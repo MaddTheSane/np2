@@ -219,8 +219,8 @@ const BYTE	*p;
 			MEML_WRITESTR(seg, off + 2, p, 8);
 			break;
 
-		case 0x28:			// 8x16 KANJI
-		case 0x29:
+//		case 0x28:
+		case 0x29:			// 8x16 KANJI
 		case 0x2a:
 		case 0x2b:
 			size = 0x0102;
