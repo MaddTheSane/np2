@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: exception.c,v 1.2 2003/12/08 02:09:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -153,7 +153,11 @@ exception(int num, int error_code)
 
 	INTERRUPT(num, FALSE, errorp, error_code);
 	CPU_STAT_NERROR = 0;
+#if defined(WIN32)
+	longjmp(exec_1step_jmpbuf, 1);
+#else
 	siglongjmp(exec_1step_jmpbuf, 1);
+#endif
 }
 
 /*

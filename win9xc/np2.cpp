@@ -805,7 +805,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		np2.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 		np2.hCursor = LoadCursor(NULL, IDC_ARROW);
 		np2.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-		np2.lpszMenuName = MAKEINTRESOURCE(IDM_MAIN);
+		np2.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
 		np2.lpszClassName = szClassName;
 		if (!RegisterClass(&np2)) {
 			return(FALSE);

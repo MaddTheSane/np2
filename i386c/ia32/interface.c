@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: interface.c,v 1.2 2003/12/08 02:09:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -43,6 +43,7 @@ ia32reset(void)
 #endif
 
 	CPU_SET_SEGREG(CPU_CS_INDEX, 0x1fc0);
+	CPU_ADRSMASK = 0xfffff;
 }
 
 void
@@ -50,7 +51,11 @@ ia32(void)
 {
 	int rv;
 
+#if defined(WIN32)
+	rv = setjmp(exec_1step_jmpbuf);
+#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
+#endif
 	switch (rv) {
 	case 0:
 		break;
@@ -70,7 +75,11 @@ ia32withtrap(void)
 {
 	int rv;
 
+#if defined(WIN32)
+	rv = setjmp(exec_1step_jmpbuf);
+#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
+#endif
 	switch (rv) {
 	case 0:
 		break;
@@ -94,7 +103,11 @@ ia32withdma(void)
 {
 	int rv;
 
+#if defined(WIN32)
+	rv = setjmp(exec_1step_jmpbuf);
+#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
+#endif
 	switch (rv) {
 	case 0:
 		break;
@@ -116,7 +129,11 @@ ia32_step(void)
 {
 	int rv;
 
+#if defined(WIN32)
+	rv = setjmp(exec_1step_jmpbuf);
+#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
+#endif
 	switch (rv) {
 	case 0:
 		break;

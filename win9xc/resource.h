@@ -3,7 +3,7 @@
 // Used by np2.rc
 //
 #define IDI_ICON1                       101
-#define IDM_MAIN                        102
+#define IDR_MAIN                        102
 #define IDD_CONFIG                      103
 #define IDD_NEWDISK                     104
 #define IDD_NEWDISK2                    105
