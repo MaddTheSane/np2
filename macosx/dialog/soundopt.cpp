@@ -372,11 +372,200 @@ static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, 
     return( eventNotHandledErr );
 }
 
+static pascal OSStatus s26proc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
+    OSStatus	err = eventNotHandledErr;
+	HIPoint		pos;
+	Point		p;
+	BYTE		bit, b;
+	Rect		ctrlbounds, winbounds;
+	PicHandle   pict;
+	BOOL		redraw = FALSE;
+
+    if (GetEventClass(event)==kEventClassControl && GetEventKind(event)==kEventControlClick ) {
+		err = noErr;
+        GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, NULL, sizeof(HIPoint), NULL, &pos);
+		GetControlBounds((ControlRef)userData, &ctrlbounds);
+		GetWindowBounds(soundWin, kWindowContentRgn, &winbounds);
+		p.h = (short)pos.x;
+		p.v = (short)pos.y;
+		p.h -= (ctrlbounds.left + winbounds.left);
+		p.h /= 9;
+		p.v -= (ctrlbounds.top + winbounds.top);
+		p.v /= 9;
+		if ((p.v < 1) || (p.v >= 3)) {
+			return(err);
+		}
+		if ((p.h >= 2) && (p.h < 7)) {
+			b = (BYTE)(p.h - 2);
+			if ((snd26 ^ b) & 7) {
+				snd26 &= ~0x07;
+				snd26 |= b;
+				redraw = TRUE;
+			}
+		}
+		else if ((p.h >= 9) && (p.h < 12)) {
+			b = snd26;
+			bit = 0x40 << (2 - p.v);
+			switch(p.h) {
+				case 9:
+					b |= bit;
+					break;
+
+				case 10:
+					b ^= bit;
+					break;
+
+				case 11:
+					b &= ~bit;
+					break;
+			}
+			if (snd26 != b) {
+				snd26 = b;
+				redraw = TRUE;
+			}
+		}
+		else if ((p.h >= 15) && (p.h < 17)) {
+			b = (BYTE)((p.h - 15) << 4);
+			if ((snd26 ^ b) & 0x10) {
+				snd26 &= ~0x10;
+				snd26 |= b;
+				redraw = TRUE;
+			}
+		}
+		if (redraw) {
+			set26s(snd26, '26io', '26in', '26rm');
+			setbmp(dipswbmp_getsnd26(snd26), &pict);
+			SetControlData((ControlRef)userData, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
+			Draw1Control((ControlRef)userData);
+		}
+	}
+
+	(void)myHandler;
+	(void)userData;
+    return err;
+}
+
+static pascal OSStatus s86proc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
+    OSStatus	err = eventNotHandledErr;
+	HIPoint		pos;
+	Point		p;
+	Rect		ctrlbounds, winbounds;
+	PicHandle   pict;
+
+    if (GetEventClass(event)==kEventClassControl && GetEventKind(event)==kEventControlClick ) {
+		err = noErr;
+        GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, NULL, sizeof(HIPoint), NULL, &pos);
+		GetControlBounds((ControlRef)userData, &ctrlbounds);
+		GetWindowBounds(soundWin, kWindowContentRgn, &winbounds);
+		p.h = (short)pos.x;
+		p.h -= (ctrlbounds.left + winbounds.left);
+		p.h /= 8;
+		if ((p.h < 2) || (p.h >= 10)) {
+			return(err);
+		}
+		p.h -= 2;
+		snd86 ^= (1 << p.h);
+		set86s();
+		setbmp(dipswbmp_getsnd86(snd86), &pict);
+		SetControlData((ControlRef)userData, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
+		Draw1Control((ControlRef)userData);
+	}
+
+	(void)myHandler;
+	(void)userData;
+    return err;
+}
+
+static pascal OSStatus spbproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
+    OSStatus	err = eventNotHandledErr;
+	HIPoint		pos;
+	Point		p;
+	BYTE		bit, b;
+	Rect		ctrlbounds, winbounds;
+	PicHandle   pict;
+	BOOL		redraw = FALSE;
+
+    if (GetEventClass(event)==kEventClassControl && GetEventKind(event)==kEventControlClick ) {
+		err = noErr;
+        GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, NULL, sizeof(HIPoint), NULL, &pos);
+		GetControlBounds((ControlRef)userData, &ctrlbounds);
+		GetWindowBounds(soundWin, kWindowContentRgn, &winbounds);
+		p.h = (short)pos.x;
+		p.v = (short)pos.y;
+		p.h -= (ctrlbounds.left + winbounds.left);
+		p.h /= 9;
+		p.v -= (ctrlbounds.top + winbounds.top);
+		p.v /= 9;
+		if ((p.v < 1) || (p.v >= 3)) {
+			return(err);
+		}
+		if ((p.h >= 2) && (p.h < 5)) {
+			b = spb;
+			bit = 0x40 << (2 - p.v);
+			switch(p.h) {
+				case 2:
+					b |= bit;
+					break;
+
+				case 3:
+					b ^= bit;
+					break;
+
+				case 4:
+					b &= ~bit;
+					break;
+			}
+			if (spb != b) {
+				spb = b;
+				set26s(b, 'spio', 'spin', 'sprm');
+				redraw = TRUE;
+			}
+		}
+		else if (p.h == 7) {
+			spb ^= 0x20;
+			redraw = TRUE;
+		}
+		else if ((p.h >= 10) && (p.h < 12)) {
+			b = (BYTE)((p.h - 10) << 4);
+			if ((spb ^ b) & 0x10) {
+				spb &= ~0x10;
+				spb |= b;
+				set26s(b, 'spio', 'spin', 'sprm');
+				redraw = TRUE;
+			}
+		}
+		else if ((p.h >= 14) && (p.h < 19)) {
+			b = (BYTE)(p.h - 14);
+			if ((spb ^ b) & 7) {
+				spb &= ~0x07;
+				spb |= b;
+				set26s(b, 'spio', 'spin', 'sprm');
+				redraw = TRUE;
+			}
+		}
+		else if ((p.h >= 21) && (p.h < 24)) {
+			spbvrc ^= (BYTE)(3 - p.v);
+			setControlValue('spvl', 0, (spbvrc & 1)?1:0);
+			setControlValue('spvr', 0, (spbvrc & 2)?1:0);
+			redraw = TRUE;
+		}
+		if (redraw) {
+			setbmp(dipswbmp_getsndspb(spb, spbvrc), &pict);
+			SetControlData((ControlRef)userData, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
+			Draw1Control((ControlRef)userData);
+		}
+	}
+
+	(void)myHandler;
+	(void)userData;
+    return err;
+}
+
 static void makeNibWindow (IBNibRef nibRef) {
     OSStatus	err;
-    short		i,j,l;
+    short		i,j,l,k;
     EventHandlerRef	ref;
-    ControlRef	targetCon[11];
+    ControlRef	targetCon[11], cref[3];
     
     err = CreateWindowFromNib(nibRef, CFSTR("SoundDialog"), &soundWin);
     if (err == noErr) {
@@ -403,6 +592,15 @@ static void makeNibWindow (IBNibRef nibRef) {
 
         EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },};
         InstallWindowEventHandler (soundWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)soundWin, &ref);
+		
+        EventTypeSpec	ctrllist[]={ { kEventClassControl, kEventControlClick } };
+        for (k=0;k<3;k++) {
+			cref[k] = getControlRefByID('BMP ', k, soundWin);
+		}
+		InstallControlEventHandler(cref[0], NewEventHandlerUPP(s26proc), GetEventTypeCount(ctrllist), ctrllist, (void *)cref[0], NULL);   
+		InstallControlEventHandler(cref[1], NewEventHandlerUPP(s86proc), GetEventTypeCount(ctrllist), ctrllist, (void *)cref[1], NULL);   
+		InstallControlEventHandler(cref[2], NewEventHandlerUPP(spbproc), GetEventTypeCount(ctrllist), ctrllist, (void *)cref[2], NULL);   
+		
         ShowSheetWindow(soundWin, hWndMain);
         
         err=RunAppModalLoopForWindow(soundWin);

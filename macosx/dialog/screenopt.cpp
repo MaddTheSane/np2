@@ -181,7 +181,6 @@ static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, 
 static void makeNibWindow (IBNibRef nibRef) {
     OSStatus	err;
     short		i;
-    ControlRef	targetCon[5];
     
     err = CreateWindowFromNib(nibRef, CFSTR("ScreenDialog"), &screenWin);
     if (err == noErr) {
@@ -196,13 +195,15 @@ static void makeNibWindow (IBNibRef nibRef) {
             { kEventClassControl, kEventControlValueFieldChanged }
         };
         for (i=0;i<5;i++) {
-            targetCon[i] = getControlRefByID('sl/f',i,screenWin);
-            InstallControlEventHandler( targetCon[i],  sliderEventHandlerProc , GetEventTypeCount(sliderControlEvents), sliderControlEvents, (void *)targetCon[i], NULL );
+			ControlRef  target;
+            target = getControlRefByID('sl/f', i, screenWin);
+            InstallControlEventHandler(target, sliderEventHandlerProc, GetEventTypeCount(sliderControlEvents), sliderControlEvents, (void *)target, NULL );
         }
 
         EventHandlerRef	ref;
         InstallWindowEventHandler (screenWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)screenWin, &ref);
-        ShowSheetWindow(screenWin, hWndMain);
+        
+		ShowSheetWindow(screenWin, hWndMain);
         
         err=RunAppModalLoopForWindow(screenWin);
     }

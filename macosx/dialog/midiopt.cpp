@@ -95,35 +95,43 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 				strcpy(mpucfg.def, "");
 				mpucfg.def_en = 0;
                 setMPUs();
+                err=noErr;
                 break;
                 
             case 'MPio':
                 setjmper(&mpu, getMenuValue << 4, 0xf0);
+                err=noErr;
                 break;
 
             case 'MPin':
                 setjmper(&mpu, getMenuValue, 0x03);
+                err=noErr;
                 break;
 
             case 'mido':
 				strcpy(mpucfg.mout, midiout_name[getMenuValue]);
+                err=noErr;
                 break;
 
             case 'midi':
 				strcpy(mpucfg.min, midiout_name[getMenuValue]);
+                err=noErr;
                 break;
 
             case 'midm':
 				strcpy(mpucfg.mdl, cmmidi_mdlname[getMenuValue]);
+                err=noErr;
                 break;
 
             case 'usem':
 				mpucfg.def_en = GetControl32BitValue(getControlRefByID(cmd.commandID, 0, midiWin));
+                err=noErr;
                 break;
 
             case 'opnm':
 				dialog_fileselect(mpucfg.def, sizeof(mpucfg.def), NULL, OPEN_MIMPI);
 				setMIMPIFilename();
+                err=noErr;
                 break;
 
             case kHICommandOK:
@@ -155,9 +163,48 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 break;
         }
     }
-	else if (GetEventClass(event)==kEventClassWindow && GetEventKind(event)==kEventWindowShowing ) {
-		//setMPUs();
-		//SysBeep(0);
+
+	(void)myHandler;
+	(void)userData;
+    return err;
+}
+
+static pascal OSStatus ctrlproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
+    OSStatus	err = eventNotHandledErr;
+	HIPoint		p;
+	BYTE		bit;
+	int			move;
+	Rect		ctrlbounds, winbounds;
+	PicHandle   pict;
+	BOOL		redraw = FALSE;
+
+    if (GetEventClass(event)==kEventClassControl && GetEventKind(event)==kEventControlClick ) {
+		err = noErr;
+        GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, NULL, sizeof(HIPoint), NULL, &p);
+		GetControlBounds((ControlRef)userData, &ctrlbounds);
+		GetWindowBounds(midiWin, kWindowContentRgn, &winbounds);
+		p.x -= (ctrlbounds.left + winbounds.left);
+		p.x /= 9;
+		if ((p.x >= 2) && (p.x < 6)) {
+			move = (int)(p.x - 2);
+			bit = 0x80 >> move;
+			mpu ^= bit;
+			redraw = TRUE;
+		}
+		else if ((p.x >= 9) && (p.x < 13)) {
+			bit = (BYTE)(13 - p.x);
+			if ((mpu ^ bit) & 3) {
+				mpu &= ~0x3;
+				mpu |= bit;
+				redraw = TRUE;
+			}
+		}
+		if (redraw) {
+			setMPUs();
+			setbmp(dipswbmp_getmpu(mpu), &pict);
+			SetControlData((ControlRef)userData, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
+			Draw1Control((ControlRef)userData);
+		}
 	}
 
 	(void)myHandler;
@@ -177,8 +224,9 @@ static void initMidiWindow(void) {
 }
 
 static void makeNibWindow (IBNibRef nibRef) {
-    OSStatus	err;
+    OSStatus		err;
     EventHandlerRef	ref;
+	ControlRef		cref;
     
     err = CreateWindowFromNib(nibRef, CFSTR("MidiDialog"), &midiWin);
     if (err == noErr) {
@@ -187,6 +235,11 @@ static void makeNibWindow (IBNibRef nibRef) {
         EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },
 								 { kEventClassWindow,  kEventWindowShowing} };
         InstallWindowEventHandler (midiWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)midiWin, &ref);
+		
+        EventTypeSpec	ctrllist[]={ { kEventClassControl, kEventControlClick } };
+		cref = getControlRefByID('BMP ', 0, midiWin);
+		InstallControlEventHandler(cref, NewEventHandlerUPP(ctrlproc), GetEventTypeCount(ctrllist), ctrllist, (void *)cref, NULL);
+		
         ShowSheetWindow(midiWin, hWndMain);
         
         err=RunAppModalLoopForWindow(midiWin);
