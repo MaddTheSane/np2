@@ -222,7 +222,8 @@ void soundmng_destroy(void) {
 			waveOutReset(w_ctrl.hwave);
 		}
 		else {
-			waveOutReset(w_ctrl.hwave);
+		//	誰かシグマリ３でのマトモな開放方法教えてくだちい…
+		//	waveOutReset(w_ctrl.hwave);
 			for (i=0; i<2; i++) {
 				waveOutUnprepareHeader(w_ctrl.hwave, w_ctrl.wh + i,
 															sizeof(WAVEHDR));
