@@ -34,6 +34,9 @@
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qpainter.h>
+#if defined(Q_WS_QWS)
+#include <qdirectpainter_qws.h>
+#endif
 
 #include "drawmng.h"
 #include "scrnmng.h"

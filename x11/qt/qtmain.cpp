@@ -279,8 +279,10 @@ emulationWindow::about()
 emulationScreen::emulationScreen(QWidget *parent, const char *name, WFlags f)
 	: QWidget(parent, name, f)
 	, m_Surface(0)
-	, m_Offscreen(0)
 	, m_Painter(0)
+#if !defined(Q_WS_QWS)
+	, m_Offscreen(0)
+#endif
 {
 
 	m_SrcRect.setRect(0, 0, 0, 0);

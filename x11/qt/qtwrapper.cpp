@@ -30,9 +30,9 @@
 #include "np2.h"
 #include "qt/xnp2.h"
 
+#if defined(Q_WS_X11)
 #include <X11/Xlib.h>
 #include <qcursor.h>
-
 
 const ScreenInfo
 qt_getScreenInfo()
@@ -103,6 +103,36 @@ hasPendingEvents()
 
 	return XPending(QPaintDevice::x11AppDisplay());
 }
+#endif	/* Q_WS_X11 */
+
+#if defined(Q_WS_QWS)
+#include <qpixmap.h>
+
+const ScreenInfo
+qt_getScreenInfo()
+{
+	ScreenInfo info;
+
+	info.bpp = 0;
+
+	// 16bpp only...
+	if (QPixmap::defaultDepth() == 16) {
+		info.bpp = 16;
+		info.mask.red = 0xf800;
+		info.mask.green = 0x07e0;
+		info.mask.blue = 0x001f;
+	}
+
+	return info;
+}
+
+bool
+hasPendingEvents()
+{
+
+	return false;
+}
+#endif
 
 void
 qt_setPointer(QWidget *w, int x, int y)

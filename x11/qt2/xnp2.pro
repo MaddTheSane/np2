@@ -8,9 +8,12 @@ DESTDIR= .
 DEFINES+= SYSRESPATH=\"/usr/X11R6/lib/X11/xnp2\"
 
 DEFINES+= USE_SDLMIXER
-TMAKE_CFLAGS+= `sdl-config --cflags`
-TMAKE_CXXFLAGS+= `sdl-config --cflags`
-TMAKE_LIBS+= `sdl-config --libs` -lSDL_mixer
+
+SDL_CONFIG= sdl-config
+linux-sharp-g++:SDL_CONFIG= /opt/Qtopia/bin/sdl-config
+TMAKE_CFLAGS+= `$$SDL_CONFIG --cflags`
+TMAKE_CXXFLAGS+= `$$SDL_CONFIG --cflags`
+TMAKE_LIBS+= `$$SDL_CONFIG --libs` -lSDL_mixer
 
 
 #

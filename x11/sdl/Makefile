@@ -48,7 +48,7 @@ CBUSOBJS=	../../cbus/cbuscore.o ../../cbus/pc9861k.o \
 		../../cbus/board26k.o ../../cbus/board86.o \
 		../../cbus/boardspb.o ../../cbus/boardx2.o \
 		../../cbus/cs4231io.o ../../cbus/pcm86io.o \
-		../../cbus/sasiio.o ../../cbus/scsicmd.o ../../cbus/scsiio.o \
+		../../cbus/sasiio.o ../../cbus/scsicmd.o ../../cbus/scsiio.o
 
 EMBEDOBJS=	../../embed/vramhdl.o ../../embed/vrammix.o
 
@@ -153,4 +153,4 @@ $(PROG): $(OBJS)
 	$(CC) -o $@ $(CFLAGS) -c $<
 
 clean:
-	-/bin/rm -f $(PROG) $(OBJS)
+	-/bin/rm -f $(PROG) $(OBJS) *~ *.bak core.* *.core

@@ -210,7 +210,9 @@ void
 emulationScreen::destroyScreen()
 {
 
+#if !defined(Q_WS_QWS)
 	DELETE(m_Offscreen);
+#endif
 	DELETE(m_Surface);
 }
 
