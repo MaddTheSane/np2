@@ -183,17 +183,33 @@ void i286c_shut(void) {
 void i286c_setextsize(UINT32 size) {
 
 	if (CPU_EXTMEMSIZE != size) {
-		if (CPU_EXTMEM) {
-			_MFREE(CPU_EXTMEM);
+		UINT8 *extmem;
+		extmem = CPU_EXTMEM;
+		if (extmem != NULL) {
+			_MFREE(extmem);
+			extmem = NULL;
+		}
+		if (size != 0) {
+			extmem = (UINT8 *)_MALLOC(size + 16, "EXTMEM");
+		}
+		if (extmem != NULL) {
+			CPU_EXTMEM = extmem;
+			CPU_EXTMEMSIZE = size;
+			CPU_EXTMEMBASE = CPU_EXTMEM - 0x100000;
+			CPU_EXTLIMIT16 = min(size + 0x100000, 0xf00000);
+#if defined(CPU_EXTLIMIT)
+			CPU_EXTLIMIT = size + 0x100000;
+#endif
+		}
+		else {
 			CPU_EXTMEM = NULL;
+			CPU_EXTMEMSIZE = 0;
+			CPU_EXTMEMBASE = NULL;
+			CPU_EXTLIMIT16 = 0;
+#if defined(CPU_EXTLIMIT)
+			CPU_EXTLIMIT = 0;
+#endif
 		}
-		if (size) {
-			CPU_EXTMEM = (UINT8 *)_MALLOC(size + 16, "EXTMEM");
-			if (CPU_EXTMEM == NULL) {
-				size = 0;
-			}
-		}
-		CPU_EXTMEMSIZE = size;
 	}
 	i286core.e.ems[0] = mem + 0xc0000;
 	i286core.e.ems[1] = mem + 0xc4000;

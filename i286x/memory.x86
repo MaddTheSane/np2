@@ -3,16 +3,14 @@
 ; ToDo: egc word-boundary
 
 %include 'x86/np2asm.inc'
+%include '../io/x86/iocore.inc'
 
 section .bss
 
 	global	_mem
 	extern	_i286core
-	extern	_grcg
-	extern	_gdcs
 	extern	_tramupdate
 	extern	_vramupdate
-	extern	_cgwindow
 	extern	_vramop
 
 _mem	resb	0x200000

@@ -52,7 +52,7 @@
 extern "C" {
 #endif
 
-extern	BYTE	mem[0x200000];
+extern	UINT8	mem[0x200000];
 
 void MEMCALL i286_memorymap(UINT type);
 void MEMCALL i286_vram_dispatch(UINT operate);

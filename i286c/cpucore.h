@@ -179,6 +179,8 @@ typedef struct {
 typedef struct {							// for ver0.73
 	UINT8	*ext;
 	UINT32	extsize;
+	UINT8	*extbase;						// ext - 0x100000
+	UINT32	extlimit16mb;					// extsize + 0x100000
 	UINT8	*ems[4];
 	UINT32	inport;
 #if defined(CPUSTRUC_MEMWAIT)
@@ -278,6 +280,8 @@ void v30c_step(void);
 
 #define	CPU_EXTMEM		i286core.e.ext
 #define	CPU_EXTMEMSIZE	i286core.e.extsize
+#define	CPU_EXTMEMBASE	i286core.e.extbase
+#define	CPU_EXTLIMIT16	i286core.e.extlimit16mb
 #define	CPU_INPADRS		i286core.e.inport
 #define	CPU_EMSPTR		i286core.e.ems
 
@@ -296,7 +300,7 @@ void v30c_step(void);
 						i286core.s.trap = 0;
 #define	CPU_STI			i286core.s.r.w.flag |= I_FLAG;						\
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
-#define	CPU_A20EN(en)	CPU_ADRSMASK = (en)?0xfffffff:0x000fffff;
+#define	CPU_A20EN(en)	CPU_ADRSMASK = (en)?0x00ffffff:0x000fffff;
 
 #define	CPU_INITIALIZE				i286c_initialize
 #define	CPU_DEINITIALIZE			i286c_deinitialize

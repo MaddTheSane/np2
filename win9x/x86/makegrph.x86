@@ -1,5 +1,6 @@
 
 %include 'x86/np2asm.inc'
+%include '../io/x86/iocore.inc'
 
 section .bss
 
@@ -7,7 +8,6 @@ section .bss
 	extern	_mem
 	extern	_np2_vram
 	extern	_renewal_line
-	extern	_gdc
 	extern	_dsync
 	extern	_vramupdate
 	global	_grph_table

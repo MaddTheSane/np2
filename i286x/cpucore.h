@@ -289,7 +289,7 @@ void v30x_step(void);
 						i286core.s.trap = 0;
 #define	CPU_STI			i286core.s.r.w.flag |= I_FLAG;						\
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
-#define	CPU_A20EN(en)	CPU_ADRSMASK = (en)?0xfffffff:0x000fffff;
+#define	CPU_A20EN(en)	CPU_ADRSMASK = (en)?0x00ffffff:0x000fffff;
 
 #define	CPU_INITIALIZE				i286x_initialize
 #define	CPU_DEINITIALIZE			i286x_deinitialize

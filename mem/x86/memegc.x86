@@ -1,15 +1,11 @@
 ; egc - asm version
-;
-; asm version: egcasm.asm + egc.c
 
 %include 'x86/np2asm.inc'
+%include '../io/x86/iocore.inc'
 
 section .bss
 
 	extern	_mem
-	extern	_grcg
-	extern	_gdcs
-	extern	_egc
 	extern	_vramupdate
 	global	_egc_src
 	global	_egc_data
