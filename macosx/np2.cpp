@@ -177,6 +177,7 @@ static void MenuBarInit(void) {
 	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_KEYDISP);
 #endif
 #ifndef SUPPORT_SOFTKBD
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), IDM_SOFTKBD, CFSTR("please wait for 0.80"));
 	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_SOFTKBD);
 #endif
     if (np2oscfg.I286SAVE) {
