@@ -148,6 +148,14 @@ gui_sdl_set_window_title(const char* str)
 	SDL_WM_SetCaption(str, str);
 }
 
+void
+gui_sdl_messagebox(const char *title, const char *msg)
+{
+
+	printf("%s\n", title);
+	printf(msg);
+}
+
 /* toolkit data */
 gui_toolkit_t gtk_toolkit = {
 	gui_sdl_get_toolkit,
@@ -159,4 +167,5 @@ gui_toolkit_t gtk_toolkit = {
 	gui_sdl_widget_quit,
 	gui_sdl_event_process,
 	gui_sdl_set_window_title,
+	gui_sdl_messagebox,
 };

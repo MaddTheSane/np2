@@ -114,6 +114,14 @@ gui_qt_set_window_title(const char* str)
 	np2EmulationWindow->setCaption(str);
 }
 
+void
+gui_qt_messagebox(const char *title, const char *msg)
+{
+
+	printf("%s\n", title);
+	printf(msg);
+}
+
 // toolkit data
 gui_toolkit_t qt_toolkit = {
 	gui_qt_get_toolkit,
@@ -125,6 +133,7 @@ gui_toolkit_t qt_toolkit = {
 	gui_qt_widget_quit,
 	gui_qt_event_process,
 	gui_qt_set_window_title,
+	gui_qt_messagebox,
 };
 
 

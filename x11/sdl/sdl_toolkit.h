@@ -42,6 +42,7 @@ void gui_sdl_widget_mainloop(void);
 void gui_sdl_widget_quit(void);
 void gui_sdl_event_process(void);
 void gui_sdl_set_window_title(const char* str);
+void gui_sdl_messagebox(const char *title, const char *msg);
 
 #ifdef __cplusplus
 }

@@ -17,7 +17,7 @@ TMAKE_LIBS+= `sdl-config --libs` -lSDL_mixer
 # common part
 #
 
-DEFINES+= USE_QT
+DEFINES+= USE_QT=1
 
 INCLUDEPATH+= . .. ../.. ../../common ../../generic
 INCLUDEPATH+= ../../bios ../../cbus ../../fdd ../../font
@@ -40,12 +40,14 @@ SOURCES+= ../../common/strres.c ../../common/milstr.c ../../common/_memory.c \
 SOURCES+= ../../bios/bios.c ../../bios/bios02.c ../../bios/bios08.c \
           ../../bios/bios09.c ../../bios/bios0c.c ../../bios/bios12.c \
           ../../bios/bios13.c ../../bios/bios18.c ../../bios/bios19.c \
-          ../../bios/bios1a.c ../../bios/bios1b.c ../../bios/bios1c.c
+          ../../bios/bios1a.c ../../bios/bios1b.c ../../bios/bios1c.c \
+          ../../bios/sxsibios.c
 
 SOURCES+= ../../cbus/cbuscore.c ../../cbus/pc9861k.c ../../cbus/mpu98ii.c \
           ../../cbus/amd98.c ../../cbus/board118.c ../../cbus/board14.c \
           ../../cbus/board26k.c ../../cbus/board86.c ../../cbus/boardspb.c \
-          ../../cbus/boardx2.c ../../cbus/cs4231io.c ../../cbus/pcm86io.c
+          ../../cbus/boardx2.c ../../cbus/cs4231io.c ../../cbus/pcm86io.c \
+          ../../cbus/sasiio.c ../../cbus/scsiio.c ../../cbus/scsicmd.c
 
 SOURCES+= ../../fdd/diskdrv.c ../../fdd/newdisk.c ../../fdd/fddfile.c \
           ../../fdd/fdd_xdf.c ../../fdd/fdd_d88.c ../../fdd/fdd_mtr.c \

@@ -42,6 +42,7 @@ void gui_gtk_widget_mainloop(void);
 void gui_gtk_widget_quit(void);
 void gui_gtk_event_process(void);
 void gui_gtk_set_window_title(const char* str);
+void gui_gtk_messagebox(const char* title, const char *msg);
 
 #ifdef __cplusplus
 }

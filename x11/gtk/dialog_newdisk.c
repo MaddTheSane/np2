@@ -229,7 +229,7 @@ newdisk_hd_ok_button_clicked(GtkButton *b, gpointer d)
 	if (p != 0 && strlen(p) != 0) {
 		hdsize = milstr_solveINT(p);
 		if (hdsize >= 5 && hdsize <= 256) {
-			newdisk_hdd(data->com.filename, hdsize);
+			newdisk_thd(data->com.filename, hdsize);
 		}
 	}
 	gtk_widget_destroy(GTK_WIDGET(data->com.dialog));

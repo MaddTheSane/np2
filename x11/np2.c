@@ -31,7 +31,6 @@
 #include "pccore.h"
 #include "dosio.h"
 #include "scrndraw.h"
-#include "statsave.h"
 #include "timing.h"
 #include "toolkit.h"
 

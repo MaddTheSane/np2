@@ -385,6 +385,14 @@ gui_gtk_set_window_title(const char* str)
 	gtk_window_set_title(GTK_WINDOW(window), str);
 }
 
+void
+gui_gtk_messagebox(const char *title, const char *msg)
+{
+
+	printf("%s\n", title);
+	printf(msg);
+}
+
 /* toolkit data */
 gui_toolkit_t gtk_toolkit = {
 	gui_gtk_get_toolkit,
@@ -396,4 +404,5 @@ gui_toolkit_t gtk_toolkit = {
 	gui_gtk_widget_quit,
 	gui_gtk_event_process,
 	gui_gtk_set_window_title,
+	gui_gtk_messagebox,
 };

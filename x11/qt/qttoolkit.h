@@ -43,6 +43,7 @@ void gui_qt_widget_mainloop(void);
 void gui_qt_widget_quit(void);
 void gui_qt_event_process(void);
 void gui_qt_set_window_title(const char* str);
+void gui_qt_messagebox(const char* title, const char *msg);
 
 #ifdef __cplusplus
 }

@@ -33,7 +33,7 @@
 
 #include "sysmng.h"
 
-#if defined(USE_GTK) && defined(USE_QT)
+#if (USE_GTK + USE_QT + USE_SDL) > 1
 
 gui_toolkit_t* toolkitp;
 
@@ -42,6 +42,7 @@ static struct {
 } toolkit[] = {
 	{ &gtk_toolkit, },
 	{ &qt_toolkit, },
+	{ &sdl_toolkit, },
 };
 
 void
@@ -65,4 +66,11 @@ toolkit_initialize(void)
 	toolkitp = &gtk_toolkit;
 }
 
-#endif	/* USE_GTK && USE_QT */
+#endif	/* USE_GTK + USE_QT + USE_SDL > 1 */
+
+void
+toolkit_msgbox(const char *title, const char *msg)
+{
+
+	toolkit_messagebox(title, msg);
+}

@@ -28,10 +28,6 @@
 #ifndef	NP2_X11_TOOLKIT_H__
 #define	NP2_X11_TOOLKIT_H__
 
-#if !defined(USE_GTK) && !defined(USE_QT) && !defined(USE_SDL)
-#error undefined USE_GTK and USE_QT and USE_SDL!!!
-#endif
-
 typedef struct {
 	const char*	(*get_toolkit)(void);
 	BOOL		(*arginit)(int* argc, char*** argv);
@@ -42,51 +38,10 @@ typedef struct {
 	void		(*widget_quit)(void);
 	void		(*event_process)(void);
 	void		(*set_window_title)(const char* str);
+	void		(*messagebox)(const char *title, const char *msg);
 } gui_toolkit_t;
 
-#if defined(USE_GTK) && !defined(USE_QT) && !defined(USE_SDL)
-
-#include "gtk/gtk_toolkit.h"
-
-#define	toolkit_initialize()
-#define	toolkit_terminate()
-#define	toolkit_arginit(argcp, argvp)	gui_gtk_arginit(argcp, argvp)
-#define	toolkit_widget_create()		gui_gtk_widget_create()
-#define	toolkit_widget_show()		gui_gtk_widget_show()
-#define	toolkit_widget_mainloop()	gui_gtk_widget_mainloop()
-#define	toolkit_widget_quit()		gui_gtk_widget_quit()
-#define	toolkit_event_process()
-#define	toolkit_set_window_title(s)	gui_gtk_set_window_title(s)
-
-#elif defined(USE_QT) && !defined(USE_GTK) && !defined(USE_SDL)
-
-#include "qt/qttoolkit.h"
-
-#define	toolkit_initialize()
-#define	toolkit_terminate()		gui_qt_terminate()
-#define	toolkit_arginit(argcp, argvp)	gui_qt_arginit(argcp, argvp)
-#define	toolkit_widget_create()		gui_qt_widget_create()
-#define	toolkit_widget_show()		gui_qt_widget_show()
-#define	toolkit_widget_mainloop()	gui_qt_widget_mainloop()
-#define	toolkit_widget_quit()		gui_qt_widget_quit()
-#define	toolkit_event_process()
-#define	toolkit_set_window_title(s)	gui_qt_set_window_title(s)
-
-#elif defined(USE_SDL) && !defined(USE_GTK) && !defined(USE_QT)
-
-#include "sdl/sdl_toolkit.h"
-
-#define	toolkit_initialize()
-#define	toolkit_terminate()
-#define	toolkit_arginit(argcp, argvp)	gui_sdl_arginit(argcp, argvp)
-#define	toolkit_widget_create()		gui_sdl_widget_create()
-#define	toolkit_widget_show()		gui_sdl_widget_show()
-#define	toolkit_widget_mainloop()	gui_sdl_widget_mainloop()
-#define	toolkit_widget_quit()		gui_sdl_widget_quit()
-#define	toolkit_event_process()		gui_sdl_event_process()
-#define	toolkit_set_window_title(s)	gui_sdl_set_window_title(s)
-
-#else
+#if (USE_GTK + USE_QT + USE_SDL) > 1
 
 extern gui_toolkit_t* toolkitp;
 
@@ -99,6 +54,56 @@ void toolkit_initialize(void);
 #define	toolkit_widget_quit()		(*toolkitp->widget_quit)()
 #define	toolkit_event_process()		(*toolkitp->event_process)()
 #define	toolkit_set_window_title(s)	(*toolkitp->set_window_title)(s)
+#define	toolkit_messagebox(t,m)		(*toolkitp->messagebox)(t,m)
+
+#elif USE_GTK > 0
+
+#include "gtk/gtk_toolkit.h"
+
+#define	toolkit_initialize()
+#define	toolkit_terminate()
+#define	toolkit_arginit(argcp, argvp)	gui_gtk_arginit(argcp, argvp)
+#define	toolkit_widget_create()		gui_gtk_widget_create()
+#define	toolkit_widget_show()		gui_gtk_widget_show()
+#define	toolkit_widget_mainloop()	gui_gtk_widget_mainloop()
+#define	toolkit_widget_quit()		gui_gtk_widget_quit()
+#define	toolkit_event_process()
+#define	toolkit_set_window_title(s)	gui_gtk_set_window_title(s)
+#define	toolkit_messagebox(t,m)		gui_gtk_messagebox(t,m)
+
+#elif USE_QT > 0
+
+#include "qt/qttoolkit.h"
+
+#define	toolkit_initialize()
+#define	toolkit_terminate()		gui_qt_terminate()
+#define	toolkit_arginit(argcp, argvp)	gui_qt_arginit(argcp, argvp)
+#define	toolkit_widget_create()		gui_qt_widget_create()
+#define	toolkit_widget_show()		gui_qt_widget_show()
+#define	toolkit_widget_mainloop()	gui_qt_widget_mainloop()
+#define	toolkit_widget_quit()		gui_qt_widget_quit()
+#define	toolkit_event_process()
+#define	toolkit_set_window_title(s)	gui_qt_set_window_title(s)
+#define	toolkit_messagebox(t,m)		gui_qt_messagebox(t,m)
+
+#elif USE_SDL > 0
+
+#include "sdl/sdl_toolkit.h"
+
+#define	toolkit_initialize()
+#define	toolkit_terminate()
+#define	toolkit_arginit(argcp, argvp)	gui_sdl_arginit(argcp, argvp)
+#define	toolkit_widget_create()		gui_sdl_widget_create()
+#define	toolkit_widget_show()		gui_sdl_widget_show()
+#define	toolkit_widget_mainloop()	gui_sdl_widget_mainloop()
+#define	toolkit_widget_quit()		gui_sdl_widget_quit()
+#define	toolkit_event_process()		gui_sdl_event_process()
+#define	toolkit_set_window_title(s)	gui_sdl_set_window_title(s)
+#define	toolkit_messagebox(t,m)		gui_sdl_messagebox(t,m)
+
+#else
+
+#error undefined USE_GTK and USE_QT and USE_SDL!!!
 
 #endif
 

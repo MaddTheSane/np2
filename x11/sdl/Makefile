@@ -10,7 +10,7 @@ CINCLUDES=	-I. -I.. -I../.. -I../../common -I../../generic -I../debug \
 		-I../../vram \
 		-I../../embed -I../../embed/menu -I../../embed/menubase \
 		`$(SDL_CONFIG) --cflags` \
-		-DUSE_SDL
+		-DUSE_SDL=1
 COPTS?= 	-O2 -W -Wall -Wpointer-arith -DUSE_SDLAUDIO
 SYSRESPATH?=	/usr/X11R6/lib/X11/xnp2
 
@@ -39,14 +39,16 @@ COMMONOBJS=	../../common/strres.o ../../common/milstr.o \
 BIOSOBJS=	../../bios/bios.o ../../bios/bios02.o ../../bios/bios08.o \
 		../../bios/bios09.o ../../bios/bios0c.o ../../bios/bios12.o \
 		../../bios/bios13.o ../../bios/bios18.o ../../bios/bios19.o \
-		../../bios/bios1a.o ../../bios/bios1b.o ../../bios/bios1c.o
+		../../bios/bios1a.o ../../bios/bios1b.o ../../bios/bios1c.o \
+                ../../bios/sxsibios.o
 
 CBUSOBJS=	../../cbus/cbuscore.o ../../cbus/pc9861k.o \
 		../../cbus/mpu98ii.o ../../cbus/amd98.o \
 		../../cbus/board118.o ../../cbus/board14.o \
 		../../cbus/board26k.o ../../cbus/board86.o \
 		../../cbus/boardspb.o ../../cbus/boardx2.o \
-		../../cbus/cs4231io.o ../../cbus/pcm86io.o
+		../../cbus/cs4231io.o ../../cbus/pcm86io.o \
+		../../cbus/sasiio.o ../../cbus/scsicmd.o ../../cbus/scsiio.o \
 
 EMBEDOBJS=	../../embed/vramhdl.o ../../embed/vrammix.o
 

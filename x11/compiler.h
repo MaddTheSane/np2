@@ -112,7 +112,10 @@ typedef	int			BOOL;
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 #endif
 
+#ifndef	UNUSED
 #define	UNUSED(v)	((void)(v))
+#endif
+
 #define	FASTCALL
 #define	SOUNDCALL
 #define	MEMCALL
@@ -139,6 +142,9 @@ UINT32 gettick();
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
 
+void toolkit_msgbox(const char *title, const char *msg);
+#define	msgbox(title, msg)	toolkit_msgbox(title, msg);
+
 #if defined(i386) || defined(__i386__)
 #undef	MEMOPTIMIZE
 #elif defined(arm) || defined (__arm__)
@@ -156,6 +162,8 @@ UINT32 gettick();
 #define	SUPPORT_24BPP
 #define	SUPPORT_32BPP
 #define	SUPPORT_NORMALDISP
+
+#define	SUPPORT_HOSTDRV
 
 #if defined(USE_GTK)
 #define	SUPPORT_KEYDISP
