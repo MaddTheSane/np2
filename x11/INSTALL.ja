@@ -16,32 +16,32 @@ Xnp2 - ねこープロジェクトII for X Window System
     良いのか判らない場合には SDL_mixer を使用する事をお勧めします。
     Xnp2 上で音を鳴らさないのであれば、この項目は飛ばしてください。
 
-    ・NetBSD
+    ・NetBSD サウンドドライバ
       NetBSD 標準のサウンド機能を使用するドライバです。
       使用する場合には、以下の行の undef を define に変更してください。
 
         #undef  USE_NETBSDAUDIO
 
-    ・OSS 互換
+    ・OSS 互換サウンドドライバ
       OSS 互換のサウンド機能を使用するドライバです。
       使用する場合には、以下の行の undef を define に変更してください。
 
         #undef  USE_OSSAUDIO
 
-    ・SDL
+    ・SDL サウンドドライバ
       SDL のサウンド機能を使用するドライバです。
       使用する場合には、以下の行の undef を define に変更してください。
 
         #undef  USE_SDLAUDIO
 
-    ・SDL_mixer
+    ・SDL_mixer サウンドドライバ
       SDL のサウンド機能を使用し、フロッピーのシーク音等の PCM の再生に
       対応したドライバです。
       使用する場合には、以下の行の undef を define に変更してください。
 
         #undef  USE_SDLMIXER
 
-    ・EsounD
+    ・EsounD サウンドドライバ
       EsounD を使用するドライバです。
       使用する場合には、以下の行の undef を define に変更してください。
 
@@ -53,6 +53,12 @@ Xnp2 - ねこープロジェクトII for X Window System
     以下の行の undef を define に変更してください。
 
         #undef  USE_GTK2
+
+  1.4. ジョイパッド機能
+
+    Xnp2 でジョイパッドを使用する場合には、SDL サウンドドライバを有効にする
+    必要があります。SDL サウンドドライバを有効にする方法については 1.3. 項を
+    参照してください。
 
 
 2. コンパイル
