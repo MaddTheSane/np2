@@ -317,7 +317,6 @@ $label		ldrh	r6, [r9, #CPU_MSW]
 			blne	i286a_selector
 			str		r0, [r9, $b]
 			str		r0, [r9, $f]
-			mov		pc, r11
 	MEND
 
 

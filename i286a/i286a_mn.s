@@ -96,7 +96,7 @@ adc_r16_ea		OP_R16_EA	ADC16, #2, #7
 adc_al_d8		OP_AL_D8	ADC8, #3
 adc_ax_d16		OP_AX_D16	ADC16, #3
 push_ss			REGPUSH		#CPU_SS, #3
-pop_ss			SEGPOPFIX	#CPU_SS, #CPU_SS_BASE, #CPU_SS_FIX, #5
+; pop_ss
 
 sbb_ea_r8		OP_EA_R8	SBB8, #2, #7
 sbb_ea_r16		OP_EA_R16	SBB16, #2, #7
@@ -105,7 +105,7 @@ sbb_r16_ea		OP_R16_EA	SBB16, #2, #7
 sbb_al_d8		OP_AL_D8	SBB8, #3
 sbb_ax_d16		OP_AX_D16	SBB16, #3
 push_ds			REGPUSH		#CPU_DS, #3
-pop_ds			SEGPOPFIX	#CPU_DS, #CPU_DS_BASE, #CPU_DS_FIX, #5
+; pop_ds		SEGPOPFIX	#CPU_DS, #CPU_DS_BASE, #CPU_DS_FIX, #5
 
 and_ea_r8		OP_EA_R8	AND8, #2, #7
 and_ea_r16		OP_EA_R16	AND16, #2, #7
@@ -340,6 +340,12 @@ jmp_short		JMPS	#7
 reserved		mov		r6, #6
 				sub		r8, r8, #(1 << 16)
 				b		i286a_localint
+
+pop_ss			SEGPOPFIX	#CPU_SS, #CPU_SS_BASE, #CPU_SS_FIX, #5
+				mov		pc, r11
+
+pop_ds			SEGPOPFIX	#CPU_DS, #CPU_DS_BASE, #CPU_DS_FIX, #5
+				mov		pc, r11
 
 daa				ldrb	r0, [r9, #CPU_AL]
 				bic		r8, r8, #O_FLAG

@@ -83,7 +83,7 @@ enum {
 #define	OEMCHAR					char
 #endif
 #ifndef OEMTEXT
-#define	OEMTEXT(string)			(string)
+#define	OEMTEXT(string)			string
 #endif
 #ifndef OEMNULLSTR
 #define	OEMNULLSTR				OEMTEXT("")

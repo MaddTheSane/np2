@@ -52,7 +52,7 @@ typedef	signed int		SINT32;
 #define	OEMSTRLEN			lstrlen
 #else
 #define	OEMCHAR				char
-#define	OEMTEXT(string)		(string)
+#define	OEMTEXT(string)		string
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
 #endif
