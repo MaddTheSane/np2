@@ -305,29 +305,37 @@ int GXSuspend(void) {
 
 	HWND	hTaskBar;
 
-	if (!(GXFlag & GX_WINDOW)) {
-		hTaskBar = FindWindow(taskbarclass, NULL);
-		if (hTaskBar) {
-			ShowWindow(hTaskBar, SW_SHOW);
+	if (gxhwnd) {
+		if (!(GXFlag & GX_WINDOW)) {
+			hTaskBar = FindWindow(taskbarclass, NULL);
+			if (hTaskBar) {
+				ShowWindow(hTaskBar, SW_SHOW);
+			}
 		}
+		return(1);
 	}
-	return(1);
+	else {
+		return(0);
+	}
 }
 
 int GXResume(void) {
 
 	HWND	hTaskBar;
 
-	if (!(GXFlag & GX_WINDOW)) {
-		hTaskBar = FindWindow(taskbarclass, NULL);
-		if (hTaskBar) {
-			ShowWindow(hTaskBar, SW_HIDE);
-		}
-		if (gxhwnd) {
+	if (gxhwnd) {
+		if (!(GXFlag & GX_WINDOW)) {
+			hTaskBar = FindWindow(taskbarclass, NULL);
+			if (hTaskBar) {
+				ShowWindow(hTaskBar, SW_HIDE);
+			}
 			MoveWindow(gxhwnd, 0, 0, GXWidth, GXHeight, TRUE);
 		}
+		return(1);
 	}
-	return(1);
+	else {
+		return(0);
+	}
 }
 
 int GXOpenInput(void) {

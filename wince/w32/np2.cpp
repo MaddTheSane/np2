@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	<gx.h>
 #include	"resource.h"
 #include	"strres.h"
 #include	"np2.h"
@@ -200,6 +201,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //			PostQuitMessage(0);
 			break;
 
+		case WM_ACTIVATE:
+			if (LOWORD(wParam) != WA_INACTIVE) {
+				GXResume();
+				scrnmng_enable(TRUE);
+				scrndraw_redraw();
+				soundmng_enable(SNDPROC_MAIN);
+			}
+			else {
+				soundmng_disable(SNDPROC_MAIN);
+				scrnmng_enable(FALSE);
+				GXSuspend();
+			}
+			break;
+
 #if defined(WAVEMNG_CBMAIN)
 		case MM_WOM_DONE:
 			soundmng_cb(MM_WOM_DONE, (HWAVEOUT)wParam, (WAVEHDR *)lParam);
@@ -314,7 +329,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (np2oscfg.resume) {
 		id = flagload(str_sav, str_resume, FALSE);
 		if (id == DID_CANCEL) {
-			DestroyWindow(hWndMain);
+			DestroyWindow(hWnd);
 			goto np2main_err3;
 		}
 	}
@@ -324,8 +339,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			if (!GetMessage(&msg, NULL, 0, 0)) {
 				break;
 			}
-			if ((msg.message != WM_SYSKEYDOWN) &&
-				(msg.message != WM_SYSKEYUP)) {
+			if ((msg.hwnd != hWnd) ||
+				((msg.message != WM_SYSKEYDOWN) &&
+				(msg.message != WM_SYSKEYUP))) {
 				TranslateMessage(&msg);
 			}
 			DispatchMessage(&msg);

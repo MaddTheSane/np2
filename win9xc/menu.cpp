@@ -158,7 +158,7 @@ void xmenu_setf12copy(BYTE value) {
 	CheckMenuItem(hmenu, IDM_F12STOP, MFCHECK(value == 2));
 }
 
-void xmenu_setextmem(BYTE value) {								// ver0.28
+void xmenu_setextmem(BYTE value) {
 
 	HMENU	hmenu = GetMenu(hWndMain);
 

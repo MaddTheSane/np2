@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"strres.h"
+#include	"np2ver.h"
 #include	"pccore.h"
 #include	"vramhdl.h"
 #include	"menubase.h"
@@ -41,6 +42,9 @@ static void dlginit(void) {
 	milstr_ncpy(work, str_np2, sizeof(work));
 	milstr_ncat(work, str_space, sizeof(work));
 	milstr_ncat(work, np2version, sizeof(work));
+#if defined(_WIN32_WCE) && defined(NP2VER_WINCE)
+	milstr_ncat(work, NP2VER_WINCE, sizeof(work));
+#endif
 	menudlg_settext(DID_VER, work);
 }
 

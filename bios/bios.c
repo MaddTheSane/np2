@@ -238,7 +238,12 @@ static void bios_boot(void) {
 		I286_AL = 0x10;
 		mem[0x004f8] = 0xee;		// out	dx, al
 		mem[0x004f9] = 0xea;		// call	far
+#if 1
+		SETBIOSMEM32(0x004fa, 0x0000);
+		SETBIOSMEM32(0x004fc, 0xffff);
+#else
 		SETBIOSMEM32(0x004fa, 0xffff0000);
+#endif
 	}
 	else {
 		I286_SP = GETBIOSMEM16(0x00404);

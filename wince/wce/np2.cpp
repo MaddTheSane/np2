@@ -31,6 +31,7 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"sysmenu.h"
+#include	"debugsub.h"
 
 
 static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
@@ -131,15 +132,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_KEYDOWN:
 			if (wParam == VK_F11) {
-//				return(DefWindowProc(hWnd, WM_SYSKEYDOWN, VK_F10, lParam));
+				if (menuvram == NULL) {
+					sysmenu_menuopen(0, 0, 0);
+				}
+				else {
+					menubase_close();
+				}
 			}
-			winkbd_keydown(wParam, lParam);
+			else {
+				winkbd_keydown(wParam, lParam);
+			}
 			break;
 
 		case WM_KEYUP:
 			winkbd_keyup(wParam, lParam);
 			break;
-
+#if 0
 		case WM_SYSKEYDOWN:
 			winkbd_keydown(wParam, lParam);
 			break;
@@ -147,7 +155,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_SYSKEYUP:
 			winkbd_keyup(wParam, lParam);
 			break;
-
+#endif
 		case WM_MOUSEMOVE:
 			if (scrnmng_mousepos(&lParam) == SUCCESS) {
 				if (menuvram == NULL) {
@@ -187,16 +195,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_ACTIVATE:
-			if (LOWORD(wParam) != WA_INACTIVE) {
-				GXResume();
-				scrnmng_enable(TRUE);
-				scrndraw_redraw();
-				soundmng_enable(SNDPROC_MAIN);
-			}
-			else {
-				soundmng_disable(SNDPROC_MAIN);
-				scrnmng_enable(FALSE);
-				GXSuspend();
+			if (sysrunning) {
+				if (LOWORD(wParam) != WA_INACTIVE) {
+					GXResume();
+					scrnmng_enable(TRUE);
+					scrndraw_redraw();
+					soundmng_enable(SNDPROC_MAIN);
+				}
+				else {
+					soundmng_disable(SNDPROC_MAIN);
+					scrnmng_enable(FALSE);
+					GXSuspend();
+				}
 			}
 			break;
 
@@ -364,15 +374,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			if (!GetMessage(&msg, NULL, 0, 0)) {
 				break;
 			}
-			if ((msg.message != WM_SYSKEYDOWN) &&
-				(msg.message != WM_SYSKEYUP)) {
+#if 1
+			TranslateMessage(&msg);
+#else
+			if ((msg.hwnd != hWnd) ||
+				((msg.message != WM_SYSKEYDOWN) &&
+				(msg.message != WM_SYSKEYUP))) {
 				TranslateMessage(&msg);
 			}
+#endif
 			DispatchMessage(&msg);
 		}
 		else {
 			if (np2oscfg.NOWAIT) {
-				pccore_exec(framecnt == 0);
+		  		pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
 					framecnt++;
 					if (framecnt >= np2oscfg.DRAW_SKIP) {
