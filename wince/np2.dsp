@@ -709,6 +709,10 @@ SOURCE=..\FDD\SXSI.C
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\LIO\GCIRCLE.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\LIO\GLINE.C
 # End Source File
 # Begin Source File
