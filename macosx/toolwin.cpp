@@ -824,19 +824,25 @@ void toolwin_open(void) {
     if (!isPUMA) {
         toolwincreate(hWnd);
     }
-
+#ifndef AVAILABLE_MAC_OS_X_VERSION_10_2_AND_LATER
+    if (np2tool.posy < 35) np2tool.posy = 35;
+    if (np2tool.posx < 5 ) np2tool.posx = 5;
+    MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
+    ShowWindow(hWnd);
+#else
     if (isPUMA) {
         if (np2tool.posy < 35) np2tool.posy = 35;
         if (np2tool.posx < 5 ) np2tool.posx = 5;
         MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
         ShowWindow(hWnd);
     }
-    else{
+    else {
         SetDrawerParent(hWnd, hWndMain);
         SetDrawerOffsets(hWnd, (640-(bounds.right-bounds.left))/2-11, (640-(bounds.right-bounds.left))/2-11);
         SetDrawerPreferredEdge(hWnd, kWindowEdgeTop);
         OpenDrawer(hWnd, kWindowEdgeDefault, 1);
     }
+#endif
 
 	return;
 
@@ -851,12 +857,16 @@ twope_err1:
 void toolwin_close(void) {
 
     if (toolwin.hwnd) {
+#ifndef AVAILABLE_MAC_OS_X_VERSION_10_2_AND_LATER
+        HideWindow(toolwin.hwnd);
+#else
         if (isPUMA) {
             HideWindow(toolwin.hwnd);
         }
         else {
             CloseDrawer(toolwin.hwnd, 0);
         }
+#endif
         RemoveReceiveHandler(dr, toolwin.hwnd);
         toolwindestroy();
         DisposeWindow(toolwin.hwnd);
