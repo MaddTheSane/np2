@@ -49,7 +49,7 @@ UINT extromio_read(EXTROMH erh, void *buf, UINT size) {
 		else if (erh->type == EXTROMIO_RES) {
 			size = min(size, (UINT)(erh->size - erh->pos));
 			if (size) {
-				CopyMemory(buf, ((BYTE *)erh->fh) + erh->pos, size);
+				CopyMemory(buf, ((UINT8 *)erh->fh) + erh->pos, size);
 				erh->pos += size;
 			}
 			return(size);

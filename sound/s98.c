@@ -18,16 +18,16 @@
 #define S98LOG_BUFSIZE (32 * 1024)
 
 typedef struct {
-	BYTE	magic[3];
+	UINT8	magic[3];
 	UINT8	formatversion;
-	BYTE	timerinfo[4];
-	BYTE	timerinfo2[4];
-	BYTE	compressing[4];
-	BYTE	offset[4];
-	BYTE	dumpdata[4];
-	BYTE	looppoint[4];
-	BYTE	headerreserved[0x24];
-	BYTE	title[0x40];
+	UINT8	timerinfo[4];
+	UINT8	timerinfo2[4];
+	UINT8	compressing[4];
+	UINT8	offset[4];
+	UINT8	dumpdata[4];
+	UINT8	looppoint[4];
+	UINT8	headerreserved[0x24];
+	UINT8	title[0x40];
 } S98HDR;
 
 static struct {
@@ -35,7 +35,7 @@ static struct {
 	UINT32	intcount;
 	SINT32	clock;
 	UINT	p;
-	BYTE	buf[S98LOG_BUFSIZE];
+	UINT8	buf[S98LOG_BUFSIZE];
 } s98log;
 
 

@@ -70,8 +70,8 @@ REG8 fmboard_getjoy(PSGGEN psg) {
 	ret &= ((ret >> 2) | (~0x30));
 
 	if (np2cfg.BTN_MODE) {
-		BYTE bit1 = (ret & 0x20) >> 1;					// ver0.28
-		BYTE bit2 = (ret & 0x10) << 1;
+		UINT8 bit1 = (ret & 0x20) >> 1;					// ver0.28
+		UINT8 bit2 = (ret & 0x10) << 1;
 		ret = (ret & (~0x30)) | bit1 | bit2;
 	}
 
@@ -100,7 +100,7 @@ void fmboard_extenable(REG8 enable) {
 
 // ----
 
-static void setfmregs(BYTE *reg) {
+static void setfmregs(UINT8 *reg) {
 
 	FillMemory(reg + 0x30, 0x60, 0xff);
 	FillMemory(reg + 0x90, 0x20, 0x00);
@@ -110,7 +110,7 @@ static void setfmregs(BYTE *reg) {
 
 void fmboard_reset(UINT32 type) {
 
-	BYTE	cross;
+	UINT8	cross;
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
@@ -236,7 +236,7 @@ void fmboard_bind(void) {
 void fmboard_fmrestore(REG8 chbase, UINT bank) {
 
 	REG8	i;
-const BYTE	*reg;
+const UINT8	*reg;
 
 	reg = opn.reg + (bank * 0x100);
 	for (i=0x30; i<0xa0; i++) {
@@ -252,7 +252,7 @@ const BYTE	*reg;
 
 void fmboard_rhyrestore(RHYTHM rhy, UINT bank) {
 
-const BYTE	*reg;
+const UINT8	*reg;
 
 	reg = opn.reg + (bank * 0x100);
 	rhythm_setreg(rhy, 0x11, reg[0x11]);

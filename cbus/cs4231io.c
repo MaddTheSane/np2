@@ -151,7 +151,7 @@ REG8 IOINPCALL cs4231io_r8(UINT port) {
 			return(cs4231.index & 0x7f);
 
 		case 5:
-			return(*(((BYTE *)(&cs4231.reg)) + (cs4231.index & 0x1f)));
+			return(*(((UINT8 *)(&cs4231.reg)) + (cs4231.index & 0x1f)));
 
 		case 6:
 			return(cs4231.intflag);

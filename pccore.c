@@ -502,7 +502,7 @@ static void drawscreen(void) {
 		}
 	}
 	if (screenupdate) {
-		screenupdate = scrndraw_draw((BYTE)(screenupdate & 2));
+		screenupdate = scrndraw_draw((UINT8)(screenupdate & 2));
 		drawcount++;
 	}
 }

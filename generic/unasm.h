@@ -9,7 +9,7 @@ const char	*mnemonic;
 extern "C" {
 #endif
 
-UINT unasm(UNASM r, const BYTE *ptr, UINT leng, BOOL d, UINT32 addr);
+UINT unasm(UNASM r, const UINT8 *ptr, UINT leng, BOOL d, UINT32 addr);
 
 #ifdef __cplusplus
 }

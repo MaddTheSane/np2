@@ -17,7 +17,7 @@ typedef struct {
 extern "C" {
 #endif
 
-BOOL mimpidef_load(MIMPIDEF *def, const char *filename);
+BRESULT mimpidef_load(MIMPIDEF *def, const OEMCHAR *filename);
 
 #ifdef __cplusplus
 }

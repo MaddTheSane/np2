@@ -6,22 +6,22 @@ enum {
 };
 
 typedef struct {
-	BYTE	ctrl1;		// 00
-	BYTE	ctrl2;		// 01
-	BYTE	start[2];	// 02
-	BYTE	stop[2];	// 04
-	BYTE	reg06;
-	BYTE	reg07;
-	BYTE	data;		// 08
-	BYTE	delta[2];	// 09
-	BYTE	level;		// 0b
-	BYTE	limit[2];	// 0c
-	BYTE	reg0e;
-	BYTE	reg0f;
-	BYTE	flag;		// 10
-	BYTE	reg11;
-	BYTE	reg12;
-	BYTE	reg13;
+	UINT8	ctrl1;		// 00
+	UINT8	ctrl2;		// 01
+	UINT8	start[2];	// 02
+	UINT8	stop[2];	// 04
+	UINT8	reg06;
+	UINT8	reg07;
+	UINT8	data;		// 08
+	UINT8	delta[2];	// 09
+	UINT8	level;		// 0b
+	UINT8	limit[2];	// 0c
+	UINT8	reg0e;
+	UINT8	reg0f;
+	UINT8	flag;		// 10
+	UINT8	reg11;
+	UINT8	reg12;
+	UINT8	reg13;
 } ADPCMREG;
 
 typedef struct {
@@ -40,13 +40,13 @@ typedef struct {
 	SINT32		out1;
 	SINT32		fb;
 	SINT32		pertim;
-	BYTE		status;
-	BYTE		play;
-	BYTE		mask;
-	BYTE		fifopos;
-	BYTE		fifo[2];
-	BYTE		padding[2];
-	BYTE		buf[0x40000];
+	UINT8		status;
+	UINT8		play;
+	UINT8		mask;
+	UINT8		fifopos;
+	UINT8		fifo[2];
+	UINT8		padding[2];
+	UINT8		buf[0x40000];
 } _ADPCM, *ADPCM;
 
 typedef struct {

@@ -7,17 +7,17 @@
 
 
 typedef struct {
-	BYTE	x1[2];
-	BYTE	y1[2];
-	BYTE	x2[2];
-	BYTE	y2[2];
-	BYTE	pal;
-	BYTE	type;
-	BYTE	sw;
-	BYTE	style[2];
-	BYTE	patleng;
-	BYTE	off[2];
-	BYTE	seg[2];
+	UINT8	x1[2];
+	UINT8	y1[2];
+	UINT8	x2[2];
+	UINT8	y2[2];
+	UINT8	pal;
+	UINT8	type;
+	UINT8	sw;
+	UINT8	style[2];
+	UINT8	patleng;
+	UINT8	off[2];
+	UINT8	seg[2];
 } GLINE;
 
 typedef struct {
@@ -178,7 +178,7 @@ static void glineb(const _GLIO *lio, const LINEPT *lp, UINT16 pat) {
 
 // ----
 
-static void gbox(const _GLIO *lio, const LINEPT *lp, BYTE *tile, UINT leng) {
+static void gbox(const _GLIO *lio, const LINEPT *lp, UINT8 *tile, UINT leng) {
 
 	int		x1;
 	int		y1;
@@ -191,7 +191,7 @@ static void gbox(const _GLIO *lio, const LINEPT *lp, BYTE *tile, UINT leng) {
 	UINT	adrs[4];
 	UINT8	ope[4];
 	UINT16	pat;
-	BYTE	*tterm;
+	UINT8	*tterm;
 	UINT	r;
 
 	x1 = lp->x1;
@@ -248,7 +248,7 @@ static void gbox(const _GLIO *lio, const LINEPT *lp, BYTE *tile, UINT leng) {
 		tmp = (x1 - lio->draw.x1) & 7;
 		do {
 			r = GDCPATREVERSE(*tile);
-			*tile = (BYTE)((r << tmp) | (r >> (8 - tmp)));
+			*tile = (UINT8)((r << tmp) | (r >> (8 - tmp)));
 		} while(++tile < tterm);
 		tile -= leng;
 		tmp = (y1 - lio->draw.y1) * planes;
@@ -300,7 +300,7 @@ REG8 lio_gline(GLIO lio) {
 	UINT16	pat;
 	UINT	leng;
 //	UINT	lengmin;
-	BYTE	tile[256];
+	UINT8	tile[256];
 
 	lio_updatedraw(lio);
 	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));

@@ -15,7 +15,7 @@ typedef struct {
 	UINT8	mio1[4];
 	UINT8	mio2[0x40];
 #endif
-} VRAM_T;
+} _VRAMOP, *VRAMOP;
 
 // operate:		bit0	access page
 //				bit1	egc enable
@@ -40,11 +40,11 @@ enum {
 extern "C" {
 #endif
 
-extern	VRAM_T	vramop;
-extern	BYTE	tramupdate[0x1000];
-extern	BYTE	vramupdate[0x8000];
+extern	_VRAMOP	vramop;
+extern	UINT8	tramupdate[0x1000];
+extern	UINT8	vramupdate[0x8000];
 #if defined(SUPPORT_PC9821)
-extern	BYTE	vramex[0x80000];
+extern	UINT8	vramex[0x80000];
 #endif
 
 void vram_initialize(void);

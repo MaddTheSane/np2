@@ -49,8 +49,8 @@ typedef struct {
 typedef struct {
 	int		posx;
 	int		posy;
-	BYTE	mode;
-	BYTE	type;
+	UINT8	mode;
+	UINT8	type;
 } KDISPCFG;
 
 static	KDISPWIN	kdispwin;
@@ -70,7 +70,7 @@ static const INITBL kdispini[] = {
 	{"windtype", INITYPE_BOOL,		&kdispcfg.type,			0}};
 
 
-static BYTE kdgetpal8(CMNPALFN *self, UINT num) {
+static UINT8 kdgetpal8(CMNPALFN *self, UINT num) {
 
 	if (num < KEYDISP_PALS) {
 		return(kdisppal[num] >> 24);
@@ -127,7 +127,7 @@ static void kdsetwinsize(void) {
 	winlocex_destroy(wlex);
 }
 
-static void kdsetdispmode(BYTE mode) {
+static void kdsetdispmode(UINT8 mode) {
 
 	HMENU	hmenu;
 
@@ -305,7 +305,7 @@ BOOL kdispwin_initialize(HINSTANCE hPreInst) {
 void kdispwin_create(void) {
 
 	HWND		hwnd;
-	BYTE		mode;
+	UINT8		mode;
 	CMNPALFN	palfn;
 
 	if (kdispwin.hwnd != NULL) {
@@ -368,9 +368,9 @@ HWND kdispwin_gethwnd(void) {
 	return(kdispwin.hwnd);
 }
 
-void kdispwin_draw(BYTE cnt) {
+void kdispwin_draw(UINT8 cnt) {
 
-	BYTE	flag;
+	UINT8	flag;
 
 	if (kdispwin.hwnd) {
 		if (!cnt) {
@@ -392,7 +392,7 @@ void kdispwin_readini(void) {
 	kdispcfg.posx = CW_USEDEFAULT;
 	kdispcfg.posy = CW_USEDEFAULT;
 	initgetfile(path, sizeof(path));
-	ini_read(path, kdispapp, kdispini, sizeof(kdispini)/sizeof(INITBL));
+	ini_read(path, kdispapp, kdispini, NELEMENTS(kdispini));
 }
 
 void kdispwin_writeini(void) {
@@ -400,7 +400,7 @@ void kdispwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, kdispapp, kdispini, sizeof(kdispini)/sizeof(INITBL));
+	ini_write(path, kdispapp, kdispini, NELEMENTS(kdispini));
 }
 #endif
 
@@ -650,7 +650,7 @@ void mdbgwin_readini(void) {
 	mdbgcfg.posx = CW_USEDEFAULT;
 	mdbgcfg.posy = CW_USEDEFAULT;
 	initgetfile(path, sizeof(path));
-	ini_read(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(INITBL));
+	ini_read(path, mdbgapp, mdbgini, NELEMENTS(mdbgini));
 }
 
 void mdbgwin_writeini(void) {
@@ -658,7 +658,7 @@ void mdbgwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(INITBL));
+	ini_write(path, mdbgapp, mdbgini, NELEMENTS(mdbgini));
 }
 #endif
 
@@ -927,7 +927,7 @@ void skbdwin_readini(void) {
 	skbdcfg.posx = CW_USEDEFAULT;
 	skbdcfg.posy = CW_USEDEFAULT;
 	initgetfile(path, sizeof(path));
-	ini_read(path, skbdapp, skbdini, sizeof(skbdini)/sizeof(INITBL));
+	ini_read(path, skbdapp, skbdini, NELEMENTS(skbdini));
 }
 
 void skbdwin_writeini(void) {
@@ -935,7 +935,7 @@ void skbdwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, skbdapp, skbdini, sizeof(skbdini)/sizeof(INITBL));
+	ini_write(path, skbdapp, skbdini, NELEMENTS(skbdini));
 }
 #endif
 

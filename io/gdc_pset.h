@@ -8,7 +8,7 @@ typedef void (MEMCALL * GDCPFN)(GDCPSET pen, UINT addr, UINT bit);
 struct _gdcpset {
 	GDCPFN	func[2];
 	union {
-		BYTE	*ptr;			// raw access / grcg
+		UINT8	*ptr;			// raw access / grcg
 		UINT32	addr;			// egc
 	}		base;
 	UINT16	pattern;

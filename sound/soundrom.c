@@ -10,7 +10,7 @@
 
 static const char file_sound[] = "sound";
 static const char file_extrom[] = ".rom";
-static const BYTE defsoundrom[9] = {
+static const UINT8 defsoundrom[9] = {
 							0x01,0x00,0x00,0x00,0xd2,0x00,0x08,0x00,0xcb};
 
 

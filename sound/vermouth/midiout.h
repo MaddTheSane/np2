@@ -69,9 +69,9 @@ struct _midictrl {
 	UINT		samprate;
 	UINT		worksize;
 	int			level;
-	BYTE		status;
+	UINT8		status;
 	SINT8		gain;
-	BYTE		master;
+	UINT8		master;
 
 	MIDIMOD		module;
 	INSTRUMENT	*bank0[2];
@@ -107,7 +107,7 @@ AEXTERN void AEXPORT midimod_loadall(MIDIMOD hdl);
 AEXTERN _MIDIHDL AEXPORT * midiout_create(MIDIMOD module, UINT worksize);
 AEXTERN void AEXPORT midiout_destroy(MIDIHDL hdl);
 AEXTERN void AEXPORT midiout_shortmsg(MIDIHDL hdl, UINT32 msg);
-AEXTERN void AEXPORT midiout_longmsg(MIDIHDL hdl, const BYTE *msg, UINT size);
+AEXTERN void AEXPORT midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size);
 AEXTERN const SINT32 AEXPORT * midiout_get(MIDIHDL hdl, UINT *samples);
 AEXTERN UINT AEXPORT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size);
 AEXTERN void AEXPORT midiout_setgain(MIDIHDL hdl, int gain);

@@ -20,7 +20,7 @@ static HANDLE CreateFile_A(LPCSTR lpFileName,
 	TCHAR	FileNameW[MAX_PATH*2];
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpFileName, -1,
-							FileNameW, sizeof(FileNameW)/sizeof(TCHAR));
+										FileNameW, NELEMENTS(FileNameW));
 	return(CreateFile(FileNameW, dwDesiredAccess, dwShareMode,
 						lpSecurityAttributes, dwCreationDisposition,
 						dwFlagsAndAttributes, hTemplateFile));

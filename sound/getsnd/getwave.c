@@ -5,28 +5,28 @@
 #if defined(__GNUC__)
 typedef struct {
 	char	head[4];
-	BYTE	size[4];
+	UINT8	size[4];
 	char	fmt[4];
 } __attribute__ ((packed)) RIFF_HEADER;
 
 typedef struct {
 	char	head[4];
-	BYTE	size[4];
+	UINT8	size[4];
 } __attribute__ ((packed)) WAVE_HEADER;
 
 typedef struct {
-	BYTE	format[2];
-	BYTE	channel[2];
-	BYTE	rate[4];
-	BYTE	rps[4];
-	BYTE	block[2];
-	BYTE	bit[2];
+	UINT8	format[2];
+	UINT8	channel[2];
+	UINT8	rate[4];
+	UINT8	rps[4];
+	UINT8	block[2];
+	UINT8	bit[2];
 } __attribute__ ((packed)) WAVE_INFOS;
 
 typedef struct {
-	BYTE	exsize[2];
-	BYTE	spb[2];
-	BYTE	numcoef[2];
+	UINT8	exsize[2];
+	UINT8	spb[2];
+	UINT8	numcoef[2];
 } __attribute__ ((packed)) WAVE_MSA_INFO;
 
 #else /* __GNUC__ */
@@ -34,28 +34,28 @@ typedef struct {
 #pragma pack(push, 1)
 typedef struct {
 	char	head[4];
-	BYTE	size[4];
+	UINT8	size[4];
 	char	fmt[4];
 } RIFF_HEADER;
 
 typedef struct {
 	char	head[4];
-	BYTE	size[4];
+	UINT8	size[4];
 } WAVE_HEADER;
 
 typedef struct {
-	BYTE	format[2];
-	BYTE	channel[2];
-	BYTE	rate[4];
-	BYTE	rps[4];
-	BYTE	block[2];
-	BYTE	bit[2];
+	UINT8	format[2];
+	UINT8	channel[2];
+	UINT8	rate[4];
+	UINT8	rps[4];
+	UINT8	block[2];
+	UINT8	bit[2];
 } WAVE_INFOS;
 
 typedef struct {
-	BYTE	exsize[2];
-	BYTE	spb[2];
-	BYTE	numcoef[2];
+	UINT8	exsize[2];
+	UINT8	spb[2];
+	UINT8	numcoef[2];
 } WAVE_MSA_INFO;
 #pragma pack(pop)
 
@@ -85,11 +85,11 @@ static UINT pcm_dec(GETSND snd, void *dst) {
 	return(size);
 }
 #elif defined(BYTESEX_BIG)
-static UINT pcm_dec(GETSND snd, BYTE *dst) {
+static UINT pcm_dec(GETSND snd, UINT8 *dst) {
 
 	UINT	size;
 	UINT	cnt;
-	BYTE	*src;
+	UINT8	*src;
 
 	size = min(snd->blocksize, snd->datsize);
 	if (size) {
@@ -115,7 +115,7 @@ static UINT pcm_dec(GETSND snd, BYTE *dst) {
 }
 #endif
 
-static const BYTE abits[4] = {0, 1, 0, 2};
+static const UINT8 abits[4] = {0, 1, 0, 2};
 
 static BOOL pcm_open(GETSND snd) {
 
@@ -153,12 +153,12 @@ static const int MSADPCMTable[16] = {
 
 static UINT msa_dec(GETSND snd, SINT16 *dst) {
 
-	BYTE		*buf;
+	UINT8		*buf;
 	UINT		size;
 	UINT		outsamples;
 	int			pred[2], delta[2], nibble;
 	UINT		i;
-	BYTE		indata;
+	UINT8		indata;
 	__COEFPAIR	*coef;
 	UINT		ch;
 	SINT32		outdata;
@@ -242,7 +242,7 @@ static BOOL msa_open(GETSND snd, WAVE_INFOS *wavehead, UINT headsize) {
 	UINT			spb;
 	UINT			blk;
 	__COEFPAIR		*coef;
-	BYTE			*p;
+	UINT8			*p;
 
 	if ((snd->bit != 4) ||
 		(headsize < (sizeof(WAVE_INFOS) + sizeof(WAVE_MSA_INFO)))) {
@@ -285,7 +285,7 @@ static BOOL msa_open(GETSND snd, WAVE_INFOS *wavehead, UINT headsize) {
 	snd->decend = msa_decend;
 	snd->snd = (void *)coef;
 
-	p = (BYTE *)(info + 1);
+	p = (UINT8 *)(info + 1);
 	do {
 		coef->Coef1 = LOADINTELWORD(p + 0);
 		coef->Coef2 = LOADINTELWORD(p + 2);
@@ -304,7 +304,7 @@ msaopn_err:
 #define IMA_MAXSTEP		89
 
 static	BOOL	ima_init = FALSE;
-static	BYTE	ima_statetbl[IMA_MAXSTEP][8];
+static	UINT8	ima_statetbl[IMA_MAXSTEP][8];
 
 static const int ima_stateadj[8] = {-1, -1, -1, -1, 2, 4, 6, 8};
 
@@ -331,7 +331,7 @@ static void ima_inittable(void) {
 			else if (k >= IMA_MAXSTEP) {
 				k = IMA_MAXSTEP - 1;
 			}
-			ima_statetbl[i][j] = (BYTE)k;
+			ima_statetbl[i][j] = (UINT8)k;
 		}
 	}
 }
@@ -341,7 +341,7 @@ static UINT ima_dec(GETSND snd, SINT16 *dst) {
 	UINT	c;
 	SINT32	val[2];
 	int		state[2];
-	BYTE	*src;
+	UINT8	*src;
 	UINT	blk;
 
 	if (snd->blocksize > snd->datsize) {
@@ -440,13 +440,13 @@ imaopn_err:
 // ---- MP3
 
 #if defined(SUPPORT_MP3)
-extern BOOL __mp3_open(GETSND snd, BYTE *ptr, UINT size);
+extern BOOL __mp3_open(GETSND snd, UINT8 *ptr, UINT size);
 #endif
 
 
 // ----
 
-BOOL getwave_open(GETSND snd, BYTE *ptr, UINT size) {
+BOOL getwave_open(GETSND snd, UINT8 *ptr, UINT size) {
 
 	RIFF_HEADER		*riff;
 	WAVE_HEADER		*head;

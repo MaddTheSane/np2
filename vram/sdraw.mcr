@@ -4,7 +4,7 @@
 // vram off
 static void SCRNCALL SDSYM(p_0)(SDRAW sdraw, int maxy) {
 
-	BYTE	*p;
+	UINT8	*p;
 	int		y;
 	int		x;
 
@@ -28,8 +28,8 @@ static void SCRNCALL SDSYM(p_0)(SDRAW sdraw, int maxy) {
 // text or grph 1プレーン
 static void SCRNCALL SDSYM(p_1)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -56,9 +56,9 @@ const BYTE	*p;
 // text + grph
 static void SCRNCALL SDSYM(p_2)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 
@@ -88,8 +88,8 @@ const BYTE	*q;
 // text + (grph:interleave)
 static void SCRNCALL SDSYM(p_ti)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -127,8 +127,8 @@ const BYTE	*p;
 // grph:interleave
 static void SCRNCALL SDSYM(p_gi)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -166,9 +166,9 @@ const BYTE	*p;
 // text + grph:interleave
 static void SCRNCALL SDSYM(p_2i)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 
@@ -209,8 +209,8 @@ const BYTE	*q;
 //	grph:interleave ex
 static void SCRNCALL SDSYM(p_gie)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -248,12 +248,12 @@ const BYTE	*p;
 //	text + grph:interleave ex
 static void SCRNCALL SDSYM(p_2ie)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
-	BYTE	c;
+	UINT8	c;
 
 	p = sdraw->src;
 	q = sdraw->src2;
@@ -298,8 +298,8 @@ const BYTE	*q;
 // text or grph 1プレーン(15kHz)
 static void SCRNCALL SDSYM(p_1d)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		a;
 	int		y;
 	int		x;
@@ -331,9 +331,9 @@ const BYTE	*p;
 // text + grph (15kHz)
 static void SCRNCALL SDSYM(p_2d)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		a;
 	int		y;
 	int		x;
@@ -382,7 +382,7 @@ static const SDRAWFN SDSYM(p)[] = {
 // vram off
 static void SCRNCALL SDSYM(n_0)(SDRAW sdraw, int maxy) {
 
-	BYTE	*p;
+	UINT8	*p;
 	int		y;
 	int		x;
 
@@ -407,8 +407,8 @@ static void SCRNCALL SDSYM(n_0)(SDRAW sdraw, int maxy) {
 // text 1プレーン
 static void SCRNCALL SDSYM(n_t)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -438,8 +438,8 @@ const BYTE	*p;
 // grph 1プレーン
 static void SCRNCALL SDSYM(n_g)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -467,9 +467,9 @@ const BYTE	*p;
 // text + grph
 static void SCRNCALL SDSYM(n_2)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 
@@ -502,8 +502,8 @@ const BYTE	*q;
 // text + (grph:interleave)
 static void SCRNCALL SDSYM(n_ti)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -547,8 +547,8 @@ const BYTE	*p;
 // grph:interleave
 static void SCRNCALL SDSYM(n_gi)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -588,9 +588,9 @@ const BYTE	*p;
 // text + grph:interleave
 static void SCRNCALL SDSYM(n_2i)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 
@@ -638,8 +638,8 @@ const BYTE	*q;
 //	grph:interleave ex
 static void SCRNCALL SDSYM(n_gie)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -679,12 +679,12 @@ const BYTE	*p;
 //	text + grph:interleave ex
 static void SCRNCALL SDSYM(n_2ie)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
-	BYTE	c;
+	UINT8	c;
 
 	p = sdraw->src;
 	q = sdraw->src2;
@@ -735,8 +735,8 @@ const BYTE	*q;
 // text 1プレーン (15kHz)
 static void SCRNCALL SDSYM(n_td)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		a;
 	int		y;
 	int		x;
@@ -774,8 +774,8 @@ const BYTE	*p;
 // grph 1プレーン (15kHz)
 static void SCRNCALL SDSYM(n_gd)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		a;
 	int		y;
 	int		x;
@@ -809,9 +809,9 @@ const BYTE	*p;
 // text + grph (15kHz)
 static void SCRNCALL SDSYM(n_2d)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		a;
 	int		y;
 	int		x;

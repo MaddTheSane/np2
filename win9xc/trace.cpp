@@ -24,7 +24,7 @@
 #define	VIEW_SIZE		12
 
 typedef struct {
-	BYTE	en;
+	UINT8	en;
 	FILEH	fh;
 	HWND	hwnd;
 } TRACEWIN;

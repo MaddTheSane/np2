@@ -163,7 +163,7 @@ typedef struct {
 	UINT16	prefix;
 	UINT8	trap;
 	UINT8	resetreq;						// ver0.72
-	BYTE	prefetchque[4];
+	UINT8	prefetchque[4];
 	I286DTR	GDTR;
 	UINT16	MSW;
 	I286DTR	IDTR;
@@ -182,9 +182,9 @@ typedef struct {
 } I286STAT;
 
 typedef struct {							// for ver0.73
-	BYTE	*ext;
+	UINT8	*ext;
 	UINT32	extsize;
-	BYTE	*ems[4];
+	UINT8	*ems[4];
 	UINT32	repbak;
 	UINT32	inport;
 } I286EXT;
@@ -210,7 +210,7 @@ void i286x_resetprefetch(void);
 void i286x_setextsize(UINT32 size);
 void i286x_setemm(UINT frame, UINT32 addr);
 
-void CPUCALL i286x_interrupt(BYTE vect);
+void CPUCALL i286x_interrupt(UINT8 vect);
 
 void i286x(void);
 void i286x_step(void);

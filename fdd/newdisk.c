@@ -29,7 +29,7 @@ void newdisk_fdd(const char *fname, REG8 type, const char *label) {
 
 static BOOL writezero(FILEH fh, UINT size) {
 
-	BYTE	work[256];
+	UINT8	work[256];
 	UINT	wsize;
 
 	ZeroMemory(work, sizeof(work));
@@ -45,7 +45,7 @@ static BOOL writezero(FILEH fh, UINT size) {
 
 static BOOL writehddipl(FILEH fh, UINT ssize, UINT32 tsize) {
 
-	BYTE	work[1024];
+	UINT8	work[1024];
 	UINT	size;
 
 	ZeroMemory(work, sizeof(work));
@@ -74,7 +74,7 @@ static BOOL writehddipl(FILEH fh, UINT ssize, UINT32 tsize) {
 void newdisk_thd(const char *fname, UINT hddsize) {
 
 	FILEH	fh;
-	BYTE	work[256];
+	UINT8	work[256];
 	UINT	size;
 	BOOL	r;
 

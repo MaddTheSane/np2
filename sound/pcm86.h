@@ -54,7 +54,7 @@ typedef struct {
 	UINT8	irqflag;
 	UINT8	padding[1];
 
-	BYTE	buffer[PCM86_BUFSIZE];
+	UINT8	buffer[PCM86_BUFSIZE];
 } _PCM86, *PCM86;
 
 typedef struct {

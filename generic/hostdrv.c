@@ -242,7 +242,7 @@ static void init_sft(SFTREC sft) {
 	else {
 		sft->open_mode[0] &= 0x0f;
 	}
-	sft->dev_info_word[0] = (BYTE)(0x40 | hostdrv.stat.drive_no);
+	sft->dev_info_word[0] = (UINT8)(0x40 | hostdrv.stat.drive_no);
 	sft->dev_info_word[1] = 0x80;
 	STOREINTELDWORD(sft->dev_drvr_ptr, 0);
 	STOREINTELDWORD(sft->file_pos, 0);
@@ -343,7 +343,7 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 	HDRVFILE	hdf;
 	FILEH		fh;
-	BYTE		work[1024];
+	UINT8		work[1024];
 	UINT		r;
 
 	hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, num);
@@ -370,7 +370,7 @@ static BOOL write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 	HDRVFILE	hdf;
 	FILEH		fh;
-	BYTE		work[1024];
+	UINT8		work[1024];
 	UINT		r;
 
 	hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, num);
@@ -1294,7 +1294,7 @@ void hostdrv_intr(const void *arg1, long arg2) {
 
 	TRACEOUT(("hostdrv: AL=%.2x", intrst.r.b.al));
 
-	if ((intrst.r.b.al >= sizeof(intr_func) / sizeof(HDINTRFN)) ||
+	if ((intrst.r.b.al >= NELEMENTS(intr_func)) ||
 		(intr_func[intrst.r.b.al] == NULL)) {
 		return;
 	}

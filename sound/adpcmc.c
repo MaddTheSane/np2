@@ -19,7 +19,7 @@ void adpcm_setvol(UINT vol) {
 void adpcm_reset(ADPCM ad) {
 
 	ZeroMemory(ad, sizeof(_ADPCM));
-	ad->mask = 0;					// (BYTE)~0x1c;
+	ad->mask = 0;					// (UINT8)~0x1c;
 	ad->delta = 127;
 	STOREINTELWORD(ad->reg.stop, 0x0002);
 	STOREINTELWORD(ad->reg.limit, 0xffff);
@@ -50,7 +50,7 @@ void adpcm_setreg(ADPCM ad, REG8 reg, REG8 value) {
 	UINT32	addr;
 
 	sound_sync();
-	((BYTE *)(&ad->reg))[reg] = value;
+	((UINT8 *)(&ad->reg))[reg] = value;
 	switch(reg) {
 		case 0x00:								// control1
 			if ((value & 0x80) && (!ad->play)) {

@@ -38,29 +38,29 @@ typedef struct {
 } SASIHDD;
 
 typedef struct {
-	BYTE	cylinders[2];
+	UINT8	cylinders[2];
 } THDHDR;
 
 typedef struct {
 	char	sig[16];
 	char	comment[0x100];
-	BYTE	headersize[4];
-	BYTE	cylinders[4];
-	BYTE	surfaces[2];
-	BYTE	sectors[2];
-	BYTE	sectorsize[2];
-	BYTE	reserved[0xe2];
+	UINT8	headersize[4];
+	UINT8	cylinders[4];
+	UINT8	surfaces[2];
+	UINT8	sectors[2];
+	UINT8	sectorsize[2];
+	UINT8	reserved[0xe2];
 } NHDHDR;
 
 typedef struct {
-	BYTE	dummy[4];
-	BYTE	hddtype[4];
-	BYTE	headersize[4];
-	BYTE	hddsize[4];
-	BYTE	sectorsize[4];
-	BYTE	sectors[4];
-	BYTE	surfaces[4];
-	BYTE	cylinders[4];
+	UINT8	dummy[4];
+	UINT8	hddtype[4];
+	UINT8	headersize[4];
+	UINT8	hddsize[4];
+	UINT8	sectorsize[4];
+	UINT8	sectors[4];
+	UINT8	surfaces[4];
+	UINT8	cylinders[4];
 } HDIHDR;
 
 typedef struct {
@@ -68,14 +68,14 @@ typedef struct {
 	char	ver[4];
 	char	delimita;
 	char	comment[128];
-	BYTE	padding1[4];
-	BYTE	mbsize[2];
-	BYTE	sectorsize[2];
-	BYTE	sectors;
-	BYTE	surfaces;
-	BYTE	cylinders[2];
-	BYTE	totals[4];
-	BYTE	padding2[0x44];
+	UINT8	padding1[4];
+	UINT8	mbsize[2];
+	UINT8	sectorsize[2];
+	UINT8	sectors;
+	UINT8	surfaces;
+	UINT8	cylinders[2];
+	UINT8	totals[4];
+	UINT8	padding2[0x44];
 } VHDHDR;
 
 typedef struct {
@@ -113,8 +113,8 @@ BOOL sxsi_issasi(void);
 BOOL sxsi_isscsi(void);
 BOOL sxsi_iside(void);
 
-REG8 sxsi_read(REG8 drv, long pos, BYTE *buf, UINT size);
-REG8 sxsi_write(REG8 drv, long pos, const BYTE *buf, UINT size);
+REG8 sxsi_read(REG8 drv, long pos, UINT8 *buf, UINT size);
+REG8 sxsi_write(REG8 drv, long pos, const UINT8 *buf, UINT size);
 REG8 sxsi_format(REG8 drv, long pos);
 
 #ifdef __cplusplus

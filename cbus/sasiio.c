@@ -145,10 +145,10 @@ static void checkcmd(void) {
 			sasiio.phase = SASIPHASE_SENSE;
 			sasiio.senspos = 0;
 			sasiio.sens[0] = sasiio.error;
-			sasiio.sens[1] = (BYTE)((sasiio.unit << 5) + 
+			sasiio.sens[1] = (UINT8)((sasiio.unit << 5) + 
 									((sasiio.sector >> 16) & 0x1f));
-			sasiio.sens[2] = (BYTE)(sasiio.sector >> 8);
-			sasiio.sens[3] = (BYTE)sasiio.sector;
+			sasiio.sens[2] = (UINT8)(sasiio.sector >> 8);
+			sasiio.sens[3] = (UINT8)sasiio.sector;
 			sasiio.error = 0x00;
 			sasiio.stat = 0x00;
 			break;
@@ -311,7 +311,7 @@ static void IOOUTCALL sasiio_o80(UINT port, REG8 dat) {
 
 		case SASIPHASE_CMD:
 //			TRACEOUT(("sasi cmd = %.2x", dat));
-			sasiio.cmd[sasiio.cmdpos] = (BYTE)dat;
+			sasiio.cmd[sasiio.cmdpos] = (UINT8)dat;
 			sasiio.cmdpos++;
 			if (sasiio.cmdpos >= 6) {
 				checkcmd();
@@ -337,7 +337,7 @@ static void IOOUTCALL sasiio_o82(UINT port, REG8 dat) {
 	UINT8	oldocr;
 
 	oldocr = sasiio.ocr;
-	sasiio.ocr = (BYTE)dat;
+	sasiio.ocr = (UINT8)dat;
 
 	if ((oldocr & SASIOCR_RST) && (!(dat & SASIOCR_RST))) {
 		sasiio.phase = SASIPHASE_FREE;

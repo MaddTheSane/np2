@@ -292,14 +292,14 @@ void gdcsub_vectl(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 void gdcsub_vectt(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 
 	_GDCPSET	pset;
-	BYTE		multiple;
+	UINT8		multiple;
 	UINT		sx;
 const VECTDIR	*dir;
-	BYTE		muly;
+	UINT8		muly;
 	REG16		cx;
 	REG16		cy;
 	UINT		xrem;
-	BYTE		mulx;
+	UINT8		mulx;
 
 	if (vect->ope & 0x80) {		// SL
 		pat = (REG16)((GDCPATREVERSE(pat) << 8) + GDCPATREVERSE(pat >> 8));
@@ -477,21 +477,21 @@ const VECTDIR	*dir;
 	calc_gdcslavewait(pset.dots);
 }
 
-void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const BYTE *pat,
+void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const UINT8 *pat,
 																REG8 ope) {
 
 	_GDCPSET	pset;
-	BYTE		multiple;
+	UINT8		multiple;
 	UINT		sx;
 	UINT		sy;
 const VECTDIR	*dir;
 	UINT		patnum;
-	BYTE		muly;
+	UINT8		muly;
 	REG16		cx;
 	REG16		cy;
 	UINT		xrem;
-	BYTE		bit;
-	BYTE		mulx;
+	UINT8		bit;
+	UINT8		mulx;
 
 	gdcpset_prepare(&pset, csrw, 0xffff, ope);
 	multiple = (gdc.s.para[GDC_ZOOM] & 15) + 1;
@@ -558,7 +558,7 @@ void gdcsub_write(void) {
 	UINT16	data;
 	UINT32	adrs;
 	UINT	leng;
-	BYTE	*ptr;
+	UINT8	*ptr;
 	UINT16	updatebit;
 
 #if 0
@@ -625,7 +625,7 @@ void gdcsub_write(void) {
 		ptr += VRAM_STEP;
 		updatebit = 0x0202;
 	}
-	gdcs.grphdisp |= (BYTE)updatebit;
+	gdcs.grphdisp |= (UINT8)updatebit;
 
 	ptr += gdcplaneseg[(adrs >> 14) & 3];
 	adrs = (adrs & 0x3fff) << 1;

@@ -9,8 +9,8 @@ extern "C" {
 
 void PARTSCALL rand_setseed(SINT32 seed);
 SINT32 PARTSCALL rand_get(void);
-BYTE PARTSCALL AdjustAfterMultiply(BYTE value);
-BYTE PARTSCALL AdjustBeforeDivision(BYTE value);
+UINT8 PARTSCALL AdjustAfterMultiply(UINT8 value);
+UINT8 PARTSCALL AdjustBeforeDivision(UINT8 value);
 UINT PARTSCALL sjis2jis(UINT sjis);
 UINT PARTSCALL jis2sjis(UINT jis);
 void PARTSCALL satuation_s16(SINT16 *dst, const SINT32 *src, UINT size);

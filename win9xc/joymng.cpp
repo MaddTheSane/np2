@@ -5,7 +5,7 @@
 #include	"pccore.h"
 
 
-static	BYTE	joyflag = 0xff;
+static	UINT8	joyflag = 0xff;
 
 #define	JOY_LEFT_BIT	0x04
 #define	JOY_RIGHT_BIT	0x08
@@ -14,7 +14,7 @@ static	BYTE	joyflag = 0xff;
 #define	JOY_BTN1_BIT	0x10
 #define	JOY_BTN2_BIT	0x20
 
-static BYTE	joypad1btn[4];										// ver0.28
+static UINT8 joypad1btn[4];										// ver0.28
 
 void joy_init(void) {
 
@@ -38,7 +38,7 @@ void joy_flash(void) {
 	joyflag = 0xff;
 }
 
-BYTE joymng_getstat(void) {
+UINT8 joymng_getstat(void) {
 
 	JOYINFO		ji;
 

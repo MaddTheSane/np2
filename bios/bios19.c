@@ -19,13 +19,13 @@ static const UINT rs_speed[] = {
 
 void bios0x19(void) {
 
-	BYTE	speed;
-	BYTE	mode;
+	UINT8	speed;
+	UINT8	mode;
 	RSBIOS	rsb;
 	UINT16	doff;
 	UINT16	cnt;
 	UINT16	dseg;
-	BYTE	flag;
+	UINT8	flag;
 
 	if (CPU_AH < 2) {
 		// ’ÊM‘¬“xc
@@ -58,8 +58,8 @@ void bios0x19(void) {
 		iocore_out8(0x32, CPU_CL);	// cmd
 #endif
 		iocore_out8(0x77, 0xb6);
-		iocore_out8(0x75, (BYTE)rs_speed[speed]);
-		iocore_out8(0x75, (BYTE)(rs_speed[speed] >> 8));
+		iocore_out8(0x75, (UINT8)rs_speed[speed]);
+		iocore_out8(0x75, (UINT8)(rs_speed[speed] >> 8));
 
 		ZeroMemory(&rsb, sizeof(rsb));
 		rsb.FLAG = (CPU_AH << 4);

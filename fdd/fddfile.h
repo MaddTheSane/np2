@@ -51,9 +51,9 @@ typedef struct {
 
 typedef struct {
 	char	fname[MAX_PATH];
-	BYTE	type;
-	BYTE	num;
-	BYTE	protect;
+	UINT8	type;
+	UINT8	num;
+	UINT8	protect;
 	union {
 		_XDFINFO	xdf;
 		_D88INFO	d88;
@@ -66,7 +66,7 @@ extern "C" {
 #endif
 
 extern	_FDDFILE	fddfile[MAX_FDDFILE];
-extern	BYTE		fddlasterror;
+extern	UINT8		fddlasterror;
 
 // ‹N“®‚Éˆê‰ñ‚¾‚¯‰Šú‰»
 void fddfile_initialize(void);
@@ -90,7 +90,7 @@ BOOL fdd_readid(void);
 BOOL fdd_writeid(void);
 
 BOOL fdd_formatinit(void);
-BOOL fdd_formating(const BYTE *ID);
+BOOL fdd_formating(const UINT8 *ID);
 BOOL fdd_isformating(void);
 
 #ifdef __cplusplus

@@ -3,19 +3,19 @@
 #include	"lio.h"
 
 typedef struct {
-	BYTE	cx[2];
-	BYTE	cy[2];
-	BYTE	rx[2];
-	BYTE	ry[2];
-	BYTE	pal;
-	BYTE	flag;
-	BYTE	sx[2];
-	BYTE	sy[2];
-	BYTE	ex[2];
-	BYTE	ey[2];
-	BYTE	pat;
-	BYTE	off[2];
-	BYTE	seg[2];
+	UINT8	cx[2];
+	UINT8	cy[2];
+	UINT8	rx[2];
+	UINT8	ry[2];
+	UINT8	pal;
+	UINT8	flag;
+	UINT8	sx[2];
+	UINT8	sy[2];
+	UINT8	ex[2];
+	UINT8	ey[2];
+	UINT8	pat;
+	UINT8	off[2];
+	UINT8	seg[2];
 } GCIRCLE;
 
 

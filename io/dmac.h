@@ -43,20 +43,20 @@ typedef struct {
 
 typedef struct {
 	union {
-		BYTE	b[4];
+		UINT8	b[4];
 		UINT16	w[2];
 		UINT32	d;
 	} adrs;
 	union {
-		BYTE	b[2];
+		UINT8	b[2];
 		UINT16	w;
 	} leng;
 	union {
-		BYTE	b[2];
+		UINT8	b[2];
 		UINT16	w;
 	} adrsorg;
 	union {
-		BYTE	b[2];
+		UINT8	b[2];
 		UINT16	w;
 	} lengorg;
 	UINT8	bound;
@@ -98,7 +98,7 @@ void dmac_bind(void);
 void dmac_extbind(void);
 
 void dmac_check(void);
-UINT dmac_getdatas(DMACH dmach, BYTE *buf, UINT size);
+UINT dmac_getdatas(DMACH dmach, UINT8 *buf, UINT size);
 
 void dmac_procset(void);
 void dmac_attach(REG8 device, REG8 channel);

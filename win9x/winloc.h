@@ -21,8 +21,8 @@ void winloc_movingproc(WINLOC *wl, RECT *rect);
 typedef struct {
 	HWND	hwnd;
 	RECT	rect;
-	BYTE	connect;
-	BYTE	padding;
+	UINT8	connect;
+	UINT8	padding;
 	UINT16	parent;
 } WLEXWND;
 

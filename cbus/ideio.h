@@ -27,7 +27,7 @@ typedef struct {
 
 	UINT	bufpos;
 	UINT	bufsize;
-	BYTE	buf[512];
+	UINT8	buf[512];
 } _IDEDRV, *IDEDRV;
 
 typedef struct {

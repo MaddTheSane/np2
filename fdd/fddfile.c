@@ -10,7 +10,7 @@
 
 
 	_FDDFILE	fddfile[MAX_FDDFILE];
-	BYTE		fddlasterror;
+	UINT8		fddlasterror;
 
 
 // ----
@@ -221,7 +221,7 @@ BOOL fdd_formatinit(void) {
 	return(FAILURE);
 }
 
-BOOL fdd_formating(const BYTE *ID) {
+BOOL fdd_formating(const UINT8 *ID) {
 
 	sysmng_fddaccess(fdc.us);
 	if (fddfile[fdc.us].type == DISKTYPE_D88) {

@@ -15,8 +15,8 @@ struct _rszhdl;
 typedef struct _rszhdl	_RSZHDL;
 typedef struct _rszhdl	*RSZHDL;
 
-typedef void (*RSZFN)(RSZHDL hdl, UINT type, BYTE *dst, int dalign,
-												const BYTE *src, int salign);
+typedef void (*RSZFN)(RSZHDL hdl, UINT type, UINT8 *dst, int dalign,
+												const UINT8 *src, int salign);
 
 struct _rszhdl {
 	RSZFN	func;

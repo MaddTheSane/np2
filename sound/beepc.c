@@ -119,7 +119,7 @@ static void beep_eventset(void) {
 			tmp &= ~0x80000000;
 		}
 		bplog.event[bplog.events++] = tmp;
-		if (bplog.events >= (sizeof(bplog.event)/sizeof(UINT32))) {
+		if (bplog.events >= NELEMENTS(bplog.event)) {
 			beeplogflash();
 		}
 #endif

@@ -13,7 +13,7 @@ static void SCRNCALL qvga16p_0(SDRAW sdraw, int maxy) {
 	int		xbytes;
 	UINT32	palwork;
 	UINT16	pal;
-	BYTE	*p;
+	UINT8	*p;
 	int		y;
 	int		x;
 
@@ -42,8 +42,8 @@ static void SCRNCALL qvga16p_0(SDRAW sdraw, int maxy) {
 static void SCRNCALL qvga16p_1(SDRAW sdraw, int maxy) {
 
 	int		xbytes;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 	UINT32	work;
@@ -79,9 +79,9 @@ const BYTE	*p;
 static void SCRNCALL qvga16p_2(SDRAW sdraw, int maxy) {
 
 	int		xbytes;
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 	UINT32	work;
@@ -124,8 +124,8 @@ const BYTE	*q;
 static void SCRNCALL qvga16p_gi(SDRAW sdraw, int maxy) {
 
 	int		xbytes;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 	UINT32	work;
@@ -159,9 +159,9 @@ const BYTE	*p;
 static void SCRNCALL qvga16p_2i(SDRAW sdraw, int maxy) {
 
 	int		xbytes;
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 	UINT32	work;
@@ -213,8 +213,8 @@ const BYTE	*q;
 static void SCRNCALL qvga16p_1d(SDRAW sdraw, int maxy) {
 
 	int		xbytes;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 	UINT32	work;
@@ -247,9 +247,9 @@ const BYTE	*p;
 static void SCRNCALL qvga16p_2d(SDRAW sdraw, int maxy) {
 
 	int		xbytes;
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 	UINT32	work;

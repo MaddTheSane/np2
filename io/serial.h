@@ -55,7 +55,7 @@ void rs232c_bind(void);
 void rs232c_open(void);
 void rs232c_callback(void);
 
-BYTE rs232c_stat(void);
+UINT8 rs232c_stat(void);
 void rs232c_midipanic(void);
 
 #ifdef __cplusplus

@@ -11,7 +11,7 @@ typedef struct {
 // ‚ ‚Æ‚ÍŠg’£`
 	HDC			hdcimage;
 	HBITMAP		hBitmap;
-	BYTE		*image;
+	UINT8		*image;
 	HFONT		hfont;
 	RECT		rect;
 	int			bmpwidth;
@@ -73,7 +73,7 @@ void *fontmng_create(int size, UINT type, const TCHAR *fontface) {
 	ret->bmpalign = (((ret->bmpwidth + 31) / 8) & ~3);
 
 
-	bi = (BITMAPINFO *)(((BYTE *)(ret + 1)) + fontalign);
+	bi = (BITMAPINFO *)(((UINT8 *)(ret + 1)) + fontalign);
 	bi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bi->bmiHeader.biWidth = ret->bmpwidth;
 	bi->bmiHeader.biHeight = ret->bmpheight;
@@ -260,13 +260,13 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const char *string) {
 
 static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 
-	DWORD	remx;
-	DWORD	remy;
-	BYTE	*src;
-	BYTE	*dst;
-	BYTE	*s;
-	BYTE	bit;
-	BYTE	b1 = 0;				// for cygwin
+	UINT	remx;
+	UINT	remy;
+	UINT8	*src;
+	UINT8	*dst;
+	UINT8	*s;
+	UINT8	bit;
+	UINT8	b1 = 0;				// for cygwin
 	int		align;
 
 	align = fhdl->bmpalign;
@@ -275,7 +275,7 @@ static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 		goto fmsp_end;
 	}
 
-	dst = (BYTE *)(fdat + 1);
+	dst = (UINT8 *)(fdat + 1);
 	align *= -1;
 
 	remy = fdat->height;

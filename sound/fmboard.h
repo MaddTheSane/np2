@@ -13,30 +13,30 @@
 
 
 typedef struct {
-	BYTE	reg[0x400];
-	BYTE	opnreg;
-	BYTE	extreg;
-	BYTE	opn2reg;
-	BYTE	ext2reg;
-	BYTE	adpcmmask;
-	BYTE	channels;
-	BYTE	extend;
-	BYTE	padding;
+	UINT8	reg[0x400];
+	UINT8	opnreg;
+	UINT8	extreg;
+	UINT8	opn2reg;
+	UINT8	ext2reg;
+	UINT8	adpcmmask;
+	UINT8	channels;
+	UINT8	extend;
+	UINT8	padding;
 	UINT16	base;
 } OPN_T;
 
 typedef struct {
 	UINT16	port;
-	BYTE	psg3reg;
-	BYTE	rhythm;
+	UINT8	psg3reg;
+	UINT8	rhythm;
 } AMD98;
 
 typedef struct {
-	BYTE	porta;
-	BYTE	portb;
-	BYTE	portc;
-	BYTE	mask;
-	BYTE	key[8];
+	UINT8	porta;
+	UINT8	portb;
+	UINT8	portc;
+	UINT8	mask;
+	UINT8	key[8];
 	int		sync;
 	int		ch;
 } MUSICGEN;

@@ -8,9 +8,9 @@
 #include	"palettes.h"
 
 
-	BYTE	renewal_line[SURFACE_HEIGHT];
-	BYTE	np2_tram[SURFACE_SIZE];
-	BYTE	np2_vram[2][SURFACE_SIZE];
+	UINT8	renewal_line[SURFACE_HEIGHT];
+	UINT8	np2_tram[SURFACE_SIZE];
+	UINT8	np2_vram[2][SURFACE_SIZE];
 
 
 static void updateallline(UINT32 update) {
@@ -44,7 +44,7 @@ void scrndraw_changepalette(void) {
 	updateallline(0x80808080);
 }
 
-static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
+static UINT8 rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 
 	RGB32		pal[16];
 	SINT32		clock;
@@ -86,7 +86,7 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 			nextupdate = y;
 			// Ç®ïŸìñÇêHÇ◊ÇÈ
 			while(clock < event->clock) {
-				((BYTE *)pal)[event->color] = event->value;
+				((UINT8 *)pal)[event->color] = event->value;
 				event++;
 				if (event >= eventterm) {
 					break;
@@ -124,13 +124,13 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 	}
 }
 
-BYTE scrndraw_draw(BYTE redraw) {
+UINT8 scrndraw_draw(UINT8 redraw) {
 
-	BYTE		ret;
+	UINT8		ret;
 const SCRNSURF	*surf;
 const SDRAWFN	*sdrawfn;
 	_SDRAW		sdraw;
-	BYTE		bit;
+	UINT8		bit;
 	int			i;
 	int			height;
 

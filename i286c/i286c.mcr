@@ -206,7 +206,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 #define	ADDBYTE(r, d, s)											\
 		(r) = (s) + (d);											\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x80;					\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= BYTESZPCF(r);
 
 #define	ADDWORD(r, d, s)											\

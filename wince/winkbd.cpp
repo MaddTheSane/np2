@@ -158,7 +158,7 @@ static UINT8 getf12key(void) {
 	UINT	key;
 
 	key = np2oscfg.F12KEY - 1;
-	if (key < (sizeof(f12keys)/sizeof(UINT8))) {
+	if (key < NELEMENTS(f12keys)) {
 		return(f12keys[key]);
 	}
 	else {
@@ -222,7 +222,7 @@ void winkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(UINT8)); i++) {
+	for (i=0; i<NELEMENTS(f12keys); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }

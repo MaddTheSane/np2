@@ -79,7 +79,7 @@ void dmac_check(void) {
 	}
 }
 
-UINT dmac_getdatas(DMACH dmach, BYTE *buf, UINT size) {
+UINT dmac_getdatas(DMACH dmach, UINT8 *buf, UINT size) {
 
 	UINT	leng;
 	UINT32	addr;
@@ -286,7 +286,7 @@ static void dmacset(REG8 channel) {
 		}
 		dev++;
 	}
-	if (dmadev >= sizeof(dmaproc) / sizeof(DMAPROC)) {
+	if (dmadev >= NELEMENTS(dmaproc)) {
 		dmadev = 0;
 	}
 //	TRACEOUT(("dmac set %d - %d", channel, dmadev));
@@ -306,7 +306,7 @@ void dmac_attach(REG8 device, REG8 channel) {
 
 	dmac_detach(device);
 
-	if (dmac.devices < (sizeof(dmac.device) / sizeof(DMADEV))) {
+	if (dmac.devices < NELEMENTS(dmac.device)) {
 		dmac.device[dmac.devices].device = device;
 		dmac.device[dmac.devices].channel = channel;
 		dmac.devices++;

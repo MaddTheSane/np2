@@ -1862,7 +1862,7 @@ static BOOL dc_cb2(void *vpItem, void *vpArg) {
 	if (hdl->flag & MENU_REDRAW) {
 		hdl->flag &= ~MENU_REDRAW;
 		if ((!(hdl->flag & MENU_DISABLE)) &&
-			((unsigned int)hdl->type < (sizeof(dlgpaint)/sizeof(DLGPAINT)))) {
+			((UINT)hdl->type < NELEMETS(dlgpaint))) {
 			dlgpaint[hdl->type](dlg, hdl);
 			menubase_setrect(dlg->vram, &hdl->rect);
 		}
@@ -2093,7 +2093,7 @@ BOOL menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
 	dhdl.prm = NULL;
 	dhdl.prmcnt = 0;
 	dhdl.val = 0;
-	if (((unsigned int)type >= (sizeof(dlgcre)/sizeof(DLGCRE))) ||
+	if (((UINT)type >= NELEMENTS(dlgcre)) ||
 		(dlgcre[type](dlg, &dhdl, arg))) {
 		goto mda_err;
 	}
@@ -2159,8 +2159,7 @@ void menudlg_moving(int x, int y, int btn) {
 				y -= hdl->rect.top;
 				dlg->btn = 1;
 				dlg->lastid = hdl->id;
-				if ((unsigned int)hdl->type <
-									(sizeof(dlgclick)/sizeof(DLGCLICK))) {
+				if ((UINT)hdl->type < NELEMENTS(dlgclick)) {
 					dlgclick[hdl->type](dlg, hdl, x, y);
 				}
 			}
@@ -2172,13 +2171,12 @@ void menudlg_moving(int x, int y, int btn) {
 			focus = rect_in(&hdl->rect, x, y);
 			x -= hdl->rect.left;
 			y -= hdl->rect.top;
-			if ((unsigned int)hdl->type < (sizeof(dlgmov)/sizeof(DLGMOV))) {
+			if ((UINT)hdl->type < NELEMENTS(dlgmov)) {
 				dlgmov[hdl->type](dlg, hdl, x, y, focus);
 			}
 			if (btn == 2) {
 				dlg->btn = 0;
-				if ((unsigned int)hdl->type <
-										(sizeof(dlgrel)/sizeof(DLGREL))) {
+				if ((UINT)hdl->type < NELEMENTS(dlgrel)) {
 					dlgrel[hdl->type](dlg, hdl, focus);
 				}
 			}
@@ -2238,8 +2236,7 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 
 		case DMSG_SETVAL:
 			ret = (void *)hdl->val;
-			if ((unsigned int)hdl->type <
-									(sizeof(dlgsetval)/sizeof(DLGSETVAL))) {
+			if ((UINT)hdl->type < NELEMENTS(dlgsetval)) {
 				dlgsetval[hdl->type](dlg, hdl, (int)arg);
 			}
 			break;
@@ -2300,8 +2297,7 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 		case DMSG_ITEMRESET:
 			if ((dlg->btn) && (dlg->lastid == hdl->id)) {
 				dlg->btn = 0;
-				if ((unsigned int)hdl->type <
-											(sizeof(dlgrel)/sizeof(DLGREL))) {
+				if ((UINT)hdl->type < NELEMENTS(dlgrel)) {
 					dlgrel[hdl->type](dlg, hdl, FALSE);
 				}
 			}

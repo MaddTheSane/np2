@@ -164,7 +164,7 @@ static void ogg_decend(GETSND snd) {
 	_MFREE(ov);
 }
 
-BOOL getogg_open(GETSND snd, BYTE *ptr, UINT size) {
+BOOL getogg_open(GETSND snd, UINT8 *ptr, UINT size) {
 
 	__OV	*ov;
 	char	*buffer;

@@ -280,7 +280,7 @@ static const GDCCMD gdc_cmd[256] = {
 			{0,					 0, 0, 0}};	// ff
 
 
-static const BYTE gdc_dirtyflag[2][GDC_TERMDATA] = {
+static const UINT8 gdc_dirtyflag[2][GDC_TERMDATA] = {
 			{	0,									// GDC_SYNC
 				GDCSCRN_EXT,
 				GDCSCRN_EXT,

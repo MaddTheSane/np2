@@ -9,12 +9,12 @@ extern "C" {
 #ifdef FONTMEMORYBIND
 #define	fontrom		(mem + FONT_ADRS)
 #else
-extern	BYTE	__font[0x84000];
+extern	UINT8	__font[0x84000];
 #define	fontrom		(__font)
 #endif
 
 void font_initialize(void);
-BYTE font_load(const char *filename, BOOL force);
+UINT8 font_load(const char *filename, BOOL force);
 
 #ifdef __cplusplus
 }

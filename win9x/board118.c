@@ -45,7 +45,7 @@ static void romeo_restore(BOOL opna) {
 		juliet_YMF288A(0x1d, opn.reg[0x1d]);
 	}
 	for (i=0; i<0x0e; i++) {
-		juliet_YMF288A(i, ((BYTE *)&psg1.reg)[i]);
+		juliet_YMF288A(i, ((UINT8 *)&psg1.reg)[i]);
 	}
 }
 
@@ -186,14 +186,14 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat) {
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
 		if (opn.opnreg != 0x0e) {
-			*((BYTE *)(&psg1.reg) + opn.opnreg) = dat;
+			*((UINT8 *)(&psg1.reg) + opn.opnreg) = dat;
 			juliet_YMF288A(opn.opnreg, dat);
 			if (opn.opnreg == 0x07) {
 				keydisp_psgmix(&psg1);
 			}
 			else if ((opn.opnreg == 0x08) || (opn.opnreg == 0x09) ||
 					(opn.opnreg == 0x0a)) {
-				keydisp_psgvol(&psg1, (BYTE)(opn.opnreg - 8));
+				keydisp_psgvol(&psg1, (UINT8)(opn.opnreg - 8));
 			}
 		}
 	}
@@ -205,7 +205,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat) {
 			if (opn.opnreg == 0x28) {
 				juliet_YMF288A(opn.opnreg, dat);
 				if ((dat & 0x0f) < 3) {
-					keydisp_fmkeyon((BYTE)(dat & 0x0f), dat);
+					keydisp_fmkeyon((UINT8)(dat & 0x0f), dat);
 				}
 				else if (((dat & 0x0f) != 3) && ((dat & 0x0f) < 7)) {
 					keydisp_fmkeyon((UINT8)((dat & 0x0f) - 1), dat);

@@ -9,14 +9,14 @@
 typedef struct {
 	SINT16	x;
 	SINT16	y;
-	BYTE	btn;
+	UINT8	btn;
 	UINT	flag;
 } MOUSEMNG;
 
 static	MOUSEMNG	mousemng;
 
 
-BYTE mousemng_getstat(SINT16 *x, SINT16 *y, int clear) {
+UINT8 mousemng_getstat(SINT16 *x, SINT16 *y, int clear) {
 
 	*x = mousemng.x;
 	*y = mousemng.y;

@@ -277,7 +277,7 @@ static void dlginit(void) {
 	char	sjis[MAX_PATH];
 #endif
 
-	menudlg_appends(res_fs, sizeof(res_fs)/sizeof(MENUPRM));
+	menudlg_appends(res_fs, NELEMENTS(res_fs));
 	menudlg_seticon(DID_PARENT, MICON_FOLDERPARENT);
 #if defined(OSLANG_EUC)
 	codecnv_euc2sjis(sjis, sizeof(sjis),

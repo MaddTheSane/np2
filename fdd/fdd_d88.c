@@ -34,7 +34,7 @@ typedef struct {
 	long	fptr;
 	UINT	size;
 	BOOL	write;
-	BYTE	buf[D88BUFSIZE];
+	UINT8	buf[D88BUFSIZE];
 } _D88TRK, *D88TRK;
 
 static	_D88TRK		d88trk;
@@ -212,7 +212,7 @@ static BOOL trkseek(FDDFILE fdd, UINT track) {
 
 static D88SEC searchsector_d88(BOOL check) {			// ver0.29
 
-	BYTE	*p;
+	UINT8	*p;
 	UINT	sec;
 	UINT	pos = 0;
 	UINT	nsize;
@@ -434,7 +434,7 @@ BOOL fdd_write_d88(void) {
 BOOL fdd_readid_d88(void) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
-	BYTE	*p;
+	UINT8	*p;
 	UINT	sec;
 	UINT	pos = 0;
 	UINT	sectors;
@@ -484,8 +484,8 @@ BOOL fdd_readid_d88(void) {
 
 // えーと…こんなところにあって大丈夫？
 static BOOL formating = FALSE;
-static BYTE formatsec = 0;
-static BYTE formatwrt = 0;
+static UINT8 formatsec = 0;
+static UINT8 formatwrt = 0;
 static UINT formatpos = 0;
 
 static int fileappend(FILEH hdl, FDDFILE fdd,
@@ -495,7 +495,7 @@ static int fileappend(FILEH hdl, FDDFILE fdd,
 	UINT	size;
 	UINT	rsize;
 	int		t;
-	BYTE	tmp[0x400];							// Stack 0x1000->0x400
+	UINT8	tmp[0x400];							// Stack 0x1000->0x400
 	UINT32	cur;
 
 	if ((length = last - ptr) <= 0) {			// 書き換える必要なし
@@ -527,7 +527,7 @@ static int fileappend(FILEH hdl, FDDFILE fdd,
 }
 
 
-static void endoftrack(UINT fmtsize, BYTE sectors) {
+static void endoftrack(UINT fmtsize, UINT8 sectors) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 
@@ -608,7 +608,7 @@ BOOL fdd_formatinit_d88(void) {
 }
 
 	// todo アンフォーマットとか ディスク１周した時の切り捨てとか…
-BOOL fdd_formating_d88(const BYTE *ID) {
+BOOL fdd_formating_d88(const UINT8 *ID) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 

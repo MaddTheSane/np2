@@ -168,7 +168,7 @@ void lio_updatedraw(GLIO lio) {
 
 static void pixed8(const _GLIO *lio, UINT addr, REG8 bit, REG8 pal) {
 
-	BYTE	*ptr;
+	UINT8	*ptr;
 
 	addr = LOW15(addr);
 	vramupdate[addr] |= lio->draw.sbit;
@@ -215,7 +215,7 @@ static void pixed8(const _GLIO *lio, UINT addr, REG8 bit, REG8 pal) {
 void lio_pset(const _GLIO *lio, SINT16 x, SINT16 y, REG8 pal) {
 
 	UINT	addr;
-	BYTE	bit;
+	UINT8	bit;
 
 	if ((lio->draw.x1 > x) || (lio->draw.x2 < x) ||
 		(lio->draw.y1 > y) || (lio->draw.y2 < y)) {
@@ -234,7 +234,7 @@ void lio_pset(const _GLIO *lio, SINT16 x, SINT16 y, REG8 pal) {
 void lio_line(const _GLIO *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 
 	UINT	addr;
-	BYTE	bit, dbit;
+	UINT8	bit, dbit;
 	SINT16	width;
 
 	if ((lio->draw.y1 > y) || (lio->draw.y2 < y)) {
@@ -286,7 +286,7 @@ void lio_line(const _GLIO *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 #if 0
 void lio_look(UINT vect) {
 
-	BYTE	work[16];
+	UINT8	work[16];
 
 	TRACEOUT(("lio command %.2x [%.4x:%.4x]", vect, CPU_CS, CPU_IP));
 	if (vect == 0xa7) {

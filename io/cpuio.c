@@ -30,7 +30,7 @@ static void IOOUTCALL cpuio_of2(UINT port, REG8 dat) {
 
 static REG8 IOINPCALL cpuio_if0(UINT port) {
 
-	BYTE	ret;
+	UINT8	ret;
 
 	if (!(pccore.sound & 0x80)) {
 		ret = 0x00;

@@ -42,13 +42,13 @@ void pal_makegrad(RGB32 *pal, int pals, UINT32 bg, UINT32 fg) {
 	if (pals >= 2) {
 		pals--;
 		for (i=0; i<=pals; i++) {
-			pal[i].p.b = (BYTE)
+			pal[i].p.b = (UINT8)
 				((((fg >> 0) & 0x0000ff) * i + 
 				((bg >> 0) & 0x0000ff) * (pals-i)) / pals);
-			pal[i].p.g = (BYTE)
+			pal[i].p.g = (UINT8)
 				((((fg >> 8) & 0x0000ff) * i + 
 				((bg >> 8) & 0x0000ff) * (pals-i)) / pals);
-			pal[i].p.r = (BYTE)
+			pal[i].p.r = (UINT8)
 				((((fg >> 16) & 0x0000ff) * i + 
 				((bg >> 16) & 0x0000ff) * (pals-i)) / pals);
 			pal[i].p.e = 0;
@@ -105,9 +105,9 @@ void pal_makeskiptable(void) {
 	UINT8	ana;
 
 	for (i=0; i<8; i++) {
-		pal.p.b = (BYTE)(i & 1);
-		pal.p.r = (BYTE)((i >> 1) & 1);
-		pal.p.g = (BYTE)((i >> 2) & 1);
+		pal.p.b = (UINT8)(i & 1);
+		pal.p.r = (UINT8)((i >> 1) & 1);
+		pal.p.g = (UINT8)((i >> 2) & 1);
 		pal.p.e = 0;
 		degpal1[i].d = pal.d * 255;
 		degpal2[i].d = pal.d * np2cfg.skiplight;
@@ -152,7 +152,7 @@ void pal_makeanalog(RGB32 *pal, UINT16 bit) {
 #endif
 }
 
-static void pal_makedegital(const BYTE *paltbl) {
+static void pal_makedegital(const UINT8 *paltbl) {
 
 	UINT	i;
 
@@ -223,7 +223,7 @@ void pal_makeanalog_lcd(RGB32 *pal, UINT16 bit) {
 #endif
 }
 
-static void pal_makedegital_lcd(const BYTE *paltbl) {
+static void pal_makedegital_lcd(const UINT8 *paltbl) {
 
 	UINT	i;
 	UINT32	pal32;
@@ -408,7 +408,7 @@ static void pal_make9821(const UINT8 *pal) {
 }
 #endif
 
-void pal_change(BYTE textpalset) {
+void pal_change(UINT8 textpalset) {
 
 	if (textpalset) {
 		if (!(np2cfg.LCD_MODE & 1)) {

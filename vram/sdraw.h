@@ -1,14 +1,14 @@
 
 typedef struct {
-const BYTE	*src;
-const BYTE	*src2;
-	BYTE	*dst;
+const UINT8	*src;
+const UINT8	*src2;
+	UINT8	*dst;
 	int		width;
 	int		xbytes;
 	int		y;
 	int		xalign;
 	int		yalign;
-	BYTE	dirty[SURFACE_WIDTH];
+	UINT8	dirty[SURFACE_WIDTH];
 } _SDRAW, *SDRAW;
 
 typedef void (SCRNCALL * SDRAWFN)(SDRAW sdraw, int maxy);

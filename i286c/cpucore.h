@@ -177,9 +177,9 @@ typedef struct {
 } I286STAT;
 
 typedef struct {							// for ver0.73
-	BYTE	*ext;
+	UINT8	*ext;
 	UINT32	extsize;
-	BYTE	*ems[4];
+	UINT8	*ems[4];
 	UINT32	inport;
 #if defined(CPUSTRUC_MEMWAIT)
 	UINT8	tramwait;

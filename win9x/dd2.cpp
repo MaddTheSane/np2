@@ -14,9 +14,9 @@ typedef struct {
 	LPDIRECTDRAWPALETTE		palette;
 	int						cliping;
 	RGB32					pal16;
-	BYTE					r16b;
-	BYTE					l16r;
-	BYTE					l16g;
+	UINT8					r16b;
+	UINT8					l16r;
+	UINT8					l16g;
 	CMNVRAM					vram;
 	PALETTEENTRY			pal[256];
 } _DD2SURF, *DD2SURF;
@@ -72,7 +72,7 @@ DD2HDL dd2_create(HWND hwnd, int width, int height) {
 	}
 	else if (dd2->ddpf.dwRGBBitCount == 16) {
 		WORD	bit;
-		BYTE	cnt;
+		UINT8	cnt;
 
 		dd2->pal16.d = 0;
 		for (bit=1; (bit) && (!(dd2->ddpf.dwBBitMask & bit)); bit<<=1);
@@ -154,7 +154,7 @@ CMNVRAM *dd2_bsurflock(DD2HDL dd2hdl) {
 	if (r != DD_OK) {
 		return(NULL);
 	}
-	dd2->vram.ptr = (BYTE *)surface.lpSurface;
+	dd2->vram.ptr = (UINT8 *)surface.lpSurface;
 	dd2->vram.yalign = surface.lPitch;
 	return(&dd2->vram);
 }

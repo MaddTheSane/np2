@@ -115,14 +115,13 @@ void sysmenu_initialize(void) {
 	HMENU	hMenu;
 
 	hMenu = GetSystemMenu(hWndMain, FALSE);
-	insertresmenus(hMenu, 0, smenuitem, sizeof(smenuitem)/sizeof(MENUITEMS));
+	insertresmenus(hMenu, 0, smenuitem, NELEMENTS(smenuitem));
 	if (np2oscfg.I286SAVE) {
-		insertresmenus(hMenu, 0, smenuitem2,
-										sizeof(smenuitem2)/sizeof(MENUITEMS));
+		insertresmenus(hMenu, 0, smenuitem2, NELEMENTS(smenuitem2));
 	}
 }
 
-void sysmenu_settoolwin(BYTE value) {
+void sysmenu_settoolwin(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.toolwin = value;
@@ -130,7 +129,7 @@ void sysmenu_settoolwin(BYTE value) {
 											IDM_TOOLWIN, MFCHECK(value));
 }
 
-void sysmenu_setkeydisp(BYTE value) {
+void sysmenu_setkeydisp(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.keydisp = value;
@@ -138,7 +137,7 @@ void sysmenu_setkeydisp(BYTE value) {
 											IDM_KEYDISP, MFCHECK(value));
 }
 
-void sysmenu_setwinsnap(BYTE value) {
+void sysmenu_setwinsnap(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.WINSNAP = value;
@@ -146,7 +145,7 @@ void sysmenu_setwinsnap(BYTE value) {
 											IDM_SNAPENABLE, MFCHECK(value));
 }
 
-void sysmenu_setbackground(BYTE value) {
+void sysmenu_setbackground(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -163,7 +162,7 @@ void sysmenu_setbackground(BYTE value) {
 	}
 }
 
-void sysmenu_setbgsound(BYTE value) {
+void sysmenu_setbgsound(UINT8 value) {
 
 	np2oscfg.background &= 1;
 	np2oscfg.background |= (value & 2);
@@ -171,7 +170,7 @@ void sysmenu_setbgsound(BYTE value) {
 									IDM_BGSOUND, MFCHECK((value & 2) ^ 2));
 }
 
-void sysmenu_setscrnmul(BYTE value) {
+void sysmenu_setscrnmul(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -307,7 +306,7 @@ void xmenu_disablewindow(void) {
 	EnableMenuItem(hmenu, IDM_FULLSCREEN, MF_GRAYED);
 }
 
-void xmenu_setroltate(BYTE value) {
+void xmenu_setroltate(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -317,28 +316,28 @@ void xmenu_setroltate(BYTE value) {
 	CheckMenuItem(hmenu, IDM_ROLRIGHT, MFCHECK(value == 2));
 }
 
-void xmenu_setdispmode(BYTE value) {
+void xmenu_setdispmode(UINT8 value) {
 
 	value &= 1;
 	np2cfg.DISPSYNC = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_DISPSYNC, MFCHECK(value));
 }
 
-void xmenu_setraster(BYTE value) {
+void xmenu_setraster(UINT8 value) {
 
 	value &= 1;
 	np2cfg.RASTER = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_RASTER, MFCHECK(value));
 }
 
-void xmenu_setwaitflg(BYTE value) {
+void xmenu_setwaitflg(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.NOWAIT = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_NOWAIT, MFCHECK(value));
 }
 
-void xmenu_setframe(BYTE value) {
+void xmenu_setframe(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -351,7 +350,7 @@ void xmenu_setframe(BYTE value) {
 	CheckMenuItem(hmenu, IDM_15FPS, MFCHECK(value == 4));
 }
 
-void xmenu_setkey(BYTE value) {
+void xmenu_setkey(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -365,7 +364,7 @@ void xmenu_setkey(BYTE value) {
 	CheckMenuItem(hmenu, IDM_JOY2, MFCHECK(value == 2));
 }
 
-void xmenu_setxshift(BYTE value) {
+void xmenu_setxshift(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -376,7 +375,7 @@ void xmenu_setxshift(BYTE value) {
 	CheckMenuItem(hmenu, IDM_XGRPH, MFCHECK(value & 4));
 }
 
-void xmenu_setf12copy(BYTE value) {
+void xmenu_setf12copy(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -394,7 +393,7 @@ void xmenu_setf12copy(BYTE value) {
 	CheckMenuItem(hmenu, IDM_USERKEY2, MFCHECK(value == 6));
 }
 
-void xmenu_setbeepvol(BYTE value) {
+void xmenu_setbeepvol(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -407,7 +406,7 @@ void xmenu_setbeepvol(BYTE value) {
 	CheckMenuItem(hmenu, IDM_BEEPHIGH, MFCHECK(value == 3));
 }
 
-void xmenu_setsound(BYTE value) {
+void xmenu_setsound(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -426,21 +425,21 @@ void xmenu_setsound(BYTE value) {
 	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
 }
 
-void xmenu_setjastsound(BYTE value) {
+void xmenu_setjastsound(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.jastsnd = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_JASTSOUND, MFCHECK(value));
 }
 
-void xmenu_setmotorflg(BYTE value) {
+void xmenu_setmotorflg(UINT8 value) {
 
 	value &= 1;
 	np2cfg.MOTOR = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_SEEKSND, MFCHECK(value));
 }
 
-void xmenu_setextmem(BYTE value) {
+void xmenu_setextmem(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -455,7 +454,7 @@ void xmenu_setextmem(BYTE value) {
 	CheckMenuItem(hmenu, IDM_MEM136, MFCHECK(value == 13));
 }
 
-void xmenu_setmouse(BYTE value) {
+void xmenu_setmouse(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.MOUSE_SW = value;
@@ -463,7 +462,7 @@ void xmenu_setmouse(BYTE value) {
 }
 
 #if defined(SUPPORT_S98)
-void xmenu_sets98logging(BYTE value) {
+void xmenu_sets98logging(UINT8 value) {
 
 	CheckMenuItem(np2class_gethmenu(hWndMain),
 											IDM_S98LOGGING, MFCHECK(value));
@@ -471,14 +470,14 @@ void xmenu_sets98logging(BYTE value) {
 #endif
 
 #if defined(SUPPORT_WAVEREC)
-void xmenu_setwaverec(BYTE value) {
+void xmenu_setwaverec(UINT8 value) {
 
 	CheckMenuItem(np2class_gethmenu(hWndMain),
 											IDM_WAVEREC, MFCHECK(value));
 }
 #endif
 
-void xmenu_setshortcut(BYTE value) {
+void xmenu_setshortcut(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -488,7 +487,7 @@ void xmenu_setshortcut(BYTE value) {
 	CheckMenuItem(hmenu, IDM_ALTF4, MFCHECK(value & 2));
 }
 
-void xmenu_setdispclk(BYTE value) {
+void xmenu_setdispclk(UINT8 value) {
 
 	HMENU	hmenu;
 
@@ -501,28 +500,28 @@ void xmenu_setdispclk(BYTE value) {
 	sysmng_updatecaption(3);
 }
 
-void xmenu_setbtnmode(BYTE value) {
+void xmenu_setbtnmode(UINT8 value) {
 
 	value &= 1;
 	np2cfg.BTN_MODE = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_JOYX, MFCHECK(value));
 }
 
-void xmenu_setbtnrapid(BYTE value) {
+void xmenu_setbtnrapid(UINT8 value) {
 
 	value &= 1;
 	np2cfg.BTN_RAPID = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_RAPID, MFCHECK(value));
 }
 
-void xmenu_setmsrapid(BYTE value) {
+void xmenu_setmsrapid(UINT8 value) {
 
 	value &= 1;
 	np2cfg.MOUSERAPID = value;
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_MSRAPID, MFCHECK(value));
 }
 
-void xmenu_setsstp(BYTE value) {
+void xmenu_setsstp(UINT8 value) {
 
 	value &= 1;
 	np2oscfg.sstp = value;

@@ -30,7 +30,7 @@ typedef struct {
 } SCRNDATA;
 
 
-static void screenmix(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	int		i;
 
@@ -39,7 +39,7 @@ static void screenmix(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 	}
 }
 
-static void screenmix2(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix2(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	int		x, y;
 
@@ -59,7 +59,7 @@ static void screenmix2(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 	}
 }
 
-static void screenmix3(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix3(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	PALNUM	c;
 	int		x, y;
@@ -81,7 +81,7 @@ static void screenmix3(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 }
 
 #if defined(SUPPORT_PC9821)
-static void screenmix4(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix4(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	int		i;
 
@@ -106,10 +106,10 @@ SCRNSAVE scrnsave_get(void) {
 	SCRNDATA	*sd;
 	PALNUM		*dat;
 	UINT		scrnsize;
-	BYTE		*datanull;
-	BYTE		*datatext;
-	BYTE		*datagrph;
-	void		(*mix)(PALNUM *dest, const BYTE *src1, const BYTE *src2);
+	UINT8		*datanull;
+	UINT8		*datatext;
+	UINT8		*datagrph;
+	void		(*mix)(PALNUM *dest, const UINT8 *src1, const UINT8 *src2);
 	PALNUM		*s;
 	UINT		pals;
 	PALNUM		remap[NP2PAL_TOTAL];
@@ -133,7 +133,7 @@ SCRNSAVE scrnsave_get(void) {
 
 	dat = sd->dat;
 	scrnsize = SURFACE_WIDTH * SURFACE_HEIGHT;
-	datanull = ((BYTE *)dat) + (scrnsize * (sizeof(PALNUM) - 1));
+	datanull = ((UINT8 *)dat) + (scrnsize * (sizeof(PALNUM) - 1));
 	datatext = datanull;
 	datagrph = datanull;
 	if (gdcs.textdisp & 0x80) {
@@ -236,7 +236,7 @@ const SCRNDATA	*sd;
 	BMPINFO		bi;
 	UINT8		palwork[1024];
 	UINT		align;
-	BYTE		*work;
+	UINT8		*work;
 const PALNUM	*s;
 	int			r;
 	int			x;
@@ -302,7 +302,7 @@ const PALNUM	*s;
 		}
 	}
 
-	work = (BYTE *)_MALLOC(align, filename);
+	work = (UINT8 *)_MALLOC(align, filename);
 	if (work == NULL) {
 		goto sswb_err2;
 	}
@@ -450,7 +450,7 @@ const PALNUM	*s;
 	UINT8		bitcount;
 	UINT		bitdata;
 	UINT		bitdatas;
-	BYTE		bitbuf[3+256*3];
+	UINT8		bitbuf[3+256*3];
 
 	int			x;
 	int			y;

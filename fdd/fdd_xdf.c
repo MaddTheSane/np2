@@ -24,14 +24,14 @@ static const _XDFINFO supportxdf[] = {
 };
 
 typedef struct {
-	BYTE	dummy[4];
-	BYTE	fddtype[4];
-	BYTE	headersize[4];
-	BYTE	fddsize[4];
-	BYTE	sectorsize[4];
-	BYTE	sectors[4];
-	BYTE	surfaces[4];
-	BYTE	cylinders[4];
+	UINT8	dummy[4];
+	UINT8	fddtype[4];
+	UINT8	headersize[4];
+	UINT8	fddsize[4];
+	UINT8	sectorsize[4];
+	UINT8	sectors[4];
+	UINT8	surfaces[4];
+	UINT8	cylinders[4];
 } FDIHDR;
 
 
@@ -55,7 +55,7 @@ const _XDFINFO	*xdf;
 	file_close(fh);
 
 	xdf = supportxdf;
-	while(xdf < (supportxdf + (sizeof(supportxdf)/sizeof(_XDFINFO)))) {
+	while(xdf < (supportxdf + NELEMENTS(supportxdf))) {
 		size = xdf->tracks;
 		size *= xdf->sectors;
 		size <<= (7 + xdf->n);

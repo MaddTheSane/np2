@@ -6,12 +6,12 @@
 
 typedef struct {
 	BMPDATA	inf;
-	BYTE	*ptr;
+	UINT8	*ptr;
 	int		yalign;
 } DIPBMP;
 
 
-static BYTE *getbmp(const char *dat, DIPBMP *dipbmp) {
+static UINT8 *getbmp(const char *dat, DIPBMP *dipbmp) {
 
 	BMPFILE	*ret;
 
@@ -26,7 +26,7 @@ static BYTE *getbmp(const char *dat, DIPBMP *dipbmp) {
 		goto gb_err2;
 	}
 	dipbmp->yalign = bmpdata_getalign((BMPINFO *)(ret + 1));
-	dipbmp->ptr = ((BYTE *)ret) + (LOADINTELDWORD(ret->bfOffBits));
+	dipbmp->ptr = ((UINT8 *)ret) + (LOADINTELDWORD(ret->bfOffBits));
 	if (dipbmp->inf.height < 0) {
 		dipbmp->inf.height *= -1;
 	}
@@ -34,7 +34,7 @@ static BYTE *getbmp(const char *dat, DIPBMP *dipbmp) {
 		dipbmp->ptr += (dipbmp->inf.height - 1) * dipbmp->yalign;
 		dipbmp->yalign *= -1;
 	}
-	return((BYTE *)ret);
+	return((UINT8 *)ret);
 
 gb_err2:
 	_MFREE(ret);
@@ -43,9 +43,9 @@ gb_err1:
 	return(NULL);
 }
 
-static void line4x(const DIPBMP *dipbmp, int x, int y, int l, BYTE c) {
+static void line4x(const DIPBMP *dipbmp, int x, int y, int l, UINT8 c) {
 
-	BYTE	*ptr;
+	UINT8	*ptr;
 
 	ptr = dipbmp->ptr + (y * dipbmp->yalign);
 	while(l--) {
@@ -61,10 +61,10 @@ static void line4x(const DIPBMP *dipbmp, int x, int y, int l, BYTE c) {
 	}
 }
 
-static void line4y(const DIPBMP *dipbmp, int x, int y, int l, BYTE c) {
+static void line4y(const DIPBMP *dipbmp, int x, int y, int l, UINT8 c) {
 
-	BYTE	*ptr;
-	BYTE	mask;
+	UINT8	*ptr;
+	UINT8	mask;
 
 	ptr = dipbmp->ptr + (x / 2) + (y * dipbmp->yalign);
 	if (x & 1) {
@@ -115,7 +115,7 @@ static void setjumpery(const DIPBMP *dipbmp, int x, int y) {
 
 // ---- pc-9861k
 
-static void setdip9861(const DIPBMP *dipbmp, const DIP9861 *pos, BYTE cfg) {
+static void setdip9861(const DIPBMP *dipbmp, const DIP9861 *pos, UINT8 cfg) {
 
 	int		x;
 	UINT	c;
@@ -135,7 +135,7 @@ static void setdip9861(const DIPBMP *dipbmp, const DIP9861 *pos, BYTE cfg) {
 	} while(--c);
 }
 
-static void setjmp9861(const DIPBMP *dipbmp, const DIP9861 *pos, BYTE cfg) {
+static void setjmp9861(const DIPBMP *dipbmp, const DIP9861 *pos, UINT8 cfg) {
 
 	int		x;
 	int		y;
@@ -153,9 +153,9 @@ static void setjmp9861(const DIPBMP *dipbmp, const DIP9861 *pos, BYTE cfg) {
 	} while(--c);
 }
 
-BYTE *dipswbmp_get9861(const BYTE *s, const BYTE *j) {
+UINT8 *dipswbmp_get9861(const UINT8 *s, const UINT8 *j) {
 
-	BYTE	*ret;
+	UINT8	*ret;
 	DIPBMP	dipbmp;
 	int		i;
 
@@ -174,18 +174,18 @@ BYTE *dipswbmp_get9861(const BYTE *s, const BYTE *j) {
 
 // ---- sound
 
-static void setsnd26io(const DIPBMP *dipbmp, int px, int py, BYTE cfg) {
+static void setsnd26io(const DIPBMP *dipbmp, int px, int py, UINT8 cfg) {
 
 	setjumpery(dipbmp, px + ((cfg & 0x10)?1:0), py);
 }
 
-static void setsnd26int(const DIPBMP *dipbmp, int px, int py, BYTE cfg) {
+static void setsnd26int(const DIPBMP *dipbmp, int px, int py, UINT8 cfg) {
 
 	setjumperx(dipbmp, px + ((cfg & 0x80)?0:1), py);
 	setjumperx(dipbmp, px + ((cfg & 0x40)?0:1), py + 1);
 }
 
-static void setsnd26rom(const DIPBMP *dipbmp, int px, int py, BYTE cfg) {
+static void setsnd26rom(const DIPBMP *dipbmp, int px, int py, UINT8 cfg) {
 
 	cfg &= 7;
 	if (cfg >= 4) {
@@ -194,9 +194,9 @@ static void setsnd26rom(const DIPBMP *dipbmp, int px, int py, BYTE cfg) {
 	setjumpery(dipbmp, px + cfg, py);
 }
 
-BYTE *dipswbmp_getsnd26(BYTE cfg) {
+UINT8 *dipswbmp_getsnd26(UINT8 cfg) {
 
-	BYTE	*ret;
+	UINT8	*ret;
 	DIPBMP	dipbmp;
 
 	ret = getbmp(bmp26, &dipbmp);
@@ -208,9 +208,9 @@ BYTE *dipswbmp_getsnd26(BYTE cfg) {
 	return(ret);
 }
 
-BYTE *dipswbmp_getsnd86(BYTE cfg) {
+UINT8 *dipswbmp_getsnd86(UINT8 cfg) {
 
-	BYTE	*ret;
+	UINT8	*ret;
 	DIPBMP	dipbmp;
 	int		i;
 	int		x;
@@ -231,9 +231,9 @@ BYTE *dipswbmp_getsnd86(BYTE cfg) {
 	return(ret);
 }
 
-BYTE *dipswbmp_getsndspb(BYTE cfg, BYTE vrc) {
+UINT8 *dipswbmp_getsndspb(UINT8 cfg, UINT8 vrc) {
 
-	BYTE	*ret;
+	UINT8	*ret;
 	DIPBMP	dipbmp;
 
 	ret = getbmp(bmpspb, &dipbmp);
@@ -250,9 +250,9 @@ BYTE *dipswbmp_getsndspb(BYTE cfg, BYTE vrc) {
 	return(ret);
 }
 
-BYTE *dipswbmp_getmpu(BYTE cfg) {
+UINT8 *dipswbmp_getmpu(UINT8 cfg) {
 
-	BYTE	*ret;
+	UINT8	*ret;
 	DIPBMP	dipbmp;
 	int		i;
 	int		x;

@@ -5,7 +5,7 @@
 
 // ‚±‚Á‚¿‚Åˆ—‚·‚é‚©@ƒVƒŠƒ“ƒ_”{ˆÚ“®‚ÅŒë–‚‰»‚·‚©”Y‚Ü‚µ‚¢‚Æ‚±‚ë
 
-	BYTE	fdd320_stat;
+	UINT8	fdd320_stat;
 
 
 static REG8 IOINPCALL fdd320_i51(UINT port) {

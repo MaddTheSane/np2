@@ -5,10 +5,10 @@
 #include	"fontdata.h"
 
 
-static void fm7ankcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void fm7ankcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		y;
-const BYTE	*p;
+const UINT8	*p;
 	int		ank;
 
 	for (ank=from; ank<to; ank++) {
@@ -22,11 +22,11 @@ const BYTE	*p;
 	}
 }
 
-static void fm7knjcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void fm7knjcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		i, j, k;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 
 	for (i=from; i<to; i++) {
 		q = dst + 0x21000 + (i << 4);
@@ -66,13 +66,13 @@ const BYTE	*p;
 	}
 }
 
-BYTE fontfm7_read(const char *filename, BYTE loading) {
+UINT8 fontfm7_read(const char *filename, UINT8 loading) {
 
 	FILEH	fh;
-	BYTE	*work;
+	UINT8	*work;
 	char	fname[MAX_PATH];
 
-	work = (BYTE *)_MALLOC(0x20000, "fm7font");
+	work = (UINT8 *)_MALLOC(0x20000, "fm7font");
 	if (work == NULL) {
 		goto frf7_err1;
 	}

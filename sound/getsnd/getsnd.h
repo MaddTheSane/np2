@@ -15,14 +15,14 @@ typedef UINT (*GSDEC)(GETSND self, void *buf);
 typedef void (*GSDECEND)(GETSND self);
 typedef void *(*GSCNV)(GETSND self, void *buf, void *bufterm);
 
-BOOL getwave_open(GETSND snd, BYTE *ptr, UINT size);
-BOOL getmp3_open(GETSND snd, BYTE *ptr, UINT size);
-BOOL getogg_open(GETSND snd, BYTE *ptr, UINT size);
+BOOL getwave_open(GETSND snd, UINT8 *ptr, UINT size);
+BOOL getmp3_open(GETSND snd, UINT8 *ptr, UINT size);
+BOOL getogg_open(GETSND snd, UINT8 *ptr, UINT size);
 BOOL getsnd_setmixproc(GETSND snd, UINT samprate, UINT channles);
 
 struct _getsnd {
-	BYTE		*work;					// data load用バッファ
-	BYTE		*buffer;				// デコード済みバッファ
+	UINT8		*work;					// data load用バッファ
+	UINT8		*buffer;				// デコード済みバッファ
 
 	void		*buf;
 	UINT		remain;
@@ -31,7 +31,7 @@ struct _getsnd {
 	long		pcml;
 	long		pcmr;
 
-	BYTE		*datptr;
+	UINT8		*datptr;
 	UINT		datsize;
 
 	void		*snd;					// optional

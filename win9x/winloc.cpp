@@ -147,9 +147,9 @@ void winloc_movingproc(WINLOC *wl, RECT *rect) {
 
 // ----
 
-static BYTE isconnect(const RECT *parent, const RECT *self) {
+static UINT8 isconnect(const RECT *parent, const RECT *self) {
 
-	BYTE	connect;
+	UINT8	connect;
 
 	connect = 0;
 	if ((self->bottom >= parent->top) && (self->top <= parent->bottom)) {
@@ -201,7 +201,7 @@ WINLOCEX winlocex_create(HWND base, const HWND *child, UINT count) {
 	UINT		allocsize;
 	WLEXWND		*wnd;
 	RECT		rect;
-	BYTE		connect;
+	UINT8		connect;
 	WLEXWND		*p;
 
 	if (child == NULL) {

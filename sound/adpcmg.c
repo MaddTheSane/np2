@@ -23,7 +23,7 @@ REG8 SOUNDCALL adpcm_readsample(ADPCM ad) {
 			pos += 8;
 		}
 		else {
-			const BYTE *ptr;
+			const UINT8 *ptr;
 			REG8 bit;
 			UINT tmp;
 			ptr = ad->buf + ((pos >> 3) & 0x7fff);
@@ -68,7 +68,7 @@ void SOUNDCALL adpcm_datawrite(ADPCM ad, REG8 data) {
 		pos += 8;
 	}
 	else {
-		BYTE *ptr;
+		UINT8 *ptr;
 		UINT8 bit;
 		UINT8 mask;
 		ptr = ad->buf + ((pos >> 3) & 0x7fff);
@@ -135,7 +135,7 @@ static void SOUNDCALL getadpcmdata(ADPCM ad) {
 		pos += ADPCM_NBR + 4;
 	}
 	else {
-		const BYTE *ptr;
+		const UINT8 *ptr;
 		REG8 bit;
 		UINT tmp;
 		ptr = ad->buf + ((pos >> 3) & 0x7fff);

@@ -119,7 +119,7 @@ UINT wavewr_write(WAVEWR hdl, const void *buf, UINT size) {
 		wr = min(hdl->remain, size);
 		CopyMemory(hdl->ptr, buf, wr);
 		size -= wr;
-		buf = ((BYTE *)buf) + wr;
+		buf = ((UINT8 *)buf) + wr;
 		hdl->ptr += wr;
 		hdl->remain -= wr;
 		if (!hdl->remain) {

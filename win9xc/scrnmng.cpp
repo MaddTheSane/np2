@@ -249,14 +249,14 @@ static void paletteset(void) {
 #if defined(SUPPORT_16BPP)
 static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 
-	BYTE	sft;
+	UINT8	sft;
 
 	sft = 0;
 	while((!(bmask & 0x80)) && (sft < 32)) {
 		bmask <<= 1;
 		sft++;
 	}
-	ddraw.pal16mask.p.b = (BYTE)bmask;
+	ddraw.pal16mask.p.b = (UINT8)bmask;
 	ddraw.r16b = sft;
 
 	sft = 0;
@@ -264,7 +264,7 @@ static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 		rmask >>= 1;
 		sft++;
 	}
-	ddraw.pal16mask.p.r = (BYTE)rmask;
+	ddraw.pal16mask.p.r = (UINT8)rmask;
 	ddraw.l16r = sft;
 
 	sft = 0;
@@ -272,7 +272,7 @@ static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 		gmask >>= 1;
 		sft++;
 	}
-	ddraw.pal16mask.p.g = (BYTE)gmask;
+	ddraw.pal16mask.p.g = (UINT8)gmask;
 	ddraw.l16g = sft;
 }
 #endif
@@ -456,7 +456,7 @@ BOOL scrnmng_create(UINT8 scrnmode) {
 	else {
 		goto scre_err;
 	}
-	scrnmng.bpp = (BYTE)bitcolor;
+	scrnmng.bpp = (UINT8)bitcolor;
 	scrnsurf.bpp = bitcolor;
 	ddraw.enable = TRUE;
 	ddraw.scrnmode = scrnmode;
@@ -571,18 +571,18 @@ const SCRNSURF *scrnmng_surflock(void) {
 		return(NULL);
 	}
 	if (!(ddraw.scrnmode & SCRNMODE_ROTATE)) {
-		scrnsurf.ptr = (BYTE *)destscrn.lpSurface;
+		scrnsurf.ptr = (UINT8 *)destscrn.lpSurface;
 		scrnsurf.xalign = scrnsurf.bpp >> 3;
 		scrnsurf.yalign = destscrn.lPitch;
 	}
 	else if (!(ddraw.scrnmode & SCRNMODE_ROTATEDIR)) {
-		scrnsurf.ptr = (BYTE *)destscrn.lpSurface;
+		scrnsurf.ptr = (UINT8 *)destscrn.lpSurface;
 		scrnsurf.ptr += (scrnsurf.width - 1) * destscrn.lPitch;
 		scrnsurf.xalign = 0 - destscrn.lPitch;
 		scrnsurf.yalign = scrnsurf.bpp >> 3;
 	}
 	else {
-		scrnsurf.ptr = (BYTE *)destscrn.lpSurface;
+		scrnsurf.ptr = (UINT8 *)destscrn.lpSurface;
 		scrnsurf.ptr += (scrnsurf.height - 1) * (scrnsurf.bpp >> 3);
 		scrnsurf.xalign = destscrn.lPitch;
 		scrnsurf.yalign = 0 - (scrnsurf.bpp >> 3);

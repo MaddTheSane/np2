@@ -18,7 +18,7 @@ void maketext_initialize(void) {
 
 	int		i;
 	int		j;
-	BYTE	bit;
+	UINT8	bit;
 
 	ZeroMemory(text_table, sizeof(text_table));
 	for (i=0; i<8; i++) {
@@ -67,9 +67,9 @@ void maketext_reset(void) {
 	ZeroMemory(&tramflag, sizeof(tramflag));
 }
 
-static BYTE dirtyonblink(void) {
+static UINT8 dirtyonblink(void) {
 
-	BYTE	ret;
+	UINT8	ret;
 	int		i;
 
 	ret = 0;
@@ -82,9 +82,9 @@ static BYTE dirtyonblink(void) {
 	return(ret);
 }
 
-BYTE maketext_curblink(void) {
+UINT8 maketext_curblink(void) {
 
-	BYTE	ret;
+	UINT8	ret;
 	UINT16	csrw;
 
 	ret = 0;
@@ -126,7 +126,7 @@ BYTE maketext_curblink(void) {
 void maketext(int text_renewal) {
 
 	UINT8	multiple;
-	BYTE	TEXT_LR;
+	UINT8	TEXT_LR;
 	int		TEXT_PL;
 	int		TEXT_BL;
 	int		TEXT_CL;
@@ -135,24 +135,24 @@ void maketext(int text_renewal) {
 	int 	topline;
 	int		lines;
 	int		nowline;
-	BYTE	wait2;
+	UINT8	wait2;
 	UINT	pitch;
 	UINT	csrw;
 	UINT	esi;
 	UINT	scroll;
 	int		scrp;
-	BYTE	wait1;
-	BYTE	LRcnt;
+	UINT8	wait1;
+	UINT8	LRcnt;
 	BOOL	reloadline;
 	int		new_flag;
 	int		cur_line;
 	int		linecnt;
-	BYTE	*q;
+	UINT8	*q;
 	UINT	y;
-	BYTE	line_effect = 0;		// for gcc
+	UINT8	line_effect = 0;		// for gcc
 	int		x;
 	UINT32	bitmap[TEXTXMAX];
-	BYTE	curx[TEXTXMAX+1];
+	UINT8	curx[TEXTXMAX+1];
 	UINT16	color[TEXTXMAX];
 
 	if (text_renewal) {
@@ -435,7 +435,7 @@ void maketext(int text_renewal) {
 void maketext40(int text_renewal) {
 
 	UINT8	multiple;
-	BYTE	TEXT_LR;
+	UINT8	TEXT_LR;
 	int		TEXT_PL;
 	int		TEXT_BL;
 	int		TEXT_CL;
@@ -444,24 +444,24 @@ void maketext40(int text_renewal) {
 	int		topline;
 	int		lines;
 	int		nowline;
-	BYTE	wait2;
+	UINT8	wait2;
 	UINT	pitch;
 	UINT	csrw;
 	UINT	esi;
 	UINT	scroll;
 	int		scrp;
-	BYTE	wait1;
-	BYTE	LRcnt;
+	UINT8	wait1;
+	UINT8	LRcnt;
 	BOOL	reloadline;
 	int		new_flag;
 	int		cur_line;
 	int		linecnt;
-	BYTE	*q;
+	UINT8	*q;
 	UINT	y;
-	BYTE	line_effect = 0;		// for gcc
+	UINT8	line_effect = 0;		// for gcc
 	int		x;
 	UINT32	bitmap[TEXTXMAX];
-	BYTE	curx[TEXTXMAX+1];
+	UINT8	curx[TEXTXMAX+1];
 	UINT16	color[TEXTXMAX];
 
 	if (text_renewal) {
@@ -658,7 +658,7 @@ void maketext40(int text_renewal) {
 					// width40
 					for (x=0; x<(TEXTXMAX/2); x++) {
 						int fntline;
-						BYTE data;
+						UINT8 data;
 						fntline = nowline;
 						if (curx[x] & 0x20) {
 							fntline >>= 1;

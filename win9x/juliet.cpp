@@ -103,14 +103,14 @@ const DLLPROC	*dterm;
 	}
 	romeo.mod = mod;
 	d = dllproc;
-	dterm = d + sizeof(dllproc)/sizeof(DLLPROC);
+	dterm = d + NELEMENTS(dllproc);
 	while(d < dterm) {
 		proc = (long)GetProcAddress(mod, d->symbol);
 		if (proc == (long)NULL) {
 			MessageBox(NULL, "0", "?", MB_OK);
 			goto jini_err2;
 		}
-		*(long *)(((BYTE *)&romeo) + (d->addr)) = proc;
+		*(long *)(((UINT8 *)&romeo) + (d->addr)) = proc;
 		d++;
 	}
 

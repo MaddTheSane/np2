@@ -44,12 +44,12 @@ static const IOCBFN bindfn[] = {
 
 void cbuscore_reset(void) {
 
-	iocore_cb(resetfn, sizeof(resetfn)/sizeof(IOCBFN));
+	iocore_cb(resetfn, NELEMENTS(resetfn));
 }
 
 void cbuscore_bind(void) {
 
-	iocore_cb(bindfn, sizeof(bindfn)/sizeof(IOCBFN));
+	iocore_cb(bindfn, NELEMENTS(bindfn));
 }
 
 

@@ -94,7 +94,7 @@ static HBITMAP allocbmp(int width, int height, CMNVRAM *vram) {
 	if (ret != NULL) {
 		ZeroMemory(image, width * height * 4);
 		if (vram) {
-			vram->ptr = (BYTE *)image;
+			vram->ptr = (UINT8 *)image;
 			vram->width = width;
 			vram->height = height;
 			vram->xalign = 4;
@@ -282,8 +282,7 @@ void memdbg_readini(void) {
 	mdbgcfg.posx = CW_USEDEFAULT;
 	mdbgcfg.posy = CW_USEDEFAULT;
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
-	profile_iniread(path, mdbgapp,
-							mdbgini, sizeof(mdbgini)/sizeof(PFTBL), NULL);
+	profile_iniread(path, mdbgapp, mdbgini, NELEMENTS(mdbgini), NULL);
 }
 
 void memdbg_writeini(void) {
@@ -291,8 +290,7 @@ void memdbg_writeini(void) {
 	char	path[MAX_PATH];
 
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
-	profile_iniwrite(path, mdbgapp,
-							mdbgini, sizeof(mdbgini)/sizeof(PFTBL), NULL);
+	profile_iniwrite(path, mdbgapp, mdbgini, NELEMENTS(mdbgini), NULL);
 }
 #endif
 
@@ -490,8 +488,7 @@ void skbdwin_readini(void) {
 	skbdcfg.posx = CW_USEDEFAULT;
 	skbdcfg.posy = CW_USEDEFAULT;
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
-	profile_iniread(path, skbdapp,
-							skbdini, sizeof(skbdini)/sizeof(PFTBL), NULL);
+	profile_iniread(path, skbdapp, skbdini, NELEMENTS(skbdini), NULL);
 }
 
 void skbdwin_writeini(void) {
@@ -499,8 +496,7 @@ void skbdwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
-	profile_iniwrite(path, skbdapp,
-							skbdini, sizeof(skbdini)/sizeof(PFTBL), NULL);
+	profile_iniwrite(path, skbdapp, skbdini, NELEMENTS(skbdini), NULL);
 }
 #endif
 

@@ -30,8 +30,8 @@ enum {
 typedef struct {
 	SINT32	clock;
 	UINT16	color;
-	BYTE	value;
-	BYTE	reserve;
+	UINT8	value;
+	UINT8	reserve;
 } PAL1EVENT;
 
 typedef struct {
@@ -53,14 +53,14 @@ extern	RGB32		np2_pal32[];
 extern	RGB16		np2_pal16[];
 #endif
 extern	PALEVENT	palevent;
-extern	BYTE		pal_monotable[16];
+extern	UINT8		pal_monotable[16];
 
 void pal_makegrad(RGB32 *pal, int pals, UINT32 bg, UINT32 fg);
 
 void pal_initlcdtable(void);
 void pal_makelcdpal(void);
 void pal_makeskiptable(void);
-void pal_change(BYTE textpalset);
+void pal_change(UINT8 textpalset);
 
 void pal_eventclear(void);
 

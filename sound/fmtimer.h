@@ -1,12 +1,12 @@
 
 typedef struct {
 	UINT16	timera;
-	BYTE	timerb;
-	BYTE	status;
-	BYTE	reg;
-	BYTE	intr;
-	BYTE	irq;
-	BYTE	intdisabel;
+	UINT8	timerb;
+	UINT8	status;
+	UINT8	reg;
+	UINT8	intr;
+	UINT8	irq;
+	UINT8	intdisabel;
 } _FMTIMER, *FMTIMER;
 
 

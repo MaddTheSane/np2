@@ -10,51 +10,51 @@ typedef struct {
 	char	id[10];
 	char	description[60];
 
-	BYTE	instruments;
-	BYTE	voice;
-	BYTE	channels;
-	BYTE	waveforms[2];
-	BYTE	volume[2];
-	BYTE	datasize[4];
-	BYTE	reserved1[36];
+	UINT8	instruments;
+	UINT8	voice;
+	UINT8	channels;
+	UINT8	waveforms[2];
+	UINT8	volume[2];
+	UINT8	datasize[4];
+	UINT8	reserved1[36];
 
-	BYTE	instrument[2];
-	BYTE	instname[16];
-	BYTE	instsize[4];
-	BYTE	layers;
-	BYTE	reserved2[40];
+	UINT8	instrument[2];
+	UINT8	instname[16];
+	UINT8	instsize[4];
+	UINT8	layers;
+	UINT8	reserved2[40];
 
-	BYTE	layerdupe;
-	BYTE	layer;
-	BYTE	layersize[4];
-	BYTE	layersamples;
-	BYTE	reserved3[40];
+	UINT8	layerdupe;
+	UINT8	layer;
+	UINT8	layersize[4];
+	UINT8	layersamples;
+	UINT8	reserved3[40];
 } GUSHEAD;
 
 typedef struct {
-	BYTE	wavename[7];
-	BYTE	fractions;
-	BYTE	datasize[4];
-	BYTE	loopstart[4];
-	BYTE	loopend[4];
-	BYTE	samprate[2];
-	BYTE	freqlow[4];
-	BYTE	freqhigh[4];
-	BYTE	freqroot[4];
-	BYTE	tune[2];
-	BYTE	balance;
-	BYTE	env[6];
-	BYTE	envpos[6];
-	BYTE	tre_sweep;
-	BYTE	tre_rate;
-	BYTE	tre_depth;
-	BYTE	vib_sweep;
-	BYTE	vib_rate;
-	BYTE	vib_depth;
-	BYTE	mode;
-	BYTE	scalefreq[2];
-	BYTE	scalefactor[2];
-	BYTE	reserved[36];
+	UINT8	wavename[7];
+	UINT8	fractions;
+	UINT8	datasize[4];
+	UINT8	loopstart[4];
+	UINT8	loopend[4];
+	UINT8	samprate[2];
+	UINT8	freqlow[4];
+	UINT8	freqhigh[4];
+	UINT8	freqroot[4];
+	UINT8	tune[2];
+	UINT8	balance;
+	UINT8	env[6];
+	UINT8	envpos[6];
+	UINT8	tre_sweep;
+	UINT8	tre_rate;
+	UINT8	tre_depth;
+	UINT8	vib_sweep;
+	UINT8	vib_rate;
+	UINT8	vib_depth;
+	UINT8	mode;
+	UINT8	scalefreq[2];
+	UINT8	scalefactor[2];
+	UINT8	reserved[36];
 } GUSWAVE;
 
 
@@ -186,7 +186,7 @@ static INSTRUMENT inst_create(MIDIMOD mod, TONECFG cfg) {
 	int			i;
 	SAMPLE		dat;
 	_SAMPLE		tmp;
-const BYTE		*d;
+const UINT8		*d;
 	SINT16		*p;
 	SINT16		*q;
 	int			cnt;
@@ -233,7 +233,7 @@ const BYTE		*d;
 	}
 
 	do {
-		BYTE fractions;
+		UINT8 fractions;
 
 		if (file_read(fh, &wave, sizeof(wave)) != sizeof(wave)) {
 			goto li_err3;
@@ -328,7 +328,7 @@ const BYTE		*d;
 #if defined(BYTESEX_LITTLE)
 			if (sizeof(_SAMPLE) != 2) {				// Ara!?
 #endif
-				d = (BYTE *)dat;
+				d = (UINT8 *)dat;
 				d += layer->datasize * 2;
 				q = dat + layer->datasize;
 				do {
@@ -341,7 +341,7 @@ const BYTE		*d;
 #endif
 		}
 		else {
-			d = (BYTE *)dat;
+			d = (UINT8 *)dat;
 			d += layer->datasize;
 			q = dat + layer->datasize;
 			do {

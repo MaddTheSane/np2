@@ -440,7 +440,7 @@ const INFOPROC	*infterm;
 			}
 			infwork[leng] = '\0';
 			inf = infoproc;
-			infterm = infoproc + (sizeof(infoproc) / sizeof(INFOPROC));
+			infterm = infoproc + NELEMENTS(infoproc);
 			while(inf < infterm) {
 				if (!milstr_cmp(infwork, inf->key)) {
 					inf->proc(dst, maxlen, &statex);

@@ -53,7 +53,7 @@ static BOOL setidentify(IDEDRV drv) {
 
 	SXSIDEV sxsi;
 	UINT16	tmp[256];
-	BYTE	*p;
+	UINT8	*p;
 	UINT	i;
 	UINT32	size;
 
@@ -104,8 +104,8 @@ static BOOL setidentify(IDEDRV drv) {
 
 	p = drv->buf;
 	for (i=0; i<256; i++) {
-		p[0] = (BYTE)tmp[i];
-		p[1] = (BYTE)(tmp[i] >> 8);
+		p[0] = (UINT8)tmp[i];
+		p[1] = (UINT8)(tmp[i] >> 8);
 		p += 2;
 	}
 	drv->bufdir = IDEDIR_IN;
@@ -721,14 +721,14 @@ static REG8 IOINPCALL ideio_i74c(UINT port) {
 void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 
 	IDEDRV	drv;
-	BYTE	*p;
+	UINT8	*p;
 
 	drv = getidedrv();
 	if ((drv != NULL) &&
 		(drv->status & IDESTAT_DRQ) && (drv->bufdir == IDEDIR_OUT)) {
 		p = drv->buf + drv->bufpos;
-		p[0] = (BYTE)value;
-		p[1] = (BYTE)(value >> 8);
+		p[0] = (UINT8)value;
+		p[1] = (UINT8)(value >> 8);
 		TRACEOUT(("ide-data send %4x (%.4x) [%.4x:%.8x]",
 										value, drv->bufpos, CPU_CS, CPU_EIP));
 		drv->bufpos += 2;
@@ -748,7 +748,7 @@ REG16 IOINPCALL ideio_r16(UINT port) {
 
 	IDEDRV	drv;
 	REG16	ret;
-	BYTE	*p;
+	UINT8	*p;
 
 	(void)port;
 

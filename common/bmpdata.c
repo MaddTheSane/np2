@@ -85,7 +85,7 @@ bdsi_exit:
 	return(ret);
 }
 
-BOOL bmpdata_getinfo(const BMPINFO *bi, BMPDATA *inf) {
+BRESULT bmpdata_getinfo(const BMPINFO *bi, BMPDATA *inf) {
 
 	UINT	tmp;
 	int		width;
@@ -121,12 +121,12 @@ bdgi_err:
 	return(FAILURE);
 }
 
-BYTE *bmpdata_lzx(int level, int dstsize, const BYTE *dat) {
+UINT8 *bmpdata_lzx(int level, int dstsize, const UINT8 *dat) {
 
-	BYTE	*ret;
-	BYTE	*ptr;
-	BYTE	ctrl;
-	BYTE	bit;
+	UINT8	*ret;
+	UINT8	*ptr;
+	UINT8	ctrl;
+	UINT8	bit;
 	UINT	mask;
 	UINT	tmp;
 	int		pos;
@@ -136,7 +136,7 @@ BYTE *bmpdata_lzx(int level, int dstsize, const BYTE *dat) {
 	if (dat == NULL) {
 		return(NULL);
 	}
-	ret = (BYTE *)_MALLOC(dstsize, "res");
+	ret = (UINT8 *)_MALLOC(dstsize, "res");
 	if (ret == NULL) {
 		goto lxz_err;
 	}
@@ -174,7 +174,7 @@ lxz_err:
 	return(ret);
 }
 
-BYTE *bmpdata_solvedata(const BYTE *dat) {
+UINT8 *bmpdata_solvedata(const UINT8 *dat) {
 
 	int		dstsize;
 

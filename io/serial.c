@@ -176,7 +176,7 @@ void rs232c_callback(void) {
 		}
 	}
 	else {
-		rs232c.result &= (BYTE)~2;
+		rs232c.result &= (UINT8)~2;
 	}
 	if (sysport.c & 4) {
 		if (rs232c.send) {
@@ -189,7 +189,7 @@ void rs232c_callback(void) {
 	}
 }
 
-BYTE rs232c_stat(void) {
+UINT8 rs232c_stat(void) {
 
 	if (cm_rs232c == NULL) {
 		cm_rs232c = commng_create(COMCREATE_SERIAL);

@@ -6,12 +6,12 @@ extern "C"{
 
 // ÇªÇÍÇºÇÍ 4bit BMPÇ™ï‘ÇÈ (ÉÅÉÇÉäâï˙ÇçsÇ»Ç§Ç±Ç∆)
 
-BYTE *dipswbmp_get9861(const BYTE *s, const BYTE *j);
+UINT8 *dipswbmp_get9861(const UINT8 *s, const UINT8 *j);
 
-BYTE *dipswbmp_getsnd26(BYTE cfg);
-BYTE *dipswbmp_getsnd86(BYTE cfg);
-BYTE *dipswbmp_getsndspb(BYTE cfg, BYTE vrc);
-BYTE *dipswbmp_getmpu(BYTE cfg);
+UINT8 *dipswbmp_getsnd26(UINT8 cfg);
+UINT8 *dipswbmp_getsnd86(UINT8 cfg);
+UINT8 *dipswbmp_getsndspb(UINT8 cfg, UINT8 vrc);
+UINT8 *dipswbmp_getmpu(UINT8 cfg);
 
 #ifdef __cplusplus
 }

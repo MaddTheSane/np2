@@ -363,7 +363,7 @@ const UINT8	*p;
 
 	ZeroMemory(&iocore, sizeof(iocore));
 	ZeroMemory(ioterminate, sizeof(ioterminate));
-	for (i=0; i<(sizeof(termtbl)/sizeof(TERMTBL)); i++) {
+	for (i=0; i<NELEMENTS(termtbl); i++) {
 		p = termtbl[i].item;
 		r = termtbl[i].items;
 		do {
@@ -475,13 +475,13 @@ void iocore_cb(const IOCBFN *cbfn, UINT count) {
 
 void iocore_reset(void) {
 
-	iocore_cb(resetfn, sizeof(resetfn)/sizeof(IOCBFN));
+	iocore_cb(resetfn, NELEMENTS(resetfn));
 }
 
 void iocore_bind(void) {
 
 	iocore.busclock = pccore.multiple;
-	iocore_cb(bindfn, sizeof(bindfn)/sizeof(IOCBFN));
+	iocore_cb(bindfn, NELEMENTS(bindfn));
 }
 
 void IOOUTCALL iocore_out8(UINT port, REG8 dat) {

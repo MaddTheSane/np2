@@ -6,7 +6,7 @@
 // vram off
 static void SCRNCALL SDSYM(pex_0)(SDRAW sdraw, int maxy) {
 
-	BYTE	*p;
+	UINT8	*p;
 	int		y;
 	int		x;
 
@@ -30,8 +30,8 @@ static void SCRNCALL SDSYM(pex_0)(SDRAW sdraw, int maxy) {
 // text 1プレーン
 static void SCRNCALL SDSYM(pex_t)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -58,8 +58,8 @@ const BYTE	*p;
 // grph 1プレーン
 static void SCRNCALL SDSYM(pex_g)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -86,9 +86,9 @@ const BYTE	*p;
 // text + grph
 static void SCRNCALL SDSYM(pex_2)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 	int		c;
@@ -136,7 +136,7 @@ static const SDRAWFN SDSYM(pex)[] = {
 // vram off
 static void SCRNCALL SDSYM(nex_0)(SDRAW sdraw, int maxy) {
 
-	BYTE	*p;
+	UINT8	*p;
 	int		y;
 	int		x;
 
@@ -161,8 +161,8 @@ static void SCRNCALL SDSYM(nex_0)(SDRAW sdraw, int maxy) {
 // text 1プレーン
 static void SCRNCALL SDSYM(nex_t)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -192,8 +192,8 @@ const BYTE	*p;
 // grph 1プレーン
 static void SCRNCALL SDSYM(nex_g)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 
@@ -221,9 +221,9 @@ const BYTE	*p;
 // text + grph
 static void SCRNCALL SDSYM(nex_2)(SDRAW sdraw, int maxy) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		y;
 	int		x;
 	int		c;

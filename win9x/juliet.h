@@ -23,8 +23,8 @@ void juliet_deinitialize(void);
 void juliet_YMF288Reset(void);
 BOOL juliet_YMF288IsEnable(void);
 BOOL juliet_YMF288IsBusy(void);
-void juliet_YMF288A(BYTE addr, BYTE data);
-void juliet_YMF288B(BYTE addr, BYTE data);
+void juliet_YMF288A(UINT8 addr, UINT8 data);
+void juliet_YMF288B(UINT8 addr, UINT8 data);
 void juliet_YMF288Enable(BOOL enable);
 
 #ifdef __cplusplus

@@ -26,8 +26,8 @@ extern	UINT	sys_updates;
 void sysmng_initialize(void);
 void sysmng_update(UINT bitmap);
 void sysmng_cpureset(void);
-void sysmng_fddaccess(BYTE drv);
-void sysmng_hddaccess(BYTE drv);
+void sysmng_fddaccess(UINT8 drv);
+void sysmng_hddaccess(UINT8 drv);
 #else
 
 // マクロ(単に関数コールしたくないだけ)

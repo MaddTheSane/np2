@@ -49,7 +49,7 @@ static const UINT8 bytemask_d1[8] =		// dir:left by length
 
 void egcshift(void) {
 
-	BYTE	src8, dst8;
+	UINT8	src8, dst8;
 
 	egc.remain = LOW12(egc.leng) + 1;
 	egc.func = (egc.sft >> 12) & 1;
@@ -638,35 +638,35 @@ static void MEMCALL shiftinput_decw(void) {
 
 #define	EGCOPE_SHIFTB											\
 	if (egc.ope & 0x400) {										\
-		egc.inptr[ 0] = (BYTE)value;							\
-		egc.inptr[ 4] = (BYTE)value;							\
-		egc.inptr[ 8] = (BYTE)value;							\
-		egc.inptr[12] = (BYTE)value;							\
+		egc.inptr[ 0] = (UINT8)value;							\
+		egc.inptr[ 4] = (UINT8)value;							\
+		egc.inptr[ 8] = (UINT8)value;							\
+		egc.inptr[12] = (UINT8)value;							\
 		shiftinput_byte(EGCADDR(ad & 1));						\
 	}															\
 
 #define	EGCOPE_SHIFTW											\
 	if (egc.ope & 0x400) {										\
 		if (!(egc.sft & 0x1000)) {								\
-			egc.inptr[ 0] = (BYTE)value;						\
-			egc.inptr[ 1] = (BYTE)(value >> 8);					\
-			egc.inptr[ 4] = (BYTE)value;						\
-			egc.inptr[ 5] = (BYTE)(value >> 8);					\
-			egc.inptr[ 8] = (BYTE)value;						\
-			egc.inptr[ 9] = (BYTE)(value >> 8);					\
-			egc.inptr[12] = (BYTE)value;						\
-			egc.inptr[13] = (BYTE)(value >> 8);					\
+			egc.inptr[ 0] = (UINT8)value;						\
+			egc.inptr[ 1] = (UINT8)(value >> 8);				\
+			egc.inptr[ 4] = (UINT8)value;						\
+			egc.inptr[ 5] = (UINT8)(value >> 8);				\
+			egc.inptr[ 8] = (UINT8)value;						\
+			egc.inptr[ 9] = (UINT8)(value >> 8);				\
+			egc.inptr[12] = (UINT8)value;						\
+			egc.inptr[13] = (UINT8)(value >> 8);				\
 			shiftinput_incw();									\
 		}														\
 		else {													\
-			egc.inptr[-1] = (BYTE)value;						\
-			egc.inptr[ 0] = (BYTE)(value >> 8);					\
-			egc.inptr[ 3] = (BYTE)value;						\
-			egc.inptr[ 4] = (BYTE)(value >> 8);					\
-			egc.inptr[ 7] = (BYTE)value;						\
-			egc.inptr[ 8] = (BYTE)(value >> 8);					\
-			egc.inptr[11] = (BYTE)value;						\
-			egc.inptr[12] = (BYTE)(value >> 8);					\
+			egc.inptr[-1] = (UINT8)value;						\
+			egc.inptr[ 0] = (UINT8)(value >> 8);				\
+			egc.inptr[ 3] = (UINT8)value;						\
+			egc.inptr[ 4] = (UINT8)(value >> 8);				\
+			egc.inptr[ 7] = (UINT8)value;						\
+			egc.inptr[ 8] = (UINT8)(value >> 8);				\
+			egc.inptr[11] = (UINT8)value;						\
+			egc.inptr[12] = (UINT8)(value >> 8);				\
 			shiftinput_decw();									\
 		}														\
 	}

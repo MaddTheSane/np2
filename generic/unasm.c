@@ -68,10 +68,10 @@ static char *set_hex(char *str, UINT32 value, UINT bit) {
 
 // ----
 
-UINT unasm(UNASM r, const BYTE *ptr, UINT leng, BOOL d, UINT32 addr) {
+UINT unasm(UNASM r, const UINT8 *ptr, UINT leng, BOOL d, UINT32 addr) {
 
-const BYTE	*org;
-const BYTE	*term;
+const UINT8	*org;
+const UINT8	*term;
 	UINT	flag;
 	REG8	ope;
 	UINT32	ctl;

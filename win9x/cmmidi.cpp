@@ -34,15 +34,15 @@ enum {		MIDI_MT32 = 0,	MIDI_CM32L,		MIDI_CM64,
 			MIDI_SC55,		MIDI_SC88,		MIDI_LA,
 			MIDI_GM,		MIDI_GS,		MIDI_XG,	MIDI_OTHER};
 
-static const BYTE EXCV_MTRESET[] = {
+static const UINT8 EXCV_MTRESET[] = {
 			0xfe, 0xfe, 0xfe};
-static const BYTE EXCV_GMRESET[] = {
+static const UINT8 EXCV_GMRESET[] = {
 			0xf0, 0x7e, 0x7f, 0x09, 0x01, 0xf7};
-static const BYTE EXCV_GSRESET[] = {
+static const UINT8 EXCV_GSRESET[] = {
 			0xf0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7f, 0x00, 0x41, 0xf7};
-static const BYTE EXCV_XGRESET[] = {
+static const UINT8 EXCV_XGRESET[] = {
 			0xf0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xf7};
-static const BYTE EXCV_GMVOLUME[] = {
+static const UINT8 EXCV_GMVOLUME[] = {
 			0xf0, 0x7F, 0x7F, 0x04, 0x01, 0x00, 0x00, 0xF7};
 
 enum {
@@ -84,10 +84,10 @@ typedef struct _cmmidi	_CMMIDI;
 typedef struct _cmmidi	*CMMIDI;
 
 typedef struct {
-	BYTE	prog;
-	BYTE	press;
+	UINT8	prog;
+	UINT8	press;
 	UINT16	bend;
-	BYTE	ctrl[28];
+	UINT8	ctrl[28];
 } _MIDICH, *MIDICH;
 
 struct _cmmidi {
@@ -104,21 +104,21 @@ struct _cmmidi {
 	UINT		midisyscnt;
 	UINT		mpos;
 
-	BYTE		midilast;
-	BYTE		midiexcvwait;
-	BYTE		midimodule;
+	UINT8		midilast;
+	UINT8		midiexcvwait;
+	UINT8		midimodule;
 
-	BYTE		buffer[MIDI_BUFFER];
+	UINT8		buffer[MIDI_BUFFER];
 	_MIDICH		mch[16];
-	BYTE		excvbuf[MIDI_BUFFER];
+	UINT8		excvbuf[MIDI_BUFFER];
 
-	BYTE		def_en;
+	UINT8		def_en;
 	MIMPIDEF	def;
 
 	UINT		recvpos;
 	UINT		recvsize;
-	BYTE		recvbuf[MIDI_BUFFER];
-	BYTE		midiinbuf[MIDI_BUFFER];
+	UINT8		recvbuf[MIDI_BUFFER];
+	UINT8		midiinbuf[MIDI_BUFFER];
 };
 
 typedef struct {
@@ -129,12 +129,12 @@ typedef struct {
 static	UINT		midiinhdls;
 static	MIDIINHDL	midiinhdl[MIDIIN_MAX];
 
-static const BYTE midictrltbl[] = {	0, 1, 5, 7, 10, 11, 64,
+static const UINT8 midictrltbl[] = { 0, 1, 5, 7, 10, 11, 64,
 									65, 66, 67, 84, 91, 93,
 									94,						// for SC-88
 									71, 72, 73, 74};		// for XG
 
-static	BYTE	midictrlindex[128];
+static	UINT8	midictrlindex[128];
 
 
 // ----
@@ -185,7 +185,7 @@ static UINT module2number(const char *module) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(cmmidi_mdlname)/sizeof(char *)); i++) {
+	for (i=0; i<NELEMENTS(cmmidi_mdlname); i++) {
 		if (milstr_extendcmp(module, cmmidi_mdlname[i])) {
 			break;
 		}
@@ -202,7 +202,7 @@ static void waitlastexclusiveout(CMMIDI midi) {
 	}
 }
 
-static void sendexclusive(CMMIDI midi, const BYTE *buf, UINT leng) {
+static void sendexclusive(CMMIDI midi, const UINT8 *buf, UINT leng) {
 
 	CopyMemory(midi->excvbuf, buf, leng);
 	midi->hmidiouthdr.lpData = (char *)midi->excvbuf;
@@ -256,9 +256,9 @@ const SINT32	*ptr;
 
 static void midireset(CMMIDI midi) {
 
-const BYTE	*excv;
+const UINT8	*excv;
 	UINT	excvsize;
-	BYTE	work[4];
+	UINT8	work[4];
 
 	switch(midi->midimodule) {
 		case MIDI_GM:
@@ -316,7 +316,7 @@ const BYTE	*excv;
 
 static void midisetparam(CMMIDI midi) {
 
-	BYTE	i;
+	UINT8	i;
 	UINT	j;
 	MIDICH	mch;
 
@@ -328,7 +328,7 @@ static void midisetparam(CMMIDI midi) {
 		if (mch->bend != 0xffff) {
 			midi->outfn(midi, (mch->bend << 8) + 0xe0+i);
 		}
-		for (j=0; j<sizeof(midictrltbl)/sizeof(BYTE); j++) {
+		for (j=0; j<NELEMENTS(midictrltbl); j++) {
 			if (mch->ctrl[j+1] != 0xff) {
 				midi->outfn(midi,
 							MIDIOUTS(0xb0+i, midictrltbl[j], mch->ctrl[j+1]));
@@ -343,7 +343,7 @@ static void midisetparam(CMMIDI midi) {
 
 // ----
 
-static UINT midiread(COMMNG self, BYTE *data) {
+static UINT midiread(COMMNG self, UINT8 *data) {
 
 	CMMIDI	midi;
 
@@ -357,7 +357,7 @@ static UINT midiread(COMMNG self, BYTE *data) {
 	return(0);
 }
 
-static UINT midiwrite(COMMNG self, BYTE data) {
+static UINT midiwrite(COMMNG self, UINT8 data) {
 
 	CMMIDI	midi;
 	MIDICH	mch;
@@ -536,7 +536,7 @@ static UINT midiwrite(COMMNG self, BYTE data) {
 	return(0);
 }
 
-static BYTE midigetstat(COMMNG self) {
+static UINT8 midigetstat(COMMNG self) {
 
 	return(0x00);
 }
@@ -666,8 +666,8 @@ void cmmidi_initailize(void) {
 	UINT	i;
 
 	ZeroMemory(midictrlindex, sizeof(midictrlindex));
-	for (i=0; i<sizeof(midictrltbl)/sizeof(BYTE); i++) {
-		midictrlindex[midictrltbl[i]] = (BYTE)(i + 1);
+	for (i=0; i<NELEMENTS(midictrltbl); i++) {
+		midictrlindex[midictrltbl[i]] = (UINT8)(i + 1);
 	}
 	midictrlindex[32] = 1;
 }
@@ -755,7 +755,7 @@ COMMNG cmmidi_create(const char *midiout, const char *midiin,
 
 	midi->midilast = 0x80;
 //	midi->midiexcvwait = 0;
-	midi->midimodule = (BYTE)module2number(module);
+	midi->midimodule = (UINT8)module2number(module);
 	FillMemory(midi->mch, sizeof(midi->mch), 0xff);
 	return(ret);
 
@@ -777,7 +777,7 @@ cmcre_err1:
 
 // ---- midiin callback
 
-static void midiinrecv(CMMIDI midi, const BYTE *data, UINT size) {
+static void midiinrecv(CMMIDI midi, const UINT8 *data, UINT size) {
 
 	UINT	wpos;
 	UINT	wsize;
@@ -831,7 +831,7 @@ void cmmidi_recvdata(HMIDIIN hdr, UINT32 data) {
 				break;
 #endif
 		}
-		midiinrecv(midi, (BYTE *)&data, databytes);
+		midiinrecv(midi, (UINT8 *)&data, databytes);
 	}
 }
 
@@ -841,7 +841,7 @@ void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data) {
 
 	midi = midiinhdlget(hdr);
 	if (midi) {
-		midiinrecv(midi, (BYTE *)data->lpData, data->dwBytesRecorded);
+		midiinrecv(midi, (UINT8 *)data->lpData, data->dwBytesRecorded);
 		midiInUnprepareHeader(midi->hmidiin,
 										&midi->hmidiinhdr, sizeof(MIDIHDR));
 		midiInPrepareHeader(midi->hmidiin,

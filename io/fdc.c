@@ -84,9 +84,9 @@ void fdcsend_error7(void) {
 	fdc.event = FDCEVENT_BUFSEND;
 	fdc.bufp = 0;
 	fdc.bufcnt = 7;
-	fdc.buf[0] = (BYTE)(fdc.stat[fdc.us] >>  0);
-	fdc.buf[1] = (BYTE)(fdc.stat[fdc.us] >>  8);
-	fdc.buf[2] = (BYTE)(fdc.stat[fdc.us] >> 16);
+	fdc.buf[0] = (UINT8)(fdc.stat[fdc.us] >>  0);
+	fdc.buf[1] = (UINT8)(fdc.stat[fdc.us] >>  8);
+	fdc.buf[2] = (UINT8)(fdc.stat[fdc.us] >> 16);
 	fdc.buf[3] = fdc.C;
 	fdc.buf[4] = fdc.H;
 	fdc.buf[5] = fdc.R;
@@ -430,7 +430,7 @@ static void FDC_SenceintStatus(void) {					// cmd: 08
 	if (fdc_isfdcinterrupt()) {
 		i = 0;
 		if (fdc.stat[fdc.us]) {
-			fdc.buf[0] = (BYTE)fdc.stat[fdc.us];
+			fdc.buf[0] = (UINT8)fdc.stat[fdc.us];
 			fdc.buf[1] = fdc.treg[fdc.us];
 			fdc.bufcnt = 2;
 			fdc.stat[fdc.us] = 0;
@@ -439,7 +439,7 @@ static void FDC_SenceintStatus(void) {					// cmd: 08
 		else {
 			for (; i<4; i++) {
 				if (fdc.stat[i]) {
-					fdc.buf[0] = (BYTE)fdc.stat[i];
+					fdc.buf[0] = (UINT8)fdc.stat[i];
 					fdc.buf[1] = fdc.treg[i];
 					fdc.bufcnt = 2;
 					fdc.stat[i] = 0;

@@ -15,7 +15,7 @@
 
 static UINT mp3_dec(GETSND snd, short *dst) {
 
-	BYTE	*src;
+	UINT8	*src;
 	MPEGL3	*mp3;
 	int		r;
 
@@ -51,7 +51,7 @@ static void mp3_decend(GETSND snd) {
 	mp3_destroy((MPEGL3 *)snd->snd);
 }
 
-BOOL __mp3_open(GETSND snd, BYTE *ptr, UINT size) {
+BOOL __mp3_open(GETSND snd, UINT8 *ptr, UINT size) {
 
 	MPEGL3	*mp3;
 
@@ -81,7 +81,7 @@ mp3opn_err:
 	return(FAILURE);
 }
 
-BOOL getmp3_open(GETSND snd, BYTE *ptr, UINT size) {
+BOOL getmp3_open(GETSND snd, UINT8 *ptr, UINT size) {
 
 	UINT	pos;
 

@@ -8,7 +8,7 @@
 
 // ----- reg8
 
-I286_8X _add_r8_i(BYTE *p) {
+I286_8X _add_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -17,10 +17,10 @@ I286_8X _add_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	ADDBYTE(res, dst, src);
-	*p = (BYTE)res;
+	*p = (UINT8)res;
 }
 
-I286_8X _or_r8_i(BYTE *p) {
+I286_8X _or_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -28,10 +28,10 @@ I286_8X _or_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	ORBYTE(dst, src);
-	*p = (BYTE)dst;
+	*p = (UINT8)dst;
 }
 
-I286_8X _adc_r8_i(BYTE *p) {
+I286_8X _adc_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -40,10 +40,10 @@ I286_8X _adc_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	ADCBYTE(res, dst, src);
-	*p = (BYTE)res;
+	*p = (UINT8)res;
 }
 
-I286_8X _sbb_r8_i(BYTE *p) {
+I286_8X _sbb_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -52,10 +52,10 @@ I286_8X _sbb_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	SBBBYTE(res, dst, src);
-	*p = (BYTE)res;
+	*p = (UINT8)res;
 }
 
-I286_8X _and_r8_i(BYTE *p) {
+I286_8X _and_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -63,10 +63,10 @@ I286_8X _and_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	ANDBYTE(dst, src);
-	*p = (BYTE)dst;
+	*p = (UINT8)dst;
 }
 
-I286_8X _sub_r8_i(BYTE *p) {
+I286_8X _sub_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -75,10 +75,10 @@ I286_8X _sub_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	SUBBYTE(res, dst, src);
-	*p = (BYTE)res;
+	*p = (UINT8)res;
 }
 
-I286_8X _xor_r8_i(BYTE *p) {
+I286_8X _xor_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -86,10 +86,10 @@ I286_8X _xor_r8_i(BYTE *p) {
 	GET_PCBYTE(src)
 	dst = *p;
 	XORBYTE(dst, src);
-	*p = (BYTE)dst;
+	*p = (UINT8)dst;
 }
 
-I286_8X _cmp_r8_i(BYTE *p) {
+I286_8X _cmp_r8_i(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;

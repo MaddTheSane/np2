@@ -12,8 +12,8 @@ void bios0x0c(void) {
 	UINT16	doff;
 	UINT16	dseg;
 	REG8	flag;
-	BYTE	data;
-	BYTE	stat;
+	UINT8	data;
+	UINT8	stat;
 	REG16	pos;
 	REG16	cnt;
 

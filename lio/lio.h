@@ -25,10 +25,10 @@ typedef struct {
 	UINT8	bgcolor;
 	UINT8	padding;
 	UINT8	color[8];
-	BYTE	viewx1[2];
-	BYTE	viewy1[2];
-	BYTE	viewx2[2];
-	BYTE	viewy2[2];
+	UINT8	viewx1[2];
+	UINT8	viewy1[2];
+	UINT8	viewx2[2];
+	UINT8	viewy2[2];
 	UINT8	disp;
 	UINT8	access;
 } LIOWORK;

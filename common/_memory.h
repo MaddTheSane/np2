@@ -31,7 +31,7 @@ void _memused(const char *filename);
 #elif defined(MEMCHECK)
 
 extern	BOOL	chgmemory;
-extern	DWORD	usedmemory;
+extern	UINT	usedmemory;
 
 #define	_MEM_INIT()				_meminit()
 #define	_MALLOC(a, b)			_memalloc(a)

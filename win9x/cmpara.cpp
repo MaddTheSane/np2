@@ -7,12 +7,12 @@ typedef struct {
 } _CMPARA, *CMPARA;
 
 
-static UINT pararead(COMMNG self, BYTE *data) {
+static UINT pararead(COMMNG self, UINT8 *data) {
 
 	return(0);
 }
 
-static UINT parawrite(COMMNG self, BYTE data) {
+static UINT parawrite(COMMNG self, UINT8 data) {
 
 	CMPARA	para;
 	DWORD	writesize;
@@ -22,7 +22,7 @@ static UINT parawrite(COMMNG self, BYTE data) {
 	return(1);
 }
 
-static BYTE paragetstat(COMMNG self) {
+static UINT8 paragetstat(COMMNG self) {
 
 	return(0);
 }

@@ -73,7 +73,7 @@ I286_F6 _neg_ea8(UINT op) {
 
 I286_F6 _mul_ea8(UINT op) {
 
-	BYTE	src;
+	UINT8	src;
 	UINT	res;
 
 	if (op >= 0xc0) {
@@ -90,7 +90,7 @@ I286_F6 _mul_ea8(UINT op) {
 
 I286_F6 _imul_ea8(UINT op) {
 
-	BYTE	src;
+	UINT8	src;
 	SINT32	res;
 
 	if (op >= 0xc0) {
@@ -108,7 +108,7 @@ I286_F6 _imul_ea8(UINT op) {
 I286_F6 _div_ea8(UINT op) {
 
 	UINT16	tmp;
-	BYTE	src;
+	UINT8	src;
 	UINT16	ip;
 
 	ip = I286_IP;

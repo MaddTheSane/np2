@@ -21,14 +21,14 @@ extern void iptrace_out(void);
 #endif
 
 
-static const BYTE hdd_inquiry[0x20] = {
+static const UINT8 hdd_inquiry[0x20] = {
 			0x00,0x00,0x02,0x02,0x1c,0x00,0x00,0x18,
 			'N', 'E', 'C', 0x20,0x20,0x20,0x20,0x20,
 			'N', 'P', '2', '-', 'H', 'D', 'D', 0x20,
 			0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20};
 
 
-static UINT scsicmd_datain(SXSIDEV sxsi, BYTE *cdb) {
+static UINT scsicmd_datain(SXSIDEV sxsi, UINT8 *cdb) {
 
 	UINT	length;
 
@@ -82,7 +82,7 @@ REG8 scsicmd_select(REG8 id) {
 	return(0x42);				// Timeout
 }
 
-REG8 scsicmd_transfer(REG8 id, BYTE *cdb) {
+REG8 scsicmd_transfer(REG8 id, UINT8 *cdb) {
 
 	SXSIDEV	sxsi;
 	UINT	leng;
@@ -165,7 +165,7 @@ static const UINT8 stat2ret[16] = {
 
 static REG8 bios1bc_seltrans(REG8 id) {
 
-	BYTE	cdb[16];
+	UINT8	cdb[16];
 	REG8	ret;
 
 	MEML_READSTR(CPU_DS, CPU_DX, cdb, 16);

@@ -46,7 +46,7 @@ I286EXT i286c_rep_outsb(void) {
 		do {
 			REG8 dat = i286_memoryread(I286_SI + DS_FIX);
 			I286_SI += stp;
-			iocore_out8(I286_DX, (BYTE)dat);
+			iocore_out8(I286_DX, (UINT8)dat);
 			I286_WORKCLOCK(4);
 		} while(--I286_CX);
 	}

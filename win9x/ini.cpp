@@ -12,12 +12,12 @@
 
 
 
-static BOOL inigetbmp(const BYTE *ptr, UINT pos) {
+static BOOL inigetbmp(const UINT8 *ptr, UINT pos) {
 
 	return((ptr[pos >> 3] >> (pos & 7)) & 1);
 }
 
-static void inisetbmp(BYTE *ptr, UINT pos, BOOL set) {
+static void inisetbmp(UINT8 *ptr, UINT pos, BOOL set) {
 
 	UINT8	bit;
 
@@ -60,14 +60,14 @@ static void inirdargs16(const char *src, const INITBL *ini) {
 
 static void inirdargh8(const char *src, const INITBL *ini) {
 
-	BYTE	*dst;
+	UINT8	*dst;
 	int		dsize;
 	int		i;
-	BYTE	val;
+	UINT8	val;
 	BOOL	set;
 	char	c;
 
-	dst = (BYTE *)ini->value;
+	dst = (UINT8 *)ini->value;
 	dsize = ini->arg;
 
 	for (i=0; i<dsize; i++) {
@@ -106,11 +106,11 @@ static void inirdargh8(const char *src, const INITBL *ini) {
 static void iniwrsetargh8(char *work, int size, const INITBL *ini) {
 
 	UINT	i;
-const BYTE	*ptr;
+const UINT8	*ptr;
 	UINT	arg;
 	char	tmp[8];
 
-	ptr = (BYTE *)ini->value;
+	ptr = (UINT8 *)ini->value;
 	arg = ini->arg;
 	if (arg > 0) {
 		SPRINTF(tmp, "%.2x", ptr[0]);
@@ -135,7 +135,7 @@ static void inirdbyte3(const char *src, const INITBL *ini) {
 		}
 		if ((((src[i] - '0') & 0xff) < 9) ||
 			(((src[i] - 'A') & 0xdf) < 26)) {
-			((BYTE *)ini->value)[i] = src[i];
+			((UINT8 *)ini->value)[i] = src[i];
 		}
 	}
 }
@@ -144,16 +144,16 @@ static void inirdkb(const char *src, const INITBL *ini) {
 
 	if ((!milstr_extendcmp(src, "PC98")) ||
 		(!milstr_cmp(src, "98"))) {
-		*(BYTE *)ini->value = KEY_PC98;
+		*(UINT8 *)ini->value = KEY_PC98;
 	}
 	else if ((!milstr_extendcmp(src, "DOS")) ||
 			(!milstr_cmp(src, "PCAT")) ||
 			(!milstr_cmp(src, "AT"))) {
-		*(BYTE *)ini->value = KEY_KEY106;
+		*(UINT8 *)ini->value = KEY_KEY106;
 	}
 	else if ((!milstr_extendcmp(src, "KEY101")) ||
 			(!milstr_cmp(src, "101"))) {
-		*(BYTE *)ini->value = KEY_KEY101;
+		*(UINT8 *)ini->value = KEY_KEY101;
 	}
 }
 
@@ -179,16 +179,16 @@ const INITBL	*pterm;
 
 			case INITYPE_BOOL:
 				GetPrivateProfileString(title, p->item,
-									(*((BYTE *)p->value))?str_true:str_false,
+									(*((UINT8 *)p->value))?str_true:str_false,
 												work, sizeof(work), path);
-				*((BYTE *)p->value) = (!milstr_cmp(work, str_true))?1:0;
+				*((UINT8 *)p->value) = (!milstr_cmp(work, str_true))?1:0;
 				break;
 
 			case INITYPE_BITMAP:
 				GetPrivateProfileString(title, p->item,
-					(inigetbmp((BYTE *)p->value, p->arg))?str_true:str_false,
+					(inigetbmp((UINT8 *)p->value, p->arg))?str_true:str_false,
 												work, sizeof(work), path);
-				inisetbmp((BYTE *)p->value, p->arg,
+				inisetbmp((UINT8 *)p->value, p->arg,
 										(milstr_cmp(work, str_true) == 0));
 				break;
 
@@ -206,8 +206,8 @@ const INITBL	*pterm;
 
 			case INITYPE_SINT8:
 			case INITYPE_UINT8:
-				val = (BYTE)GetPrivateProfileInt(title, p->item,
-												*(BYTE *)p->value, path);
+				val = (UINT8)GetPrivateProfileInt(title, p->item,
+												*(UINT8 *)p->value, path);
 				*(UINT8 *)p->value = (UINT8)val;
 				break;
 
@@ -226,10 +226,10 @@ const INITBL	*pterm;
 				break;
 
 			case INITYPE_HEX8:
-				SPRINTF(work, str_x, *(BYTE *)p->value),
+				SPRINTF(work, str_x, *(UINT8 *)p->value),
 				GetPrivateProfileString(title, p->item, work,
 												work, sizeof(work), path);
-				val = (BYTE)milstr_solveHEX(work);
+				val = (UINT8)milstr_solveHEX(work);
 				*(UINT8 *)p->value = (UINT8)val;
 				break;
 
@@ -285,7 +285,7 @@ const char		*set;
 					break;
 
 				case INITYPE_BOOL:
-					set = (*((BYTE *)p->value))?str_true:str_false;
+					set = (*((UINT8 *)p->value))?str_true:str_false;
 					break;
 
 				case INITYPE_ARGH8:
@@ -544,7 +544,7 @@ void initload(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_read(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
+	ini_read(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 
 void initsave(void) {
@@ -552,6 +552,6 @@ void initsave(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
+	ini_write(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 

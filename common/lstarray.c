@@ -61,7 +61,7 @@ UINT listarray_getitems(LISTARRAY laHandle) {
 void *listarray_append(LISTARRAY laHandle, const void *vpItem) {
 
 	LISTARRAY	laNext;
-	char		*p;
+	UINT8		*p;
 
 	if (laHandle == NULL) {
 		goto laapp_err;
@@ -78,7 +78,7 @@ void *listarray_append(LISTARRAY laHandle, const void *vpItem) {
 		}
 		laHandle = laNext;
 	}
-	p = (char *)(laHandle + 1);
+	p = (UINT8 *)(laHandle + 1);
 	p += laHandle->items * laHandle->listsize;
 	if (vpItem) {
 		CopyMemory(p, vpItem, laHandle->listsize);
@@ -97,7 +97,7 @@ void *listarray_getitem(LISTARRAY laHandle, UINT num) {
 
 	while(laHandle) {
 		if (num < laHandle->items) {
-			return((char *)(laHandle + 1) + (laHandle->listsize * num));
+			return((UINT8 *)(laHandle + 1) + (laHandle->listsize * num));
 		}
 		num -= laHandle->items;
 		laHandle = laHandle->laNext;
@@ -112,7 +112,7 @@ UINT listarray_getpos(LISTARRAY laHandle, void *vpItem) {
 
 	pos = 0;
 	while(laHandle) {
-		char *p = (char *)(laHandle + 1);
+		UINT8 *p = (UINT8 *)(laHandle + 1);
 		for (i=0; i<laHandle->items; i++) {
 			if ((long)p == (long)vpItem) {
 				return(pos + i);
@@ -126,7 +126,7 @@ UINT listarray_getpos(LISTARRAY laHandle, void *vpItem) {
 }
 
 void *listarray_enum(LISTARRAY laHandle,
-				BOOL (*cbProc)(void *vpItem, void *vpArg), void *vpArg) {
+				BRESULT (*cbProc)(void *vpItem, void *vpArg), void *vpArg) {
 
 	UINT	i;
 
@@ -135,7 +135,7 @@ void *listarray_enum(LISTARRAY laHandle,
 	}
 
 	while(laHandle) {
-		char *p = (char *)(laHandle + 1);
+		UINT8 *p = (UINT8 *)(laHandle + 1);
 		for (i=0; i<laHandle->items; i++) {
 			if (cbProc((void *)p, vpArg)) {
 				return((void *)p);

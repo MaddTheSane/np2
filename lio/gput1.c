@@ -8,35 +8,35 @@
 
 
 typedef struct {
-	BYTE	x1[2];
-	BYTE	y1[2];
-	BYTE	x2[2];
-	BYTE	y2[2];
-	BYTE	off[2];
-	BYTE	seg[2];
-	BYTE	leng[2];
+	UINT8	x1[2];
+	UINT8	y1[2];
+	UINT8	x2[2];
+	UINT8	y2[2];
+	UINT8	off[2];
+	UINT8	seg[2];
+	UINT8	leng[2];
 } GGET;
 
 typedef struct {
-	BYTE	x[2];
-	BYTE	y[2];
-	BYTE	off[2];
-	BYTE	seg[2];
-	BYTE	leng[2];
-	BYTE	mode;
-	BYTE	colorsw;
-	BYTE	fg;
-	BYTE	bg;
+	UINT8	x[2];
+	UINT8	y[2];
+	UINT8	off[2];
+	UINT8	seg[2];
+	UINT8	leng[2];
+	UINT8	mode;
+	UINT8	colorsw;
+	UINT8	fg;
+	UINT8	bg;
 } GPUT1;
 
 typedef struct {
-	BYTE	x[2];
-	BYTE	y[2];
-	BYTE	chr[2];
-	BYTE	mode;
-	BYTE	colorsw;
-	BYTE	fg;
-	BYTE	bg;
+	UINT8	x[2];
+	UINT8	y[2];
+	UINT8	chr[2];
+	UINT8	mode;
+	UINT8	colorsw;
+	UINT8	fg;
+	UINT8	bg;
 } GPUT2;
 
 typedef struct {
@@ -53,7 +53,7 @@ typedef struct {
 } LIOPUT;
 
 typedef struct {
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
 	UINT	sft;
 	UINT	width;
@@ -61,7 +61,7 @@ typedef struct {
 } GETCNTX;
 
 typedef struct {
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
 	UINT	sft;
 	UINT	width;
@@ -69,13 +69,13 @@ typedef struct {
 	UINT8	maskr;
 	UINT8	masklr;
 	UINT8	mask;
-	BYTE	pat[84];
+	UINT8	pat[84];
 } PUTCNTX;
 
 
-static void getvram(const GETCNTX *gt, BYTE *dst) {
+static void getvram(const GETCNTX *gt, UINT8 *dst) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
 	UINT	width;
 	UINT	dat;
@@ -116,9 +116,9 @@ static void setdirty(UINT addr, UINT width, UINT height, REG8 bit) {
 
 static void putor(const PUTCNTX *pt) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
-const BYTE	*src;
+const UINT8	*src;
 	UINT	width;
 	UINT	dat;
 
@@ -150,9 +150,9 @@ const BYTE	*src;
 
 static void putorn(const PUTCNTX *pt) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
-const BYTE	*src;
+const UINT8	*src;
 	UINT	width;
 	UINT	dat;
 
@@ -184,9 +184,9 @@ const BYTE	*src;
 
 static void putand(const PUTCNTX *pt) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
-const BYTE	*src;
+const UINT8	*src;
 	UINT	width;
 	UINT	dat;
 
@@ -218,9 +218,9 @@ const BYTE	*src;
 
 static void putandn(const PUTCNTX *pt) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
-const BYTE	*src;
+const UINT8	*src;
 	UINT	width;
 	UINT	dat;
 
@@ -252,9 +252,9 @@ const BYTE	*src;
 
 static void putxor(const PUTCNTX *pt) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
-const BYTE	*src;
+const UINT8	*src;
 	UINT	width;
 	UINT	dat;
 
@@ -286,9 +286,9 @@ const BYTE	*src;
 
 static void putxorn(const PUTCNTX *pt) {
 
-	BYTE	*baseptr;
+	UINT8	*baseptr;
 	UINT	addr;
-const BYTE	*src;
+const UINT8	*src;
 	UINT	width;
 	UINT	dat;
 
@@ -469,7 +469,7 @@ REG8 lio_gget(GLIO lio) {
 	UINT	datacnt;
 	UINT	mask;
 	GETCNTX	gt;
-	BYTE	pat[84];
+	UINT8	pat[84];
 	UINT	pl;
 
 	lio_updatedraw(lio);

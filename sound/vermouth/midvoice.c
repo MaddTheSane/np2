@@ -814,7 +814,7 @@ static const RESPROC resproc[] = {
 #endif
 };
 
-void voice_setphase(VOICE v, BYTE phase) {
+void voice_setphase(VOICE v, UINT8 phase) {
 
 	int		proc;
 	int		mode;

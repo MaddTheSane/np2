@@ -115,7 +115,7 @@ void debugwriteseg(const char *fname, const descriptor_t *sd,
 												UINT32 addr, UINT32 size) {
 
 	FILEH	fh;
-	BYTE	buf[0x1000];
+	UINT8	buf[0x1000];
 	UINT32	limit;
 
 	limit = sd->u.seg.limit;

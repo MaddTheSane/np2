@@ -13,15 +13,15 @@ enum {
 };
 
 typedef struct {
-	BYTE	timing;
-	BYTE	count;
-	BYTE	renewal;
-	BYTE	gaiji;
-	BYTE	attr;
-	BYTE	curdisp;
-	BYTE	curdisplast;
-	BYTE	blink;
-	BYTE	blinkdisp;
+	UINT8	timing;
+	UINT8	count;
+	UINT8	renewal;
+	UINT8	gaiji;
+	UINT8	attr;
+	UINT8	curdisp;
+	UINT8	curdisplast;
+	UINT8	blink;
+	UINT8	blinkdisp;
 	UINT16	curpos;
 } TRAM_T;
 
@@ -34,7 +34,7 @@ extern	TRAM_T	tramflag;
 
 void maketext_initialize(void);
 void maketext_reset(void);
-BYTE maketext_curblink(void);
+UINT8 maketext_curblink(void);
 void maketext(int text_renewal);
 void maketext40(int text_renewal);
 

@@ -1,8 +1,8 @@
 
 typedef struct {
-	BYTE	port;
-	BYTE	def_en;
-	BYTE	param;
+	UINT8	port;
+	UINT8	def_en;
+	UINT8	param;
 	UINT32	speed;
 	char	mout[MAXPNAMELEN];
 	char	min[MAXPNAMELEN];
@@ -18,20 +18,20 @@ typedef struct {
 	int		winy;
 	UINT	paddingx;
 	UINT	paddingy;
-	BYTE	force400;
-	BYTE	WINSNAP;
-	BYTE	NOWAIT;
-	BYTE	DRAW_SKIP;
+	UINT8	force400;
+	UINT8	WINSNAP;
+	UINT8	NOWAIT;
+	UINT8	DRAW_SKIP;
 
-	BYTE	background;
-	BYTE	DISPCLK;
-	BYTE	KEYBOARD;
-	BYTE	F12COPY;
+	UINT8	background;
+	UINT8	DISPCLK;
+	UINT8	KEYBOARD;
+	UINT8	F12COPY;
 
-	BYTE	MOUSE_SW;
-	BYTE	JOYPAD1;
-	BYTE	JOYPAD2;
-	BYTE	JOY1BTN[4];
+	UINT8	MOUSE_SW;
+	UINT8	JOYPAD1;
+	UINT8	JOYPAD2;
+	UINT8	JOY1BTN[4];
 
 	COMCFG	mpu;
 	COMCFG	com1;
@@ -40,27 +40,27 @@ typedef struct {
 
 	UINT32	clk_color1;
 	UINT32	clk_color2;
-	BYTE	clk_x;
-	BYTE	clk_fnt;
+	UINT8	clk_x;
+	UINT8	clk_fnt;
 
-	BYTE	comfirm;
-	BYTE	shortcut;												// ver0.30
+	UINT8	comfirm;
+	UINT8	shortcut;												// ver0.30
 
-	BYTE	sstp;
+	UINT8	sstp;
 	UINT16	sstpport;												// ver0.30
 
-	BYTE	resume;													// ver0.30
-	BYTE	statsave;
-	BYTE	disablemmx;
-	BYTE	wintype;
-	BYTE	toolwin;
-	BYTE	keydisp;
-	BYTE	I286SAVE;
-	BYTE	hostdrv_write;
-	BYTE	jastsnd;
-	BYTE	useromeo;
-	BYTE	thickframe;
-	BYTE	xrollkey;
+	UINT8	resume;													// ver0.30
+	UINT8	statsave;
+	UINT8	disablemmx;
+	UINT8	wintype;
+	UINT8	toolwin;
+	UINT8	keydisp;
+	UINT8	I286SAVE;
+	UINT8	hostdrv_write;
+	UINT8	jastsnd;
+	UINT8	useromeo;
+	UINT8	thickframe;
+	UINT8	xrollkey;
 } NP2OSCFG;
 
 
@@ -121,7 +121,7 @@ extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
 extern	int			mmxflag;
-extern	BYTE		np2break;
+extern	UINT8		np2break;
 extern	BOOL		winui_en;
 
 extern	char		modulefile[MAX_PATH];

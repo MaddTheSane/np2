@@ -8,7 +8,7 @@
 
 static REG8 bios0x1f_90(void) {
 
-	BYTE	work[256];
+	UINT8	work[256];
 	UINT	srclimit;
 	UINT	srcaddr;
 	UINT	dstlimit;

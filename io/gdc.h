@@ -2,7 +2,7 @@
 #define	GDCCMD_MAX	32
 
 typedef struct {
-	BYTE	para[256];
+	UINT8	para[256];
 	UINT16	fifo[GDCCMD_MAX];
 	UINT16	cnt;
 	UINT8	ptr;

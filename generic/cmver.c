@@ -13,7 +13,7 @@
 #define MIDIOUTS2(a)		((a)[0] + ((a)[1] << 8))
 #define MIDIOUTS3(a)		((a)[0] + ((a)[1] << 8) + ((a)[2] << 16))
 
-static const BYTE EXCV_GMRESET[] = {
+static const UINT8 EXCV_GMRESET[] = {
 			0xf0, 0x7e, 0x7f, 0x09, 0x01, 0xf7};
 
 enum {
@@ -44,10 +44,10 @@ enum {
 };
 
 typedef struct {
-	BYTE	prog;
-	BYTE	press;
+	UINT8	prog;
+	UINT8	press;
 	UINT16	bend;
-	BYTE	ctrl[28];
+	UINT8	ctrl[28];
 } _MIDICH, *MIDICH;
 
 typedef struct {
@@ -55,9 +55,9 @@ typedef struct {
 	UINT		midictrl;
 	UINT		midisyscnt;
 	UINT		mpos;
-	BYTE		midilast;
+	UINT8		midilast;
 	_MIDICH		mch[16];
-	BYTE		buffer[MIDI_BUFFER];
+	UINT8		buffer[MIDI_BUFFER];
 } _CMMIDI, *CMMIDI;
 
 typedef struct {
@@ -65,13 +65,13 @@ typedef struct {
 	UINT	rate;
 } CMVER;
 
-static const BYTE midictrltbl[] = {	0, 1, 5, 7, 10, 11, 64,
+static const UINT8 midictrltbl[] = { 0, 1, 5, 7, 10, 11, 64,
 									65, 66, 67, 84, 91, 93,
 									94,						// for SC-88
 									71, 72, 73, 74};		// for XG
 
 static	CMVER	cmver;
-static	BYTE	midictrlindex[128];
+static	UINT8	midictrlindex[128];
 
 
 // ----
@@ -99,7 +99,7 @@ const SINT32	*ptr;
 
 static void midireset(CMMIDI midi) {
 
-	BYTE	work[4];
+	UINT8	work[4];
 
 	midiout_longmsg(midi->midihdl, EXCV_GMRESET, sizeof(EXCV_GMRESET));
 
@@ -114,7 +114,7 @@ static void midireset(CMMIDI midi) {
 
 static void midisetparam(CMMIDI midi) {
 
-	BYTE	i;
+	UINT8	i;
 	UINT	j;
 	MIDICH	mch;
 
@@ -127,7 +127,7 @@ static void midisetparam(CMMIDI midi) {
 		if (mch->bend != 0xffff) {
 			midiout_shortmsg(midi->midihdl, (mch->bend << 8) + 0xe0+i);
 		}
-		for (j=0; j<sizeof(midictrltbl)/sizeof(BYTE); j++) {
+		for (j=0; j<NELEMENTS(midictrltbl); j++) {
 			if (mch->ctrl[j+1] != 0xff) {
 				midiout_shortmsg(midi->midihdl,
 							MIDIOUTS(0xb0+i, midictrltbl[j], mch->ctrl[j+1]));
@@ -142,14 +142,14 @@ static void midisetparam(CMMIDI midi) {
 
 // ----
 
-static UINT midiread(COMMNG self, BYTE *data) {
+static UINT midiread(COMMNG self, UINT8 *data) {
 
 	(void)self;
 	(void)data;
 	return(0);
 }
 
-static UINT midiwrite(COMMNG self, BYTE data) {
+static UINT midiwrite(COMMNG self, UINT8 data) {
 
 	CMMIDI	midi;
 	MIDICH	mch;
@@ -315,7 +315,7 @@ static UINT midiwrite(COMMNG self, BYTE data) {
 	return(0);
 }
 
-static BYTE midigetstat(COMMNG self) {
+static UINT8 midigetstat(COMMNG self) {
 
 	return(0x00);
 }
@@ -375,8 +375,8 @@ void cmvermouth_initialize(void) {
 	UINT	i;
 
 	ZeroMemory(midictrlindex, sizeof(midictrlindex));
-	for (i=0; i<sizeof(midictrltbl)/sizeof(BYTE); i++) {
-		midictrlindex[midictrltbl[i]] = (BYTE)(i + 1);
+	for (i=0; i<NELEMENTS(midictrltbl); i++) {
+		midictrlindex[midictrltbl[i]] = (UINT8)(i + 1);
 	}
 	midictrlindex[32] = 1;
 }

@@ -11,7 +11,7 @@
 
 void bios0x1c(void) {
 
-	BYTE	buf[6];
+	UINT8	buf[6];
 
 	switch(CPU_AH) {
 		case 0x00:					// get system timer

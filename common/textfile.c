@@ -3,7 +3,7 @@
 #include	"textfile.h"
 
 
-static BOOL getnextstrings(TEXTFILEH fh) {
+static BRESULT getnextstrings(TEXTFILEH fh) {
 
 	UINT	rsize;
 
@@ -23,7 +23,7 @@ static BOOL getnextstrings(TEXTFILEH fh) {
 	return(SUCCESS);
 }
 
-TEXTFILEH textfile_open(const char *filename, UINT buffersize) {
+TEXTFILEH textfile_open(const OEMCHAR *filename, UINT buffersize) {
 
 	FILEH		fh;
 	TEXTFILEH	ret;
@@ -72,12 +72,12 @@ void textfile_close(TEXTFILEH fh) {
 	}
 }
 
-BOOL textfile_read(TEXTFILEH fh, char *buffer, UINT size) {
+BRESULT textfile_read(TEXTFILEH fh, char *buffer, UINT size) {
 
 	char	c = '\0';
 	char	*p;
 	BOOL	crlf;
-	BOOL	ret = FAILURE;
+	BRESULT	ret = FAILURE;
 
 	if ((fh) && (size > 0)) {
 		size--;

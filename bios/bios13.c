@@ -10,11 +10,11 @@
 
 void bios0x13(void) {
 
-	BYTE	stat;
-	BYTE	result;
-	BYTE	*p;
-	BYTE	drv;
-	BYTE	drvbit;
+	UINT8	stat;
+	UINT8	result;
+	UINT8	*p;
+	UINT8	drv;
+	UINT8	drvbit;
 
 //	TRACE_("BIOS", 0x13);
 	iocore_out8(0x08, 0x20);

@@ -220,16 +220,16 @@ const MENUPRM	*prm;
 static const MENUID gdcchip[4] = {DID_GRCGNON, DID_GRCG, DID_GRCG2, DID_EGC};
 
 static const TABLISTS tablist[] = {
-		{str_video,	res_scr1, sizeof(res_scr1)/sizeof(MENUPRM)},
-		{str_chip,	res_scr2, sizeof(res_scr2)/sizeof(MENUPRM)},
-		{str_timing,res_scr3, sizeof(res_scr3)/sizeof(MENUPRM)},
+		{str_video,	res_scr1, NELEMENTS(res_scr1)},
+		{str_chip,	res_scr2, NELEMENTS(res_scr2)},
+		{str_timing,res_scr3, NELEMENTS(res_scr3)},
 };
 
 static void setpage(UINT page) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(tablist)/sizeof(TABLISTS)); i++) {
+	for (i=0; i<NELEMETS(tablist); i++) {
 		menudlg_disppagehidden((MENUID)(i + 1), (i != page));
 	}
 }
@@ -247,9 +247,9 @@ static void dlginit(void) {
 	UINT		i;
 const TABLISTS	*tl;
 
-	menudlg_appends(res_scr0, sizeof(res_scr0)/sizeof(MENUPRM));
+	menudlg_appends(res_scr0, NELEMENTS(res_scr0));
 	tl = tablist;
-	for (i=0; i<(sizeof(tablist)/sizeof(TABLISTS)); i++, tl++) {
+	for (i=0; i<NELEMENTS(tablist); i++, tl++) {
 		menudlg_setpage((MENUID)(i + 1));
 		menudlg_itemappend(DID_TAB, (char *)tl->tab);
 		menudlg_appends(tl->prm, tl->count);

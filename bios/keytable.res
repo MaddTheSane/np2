@@ -1,5 +1,5 @@
 
-static const BYTE keytable[8][0x60] = {
+static const UINT8 keytable[8][0x60] = {
 	{	//												normal
 		//	 ESC,  ‚P,  ‚Q,  ‚R,  ‚S,  ‚T,  ‚U,  ‚V		; 00h
 			0x1b, '1', '2', '3', '4', '5', '6', '7',

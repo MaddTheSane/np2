@@ -45,7 +45,7 @@ BOOL sysmng_workclockrenewal(void) {
 	return(TRUE);
 }
 
-void sysmng_updatecaption(BYTE flag) {
+void sysmng_updatecaption(UINT8 flag) {
 
 	char	work[512];
 

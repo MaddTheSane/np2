@@ -13,7 +13,7 @@
 
 static const HDRVDIR hddroot = {"           ", 0, 0, 0, 0x10, {0}, {0}};
 
-static const BYTE dospathchr[] = {
+static const UINT8 dospathchr[] = {
 			0xfa, 0x23,		// '&%$#"!  /.-,+*)(
 			0xff, 0x03,		// 76543210 ?>=<;:98
 			0xff, 0xff,		// GFEDCBA@ ONMLKJIH

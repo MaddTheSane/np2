@@ -450,7 +450,7 @@ BOOL profile_write(const char *app, const char *key,
 	return(SUCCESS);
 }
 
-static void bitmapset(BYTE *ptr, UINT pos, BOOL set) {
+static void bitmapset(UINT8 *ptr, UINT pos, BOOL set) {
 
 	UINT8	bit;
 
@@ -464,15 +464,15 @@ static void bitmapset(BYTE *ptr, UINT pos, BOOL set) {
 	}
 }
 
-static BOOL bitmapget(const BYTE *ptr, UINT pos) {
+static BOOL bitmapget(const UINT8 *ptr, UINT pos) {
 
 	return((ptr[pos >> 3] >> (pos & 7)) & 1);
 }
 
-static void binset(BYTE *bin, UINT binlen, const char *src) {
+static void binset(UINT8 *bin, UINT binlen, const char *src) {
 
 	UINT	i;
-	BYTE	val;
+	UINT8	val;
 	BOOL	set;
 	char	c;
 
@@ -509,7 +509,7 @@ static void binset(BYTE *bin, UINT binlen, const char *src) {
 	}
 }
 
-static void binget(char *work, int size, const BYTE *bin, UINT binlen) {
+static void binget(char *work, int size, const UINT8 *bin, UINT binlen) {
 
 	UINT	i;
 	char	tmp[8];
@@ -551,12 +551,12 @@ const PFTBL	*pterm;
 					break;
 
 				case PFTYPE_BITMAP:
-					bitmapset((BYTE *)p->value, p->arg,
+					bitmapset((UINT8 *)p->value, p->arg,
 									(!milstr_cmp(work, str_true))?TRUE:FALSE);
 					break;
 
 				case PFTYPE_BIN:
-					binset((BYTE *)p->value, p->arg, work);
+					binset((UINT8 *)p->value, p->arg, work);
 					break;
 
 				case PFTYPE_SINT8:
@@ -627,12 +627,12 @@ const char	*set;
 					break;
 
 				case PFTYPE_BITMAP:
-					set = (bitmapget((BYTE *)p->value, p->arg))?
+					set = (bitmapget((UINT8 *)p->value, p->arg))?
 														str_true:str_false;
 					break;
 
 				case PFTYPE_BIN:
-					binget(work, sizeof(work), (BYTE *)p->value, p->arg);
+					binget(work, sizeof(work), (UINT8 *)p->value, p->arg);
 					break;
 
 				case PFTYPE_SINT8:

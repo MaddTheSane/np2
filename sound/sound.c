@@ -98,7 +98,7 @@ static void streamfilewrite(UINT samples) {
 	CBTBL	*cb;
 	UINT	count;
 	SINT32	buf32[2*512];
-	BYTE	buf[2*2*512];
+	UINT8	buf[2*2*512];
 	UINT	r;
 	UINT	i;
 	SINT32	samp;
@@ -126,8 +126,8 @@ static void streamfilewrite(UINT samples) {
 				samp = -32768;
 			}
 			// little endian‚È‚Ì‚Å satuation_s16‚ÍŽg‚¦‚È‚¢
-			buf[i*2+0] = (BYTE)samp;
-			buf[i*2+1] = (BYTE)(samp >> 8);
+			buf[i*2+0] = (UINT8)samp;
+			buf[i*2+1] = (UINT8)(samp >> 8);
 		}
 		wavewr_write(sndstream.rec, buf, count * 4);
 		samples -= count;
@@ -375,7 +375,7 @@ void sound_pcmunlock(const SINT32 *hdl) {
 BOOL pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate) {
 
 	GETSND	gs;
-	BYTE	tmp[256];
+	UINT8	tmp[256];
 	UINT	size;
 	UINT	r;
 	SINT16	*buf;
@@ -425,7 +425,7 @@ BOOL pcmmix_regfile(PMIXDAT *dat, const char *fname, UINT rate) {
 
 	FILEH	fh;
 	UINT	size;
-	BYTE	*ptr;
+	UINT8	*ptr;
 	BOOL	r;
 
 	r = FAILURE;
@@ -437,7 +437,7 @@ BOOL pcmmix_regfile(PMIXDAT *dat, const char *fname, UINT rate) {
 	if (size == 0) {
 		goto pmrf_err2;
 	}
-	ptr = (BYTE *)_MALLOC(size, fname);
+	ptr = (UINT8 *)_MALLOC(size, fname);
 	if (ptr == NULL) {
 		goto pmrf_err2;
 	}

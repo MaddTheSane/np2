@@ -46,9 +46,9 @@ static void updateshiftkey(void) {
 
 void bios0x09(void) {
 
-	BYTE	key;
+	UINT8	key;
 	UINT	pos;
-	BYTE	bit;
+	UINT8	bit;
 	UINT16	code;
 	UINT32	base;
 	UINT	kbbuftail;

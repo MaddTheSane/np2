@@ -8,7 +8,7 @@ extern "C" {
 extern	UINT32	grph_table[4*256*2];
 
 #define GRPHDATASET(d, a) {							\
-	BYTE dat;										\
+	UINT8 dat;										\
 	UINT32 l32, r32;								\
 	dat = mem[(a) + VRAM_B];						\
 	l32 = grph_table[dat*2 + 0*0x200 + 0];			\
@@ -31,7 +31,7 @@ extern	UINT32	grph_table[4*256*2];
 extern	UINT32	grph_table1[256*2];
 
 #define GRPHDATASET(d, a) {							\
-	BYTE dat;										\
+	UINT8 dat;										\
 	UINT32 l32, r32;								\
 	dat = mem[(a) + VRAM_B];						\
 	l32 = grph_table1[dat*2 + 0];					\
@@ -54,7 +54,7 @@ extern	UINT32	grph_table1[256*2];
 extern	UINT32	grph_table0[16];
 
 #define GRPHDATASET(d, a) {							\
-	BYTE dat;										\
+	UINT8 dat;										\
 	UINT32 l32, r32;								\
 	dat = mem[(a) + VRAM_B];						\
 	l32 = grph_table0[dat >> 4];					\

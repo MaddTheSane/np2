@@ -732,14 +732,14 @@ void midiout_shortmsg(MIDIHDL hdl, UINT32 msg) {
 	}
 }
 
-static void longmsg_gm(MIDIHDL hdl, const BYTE *msg, UINT size) {
+static void longmsg_gm(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	if ((size > 5) && (msg[2] == 0x7f) && (msg[3] == 0x09)) {
 		allresetmidi(hdl);						// GM reset
 	}
 }
 
-static void longmsg_roland(MIDIHDL hdl, const BYTE *msg, UINT size) {
+static void longmsg_roland(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	UINT	addr;
 	UINT	part;
@@ -780,7 +780,7 @@ static void longmsg_roland(MIDIHDL hdl, const BYTE *msg, UINT size) {
 	}
 }
 
-void midiout_longmsg(MIDIHDL hdl, const BYTE *msg, UINT size) {
+void midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	UINT	id;
 

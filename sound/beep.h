@@ -16,8 +16,8 @@ typedef struct {
 	UINT16	hz;
 	int		buz;
 	int		__puchi;
-	BYTE	mode;
-	BYTE	padding[3];
+	UINT8	mode;
+	UINT8	padding[3];
 
 	int		low;
 	int		enable;

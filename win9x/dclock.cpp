@@ -14,7 +14,7 @@
 
 // ------------------------------------------------------------------ font1
 
-static const BYTE clockchr1[11][16] = {
+static const UINT8 clockchr1[11][16] = {
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x78, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0x78,},
 			{0x30, 0x70, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,},
@@ -57,7 +57,7 @@ static void resetfont1(void) {
 // ------------------------------------------------------------------ font2
 
 // 5x9
-static const BYTE clockchr2[11][16] = {
+static const UINT8 clockchr2[11][16] = {
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x00, 0x30, 0x48, 0x88, 0x88, 0x88, 0x88, 0x70,},
 			{0x10, 0x30, 0x10, 0x10, 0x10, 0x20, 0x20, 0x20, 0x20,},
@@ -101,7 +101,7 @@ static void resetfont2(void) {
 // ------------------------------------------------------------------ font3
 
 // 4x9
-static const BYTE clockchr3[11][16] = {
+static const UINT8 clockchr3[11][16] = {
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x60, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x60,},
 			{0x20, 0x60, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,},
@@ -144,7 +144,7 @@ static void resetfont3(void) {
 // ------------------------------------------------------------------ font4
 
 // 5x8
-static const BYTE clockchr4[11][16] = {
+static const UINT8 clockchr4[11][16] = {
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x70, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x70,},
 			{0x00, 0x60, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x70,},
@@ -178,7 +178,7 @@ static void resetfont4(void) {
 
 // ------------------------------------------------------------------ font5
 
-static const BYTE clockchr5[11][16] = {
+static const UINT8 clockchr5[11][16] = {
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x00, 0x70, 0x88, 0x88, 0x88, 0x88, 0x88, 0x70,},
 			{0x00, 0x00, 0x20, 0x60, 0x20, 0x20, 0x20, 0x20, 0x20,},
@@ -221,7 +221,7 @@ static void resetfont5(void) {
 // ------------------------------------------------------------------ font6
 
 // 4x6
-static const BYTE clockchr6[11][16] = {
+static const UINT8 clockchr6[11][16] = {
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x00, 0x00, 0x60, 0x90, 0x90, 0x90, 0x90, 0x60,},
 			{0x00, 0x00, 0x00, 0x20, 0x60, 0x20, 0x20, 0x20, 0x20,},
@@ -262,7 +262,7 @@ static void resetfont6(void) {
 // ------------------------------------------------------------------------
 
 typedef struct {
-const BYTE	*fnt;
+const UINT8	*fnt;
 const DCPOS	*pos;
 	void	(*init)(void);
 } DCLOCKFNT;
@@ -286,7 +286,7 @@ void dclock_init(void) {
 
 void dclock_init8(void) {
 
-	BYTE	i, j;
+	UINT8	i, j;
 	DWORD	work = 0;							// vc++4.2
 
 	for (i=0; i<16; i++) {
@@ -328,7 +328,7 @@ const DCLOCKFNT *fnt;
 			np2oscfg.clk_x = 0;
 		}
 	}
-	if (np2oscfg.clk_fnt >= (sizeof(fonttype) / sizeof(DCLOCKFNT))) {
+	if (np2oscfg.clk_fnt >= NELEMENTS(fonttype)) {
 		np2oscfg.clk_fnt = 0;
 	}
 
@@ -344,8 +344,8 @@ const DCLOCKFNT *fnt;
 void dclock_callback(void) {
 
 	int			i;
-	BYTE		count = 13;
-	BYTE		buf[8];
+	UINT8		count = 13;
+	UINT8		buf[8];
 	_SYSTIME	st;
 
 	if ((scrnmng_isfullscreen()) && (dclock.clk_x)) {
@@ -386,7 +386,7 @@ BOOL dclock_disp(void) {
 
 
 #if 0
-LABEL void __fastcall dclock_cntdown(BYTE value) {
+LABEL void __fastcall dclock_cntdown(UINT8 value) {
 
 	__asm {
 				cmp		np2oscfg.clk_x, 0

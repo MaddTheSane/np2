@@ -8,7 +8,7 @@
 
 
 #ifndef FONTMEMORYBIND
-	BYTE	__font[0x84000];
+	UINT8	__font[0x84000];
 #endif
 
 static const char fonttmpname[] = "font.tmp";
@@ -16,8 +16,8 @@ static const char fonttmpname[] = "font.tmp";
 
 void font_initialize(void) {
 
-	BYTE	*p;
-	BYTE	*q;
+	UINT8	*p;
+	UINT8	*q;
 	UINT	i;
 	UINT	j;
 	UINT32	dbit;
@@ -43,7 +43,7 @@ void font_initialize(void) {
 	}
 }
 
-static BYTE fonttypecheck(const char *fname) {
+static UINT8 fonttypecheck(const char *fname) {
 
 const char	*p;
 
@@ -75,15 +75,15 @@ const char	*p;
 	return(FONTTYPE_NONE);
 }
 
-BYTE font_load(const char *filename, BOOL force) {
+UINT8 font_load(const char *filename, BOOL force) {
 
 	UINT	i;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	UINT	j;
 	char	fname[MAX_PATH];
-	BYTE	type;
-	BYTE	loading;
+	UINT8	type;
+	UINT8	loading;
 
 	if (filename) {
 		file_cpyname(fname, filename, sizeof(fname));

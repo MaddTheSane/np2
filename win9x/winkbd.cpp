@@ -144,7 +144,7 @@ static const UINT8 f12keys[] = {
 
 void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
-	BYTE	data;
+	UINT8	data;
 
 	data = key106[wParam & 0xff];
 	if (data != NC) {
@@ -171,7 +171,7 @@ void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
 void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 
-	BYTE	data;
+	UINT8	data;
 
 	data = key106[wParam & 0xff];
 	if (data != NC) {
@@ -186,7 +186,7 @@ void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 			keystat_senddata(0x70 | 0x80);				// PC/AT only
 			data = key106ext[wParam & 0xff];
 		}
-		keystat_senddata((BYTE)(data | 0x80));
+		keystat_senddata((UINT8)(data | 0x80));
 	}
 	else {												// ver0.28
 		if ((np2oscfg.KEYBOARD != KEY_PC98) && (wParam == 0x0c)) {
@@ -213,7 +213,7 @@ void winkbd_setf12(UINT f12key) {
 	UINT8	key;
 
 	f12key--;
-	if (f12key < (sizeof(f12keys)/sizeof(UINT8))) {
+	if (f12key < NELEMENTS(f12keys)) {
 		key = f12keys[f12key];
 	}
 	else {
@@ -226,7 +226,7 @@ void winkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(UINT8)); i++) {
+	for (i=0; i<NELEMENTS(f12keys); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }

@@ -38,10 +38,10 @@ typedef struct {
 	int		tremolo_step;
 	int		vibrate_sweep;
 	int		vibrate_rate;
-	BYTE	tremolo_depth;
-	BYTE	vibrate_depth;
-	BYTE	mode;
-	BYTE	panpot;
+	UINT8	tremolo_depth;
+	UINT8	vibrate_depth;
+	UINT8	mode;
+	UINT8	panpot;
 } _INSTLAYER, *INSTLAYER;
 
 typedef struct {

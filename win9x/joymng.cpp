@@ -14,7 +14,7 @@ enum {
 };
 
 static	REG8	joyflag = 0xff;
-static	BYTE	joypad1btn[4];
+static	UINT8	joypad1btn[4];
 
 
 void joymng_initialize(void) {

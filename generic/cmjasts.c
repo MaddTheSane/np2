@@ -22,14 +22,14 @@ typedef struct {
 } _CMJAST, *CMJAST;
 
 
-static UINT jsread(COMMNG self, BYTE *data) {
+static UINT jsread(COMMNG self, UINT8 *data) {
 
 	(void)self;
 	(void)data;
 	return(0);
 }
 
-static UINT jswrite(COMMNG self, BYTE data) {
+static UINT jswrite(COMMNG self, UINT8 data) {
 
 	CMJAST	js;
 	SINT32	pcm;
@@ -55,7 +55,7 @@ static UINT jswrite(COMMNG self, BYTE data) {
 	return(1);
 }
 
-static BYTE jsgetstat(COMMNG self) {
+static UINT8 jsgetstat(COMMNG self) {
 
 	(void)self;
 	return(0);

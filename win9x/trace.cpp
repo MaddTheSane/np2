@@ -7,7 +7,7 @@
 
 #ifdef TRACE
 
-#define FILEBUFSIZE			(1 << 20)
+// #define FILEBUFSIZE			(1 << 20)
 // #define FILELASTBUFONLY
 
 #ifdef STRICT
@@ -24,7 +24,7 @@
 #define	VIEW_SIZE		12
 
 typedef struct {
-	BYTE	en;
+	UINT8	en;
 	FILEH	fh;
 	HWND	hwnd;
 } TRACEWIN;

@@ -7,7 +7,7 @@ extern "C" {
 
 extern const UINT32 cmserial_speed[10];
 
-COMMNG cmserial_create(UINT port, BYTE param, UINT32 speed);
+COMMNG cmserial_create(UINT port, UINT8 param, UINT32 speed);
 
 #ifdef __cplusplus
 }

@@ -37,7 +37,7 @@ const SASIHDD	*sasi;
 	UINT		i;
 
 	sasi = sasihdd;
-	for (i=0; i<sizeof(sasihdd)/sizeof(SASIHDD); i++, sasi++) {
+	for (i=0; i<NELEMENTS(sasihdd); i++, sasi++) {
 		if ((sxsi->size == 256) &&
 			(sxsi->sectors == sasi->sectors) &&
 			(sxsi->surfaces == sasi->surfaces) &&
@@ -56,7 +56,7 @@ void sxsi_initialize(void) {
 	UINT	i;
 
 	ZeroMemory(sxsi_dev, sizeof(sxsi_dev));
-	for (i=0; i<(sizeof(sxsi_dev)/sizeof(_SXSIDEV)); i++) {
+	for (i=0; i<NELEMENTS(sxsi_dev); i++) {
 		sxsi_dev[i].fh = (long)FILEH_INVALID;
 	}
 }
@@ -237,7 +237,7 @@ void sxsi_flash(void) {
 	SXSIDEV	sxsiterm;
 
 	sxsi = sxsi_dev;
-	sxsiterm = sxsi + (sizeof(sxsi_dev)/sizeof(_SXSIDEV));
+	sxsiterm = sxsi + NELEMENTS(sxsi_dev);
 	while(sxsi < sxsiterm) {
 		if ((FILEH)sxsi->fh != FILEH_INVALID) {
 			file_close((FILEH)sxsi->fh);
@@ -253,7 +253,7 @@ void sxsi_trash(void) {
 	SXSIDEV	sxsiterm;
 
 	sxsi = sxsi_dev;
-	sxsiterm = sxsi + (sizeof(sxsi_dev)/sizeof(_SXSIDEV));
+	sxsiterm = sxsi + NELEMENTS(sxsi_dev);
 	while(sxsi < sxsiterm) {
 		if ((FILEH)sxsi->fh != FILEH_INVALID) {
 			file_close((FILEH)sxsi->fh);
@@ -335,7 +335,7 @@ BOOL sxsi_iside(void) {
 	return(FALSE);
 }
 
-REG8 sxsi_read(REG8 drv, long pos, BYTE *buf, UINT size) {
+REG8 sxsi_read(REG8 drv, long pos, UINT8 *buf, UINT size) {
 
 const _SXSIDEV	*sxsi;
 	long		r;
@@ -365,7 +365,7 @@ const _SXSIDEV	*sxsi;
 	return(0x00);
 }
 
-REG8 sxsi_write(REG8 drv, long pos, const BYTE *buf, UINT size) {
+REG8 sxsi_write(REG8 drv, long pos, const UINT8 *buf, UINT size) {
 
 const _SXSIDEV	*sxsi;
 	long		r;
@@ -400,7 +400,7 @@ REG8 sxsi_format(REG8 drv, long pos) {
 const _SXSIDEV	*sxsi;
 	long		r;
 	UINT16		i;
-	BYTE		work[256];
+	UINT8		work[256];
 	UINT		size;
 	UINT		wsize;
 

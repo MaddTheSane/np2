@@ -16,10 +16,10 @@
 #define	BMPDATASIZE		(BMPLINESIZE * BMPHEIGHT)
 
 
-static void pc98ankcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void pc98ankcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		y;
-const BYTE	*p;
+const UINT8	*p;
 	int		ank;
 
 	for (ank=from; ank<to; ank++) {
@@ -33,11 +33,11 @@ const BYTE	*p;
 	}
 }
 
-static void pc98knjcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void pc98knjcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		i, j, k;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 
 	for (i=from; i<to; i++) {
 		p = src + BMPDATASIZE + (i << 1) - (FONTYSIZE * BMPLINESIZE);
@@ -53,12 +53,12 @@ const BYTE	*p;
 	}
 }
 
-BYTE fontpc98_read(const char *filename, BYTE loading) {
+UINT8 fontpc98_read(const char *filename, UINT8 loading) {
 
 	FILEH	fh;
 	BMPFILE	bf;
 	BMPINFO	bi;
-	BYTE	*bmpdata;
+	UINT8	*bmpdata;
 	BMPDATA	bd;
 	long	fptr;
 
@@ -93,7 +93,7 @@ BYTE fontpc98_read(const char *filename, BYTE loading) {
 	}
 
 	// メモリアロケート
-	bmpdata = (BYTE *)_MALLOC(BMPDATASIZE, "pc98font");
+	bmpdata = (UINT8 *)_MALLOC(BMPDATASIZE, "pc98font");
 	if (bmpdata == NULL) {
 		goto fr98_err2;
 	}

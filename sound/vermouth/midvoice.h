@@ -41,13 +41,13 @@ typedef struct {
 	INSTRUMENT	*rhythm;
 #endif
 
-	BYTE		bank;
-	BYTE		program;
-	BYTE		volume;
-	BYTE		expression;
-	BYTE		panpot;
-	BYTE		rpn_l;
-	BYTE		rpn_m;
+	UINT8		bank;
+	UINT8		program;
+	UINT8		volume;
+	UINT8		expression;
+	UINT8		panpot;
+	UINT8		rpn_l;
+	UINT8		rpn_m;
 } _CHANNEL, *CHANNEL;
 
 typedef struct {
@@ -67,10 +67,10 @@ typedef struct {
 } VOICEVIB;
 
 struct _midivoice {
-	BYTE		phase;
-	BYTE		flag;
-	BYTE		note;
-	BYTE		velocity;
+	UINT8		phase;
+	UINT8		flag;
+	UINT8		note;
+	UINT8		velocity;
 
 	CHANNEL		channel;
 	int			frequency;
@@ -106,7 +106,7 @@ struct _midivoice {
 int envlope_setphase(VOICE v, int phase);
 void envelope_updates(VOICE v);
 
-void voice_setphase(VOICE v, BYTE phase);
+void voice_setphase(VOICE v, UINT8 phase);
 void voice_setmix(VOICE v);
 
 

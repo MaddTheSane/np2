@@ -70,9 +70,9 @@ typedef struct {
 	HWND			hwnd;
 	WINLOCEX		wlex;
 	HBITMAP			hbmp;
-	BYTE			fddaccess[2];
-	BYTE			hddaccess;
-	BYTE			_padding;
+	UINT8			fddaccess[2];
+	UINT8			hddaccess;
+	UINT8			_padding;
 	int				winflg;
 	int				wingx;
 	int				wingy;
@@ -103,10 +103,10 @@ static	TOOLWIN		toolwin;
 
 typedef struct {
 	WORD	idc;
-	BYTE	*counter;
+	UINT8	*counter;
 } DISKACC;
 
-static const BYTE fddlist[FDDLIST_DRV] = {
+static const UINT8 fddlist[FDDLIST_DRV] = {
 					IDC_TOOLFDD1LIST, IDC_TOOLFDD2LIST};
 
 static const DISKACC diskacc[3] = {
@@ -129,7 +129,7 @@ static HBITMAP skinload(const char *path) {
 	toolskin.color1 = 0x600000;
 	toolskin.color2 = 0xff0000;
 	if (path) {
-		ini_read(path, skintitle, skinini1, sizeof(skinini1)/sizeof(INITBL));
+		ini_read(path, skintitle, skinini1, NELEMENTS(skinini1));
 	}
 	if (toolskin.main[0]) {
 		ZeroMemory(subitem, sizeof(defsubitem));
@@ -142,7 +142,7 @@ static HBITMAP skinload(const char *path) {
 		CopyMemory(subitem, defsubitem, sizeof(defsubitem));
 	}
 	if (path) {
-		ini_read(path, skintitle, skinini2, sizeof(skinini2)/sizeof(INITBL));
+		ini_read(path, skintitle, skinini2, NELEMENTS(skinini2));
 	}
 	if (toolskin.main[0]) {
 		milstr_ncpy(fname, path, sizeof(fname));
@@ -300,7 +300,7 @@ static void remakefddlist(HWND hwnd, TOOLFDD *fdd) {
 	setlist(hwnd, fdd, sel);
 }
 
-static void accdraw(HWND hWnd, BYTE count) {
+static void accdraw(HWND hWnd, UINT8 count) {
 
 	HDC			hdc;
 	PAINTSTRUCT	ps;
@@ -940,7 +940,7 @@ HWND toolwin_gethwnd(void) {
 	return(toolwin.hwnd);
 }
 
-void toolwin_setfdd(BYTE drv, const char *name) {
+void toolwin_setfdd(UINT8 drv, const char *name) {
 
 	TOOLFDD	*fdd;
 	char	*q;
@@ -983,7 +983,7 @@ void toolwin_setfdd(BYTE drv, const char *name) {
 	}
 }
 
-static void setdiskacc(UINT num, BYTE count) {
+static void setdiskacc(UINT num, UINT8 count) {
 
 const DISKACC	*acc;
 	HWND		sub;
@@ -991,7 +991,7 @@ const DISKACC	*acc;
 	if (toolwin.hwnd == NULL) {
 		return;
 	}
-	if (num < (sizeof(diskacc)/sizeof(DISKACC))) {
+	if (num < NELEMENTS(diskacc)) {
 		acc = diskacc + num;
 		sub = NULL;
 		if (*(acc->counter) == 0) {
@@ -1004,23 +1004,23 @@ const DISKACC	*acc;
 	}
 }
 
-void toolwin_fddaccess(BYTE drv) {
+void toolwin_fddaccess(UINT8 drv) {
 
 	if (drv < 2) {
 		setdiskacc(drv, 20);
 	}
 }
 
-void toolwin_hddaccess(BYTE drv) {
+void toolwin_hddaccess(UINT8 drv) {
 
 	setdiskacc(2, 10);
 }
 
-void toolwin_draw(BYTE frame) {
+void toolwin_draw(UINT8 frame) {
 
 const DISKACC	*acc;
 const DISKACC	*accterm;
-	BYTE		counter;
+	UINT8		counter;
 	HWND		sub;
 
 	if (toolwin.hwnd == NULL) {
@@ -1030,7 +1030,7 @@ const DISKACC	*accterm;
 		frame = 1;
 	}
 	acc = diskacc;
-	accterm = acc + (sizeof(diskacc)/sizeof(DISKACC));
+	accterm = acc + NELEMENTS(diskacc);
 	while(acc < accterm) {
 		counter = *acc->counter;
 		if (counter) {
@@ -1089,7 +1089,7 @@ void toolwin_readini(void) {
 	np2tool.posy = CW_USEDEFAULT;
 	np2tool.type = 1;
 	initgetfile(path, sizeof(path));
-	ini_read(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
+	ini_read(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 
 void toolwin_writeini(void) {
@@ -1097,6 +1097,6 @@ void toolwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
+	ini_write(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 

@@ -27,8 +27,8 @@ typedef struct {
 	int		func;
 	UINT	remain;
 	UINT	stack;
-	BYTE	*inptr;
-	BYTE	*outptr;
+	UINT8	*inptr;
+	UINT8	*outptr;
 	EGCWORD	mask2;
 	EGCWORD	srcmask;
 	UINT8	srcbit;
@@ -37,7 +37,7 @@ typedef struct {
 	UINT8	sft8bitr;
 
 	UINT	padding_b[4];
-	BYTE	buf[4096/8 + 4*4];
+	UINT8	buf[4096/8 + 4*4];
 	UINT	padding_a[4];
 } _EGC, *EGC;
 

@@ -99,10 +99,10 @@ typedef struct {
 	int		bufcnt;
 
 	UINT8	cmd;
-	BYTE	cmds[15];
-	BYTE	data[16];
+	UINT8	cmds[15];
+	UINT8	data[16];
 
-	BYTE	buf[0x8000];
+	UINT8	buf[0x8000];
 } _FDC, *FDC;
 
 

@@ -7,11 +7,11 @@
 
 #define	V98FILESIZE		0x46800
 
-static void v98knjcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void v98knjcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		i, j, k;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 
 	for (i=from; i<to; i++) {
 		p = src + 0x1800 + (0x60 * 32 * (i - 1));
@@ -27,10 +27,10 @@ const BYTE	*p;
 	}
 }
 
-BYTE fontv98_read(const char *filename, BYTE loading) {
+UINT8 fontv98_read(const char *filename, UINT8 loading) {
 
 	FILEH	fh;
-	BYTE	*v98fnt;
+	UINT8	*v98fnt;
 
 	if (!(loading & FONTLOAD_ALL)) {
 		goto frv_err1;
@@ -42,7 +42,7 @@ BYTE fontv98_read(const char *filename, BYTE loading) {
 		goto frv_err1;
 	}
 
-	v98fnt = (BYTE *)_MALLOC(V98FILESIZE, "v98font");
+	v98fnt = (UINT8 *)_MALLOC(V98FILESIZE, "v98font");
 	if (v98fnt == NULL) {
 		goto frv_err2;
 	}

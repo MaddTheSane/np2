@@ -57,7 +57,7 @@ I286_SFT _shl_r8_1(UINT8 *p) {
 	*p = (UINT8)dst;
 }
 
-I286_SFT _shr_r8_1(BYTE *p) {
+I286_SFT _shr_r8_1(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;
@@ -67,7 +67,7 @@ I286_SFT _shr_r8_1(BYTE *p) {
 	*p = (UINT8)dst;
 }
 
-I286_SFT _sar_r8_1(BYTE *p) {
+I286_SFT _sar_r8_1(UINT8 *p) {
 
 	UINT	src;
 	UINT	dst;

@@ -7,21 +7,21 @@
 
 // ---- non connect
 
-static UINT ncread(COMMNG self, BYTE *data) {
+static UINT ncread(COMMNG self, UINT8 *data) {
 
 	(void)self;
 	(void)data;
 	return(0);
 }
 
-static UINT ncwrite(COMMNG self, BYTE data) {
+static UINT ncwrite(COMMNG self, UINT8 data) {
 
 	(void)self;
 	(void)data;
 	return(0);
 }
 
-static BYTE ncgetstat(COMMNG self) {
+static UINT8 ncgetstat(COMMNG self) {
 
 	(void)self;
 	return(0xf0);

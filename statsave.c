@@ -186,7 +186,7 @@ sfo_err1:
 static int statflag_closesection(SFFILEH sffh) {
 
 	UINT	leng;
-	BYTE	zero[16];
+	UINT8	zero[16];
 
 	if (sffh == NULL) {
 		goto sfcs_err1;
@@ -547,7 +547,7 @@ static int nevent_write(STFLAGH sfh, int num) {
 	UINT		i;
 
 	ZeroMemory(&nit, sizeof(nit));
-	for (i=0; i<sizeof(evtnum)/sizeof(ENUMTBL); i++) {
+	for (i=0; i<NELEMENTS(evtnum); i++) {
 		if (evtnum[i].num == num) {
 			nit.id = evtnum[i].id;
 			break;
@@ -591,12 +591,12 @@ static int nevent_read(STFLAGH sfh, UINT *tbl, UINT *pos) {
 
 	ret = statflag_read(sfh, &nit, sizeof(nit));
 
-	for (i=0; i<sizeof(evtnum)/sizeof(ENUMTBL); i++) {
+	for (i=0; i<NELEMENTS(evtnum); i++) {
 		if (nit.id == evtnum[i].id) {
 			break;
 		}
 	}
-	if (i < (sizeof(evtnum)/sizeof(ENUMTBL))) {
+	if (i < NELEMENTS(evtnum)) {
 		num = evtnum[i].num;
 		nevent.item[num].clock = nit.clock;
 		nevent.item[num].flag = nit.flag;
@@ -671,7 +671,7 @@ static int flagsave_gij(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 	int		i;
 	int		j;
-const BYTE	*fnt;
+const UINT8	*fnt;
 
 	ret = STATFLAG_SUCCESS;
 	for (i=0; i<2; i++) {
@@ -690,7 +690,7 @@ static int flagload_gij(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 	int		i;
 	int		j;
-	BYTE	*fnt;
+	UINT8	*fnt;
 
 	ret = 0;
 	for (i=0; i<2; i++) {
@@ -725,8 +725,8 @@ enum {
 };
 
 typedef struct {
-	BYTE	keyreg[OPNCH_MAX];
-	BYTE	extop[4];
+	UINT8	keyreg[OPNCH_MAX];
+	UINT8	extop[4];
 } OPNKEY;
 
 static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
@@ -961,7 +961,7 @@ static int disksave(STFLAGH sfh, const char *path, int readonly) {
 static int flagsave_disk(STFLAGH sfh, const SFENTRY *tbl) {
 
 	int		ret;
-	BYTE	i;
+	UINT8	i;
 
 	sxsi_flash();
 	ret = STATFLAG_SUCCESS;
@@ -1187,7 +1187,7 @@ const SFENTRY	*tblterm;
 
 	ret = STATFLAG_SUCCESS;
 	tbl = np2tbl;
-	tblterm = tbl + (sizeof(np2tbl)/sizeof(SFENTRY));
+	tblterm = tbl + NELEMENTS(np2tbl);
 	while(tbl < tblterm) {
 		ret |= statflag_createsection(sffh, tbl);
 		switch(tbl->type) {
@@ -1274,7 +1274,7 @@ const SFENTRY	*tblterm;
 	while((!done) && (ret != STATFLAG_FAILURE)) {
 		ret |= statflag_readsection(sffh);
 		tbl = np2tbl;
-		tblterm = tbl + (sizeof(np2tbl)/sizeof(SFENTRY));
+		tblterm = tbl + NELEMENTS(np2tbl);
 		while(tbl < tblterm) {
 			if (!memcmp(sffh->sfh.hdr.index, tbl->index, 10)) {
 				break;
@@ -1374,7 +1374,7 @@ const SFENTRY	*tblterm;
 	while((!done) && (ret != STATFLAG_FAILURE)) {
 		ret |= statflag_readsection(sffh);
 		tbl = np2tbl + 1;
-		tblterm = np2tbl + (sizeof(np2tbl)/sizeof(SFENTRY));
+		tblterm = np2tbl + NELEMENTS(np2tbl);
 		while(tbl < tblterm) {
 			if (!memcmp(sffh->sfh.hdr.index, tbl->index, 10)) {
 				break;

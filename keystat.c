@@ -88,7 +88,7 @@ const KEYNAME	*n;
 const KEYNAME	*nterm;
 
 	n = keyname;
-	nterm = keyname + (sizeof(keyname) / sizeof(KEYNAME));
+	nterm = keyname + NELEMENTS(keyname);
 	while(n < nterm) {
 		if (!milstr_cmp(n->str, str)) {
 			return(n->num);

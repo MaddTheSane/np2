@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 void tms3631_initialize(UINT rate);
-void tms3631_setvol(const BYTE *vol);
+void tms3631_setvol(const UINT8 *vol);
 
 void tms3631_reset(TMS3631 tms);
 void tms3631_setkey(TMS3631 tms, REG8 ch, REG8 key);

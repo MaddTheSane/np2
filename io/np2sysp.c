@@ -199,7 +199,7 @@ const SYSPCMD	*cmdterm;
 
 	np2sysp.substr[np2sysp.strpos] = (char)dat;
 	cmd = np2spcmd;
-	cmdterm = cmd + (sizeof(np2spcmd) / sizeof(SYSPCMD));
+	cmdterm = cmd + NELEMENTS(np2spcmd);
 	while(cmd < cmdterm) {
 		if (!np2syspcmp(cmd->key)) {
 			cmd->func(cmd->arg1, cmd->arg2);

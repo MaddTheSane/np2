@@ -9,24 +9,24 @@
 
 
 typedef struct {
-	BYTE	GBON_PTN;
-	BYTE	GBBCC;
-	BYTE	GBDOTU;
-	BYTE	GBDSP;
-	BYTE	GBCPC[4];
-	BYTE	GBSX1[2];
-	BYTE	GBSY1[2];
-	BYTE	GBLNG1[2];
-	BYTE	GBWDPA[2];
-	BYTE	GBRBUF[2][3];
-	BYTE	GBSX2[2];
-	BYTE	GBSY2[2];
-	BYTE	GBMDOT[2];
-	BYTE	GBCIR[2];
-	BYTE	GBLNG2[2];
-	BYTE	GBMDOTI[8];
-	BYTE	GBDTYP;
-	BYTE	GBFILL;
+	UINT8	GBON_PTN;
+	UINT8	GBBCC;
+	UINT8	GBDOTU;
+	UINT8	GBDSP;
+	UINT8	GBCPC[4];
+	UINT8	GBSX1[2];
+	UINT8	GBSY1[2];
+	UINT8	GBLNG1[2];
+	UINT8	GBWDPA[2];
+	UINT8	GBRBUF[2][3];
+	UINT8	GBSX2[2];
+	UINT8	GBSY2[2];
+	UINT8	GBMDOT[2];
+	UINT8	GBCIR[2];
+	UINT8	GBLNG2[2];
+	UINT8	GBMDOTI[8];
+	UINT8	GBDTYP;
+	UINT8	GBFILL;
 } UCWTBL;
 
 typedef struct {
@@ -143,7 +143,7 @@ void bios0x18_0c(void) {
 
 static void bios0x18_0f(UINT seg, UINT off, REG8 num, REG8 cnt) {
 
-	BYTE	*p;
+	UINT8	*p;
 	UINT	raster;
 	UINT	t;
 
@@ -207,8 +207,8 @@ void bios0x18_10(REG8 curdel) {
 REG16 bios0x18_14(REG16 seg, REG16 off, REG16 code) {
 
 	UINT16	size;
-const BYTE	*p;
-	BYTE	buf[32];
+const UINT8	*p;
+	UINT8	buf[32];
 	UINT	i;
 
 	switch(code >> 8) {
@@ -255,8 +255,8 @@ const BYTE	*p;
 
 static void bios0x18_1a(REG16 seg, REG16 off, REG16 code) {
 
-	BYTE	*p;
-	BYTE	buf[32];
+	UINT8	*p;
+	UINT8	buf[32];
 	UINT	i;
 
 	if (((code >> 8) & 0x7e) == 0x76) {
@@ -541,9 +541,9 @@ void bios0x18_42(REG8 mode) {
 
 static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
 
-	gdc.s.para[GDC_CSRW + 0] = (BYTE)csrw;
-	gdc.s.para[GDC_CSRW + 1] = (BYTE)(csrw >> 8);
-	gdc.s.para[GDC_CSRW + 2] = (BYTE)(csrw >> 16);
+	gdc.s.para[GDC_CSRW + 0] = (UINT8)csrw;
+	gdc.s.para[GDC_CSRW + 1] = (UINT8)(csrw >> 8);
+	gdc.s.para[GDC_CSRW + 2] = (UINT8)(csrw >> 16);
 
 	gdc.s.para[GDC_VECTW] = vect->ope;
 	gdc_vectreset(&gdc.s);
@@ -673,7 +673,7 @@ static void bios0x18_49(void) {
 
 	UCWTBL		ucw;
 	UINT		i;
-	BYTE		pat[8];
+	UINT8		pat[8];
 	UINT16		tmp;
 	GDCVECT		vect;
 	UINT16		GBSX1;

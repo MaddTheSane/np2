@@ -37,7 +37,7 @@ void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 static	LPDIRECTSOUND		pDSound;
 static	LPDIRECTSOUNDBUFFER	pDSData3;
 static	UINT				dsstreambytes;
-static	BYTE				dsstreamevent;
+static	UINT8				dsstreamevent;
 static	LPDIRECTSOUNDBUFFER pDSwave3[SOUND_MAXPCM];
 static	UINT				mute;
 static	void				(PARTSCALL *fnmix)(SINT16 *dst,
@@ -88,7 +88,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	}
 
 	// キーボード表示のディレイ設定
-//	keydispr_delayinit((BYTE)((ms * 10 + 563) / 564));
+//	keydispr_delayinit((UINT8)((ms * 10 + 563) / 564));
 
 	samples = (rate * ms) / 2000;
 	samples = (samples + 3) & (~3);
@@ -118,7 +118,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	vermouth_module = midimod_create(rate);
 	midimod_loadall(vermouth_module);
 #endif
-	dsstreamevent = (BYTE)-1;
+	dsstreamevent = (UINT8)-1;
 	soundmng_reset();
 	return(samples);
 
@@ -146,7 +146,7 @@ void soundmng_reset(void) {
 		}
 		pDSData3->Unlock(blockptr1, blocksize1, blockptr2, blocksize2);
 		pDSData3->SetCurrentPosition(0);
-		dsstreamevent = (BYTE)-1;
+		dsstreamevent = (UINT8)-1;
 	}
 }
 

@@ -6,11 +6,11 @@
 #include	"fontdata.h"
 
 
-static void x1knjcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void x1knjcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		i, j, k;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	UINT	sjis;
 
 	for (i=from; i<to; i++) {
@@ -40,13 +40,13 @@ const BYTE	*p;
 	}
 }
 
-BYTE fontx1_read(const char *filename, BYTE loading) {
+UINT8 fontx1_read(const char *filename, UINT8 loading) {
 
 	FILEH	fh;
-	BYTE	*work;
+	UINT8	*work;
 	char	fname[MAX_PATH];
 
-	work = (BYTE *)_MALLOC(306176, "x1font");
+	work = (UINT8 *)_MALLOC(306176, "x1font");
 	if (work == NULL) {
 		goto frx1_err1;
 	}

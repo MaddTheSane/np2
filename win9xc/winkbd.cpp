@@ -6,7 +6,7 @@
 
 #define		NC		0xff
 
-static const BYTE key106[256] = {
+static const UINT8 key106[256] = {
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 				  NC,  NC,  NC,0x60,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08
@@ -72,7 +72,7 @@ static const BYTE key106[256] = {
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
-static const BYTE key106ext[256] = {
+static const UINT8 key106ext[256] = {
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08
@@ -138,16 +138,16 @@ static const BYTE key106ext[256] = {
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
-static const BYTE f12keys[] = {
+static const UINT8 f12keys[] = {
 			0x61, 0x60, 0x4d, 0x4f};
 
 
-static BYTE getf12key(void) {
+static UINT8 getf12key(void) {
 
 	UINT	key;
 
 	key = np2oscfg.F12COPY - 1;
-	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
+	if (key < NELEMENTS(f12keys)) {
 		return(f12keys[key]);
 	}
 	else {
@@ -157,7 +157,7 @@ static BYTE getf12key(void) {
 
 void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
-	BYTE	data;
+	UINT8	data;
 
 	if (wParam != VK_F12) {
 		data = key106[wParam & 0xff];
@@ -189,7 +189,7 @@ void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
 void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 
-	BYTE	data;
+	UINT8	data;
 
 	if (wParam != VK_F12) {
 		data = key106[wParam & 0xff];
@@ -209,7 +209,7 @@ void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 			keystat_senddata(0x70 | 0x80);				// PC/AT only
 			data = key106ext[wParam & 0xff];
 		}
-		keystat_senddata((BYTE)(data | 0x80));
+		keystat_senddata((UINT8)(data | 0x80));
 	}
 	else {												// ver0.28
 		if ((np2oscfg.KEYBOARD != KEY_PC98) && (wParam == 0x0c)) {
@@ -223,7 +223,7 @@ void winkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
+	for (i=0; i<NELEMENTS(f12keys); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }

@@ -417,7 +417,7 @@ const GDCCLK	*clk;
 
 void gdc_restorekacmode(void) {
 
-	BYTE	bit;
+	UINT8	bit;
 
 	bit = (((!np2cfg.uPD72020) && (gdc.mode1 & 0x20))?0x00:0xff);
 	if (gdc.bitac != bit) {

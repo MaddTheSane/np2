@@ -15,8 +15,8 @@ static void SOUNDCALL pcm8m(CS4231 cs, SINT32 *pcm, UINT count) {
 	UINT32	pos12;
 	SINT32	fract;
 	UINT	samppos;
-const BYTE	*ptr1;
-const BYTE	*ptr2;
+const UINT8	*ptr1;
+const UINT8	*ptr2;
 	SINT32	samp1;
 	SINT32	samp2;
 
@@ -56,8 +56,8 @@ static void SOUNDCALL pcm8s(CS4231 cs, SINT32 *pcm, UINT count) {
 	UINT32	pos12;
 	SINT32	fract;
 	UINT	samppos;
-const BYTE	*ptr1;
-const BYTE	*ptr2;
+const UINT8	*ptr1;
+const UINT8	*ptr2;
 	SINT32	samp1;
 	SINT32	samp2;
 
@@ -100,8 +100,8 @@ static void SOUNDCALL pcm16m(CS4231 cs, SINT32 *pcm, UINT count) {
 	UINT32	pos12;
 	SINT32	fract;
 	UINT	samppos;
-const BYTE	*ptr1;
-const BYTE	*ptr2;
+const UINT8	*ptr1;
+const UINT8	*ptr2;
 	SINT32	samp1;
 	SINT32	samp2;
 
@@ -141,8 +141,8 @@ static void SOUNDCALL pcm16s(CS4231 cs, SINT32 *pcm, UINT count) {
 	UINT32	pos12;
 	SINT32	fract;
 	UINT	samppos;
-const BYTE	*ptr1;
-const BYTE	*ptr2;
+const UINT8	*ptr1;
+const UINT8	*ptr2;
 	SINT32	samp1;
 	SINT32	samp2;
 

@@ -45,10 +45,10 @@ typedef struct {
 
 // ---- convert sub
 
-typedef void (*FNCNV)(RSZHDL hdl, BYTE *dst, const BYTE *src);
+typedef void (*FNCNV)(RSZHDL hdl, UINT8 *dst, const UINT8 *src);
 
 #if defined(RESIZE_FASTCOPY) || defined(RESIZE_BILINEAR)
-static void cc16by24(RSZHDL hdl, BYTE *dst, const BYTE *src) {
+static void cc16by24(RSZHDL hdl, UINT8 *dst, const UINT8 *src) {
 
 	UINT	width;
 	UINT	col;
@@ -64,7 +64,7 @@ static void cc16by24(RSZHDL hdl, BYTE *dst, const BYTE *src) {
 	} while(--width);
 }
 
-static void cc24by16(RSZHDL hdl, BYTE *dst, const BYTE *src) {
+static void cc24by16(RSZHDL hdl, UINT8 *dst, const UINT8 *src) {
 
 	UINT	width;
 	UINT	col;
@@ -74,11 +74,11 @@ static void cc24by16(RSZHDL hdl, BYTE *dst, const BYTE *src) {
 	do {
 		col = *(UINT16 *)src;
 		tmp = (col >> B16SFT) & ((1 << B16BIT) - 1);
-		dst[0] = (BYTE)((tmp << (8 - B16BIT)) + (tmp >> (B16BIT * 2 - 8)));
+		dst[0] = (UINT8)((tmp << (8 - B16BIT)) + (tmp >> (B16BIT * 2 - 8)));
 		tmp = (col >> G16SFT) & ((1 << G16BIT) - 1);
-		dst[1] = (BYTE)((tmp << (8 - G16BIT)) + (tmp >> (G16BIT * 2 - 8)));
+		dst[1] = (UINT8)((tmp << (8 - G16BIT)) + (tmp >> (G16BIT * 2 - 8)));
 		tmp = (col >> R16SFT) & ((1 << R16BIT) - 1);
-		dst[2] = (BYTE)((tmp << (8 - R16BIT)) + (tmp >> (R16BIT * 2 - 8)));
+		dst[2] = (UINT8)((tmp << (8 - R16BIT)) + (tmp >> (R16BIT * 2 - 8)));
 		src += 2;
 		dst += 3;
 	} while(--width);
@@ -86,17 +86,17 @@ static void cc24by16(RSZHDL hdl, BYTE *dst, const BYTE *src) {
 #endif
 
 #if defined(RESIZE_FASTCOPY)
-static void cc8(RSZHDL hdl, BYTE *dst, const BYTE *src) {
+static void cc8(RSZHDL hdl, UINT8 *dst, const UINT8 *src) {
 
 	CopyMemory(dst, src, hdl->width);
 }
 
-static void cc16(RSZHDL hdl, BYTE *dst, const BYTE *src) {
+static void cc16(RSZHDL hdl, UINT8 *dst, const UINT8 *src) {
 
 	CopyMemory(dst, src, hdl->width * 2);
 }
 
-static void cc24(RSZHDL hdl, BYTE *dst, const BYTE *src) {
+static void cc24(RSZHDL hdl, UINT8 *dst, const UINT8 *src) {
 
 	CopyMemory(dst, src, hdl->width * 3);
 }
@@ -109,8 +109,8 @@ static const FNCNV cnvcpy[RSZFNMAX] = {cc8, cc16, cc24, cc16by24, cc24by16};
 // ----
 
 #if defined(RESIZE_FASTCOPY)
-static void fastcopyfunc(RSZHDL hdl, UINT type, BYTE *dst, int dalign,
-												const BYTE *src, int salign) {
+static void fastcopyfunc(RSZHDL hdl, UINT type, UINT8 *dst, int dalign,
+											const UINT8 *src, int salign) {
 
 	UINT	height;
 	FNCNV	cnv;
@@ -145,7 +145,7 @@ static RSZHDL fastcopy(int width, int height) {
 // ---- area average
 
 #if defined(RESIZE_AREAAVG)
-static void aamix8(RSZEX hdl, const BYTE *src, int volume) {
+static void aamix8(RSZEX hdl, const UINT8 *src, int volume) {
 
 	UINT	*buf;
 	UINT	posx;
@@ -174,7 +174,7 @@ static void aamix8(RSZEX hdl, const BYTE *src, int volume) {
 	}
 }
 
-static void aamix16(RSZEX hdl, const BYTE *src, int volume) {
+static void aamix16(RSZEX hdl, const UINT8 *src, int volume) {
 
 	UINT	*buf;
 	UINT	posx;
@@ -213,7 +213,7 @@ static void aamix16(RSZEX hdl, const BYTE *src, int volume) {
 	}
 }
 
-static void aamix24(RSZEX hdl, const BYTE *src, int volume) {
+static void aamix24(RSZEX hdl, const UINT8 *src, int volume) {
 
 	UINT	*buf;
 	UINT	posx;
@@ -246,7 +246,7 @@ static void aamix24(RSZEX hdl, const BYTE *src, int volume) {
 	}
 }
 
-static void aaout8(RSZEX hdl, BYTE *dst) {
+static void aaout8(RSZEX hdl, UINT8 *dst) {
 
 const UINT	*buf;
 	int		rem;
@@ -254,11 +254,11 @@ const UINT	*buf;
 	buf = hdl->buf;
 	rem = hdl->width;
 	do {
-		*dst++ = (BYTE)((*buf++) >> (MXBITS + MYBITS));
+		*dst++ = (UINT8)((*buf++) >> (MXBITS + MYBITS));
 	} while(--rem);
 }
 
-static void aaout16(RSZEX hdl, BYTE *dst) {
+static void aaout16(RSZEX hdl, UINT8 *dst) {
 
 const UINT	*buf;
 	int		rem;
@@ -283,7 +283,7 @@ const UINT	*buf;
 	} while(--rem);
 }
 
-static void aaout24(RSZEX hdl, BYTE *dst) {
+static void aaout24(RSZEX hdl, UINT8 *dst) {
 
 const UINT	*buf;
 	int		rem;
@@ -291,11 +291,11 @@ const UINT	*buf;
 	buf = hdl->buf;
 	rem = hdl->width * 3;
 	do {
-		*dst++ = (BYTE)((*buf++) >> (MXBITS + MYBITS));
+		*dst++ = (UINT8)((*buf++) >> (MXBITS + MYBITS));
 	} while(--rem);
 }
 
-static void aaout16by24(RSZEX hdl, BYTE *dst) {
+static void aaout16by24(RSZEX hdl, UINT8 *dst) {
 
 const UINT	*buf;
 	int		rem;
@@ -316,7 +316,7 @@ const UINT	*buf;
 	} while(--rem);
 }
 
-static void aaout24by16(RSZEX hdl, BYTE *dst) {
+static void aaout24by16(RSZEX hdl, UINT8 *dst) {
 
 const UINT	*buf;
 	int		rem;
@@ -324,24 +324,24 @@ const UINT	*buf;
 	buf = hdl->buf;
 	rem = hdl->width;
 	do {
-		dst[0] = (BYTE)(buf[0] >> (MXBITS + MYBITS - 8 + B16BIT));
-		dst[1] = (BYTE)(buf[1] >> (MXBITS + MYBITS - 8 + G16BIT));
-		dst[2] = (BYTE)(buf[2] >> (MXBITS + MYBITS - 8 + R16BIT));
+		dst[0] = (UINT8)(buf[0] >> (MXBITS + MYBITS - 8 + B16BIT));
+		dst[1] = (UINT8)(buf[1] >> (MXBITS + MYBITS - 8 + G16BIT));
+		dst[2] = (UINT8)(buf[2] >> (MXBITS + MYBITS - 8 + R16BIT));
 		dst += 3;
 		buf += 3;
 	} while(--rem);
 }
 
-typedef void (*AAMIX)(RSZEX hdl, const BYTE *src, int volume);
-typedef void (*AAOUT)(RSZEX hdl, BYTE *dst);
+typedef void (*AAMIX)(RSZEX hdl, const UINT8 *src, int volume);
+typedef void (*AAOUT)(RSZEX hdl, UINT8 *dst);
 
 static const AAMIX fnaamix[RSZFNMAX] = {aamix8, aamix16, aamix24,
 										aamix24, aamix16};
 static const AAOUT fnaaout[RSZFNMAX] = {aaout8, aaout16, aaout24,
 										aaout16by24, aaout24by16};
 
-static void areaavefunc(RSZEX hdl, UINT type, BYTE *dst, int dalign,
-												const BYTE *src, int salign) {
+static void areaavefunc(RSZEX hdl, UINT type, UINT8 *dst, int dalign,
+											const UINT8 *src, int salign) {
 
 	AAMIX	aamix;
 	AAOUT	aaout;

@@ -8,7 +8,7 @@ enum {
 
 typedef struct {
 	UINT	type;
-	BYTE	*ptr;
+	UINT8	*ptr;
 	UINT	size;
 } _SCRNBMP, *SCRNBMP;
 

@@ -11,37 +11,37 @@
 
 typedef struct {
 	UINT32	sig;
-	BYTE	size[4];
+	UINT8	size[4];
 	UINT32	fmt;
 } RIFF_HEADER;
 
 typedef struct {
 	UINT	sig;
-	BYTE	size[4];
+	UINT8	size[4];
 } WAVE_HEADER;
 
 typedef struct {
-	BYTE	format[2];
-	BYTE	channel[2];
-	BYTE	rate[4];
-	BYTE	rps[4];
-	BYTE	block[2];
-	BYTE	bit[2];
+	UINT8	format[2];
+	UINT8	channel[2];
+	UINT8	rate[4];
+	UINT8	rps[4];
+	UINT8	block[2];
+	UINT8	bit[2];
 } WAVE_INFOS;
 
 
 // ---- write
 
 typedef struct {
-	long		fh;
-	UINT		rate;
-	UINT		bits;
-	UINT		ch;
-	UINT		size;
+	long	fh;
+	UINT	rate;
+	UINT	bits;
+	UINT	ch;
+	UINT	size;
 
-	BYTE		*ptr;
-	UINT		remain;
-	BYTE		buf[4096];
+	UINT8	*ptr;
+	UINT	remain;
+	UINT8	buf[4096];
 } _WAVEWR, *WAVEWR;
 
 

@@ -95,15 +95,15 @@ static void analyze(MIMPIDEF *def, char *buf) {
 				return;
 			}
 			tone--;
-			def->bank[mod][num] = (BYTE)bank;
+			def->bank[mod][num] = (UINT8)bank;
 		}
-		def->map[mod][num] = (BYTE)tone;
+		def->map[mod][num] = (UINT8)tone;
 	}
 }
 
-BOOL mimpidef_load(MIMPIDEF *def, const char *filename) {
+BRESULT mimpidef_load(MIMPIDEF *def, const OEMCHAR *filename) {
 
-	BYTE		b;
+	UINT8		b;
 	TEXTFILEH	fh;
 	char		buf[256];
 

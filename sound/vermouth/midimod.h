@@ -22,9 +22,9 @@ enum {
 typedef struct {
 	char	*name;
 	int		amp;
-	BYTE	flag;
-	BYTE	pan;
-	BYTE	note;
+	UINT8	flag;
+	UINT8	pan;
+	UINT8	note;
 } _TONECFG, *TONECFG;
 
 

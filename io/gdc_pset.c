@@ -50,7 +50,7 @@ static void MEMCALL _set(GDCPSET pset, UINT addr, UINT bit) {
 
 static void MEMCALL withtdw(GDCPSET pset, UINT addr, UINT bit) {
 
-	BYTE	*ptr;
+	UINT8	*ptr;
 
 	addr &= ~1;
 	*(UINT16 *)(vramupdate + addr) |= pset->update.w;
@@ -64,9 +64,9 @@ static void MEMCALL withtdw(GDCPSET pset, UINT addr, UINT bit) {
 
 static void MEMCALL withrmw(GDCPSET pset, UINT addr, UINT bit) {
 
-	BYTE	*ptr;
-	BYTE	data;
-	BYTE	mask;
+	UINT8	*ptr;
+	UINT8	data;
+	UINT8	mask;
 
 	vramupdate[addr] |= pset->update.b[0];
 	ptr = pset->base.ptr + addr;
@@ -109,8 +109,8 @@ static const GDCPFN psettbl[4][2] = {
 
 void MEMCALL gdcpset_prepare(GDCPSET pset, UINT32 csrw, REG16 pat, REG8 op) {
 
-	BYTE	*base;
-	BYTE	update;
+	UINT8	*base;
+	UINT8	update;
 
 	if (vramop.operate & VOP_EGCBIT) {
 		pset->func[0] = _nop;

@@ -51,7 +51,7 @@ static REG8 sxsibios_write(UINT type, SXSIDEV sxsi) {
 	long	pos;
 	UINT32	addr;
 	UINT	r;
-	BYTE	work[1024];
+	UINT8	work[1024];
 
 	size = CPU_BX;
 	if (!size) {
@@ -82,7 +82,7 @@ static REG8 sxsibios_read(UINT type, SXSIDEV sxsi) {
 	long	pos;
 	UINT32	addr;
 	UINT	r;
-	BYTE	work[1024];
+	UINT8	work[1024];
 
 	size = CPU_BX;
 	if (!size) {
@@ -249,7 +249,7 @@ REG8 sasibios_operate(void) {
 static void scsibios_set(REG8 drv, REG8 sectors, REG8 surfaces,
 									REG16 cylinders, REG16 size, BOOL hwsec) {
 
-	BYTE	*scsiinf;
+	UINT8	*scsiinf;
 	UINT16	inf;
 
 	scsiinf = mem + 0x00460 + ((drv & 7) * 4);
@@ -295,7 +295,7 @@ static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 
 static REG8 scsibios_sense(UINT type, SXSIDEV sxsi) {
 
-	BYTE	*scsiinf;
+	UINT8	*scsiinf;
 
 	scsiinf = mem + 0x00460 + ((CPU_AL & 7) * 4);
 	if (CPU_AH == 0x24) {
@@ -417,15 +417,15 @@ static void reg_pop(const REGBAK *r) {
 }
 
 typedef struct {
-	BYTE	r_ax[2];
-	BYTE	r_bx[2];
-	BYTE	r_cx[2];
-	BYTE	r_dx[2];
-	BYTE	r_bp[2];
-	BYTE	r_es[2];
-	BYTE	r_di[2];
-	BYTE	r_si[2];
-	BYTE	r_ds[2];
+	UINT8	r_ax[2];
+	UINT8	r_bx[2];
+	UINT8	r_cx[2];
+	UINT8	r_dx[2];
+	UINT8	r_bp[2];
+	UINT8	r_es[2];
+	UINT8	r_di[2];
+	UINT8	r_si[2];
+	UINT8	r_ds[2];
 } B1BREG;
 
 static void reg_load(UINT seg, UINT off) {

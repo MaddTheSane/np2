@@ -32,7 +32,7 @@ void inputmng_init(void) {
 
 	im = &inpmng;
 	ZeroMemory(im, sizeof(INPMNG));
-	im->kbs = sizeof(keybind) / sizeof(KEYBIND);
+	im->kbs = NELEMENTS(keybind);
 	CopyMemory(im->kb, keybind, sizeof(keybind));
 }
 
@@ -48,7 +48,7 @@ void inputmng_keybind(short key, UINT bit) {
 			return;
 		}
 	}
-	if (im->kbs < (sizeof(im->kb) / sizeof(KEYBIND))) {
+	if (im->kbs < NELEMENTS(im->kb)) {
 		im->kb[im->kbs].key = key;
 		im->kb[im->kbs].bit = bit;
 		im->kbs++;

@@ -7,12 +7,12 @@ enum {
 };
 
 typedef struct {
-	BYTE	ope;
-	BYTE	DC[2];
-	BYTE	D[2];
-	BYTE	D2[2];
-	BYTE	D1[2];
-	BYTE	DM[2];
+	UINT8	ope;
+	UINT8	DC[2];
+	UINT8	D[2];
+	UINT8	D2[2];
+	UINT8	D1[2];
+	UINT8	DM[2];
 } GDCVECT;
 
 extern const UINT32 gdcplaneseg[4];
@@ -45,7 +45,7 @@ void gdcsub_vectt(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_vectc(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_vectr(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 
-void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const BYTE *pat, REG8 ope);
+void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const UINT8 *pat, REG8 ope);
 void gdcsub_write(void);
 
 #ifdef __cplusplus

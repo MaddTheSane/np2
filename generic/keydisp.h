@@ -4,7 +4,7 @@
 #include	"cmndraw.h"
 
 struct _cmnpalfn {
-	BYTE	(*get8)(struct _cmnpalfn *fn, UINT num);
+	UINT8	(*get8)(struct _cmnpalfn *fn, UINT num);
 	UINT32	(*get32)(struct _cmnpalfn *fn, UINT num);
 	UINT16	(*cnv16)(struct _cmnpalfn *fn, RGB32 pal32);
 	long	userdata;
@@ -62,18 +62,18 @@ extern "C" {
 #endif
 
 void keydisp_initialize(void);
-void keydisp_setmode(BYTE mode);
+void keydisp_setmode(UINT8 mode);
 void keydisp_setpal(CMNPALFN *palfn);
-void keydisp_setdelay(BYTE frames);
-BYTE keydisp_process(BYTE framepast);
+void keydisp_setdelay(UINT8 frames);
+UINT8 keydisp_process(UINT8 framepast);
 void keydisp_getsize(int *width, int *height);
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
 void keydisp_setfmboard(UINT board);
-void keydisp_fmkeyon(BYTE ch, BYTE value);
+void keydisp_fmkeyon(UINT8 ch, UINT8 value);
 void keydisp_psgmix(void *psg);
-void keydisp_psgvol(void *psg, BYTE ch);
-void keydisp_midi(const BYTE *msg);
+void keydisp_psgvol(void *psg, UINT8 ch);
+void keydisp_midi(const UINT8 *msg);
 
 #ifdef __cplusplus
 }

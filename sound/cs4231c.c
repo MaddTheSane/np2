@@ -174,8 +174,8 @@ void cs4231_control(UINT index, REG8 dat) {
 	UINT8	modify;
 	DMACH	dmach;
 
-	modify = ((BYTE *)&cs4231.reg)[index] ^ dat;
-	((BYTE *)&cs4231.reg)[index] = dat;
+	modify = ((UINT8 *)&cs4231.reg)[index] ^ dat;
+	((UINT8 *)&cs4231.reg)[index] = dat;
 	switch(index) {
 		case CS4231REG_PLAYFMT:
 			if (modify & 0xf0) {

@@ -68,12 +68,12 @@ static void biosfd_setchrn(void) {
 #if 0
 static void biosfd_resultout(UINT32 result) {
 
-	BYTE	*ptr;
+	UINT8	*ptr;
 
 	ptr = mem + 0x00564 + (fdc.us*8);
-	ptr[0] = (BYTE)(result & 0xff) | (fdc.hd << 2) | fdc.us;
-	ptr[1] = (BYTE)(result >> 8);
-	ptr[2] = (BYTE)(result >> 16);
+	ptr[0] = (UINT8)(result & 0xff) | (fdc.hd << 2) | fdc.us;
+	ptr[1] = (UINT8)(result >> 8);
+	ptr[2] = (UINT8)(result >> 16);
 	ptr[3] = fdc.C;
 	ptr[4] = fdc.H;
 	ptr[5] = fdc.R;
@@ -288,9 +288,9 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 	UINT16	accesssize;
 	UINT16	secsize;
 	UINT16	para;
-	BYTE	s;
-	BYTE	ID[4];
-	BYTE	hd;
+	UINT8	s;
+	UINT8	ID[4];
+	UINT8	hd;
 	int		result = FDCBIOS_NORESULT;
 	UINT32	addr;
 	UINT8	mtr_c;
@@ -784,7 +784,7 @@ static UINT16 boot_fd(REG8 drv, REG8 type) {
 		// 2DD
 		bootseg = boot_fd1(0, 0);
 		if (bootseg) {
-			mem[MEMB_DISK_BOOT] = (BYTE)(0x70 + drv);
+			mem[MEMB_DISK_BOOT] = (UINT8)(0x70 + drv);
 			fddbios_equip(0, TRUE);
 			return(bootseg);
 		}
@@ -806,7 +806,7 @@ static REG16 boot_hd(REG8 drv) {
 
 REG16 bootstrapload(void) {
 
-	BYTE	i;
+	UINT8	i;
 	REG16	bootseg;
 
 //	fdmode = 0;

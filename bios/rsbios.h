@@ -38,18 +38,18 @@ enum {
 };
 
 typedef struct {
-	BYTE	INT;				// + 0
-	BYTE	BFLG;				// + 1
-	BYTE	FLAG;				// + 2
-	BYTE	CMD;				// + 3
-	BYTE	STIME;				// + 4
-	BYTE	RTIME;				// + 5
-	BYTE	XOFF[2];			// + 6
-	BYTE	XON[2];				// + 8
-	BYTE	HEADP[2];			// + a
-	BYTE	TAILP[2];			// + c
-	BYTE	CNT[2];				// + e
-	BYTE	PUTP[2];			// +10
-	BYTE	GETP[2];			// +12
+	UINT8	INT;				// + 0
+	UINT8	BFLG;				// + 1
+	UINT8	FLAG;				// + 2
+	UINT8	CMD;				// + 3
+	UINT8	STIME;				// + 4
+	UINT8	RTIME;				// + 5
+	UINT8	XOFF[2];			// + 6
+	UINT8	XON[2];				// + 8
+	UINT8	HEADP[2];			// + a
+	UINT8	TAILP[2];			// + c
+	UINT8	CNT[2];				// + e
+	UINT8	PUTP[2];			// +10
+	UINT8	GETP[2];			// +12
 } RSBIOS;
 

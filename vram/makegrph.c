@@ -24,7 +24,7 @@ typedef struct {
 void makegrph_initialize(void) {
 
 	int		i, j;
-	BYTE	bit;
+	UINT8	bit;
 	UINT32	tmp;
 
 	tmp = 0;
@@ -67,7 +67,7 @@ void makegrph_initialize(void) {
 void makegrph_initialize(void) {
 
 	int		i;
-	BYTE	bit;
+	UINT8	bit;
 	UINT32	tmp;
 
 	tmp = 0;
@@ -106,7 +106,7 @@ void makegrph_initialize(void) {
 void makegrph_initialize(void) {
 
 	int		i;
-	BYTE	bit;
+	UINT8	bit;
 	UINT32	tmp;
 
 	tmp = 0;

@@ -69,7 +69,7 @@ static	UINT		waitcnt = 0;
 static	UINT		framemax = 1;
 static	int			np2opening = 1;
 static	int			np2quitmsg = 0;
-static	BYTE	scrnmode;
+static	UINT8	scrnmode;
 
 
 static const char np2help[] = "np2.chm";
@@ -88,10 +88,10 @@ static void winuileave(void) {
 	soundmng_enable(SNDPROC_MAIN);
 }
 
-static void changescreen(BYTE newmode) {
+static void changescreen(UINT8 newmode) {
 
-	BYTE	change;
-	BYTE	renewal;
+	UINT8	change;
+	UINT8	renewal;
 
 	change = scrnmode ^ newmode;
 	renewal = (change & SCRNMODE_FULLSCREEN);

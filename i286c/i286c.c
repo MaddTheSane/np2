@@ -185,7 +185,7 @@ void i286c_setextsize(UINT32 size) {
 			CPU_EXTMEM = NULL;
 		}
 		if (size) {
-			CPU_EXTMEM = (BYTE *)_MALLOC(size + 16, "EXTMEM");
+			CPU_EXTMEM = (UINT8 *)_MALLOC(size + 16, "EXTMEM");
 			if (CPU_EXTMEM == NULL) {
 				size = 0;
 			}
@@ -200,7 +200,7 @@ void i286c_setextsize(UINT32 size) {
 
 void i286c_setemm(UINT frame, UINT32 addr) {
 
-	BYTE	*ptr;
+	UINT8	*ptr;
 
 	frame &= 3;
 	if (addr < USE_HIMEM) {
@@ -218,7 +218,7 @@ void i286c_setemm(UINT frame, UINT32 addr) {
 
 void CPUCALL i286c_intnum(UINT vect, REG16 IP) {
 
-const BYTE	*ptr;
+const UINT8	*ptr;
 
 	REGPUSH0(REAL_FLAGREG)
 	REGPUSH0(I286_CS)
@@ -237,7 +237,7 @@ const BYTE	*ptr;
 void CPUCALL i286c_interrupt(REG8 vect) {
 
 	UINT	op;
-const BYTE	*ptr;
+const UINT8	*ptr;
 
 	op = i286_memoryread(I286_IP + CS_BASE);
 	if (op == 0xf4) {							// hlt
@@ -307,7 +307,7 @@ void i286c_step(void) {
 // ---- test
 
 #if defined(I286C_TEST)
-BYTE BYTESZPF(UINT r) {
+UINT8 BYTESZPF(UINT r) {
 
 	if (r & (~0xff)) {
 		TRACEOUT(("BYTESZPF bound error: %x", r));
@@ -315,7 +315,7 @@ BYTE BYTESZPF(UINT r) {
 	return(iflags[r & 0xff]);
 }
 
-BYTE BYTESZPCF(UINT r) {
+UINT8 BYTESZPCF(UINT r) {
 
 	if (r & (~0x1ff)) {
 		TRACEOUT(("BYTESZPCF bound error: %x", r));
@@ -323,10 +323,10 @@ BYTE BYTESZPCF(UINT r) {
 	return(iflags[r & 0x1ff]);
 }
 
-BYTE WORDSZPF(UINT32 r) {
+UINT8 WORDSZPF(UINT32 r) {
 
-	BYTE	f1;
-	BYTE	f2;
+	UINT8	f1;
+	UINT8	f2;
 
 	if (r & (~0xffff)) {
 		TRACEOUT(("WORDSZPF bound error: %x", r));
@@ -341,10 +341,10 @@ BYTE WORDSZPF(UINT32 r) {
 	return(f1);
 }
 
-BYTE WORDSZPCF(UINT32 r) {
+UINT8 WORDSZPCF(UINT32 r) {
 
-	BYTE	f1;
-	BYTE	f2;
+	UINT8	f1;
+	UINT8	f2;
 
 	if ((r & 0xffff0000) && (!(r & 0x00010000))) {
 		TRACEOUT(("WORDSZPCF bound error: %x", r));

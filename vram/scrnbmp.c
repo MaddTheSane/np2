@@ -15,11 +15,11 @@ typedef	unsigned char	PALNUM;
 
 typedef union {
 	UINT32	d;
-	BYTE	rgb[4];
+	UINT8	rgb[4];
 } BMPPAL;
 
 
-static void screenmix(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	int		i;
 
@@ -28,7 +28,7 @@ static void screenmix(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 	}
 }
 
-static void screenmix2(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix2(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	int		x, y;
 
@@ -48,7 +48,7 @@ static void screenmix2(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 	}
 }
 
-static void screenmix3(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix3(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	PALNUM	c;
 	int		x, y;
@@ -70,7 +70,7 @@ static void screenmix3(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 }
 
 #if defined(SUPPORT_PC9821)
-static void screenmix4(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix4(PALNUM *dest, const UINT8 *src1, const UINT8 *src2) {
 
 	int		i;
 
@@ -92,8 +92,8 @@ SCRNBMP scrnbmp(void) {
 	UINT	scrnsize;
 	UINT	allocsize;
 	PALNUM	*scrn;
-	BYTE	*p;
-	BYTE	*q;
+	UINT8	*p;
+	UINT8	*q;
 	PALNUM	*s;
 	UINT	pals;
 	BMPPAL	pal[NP2PAL_TOTAL];
@@ -111,7 +111,7 @@ SCRNBMP scrnbmp(void) {
 	SCRNBMP	ret;
 	BMPFILE	*bf;
 	int		r;
-	void	(*mix)(PALNUM *dest, const BYTE *src1, const BYTE *src2);
+	void	(*mix)(PALNUM *dest, const UINT8 *src1, const UINT8 *src2);
 
 	bd.width = dsync.scrnxmax;
 	bd.height = dsync.scrnymax;
@@ -141,7 +141,7 @@ SCRNBMP scrnbmp(void) {
 	else {
 		mix = screenmix3;
 	}
-	q = p = ((BYTE *)scrn) + (scrnsize * (sizeof(PALNUM) - 1));
+	q = p = ((UINT8 *)scrn) + (scrnsize * (sizeof(PALNUM) - 1));
 	if (gdcs.textdisp & 0x80) {
 		p = np2_tram;
 	}
@@ -222,7 +222,7 @@ SCRNBMP scrnbmp(void) {
 	bf->bfType[1] = 'M';
 	pos = sizeof(BMPFILE) + sizeof(BMPINFO) + palsize;
 	STOREINTELDWORD(bf->bfOffBits, pos);
-	q = (BYTE *)(bf + 1);
+	q = (UINT8 *)(bf + 1);
 	STOREINTELDWORD(bi.biClrImportant, pals);
 	CopyMemory(q, &bi, sizeof(bi));
 	q += sizeof(bi);
@@ -271,7 +271,7 @@ SCRNBMP scrnbmp(void) {
 	} while(scrn < s);
 	_MFREE(scrn);
 	ret->type = type;
-	ret->ptr = (BYTE *)(ret + 1);
+	ret->ptr = (UINT8 *)(ret + 1);
 	ret->size = allocsize;
 	return(ret);
 

@@ -5,22 +5,22 @@ enum {
 };
 
 typedef struct {
-	BYTE	*pos;
+	UINT8	*pos;
 	UINT16	mask;
-	BYTE	rolbit;
-	BYTE	reserved;
+	UINT8	rolbit;
+	UINT8	reserved;
 } DCPOS;
 
 typedef struct {
-const BYTE	*fnt;
+const UINT8	*fnt;
 const DCPOS	*pos;
-	BYTE	flm[8];
-	BYTE	now[8];
-	BYTE	bak[8];
+	UINT8	flm[8];
+	UINT8	now[8];
+	UINT8	bak[8];
 	UINT16	drawing;
-	BYTE	clk_x;
-	BYTE	_padding;
-	BYTE	dat[(DCLOCK_X * DCLOCK_Y / 8) + 4];
+	UINT8	clk_x;
+	UINT8	_padding;
+	UINT8	dat[(DCLOCK_X * DCLOCK_Y / 8) + 4];
 } _DCLOCK, *DCLOCK;
 
 typedef struct {
@@ -44,7 +44,7 @@ void dclock_reset(void);
 void dclock_callback(void);
 void dclock_redraw(void);
 BOOL dclock_disp(void);
-void dclock_cntdown(BYTE value);
+void dclock_cntdown(UINT8 value);
 void dclock_make(void);
 void dclock_out8(void *ptr, UINT width);
 void dclock_out16(void *ptr, UINT width);

@@ -19,7 +19,7 @@
 
 void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 
-	BYTE	TEXT_LR;
+	UINT8	TEXT_LR;
 	int		TEXT_PL;
 	int		TEXT_BL;
 	int		TEXT_CL;
@@ -28,7 +28,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 	int		topline;
 	int		lines;
 	int		nowline;
-	BYTE	wait2;
+	UINT8	wait2;
 	UINT	m_pitch;
 	UINT	esi;
 	UINT	m_scr;
@@ -38,14 +38,14 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 	UINT	s_scr;
 	int		s_scrp;
 	int		s_scrpmask;
-	BYTE	GRPH_LR;
-	BYTE	GRPH_LRcnt;
+	UINT8	GRPH_LR;
+	UINT8	GRPH_LRcnt;
 	UINT32	ppage;
 	UINT32	gbit;
 	UINT	ymax;
-	BYTE	*q;
-	BYTE	wait1;
-	BYTE	TEXT_LRcnt;
+	UINT8	*q;
+	UINT8	wait1;
+	UINT8	TEXT_LRcnt;
 	BOOL	reloadline;
 	int		new_flag;
 	int		linecnt;
@@ -53,7 +53,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 	UINT	edi;
 	UINT	x;
 	int		i;
-	BYTE	color[TEXTXMAX];
+	UINT8	color[TEXTXMAX];
 	UINT32	bit[160];
 
 	TEXT_LR = gdc.m.para[GDC_CSRFORM] & 0x1f;
@@ -188,7 +188,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 				if (!grph_new) {
 					UINT vc = ebp;
 					for (x=0; x<TEXTXMAX; x++) {
-						if (vramupdate[vc] & (BYTE)gbit) {
+						if (vramupdate[vc] & (UINT8)gbit) {
 							grph_new = 1;
 							break;
 						}
@@ -199,7 +199,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 			if (grph_new) {
 				UINT32 vc = ebp + ppage;
 				UINT32 *p;
-				BYTE *d;
+				UINT8 *d;
 				UINT xdot;
 				p = bit;
 				for (x=0; x<TEXTXMAX; x++) {
@@ -207,7 +207,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 					p += 2;
 					vc = VRAMADDRMASKEX(vc + 1);
 				}
-				d = (BYTE *)bit;
+				d = (UINT8 *)bit;
 				ZeroMemory(q, TEXTXMAX * 8);
 				// width80
 				xdot = 8 - displaymoder;
@@ -221,7 +221,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 					xdot = 8;
 				}
 				q += displaymoder;
-				renewal_line[y] |= (BYTE)gbit;
+				renewal_line[y] |= (UINT8)gbit;
 			}
 			else {
 				q += TEXTXMAX * 8;
@@ -277,7 +277,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 
 void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 
-	BYTE	TEXT_LR;
+	UINT8	TEXT_LR;
 	int		TEXT_PL;
 	int		TEXT_BL;
 	int		TEXT_CL;
@@ -286,7 +286,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 	int		topline;
 	int		lines;
 	int		nowline = 0;
-	BYTE	wait2 = 0;
+	UINT8	wait2 = 0;
 	UINT	m_pitch;
 	UINT	esi;
 	UINT	m_scr;
@@ -296,14 +296,14 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 	UINT	s_scr;
 	int		s_scrp;
 	int		s_scrpmask;
-	BYTE	GRPH_LR;
-	BYTE	GRPH_LRcnt;
+	UINT8	GRPH_LR;
+	UINT8	GRPH_LRcnt;
 	UINT32	ppage;
 	UINT32	gbit;
 	UINT	ymax;
-	BYTE	*q;
-	BYTE	wait1;
-	BYTE	TEXT_LRcnt;
+	UINT8	*q;
+	UINT8	wait1;
+	UINT8	TEXT_LRcnt;
 	BOOL	reloadline;
 	int		new_flag;
 	int		linecnt;
@@ -311,7 +311,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 	UINT	edi;
 	UINT	x;
 	int		i;
-	BYTE	color[TEXTXMAX];
+	UINT8	color[TEXTXMAX];
 	UINT32	bit[160];
 
 	TEXT_LR = gdc.m.para[GDC_CSRFORM] & 0x1f;
@@ -446,7 +446,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 				if (!grph_new) {
 					UINT vc = ebp;
 					for (x=0; x<TEXTXMAX; x++) {
-						if (vramupdate[vc] & (BYTE)gbit) {
+						if (vramupdate[vc] & (UINT8)gbit) {
 							grph_new = 1;
 							break;
 						}
@@ -457,7 +457,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 			if (grph_new) {
 				UINT32 vc = ebp + ppage;
 				UINT32 *p;
-				BYTE *d;
+				UINT8 *d;
 				UINT xdot;
 				p = bit;
 				for (x=0; x<TEXTXMAX; x++) {
@@ -465,7 +465,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 					p += 2;
 					vc = VRAMADDRMASKEX(vc + 1);
 				}
-				d = (BYTE *)bit;
+				d = (UINT8 *)bit;
 				ZeroMemory(q, TEXTXMAX * 8);
 				// width40
 				xdot = 16 - displaymoder;
@@ -479,7 +479,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 					xdot = 16;
 				}
 				q += displaymoder;
-				renewal_line[y] |= (BYTE)gbit;
+				renewal_line[y] |= (UINT8)gbit;
 			}
 			else {
 				q += TEXTXMAX * 8;

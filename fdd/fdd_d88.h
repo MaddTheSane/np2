@@ -16,7 +16,7 @@ BOOL fdd_readid_d88(void);
 BOOL fdd_writeid_d88(void);
 
 BOOL fdd_formatinit_d88(void);
-BOOL fdd_formating_d88(const BYTE *ID);
+BOOL fdd_formating_d88(const UINT8 *ID);
 BOOL fdd_isformating_d88(void);
 
 #ifdef __cplusplus

@@ -17,13 +17,13 @@ enum {
 extern "C" {
 #endif
 
-extern	BYTE	renewal_line[SURFACE_HEIGHT];
-extern	BYTE	np2_tram[SURFACE_SIZE];
-extern	BYTE	np2_vram[2][SURFACE_SIZE];
+extern	UINT8	renewal_line[SURFACE_HEIGHT];
+extern	UINT8	np2_tram[SURFACE_SIZE];
+extern	UINT8	np2_vram[2][SURFACE_SIZE];
 
 void scrndraw_initialize(void);
 void scrndraw_changepalette(void);
-BYTE scrndraw_draw(BYTE update);
+UINT8 scrndraw_draw(UINT8 update);
 void scrndraw_redraw(void);
 
 #ifdef __cplusplus

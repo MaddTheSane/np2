@@ -16,14 +16,14 @@ SINT32 PARTSCALL rand_get(void) {
 	return(randseed >> 16);
 }
 
-BYTE PARTSCALL AdjustAfterMultiply(BYTE value) {
+UINT8 PARTSCALL AdjustAfterMultiply(UINT8 value) {
 
-	return((BYTE)(((value / 10) << 4) + (value % 10)));
+	return((UINT8)(((value / 10) << 4) + (value % 10)));
 }
 
-BYTE PARTSCALL AdjustBeforeDivision(BYTE value) {
+UINT8 PARTSCALL AdjustBeforeDivision(UINT8 value) {
 
-	return((BYTE)(((value >> 4) * 10) + (value & 0xf)));
+	return((UINT8)(((value >> 4) * 10) + (value & 0xf)));
 }
 
 UINT PARTSCALL sjis2jis(UINT sjis) {

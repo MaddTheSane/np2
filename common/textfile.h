@@ -13,8 +13,8 @@ typedef struct {
 extern "C" {
 #endif
 
-TEXTFILEH textfile_open(const char *filename, UINT buffersize);
-BOOL textfile_read(TEXTFILEH fh, char *buffer, UINT size);
+TEXTFILEH textfile_open(const OEMCHAR *filename, UINT buffersize);
+BRESULT textfile_read(TEXTFILEH fh, char *buffer, UINT size);
 void textfile_close(TEXTFILEH fh);
 
 #ifdef __cplusplus

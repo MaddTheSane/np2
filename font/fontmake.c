@@ -14,9 +14,9 @@ typedef struct {
 } JISPAIR;
 
 static const BMPDATA fntinf = {2048, 2048, 1};
-static const BYTE fntpal[8] = {0x00,0x00,0x00,0x00, 0xff,0xff,0xff,0x00};
+static const UINT8 fntpal[8] = {0x00,0x00,0x00,0x00, 0xff,0xff,0xff,0x00};
 
-static const BYTE deltable[] = {
+static const UINT8 deltable[] = {
 		//     del         del         del         del         del
 			0x0f, 0x5f, 0,
 			0x01, 0x10, 0x1a, 0x21, 0x3b, 0x41, 0x5b, 0x5f, 0,
@@ -53,7 +53,7 @@ static UINT16 cnvjis(UINT16 jis, const JISPAIR *tbl, UINT tblsize) {
 
 const JISPAIR	*tblterm;
 
-	tblterm = (JISPAIR *)(((BYTE *)tbl) + tblsize);
+	tblterm = (JISPAIR *)(((UINT8 *)tbl) + tblsize);
 	while(tbl < tblterm) {
 		if (jis == tbl->jis1) {
 			return(tbl->jis2);
@@ -68,7 +68,7 @@ const JISPAIR	*tblterm;
 
 static BOOL ispc98jis(UINT16 jis) {
 
-const BYTE	*p;
+const UINT8	*p;
 	UINT	tmp;
 
 	switch(jis >> 8) {
@@ -128,15 +128,15 @@ const BYTE	*p;
 	return(TRUE);
 }
 
-static void setank(BYTE *ptr, void *fnt, UINT from, UINT to) {
+static void setank(UINT8 *ptr, void *fnt, UINT from, UINT to) {
 
 	char	work[2];
 	FNTDAT	dat;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		width;
 	int		height;
-	BYTE	bit;
+	UINT8	bit;
 	int		i;
 
 	ptr += (2048 * (2048 / 8)) + from;
@@ -147,7 +147,7 @@ const BYTE	*p;
 		if (dat) {
 			width = min(dat->width, 8);
 			height = min(dat->height, 16);
-			p = (BYTE *)(dat + 1);
+			p = (UINT8 *)(dat + 1);
 			q = ptr;
 			while(height > 0) {
 				height--;
@@ -167,7 +167,7 @@ const BYTE	*p;
 	}
 }
 
-static void patchank(BYTE *ptr, const BYTE *fnt, UINT from) {
+static void patchank(UINT8 *ptr, const UINT8 *fnt, UINT from) {
 
 	int		r;
 	int		y;
@@ -184,7 +184,7 @@ static void patchank(BYTE *ptr, const BYTE *fnt, UINT from) {
 	} while(--r);
 }
 
-static void setjis(BYTE *ptr, void *fnt) {
+static void setjis(UINT8 *ptr, void *fnt) {
 
 	char	work[4];
 	UINT16	h;
@@ -192,8 +192,8 @@ static void setjis(BYTE *ptr, void *fnt) {
 	UINT16	jis;
 	UINT	sjis;
 	FNTDAT	dat;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		width;
 	int		height;
 	UINT16	bit;
@@ -208,13 +208,13 @@ const BYTE	*p;
 				jis = cnvjis(jis, jis7883, sizeof(jis7883));
 				jis = cnvjis(jis, jis8390, sizeof(jis8390));
 				sjis = jis2sjis(jis);
-				work[0] = (BYTE)(sjis >> 8);
-				work[1] = (BYTE)sjis;
+				work[0] = (UINT8)(sjis >> 8);
+				work[1] = (UINT8)sjis;
 				dat = fontmng_get(fnt, work);
 				if (dat) {
 					width = min(dat->width, 16);
 					height = min(dat->height, 16);
-					p = (BYTE *)(dat + 1);
+					p = (UINT8 *)(dat + 1);
 					q = ptr;
 					while(height > 0) {
 						height--;
@@ -225,8 +225,8 @@ const BYTE	*p;
 								bit ^= (0x8000 >> i);
 							}
 						}
-						q[0] = (BYTE)(bit >> 8);
-						q[1] = (BYTE)bit;
+						q[0] = (UINT8)(bit >> 8);
+						q[1] = (UINT8)bit;
 						p += dat->width;
 					}
 				}
@@ -237,7 +237,7 @@ const BYTE	*p;
 	}
 }
 
-static void patchextank(BYTE *ptr, const BYTE *fnt, UINT pos) {
+static void patchextank(UINT8 *ptr, const UINT8 *fnt, UINT pos) {
 
 	UINT	r;
 
@@ -249,7 +249,7 @@ static void patchextank(BYTE *ptr, const BYTE *fnt, UINT pos) {
 	} while(--r);
 }
 
-static void patchextfnt(BYTE *ptr, const BYTE *fnt) {			// 2c24-2c6f
+static void patchextfnt(UINT8 *ptr, const UINT8 *fnt) {			// 2c24-2c6f
 
 	UINT	r;
 
@@ -257,8 +257,8 @@ static void patchextfnt(BYTE *ptr, const BYTE *fnt) {			// 2c24-2c6f
 	r = 0x4c * 16;
 	do {
 		ptr -= (2048 / 8);
-		ptr[0] = (BYTE)(~fnt[0]);
-		ptr[1] = (BYTE)(~fnt[1]);
+		ptr[0] = (UINT8)(~fnt[0]);
+		ptr[1] = (UINT8)(~fnt[1]);
 		fnt += 2;
 	} while(--r);
 }
@@ -269,7 +269,7 @@ void makepc98bmp(const char *filename) {
 	BMPFILE	bf;
 	UINT	size;
 	BMPINFO	bi;
-	BYTE	*ptr;
+	UINT8	*ptr;
 	FILEH	fh;
 	BOOL	r;
 
@@ -279,7 +279,7 @@ void makepc98bmp(const char *filename) {
 	}
 	size = bmpdata_setinfo(&bi, &fntinf);
 	bmpdata_sethead(&bf, &bi);
-	ptr = (BYTE *)_MALLOC(size, filename);
+	ptr = (UINT8 *)_MALLOC(size, filename);
 	if (ptr == NULL) {
 		goto mfnt_err2;
 	}

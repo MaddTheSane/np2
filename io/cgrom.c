@@ -110,7 +110,7 @@ static void IOOUTCALL cgrom_oa9(UINT port, REG8 dat) {
 static REG8 IOINPCALL cgrom_ia9(UINT port) {
 
 	CGROM	cr;
-const BYTE	*ptr;
+const UINT8	*ptr;
 	int		type;
 
 	cr = &cgrom;

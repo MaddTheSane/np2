@@ -9,7 +9,7 @@ typedef union {
 } CMNPAL;
 
 typedef struct {
-	BYTE	*ptr;
+	UINT8	*ptr;
 	int		width;
 	int		height;
 	int		xalign;
@@ -27,9 +27,9 @@ void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg);
 
 void cmndraw_fill(const CMNVRAM *vram, int x, int y,
 										int cx, int cy, CMNPAL fg);
-void cmndraw_setfg(const CMNVRAM *vram, const BYTE *src,
+void cmndraw_setfg(const CMNVRAM *vram, const UINT8 *src,
 										int x, int y, CMNPAL fg);
-void cmndraw_setpat(const CMNVRAM *vram, const BYTE *src,
+void cmndraw_setpat(const CMNVRAM *vram, const UINT8 *src,
 										int x, int y, CMNPAL bg, CMNPAL fg);
 void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL fg);
 
@@ -46,7 +46,7 @@ enum {
 };
 
 typedef struct {
-	BYTE	*ptr;
+	UINT8	*ptr;
 	int		width;
 	int		height;
 	int		align;

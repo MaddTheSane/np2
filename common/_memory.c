@@ -176,8 +176,9 @@ typedef struct {
 	UINT	size;
 } _MEMTBL;
 
-		UINT	usedmemory;
 		BOOL	chgmemory;
+		UINT	usedmemory;
+
 static	_MEMTBL	memtbl[MEMTBLMAX];
 
 void _meminit(void) {

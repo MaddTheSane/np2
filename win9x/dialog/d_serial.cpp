@@ -389,8 +389,8 @@ static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m) {
 	r = SendDlgItemMessage(hWnd, m->idc_speed, CB_GETCURSEL, 0, 0);
 	if (r != CB_ERR) {
 		DWORD speed = r;
-		if (speed > ((sizeof(pc9861k_speed) / sizeof(UINT32)) - 1)) {
-			speed = (sizeof(pc9861k_speed) / sizeof(UINT32)) - 1;
+		if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
+			speed = NELEMENTS(pc9861k_speed) - 1;
 		}
 		if (mode & 2) {
 			speed += 3;
@@ -457,8 +457,8 @@ static void pc9861setmode(HWND hWnd, const PC9861MODE_T *m) {
 			speed = 0;
 		}
 	}
-	if (speed > ((sizeof(pc9861k_speed) / sizeof(UINT32)) - 1)) {
-		speed = (sizeof(pc9861k_speed) / sizeof(UINT32)) - 1;
+	if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
+		speed = NELEMENTS(pc9861k_speed) - 1;
 	}
 
 	SendDlgItemMessage(hWnd, m->idc_speed,

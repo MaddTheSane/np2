@@ -4,14 +4,14 @@
 
 
 typedef struct {
-	BYTE	x[2];
-	BYTE	y[2];
-	BYTE	pal;
+	UINT8	x[2];
+	UINT8	y[2];
+	UINT8	pal;
 } GPSET;
 
 typedef struct {
-	BYTE	x[2];
-	BYTE	y[2];
+	UINT8	x[2];
+	UINT8	y[2];
 } GPOINT2;
 
 
@@ -51,7 +51,7 @@ REG8 lio_gpoint2(GLIO lio) {
 	UINT32	addr;
 	UINT	sft;
 	UINT	pl;
-const BYTE	*ptr;
+const UINT8	*ptr;
 
 	lio_updatedraw(lio);
 	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));

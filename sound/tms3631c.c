@@ -34,7 +34,7 @@ void tms3631_initialize(UINT rate) {
 	tms3631cfg.ratesft = sft;
 }
 
-void tms3631_setvol(const BYTE *vol) {
+void tms3631_setvol(const UINT8 *vol) {
 
 	UINT	i;
 	UINT	j;

@@ -82,8 +82,8 @@ static UINT32 pc9861k_getspeed(REG8 dip) {
 			speed = 0;
 		}
 	}
-	if (speed > ((sizeof(pc9861k_speed) / sizeof(UINT32)) - 1)) {
-		speed = (sizeof(pc9861k_speed) / sizeof(UINT32)) - 1;
+	if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
+		speed = NELEMENTS(pc9861k_speed) - 1;
 	}
 	return(pc9861k_speed[speed]);
 }
@@ -131,7 +131,7 @@ static void IOOUTCALL pc9861data_w8(COMMNG cm, PC9861CH m,
 
 	switch(port & 0x3) {
 		case 0x01:
-			cm->write(cm, (BYTE)value);
+			cm->write(cm, (UINT8)value);
 			if (m->signal & 4) {
 				m->send = 0;
 				pic_setirq(m->irq);

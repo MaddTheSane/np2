@@ -11,15 +11,15 @@ GETSND getsnd_create(void *datptr, UINT datsize) {
 	GETSND		ret;
 
 	ZeroMemory(&snd, sizeof(snd));
-	r = getwave_open(&snd, (BYTE *)datptr, datsize);
+	r = getwave_open(&snd, (UINT8 *)datptr, datsize);
 #if defined(SUPPORT_MP3)
 	if (r == FAILURE) {
-		r = getmp3_open(&snd, (BYTE *)datptr, datsize);
+		r = getmp3_open(&snd, (UINT8 *)datptr, datsize);
 	}
 #endif
 #if defined(SUPPORT_OGG)
 	if (r == FAILURE) {
-		r = getogg_open(&snd, (BYTE *)datptr, datsize);
+		r = getogg_open(&snd, (UINT8 *)datptr, datsize);
 	}
 #endif
 	if (r == FAILURE) {
@@ -38,7 +38,7 @@ GETSND getsnd_create(void *datptr, UINT datsize) {
 	ZeroMemory(ret + 1, size);
 
 	// ÉèÅ[ÉNÇ∆Ç©ê›íËÅB
-	snd.buffer = (BYTE *)(ret + 1);
+	snd.buffer = (UINT8 *)(ret + 1);
 	snd.work = snd.buffer + blkwork;
 	*ret = snd;
 	if (getsnd_setmixproc(ret, snd.samplingrate, snd.channels) != SUCCESS) {
@@ -73,18 +73,18 @@ gsdes_end:
 
 UINT getsnd_getpcmbyleng(GETSND snd, void *pcm, UINT leng) {
 
-	BYTE	*pcmp;
-	BYTE	*pcmterm;
+	UINT8	*pcmp;
+	UINT8	*pcmterm;
 
 	if (snd == NULL) {
 		goto gsgpl_err;
 	}
 
-	pcmp = (BYTE *)pcm;
+	pcmp = (UINT8 *)pcm;
 	pcmterm = pcmp + leng;
 	while(pcmp < pcmterm) {
 		if (snd->remain != 0) {
-			pcmp = (BYTE *)(*snd->cnv)(snd, pcmp, pcmterm);
+			pcmp = (UINT8 *)(*snd->cnv)(snd, pcmp, pcmterm);
 		}
 		if (snd->remain == 0) {
 			snd->buf = snd->buffer;
@@ -94,7 +94,7 @@ UINT getsnd_getpcmbyleng(GETSND snd, void *pcm, UINT leng) {
 			}
 		}
 	}
-	return(UINT)(pcmp - (BYTE *)pcm);
+	return((UINT)(pcmp - (UINT8 *)pcm));
 
 gsgpl_err:
 	return(0);

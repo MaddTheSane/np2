@@ -30,7 +30,7 @@ void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg) {
 void cmndraw_fill(const CMNVRAM *vram, int x, int y,
 										int cx, int cy, CMNPAL fg) {
 
-	BYTE	*p;
+	UINT8	*p;
 	int		dalign;
 	int		r;
 
@@ -93,16 +93,16 @@ void cmndraw_fill(const CMNVRAM *vram, int x, int y,
 	}
 }
 
-void cmndraw_setfg(const CMNVRAM *vram, const BYTE *src,
+void cmndraw_setfg(const CMNVRAM *vram, const UINT8 *src,
 										int x, int y, CMNPAL fg) {
 
-const BYTE	*p;
-	BYTE	*q;
-	BYTE	cy;
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	cy;
 	int		dalign;
-	BYTE	c;
-	BYTE	bit;
-	BYTE	cx;
+	UINT8	c;
+	UINT8	bit;
+	UINT8	cx;
 
 	if (vram == NULL) {
 		return;
@@ -183,16 +183,16 @@ const BYTE	*p;
 	} while(--cy);
 }
 
-void cmndraw_setpat(const CMNVRAM *vram, const BYTE *src,
+void cmndraw_setpat(const CMNVRAM *vram, const UINT8 *src,
 										int x, int y, CMNPAL bg, CMNPAL fg) {
 
-const BYTE	*p;
-	BYTE	*q;
-	BYTE	cy;
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	cy;
 	int		dalign;
-	BYTE	c;
-	BYTE	bit;
-	BYTE	cx;
+	UINT8	c;
+	UINT8	bit;
+	UINT8	cx;
 
 	p = src + 2;
 	q = vram->ptr + (x * vram->xalign) + (y * vram->yalign);
@@ -290,8 +290,8 @@ const BYTE	*p;
 void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL fg) {
 
 	UINT	s;
-const BYTE	*ptr;
-	BYTE	src[10];
+const UINT8	*ptr;
+	UINT8	src[10];
 
 	if ((vram == NULL) || (str == NULL)) {
 		return;
@@ -324,9 +324,9 @@ BOOL cmndraw_bmp4inf(CMNBMP *bmp, const void *ptr) {
 
 const BMPFILE	*bf;
 const BMPINFO	*bi;
-const BYTE		*palptr;
+const UINT8		*palptr;
 	BMPDATA		inf;
-	BYTE		*src;
+	UINT8		*src;
 	int			bmpalign;
 	UINT		pals;
 	UINT		c;
@@ -336,14 +336,14 @@ const BYTE		*palptr;
 	}
 	bf = (BMPFILE *)ptr;
 	bi = (BMPINFO *)(bf + 1);
-	palptr = (BYTE *)(bi + 1);
+	palptr = (UINT8 *)(bi + 1);
 	if (((bf->bfType[0] != 'B') && (bf->bfType[1] != 'M')) ||
 		(bmpdata_getinfo(bi, &inf) != SUCCESS) || (inf.bpp != 4)) {
 		return(FAILURE);
 	}
 	pals = min(LOADINTELDWORD(bi->biClrUsed), 16);
 
-	src = (BYTE *)bf + (LOADINTELDWORD(bf->bfOffBits));
+	src = (UINT8 *)bf + (LOADINTELDWORD(bf->bfOffBits));
 	bmpalign = bmpdata_getalign(bi);
 	if (inf.height > 0) {
 		bmp->ptr = src + ((inf.height - 1) * bmpalign);
@@ -371,8 +371,8 @@ void cmndraw_bmp16(CMNVRAM *vram, const void *ptr, CMNPALCNV cnv, UINT flag) {
 
 	CMNBMP	bmp;
 	CMNPAL	pal[16];
-	BYTE	*src;
-	BYTE	*dst;
+	UINT8	*src;
+	UINT8	*dst;
 	int		yalign;
 	int		x;
 	int		y;

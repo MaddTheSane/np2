@@ -6,7 +6,7 @@ typedef struct {
 	UINT8	cmd;
 	UINT8	serial;
 	UINT8	parallel;
-	BYTE	reg[UPD4990_REGLEN];
+	UINT8	reg[UPD4990_REGLEN];
 	UINT	pos;
 	UINT8	cdat;
 	UINT8	regsft;

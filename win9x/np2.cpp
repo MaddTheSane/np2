@@ -56,7 +56,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
 		int			mmxflag;
-		BYTE		np2break = 0;									// ver0.30
+		UINT8		np2break = 0;									// ver0.30
 		BOOL		winui_en;
 
 		NP2OSCFG	np2oscfg = {
@@ -84,11 +84,11 @@ static	char		szClassName[] = "NP2-MainWindow";
 static	UINT		framecnt = 0;
 static	UINT		waitcnt = 0;
 static	UINT		framemax = 1;
-static	BYTE		np2stopemulate = 0;
+static	UINT8		np2stopemulate = 0;
 static	int			np2opening = 1;
 static	int			np2quitmsg = 0;
 static	HMENU		hStat = NULL;
-static	BYTE		scrnmode;
+static	UINT8		scrnmode;
 static	WINLOCEX	smwlex;
 
 static const char np2help[] = "np2.chm";
@@ -132,10 +132,10 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 	return(winlocex_create(base, list, cnt));
 }
 
-static void changescreen(BYTE newmode) {
+static void changescreen(UINT8 newmode) {
 
-	BYTE		change;
-	BYTE		renewal;
+	UINT8		change;
+	UINT8		renewal;
 	WINLOCEX	wlex;
 
 	change = scrnmode ^ newmode;
@@ -364,7 +364,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_CONFIG),
 									hWnd, (DLGPROC)CfgDialogProc);
 			if (!scrnmng_isfullscreen()) {
-				BYTE thick;
+				UINT8 thick;
 				thick = (GetWindowLong(hWnd, GWL_STYLE) & WS_THICKFRAME)?1:0;
 				if (thick != np2oscfg.thickframe) {
 					WINLOCEX wlex;
@@ -1361,10 +1361,10 @@ static void framereset(UINT cnt) {
 
 	framecnt = 0;
 	scrnmng_dispclock();
-	kdispwin_draw((BYTE)cnt);
+	kdispwin_draw((UINT8)cnt);
 	skbdwin_process();
 	mdbgwin_process();
-	toolwin_draw((BYTE)cnt);
+	toolwin_draw((UINT8)cnt);
 	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {

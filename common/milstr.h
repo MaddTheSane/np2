@@ -1,75 +1,80 @@
 
+#ifndef STRCALL
+#define	STRCALL
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // １文字分のサイズを取得
-int milank_charsize(const OEMCHAR *str);
-int milsjis_charsize(const char *str);
-int mileuc_charsize(const char *str);
-int milutf8_charsize(const char *str);
+int STRCALL milank_charsize(const OEMCHAR *str);
+int STRCALL milsjis_charsize(const char *str);
+int STRCALL mileuc_charsize(const char *str);
+int STRCALL milutf8_charsize(const char *str);
 
 // 大文字小文字を同一視して比較
 // ret 0:一致
-int milank_cmp(const OEMCHAR *str, const OEMCHAR *cmp);
-int milsjis_cmp(const char *str, const char *cmp);
-int mileuc_cmp(const char *str, const char *cmp);
-int milutf8_cmp(const char *str, const char *cmp);
+int STRCALL milank_cmp(const OEMCHAR *str, const OEMCHAR *cmp);
+int STRCALL milsjis_cmp(const char *str, const char *cmp);
+int STRCALL mileuc_cmp(const char *str, const char *cmp);
+int STRCALL milutf8_cmp(const char *str, const char *cmp);
 
 // 大文字小文字を 同一視してcmpのヌルまで比較
 // ret 0:一致
-int milank_memcmp(const OEMCHAR *str, const OEMCHAR *cmp);
-int milsjis_memcmp(const char *str, const char *cmp);
-int mileuc_memcmp(const char *str, const char *cmp);
-int milutf8_memcmp(const char *str, const char *cmp);
+int STRCALL milank_memcmp(const OEMCHAR *str, const OEMCHAR *cmp);
+int STRCALL milsjis_memcmp(const char *str, const char *cmp);
+int STRCALL mileuc_memcmp(const char *str, const char *cmp);
+int STRCALL milutf8_memcmp(const char *str, const char *cmp);
 
 // str[pos]が漢字１バイト目かどうか…
-int milsjis_kanji1st(const char *str, int pos);
-int mileuc_kanji1st(const char *str, int pos);
-int milutf8_kanji1st(const char *str, int pos);
+int STRCALL milsjis_kanji1st(const char *str, int pos);
+int STRCALL mileuc_kanji1st(const char *str, int pos);
+int STRCALL milutf8_kanji1st(const char *str, int pos);
 
 // str[pos]が漢字２バイト目かどうか…
-int milsjis_kanji2nd(const char *str, int pos);
-int mileuc_kanji2nd(const char *str, int pos);
-int milutf8_kanji2nd(const char *str, int pos);
+int STRCALL milsjis_kanji2nd(const char *str, int pos);
+int STRCALL mileuc_kanji2nd(const char *str, int pos);
+int STRCALL milutf8_kanji2nd(const char *str, int pos);
 
 // maxlen分だけ文字列をコピー
-void milank_ncpy(OEMCHAR *dst, const OEMCHAR *src, int maxlen);
-void milsjis_ncpy(char *dst, const char *src, int maxlen);
-void mileuc_ncpy(char *dst, const char *src, int maxlen);
-void milutf8_ncpy(char *dst, const char *src, int maxlen);
+void STRCALL milank_ncpy(OEMCHAR *dst, const OEMCHAR *src, int maxlen);
+void STRCALL milsjis_ncpy(char *dst, const char *src, int maxlen);
+void STRCALL mileuc_ncpy(char *dst, const char *src, int maxlen);
+void STRCALL milutf8_ncpy(char *dst, const char *src, int maxlen);
 
 // maxlen分だけ文字列をキャット
-void milank_ncat(OEMCHAR *dst, const OEMCHAR *src, int maxlen);
-void milsjis_ncat(char *dst, const char *src, int maxlen);
-void mileuc_ncat(char *dst, const char *src, int maxlen);
-void milutf8_ncat(char *dst, const char *src, int maxlen);
+void STRCALL milank_ncat(OEMCHAR *dst, const OEMCHAR *src, int maxlen);
+void STRCALL milsjis_ncat(char *dst, const char *src, int maxlen);
+void STRCALL mileuc_ncat(char *dst, const char *src, int maxlen);
+void STRCALL milutf8_ncat(char *dst, const char *src, int maxlen);
 
 // 文字を検索
-char *milank_chr(const OEMCHAR *str, int c);
-char *milsjis_chr(const char *str, int c);
-char *mileuc_chr(const char *str, int c);
-char *milutf8_chr(const char *str, int c);
+OEMCHAR * STRCALL milank_chr(const OEMCHAR *str, int c);
+char * STRCALL milsjis_chr(const char *str, int c);
+char * STRCALL mileuc_chr(const char *str, int c);
+char * STRCALL milutf8_chr(const char *str, int c);
 
 
 // 0~9, A~Z のみを大文字小文字を同一視して比較
 // ret 0:一致
-int milstr_extendcmp(const OEMCHAR *str, const OEMCHAR *cmp);
+int STRCALL milstr_extendcmp(const OEMCHAR *str, const OEMCHAR *cmp);
 
 // 次の語を取得
-char *milstr_nextword(const OEMCHAR *str);
+OEMCHAR * STRCALL milstr_nextword(const OEMCHAR *str);
 
 // 文字列からARGの取得
-int milstr_getarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg);
+int STRCALL milstr_getarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg);
 
 // HEX2INT
-long milstr_solveHEX(const OEMCHAR *str);
+long STRCALL milstr_solveHEX(const OEMCHAR *str);
 
 // STR2INT
-long milstr_solveINT(const OEMCHAR *str);
+long STRCALL milstr_solveINT(const OEMCHAR *str);
 
 // STRLIST
-OEMCHAR *milstr_list(const OEMCHAR *lststr, UINT pos);
+OEMCHAR * STRCALL milstr_list(const OEMCHAR *lststr, UINT pos);
 
 #ifdef __cplusplus
 }

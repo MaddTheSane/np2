@@ -5,11 +5,11 @@
 #include	"fontdata.h"
 
 
-static void x68kknjcpy(BYTE *dst, const BYTE *src, int from, int to) {
+static void x68kknjcpy(UINT8 *dst, const UINT8 *src, int from, int to) {
 
 	int		i, j, k;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 
 	for (i=from; i<to; i++) {
 		q = dst + 0x21000 + (i << 4);
@@ -44,10 +44,10 @@ const BYTE	*p;
 	}
 }
 
-BYTE fontx68k_read(const char *filename, BYTE loading) {
+UINT8 fontx68k_read(const char *filename, UINT8 loading) {
 
 	FILEH	fh;
-	BYTE	*work;
+	UINT8	*work;
 
 	// ファイルをオープン
 	fh = file_open_rb(filename);
@@ -56,7 +56,7 @@ BYTE fontx68k_read(const char *filename, BYTE loading) {
 	}
 
 	// メモリアロケート
-	work = (BYTE *)_MALLOC(0x3b800, "x68kfont");
+	work = (UINT8 *)_MALLOC(0x3b800, "x68kfont");
 	if (work == NULL) {
 		goto fr68_err2;
 	}

@@ -9,33 +9,33 @@
 
 
 typedef struct {
-	BYTE	mode;
-	BYTE	sw;
-	BYTE	act;
-	BYTE	disp;
+	UINT8	mode;
+	UINT8	sw;
+	UINT8	act;
+	UINT8	disp;
 } GSCREEN;
 
 typedef struct {
-	BYTE	x1[2];
-	BYTE	y1[2];
-	BYTE	x2[2];
-	BYTE	y2[2];
-	BYTE	vdraw_bg;
-	BYTE	vdraw_ln;
+	UINT8	x1[2];
+	UINT8	y1[2];
+	UINT8	x2[2];
+	UINT8	y2[2];
+	UINT8	vdraw_bg;
+	UINT8	vdraw_ln;
 } GVIEW;
 
 typedef struct {
-	BYTE	dummy;
-	BYTE	bgcolor;
-	BYTE	bdcolor;
-	BYTE	fgcolor;
-	BYTE	palmode;
+	UINT8	dummy;
+	UINT8	bgcolor;
+	UINT8	bdcolor;
+	UINT8	fgcolor;
+	UINT8	palmode;
 } GCOLOR1;
 
 typedef struct {
-	BYTE	pal;
-	BYTE	color1;
-	BYTE	color2;
+	UINT8	pal;
+	UINT8	color1;
+	UINT8	color2;
 } GCOLOR2;
 
 

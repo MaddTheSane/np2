@@ -40,25 +40,25 @@ extern const char x1ank2name[];
 extern const char x1knjname[];
 extern const char x68kfontname[];
 
-extern const BYTE fontdata_8[256*8];
-extern const BYTE fontdata_16[3*32*16];
-extern const BYTE fontdata_29[94*16];
-extern const BYTE fontdata_2a[94*16];
-extern const BYTE fontdata_2b[94*16];
-extern const BYTE fontdata_2c[76*16*2];
+extern const UINT8 fontdata_8[256*8];
+extern const UINT8 fontdata_16[3*32*16];
+extern const UINT8 fontdata_29[94*16];
+extern const UINT8 fontdata_2a[94*16];
+extern const UINT8 fontdata_2b[94*16];
+extern const UINT8 fontdata_2c[76*16*2];
 
 
-void fontdata_ank8store(const BYTE *ptr, UINT pos, UINT cnt);
+void fontdata_ank8store(const UINT8 *ptr, UINT pos, UINT cnt);
 void fontdata_patch16a(void);
 void fontdata_patch16b(void);
 void fontdata_patchjis(void);
 
-BYTE fontpc88_read(const char *filename, BYTE loading);
-BYTE fontpc98_read(const char *filename, BYTE loading);
-BYTE fontv98_read(const char *filename, BYTE loading);
-BYTE fontfm7_read(const char *filename, BYTE loading);
-BYTE fontx1_read(const char *filename, BYTE loading);
-BYTE fontx68k_read(const char *filename, BYTE loading);
+UINT8 fontpc88_read(const char *filename, UINT8 loading);
+UINT8 fontpc98_read(const char *filename, UINT8 loading);
+UINT8 fontv98_read(const char *filename, UINT8 loading);
+UINT8 fontfm7_read(const char *filename, UINT8 loading);
+UINT8 fontx1_read(const char *filename, UINT8 loading);
+UINT8 fontx68k_read(const char *filename, UINT8 loading);
 
 #ifdef __cplusplus
 }

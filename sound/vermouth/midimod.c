@@ -71,7 +71,7 @@ static int cfggetarg(char *str, char *arg[], int maxarg) {
 	int		ret;
 	BOOL	quot;
 	char	*p;
-	BYTE	c;
+	UINT8	c;
 
 	ret = 0;
 	while(maxarg--) {
@@ -193,7 +193,7 @@ static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
 	int		i;
 	char	*key;
 	char	*data;
-	BYTE	flag;
+	UINT8	flag;
 
 	if ((bank < 0) || (bank >= (MIDI_BANKS * 2)) || (argc < 2) ||
 		(cfggetval(argv[0], &val) != SUCCESS) || (val < 0) || (val >= 128)) {
@@ -227,7 +227,7 @@ static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
 	}
 	else {								// for drums
 		flag |= TONECFG_NOLOOP | TONECFG_NOENV;
-		tone->note = (BYTE)val;
+		tone->note = (UINT8)val;
 	}
 
 	for (i=2; i<argc; i++) {
@@ -260,7 +260,7 @@ static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
 		else if (!milstr_cmp(key, str_note)) {
 			if ((cfggetval(data, &val) == SUCCESS) &&
 				(val >= 0) && (val < 128)) {
-				tone->note = (BYTE)val;
+				tone->note = (UINT8)val;
 			}
 		}
 		else if (!milstr_cmp(key, str_pan)) {
@@ -288,7 +288,7 @@ static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
 			else {
 				continue;
 			}
-			tone->pan = (BYTE)val;
+			tone->pan = (UINT8)val;
 		}
 		else if (!milstr_cmp(key, str_strip)) {
 			if (!milstr_cmp(data, str_env)) {
@@ -357,12 +357,12 @@ BOOL cfgfile_load(MIDIMOD mod, const char *filename, int depth) {
 		goto cfl_err;
 	}
 	while(textfile_read(tfh, buf, sizeof(buf)) == SUCCESS) {
-		argc = cfggetarg(buf, argv, sizeof(argv)/sizeof(char *));
+		argc = cfggetarg(buf, argv, NELEMENTS(argv));
 		if (argc < 2) {
 			continue;
 		}
 		cfg = 0;
-		while(cfg < (sizeof(cfgstr)/sizeof(char *))) {
+		while(cfg < NELEMENTS(cfgstr)) {
 			if (!milstr_cmp(argv[0], cfgstr[cfg])) {
 				break;
 			}

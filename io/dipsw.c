@@ -9,7 +9,7 @@
 
 void IOOUTCALL dipsw_w8(UINT port, REG8 value) {
 
-	BYTE	set;
+	UINT8	set;
 	UINT	update;
 
 	update = 0;
