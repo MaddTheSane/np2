@@ -442,8 +442,8 @@ DEP_CPP_DMAP_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -493,8 +493,8 @@ DEP_CPP_EGCME=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1377,8 +1377,8 @@ DEP_CPP_ARTIC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1465,8 +1465,8 @@ DEP_CPP_CGROM=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1552,8 +1552,8 @@ DEP_CPP_CPUIO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1572,18 +1572,6 @@ DEP_CPP_CPUIO=\
 	"..\io\upd4990.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
-	"..\sound\adpcm.h"\
-	"..\sound\cs4231.h"\
-	"..\sound\fmboard.h"\
-	"..\sound\fmtimer.h"\
-	"..\sound\opngen.h"\
-	"..\sound\pcm86.h"\
-	"..\sound\psggen.h"\
-	"..\sound\rhythm.h"\
-	"..\sound\sound.h"\
-	"..\sound\soundrom.h"\
-	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1661,8 +1649,8 @@ DEP_CPP_CRTC_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1749,8 +1737,8 @@ DEP_CPP_DIPSW=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1843,8 +1831,8 @@ DEP_CPP_DMAC_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1926,6 +1914,7 @@ DEP_CPP_EGC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1934,8 +1923,8 @@ DEP_CPP_EGC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2005,6 +1994,93 @@ NODEP_CPP_EGC_C=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\IO\EMSIO.C
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+DEP_CPP_EMSIO=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\i286a\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_EMSIO=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\i286c\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\IO\EPSONIO.C
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
@@ -2023,8 +2099,8 @@ DEP_CPP_EPSON=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2092,93 +2168,6 @@ NODEP_CPP_EPSON=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\IO\EXTMEM.C
-
-!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
-
-DEP_CPP_EXTME=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\wce\compiler.h"\
-	
-
-!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
-
-DEP_CPP_EXTME=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\extmem.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	".\wce\compiler.h"\
-	
-NODEP_CPP_EXTME=\
-	"..\I286C\i286.h"\
-	"..\io\itf.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=..\IO\FDC.C
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
@@ -2198,8 +2187,8 @@ DEP_CPP_FDC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2285,8 +2274,8 @@ DEP_CPP_FDD32=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2371,8 +2360,8 @@ DEP_CPP_GDC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2466,8 +2455,8 @@ DEP_CPP_GDC_P=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2556,8 +2545,8 @@ DEP_CPP_GDC_S=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2648,8 +2637,8 @@ DEP_CPP_IOCOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2762,8 +2751,8 @@ DEP_CPP_MOUSE=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2851,8 +2840,8 @@ DEP_CPP_NECIO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2936,8 +2925,8 @@ DEP_CPP_NMIIO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3026,8 +3015,8 @@ DEP_CPP_NP2SY=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3116,8 +3105,8 @@ DEP_CPP_PIC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3203,8 +3192,8 @@ DEP_CPP_PIT_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3295,8 +3284,8 @@ DEP_CPP_PRINT=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3382,8 +3371,8 @@ DEP_CPP_SERIA=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3469,8 +3458,8 @@ DEP_CPP_SYSPO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3560,8 +3549,8 @@ DEP_CPP_UPD49=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3654,8 +3643,8 @@ DEP_CPP_AMD98=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3767,8 +3756,8 @@ DEP_CPP_BOARD=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3882,8 +3871,8 @@ DEP_CPP_BOARD1=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3994,8 +3983,8 @@ DEP_CPP_BOARD2=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4109,8 +4098,8 @@ DEP_CPP_BOARD8=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4224,8 +4213,8 @@ DEP_CPP_BOARDS=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4339,8 +4328,8 @@ DEP_CPP_BOARDX=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4457,8 +4446,8 @@ DEP_CPP_CBUSC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4539,6 +4528,7 @@ DEP_CPP_CS423=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4546,8 +4536,8 @@ DEP_CPP_CS423=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4657,8 +4647,8 @@ DEP_CPP_MPU98=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4748,8 +4738,8 @@ DEP_CPP_PC986=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4839,8 +4829,8 @@ DEP_CPP_PCM86=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4965,8 +4955,8 @@ DEP_CPP_BIOS_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4986,18 +4976,6 @@ DEP_CPP_BIOS_=\
 	"..\lio\lio.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
-	"..\sound\adpcm.h"\
-	"..\sound\cs4231.h"\
-	"..\sound\fmboard.h"\
-	"..\sound\fmtimer.h"\
-	"..\sound\opngen.h"\
-	"..\sound\pcm86.h"\
-	"..\sound\psggen.h"\
-	"..\sound\rhythm.h"\
-	"..\sound\sound.h"\
-	"..\sound\soundrom.h"\
-	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -5088,8 +5066,8 @@ DEP_CPP_BIOS0=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5178,8 +5156,8 @@ DEP_CPP_BIOS08=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5269,8 +5247,8 @@ DEP_CPP_BIOS09=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5361,8 +5339,8 @@ DEP_CPP_BIOS0C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5452,8 +5430,8 @@ DEP_CPP_BIOS1=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5541,8 +5519,8 @@ DEP_CPP_BIOS13=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5632,8 +5610,8 @@ DEP_CPP_BIOS18=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5725,8 +5703,8 @@ DEP_CPP_BIOS19=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5816,8 +5794,8 @@ DEP_CPP_BIOS1A=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5912,8 +5890,8 @@ DEP_CPP_BIOS1B=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5933,7 +5911,6 @@ DEP_CPP_BIOS1B=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	"..\timing.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6010,8 +5987,8 @@ DEP_CPP_BIOS1C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6104,6 +6081,7 @@ DEP_CPP_SXSIB=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	"..\timing.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6153,8 +6131,8 @@ DEP_CPP_DISPS=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6323,8 +6301,8 @@ DEP_CPP_MAKET=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6419,8 +6397,8 @@ DEP_CPP_MAKETG=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6521,8 +6499,8 @@ DEP_CPP_PALET=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6613,8 +6591,8 @@ DEP_CPP_SCRNB=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6707,8 +6685,8 @@ DEP_CPP_SCRND=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6882,6 +6860,7 @@ DEP_CPP_VRAM_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\vram\vram.h"\
 	".\wce\compiler.h"\
 	
@@ -7303,8 +7282,8 @@ DEP_CPP_BEEPC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7448,8 +7427,8 @@ DEP_CPP_CS4231=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7549,6 +7528,7 @@ DEP_CPP_CS4231G=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7556,8 +7536,8 @@ DEP_CPP_CS4231G=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7676,8 +7656,8 @@ DEP_CPP_FMBOA=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7804,8 +7784,8 @@ DEP_CPP_FMTIM=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7915,8 +7895,8 @@ DEP_CPP_OPNGE=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8109,8 +8089,8 @@ DEP_CPP_PCM86C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8218,8 +8198,8 @@ DEP_CPP_PCM86G=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8488,8 +8468,8 @@ DEP_CPP_S98_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8635,8 +8615,8 @@ DEP_CPP_SOUND=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8844,8 +8824,8 @@ DEP_CPP_DISKD=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8939,8 +8919,8 @@ DEP_CPP_FDD_D=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9071,8 +9051,8 @@ DEP_CPP_FDD_X=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9166,8 +9146,8 @@ DEP_CPP_FDDFI=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9384,8 +9364,8 @@ DEP_CPP_GCOLO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9473,8 +9453,8 @@ DEP_CPP_GCOLOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9667,8 +9647,8 @@ DEP_CPP_GSCRE=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9756,8 +9736,8 @@ DEP_CPP_GVIEW=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9847,8 +9827,8 @@ DEP_CPP_LIO_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -10538,8 +10518,8 @@ DEP_CPP_NP2_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -10747,8 +10727,8 @@ DEP_CPP_SOFTK=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -10895,8 +10875,8 @@ DEP_CPP_SYSME=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -11113,8 +11093,8 @@ DEP_CPP_WINKB=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -11423,8 +11403,8 @@ DEP_CPP_DLGSC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -12109,8 +12089,8 @@ DEP_CPP_DEBUG=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -12253,8 +12233,8 @@ DEP_CPP_PCCOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -12423,8 +12403,8 @@ DEP_CPP_STATS=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
+	"..\io\emsio.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\

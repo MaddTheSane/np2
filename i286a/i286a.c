@@ -124,10 +124,10 @@ void i286a_setextsize(UINT32 size) {
 		}
 		CPU_EXTMEMSIZE = size;
 	}
-	i286core.e.ems[0] = mem + 0xc0000;
-	i286core.e.ems[1] = mem + 0xc4000;
-	i286core.e.ems[2] = mem + 0xc8000;
-	i286core.e.ems[3] = mem + 0xcc000;
+	i286acore.e.ems[0] = mem + 0xc0000;
+	i286acore.e.ems[1] = mem + 0xc4000;
+	i286acore.e.ems[2] = mem + 0xc8000;
+	i286acore.e.ems[3] = mem + 0xcc000;
 }
 
 void i286a_setemm(UINT frame, UINT32 addr) {
@@ -144,7 +144,7 @@ void i286a_setemm(UINT frame, UINT32 addr) {
 	else {
 		ptr = mem + 0xc0000 + (frame << 14);
 	}
-	i286core.e.ems[frame] = ptr;
+	i286acore.e.ems[frame] = ptr;
 }
 
 

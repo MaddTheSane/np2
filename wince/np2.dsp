@@ -286,11 +286,11 @@ SOURCE=..\IO\EGC.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\IO\EPSONIO.C
+SOURCE=..\IO\EMSIO.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\IO\EXTMEM.C
+SOURCE=..\IO\EPSONIO.C
 # End Source File
 # Begin Source File
 

@@ -1062,25 +1062,22 @@ egcwwt_egc		dcd		egc
 
 ; ---- emmc
 
-emmc_rd			ldr		r2, emrd_extmempp
+emmc_rd			add		r2, r9, #CPU_EXTMEMSIZE
 				and		r3, r0, #(3 << 14)
 				ldr		r2, [r2, r3 lsr #(14 - 2)]
 				mov		r0, r0 lsl #(32 - 14)
 				ldrb	r0, [r2, r0 lsr #(32 - 14)]
 				mov		pc, lr
-emrd_extmempp	dcd		extmem + EM_PAGEPTR
 
-
-emmc_wt			ldr		r2, emwt_extmempp
+emmc_wt			add		r2, r9, #CPU_EXTMEMSIZE
 				and		r3, r0, #(3 << 14)
 				ldr		r2, [r2, r3 lsr #(14 - 2)]
 				mov		r0, r0 lsl #(32 - 14)
 				strb	r1, [r2, r0 lsr #(32 - 14)]
 				mov		pc, lr
-emwt_extmempp	dcd		extmem + EM_PAGEPTR
 
 
-emmcw_rd		ldr		r2, emwrd_extmempp
+emmcw_rd		add		r2, r9, #CPU_EXTMEMSIZE
 				and		r12, r0, #(3 << 14)
 				mov		r0, r0 lsl #(32 - 14)
 				ldr		r3, [r2, r12 lsr #(14 - 2)]
@@ -1089,7 +1086,6 @@ emmcw_rd		ldr		r2, emwrd_extmempp
 				add		r3, r3, r0 lsr #(32 - 14)
 				ldrh	r0, [r3]
 				mov		pc, lr
-emwrd_extmempp	dcd		extmem + EM_PAGEPTR
 emmcw_rd_odd	ldrb	r1, [r3, r0 lsr #(32 - 14)]
 				adds	r0, r0, #(1 << (32 - 14))
 				beq		emmcw_rd_3fff
@@ -1103,7 +1099,7 @@ emmcw_rd_3fff	eor		r12, r12, #(1 << 14)				; !
 				mov		pc, lr
 
 
-emmcw_wt		ldr		r2, emwwt_extmempp
+emmcw_wt		add		r2, r9, #CPU_EXTMEMSIZE
 				and		r12, r0, #(3 << 14)
 				mov		r0, r0 lsl #(32 - 14)
 				ldr		r3, [r2, r12 lsr #(14 - 2)]
@@ -1112,7 +1108,6 @@ emmcw_wt		ldr		r2, emwwt_extmempp
 				add		r3, r3, r0 lsr #(32 - 14)
 				strh	r1, [r3]
 				mov		pc, lr
-emwwt_extmempp	dcd		extmem + EM_PAGEPTR
 emmcw_wt_odd	strb	r1, [r3, r0 lsr #(32 - 14)]
 				mov		r1, r1 lsr #8
 				adds	r0, r0, #(1 << (32 - 14))
