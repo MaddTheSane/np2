@@ -1,6 +1,6 @@
 /*
  *  configure.cpp
- *  drom Neko Project IIx 0.3
+ *  from Neko Project IIx 0.3
  *
  *  Created by tk800 on Mon Sep 23 2002.
  *
@@ -169,6 +169,8 @@ static void initConfigWindow(void) {
         NumToString(np2cfg.delayms, title);
         SetControlData(getControlRefByID('Bufr', 7, configWin), kControlNoPart, kControlStaticTextTextTag, *title, title+1);
 
+        SetControlValue(getControlRefByID('cnfm', 0, configWin), np2oscfg.comfirm);
+        SetControlValue(getControlRefByID('rsum', 0, configWin), np2oscfg.resume);
 }
 
 static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
@@ -250,6 +252,17 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 						update |= SYS_UPDATECFG | SYS_UPDATESBUF;
                     }
                 }
+                dval=getSelectedValue('cnfm', 0);
+                if (dval != np2oscfg.comfirm) {
+                    np2oscfg.comfirm = dval;
+                    update |= SYS_UPDATEOSCFG;
+                }
+                dval=getSelectedValue('rsum', 0);
+                if (dval != np2oscfg.resume) {
+                    np2oscfg.resume = dval;
+                    update |= SYS_UPDATEOSCFG;
+                }
+
                 sysmng_update(update);
                 endLoop();
                 err=noErr;

@@ -28,12 +28,13 @@
 #include	"statsave.h"
 #include	"mousemng.h"
 #include	"configure.h"
+#include	"screenopt.h"
 
 
 #define	USE_RESUME
 
 
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0};
+		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0, 1, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -255,6 +256,10 @@ static void HandleMenuChoice(long wParam) {
 			break;
 
 #if defined(NP2GCC)
+		case IDM_SCREENOPT:
+			initScreenOpt();
+			break;
+
         case IDM_MOUSE:
             mouse_running(MOUSE_XOR);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
@@ -656,7 +661,9 @@ int main(int argc, char *argv[]) {
 	pccore_reset();
 
 #if defined(USE_RESUME)
-	flagload(np2resume);
+    if (np2oscfg.resume) {
+        flagload(np2resume);
+    }
 #endif
 
 #if 0
@@ -756,7 +763,9 @@ int main(int argc, char *argv[]) {
 	pccore_cfgupdate();
 
 #if defined(USE_RESUME)
-	flagsave(np2resume);
+    if (np2oscfg.resume) {
+        flagsave(np2resume);
+    }
 #endif
 
 	pccore_term();
