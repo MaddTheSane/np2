@@ -665,7 +665,7 @@ static int flagload_cgwnd(STFLAGH sfh, const SFENTRY *tbl) {
 
 // ---- dma
 
-static int flagsave_dma(STFLAGH sfh, const SFENTRY *t) {
+static int flagsave_dma(STFLAGH sfh, const SFENTRY *tbl) {
 
 	int			i;
 	_DMAC		dmabak;
@@ -678,6 +678,7 @@ static int flagsave_dma(STFLAGH sfh, const SFENTRY *t) {
 			return(STATFLAG_FAILURE);
 		}
 	}
+	(void)tbl;
 	return(statflag_write(sfh, &dmabak, sizeof(dmabak)));
 }
 
@@ -1019,6 +1020,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	if (saveflg & FLAG_CS4231) {
 		ret |= statflag_write(sfh, &cs4231, sizeof(cs4231));
 	}
+	(void)tbl;
 	return(ret);
 }
 

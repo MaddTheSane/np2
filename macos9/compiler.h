@@ -68,6 +68,8 @@ typedef unsigned char	BYTE;
 
 #define	SUPPORT_WAVEMIX
 #define	SUPPORT_HOSTDRV
+#define	SUPPORT_SASI
+#define	SUPPORT_SCSI
 
 #define	SOUNDRESERVE	80
 

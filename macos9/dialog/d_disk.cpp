@@ -159,7 +159,13 @@ void dialog_newdisk(void) {
 	if (!file_cmpname(file_getext(path), str_thd)) {
 		hddsize = 0;
 		if (NewHddDlgProc(&hddsize) == IDOK) {
-			newdisk_hdd(path, hddsize);
+			newdisk_thd(path, hddsize);
+		}
+	}
+	else if (!file_cmpname(file_getext(path), str_hdd)) {
+		hddsize = 0;
+		if (NewHddDlgProc(&hddsize) == IDOK) {
+			newdisk_vhd(path, hddsize);
 		}
 	}
 	else {

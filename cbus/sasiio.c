@@ -329,6 +329,7 @@ static void IOOUTCALL sasiio_o80(UINT port, REG8 dat) {
 			sasi_datawrite(dat);
 			break;
 	}
+	(void)port;
 }
 
 static void IOOUTCALL sasiio_o82(UINT port, REG8 dat) {
@@ -343,6 +344,7 @@ static void IOOUTCALL sasiio_o82(UINT port, REG8 dat) {
 		TRACEOUT(("SASI reset"));
 	}
 	sasidmac();
+	(void)port;
 }
 
 static REG8 IOINPCALL sasiio_i80(UINT port) {
@@ -379,6 +381,7 @@ static REG8 IOINPCALL sasiio_i80(UINT port) {
 			}
 			break;
 	}
+	(void)port;
 	return(ret);
 }
 
@@ -416,6 +419,7 @@ static REG8 IOINPCALL sasiio_i82(UINT port) {
 	else {
 		return((6 << 3) + 6);			// 256/256/40MB/40MB
 	}
+	(void)port;
 }
 
 

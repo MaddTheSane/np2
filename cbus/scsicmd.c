@@ -47,6 +47,7 @@ static UINT scsicmd_datain(SXSIDEV sxsi, BYTE *cdb) {
 		default:
 			length = 0;
 	}
+	(void)sxsi;
 	return(length);
 }
 
@@ -60,6 +61,7 @@ static UINT scsicmd_datain(SXSIDEV sxsi, BYTE *cdb) {
 REG8 scsicmd_negate(REG8 id) {
 
 	scsiio.phase = 0;
+	(void)id;
 	return(0x85);			// disconnect
 }
 

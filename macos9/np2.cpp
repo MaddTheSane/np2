@@ -28,7 +28,6 @@
 #include	"s98.h"
 #include	"diskdrv.h"
 #include	"fddfile.h"
-#include	"statsave.h"
 
 
 #define	USE_RESUME

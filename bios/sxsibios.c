@@ -130,6 +130,7 @@ static REG8 sxsibios_format(UINT type, SXSIDEV sxsi) {
 
 static REG8 sxsibios_succeed(UINT type, SXSIDEV sxsi) {
 
+	(void)type;
 	(void)sxsi;
 	return(0x00);
 }
@@ -267,6 +268,7 @@ static REG8 scsibios_sense(UINT type, SXSIDEV sxsi) {
 		CPU_DH = sxsi->surfaces;
 		CPU_DL = sxsi->sectors;
 	}
+	(void)type;
 	return(0x00);
 }
 

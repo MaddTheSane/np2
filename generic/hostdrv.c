@@ -1364,6 +1364,7 @@ int hostdrv_sfsave(STFLAGH sfh, const SFENTRY *tbl) {
 	ret |= statflag_write(sfh, &hostdrv.stat, sizeof(hostdrv.stat));
 	listarray_enum(hostdrv.fhdl, fhdl_wr, sfh);
 	listarray_enum(hostdrv.flist, flist_wr, sfh);
+	(void)tbl;
 	return(ret);
 }
 
@@ -1409,8 +1410,8 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl) {
 		}
 		ret |= statflag_read(sfh, hdl, sizeof(_HDRVLST));
 	}
+	(void)tbl;
 	return(ret);
 }
-
 #endif
 

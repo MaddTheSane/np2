@@ -78,6 +78,7 @@ static void scsicmd(REG8 cmd) {
 static void IOOUTCALL scsiio_occ0(UINT port, REG8 dat) {
 
 	scsiio.port = dat;
+	(void)port;
 }
 
 static void IOOUTCALL scsiio_occ2(UINT port, REG8 dat) {
@@ -125,17 +126,21 @@ static void IOOUTCALL scsiio_occ2(UINT port, REG8 dat) {
 				break;
 		}
 	}
+	(void)port;
 }
 
 static void IOOUTCALL scsiio_occ4(UINT port, REG8 dat) {
 
 	TRACEOUT(("scsiio_occ4 %.2x", dat));
+	(void)port;
+	(void)dat;
 }
 
 static void IOOUTCALL scsiio_occ6(UINT port, REG8 dat) {
 
 	scsiio.data[scsiio.wrdatpos & 0x7fff] = dat;
 	scsiio.wrdatpos++;
+	(void)port;
 }
 
 static REG8 IOINPCALL scsiio_icc0(UINT port) {
@@ -144,6 +149,7 @@ static REG8 IOINPCALL scsiio_icc0(UINT port) {
 
 	ret = scsiio.auxstatus;
 	scsiio.auxstatus = 0;
+	(void)port;
 	return(ret);
 }
 
@@ -175,12 +181,14 @@ static REG8 IOINPCALL scsiio_icc2(UINT port) {
 		scsiio.port++;
 		return(ret);
 	}
+	(void)port;
 	return(0xff);
 }
 
 static REG8 IOINPCALL scsiio_icc4(UINT port) {
 
 	TRACEOUT(("scsiio_icc4"));
+	(void)port;
 	return(0x00);
 }
 
@@ -190,6 +198,7 @@ static REG8 IOINPCALL scsiio_icc6(UINT port) {
 
 	ret = scsiio.data[scsiio.rddatpos & 0x7fff];
 	scsiio.rddatpos++;
+	(void)port;
 	return(ret);
 }
 
