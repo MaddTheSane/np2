@@ -50,7 +50,9 @@ typedef Boolean			BOOL;
 #define SOUND_CRITICAL
 
 // #define	SUPPORT_8BPP
-// #define	SUPPORT_16BPP
+#ifdef NP2GCC
+#define	SUPPORT_16BPP
+#endif
 // #define	SUPPORT_24BPP
 #define	SUPPORT_32BPP
 // #define SUPPORT_NORMALDISP
