@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.8 2004/02/06 16:49:51 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.9 2004/02/09 16:12:54 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -194,7 +194,7 @@ set_flags(WORD new_flags, WORD mask)
 
 	mask &= I_FLAG|IOPL_FLAG;
 	mask |= (SZAPC_FLAG|T_FLAG|D_FLAG|O_FLAG|NT_FLAG);
-	modify_eflags(new_flags, 0xffff0000|mask);
+	modify_eflags(new_flags, mask);
 }
 
 void

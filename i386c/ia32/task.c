@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.10 2004/02/06 16:49:51 monaka Exp $	*/
+/*	$Id: task.c,v 1.11 2004/02/09 16:12:54 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -78,7 +78,7 @@ load_tr(WORD selector)
 }
 
 void
-get_stack_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
+get_stack_pointer_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
 {
 	DWORD tss_stack_addr;
 
@@ -101,14 +101,14 @@ get_stack_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
 		*new_esp = cpu_kmemoryread_w(tss_stack_addr);
 		*new_ss = cpu_kmemoryread_w(tss_stack_addr + 2);
 	} else {
-		ia32_panic("get_stack_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
+		ia32_panic("get_stack_pointer_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
 
-	VERBOSE(("get_stack_from_tss: pl = %d, new_esp = 0x%08x, new_ss = 0x%04x", pl, *new_esp, *new_ss));
+	VERBOSE(("get_stack_pointer_from_tss: pl = %d, new_esp = 0x%08x, new_ss = 0x%04x", pl, *new_esp, *new_ss));
 }
 
 WORD
-get_link_selector_from_tss()
+get_backlink_selector_from_tss(void)
 {
 	WORD backlink;
 
@@ -121,16 +121,16 @@ get_link_selector_from_tss()
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
 		}
 	} else {
-		ia32_panic("get_link_selector_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
+		ia32_panic("get_backlink_selector_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
 
 	backlink = cpu_kmemoryread_w(CPU_TR_DESC.u.seg.segbase);
-	VERBOSE(("get_link_selector_from_tss: backlink selector = 0x%04x", backlink));
+	VERBOSE(("get_backlink_selector_from_tss: backlink selector = 0x%04x", backlink));
 	return backlink;
 }
 
 void
-task_switch(selector_t* task_sel, int type)
+task_switch(selector_t *task_sel, task_switch_type_t type)
 {
 	DWORD regs[CPU_REG_NUM];
 	DWORD eip;
@@ -394,11 +394,7 @@ task_switch(selector_t* task_sel, int type)
 
 	/* set new EFLAGS */
 	mask = I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG;
-	if (!task16) {
-		set_eflags(new_flags, mask);
-	} else {
-		set_flags(new_flags, mask);
-	}
+	set_eflags(new_flags, mask);
 
 	/* load new LDTR */
 	load_ldtr(ldtr, TS_EXCEPTION);

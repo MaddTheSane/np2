@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.8 2004/02/06 16:49:51 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.9 2004/02/09 16:12:54 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1153,14 +1153,13 @@ IRET(void)
 			POP0_16(new_ip);
 			POP0_16(new_cs);
 			POP0_16(new_flags);
-			set_flags(new_flags, mask);
 		} else {
 			POP0_32(new_ip);
 			POP0_32(new_cs);
 			POP0_32(new_flags);
 			mask |= RF_FLAG;
-			set_eflags(new_flags, mask);
 		}
+		set_eflags(new_flags, mask);
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);
@@ -1312,30 +1311,28 @@ ENTER16_IwIb(void)
 			}
 		} else {			/* enter level=2-31 */
 			CPU_WORKCLOCK(12 + level * 4);
-			if (!CPU_INST_OP32) {
-				if (!CPU_STAT_SS32) {
-					bp = CPU_BP;
-					CPU_BP = CPU_SP;
-					while (level--) {
-						bp -= 2;
-						CPU_SP -= 2;
-						val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
-						cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, val);
-					}
-					REGPUSH0(CPU_BP);
-					CPU_SP -= dimsize;
-				} else {
-					bp = CPU_EBP;
-					CPU_BP = CPU_SP;
-					while (level--) {
-						bp -= 2;
-						CPU_ESP -= 2;
-						val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
-						cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, val);
-					}
-					REGPUSH0_16_32(CPU_EBP);
-					CPU_ESP -= dimsize;
+			if (!CPU_STAT_SS32) {
+				bp = CPU_BP;
+				CPU_BP = CPU_SP;
+				while (level--) {
+					bp -= 2;
+					CPU_SP -= 2;
+					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
+					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, val);
 				}
+				REGPUSH0(CPU_BP);
+				CPU_SP -= dimsize;
+			} else {
+				bp = CPU_EBP;
+				CPU_BP = CPU_SP;
+				while (level--) {
+					bp -= 2;
+					CPU_ESP -= 2;
+					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
+					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, val);
+				}
+				REGPUSH0_16_32(CPU_BP);
+				CPU_ESP -= dimsize;
 			}
 		}
 	}
@@ -1418,13 +1415,11 @@ ENTER32_IwIb(void)
 void
 LEAVE16(void)
 {
-	WORD bp;
 	DWORD sp, size;
 
 	CPU_WORKCLOCK(5);
 
 	if (CPU_STAT_PM) {
-		bp = CPU_BP;
 		if (!CPU_STAT_SS32) {
 			sp = CPU_SP;
 			size = 2;
@@ -1432,10 +1427,10 @@ LEAVE16(void)
 			sp = CPU_ESP;
 			size = 4;
 		}
-		if (bp < sp) {
-			ia32_panic("LEAVE16: bp < sp");
+		if (CPU_BP < CPU_SP) {
+			ia32_panic("LEAVE16: BP(%04x) < SP(%04x)", CPU_BP, CPU_SP);
 		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (bp - sp) + size);
+		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (CPU_BP - CPU_SP) + size);
 	}
 
 	CPU_SP = CPU_BP;
@@ -1445,12 +1440,11 @@ LEAVE16(void)
 void
 LEAVE32(void)
 {
-	DWORD bp, sp, size;
+	DWORD sp, size;
 
 	CPU_WORKCLOCK(5);
 
 	if (CPU_STAT_PM) {
-		bp = CPU_EBP;
 		if (CPU_STAT_SS32) {
 			sp = CPU_ESP;
 			size = 4;
@@ -1458,10 +1452,10 @@ LEAVE32(void)
 			sp = CPU_SP;
 			size = 2;
 		}
-		if (bp < sp) {
-			ia32_panic("LEAVE32: bp < sp");
+		if (CPU_EBP < CPU_ESP) {
+			ia32_panic("LEAVE32: EBP(%08x) < ESP(%08x)", CPU_EBP, CPU_ESP);
 		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (bp - sp) + size);
+		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (CPU_EBP - CPU_ESP) + size);
 	}
 
 	CPU_ESP = CPU_EBP;
