@@ -467,6 +467,8 @@
 				F5193EB3053EE115014E43C7,
 				F5193EBB053EE130014E43C7,
 				96A202670549B28C00000102,
+				96CDCF10054AF57700000102,
+				96CDCF12054AF58300000102,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,6 +530,30 @@
 		};
 		96A2026E0549B38300000102 = {
 			fileRef = 96A2026D0549B38300000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96CDCF0F054AF57700000102 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			path = soundopt.cpp;
+			refType = 4;
+		};
+		96CDCF10054AF57700000102 = {
+			fileRef = 96CDCF0F054AF57700000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96CDCF11054AF58300000102 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			path = screenopt.cpp;
+			refType = 4;
+		};
+		96CDCF12054AF58300000102 = {
+			fileRef = 96CDCF11054AF58300000102;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1928,7 +1954,9 @@
 				F5193D73053EDF6B014E43C7,
 				F5193D85053EDF6B014E43C7,
 				F58B9A0105479597014E43C7,
+				96CDCF11054AF58300000102,
 				96A202660549B28C00000102,
+				96CDCF0F054AF57700000102,
 			);
 			isa = PBXGroup;
 			name = MacOSX;

@@ -13,7 +13,6 @@
 #include	"iocore.h"
 #include	"scrndraw.h"
 #include	"palettes.h"
-#include	"configure.h"
 #include	"dialogutils.h"
 
 #define	getControlValue(a)		GetControl32BitValue(getControlRefByID(a,0,screenWin))

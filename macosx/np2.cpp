@@ -30,6 +30,7 @@
 #include	"mousemng.h"
 #include	"configure.h"
 #include	"screenopt.h"
+#include	"soundopt.h"
 
 
 #define	USE_RESUME
@@ -312,6 +313,10 @@ static void HandleMenuChoice(long wParam) {
             sysmng_update(SYS_UPDATECFG);
             toggleMenubar();
 			break;
+            
+        case IDM_SOUNDOPT:
+            initSoundOpt();
+            break;
 #endif
 
 		case IDM_KEY:
