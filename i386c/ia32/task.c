@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.18 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: task.c,v 1.19 2004/03/24 14:34:23 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -225,8 +225,8 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	if (CPU_STAT_PAGING) {
 		/* task state paging check */
-		paging_check(cur_base, CPU_TR_DESC.u.seg.limit, CPU_PAGE_WRITE_DATA, CPU_MODE_SUPERVISER);
-		paging_check(task_base, task_sel->desc.u.seg.limit, CPU_PAGE_WRITE_DATA, CPU_MODE_SUPERVISER);
+		paging_check(cur_base, CPU_TR_DESC.u.seg.limit, CPU_PAGE_WRITE_DATA|CPU_MODE_SUPERVISER);
+		paging_check(task_base, task_sel->desc.u.seg.limit, CPU_PAGE_WRITE_DATA|CPU_MODE_SUPERVISER);
 	}
 
 	/* load task state */

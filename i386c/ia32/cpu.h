@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.26 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.27 2004/03/24 14:34:23 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -464,7 +464,7 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 
 #define	CPU_MODE_SUPERVISER	0
-#define	CPU_MODE_USER		1
+#define	CPU_MODE_USER		(1 << 3)
 #define	CPU_SET_CPL(cpl) \
 do { \
 	UINT8 __t = (UINT8)((cpl) & 3); \

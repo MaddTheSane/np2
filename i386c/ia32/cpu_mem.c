@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.15 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.16 2004/03/24 14:34:23 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -265,7 +265,7 @@ cpu_prefetch(UINT32 address)
 	UINT offset = address & CPU_PREFETCHQ_MASK;
 	UINT length = CPU_PREFETCH_QUEUE_LENGTH - offset;
 
-	cpu_memory_access_la_region(address, length, CPU_PAGE_READ_CODE, CPU_STAT_USER_MODE, CPU_PREFETCHQ + offset);
+	cpu_memory_access_la_region(address, length, CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE, CPU_PREFETCHQ + offset);
 	CPU_PREFETCHQ_REMAIN = (SINT8)length;
 }
 

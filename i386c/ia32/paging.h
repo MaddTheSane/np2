@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.15 2004/03/24 14:03:52 monaka Exp $	*/
+/*	$Id: paging.h,v 1.16 2004/03/24 14:34:23 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -128,45 +128,44 @@ extern "C" {
 /*
  * linear address memory access function
  */
-#if defined(IA32_PAGING_EACHSIZE)
-UINT8 MEMCALL cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
-UINT16 MEMCALL cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
-UINT32 MEMCALL cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
-UINT8 MEMCALL cpu_linear_memory_read_b(UINT32 laddr, const int crw, const int user_mode);
-UINT16 MEMCALL cpu_linear_memory_read_w(UINT32 laddr, const int crw, const int user_mode);
-UINT32 MEMCALL cpu_linear_memory_read_d(UINT32 laddr, const int crw, const int user_mode);
-void MEMCALL cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode);
-void MEMCALL cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode);
-void MEMCALL cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode);
-#else	/* !IA32_PAGING_EACHSIZE */
-UINT32 MEMCALL cpu_memory_access_la_RMW(UINT32 laddr, UINT length, const int user_mode, UINT32 (*func)(UINT32, void *), void *arg);
-UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, const int crw, const int user_mode);
-void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, const int user_mode);
-#endif	/* IA32_PAGING_EACHSIZE */
-void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, const int crw, const int user_mode, BYTE *data);
-void MEMCALL paging_check(UINT32 laddr, UINT length, const int crw, const int user_mode);
+void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, const int ucrw, BYTE *data);
+void MEMCALL paging_check(UINT32 laddr, UINT length, const int ucrw);
 
 /* crw */
 #define	CPU_PAGE_READ		(0 << 0)
 #define	CPU_PAGE_WRITE		(1 << 0)
 #define	CPU_PAGE_CODE		(1 << 1)
 #define	CPU_PAGE_DATA		(1 << 2)
+#define	CPU_PAGE_USER_MODE	(1 << 3)	/* == CPU_MODE_USER */
 #define	CPU_PAGE_READ_CODE	(CPU_PAGE_READ|CPU_PAGE_CODE)
 #define	CPU_PAGE_READ_DATA	(CPU_PAGE_READ|CPU_PAGE_DATA)
 #define	CPU_PAGE_WRITE_DATA	(CPU_PAGE_WRITE|CPU_PAGE_DATA)
 
 #if defined(IA32_PAGING_EACHSIZE)
 
+UINT8 MEMCALL cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT16 MEMCALL cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT32 MEMCALL cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT8 MEMCALL cpu_linear_memory_read_b(UINT32 laddr, const int ucrw);
+UINT16 MEMCALL cpu_linear_memory_read_w(UINT32 laddr, const int ucrw);
+UINT32 MEMCALL cpu_linear_memory_read_d(UINT32 laddr, const int ucrw);
+void MEMCALL cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode);
+void MEMCALL cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode);
+void MEMCALL cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode);
+
 #define	cpu_lmemoryread(a,pl) \
 	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread(a) : cpu_linear_memory_read_b(a,CPU_PAGE_READ_DATA,pl)
+	 cpu_memoryread(a) : \
+	 cpu_linear_memory_read_b(a,CPU_PAGE_READ_DATA | (pl))
 #define	cpu_lmemoryread_b(a,pl) cpu_lmemoryread(a,pl)
 #define	cpu_lmemoryread_w(a,pl) \
 	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread_w(a) : cpu_linear_memory_read_w(a,CPU_PAGE_READ_DATA,pl)
+	 cpu_memoryread_w(a) : \
+	 cpu_linear_memory_read_w(a,CPU_PAGE_READ_DATA | (pl))
 #define	cpu_lmemoryread_d(a,pl) \
 	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread_d(a) : cpu_linear_memory_read_d(a,CPU_PAGE_READ_DATA,pl)
+	 cpu_memoryread_d(a) : \
+	 cpu_linear_memory_read_d(a,CPU_PAGE_READ_DATA | (pl))
 
 #define	cpu_lmemorywrite(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
@@ -183,17 +182,21 @@ void MEMCALL paging_check(UINT32 laddr, UINT length, const int crw, const int us
 #define	cpu_lcmemoryread(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread(a) : \
-	 cpu_linear_memory_read_b(a,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 cpu_linear_memory_read_b(a,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 #define	cpu_lcmemoryread_w(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_w(a) : \
-	 cpu_linear_memory_read_w(a,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 cpu_linear_memory_read_w(a,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 #define	cpu_lcmemoryread_d(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_d(a) : \
-	 cpu_linear_memory_read_d(a,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 cpu_linear_memory_read_d(a,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 
 #else	/* !IA32_PAGING_EACHSIZE */
+
+UINT32 MEMCALL cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void *), void *arg);
+UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, const int ucrw);
+void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, const int user_mode);
 
 #define	cpu_memory_access_la_RMW_b(l,f,a) \
 	 cpu_memory_access_la_RMW(l,1,f,a)
@@ -205,16 +208,16 @@ void MEMCALL paging_check(UINT32 laddr, UINT length, const int crw, const int us
 #define	cpu_lmemoryread(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread(a) : \
-	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_DATA,pl)
+	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_DATA | (pl))
 #define	cpu_lmemoryread_b(a,pl) cpu_lmemoryread(a,pl)
 #define	cpu_lmemoryread_w(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_w(a) : \
-	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_DATA,pl)
+	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_DATA | (pl))
 #define	cpu_lmemoryread_d(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_d(a) : \
-	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_DATA,pl)
+	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_DATA | (pl))
 
 #define	cpu_lmemorywrite(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
@@ -234,15 +237,15 @@ void MEMCALL paging_check(UINT32 laddr, UINT length, const int crw, const int us
 #define	cpu_lcmemoryread(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread(a) : \
-	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 #define	cpu_lcmemoryread_w(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_w(a) : \
-	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 #define	cpu_lcmemoryread_d(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_d(a) : \
-	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 
 #endif	/* IA32_PAGING_EACHSIZE */
 

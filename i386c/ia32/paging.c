@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.21 2004/03/24 14:03:52 monaka Exp $	*/
+/*	$Id: paging.c,v 1.22 2004/03/24 14:34:23 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -184,7 +184,7 @@ static const UINT8 page_access_bit[32] = {
  * +- CR3(物理アドレス)
  */
 
-static UINT32 paging(const UINT32 laddr, const int crw, const int user_mode);
+static UINT32 paging(const UINT32 laddr, const int ucrw);
 #if defined(IA32_SUPPORT_TLB)
 static BOOL tlb_lookup(const UINT32 vaddr, const int crw, UINT32 *paddr);
 static void tlb_update(const UINT32 laddr, const UINT entry, const int crw);
@@ -194,12 +194,11 @@ static void tlb_update(const UINT32 laddr, const UINT entry, const int crw);
 UINT8 MEMCALL
 cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
-	const int user_mode = CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr;
 
-	paddr = paging(laddr, crw, user_mode);
+	paddr = paging(laddr, ucrw);
 	value = cpu_memoryread(paddr);
 	result = (*func)(value, arg);
 	cpu_memorywrite(paddr, (UINT8)result);
@@ -210,18 +209,17 @@ cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 UINT16 MEMCALL
 cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
-	const int user_mode = CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr[2];
 
-	paddr[0] = paging(laddr, crw, user_mode);
+	paddr[0] = paging(laddr, ucrw);
 	if ((laddr + 1) & 0x00000fff) {
 		value = cpu_memoryread_w(paddr[0]);
 		result = (*func)(value, arg);
 		cpu_memorywrite_w(paddr[0], (UINT16)result);
 	} else {
-		paddr[1] = paging(laddr + 1, crw, user_mode);
+		paddr[1] = paging(laddr + 1, ucrw);
 		value = cpu_memoryread_b(paddr[0]);
 		value += (UINT16)cpu_memoryread_b(paddr[1]) << 8;
 		result = (*func)(value, arg);
@@ -234,20 +232,19 @@ cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 UINT32 MEMCALL
 cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
-	const int user_mode = CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr[2];
 	UINT remain;
 
-	paddr[0] = paging(laddr, crw, user_mode);
+	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= 4) {
 		value = cpu_memoryread_d(paddr[0]);
 		result = (*func)(value, arg);
 		cpu_memorywrite_d(paddr[0], result);
 	} else {
-		paddr[1] = paging(laddr + remain, crw, user_mode);
+		paddr[1] = paging(laddr + remain, ucrw);
 		switch (remain) {
 		case 3:
 			value = cpu_memoryread(paddr[0]);
@@ -256,7 +253,7 @@ cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 			result = (*func)(value, arg);
 			cpu_memorywrite(paddr[0], (UINT8)result);
 			cpu_memorywrite_w(paddr[0] + 1, (UINT16)(result >> 8));
-			cpu_memorywrite(paddr[1], (BYTE)(result >> 24));
+			cpu_memorywrite(paddr[1], (UINT8)(result >> 24));
 			break;
 
 		case 2:
@@ -287,25 +284,25 @@ cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 }
 
 UINT8 MEMCALL
-cpu_linear_memory_read_b(UINT32 laddr, const int crw, const int user_mode)
+cpu_linear_memory_read_b(UINT32 laddr, const int ucrw)
 {
 	UINT32 addr;
 
-	addr = paging(laddr, crw, user_mode);
+	addr = paging(laddr, ucrw);
 	return cpu_memoryread(addr);
 }
 
 UINT16 MEMCALL
-cpu_linear_memory_read_w(UINT32 laddr, const int crw, const int user_mode)
+cpu_linear_memory_read_w(UINT32 laddr, const int ucrw)
 {
 	UINT32 addr, addr2;
 	UINT16 value;
 
-	addr = paging(laddr, crw, user_mode);
+	addr = paging(laddr, ucrw);
 	if ((laddr + 1) & 0x00000fff) {
 		return cpu_memoryread_w(addr);
 	} else {
-		addr2 = paging(laddr + 1, crw, user_mode);
+		addr2 = paging(laddr + 1, ucrw);
 		value = cpu_memoryread_b(addr);
 		value += (UINT16)cpu_memoryread_b(addr2) << 8;
 		return value;
@@ -313,18 +310,18 @@ cpu_linear_memory_read_w(UINT32 laddr, const int crw, const int user_mode)
 }
 
 UINT32 MEMCALL
-cpu_linear_memory_read_d(UINT32 laddr, const int crw, const int user_mode)
+cpu_linear_memory_read_d(UINT32 laddr, const int ucrw)
 {
 	UINT32 addr, addr2;
 	UINT32 value;
 	UINT remain;
 
-	addr = paging(laddr, crw, user_mode);
+	addr = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= 4) {
 		return cpu_memoryread_d(addr);
 	} else {
-		addr2 = paging(laddr + remain, crw, user_mode);
+		addr2 = paging(laddr + remain, ucrw);
 		switch (remain) {
 		case 3:
 			value = cpu_memoryread(addr);
@@ -355,24 +352,24 @@ cpu_linear_memory_read_d(UINT32 laddr, const int crw, const int user_mode)
 void MEMCALL
 cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
 	UINT32 addr;
 
-	addr = paging(laddr, crw, user_mode);
+	addr = paging(laddr, ucrw);
 	cpu_memorywrite(addr, value);
 }
 
 void MEMCALL
 cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
 	UINT32 addr, addr2;
 
-	addr = paging(laddr, crw, user_mode);
+	addr = paging(laddr, ucrw);
 	if ((laddr + 1) & 0x00000fff) {
 		cpu_memorywrite_w(addr, value);
 	} else {
-		addr2 = paging(laddr + 1, crw, user_mode);
+		addr2 = paging(laddr + 1, ucrw);
 		cpu_memorywrite(addr, (UINT8)value);
 		cpu_memorywrite(addr2, (UINT8)(value >> 8));
 	}
@@ -381,16 +378,16 @@ cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode)
 void MEMCALL
 cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
 	UINT32 addr, addr2;
 	UINT remain;
 
-	addr = paging(laddr, crw, user_mode);
+	addr = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= 4) {
 		cpu_memorywrite_d(addr, value);
 	} else {
-		addr2 = paging(laddr + remain, crw, user_mode);
+		addr2 = paging(laddr + remain, ucrw);
 		switch (remain) {
 		case 3:
 			cpu_memorywrite(addr, (UINT8)value);
@@ -417,13 +414,12 @@ cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode)
 UINT32 MEMCALL
 cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
-	const int user_mode = CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr[2];
 	UINT remain;
 
-	paddr[0] = paging(laddr, crw, user_mode);
+	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= length) {
 		/* fast mode */
@@ -455,7 +451,7 @@ cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void 
 	}
 
 	/* slow mode */
-	paddr[1] = paging(laddr + remain, crw, user_mode);
+	paddr[1] = paging(laddr + remain, ucrw);
 	switch (remain) {
 	case 3:
 		value = cpu_memoryread(paddr[0]);
@@ -464,7 +460,7 @@ cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void 
 		result = (*func)(value, arg);
 		cpu_memorywrite(paddr[0], (UINT8)result);
 		cpu_memorywrite_w(paddr[0] + 1, (UINT16)(result >> 8));
-		cpu_memorywrite(paddr[1], (BYTE)(result >> 24));
+		cpu_memorywrite(paddr[1], (UINT8)(result >> 24));
 		break;
 
 	case 2:
@@ -498,13 +494,13 @@ cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void 
 }
 
 UINT32 MEMCALL
-cpu_linear_memory_read(UINT32 laddr, UINT length, const int crw, const int user_mode)
+cpu_linear_memory_read(UINT32 laddr, UINT length, const int ucrw)
 {
 	UINT32 value;
 	UINT32 paddr[2];
 	UINT remain;
 
-	paddr[0] = paging(laddr, crw, user_mode);
+	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= length) {
 		/* fast mode */
@@ -530,7 +526,7 @@ cpu_linear_memory_read(UINT32 laddr, UINT length, const int crw, const int user_
 	}
 
 	/* slow mode */
-	paddr[1] = paging(laddr + remain, crw, user_mode);
+	paddr[1] = paging(laddr + remain, ucrw);
 	switch (remain) {
 	case 3:
 		value = cpu_memoryread(paddr[0]);
@@ -562,11 +558,11 @@ cpu_linear_memory_read(UINT32 laddr, UINT length, const int crw, const int user_
 void MEMCALL
 cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_mode)
 {
-	const int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
 	UINT32 paddr[2];
 	UINT remain;
 
-	paddr[0] = paging(laddr, crw, user_mode);
+	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= length) {
 		/* fast mode */
@@ -591,7 +587,7 @@ cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_
 	}
 
 	/* slow mode */
-	paddr[1] = paging(laddr + remain, crw, user_mode);
+	paddr[1] = paging(laddr + remain, ucrw);
 	switch (remain) {
 	case 3:
 		cpu_memorywrite(paddr[0], (UINT8)value);
@@ -620,7 +616,7 @@ cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_
 #endif	/* IA32_PAGING_EACHSIZE */
 
 void MEMCALL
-cpu_memory_access_la_region(UINT32 laddr, UINT length, const int crw, const int user_mode, BYTE *data)
+cpu_memory_access_la_region(UINT32 laddr, UINT length, const int ucrw, BYTE *data)
 {
 	UINT32 paddr;
 	UINT remain;	/* page remain */
@@ -634,11 +630,11 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, const int crw, const int 
 		if (!CPU_STAT_PAGING) {
 			paddr = laddr;
 		} else {
-			paddr = paging(laddr, crw, user_mode);
+			paddr = paging(laddr, ucrw);
 		}
 
 		r = (remain > length) ? length : remain;
-		if (!(crw & CPU_PAGE_WRITE)) {
+		if (!(ucrw & CPU_PAGE_WRITE)) {
 			cpu_memoryread_region(paddr, data, r);
 		} else {
 			cpu_memorywrite_region(paddr, data, r);
@@ -659,7 +655,7 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, const int crw, const int 
 }
 
 void MEMCALL
-paging_check(UINT32 laddr, UINT length, const int crw, const int user_mode)
+paging_check(UINT32 laddr, UINT length, const int ucrw)
 {
 	UINT32 paddr;
 	UINT remain;	/* page remain */
@@ -667,7 +663,7 @@ paging_check(UINT32 laddr, UINT length, const int crw, const int user_mode)
 
 	remain = 0x1000 - (laddr & 0x00000fff);
 	for (;;) {
-		paddr = paging(laddr, crw, user_mode);
+		paddr = paging(laddr, ucrw);
 
 		r = (remain > length) ? length : remain;
 
@@ -685,7 +681,7 @@ paging_check(UINT32 laddr, UINT length, const int crw, const int user_mode)
 }
 
 static UINT32
-paging(const UINT32 laddr, const int crw, const int user_mode)
+paging(const UINT32 laddr, const int ucrw)
 {
 	UINT32 paddr;		/* physical address */
 	UINT32 pde_addr;	/* page directory entry address */
@@ -731,9 +727,9 @@ paging(const UINT32 laddr, const int crw, const int user_mode)
 	/* make physical address */
 	paddr = (pte & CPU_PTE_BASEADDR_MASK) + (laddr & 0x00000fff);
 
-	bit  = crw & CPU_PAGE_WRITE;
+	bit  = ucrw & CPU_PAGE_WRITE;
 	bit |= (pde & pte & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE));
-	bit |= (user_mode << 3);
+	bit |= ucrw & CPU_PAGE_USER_MODE;
 	bit |= CPU_STAT_WP;
 
 #if !defined(USE_PAGE_ACCESS_TABLE)
@@ -750,29 +746,30 @@ paging(const UINT32 laddr, const int crw, const int user_mode)
 		goto pf_exception;
 	}
 
-	if ((crw & CPU_PAGE_WRITE) && !(pte & CPU_PTE_DIRTY)) {
+	if ((ucrw & CPU_PAGE_WRITE) && !(pte & CPU_PTE_DIRTY)) {
 		pte |= CPU_PTE_DIRTY;
 		cpu_memorywrite_d(pte_addr, pte);
 	}
 
 #if defined(IA32_SUPPORT_TLB)
-	tlb_update(laddr, pte, crw);
+	tlb_update(laddr, pte, ucrw);
 #endif	/* IA32_SUPPORT_TLB */
 
 	return paddr;
 
 pf_exception:
 	CPU_CR2 = laddr;
-	err |= ((crw & CPU_PAGE_WRITE) << 1) | (user_mode << 2);
+	err |= (ucrw & CPU_PAGE_WRITE) << 1;
+	err |= (ucrw & CPU_PAGE_USER_MODE) >> 1;
 	EXCEPTION(PF_EXCEPTION, err);
 	return 0;	/* compiler happy */
 }
+
 
 #if defined(IA32_SUPPORT_TLB)
 /* 
  * TLB
  */
-
 #if defined(IA32_PROFILE_TLB)
 /* profiling */
 typedef struct {
