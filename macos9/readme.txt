@@ -49,6 +49,13 @@
 
 
 
+・対応ディスクイメージ
+　　FDD  - *.d88 *.xdf
+　　SASI - *.thd *.hdi
+　　SCSI - *.hdd
+
+
+
 ・メニュー
 
 　　Emulate
