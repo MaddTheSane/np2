@@ -357,6 +357,7 @@ DEP_CPP_PROFI=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\profile.h"\
 	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -2231,6 +2232,7 @@ DEP_CPP_DMAC_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4410,6 +4412,7 @@ DEP_CPP_SERIA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6308,6 +6311,7 @@ DEP_CPP_BIOS_=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	"..\vram\vram.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -9184,6 +9188,7 @@ DEP_CPP_CS4231=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10594,6 +10599,7 @@ DEP_CPP_SOUND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\common\wavefile.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12685,6 +12691,8 @@ DEP_CPP_NP2_C=\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fddfile.h"\
 	"..\font\font.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -12727,7 +12735,6 @@ DEP_CPP_NP2_C=\
 	".\inputmng.h"\
 	".\np2.h"\
 	".\scrnmng.h"\
-	".\softkbd.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
 	".\sysmng.h"\
@@ -12919,11 +12926,12 @@ DEP_CPP_SCRNM=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\generic\softkbd.h"\
 	"..\vram\scrndraw.h"\
 	".\gx\gx.h"\
 	".\nekop2.res"\
 	".\scrnmng.h"\
-	".\softkbd.res"\
 	".\wce\compiler.h"\
 	
 
@@ -13429,6 +13437,64 @@ DEP_CPP_CMJAS=\
 	"..\i286c\cpucore.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\CMNDRAW.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_CMNDR=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\bmpdata.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\font\font.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\minifont.res"\
+	"..\i286c\cpucore.h"\
+	".\scrnmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_CMNDR=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\bmpdata.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\font\font.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\minifont.res"\
+	"..\i286c\cpucore.h"\
+	".\scrnmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_CMNDR=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\bmpdata.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\font\font.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\minifont.res"\
+	"..\i286c\cpucore.h"\
+	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14703,6 +14769,8 @@ DEP_CPP_KEYST=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\textfile.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -15088,6 +15156,7 @@ DEP_CPP_STATS=\
 	"..\CBUS\amd98.h"\
 	"..\CBUS\board14.h"\
 	"..\cbus\cbuscore.h"\
+	"..\CBUS\ideio.h"\
 	"..\CBUS\mpu98ii.h"\
 	"..\CBUS\pc9861k.h"\
 	"..\cbus\sasiio.h"\
@@ -15134,6 +15203,7 @@ DEP_CPP_STATS=\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\adpcm.h"\

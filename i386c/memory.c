@@ -796,10 +796,10 @@ void MEMCALL i286_vram_dispatch(UINT func) {
 
 const VACCTBL	*vacc;
 
-	vacc = vacctbl + (func & 0x0f);
 #if defined(SUPPORT_PC9821)
 	if (!(func & 0x20)) {
 #endif
+		vacc = vacctbl + (func & 0x0f);
 		memfn.rd8[0xa8000 >> 15] = vacc->rd8;
 		memfn.rd8[0xb0000 >> 15] = vacc->rd8;
 		memfn.rd8[0xb8000 >> 15] = vacc->rd8;
@@ -831,22 +831,22 @@ const VACCTBL	*vacc;
 	else {
 		memfn.rd8[0xa8000 >> 15] = mem9821_b0r;
 		memfn.rd8[0xb0000 >> 15] = mem9821_b0r;
-		memfn.rd8[0xb8000 >> 15] = vacc->rd8;
+		memfn.rd8[0xb8000 >> 15] = i286_nonram_r;
 		memfn.rd8[0xe0000 >> 15] = mem9821_b2r;
 
 		memfn.wr8[0xa8000 >> 15] = mem9821_b0w;
 		memfn.wr8[0xb0000 >> 15] = mem9821_b0w;
-		memfn.wr8[0xb8000 >> 15] = vacc->wr8;
+		memfn.wr8[0xb8000 >> 15] = i286_wn;
 		memfn.wr8[0xe0000 >> 15] = mem9821_b2w;
 
 		memfn.rd16[0xa8000 >> 15] = mem9821_b0rw;
 		memfn.rd16[0xb0000 >> 15] = mem9821_b0rw;
-		memfn.rd16[0xb8000 >> 15] = vacc->rd16;
+		memfn.rd16[0xb8000 >> 15] = i286_nonram_rw;
 		memfn.rd16[0xe0000 >> 15] = mem9821_b2rw;
 
 		memfn.wr16[0xa8000 >> 15] = mem9821_b0ww;
 		memfn.wr16[0xb0000 >> 15] = mem9821_b0ww;
-		memfn.wr16[0xb8000 >> 15] = vacc->wr16;
+		memfn.wr16[0xb8000 >> 15] = i286w_wn;
 		memfn.wr16[0xe0000 >> 15] = mem9821_b2ww;
 	}
 #endif

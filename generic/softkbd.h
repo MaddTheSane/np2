@@ -17,10 +17,10 @@ extern "C" {
 void softkbd_initialize(void);
 void softkbd_deinitialize(void);
 BOOL softkbd_getsize(int *width, int *height);
-BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv);
+BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw);
 BOOL softkbd_down(int x, int y);
 void softkbd_up(void);
-void softkbd_led(REG8 flag);
+void softkbd_led(REG8 led);
 
 #ifdef __cplusplus
 }

@@ -53,7 +53,7 @@ void MEMCALL mem9821_b0w(UINT32 address, REG8 value) {
 	UINT32	addr;
 
 	address -= 0xa8000;
-	addr = (vramop.bank2[((address >> 14) & 2)] & 15) << 15;
+	addr = (vramop.mio1[((address >> 14) & 2)] & 15) << 15;
 	addr += LOW15(address);
 	vramex[addr] = value;
 	vramupdate[LOW15(addr >> 3)] |= (addr & 0x40000)?2:1;
@@ -65,7 +65,7 @@ REG8 MEMCALL mem9821_b0r(UINT32 address) {
 	UINT32	addr;
 
 	address -= 0xa8000;
-	addr = (vramop.bank2[((address >> 14) & 2)] & 15) << 15;
+	addr = (vramop.mio1[((address >> 14) & 2)] & 15) << 15;
 	addr += LOW15(address);
 	return(vramex[addr]);
 }
@@ -86,22 +86,38 @@ REG16 MEMCALL mem9821_b0rw(UINT32 address) {
 }
 
 
-void MEMCALL mem9821_b2w(UINT32 address, REG8 value) {
+void MEMCALL mem9821_b2w(UINT32 addr, REG8 value) {
 
-	address -= 0xe0004;
-	if (address < 4) {
-		vramop.bank2[address] = value;
-//		TRACEOUT(("bank2[%d] = %.2x", address, value));
+	UINT	pos;
+
+	addr -= 0xe0000;
+	pos = addr - 0x0004;
+	if (pos < 4) {
+		vramop.mio1[pos] = value;
+		return;
+	}
+	pos = addr - 0x0100;
+	if (pos < 0x40) {
+		vramop.mio2[pos] = value;
+		TRACEOUT(("mem9821_b2w(%.5x, %.2x)", addr, value));
+		return;
 	}
 }
 
-REG8 MEMCALL mem9821_b2r(UINT32 address) {
+REG8 MEMCALL mem9821_b2r(UINT32 addr) {
 
-	address -= 0xe0004;
-	if (address < 4) {
-		return(vramop.bank2[address]);
+	UINT	pos;
+
+	addr -= 0xe0000;
+	pos = addr - 0x0004;
+	if (pos < 4) {
+		return(vramop.mio1[pos]);
 	}
-	return(0xff);
+	pos = addr - 0x0100;
+	if (pos < 0x40) {
+		return(vramop.mio2[pos]);
+	}
+	return(0x00);
 }
 
 void MEMCALL mem9821_b2ww(UINT32 address, REG16 value) {

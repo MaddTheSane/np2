@@ -33,9 +33,7 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"sysmenu.h"
-#if defined(SUPPORT_SOFTKBD)
 #include	"softkbd.h"
-#endif
 
 
 static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
@@ -202,7 +200,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 				else {
 #if defined(SUPPORT_SOFTKBD)
-					softkbd_down(LOWORD(lParam), HIWORD(lParam));
+					softkbd_down(LOWORD(lParam), HIWORD(lParam) - 200);
 #endif
 				}
 			}

@@ -826,6 +826,7 @@ static void framereset(void) {
 	framecnt = 0;
 	sysmng_updatecaption();
 	memdbg_process();
+	skbdwin_process();
 }
 
 static void processwait(UINT cnt) {

@@ -6,9 +6,8 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"nekop2.res"
-#if defined(SUPPORT_SOFTKBD)
-#include	"softkbd.res"
-#endif
+#include	"cmndraw.h"
+#include	"softkbd.h"
 
 
 #if defined(GX_DLL)
@@ -28,7 +27,6 @@ typedef struct {
 	long	yalign;
 #if defined(SUPPORT_SOFTKBD)
 	int		allflash;
-	BMPFILE	*kbd;
 #endif
 } SCRNMNG;
 
@@ -85,70 +83,31 @@ static BOOL calcdrawrect(DRAWRECT *dr, VRAMHDL s, const RECT_T *rt) {
 	return(SUCCESS);
 }
 
-static void bmp16draw(BMPFILE *bf, BYTE *dst, int width, int height,
+static void palcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
+
+	UINT	i;
+
+	if (bpp == 16) {
+		for (i=0; i<pals; i++) {
+			dst[i].pal16 = ((src[i].p.r & 0xf8) << 8) |
+							((src[i].p.g & 0xfc) << 3) |
+							(src[i].p.b >> 3);
+		}
+	}
+}
+
+static void bmp16draw(void *bmp, BYTE *dst, int width, int height,
 												int xalign, int yalign) {
 
-const BMPINFO	*bi;
-const BYTE		*pal;
-	BMPDATA		inf;
-	BYTE		*src;
-	int			bmpalign;
-	UINT		pals;
-	UINT16		paltbl[16];
-	UINT		c;
-	int			x;
-	int			y;
+	CMNVRAM	vram;
 
-	if (bf == NULL) {
-		goto b16d_err;
-	}
-	bi = (BMPINFO *)(bf + 1);
-	pal = (BYTE *)(bi + 1);
-	if (((bf->bfType[0] != 'B') && (bf->bfType[1] != 'M')) ||
-		(bmpdata_getinfo(bi, &inf) != SUCCESS) || (inf.bpp != 4)) {
-		goto b16d_err;
-	}
-	src = (BYTE *)bf + (LOADINTELDWORD(bf->bfOffBits));
-	bmpalign = bmpdata_getalign(bi);
-	if (inf.height > 0) {
-		src += (inf.height - 1) * bmpalign;
-		bmpalign *= -1;
-	}
-	else {
-		inf.height *= -1;
-	}
-	if ((width < inf.width) || (height < inf.height)) {
-		goto b16d_err;
-	}
-	dst += ((width - inf.width) / 2) * xalign;
-	dst += ((height - inf.height) / 2) * yalign;
-	yalign -= (inf.width * xalign);
-
-	pals = LOADINTELDWORD(bi->biClrUsed);
-	pals = min(pals, 16);
-	ZeroMemory(paltbl, sizeof(paltbl));
-	for (c=0; c<pals; c++) {
-		paltbl[c] = ((pal[c*4+2] & 0xf8) << 8) +
-					((pal[c*4+1] & 0xfc) << 3) + (pal[c*4+0] >> 3);
-	}
-
-	for (y=0; y<inf.height; y++) {
-		for (x=0; x<inf.width; x++) {
-			if (!(x & 1)) {
-				c = src[x >> 1] >> 4;
-			}
-			else {
-				c = src[x >> 1] & 15;
-			}
-			*(UINT16 *)dst = paltbl[c];
-			dst += xalign;
-		}
-		src += bmpalign;
-		dst += yalign;
-	}
-
-b16d_err:
-	return;
+	vram.ptr = dst;
+	vram.width = width;
+	vram.height = height;
+	vram.xalign = xalign;
+	vram.yalign = yalign;
+	vram.bpp = 16;
+	cmndraw_bmp16(&vram, bmp, palcnv, CMNBMP_CENTER | CMNBMP_MIDDLE);
 }
 
 
@@ -221,7 +180,7 @@ BOOL scrnmng_create(HWND hWnd, LONG width, LONG height) {
 	gx_disable = 0;
 	scrnmng_clear(TRUE);
 #if defined(SUPPORT_SOFTKBD)
-	scrnmng.kbd = (BMPFILE *)bmpdata_solvedata(np2kbd_bmp);
+	softkbd_initialize();
 #endif
 	return(SUCCESS);
 }
@@ -231,10 +190,7 @@ void scrnmng_destroy(void) {
 	gx_disable = 1;
 	GXCloseDisplay();
 #if defined(SUPPORT_SOFTKBD)
-	if (scrnmng.kbd) {
-		_MFREE(scrnmng.kbd);
-		scrnmng.kbd = NULL;
-	}
+	softkbd_deinitialize();
 #endif
 }
 
@@ -353,14 +309,23 @@ const BYTE		*a;
 
 void scrnmng_surfunlock(const SCRNSURF *surf) {
 
+#if defined(SUPPORT_SOFTKBD)
+	CMNVRAM	vram;
+#endif
+
 	if (surf) {
 		if (scrnmng.vram == NULL) {
 #if defined(SUPPORT_SOFTKBD)
 			if (scrnmng.allflash) {
 				scrnmng.allflash = 0;
+				vram.ptr = surf->ptr + (surf->yalign * 200);
+				vram.width = 320;
+				vram.height = 40;
+				vram.xalign = surf->xalign;
+				vram.yalign = surf->yalign;
+				vram.bpp = 16;
+				softkbd_paint(&vram, palcnv, TRUE);
 			}
-			bmp16draw(scrnmng.kbd, surf->ptr + (surf->yalign * 200), 320, 40,
-												surf->xalign, surf->yalign);
 #endif
 			GXEndDraw();
 		}
@@ -407,7 +372,7 @@ BOOL scrnmng_mousepos(LPARAM *lp) {
 
 void scrnmng_clear(BOOL logo) {
 
-	BMPFILE *bf;
+	void	*bmp;
 	BYTE	*p;
 	BYTE	*q;
 	int		y;
@@ -417,9 +382,9 @@ void scrnmng_clear(BOOL logo) {
 	if (gx_disable) {
 		return;
 	}
-	bf = NULL;
+	bmp = NULL;
 	if (logo) {
-		bf = (BMPFILE *)bmpdata_solvedata(nekop2_bmp);
+		bmp = (void *)bmpdata_solvedata(nekop2_bmp);
 	}
 	p = (BYTE *)GXBeginDraw();
 	q = p;
@@ -433,11 +398,10 @@ void scrnmng_clear(BOOL logo) {
 		} while(--x);
 		q += yalign;
 	} while(--y);
-	bmp16draw(bf, p + scrnmng.start, scrnmng.width, scrnmng.height,
-											scrnmng.xalign, scrnmng.yalign);
-	GXEndDraw();
-	if (bf) {
-		_MFREE(bf);
+	bmp16draw(bmp, p + scrnmng.start, scrnmng.width, scrnmng.height,
+												scrnmng.xalign, scrnmng.yalign);	GXEndDraw();
+	if (bmp) {
+		_MFREE(bmp);
 	}
 }
 
@@ -459,6 +423,10 @@ void scrnmng_keybinds(void) {
 
 BOOL scrnmng_entermenu(SCRNMENU *smenu) {
 
+#if defined(SUPPORT_SOFTKBD)
+	CMNVRAM	vram;
+#endif
+
 	if (smenu == NULL) {
 		goto smem_err;
 	}
@@ -469,7 +437,13 @@ BOOL scrnmng_entermenu(SCRNMENU *smenu) {
 	}
 	scrndraw_redraw();
 #if defined(SUPPORT_SOFTKBD)
-	bmp16draw(scrnmng.kbd, scrnmng.vram->ptr + (640 * 200), 320, 40, 2, 640);
+	vram.ptr = scrnmng.vram->ptr + (640 * 200);
+	vram.width = 320;
+	vram.height = 40;
+	vram.xalign = 2;
+	vram.yalign = 640;
+	vram.bpp = 16;
+	softkbd_paint(&vram, palcnv, TRUE);
 #endif
 	smenu->width = scrnmng.width;
 	smenu->height = scrnmng.height;

@@ -53,7 +53,7 @@ typedef	signed int		SINT32;
 
 #if defined(WIN32_PLATFORM_PSPC) && defined(SIZE_QVGA)
 #define	MENU_TASKMINIMIZE
-#define SUPPORT_SOFTKBD
+#define SUPPORT_SOFTKBD			1
 #endif
 
 #define	VERMOUTH_LIB

@@ -9,6 +9,23 @@
 #define	SOFTKEY_MENU	0xfe
 #define	SOFTKEY_NC		0xff
 
+enum {
+	KBDDRAW_BMP		= 0x01,
+	KBDDRAW_LED		= 0x02
+};
+
+typedef struct {
+	UINT8	key;
+	UINT8	key2;
+	UINT8	led;
+	UINT8	draw;
+	void	*ptr;
+	CMNBMP	bmp;
+	CMNPAL	pal[16];
+} SOFTKBD;
+
+static	SOFTKBD	softkbd;
+
 #if (SUPPORT_SOFTKBD == 1)
 #include	"softkbd1.res"
 #elif (SUPPORT_SOFTKBD == 2)
@@ -17,115 +34,78 @@
 #include	"softkbd.res"
 #endif
 
-#if 0
-typedef struct {
-	BMPDATA	inf;
-	BYTE	*ptr;
-	int		height;
-	int		yalign;
-} CMNBMP;
 
-static BOOL cmnbmp_4(const BYTE *dat, CMNBMP *ret) {
+static void loadbmp(const char *filename) {
 
-	BMPDATA		inf;
-const BMPFILE	*bf;
+	void	*ptr;
 
-	bf = (BMPFILE *)dat;
-	if ((bf == NULL) ||
-		(bf->bfType[0] != 'B') || (bf->bfType[1] != 'M') ||
-		(bmpdata_getinfo((BMPINFO *)(bf + 1), &inf) != SUCCESS) ||
-		(inf.bpp == 4)) {
-		return(FAILURE);
-	}
-	if (ret) {
-		ret->inf = inf;
-		ret->ptr = ((BYTE *)bf) + (LOADINTELDWORD(bf->bfOffBits));
-		ret->yalign = bmpdata_getalign((BMPINFO *)(bf + 1));
-		if (inf.height < 0) {
-			ret->height = inf.height * -1;
+	softkbd.ptr = NULL;
+	ptr = (void *)bmpdata_solvedata(np2kbd_bmp);
+	if (ptr != NULL) {
+		if (cmndraw_bmp4inf(&softkbd.bmp, ptr) == SUCCESS) {
+			softkbd.ptr = ptr;
 		}
 		else {
-			ret->ptr += (inf.height - 1) * ret->yalign;
-			ret->height = inf.height;
-			ret->yalign *= -1;
+			_MFREE(ptr);
 		}
 	}
-	return(SUCCESS);
+	softkbd.draw |= KBDDRAW_BMP;
 }
-#endif
-
-
-typedef struct {
-	BYTE	*bmp;
-	UINT	width;
-	UINT	height;
-	UINT8	key;
-} SOFTKBD;
-
-static	SOFTKBD	softkbd;
-
-
-
-// ----
 
 void softkbd_initialize(void) {
 
-	BMPFILE	*bf;
-	BMPDATA	inf;
-
-	softkbd.bmp = NULL;
-	softkbd.width = 0;
-	softkbd.height = 0;
 	softkbd.key = SOFTKEY_NC;
-	bf = (BMPFILE *)bmpdata_solvedata(np2kbd_bmp);
-	if (bf != NULL) {
-		if ((bf->bfType[0] == 'B') && (bf->bfType[1] == 'M') &&
-			(bmpdata_getinfo((BMPINFO *)(bf + 1), &inf) == SUCCESS) &&
-			(inf.bpp == 4)) {
-			softkbd.bmp = (BYTE *)bf;
-			softkbd.width = inf.width;
-			if (inf.height > 0) {
-				softkbd.height = inf.height;
-			}
-			else {
-				softkbd.height = 0 - inf.height;
-			}
-		}
-		else {
-			_MFREE(bf);
-		}
-	}
+	softkbd.led = 0;
+	loadbmp(NULL);
 }
 
 void softkbd_deinitialize(void) {
 
-	BYTE	*bmp;
+	void	*ptr;
 
-	bmp = softkbd.bmp;
-	softkbd.bmp = NULL;
-	if (bmp) {
-		_MFREE(bmp);
+	ptr = softkbd.ptr;
+	softkbd.ptr = NULL;
+	if (ptr) {
+		_MFREE(ptr);
 	}
 }
 
 BOOL softkbd_getsize(int *width, int *height) {
 
-	if (softkbd.bmp == NULL) {
+	if (softkbd.ptr == NULL) {
 		return(FAILURE);
 	}
 	if (width) {
-		*width = softkbd.width;
+		*width = softkbd.bmp.width;
 	}
 	if (height) {
-		*height = softkbd.height;
+		*height = softkbd.bmp.height;
 	}
 	return(SUCCESS);
 }
 
-BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv) {
+BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw) {
 
-	cmddraw_bmp16(vram, softkbd.bmp, cnv, CMNBMP_LEFT | CMNBMP_TOP);
-	return(TRUE);
+	UINT8	draw;
+	BOOL	ret;
+
+	draw = softkbd.draw;
+	softkbd.draw = 0;
+	if (redraw) {
+		draw = KBDDRAW_BMP | KBDDRAW_LED;
+	}
+	ret = FALSE;
+	if ((draw & KBDDRAW_BMP) && (vram) && (cnv)) {
+		(*cnv)(softkbd.pal, softkbd.bmp.paltbl, softkbd.bmp.pals, vram->bpp);
+		cmndraw_bmp16(vram, softkbd.ptr, cnv, CMNBMP_LEFT | CMNBMP_TOP);
+		ret = TRUE;
+	}
+	if (draw & KBDDRAW_LED) {
+		TRACEOUT(("softkbd_paint"));
+		ledpaint(vram);
+		ret = TRUE;
+	}
+	return(ret);
 }
 
 BOOL softkbd_down(int x, int y) {
@@ -149,6 +129,15 @@ void softkbd_up(void) {
 	if (softkbd.key != SOFTKEY_NC) {
 		keystat_up(&softkbd.key, 1, NKEYREF_SOFTKBD);
 		softkbd.key = SOFTKEY_NC;
+	}
+}
+
+void softkbd_led(REG8 led) {
+
+	TRACEOUT(("softkbd_led(%x)", led));
+	if (softkbd.led != led) {
+		softkbd.led = led;
+		softkbd.draw |= KBDDRAW_LED;
 	}
 }
 #endif

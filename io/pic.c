@@ -32,16 +32,12 @@ static const _PICITEM def_slave = {
 void pic_irq(void) {
 
 	PIC		p;
-	REG8	imr;
 	REG8	mir;
-	REG8	mis;
 	REG8	sir;
-	REG8	sis;
 	REG8	dat;
 	REG8	num;
 	REG8	bit;
 	REG8	slave;
-	REG8	master;
 
 	// äÑçûÇ›ãñâ¬ÅH
 	if (!CPU_isEI) {

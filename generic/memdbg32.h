@@ -26,9 +26,8 @@ extern "C" {
 #endif
 
 void memdbg32_initialize(void);
-void memdbg32_setpal(CMNPALFN *palfn);
 void memdbg32_getsize(int *width, int *height);
-BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw);
+BOOL memdbg32_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw);
 
 #ifdef __cplusplus
 }

@@ -33,7 +33,7 @@ typedef struct {
 	int		bpp;
 } CMNVRAM;
 
-typedef void (*CMNPALCNV)(CMNPAL *dst, RGB32 *src, UINT pals, UINT bpp);
+typedef void (*CMNPALCNV)(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp);
 
 #ifdef __cplusplus
 extern "C" {
@@ -82,8 +82,14 @@ void cmndraw32_setpat(const CMNVRAM *vram, const BYTE *src,
 // ----
 
 void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPALS *pal);
-void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPALS *pal);
 
+void cmndraw_fill2(const CMNVRAM *vram, int x, int y,
+										int cx, int cy, CMNPAL fg);
+void cmndraw_setfg2(const CMNVRAM *vram, const BYTE *src,
+										int x, int y, CMNPAL fg);
+void cmndraw_setpat2(const CMNVRAM *vram, const BYTE *src,
+										int x, int y, CMNPAL bg, CMNPAL fg);
+void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL fg);
 
 // ----
 
@@ -96,7 +102,17 @@ enum {
 	CMNBMP_BOTTOM	= 0x08
 };
 
-void cmddraw_bmp16(CMNVRAM *vram, const void *bmp, CMNPALCNV cnv, UINT flag);
+typedef struct {
+	BYTE	*ptr;
+	int		width;
+	int		height;
+	int		align;
+	UINT	pals;
+	RGB32	paltbl[16];
+} CMNBMP;
+
+BOOL cmndraw_bmp4inf(CMNBMP *bmp, const void *ptr);
+void cmndraw_bmp16(CMNVRAM *vram, const void *ptr, CMNPALCNV cnv, UINT flag);
 
 #ifdef __cplusplus
 }

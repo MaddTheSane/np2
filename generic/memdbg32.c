@@ -13,7 +13,8 @@ typedef struct {
 	UINT	mode;
 	int		width;
 	int		height;
-	CMNPALS	pal[MEMDBG32_PALS];
+	int		bpp;
+	CMNPAL	pal[MEMDBG32_PALS];
 } MEMDBG32;
 
 static	MEMDBG32	memdbg32;
@@ -22,17 +23,21 @@ static const char _mode0[] = "Real Mode";
 static const char _mode1[] = "Protected Mode";
 static const char _mode2[] = "Virutal86";
 static const char *modestr[3] = {_mode0, _mode1, _mode2};
+static const RGB32 md32pal[MEMDBG32_PALS] = {
+			RGB32D(0x33, 0x33, 0x33),
+			RGB32D(0x00, 0x00, 0x00),
+			RGB32D(0xff, 0xaa, 0x00),
+			RGB32D(0xff, 0x00, 0x00),
+			RGB32D(0x11, 0x88, 0x11),
+			RGB32D(0x00, 0xff, 0x00),
+			RGB32D(0xff, 0xff, 0xff)};
 
 
 void memdbg32_initialize(void) {
 
+	ZeroMemory(&memdbg32, sizeof(memdbg32));
 	memdbg32.width = (MEMDBG32_BLOCKW * 128) + 8;
 	memdbg32.height = (MEMDBG32_BLOCKH * 2 * 16) + 8;
-}
-
-void memdbg32_setpal(CMNPALFN *palfn) {
-
-	cmndraw_getpals(palfn, memdbg32.pal, MEMDBG32_PALS);
 }
 
 void memdbg32_getsize(int *width, int *height) {
@@ -45,7 +50,7 @@ void memdbg32_getsize(int *width, int *height) {
 	}
 }
 
-BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
+BOOL memdbg32_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw) {
 
 	UINT	mode;
 	UINT8	use[16*256];
@@ -71,9 +76,19 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 	if ((!redraw) && (!CPU_STAT_PAGING)) {
 		return(FALSE);
 	}
+	if (vram == NULL) {
+		return(FALSE);
+	}
+	if ((memdbg32.bpp != vram->bpp) || (redraw)) {
+		if (cnv == NULL) {
+			return(FALSE);
+		}
+		(*cnv)(memdbg32.pal, md32pal, MEMDBG32_PALS, vram->bpp);
+		memdbg32.bpp = vram->bpp;
+	}
 
-	cmddraw_fill(vram, 0, 0, memdbg32.width, memdbg32.height,
-											memdbg32.pal + MEMDBG32_PALBDR);
+	cmndraw_fill2(vram, 0, 0, memdbg32.width, memdbg32.height,
+											memdbg32.pal[MEMDBG32_PALBDR]);
 	ZeroMemory(use, sizeof(use));
 	if (CPU_STAT_PAGING) {
 		pdmax = 0;
@@ -118,18 +133,18 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 	}
 	for (i=0; i<32; i++) {
 		for (j=0; j<128; j++) {
-			cmddraw_fill(vram, 8 + j * MEMDBG32_BLOCKW, i * MEMDBG32_BLOCKH,
+			cmndraw_fill2(vram, 8 + j * MEMDBG32_BLOCKW, i * MEMDBG32_BLOCKH,
 									MEMDBG32_BLOCKW - 1, MEMDBG32_BLOCKH - 1,
-									memdbg32.pal + use[(i * 128) + j]);
+									memdbg32.pal[use[(i * 128) + j]]);
 		}
 	}
 	for (i=0; i<16; i++) {
 		SPRINTF(str, str_x, i);
 		cmddraw_text8(vram, 0, i * MEMDBG32_BLOCKH * 2, str,
-											memdbg32.pal + MEMDBG32_PALTXT);
+											memdbg32.pal[MEMDBG32_PALTXT]);
 	}
 	cmddraw_text8(vram, 0, memdbg32.height - 8, modestr[mode],
-											memdbg32.pal + MEMDBG32_PALTXT);
+											memdbg32.pal[MEMDBG32_PALTXT]);
 	return(TRUE);
 }
 #endif

@@ -301,3 +301,5 @@ const FULLKEY	*fk;
 	return(SOFTKEY_NC);
 }
 
+#define	ledpaint(v)
+

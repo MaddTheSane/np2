@@ -130,35 +130,31 @@ static const PFTBL mdbgini[] = {
 	{"WindposX", PFTYPE_SINT32,		&mdbgcfg.posx,			0},
 	{"WindposY", PFTYPE_SINT32,		&mdbgcfg.posy,			0}};
 
-static const UINT32 mdwinpal[MEMDBG32_PALS] =
-			{0x00333333, 0x00000000, 
-				0x00ffaa00, 0x00ff0000, 0x00118811, 0x0000ff00, 0xffffffff};
 
-static UINT32 mdwin_getpal32(CMNPALFN *self, UINT num) {
+static void mdpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 
-	if (num < MEMDBG32_PALS) {
-		return(mdwinpal[num] & 0xffffff);
+	UINT	i;
+
+	switch(bpp) {
+		case 32:
+			for (i=0; i<pals; i++) {
+				dst[i].pal32.d = src[i].d;
+			}
+			break;
 	}
-	return(0);
 }
 
 static void mdwincreate(HWND hWnd) {
 
 	int			width;
 	int			height;
-	CMNPALFN	palfn;
 
 	memdbg32_initialize();
 	memdbg32_getsize(&width, &height);
-	palfn.get8 = NULL;
-	palfn.get32 = mdwin_getpal32;
-	palfn.cnv16 = NULL;
-	palfn.userdata = 0;
-	memdbg32_setpal(&palfn);
 	setclientsize(hWnd, width, height);
 	mdbgwin.hbmp = allocbmp(width, height, &mdbgwin.vram);
 	if (mdbgwin.hbmp) {
-		memdbg32_paint(&mdbgwin.vram, TRUE);
+		memdbg32_paint(&mdbgwin.vram, mdpalcnv, TRUE);
 	}
 }
 
@@ -273,7 +269,7 @@ void memdbg_destroy(void) {
 void memdbg_process(void) {
 
 	if ((mdbgwin.hwnd) && (mdbgwin.hbmp)) {
-		if (memdbg32_paint(&mdbgwin.vram, FALSE)) {
+		if (memdbg32_paint(&mdbgwin.vram, mdpalcnv, FALSE)) {
 			InvalidateRect(mdbgwin.hwnd, NULL, TRUE);
 		}
 	}
@@ -322,7 +318,7 @@ static const PFTBL skbdini[] = {
 	{"WindposX", PFTYPE_SINT32,		&skbdcfg.posx,			0},
 	{"WindposY", PFTYPE_SINT32,		&skbdcfg.posy,			0}};
 
-static void skpalcnv(CMNPAL *dst, RGB32 *src, UINT pals, UINT bpp) {
+static void skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 
 	UINT	i;
 
@@ -344,7 +340,7 @@ static void skcreate(HWND hWnd) {
 	setclientsize(hWnd, width, height);
 	skbdwin.hbmp = allocbmp(width, height, &skbdwin.vram);
 	if (skbdwin.hbmp) {
-		softkbd_paint(&skbdwin.vram, skpalcnv);
+		softkbd_paint(&skbdwin.vram, skpalcnv, TRUE);
 	}
 }
 
@@ -473,6 +469,15 @@ void skbdwin_destroy(void) {
 
 	if (skbdwin.hwnd != NULL) {
 		DestroyWindow(skbdwin.hwnd);
+	}
+}
+
+void skbdwin_process(void) {
+
+	if ((skbdwin.hwnd) && (skbdwin.hbmp)) {
+		if (softkbd_paint(&skbdwin.vram, skpalcnv, FALSE)) {
+			InvalidateRect(skbdwin.hwnd, NULL, TRUE);
+		}
 	}
 }
 

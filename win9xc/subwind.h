@@ -20,6 +20,7 @@ BOOL skbdwin_initialize(HINSTANCE hInstance);
 void skbdwin_deinitialize(void);
 void skbdwin_create(void);
 void skbdwin_destroy(void);
+void skbdwin_process(void);
 void skbdwin_readini(void);
 void skbdwin_writeini(void);
 #else
@@ -27,6 +28,7 @@ void skbdwin_writeini(void);
 #define	skbdwin_deinitialize()
 #define	skbdwin_create()
 #define	skbdwin_destroy()
+#define skbdwin_process()
 #define skbdwin_readini()
 #define skbdwin_writeini()
 #endif

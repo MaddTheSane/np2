@@ -12,7 +12,8 @@ typedef struct {
 	UINT	grcgwait;
 #endif
 #if defined(SUPPORT_PC9821)
-	UINT8	bank2[4];
+	UINT8	mio1[4];
+	UINT8	mio2[0x40];
 #endif
 } VRAM_T;
 

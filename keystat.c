@@ -5,6 +5,7 @@
 #include	"iocore.h"
 #include	"keystat.h"
 #include	"keystat.tbl"
+#include	"softkbd.h"
 
 
 typedef struct {
@@ -179,6 +180,9 @@ static void reloadled(void) {
 
 	keyctrl.kanaref = keystat.ref[0x72];
 	keyctrl.capsref = keystat.ref[0x71];
+#if defined(SUPPORT_SOFTKBD)
+	softkbd_led(getledstat());
+#endif
 }
 
 void keystat_ctrlreset(void) {
@@ -186,6 +190,9 @@ void keystat_ctrlreset(void) {
 	keyctrl.reqparam = 0;
 	keystat.ref[0x72] = keyctrl.kanaref;
 	keystat.ref[0x71] = keyctrl.capsref;
+#if defined(SUPPORT_SOFTKBD)
+	softkbd_led(getledstat());
+#endif
 }
 
 void keystat_ctrlsend(REG8 dat) {

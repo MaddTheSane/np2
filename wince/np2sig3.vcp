@@ -233,6 +233,7 @@ DEP_CPP_PROFI=\
 	"..\common\milstr.h"\
 	"..\COMMON\profile.h"\
 	"..\common\rect.h"\
+	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -982,6 +983,7 @@ DEP_CPP_DMAC_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1737,6 +1739,7 @@ DEP_CPP_SERIA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2688,6 +2691,7 @@ DEP_CPP_BIOS_=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	"..\VRAM\vram.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -3850,6 +3854,7 @@ DEP_CPP_CS4231=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4466,6 +4471,7 @@ DEP_CPP_SOUND=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\COMMON\wavefile.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5282,6 +5288,8 @@ DEP_CPP_NP2_C=\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fddfile.h"\
 	"..\font\font.h"\
+	"..\generic\cmndraw.h"\
+	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5324,7 +5332,6 @@ DEP_CPP_NP2_C=\
 	".\inputmng.h"\
 	".\np2.h"\
 	".\scrnmng.h"\
-	".\softkbd.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
 	".\sysmng.h"\
@@ -5355,26 +5362,12 @@ DEP_CPP_SCRNM=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
+	"..\generic\cmndraw.h"\
+	"..\generic\softkbd.h"\
 	"..\VRAM\scrndraw.h"\
 	".\gx\gx.h"\
 	".\nekop2.res"\
 	".\scrnmng.h"\
-	".\softkbd.res"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=.\SOFTKBD.CPP
-DEP_CPP_SOFTK=\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\keystat.h"\
-	".\np2.h"\
-	".\softkbd.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5544,7 +5537,20 @@ DEP_CPP_CMJAS=\
 # Begin Source File
 
 SOURCE=..\GENERIC\CMNDRAW.C
-# PROP Exclude_From_Build 1
+DEP_CPP_CMNDR=\
+	"..\common.h"\
+	"..\common\_memory.h"\
+	"..\COMMON\bmpdata.h"\
+	"..\common\lstarray.h"\
+	"..\common\milstr.h"\
+	"..\common\rect.h"\
+	"..\font\font.h"\
+	"..\generic\cmndraw.h"\
+	"..\GENERIC\minifont.res"\
+	"..\i286a\cpucore.h"\
+	".\scrnmng.h"\
+	".\wce\compiler.h"\
+	
 # End Source File
 # Begin Source File
 
@@ -6010,6 +6016,8 @@ DEP_CPP_KEYST=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\textfile.h"\
+	"..\generic\cmndraw.h"\
+	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6157,6 +6165,7 @@ DEP_CPP_STATS=\
 	"..\CBUS\amd98.h"\
 	"..\CBUS\board14.h"\
 	"..\CBUS\cbuscore.h"\
+	"..\CBUS\ideio.h"\
 	"..\CBUS\mpu98ii.h"\
 	"..\CBUS\pc9861k.h"\
 	"..\cbus\sasiio.h"\
@@ -6203,6 +6212,7 @@ DEP_CPP_STATS=\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\SOUND\ADPCM.H"\

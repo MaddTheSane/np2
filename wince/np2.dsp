@@ -817,10 +817,6 @@ SOURCE=.\SCRNMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\SOFTKBD.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\SOUNDMNG.CPP
 # End Source File
 # Begin Source File
@@ -857,6 +853,10 @@ SOURCE=..\GENERIC\CMJASTS.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\GENERIC\CMNDRAW.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\GENERIC\CMVER.C
 # End Source File
 # Begin Source File
@@ -866,6 +866,10 @@ SOURCE=..\GENERIC\HOSTDRV.C
 # Begin Source File
 
 SOURCE=..\GENERIC\HOSTDRVS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\SOFTKBD.C
 # End Source File
 # End Group
 # Begin Group "embed"
