@@ -11,6 +11,9 @@ typedef struct {
 	UINT	vramwait;
 	UINT	grcgwait;
 #endif
+#if defined(SUPPORT_PC9821)
+	UINT8	bank2[4];
+#endif
 } VRAM_T;
 
 // operate:		bit0	access page
@@ -39,6 +42,9 @@ extern "C" {
 extern	VRAM_T	vramop;
 extern	BYTE	tramupdate[0x1000];
 extern	BYTE	vramupdate[0x8000];
+#if defined(SUPPORT_PC9821)
+extern	BYTE	vramex[0x80000];
+#endif
 
 void vram_initialize(void);
 

@@ -142,6 +142,12 @@ const SDRAWFN	*sdrawfn;
 	if (surf == NULL) {
 		goto sddr_exit1;
 	}
+#if defined(SUPPORT_PC9821)
+	if (gdc.analog & 2) {
+		sdrawfn = sdraw_getproctblex(surf);
+	}
+	else
+#endif
 	sdrawfn = sdraw_getproctbl(surf);
 	if (sdrawfn == NULL) {
 		goto sddr_exit2;
@@ -149,6 +155,12 @@ const SDRAWFN	*sdrawfn;
 
 	bit = 0;
 	if (gdc.mode1 & 0x80) {						// ver0.28
+#if defined(SUPPORT_PC9821)
+		if ((gdc.analog & 6) == 6) {
+			bit |= 0x01;
+		}
+		else
+#endif
 		if (gdcs.grphdisp & 0x80) {
 			bit |= (1 << gdcs.disp);
 		}
@@ -167,12 +179,18 @@ const SDRAWFN	*sdrawfn;
 		}
 	}
 	height = surf->height;
+	do {
+#if defined(SUPPORT_PC9821)
+		if (gdc.analog & 2) {
+			break;
+		}
+#endif
 #if defined(SUPPORT_CRT15KHZ)
-	if (gdc.crt15khz & 2) {
-		sdrawfn += 12;
-		height >>= 1;
-	}
-	else {
+		if (gdc.crt15khz & 2) {
+			sdrawfn += 12;
+			height >>= 1;
+			break;
+		}
 #endif
 		if (gdc.mode1 & 0x10) {
 			sdrawfn += 4;
@@ -180,9 +198,7 @@ const SDRAWFN	*sdrawfn;
 				sdrawfn += 4;
 			}
 		}
-#if defined(SUPPORT_CRT15KHZ)
-	}
-#endif
+	} while(0);
 	switch(bit & 7) {
 		case 1:								// grph1
 			sdrawfn += 2;
@@ -217,7 +233,7 @@ const SDRAWFN	*sdrawfn;
 	sdraw.y = 0;
 	sdraw.xalign = surf->xalign;
 	sdraw.yalign = surf->yalign;
-	if ((!gdc.analog) || (palevent.events >= PALEVENTMAX)) {
+	if (((gdc.analog & 3) != 1) || (palevent.events >= PALEVENTMAX)) {
 		(*(*sdrawfn))(&sdraw, height);
 	}
 	else {

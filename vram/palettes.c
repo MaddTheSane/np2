@@ -6,10 +6,18 @@
 #include	"palettes.h"
 
 
-		RGB32		np2_pal32[256];
+#if defined(SUPPORT_PC9821)
+		RGB32		np2_pal32[NP2PAL_EXTEND];
 #if defined(SUPPORT_16BPP)
-		RGB16		np2_pal16[256];
+		RGB16		np2_pal16[NP2PAL_EXTEND];
 #endif
+#else
+		RGB32		np2_pal32[NP2PAL_NORMAL];
+#if defined(SUPPORT_16BPP)
+		RGB16		np2_pal16[NP2PAL_NORMAL];
+#endif
+#endif
+
 		PALEVENT	palevent;
 static	RGB32		degpal1[8];
 static	RGB32		degpal2[8];
@@ -331,6 +339,30 @@ static void pal_maketext_lcd(void) {
 #endif
 }
 
+#if defined(SUPPORT_PC9821)
+static void pal_maketext256(void) {
+
+	UINT	i;
+#if defined(SUPPORT_16BPP)
+	RGB16	pal16;
+#endif
+
+	for (i=0; i<8; i++) {
+		np2_pal32[i+1+NP2PAL_TEXTEX].d = degpal1[i].d;
+		np2_pal32[i+1+NP2PAL_TEXTEX3].d = degpal1[i].d;
+	}
+#if defined(SUPPORT_16BPP)
+	if (scrnmng_getbpp() == 16) {
+		for (i=0; i<8; i++) {
+			pal16 = scrnmng_makepal16(degpal1[i]);
+			np2_pal16[i+1+NP2PAL_TEXTEX] = pal16;
+			np2_pal16[i+1+NP2PAL_TEXTEX3] = pal16;
+		}
+	}
+#endif
+}
+#endif
+
 static void pal_makeingmono(void) {							// ver0.28/pr4
 
 	int		i;
@@ -350,6 +382,32 @@ static void pal_makeingmono(void) {							// ver0.28/pr4
 	}
 }
 
+
+#if defined(SUPPORT_PC9821)
+static void pal_make9821(const UINT8 *pal) {
+
+	int		i;
+	RGB32	*p;
+
+	p = np2_pal32 + NP2PAL_GRPHEX;
+	for (i=0; i<256; i++) {
+		p[i].p.g = pal[i*4+0];
+		p[i].p.r = pal[i*4+1];
+		p[i].p.b = pal[i*4+2];
+	}
+	np2_pal32[NP2PAL_TEXTEX3].d = np2_pal32[NP2PAL_GRPHEX].d;
+#if defined(SUPPORT_16BPP)
+	if (scrnmng_getbpp() == 16) {
+		for (i=0; i<256; i++) {
+			np2_pal16[i + NP2PAL_GRPHEX] =
+							scrnmng_makepal16(np2_pal32[i + NP2PAL_GRPHEX]);
+		}
+		np2_pal16[NP2PAL_TEXTEX3] = np2_pal16[NP2PAL_GRPHEX];
+	}
+#endif
+}
+#endif
+
 void pal_change(BYTE textpalset) {
 
 	if (textpalset) {
@@ -363,9 +421,19 @@ void pal_change(BYTE textpalset) {
 #if defined(SUPPORT_16BPP)
 		np2_pal16[NP2PAL_TEXT] = np2_pal16[NP2PAL_TEXT2];
 #endif
+#if defined(SUPPORT_PC9821)
+		pal_maketext256();
+#endif
 	}
+#if defined(SUPPORT_PC9821)
+	if (gdc.analog & 2) {
+		pal_make9821(gdc.anareg + (16 * 3));
+		scrndraw_changepalette();
+		return;
+	}
+#endif
 	if (!(np2cfg.LCD_MODE & 1)) {
-		if (gdc.mode1 & 2) {								// ver0.28/pr4
+		if (gdc.mode1 & 2) {
 			pal_makedegital(deftbl);
 			pal_makeingmono();
 		}
@@ -379,7 +447,7 @@ void pal_change(BYTE textpalset) {
 		}
 	}
 	else {
-		if (gdc.mode1 & 2) {								// ver0.28/pr4
+		if (gdc.mode1 & 2) {
 			pal_makedegital_lcd(deftbl);
 			pal_makeingmono();
 		}

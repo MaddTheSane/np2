@@ -3,7 +3,7 @@
 //	+0A		skipline palette			(NP2PAL_SKIP: skiplines)
 //	+10		grph palette				(NP2PAL_GRPH: grph only)
 //	+80		text+grph					(NP2PAL_TEXT2:grph+text)
-//	+09		black + text palette		(NP2PAL_TEXT3: text/grph=black)
+//	+0A		black + text palette		(NP2PAL_TEXT3: text/grph=black)
 
 enum {
 	NP2PALS_TXT		= 10,
@@ -14,6 +14,12 @@ enum {
 	NP2PAL_GRPH		= (NP2PAL_SKIP + NP2PALS_GRPH),
 	NP2PAL_TEXT2	= (NP2PAL_GRPH + NP2PALS_GRPH),
 	NP2PAL_TEXT3	= (NP2PAL_TEXT2 + (8 * NP2PALS_GRPH)),
+	NP2PAL_NORMAL	= (NP2PAL_TEXT3 + NP2PALS_TXT),
+
+	NP2PAL_TEXTEX	= NP2PAL_NORMAL,
+	NP2PAL_TEXTEX3	= (NP2PAL_TEXTEX + NP2PALS_TXT),
+	NP2PAL_GRPHEX	= (NP2PAL_TEXTEX3 + NP2PALS_TXT),
+	NP2PAL_EXTEND	= (NP2PAL_GRPHEX + 256),
 
 						// 8bit color‚Å‚Í TEXT3‚ÍŽg‚í‚È‚¢”¤
 	NP2PAL_TOTAL	= NP2PAL_TEXT3
@@ -42,9 +48,9 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	RGB32		np2_pal32[256];
+extern	RGB32		np2_pal32[];
 #if defined(SUPPORT_16BPP)
-extern	RGB16		np2_pal16[256];
+extern	RGB16		np2_pal16[];
 #endif
 extern	PALEVENT	palevent;
 extern	BYTE		pal_monotable[16];

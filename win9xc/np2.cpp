@@ -40,7 +40,9 @@
 #define		OPENING_WAIT		1500
 #endif
 
-#if defined(CPUCORE_IA32)
+#if defined(SUPPORT_PC9821)
+		const char szAppCaption[] = "Neko Project-21";
+#elif defined(CPUCORE_IA32)
 		const char szAppCaption[] = "Neko Project II (IA-32)";
 #else
 		const char szAppCaption[] = "Neko Project II (C Version)";

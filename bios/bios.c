@@ -108,6 +108,13 @@ static void bios_reinitbyswitch(void) {
 	}
 	mem[MEMB_F2DD_MODE] = 0xff;
 
+#if defined(SUPPORT_31KHZ)
+	mem[MEMB_CRT_BIOS] = 0x80;
+#endif
+#if defined(SUPPORT_PC9821)
+	mem[0x45c] = 0x40;
+#endif
+
 	// IDE initialize
 	if (pccore.hddif & PCHDD_IDE) {
 		mem[MEMB_SYS_TYPE] |= 0x80;		// IDE

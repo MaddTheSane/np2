@@ -35,6 +35,10 @@ typedef struct {
 	UINT32		vsyncclock;
 	UINT32		rasterclock;
 	UINT32		hsyncclock;
+
+#if defined(SUPPORT_PC9821)
+	UINT8		anareg[16*3 + 256*4];
+#endif
 } _GDC, *GDC;
 
 typedef struct {
@@ -65,6 +69,7 @@ enum {
 
 	GDCANALOG_16		= 0,
 	GDCANALOG_256		= 1,
+	GDCANALOG_256E		= 2,
 
 	GDCDISP_PLAZMA		= 0,
 	GDCDISP_ANALOG		= 1,
@@ -89,6 +94,10 @@ void gdc_paletteinit(void);
 void gdc_setdegitalpal(int color, REG8 value);
 void gdc_setanalogpal(int color, int rgb, REG8 value);
 void gdc_setdegpalpack(int color, REG8 value);
+
+#if defined(SUPPORT_PC9821)
+void gdc_analogext(BOOL extend);
+#endif
 
 void gdc_updateclock(void);
 void gdc_restorekacmode(void);

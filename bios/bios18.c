@@ -295,6 +295,17 @@ const CRTDATA	*p;
 		return(1);
 	}
 	if ((scrn & 0x30) == 0x30) {				// 640x480
+#if defined(SUPPORT_PC9821)
+		if (mode & 4) {
+			gdc_analogext(TRUE);
+			mem[MEMB_PRXDUPD] |= 0x80;
+			crt = 4;
+			master = 3;
+			slave = 1;
+			gdc.display |= 0x10;
+		}
+		else
+#endif
 		return(1);
 	}
 	else {
@@ -319,6 +330,12 @@ const CRTDATA	*p;
 		if ((scrn & 0x20) && (mem[MEMB_PRXDUPD] & 0x04)) {
 			slave += 1;
 		}
+#if defined(SUPPORT_PC9821)
+		else {
+			gdc_analogext(FALSE);
+			mem[MEMB_PRXDUPD] &= ~0x80;
+		}
+#endif
 	}
 	crt += (scrn & 3);
 	master += (scrn & 3);
@@ -516,7 +533,6 @@ static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
 	mem[MEMB_PRXDUPD] |= ope;
 }
 
-
 static void bios0x18_47(void) {
 
 	UCWTBL		ucw;
@@ -691,6 +707,30 @@ static void bios0x18_49(void) {
 }
 
 
+// ---- PC-9821
+
+#if defined(SUPPORT_PC9821)
+static void bios0x18_4d(REG8 mode) {
+
+	if ((mem[0x45c] & 0x40) &&
+		((mem[MEMB_CRT_BIOS] & 3) == 2)) {
+		if (mode == 0) {
+			gdc_analogext(FALSE);
+			mem[MEMB_PRXDUPD] &= ~0x7f;
+			mem[MEMB_PRXDUPD] |= 0x04;
+		}
+		else if (mode == 1) {
+			gdc_analogext(TRUE);
+			mem[MEMB_PRXDUPD] |= 0x80;
+		}
+		else {
+			mem[MEMB_PRXDUPD] |= 0x04;
+		}
+	}
+}
+#endif
+
+
 // ----
 
 void bios0x18(void) {
@@ -803,7 +843,7 @@ void bios0x18(void) {
 //			screenupdate |= 2;
  			break;
 
-		case 0x0f:						// ï°êîÇÃï\é¶óÃàÊÇÃê›íË(15/24khz)
+		case 0x0f:						// ï°êîÇÃï\é¶óÃàÊÇÃê›íË
 			gdc_forceready(GDCWORK_MASTER);
 			bios0x18_0f(CPU_BX, CPU_CX, CPU_DH, CPU_DL);
 			break;
@@ -948,6 +988,11 @@ void bios0x18(void) {
 				}
 			}
 			break;
+#if defined(SUPPORT_PC9821)
+		case 0x4d:
+			bios0x18_4d(CPU_CH);
+			break;
+#endif
 	}
 }
 

@@ -21,6 +21,7 @@
 #include	"maketext.h"
 #include	"maketgrp.h"
 #include	"makegrph.h"
+#include	"makegrex.h"
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"beep.h"
@@ -374,7 +375,9 @@ void pccore_reset(void) {
 
 static void drawscreen(void) {
 
-	BYTE	timing;
+	UINT8	timing;
+	void	(VRAMCALL * grphfn)(int page, int alldraw);
+	UINT8	bit;
 
 	tramflag.timing++;
 	timing = ((LOADINTELWORD(gdc.m.para + GDC_CSRFORM + 1)) >> 5) & 0x3e;
@@ -392,109 +395,112 @@ static void drawscreen(void) {
 		gdc_updateclock();
 	}
 
-	if (drawframe) {
-		if ((gdcs.textdisp & GDCSCRN_EXT) ||
-			(gdcs.grphdisp & GDCSCRN_EXT)) {
-			if (dispsync_renewalvertical()) {
-				gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-				gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
-			}
+	if (!drawframe) {
+		return;
+	}
+	if ((gdcs.textdisp & GDCSCRN_EXT) || (gdcs.grphdisp & GDCSCRN_EXT)) {
+		if (dispsync_renewalvertical()) {
+			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
+			gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 		}
-		if (gdcs.textdisp & GDCSCRN_EXT) {
-			gdcs.textdisp &= ~GDCSCRN_EXT;
-			dispsync_renewalhorizontal();
-			tramflag.renewal |= 1;
-			if (dispsync_renewalmode()) {
-				screenupdate |= 2;
-			}
+	}
+	if (gdcs.textdisp & GDCSCRN_EXT) {
+		gdcs.textdisp &= ~GDCSCRN_EXT;
+		dispsync_renewalhorizontal();
+		tramflag.renewal |= 1;
+		if (dispsync_renewalmode()) {
+			screenupdate |= 2;
 		}
-		if (gdcs.palchange) {
-			gdcs.palchange = 0;
-			pal_change(0);
-			screenupdate |= 1;
+	}
+	if (gdcs.palchange) {
+		gdcs.palchange = 0;
+		pal_change(0);
+		screenupdate |= 1;
+	}
+	if (gdcs.grphdisp & GDCSCRN_EXT) {
+		gdcs.grphdisp &= ~GDCSCRN_EXT;
+		if (((gdc.clock & 0x80) && (gdc.clock != 0x83)) ||
+			(gdc.clock == 0x03)) {
+			gdc.clock ^= 0x80;
+			gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 		}
-		if (gdcs.grphdisp & GDCSCRN_EXT) {
-			gdcs.grphdisp &= ~GDCSCRN_EXT;
-			if (((gdc.clock & 0x80) && (gdc.clock != 0x83)) ||
-				(gdc.clock == 0x03)) {
-				gdc.clock ^= 0x80;
-				gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
+	}
+	if (gdcs.grphdisp & GDCSCRN_ENABLE) {
+		if (!(gdc.mode1 & 2)) {
+			grphfn = makegrph;
+			bit = GDCSCRN_MAKE;
+			if (gdcs.disp) {
+				bit <<= 1;
 			}
-		}
-		if (gdcs.grphdisp & GDCSCRN_ENABLE) {
-			if (!(gdc.mode1 & 2)) {
-				if (!gdcs.disp) {
-					if (gdcs.grphdisp & GDCSCRN_MAKE) {
-						makegrph(0, gdcs.grphdisp & GDCSCRN_ALLDRAW);
-						gdcs.grphdisp &= ~GDCSCRN_MAKE;
-						screenupdate |= 1;
-					}
-				}
-				else {
-					if (gdcs.grphdisp & (GDCSCRN_MAKE << 1)) {
-						makegrph(1, gdcs.grphdisp & (GDCSCRN_ALLDRAW << 1));
-						gdcs.grphdisp &= ~(GDCSCRN_MAKE << 1);
-						screenupdate |= 1;
-					}
+#if defined(SUPPORT_PC9821)
+			if (gdc.analog & 2) {
+				grphfn = makegrphex;
+				if (gdc.analog & 4) {
+					bit = GDCSCRN_MAKE | (GDCSCRN_MAKE << 1);
 				}
 			}
-			else if (gdcs.textdisp & GDCSCRN_ENABLE) {
-				if (!gdcs.disp) {
-					if ((gdcs.grphdisp & GDCSCRN_MAKE) ||
-						(gdcs.textdisp & GDCSCRN_MAKE)) {
-						if (!(gdc.mode1 & 0x4)) {
-							maketextgrph(0, gdcs.textdisp & GDCSCRN_ALLDRAW,
-									gdcs.grphdisp & GDCSCRN_ALLDRAW);
-						}
-						else {
-							maketextgrph40(0, gdcs.textdisp & GDCSCRN_ALLDRAW,
-									gdcs.grphdisp & GDCSCRN_ALLDRAW);
-						}
-						gdcs.grphdisp &= ~GDCSCRN_MAKE;
-						screenupdate |= 1;
-					}
-				}
-				else {
-					if ((gdcs.grphdisp & (GDCSCRN_MAKE << 1)) ||
-						(gdcs.textdisp & GDCSCRN_MAKE)) {
-						if (!(gdc.mode1 & 0x4)) {
-							maketextgrph(1, gdcs.textdisp & GDCSCRN_ALLDRAW,
-									gdcs.grphdisp & (GDCSCRN_ALLDRAW << 1));
-						}
-						else {
-							maketextgrph40(1, gdcs.textdisp & GDCSCRN_ALLDRAW,
-									gdcs.grphdisp & (GDCSCRN_ALLDRAW << 1));
-						}
-						gdcs.grphdisp &= ~(GDCSCRN_MAKE << 1);
-						screenupdate |= 1;
-					}
-				}
-			}
-		}
-
-		if (gdcs.textdisp & GDCSCRN_ENABLE) {
-			if (tramflag.renewal) {
-				gdcs.textdisp |= maketext_curblink();
-			}
-			if ((cgwindow.writable & 0x80) && (tramflag.gaiji)) {
-				gdcs.textdisp |= GDCSCRN_ALLDRAW;
-			}
-			cgwindow.writable &= ~0x80;
-			if (gdcs.textdisp & GDCSCRN_MAKE) {
-				if (!(gdc.mode1 & 0x4)) {
-					maketext(gdcs.textdisp & GDCSCRN_ALLDRAW);
-				}
-				else {
-					maketext40(gdcs.textdisp & GDCSCRN_ALLDRAW);
-				}
-				gdcs.textdisp &= ~GDCSCRN_MAKE;
+#endif
+			if (gdcs.grphdisp & bit) {
+				(*grphfn)(gdcs.disp, gdcs.grphdisp & bit & GDCSCRN_ALLDRAW2);
+				gdcs.grphdisp &= ~bit;
 				screenupdate |= 1;
 			}
 		}
-		if (screenupdate) {
-			screenupdate = scrndraw_draw((BYTE)(screenupdate & 2));
-			drawcount++;
+		else if (gdcs.textdisp & GDCSCRN_ENABLE) {
+			if (!gdcs.disp) {
+				if ((gdcs.grphdisp & GDCSCRN_MAKE) ||
+					(gdcs.textdisp & GDCSCRN_MAKE)) {
+					if (!(gdc.mode1 & 0x4)) {
+						maketextgrph(0, gdcs.textdisp & GDCSCRN_ALLDRAW,
+								gdcs.grphdisp & GDCSCRN_ALLDRAW);
+					}
+					else {
+						maketextgrph40(0, gdcs.textdisp & GDCSCRN_ALLDRAW,
+								gdcs.grphdisp & GDCSCRN_ALLDRAW);
+					}
+					gdcs.grphdisp &= ~GDCSCRN_MAKE;
+					screenupdate |= 1;
+				}
+			}
+			else {
+				if ((gdcs.grphdisp & (GDCSCRN_MAKE << 1)) ||
+					(gdcs.textdisp & GDCSCRN_MAKE)) {
+					if (!(gdc.mode1 & 0x4)) {
+						maketextgrph(1, gdcs.textdisp & GDCSCRN_ALLDRAW,
+								gdcs.grphdisp & (GDCSCRN_ALLDRAW << 1));
+					}
+					else {
+						maketextgrph40(1, gdcs.textdisp & GDCSCRN_ALLDRAW,
+								gdcs.grphdisp & (GDCSCRN_ALLDRAW << 1));
+					}
+					gdcs.grphdisp &= ~(GDCSCRN_MAKE << 1);
+					screenupdate |= 1;
+				}
+			}
 		}
+	}
+	if (gdcs.textdisp & GDCSCRN_ENABLE) {
+		if (tramflag.renewal) {
+			gdcs.textdisp |= maketext_curblink();
+		}
+		if ((cgwindow.writable & 0x80) && (tramflag.gaiji)) {
+			gdcs.textdisp |= GDCSCRN_ALLDRAW;
+		}
+		cgwindow.writable &= ~0x80;
+		if (gdcs.textdisp & GDCSCRN_MAKE) {
+			if (!(gdc.mode1 & 0x4)) {
+				maketext(gdcs.textdisp & GDCSCRN_ALLDRAW);
+			}
+			else {
+				maketext40(gdcs.textdisp & GDCSCRN_ALLDRAW);
+			}
+			gdcs.textdisp &= ~GDCSCRN_MAKE;
+			screenupdate |= 1;
+		}
+	}
+	if (screenupdate) {
+		screenupdate = scrndraw_draw((BYTE)(screenupdate & 2));
+		drawcount++;
 	}
 }
 
@@ -539,7 +545,7 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-#define	IPTRACE			(1 << 12)
+// #define	IPTRACE			(1 << 12)
 
 #if defined(TRACE) && IPTRACE
 static UINT		trpos = 0;
