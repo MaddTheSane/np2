@@ -946,7 +946,7 @@ REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
 
 	UINT32	address;
 
-	address = (seg << 4) + off;
+	address = (seg << 4) + LOW16(off);
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);
 	}
@@ -959,7 +959,7 @@ REG16 MEMCALL i286_memword_read(UINT seg, UINT off) {
 
 	UINT32	address;
 
-	address = (seg << 4) + off;
+	address = (seg << 4) + LOW16(off);
 	if (address < (I286_MEMREADMAX - 1)) {
 		return(LOADINTELWORD(mem + address));
 	}
@@ -972,7 +972,7 @@ void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 value) {
 
 	UINT32	address;
 
-	address = (seg << 4) + off;
+	address = (seg << 4) + LOW16(off);
 	if (address < I286_MEMWRITEMAX) {
 		mem[address] = (BYTE)value;
 	}
@@ -985,7 +985,7 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 
 	UINT32	address;
 
-	address = (seg << 4) + off;
+	address = (seg << 4) + LOW16(off);
 	if (address < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + address, value);
 	}
@@ -1002,6 +1002,7 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 
 	out = (BYTE *)dat;
 	adrs = seg << 4;
+	off = LOW16(off);
 	if ((I286_MEMREADMAX >= 0x10000) &&
 		(adrs < (I286_MEMREADMAX - 0x10000))) {
 		if (leng) {
@@ -1040,6 +1041,7 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 
 	out = (BYTE *)dat;
 	adrs = seg << 4;
+	off = LOW16(off);
 	if ((I286_MEMWRITEMAX >= 0x10000) &&
 		(adrs < (I286_MEMWRITEMAX - 0x10000))) {
 		if (leng) {

@@ -881,46 +881,5 @@ a_bp_d16		mov		r4, lr
 				bic		r0, r2, #(1 << 16)
 				mov		pc, r4
 
-
-
-; ---- test
-
-	IMPORT	i286core
-	EXPORT	i286a_ea_test
-	EXPORT	i286a_lea_test
-	EXPORT	i286a_a_test
-
-i286a_ea_test	stmdb	sp!, {r4, r8, r9, lr}
-				ldr		r9, iet_i286core
-				ldrh	r8, [r9, #CPU_IP]
-				mov		r8, r8 lsl #16
-				bl		i286a_ea
-				mov		r8, r8 lsr #16
-				strh	r8, [r9, #CPU_IP]
-				ldmia	sp!, {r4, r8, r9, pc}
-iet_i286core	dcd		i286core + CPU_SIZE
-
-i286a_lea_test	stmdb	sp!, {r4, r8, r9, lr}
-				ldr		r9, ilt_i286core
-				ldrh	r8, [r9, #CPU_IP]
-				mov		r8, r8 lsl #16
-				bl		i286a_lea
-				mov		r8, r8 lsr #16
-				strh	r8, [r9, #CPU_IP]
-				ldmia	sp!, {r4, r8, r9, pc}
-ilt_i286core	dcd		i286core + CPU_SIZE
-
-i286a_a_test	stmdb	sp!, {r4, r5, r6, r8, r9, lr}
-				ldr		r9, iat_i286core
-				ldrh	r8, [r9, #CPU_IP]
-				mov		r8, r8 lsl #16
-				mov		r5, r1
-				bl		i286a_a
-				str		r6, [r5]
-				mov		r8, r8 lsr #16
-				strh	r8, [r9, #CPU_IP]
-				ldmia	sp!, {r4, r5, r6, r8, r9, pc}
-iat_i286core	dcd		i286core + CPU_SIZE
-
 	END
 
