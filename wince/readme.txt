@@ -1,6 +1,6 @@
 
 　Neko Project II
-                                        NP2 developer team, 1999-2001,2003
+                                       NP2 developer team, 1999-2001,2003,2004
 
 
 ・概要
@@ -111,6 +111,7 @@
 　　　　Speak board             スピークボードを使用します。
 　　　　Spark board             スパークボードを使用します。
 　　　　AMD-98                  AMD-98を使用します。
+　　　　JAST SOUND              JAST SOUNDを使用します。
 　　　　Seek Sound              ディスクシークタイミングを取ります。
 　　　Memory
 　　　　640KB                   メモリをメインメモリのみ使用します。
@@ -128,6 +129,10 @@
 　　　CPU
 　　　　Base Clock              CPUのベースクロックを指定します。
 　　　　Multiple                CPUのクロック倍率を指定します。
+　　　Architecture
+　　　　PC-9801VM               V30以前のCPUを搭載したNEC仕様となります。
+　　　　PC-9801VX               i286以降のCPUを搭載したNEC仕様となります。
+　　　　PC-286                  EPSON互換機仕様となります。
 　　　Sound
 　　　　Sampling Rate           サウンドの出力周波数を指定します。
 　　　　Buffer                  サウンドのバッファサイズを指定します。

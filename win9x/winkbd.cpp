@@ -35,7 +35,7 @@ static const BYTE key106[256] = {
 			//	<ÇO>,<ÇP>,<ÇQ>,<ÇR>,<ÇS>,<ÇT>,<ÇU>,<ÇV>		; 0x60
 				0x4e,0x4a,0x4b,0x4c,0x46,0x47,0x48,0x42,
 			//	<ÇW>,<ÇX>,<Åñ>,<Å{>,<ÅC>,<Å|>,<ÅD>,<Å^>		; 0x68
-				0x43,0x44,0x45,0x49,  NC,0x40,0x50,0x41,
+				0x43,0x44,0x45,0x49,0x4f,0x40,0x50,0x41,
 			//	 f.1, f.2, f.3, f.4, f.5, f.6, f.7, f.8		; 0x70
 				0x62,0x63,0x64,0x65,0x66,0x67,0x68,0x69,
 			//	 f.9, f10, f11, f12, f13, f14, f15, f16		; 0x78
@@ -62,8 +62,8 @@ static const BYTE key106[256] = {
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xd0
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	    ,    ,    ,  Åm,  Åè,  Ån,  ÅO,    		; 0xd8
-				  NC,  NC,  NC,0x1b,0x0d,0x28,0x0c,  NC,
+			//	    ,    ,    ,  Åm,  Åè,  Ån,  ÅO,  ÅQ		; 0xd8
+				  NC,  NC,  NC,0x1b,0x0d,0x28,0x0c,0x33,
 			//	    ,    ,  ÅQ,    ,    ,    ,    ,    		; 0xe0
 				  NC,  NC,0x33,  NC,  NC,  NC,  NC,  NC,
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xe8

@@ -1,6 +1,6 @@
 
 　Neko Project II
-                                        NP2 developer team, 1999-2001,2003
+                                       NP2 developer team, 1999-2001,2003,2004
 
 
 ・概要
@@ -136,7 +136,7 @@
 　　　CPU
 　　　　Base Clock              CPUのベースクロックを指定します。
 　　　　Multiple                CPUのクロック倍率を指定します。
-　　Architecture
+　　　Architecture
 　　　　PC-9801VM               V30以前のCPUを搭載したNEC仕様となります。
 　　　　PC-9801VX               i286以降のCPUを搭載したNEC仕様となります。
 　　　　PC-286                  EPSON互換機仕様となります。
