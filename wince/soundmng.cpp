@@ -46,7 +46,7 @@ static const DWORD capsfmt[] = {
 
 extern HWND hWndMain;
 
-void wavemng_cb(UINT msg, HWAVEOUT hwo, WAVEHDR *whd) {
+void soundmng_cb(UINT msg, HWAVEOUT hwo, WAVEHDR *whd) {
 
 	short		*dst;
 const SINT32	*pcm;

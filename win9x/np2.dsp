@@ -18,8 +18,8 @@ CFG=np2 - Win32 Debug
 !MESSAGE 選択可能なﾋﾞﾙﾄﾞ ﾓｰﾄﾞ:
 !MESSAGE 
 !MESSAGE "np2 - Win32 Release" ("Win32 (x86) Application" 用)
-!MESSAGE "np2 - Win32 Debug" ("Win32 (x86) Application" 用)
 !MESSAGE "np2 - Win32 Trace" ("Win32 (x86) Application" 用)
+!MESSAGE "np2 - Win32 Debug" ("Win32 (x86) Application" 用)
 !MESSAGE 
 
 # Begin Project
@@ -56,6 +56,33 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comdlg32.lib comctl32.lib wsock32.lib shell32.lib /nologo /subsystem:windows /map /machine:I386
 
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Trace"
+# PROP BASE Intermediate_Dir "Trace"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\bin"
+# PROP Intermediate_Dir "..\obj\trc"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GX /O2 /I ".\\" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\dialog" /I "..\keydisp" /I "..\debuguty" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\keydisp" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /FAcs /YX /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comdlg32.lib comctl32.lib wsock32.lib shell32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comdlg32.lib comctl32.lib wsock32.lib shell32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np2t.exe"
+
 !ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # PROP BASE Use_MFC 0
@@ -82,40 +109,13 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comdlg32.lib comctl32.lib wsock32.lib shell32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\bin/np2d.exe" /pdbtype:sept
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "np2___Win32_Trace"
-# PROP BASE Intermediate_Dir "np2___Win32_Trace"
-# PROP BASE Ignore_Export_Lib 0
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "..\bin"
-# PROP Intermediate_Dir "..\obj\trc"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /I ".\\" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\dialog" /I "..\keydisp" /I "..\debuguty" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\keydisp" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /FAcs /YX /FD /c
-# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-# ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comdlg32.lib comctl32.lib wsock32.lib shell32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comdlg32.lib comctl32.lib wsock32.lib shell32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np2t.exe"
-
 !ENDIF 
 
 # Begin Target
 
 # Name "np2 - Win32 Release"
-# Name "np2 - Win32 Debug"
 # Name "np2 - Win32 Trace"
+# Name "np2 - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -154,10 +154,10 @@ InputName=PARTS
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
@@ -166,10 +166,10 @@ InputName=PARTS
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
@@ -209,10 +209,10 @@ InputName=DMAP
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=..\I286X\DMAP.X86
 InputName=DMAP
 
@@ -221,10 +221,10 @@ InputName=DMAP
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=..\I286X\DMAP.X86
 InputName=DMAP
 
@@ -252,10 +252,10 @@ InputName=EGCMEM
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=..\I286X\EGCMEM.X86
 InputName=EGCMEM
 
@@ -264,10 +264,10 @@ InputName=EGCMEM
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=..\I286X\EGCMEM.X86
 InputName=EGCMEM
 
@@ -315,10 +315,10 @@ InputName=MEMORY
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
@@ -327,10 +327,10 @@ InputName=MEMORY
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
@@ -478,10 +478,10 @@ InputName=OPNGENG
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
@@ -490,10 +490,10 @@ InputName=OPNGENG
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
@@ -817,10 +817,10 @@ InputName=DCLOCKD
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
@@ -829,10 +829,10 @@ InputName=DCLOCKD
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
@@ -1108,10 +1108,10 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\dbg
+IntDir=.\..\obj\trc
 InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
@@ -1120,10 +1120,10 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
-IntDir=.\..\obj\trc
+IntDir=.\..\obj\dbg
 InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
@@ -1196,10 +1196,6 @@ SOURCE=..\TIMING.C
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-# End Group
-# Begin Group "Object Files"
-
-# PROP Default_Filter ""
 # End Group
 # End Target
 # End Project

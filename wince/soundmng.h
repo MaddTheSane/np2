@@ -27,7 +27,9 @@ void soundmng_stop(void);
 
 // ---- for windows
 
-void wavemng_cb(UINT msg, HWAVEOUT hwo, WAVEHDR *whd);
+#if defined(WAVEMNG_CBMAIN)
+void soundmng_cb(UINT msg, HWAVEOUT hwo, WAVEHDR *whd);
+#endif
 void soundmng_awake(void);
 
 #ifdef __cplusplus

@@ -2084,7 +2084,7 @@ I286FN _enter(void) {						// C8:	enter	DATA16, DATA8
 	}
 }
 
-I286FN leave(void) {						// C9:	leave
+I286FN fleave(void) {						// C9:	leave
 
 	I286_WORKCLOCK(5);
 	I286_SP = I286_BP;
@@ -2762,7 +2762,7 @@ const I286OP i286op[] = {
 			_mov_ea8_data8,					// C6:	mov		EA8, DATA8
 			_mov_ea16_data16,				// C7:	mov		EA16, DATA16
 			_enter,							// C8:	enter	DATA16, DATA8
-			leave,							// C9:	leave
+			fleave,							// C9:	leave
 			_ret_far_data16,				// CA:	ret far	DATA16
 			_ret_far,						// CB:	ret far
 			_int_03,						// CC:	int		3
@@ -3108,7 +3108,7 @@ const I286OP i286op_repe[] = {
 			_mov_ea8_data8,					// C6:	mov		EA8, DATA8
 			_mov_ea16_data16,				// C7:	mov		EA16, DATA16
 			_enter,							// C8:	enter	DATA16, DATA8
-			leave,							// C9:	leave
+			fleave,							// C9:	leave
 			_ret_far_data16,				// CA:	ret far	DATA16
 			_ret_far,						// CB:	ret far
 			_int_03,						// CC:	int		3
@@ -3453,7 +3453,7 @@ const I286OP i286op_repne[] = {
 			_mov_ea8_data8,					// C6:	mov		EA8, DATA8
 			_mov_ea16_data16,				// C7:	mov		EA16, DATA16
 			_enter,							// C8:	enter	DATA16, DATA8
-			leave,							// C9:	leave
+			fleave,							// C9:	leave
 			_ret_far_data16,				// CA:	ret far	DATA16
 			_ret_far,						// CB:	ret far
 			_int_03,						// CC:	int		3

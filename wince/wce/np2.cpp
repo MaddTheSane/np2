@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	<time.h>
 #include	"resource.h"
 #include	"strres.h"
 #include	"np2.h"
@@ -53,7 +52,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	switch (msg) {
 		case WM_CREATE:
-//			WINNLSEnableIME(hWnd, FALSE);
+			ImmAssociateContext(hWnd, NULL);
 			break;
 
 		case WM_PAINT:
@@ -81,21 +80,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			winkeyup106(wParam, lParam);
 			break;
 
-		case WM_ENTERSIZEMOVE:
-			soundmng_stop();
-			break;
-
-		case WM_EXITSIZEMOVE:
-			soundmng_play();
-			break;
-
 		case WM_CLOSE:
-			DestroyWindow(hWnd);
 			break;
 
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
+
+#if 0
+		case WM_KILLFOCUS:
+			if (systemrunning) {
+				wavemng_destroy();
+				gdraws_enable(FALSE);
+				GXSuspend();
+			}
+			break;
+
+		case WM_SETFOCUS:
+			if (systemrunning) {
+				GXResume();
+				gdraws_enable(TRUE);
+				scrnmng_draw(NULL);
+				if (wavemng_used) {
+					wavemng_reopen();
+				}
+			}
+			break;
+#endif
 
 #if defined(WAVEMNG_CBMAIN)
 		case MM_WOM_DONE:
@@ -121,26 +132,54 @@ static void processwait(UINT waitcnt) {
 	}
 }
 
+static DWORD GetModuleFileName_A(HMODULE hModule,
+								LPSTR lpFileName, DWORD nSize) {
+
+	TCHAR	*FileNameW;
+	DWORD	len;
+
+	if (nSize) {
+		FileNameW = (TCHAR *)malloc(nSize * sizeof(TCHAR));
+		if (FileNameW) {
+			len = GetModuleFileName(hModule, FileNameW, nSize);
+			nSize = WideCharToMultiByte(CP_ACP, 0, FileNameW, -1,
+										lpFileName, nSize, NULL, NULL);
+			if (nSize) {
+				nSize--;
+			}
+			free(FileNameW);
+		}
+		else {
+			nSize = 0;
+		}
+	}
+	return(nSize);
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										LPTSTR lpszCmdLine, int nCmdShow) {
+
+	HWND		hwndorg;
 	WNDCLASS	np2;
 	MSG			msg;
-	HWND		hwndorg;
 
 	hwndorg = FindWindow(szClassName, NULL);
 	if (hwndorg != NULL) {
-		ShowWindow(hwndorg, SW_RESTORE);
+		ShowWindow(hwndorg, SW_SHOW);
+#if defined(WIN32_PLATFORM_PSPC)
+		SetForegroundWindow((HWND)((ULONG)hwndorg | 1));
+#else
 		SetForegroundWindow(hwndorg);
-		return(FALSE);
+#endif
+		return(0);
 	}
 
-	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
+	GetModuleFileName_A(NULL, modulefile, MAX_PATH);
 	dosio_init();
 	file_setcd(modulefile);
 	initload();
 
-	srand((unsigned)time(NULL));
+//	srand((unsigned)time(NULL));
 
 	hInst = hInstance;
 	hPrev = hPreInst;
@@ -148,8 +187,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	keystat_reset();
 
-	if (!hPreInst) {
-		np2.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
+//	if (!hPreInst) {
+		np2.style = CS_HREDRAW | CS_VREDRAW;
 		np2.lpfnWndProc = WndProc;
 		np2.cbClsExtra = 0;
 		np2.cbWndExtra = 0;
@@ -162,7 +201,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		if (!RegisterClass(&np2)) {
 			return(FALSE);
 		}
-	}
+//	}
 
 	hWndMain = CreateWindowEx(0, szClassName, szAppCaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
@@ -176,7 +215,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	UpdateWindow(hWndMain);
 
 	if (scrnmng_create(hWndMain, 320, 240) != SUCCESS) {
-		MessageBox(hWndMain, "Couldn't create DirectDraw Object",
+		MessageBox(hWndMain, STRLITERAL("Couldn't create DirectDraw Object"),
 									szAppCaption, MB_OK | MB_ICONSTOP);
 		return(FALSE);
 	}
