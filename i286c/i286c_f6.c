@@ -133,7 +133,7 @@ I286_F6 _div_ea8(UINT op) {
 I286_F6 _idiv_ea8(UINT op) {
 
 	SINT16	tmp, r;
-	char	src;
+	SINT8	src;
 	UINT16	ip;
 
 	ip = I286_IP;
@@ -149,7 +149,7 @@ I286_F6 _idiv_ea8(UINT op) {
 	if (src) {
 		r = tmp / src;
 		if (!((r + 0x80) & 0xff00)) {
-			I286_AL = (char)r;
+			I286_AL = r;
 			I286_AH = tmp % src;
 			return;
 		}
@@ -277,8 +277,8 @@ I286_F6 _div_ea16(UINT op) {
 	}
 	tmp = (I286_DX << 16) + I286_AX;
 	if ((src) && (tmp < (src << 16))) {
-		I286_AX = (SINT16)(tmp / src);
-		I286_DX = (SINT16)(tmp % src);
+		I286_AX = tmp / src;
+		I286_DX = tmp % src;
 	}
 	else {
 		INT_NUM(0, ip - 2);										// 80x86

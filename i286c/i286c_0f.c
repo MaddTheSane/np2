@@ -156,7 +156,6 @@ I286EXT i286c_cts(void) {
 		_loadall286();
 	}
 	else {
-		I286_WORKCLOCK(20);
 		INT_NUM(6, ip - 1);
 	}
 }
