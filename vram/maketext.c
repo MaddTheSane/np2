@@ -2,11 +2,11 @@
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"scrndraw.h"
 #include	"vram.h"
+#include	"scrndraw.h"
+#include	"dispsync.h"
 #include	"maketext.h"
 #include	"font.h"
-#include	"dispsync.h"
 
 
 		TRAM_T	tramflag;
@@ -148,7 +148,7 @@ void maketext(int text_renewal) {
 	int		linecnt;
 	BYTE	*q;
 	UINT	y;
-	BYTE	line_effect;
+	BYTE	line_effect = 0;		// for gcc
 	int		x;
 	UINT32	bitmap[TEXTXMAX];
 	BYTE	curx[TEXTXMAX+1];
@@ -459,7 +459,7 @@ void maketext40(int text_renewal) {
 	int		linecnt;
 	BYTE	*q;
 	UINT	y;
-	BYTE	line_effect;
+	BYTE	line_effect = 0;		// for gcc
 	int		x;
 	UINT32	bitmap[TEXTXMAX];
 	BYTE	curx[TEXTXMAX+1];

@@ -5,11 +5,9 @@
 #include	"iocore.h"
 #include	"bios.h"
 #include	"biosmem.h"
-#include	"lio.h"
 #include	"vram.h"
+#include	"lio.h"
 
-
-extern BYTE screenupdate;
 
 	LIO_TABLE	lio;
 
@@ -238,6 +236,7 @@ void lio_line(SINT16 x1, SINT16 x2, SINT16 y, BYTE pal) {
 	}
 	else {
 		vadrs = adrs + 0x200000;
+		sbit = 2;
 		gdcs.grphdisp |= 2;
 	}
 

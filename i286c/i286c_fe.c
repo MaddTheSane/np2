@@ -1,9 +1,8 @@
 #include	"compiler.h"
 #include	"i286.h"
 #include	"i286c.h"
-#include	"i286c.mcr"
 #include	"memory.h"
-#include	"nevent.h"
+#include	"i286c.mcr"
 
 
 // ------------------------------------------------------------ opecode 0xfe,f

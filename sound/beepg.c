@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	"pccore.h"
 #include	"sound.h"
 #include	"beep.h"
 

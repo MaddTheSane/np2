@@ -1,8 +1,7 @@
 #include	"compiler.h"
-#include	"dosio.h"
+#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"memory.h"
 #include	"font.h"
 
 

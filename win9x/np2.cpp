@@ -1,6 +1,8 @@
 #include	"compiler.h"
 #include	<time.h>
+#ifndef __GNUC__
 #include	<winnls32.h>
+#endif
 #include	"resource.h"
 #include	"strres.h"
 #include	"np2.h"
@@ -16,18 +18,19 @@
 #include	"winkbd.h"
 #include	"ini.h"
 #include	"menu.h"
-#include	"dialog.h"
 #include	"winloc.h"
 #include	"sstp.h"
 #include	"sstpmsg.h"
 #include	"dclock.h"
+#ifdef USE_ROMEO
+#include	"juliet.h"
+#endif
+#include	"dialog.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
-#include	"timing.h"
-#include	"debugsub.h"
 #include	"bios.h"
 #include	"scrndraw.h"
 #include	"sound.h"
@@ -35,14 +38,11 @@
 #include	"s98.h"
 #include	"diskdrv.h"
 #include	"fddfile.h"
-
-#ifdef USE_ROMEO
-#include	"juliet.h"
-#endif
-
+#include	"timing.h"
+#include	"statsave.h"
+#include	"debugsub.h"
 #include	"keydisp.h"
 #include	"viewer.h"
-#include	"statsave.h"
 
 
 #ifdef BETA_RELEASE
@@ -275,7 +275,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg) {
 		case WM_CREATE:
 			sstp_construct(hWnd);
+#ifndef __GNUC__
 			WINNLSEnableIME(hWnd, FALSE);
+#endif
 //			DragAcceptFiles(hWnd, TRUE);
 			break;
 
@@ -1095,7 +1097,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	MSG			msg;
 	HMENU		hMenu;
 	HWND		hwndorg;
-	int			i;
+	UINT		i;
 #ifdef OPENING_WAIT
 	UINT32		tick;
 #endif

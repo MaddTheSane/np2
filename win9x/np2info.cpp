@@ -2,6 +2,7 @@
 #include	"strres.h"
 #include	"np2.h"
 #include	"scrnmng.h"
+#include	"np2info.h"
 #include	"i286.h"
 #include	"memory.h"
 #include	"pccore.h"
@@ -9,7 +10,6 @@
 #include	"bios.h"
 #include	"sound.h"
 #include	"fmboard.h"
-#include	"np2info.h"
 
 
 static const char str_2halfMHz[] = "2.5MHz";

@@ -4,11 +4,21 @@
 
 #define	BYTESEX_LITTLE
 
+#ifndef __GNUC__
 
 typedef	short			SINT16;
 typedef	unsigned short	UINT16;
 typedef	int				SINT32;
 typedef	unsigned int	UINT32;
+
+#else
+
+#include	<stdlib.h>
+typedef	short			SINT16;
+typedef	unsigned short	UINT16;
+typedef	int				SINT32;
+
+#endif
 
 #include	"common.h"
 #include	"milstr.h"

@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	"i286.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"

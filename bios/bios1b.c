@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	"dosio.h"
 #include	"i286.h"
 #include	"memory.h"
 #include	"pccore.h"

@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"dosio.h"
-#include	"fddfile.h"
 #include	"newdisk.h"
+#include	"fddfile.h"
 
 
 static const BYTE hdddiskboot[] = {

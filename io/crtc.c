@@ -3,7 +3,6 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"vram.h"
-#include	"maketext.h"
 
 
 // ---- I/O

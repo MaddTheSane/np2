@@ -1,10 +1,10 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"sysmng.h"
-#include	"pccore.h"
 #include	"sstp.h"
 #include	"sstpres.h"
 #include	"np2info.h"
+#include	"pccore.h"
 
 
 static char cr[] = "\\n";
@@ -413,6 +413,7 @@ static void e_sstpexit(HWND hWnd, char *buf) {
 	}
 }
 
+#if 0
 static void e_sstpexit2(HWND hWnd, char *buf) {
 
 	char	*p;
@@ -425,6 +426,7 @@ static void e_sstpexit2(HWND hWnd, char *buf) {
 		}
 	}
 }
+#endif
 
 BOOL sstpconfirm_exit(void) {
 

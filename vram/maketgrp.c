@@ -1,17 +1,16 @@
 #include	"compiler.h"
-#include	"scrnmng.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"scrndraw.h"
 #include	"vram.h"
+#include	"scrndraw.h"
+#include	"dispsync.h"
+#include	"palettes.h"
 #include	"maketext.h"
 #include	"maketgrp.h"
 #include	"makegrph.h"
-#include	"makegrph.mcr"
 #include	"font.h"
-#include	"dispsync.h"
-#include	"palettes.h"
+#include	"makegrph.mcr"
 
 
 // extern	int		displaymoder;

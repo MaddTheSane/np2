@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	"timemng.h"
-#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"calendar.h"

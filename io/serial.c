@@ -1,7 +1,5 @@
 #include	"compiler.h"
-#include	"dosio.h"
 #include	"commng.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
@@ -112,9 +110,9 @@ void keystat_senddata(BYTE data) {
 	}
 	else {
 		if ((np2cfg.XSHIFT) &&
-			((key == 0x70) && (np2cfg.XSHIFT & 1)) ||
+			(((key == 0x70) && (np2cfg.XSHIFT & 1)) ||
 			((key == 0x74) && (np2cfg.XSHIFT & 2)) ||
-			((key == 0x73) && (np2cfg.XSHIFT & 4))) {
+			((key == 0x73) && (np2cfg.XSHIFT & 4)))) {
 			if (data & 0x80) {
 				return;
 			}
@@ -288,6 +286,7 @@ void rs232c_callback(void) {
 
 	BOOL	interrupt;
 
+	interrupt = FALSE;
 	if ((cm_rs232c) && (cm_rs232c->read(cm_rs232c, &rs232c.data))) {
 		rs232c.result |= 2;
 		if (sysport.c & 1) {

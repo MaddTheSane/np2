@@ -1,12 +1,8 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"i286.h"
-#include	"memory.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"bios.h"
 #include	"viewer.h"
+#include	"viewcmn.h"
 #include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"viewreg.h"
@@ -14,6 +10,11 @@
 #include	"view1mb.h"
 #include	"viewasm.h"
 #include	"viewsnd.h"
+#include	"i286.h"
+#include	"memory.h"
+#include	"pccore.h"
+#include	"iocore.h"
+#include	"bios.h"
 
 
 char viewcmn_hex[16] = {

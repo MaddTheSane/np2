@@ -1,13 +1,13 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"i286.h"
 #include	"debugsub.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
 #include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"viewreg.h"
+#include	"i286.h"
 
 
 static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {

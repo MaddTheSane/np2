@@ -1,6 +1,6 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"viewer.h"
 #include	"viewcmn.h"

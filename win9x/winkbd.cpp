@@ -1,10 +1,8 @@
 #include	"compiler.h"
 #include	"np2.h"
-#include	"dosio.h"
-#include	"memory.h"
+#include	"winkbd.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"winkbd.h"
 
 
 #define		NC		0xff

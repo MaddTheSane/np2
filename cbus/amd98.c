@@ -5,8 +5,6 @@
 #include	"amd98.h"
 #include	"sound.h"
 #include	"fmboard.h"
-#include	"beep.h"
-#include	"s98.h"
 
 
 static void setamd98event(BOOL absolute) {

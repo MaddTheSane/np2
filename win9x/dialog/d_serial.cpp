@@ -1,16 +1,17 @@
 #include	"compiler.h"
-#include	"resource.h"
+#include	<prsht.h>
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
 #include	"commng.h"
 #include	"sysmng.h"
+#include	"dialog.h"
+#include	"dialogs.h"
+#include	"bit2res.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"pc9861k.h"
-#include	"bit2res.h"
-#include	"dialog.h"
-#include	"dialogs.h"
 
 
 static const char str_none[] = "NONE";

@@ -5,8 +5,8 @@
 #include	"sysmng.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"fddfile.h"
 #include	"diskdrv.h"
+#include	"fddfile.h"
 
 
 #define	DISK_DELAY	20			// (0.4sec)

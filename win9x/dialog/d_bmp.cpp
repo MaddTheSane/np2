@@ -1,15 +1,15 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
 #include	"sysmng.h"
-#include	"pccore.h"
-#include	"iocore.h"
 #include	"dialog.h"
 #include	"dialogs.h"
-#include	"font.h"
+#include	"pccore.h"
+#include	"iocore.h"
 #include	"scrnbmp.h"
+#include	"font.h"
 
 
 static const char fontui_title[] = "Select font file";

@@ -1,8 +1,8 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"dosio.h"
-#include	"i286.h"
 #include	"sysmng.h"
+#include	"i286.h"
 #include	"pccore.h"
 #include	"fddfile.h"
 

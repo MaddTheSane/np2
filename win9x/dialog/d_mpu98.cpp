@@ -1,13 +1,13 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"commng.h"
 #include	"sysmng.h"
-#include	"pccore.h"
-#include	"bit2res.h"
 #include	"dialog.h"
 #include	"dialogs.h"
+#include	"bit2res.h"
+#include	"pccore.h"
 
 
 #ifdef __cplusplus

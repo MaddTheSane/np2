@@ -12,14 +12,14 @@
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
 #include	"board14.h"
-#include	"vram.h"
-#include	"maketext.h"
-#include	"palettes.h"
-#include	"font.h"
-#include	"sound.h"
 #include	"bios.h"
+#include	"vram.h"
+#include	"palettes.h"
+#include	"maketext.h"
+#include	"sound.h"
 #include	"fmboard.h"
 #include	"beep.h"
+#include	"font.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
@@ -841,6 +841,7 @@ static int flagload_fm(NP2FFILE *f, const STENTRY *t) {
 			break;
 
 		default:
+			saveflg = 0;
 			break;
 	}
 

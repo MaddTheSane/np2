@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	"i286.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
@@ -133,6 +132,7 @@ void pic_irq(void) {
 		else {
 			pry = (char)p->pi[0].pry[p->pi[0].level[p->pi[0].levels - 1]];
 		}
+		irq = 0xff;
 		targetbit = 0;
 		for (bit=1, i=0; bit; bit<<=1, i++) {
 			if ((p->pi[0].irr & bit) &&

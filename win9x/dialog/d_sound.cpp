@@ -2,19 +2,19 @@
 #include	<windowsx.h>
 #include	<commctrl.h>
 #include	<prsht.h>
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"joymng.h"
 #include	"sysmng.h"
 #include	"menu.h"
+#include	"dialog.h"
+#include	"dialogs.h"
+#include	"bit2res.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
 #include	"fmboard.h"
-#include	"bit2res.h"
-#include	"dialog.h"
-#include	"dialogs.h"
 #include	"s98.h"
 
 

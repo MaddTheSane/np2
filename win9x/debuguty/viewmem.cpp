@@ -1,9 +1,9 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"memory.h"
 #include	"viewer.h"
 #include	"viewmem.h"
+#include	"memory.h"
 
 
 void viewmem_read(VIEWMEM_T *cfg, DWORD adrs, BYTE *buf, DWORD size) {

@@ -2,11 +2,11 @@
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"scrndraw.h"
 #include	"vram.h"
+#include	"scrndraw.h"
+#include	"dispsync.h"
 #include	"makegrph.h"
 #include	"makegrph.mcr"
-#include	"dispsync.h"
 
 
 typedef struct {

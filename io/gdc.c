@@ -4,15 +4,13 @@
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"gdc_cmd.tbl"
-#include	"palettes.h"
 #include	"vram.h"
+#include	"palettes.h"
+#include	"gdc_cmd.tbl"
 
 
 #define	SEARHC_SYNC
 #define	TURE_SYNC
-
-extern BYTE screenupdate;
 
 
 static const BYTE defdegpal[4] = {0x04,0x15,0x26,0x37};

@@ -2,12 +2,11 @@
 #include	<windowsx.h>
 #include	<io.h>
 #include	"np2.h"
-#include	"dosio.h"
 #include	"np2arg.h"
-#include	"pccore.h"
-#include	"iocore.h"
+#include	"dosio.h"
 #include	"ini.h"
 #include	"winkbd.h"
+#include	"pccore.h"
 
 
 #define		CFGLEN		(MAX_PATH + 32)

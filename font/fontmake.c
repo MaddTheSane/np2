@@ -3,7 +3,6 @@
 #include	"parts.h"
 #include	"dosio.h"
 #include	"fontmng.h"
-#include	"memory.h"
 #include	"font.h"
 #include	"fontdata.h"
 #include	"fontmake.h"

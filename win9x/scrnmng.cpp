@@ -1,16 +1,17 @@
 #include	"compiler.h"
 #include	<ddraw.h>
+#ifndef __GNUC__
 #include	<winnls32.h>
+#endif
 #include	"resource.h"
 #include	"np2.h"
 #include	"mousemng.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
-#include	"pccore.h"
-#include	"scrndraw.h"
-#include	"palettes.h"
 #include	"dclock.h"
 #include	"menu.h"
+#include	"scrndraw.h"
+#include	"palettes.h"
 
 
 typedef struct {
@@ -229,9 +230,9 @@ static void paletteinit(void) {
 	GetSystemPaletteEntries(hdc, 0, 256, ddraw.pal);
 	ReleaseDC(hWndMain, hdc);
 	for (i=0; i<4; i++) {
-		ddraw.pal[i+START_PALORG].peBlue = dclock_pal[i].p.b;
-		ddraw.pal[i+START_PALORG].peRed = dclock_pal[i].p.r;
-		ddraw.pal[i+START_PALORG].peGreen = dclock_pal[i].p.g;
+		ddraw.pal[i+START_PALORG].peBlue = dclockpal.pal32[i].p.b;
+		ddraw.pal[i+START_PALORG].peRed = dclockpal.pal32[i].p.r;
+		ddraw.pal[i+START_PALORG].peGreen = dclockpal.pal32[i].p.g;
 		ddraw.pal[i+START_PALORG].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
 	for (i=0; i<NP2PAL_TOTAL; i++) {
@@ -513,14 +514,18 @@ void scrnmng_topwinui(void) {
 		if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 			ddraw.primsurf->SetClipper(ddraw.clipper);
 		}
+#ifndef __GNUC__
 		WINNLSEnableIME(hWndMain, TRUE);
+#endif
 	}
 }
 
 void scrnmng_clearwinui(void) {
 
 	if ((ddraw.cliping > 0) && (!(--ddraw.cliping))) {
+#ifndef __GNUC__
 		WINNLSEnableIME(hWndMain, FALSE);
+#endif
 		if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 			ddraw.primsurf->SetClipper(0);
 		}

@@ -2,11 +2,11 @@
 #include	"np2.h"
 #include	"mimpidef.h"
 #include	"commng.h"
-#include	"keydisp.h"
 #if defined(VERMOUTH_LIB)
 #include	"sound.h"
 #include	"vermouth.h"
 #endif
+#include	"keydisp.h"
 
 
 #if defined(VERMOUTH_LIB)

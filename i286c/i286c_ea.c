@@ -1,8 +1,8 @@
 #include	"compiler.h"
 #include	"i286.h"
 #include	"i286c.h"
-#include	"i286c.mcr"
 #include	"memory.h"
+#include	"i286c.mcr"
 
 
 // ---------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"np2info.h"
 #include	"dialog.h"
 #include	"dialogs.h"
-#include	"np2info.h"
 #include	"pccore.h"
 
 

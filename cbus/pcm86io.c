@@ -1,11 +1,10 @@
 #include	"compiler.h"
-#include	"dosio.h"
 #include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"pcm86io.h"
 #include	"sound.h"
 #include	"fmboard.h"
-#include	"pcm86io.h"
 
 
 extern	PCM86CFG	pcm86cfg;

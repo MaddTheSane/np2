@@ -2,7 +2,6 @@
 #include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"memory.h"
 
 
 // ---- I/O

@@ -6,7 +6,6 @@
 
 
 static	HWND		sstphwnd = NULL;
-static	BOOL		sstpinused = FALSE;
 static	int			sstp_stat = SSTP_READY;
 static	SOCKET		hSocket = INVALID_SOCKET;
 static	WSAData		wsadata;
@@ -37,7 +36,7 @@ static HANDLE check_sakura(void) {
 
 // ------------------------------------------------------------------ Async...
 
-BOOL sstp_send(char *msg, void *proc) {
+BOOL sstp_send(char *msg, void (*proc)(HWND hWnd, char *msg)) {
 
 	sockaddr_in	s_in;
 
@@ -78,7 +77,7 @@ BOOL sstp_send(char *msg, void *proc) {
 		}
 	}
 	sstp_stat = SSTP_SENDING;
-	sstpproc = (void (*)(HWND, char *))proc;
+	sstpproc = proc;
 	return(SUCCESS);
 
 sstp_senderror:;
@@ -107,7 +106,7 @@ void sstp_readSocket(void) {
 		int		len;
 		char	buf[256];
 		while(1) {
-			if (ioctlsocket(hSocket, FIONREAD, &available) != NULL) {
+			if (ioctlsocket(hSocket, FIONREAD, &available) != 0) {
 				break;
 			}
 			if (!available) {

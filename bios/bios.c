@@ -6,12 +6,12 @@
 #include	"iocore.h"
 #include	"bios.h"
 #include	"biosmem.h"
-#include	"keytable.res"
-#include	"itfrom.res"
 #include	"lio.h"
-#include	"fdfmt.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
+#include	"fdfmt.h"
+#include	"keytable.res"
+#include	"itfrom.res"
 
 
 	BOOL	biosrom = FALSE;

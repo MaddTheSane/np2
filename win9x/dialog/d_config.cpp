@@ -4,9 +4,9 @@
 #include	"np2.h"
 #include	"dosio.h"
 #include	"sysmng.h"
-#include	"pccore.h"
 #include	"dialog.h"
 #include	"dialogs.h"
+#include	"pccore.h"
 
 
 static const char str_2halfmhz[] = "2.4576MHz";

@@ -3,9 +3,9 @@
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"font.h"
 #include	"bios.h"
 #include	"biosmem.h"
+#include	"font.h"
 
 
 static	int		sti_waiting = 0;

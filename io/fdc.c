@@ -4,8 +4,6 @@
 
 
 #include	"compiler.h"
-#include	"dosio.h"
-#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"fddfile.h"

@@ -3,8 +3,8 @@
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"vram.h"
 #include	"gdc_pset.h"
+#include	"vram.h"
 
 
 enum {

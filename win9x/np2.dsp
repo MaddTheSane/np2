@@ -803,6 +803,49 @@ SOURCE=.\DCLOCK.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\DCLOCKD.X86
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\rel
+InputPath=.\DCLOCKD.X86
+InputName=DCLOCKD
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\dbg
+InputPath=.\DCLOCKD.X86
+InputName=DCLOCKD
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trc
+InputPath=.\DCLOCKD.X86
+InputName=DCLOCKD
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File

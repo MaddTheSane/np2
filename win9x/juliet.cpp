@@ -1,6 +1,4 @@
-#include	<windows.h>
-#include	"common.h"
-
+#include	"compiler.h"
 #include	"romeo.h"
 #include	"juliet.h"
 

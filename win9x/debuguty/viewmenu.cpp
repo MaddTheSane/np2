@@ -1,9 +1,8 @@
-#include	<windows.h>
-
-#include	"common.h"
+#include	"compiler.h"
 #include	"resource.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
+#include	"viewmenu.h"
 
 #define	MFCHECK(a) ((a)?MF_CHECKED:MF_UNCHECKED)
 

@@ -1,12 +1,12 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"i286.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
 #include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"view1mb.h"
+#include	"i286.h"
 
 
 static void set_viewseg(HWND hwnd, NP2VIEW_T *view, WORD seg) {

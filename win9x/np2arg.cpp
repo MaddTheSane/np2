@@ -1,6 +1,6 @@
 #include	"compiler.h"
-#include	"dosio.h"
 #include	"np2arg.h"
+#include	"dosio.h"
 
 												// ver0.26 np2arg.cpp append
 // コマンドラインの解析

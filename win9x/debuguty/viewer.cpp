@@ -1,9 +1,10 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"i286.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
+#include	"i286.h"
+
 
 static	char		np2viewclass[] = "NP2-ViewWindow";
 		NP2VIEW_T	np2view[NP2VIEW_MAX];

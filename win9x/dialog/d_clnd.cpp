@@ -1,13 +1,14 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"sysmng.h"
 #include	"timemng.h"
-#include	"pccore.h"
 #include	"dialog.h"
 #include	"dialogs.h"
+#include	"pccore.h"
 #include	"calendar.h"
+
 
 static	BYTE	cbuf[8];
 

@@ -1,13 +1,13 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
-#include	"fddfile.h"
 #include	"diskdrv.h"
+#include	"fddfile.h"
 #include	"newdisk.h"
 
 

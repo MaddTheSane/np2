@@ -1,17 +1,17 @@
 #include	"compiler.h"
 #include	<commctrl.h>
 #include	<prsht.h>
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
+#include	"dialog.h"
+#include	"dialogs.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"scrndraw.h"
 #include	"palettes.h"
-#include	"dialog.h"
-#include	"dialogs.h"
 
 
 static const char str_scropt[] = "Screen option";

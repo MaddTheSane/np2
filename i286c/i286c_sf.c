@@ -1,10 +1,9 @@
 #include	"compiler.h"
 #include	"i286.h"
 #include	"i286c.h"
+#include	"memory.h"
 #include	"i286c.mcr"
 #include	"i286c_sf.mcr"
-#include	"memory.h"
-#include	"nevent.h"
 
 
 // ------------------------------------------------------------------------

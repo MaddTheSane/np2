@@ -2,7 +2,6 @@
 #include	"np2.h"
 #include	"joymng.h"
 #include	"menu.h"
-#include	"pccore.h"
 
 
 static	int		joyactive = 0;

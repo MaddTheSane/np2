@@ -6,9 +6,6 @@
 #include	"lio.h"
 
 
-extern BYTE screenupdate;
-
-
 static void lio_makescreen(void) {
 
 	UINT16	pos;

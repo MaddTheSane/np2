@@ -1,11 +1,10 @@
 #include	"compiler.h"
 #include	"bmpdata.h"
-#include	"scrnmng.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"scrndraw.h"
-#include	"palettes.h"
 #include	"dispsync.h"
+#include	"palettes.h"
 #include	"scrnbmp.h"
 
 
