@@ -1,4 +1,4 @@
-/*	$Id: dialog_newdisk.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: dialog_newdisk.c,v 1.2 2004/08/14 03:18:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -44,9 +44,10 @@
  * create hard disk image
  */
 
-static int
+static gint
 anex_newdisk_dialog(GtkWidget *dialog)
 {
+	static const int cnv[] = { 0, 1, 2, 3, 5, 6 };
 	static const int hddsize[] = { 5, 10, 15, 20, 30, 40 };
 	static int last = 0;
 
@@ -81,14 +82,15 @@ anex_newdisk_dialog(GtkWidget *dialog)
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
 		for (i = 0; i < NELEMENTS(hddsize); i++) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button[i]))) {
-				return i;
+				last = i;
+				return cnv[i];
 			}
 		}
 	}
-	return 0;
+	return -1;
 }
 
-static int
+static gint
 t98_newdisk_dialog(GtkWidget *dialog, const int kind)
 {
 	static const char *hddsizestr[] = {
@@ -206,7 +208,7 @@ create_newdisk_hd_dialog(const char *filename, int kind)
 	switch (kind) {
 	case 1:	/* HDI */
 		hdsize = anex_newdisk_dialog(dialog);
-		if (hdsize > 0) {
+		if (hdsize >= 0) {
 			newdisk_hdi(filename, hdsize);
 		}
 		break;
@@ -226,7 +228,6 @@ create_newdisk_hd_dialog(const char *filename, int kind)
 		break;
 	}
 	gtk_widget_destroy(dialog);
-
 }
 
 
