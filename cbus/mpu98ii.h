@@ -42,12 +42,13 @@ typedef struct {
 	UINT32	xferclock;
 	SINT32	stepclock;
 
-	UINT8	acttr;
+	UINT8	intphase;
 	UINT8	intreq;
 	UINT8	hclk_rem;
 	UINT8	hclk_cnt;
 	UINT8	hclk_step[4];
 
+	UINT8	acttr;
 	UINT8	status;
 	UINT8	mode;
 	UINT8	flag1;
@@ -66,7 +67,6 @@ typedef struct {
 	UINT8	midipermetero;
 	UINT8	meteropermeas;
 	UINT8	sendplaycnt;
-	UINT8	padding;
 
 	UINT	accch;
 

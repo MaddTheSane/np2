@@ -70,7 +70,7 @@ BOOL sxsi_isconnect(SXSIDEV sxsi);
 BRESULT sxsi_prepare(SXSIDEV sxsi);
 
 SXSIDEV sxsi_getptr(REG8 drv);
-const OEMCHAR *sxsi_getfilename(REG8 drv);
+OEMCHAR *sxsi_getfilename(REG8 drv);
 BRESULT sxsi_setdevtype(REG8 drv, UINT8 dev);
 UINT8 sxsi_getdevtype(REG8 drv);
 BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *file);

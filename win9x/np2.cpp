@@ -876,7 +876,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			update |= SYS_UPDATECFG;
 			break;
 
-		case IDM_I286SAVE:
+		case IDM_CPUSAVE:
 			debugsub_status();
 			break;
 

@@ -33,7 +33,7 @@ void fddfile_reset2dmode(void) { 			// ver0.29
 OEMCHAR *fdd_diskname(REG8 drv) {
 
 	if (drv >= MAX_FDDFILE) {
-		return((OEMCHAR *)str_null);
+		return(NULL);
 	}
 	return(fddfile[drv].fname);
 }

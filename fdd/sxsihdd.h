@@ -62,8 +62,6 @@ extern const SASIHDD sasihdd[7];
 
 BRESULT sxsihdd_open(SXSIDEV sxsi, const OEMCHAR *file);
 
-void sxsihdd_allbind(void);
-
 #ifdef __cplusplus
 }
 #endif

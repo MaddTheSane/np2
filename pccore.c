@@ -330,7 +330,7 @@ void pccore_reset(void) {
 	}
 
 	// HDDセット
-	sxsihdd_allbind();
+	diskdrv_hddbind();
 	// SASI/IDEどっち？
 #if defined(SUPPORT_SASI)
 	if (sxsi_issasi()) {

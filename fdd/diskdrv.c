@@ -7,6 +7,7 @@
 #include	"iocore.h"
 #include	"diskdrv.h"
 #include	"fddfile.h"
+#include	"sxsi.h"
 
 
 #define	DISK_DELAY	20			// (0.4sec)
@@ -17,7 +18,9 @@
 	int		diskdrv_ro[4];
 
 
-void diskdrv_sethdd(REG8 drv, const OEMCHAR *fname) {
+// ---- sxsi
+
+void diskdrv_setsxsi(REG8 drv, const OEMCHAR *fname) {
 
 	UINT	num;
 	OEMCHAR	*p;
@@ -49,7 +52,58 @@ void diskdrv_sethdd(REG8 drv, const OEMCHAR *fname) {
 		}
 		sysmng_update(SYS_UPDATEHDD | SYS_UPDATECFG);
 	}
+	else {
+		sxsi_devopen(drv, fname);
+	}
 }
+
+OEMCHAR *diskdrv_getsxsi(REG8 drv) {
+
+	UINT	num;
+
+	num = drv & 0x0f;
+	if (!(drv & 0x20)) {			// SASI or IDE
+		if (num < 2) {
+			return(np2cfg.sasihdd[num]);
+		}
+	}
+#if defined(SUPPORT_SCSI)
+	else {							// SCSI
+		if (num < 4) {
+			return(np2cfg.scsihdd[num]);
+		}
+	}
+#endif
+	return(sxsi_getfilename(drv));
+}
+
+
+void diskdrv_hddbind(void) {
+
+	UINT	i;
+	REG8	drv;
+
+	drv = 0;
+	for (i=0; i<2; i++) {
+		sxsi_devclose(drv);
+		sxsi_setdevtype(drv, SXSIDEV_HDD);
+		if (sxsi_devopen(drv, np2cfg.sasihdd[i]) == SUCCESS) {
+			drv++;
+		}
+	}
+#if defined(SUPPORT_SCSI)
+	drv = 0x20;
+	for (i=0; i<4; i++) {
+		sxsi_devclose(drv);
+		sxsi_setdevtype(drv, SXSIDEV_HDD);
+		if (sxsi_devopen(drv, np2cfg.scsihdd[i]) == SUCCESS) {
+			drv++;
+		}
+	}
+#endif
+}
+
+// ---- fdd
 
 void diskdrv_readyfddex(REG8 drv, const OEMCHAR *fname,
 												UINT ftype, int readonly) {

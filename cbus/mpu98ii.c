@@ -123,6 +123,7 @@ static void setdefaultcondition(void) {
 
 	mpu98.recvevent = 0;
 	mpu98.remainstep = 0;
+	mpu98.intphase = 0;
 	mpu98.intreq = 0;
 
 	ZeroMemory(&mpu98.cmd, sizeof(mpu98.cmd));
@@ -193,6 +194,7 @@ static void sendmpulongmsg(const UINT8 *dat, UINT count) {
 
 static void mpu98ii_int(void) {
 
+	TRACEOUT(("int!"));
 	pic_setirq(mpu98.irqnum);
 }
 
@@ -221,51 +223,55 @@ static BOOL tr_nextsearch(void) {
 	REG8	bit;
 
 tr_nextsearch_more:
-	if (mpu98.intreq == 9) {
+	if (mpu98.intphase == 1) {
 		if (mpu98.flag1 & MPUFLAG1_CONDUCTOR) {
 			if (!mpu98.cond.step) {
-				setrecvdata(MPUMSG_REQCOND);
-				mpu98ii_int();
+				mpu98.intreq = MPUMSG_REQCOND;
 				mpu98.cond.phase |= MPUCMDP_STEP | MPUCMDP_CMD;
-				return(TRUE);
-			}
-		}
-		mpu98.intreq = 7;
-	}
-	bit = 1 << mpu98.intreq;
-	for (; bit; bit>>=1) {
-		if (mpu98.acttr & bit) {
-			MPUTR *tr;
-			tr = mpu98.tr + mpu98.intreq;
-			if (!tr->step) {
-				if ((tr->datas) && (tr->remain == 0)) {
-					if (cm_mpu98 == NULL) {
-						cm_mpu98 = commng_create(COMCREATE_MPU98II);
-					}
-					if (tr->data[0] == MIDI_STOP) {
-						tr->datas = 0;
-						cm_mpu98->write(cm_mpu98, MIDI_STOP);
-						setrecvdata(MIDI_STOP);
-						mpu98ii_int();
-						return(TRUE);
-					}
-					for (i=0; i<tr->datas; i++) {
-						cm_mpu98->write(cm_mpu98, tr->data[i]);
-					}
-					tr->datas = 0;
-				}
-				setrecvdata((REG8)(0xf0 + mpu98.intreq));
 				mpu98ii_int();
-				mpu98.recvevent |= MIDIE_STEP;
 				return(TRUE);
 			}
 		}
-		mpu98.intreq--;
+		mpu98.intphase = 2;
+	}
+	if (mpu98.intphase) {
+		bit = 1 << (mpu98.intphase - 2);
+		do {
+			if (mpu98.acttr & bit) {
+				MPUTR *tr;
+				tr = mpu98.tr + (mpu98.intphase - 2);
+				if (!tr->step) {
+					if ((tr->datas) && (tr->remain == 0)) {
+						if (cm_mpu98 == NULL) {
+							cm_mpu98 = commng_create(COMCREATE_MPU98II);
+						}
+						if (tr->data[0] == MIDI_STOP) {
+							tr->datas = 0;
+							cm_mpu98->write(cm_mpu98, MIDI_STOP);
+							setrecvdata(MIDI_STOP);
+							mpu98ii_int();
+							return(TRUE);
+						}
+						for (i=0; i<tr->datas; i++) {
+							cm_mpu98->write(cm_mpu98, tr->data[i]);
+						}
+						tr->datas = 0;
+					}
+					mpu98.intreq = 0xf0 + (mpu98.intphase - 2);
+					mpu98.recvevent |= MIDIE_STEP;
+					mpu98ii_int();
+					return(TRUE);
+				}
+			}
+			bit <<= 1;
+			mpu98.intphase++;
+		} while(mpu98.intphase < 10);
+		mpu98.intphase = 0;
 	}
 	mpu98.remainstep--;
 	if (mpu98.remainstep) {
 		tr_step();
-		mpu98.intreq = 9;
+		mpu98.intphase = 1;
 		goto tr_nextsearch_more;
 	}
 	return(FALSE);
@@ -289,7 +295,7 @@ void midiint(NEVENTITEM item) {
 	if (mpu98.flag1 & MPUFLAG1_PLAY) {
 		if (!mpu98.remainstep++) {
 			tr_step();
-			mpu98.intreq = 9;
+			mpu98.intphase = 1;
 			tr_nextsearch();
 		}
 	}
@@ -325,6 +331,7 @@ static REG8 mpucmd_xx(REG8 cmd) {
 
 static REG8 mpucmd_md(REG8 cmd) {			// 00-2F: Mode
 
+	TRACEOUT(("mpucmd_md %.2x", cmd));
 #if 0
 	switch((cmd >> 0) & 3) {
 		case 1:								// MIDI Stop
@@ -337,6 +344,7 @@ static REG8 mpucmd_md(REG8 cmd) {			// 00-2F: Mode
 		case 1:								// Stop Play
 			mpu98.flag1 &= ~MPUFLAG1_PLAY;
 			mpu98.recvevent = 0;
+			mpu98.intphase = 0;
 			mpu98.intreq = 0;
 			ZeroMemory(mpu98.tr, sizeof(mpu98.tr));
 			ZeroMemory(&mpu98.cond, sizeof(mpu98.cond));
@@ -771,6 +779,9 @@ static BRESULT sendmpucmd(MPUCMDS *cmd, REG8 data) {
 static BRESULT sendmpucond(MPUCMDS *cmd, REG8 data) {
 
 	if (cmd->phase & (MPUCMDP_SHORT | MPUCMDP_LONG)) {
+//		if (mpu98.intreq == 0xf9) {
+//			mpu98.intreq = 0;
+//		}
 		sendmpumsg(cmd, data);
 		return(SUCCESS);
 	}
@@ -796,8 +807,8 @@ static BRESULT sendmpucond(MPUCMDS *cmd, REG8 data) {
 				reqmpucmdgroupd(data);
 			}
 			cmd->phase = phase;
-			if (!(phase & MPUCMDP_FOLLOWBYTE)) {
-				tr_nextsearch();
+			if (phase & MPUCMDP_FOLLOWBYTE) {
+				return(SUCCESS);
 			}
 		}
 		else {
@@ -807,20 +818,19 @@ static BRESULT sendmpucond(MPUCMDS *cmd, REG8 data) {
 				setrecvdata(MIDI_STOP);
 				mpu98ii_int();
 			}
-			tr_nextsearch();
 		}
-		return(SUCCESS);
 	}
 	else if (cmd->phase & MPUCMDP_FOLLOWBYTE) {
 		cmd->phase &= ~MPUCMDP_FOLLOWBYTE;
 		setmpucmdgroupe(cmd->cmd, data);
-		tr_nextsearch();
-		return(SUCCESS);
 	}
 	else {
 		cmd->phase = 0;
 		return(FAILURE);
 	}
+
+	tr_nextsearch();
+	return(SUCCESS);
 }
 
 static void sendmpudata(REG8 data) {
@@ -833,7 +843,7 @@ static void sendmpudata(REG8 data) {
 	if (mpu98.recvevent & MIDIE_STEP) {
 		MPUTR *tr;
 		mpu98.recvevent ^= MIDIE_STEP;
-		tr = mpu98.tr + mpu98.intreq;
+		tr = mpu98.tr + (mpu98.intphase - 2);
 		tr->datas = 0;
 		if (data < 0xf0) {
 			mpu98.recvevent ^= MIDIE_EVENT;
@@ -851,7 +861,7 @@ static void sendmpudata(REG8 data) {
 		MPUTR *tr;
 		mpu98.recvevent ^= MIDIE_EVENT;
 		mpu98.recvevent |= MIDIE_DATA;
-		tr = mpu98.tr + mpu98.intreq;
+		tr = mpu98.tr + (mpu98.intphase - 2);
 		switch(data & 0xf0) {
 			case 0xc0:
 			case 0xd0:
@@ -884,7 +894,7 @@ static void sendmpudata(REG8 data) {
 	}
 	if (mpu98.recvevent & MIDIE_DATA) {
 		MPUTR *tr;
-		tr = mpu98.tr + mpu98.intreq;
+		tr = mpu98.tr + (mpu98.intphase - 2);
 		if (tr->remain) {
 			tr->data[tr->datas] = data;
 			tr->datas++;
@@ -912,6 +922,7 @@ static void IOOUTCALL mpu98ii_o0(UINT port, REG8 dat) {
 
 	UINT	sent;
 
+TRACEOUT(("mpu98ii out %.4x %.2x", port, dat));
 	if (cm_mpu98 == NULL) {
 		cm_mpu98 = commng_create(COMCREATE_MPU98II);
 	}
@@ -933,6 +944,7 @@ static void IOOUTCALL mpu98ii_o0(UINT port, REG8 dat) {
 
 static void IOOUTCALL mpu98ii_o2(UINT port, REG8 dat) {
 
+TRACEOUT(("mpu98ii out %.4x %.2x", port, dat));
 	if (cm_mpu98 == NULL) {
 		cm_mpu98 = commng_create(COMCREATE_MPU98II);
 	}
@@ -969,16 +981,30 @@ static REG8 IOINPCALL mpu98ii_i0(UINT port) {
 	if (cm_mpu98->connect != COMCONNECT_OFF) {
 		if (mpu98.r.cnt) {
 			mpu98.r.cnt--;
+#if 0
 			if (mpu98.r.cnt) {
 				mpu98ii_int();
 			}
 			else {
 				pic_resetirq(mpu98.irqnum);
 			}
+#endif
 			mpu98.data = mpu98.r.buf[mpu98.r.pos];
 			mpu98.r.pos = (mpu98.r.pos + 1) & (MPU98_RECVBUFS - 1);
 		}
+		else if (mpu98.intreq) {
+			mpu98.data = mpu98.intreq;
+			mpu98.intreq = 0;
+		}
+		if ((mpu98.r.cnt) || (mpu98.intreq)) {
+			mpu98ii_int();
+		}
+		else {
+			pic_resetirq(mpu98.irqnum);
+		}
+
 //		TRACEOUT(("recv data->%.2x", mpu98.data));
+TRACEOUT(("mpu98ii inp %.4x %.2x", port, mpu98.data));
 		return(mpu98.data);
 	}
 	(void)port;
@@ -994,9 +1020,10 @@ static REG8 IOINPCALL mpu98ii_i2(UINT port) {
 	}
 	if (cm_mpu98->connect != COMCONNECT_OFF) {
 		ret = mpu98.status;
-		if (!mpu98.r.cnt) {
+		if ((mpu98.r.cnt == 0) && (mpu98.intreq == 0)) {
 			ret |= MIDIIN_AVAIL;
 		}
+// TRACEOUT(("mpu98ii inp %.4x %.2x", port, ret));
 		return(ret);
 	}
 	(void)port;

@@ -173,7 +173,7 @@ SXSIDEV sxsi_getptr(REG8 drv) {
 	return(NULL);
 }
 
-const OEMCHAR *sxsi_getfilename(REG8 drv) {
+OEMCHAR *sxsi_getfilename(REG8 drv) {
 
 	SXSIDEV	sxsi;
 

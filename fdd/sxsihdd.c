@@ -238,30 +238,3 @@ sxsiope_err1:
 	return(FAILURE);
 }
 
-// ----
-
-void sxsihdd_allbind(void) {
-
-	int		i;
-	REG8	drv;
-
-	drv = 0;
-	for (i=0; i<2; i++) {
-		sxsi_devclose(drv);
-		sxsi_setdevtype(drv, SXSIDEV_HDD);
-		if (sxsi_devopen(drv, np2cfg.sasihdd[i]) == SUCCESS) {
-			drv++;
-		}
-	}
-#if defined(SUPPORT_SCSI)
-	drv = 0x20;
-	for (i=0; i<4; i++) {
-		sxsi_devclose(drv);
-		sxsi_setdevtype(drv, SXSIDEV_HDD);
-		if (sxsi_devopen(drv, np2cfg.scsihdd[i]) == SUCCESS) {
-			drv++;
-		}
-	}
-#endif
-}
-

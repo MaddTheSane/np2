@@ -268,7 +268,7 @@ void xmenu_initialize(void) {
 	if (np2oscfg.I286SAVE) {
 		hSubMenu = GetSubMenu(hMenu, 4);
 		insertresmenu(hSubMenu, 10, MF_BYPOSITION | MF_STRING,
-												IDM_I286SAVE, IDS_I286SAVE);
+												IDM_CPUSAVE, IDS_CPUSAVE);
 	}
 #if defined(SUPPORT_WAVEREC)
 	hSubMenu = GetSubMenu(hMenu, 4);
