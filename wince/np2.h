@@ -6,8 +6,8 @@ typedef struct {
 	BYTE	resume;
 
 #if !defined(GX_DLL)
-	int		posx;
-	int		posy;
+	int		winx;
+	int		winy;
 #endif
 #if defined(WIN32_PLATFORM_PSPC)
 	BYTE	bindcur;

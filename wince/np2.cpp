@@ -234,6 +234,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_MOVE:
 			if (!(GetWindowLong(hWnd, GWL_STYLE) &
 											(WS_MAXIMIZE | WS_MINIMIZE))) {
+				RECT rc;
 				GetWindowRect(hWnd, &rc);
 				np2oscfg.winx = rc.left;
 				np2oscfg.winy = rc.top;

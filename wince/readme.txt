@@ -20,7 +20,7 @@
 
 　　ARM 206Mhz以上
 　　WinCE 2.11以上
-　　12MB以上の空きメモリ
+　　10MB以上の空きメモリ
 
 　　PocketPC, Sigmarion3では gx.dllが必要です。
 　　(PocketPC2002では 最初から導入済みです)
