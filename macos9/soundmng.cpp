@@ -10,7 +10,8 @@
 #endif
 
 
-#define	SOUNDBUFFERS	3
+#define	SOUNDBUFFERS	2
+
 
 typedef struct {
 	SndChannelPtr	hdl;
@@ -18,6 +19,10 @@ typedef struct {
 	UINT			rate;
 	UINT			samples;
 	UINT			buffersize;
+#if defined(SOUNDMNG_USEBUFFERING)
+	SINT16			*indata;
+	SINT16			*extendbuffer;
+#endif
 	ExtSoundHeader	*buf[SOUNDBUFFERS];
 	SndCommand		cmd[SOUNDBUFFERS];
 	SndCommand		cbcmd[SOUNDBUFFERS];
@@ -37,12 +42,20 @@ static pascal void QSoundCallback(SndChannelPtr inCh, SndCommand *inCmd) {
 	QSOUND		qs;
 	int			nextbuf;
 	void		*dst;
+#if !defined(SOUNDMNG_USEBUFFERING)
 const SINT32	*src;
+#endif
 
 	if (QS_Avail) {
 		qs = &QSound;
 		nextbuf = inCmd->param1;
 		dst = qs->buf[nextbuf]->sampleArea;
+#if defined(SOUNDMNG_USEBUFFERING)
+		if (qs->indata) {
+			CopyMemory((SINT16 *)dst, qs->indata, qs->buffersize);
+			qs->indata = NULL;
+		}
+#else
 		src = NULL;
 		if (QSound_Playing) {
 			src = sound_pcmlock();
@@ -51,6 +64,7 @@ const SINT32	*src;
 			satuation_s16((SINT16 *)dst, src, qs->buffersize);
 			sound_pcmunlock(src);
 		}
+#endif
 		else {
 			ZeroMemory(dst, qs->buffersize);
 		}
@@ -117,6 +131,14 @@ static BOOL SoundBuffer_Init(UINT rate, UINT samples) {
 	qs->buffersize = buffersize;
 	drate = rate;
 	dtox80(&drate, &extFreq);
+
+#if defined(SOUNDMNG_USEBUFFERING)
+	qs->extendbuffer = (SINT16 *)_MALLOC(buffersize, "Extend buffer");
+	if (qs->extendbuffer == NULL) {
+		goto sbinit_err;
+	}
+#endif
+
 	buffersize += sizeof(ExtSoundHeader);
 	for (i=0; i<SOUNDBUFFERS; i++) {
 		buf = (ExtSoundHeader *)_MALLOC(buffersize, "ExtSoundHeader");
@@ -161,6 +183,13 @@ static void SoundBuffer_Term(void) {
 			buf[i] = NULL;
 		}
 	}
+#if defined(SOUNDMNG_USEBUFFERING)
+	qs->indata = NULL;
+	if (qs->extendbuffer) {
+		_MFREE(qs->extendbuffer);
+		qs->extendbuffer = NULL;
+	}
+#endif
 }
 
 UINT soundmng_create(UINT rate, UINT ms) {
@@ -182,8 +211,13 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	if (SoundChannel_Init()) {
 		goto qsinit_err;
 	}
-	samples = rate * ms / 1000;
+#if defined(SOUNDMNG_USEBUFFERING)
+	samples = rate * ms / (SOUNDBUFFERS * 1000);
 	samples = (samples + 3) & (~3);
+#else
+	samples = rate * ms / 1000;
+	samples = (samples + 255) & (~255);
+#endif
 	if (SoundBuffer_Init(rate, samples)) {
 		goto qsinit_err;
 	}
@@ -223,4 +257,23 @@ void soundmng_stop(void) {
 
 	QSound_Playing = FALSE;
 }
+
+#if defined(SOUNDMNG_USEBUFFERING)
+void soundmng_sync(void) {
+
+	QSOUND		qs;
+const SINT32	*src;
+
+	qs = &QSound;
+
+	if ((QSound_Playing) && (qs->indata == NULL)) {
+		src = sound_pcmlock();
+		if (src) {
+			satuation_s16(qs->extendbuffer, src, qs->buffersize);
+			sound_pcmunlock(src);
+			qs->indata = qs->extendbuffer;
+		}
+	}
+}
+#endif
 
