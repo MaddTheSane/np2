@@ -82,6 +82,15 @@ static int Getfiletype(FInfo *fndrinfo) {
 		case '.HDI':
 			return(FTYPE_HDI);
             
+		case '.NHD':
+			return(FTYPE_NHD);
+            
+		case '.HDD':
+			return(FTYPE_HDD);
+            
+		case '.FDI':
+			return(FTYPE_FDI);
+            
 		case 'BMP ':
 			return(FTYPE_BMP);
 	}
@@ -108,11 +117,17 @@ static int GetFileExt(char* filename) {
     else if ((!milstr_cmp(p, str_thd))) {
 			ftype = FTYPE_THD;
 		}
+    else if ((!milstr_cmp(p, str_nhd))) {
+			ftype = FTYPE_NHD;
+		}
     else if ((!milstr_cmp(p, str_hdi))) {
 			ftype = FTYPE_HDI;
 		}
     else if ((!milstr_cmp(p, str_hdd))) {
 			ftype = FTYPE_HDD;
+		}
+    else if ((!milstr_cmp(p, str_fdi))) {
+			ftype = FTYPE_FDI;
 		}
     else if ((!milstr_cmp(p, "xdf")) || (!milstr_cmp(p, "dup")) || (!milstr_cmp(p, "hdm"))) {
         ftype = FTYPE_BETA;

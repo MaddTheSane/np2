@@ -135,6 +135,10 @@ static void MenuBarInit(void) {
 	}
 	InsertMenu(GetMenu(IDM_SASI1), -1);
 	InsertMenu(GetMenu(IDM_SASI2), -1);
+	InsertMenu(GetMenu(IDM_SCSI0), -1);
+	InsertMenu(GetMenu(IDM_SCSI1), -1);
+	InsertMenu(GetMenu(IDM_SCSI2), -1);
+	InsertMenu(GetMenu(IDM_SCSI3), -1);
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
@@ -247,6 +251,38 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_SASI2REMOVE:
 			diskdrv_sethdd(1, NULL);
+			break;
+
+		case IDM_SCSI0OPEN:
+			dialog_changehdd(0x20);
+			break;
+
+		case IDM_SCSI0REMOVE:
+			diskdrv_sethdd(0x20, NULL);
+			break;
+
+		case IDM_SCSI1OPEN:
+			dialog_changehdd(0x21);
+			break;
+
+		case IDM_SCSI1REMOVE:
+			diskdrv_sethdd(0x21, NULL);
+			break;
+
+		case IDM_SCSI2OPEN:
+			dialog_changehdd(0x22);
+			break;
+
+		case IDM_SCSI2REMOVE:
+			diskdrv_sethdd(0x22, NULL);
+			break;
+
+		case IDM_SCSI3OPEN:
+			dialog_changehdd(0x23);
+			break;
+
+		case IDM_SCSI3REMOVE:
+			diskdrv_sethdd(0x23, NULL);
 			break;
 
 		case IDM_FULLSCREEN:

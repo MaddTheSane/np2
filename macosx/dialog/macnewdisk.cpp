@@ -84,7 +84,7 @@ static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, 
 {
     WindowRef	theWindow = (WindowRef)inUserData;  // get the windowRef, passed around as userData    
     short		ret;
-    ControlRef	focus;
+    ControlRef	focus = NULL;
 
     ret = changeTab(theWindow, lastPaneSelected);
     if (ret) {

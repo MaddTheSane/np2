@@ -170,27 +170,13 @@ short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime) {
 
 	FSRef			ref;
 	FSCatalogInfo	fsci;
-	LocalDateTime	ldt;
-	DateTimeRec		dtr;
 
-	ZeroMemory(&dtr, sizeof(dtr));
 	if ((FSGetForkCBInfo(handle, 0, NULL, NULL, NULL, &ref, NULL) != noErr) ||
 		(FSGetCatalogInfo(&ref, kFSCatInfoContentMod, &fsci, NULL, NULL, NULL)
 																!= noErr)) {
 		return(-1);
 	}
-	ConvertUTCToLocalDateTime(&fsci.contentModDate, &ldt);
-	SecondsToDate(ldt.lowSeconds, &dtr);
-	if (dosdate) {
-		dosdate->year = dtr.year;
-		dosdate->month = (BYTE)dtr.month;
-		dosdate->day = (BYTE)dtr.day;
-	}
-	if (dostime) {
-		dostime->hour = (BYTE)dtr.hour;
-		dostime->minute = (BYTE)dtr.minute;
-		dostime->second = (BYTE)dtr.second;
-	}
+	cnvdatetime(&fsci.contentModDate, dosdate, dostime);
 	return(0);
 #else
 	(void)handle;

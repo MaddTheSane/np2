@@ -284,7 +284,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "../font ../lio ../fdd ../sound ../vram ../bios ../cbus ../io ../i286c . .. ../common";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "\"$(HOME)/Library/Application Support\" ./";
+				LIBRARY_SEARCH_PATHS = ./;
 				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -336,7 +336,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ROM.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Neko Project II ROMファイル</string>
+			<string>ROMファイル</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>.ROM</string>
@@ -412,6 +412,38 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>NHD</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>nhd.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>T98-Next ハードディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.NHD</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>HDD</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>hdd.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Virtual98 ハードディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.HDD</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>CFG</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
@@ -420,6 +452,22 @@
 			<string>Neko Project II 初期設定</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>FDI</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>fdi.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>FDI フロッピーディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.FDI</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -461,7 +509,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Neko Project IIx</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Neko Project IIx version 0.73</string>
+	<string>Neko Project IIx version 0.74</string>
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -473,11 +521,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.73</string>
+	<string>0.74</string>
 	<key>CFBundleSignature</key>
 	<string>SMil</string>
 	<key>CFBundleVersion</key>
-	<string>0.73</string>
+	<string>0.74</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 </dict>
@@ -509,6 +557,9 @@
 				961B70270563FAF900000103,
 				961B70280563FAF900000103,
 				961B71CA05641E6C00000103,
+				96C722A605CC3C56005B39D9,
+				96C722AA05CC3C60005B39D9,
+				96C722AE05CC3C69005B39D9,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,7 +639,6 @@
 				967C9320055778CC00000103,
 				967C9322055778CC00000103,
 				967C9324055778CC00000103,
-				967C9326055778CC00000103,
 				967C9328055778CC00000103,
 				967C932A055778CC00000103,
 				967C932C055778CC00000103,
@@ -705,6 +755,7 @@
 				9645C2DB05BFA3B90090B4FD,
 				9645C2DC05BFA3B90090B4FD,
 				9645C2E005BFA3B90090B4FD,
+				9621596805C3C2630070042E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -859,6 +910,20 @@
 		};
 		961B71CA05641E6C00000103 = {
 			fileRef = 961B71C905641E6C00000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9621596705C3C2630070042E = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = emsio.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9621596805C3C2630070042E = {
+			fileRef = 9621596705C3C2630070042E;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1740,8 +1805,8 @@
 				967C91CE055778CB00000103,
 				967C91D0055778CB00000103,
 				967C91D2055778CB00000103,
+				9621596705C3C2630070042E,
 				969790E9059DE00F009015EE,
-				967C91D4055778CB00000103,
 				967C91D6055778CB00000103,
 				967C91D8055778CB00000103,
 				967C91DA055778CB00000103,
@@ -1818,14 +1883,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			path = egc.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91D4055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = extmem.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3033,12 +3090,6 @@
 			settings = {
 			};
 		};
-		967C9326055778CC00000103 = {
-			fileRef = 967C91D4055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		967C9328055778CC00000103 = {
 			fileRef = 967C91D6055778CB00000103;
 			isa = PBXBuildFile;
@@ -3718,8 +3769,11 @@
 			children = (
 				969A8348055A60A500000103,
 				969A8349055A60A500000103,
+				96C722A505CC3C56005B39D9,
+				96C722A905CC3C60005B39D9,
 				969A834A055A60A500000103,
 				969A834B055A60A500000103,
+				96C722AD05CC3C69005B39D9,
 				969A834C055A60A500000103,
 				969A834D055A60A500000103,
 				961B71C905641E6C00000103,
@@ -3846,6 +3900,45 @@
 		};
 		96A2026E0549B38300000102 = {
 			fileRef = 96A2026D0549B38300000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96C722A505CC3C56005B39D9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			path = fdi.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96C722A605CC3C56005B39D9 = {
+			fileRef = 96C722A505CC3C56005B39D9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96C722A905CC3C60005B39D9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			path = hdd.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96C722AA05CC3C60005B39D9 = {
+			fileRef = 96C722A905CC3C60005B39D9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96C722AD05CC3C69005B39D9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			path = nhd.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96C722AE05CC3C69005B39D9 = {
+			fileRef = 96C722AD05CC3C69005B39D9;
 			isa = PBXBuildFile;
 			settings = {
 			};

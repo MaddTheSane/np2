@@ -96,8 +96,8 @@ static void info_mem1(char *str, int maxlen) {
 	else {
 		memsize = 640;
 	}
-	if (extmem.maxmem > 1) {
-		SPRINTF(memstr, str_memfmt2, memsize, (extmem.maxmem - 1) * 1024);
+	if (emsio.maxmem > 1) {
+		SPRINTF(memstr, str_memfmt2, memsize, (emsio.maxmem - 1) * 1024);
 	}
 	else {
 		SPRINTF(memstr, str_memfmt, memsize);
@@ -117,8 +117,8 @@ static void info_mem2(char *str, int maxlen) {
 	else {
 		memsize = 640;
 	}
-	if (extmem.maxmem > 1) {
-		memsize += (extmem.maxmem - 1) * 1024;
+	if (emsio.maxmem > 1) {
+		memsize += (emsio.maxmem - 1) * 1024;
 	}
 	SPRINTF(memstr, str_memfmt, memsize);
 	milstr_ncpy(str, memstr, maxlen);
@@ -136,8 +136,8 @@ static void info_mem3(char *str, int maxlen) {
 	else {
 		memsize = 640;
 	}
-	if (extmem.maxmem > 1) {
-		SPRINTF(memstr, str_memfmt3, extmem.maxmem - 1, memsize / 100);
+	if (emsio.maxmem > 1) {
+		SPRINTF(memstr, str_memfmt3, emsio.maxmem - 1, memsize / 100);
 	}
 	else {
 		SPRINTF(memstr, str_memfmt, memsize);
