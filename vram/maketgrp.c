@@ -205,7 +205,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 				for (x=0; x<TEXTXMAX; x++) {
 					GRPHDATASET(p, vc);
 					p += 2;
-					vc = VRAM_POS(vc + 1);
+					vc = VRAMADDRMASKEX(vc + 1);
 				}
 				d = (BYTE *)bit;
 				ZeroMemory(q, TEXTXMAX * 8);
@@ -463,7 +463,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 				for (x=0; x<TEXTXMAX; x++) {
 					GRPHDATASET(p, vc);
 					p += 2;
-					vc = VRAM_POS(vc + 1);
+					vc = VRAMADDRMASKEX(vc + 1);
 				}
 				d = (BYTE *)bit;
 				ZeroMemory(q, TEXTXMAX * 8);

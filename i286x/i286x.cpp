@@ -2668,7 +2668,8 @@ I286 _popf(void) {								// 9D: popf
 				cmp		ah, 3
 				sete	I286_TRAP
 
-				test	ah, 2					// fast_intr
+				je		irqcheck				// fast_intr
+				test	ah, 2
 				je		nextop
 				cmp		pic.ext_irq, 0
 				jne		nextop
@@ -3596,7 +3597,9 @@ I286 _iret(void) {								// CF: iret
 				sete	I286_TRAP
 				RESET_XPREFETCH
 
-				test	I286_FLAG, I_FLAG		// fast_intr
+				cmp		I286_TRAP, 0			// fast_intr
+				jne		irqcheck
+				test	I286_FLAG, I_FLAG
 				je		nextop
 				cmp		pic.ext_irq, 0
 				jne		nextop
@@ -4201,7 +4204,8 @@ I286 _sti(void) {								// FB: sti
 				test	I286_FLAG, T_FLAG
 				setne	I286_TRAP
 
-				cmp		pic.ext_irq, 0			// fast_intr
+				jne		nextopandexit			// fast_intr
+				cmp		pic.ext_irq, 0
 				jne		jmp_nextop
 				mov		al, pic.pi[0].imr
 				mov		ah, pic.pi[1].imr

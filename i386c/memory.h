@@ -17,7 +17,7 @@
 #define	VRAM_G		0x0b8000
 #define	VRAM_E		0x0e0000
 
-#define	VRAM_POS(a)	((a) & (VRAM_STEP | 0x7fff))
+#define	VRAMADDRMASKEX(a)	((a) & (VRAM_STEP | 0x7fff))
 
 #define	VRAM0_B		VRAM_B
 #define	VRAM0_R		VRAM_R

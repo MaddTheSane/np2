@@ -11,7 +11,6 @@ typedef signed char		SINT8;
 typedef	signed short	SINT16;
 typedef	signed int		SINT32;
 
-
 #ifndef	ZeroMemory
 #define	ZeroMemory(a, b)		memset((a),  0 , (b))
 #endif
@@ -50,7 +49,7 @@ typedef	signed int		SINT32;
 #define	SPRINTF		sprintf
 #define	__ASSERT(s)
 
-#if defined(WIN32_PLATFORM_PSPC)
+#if defined(WIN32_PLATFORM_PSPC) && defined(SIZE_QVGA)
 #define	MENU_TASKMINIMIZE
 #define SUPPORT_SOFTKBD
 #endif

@@ -30,7 +30,7 @@ enum {
 	ITF_ADRS	= 0x1f8000
 };
 
-#define	VRAM_POS(a)	((a) & (VRAM_STEP | 0x7fff))
+#define	VRAMADDRMASKEX(a)	((a) & (VRAM_STEP | 0x7fff))
 
 
 #ifdef __cplusplus

@@ -824,7 +824,7 @@ REG8 MEMCALL egc_read(UINT32 addr) {
 	if (gdcs.access) {
 		addr += VRAM_STEP;
 	}
-	ad = VRAM_POS(addr);
+	ad = VRAMADDRMASKEX(addr);
 	ext = EGCADDR(addr & 1);
 	egc.lastvram._b[0][ext] = mem[ad + VRAM_B];
 	egc.lastvram._b[1][ext] = mem[ad + VRAM_R];
@@ -918,7 +918,7 @@ REG16 MEMCALL egc_read_w(UINT32 addr) {
 		if (gdcs.access) {
 			addr += VRAM_STEP;
 		}
-		ad = VRAM_POS(addr);
+		ad = VRAMADDRMASKEX(addr);
 		egc.lastvram.w[0] = *(UINT16 *)(&mem[ad + VRAM_B]);
 		egc.lastvram.w[1] = *(UINT16 *)(&mem[ad + VRAM_R]);
 		egc.lastvram.w[2] = *(UINT16 *)(&mem[ad + VRAM_G]);

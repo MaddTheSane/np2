@@ -8,7 +8,8 @@
 #include	"font.h"
 
 
-#define	USE_HIMEM
+#define	USE_HIMEM		0x10fff0
+
 #if defined(TRACE)
 #define	MEMORY_DEBUG
 #endif
@@ -747,7 +748,7 @@ static REG8 MEMCALL _i286_memoryread(UINT32 address) {
 		return(mem[address]);
 	}
 #if defined(USE_HIMEM)
-	else if (address >= 0x10fff0) {
+	else if (address >= USE_HIMEM) {
 		address -= 0x100000;
 		if (address < CPU_EXTMEMSIZE) {
 			return(CPU_EXTMEM[address]);
@@ -770,9 +771,9 @@ static REG16 MEMCALL _i286_memoryread_w(UINT32 address) {
 		return(LOADINTELWORD(mem + address));
 	}
 #if defined(USE_HIMEM)
-	else if (address >= (0x10fff0 - 1)) {
+	else if (address >= (USE_HIMEM - 1)) {
 		address -= 0x100000;
-		if (address == (0x00fff0 - 1)) {
+		if (address == (USE_HIMEM - 0x100000 - 1)) {
 			ret = mem[0x100000 + address];
 		}
 		else if (address < CPU_EXTMEMSIZE) {
@@ -830,7 +831,7 @@ REG8 MEMCALL i286_memoryread(UINT32 address) {
 		return(mem[address]);
 	}
 #if defined(USE_HIMEM)
-	else if (address >= 0x10fff0) {
+	else if (address >= USE_HIMEM) {
 		address -= 0x100000;
 		if (address < CPU_EXTMEMSIZE) {
 			return(CPU_EXTMEM[address]);
@@ -853,9 +854,9 @@ REG16 MEMCALL i286_memoryread_w(UINT32 address) {
 		return(LOADINTELWORD(mem + address));
 	}
 #if defined(USE_HIMEM)
-	else if (address >= (0x10fff0 - 1)) {
+	else if (address >= (USE_HIMEM - 1)) {
 		address -= 0x100000;
-		if (address == (0x00fff0 - 1)) {
+		if (address == (USE_HIMEM - 0x100000 - 1)) {
 			ret = mem[0x100000 + address];
 		}
 		else if (address < CPU_EXTMEMSIZE) {
@@ -892,7 +893,7 @@ void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
 		mem[address] = (BYTE)value;
 	}
 #if defined(USE_HIMEM)
-	else if (address >= 0x10fff0) {
+	else if (address >= USE_HIMEM) {
 		address -= 0x100000;
 		if (address < CPU_EXTMEMSIZE) {
 			CPU_EXTMEM[address] = (BYTE)value;
@@ -910,9 +911,9 @@ void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
 		STOREINTELWORD(mem + address, value);
 	}
 #if defined(USE_HIMEM)
-	else if (address >= (0x10fff0 - 1)) {
+	else if (address >= (USE_HIMEM - 1)) {
 		address -= 0x100000;
-		if (address == (0x00fff0 - 1)) {
+		if (address == (USE_HIMEM - 0x100000 - 1)) {
 			mem[address] = (BYTE)value;
 		}
 		else if (address < CPU_EXTMEMSIZE) {

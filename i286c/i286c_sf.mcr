@@ -39,11 +39,17 @@
 		I286_OV = (s) & 0x80;										\
 		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
 
+#if 1
 #define	BYTE_SAR1(d, s)												\
-		(d) = (BYTE)(((SINT8)s) >> 1);								\
+		(d) = ((s) & 0x80) + ((s) >> 1);							\
 		I286_OV = 0;												\
 		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
-
+#else	// eVC3/4 compiler bug
+#define	BYTE_SAR1(d, s)												\
+		(d) = (BYTE)(((SINT8)(s)) >> 1);							\
+		I286_OV = 0;												\
+		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
+#endif
 
 
 #define	WORD_ROL1(d, s)	{											\
@@ -84,11 +90,17 @@
 		I286_OV = (s) & 0x8000;										\
 		I286_FLAGL = (BYTE)(WORDSZPF(d) | A_FLAG | ((s) & 1));
 
+#if 1
 #define	WORD_SAR1(d, s)												\
-		(d) = (UINT16)(((SINT16)s) >> 1);							\
+		(d) = ((s) & 0x8000) + ((s) >> 1);							\
 		I286_OV = 0;												\
 		I286_FLAGL = (BYTE)(WORDSZPF(d) | A_FLAG | ((s) & 1));
-
+#else	// eVC3/4 compiler bug
+#define	WORD_SAR1(d, s)												\
+		(d) = (UINT16)(((SINT16)(s)) >> 1);							\
+		I286_OV = 0;												\
+		I286_FLAGL = (BYTE)(WORDSZPF(d) | A_FLAG | ((s) & 1));
+#endif
 
 
 
