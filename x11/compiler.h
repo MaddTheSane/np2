@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.21 2004/06/17 14:36:33 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.22 2004/07/02 14:53:08 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -47,6 +47,9 @@
 #else	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO || USE_SDLAUDIO || USE_SDLMIXER */
 #undef	NOSOUND
 #define	VERMOUTH_LIB
+#if defined(USE_NETBSDAUDIO) || defined(USE_OSSAUDIO) || defined(USE_ESDAUDIO)
+#include <pthread.h>
+#endif	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO */
 #endif	/* !USE_NETBSDAUDIO && !USE_OSSAUDIO && !USE_ESDAUDIO && !USE_SDLAUDIO && !USE_SDMIXER */
 
 #include <sys/param.h>
