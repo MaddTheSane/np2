@@ -11,6 +11,10 @@
 #include	"dialog.h"
 #include	"soundmng.h"
 #include	"fdefine.h"
+#include	"mackbd.h"
+#include	"mousemng.h"
+#include	"pccore.h"
+#include	"iocore.h"
 
 
 enum {
@@ -525,10 +529,12 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                         Draw1Control(sub);
                     }
                 }
+                err=noErr;
                 break;
                 
             case kEventWindowFocusAcquired:
-                SelectWindow(hWndMain);
+                BringToFront(hWndMain);
+                err = noErr;
                 break;
                 
                 
@@ -536,13 +542,51 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 break;
         }
     }
-    else if (GetEventClass(event)==kEventClassKeyboard && GetEventKind(event)==kEventRawKeyDown) {
+    else if (GetEventClass(event)==kEventClassKeyboard) {
+        static	UInt32	backup = 0;
+        UInt32	whatHappened = GetEventKind(event);
+        UInt32 key;
+        GetEventParameter (event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &key);
         UInt32 modif;
         GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
-        if (modif & cmdKey) {
-            EventRecord	eve;
-            ConvertEventRefToEventRecord( event,&eve );
-            recieveCommand(MenuEvent(&eve));
+        switch (whatHappened)
+        {
+            case kEventRawKeyUp:
+                mackbd_keyup(key);
+                err = noErr;
+                break;
+            case kEventRawKeyRepeat:
+                mackbd_keydown(key);
+                err = noErr;
+                break;
+            case kEventRawKeyDown:
+                if (modif & cmdKey) {
+                    EventRecord	eve;
+                    ConvertEventRefToEventRecord( event,&eve );
+                    mousemng_disable(MOUSEPROC_MACUI);
+                    recieveCommand(MenuEvent(&eve));
+                    mousemng_enable(MOUSEPROC_MACUI);
+                }
+                else {
+                    mackbd_keydown(key);
+                }
+                err = noErr;
+                break;
+            case kEventRawKeyModifiersChanged:
+                if (modif & shiftKey) keystat_senddata(0x70);
+                else keystat_senddata(0x70 | 0x80);
+                if (modif & optionKey) keystat_senddata(0x73);
+                else keystat_senddata(0x73 | 0x80);
+                if (modif & controlKey) keystat_senddata(0x74);
+                else keystat_senddata(0x74 | 0x80);
+                if ((modif & alphaLock) != (backup & alphaLock)) {
+                    keystat_senddata(0x71);
+                    backup = modif;
+                }
+                err = noErr;
+                break;
+            default: 
+                break;             
         }
     }
 
@@ -757,7 +801,7 @@ static void openpopup(HIPoint location) {
     else {
         switch (sel) {
             case 1:
-                if(dialog_fileselect(fname, sizeof(fname), hWndMain)) {
+                if(dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_INI)) {
                     if (file_getftype(fname)==FTYPE_TEXT) {
                         strcpy(np2tool.skin, fname);
                         skinchange(true);

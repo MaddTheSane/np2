@@ -69,8 +69,10 @@ static void char2str(char *dst, int size, const UniChar *uni, int unicnt) {
 	CFStringRef	cfsr;
 
 	cfsr = CFStringCreateWithCharacters(NULL, uni, unicnt);
-	CFStringGetCString(cfsr, dst, size, CFStringGetSystemEncoding());
-	CFRelease(cfsr);
+    if (cfsr) {
+        CFStringGetCString(cfsr, dst, size, CFStringGetSystemEncoding());
+        CFRelease(cfsr);
+    }
 }
 
 void *file_list1st(const char *dir, FLDATA *fl) {
@@ -156,30 +158,21 @@ bool getLongFileName(char* dst, const char* path) {
 	FSSpec	fss;
 	Str255	fname;
     FSRef	fref;
-    char	buffer[1024];
-	char 	*ret, *val;
+    HFSUniStr255	name;
 
     if (*path == '\0') {
         return(false);
     }
 	mkstr255(fname, path);
-	if (FSMakeFSSpec(0, 0, fname, &fss) != noErr) {
+	FSMakeFSSpec(0, 0, fname, &fss);
+    FSpMakeFSRef(&fss, &fref);
+    if (FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, &name, NULL, NULL) != noErr) {
         return(false);
     }
-    if (FSpMakeFSRef(&fss, &fref) != noErr) {
+    char2str(dst, 512, name.unicode, name.length);
+    if (!dst) {
         return(false);
     }
-    if (FSRefMakePath(&fref, (UInt8*)buffer, 1024) != noErr) {
-        return(false);
-    }
-	val = buffer;
-    ret = val;
-	while(*val != '\0') {
- 		if (*val++ == '/') {
-			ret = val;
-		}
-	}
-    strcpy(dst, ret);
     return(true);
 }
 

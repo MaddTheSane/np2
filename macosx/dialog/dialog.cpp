@@ -88,7 +88,62 @@ static pascal void dummyproc(NavEventCallbackMessage sel, NavCBRecPtr prm,
 	(void)ud;
 }
 
-BOOL dialog_fileselect(char *name, int size, WindowRef parent) {
+static pascal Boolean NavLaunchServicesFilterProc( AEDesc* theItem, void* info, NavCallBackUserData ioUserData, NavFilterModes filterMode)
+{
+	#pragma unused( info )
+	OSStatus	err			= noErr;
+	Boolean		showItem	= false;
+    FSSpec		fsSpec;
+    int			ret;
+    char		name[MAX_PATH];
+	AEDesc 		coerceDesc	= { NULL, NULL };
+		
+	if ( filterMode == kNavFilteringBrowserList ) {
+		if ( theItem->descriptorType != typeFSS ) {
+			err = AECoerceDesc( theItem, typeFSS, &coerceDesc );
+			theItem = &coerceDesc;
+		}
+		if ( err == noErr ) {
+			err = AEGetDescData( theItem, &fsSpec, sizeof(fsSpec) );
+        }
+		AEDisposeDesc( &coerceDesc );
+        
+        if (err == noErr) {
+            fsspec2path(&fsSpec, name, MAX_PATH);
+            if (file_attr(name) == FILEATTR_DIRECTORY) {
+                showItem = true;
+            }
+            else {
+                ret = file_getftype(name);
+                switch (*(int*)ioUserData) {
+                    case OPEN_FDD:
+                        if (ret == FTYPE_D88 || ret == FTYPE_BETA) {
+                            showItem = true;
+                        }
+                        break;
+                    case OPEN_HDD:
+                        if (ret == FTYPE_THD || ret == FTYPE_HDI) {
+                            showItem = true;
+                        }
+                        break;
+                    case OPEN_FONT:
+                        if (ret == FTYPE_BMP || ret == FTYPE_SMIL) {
+                            showItem = true;
+                        }
+                        break;
+                    case OPEN_INI:
+                        if (ret == FTYPE_INI) {
+                            showItem = true;
+                        }
+                        break;
+                }
+            }
+        }
+	}
+	return( showItem );
+}
+
+BOOL dialog_fileselect(char *name, int size, WindowRef parent, int opentype) {
 
 	BOOL				ret;
 	OSErr				err;
@@ -98,17 +153,30 @@ BOOL dialog_fileselect(char *name, int size, WindowRef parent) {
 	long				count;
 	long				i;
 	FSSpec				fss;
+    NavObjectFilterUPP	navFilterProc;
 
 	ret = FALSE;
     NavGetDefaultDialogCreationOptions(&optNav);
+    optNav.clientName = CFSTR("Neko Project IIx");
     optNav.modality=kWindowModalityWindowModal;
     optNav.parentWindow=parent;
-    optNav.optionFlags+=kNavNoTypePopup;
+    switch (opentype) {
+        case OPEN_FONT:
+            optNav.message = CFCopyLocalizedString(CFSTR("Choose font file."),"FontSelect Message");
+            break;
+        case OPEN_INI:
+            optNav.message = CFCopyLocalizedString(CFSTR("Choose a skin file for Tool Window."),"SkinSelect Message");
+            break;
+        default:
+            break;
+    }
 	proc = NewNavEventUPP(dummyproc);
-    ret=NavCreateChooseFileDialog(&optNav,NULL,proc,NULL,NULL,NULL,&navWin);
+    navFilterProc = NewNavObjectFilterUPP( NavLaunchServicesFilterProc );
+    ret=NavCreateGetFileDialog(&optNav,NULL,proc,NULL,navFilterProc,&opentype,&navWin);
     NavDialogRun(navWin);
     RunAppModalLoopForWindow(NavDialogGetWindow(navWin));
     NavDialogGetReply(navWin, &reply);
+    if (optNav.message) CFRelease(optNav.message);
     NavDialogDispose(navWin);
 	DisposeNavEventUPP(proc);
     
@@ -150,10 +218,24 @@ BOOL dialog_filewriteselect(OSType type, char *title, FSSpec *fsc, WindowRef par
 
 	InitCursor();
     NavGetDefaultDialogCreationOptions(&copt);
+    copt.clientName = CFSTR("Neko Project IIx");
     copt.parentWindow = parentWindow;
     copt.saveFileName = CFStringCreateWithCString(NULL, title, CFStringGetSystemEncoding());
-    copt.optionFlags += kNavNoTypePopup;
+    copt.optionFlags += kNavPreserveSaveFileExtension;
     copt.modality = kWindowModalityWindowModal;
+    switch (type) {
+        case 'AIFF':
+            copt.message = CFCopyLocalizedString(CFSTR("Record playing sound as AIFF file."),"SoundRecord Message");
+            break;
+        case 'BMP ':
+            copt.message = CFCopyLocalizedString(CFSTR("Save the screen as BMP file."),"ScreenShot Message");
+            break;
+        case '.S98':
+            copt.message = CFCopyLocalizedString(CFSTR("Log playing sound as S98 file."),"S98Log Message");
+            break;
+        default:
+            break;
+    }
 	eventUPP=NewNavEventUPP( dummyproc );
     NavCreatePutFileDialog(&copt, type, sign, eventUPP, NULL, &navWin);
     
@@ -187,7 +269,7 @@ void dialog_changefdd(BYTE drv) {
 	char	fname[MAX_PATH];
 
 	if (drv < 4) {
-		if (dialog_fileselect(fname, sizeof(fname), hWndMain)) {
+		if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_FDD)) {
             if (file_getftype(fname)==FTYPE_D88 || file_getftype(fname)==FTYPE_BETA) {
                 diskdrv_setfdd(drv, fname, 0);
                 toolwin_setfdd(drv, fname);
@@ -201,7 +283,7 @@ void dialog_changehdd(BYTE drv) {
 	char	fname[MAX_PATH];
 
 	if (drv < 2) {
-		if (dialog_fileselect(fname, sizeof(fname), hWndMain)) {
+		if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_HDD)) {
             if (file_getftype(fname)==FTYPE_HDI || file_getftype(fname)==FTYPE_THD) {
                 diskdrv_sethdd(drv, fname);
             }
@@ -214,7 +296,7 @@ void dialog_font(void) {
 
     char	name[1024];
 
-	if (dialog_fileselect(name, 1024, hWndMain)) {
+	if (dialog_fileselect(name, sizeof(name), hWndMain, OPEN_FONT)) {
         if ((name != NULL) && (font_load(name, FALSE))) {
             gdcs.textdisp |= GDCSCRN_ALLDRAW2;
             milstr_ncpy(np2cfg.fontfile, name, sizeof(np2cfg.fontfile));
@@ -232,7 +314,7 @@ void dialog_writebmp(void) {
 
 	bmp = scrnbmp();
 	if (bmp) {
-		if (dialog_filewriteselect('BMP ', "np2.bmp", &fss, hWndMain)) {
+		if (dialog_filewriteselect('BMP ', "Neko Project IIx ScreenShot.bmp", &fss, hWndMain)) {
             fsspec2path(&fss, path, MAX_PATH);
 			fh = file_create(path);
 			if (fh != FILEH_INVALID) {

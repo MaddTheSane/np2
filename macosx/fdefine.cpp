@@ -3,6 +3,7 @@
 #include	"dosio.h"
 #include	"fdefine.h"
 #include	"strres.h"
+#include	"fontdata.h"
 
 void Setfiletype(int ftype, OSType *creator, OSType *fileType) {
 
@@ -80,6 +81,9 @@ static int Getfiletype(FInfo *fndrinfo) {
 
 		case '.HDI':
 			return(FTYPE_HDI);
+            
+		case 'BMP ':
+			return(FTYPE_BMP);
 	}
 	return(FTYPE_NONE);
 }
@@ -87,9 +91,11 @@ static int Getfiletype(FInfo *fndrinfo) {
 static int GetFileExt(char* filename) {
 
     char*	p;
+    char*	n;
     int		ftype;
     
     p = file_getext((char *)filename);
+    n = file_getname((char *)filename);
     if ((!milstr_cmp(p, str_d88)) || (!milstr_cmp(p, str_d98))) {
 			ftype = FTYPE_D88;
 		}
@@ -105,11 +111,24 @@ static int GetFileExt(char* filename) {
     else if ((!milstr_cmp(p, str_hdi))) {
 			ftype = FTYPE_HDI;
 		}
-    else if ((!milstr_cmp(p, "rom")) || (!milstr_cmp(p, "cfg")) || (!milstr_cmp(p, "sav"))) {
-        ftype = FTYPE_NONE;
-    }
-    else {
+    else if ((!milstr_cmp(p, "xdf")) || (!milstr_cmp(p, "dup")) || (!milstr_cmp(p, "hdm"))) {
         ftype = FTYPE_BETA;
+    }
+	else if (
+        (!file_cmpname(n, v98fontname))	||
+        (!file_cmpname(n, pc88ankname))	||
+		(!file_cmpname(n, pc88knj1name))||
+		(!file_cmpname(n, pc88knj2name))||
+        (!file_cmpname(n, fm7ankname))	||
+		(!file_cmpname(n, fm7knjname))	||
+        (!file_cmpname(n, x1ank1name)) 	||
+		(!file_cmpname(n, x1ank2name))	||
+		(!file_cmpname(n, x1knjname))	||
+        (!file_cmpname(n, x68kfontname))) {
+        ftype = FTYPE_SMIL;
+	}
+    else {
+        ftype = FTYPE_NONE;
     }
     return(ftype);
 }
@@ -121,14 +140,14 @@ int file_getftype(char* filename) {
 	FInfo	fndrInfo;
     int		ftype;
 
-	mkstr255(fname, filename);
-	FSMakeFSSpec(0, 0, fname, &fss);
-	if (FSpGetFInfo(&fss, &fndrInfo) != noErr) {
-		return(FTYPE_NONE);
-	}
+    mkstr255(fname, filename);
+    FSMakeFSSpec(0, 0, fname, &fss);
+    if (FSpGetFInfo(&fss, &fndrInfo) != noErr) {
+        return(FTYPE_NONE);
+    }
     ftype = Getfiletype(&fndrInfo);
 	if (ftype == FTYPE_NONE) {
         ftype = GetFileExt(filename);
-	}
+    }
 	return(ftype);
 }

@@ -283,8 +283,8 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>d88</string>
-				<string>d98</string>
+				<string>D88</string>
+				<string>D98</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>d88.icns</string>
@@ -300,12 +300,12 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>rom</string>
+				<string>ROM</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>ROM.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Neko Project IIx ROMファイル</string>
+			<string>Neko Project II ROMファイル</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>.ROM</string>
@@ -316,13 +316,13 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>hdm</string>
-				<string>dup</string>
+				<string>HDM</string>
+				<string>DUP</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>beta.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>ベタイメージ</string>
+			<string>ベタフロッピーディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>BETA</string>
@@ -333,7 +333,7 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>xdf</string>
+				<string>XDF</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>xdf.icns</string>
@@ -349,7 +349,7 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>hdi</string>
+				<string>HDI</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>hdi.icns</string>
@@ -365,7 +365,7 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>thd</string>
+				<string>THD</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>thd.icns</string>
@@ -381,31 +381,31 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>cfg</string>
+				<string>CFG</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>preference.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Neko Project IIx 初期設定</string>
+			<string>Neko Project II 初期設定</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>ini</string>
+				<string>INI</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>preference.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Neko Project IIx ツールウィンドウ スキンファイル</string>
+			<string>Neko Project II ツールウィンドウ スキンファイル</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>a</string>
+				<string>A</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>plug-in.icns</string>
@@ -417,12 +417,12 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>sav</string>
+				<string>SAV</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>preference.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Neko Project IIx レジュームファイル</string>
+			<string>Neko Project II レジュームファイル</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
 		</dict>

@@ -35,7 +35,7 @@ void ResumeErrorDialogProc(void) {
     
     GetStandardAlertDefaultParams(&param, kStdCFStringAlertVersionOne);   
     CreateStandardAlert(kAlertStopAlert, CFCopyLocalizedString(CFSTR("Couldn't restart"), "Resume Error Message"), 
-                                         CFCopyLocalizedString(CFSTR("A resume error occured when loading the np2.sav file. So Neko Project II couldn't restart."), "Resume Error Description"),
+                                         CFCopyLocalizedString(CFSTR("An error occured when reading the np2.sav file. Neko Project IIx couldn't restart."), "Resume Error Description"),
                                          &param, &ret);
     SysBeep(0);
     RunStandardAlert(ret, NULL, &hit);
@@ -44,7 +44,7 @@ void ResumeErrorDialogProc(void) {
 int ResumeWarningDialogProc(const char *string) {
     SInt16	ret;
     
-    ret = showCautionAlert(	CFCopyLocalizedString(CFSTR("Save Data Conflict"), "bad data"), 
+    ret = showCautionAlert(	CFCopyLocalizedString(CFSTR("The Save Data file is conflicting"), "bad data"), 
                             CFStringCreateWithCString(NULL, string, CFStringGetSystemEncoding()), 
                             CFCopyLocalizedString(CFSTR("Continue"), "OK"));
     if (ret = kAlertStdAlertOKButton) {
