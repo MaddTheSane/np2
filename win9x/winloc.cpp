@@ -1,85 +1,92 @@
-#include	<windows.h>
+#include	"compiler.h"
+#include	"winloc.h"
 
-#define		SNAPDOTPULL		12
-#define		SNAPDOTREL		16
 
-static	int		wingx;
-static	int		wingy;
-static	int		winflg;
+enum {
+	SNAPDOTPULL		= 12,
+	SNAPDOTREL		= 16
+};
 
-void winloc_movingstart(void) {
 
-	wingx = 0;
-	wingy = 0;
-	winflg = 0;
+void winloc_movingstart(WINLOC *wl) {
+
+	ZeroMemory(wl, sizeof(WINLOC));
 }
 
-void winloc_movingproc(RECT *prc) {
+void winloc_movingproc(WINLOC *wl, RECT *rect) {
 
 	RECT	workrc;
-	int		winlx, winly;
-	int		mv1, mv2;
+	int		winlx;
+	int		winly;
+	int		d;
 
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
-	winlx = prc->right - prc->left;
-	winly = prc->bottom - prc->top;
+	winlx = rect->right - rect->left;
+	winly = rect->bottom - rect->top;
 
 	if ((winlx > (workrc.right - workrc.left)) ||
 		(winly > (workrc.bottom - workrc.top))) {
 		return;
 	}
-	mv1 = prc->left - workrc.left;
-	mv2 = prc->right - workrc.right;
-	if (winflg & 1) {
-		wingx += mv1;
-		prc->left = workrc.left;
-	}
-	else if (winflg & 2) {
-		wingx += mv2;
-		prc->left = workrc.right - winlx;
-	}
-	else if ((mv1 < SNAPDOTPULL) && (mv1 > -SNAPDOTPULL)) {
-		wingx += mv1;
-		prc->left = workrc.left;
-		winflg |= 1;
-	}
-	else if ((mv2 < SNAPDOTPULL) && (mv2 > -SNAPDOTPULL)) {
-		wingx += mv2;
-		prc->left = workrc.right - winlx;
-		winflg |= 2;
-	}
-	if ((wingx >= SNAPDOTREL) || (wingx <= -SNAPDOTREL)) {
-		prc->left += wingx;
-		wingx = 0;
-		winflg &= (~3);
-	}
-	prc->right = prc->left + winlx;
 
-	mv1 = prc->top - workrc.top;
-	mv2 = prc->bottom - workrc.bottom;
-	if (winflg & 4) {
-		wingy += mv1;
-		prc->top = workrc.top;
+	if (wl->flag & 1) {
+		wl->gx += rect->left - wl->tx;
+		rect->left = wl->tx;
+		if ((wl->gx >= SNAPDOTREL) || (wl->gx <= -SNAPDOTREL)) {
+			wl->flag &= ~1;
+			rect->left += wl->gx;
+			wl->gx = 0;
+		}
+		rect->right = rect->left + winlx;
 	}
-	else if (winflg & 8) {
-		wingy += mv2;
-		prc->top = workrc.bottom - winly;
+	if (wl->flag & 2) {
+		wl->gy += rect->top - wl->ty;
+		rect->top = wl->ty;
+		if ((wl->gy >= SNAPDOTREL) || (wl->gy <= -SNAPDOTREL)) {
+			wl->flag &= ~2;
+			rect->top += wl->gy;
+			wl->gy = 0;
+		}
+		rect->bottom = rect->top + winly;
 	}
-	else if ((mv1 < SNAPDOTPULL) && (mv1 > -SNAPDOTPULL)) {
-		wingy += mv1;
-		prc->top = workrc.top;
-		winflg |= 4;
+
+	if (!(wl->flag & 1)) {
+		do {
+			d = rect->left - workrc.left;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
+			d = rect->right - workrc.right;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
+		} while(0);
+		if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+			rect->left -= d;
+			rect->right = rect->left + winlx;
+			wl->flag |= 1;
+			wl->gx = d;
+			wl->tx = rect->left;
+		}
 	}
-	else if ((mv2 < SNAPDOTPULL) && (mv2 > -SNAPDOTPULL)) {
-		wingy += mv2;
-		prc->top = workrc.bottom - winly;
-		winflg |= 8;
+	if (!(wl->flag & 2)) {
+		do {
+			d = rect->top - workrc.top;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
+			d = rect->bottom - workrc.bottom;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
+		} while(0);
+		if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+			rect->top -= d;
+			rect->bottom = rect->top + winly;
+			wl->flag |= 2;
+			wl->gy = d;
+			wl->ty = rect->top;
+		}
 	}
-	if ((wingy >= SNAPDOTREL) || (wingy <= -SNAPDOTREL)) {
-		prc->top += wingy;
-		wingy = 0;
-		winflg &= (~0xc);
-	}
-	prc->bottom = prc->top + winly;
 }
 

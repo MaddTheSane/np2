@@ -86,12 +86,13 @@ static	BYTE	np2stopemulate = 0;
 static	int		np2opening = 1;
 static	int		np2quitmsg = 0;
 		HMENU	hStat = NULL;
+static	BYTE	scrnmode;
+		WINLOC	wl;
 
 static const char np2help[] = "np2.hlp";
 static const char np2resume[] = "sav";
 
 
-static	BYTE	scrnmode;
 
 
 static void winuienter(void) {
@@ -922,7 +923,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_ENTERSIZEMOVE:
 			soundmng_disable(SNDPROC_MAIN);
 			mouse_running(MOUSE_STOP);
-			winloc_movingstart();
+			winloc_movingstart(&wl);
 			toolwin_movingstart();
 			break;
 
@@ -934,7 +935,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_MOVING:
 			if (np2oscfg.WINSNAP) {
-				winloc_movingproc((RECT *)lParam);
+				winloc_movingproc(&wl, (RECT *)lParam);
 			}
 			break;
 

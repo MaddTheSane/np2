@@ -38,7 +38,8 @@ void soundmng_pcmvolume(UINT num, int volume);
 enum {
 	SNDPROC_MASTER		= 0,
 	SNDPROC_MAIN,
-	SNDPROC_TOOL
+	SNDPROC_TOOL,
+	SNDPROC_KEYDISP
 };
 
 void soundmng_enable(UINT proc);

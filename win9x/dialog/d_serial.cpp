@@ -755,6 +755,6 @@ void dialog_serial(HWND hWnd) {
 	psh.phpage = hpsp;
 	psh.pszCaption = str_seropt;
 	PropertySheet(&psh);
-	InvalidateRect(hWndMain, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, TRUE);
 }
 
