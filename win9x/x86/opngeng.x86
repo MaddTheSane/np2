@@ -61,6 +61,9 @@
 .calc1024		resd	1
 .fmvol			resd	1
 .ratebit		resd	1
+.vr_en			resd	1
+.vr_l			resd	1
+.vr_r			resd	1
 				endstruc
 
 
@@ -107,6 +110,7 @@ section .text
 
 
 	global	@opngen_getpcm@12
+	global	@opngen_getpcmvr@12
 
 %macro	op_out		0
 				add		eax, [edi + slot_t.freq_cnt]
@@ -289,6 +293,150 @@ og_noupdate:	ret		4
 				setenv	envcalc2, envret2
 				setenv	envcalc3, envret3
 				setenv	envcalc4, envret4
+
+
+				align	16
+@opngen_getpcmvr@12:
+				cmp		dword [_opncfg + opncfg_t.vr_en], byte 0
+				je		near @opngen_getpcm@12
+
+				cmp		dword [esp+4], byte 0
+				je		near ogv_noupdate
+
+				push	ebx
+				push	esi
+				push	edi
+				push	ebp
+				sub		esp, byte 8
+
+OPNV_SAMPL		equ		0
+OPNV_SAMPR		equ		4
+OPNV_LENG		equ		16 + 8 + 4
+
+				mov		ebp, edx
+				mov		ebx, [_opngen + opngen_t.calcremain]
+ogv_fmout_st:	mov		eax, ebx
+				imul	ebx, [_opngen + opngen_t.outdl]
+				mov		[esp + OPNV_SAMPL], ebx
+				mov		ebx, FMDIV_ENT
+				sub		ebx, eax
+				imul	eax, [_opngen + opngen_t.outdr]
+				mov		[esp + OPNV_SAMPR], eax
+ogv_fmout_lp:	xor		eax, eax
+				mov		[_opngen + opngen_t.calcremain], ebx
+				mov		[_opngen + opngen_t.outdl], eax
+				mov		[_opngen + opngen_t.outdc], eax
+				mov		[_opngen + opngen_t.outdr], eax
+				mov		ch, [_opngen + opngen_t.playchannels]
+				mov		edi, _opnch
+ogv_calcch_lp:	xor		eax, eax
+				mov		[_opngen + opngen_t.feedback2], eax
+				mov		[_opngen + opngen_t.feedback3], eax
+				mov		[_opngen + opngen_t.feedback4], eax
+				mov		esi, edi
+				calcenv	vrenvcalc1, vrenvret1		; slot1 calculate
+				jl		near ogv_calcslot3
+				mov		cl, [esi + ch_t.feedback]
+				test	cl, cl
+				je		short ogv_nofeed
+				mov		eax, [esi + ch_t.op1fb]		; with feedback
+				mov		ebx, eax
+				shr		eax, cl
+				op_out
+				mov		[esi + ch_t.op1fb], eax
+				add		eax, ebx
+				sar		eax, 1
+				jmp		short ogv_algchk
+ogv_nofeed:		xor		eax, eax					; without feedback
+				op_out
+ogv_algchk:		cmp		byte [esi + ch_t.algorithm], 5
+				jne		short ogv_calcalg5
+				mov		[_opngen + opngen_t.feedback2], eax		; case ALG == 5
+				mov		[_opngen + opngen_t.feedback3], eax
+				mov		[_opngen + opngen_t.feedback4], eax
+				jmp		short ogv_calcslot3
+ogv_calcalg5:	mov		ebx, [esi + ch_t.connect1]	; case ALG != 5
+				add		[ebx], eax
+ogv_calcslot3:	add		edi, byte slot_t.size		; slot3 calculate
+				calcenv	vrenvcalc2, vrenvret2
+				jl		short ogv_calcslot2
+				mov		eax, [_opngen + opngen_t.feedback2]
+				op_out
+				mov		ebx, [esi + ch_t.connect2]
+				add		[ebx], eax
+ogv_calcslot2:	add		edi, byte slot_t.size		; slot2 calculate
+				calcenv	vrenvcalc3, vrenvret3
+				jl		short ogv_calcslot4
+				mov		eax, [_opngen + opngen_t.feedback3]
+				op_out
+				mov		ebx, [esi + ch_t.connect3]
+				add		[ebx], eax
+ogv_calcslot4:	add		edi, byte slot_t.size		; slot4 calculate
+				calcenv	vrenvcalc4, vrenvret4
+				jl		short ogv_calcsloted
+				mov		eax, [_opngen + opngen_t.feedback4]
+				op_out
+				mov		ebx, [esi + ch_t.connect4]
+				add		[ebx], eax
+ogv_calcsloted:	add		edi, byte (ch_t.size - (slot_t.size * 3))
+				dec		ch
+				jne		near ogv_calcch_lp
+				mov		eax, [_opngen + opngen_t.outdl]
+				mov		edx, [_opngen + opngen_t.outdc]
+				imul	eax, [_opncfg + opncfg_t.vr_l]
+				mov		ebx, edx
+				sar		eax, 5
+				add		ebx, eax
+				sar		eax, 2
+				add		edx, eax
+				mov		eax, [_opngen + opngen_t.outdr]
+				imul	eax, [_opncfg + opncfg_t.vr_r]
+				sar		eax, 5
+				add		edx, eax
+				sar		eax, 2
+				add		ebx, eax
+				add		[_opngen + opngen_t.outdl], edx
+				add		[_opngen + opngen_t.outdr], ebx
+				sar		dword [_opngen + opngen_t.outdl], FMVOL_SFTBIT
+				sar		dword [_opngen + opngen_t.outdr], FMVOL_SFTBIT
+				mov		edx, [_opncfg + opncfg_t.calc1024]
+				mov		ebx, [_opngen + opngen_t.calcremain]
+				mov		eax, ebx
+				sub		ebx, edx
+				jbe		short ogv_nextsamp
+				mov		[_opngen + opngen_t.calcremain], ebx
+				mov		eax, edx
+				imul	eax, [_opngen + opngen_t.outdl]
+				add		[esp + OPNV_SAMPL], eax
+				imul	edx, [_opngen + opngen_t.outdr]
+				add		[esp + OPNV_SAMPR], edx
+				jmp		near ogv_fmout_lp
+ogv_nextsamp:	neg		ebx
+				mov		[_opngen + opngen_t.calcremain], ebx
+				mov		ecx, eax
+				imul	eax, [_opngen + opngen_t.outdl]
+				add		eax, [esp + OPNV_SAMPL]
+				imul	dword [_opncfg + opncfg_t.fmvol]
+				add		[ebp], edx
+				mov		eax, [_opngen + opngen_t.outdr]
+				imul	ecx
+				add		eax, [esp + OPNV_SAMPR]
+				imul	dword [_opncfg + opncfg_t.fmvol]
+				add		[ebp+4], edx
+				add		ebp, byte 8
+				dec		dword [esp + OPNV_LENG]
+				jne		near ogv_fmout_st
+				add		esp, byte 8
+				pop		ebp
+				pop		edi
+				pop		esi
+				pop		ebx
+ogv_noupdate:	ret		4
+
+				setenv	vrenvcalc1, vrenvret1
+				setenv	vrenvcalc2, vrenvret2
+				setenv	vrenvcalc3, vrenvret3
+				setenv	vrenvcalc4, vrenvret4
 
 	ends
 

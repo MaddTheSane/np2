@@ -197,7 +197,7 @@ void boardspb_reset(void) {
 
 void boardspb_bind(void) {
 
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
@@ -226,7 +226,7 @@ void boardspr_reset(void) {
 
 void boardspr_bind(void) {
 
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);

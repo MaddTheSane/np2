@@ -175,7 +175,7 @@ void fmboard_reset(BYTE num) {
 	}
 	soundmng_setreverse(cross);
 	keydisp_setfmboard(num);
-//	FM_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);				// ver0.30
+	opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
 }
 
 void fmboard_bind(void) {

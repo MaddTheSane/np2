@@ -98,7 +98,7 @@ void SOUNDCALL adpcm_datawrite(ADPCM ad, BYTE data) {
 		if (data & 0x20) {
 			ptr[0x28000] |= bit;
 		}
-		ptr[0x300000] &= mask;
+		ptr[0x30000] &= mask;
 		if (data & 0x40) {
 			ptr[0x30000] |= bit;
 		}

@@ -935,7 +935,7 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 					np2cfg.spb_vrl = b;
 					update |= SYS_UPDATECFG;
 				}
-//				FM_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
+				opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
 				b = (BYTE)(Button_GetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE))?																			1:0);
 				if (np2cfg.spb_x != b) {
 					np2cfg.spb_x = b;

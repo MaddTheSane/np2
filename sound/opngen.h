@@ -129,6 +129,9 @@ typedef struct {
 	SINT32	calc1024;
 	SINT32	fmvol;
 	UINT	ratebit;
+	UINT	vr_en;
+	SINT32	vr_l;
+	SINT32	vr_r;
 } OPNCFG;
 
 
@@ -138,6 +141,7 @@ extern "C" {
 
 void opngen_initialize(UINT rate);
 void opngen_setvol(UINT vol);
+void opngen_setVR(BYTE channel, BYTE value);
 
 void opngen_reset(void);
 void opngen_setcfg(BYTE maxch, UINT flag);
@@ -146,6 +150,7 @@ void opngen_setreg(BYTE chbase, BYTE reg, BYTE value);
 void opngen_keyon(UINT chnum, BYTE value);
 
 void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *buf, UINT count);
+void SOUNDCALL opngen_getpcmvr(void *hdl, SINT32 *buf, UINT count);
 
 #ifdef __cplusplus
 }

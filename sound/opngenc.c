@@ -169,6 +169,18 @@ void opngen_setvol(UINT vol) {
 #endif
 }
 
+void opngen_setVR(BYTE channel, BYTE value) {
+
+	if ((channel & 3) && (value)) {
+		opncfg.vr_en = TRUE;
+		opncfg.vr_l = (channel & 1)?value:0;
+		opncfg.vr_r = (channel & 2)?value:0;
+	}
+	else {
+		opncfg.vr_en = FALSE;
+	}
+}
+
 
 // ----
 

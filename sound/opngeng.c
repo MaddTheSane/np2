@@ -147,3 +147,59 @@ void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 	(void)hdl;
 }
 
+void SOUNDCALL opngen_getpcmvr(void *hdl, SINT32 *pcm, UINT count) {
+
+	OPNCH	*fm;
+	UINT	i;
+	SINT32	samp_l;
+	SINT32	samp_r;
+
+	fm = opnch;
+	while(count--) {
+		samp_l = opngen.outdl * (opngen.calcremain * -1);
+		samp_r = opngen.outdr * (opngen.calcremain * -1);
+		opngen.calcremain += FMDIV_ENT;
+		while(1) {
+			opngen.outdc = 0;
+			opngen.outdl = 0;
+			opngen.outdr = 0;
+			for (i=0; i<opngen.playchannels; i++) {
+				calcratechannel(fm + i);
+			}
+			if (opncfg.vr_en) {
+				SINT32 tmpl;
+				SINT32 tmpr;
+				tmpl = (opngen.outdl >> 5) * opncfg.vr_l;
+				tmpr = (opngen.outdr >> 5) * opncfg.vr_r;
+				opngen.outdl += tmpr;
+				opngen.outdr += tmpl;
+			}
+			opngen.outdl += opngen.outdc;
+			opngen.outdr += opngen.outdc;
+			opngen.outdl >>= FMVOL_SFTBIT;
+			opngen.outdr >>= FMVOL_SFTBIT;
+			if (opngen.calcremain > opncfg.calc1024) {
+				samp_l += opngen.outdl * opncfg.calc1024;
+				samp_r += opngen.outdr * opncfg.calc1024;
+				opngen.calcremain -= opncfg.calc1024;
+			}
+			else {
+				break;
+			}
+		}
+		samp_l += opngen.outdl * opngen.calcremain;
+		samp_l >>= 8;
+		samp_l *= opncfg.fmvol;
+		samp_l >>= (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8);
+		pcm[0] += samp_l;
+		samp_r += opngen.outdr * opngen.calcremain;
+		samp_r >>= FMDIV_BITS;
+		samp_r *= opncfg.fmvol;
+		samp_r >>= (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8);
+		pcm[1] += samp_r;
+		opngen.calcremain -= opncfg.calc1024;
+		pcm += 2;
+	}
+	(void)hdl;
+}
+
