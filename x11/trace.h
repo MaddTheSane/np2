@@ -7,6 +7,10 @@ extern "C" {
 
 extern int trace_flag;
 
+void trace_init(void);
+void trace_term(void);
+void trace_fmt(const char *str, ...);
+
 #ifndef TRACE
 
 #define	TRACEINIT()
@@ -17,10 +21,6 @@ extern int trace_flag;
 #endif
 
 #else	/* TRACE */
-
-void trace_init(void);
-void trace_term(void);
-void trace_fmt(const char *str, ...);
 
 #define	TRACEINIT()	trace_init()
 #define	TRACETERM()	trace_term()
