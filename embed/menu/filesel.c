@@ -20,7 +20,7 @@ enum {
 	DID_FILTER
 };
 
-#if !defined(CHARSET_OEM) || defined(OSLANG_SJIS)
+#if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
 static const char str_dirname[] =				// ファイルの場所
 			"\203\164\203\100\203\103\203\213\202\314\217\352\217\212";
 static const char str_filename[] =				// ファイル名
@@ -38,7 +38,7 @@ static const char str_filetype[] =				// ファイルの種類
 			"\245\325\245\241\245\244\245\353\244\316\274\357\316\340";
 static const char str_open[] =					// 開く
 			"\263\253\244\257";
-#elif defined(OSLANG_UTF8)
+#elif defined(OSLANG_UTF8) && !defined(RESOURCE_US)
 static const char str_dirname[] =				// ファイルの場所
 			"\343\203\225\343\202\241\343\202\244\343\203\253\343\201\256" \
 			"\345\240\264\346\211\200";

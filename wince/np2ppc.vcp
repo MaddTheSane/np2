@@ -5,7 +5,7 @@
 # TARGTYPE "Win32 (WCE ARM) Application" 0x8501
 # TARGTYPE "Win32 (WCE MIPS) Application" 0x8201
 
-CFG=NP2PPC - WIN32 (WCE ARM) RELEASE JP
+CFG=np2ppc - Win32 (WCE ARM) Release JP
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 

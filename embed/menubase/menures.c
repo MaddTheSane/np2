@@ -3,7 +3,7 @@
 #include	"menubase.h"
 
 
-#if !defined(CHARSET_OEM) || defined(OSLANG_SJIS)
+#if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
 const char mstr_fontcheck[] = " ";
 const char mstr_ok[] = "OK";
 			// キャンセル
@@ -33,7 +33,7 @@ const char mstr_ignore[] = "\314\265\273\353";
 const char mstr_yes[] = "\244\317\244\244";
 			// いいえ
 const char mstr_no[] = "\244\244\244\244\244\250";
-#elif defined(OSLANG_UTF8)
+#elif defined(OSLANG_UTF8) && !defined(RESOURCE_US)
 const char mstr_fontcheck[] = " ";
 const char mstr_ok[] = "OK";
 			// キャンセル

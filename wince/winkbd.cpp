@@ -10,9 +10,9 @@
 #define		NC		0xff
 
 #if defined(WIN32_PLATFORM_PSPC)
-static BYTE key106[256] =
+static UINT8 key106[256] =
 #else
-static const BYTE key106[256] =
+static const UINT8 key106[256] =
 #endif
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 		{		  NC,  NC,  NC,0x60,  NC,  NC,  NC,  NC,
@@ -80,9 +80,9 @@ static const BYTE key106[256] =
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
 #if defined(WIN32_PLATFORM_PSPC)
-static BYTE key106ext[256] =
+static UINT8 key106ext[256] =
 #else
-static const BYTE key106ext[256] =
+static const UINT8 key106ext[256] =
 #endif
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 		{		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
@@ -149,16 +149,16 @@ static const BYTE key106ext[256] =
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
-static const BYTE f12keys[] = {
+static const UINT8 f12keys[] = {
 			0x61, 0x60, 0x4d, 0x4f};
 
 
-static BYTE getf12key(void) {
+static UINT8 getf12key(void) {
 
 	UINT	key;
 
 	key = np2oscfg.F12KEY - 1;
-	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
+	if (key < (sizeof(f12keys)/sizeof(UINT8))) {
 		return(f12keys[key]);
 	}
 	else {
@@ -168,7 +168,7 @@ static BYTE getf12key(void) {
 
 void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
-	BYTE	data;
+	UINT8	data;
 
 	if (wParam != VK_F12) {
 		data = key106[wParam & 0xff];
@@ -194,7 +194,7 @@ void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
 void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 
-	BYTE	data;
+	UINT8	data;
 
 	if (wParam != VK_F12) {
 		data = key106[wParam & 0xff];
@@ -208,7 +208,7 @@ void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 			keystat_senddata(0x70 | 0x80);				// PC/AT only
 			data = key106ext[wParam & 0xff];
 		}
-		keystat_senddata((BYTE)(data | 0x80));
+		keystat_senddata((UINT8)(data | 0x80));
 	}
 	else {												// ver0.28
 		if (wParam == 0x0c) {
@@ -222,7 +222,7 @@ void winkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
+	for (i=0; i<(sizeof(f12keys)/sizeof(UINT8)); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }
@@ -239,7 +239,7 @@ typedef struct {
 } KEYADRS;
 
 typedef struct {
-	BYTE	key[4];
+	UINT8	key[4];
 } KEYSET;
 
 typedef struct {
@@ -270,7 +270,7 @@ static const PPCBTNTBL ppcbtntbl = {
 
 static	PPCBTNDEF	ppcbtndef;
 
-static void getbind(KEYSET *bind, const BYTE *tbl, const KEYADRS *adrs) {
+static void getbind(KEYSET *bind, const UINT8 *tbl, const KEYADRS *adrs) {
 
 	int		i;
 	int		key;
@@ -281,7 +281,7 @@ static void getbind(KEYSET *bind, const BYTE *tbl, const KEYADRS *adrs) {
 	}
 }
 
-static void setbind(BYTE *tbl, const KEYSET *bind, const KEYADRS *adrs) {
+static void setbind(UINT8 *tbl, const KEYSET *bind, const KEYADRS *adrs) {
 
 	int		i;
 	int		key;

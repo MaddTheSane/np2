@@ -44,7 +44,7 @@ typedef struct {
 
 static MENUSYS	menusys;
 
-#if !defined(CHARSET_OEM) || defined(OSLANG_SJIS)
+#if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
 static const char str_sysr[] = 				// 元のサイズに戻す
 			"\214\263\202\314\203\124\203\103\203\131\202\311" \
 			"\226\337\202\267";
@@ -72,7 +72,7 @@ static const char str_sysx[] =				// 最大化
 			"\272\307\302\347\262\275";
 static const char str_sysc[] =				// 閉じる
 			"\312\304\244\270\244\353";
-#elif defined(OSLANG_UTF8)
+#elif defined(OSLANG_UTF8) && !defined(RESOURCE_US)
 static const char str_sysr[] = 				// 元のサイズに戻す
 			"\345\205\203\343\201\256\343\202\265\343\202\244\343\202\272" \
 			"\343\201\253\346\210\273\343\201\231";
