@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: shift_rotate.c,v 1.2 2004/01/14 16:13:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -421,14 +421,15 @@ SHRD_EwGwIb(void)
 	BYTE cl;
 
 	PREPART_EA_REG16(op, src);
-	GET_PCBYTE(cl);
 	if (op >= 0xc0) {
 		out = reg16_b20[op];
+		GET_PCBYTE(cl);
 		dst = *out;
 		WORD_SHRD(dst, src, cl);
 		*out = dst;
 	} else {
 		madr = calc_ea_dst(op);
+		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHRD(dst, src, cl);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
@@ -443,14 +444,15 @@ SHRD_EdGdIb(void)
 	BYTE cl;
 
 	PREPART_EA_REG32(op, src);
-	GET_PCBYTE(cl);
 	if (op >= 0xc0) {
 		out = reg32_b20[op];
+		GET_PCBYTE(cl);
 		dst = *out;
 		DWORD_SHRD(dst, src, cl);
 		*out = dst;
 	} else {
 		madr = calc_ea_dst(op);
+		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		DWORD_SHRD(dst, src, cl);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, dst);
@@ -512,14 +514,15 @@ SHLD_EwGwIb(void)
 	BYTE cl;
 
 	PREPART_EA_REG16(op, src);
-	GET_PCBYTE(cl);
 	if (op >= 0xc0) {
 		out = reg16_b20[op];
+		GET_PCBYTE(cl);
 		dst = *out;
 		WORD_SHLD(dst, src, cl);
 		*out = dst;
 	} else {
 		madr = calc_ea_dst(op);
+		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHLD(dst, src, cl);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
@@ -534,14 +537,15 @@ SHLD_EdGdIb(void)
 	BYTE cl;
 
 	PREPART_EA_REG32(op, src);
-	GET_PCBYTE(cl);
 	if (op >= 0xc0) {
 		out = reg32_b20[op];
+		GET_PCBYTE(cl);
 		dst = *out;
 		DWORD_SHLD(dst, src, cl);
 		*out = dst;
 	} else {
 		madr = calc_ea_dst(op);
+		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		DWORD_SHLD(dst, src, cl);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, dst);
