@@ -13,6 +13,7 @@ void bios0x12(void) {
 	BYTE	result;
 	BYTE	*p;
 	BYTE	drv;
+	BYTE	drvbit;
 
 //	TRACE_("BIOS", 0x12);
 	iocore_out8(0x08, 0x20);
@@ -41,6 +42,7 @@ void bios0x12(void) {
 			break;
 		}
 		drv = result & 3;
+		drvbit = 0x10 << drv;
 		if (result & (FDCRLT_IC1 | FDCRLT_SE)) {
 			p = mem + 0x005d8 + (drv * 2);
 		}
@@ -56,6 +58,7 @@ void bios0x12(void) {
 			}
 			result = iocore_inp8(baseport+2);
 		}
+		mem[0x0055f] |= drvbit;
 	}
 }
 

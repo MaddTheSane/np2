@@ -160,6 +160,7 @@ static void fdd_int(int result) {
 		case 0x0a:								// READ ID
 		case 0x0d:								// フォーマット
 			break;
+
 		default:
 			return;
 	}
@@ -196,7 +197,17 @@ static void fdd_int(int result) {
 			fdc.stat[fdc.us] |= FDCRLT_IC0 | FDCRLT_NW;
 			fdcsend_error7();
 			break;
+
+		default:
+			return;
 	}
+	if (fdc.chgreg & 1) {
+		mem[0x0055e] &= ~(0x01 << fdc.us);
+	}
+	else {
+		mem[0x0055f] &= ~(0x10 << fdc.us);
+	}
+	CPU_IP = BIOSOFST_WAIT;
 }
 
 #if 1
@@ -291,7 +302,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 
 //	TRACE_("int 1Bh", CPU_AH);
 
-	setfdcmode(CPU_AL & 3, type, rpm);
+	setfdcmode((REG8)(CPU_AL & 3), type, rpm);
 
 	if ((CPU_AH & 0x0f) != 0x0a) {
 		fdc.crcn = 0;
@@ -662,7 +673,6 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 	}
 	fdd_int(result);
 	fddmtr_seek(fdc.us, mtr_c, mtr_r);
-	CPU_IP = BIOSOFST_WAIT;											// ver0.30
 	return(ret_ah);
 }
 

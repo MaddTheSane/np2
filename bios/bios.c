@@ -372,19 +372,17 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 				CPU_REMCLOCK = -1;
 			}
 			else {
-				switch(CTRL_FDMEDIA) {
-					case DISKTYPE_2HD:
-						if (pic.pi[1].isr & PIC_INT42) {
-							CPU_IP--;
-							CPU_REMCLOCK -= 1000;
-						}
-						break;
-					case DISKTYPE_2DD:
-						if (pic.pi[1].isr & PIC_INT41) {
-							CPU_IP--;
-							CPU_REMCLOCK -= 1000;
-						}
-						break;
+				if (fdc.chgreg & 1) {
+					if (!(mem[0x0055e] & (0x01 << fdc.us))) {
+						CPU_IP--;
+						CPU_REMCLOCK -= 1000;
+					}
+				}
+				else {
+					if (!(mem[0x0055f] & (0x10 << fdc.us))) {
+						CPU_IP--;
+						CPU_REMCLOCK -= 1000;
+					}
 				}
 			}
 			return(1);
