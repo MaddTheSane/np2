@@ -24,15 +24,17 @@
 
 typedef struct {
 	UINT	opnum;
-	void	(*v30opcode)(void);
+	I286OP	v30opcode;
 } V30PATCH;
 
-static void (*v30op[256])(void);
-static void (*v30op_repne[256])(void);
-static void (*v30op_repe[256])(void);
+static	I286OP		v30op[256];
+static	I286OP		v30op_repne[256];
+static	I286OP		v30op_repe[256];
+static	I286OPF6	v30ope0xf6_table[8];
+static	I286OPF6	v30ope0xf7_table[8];
 
 
-static const BYTE shiftbase16[256] =
+static const UINT8 shiftbase16[256] =
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
 				16, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
 				16, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
@@ -50,7 +52,7 @@ static const BYTE shiftbase16[256] =
 				16, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
 				16, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15};
 
-static const BYTE shiftbase09[256] =
+static const UINT8 shiftbase09[256] =
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6,
 				 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4,
 				 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2,
@@ -68,7 +70,7 @@ static const BYTE shiftbase09[256] =
 				 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5,
 				 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3};
 
-static const BYTE shiftbase17[256] =
+static const UINT8 shiftbase17[256] =
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
 				16,17, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,
 				15,16,17, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,
@@ -223,10 +225,10 @@ I286FN v30_popf(void) {						// 9D:	popf
 
 I286FN v30shift_ea8_data8(void) {			// C0:	shift	EA8, DATA8
 
-	BYTE	*out;
+	UINT8	*out;
 	UINT	op;
 	UINT32	madr;
-	BYTE	cl;
+	REG8	cl;
 
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
@@ -266,7 +268,7 @@ I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 	UINT16	*out;
 	UINT	op;
 	UINT32	madr;
-	BYTE	cl;
+	REG8	cl;
 
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
@@ -303,10 +305,10 @@ I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 
 I286FN v30shift_ea8_cl(void) {				// D2:	shift EA8, cl
 
-	BYTE	*out;
+	UINT8	*out;
 	UINT	op;
 	UINT32	madr;
-	BYTE	cl;
+	REG8	cl;
 
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
@@ -346,7 +348,7 @@ I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
 	UINT16	*out;
 	UINT	op;
 	UINT32	madr;
-	BYTE	cl;
+	REG8	cl;
 
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
@@ -383,7 +385,7 @@ I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
 
 I286FN v30_aam(void) {						// D4:	AAM
 
-	BYTE	al;
+	UINT8	al;
 
 	I286_WORKCLOCK(16);
 	I286_IP++;								// is 10
@@ -398,7 +400,7 @@ I286FN v30_aad(void) {						// D5:	AAD
 
 	I286_WORKCLOCK(14);
 	I286_IP++;								// is 10
-	I286_AL += (BYTE)(I286_AH * 10);
+	I286_AL += (UINT8)(I286_AH * 10);
 	I286_AH = 0;
 	I286_FLAGL &= ~(S_FLAG | Z_FLAG | P_FLAG);
 	I286_FLAGL |= BYTESZPF(I286_AL);
@@ -438,6 +440,120 @@ I286FN v30_repe(void) {						// F3:	repe
 	}
 }
 
+I286_F6 v30_div_ea8(UINT op) {
+
+	UINT16	tmp;
+	UINT8	src;
+
+	if (op >= 0xc0) {
+		I286_WORKCLOCK(14);
+		src = *(REG8_B20(op));
+	}
+	else {
+		I286_WORKCLOCK(17);
+		src = i286_memoryread(CALC_EA(op));
+	}
+	tmp = I286_AX;
+	if ((src) && (tmp < ((UINT16)src << 8))) {
+		I286_AL = tmp / src;
+		I286_AH = tmp % src;
+	}
+	else {
+		INT_NUM(0, I286_IP);									// V30
+	}
+}
+
+I286_F6 v30_idiv_ea8(UINT op) {
+
+	SINT16	tmp;
+	SINT16	r;
+	SINT8	src;
+
+	if (op >= 0xc0) {
+		I286_WORKCLOCK(17);
+		src = *(REG8_B20(op));
+	}
+	else {
+		I286_WORKCLOCK(20);
+		src = i286_memoryread(CALC_EA(op));
+	}
+	tmp = (SINT16)I286_AX;
+	if (src) {
+		r = tmp / src;
+		if (!((r + 0x80) & 0xff00)) {
+			I286_AL = (UINT8)r;
+			I286_AH = tmp % src;
+			return;
+		}
+	}
+	INT_NUM(0, I286_IP);										// V30
+}
+
+I286FN v30_ope0xf6(void) {					// F6:	
+
+	UINT	op;
+
+	GET_PCBYTE(op);
+	v30ope0xf6_table[(op >> 3) & 7](op);
+}
+
+I286_F6 v30_div_ea16(UINT op) {
+
+	UINT32	tmp;
+	UINT32	src;
+
+	if (op >= 0xc0) {
+		I286_WORKCLOCK(22);
+		src = *(REG16_B20(op));
+	}
+	else {
+		I286_WORKCLOCK(25);
+		src = i286_memoryread_w(CALC_EA(op));
+	}
+	tmp = (I286_DX << 16) + I286_AX;
+	if ((src) && (tmp < (src << 16))) {
+		I286_AX = tmp / src;
+		I286_DX = tmp % src;
+	}
+	else {
+		INT_NUM(0, I286_IP);									// V30
+	}
+}
+
+I286_F6 v30_idiv_ea16(UINT op) {
+
+	SINT32	tmp;
+	SINT32	r;
+	SINT16	src;
+
+	if (op >= 0xc0) {
+		I286_WORKCLOCK(25);
+		src = *(REG16_B20(op));
+	}
+	else {
+		I286_WORKCLOCK(28);
+		src = i286_memoryread_w(CALC_EA(op));
+	}
+	tmp = (SINT32)((I286_DX << 16) + I286_AX);
+	if (src) {
+		r = tmp / src;
+		if (!((r + 0x8000) & 0xffff0000)) {
+			I286_AX = (SINT16)r;
+			I286_DX = tmp % src;
+			return;
+		}
+	}
+	INT_NUM(0, I286_IP);										// V30
+}
+
+I286FN v30_ope0xf7(void) {					// F7:	
+
+	UINT	op;
+
+	GET_PCBYTE(op);
+	v30ope0xf7_table[(op >> 3) & 7](op);
+}
+
 static const V30PATCH v30patch_op[] = {
 			{0x26, v30segprefix_es},		// 26:	es:
 			{0x2e, v30segprefix_cs},		// 2E:	cs:
@@ -461,8 +577,9 @@ static const V30PATCH v30patch_op[] = {
 			{0xd5, v30_aad},				// D5:	AAD
 			{0xd6, v30_xlat},				// D6:	xlat (8086/V30)
 			{0xf2, v30_repne},				// F2:	repne
-			{0xf3, v30_repe}				// F3:	repe
-};
+			{0xf3, v30_repe},				// F3:	repe
+			{0xf6, v30_ope0xf6},			// F6:
+			{0xf7, v30_ope0xf7}};			// F7:
 
 
 // ----------------------------------------------------------------- repe
@@ -558,8 +675,9 @@ static const V30PATCH v30patch_repe[] = {
 			{0xd5, v30_aad},				// D5:	AAD
 			{0xd6, v30_xlat},				// D6:	xlat (8086/V30)
 			{0xf2, v30_repne},				// F2:	repne
-			{0xf3, v30_repe}				// F3:	repe
-};
+			{0xf3, v30_repe},				// F3:	repe
+			{0xf6, v30_ope0xf6},			// F6:
+			{0xf7, v30_ope0xf7}};			// F7:
 
 
 // ----------------------------------------------------------------- repne
@@ -655,13 +773,14 @@ static const V30PATCH v30patch_repne[] = {
 			{0xd5, v30_aad},				// D5:	AAD
 			{0xd6, v30_xlat},				// D6:	xlat (8086/V30)
 			{0xf2, v30_repne},				// F2:	repne
-			{0xf3, v30_repe}				// F3:	repe
-};
+			{0xf3, v30_repe},				// F3:	repe
+			{0xf6, v30_ope0xf6},			// F6:
+			{0xf7, v30_ope0xf7}};			// F7:
 
 
 // ---------------------------------------------------------------------------
 
-static void v30patching(void (*op[])(void), const V30PATCH *patch, int cnt) {
+static void v30patching(I286OP *op, const V30PATCH *patch, int cnt) {
 
 	do {
 		op[patch->opnum] = patch->v30opcode;
@@ -679,6 +798,12 @@ void v30cinit(void) {
 	V30PATCHING(v30op_repne, v30patch_repne);
 	CopyMemory(v30op_repe, i286op_repe, sizeof(v30op_repe));
 	V30PATCHING(v30op_repe, v30patch_repe);
+	CopyMemory(v30ope0xf6_table, c_ope0xf6_table, sizeof(v30ope0xf6_table));
+	v30ope0xf6_table[6] = v30_div_ea8;
+	v30ope0xf6_table[7] = v30_idiv_ea8;
+	CopyMemory(v30ope0xf7_table, c_ope0xf7_table, sizeof(v30ope0xf7_table));
+	v30ope0xf7_table[6] = v30_div_ea16;
+	v30ope0xf7_table[7] = v30_idiv_ea16;
 }
 
 void v30c(void) {

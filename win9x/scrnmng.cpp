@@ -431,8 +431,7 @@ BOOL scrnmng_create(BYTE scrnmode) {
 			dclock_init8();
 		}
 		else {
-			make16mask(ddpf.dwBBitMask, ddpf.dwRBitMask,
-														ddpf.dwGBitMask);
+			make16mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
 			dclock_init16();
 		}
 
@@ -774,7 +773,7 @@ void scrnmng_dispclock(void) {
 			ddraw.clocksurf->Unlock(NULL);
 		}
 		if (ddraw.primsurf->BltFast(640 - DCLOCK_X - 4,
-									ddraw.height - DCLOCK_Y, 
+									ddraw.height - DCLOCK_Y,
 									ddraw.clocksurf, (RECT *)&rectclk,
 									DDBLTFAST_WAIT) == DDERR_SURFACELOST) {
 			ddraw.primsurf->Restore();
