@@ -11,12 +11,16 @@
 　ver0.72 → ver0.73
 
 　・主にRISC向けの最適化、その２
+　・アーキテクチャの選択
 　・CPU … シングルステップ割り込みの修正
 　・CPU … int3 / int imm8 / into クロック数を修正
 　・CPU … shl r/m8,cl / shr r/m8,cl の修正
 　・CPU … sar r/m (eVC3/eVC4コンパイラバグ回避)
 　・NP2SYSP … ポートを叩いた瞬間 フリーズするバグを修正。
 　・ITF … 拡張メモリ使用時にエミュレーション内部のメモリを破壊するのを修正
+　・MIDI … STATSAVEの修正
+　・SOUND … JAST SOUNDに仮対応
+　・Vermouth … Roland GSコマンドの一部に対応
 
 　(X11)
 　　・Qt 2.x の実験的なサポート

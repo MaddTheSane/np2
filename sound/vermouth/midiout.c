@@ -453,7 +453,6 @@ static void ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl, int val) {
 
 		case CTRL_EXPRESS:
 			ch->expression = val;
-			TRACEOUT(("exp = %d", val));
 			volumeupdate(midi, ch);
 			break;
 
