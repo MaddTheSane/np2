@@ -511,7 +511,7 @@ void milutf8_ncpy(char *dst, const char *src, int maxlen) {
 		for (i=0; i<maxlen && src[i]; i++) {
 			dst[i] = src[i];
 		}
-		while((i) && ((dst[i] & 0xc0) == 0x80)) {
+		while((i) && ((dst[i-1] & 0xc0) == 0x80)) {
 			i--;
 		}
 		dst[i] = '\0';
@@ -533,7 +533,7 @@ void milutf8_ncat(char *dst, const char *src, int maxlen) {
 		for (j=0; i<maxlen && src[j]; i++, j++) {
 			dst[i] = src[j];
 		}
-		while((i) && ((dst[i] & 0xc0) == 0x80)) {
+		while((i) && ((dst[i-1] & 0xc0) == 0x80)) {
 			i--;
 		}
 		dst[i] = '\0';

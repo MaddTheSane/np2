@@ -95,9 +95,11 @@ static void View_AddString(const char *lpszString) {
 	int		overleng;
 	TCHAR	*p;
 
-#if defined(UNICODE)
+#if defined(UNICODE) && defined(OSLANG_SJIS)
 	len = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1,
 																NULL, 0) - 1;
+#elif defined(OSLANG_UTF8)
+	len = ucscnv_utf8toucs2(NULL, 0, lpszString, (UINT8)-1) - 1;
 #else
 	len = strlen(lpszString);
 #endif
@@ -120,8 +122,10 @@ static void View_AddString(const char *lpszString) {
 		}
 	}
 	p = szView + vlen;
-#if defined(UNICODE)
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1, p, len);
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1, p, len + 1);
+#elif defined(OSLANG_UTF8)
+	ucscnv_utf8toucs2(p, len + 1, lpszString, (UINT8)-1);
 #else
 	CopyMemory(p, lpszString, len);
 #endif

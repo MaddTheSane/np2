@@ -3,39 +3,7 @@
 #include	"textfile.h"
 
 
-TEXTFILEH textfile_open(const char *filename, UINT buffersize) {
-
-	FILEH		fh;
-	TEXTFILEH	ret;
-
-	if (buffersize < 256) {
-		buffersize = 256;
-	}
-	fh = file_open(filename);
-	if (fh != FILEH_INVALID) {
-		ret = (TEXTFILEH)_MALLOC(sizeof(_TEXTFILE) + buffersize, filename);
-		if (ret) {
-			ZeroMemory(ret, sizeof(_TEXTFILE) + buffersize);
-			ret->fh = (long)fh;
-			ret->buffersize = buffersize;
-			return(ret);
-		}
-		file_close(fh);
-	}
-	return(NULL);
-}
-
-
-void textfile_close(TEXTFILEH fh) {
-
-	if (fh) {
-		file_close((FILEH)fh->fh);
-		_MFREE(fh);
-	}
-}
-
-
-static BOOL getnextstring(TEXTFILEH fh) {
+static BOOL getnextstrings(TEXTFILEH fh) {
 
 	UINT	rsize;
 
@@ -55,6 +23,54 @@ static BOOL getnextstring(TEXTFILEH fh) {
 	return(SUCCESS);
 }
 
+TEXTFILEH textfile_open(const char *filename, UINT buffersize) {
+
+	FILEH		fh;
+	TEXTFILEH	ret;
+
+	if (buffersize < 256) {
+		buffersize = 256;
+	}
+	fh = file_open(filename);
+	if (fh == FILEH_INVALID) {
+		goto tfo_err1;
+	}
+	ret = (TEXTFILEH)_MALLOC(sizeof(_TEXTFILE) + buffersize, filename);
+	if (ret == NULL) {
+		goto tfo_err2;
+	}
+	ZeroMemory(ret, sizeof(_TEXTFILE) + buffersize);
+	ret->fh = (long)fh;
+	ret->buffersize = buffersize;
+#if defined(OSLANG_UTF8)
+	getnextstrings(ret);
+	if (ret->remain >= 3) {
+		char *ptr;
+		ptr = ((char *)(ret + 1)) + ret->pos;
+		if ((ptr[0] == (char)0xef) &&
+			(ptr[1] == (char)0xbb) &&
+			(ptr[2] == (char)0xbf)) {
+			ret->pos += 3;
+			ret->remain -= 3;
+		}
+	}
+#endif
+	return(ret);
+
+tfo_err2:
+	file_close(fh);
+
+tfo_err1:
+	return(NULL);
+}
+
+void textfile_close(TEXTFILEH fh) {
+
+	if (fh) {
+		file_close((FILEH)fh->fh);
+		_MFREE(fh);
+	}
+}
 
 BOOL textfile_read(TEXTFILEH fh, char *buffer, UINT size) {
 
@@ -67,7 +83,7 @@ BOOL textfile_read(TEXTFILEH fh, char *buffer, UINT size) {
 		size--;
 		crlf = FALSE;
 		do {
-			if ((!fh->remain) && (getnextstring(fh))) {
+			if ((!fh->remain) && (getnextstrings(fh))) {
 				return(FAILURE);
 			}
 			if (!fh->remain) {
@@ -100,7 +116,7 @@ BOOL textfile_read(TEXTFILEH fh, char *buffer, UINT size) {
 			}
 		} while(!crlf);
 		if ((crlf) && (c == 0x0d)) {
-			if ((!fh->remain) && (getnextstring(fh))) {
+			if ((!fh->remain) && (getnextstrings(fh))) {
 				return(FAILURE);
 			}
 			if (fh->remain) {

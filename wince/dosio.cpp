@@ -396,7 +396,7 @@ void file_cutext(OEMCHAR *path) {
 	q = NULL;
 	while((csize = milstr_charsize(p)) != 0) {
 		if ((csize == 1) && (*p == '.')) {
-			q = p + 1;
+			q = p;
 		}
 		p += csize;
 	}
