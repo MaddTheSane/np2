@@ -229,7 +229,7 @@ static void setpage(UINT page) {
 
 	UINT	i;
 
-	for (i=0; i<NELEMETS(tablist); i++) {
+	for (i=0; i<NELEMENTS(tablist); i++) {
 		menudlg_disppagehidden((MENUID)(i + 1), (i != page));
 	}
 }

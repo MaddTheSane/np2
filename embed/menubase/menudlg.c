@@ -1862,7 +1862,7 @@ static BOOL dc_cb2(void *vpItem, void *vpArg) {
 	if (hdl->flag & MENU_REDRAW) {
 		hdl->flag &= ~MENU_REDRAW;
 		if ((!(hdl->flag & MENU_DISABLE)) &&
-			((UINT)hdl->type < NELEMETS(dlgpaint))) {
+			((UINT)hdl->type < NELEMENTS(dlgpaint))) {
 			dlgpaint[hdl->type](dlg, hdl);
 			menubase_setrect(dlg->vram, &hdl->rect);
 		}

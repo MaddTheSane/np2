@@ -191,7 +191,7 @@ static void dlginit(void) {
 
 	MENUID	id;
 
-	menudlg_appends(res_cfg, NELEMETS(res_cfg));
+	menudlg_appends(res_cfg, NELEMENTS(res_cfg));
 	if (np2cfg.baseclock < ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
 		id = DID_CLOCK1;
 	}
