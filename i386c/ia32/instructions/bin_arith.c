@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: bin_arith.c,v 1.3 2004/01/07 14:49:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1235,7 +1235,9 @@ INC_Eb(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg8_b20[op];
-		BYTE_INC(*out);
+		value = *out;
+		BYTE_INC(value);
+		*out = value;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -1255,7 +1257,9 @@ INC_Ew(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
-		WORD_INC(*out);
+		value = *out;
+		WORD_INC(value);
+		*out = value;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -1275,7 +1279,9 @@ INC_Ed(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
-		DWORD_INC(*out);
+		value = *out;
+		DWORD_INC(value);
+		*out = value;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -1318,7 +1324,9 @@ DEC_Eb(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg8_b20[op];
-		BYTE_DEC(*out);
+		value = *out;
+		BYTE_DEC(value);
+		*out = value;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -1338,7 +1346,9 @@ DEC_Ew(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
-		WORD_DEC(*out);
+		value = *out;
+		WORD_DEC(value);
+		*out = value;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -1358,7 +1368,9 @@ DEC_Ed(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
-		DWORD_DEC(*out);
+		value = *out;
+		DWORD_DEC(value);
+		*out = value;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -1550,31 +1562,34 @@ CMP_GdEd(void)
 void
 CMP_ALIb(void)
 {
-	DWORD src, res;
+	DWORD src, dst, res;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(src);
-	BYTE_SUB(res, CPU_AL, src);
+	dst = CPU_AL;
+	BYTE_SUB(res, dst, src);
 }
 
 void
 CMP_AXIw(void)
 {
-	DWORD src, res;
+	DWORD src, dst, res;
 
 	CPU_WORKCLOCK(3);
 	GET_PCWORD(src);
-	WORD_SUB(res, CPU_AX, src);
+	dst = CPU_AX;
+	WORD_SUB(res, dst, src);
 }
 
 void
 CMP_EAXId(void)
 {
-	DWORD src, res;
+	DWORD src, dst, res;
 
 	CPU_WORKCLOCK(3);
 	GET_PCDWORD(src);
-	DWORD_SUB(res, CPU_EAX, src);
+	dst = CPU_EAX;
+	DWORD_SUB(res, dst, src);
 }
 
 void

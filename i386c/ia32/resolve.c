@@ -1,4 +1,4 @@
-/*	$Id: resolve.c,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: resolve.c,v 1.3 2004/01/07 14:49:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -412,7 +412,6 @@ ea32_sib(void)
 	PROFILE_INC_EA32(4);
 
 	GET_PCBYTE(op);
-	dst = 0;	/* compiler happy */
 
 	base = op & 7;
 	idx = (op >> 3) & 7;
@@ -431,6 +430,11 @@ ea32_sib(void)
 	case 5:
 		CPU_INST_SEGREG_INDEX = DS_FIX;
 		GET_PCDWORD(dst);
+		break;
+
+	default:
+		dst = 0;	/* compiler happy */
+		ia32_panic("ea32_sib: invalid base = %d", base);
 		break;
 	}
 	if (idx != 4)
