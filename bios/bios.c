@@ -42,21 +42,6 @@ static const BYTE nosyscode[] = {
 			0x57,0x04,0x47,0x04,0x39,0x00,0x00};
 
 
-void bios_getpath(char *path, const char *name, int maxlen) {
-
-const char	*p;
-
-	p = np2cfg.biospath;
-	if (p[0]) {
-		file_cpyname(path, p, maxlen);
-		file_setseparator(path, maxlen);
-		file_catname(path, name, maxlen);
-	}
-	else {
-		file_cpyname(path, file_getcd(name), maxlen);
-	}
-}
-
 static void bios_reinitbyswitch(void) {
 
 	BYTE	prxcrt;
@@ -159,7 +144,8 @@ void bios_init(void) {
 
 	// まぁDISK BASIC動くようになるからいいんじゃないですか？
 	// BASIC BIOSは 8086コードのように見えるけど…
-	bios_getpath(path, file_biosrom, sizeof(path));
+	file_cpyname(path, np2cfg.biospath, sizeof(path));
+	file_catname(path, file_biosrom, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh != FILEH_INVALID) {
 		if (file_read(fh, mem + 0x0e8000, 0x18000) == 0x18000) {

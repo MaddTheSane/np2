@@ -1,4 +1,6 @@
 #include	"compiler.h"
+#include	"strres.h"
+#include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
 #include	"timemng.h"
@@ -31,7 +33,6 @@
 #include	"timing.h"
 //#include	"hostdrv.h"
 #include	"debugsub.h"
-#include	"dosio.h"
 
 
 	const char	np2version[] = NP2VER_CORE;
@@ -183,6 +184,16 @@ static void sound_term(void) {
 }
 
 void pccore_init(void) {
+
+	char	*p;
+
+	p = np2cfg.biospath;
+	if (p[0]) {
+		file_setseparator(p, sizeof(np2cfg.biospath));
+	}
+	else {
+		file_cpyname(p, file_getcd(str_null), sizeof(np2cfg.biospath));
+	}
 
 	i286_initialize();
 

@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"dosio.h"
-#include	"bios.h"
+#include	"pccore.h"
 #include	"memory.h"
 #include	"soundrom.h"
 
@@ -26,7 +26,8 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 		file_catname(romname, name, sizeof(romname));
 	}
 	file_catname(romname, file_extrom, sizeof(romname));
-	bios_getpath(path, romname, sizeof(path));
+	file_cpyname(path, np2cfg.biospath, sizeof(path));
+	file_catname(path, romname, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto lsr_err;

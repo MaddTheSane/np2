@@ -2,7 +2,7 @@
 #include	<math.h>
 #include	"wavefile.h"
 #include	"dosio.h"
-#include	"bios.h"
+#include	"pccore.h"
 #include	"sound.h"
 #include	"rhythm.h"
 
@@ -37,7 +37,8 @@ static BOOL pcmload(RHYTHMPCM *pcm, const char *fname, UINT rate) {
 	UINT		pos;
 	BYTE		work[256];
 
-	bios_getpath(path, fname, sizeof(path));
+	file_cpyname(path, np2cfg.biospath, sizeof(path));
+	file_catname(path, fname, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto pld_err1;
