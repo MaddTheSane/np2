@@ -37,6 +37,13 @@ enum {
 };
 
 enum {
+	MSW_PE			= 0x0001,
+	MSW_MP			= 0x0002,
+	MSW_EM			= 0x0004,
+	MSW_TS			= 0x0008
+};
+
+enum {
 	CPUTYPE_V30		= 0x01
 };
 
@@ -159,10 +166,12 @@ typedef struct {
 	UINT32	inport;
 	UINT32	ovflag;
 	I286DTR	GDTR;
-	I286DTR	IDTR;
-	I286DTR	LDTRC;							// ver0.73
-	UINT16	LDTR;							// ver0.73
 	UINT16	MSW;
+	I286DTR	IDTR;
+	UINT16	LDTR;							// ver0.73
+	I286DTR	LDTRC;
+	UINT16	TR;
+	I286DTR	TRC;
 	UINT8	resetreq;						// ver0.72
 	UINT8	itfbank;						// ver0.72
 } I286STAT;

@@ -22,22 +22,6 @@
 			I286_REMCLOCK = (c);								\
 		}
 
-// ---- select...
-
-static UINT32 segselect(UINT sel) {
-
-	I286DTR	*dtr;
-	UINT32	addr;
-	UINT32	ret;
-
-	dtr = (sel & 4)?&I286_IDTR:&I286_GDTR;
-	addr = (dtr->base24 << 16) + dtr->base + (sel & (~7));
-	ret = i286_memoryread_w(addr+2);
-	ret += i286_memoryread(addr+4) << 16;
-	TRACEOUT(("PE - select %.4x %.8x", sel, ret));
-	return(ret);
-}
-
 
 // ----
 
@@ -167,12 +151,12 @@ I286FN _pop_es(void) {							// 07: pop es
 
 	REGPOP(tmp, 5)
 	I286_ES = tmp;
-	if (!(I286_MSW & 1)) {
+	if (!(I286_MSW & MSW_PE)) {
 		ES_BASE = tmp << 4;
 		NEXT_OPCODE
 	}
 	else {
-		ES_BASE = segselect(tmp);
+		ES_BASE = i286c_selector(tmp);
 	}
 }
 
@@ -411,13 +395,13 @@ I286FN _pop_ss(void) {							// 17: pop ss
 
 	REGPOP(tmp, 5)
 	I286_SS = tmp;
-	if (!(I286_MSW & 1)) {
+	if (!(I286_MSW & MSW_PE)) {
 		SS_BASE = tmp << 4;
 		SS_FIX = tmp << 4;
 		NEXT_OPCODE
 	}
 	else {
-		base = segselect(tmp);
+		base = i286c_selector(tmp);
 		SS_BASE = base;
 		SS_FIX = base;
 		NEXT_OPCODE
@@ -546,13 +530,13 @@ I286FN _pop_ds(void) {							// 1f: pop ds
 
 	REGPOP(tmp, 5)
 	I286_DS = tmp;
-	if (!(I286_MSW & 1)) {
+	if (!(I286_MSW & MSW_PE)) {
 		DS_BASE = tmp << 4;
 		DS_FIX = tmp << 4;
 		NEXT_OPCODE
 	}
 	else {
-		base = segselect(tmp);
+		base = i286c_selector(tmp);
 		DS_BASE = base;
 		DS_FIX = base;
 		NEXT_OPCODE
@@ -1721,11 +1705,11 @@ I286FN _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 		I286_WORKCLOCK(5);
 		tmp = i286_memoryread_w(CALC_EA(op));
 	}
-	if (!(I286_MSW & 1)) {
+	if (!(I286_MSW & MSW_PE)) {
 		base = tmp << 4;
 	}
 	else {
-		base = segselect(tmp);
+		base = i286c_selector(tmp);
 	}
 
 	switch(op & 0x18) {

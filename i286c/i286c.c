@@ -262,6 +262,21 @@ void i286c_step(void) {
 }
 
 
+UINT32 i286c_selector(UINT sel) {
+
+	I286DTR	*dtr;
+	UINT32	addr;
+	UINT32	ret;
+
+	dtr = (sel & 4)?&I286_LDTRC:&I286_GDTR;
+	addr = (dtr->base24 << 16) + dtr->base + (sel & (~7));
+	ret = i286_memoryread_w(addr+2);
+	ret += i286_memoryread(addr+4) << 16;
+	TRACEOUT(("PE - select %.4x %.8x", sel, ret));
+	return(ret);
+}
+
+
 // ---- test
 
 #if defined(I286C_TEST)

@@ -2,12 +2,12 @@
 #if defined(SIZE_QVGA)
 enum {
 	DLGCFG_WIDTH	= 254,
-	DLGCFG_HEIGHT	= 180
+	DLGCFG_HEIGHT	= 144
 };
 #else
 enum {
 	DLGCFG_WIDTH	= 303,
-	DLGCFG_HEIGHT	= 217
+	DLGCFG_HEIGHT	= 172
 };
 #endif
 

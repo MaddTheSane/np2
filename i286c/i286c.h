@@ -51,6 +51,10 @@
 
 #define	I286_GDTR		i286core.s.GDTR
 #define	I286_IDTR		i286core.s.IDTR
+#define	I286_LDTR		i286core.s.LDTR
+#define	I286_LDTRC		i286core.s.LDTRC
+#define	I286_TR			i286core.s.TR
+#define	I286_TRC		i286core.s.TRC
 #define	I286_MSW		i286core.s.MSW
 
 #define	I286_REMCLOCK	i286core.s.remainclock
@@ -68,6 +72,7 @@
 typedef void (*I286OP)(void);
 
 extern void CPUCALL i286c_intnum(UINT vect, REG16 IP);
+extern UINT32 i286c_selector(UINT sel);
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 extern void i286cea_initialize(void);
