@@ -79,7 +79,9 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
 	gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
 	gint resume = GTK_TOGGLE_BUTTON(resume_checkbutton)->active;
+#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
 	gint disablemmx = GTK_TOGGLE_BUTTON(disablemmx_checkbutton)->active;
+#endif
 	guint bufsize;
 	guint mult;
 	UINT renewal = 0;
@@ -194,7 +196,7 @@ rate_radiobutton_clicked(GtkButton *b, gpointer d)
 
 	UNUSED(b);
 
-	rate = (gint)d;
+	rate = GPOINTER_TO_INT(d);
 }
 
 static void
@@ -433,7 +435,7 @@ create_configure_dialog(void)
 		gtk_box_pack_start(GTK_BOX(soundrate_hbox), rate_radiobutton[i], FALSE, FALSE, 0);
 		GTK_WIDGET_UNSET_FLAGS(rate_radiobutton[i], GTK_CAN_FOCUS);
 		gtk_signal_connect(GTK_OBJECT(rate_radiobutton[i]), "clicked",
-		    GTK_SIGNAL_FUNC(rate_radiobutton_clicked), (gpointer)samplingrate[i].rate);
+		    GTK_SIGNAL_FUNC(rate_radiobutton_clicked), GINT_TO_POINTER(samplingrate[i].rate));
 	}
 	if (np2cfg.samplingrate == 11025) {
 		i = 0;

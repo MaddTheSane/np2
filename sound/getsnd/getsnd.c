@@ -94,7 +94,7 @@ UINT getsnd_getpcmbyleng(GETSND snd, void *pcm, UINT leng) {
 			}
 		}
 	}
-	return((int)pcmp - (int)pcm);
+	return(UINT)(pcmp - (BYTE *)pcm);
 
 gsgpl_err:
 	return(0);
