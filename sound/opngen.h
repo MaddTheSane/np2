@@ -97,7 +97,8 @@ typedef struct {
 	OPNSLOT	slot[4];
 	BYTE	algorithm;			// algorithm
 	BYTE	feedback;			// self feedback
-	BYTE	padding1[2];
+	BYTE	playing;
+	BYTE	padding1;
 	SINT32	op1fb;				// operator1 feedback
 	SINT32	*connect1;			// operator1 connect
 	SINT32	*connect3;			// operator3 connect
@@ -115,6 +116,7 @@ typedef struct {
 
 typedef struct {
 	UINT	playchannels;
+	UINT	playing;
 	SINT32	feedback2;
 	SINT32	feedback3;
 	SINT32	feedback4;

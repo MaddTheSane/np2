@@ -5,7 +5,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 #define	IDC_STATIC	-1
 
-IDD_CONFIG DIALOG DISCARDABLE  0, 0, 180, 142
+IDD_CONFIG DIALOG DISCARDABLE  0, 0, 184, 142
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configure"
 FONT 8, "MS Sans Serif"
@@ -16,25 +16,25 @@ BEGIN
     LTEXT           "x",IDC_STATIC,72,26,8,8
     COMBOBOX        IDC_MULTIPLE,80,22,28,80,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    RTEXT           "ClockCount",IDC_CLOCKMSG,58,41,36,8
+    RTEXT           "ClockCount",IDC_CLOCKMSG,58,41,38,8
     LTEXT           "MHz",IDC_STATIC,96,41,14,8
-    GROUPBOX        "Sound",IDC_STATIC,7,58,166,46
+    GROUPBOX        "Sound",IDC_STATIC,8,58,170,46
     LTEXT           "Sampling Rate",IDC_STATIC,14,71,43,8
     CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,66,70,32,10
-    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,104,70,32,
+                    WS_GROUP | WS_TABSTOP,66,70,37,10
+    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,104,70,37,
                     10
-    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,70,32,
+    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,142,70,37,
                     10
     LTEXT           "Buffer",IDC_STATIC,14,88,19,8
     EDITTEXT        IDC_SOUNDBUF,66,86,30,12,WS_GROUP
     LTEXT           "ms",IDC_STATIC,102,88,10,8
     CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,112,163,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,112,111,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,126,163,10
-    DEFPUSHBUTTON   "&OK",IDOK,130,7,44,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,130,24,44,14
+                    WS_TABSTOP,8,126,41,10
+    DEFPUSHBUTTON   "&OK",IDOK,134,7,44,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,134,24,44,14
 END
 
 IDD_NEWDISK DIALOG DISCARDABLE  0, 0, 180, 44
@@ -42,12 +42,12 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create New FD image"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Disk Label:",IDC_STATIC,8,10,32,8
+    LTEXT           "Disk Label:",IDC_STATIC,8,10,33,8
     EDITTEXT        IDC_DISKLABEL,50,8,64,12,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Disk Type:",IDC_STATIC,8,28,32,8
     CONTROL         "2DD",IDC_MAKE2DD,"Button",BS_AUTORADIOBUTTON | WS_GROUP | 
-                    WS_TABSTOP,52,27,24,10
-    CONTROL         "2HD",IDC_MAKE2HD,"Button",BS_AUTORADIOBUTTON,82,27,29,
+                    WS_TABSTOP,50,27,29,10
+    CONTROL         "2HD",IDC_MAKE2HD,"Button",BS_AUTORADIOBUTTON,80,27,29,
                     10
     DEFPUSHBUTTON   "&OK",IDOK,130,7,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,130,24,44,14
@@ -58,14 +58,14 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create New FD image"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Disk Label:",IDC_STATIC,8,10,32,8
+    LTEXT           "Disk Label:",IDC_STATIC,8,10,33,8
     EDITTEXT        IDC_DISKLABEL,50,8,64,12,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Disk Type:",IDC_STATIC,8,28,32,8
     CONTROL         "2DD",IDC_MAKE2DD,"Button",BS_AUTORADIOBUTTON | WS_GROUP | 
-                    WS_TABSTOP,52,27,24,10
-    CONTROL         "2HD",IDC_MAKE2HD,"Button",BS_AUTORADIOBUTTON,82,27,29,
+                    WS_TABSTOP,50,27,29,10
+    CONTROL         "2HD",IDC_MAKE2HD,"Button",BS_AUTORADIOBUTTON,80,27,29,
                     10
-    CONTROL         "1.44",IDC_MAKE144,"Button",BS_AUTORADIOBUTTON,112,27,27,
+    CONTROL         "1.44",IDC_MAKE144,"Button",BS_AUTORADIOBUTTON,110,27,29,
                     10
     DEFPUSHBUTTON   "&OK",IDOK,144,7,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,144,24,44,14
@@ -76,11 +76,11 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create New HD image"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "HDD size",IDC_STATIC,8,10,28,8
+    LTEXT           "HDD size",IDC_STATIC,8,10,29,8
     COMBOBOX        IDC_HDDSIZE,48,8,32,46,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "MB",IDC_STATIC,86,10,11,8
-    LTEXT           "(5`256MB)",IDC_STATIC,64,30,36,8
+    LTEXT           "(5`256MB)",IDC_STATIC,64,30,38,8
     DEFPUSHBUTTON   "&OK",IDOK,108,7,44,14
     PUSHBUTTON      "Cancel",IDCANCEL,108,24,44,14
 END
@@ -91,12 +91,12 @@ CAPTION "Video"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Liquid Crystal Display",IDC_LCD,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,8,81,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,8,79,10
     CONTROL         "Reverse",IDC_LCDX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    20,24,40,10
+                    20,24,42,10
     CONTROL         "Use skipline revisions",IDC_SKIPLINE,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,40,81,10
-    LTEXT           "Raito",IDC_STATIC,20,55,16,8
+    LTEXT           "Ratio",IDC_STATIC,20,55,17,8
     CONTROL         "Slider1",IDC_SKIPLIGHT,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,44,55,96,10
     RTEXT           "",IDC_LIGHTSTR,144,54,16,10,SS_SUNKEN
@@ -109,18 +109,18 @@ FONT 8, "MS Sans Serif"
 BEGIN
     GROUPBOX        "Graphic Display Controller",IDC_STATIC,8,8,122,28
     CONTROL         "uPD7220",IDC_GDC7220,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,20,20,42,10
+                    WS_GROUP | WS_TABSTOP,16,20,45,10
     CONTROL         "uPD72020",IDC_GDC72020,"Button",BS_AUTORADIOBUTTON,72,
-                    20,43,10
+                    20,49,10
     GROUPBOX        "Graphic Charger",IDC_STATIC,8,42,156,28
     CONTROL         "None",IDC_GRCGNON,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,20,54,35,10
-    CONTROL         "GRCG",IDC_GRCG,"Button",BS_AUTORADIOBUTTON,54,54,34,10
-    CONTROL         "GRCG+",IDC_GRCG2,"Button",BS_AUTORADIOBUTTON,88,54,38,
+                    WS_GROUP | WS_TABSTOP,16,54,33,10
+    CONTROL         "GRCG",IDC_GRCG,"Button",BS_AUTORADIOBUTTON,50,54,35,10
+    CONTROL         "GRCG+",IDC_GRCG2,"Button",BS_AUTORADIOBUTTON,88,54,39,
                     10
-    CONTROL         "EGC",IDC_EGC,"Button",BS_AUTORADIOBUTTON,128,54,28,10
+    CONTROL         "EGC",IDC_EGC,"Button",BS_AUTORADIOBUTTON,128,54,29,10
     CONTROL         "&Enable 16color (PC-9801-24)",IDC_PC980124,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,80,102,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,80,109,10
 END
 
 IDD_SCROPT3 DIALOG DISCARDABLE  0, 0, 172, 96
@@ -128,9 +128,9 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Timing"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "T-RAM",IDC_STATIC,8,9,23,8
-    LTEXT           "V-RAM",IDC_STATIC,8,25,23,8
-    LTEXT           "GRCG",IDC_STATIC,8,41,19,8
+    LTEXT           "T-RAM",IDC_STATIC,8,9,24,8
+    LTEXT           "V-RAM",IDC_STATIC,8,25,24,8
+    LTEXT           "GRCG",IDC_STATIC,8,41,20,8
     CONTROL         "Slider1",IDC_TRAMWAIT,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,9,80,10
     CONTROL         "Slider2",IDC_VRAMWAIT,"msctls_trackbar32",TBS_BOTH | 
@@ -140,10 +140,10 @@ BEGIN
     RTEXT           "",IDC_TRAMSTR,128,8,16,10,SS_SUNKEN
     RTEXT           "",IDC_VRAMSTR,128,24,16,10,SS_SUNKEN
     RTEXT           "",IDC_GRCGSTR,128,40,16,10,SS_SUNKEN
-    LTEXT           "clock",IDC_STATIC,148,9,16,8
-    LTEXT           "clock",IDC_STATIC,148,25,16,8
-    LTEXT           "clock",IDC_STATIC,148,41,16,8
-    LTEXT           "RealPalettes Adjust",IDC_STATIC,8,60,59,8
+    LTEXT           "clock",IDC_STATIC,148,9,18,8
+    LTEXT           "clock",IDC_STATIC,148,25,18,8
+    LTEXT           "clock",IDC_STATIC,148,41,18,8
+    LTEXT           "RealPalettes Adjust",IDC_STATIC,8,60,62,8
     CONTROL         "Slider3",IDC_REALPAL,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,73,80,10
     RTEXT           "",IDC_REALPALSTR,128,72,16,10,SS_SUNKEN
@@ -154,22 +154,22 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "COM1"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Port",IDC_STATIC,8,10,13,8
+    LTEXT           "Port",IDC_STATIC,8,10,15,8
     COMBOBOX        IDC_COM1PORT,48,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Assign",IDC_COM1STR00,8,28,128,88
-    LTEXT           "Speed",IDC_COM1STR01,16,45,19,8
+    LTEXT           "Speed",IDC_COM1STR01,16,45,20,8
     COMBOBOX        IDC_COM1SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "bps",IDC_COM1STR02,108,45,11,8
-    LTEXT           "Char size",IDC_COM1STR03,16,61,28,8
+    LTEXT           "Char size",IDC_COM1STR03,16,61,30,8
     COMBOBOX        IDC_COM1CHARSIZE,56,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "bits",IDC_COM1STR04,108,61,12,8
-    LTEXT           "Parity",IDC_COM1STR05,16,77,18,8
+    LTEXT           "Parity",IDC_COM1STR05,16,77,19,8
     COMBOBOX        IDC_COM1PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Stop bit",IDC_COM1STR06,16,93,24,8
+    LTEXT           "Stop bit",IDC_COM1STR06,16,93,25,8
     COMBOBOX        IDC_COM1STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "bit(s)",IDC_COM1STR07,108,93,16,8
@@ -181,39 +181,39 @@ BEGIN
     COMBOBOX        IDC_COM1MMDL,56,58,112,64,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Use program define file (MIMPI define)",IDC_COM1DEFE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,139,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,132,10
     LTEXT           "",IDC_COM1DEFF,26,94,128,10,SS_SUNKEN
     PUSHBUTTON      "...",IDC_COM1DEFB,156,94,10,10
 END
 
-IDD_PC9861A DIALOGEX 0, 0, 224, 140
+IDD_PC9861A DIALOG DISCARDABLE  0, 0, 224, 140
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "PC-9861K"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Enable",IDC_PC9861E,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,8,35,10
-    LTEXT           "CH.1",IDC_STATIC,8,27,15,8
-    LTEXT           "Speed",IDC_STATIC,32,27,19,8
+                    WS_TABSTOP,8,8,36,10
+    LTEXT           "CH.1",IDC_STATIC,8,27,16,8
+    LTEXT           "Speed",IDC_STATIC,32,27,20,8
     COMBOBOX        IDC_CH1SPEED,52,24,39,128,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP,WS_EX_RIGHT
-    LTEXT           "INT",IDC_STATIC,96,27,11,8
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "INT",IDC_STATIC,96,27,12,8
     COMBOBOX        IDC_CH1INT,108,24,29,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Mode",IDC_STATIC,142,27,16,8
+    LTEXT           "Mode",IDC_STATIC,142,27,18,8
     COMBOBOX        IDC_CH1MODE,159,24,58,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "CH.2",IDC_STATIC,8,45,15,8
-    LTEXT           "Speed",IDC_STATIC,32,45,19,8
+    LTEXT           "CH.2",IDC_STATIC,8,45,16,8
+    LTEXT           "Speed",IDC_STATIC,32,45,20,8
     COMBOBOX        IDC_CH2SPEED,52,42,38,128,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP,WS_EX_RIGHT
-    LTEXT           "INT",IDC_STATIC,96,45,11,8
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "INT",IDC_STATIC,96,45,12,8
     COMBOBOX        IDC_CH2INT,108,42,29,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Mode",IDC_STATIC,142,45,16,8
+    LTEXT           "Mode",IDC_STATIC,142,45,18,8
     COMBOBOX        IDC_CH2MODE,159,42,58,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "DIP-SW",IDC_STATIC,8,64,24,8
+    LTEXT           "DIP-SW",IDC_STATIC,8,64,26,8
     CONTROL         "",IDC_PC9861DIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,
                     64,153,68
 END
@@ -297,28 +297,28 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "MPU-PC98II"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,24,8
+    LTEXT           "I/O port",IDC_STATIC,8,10,27,8
     COMBOBOX        IDC_MPUIO,42,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,8,26,26,8
+    LTEXT           "Interrupt",IDC_STATIC,8,26,29,8
     COMBOBOX        IDC_MPUINT,42,24,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "DEF",IDC_MPUDEF,92,24,18,12
-    LTEXT           "DIP-SW",IDC_STATIC,8,46,24,8
+    LTEXT           "DIP-SW",IDC_STATIC,8,46,26,8
     CONTROL         "",IDC_MPUDIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,46,
                     80,20
     GROUPBOX        "Assign",IDC_STATIC,8,72,166,98
-    LTEXT           "MIDI-OUT",IDC_STATIC,16,87,31,8
+    LTEXT           "MIDI-OUT",IDC_STATIC,16,87,33,8
     COMBOBOX        IDC_MPU98MMAP,54,84,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "MIDI-IN",IDC_STATIC,16,103,24,8
+    LTEXT           "MIDI-IN",IDC_STATIC,16,103,26,8
     COMBOBOX        IDC_MPU98MDIN,54,100,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Module",IDC_STATIC,16,119,22,8
+    LTEXT           "Module",IDC_STATIC,16,119,23,8
     COMBOBOX        IDC_MPU98MMDL,54,116,112,96,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Use program define file (MIMPI define)",IDC_MPU98DEFE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,140,139,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,140,132,10
     LTEXT           "",IDC_MPU98DEFF,26,152,128,10,SS_SUNKEN
     PUSHBUTTON      "...",IDC_MPU98DEFB,156,152,10,10
     DEFPUSHBUTTON   "&OK",IDOK,132,7,44,14,WS_GROUP
@@ -328,21 +328,21 @@ END
 IDD_SNDMIX DIALOGEX 0, 0, 184, 120
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Mixer"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "FM",IDC_STATIC,8,9,10,8
     CONTROL         "Slider1",IDC_VOLFM,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_GROUP | WS_TABSTOP,40,9,88,10
-    LTEXT           "PSG",IDC_STATIC,8,23,14,8
+    LTEXT           "PSG",IDC_STATIC,8,23,15,8
     CONTROL         "Slider16",IDC_VOLPSG,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,23,88,10
-    LTEXT           "ADPCM",IDC_STATIC,8,37,24,8
+    LTEXT           "ADPCM",IDC_STATIC,8,37,25,8
     CONTROL         "Slider2",IDC_VOLADPCM,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,37,88,10
-    LTEXT           "PCM",IDC_STATIC,8,51,15,8
+    LTEXT           "PCM",IDC_STATIC,8,51,16,8
     CONTROL         "Slider4",IDC_VOLPCM,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,51,88,10
-    LTEXT           "Rhythm",IDC_STATIC,8,65,23,8
+    LTEXT           "Rhythm",IDC_STATIC,8,65,25,8
     CONTROL         "Slider8",IDC_VOLRHYTHM,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,65,88,10
     LTEXT           "",IDC_VOLFMSTR,134,8,16,10,SS_SUNKEN,WS_EX_RIGHT
@@ -356,12 +356,12 @@ END
 IDD_SND14 DIALOGEX 0, 0, 184, 120
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "PC-9801-14"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Left",IDC_STATIC,8,9,12,8
+    LTEXT           "Left",IDC_STATIC,8,9,14,8
     CONTROL         "Slider1",IDC_VOL14L,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_GROUP | WS_TABSTOP,40,9,48,10
-    LTEXT           "Right",IDC_STATIC,8,23,16,8
+    LTEXT           "Right",IDC_STATIC,8,23,17,8
     CONTROL         "Slider16",IDC_VOL14R,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,23,48,10
     LTEXT           "f2",IDC_STATIC,10,37,8,8
@@ -373,7 +373,7 @@ BEGIN
     LTEXT           "f8",IDC_STATIC,10,65,8,8
     CONTROL         "Slider8",IDC_VOLF8,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,65,48,10
-    LTEXT           "f16",IDC_STATIC,10,79,10,8
+    LTEXT           "f16",IDC_STATIC,10,79,11,8
     CONTROL         "Slider16",IDC_VOLF16,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,79,48,10
     LTEXT           "",IDC_VOL14LSTR,94,8,16,10,SS_SUNKEN,WS_EX_RIGHT
@@ -389,16 +389,16 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "26"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,24,8
+    LTEXT           "I/O port",IDC_STATIC,8,10,27,8
     COMBOBOX        IDC_SND26IO,42,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,106,10,26,8
+    LTEXT           "Interrupt",IDC_STATIC,102,10,29,8
     COMBOBOX        IDC_SND26INT,138,8,38,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ROM",IDC_STATIC,8,28,15,8
+    LTEXT           "ROM",IDC_STATIC,8,28,16,8
     COMBOBOX        IDC_SND26ROM,42,26,52,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Jumper",IDC_STATIC,8,66,23,8
+    LTEXT           "Jumper",IDC_STATIC,8,66,24,8
     CONTROL         "",IDC_SND26JMP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,
                     66,132,32
     PUSHBUTTON      "DEF",IDC_SND26DEF,158,28,18,12
@@ -409,19 +409,19 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "86"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,24,8
+    LTEXT           "I/O port",IDC_STATIC,8,10,27,8
     COMBOBOX        IDC_SND86IO,42,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Interrupt",IDC_SND86INT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,96,9,41,10
+                    WS_TABSTOP,92,9,44,10
     COMBOBOX        IDC_SND86INTA,138,8,38,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Sound ID",IDC_STATIC,8,28,27,8
+    LTEXT           "Sound ID",IDC_STATIC,8,28,30,8
     COMBOBOX        IDC_SND86ID,42,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "ROM",IDC_SND86ROM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    96,27,30,10
-    LTEXT           "DIP-SW",IDC_STATIC,8,66,24,8
+                    92,27,31,10
+    LTEXT           "DIP-SW",IDC_STATIC,8,66,26,8
     CONTROL         "",IDC_SND86DIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,
                     66,132,32
     PUSHBUTTON      "DEF",IDC_SND86DEF,158,28,18,12
@@ -432,28 +432,28 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "SPB"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,24,8
+    LTEXT           "I/O port",IDC_STATIC,8,10,27,8
     COMBOBOX        IDC_SPBIO,42,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,106,10,26,8
+    LTEXT           "Interrupt",IDC_STATIC,102,10,29,8
     COMBOBOX        IDC_SPBINT,138,8,38,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ROM",IDC_STATIC,8,28,15,8
+    LTEXT           "ROM",IDC_STATIC,8,28,16,8
     COMBOBOX        IDC_SPBROM,42,26,52,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "VR",IDC_STATIC,8,46,10,8
     CONTROL         "L",IDC_SPBVRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,42,
-                    45,22,10
+                    45,20,10
     CONTROL         "R",IDC_SPBVRR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,
-                    45,22,10
-    LTEXT           "level",IDC_STATIC,96,46,16,8
+                    45,21,10
+    LTEXT           "level",IDC_STATIC,96,46,15,8
     CONTROL         "Slider16",IDC_SPBVRLEVEL,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,112,46,64,10
-    LTEXT           "Jumper",IDC_STATIC,8,66,23,8
+    LTEXT           "Jumper",IDC_STATIC,8,66,24,8
     CONTROL         "",IDC_SPBJMP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,66,
                     132,32
     CONTROL         "Reversed channel (SPB default)",IDC_SPBREVERSE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,106,110,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,106,115,10
     PUSHBUTTON      "DEF",IDC_SPBDEF,158,28,18,12
 END
 
@@ -463,20 +463,20 @@ CAPTION "JoyPad"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Use JoyPad-1",IDC_JOYPAD1,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,8,58,10
-    LTEXT           "Trigger-1",IDC_STATIC,24,27,28,8
+                    WS_TABSTOP,8,8,61,10
+    LTEXT           "Trigger-1",IDC_STATIC,24,27,30,8
     CONTROL         "A",IDC_PAD1_1A,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
                     WS_TABSTOP,64,26,21,10
     CONTROL         "B",IDC_PAD1_1B,"Button",BS_AUTOCHECKBOX,86,26,21,10
     CONTROL         "C",IDC_PAD1_1C,"Button",BS_AUTOCHECKBOX,108,26,21,10
     CONTROL         "D",IDC_PAD1_1D,"Button",BS_AUTOCHECKBOX,130,26,21,10
-    LTEXT           "Trigger-2",IDC_STATIC,24,43,28,8
+    LTEXT           "Trigger-2",IDC_STATIC,24,43,30,8
     CONTROL         "A",IDC_PAD1_2A,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
                     WS_TABSTOP,64,42,21,10
     CONTROL         "B",IDC_PAD1_2B,"Button",BS_AUTOCHECKBOX,86,42,21,10
     CONTROL         "C",IDC_PAD1_2C,"Button",BS_AUTOCHECKBOX,108,42,21,10
     CONTROL         "D",IDC_PAD1_2D,"Button",BS_AUTOCHECKBOX,130,42,21,10
-    LTEXT           "Rapid",IDC_STATIC,28,61,18,8
+    LTEXT           "Rapid",IDC_STATIC,28,61,17,8
     CONTROL         "A",IDC_PAD1_RA,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
                     WS_TABSTOP,64,60,21,10
     CONTROL         "B",IDC_PAD1_RB,"Button",BS_AUTOCHECKBOX,86,60,21,10
@@ -490,9 +490,9 @@ CAPTION "Calendar"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Real (localtime)",IDC_CLNDREAL,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,10,60,10
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,10,63,10
     CONTROL         "Virtual Calendar",IDC_CLNDVIR,"Button",
-                    BS_AUTORADIOBUTTON,8,26,63,10
+                    BS_AUTORADIOBUTTON,8,26,65,10
     EDITTEXT        IDC_VIRYEAR,20,42,13,12
     LTEXT           "/",IDC_STATIC,35,44,7,8
     EDITTEXT        IDC_VIRMONTH,42,42,13,12
@@ -516,13 +516,13 @@ BEGIN
     CONTROL         "",IDC_EXTICON,"Static",SS_ENHMETAFILE,8,8,30,36
     ICON            IDI_ICON1,IDC_NP2ICON,8,8,20,20
     LTEXT           "",IDC_NP2VER,36,16,102,8
-    DEFPUSHBUTTON   "&OK",IDOK,148,4,40,14
-    PUSHBUTTON      "More >>",IDC_MORE,148,22,40,14
+    DEFPUSHBUTTON   "&OK",IDOK,148,4,40,12
+    PUSHBUTTON      "More >>",IDC_MORE,148,20,40,12
     EDITTEXT        IDC_NP2INFO,8,48,180,48,ES_MULTILINE | ES_READONLY | 
                     ES_WANTRETURN | WS_VSCROLL
 END
 
-IDM_MAIN MENU DISCARDABLE
+IDM_MAIN MENU DISCARDABLE 
 BEGIN
     POPUP "&Emulate"
     BEGIN
@@ -703,7 +703,6 @@ BEGIN
         MENUITEM "&Midi",                       IDM_KDISPMIDI
     END
 END
-
 
 NP2BMP                  BITMAP  DISCARDABLE     "ICONS\\nekop2.bmp"
 

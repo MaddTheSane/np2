@@ -137,7 +137,7 @@ static LRESULT CALLBACK SndmixDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				for (i=0; i<5; i++) {
 					if (sliderrestore(hWnd, &sndmixitem[i])) {
 						sysmng_update(SYS_UPDATECFG);
@@ -193,7 +193,7 @@ static LRESULT CALLBACK Snd14optDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				for (i=0; i<6; i++) {
 					if (sliderrestore(hWnd, &snd14item[i])) {
 						sysmng_update(SYS_UPDATECFG);
@@ -456,7 +456,7 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				if (np2cfg.snd26opt != snd26) {
 					np2cfg.snd26opt = snd26;
 					sysmng_update(SYS_UPDATECFG);
@@ -689,7 +689,7 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				if (np2cfg.snd86opt != snd86) {
 					np2cfg.snd86opt = snd86;
 					sysmng_update(SYS_UPDATECFG);
@@ -919,7 +919,7 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				update = 0;
 				if (np2cfg.spbopt != spb) {
 					np2cfg.spbopt = spb;
@@ -1012,7 +1012,7 @@ static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 			return(TRUE);
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				renewal = 0;
 				for (i=0; i<13; i++) {
 					renewal |= checkbtnres_store(hWnd, pad1opt + i);

@@ -28,7 +28,8 @@
 .slot			resb	(slot_t.size * 4)
 .algorithm		resb	1
 .feedback		resb	1
-				resb	2
+.playing		resb	1
+				resb	1
 .op1fb			resd	1
 .connect1		resd	1
 .connect3		resd	1
@@ -47,6 +48,7 @@
 
 				struc opngen_t
 .playchannels	resd	1
+.playing		resd	1
 .feedback2		resd	1
 .feedback3		resd	1
 .feedback4		resd	1

@@ -19,7 +19,14 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 	UINT	i;
 	UINT	noise;
 
-	while(count--) {
+	if ((psg->mixer & 0x3f) == 0) {
+		count = min(count, psg->puchicount);
+		psg->puchicount -= count;
+	}
+	if (count == 0) {
+		return;
+	}
+	do {
 		noisevol = 0;
 		if (psg->envcnt) {
 			psg->envcnt--;
@@ -51,7 +58,7 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 				countbak = psg->noise.count;
 				psg->noise.count -= psg->noise.freq;
 				if (psg->noise.count > countbak) {
-					psg->noise.base = rand() & (1 << (1 << PSGADDEDBIT));
+					psg->noise.base = GETRAND() & (1 << (1 << PSGADDEDBIT));
 				}
 				noisetbl += psg->noise.base;
 				noisetbl >>= 1;
@@ -107,6 +114,6 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 		pcm[0] += samp;
 		pcm[1] += samp;
 		pcm += 2;
-	}
+	} while(--count);
 }
 

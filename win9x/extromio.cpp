@@ -12,6 +12,7 @@ EXTROMH extromio_open(const char *filename, UINT type) {
 
 	EXTROMH	ret;
 	HRSRC	hrsrc;
+	HGLOBAL hg;
 
 	ret = (EXTROMH)_MALLOC(sizeof(_EXTROMH), filename);
 	if (ret == NULL) {
@@ -27,7 +28,8 @@ EXTROMH extromio_open(const char *filename, UINT type) {
 	else if (type == EXTROMIO_RES) {
 		hrsrc = FindResource(hInst, filename, str_extrom);
 		if (hrsrc) {
-			ret->fh = (void *)LoadResource(hInst, hrsrc);
+			hg = LoadResource(hInst, hrsrc);
+			ret->fh = (void *)LockResource(hg);
 			ret->pos = 0;
 			ret->size = SizeofResource(hInst, hrsrc);
 			return(ret);
@@ -41,8 +43,6 @@ erope_err1:
 
 UINT extromio_read(EXTROMH erh, void *buf, UINT size) {
 
-const char	*p;
-
 	if (erh) {
 		if (erh->type == EXTROMIO_FILE) {
 			return(file_read((FILEH)erh->fh, buf, size));
@@ -50,10 +50,8 @@ const char	*p;
 		else if (erh->type == EXTROMIO_RES) {
 			size = min(size, (UINT)(erh->size - erh->pos));
 			if (size) {
-				p = (char *)LockResource((HGLOBAL)erh->fh);
-				CopyMemory(buf, p + erh->pos, size);
+				CopyMemory(buf, ((BYTE *)erh->fh) + erh->pos, size);
 				erh->pos += size;
-				UnlockResource((HGLOBAL)erh->fh);
 			}
 			return(size);
 		}
@@ -95,9 +93,6 @@ void extromio_close(EXTROMH erh) {
 	if (erh) {
 		if (erh->type == EXTROMIO_FILE) {
 			file_close((FILEH)erh->fh);
-		}
-		else if (erh->type == EXTROMIO_RES) {
-//			FreeResource((HGLOBAL)erh->fh);		// win9x/NT
 		}
 		_MFREE(erh);
 	}

@@ -48,6 +48,7 @@ typedef struct {
 	BYTE		envvol;
 	char		envvolcnt;
 	BYTE		mixer;
+	UINT		puchicount;
 } _PSGGEN, *PSGGEN;
 
 typedef struct {

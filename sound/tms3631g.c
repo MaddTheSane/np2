@@ -12,6 +12,9 @@ void SOUNDCALL tms3631_getpcm(TMS3631 tms, SINT32 *pcm, UINT count) {
 	SINT32	data;
 	UINT	i;
 
+	if (tms->enable == 0) {
+		return;
+	}
 	while(count--) {
 		ch = 0;
 		data = 0;

@@ -555,7 +555,9 @@ void opngen_keyon(UINT chnum, BYTE value) {
 
 	sound_sync();
 	opngen.keyreg[chnum] = value;
+	opngen.playing++;
 	ch = opnch + chnum;
+	ch->playing |= value >> 4;
 	slot = ch->slot;
 	bit = 0x10;
 	for (i=0; i<4; i++) {

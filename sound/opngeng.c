@@ -12,9 +12,40 @@ extern	SINT32	envtable[];
 extern	SINT32	sintable[];					// ver0.27
 
 
+#define	CALCENV(e, c, s)													\
+	(c)->slot[(s)].freq_cnt += (c)->slot[(s)].freq_inc;						\
+	(c)->slot[(s)].env_cnt += (c)->slot[(s)].env_inc;						\
+	if ((c)->slot[(s)].env_cnt >= (c)->slot[(s)].env_end) {					\
+		switch((c)->slot[(s)].env_mode) {									\
+			case EM_ATTACK:													\
+				(c)->slot[(s)].env_mode = EM_DECAY1;						\
+				(c)->slot[(s)].env_cnt = EC_DECAY;							\
+				(c)->slot[(s)].env_end = (c)->slot[(s)].decaylevel;			\
+				(c)->slot[(s)].env_inc = (c)->slot[(s)].env_inc_decay1;		\
+				break;														\
+			case EM_DECAY1:													\
+				(c)->slot[(s)].env_mode = EM_DECAY2;						\
+				(c)->slot[(s)].env_cnt = (c)->slot[(s)].decaylevel;			\
+				(c)->slot[(s)].env_end = EC_OFF;							\
+				(c)->slot[(s)].env_inc = (c)->slot[(s)].env_inc_decay2;		\
+				break;														\
+			case EM_RELEASE:												\
+				(c)->slot[(s)].env_mode = EM_OFF;							\
+			case EM_DECAY2:													\
+				(c)->slot[(s)].env_cnt = EC_OFF;							\
+				(c)->slot[(s)].env_end = EC_OFF + 1;						\
+				(c)->slot[(s)].env_inc = 0;									\
+				(c)->playing &= ~(1 << (s));								\
+				break;														\
+		}																	\
+	}																		\
+	(e) = (c)->slot[(s)].totallevel - env_curve[(c)->slot[(s)].env_cnt 		\
+															>> ENV_BITS];
+
 #define SLOTOUT(s, e, c)													\
 		((sintable[(((s).freq_cnt + (c)) >> (FREQ_BITS - SIN_BITS)) &		\
 			(SIN_ENT-1)] * envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
+
 
 static SINT32 calcrateenvlope(OPNSLOT *slot) {
 
@@ -61,7 +92,8 @@ static void calcratechannel(OPNCH *ch) {
 	opngen.feedback4 = 0;
 
 	/* SLOT 1 */
-	envout = calcrateenvlope(ch->slot + 0);
+//	envout = calcrateenvlope(ch->slot + 0);
+	CALCENV(envout, ch, 0);
 	if (envout > 0) {
 		if (ch->feedback) {
 			/* with self feed back */
@@ -83,17 +115,20 @@ static void calcratechannel(OPNCH *ch) {
 		}
 	}
 	/* SLOT 2 */
-	envout = calcrateenvlope(ch->slot + 1);
+//	envout = calcrateenvlope(ch->slot + 1);
+	CALCENV(envout, ch, 1);
 	if (envout > 0) {
 		*ch->connect2 += SLOTOUT(ch->slot[1], envout, opngen.feedback2);
 	}
 	/* SLOT 3 */
-	envout = calcrateenvlope(ch->slot + 2);
+//	envout = calcrateenvlope(ch->slot + 2);
+	CALCENV(envout, ch, 2);
 	if (envout > 0) {
 		*ch->connect3 += SLOTOUT(ch->slot[2], envout, opngen.feedback3);
 	}
 	/* SLOT 4 */
-	envout = calcrateenvlope(ch->slot + 3);
+//	envout = calcrateenvlope(ch->slot + 3);
+	CALCENV(envout, ch, 3);
 	if (envout > 0) {
 		*ch->connect4 += SLOTOUT(ch->slot[3], envout, opngen.feedback4);
 	}
@@ -103,11 +138,15 @@ void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 
 	OPNCH	*fm;
 	UINT	i;
+	UINT	playing;
 	SINT32	samp_l;
 	SINT32	samp_r;
 
+	if ((!opngen.playing) || (!count)) {
+		return;
+	}
 	fm = opnch;
-	while(count--) {
+	do {
 		samp_l = opngen.outdl * (opngen.calcremain * -1);
 		samp_r = opngen.outdr * (opngen.calcremain * -1);
 		opngen.calcremain += FMDIV_ENT;
@@ -115,8 +154,12 @@ void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 			opngen.outdc = 0;
 			opngen.outdl = 0;
 			opngen.outdr = 0;
+			playing = 0;
 			for (i=0; i<opngen.playchannels; i++) {
-				calcratechannel(fm + i);
+				if (fm[i].playing) {
+					calcratechannel(fm + i);
+					playing++;
+				}
 			}
 			opngen.outdl += opngen.outdc;
 			opngen.outdr += opngen.outdc;
@@ -143,7 +186,8 @@ void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 		pcm[1] += samp_r;
 		opngen.calcremain -= opncfg.calc1024;
 		pcm += 2;
-	}
+	} while(--count);
+	opngen.playing = playing;
 	(void)hdl;
 }
 

@@ -219,7 +219,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				cfg = m->cfg;
 				update = 0;
 				r = SendDlgItemMessage(hWnd, m->idc[ID_PORT],
@@ -682,7 +682,7 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				update = 0;
 				r = GetDlgItemCheck(hWnd, IDC_PC9861E);
 				if (np2cfg.pc9861enable != r) {
