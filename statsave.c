@@ -1243,6 +1243,7 @@ int statsave_check(const char *filename, char *buf, int size) {
 			if (i < (sizeof(np2tbl)/sizeof(STENTRY))) {
 				switch(np2tbl[i].type) {
 					case NP2FLAG_BIN:
+					case NP2FLAG_CLOCK:
 						ret |= flagcheck_versize(&f, &np2tbl[i], &e);
 						break;
 
@@ -1250,7 +1251,6 @@ int statsave_check(const char *filename, char *buf, int size) {
 						done = TRUE;
 						break;
 
-					case NP2FLAG_CLOCK:
 					case NP2FLAG_DMA:
 					case NP2FLAG_EGC:
 					case NP2FLAG_EXT:
