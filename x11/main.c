@@ -27,6 +27,7 @@
 
 #include "compiler.h"
 
+#include <sys/stat.h>
 #include <getopt.h>
 #include <signal.h>
 
