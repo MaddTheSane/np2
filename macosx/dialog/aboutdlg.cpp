@@ -20,15 +20,15 @@ const	EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },
                                  { kEventClassWindow, kEventWindowShowing },
                                 };
 static const char np2infostr[] = 									\
-						"CPU: !CPU !CLOCK\r"						\
-						"MEM: !MEM1\r"							\
-						"GDC: !GDC\r"								\
-						"TEXT: !TEXT\r"							\
-						"GRPH: !GRPH\r"							\
-						"SOUND: !EXSND\r"							\
+						"CPU: %CPU% %CLOCK%\r"						\
+						"MEM: %MEM1%\r"							\
+						"GDC: %GDC%\r"								\
+						"TEXT: %TEXT%\r"							\
+						"GRPH: %GRPH%\r"							\
+						"SOUND: %EXSND%\r"							\
 						"\r"										\
-						"BIOS: !BIOS\r"							\
-						"RHYTHM: !RHYTHM\r"
+						"BIOS: %BIOS%\r"							\
+						"RHYTHM: %RHYTHM%\r"
 						;
 
 static void closeAboutDialog(void) {
@@ -58,8 +58,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                     SizeWindow(aboutWin, 292, 230, true);
                 }
                 else {
-                    ZeroMemory(infostr, sizeof(infostr));
-                    np2info(infostr, np2infostr, sizeof(infostr));
+                    np2info(infostr, np2infostr, sizeof(infostr), NULL);
                     SetControlData(more,kControlNoPart,kControlEditTextTextTag,sizeof(infostr), infostr);
                     SetControl32BitValue(getControlRefByID('detl',0,aboutWin),3);
                     SizeWindow(aboutWin, 292, 441, true);

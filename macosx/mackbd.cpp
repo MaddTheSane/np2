@@ -5,6 +5,7 @@
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"keystat.h"
 
 #if defined(NP2GCC)
 #include	"mousemng.h"

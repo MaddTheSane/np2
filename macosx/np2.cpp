@@ -38,6 +38,7 @@
 #include	"np2opening.h"
 #include	"toolwin.h"
 #include	"aboutdlg.h"
+#include	"keystat.h"
 
 #include	<QuickTime/QuickTime.h>
 #define	USE_RESUME
@@ -742,7 +743,9 @@ int main(int argc, char *argv[]) {
 
 	TRACEINIT();
     
-    toolwin_readini();
+	keystat_initialize();
+	
+	toolwin_readini();
     if (!(setupMainWindow())) {
         return(0);
     }
@@ -790,7 +793,7 @@ int main(int argc, char *argv[]) {
 	S98_init();
 
     hid_init();
-#ifndef SUPPORT_WAVEMIX
+#ifndef SUPPORT_SWSEEKSND
 	if (soundmng_initialize() == SUCCESS) {
 		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
@@ -914,7 +917,7 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
 	mousemng_disable(MOUSEPROC_SYSTEM);
 #endif
-#ifndef SUPPORT_WAVEMIX
+#ifndef SUPPORT_SWSEEKSND
 	soundmng_deinitialize();
 #endif
 	scrnmng_destroy();

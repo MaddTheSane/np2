@@ -68,7 +68,7 @@ typedef unsigned char	BYTE;
 
 #define	SUPPORT_CRT15KHZ
 #define	SUPPORT_S98
-#define	SUPPORT_WAVEMIX
+#define	SUPPORT_SWSEEKSND
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
@@ -84,4 +84,5 @@ typedef unsigned long long  UINT64;
 #define MEMCALL
 typedef UINT64  DWORD;
 typedef UINT32  WORD;
+void msgbox (char* text, char* buf);
 #endif

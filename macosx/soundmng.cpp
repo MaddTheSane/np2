@@ -283,7 +283,7 @@ const SINT32	*src;
 }
 #endif
 
-#ifndef SUPPORT_WAVEMIX
+#ifdef SUPPORT_HWSEEKSND
 // --------------------------------------------------------------------------
 #include <QuickTime/Movies.h>
 #include "np2.h"
