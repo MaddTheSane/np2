@@ -188,6 +188,11 @@ static void MEMCALL emmc_wt(UINT32 address, REG8 value) {
 	extmem.pageptr[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
 }
 
+static void MEMCALL i286_wb(UINT32 address, REG8 value) {
+
+	mem[address + 0x1c8000 - 0xe8000] = (BYTE)value;
+}
+
 static void MEMCALL i286_wn(UINT32 address, REG8 value) {
 
 	(void)address;
@@ -288,10 +293,10 @@ static REG8 MEMCALL emmc_rd(UINT32 address) {
 	return(extmem.pageptr[(address >> 14) & 3][LOW14(address)]);
 }
 
-static REG8 MEMCALL i286_itf(UINT32 address) {
+static REG8 MEMCALL i286_rb(UINT32 address) {
 
 	if (CPU_ITFBANK) {
-		address = ITF_ADRS + LOW15(address);
+		address += VRAM_STEP;
 	}
 	return(mem[address]);
 }
@@ -474,6 +479,12 @@ static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
 	}
 }
 
+static void MEMCALL i286w_wb(UINT32 address, REG16 value) {
+
+	mem[address + 0x1c8000 - 0xe8000] = (BYTE)value;
+	mem[address + 0x1c8001 - 0xe8000] = (BYTE)(value >> 8);
+}
+
 static void MEMCALL i286w_wn(UINT32 address, REG16 value) {
 
 	(void)address;
@@ -616,10 +627,10 @@ const BYTE	*ptr;
 	}
 }
 
-static REG16 MEMCALL i286w_itf(UINT32 address) {
+static REG16 MEMCALL i286w_rb(UINT32 address) {
 
 	if (CPU_ITFBANK) {
-		address = ITF_ADRS + LOW15(address);
+		address += VRAM_STEP;
 	}
 	return(LOADINTELWORD(mem + address));
 }
@@ -640,6 +651,17 @@ typedef struct {
 } MEMFN;
 
 typedef struct {
+	MEM8READ	brd8;
+	MEM8READ	ird8;
+	MEM8WRITE	ewr8;
+	MEM8WRITE	bwr8;
+	MEM16READ	brd16;
+	MEM16READ	ird16;
+	MEM16WRITE	ewr16;
+	MEM16WRITE	bwr16;
+} MMAPTBL;
+
+typedef struct {
 	MEM8READ	rd8;
 	MEM8WRITE	wr8;
 	MEM16READ	rd16;
@@ -654,7 +676,7 @@ static MEMFN memfn = {
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 80
 			tram_rd,	vram_r0,	vram_r0,	vram_r0,		// a0
 			emmc_rd,	emmc_rd,	i286_rd,	i286_rd,		// c0
-			vram_r0,	i286_rd,	i286_rd,	i286_itf},		// f0
+			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// f0
 
 		   {i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 20
@@ -672,7 +694,7 @@ static MEMFN memfn = {
 			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 80
 			tramw_rd,	vramw_r0,	vramw_r0,	vramw_r0,		// a0
 			emmcw_rd,	emmcw_rd,	i286w_rd,	i286w_rd,		// c0
-			vramw_r0,	i286w_rd,	i286w_rd,	i286w_itf},		// e0
+			vramw_r0,	i286w_rd,	i286w_rd,	i286w_rb},		// e0
 
 		   {i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 00
 			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 20
@@ -682,6 +704,12 @@ static MEMFN memfn = {
 			tramw_wt,	vramw_w0,	vramw_w0,	vramw_w0,		// a0
 			emmcw_wt,	emmcw_wt,	i286w_wn,	i286w_wn,		// c0
 			vramw_w0,	i286w_wn,	i286w_wn,	i286w_wn}};		// e0
+
+static const MMAPTBL mmaptbl[2] = {
+		   {i286_rd,	i286_rb,	i286_wn,	i286_wn,
+			i286w_rd,	i286w_rb,	i286w_wn,	i286w_wn},
+		   {i286_rb,	i286_rb,	i286_wt,	i286_wb,
+			i286w_rb,	i286w_rb,	i286w_wt,	i286w_wb}};
 
 static const VACCTBL vacctbl[0x10] = {
 			{vram_r0,	vram_w0,	vramw_r0,	vramw_w0},		// 00
@@ -712,6 +740,34 @@ static REG16 MEMCALL i286_nonram_rw(UINT32 address) {
 
 	(void)address;
 	return(0xffff);
+}
+
+
+void MEMCALL i286_memorymap(UINT type) {
+
+const MMAPTBL	*mm;
+
+	mm = mmaptbl + (type & 1);
+
+	memfn.rd8[0xe8000 >> 15] = mm->brd8;
+	memfn.rd8[0xf0000 >> 15] = mm->brd8;
+	memfn.rd8[0xf8000 >> 15] = mm->ird8;
+
+	memfn.wr8[0xd0000 >> 15] = mm->ewr8;
+	memfn.wr8[0xd8000 >> 15] = mm->ewr8;
+	memfn.wr8[0xe8000 >> 15] = mm->bwr8;
+	memfn.wr8[0xf0000 >> 15] = mm->bwr8;
+	memfn.wr8[0xf8000 >> 15] = mm->bwr8;
+
+	memfn.rd16[0xe8000 >> 15] = mm->brd16;
+	memfn.rd16[0xf0000 >> 15] = mm->brd16;
+	memfn.rd16[0xf8000 >> 15] = mm->ird16;
+
+	memfn.wr16[0xd0000 >> 15] = mm->ewr16;
+	memfn.wr16[0xd8000 >> 15] = mm->ewr16;
+	memfn.wr16[0xe8000 >> 15] = mm->bwr16;
+	memfn.wr16[0xf0000 >> 15] = mm->bwr16;
+	memfn.wr16[0xf8000 >> 15] = mm->bwr16;
 }
 
 void MEMCALL i286_vram_dispatch(UINT func) {

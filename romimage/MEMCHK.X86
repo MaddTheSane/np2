@@ -44,9 +44,12 @@ endif
 
 EXTMEMORYMAX	equ		128						; 128MB MAX
 
-res_memory128ok	db		"MEMORY 128"
-res_memoryok	db		"KB OK", 0
-res_plusspace	db		"+", 0
+res_memory128ok	db	"MEMORY 128"
+res_memoryok	db	"KB OK", 0
+res_plusspace	db	"+", 0
+
+res_ramchk		db	"RAM check    :   128KB Ok", 0
+res_extchk		db	"Extended RAM :   128KB Ok", 0
 
 
 extmemory_chk:	push	ax
@@ -154,5 +157,78 @@ extmomey_o16:
 				call	extmemory_chk
 
 extmemtest_end:	pop		dx
+				ret
+
+
+; ---- epson
+
+epson_memtest:	mov		bx, 2000h				; ÉÅÉCÉìÉÅÉÇÉä Å`128KB
+				mov		cl, 0
+				call	sub_memchk
+				mov		cl, 0e1h
+				mov		si, offset res_ramchk
+				call	TEXTOUT_CS
+
+				mov		ch, es:[MEM_MSW3]		; ÉÅÉCÉìÉÅÉÇÉä 128KBÅ`640KB
+				and		ch, 7
+				je		short epmt_ext
+				cmp		ch, 4
+				jbe		short epmt_main_lp
+				mov		ch, 4
+epmt_main_lp:	call	sub_memchk
+				add		bh, 20h
+				push	cx
+				push	dx
+				mov		ax, bx
+				shr		ax, 6
+				call	STRING_I2A
+				pop		dx
+				pop		cx
+				mov		dl, 17
+				mov		cl, 0e1h
+				call	TEXTOUT_DS
+				dec		ch
+				jne		epmt_main_lp
+
+epmt_ext:		in		al, 42h					; ägí£ÉÅÉÇÉä
+				test	al, 2
+				jne		short epmt_exit
+				xor		ax, ax
+				push	ds
+				mov		ds, ax
+				or		al, ds:[MEM_EXPMMSZ]
+				pop		ds
+				je		short epmt_exit
+				inc		dh
+				mov		dl, 0
+				push	ax
+				mov		bx, 2000h
+				mov		cl, 0
+				call	sub_memchk
+				mov		cl, 0e1h
+				mov		si, offset res_extchk
+				call	TEXTOUT_CS
+				pop		ax
+epmt_ext_lp:	inc		ah
+				push	ax
+				mov		bx, 2000h
+				mov		cl, 0
+				call	sub_memchk
+				pop		ax
+				push	ax
+				push	dx
+				mov		al, 0
+				shr		ax, 1
+				call	STRING_I2A
+				pop		dx
+				mov		cl, 0e1h
+				mov		dl, 15
+				mov		si, I2ABUFFER + 5
+				call	TEXTOUT_DS
+				pop		ax
+				cmp		ah, al
+				jb		epmt_ext_lp
+epmt_exit:		inc		dh
+				mov		dl, 0
 				ret
 

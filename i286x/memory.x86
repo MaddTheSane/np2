@@ -264,7 +264,7 @@ grcgtdw_end:		pop		ecx
 @egc_wt:			VRAMTRACE
 					pop		ebx
 %if USE_EGCASM
-					jmp		_egca_write							; ver0.26
+					jmp		_egca_write
 %else
 					pushad
 					call	@egc_write@8
@@ -280,7 +280,12 @@ grcgtdw_end:		pop		ecx
 					shr		ebx, 12
 					and		ebx, byte (3*4)
 					add		ecx, [_extmem + extmem_t.pageptr + ebx]
-					mov		[EXTMEMORY + ecx], dl					; ver0.28
+					mov		[EXTMEMORY + ecx], dl
+					pop		ecx
+					pop		ebx
+					ret
+
+@i286_wb:			mov		[MAINMEMORY + 1c8000h - 0e8000h + ecx], dl
 					pop		ecx
 					pop		ebx
 					ret
@@ -381,7 +386,7 @@ grcgtcr_end:		not		al
 					align	16
 @egc_rd:			pop		ebx
 %if USE_EGCASM
-					jmp		_egca_read							; ver0.26
+					jmp		_egca_read
 %else
 					pushad
 					call	@egc_read@4
@@ -399,23 +404,19 @@ grcgtcr_end:		not		al
 					shr		ebx, 12
 					and		ebx, byte (3*4)
 					add		ecx, [_extmem + extmem_t.pageptr + ebx]
-					mov		al, [EXTMEMORY + ecx]					; ver0.28
+					mov		al, [EXTMEMORY + ecx]
 					pop		ecx
 					pop		ebx
 					ret
 
 ; BIOS or ITF
 					align	16
-@i286_itf:			cmp		byte [_i286core + i286core_t.itfbank], 0
-					jne		readmem_itr
+@i286_rb:			pop		ebx
+					cmp		byte [_i286core + i286core_t.itfbank], 0
+					jne		readmem_itf
 					mov		al, [MAINMEMORY + ecx]
-					pop		ebx
 					ret
-					align	16
-readmem_itr:		mov		ebx, ecx
-					and		ebx, 00007fffh
-					mov		al, [MAINMEMORY + ITF_ADRS + ebx]
-					pop		ebx
+readmem_itf:		mov		al, [MAINMEMORY + VRAM_STEP + ecx]
 					ret
 
 ; ----------------------------------------------------------------- write word
@@ -617,7 +618,7 @@ grcgwtdw_end:		pop		ecx
 @egcw_wt:			VRAMTRACE_W
 					pop		ebx
 %if USE_EGCASM
-					jmp		_egca_write_w						; ver0.26
+					jmp		_egca_write_w
 %else
 					test	ecx, 1
 					jne		short egcw_wtodd
@@ -647,7 +648,12 @@ egcw_wtodd:
 					shr		ebx, 12
 					and		ebx, byte (3*4)
 					add		ecx, [_extmem + extmem_t.pageptr + ebx]
-					mov		[EXTMEMORY + ecx], dx					; ver0.28
+					mov		[EXTMEMORY + ecx], dx
+					pop		ecx
+					pop		ebx
+					ret
+
+@i286w_wb:			mov		[MAINMEMORY + 1c8000h - 0e8000h + ecx], dx
 					pop		ecx
 					pop		ebx
 					ret
@@ -775,7 +781,7 @@ grcgwtcr_end:		not		ax
 					test	ecx, 1
 					jne		short egcw_rdodd
 %if USE_EGCASM
-					jmp		_egca_read_w						; ver0.26
+					jmp		_egca_read_w
 %else
 					pushad
 					call	@egc_read_w@4
@@ -785,7 +791,7 @@ grcgwtcr_end:		not		ax
 %endif
 
 egcw_rdodd:
-%if USE_EGCASM												; ver0.26
+%if USE_EGCASM
 					inc		ecx
 					call	_egca_read
 					mov		ah, al
@@ -812,31 +818,45 @@ egcw_rdodd:
 					shr		ebx, 12
 					and		ebx, byte (3*4)
 					add		ecx, [_extmem + extmem_t.pageptr + ebx]
-					mov		ax, [EXTMEMORY + ecx]					; ver0.28
+					mov		ax, [EXTMEMORY + ecx]
 					pop		ecx
 					pop		ebx
 					ret
 
 ; BIOS or ITF
 					align	16
-@i286w_itf:			cmp		byte [_i286core + i286core_t.itfbank], 0
-					jne		readwmem_itr
+@i286w_rb:			pop		ebx
+					cmp		byte [_i286core + i286core_t.itfbank], 0
+					jne		readwmem_itf
 					mov		ax, [MAINMEMORY + ecx]
-					pop		ebx
 					ret
-					align	16
-readwmem_itr:		mov		ebx, ecx
-					and		ebx, 00007fffh
-					mov		ax, [MAINMEMORY + ITF_ADRS + ebx]
-					pop		ebx
+readwmem_itf:		mov		ax, [MAINMEMORY + VRAM_STEP + ecx]
 					ret
 
 
 section .data
+
 ; ---------------------------------------------------------------------- table
 
-	global	_memory_write
 	global	_memory_read
+	global	_memory_write
+
+_memory_read	dd	@i286_rd,		@i286_rd		; 00
+				dd	@i286_rd,		@i286_rd		; 10
+				dd	@i286_rd,		@i286_rd		; 20
+				dd	@i286_rd,		@i286_rd		; 30
+				dd	@i286_rd,		@i286_rd		; 40
+				dd	@i286_rd,		@i286_rd		; 50
+				dd	@i286_rd,		@i286_rd		; 60
+				dd	@i286_rd,		@i286_rd		; 70
+				dd	@i286_rd,		@i286_rd		; 80
+				dd	@i286_rd,		@i286_rd		; 90
+				dd	@tram_rd,		@vram_r0		; a0
+				dd	@vram_r0,		@vram_r0		; b0
+				dd	@emmc_rd,		@emmc_rd		; c0
+				dd	@i286_rd,		@i286_rd		; d0
+				dd	@vram_r0,		@i286_rd		; e0
+				dd	@i286_rd,		@i286_rb		; f0
 
 _memory_write	dd	@i286_wt,		@i286_wt		; 00
 				dd	@i286_wt,		@i286_wt		; 10
@@ -855,22 +875,22 @@ _memory_write	dd	@i286_wt,		@i286_wt		; 00
 				dd	@vram_w0,		@i286_wn		; e0
 				dd	@i286_wn,		@i286_wn		; f0
 
-_memory_read	dd	@i286_rd,		@i286_rd		; 00
-				dd	@i286_rd,		@i286_rd		; 10
-				dd	@i286_rd,		@i286_rd		; 20
-				dd	@i286_rd,		@i286_rd		; 30
-				dd	@i286_rd,		@i286_rd		; 40
-				dd	@i286_rd,		@i286_rd		; 50
-				dd	@i286_rd,		@i286_rd		; 60
-				dd	@i286_rd,		@i286_rd		; 70
-				dd	@i286_rd,		@i286_rd		; 80
-				dd	@i286_rd,		@i286_rd		; 90
-				dd	@tram_rd,		@vram_r0		; a0
-				dd	@vram_r0,		@vram_r0		; b0
-				dd	@emmc_rd,		@emmc_rd		; c0
-				dd	@i286_rd,		@i286_rd		; d0
-				dd	@vram_r0,		@i286_rd		; e0
-				dd	@i286_rd,		@i286_itf		; f0
+_memword_read	dd	@i286w_rd,		@i286w_rd		; 00
+				dd	@i286w_rd,		@i286w_rd		; 10
+				dd	@i286w_rd,		@i286w_rd		; 20
+				dd	@i286w_rd,		@i286w_rd		; 30
+				dd	@i286w_rd,		@i286w_rd		; 40
+				dd	@i286w_rd,		@i286w_rd		; 50
+				dd	@i286w_rd,		@i286w_rd		; 60
+				dd	@i286w_rd,		@i286w_rd		; 70
+				dd	@i286w_rd,		@i286w_rd		; 80
+				dd	@i286w_rd,		@i286w_rd		; 90
+				dd	@tramw_rd,		@vramw_r0		; a0
+				dd	@vramw_r0,		@vramw_r0		; b0
+				dd	@emmcw_rd,		@emmcw_rd		; c0
+				dd	@i286w_rd,		@i286w_rd		; d0
+				dd	@vramw_r0,		@i286w_rd		; e0
+				dd	@i286w_rd,		@i286w_rb		; f0
 
 _memword_write	dd	@i286w_wt,		@i286w_wt		; 00
 				dd	@i286w_wt,		@i286w_wt		; 10
@@ -889,33 +909,20 @@ _memword_write	dd	@i286w_wt,		@i286w_wt		; 00
 				dd	@vramw_w0,		@i286_wn		; e0
 				dd	@i286_wn,		@i286_wn		; f0
 
-_memword_read	dd	@i286w_rd,		@i286w_rd		; 00
-				dd	@i286w_rd,		@i286w_rd		; 10
-				dd	@i286w_rd,		@i286w_rd		; 20
-				dd	@i286w_rd,		@i286w_rd		; 30
-				dd	@i286w_rd,		@i286w_rd		; 40
-				dd	@i286w_rd,		@i286w_rd		; 50
-				dd	@i286w_rd,		@i286w_rd		; 60
-				dd	@i286w_rd,		@i286w_rd		; 70
-				dd	@i286w_rd,		@i286w_rd		; 80
-				dd	@i286w_rd,		@i286w_rd		; 90
-				dd	@tramw_rd,		@vramw_r0		; a0
-				dd	@vramw_r0,		@vramw_r0		; b0
-				dd	@emmcw_rd,		@emmcw_rd		; c0
-				dd	@i286w_rd,		@i286w_rd		; d0
-				dd	@vramw_r0,		@i286w_rd		; e0
-				dd	@i286w_rd,		@i286w_itf		; f0
+section .rdata
 
-_vram_write		dd	@vram_w0,		@vram_w1		; 00
-				dd	@vram_w0,		@vram_w1
-				dd	@vram_w0,		@vram_w1		; 40
-				dd	@vram_w0,		@vram_w1
-				dd	@grcg_tdw0,		@grcg_tdw1		; 80 tdw/tcr
-				dd	@egc_wt,		@egc_wt
-				dd	@grcg_rmw0,		@grcg_rmw1		; c0 rmw
-				dd	@egc_wt,		@egc_wt
+memmap			dd	@i286_rd,		@i286_rb		; NEC
+				dd	@i286_wn,		@i286_wn
+				dd	@i286w_rd,		@i286w_rb
+				dd	@i286_wn,		@i286_wn
 
-_vram_read		dd	@vram_r0,		@vram_r1		; 00
+				dd	@i286_rb,		@i286_rb		; EPSON
+				dd	@i286_wt,		@i286_wb
+				dd	@i286w_rb,		@i286w_rb
+				dd	@i286w_wt,		@i286w_wb
+
+
+vram_read		dd	@vram_r0,		@vram_r1		; 00
 				dd	@vram_r0,		@vram_r1
 				dd	@vram_r0,		@vram_r1		; 40
 				dd	@vram_r0,		@vram_r1
@@ -924,7 +931,25 @@ _vram_read		dd	@vram_r0,		@vram_r1		; 00
 				dd	@vram_r0,		@vram_r1		; c0 rmw
 				dd	@egc_rd,		@egc_rd
 
-_vramw_write	dd	@vramw_w0,		@vramw_w1		; 00
+vram_write		dd	@vram_w0,		@vram_w1		; 00
+				dd	@vram_w0,		@vram_w1
+				dd	@vram_w0,		@vram_w1		; 40
+				dd	@vram_w0,		@vram_w1
+				dd	@grcg_tdw0,		@grcg_tdw1		; 80 tdw/tcr
+				dd	@egc_wt,		@egc_wt
+				dd	@grcg_rmw0,		@grcg_rmw1		; c0 rmw
+				dd	@egc_wt,		@egc_wt
+
+vramw_read		dd	@vramw_r0,		@vramw_r1		; 00
+				dd	@vramw_r0,		@vramw_r1
+				dd	@vramw_r0,		@vramw_r1		; 40
+				dd	@vramw_r0,		@vramw_r1
+				dd	@grcgw_tcr0,	@grcgw_tcr1		; 80 tdw/tcr
+				dd	@egcw_rd,		@egcw_rd
+				dd	@vramw_r0,		@vramw_r1		; c0 rmw
+				dd	@egcw_rd,		@egcw_rd
+
+vramw_write		dd	@vramw_w0,		@vramw_w1		; 00
 				dd	@vramw_w0,		@vramw_w1
 				dd	@vramw_w0,		@vramw_w1		; 40
 				dd	@vramw_w0,		@vramw_w1
@@ -933,14 +958,6 @@ _vramw_write	dd	@vramw_w0,		@vramw_w1		; 00
 				dd	@grcgw_rmw0,	@grcgw_rmw1		; c0 rmw
 				dd	@egcw_wt,		@egcw_wt
 
-_vramw_read		dd	@vramw_r0,		@vramw_r1		; 00
-				dd	@vramw_r0,		@vramw_r1
-				dd	@vramw_r0,		@vramw_r1		; 40
-				dd	@vramw_r0,		@vramw_r1
-				dd	@grcgw_tcr0,	@grcgw_tcr1		; 80 tdw/tcr
-				dd	@egcw_rd,		@egcw_rd
-				dd	@vramw_r0,		@vramw_r1		; c0 rmw
-				dd	@egcw_rd,		@egcw_rd
 
 
 section .text
@@ -1083,30 +1100,65 @@ readmemory_b:
 					mov		ax, 0ffffh
 					ret
 
+
+					align	16
+@i286_memorymap@4:	and		ecx, 1
+					shl		ecx, 5
+					lea		ecx, [memmap + ecx]
+					mov		edx, _memory_read
+					mov		eax, [ecx]
+					mov		[edx + 74h], eax
+					mov		[edx + 78h], eax
+					mov		eax, [ecx+4]
+					mov		[edx + 7ch], eax
+					mov		eax, [ecx+8]
+					mov		edx, _memory_write
+					mov		[edx + 68h], eax
+					mov		[edx + 6ch], eax
+					mov		eax, [ecx+12]
+					mov		[edx + 74h], eax
+					mov		[edx + 78h], eax
+					mov		[edx + 7ch], eax
+					mov		eax, [ecx+16]
+					mov		edx, _memword_read
+					mov		[edx + 74h], eax
+					mov		[edx + 78h], eax
+					mov		eax, [ecx+20]
+					mov		[edx + 7ch], eax
+					mov		eax, [ecx+24]
+					mov		edx, _memword_write
+					mov		[edx + 68h], eax
+					mov		[edx + 6ch], eax
+					mov		eax, [ecx+28]
+					mov		[edx + 74h], eax
+					mov		[edx + 78h], eax
+					mov		[edx + 7ch], eax
+					ret
+
 					align	16
 @i286_vram_dispatch@4:
 					mov		edx, ecx
 					and		edx, byte 15
-					mov		eax, [_vram_write + edx*4]
-					mov		[_memory_write + 54h], eax		; VRAM_B
-					mov		[_memory_write + 58h], eax		; VRAM_R
-					mov		[_memory_write + 5ch], eax		; VRAM_G
-					mov		[_memory_write + 70h], eax		; VRAM_E
-					mov		eax, [_vram_read + edx*4]
+					mov		eax, [vram_read + edx*4]
 					mov		[_memory_read + 54h], eax		; VRAM_B
 					mov		[_memory_read + 58h], eax		; VRAM_R
 					mov		[_memory_read + 5ch], eax		; VRAM_G
 					mov		[_memory_read + 70h], eax		; VRAM_E
-					mov		eax, [_vramw_write + edx*4]
-					mov		[_memword_write + 54h], eax		; VRAM_B
-					mov		[_memword_write + 58h], eax		; VRAM_R
-					mov		[_memword_write + 5ch], eax		; VRAM_G
-					mov		[_memword_write + 70h], eax		; VRAM_E
-					mov		eax, [_vramw_read + edx*4]
+					mov		eax, [vram_write + edx*4]
+					mov		[_memory_write + 54h], eax		; VRAM_B
+					mov		[_memory_write + 58h], eax		; VRAM_R
+					mov		[_memory_write + 5ch], eax		; VRAM_G
+					mov		[_memory_write + 70h], eax		; VRAM_E
+					mov		eax, [vramw_read + edx*4]
 					mov		[_memword_read + 54h], eax		; VRAM_B
 					mov		[_memword_read + 58h], eax		; VRAM_R
 					mov		[_memword_read + 5ch], eax		; VRAM_G
 					mov		[_memword_read + 70h], eax		; VRAM_E
+					mov		eax, [vramw_write + edx*4]
+					mov		[_memword_write + 54h], eax		; VRAM_B
+					mov		[_memword_write + 58h], eax		; VRAM_R
+					mov		[_memword_write + 5ch], eax		; VRAM_G
+					mov		[_memword_write + 70h], eax		; VRAM_E
 					test	ecx, 10h
 					jne		short degtaldispatch_e
 					mov		eax, @i286_nonram_w@8

@@ -27,10 +27,14 @@ item_sw		dw	4 dup(?)
 dipitem		ends
 
 
-START:			jmp		short main
+START:			jmp		short vxmain
 				dw		offset dipswflag
+				mov		dl, 1
+				jmp		short main
+				mov		dl, 2
+				jmp		short main
 
-
+vxmain:			mov		dl, 0
 main:			cli
 				cld
 				mov		ax, 0030h
@@ -39,6 +43,7 @@ main:			cli
 
 				mov		ax, DATASEG
 				mov		ds, ax
+				mov		ds:[MACTYPE], dl
 
 ifdef DEBUG_INIT
 				DEBUG_INIT
@@ -63,9 +68,11 @@ key1cklp:		call	boot_keycheck
 
 ;				jmp		ssp_start
 
+				cmp		byte ptr ds:[MACTYPE], 0
+				jne		short key2ck
 				call	BEEP_TEST
 
-				mov		ah, 32
+key2ck:			mov		ah, 32
 key2cklp:		call	boot_keycheck
 				cmp		al, BOOT_MENU
 				je		short boot_menujmp
@@ -103,15 +110,22 @@ boot_normalprc:	push	ax
 
 				mov		cl, 0e1h
 				xor		dx, dx
-				pop		ax
+				pop		bx
 
-				add		ax, ax
-				mov		bx, ax
+				mov		al, ds:[MACTYPE]
+				cmp		al, 0
+				je		short necmemchk
+				dec		al
+				jne		short retbioswait
+
+				call	epson_memtest
+				jmp		short retbioswait
+
+necmemchk:		add		bx, bx
 				call	cs:firmproc[bx]
-
 				call	MEMORY_TEST
 
-				mov		ah, 90
+retbioswait:	mov		ah, 90
 				call	WAITVSYNC
 
 				clc
@@ -136,8 +150,6 @@ include	ssp_dip.x86
 include	ssp_msw.x86
 
 ; ---------------------------------------------------------------------------
-
-
 
 disptextjis:	push	dx
 				push	di

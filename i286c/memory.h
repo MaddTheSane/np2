@@ -7,7 +7,10 @@
 // 000000-0fffff ÉÅÉCÉìÉÅÉÇÉä
 // 100000-10ffef HMA
 // 110000-193fff FONT-ROM/RAM
-// 1a8000-1e7fff VRAM1
+// 1a8000-1bffff VRAM1
+// 1c0000-1c7fff ITF-ROM BAK
+// 1c8000-1dffff EPSON RAM
+// 1e0000-1e7fff VRAM1
 // 1f8000-1fffff ITF-ROM
 
 enum {
@@ -27,7 +30,7 @@ enum {
 	VRAM1_E		= (VRAM_STEP + VRAM_E),
 
 	FONT_ADRS	= 0x110000,
-	ITF_ADRS	= 0x1f8000
+	ITF_ADRS	= (VRAM_STEP + 0xf8000)
 };
 
 #define	VRAMADDRMASKEX(a)	((a) & (VRAM_STEP | 0x7fff))
@@ -39,6 +42,7 @@ extern "C" {
 
 extern	BYTE	mem[0x200000];
 
+void MEMCALL i286_memorymap(UINT type);
 void MEMCALL i286_vram_dispatch(UINT operate);
 
 REG8 MEMCALL i286_memoryread(UINT32 address);

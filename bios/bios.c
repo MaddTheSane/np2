@@ -175,10 +175,6 @@ void bios_init(void) {
 	mem[0xffff0] = 0xea;
 	STOREINTELDWORD(mem + 0xffff1, 0xfd800000);
 
-	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
-	mem[ITF_ADRS + 0x7ff0] = 0xea;
-	STOREINTELDWORD(mem + ITF_ADRS + 0x7ff1, 0xf8000000);
-
 	if ((!biosrom) && (!(pc.model & PCMODEL_EPSON))) {
 		CopyMemory(mem + 0xe8dd8, neccheck, 0x25);
 		pos = LOADINTELWORD(itfrom + 2);
@@ -196,6 +192,16 @@ void bios_init(void) {
 
 	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
 	bios0x09_init();
+
+	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
+	mem[ITF_ADRS + 0x7ff0] = 0xea;
+	STOREINTELDWORD(mem + ITF_ADRS + 0x7ff1, 0xf8000000);
+	if (pc.model & PCMODEL_EPSON) {
+		mem[ITF_ADRS + 0x7ff1] = 0x04;
+	}
+	else if ((pc.model & PCMODELMASK) == PCMODEL_VM) {
+		mem[ITF_ADRS + 0x7ff1] = 0x08;
+	}
 #else
 	fh = file_open_c("itf.rom");
 	if (fh != FILEH_INVALID) {

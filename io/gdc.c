@@ -335,11 +335,13 @@ static void IOOUTCALL gdc_o6a(UINT port, REG8 dat) {
 	else {
 		switch(dat) {
 			case 0x40:
+			case 0x80:					// EPSON?
 				gdc.display &= ~1;
 				gdcs.textdisp |= GDCSCRN_EXT;
 				break;
 
 			case 0x41:
+			case 0x81:					// EPSON?
 				gdc.display |= 1;
 				gdcs.textdisp |= GDCSCRN_EXT;
 				break;

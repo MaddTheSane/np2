@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.4 2003/12/26 22:24:06 yui Exp $	*/
+/*	$Id: cpu.h,v 1.5 2003/12/27 11:55:23 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -474,6 +474,7 @@ void set_eflags(DWORD new_flags, DWORD mask);
 void ia32_init(void);
 
 void ia32reset(void);
+void ia32shut(void);
 void ia32(void);
 void ia32withtrap(void);
 void ia32withdma(void);

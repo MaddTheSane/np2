@@ -12,6 +12,7 @@
 	IMPORT	egc_read_w
 
 	EXPORT	memfn
+	EXPORT	i286_memorymap
 	EXPORT	i286_vram_dispatch
 
 	EXPORT	i286_nonram_r
@@ -50,7 +51,7 @@ memfn	dcd		i286_rdex		; 00
 		dcd		vram_r0			; e0
 		dcd		i286_rd
 		dcd		i286_rd
-		dcd		i286_itf
+		dcd		i286_rb
 
 		dcd		i286_wtex		; 00
 		dcd		i286_wtex
@@ -116,7 +117,7 @@ memfn	dcd		i286_rdex		; 00
 		dcd		vramw_r0		; e0
 		dcd		i286w_rd
 		dcd		i286w_rd
-		dcd		i286w_itf
+		dcd		i286w_rb
 
 		dcd		i286w_wtex		; 00
 		dcd		i286w_wtex
@@ -993,7 +994,6 @@ grcgw_clock	;;	ldr		r3, grww_vramop
 				mov		pc, lr
 
 
-
 ; ---- egc
 
 egc_rd			ldrb	r3, [r9, #MEMWAIT_GRCG]
@@ -1103,8 +1103,6 @@ emmcw_rd_3fff	eor		r12, r12, #(1 << 14)				; !
 				mov		pc, lr
 
 
-
-
 emmcw_wt		ldr		r2, emwwt_extmempp
 				and		r12, r0, #(3 << 14)
 				mov		r0, r0 lsl #(32 - 14)
@@ -1129,28 +1127,51 @@ emmcw_wt_3fff	eor		r12, r12, #(1 << 14)				; !
 
 ; ---- itf
 
-i286_itf		ldrb	r2, [r9, #CPU_ITFBANK]
-				mov		r3, r0 lsl #(32 - 15)
-				add		r12, r9, #ITF_ADRS
+i286_rb			ldrb	r2, [r9, #CPU_ITFBANK]
+				orr		r12, r9, #VRAM_STEP
 				cmp		r2, #0
 				ldreqb	r0, [r9, r0]
-				ldrneb	r0, [r12, r3 lsr #(32 - 15)]
+				ldrneb	r0, [r12, r9]
 				mov		pc, lr
 
 
-i286w_itf		ldrb	r2, [r9, #CPU_ITFBANK]
+i286_wb			ldrb	r2, [r9, #CPU_ITFBANK]
+				orr		r12, r9, #(&1c8000 - &0e8000)
+				cmp		r2, #0
+				streqb	r1, [r9, r0]
+				strneb	r1, [r12, r9]
+				mov		pc, lr
+
+
+i286w_rb		ldrb	r2, [r9, #CPU_ITFBANK]
 				tst		r0, #1
-				bne		i286w_itf_odd
+				bne		i286w_rb_odd
 				cmp		r2, #0
 				orrne	r0, r0, #VRAM_STEP
 				ldrh	r0, [r0, r9]
 				mov		pc, lr
-i286w_itf_odd	cmp		r2, #0
+i286w_rb_odd	cmp		r2, #0
 				orrne	r0, r0, #VRAM_STEP
 				add		r2, r0, #1
 				ldrb	r0, [r0, r9]
 				ldrb	r1, [r2, r9]
 				orr		r0, r0, r1 lsl #8
+				mov		pc, lr
+
+
+i286w_wb		ldrb	r2, [r9, #CPU_ITFBANK]
+				tst		r0, #1
+				bne		i286w_wb_odd
+				cmp		r2, #0
+				addne	r0, r0, #(&1c8000 - &0e8000)
+				strh	r1, [r0, r9]
+				mov		pc, lr
+i286w_wb_odd	cmp		r2, #0
+				addne	r0, r0, #(&1c8000 - &0e8000)
+				mov		r3, r1 lsr #8
+				add		r2, r0, #1
+				strb	r1, [r0, r9]
+				strb	r3, [r2, r9]
 				mov		pc, lr
 
 
@@ -1164,6 +1185,55 @@ i286_wn			mov		pc, lr
 
 
 ; ---- dispatch
+
+i286_memorymap
+				ldr		r3, i2mm_memfn
+				and		r1, r0, #1
+				adr		r2, mmaptbl
+				add		r12, r2, r1 lsl #5
+				ldr		r1, [r2, r1 lsl #5]
+				ldr		r2, [r12, #4]
+				str		r1, [r3, #((0 * 32) + (0xe8000 >> (15 - 2)))]
+				str		r1, [r3, #((0 * 32) + (0xf0000 >> (15 - 2)))]
+				str		r2, [r3, #((0 * 32) + (0xf8000 >> (15 - 2)))]
+				ldr		r1, [r12, #8]
+				ldr		r2, [r12, #12]
+				str		r1, [r3, #((4 * 32) + (0xd0000 >> (15 - 2)))]
+				str		r1, [r3, #((4 * 32) + (0xd8000 >> (15 - 2)))]
+				str		r2, [r3, #((4 * 32) + (0xe8000 >> (15 - 2)))]
+				str		r2, [r3, #((4 * 32) + (0xf0000 >> (15 - 2)))]
+				str		r2, [r3, #((4 * 32) + (0xf8000 >> (15 - 2)))]
+				ldr		r1, [r12, #16]
+				ldr		r2, [r12, #20]
+				str		r1, [r3, #((8 * 32) + (0xe8000 >> (15 - 2)))]
+				str		r1, [r3, #((8 * 32) + (0xf0000 >> (15 - 2)))]
+				str		r2, [r3, #((8 * 32) + (0xf8000 >> (15 - 2)))]
+				ldr		r1, [r12, #24]
+				ldr		r2, [r12, #28]
+				str		r1, [r3, #((12 * 32) + (0xd0000 >> (15 - 2)))]
+				str		r1, [r3, #((12 * 32) + (0xd8000 >> (15 - 2)))]
+				str		r2, [r3, #((12 * 32) + (0xe8000 >> (15 - 2)))]
+				str		r2, [r3, #((12 * 32) + (0xf0000 >> (15 - 2)))]
+				str		r2, [r3, #((12 * 32) + (0xf8000 >> (15 - 2)))]
+				mov		pc, lr
+i2mm_memfn		dcd		memfn
+mmaptbl			dcd		i286_rd		; NEC
+				dcd		i286_rb
+				dcd		i286_wn
+				dcd		i286_wn
+				dcd		i286w_rd
+				dcd		i286w_rb
+				dcd		i286_wn
+				dcd		i286_wn
+				dcd		i286_rb		; EPSON
+				dcd		i286_rb
+				dcd		i286_wt
+				dcd		i286_wb
+				dcd		i286w_rb
+				dcd		i286w_rb
+				dcd		i286w_wt
+				dcd		i286w_wb
+
 
 i286_vram_dispatch
 				ldr		r3, i2vd_memfn

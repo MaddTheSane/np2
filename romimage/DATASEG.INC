@@ -12,6 +12,7 @@ DIPSW_2			equ		09d7h
 DIPSW_3			equ		09d8h
 KEYSTAT			equ		09d9h
 KEYBAK			equ		09dah
+MACTYPE			equ		09dbh
 
 LOCATION		equ		09e0h				; word
 	LOCATION_X	equ		09e0h
