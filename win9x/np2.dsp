@@ -1010,10 +1010,6 @@ SOURCE=.\JULIET.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\KDISPWIN.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\MENU.CPP
 # End Source File
 # Begin Source File
@@ -1047,6 +1043,10 @@ SOURCE=.\SSTP.CPP
 # Begin Source File
 
 SOURCE=.\SSTPMSG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\SUBWIND.CPP
 # End Source File
 # Begin Source File
 
@@ -1370,6 +1370,10 @@ SOURCE=..\GENERIC\KEYDISP.C
 # Begin Source File
 
 SOURCE=..\GENERIC\NP2INFO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\SOFTKBD.C
 # End Source File
 # Begin Source File
 

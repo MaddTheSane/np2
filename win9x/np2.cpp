@@ -43,8 +43,7 @@
 #include	"timing.h"
 #include	"keystat.h"
 #include	"debugsub.h"
-#include	"keydisp.h"
-#include	"kdispwin.h"
+#include	"subwind.h"
 #include	"viewer.h"
 
 
@@ -107,13 +106,16 @@ static void winuileave(void) {
 
 WINLOCEX np2_winlocexallwin(HWND base) {
 
-	HWND	list[3];
 	UINT	i;
+	UINT	cnt;
+	HWND	list[4];
 
-	list[0] = hWndMain;
-	list[1] = toolwin_gethwnd();
-	list[2] = kdispwin_gethwnd();
-	for (i=0; i<3; i++) {
+	cnt = 0;
+	list[cnt++] = hWndMain;
+	list[cnt++] = toolwin_gethwnd();
+	list[cnt++] = kdispwin_gethwnd();
+	list[cnt++] = skbdwin_gethwnd();
+	for (i=0; i<cnt; i++) {
 		if (list[i] == base) {
 			list[i] = NULL;
 		}
@@ -121,7 +123,7 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 	if (base != hWndMain) {		// hWndMain‚Ì‚Ý‘S‘ÌˆÚ“®
 		base = NULL;
 	}
-	return(winlocex_create(base, list, 3));
+	return(winlocex_create(base, list, cnt));
 }
 
 static void changescreen(BYTE newmode) {
@@ -143,6 +145,7 @@ static void changescreen(BYTE newmode) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			toolwin_destroy();
 			kdispwin_destroy();
+			skbdwin_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
 			wlex = np2_winlocexallwin(hWndMain);
@@ -906,6 +909,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					update |= SYS_UPDATEOSCFG;
 					break;
 
+#if defined(SUPPORT_KEYDISP)
 				case IDM_KEYDISP:
 					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
 					if (np2oscfg.keydisp) {
@@ -915,6 +919,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						kdispwin_destroy();
 					}
 					break;
+#endif
+#if defined(SUPPORT_SOFTKBD)
+				case IDM_SOFTKBD:
+					skbdwin_create();
+					break;
+#endif
 
 				case IDM_SCREENCENTER:
 					if ((!scrnmng_isfullscreen()) &&
@@ -975,6 +985,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
 					subwin = kdispwin_gethwnd();
+					if (subwin) {
+						ShowWindow(subwin, SW_SHOWNOACTIVATE);
+					}
+					subwin = skbdwin_gethwnd();
 					if (subwin) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
@@ -1346,6 +1360,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	initload();
 	toolwin_readini();
 	kdispwin_readini();
+	skbdwin_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -1397,6 +1412,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	toolwin_initapp(hInstance);
 	kdispwin_initialize(hPreInst);
+	skbdwin_initialize(hPreInst);
 	viewer_init(hPreInst);
 
 	mousemng_initialize();
@@ -1639,6 +1655,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	toolwin_destroy();
 	kdispwin_destroy();
+	skbdwin_destroy();
 
 	pccore_cfgupdate();
 
@@ -1668,6 +1685,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		initsave();
 		toolwin_writeini();
 		kdispwin_writeini();
+		skbdwin_writeini();
 	}
 
 	TRACETERM();

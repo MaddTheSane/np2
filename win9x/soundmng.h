@@ -39,7 +39,7 @@ enum {
 	SNDPROC_MASTER		= 0,
 	SNDPROC_MAIN,
 	SNDPROC_TOOL,
-	SNDPROC_KEYDISP
+	SNDPROC_SUBWIND
 };
 
 void soundmng_enable(UINT proc);

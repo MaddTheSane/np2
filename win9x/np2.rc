@@ -1005,10 +1005,11 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_TOOLWIN             "&Tool Window"
     IDS_KEYDISP             "&Key display"
+    IDS_SOFTKBD				"&Soft keyboard"
     IDS_SCREENCENTER        "&Centering"
     IDS_SNAPENABLE          "&Window Snap"
     IDS_BACKGROUND          "&Background"
-    IDS_BGSOUND             "Background &Sound"
+    IDS_BGSOUND             "Back&ground Sound"
     IDS_SCRNMUL4            " 320x200"
     IDS_SCRNMUL6            " 480x300"
     IDS_SCRNMUL8            " 640x400"

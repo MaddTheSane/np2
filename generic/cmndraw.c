@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"bmpdata.h"
 #include	"scrnmng.h"
 #include	"cpucore.h"
 #include	"font.h"
@@ -6,7 +7,7 @@
 #include	"minifont.res"
 
 
-void cmndraw_getpals(CMNPALFN *fn, CMNPAL *pal, UINT pals) {
+void cmndraw_getpals(CMNPALFN *fn, CMNPALS *pal, UINT pals) {
 
 	UINT	i;
 
@@ -427,7 +428,7 @@ const BYTE	*p;
 
 // ----
 
-void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal) {
+void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPALS *pal) {
 
 	if ((vram == NULL) || (pal == NULL)) {
 		return;
@@ -456,7 +457,7 @@ void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal) {
 	}
 }
 
-void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL *pal) {
+void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPALS *pal) {
 
 	UINT	s;
 const BYTE	*ptr;
@@ -504,6 +505,103 @@ const BYTE	*ptr;
 #endif
 		}
 		x += ptr[0] + 1;
+	}
+}
+
+
+// ---- bmp
+
+void cmddraw_bmp16(CMNVRAM *vram, const void *bmp, CMNPALCNV cnv) {
+
+const BMPFILE	*bf;
+const BMPINFO	*bi;
+const BYTE		*palptr;
+	BMPDATA		inf;
+	BYTE		*src;
+	int			bmpalign;
+	UINT		pals;
+	UINT		c;
+	RGB32		paltbl[16];
+	CMNPAL		pal[16];
+	BYTE		*dst;
+	int			yalign;
+	int			x;
+	int			y;
+
+	if ((vram == NULL) || (bmp == NULL) || (cnv == NULL)) {
+		return;
+	}
+	bf = (BMPFILE *)bmp;
+	bi = (BMPINFO *)(bf + 1);
+	palptr = (BYTE *)(bi + 1);
+	if (((bf->bfType[0] != 'B') && (bf->bfType[1] != 'M')) ||
+		(bmpdata_getinfo(bi, &inf) != SUCCESS) || (inf.bpp != 4)) {
+		return;
+	}
+	src = (BYTE *)bf + (LOADINTELDWORD(bf->bfOffBits));
+	bmpalign = bmpdata_getalign(bi);
+	if (inf.height > 0) {
+		src += (inf.height - 1) * bmpalign;
+		bmpalign *= -1;
+	}
+	else {
+		inf.height *= -1;
+	}
+	if ((vram->width < inf.width) || (vram->height < inf.height)) {
+		return;
+	}
+	pals = LOADINTELDWORD(bi->biClrUsed);
+	pals = min(pals, 16);
+	ZeroMemory(paltbl, sizeof(paltbl));
+	for (c=0; c<pals; c++) {
+		paltbl[c].p.b = palptr[c*4+0];
+		paltbl[c].p.g = palptr[c*4+1];
+		paltbl[c].p.r = palptr[c*4+2];
+	}
+	(*cnv)(pal, paltbl, pals, vram->bpp);
+	dst = vram->ptr;
+#if 0
+	dst += ((vram->width - inf.width) / 2) * vram->xalign;
+	dst += ((vram->height - inf.height) / 2) * vram->yalign;
+#endif
+	yalign = vram->yalign - (inf.width * vram->xalign);
+	switch(vram->bpp) {
+#if defined(SUPPORT_16BPP)
+		case 16:
+			for (y=0; y<inf.height; y++) {
+				for (x=0; x<inf.width; x++) {
+					if (!(x & 1)) {
+						c = src[x >> 1] >> 4;
+					}
+					else {
+						c = src[x >> 1] & 15;
+					}
+					*(UINT16 *)dst = pal[c].pal16;
+					dst += vram->xalign;
+				}
+				src += bmpalign;
+				dst += yalign;
+			}
+			break;
+#endif
+#if defined(SUPPORT_32BPP)
+		case 32:
+			for (y=0; y<inf.height; y++) {
+				for (x=0; x<inf.width; x++) {
+					if (!(x & 1)) {
+						c = src[x >> 1] >> 4;
+					}
+					else {
+						c = src[x >> 1] & 15;
+					}
+					*(UINT32 *)dst = pal[c].pal32.d;
+					dst += vram->xalign;
+				}
+				src += bmpalign;
+				dst += yalign;
+			}
+			break;
+#endif
 	}
 }
 

@@ -13,7 +13,7 @@ typedef struct {
 	UINT	mode;
 	int		width;
 	int		height;
-	CMNPAL	pal[MEMDBG32_PALS];
+	CMNPALS	pal[MEMDBG32_PALS];
 } MEMDBG32;
 
 static	MEMDBG32	memdbg32;

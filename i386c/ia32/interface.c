@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.19 2004/03/10 23:01:08 yui Exp $	*/
+/*	$Id: interface.c,v 1.20 2004/03/25 08:51:24 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -92,6 +92,16 @@ ia32shut(void)
 
 	memset(&i386core.s, 0, offsetof(I386STAT, cpu_type));
 	ia32_initreg();
+}
+
+void
+ia32a20enable(BOOL enable)
+{
+#if (CPU_FAMILY == 3)
+	CPU_ADRSMASK = (enable)?0x00ffffff:0x00ffffff;
+#else
+	CPU_ADRSMASK = (enable)?0xffffffff:0x00ffffff;
+#endif
 }
 
 void

@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.12 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: interface.h,v 1.13 2004/03/25 08:51:24 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,6 +30,10 @@
 #ifndef	IA32_CPU_INTERFACE_H__
 #define	IA32_CPU_INTERFACE_H__
 
+#ifndef CPUCALL
+#define	CPUCALL
+#endif
+
 #if !defined(QWORD_CONST)
 #define	QWORD_CONST(v)	v ## ULL
 #define	SQWORD_CONST(v)	v ## LL
@@ -46,6 +50,7 @@
 #define	CPU_EXEC()			ia32()
 #define	CPU_EXECV30()			ia32()
 #define	CPU_SHUT()			ia32shut()
+#define	CPU_A20EN(enable)		ia32a20enable(enable)
 #define	CPU_SETEXTSIZE(size)		ia32_setextsize((UINT32)(size) << 20)
 #define CPU_SETEMM(frame, addr)
 

@@ -69,6 +69,7 @@ typedef	int				SINT32;
 
 #define	SUPPORT_CRT15KHZ
 #define	SUPPORT_PC9861K
+#define	SUPPORT_SOFTKBD
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_HOSTDRV

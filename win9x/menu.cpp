@@ -81,7 +81,12 @@ const MENUITEMS *iterm;
 
 static const MENUITEMS smenuitem[] = {
 			{IDM_TOOLWIN,		IDS_TOOLWIN},
+#if defined(SUPPORT_KEYDISP)
 			{IDM_KEYDISP,		IDS_KEYDISP},
+#endif
+#if defined(SUPPORT_SOFTKBD)
+			{IDM_SOFTKBD,		IDS_SOFTKBD},
+#endif
 			{0,					0},
 			{IDM_SCREENCENTER,	IDS_SCREENCENTER},
 			{IDM_SNAPENABLE,	IDS_SNAPENABLE},
