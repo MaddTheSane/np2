@@ -192,7 +192,6 @@ static void setlist(ControlRef hwnd, const TOOLFDD *fdd, UINT sel) {
 const char		*q;
 const char		*p;
     CFStringRef	str;
-    SInt32		attr = kMenuItemAttrIconDisabled;
     Str255		pname;
     bool		success = false;
     
@@ -210,6 +209,7 @@ const char		*p;
 	}
 #endif
 	for (i=0; i<fdd->cnt; i++) {
+        SInt32		attr = kMenuItemAttrIconDisabled;
 		p = fdd->name[fdd->pos[i]];
         success = getLongFileName(cfname, p);
         str = CFStringCreateWithCString(NULL, cfname, CFStringGetSystemEncoding());
@@ -238,6 +238,9 @@ const char		*p;
             AppendMenu(menu, pname);
             if (file_attr(p)==FILEATTR_ARCHIVE) {
                 EnableMenuItem(menu, i+1);
+            }
+            else {
+                DisableMenuItem(menu, i+1);
             }
         }
 		p += sizeof(fdd->name[0]);
