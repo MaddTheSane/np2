@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.3 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.4 2004/01/26 15:23:21 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -706,7 +706,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		}
 
 		load_ss(ss_sel.selector, &ss_sel.desc, ss_sel.desc.dpl);
-		CPU_SP = tss_esp;
+		CPU_ESP = tss_esp;
 
 		load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->desc.dpl);
 		SET_EIP(callgate_sel->desc.u.gate.offset);
@@ -981,11 +981,7 @@ RETfar_pm(DWORD nbytes)
 		SET_EIP(new_ip);
 
 		load_ss(ss_sel.selector, &ss_sel.desc, ret_sel.rpl);
-		if (CPU_STAT_SS32) {
-			CPU_ESP = new_sp + nbytes;
-		} else {
-			CPU_SP = new_sp + nbytes;
-		}
+		CPU_ESP = new_sp + nbytes;
 
 		/* check segment register */
 		check_segreg();
@@ -999,13 +995,13 @@ RETfar_pm(DWORD nbytes)
  * IRET_pm
  */
 
-#undef	RETURN_FROM_VM86
+#undef	IA32_RETURN_FROM_VM86
 
 static void IRET_pm_nested_task(void);
 static void IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
-#ifdef	RETURN_FROM_VM86
+#if defined(IA32_RETURN_FROM_VM86)
 static void IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
-#endif	/* RETURN_FROM_VM86 */
+#endif	/* IA32_RETURN_FROM_VM86 */
 
 void
 IRET_pm(void)
@@ -1016,6 +1012,7 @@ IRET_pm(void)
 	DWORD mask = 0;
 	DWORD new_ip, new_sp, new_flags;
 	WORD new_cs, new_ss;
+	int old_cpl;
 	int rv;
 
 	VERBOSE(("IRET_pm: old EIP = %04x:%08x, old ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
@@ -1024,6 +1021,7 @@ IRET_pm(void)
 		/* TASK-RETURN: PE=1, VM=0, NT=1 */
 		IRET_pm_nested_task();
 		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
+		CPU_STAT_NERROR = 0;
 		return;
 	}
 
@@ -1035,7 +1033,7 @@ IRET_pm(void)
 	if (CPU_INST_OP32) {
 		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 12);
 		new_ip = cpu_vmemoryread_d(CPU_SS_INDEX, sp);
-		new_cs = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 4);
+		new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 4);
 		new_flags = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 8);
 	} else {
 		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 6);
@@ -1045,19 +1043,21 @@ IRET_pm(void)
 	}
 	VERBOSE(("IRET_pm: new_ip = %08x, new_cs = %04x, new_eflags = %08x", new_ip, new_cs, new_flags));
 
-#ifdef	RETURN_FROM_VM86
+#ifdef	IA32_RETURN_FROM_VM86
 	if (CPU_EFLAG & VM_FLAG) {
 		/* RETURN-FROM-VIRTUAL-8086-MODE */
 		IRET_pm_return_from_vm86(new_ip, new_cs, new_flags);
 		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
+		CPU_STAT_NERROR = 0;
 		return;
 	}
-#endif	/* RETURN_FROM_VM86 */
+#endif	/* IA32_RETURN_FROM_VM86 */
 
 	if (new_flags & VM_FLAG) {
 		/* RETURN-TO-VIRTUAL-8086-MODE */
 		IRET_pm_return_to_vm86(new_ip, new_cs, new_flags);
 		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
+		CPU_STAT_NERROR = 0;
 		return;
 	}
 
@@ -1102,7 +1102,7 @@ IRET_pm(void)
 		if (CPU_INST_OP32) {
 			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 20);
 			new_sp = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 12);
-			new_ss = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 16);
+			new_ss = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 16);
 		} else {
 			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 10);
 			new_sp = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 6);
@@ -1146,6 +1146,7 @@ IRET_pm(void)
 			EXCEPTION(SS_EXCEPTION, ss_sel.idx);
 		}
 
+		/* compiler happy :-) */
 		stacksize = 0;
 	} else {
 		VERBOSE(("IRET_pm: RETURN-TO-SAME-PRIVILEGE-LEVEL"));
@@ -1167,6 +1168,12 @@ IRET_pm(void)
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
+	/* set new register */
+	old_cpl = CPU_STAT_CPL;
+	load_cs(iret_sel.selector, &iret_sel.desc, iret_sel.rpl);
+	SET_EIP(new_ip);
+
+	/* set new eflags */
 	mask = 0;
 	if (CPU_INST_OP32)
 		mask |= RF_FLAG;
@@ -1178,16 +1185,11 @@ IRET_pm(void)
 			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
 		}
 	}
-
-	/* set new register */
-	load_cs(iret_sel.selector, &iret_sel.desc, iret_sel.rpl);
-	SET_EIP(new_ip);
-
 	set_eflags(new_flags, mask);
 
-	if (iret_sel.rpl != CPU_STAT_CPL) {
+	if (iret_sel.rpl > old_cpl) {
 		/* RETURN-OUTER-PRIVILEGE-LEVEL */
-		load_ss(new_ss, &ss_sel.desc, iret_sel.rpl);
+		load_ss(ss_sel.selector, &ss_sel.desc, iret_sel.rpl);
 		CPU_ESP = new_sp;
 
 		/* check segment register */
@@ -1200,6 +1202,7 @@ IRET_pm(void)
 			CPU_SP += stacksize;
 		}
 	}
+	CPU_STAT_NERROR = 0;
 
 	VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
 }
@@ -1285,11 +1288,11 @@ IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 
 	CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 36);
 	new_sp = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 12);
-	segsel[CPU_SS_INDEX] = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 16);
-	segsel[CPU_ES_INDEX] = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 20);
-	segsel[CPU_DS_INDEX] = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 24);
-	segsel[CPU_FS_INDEX] = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 28);
-	segsel[CPU_GS_INDEX] = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 32);
+	segsel[CPU_SS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 16);
+	segsel[CPU_ES_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 20);
+	segsel[CPU_DS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 24);
+	segsel[CPU_FS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 28);
+	segsel[CPU_GS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 32);
 	segsel[CPU_CS_INDEX] = new_cs;
 
 	for (i = 0; i < CPU_SEGREG_NUM; i++) {
@@ -1302,7 +1305,7 @@ IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 	SET_EIP(new_ip);
 }
 
-#ifdef	RETURN_FROM_VM86
+#ifdef	IA32_RETURN_FROM_VM86
 /*---
  * IRET_pm: VM_FLAG
  */
@@ -1335,7 +1338,7 @@ IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 	VERBOSE(("IRET_pm: trap to virtual-8086 monitor: VM=1, IOPL<3"));
 	EXCEPTION(GP_EXCEPTION, 0);
 }
-#endif	/* RETURN_FROM_VM86 */
+#endif	/* IA32_RETURN_FROM_VM86 */
 
 
 /*-----
