@@ -42,8 +42,11 @@ bool getResourceFile(const char* name, FSSpec* fsc) {
     CFURLRef	url = NULL;
     FSRef		fsr;
     bool		ret = false;
+	CFStringRef str = CFSTRj(name);
     
-    url=CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTRj(name), NULL, NULL);
+	if (!str) return (false);
+    url=CFBundleCopyResourceURL(CFBundleGetMainBundle(), str, NULL, NULL);
+	CFRelease(str);
     if (url) {
         if (CFURLGetFSRef(url, &fsr)) {
             if (FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, fsc, NULL) == noErr) {

@@ -12,6 +12,7 @@
 #include	"np2ver.h"
 #include	"np2info.h"
 #include	"aboutdlg.h"
+#include	<QuickTime/QuickTime.h>
 
 static	WindowRef	aboutWin;
 static	PicHandle	pict;
@@ -83,7 +84,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 image = getControlRefByID('logo', 0, aboutWin);
                 pict = getBMPfromResource("np2logo.tiff", &bounds);
                 SetControlData(image, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
-                version = getControlRefByID('vers', 0, aboutWin);
+				version = getControlRefByID('vers', 0, aboutWin);
                 SetControlData(version, kControlNoPart, kControlStaticTextTextTag, sizeof(NP2VER_CORE), NP2VER_CORE);
                 err=noErr;
                 break;

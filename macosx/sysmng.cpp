@@ -104,7 +104,10 @@ void sysmng_updatecaption(BYTE flag) {
 	milstr_ncat(work, strclock, sizeof(work));
 
 #if defined(NP2GCC)
-    SetWindowTitleWithCFString(hWndMain, CFStringCreateWithCString(NULL, work, CFStringGetSystemEncoding()));
+	CFStringRef cfstr;
+	cfstr = CFStringCreateWithCString(NULL, work, CFStringGetSystemEncoding());
+    SetWindowTitleWithCFString(hWndMain, cfstr);
+	CFRelease(cfstr);
 #else
 	mkstr255(str, work);
 	SetWTitle(hWndMain, str);

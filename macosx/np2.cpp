@@ -973,6 +973,22 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                 }
 #endif
                 break;
+		case kEventClassKeyboard:
+                if (GetEventKind(event)==kEventRawKeyModifiersChanged) {
+					static UInt32 backup = 0;
+                    if (modif & shiftKey) keystat_senddata(0x70);
+                    else keystat_senddata(0x70 | 0x80);
+                    if (modif & optionKey) keystat_senddata(0x73);
+                    else keystat_senddata(0x73 | 0x80);
+                    if (modif & controlKey) keystat_senddata(0x74);
+                    else keystat_senddata(0x74 | 0x80);
+                    if ((modif & alphaLock) != (backup & alphaLock)) {
+                        keystat_senddata(0x71);
+                        backup = modif;
+                    }
+                    result = noErr;
+				}
+				break;
         default:
             break; 
     }
@@ -994,7 +1010,6 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
     eventClass = GetEventClass(event);
     whatHappened = GetEventKind(event);
         
-    static UInt32 backup = 0;
     switch (eventClass)
     {        
         case kEventClassKeyboard:
@@ -1022,19 +1037,6 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                     }
                     else {
                         mackbd_keydown(key);
-                    }
-                    result = noErr;
-                    break;
-                case kEventRawKeyModifiersChanged:
-                    if (modif & shiftKey) keystat_senddata(0x70);
-                    else keystat_senddata(0x70 | 0x80);
-                    if (modif & optionKey) keystat_senddata(0x73);
-                    else keystat_senddata(0x73 | 0x80);
-                    if (modif & controlKey) keystat_senddata(0x74);
-                    else keystat_senddata(0x74 | 0x80);
-                    if ((modif & alphaLock) != (backup & alphaLock)) {
-                        keystat_senddata(0x71);
-                        backup = modif;
                     }
                     result = noErr;
                     break;
@@ -1084,6 +1086,7 @@ static const EventTypeSpec appEventList[] = {
 				{kEventClassMouse,		kEventMouseMoved},
 				{kEventClassMouse,		kEventMouseUp},
 #endif
+				{kEventClassKeyboard,	kEventRawKeyModifiersChanged},
 			};
 
 static const EventTypeSpec windEventList[] = {
@@ -1096,7 +1099,6 @@ static const EventTypeSpec windEventList[] = {
 				{kEventClassKeyboard,	kEventRawKeyDown},
 				{kEventClassKeyboard,	kEventRawKeyUp},
 				{kEventClassKeyboard,	kEventRawKeyRepeat},
-				{kEventClassKeyboard,	kEventRawKeyModifiersChanged},
 			};
 
 
@@ -1147,7 +1149,11 @@ static bool setupMainWindow(void) {
     setUpCarbonEvent();
     if (backupwidth) scrnmng_setwidth(0, backupwidth);
     if (backupheight) scrnmng_setheight(0, backupheight);
-    SetWindowTitleWithCFString(hWndMain, CFStringCreateWithCString(NULL, np2oscfg.titles, kCFStringEncodingUTF8));
+	CFStringRef title = CFStringCreateWithCString(NULL, np2oscfg.titles, kCFStringEncodingUTF8);
+	if (title) {
+		SetWindowTitleWithCFString(hWndMain, title);
+		CFRelease(title);
+	}
 	ShowWindow(hWndMain);
     return(true);
 }

@@ -48,8 +48,8 @@ FILEH file_create(const char *path) {
 	FILEH	ret;
 	FSSpec	fss;
 	Str255	fname;
-	OSType	creator = '????';
-	OSType	fileType = '????';
+	OSType	creator = kUnknownType;
+	OSType	fileType = kUnknownType;
 
 	mkstr255(fname, path);
 	FSMakeFSSpec(0, 0, fname, &fss);
@@ -141,6 +141,26 @@ UINT file_getsize(FILEH handle) {
 	}
 	else {
 		return(0);
+	}
+}
+
+static void cnvdatetime(UTCDateTime *dt, DOSDATE *dosdate, DOSTIME *dostime) {
+
+	LocalDateTime	ldt;
+	DateTimeRec		dtr;
+
+	ZeroMemory(&dtr, sizeof(dtr));
+	ConvertUTCToLocalDateTime(dt, &ldt);
+	SecondsToDate(ldt.lowSeconds, &dtr);
+	if (dosdate) {
+		dosdate->year = dtr.year;
+		dosdate->month = (UINT8)dtr.month;
+		dosdate->day = (UINT8)dtr.day;
+	}
+	if (dostime) {
+		dostime->hour = (UINT8)dtr.hour;
+		dostime->minute = (UINT8)dtr.minute;
+		dostime->second = (UINT8)dtr.second;
 	}
 }
 
@@ -303,6 +323,133 @@ short file_attr_c(const char *path) {
 	file_catname(curpath, path, sizeof(curpath));
 	return(file_attr(curpath));
 }
+
+typedef struct {
+	BOOL			eoff;
+	FSIterator		fsi;
+	FSCatalogInfo	fsci;
+	HFSUniStr255	name;
+} _FLHDL, *FLHDL;
+
+static void char2str(char *dst, int size, const UniChar *uni, int unicnt) {
+
+	CFStringRef	cfsr;
+
+	cfsr = CFStringCreateWithCharacters(NULL, uni, unicnt);
+	CFStringGetCString(cfsr, dst, size, CFStringGetSystemEncoding());
+	CFRelease(cfsr);
+}
+
+void *file_list1st(const char *dir, FLINFO *fli) {
+
+	FLISTH		ret;
+	Str255		fname;
+	FSSpec		fss;
+	FSRef		fsr;
+	FSIterator	fsi;
+
+	mkstr255(fname, dir);
+	if ((FSMakeFSSpec(0, 0, fname, &fss) != noErr) ||
+		(FSpMakeFSRef(&fss, &fsr) != noErr) ||
+		(FSOpenIterator(&fsr, kFSIterateFlat, &fsi) != noErr)) {
+		goto ff1_err1;
+	}
+	ret = _MALLOC(sizeof(_FLHDL), dir);
+	if (ret == NULL) {
+		goto ff1_err2;
+	}
+	((FLHDL)ret)->eoff = FALSE;
+	((FLHDL)ret)->fsi = fsi;
+	if (file_listnext(ret, fli) == SUCCESS) {
+		return(ret);
+	}
+
+ff1_err2:
+	FSCloseIterator(fsi);
+
+ff1_err1:
+	return(NULL);
+}
+
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
+
+	FLHDL		flhdl;
+	ItemCount	count;
+	OSStatus	r;
+	UTCDateTime	*dt;
+
+	flhdl = (FLHDL)hdl;
+	if ((flhdl == NULL) || (flhdl->eoff)) {
+		goto ffn_err;
+	}
+	r = FSGetCatalogInfoBulk(flhdl->fsi, 1, &count, NULL,
+						kFSCatInfoNodeFlags | kFSCatInfoDataSizes |
+						kFSCatInfoAllDates,
+						&flhdl->fsci, NULL, NULL, &flhdl->name);
+	if (r != noErr) {
+		flhdl->eoff = TRUE;
+		if (r != errFSNoMoreItems) {
+			goto ffn_err;
+		}
+	}
+	if (count != 1) {
+		flhdl->eoff = TRUE;
+		goto ffn_err;
+	}
+	if (fli) {
+		fli->caps = FLICAPS_SIZE | FLICAPS_ATTR | FLICAPS_DATE | FLICAPS_TIME;
+		if (flhdl->fsci.nodeFlags & kFSNodeIsDirectoryMask) {
+			fli->attr = FILEATTR_DIRECTORY;
+			fli->size = 0;
+			dt = &flhdl->fsci.createDate;
+		}
+		else {
+			fli->attr = FILEATTR_ARCHIVE;
+			fli->size = (UINT32)flhdl->fsci.dataLogicalSize;
+			dt = &flhdl->fsci.contentModDate;
+		}
+		cnvdatetime(dt, &fli->date, &fli->time);
+		char2str(fli->path, sizeof(fli->path),
+								flhdl->name.unicode, flhdl->name.length);
+	}
+	return(SUCCESS);
+
+ffn_err:
+	return(FAILURE);
+}
+
+void file_listclose(FLISTH hdl) {
+
+	if (hdl) {
+		FSCloseIterator(((FLHDL)hdl)->fsi);
+		_MFREE(hdl);
+	}
+}
+
+BOOL getLongFileName(char *dst, const char *path) {
+
+	FSSpec			fss;
+	Str255			fname;
+	FSRef			fref;
+	HFSUniStr255	name;
+
+	if (*path == '\0') {
+		return(false);
+	}
+	mkstr255(fname, path);
+	FSMakeFSSpec(0, 0, fname, &fss);
+	FSpMakeFSRef(&fss, &fref);
+	if (FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, &name, NULL, NULL)
+																!= noErr) {
+		return(false);
+	}
+	char2str(dst, 512, name.unicode, name.length);
+	if (!dst) {
+		return(false);
+	}
+	return(true);
+}
+
 
 void file_catname(char *path, const char *sjis, int maxlen) {
 

@@ -8,7 +8,7 @@
 void Setfiletype(int ftype, OSType *creator, OSType *fileType) {
 
 	*creator = 'SMil';
-	*fileType = '????';
+//	*fileType = '????';
 
 	switch(ftype) {
 //		case FTYPE_SMIL:			// ƒVƒXƒeƒ€—\–ñ

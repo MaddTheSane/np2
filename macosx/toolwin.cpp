@@ -117,9 +117,9 @@ static const ControlID imageid = {'back', 0};
 
 static DragReceiveHandlerUPP	dr;
 static DragTrackingHandlerUPP	tr;
-static bool	isPUMA;
+static bool	isPUMA, isJaguar;
 
-static void openpopup(HIPoint location);
+static void openpopup(Point location);
 static void skinchange(bool remake);
 
 // ----
@@ -130,9 +130,15 @@ static void checkOSVersion(void) {
         Gestalt(gestaltSystemVersion, &res);
         if (res<0x1020) {
             isPUMA = true;
+			isJaguar = false;
         }
+		else if (res<0x1030) {
+            isPUMA = false;
+			isJaguar = true;
+		}
         else {
             isPUMA = false;
+			isJaguar = false;
         }
     }
 }
@@ -213,11 +219,13 @@ const char		*p;
 		p = fdd->name[fdd->pos[i]];
         success = getLongFileName(cfname, p);
         str = CFStringCreateWithCString(NULL, cfname, CFStringGetSystemEncoding());
-        if ((str) && success) {
-            if (file_attr(p) != FILEATTR_ARCHIVE) {
-                attr |= kMenuItemAttrDisabled;
-            }
-            AppendMenuItemTextWithCFString(menu, str, attr, NULL, NULL);
+        if (str) {
+			if (success) {
+				if (file_attr(p) != FILEATTR_ARCHIVE) {
+					attr |= kMenuItemAttrDisabled;
+				}
+				AppendMenuItemTextWithCFString(menu, str, attr, NULL, NULL);
+			}
             CFRelease(str);
         }
         else {
@@ -249,7 +257,10 @@ const char		*p;
         CFStringRef title;
         SetBevelButtonMenuValue(hwnd, sel+1);
         CopyMenuItemTextAsCFString(menu, sel+1, &title);
-        SetControlTitleWithCFString(hwnd, title);
+		if (title) {
+			SetControlTitleWithCFString(hwnd, title);
+			CFRelease(title);
+		}
     }
     else {
         SetControlTitleWithCFString(hwnd, CFSTR(" "));
@@ -351,9 +362,21 @@ static pascal OSStatus cfControlproc(EventHandlerCallRef myHandler, EventRef eve
     }
     else if (GetEventClass(event)==kEventClassControl && GetEventKind(event)==kEventControlContextualMenuClick) {
         HIPoint	location;
+		Point   point;
+    
         soundmng_stop();
         GetEventParameter (event, kEventParamMouseLocation, typeHIPoint, NULL, sizeof(HIPoint), NULL, &location);
-        openpopup(location);
+        point.h = (short)location.x;
+		point.v = (short)location.y;
+		if (!isJaguar && !isPUMA) {
+			GrafPtr	port, dst;
+			bool	portchanged;
+			dst = GetWindowPort(toolwin.hwnd);
+			portchanged = QDSwapPort(dst, &port);
+			LocalToGlobal(&point);
+			if (portchanged) QDSwapPort(port, NULL);
+		}
+		openpopup(point);
         soundmng_play();
     }
 
@@ -551,6 +574,9 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
     else if (GetEventClass(event)==kEventClassWindow) {
         switch (GetEventKind(event)) {
             case kEventWindowClose:
+#ifdef AVAILABLE_MAC_OS_X_VERSION_10_2_AND_LATER
+			case kEventWindowDrawerClosed:
+#endif
                 toolwin_close();
                 err=noErr;
                 break;
@@ -566,22 +592,15 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 err=noErr;
                 break;
                 
-            case kEventWindowFocusAcquired:
-                BringToFront(hWndMain);
-                err = noErr;
-                break;
-                
-                
             default:
                 break;
         }
     }
     else if (GetEventClass(event)==kEventClassKeyboard) {
-        static	UInt32	backup = 0;
         UInt32	whatHappened = GetEventKind(event);
-        UInt32 key;
+        UInt32  key;
         GetEventParameter (event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &key);
-        UInt32 modif;
+        UInt32  modif;
         GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
         switch (whatHappened)
         {
@@ -603,19 +622,6 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 }
                 else {
                     mackbd_keydown(key);
-                }
-                err = noErr;
-                break;
-            case kEventRawKeyModifiersChanged:
-                if (modif & shiftKey) keystat_senddata(0x70);
-                else keystat_senddata(0x70 | 0x80);
-                if (modif & optionKey) keystat_senddata(0x73);
-                else keystat_senddata(0x73 | 0x80);
-                if (modif & controlKey) keystat_senddata(0x74);
-                else keystat_senddata(0x74 | 0x80);
-                if ((modif & alphaLock) != (backup & alphaLock)) {
-                    keystat_senddata(0x71);
-                    backup = modif;
                 }
                 err = noErr;
                 break;
@@ -810,8 +816,12 @@ static WindowRef makeNibWindow (IBNibRef nibRef) {
             { kEventClassWindow,	kEventWindowClose }, 
             { kEventClassWindow,	kEventWindowShown }, 
             { kEventClassWindow,	kEventWindowDrawContent }, 
-            { kEventClassWindow, 	kEventWindowFocusAcquired }, 
+            { kEventClassKeyboard,	kEventRawKeyUp},
             { kEventClassKeyboard,	kEventRawKeyDown},
+            { kEventClassKeyboard,	kEventRawKeyRepeat},
+#ifdef AVAILABLE_MAC_OS_X_VERSION_10_2_AND_LATER
+			{ kEventClassWindow, 	kEventWindowDrawerClosed },
+#endif
         };
         EventHandlerRef	ref;
         InstallWindowEventHandler (win, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)win, &ref);
@@ -903,7 +913,7 @@ const char		*p;
 
 
 // ----
-static void openpopup(HIPoint location) {
+static void openpopup(Point location) {
 
 	MenuRef	hMenu;
 	short	sel;
@@ -917,7 +927,7 @@ static void openpopup(HIPoint location) {
     AppendMenuItemTextWithCFString(hMenu, CFCopyLocalizedString(CFSTR("Close"),"ToolWin Close"), kMenuItemAttrIconDisabled, NULL, NULL);
     DeleteMenu(222);
     selectclose = CountMenuItems(hMenu);
-    sel = LoWord(PopUpMenuSelect(hMenu, (short)location.y, (short)location.x, 0));
+    sel = LoWord(PopUpMenuSelect(hMenu, location.v, location.h, 0));
 	DisposeMenu(hMenu);
     if (sel == selectclose) {
         toolwin_close();
@@ -954,16 +964,33 @@ static void openpopup(HIPoint location) {
 
 }
 
+static void makeskinimage(WindowRef win,PicHandle bmp, Rect* rect) {
+    ControlButtonContentInfo	info;
+    ControlRef					image;
+    EventHandlerRef				ref;
+    EventTypeSpec				list[]={ 
+        { kEventClassControl, kEventControlContextualMenuClick },
+    };
+	
+    info.contentType = kControlContentPictHandle;
+    info.u.picture = bmp;
+    CreatePictureControl(win, rect, &info, true, &image);
+    SetControlID(image, &imageid);
+    InstallControlEventHandler (image, NewEventHandlerUPP(cfControlproc), GetEventTypeCount(list), list, (void *)win, &ref);
+}
+
+static void opentoolwin_puma(WindowRef win) {
+	if (np2tool.posy < 35) np2tool.posy = 35;
+	if (np2tool.posx < 5 ) np2tool.posx = 5;
+	MoveWindow(win, np2tool.posx, np2tool.posy, true);
+	ShowWindow(win);
+}
+
 void toolwin_open(void) {
 
 	PicHandle	hbmp;
 	WindowRef	hWnd = NULL;
     Rect		bounds;
-    ControlRef	image;
-    EventTypeSpec	list[]={ 
-        { kEventClassControl, kEventControlContextualMenuClick },
-    };
-    EventHandlerRef	ref;
 
 	if (toolwin.hwnd) {
         toolwin_close();
@@ -984,30 +1011,21 @@ void toolwin_open(void) {
 		goto twope_err2;
 	}
     
-    if (isPUMA) {
+
+	SetWindowBounds(hWnd, kWindowContentRgn, &bounds);
+	if (isPUMA) {
         toolwincreate(hWnd);
+		makeskinimage(hWnd, hbmp, &bounds);
     }
-    SizeWindow(hWnd, bounds.right-bounds.left, bounds.bottom-bounds.top, true);
-    ControlButtonContentInfo	info;
-    info.contentType = kControlContentPictHandle;
-    info.u.picture = hbmp;
-    CreatePictureControl(hWnd, &bounds, &info, true, &image);
-    SetControlID(image, &imageid);
-    InstallControlEventHandler (image, NewEventHandlerUPP(cfControlproc), GetEventTypeCount(list), list, (void *)hWnd, &ref);
-    if (!isPUMA) {
+	else {
+		makeskinimage(hWnd, hbmp, &bounds);
         toolwincreate(hWnd);
     }
 #ifndef AVAILABLE_MAC_OS_X_VERSION_10_2_AND_LATER
-    if (np2tool.posy < 35) np2tool.posy = 35;
-    if (np2tool.posx < 5 ) np2tool.posx = 5;
-    MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
-    ShowWindow(hWnd);
+	opentoolwin_puma(hWnd);
 #else
     if (isPUMA) {
-        if (np2tool.posy < 35) np2tool.posy = 35;
-        if (np2tool.posx < 5 ) np2tool.posx = 5;
-        MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
-        ShowWindow(hWnd);
+		opentoolwin_puma(hWnd);
     }
     else {
         Rect	mainbounds;
@@ -1021,6 +1039,8 @@ void toolwin_open(void) {
         }
         SetDrawerOffsets(hWnd, width/2-11, width/2-11);
         SetDrawerPreferredEdge(hWnd, kWindowEdgeTop);
+		const HISize  size = {bounds.right-bounds.left, bounds.bottom-bounds.top};
+		SetWindowResizeLimits(hWnd, &size, &size);
         OpenDrawer(hWnd, kWindowEdgeDefault, 1);
     }
 #endif
