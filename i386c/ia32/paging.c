@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.24 2004/03/25 15:08:32 monaka Exp $	*/
+/*	$Id: paging.c,v 1.25 2004/06/15 13:50:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -186,8 +186,7 @@ static const UINT8 page_access_bit[32] = {
 
 static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
 #if defined(IA32_SUPPORT_TLB)
-static BOOL tlb_lookup(const UINT32 vaddr, const int crw, UINT32 *paddr) GCC_ATTR_REGPARM;
-static void tlb_update(const UINT32 laddr, const UINT entry, const int crw) GCC_ATTR_REGPARM;
+static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw) GCC_ATTR_REGPARM;
 #endif
 
 #if defined(IA32_PAGING_EACHSIZE)
@@ -276,8 +275,7 @@ cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 
 		default:
 			ia32_panic("cpu_memory_access_la_RMW_d(): out of range (remain = %d)\n", remain);
-			value = 0;	/* compiler happy */
-			break;
+			return (UINT32)-1;
 		}
 	}
 	return value;
@@ -295,16 +293,16 @@ cpu_linear_memory_read_b(UINT32 laddr, const int ucrw)
 UINT16 MEMCALL
 cpu_linear_memory_read_w(UINT32 laddr, const int ucrw)
 {
-	UINT32 paddr, paddr2;
+	UINT32 paddr[2];
 	UINT16 value;
 
-	paddr = paging(laddr, ucrw);
+	paddr[0] = paging(laddr, ucrw);
 	if ((laddr + 1) & 0x00000fff) {
-		return cpu_memoryread_w(paddr);
+		return cpu_memoryread_w(paddr[0]);
 	} else {
-		paddr2 = paging(laddr + 1, ucrw);
-		value = cpu_memoryread_b(paddr);
-		value += (UINT16)cpu_memoryread_b(paddr2) << 8;
+		paddr[1] = paging(laddr + 1, ucrw);
+		value = cpu_memoryread_b(paddr[0]);
+		value += (UINT16)cpu_memoryread_b(paddr[1]) << 8;
 		return value;
 	}
 }
@@ -312,38 +310,37 @@ cpu_linear_memory_read_w(UINT32 laddr, const int ucrw)
 UINT32 MEMCALL
 cpu_linear_memory_read_d(UINT32 laddr, const int ucrw)
 {
-	UINT32 paddr, paddr2;
+	UINT32 paddr[2];
 	UINT32 value;
 	UINT remain;
 
-	paddr = paging(laddr, ucrw);
+	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= 4) {
-		return cpu_memoryread_d(paddr);
+		return cpu_memoryread_d(paddr[0]);
 	} else {
-		paddr2 = paging(laddr + remain, ucrw);
+		paddr[1] = paging(laddr + remain, ucrw);
 		switch (remain) {
 		case 3:
-			value = cpu_memoryread(paddr);
-			value += (UINT32)cpu_memoryread_w(paddr + 1) << 8;
-			value += (UINT32)cpu_memoryread(paddr2) << 24;
+			value = cpu_memoryread(paddr[0]);
+			value += (UINT32)cpu_memoryread_w(paddr[0] + 1) << 8;
+			value += (UINT32)cpu_memoryread(paddr[1]) << 24;
 			break;
 
 		case 2:
-			value = cpu_memoryread_w(paddr);
-			value += (UINT32)cpu_memoryread_w(paddr2) << 16;
+			value = cpu_memoryread_w(paddr[0]);
+			value += (UINT32)cpu_memoryread_w(paddr[1]) << 16;
 			break;
 
 		case 1:
-			value = cpu_memoryread(paddr);
-			value += (UINT32)cpu_memoryread(paddr2) << 8;
-			value += (UINT32)cpu_memoryread_w(paddr2 + 1) << 16;
+			value = cpu_memoryread(paddr[0]);
+			value += (UINT32)cpu_memoryread(paddr[1]) << 8;
+			value += (UINT32)cpu_memoryread_w(paddr[1] + 1) << 16;
 			break;
 
 		default:
 			ia32_panic("cpu_linear_memory_read_d(): out of range (remain = %d)\n", remain);
-			value = 0;	/* compiler happy */
-			break;
+			return (UINT32)-1;
 		}
 		return value;
 	}
@@ -363,15 +360,15 @@ void MEMCALL
 cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode)
 {
 	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
-	UINT32 paddr, paddr2;
+	UINT32 paddr[2];
 
-	paddr = paging(laddr, ucrw);
+	paddr[0] = paging(laddr, ucrw);
 	if ((laddr + 1) & 0x00000fff) {
-		cpu_memorywrite_w(paddr, value);
+		cpu_memorywrite_w(paddr[0], value);
 	} else {
-		paddr2 = paging(laddr + 1, ucrw);
-		cpu_memorywrite(paddr, (UINT8)value);
-		cpu_memorywrite(paddr2, (UINT8)(value >> 8));
+		paddr[1] = paging(laddr + 1, ucrw);
+		cpu_memorywrite(paddr[0], (UINT8)value);
+		cpu_memorywrite(paddr[1], (UINT8)(value >> 8));
 	}
 }
 
@@ -379,31 +376,31 @@ void MEMCALL
 cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode)
 {
 	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
-	UINT32 paddr, paddr2;
+	UINT32 paddr[2];
 	UINT remain;
 
-	paddr = paging(laddr, ucrw);
+	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
 	if (remain >= 4) {
-		cpu_memorywrite_d(paddr, value);
+		cpu_memorywrite_d(paddr[0], value);
 	} else {
-		paddr2 = paging(laddr + remain, ucrw);
+		paddr[1] = paging(laddr + remain, ucrw);
 		switch (remain) {
 		case 3:
-			cpu_memorywrite(paddr, (UINT8)value);
-			cpu_memorywrite_w(paddr + 1, (UINT16)(value >> 8));
-			cpu_memorywrite(paddr2, (UINT8)(value >> 24));
+			cpu_memorywrite(paddr[0], (UINT8)value);
+			cpu_memorywrite_w(paddr[0] + 1, (UINT16)(value >> 8));
+			cpu_memorywrite(paddr[1], (UINT8)(value >> 24));
 			break;
 
 		case 2:
-			cpu_memorywrite_w(paddr, (UINT16)value);
-			cpu_memorywrite_w(paddr2, (UINT16)(value >> 16));
+			cpu_memorywrite_w(paddr[0], (UINT16)value);
+			cpu_memorywrite_w(paddr[1], (UINT16)(value >> 16));
 			break;
 
 		case 1:
-			cpu_memorywrite(paddr, (UINT8)value);
-			cpu_memorywrite(paddr2, (UINT8)(value >> 8));
-			cpu_memorywrite_w(paddr2 + 1, (UINT16)(value >> 16));
+			cpu_memorywrite(paddr[0], (UINT8)value);
+			cpu_memorywrite(paddr[1], (UINT8)(value >> 8));
+			cpu_memorywrite_w(paddr[1] + 1, (UINT16)(value >> 16));
 			break;
 		}
 	}
@@ -444,8 +441,7 @@ cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void 
 
 		default:
 			ia32_panic("cpu_memory_access_la_RMW(): invalid length (length = %d)\n", length);
-			value = 0;	/* compiler happy */
-			break;
+			return (UINT32)-1;
 		}
 		return value;
 	}
@@ -487,8 +483,7 @@ cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void 
 
 	default:
 		ia32_panic("cpu_memory_access_la_RMW(): out of range (remain = %d)\n", remain);
-		value = 0;	/* compiler happy */
-		break;
+		return (UINT32)-1;
 	}
 	return value;
 }
@@ -519,8 +514,7 @@ cpu_linear_memory_read(UINT32 laddr, UINT length, const int ucrw)
 
 		default:
 			ia32_panic("cpu_linear_memory_read(): invalid length (length = %d)\n", length);
-			value = 0;	/* compiler happy */
-			break;
+			return (UINT32)-1;
 		}
 		return value;
 	}
@@ -549,8 +543,7 @@ cpu_linear_memory_read(UINT32 laddr, UINT length, const int ucrw)
 
 	default:
 		ia32_panic("cpu_linear_memory_read(): out of range (remain = %d)\n", remain);
-		value = 0;	/* compiler happy */
-		break;
+		return (UINT32)-1;
 	}
 	return value;
 }
@@ -690,11 +683,13 @@ paging(const UINT32 laddr, const int ucrw)
 	UINT32 pte;		/* page table entry */
 	UINT bit;
 	UINT err;
-
 #if defined(IA32_SUPPORT_TLB)
-	if (tlb_lookup(laddr, ucrw, &paddr))
-		return paddr;
-#endif	/* IA32_SUPPORT_TLB */
+	TLB_ENTRY_T *ep;
+
+	ep = tlb_lookup(laddr, ucrw);
+	if (ep != NULL)
+		return ep->paddr + (laddr & 0xfff);
+#endif
 
 	pde_addr = CPU_STAT_PDE_BASE + ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
@@ -727,9 +722,8 @@ paging(const UINT32 laddr, const int ucrw)
 	/* make physical address */
 	paddr = (pte & CPU_PTE_BASEADDR_MASK) + (laddr & 0x00000fff);
 
-	bit  = ucrw & CPU_PAGE_WRITE;
+	bit  = ucrw & (CPU_PAGE_WRITE|CPU_PAGE_USER_MODE);
 	bit |= (pde & pte & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE));
-	bit |= ucrw & CPU_PAGE_USER_MODE;
 	bit |= CPU_STAT_WP;
 
 #if !defined(USE_PAGE_ACCESS_TABLE)
@@ -752,9 +746,8 @@ paging(const UINT32 laddr, const int ucrw)
 	}
 
 #if defined(IA32_SUPPORT_TLB)
-	tlb_update(laddr, pte, ucrw);
-#endif	/* IA32_SUPPORT_TLB */
-
+	tlb_update(laddr, pte, (bit & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE)) + ((ucrw & CPU_PAGE_CODE) >> 1));
+#endif
 	return paddr;
 
 pf_exception:
@@ -770,6 +763,44 @@ pf_exception:
 /* 
  * TLB
  */
+#define	TLB_GET_PADDR(ep, addr)	((ep)->paddr + ((addr) & ~CPU_PTE_BASEADDR_MASK))
+#define	TLB_SET_PADDR(ep, addr)	((ep)->paddr = (addr) & CPU_PTE_BASEADDR_MASK)
+
+#define	TLB_TAG_SHIFT		TLB_ENTRY_TAG_MAX_SHIFT
+#define	TLB_TAG_MASK		(~((1 << TLB_TAG_SHIFT) - 1))
+#define	TLB_GET_TAG_ADDR(ep)	((ep)->tag & TLB_TAG_MASK)
+#define	TLB_SET_TAG_ADDR(ep, addr) \
+do { \
+	(ep)->tag &= ~TLB_TAG_MASK; \
+	(ep)->tag |= (addr) & TLB_TAG_MASK; \
+} while (/*CONSTCOND(*/ 0)
+
+#define	TLB_IS_VALID(ep)	((ep)->tag & TLB_ENTRY_TAG_VALID)
+#define	TLB_SET_VALID(ep)	((ep)->tag = TLB_ENTRY_TAG_VALID)
+#define	TLB_SET_INVALID(ep)	((ep)->tag = 0)
+
+#define	TLB_IS_WRITABLE(ep)	((ep)->tag & CPU_PTE_WRITABLE)
+#define	TLB_IS_USERMODE(ep)	((ep)->tag & CPU_PTE_USER_MODE)
+#define	TLB_IS_DIRTY(ep)	((ep)->tag & TLB_ENTRY_TAG_DIRTY)
+#define	TLB_IS_GLOBAL(ep)	((ep)->tag & TLB_ENTRY_TAG_GLOBAL)
+
+#define	TLB_SET_TAG_FLAGS(ep, entry, bit) \
+do { \
+	(ep)->tag |= (entry) & (CPU_PTE_GLOBAL_PAGE|CPU_PTE_DIRTY); \
+	(ep)->tag |= (bit) & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE); \
+} while (/*CONSTCOND*/ 0)
+
+#define	NTLB		2	/* 0: DTLB, 1: ITLB */
+#define	NENTRY		(1 << 6)
+#define	TLB_ENTRY_SHIFT	12
+#define	TLB_ENTRY_MASK	(NENTRY - 1)
+
+typedef struct {
+	TLB_ENTRY_T	entry[NENTRY];
+} TLB_T;
+
+static TLB_T tlb[NTLB];
+
 #if defined(IA32_PROFILE_TLB)
 /* profiling */
 typedef struct {
@@ -790,71 +821,22 @@ static TLB_PROFILE_T tlb_profile;
 #endif	/* IA32_PROFILE_TLB */
 
 
-typedef struct {
-	UINT32	tag;	/* linear address */
-#define	TLB_ENTRY_VALID		(1 << 0)
-#define	TLB_ENTRY_GLOBAL	CPU_PTE_GLOBAL_PAGE
-
-	UINT32	paddr;	/* physical address */
-} TLB_ENTRY_T;
-
-#define	TLB_GET_PADDR(ep, addr)	((ep)->paddr + ((addr) & ~CPU_PTE_BASEADDR_MASK))
-#define	TLB_SET_PADDR(ep, addr)	((ep)->paddr = (addr) & CPU_PTE_BASEADDR_MASK)
-
-#define	TLB_TAG_SHIFT	17
-#define	TLB_TAG_MASK	~((1 << TLB_TAG_SHIFT) - 1)
-#define	TLB_GET_TAG_ADDR(ep)	((ep)->tag & TLB_TAG_MASK)
-#define	TLB_SET_TAG_ADDR(ep, addr) \
-	((ep)->tag = ((addr) & TLB_TAG_MASK) + ((ep)->tag & ~TLB_TAG_MASK))
-
-#define	TLB_IS_VALID(ep)	((ep)->tag & TLB_ENTRY_VALID)
-#define	TLB_SET_VALID(ep)	((ep)->tag |= TLB_ENTRY_VALID)
-#define	TLB_CLEAR_VALID(ep)	((ep)->tag &= ~TLB_ENTRY_VALID)
-
-#if CPU_FAMILY == 4
-#define	TLB_IS_GLOBAL(ep)	FALSE
-#define	TLB_SET_GLOBAL(ep)	(void)(ep)
-#define	TLB_CLEAR_GLOBAL(ep)	(void)(ep)
-#else
-#define	TLB_IS_GLOBAL(ep)	((ep)->tag & TLB_ENTRY_GLOBAL)
-#define	TLB_SET_GLOBAL(ep)	((ep)->tag |= TLB_ENTRY_GLOBAL)
-#define	TLB_CLEAR_GLOBAL(ep)	((ep)->tag &= ~TLB_ENTRY_GLOBAL)
-#endif
-
-
-#if CPU_FAMILY == 4
-#define	NTLB	1
-#define	NENTRY	(1 << 3)
-#define	NWAY	(1 << 2)
-
-#define	TLB_ENTRY_SHIFT	12
-#define	TLB_ENTRY_MASK	(NENTRY - 1)
-#define	TLB_WAY_SHIFT	15
-#define	TLB_WAY_MASK	(NWAY - 1)
-#endif
-
-typedef struct {
-	TLB_ENTRY_T	entry[NENTRY][NWAY];
-} TLB_T;
-
-static TLB_T tlb;
-
-
 void
 tlb_init(void)
 {
 
-	memset(&tlb, 0, sizeof(tlb));
+	memset(tlb, 0, sizeof(tlb));
 #if defined(IA32_PROFILE_TLB)
-	memset(&tlb_profile, 0, sizeof(tlb_profile));
+	memset(tlb_profile, 0, sizeof(tlb_profile));
 #endif	/* IA32_PROFILE_TLB */
 }
 
-void
+void MEMCALL
 tlb_flush(BOOL allflush)
 {
 	TLB_ENTRY_T *ep;
-	int i, j;
+	int i;
+	int n;
 
 	if (allflush) {
 		PROFILE_INC(tlb_global_flushes);
@@ -862,85 +844,104 @@ tlb_flush(BOOL allflush)
 		PROFILE_INC(tlb_flushes);
 	}
 
-	for (i = 0; i < NENTRY ; i++) {
-		for (j = 0; j < NWAY; j++) {
-			ep = &tlb.entry[i][j];
-			if (TLB_IS_VALID(ep) && (!TLB_IS_GLOBAL(ep) || allflush)) {
-				TLB_CLEAR_VALID(ep);
+	for (n = 0; n < NTLB; n++) {
+		for (i = 0; i < NENTRY ; i++) {
+			ep = &tlb[n].entry[i];
+			if (TLB_IS_VALID(ep) && (allflush || !TLB_IS_GLOBAL(ep))) {
+				TLB_SET_INVALID(ep);
 				PROFILE_INC(tlb_entry_flushes);
 			}
 		}
 	}
 }
 
-void
+void MEMCALL
 tlb_flush_page(UINT32 laddr)
 {
 	TLB_ENTRY_T *ep;
 	int idx;
-	int way;
+	int n;
 
 	PROFILE_INC(tlb_flushes);
 
-	idx = (laddr >> TLB_ENTRY_SHIFT) & (NENTRY - 1);
-	way = (laddr >> TLB_WAY_SHIFT) & (NWAY - 1);
-	ep = &tlb.entry[idx][way];
+	idx = (laddr >> TLB_ENTRY_SHIFT) & TLB_ENTRY_MASK;
 
-	if (TLB_IS_VALID(ep)) {
-		if ((laddr & TLB_TAG_MASK) == TLB_GET_TAG_ADDR(ep)) {
-			TLB_CLEAR_VALID(ep);
-			return;
+	for (n = 0; n < NTLB; n++) {
+		ep = &tlb[n].entry[idx];
+		if (TLB_IS_VALID(ep)) {
+			if ((laddr & TLB_TAG_MASK) == TLB_GET_TAG_ADDR(ep)) {
+				TLB_SET_INVALID(ep);
+				PROFILE_INC(tlb_entry_flushes);
+			}
 		}
 	}
 }
 
-static BOOL
-tlb_lookup(const UINT32 laddr, const int crw, UINT32 *paddr)
+TLB_ENTRY_T * MEMCALL
+tlb_lookup(const UINT32 laddr, const int ucrw)
 {
 	TLB_ENTRY_T *ep;
+	UINT bit;
 	int idx;
-	int way;
+	int n;
 
 	PROFILE_INC(tlb_lookups);
 
-	idx = (laddr >> TLB_ENTRY_SHIFT) & (NENTRY - 1);
-	way = (laddr >> TLB_WAY_SHIFT) & (NWAY - 1);
-	ep = &tlb.entry[idx][way];
+	n = (ucrw & CPU_PAGE_CODE) >> 1;
+	idx = (laddr >> TLB_ENTRY_SHIFT) & TLB_ENTRY_MASK;
+	ep = &tlb[n].entry[idx];
 
-	ep = &tlb.entry[idx][way];
 	if (TLB_IS_VALID(ep)) {
 		if ((laddr & TLB_TAG_MASK) == TLB_GET_TAG_ADDR(ep)) {
-			*paddr = TLB_GET_PADDR(ep, laddr);
-			PROFILE_INC(tlb_hits);
-			return TRUE;
+			bit = ucrw & (CPU_PAGE_WRITE|CPU_PAGE_USER_MODE);
+			bit |= ep->tag & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE);
+			bit |= CPU_STAT_WP;
+#if !defined(USE_PAGE_ACCESS_TABLE)
+			if ((page_access & (1 << bit)))
+#else
+			if (page_access_bit[bit])
+#endif
+			{
+				if (!(ucrw & CPU_PAGE_WRITE) || TLB_IS_DIRTY(ep)) {
+					PROFILE_INC(tlb_hits);
+					return ep;
+				}
+			}
 		}
 	}
-	(void)crw;
 	PROFILE_INC(tlb_misses);
-	return FALSE;
+	return NULL;
 }
 
-static void
-tlb_update(const UINT32 laddr, const UINT entry, const int crw)
+static void MEMCALL
+tlb_update(const UINT32 laddr, const UINT entry, const int bit)
 {
 	TLB_ENTRY_T *ep;
+	UINT32 pos;
 	int idx;
-	int way;
+	int n;
 
 	PROFILE_INC(tlb_updates);
 
-	idx = (laddr >> TLB_ENTRY_SHIFT) & (NENTRY - 1);
-	way = (laddr >> TLB_WAY_SHIFT) & (NWAY - 1);
-	ep = &tlb.entry[idx][way];
+	n = bit & 1;
+	idx = (laddr >> TLB_ENTRY_SHIFT) & TLB_ENTRY_MASK;
+	ep = &tlb[n].entry[idx];
 
 	TLB_SET_VALID(ep);
-#if CPU_FAMILY >= 5
-	if (entry & CPU_PTE_GLOBAL_PAGE) {
-		TLB_SET_GLOBAL(ep);
-	}
-#endif
 	TLB_SET_TAG_ADDR(ep, laddr);
 	TLB_SET_PADDR(ep, entry);
-	(void)crw;
+	TLB_SET_TAG_FLAGS(ep, entry, bit);
+
+	if (ep->paddr < CPU_MEMREADMAX) {
+		ep->memp = mem + ep->paddr;
+		return;
+	} else if (ep->paddr >= USE_HIMEM) {
+		pos = (ep->paddr & CPU_ADRSMASK) - 0x100000;
+		if (pos < CPU_EXTMEMSIZE) {
+			ep->memp = CPU_EXTMEM + pos;
+			return;
+		}
+	}
+	ep->memp = NULL;
 }
 #endif	/* IA32_SUPPORT_TLB */

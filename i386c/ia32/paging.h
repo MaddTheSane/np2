@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.17 2004/03/25 15:08:32 monaka Exp $	*/
+/*	$Id: paging.h,v 1.18 2004/06/15 13:50:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -131,14 +131,13 @@ extern "C" {
 void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, const int ucrw, BYTE *data);
 void MEMCALL paging_check(UINT32 laddr, UINT length, const int ucrw);
 
-/* crw */
-#define	CPU_PAGE_READ		(0 << 0)
+/* ucrw */
 #define	CPU_PAGE_WRITE		(1 << 0)
 #define	CPU_PAGE_CODE		(1 << 1)
 #define	CPU_PAGE_DATA		(1 << 2)
 #define	CPU_PAGE_USER_MODE	(1 << 3)	/* == CPU_MODE_USER */
-#define	CPU_PAGE_READ_CODE	(CPU_PAGE_READ|CPU_PAGE_CODE)
-#define	CPU_PAGE_READ_DATA	(CPU_PAGE_READ|CPU_PAGE_DATA)
+#define	CPU_PAGE_READ_CODE	(CPU_PAGE_CODE)
+#define	CPU_PAGE_READ_DATA	(CPU_PAGE_DATA)
 #define	CPU_PAGE_WRITE_DATA	(CPU_PAGE_WRITE|CPU_PAGE_DATA)
 
 #if defined(IA32_PAGING_EACHSIZE)
@@ -177,20 +176,6 @@ void MEMCALL cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int use
 #define	cpu_lmemorywrite_d(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memorywrite_d(a,v) : cpu_linear_memory_write_d(a,v,pl)
-
-/* code */
-#define	cpu_lcmemoryread(a) \
-	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread(a) : \
-	 cpu_linear_memory_read_b(a,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
-#define	cpu_lcmemoryread_w(a) \
-	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread_w(a) : \
-	 cpu_linear_memory_read_w(a,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
-#define	cpu_lcmemoryread_d(a) \
-	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread_d(a) : \
-	 cpu_linear_memory_read_d(a,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
 
 #else	/* !IA32_PAGING_EACHSIZE */
 
@@ -237,20 +222,6 @@ void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, 
 	 cpu_memorywrite_d(a,v) : \
 	 cpu_linear_memory_write(a,v,4,pl)
 
-/* code */
-#define	cpu_lcmemoryread(a) \
-	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread(a) : \
-	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
-#define	cpu_lcmemoryread_w(a) \
-	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread_w(a) : \
-	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
-#define	cpu_lcmemoryread_d(a) \
-	(!CPU_STAT_PAGING) ? \
-	 cpu_memoryread_d(a) : \
-	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE)
-
 #endif	/* IA32_PAGING_EACHSIZE */
 
 /*
@@ -279,14 +250,31 @@ do { \
 /*
  * TLB function
  */
+typedef struct {
+	UINT32	tag;	/* linear address */
+#define	TLB_ENTRY_TAG_VALID		(1 << 0)
+/*	pde & pte & CPU_PTE_WRITABLE	(1 << 1)	*/
+/*	pde & pte & CPU_PTE_USER_MODE	(1 << 2)	*/
+#define	TLB_ENTRY_TAG_DIRTY		CPU_PTE_DIRTY		/* (1 << 6) */
+#define	TLB_ENTRY_TAG_GLOBAL		CPU_PTE_GLOBAL_PAGE	/* (1 << 8) */
+#define	TLB_ENTRY_TAG_MAX_SHIFT		12
+
+	UINT32	paddr;	/* physical address */
+
+	UINT8	*memp;	/* shortcut for pre-fetch queue */
+} TLB_ENTRY_T;
+
+
 #if defined(IA32_SUPPORT_TLB)
 void tlb_init(void);
-void tlb_flush(BOOL allflush);
-void tlb_flush_page(UINT32 laddr);
+void MEMCALL tlb_flush(BOOL allflush) GCC_ATTR_REGPARM;
+void MEMCALL tlb_flush_page(UINT32 laddr) GCC_ATTR_REGPARM;
+TLB_ENTRY_T* MEMCALL tlb_lookup(const UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
 #else
 #define	tlb_init()
 #define	tlb_flush(allflush)	(void)(allflush)
-#define	tlb_flush_page(laddr)	(void)(laddr)
+#define	tlb_flush_page(la)	(void)(la)
+#define	tlb_lookup(la, ucrw)	NULL
 #endif
 
 #ifdef __cplusplus

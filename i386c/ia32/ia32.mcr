@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.19 2004/05/22 16:35:07 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.20 2004/06/15 13:50:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -922,7 +922,7 @@ do { \
 #define	JMPNOP(clock, d) \
 do { \
 	CPU_WORKCLOCK(clock); \
-	CPU_PREFETCHQ_REMAIN -= (d); \
+	CPU_PREFETCHQ_REMAIN_SUB(d); \
 	ADD_EIP((d)); \
 } while (/*CONSTCOND*/ 0)
 #endif

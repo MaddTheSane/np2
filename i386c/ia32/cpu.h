@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.29 2004/03/29 05:50:29 yui Exp $	*/
+/*	$Id: cpu.h,v 1.30 2004/06/15 13:50:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -117,10 +117,6 @@ enum {
 	MAX_PREFIX = 8
 };
 
-enum {
-	CPU_PREFETCH_QUEUE_LENGTH = 16
-};
-
 typedef struct {
 	REG32		reg[CPU_REG_NUM];
 	UINT16		sreg[CPU_SEGREG_NUM];
@@ -156,10 +152,6 @@ typedef struct {
 	descriptor_t	sreg[CPU_SEGREG_NUM];
 	descriptor_t	ldtr;
 	descriptor_t	tr;
-
-	BYTE		prefetch[CPU_PREFETCH_QUEUE_LENGTH];
-	SINT8		prefetch_remain;
-	UINT8		pad2[3];
 
 	UINT32		adrsmask;
 	UINT32		ovflag;
@@ -456,14 +448,9 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 #define	CPU_STAT_EXCEPTION_COUNTER_INC()	CPU_STATSAVE.cpu_stat.nerror++
 #define	CPU_STAT_EXCEPTION_COUNTER_CLEAR()	CPU_STATSAVE.cpu_stat.nerror = 0
 
-#define	CPU_PREFETCHQ		CPU_STATSAVE.cpu_stat.prefetch
-#define	CPU_PREFETCHQ_REMAIN	CPU_STATSAVE.cpu_stat.prefetch_remain
-
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-#define	CPU_PREFETCH_CLEAR()	CPU_PREFETCHQ_REMAIN = 0
-#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 #define	CPU_PREFETCH_CLEAR()
-#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#define	CPU_PREFETCHQ_REMAIN_ADD(d)
+#define	CPU_PREFETCHQ_REMAIN_SUB(d)
 
 #define	CPU_MODE_SUPERVISER	0
 #define	CPU_MODE_USER		(1 << 3)

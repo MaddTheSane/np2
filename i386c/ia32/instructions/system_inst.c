@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.27 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.28 2004/06/15 13:50:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -298,7 +298,7 @@ MOV_CdRd(void)
 			VERBOSE(("MOV_CdRd: %04x:%08x: cr0: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR0, reg32_str[op & 7]));
 
 			if ((reg ^ CPU_CR0) & (CPU_CR0_PE|CPU_CR0_PG)) {
-				tlb_flush(FALSE);
+				tlb_flush(TRUE);
 			}
 			if ((reg ^ CPU_CR0) & CPU_CR0_PE) {
 				if (CPU_CR0 & CPU_CR0_PE) {
@@ -338,7 +338,6 @@ MOV_CdRd(void)
 			VERBOSE(("MOV_CdRd: %04x:%08x: cr3: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR3, reg32_str[op & 7]));
 			break;
 
-#if CPU_FAMILY >= 5
 		case 4: /* CR4 */
 			/*
 			 * 10 = OSXMMEXCPT (support non masking exception by OS)
@@ -353,7 +352,10 @@ MOV_CdRd(void)
 			 * 1 = PVI (protected mode virtual interrupt)
 			 * 0 = VME (VM8086 mode extention)
 			 */
-			reg = 0;	/* allow */
+			reg = 0;	/* allow bit */
+			if (CPU_FEATURES & CPU_FEATURE_PGE) {
+				reg |= CPU_CR4_PGE;
+			}
 			if (src & ~reg) {
 				if (src & 0xfffffc00) {
 					EXCEPTION(GP_EXCEPTION, 0);
@@ -366,10 +368,9 @@ MOV_CdRd(void)
 			VERBOSE(("MOV_CdRd: %04x:%08x: cr4: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR4, reg32_str[op & 7]));
 
 			if ((reg ^ CPU_CR4) & (CPU_CR4_PSE|CPU_CR4_PGE|CPU_CR4_PAE)) {
-				tlb_flush(FALSE);
+				tlb_flush(TRUE);
 			}
 			break;
-#endif	/* CPU_FAMILY >= 5 */
 
 		default:
 			ia32_panic("MOV_CdRd: CR reg index (%d)", idx);
@@ -412,11 +413,9 @@ MOV_RdCd(void)
 			*out = CPU_CR3;
 			break;
 
-#if CPU_FAMILY >= 5
 		case 4:
 			*out = CPU_CR4;
 			break;
-#endif	/* CPU_FAMILY >= 5 */
 
 		default:
 			ia32_panic("MOV_RdCd: CR reg index (%d)", idx);
@@ -991,8 +990,6 @@ INVD(void)
 		VERBOSE(("INVD: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
-
-	tlb_flush(TRUE);
 }
 
 void
@@ -1004,8 +1001,6 @@ WBINVD(void)
 		VERBOSE(("WBINVD: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
-
-	tlb_flush(TRUE);
 }
 
 void
@@ -1078,9 +1073,7 @@ HLT(void)
 
 	CPU_HALT();
 	CPU_EIP--;
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-	CPU_PREFETCHQ_REMAIN++;
-#endif
+	CPU_PREFETCHQ_REMAIN_ADD(1);
 	CPU_STAT_HLT = 1;
 }
 
@@ -1121,7 +1114,7 @@ WRMSR(void)
 
 	idx = CPU_ECX;
 	switch (idx) {
-		/* MTRR への書き込み時 tlb_flush(FALSE); */
+		/* MTRR への書き込み時 tlb_flush(TRUE); */
 
 	default:
 		EXCEPTION(GP_EXCEPTION, 0);

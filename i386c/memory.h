@@ -23,6 +23,9 @@
 // 1e0000-1e7fff VRAM1
 // 1f8000-1fffff ITF-ROM
 
+#define	CPU_MEMREADMAX	0x0a4000
+#define	CPU_MEMWRITEMAX	0x0a0000
+
 #define	VRAM_STEP	0x100000
 #define	VRAM_B		0x0a8000
 #define	VRAM_R		0x0b0000

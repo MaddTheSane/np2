@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.17 2004/03/25 15:08:32 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.18 2004/06/15 13:50:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -252,71 +252,6 @@ cpu_stack_pop_check(UINT16 s, descriptor_t *sd, UINT32 esp, UINT length)
 	}
 }
 
-
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-/*
- * code prefetch
- */
-#define	CPU_PREFETCHQ_MASK	(CPU_PREFETCH_QUEUE_LENGTH - 1)
-
-INLINE static MEMCALL void
-cpu_prefetch(UINT32 address)
-{
-	UINT offset = address & CPU_PREFETCHQ_MASK;
-	UINT length = CPU_PREFETCH_QUEUE_LENGTH - offset;
-
-	cpu_memory_access_la_region(address, length, CPU_PAGE_READ_CODE|CPU_STAT_USER_MODE, CPU_PREFETCHQ + offset);
-	CPU_PREFETCHQ_REMAIN = (SINT8)length;
-}
-
-INLINE static MEMCALL UINT8
-cpu_prefetchq(UINT32 address)
-{
-	UINT8 v;
-
-	CPU_PREFETCHQ_REMAIN--;
-	v = CPU_PREFETCHQ[address & CPU_PREFETCHQ_MASK];
-	return v;
-}
-
-INLINE static MEMCALL UINT16
-cpu_prefetchq_w(UINT32 address)
-{
-	BYTE *p;
-	UINT16 v;
-
-	CPU_PREFETCHQ_REMAIN -= 2;
-	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
-	v = LOADINTELWORD(p);
-	return v;
-}
-
-INLINE static MEMCALL UINT32
-cpu_prefetchq_3(UINT32 address)
-{
-	BYTE *p;
-	UINT32 v;
-
-	CPU_PREFETCHQ_REMAIN -= 3;
-	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
-	v = LOADINTELWORD(p);
-	v += ((UINT32)p[2]) << 16;
-	return v;
-}
-
-INLINE static MEMCALL UINT32
-cpu_prefetchq_d(UINT32 address)
-{
-	BYTE *p;
-	UINT32 v;
-
-	CPU_PREFETCHQ_REMAIN -= 4;
-	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
-	v = LOADINTELDWORD(p);
-	return v;
-}
-#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
-
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
 INLINE static void
 check_memory_break_point(UINT32 address, UINT length, UINT rw)
@@ -339,28 +274,33 @@ check_memory_break_point(UINT32 address, UINT length, UINT rw)
 #define	check_memory_break_point(address, length, rw)
 #endif
 
+
 /*
  * code fetch
  */
+#define	ucrw	(CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE)
+
 UINT8 MEMCALL
 cpu_codefetch(UINT32 offset)
 {
 	descriptor_t *sd;
 	UINT32 addr;
+#if defined(IA32_SUPPORT_TLB)
+	TLB_ENTRY_T *ep;
+#endif
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit) {
 		addr = sd->u.seg.segbase + offset;
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-		if (CPU_PREFETCHQ_REMAIN <= 0) {
-			cpu_prefetch(addr);
-		}
-		return cpu_prefetchq(addr);
-#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread(addr);
-		return cpu_linear_memory_read_b(addr, CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE);
-#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#if defined(IA32_SUPPORT_TLB)
+		ep = tlb_lookup(addr, ucrw);
+		if (ep != NULL && ep->memp != NULL) {
+			return ep->memp[addr & 0xfff];
+		}
+#endif
+		return cpu_linear_memory_read_b(addr, ucrw);
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
 	return 0;	/* compiler happy */
@@ -371,31 +311,31 @@ cpu_codefetch_w(UINT32 offset)
 {
 	descriptor_t *sd;
 	UINT32 addr;
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-	UINT16 v;
+#if defined(IA32_SUPPORT_TLB)
+	TLB_ENTRY_T *ep;
+	UINT16 value;
 #endif
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit - 1) {
 		addr = sd->u.seg.segbase + offset;
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-		if (CPU_PREFETCHQ_REMAIN <= 0) {
-			cpu_prefetch(addr);
-		}
-		if (CPU_PREFETCHQ_REMAIN >= 2) {
-			return cpu_prefetchq_w(addr);
-		}
-
-		v = cpu_prefetchq(addr);
-		addr++;
-		cpu_prefetch(addr);
-		v += (UINT16)cpu_prefetchq(addr) << 8;
-		return v;
-#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_w(addr);
-		return cpu_linear_memory_read_w(addr, CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE);
-#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#if defined(IA32_SUPPORT_TLB)
+		ep = tlb_lookup(addr, ucrw);
+		if (ep != NULL && ep->memp != NULL) {
+			if ((addr + 1) & 0x00000fff) {
+				return LOADINTELWORD(ep->memp + (addr & 0xfff));
+			}
+			value = ep->memp[0xfff];
+			ep = tlb_lookup(addr + 1, ucrw);
+			if (ep != NULL && ep->memp != NULL) {
+				value += (UINT16)ep->memp[0] << 8;
+				return value;
+			}
+		}
+#endif
+		return cpu_linear_memory_read_w(addr, ucrw);
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
 	return 0;	/* compiler happy */
@@ -406,54 +346,53 @@ cpu_codefetch_d(UINT32 offset)
 {
 	descriptor_t *sd;
 	UINT32 addr;
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-	UINT32 v;
+#if defined(IA32_SUPPORT_TLB)
+	TLB_ENTRY_T *ep[2];
+	UINT32 value;
+	UINT remain;
 #endif
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit - 3) {
 		addr = sd->u.seg.segbase + offset;
-#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-		if (CPU_PREFETCHQ_REMAIN <= 0) {
-			cpu_prefetch(addr);
-		}
-		if (CPU_PREFETCHQ_REMAIN >= 4) {
-			return cpu_prefetchq_d(addr);
-		} else {
-			switch (CPU_PREFETCHQ_REMAIN) {
-			case 1:
-				v = cpu_prefetchq(addr);
-				addr++;
-				cpu_prefetch(addr);
-				v += (UINT32)cpu_prefetchq_3(addr) << 8;
-				break;
-
-			case 2:
-				v = cpu_prefetchq_w(addr);
-				addr += 2;
-				cpu_prefetch(addr);
-				v += (UINT32)cpu_prefetchq_w(addr) << 16;
-				break;
-
-			case 3:
-				v = cpu_prefetchq_3(addr);
-				addr += 3;
-				cpu_prefetch(addr);
-				v += (UINT32)cpu_prefetchq(addr) << 24;
-				break;
-
-			default:
-				ia32_panic("cpu_codefetch_d: remain bytes is invalid");
-				v = 0; /* compiler happy */
-				break;
-			}
-			return v;
-		}
-#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_d(addr);
-		return cpu_linear_memory_read_d(addr, CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE);
-#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#if defined(IA32_SUPPORT_TLB)
+		ep[0] = tlb_lookup(addr, ucrw);
+		if (ep[0] != NULL && ep[0]->memp != NULL) {
+			remain = 0x1000 - (addr & 0xfff);
+			if (remain >= 4) {
+				return LOADINTELDWORD(ep[0]->memp + (addr & 0xfff));
+			}
+			ep[1] = tlb_lookup(addr + remain, ucrw);
+			if (ep[1] != NULL && ep[1]->memp != NULL) {
+				switch (remain) {
+				case 3:
+					value = ep[0]->memp[0xffd];
+					value += (UINT32)LOADINTELWORD(ep[0]->memp + 0xffe) << 8;
+					value += (UINT32)ep[1]->memp[0] << 24;
+					break;
+
+				case 2:
+					value = LOADINTELWORD(ep[0]->memp + 0xffe);
+					value += (UINT32)LOADINTELWORD(ep[1]->memp + 0) << 16;
+					break;
+
+				case 1:
+					value = ep[0]->memp[0xfff];
+					value += (UINT32)LOADINTELWORD(ep[1]->memp + 0) << 8;
+					value += (UINT32)ep[1]->memp[2] << 24;
+					break;
+
+				default:
+					ia32_panic("cpu_codefetch_d(): out of range. (remain = %d)\n", remain);
+					return (UINT32)-1;
+				}
+				return value;
+			}
+		}
+#endif
+		return cpu_linear_memory_read_d(addr, ucrw);
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
 	return 0;	/* compiler happy */
