@@ -75,9 +75,9 @@ static void char2str(char *dst, int size, const UniChar *uni, int unicnt) {
     }
 }
 
-void *file_list1st(const char *dir, FLDATA *fl) {
+void *file_list1st(const char *dir, FLINFO *fli) {
 
-	void		*ret;
+	FLISTH		ret;
 	Str255		fname;
 	FSSpec		fss;
 	FSRef		fsr;
@@ -95,7 +95,7 @@ void *file_list1st(const char *dir, FLDATA *fl) {
 	}
 	((FLHDL)ret)->eoff = FALSE;
 	((FLHDL)ret)->fsi = fsi;
-	if (file_listnext(ret, fl) == SUCCESS) {
+	if (file_listnext(ret, fli) == SUCCESS) {
 		return(ret);
 	}
 
@@ -106,7 +106,7 @@ ff1_err1:
 	return(NULL);
 }
 
-BOOL file_listnext(void *hdl, FLDATA *fl) {
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	FLHDL		flhdl;
 	ItemCount	count;
@@ -129,15 +129,16 @@ BOOL file_listnext(void *hdl, FLDATA *fl) {
 		flhdl->eoff = TRUE;
 		goto ffn_err;
 	}
-	if (fl) {
-		char2str(fl->path, sizeof(fl->path),
+	if (fli) {
+		char2str(fli->path, sizeof(fli->path),
 								flhdl->name.unicode, flhdl->name.length);
-		fl->size = (UINT32)flhdl->fsci.dataLogicalSize;
 		if (flhdl->fsci.nodeFlags & kFSNodeIsDirectoryMask) {
-			fl->attr = FILEATTR_DIRECTORY;
+			fli->attr = FILEATTR_DIRECTORY;
+			fli->size = 0;
 		}
 		else {
-			fl->attr = FILEATTR_ARCHIVE;
+			fli->attr = FILEATTR_ARCHIVE;
+			fli->size = (UINT32)flhdl->fsci.dataLogicalSize;
 		}
 	}
 	return(SUCCESS);
@@ -146,7 +147,7 @@ ffn_err:
 	return(FAILURE);
 }
 
-void file_listclose(void *hdl) {
+void file_listclose(FLISTH hdl) {
 
 	if (hdl) {
 		FSCloseIterator(((FLHDL)hdl)->fsi);
@@ -185,7 +186,7 @@ typedef struct {
 	long		tagid;
 } _FLHDL, *FLHDL;
 
-void *file_list1st(const char *dir, FLDATA *fl) {
+FLISTH file_list1st(const char *dir, FLINFO *fli) {
 
 	Str255	fname;
 	FSSpec	fss;
@@ -217,8 +218,8 @@ void *file_list1st(const char *dir, FLDATA *fl) {
 	}
 	ret->eoff = FALSE;
 	ret->index = 1;
-	if (file_listnext((void *)ret, fl) == SUCCESS) {
-		return((void *)ret);
+	if (file_listnext((FLISTH)ret, fli) == SUCCESS) {
+		return((FLISTH)ret);
 	}
 
 ff1_err2:
@@ -228,7 +229,7 @@ ff1_err1:
 	return(NULL);
 }
 
-BOOL file_listnext(void *hdl, FLDATA *fl) {
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	FLHDL	flhdl;
 	Str255	fname;
@@ -247,14 +248,15 @@ BOOL file_listnext(void *hdl, FLDATA *fl) {
 		goto ffn_err;
 	}
 	flhdl->index++;
-	if (fl) {
-		mkcstr(fl->path, sizeof(fl->path), fname);
-		fl->size = 0;
+	if (fli) {
+		mkcstr(fli->path, sizeof(fli->path), fname);
 		if (flhdl->pb.hFileInfo.ioFlAttrib & 0x10) {
-			fl->attr = FILEATTR_DIRECTORY;
+			fli->attr = FILEATTR_DIRECTORY;
+			fli->size = 0;
 		}
 		else {
-			fl->attr = FILEATTR_ARCHIVE;
+			fli->attr = FILEATTR_ARCHIVE;
+			fli->size = flhdl->pb.hFileInfo.ioFlLgLen;
 		}
 	}
 	return(SUCCESS);
@@ -263,7 +265,7 @@ ffn_err:
 	return(FAILURE);
 }
 
-void file_listclose(void *hdl) {
+void file_listclose(FLISTH hdl) {
 
 	if (hdl) {
 		_MFREE(hdl);
@@ -271,8 +273,8 @@ void file_listclose(void *hdl) {
 }
 
 bool getLongFileName(char* dst, const char* path) {
+
     return(false);
 }
 #endif
-
 

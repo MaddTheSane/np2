@@ -163,14 +163,12 @@ static char *dospath2fcb(char *fcbname, char *dospath) {
 
 BOOL hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath) {
 
-	BOOL		ret;
 	char		path[MAX_PATH];
 	LISTARRAY	lst;
 const HDRVDIR 	*di;
 	HDRVLST		hdl;
 	char		fcbname[11];
 
-	ret = SUCCESS;
 	file_cpyname(path, np2cfg.hdrvroot, sizeof(path));
 	lst = NULL;
 	di = &hddroot;
@@ -194,9 +192,83 @@ const HDRVDIR 	*di;
 		file_catname(path, hdl->realname, sizeof(path));
 		di = &hdl->di;
 	}
-	if (hdl) {
+	if (hdp) {
 		CopyMemory(&hdp->di, di, sizeof(HDRVDIR));
 		file_cpyname(hdp->path, path, sizeof(hdp->path));
+	}
+	listarray_destroy(lst);
+	return(SUCCESS);
+
+hdsgrp_err:
+	listarray_destroy(lst);
+	return(FAILURE);
+}
+
+BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
+
+	char		path[MAX_PATH];
+	LISTARRAY	lst;
+	HDRVLST		hdl;
+	char		fcbname[11];
+	char		dosname[16];
+	UINT		i;
+	char		*p;
+
+	file_cpyname(path, np2cfg.hdrvroot, sizeof(path));
+	lst = NULL;
+	if (dospath[0] != '\\') {
+		goto hdsgrp_err;
+	}
+	while(1) {
+		file_setseparator(path, sizeof(path));
+		dospath++;
+		if (dospath[0] == '\0') {
+			goto hdsgrp_err;
+		}
+		dospath = dospath2fcb(fcbname, dospath);
+		if (dospath[0] != '\\') {
+			break;
+		}
+		listarray_destroy(lst);
+		lst = hostdrvs_getpathlist(path);
+		hdl = (HDRVLST)listarray_enum(lst, hddsea, fcbname);
+		if ((hdl == NULL) || (!(hdl->di.attr & 0x10))) {
+			goto hdsgrp_err;
+		}
+		file_catname(path, hdl->realname, sizeof(path));
+	}
+	if (dospath[0] != '\0') {
+		goto hdsgrp_err;
+	}
+	listarray_destroy(lst);
+	lst = hostdrvs_getpathlist(path);
+	hdl = (HDRVLST)listarray_enum(lst, hddsea, fcbname);
+	if (hdl != NULL) {
+		file_catname(path, hdl->realname, sizeof(path));
+		if (hdp) {
+			CopyMemory(&hdp->di, &hdl->di, sizeof(HDRVDIR));
+			file_cpyname(hdp->path, path, sizeof(hdp->path));
+		}
+	}
+	else {
+		p = dosname;
+		for (i=0; (i<8) && (fcbname[i] != ' '); i++) {
+			*p++ = fcbname[i];
+		}
+		if (fcbname[8] != ' ') {
+			*p++ = '.';
+			for (i=8; (i<11) && (fcbname[i] != ' '); i++) {
+				*p++ = fcbname[i];
+			}
+		}
+		*p = '\0';
+		file_catname(path, dosname, sizeof(path));
+		if (hdp) {
+			CopyMemory(hdp->di.fcbname, fcbname, 11);
+			hdp->di.size = 0;
+			hdp->di.attr = 0;
+			file_cpyname(hdp->path, path, sizeof(hdp->path));
+		}
 	}
 	listarray_destroy(lst);
 	return(SUCCESS);

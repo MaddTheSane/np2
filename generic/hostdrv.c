@@ -15,15 +15,13 @@
 #include	"hostdrv.tbl"
 
 
-#if 1
-#define IS_PERMITWRITE		0
-#else
-#define IS_PERMITWRITE		np2oscfg.hostdrv_permitwrite
-#endif
+#define IS_PERMITWRITE		(np2cfg.hdrvacc & HDFMODE_WRITE)
+#define IS_PERMITDELETE		(np2cfg.hdrvacc & HDFMODE_DELETE)
 
-#define ROOTPATH			"\\\\HOSTDRV\\"
-#define ROOTPATH_SIZE		(sizeof(ROOTPATH) - 1)
+#define ROOTPATH_NAME		"\\\\HOSTDRV\\"
+#define ROOTPATH_SIZE		(sizeof(ROOTPATH_NAME) - 1)
 
+static const char ROOTPATH[ROOTPATH_SIZE] = ROOTPATH_NAME;
 static const HDRVDIR hdd_volume = {"_HOSTDRIVE_", 0, 0x08};
 static const HDRVDIR hdd_owner  = {".          ", 0, 0x10};
 static const HDRVDIR hdd_parent = {"..         ", 0, 0x10};
@@ -292,6 +290,23 @@ static void setup_ptrs(INTRST is, SDACDS sc) {
 }
 
 
+static BOOL pathishostdrv(INTRST is, SDACDS sc) {
+
+	fetch_sda_currcds(sc);
+	setup_ptrs(is, sc);
+
+	if (memcmp(is->root_path, ROOTPATH, ROOTPATH_SIZE)) {
+		CPU_FLAG &= ~Z_FLAG;	// chain
+		return(FAILURE);
+	}
+	if (is->is_chardev) {
+		fail(is, ERR_ACCESSDENIED);
+		return(FAILURE);
+	}
+	return(SUCCESS);
+}
+
+
 static BOOL read_data(UINT num, UINT32 pos, UINT size,
 													UINT16 seg, UINT16 off) {
 
@@ -316,6 +331,39 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size,
 		i286_memstr_write(seg, off, work, r);
 		off += r;
 		size -= r;
+	}
+	return(SUCCESS);
+}
+
+static BOOL write_data(UINT num, UINT32 pos, UINT size,
+													UINT16 seg, UINT16 off) {
+
+	HDRVFILE	hdf;
+	FILEH		fh;
+	BYTE		work[1024];
+	UINT		r;
+
+	hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, num);
+	if (hdf == NULL) {
+		return(FAILURE);
+	}
+	fh = (FILEH)hdf->hdl;
+	if (file_seek(fh, (long)pos, FSEEK_SET) != (long)pos) {
+		return(FAILURE);
+	}
+	if (!size) {
+		file_write(fh, work, 0);
+	}
+	else {
+		do {
+			r = min(size, sizeof(work));
+			i286_memstr_read(seg, off, work, r);
+			if (file_write(fh, work, r) != r) {
+				return(FAILURE);
+			}
+			off += r;
+			size -= r;
+		} while(size);
 	}
 	return(SUCCESS);
 }
@@ -388,15 +436,7 @@ static void change_currdir(INTRST intrst) {
 	char		*ptr;
 	HDRVPATH	hdp;
 
-	fetch_sda_currcds(&sc);
-	setup_ptrs(intrst, &sc);
-
-	if (strncmp(intrst->root_path, ROOTPATH, ROOTPATH_SIZE) != 0) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
-		return;
-	}
-	if (intrst->is_chardev) {
-		fail(intrst, ERR_ACCESSDENIED);
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
 	}
 
@@ -520,6 +560,55 @@ static void read_file(INTRST intrst) {
 	succeed(intrst);
 }
 
+/* 09 */
+static void write_file(INTRST intrst) {
+
+	_SDACDS		sc;
+	_SFTREC		sft;
+	UINT16		cx;
+	UINT		file_size;
+	UINT32		file_pos;
+
+	fetch_sda_currcds(&sc);
+	fetch_sft(intrst, &sft);
+	setup_ptrs(intrst, &sc);
+
+	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.drive_no) {
+		CPU_FLAG &= ~Z_FLAG;	// chain
+		return;
+	}
+
+	if ((!IS_PERMITWRITE) ||
+		(!(sft.open_mode[0] & 3))) {	// read only
+		fail(intrst, ERR_ACCESSDENIED);
+		return;
+	}
+
+	cx = LOADINTELWORD(intrst->r.w.cx);
+	file_size = LOADINTELDWORD(sft.file_size);
+	file_pos = LOADINTELDWORD(sft.file_pos);
+	if (write_data(LOADINTELWORD(sft.start_sector), file_pos, cx,
+					LOADINTELWORD(sc.ver3.sda.current_dta.seg),
+					LOADINTELWORD(sc.ver3.sda.current_dta.off)) != SUCCESS) {
+		fail(intrst, ERR_WRITEFAULT);
+		return;
+	}
+	if (cx) {
+		file_pos += cx;
+		if (file_size < file_pos) {
+			file_size = file_pos;
+		}
+	}
+	else {
+		file_size = file_pos;
+	}
+
+	STOREINTELDWORD(sft.file_size, file_size);
+	STOREINTELDWORD(sft.file_pos, file_pos);
+	store_sft(intrst, &sft);
+	succeed(intrst);
+}
+
 /* 0A */
 static void lock_file(INTRST intrst) {
 
@@ -554,6 +643,31 @@ static void unlock_file(INTRST intrst) {
 	TRACEOUT(("hostdrv: unlock_file"));
 }
 
+/* 0E */
+static void set_fileattr(INTRST intrst) {
+
+	_SDACDS		sc;
+	HDRVPATH	hdp;
+	REG16		attr;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+		return;
+	}
+	if ((is_wildcards(intrst->fcbname_ptr)) ||
+		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS)) {
+		fail(intrst, ERR_FILENOTFOUND);
+		return;
+	}
+	if (!IS_PERMITWRITE) {
+		fail(intrst, ERR_ACCESSDENIED);
+		return;
+	}
+	attr = i286_memword_read(CPU_SS, CPU_BP + sizeof(IF4INTR)) & 0x37;
+
+	// ¬Œ÷‚µ‚½‚±‚Æ‚É‚·‚é...
+	succeed(intrst);
+}
+
 /* 0F */
 static void get_fileattr(INTRST intrst) {
 
@@ -561,17 +675,10 @@ static void get_fileattr(INTRST intrst) {
 	HDRVPATH	hdp;
 	UINT16		ax;
 
-	fetch_sda_currcds(&sc);
-	setup_ptrs(intrst, &sc);
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+		return;
+	}
 
-	if (strncmp(intrst->root_path, ROOTPATH, ROOTPATH_SIZE) != 0) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
-		return;
-	}
-	if (intrst->is_chardev) {
-		fail(intrst, ERR_ACCESSDENIED);
-		return;
-	}
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS)) {
 		fail(intrst, ERR_FILENOTFOUND);
@@ -585,27 +692,61 @@ static void get_fileattr(INTRST intrst) {
 	STOREINTELWORD(intrst->r.w.ax, ax);
 }
 
+/* 11 */
+static void rename_file(INTRST intrst) {
+
+	_SDACDS		sc;
+	HDRVPATH	hdp1;
+	HDRVPATH	hdp2;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+		return;
+	}
+
+	if ((hostdrvs_getrealpath(&hdp1, intrst->filename_ptr) != SUCCESS) ||
+		(hostdrvs_getrealpath(&hdp2, intrst->filename_ptr_2) != SUCCESS)) {
+		fail(intrst, ERR_PATHNOTFOUND);
+		return;
+	}
+	TRACEOUT(("rename_file %s to %s - failed", hdp1.path, hdp2.path));
+	fail(intrst, ERR_ACCESSDENIED);
+}
+
+
+/* 13 */
+static void delete_file(INTRST intrst) {
+
+	_SDACDS		sc;
+	HDRVPATH	hdp;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+		return;
+	}
+
+	if ((hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
+		(hdp.di.attr & 0x10)) {
+		fail(intrst, ERR_PATHNOTFOUND);
+		return;
+	}
+	TRACEOUT(("delete_file %s - failed", hdp.path));
+	fail(intrst, ERR_ACCESSDENIED);
+}
+
 /* 16 */
 static void open_file(INTRST intrst) {
 
 	_SDACDS		sc;
 	_SFTREC		sft;
 	HDRVPATH	hdp;
-	HDRVFILE	hdf;
+	UINT		mode;
 	FILEH		fh;
+	HDRVFILE	hdf;
 
-	fetch_sda_currcds(&sc);
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+		return;
+	}
 	fetch_sft(intrst, &sft);
-	setup_ptrs(intrst, &sc);
 
-	if (strncmp(intrst->root_path, ROOTPATH, ROOTPATH_SIZE) != 0) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
-		return;
-	}
-	if (intrst->is_chardev) {
-		fail(intrst, ERR_ACCESSDENIED);
-		return;
-	}
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
 		(hdp.di.attr & 0x10)) {
@@ -616,26 +757,94 @@ static void open_file(INTRST intrst) {
 										hdp.path, sft.open_mode[0] & 7));
 	switch(sft.open_mode[0] & 7) {
 		case 1:	// write only
+			mode = HDFMODE_WRITE;
+			break;
+
 		case 2:	// read/write
-			if (!IS_PERMITWRITE) {
-				fail(intrst, ERR_ACCESSDENIED);
-				return;
-			}
+			mode = HDFMODE_READ | HDFMODE_WRITE;
+			break;
+
+		default:
+			mode = HDFMODE_READ;
 			break;
 	}
-	hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
-	if (hdf == NULL) {
-		fail(intrst, ERR_PATHNOTFOUND);
-		return;
+
+	if (mode & HDFMODE_WRITE) {
+		if (!IS_PERMITWRITE) {
+			fail(intrst, ERR_ACCESSDENIED);
+			return;
+		}
+		fh = file_open(hdp.path);
 	}
-	fh = file_open_rb(hdp.path);
+	else {
+		fh = file_open_rb(hdp.path);
+	}
 	if (fh == FILEH_INVALID) {
 		TRACEOUT(("file open error!"));
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
+
+	hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+	if (hdf == NULL) {
+		file_close(fh);
+		fail(intrst, ERR_PATHNOTFOUND);
+		return;
+	}
+
 	hdf->hdl = (long)fh;
-	hdf->mode = 0;
+	hdf->mode = mode;
+	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
+
+	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.di);
+	init_sft(&sft);
+
+	store_sft(intrst, &sft);
+	store_sda_currcds(&sc);
+	succeed(intrst);
+}
+
+/* 17 */
+static void create_file(INTRST intrst) {
+
+	_SDACDS		sc;
+	_SFTREC		sft;
+	HDRVPATH	hdp;
+	HDRVFILE	hdf;
+	FILEH		fh;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+		return;
+	}
+	fetch_sft(intrst, &sft);
+
+	if ((is_wildcards(intrst->fcbname_ptr)) ||
+		(hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
+		(hdp.di.attr & 0x10)) {
+		fail(intrst, ERR_PATHNOTFOUND);
+		return;
+	}
+	TRACEOUT(("create_file: %s -> %s %d", intrst->filename_ptr,
+										hdp.path, sft.open_mode[0] & 7));
+
+	if (!IS_PERMITWRITE) {
+		fail(intrst, ERR_ACCESSDENIED);
+		return;
+	}
+
+	hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+	if (hdf == NULL) {
+		fail(intrst, ERR_PATHNOTFOUND);
+		return;
+	}
+	fh = file_create(hdp.path);
+	if (fh == FILEH_INVALID) {
+		TRACEOUT(("file create error!"));
+		fail(intrst, ERR_ACCESSDENIED);
+		return;
+	}
+	hdf->hdl = (long)fh;
+	hdf->mode = HDFMODE_READ | HDFMODE_WRITE;
 	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
 
 	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.di);
@@ -660,15 +869,7 @@ static void find_first(INTRST intrst) {
 		listarray_destroy(flist);
 	}
 
-	fetch_sda_currcds(&sc);
-	setup_ptrs(intrst, &sc);
-
-	if (strncmp(intrst->root_path, ROOTPATH, ROOTPATH_SIZE) != 0) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
-		return;
-	}
-	if (intrst->is_chardev) {
-		fail(intrst, ERR_ACCESSDENIED);
+	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
 	}
 
@@ -719,6 +920,42 @@ static void find_next(INTRST intrst) {
 	succeed(intrst);
 }
 
+/* 21 */
+// dos4ˆÈ~ŒÄ‚Î‚ê‚é‚±‚Æ‚Í‚ ‚ñ‚Ü‚È‚¢EEE
+static void seek_fromend(INTRST intrst) {
+
+	_SDACDS		sc;
+	_SFTREC		sft;
+	UINT16		reg;
+	UINT32 		pos;
+	UINT		file_size;
+
+	fetch_sda_currcds(&sc);
+	fetch_sft(intrst, &sft);
+
+	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.drive_no) {
+		CPU_FLAG &= ~Z_FLAG;	// chain
+		return;
+	}
+	reg = LOADINTELWORD(intrst->r.w.cx);
+	pos = reg << 16;
+	reg = LOADINTELWORD(intrst->r.w.dx);
+	pos += reg;
+	file_size = LOADINTELDWORD(sft.file_size);
+	if (pos > file_size) {
+		pos = file_size;
+	}
+	reg = (UINT16)(pos >> 16);
+	STOREINTELWORD(intrst->r.w.dx, reg);
+	reg = (UINT16)pos;
+	STOREINTELWORD(intrst->r.w.ax, reg);
+	pos = file_size - pos;
+	STOREINTELDWORD(sft.file_pos, pos);
+
+	store_sft(intrst, &sft);
+	intrst->r.b.flag_l &= ~C_FLAG;
+}
+
 
 // ----
 
@@ -734,21 +971,21 @@ static const HDINTRFN intr_func[] = {
 		close_file,			/* 06 */
 		commit_file,		/* 07 */
 		read_file,			/* 08 */
-		NULL,	//	write_file,			/* 09 */
+		write_file,			/* 09 */
 		lock_file,			/* 0A */
 		unlock_file,		/* 0B */
 		NULL,	//	get_diskspace,		/* 0C */
 		NULL,
-		NULL,	//	set_fileattr,		/* 0E */
+		set_fileattr,		/* 0E */
 		get_fileattr,		/* 0F */
 		NULL,
-		NULL,	//	rename_file,		/* 11 */
+		rename_file,		/* 11 */
 		NULL,
-		NULL,	//	delete_file,		/* 13 */
+		delete_file,		/* 13 */
 		NULL,
 		NULL,
 		open_file,			/* 16 */
-		NULL,	//	create_file,		/* 17 */
+		create_file,		/* 17 */
 		NULL,
 		NULL,
 		NULL,
@@ -758,7 +995,7 @@ static const HDINTRFN intr_func[] = {
 		NULL,
 		NULL,
 		NULL,
-		NULL,	//	seek_fromend,		/* 21 */
+		seek_fromend,		/* 21 */
 		NULL,
 		NULL,
 		NULL,
@@ -835,7 +1072,7 @@ void hostdrv_intr(void) {
 
 	fetch_intr_regs(&intrst);
 
-//	TRACEOUT(("hostdrv: AL=%.2x", intrst.r.b.al));
+	TRACEOUT(("hostdrv: AL=%.2x", intrst.r.b.al));
 
 	if ((intrst.r.b.al >= sizeof(intr_func) / sizeof(HDINTRFN)) ||
 		(intr_func[intrst.r.b.al] == NULL)) {

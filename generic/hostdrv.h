@@ -17,9 +17,15 @@ typedef struct {
 	char	path[MAX_PATH];
 } HDRVPATH;
 
+enum {
+	HDFMODE_READ		= 0x01,
+	HDFMODE_WRITE		= 0x02,
+	HDFMODE_DELETE		= 0x04
+};
+
 typedef struct {
 	long	hdl;
-	UINT32	mode;
+	UINT	mode;
 	char	path[MAX_PATH];
 } _HDRVFILE, *HDRVFILE;
 
@@ -37,58 +43,12 @@ typedef struct {
 	LISTARRAY	flist;
 } HOSTDRV;
 
-#if 0
-typedef struct {
-	char		filename[MAX_PATH];
-	UINT32		mode;
-} HOSTDRVFILE;
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 extern	HOSTDRV		hostdrv;
-// extern	HOSTDRVFILE	hostdrv_files[];
-
-
-
-
-
-#if 0
-#pragma pack(1)
-
-typedef union {
-	LPVOID		ptr;
-	DWORD		addr;
-	struct {
-		WORD	offset;
-		WORD	seg;
-	};
-} PTR;
-
-typedef struct {
-	BYTE		drive_no;		// 作成したドライブ番号(A:=0)
-	struct {
-		BYTE		major;
-		BYTE		minor;
-	}			dos_ver;		// DOSのバージョン
-	PTR			sda_ptr;		// DOS上のSDAのアドレス
-} IF4DOS;
-
-typedef struct {
-	IF4DOS		if4dos;
-	int			find_drive_no;
-	BOOL		is_mount;
-} HOSTDRV;
-
-typedef struct {
-	char		filename[MAX_PATH];
-	DWORD		mode;
-} HOSTDRVFILE;
-
-#pragma pack()
-
-extern	HOSTDRV		hostdrv;
-extern	HOSTDRVFILE	hostdrv_files[];
-#endif
-
 
 void hostdrv_initialize(void);
 void hostdrv_deinitialize(void);
@@ -99,4 +59,8 @@ void hostdrv_reset(void);
 BOOL hostdrv_mount(void);
 void hostdrv_unmount(void);
 void hostdrv_intr(void);
+
+#ifdef __cplusplus
+}
+#endif
 

@@ -130,12 +130,13 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 	if (fli) {
 		char2str(fli->path, sizeof(fli->path),
 								flhdl->name.unicode, flhdl->name.length);
-		fli->size = (UINT32)flhdl->fsci.dataLogicalSize;
 		if (flhdl->fsci.nodeFlags & kFSNodeIsDirectoryMask) {
 			fli->attr = FILEATTR_DIRECTORY;
+			fli->size = 0;
 		}
 		else {
 			fli->attr = FILEATTR_ARCHIVE;
+			fli->size = (UINT32)flhdl->fsci.dataLogicalSize;
 		}
 	}
 	return(SUCCESS);
@@ -150,6 +151,30 @@ void file_listclose(FLISTH hdl) {
 		FSCloseIterator(((FLHDL)hdl)->fsi);
 		_MFREE(hdl);
 	}
+}
+
+bool getLongFileName(char* dst, const char* path) {
+
+	FSSpec			fss;
+	Str255			fname;
+	FSRef			fref;
+	HFSUniStr255	name;
+
+	if (*path == '\0') {
+		return(false);
+	}
+	mkstr255(fname, path);
+	FSMakeFSSpec(0, 0, fname, &fss);
+	FSpMakeFSRef(&fss, &fref);
+	if (FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, &name, NULL, NULL)
+																!= noErr) {
+		return(false);
+	}
+	char2str(dst, 512, name.unicode, name.length);
+	if (!dst) {
+		return(false);
+	}
+	return(true);
 }
 
 #else
@@ -247,5 +272,9 @@ void file_listclose(FLISTH hdl) {
 	}
 }
 
+bool getLongFileName(char* dst, const char* path) {
+
+	return(false);
+}
 #endif
 

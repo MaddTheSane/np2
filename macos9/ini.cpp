@@ -308,6 +308,7 @@ static const INITBL iniitem[] = {
 	{"fontfile", INITYPE_STR,		np2cfg.fontfile,		MAX_PATH},
 	{"biospath", INITYPE_STR,		np2cfg.biospath,		MAX_PATH},
 	{"hdrvroot", INITYPE_STR,		np2cfg.hdrvroot,		MAX_PATH},
+	{"hdrv_acc", INITYPE_UINT8,		&np2cfg.hdrvacc,		0},
 
 	{"SampleHz", INITYPE_UINT16,	&np2cfg.samplingrate,	0},
 	{"Latencys", INITYPE_UINT16,	&np2cfg.delayms,		0},

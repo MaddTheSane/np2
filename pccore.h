@@ -85,6 +85,7 @@ typedef struct {
 	BYTE	MOTOR;
 	BYTE	MOTORVOL;
 	BYTE	PROTECTMEM;
+	BYTE	hdrvacc;
 
 	char	hddfile[2][MAX_PATH];									// ver0.30
 	char	fontfile[MAX_PATH];
