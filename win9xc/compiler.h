@@ -76,3 +76,11 @@ typedef signed __int64		SINT64;
 
 #define	FASTCALL	__fastcall
 
+
+#if defined(CPUCORE_IA32)
+#define	sigjmp_buf				jmp_buf
+#define	sigsetjmp(env, mask)	setjmp(env)
+#define	siglongjmp(env, val)	longjmp(env, val)
+#define	msgbox(title, msg)		MessageBox(NULL, msg, title, MB_OK)
+#endif
+

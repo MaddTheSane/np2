@@ -77,7 +77,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/dmap.o												\
 			$(OBJ)/ia32.o		$(OBJ)/inst_table.o	$(OBJ)/interface.o	\
 			$(OBJ)/paging.o		$(OBJ)/resolve.o	$(OBJ)/segments.o	\
-			$(OBJ)/task.o		$(OBJ)/iadebug.o						\
+			$(OBJ)/task.o		$(OBJ)/iadebug.o	$(OBJ)/iadisasm.o	\
 			$(OBJ)/bin_arith.o		$(OBJ)/bit_byte.o					\
 			$(OBJ)/ctrl_trans.o		$(OBJ)/data_trans.o					\
 			$(OBJ)/dec_arith.o		$(OBJ)/flag_ctrl.o					\
@@ -1055,6 +1055,9 @@ $(OBJ)/task.o		:	$(IA32)/task.c
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/iadebug.o	:	$(IA32)/debug.c
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/iadisasm.o	:	$(IA32)/disasm.c
 	$(CC) $(COPT) -o $@ $<
 
 
