@@ -178,7 +178,7 @@ static const BYTE xkeyconv_misc[256] = {
 	/*	  BS, TAB,  LF, CLR,    , RET,    ,   		; 0x08 */
 		0x0e,0x0f,0x1c,0x47,  NC,0x1c,  NC,  NC,
 	/*	    ,    ,    ,PAUS,SCRL,SYSQ,    ,  		; 0x10 */
-		  NC,  NC,  NC,0x60,0x72,0x62,  NC,  NC,
+		  NC,  NC,  NC,0x60,0x71,0x62,  NC,  NC,
 	/*	    ,    ,    , ESC,    ,    ,    ,   		; 0x18 */
 		  NC,  NC,  NC,0x00,  NC,  NC,  NC,  NC,
 	/*	    ,KANJ,MUHE,HENM,HENK,RONM,HIRA,KATA		; 0x20 */
