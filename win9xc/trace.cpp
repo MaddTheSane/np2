@@ -249,7 +249,7 @@ void trace_init(void) {
 		}
 	}
 
-	tracewin.en = 1;
+	tracewin.en = 0;
 	tracewin.fh = FILEH_INVALID;
 
 	tracecfg.posx = CW_USEDEFAULT;

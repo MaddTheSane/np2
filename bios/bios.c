@@ -37,6 +37,19 @@ static void bios_reinitbyswitch(void) {
 	BYTE	biosflag;
 	BYTE	ext_mem;
 
+
+#if defined(CPUCORE_IA32)
+	UINT16	org_cs;
+	UINT16	org_ip;
+
+	org_cs = CPU_CS;
+	org_ip = CPU_IP;
+	CPU_SHUT();
+	CPU_CS = org_cs;
+	CPU_IP = org_ip;
+	SETBIOSMEM16(0x00486, CPU_DX);
+#endif
+
 	CPU_TYPE = 0;
 	prxcrt = 0xc8;
 	if (gdc.display & 2) {

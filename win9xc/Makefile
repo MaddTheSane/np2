@@ -24,6 +24,7 @@ CBUS		= ../cbus
 BIOS		= ../bios
 SOUND		= ../sound
 VERMOUTH	= ../sound/vermouth
+GETSND		= ../sound/getsnd
 VRAM		= ../vram
 FDD			= ../fdd
 LIO			= ../lio
@@ -62,8 +63,8 @@ COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-DWIN32 -DNDEBUG -D_WINDOWS -DCPUCORE_IA32 -DTRACE \
 			-I$(BASE) -I$(COMMON) -I$(I386C) -I$(IA32) -I$(IA32INST) \
 			-I$(IA32FPU) -I$(IO) -I$(CBUS) -I$(BIOS) -I$(SOUND) \
-			-I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) -I$(GENERIC) \
-			-I$(TARGET) -I$(DIALOG)
+			-I$(VERMOUTH) -I$(GETSND) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
+			-I$(GENERIC) -I$(TARGET) -I$(DIALOG)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -85,18 +86,19 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/amd98.o		$(OBJ)/pcm86io.o	$(OBJ)/cs4231io.o	\
 			$(OBJ)/midiout.o	$(OBJ)/midimod.o	$(OBJ)/midinst.o	\
 			$(OBJ)/midvoice.o	$(OBJ)/midtable.o						\
+			$(OBJ)/getsnd.o		$(OBJ)/getwave.o	$(OBJ)/getsmix.o	\
 			$(OBJ)/bios.o		$(OBJ)/bios02.o		$(OBJ)/bios08.o		\
 			$(OBJ)/bios09.o		$(OBJ)/bios0c.o		$(OBJ)/bios12.o		\
 			$(OBJ)/bios13.o		$(OBJ)/bios18.o		$(OBJ)/bios19.o		\
 			$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		$(OBJ)/bios1c.o		\
-			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
-			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
-			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
-			$(OBJ)/opngeng.o	$(OBJ)/psggenc.o	$(OBJ)/psggeng.o	\
-			$(OBJ)/rhythmc.o	$(OBJ)/rhythmg.o	$(OBJ)/adpcmc.o		\
-			$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		$(OBJ)/pcm86g.o		\
-			$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	\
-			$(OBJ)/s98.o												\
+			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/wavemix.o	\
+			$(OBJ)/fmboard.o	$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		\
+			$(OBJ)/beepg.o		$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	\
+			$(OBJ)/opngenc.o	$(OBJ)/opngeng.o	$(OBJ)/psggenc.o	\
+			$(OBJ)/psggeng.o	$(OBJ)/rhythmc.o	$(OBJ)/rhythmg.o	\
+			$(OBJ)/adpcmc.o		$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		\
+			$(OBJ)/pcm86g.o		$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	\
+			$(OBJ)/soundrom.o	$(OBJ)/s98.o							\
 			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
 			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
 			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/scrnbmp.o	\
@@ -127,7 +129,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/ctrlxfer.o	$(OBJ)/exception.o	$(OBJ)/groups.o		\
 			$(OBJ)/ia32.o		$(OBJ)/inst_table.o	$(OBJ)/interface.o	\
 			$(OBJ)/paging.o		$(OBJ)/resolve.o	$(OBJ)/segments.o	\
-			$(OBJ)/task.o												\
+			$(OBJ)/task.o		$(OBJ)/iadebug.o						\
 			$(OBJ)/bin_arith.o		$(OBJ)/bit_byte.o		\
 			$(OBJ)/ctrl_trans.o		$(OBJ)/data_trans.o		\
 			$(OBJ)/dec_arith.o		$(OBJ)/flag_ctrl.o		\
@@ -437,6 +439,11 @@ $(OBJ)/sndcsec.o	:	$(SOUND)/sndcsec.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/sndcsec.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/wavemix.o	:	$(SOUND)/wavemix.c $(HEADERS) $(PCCORES) \
+						$(SOUND)/sound.h $(GETSND)/getsnd.h \
+						$(SOUND)/wavemix.res
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(FMBOARDS) $(TARGET)/joymng.h $(TARGET)/soundmng.h \
 						$(I386C)/cpucore.h $(CBUS)/cbuscore.h \
@@ -541,6 +548,23 @@ $(OBJ)/midvoice.o	:	$(VERMOUTH)/midvoice.c $(HEADERS) $(VERMOUTHS)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/midtable.o	:	$(VERMOUTH)/midtable.c $(HEADERS) $(VERMOUTHS)
+	$(CC) $(COPT) -o $@ $<
+
+
+
+$(OBJ)/getsnd.o		:	$(GETSND)/getsnd.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getwave.o	:	$(GETSND)/getwave.c $(HEADERS) $(GETSND)/getsnd.c
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getmp3.o		:	$(GETSND)/getmp3.c $(HEADERS) $(GETSND)/getsnd.c
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getogg.o		:	$(GETSND)/getogg.c $(HEADERS) $(GETSND)/getsnd.c
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getsmix.o	:	$(GETSND)/getsmix.c $(HEADERS) $(GETSND)/getsnd.c
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -976,6 +1000,10 @@ $(OBJ)/segments.o	:	$(IA32)/segments.c
 
 $(OBJ)/task.o		:	$(IA32)/task.c
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/iadebug.o	:	$(IA32)/debug.c
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/bin_arith.o		:	$(IA32INST)/bin_arith.c
