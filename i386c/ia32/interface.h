@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: interface.h,v 1.2 2003/12/11 14:58:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,92 +30,12 @@
 #ifndef	IA32_CPU_INTERFACE_H__
 #define	IA32_CPU_INTERFACE_H__
 
-#if 0		// このあたりも compiler.hへ
-#include "compiler.h"
-
-#include <assert.h>
-#include <stdarg.h>
-
-#include "memory.h"
-#include "nevent.h"
-#include "iobridge.h"
-
-#include "bios.h"
-#include "cpuio.h"
-#include "dmac.h"
-
-#if defined(_DEBUG)
-#define	ASSERT(v)	assert(v)
-#define	VERBOSE(v)	ia32_warning v
-#else
-#define	ASSERT(v)
-#define	VERBOSE(v)
-#endif
-#endif
-
-// --> あとで common.hへ
-#ifndef	INLINE
-#define	INLINE
-#endif
-
-#if 1			// これ SINT64/UINT64 を作ること
-typedef	unsigned __int64	QWORD;
-typedef signed __int64		SQWORD;
-#else
-typedef	unsigned long long	QWORD;
-typedef signed long long	SQWORD;
-#endif
-
 typedef signed char		SBYTE;
 typedef signed short		SWORD;
 typedef signed int		SDWORD;
 
-#if 0
-#define I286_AL		CPU_AL
-#define I286_CL		CPU_CL
-#define I286_DL		CPU_DL
-#define I286_BL		CPU_BL
-#define I286_AH		CPU_AH
-#define I286_CH		CPU_CH
-#define I286_DH		CPU_DH
-#define I286_BH		CPU_BH
-
-#define I286_AX		CPU_AX
-#define I286_CX		CPU_CX
-#define I286_DX		CPU_DX
-#define I286_BX		CPU_BX
-#define I286_SP		CPU_SP
-#define I286_BP		CPU_BP
-#define I286_SI		CPU_SI
-#define I286_DI		CPU_DI
-#define I286_IP		CPU_IP
-
-#define I286_EAX	CPU_EAX
-#define I286_ECX	CPU_ECX
-#define I286_EDX	CPU_EDX
-#define I286_EBX	CPU_EBX
-#define I286_ESP	CPU_ESP
-#define I286_EBP	CPU_EBP
-#define I286_ESI	CPU_ESI
-#define I286_EDI	CPU_EDI
-#define I286_EIP	CPU_EIP
-
-#define I286_ES		CPU_ES
-#define I286_CS		CPU_CS
-#define I286_SS		CPU_SS
-#define I286_DS		CPU_DS
-#define I286_FS		CPU_FS
-#define I286_GS		CPU_GS
-
-#define I286_EFLAG	CPU_EFLAG
-#define I286_FLAG	CPU_FLAG
-#define I286_FLAGL	CPU_FLAGL
-#define I286_FLAGH	CPU_FLAGH
-#define I286_TRAP	CPU_TRAP
-#define I286_INPORT	CPU_INPORT
-#define I286_OV		CPU_OV
-#define i286s		cpu_stat
-#endif
+typedef	UINT64			QWORD;
+typedef	SINT64			SQWORD;
 
 #define CPU_isDI	(!(CPU_FLAG & I_FLAG))
 #define CPU_isEI	(CPU_FLAG & I_FLAG)
@@ -127,9 +47,7 @@ typedef signed int		SDWORD;
 #define	CPU_EXEC()		ia32()
 #define	CPU_EXECV30()		ia32()
 
-// #define	CPU_WITHTRAP()		ia32withtrap()
-// #define	CPU_WITHDMA()		ia32withdma()
-// #define	CPU_STEP()		ia32_step()
+void i386c_initialize(void);
 
 void FASTCALL msgbox_str(char *msg);
 void FASTCALL msgbox_mem(DWORD no);
