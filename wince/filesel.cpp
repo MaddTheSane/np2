@@ -20,11 +20,14 @@ enum {
 	DID_FILTER
 };
 
-static const char str_dirname[] = "ﾌｧｲﾙの場所";
-static const char str_parent[] = "←";
-static const char str_filename[] = "ﾌｧｲﾙ名";
-static const char str_filetype[] = "ﾌｧｲﾙの種類";
-static const char str_open[] = "開く";
+static const BYTE str_dirname[] = {		// ファイルの場所
+		0xcc,0xa7,0xb2,0xd9,0x82,0xcc,0x8f,0xea,0x8f,0x8a,0};
+static const BYTE str_filename[] = {	// ファイル名
+		0xcc,0xa7,0xb2,0xd9,0x96,0xbc,0};
+static const BYTE str_filetype[] = {	// ファイルの種類
+		0xcc,0xa7,0xb2,0xd9,0x82,0xcc,0x8e,0xed,0x97,0xde,0};
+static const BYTE str_open[] = {		// 開く
+		0x8a,0x4a,0x82,0xad,0};
 
 
 #if defined(SIZE_QVGA)
@@ -38,7 +41,7 @@ static const MENUPRM res_fs[] = {
 			{DLGTYPE_EDIT,		DID_FOLDER,		0,
 				NULL,									 74,   6, 192,  16},
 			{DLGTYPE_BUTTON,	DID_PARENT,		MENU_TABSTOP,
-				str_parent,								271,   5,  18,  18},
+				NULL,									272,   6,  16,  16},
 			{DLGTYPE_LIST,		DID_FLIST,		MENU_TABSTOP,
 				NULL,									  5,  28, 284, 115},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
@@ -64,7 +67,7 @@ static const MENUPRM res_fs[] = {
 			{DLGTYPE_EDIT,		DID_FOLDER,		0,
 				NULL,									114,   7, 219,  18},
 			{DLGTYPE_BUTTON,	DID_PARENT,		MENU_TABSTOP,
-				str_parent,								346,   5,  22,  22},
+				NULL,									348,   7,  18,  18},
 			{DLGTYPE_LIST,		DID_FLIST,		MENU_TABSTOP,
 				NULL,									  7,  30, 481, 128},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
@@ -231,6 +234,7 @@ static void dlgsetlist(void) {
 static void dlginit(void) {
 
 	menudlg_appends(res_fs, sizeof(res_fs)/sizeof(MENUPRM));
+	menudlg_seticon(DID_PARENT, MICON_FOLDERPARENT);
 	menudlg_settext(DID_FILE, file_getname(filesel.path));
 	menudlg_settext(DID_FILTER, filesel.filter);
 	file_cutname(filesel.path);

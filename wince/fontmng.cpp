@@ -188,7 +188,6 @@ void *fontmng_create(int size, UINT type, const TCHAR *fontface) {
 	return(ret);
 }
 
-
 void fontmng_destroy(void *hdl) {
 
 	FNTMNG	fhdl;
@@ -202,6 +201,12 @@ void fontmng_destroy(void *hdl) {
 	}
 }
 
+int fontmng_getpoint(void *hdl) {
+
+	if (hdl) {
+	}
+	return(0);
+}
 
 #ifdef _WIN32_WCE
 static void getlength1(FNTMNG fhdl, FNTDAT fdat, LPCTSTR string,
@@ -258,7 +263,6 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const char *string) {
 	getlength1(fhdl, fdat, txtwork, len, leng);
 }
 
-
 BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 
 	TCHAR	txtwork[4];
@@ -268,11 +272,10 @@ BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 	DWORD	len;
 	int		leng;
 
-	width = 0;
 	if ((hdl == NULL) || (string == NULL)) {
 		goto fmgs_exit;
 	}
-
+	width = 0;
 	buf[2] = '\0';
 	do {
 		buf[0] = *string++;
@@ -305,7 +308,6 @@ BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 fmgs_exit:
 	return(FAILURE);
 }
-
 
 BOOL fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt) {
 
@@ -357,7 +359,6 @@ fmgds_exit:
 	return(FAILURE);
 }
 
-
 #else
 
 static void getlength1(FNTMNG fhdl, FNTDAT fdat,
@@ -398,7 +399,6 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 	}
 }
 
-
 static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const char *string) {
 
 	int		leng;
@@ -409,7 +409,6 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const char *string) {
 	TextOut(fhdl->hdcimage, 0, 0, string, leng);
 	getlength1(fhdl, fdat, string, leng);
 }
-
 
 BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 
@@ -453,7 +452,6 @@ BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 fmgs_exit:
 	return(FAILURE);
 }
-
 
 BOOL fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt) {
 
@@ -501,7 +499,6 @@ fmgds_exit:
 	return(FAILURE);
 }
 #endif
-
 
 static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 
@@ -585,7 +582,6 @@ static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 fmsp_end:
 	return;
 }
-
 
 FNTDAT fontmng_get(void *hdl, const char *string) {
 

@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"strres.h"
 #include	"fontmng.h"
 #include	"vramhdl.h"
 #include	"vrammix.h"
@@ -8,9 +9,10 @@
 
 typedef struct _dprm {
 struct _dprm	*next;
-	int			width;
+	UINT16		width;
+	UINT16		num;
 	VRAMHDL		icon;
-	char		str[128];
+	char		str[96];
 } _DLGPRM, *DLGPRM;
 
 #define	PRMNEXT_EMPTY	((DLGPRM)-1)
@@ -115,8 +117,9 @@ static DLGPRM resappend(MENUDLG dlg, const char *str) {
 	}
 	if (prm) {
 		prm->next = NULL;
-		prm->icon = NULL;
 		prm->width = 0;
+		prm->num = 0;
+		prm->icon = NULL;
 		prm->str[0] = '\0';
 		if (str) {
 			milstr_ncpy(prm->str, str, sizeof(prm->str));
@@ -130,6 +133,7 @@ static void resattachicon(MENUDLG dlg, DLGPRM prm, UINT16 icon,
 
 	if (prm) {
 		menuicon_unlock(prm->icon);
+		prm->num = icon;
 		prm->icon = menuicon_lock(icon, width, height, dlg->vram->bpp);
 	}
 }
@@ -166,6 +170,30 @@ static DLGHDL dlghdlsea(MENUDLG dlg, MENUID id) {
 	return((DLGHDL)listarray_enum(dlg->dlg, dsbyid, (void *)(long)id));
 }
 
+static BOOL gettextsz(DLGHDL hdl, POINT_T *sz) {
+
+	DLGPRM	prm;
+
+	prm = hdl->prm;
+	if (prm == NULL) {
+		goto gts_err;
+	}
+	*sz = hdl->c.dt.pt;
+	if (prm->icon) {
+		if (sz->x) {
+#if defined(SIZE_QVGA)
+			sz->x += 1;
+#else
+			sz->x += 2;
+#endif
+		}
+		sz->x += sz->y;
+	}
+	return(SUCCESS);
+
+gts_err:
+	return(FAILURE);
+}
 
 static void getleft(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 
@@ -173,7 +201,6 @@ static void getleft(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 	pt->y = rect->top;
 	(void)sz;
 }
-
 
 static void getcenter(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 
@@ -188,7 +215,6 @@ static void getright(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 	pt->y = rect->top;
 }
 
-
 static void getmid(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 
 	pt->x = rect->left;
@@ -200,44 +226,61 @@ static void getmid(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 
 static BOOL _cre_settext(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
-	hdl->prm = resappend(dlg, (char *)arg);
+const char	*str;
+
+	str = (char *)arg;
+	if (str == NULL) {
+		str = str_null;
+	}
+	hdl->prm = resappend(dlg, str);
 	hdl->c.dt.font = dlg->font;
-	fontmng_getsize(dlg->font, (char *)arg, &hdl->c.dt.pt);
+	fontmng_getsize(dlg->font, str, &hdl->c.dt.pt);
 	return(SUCCESS);
 }
-
 
 static void dlg_text(MENUDLG dlg, DLGHDL hdl,
 									const POINT_T *pt, const RECT_T *rect) {
 
+	VRAMHDL	icon;
 const char	*string;
 	int		color;
+	POINT_T	fp;
 	POINT_T	p;
 
 	if (hdl->prm == NULL) {
-		goto dgtx_exit;
+		return;
+	}
+	fp = *pt;
+	icon = hdl->prm->icon;
+	if (icon) {
+		if (icon->alpha) {
+			vramcpy_cpyex(dlg->vram, &fp, icon, NULL);
+		}
+		else {
+			vramcpy_cpy(dlg->vram, &fp, icon, NULL);
+		}
+		fp.x += icon->width;
+#if defined(SIZE_QVGA)
+		fp.x += 1;
+#else
+		fp.x += 2;
+#endif
 	}
 	string = hdl->prm->str;
-	if (string == NULL) {
-		goto dgtx_exit;
-	}
-	if (!(hdl->flag & MENU_GRAY)) {
-		color = MVC_TEXT;
-	}
-	else {
-		p.x = pt->x + MENU_DSTEXT;
-		p.y = pt->y + MENU_DSTEXT;
-		vrammix_text(dlg->vram, hdl->c.dt.font, string,
+	if (string) {
+		if (!(hdl->flag & MENU_GRAY)) {
+			color = MVC_TEXT;
+		}
+		else {
+			p.x = fp.x + MENU_DSTEXT;
+			p.y = fp.y + MENU_DSTEXT;
+			vrammix_text(dlg->vram, hdl->c.dt.font, string,
 										menucolor[MVC_GRAYTEXT2], &p, rect);
-		color = MVC_GRAYTEXT1;
+			color = MVC_GRAYTEXT1;
+		}
+		vrammix_text(dlg->vram, hdl->c.dt.font, string,
+										menucolor[color], &fp, rect);
 	}
-	p.x = pt->x;
-	p.y = pt->y;
-	vrammix_text(dlg->vram, hdl->c.dt.font, string,
-										menucolor[color], &p, rect);
-
-dgtx_exit:
-	return;
 }
 
 
@@ -352,6 +395,7 @@ static void dlgclose_rel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 
 static void dlgbtn_paint(MENUDLG dlg, DLGHDL hdl) {
 
+	POINT_T	sz;
 	POINT_T	pt;
 	UINT	c;
 
@@ -364,8 +408,8 @@ static void dlgbtn_paint(MENUDLG dlg, DLGHDL hdl) {
 	}
 	menuvram_box2(dlg->vram, &hdl->rect, c);
 
-	if (hdl->prm) {
-		getmid(&pt, &hdl->rect, &hdl->c.dt.pt);
+	if (gettextsz(hdl, &sz) == SUCCESS) {
+		getmid(&pt, &hdl->rect, &sz);
 		if (hdl->val) {
 			pt.x += MENU_DSTEXT;
 			pt.y += MENU_DSTEXT;
@@ -493,12 +537,12 @@ static void dlglist_drawitem(DLGHDL hdl, DLGPRM prm, int focus,
 			vramcpy_cpy(hdl->vram, &fp, icon, NULL);
 		}
 		fp.x += icon->width;
-	}
 #if defined(SIZE_QVGA)
-	fp.x += 1;
+		fp.x += 1;
 #else
-	fp.x += 2;
+		fp.x += 2;
 #endif
+	}
 	vrammix_text(hdl->vram, hdl->c.dl.font, prm->str,
 							menucolor[focus?MVC_CURTEXT:MVC_TEXT], &fp, rct);
 }
@@ -1482,11 +1526,12 @@ static void dlgcheck_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
 static void dlgtext_paint(MENUDLG dlg, DLGHDL hdl) {
 
+	POINT_T	sz;
 	POINT_T	pt;
 	void	(*getpt)(POINT_T *pt, const RECT_T *rect, const POINT_T *sz);
 
 	vram_filldat(dlg->vram, &hdl->rect, menucolor[MVC_STATIC]);
-	if (hdl->prm) {
+	if (gettextsz(hdl, &sz) == SUCCESS) {
 		switch(hdl->flag & MST_POSMASK) {
 			case MST_LEFT:
 			default:
@@ -1501,23 +1546,31 @@ static void dlgtext_paint(MENUDLG dlg, DLGHDL hdl) {
 				getpt = getright;
 				break;
 		}
-		getpt(&pt, &hdl->rect, &hdl->c.dt.pt);
+		getpt(&pt, &hdl->rect, &sz);
 		dlg_text(dlg, hdl, &pt, &hdl->rect);
 	}
 }
 
+static void dlgtext_itemset(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
-static void dlgtext_itemset(MENUDLG dlg, DLGHDL hdl, const void *str) {
+const void	*str;
 
 	if (hdl->prm) {
-		if (str) {
-			milstr_ncpy(hdl->prm->str, (char *)str, sizeof(hdl->prm->str));
-			fontmng_getsize(hdl->c.dt.font, (char *)str, &hdl->c.dt.pt);
+		str = (char *)arg;
+		if (str == NULL) {
+			str = str_null;
 		}
-		else {
-			hdl->prm->str[0] = '\0';
-			hdl->c.dt.pt.x = 0;
-		}
+		milstr_ncpy(hdl->prm->str, str, sizeof(hdl->prm->str));
+		fontmng_getsize(hdl->c.dt.font, str, &hdl->c.dt.pt);
+	}
+	(void)dlg;
+}
+
+static void dlgtext_iconset(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+
+	if (hdl->prm) {
+		resattachicon(dlg, hdl->prm, (UINT16)(long)arg,
+											hdl->c.dt.pt.y, hdl->c.dt.pt.y);
 	}
 	(void)dlg;
 }
@@ -2180,11 +2233,25 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 
 		case DMSG_SETTEXT:
 			switch(hdl->type) {
+				case DLGTYPE_BUTTON:
 				case DLGTYPE_RADIO:
 				case DLGTYPE_CHECK:
 				case DLGTYPE_EDIT:
 				case DLGTYPE_TEXT:
 					dlgtext_itemset(dlg, hdl, arg);
+					drawctrls(dlg, hdl);
+					break;
+			}
+			break;
+
+		case DMSG_SETICON:
+			switch(hdl->type) {
+				case DLGTYPE_BUTTON:
+				case DLGTYPE_RADIO:
+				case DLGTYPE_CHECK:
+				case DLGTYPE_EDIT:
+				case DLGTYPE_TEXT:
+					dlgtext_iconset(dlg, hdl, arg);
 					drawctrls(dlg, hdl);
 					break;
 			}

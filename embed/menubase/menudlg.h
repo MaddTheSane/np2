@@ -125,6 +125,8 @@ void menudlg_disppagehidden(MENUID page, BOOL hidden);
 					((VRAMHDL)menudlg_msg(DMSG_SETVRAM, (id), (void *)(vram)))
 #define menudlg_settext(id, arg)		\
 					menudlg_msg(DMSG_SETTEXT, (id), (void *)(arg))
+#define menudlg_seticon(id, val)		\
+					menudlg_msg(DMSG_SETICON, (id), (void *)(long)(val))
 #define menudlg_itemappend(id, arg)		\
 					menudlg_msg(DMSG_ITEMAPPEND, (id), (void *)(arg))
 #define menudlg_itemreset(id)			\
