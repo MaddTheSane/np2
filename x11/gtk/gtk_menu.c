@@ -231,8 +231,6 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/HardDisk/SASI-_2",		NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-2/_Open...",	NULL, f(sasiopen), 1, NULL },
 { "/HardDisk/SASI-2/_Remove",	NULL, f(sasiremove), 1, NULL },
-{ "/HardDisk/sep1",		NULL, NULL, 0, "<Separator>" },
-{ "/HardDisk/_Remove All",	NULL, f(sasiremove), ~0, NULL },
 { "/Screen",			NULL, NULL, 0, "<Branch>" },
 { "/Screen/_Window",		NULL, NULL, 0, "<RadioItem>" },
 { "/Screen/_FullScreen",	NULL, NULL, 0, "/Screen/Window" },
