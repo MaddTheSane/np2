@@ -116,7 +116,7 @@ usage(void)
 
 	printf("Usage: %s [options] [[FD1 image] [[FD2 image] [[FD3 image] [FD4 image]]]]\n\n", progname);
 	printf("options:\n");
-	printf("\t--help\n          [-h]        : print this message\n");
+	printf("\t--help            [-h]        : print this message\n");
 	printf("\t--config          [-c] <file> : specify config file\n");
 	printf("\t--timidity-config [-C] <file> : specify timidity config file\n");
 	printf("\t--shared-pixmap   [-p]        : use MIT-SHM pixmap extention\n");
