@@ -19,7 +19,7 @@ enum {
 };
 
 typedef struct {
-	BYTE	*buffer;
+	char	*buffer;
 	UINT	buffers;
 	UINT	size;
 	UINT	flag;

@@ -336,7 +336,7 @@ PFILEH profile_open(const char *filename, UINT flag) {
 		}
 	}
 	file_close(fh);
-	ret->buffer = (BYTE *)(ret + 1);
+	ret->buffer = (char *)(ret + 1);
 	ret->buffers = size;
 	ret->size = filesize;
 	ret->flag = flag;
