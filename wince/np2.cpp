@@ -175,7 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			winkbd_keyup(wParam, lParam);
 			break;
 
-#if !defined(_WIN32_WCE)
+#if 1 // !defined(_WIN32_WCE)
 		case WM_SYSKEYDOWN:
 			winkbd_keydown(wParam, lParam);
 			break;
@@ -475,7 +475,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			if (!GetMessage(&msg, NULL, 0, 0)) {
 				break;
 			}
-#if !defined(_WIN32_WCE)
+#if 1 // !defined(_WIN32_WCE)
 			if ((msg.hwnd != hWnd) ||
 				((msg.message != WM_SYSKEYDOWN) &&
 				(msg.message != WM_SYSKEYUP))) {
