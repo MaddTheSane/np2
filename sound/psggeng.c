@@ -5,6 +5,27 @@
 
 extern	PSGGENCFG	psggencfg;
 
+// ƒeƒXƒg
+
+static UINT32	rnds;
+
+static UINT psg_rand(void) {
+
+	UINT32	rand0;
+	UINT32	rand1;
+	UINT	c;
+
+	rand0 = rnds & 0xffff;
+	rand1 = rnds >> 16;
+	rand0 = (rand0 >> 5) + (rand0 << 11);
+	rand0 += 60043;
+	rand1 -= 4953 + ((rand0 >> 16) & 1);
+	c = (rand1 >> 15) & 1;
+	rand1 = (rand1 << 1) + c;
+	rand0 += rand1 + c;
+	rnds = (rand1 << 16) + (rand0 & 0xffff);
+	return(rand0);
+}
 
 void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 
@@ -58,7 +79,8 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 				countbak = psg->noise.count;
 				psg->noise.count -= psg->noise.freq;
 				if (psg->noise.count > countbak) {
-					psg->noise.base = GETRAND() & (1 << (1 << PSGADDEDBIT));
+//					psg->noise.base = GETRAND() & (1 << (1 << PSGADDEDBIT));
+					psg->noise.base = psg_rand() & (1 << (1 << PSGADDEDBIT));
 				}
 				noisetbl += psg->noise.base;
 				noisetbl >>= 1;
