@@ -87,164 +87,7 @@ maketbl_4:		mov		[esi], eax
 			align	16
 			global	@makegrph@8
 
-@makegrph@8:
-%if 0
-				pushad
-				mov		edi, _np2_vram
-				add		edi, [_dsync + dsync_t.grphvad]
-				and		ecx, 1
-				je		short em_adjustpage
-				add		edi, SCRN_BUFSIZE
-em_adjustpage:	inc		cl
-				mov		ch, cl
-				movzx	eax, cx
-				shl		eax, 16
-				mov		ax, cx
-
-				cmp		dl, 0
-				je		short em_calc_maxline
-				mov		ecx, 2000h
-				mov		ebx, _vramupdate
-em_dirtyfill_lp:or		[ebx], eax
-				add		ebx, byte 4
-				loop	em_dirtyfill_lp
-
-em_calc_maxline:movzx	edx, byte [GDC_S_CSRFORM]
-				and		edx, byte 0x1f
-				mov		[esp+28], edx					; GRP_LR
-				movzx	edx, byte [GDC_S_PITCH]
-				cmp		byte [_gdc + gdc_t.clock], 0
-				js		short em_calc1_width
-				add		edx, edx
-em_calc1_width:	and		edx, 0000feh					; uPD72020で確認…
-				mov		[esp+12], edx					; LINE_WIDTH
-
-				mov		ebx, [_dsync + dsync_t.grph_vbp]
-em_draw_lp:		movzx	esi, word [GDC_S_SCROLL+ 0+0]
-				movzx	ecx, word [GDC_S_SCROLL+ 0+2]
-				call	em_grphputlines
-				movzx	esi, word [GDC_S_SCROLL+ 4+0]
-				movzx	ecx, word [GDC_S_SCROLL+ 4+2]
-				call	em_grphputlines
-				cmp		byte [_np2cfg + np2cfg_t.uPD72020], 0
-				jne		short em_draw_lp
-				movzx	esi, word [GDC_S_SCROLL+ 8+0]
-				movzx	ecx, word [GDC_S_SCROLL+ 8+2]
-				call	em_grphputlines
-				movzx	esi, word [GDC_S_SCROLL+12+0]
-				movzx	ecx, word [GDC_S_SCROLL+12+2]
-				push	dword em_draw_lp
-
-em_grphputlines:	and		esi, 3fffh
-					add		esi, esi
-					shr		ecx, 4
-					and		ecx, 03ffh
-					jne		short em_grphlineput_st
-					mov		ecx, 0400h
-em_grphlineput_st:	push	ecx
-
-em_grphlineput_lp:	mov		ecx, [esp+28+8]				; GRP_LR
-em_grphline1_lp:	test	bl, 1
-					je		short em_grph_putline
-					test	byte [_gdc + gdc_t.mode1], 10h
-					je		short em_grph_putline
-					add		edi, 640
-					mov		ah, [esp+20+8]				; ALL_DRAWFLAG
-					and		ah, al
-					jmp		near em_setflags
-
-					align	4
-em_grph_putline:	mov		ah, 0
-					push	esi
-					mov		ebp, 80
-					cmp		al, 1
-					jne		short em_bank1_linelp
-em_bank0_linelp:	test	byte [_vramupdate + esi], al
-					je		short em_bank0_nodirty
-					mov		ah, al
-					movzx	edx, byte [_mem + esi + VRAM0_B]
-					movq	mm0, [_grph_table + edx*8+0*0x800]
-					movzx	edx, byte [_mem + esi + VRAM0_R]
-					por		mm0, [_grph_table + edx*8+1*0x800]
-					movzx	edx, byte [_mem + esi + VRAM0_G]
-					por		mm0, [_grph_table + edx*8+2*0x800]
-					movzx	edx, byte [_mem + esi + VRAM0_E]
-					por		mm0, [_grph_table + edx*8+3*0x800]
-					movq	[edi], mm0
-em_bank0_nodirty:	inc		esi
-					and		esi, 7fffh
-					add		edi, 8
-					dec		ebp
-					jne		short em_bank0_linelp
-					jmp		short em_bankputend
-
-					align	16
-em_bank1_linelp:	test	byte [_vramupdate + esi], al
-					je		short em_bank1_nodirty
-					mov		ah, al
-					movzx	edx, byte [_mem + esi + VRAM1_B]
-					movq	mm0, [_grph_table + edx*8+0*0x800]
-					movzx	edx, byte [_mem + esi + VRAM1_R]
-					por		mm0, [_grph_table + edx*8+1*0x800]
-					movzx	edx, byte [_mem + esi + VRAM1_G]
-					por		mm0, [_grph_table + edx*8+2*0x800]
-					movzx	edx, byte [_mem + esi + VRAM1_E]
-					por		mm0, [_grph_table + edx*8+3*0x800]
-					movq	[edi], mm0
-em_bank1_nodirty:	inc		esi
-					and		esi, 7fffh
-					add		edi, 8
-					dec		ebp
-					jne		short em_bank1_linelp
-em_bankputend:		pop		esi
-em_setflags:		or		byte [_renewal_line + ebx], ah
-
-em_putline_end:		inc		ebx
-					cmp		ebx, [_dsync + dsync_t.grphymax]
-					jnc		short em_grph_break
-					dec		dword [esp]
-					je		short em_grphline1_ed
-					dec		ecx
-					jns		near em_grphline1_lp
-					add		esi, [esp+12+8]				; LINE_WIDTH
-					and		esi, 7fffh
-					jmp		near em_grphlineput_lp
-					align	16
-em_grphline1_ed:	pop		ecx
-					ret
-
-				align	16
-em_grph_break:	mov		ah, al
-				add		esp, 8
-				cmp		byte [esp+20], 0				; ALL_DRAWFLAG
-				je		short em_deldirty
-
-				cmp		ebx, [_dsync + dsync_t.scrnymax]
-				jae		short em_deldirty
-				xor		edx, edx
-em_btmfill0_lp:	or		[_renewal_line + ebx], al
-				mov		ecx, 640/4
-em_btmfill1_lp:	mov		[edi], edx
-				add		edi, 4
-				loop	em_btmfill1_lp
-				inc		ebx
-				cmp		ebx, [_dsync + dsync_t.scrnymax]
-				jb		em_btmfill0_lp
-
-em_deldirty:	mov		ecx, 2000h
-				mov		ebx, dword _vramupdate
-				not		eax
-em_deldirty_lp:	and		[ebx], eax
-				add		ebx, 4
-				loop	em_deldirty_lp
-				popad
-				emms
-				ret
-
-				align	16
-%else	; ---- MMXないよ～
-
-non_mmx:		pushad
+@makegrph@8:	pushad
 				mov		edi, _np2_vram
 				add		edi, [_dsync + dsync_t.grphvad]
 				and		ecx, 1
@@ -269,12 +112,6 @@ calc_maxline:	push	eax
 				movzx	eax, byte [GDC_S_CSRFORM]
 				and		eax, byte 01fh
 				mov		[esp+28+4], eax					; GRP_LR
-				movzx	eax, byte [GDC_S_PITCH]
-				cmp		byte [_gdc + gdc_t.clock], 0
-				js		short calc1_width
-				add		eax, eax
-calc1_width:	and		eax, 0000feh					; uPD72020で確認…
-				mov		[esp+12+4], eax					; LINE_WIDTH
 
 				mov		ebx, [_dsync + dsync_t.grph_vbp]
 draw_lp:		movzx	esi, word [GDC_S_SCROLL+ 0+0]
@@ -292,7 +129,14 @@ draw_lp:		movzx	esi, word [GDC_S_SCROLL+ 0+0]
 				movzx	ecx, word [GDC_S_SCROLL+12+2]
 				push	dword draw_lp
 
-grphputlines:		and		esi, 3fffh
+grphputlines:		movzx	eax, byte [GDC_S_PITCH]
+					test	ecx, 4000h
+					jne		short .storewidth
+					add		eax, eax
+.storewidth:		and		eax, 0000feh				; uPD72020で確認…
+					mov		[esp+12+8], eax				; LINE_WIDTH
+
+					and		esi, 3fffh
 					add		esi, esi
 					shr		ecx, 4
 					and		ecx, 03ffh
@@ -340,6 +184,7 @@ bank0_nodirty:		inc		esi
 					dec		ebp
 					jne		short bank0_linelp
 					jmp		short bankputend
+
 					align	4
 bank1_linelp:		test	byte [_vramupdate + esi], 2
 					je		short bank1_nodirty
@@ -406,6 +251,5 @@ deldirty_lp:	and		[ebx], edx
 				popad
 				ret
 
-%endif
-
 	ends
+

@@ -354,7 +354,7 @@ const CRTDATA	*p;
 	}
 
 	CopyMemory(gdc.m.para + GDC_SYNC, gdcmastersync[master], 8);
-	ZeroMemory(gdc.m.para + GDC_SCROLL, 8);
+	ZeroMemory(gdc.m.para + GDC_SCROLL, 4);
 	gdc.m.para[GDC_PITCH] = 80;
 
 	p = crtdata + crt;
@@ -369,11 +369,12 @@ const CRTDATA	*p;
 	crtc.reg.sdr = 0;
 
 	CopyMemory(gdc.s.para + GDC_SYNC, gdcslavesync[slave], 8);
-	ZeroMemory(gdc.s.para + GDC_SCROLL, 8);
+	ZeroMemory(gdc.s.para + GDC_SCROLL, 4);
 	if (slave & 1) {
 		gdc.s.para[GDC_PITCH] = 80;
 		gdc.clock |= 3;
 		mem[MEMB_PRXDUPD] |= 0x04;
+		gdc.s.para[GDC_SCROLL+3] = 0x40;
 	}
 	else {
 		gdc.s.para[GDC_PITCH] = 40;
@@ -478,7 +479,7 @@ void bios0x18_42(REG8 mode) {
 	}
 	else {
 #endif
-		ZeroMemory(gdc.s.para + GDC_SCROLL, 8);
+		ZeroMemory(gdc.s.para + GDC_SCROLL, 4);
 		if (crtmode == 2) {							// ALL
 			crtmode = 2;
 			if ((mem[MEMB_PRXDUPD] & 0x24) == 0x20) {
@@ -508,6 +509,9 @@ void bios0x18_42(REG8 mode) {
 				gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
 				gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
 			}
+		}
+		if (mem[MEMB_PRXDUPD] & 4) {
+			gdc.s.para[GDC_SCROLL+3] = 0x40;
 		}
 		if ((crtmode == 2) || (!(mem[MEMB_PRXCRT] & 0x40))) {
 			gdc.mode1 &= ~(0x10);

@@ -191,6 +191,21 @@ static void bios_screeninit(void) {
 	bios0x18_0a(al);
 }
 
+static void setbiosseed(UINT8 *ptr, UINT size, UINT seedpos) {
+
+	UINT8	x;
+	UINT8	y;
+	UINT	i;
+
+	x = 0;
+	y = 0;
+	for (i=0; i<size; i+=2) {
+		x += ptr[i + 0];
+		y += ptr[i + 1];
+	}
+	ptr[seedpos + 0] -= x;
+	ptr[seedpos + 1] -= y;
+}
 
 void bios_initialize(void) {
 
@@ -216,12 +231,20 @@ void bios_initialize(void) {
 			tmp = LOADINTELDWORD(mem + 0xf0000 + i);
 			if (tmp == 0x506e5024) {
 				TRACEOUT(("found PnP BIOS at %.5x", 0xf0000 + i));
-				STOREINTELDWORD(mem + 0xf0000 + i, 0x32504e24);
+				mem[0xf0000 + i] = 0x6e;
+				mem[0xf0002 + i] = 0x24;
+				break;
 			}
 		}
 	}
 	else {
 		CopyMemory(mem + 0x0e8000, nosyscode, sizeof(nosyscode));
+		if ((!biosrom) && (!(pccore.model & PCMODEL_EPSON))) {
+			CopyMemory(mem + 0xe8dd8, neccheck, 0x25);
+			pos = LOADINTELWORD(itfrom + 2);
+			CopyMemory(mem + 0xf538e, itfrom + pos, 0x27);
+		}
+		setbiosseed(mem + 0x0e8000, 0x10000, 0xb1f0);
 	}
 
 #if defined(SUPPORT_PC9821)
@@ -257,12 +280,6 @@ void bios_initialize(void) {
 	mem[0xffff0] = 0xea;
 	STOREINTELDWORD(mem + 0xffff1, 0xfd800000);
 
-	if ((!biosrom) && (!(pccore.model & PCMODEL_EPSON))) {
-		CopyMemory(mem + 0xe8dd8, neccheck, 0x25);
-		pos = LOADINTELWORD(itfrom + 2);
-		CopyMemory(mem + 0xf538e, itfrom + pos, 0x27);
-	}
-
 	CopyMemory(mem + 0x0fd800 + 0x0e00, keytable[0], 0x300);
 
 	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
@@ -274,6 +291,7 @@ void bios_initialize(void) {
 	else if ((pccore.model & PCMODELMASK) == PCMODEL_VM) {
 		mem[ITF_ADRS + 0x7ff1] = 0x08;
 	}
+	setbiosseed(mem + 0x0f8000, 0x08000, 0x7ffe);
 #else
 	fh = file_open_c("itf.rom");
 	if (fh != FILEH_INVALID) {
