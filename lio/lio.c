@@ -11,7 +11,7 @@
 	LIO_TABLE	lio;
 
 
-void lio_init(void) {
+void lio_initialize(void) {
 
 	UINT	i;
 
@@ -25,11 +25,11 @@ void lio_init(void) {
 	ZeroMemory(&lio, sizeof(lio));
 }
 
-void bios_lio(BYTE cmd) {
+void bios_lio(REG8 cmd) {
 
 	UINT	i;
 
-//	TRACE_("lio", cmd);
+	TRACEOUT(("lio command %.2x", cmd));
 
 	switch(cmd) {
 		case 0x00:			// a0: GINIT
@@ -118,6 +118,7 @@ void bios_lio(BYTE cmd) {
 			break;
 
 		case 0x0d:			// ad: GPUT2
+//			CPU_AH = lio_gput2();
 			break;
 
 		case 0x0e:			// ae: GROLL

@@ -2,6 +2,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"biosmem.h"
 #include	"lio.h"
 
 
@@ -35,16 +36,23 @@ static void lio_makescreen(void) {
 BYTE lio_gscreen(void) {
 
 	LIOGSCREEN	data;
-	LIO_SCRN		scrn;
-	BOOL			screenmodechange = FALSE;
-	BYTE			bit;
-	int				disp;
+	LIO_SCRN	scrn;
+	BOOL		screenmodechange = FALSE;
+	BYTE		bit;
+	int			disp;
 
 	i286_memstr_read(CPU_DS, CPU_BX, &data, sizeof(data));
 	if (data.mode == 0xff) {
 		data.mode = lio.gscreen.mode;
 	}
-	else if (data.mode != lio.gscreen.mode) {
+	if (data.mode > 4) {
+		goto gscreen_err5;
+	}
+	else if ((data.mode >= 2) && (!(mem[MEMB_PRXCRT] & 0x40))) {
+		goto gscreen_err5;
+	}
+
+	if (data.mode != lio.gscreen.mode) {
 		screenmodechange = TRUE;
 	}
 	if (data.sw == 0xff) {
@@ -152,6 +160,9 @@ BYTE lio_gscreen(void) {
 	lio.scrn = scrn;
 	lio_makeviewmask();
 	lio_makescreen();
-	return(0);
+	return(LIO_SUCCESS);
+
+gscreen_err5:
+	return(LIO_ILLEGALFUNC);
 }
 

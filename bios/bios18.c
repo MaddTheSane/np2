@@ -764,6 +764,11 @@ void bios0x18(void) {
 //			}
 			break;
 
+		case 0x45:
+		case 0x46:
+			TRACEOUT(("unsupport bios 18-%.2x", CPU_AH));
+			break;
+
 		case 0x47:						// ’¼üA‹éŒ`‚Ì•`‰æ
 		case 0x48:						// ‰~‚Ì•`‰æ
 			bios18_47();

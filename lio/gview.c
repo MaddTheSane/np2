@@ -43,7 +43,7 @@ void lio_makeviewmask(void) {
 	}
 }
 
-BYTE lio_gview(void) {
+REG8 lio_gview(void) {
 
 	MEMGVIEW	dat;
 	SINT16		x1;

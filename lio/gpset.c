@@ -7,12 +7,12 @@ typedef struct {
 	BYTE	x[2];
 	BYTE	y[2];
 	BYTE	pal;
-} MEMGPSET;
+} LIOGPSET;
 
 
-BYTE lio_gpset(void) {
+REG8 lio_gpset(void) {
 
-	MEMGPSET	gpset;
+	LIOGPSET	gpset;
 	SINT16		x;
 	SINT16		y;
 
@@ -28,6 +28,6 @@ BYTE lio_gpset(void) {
 	x = (SINT16)LOADINTELWORD(gpset.x);
 	y = (SINT16)LOADINTELWORD(gpset.y);
 	lio_pset(x, y, gpset.pal);
-	return(0);
+	return(LIO_SUCCESS);
 }
 

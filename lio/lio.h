@@ -1,4 +1,11 @@
 
+enum {
+	LIO_SUCCESS			= 0,
+	LIO_ILLEGALFUNC		= 5,
+	LIO_OUTOFMEMORY		= 7
+};
+
+
 typedef struct {
 	BYTE	mode;
 	BYTE	sw;
@@ -16,11 +23,11 @@ typedef struct {
 } LIOGVIEW;
 
 typedef struct {
-	BYTE	palmax;					// command dummy
-	BYTE	bgcolor;
-	BYTE	bdcolor;
-	BYTE	fgcolor;
-	BYTE	palmode;
+	UINT8	palmax;
+	UINT8	bgcolor;
+	UINT8	bdcolor;
+	UINT8	fgcolor;
+	UINT8	palmode;
 } LIOGCOLOR1;
 
 
@@ -56,8 +63,8 @@ extern "C" {
 
 extern LIO_TABLE lio;
 
-void lio_init(void);
-void bios_lio(BYTE cmd);
+void lio_initialize(void);
+void bios_lio(REG8 cmd);
 
 void lio_makeviewmask(void);
 void lio_pset(SINT16 x, SINT16 y, BYTE pal);
@@ -65,18 +72,18 @@ void lio_line(SINT16 x1, SINT16 x2, SINT16 y, BYTE pal);
 
 BYTE lio_ginit(void);
 BYTE lio_gscreen(void);
-BYTE lio_gview(void);
-BYTE lio_gcolor1(void);
-BYTE lio_gcolor2(void);
+REG8 lio_gview(void);
+REG8 lio_gcolor1(void);
+REG8 lio_gcolor2(void);
 BYTE lio_gcls(void);
-BYTE lio_gpset(void);
+REG8 lio_gpset(void);
 BYTE lio_gline(void);
 BYTE lio_gcircle(void);
 BYTE lio_gpaint1(void);
 BYTE lio_gpaint2(void);
 BYTE lio_gget(void);
 BYTE lio_gput1(void);
-BYTE lio_gput2(void);
+REG8 lio_gput2(void);
 BYTE lio_groll(void);
 BYTE lio_gpoint2(void);
 BYTE lio_gcopy(void);

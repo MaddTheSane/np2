@@ -200,7 +200,7 @@ void bios_initialize(void) {
 
 	bios_vectorset();
 	if (!biosrom) {
-		lio_init();
+		lio_initialize();
 	}
 
 	SETBIOSMEM16(0xfd800, 0xcb90);
@@ -368,6 +368,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 		case BIOS_BASE + BIOSOFST_1f:
 			CPU_REMCLOCK -= 200;
+			TRACEOUT(("unsupport protect bios"));
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_WAIT:

@@ -1062,14 +1062,14 @@ egcwwt_egc		dcd		egc
 
 ; ---- emmc
 
-emmc_rd			add		r2, r9, #CPU_EXTMEMSIZE
+emmc_rd			add		r2, r9, #CPU_EMS
 				and		r3, r0, #(3 << 14)
 				ldr		r2, [r2, r3 lsr #(14 - 2)]
 				mov		r0, r0 lsl #(32 - 14)
 				ldrb	r0, [r2, r0 lsr #(32 - 14)]
 				mov		pc, lr
 
-emmc_wt			add		r2, r9, #CPU_EXTMEMSIZE
+emmc_wt			add		r2, r9, #CPU_EMS
 				and		r3, r0, #(3 << 14)
 				ldr		r2, [r2, r3 lsr #(14 - 2)]
 				mov		r0, r0 lsl #(32 - 14)
@@ -1077,7 +1077,7 @@ emmc_wt			add		r2, r9, #CPU_EXTMEMSIZE
 				mov		pc, lr
 
 
-emmcw_rd		add		r2, r9, #CPU_EXTMEMSIZE
+emmcw_rd		add		r2, r9, #CPU_EMS
 				and		r12, r0, #(3 << 14)
 				mov		r0, r0 lsl #(32 - 14)
 				ldr		r3, [r2, r12 lsr #(14 - 2)]
@@ -1099,7 +1099,7 @@ emmcw_rd_3fff	eor		r12, r12, #(1 << 14)				; !
 				mov		pc, lr
 
 
-emmcw_wt		add		r2, r9, #CPU_EXTMEMSIZE
+emmcw_wt		add		r2, r9, #CPU_EMS
 				and		r12, r0, #(3 << 14)
 				mov		r0, r0 lsl #(32 - 14)
 				ldr		r3, [r2, r12 lsr #(14 - 2)]
