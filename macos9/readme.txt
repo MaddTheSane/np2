@@ -3,6 +3,7 @@
                                        NP2 developer team, 1999-2001,2003,2004
 
 
+
 ・概要
 
 　　PC-9801VX21をベースとして、PC-9801シリーズの主要な機能をソフトウェアで
@@ -28,7 +29,7 @@
 　　ねこープロジェクトIIを使うには フロッピーイメージが必要です。
 　　webの情報を基にイメージ化を行なって下さい。
 
-　　その後 NP2 Carbonを起動します。
+　　その後 NP2 Classic または NP2 Carbonを起動します。
 
 　　フロッピーベースのソフトウェアを起動するには、メニューの
 　　[FDD1 - Open], [FDD2 - Open]を選択しディスクイメージを挿入した後に
@@ -46,13 +47,6 @@
 　　CPUスピードは Configureで変更出来ます。
 
 　　実行し、設定を変えると np2.cfgファイルが作成されます。
-
-
-
-・対応ディスクイメージ
-　　FDD  - *.d88 *.xdf
-　　SASI - *.thd *.hdi
-　　SCSI - *.hdd
 
 
 
@@ -133,6 +127,7 @@
 
 　　Other
 　　　BMP Save                  エミュレーション中の画面をBMP形式で保存します。
+　　　Calendar                  カレンダ設定を開きます。
 　　　Clock Disp                クロック数を表示します。
 　　　Frame Disp                フレーム数を表示します。
 
@@ -168,11 +163,47 @@
 　　　　GRCG                    GRCG使用時のアクセスウェイト値を指定します。
 　　　　RealPalettes Adjust     RealPalettes時のタイミングを調整します。
 
+　　Calendar
+　　　Real                      常に現実と同じ時刻になります。
+　　　Virtual Calendar          仮想カレンダーを使用します。
+
 　　※ Classic版のみ
+
+
+
+・ディスクイメージ
+
+　　以下にイメージ対応しています。
+　　　FDD  - D88形式, XDF(ベタイメージ)形式
+　　　SASI - THD形式(T98), HDI形式(Anex86)
+　　　SCSI - HDD形式(Virtual98)
+
+
+
+・Userkeyについて
+　userkey1, userkey2は、cfgを書換えることによりキーを自由に変更することが
+　出来ます。
+　書式)
+　　userkey1 = [key1] (key2) (key3)...
+　　　フルキー 0～9 A～Z - ^ \ @ [ ] ; : , . / _
+　　　         STOP COPY ESC TAB BS RET SPC XFER NFER
+　　　         INS DEL RLUP RLDN HMCL HELP
+　　　ファンク F1～F10 VF1～VF5
+　　　テンキー [0]～[9] [-] [/] [*] [+] [=] [,] [.]
+　　　シフト   SHIFT CAPS KANA GRPH CTRL
+
+　　例:
+　　　userkey1 = CTRL XFER   (CTRL+XFER FEP切り替え用)
+　　　userkey2 = D O A Z     (D+O+A+Z 同時押し)
+
+　本機能は 簡易的な実装であり ver0.75で変更されます。
+　また、ver0.74ではシフト系は不整合が発生する可能性があります。
+
 
 
 　Windows版と共通点が多いので Windows版ヘルプもご覧ください。
 　　http://www.yui.ne.jp/np2/help.html
+
 
 
 　　　　　　　　　　　　　　　　　　email: np2@yui.ne.jp

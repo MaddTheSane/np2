@@ -3,6 +3,7 @@
                                        NP2 developer team, 1999-2001,2003,2004
 
 
+
 ・概要
 
 　　PC-9801VX21をベースとして、PC-9801シリーズの主要な機能をソフトウェアで
@@ -27,6 +28,8 @@
 　　・ヘルプを使用するには IE4.01以上が必要です。
 　　　　IE4.01が利用できない場合にはこちらをご覧ください。
 　　　　　http://www.yui.ne.jp/np2/help.html
+
+
 
 ・推奨動作環境
 
@@ -164,6 +167,7 @@
 　　　About                     バージョンを表示します。
 
 
+
 ・設定ダイアログ
 
 　　Configue
@@ -217,6 +221,49 @@
 　　Calendar
 　　　Real                      常に現実と同じ時刻になります。
 　　　Virtual Calendar          仮想カレンダーを使用します。
+
+
+
+・ディスクイメージ
+
+　　以下にイメージ対応しています。
+　　　FDD  - D88形式, XDF(ベタイメージ)形式
+　　　SASI - THD形式(T98), HDI形式(Anex86)
+　　　SCSI - HDD形式(Virtual98)
+
+
+
+・Userkeyについて
+
+　　userkey1, userkey2は、np2.iniファイルを書換えることにより
+　　キーを自由に設定することが出来ます。
+
+　　書式)
+　　　userkey1 = [key1] (key2) (key3)...
+　　　　フルキー 0～9 A～Z - ^ \ @ [ ] ; : , . / _
+　　　　         STOP COPY ESC TAB BS RET SPC XFER NFER
+　　　　         INS DEL RLUP RLDN HMCL HELP
+　　　　ファンク F1～F10 VF1～VF5
+　　　　テンキー [0]～[9] [-] [/] [*] [+] [=] [,] [.]
+　　　　シフト   SHIFT CAPS KANA GRPH CTRL
+
+　　　例:
+　　　　userkey1 = CTRL XFER   (CTRL+XFER FEP切り替え用)
+　　　　userkey2 = D O A Z     (D+O+A+Z 同時押し)
+
+　　本機能は 簡易的な実装であり ver0.75で変更されます。
+　　また、ver0.74ではシフト系は不整合が発生する可能性があります。
+
+
+
+・ROMEOについて
+
+　　ROMEOを使用するには、np2.exeと同じフォルダに pcidebug.dllと
+　　pcidbg95.vxd(Win95/98) / pcidbgnt.sys(WinNT4/2000/XP)を置いて、
+　　np2.iniのuseromeoを trueにしてください。
+
+　　PC-9801-118音源のYMF288部分がROMEOから出力されます。
+
 
 
 　　　　　　　　　　　　　　　　　　email: np2@yui.ne.jp
