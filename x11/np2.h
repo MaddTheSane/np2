@@ -30,7 +30,7 @@ typedef struct {
 
 	COMCFG	mpu;
 
-	BYTE	comfirm;
+	BYTE	confirm;
 
 	BYTE	resume;						// ver0.30
 

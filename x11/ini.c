@@ -511,7 +511,7 @@ static const INITBL iniitem[] = {
 	{"Joystick", INITYPE_BOOL,	&np2oscfg.JOYPAD1,	0},
 	{"Joy1_btn", INITYPE_ARGH8,	np2oscfg.JOY1BTN,	4},
 
-	{"comfirm_", INITYPE_BOOL,	&np2oscfg.comfirm,	0},
+	{"confirm_", INITYPE_BOOL,	&np2oscfg.confirm,	0},
 
 	{"mpu98map", INITYPE_STR,	np2oscfg.mpu.mout,	MAX_PATH},
 	{"mpu98min", INITYPE_STR,	np2oscfg.mpu.min,	MAX_PATH},
