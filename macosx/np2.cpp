@@ -33,11 +33,11 @@
 
 
 #define	USE_RESUME
-// #define	NP2OPENING
+#define	NP2OPENING
 
 #ifdef		NP2OPENING
 #include	<QuickTime/QuickTime.h>
-#define		OPENING_WAIT		1500
+// #define	OPENING_WAIT	1500
 #endif
 
 
