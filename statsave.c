@@ -12,6 +12,7 @@
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
 #include	"board14.h"
+#include	"amd98.h"
 #include	"bios.h"
 #include	"vram.h"
 #include	"palettes.h"
@@ -654,10 +655,11 @@ enum {
 	FLAG_FM2B		= 0x0010,
 	FLAG_PSG1		= 0x0020,
 	FLAG_PSG2		= 0x0040,
-	FLAG_RHYTHM		= 0x0080,
-	FLAG_ADPCM		= 0x0100,
-	FLAG_PCM86		= 0x0200,
-	FLAG_CS4231		= 0x0400
+	FLAG_PSG3		= 0x0080,
+	FLAG_RHYTHM		= 0x0100,
+	FLAG_ADPCM		= 0x0200,
+	FLAG_PCM86		= 0x0400,
+	FLAG_CS4231		= 0x0800
 };
 
 typedef struct {
@@ -710,6 +712,10 @@ static int flagsave_fm(NP2FFILE f, const STENTRY *t) {
 										FLAG_PSG1 | FLAG_RHYTHM | FLAG_ADPCM;
 			break;
 
+		case 0x80:
+			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
+			break;
+
 		default:
 			saveflg = 0;
 			break;
@@ -737,6 +743,9 @@ static int flagsave_fm(NP2FFILE f, const STENTRY *t) {
 		}
 		if (saveflg & FLAG_PSG2) {
 			ret |= flagsave_save(f, &psg2.reg, sizeof(PSGREG));
+		}
+		if (saveflg & FLAG_PSG3) {
+			ret |= flagsave_save(f, &psg3.reg, sizeof(PSGREG));
 		}
 		if (saveflg & FLAG_ADPCM) {
 			ret |= flagsave_save(f, &adpcm, sizeof(adpcm));
@@ -846,6 +855,10 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 										FLAG_PSG1 | FLAG_RHYTHM | FLAG_ADPCM;
 			break;
 
+		case 0x80:
+			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
+			break;
+
 		default:
 			saveflg = 0;
 			break;
@@ -871,6 +884,9 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 	}
 	if (saveflg & FLAG_PSG2) {
 		ret |= flagload_load(f, &psg2.reg, sizeof(PSGREG));
+	}
+	if (saveflg & FLAG_PSG3) {
+		ret |= flagload_load(f, &psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
 		ret |= flagload_load(f, &adpcm, sizeof(adpcm));
@@ -911,6 +927,9 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 	}
 	if (saveflg & FLAG_PSG2) {
 		play_psgreg(&psg2);
+	}
+	if (saveflg & FLAG_PSG3) {
+		play_psgreg(&psg3);
 	}
 	(void)t;
 	return(ret);

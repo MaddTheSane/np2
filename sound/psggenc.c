@@ -114,6 +114,7 @@ void psggen_setreg(PSGGEN psg, BYTE reg, BYTE value) {
 			keydisp_psgmix(psg);
 			psg->mixer = ~value;
 			psg->puchicount = psggencfg.puchidec;
+//			TRACEOUT(("psg %x 7 %d", (long)psg, value));
 			break;
 
 		case 8:
@@ -129,7 +130,7 @@ void psggen_setreg(PSGGEN psg, BYTE reg, BYTE value) {
 			}
 			psg->tone[ch].puchi = psggencfg.puchidec;
 			psg->puchicount = psggencfg.puchidec;
-//			TRACEOUT(("%d", value));
+//			TRACEOUT(("psg %x %x %d", (long)psg, reg, value));
 			break;
 
 		case 11:

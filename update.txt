@@ -2,4 +2,9 @@
 　ver0.70 → ver0.71
 
 　・np2sysp … ポート指定ミスを修正
+　・AMD-98  … クロックを修正
+
+
+  (Win)
+　　keydisp PSG修正
 

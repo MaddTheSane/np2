@@ -28,7 +28,8 @@ static const PROCTBL evtproc[] = {
 			{PROCID('e','v','f','7'), fdcbusy_error7},
 			{PROCID('e','v','k','1'), pc9861ch1cb},
 			{PROCID('e','v','k','2'), pc9861ch2cb},
-			{PROCID('e','v','8','6'), pcm86_cb}};
+			{PROCID('e','v','8','6'), pcm86_cb},
+			{PROCID('e','v','a','m'), amd98int}};
 
 static const ENUMTBL evtnum[] = {
 			{PROCID('m','a','i','n'), NEVENT_FLAMES},
@@ -97,6 +98,8 @@ static const STENTRY np2tbl[] = {
 	{"CALENDAR",	0,	NP2FLAG_BIN,	&cal,			sizeof(cal)},
 	{"PALEVENT",	0,	NP2FLAG_BIN,	&palevent,		sizeof(palevent)},
 	{"FMBOARD",		0,	NP2FLAG_FM,		NULL,			0},
+	{"AMD98",		0,	NP2FLAG_BIN,	&amd98,			sizeof(amd98)},
+	{"MUSICGEN",	0,	NP2FLAG_BIN,	&musicgen,		sizeof(musicgen)},
 	{"BEEP",		0,	NP2FLAG_BIN,	&beep,			sizeof(beep)},
 	{"CMMPU98",		0,	NP2FLAG_COM,	(void *)0,		0},
 	{"CMRS232C",	0,	NP2FLAG_COM,	(void *)1,		0},

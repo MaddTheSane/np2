@@ -17,6 +17,9 @@ static void setamd98event(BOOL absolute) {
 	else {
 		cnt = pc.multiple << 16;
 	}
+	if (pc.baseclock == PCBASECLOCK25) {
+		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
+	}
 	nevent_set(NEVENT_MUSICGEN, cnt, amd98int, absolute);
 }
 

@@ -29,9 +29,7 @@ typedef struct {
 	BYTE	tune[3][2];		// 0
 	BYTE	noise;			// 6
 	BYTE	mixer;			// 7
-	BYTE	vol0;			// 8
-	BYTE	vol1;			// 9
-	BYTE	vol2;			// a
+	BYTE	vol[3];			// 8
 	BYTE	envtime[2];		// b
 	BYTE	env;			// d
 	BYTE	io1;
