@@ -1,7 +1,10 @@
 
 #define	MIDI_GMONLY
+
+#if !defined(_WIN32_CE) && !defined(SLZAURUS)
 #define	ENABLE_TREMOLO
 #define	ENABLE_VIRLATE
+#endif
 
 struct _midimodule;
 typedef	struct _midimodule	_MIDIMOD;

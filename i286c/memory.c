@@ -44,7 +44,7 @@ static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 	else if (address < 0xa5000) {
 		if ((address & 1) && (cgwindow.writable & 1)) {
 			cgwindow.writable |= 0x80;
-			font[cgwindow.high + ((address >> 1) & 0x0f)] = value;
+			fontrom[cgwindow.high + ((address >> 1) & 0x0f)] = value;
 		}
 	}
 }
@@ -203,10 +203,10 @@ static BYTE MEMCALL tram_rd(UINT32 address) {
 	}
 	else if (address < 0xa5000) {
 		if (address & 1) {
-			return(font[cgwindow.high + ((address >> 1) & 0x0f)]);
+			return(fontrom[cgwindow.high + ((address >> 1) & 0x0f)]);
 		}
 		else {
-			return(font[cgwindow.low + ((address >> 1) & 0x0f)]);
+			return(fontrom[cgwindow.low + ((address >> 1) & 0x0f)]);
 		}
 	}
 	return(mem[address]);
@@ -339,7 +339,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 		}
 		if (cgwindow.writable & 1) {
 			cgwindow.writable |= 0x80;
-			font[cgwindow.high + ((address >> 1) & 0x0f)] = (BYTE)value;
+			fontrom[cgwindow.high + ((address >> 1) & 0x0f)] = (BYTE)value;
 		}
 	}
 }
@@ -488,24 +488,24 @@ static UINT16 MEMCALL tramw_rd(UINT32 address) {
 		return(LOADINTELWORD(mem + address));
 	}
 	else if (address == 0xa3fff) {
-		return(mem[address] + (font[cgwindow.low] << 8));
+		return(mem[address] + (fontrom[cgwindow.low] << 8));
 	}
 	else if (address < 0xa4fff) {
 		if (address & 1) {
 			UINT16 ret;
-			ret = font[cgwindow.high + ((address >> 1) & 0x0f)];
-			ret += font[cgwindow.low + (((address + 1) >> 1) & 0x0f)] << 8;
+			ret = fontrom[cgwindow.high + ((address >> 1) & 0x0f)];
+			ret += fontrom[cgwindow.low + (((address + 1) >> 1) & 0x0f)] << 8;
 			return(ret);
 		}
 		else {
 			UINT16 ret;
-			ret = font[cgwindow.low + ((address >> 1) & 0x0f)];
-			ret += font[cgwindow.high + ((address >> 1) & 0x0f)] << 8;
+			ret = fontrom[cgwindow.low + ((address >> 1) & 0x0f)];
+			ret += fontrom[cgwindow.high + ((address >> 1) & 0x0f)] << 8;
 			return(ret);
 		}
 	}
 	else if (address == 0xa4fff) {
-		return((mem[0xa5000] << 8) | font[cgwindow.high + 15]);
+		return((mem[0xa5000] << 8) | fontrom[cgwindow.high + 15]);
 	}
 	return(LOADINTELWORD(mem + address));
 }

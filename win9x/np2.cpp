@@ -603,61 +603,67 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_KEY:
 					xmenu_setkey(0);
 					keystat_resetjoykey();
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_JOY1:
 					xmenu_setkey(1);
 					keystat_resetjoykey();
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_JOY2:
 					xmenu_setkey(2);
 					keystat_resetjoykey();
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_XSHIFT:
 					xmenu_setxshift(np2cfg.XSHIFT ^ 1);
 					keystat_forcerelease(0x70);
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_XCTRL:
 					xmenu_setxshift(np2cfg.XSHIFT ^ 2);
 					keystat_forcerelease(0x74);
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_XGRPH:
 					xmenu_setxshift(np2cfg.XSHIFT ^ 4);
 					keystat_forcerelease(0x73);
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_F12MOUSE:
 					xmenu_setf12copy(0);
 					winkbd_resetf12();
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_F12COPY:
 					xmenu_setf12copy(1);
 					winkbd_resetf12();
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_F12STOP:
 					xmenu_setf12copy(2);
 					winkbd_resetf12();
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_F12EQU:
 					xmenu_setf12copy(3);
 					winkbd_resetf12();
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_F12COMMA:
 					xmenu_setf12copy(4);
 					winkbd_resetf12();
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BEEPOFF:
@@ -715,7 +721,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_PC9801_118:
-					xmenu_setsound(8);
+					xmenu_setsound(0x08);
 					update |= SYS_UPDATECFG;
 					break;
 

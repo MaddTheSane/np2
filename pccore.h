@@ -14,30 +14,47 @@ enum {
 #define		CPUMODE_8MHz		0x20
 
 typedef struct {
-	UINT	baseclock;
-	UINT	multiple;
-	BYTE	model;
-
-	BYTE	dipsw[3];
-	BYTE	memsw[8];
-	BYTE	vol14[6];
-	BYTE	wait[6];
-
+	// エミュレート中によく参照される奴
 	BYTE	uPD72020;
-	BYTE	KEY_MODE;
-	BYTE	SOUND_SW;
-	BYTE	realpal;
-	UINT16	samplingrate;
-	UINT16	delayms;
-	BYTE	MIDIRESET;
 	BYTE	DISPSYNC;
-	BYTE	EXTMEM;
-	BYTE	PROTECTMEM;												// qn
+	BYTE	RASTER;
+	BYTE	realpal;
+	BYTE	LCD_MODE;
+	BYTE	skipline;
+	UINT16	skiplight;
 
+	BYTE	KEY_MODE;
+	BYTE	XSHIFT;
 	BYTE	BTN_RAPID;
 	BYTE	BTN_MODE;
 
-	BYTE	snd_x;													// ver0.30
+	BYTE	dipsw[3];
+	BYTE	MOUSERAPID;
+
+	BYTE	calendar;
+	BYTE	usefd144;
+	BYTE	wait[6];
+
+
+	// リセット時とかあんまり参照されない奴
+	char	model[8];
+	UINT	baseclock;
+	UINT	multiple;
+
+	BYTE	memsw[8];
+
+	BYTE	ITF_WORK;
+	BYTE	EXTMEM;
+	BYTE	grcg;
+	BYTE	color16;
+	UINT32	BG_COLOR;
+	UINT32	FG_COLOR;
+
+	UINT16	samplingrate;
+	UINT16	delayms;
+	BYTE	SOUND_SW;
+	BYTE	snd_x;
+
 	BYTE	snd14opt[3];
 	BYTE	snd26opt;
 	BYTE	snd86opt;
@@ -45,37 +62,25 @@ typedef struct {
 	BYTE	spb_vrc;												// ver0.30
 	BYTE	spb_vrl;												// ver0.30
 	BYTE	spb_x;													// ver0.30
-	BYTE	mpuopt;
 
-	BYTE	MOTOR;
-	BYTE	MOTORVOL;
 	BYTE	BEEP_VOL;
-	BYTE	ITF_WORK;
-	BYTE	EMM_WORK;
-	BYTE	LCD_MODE;
-	UINT32	BG_COLOR;
-	UINT32	FG_COLOR;
-
-	BYTE	MOUSERAPID;
-	BYTE	XSHIFT;
-	BYTE	skipline;
-	UINT16	skiplight;
-	BYTE	RASTER;
-
+	BYTE	vol14[6];
 	BYTE	vol_fm;
 	BYTE	vol_ssg;
 	BYTE	vol_adpcm;
 	BYTE	vol_pcm;
 	BYTE	vol_rhythm;
 
+	BYTE	mpuenable;
+	BYTE	mpuopt;
+
 	BYTE	pc9861enable;
 	BYTE	pc9861sw[3];
 	BYTE	pc9861jmp[6];
 
-	BYTE	grcg;
-	BYTE	color16;
-	BYTE	calendar;
-	BYTE	usefd144;
+	BYTE	MOTOR;
+	BYTE	MOTORVOL;
+	BYTE	PROTECTMEM;
 
 	char	hddfile[2][MAX_PATH];									// ver0.30
 	char	fontfile[MAX_PATH];
@@ -94,6 +99,7 @@ typedef struct {
 	UINT32	raster;
 	UINT32	hsync;
 	BYTE	cpumode;
+	BYTE	model;
 } PCCORE;
 
 

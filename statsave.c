@@ -627,7 +627,7 @@ static int flagsave_gij(NP2FFILE f, const STENTRY *t) {
 	ret = flagsave_create(f, t);
 	if (ret != NP2FLAG_FAILURE) {
 		for (i=0; i<2; i++) {
-			fnt = font + ((0x56 + (i << 7)) << 4);
+			fnt = fontrom + ((0x56 + (i << 7)) << 4);
 			for (j=0; j<0x80; j++) {
 				ret |= flagsave_save(f, fnt, 32);
 				fnt += 0x1000;
@@ -647,7 +647,7 @@ static int flagload_gij(NP2FFILE f, const STENTRY *t) {
 
 	ret = 0;
 	for (i=0; i<2; i++) {
-		fnt = font + ((0x56 + (i << 7)) << 4);
+		fnt = fontrom + ((0x56 + (i << 7)) << 4);
 		for (j=0; j<0x80; j++) {
 			ret |= flagload_load(f, fnt, 32);
 			fnt += 0x1000;

@@ -22,9 +22,9 @@ void font_init(void) {
 	UINT	j;
 	UINT32	dbit;
 
-	ZeroMemory(font, sizeof(font));
-	p = font + 0x81000;
-	q = font + 0x82800;
+	ZeroMemory(fontrom, sizeof(fontrom));
+	p = fontrom + 0x81000;
+	q = fontrom + 0x82800;
 	for (i=0; i<256; i++) {
 		for (j=0; j<4; j++) {
 			dbit = 0;
@@ -97,15 +97,15 @@ const BYTE	*p;
 
 	// ŠOŽš: font[??560-??57f], font[??d60-??d7f] ‚Íí‚ç‚È‚¢‚æ‚¤‚Éc
 	for (i=0; i<0x80; i++) {
-		q = font + (i << 12);
+		q = fontrom + (i << 12);
 		ZeroMemory(q + 0x000, 0x0560 - 0x000);
 		ZeroMemory(q + 0x580, 0x0d60 - 0x580);
 		ZeroMemory(q + 0xd80, 0x1000 - 0xd80);
 	}
 
-	CopyMemory(font + 0x82000, fontdata_8, 0x800);
+	CopyMemory(fontrom + 0x82000, fontdata_8, 0x800);
 	p = fontdata_8;
-	q = font + 0x80000;
+	q = fontrom + 0x80000;
 	for (i=0; i<256; i++) {
 		for (j=0; j<8; j++) {
 			q[0] = p[0];

@@ -35,38 +35,38 @@
 
 	const char	np2version[] = NP2VER_CORE;
 
-	NP2CFG		np2cfg = {
-				PCBASECLOCK25, 4, PCMODEL_VX,
-				{0x3e, 0x63, 0x7a},
-				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6E},
-				{0x0c, 0x0c, 0x08, 0x06, 0x03, 0x0c},
-				{1, 1, 6, 1, 8, 1},
-				0, 0, 4, 32, 22050, 800, 0, 1, 1, 0,
-				0, 0,
-				0, {0, 0, 0}, 0xd1, 0x7f, 0xd1, 0, 0, 1, 0x82,		// ver0.30
-				1, 80, 3, 1, 1, 0, 0x000000, 0xffffff,
-				0, 0, 0, 0x40, 0,
-				64, 64, 64, 64, 64,
+	NP2CFG	np2cfg = {
+				0, 1, 0, 32, 0, 0, 0x40,
+				0, 0, 0, 0,
+				{0x3e, 0x63, 0x7a}, 0,
+				0, 0, {1, 1, 6, 1, 8, 1},
+
+				"VX", PCBASECLOCK25, 4,
+				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e},
+				1, 1, 2, 1, 0x000000, 0xffffff,
+				22050, 800, 4, 0,
+				{0, 0, 0}, 0xd1, 0x7f, 0xd1, 0, 0, 1,
+				3, {0x0c, 0x0c, 0x08, 0x06, 0x03, 0x0c}, 64, 64, 64, 64, 64,
+				1, 0x82,
 				0, {0x17, 0x04, 0x1f}, {0x0c, 0x0c, 0x02, 0x10, 0x3f, 0x3f},
-				2, 1, 0, 0,
+				1, 80, 0,
 				{"", ""}, ""};
 
 	PCCORE	pc = {	PCBASECLOCK25,
-							4,
-							4 * PCBASECLOCK25,
-							4 * PCBASECLOCK25 * 50 / 3104,
-							4 * PCBASECLOCK25 * 5 / 3104,
-							4 * PCBASECLOCK25 / 120,
-							4 * PCBASECLOCK25 / 1920,
-							4 * PCBASECLOCK25 / 3125,
-							(4 * PCBASECLOCK25 / 56400),
-							100, 20,
-							0};
+					4,
+					4 * PCBASECLOCK25,
+					4 * PCBASECLOCK25 * 50 / 3104,
+					4 * PCBASECLOCK25 * 5 / 3104,
+					4 * PCBASECLOCK25 / 120,
+					4 * PCBASECLOCK25 / 1920,
+					4 * PCBASECLOCK25 / 3125,
+					4 * PCBASECLOCK25 / 56400,
+					100, 20, 0, PCMODEL_VX};
 
-//									// on=0, off=1
+									// on=0, off=1
 //	BYTE	dip_default[3] = {0x3e, 0x63, 0x7a};
 static const BYTE msw_default[8] =
-							{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6E};
+							{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e};
 
 	BYTE	screenupdate = 3;
 	int		screendispflag = 1;
@@ -117,6 +117,8 @@ static void setvsyncclock(void) {
 }
 
 static void setpcclock(UINT base, UINT multiple) {			// ver0.28
+
+	pc.model = PCMODEL_VX;
 
 	if (base >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
 		pc.baseclock = PCBASECLOCK25;			// 2.5MHz

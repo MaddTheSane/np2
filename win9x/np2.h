@@ -62,9 +62,6 @@ typedef struct {
 
 
 enum {
-	SCREEN_WBASE		= 80,
-	SCREEN_HBASE		= 50,
-	SCREEN_DEFMUL		= 8,
 	FULLSCREEN_WIDTH	= 640,
 	FULLSCREEN_HEIGHT	= 480
 };

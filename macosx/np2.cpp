@@ -337,66 +337,73 @@ static void HandleMenuChoice(long wParam) {
 		case IDM_KEY:
 			menu_setkey(0);
 			keystat_resetjoykey();
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_JOY1:
 			menu_setkey(1);
 			keystat_resetjoykey();
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_JOY2:
 			menu_setkey(2);
 			keystat_resetjoykey();
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_MOUSEKEY:
 			menu_setkey(3);
 			keystat_resetjoykey();
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_XSHIFT:
 			menu_setxshift(np2cfg.XSHIFT ^ 1);
 			keystat_forcerelease(0x70);
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_XCTRL:
 			menu_setxshift(np2cfg.XSHIFT ^ 2);
 			keystat_forcerelease(0x74);
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_XGRPH:
 			menu_setxshift(np2cfg.XSHIFT ^ 4);
 			keystat_forcerelease(0x73);
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_F12MOUSE:
 			menu_setf12copy(0);
 			mackbd_resetf12();
-			update |= SYS_UPDATECFG;
+			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COPY:
 			menu_setf12copy(1);
 			mackbd_resetf12();
-			update |= SYS_UPDATECFG;
+			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12STOP:
 			menu_setf12copy(2);
 			mackbd_resetf12();
-			update |= SYS_UPDATECFG;
+			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12EQU:
 			menu_setf12copy(3);
 			mackbd_resetf12();
-			update |= SYS_UPDATECFG;
+			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COMMA:
 			menu_setf12copy(4);
 			mackbd_resetf12();
-			update |= SYS_UPDATECFG;
+			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_BEEPOFF:

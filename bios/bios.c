@@ -97,7 +97,7 @@ static void bios_reinitbyswitch(void) {
 	}
 	gdcs.textdisp |= GDCSCRN_EXT;
 
-	if ((np2cfg.model >= PCMODEL_VX) && (usesound & 0x7e)) {
+	if ((pc.model >= PCMODEL_VX) && (usesound & 0x7e)) {
 		iocore_out8(0x188, 0x27);
 		iocore_out8(0x18a, 0x3f);
 	}

@@ -106,28 +106,28 @@ BYTE fontpc98_read(const char *filename, BYTE loading) {
 	// 8x16 フォント(～0x7f)を読む必要がある？
 	if (loading & FONT_ANK16a) {
 		loading &= ~FONT_ANK16a;
-		pc98ankcpy(font + 0x80000, bmpdata, 0x000, 0x080);
+		pc98ankcpy(fontrom + 0x80000, bmpdata, 0x000, 0x080);
 	}
 	// 8x16 フォント(0x80～)を読む必要がある？
 	if (loading & FONT_ANK16b) {
 		loading &= ~FONT_ANK16b;
-		pc98ankcpy(font + 0x80800, bmpdata, 0x080, 0x100);
+		pc98ankcpy(fontrom + 0x80800, bmpdata, 0x080, 0x100);
 	}
 
 	// 第一水準漢字を読む必要がある？
 	if (loading & FONT_KNJ1) {
 		loading &= ~FONT_KNJ1;
-		pc98knjcpy(font, bmpdata, 0x01, 0x30);
+		pc98knjcpy(fontrom, bmpdata, 0x01, 0x30);
 	}
 	// 第二水準漢字を読む必要がある？
 	if (loading & FONT_KNJ2) {
 		loading &= ~FONT_KNJ2;
-		pc98knjcpy(font, bmpdata, 0x30, 0x56);
+		pc98knjcpy(fontrom, bmpdata, 0x30, 0x56);
 	}
 	// 拡張漢字を読む必要がある？
 	if (loading & FONT_KNJ3) {
 		loading &= ~FONT_KNJ3;
-		pc98knjcpy(font, bmpdata, 0x58, 0x60);
+		pc98knjcpy(fontrom, bmpdata, 0x58, 0x60);
 	}
 
 fr98_err3:

@@ -354,7 +354,7 @@ void maketext(int text_renewal) {
 						if (curx[x] & 0x20) {
 							fntline >>= 1;
 						}
-						data = font[bitmap[x] + fntline];
+						data = fontrom[bitmap[x] + fntline];
 						*(UINT32 *)(q+0) = text_table[color[x] + (data >> 4)];
 						*(UINT32 *)(q+4) = text_table[color[x] + (data & 15)];
 						q += 8;
@@ -665,7 +665,7 @@ void maketext40(int text_renewal) {
 						if (curx[x] & 0x20) {
 							fntline >>= 1;
 						}
-						data = font[bitmap[x] + fntline];
+						data = fontrom[bitmap[x] + fntline];
 						*(UINT32 *)(q+ 0) = text_tblx2[color[x] +
 															(data>>4)][0];
 						*(UINT32 *)(q+ 4) = text_tblx2[color[x] +

@@ -86,8 +86,8 @@ BYTE fontfm7_read(const char *filename, BYTE loading) {
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 2048) == 2048) {
 				loading &= ~FONT_ANK8;
-				CopyMemory(font + 0x82100, work + 0x100, 0x60*8);
-				CopyMemory(font + 0x82500, work + 0x500, 0x40*8);
+				CopyMemory(fontrom + 0x82100, work + 0x100, 0x60*8);
+				CopyMemory(fontrom + 0x82500, work + 0x500, 0x40*8);
 			}
 			file_close(fh);
 		}
@@ -104,14 +104,14 @@ BYTE fontfm7_read(const char *filename, BYTE loading) {
 				// 16dot ASCIIÇì«Ç›çûÇﬁÅH
 				if (loading & FONT_ANK16a) {
 					loading &= ~FONT_ANK16a;
-					fm7ankcpy(font + 0x80200, work, 0x20, 0x7f);
+					fm7ankcpy(fontrom + 0x80200, work, 0x20, 0x7f);
 					fontdata_patch16a();
 				}
 
 				// ëÊàÍêÖèÄäøéöÇì«Ç›çûÇﬁÅH
 				if (loading & FONT_KNJ1) {
 					loading &= ~FONT_KNJ1;
-					fm7knjcpy(font, work, 0x01, 0x30);
+					fm7knjcpy(fontrom, work, 0x01, 0x30);
 					fontdata_patchjis();
 				}
 			}

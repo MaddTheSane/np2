@@ -60,8 +60,8 @@ BYTE fontx1_read(const char *filename, BYTE loading) {
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 2048) == 2048) {
 				loading &= ~FONT_ANK8;
-				CopyMemory(font + 0x82100, work + 0x100, 0x60*8);
-				CopyMemory(font + 0x82500, work + 0x500, 0x40*8);
+				CopyMemory(fontrom + 0x82100, work + 0x100, 0x60*8);
+				CopyMemory(fontrom + 0x82500, work + 0x500, 0x40*8);
 			}
 			file_close(fh);
 		}
@@ -78,14 +78,14 @@ BYTE fontx1_read(const char *filename, BYTE loading) {
 				// 16dot ASCIIを読む必要があるか
 				if (loading & FONT_ANK16a) {
 					loading &= ~FONT_ANK16a;
-					CopyMemory(font + 0x80200, work + 0x200, 0x60*16);
+					CopyMemory(fontrom + 0x80200, work + 0x200, 0x60*16);
 					fontdata_patch16a();
 				}
 
 				// 16dot ANK(0x80～)を読む必要があるか
 				if (loading & FONT_ANK16b) {
 					loading &= ~FONT_ANK16b;
-					CopyMemory(font + 0x80a00, work + 0xa00, 0x40*16);
+					CopyMemory(fontrom + 0x80a00, work + 0xa00, 0x40*16);
 					fontdata_patch16b();
 				}
 			}
@@ -104,14 +104,14 @@ BYTE fontx1_read(const char *filename, BYTE loading) {
 				// 第一水準漢字を読み込む？
 				if (loading & FONT_KNJ1) {
 					loading &= ~FONT_KNJ1;
-					x1knjcpy(font, work, 0x01, 0x30);
+					x1knjcpy(fontrom, work, 0x01, 0x30);
 					fontdata_patchjis();
 				}
 
 				// 第二水準を読む必要はある？
 				if (loading & FONT_KNJ2) {
 					loading &= ~FONT_KNJ2;
-					x1knjcpy(font, work, 0x31, 0x50);
+					x1knjcpy(fontrom, work, 0x31, 0x50);
 				}
 			}
 			file_close(fh);

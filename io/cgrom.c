@@ -81,7 +81,7 @@ static void IOOUTCALL cgrom_oa9(UINT port, BYTE dat) {
 
 	cr = &cgrom;
 	if ((cr->code & 0x007e) == 0x0056) {
-		font[((cr->code & 0x7f7f) << 4) +
+		fontrom[((cr->code & 0x7f7f) << 4) +
 							cr->lr + cr->line] = dat;
 		cgwindow.writable |= 0x80;
 	}
@@ -91,10 +91,10 @@ static void IOOUTCALL cgrom_oa9(UINT port, BYTE dat) {
 static BYTE IOINPCALL cgrom_ia9(UINT port) {
 
 	CGROM	cr;
-	BYTE	*ptr;
+const BYTE	*ptr;
 
 	cr = &cgrom;
-	ptr = font;
+	ptr = fontrom;
 	if (cr->code & 0xff00) {
 		ptr += (cr->code & 0x7f7f) << 4;
 		ptr += cr->lr;

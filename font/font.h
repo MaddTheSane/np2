@@ -7,10 +7,10 @@ extern "C" {
 #endif
 
 #ifdef FONTMEMORYBIND
-#define	font	(mem + FONT_ADRS)
+#define	fontrom		(mem + FONT_ADRS)
 #else
 extern	BYTE	__font[0x84000];
-#define	font	(__font)
+#define	fontrom		(__font)
 #endif
 
 void font_init(void);

@@ -23,7 +23,7 @@ static void patch29(UINT jish, const BYTE *src) {
 	UINT	i;
 	BYTE	*p;
 
-	p = font + 0x21000 + (jish << 4);
+	p = fontrom + 0x21000 + (jish << 4);
 	for (i=0x21; i<0x7f; i++) {
 		CopyMemory(p, src, 16);
 		p += 0x1000;
@@ -39,7 +39,7 @@ const BYTE	*p;
 	BYTE	*q;
 
 	p = fontdata_2c;
-	q = font + 0x240c0;
+	q = fontrom + 0x240c0;
 	for (i=0x24; i<0x70; i++) {
 		for (j=0; j<16; j++) {
 			q[j + 0x800] = p[0];
@@ -55,13 +55,13 @@ const BYTE	*p;
 
 void fontdata_patch16a(void) {
 
-	CopyMemory(font + 0x80000, fontdata_16 + 0*32*16, 32*16);
+	CopyMemory(fontrom + 0x80000, fontdata_16 + 0*32*16, 32*16);
 }
 
 void fontdata_patch16b(void) {
 
-	CopyMemory(font + 0x80800, fontdata_16 + 1*32*16, 32*16);
-	CopyMemory(font + 0x80e00, fontdata_16 + 2*32*16, 32*16);
+	CopyMemory(fontrom + 0x80800, fontdata_16 + 1*32*16, 32*16);
+	CopyMemory(fontrom + 0x80e00, fontdata_16 + 2*32*16, 32*16);
 }
 
 void fontdata_patchjis(void) {

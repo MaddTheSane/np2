@@ -55,33 +55,33 @@ BYTE fontv98_read(const char *filename, BYTE loading) {
 	// 8x8 フォントを読む必要がある？
 	if (loading & FONT_ANK8) {
 		loading &= ~FONT_ANK8;
-		CopyMemory(font + 0x82000, v98fnt, 8*256);
+		CopyMemory(fontrom + 0x82000, v98fnt, 8*256);
 	}
 	// 8x16 フォント(～0x7f)を読む必要がある？
 	if (loading & FONT_ANK16a) {
 		loading &= ~FONT_ANK16a;
-		CopyMemory(font + 0x80000, v98fnt + 0x0800, 16*128);
+		CopyMemory(fontrom + 0x80000, v98fnt + 0x0800, 16*128);
 	}
 	// 8x16 フォント(0x80～)を読む必要がある？
 	if (loading & FONT_ANK16b) {
 		loading &= ~FONT_ANK16b;
-		CopyMemory(font + 0x80800, v98fnt + 0x1000, 16*128);
+		CopyMemory(fontrom + 0x80800, v98fnt + 0x1000, 16*128);
 	}
 
 	// 第一水準漢字を読む必要がある？
 	if (loading & FONT_KNJ1) {
 		loading &= ~FONT_KNJ1;
-		v98knjcpy(font, v98fnt, 0x01, 0x30);
+		v98knjcpy(fontrom, v98fnt, 0x01, 0x30);
 	}
 	// 第二水準漢字を読む必要がある？
 	if (loading & FONT_KNJ2) {
 		loading &= ~FONT_KNJ2;
-		v98knjcpy(font, v98fnt, 0x30, 0x56);
+		v98knjcpy(fontrom, v98fnt, 0x30, 0x56);
 	}
 	// 拡張漢字を読む必要がある？
 	if (loading & FONT_KNJ3) {
 		loading &= ~FONT_KNJ3;
-		v98knjcpy(font, v98fnt, 0x58, 0x5d);
+		v98knjcpy(fontrom, v98fnt, 0x58, 0x5d);
 	}
 
 frv_err3:
