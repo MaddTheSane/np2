@@ -76,6 +76,13 @@ void crtc_biosreset(void) {
 		crtc.reg.ssl = 0;
 	}
 	gdcs.textdisp |= GDCSCRN_ALLDRAW;
+
+	grcg.modereg = 0;
+	grcg.counter = 0;
+	vramop.operate &= ~(3 << VOPBIT_GRCG);
+	grcg.gdcwithgrcg = 0;
+	ZeroMemory(grcg.tile, sizeof(grcg.tile));
+	i286_vram_dispatch(vramop.operate);
 }
 
 void crtc_reset(void) {
