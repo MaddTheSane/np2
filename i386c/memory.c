@@ -3,71 +3,83 @@
 #ifndef NP2_MEMORY_ASM
 
 #include	"cpucore.h"
-#include	"mem9821.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"memtram.h"
+#include	"memvram.h"
 #include	"memegc.h"
+#if defined(SUPPORT_PC9821)
+#include	"memvga.h"
+#endif
+#include	"memems.h"
+#include	"memepp.h"
 #include	"vram.h"
 #include	"font.h"
 
 
-	BYTE	mem[0x200000];
+	UINT8	mem[0x200000];
+
+
+// ---- MAIN
+
+static REG8 MEMCALL memmain_rd8(UINT32 address) {
+
+	return(mem[address & CPU_ADRSMASK]);
+}
+
+static REG16 MEMCALL memmain_rd16(UINT32 address) {
+
+const UINT8	*ptr;
+
+	ptr = mem + (address & CPU_ADRSMASK);
+	return(LOADINTELWORD(ptr));
+}
+
+static void MEMCALL memmain_wr8(UINT32 address, REG8 value) {
+
+	mem[address & CPU_ADRSMASK] = (UINT8)value;
+}
+
+static void MEMCALL memmain_wr16(UINT32 address, REG16 value) {
+
+	UINT8	*ptr;
+
+	ptr = mem + (address & CPU_ADRSMASK);
+	STOREINTELWORD(ptr, value);
+}
+
+
+// ---- N/C
+
+static REG8 MEMCALL memnc_rd8(UINT32 address) {
+
+	(void)address;
+	return(0xff);
+}
+
+static REG16 MEMCALL memnc_rd16(UINT32 address) {
+
+	(void)address;
+	return(0xffff);
+}
+
+static void MEMCALL memnc_wr8(UINT32 address, REG8 value) {
+
+	(void)address;
+	(void)value;
+}
+
+static void MEMCALL memnc_wr16(UINT32 address, REG16 value) {
+
+	(void)address;
+	(void)value;
+}
+
+
+
 
 
 // ---- write byte
-
-static void MEMCALL i286_wt(UINT32 address, REG8 value) {		// MAIN
-
-	mem[address & CPU_ADRSMASK] = (BYTE)value;
-}
-
-static void MEMCALL tram_wt(UINT32 address, REG8 value) {		// TRAM
-
-	CPU_REMCLOCK -= MEMWAIT_TRAM;
-	if (address < 0xa2000) {
-		mem[address] = (BYTE)value;
-		tramupdate[LOW12(address >> 1)] = 1;
-		gdcs.textdisp |= 1;
-	}
-	else if (address < 0xa3fe0) {
-		if (!(address & 1)) {
-			mem[address] = (BYTE)value;
-			tramupdate[LOW12(address >> 1)] = 1;
-			gdcs.textdisp |= 1;
-		}
-	}
-	else if (address < 0xa4000) {
-		if (!(address & 1)) {
-			if ((!(address & 2)) || (gdcs.msw_accessable)) {
-				mem[address] = (BYTE)value;
-				tramupdate[LOW12(address >> 1)] = 1;
-				gdcs.textdisp |= 1;
-			}
-		}
-	}
-	else if (address < 0xa5000) {
-		if ((address & 1) && (cgwindow.writable & 1)) {
-			cgwindow.writable |= 0x80;
-			fontrom[cgwindow.high + ((address >> 1) & 0x0f)] = (BYTE)value;
-		}
-	}
-}
-
-static void MEMCALL vram_w0(UINT32 address, REG8 value) {		// VRAM
-
-	CPU_REMCLOCK -= MEMWAIT_VRAM;
-	mem[address] = (BYTE)value;
-	vramupdate[LOW15(address)] |= 1;
-	gdcs.grphdisp |= 1;
-}
-
-static void MEMCALL vram_w1(UINT32 address, REG8 value) {		// VRAM
-
-	CPU_REMCLOCK -= MEMWAIT_VRAM;
-	mem[address + VRAM_STEP] = (BYTE)value;
-	vramupdate[LOW15(address)] |= 2;
-	gdcs.grphdisp |= 2;
-}
 
 static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {		// VRAM
 
@@ -181,65 +193,8 @@ static void MEMCALL egc_wt(UINT32 address, REG8 value) {		// VRAM
 	memegc_wr8(address, value);
 }
 
-static void MEMCALL emmc_wt(UINT32 address, REG8 value) {		// EMS
-
-	CPU_EMSPTR[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
-}
-
-static void MEMCALL i286_wd(UINT32 address, REG8 value) {		// D000Å`DFFF
-
-	if (CPU_RAM_D000 & (1 << ((address >> 12) & 15))) {
-		mem[address] = (BYTE)value;
-	}
-}
-
-static void MEMCALL i286_wb(UINT32 address, REG8 value) {		// F800Å`FFFF
-
-	mem[address + 0x1c8000 - 0xe8000] = (BYTE)value;
-}
-
-static void MEMCALL i286_wn(UINT32 address, REG8 value) {		// NONE
-
-	(void)address;
-	(void)value;
-}
-
 
 // ---- read byte
-
-static REG8 MEMCALL i286_rd(UINT32 address) {					// MAIN
-
-	return(mem[address & CPU_ADRSMASK]);
-}
-
-static REG8 MEMCALL tram_rd(UINT32 address) {					// TRAM
-
-	CPU_REMCLOCK -= MEMWAIT_TRAM;
-	if (address < 0xa4000) {
-		return(mem[address]);
-	}
-	else if (address < 0xa5000) {
-		if (address & 1) {
-			return(fontrom[cgwindow.high + ((address >> 1) & 0x0f)]);
-		}
-		else {
-			return(fontrom[cgwindow.low + ((address >> 1) & 0x0f)]);
-		}
-	}
-	return(mem[address]);
-}
-
-static REG8 MEMCALL vram_r0(UINT32 address) {					// VRAM
-
-	CPU_REMCLOCK -= MEMWAIT_VRAM;
-	return(mem[address]);
-}
-
-static REG8 MEMCALL vram_r1(UINT32 address) {					// VRAM
-
-	CPU_REMCLOCK -= MEMWAIT_VRAM;
-	return(mem[address + VRAM_STEP]);
-}
 
 static REG8 MEMCALL grcg_tcr0(UINT32 address) {					// VRAM
 
@@ -293,84 +248,8 @@ static REG8 MEMCALL egc_rd(UINT32 address) {					// VRAM
 	return(memegc_rd8(address));
 }
 
-static REG8 MEMCALL emmc_rd(UINT32 address) {					// EMS
-
-	return(CPU_EMSPTR[(address >> 14) & 3][LOW14(address)]);
-}
-
-static REG8 MEMCALL i286_rb(UINT32 address) {					// F800-FFFF
-
-	if (CPU_ITFBANK) {
-		address += VRAM_STEP;
-	}
-	return(mem[address]);
-}
-
 
 // ---- write word
-
-static void MEMCALL i286w_wt(UINT32 address, REG16 value) {
-
-	BYTE	*ptr;
-
-	ptr = mem + (address & CPU_ADRSMASK);
-	STOREINTELWORD(ptr, value);
-}
-
-static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
-
-	CPU_REMCLOCK -= MEMWAIT_TRAM;
-	if (address < 0xa1fff) {
-		STOREINTELWORD(mem + address, value);
-		tramupdate[LOW12(address >> 1)] = 1;
-		tramupdate[LOW12((address + 1) >> 1)] = 1;
-		gdcs.textdisp |= 1;
-	}
-	else if (address == 0xa1fff) {
-		STOREINTELWORD(mem + address, value);
-		tramupdate[0] = 1;
-		tramupdate[0xfff] = 1;
-		gdcs.textdisp |= 1;
-	}
-	else if (address < 0xa3fe0) {
-		if (address & 1) {
-			address++;
-			value >>= 8;
-		}
-		mem[address] = (BYTE)value;
-		tramupdate[LOW12(address >> 1)] = 1;
-		gdcs.textdisp |= 1;
-	}
-	else if (address < 0xa3fff) {
-		if (address & 1) {
-			address++;
-			value >>= 8;
-		}
-		if ((!(address & 2)) || (gdcs.msw_accessable)) {
-			mem[address] = (BYTE)value;
-			tramupdate[LOW12(address >> 1)] = 1;
-			gdcs.textdisp |= 1;
-		}
-	}
-	else if (address < 0xa5000) {
-		if (!(address & 1)) {
-			value >>= 8;
-		}
-		if (cgwindow.writable & 1) {
-			cgwindow.writable |= 0x80;
-			fontrom[cgwindow.high + ((address >> 1) & 0x0f)] = (BYTE)value;
-		}
-	}
-}
-
-
-#define GRCGW_NON(page) {											\
-	CPU_REMCLOCK -= MEMWAIT_VRAM;									\
-	STOREINTELWORD(mem + address + VRAM_STEP*(page), value);		\
-	vramupdate[LOW15(address)] |= (1 << page);						\
-	vramupdate[LOW15(address + 1)] |= (1 << page);					\
-	gdcs.grphdisp |= (1 << page);									\
-}
 
 #define GRCGW_RMW(page) {											\
 	BYTE	*vram;													\
@@ -445,8 +324,6 @@ static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 	(void)value;													\
 }
 
-static void MEMCALL vramw_w0(UINT32 address, REG16 value) GRCGW_NON(0)
-static void MEMCALL vramw_w1(UINT32 address, REG16 value) GRCGW_NON(1)
 static void MEMCALL grcgw_rmw0(UINT32 address, REG16 value) GRCGW_RMW(0)
 static void MEMCALL grcgw_rmw1(UINT32 address, REG16 value) GRCGW_RMW(1)
 static void MEMCALL grcgw_tdw0(UINT32 address, REG16 value) GRCGW_TDW(0)
@@ -458,107 +335,8 @@ static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 	memegc_wr16(address, value);
 }
 
-static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
-
-	BYTE	*ptr;
-
-	if ((address & 0x3fff) != 0x3fff) {
-		ptr = CPU_EMSPTR[(address >> 14) & 3] + LOW14(address);
-		STOREINTELWORD(ptr, value);
-	}
-	else {
-		CPU_EMSPTR[(address >> 14) & 3][0x3fff] = (BYTE)value;
-		CPU_EMSPTR[((address + 1) >> 14) & 3][0] = (BYTE)(value >> 8);
-	}
-}
-
-static void MEMCALL i286w_wd(UINT32 address, REG16 value) {
-
-	BYTE	*ptr;
-	UINT16	bit;
-
-	ptr = mem + address;
-	bit = 1 << ((address >> 12) & 15);
-	if ((address + 1) & 0xfff) {
-		if (CPU_RAM_D000 & bit) {
-			STOREINTELWORD(ptr, value);
-		}
-	}
-	else {
-		if (CPU_RAM_D000 & bit) {
-			ptr[0] = (UINT8)value;
-		}
-		if (CPU_RAM_D000 & (bit << 1)) {
-			ptr[1] = (UINT8)(value >> 8);
-		}
-	}
-}
-
-static void MEMCALL i286w_wb(UINT32 address, REG16 value) {
-
-	BYTE	*ptr;
-
-	ptr = mem + (address + 0x1c8000 - 0xe8000);
-	STOREINTELWORD(ptr, value);
-}
-
-static void MEMCALL i286w_wn(UINT32 address, REG16 value) {
-
-	(void)address;
-	(void)value;
-}
-
 
 // ---- read word
-
-static REG16 MEMCALL i286w_rd(UINT32 address) {
-
-	BYTE	*ptr;
-
-	ptr = mem + (address & CPU_ADRSMASK);
-	return(LOADINTELWORD(ptr));
-}
-
-static REG16 MEMCALL tramw_rd(UINT32 address) {
-
-	CPU_REMCLOCK -= MEMWAIT_TRAM;
-	if (address < (0xa4000 - 1)) {
-		return(LOADINTELWORD(mem + address));
-	}
-	else if (address == 0xa3fff) {
-		return(mem[address] + (fontrom[cgwindow.low] << 8));
-	}
-	else if (address < 0xa4fff) {
-		if (address & 1) {
-			REG16 ret;
-			ret = fontrom[cgwindow.high + ((address >> 1) & 0x0f)];
-			ret += fontrom[cgwindow.low + (((address + 1) >> 1) & 0x0f)] << 8;
-			return(ret);
-		}
-		else {
-			REG16 ret;
-			ret = fontrom[cgwindow.low + ((address >> 1) & 0x0f)];
-			ret += fontrom[cgwindow.high + ((address >> 1) & 0x0f)] << 8;
-			return(ret);
-		}
-	}
-	else if (address == 0xa4fff) {
-		return((mem[0xa5000] << 8) | fontrom[cgwindow.high + 15]);
-	}
-	return(LOADINTELWORD(mem + address));
-}
-
-static REG16 MEMCALL vramw_r0(UINT32 address) {
-
-	CPU_REMCLOCK -= MEMWAIT_VRAM;
-	return(LOADINTELWORD(mem + address));
-}
-
-static REG16 MEMCALL vramw_r1(UINT32 address) {
-
-	CPU_REMCLOCK -= MEMWAIT_VRAM;
-	return(LOADINTELWORD(mem + address + VRAM_STEP));
-}
 
 static REG16 MEMCALL grcgw_tcr0(UINT32 address) {
 
@@ -612,30 +390,6 @@ static REG16 MEMCALL egcw_rd(UINT32 address) {
 	return(memegc_rd16(address));
 }
 
-static REG16 MEMCALL emmcw_rd(UINT32 address) {
-
-const BYTE	*ptr;
-	REG16	ret;
-
-	if ((address & 0x3fff) != 0x3fff) {
-		ptr = CPU_EMSPTR[(address >> 14) & 3] + LOW14(address);
-		return(LOADINTELWORD(ptr));
-	}
-	else {
-		ret = CPU_EMSPTR[(address >> 14) & 3][0x3fff];
-		ret += CPU_EMSPTR[((address + 1) >> 14) & 3][0] << 8;
-		return(ret);
-	}
-}
-
-static REG16 MEMCALL i286w_rb(UINT32 address) {
-
-	if (CPU_ITFBANK) {
-		address += VRAM_STEP;
-	}
-	return(LOADINTELWORD(mem + address));
-}
-
 
 // ---- table
 
@@ -668,78 +422,65 @@ typedef struct {
 } VACCTBL;
 
 static MEMFN memfn = {
-		   {i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 00
-			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 20
-			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 40
-			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 60
-			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 80
-			tram_rd,	vram_r0,	vram_r0,	vram_r0,		// a0
-			emmc_rd,	emmc_rd,	i286_rd,	i286_rd,		// c0
-			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// e0
+	   {memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 00
+		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 20
+		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 40
+		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 60
+		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 80
+		memtram_rd8,	memvram0_rd8,	memvram0_rd8,	memvram0_rd8,	// a0
+		memems_rd8,		memems_rd8,		memmain_rd8,	memmain_rd8,	// c0
+		memvram0_rd8,	memmain_rd8,	memmain_rd8,	memf800_rd8},	// e0
 
-		   {i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
-			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 20
-			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 40
-			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 60
-			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 80
-			tram_wt,	vram_w0,	vram_w0,	vram_w0,		// a0
-			emmc_wt,	emmc_wt,	i286_wd,	i286_wd,		// c0
-			vram_w0,	i286_wn,	i286_wn,	i286_wn},		// e0
+	   {memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 00
+		memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 20
+		memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 40
+		memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 60
+		memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 80
+		memtram_wr8,	memvram0_wr8,	memvram0_wr8,	memvram0_wr8,	// a0
+		memems_wr8,		memems_wr8,		memd000_wr8,	memd000_wr8,	// c0
+		memvram0_wr8,	memnc_wr8,		memnc_wr8,		memnc_wr8},		// e0
 
-		   {i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 00
-			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 20
-			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 40
-			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 60
-			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 80
-			tramw_rd,	vramw_r0,	vramw_r0,	vramw_r0,		// a0
-			emmcw_rd,	emmcw_rd,	i286w_rd,	i286w_rd,		// c0
-			vramw_r0,	i286w_rd,	i286w_rd,	i286w_rb},		// e0
+	   {memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 00
+		memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 20
+		memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 40
+		memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 60
+		memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 80
+		memtram_rd16,	memvram0_rd16,	memvram0_rd16,	memvram0_rd16,	// a0
+		memems_rd16,	memems_rd16,	memmain_rd16,	memmain_rd16,	// c0
+		memvram0_rd16,	memmain_rd16,	memmain_rd16,	memf800_rd16},	// e0
 
-		   {i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 00
-			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 20
-			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 40
-			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 60
-			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 80
-			tramw_wt,	vramw_w0,	vramw_w0,	vramw_w0,		// a0
-			emmcw_wt,	emmcw_wt,	i286w_wd,	i286w_wd,		// c0
-			vramw_w0,	i286w_wn,	i286w_wn,	i286w_wn}};		// e0
+	   {memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 00
+		memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 20
+		memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 40
+		memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 60
+		memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 80
+		memtram_wr16,	memvram0_wr16,	memvram0_wr16,	memvram0_wr16,	// a0
+		memems_wr16,	memems_wr16,	memd000_wr16,	memd000_wr16,	// c0
+		memvram0_wr16,	memnc_wr16,		memnc_wr16,		memnc_wr16}};	// e0
 
 static const MMAPTBL mmaptbl[2] = {
-		   {i286_rd,	i286_rb,	i286_wn,
-			i286w_rd,	i286w_rb,	i286w_wn},
-		   {i286_rb,	i286_rb,	i286_wb,
-			i286w_rb,	i286w_rb,	i286w_wb}};
+		   {memmain_rd8,	memf800_rd8,	memnc_wr8,
+			memmain_rd16,	memf800_rd16,	memnc_wr16},
+		   {memf800_rd8,	memf800_rd8,	memepson_wr8,
+			memf800_rd16,	memf800_rd16,	memepson_wr16}};
 
 static const VACCTBL vacctbl[0x10] = {
-			{vram_r0,	vram_w0,	vramw_r0,	vramw_w0},		// 00
-			{vram_r1,	vram_w1,	vramw_r1,	vramw_w1},
-			{vram_r0,	vram_w0,	vramw_r0,	vramw_w0},
-			{vram_r1,	vram_w1,	vramw_r1,	vramw_w1},
-			{vram_r0,	vram_w0,	vramw_r0,	vramw_w0},		// 40
-			{vram_r1,	vram_w1,	vramw_r1,	vramw_w1},
-			{vram_r0,	vram_w0,	vramw_r0,	vramw_w0},
-			{vram_r1,	vram_w1,	vramw_r1,	vramw_w1},
-			{grcg_tcr0,	grcg_tdw0,	grcgw_tcr0,	grcgw_tdw0},	// 80 tdw/tcr
-			{grcg_tcr1,	grcg_tdw1,	grcgw_tcr1,	grcgw_tdw1},
-			{egc_rd,	egc_wt,		egcw_rd,	egcw_wt},
-			{egc_rd,	egc_wt,		egcw_rd,	egcw_wt},
-			{vram_r0,	grcg_rmw0,	vramw_r0,	grcgw_rmw0},	// c0 rmw
-			{vram_r1,	grcg_rmw1,	vramw_r1,	grcgw_rmw1},
-			{egc_rd,	egc_wt,		egcw_rd,	egcw_wt},
-			{egc_rd,	egc_wt,		egcw_rd,	egcw_wt}};
-
-
-static REG8 MEMCALL i286_nonram_r(UINT32 address) {
-
-	(void)address;
-	return(0xff);
-}
-
-static REG16 MEMCALL i286_nonram_rw(UINT32 address) {
-
-	(void)address;
-	return(0xffff);
-}
+		{memvram0_rd8,	memvram0_wr8,	memvram0_rd16,	memvram0_wr16},	// 00
+		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
+		{memvram0_rd8,	memvram0_wr8,	memvram0_rd16,	memvram0_wr16},
+		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
+		{memvram0_rd8,	memvram0_wr8,	memvram0_rd16,	memvram0_wr16},	// 40
+		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
+		{memvram0_rd8,	memvram0_wr8,	memvram0_rd16,	memvram0_wr16},
+		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
+		{grcg_tcr0,		grcg_tdw0,		grcgw_tcr0,		grcgw_tdw0},	// 80
+		{grcg_tcr1,		grcg_tdw1,		grcgw_tcr1,		grcgw_tdw1},
+		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
+		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
+		{memvram0_rd8,	grcg_rmw0,		memvram0_rd16,	grcgw_rmw0},	// c0
+		{memvram1_rd8,	grcg_rmw1,		memvram1_rd16,	grcgw_rmw1},
+		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
+		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt}};
 
 
 void MEMCALL i286_memorymap(UINT type) {
@@ -792,33 +533,33 @@ const VACCTBL	*vacc;
 		memfn.wr16[0xe0000 >> 15] = vacc->wr16;
 
 		if (!(func & 0x10)) {							// digital
-			memfn.wr8[0xe0000 >> 15] = i286_wn;
-			memfn.wr16[0xe0000 >> 15] = i286w_wn;
-			memfn.rd8[0xe0000 >> 15] = i286_nonram_r;
-			memfn.rd16[0xe0000 >> 15] = i286_nonram_rw;
+			memfn.rd8[0xe0000 >> 15] = memnc_rd8;
+			memfn.wr8[0xe0000 >> 15] = memnc_wr8;
+			memfn.rd16[0xe0000 >> 15] = memnc_rd16;
+			memfn.wr16[0xe0000 >> 15] = memnc_wr16;
 		}
 #if defined(SUPPORT_PC9821)
 	}
 	else {
-		memfn.rd8[0xa8000 >> 15] = mem9821_b0r;
-		memfn.rd8[0xb0000 >> 15] = mem9821_b0r;
-		memfn.rd8[0xb8000 >> 15] = i286_nonram_r;
-		memfn.rd8[0xe0000 >> 15] = mem9821_b2r;
+		memfn.rd8[0xa8000 >> 15] = memvga0_rd8;
+		memfn.rd8[0xb0000 >> 15] = memvga0_rd8;
+		memfn.rd8[0xb8000 >> 15] = memnc_rd8;
+		memfn.rd8[0xe0000 >> 15] = memvgaio_rd8;
 
-		memfn.wr8[0xa8000 >> 15] = mem9821_b0w;
-		memfn.wr8[0xb0000 >> 15] = mem9821_b0w;
-		memfn.wr8[0xb8000 >> 15] = i286_wn;
-		memfn.wr8[0xe0000 >> 15] = mem9821_b2w;
+		memfn.wr8[0xa8000 >> 15] = memvga0_wr8;
+		memfn.wr8[0xb0000 >> 15] = memvga0_wr8;
+		memfn.wr8[0xb8000 >> 15] = memnc_wr8;
+		memfn.wr8[0xe0000 >> 15] = memvgaio_wr8;
 
-		memfn.rd16[0xa8000 >> 15] = mem9821_b0rw;
-		memfn.rd16[0xb0000 >> 15] = mem9821_b0rw;
-		memfn.rd16[0xb8000 >> 15] = i286_nonram_rw;
-		memfn.rd16[0xe0000 >> 15] = mem9821_b2rw;
+		memfn.rd16[0xa8000 >> 15] = memvga0_rd16;
+		memfn.rd16[0xb0000 >> 15] = memvga0_rd16;
+		memfn.rd16[0xb8000 >> 15] = memnc_rd16;
+		memfn.rd16[0xe0000 >> 15] = memvgaio_rd16;
 
-		memfn.wr16[0xa8000 >> 15] = mem9821_b0ww;
-		memfn.wr16[0xb0000 >> 15] = mem9821_b0ww;
-		memfn.wr16[0xb8000 >> 15] = i286w_wn;
-		memfn.wr16[0xe0000 >> 15] = mem9821_b2ww;
+		memfn.wr16[0xa8000 >> 15] = memvga0_wr16;
+		memfn.wr16[0xb0000 >> 15] = memvga0_wr16;
+		memfn.wr16[0xb8000 >> 15] = memnc_wr16;
+		memfn.wr16[0xe0000 >> 15] = memvgaio_wr16;
 	}
 #endif
 }
@@ -841,10 +582,10 @@ REG8 MEMCALL i286_memoryread(UINT32 addr) {
 		}
 #if defined(SUPPORT_PC9821)
 		else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
-			return(mem9821_r(addr));
+			return(memvgaf_rd8(addr));
 		}
 		else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
-			return(mem9821_r(addr));
+			return(memvgaf_rd8(addr));
 		}
 #endif
 		else {
@@ -876,10 +617,10 @@ REG16 MEMCALL i286_memoryread_w(UINT32 addr) {
 			}
 #if defined(SUPPORT_PC9821)
 			else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
-				return(mem9821_rw(addr));
+				return(memvgaf_rd16(addr));
 			}
 			else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
-				return(mem9821_rw(addr));
+				return(memvgaf_rd16(addr));
 			}
 #endif
 			else {
@@ -939,10 +680,10 @@ void MEMCALL i286_memorywrite(UINT32 addr, REG8 value) {
 		}
 #if defined(SUPPORT_PC9821)
 		else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
-			mem9821_w(addr, value);
+			memvgaf_wr8(addr, value);
 		}
 		else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
-			mem9821_w(addr, value);
+			memvgaf_wr8(addr, value);
 		}
 #endif
 		else {
@@ -972,10 +713,10 @@ void MEMCALL i286_memorywrite_w(UINT32 addr, REG16 value) {
 			}
 #if defined(SUPPORT_PC9821)
 			else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
-				mem9821_ww(addr, value);
+				memvgaf_wr16(addr, value);
 			}
 			else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
-				mem9821_ww(addr, value);
+				memvgaf_wr16(addr, value);
 			}
 #endif
 			else {
@@ -1306,5 +1047,6 @@ void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
 		}
 	}
 }
+
 #endif
 

@@ -327,10 +327,6 @@ SOURCE=..\I386C\cpucore.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\MEM9821.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\I386C\memory.c
 # End Source File
 # End Group
@@ -344,6 +340,26 @@ SOURCE=..\MEM\DMAX86.C
 # Begin Source File
 
 SOURCE=..\MEM\MEMEGC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEMS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEPP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMTRAM.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMVGA.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMVRAM.C
 # End Source File
 # End Group
 # Begin Group "io"

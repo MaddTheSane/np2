@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "SIZE_VGA" /D "RESOURCE_US" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "SIZE_VGA" /D "RESOURCE_US" /YX /FD /c
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
 # ADD RSC /l 0x411 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -67,8 +67,8 @@ LINK32=link.exe
 # PROP Intermediate_Dir "..\obj\sdlw32strc"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\embed" /I "..\embed\qvga" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "RESOURCE_US" /YX /FD /c
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "RESOURCE_US" /YX /FD /c
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
 # ADD RSC /l 0x411 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -92,7 +92,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\win32s" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
 # ADD RSC /l 0x411 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -173,14 +173,6 @@ SOURCE=..\COMMON\WAVEFILE.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\I286C\DMAP.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\I286C\EGCMEM.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\I286C\I286C.C
 # End Source File
 # Begin Source File
@@ -222,6 +214,22 @@ SOURCE=..\I286C\MEMORY.C
 # Begin Source File
 
 SOURCE=..\I286C\V30PATCH.C
+# End Source File
+# End Group
+# Begin Group "mem"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\MEM\DMAV30.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\DMAX86.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEGC.C
 # End Source File
 # End Group
 # Begin Group "io"
@@ -444,6 +452,34 @@ SOURCE=..\BIOS\BIOS1F.C
 SOURCE=..\BIOS\SXSIBIOS.C
 # End Source File
 # End Group
+# Begin Group "lio"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\LIO\GCIRCLE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GLINE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPSET.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPUT1.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GSCREEN.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\LIO.C
+# End Source File
+# End Group
 # Begin Group "vram"
 
 # PROP Default_Filter ""
@@ -648,34 +684,6 @@ SOURCE=..\FDD\NEWDISK.C
 SOURCE=..\FDD\SXSI.C
 # End Source File
 # End Group
-# Begin Group "lio"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\LIO\GCIRCLE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GLINE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GPSET.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GPUT1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\LIO.C
-# End Source File
-# End Group
 # Begin Group "font"
 
 # PROP Default_Filter ""
@@ -714,6 +722,94 @@ SOURCE=..\FONT\FONTX1.C
 # Begin Source File
 
 SOURCE=..\FONT\FONTX68K.C
+# End Source File
+# End Group
+# Begin Group "generic"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\GENERIC\CMJASTS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\CMVER.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRV.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRVS.C
+# End Source File
+# End Group
+# Begin Group "embed"
+
+# PROP Default_Filter ""
+# Begin Group "menu"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\DLGABOUT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\DLGCFG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\DLGSCR.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\FILESEL.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\MENUSTR.C
+# End Source File
+# End Group
+# Begin Group "menubase"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENUBASE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENUDLG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENUICON.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENUMBOX.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENURES.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENUSYS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENUBASE\MENUVRAM.C
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=..\EMBED\VRAMHDL.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\VRAMMIX.C
 # End Source File
 # End Group
 # Begin Group "sdl"
@@ -810,94 +906,6 @@ SOURCE=.\TIMEMNG.C
 # Begin Source File
 
 SOURCE=.\TRACE.C
-# End Source File
-# End Group
-# Begin Group "generic"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\GENERIC\CMJASTS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\GENERIC\CMVER.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\GENERIC\HOSTDRV.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\GENERIC\HOSTDRVS.C
-# End Source File
-# End Group
-# Begin Group "embed"
-
-# PROP Default_Filter ""
-# Begin Group "menu"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\EMBED\MENU\DLGABOUT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENU\DLGCFG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENU\DLGSCR.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENU\FILESEL.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENU\MENUSTR.C
-# End Source File
-# End Group
-# Begin Group "menubase"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENUBASE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENUDLG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENUICON.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENUMBOX.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENURES.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENUSYS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\MENUBASE\MENUVRAM.C
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=..\EMBED\VRAMHDL.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\EMBED\VRAMMIX.C
 # End Source File
 # End Group
 # Begin Source File
