@@ -988,58 +988,15 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	return(ret);
 }
 
-static void play_fmreg(BYTE num, UINT reg) {
-
-	UINT	chbase;
-	UINT	i;
-
-	chbase = num * 3;
-	for (i=0x30; i<0xa0; i++) {
-		opngen_setreg((BYTE)chbase, (BYTE)i, opn.reg[reg + i]);
-	}
-	for (i=0xb7; i>=0xa0; i--) {
-		opngen_setreg((BYTE)chbase, (BYTE)i, opn.reg[reg + i]);
-	}
-	for (i=0; i<3; i++) {
-		opngen_keyon(chbase + i, opngen.keyreg[chbase + i]);
-	}
-}
-
-static void play_psgreg(PSGGEN psg) {
-
-	BYTE	i;
-
-	for (i=0; i<0x0e; i++) {
-		psggen_setreg(psg, i, ((BYTE *)&psg->reg)[i]);
-	}
-}
-
 static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 
 	int		ret;
 	UINT	saveflg;
 	OPNKEY	opnkey;
-	UINT	fmreg1a;
-	UINT	fmreg1b;
-	UINT	fmreg2a;
-	UINT	fmreg2b;
-
-	opngen_reset();
-	psggen_reset(&psg1);
-	psggen_reset(&psg2);
-	psggen_reset(&psg3);
-	rhythm_reset(&rhythm);
-	adpcm_reset(&adpcm);
-	pcm86_reset();
-	cs4231_reset();
 
 	ret = statflag_read(sfh, &usesound, sizeof(usesound));
 	fmboard_reset(usesound);
 
-	fmreg1a = 0x000;
-	fmreg1b = 0x100;
-	fmreg2a = 0x200;
-	fmreg2b = 0x300;
 	switch(usesound) {
 		case 0x01:
 			saveflg = FLAG_MG;
@@ -1057,9 +1014,6 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		case 0x06:
 			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_PSG1 |
 										FLAG_PSG2 | FLAG_RHYTHM | FLAG_PCM86;
-			fmreg1a = 0x200;	// 逆転してるのん…
-			fmreg1b = 0x000;
-			fmreg2a = 0x100;
 			break;
 
 		case 0x08:
@@ -1126,37 +1080,15 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		cs4231.proc = cs4231dec[cs4231.reg.datafmt >> 4];
 	}
 
-	// 復元。
+	// 復元。 これ移動すること！
 	rhythm_update(&rhythm);
 	adpcm_update(&adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
-		fmboard_extenable((BYTE)(pcm86.extfunc & 1));
+		fmboard_extenable((REG8)(pcm86.extfunc & 1));
 	}
 	if (saveflg & FLAG_CS4231) {
-		fmboard_extenable((BYTE)(cs4231.extfunc & 1));
-	}
-
-	if (saveflg & FLAG_FM1A) {
-		play_fmreg(0, fmreg1a);
-	}
-	if (saveflg & FLAG_FM1B) {
-		play_fmreg(1, fmreg1b);
-	}
-	if (saveflg & FLAG_FM2A) {
-		play_fmreg(2, fmreg2a);
-	}
-	if (saveflg & FLAG_FM2B) {
-		play_fmreg(3, fmreg2b);
-	}
-	if (saveflg & FLAG_PSG1) {
-		play_psgreg(&psg1);
-	}
-	if (saveflg & FLAG_PSG2) {
-		play_psgreg(&psg2);
-	}
-	if (saveflg & FLAG_PSG3) {
-		play_psgreg(&psg3);
+		fmboard_extenable((REG8)(cs4231.extfunc & 1));
 	}
 	(void)t;
 	return(ret);

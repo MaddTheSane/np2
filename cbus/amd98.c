@@ -81,6 +81,7 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 					psggen_setreg(&psg3, amd98.psg3reg,
 												psg1.reg.io2);
 				}
+#if 0
 				else if (amd98.psg3reg == 0x0f) {
 					int r;
 static const BYTE amdr[] = {0x01, 0x08, 0x10, 0x20, 0x06, 0x40};
@@ -91,6 +92,7 @@ static const BYTE amdr[] = {0x01, 0x08, 0x10, 0x20, 0x06, 0x40};
 						}
 					}
 				}
+#endif
 			}
 		}
 		psg2.reg.io2 = dat;
@@ -126,6 +128,9 @@ void amd98_bind(void) {
 	psgpanset(&psg1);
 	psgpanset(&psg2);
 	psgpanset(&psg3);
+	psggen_restore(&psg1);
+	psggen_restore(&psg2);
+	psggen_restore(&psg3);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg3, (SOUNDCB)psggen_getpcm);

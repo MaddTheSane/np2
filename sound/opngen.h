@@ -1,7 +1,7 @@
 
 enum {
 	OPNCH_MAX		= 12,
-	OPNA_CLOCK		= 3993600,
+	OPNA_CLOCK		= 55556 * 72,
 
 	OPN_CHMASK		= 0x8000,
 	OPN_STEREO		= 0x8000,

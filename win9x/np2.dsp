@@ -1085,7 +1085,7 @@ SOURCE=..\CBUS\AMD98.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\CBUS\BOARD118.C
+SOURCE=.\BOARD118.C
 # End Source File
 # Begin Source File
 

@@ -210,6 +210,12 @@ void boardx2_reset(void) {
 
 void boardx2_bind(void) {
 
+	fmboard_fmrestore(0, 2);
+	fmboard_fmrestore(3, 0);
+	fmboard_fmrestore(6, 1);
+	psggen_restore(&psg1);
+	psggen_restore(&psg2);
+	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);

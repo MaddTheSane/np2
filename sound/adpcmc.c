@@ -50,6 +50,7 @@ void adpcm_setreg(ADPCM ad, REG8 reg, REG8 value) {
 
 	UINT32	addr;
 
+	sound_sync();
 	((BYTE *)(&ad->reg))[reg] = value;
 	switch(reg) {
 		case 0x00:								// control1

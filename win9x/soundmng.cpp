@@ -6,6 +6,7 @@
 #include	"soundmng.h"
 #include	"extromio.h"
 #include	"sound.h"
+#include	"juliet.h"
 #if defined(VERMOUTH_LIB)
 #include	"vermouth.h"
 #endif
@@ -172,6 +173,7 @@ static void streamenable(BOOL play) {
 			pDSData3->Stop();
 		}
 	}
+	juliet_YMF288Enable(play);
 }
 
 void soundmng_play(void) {

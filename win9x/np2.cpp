@@ -25,9 +25,7 @@
 #include	"sstpmsg.h"
 #include	"dclock.h"
 #include	"toolwin.h"
-#ifdef USE_ROMEO
 #include	"juliet.h"
-#endif
 #include	"np2class.h"
 #include	"dialog.h"
 #include	"memory.h"
@@ -71,7 +69,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0};	// ver0.73
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		char		fddfolder[MAX_PATH];
 		char		hddfolder[MAX_PATH];
@@ -340,6 +338,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			}
 			if (b) {
 				sstpmsg_reset();
+				juliet_YMF288Reset();
 				pccore_cfgupdate();
 				pccore_reset();
 			}
@@ -1207,6 +1206,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case NP2CMD_RESET:
+					juliet_YMF288Reset();
 					pccore_cfgupdate();
 					pccore_reset();
 					break;
@@ -1442,10 +1442,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
 
-#ifdef USE_ROMEO
-	juliet_load();
-	juliet_prepare();
-#endif
+	if (np2oscfg.useromeo) {
+		juliet_initialize();
+	}
 
 	mousemng_initialize();
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
@@ -1616,16 +1615,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		flagdelete(str_sav);
 	}
 
-#ifdef USE_ROMEO
 	juliet_YMF288Reset();
-#endif
 	pccore_term();
 
 	sstp_destruct();
 
-#ifdef USE_ROMEO
-	juliet_unload();
-#endif
+	juliet_deinitialize();
 
 	soundmng_deinitialize();
 	scrnmng_destroy();

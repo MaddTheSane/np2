@@ -74,6 +74,15 @@ void psggen_reset(PSGGEN psg) {
 	}
 }
 
+void psggen_restore(PSGGEN psg) {
+
+	REG8	i;
+
+	for (i=0; i<0x0e; i++) {
+		psggen_setreg(psg, i, ((BYTE *)&psg->reg)[i]);
+	}
+}
+
 void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
 
 	UINT	freq;

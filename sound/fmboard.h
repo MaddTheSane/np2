@@ -70,6 +70,9 @@ void fmboard_extenable(REG8 enable);
 void fmboard_reset(UINT32 type);
 void fmboard_bind(void);
 
+void fmboard_fmrestore(REG8 chbase, UINT bank);
+void fmboard_rhyrestore(RHYTHM rhy, UINT bank);
+
 #ifdef __cplusplus
 }
 #endif

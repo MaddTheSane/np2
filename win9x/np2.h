@@ -58,6 +58,7 @@ typedef struct {
 	BYTE	I286SAVE;
 	BYTE	hostdrv_write;
 	BYTE	jastsnd;
+	BYTE	useromeo;
 } NP2OSCFG;
 
 

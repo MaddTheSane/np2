@@ -52,15 +52,24 @@ static const int fmslot[4] = {0, 2, 1, 3};
 
 void opngen_initialize(UINT rate) {
 
+	UINT	ratebit;
 	int		i;
 	int		j;
 	double	pom;
 	double	freq;
 	UINT32	calcrate;
 
-	calcrate = rate * 55466 / 44100;
-
-	opncfg.calc1024 = FMDIV_ENT * 44100 / 55466;
+	if (rate == 44100) {
+		ratebit = 0;
+	}
+	else if (rate == 22050) {
+		ratebit = 1;
+	}
+	else {
+		ratebit = 2;
+	}
+	calcrate = (OPNA_CLOCK / 72) >> ratebit;
+	opncfg.calc1024 = FMDIV_ENT * 44100 / (OPNA_CLOCK / 72);
 
 	for (i=0; i<EVC_ENT; i++) {
 #ifdef OPNGENX86

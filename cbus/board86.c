@@ -152,6 +152,10 @@ void board86_reset(void) {
 
 void board86_bind(void) {
 
+	fmboard_fmrestore(0, 0);
+	fmboard_fmrestore(3, 1);
+	psggen_restore(&psg1);
+	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
@@ -171,7 +175,6 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 	}
 	else {
 		if (opn.extreg < 0x12) {
-			sound_sync();
 			adpcm_setreg(&adpcm, opn.extreg, dat);
 		}
 	}
@@ -209,6 +212,10 @@ static const IOINP opnac_i[4] = {
 
 void board86c_bind(void) {
 
+	fmboard_fmrestore(0, 0);
+	fmboard_fmrestore(3, 1);
+	psggen_restore(&psg1);
+	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);

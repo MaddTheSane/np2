@@ -111,7 +111,8 @@ void fmboard_reset(UINT32 type) {
 	extfn = NULL;
 	ZeroMemory(&opn, sizeof(opn));
 	opn.channels = 3;
-	opn.adpcmmask = (BYTE)~(0x1c);
+	opn.adpcmmask = (UINT8)~(0x1c);
+	FillMemory(opn.reg, 0xff, 0x400);
 	opn.reg[0xff] = 0x01;
 
 	ZeroMemory(&musicgen, sizeof(musicgen));
@@ -216,5 +217,39 @@ void fmboard_bind(void) {
 			break;
 	}
 	sound_streamregist(&beep, (SOUNDCB)beep_getpcm);
+}
+
+
+// ----
+
+void fmboard_fmrestore(REG8 chbase, UINT bank) {
+
+	REG8	i;
+const BYTE	*reg;
+
+	reg = opn.reg + (bank * 0x100);
+	for (i=0x30; i<0xa0; i++) {
+		opngen_setreg(chbase, i, reg[i]);
+	}
+	for (i=0xb7; i>=0xa0; i--) {
+		opngen_setreg(chbase, i, reg[i]);
+	}
+	for (i=0; i<3; i++) {
+		opngen_keyon(chbase + i, opngen.keyreg[chbase + i]);
+	}
+}
+
+void fmboard_rhyrestore(RHYTHM rhy, UINT bank) {
+
+const BYTE	*reg;
+
+	reg = opn.reg + (bank * 0x100);
+	rhythm_setreg(rhy, 0x11, reg[0x11]);
+	rhythm_setreg(rhy, 0x18, reg[0x18]);
+	rhythm_setreg(rhy, 0x19, reg[0x19]);
+	rhythm_setreg(rhy, 0x1a, reg[0x1a]);
+	rhythm_setreg(rhy, 0x1b, reg[0x1b]);
+	rhythm_setreg(rhy, 0x1c, reg[0x1c]);
+	rhythm_setreg(rhy, 0x1d, reg[0x1d]);
 }
 
