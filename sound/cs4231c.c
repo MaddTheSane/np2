@@ -14,9 +14,6 @@ static const UINT16 cs4231samprate[] = {
 					54840,	37800,	64000,	44100,
 					48000,	33075,	 9600,	 6620};
 
-static const BYTE dmach[] =  {0xff, 0x00, 0x01, 0x03, 0xff, 0xff, 0xff, 0xff};
-static const BYTE dmairq[] = {0xff, 0x03, 0x06, 0x0a, 0x0c, 0xff, 0xff, 0xff};
-
 
 void cs4231_initialize(UINT rate) {
 
@@ -40,8 +37,10 @@ void cs4231_dma(NEVENTITEM item) {
 			ret = cs4231.proc();
 			if ((ret) && (cs4231.reg.pinctrl & 2)) {
 				dmac.dmach[0].leng.w = 0;
-				cs4231.intflag = 1;
-				pic_setirq(0x0c);
+				if (cs4231.dmairq != 0xff) {
+					cs4231.intflag = 1;
+					pic_setirq(cs4231.dmairq);
+				}
 			}
 		}
 		if (cs4231cfg.rate) {

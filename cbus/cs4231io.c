@@ -7,6 +7,10 @@
 #include	"fmboard.h"
 
 
+static const UINT8 cs4231dma[] = {0xff,0x00,0x01,0x03,0xff,0xff,0xff,0xff};
+static const UINT8 cs4231irq[] = {0xff,0x03,0x06,0x0a,0x0c,0xff,0xff,0xff};
+
+
 static void IOOUTCALL csctrl_oc24(UINT port, REG8 dat) {
 
 	cs4231.portctrl = dat;
@@ -77,10 +81,12 @@ void cs4231io_reset(void) {
 	cs4231.enable = 1;
 	cs4231.port = 0xf40;
 	cs4231.adrs = 0x21;
-	cs4231.dmach = 0;
-	cs4231.dmairq = 0x0c;
+	cs4231.dmairq = cs4231irq[(cs4231.adrs >> 3) & 3];
+	cs4231.dmach = cs4231dma[cs4231.adrs & 7];
 	cs4231.step = 22050;
-	dmac_attach(DMADEV_CS4231, 0);
+	if (cs4231.dmach != 0xff) {
+		dmac_attach(DMADEV_CS4231, cs4231.dmach);
+	}
 }
 
 void cs4231io_bind(void) {
@@ -98,11 +104,13 @@ void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
 
 	switch(port & 0x0f) {
 		case 0:
-#if 0
 			cs4231.adrs = value;
-			cs4231.dmairq = dmairq[(value >> 3) & 3];
-			cs4231.dmach = dmach[value & 7];
-#endif
+			cs4231.dmairq = cs4231irq[(value >> 3) & 3];
+			cs4231.dmach = cs4231dma[value & 7];
+			dmac_detach(DMADEV_CS4231);
+			if (cs4231.dmach != 0xff) {
+				dmac_attach(DMADEV_CS4231, cs4231.dmach);
+			}
 			break;
 
 		case 4:

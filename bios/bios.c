@@ -14,6 +14,7 @@
 #include	"keytable.res"
 #include	"itfrom.res"
 #include	"startup.res"
+#include	"sxsibios.res"
 
 
 #define	BIOS_SIMULATE
@@ -211,6 +212,7 @@ void bios_init(void) {
 	}
 	extmem_init(np2cfg.EXTMEM);
 #endif
+//	CopyMemory(mem + 0xd0000, sxsibios, sizeof(sxsibios));
 
 	CopyMemory(mem + 0x1c0000, mem + 0x1f8000, 0x08000);
 	CopyMemory(mem + 0x1e8000, mem + 0x0e8000, 0x10000);
