@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.h,v 1.2 2004/02/03 14:27:52 monaka Exp $	*/
+/*	$Id: ctrl_trans.h,v 1.3 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -131,7 +131,6 @@ void RETfar32(void);
 void RETfar16_Iw(void);
 void RETfar32_Iw(void);
 void IRET(void);
-void IRETD(void);
 
 /*
  * INT

@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.5 2004/01/25 05:41:29 yui Exp $	*/
+/*	$Id: interface.h,v 1.6 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -37,8 +37,8 @@ typedef signed int		SDWORD;
 typedef	UINT64			QWORD;
 typedef	SINT64			SQWORD;
 
-#define CPU_isDI	(!(CPU_FLAG & I_FLAG))
-#define CPU_isEI	(CPU_FLAG & I_FLAG)
+#define CPU_isDI		(!(CPU_FLAG & I_FLAG))
+#define CPU_isEI		(CPU_FLAG & I_FLAG)
 
 #define CPU_INITIALIZE()	i386c_initialize()
 #define	CPU_DEINITIALIZE()
@@ -48,8 +48,15 @@ typedef	SINT64			SQWORD;
 #define	CPU_EXEC()		ia32()
 #define	CPU_EXECV30()		ia32()
 #define	CPU_SHUT()		ia32shut()
-#define	CPU_SETEXTSIZE(size)	init_cpumem(size)
+#define	CPU_SETEXTSIZE(size)	ia32_setextsize((UINT32)size << 20)
 // #define CPU_SETEMM(frame, addr)
+
+#define	cpu_memorywrite(a,v)	i286_memorywrite(a,v)
+#define	cpu_memorywrite_w(a,v)	i286_memorywrite_w(a,v)
+#define	cpu_memorywrite_d(a,v)	i286_memorywrite_d(a,v)
+#define	cpu_memoryread(a)	i286_memoryread(a)
+#define	cpu_memoryread_w(a)	i286_memoryread_w(a)
+#define	cpu_memoryread_d(a)	i286_memoryread_d(a)
 
 void i386c_initialize(void);
 

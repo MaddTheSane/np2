@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.13 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.14 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -158,9 +158,10 @@ typedef struct {
 	BYTE		ss_32;
 	BYTE		resetreq;
 	BYTE		trap;
-	BYTE		_dummy;
 
-	BYTE		cpl;
+	BYTE		page_wp;
+
+	BYTE		user_mode;
 	BYTE		protected_mode;
 	BYTE		paging;
 	BYTE		vm86;
@@ -229,7 +230,6 @@ extern I386CORE		i386core;
 #define	CPU_EXTMEMSIZE	i386core.e.extsize
 #define	CPU_INPADRS	i386core.e.inport
 
-extern BYTE 		iflags[];
 extern sigjmp_buf	exec_1step_jmpbuf;
 
 
@@ -419,7 +419,9 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_STAT_PM		CPU_STATSAVE.cpu_stat.protected_mode
 #define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
 #define	CPU_STAT_PAGING		CPU_STATSAVE.cpu_stat.paging
-#define	CPU_STAT_CPL		CPU_STATSAVE.cpu_stat.cpl
+#define	CPU_STAT_WP		CPU_STATSAVE.cpu_stat.page_wp
+#define	CPU_STAT_CPL		CPU_STAT_SREG(CPU_CS_INDEX).rpl
+#define	CPU_STAT_USER_MODE	CPU_STATSAVE.cpu_stat.user_mode
 #define	CPU_STAT_PDE_BASE	CPU_STATSAVE.cpu_stat.pde_base
 
 #define	CPU_STAT_IOPL		((CPU_EFLAG & IOPL_FLAG) >> 12)
@@ -436,7 +438,12 @@ void set_eflags(DWORD new_flags, DWORD mask);
 
 #define	CPU_MODE_SUPERVISER	0
 #define	CPU_MODE_USER		1
-#define	CPU_IS_USER_MODE()	((CPU_STAT_CPL == 3) ? CPU_MODE_USER : CPU_MODE_SUPERVISER)
+#define	CPU_SET_CPL(cpl) \
+do { \
+	BYTE __t = (cpl) & 3; \
+	CPU_STAT_CPL = __t; \
+	CPU_STAT_USER_MODE = (__t == 3) ? CPU_MODE_USER : CPU_MODE_SUPERVISER; \
+} while (/*CONSTCOND*/ 0)
 
 #define CPU_CLI		do { CPU_FLAG &= ~I_FLAG;	\
 					CPU_TRAP = 0; } while (/*CONSTCOND*/ 0)
@@ -501,6 +508,8 @@ void set_eflags(DWORD new_flags, DWORD mask);
 
 
 void ia32_init(void);
+void ia32_initreg(void);
+void ia32_setextsize(UINT32 size);
 
 void ia32reset(void);
 void ia32shut(void);
@@ -527,7 +536,8 @@ void FASTCALL change_pm(BOOL onoff);
 void FASTCALL change_vm(BOOL onoff);
 void FASTCALL change_pg(BOOL onoff);
 
-extern BYTE szpcflag[0x200];
+extern const UINT8 iflags[];
+#define	szpcflag	iflags
 extern BYTE szpflag_w[0x10000];
 
 extern BYTE  *reg8_b20[0x100];

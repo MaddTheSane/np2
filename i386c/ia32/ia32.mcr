@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.7 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.8 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -87,9 +87,6 @@ do { \
 #define	SET_EIP(v) \
 do { \
 	DWORD __new_ip = (v); \
-	if (!CPU_STATSAVE.cpu_inst_default.op_32) {\
-		__new_ip &= 0x0000ffff; \
-	} \
 	if (__new_ip > CPU_STAT_CS_LIMIT) { \
 		VERBOSE(("SET_EIP: new_ip = %08x, limit = %08x", __new_ip, CPU_STAT_CS_LIMIT)); \
 		EXCEPTION(GP_EXCEPTION, 0); \
@@ -812,6 +809,51 @@ do { \
 	} else { \
 		REGPOP0_32_16(reg); \
 	} \
+} while (/*CONSTCOND*/ 0)
+
+/*
+ * stack pointer
+ */
+#define	SP_PUSH_16(reg) \
+do { \
+	WORD sp = CPU_SP; \
+	if (!CPU_STAT_SS32) { \
+		REGPUSH0(sp); \
+	} else { \
+		REGPUSH0_16_32(sp); \
+	} \
+} while (/*CONSTCOND*/ 0)
+
+#define	ESP_PUSH_32(reg) \
+do { \
+	DWORD sp = CPU_ESP; \
+	if (!CPU_STAT_SS32) { \
+		REGPUSH0_32_16(sp); \
+	} else { \
+		REGPUSH0_32(sp); \
+	} \
+} while (/*CONSTCOND*/ 0)
+
+#define	SP_POP_16(reg) \
+do { \
+	DWORD sp; \
+	if (!CPU_STAT_SS32) { \
+		sp = CPU_SP; \
+	} else { \
+		sp = CPU_ESP; \
+	} \
+	CPU_SP = cpu_vmemoryread_w(CPU_SS_INDEX, sp); \
+} while (/*CONSTCOND*/ 0)
+
+#define	ESP_POP_32(reg) \
+do { \
+	DWORD sp; \
+	if (!CPU_STAT_SS32) { \
+		sp = CPU_SP; \
+	} else { \
+		sp = CPU_ESP; \
+	} \
+	CPU_ESP = cpu_vmemoryread_d(CPU_SS_INDEX, sp); \
 } while (/*CONSTCOND*/ 0)
 
 

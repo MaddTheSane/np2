@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.10 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: paging.c,v 1.11 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -212,17 +212,17 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int crw, int user_mode)
 			break;
 
 		case 3:
-			value |= (DWORD)cpu_memoryread(paddr) << shift;
+			value += (DWORD)cpu_memoryread(paddr) << shift;
 			shift += 8;
 			paddr++;
 			/*FALLTHROUGH*/
 		case 2:
-			value |= (DWORD)cpu_memoryread_w(paddr) << shift;
+			value += (DWORD)cpu_memoryread_w(paddr) << shift;
 			shift += 16;
 			break;
 
 		case 1:
-			value |= (DWORD)cpu_memoryread(paddr) << shift;
+			value += (DWORD)cpu_memoryread(paddr) << shift;
 			shift += 8;
 			break;
 
@@ -341,10 +341,10 @@ paging(DWORD laddr, int crw, int user_mode)
 		return paddr;
 #endif	/* IA32_SUPPORT_TLB */
 
-	pde_addr = CPU_STAT_PDE_BASE | ((laddr >> 20) & 0xffc);
+	pde_addr = CPU_STAT_PDE_BASE + ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
 	if (!(pde & CPU_PDE_PRESENT)) {
-		VERBOSE(("paging: PDE is not present"));
+		VERBOSE(("paging: PTE page is not present"));
 		VERBOSE(("paging: CPU_CR3 = 0x%08x", CPU_CR3));
 		VERBOSE(("paging: laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x", laddr, pde_addr, pde));
 		err = 0;
@@ -367,15 +367,15 @@ paging(DWORD laddr, int crw, int user_mode)
 		pte_addr = 0;	/* compiler happy */
 
 		/* make physical address */
-		paddr = (pde & CPU_PDE_4M_BASEADDR_MASK) | (laddr & 0x003fffff);
+		paddr = (pde & CPU_PDE_4M_BASEADDR_MASK) + (laddr & 0x003fffff);
 	} else
 #endif	/* CPU_FAMILY >= 5 */
 	{
 		/* 4KB page size */
-		pte_addr = (pde & CPU_PDE_BASEADDR_MASK) | ((laddr >> 10) & 0xffc);
+		pte_addr = (pde & CPU_PDE_BASEADDR_MASK) + ((laddr >> 10) & 0xffc);
 		pte = cpu_memoryread_d(pte_addr);
 		if (!(pte & CPU_PTE_PRESENT)) {
-			VERBOSE(("paging: PTE is not present"));
+			VERBOSE(("paging: page is not present"));
 			VERBOSE(("paging: laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x", laddr, pde_addr, pde));
 			VERBOSE(("paging: pte_addr = 0x%08x, pte = 0x%08x", pte_addr, pte));
 			err = 0;
@@ -387,13 +387,13 @@ paging(DWORD laddr, int crw, int user_mode)
 		}
 
 		/* make physical address */
-		paddr = (pte & CPU_PTE_BASEADDR_MASK) | (laddr & 0x00000fff);
+		paddr = (pte & CPU_PTE_BASEADDR_MASK) + (laddr & 0x00000fff);
 	}
 
 	bit  = crw & CPU_PAGE_WRITE;
 	bit |= (pde & pte & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE));
 	bit |= (user_mode << 3);
-	bit |= (CPU_CR0 & CPU_CR0_WP) >> 12;
+	bit |= CPU_STAT_WP;
 
 #if !defined(USE_PAGE_ACCESS_TABLE)
 	if (!(page_access & (1 << bit)))

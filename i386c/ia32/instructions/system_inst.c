@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.13 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.14 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -44,7 +44,7 @@ LGDT_Ms(DWORD op)
 	if (op < 0xc0) {
 		if (!CPU_STAT_PM || !CPU_STAT_VM86 || CPU_STAT_CPL == 0) {
 			CPU_WORKCLOCK(11);
-			madr = get_ea(op);
+			madr = calc_ea_dst(op);
 			limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
 			if (!CPU_INST_OP32) {
@@ -79,7 +79,7 @@ SGDT_Ms(DWORD op)
 		if (!CPU_INST_OP32) {
 			base &= 0x00ffffff;
 		}
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, limit);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr + 2, base);
 		return;
@@ -199,7 +199,7 @@ LIDT_Ms(DWORD op)
 	if (op < 0xc0) {
 		if (!CPU_STAT_PM || !CPU_STAT_VM86 || CPU_STAT_CPL == 0) {
 			CPU_WORKCLOCK(11);
-			madr = get_ea(op);
+			madr = calc_ea_dst(op);
 			limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
 			if (!CPU_INST_OP32) {
@@ -234,7 +234,7 @@ SIDT_Ms(DWORD op)
 		if (!CPU_INST_OP32) {
 			base &= 0x00ffffff;
 		}
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, limit);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr + 2, base);
 		return;
@@ -314,6 +314,8 @@ MOV_CdRd(void)
 					change_pm(0);
 				}
 			}
+
+			CPU_STAT_WP = (CPU_CR0 & CPU_CR0_WP) >> 12;
 			break;
 
 		case 2: /* CR2 */
@@ -526,15 +528,13 @@ LAR_GwEw(void)
 	WORD *out;
 	DWORD op;
 	DWORD h;
-	int user_mode;
 	int rv;
 	WORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG16_EA(op, selector, out, 5, 11);
 
-		user_mode = CPU_IS_USER_MODE();
-		rv = parse_selector(&sel, selector, user_mode);
+		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -564,7 +564,7 @@ LAR_GwEw(void)
 			}
 		}
 
-		h = cpu_lmemoryread_d(sel.addr + 4, user_mode);
+		h = cpu_kmemoryread_d(sel.addr + 4);
 		*out = h & 0xff00;
 		CPU_FLAGL |= Z_FLAG;
 		return;
@@ -580,15 +580,13 @@ LAR_GdEw(void)
 	DWORD *out;
 	DWORD op;
 	DWORD h;
-	int user_mode;
 	int rv;
 	WORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		user_mode = CPU_IS_USER_MODE();
-		rv = parse_selector(&sel, selector, user_mode);
+		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -618,7 +616,7 @@ LAR_GdEw(void)
 			}
 		}
 
-		h = cpu_lmemoryread_d(sel.addr + 4, user_mode);
+		h = cpu_kmemoryread_d(sel.addr + 4);
 		*out = h & 0x00ffff00;	/* 0x00fxff00, x? */
 		CPU_FLAGL |= Z_FLAG;
 		return;
@@ -639,7 +637,7 @@ LSL_GwEw(void)
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG16_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
+		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -686,7 +684,7 @@ LSL_GdEw(void)
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
+		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -739,7 +737,7 @@ VERR_Ew(DWORD op)
 			selector = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		}
 
-		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
+		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -786,7 +784,7 @@ VERW_Ew(DWORD op)
 			selector = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		}
 
-		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
+		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -864,7 +862,7 @@ INVLPG(DWORD op)
 
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		tlb_flush_page(madr);
 		return;
 	}

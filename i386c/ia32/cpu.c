@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.9 2004/02/04 13:24:34 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.10 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -66,7 +66,7 @@ static const char *opcode_1byte[2][256] = {
 /*b0*/	"movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  
 	"movw",  "movw",  "movw",  "movw",  "movw",  "movw",  "movw",  "movw",  
 /*c0*/	NULL,    NULL,    "ret",   "ret",   "les",   "lds",   "movb",  "movw",
-	"enter", "leave", "retf",  "retf",  "int3",  "int",   "into",  "iret",
+	"enter", "leave", "ret",   "ret",   "int3",  "int",   "into",  "iret",
 /*d0*/	NULL,    NULL,    NULL,    NULL,    "aam",   "aad",   "salc",  "xlat",
 	"esc0",  "esc1",  "esc2",  "esc3",  "esc4",  "esc5",  "esc6",  "esc7",
 /*e0*/	"loopne","loope", "loop",  "jcxz",  "inb",   "inw",   "outb",  "outw",
@@ -101,7 +101,7 @@ static const char *opcode_1byte[2][256] = {
 /*b0*/	"movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  
 	"movl",  "movl",  "movl",  "movl",  "movl",  "movl",  "movl",  "movl",  
 /*c0*/	NULL,    NULL,    "ret",   "ret",   "les",   "lds",   "movb",  "movl",
-	"enter", "leave", "retfd", "retfd", "int3",  "int",   "into",  "iretd",
+	"enter", "leave", "ret",   "ret",   "int3",  "int",   "into",  "iretd",
 /*d0*/	NULL,    NULL,    NULL,    NULL,    "aam",   "aad",   "salc",  "xlat",
 	"esc0",  "esc1",  "esc2",  "esc3",  "esc4",  "esc5",  "esc6",  "esc7",
 /*e0*/	"loopne","loope", "loop",  "jecxz", "inb",   "inl",   "outb",  "outl",
@@ -596,7 +596,13 @@ exec_1step(void)
 		case 0xcd:
 			op2 = cpu_codefetch(eip);
 			eip++;
-			fprintf(fp, "%02xh", op2);
+			fprintf(fp, "0x%02x", op2);
+			break;
+
+		case 0xe4: case 0xe5: case 0xe6: case 0xe7:
+			op2 = cpu_codefetch(eip);
+			eip++;
+			fprintf(fp, "0x%02x", op2);
 			break;
 		}
 		fprintf(fp, "\n");

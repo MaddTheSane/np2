@@ -1,4 +1,4 @@
-/*	$Id: misc_inst.c,v 1.3 2004/01/23 14:33:27 monaka Exp $	*/
+/*	$Id: misc_inst.c,v 1.4 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -45,7 +45,7 @@ LEA_GwM(void)
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(3);
 		out = reg16_b53[op];
-		dst = calc_lea(op);
+		dst = calc_ea_dst(op);
 		*out = dst;
 		return;
 	}
@@ -62,7 +62,7 @@ LEA_GdM(void)
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(3);
 		out = reg32_b53[op];
-		dst = calc_lea(op);
+		dst = calc_ea_dst(op);
 		*out = dst;
 		return;
 	}

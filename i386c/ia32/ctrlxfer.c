@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.7 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.8 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -51,7 +51,7 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 	VERBOSE(("JMPfar_pm: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 	VERBOSE(("JMPfar_pm: selector = 0x%04x, new_ip = 0x%08x", selector, new_ip));
 
-	rv = parse_selector(&jmp_sel, selector, CPU_IS_USER_MODE());
+	rv = parse_selector(&jmp_sel, selector);
 	if (rv < 0) {
 		VERBOSE(("JMPfar_pm: parse_selector (selector = %04x, rv = %d)", selector, rv));
 		EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
@@ -173,7 +173,7 @@ JMPfar_pm_call_gate(selector_t *callgate_sel)
 	}
 
 	/* parse code segment selector */
-	rv = parse_selector(&cs_sel, callgate_sel->desc.u.gate.selector, CPU_IS_USER_MODE());
+	rv = parse_selector(&cs_sel, callgate_sel->desc.u.gate.selector);
 	if (rv < 0) {
 		VERBOSE(("JMPfar_pm: parse_selector (selector = %04x, rv = %d)", callgate_sel->desc.u.gate.selector, rv));
 		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
@@ -266,7 +266,7 @@ JMPfar_pm_task_gate(selector_t *taskgate_sel)
 	}
 
 	/* parse tss selector */
-	rv = parse_selector(&tss_sel, taskgate_sel->desc.u.gate.selector, CPU_IS_USER_MODE());
+	rv = parse_selector(&tss_sel, taskgate_sel->desc.u.gate.selector);
 	if (rv < 0 || tss_sel.ldt) {
 		VERBOSE(("JMPfar_pm: parse_selector (selector = %04x, rv = %d, %cDT)", taskgate_sel->desc.u.gate.selector, rv, tss_sel.ldt ? 'L' : 'G'));
 		EXCEPTION(GP_EXCEPTION, tss_sel.idx);
@@ -362,7 +362,7 @@ CALLfar_pm(WORD selector, DWORD new_ip)
 	VERBOSE(("CALLfar_pm: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 	VERBOSE(("CALLfar_pm: selector = 0x%04x, new_ip = 0x%08x", selector, new_ip));
 
-	rv = parse_selector(&call_sel, selector, CPU_IS_USER_MODE());
+	rv = parse_selector(&call_sel, selector);
 	if (rv < 0) {
 		VERBOSE(("CALLfar_pm: parse_selector (selector = %04x, rv = %d)", selector, rv));
 		EXCEPTION(GP_EXCEPTION, call_sel.idx);
@@ -512,7 +512,7 @@ CALLfar_pm_call_gate(selector_t *callgate_sel)
 	}
 
 	/* parse code segment descriptor */
-	rv = parse_selector(&cs_sel, callgate_sel->desc.u.gate.selector, CPU_IS_USER_MODE());
+	rv = parse_selector(&cs_sel, callgate_sel->desc.u.gate.selector);
 	if (rv < 0) {
 		VERBOSE(("CALLfar_pm: parse_selector (selector = %04x, rv = %d)", callgate_sel->desc.u.gate.selector, rv));
 		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
@@ -560,37 +560,33 @@ static void
 CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel)
 {
 	DWORD sp;
-	DWORD old_eip;
-	WORD old_cs;
+	DWORD new_ip;
 
 	VERBOSE(("CALLfar_pm: SAME-PRIVILEGE"));
-
-	/* save register */
-	old_cs = CPU_CS;
-	old_eip = CPU_EIP;
 
 	if (CPU_STAT_SS32) {
 		sp = CPU_ESP;
 	} else {
 		sp = CPU_SP;
 	}
+	new_ip = callgate_sel->desc.u.gate.offset;
 
 	if (callgate_sel->desc.type == CPU_SYSDESC_TYPE_CALL_32) {
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 8);
 
-		load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
-		SET_EIP(callgate_sel->desc.u.gate.offset);
+		PUSH0_32(CPU_CS);
+		PUSH0_32(CPU_EIP);
 
-		PUSH0_32(old_cs);
-		PUSH0_32(old_eip);
+		load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
+		SET_EIP(new_ip);
 	} else {
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 4);
 
-		load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
-		SET_EIP(callgate_sel->desc.u.gate.offset);
+		PUSH0_16(CPU_CS);
+		PUSH0_16(CPU_IP);
 
-		PUSH0_16(old_cs);
-		PUSH0_16(old_eip);
+		load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
+		SET_EIP(new_ip);
 	}
 }
 
@@ -629,7 +625,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 	get_stack_from_tss(cs_sel->desc.dpl, &tss_ss, &tss_esp);
 
 	/* parse stack segment descriptor */
-	rv = parse_selector(&ss_sel, tss_ss, CPU_IS_USER_MODE());
+	rv = parse_selector(&ss_sel, tss_ss);
 	if (rv < 0) {
 		VERBOSE(("CALLfar_pm: parse_selector (selector = %04x, rv = %d)", tss_ss, rv));
 		EXCEPTION(TS_EXCEPTION, ss_sel.idx);
@@ -678,7 +674,11 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		}
 
 		load_ss(ss_sel.selector, &ss_sel.desc, ss_sel.desc.dpl);
-		CPU_ESP = tss_esp;
+		if (CPU_STAT_SS32) {
+			CPU_ESP = tss_esp;
+		} else {
+			CPU_SP = (WORD)tss_esp;
+		}
 
 		load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->desc.dpl);
 		SET_EIP(callgate_sel->desc.u.gate.offset);
@@ -704,7 +704,11 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		}
 
 		load_ss(ss_sel.selector, &ss_sel.desc, ss_sel.desc.dpl);
-		CPU_ESP = tss_esp;
+		if (CPU_STAT_SS32) {
+			CPU_ESP = tss_esp;
+		} else {
+			CPU_SP = (WORD)tss_esp;
+		}
 
 		load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->desc.dpl);
 		SET_EIP(callgate_sel->desc.u.gate.offset);
@@ -751,7 +755,7 @@ CALLfar_pm_task_gate(selector_t *taskgate_sel)
 	}
 
 	/* tss descriptor */
-	rv = parse_selector(&tss_sel, taskgate_sel->desc.u.gate.selector, CPU_IS_USER_MODE());
+	rv = parse_selector(&tss_sel, taskgate_sel->desc.u.gate.selector);
 	if (rv < 0 || tss_sel.ldt) {
 		VERBOSE(("CALLfar_pm: parse_selector (selector = %04x, rv = %d, %s)", tss_sel.selector, rv, tss_sel.ldt ? "LDT" : "GDT"));
 		EXCEPTION(GP_EXCEPTION, tss_sel.idx);
@@ -862,7 +866,7 @@ RETfar_pm(DWORD nbytes)
 		new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 2);
 	}
 
-	rv = parse_selector(&ret_sel, new_cs, CPU_IS_USER_MODE());
+	rv = parse_selector(&ret_sel, new_cs);
 	if (rv < 0) {
 		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d, %s)", ret_sel.selector, rv));
 		EXCEPTION(GP_EXCEPTION, ret_sel.idx);
@@ -931,7 +935,7 @@ RETfar_pm(DWORD nbytes)
 			new_ss = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 4 + nbytes + 2);
 		}
 
-		rv = parse_selector(&ss_sel, new_ss, CPU_IS_USER_MODE());
+		rv = parse_selector(&ss_sel, new_ss);
 		if (rv < 0) {
 			VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d, %s)", ss_sel.selector, rv));
 			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
@@ -980,7 +984,11 @@ RETfar_pm(DWORD nbytes)
 		SET_EIP(new_ip);
 
 		load_ss(ss_sel.selector, &ss_sel.desc, ret_sel.rpl);
-		CPU_ESP = new_sp + nbytes;
+		if (CPU_STAT_SS32) {
+			CPU_ESP = new_sp + nbytes;
+		} else {
+			CPU_SP = new_sp + nbytes;
+		}
 
 		/* check segment register */
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
@@ -996,7 +1004,7 @@ RETfar_pm(DWORD nbytes)
 				continue;
 			}
 
-			rv = parse_selector(&temp_sel, CPU_REGS_SREG(i), CPU_IS_USER_MODE());
+			rv = parse_selector(&temp_sel, CPU_REGS_SREG(i));
 			if (rv < 0) {
 				/* segment register is invalid */
 				CPU_REGS_SREG(i) = 0;
@@ -1099,7 +1107,7 @@ IRET_pm(void)
 	/* PROTECTED-MODE-RETURN */
 	VERBOSE(("IRET_pm: PE=1, VM=0 in flags image"));
 
-	rv = parse_selector(&iret_sel, new_cs, CPU_IS_USER_MODE());
+	rv = parse_selector(&iret_sel, new_cs);
 	if (rv < 0) {
 		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", iret_sel.selector, rv));
 		EXCEPTION(GP_EXCEPTION, iret_sel.idx);
@@ -1145,7 +1153,7 @@ IRET_pm(void)
 		}
 		VERBOSE(("IRET_pm: new_sp = 0x%08x, new_ss = 0x%04x", new_sp, new_ss));
 
-		rv = parse_selector(&ss_sel, new_ss, CPU_IS_USER_MODE());
+		rv = parse_selector(&ss_sel, new_ss);
 		if (rv < 0) {
 			VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", ss_sel.selector, rv));
 			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
@@ -1203,12 +1211,6 @@ IRET_pm(void)
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
-	/* set new register */
-	old_cpl = CPU_STAT_CPL;
-	load_cs(iret_sel.selector, &iret_sel.desc, iret_sel.rpl);
-	SET_EIP(new_ip);
-
-	/* set new eflags */
 	mask = 0;
 	if (CPU_INST_OP32)
 		mask |= RF_FLAG;
@@ -1220,13 +1222,22 @@ IRET_pm(void)
 			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
 		}
 	}
+
+	/* set new register */
+	old_cpl = CPU_STAT_CPL;
+	load_cs(iret_sel.selector, &iret_sel.desc, iret_sel.rpl);
+	SET_EIP(new_ip);
 	set_eflags(new_flags, mask);
 
 	if (iret_sel.rpl > old_cpl) {
 		/* RETURN-OUTER-PRIVILEGE-LEVEL */
 
 		load_ss(ss_sel.selector, &ss_sel.desc, iret_sel.rpl);
-		CPU_ESP = new_sp;
+		if (CPU_STAT_SS32) {
+			CPU_ESP = new_sp;
+		} else {
+			CPU_SP = new_sp;
+		}
 
 		/* check segment register */
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
@@ -1260,26 +1271,26 @@ IRET_pm(void)
 static void
 IRET_pm_nested_task(void)
 {
-	selector_t iret_sel;
+	selector_t tss_sel;
 	int rv;
-	WORD new_cs;
+	WORD new_tss;
 
 	VERBOSE(("IRET_pm: TASK-RETURN: PE=1, VM=0, NT=1"));
 
-	new_cs = get_link_selector_from_tss();
-	rv = parse_selector(&iret_sel, new_cs, CPU_IS_USER_MODE());
-	if (rv < 0 || iret_sel.ldt) {
-		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", iret_sel.selector, rv));
-		EXCEPTION(GP_EXCEPTION, iret_sel.idx);
+	new_tss = get_link_selector_from_tss();
+	rv = parse_selector(&tss_sel, new_tss);
+	if (rv < 0 || tss_sel.ldt) {
+		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d, %cDT)", tss_sel.selector, rv, tss_sel.ldt ? 'L' : 'G'));
+		EXCEPTION(GP_EXCEPTION, tss_sel.idx);
 	}
 
 	/* check system segment */
-	if (iret_sel.desc.s) {
-		VERBOSE(("IRET_pm: task segment is %d segment", iret_sel.desc.u.seg.c ? "code" : "data"));
-		EXCEPTION(GP_EXCEPTION, iret_sel.idx);
+	if (tss_sel.desc.s) {
+		VERBOSE(("IRET_pm: task segment is %d segment", tss_sel.desc.u.seg.c ? "code" : "data"));
+		EXCEPTION(GP_EXCEPTION, tss_sel.idx);
 	}
 
-	switch (iret_sel.desc.type) {
+	switch (tss_sel.desc.type) {
 	case CPU_SYSDESC_TYPE_TSS_BUSY_16:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_32:
 		break;
@@ -1289,18 +1300,18 @@ IRET_pm_nested_task(void)
 		VERBOSE(("IRET_pm: task is not busy"));
 		/*FALLTHROUGH*/
 	default:
-		VERBOSE(("IRET_pm: invalid descriptor type (type = %d)", iret_sel.desc.type));
-		EXCEPTION(GP_EXCEPTION, iret_sel.idx);
+		VERBOSE(("IRET_pm: invalid descriptor type (type = %d)", tss_sel.desc.type));
+		EXCEPTION(GP_EXCEPTION, tss_sel.idx);
 		break;
 	}
 
 	/* not present */
-	if (selector_is_not_present(&iret_sel)) {
+	if (selector_is_not_present(&tss_sel)) {
 		VERBOSE(("IRET_pm: tss segment is not present"));
-		EXCEPTION(NP_EXCEPTION, iret_sel.idx);
+		EXCEPTION(NP_EXCEPTION, tss_sel.idx);
 	}
 
-	task_switch(&iret_sel, TASK_SWITCH_IRET);
+	task_switch(&tss_sel, TASK_SWITCH_IRET);
 }
 
 /*---

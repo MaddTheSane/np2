@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.4 2004/02/03 14:27:52 monaka Exp $	*/
+/*	$Id: inst_table.c,v 1.5 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -839,7 +839,7 @@ void (*insttable_1byte[2][256])(void) = {
 		INT3,
 		INT_Ib,
 		INTO,
-		IRETD,
+		IRET,
 
 		Grp2_Eb,		/* D0 */
 		Grp2_Ed,

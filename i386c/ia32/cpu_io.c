@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.c,v 1.2 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: cpu_io.c,v 1.3 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -34,28 +34,29 @@
 
 
 static void
-check_io(WORD port, int len)
+check_io(WORD port, DWORD len)
 {
 	WORD off;
 	BYTE bit;
 	BYTE map;
 
-	/* そもそも I/O 許可マップが無い場合 */
 	if (CPU_STAT_IOLIMIT == 0) {
+		VERBOSE(("check_io: CPU_STAT_IOLIMIT == 0 (port = %04x, len = %d)", port, len));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
 	off = port / 8;
 	bit = 1 << (port % 8);
 	for (; len > 0; ++off, bit = 0x01) {
-		/* I/O 許可マップはビット単位なので */
-		if (off * 8 >= CPU_STAT_IOLIMIT) {
+		if (off >= CPU_STAT_IOLIMIT) {
+			VERBOSE(("check_io: off(%08x) >= CPU_STAT_IOLIMIT(%08x) (port = %04x, len = %d)", off, CPU_STAT_IOLIMIT, port, len));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
 		map = cpu_kmemoryread(CPU_STAT_IOADDR + off);
 		for (; (len > 0) && (bit != 0x00); bit <<= 1, --len) {
 			if (map & bit) {
+				VERBOSE(("check_io: (bitmap(0x%02x) & bit(0x%02x)) != 0 (port = %04x, len = %d)", map, bit, port, len));
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
 		}

@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.10 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: segments.c,v 1.11 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -47,17 +47,12 @@ load_segreg(int idx, WORD selector, int exc)
 		CPU_REGS_SREG(idx) = selector;
 
 		memset(&sd, 0, sizeof(sd));
+		if (idx == CPU_CS_INDEX) {
+			sd.rpl = CPU_STAT_CPL;
+		}
 		sd.u.seg.limit = CPU_STAT_SREGLIMIT(idx);
 		CPU_SET_SEGDESC_DEFAULT(&sd, idx, selector);
 		CPU_STAT_SREG(idx) = sd;
-
-		if (idx == CPU_CS_INDEX) {
-			CPU_INST_OP32 = CPU_INST_AS32 =
-			    CPU_STATSAVE.cpu_inst_default.op_32 =
-			    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
-		} else if (idx == CPU_SS_INDEX) {
-			CPU_STAT_SS32 = 0;
-		}
 		return;
 	}
 
@@ -70,7 +65,7 @@ load_segreg(int idx, WORD selector, int exc)
 		ia32_panic("load_segreg: CS");
 	}
 
-	rv = parse_selector_user(&sel, selector);
+	rv = parse_selector(&sel, selector);
 	if (rv < 0) {
 		if ((rv != -2) || (idx == CPU_SS_INDEX)) {
 			EXCEPTION(exc, sel.idx);
@@ -154,7 +149,7 @@ load_cs(WORD selector, descriptor_t* sdp, DWORD cpl)
 	    CPU_STATSAVE.cpu_inst_default.as_32 = sdp->d;
 	CPU_REGS_SREG(CPU_CS_INDEX) = (selector & ~3) | (cpl & 3);
 	CPU_STAT_SREG(CPU_CS_INDEX) = *sdp;
-	CPU_STAT_CPL = cpl & 3;
+	CPU_SET_CPL(cpl & 3);
 }
 
 /*
@@ -166,7 +161,7 @@ load_ldtr(WORD selector, int exc)
 	selector_t sel;
 	int rv;
 
-	rv = parse_selector_user(&sel, selector);
+	rv = parse_selector(&sel, selector);
 	if (rv < 0 || sel.ldt) {
 		if (rv == -2) {
 			/* null segment */
@@ -202,14 +197,14 @@ load_ldtr(WORD selector, int exc)
 }
 
 void
-load_descriptor(descriptor_t *descp, DWORD addr, int user_mode)
+load_descriptor(descriptor_t *descp, DWORD addr)
 {
 	DWORD l, h;
 
 	memset(descp, 0, sizeof(*descp));
 
-	l = cpu_lmemoryread_d(addr, user_mode);
-	h = cpu_lmemoryread_d(addr + 4, user_mode);
+	l = cpu_kmemoryread_d(addr);
+	h = cpu_kmemoryread_d(addr + 4);
 	VERBOSE(("load_descriptor: descriptor address = 0x%08x, h = 0x%08x, l = %08x", addr, h, l));
 
 	descp->flag = 0;
@@ -293,7 +288,7 @@ load_descriptor(descriptor_t *descp, DWORD addr, int user_mode)
 			}
 			descp->u.seg.segend = descp->u.seg.segbase + descp->u.seg.limit;
 
-			VERBOSE(("load_descriptor: %dbit %sTSS descriptor", descp->d ? 32 : 16, (descp->type & CPU_SYSDESC_TYPE_TSS_BUSY) ? "busy " : ""));
+			VERBOSE(("load_descriptor: %dbit %sTSS descriptor", descp->d ? 32 : 16, (descp->type & CPU_SYSDESC_TYPE_TSS_BUSY_IND) ? "busy " : ""));
 			VERBOSE(("load_descriptor: TSS base address = 0x%08x, limit = 0x%08x", descp->u.seg.segbase, descp->u.seg.limit));
 			VERBOSE(("load_descriptor: d = %s, g = %s", descp->d ? "on" : "off", descp->u.seg.g ? "on" : "off"));
 			break;
@@ -329,7 +324,7 @@ load_descriptor(descriptor_t *descp, DWORD addr, int user_mode)
 }
 
 int
-parse_selector(selector_t* ssp, WORD selector, int user_mode)
+parse_selector(selector_t* ssp, WORD selector)
 {
 	DWORD base;
 	WORD limit;
@@ -339,12 +334,11 @@ parse_selector(selector_t* ssp, WORD selector, int user_mode)
 	ssp->idx = selector & ~3;
 	ssp->rpl = selector & 3;
 	ssp->ldt = selector & CPU_SEGMENT_TABLE_IND;
-	ssp->user_mode = user_mode;
 
-	VERBOSE(("parse_selector: selector = %04x, index = %d, RPL = %d, %cDT %c", ssp->selector, ssp->idx >> 3, ssp->rpl, ssp->ldt ? 'L' : 'G', user_mode ? 'u' : 's'));
+	VERBOSE(("parse_selector: selector = %04x, index = %d, RPL = %d, %cDT", ssp->selector, ssp->idx >> 3, ssp->rpl, ssp->ldt ? 'L' : 'G'));
 
 	/* descriptor table */
-	idx = selector & ~7;
+	idx = selector & CPU_SEGMENT_SELECTOR_INDEX_MASK;
 	if (ssp->ldt) {
 		/* LDT */
 		if (!CPU_LDTR_DESC.valid) {
@@ -369,7 +363,7 @@ parse_selector(selector_t* ssp, WORD selector, int user_mode)
 
 	/* load descriptor */
 	ssp->addr = base + idx;
-	CPU_SET_SEGDESC(&ssp->desc, ssp->addr, ssp->user_mode);
+	load_descriptor(&ssp->desc, ssp->addr);
 	if (!ssp->desc.valid) {
 		VERBOSE(("parse_selector: segment descriptor is invalid"));
 		return -4;
@@ -391,10 +385,10 @@ selector_is_not_present(selector_t *ssp)
 
 	/* set access bit if code/data segment descriptor */
 	if (ssp->desc.s) {
-		h = cpu_lmemoryread_d(ssp->addr + 4, ssp->user_mode);
+		h = cpu_kmemoryread_d(ssp->addr + 4);
 		if (!(h & CPU_SEGDESC_H_A)) {
 			h |= CPU_SEGDESC_H_A;
-			cpu_lmemorywrite_d(ssp->addr + 4, h, ssp->user_mode);
+			cpu_kmemorywrite_d(ssp->addr + 4, h);
 		}
 	}
 

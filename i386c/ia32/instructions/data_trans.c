@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.5 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.6 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1044,7 +1044,7 @@ void PUSH_AX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_AX); }
 void PUSH_CX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_CX); }
 void PUSH_DX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_DX); }
 void PUSH_BX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_BX); }
-void PUSH_SP(void) { WORD sp = CPU_SP; CPU_WORKCLOCK(3); PUSH0_16(sp); }
+void PUSH_SP(void) { CPU_WORKCLOCK(3); SP_PUSH_16(CPU_SP); }
 void PUSH_BP(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_BP); }
 void PUSH_SI(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_SI); }
 void PUSH_DI(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_DI); }
@@ -1053,7 +1053,7 @@ void PUSH_EAX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EAX); }
 void PUSH_ECX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_ECX); }
 void PUSH_EDX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EDX); }
 void PUSH_EBX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EBX); }
-void PUSH_ESP(void) { DWORD sp = CPU_ESP; CPU_WORKCLOCK(3); PUSH0_32(sp); }
+void PUSH_ESP(void) { CPU_WORKCLOCK(3); ESP_PUSH_32(CPU_ESP); }
 void PUSH_EBP(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EBP); }
 void PUSH_ESI(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_ESI); }
 void PUSH_EDI(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EDI); }
@@ -1143,7 +1143,7 @@ void POP_AX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_AX); }
 void POP_CX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_CX); }
 void POP_DX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_DX); }
 void POP_BX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_BX); }
-void POP_SP(void) { WORD sp; CPU_WORKCLOCK(5); POP0_16(sp); CPU_SP = sp; }
+void POP_SP(void) { CPU_WORKCLOCK(5); SP_POP_16(CPU_SP); }
 void POP_BP(void) { CPU_WORKCLOCK(5); POP0_16(CPU_BP); }
 void POP_SI(void) { CPU_WORKCLOCK(5); POP0_16(CPU_SI); }
 void POP_DI(void) { CPU_WORKCLOCK(5); POP0_16(CPU_DI); }
@@ -1152,7 +1152,7 @@ void POP_EAX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EAX); }
 void POP_ECX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_ECX); }
 void POP_EDX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EDX); }
 void POP_EBX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EBX); }
-void POP_ESP(void) { DWORD sp; CPU_WORKCLOCK(5); POP0_32(sp); CPU_ESP = sp; }
+void POP_ESP(void) { CPU_WORKCLOCK(5); ESP_POP_32(CPU_ESP); }
 void POP_EBP(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EBP); }
 void POP_ESI(void) { CPU_WORKCLOCK(5); POP0_32(CPU_ESI); }
 void POP_EDI(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EDI); }
@@ -1361,7 +1361,7 @@ PUSHA(void)
 		REGPUSH0(CPU_DI);
 	} else {
 		if (CPU_STAT_PM) {
-			CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP, 32);
+			CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP, 16);
 		}
 		REGPUSH0_16_32(CPU_AX);
 		REGPUSH0_16_32(CPU_CX);
@@ -1382,7 +1382,7 @@ PUSHAD(void)
 	CPU_WORKCLOCK(17);
 	if (!CPU_STAT_SS32) {
 		if (CPU_STAT_PM) {
-			CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_SP, 16);
+			CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_SP, 32);
 		}
 		REGPUSH0_32_16(CPU_EAX);
 		REGPUSH0_32_16(CPU_ECX);
@@ -1426,7 +1426,7 @@ POPA(void)
 		REGPOP0(CPU_AX);
 	} else {
 		if (CPU_STAT_PM) {
-			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP, 32);
+			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP, 16);
 		}
 		REGPOP0_16_32(CPU_DI);
 		REGPOP0_16_32(CPU_SI);
@@ -1446,7 +1446,7 @@ POPAD(void)
 	CPU_WORKCLOCK(19);
 	if (!CPU_STAT_SS32) {
 		if (CPU_STAT_PM) {
-			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_SP, 16);
+			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_SP, 32);
 		}
 		REGPOP0_32_16(CPU_EDI);
 		REGPOP0_32_16(CPU_ESI);
@@ -1501,7 +1501,7 @@ IN_EAXDX(void)
 void
 IN_ALIb(void)
 {
-	BYTE port;
+	WORD port;
 
 	CPU_WORKCLOCK(5);
 	GET_PCBYTE(port);
@@ -1511,7 +1511,7 @@ IN_ALIb(void)
 void
 IN_AXIb(void)
 {
-	BYTE port;
+	WORD port;
 
 	CPU_WORKCLOCK(5);
 	GET_PCBYTE(port);
@@ -1521,7 +1521,7 @@ IN_AXIb(void)
 void
 IN_EAXIb(void)
 {
-	BYTE port;
+	WORD port;
 
 	CPU_WORKCLOCK(5);
 	GET_PCBYTE(port);
@@ -1558,7 +1558,7 @@ OUT_DXEAX(void)
 void
 OUT_IbAL(void)
 {
-	BYTE port;
+	WORD port;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(port);
@@ -1568,7 +1568,7 @@ OUT_IbAL(void)
 void
 OUT_IbAX(void)
 {
-	BYTE port;
+	WORD port;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(port);
@@ -1578,7 +1578,7 @@ OUT_IbAX(void)
 void
 OUT_IbEAX(void)
 {
-	BYTE port;
+	WORD port;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(port);

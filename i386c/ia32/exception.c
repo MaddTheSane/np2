@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.7 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: exception.c,v 1.8 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -72,10 +72,9 @@ exception(int num, int error_code)
 
 	__ASSERT((unsigned int)num < EXCEPTION_NUM);
 
+	VERBOSE(("exception: -------------------------------------------------------------- start"));
 	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
-	VERBOSE(("exception:------------------------------------------------"));
 	VERBOSE(("%s", cpu_reg2str()));
-	VERBOSE(("exception:------------------------------------------------"));
 
 	CPU_STAT_NERROR++;
 	if ((CPU_STAT_NERROR >= 3) 
@@ -148,7 +147,9 @@ exception(int num, int error_code)
 	}
 	CPU_STAT_PREV_EXCEPTION = num;
 
-	INTERRUPT(num, FALSE, errorp, error_code);
+	VERBOSE(("exception: ---------------------------------------------------------------- end"));
+
+	INTERRUPT(num, 0, errorp, error_code);
 	siglongjmp(exec_1step_jmpbuf, 1);
 }
 
@@ -219,14 +220,14 @@ interrupt(int num, int softintp, int errorp, int error_code)
 	DWORD new_ip;
 	WORD new_cs;
 
-	VERBOSE(("interrupt: num = 0x%02x, softintp = %s, errorp = %s, error_code = %02x", num, softintp ? "on" : "off", errorp ? "on" : "off", error_code));
+	VERBOSE(("interrupt: num = 0x%02x, softintp = %s, errorp = %s, error_code = %08x", num, softintp ? "on" : "off", errorp ? "on" : "off", error_code));
 
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		idt_idx = num * 4;
 		if (idt_idx + 3 > CPU_IDTR_LIMIT) {
 			VERBOSE(("interrupt: real-mode IDTR limit check failure (idx = 0x%04x, limit = 0x%08x", idt_idx, CPU_IDTR_LIMIT));
-			EXCEPTION(GP_EXCEPTION, num * 4 | 2);
+			EXCEPTION(GP_EXCEPTION, idt_idx + 2);
 		}
 
 		if (!softintp) {
@@ -243,13 +244,14 @@ interrupt(int num, int softintp, int errorp, int error_code)
 		CPU_EFLAG &= ~(T_FLAG | I_FLAG | AC_FLAG | RF_FLAG);
 		CPU_TRAP = 0;
 
-		new_ip = cpu_memoryread_w(CPU_IDTR_BASE + num * 4);
-		new_cs = cpu_memoryread_w(CPU_IDTR_BASE + num * 4 + 2);
+		new_ip = cpu_memoryread_w(CPU_IDTR_BASE + idt_idx);
+		new_cs = cpu_memoryread_w(CPU_IDTR_BASE + idt_idx + 2);
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);
 		CPU_WORKCLOCK(20);
 	} else {
 		/* protected mode */
+		VERBOSE(("interrupt: -------------------------------------------------------------- start"));
 
 		/* VM86 && IOPL < 3 && interrupt cause == INTn */
 		if (CPU_STAT_VM86 && (CPU_STAT_IOPL < CPU_IOPL3) && (softintp == -1)) {
@@ -260,14 +262,14 @@ interrupt(int num, int softintp, int errorp, int error_code)
 		idt_idx = num * 8;
 		if (idt_idx + 7 > CPU_IDTR_LIMIT) {
 			VERBOSE(("interrupt: IDTR limit check failure (idx = 0x%04x, limit = 0x%08x", idt_idx, CPU_IDTR_LIMIT));
-			EXCEPTION(GP_EXCEPTION, num * 8 | 2 | !softintp);
+			EXCEPTION(GP_EXCEPTION, idt_idx + 2 + !softintp);
 		}
 
 		memset(&gd, 0, sizeof(gd));
-		CPU_SET_GATEDESC(&gd, CPU_IDTR_BASE + idt_idx, CPU_MODE_SUPERVISER);
+		load_descriptor(&gd, CPU_IDTR_BASE + idt_idx);
 		if (!gd.valid || !gd.p) {
 			VERBOSE(("interrupt: gate descripter is invalid."));
-			EXCEPTION(GP_EXCEPTION, num * 8 | 2 | !softintp);
+			EXCEPTION(GP_EXCEPTION, idt_idx + 2 + !softintp);
 		}
 
 		switch (gd.type) {
@@ -280,14 +282,14 @@ interrupt(int num, int softintp, int errorp, int error_code)
 
 		default:
 			VERBOSE(("interrupt: invalid gate type (%d)", gd.type));
-			EXCEPTION(GP_EXCEPTION, num * 8 | 2 | !softintp);
+			EXCEPTION(GP_EXCEPTION, idt_idx + 2 + !softintp);
 			break;
 		}
 
 		/* 5.10.1.1. 例外／割り込みハンドラ・プロシージャの保護 */
 		if (softintp && (gd.dpl < CPU_STAT_CPL)) {
 			VERBOSE(("interrupt: softintp && DPL(%d) < CPL(%d)", gd.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, num * 8 | 2);
+			EXCEPTION(GP_EXCEPTION, idt_idx + 2);
 		}
 
 		switch (gd.type) {
@@ -303,9 +305,11 @@ interrupt(int num, int softintp, int errorp, int error_code)
 			break;
 
 		default:
-			EXCEPTION(GP_EXCEPTION, num * 8 | 2 | !softintp);
+			EXCEPTION(GP_EXCEPTION, idt_idx + 2 + !softintp);
 			break;
 		}
+
+		VERBOSE(("interrupt: ---------------------------------------------------------------- end"));
 	}
 }
 
@@ -319,7 +323,7 @@ interrupt_task(descriptor_t *gdp, int softintp, int errorp, int error_code)
 
 	(void)softintp;
 
-	rv = parse_selector_sv(&task_sel, gdp->u.gate.selector);
+	rv = parse_selector(&task_sel, gdp->u.gate.selector);
 	if (rv < 0 || task_sel.ldt) {
 		VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d, %cDT)", gdp->u.gate.selector, rv, task_sel.ldt ? 'L' : 'G'));
 		EXCEPTION(TS_EXCEPTION, task_sel.idx);
@@ -397,32 +401,32 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 	flags &= ~(T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG);
 	mask |= T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG;
 
-	rv = parse_selector_sv(&intr_sel, gdp->u.gate.selector);
+	rv = parse_selector(&intr_sel, gdp->u.gate.selector);
 	if (rv < 0) {
 		VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d)", gdp->u.gate.selector, rv));
-		EXCEPTION(GP_EXCEPTION, intr_sel.idx | !softintp);
+		EXCEPTION(GP_EXCEPTION, intr_sel.idx + !softintp);
 	}
 
 	/* check segment type */
 	if (!intr_sel.desc.s) {
 		VERBOSE(("interrupt: code segment is system segment"));
-		EXCEPTION(GP_EXCEPTION, intr_sel.idx | !softintp);
+		EXCEPTION(GP_EXCEPTION, intr_sel.idx + !softintp);
 	}
 	if (!intr_sel.desc.u.seg.c) {
 		VERBOSE(("interrupt: code segment is data segment"));
-		EXCEPTION(GP_EXCEPTION, intr_sel.idx | !softintp);
+		EXCEPTION(GP_EXCEPTION, intr_sel.idx + !softintp);
 	}
 
 	/* check privilege level */
 	if (intr_sel.desc.dpl > CPU_STAT_CPL) {
 		VERBOSE(("interrupt: DPL(%d) > CPL(%d)", intr_sel.desc.dpl, CPU_STAT_CPL));
-		EXCEPTION(GP_EXCEPTION, intr_sel.idx | !softintp);
+		EXCEPTION(GP_EXCEPTION, intr_sel.idx + !softintp);
 	}
 
 	/* not present */
 	if (selector_is_not_present(&intr_sel)) {
 		VERBOSE(("interrupt: selector is not present"));
-		EXCEPTION(NP_EXCEPTION, intr_sel.idx | !softintp);
+		EXCEPTION(NP_EXCEPTION, intr_sel.idx + !softintp);
 	}
 
 	if (!intr_sel.desc.u.seg.ec
@@ -449,40 +453,40 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 
 		get_stack_from_tss(intr_sel.desc.dpl, &new_ss, &new_sp);
 
-		rv = parse_selector_sv(&ss_sel, new_ss);
+		rv = parse_selector(&ss_sel, new_ss);
 		if (rv < 0) {
 			VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d)", new_ss, rv));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(TS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 
 		/* check privilege level */
 		if (ss_sel.rpl != intr_sel.desc.dpl) {
 			VERBOSE(("interrupt: RPL[SS](%d) != DPL[CS](%d)", ss_sel.rpl, intr_sel.desc.dpl));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(TS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 		if (ss_sel.desc.dpl != intr_sel.desc.dpl) {
 			VERBOSE(("interrupt: DPL[SS](%d) != DPL[CS](%d)", ss_sel.desc.dpl, intr_sel.desc.dpl));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(TS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 
 		/* check segment type */
 		if (!ss_sel.desc.s) {
 			VERBOSE(("interrupt: stack segment is system segment"));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(TS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 		if (ss_sel.desc.u.seg.c) {
 			VERBOSE(("interrupt: stack segment is code segment"));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(TS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 		if (!ss_sel.desc.u.seg.wr) {
 			VERBOSE(("interrupt: stack segment is read-only data segment"));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(TS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 
 		/* not present */
 		if (selector_is_not_present(&ss_sel)) {
 			VERBOSE(("interrupt: selector is not present"));
-			EXCEPTION(SS_EXCEPTION, ss_sel.idx | !softintp);
+			EXCEPTION(SS_EXCEPTION, ss_sel.idx + !softintp);
 		}
 
 		/* check stack room size */
@@ -552,11 +556,11 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 	} else {
 		if (CPU_STAT_VM86) {
 			VERBOSE(("interrupt: VM86"));
-			EXCEPTION(GP_EXCEPTION, intr_sel.idx);
+			EXCEPTION(GP_EXCEPTION, intr_sel.idx + !softintp);
 		}
 		if (!intr_sel.desc.u.seg.ec && (intr_sel.desc.dpl != CPU_STAT_CPL)) {
 			VERBOSE(("interrupt: NON-CONFORMING-CODE-SEGMENT(%s) and DPL[CS](%d) != CPL", intr_sel.desc.u.seg.ec ? "false" : "true", intr_sel.desc.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, intr_sel.idx);
+			EXCEPTION(GP_EXCEPTION, intr_sel.idx + !softintp);
 		}
 		VERBOSE(("interrupt: INTRA-PRIVILEGE-LEVEL-INTERRUPT"));
 

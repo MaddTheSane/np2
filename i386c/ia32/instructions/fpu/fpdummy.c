@@ -1,4 +1,4 @@
-/*	$Id: fpdummy.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: fpdummy.c,v 1.2 2004/02/05 16:43:45 monaka Exp $	*/
 
 #include "compiler.h"
 #include "cpu.h"
@@ -18,6 +18,6 @@ ESC0(void)
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 	} else {
-		madr = calc_lea(op);
+		madr = calc_ea_dst(op);
 	}
 }

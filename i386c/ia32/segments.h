@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.5 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: segments.h,v 1.6 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -66,14 +66,13 @@ typedef struct {
 
 	BYTE	type;	/* descriptor type */
 	BYTE	dpl;	/* DPL */
+	BYTE	rpl;	/* RPL */
 	BYTE	s;	/* 0 = system, 1 = code/data */
 	BYTE	d;	/* 0 = 16bit, 1 = 32bit */
 
 	BYTE	flag;
 #define	CPU_DESC_FLAG_READABLE	(1 << 0)
 #define	CPU_DESC_FLAG_WRITABLE	(1 << 1)
-
-	BYTE	b_pad;
 } descriptor_t;
 
 
@@ -147,18 +146,18 @@ do { \
 	(dscp)->u.seg.g = 0; \
 	(dscp)->valid = 1; \
 	(dscp)->p = 1; \
-	(dscp)->type = 0x02 /* writable */; \
+	(dscp)->type = 0x02; /* writable */ \
 	(dscp)->dpl = 0; \
 	(dscp)->s = 1;	/* code/data */ \
-	(dscp)->d = 0; \
-	(dscp)->flag = 0; \
+	(dscp)->d = 0; /* 16bit */ \
+	(dscp)->flag = CPU_DESC_FLAG_READABLE|CPU_DESC_FLAG_WRITABLE; \
 } while (/*CONSTCOND*/ 0)
 
 #define	CPU_SET_TASK_BUSY(selector, dscp) \
 do { \
 	DWORD addr; \
 	DWORD h; \
-	addr = CPU_GDTR_BASE | ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
+	addr = CPU_GDTR_BASE + ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
 	h = cpu_kmemoryread_d(addr + 4); \
 	if (!(h & CPU_TSS_H_BUSY)) { \
 		(dscp)->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
@@ -173,7 +172,7 @@ do { \
 do { \
 	DWORD addr; \
 	DWORD h; \
-	addr = CPU_GDTR_BASE | ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
+	addr = CPU_GDTR_BASE + ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
 	h = cpu_kmemoryread_d(addr + 4); \
 	if (h & CPU_TSS_H_BUSY) { \
 		(dscp)->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
@@ -184,9 +183,7 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	CPU_SET_SEGDESC(descp, addr, mode)  load_descriptor(descp, addr, mode)
-#define	CPU_SET_GATEDESC(descp, addr, mode) load_descriptor(descp, addr, mode)
-void load_descriptor(descriptor_t* descp, DWORD addr, int user_mode);
+void load_descriptor(descriptor_t *descp, DWORD addr);
 
 #define	CPU_SET_SEGREG(idx, selector)	load_segreg(idx, selector, GP_EXCEPTION)
 void load_segreg(int idx, WORD selector, int exc);
@@ -198,8 +195,8 @@ void load_ldtr(WORD selector, int exc);
 /*
  * segment selector
  */
-#define	CPU_SEGMENT_SELECTOR_INDEX_MASK	~7
-#define	CPU_SEGMENT_SELECTOR_RPL_MASK	3
+#define	CPU_SEGMENT_SELECTOR_INDEX_MASK	(~7)
+#define	CPU_SEGMENT_SELECTOR_RPL_MASK	(3)
 #define	CPU_SEGMENT_TABLE_IND		(1 << 2)	/* 0 = GDT, 1 = LDT */
 
 typedef struct {
@@ -209,17 +206,13 @@ typedef struct {
 	BYTE		ldt;
 	BYTE		pad;
 
-	int		user_mode;	/* superviser/user mode */
 	DWORD		addr;		/* descriptor linear address */
 
 	descriptor_t	desc;
 } selector_t;
 
-int parse_selector(selector_t *ssp, WORD selector, int user_mode);
+int parse_selector(selector_t *ssp, WORD selector);
 int selector_is_not_present(selector_t *ssp);
-
-#define	parse_selector_sv(sp, s) parse_selector(sp, s, CPU_MODE_SUPERVISER)
-#define	parse_selector_user(sp, s) parse_selector(sp, s, CPU_IS_USER_MODE())
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: seg_reg.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: seg_reg.c,v 1.2 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -44,7 +44,7 @@ LES_GwMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg16_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_ES_INDEX, sreg);
@@ -64,7 +64,7 @@ LES_GdMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg32_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 4);
 		CPU_SET_SEGREG(CPU_ES_INDEX, sreg);
@@ -84,7 +84,7 @@ LSS_GwMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg16_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_SS_INDEX, sreg);
@@ -104,7 +104,7 @@ LSS_GdMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg32_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 4);
 		CPU_SET_SEGREG(CPU_SS_INDEX, sreg);
@@ -124,7 +124,7 @@ LDS_GwMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg16_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_DS_INDEX, sreg);
@@ -144,7 +144,7 @@ LDS_GdMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg32_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 4);
 		CPU_SET_SEGREG(CPU_DS_INDEX, sreg);
@@ -164,7 +164,7 @@ LFS_GwMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg16_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_FS_INDEX, sreg);
@@ -184,7 +184,7 @@ LFS_GdMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg32_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 4);
 		CPU_SET_SEGREG(CPU_FS_INDEX, sreg);
@@ -204,7 +204,7 @@ LGS_GwMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg16_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_GS_INDEX, sreg);
@@ -224,7 +224,7 @@ LGS_GdMp(void)
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		out = reg32_b53[op];
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 4);
 		CPU_SET_SEGREG(CPU_GS_INDEX, sreg);

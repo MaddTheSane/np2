@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.6 2004/02/03 14:27:52 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.7 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -151,7 +151,7 @@ JMP16_Ep(DWORD op)
 
 	CPU_WORKCLOCK(11);
 	if (op < 0xc0) {
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		new_ip = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		new_cs = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -176,7 +176,7 @@ JMP32_Ep(DWORD op)
 
 	CPU_WORKCLOCK(11);
 	if (op < 0xc0) {
-		madr = get_ea(op);
+		madr = calc_ea_dst(op);
 		new_ip = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		new_cs = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 4);
 		if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -937,7 +937,7 @@ CALL16_Ep(DWORD op)
 
 	CPU_WORKCLOCK(16);
 	if (op < 0xc0) {
-		ad = get_ea(op);
+		ad = calc_ea_dst(op);
 		new_ip = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, ad);
 		new_cs = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, ad + 2);
 		if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -965,7 +965,7 @@ CALL32_Ep(DWORD op)
 
 	CPU_WORKCLOCK(16);
 	if (op < 0xc0) {
-		ad = get_ea(op);
+		ad = calc_ea_dst(op);
 		new_ip = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, ad);
 		new_cs = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, ad + 4);
 		if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -1141,46 +1141,25 @@ void
 IRET(void)
 {
 	DWORD new_ip;
-	WORD flag;
+	DWORD new_flags;
+	DWORD mask;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(31);
 	if (!CPU_STAT_PM) {
 		/* Real mode */
-		POP0_16(new_ip);
-		POP0_16(new_cs);
-		POP0_16(flag);
-
-		CPU_FLAG = flag & 0x7fd5;
-		CPU_OV = CPU_FLAG & O_FLAG;
-		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-
-		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
-		SET_EIP(new_ip);
-	} else {
-		/* Protected mode */
-		IRET_pm();
-	}
-	IRQCHECKTERM();
-}
-
-void
-IRETD(void)
-{
-	DWORD new_ip;
-	DWORD flag;
-	WORD new_cs;
-
-	CPU_WORKCLOCK(31);
-	if (!CPU_STAT_PM) {
-		/* Real mode */
-		POP0_32(new_ip);
-		POP0_32(new_cs);
-		POP0_32(flag);
-
-		CPU_EFLAG = (flag & 0x00257fd5) | (CPU_EFLAG & 0x1a0000);
-		CPU_OV = CPU_FLAG & O_FLAG;
-		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+		mask = I_FLAG|IOPL_FLAG;
+		if (!CPU_INST_OP32) {
+			POP0_16(new_ip);
+			POP0_16(new_cs);
+			POP0_16(new_flags);
+		} else {
+			POP0_32(new_ip);
+			POP0_32(new_cs);
+			POP0_32(new_flags);
+			mask |= RF_FLAG;
+		}
+		set_eflags(new_flags, mask);
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);

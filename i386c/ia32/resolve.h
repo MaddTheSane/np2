@@ -1,4 +1,4 @@
-/*	$Id: resolve.h,v 1.2 2004/01/27 15:53:56 monaka Exp $	*/
+/*	$Id: resolve.h,v 1.3 2004/02/05 16:43:44 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -34,14 +34,14 @@
 extern "C" {
 #endif
 
-DWORD (*calc_ea_dst_tbl[0x100])(void);
-DWORD (*calc_ea32_dst_tbl[0x100])(void);
-
 void resolve_init(void);
 
 #if defined(DEBUG) || !defined(IA32_INLINE_CALC_EA)
 DWORD calc_ea_dst(DWORD);
 #else
+DWORD (*calc_ea_dst_tbl[0x100])(void);
+DWORD (*calc_ea32_dst_tbl[0x100])(void);
+
 INLINE static DWORD
 calc_ea_dst(DWORD op)
 {
@@ -53,10 +53,6 @@ calc_ea_dst(DWORD op)
 	return (*calc_ea32_dst_tbl[op])();
 }
 #endif
-
-#define	calc_lea(op)	calc_ea_dst(op)
-#define	get_ea(op)	calc_ea_dst(op)
-#define	get_lea(op)	calc_ea_dst(op)
 
 #ifdef __cplusplus
 }

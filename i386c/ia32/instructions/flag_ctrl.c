@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.4 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.5 2004/02/05 16:43:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -101,7 +101,7 @@ PUSHF_Fw(void)
 {
 
 	CPU_WORKCLOCK(3);
-	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == 3)) {
+	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
 		WORD flags = REAL_FLAGREG;
 		flags = (flags & ALL_FLAG) | 2;
 		PUSH0_16(flags);
@@ -116,7 +116,7 @@ PUSHFD_Fd(void)
 {
 
 	CPU_WORKCLOCK(3);
-	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == 3)) {
+	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
 		DWORD flags = REAL_EFLAGREG;
 		flags = (flags & ALL_EFLAG) | 2;
 		PUSH0_32(flags);
@@ -129,7 +129,7 @@ PUSHFD_Fd(void)
 void
 POPF_Fw(void)
 {
-	WORD flags, mask = 0;
+	WORD flags, mask;
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM) {
@@ -143,6 +143,8 @@ POPF_Fw(void)
 			mask = I_FLAG|IOPL_FLAG;
 		} else if (CPU_STAT_CPL <= CPU_STAT_IOPL) {
 			mask = I_FLAG;
+		} else {
+			mask = 0;
 		}
 	} else if (CPU_STAT_IOPL == CPU_IOPL3) {
 		/* Virtual-8086 Mode, IOPL == 3 */
@@ -151,6 +153,7 @@ POPF_Fw(void)
 	} else {
 		EXCEPTION(GP_EXCEPTION, 0);
 		flags = 0;
+		mask = 0;
 		/* compiler happy */
 	}
 	set_flags(flags, mask);
@@ -160,7 +163,7 @@ POPF_Fw(void)
 void
 POPFD_Fd(void)
 {
-	DWORD flags, mask = 0;
+	DWORD flags, mask;
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM) {
@@ -177,6 +180,8 @@ POPFD_Fd(void)
 		} else if (CPU_STAT_CPL <= CPU_STAT_IOPL) {
 			flags &= ~(VIP_FLAG|VIF_FLAG);
 			mask = I_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG;
+		} else {
+			mask = 0;
 		}
 	} else if (CPU_STAT_IOPL == CPU_IOPL3) {
 		/* Virtual-8086 Mode, IOPL == 3 */
@@ -185,6 +190,7 @@ POPFD_Fd(void)
 	} else {
 		EXCEPTION(GP_EXCEPTION, 0);
 		flags = 0;
+		mask = 0;
 		/* compiler happy */
 	}
 	set_eflags(flags, mask);
@@ -198,7 +204,7 @@ STI(void)
 	CPU_WORKCLOCK(2);
 	if ((!CPU_STAT_PM)
 	 || (!CPU_STAT_VM86 && (CPU_STAT_CPL <= CPU_STAT_IOPL))
-	 || (CPU_STAT_VM86 && (CPU_STAT_CPL == 3 && CPU_STAT_IOPL == CPU_IOPL3))) {
+	 || (CPU_STAT_VM86 && (CPU_STAT_USER_MODE && CPU_STAT_IOPL == CPU_IOPL3))) {
 		CPU_FLAG |= I_FLAG;
 		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
 		exec_1step();
