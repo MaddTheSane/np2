@@ -1,4 +1,4 @@
-/*	$Id: ia32xc.mcr,v 1.6 2004/05/22 16:35:07 monaka Exp $	*/
+/*	$Id: ia32xc.mcr,v 1.7 2004/08/05 05:37:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -247,7 +247,7 @@ do { \
 	UINT32 __s = (s); \
 	UINT32 __d = (d); \
 	UINT32 __r = __d; \
-	DWORD __R; \
+	UINT32 __R; \
 	UINT8 __f; \
 	UINT8 __o; \
 	\
@@ -1337,21 +1337,21 @@ do { \
 		: "=m" (__r), "=m" (__h), "=m" (__f), "=m" (__o) \
 		: "m" (__d), "m" (__s) \
 		: "eax", "edx"); \
-	if (((DWORD)__R != __r) || \
-	    ((DWORD)(__R >> 32) != __h) || \
+	if (((UINT32)__R != __r) || \
+	    ((UINT32)(__R >> 32) != __h) || \
 	    (((__f ^ CPU_FLAGL) & C_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
 		ia32_warning("XC_DWORD_IMUL: __s = %08x, __d = %08x",__s, __d);\
 		ia32_warning("XC_DWORD_IMUL: __Rl = %08x, __r = %08x", \
-		    (DWORD)__R, __r); \
+		    (UINT32)__R, __r); \
 		ia32_warning("XC_DWORD_IMUL: __Rh == %08x, __h == %08x", \
-		    (DWORD)(__R >> 32), __h); \
+		    (UINT32)(__R >> 32), __h); \
 		ia32_warning("XC_DWORD_IMUL: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, C_FLAG); \
 		ia32_warning("XC_DWORD_IMUL: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
-		assert((DWORD)__R == __r); \
-		assert((DWORD)(__R >> 32) == __h); \
+		assert((UINT32)__R == __r); \
+		assert((UINT32)(__R >> 32) == __h); \
 		assert(((__f ^ CPU_FLAGL) & C_FLAG) == 0); \
 		assert(!CPU_OV == !__o); \
 	} \
