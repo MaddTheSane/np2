@@ -9,6 +9,49 @@
 #include	"vram.h"
 
 
+// ---- macros
+
+#if 0
+#define	VGARD8(p, a) {													\
+	UINT32	addr;														\
+	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
+	addr += LOW15((a));													\
+	return(vramex[addr]);												\
+}
+
+#define	VGAWR8(p, a, v) {												\
+	UINT32	addr;														\
+	UINT8	bit;														\
+	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
+	addr += LOW15((a));													\
+	vramex[addr] = (v);													\
+	bit = (addr & 0x40000)?2:1;											\
+	vramupdate[LOW15(addr >> 3)] |= bit;								\
+	gdcs.grphdisp |= bit;												\
+}
+
+#define	VGARD16(p, a) {													\
+	UINT32	addr;														\
+	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
+	addr += LOW15((a));													\
+	return(LOADINTELWORD(vramex + addr));								\
+}
+
+#define	VGAWR16(p, a, v) {												\
+	UINT32	addr;														\
+	UINT8	bit;														\
+	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
+	addr += LOW15((a));													\
+	STOREINTELWORD(vramex + addr, (v));									\
+	bit = (addr & 0x40000)?2:1;											\
+	vramupdate[LOW15((addr + 0) >> 3)] |= bit;							\
+	vramupdate[LOW15((addr + 1) >> 3)] |= bit;							\
+	gdcs.grphdisp |= bit;												\
+}
+#endif
+
+
+
 // ---- flat
 
 REG8 MEMCALL memvgaf_rd8(UINT32 address) {

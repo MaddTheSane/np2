@@ -766,6 +766,90 @@ SOURCE=..\MEM\MEMEGC.C
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEMS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEPP.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMTRAM.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMVRAM.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
 # End Group
 # Begin Group "io"
 

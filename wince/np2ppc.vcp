@@ -1637,138 +1637,57 @@ DEP_CPP_V30PA=\
 # Begin Source File
 
 SOURCE=..\MEM\DMAV30.C
+DEP_CPP_DMAV3=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\common\ucscnv.h"\
+	"..\i286a\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\MEM\dmav30.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\oemtext.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release JP"
 
-DEP_CPP_DMAV3=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\iocore.h"\
-	"..\io\lsidef.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pcidev.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\MEM\dmav30.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\oemtext.h"\
-	".\wce\compiler.h"\
-	
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
 
-DEP_CPP_DMAV3=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\iocore.h"\
-	"..\io\lsidef.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pcidev.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\MEM\dmav30.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\oemtext.h"\
-	".\wce\compiler.h"\
-	
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
-
-DEP_CPP_DMAV3=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	"..\i286c\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\iocore.h"\
-	"..\io\lsidef.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pcidev.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\MEM\dmav30.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\oemtext.h"\
-	".\wce\compiler.h"\
-	
 
 !ENDIF 
 
@@ -2050,6 +1969,74 @@ DEP_CPP_MEMEG=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEMS.C
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release JP"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEPP.C
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release JP"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMTRAM.C
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release JP"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMVRAM.C
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release JP"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
 !ENDIF 
 
@@ -2909,7 +2896,6 @@ DEP_CPP_EGC_C=\
 	"..\COMMON\rect.h"\
 	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
-	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2936,6 +2922,7 @@ DEP_CPP_EGC_C=\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\MEM\memegc.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -3752,7 +3739,6 @@ DEP_CPP_GDC_P=\
 	"..\COMMON\rect.h"\
 	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
-	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3781,6 +3767,7 @@ DEP_CPP_GDC_P=\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\MEM\memegc.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -11797,6 +11784,7 @@ DEP_CPP_BEEPC=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
@@ -17300,9 +17288,7 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	
-NODEP_CPP_NP2_C=\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
@@ -17380,7 +17366,9 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_NP2_C=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -17533,9 +17521,7 @@ DEP_CPP_SCRNM=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_SCRNM=\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
@@ -17563,7 +17549,9 @@ DEP_CPP_SCRNM=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_SCRNM=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -18046,9 +18034,7 @@ DEP_CPP_WINKB=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	
-NODEP_CPP_WINKB=\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release World"
@@ -18065,7 +18051,9 @@ DEP_CPP_WINKB=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_WINKB=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
