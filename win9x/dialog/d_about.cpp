@@ -12,17 +12,18 @@
 static	SIZE	aboutsize;
 
 static const char str_np2title[] = "Neko Project II  ";
-static const char np2infostr[] = 									\
-						"CPU: %CPU% %CLOCK%\n"						\
-						"MEM: %MEM1%\n"								\
-						"GDC: %GDC%\n"								\
-						"TEXT: %TEXT%\n"							\
-						"GRPH: %GRPH%\n"							\
-						"SOUND: %EXSND%\n"							\
-						"\n"										\
-						"BIOS: %BIOS%\n"							\
-						"RHYTHM: %RHYTHM%\n"						\
-						"\n"										\
+static const char np2infostr[] = 								\
+						"CPU: %CPU% %CLOCK%\n"					\
+						"MEM: %MEM1%\n"							\
+						"GDC: %GDC%\n"							\
+						"     %GDC2%\n"							\
+						"TEXT: %TEXT%\n"						\
+						"GRPH: %GRPH%\n"						\
+						"SOUND: %EXSND%\n"						\
+						"\n"									\
+						"BIOS: %BIOS%\n"						\
+						"RHYTHM: %RHYTHM%\n"					\
+						"\n"									\
 						"SCREEN: %DISP%";
 
 

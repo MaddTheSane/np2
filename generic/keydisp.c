@@ -15,37 +15,37 @@ const BYTE	*data;
 } KDKEYPOS;
 
 typedef struct {
-	BYTE	k[KEYDISP_NOTEMAX];
-	BYTE	r[KEYDISP_NOTEMAX];
+	UINT8	k[KEYDISP_NOTEMAX];
+	UINT8	r[KEYDISP_NOTEMAX];
 	UINT	remain;
-	BYTE	flag;
+	UINT8	flag;
 	BYTE	padding[3];
 } KDCHANNEL;
 
 typedef struct {
-	BYTE	ch;
-	BYTE	key;
+	UINT8	ch;
+	UINT8	key;
 } KDDELAYE;
 
 typedef struct {
 	UINT	pos;
 	UINT	rem;
-	BYTE	warm;
-	BYTE	warmbase;
+	UINT8	warm;
+	UINT8	warmbase;
 } KDDELAY;
 
 typedef struct {
 	UINT16	fnum[4];
-	BYTE	lastnote[4];
-	BYTE	flag;
-	BYTE	extflag;
+	UINT8	lastnote[4];
+	UINT8	flag;
+	UINT8	extflag;
 } KDFMCTRL;
 
 typedef struct {
 	UINT16	fto[4];
-	BYTE	lastnote[4];
-	BYTE	flag;
-	BYTE	mix;
+	UINT8	lastnote[4];
+	UINT8	flag;
+	UINT8	mix;
 	BYTE	padding[2];
 } KDPSGCTRL;
 
@@ -63,7 +63,7 @@ typedef struct {
 	KDCHANNEL	ch[KEYDISP_CHMAX];
 	KDFMCTRL	fmctl[KEYDISP_FMMAX];
 	KDPSGCTRL	psgctl[KEYDISP_PSGMAX];
-	BYTE		pal8[KEYDISP_PALS];
+	UINT8		pal8[KEYDISP_PALS];
 	UINT16		pal16[KEYDISP_LEVEL*2];
 	RGB32		pal32[KEYDISP_LEVEL*2];
 	KDKEYPOS	keypos[128];

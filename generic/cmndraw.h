@@ -2,22 +2,6 @@
 #ifndef __CMNDRAW
 #define __CMNDRAW
 
-
-struct _cmnpalfn {
-	BYTE	(*get8)(struct _cmnpalfn *fn, UINT num);
-	UINT32	(*get32)(struct _cmnpalfn *fn, UINT num);
-	UINT16	(*cnv16)(struct _cmnpalfn *fn, RGB32 pal32);
-	long	userdata;
-};
-typedef struct _cmnpalfn	CMNPALFN;
-
-typedef struct {
-	UINT8	pal8;
-	UINT8	padding;
-	UINT16	pal16;
-	RGB32	pal32;
-} CMNPALS;
-
 typedef union {
 	RGB32	pal32;
 	UINT16	pal16;
@@ -39,7 +23,6 @@ typedef void (*CMNPALCNV)(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp);
 extern "C" {
 #endif
 
-void cmndraw_getpals(CMNPALFN *fn, CMNPALS *pal, UINT pals);
 void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg);
 
 void cmndraw_fill(const CMNVRAM *vram, int x, int y,

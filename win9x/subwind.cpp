@@ -316,7 +316,7 @@ void kdispwin_create(void) {
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						kdispcfg.posx, kdispcfg.posy,
-						CW_USEDEFAULT, CW_USEDEFAULT,
+						KEYDISP_WIDTH, KEYDISP_HEIGHT,
 						NULL, NULL, hInst, NULL);
 	kdispwin.hwnd = hwnd;
 	if (hwnd == NULL) {

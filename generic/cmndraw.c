@@ -7,30 +7,6 @@
 #include	"minifont.res"
 
 
-void cmndraw_getpals(CMNPALFN *fn, CMNPALS *pal, UINT pals) {
-
-	UINT	i;
-
-	if (fn == NULL) {
-		return;
-	}
-	if (fn->get8) {
-		for (i=0; i<pals; i++) {
-			pal[i].pal8 = (*fn->get8)(fn, i);
-		}
-	}
-	if (fn->get32) {
-		for (i=0; i<pals; i++) {
-			pal[i].pal32.d = (*fn->get32)(fn, i);
-		}
-		if (fn->cnv16) {
-			for (i=0; i<pals; i++) {
-				pal[i].pal16 = (*fn->cnv16)(fn, pal[i].pal32);
-			}
-		}
-	}
-}
-
 void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg) {
 
 	int		i;

@@ -42,6 +42,7 @@ void dmap(void) {
 						ch->proc.outproc(i286_memoryread(addr));
 						break;
 				}
+				break;
 			}
 			ch++;
 			bit <<= 1;

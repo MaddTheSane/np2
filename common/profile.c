@@ -401,7 +401,13 @@ BOOL profile_write(const char *app, const char *key,
 		return(FAILURE);
 	}
 	if (!pfp.apphit) {
-		newsize = pfp.applen + 2 + 2;
+		newsize = pfp.applen + 2;
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+		newsize++;
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+		newsize++;
+#endif
 		if (replace(hdl, pfp.pos, 0, newsize) != SUCCESS) {
 			return(FAILURE);
 		}
@@ -409,13 +415,23 @@ BOOL profile_write(const char *app, const char *key,
 		*buf++ = '[';
 		CopyMemory(buf, app, pfp.applen);
 		buf += pfp.applen;
-		buf[0] = ']';
-		buf[1] = '\r';
-		buf[2] = '\n';
+		*buf++ = ']';
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+		*buf++ = '\r';
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+		*buf++ = '\n';
+#endif
 		pfp.pos += newsize;
 	}
 	datalen = strlen(data);
-	newsize = pfp.keylen + 1 + datalen + 2;
+	newsize = pfp.keylen + 1 + datalen;
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+	newsize++;
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+	newsize++;
+#endif
 	if (replace(hdl, pfp.pos, pfp.size, newsize) != SUCCESS) {
 		return(FAILURE);
 	}
@@ -425,13 +441,92 @@ BOOL profile_write(const char *app, const char *key,
 	*buf++ = '=';
 	CopyMemory(buf, data, datalen);
 	buf += datalen;
-	buf[0] = '\r';
-	buf[1] = '\n';
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+	*buf++ = '\r';
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+	*buf++ = '\n';
+#endif
 	return(SUCCESS);
 }
 
 
 // ----
+
+static void bitmapset(BYTE *ptr, UINT pos, BOOL set) {
+
+	UINT8	bit;
+
+	ptr += (pos >> 3);
+	bit = 1 << (pos & 7);
+	if (set) {
+		*ptr |= bit;
+	}
+	else {
+		*ptr &= ~bit;
+	}
+}
+
+static BOOL bitmapget(const BYTE *ptr, UINT pos) {
+
+	return((ptr[pos >> 3] >> (pos & 7)) & 1);
+}
+
+static void binset(BYTE *bin, UINT binlen, const char *src) {
+
+	UINT	i;
+	BYTE	val;
+	BOOL	set;
+	char	c;
+
+	for (i=0; i<binlen; i++) {
+		val = 0;
+		set = FALSE;
+		while(*src == ' ') {
+			src++;
+		}
+		while(1) {
+			c = *src;
+			if ((c == '\0') || (c == ' ')) {
+				break;
+			}
+			else if ((c >= '0') && (c <= '9')) {
+				val <<= 4;
+				val += c - '0';
+				set = TRUE;
+			}
+			else {
+				c |= 0x20;
+				if ((c >= 'a') && (c <= 'f')) {
+					val <<= 4;
+					val += c - 'a' + 10;
+					set = TRUE;
+				}
+			}
+			src++;
+		}
+		if (set == FALSE) {
+			break;
+		}
+		bin[i] = val;
+	}
+}
+
+static void binget(char *work, int size, const BYTE *bin, UINT binlen) {
+
+	UINT	i;
+	char	tmp[8];
+
+	if (binlen) {
+		SPRINTF(tmp, "%.2x", bin[0]);
+		milstr_ncpy(work, tmp, size);
+	}
+	for (i=1; i<binlen; i++) {
+		SPRINTF(tmp, " %.2x", bin[i]);
+		milstr_ncat(work, tmp, size);
+	}
+}
+
 
 void profile_iniread(const char *path, const char *app,
 								const PFTBL *tbl, UINT count, PFREAD cb) {
@@ -459,8 +554,13 @@ const PFTBL	*pterm;
 					*((UINT8 *)p->value) = (!milstr_cmp(work, str_true))?1:0;
 					break;
 
-				case PFTYPE_BITMAP:		// Todo
+				case PFTYPE_BITMAP:
+					bitmapset((BYTE *)p->value, p->arg,
+									(!milstr_cmp(work, str_true))?TRUE:FALSE);
+					break;
+
 				case PFTYPE_BIN:
+					binset((BYTE *)p->value, p->arg, work);
 					break;
 
 				case PFTYPE_SINT8:
@@ -530,9 +630,13 @@ const char	*set;
 					set = (*((UINT8 *)p->value))?str_true:str_false;
 					break;
 
-				case PFTYPE_BITMAP:		// Todo
+				case PFTYPE_BITMAP:
+					set = (bitmapget((BYTE *)p->value, p->arg))?
+														str_true:str_false;
+					break;
+
 				case PFTYPE_BIN:
-					set = NULL;
+					binget(work, sizeof(work), (BYTE *)p->value, p->arg);
 					break;
 
 				case PFTYPE_SINT8:
