@@ -103,7 +103,7 @@ static GXDisplayProperties GXGETDISPLAYPROPERTIES(void) {
 	ret.cbyPitch = rfbi.cyStride;
 	ret.cBPP = rfbi.wBPP;
 	ret.ffFormat = 0;
-	switch(rfbi.wBPP) {
+	switch(rfbi.wFormat) {
 		case RFBIFMT_565:
 			ret.ffFormat |= kfDirect565;
 			break;
