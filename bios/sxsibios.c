@@ -432,7 +432,7 @@ static void reg_load(UINT seg, UINT off) {
 
 	B1BREG	r;
 
-	i286_memstr_read(seg, off, &r, sizeof(r));
+	MEML_READSTR(seg, off, &r, sizeof(r));
 	CPU_FLAGL = i286_membyte_read(seg, off + 0x16);
 	CPU_AX = LOADINTELWORD(r.r_ax);
 	CPU_BX = LOADINTELWORD(r.r_bx);
@@ -458,7 +458,7 @@ static void reg_store(UINT seg, UINT off) {
 	STOREINTELWORD(r.r_di, CPU_DI);
 	STOREINTELWORD(r.r_si, CPU_SI);
 	STOREINTELWORD(r.r_ds, CPU_DS);
-	i286_memstr_write(seg, off, &r, sizeof(r));
+	MEML_WRITESTR(seg, off, &r, sizeof(r));
 	i286_membyte_write(seg, off + 0x16, CPU_FLAGL);
 }
 #endif
