@@ -270,5 +270,38 @@ $label		POP		$clk
 	MEND
 
 
+	MACRO
+$label	JMPS		$jmpclk
+$label		CPUWORK	$jmpclk
+			ldr		r0, [r9, #CPU_CS_BASE]
+			add		r0, r0, r8 lsr #16
+			bl		i286_memoryread
+			mov		r1, r0, lsl #24
+			add		r8, r8, #(1 << 16)
+			mov		r0, r1, asr #8
+			add		r8, r0, r8
+			mov		pc, r11
+	MEND
+
+	MACRO
+$label	JMPNE		$f, $nojclk, $jmpclk
+$label		tst		r8, $f
+			bne		$label.1
+			CPUWORK	$nojclk
+			add		r8, r8, #(1 << 16)
+			mov		pc, r11
+$label.1	JMPS	$jmpclk
+	MEND
+
+	MACRO
+$label	JMPEQ		$f, $nojclk, $jmpclk
+$label		tst		r8, $f
+			beq		$label.1
+			CPUWORK	$nojclk
+			add		r8, r8, #(1 << 16)
+			mov		pc, r11
+$label.1	JMPS	$jmpclk
+	MEND
+
 
 	END

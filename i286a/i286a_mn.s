@@ -11,8 +11,13 @@
 	IMPORT		i286_memoryread_w
 	IMPORT		i286_memorywrite
 	IMPORT		i286_memorywrite_w
+	IMPORT		iocore_inp8
+	IMPORT		iocore_inp16
+	IMPORT		iocore_out8
+	IMPORT		iocore_out16
 
 	EXPORT		i286a_step
+	EXPORT		optbl1
 
 	AREA	.text, CODE, READONLY
 
@@ -58,8 +63,8 @@ and_r8_ea		OP_R8_EA	AND8, #2, #7
 and_r16_ea		OP_R16_EA	AND16, #2, #7
 and_al_d8		OP_AL_D8	AND8, #3
 and_ax_d16		OP_AX_D16	AND16, #3
-; segprefix_es
-; daa
+; segprefix_es		!
+; daa			*
 
 sub_ea_r8		OP_EA_R8	SUB8, #2, #7
 sub_ea_r16		OP_EA_R16	SUB16, #2, #7
@@ -67,8 +72,8 @@ sub_r8_ea		OP_R8_EA	SUB8, #2, #7
 sub_r16_ea		OP_R16_EA	SUB16, #2, #7
 sub_al_d8		OP_AL_D8	SUB8, #3
 sub_ax_d16		OP_AX_D16	SUB16, #3
-; segprefix_cs
-; das
+; segprefix_cs		!
+; das			*
 
 xor_ea_r8		OP_EA_R8	XOR8, #2, #7
 xor_ea_r16		OP_EA_R16	XOR16, #2, #7
@@ -76,8 +81,8 @@ xor_r8_ea		OP_R8_EA	XOR8, #2, #7
 xor_r16_ea		OP_R16_EA	XOR16, #2, #7
 xor_al_d8		OP_AL_D8	XOR8, #3
 xor_ax_d16		OP_AX_D16	XOR16, #3
-; segprefix_ss
-; aaa
+; segprefix_ss		!
+; aaa			*
 
 cmp_ea_r8		S_EA_R8		SUB8, #2, #7
 cmp_ea_r16		S_EA_R16	SUB16, #2, #7
@@ -85,8 +90,8 @@ cmp_r8_ea		S_R8_EA		SUB8, #2, #6
 cmp_r16_ea		S_R16_EA	SUB16, #2, #6
 cmp_al_d8		S_AL_D8		SUB8, #3
 cmp_ax_d16		S_AX_D16	SUB16, #3
-; segprefix_ds
-; aas
+; segprefix_ds		!
+; aas			*
 
 inc_ax			OP_INC16	#CPU_AX, #2
 inc_cx			OP_INC16	#CPU_CX, #2
@@ -122,31 +127,31 @@ pop_bp			REGPOP		#CPU_BP, #5
 pop_si			REGPOP		#CPU_SI, #5
 pop_di			REGPOP		#CPU_DI, #5
 
-; pusha
-; popa
+; pusha			*
+; popa			*
 ; bound
 ; arpl
-; push_d16
-; imul_reg_ea_d16
-; push_d8
-; imul_reg_ea_d8
-; insb
-; insw
-; outsb
-; outsw
+; push_d16		*
+; imul_r_ea_d16
+; push_d8		*
+; imul_r_ea_d8
+; insb			*
+; insw			*
+; outsb			*
+; outsw			*
 
-; jo_short
-; jno_short
-; jc_short
-; jnc_short
-; jz_short
-; jnz_short
-; jna_short
-; ja_short
-; js_short
-; jns_short
-; jp_short
-; jnp_short
+jo_short		JMPNE		#O_FLAG, #2, #7
+jno_short		JMPEQ		#O_FLAG, #2, #7
+jc_short		JMPNE		#C_FLAG, #2, #7
+jnc_short		JMPEQ		#C_FLAG, #2, #7
+jz_short		JMPNE		#Z_FLAG, #2, #7
+jnz_short		JMPEQ		#Z_FLAG, #2, #7
+jna_short		JMPNE		#(Z_FLAG + C_FLAG), #2, #7
+ja_short		JMPEQ		#(Z_FLAG + C_FLAG), #2, #7
+js_short		JMPNE		#S_FLAG, #2, #7
+jns_short		JMPEQ		#S_FLAG, #2, #7
+jp_short		JMPNE		#P_FLAG, #2, #7
+jnp_short		JMPEQ		#P_FLAG, #2, #7
 ; jl_short
 ; jnl_short
 ; jle_short
@@ -165,8 +170,8 @@ test_ea_r16		S_EA_R16	AND16, #2, #6
 ; mov_r16_ea	*
 ; mov_ea_seg
 ; lea_r16_ea
-; mov_seg_ea
-; pop_ea
+; mov_seg_ea		!
+; pop_ea		*
 
 ; nop
 xchg_ax_cx		XCHG_AX		#CPU_CX, #3
@@ -176,31 +181,31 @@ xchg_ax_sp		XCHG_AX		#CPU_SP, #3
 xchg_ax_bp		XCHG_AX		#CPU_BP, #3
 xchg_ax_si		XCHG_AX		#CPU_SI, #3
 xchg_ax_di		XCHG_AX		#CPU_DI, #3
-; cbw
-; cwd
-; call_far
-; wait
-; pushf
-; popf
-; sahf
-; lahf
+; cbw			*
+; cwd			*
+; call_far		*
+; wait			*
+; pushf			*
+; popf				!
+; sahf			*
+; lahf			*
 
-; mov_al_m8
-; mov_ax_m16
-; mov_m8_al
-; mov_m16_ax
-; movsb
-; movsw
-; cmpsb
-; cmpsw
+; mov_al_m8		*
+; mov_ax_m16	*
+; mov_m8_al		*
+; mov_m16_ax	*
+; movsb			*
+; movsw			*
+; cmpsb			*
+; cmpsw			*
 test_al_d8		S_AL_D8		AND8, #3
 test_ax_d16		S_AX_D16	AND16, #3
-; stosb
-; stosw
-; lodsb
-; lodsw
-; scasb
-; scasw
+; stosb			*
+; stosw			*
+; lodsb			*
+; lodsw			*
+; scasb			*
+; scasw			*
 
 mov_al_imm		MOVIMM8		#CPU_AL, #2
 mov_cl_imm		MOVIMM8		#CPU_CL, #2
@@ -234,7 +239,7 @@ mov_di_imm		MOVIMM16	#CPU_DI, #2
 ; int_03
 ; int_d8
 ; into
-; iret
+; iret				!
 
 ; shift_ea8_1
 ; shift_ea16_1
@@ -242,45 +247,281 @@ mov_di_imm		MOVIMM16	#CPU_DI, #2
 ; shift_ea16_cl
 ; aam
 ; aad
-; setalc
-; xlat
-; esc
+; setalc		*
+; xlat			*
+; esc			*
 
-; loopnz
-; loopz
-; loop
-; jcxz
-; in_al_d8
-; in_ax_d8
-; out_d8_al
-; out_d8_ax
-; call_near
-; jmp_near
-; jmp_far
-; jmp_short
-; in_al_dx
-; in_ax_dx
-; out_dx_al
-; out_dx_ax
+; loopnz		*
+; loopz			*
+; loop			*
+; jcxz			*
+; in_al_d8		*
+; in_ax_d8		*
+; out_d8_al		*
+; out_d8_ax		*
+; call_near		*
+; jmp_near		*
+; jmp_far		*
+jmp_short		JMPS	#7
+; in_al_dx		*
+; in_ax_dx		*
+; out_dx_al		*
+; out_dx_ax		*
 
-; lock
-; repne
-; repe
-; hlt
-; cmc
+; lock			*
+; repne				!
+; repe				!
+; hlt				!
+; cmc			*
 ; ope0xf6
 ; ope0xf7
-; clc
-; stc
+; clc			*
+; stc			*
 ; cli
-; sti
-; cld
-; std
+; sti				!
+; cld			*
+; std			*
 ; ope0xfe
 ; ope0xff
 
 
 ; ----
+
+daa				CPUWORK	#3
+				ldrb	r0, [r9, #CPU_AL]
+				bic		r8, r8, #O_FLAG
+				eor		r2, r0, #&80
+				tst		r8, #A_FLAG
+				bne		daalo2
+				and		r1, r0, #&0f
+				cmp		r1, #10
+				bcc		daahi
+				orr		r8, r8, #A_FLAG
+daalo2			add		r0, r0, #6
+				orr		r8, r8, r0 lsr #8
+				and		r0, r0, #&ff
+daahi			tst		r8, #C_FLAG
+				bne		daahi2
+				cmp		r0, #&a0
+				bcc		daaflg
+				orr		r8, r8, #C_FLAG
+daahi2			add		r0, r0, #&60
+				and		r0, r0, #&ff
+daaflg			strb	r0, [r9, #CPU_AL]
+				ldrb	r1, [r10, r0]
+				bic		r8, r8, #(&ff - A_FLAG - C_FLAG)
+				and		r2, r0, r2
+				orr		r8, r1, r8
+				tst		r2, #&80
+				addne	r8, r8, #O_FLAG
+				mov		pc, r11
+
+das				CPUWORK	#3
+				ldrb	r0, [r9, #CPU_AL]
+				tst		r8, #C_FLAG
+				bne		dashi2
+				cmp		r0, #&9a
+				bcc		daslo
+				orr		r8, r8, #C_FLAG
+dashi2			sub		r0, r0, #&60
+				and		r0, r0, #&ff
+daslo			tst		r8, #A_FLAG
+				bne		daslo2
+				and		r1, r0, #&0f
+				cmp		r1, #10
+				bcc		dasflg
+				orr		r8, r8, #A_FLAG
+daslo2			sub		r0, r0, #6
+				orr		r8, r8, r0 lsr #31
+				and		r0, r0, #&ff
+dasflg			strb	r0, [r9, #CPU_AL]
+				ldrb	r1, [r10, r0]
+				bic		r8, r8, #(&ff - A_FLAG - C_FLAG)
+				orr		r8, r1, r8
+				mov		pc, r11
+
+aaa				CPUWORK	#3
+				ldrh	r0, [r9, #CPU_AX]
+				tst		r8, #A_FLAG
+				bic		r8, r8, #(A_FLAG + C_FLAG)
+				bne		aaa1
+				and		r1, r0, #&f
+				cmp		r1, #10
+				bcc		aaa2
+aaa1			orr		r8, r8, #(A_FLAG + C_FLAG)
+				add		r0, r0, #6
+				add		r0, r0, #&100
+aaa2			bic		r0, r0, #&f0
+				strh	r0, [r9, #CPU_AX]
+				mov		pc, r11
+
+aas				CPUWORK	#3
+				ldrh	r0, [r9, #CPU_AX]
+				tst		r8, #A_FLAG
+				bic		r8, r8, #(A_FLAG + C_FLAG)
+				bne		aas1
+				and		r1, r0, #&f
+				cmp		r1, #10
+				movcc	pc, r11
+aas1			orr		r8, r8, #(A_FLAG + C_FLAG)
+				sub		r0, r0, #6
+				sub		r0, r0, #&100
+				strh	r0, [r9, #CPU_AX]
+				mov		pc, r11
+
+
+pusha			ldrh	r4, [r9, #CPU_SP]
+				ldr		r5, [r9, #CPU_SS_BASE]
+				mov		r6, r4
+				mov		r4, r4 lsl #16
+				ldrh	r1, [r9, #CPU_AX]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldrh	r1, [r9, #CPU_CX]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldrh	r1, [r9, #CPU_DX]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldrh	r1, [r9, #CPU_BX]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				mov		r1, r6
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldrh	r1, [r9, #CPU_BP]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldrh	r1, [r9, #CPU_SI]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldrh	r1, [r9, #CPU_DI]
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				mov		r0, r4 lsr #16
+				strh	r0, [r9, #CPU_SP]
+				mov		pc, r11
+
+popa			ldrh	r4, [r9, #CPU_SP]
+				ldr		r5, [r9, #CPU_SS_BASE]
+				add		r0, r5, r4
+				mov		r4, r4 lsl #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_DI]
+				add		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_SI]
+				add		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_BP]
+				add		r4, r4, #(4 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_BX]
+				add		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_DX]
+				add		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_CX]
+				add		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_AX]
+				add		r4, r4, #(2 << 16)
+				mov		r0, r4 lsr #16
+				strh	r0, [r9, #CPU_SP]
+				mov		pc, r11
+
+push_d16		CPUWORK	#3
+				GETPC16
+				ldrh	r2, [r9, #CPU_SP]
+				ldr		r3, [r9, #CPU_SS_BASE]
+				subs	r2, r2, #2
+				addcc	r2, r2, #&10000
+				mov		r1, r0
+				strh	r2, [r9, #CPU_SP]
+				add		r0, r2, r3
+				mov		lr, r11
+				b		i286_memorywrite_w
+
+push_d8			CPUWORK	#3
+				GETPC8
+				ldrh	r2, [r9, #CPU_SP]
+				ldr		r3, [r9, #CPU_SS_BASE]
+				subs	r2, r2, #2
+				addcc	r2, r2, #&10000
+				mov		r0, r0 lsl #24
+				mov		r1, r0 asr #24
+				strh	r2, [r9, #CPU_SP]
+				add		r0, r2, r3
+				mov		lr, r11
+				b		i286_memorywrite_w
+
+insb			ldrh	r0, [r9, #CPU_DX]
+				bl		iocore_inp8
+				ldrh	r2, [r9, #CPU_DI]
+				ldr		r3, [r9, #CPU_ES_BASE]
+				mov		r1, r0
+				add		r0, r2, r3
+				tst		r8, #D_FLAG
+				addeq	r2, r2, #1
+				subne	r2, r2, #1
+				mov		lr, r11
+				strh	r2, [r9, #CPU_DI]
+				b		i286_memorywrite
+
+insw			ldrh	r0, [r9, #CPU_DX]
+				bl		iocore_inp16
+				ldrh	r2, [r9, #CPU_DI]
+				ldr		r3, [r9, #CPU_ES_BASE]
+				mov		r1, r0
+				add		r0, r2, r3
+				tst		r8, #D_FLAG
+				addeq	r2, r2, #2
+				subne	r2, r2, #2
+				mov		lr, r11
+				strh	r2, [r9, #CPU_DI]
+				b		i286_memorywrite_w
+
+outsb			ldrh	r1, [r9, #CPU_SI]
+				ldr		r2, [r9, #CPU_DS_FIX]
+				add		r0, r1, r2
+				tst		r8, #D_FLAG
+				addeq	r1, r1, #1
+				subne	r1, r1, #1
+				strh	r1, [r9, #CPU_SI]
+				bl		i286_memoryread
+				mov		r1, r0
+				ldr		r0, [r9, #CPU_DX]
+				mov		lr, r11
+				b		iocore_out8
+
+outsw			ldrh	r1, [r9, #CPU_SI]
+				ldr		r2, [r9, #CPU_DS_FIX]
+				add		r0, r1, r2
+				tst		r8, #D_FLAG
+				addeq	r1, r1, #2
+				subne	r1, r1, #2
+				strh	r1, [r9, #CPU_SI]
+				bl		i286_memoryread_w
+				mov		r1, r0
+				ldr		r0, [r9, #CPU_DX]
+				mov		lr, r11
+				b		iocore_out16
+
 
 xchg_ea_r8		EAREG8	r6
 				cmp		r0, #&c0
@@ -374,7 +615,440 @@ mov_r16_ea		REG16EA	r5, #2, #5
 				ldrh	r0, [r5, #CPU_REG]
 				mov		pc, r11
 
+pop_ea			POP		#5
+				mov		r4, r0
+				GETPC8
+				cmp		r0, #&c0
+				bcs		popreg
+				bl		i286a_ea
+				mov		r1, r4
+				mov		lr, r11
+				b		i286_memorywrite_w
+popreg			R16DST	r0, r1
+				ldrh	r4, [r1, #CPU_REG]
+				mov		pc, r11
 
+
+cbw				CPUWORK	#2
+				ldrb	r0, [r9, #CPU_AL]
+				mov		r1, r0 lsl #24
+				mov		r0, r1 asr #31
+				strb	r0, [r9, #CPU_AH]
+				mov		pc, r11
+
+cwd				CPUWORK	#2
+				ldrb	r0, [r9, #CPU_AH]
+				mov		r1, r0 lsl #24
+				mov		r0, r1 asr #31
+				strh	r0, [r9, #CPU_DX]
+				mov		pc, r11
+
+call_far		CPUWORK	#13
+				ldrh	r1, [r9, #CPU_CS]
+				ldrh	r4, [r9, #CPU_SP]
+				ldr		r5, [r9, #CPU_SS_BASE]
+				mov		r4, r4 lsl #16
+				sub		r4, r4, #(2 << 16)
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				add		r12, r8, #(4 << 16)
+				sub		r4, r4, #(2 << 16)
+				mov		r1, r12 lsr #16
+				add		r0, r5, r4 lsr #16
+				bl		i286_memorywrite_w
+				ldr		r5, [r9, #CPU_CS_BASE]
+				strh	r4, [r9, #CPU_SP]
+				add		r0, r5, r8 lsr #16
+				bl		i286_memoryread_w
+				add		r8, r8, #(2 << 16)
+				mov		r4, r0 lsl #16
+				add		r0, r5, r8 lsr #16
+				bl		i286_memoryread_w
+				mov		r1, r0 lsl #4
+				strh	r0, [r9, #CPU_CS]
+				str		r1, [r9, #CPU_CS_BASE]
+				mov		r0, r8 lsl #16
+				orr		r8, r4, r0 lsr #16
+				mov		pc, r11
+
+wait			CPUWORK	#2
+				mov		pc, r11
+
+pushf			CPUWORK	#3
+				ldrh	r1, [r9, #CPU_SP]
+				ldr		r2, [r9, #CPU_SS_BASE]
+				sub		r0, r1, #2
+				mov		r3, r0 lsl #16
+				strh	r0, [r9, #CPU_SP]
+				add		r0, r2, r3 lsr #16
+				mov		r1, r8
+				mov		lr, r11
+				b		i286_memorywrite_w
+
+sahf			CPUWORK	#2
+				ldrb	r0, [r9, #CPU_AH]
+				bic		r8, r8, #&ff
+				orr		r8, r0, r8
+				mov		pc, r11
+
+lahf			CPUWORK	#2
+				strb	r8, [r9, #CPU_AH]
+				mov		pc, r11
+
+
+mov_al_m8		CPUWORK	#5
+				ldr		r5, [r9, #CPU_DS_FIX]
+				GETPC16
+				add		r0, r5, r0
+				bl		i286_memoryread
+				strb	r0, [r9, #CPU_AL]
+				mov		pc, r11
+
+mov_ax_m16		CPUWORK	#5
+				ldr		r5, [r9, #CPU_DS_FIX]
+				GETPC16
+				add		r0, r5, r0
+				bl		i286_memoryread_w
+				strh	r0, [r9, #CPU_AX]
+				mov		pc, r11
+
+mov_m8_al		CPUWORK	#5
+				ldr		r5, [r9, #CPU_DS_FIX]
+				GETPC16
+				ldrb	r1, [r9, #CPU_AL]
+				add		r0, r5, r0
+				mov		lr, r11
+				b		i286_memorywrite
+
+mov_m16_ax		CPUWORK	#5
+				ldr		r5, [r9, #CPU_DS_FIX]
+				GETPC16
+				ldrh	r1, [r9, #CPU_AX]
+				add		r0, r5, r0
+				mov		lr, r11
+				b		i286_memorywrite_w
+
+movsb			CPUWORK	#5
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread
+				ldr		r2, [r9, #CPU_ES_BASE]
+				ldrh	r3, [r9, #CPU_DI]
+				and		r12, r8, #D_FLAG
+				mov		r1, r0
+				mov		r12, r12 lsr #(10 - 1)
+				add		r0, r2, r3
+				add		r2, r12, #-1
+				mov		lr, r11
+				add		r5, r2, r5
+				add		r3, r2, r3
+				strh	r5, [r9, #CPU_SI]
+				strh	r3, [r9, #CPU_DI]
+				b		i286_memorywrite
+
+movsw			CPUWORK	#5
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread_w
+				ldr		r2, [r9, #CPU_ES_BASE]
+				ldrh	r3, [r9, #CPU_DI]
+				and		r12, r8, #D_FLAG
+				mov		r1, r0
+				mov		r12, r12 lsr #(10 - 2)
+				add		r0, r2, r3
+				add		r2, r12, #-2
+				mov		lr, r11
+				add		r5, r2, r5
+				add		r3, r2, r3
+				strh	r5, [r9, #CPU_SI]
+				strh	r3, [r9, #CPU_DI]
+				b		i286_memorywrite_w
+
+cmpsb			CPUWORK	#8
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread
+				ldr		r2, [r9, #CPU_ES_BASE]
+				ldrh	r3, [r9, #CPU_DI]
+				mov		r6, r0
+				and		r12, r8, #D_FLAG
+				mov		r12, r12 lsr #(10 - 1)
+				add		r0, r2, r3
+				add		r2, r12, #-1
+				add		r5, r2, r5
+				add		r3, r2, r3
+				strh	r5, [r9, #CPU_SI]
+				strh	r3, [r9, #CPU_DI]
+				bl		i286_memoryread
+				SUB8	r6, r0
+				mov		pc, r11
+
+cmpsw			CPUWORK	#8
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread_w
+				ldr		r2, [r9, #CPU_ES_BASE]
+				ldrh	r3, [r9, #CPU_DI]
+				mov		r6, r0
+				and		r12, r8, #D_FLAG
+				mov		r12, r12 lsr #(10 - 2)
+				add		r0, r2, r3
+				add		r2, r12, #-2
+				add		r5, r2, r5
+				add		r3, r2, r3
+				strh	r5, [r9, #CPU_SI]
+				strh	r3, [r9, #CPU_DI]
+				bl		i286_memoryread_w
+				SUB16	r6, r0
+				mov		pc, r11
+
+stosb			CPUWORK	#3
+				ldr		r0, [r9, #CPU_ES_BASE]
+				ldrb	r1, [r9, #CPU_AL]
+				ldrh	r2, [r9, #CPU_DI]
+				add		r0, r2, r0
+				tst		r8, #D_FLAG
+				addeq	r2, r2, #1
+				subne	r2, r2, #1
+				strh	r2, [r9, #CPU_DI]
+				mov		lr, r11
+				b		i286_memorywrite
+
+stosw			CPUWORK	#3
+				ldr		r0, [r9, #CPU_ES_BASE]
+				ldrh	r1, [r9, #CPU_AX]
+				ldrh	r2, [r9, #CPU_DI]
+				add		r0, r2, r0
+				tst		r8, #D_FLAG
+				addeq	r2, r2, #2
+				subne	r2, r2, #2
+				strh	r2, [r9, #CPU_DI]
+				mov		lr, r11
+				b		i286_memorywrite_w
+
+lodsb			CPUWORK	#5
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread
+				tst		r8, #D_FLAG
+				addeq	r5, r5, #1
+				subne	r5, r5, #1
+				strb	r0, [r9, #CPU_AL]
+				strh	r5, [r9, #CPU_SI]
+				mov		pc, r11
+
+lodsw			CPUWORK	#5
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread_w
+				tst		r8, #D_FLAG
+				addeq	r5, r5, #2
+				subne	r5, r5, #2
+				strh	r0, [r9, #CPU_AX]
+				strh	r5, [r9, #CPU_SI]
+				mov		pc, r11
+
+scasb			CPUWORK	#7
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread
+				tst		r8, #D_FLAG
+				addeq	r5, r5, #1
+				subne	r5, r5, #1
+				strh	r5, [r9, #CPU_SI]
+				ldrb	r5, [r9, #CPU_AL]
+				SUB8	r5, r0
+				mov		pc, r11
+
+scasw			CPUWORK	#7
+				ldr		r0, [r9, #CPU_DS_FIX]
+				ldrh	r5, [r9, #CPU_SI]
+				add		r0, r5, r0
+				bl		i286_memoryread_w
+				tst		r8, #D_FLAG
+				addeq	r5, r5, #2
+				subne	r5, r5, #2
+				strh	r5, [r9, #CPU_SI]
+				ldrh	r5, [r9, #CPU_AX]
+				SUB16	r5, r0
+				mov		pc, r11
+
+
+setalc			CPUWORK	#2
+				mov		r0, r8 lsr #31
+				mov		r0, r0 asr #31
+				strb	r0, [r9, #CPU_AL]
+				mov		pc, r11
+
+xlat			CPUWORK	#5
+				ldrb	r0, [r9, #CPU_AL]
+				ldrh	r1, [r9, #CPU_BX]
+				ldr		r2, [r9, #CPU_DS_FIX]
+				add		r0, r1, r0
+				bic		r0, r0, #(1 << 16)
+				add		r0, r2, r0
+				bl		i286_memoryread
+				strb	r0, [r9, #CPU_AL]
+				mov		pc, r11
+
+esc				CPUWORK	#2
+				GETPC8
+				cmp		r0, #&c0
+				movcs	pc, r11
+				mov		lr, r11
+				b		i286a_ea
+
+
+loopnz			ldrh	r0, [r9, #CPU_CX]
+				subs	r0, r0, #1
+				strh	r0, [r9, #CPU_CX]
+				beq		lpnznoj
+				tst		r8, #Z_FLAG
+				bne		lpnznoj
+				JMPS	#8
+lpnznoj			CPUWORK	#4
+				add		r8, r8, #(1 << 16)
+				mov		pc, r11
+
+loopz			ldrh	r0, [r9, #CPU_CX]
+				subs	r0, r0, #1
+				strh	r0, [r9, #CPU_CX]
+				beq		lpznoj
+				tst		r8, #Z_FLAG
+				beq		lpnznoj
+				JMPS	#8
+lpznoj			CPUWORK	#4
+				add		r8, r8, #(1 << 16)
+				mov		pc, r11
+
+loop			ldrh	r0, [r9, #CPU_CX]
+				subs	r0, r0, #1
+				strh	r0, [r9, #CPU_CX]
+				beq		lpnoj
+				JMPS	#8
+lpnoj			CPUWORK	#4
+				add		r8, r8, #(1 << 16)
+				mov		pc, r11
+
+jcxz			ldrh	r0, [r9, #CPU_CX]
+				cmp		r0, #0
+				beq		jcxzj
+				CPUWORK	#4
+				add		r8, r8, #(1 << 16)
+				mov		pc, r11
+jcxzj			JMPS	#8
+
+in_al_d8		CPUWORK	#5
+				GETPC8
+				bl		iocore_inp8
+				strb	r0, [r9, #CPU_AL]
+				mov		pc, r11
+
+in_ax_d8		CPUWORK	#5
+				GETPC8
+				bl		iocore_inp16
+				strh	r0, [r9, #CPU_AX]
+				mov		pc, r11
+
+out_d8_al		CPUWORK	#3
+				GETPC8
+				ldrb	r1, [r9, #CPU_AL]
+				mov		lr, r11
+				b		iocore_out8
+
+out_d8_ax		CPUWORK	#3
+				GETPC8
+				ldrh	r1, [r9, #CPU_AX]
+				mov		lr, r11
+				b		iocore_out16
+
+call_near		CPUWORK	#7
+				GETPC16
+				ldrh	r2, [r9, #CPU_SP]
+				ldr		r3, [r9, #CPU_SS_BASE]
+				sub		r1, r2, #2
+				mov		r2, r1 lsl #16
+				strh	r1, [r9, #CPU_SP]
+				mov		r1, r8 lsr #16
+				add		r8, r8, r0 lsl #16
+				add		r0, r3, r2 lsr #16
+				mov		lr, r11
+				b		i286_memorywrite_w
+
+jmp_near		CPUWORK	#7
+				GETPC16
+				add		r8, r8, r0 lsl #16
+				mov		pc, r11
+
+jmp_far			CPUWORK	#11
+				ldr		r4, [r9, #CPU_CS_BASE]
+				add		r0, r4, r8 lsr #16
+				bl		i286_memoryread_w
+				add		r8, r8, #(2 << 16)
+				mov		r1, r0, lsl #16
+				add		r0, r4, r8 lsr #16
+				mov		r8, r8, lsl #16
+				orr		r8, r0, r8 lsr #16
+				bl		i286_memoryread_w
+				mov		r1, r0 lsl #4
+				strh	r0, [r9, #CPU_CS]
+				str		r1, [r9, #CPU_CS_BASE]
+				mov		pc, r11
+
+in_al_dx		CPUWORK	#5
+				ldrh	r0, [r9, #CPU_DX]
+				bl		iocore_inp8
+				strb	r0, [r9, #CPU_AL]
+				mov		pc, r11
+
+in_ax_dx		CPUWORK	#5
+				ldrh	r0, [r9, #CPU_DX]
+				bl		iocore_inp16
+				strh	r0, [r9, #CPU_AX]
+				mov		pc, r11
+
+out_dx_al		CPUWORK	#3
+				ldrb	r1, [r9, #CPU_AL]
+				ldrh	r0, [r9, #CPU_DX]
+				mov		lr, r11
+				b		iocore_out8
+
+out_dx_ax		CPUWORK	#3
+				ldrh	r1, [r9, #CPU_AX]
+				ldrh	r0, [r9, #CPU_DX]
+				mov		lr, r11
+				b		iocore_out16
+
+
+lock			CPUWORK	#2
+				mov		pc, r11
+
+cmc				CPUWORK	#2
+				eor		r8, r8, #C_FLAG
+				mov		pc, r11
+
+clc				CPUWORK	#2
+				bic		r8, r8, #C_FLAG
+				mov		pc, r11
+
+stc				CPUWORK	#2
+				orr		r8, r8, #C_FLAG
+				mov		pc, r11
+
+cld				CPUWORK	#2
+				bic		r8, r8, #D_FLAG
+				mov		pc, r11
+
+std				CPUWORK	#2
+				orr		r8, r8, #D_FLAG
+				mov		pc, r11
 
 
 
@@ -506,6 +1180,10 @@ optbl1			dcd		add_ea_r8
 				dcd		0				; popa
 				dcd		0				; bound
 				dcd		0				; arpl
+				dcd		0				; reserved
+				dcd		0				; reserved
+				dcd		0				; reserved
+				dcd		0				; reserved
 				dcd		0				; push_d16
 				dcd		0				; imul_reg_ea_d16
 				dcd		0				; push_d8
@@ -515,18 +1193,18 @@ optbl1			dcd		add_ea_r8
 				dcd		0				; outsb
 				dcd		0				; outsw
 
-				dcd		0				; jo_short
-				dcd		0				; jno_short
-				dcd		0				; jc_short
-				dcd		0				; jnc_short
-				dcd		0				; jz_short
-				dcd		0				; jnz_short
-				dcd		0				; jna_short
-				dcd		0				; ja_short
-				dcd		0				; js_short
-				dcd		0				; jns_short
-				dcd		0				; jp_short
-				dcd		0				; jnp_short
+				dcd		jo_short
+				dcd		jno_short
+				dcd		jc_short
+				dcd		jnc_short
+				dcd		jz_short
+				dcd		jnz_short
+				dcd		jna_short
+				dcd		ja_short
+				dcd		js_short
+				dcd		jns_short
+				dcd		jp_short
+				dcd		jnp_short
 				dcd		0				; jl_short
 				dcd		0				; jnl_short
 				dcd		0				; jle_short
@@ -534,6 +1212,7 @@ optbl1			dcd		add_ea_r8
 
 				dcd		0				; calc_ea8_i8
 				dcd		0				; calc_ea16_i16
+				dcd		0				; calc_ea8_i8
 				dcd		0				; calc_ea16_i8
 				dcd		test_ea_r8
 				dcd		test_ea_r16
@@ -556,19 +1235,19 @@ optbl1			dcd		add_ea_r8
 				dcd		xchg_ax_bp
 				dcd		xchg_ax_si
 				dcd		xchg_ax_di
-				dcd		0				; cbw
-				dcd		0				; cwd
+				dcd		cbw
+				dcd		cwd
 				dcd		0				; call_far
-				dcd		0				; wait
+				dcd		wait
 				dcd		0				; pushf
 				dcd		0				; popf
-				dcd		0				; sahf
-				dcd		0				; lahf
+				dcd		sahf
+				dcd		lahf
 
-				dcd		0				; mov_al_m8
-				dcd		0				; mov_ax_m16
-				dcd		0				; mov_m8_al
-				dcd		0				; mov_m16_ax
+				dcd		mov_al_m8
+				dcd		mov_ax_m16
+				dcd		mov_m8_al
+				dcd		mov_m16_ax
 				dcd		0				; movsb
 				dcd		0				; movsw
 				dcd		0				; cmpsb
@@ -644,7 +1323,7 @@ optbl1			dcd		add_ea_r8
 				dcd		0				; call_near
 				dcd		0				; jmp_near
 				dcd		0				; jmp_far
-				dcd		0				; jmp_short
+				dcd		jmp_short
 				dcd		0				; in_al_dx
 				dcd		0				; in_ax_dx
 				dcd		0				; out_dx_al
