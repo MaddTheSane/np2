@@ -31,8 +31,10 @@
 #include	"sxsi.h"
 #include	"calendar.h"
 #include	"timing.h"
-//#include	"hostdrv.h"
 #include	"debugsub.h"
+#if defined(SUPPORT_HOSTDRV)
+// #include	"hostdrv.h"
+#endif
 
 
 	const char	np2version[] = NP2VER_CORE;
@@ -185,6 +187,9 @@ static void sound_init(void) {
 		rate = 0;
 	}
 	sound_create(rate, np2cfg.delayms);
+#if defined(SUPPORT_WAVEMIX)
+	wavemix_initialize(rate);
+#endif
 	beep_initialize(rate);
 	beep_setvol(np2cfg.BEEP_VOL);
 	tms3631_initialize(rate);
@@ -205,6 +210,9 @@ static void sound_init(void) {
 static void sound_term(void) {
 
 	soundmng_stop();
+#if defined(SUPPORT_WAVEMIX)
+	wavemix_deinitialize();
+#endif
 	rhythm_deinitialize();
 	sound_destroy();
 }
@@ -311,6 +319,9 @@ void pccore_reset(void) {
 	nevent_init();
 
 	sound_reset();
+#if defined(SUPPORT_WAVEMIX)
+	wavemix_bind();
+#endif
 
 	if (pc.model & PCMODEL_EPSON) {				// RAM ctrl
 		CPU_RAM_D000 = 0xffff;

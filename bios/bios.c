@@ -242,7 +242,7 @@ static void bios_boot(void) {
 	else {
 		CPU_SP = GETBIOSMEM16(0x00404);
 		CPU_SS = GETBIOSMEM16(0x00406);
-		TRACEOUT(("Protect Disable... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
+		TRACEOUT(("CPU Reset... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
 	}
 }
 

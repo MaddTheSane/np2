@@ -2,6 +2,9 @@
 #include	"soundmng.h"
 #include	"pccore.h"
 #include	"fdd_mtr.h"
+#if defined(SUPPORT_WAVEMIX)
+#include	"wavemix.h"
+#endif
 
 
 		int		fddmtr_biosbusy = 0;							// ver0.26
@@ -20,7 +23,11 @@ static void fddmtr_event(void) {
 
 	switch(mtr_curevent) {
 		case 100:
+#if defined(SUPPORT_WAVEMIX)
+			wavemix_stop(SOUND_PCMSEEK);
+#else
 			soundmng_pcmstop(SOUND_PCMSEEK);
+#endif
 			mtr_curevent = 0;
 			break;
 
@@ -73,7 +80,11 @@ void fddmtr_seek(BYTE drv, BYTE c, UINT size) {
 	if (regmove == 1) {
 		if (mtr_curevent < 80) {
 			fddmtr_event();
+#if defined(SUPPORT_WAVEMIX)
+			wavemix_play(SOUND_PCMSEEK1, FALSE);
+#else
 			soundmng_pcmplay(SOUND_PCMSEEK1, FALSE);
+#endif
 			mtr_curevent = 80;
 			nextevent = GETTICK() + MOVEMOTOR1_MS;
 		}
@@ -81,7 +92,11 @@ void fddmtr_seek(BYTE drv, BYTE c, UINT size) {
 	else if (regmove) {
 		if (mtr_curevent < 100) {
 			fddmtr_event();
+#if defined(SUPPORT_WAVEMIX)
+			wavemix_play(SOUND_PCMSEEK, TRUE);
+#else
 			soundmng_pcmplay(SOUND_PCMSEEK, TRUE);
+#endif
 			mtr_curevent = 100;
 			nextevent = GETTICK() + (regmove * MOVE1TCK_MS);
 		}

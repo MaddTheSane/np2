@@ -10,6 +10,11 @@
 
 static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 
+#if defined(TRACE)
+	if (CPU_MSW & 1) {
+		TRACEOUT(("80286 ProtectMode Disable"));
+	}
+#endif
 	epsonio.cpumode = (CPU_MSW & 1)?'P':'R';
 	CPU_ADRSMASK = 0x0fffff;
 	CPU_RESETREQ = 1;

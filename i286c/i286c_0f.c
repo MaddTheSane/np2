@@ -186,7 +186,7 @@ I286_0F _lmsw(UINT op) {
 	}
 	I286_MSW = msw | (I286_MSW & MSW_PE);
 	if (msw & MSW_PE) {
-		TRACEOUT(("Protect Enable  MSW=%.4x", I286_MSW));
+		TRACEOUT(("80286 ProtectMode Enable... / MSW=%.4x", I286_MSW));
 	}
 }
 

@@ -7,7 +7,6 @@
 #include	"sndcsec.h"
 #include	"beep.h"
 
-
 	SOUNDCFG	soundcfg;
 
 

@@ -1488,6 +1488,9 @@ const STENTRY	*tblterm;
 	mpu98ii_midipanic();
 	pc9861k_midipanic();
 	sound_reset();
+#if defined(SUPPORT_WAVEMIX)
+	wavemix_bind();
+#endif
 	fmboard_reset(0);
 
 	done = FALSE;
