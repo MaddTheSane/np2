@@ -70,3 +70,6 @@ typedef	signed int		SINT32;
 #define	OPNGENARM
 #endif
 
+#define	CPUSTRUC_MEMWAIT
+#define	CPUSTRUC_FONTPTR
+

@@ -25,7 +25,7 @@ static void MEMCALL i286_wt(UINT32 address, REG8 value) {
 
 static void MEMCALL tram_wt(UINT32 address, REG8 value) {
 
-	CPU_REMCLOCK -= vramop.tramwait;
+	CPU_REMCLOCK -= MEMWAIT_TRAM;
 	if (address < 0xa2000) {
 		mem[address] = (BYTE)value;
 		tramupdate[LOW12(address >> 1)] = 1;
@@ -57,7 +57,7 @@ static void MEMCALL tram_wt(UINT32 address, REG8 value) {
 
 static void MEMCALL vram_w0(UINT32 address, REG8 value) {
 
-	CPU_REMCLOCK -= vramop.vramwait;
+	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	mem[address] = (BYTE)value;
 	vramupdate[LOW15(address)] |= 1;
 	gdcs.grphdisp |= 1;
@@ -65,7 +65,7 @@ static void MEMCALL vram_w0(UINT32 address, REG8 value) {
 
 static void MEMCALL vram_w1(UINT32 address, REG8 value) {
 
-	CPU_REMCLOCK -= vramop.vramwait;
+	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	mem[address + VRAM_STEP] = (BYTE)value;
 	vramupdate[LOW15(address)] |= 2;
 	gdcs.grphdisp |= 2;
@@ -76,7 +76,7 @@ static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {
 	REG8	mask;
 	BYTE	*vram;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	mask = ~value;
 	address = LOW15(address);
 	vramupdate[address] |= 1;
@@ -105,7 +105,7 @@ static void MEMCALL grcg_rmw1(UINT32 address, REG8 value) {
 	REG8	mask;
 	BYTE	*vram;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	mask = ~value;
 	address = LOW15(address);
 	vramupdate[address] |= 2;
@@ -133,7 +133,7 @@ static void MEMCALL grcg_tdw0(UINT32 address, REG8 value) {
 
 	BYTE	*vram;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	address = LOW15(address);
 	vramupdate[address] |= 1;
 	gdcs.grphdisp |= 1;
@@ -157,7 +157,7 @@ static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {
 
 	BYTE	*vram;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	address = LOW15(address);
 	vramupdate[address] |= 2;
 	gdcs.grphdisp |= 2;
@@ -179,6 +179,7 @@ static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {
 
 static void MEMCALL egc_wt(UINT32 address, REG8 value) {
 
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	egc_write(address, value);
 }
 
@@ -203,7 +204,7 @@ static REG8 MEMCALL i286_rd(UINT32 address) {
 
 static REG8 MEMCALL tram_rd(UINT32 address) {
 
-	CPU_REMCLOCK -= vramop.tramwait;
+	CPU_REMCLOCK -= MEMWAIT_TRAM;
 	if (address < 0xa4000) {
 		return(mem[address]);
 	}
@@ -220,13 +221,13 @@ static REG8 MEMCALL tram_rd(UINT32 address) {
 
 static REG8 MEMCALL vram_r0(UINT32 address) {
 
-	CPU_REMCLOCK -= vramop.vramwait;
+	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	return(mem[address]);
 }
 
 static REG8 MEMCALL vram_r1(UINT32 address) {
 
-	CPU_REMCLOCK -= vramop.vramwait;
+	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	return(mem[address + VRAM_STEP]);
 }
 
@@ -235,7 +236,7 @@ static REG8 MEMCALL grcg_tcr0(UINT32 address) {
 const BYTE	*vram;
 	REG8	ret;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	vram = mem + LOW15(address);
 	ret = 0;
 	if (!(grcg.modereg & 1)) {
@@ -258,7 +259,7 @@ static REG8 MEMCALL grcg_tcr1(UINT32 address) {
 const BYTE	*vram;
 	REG8	ret;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	ret = 0;
 	vram = mem + LOW15(address);
 	if (!(grcg.modereg & 1)) {
@@ -278,6 +279,7 @@ const BYTE	*vram;
 
 static REG8 MEMCALL egc_rd(UINT32 address) {
 
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	return(egc_read(address));
 }
 
@@ -307,6 +309,7 @@ static void MEMCALL i286w_wt(UINT32 address, REG16 value) {
 
 static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 
+	CPU_REMCLOCK -= MEMWAIT_TRAM;
 	if (address < 0xa1fff) {
 		STOREINTELWORD(mem + address, value);
 		tramupdate[LOW12(address >> 1)] = 1;
@@ -352,7 +355,7 @@ static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 
 
 #define GRCGW_NON(page) {											\
-	CPU_REMCLOCK -= vramop.vramwait;								\
+	CPU_REMCLOCK -= MEMWAIT_VRAM;									\
 	STOREINTELWORD(mem + address + VRAM_STEP*(page), value);		\
 	vramupdate[LOW15(address)] |= (1 << page);						\
 	vramupdate[LOW15(address + 1)] |= (1 << page);					\
@@ -361,7 +364,7 @@ static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 
 #define GRCGW_RMW(page) {											\
 	BYTE	*vram;													\
-	CPU_REMCLOCK -= vramop.grcgwait;								\
+	CPU_REMCLOCK -= MEMWAIT_GRCG;									\
 	address = LOW15(address);										\
 	vramupdate[address] |= (1 << page);								\
 	vramupdate[address + 1] |= (1 << page);							\
@@ -407,7 +410,7 @@ static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 
 #define GRCGW_TDW(page) {											\
 	BYTE	*vram;													\
-	CPU_REMCLOCK -= vramop.grcgwait;								\
+	CPU_REMCLOCK -= MEMWAIT_GRCG;									\
 	address = LOW15(address);										\
 	vramupdate[address] |= (1 << page);								\
 	vramupdate[address + 1] |= (1 << page);							\
@@ -441,6 +444,7 @@ static void MEMCALL grcgw_tdw1(UINT32 address, REG16 value) GRCGW_TDW(1)
 
 static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	if (!(address & 1)) {
 		egc_write_w(address, value);
 	}
@@ -489,7 +493,7 @@ static REG16 MEMCALL i286w_rd(UINT32 address) {
 
 static REG16 MEMCALL tramw_rd(UINT32 address) {
 
-	CPU_REMCLOCK -= vramop.tramwait;
+	CPU_REMCLOCK -= MEMWAIT_TRAM;
 	if (address < (0xa4000 - 1)) {
 		return(LOADINTELWORD(mem + address));
 	}
@@ -518,13 +522,13 @@ static REG16 MEMCALL tramw_rd(UINT32 address) {
 
 static REG16 MEMCALL vramw_r0(UINT32 address) {
 
-	CPU_REMCLOCK -= vramop.vramwait;
+	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	return(LOADINTELWORD(mem + address));
 }
 
 static REG16 MEMCALL vramw_r1(UINT32 address) {
 
-	CPU_REMCLOCK -= vramop.vramwait;
+	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	return(LOADINTELWORD(mem + address + VRAM_STEP));
 }
 
@@ -533,7 +537,7 @@ static REG16 MEMCALL grcgw_tcr0(UINT32 address) {
 	BYTE	*vram;
 	REG16	ret;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	ret = 0;
 	vram = mem + LOW15(address);
 	if (!(grcg.modereg & 1)) {
@@ -556,7 +560,7 @@ static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
 	BYTE	*vram;
 	REG16	ret;
 
-	CPU_REMCLOCK -= vramop.grcgwait;
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	ret = 0;
 	vram = mem + LOW15(address);
 	if (!(grcg.modereg & 1)) {
@@ -578,6 +582,7 @@ static REG16 MEMCALL egcw_rd(UINT32 address) {
 
 	REG16	ret;
 
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	if (!(address & 1)) {
 		return(egc_read_w(address));
 	}

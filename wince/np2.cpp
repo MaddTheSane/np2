@@ -308,9 +308,11 @@ static void processwait(UINT cnt) {
 		timing_setcount(0);
 		framereset(cnt);
 	}
+#if !defined(_WIN32_WCE)
 	else {
 		Sleep(1);
 	}
+#endif
 }
 
 

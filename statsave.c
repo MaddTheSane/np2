@@ -1498,6 +1498,10 @@ const STENTRY	*tblterm;
 	gdcs.palchange = GDCSCRN_REDRAW;
 	tramflag.renewal = 1;
 	cgwindow.writable |= 0x80;
+#if defined(CPUSTRUC_FONTPTR)
+	FONTPTR_LOW = fontrom + cgwindow.low;
+	FONTPTR_HIGH = fontrom + cgwindow.high;
+#endif
 	i286_vram_dispatch(vramop.operate);
 	soundmng_play();
 

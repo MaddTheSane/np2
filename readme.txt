@@ -43,6 +43,10 @@
         ver0.73でmilstr.hの定義を外し compiler.hで指定した物となります。
 
 
+  CPUSTRUC_MEMWAIT … cpucore構造体にメモリウェイト値を移動する(vramop)
+　CPUSTRUC_FONTPTR … cpucore構造体にフォントポインタを保持する
+
+
 // ---- screen
 
   PC-9801シリーズの画面サイズは標準で 641x400。

@@ -6,9 +6,11 @@
 
 typedef struct {
 	UINT	operate;
+#if !defined(CPUSTRUC_MEMWAIT)
 	UINT	tramwait;
 	UINT	vramwait;
 	UINT	grcgwait;
+#endif
 } VRAM_T;
 
 // operate:		bit0	access page
@@ -41,6 +43,12 @@ extern	BYTE	tramupdate[0x1000];
 extern	BYTE	vramupdate[0x8000];
 
 void vram_init(void);
+
+#if !defined(CPUSTRUC_MEMWAIT)
+#define	MEMWAIT_TRAM	vramop.tramwait
+#define	MEMWAIT_VRAM	vramop.vramwait
+#define	MEMWAIT_GRCG	vramop.grcgwait
+#endif
 
 #ifdef __cplusplus
 }

@@ -168,6 +168,16 @@ typedef struct {
 typedef struct {							// for ver0.73
 	BYTE	*ext;
 	UINT32	extsize;
+#if defined(CPUSTRUC_MEMWAIT)
+	UINT8	tramwait;
+	UINT8	vramwait;
+	UINT8	grcgwait;
+	UINT8	padding;
+#endif
+#if defined(CPUSTRUC_FONTPTR)
+	BYTE	*fontlow;
+	BYTE	*fonthigh;
+#endif
 } I286EXT;
 
 typedef struct {
@@ -246,6 +256,17 @@ void v30c_step(void);
 #define	CPU_EXTMEMSIZE	i286core.e.extsize
 
 #define	CPU_TYPE		i286core.s.cpu_type
+
+#if defined(CPUSTRUC_MEMWAIT)
+#define	MEMWAIT_TRAM	i286core.e.tramwait
+#define	MEMWAIT_VRAM	i286core.e.vramwait
+#define	MEMWAIT_GRCG	i286core.e.grcgwait
+#endif
+#if defined(CPUSTRUC_FONTPTR)
+#define	FONTPTR_LOW		i286core.e.fontlow
+#define	FONTPTR_HIGH	i286core.e.fonthigh
+#endif
+
 
 #define	CPU_isDI		(!(i286core.s.r.w.flag & I_FLAG))
 #define	CPU_isEI		(i286core.s.r.w.flag & I_FLAG)

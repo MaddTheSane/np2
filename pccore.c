@@ -490,9 +490,9 @@ void screendisp(NEVENTITEM item) {
 
 void screenvsync(NEVENTITEM item) {
 
-	vramop.tramwait = np2cfg.wait[1];
-	vramop.vramwait = np2cfg.wait[3];
-	vramop.grcgwait = np2cfg.wait[5];
+	MEMWAIT_TRAM = np2cfg.wait[1];
+	MEMWAIT_VRAM = np2cfg.wait[3];
+	MEMWAIT_GRCG = np2cfg.wait[5];
 	gdc_work(GDCWORK_MASTER);
 	gdc.vsync = 0x20;
 	if (gdc.vsyncint) {
@@ -527,9 +527,9 @@ void pccore_exec(BOOL draw) {
 
 	gdc.vsync = 0;
 	screendispflag = 1;
-	vramop.tramwait = np2cfg.wait[0];
-	vramop.vramwait = np2cfg.wait[2];
-	vramop.grcgwait = np2cfg.wait[4];
+	MEMWAIT_TRAM = np2cfg.wait[0];
+	MEMWAIT_VRAM = np2cfg.wait[2];
+	MEMWAIT_GRCG = np2cfg.wait[4];
 	nevent_set(NEVENT_FLAMES, pc.dispclock, screenvsync, NEVENT_RELATIVE);
 
 //	nevent_get1stevent();

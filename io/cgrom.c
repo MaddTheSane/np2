@@ -7,34 +7,42 @@
 
 static void cgwindowset(CGROM cr) {
 
+	UINT	low;
+	UINT	high;
 	int		code;
 
-	cgwindow.low = 0x7fff0;
 	cgwindow.writable &= ~1;
+	low = 0x7fff0;
 	if (grcg.chip >= 2) {
 		if (!(cr->code & 0xff00)) {
-			cgwindow.high = 0x80000 + (cr->code << 4);
+			high = 0x80000 + (cr->code << 4);
 		}
 		else {
 			code = cr->code & 0x007f;
-			cgwindow.high = (cr->code & 0x7f7f) << 4;
+			high = (cr->code & 0x7f7f) << 4;
 			if ((code >= 0x56) && (code < 0x58)) {
 				cgwindow.writable |= 1;
-				cgwindow.high += cr->lr;
+				high += cr->lr;
 			}
 			else if (((code >= 0x0c) && (code < 0x10)) ||
 				((code >= 0x58) && (code < 0x60))) {
-				cgwindow.high += cr->lr;
+				high += cr->lr;
 			}
 			else if ((code < 0x08) || (code >= 0x10)) {
-				cgwindow.low = cgwindow.high;
-				cgwindow.high += 0x800;
+				low = high;
+				high += 0x800;
 			}
 		}
 	}
 	else {
-		cgwindow.high = cgwindow.low;
+		high = low;
 	}
+	cgwindow.low = low;
+	cgwindow.high = high;
+#if defined(CPUSTRUC_FONTPTR)
+	FONTPTR_LOW = fontrom + low;
+	FONTPTR_HIGH = fontrom + high;
+#endif
 }
 
 
@@ -126,6 +134,10 @@ void cgrom_reset(void) {
 	ZeroMemory(cgw, sizeof(cgrom));
 	cgw->low = 0x7fff0;
 	cgw->high = 0x7fff0;
+#if defined(CPUSTRUC_FONTPTR)
+	FONTPTR_LOW = fontrom + 0x7fff0;
+	FONTPTR_HIGH = fontrom + 0x7fff0;
+#endif
 	cgw->writable = 0;
 }
 
