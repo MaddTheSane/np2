@@ -439,11 +439,25 @@ static void mdpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 	UINT	i;
 
 	switch(bpp) {
+#if defined(SUPPORT_16BPP)
+		case 16:
+			for (i=0; i<pals; i++) {
+				dst[i].pal16 = dd2_get16pal(mdbgwin.dd2hdl, src[i]);
+			}
+			break;
+#endif
+#if defined(SUPPORT_24BPP)
+		case 24:
+#endif
+#if defined(SUPPORT_32BPP)
 		case 32:
+#endif
+#if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
 			for (i=0; i<pals; i++) {
 				dst[i].pal32.d = src[i].d;
 			}
 			break;
+#endif
 	}
 }
 
@@ -553,7 +567,7 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0);
 }
 
-BOOL memdbg_initialize(HINSTANCE hInstance) {
+BOOL mdbgwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
@@ -574,7 +588,7 @@ BOOL memdbg_initialize(HINSTANCE hInstance) {
 	return(SUCCESS);
 }
 
-void memdbg_create(void) {
+void mdbgwin_create(void) {
 
 	HWND	hwnd;
 
@@ -610,26 +624,26 @@ mdcre_err1:
 	return;
 }
 
-void memdbg_destroy(void) {
+void mdbgwin_destroy(void) {
 
 	if (mdbgwin.hwnd) {
 		DestroyWindow(mdbgwin.hwnd);
 	}
 }
 
-void memdbg_process(void) {
+void mdbgwin_process(void) {
 
 	if ((mdbgwin.hwnd) && (memdbg32_process())) {
 		mddrawwin(mdbgwin.hwnd, FALSE);
 	}
 }
 
-HWND memdbg_gethwnd(void) {
+HWND mdbgwin_gethwnd(void) {
 
 	return(mdbgwin.hwnd);
 }
 
-void memdbg_readini(void) {
+void mdbgwin_readini(void) {
 
 	char	path[MAX_PATH];
 
@@ -639,7 +653,7 @@ void memdbg_readini(void) {
 	ini_read(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(INITBL));
 }
 
-void memdbg_writeini(void) {
+void mdbgwin_writeini(void) {
 
 	char	path[MAX_PATH];
 
@@ -681,10 +695,6 @@ static void skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 	UINT	i;
 
 	switch(bpp) {
-#if defined(SUPPORT_8BPP)
-		case 8:
-			break;
-#endif
 #if defined(SUPPORT_16BPP)
 		case 16:
 			for (i=0; i<pals; i++) {

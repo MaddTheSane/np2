@@ -18,21 +18,21 @@ void kdispwin_writeini(void);
 #endif
 
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
-BOOL memdbg_initialize(HINSTANCE hInstance);
-void memdbg_create(void);
-void memdbg_destroy(void);
-void memdbg_process(void);
-HWND memdbg_gethwnd(void);
-void memdbg_readini(void);
-void memdbg_writeini(void);
+BOOL mdbgwin_initialize(HINSTANCE hInstance);
+void mdbgwin_create(void);
+void mdbgwin_destroy(void);
+void mdbgwin_process(void);
+HWND mdbgwin_gethwnd(void);
+void mdbgwin_readini(void);
+void mdbgwin_writeini(void);
 #else
-#define memdbg_initialize(i)	(SUCCESS)
-#define	memdbg_create()
-#define	memdbg_destroy()
-#define	memdbg_process()
-#define	memdbg_gethwnd()		(NULL)
-#define memdbg_readini()
-#define memdbg_writeini()
+#define mdbgwin_initialize(i)	(SUCCESS)
+#define	mdbgwin_create()
+#define	mdbgwin_destroy()
+#define	mdbgwin_process()
+#define	mdbgwin_gethwnd()		(NULL)
+#define mdbgwin_readini()
+#define mdbgwin_writeini()
 #endif
 
 #if defined(SUPPORT_SOFTKBD)

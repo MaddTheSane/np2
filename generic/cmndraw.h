@@ -42,54 +42,14 @@ extern "C" {
 void cmndraw_getpals(CMNPALFN *fn, CMNPALS *pal, UINT pals);
 void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg);
 
-#if defined(SUPPORT_8BPP)
-void cmndraw8_fill(const CMNVRAM *vram, int x, int y,
-										int cx, int cy, BYTE fg);
-void cmndraw8_setfg(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, BYTE fg);
-void cmndraw8_setpat(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, BYTE bg, BYTE fg);
-#endif
-
-#if defined(SUPPORT_16BPP)
-void cmndraw16_fill(const CMNVRAM *vram, int x, int y,
-										int cx, int cy, UINT16 fg);
-void cmndraw16_setfg(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, UINT16 fg);
-void cmndraw16_setpat(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, UINT16 bg, UINT16 fg);
-#endif
-
-#if defined(SUPPORT_24BPP)
-void cmndraw24_fill(const CMNVRAM *vram, int x, int y,
-										int cx, int cy, RGB32 fg);
-void cmndraw24_setfg(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, RGB32 fg);
-void cmndraw24_setpat(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, RGB32 bg, RGB32 fg);
-#endif
-
-#if defined(SUPPORT_32BPP)
-void cmndraw32_fill(const CMNVRAM *vram, int x, int y,
-										int cx, int cy, RGB32 fg);
-void cmndraw32_setfg(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, RGB32 fg);
-void cmndraw32_setpat(const CMNVRAM *vram, const BYTE *src,
-										int x, int y, RGB32 bg, RGB32 fg);
-#endif
-
-
-// ----
-
-void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPALS *pal);
-
-void cmndraw_fill2(const CMNVRAM *vram, int x, int y,
+void cmndraw_fill(const CMNVRAM *vram, int x, int y,
 										int cx, int cy, CMNPAL fg);
-void cmndraw_setfg2(const CMNVRAM *vram, const BYTE *src,
+void cmndraw_setfg(const CMNVRAM *vram, const BYTE *src,
 										int x, int y, CMNPAL fg);
-void cmndraw_setpat2(const CMNVRAM *vram, const BYTE *src,
+void cmndraw_setpat(const CMNVRAM *vram, const BYTE *src,
 										int x, int y, CMNPAL bg, CMNPAL fg);
 void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL fg);
+
 
 // ----
 

@@ -645,85 +645,80 @@ static int getdispkeys(void) {
 
 static void clearrect(CMNVRAM *vram, int x, int y, int cx, int cy) {
 
+	CMNPAL	col;
+
 	switch(vram->bpp) {
 #if defined(SUPPORT_8BPP)
 		case 8:
-			cmndraw8_fill(vram, x, y, cx, cy, keydisp.pal8[KEYDISP_PALBG]);
+			col.pal8 = keydisp.pal8[KEYDISP_PALBG];
 			break;
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			cmndraw16_fill(vram, x, y, cx, cy, keydisp.pal16[KEYDISP_LEVEL]);
+			col.pal16 = keydisp.pal16[KEYDISP_LEVEL];
 			break;
 #endif
 #if defined(SUPPORT_24BPP)
 		case 24:
-			cmndraw24_fill(vram, x, y, cx, cy, keydisp.pal32[KEYDISP_LEVEL]);
-			break;
 #endif
 #if defined(SUPPORT_32BPP)
 		case 32:
-			cmndraw32_fill(vram, x, y, cx, cy, keydisp.pal32[KEYDISP_LEVEL]);
+#endif
+#if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
+			col.pal32 = keydisp.pal32[KEYDISP_LEVEL];
 			break;
 #endif
+		default:
+			return;
 	}
+	cmndraw_fill(vram, x, y, cx, cy, col);
 }
 
 static void drawkeybg(CMNVRAM *vram) {
 
+	CMNPAL	bg;
+	CMNPAL	fg;
 	int		i;
 
 	switch(vram->bpp) {
 #if defined(SUPPORT_8BPP)
 		case 8:
-			for (i=0; i<10; i++) {
-				cmndraw8_setpat(vram, keybrd1, i * KEYDISP_KEYCX, 0,
-					keydisp.pal8[KEYDISP_PALBG], keydisp.pal8[KEYDISP_PALFG]);
-			}
-			cmndraw8_setpat(vram, keybrd2, 10 * KEYDISP_KEYCX, 0,
-					keydisp.pal8[KEYDISP_PALBG], keydisp.pal8[KEYDISP_PALFG]);
+			bg.pal8 = keydisp.pal8[KEYDISP_PALBG];
+			fg.pal8 = keydisp.pal8[KEYDISP_PALFG];
 			break;
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			for (i=0; i<10; i++) {
-				cmndraw16_setpat(vram, keybrd1, i * KEYDISP_KEYCX, 0,
-							keydisp.pal16[KEYDISP_LEVEL], keydisp.pal16[0]);
-			}
-			cmndraw16_setpat(vram, keybrd2, 10 * KEYDISP_KEYCX, 0,
-							keydisp.pal16[KEYDISP_LEVEL], keydisp.pal16[0]);
+			bg.pal16 = keydisp.pal16[KEYDISP_LEVEL];
+			fg.pal16 = keydisp.pal16[0];
 			break;
 #endif
 #if defined(SUPPORT_24BPP)
 		case 24:
-			for (i=0; i<10; i++) {
-				cmndraw24_setpat(vram, keybrd1, i * KEYDISP_KEYCX, 0,
-							keydisp.pal32[KEYDISP_LEVEL], keydisp.pal32[0]);
-			}
-			cmndraw24_setpat(vram, keybrd2, 10 * KEYDISP_KEYCX, 0,
-							keydisp.pal32[KEYDISP_LEVEL], keydisp.pal32[0]);
+			bg.pal32 = keydisp.pal32[KEYDISP_LEVEL];
+			fg.pal32 = keydisp.pal32[0];
 			break;
 #endif
 #if defined(SUPPORT_32BPP)
 		case 32:
-			for (i=0; i<10; i++) {
-				cmndraw32_setpat(vram, keybrd1, i * KEYDISP_KEYCX, 0,
-							keydisp.pal32[KEYDISP_LEVEL], keydisp.pal32[0]);
-			}
-			cmndraw32_setpat(vram, keybrd2, 10 * KEYDISP_KEYCX, 0,
-							keydisp.pal32[KEYDISP_LEVEL], keydisp.pal32[0]);
+			bg.pal32 = keydisp.pal32[KEYDISP_LEVEL];
+			fg.pal32 = keydisp.pal32[0];
 			break;
 #endif
+		default:
+			return;
 	}
+	for (i=0; i<10; i++) {
+		cmndraw_setpat(vram, keybrd1, i * KEYDISP_KEYCX, 0, bg, fg);
+	}
+	cmndraw_setpat(vram, keybrd2, 10 * KEYDISP_KEYCX, 0, bg, fg);
 }
 
 static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n) {
 
 	KDKEYPOS	*pos;
 	UINT		pal;
-#if defined(SUPPORT_8BPP)
-	BYTE		pal8;
-#endif
+	CMNPAL		fg;
 
 	pos = keydisp.keypos + (kdch->k[n] & 0x7f);
 	pal = kdch->r[n] & 0x7f;
@@ -731,34 +726,34 @@ static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n) {
 #if defined(SUPPORT_8BPP)
 		case 8:
 			if (pal != (KEYDISP_LEVEL - 1)) {
-				pal8 = keydisp.pal8[(pos->pals)?KEYDISP_PALBG:KEYDISP_PALFG];
-				cmndraw8_setfg(vram, pos->data, pos->posx, 0, pal8);
+				fg.pal8 = keydisp.pal8[
+									(pos->pals)?KEYDISP_PALBG:KEYDISP_PALFG];
+				cmndraw_setfg(vram, pos->data, pos->posx, 0, fg);
 				kdch->r[n] = 0;
 				return(TRUE);
 			}
-			cmndraw8_setfg(vram, pos->data, pos->posx, 0,
-												keydisp.pal8[KEYDISP_PALHIT]);
+			fg.pal8 = keydisp.pal8[KEYDISP_PALHIT];
 			break;
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			cmndraw16_setfg(vram, pos->data, pos->posx, 0,
-											keydisp.pal16[pal + pos->pals]);
+			fg.pal16 = keydisp.pal16[pal + pos->pals];
 			break;
 #endif
 #if defined(SUPPORT_24BPP)
 		case 24:
-			cmndraw24_setfg(vram, pos->data, pos->posx, 0,
-											keydisp.pal32[pal + pos->pals]);
+			fg.pal32 = keydisp.pal32[pal + pos->pals];
 			break;
 #endif
 #if defined(SUPPORT_32BPP)
 		case 32:
-			cmndraw32_setfg(vram, pos->data, pos->posx, 0,
-											keydisp.pal32[pal + pos->pals]);
+			fg.pal32 = keydisp.pal32[pal + pos->pals];
 			break;
 #endif
+		default:
+			return(FALSE);
 	}
+	cmndraw_setfg(vram, pos->data, pos->posx, 0, fg);
 	return(FALSE);
 }
 
@@ -959,6 +954,5 @@ BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw) {
 kdpnt_exit:
 	return(draw);
 }
-
 #endif
 

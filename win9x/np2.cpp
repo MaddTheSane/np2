@@ -115,7 +115,7 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 	list[cnt++] = toolwin_gethwnd();
 	list[cnt++] = kdispwin_gethwnd();
 	list[cnt++] = skbdwin_gethwnd();
-	list[cnt++] = memdbg_gethwnd();
+	list[cnt++] = mdbgwin_gethwnd();
 	for (i=0; i<cnt; i++) {
 		if (list[i] == base) {
 			list[i] = NULL;
@@ -147,7 +147,7 @@ static void changescreen(BYTE newmode) {
 			toolwin_destroy();
 			kdispwin_destroy();
 			skbdwin_destroy();
-			memdbg_destroy();
+			mdbgwin_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
 			wlex = np2_winlocexallwin(hWndMain);
@@ -938,7 +938,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #endif
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
 				case IDM_MEMDBG32:
-					memdbg_create();
+					mdbgwin_create();
 					break;
 #endif
 				case IDM_SCREENCENTER:
@@ -1007,7 +1007,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if (subwin) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
-					subwin = memdbg_gethwnd();
+					subwin = mdbgwin_gethwnd();
 					if (subwin) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
@@ -1339,7 +1339,7 @@ static void framereset(UINT cnt) {
 	scrnmng_dispclock();
 	kdispwin_draw((BYTE)cnt);
 	skbdwin_process();
-	memdbg_process();
+	mdbgwin_process();
 	toolwin_draw((BYTE)cnt);
 	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {
@@ -1382,7 +1382,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	toolwin_readini();
 	kdispwin_readini();
 	skbdwin_readini();
-	memdbg_readini();
+	mdbgwin_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -1435,7 +1435,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	toolwin_initapp(hInstance);
 	kdispwin_initialize(hPreInst);
 	skbdwin_initialize(hPreInst);
-	memdbg_initialize(hPreInst);
+	mdbgwin_initialize(hPreInst);
 	viewer_init(hPreInst);
 
 	mousemng_initialize();
@@ -1679,7 +1679,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	toolwin_destroy();
 	kdispwin_destroy();
 	skbdwin_destroy();
-	memdbg_destroy();
+	mdbgwin_destroy();
 
 	pccore_cfgupdate();
 
@@ -1710,7 +1710,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		toolwin_writeini();
 		kdispwin_writeini();
 		skbdwin_writeini();
-		memdbg_writeini();
+		mdbgwin_writeini();
 	}
 	skbdwin_deinitialize();
 

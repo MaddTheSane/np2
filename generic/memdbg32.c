@@ -92,7 +92,7 @@ BOOL memdbg32_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw) {
 		memdbg32.bpp = vram->bpp;
 	}
 
-	cmndraw_fill2(vram, 0, 0, memdbg32.width, memdbg32.height,
+	cmndraw_fill(vram, 0, 0, memdbg32.width, memdbg32.height,
 											memdbg32.pal[MEMDBG32_PALBDR]);
 	ZeroMemory(use, sizeof(use));
 	if (CPU_STAT_PAGING) {
@@ -138,7 +138,7 @@ BOOL memdbg32_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw) {
 	}
 	for (i=0; i<32; i++) {
 		for (j=0; j<128; j++) {
-			cmndraw_fill2(vram, 8 + j * MEMDBG32_BLOCKW, i * MEMDBG32_BLOCKH,
+			cmndraw_fill(vram, 8 + j * MEMDBG32_BLOCKW, i * MEMDBG32_BLOCKH,
 									MEMDBG32_BLOCKW - 1, MEMDBG32_BLOCKH - 1,
 									memdbg32.pal[use[(i * 128) + j]]);
 		}

@@ -401,8 +401,8 @@ static void ledpaint(CMNVRAM *vram) {
 	UINT	col;
 
 	col = (softkbd.led & 4)?9:8;
-	cmndraw_fill2(vram, 6, 0, 2, 6, softkbd.pal[col]);
+	cmndraw_fill(vram, 6, 0, 2, 6, softkbd.pal[col]);
 	col = (softkbd.led & 8)?9:8;
-	cmndraw_fill2(vram, 15, 0, 2, 6, softkbd.pal[col]);
+	cmndraw_fill(vram, 15, 0, 2, 6, softkbd.pal[col]);
 }
 
