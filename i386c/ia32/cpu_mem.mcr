@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.mcr,v 1.1 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: cpu_mem.mcr,v 1.2 2004/03/24 14:03:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -167,7 +167,7 @@ cpu_memory_access_va_RMW_##width(int idx, UINT32 offset, UINT32 (*func)(UINT32, 
 		res = (*func)(dst, arg); \
 		cpu_memorywrite_##width(addr, res); \
 	} else { \
-		dst = cpu_memory_access_la_RMW(addr, length, CPU_STAT_USER_MODE, func, arg); \
+		dst = cpu_memory_access_la_RMW_##width(addr, func, arg); \
 	} \
 	return dst; \
 \
