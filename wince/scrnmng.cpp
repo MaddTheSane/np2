@@ -168,7 +168,11 @@ RGB16 scrnmng_makepal16(RGB32 pal32) {
 	RGB16	ret;
 
 	ret = (pal32.p.r & 0xf8) << 8;
+#if defined(SIZE_QVGA)
 	ret += (pal32.p.g & 0xfc) << (3 + 16);
+#else
+	ret += (pal32.p.g & 0xfc) << 3;
+#endif
 	ret += pal32.p.b >> 3;
 	return(ret);
 }
