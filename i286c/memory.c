@@ -88,7 +88,7 @@ typedef struct {
 	MEM8WRITE	wr8[0x20];
 	MEM16READ	rd16[0x20];
 	MEM16WRITE	wr16[0x20];
-} MEMFN;
+} MEMFN0;
 
 typedef struct {
 	MEM8READ	brd8;		// E8000-F7FFF byte read
@@ -106,7 +106,7 @@ typedef struct {
 	MEM16WRITE	wr16;
 } VACCTBL;
 
-static MEMFN memfn = {
+static MEMFN0 memfn0 = {
 	   {memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 00
 		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 20
 		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 40
@@ -174,19 +174,19 @@ const MMAPTBL	*mm;
 
 	mm = mmaptbl + (type & 1);
 
-	memfn.rd8[0xe8000 >> 15] = mm->brd8;
-	memfn.rd8[0xf0000 >> 15] = mm->brd8;
-	memfn.rd8[0xf8000 >> 15] = mm->ird8;
-	memfn.wr8[0xe8000 >> 15] = mm->bwr8;
-	memfn.wr8[0xf0000 >> 15] = mm->bwr8;
-	memfn.wr8[0xf8000 >> 15] = mm->bwr8;
+	memfn0.rd8[0xe8000 >> 15] = mm->brd8;
+	memfn0.rd8[0xf0000 >> 15] = mm->brd8;
+	memfn0.rd8[0xf8000 >> 15] = mm->ird8;
+	memfn0.wr8[0xe8000 >> 15] = mm->bwr8;
+	memfn0.wr8[0xf0000 >> 15] = mm->bwr8;
+	memfn0.wr8[0xf8000 >> 15] = mm->bwr8;
 
-	memfn.rd16[0xe8000 >> 15] = mm->brd16;
-	memfn.rd16[0xf0000 >> 15] = mm->brd16;
-	memfn.rd16[0xf8000 >> 15] = mm->ird16;
-	memfn.wr16[0xe8000 >> 15] = mm->bwr16;
-	memfn.wr16[0xf0000 >> 15] = mm->bwr16;
-	memfn.wr16[0xf8000 >> 15] = mm->bwr16;
+	memfn0.rd16[0xe8000 >> 15] = mm->brd16;
+	memfn0.rd16[0xf0000 >> 15] = mm->brd16;
+	memfn0.rd16[0xf8000 >> 15] = mm->ird16;
+	memfn0.wr16[0xe8000 >> 15] = mm->bwr16;
+	memfn0.wr16[0xf0000 >> 15] = mm->bwr16;
+	memfn0.wr16[0xf8000 >> 15] = mm->bwr16;
 }
 
 void MEMCALL i286_vram_dispatch(UINT func) {
@@ -195,31 +195,31 @@ const VACCTBL	*vacc;
 
 	vacc = vacctbl + (func & 0x0f);
 
-	memfn.rd8[0xa8000 >> 15] = vacc->rd8;
-	memfn.rd8[0xb0000 >> 15] = vacc->rd8;
-	memfn.rd8[0xb8000 >> 15] = vacc->rd8;
-	memfn.rd8[0xe0000 >> 15] = vacc->rd8;
+	memfn0.rd8[0xa8000 >> 15] = vacc->rd8;
+	memfn0.rd8[0xb0000 >> 15] = vacc->rd8;
+	memfn0.rd8[0xb8000 >> 15] = vacc->rd8;
+	memfn0.rd8[0xe0000 >> 15] = vacc->rd8;
 
-	memfn.wr8[0xa8000 >> 15] = vacc->wr8;
-	memfn.wr8[0xb0000 >> 15] = vacc->wr8;
-	memfn.wr8[0xb8000 >> 15] = vacc->wr8;
-	memfn.wr8[0xe0000 >> 15] = vacc->wr8;
+	memfn0.wr8[0xa8000 >> 15] = vacc->wr8;
+	memfn0.wr8[0xb0000 >> 15] = vacc->wr8;
+	memfn0.wr8[0xb8000 >> 15] = vacc->wr8;
+	memfn0.wr8[0xe0000 >> 15] = vacc->wr8;
 
-	memfn.rd16[0xa8000 >> 15] = vacc->rd16;
-	memfn.rd16[0xb0000 >> 15] = vacc->rd16;
-	memfn.rd16[0xb8000 >> 15] = vacc->rd16;
-	memfn.rd16[0xe0000 >> 15] = vacc->rd16;
+	memfn0.rd16[0xa8000 >> 15] = vacc->rd16;
+	memfn0.rd16[0xb0000 >> 15] = vacc->rd16;
+	memfn0.rd16[0xb8000 >> 15] = vacc->rd16;
+	memfn0.rd16[0xe0000 >> 15] = vacc->rd16;
 
-	memfn.wr16[0xa8000 >> 15] = vacc->wr16;
-	memfn.wr16[0xb0000 >> 15] = vacc->wr16;
-	memfn.wr16[0xb8000 >> 15] = vacc->wr16;
-	memfn.wr16[0xe0000 >> 15] = vacc->wr16;
+	memfn0.wr16[0xa8000 >> 15] = vacc->wr16;
+	memfn0.wr16[0xb0000 >> 15] = vacc->wr16;
+	memfn0.wr16[0xb8000 >> 15] = vacc->wr16;
+	memfn0.wr16[0xe0000 >> 15] = vacc->wr16;
 
 	if (!(func & (1 << VOPBIT_ANALOG))) {					// digital
-		memfn.rd8[0xe0000 >> 15] = memnc_rd8;
-		memfn.wr8[0xe0000 >> 15] = memnc_wr8;
-		memfn.rd16[0xe0000 >> 15] = memnc_rd16;
-		memfn.wr16[0xe0000 >> 15] = memnc_wr16;
+		memfn0.rd8[0xe0000 >> 15] = memnc_rd8;
+		memfn0.wr8[0xe0000 >> 15] = memnc_wr8;
+		memfn0.rd16[0xe0000 >> 15] = memnc_rd16;
+		memfn0.wr16[0xe0000 >> 15] = memnc_wr16;
 	}
 }
 
@@ -240,7 +240,7 @@ REG8 MEMCALL i286_memoryread(UINT32 address) {
 	}
 #endif
 	else {
-		return(memfn.rd8[(address >> 15) & 0x1f](address));
+		return(memfn0.rd8[(address >> 15) & 0x1f](address));
 	}
 }
 
@@ -274,12 +274,12 @@ REG16 MEMCALL i286_memoryread_w(UINT32 address) {
 	}
 #endif
 	else if ((address & 0x7fff) != 0x7fff) {
-		return(memfn.rd16[(address >> 15) & 0x1f](address));
+		return(memfn0.rd16[(address >> 15) & 0x1f](address));
 	}
 	else {
-		ret = memfn.rd8[(address >> 15) & 0x1f](address);
+		ret = memfn0.rd8[(address >> 15) & 0x1f](address);
 		address++;
-		ret += memfn.rd8[(address >> 15) & 0x1f](address) << 8;
+		ret += memfn0.rd8[(address >> 15) & 0x1f](address) << 8;
 		return(ret);
 	}
 }
@@ -298,7 +298,7 @@ void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
 	}
 #endif
 	else {
-		memfn.wr8[(address >> 15) & 0x1f](address, value);
+		memfn0.wr8[(address >> 15) & 0x1f](address, value);
 	}
 }
 
@@ -323,12 +323,12 @@ void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
 	}
 #endif
 	else if ((address & 0x7fff) != 0x7fff) {
-		memfn.wr16[(address >> 15) & 0x1f](address, value);
+		memfn0.wr16[(address >> 15) & 0x1f](address, value);
 	}
 	else {
-		memfn.wr8[(address >> 15) & 0x1f](address, (UINT8)value);
+		memfn0.wr8[(address >> 15) & 0x1f](address, (UINT8)value);
 		address++;
-		memfn.wr8[(address >> 15) & 0x1f](address, (UINT8)(value >> 8));
+		memfn0.wr8[(address >> 15) & 0x1f](address, (UINT8)(value >> 8));
 	}
 }
 

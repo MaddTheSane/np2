@@ -961,7 +961,7 @@ I286FN _cmp_ea_r8(void) {						// 38: cmp EA, REG8
 		SUBBYTE(res, dst, src);
 	}
 	else {
-		I286_WORKCLOCK(7);
+		I286_WORKCLOCK(6);
 		dst = i286_memoryread(CALC_EA(op));
 		SUBBYTE(res, dst, src);
 	}
@@ -981,7 +981,7 @@ I286FN _cmp_ea_r16(void) {						// 39: cmp EA, REG16
 		SUBWORD(res, dst, src);
 	}
 	else {
-		I286_WORKCLOCK(7);
+		I286_WORKCLOCK(6);
 		dst = i286_memoryread_w(CALC_EA(op));
 		SUBWORD(res, dst, src);
 	}
@@ -1317,87 +1317,87 @@ I286FN _outsw(void) {						// 6F:	outsw
 
 I286FN _jo_short(void) {					// 70:	jo short
 
-	if (!I286_OV) JMPNOP(2) else JMPSHORT(7)
+	if (!I286_OV) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jno_short(void) {					// 71:	jno short
 
-	if (I286_OV) JMPNOP(2) else JMPSHORT(7)
+	if (I286_OV) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jc_short(void) {					// 72:	jnae/jb/jc short
 
-	if (!(I286_FLAGL & C_FLAG)) JMPNOP(2) else JMPSHORT(7)
+	if (!(I286_FLAGL & C_FLAG)) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jnc_short(void) {					// 73:	jae/jnb/jnc short
 
-	if (I286_FLAGL & C_FLAG) JMPNOP(2) else JMPSHORT(7)
+	if (I286_FLAGL & C_FLAG) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jz_short(void) {					// 74:	je/jz short
 
-	if (!(I286_FLAGL & Z_FLAG)) JMPNOP(2) else JMPSHORT(7)
+	if (!(I286_FLAGL & Z_FLAG)) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jnz_short(void) {					// 75:	jne/jnz short
 
-	if (I286_FLAGL & Z_FLAG) JMPNOP(2) else JMPSHORT(7)
+	if (I286_FLAGL & Z_FLAG) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jna_short(void) {					// 76:	jna/jbe short
 
-	if (!(I286_FLAGL & (Z_FLAG | C_FLAG))) JMPNOP(2) else JMPSHORT(7)
+	if (!(I286_FLAGL & (Z_FLAG | C_FLAG))) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _ja_short(void) {					// 77:	ja/jnbe short
-	if (I286_FLAGL & (Z_FLAG | C_FLAG)) JMPNOP(2) else JMPSHORT(7)
+	if (I286_FLAGL & (Z_FLAG | C_FLAG)) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _js_short(void) {					// 78:	js short
 
-	if (!(I286_FLAGL & S_FLAG)) JMPNOP(2) else JMPSHORT(7)
+	if (!(I286_FLAGL & S_FLAG)) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jns_short(void) {					// 79:	jns short
 
-	if (I286_FLAGL & S_FLAG) JMPNOP(2) else JMPSHORT(7)
+	if (I286_FLAGL & S_FLAG) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jp_short(void) {					// 7A:	jp/jpe short
 
-	if (!(I286_FLAGL & P_FLAG)) JMPNOP(2) else JMPSHORT(7)
+	if (!(I286_FLAGL & P_FLAG)) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jnp_short(void) {					// 7B:	jnp/jpo short
 
-	if (I286_FLAGL & P_FLAG) JMPNOP(2) else JMPSHORT(7)
+	if (I286_FLAGL & P_FLAG) JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jl_short(void) {					// 7C:	jl/jnge short
 
 	if (((I286_FLAGL & S_FLAG) == 0) == (I286_OV == 0))
-												JMPNOP(2) else JMPSHORT(7)
+												JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jnl_short(void) {					// 7D:	jnl/jge short
 
 	if (((I286_FLAGL & S_FLAG) == 0) != (I286_OV == 0))
-												JMPNOP(2) else JMPSHORT(7)
+												JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jle_short(void) {					// 7E:	jle/jng short
 
 	if ((!(I286_FLAGL & Z_FLAG)) &&
 		(((I286_FLAGL & S_FLAG) == 0) == (I286_OV == 0)))
-												JMPNOP(2) else JMPSHORT(7)
+												JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _jnle_short(void) {					// 7F:	jg/jnle short
 
 	if ((I286_FLAGL & Z_FLAG) ||
 		(((I286_FLAGL & S_FLAG) == 0) != (I286_OV == 0)))
-												JMPNOP(2) else JMPSHORT(7)
+												JMPNOP(3) else JMPSHORT(7)
 }
 
 I286FN _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
@@ -1516,7 +1516,7 @@ I286FN _test_ea_r16(void) {					// 85:	test	EA, REG16
 		out = REG16_B20(op);
 	}
 	else {
-		I286_WORKCLOCK(7);
+		I286_WORKCLOCK(6);
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
 			tmp = i286_memoryread_w(madr);
@@ -2206,7 +2206,7 @@ I286FN _enter(void) {						// C8:	enter	DATA16, DATA8
 		}
 		else {									// enter level=2-31
 			UINT16 bp;
-			I286_WORKCLOCK(12 + level*4);
+			I286_WORKCLOCK(12 + 4 + level*4);
 			bp = I286_BP;
 			I286_BP = I286_SP;
 			while(level--) {

@@ -134,8 +134,8 @@ xor_ax_d16		OP_AX_D16	XOR16, #3
 ; segprefix_ss		!
 ; aaa			*
 
-cmp_ea_r8		S_EA_R8		SUB8, #2, #7
-cmp_ea_r16		S_EA_R16	SUB16, #2, #7
+cmp_ea_r8		S_EA_R8		SUB8, #2, #6
+cmp_ea_r16		S_EA_R16	SUB16, #2, #6
 cmp_r8_ea		S_R8_EA		SUB8, #2, #6
 cmp_r16_ea		S_R16_EA	SUB16, #2, #6
 cmp_al_d8		S_AL_D8		SUB8, #3
@@ -190,18 +190,18 @@ pop_di			REGPOP		#CPU_DI, #5
 ; outsb			*
 ; outsw			*
 
-jo_short		JMPNE		#O_FLAG, #2, #7
-jno_short		JMPEQ		#O_FLAG, #2, #7
-jc_short		JMPNE		#C_FLAG, #2, #7
-jnc_short		JMPEQ		#C_FLAG, #2, #7
-jz_short		JMPNE		#Z_FLAG, #2, #7
-jnz_short		JMPEQ		#Z_FLAG, #2, #7
-jna_short		JMPNE		#(Z_FLAG + C_FLAG), #2, #7
-ja_short		JMPEQ		#(Z_FLAG + C_FLAG), #2, #7
-js_short		JMPNE		#S_FLAG, #2, #7
-jns_short		JMPEQ		#S_FLAG, #2, #7
-jp_short		JMPNE		#P_FLAG, #2, #7
-jnp_short		JMPEQ		#P_FLAG, #2, #7
+jo_short		JMPNE		#O_FLAG, #3, #7
+jno_short		JMPEQ		#O_FLAG, #3, #7
+jc_short		JMPNE		#C_FLAG, #3, #7
+jnc_short		JMPEQ		#C_FLAG, #3, #7
+jz_short		JMPNE		#Z_FLAG, #3, #7
+jnz_short		JMPEQ		#Z_FLAG, #3, #7
+jna_short		JMPNE		#(Z_FLAG + C_FLAG), #3, #7
+ja_short		JMPEQ		#(Z_FLAG + C_FLAG), #3, #7
+js_short		JMPNE		#S_FLAG, #3, #7
+jns_short		JMPEQ		#S_FLAG, #3, #7
+jp_short		JMPNE		#P_FLAG, #3, #7
+jnp_short		JMPEQ		#P_FLAG, #3, #7
 ; jl_short		+
 ; jnl_short		+
 ; jle_short		+
@@ -650,7 +650,7 @@ jle_short		tst		r8, #Z_FLAG
 jl_short		eor		r0, r8, r8 lsr #4
 				tst		r0, #S_FLAG
 				bne		jmps
-nojmps			CPUWORK	#2
+nojmps			CPUWORK	#3
 				add		r8, r8, #(1 << 16)
 				mov		pc, r11
 
@@ -1301,7 +1301,7 @@ enterlv1		cmp		r0, #1
 				strh	r2, [r9, #CPU_SP]
 				bl		i286a_memorywrite_w
 enterlv2		mov		r1, r0, lsl #2
-				add		r1, r1, #12
+				add		r1, r1, #(12 + 4)
 				CPUWORK	r1
 				strh	r4, [r9, #CPU_BP]
 				str		r11, [sp, #-4]!
