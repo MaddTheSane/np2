@@ -67,6 +67,27 @@
 　　・ToolWindowとか
 
 
+　・Userkeyについて
+　　userkey1, userkey2は、cfgを書換えることによりキーを自由に変更することが
+　　出来ます。
+　　書式)
+　　　userkey1 = [key1] (key2) (key3)...
+　　　　フルキー 0～9 A～Z - ^ \ @ [ ] ; : , . / _
+　　　　         STOP COPY ESC TAB BS RET SPC XFER NFER
+                 INS DEL RLUP RLDN HMCL HELP
+　　　　ファンク F1～F10 VF1～VF5
+　　　　テンキー [0]～[9] [-] [/] [*] [+] [=] [,] [.]
+　　　　シフト   SHIFT CAPS KANA GRPH CTRL
+
+　　　例:
+　　　　userkey1 = CTRL XFER   (CTRL+XFER FEP切り替え用)
+　　　　userkey2 = D O A Z     (D+O+A+Z 同時押し)
+
+　　本機能は 簡易的な実装であり ver0.75で変更されます。
+　　また、ver0.74ではシフト系は不整合が発生する可能性があります。
+
+
+
 　・内部変更
 　　　pccore.h の中で statsave.hをインクルード
 　　　　→ #include "statsave.h" をトル
@@ -109,6 +130,10 @@
 
 　　　PC9861Kについて SUPPORT_PC9861K定義時のみリンクするようにしました。
 　　　(シリアル通信に対応していなければ無意味な機能です)
+
+　　　userkey
+　　　　ini.cで profile_setkeys, profile_getkeysで np2cfg.userkeyを更新
+　　　　キーボードのどこかにキーに キーコード 0x76,0x77を追加
 
 
 　メモ

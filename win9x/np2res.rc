@@ -637,6 +637,8 @@ BEGIN
             MENUITEM "F12 = S&top",                 IDM_F12STOP
             MENUITEM "F12 = tenkey [=]",            IDM_F12EQU
             MENUITEM "F12 = tenkey [ , ]",          IDM_F12COMMA
+            MENUITEM "F12 = User1",                 IDM_USERKEY1
+            MENUITEM "F12 = User2",                 IDM_USERKEY2
         END
         POPUP "&Sound"
         BEGIN

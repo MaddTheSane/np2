@@ -89,7 +89,7 @@ void menu_setf11key(BYTE value) {
 
 	MenuHandle	hmenu;
 
-	if (value >= 4) {
+	if (value >= 5) {
 		value = 0;
 	}
 	np2oscfg.F11KEY = value;
@@ -97,13 +97,14 @@ void menu_setf11key(BYTE value) {
 	_CheckMenuItem(hmenu, IDM_F11KANA, MFCHECK(value == 0));
 	_CheckMenuItem(hmenu, IDM_F11STOP, MFCHECK(value == 1));
 	_CheckMenuItem(hmenu, IDM_F11NFER, MFCHECK(value == 3));
+	_CheckMenuItem(hmenu, IDM_F11USER, MFCHECK(value == 4));
 }
 
 void menu_setf12key(BYTE value) {
 
 	MenuHandle	hmenu;
 
-	if (value >= 4) {
+	if (value >= 5) {
 		value = 0;
 	}
 	np2oscfg.F12KEY = value;
@@ -111,6 +112,7 @@ void menu_setf12key(BYTE value) {
 	_CheckMenuItem(hmenu, IDM_F12MOUSE, MFCHECK(value == 0));
 	_CheckMenuItem(hmenu, IDM_F12COPY, MFCHECK(value == 1));
 	_CheckMenuItem(hmenu, IDM_F12XFER, MFCHECK(value == 3));
+	_CheckMenuItem(hmenu, IDM_F12USER, MFCHECK(value == 4));
 }
 
 void menu_setbeepvol(BYTE value) {

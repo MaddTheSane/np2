@@ -387,6 +387,12 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATEOSCFG;
 			break;
 
+		case IDM_F11USER:
+			menu_setf11key(4);
+			mackbd_resetf11();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
 		case IDM_F12MOUSE:
 			menu_setf12key(0);
 			mackbd_resetf12();
@@ -401,6 +407,12 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_F12XFER:
 			menu_setf12key(3);
+			mackbd_resetf12();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case IDM_F12USER:
+			menu_setf12key(4);
 			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
