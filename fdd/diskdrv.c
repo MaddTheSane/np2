@@ -46,7 +46,7 @@ void diskdrv_sethdd(REG8 drv, const char *fname) {
 	sysmng_update(SYS_UPDATEHDD | SYS_UPDATECFG);
 }
 
-void diskdrv_setfdd(BYTE drv, const char *fname, int readonly) {
+void diskdrv_setfdd(REG8 drv, const char *fname, int readonly) {
 
 	if (drv < 4) {
 		fdd_eject(drv);
@@ -66,7 +66,7 @@ void diskdrv_setfdd(BYTE drv, const char *fname, int readonly) {
 
 void diskdrv_callback(void) {
 
-	BYTE	drv;
+	REG8	drv;
 
 	for (drv=0; drv<4; drv++) {
 		if (diskdrv_delay[drv]) {

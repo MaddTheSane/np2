@@ -34,7 +34,7 @@ void fddfile_reset2dmode(void) { 			// ver0.29
 #endif
 }
 
-const char *fdd_diskname(BYTE drv) {
+const char *fdd_diskname(REG8 drv) {
 
 	if (drv >= MAX_FDDFILE) {
 		return(str_null);
@@ -42,7 +42,7 @@ const char *fdd_diskname(BYTE drv) {
 	return(fddfile[drv].fname);
 }
 
-BOOL fdd_diskready(BYTE drv) {
+BOOL fdd_diskready(REG8 drv) {
 
 	if ((drv >= MAX_FDDFILE) || (!fddfile[drv].fname[0])) {
 		return(FALSE);
@@ -50,7 +50,7 @@ BOOL fdd_diskready(BYTE drv) {
 	return(TRUE);
 }
 
-BOOL fdd_diskprotect(BYTE drv) {
+BOOL fdd_diskprotect(REG8 drv) {
 
 	if ((drv >= MAX_FDDFILE) || (!fddfile[drv].protect)) {
 		return(FALSE);
@@ -61,7 +61,7 @@ BOOL fdd_diskprotect(BYTE drv) {
 
 // --------------------------------------------------------------------------
 
-BOOL fdd_set(BYTE drv, const char *fname, UINT ftype, int ro) {
+BOOL fdd_set(REG8 drv, const char *fname, UINT ftype, int ro) {
 
 	FDDFILE		fdd;
 const char		*p;
@@ -90,7 +90,7 @@ const char		*p;
 	return(FAILURE);
 }
 
-BOOL fdd_eject(BYTE drv) {
+BOOL fdd_eject(REG8 drv) {
 
 	FDDFILE		fdd;
 

@@ -54,5 +54,9 @@ typedef	signed int		SINT32;
 
 #define	SOUNDRESERVE	100
 
+#define	SUPPORT_HOSTDRV
+#define	SUPPORT_SASI
+#define	SUPPORT_SCSI
+
 #define	SCREEN_BPP		16
 

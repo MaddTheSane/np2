@@ -58,21 +58,53 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SASI1OPEN:
-			filesel_sasi(0);
+			filesel_hdd(0x00);
 			break;
 
 		case MID_SASI1EJECT:
-			diskdrv_sethdd(0, NULL);
+			diskdrv_sethdd(0x00, NULL);
 			break;
 
 		case MID_SASI2OPEN:
-			filesel_sasi(1);
+			filesel_hdd(0x01);
 			break;
 
 		case MID_SASI2EJECT:
-			diskdrv_sethdd(1, NULL);
+			diskdrv_sethdd(0x01, NULL);
+			break;
+#if defined(SUPPORT_SCSI)
+		case MID_SCSI0OPEN:
+			filesel_hdd(0x20);
 			break;
 
+		case MID_SCSI0EJECT:
+			diskdrv_sethdd(0x20, NULL);
+			break;
+
+		case MID_SCSI1OPEN:
+			filesel_hdd(0x21);
+			break;
+
+		case MID_SCSI1EJECT:
+			diskdrv_sethdd(0x21, NULL);
+			break;
+
+		case MID_SCSI2OPEN:
+			filesel_hdd(0x22);
+			break;
+
+		case MID_SCSI2EJECT:
+			diskdrv_sethdd(0x22, NULL);
+			break;
+
+		case MID_SCSI3OPEN:
+			filesel_hdd(0x23);
+			break;
+
+		case MID_SCSI3EJECT:
+			diskdrv_sethdd(0x23, NULL);
+			break;
+#endif
 		case MID_DISPSYNC:
 			np2cfg.DISPSYNC ^= 1;
 			update |= SYS_UPDATECFG;

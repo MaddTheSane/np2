@@ -3,8 +3,8 @@
 extern "C" {
 #endif
 
-void filesel_fdd(BYTE drv);
-void filesel_sasi(BYTE drv);
+void filesel_fdd(REG8 drv);
+void filesel_hdd(REG8 drv);
 
 #ifdef __cplusplus
 }

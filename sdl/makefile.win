@@ -123,7 +123,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
-			$(OBJ)/cmjasts.o	$(OBJ)/cmver.o							\
+			$(OBJ)/cmjasts.o	$(OBJ)/cmver.o		$(OBJ)/hostdrv.o	\
+			$(OBJ)/hostdrvs.o											\
 			$(OBJ)/vramhdl.o	$(OBJ)/vrammix.o						\
 			$(OBJ)/menustr.o	$(OBJ)/filesel.o	$(OBJ)/dlgcfg.o		\
 			$(OBJ)/dlgscr.o		$(OBJ)/dlgabout.o						\
