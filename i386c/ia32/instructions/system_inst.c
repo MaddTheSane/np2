@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.24 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.25 2004/03/12 15:10:38 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -288,7 +288,8 @@ MOV_CdRd(void)
 			reg = CPU_CR0;
 			src &= 0xe005003f;
 #ifndef USE_FPU
-			src &= ~CPU_CR0_ET;	/* FPU not present */
+			src |= CPU_CR0_EM | CPU_CR0_NE;
+			src &= ~(CPU_CR0_MP | CPU_CR0_ET);
 #else
 			src |= CPU_CR0_ET;	/* FPU present */
 #endif
