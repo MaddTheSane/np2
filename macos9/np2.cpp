@@ -53,6 +53,11 @@ static	BYTE		scrnmode;
 #endif
 static	char	target[MAX_PATH] = DEFAULTPATH;
 
+#if !defined(SUPPORT_PC9821)
+static const char np2app[] = "np2";
+#else
+static const char np2app[] = "np21";
+#endif
 
 static const char np2resume[] = "sav";
 
@@ -745,7 +750,7 @@ static void processwait(UINT waitcnt) {
 
 static void getstatfilename(char *path, const char *ext, int size) {
 
-	file_cpyname(path, file_getcd("np2"), size);
+	file_cpyname(path, file_getcd(np2app), size);
 	file_catname(path, str_dot, size);
 	file_catname(path, ext, size);
 }
@@ -811,8 +816,13 @@ int main(int argc, char *argv[]) {
 	keystat_initialize();
 
 	SetRect(&wRect, np2oscfg.posx, np2oscfg.posy, 100, 100);
+#if !defined(SUPPORT_PC9821)
 	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
 								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
+#else
+	hWndMain = NewWindow(0, &wRect, "\pNeko Project 21", FALSE,
+								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
+#endif
 	if (!hWndMain) {
 		TRACETERM();
 		macossub_term();

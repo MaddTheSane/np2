@@ -343,7 +343,11 @@ const char		*set;
 
 // ----
 
+#if !defined(SUPPORT_PC9821)
 static const char ini_title[] = "NekoProjectII";
+#else
+static const char ini_title[] = "NekoProject21";
+#endif
 
 enum {
 	INIRO_STR			= INITYPE_STR + INIFLAG_RO,

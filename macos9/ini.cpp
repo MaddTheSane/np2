@@ -314,8 +314,13 @@ const INITBL	*pterm;
 
 // ----
 
+#if !defined(SUPPORT_PC9821)
 static const char ini_title[] = "NekoProjectII";
 static const char inifile[] = "np2.cfg";
+#else
+static const char ini_title[] = "NekoProject21";
+static const char inifile[] = "np21.cfg";
+#endif
 
 static const INITBL iniitem[] = {
 	{"windposx", INITYPE_SINT32,	&np2oscfg.posx,			0},
