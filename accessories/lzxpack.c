@@ -134,7 +134,7 @@ static void stringout(void *dst, const BYTE *ptr, UINT size) {
 		if (!step) {
 			textout_write(dst, "\t\t");
 		}
-		sprintf(work, "0x%02x,", (BYTE)*ptr++);
+		SPRINTF(work, "0x%02x,", (BYTE)*ptr++);
 		textout_write(dst, work);
 		step++;
 		if (step > 12) {
@@ -196,7 +196,7 @@ static int packmain(const char *srcfile, const char *dstfile,
 		if (sym == NULL) {
 			sym = srcfile;
 		}
-		sprintf(work, "static const BYTE %s[%d] = {\n", sym, lz->size);
+		SPRINTF(work, "static const BYTE %s[%d] = {\n", sym, lz->size);
 		textout_write(dst, work);
 		stringout(dst, lz->ptr, lz->size);
 		textout_write(dst, "};\n");
