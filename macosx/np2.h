@@ -11,6 +11,7 @@ typedef struct {
 	BYTE	comfirm;
 	BYTE	resume;
     
+	BYTE	toolwin;
 	BYTE	I286SAVE;
 } NP2OSCFG;
 

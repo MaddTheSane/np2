@@ -206,6 +206,7 @@
 				969A8347055A60A500000103,
 				96A202640549B26600000102,
 				96E7E2C50556630F00000103,
+				961B6B800560290B00000103,
 				96EFFA58054716B900000102,
 				F50908FE053EDAC2014E43C7,
 				969A7EB20559979000000103,
@@ -397,11 +398,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Neko Project IIx</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Neko Project IIx version 0.70</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>np2help</string>
-	<key>CFBundleHelpBookName</key>
-	<string>np2help</string>
+	<string>Neko Project IIx version 0.71</string>
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -413,11 +410,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.70</string>
+	<string>0.71</string>
 	<key>CFBundleSignature</key>
 	<string>SMil</string>
 	<key>CFBundleVersion</key>
-	<string>0.70</string>
+	<string>0.71</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 </dict>
@@ -447,6 +444,7 @@
 				969A8355055A60A500000103,
 				969A8356055A60A500000103,
 				969A8357055A60A500000103,
+				961B6B810560290B00000103,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -625,6 +623,8 @@
 				967C940705577A1F00000103,
 				967C940805577A1F00000103,
 				967C940905577A1F00000103,
+				961B7001056039CE00000103,
+				961B7005056048F500000103,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -665,6 +665,41 @@
 		};
 		9608400D054ED1E900000103 = {
 			fileRef = 9608400C054ED1E900000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B6B800560290B00000103 = {
+			isa = PBXFileReference;
+			path = np2logo.tiff;
+			refType = 4;
+		};
+		961B6B810560290B00000103 = {
+			fileRef = 961B6B800560290B00000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B7000056039CE00000103 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			path = np2info.cpp;
+			refType = 4;
+		};
+		961B7001056039CE00000103 = {
+			fileRef = 961B7000056039CE00000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B7003056048F500000103 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = aboutdlg.cpp;
+			refType = 4;
+		};
+		961B7005056048F500000103 = {
+			fileRef = 961B7003056048F500000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1517,6 +1552,7 @@
 				967C926D055778CC00000103,
 				967C926F055778CC00000103,
 				967C9272055778CC00000103,
+				961B7000056039CE00000103,
 			);
 			isa = PBXGroup;
 			name = macosx;
@@ -1545,6 +1581,7 @@
 				967C922D055778CB00000103,
 				967C922F055778CB00000103,
 				967C9231055778CB00000103,
+				961B7003056048F500000103,
 			);
 			isa = PBXGroup;
 			path = dialog;

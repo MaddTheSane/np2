@@ -56,10 +56,10 @@ static const INITBL skinini2[] = {
 
 // ----
 
-static const char str_skindef[] = "Base Skin";
-static const char str_skinsel[] = "Select Skin...";
+static const char str_skindef[] = "<&Base Skin>";
+static const char str_skinsel[] = "&Select Skin...";
 static const char str_toolskin[] = "&Skins";
-static const char str_toolclose[] = "Close";
+static const char str_toolclose[] = "&Close";
 
 static const char skinui_title[] = "Select skin file";
 static const char skinui_filter[] =								\

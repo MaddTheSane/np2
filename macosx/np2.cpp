@@ -38,6 +38,7 @@
 #include	"macalert.h"
 #include	"np2opening.h"
 #include	"toolwin.h"
+#include	"aboutdlg.h"
 
 #include	<QuickTime/QuickTime.h>
 #define	USE_RESUME
@@ -138,6 +139,7 @@ static void MenuBarInit(void) {
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
     ChangeMenuAttributes(GetMenuRef(IDM_EDIT), kMenuAttrAutoDisable, 0);
+    DisableAllMenuItems(GetMenuHandle(IDM_EDIT));
     SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2OPEN, kMenuOptionModifier);
     SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2EJECT, kMenuOptionModifier);
     SetMenuItemModifiers(GetMenuRef(IDM_SASI2), IDM_SASI2OPEN, kMenuOptionModifier);
@@ -530,13 +532,27 @@ static void HandleMenuChoice(long wParam) {
             menu_setmsrapid(np2cfg.MOUSERAPID ^ 1);
             update |= SYS_UPDATECFG;
             break;
+        case IDM_RECORDING:
+            menu_setrecording(false);
+            break;
+
 
 		case IDM_I286SAVE:
 			debugsub_status();
 			break;
+            
+        case IDM_NP2HELP:
+            {
+                ICInstance inst;
+                long start, fin;
+                const char	urlStr[] = "http://retropc.net/tk800/np2x/help.html";
 
-        case IDM_RECORDING:
-            menu_setrecording(false);
+                ICStart(&inst, 'SMil');
+                start = 0;
+                fin = strlen(urlStr);
+                ICLaunchURL(inst, "\p", urlStr, strlen(urlStr), &start, &fin);
+                ICStop(inst);
+            }
             break;
 
 		default:
@@ -674,6 +690,9 @@ int main(int argc, char *argv[]) {
 	menu_setdispclk(np2oscfg.DISPCLK);
 	menu_setbtnrapid(np2cfg.BTN_RAPID);
 	menu_setbtnmode(np2cfg.BTN_MODE);
+    if (np2oscfg.I286SAVE) {
+        AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
+    }
 
 	scrnmode = 0;
 	if (scrnmng_create(scrnmode) != SUCCESS) {
@@ -711,6 +730,9 @@ int main(int argc, char *argv[]) {
         flagload(np2resume);
     }
 #endif
+    if (np2oscfg.toolwin) {
+        toolwin_open();
+    }
 
     theTarget = GetEventDispatcherTarget();
     
@@ -851,6 +873,24 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
         
     switch (eventClass)
     {
+        case kEventClassCommand:
+            if (GetEventKind(event)==kEventCommandProcess) {
+                HICommand	cmd;
+                GetEventParameter(event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd);
+                if (cmd.commandID == kHICommandAppHelp) {
+                    ICInstance inst;
+                    long start, fin;
+                    const char	urlStr[] = "http://retropc.net/tk800/np2x/help.html";
+
+                    ICStart(&inst, '????');
+                    start = 0;
+                    fin = strlen(urlStr);
+                    ICLaunchURL(inst, "\p", urlStr, strlen(urlStr), &start, &fin);
+                    ICStop(inst);
+                }
+            }
+            break;
+
         case kEventClassAppleEvent:  
             if (whatHappened == kEventAppleEvent) {
                 AEProcessAppleEvent(&eve);
@@ -998,6 +1038,7 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
 }
 
 static const EventTypeSpec appEventList[] = {
+                {kEventClassCommand, 	kEventCommandProcess },
 				{kEventClassAppleEvent,	kEventAppleEvent},
 				{kEventClassMouse,		kEventMouseDown},
 #if defined(NP2GCC)

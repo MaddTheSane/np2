@@ -4,7 +4,7 @@
   <object name="rootObject" class="NSCustomObject" id="1">
     <string name="customClass">NSApplication</string>
   </object>
-  <array count="259" name="allObjects">
+  <array count="268" name="allObjects">
     <object class="IBCarbonButton" id="311">
       <string name="bounds">264 208 284 278 </string>
       <ostype name="controlSignature">CfCL</ostype>
@@ -1766,8 +1766,72 @@
     <reference idRef="1017"/>
     <reference idRef="1025"/>
     <reference idRef="1026"/>
+    <object class="IBCarbonWindow" id="1027">
+      <string name="windowRect">94 203 324 503 </string>
+      <string name="title">About Neko Project IIx</string>
+      <object name="rootControl" class="IBCarbonRootControl" id="1028">
+        <string name="bounds">0 0 230 300 </string>
+        <array count="7" name="subviews">
+          <object class="IBCarbonStaticText" id="1031">
+            <string name="bounds">127 128 142 183 </string>
+            <ostype name="controlSignature">vers</ostype>
+            <boolean name="small">TRUE</boolean>
+            <string name="title">ver. 0.71</string>
+          </object>
+          <object class="IBCarbonPicture" id="1032">
+            <string name="bounds">44 20 119 280 </string>
+            <ostype name="controlSignature">logo</ostype>
+          </object>
+          <object class="IBCarbonButton" id="1034">
+            <string name="bounds">190 210 210 280 </string>
+            <string name="title">OK</string>
+            <ostype name="command">ok  </ostype>
+            <int name="buttonType">1</int>
+          </object>
+          <object class="IBCarbonStaticText" id="1035">
+            <string name="bounds">150 35 170 272 </string>
+            <ostype name="controlSignature">site</ostype>
+            <boolean name="small">TRUE</boolean>
+            <string name="title">http://retropc.net/tk800/np2x/index.html</string>
+            <ostype name="command">site</ostype>
+          </object>
+          <object class="IBCarbonEditText" id="1042">
+            <string name="bounds">233 23 418 277 </string>
+            <ostype name="controlSignature">more</ostype>
+            <boolean name="enabled">FALSE</boolean>
+            <boolean name="hidden">TRUE</boolean>
+            <boolean name="small">TRUE</boolean>
+            <boolean name="useInlineInput">TRUE</boolean>
+          </object>
+          <object class="IBCarbonTriangle" id="1043">
+            <string name="bounds">192 20 208 142 </string>
+            <ostype name="controlSignature">detl</ostype>
+            <string name="title">detail</string>
+            <ostype name="command">detl</ostype>
+            <boolean name="drawTitle">TRUE</boolean>
+          </object>
+          <object class="IBCarbonStaticText" id="1044">
+            <string name="bounds">20 20 36 280 </string>
+            <string name="title">PC-9801 series emulator</string>
+          </object>
+        </array>
+      </object>
+      <boolean name="receiveActivates">FALSE</boolean>
+      <boolean name="receiveUpdates">FALSE</boolean>
+      <boolean name="isResizable">FALSE</boolean>
+      <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">7</int>
+    </object>
+    <reference idRef="1028"/>
+    <reference idRef="1031"/>
+    <reference idRef="1032"/>
+    <reference idRef="1034"/>
+    <reference idRef="1035"/>
+    <reference idRef="1042"/>
+    <reference idRef="1043"/>
+    <reference idRef="1044"/>
   </array>
-  <array count="259" name="allParents">
+  <array count="268" name="allParents">
     <reference idRef="330"/>
     <reference idRef="331"/>
     <reference idRef="327"/>
@@ -2027,8 +2091,19 @@
     <reference idRef="1011"/>
     <reference idRef="1011"/>
     <reference idRef="1001"/>
+    <reference idRef="1"/>
+    <reference idRef="1027"/>
+    <reference idRef="1028"/>
+    <reference idRef="1028"/>
+    <reference idRef="1028"/>
+    <reference idRef="1028"/>
+    <reference idRef="1028"/>
+    <reference idRef="1028"/>
+    <reference idRef="1028"/>
   </array>
-  <dictionary count="14" name="nameTable">
+  <dictionary count="15" name="nameTable">
+    <string>AboutDialog</string>
+    <reference idRef="1027"/>
     <string>ConfigDialog</string>
     <reference idRef="317"/>
     <string>File&apos;s Owner</string>
@@ -2058,5 +2133,5 @@
     <string>ToolWindow</string>
     <reference idRef="952"/>
   </dictionary>
-  <unsigned_int name="nextObjectID">1027</unsigned_int>
+  <unsigned_int name="nextObjectID">1045</unsigned_int>
 </object>

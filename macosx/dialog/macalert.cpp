@@ -23,6 +23,7 @@ static SInt16 showCautionAlert(CFStringRef title, CFStringRef string, CFStringRe
     if (button) param.defaultText = button;
    
     CreateStandardAlert(kAlertCautionAlert, title, string, &param, &ret);
+    SysBeep(0);
     RunStandardAlert(ret, NULL, &hit);
     return(hit);
 }
@@ -36,6 +37,7 @@ void ResumeErrorDialogProc(void) {
     CreateStandardAlert(kAlertStopAlert, CFCopyLocalizedString(CFSTR("Couldn't restart"), "Resume Error Message"), 
                                          CFCopyLocalizedString(CFSTR("A resume error occured when loading the np2.sav file. So Neko Project II couldn't restart."), "Resume Error Description"),
                                          &param, &ret);
+    SysBeep(0);
     RunStandardAlert(ret, NULL, &hit);
 }
 

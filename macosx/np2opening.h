@@ -14,7 +14,7 @@ extern "C" {
 
 void openingNP2(void);
 PicHandle getBMPfromPath(char* path, Rect* srt);
-PicHandle getBMPfromResource(const char* name, Rect* srt);
+PicHandle getBMPfromResource(const char* name, Rect* srt, const CFStringRef	type);
 
 #ifdef __cplusplus
 }

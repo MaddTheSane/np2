@@ -1,13 +1,9 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"sysmng.h"
-#include	"dialog.h"
 #include	"pccore.h"
-#include	"fddfile.h"
+#include	"dialog.h"
 #include	"diskdrv.h"
-#if 0
-#include	"newdisk.h"
-#endif
 #include	"font.h"
 #include	"iocore.h"
 #include	"np2.h"
@@ -18,44 +14,6 @@
 #include	"s98.h"
 #include	"fdefine.h"
 #include	"toolwin.h"
-
-static Handle GetDlgItem(DialogPtr hWnd, short pos) {
-
-	Handle	ret;
-	Rect	rct;
-	short	s;
-
-	GetDialogItem(hWnd, pos, &s, &ret, &rct);
-	return(ret);
-}
-
-void AboutDialogProc(void) {
-
-	DialogPtr	hDlg;
-	Str255		verstr;
-	int			done;
-	short		item;
-
-	hDlg = GetNewDialog(IDD_ABOUT, NULL, (WindowPtr)-1);
-	if (!hDlg) {
-		return;
-	}
-	mkstr255(verstr, np2version);
-	SetDialogItemText(GetDlgItem(hDlg, IDD_VERSION), verstr);
-	SetDialogDefaultItem(hDlg, IDOK);
-
-	done = 0;
-	while(!done) {
-		ModalDialog(NULL, &item);
-		switch(item) {
-			case IDOK:
-				done = 1;
-				break;
-		}
-	}
-	DisposeDialog(hDlg);
-}
-
 
 // ----
 

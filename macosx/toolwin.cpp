@@ -165,7 +165,7 @@ static PicHandle skinload(const char *path, Rect* bounds) {
 			return(ret);
 		}
 	}
-	return(getBMPfromResource("np2tool", bounds));
+	return(getBMPfromResource("np2tool", bounds, CFSTR("bmp")));
 }
 
 // ----
@@ -533,6 +533,15 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 break;
         }
     }
+    else if (GetEventClass(event)==kEventClassKeyboard && GetEventKind(event)==kEventRawKeyDown) {
+        UInt32 modif;
+        GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
+        if (modif & cmdKey) {
+            EventRecord	eve;
+            ConvertEventRefToEventRecord( event,&eve );
+            recieveCommand(MenuEvent(&eve));
+        }
+    }
 
 	(void)myHandler;
     return err;
@@ -628,11 +637,12 @@ static WindowRef makeNibWindow (IBNibRef nibRef) {
     if (err == noErr) {
         InstallStandardEventHandler(GetWindowEventTarget(win));
         EventTypeSpec	list[]={ 
-            { kEventClassCommand, kEventCommandProcess },
-            { kEventClassWindow, kEventWindowClose }, 
-            { kEventClassWindow, kEventWindowShown }, 
-            { kEventClassWindow, kEventWindowDrawContent }, 
-            { kEventClassWindow, kEventWindowFocusAcquired }, 
+            { kEventClassCommand, 	kEventCommandProcess },
+            { kEventClassWindow,	kEventWindowClose }, 
+            { kEventClassWindow,	kEventWindowShown }, 
+            { kEventClassWindow,	kEventWindowDrawContent }, 
+            { kEventClassWindow, 	kEventWindowFocusAcquired }, 
+            { kEventClassKeyboard,	kEventRawKeyDown},
         };
         EventHandlerRef	ref;
         InstallWindowEventHandler (win, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)win, &ref);
@@ -671,7 +681,7 @@ const char	*file[SKINMRU_MAX];
 	AppendMenu(ret, "\p-");
 
 	base = np2tool.skin;
-	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Base Skin"),"Base Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
+	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("<Base Skin>"),"Base Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
 	if (base[0] == '\0') {
         DisableMenuItem(ret, 3);
     }
@@ -845,6 +855,7 @@ void toolwin_open(void) {
     }
 #endif
 
+    np2oscfg.toolwin = 1;
 	return;
 
 twope_err2:
@@ -872,6 +883,7 @@ void toolwin_close(void) {
         toolwindestroy();
         DisposeWindow(toolwin.hwnd);
         toolwin.hwnd = NULL;
+        np2oscfg.toolwin = 0;
     }
 }
 
