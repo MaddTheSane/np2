@@ -77,6 +77,16 @@ $label		mov		r7, $clock
 			str		r7, [r9, #CPU_REMAINCLOCK]
 	MEND
 
+	MACRO
+$label	CPUSV
+$label
+	MEND
+
+	MACRO
+$label	CPULD
+$label
+	MEND
+
 
 	MACRO
 $label	GETPC8
@@ -118,7 +128,7 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 			bl		i286_memoryread
 			add		r8, r8, #(1 << 16)
 			and		$src, r0, #(6 << 2)
-			add		$src, r9, r12 lsr #2
+			add		$src, r9, $src lsr #2
 			tst		r0, #(1 << 5)
 			addne	$src, $src, #1
 	MEND
@@ -161,8 +171,8 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
 			bl		i286_memoryread
 			add		r8, r8, #(1 << 16)
-			and		r12, r0, #(7 << 3)
-			add		r12, r9, r12 lsr #2
+			and		$src, r0, #(7 << 3)
+			add		$src, r9, $src lsr #2
 	MEND
 
 	MACRO

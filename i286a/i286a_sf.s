@@ -9,16 +9,16 @@
 	IMPORT		i286_memorywrite
 	IMPORT		i286_memorywrite_w
 
-	EXPORT		shift_ea8_1
-	EXPORT		shift_ea16_1
-	EXPORT		shift_ea8_cl
-	EXPORT		shift_ea8_d8
-	EXPORT		shift_e16_cl
-	EXPORT		shift_ea16_d8
+	EXPORT		i286asft8_1
+	EXPORT		i286asft16_1
+	EXPORT		i286asft8_cl
+	EXPORT		i286asft8_d8
+	EXPORT		i286asft16_cl
+	EXPORT		i286asft16_d8
 
 	AREA	.text, CODE, READONLY
 
-shift_ea8_1		GETPC8
+i286asft8_1		GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft8m
@@ -113,7 +113,7 @@ sar_e8_1		SAR8	r0
 
 ; ----
 
-shift_ea16_1	GETPC8
+i286asft16_1	GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft16m
@@ -210,7 +210,7 @@ sar_e16_1		SAR16	r0
 
 ; ----
 
-shift_ea8_cl	GETPC8
+i286asft8_cl	GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft8clm
@@ -242,7 +242,7 @@ sft8cle			ldrb	r4, [r9, #CPU_CL]
 				adr		r1, sft_ext8cl
 				ldr		pc, [r1, r6 lsr #1]
 
-shift_ea8_d8	GETPC8
+i286asft8_d8	GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft8d8m
@@ -347,20 +347,21 @@ sar_e8_cl		SAR8CL	r0, r4
 
 ; ----
 
-shift_e16_cl	GETPC8
+i286asft16_cl	GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft16clm
-				CPUWORK	#2
+				CPUWORK	#5
 				R16SRC	r0, r5
 				ldrb	r0, [r9, #CPU_CL]
 				ands	r0, r0, #&1f
 				moveq	pc, r11
+				CPUWORK	r0
 				add		r5, r5, #CPU_REG
 				adr		r1, sft_reg16cl
 				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
-sft16clm		CPUWORK	#7
+sft16clm		CPUWORK	#8
 				bl		i286a_ea
 				tst		r0, #1
 				bne		sft16cle
@@ -370,31 +371,34 @@ sft16clm		CPUWORK	#7
 				ldrb	r0, [r9, #CPU_CL]
 				ands	r0, r0, #&1f
 				moveq	pc, r11
+				CPUWORK	r0
 				adr		r1, sft_reg16cl
 				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 sft16cle		ldrb	r4, [r9, #CPU_CL]
 				ands	r4, r4, #&1f
 				moveq	pc, r11
+				CPUWORK	r4
 				mov		r5, r0
 				bl		i286_memoryread_w
 				adr		r1, sft_ext16cl
 				ldr		pc, [r1, r6 lsr #1]
 
-shift_ea16_d8	GETPC8
+i286asft16_d8	GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft16d8m
-				CPUWORK	#2
+				CPUWORK	#5
 				R16SRC	r0, r5
 				GETPC8
 				ands	r0, r0, #&1f
 				moveq	pc, r11
+				CPUWORK	r0
 				add		r5, r5, #CPU_REG
 				adr		r1, sft_reg16cl
 				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
-sft16d8m		CPUWORK	#7
+sft16d8m		CPUWORK	#8
 				bl		i286a_ea
 				tst		r0, #1
 				bne		sft16d8e
@@ -404,6 +408,7 @@ sft16d8m		CPUWORK	#7
 				GETPC8
 				ands	r0, r0, #&1f
 				moveq	pc, r11
+				CPUWORK	r0
 				adr		r1, sft_reg16cl
 				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
@@ -411,6 +416,7 @@ sft16d8e		mov		r5, r0
 				GETPC8
 				ands	r4, r0, #&1f
 				moveq	pc, r11
+				CPUWORK	r4
 				mov		r0, r5
 				bl		i286_memoryread_w
 				adr		r1, sft_ext16cl

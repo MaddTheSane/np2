@@ -9,13 +9,13 @@
 	IMPORT		i286_memorywrite
 	IMPORT		i286_memorywrite_w
 
-	EXPORT		i286a_80
-	EXPORT		i286a_81
-	EXPORT		i286a_83
+	EXPORT		i286aop80
+	EXPORT		i286aop81
+	EXPORT		i286aop83
 
 	AREA	.text, CODE, READONLY
 
-i286a_80		GETPC8
+i286aop80		GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		ope80m
@@ -124,7 +124,7 @@ cmp_r8_e		SUB8	r0, r4
 
 ; ----
 
-i286a_81		GETPC8
+i286aop81		GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		ope81m
@@ -144,14 +144,14 @@ ope81m			CPUWORK	#7
 				GETPC16
 				adr		r1, op8x_reg16
 				ldr		pc, [r1, r6 lsr #1]
-ope81e			mov		r4, r0
-				GETPC16
-				mov		r5, r0
+ope81e			mov		r5, r0
 				bl		i286_memoryread_w
+				mov		r4, r0
+				GETPC16
 				adr		r1, op8x_ext16
 				ldr		pc, [r1, r6 lsr #1]
 
-i286a_83		GETPC8
+i286aop83		GETPC8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		ope83m
@@ -175,12 +175,12 @@ ope83m			CPUWORK	#7
 				orrne	r0, r0, #(&ff << 8)
 				adr		r1, op8x_reg16
 				ldr		pc, [r1, r6 lsr #1]
-ope83e			mov		r4, r0
-				GETPC8
-				mov		r5, r0
-				tst		r0, #(1 << 7)
-				orrne	r5, r5, #(&ff << 8)
+ope83e			mov		r5, r0
 				bl		i286_memoryread_w
+				mov		r4, r0
+				GETPC8
+				tst		r0, #(1 << 7)
+				orrne	r0, r0, #(&ff << 8)
 				adr		r1, op8x_ext16
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -234,35 +234,35 @@ cmp_r16_i		ldrh	r6, [r5]
 				SUB16	r6, r0
 				mov		pc, r11
 
-add_r16_e		ADD16	r0, r4
+add_r16_e		ADD16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-or_r16_e		OR16	r0, r4
+or_r16_e		OR16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-adc_r16_e		ADC16	r0, r4
+adc_r16_e		ADC16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-sbb_r16_e		SBB16	r0, r4
+sbb_r16_e		SBB16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-and_r16_e		AND16	r0, r4
+and_r16_e		AND16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-sub_r16_e		SUB16	r0, r4
+sub_r16_e		SUB16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-xor_r16_e		XOR16	r0, r4
+xor_r16_e		XOR16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286_memorywrite_w
-cmp_r16_e		SUB16	r0, r4
+cmp_r16_e		SUB16	r4, r0
 				mov		pc, r11
 
 	END

@@ -127,7 +127,7 @@ $label		EAREG16	r12
 			cmp		r0, #&c0
 			bcc		$label.1
 			CPUWORK	$regclk
-			R8SRC	r0, r5
+			R16SRC	r0, r5
 			ldrh	r4, [r5, #CPU_REG]
 			$alu	r4, r6
 			mov		pc, r11
