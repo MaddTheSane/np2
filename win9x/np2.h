@@ -58,6 +58,7 @@ typedef struct {
 	BYTE	keydisp;
 	BYTE	I286SAVE;
 	BYTE	hostdrv_write;
+	BYTE	jastsnd;
 } NP2OSCFG;
 
 

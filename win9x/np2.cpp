@@ -74,7 +74,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0};		// ver0.38
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0};	// ver0.73
 
 		char		fddfolder[MAX_PATH];
 		char		hddfolder[MAX_PATH];
@@ -739,10 +739,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					update |= SYS_UPDATECFG;
 					break;
 
-				case IDM_SNDOPT:
-					winuienter();
-					dialog_sndopt(hWnd);
-					winuileave();
+				case IDM_JASTSOUND:
+					xmenu_setjastsound(np2oscfg.jastsnd ^ 1);
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_SEEKSND:
@@ -793,6 +792,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					rs232c_midipanic();
 					mpu98ii_midipanic();
 					pc9861k_midipanic();
+					break;
+
+				case IDM_SNDOPT:
+					winuienter();
+					dialog_sndopt(hWnd);
+					winuileave();
 					break;
 
 				case IDM_BMPSAVE:
@@ -1311,26 +1316,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	hWnd = hWndMain;
 	scrnmng_initialize();
 
-	xmenu_setsound(np2cfg.SOUND_SW);
-	xmenu_setbeepvol(np2cfg.BEEP_VOL);
-	xmenu_setkey(0);
-	xmenu_setbtnrapid(np2cfg.BTN_RAPID);
-	xmenu_setbtnmode(np2cfg.BTN_MODE);
-	xmenu_setmsrapid(np2cfg.MOUSERAPID);
+	xmenu_setroltate(0);
+	xmenu_setdispmode(np2cfg.DISPSYNC);
+	xmenu_setraster(np2cfg.RASTER);
 	xmenu_setwaitflg(np2oscfg.NOWAIT);
 	xmenu_setframe(np2oscfg.DRAW_SKIP);
-	xmenu_setdispmode(np2cfg.DISPSYNC);
-	xmenu_setdispclk(np2oscfg.DISPCLK);
-	xmenu_seti286save(np2oscfg.I286SAVE);
-	xmenu_setmotorflg(np2cfg.MOTOR);
-	xmenu_setroltate(0);
+
+	xmenu_setkey(0);
 	xmenu_setxshift(0);
 	xmenu_setf12copy(np2oscfg.F12COPY);
+	xmenu_setbeepvol(np2cfg.BEEP_VOL);
+	xmenu_setsound(np2cfg.SOUND_SW);
+	xmenu_setjastsound(np2oscfg.jastsnd);
+	xmenu_setmotorflg(np2cfg.MOTOR);
 	xmenu_setextmem(np2cfg.EXTMEM);
-	xmenu_setraster(np2cfg.RASTER);
-	xmenu_setshortcut(np2oscfg.shortcut);						// ver0.30
-	xmenu_setsstp(np2oscfg.sstp);
 	xmenu_setmouse(np2oscfg.MOUSE_SW);
+
+	xmenu_setshortcut(np2oscfg.shortcut);
+	xmenu_setdispclk(np2oscfg.DISPCLK);
+	xmenu_setbtnmode(np2cfg.BTN_MODE);
+	xmenu_setbtnrapid(np2cfg.BTN_RAPID);
+	xmenu_setmsrapid(np2cfg.MOUSERAPID);
+	xmenu_setsstp(np2oscfg.sstp);
+	xmenu_seti286save(np2oscfg.I286SAVE);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);

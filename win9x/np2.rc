@@ -814,6 +814,7 @@ BEGIN
             MENUITEM "S&peak board",                IDM_SPEAKBOARD
             MENUITEM "Sp&ark board",                IDM_SPARKBOARD
             MENUITEM "&AMD-98",                     IDM_AMD98
+            MENUITEM "&JastSound",                  IDM_JASTSOUND
             MENUITEM SEPARATOR
             MENUITEM "&Seek Sound",                 IDM_SEEKSND
         END

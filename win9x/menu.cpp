@@ -297,6 +297,13 @@ void xmenu_setsound(BYTE value) {
 	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
 }
 
+void xmenu_setjastsound(BYTE value) {
+
+	value &= 1;
+	np2oscfg.jastsnd = value;
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_JASTSOUND, MFCHECK(value));
+}
+
 void xmenu_setmotorflg(BYTE value) {
 
 	value &= 1;

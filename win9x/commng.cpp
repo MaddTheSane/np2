@@ -69,15 +69,10 @@ COMMNG commng_create(UINT device) {
 			break;
 
 		case COMCREATE_PRINTER:
-#if 1								// test
-			ret = cmjasts_create();
-			if (ret) {
-				return(ret);
-			}
-			return((COMMNG)&com_nc);
-#else
 			cfg = NULL;
-#endif
+			if (np2oscfg.jastsnd) {
+				ret = cmjasts_create();
+			}
 			break;
 
 		case COMCREATE_MPU98II:

@@ -461,6 +461,7 @@ static const INITBL iniitem[] = {
 	{"windtype", INITYPE_UINT8,		&np2oscfg.wintype,		0},
 	{"toolwind", INITYPE_BOOL,		&np2oscfg.toolwin,		0},		// ver0.38
 	{"keydispl", INITYPE_BOOL,		&np2oscfg.keydisp,		0},
+	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
 	{"I286SAVE", INIRO_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 

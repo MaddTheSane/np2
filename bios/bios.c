@@ -190,7 +190,7 @@ if (fh != FILEH_INVALID) {
 		file_close(fh);
 	}
 #endif
-	if (!biosrom) {
+	if ((!biosrom) && (!(pc.model & PCMODEL_EPSON))) {
 		CopyMemory(mem + 0xe8dd8, neccheck, 0x25);
 		pos = LOADINTELWORD(itfrom + 2);
 		CopyMemory(mem + 0xf538e, itfrom + pos, 0x27);

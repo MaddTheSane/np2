@@ -20,6 +20,7 @@ void xmenu_setxshift(BYTE value);
 void xmenu_setf12copy(BYTE value);
 void xmenu_setbeepvol(BYTE value);
 void xmenu_setsound(BYTE value);
+void xmenu_setjastsound(BYTE value);
 void xmenu_setmotorflg(BYTE value);
 void xmenu_setextmem(BYTE value);
 void xmenu_setmouse(BYTE value);
