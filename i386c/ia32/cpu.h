@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.22 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.23 2004/03/08 14:48:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -159,7 +159,7 @@ typedef struct {
 
 	BYTE		prefetch[CPU_PREFETCH_QUEUE_LENGTH];
 	SINT8		prefetch_remain;
-	UINT8		pad2[2];
+	UINT8		pad2[3];
 
 	UINT32		adrsmask;
 	UINT32		ovflag;
