@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -11,7 +11,7 @@ BYTE lio_gcolor1(void) {
 	LIOGCOLOR1	dat;
 	LIOGCOLOR1	gcolor1;
 
-	i286_memstr_read(I286_DS, I286_BX, &dat, sizeof(dat));
+	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	if (dat.palmode < 2) {
 		gcolor1.palmax = 8;
 		gcolor1.palmode = dat.palmode;

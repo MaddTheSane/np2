@@ -17,8 +17,8 @@ extern "C" {
 void fmport_a(NEVENTITEM item);
 void fmport_b(NEVENTITEM item);
 
-void fmtimer_reset(BYTE irq);
-void fmtimer_setreg(BYTE reg, BYTE value);
+void fmtimer_reset(UINT irq);
+void fmtimer_setreg(REG8 reg, REG8 value);
 
 #ifdef __cplusplus
 }

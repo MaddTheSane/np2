@@ -9,13 +9,13 @@
 #include	"s98.h"
 
 
-static void IOOUTCALL opna_o188(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o188(UINT port, REG8 dat) {
 
 	opn.opnreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL opna_o18a(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
@@ -54,13 +54,13 @@ static void IOOUTCALL opna_o18a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL opna_o18c(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o18c(UINT port, REG8 dat) {
 
 	opn.extreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL opna_o18e(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 
 	S98_put(EXTEND2608, opn.extreg, dat);
 	opn.reg[opn.extreg + 0x100] = dat;
@@ -77,13 +77,13 @@ static void IOOUTCALL opna_o18e(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL opna_i188(UINT port) {
+static REG8 IOINPCALL opna_i188(UINT port) {
 
 	(void)port;
 	return(fmtimer.status);
 }
 
-static BYTE IOINPCALL opna_i18a(UINT port) {
+static REG8 IOINPCALL opna_i18a(UINT port) {
 
 	if (opn.opnreg == 0x0e) {
 		return(fmboard_getjoy(&psg1));
@@ -95,7 +95,7 @@ static BYTE IOINPCALL opna_i18a(UINT port) {
 	return(opn.reg[opn.opnreg]);
 }
 
-static BYTE IOINPCALL opna_i18c(UINT port) {
+static REG8 IOINPCALL opna_i18c(UINT port) {
 
 	if (opn.extend) {
 		return((fmtimer.status & 3) | (opn.adpcmmask & 8));
@@ -104,7 +104,7 @@ static BYTE IOINPCALL opna_i18c(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL opna_i18e(UINT port) {
+static REG8 IOINPCALL opna_i18e(UINT port) {
 
 	if (opn.extend) {
 		return(opn.reg[opn.opnreg]);
@@ -113,7 +113,7 @@ static BYTE IOINPCALL opna_i18e(UINT port) {
 	return(0xff);
 }
 
-static void extendchannel(BYTE enable) {
+static void extendchannel(REG8 enable) {
 
 	opn.extend = enable;
 	if (enable) {
@@ -139,9 +139,9 @@ static const IOINP opna_i[4] = {
 
 void board86_reset(void) {
 
-	fmtimer_reset((BYTE)((np2cfg.snd86opt & 0x10) |
-						((np2cfg.snd86opt & 0x4) << 5) |
-						((np2cfg.snd86opt & 0x8) << 3)));
+	fmtimer_reset((np2cfg.snd86opt & 0x10) |
+					((np2cfg.snd86opt & 0x4) << 5) |
+					((np2cfg.snd86opt & 0x8) << 3));
 	opngen_setcfg(3, OPN_STEREO | 0x038);
 	if (np2cfg.snd86opt & 2) {
 		soundrom_load(0xcc000, "86");
@@ -162,7 +162,7 @@ void board86_bind(void) {
 
 // ---- + chibioto
 
-static void IOOUTCALL opnac_o18e(UINT port, BYTE dat) {
+static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 
 	S98_put(EXTEND2608, opn.extreg, dat);
 	opn.reg[opn.extreg + 0x100] = dat;
@@ -178,7 +178,7 @@ static void IOOUTCALL opnac_o18e(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL opnac_i18c(UINT port) {
+static REG8 IOINPCALL opnac_i18c(UINT port) {
 
 	if (opn.extend) {
 		return((fmtimer.status & 3) | adpcm_status(&adpcm));
@@ -188,7 +188,7 @@ static BYTE IOINPCALL opnac_i18c(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL opnac_i18e(UINT port) {
+static REG8 IOINPCALL opnac_i18e(UINT port) {
 
 	if (opn.extend) {
 		if (opn.extreg == 0x08) {

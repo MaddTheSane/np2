@@ -5,17 +5,17 @@
 #include	"cs4231.h"
 
 
-void DMACCALL dma_dummyout(BYTE data) {
+void DMACCALL dma_dummyout(REG8 data) {
 
 	(void)data;
 }
 
-BYTE DMACCALL dma_dummyin(void) {
+REG8 DMACCALL dma_dummyin(void) {
 
 	return(0xff);
 }
 
-BYTE DMACCALL dma_dummyproc(BYTE func) {
+REG8 DMACCALL dma_dummyproc(REG8 func) {
 
 	(void)func;
 	return(0);
@@ -28,7 +28,7 @@ void dmac_check(void) {
 
 	BOOL	workchg;
 	DMACH	ch;
-	BYTE	bit;
+	REG8	bit;
 
 	workchg = FALSE;
 	ch = dmac.dmach;
@@ -63,7 +63,7 @@ void dmac_check(void) {
 
 // ---- I/O
 
-static void IOOUTCALL dmac_o01(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o01(UINT port, REG8 dat) {
 
 	DMACH	dmach;
 	int		lh;
@@ -75,7 +75,7 @@ static void IOOUTCALL dmac_o01(UINT port, BYTE dat) {
 	dmach->adrsorg.b[lh] = dat;
 }
 
-static void IOOUTCALL dmac_o03(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o03(UINT port, REG8 dat) {
 
 	int		ch;
 	DMACH	dmach;
@@ -90,13 +90,13 @@ static void IOOUTCALL dmac_o03(UINT port, BYTE dat) {
 	dmac.stat &= ~(1 << ch);
 }
 
-static void IOOUTCALL dmac_o13(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o13(UINT port, REG8 dat) {
 
 	dmac.dmach[dat & 3].sreq = dat;
 	(void)port;
 }
 
-static void IOOUTCALL dmac_o15(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o15(UINT port, REG8 dat) {
 
 	if (dat & 4) {
 		dmac.mask |= (1 << (dat & 3));
@@ -108,34 +108,34 @@ static void IOOUTCALL dmac_o15(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL dmac_o17(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o17(UINT port, REG8 dat) {
 
 	dmac.dmach[dat & 3].mode = dat;
 	(void)port;
 }
 
-static void IOOUTCALL dmac_o19(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o19(UINT port, REG8 dat) {
 
 	dmac.lh = DMA16_LOW;
 	(void)port;
 	(void)dat;
 }
 
-static void IOOUTCALL dmac_o1b(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o1b(UINT port, REG8 dat) {
 
 	dmac.mask = 0x0f;
 	(void)port;
 	(void)dat;
 }
 
-static void IOOUTCALL dmac_o1f(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o1f(UINT port, REG8 dat) {
 
 	dmac.mask = dat;
 	dmac_check();
 	(void)port;
 }
 
-static void IOOUTCALL dmac_o21(UINT port, BYTE dat) {
+static void IOOUTCALL dmac_o21(UINT port, REG8 dat) {
 
 	DMACH	dmach;
 
@@ -143,7 +143,7 @@ static void IOOUTCALL dmac_o21(UINT port, BYTE dat) {
 	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat;
 }
 
-static BYTE IOINPCALL dmac_i01(UINT port) {
+static REG8 IOINPCALL dmac_i01(UINT port) {
 
 	DMACH	dmach;
 	int		lh;
@@ -154,7 +154,7 @@ static BYTE IOINPCALL dmac_i01(UINT port) {
 	return(dmach->leng.b[lh]);
 }
 
-static BYTE IOINPCALL dmac_i03(UINT port) {
+static REG8 IOINPCALL dmac_i03(UINT port) {
 
 	DMACH	dmach;
 	int		lh;
@@ -165,7 +165,7 @@ static BYTE IOINPCALL dmac_i03(UINT port) {
 	return(dmach->adrs.b[lh + DMA32_LOW]);
 }
 
-static BYTE IOINPCALL dmac_i11(UINT port) {
+static REG8 IOINPCALL dmac_i11(UINT port) {
 
 	(void)port;
 	return(dmac.stat);												// ToDo!!

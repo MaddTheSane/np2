@@ -7,7 +7,7 @@
 
 // ---- I/O
 
-static void IOOUTCALL sysp_o35(UINT port, BYTE dat) {
+static void IOOUTCALL sysp_o35(UINT port, REG8 dat) {
 
 	if ((sysport.c ^ dat) & 0x04) {					// ver0.29
 		rs232c.send = 1;
@@ -17,9 +17,9 @@ static void IOOUTCALL sysp_o35(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL sysp_o37(UINT port, BYTE dat) {
+static void IOOUTCALL sysp_o37(UINT port, REG8 dat) {
 
-	BYTE	bit;
+	REG8	bit;
 
 	if (!(dat & 0xf0)) {
 		bit = 1 << (dat >> 1);
@@ -39,25 +39,24 @@ static void IOOUTCALL sysp_o37(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL sysp_i31(UINT port) {
+static REG8 IOINPCALL sysp_i31(UINT port) {
 
 	(void)port;
 	return(np2cfg.dipsw[1]);
 }
 
-static BYTE IOINPCALL sysp_i33(UINT port) {
+static REG8 IOINPCALL sysp_i33(UINT port) {
 
-	BYTE	ret;
+	REG8	ret;
 
 	ret = ((~np2cfg.dipsw[0]) & 1) << 3;
 	ret |= rs232c_stat();
 	ret |= uPD4990.cdat;
-
 	(void)port;
 	return(ret);
 }
 
-static BYTE IOINPCALL sysp_i35(UINT port) {
+static REG8 IOINPCALL sysp_i35(UINT port) {
 
 	(void)port;
 	return(sysport.c);

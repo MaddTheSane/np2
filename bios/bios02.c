@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -42,8 +42,8 @@ void bios0x02(void) {
 		textout(ptr, msg4);
 		mem[0x004f8] = 0xfa;		// cli
 		mem[0x004f9] = 0xf4;		// hlt
-		I286_CS = 0;
-		I286_IP = 0x4f8;
+		CPU_CS = 0;
+		CPU_IP = 0x4f8;
 	}
 }
 

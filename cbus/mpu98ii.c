@@ -40,10 +40,10 @@ enum {
 	COMMNG		cm_mpu98;
 
 
-static const BYTE mpuirqnum[4] = {3, 5, 6, 12};
+static const UINT8 mpuirqnum[4] = {3, 5, 6, 12};
 
-static const BYTE fd_step1[4][4] = {{0, 0, 0, 0}, {1, 0, 0, 0},
-								{1, 0, 1, 0}, {1, 1, 1, 0}};
+static const UINT8 fd_step1[4][4] = {{0, 0, 0, 0}, {1, 0, 0, 0},
+									{1, 0, 1, 0}, {1, 1, 1, 0}};
 
 
 static void makeintclock(void) {
@@ -58,9 +58,9 @@ static void makeintclock(void) {
 	mpu98.clock = (pc.realclock * 5 / l);		//	/12
 }
 
-static void sendallclocks(BYTE data) {
+static void sendallclocks(REG8 data) {
 
-	BYTE	quarter;
+	REG8	quarter;
 	int		i;
 
 	quarter = data >> 2;
@@ -68,13 +68,12 @@ static void sendallclocks(BYTE data) {
 		quarter = 64;
 	}
 	for (i=0; i<4; i++) {
-		mpu98.fd_step[i] = fd_step1[data & 3][i];
-		mpu98.fd_step[i] += quarter;
+		mpu98.fd_step[i] = quarter + fd_step1[data & 3][i];
 	}
 	mpu98.fd_remain = 0;
 }
 
-static void setrecvdata(BYTE data) {
+static void setrecvdata(REG8 data) {
 
 	if (mpu98.cnt < MPU98_RECVBUFS) {
 		mpu98.buf[(mpu98.pos + mpu98.cnt) & (MPU98_RECVBUFS - 1)] = data;
@@ -90,14 +89,14 @@ static void mpu98ii_int(void) {
 static void ch_step(void) {
 
 	int		i;
-	BYTE	bit;
+	REG8	bit;
 
 	if (mpu98.flag1 & MPU1FLAG_F9) {
 		if (mpu98.f9.step) {
 			mpu98.f9.step--;
 		}
 	}
-	for (i=0, bit=1; bit; bit<<=1, i++) {
+	for (i=0, bit=1; i<8; bit<<=1, i++) {
 		if (mpu98.intch & bit) {
 			if (mpu98.ch[i].step) {
 				mpu98.ch[i].step--;
@@ -109,7 +108,7 @@ static void ch_step(void) {
 static BOOL ch_nextsearch(void) {
 
 	int		i;
-	BYTE	bit;
+	REG8	bit;
 
 ch_nextsearch_more:
 	if (mpu98.intreq == 9) {
@@ -147,7 +146,7 @@ ch_nextsearch_more:
 					}
 					ch->datas = 0;
 				}
-				setrecvdata((BYTE)(0xf0 + mpu98.intreq));
+				setrecvdata((REG8)(0xf0 + mpu98.intreq));
 				mpu98ii_int();
 				mpu98.recvevent |= MIDIE_STEP;
 				return(TRUE);
@@ -204,9 +203,9 @@ static void midiwait(SINT32 waitclock) {
 	}
 }
 
-static BOOL sendcmd(BYTE cmd) {
+static BOOL sendcmd(REG8 cmd) {
 
-	BYTE	work;
+	REG8	work;
 
 	mpu98.cmd = cmd;
 	switch(cmd & 0xf0) {
@@ -338,7 +337,7 @@ static BOOL sendcmd(BYTE cmd) {
 	return(TRUE);
 }
 
-static void group_ex(BYTE cmd, BYTE data) {
+static void group_ex(REG8 cmd, REG8 data) {
 
 	switch(cmd) {
 		case 0xe0:				// tempo
@@ -372,7 +371,7 @@ static void group_ex(BYTE cmd, BYTE data) {
 	}
 }
 
-static void senddat(BYTE data) {
+static void senddat(REG8 data) {
 
 	MPUCH	*ch;
 
@@ -505,7 +504,7 @@ static void senddat(BYTE data) {
 }
 
 
-static void IOOUTCALL mpu98ii_o0(UINT port, BYTE dat) {
+static void IOOUTCALL mpu98ii_o0(UINT port, REG8 dat) {
 
 	UINT	sent;
 
@@ -515,11 +514,11 @@ static void IOOUTCALL mpu98ii_o0(UINT port, BYTE dat) {
 	if (cm_mpu98->connect != COMCONNECT_OFF) {
 
 		if (mpu98.mode) {
-			sent = cm_mpu98->write(cm_mpu98, dat);
+			sent = cm_mpu98->write(cm_mpu98, (BYTE)dat);
 		}
 		else {
 			if ((mpu98.cmd == 0xd0) || (mpu98.cmd == 0xdf)) {
-				sent = cm_mpu98->write(cm_mpu98, dat);
+				sent = cm_mpu98->write(cm_mpu98, (BYTE)dat);
 			}
 			else {
 				senddat(dat);
@@ -533,7 +532,7 @@ static void IOOUTCALL mpu98ii_o0(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL mpu98ii_o2(UINT port, BYTE dat) {
+static void IOOUTCALL mpu98ii_o2(UINT port, REG8 dat) {
 
 	if (cm_mpu98 == NULL) {
 		cm_mpu98 = commng_create(COMCREATE_MPU98II);
@@ -564,7 +563,7 @@ static void IOOUTCALL mpu98ii_o2(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL mpu98ii_i0(UINT port) {
+static REG8 IOINPCALL mpu98ii_i0(UINT port) {
 
 	if (cm_mpu98 == NULL) {
 		cm_mpu98 = commng_create(COMCREATE_MPU98II);
@@ -587,9 +586,9 @@ static BYTE IOINPCALL mpu98ii_i0(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL mpu98ii_i2(UINT port) {
+static REG8 IOINPCALL mpu98ii_i2(UINT port) {
 
-	BYTE	ret;
+	REG8	ret;
 
 	if (cm_mpu98 == NULL) {
 		cm_mpu98 = commng_create(COMCREATE_MPU98II);

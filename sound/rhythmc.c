@@ -172,10 +172,10 @@ void rhythm_update(RHYTHM rhy) {
 	} while(++r < rterm);
 }
 
-void rhythm_setreg(RHYTHM rhy, BYTE reg, BYTE value) {
+void rhythm_setreg(RHYTHM rhy, REG8 reg, REG8 value) {
 
 	RHYTHMCH	*r;
-	BYTE		bit;
+	REG8		bit;
 	int			i;
 
 	if (reg == 0x10) {

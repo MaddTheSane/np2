@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"soundmng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -126,7 +126,7 @@ void sound_reset(void) {
 	if (sndstream.buffer) {
 		soundmng_reset();
 		streamreset();
-		soundcfg.lastclock = I286_CLOCK;
+		soundcfg.lastclock = CPU_CLOCK;
 		beep_eventreset();
 	}
 }
@@ -154,7 +154,7 @@ void sound_changeclock(void) {
 	soundcfg.hzbase = hz;
 	soundcfg.clockbase = clock;
 	soundcfg.minclock = 2 * clock / hz;
-	soundcfg.lastclock = I286_CLOCK;
+	soundcfg.lastclock = CPU_CLOCK;
 }
 
 void sound_streamregist(void *hdl, SOUNDCB cbfn) {
@@ -180,7 +180,7 @@ void sound_sync(void) {
 		return;
 	}
 
-	length = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK - soundcfg.lastclock;
+	length = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK - soundcfg.lastclock;
 	if (length < soundcfg.minclock) {
 		return;
 	}
@@ -217,7 +217,7 @@ const SINT32 *ret;
 		SNDCSEC_ENTER;
 		if (sndstream.remain > sndstream.reserve) {
 			streamprepare(sndstream.remain - sndstream.reserve);
-			soundcfg.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
+			soundcfg.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 			beep_eventreset();
 		}
 	}

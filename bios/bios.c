@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"dosio.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -49,7 +49,7 @@ static void bios_reinitbyswitch(void) {
 	BYTE	biosflag;
 	BYTE	ext_mem;
 
-	CPUTYPE = 0;
+	CPU_TYPE = 0;
 	prxcrt = 0xc8;
 	if (gdc.display & 2) {
 		prxcrt |= 0x04;							// color16
@@ -80,7 +80,7 @@ static void bios_reinitbyswitch(void) {
 		ext_mem = np2cfg.EXTMEM;									// ver0.28
 	}
 	else {
-		CPUTYPE = CPUTYPE_V30;
+		CPU_TYPE = CPUTYPE_V30;
 		ext_mem = 0;
 		biosflag |= 0x40;
 	}
@@ -231,19 +231,19 @@ static void bios_boot(void) {
 		if (!(sysport.c & 0x20)) {
 			bios_reinitbyswitch();
 		}
-		I286_CS = 0x0000;
-		I286_IP = 0x04f8;
-		I286_DS = 0x0000;
-		I286_DX = 0x43d;
-		I286_AL = 0x10;
+		CPU_CS = 0x0000;
+		CPU_IP = 0x04f8;
+		CPU_DS = 0x0000;
+		CPU_DX = 0x43d;
+		CPU_AL = 0x10;
 		mem[0x004f8] = 0xee;		// out	dx, al
 		mem[0x004f9] = 0xea;		// call	far
 		SETBIOSMEM16(0x004fa, 0x0000);
 		SETBIOSMEM16(0x004fc, 0xffff);
 	}
 	else {
-		I286_SP = GETBIOSMEM16(0x00404);
-		I286_SS = GETBIOSMEM16(0x00406);
+		CPU_SP = GETBIOSMEM16(0x00404);
+		CPU_SS = GETBIOSMEM16(0x00406);
 	}
 }
 
@@ -252,15 +252,15 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 	UINT16	bootseg;
 
-	if ((i286core.s.itfbank) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
-		I286_IP--;
-		I286_REMCLOCK = -1;
+	if ((CPU_ITFBANK) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
+		CPU_IP--;
+		CPU_REMCLOCK = -1;
 		return(1);
 	}
 
 	switch(adrs) {													// ver0.30
 		case BIOS_BASE + BIOSOFST_EOIM:
-			I286_REMCLOCK -= 300;
+			CPU_REMCLOCK -= 300;
 			iocore_out8(0x00, 0x20);
 			return(0);
 
@@ -272,78 +272,78 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(0);
 
 		case BIOS_BASE + BIOSOFST_02:
-			I286_REMCLOCK -= 300;
+			CPU_REMCLOCK -= 300;
 			bios0x02();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_08:
-			I286_REMCLOCK -= 300;
+			CPU_REMCLOCK -= 300;
 			bios0x08();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_09:
-			I286_REMCLOCK -= 300;
+			CPU_REMCLOCK -= 300;
 			bios0x09();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_0c:
-			I286_REMCLOCK -= 500;
+			CPU_REMCLOCK -= 500;
 			bios0x0c();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_12:
-			I286_REMCLOCK -= 500;
+			CPU_REMCLOCK -= 500;
 			bios0x12();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_13:
-			I286_REMCLOCK -= 500;
+			CPU_REMCLOCK -= 500;
 			bios0x13();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_18:
-			I286_REMCLOCK -= 200;
+			CPU_REMCLOCK -= 200;
 			bios0x18();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_19:
-			I286_REMCLOCK -= 200;
+			CPU_REMCLOCK -= 200;
 			bios0x19();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1a:
-			I286_REMCLOCK -= 200;
+			CPU_REMCLOCK -= 200;
 			bios0x1a();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1b:
-			I286_REMCLOCK -= 200;
+			CPU_REMCLOCK -= 200;
 			bios0x1b();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1c:
-			I286_REMCLOCK -= 200;
+			CPU_REMCLOCK -= 200;
 			bios0x1c();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_WAIT:
-			I286_STI;
+			CPU_STI;
 			if (fddmtr_biosbusy) {						// ver0.26
-				I286_IP--;
-				I286_REMCLOCK = -1;
+				CPU_IP--;
+				CPU_REMCLOCK = -1;
 			}
 			else {
 				switch(CTRL_FDMEDIA) {
 					case DISKTYPE_2HD:
 						if (pic.pi[1].isr & PIC_INT42) {
-							I286_IP--;
-							I286_REMCLOCK -= 1000;
+							CPU_IP--;
+							CPU_REMCLOCK -= 1000;
 						}
 						break;
 					case DISKTYPE_2DD:
 						if (pic.pi[1].isr & PIC_INT41) {
-							I286_IP--;
-							I286_REMCLOCK -= 1000;
+							CPU_IP--;
+							CPU_REMCLOCK -= 1000;
 						}
 						break;
 				}
@@ -362,29 +362,29 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			bios_reinitbyswitch();									// ver0.27
 			bios_vectorset();										// ver0.29
 			bootseg = bootstrapload();
-			I286_STI;
-			I286_CS = (bootseg != 0)?bootseg:0xe800;
-			I286_DS = 0x0000;
-			I286_SS = 0x0030;
-			I286_SP = 0x00e6;
-			I286_IP = 0x0000;
+			CPU_STI;
+			CPU_CS = (bootseg != 0)?bootseg:0xe800;
+			CPU_DS = 0x0000;
+			CPU_SS = 0x0030;
+			CPU_SP = 0x00e6;
+			CPU_IP = 0x0000;
 			return(1);
 
 		case 0xfffe8:					// ブートストラップロード
-			I286_REMCLOCK -= 2000;
+			CPU_REMCLOCK -= 2000;
 			bootseg = bootstrapload();
 			if (bootseg) {
-				I286_STI;
-				I286_CS = bootseg;
-				I286_IP = 0x0000;
-				I286_SS = 0x0030;
-				I286_SP = 0x00e6;
+				CPU_STI;
+				CPU_CS = bootseg;
+				CPU_IP = 0x0000;
+				CPU_SS = 0x0030;
+				CPU_SP = 0x00e6;
 				return(1);
 			}
 			return(0);
 
 		case 0xfffec:
-			I286_REMCLOCK -= 2000;
+			CPU_REMCLOCK -= 2000;
 			bootstrapload();
 			return(0);
 	}
@@ -399,8 +399,8 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 	if (biosrom) {
 		return(0);
 	}
-	I286_IP--;
-	I286_REMCLOCK = -1;
+	CPU_IP--;
+	CPU_REMCLOCK = -1;
 	return(1);
 }
 

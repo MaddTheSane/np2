@@ -4,6 +4,7 @@
 #include	"fdd_mtr.h"
 #include	"timing.h"
 
+
 typedef struct {
 	UINT32	tick;
 	UINT	cnt;

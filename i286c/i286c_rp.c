@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"i286c.h"
 #include	"memory.h"
 #include	"pccore.h"
@@ -86,7 +86,7 @@ I286EXT i286c_rep_movsb(void) {
 				break;
 			}
 			if (I286_REMCLOCK <= 0) {
-				I286_IP -= i286core.s.prefix + 1;
+				I286_IP -= I286_PREFIX + 1;
 				break;
 			}
 		}
@@ -109,7 +109,7 @@ I286EXT i286c_rep_movsw(void) {
 				break;
 			}
 			if (I286_REMCLOCK <= 0) {
-				I286_IP -= i286core.s.prefix + 1;
+				I286_IP -= I286_PREFIX + 1;
 				break;
 			}
 		}
@@ -133,7 +133,7 @@ I286EXT i286c_rep_lodsb(void) {
 				break;
 			}
 			if (I286_REMCLOCK <= 0) {
-				I286_IP -= i286core.s.prefix + 1;
+				I286_IP -= I286_PREFIX + 1;
 				break;
 			}
 		}
@@ -154,7 +154,7 @@ I286EXT i286c_rep_lodsw(void) {
 		 		break;
 		 	}
 			if (I286_REMCLOCK <= 0) {
-				I286_IP -= i286core.s.prefix + 1;
+				I286_IP -= I286_PREFIX + 1;
 				break;
 			}
 		}
@@ -178,7 +178,7 @@ I286EXT i286c_rep_stosb(void) {
 				break;
 			}
 			if (I286_REMCLOCK <= 0) {
-				I286_IP -= i286core.s.prefix + 1;
+				I286_IP -= I286_PREFIX + 1;
 				break;
 			}
 		}
@@ -199,7 +199,7 @@ I286EXT i286c_rep_stosw(void) {
 				break;
 			}
 			if (I286_REMCLOCK <= 0) {
-				I286_IP -= i286core.s.prefix + 1;
+				I286_IP -= I286_PREFIX + 1;
 				break;
 			}
 		}

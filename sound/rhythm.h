@@ -39,7 +39,7 @@ void rhythm_setvol(UINT vol);
 
 void rhythm_reset(RHYTHM rhy);
 void rhythm_update(RHYTHM rhy);
-void rhythm_setreg(RHYTHM rhy, BYTE reg, BYTE val);
+void rhythm_setreg(RHYTHM rhy, REG8 reg, REG8 val);
 
 void SOUNDCALL rhythm_getpcm(RHYTHM rhy, SINT32 *pcm, UINT count);
 

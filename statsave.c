@@ -4,7 +4,7 @@
 #include	"scrnmng.h"
 #include	"soundmng.h"
 #include	"timemng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -408,8 +408,8 @@ static int flagsave_ext(NP2FFILE f, const STENTRY *t) {
 	ret = flagsave_create(f, t);
 	if (ret != NP2FLAG_FAILURE) {
 		ret |= flagsave_save(f, &extmem, sizeof(extmem));
-		if (extmemmng_size) {
-			ret |= flagsave_save(f, extmemmng_ptr, extmemmng_size);
+		if (CPU_EXTMEM) {
+			ret |= flagsave_save(f, CPU_EXTMEM, CPU_EXTMEMSIZE);
 		}
 		ret |= flagsave_close(f);
 	}
@@ -429,8 +429,8 @@ static int flagload_ext(NP2FFILE f, const STENTRY *t) {
 		}
 		if (!extmemmng_realloc(extmem.maxmem - 1)) {
 			pagemax = (extmem.maxmem - 1) << 8;
-			if (extmemmng_size) {
-				ret |= flagload_load(f, extmemmng_ptr, extmemmng_size);
+			if (CPU_EXTMEM) {
+				ret |= flagload_load(f, CPU_EXTMEM, CPU_EXTMEMSIZE);
 			}
 		}
 		else {
@@ -439,7 +439,7 @@ static int flagload_ext(NP2FFILE f, const STENTRY *t) {
 	}
 	for (i=0; i<4; i++) {
 		if (extmem.page[i] < pagemax) {
-			extmem.pageptr[i] = extmemmng_ptr + (extmem.page[i] << 12);
+			extmem.pageptr[i] = CPU_EXTMEM + (extmem.page[i] << 12);
 		}
 		else {
 			extmem.pageptr[i] = mem + 0xc0000 + (i << 14);

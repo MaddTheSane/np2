@@ -7,7 +7,7 @@
 #include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"viewreg.h"
-#include	"i286.h"
+#include	"cpucore.h"
 
 
 static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {

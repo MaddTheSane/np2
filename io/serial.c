@@ -4,7 +4,7 @@
 #include	"iocore.h"
 
 
-static const BYTE joykeytable[12] = {
+static const UINT8 joykeytable[12] = {
 				0x2a,	0x34,
 				0x29,	0x1c,
 				0x3c,	0x48,
@@ -12,7 +12,7 @@ static const BYTE joykeytable[12] = {
 				0x3d,	0x4b,
 				0x3a,	0x43};
 
-static const BYTE kbexflag[0x80] = {
+static const UINT8 kbexflag[0x80] = {
 		//	 ESC,  ÇP,  ÇQ,  ÇR,  ÇS,  ÇT,  ÇU,  ÇV		; 00h
 			   0,   0,   0,   0,   0,   0,   0,   0,
 		//	  ÇW,  ÇX,  ÇO,  Å|,  ÅO,  Åè,  BS, TAB		; 08h
@@ -72,7 +72,7 @@ void keyb_callback(NEVENTITEM item) {
 	}
 }
 
-static void keyb_out(BYTE data) {
+static void keyb_out(REG8 data) {
 
 	if (keyb.buffers < KB_BUF) {
 		keyb.buf[(keyb.pos + keyb.buffers) & KB_BUFMASK] = data;
@@ -89,7 +89,7 @@ static void keyb_out(BYTE data) {
 
 // ----
 
-	BYTE	keystat[0x80];
+	UINT8	keystat[0x80];
 
 void keystat_reset(void) {
 
@@ -97,9 +97,9 @@ void keystat_reset(void) {
 }
 
 
-void keystat_senddata(BYTE data) {
+void keystat_senddata(REG8 data) {
 
-	BYTE	key;
+	REG8	key;
 	BOOL	keynochange;
 
 	key = data & 0x7f;
@@ -147,7 +147,7 @@ void keystat_senddata(BYTE data) {
 			if (data & 0x80) {						// ver0.30
 				return;
 			}
-			keyb_out((BYTE)(data ^ 0x80));
+			keyb_out((REG8)(data ^ 0x80));
 		}
 		keyb_out(data);
 	}
@@ -155,46 +155,46 @@ void keystat_senddata(BYTE data) {
 
 void keystat_resetcopyhelp(void) {
 
-	BYTE	i;
+	REG8	i;
 
 	for (i=0x60; i<0x62; i++) {
 		if (keystat[i] & 0x80) {
 			keystat[i] &= 0x7f;
-			keyb_out((BYTE)(i | 0x80));
+			keyb_out((REG8)(i | 0x80));
 		}
 	}
 }
 
 void keystat_allrelease(void) {
 
-	UINT	i;
+	REG8	i;
 
 	for (i=0; i<0x80; i++) {
 		if (keystat[i] & 0x80) {
 			keystat[i] &= ~0x80;
-			keyb_out((BYTE)(i + 0x80));
+			keyb_out((REG8)(i | 0x80));
 		}
 	}
 }
 
-void keystat_forcerelease(BYTE value) {
+void keystat_forcerelease(REG8 value) {
 
 	if (keystat[value & 0x7f] & 0x80) {
 		keystat[value & 0x7f] &= ~0x80;
-		keyb_out((BYTE)(value | 0x80));
+		keyb_out((REG8)(value | 0x80));
 	}
 }
 
 void keystat_resetjoykey(void) {
 
 	int		i;
-	BYTE	key;
+	REG8	key;
 
 	for (i=0; i<12; i++) {
 		key = joykeytable[i];
 		if (keystat[key] & 0x80) {
 			keystat[key] &= 0x7f;
-			keyb_out((BYTE)(key | 0x80));
+			keyb_out((REG8)(key | 0x80));
 		}
 	}
 }
@@ -203,20 +203,20 @@ void keystat_resetjoykey(void) {
 // ----
 
 typedef struct {
-	BYTE	joysync;
-	BYTE	joylast;
-	BYTE	mouselast;
-	BYTE	padding;
-	BYTE	d_up;
-	BYTE	d_dn;
-	BYTE	d_lt;
-	BYTE	d_rt;
+	UINT8	joysync;
+	UINT8	joylast;
+	UINT8	mouselast;
+	UINT8	padding;
+	UINT8	d_up;
+	UINT8	d_dn;
+	UINT8	d_lt;
+	UINT8	d_rt;
 } KEYEXT;
 
 static	KEYEXT	keyext;
-static const BYTE mousedelta[] = {1, 1, 1, 1,
+static const UINT8 mousedelta[] = {1, 1, 1, 1,
 									2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 4};
-#define	MOUSESTEPMAX ((sizeof(mousedelta) / sizeof(BYTE)) - 1)
+#define	MOUSESTEPMAX ((sizeof(mousedelta) / sizeof(UINT8)) - 1)
 
 void keyext_flash(void) {
 
@@ -313,13 +313,13 @@ BYTE keyext_getmouse(SINT16 *x, SINT16 *y) {
 
 // ----
 
-static void IOOUTCALL keyb_o41(UINT port, BYTE dat) {
+static void IOOUTCALL keyb_o41(UINT port, REG8 dat) {
 
 	keyb.mode = dat;
 	(void)port;
 }
 
-static void IOOUTCALL keyb_o43(UINT port, BYTE dat) {
+static void IOOUTCALL keyb_o43(UINT port, REG8 dat) {
 
 	if ((!(dat & 0x08)) && (keyb.cmd & 0x08)) {
 		keyboard_resetsignal();
@@ -331,13 +331,13 @@ static void IOOUTCALL keyb_o43(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL keyb_i41(UINT port) {
+static REG8 IOINPCALL keyb_i41(UINT port) {
 
 	(void)port;
 	return(keyb.data);
 }
 
-static BYTE IOINPCALL keyb_i43(UINT port) {
+static REG8 IOINPCALL keyb_i43(UINT port) {
 
 	(void)port;
 	return(keyb.status);
@@ -373,7 +373,7 @@ void keyboard_resetsignal(void) {									// ver0.29
 	keyboard_reset();
 	for (i=0; i<0x80; i++) {
 		if (keystat[i]) {
-			keyb_out((BYTE)i);
+			keyb_out((REG8)i);
 		}
 	}
 }
@@ -445,10 +445,10 @@ void rs232c_midipanic(void) {
 
 // ----
 
-static void IOOUTCALL rs232c_o30(UINT port, BYTE dat) {
+static void IOOUTCALL rs232c_o30(UINT port, REG8 dat) {
 
 	if (cm_rs232c) {
-		cm_rs232c->write(cm_rs232c, dat);
+		cm_rs232c->write(cm_rs232c, (UINT8)dat);
 	}
 	if (sysport.c & 4) {
 		rs232c.send = 0;
@@ -460,7 +460,7 @@ static void IOOUTCALL rs232c_o30(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL rs232c_o32(UINT port, BYTE dat) {
+static void IOOUTCALL rs232c_o32(UINT port, REG8 dat) {
 
 	if (!(dat & 0xfd)) {
 		rs232c.dummyinst++;
@@ -518,13 +518,13 @@ static void IOOUTCALL rs232c_o32(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL rs232c_i30(UINT port) {
+static REG8 IOINPCALL rs232c_i30(UINT port) {
 
 	(void)port;
 	return(rs232c.data);
 }
 
-static BYTE IOINPCALL rs232c_i32(UINT port) {
+static REG8 IOINPCALL rs232c_i32(UINT port) {
 
 	if (!(rs232c_stat() & 0x20)) {
 		return(rs232c.result | 0x80);

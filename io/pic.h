@@ -1,23 +1,23 @@
 
 typedef struct {
 	int		levels;
-	BYTE	level[8];
+	UINT8	level[8];
 
 	int		levelsbak;
-	BYTE	levelbak[8];
+	UINT8	levelbak[8];
 
-	BYTE	pry[8];
-	BYTE	icw[4];
+	UINT8	pry[8];
+	UINT8	icw[4];
 
-	BYTE	imr;			// ocw1
-	BYTE	ocw3;
-	BYTE	irr;
-	BYTE	ext;
+	UINT8	imr;			// ocw1
+	UINT8	ocw3;
+	UINT8	irr;
+	UINT8	ext;
 
-	BYTE	isr;
-	BYTE	isrbak;
-	BYTE	writeicw;
-	BYTE	padding;
+	UINT8	isr;
+	UINT8	isrbak;
+	UINT8	writeicw;
+	UINT8	padding;
 } _PICITEM, *PICITEM;
 
 
@@ -67,9 +67,9 @@ void extirq_push(void);
 void extirq_pop(void);
 
 void pic_irq(void);
-void pic_setirq(BYTE irq);
-void pic_resetirq(BYTE irq);
-void pic_registext(BYTE irq);
+void pic_setirq(REG8 irq);
+void pic_resetirq(REG8 irq);
+void pic_registext(REG8 irq);
 
 void picmask(NEVENTITEM item);
 

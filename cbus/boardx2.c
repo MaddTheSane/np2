@@ -9,13 +9,13 @@
 #include	"s98.h"
 
 
-static void IOOUTCALL opn_o088(UINT port, BYTE dat) {
+static void IOOUTCALL opn_o088(UINT port, REG8 dat) {
 
 	opn.opn2reg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL opn_o08a(UINT port, BYTE dat) {
+static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 
 	if (opn.opn2reg < 0x10) {
 		if (opn.opn2reg != 0x0e) {
@@ -26,7 +26,7 @@ static void IOOUTCALL opn_o08a(UINT port, BYTE dat) {
 		if (opn.opn2reg < 0x30) {
 			if (opn.opn2reg == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					opngen_keyon((dat & 0x0f), dat);
+					opngen_keyon(dat & 0x0f, dat);
 				}
 			}
 			else {
@@ -44,13 +44,13 @@ static void IOOUTCALL opn_o08a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL opn_i088(UINT port) {
+static REG8 IOINPCALL opn_i088(UINT port) {
 
 	(void)port;
 	return(fmtimer.status);
 }
 
-static BYTE IOINPCALL opn_i08a(UINT port) {
+static REG8 IOINPCALL opn_i08a(UINT port) {
 
 	if (opn.opn2reg == 0x0e) {
 		return(0xff);
@@ -65,13 +65,13 @@ static BYTE IOINPCALL opn_i08a(UINT port) {
 
 // ----
 
-static void IOOUTCALL opna_o188(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o188(UINT port, REG8 dat) {
 
 	opn.opnreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL opna_o18a(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
@@ -88,11 +88,11 @@ static void IOOUTCALL opna_o18a(UINT port, BYTE dat) {
 		else if (opn.opnreg < 0x30) {
 			if (opn.opnreg == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					opngen_keyon((dat & 0x0f)+3, dat);
+					opngen_keyon((dat & 0x0f) + 3, dat);
 				}
 				else if (((dat & 0x0f) != 3) &&
 						((dat & 0x0f) < 7)) {
-					opngen_keyon((dat & 0x0f)+2, dat);
+					opngen_keyon((dat & 0x0f) + 2, dat);
 				}
 			}
 			else {
@@ -110,13 +110,13 @@ static void IOOUTCALL opna_o18a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL opna_o18c(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o18c(UINT port, REG8 dat) {
 
 	opn.extreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL opna_o18e(UINT port, BYTE dat) {
+static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 
 	S98_put(EXTEND2608, opn.extreg, dat);
 	opn.reg[opn.extreg + 0x100] = dat;
@@ -133,13 +133,13 @@ static void IOOUTCALL opna_o18e(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL opna_i188(UINT port) {
+static REG8 IOINPCALL opna_i188(UINT port) {
 
 	(void)port;
 	return(fmtimer.status);
 }
 
-static BYTE IOINPCALL opna_i18a(UINT port) {
+static REG8 IOINPCALL opna_i18a(UINT port) {
 
 	if (opn.opnreg == 0x0e) {
 		return(fmboard_getjoy(&psg2));
@@ -151,7 +151,7 @@ static BYTE IOINPCALL opna_i18a(UINT port) {
 	return(opn.reg[opn.opnreg]);
 }
 
-static BYTE IOINPCALL opna_i18c(UINT port) {
+static REG8 IOINPCALL opna_i18c(UINT port) {
 
 	if (opn.extend) {
 		return((fmtimer.status & 3) | (opn.adpcmmask & 8));
@@ -160,7 +160,7 @@ static BYTE IOINPCALL opna_i18c(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL opna_i18e(UINT port) {
+static REG8 IOINPCALL opna_i18e(UINT port) {
 
 	if (opn.extend) {
 		return(opn.reg[opn.opnreg]);
@@ -169,7 +169,7 @@ static BYTE IOINPCALL opna_i18e(UINT port) {
 	return(0xff);
 }
 
-static void extendchannel(BYTE enable) {
+static void extendchannel(REG8 enable) {
 
 	opn.extend = enable;
 	if (enable) {

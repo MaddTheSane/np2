@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"i286c.h"
 #include	"v30patch.h"
 #include	"memory.h"
@@ -11,7 +11,7 @@
 
 	I286CORE	i286core;
 
-const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
+const UINT8 iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,
 			0x00, 0x04, 0x04, 0x00, 0x04, 0x00, 0x00, 0x04,
 			0x00, 0x04, 0x04, 0x00, 0x04, 0x00, 0x00, 0x04,
@@ -48,26 +48,26 @@ const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 
 // ----
 
-	BYTE	_szpcflag8[0x200];
+	UINT8	_szpcflag8[0x200];
 
 #if !defined(MEMOPTIMIZE)
-	BYTE	_szpflag16[0x10000];
+	UINT8	_szpflag16[0x10000];
 #endif
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
-	BYTE	*_reg8_b53[256];
-	BYTE	*_reg8_b20[256];
+	UINT8	*_reg8_b53[256];
+	UINT8	*_reg8_b20[256];
 #endif
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 	UINT16	*_reg16_b53[256];
 	UINT16	*_reg16_b20[256];
 #endif
 
-void i286_initialize(void) {
+void i286c_initialize(void) {
 
 	UINT	i;
 	UINT	bit;
-	BYTE	f;
+	REG8	f;
 
 	for (i=0; i<0x100; i++) {
 		f = P_FLAG;
@@ -95,14 +95,14 @@ void i286_initialize(void) {
 		pos = ((i & 0x20)?0:1);
 #endif
 		pos += ((i >> 3) & 3) * 2;
-		_reg8_b53[i] = ((BYTE *)&I286_REG) + pos;
+		_reg8_b53[i] = ((UINT8 *)&I286_REG) + pos;
 #if defined(BYTESEX_LITTLE)
 		pos = ((i & 0x4)?1:0);
 #else
 		pos = ((i & 0x4)?0:1);
 #endif
 		pos += (i & 3) * 2;
-		_reg8_b20[i] = ((BYTE *)&I286_REG) + pos;
+		_reg8_b20[i] = ((UINT8 *)&I286_REG) + pos;
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 		_reg16_b53[i] = ((UINT16 *)&I286_REG) + ((i >> 3) & 7);
 		_reg16_b20[i] = ((UINT16 *)&I286_REG) + (i & 7);
@@ -130,21 +130,18 @@ void i286_initialize(void) {
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 	i286cea_initialize();
 #endif
-	v30init();
+	v30cinit();
 }
 
-void i286_reset(void) {
+void i286c_reset(void) {
 
-	ZeroMemory(&i286core.s, sizeof(i286core.s));
+	ZeroMemory(&I286_STAT, sizeof(I286_STAT));
 	I286_CS = 0x1fc0;
 	CS_BASE = 0x1fc00;
-	i286core.s.adrsmask = 0xfffff;
+	I286_ADRSMASK = 0xfffff;
 }
 
-void i286_resetprefetch(void) {
-}
-
-void CPUCALL i286_intnum(UINT vect, REG16 IP) {
+void CPUCALL i286c_intnum(UINT vect, REG16 IP) {
 
 const BYTE	*ptr;
 
@@ -162,7 +159,7 @@ const BYTE	*ptr;
 	I286_WORKCLOCK(20);
 }
 
-void CPUCALL i286_interrupt(BYTE vect) {
+void CPUCALL i286c_interrupt(REG8 vect) {
 
 	UINT	op;
 const BYTE	*ptr;
@@ -179,13 +176,13 @@ const BYTE	*ptr;
 	I286_TRAP = 0;
 
 	ptr = I286_MEM + (vect * 4);
-	I286_IP = LOADINTELWORD(ptr+0);				// real mode!
-	I286_CS = LOADINTELWORD(ptr+2);				// real mode!
+	I286_IP = LOADINTELWORD(ptr + 0);			// real mode!
+	I286_CS = LOADINTELWORD(ptr + 2);			// real mode!
 	CS_BASE = I286_CS << 4;
 	I286_WORKCLOCK(20);
 }
 
-void i286(void) {
+void i286c(void) {
 
 	UINT	opcode;
 
@@ -194,7 +191,7 @@ void i286(void) {
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
 			if (I286_TRAP) {
-				i286_interrupt(1);
+				i286c_interrupt(1);
 			}
 			dmap_i286();
 		} while(I286_REMCLOCK > 0);
@@ -214,7 +211,7 @@ void i286(void) {
 	}
 }
 
-void i286_step(void) {
+void i286c_step(void) {
 
 	UINT	opcode;
 

@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -28,10 +28,10 @@ void bios0x19(void) {
 	UINT16	dseg;
 	BYTE	flag;
 
-	if (I286_AH < 2) {
+	if (CPU_AH < 2) {
 		// 通信速度…
-		mode = I286_CH | 0x02;
-		speed = I286_AL;
+		mode = CPU_CH | 0x02;
+		speed = CPU_AL;
 		if (speed >= 8) {
 			speed = 4;						// 1200bps
 		}
@@ -56,69 +56,69 @@ void bios0x19(void) {
 		iocore_out8(0x32, 0x00);		// dummy instruction
 		iocore_out8(0x32, 0x40);		// reset
 		iocore_out8(0x32, mode);		// mode
-		iocore_out8(0x32, I286_CL);	// cmd
+		iocore_out8(0x32, CPU_CL);	// cmd
 #endif
 		iocore_out8(0x77, 0xb6);
 		iocore_out8(0x75, (BYTE)rs_speed[speed]);
 		iocore_out8(0x75, (BYTE)(rs_speed[speed] >> 8));
 
 		ZeroMemory(&rsb, sizeof(rsb));
-		rsb.FLAG = (I286_AH << 4);
-		rsb.CMD = I286_CL;
+		rsb.FLAG = (CPU_AH << 4);
+		rsb.CMD = CPU_CL;
 		sysport.c &= ~7;
-		if (!(I286_CL & RCMD_IR)) {
+		if (!(CPU_CL & RCMD_IR)) {
 			rsb.FLAG |= RFLAG_INIT;
-			if (I286_CL & RCMD_RXE) {
+			if (CPU_CL & RCMD_RXE) {
 				sysport.c |= 1;
 				pic.pi[0].imr &= ~PIC_RS232C;
 			}
 		}
 
-		rsb.STIME = I286_BH;
+		rsb.STIME = CPU_BH;
 		if (!rsb.STIME) {
 			rsb.STIME = 0x04;
 		}
-		rsb.RTIME = I286_BL;
+		rsb.RTIME = CPU_BL;
 		if (!rsb.RTIME) {
 			rsb.RTIME = 0x40;
 		}
-		doff = I286_DI + sizeof(RSBIOS);
+		doff = CPU_DI + sizeof(RSBIOS);
 		STOREINTELWORD(rsb.HEADP, doff);
 		STOREINTELWORD(rsb.PUTP, doff);
 		STOREINTELWORD(rsb.GETP, doff);
-		doff += I286_DX;
+		doff += CPU_DX;
 		STOREINTELWORD(rsb.TAILP, doff);
-		cnt = I286_DX >> 3;
+		cnt = CPU_DX >> 3;
 		STOREINTELWORD(rsb.XOFF, cnt);
-		cnt += I286_DX >> 2;
+		cnt += CPU_DX >> 2;
 		STOREINTELWORD(rsb.XON, cnt);
 
 		// ポインタ～
-		SETBIOSMEM16(MEMW_RS_CH0_OFST, I286_DI);
-		SETBIOSMEM16(MEMW_RS_CH0_SEG, I286_ES);
-		i286_memstr_write(I286_ES, I286_DI, &rsb, sizeof(rsb));
+		SETBIOSMEM16(MEMW_RS_CH0_OFST, CPU_DI);
+		SETBIOSMEM16(MEMW_RS_CH0_SEG, CPU_ES);
+		i286_memstr_write(CPU_ES, CPU_DI, &rsb, sizeof(rsb));
 
-		I286_AH = 0;
+		CPU_AH = 0;
 	}
-	else if (I286_AH < 7) {
+	else if (CPU_AH < 7) {
 		doff = GETBIOSMEM16(MEMW_RS_CH0_OFST);
 		dseg = GETBIOSMEM16(MEMW_RS_CH0_SEG);
 		if ((!doff) && (!dseg)) {
-			I286_AH = 1;
+			CPU_AH = 1;
 			return;
 		}
 		flag = i286_membyte_read(dseg, doff + R_FLAG);
 		if (!(flag & RFLAG_INIT)) {
-			I286_AH = 1;
+			CPU_AH = 1;
 			return;
 		}
-		switch(I286_AH) {
+		switch(CPU_AH) {
 			case 0x02:
-				I286_CX = i286_memword_read(dseg, doff + R_CNT);
+				CPU_CX = i286_memword_read(dseg, doff + R_CNT);
 				break;
 
 			case 0x03:
-				iocore_out8(0x30, I286_AL);
+				iocore_out8(0x30, CPU_AL);
 				break;
 
 			case 0x04:
@@ -128,7 +128,7 @@ void bios0x19(void) {
 
 					// データ引き取り
 					pos = i286_memword_read(dseg, doff + R_GETP);
-					I286_CX = i286_memword_read(dseg, pos);
+					CPU_CX = i286_memword_read(dseg, pos);
 
 					// 次のポインタをストア
 					pos += 2;
@@ -148,24 +148,24 @@ void bios0x19(void) {
 						flag &= ~RFLAG_XOFF;
 					}
 					flag &= ~RFLAG_BOVF;
-					I286_AH = 0;
+					CPU_AH = 0;
 					i286_membyte_write(dseg, doff + R_FLAG, flag);
 					return;
 				}
 				else {
-					I286_AH = 3;
+					CPU_AH = 3;
 				}
 				break;
 
 			case 0x05:
-				iocore_out8(0x32, I286_AL);
-				if (I286_AL & RCMD_IR) {
+				iocore_out8(0x32, CPU_AL);
+				if (CPU_AL & RCMD_IR) {
 					flag &= ~RFLAG_INIT;
 					i286_membyte_write(dseg, doff + R_FLAG, flag);
 					sysport.c &= ~1;
 					pic.pi[0].imr |= PIC_RS232C;
 				}
-				else if (!(I286_AL & RCMD_RXE)) {
+				else if (!(CPU_AL & RCMD_RXE)) {
 					sysport.c &= ~1;
 					pic.pi[0].imr |= PIC_RS232C;
 				}
@@ -173,22 +173,22 @@ void bios0x19(void) {
 					sysport.c |= 1;
 					pic.pi[0].imr &= ~PIC_RS232C;
 				}
-				i286_membyte_write(dseg, doff + R_CMD, I286_AL);
+				i286_membyte_write(dseg, doff + R_CMD, CPU_AL);
 				break;
 			case 0x06:
-				I286_CH = iocore_inp8(0x32);
-				I286_CL = iocore_inp8(0x33);
+				CPU_CH = iocore_inp8(0x32);
+				CPU_CL = iocore_inp8(0x33);
 				break;
 		}
-		I286_AH = 0;
+		CPU_AH = 0;
 		if (flag & RFLAG_BOVF) {
 			i286_membyte_write(dseg, doff + R_FLAG,
 											(BYTE)(flag & (~RFLAG_BOVF)));
-			I286_AH = 2;
+			CPU_AH = 2;
 		}
 	}
 	else {
-		I286_AH = 0;
+		CPU_AH = 0;
 	}
 }
 

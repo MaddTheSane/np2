@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 
 
@@ -16,15 +16,15 @@ void nevent_get1stevent(void) {
 
 	// 最短のイベントのクロック数をセット
 	if (nevent.readyevents) {
-		I286_BASECLOCK = nevent.item[nevent.level[0]].clock;
+		CPU_BASECLOCK = nevent.item[nevent.level[0]].clock;
 	}
 	else {
 		// イベントがない場合のクロック数をセット
-		I286_BASECLOCK = NEVENT_MAXCLOCK;
+		CPU_BASECLOCK = NEVENT_MAXCLOCK;
 	}
 
 	// カウンタへセット
-	I286_REMCLOCK = I286_BASECLOCK;
+	CPU_REMCLOCK = CPU_BASECLOCK;
 }
 
 static void nevent_execute(void) {
@@ -64,13 +64,13 @@ void nevent_progress(void) {
 	UINT		curid;
 	NEVENTITEM	item;
 
-	I286_CLOCK += I286_BASECLOCK;
+	CPU_CLOCK += CPU_BASECLOCK;
 	eventnum = 0;
 	nextbase = NEVENT_MAXCLOCK;
 	for (i=0; i<nevent.readyevents; i++) {
 		curid = nevent.level[i];
 		item = &nevent.item[curid];
-		item->clock -= I286_BASECLOCK;
+		item->clock -= CPU_BASECLOCK;
 		if (item->clock > 0) {
 			// イベント待ち中
 			nevent.level[eventnum++] = curid;
@@ -89,10 +89,10 @@ void nevent_progress(void) {
 		}
 	}
 	nevent.readyevents = eventnum;
-	I286_BASECLOCK = nextbase;
-	I286_REMCLOCK += nextbase;
+	CPU_BASECLOCK = nextbase;
+	CPU_REMCLOCK += nextbase;
 	nevent_execute();
-//	TRACEOUT(("nextbase = %d (%d)", nextbase, I286_REMCLOCK));
+//	TRACEOUT(("nextbase = %d (%d)", nextbase, CPU_REMCLOCK));
 }
 
 
@@ -145,7 +145,7 @@ void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute) {
 
 //	TRACEOUT(("event %d - %xclocks", id, eventclock));
 
-	clock = I286_BASECLOCK - I286_REMCLOCK;
+	clock = CPU_BASECLOCK - CPU_REMCLOCK;
 	item = &nevent.item[id];
 	item->proc = proc;
 	item->flag = 0;
@@ -179,10 +179,10 @@ void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute) {
 
 	// もし最短イベントだったら...
 	if (eventid == 0) {
-		clock = I286_BASECLOCK - item->clock;
-		I286_BASECLOCK -= clock;
-		I286_REMCLOCK -= clock;
-//		TRACEOUT(("reset nextbase -%d (%d)", clock, I286_REMCLOCK));
+		clock = CPU_BASECLOCK - item->clock;
+		CPU_BASECLOCK -= clock;
+		CPU_REMCLOCK -= clock;
+//		TRACEOUT(("reset nextbase -%d (%d)", clock, CPU_REMCLOCK));
 	}
 }
 
@@ -211,7 +211,7 @@ SINT32 nevent_getremain(UINT id) {
 	// 現在進行してるイベントを検索
 	for (i=0; i<nevent.readyevents; i++) {
 		if (nevent.level[i] == id) {
-			return(nevent.item[id].clock - (I286_BASECLOCK - I286_REMCLOCK));
+			return(nevent.item[id].clock - (CPU_BASECLOCK - CPU_REMCLOCK));
 		}
 	}
 	return(-1);
@@ -219,9 +219,9 @@ SINT32 nevent_getremain(UINT id) {
 
 void nevent_forceexit(void) {
 
-	if (I286_REMCLOCK > 0) {
-		I286_BASECLOCK -= I286_REMCLOCK;
-		I286_REMCLOCK = 0;
+	if (CPU_REMCLOCK > 0) {
+		CPU_BASECLOCK -= CPU_REMCLOCK;
+		CPU_REMCLOCK = 0;
 	}
 }
 

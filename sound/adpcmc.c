@@ -46,7 +46,7 @@ void adpcm_update(ADPCM ad) {
 	ad->level = (ad->reg.level * adpcmcfg.vol) >> 4;
 }
 
-void adpcm_setreg(ADPCM ad, BYTE reg, BYTE value) {
+void adpcm_setreg(ADPCM ad, REG8 reg, REG8 value) {
 
 	UINT32	addr;
 
@@ -115,7 +115,7 @@ void adpcm_setreg(ADPCM ad, BYTE reg, BYTE value) {
 	}
 }
 
-BYTE adpcm_status(ADPCM ad) {
+REG8 adpcm_status(ADPCM ad) {
 
 	return(((ad->status | 8) & ad->mask) | ad->play);
 }

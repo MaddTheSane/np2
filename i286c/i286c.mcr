@@ -24,16 +24,16 @@
 
 #if defined(I286C_TEST)
 
-extern BYTE BYTESZPF(UINT r);
-extern BYTE BYTESZPCF(UINT r);
+extern UINT8 BYTESZPF(UINT r);
+extern UINT8 BYTESZPCF(UINT r);
 #define	BYTESZPCF2(a)	BYTESZPCF((a) & 0x1ff)
-extern BYTE WORDSZPF(UINT32 r);
-extern BYTE WORDSZPCF(UINT32 r);
+extern UINT8 WORDSZPF(UINT32 r);
+extern UINT8 WORDSZPCF(UINT32 r);
 
 #elif !defined(MEMOPTIMIZE)
 
-extern	BYTE	_szpcflag8[0x200];
-extern	BYTE	_szpflag16[0x10000];
+extern	UINT8	_szpcflag8[0x200];
+extern	UINT8	_szpflag16[0x10000];
 #define	BYTESZPF(a)		(_szpcflag8[(a)])
 #define	BYTESZPCF(a)	(_szpcflag8[(a)])
 #define	BYTESZPCF2(a)	(_szpcflag8[(a) & 0x1ff])
@@ -42,7 +42,7 @@ extern	BYTE	_szpflag16[0x10000];
 
 #else
 
-extern	BYTE	_szpcflag8[0x200];
+extern	UINT8	_szpcflag8[0x200];
 
 #define	BYTESZPF(a)		(_szpcflag8[(a)])
 #define	BYTESZPCF(a)	(_szpcflag8[(a)])
@@ -59,20 +59,20 @@ extern	BYTE	_szpcflag8[0x200];
 // ---- reg position
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
-extern	BYTE	*_reg8_b53[256];
-extern	BYTE	*_reg8_b20[256];
+extern	UINT8	*_reg8_b53[256];
+extern	UINT8	*_reg8_b20[256];
 #define	REG8_B53(op)		_reg8_b53[(op)]
 #define	REG8_B20(op)		_reg8_b20[(op)]
 #else
 #if defined(BYTESEX_LITTLE)
 #define	REG8_B53(op)		\
-				(((BYTE *)&I286_REG) + (((op) >> 2) & 6) + (((op) >> 5) & 1))
+				(((UINT8 *)&I286_REG) + (((op) >> 2) & 6) + (((op) >> 5) & 1))
 #define	REG8_B20(op)		\
-				(((BYTE *)&I286_REG) + (((op) & 3) * 2) + (((op) >> 2) & 1))
+				(((UINT8 *)&I286_REG) + (((op) & 3) * 2) + (((op) >> 2) & 1))
 #else
-#define	REG8_B53(op)		(((BYTE *)&I286_REG) + (((op) >> 2) & 6) +	\
+#define	REG8_B53(op)		(((UINT8 *)&I286_REG) + (((op) >> 2) & 6) +	\
 													((((op) >> 5) & 1) ^ 1))
-#define	REG8_B20(op)		(((BYTE *)&I286_REG) + (((op) & 3) * 2) +	\
+#define	REG8_B20(op)		(((UINT8 *)&I286_REG) + (((op) & 3) * 2) +	\
 													((((op) >> 2) & 1) ^ 1))
 #endif
 #endif
@@ -111,13 +111,14 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 
 
 #define	SWAPBYTE(p, q) {											\
-		BYTE tmp = (p);												\
+		REG8 tmp;													\
+		tmp = (p);													\
 		(p) = (q);													\
 		(q) = tmp;													\
 	}
 
 #define	SWAPWORD(p, q) {											\
-		UINT16 tmp;													\
+		REG16 tmp;													\
 		tmp = (p);													\
 		(p) = (q);													\
 		(q) = tmp;													\
@@ -214,7 +215,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 #define	ADDWORD(r, d, s)											\
 		(r) = (s) + (d);											\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x8000;				\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= WORDSZPCF(r);
 
 
@@ -233,13 +234,13 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 #define	ADCBYTE(r, d, s) 											\
 		(r) = (I286_FLAGL & 1) + (s) + (d);							\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x80;					\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= BYTESZPCF(r);
 
 #define	ADCWORD(r, d, s) 											\
 		(r) = (I286_FLAGL & 1) + (s) + (d);							\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x8000;				\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= WORDSZPCF(r);
 
 
@@ -247,13 +248,13 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 #define	SBBBYTE(r, d, s) 											\
 		(r) = (d) - (s) - (I286_FLAGL & 1);							\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x80;					\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= BYTESZPCF2(r);
 
 #define	SBBWORD(r, d, s) 											\
 		(r) = (d) - (s) - (I286_FLAGL & 1);							\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x8000;				\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= WORDSZPCF(r);
 
 
@@ -273,7 +274,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 #define	SUBBYTE(r, d, s) 											\
 		(r) = (d) - (s);											\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x80;					\
-		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
+		I286_FLAGL = (UINT8)(((r) ^ (d) ^ (s)) & A_FLAG);			\
 		I286_FLAGL |= BYTESZPCF2(r);
 
 #define	SUBWORD(r, d, s) 											\
@@ -298,19 +299,19 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 #define	NEGBYTE(d, s) 												\
 		(d) = 0 - (s);												\
 		I286_OV = ((d) & (s)) & 0x80;								\
-		I286_FLAGL = (BYTE)(((d) ^ (s)) & A_FLAG);					\
+		I286_FLAGL = (UINT8)(((d) ^ (s)) & A_FLAG);					\
 		I286_FLAGL |= BYTESZPCF2(d);
 
 #define	NEGWORD(d, s) 												\
 		(d) = 0 - (s);												\
 		I286_OV = ((d) & (s)) & 0x8000;								\
-		I286_FLAGL = (BYTE)(((d) ^ (s)) & A_FLAG);					\
+		I286_FLAGL = (UINT8)(((d) ^ (s)) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPCF(d);
 
 
 #define	BYTE_MUL(r, d, s)											\
 		I286_FLAGL &= (Z_FLAG | S_FLAG | A_FLAG | P_FLAG);			\
-		(r) = (BYTE)(d) * (BYTE)(s);								\
+		(r) = (UINT8)(d) * (UINT8)(s);								\
 		I286_OV = (r) >> 8;											\
 		if (I286_OV) {												\
 			I286_FLAGL |= C_FLAG;									\
@@ -348,8 +349,8 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		(s)++;														\
 		I286_OV = (s) & (b ^ (s)) & 0x80;							\
 		I286_FLAGL &= C_FLAG;										\
-		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= BYTESZPF((BYTE)(s));							\
+		I286_FLAGL |= (UINT8)((b ^ (s)) & A_FLAG);					\
+		I286_FLAGL |= BYTESZPF((UINT8)(s));							\
 	}
 
 #define	INCWORD(s) {												\
@@ -357,7 +358,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		(s)++;														\
 		I286_OV = (s) & (b ^ (s)) & 0x8000;							\
 		I286_FLAGL &= C_FLAG;										\
-		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
+		I286_FLAGL |= (UINT8)((b ^ (s)) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPF((UINT16)(s));						\
 	}
 
@@ -368,8 +369,8 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		b--;														\
 		I286_OV = (s) & (b ^ (s)) & 0x80;							\
 		I286_FLAGL &= C_FLAG;										\
-		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= BYTESZPF((BYTE)b);							\
+		I286_FLAGL |= (UINT8)((b ^ (s)) & A_FLAG);					\
+		I286_FLAGL |= BYTESZPF((UINT8)b);							\
 		(s) = b;													\
 	}
 
@@ -378,7 +379,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		b--;														\
 		I286_OV = (s) & (b ^ (s)) & 0x8000;							\
 		I286_FLAGL &= C_FLAG;										\
-		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
+		I286_FLAGL |= (UINT8)((b ^ (s)) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPF((UINT16)b);							\
 		(s) = b;													\
 	}
@@ -392,7 +393,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		(r) = (UINT16)d;											\
 		I286_OV = d & (d ^ s) & 0x8000;								\
 		I286_FLAGL &= C_FLAG;										\
-		I286_FLAGL |= (BYTE)((d ^ s) & A_FLAG);						\
+		I286_FLAGL |= (UINT8)((d ^ s) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPF((UINT16)d);							\
 		I286_WORKCLOCK(clock);										\
 	}
@@ -404,7 +405,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		(r) = (UINT16)d;											\
 		I286_OV = s & (d ^ s) & 0x8000;								\
 		I286_FLAGL &= C_FLAG;										\
-		I286_FLAGL |= (BYTE)((d ^ s) & A_FLAG);						\
+		I286_FLAGL |= (UINT8)((d ^ s) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPF((UINT16)d);							\
 		I286_WORKCLOCK(clock);										\
 	}
@@ -502,5 +503,5 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 	}
 
 
-#define	INT_NUM(a, b)		i286_intnum((a), (REG16)(b))
+#define	INT_NUM(a, b)		i286c_intnum((a), (REG16)(b))
 

@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
@@ -52,12 +52,12 @@ typedef struct {
 } _IOCORE, *IOCORE;
 
 static	_IOCORE		iocore;
-static	BYTE		ioterminate[0x100];
+static	UINT8		ioterminate[0x100];
 
 
 // ----
 
-static void IOOUTCALL defout(UINT port, BYTE dat) {
+static void IOOUTCALL defout8(UINT port, REG8 dat) {
 
 	if ((port & 0xfff0) == cs4231.port) {
 		cs4231io_w8(port, dat);
@@ -69,7 +69,7 @@ static void IOOUTCALL defout(UINT port, BYTE dat) {
 	}
 }
 
-static BYTE IOINPCALL definp(UINT port) {
+static REG8 IOINPCALL definp8(UINT port) {
 
 	if ((port & 0xfff0) == cs4231.port) {
 		return(cs4231io_r8(port));
@@ -344,7 +344,7 @@ BOOL iocore_attachinp(UINT port, IOINP func) {
 void iocore_create(void) {
 
 	UINT	i;
-const BYTE	*p;
+const UINT8	*p;
 	UINT	r;
 
 	ZeroMemory(&iocore, sizeof(iocore));
@@ -353,7 +353,7 @@ const BYTE	*p;
 		p = termtbl[i].item;
 		r = termtbl[i].items;
 		do {
-			ioterminate[*p++] = (BYTE)(i + 1);
+			ioterminate[*p++] = (UINT8)(i + 1);
 		} while(--r);
 	}
 }
@@ -387,8 +387,8 @@ BOOL iocore_build(void) {
 		goto icbld_err;
 	}
 	for (i=0; i<256; i++) {
-		cmn->ioout[i] = defout;
-		cmn->ioinp[i] = definp;
+		cmn->ioout[i] = defout8;
+		cmn->ioinp[i] = definp8;
 	}
 	sys = (IOFUNC)listarray_append(iotbl, cmn);
 	if (sys == NULL) {
@@ -461,7 +461,9 @@ void iocore_bind(void) {
 	iocore_cb(bindfn, sizeof(bindfn)/sizeof(IOCBFN));
 }
 
-void IOOUTCALL iocore_out8(UINT port, BYTE dat) {
+#if !defined(TRACE)
+
+void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 
 	IOFUNC	iof;
 
@@ -469,7 +471,7 @@ void IOOUTCALL iocore_out8(UINT port, BYTE dat) {
 	iof->ioout[port & 0xff](port, dat);
 }
 
-BYTE IOINPCALL iocore_inp8(UINT port) {
+REG8 IOINPCALL iocore_inp8(UINT port) {
 
 	IOFUNC	iof;
 
@@ -477,7 +479,36 @@ BYTE IOINPCALL iocore_inp8(UINT port) {
 	return(iof->ioinp[port & 0xff](port));
 }
 
-void IOOUTCALL iocore_out16(UINT port, UINT16 dat) {
+#else
+
+void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
+
+	IOFUNC	iof;
+
+	if (dat & (~0xff)) {
+		TRACEOUT(("iocore_out8 - %x %x", port, dat));
+	}
+	iof = iocore.base[(port >> 8) & 0xff];
+	iof->ioout[port & 0xff](port, dat);
+}
+
+REG8 IOINPCALL iocore_inp8(UINT port) {
+
+	IOFUNC	iof;
+	REG8	ret;
+
+	iof = iocore.base[(port >> 8) & 0xff];
+	ret = iof->ioinp[port & 0xff](port);
+
+	if (ret & (~0xff)) {
+		TRACEOUT(("iocore_inp8 - %x %x", port, ret));
+	}
+	return(ret);
+}
+
+#endif
+
+void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
 
 	IOFUNC	iof;
 
@@ -495,21 +526,21 @@ void IOOUTCALL iocore_out16(UINT port, UINT16 dat) {
 			case TERM_MINUS:
 			case TERM_EXT08:
 				iof = iocore.base[(port >> 8) & 0xff];
-				iof->ioout[port & 0xff](port, (BYTE)dat);
+				iof->ioout[port & 0xff](port, (UINT8)dat);
 				return;
 		}
 	}
 	iof = iocore.base[(port >> 8) & 0xff];
-	iof->ioout[port & 0xff](port, (BYTE)dat);
+	iof->ioout[port & 0xff](port, (UINT8)dat);
 	port++;
 	iof = iocore.base[(port >> 8) & 0xff];
-	iof->ioout[port & 0xff](port, (BYTE)(dat >> 8));
+	iof->ioout[port & 0xff](port, (UINT8)(dat >> 8));
 }
 
-UINT16 IOINPCALL iocore_inp16(UINT port) {
+REG16 IOINPCALL iocore_inp16(UINT port) {
 
 	IOFUNC	iof;
-	BYTE	ret;
+	REG8	ret;
 
 	if ((port & 0xfffc) == 0x005c) {
 		return(artic_r16(port));
@@ -522,7 +553,7 @@ UINT16 IOINPCALL iocore_inp16(UINT port) {
 
 			case TERM_ACTIVE:
 				ret = iof->ioinp[port & 0xff](port);
-				return((I286_AX & 0xff00) + ret);
+				return((CPU_AX & 0xff00) + ret);
 
 			case TERM_PLUS:
 				ret = iof->ioinp[port & 0xff](port);
@@ -540,5 +571,19 @@ UINT16 IOINPCALL iocore_inp16(UINT port) {
 	port++;
 	iof = iocore.base[(port >> 8) & 0xff];
 	return((UINT16)((iof->ioinp[port & 0xff](port) << 8) + ret));
+}
+
+void IOOUTCALL iocore_out32(UINT port, UINT32 dat) {
+
+	iocore_out16(port, (UINT16)dat);
+	iocore_out16(port+2, (UINT16)(dat >> 16));
+}
+
+UINT32 IOINPCALL iocore_inp32(UINT port) {
+
+	REG16	ret;
+
+	ret = iocore_inp16(port);
+	return(ret + (iocore_inp16(port+2) << 16));
 }
 

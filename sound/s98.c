@@ -16,7 +16,7 @@
 
 typedef struct {
 	BYTE	magic[3];
-	BYTE	formatversion;
+	UINT8	formatversion;
 	BYTE	timerinfo[4];
 	BYTE	timerinfo2[4];
 	BYTE	compressing[4];
@@ -61,7 +61,7 @@ static void S98_flush(void) {
 	}
 }
 
-static void S98_putc(BYTE data) {
+static void S98_putc(REG8 data) {
 
 	s98log.buf[s98log.p++] = data;
 	if (s98log.p == S98LOG_BUFSIZE) {
@@ -83,10 +83,10 @@ static void S98_putint(void) {
 			S98_putc(0xFE);					/* SYNC(n) */
 			s98log.intcount -= 2;
 			while (s98log.intcount > 0x7f) {
-				S98_putc((BYTE)(0x80 | (s98log.intcount & 0x7f)));
+				S98_putc((REG8)(0x80 | (s98log.intcount & 0x7f)));
 				s98log.intcount >>= 7;
 			}
-			S98_putc((BYTE)(s98log.intcount & 0x7f));
+			S98_putc((REG8)(s98log.intcount & 0x7f));
 		}
 		s98log.intcount = 0;
 	}
@@ -138,11 +138,11 @@ BOOL S98_open(const char *filename) {
 	for (i=0x30; i<0xb6; i++) {
 		if ((i & 3) != 3) {
 			S98_putc(NORMAL2608);
-			S98_putc((BYTE)i);
+			S98_putc((REG8)i);
 			S98_putc(opn.reg[i]);
 #if 0
 			S98_putc(EXTEND2608);
-			S98_putc((BYTE)i);
+			S98_putc((REG8)i);
 			S98_putc(opn.reg[i+0x100]);
 #endif
 		}
@@ -150,7 +150,7 @@ BOOL S98_open(const char *filename) {
 	// PSG
 	for (i=0x00; i<0x0e; i++) {
 		S98_putc(NORMAL2608);
-		S98_putc((BYTE)i);
+		S98_putc((REG8)i);
 		S98_putc(((BYTE *)&psg1.reg)[i]);
 	}
 #endif
@@ -174,7 +174,7 @@ void S98_close(void) {
 	}
 }
 
-void S98_put(BYTE module, BYTE addr, BYTE data) {
+void S98_put(REG8 module, REG8 addr, REG8 data) {
 
 	if (s98log.fh != FILEH_INVALID) {
 		S98_putint();

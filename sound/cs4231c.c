@@ -31,7 +31,7 @@ void cs4231_setvol(UINT vol) {
 
 void cs4231_dma(NEVENTITEM item) {
 
-	BYTE	ret;
+	REG8	ret;
 	SINT32	cnt;
 
 	if (item->flag & NEVENT_SETEVENT) {
@@ -52,7 +52,7 @@ void cs4231_dma(NEVENTITEM item) {
 	(void)item;
 }
 
-BYTE DMACCALL cs4231dmafunc(BYTE func) {
+REG8 DMACCALL cs4231dmafunc(REG8 func) {
 
 	SINT32	cnt;
 
@@ -84,7 +84,7 @@ void cs4231_update(void) {
 }
 
 
-void cs4231_control(UINT index, BYTE value) {
+void cs4231_control(UINT index, REG8 value) {
 
 	*(((BYTE *)(&cs4231.reg)) + index) = value;
 	switch(index) {

@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"i286x.h"
 #include	"i286xadr.h"
 #include	"i286xs.h"
@@ -52,13 +52,13 @@ const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x80, 0x84, 0x84, 0x80, 0x84, 0x80, 0x80, 0x84};
 
 
-void i286_initialize(void) {
+void i286x_initialize(void) {
 
 	i286xadr_init();
-	v30init();
+	v30xinit();
 }
 
-void i286_reset(void) {
+void i286x_reset(void) {
 
 	ZeroMemory(&i286core.s, sizeof(i286core.s));
 	I286_CS = 0x1fc0;
@@ -67,7 +67,7 @@ void i286_reset(void) {
 }
 
 
-LABEL void i286_resetprefetch(void) {
+LABEL void i286x_resetprefetch(void) {
 
 	__asm {
 				pushad
@@ -79,7 +79,7 @@ LABEL void i286_resetprefetch(void) {
 	}
 }
 
-LABEL void __fastcall i286_interrupt(BYTE vect) {
+LABEL void __fastcall i286x_interrupt(BYTE vect) {
 
 	__asm {
 				pushad
@@ -169,7 +169,7 @@ LABEL void __fastcall i286x_localint(void) {
 
 
 
-LABEL void i286(void) {
+LABEL void i286x(void) {
 
 	__asm {
 				pushad
@@ -217,7 +217,7 @@ i286notrap:		mov		dword ptr (i286core.s.prefetchque), ebx
 
 
 
-LABEL void i286_step(void) {
+LABEL void i286x_step(void) {
 
 	__asm {
 				pushad

@@ -11,12 +11,12 @@ extern	CS4231CFG	cs4231cfg;
 
 // ---- ï‚äÆÇ≠ÇÁÇ¢ÇµÇÊÇ§ÇÊÅc
 
-BYTE cs4231_nodecode(void) {
+REG8 cs4231_nodecode(void) {
 
 	return(0);
 }
 
-static BYTE cs4231_pcm8s(void) {
+static REG8 cs4231_pcm8s(void) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -58,7 +58,7 @@ p8s_stop:
 	return((leng < 2)?1:0);
 }
 
-static BYTE cs4231_pcm8m(void) {
+static REG8 cs4231_pcm8m(void) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -102,7 +102,7 @@ p8m_stop:
 	return((leng == 0)?1:0);
 }
 
-static BYTE cs4231_pcm16s(void) {
+static REG8 cs4231_pcm16s(void) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -148,7 +148,7 @@ p16s_stop:
 	return((leng < 4)?1:0);
 }
 
-static BYTE cs4231_pcm16m(void) {
+static REG8 cs4231_pcm16m(void) {
 
 	SINT32	leng;
 	UINT	indatas;

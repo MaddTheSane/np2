@@ -67,7 +67,7 @@ void soundrom_load(UINT32 address, const char *primary) {
 	soundrom.address = address;
 }
 
-void soundrom_loadex(BYTE sw, const char *primary) {
+void soundrom_loadex(UINT sw, const char *primary) {
 
 	if (sw < 4) {
 		soundrom_load((0xc8000 + ((UINT32)sw << 14)), primary);

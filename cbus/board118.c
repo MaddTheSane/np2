@@ -9,13 +9,13 @@
 #include	"s98.h"
 
 
-static void IOOUTCALL ymf_o188(UINT port, BYTE dat) {
+static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
 	opn.opnreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL ymf_o18a(UINT port, BYTE dat) {
+static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
@@ -49,13 +49,13 @@ static void IOOUTCALL ymf_o18a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL ymf_o18c(UINT port, BYTE dat) {
+static void IOOUTCALL ymf_o18c(UINT port, REG8 dat) {
 
 	opn.extreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL ymf_o18e(UINT port, BYTE dat) {
+static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 
 	S98_put(EXTEND2608, opn.extreg, dat);
 	opn.reg[opn.extreg + 0x100] = dat;
@@ -73,13 +73,13 @@ static void IOOUTCALL ymf_o18e(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL ymf_i188(UINT port) {
+static REG8 IOINPCALL ymf_i188(UINT port) {
 
 	(void)port;
 	return(fmtimer.status);
 }
 
-static BYTE IOINPCALL ymf_i18a(UINT port) {
+static REG8 IOINPCALL ymf_i18a(UINT port) {
 
 	if (opn.opnreg == 0x0e) {
 		return(fmboard_getjoy(&psg1));
@@ -91,7 +91,7 @@ static BYTE IOINPCALL ymf_i18a(UINT port) {
 	return(opn.reg[opn.opnreg]);
 }
 
-static BYTE IOINPCALL ymf_i18c(UINT port) {
+static REG8 IOINPCALL ymf_i18c(UINT port) {
 
 	if (opn.extend) {
 		return(fmtimer.status & 3);
@@ -100,7 +100,7 @@ static BYTE IOINPCALL ymf_i18c(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL ymf_i18e(UINT port) {
+static REG8 IOINPCALL ymf_i18e(UINT port) {
 
 	if (opn.extend) {
 		return(opn.reg[opn.opnreg]);
@@ -109,7 +109,7 @@ static BYTE IOINPCALL ymf_i18e(UINT port) {
 	return(0xff);
 }
 
-static void extendchannel(BYTE enable) {
+static void extendchannel(REG8 enable) {
 
 	opn.extend = enable;
 	if (enable) {
@@ -123,14 +123,14 @@ static void extendchannel(BYTE enable) {
 	}
 }
 
-static void IOOUTCALL ymf_oa460(UINT port, BYTE dat) {
+static void IOOUTCALL ymf_oa460(UINT port, REG8 dat) {
 
 	cs4231.extfunc = dat;
-	extendchannel((BYTE)(dat & 1));
+	extendchannel((REG8)(dat & 1));
 	(void)port;
 }
 
-static BYTE IOINPCALL ymf_ia460(UINT port) {
+static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 	(void)port;
 	return(0x80 | (cs4231.extfunc & 1));

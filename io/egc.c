@@ -19,7 +19,7 @@ static const UINT16 maskword[16][4] = {
 				{0x0000,0xffff,0xffff,0xffff}, {0xffff,0xffff,0xffff,0xffff}};
 
 
-static void IOOUTCALL egc_o4a0(UINT port, BYTE value) {
+static void IOOUTCALL egc_o4a0(UINT port, REG8 value) {
 
 	if (!(vramop.operate & VOP_EGCBIT)) {
 		return;
@@ -130,7 +130,7 @@ void egc_bind(void) {
 	}
 }
 
-void IOOUTCALL egc_w16(UINT port, UINT16 value) {
+void IOOUTCALL egc_w16(UINT port, REG16 value) {
 
 	if (!(vramop.operate & VOP_EGCBIT)) {
 		return;

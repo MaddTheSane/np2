@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"lio.h"
 
@@ -17,9 +17,9 @@ BYTE lio_gpset(void) {
 	SINT16		x;
 	SINT16		y;
 
-	i286_memstr_read(I286_DS, I286_BX, &gpset, sizeof(gpset));
+	i286_memstr_read(CPU_DS, CPU_BX, &gpset, sizeof(gpset));
 	if (gpset.pal >= lio.gcolor1.palmax) {
-		if (I286_AH == 2) {
+		if (CPU_AH == 2) {
 			gpset.pal = lio.gcolor1.bgcolor;
 		}
 		else {

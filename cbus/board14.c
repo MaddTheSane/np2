@@ -13,7 +13,7 @@
 
 // ---- 8253C-2
 
-static UINT16 pit3_latch(void) {
+static UINT pit3_latch(void) {
 
 	SINT32	clock;
 
@@ -24,12 +24,12 @@ static UINT16 pit3_latch(void) {
 		if (pc.baseclock == PCBASECLOCK25) {
 			clock = clock * 13 / 16;
 		}
-		return((UINT16)clock);
+		return(clock);
 	}
 	return(0);
 }
 
-static void pit3_setflag(BYTE value) {
+static void pit3_setflag(REG8 value) {
 
 	pit.flag[3] = 0;
 	if (value & 0x30) {
@@ -41,7 +41,7 @@ static void pit3_setflag(BYTE value) {
 	}
 }
 
-static BOOL pit3_setcount(BYTE value) {
+static BOOL pit3_setcount(REG8 value) {
 
 	switch(pit.mode[3] & 0x30) {
 		case 0x10:		// access low
@@ -67,10 +67,10 @@ static BOOL pit3_setcount(BYTE value) {
 	return(FALSE);
 }
 
-static BYTE pit3_getcount(void) {
+static REG8 pit3_getcount(void) {
 
-	BYTE	ret;
-	UINT16	w;
+	REG8	ret;
+	REG16	w;
 
 	if (!(pit.mode[3] & 0x30)) {
 		w = pit.latch[3];
@@ -80,17 +80,17 @@ static BYTE pit3_getcount(void) {
 	}
 	switch(pit.mode[3] & 0x30) {
 		case 0x10:						// access low
-			return((BYTE)w);
+			return((UINT8)w);
 
 		case 0x20:						// access high
-			return((BYTE)(w >> 8));
+			return((UINT8)(w >> 8));
 	}
 										// access word
 	if (!(pit.flag[3] & 1)) {
-		ret = (BYTE)w;
+		ret = (UINT8)w;
 	}
 	else {
-		ret = (BYTE)(w >> 8);
+		ret = (UINT8)(w >> 8);
 	}
 	pit.flag[3] ^= 1;
 	return(ret);
@@ -131,19 +131,19 @@ void musicgenint(NEVENTITEM item) {
 
 // ---- I/O
 
-static void IOOUTCALL musicgen_o088(UINT port, BYTE dat) {
+static void IOOUTCALL musicgen_o088(UINT port, REG8 dat) {
 
 	musicgen.porta = dat;
 	(void)port;
 }
 
-static void IOOUTCALL musicgen_o08a(UINT port, BYTE dat) {
+static void IOOUTCALL musicgen_o08a(UINT port, REG8 dat) {
 
 	musicgen.portb = dat;
 	(void)port;
 }
 
-static void IOOUTCALL musicgen_o08c(UINT port, BYTE dat) {
+static void IOOUTCALL musicgen_o08c(UINT port, REG8 dat) {
 
 	if (dat & 0x80) {
 		if (!(musicgen.portc & 0x80)) {
@@ -154,7 +154,7 @@ static void IOOUTCALL musicgen_o08c(UINT port, BYTE dat) {
 			musicgen.sync = 0;
 			sound_sync();
 			musicgen.key[musicgen.ch] = dat;
-			tms3631_setkey(&tms3631, (BYTE)musicgen.ch, dat);
+			tms3631_setkey(&tms3631, (REG8)musicgen.ch, dat);
 		}
 		else if ((!(dat & 0x40)) && (musicgen.portc & 0x40)) {
 			musicgen.sync = 1;
@@ -165,7 +165,7 @@ static void IOOUTCALL musicgen_o08c(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL musicgen_o188(UINT port, BYTE dat) {
+static void IOOUTCALL musicgen_o188(UINT port, REG8 dat) {
 
 	sound_sync();
 	musicgen.mask = dat;
@@ -173,7 +173,7 @@ static void IOOUTCALL musicgen_o188(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL musicgen_o18c(UINT port, BYTE dat) {
+static void IOOUTCALL musicgen_o18c(UINT port, REG8 dat) {
 
 	if (!pit3_setcount(dat)) {
 		setmusicgenevent(NEVENT_ABSOLUTE);
@@ -181,49 +181,49 @@ static void IOOUTCALL musicgen_o18c(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL musicgen_o18e(UINT port, BYTE dat) {
+static void IOOUTCALL musicgen_o18e(UINT port, REG8 dat) {
 
 	pit3_setflag(dat);
 	(void)port;
 }
 
-static BYTE IOINPCALL musicgen_i088(UINT port) {
+static REG8 IOINPCALL musicgen_i088(UINT port) {
 
 	(void)port;
 	return(musicgen.porta);
 }
 
-static BYTE IOINPCALL musicgen_i08a(UINT port) {
+static REG8 IOINPCALL musicgen_i08a(UINT port) {
 
 	(void)port;
 	return(musicgen.portb);
 }
 
-static BYTE IOINPCALL musicgen_i08c(UINT port) {
+static REG8 IOINPCALL musicgen_i08c(UINT port) {
 
 	(void)port;
 	return(musicgen.portc);
 }
 
-static BYTE IOINPCALL musicgen_i08e(UINT port) {
+static REG8 IOINPCALL musicgen_i08e(UINT port) {
 
 	(void)port;
 	return(0x08);
 }
 
-static BYTE IOINPCALL musicgen_i188(UINT port) {
+static REG8 IOINPCALL musicgen_i188(UINT port) {
 
 	(void)port;
 	return(musicgen.mask);
 }
 
-static BYTE IOINPCALL musicgen_i18c(UINT port) {
+static REG8 IOINPCALL musicgen_i18c(UINT port) {
 
 	(void)port;
 	return(pit3_getcount());
 }
 
-static BYTE IOINPCALL musicgen_i18e(UINT port) {
+static REG8 IOINPCALL musicgen_i18e(UINT port) {
 
 	(void)port;
 #if 1
@@ -264,10 +264,10 @@ void board14_bind(void) {
 
 void board14_allkeymake(void) {
 
-	int		i;
+	REG8	i;
 
 	for (i=0; i<8; i++) {
-		tms3631_setkey(&tms3631, (BYTE)i, musicgen.key[i]);
+		tms3631_setkey(&tms3631, i, musicgen.key[i]);
 	}
 }
 

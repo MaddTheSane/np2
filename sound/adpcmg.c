@@ -10,11 +10,11 @@ static const UINT adpcmdeltatable[8] = {
 			228,	228,	228,	228,	308,	408,	512,	612};
 
 
-BYTE SOUNDCALL adpcm_readsample(ADPCM ad) {
+REG8 SOUNDCALL adpcm_readsample(ADPCM ad) {
 
 	UINT32	pos;
-	BYTE	data;
-	BYTE	ret;
+	REG8	data;
+	REG8	ret;
 
 	if ((ad->reg.ctrl1 & 0x60) == 0x20) {
 		pos = ad->pos & 0x1fffff;
@@ -24,7 +24,7 @@ BYTE SOUNDCALL adpcm_readsample(ADPCM ad) {
 		}
 		else {
 			const BYTE *ptr;
-			BYTE bit;
+			REG8 bit;
 			UINT tmp;
 			ptr = ad->buf + ((pos >> 3) & 0x7fff);
 			bit = 1 << (pos & 7);
@@ -36,7 +36,7 @@ BYTE SOUNDCALL adpcm_readsample(ADPCM ad) {
 			tmp += (ptr[0x28000] & bit) << 5;
 			tmp += (ptr[0x30000] & bit) << 6;
 			tmp += (ptr[0x38000] & bit) << 7;
-			data = (BYTE)(tmp >> (pos & 7));
+			data = (REG8)(tmp >> (pos & 7));
 			pos++;
 		}
 		if (pos != ad->stop) {
@@ -58,7 +58,7 @@ BYTE SOUNDCALL adpcm_readsample(ADPCM ad) {
 	return(ret);
 }
 
-void SOUNDCALL adpcm_datawrite(ADPCM ad, BYTE data) {
+void SOUNDCALL adpcm_datawrite(ADPCM ad, REG8 data) {
 
 	UINT32	pos;
 
@@ -69,8 +69,8 @@ void SOUNDCALL adpcm_datawrite(ADPCM ad, BYTE data) {
 	}
 	else {
 		BYTE *ptr;
-		BYTE bit;
-		BYTE mask;
+		UINT8 bit;
+		UINT8 mask;
 		ptr = ad->buf + ((pos >> 3) & 0x7fff);
 		bit = 1 << (pos & 7);
 		mask = ~bit;
@@ -136,7 +136,7 @@ static void SOUNDCALL getadpcmdata(ADPCM ad) {
 	}
 	else {
 		const BYTE *ptr;
-		BYTE bit;
+		REG8 bit;
 		UINT tmp;
 		ptr = ad->buf + ((pos >> 3) & 0x7fff);
 		bit = 1 << (pos & 7);

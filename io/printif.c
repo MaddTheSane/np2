@@ -1,14 +1,14 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
 
 // ---- I/O
 
-static BYTE IOINPCALL prt_i42(UINT port) {
+static REG8 IOINPCALL prt_i42(UINT port) {
 
-	BYTE	ret;
+	REG8	ret;
 
 	ret = 0x84;
 	if (pc.cpumode & CPUMODE_8MHz) {
@@ -21,7 +21,7 @@ static BYTE IOINPCALL prt_i42(UINT port) {
 		ret |= 0x08;
 	}
 #ifndef EPSON_286
-	if (CPUTYPE & CPUTYPE_V30) {
+	if (CPU_TYPE & CPUTYPE_V30) {
 		ret |= 0x02;
 	}
 #else

@@ -7,13 +7,13 @@
 #include	"fmboard.h"
 
 
-static void IOOUTCALL csctrl_oc24(UINT port, BYTE dat) {
+static void IOOUTCALL csctrl_oc24(UINT port, REG8 dat) {
 
 	cs4231.portctrl = dat;
 	(void)port;
 }
 
-static void IOOUTCALL csctrl_oc2b(UINT port, BYTE dat) {
+static void IOOUTCALL csctrl_oc2b(UINT port, REG8 dat) {
 
 	if ((cs4231.portctrl & 0x2f) == 0x20) {
 		cs4231.port &= 0xff00;
@@ -22,7 +22,7 @@ static void IOOUTCALL csctrl_oc2b(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL csctrl_oc2d(UINT port, BYTE dat) {
+static void IOOUTCALL csctrl_oc2d(UINT port, REG8 dat) {
 
 	if ((cs4231.portctrl & 0x2f) == 0x20) {
 		cs4231.port &= 0x00ff;
@@ -31,13 +31,13 @@ static void IOOUTCALL csctrl_oc2d(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL csctrl_ic24(UINT port) {
+static REG8 IOINPCALL csctrl_ic24(UINT port) {
 
 	(void)port;
 	return(0x80 | cs4231.portctrl);
 }
 
-static BYTE IOINPCALL csctrl_ic2b(UINT port) {
+static REG8 IOINPCALL csctrl_ic2b(UINT port) {
 
 	switch(cs4231.portctrl & 0x0f) {
 		case 0x00:
@@ -53,7 +53,7 @@ static BYTE IOINPCALL csctrl_ic2b(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL csctrl_ic2d(UINT port) {
+static REG8 IOINPCALL csctrl_ic2d(UINT port) {
 
 	switch(cs4231.portctrl & 0x0f) {
 		case 0x00:
@@ -96,7 +96,7 @@ void cs4231io_bind(void) {
 	iocore_attachinp(0xc2d, csctrl_ic2d);
 }
 
-void IOOUTCALL cs4231io_w8(UINT port, BYTE value) {
+void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
 
 	switch(port & 0x0f) {
 		case 0:
@@ -121,7 +121,7 @@ void IOOUTCALL cs4231io_w8(UINT port, BYTE value) {
 	}
 }
 
-BYTE IOINPCALL cs4231io_r8(UINT port) {
+REG8 IOINPCALL cs4231io_r8(UINT port) {
 
 	switch(port & 0x0f) {
 		case 0:

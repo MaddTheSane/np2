@@ -10,7 +10,7 @@
 #include	"view1mb.h"
 #include	"viewasm.h"
 #include	"viewsnd.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -156,8 +156,8 @@ void viewcmn_setbank(NP2VIEW_T *view) {
 
 	dmem = &view->dmem;
 	dmem->vram = gdcs.disp;
-	dmem->itf = i286core.s.itfbank;
-	dmem->A20 = (BYTE)((i286core.s.adrsmask >> 20) & 1);
+	dmem->itf = CPU_ITFBANK;
+	dmem->A20 = (BYTE)((CPU_ADRSMASK >> 20) & 1);
 }
 
 
@@ -184,10 +184,10 @@ void viewcmn_setmenuseg(HWND hwnd) {
 	hmenu = GetSubMenu(hparent, 2);
 
 	if (hmenu) {
-		modmenu(hmenu, 2, IDM_SEGCS, "CS", I286_CS);
-		modmenu(hmenu, 3, IDM_SEGDS, "DS", I286_DS);
-		modmenu(hmenu, 4, IDM_SEGES, "ES", I286_ES);
-		modmenu(hmenu, 5, IDM_SEGSS, "SS", I286_SS);
+		modmenu(hmenu, 2, IDM_SEGCS, "CS", CPU_CS);
+		modmenu(hmenu, 3, IDM_SEGDS, "DS", CPU_DS);
+		modmenu(hmenu, 4, IDM_SEGES, "ES", CPU_ES);
+		modmenu(hmenu, 5, IDM_SEGSS, "SS", CPU_SS);
 		DrawMenuBar(hwnd);
 	}
 }

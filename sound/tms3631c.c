@@ -60,12 +60,12 @@ void tms3631_reset(TMS3631 tms) {
 	ZeroMemory(tms, sizeof(_TMS3631));
 }
 
-void tms3631_setkey(TMS3631 tms, BYTE ch, BYTE key) {
+void tms3631_setkey(TMS3631 tms, REG8 ch, REG8 key) {
 
 	tms->ch[ch & 7].freq = tms3631_freqtbl[key & 0x3f] >> tms3631cfg.ratesft;
 }
 
-void tms3631_setenable(TMS3631 tms, BYTE enable) {
+void tms3631_setenable(TMS3631 tms, REG8 enable) {
 
 	tms->enable = enable;
 }

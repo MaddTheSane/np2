@@ -8,6 +8,14 @@
 
 // ----
 
+　ver0.72
+
+　・主にRISC向けの最適化、その２
+　・CPU … シングルステップ割り込みの修正
+
+
+// ----
+
 　ver0.71 → ver0.72
 
 　・主にRISC向けの最適化(CPU, BEEP counter, BIOS etc...)

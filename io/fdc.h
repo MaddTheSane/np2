@@ -61,20 +61,20 @@ enum {
 };
 
 typedef struct {
-	BYTE	us, hd;
-	BYTE	mt, mf, sk;
-	BYTE	eot, gpl, dtl;
-	BYTE	C, H, R, N;
-	BYTE	srt, hut, hlt, nd;
-	BYTE	stp, ncn, sc, d;
+	UINT8	us, hd;
+	UINT8	mt, mf, sk;
+	UINT8	eot, gpl, dtl;
+	UINT8	C, H, R, N;
+	UINT8	srt, hut, hlt, nd;
+	UINT8	stp, ncn, sc, d;
 
-	BYTE	status;
-	BYTE	intreq;
-	BYTE	lastdata;
-	BYTE	tc;
+	UINT8	status;
+	UINT8	intreq;
+	UINT8	lastdata;
+	UINT8	tc;
 
 	UINT32	stat[4];
-	BYTE	treg[4];
+	UINT8	treg[4];
 
 	int		event;
 	int		cmdp;
@@ -84,19 +84,19 @@ typedef struct {
 	int		bufp;
 	int		bufcnt;
 
-	BYTE	cmd;
+	UINT8	cmd;
 	BYTE	cmds[15];
 	BYTE	data[16];
 	BYTE	buf[0x8000];
 
-	BYTE	ctrlfd;
-	BYTE	crcn;
+	UINT8	ctrlfd;
+	UINT8	crcn;
 
-	BYTE	ctrlreg;
-	BYTE	busy;
+	UINT8	ctrlreg;
+	UINT8	busy;
 
-	BYTE	chgreg;
-	BYTE	rpm;													// 1.44
+	UINT8	chgreg;
+	UINT8	rpm;													// 1.44
 } _FDC, *FDC;
 
 
@@ -110,9 +110,9 @@ void fdc_reset(void);
 void fdc_bind(void);
 void fdc_interrupt(void);
 
-void DMACCALL fdc_DataRegWrite(BYTE data);
-BYTE DMACCALL fdc_DataRegRead(void);
-BYTE DMACCALL fdc_dmafunc(BYTE func);
+void DMACCALL fdc_DataRegWrite(REG8 data);
+REG8 DMACCALL fdc_DataRegRead(void);
+REG8 DMACCALL fdc_dmafunc(REG8 func);
 
 void fdcsend_error7(void);
 void fdcsend_success7(void);

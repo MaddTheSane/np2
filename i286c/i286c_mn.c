@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"i286c.h"
 #include	"memory.h"
 #include	"pccore.h"
@@ -623,13 +623,13 @@ I286FN _segprefix_es(void) {					// 26: es:
 
 	SS_FIX = ES_BASE;
 	DS_FIX = ES_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -769,13 +769,13 @@ I286FN _segprefix_cs(void) {					// 2e: cs:
 
 	SS_FIX = CS_BASE;
 	DS_FIX = CS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -910,13 +910,13 @@ I286FN _segprefix_ss(void) {					// 36: ss:
 
 	SS_FIX = SS_BASE;
 	DS_FIX = SS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -1027,13 +1027,13 @@ I286FN _segprefix_ds(void) {					// 3e: ds:
 
 	SS_FIX = DS_BASE;
 	DS_FIX = DS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -1820,7 +1820,7 @@ I286FN _popf(void) {						// 9D:	popf
 	I286_TRAP = ((flag & 0x300) == 0x300);
 	I286_WORKCLOCK(5);
 #if defined(INTR_FAST)
-	if ((flag & I_FLAG) && (PICEXISTINTR)) {
+	if ((I286_TRAP) || ((flag & I_FLAG) && (PICEXISTINTR))) {
 		I286IRQCHECKTERM
 	}
 #else
@@ -2282,7 +2282,7 @@ I286FN _iret(void) {						// CF:	iret
 	CS_BASE = I286_CS << 4;
 	I286_WORKCLOCK(31);
 #if defined(INTR_FAST)
-	if ((flag & I_FLAG) && (PICEXISTINTR)) {
+	if ((I286_TRAP) || ((flag & I_FLAG) && (PICEXISTINTR))) {
 		I286IRQCHECKTERM
 	}
 #else
@@ -2475,9 +2475,9 @@ I286FN _in_al_data8(void) {					// E4:	in		al, DATA8
 
 	I286_WORKCLOCK(5);
 	GET_PCBYTE(port)
-	i286core.s.inport = CS_BASE + I286_IP;
+	I286_INPADRS = CS_BASE + I286_IP;
 	I286_AL = iocore_inp8(port);
-	i286core.s.inport = 0;
+	I286_INPADRS = 0;
 }
 
 I286FN _in_ax_data8(void) {					// E5:	in		ax, DATA8
@@ -2577,12 +2577,12 @@ I286FN _lock(void) {						// F0:	lock
 
 I286FN _repne(void) {						// F2:	repne
 
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2591,12 +2591,12 @@ I286FN _repne(void) {						// F2:	repne
 
 I286FN _repe(void) {						// F3:	repe
 
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2662,11 +2662,11 @@ I286FN _sti(void) {							// FB:	sti
 	I286_FLAG |= I_FLAG;
 	I286_TRAP = (I286_FLAG & T_FLAG) >> 8;
 #if defined(INTR_FAST)
-	if (!PICEXISTINTR) {
-		NEXT_OPCODE;
+	if ((I286_TRAP) || (PICEXISTINTR)) {
+		REMAIN_ADJUST(1)
 	}
 	else {
-		REMAIN_ADJUST(1)
+		NEXT_OPCODE;
 	}
 #else
 	REMAIN_ADJUST(1)
@@ -2985,13 +2985,13 @@ I286FN _repe_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3002,13 +3002,13 @@ I286FN _repe_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3019,13 +3019,13 @@ I286FN _repe_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3036,13 +3036,13 @@ I286FN _repe_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3330,13 +3330,13 @@ I286FN _repne_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3347,13 +3347,13 @@ I286FN _repne_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3364,13 +3364,13 @@ I286FN _repne_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3381,13 +3381,13 @@ I286FN _repne_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);

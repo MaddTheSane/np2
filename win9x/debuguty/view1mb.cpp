@@ -6,7 +6,7 @@
 #include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"view1mb.h"
-#include	"i286.h"
+#include	"cpucore.h"
 
 
 static void set_viewseg(HWND hwnd, NP2VIEW_T *view, WORD seg) {
@@ -86,19 +86,19 @@ LRESULT CALLBACK view1mb_proc(NP2VIEW_T *view,
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDM_SEGCS:
-					set_viewseg(hwnd, view, I286_CS);
+					set_viewseg(hwnd, view, CPU_CS);
 					break;
 
 				case IDM_SEGDS:
-					set_viewseg(hwnd, view, I286_DS);
+					set_viewseg(hwnd, view, CPU_DS);
 					break;
 
 				case IDM_SEGES:
-					set_viewseg(hwnd, view, I286_ES);
+					set_viewseg(hwnd, view, CPU_ES);
 					break;
 
 				case IDM_SEGSS:
-					set_viewseg(hwnd, view, I286_SS);
+					set_viewseg(hwnd, view, CPU_SS);
 					break;
 
 				case IDM_SEGTEXT:

@@ -1,13 +1,13 @@
 #include	"compiler.h"
 #include	"sysmng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
 #include	"beep.h"
 
 
-void IOOUTCALL dipsw_w8(UINT port, BYTE value) {
+void IOOUTCALL dipsw_w8(UINT port, REG8 value) {
 
 	BYTE	set;
 	UINT	update;
@@ -76,10 +76,11 @@ void IOOUTCALL dipsw_w8(UINT port, BYTE value) {
 	sysmng_update(update);
 }
 
-BYTE IOINPCALL dipsw_r8(UINT port) {
+REG8 IOINPCALL dipsw_r8(UINT port) {
 
-	BYTE	ret = 0xff;
+	REG8	ret;
 
+	ret = 0xff;
 	switch(port & 0x0f00) {
 		case 0x0400:
 			ret = (np2cfg.dipsw[0] ^ 0x04) & 0xbc;

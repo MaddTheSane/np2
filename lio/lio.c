@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -71,35 +71,35 @@ void bios_lio(BYTE cmd) {
 			for (i=0; i<8; i++) {
 				lio.degcol[i] = i;
 			}
-			I286_AH = 0;
+			CPU_AH = 0;
 			break;
 
 		case 0x01:			// a1: GSCREEN
-			I286_AH = lio_gscreen();
+			CPU_AH = lio_gscreen();
 			break;
 
 		case 0x02:			// a2: GVIEW
-			I286_AH = lio_gview();
+			CPU_AH = lio_gview();
 			break;
 
 		case 0x03:			// a3: GCOLOR1
-			I286_AH = lio_gcolor1();
+			CPU_AH = lio_gcolor1();
 			break;
 
 		case 0x04:			// a4: GCOLOR2
-			I286_AH = lio_gcolor2();
+			CPU_AH = lio_gcolor2();
 			break;
 
 		case 0x05:			// a5: GCLS
-			I286_AH = lio_gcls();
+			CPU_AH = lio_gcls();
 			break;
 
 		case 0x06:			// a6: GPSET
-			I286_AH = lio_gpset();
+			CPU_AH = lio_gpset();
 			break;
 
 		case 0x07:			// a7: GLINE
-			I286_AH = lio_gline();
+			CPU_AH = lio_gline();
 			break;
 
 		case 0x08:			// a8: GCIRCLE
@@ -115,7 +115,7 @@ void bios_lio(BYTE cmd) {
 			break;
 
 		case 0x0c:			// ac: GPUT1
-			I286_AH = lio_gput1();
+			CPU_AH = lio_gput1();
 			break;
 
 		case 0x0d:			// ad: GPUT2
@@ -130,7 +130,7 @@ void bios_lio(BYTE cmd) {
 		case 0x10:			// ce: GCOPY
 			break;
 	}
-	// TRACEOUT(("lio cmd-%d, %d", cmd, I286_AH));
+	// TRACEOUT(("lio cmd-%d, %d", cmd, CPU_AH));
 }
 
 

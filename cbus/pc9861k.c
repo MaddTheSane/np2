@@ -17,8 +17,8 @@
 const UINT32 pc9861k_speed[11] = {75, 150, 300, 600, 1200, 2400, 4800,
 											9600, 19200, 38400, 76800};
 
-static const BYTE ch1_irq[4] = {IRQ_INT0, IRQ_INT1, IRQ_INT2, IRQ_INT3};
-static const BYTE ch2_irq[4] = {IRQ_INT0, IRQ_INT41, IRQ_INT5, IRQ_INT6};
+static const UINT8 ch1_irq[4] = {IRQ_INT0, IRQ_INT1, IRQ_INT2, IRQ_INT3};
+static const UINT8 ch2_irq[4] = {IRQ_INT0, IRQ_INT41, IRQ_INT5, IRQ_INT6};
 static const _PC9861CH pc9861def =
 					{0x05, 0xff, 7, 1,
 						0, 0, 2400, NEVENT_MAXCLOCK, 0, 0, 0};
@@ -38,7 +38,7 @@ static void pc9861k_callback(COMMNG cm, PC9861CH m) {
 		}
 	}
 	else {
-		m->result &= (BYTE)~2;
+		m->result &= ~2;
 	}
 	if (m->signal & 4) {
 		if (m->send) {
@@ -69,7 +69,7 @@ void pc9861ch2cb(NEVENTITEM item) {
 	pc9861k_callback(cm_pc9861ch2, &pc9861ch2);
 }
 
-static UINT32 pc9861k_getspeed(BYTE dip) {
+static UINT32 pc9861k_getspeed(REG8 dip) {
 
 	UINT	speed;
 
@@ -123,13 +123,13 @@ static void pc9861ch2_open(void) {
 // -------------------------------------------------------------------------
 
 static void IOOUTCALL pc9861data_w8(COMMNG cm, PC9861CH m,
-													UINT port, BYTE value) {
+													UINT port, REG8 value) {
 
 	UINT32	mul2;
 
 	switch(port & 0x3) {
 		case 0x01:
-			cm->write(cm, value);
+			cm->write(cm, (BYTE)value);
 			if (m->signal & 4) {
 				m->send = 0;
 				pic_setirq(m->irq);
@@ -187,7 +187,7 @@ static void IOOUTCALL pc9861data_w8(COMMNG cm, PC9861CH m,
 	}
 }
 
-static BYTE IOINPCALL pc9861data_r8(COMMNG cm, PC9861CH m, UINT port) {
+static REG8 IOINPCALL pc9861data_r8(COMMNG cm, PC9861CH m, UINT port) {
 
 	switch(port & 0x3) {
 		case 0x01:
@@ -203,7 +203,7 @@ static BYTE IOINPCALL pc9861data_r8(COMMNG cm, PC9861CH m, UINT port) {
 }
 
 
-static void IOOUTCALL pc9861k_ob0(UINT port, BYTE dat) {
+static void IOOUTCALL pc9861k_ob0(UINT port, REG8 dat) {
 
 	if (cm_pc9861ch1 == NULL) {
 		pc9861ch1_open();
@@ -212,7 +212,7 @@ static void IOOUTCALL pc9861k_ob0(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL pc9861k_ob2(UINT port, BYTE dat) {
+static void IOOUTCALL pc9861k_ob2(UINT port, REG8 dat) {
 
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();
@@ -221,7 +221,7 @@ static void IOOUTCALL pc9861k_ob2(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL pc9861k_ib0(UINT port) {
+static REG8 IOINPCALL pc9861k_ib0(UINT port) {
 
 	if (cm_pc9861ch1 == NULL) {
 		pc9861ch1_open();
@@ -230,7 +230,7 @@ static BYTE IOINPCALL pc9861k_ib0(UINT port) {
 	return(cm_pc9861ch1->getstat(cm_pc9861ch1) | pc9861ch1.vect);
 }
 
-static BYTE IOINPCALL pc9861k_ib2(UINT port) {
+static REG8 IOINPCALL pc9861k_ib2(UINT port) {
 
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();
@@ -240,7 +240,7 @@ static BYTE IOINPCALL pc9861k_ib2(UINT port) {
 }
 
 
-static void IOOUTCALL pc9861k_ob1(UINT port, BYTE dat) {
+static void IOOUTCALL pc9861k_ob1(UINT port, REG8 dat) {
 
 	if (cm_pc9861ch1 == NULL) {
 		pc9861ch1_open();
@@ -248,7 +248,7 @@ static void IOOUTCALL pc9861k_ob1(UINT port, BYTE dat) {
 	pc9861data_w8(cm_pc9861ch1, &pc9861ch1, port, dat);
 }
 
-static BYTE IOINPCALL pc9861k_ib1(UINT port) {
+static REG8 IOINPCALL pc9861k_ib1(UINT port) {
 
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch1_open();
@@ -257,7 +257,7 @@ static BYTE IOINPCALL pc9861k_ib1(UINT port) {
 }
 
 
-static void IOOUTCALL pc9861k_ob9(UINT port, BYTE dat) {
+static void IOOUTCALL pc9861k_ob9(UINT port, REG8 dat) {
 
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();
@@ -265,7 +265,7 @@ static void IOOUTCALL pc9861k_ob9(UINT port, BYTE dat) {
 	pc9861data_w8(cm_pc9861ch2, &pc9861ch2, port, dat);
 }
 
-static BYTE IOINPCALL pc9861k_ib9(UINT port) {
+static REG8 IOINPCALL pc9861k_ib9(UINT port) {
 
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();

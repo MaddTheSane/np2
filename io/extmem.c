@@ -1,35 +1,31 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
 
-	BYTE	*extmemmng_ptr;
-	UINT32	extmemmng_size;
-
-
 void extmemmng_clear(void) {
 
-	if (extmemmng_ptr) {
-		free(extmemmng_ptr);
-		extmemmng_ptr = NULL;
-		extmemmng_size = 0;
+	if (CPU_EXTMEM) {
+		_MFREE(CPU_EXTMEM);
+		CPU_EXTMEM = NULL;
+		CPU_EXTMEMSIZE = 0;
 	}
 }
 
 BOOL extmemmng_realloc(UINT megabytes) {
 
 	megabytes <<= 20;
-	if (megabytes != extmemmng_size) {
+	if (megabytes != CPU_EXTMEMSIZE) {
 		extmemmng_clear();
 		if (megabytes) {
-			extmemmng_ptr = (BYTE *)malloc(megabytes + 16);
-			if (extmemmng_ptr == NULL) {
+			CPU_EXTMEM = (BYTE *)_MALLOC(megabytes + 16, "EXTMEM");
+			if (CPU_EXTMEM == NULL) {
 				return(FAILURE);
 			}
 		}
-		extmemmng_size = megabytes;
+		CPU_EXTMEMSIZE = megabytes;
 	}
 	return(SUCCESS);
 }
@@ -37,11 +33,11 @@ BOOL extmemmng_realloc(UINT megabytes) {
 
 // ---- I/O
 
-static void IOOUTCALL emm_o08e1(UINT port, BYTE dat) {
+static void IOOUTCALL emm_o08e1(UINT port, REG8 dat) {
 
 	UINT	pos;
 
-	if (!(CPUTYPE & CPUTYPE_V30)) {
+	if (!(CPU_TYPE & CPUTYPE_V30)) {
 		pos = (port >> 1) & 3;
 		if (!extmem.target) {							// ver0.28
 			extmem.page[pos] = 0xffffffff;
@@ -49,24 +45,23 @@ static void IOOUTCALL emm_o08e1(UINT port, BYTE dat) {
 		}
 		else if (extmem.target < extmem.maxmem) {		// ver0.28
 			dat &= 0xfc;
-			extmem.page[pos] = ((extmem.target-1) << 8) + dat;
-			extmem.pageptr[pos] = extmemmng_ptr +
-									(extmem.page[pos] << 12);
+			extmem.page[pos] = ((extmem.target - 1) << 8) + dat;
+			extmem.pageptr[pos] = CPU_EXTMEM + (extmem.page[pos] << 12);
 		}
 	}
 }
 
-static void IOOUTCALL emm_o08e9(UINT port, BYTE dat) {
+static void IOOUTCALL emm_o08e9(UINT port, REG8 dat) {
 
-	if (!(CPUTYPE & CPUTYPE_V30)) {
+	if (!(CPU_TYPE & CPUTYPE_V30)) {
 		extmem.target = dat & 0x0f;
 	}
 	(void)port;
 }
 
-static BYTE IOINPCALL emm_i08e9(UINT port) {
+static REG8 IOINPCALL emm_i08e9(UINT port) {
 
-	if ((!(CPUTYPE & CPUTYPE_V30)) &&
+	if ((!(CPU_TYPE & CPUTYPE_V30)) &&
 		(extmem.target) && (extmem.target < extmem.maxmem)) {
 		return(0);
 	}
@@ -83,19 +78,22 @@ BOOL extmem_init(BYTE usemem) {
 
 	UINT	i;
 
-	if (usemem > 13) {											// ver0.28
+	if (usemem > 13) {
 		usemem = 13;
 	}
 	extmem.target = 0;
 	extmem.maxmem = 0;
 	for (i=0; i<4; i++) {
 		extmem.page[i] = 0xffffffff;
-		extmem.pageptr[i] = mem + 0xc0000 + (i << 14);			// ver0.28
+		extmem.pageptr[i] = mem + 0xc0000 + (i << 14);
 	}
 	if (extmemmng_realloc(usemem)) {
 		return(FAILURE);
 	}
 	extmem.maxmem = usemem + 1;
+#if defined(CPU386)
+	init_cpumem(usemem);
+#endif
 	return(SUCCESS);
 }
 

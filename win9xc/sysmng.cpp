@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"sysmng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 
 
@@ -21,7 +21,7 @@ static struct {
 void sysmng_workclockreset(void) {
 
 	workclock.tick = GETTICK();
-	workclock.clock = I286_CLOCK;
+	workclock.clock = CPU_CLOCK;
 	workclock.draws = drawcount;
 }
 
@@ -36,8 +36,8 @@ static BOOL workclockrenewal(void) {
 	workclock.tick += tick;
 	workclock.fps = ((drawcount - workclock.draws) * 10000) / tick;
 	workclock.draws = drawcount;
-	workclock.khz = (I286_CLOCK - workclock.clock) / tick;
-	workclock.clock = I286_CLOCK;
+	workclock.khz = (CPU_CLOCK - workclock.clock) / tick;
+	workclock.clock = CPU_CLOCK;
 	return(TRUE);
 }
 

@@ -2,14 +2,14 @@
 #define UPD4990_REGLEN	8
 
 typedef struct {
-	BYTE	last;
-	BYTE	cmd;
-	BYTE	serial;
-	BYTE	parallel;
+	UINT8	last;
+	UINT8	cmd;
+	UINT8	serial;
+	UINT8	parallel;
 	BYTE	reg[UPD4990_REGLEN];
 	UINT	pos;
-	BYTE	cdat;
-	BYTE	regsft;
+	UINT8	cdat;
+	UINT8	regsft;
 } _UPD4990, *UPD4990;
 
 

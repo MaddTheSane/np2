@@ -1,29 +1,29 @@
 
 typedef union {
 	struct {
-		BYTE	pl;
-		BYTE	bl;
-		BYTE	cl;
-		BYTE	ssl;
-		BYTE	sur;
-		BYTE	sdr;
+		UINT8	pl;
+		UINT8	bl;
+		UINT8	cl;
+		UINT8	ssl;
+		UINT8	sur;
+		UINT8	sdr;
 	} reg;
-	BYTE	b[6];
+	UINT8	b[6];
 } _CRTC, *CRTC;
 
 typedef union {
-	BYTE	b[2];
+	UINT8	b[2];
 	UINT16	w;
 } PAIR16;
 
 typedef struct {
 	UINT32	counter;
 	UINT16	mode;
-	BYTE	modereg;
-	BYTE	padding;
+	UINT8	modereg;
+	UINT8	padding;
 	PAIR16	tile[4];
 	UINT32	gdcwithgrcg;
-	BYTE	chip;
+	UINT8	chip;
 } _GRCG, *GRCG;
 
 

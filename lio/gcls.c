@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+// #include	"cpucore.h"
 #include	"memory.h"
 #include	"lio.h"
 

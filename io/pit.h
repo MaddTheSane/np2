@@ -1,8 +1,8 @@
 
 typedef struct {
-	BYTE	mode[4];
-	BYTE	flag[4];
-	BYTE	intr[4];
+	UINT8	mode[4];
+	UINT8	flag[4];
+	UINT8	intr[4];
 	UINT16	value[4];
 	UINT16	latch[4];
 } _PIT, *PIT;
@@ -17,9 +17,9 @@ void systimer(NEVENTITEM item);
 void beeponeshot(NEVENTITEM item);
 void rs232ctimer(NEVENTITEM item);
 
-void itimer_setflag(int ch, BYTE value);
-BOOL itimer_setcount(int ch, BYTE value);
-BYTE itimer_getcount(int ch);
+void pit_setflag(int ch, REG8 value);
+BOOL pit_setcount(int ch, REG8 value);
+REG8 pit_getcount(int ch);
 
 void itimer_reset(void);
 void itimer_bind(void);

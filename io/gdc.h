@@ -5,41 +5,41 @@ typedef struct {
 	BYTE	para[256];
 	UINT16	fifo[GDCCMD_MAX];
 	UINT16	cnt;
-	BYTE	ptr;
-	BYTE	rcv;
-	BYTE	snd;
-	BYTE	cmd;
-	BYTE	paracb;
-	BYTE	reserved;
+	UINT8	ptr;
+	UINT8	rcv;
+	UINT8	snd;
+	UINT8	cmd;
+	UINT8	paracb;
+	UINT8	reserved;
 } _GDCDATA, *GDCDATA;
 
 typedef struct {
 	_GDCDATA	m;
 	_GDCDATA	s;
-	BYTE		mode1;
-	BYTE		mode2;
-	BYTE		vsync;
-	BYTE		vsyncint;
+	UINT8		mode1;
+	UINT8		mode2;
+	UINT8		vsync;
+	UINT8		vsyncint;
 	int			analog;
 	int			palnum;
-	BYTE		degpal[4];
+	UINT8		degpal[4];
 	RGB32		anapal[16];
-	BYTE		clock;
-	BYTE		display;
-	BYTE		bitac;
-	BYTE		m_drawing;
-	BYTE		s_drawing;
-	BYTE		reserved[3];
+	UINT8		clock;
+	UINT8		display;
+	UINT8		bitac;
+	UINT8		m_drawing;
+	UINT8		s_drawing;
+	UINT8		reserved[3];
 } _GDC, *GDC;
 
 typedef struct {
-	BYTE	access;
-	BYTE	disp;
-	BYTE	textdisp;
-	BYTE	msw_accessable;
-	BYTE	grphdisp;
-	BYTE	palchange;
-	BYTE	mode2;
+	UINT8	access;
+	UINT8	disp;
+	UINT8	textdisp;
+	UINT8	msw_accessable;
+	UINT8	grphdisp;
+	UINT8	palchange;
+	UINT8	mode2;
 } _GDCS, *GDCS;
 
 enum {
@@ -72,9 +72,9 @@ void gdc_work(int id);
 void gdc_forceready(GDCDATA item);
 void gdc_paletteinit(void);
 
-void gdc_setdegitalpal(int color, BYTE value);
-void gdc_setanalogpal(int color, int rgb, BYTE value);
-void gdc_setdegpalpack(int color, BYTE value);
+void gdc_setdegitalpal(int color, REG8 value);
+void gdc_setanalogpal(int color, int rgb, REG8 value);
+void gdc_setdegpalpack(int color, REG8 value);
 
 void gdc_restorekacmode(void);
 

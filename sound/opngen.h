@@ -97,7 +97,7 @@ const SINT32	*release;			// release raito
 	SINT32		multiple;			// multiple
 	BYTE		keyscale;			// key scale
 	BYTE		env_mode;			// envelope mode
-	BYTE		envraito;			// envelope raito
+	BYTE		envratio;			// envelope raito
 	BYTE		ssgeg1;				// SSG-EG
 
 	SINT32		env_cnt;			// envelope count
@@ -163,13 +163,13 @@ extern "C" {
 
 void opngen_initialize(UINT rate);
 void opngen_setvol(UINT vol);
-void opngen_setVR(BYTE channel, BYTE value);
+void opngen_setVR(REG8 channel, REG8 value);
 
 void opngen_reset(void);
-void opngen_setcfg(BYTE maxch, UINT flag);
-void opngen_setextch(UINT chnum, BYTE data);
-void opngen_setreg(BYTE chbase, BYTE reg, BYTE value);
-void opngen_keyon(UINT chnum, BYTE value);
+void opngen_setcfg(REG8 maxch, UINT flag);
+void opngen_setextch(UINT chnum, REG8 data);
+void opngen_setreg(REG8 chbase, REG8 reg, REG8 value);
+void opngen_keyon(UINT chnum, REG8 value);
 
 void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *buf, UINT count);
 void SOUNDCALL opngen_getpcmvr(void *hdl, SINT32 *buf, UINT count);

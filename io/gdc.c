@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"scrnmng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -13,11 +13,11 @@
 #define	TURE_SYNC
 
 
-static const BYTE defdegpal[4] = {0x04,0x15,0x26,0x37};
-static const BYTE defsync[8] = {0x10,0x4e,0x07,0x25,0x07,0x07,0x90,0x65};
+static const UINT8 defdegpal[4] = {0x04,0x15,0x26,0x37};
+static const UINT8 defsync[8] = {0x10,0x4e,0x07,0x25,0x07,0x07,0x90,0x65};
 
 
-void gdc_setdegitalpal(int color, BYTE value) {
+void gdc_setdegitalpal(int color, REG8 value) {
 
 	if (color & 4) {
 		color &= 3;
@@ -39,21 +39,21 @@ void gdc_setdegitalpal(int color, BYTE value) {
 	}
 }
 
-void gdc_setanalogpal(int color, int rgb, BYTE value) {
+void gdc_setanalogpal(int color, int rgb, REG8 value) {
 
-	BYTE		*ptr;
+	UINT8		*ptr;
 	PAL1EVENT	*event;
 
-	ptr = ((BYTE *)(gdc.anapal + color)) + rgb;
+	ptr = ((UINT8 *)(gdc.anapal + color)) + rgb;
 	if (((*ptr) ^ value) & 0x0f) {
 		gdcs.palchange = GDCSCRN_REDRAW;
 		if (palevent.events < PALEVENTMAX) {
 			if (!gdc.vsync) {
 				event = palevent.event + palevent.events;
 				event->clock = nevent.item[NEVENT_FLAMES].clock -
-											(I286_BASECLOCK - I286_REMCLOCK);
+											(CPU_BASECLOCK - CPU_REMCLOCK);
 				event->color = (color * sizeof(RGB32)) + rgb;
-				event->value = value;
+				event->value = (UINT8)value;
 				palevent.events++;
 			}
 			else {
@@ -64,17 +64,17 @@ void gdc_setanalogpal(int color, int rgb, BYTE value) {
 	*ptr = value;
 }
 
-void gdc_setdegpalpack(int color, BYTE value) {
+void gdc_setdegpalpack(int color, REG8 value) {
 
 	if ((gdc.degpal[color] ^ value) & 0x77) {
 		gdcs.palchange = GDCSCRN_REDRAW;
 	}
-	gdc.degpal[color] = value;
+	gdc.degpal[color] = (UINT8)value;
 }
 
 void gdc_paletteinit(void) {
 
-	BYTE	c;
+	int		c;
 
 	CopyMemory(gdc.degpal, defdegpal, 4);
 	for (c=0; c<8; c++) {
@@ -131,13 +131,13 @@ static void textdraw(void) {									// ver0.30
 
 void gdc_work(int id) {
 
-	UINT16		i;
-	BYTE		data;
 	GDCDATA		item;
-	BYTE		*dispflag;
+	UINT8		*dispflag;
+	UINT		i;
+	BYTE		data;
 
-	item = ((id==GDCWORK_MASTER)?(&gdc.m):(&gdc.s));
-	dispflag = ((id==GDCWORK_MASTER)?(&gdcs.textdisp):(&gdcs.grphdisp));
+	item = (id==GDCWORK_MASTER)?&gdc.m:&gdc.s;
+	dispflag = (id==GDCWORK_MASTER)?&gdcs.textdisp:&gdcs.grphdisp;
 
 	for (i=0; i<item->cnt; i++) {
 		data = (BYTE)item->fifo[i];
@@ -151,11 +151,13 @@ void gdc_work(int id) {
 						item->rcv = 2;
 						item->paracb = 1;
 						break;
+
 					case 0x10:
 					case 0x18:
 						item->rcv = 1;
 						item->paracb = 1;
 						break;
+
 					default:
 						item->rcv = 0;
 						break;
@@ -245,7 +247,7 @@ void gdc_restorekacmode(void) {
 
 // ---- I/O
 
-static void IOOUTCALL gdc_o60(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_o60(UINT port, REG8 dat) {
 
 	if (gdc.m.cnt < GDCCMD_MAX) {
 		gdc.m.fifo[gdc.m.cnt++] = dat;
@@ -253,7 +255,7 @@ static void IOOUTCALL gdc_o60(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_o62(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_o62(UINT port, REG8 dat) {
 
 	if (gdc.m.cnt < GDCCMD_MAX) {
 		gdc.m.fifo[gdc.m.cnt++] = 0x100 | dat;
@@ -262,16 +264,16 @@ static void IOOUTCALL gdc_o62(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_o64(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_o64(UINT port, REG8 dat) {
 
 	gdc.vsyncint = 1;
 	(void)port;
 	(void)dat;
 }
 
-static void IOOUTCALL gdc_o68(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_o68(UINT port, REG8 dat) {
 
-	BYTE	bit;
+	REG8	bit;
 
 	if (!(dat & 0xf0)) {									// ver0.28
 		bit = 1 << ((dat >> 1) & 7);
@@ -299,9 +301,9 @@ static void IOOUTCALL gdc_o68(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_o6a(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_o6a(UINT port, REG8 dat) {
 
-	BYTE	bit;
+	REG8	bit;
 
 	if (!(dat & 0xf8)) {
 		bit = (dat >> 1) & 3;
@@ -367,10 +369,10 @@ static void IOOUTCALL gdc_o6a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL gdc_i60(UINT port) {
+static REG8 IOINPCALL gdc_i60(UINT port) {
 
-	BYTE	ret;
-	long	remain;
+	REG8	ret;
+	SINT32	remain;
 
 	ret = 0x80 | gdc.vsync;		// | m_drawing;
 	remain = nevent_getremain(NEVENT_FLAMES);
@@ -392,32 +394,32 @@ static BYTE IOINPCALL gdc_i60(UINT port) {
 		gdc_work(GDCWORK_MASTER);
 	}
 #ifdef SEARHC_SYNC
-	if ((i286core.s.inport) && (I286_REMCLOCK >= 5)) {
+	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
-		memv = i286_memoryread_w(i286core.s.inport);
+		memv = i286_memoryread_w(CPU_INPADRS);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
-			i286core.s.inport += 2;
-			memv = i286_memoryread_w(i286core.s.inport);
+			CPU_INPADRS += 2;
+			memv = i286_memoryread_w(CPU_INPADRS);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(i286core.s.inport + 2);
+			memv = i286_memoryread_w(CPU_INPADRS + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
-					I286_REMCLOCK = -1;
+					CPU_REMCLOCK = -1;
 				}
 			}
 			else if (memv == (jadr + 1)) {		// jne
 				if (gdc.vsync) {
-					I286_REMCLOCK = -1;
+					CPU_REMCLOCK = -1;
 				}
 			}
 		}
 	}
 #endif
 #ifdef TURE_SYNC				// クロックイベントの誤差修正
-	if (nevent.item[NEVENT_FLAMES].clock < (I286_BASECLOCK - I286_REMCLOCK)) {
+	if (nevent.item[NEVENT_FLAMES].clock < (CPU_BASECLOCK - CPU_REMCLOCK)) {
 		ret ^= 0x20;
 	}
 #endif
@@ -425,7 +427,7 @@ static BYTE IOINPCALL gdc_i60(UINT port) {
 	return(ret);
 }
 
-static BYTE IOINPCALL gdc_i62(UINT port) {
+static REG8 IOINPCALL gdc_i62(UINT port) {
 
 	if (gdc.m.snd) {
 		gdc.m.snd--;
@@ -435,20 +437,20 @@ static BYTE IOINPCALL gdc_i62(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL gdc_i68(UINT port) {
+static REG8 IOINPCALL gdc_i68(UINT port) {
 
 	(void)port;
 	return(gdc.mode1);
 }
 
-static BYTE IOINPCALL gdc_i6a(UINT port) {
+static REG8 IOINPCALL gdc_i6a(UINT port) {
 
 	(void)port;
 	return(gdc.mode2);
 }
 
 
-static void IOOUTCALL gdc_oa0(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oa0(UINT port, REG8 dat) {
 
 	if (gdc.s.cnt < GDCCMD_MAX) {
 		gdc.s.fifo[gdc.s.cnt++] = dat;
@@ -460,7 +462,7 @@ static void IOOUTCALL gdc_oa0(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oa2(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oa2(UINT port, REG8 dat) {
 
 	if (gdc.s.cnt < GDCCMD_MAX) {
 		gdc.s.fifo[gdc.s.cnt++] = 0x100 | dat;
@@ -470,7 +472,7 @@ static void IOOUTCALL gdc_oa2(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oa4(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oa4(UINT port, REG8 dat) {
 
 	if ((gdcs.disp ^ dat) & 1) {
 		gdcs.disp = dat & 1;
@@ -479,7 +481,7 @@ static void IOOUTCALL gdc_oa4(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oa6(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oa6(UINT port, REG8 dat) {
 
 	if ((gdcs.access ^ dat) & 1) {
 		gdcs.access = dat & 1;
@@ -490,7 +492,7 @@ static void IOOUTCALL gdc_oa6(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oa8(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oa8(UINT port, REG8 dat) {
 
 	if (gdc.analog) {
 		gdc.palnum = dat & 0x0f;
@@ -501,7 +503,7 @@ static void IOOUTCALL gdc_oa8(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oaa(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oaa(UINT port, REG8 dat) {
 
 	if (gdc.analog) {
 		gdc_setanalogpal(gdc.palnum, offsetof(RGB32, p.g), dat);
@@ -512,7 +514,7 @@ static void IOOUTCALL gdc_oaa(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oac(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oac(UINT port, REG8 dat) {
 
 	if (gdc.analog) {
 		gdc_setanalogpal(gdc.palnum, offsetof(RGB32, p.r), dat);
@@ -523,7 +525,7 @@ static void IOOUTCALL gdc_oac(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL gdc_oae(UINT port, BYTE dat) {
+static void IOOUTCALL gdc_oae(UINT port, REG8 dat) {
 
 	if (gdc.analog) {
 		gdc_setanalogpal(gdc.palnum, offsetof(RGB32, p.b), dat);
@@ -534,9 +536,9 @@ static void IOOUTCALL gdc_oae(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL gdc_ia0(UINT port) {
+static REG8 IOINPCALL gdc_ia0(UINT port) {
 
-	BYTE	ret;
+	REG8	ret;
 	SINT32	remain;
 
 	ret = 0x80 | gdc.vsync | gdc.s_drawing;
@@ -559,32 +561,32 @@ static BYTE IOINPCALL gdc_ia0(UINT port) {
 		gdc_work(GDCWORK_SLAVE);
 	}
 #ifdef SEARHC_SYNC
-	if ((i286core.s.inport) && (I286_REMCLOCK >= 5)) {
+	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
-		memv = i286_memoryread_w(i286core.s.inport);
+		memv = i286_memoryread_w(CPU_INPADRS);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
-			i286core.s.inport += 2;
-			memv = i286_memoryread_w(i286core.s.inport);
+			CPU_INPADRS += 2;
+			memv = i286_memoryread_w(CPU_INPADRS);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(i286core.s.inport + 2);
+			memv = i286_memoryread_w(CPU_INPADRS + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
-					I286_REMCLOCK = -1;
+					CPU_REMCLOCK = -1;
 				}
 			}
 			else if (memv == (jadr + 1)) {		// jne
 				if (gdc.vsync) {
-					I286_REMCLOCK = -1;
+					CPU_REMCLOCK = -1;
 				}
 			}
 		}
 	}
 #endif
 #ifdef TURE_SYNC				// クロックイベントの誤差修正
-	if (nevent.item[NEVENT_FLAMES].clock < (I286_BASECLOCK - I286_REMCLOCK)) {
+	if (nevent.item[NEVENT_FLAMES].clock < (CPU_BASECLOCK - CPU_REMCLOCK)) {
 		ret ^= 0x20;
 	}
 #endif
@@ -592,7 +594,7 @@ static BYTE IOINPCALL gdc_ia0(UINT port) {
 	return(ret);
 }
 
-static BYTE IOINPCALL gdc_ia2(UINT port) {
+static REG8 IOINPCALL gdc_ia2(UINT port) {
 
 	if (gdc.s.snd) {
 		gdc.s.snd--;
@@ -602,13 +604,13 @@ static BYTE IOINPCALL gdc_ia2(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL gdc_ia4(UINT port) {
+static REG8 IOINPCALL gdc_ia4(UINT port) {
 
 	(void)port;
 	return(gdcs.disp);
 }
 
-static BYTE IOINPCALL gdc_ia6(UINT port) {
+static REG8 IOINPCALL gdc_ia6(UINT port) {
 
 	(void)port;
 	return(gdcs.access);

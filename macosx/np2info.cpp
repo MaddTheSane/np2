@@ -3,7 +3,7 @@
 #include	"np2.h"
 #include	"scrnmng.h"
 #include	"np2info.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -68,7 +68,7 @@ static void info_ver(char *str, int maxlen) {
 
 static void info_cpu(char *str, int maxlen) {
 
-	milstr_ncpy(str, (CPUTYPE & CPUTYPE_V30)?str_V30:str_i286, maxlen);
+	milstr_ncpy(str, (CPU_TYPE & CPUTYPE_V30)?str_V30:str_i286, maxlen);
 }
 
 static void info_clock(char *str, int maxlen) {

@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"taskmng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 // #include	"hostdrv.h"
@@ -64,7 +64,7 @@ static void np2sysp_cpu(const void *arg1, const void *arg2) {
 
 	// CPU‚ð•Ô‚·
 #if 1											// 80286 or V30
-	if (!(CPUTYPE & CPUTYPE_V30)) {
+	if (!(CPU_TYPE & CPUTYPE_V30)) {
 		np2sysp_outstr(str_80286, NULL);
 	}
 	else {
@@ -190,14 +190,17 @@ static BOOL np2syspcmp(const char *p) {
 	return(FALSE);
 }
 
-static void IOOUTCALL np2sysp_o7ef(UINT port, BYTE dat) {
+static void IOOUTCALL np2sysp_o7ef(UINT port, REG8 dat) {
 
-	UINT	i;
+const SYSPCMD	*cmd;
+const SYSPCMD	*cmdterm;
 
-	np2sysp.substr[np2sysp.strpos] = dat;
-	for (i=0; i<(sizeof(np2spcmd)/sizeof(SYSPCMD)); i++) {
-		if (!np2syspcmp(np2spcmd[i].key)) {
-			np2spcmd[i].func(np2spcmd[i].arg1, np2spcmd[i].arg2);
+	np2sysp.substr[np2sysp.strpos] = (char)dat;
+	cmd = np2spcmd;
+	cmdterm = cmd + (sizeof(np2spcmd) / sizeof(SYSPCMD));
+	while(cmd < cmdterm) {
+		if (!np2syspcmp(cmd->key)) {
+			cmd->func(cmd->arg1, cmd->arg2);
 			break;
 		}
 	}
@@ -206,11 +209,11 @@ static void IOOUTCALL np2sysp_o7ef(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL np2sysp_i7ef(UINT port) {
+static REG8 IOINPCALL np2sysp_i7ef(UINT port) {
 
-	BYTE	ret;
+	REG8	ret;
 
-	ret = np2sysp.outstr[np2sysp.outpos];
+	ret = (UINT8)np2sysp.outstr[np2sysp.outpos];
 	if (ret) {
 		np2sysp.outpos++;
 		np2sysp.outpos &= NP2SYSP_MASK;

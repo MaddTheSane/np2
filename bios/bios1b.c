@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -37,10 +37,10 @@ static void init_fdd_equip(void) {
 
 static void biosfd_setchrn(void) {
 
-	fdc.C = I286_CL;
-	fdc.H = I286_DH;
-	fdc.R = I286_DL;
-	fdc.N = I286_CH;
+	fdc.C = CPU_CL;
+	fdc.H = CPU_DH;
+	fdc.R = CPU_DL;
+	fdc.N = CPU_CH;
 }
 
 #if 0
@@ -102,7 +102,7 @@ static UINT16 fdfmt_biospara(BYTE fmt, BYTE rpm) {					// ver0.31
 	off += fdc.us * 2;
 	off = i286_memword_read(seg, off);
 	off += n * 8;
-	if (!(I286_AH & 0x40)) {
+	if (!(CPU_AH & 0x40)) {
 		off += 4;
 	}
 	if (fmt) {
@@ -137,7 +137,7 @@ static void fdd_int(int result) {
 	if (result == FDCBIOS_NORESULT) {						// ver0.29
 		return;
 	}
-	switch(I286_AH & 0x0f) {
+	switch(CPU_AH & 0x0f) {
 		case 0x00:								// シーク
 		case 0x01:								// ベリファイ
 		case 0x02:								// 診断の為の読み込み
@@ -197,11 +197,11 @@ static struct {
 
 static void b0patch(void) {
 
-	if ((!b0p.flg) || (b0p.cx != I286_CX) || (b0p.dx != I286_DX)) {
+	if ((!b0p.flg) || (b0p.cx != CPU_CX) || (b0p.dx != CPU_DX)) {
 		b0p.flg = TRUE;
 		b0p.pos = 0;
-		b0p.cx = I286_CX;
-		b0p.dx = I286_DX;
+		b0p.cx = CPU_CX;
+		b0p.dx = CPU_DX;
 	}
 	else {
 		if (!b0p.pos) {
@@ -211,8 +211,8 @@ static void b0patch(void) {
 			REG8	c;
 			REG8	cl;
 			REG8	last;
-			addr = ES_BASE + I286_BP;
-			size = I286_BX;
+			addr = ES_BASE + CPU_BP;
+			size = CPU_BX;
 			cnt = 0;
 			last = 0;
 			while(size--) {
@@ -239,10 +239,10 @@ static void b0patch(void) {
 				}
 			}
 		}
-		if ((b0p.pos >> 3) < I286_BX) {
+		if ((b0p.pos >> 3) < CPU_BX) {
 			UINT32 addr;
 			REG8 c;
-			addr = ES_BASE + I286_BP + (b0p.pos >> 3);
+			addr = ES_BASE + CPU_BP + (b0p.pos >> 3);
 			c = i286_memoryread(addr);
 			c ^= (1 << (b0p.pos & 7));
 			b0p.pos++;
@@ -277,13 +277,13 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 	// とりあえずBIOSの時は無視する
 	fdc.mf = 0xff;						// ver0.29
 
-//	TRACE_("int 1Bh", I286_AH);
+//	TRACE_("int 1Bh", CPU_AH);
 
 	change_rpm(rpm);												// ver0.31
-	if ((I286_AH & 0x0f) != 0x0a) {
+	if ((CPU_AH & 0x0f) != 0x0a) {
 		fdc.crcn = 0;
 	}
-	if ((I286_AH & 0x0f) != 0x03) {
+	if ((CPU_AH & 0x0f) != 0x03) {
 		CTRL_FDMEDIA = type;
 		switch(type) {
 			case DISKTYPE_2HD:
@@ -297,21 +297,21 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				}
 				break;
 		}
-		if (fdc.us != (I286_AL & 0x03)) {
-			fdc.us = I286_AL & 0x03;
+		if (fdc.us != (CPU_AL & 0x03)) {
+			fdc.us = CPU_AL & 0x03;
 			fdc.crcn = 0;
 		}
-		hd = ((I286_DH) ^ (I286_AL >> 2)) & 1;
+		hd = ((CPU_DH) ^ (CPU_AL >> 2)) & 1;
 		if (fdc.hd != hd) {
 			fdc.hd = hd;
 			fdc.crcn = 0;
 		}
 		if (!fdd_diskready(fdc.us)) {
 			fdd_int(FDCBIOS_NONREADY);
-			if (I286_AH == 0x84) {								// ver0.28
+			if (CPU_AH == 0x84) {								// ver0.28
 				return(0x68);			// 新センスは 両用ドライブ情報も
 			}
-			if (I286_AH == 0xc4) {								// ver0.31
+			if (CPU_AH == 0xc4) {								// ver0.31
 				if (np2cfg.usefd144) {
 					return(0x6c);
 				}
@@ -328,10 +328,10 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 		}
 	}
 
-	switch(I286_AH & 0x0f) {
+	switch(CPU_AH & 0x0f) {
 		case 0x00:								// シーク
-			if (I286_AH & 0x10) {
-				if (!biosfd_seek(I286_CL, ndensity)) {
+			if (CPU_AH & 0x10) {
+				if (!biosfd_seek(CPU_CL, ndensity)) {
 					result = FDCBIOS_SEEKSUCCESS;
 				}
 				else {
@@ -342,8 +342,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			break;
 
 		case 0x01:								// ベリファイ
-			if (I286_AH & 0x10) {
-				if (!biosfd_seek(I286_CL, ndensity)) {
+			if (CPU_AH & 0x10) {
+				if (!biosfd_seek(CPU_CL, ndensity)) {
 					result = FDCBIOS_SEEKSUCCESS;
 				}
 				else {
@@ -364,7 +364,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			else {
 				secsize = 128 << 8;
 			}
-			size = I286_BX;
+			size = CPU_BX;
 			while(size) {
 				if (size > secsize) {
 					accesssize = secsize;
@@ -377,7 +377,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				}
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26
-				if ((fdc.R++ == (BYTE)para) && (I286_AH & 0x80) && (!fdc.hd)) {
+				if ((fdc.R++ == (BYTE)para) && (CPU_AH & 0x80) && (!fdc.hd)) {
 					fdc.hd = 1;
 					fdc.H = 1;
 					fdc.R = 1;
@@ -409,7 +409,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			else if (fdd_diskprotect(fdc.us)) {
 				ret_ah = 0x10;
 			}
-			if (I286_AL & 0x80) {				// 2HD
+			if (CPU_AL & 0x80) {				// 2HD
 				ret_ah |= 0x01;
 			}
 			else {								// 2DD
@@ -420,9 +420,9 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 					ret_ah |= 0x04;
 				}
 			}
-			if (I286_AH & 0x80) {				// ver0.30
+			if (CPU_AH & 0x80) {				// ver0.30
 				ret_ah |= 8;					// 1MB/640KB両用ドライブ
-				if ((I286_AH & 0x40) &&
+				if ((CPU_AH & 0x40) &&
 					(np2cfg.usefd144)) {		// ver0.31
 					ret_ah |= 4;				// 1.44対応ドライブ
 				}
@@ -430,8 +430,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			break;
 
 		case 0x05:								// データの書き込み
-			if (I286_AH & 0x10) {
-				if (!biosfd_seek(I286_CL, ndensity)) {
+			if (CPU_AH & 0x10) {
+				if (!biosfd_seek(CPU_CL, ndensity)) {
 					result = FDCBIOS_SEEKSUCCESS;
 				}
 				else {
@@ -457,8 +457,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			else {
 				secsize = 128 << 8;
 			}
-			size = I286_BX;
-			addr = ES_BASE + I286_BP;
+			size = CPU_BX;
+			addr = ES_BASE + CPU_BP;
 			while(size) {
 				if (size > secsize) {
 					accesssize = secsize;
@@ -473,7 +473,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				addr += accesssize;
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26
-				if ((fdc.R++ == (BYTE)para) && (I286_AH & 0x80) && (!fdc.hd)) {
+				if ((fdc.R++ == (BYTE)para) && (CPU_AH & 0x80) && (!fdc.hd)) {
 					fdc.hd = 1;
 					fdc.H = 1;
 					fdc.R = 1;
@@ -494,8 +494,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 
 		case 0x02:								// 診断の為の読み込み
 		case 0x06:								// データの読み込み
-			if (I286_AH & 0x10) {
-				if (!biosfd_seek(I286_CL, ndensity)) {
+			if (CPU_AH & 0x10) {
+				if (!biosfd_seek(CPU_CL, ndensity)) {
 					result = FDCBIOS_SEEKSUCCESS;
 				}
 				else {
@@ -522,8 +522,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			else {
 				secsize = 128 << 8;
 			}
-			size = I286_BX;
-			addr = ES_BASE + I286_BP;
+			size = CPU_BX;
+			addr = ES_BASE + CPU_BP;
 			while(size) {
 				if (size > secsize) {
 					accesssize = secsize;
@@ -539,7 +539,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26
 				if (fdc.R++ == (BYTE)para) {
-					if ((I286_AH & 0x80) && (!fdc.hd)) {
+					if ((CPU_AH & 0x80) && (!fdc.hd)) {
 						fdc.hd = 1;
 						fdc.H = 1;
 						fdc.R = 1;
@@ -569,7 +569,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 #endif
 			}
 #if 1
-			else if ((I286_AH & 0x0f) == 0x02) {	// ARS対策…
+			else if ((CPU_AH & 0x0f) == 0x02) {		// ARS対策…
 				ret_ah = 0x00;
 				result = FDCBIOS_READERROR;
 			}
@@ -587,9 +587,9 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			break;
 
 		case 0x0a:						// READ ID
-			fdc.mf = I286_AH & 0x40;						// ver0.29
-			if (I286_AH & 0x10) {							// ver0.28
-				if (!biosfd_seek(I286_CL, ndensity)) {
+			fdc.mf = CPU_AH & 0x40;							// ver0.29
+			if (CPU_AH & 0x10) {							// ver0.28
+				if (!biosfd_seek(CPU_CL, ndensity)) {
 					result = FDCBIOS_SEEKSUCCESS;
 				}
 				else {
@@ -609,23 +609,23 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				mtr_r += 128 << 8;
 			}
 			ret_ah = 0x00;
-			I286_CL = fdc.C;
-			I286_DH = fdc.H;
-			I286_DL = fdc.R;
-			I286_CH = fdc.N;
+			CPU_CL = fdc.C;
+			CPU_DH = fdc.H;
+			CPU_DL = fdc.R;
+			CPU_CH = fdc.N;
 			result = FDCBIOS_SUCCESS;
 			break;
 
 		case 0x0d:						// フォーマット
-			if (I286_AH & 0x10) {
-				biosfd_seek(I286_CL, ndensity);
+			if (CPU_AH & 0x10) {
+				biosfd_seek(CPU_CL, ndensity);
 			}
 			if (fdd_diskprotect(fdc.us)) {
 				ret_ah = 0x70;
 				break;
 			}
-			fdc.d = I286_DL;
-			fdc.N = I286_CH;
+			fdc.d = CPU_DL;
+			fdc.N = CPU_CH;
 			para = fdfmt_biospara(1, rpm);
 			if (!para) {
 				ret_ah = 0xd0;
@@ -633,9 +633,9 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			}
 			fdc.sc = (BYTE)para;
 			fdd_formatinit();
-			pos = I286_BP;
+			pos = CPU_BP;
 			for (s=0; s<fdc.sc; s++) {
-				i286_memstr_read(I286_ES, pos, ID, 4);
+				i286_memstr_read(CPU_ES, pos, ID, 4);
 				fdd_formating(ID);
 				pos += 4;
 			}
@@ -644,7 +644,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 	}
 	fdd_int(result);
 	fddmtr_seek(fdc.us, mtr_c, mtr_r);
-	I286_IP = BIOSOFST_WAIT;										// ver0.30
+	CPU_IP = BIOSOFST_WAIT;											// ver0.30
 	return(ret_ah);
 }
 
@@ -705,24 +705,24 @@ static BYTE sxsi_pos(long *pos) {
 	int		np2drv;
 
 	*pos = 0;
-	np2drv = (I286_AL & 0x20) >> 4;
-	if ((I286_AL & 0x0f) >= 2) {
+	np2drv = (CPU_AL & 0x20) >> 4;
+	if ((CPU_AL & 0x0f) >= 2) {
 		return(0x60);
 	}
-	np2drv |= (I286_AL & 1);
+	np2drv |= (CPU_AL & 1);
 	sxsi = &sxsi_hd[np2drv];
-	if (I286_AL & 0x80) {
-		if ((I286_DL >= sxsi->sectors) ||
-			(I286_DH >= sxsi->surfaces) ||
-			(I286_CX >= sxsi->tracks)) {
+	if (CPU_AL & 0x80) {
+		if ((CPU_DL >= sxsi->sectors) ||
+			(CPU_DH >= sxsi->surfaces) ||
+			(CPU_CX >= sxsi->tracks)) {
 			return(0xd0);
 		}
-		(*pos) = ((I286_CX * sxsi->surfaces) + I286_DH) * sxsi->sectors
-															+ I286_DL;
+		(*pos) = ((CPU_CX * sxsi->surfaces) + CPU_DH) * sxsi->sectors
+															+ CPU_DL;
 	}
 	else {
-		*pos = (I286_DL << 16) | I286_CX;
-		if (!(I286_AL & 0x20)) {
+		*pos = (CPU_DL << 16) | CPU_CX;
+		if (!(CPU_AL & 0x20)) {
 			(*pos) &= 0x1fffff;
 		}
 		if ((*pos) >= sxsi->totals) {
@@ -740,13 +740,13 @@ static BYTE sxsi_operate(BYTE type) {
 	long	pos;
 //	int		i;
 
-	drv = (I286_AL & 0x20) >> 4;
-	if ((I286_AL & 0x0f) >= 2) {
+	drv = (CPU_AL & 0x20) >> 4;
+	if ((CPU_AL & 0x0f) >= 2) {
 		return(0x60);
 	}
-	drv |= (I286_AL & 1);
+	drv |= (CPU_AL & 1);
 
-	switch(I286_AH & 0x0f) {
+	switch(CPU_AH & 0x0f) {
 		case 0x01:						// ベリファイ
 		case 0x07:						// リトラクト
 		case 0x0f:						// リトラクト
@@ -763,47 +763,47 @@ static BYTE sxsi_operate(BYTE type) {
 
    		case 0x04:						// センス
 			ret_ah = 0x00;
-			if ((I286_AH == 0x04) && (type == HDDTYPE_SASI)) {
+			if ((CPU_AH == 0x04) && (type == HDDTYPE_SASI)) {
 				ret_ah = 0x04;
 			}
-			else if ((I286_AH == 0x44) && (type == HDDTYPE_SCSI)) {
-				I286_BX = 1;
+			else if ((CPU_AH == 0x44) && (type == HDDTYPE_SCSI)) {
+				CPU_BX = 1;
 			}
-			else if (I286_AH == 0x84) {
-				I286_BX = sxsi_hd[drv].size;
-				I286_CX = sxsi_hd[drv].tracks;
-				I286_DH = sxsi_hd[drv].surfaces;
-				I286_DL = sxsi_hd[drv].sectors;
+			else if (CPU_AH == 0x84) {
+				CPU_BX = sxsi_hd[drv].size;
+				CPU_CX = sxsi_hd[drv].tracks;
+				CPU_DH = sxsi_hd[drv].surfaces;
+				CPU_DL = sxsi_hd[drv].sectors;
 			}
 			break;
 
 		case 0x05:						// データの書き込み
-			i286_memx_read(ES_BASE + I286_BP, work, I286_BX);
+			i286_memx_read(ES_BASE + CPU_BP, work, CPU_BX);
 			ret_ah = sxsi_pos(&pos);
 			if (!ret_ah) {
-				ret_ah = sxsi_write(I286_AL, pos, work, I286_BX);
+				ret_ah = sxsi_write(CPU_AL, pos, work, CPU_BX);
 			}
 			break;
 
 		case 0x06:						// データの読み込み
 			ret_ah = sxsi_pos(&pos);
 			if (!ret_ah) {
-				ret_ah = sxsi_read(I286_AL, pos, work, I286_BX);
+				ret_ah = sxsi_read(CPU_AL, pos, work, CPU_BX);
 				if (ret_ah < 0x20) {
-					i286_memx_write(ES_BASE + I286_BP, work, I286_BX);
+					i286_memx_write(ES_BASE + CPU_BP, work, CPU_BX);
 				}
 			}
 			break;
 
 		case 0x0d:						// フォーマット
-			if (I286_DL) {
+			if (CPU_DL) {
 				ret_ah = 0x30;
 				break;
 			}
-			i286_memstr_read(I286_ES, I286_BP, work, I286_BX);
+			i286_memstr_read(CPU_ES, CPU_BP, work, CPU_BX);
 			ret_ah = sxsi_pos(&pos);
 			if (!ret_ah) {
-				ret_ah = sxsi_format(I286_AL, pos);
+				ret_ah = sxsi_format(CPU_AL, pos);
 			}
 			break;
 
@@ -996,7 +996,7 @@ void bios0x1b(void) {
 	BYTE	ret_ah;
 	REG8	flag;
 
-	switch(I286_AL & 0xf0) {
+	switch(CPU_AL & 0xf0) {
 		case 0x90:
 			ret_ah = fdd_operate(DISKTYPE_2HD, 0, 0);
 			break;
@@ -1034,7 +1034,7 @@ void bios0x1b(void) {
 #if 0
 	{
 		static BYTE p = 0;
-		if ((I286_CL == 0x4d) && (ret_ah == 0xe0)) {
+		if ((CPU_CL == 0x4d) && (ret_ah == 0xe0)) {
 			if (!p) {
 				trace_sw = 1;
 				p++;
@@ -1047,16 +1047,16 @@ void bios0x1b(void) {
 #if 0
 	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
-			i286_memword_read(I286_SS, I286_SP+2),
-			i286_memword_read(I286_SS, I286_SP),
-			I286_AX, I286_BX, I286_CL, I286_DH, I286_DL, I286_CH, 
-			I286_ES, I286_BP, ret_ah));
+							i286_memword_read(CPU_SS, CPU_SP+2),
+							i286_memword_read(CPU_SS, CPU_SP),
+							CPU_AX, CPU_BX, CPU_CL, CPU_DH, CPU_DL, CPU_CH,
+							CPU_ES, CPU_BP, ret_ah));
 #endif
-	I286_AH = ret_ah;
-	flag = i286_membyte_read(I286_SS, I286_SP+4) & 0xfe;
+	CPU_AH = ret_ah;
+	flag = i286_membyte_read(CPU_SS, CPU_SP+4) & 0xfe;
 	if (ret_ah >= 0x20) {
 		flag += 1;
 	}
-	i286_membyte_write(I286_SS, I286_SP+4, flag);
+	i286_membyte_write(CPU_SS, CPU_SP + 4, flag);
 }
 

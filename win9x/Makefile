@@ -199,54 +199,55 @@ $(OBJ)/parts.oa		:	$(X86ASM)/parts.x86
 
 
 $(OBJ)/i286c.o		:	$(I286C)/i286c.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/v30patch.h \
-						$(I286C)/memory.h $(I286C)/dmap.h $(I286C)/i286c.mcr
+						$(I286C)/cpucore.h $(I286C)/i286c.h \
+						$(I286C)/v30patch.h $(I286C)/memory.h \
+						$(I286C)/dmap.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/i286c_mn.o	:	$(I286C)/i286c_mn.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/memory.h \
-						$(BIOS)/bios.h $(I286C)/i286c.mcr
+						$(I286C)/cpucore.h $(I286C)/i286c.h \
+						$(I286C)/memory.h $(BIOS)/bios.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/i286c_ea.o	:	$(I286C)/i286c_ea.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/i286c_ea.o	:	$(I286C)/i286c_ea.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/i286c.h $(I286C)/memory.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/i286c_0f.o	:	$(I286C)/i286c_0f.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/i286c_0f.o	:	$(I286C)/i286c_0f.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/i286c.h $(I286C)/memory.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/i286c_8x.o	:	$(I286C)/i286c_8x.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/i286c_8x.o	:	$(I286C)/i286c_8x.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/i286c.h $(I286C)/memory.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/i286c_sf.o	:	$(I286C)/i286c_sf.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/i286c_sf.o	:	$(I286C)/i286c_sf.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/i286c.h $(I286C)/memory.h \
 						$(I286C)/i286c.mcr $(I286C)/i286c_sf.mcr
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/i286c_f6.o	:	$(I286C)/i286c_f6.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/i286c_f6.o	:	$(I286C)/i286c_f6.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/i286c.h $(I286C)/memory.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/i286c_fe.o	:	$(I286C)/i286c_fe.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/i286c_fe.o	:	$(I286C)/i286c_fe.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/i286c.h $(I286C)/memory.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/i286c_rp.o	:	$(I286C)/i286c_rp.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/memory.h \
-						$(I286C)/i286c.mcr
+						$(I286C)/cpucore.h $(I286C)/i286c.h \
+						$(I286C)/memory.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/v30patch.o	:	$(I286C)/v30patch.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/v30patch.h \
-						$(I286C)/memory.h $(I286C)/dmap.h $(BIOS)/bios.h \
-						$(I286C)/i286c.mcr
+						$(I286C)/cpucore.h $(I286C)/i286c.h \
+						$(I286C)/v30patch.h $(I286C)/memory.h \
+						$(I286C)/dmap.h $(BIOS)/bios.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/memory.o		:	$(I286C)/memory.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(I286C)/egcmem.h \
-						$(VRAM)/vram.h $(FONT)/font.h
+						$(I286C)/cpucore.h $(I286C)/memory.h \
+						$(I286C)/egcmem.h $(VRAM)/vram.h $(FONT)/font.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/egcmem.o		:	$(I286C)/egcmem.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -260,12 +261,12 @@ $(OBJ)/dmap.o		:	$(I286C)/dmap.c $(HEADERS) $(PCCORES) $(IOCORES) \
 
 
 $(OBJ)/iocore.o		:	$(IO)/iocore.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(FMBOARDS) $(I286C)/i286.h $(CBUS)/cbuscore.h \
+						$(FMBOARDS) $(I286C)/cpucore.h $(CBUS)/cbuscore.h \
 						$(SOUND)/sound.h $(CBUS)/cs4231io.h $(IO)/iocore16.tbl
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/artic.o		:	$(IO)/artic.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/cgrom.o		:	$(IO)/cgrom.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -273,7 +274,7 @@ $(OBJ)/cgrom.o		:	$(IO)/cgrom.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/cpuio.o		:	$(IO)/cpuio.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(FMBOARDS) $(I286C)/i286.h $(SOUND)/sound.h
+						$(FMBOARDS) $(I286C)/cpucore.h $(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/crtc.o		:	$(IO)/crtc.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -281,8 +282,8 @@ $(OBJ)/crtc.o		:	$(IO)/crtc.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dipsw.o		:	$(IO)/dipsw.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/sysmng.h $(I286C)/i286.h $(SOUND)/sound.h \
-						$(SOUND)/beep.h
+						$(TARGET)/sysmng.h $(I286C)/cpucore.h \
+						$(SOUND)/sound.h $(SOUND)/beep.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dmac.o		:	$(IO)/dmac.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -294,7 +295,7 @@ $(OBJ)/egc.o		:	$(IO)/egc.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/extmem.o		:	$(IO)/extmem.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h
+						$(I286C)/cpucore.h $(I286C)/memory.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fdc.o		:	$(IO)/fdc.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -305,7 +306,7 @@ $(OBJ)/fdd320.o		:	$(IO)/fdd320.c $(HEADERS) $(PCCORES) $(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gdc.o		:	$(IO)/gdc.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/scrnmng.h $(I286C)/i286.h \
+						$(TARGET)/scrnmng.h $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(VRAM)/vram.h $(VRAM)/palettes.h \
 						$(IO)/gdc_cmd.tbl
 	$(CC) $(COPT) -o $@ $<
@@ -322,27 +323,28 @@ $(OBJ)/itf.o		:	$(IO)/itf.c $(HEADERS) $(PCCORES) $(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/mouseif.o	:	$(IO)/mouseif.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/mousemng.h $(I286C)/i286.h
+						$(TARGET)/mousemng.h $(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/nmiio.o		:	$(IO)/nmiio.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2sysp.o	:	$(IO)/np2sysp.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(COMMON)/strres.h $(TARGET)/taskmng.h $(I286C)/i286.h
+						$(COMMON)/strres.h $(TARGET)/taskmng.h \
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pic.o		:	$(IO)/pic.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pit.o		:	$(IO)/pit.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(SOUND)/sound.h $(SOUND)/beep.h
+						$(I286C)/cpucore.h $(SOUND)/sound.h $(SOUND)/beep.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/printif.o	:	$(IO)/printif.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/serial.o		:	$(IO)/serial.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -409,7 +411,7 @@ $(OBJ)/amd98.o		:	$(CBUS)/amd98.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pcm86io.o	:	$(CBUS)/pcm86io.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(FMBOARDS) $(I286C)/i286.h $(CBUS)/pcm86io.h \
+						$(FMBOARDS) $(I286C)/cpucore.h $(CBUS)/pcm86io.h \
 						$(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
 
@@ -420,63 +422,64 @@ $(OBJ)/cs4231io.o	:	$(CBUS)/cs4231io.c $(HEADERS) $(PCCORES) $(IOCORES) \
 
 
 $(OBJ)/bios.o		:	$(BIOS)/bios.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/dosio.h $(I286C)/i286.h $(I286C)/memory.h \
-						$(BIOS)/bios.h $(BIOS)/biosmem.h $(LIO)/lio.h \
-						$(FDD)/fddfile.h $(FDD)/fdd_mtr.h $(BIOS)/fdfmt.h \
-						$(BIOS)/keytable.res $(BIOS)/itfrom.res
+						$(TARGET)/dosio.h $(I286C)/cpucore.h \
+						$(I286C)/memory.h $(BIOS)/bios.h $(BIOS)/biosmem.h \
+						$(LIO)/lio.h $(FDD)/fddfile.h $(FDD)/fdd_mtr.h \
+						$(BIOS)/fdfmt.h $(BIOS)/keytable.res \
+						$(BIOS)/itfrom.res
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios02.o		:	$(BIOS)/bios02.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h 
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h 
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios08.o		:	$(BIOS)/bios08.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios09.o		:	$(BIOS)/bios09.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios0c.o		:	$(BIOS)/bios0c.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(BIOS)/rsbios.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios12.o		:	$(BIOS)/bios12.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios13.o		:	$(BIOS)/bios13.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios18.o		:	$(BIOS)/bios18.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(FONT)/font.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios19.o		:	$(BIOS)/bios19.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(BIOS)/rsbios.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios1a.o		:	$(BIOS)/bios1a.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios1b.o		:	$(BIOS)/bios1b.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(FDD)/fddfile.h $(FDD)/fdd_mtr.h \
 						$(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/timemng.h $(I286C)/i286.h \
+						$(TARGET)/timemng.h $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(BASE)/calendar.h \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h 
 	$(CC) $(COPT) -o $@ $<
@@ -484,7 +487,7 @@ $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(PCCORES) $(IOCORES) \
 
 
 $(OBJ)/sound.o		:	$(SOUND)/sound.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/soundmng.h $(I286C)/i286.h \
+						$(TARGET)/soundmng.h $(I286C)/cpucore.h \
 						$(SOUND)/sound.h $(SOUND)/sndcsec.h $(SOUND)/beep.h
 	$(CC) $(COPT) -o $@ $<
 
@@ -494,12 +497,12 @@ $(OBJ)/sndcsec.o	:	$(SOUND)/sndcsec.c $(HEADERS) $(SOUND)/sound.h \
 
 $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(FMBOARDS) $(TARGET)/joymng.h $(TARGET)/soundmng.h \
-						$(I286C)/i286.h $(CBUS)/cbuscore.h $(CBUS)/board14.h \
-						$(CBUS)/board26k.h $(CBUS)/board86.h \
-						$(CBUS)/boardx2.h $(CBUS)/board118.h \
-						$(CBUS)/boardspb.h $(CBUS)/amd98.h $(CBUS)/pcm86io.h \
-						$(CBUS)/cs4231io.h $(SOUND)/sound.h $(SOUND)/beep.h \
-						$(GENERIC)/keydisp.h
+						$(I286C)/cpucore.h $(CBUS)/cbuscore.h \
+						$(CBUS)/board14.h $(CBUS)/board26k.h \
+						$(CBUS)/board86.h $(CBUS)/boardx2.h \
+						$(CBUS)/board118.h $(CBUS)/boardspb.h \
+						$(CBUS)/amd98.h $(CBUS)/pcm86io.h $(CBUS)/cs4231io.h \
+						$(SOUND)/sound.h $(SOUND)/beep.h $(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fmtimer.o	:	$(SOUND)/fmtimer.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -558,7 +561,7 @@ $(OBJ)/adpcmg.o		:	$(SOUND)/adpcmg.c $(HEADERS) $(SOUND)/sound.h \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pcm86c.o		:	$(SOUND)/pcm86c.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(FMBOARDS) $(I286C)/i286.h $(SOUND)/sound.h
+						$(FMBOARDS) $(I286C)/cpucore.h $(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pcm86g.o		:	$(SOUND)/pcm86g.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -684,45 +687,45 @@ $(OBJ)/fdd_mtr.o	:	$(FDD)/fdd_mtr.c $(HEADERS) $(PCCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/sxsi.o		:	$(FDD)/sxsi.c $(HEADERS) $(PCCORES) \
-						$(TARGET)/sysmng.h $(I286C)/i286.h $(FDD)/sxsi.h
+						$(TARGET)/sysmng.h $(I286C)/cpucore.h $(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
 
 
 $(OBJ)/lio.o		:	$(LIO)/lio.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(VRAM)/vram.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gscreen.o	:	$(LIO)/gscreen.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(LIO)/lio.h
+						$(I286C)/cpucore.h $(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gview.o		:	$(LIO)/gview.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(LIO)/lio.h
+						$(I286C)/cpucore.h $(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gcolor1.o	:	$(LIO)/gcolor1.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(LIO)/lio.h
+						$(I286C)/cpucore.h $(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gcolor2.o	:	$(LIO)/gcolor2.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/memory.h $(LIO)/lio.h
+						$(I286C)/cpucore.h $(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/gcls.o		:	$(LIO)/gcls.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/gcls.o		:	$(LIO)/gcls.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/gpset.o		:	$(LIO)/gpset.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/gpset.o		:	$(LIO)/gpset.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/gline.o		:	$(LIO)/gline.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/gline.o		:	$(LIO)/gline.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/gput1.o		:	$(LIO)/gput1.c $(HEADERS) $(I286C)/i286.h \
+$(OBJ)/gput1.o		:	$(LIO)/gput1.c $(HEADERS) $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
@@ -875,7 +878,7 @@ $(OBJ)/soundmng.o	:	$(TARGET)/soundmng.cpp $(HEADERS) $(COMMON)/parts.h \
 
 $(OBJ)/sysmng.o		:	$(TARGET)/sysmng.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/np2.h $(TARGET)/dosio.h $(TARGET)/sysmng.h \
-						$(I286C)/i286.h $(FDD)/fddfile.h
+						$(I286C)/cpucore.h $(FDD)/fddfile.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/taskmng.o	:	$(TARGET)/taskmng.cpp $(HEADERS) $(TARGET)/taskmng.h
@@ -923,7 +926,7 @@ $(OBJ)/ini.o		:	$(TARGET)/ini.cpp $(HEADERS) $(PCCORES) \
 $(OBJ)/np2info.o	:	$(TARGET)/np2info.cpp $(HEADERS) $(PCCORES) \
 						$(IOCORES) $(FMBOARDS) $(COMMON)/strres.h \
 						$(TARGET)/np2.h $(TARGET)/scrnmng.h \
-						$(TARGET)/np2info.h $(I286C)/i286.h \
+						$(TARGET)/np2info.h $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(BIOS)/bios.h
 	$(CC) $(COPT) -o $@ $<
 
@@ -1029,7 +1032,7 @@ $(OBJ)/dialogs.o	:	$(DIALOG)/dialogs.cpp $(HEADERS) $(COMMON)/strres.h \
 $(OBJ)/viewer.o		:	$(DEBUGUTY)/viewer.cpp $(HEADERS) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(DEBUGUTY)/viewer.h $(DEBUGUTY)/viewcmn.h \
-						$(I286C)/i286.h
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/viewcmn.o	:	$(DEBUGUTY)/viewcmn.cpp $(HEADERS) $(PCCORES) \
@@ -1038,7 +1041,7 @@ $(OBJ)/viewcmn.o	:	$(DEBUGUTY)/viewcmn.cpp $(HEADERS) $(PCCORES) \
 						$(DEBUGUTY)/viewmem.h $(DEBUGUTY)/viewreg.h \
 						$(DEBUGUTY)/viewseg.h $(DEBUGUTY)/view1mb.h \
 						$(DEBUGUTY)/viewasm.h $(DEBUGUTY)/viewsnd.h \
-						$(I286C)/i286.h $(I286C)/memory.h $(BIOS)/bios.h
+						$(I286C)/cpucore.h $(I286C)/memory.h $(BIOS)/bios.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/viewmenu.o	:	$(DEBUGUTY)/viewmenu.cpp $(HEADERS) \
@@ -1056,28 +1059,28 @@ $(OBJ)/viewreg.o	:	$(DEBUGUTY)/viewreg.cpp $(HEADERS) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(DEBUGUTY)/viewer.h $(DEBUGUTY)/viewcmn.h \
 						$(DEBUGUTY)/viewmenu.h $(DEBUGUTY)/viewmem.h \
-						$(DEBUGUTY)/viewreg.h $(I286C)/i286.h
+						$(DEBUGUTY)/viewreg.h $(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/viewseg.o	:	$(DEBUGUTY)/viewseg.cpp $(HEADERS) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(DEBUGUTY)/viewer.h $(DEBUGUTY)/viewcmn.h \
 						$(DEBUGUTY)/viewmenu.h $(DEBUGUTY)/viewmem.h \
-						$(DEBUGUTY)/viewseg.h $(I286C)/i286.h
+						$(DEBUGUTY)/viewseg.h $(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/view1mb.o	:	$(DEBUGUTY)/view1mb.cpp $(HEADERS) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(DEBUGUTY)/viewer.h $(DEBUGUTY)/viewcmn.h \
 						$(DEBUGUTY)/viewmenu.h $(DEBUGUTY)/viewmem.h \
-						$(DEBUGUTY)/view1mb.h $(I286C)/i286.h
+						$(DEBUGUTY)/view1mb.h $(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/viewasm.o	:	$(DEBUGUTY)/viewasm.cpp $(HEADERS) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(DEBUGUTY)/viewer.h $(DEBUGUTY)/viewcmn.h \
 						$(DEBUGUTY)/viewmenu.h $(DEBUGUTY)/viewmem.h \
-						$(DEBUGUTY)/viewsnd.h $(I286C)/i286.h
+						$(DEBUGUTY)/viewsnd.h $(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/viewsnd.o	:	$(DEBUGUTY)/viewsnd.cpp $(HEADERS) $(PCCORES) \
@@ -1095,7 +1098,7 @@ $(OBJ)/unasm.o		:	$(DEBUGUTY)/unasm.cpp $(HEADER) $(DEBUGUTY)/unasm.h
 
 $(OBJ)/pccore.o		:	$(BASE)/pccore.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/soundmng.h $(TARGET)/sysmng.h \
-						$(TARGET)/timemng.h $(I286C)/i286.h \
+						$(TARGET)/timemng.h $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(CBUS)/cbuscore.h \
 						$(CBUS)/pc9861k.h $(CBUS)/mpu98ii.h $(BIOS)/bios.h \
 						$(VRAM)/vram.h $(VRAM)/scrndraw.h $(VRAM)/dispsync.h \
@@ -1107,7 +1110,8 @@ $(OBJ)/pccore.o		:	$(BASE)/pccore.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(BASE)/timing.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/nevent.o		:	$(BASE)/nevent.c $(HEADERS) $(PCCORES) $(I286C)/i286.h
+$(OBJ)/nevent.o		:	$(BASE)/nevent.c $(HEADERS) $(PCCORES) \
+						$(I286C)/cpucore.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/calendar.o	:	$(BASE)/calendar.c $(HEADERS) $(PCCORES) \
@@ -1122,7 +1126,7 @@ $(OBJ)/timing.o		:	$(BASE)/timing.c $(HEADERS) $(PCCORES) \
 $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/dosio.h $(TARGET)/commng.h \
 						$(TARGET)/scrnmng.h $(TARGET)/soundmng.h \
-						$(TARGET)/timemng.h $(I286C)/i286.h \
+						$(TARGET)/timemng.h $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(CBUS)/cbuscore.h \
 						$(CBUS)/pc9861k.h $(CBUS)/mpu98ii.h \
 						$(CBUS)/board14.h $(BIOS)/bios.h $(VRAM)/vram.h \
@@ -1134,8 +1138,9 @@ $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/debugsub.o	:	$(BASE)/debugsub.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(COMMON)/strres.h $(TARGET)/dosio.h $(I286C)/i286.h \
-						$(I286C)/memory.h $(BASE)/debugsub.h
+						$(COMMON)/strres.h $(TARGET)/dosio.h \
+						$(I286C)/cpucore.h $(I286C)/memory.h \
+						$(BASE)/debugsub.h
 	$(CC) $(COPT) -o $@ $<
 
 

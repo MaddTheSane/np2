@@ -1,11 +1,11 @@
 
 typedef union {
-	BYTE	_b[2];
+	UINT8	_b[2];
 	UINT16	w;
 } EGCWORD;
 
 typedef union {
-	BYTE	_b[4][2];
+	UINT8	_b[4][2];
 	UINT16	w[4];
 	UINT32	d[2];
 } EGCQUAD;
@@ -34,10 +34,10 @@ typedef struct {
 	BYTE	*outptr;
 	EGCWORD	mask2;
 	EGCWORD	srcmask;
-	BYTE	srcbit;
-	BYTE	dstbit;
-	BYTE	sft8bitl;
-	BYTE	sft8bitr;
+	UINT8	srcbit;
+	UINT8	dstbit;
+	UINT8	sft8bitl;
+	UINT8	sft8bitr;
 } _EGC, *EGC;
 
 
@@ -47,7 +47,7 @@ extern "C" {
 
 void egc_reset(void);
 void egc_bind(void);
-void IOOUTCALL egc_w16(UINT port, UINT16 value);
+void IOOUTCALL egc_w16(UINT port, REG16 value);
 
 #ifdef __cplusplus
 }

@@ -1,19 +1,18 @@
 #include	"compiler.h"
-#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
 
 // ---- I/O
 
-static void IOOUTCALL nmiio_o50(UINT port, BYTE dat) {
+static void IOOUTCALL nmiio_o50(UINT port, REG8 dat) {
 
 	nmiio.enable = 0;
 	(void)port;
 	(void)dat;
 }
 
-static void IOOUTCALL nmiio_o52(UINT port, BYTE dat) {
+static void IOOUTCALL nmiio_o52(UINT port, REG8 dat) {
 
 	nmiio.enable = 1;
 	(void)port;

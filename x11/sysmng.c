@@ -3,7 +3,7 @@
 #include "np2.h"
 #include "dosio.h"
 #include "fddfile.h"
-#include "i286.h"
+#include "cpucore.h"
 #include "pccore.h"
 #include "sysmng.h"
 #include "toolkit.h"
@@ -26,7 +26,7 @@ sysmng_workclockreset(void)
 {
 
 	workclock.tick = GETTICK();
-	workclock.clock = I286_CLOCK;
+	workclock.clock = CPU_CLOCK;
 	workclock.draws = drawcount;
 	workclock.fps = 0;
 	workclock.khz = 0;
@@ -41,8 +41,8 @@ sysmng_workclockrenewal(void)
 		workclock.tick += tick;
 		workclock.fps = ((drawcount - workclock.draws) * 10000) / tick;
 		workclock.draws = drawcount;
-		workclock.khz = (I286_CLOCK - workclock.clock) / tick;
-		workclock.clock = I286_CLOCK;
+		workclock.khz = (CPU_CLOCK - workclock.clock) / tick;
+		workclock.clock = CPU_CLOCK;
 		return TRUE;
 	}
 	return FALSE;

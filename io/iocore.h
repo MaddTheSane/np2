@@ -6,8 +6,8 @@
 #define	IOINPCALL
 #endif
 
-typedef	void (IOOUTCALL *IOOUT)(UINT port, BYTE val);
-typedef	BYTE (IOINPCALL *IOINP)(UINT port);
+typedef	void (IOOUTCALL *IOOUT)(UINT port, REG8 val);
+typedef	REG8 (IOINPCALL *IOINP)(UINT port);
 
 typedef void (*IOCBFN)(void);
 
@@ -95,11 +95,14 @@ void iocore_cb(const IOCBFN *cbfn, UINT count);
 void iocore_reset(void);
 void iocore_bind(void);
 
-void IOOUTCALL iocore_out8(UINT port, BYTE val);
-BYTE IOINPCALL iocore_inp8(UINT port);
+void IOOUTCALL iocore_out8(UINT port, REG8 dat);
+REG8 IOINPCALL iocore_inp8(UINT port);
 
-void IOOUTCALL iocore_out16(UINT port, UINT16 dat);
-UINT16 IOINPCALL iocore_inp16(UINT port);
+void IOOUTCALL iocore_out16(UINT port, REG16 dat);
+REG16 IOINPCALL iocore_inp16(UINT port);
+
+void IOOUTCALL iocore_out32(UINT port, UINT32 dat);
+UINT32 IOINPCALL iocore_inp32(UINT port);
 
 #ifdef __cplusplus
 }

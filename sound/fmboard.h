@@ -64,8 +64,8 @@ extern	MUSICGEN	musicgen;
 
 BYTE fmboard_getjoy(PSGGEN psg);
 
-void fmboard_extreg(void (*ext)(BYTE enable));
-void fmboard_extenable(BYTE enable);
+void fmboard_extreg(void (*ext)(REG8 enable));
+void fmboard_extenable(REG8 enable);
 
 void fmboard_reset(BYTE num);
 void fmboard_bind(void);

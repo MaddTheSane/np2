@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"pcm86io.h"
@@ -10,21 +10,21 @@
 extern	PCM86CFG	pcm86cfg;
 
 
-static const BYTE pcm86bits[] = {1, 1, 1, 2, 0, 0, 0, 1};
+static const UINT8 pcm86bits[] = {1, 1, 1, 2, 0, 0, 0, 1};
 static const SINT32 pcm86rescue[] = {PCM86_RESCUE * 32, PCM86_RESCUE * 24,
 									 PCM86_RESCUE * 16, PCM86_RESCUE * 12,
 									 PCM86_RESCUE *  8, PCM86_RESCUE *  6,
 									 PCM86_RESCUE *  4, PCM86_RESCUE *  3};
 
 
-static void IOOUTCALL pcm86_oa460(UINT port, BYTE val) {
+static void IOOUTCALL pcm86_oa460(UINT port, REG8 val) {
 
 	pcm86.extfunc = val;
-	fmboard_extenable((BYTE)(val & 1));
+	fmboard_extenable((REG8)(val & 1));
 	(void)port;
 }
 
-static void IOOUTCALL pcm86_oa466(UINT port, BYTE val) {
+static void IOOUTCALL pcm86_oa466(UINT port, REG8 val) {
 
 	if ((val & 0xe0) == 0xa0) {
 		sound_sync();
@@ -34,9 +34,9 @@ static void IOOUTCALL pcm86_oa466(UINT port, BYTE val) {
 	(void)port;
 }
 
-static void IOOUTCALL pcm86_oa468(UINT port, BYTE val) {
+static void IOOUTCALL pcm86_oa468(UINT port, REG8 val) {
 
-	BYTE	xchgbit;
+	REG8	xchgbit;
 
 	sound_sync();
 	xchgbit = pcm86.fifo ^ val;
@@ -48,7 +48,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, BYTE val) {
 		pcm86.virbuf = 0;
 		pcm86.write = 0;
 		pcm86.reqirq = 0;
-		pcm86.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
+		pcm86.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 		pcm86.lastclock <<= 6;
 	}
 	// サンプリングレート変更
@@ -58,7 +58,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, BYTE val) {
 	}
 	pcm86.fifo = val & (~0x10);
 	if ((xchgbit & 0x80) && (val & 0x80)) {
-		pcm86.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
+		pcm86.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 		pcm86.lastclock <<= 6;
 	}
 	pcm86.write = 1;
@@ -66,7 +66,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, BYTE val) {
 	(void)port;
 }
 
-static void IOOUTCALL pcm86_oa46a(UINT port, BYTE val) {
+static void IOOUTCALL pcm86_oa46a(UINT port, REG8 val) {
 
 	sound_sync();
 	if (pcm86.fifo & 0x20) {
@@ -94,7 +94,7 @@ static void IOOUTCALL pcm86_oa46a(UINT port, BYTE val) {
 	(void)port;
 }
 
-static void IOOUTCALL pcm86_oa46c(UINT port, BYTE val) {
+static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val) {
 
 	if (pcm86.virbuf < PCM86_LOGICALBUF) {
 		pcm86.virbuf++;
@@ -112,20 +112,20 @@ static void IOOUTCALL pcm86_oa46c(UINT port, BYTE val) {
 	(void)port;
 }
 
-static BYTE IOINPCALL pcm86_ia460(UINT port) {
+static REG8 IOINPCALL pcm86_ia460(UINT port) {
 
 	(void)port;
 	return(0x40 | (pcm86.extfunc & 1));
 }
 
-static BYTE IOINPCALL pcm86_ia466(UINT port) {
+static REG8 IOINPCALL pcm86_ia466(UINT port) {
 
 	UINT32	nowclk;
 	UINT32	past;
-	BYTE	ret;
+	REG8	ret;
 
 	sound_sync();
-	nowclk = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
+	nowclk = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 	nowclk <<= 6;
 	past = nowclk - pcm86.lastclock;
 	if (past >= pcm86.stepclock) {
@@ -143,9 +143,9 @@ static BYTE IOINPCALL pcm86_ia466(UINT port) {
 	return(ret);
 }
 
-static BYTE IOINPCALL pcm86_ia468(UINT port) {
+static REG8 IOINPCALL pcm86_ia468(UINT port) {
 
-	BYTE	ret;
+	REG8	ret;
 
 	ret = pcm86.fifo & (~0x10);
 	if ((pcm86.write) && (pcm86.fifo & 0x20)) {
@@ -160,13 +160,13 @@ static BYTE IOINPCALL pcm86_ia468(UINT port) {
 	return(ret);
 }
 
-static BYTE IOINPCALL pcm86_ia46a(UINT port) {
+static REG8 IOINPCALL pcm86_ia46a(UINT port) {
 
 	(void)port;
 	return(pcm86.dactrl);
 }
 
-static BYTE IOINPCALL pcm86_inpdummy(UINT port) {
+static REG8 IOINPCALL pcm86_inpdummy(UINT port) {
 
 	(void)port;
 	return(0);

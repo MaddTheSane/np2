@@ -52,13 +52,13 @@ typedef struct {
 		UINT16	w;
 	} lengorg;
 	UINT16	action;
-	void	(DMACCALL * outproc)(BYTE data);
-	BYTE	(DMACCALL * inproc)(void);
-	BYTE	(DMACCALL * extproc)(BYTE action);
-	BYTE	mode;
-	BYTE	sreq;
-	BYTE	ready;
-	BYTE	mask;
+	void	(DMACCALL * outproc)(REG8 data);
+	REG8	(DMACCALL * inproc)(void);
+	REG8	(DMACCALL * extproc)(REG8 action);
+	UINT8	mode;
+	UINT8	sreq;
+	UINT8	ready;
+	UINT8	mask;
 } _DMACH, *DMACH;
 
 typedef struct {
@@ -66,8 +66,8 @@ typedef struct {
 	int		lh;
 	UINT	work;
 	UINT	working;
-	BYTE	mask;
-	BYTE	stat;
+	UINT8	mask;
+	UINT8	stat;
 } _DMAC, *DMAC;
 
 
@@ -75,9 +75,9 @@ typedef struct {
 extern "C" {
 #endif
 
-void DMACCALL dma_dummyout(BYTE data);
-BYTE DMACCALL dma_dummyin(void);
-BYTE DMACCALL dma_dummyproc(BYTE func);
+void DMACCALL dma_dummyout(REG8 data);
+REG8 DMACCALL dma_dummyin(void);
+REG8 DMACCALL dma_dummyproc(REG8 func);
 
 void dmac_reset(void);
 void dmac_bind(void);

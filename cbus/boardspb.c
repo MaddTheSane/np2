@@ -8,13 +8,13 @@
 #include	"s98.h"
 
 
-static void IOOUTCALL spb_o188(UINT port, BYTE dat) {
+static void IOOUTCALL spb_o188(UINT port, REG8 dat) {
 
 	opn.opnreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spb_o18a(UINT port, BYTE dat) {
+static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
@@ -51,13 +51,13 @@ static void IOOUTCALL spb_o18a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL spb_o18c(UINT port, BYTE dat) {
+static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
 
 	opn.extreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spb_o18e(UINT port, BYTE dat) {
+static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 
 	S98_put(EXTEND2608, opn.extreg, dat);
 	opn.reg[opn.extreg + 0x100] = dat;
@@ -71,13 +71,13 @@ static void IOOUTCALL spb_o18e(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL spb_i188(UINT port) {
+static REG8 IOINPCALL spb_i188(UINT port) {
 
 	(void)port;
 	return((fmtimer.status & 3) | adpcm_status(&adpcm));
 }
 
-static BYTE IOINPCALL spb_i18a(UINT port) {
+static REG8 IOINPCALL spb_i18a(UINT port) {
 
 	if (opn.opnreg == 0x0e) {
 		return(fmboard_getjoy(&psg1));
@@ -89,7 +89,7 @@ static BYTE IOINPCALL spb_i18a(UINT port) {
 	return(opn.reg[opn.opnreg]);
 }
 
-static BYTE IOINPCALL spb_i18e(UINT port) {
+static REG8 IOINPCALL spb_i18e(UINT port) {
 
 	if (opn.extreg == 0x08) {
 		return(adpcm_readsample(&adpcm));
@@ -101,13 +101,13 @@ static BYTE IOINPCALL spb_i18e(UINT port) {
 
 // ---- spark board
 
-static void IOOUTCALL spr_o588(UINT port, BYTE dat) {
+static void IOOUTCALL spr_o588(UINT port, REG8 dat) {
 
 	opn.opn2reg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spr_o58a(UINT port, BYTE dat) {
+static void IOOUTCALL spr_o58a(UINT port, REG8 dat) {
 
 	if (opn.opn2reg < 0x30) {
 		if (opn.opn2reg == 0x28) {
@@ -132,13 +132,13 @@ static void IOOUTCALL spr_o58a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL spr_o58c(UINT port, BYTE dat) {
+static void IOOUTCALL spr_o58c(UINT port, REG8 dat) {
 
 	opn.ext2reg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spr_o58e(UINT port, BYTE dat) {
+static void IOOUTCALL spr_o58e(UINT port, REG8 dat) {
 
 	opn.reg[opn.ext2reg + 0x300] = dat;
 	if (opn.ext2reg >= 0x30) {
@@ -148,13 +148,13 @@ static void IOOUTCALL spr_o58e(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL spr_i588(UINT port) {
+static REG8 IOINPCALL spr_i588(UINT port) {
 
 	(void)port;
 	return(fmtimer.status);
 }
 
-static BYTE IOINPCALL spr_i58a(UINT port) {
+static REG8 IOINPCALL spr_i58a(UINT port) {
 
 	if (opn.opn2reg >= 0x20) {
 		return(opn.reg[opn.opn2reg + 0x200]);
@@ -163,13 +163,13 @@ static BYTE IOINPCALL spr_i58a(UINT port) {
 	return(0xff);
 }
 
-static BYTE IOINPCALL spr_i58c(UINT port) {
+static REG8 IOINPCALL spr_i58c(UINT port) {
 
 	(void)port;
 	return(fmtimer.status & 3);
 }
 
-static BYTE IOINPCALL spr_i58e(UINT port) {
+static REG8 IOINPCALL spr_i58e(UINT port) {
 
 	(void)port;
 	return(opn.reg[opn.opn2reg + 0x200]);
@@ -187,10 +187,10 @@ static const IOINP spb_i[4] = {
 
 void boardspb_reset(void) {
 
-	fmtimer_reset((BYTE)(np2cfg.spbopt & 0xc0));
+	fmtimer_reset(np2cfg.spbopt & 0xc0);
 	opn.channels = 6;
 	opngen_setcfg(6, OPN_STEREO | 0x03f);
-	soundrom_loadex((BYTE)(np2cfg.spbopt & 7), "SPB");
+	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
 	opn.base = ((np2cfg.spbopt & 0x10)?0x000:0x100);
 }
 
@@ -215,11 +215,11 @@ static const IOINP spr_i[4] = {
 
 void boardspr_reset(void) {
 
-	fmtimer_reset((BYTE)(np2cfg.spbopt & 0xc0));
+	fmtimer_reset(np2cfg.spbopt & 0xc0);
 	opn.reg[0x2ff] = 0;
 	opn.channels = 12;
 	opngen_setcfg(12, OPN_STEREO | 0x03f);
-	soundrom_loadex((BYTE)(np2cfg.spbopt & 7), "SPB");
+	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
 	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
 }
 

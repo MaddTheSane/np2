@@ -10,19 +10,19 @@ enum {
 #define	MPUCHDATAS	4
 
 typedef struct {
-	BYTE	step;
-	BYTE	datas;
-	BYTE	remain;
-	BYTE	rstat;
-	BYTE	recv;
-	BYTE	padding[2];
+	UINT8	step;
+	UINT8	datas;
+	UINT8	remain;
+	UINT8	rstat;
+	UINT8	recv;
+	UINT8	padding[2];
 	BYTE	data[MPUCHDATAS];
 } MPUCH;
 
 typedef struct {
-	BYTE	step;
-	BYTE	cmd;
-	BYTE	padding[2];
+	UINT8	step;
+	UINT8	cmd;
+	UINT8	padding[2];
 	UINT16	remain;
 	UINT16	datas;
 	BYTE	data[MPU98_EXCVBUFS];
@@ -39,29 +39,29 @@ typedef struct {
 	int		pos;
 
 	UINT16	port;												// ver0.28
-	BYTE	irqnum;
-	BYTE	data;
+	UINT8	irqnum;
+	UINT8	data;
 
-	BYTE	intch;
-	BYTE	intreq;
+	UINT8	intch;
+	UINT8	intreq;
 
-	BYTE	fd_remain;
-	BYTE	fd_cnt;
-	BYTE	fd_step[4];
+	UINT8	fd_remain;
+	UINT8	fd_cnt;
+	UINT8	fd_step[4];
 
-	BYTE	status;
-	BYTE	mode;
-	BYTE	cmd;
-	BYTE	timebase;
-	BYTE	tempo;
-	BYTE	tempos;
-	BYTE	recvevent;
-	BYTE	remainstep;
-	BYTE	timing;
-	BYTE	avail;
-	BYTE	bar;
+	UINT8	status;
+	UINT8	mode;
+	UINT8	cmd;
+	UINT8	timebase;
+	UINT8	tempo;
+	UINT8	tempos;
+	UINT8	recvevent;
+	UINT8	remainstep;
+	UINT8	timing;
+	UINT8	avail;
+	UINT8	bar;
 
-	BYTE	flag1;
+	UINT8	flag1;
 } _MPU98II, *MPU98II;
 
 

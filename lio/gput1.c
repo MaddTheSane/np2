@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"lio.h"
 
@@ -21,7 +21,7 @@ BYTE lio_gput1(void) {
 
 	MEMGPUT1	dat;
 
-	i286_memstr_read(I286_DS, I286_BX, &dat, sizeof(dat));
+	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	return(0);
 }
 

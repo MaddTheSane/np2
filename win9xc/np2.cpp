@@ -1,6 +1,8 @@
 #include	"compiler.h"
 #include	<time.h>
+#ifndef __GNUC__
 #include	<winnls32.h>
+#endif
 #include	"strres.h"
 #include	"parts.h"
 #include	"resource.h"
@@ -45,7 +47,7 @@
 #define	STATSAVEMAX		10
 
 static	char		np2help[] = "np2.hlp";
-static	char		np2resume[] = "sav";
+// static char		np2resume[] = "sav";
 
 static	const char	szAppCaption[] = "Neko Project II - C version";
 static	const char	szClassName[] = "NP2-MainWindow";
@@ -133,8 +135,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	switch (msg) {
 		case WM_CREATE:
+#ifndef __GNUC__
 			WINNLSEnableIME(hWnd, FALSE);
-//			DragAcceptFiles(hWnd, TRUE);
+#endif
 			break;
 
 		case WM_SYSCOMMAND:

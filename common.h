@@ -32,16 +32,13 @@ enum {
 #endif
 
 
-// Optimize Macros
+// ---- Optimize Macros
 
 #ifndef REG8
 #define	REG8		BYTE
 #endif
 #ifndef REG16
 #define	REG16		UINT16
-#endif
-#ifndef REG32
-#define	REG32		UINT32
 #endif
 
 #ifndef LOW12
@@ -76,20 +73,20 @@ enum {
 #if defined(BYTESEX_LITTLE)
 typedef union {
 	struct {
-		BYTE	b;
-		BYTE	g;
-		BYTE	r;
-		BYTE	e;
+		UINT8	b;
+		UINT8	g;
+		UINT8	r;
+		UINT8	e;
 	} p;
 	UINT32	d;
 } RGB32;
 #elif defined(BYTESEX_BIG)
 typedef union {
 	struct {
-		BYTE	e;
-		BYTE	r;
-		BYTE	g;
-		BYTE	b;
+		UINT8	e;
+		UINT8	r;
+		UINT8	g;
+		UINT8	b;
 	} p;
 	UINT32	d;
 } RGB32;

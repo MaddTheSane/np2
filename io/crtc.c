@@ -7,20 +7,20 @@
 
 // ---- I/O
 
-static void IOOUTCALL crtc_o70(UINT port, BYTE dat) {
+static void IOOUTCALL crtc_o70(UINT port, REG8 dat) {
 
 	port = (port & 0x0e) >> 1;
 	dat &= 0x1f;
 	if (crtc.b[port] != dat) {
-		crtc.b[port] = dat;
+		crtc.b[port] = (UINT8)dat;
 		gdcs.textdisp |= GDCSCRN_ALLDRAW;
 	}
 }
 
-static void IOOUTCALL crtc_o7c(UINT port, BYTE dat) {
+static void IOOUTCALL crtc_o7c(UINT port, REG8 dat) {
 
 	if (grcg.chip) {
-		grcg.modereg = dat;
+		grcg.modereg = (UINT8)dat;
 		grcg.counter = 0;
 		vramop.operate &= VOP_GRCGMASK;
 		vramop.operate |= ((dat & 0xc0) >> 4);
@@ -32,18 +32,18 @@ static void IOOUTCALL crtc_o7c(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL crtc_o7e(UINT port, BYTE dat) {
+static void IOOUTCALL crtc_o7e(UINT port, REG8 dat) {
 
 	int		cnt;
 
 	cnt = grcg.counter;
-	grcg.tile[cnt].b[0] = dat;
-	grcg.tile[cnt].b[1] = dat;
+	grcg.tile[cnt].b[0] = (UINT8)dat;
+	grcg.tile[cnt].b[1] = (UINT8)dat;
 	grcg.counter = (cnt + 1) & 3;
 	(void)port;
 }
 
-static BYTE IOINPCALL crtc_i7c(UINT port) {
+static REG8 IOINPCALL crtc_i7c(UINT port) {
 
 	(void)port;
 	return(grcg.modereg);

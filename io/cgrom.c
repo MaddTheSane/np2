@@ -41,7 +41,7 @@ static void cgwindowset(CGROM cr) {
 // ---- I/O
 
 // write charactor code low
-static void IOOUTCALL cgrom_oa1(UINT port, BYTE dat) {
+static void IOOUTCALL cgrom_oa1(UINT port, REG8 dat) {
 
 	CGROM	cr;
 
@@ -52,7 +52,7 @@ static void IOOUTCALL cgrom_oa1(UINT port, BYTE dat) {
 }
 
 // write charactor code high
-static void IOOUTCALL cgrom_oa3(UINT port, BYTE dat) {
+static void IOOUTCALL cgrom_oa3(UINT port, REG8 dat) {
 
 	CGROM	cr;
 
@@ -63,7 +63,7 @@ static void IOOUTCALL cgrom_oa3(UINT port, BYTE dat) {
 }
 
 // write charactor line
-static void IOOUTCALL cgrom_oa5(UINT port, BYTE dat) {
+static void IOOUTCALL cgrom_oa5(UINT port, REG8 dat) {
 
 	CGROM	cr;
 
@@ -75,20 +75,20 @@ static void IOOUTCALL cgrom_oa5(UINT port, BYTE dat) {
 }
 
 // CG write pattern
-static void IOOUTCALL cgrom_oa9(UINT port, BYTE dat) {
+static void IOOUTCALL cgrom_oa9(UINT port, REG8 dat) {
 
 	CGROM	cr;
 
 	cr = &cgrom;
 	if ((cr->code & 0x007e) == 0x0056) {
 		fontrom[((cr->code & 0x7f7f) << 4) +
-							cr->lr + cr->line] = dat;
+							cr->lr + cr->line] = (UINT8)dat;
 		cgwindow.writable |= 0x80;
 	}
 	(void)port;
 }
 
-static BYTE IOINPCALL cgrom_ia9(UINT port) {
+static REG8 IOINPCALL cgrom_ia9(UINT port) {
 
 	CGROM	cr;
 const BYTE	*ptr;

@@ -8,13 +8,13 @@
 #include	"s98.h"
 
 
-static void IOOUTCALL opn_o188(UINT port, BYTE dat) {
+static void IOOUTCALL opn_o188(UINT port, REG8 dat) {
 
 	opn.opnreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL opn_o18a(UINT port, BYTE dat) {
+static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
@@ -44,7 +44,7 @@ static void IOOUTCALL opn_o18a(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL opn_i188(UINT port) {
+static REG8 IOINPCALL opn_i188(UINT port) {
 
 	(void)port;
 #if 1							// ドラッケンで未定義フラグ見てる　テスト終了
@@ -54,7 +54,7 @@ static BYTE IOINPCALL opn_i188(UINT port) {
 #endif
 }
 
-static BYTE IOINPCALL opn_i18a(UINT port) {
+static REG8 IOINPCALL opn_i18a(UINT port) {
 
 	if (opn.opnreg == 0x0e) {
 		return(fmboard_getjoy(&psg1));
@@ -79,8 +79,8 @@ static const IOINP opn_i[4] = {
 void board26k_reset(void) {
 
 	opngen_setcfg(3, 0);
-	fmtimer_reset((BYTE)(np2cfg.snd26opt & 0xc0));
-	soundrom_loadex((BYTE)(np2cfg.snd26opt & 7), "26");
+	fmtimer_reset(np2cfg.snd26opt & 0xc0);
+	soundrom_loadex(np2cfg.snd26opt & 7, "26");
 	opn.base = (np2cfg.snd26opt & 0x10)?0x000:0x100;
 }
 

@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
@@ -79,7 +79,7 @@ static void pic_rolpry(PICITEM pi) {
 }
 
 
-static void pic_downbylevel(PICITEM picp, BYTE level) {
+static void pic_downbylevel(PICITEM picp, UINT level) {
 
 	int		i;
 
@@ -93,13 +93,13 @@ static void pic_downbylevel(PICITEM picp, BYTE level) {
 
 
 // eoi処理
-static void pic_forceeoibylevel(PICITEM picp, BYTE level) {
+static void pic_forceeoibylevel(PICITEM picp, UINT level) {
 
 	int		i;
 
 	if (picp->isr & (1 << level)) {
 		picp->isr &= ~(1 << level);
-		(picp->levels)--;
+		picp->levels--;
 		for (i=0; (i<picp->levels) && (picp->level[i] != level); i++) { }
 		for (; i<picp->levels; i++) {
 			picp->level[i] = picp->level[i+1];
@@ -121,7 +121,7 @@ void pic_irq(void) {
 	p = &pic;
 
 	// 割込み許可で　要求あり？
-	if ((isI286EI) && (!p->ext_irq) &&
+	if ((CPU_isEI) && (!p->ext_irq) &&
 		((p->pi[0].irr & (~p->pi[0].imr)) ||
 			(p->pi[1].irr & (~p->pi[1].imr)))) {
 
@@ -134,7 +134,7 @@ void pic_irq(void) {
 		}
 		irq = 0xff;
 		targetbit = 0;
-		for (bit=1, i=0; bit; bit<<=1, i++) {
+		for (bit=1, i=0; i<8; bit<<=1, i++) {
 			if ((p->pi[0].irr & bit) &&
 				(!((p->pi[0].imr | p->pi[0].isr) & bit))) {
 				if ((SINT8)p->pi[0].pry[i] > pry) {
@@ -170,8 +170,8 @@ void pic_irq(void) {
 				if (irq == 0) {									// ver0.28
 					nevent_reset(NEVENT_PICMASK);
 				}
-				i286_interrupt((BYTE)((p->pi[0].icw[1] & 0xf8) | irq));
 // TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | irq));
+				CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | irq));
 				return;
 			}
 			if ((!p->pi[0].levels) ||
@@ -187,7 +187,7 @@ void pic_irq(void) {
 			pry = (SINT8)p->pi[1].pry[p->pi[1].level[p->pi[1].levels - 1]];
 		}
 		targetbit = 0;
-		for (bit=1, i=0; bit; bit<<=1, i++) {
+		for (bit=1, i=0; i<8; bit<<=1, i++) {
 			if ((p->pi[1].irr & bit) &&
 				(!((p->pi[1].imr | p->pi[1].isr) & bit))) {
 				if ((SINT8)p->pi[1].pry[i] > pry) {
@@ -213,7 +213,7 @@ void pic_irq(void) {
 					p->pi[0].level[p->pi[0].levels++] = sirq;
 				}
 // TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | irq));
-				i286_interrupt((BYTE)((p->pi[1].icw[1] & 0xf8) | irq));
+				CPU_INTERRUPT((REG8)((p->pi[1].icw[1] & 0xf8) | irq));
 			}
 		}
 	}
@@ -231,10 +231,10 @@ void picmask(NEVENTITEM item) {
 	}
 }
 
-void pic_setirq(BYTE irq) {
+void pic_setirq(REG8 irq) {
 
 	PICITEM	pi;
-	BYTE	bit;
+	REG8	bit;
 
 	pi = pic.pi;
 	bit = 1 << (irq & 7);
@@ -267,7 +267,7 @@ void pic_setirq(BYTE irq) {
 	}
 }
 
-void pic_resetirq(BYTE irq) {
+void pic_resetirq(REG8 irq) {
 
 	PICITEM		pi;
 
@@ -275,8 +275,7 @@ void pic_resetirq(BYTE irq) {
 	pi->irr &= ~(1 << (irq & 7));
 }
 
-
-void pic_registext(BYTE irq) {
+void pic_registext(REG8 irq) {
 
 	PICITEM		pi;
 
@@ -287,10 +286,10 @@ void pic_registext(BYTE irq) {
 
 // ---- I/O
 
-static void IOOUTCALL pic_o00(UINT port, BYTE dat) {
+static void IOOUTCALL pic_o00(UINT port, REG8 dat) {
 
 	PICITEM		picp;
-	BYTE		level;
+	UINT		level;
 
 //	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
@@ -342,7 +341,7 @@ static void IOOUTCALL pic_o00(UINT port, BYTE dat) {
 extern int piccnt;
 #endif
 
-static void IOOUTCALL pic_o02(UINT port, BYTE dat) {
+static void IOOUTCALL pic_o02(UINT port, REG8 dat) {
 
 	PICITEM		picp;
 
@@ -350,7 +349,7 @@ static void IOOUTCALL pic_o02(UINT port, BYTE dat) {
 	picp = &pic.pi[(port >> 3) & 1];
 	if (!picp->writeicw) {
 #if 1	// マスクのセットだけなら nevent_forceexit()をコールしない
-		if ((isI286DI) || (pic.ext_irq) ||
+		if ((CPU_isDI) || (pic.ext_irq) ||
 			((picp->imr & dat) == picp->imr)) {
 			picp->imr = dat;
 			return;
@@ -376,7 +375,7 @@ static void IOOUTCALL pic_o02(UINT port, BYTE dat) {
 	nevent_forceexit();
 }
 
-static BYTE IOINPCALL pic_i00(UINT port) {
+static REG8 IOINPCALL pic_i00(UINT port) {
 
 	PICITEM		picp;
 
@@ -393,7 +392,7 @@ static BYTE IOINPCALL pic_i00(UINT port) {
 	}
 }
 
-static BYTE IOINPCALL pic_i02(UINT port) {
+static REG8 IOINPCALL pic_i02(UINT port) {
 
 	PICITEM		picp;
 

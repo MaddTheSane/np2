@@ -1,1 +1,3 @@
-void v30init(void);
+
+void v30xinit(void);
+

@@ -3,7 +3,7 @@
 #include	"soundmng.h"
 #include	"sysmng.h"
 #include	"timemng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"np2ver.h"
 #include	"pccore.h"
@@ -204,7 +204,7 @@ static void sound_term(void) {
 
 void pccore_init(void) {
 
-	i286_initialize();
+	CPU_INITIALIZE();
 
 	pal_initlcdtable();
 	pal_makelcdpal();
@@ -277,10 +277,10 @@ void pccore_reset(void) {
 	ZeroMemory(mem + VRAM1_E, 0x08000);
 	ZeroMemory(mem + FONT_ADRS, 0x08000);
 
-	i286_reset();
-	CPUTYPE = 0;
+	CPU_RESET();
+	CPU_TYPE = 0;
 	if (np2cfg.dipsw[2] & 0x80) {
-		CPUTYPE = CPUTYPE_V30;
+		CPU_TYPE = CPUTYPE_V30;
 	}
 
 	//メモリスイッチ
@@ -326,18 +326,18 @@ void pccore_reset(void) {
 
 	if (np2cfg.ITF_WORK) {
 		CS_BASE = 0xf0000;
-		I286_CS = 0xf000;
-		I286_IP = 0xfff0;
+		CPU_CS = 0xf000;
+		CPU_IP = 0xfff0;
 	}
 	else {
 		for (i=0; i<8; i++) {
 			mem[0xa3fe2 + i*4] = msw_default[i];
 		}
 		CS_BASE = 0xfd800;
-		I286_CS = 0xfd80;
-		I286_IP = 0x0002;
+		CPU_CS = 0xfd80;
+		CPU_IP = 0x0002;
 	}
-	i286_resetprefetch();
+	CPU_CLEARPREFETCH();
 	sysmng_cpureset();
 
 	soundmng_play();
@@ -541,29 +541,29 @@ void pccore_exec(BOOL draw) {
 	resetcnt++;
 #endif
 		pic_irq();
-		if (i286core.s.resetreq) {
-			i286core.s.resetreq = 0;
-			I286_CS = 0xf000;
+		if (CPU_RESETREQ) {
+			CPU_RESETREQ = 0;
+			CPU_CS = 0xf000;
 			CS_BASE = 0xf0000;
-			I286_IP = 0xfff0;
+			CPU_IP = 0xfff0;
 #ifdef CPU386											// defineを変えてね
-			I286_DX = 0x0300;
+			CPU_DX = 0x0300;
 #endif
-			i286_resetprefetch();
+			CPU_CLEARPREFETCH();
 		}
 
 #if 1 // ndef TRACE
-		if (I286_REMCLOCK > 0) {
-			if (!(CPUTYPE & CPUTYPE_V30)) {
-				i286();
+		if (CPU_REMCLOCK > 0) {
+			if (!(CPU_TYPE & CPUTYPE_V30)) {
+				CPU_EXEC();
 			}
 			else {
-				v30();
+				CPU_EXECV30();
 			}
 		}
 #else
-		while(I286_REMCLOCK > 0) {
-			TRACEOUT(("%.4x:%.4x", I286_CS, I286_IP));
+		while(CPU_REMCLOCK > 0) {
+			TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 			i286_step();
 		}
 #endif

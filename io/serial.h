@@ -6,20 +6,20 @@ enum {
 };
 
 typedef struct {
-	BYTE	data;
-	BYTE	mode;
-	BYTE	cmd;
-	BYTE	status;
+	UINT8	data;
+	UINT8	mode;
+	UINT8	cmd;
+	UINT8	status;
 	int		buffers;
 	int		pos;
 	BYTE	buf[KB_BUF];
 } _KEYB, *KEYB;
 
 typedef struct {
-	BYTE	result;
-	BYTE	data;
-	BYTE	send;
-	BYTE	pad;
+	UINT8	result;
+	UINT8	data;
+	UINT8	send;
+	UINT8	pad;
 	UINT	pos;
 	UINT	dummyinst;
 	UINT	mul;
@@ -32,9 +32,9 @@ extern "C" {
 #endif
 
 void keystat_reset(void);
-void keystat_senddata(BYTE data);
+void keystat_senddata(REG8 data);
 void keystat_allrelease(void);
-void keystat_forcerelease(BYTE value);
+void keystat_forcerelease(REG8 value);
 void keystat_resetcopyhelp(void);
 void keystat_resetjoykey(void);
 

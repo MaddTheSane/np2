@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -103,7 +103,7 @@ static void bios18_47(void) {
 	}
 	gdc_forceready(&gdc.s);
 
-	i286_memstr_read(I286_DS, I286_BX, &ucw, sizeof(ucw));
+	i286_memstr_read(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	GBSX1 = LOADINTELWORD(ucw.GBSX1);
 	GBSY1 = LOADINTELWORD(ucw.GBSY1);
 	GBSX2 = LOADINTELWORD(ucw.GBSX2);
@@ -165,13 +165,13 @@ static void bios18_47(void) {
 	else {
 		return;
 	}
-	if ((I286_CH & 0xc0) == 0x40) {
+	if ((CPU_CH & 0xc0) == 0x40) {
 		GBSY1 += 200;
 	}
 	csrw = (GBSY1 * 40) + (GBSX1 >> 4);
 	csrw += (GBSX1 & 0xf) << 20;
 	GBMDOTI = LOADINTELWORD(ucw.GBMDOTI);
-	if ((I286_CH & 0x30) == 0x30) {
+	if ((CPU_CH & 0x30) == 0x30) {
 		if (ucw.GBON_PTN & 1) {
 			func(0x04000 + csrw, &vect, GBMDOTI, GDCOPE_SET);
 		}
@@ -192,7 +192,7 @@ static void bios18_47(void) {
 		}
 	}
 	else {
-		func(csrw + 0x4000 + ((I286_CH & 0x30) << 10), &vect,
+		func(csrw + 0x4000 + ((CPU_CH & 0x30) << 10), &vect,
 														GBMDOTI, ucw.GBDOTU);
 	}
 }
@@ -206,26 +206,27 @@ void bios0x18(void) {
 	UINT16	tmp;
 	UINT32	pal;
 
-//	TRACE_("int18", I286_AH);
+//	TRACE_("int18", CPU_AH);
 
 	sti_waiting ^= 1;
 	if (sti_waiting) {					// 割込み許可の遊び
-		I286_STI;
+		CPU_STI;
 		if (PICEXISTINTR) {
-			I286_IP--;
+			CPU_IP--;
 			nevent_forceexit();
 			return;
 		}
 	}
+	sti_waiting = 0;
 
-	switch(I286_AH) {
+	switch(CPU_AH) {
 		case 0x00:						// キー・データの読みだし
 			if (mem[MEMB_KB_COUNT]) {
-				I286_AX = keyget();
+				CPU_AX = keyget();
 			}
 			else {
-				I286_IP--;
-				I286_REMCLOCK = -1;
+				CPU_IP--;
+				CPU_REMCLOCK = -1;
 				break;
 			}
 			break;
@@ -233,16 +234,16 @@ void bios0x18(void) {
    		case 0x01:						// キー・バッファ状態のセンス
 			if (mem[MEMB_KB_COUNT]) {
 				pos = GETBIOSMEM16(MEMW_KB_BUF_HEAD);
-				I286_AX = GETBIOSMEM16(pos);
-				I286_BH = 1;
+				CPU_AX = GETBIOSMEM16(pos);
+				CPU_BH = 1;
 			}
 			else {
-				I286_BH = 0;
+				CPU_BH = 0;
 			}
 			break;
 
    		case 0x02:						// シフト・キー状態のセンス
-			I286_AL = mem[MEMB_SHIFT_STS];
+			CPU_AL = mem[MEMB_SHIFT_STS];
 			break;
 
    		case 0x03:						// キーボード・インタフェイスの初期化
@@ -250,22 +251,22 @@ void bios0x18(void) {
 			break;
 
    		case 0x04:						// キー入力状態のセンス
-			I286_AH = mem[0x00052a + (I286_AL & 0x0f)];
+			CPU_AH = mem[0x00052a + (CPU_AL & 0x0f)];
  			break;
 
    		case 0x05:						// キー入力センス
 			if (mem[MEMB_KB_COUNT]) {
-				I286_AX = keyget();
-				I286_BH = 1;
+				CPU_AX = keyget();
+				CPU_BH = 1;
 			}
 			else {
-				I286_BH = 0;
+				CPU_BH = 0;
 			}
  			break;
 
    		case 0x0a:						// CRTモードの設定
 #if 1
-			mem[MEMB_CRT_STS_FLAG] = 0x80 | (I286_AL & 0x0f);
+			mem[MEMB_CRT_STS_FLAG] = 0x80 | (CPU_AL & 0x0f);
 			// GDCバッファを空に
 			if (gdc.m.cnt) {
 				gdc_work(GDCWORK_MASTER);
@@ -274,16 +275,16 @@ void bios0x18(void) {
 
 			gdc.mode1 &= ~(0x25);
 			gdc.mode1 |= 0x08;
-			if (I286_AL & 0x02) {
+			if (CPU_AL & 0x02) {
 				gdc.mode1 |= 0x04;				// 40桁
 			}
-			if (I286_AL & 0x04) {
+			if (CPU_AL & 0x04) {
 				gdc.mode1 |= 0x01;				// アトリビュート
 			}
-			if (I286_AL & 0x08) {
+			if (CPU_AL & 0x08) {
 				gdc.mode1 |= 0x20;				// コードアクセス
 			}
-			if (I286_AL & 0x01) {					// 20行
+			if (CPU_AL & 0x01) {					// 20行
 				mem[MEMB_CRT_RASTER] = 0x13;
 				gdc.m.para[GDC_CSRFORM + 0] = 0x13;
 				gdc.m.para[GDC_CSRFORM + 1] = 0x00;
@@ -311,14 +312,14 @@ void bios0x18(void) {
 			}
 			gdc_forceready(&gdc.m);
 
-			mem[MEMB_CRT_STS_FLAG] = I286_AL;
+			mem[MEMB_CRT_STS_FLAG] = CPU_AL;
 			if (systemport_r(0x33) & 0x08) {
 				mem[MEMB_CRT_STS_FLAG] |= 0x80;
 			}
 #endif
 
    		case 0x0b:						// CRTモードのセンス
-			I286_AL = mem[MEMB_CRT_STS_FLAG];
+			CPU_AL = mem[MEMB_CRT_STS_FLAG];
  			break;
 
    		case 0x0c:						// テキスト画面の表示開始
@@ -343,27 +344,27 @@ void bios0x18(void) {
 			gdc_forceready(&gdc.m);
 
 			ZeroMemory(&gdc.m.para[GDC_SCROLL], 16);
-			tmp = I286_DX >> 1;
+			tmp = CPU_DX >> 1;
 			STOREINTELWORD(gdc.m.para + GDC_SCROLL, tmp);
 			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
 			screenupdate |= 2;
  			break;
 
 		case 0x0f:						// 複数の表示領域の設定
-			SETBIOSMEM16(0x0053e, I286_CX);
-			SETBIOSMEM16(0x00540, I286_BX);
-			mem[0x00547] = I286_DH;
-			mem[0x0053D] = I286_DL;
+			SETBIOSMEM16(0x0053e, CPU_CX);
+			SETBIOSMEM16(0x00540, CPU_BX);
+			mem[0x00547] = CPU_DH;
+			mem[0x0053D] = CPU_DL;
 			// wait sync int
-			if ((i = I286_DL) > 0) {
-				pos = I286_CX;
-				p = gdc.m.para + GDC_SCROLL + (I286_DH << 2);
+			if ((i = CPU_DL) > 0) {
+				pos = CPU_CX;
+				p = gdc.m.para + GDC_SCROLL + (CPU_DH << 2);
 				while((i--) && (p < (gdc.m.para + GDC_SCROLL + 0x10))) {
 					REG16 t;
-					t = i286_memword_read(I286_BX, pos);
+					t = i286_memword_read(CPU_BX, pos);
 					t >>= 1;
 					STOREINTELWORD(p, t);
-					t = i286_memword_read(I286_BX, pos + 2);
+					t = i286_memword_read(CPU_BX, pos + 2);
 					if (!(mem[MEMB_CRT_STS_FLAG] & 1)) {	// 25
 						t *= (16 * 16);
 					}
@@ -391,7 +392,7 @@ void bios0x18(void) {
 
 			gdc.m.para[GDC_CSRFORM + 0] &= 0x7f;
 			gdc.m.para[GDC_CSRFORM + 1] &= 0xdf;
-			gdc.m.para[GDC_CSRFORM + 1] |= (I286_AL & 1) << 5;
+			gdc.m.para[GDC_CSRFORM + 1] |= (CPU_AL & 1) << 5;
 			gdcs.textdisp |= GDCSCRN_EXT;
  			break;
 
@@ -428,7 +429,7 @@ void bios0x18(void) {
 			}
 			gdc_forceready(&gdc.m);
 
-			tmp = I286_DX >> 1;
+			tmp = CPU_DX >> 1;
 			if (LOADINTELWORD(gdc.m.para + GDC_CSRW) != tmp) {
 				STOREINTELWORD(gdc.m.para + GDC_CSRW, tmp);
 				gdcs.textdisp |= GDCSCRN_EXT;
@@ -436,39 +437,39 @@ void bios0x18(void) {
  			break;
 
    		case 0x14:						// フォントパターンの読み出し
-			switch(I286_DH) {
+			switch(CPU_DH) {
 				case 0x00:			// 8x8
-					i286_memword_write(I286_BX, I286_CX, 0x0101);
-					i286_memstr_write(I286_BX, I286_CX+2,
-								fontrom + 0x82000 + (I286_DL << 3), 8);
+					i286_memword_write(CPU_BX, CPU_CX, 0x0101);
+					i286_memstr_write(CPU_BX, CPU_CX + 2,
+								fontrom + 0x82000 + (CPU_DL << 3), 8);
 					break;
 
 				case 0x28:			// 8x16 KANJI
 				case 0x29:
 				case 0x2a:
 				case 0x2b:
-					i286_memword_write(I286_BX, I286_CX, 0x0102);
-					i286_memstr_write(I286_BX, I286_CX+2,
-								fontrom + ((I286_DL & 0x7f) << 12)
-										+ ((I286_DH - 0x20) << 4), 16);
+					i286_memword_write(CPU_BX, CPU_CX, 0x0102);
+					i286_memstr_write(CPU_BX, CPU_CX + 2,
+								fontrom + ((CPU_DL & 0x7f) << 12)
+										+ ((CPU_DH - 0x20) << 4), 16);
 					break;
 
 				case 0x80:			// 8x16 ANK
-					i286_memword_write(I286_BX, I286_CX, 0x0102);
-					i286_memstr_write(I286_BX, I286_CX+2,
-								fontrom + 0x80000 + (I286_DL << 4), 16);
+					i286_memword_write(CPU_BX, CPU_CX, 0x0102);
+					i286_memstr_write(CPU_BX, CPU_CX + 2,
+								fontrom + 0x80000 + (CPU_DL << 4), 16);
 					break;
 
 				default:
 					buf[0] = 0x02;
 					buf[1] = 0x02;
-					p = fontrom + ((I286_DL & 0x7f) << 12)
-								+ (((I286_DH - 0x20) & 0x7f) << 4);
+					p = fontrom + ((CPU_DL & 0x7f) << 12)
+								+ (((CPU_DH - 0x20) & 0x7f) << 4);
 					for (i=1; i<17; i++, p++) {
 						buf[i*2+0] = *p;
 						buf[i*2+1] = *(p+0x800);
 					}
-					i286_memstr_write(I286_BX, I286_CX, buf, 34);
+					i286_memstr_write(CPU_BX, CPU_CX, buf, 34);
 					break;
 			}
  			break;
@@ -477,7 +478,7 @@ void bios0x18(void) {
  			break;
 
    		case 0x16:						// テキストVRAMの初期化
-			bios0x18_16(I286_DL, I286_DH);
+			bios0x18_16(CPU_DL, CPU_DH);
  			break;
 
 		case 0x17:						// ブザーの起呼
@@ -492,10 +493,10 @@ void bios0x18(void) {
 			break;
 
    		case 0x1a:						// ユーザー文字の定義
-			if ((I286_DH & 0x7e) == 0x76) {
-				i286_memstr_read(I286_BX, I286_CX+2, buf, 32);
-				p = fontrom + ((I286_DL & 0x7f) << 12)
-							+ (((I286_DH - 0x20) & 0x7f) << 4);
+			if ((CPU_DH & 0x7e) == 0x76) {
+				i286_memstr_read(CPU_BX, CPU_CX + 2, buf, 32);
+				p = fontrom + ((CPU_DL & 0x7f) << 12)
+							+ (((CPU_DH - 0x20) & 0x7f) << 4);
 				for (i=0; i<16; i++, p++) {
 					*p = buf[i*2+0];
 					*(p+0x800) = buf[i*2+1];
@@ -505,7 +506,7 @@ void bios0x18(void) {
 			break;
 
 		case 0x1b:						// KCGアクセスモードの設定
-			switch(I286_AL) {						// 実装し忘れ	// ver0.28
+			switch(CPU_AL) {
 				case 0:
 					mem[MEMB_CRT_STS_FLAG] &= ~0x08;
 					gdc.mode1 &= ~0x20;
@@ -542,7 +543,7 @@ void bios0x18(void) {
 			gdc_forceready(&gdc.s);
 
 			ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
-			switch(I286_CH & 0xc0) {
+			switch(CPU_CH & 0xc0) {
 				case 0x40:					// UPPER
 					if ((mem[MEMB_PRXDUPD] & 0x24) == 0x24) {
 						mem[MEMB_PRXDUPD] ^= 4;
@@ -578,13 +579,13 @@ void bios0x18(void) {
 					gdc.s.para[GDC_CSRFORM] = 0;
 					break;
 			}
-			gdcs.disp = (I286_CH >> 4) & 1;				// 00/05/23
+			gdcs.disp = (CPU_CH >> 4) & 1;
 			gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 			screenupdate |= 2;
  			break;
 
 		case 0x43:						// パレットの設定
-			i286_memstr_read(I286_DS, I286_BX + offsetof(UCWTBL, GBCPC),
+			i286_memstr_read(CPU_DS, CPU_BX + offsetof(UCWTBL, GBCPC),
 																	buf, 4);
 			pal = LOADINTELDWORD(buf);
 			for (i=8; i--;) {

@@ -8,7 +8,7 @@ typedef struct {
 typedef struct {
 	UINT	low;
 	UINT	high;
-	BYTE	writable;
+	UINT8	writable;
 } _CGWINDOW, *CGWINDOW;
 
 

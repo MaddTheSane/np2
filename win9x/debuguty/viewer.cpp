@@ -3,7 +3,7 @@
 #include	"np2.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
-#include	"i286.h"
+#include	"cpucore.h"
 
 
 static	char		np2viewclass[] = "NP2-ViewWindow";
@@ -275,8 +275,8 @@ static	DWORD	last = 0;
 		for (i=0; i<NP2VIEW_MAX; i++, view++) {
 			if ((view->alive) && (!view->lock)) {
 				if (view->type == VIEWMODE_ASM) {
-					view->seg = I286_CS;
-					view->off = I286_IP;
+					view->seg = CPU_CS;
+					view->off = CPU_IP;
 					view->pos = 0;
 					viewcmn_setvscroll(view->hwnd, view);
 				}

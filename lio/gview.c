@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -52,7 +52,7 @@ BYTE lio_gview(void) {
 	SINT16		x2;
 	SINT16		y2;
 
-	i286_memstr_read(I286_DS, I286_BX, &dat, sizeof(dat));
+	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x1 = (SINT16)LOADINTELWORD(dat.x1);
 	y1 = (SINT16)LOADINTELWORD(dat.y1);
 	x2 = (SINT16)LOADINTELWORD(dat.x2);

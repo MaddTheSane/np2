@@ -3,7 +3,6 @@
 // 
 
 #include	"compiler.h"
-#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -149,7 +148,7 @@ void rs232ctimer(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-static UINT16 itimer_latch(int ch) {
+static UINT pit_latch(int ch) {
 
 	SINT32	clock;
 
@@ -160,7 +159,7 @@ static UINT16 itimer_latch(int ch) {
 				return(pit.value[1]);
 #ifdef uPD71054
 			case 0x06:
-				return(pit.value[1] & 0xfffe);
+				return(pit.value[1] & (~1));
 #endif
 		}
 #if defined(BEEPCOUNTEREX)
@@ -175,29 +174,29 @@ static UINT16 itimer_latch(int ch) {
 		else {
 			clock >>= 16;
 		}
-		return((UINT16)clock);
+		return(clock);
 #endif
 	}
 	clock = nevent_getremain(NEVENT_ITIMER + ch);
 	if (clock >= 0) {
-		return((UINT16)(clock / pc.multiple));
+		return(clock / pc.multiple);
 	}
 	return(0);
 }
 
-void itimer_setflag(int ch, BYTE value) {
+void pit_setflag(int ch, REG8 value) {
 
 	pit.flag[ch] = 0;
 	if (value & 0x30) {
-		pit.mode[ch] = value;
+		pit.mode[ch] = (UINT8)value;
 	}
 	else {														// latch
 		pit.mode[ch] &= ~0x30;
-		pit.latch[ch] = itimer_latch(ch);
+		pit.latch[ch] = (UINT16)pit_latch(ch);
 	}
 }
 
-BOOL itimer_setcount(int ch, BYTE value) {
+BOOL pit_setcount(int ch, REG8 value) {
 
 	switch(pit.mode[ch] & 0x30) {
 		case 0x10:		// access low
@@ -223,30 +222,29 @@ BOOL itimer_setcount(int ch, BYTE value) {
 	return(FALSE);
 }
 
-BYTE itimer_getcount(int ch) {
+REG8 pit_getcount(int ch) {
 
-	BYTE	ret;
-	UINT16	w;
+	REG8	ret;
+	REG16	w;
 
 	if (!(pit.mode[ch] & 0x30)) {
 		w = pit.latch[ch];
 	}
 	else {
-		w = itimer_latch(ch);
+		w = pit_latch(ch);
 	}
 	switch(pit.mode[ch] & 0x30) {
 		case 0x10:						// access low
-			return((BYTE)w);
+			return((UINT8)w);
 
 		case 0x20:						// access high
-			return((BYTE)(w >> 8));
+			return((UINT8)(w >> 8));
 	}
-										// access word
-	if (!(pit.flag[ch] & 1)) {
-		ret = (BYTE)w;
+	if (!(pit.flag[ch] & 1)) {			// access word
+		ret = (UINT8)w;
 	}
 	else {
-		ret = (BYTE)(w >> 8);
+		ret = (UINT8)(w >> 8);
 	}
 	pit.flag[ch] ^= 1;
 	return(ret);
@@ -256,10 +254,9 @@ BYTE itimer_getcount(int ch) {
 // ---- I/O
 
 // system timer
-static void IOOUTCALL pit_o71(UINT port, BYTE dat) {
+static void IOOUTCALL pit_o71(UINT port, REG8 dat) {
 
-//	TRACEOUT(("pic o71: %x [%.4x %.4x]", dat, I286_CS, I286_IP));
-	if (itimer_setcount(0, dat)) {
+	if (pit_setcount(0, dat)) {
 		return;
 	}
 	pic.pi[0].irr &= (~1);
@@ -269,9 +266,9 @@ static void IOOUTCALL pit_o71(UINT port, BYTE dat) {
 }
 
 // beep
-static void IOOUTCALL pit_o73(UINT port, BYTE dat) {
+static void IOOUTCALL pit_o73(UINT port, REG8 dat) {
 
-	if (itimer_setcount(1, dat)) {
+	if (pit_setcount(1, dat)) {
 		return;
 	}
 	setbeepevent(NEVENT_ABSOLUTE);
@@ -285,9 +282,9 @@ static void IOOUTCALL pit_o73(UINT port, BYTE dat) {
 }
 
 // rs-232c
-static void IOOUTCALL pit_o75(UINT port, BYTE dat) {
+static void IOOUTCALL pit_o75(UINT port, REG8 dat) {
 
-	if (itimer_setcount(2, dat)) {
+	if (pit_setcount(2, dat)) {
 		return;
 	}
 	rs232c_open();
@@ -296,14 +293,14 @@ static void IOOUTCALL pit_o75(UINT port, BYTE dat) {
 }
 
 // ctrl
-static void IOOUTCALL pit_o77(UINT port, BYTE dat) {
+static void IOOUTCALL pit_o77(UINT port, REG8 dat) {
 
 	int		ch;
 
 //	TRACEOUT(("pic o77: %x", dat));
 	ch = (dat >> 6) & 3;
 	if (ch != 3) {
-		itimer_setflag(ch, dat);
+		pit_setflag(ch, dat);
 		if (ch == 0) {			// 書込みで itimerのirrがリセットされる…
 			pic.pi[0].irr &= (~1);
 			if (dat & 0x30) {	// 一応ラッチ時は割り込みをセットしない
@@ -318,9 +315,9 @@ static void IOOUTCALL pit_o77(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL pit_i71(UINT port) {
+static REG8 IOINPCALL pit_i71(UINT port) {
 
-	return(itimer_getcount((port >> 1) & 3));
+	return(pit_getcount((port >> 1) & 3));
 }
 
 

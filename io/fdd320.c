@@ -8,16 +8,15 @@
 	BYTE	fdd320_stat;
 
 
-static BYTE IOINPCALL fdd320_i51(UINT port) {
+static REG8 IOINPCALL fdd320_i51(UINT port) {
 
 	(void)port;
 	return(0x00);
 }
 
-static BYTE IOINPCALL fdd320_i55(UINT port) {
+static REG8 IOINPCALL fdd320_i55(UINT port) {
 
 	fdd320_stat ^= 0xff;
-
 	(void)port;
 	return(fdd320_stat);
 }

@@ -1,20 +1,20 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
 
 // ---- I/O
 
-static void IOOUTCALL itf_o043d(UINT port, BYTE dat) {
+static void IOOUTCALL itf_o043d(UINT port, REG8 dat) {
 
 	switch(dat) {
 		case 0x10:
-			i286core.s.itfbank = 1;
+			CPU_ITFBANK = 1;
 			break;
 
 		case 0x12:
-			i286core.s.itfbank = 0;
+			CPU_ITFBANK = 0;
 			break;
 	}
 	(void)port;

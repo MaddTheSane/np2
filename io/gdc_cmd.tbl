@@ -1,9 +1,9 @@
 
 typedef struct {
-	BYTE	pos;
-	BYTE	outdatas;
-	BYTE	indatas;
-	BYTE	flag;
+	UINT8	pos;
+	UINT8	outdatas;
+	UINT8	indatas;
+	UINT8	flag;
 } GDCCMD;
 
 static const GDCCMD gdc_cmd[256] = {

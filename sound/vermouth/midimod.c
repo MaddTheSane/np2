@@ -448,6 +448,8 @@ MIDIMOD midimod_create(UINT samprate) {
 	return(ret);
 
 mmcre_err2:
+	listarray_destroy(ret->namelist);
+	listarray_destroy(ret->pathtbl);
 	_MFREE(ret);
 
 mmcre_err1:

@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"mousemng.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
@@ -24,7 +24,7 @@ void mouseif_sync(void) {
 	mouseif.rx = mouseif.sx;
 	mouseif.ry = mouseif.sy;
 
-	mouseif.lastc = I286_CLOCK + I286_BASECLOCK + I286_REMCLOCK;
+	mouseif.lastc = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
 }
 
 static void calc_mousexy(void) {
@@ -32,7 +32,7 @@ static void calc_mousexy(void) {
 	UINT32	clock;
 	SINT32	diff;
 
-	clock = I286_CLOCK + I286_BASECLOCK + I286_REMCLOCK;
+	clock = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
 	diff = clock - mouseif.lastc;
 	if (diff >= 2000) {
 		SINT32 dx;
@@ -89,7 +89,7 @@ void mouseint(NEVENTITEM item) {
 	}
 }
 
-static void setportc(BYTE value) {
+static void setportc(REG8 value) {
 
 	if ((value & 0x80) && (!(mouseif.portc & 0x80))) {
 		calc_mousexy();
@@ -118,43 +118,43 @@ static void setportc(BYTE value) {
 			}
 		}
 	}
-	mouseif.portc = value;
+	mouseif.portc = (UINT8)value;
 }
 
 
 // ---- I/O
 
-static void IOOUTCALL mouseif_o7fdd(UINT port, BYTE dat) {
+static void IOOUTCALL mouseif_o7fdd(UINT port, REG8 dat) {
 
 	setportc(dat);
 	(void)port;
 }
 
-static void IOOUTCALL mouseif_o7fdf(UINT port, BYTE dat) {
+static void IOOUTCALL mouseif_o7fdf(UINT port, REG8 dat) {
 
 	if (dat & 0xf0) {
-		mouseif.mode = dat;
+		mouseif.mode = (UINT8)dat;
 		if (dat == 0x93) {
 			setportc(0);
 		}
 	}
 	else {
 		if (dat & 1) {
-			setportc((BYTE)(mouseif.portc | (1 << (dat >> 1))));
+			setportc((REG8)(mouseif.portc | (1 << (dat >> 1))));
 		}
 		else {
-			setportc((BYTE)(mouseif.portc & (~(1 << (dat >> 1)))));
+			setportc((REG8)(mouseif.portc & (~(1 << (dat >> 1)))));
 		}
 	}
 	(void)port;
 }
 
-static BYTE IOINPCALL mouseif_i7fd9(UINT port) {
+static REG8 IOINPCALL mouseif_i7fd9(UINT port) {
 
 	SINT16	x;
 	SINT16	y;
-	BYTE	ret;
-	BYTE	portc;
+	REG8	ret;
+	REG8	portc;
 
 	calc_mousexy();
 	ret = mouseif.b;
@@ -181,21 +181,21 @@ static BYTE IOINPCALL mouseif_i7fd9(UINT port) {
 	else {
 		ret |= (x >> 4) & 0x0f;
 	}
-//	TRACEOUT(("%x %x mouse [%x] %d -> %x", I286_CS, I286_IP, portc & 0x20, y, ret));
+//	TRACEOUT(("%x %x mouse [%x] %d -> %x", CPU_CS, CPU_IP, portc & 0x20, y, ret));
 	(void)port;
 	return(ret);
 }
 
-static BYTE IOINPCALL mouseif_i7fdb(UINT port) {
+static REG8 IOINPCALL mouseif_i7fdb(UINT port) {
 
 	(void)port;
 	return(0x40);
 }
 
-static BYTE IOINPCALL mouseif_i7fdd(UINT port) {
+static REG8 IOINPCALL mouseif_i7fdd(UINT port) {
 
-	BYTE	ret;
-	BYTE	mode;
+	REG8	ret;
+	REG8	mode;
 
 	ret = mouseif.portc;
 	mode = mouseif.mode;
@@ -213,7 +213,7 @@ static BYTE IOINPCALL mouseif_i7fdd(UINT port) {
 }
 
 
-static void IOOUTCALL mouseif_obfdb(UINT port, BYTE dat) {
+static void IOOUTCALL mouseif_obfdb(UINT port, REG8 dat) {
 
 	mouseif.timing = dat & 3;
 	(void)port;

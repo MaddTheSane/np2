@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -54,7 +54,7 @@ void pcm86gen_update(void) {
 	pcm86_setpcmrate(pcm86.fifo);
 }
 
-void pcm86_setpcmrate(BYTE val) {
+void pcm86_setpcmrate(REG8 val) {
 
 	SINT32	rate;
 
@@ -118,7 +118,7 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 	long	bufs;
 	UINT32	past;
 
-	past = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
+	past = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 	past <<= 6;
 	past -= pcm86.lastclock;
 	if (past >= pcm86.stepclock) {

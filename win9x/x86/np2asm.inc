@@ -47,7 +47,7 @@ SCRN_BUFSIZE	equ		04b000h
 
 GDCCMD_MAX		equ		32
 
-				struc	i286stat_t
+				struc	i286core_t
 .reg			resw	14
 .remainclock	resd	1
 .baseclock		resd	1
@@ -71,6 +71,8 @@ GDCCMD_MAX		equ		32
 .MSW			resw	1
 .resetreq		resb	1
 .itfbank		resb	1
+.ext			resd	1
+.extsize		resd	1
 				endstruc
 
 				struc	gdcd_t

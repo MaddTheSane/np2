@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"dosio.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -101,10 +101,10 @@ const char *debugsub_regs(void) {
 
 static char work[256];
 
-	SPRINTF(work, str_register, I286_AX, I286_BX, I286_CX, I286_DX,
-								I286_SP, I286_BP, I286_SI, I286_DI,
-								I286_DS, I286_ES, I286_SS, I286_CS, I286_IP);
-	milstr_ncat(work, debugsub_flags(I286_FLAG), sizeof(work));
+	SPRINTF(work, str_register, CPU_AX, CPU_BX, CPU_CX, CPU_DX,
+								CPU_SP, CPU_BP, CPU_SI, CPU_DI,
+								CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_IP);
+	milstr_ncat(work, debugsub_flags(CPU_FLAG), sizeof(work));
 	milstr_ncat(work, CRCONST, sizeof(work));
 	return(work);
 }

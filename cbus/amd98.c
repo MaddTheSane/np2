@@ -38,19 +38,19 @@ void amd98int(NEVENTITEM item) {
 
 // ----
 
-static void IOOUTCALL amd_od8(UINT port, BYTE dat) {
+static void IOOUTCALL amd_od8(UINT port, REG8 dat) {
 
 	opn.opnreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL amd_od9(UINT port, BYTE dat) {
+static void IOOUTCALL amd_od9(UINT port, REG8 dat) {
 
 	opn.extreg = dat;
 	(void)port;
 }
 
-static void IOOUTCALL amd_oda(UINT port, BYTE dat) {
+static void IOOUTCALL amd_oda(UINT port, REG8 dat) {
 
 	if (opn.opnreg < 0x0e) {
 		psggen_setreg(&psg1, opn.opnreg, dat);
@@ -61,13 +61,13 @@ static void IOOUTCALL amd_oda(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static void IOOUTCALL amd_odb(UINT port, BYTE dat) {
+static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 
 	if (opn.extreg < 0x0e) {
 		psggen_setreg(&psg2, opn.extreg, dat);
 	}
 	else if (opn.extreg == 0x0f) {
-		BYTE b;
+		REG8 b;
 		b = psg2.reg.io2;
 		if ((b & 1) > (dat & 1)) {
 			b &= 0xc2;
@@ -98,16 +98,16 @@ static const BYTE amdr[] = {0x01, 0x08, 0x10, 0x20, 0x06, 0x40};
 	(void)port;
 }
 
-static void IOOUTCALL amd_odc(UINT port, BYTE dat) {
+static void IOOUTCALL amd_odc(UINT port, REG8 dat) {
 
-	itimer_setcount(3, dat);
+	pit_setcount(3, dat);
 	setamd98event(NEVENT_ABSOLUTE);
 	(void)port;
 }
 
-static void IOOUTCALL amd_ode(UINT port, BYTE dat) {
+static void IOOUTCALL amd_ode(UINT port, REG8 dat) {
 
-	itimer_setflag(3, dat);
+	pit_setflag(3, dat);
 	(void)port;
 }
 

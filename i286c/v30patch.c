@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"i286c.h"
 #include	"v30patch.h"
 #include	"memory.h"
@@ -97,13 +97,13 @@ I286FN v30segprefix_es(void) {				// 26: es:
 
 	SS_FIX = ES_BASE;
 	DS_FIX = ES_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -114,13 +114,13 @@ I286FN v30segprefix_cs(void) {				// 2e: cs:
 
 	SS_FIX = CS_BASE;
 	DS_FIX = CS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -131,13 +131,13 @@ I286FN v30segprefix_ss(void) {				// 36: ss:
 
 	SS_FIX = SS_BASE;
 	DS_FIX = SS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -148,13 +148,13 @@ I286FN v30segprefix_ds(void) {				// 3e: ds:
 
 	SS_FIX = DS_BASE;
 	DS_FIX = DS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -413,12 +413,12 @@ I286FN v30_xlat(void) {						// D6:	xlat
 
 I286FN v30_repne(void) {					// F2:	repne
 
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repne[op]();
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -427,12 +427,12 @@ I286FN v30_repne(void) {					// F2:	repne
 
 I286FN v30_repe(void) {						// F3:	repe
 
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repe[op]();
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -472,13 +472,13 @@ I286FN v30repe_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -489,13 +489,13 @@ I286FN v30repe_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -506,13 +506,13 @@ I286FN v30repe_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -523,13 +523,13 @@ I286FN v30repe_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repe[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -569,13 +569,13 @@ I286FN v30repne_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -586,13 +586,13 @@ I286FN v30repne_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -603,13 +603,13 @@ I286FN v30repne_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -620,13 +620,13 @@ I286FN v30repne_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
-	i286core.s.prefix++;
-	if (i286core.s.prefix < MAX_PREFIX) {
+	I286_PREFIX++;
+	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
 		GET_PCBYTE(op);
 		v30op_repne[op]();
 		REMOVE_PREFIX
-		i286core.s.prefix = 0;
+		I286_PREFIX = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -672,7 +672,7 @@ static void v30patching(void (*op[])(void), const V30PATCH *patch, int cnt) {
 
 #define	V30PATCHING(a, b)	v30patching(a, b, sizeof(b)/sizeof(V30PATCH))
 
-void v30init(void) {
+void v30cinit(void) {
 
 	CopyMemory(v30op, i286op, sizeof(v30op));
 	V30PATCHING(v30op, v30patch_op);
@@ -682,7 +682,7 @@ void v30init(void) {
 	V30PATCHING(v30op_repe, v30patch_repe);
 }
 
-void v30(void) {
+void v30c(void) {
 
 	UINT	opcode;
 
@@ -691,7 +691,7 @@ void v30(void) {
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
 			if (I286_TRAP) {
-				i286_interrupt(1);
+				i286c_interrupt(1);
 			}
 			dmap_v30();
 		} while(I286_REMCLOCK > 0);
@@ -711,7 +711,7 @@ void v30(void) {
 	}
 }
 
-void v30_step(void) {
+void v30c_step(void) {
 
 	UINT	opcode;
 

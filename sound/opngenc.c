@@ -31,13 +31,13 @@ static	SINT32	decaytable[94];
 static const SINT32	decayleveltable[16] = {
 		 			SC( 0),SC( 1),SC( 2),SC( 3),SC( 4),SC( 5),SC( 6),SC( 7),
 		 			SC( 8),SC( 9),SC(10),SC(11),SC(12),SC(13),SC(14),SC(31)};
-static const BYTE multipletable[] = {
+static const UINT8 multipletable[] = {
 			    	1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
 static const SINT32 nulltable[] = {
 					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-static const BYTE kftable[16] = {0,0,0,0,0,0,0,1,2,3,3,3,3,3,3,3};
-static const BYTE dttable[] = {
+static const UINT8 kftable[16] = {0,0,0,0,0,0,0,1,2,3,3,3,3,3,3,3};
+static const UINT8 dttable[] = {
 					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 					0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
@@ -177,7 +177,7 @@ void opngen_setvol(UINT vol) {
 #endif
 }
 
-void opngen_setVR(BYTE channel, BYTE value) {
+void opngen_setVR(REG8 channel, REG8 value) {
 
 	if ((channel & 3) && (value)) {
 		opncfg.vr_en = TRUE;
@@ -195,7 +195,7 @@ void opngen_setVR(BYTE channel, BYTE value) {
 static void set_algorithm(OPNCH *ch) {
 
 	SINT32	*outd;
-	BYTE	outslot;
+	UINT8	outslot;
 
 	outd = &opngen.outdc;
 	if (ch->stereo) {
@@ -270,13 +270,13 @@ static void set_algorithm(OPNCH *ch) {
 	ch->outslot = outslot;
 }
 
-static void set_dt1_mul(OPNSLOT *slot, BYTE value) {
+static void set_dt1_mul(OPNSLOT *slot, REG8 value) {
 
 	slot->multiple = (SINT32)multipletable[value & 0x0f];
 	slot->detune1 = detunetable[(value >> 4) & 7];
 }
 
-static void set_tl(OPNSLOT *slot, BYTE value) {
+static void set_tl(OPNSLOT *slot, REG8 value) {
 
 #if (EVC_BITS >= 7)
 	slot->totallevel = ((~value) & 0x007f) << (EVC_BITS - 7);
@@ -285,28 +285,28 @@ static void set_tl(OPNSLOT *slot, BYTE value) {
 #endif
 }
 
-static void set_ks_ar(OPNSLOT *slot, BYTE value) {
+static void set_ks_ar(OPNSLOT *slot, REG8 value) {
 
-	slot->keyscale = (BYTE)(((~value)>>6)&3);
+	slot->keyscale = ((~value) >> 6) & 3;
 	value &= 0x1f;
 	slot->attack = (value)?(attacktable + (value << 1)):nulltable;
-	slot->env_inc_attack = slot->attack[slot->envraito];
+	slot->env_inc_attack = slot->attack[slot->envratio];
 	if (slot->env_mode == EM_ATTACK) {
 		slot->env_inc = slot->env_inc_attack;
 	}
 }
 
-static void set_d1r(OPNSLOT *slot, BYTE value) {
+static void set_d1r(OPNSLOT *slot, REG8 value) {
 
 	value &= 0x1f;
 	slot->decay1 = (value)?(decaytable + (value << 1)):nulltable;
-	slot->env_inc_decay1 = slot->decay1[slot->envraito];
+	slot->env_inc_decay1 = slot->decay1[slot->envratio];
 	if (slot->env_mode == EM_DECAY1) {
 		slot->env_inc = slot->env_inc_decay1;
 	}
 }
 
-static void set_dt2_d2r(OPNSLOT *slot, BYTE value) {
+static void set_dt2_d2r(OPNSLOT *slot, REG8 value) {
 
 	value &= 0x1f;
 	slot->decay2 = (value)?(decaytable + (value << 1)):nulltable;
@@ -314,18 +314,18 @@ static void set_dt2_d2r(OPNSLOT *slot, BYTE value) {
 		slot->env_inc_decay2 = 0;
 	}
 	else {
-		slot->env_inc_decay2 = slot->decay2[slot->envraito];
+		slot->env_inc_decay2 = slot->decay2[slot->envratio];
 	}
 	if (slot->env_mode == EM_DECAY2) {
 		slot->env_inc = slot->env_inc_decay2;
 	}
 }
 
-static void set_d1l_rr(OPNSLOT *slot, BYTE value) {
+static void set_d1l_rr(OPNSLOT *slot, REG8 value) {
 
 	slot->decaylevel = decayleveltable[(value >> 4)];
 	slot->release = decaytable + ((value & 0x0f) << 2) + 2;
-	slot->env_inc_release = slot->release[slot->envraito];
+	slot->env_inc_release = slot->release[slot->envratio];
 	if (slot->env_mode == EM_RELEASE) {
 		slot->env_inc = slot->env_inc_release;
 		if (value == 0xff) {
@@ -337,7 +337,7 @@ static void set_d1l_rr(OPNSLOT *slot, BYTE value) {
 	}
 }
 
-static void set_ssgeg(OPNSLOT *slot, BYTE value) {
+static void set_ssgeg(OPNSLOT *slot, REG8 value) {
 
 	value &= 0xf;
 	if ((value == 0xb) || (value == 0xd)) {
@@ -346,7 +346,7 @@ static void set_ssgeg(OPNSLOT *slot, BYTE value) {
 	}
 	else {
 		slot->ssgeg1 = 0;
-		slot->env_inc_decay2 = slot->decay2[slot->envraito];
+		slot->env_inc_decay2 = slot->decay2[slot->envratio];
 	}
 	if (slot->env_mode == EM_DECAY2) {
 		slot->env_inc = slot->env_inc_decay2;
@@ -367,8 +367,8 @@ static void channleupdate(OPNCH *ch) {
 		for (i=0; i<4; i++, slot++) {
 			slot->freq_inc = (fc + slot->detune1[kc]) * slot->multiple;
 			evr = (BYTE)(kc >> slot->keyscale);
-			if (slot->envraito != evr) {
-				slot->envraito = evr;
+			if (slot->envratio != evr) {
+				slot->envratio = evr;
 				slot->env_inc_attack = slot->attack[evr];
 				slot->env_inc_decay1 = slot->decay1[evr];
 				slot->env_inc_decay2 = slot->decay2[evr];
@@ -382,8 +382,8 @@ static void channleupdate(OPNCH *ch) {
 			slot->freq_inc = (ch->keynote[s] + slot->detune1[ch->kcode[s]])
 														* slot->multiple;
 			evr = (BYTE)(ch->kcode[s] >> slot->keyscale);
-			if (slot->envraito != evr) {
-				slot->envraito = evr;
+			if (slot->envratio != evr) {
+				slot->envratio = evr;
 				slot->env_inc_attack = slot->attack[evr];
 				slot->env_inc_decay1 = slot->decay1[evr];
 				slot->env_inc_decay2 = slot->decay2[evr];
@@ -426,14 +426,14 @@ void opngen_reset(void) {
 		ch++;
 	}
 	for (i=0x30; i<0xc0; i++) {
-		opngen_setreg(0, (BYTE)i, 0xff);
-		opngen_setreg(3, (BYTE)i, 0xff);
-		opngen_setreg(6, (BYTE)i, 0xff);
-		opngen_setreg(9, (BYTE)i, 0xff);
+		opngen_setreg(0, (REG8)i, 0xff);
+		opngen_setreg(3, (REG8)i, 0xff);
+		opngen_setreg(6, (REG8)i, 0xff);
+		opngen_setreg(9, (REG8)i, 0xff);
 	}
 }
 
-void opngen_setcfg(BYTE maxch, UINT flag) {
+void opngen_setcfg(REG8 maxch, UINT flag) {
 
 	OPNCH	*ch;
 	UINT	i;
@@ -460,7 +460,7 @@ void opngen_setcfg(BYTE maxch, UINT flag) {
 	}
 }
 
-void opngen_setextch(UINT chnum, BYTE data) {
+void opngen_setextch(UINT chnum, REG8 data) {
 
 	OPNCH	*ch;
 
@@ -468,7 +468,7 @@ void opngen_setextch(UINT chnum, BYTE data) {
 	ch[chnum].extop = data;
 }
 
-void opngen_setreg(BYTE chbase, BYTE reg, BYTE value) {
+void opngen_setreg(REG8 chbase, REG8 reg, REG8 value) {
 
 	UINT	chpos;
 	OPNCH	*ch;
@@ -568,11 +568,11 @@ void opngen_setreg(BYTE chbase, BYTE reg, BYTE value) {
 	}
 }
 
-void opngen_keyon(UINT chnum, BYTE value) {
+void opngen_keyon(UINT chnum, REG8 value) {
 
 	OPNCH	*ch;
 	OPNSLOT	*slot;
-	BYTE	bit;
+	REG8	bit;
 	UINT	i;
 
 	sound_sync();

@@ -1,6 +1,6 @@
 
 typedef struct {
-	BYTE	c;
+	UINT8	c;
 } _SYSPORT, *SYSPORT;
 
 

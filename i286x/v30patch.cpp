@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"i286x.h"
 #include	"i286xadr.h"
 #include	"i286xs.h"
@@ -992,7 +992,7 @@ static void v30patching(void (*dst[])(void), V30PATCH_T *patch, int length) {
 
 #define	V30PATCHING(a, b)	v30patching(a, b, sizeof(b)/sizeof(V30PATCH_T))
 
-void v30init(void) {
+void v30xinit(void) {
 
 	CopyMemory(v30op, i286op, sizeof(v30op));
 	V30PATCHING(v30op, v30patch_op);
@@ -1002,7 +1002,7 @@ void v30init(void) {
 	V30PATCHING(v30op_repe, v30patch_repe);
 }
 
-LABEL void v30(void) {
+LABEL void v30x(void) {
 
 	__asm {
 				pushad
@@ -1049,7 +1049,7 @@ v30notrap:		mov		dword ptr (i286core.s.prefetchque), ebx
 	}
 }
 
-LABEL void v30_step(void) {
+LABEL void v30x_step(void) {
 
 	__asm {
 				pushad

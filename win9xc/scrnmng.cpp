@@ -1,6 +1,8 @@
 #include	"compiler.h"
 #include	<ddraw.h>
+#ifndef __GNUC__
 #include	<winnls32.h>
+#endif
 #include	"resource.h"
 #include	"np2.h"
 #include	"mousemng.h"
@@ -508,14 +510,18 @@ void scrnmng_topwinui(void) {
 		if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 			ddraw.primsurf->SetClipper(ddraw.clipper);
 		}
+#ifndef __GNUC__
 		WINNLSEnableIME(hWndMain, TRUE);
+#endif
 	}
 }
 
 void scrnmng_clearwinui(void) {
 
 	if ((ddraw.cliping > 0) && (!(--ddraw.cliping))) {
+#ifndef __GNUC__
 		WINNLSEnableIME(hWndMain, FALSE);
+#endif
 		if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 			ddraw.primsurf->SetClipper(0);
 		}

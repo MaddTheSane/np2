@@ -1,9 +1,9 @@
 
 typedef struct {
-	BYTE	result;
-	BYTE	data;
-	BYTE	signal;
-	BYTE	send;
+	UINT8	result;
+	UINT8	data;
+	UINT8	signal;
+	UINT8	send;
 
 	UINT	pos;
 	UINT	dummyinst;

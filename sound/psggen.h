@@ -67,9 +67,9 @@ void psggen_initialize(UINT rate);
 void psggen_setvol(UINT vol);
 
 void psggen_reset(PSGGEN psg);
-void psggen_setreg(PSGGEN psg, BYTE reg, BYTE val);
-BYTE psggen_getreg(PSGGEN psg, BYTE reg);
-void psggen_setpan(PSGGEN psg, UINT ch, BYTE pan);
+void psggen_setreg(PSGGEN psg, REG8 reg, REG8 val);
+REG8 psggen_getreg(PSGGEN psg, REG8 reg);
+void psggen_setpan(PSGGEN psg, UINT ch, REG8 pan);
 
 void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count);
 

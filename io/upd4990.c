@@ -7,13 +7,13 @@
 
 // ---- I/O
 
-static void IOOUTCALL upd4990_o20(UINT port, BYTE dat) {
+static void IOOUTCALL upd4990_o20(UINT port, REG8 dat) {
 
-	BYTE	mod;
-	BYTE	cmd;
+	REG8	mod;
+	REG8	cmd;
 
 	mod = dat ^ uPD4990.last;
-	uPD4990.last = dat;
+	uPD4990.last = (UINT8)dat;
 
 	if (dat & 0x08) {										// STB
 		if (mod & 0x08) {
@@ -25,13 +25,16 @@ static void IOOUTCALL upd4990_o20(UINT port, BYTE dat) {
 				case 0x00:			// register hold
 					uPD4990.regsft = 0;
 					break;
+
 				case 0x01:			// register shift
 					uPD4990.regsft = 1;
 					uPD4990.pos = (UPD4990_REGLEN * 8) - 1;
 					break;
+
 				case 0x02:			// time set	/ counter hold
 					uPD4990.regsft = 0;
 					break;
+
 				case 0x03:			// time read
 					uPD4990.regsft = 0;
 					ZeroMemory(uPD4990.reg, sizeof(uPD4990.reg));

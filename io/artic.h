@@ -13,7 +13,7 @@ void artic_callback(void);
 
 void artic_reset(void);
 void artic_bind(void);
-UINT16 IOINPCALL artic_r16(UINT port);
+REG16 IOINPCALL artic_r16(UINT port);
 
 #ifdef __cplusplus
 }

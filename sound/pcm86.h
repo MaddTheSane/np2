@@ -77,7 +77,7 @@ void pcm86gen_setvol(UINT vol);
 
 void pcm86_reset(void);
 void pcm86gen_update(void);
-void pcm86_setpcmrate(BYTE val);
+void pcm86_setpcmrate(REG8 val);
 void pcm86_setnextintr(void);
 
 void SOUNDCALL pcm86gen_checkbuf(void);

@@ -1,5 +1,5 @@
 
-typedef BYTE (*CS4231DMA)(void);
+typedef REG8 (*CS4231DMA)(void);
 
 enum {
 	CS4231_BUFFERS	= (1 << 6),
@@ -74,16 +74,16 @@ extern "C" {
 
 extern const CS4231DMA cs4231dec[16];
 
-BYTE cs4231_nodecode(void);
+REG8 cs4231_nodecode(void);
 void cs4231_dma(NEVENTITEM item);
-BYTE DMACCALL cs4231dmafunc(BYTE func);
+REG8 DMACCALL cs4231dmafunc(REG8 func);
 
 void cs4231_initialize(UINT rate);
 void cs4231_setvol(UINT vol);
 
 void cs4231_reset(void);
 void cs4231_update(void);
-void cs4231_control(UINT index, BYTE value);
+void cs4231_control(UINT index, REG8 value);
 
 void SOUNDCALL cs4231_getpcm(CS4231 cs, SINT32 *pcm, UINT count);
 

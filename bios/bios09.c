@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"i286.h"
+#include	"cpucore.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -87,10 +87,10 @@ void bios0x09(void) {
 		}
 		else {
 			if (key == 0x60) {
-				i286_interrupt(6);
+				CPU_INTERRUPT(6);
 			}
 			else if (key == 0x61) {
-				i286_interrupt(5);
+				CPU_INTERRUPT(5);
 			}
 			else if (key < 0x70) {
 				code = mem[base + key - 0x0c] << 8;

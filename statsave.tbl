@@ -63,7 +63,7 @@ static const PROCTBL dmaproc[] = {
 			{PROCID('d','m','e','c'), cs4231dmafunc}};
 
 static const STENTRY np2tbl[] = {
-	{"CPU286",		0,	NP2FLAG_CLOCK,	&i286core.s,	sizeof(i286core.s)},
+	{"CPU286",		0,	NP2FLAG_CLOCK,	&CPU_STATSAVE,	sizeof(CPU_STATSAVE)},
 #if 1	// ver0.72
 	{"MEMORY",		0,	NP2FLAG_MEM,	NULL,			0x130000},
 #else

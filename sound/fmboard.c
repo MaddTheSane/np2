@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"joymng.h"
 #include	"soundmng.h"
-#include	"i286.h"
+// #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
@@ -40,7 +40,7 @@
 	MUSICGEN	musicgen;
 
 
-static void		(*extfn)(BYTE enable);
+static void	(*extfn)(REG8 enable);
 
 
 // ----
@@ -86,12 +86,12 @@ BYTE fmboard_getjoy(PSGGEN psg) {
 
 // ----
 
-void fmboard_extreg(void (*ext)(BYTE enable)) {
+void fmboard_extreg(void (*ext)(REG8 enable)) {
 
 	extfn = ext;
 }
 
-void fmboard_extenable(BYTE enable) {
+void fmboard_extenable(REG8 enable) {
 
 	if (extfn) {
 		(*extfn)(enable);

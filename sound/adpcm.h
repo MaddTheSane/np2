@@ -64,11 +64,11 @@ void adpcm_setvol(UINT vol);
 
 void adpcm_reset(ADPCM ad);
 void adpcm_update(ADPCM ad);
-void adpcm_setreg(ADPCM ad, BYTE reg, BYTE value);
-BYTE adpcm_status(ADPCM ad);
+void adpcm_setreg(ADPCM ad, REG8 reg, REG8 value);
+REG8 adpcm_status(ADPCM ad);
 
-BYTE SOUNDCALL adpcm_readsample(ADPCM ad);
-void SOUNDCALL adpcm_datawrite(ADPCM ad, BYTE data);
+REG8 SOUNDCALL adpcm_readsample(ADPCM ad);
+void SOUNDCALL adpcm_datawrite(ADPCM ad, REG8 data);
 void SOUNDCALL adpcm_getpcm(ADPCM ad, SINT32 *buf, UINT count);
 
 #ifdef __cplusplus

@@ -1,18 +1,33 @@
 #include	<windows.h>
 #include	<stdio.h>
 #include	<stddef.h>
+#include	<setjmp.h>
 
 #define	BYTESEX_LITTLE
 #define	OSLANG_SJIS
 #define	OSLINEBREAK_CRLF
 
 
+#ifndef __GNUC__
 typedef signed char		SINT8;
 typedef unsigned char	UINT8;
 typedef	signed short	SINT16;
 typedef	unsigned short	UINT16;
 typedef	signed int		SINT32;
 typedef	unsigned int	UINT32;
+#else
+#include	<stdlib.h>
+typedef signed char		SINT8;
+typedef unsigned char	UINT8;
+typedef	short			SINT16;
+typedef	unsigned short	UINT16;
+typedef	int				SINT32;
+#endif
+
+// for RISC test
+#define	REG8		UINT
+#define REG16		UINT
+
 
 #include	"common.h"
 #include	"milstr.h"
@@ -49,4 +64,6 @@ typedef	unsigned int	UINT32;
 #define	MEMOPTIMIZE		1
 
 #define	SOUNDRESERVE	20
+
+#define	FASTCALL	__fastcall
 
