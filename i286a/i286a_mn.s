@@ -931,10 +931,7 @@ popf			POP		#5
 				strb	r2, [r9, #CPU_TRAP]
 				bne		popf_withirq
 				ldr		r0, popf_pic
-				tst		r8, #I_FLAG
-				moveq	pc, r11
-				PICEXISTINTR
-				moveq	pc, r11
+				NOINTREXIT
 popf_withirq	I286IRQCHECKTERM
 popf_pic		dcd		pic
 
@@ -1395,10 +1392,7 @@ iret			bl		extirq_pop
 				strb	r2, [r9, #CPU_TRAP]
 				bne		iret_withirq
 				ldr		r0, iret_pic
-				tst		r8, #I_FLAG
-				moveq	pc, r11
-				PICEXISTINTR
-				moveq	pc, r11
+				NOINTREXIT
 iret_withirq	I286IRQCHECKTERM
 iret_pic		dcd		pic
 
@@ -1657,7 +1651,7 @@ sti_set			orr		r8, r8, #I_FLAG
 				ldr		r0, sti_pic
 				strneb	r1, [r9, #CPU_TRAP]
 				bne		sti_withirq
-				PICEXISTINTR
+				PICEXISTINTR	sti_noirq
 				bne		sti_withirq
 sti_noirq		NEXT_OPCODE
 sti_pic			dcd		pic

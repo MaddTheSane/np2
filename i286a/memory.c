@@ -16,16 +16,22 @@
 
 // ---- write byte
 
-#if 0 // defined(ARM)
+#if defined(ARM)
 void MEMCALL i286_wt(UINT32 address, REG8 value);
+void MEMCALL i286_wtex(UINT32 address, REG8 value);
 #else
 static void MEMCALL i286_wt(UINT32 address, REG8 value) {
+
+	mem[address] = (BYTE)value;
+}
+
+static void MEMCALL i286_wtex(UINT32 address, REG8 value) {
 
 	mem[address & CPU_ADRSMASK] = (BYTE)value;
 }
 #endif
 
-#if 0 // defined(ARM)
+#if defined(ARM)
 void MEMCALL tram_wt(UINT32 address, REG8 value);
 #else
 static void MEMCALL tram_wt(UINT32 address, REG8 value) {
@@ -214,11 +220,24 @@ static void MEMCALL i286_wn(UINT32 address, REG8 value) {
 
 // ---- read byte
 
+#if defined(ARM)
+REG8 MEMCALL i286_rd(UINT32 address);
+REG8 MEMCALL i286_rdex(UINT32 address);
+#else
 static REG8 MEMCALL i286_rd(UINT32 address) {
+
+	return(mem[address]);
+}
+
+static REG8 MEMCALL i286_rdex(UINT32 address) {
 
 	return(mem[address & CPU_ADRSMASK]);
 }
+#endif
 
+#if 0 // defined(ARM)
+REG8 MEMCALL tram_rd(UINT32 address);
+#else
 static REG8 MEMCALL tram_rd(UINT32 address) {
 
 	CPU_REMCLOCK -= vramop.tramwait;
@@ -235,7 +254,12 @@ static REG8 MEMCALL tram_rd(UINT32 address) {
 	}
 	return(mem[address]);
 }
+#endif
 
+#if 0 // defined(ARM)
+REG8 MEMCALL vram_r0(UINT32 address);
+REG8 MEMCALL vram_r1(UINT32 address);
+#else
 static REG8 MEMCALL vram_r0(UINT32 address) {
 
 	CPU_REMCLOCK -= vramop.vramwait;
@@ -247,6 +271,7 @@ static REG8 MEMCALL vram_r1(UINT32 address) {
 	CPU_REMCLOCK -= vramop.vramwait;
 	return(mem[address + VRAM_STEP]);
 }
+#endif
 
 static REG8 MEMCALL grcg_tcr0(UINT32 address) {
 
@@ -315,13 +340,26 @@ static REG8 MEMCALL i286_itf(UINT32 address) {
 
 // ---- write word
 
+#if defined(ARM)
+void MEMCALL i286w_wt(UINT32 address, REG16 value);
+void MEMCALL i286w_wtex(UINT32 address, REG16 value);
+#else
 static void MEMCALL i286w_wt(UINT32 address, REG16 value) {
+
+	BYTE	*ptr;
+
+	ptr = mem + address;
+	STOREINTELWORD(ptr, value);
+}
+
+static void MEMCALL i286w_wtex(UINT32 address, REG16 value) {
 
 	BYTE	*ptr;
 
 	ptr = mem + (address & CPU_ADRSMASK);
 	STOREINTELWORD(ptr, value);
 }
+#endif
 
 static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 
@@ -506,13 +544,26 @@ static void MEMCALL i286w_wn(UINT32 address, REG16 value) {
 
 // ---- read word
 
+#if defined(ARM)
+REG16 MEMCALL i286w_rd(UINT32 address);
+REG16 MEMCALL i286w_rdex(UINT32 address);
+#else
 static REG16 MEMCALL i286w_rd(UINT32 address) {
+
+	BYTE	*ptr;
+
+	ptr = mem + address;
+	return(LOADINTELWORD(ptr));
+}
+
+static REG16 MEMCALL i286w_rdex(UINT32 address) {
 
 	BYTE	*ptr;
 
 	ptr = mem + (address & CPU_ADRSMASK);
 	return(LOADINTELWORD(ptr));
 }
+#endif
 
 static REG16 MEMCALL tramw_rd(UINT32 address) {
 
@@ -543,6 +594,9 @@ static REG16 MEMCALL tramw_rd(UINT32 address) {
 	return(LOADINTELWORD(mem + address));
 }
 
+#if 0 // defined(ARM)
+REG16 MEMCALL vramw_r0(UINT32 address);
+REG16 MEMCALL vramw_r1(UINT32 address);
 static REG16 MEMCALL vramw_r0(UINT32 address) {
 
 	CPU_REMCLOCK -= vramop.vramwait;
@@ -554,6 +608,7 @@ static REG16 MEMCALL vramw_r1(UINT32 address) {
 	CPU_REMCLOCK -= vramop.vramwait;
 	return(LOADINTELWORD(mem + address + VRAM_STEP));
 }
+#endif
 
 static REG16 MEMCALL grcgw_tcr0(UINT32 address) {
 
@@ -673,7 +728,7 @@ MEMFN memfn =		// -> memory.s
 #else
 static MEMFN memfn =
 #endif
-		  {{i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 00
+		  {{i286_rdex,	i286_rdex,	i286_rd,	i286_rd,		// 00
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 20
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 40
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 60
@@ -682,7 +737,7 @@ static MEMFN memfn =
 			emmc_rd,	emmc_rd,	i286_rd,	i286_rd,		// c0
 			vram_r0,	i286_rd,	i286_rd,	i286_itf},		// f0
 
-		   {i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
+		   {i286_wtex,	i286_wtex,	i286_wt,	i286_wt,		// 00
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 20
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 40
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 60
@@ -691,7 +746,7 @@ static MEMFN memfn =
 			emmc_wt,	emmc_wt,	i286_wn,	i286_wn,		// c0
 			vram_w0,	i286_wn,	i286_wn,	i286_wn},		// e0
 
-		   {i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 00
+		   {i286w_rdex,	i286w_rdex,	i286w_rd,	i286w_rd,		// 00
 			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 20
 			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 40
 			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 60
@@ -700,7 +755,7 @@ static MEMFN memfn =
 			emmcw_rd,	emmcw_rd,	i286w_rd,	i286w_rd,		// c0
 			vramw_r0,	i286w_rd,	i286w_rd,	i286w_itf},		// e0
 
-		   {i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 00
+		   {i286w_wtex,	i286w_wtex,	i286w_wt,	i286w_wt,		// 00
 			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 20
 			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 40
 			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 60

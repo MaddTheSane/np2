@@ -42,15 +42,38 @@ DMAC_WORKING		equ		(DMACH_SIZE * 4) + 8
 ; DMA_stat			equ		(DMACH_SIZE * 4) + 13
 
 
+; #define PICEXISTINTR	((!pic.ext_irq) &&							\
+;						((pic.pi[0].irr & (~pic.pi[0].imr)) ||		\
+;						(pic.pi[1].irr & (~pic.pi[1].imr))))
+
+
 	MACRO
-$label	PICEXISTINTR
-				mov		r12, #(&ff << 24)
+$label	NOINTREXIT
+				tst		r8, #I_FLAG
+				moveq	pc, r11
 				ldrb	r1, [r0, #PIC_EXTIRQ]
 				ldr		r2, [r0, #(PIC_MASTER + PI_IMR)]
-				ldr		r3, [r0, #(PIC_SLAVE + PI_IMR)]
+				mov		r12, #(&ff << 24)
 				cmp		r1, #0
-				eoreq	r0, r12, r2 lsl #24
-				tsteq	r0, r2 lsl #8
+				movne	pc, r11
+				ldr		r3, [r0, #(PIC_SLAVE + PI_IMR)]
+				eor		r0, r12, r2 lsl #24
+				tst		r0, r2 lsl #8
+				eoreq	r0, r12, r3 lsl #24
+				tsteq	r0, r3 lsl #8
+				moveq	pc, r11
+	MEND
+
+	MACRO
+$label	PICEXISTINTR	$noirq
+				ldrb	r1, [r0, #PIC_EXTIRQ]
+				ldr		r2, [r0, #(PIC_MASTER + PI_IMR)]
+				mov		r12, #(&ff << 24)
+				cmp		r1, #0
+				bne		$noirq
+				ldr		r3, [r0, #(PIC_SLAVE + PI_IMR)]
+				eor		r0, r12, r2 lsl #24
+				tst		r0, r2 lsl #8
 				eoreq	r0, r12, r3 lsl #24
 				tsteq	r0, r3 lsl #8
 	MEND

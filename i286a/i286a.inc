@@ -17,7 +17,7 @@ CPU_SEG				equ		16 - 112
 CPU_REMAINCLOCK		equ		28 - 112
 CPU_BASECLOCK		equ		32 - 112
 ; cpu_clock			equ		36 - 112
-; cpu_adrsmask		equ		40 - 112
+CPU_ADRSMASK		equ		40 - 112
 CPU_ES_BASE			equ		44 - 112
 CPU_CS_BASE			equ		48 - 112
 CPU_SS_BASE			equ		52 - 112
@@ -152,7 +152,7 @@ $label		ldr		r7, [r9, #CPU_REMAINCLOCK]
 $label	I286IRQCHECKTERM
 $label		ldr		r7, [r9, #CPU_REMAINCLOCK]
 			cmp		r7, #0
-			movgt	pc, r11
+			movle	pc, r11
 			ldr		r0, [r9, #CPU_BASECLOCK]
 			mov		r1, r7
 			mov		r7, #0

@@ -37,7 +37,7 @@ GW_WRITABLE			equ		8
 
 ;	IMPORT	mem
 	IMPORT	memfn
-	IMPORT	i286core
+;	IMPORT	i286core
 	IMPORT	vramupdate
 	IMPORT	gdcs
 	IMPORT	vramop
@@ -45,8 +45,9 @@ GW_WRITABLE			equ		8
 	IMPORT	tramupdate
 	IMPORT	cgwindow
 
-;	EXPORT	i286_wt
-;	EXPORT	tram_wt
+	EXPORT	i286_wt
+	EXPORT	i286_wtex
+	EXPORT	tram_wt
 	EXPORT	vram_w0
 	EXPORT	vram_w1
 	EXPORT	grcg_rmw0
@@ -54,12 +55,26 @@ GW_WRITABLE			equ		8
 	EXPORT	grcg_tdw0
 	EXPORT	grcg_tdw1
 
+	EXPORT	i286_rd
+	EXPORT	i286_rdex
+;	EXPORT	tram_rd
+;	EXPORT	vram_r0
+;	EXPORT	vram_r1
+
+	EXPORT	i286w_wt
+	EXPORT	i286w_wtex
 	EXPORT	vramw_w0
 	EXPORT	vramw_w1
 	EXPORT	grcgw_rmw0
 	EXPORT	grcgw_rmw1
 	EXPORT	grcgw_tdw0
 	EXPORT	grcgw_tdw1
+
+	EXPORT	i286w_rd
+	EXPORT	i286w_rdex
+;	EXPORT	tramw_rd
+;	EXPORT	vramw_r0
+;	EXPORT	vramw_r1
 
 	EXPORT	i286_nonram_r
 	EXPORT	i286_nonram_rw
@@ -70,24 +85,18 @@ GW_WRITABLE			equ		8
 
 ; ---- write byte
 
-	if 0
-i286_wt			ldr		r2, iwt_cpu
-				ldr		r3, iwt_mem
-				ldr		r2, [r2, #CPU_ADRSMASK]
-				and		r0, r0, r2
-				strb	r1, [r0, r3]
+i286_wt			strb	r1, [r9, r0]
 				mov		pc, lr
-iwt_cpu			dcd		i286core
-iwt_mem			MEMADR
-	endif
 
-	if 0
-tram_wt			ldr		r2, twt_cpu
-				ldr		r3, twt_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
+i286_wtex		ldr		r2, [r9, #CPU_ADRSMASK]
+				and		r0, r2, r0
+				strb	r1, [r9, r0]
+				mov		pc, lr
+
+
+tram_wt			ldr		r3, twt_vramop
 				ldr		r3, [r3, #VRAMOP_TRAMWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+				CPUWORK	r3
 
 				mov		r12, r0, lsl #(31 - 12)
 				cmp		r0, #&a2000
@@ -108,8 +117,7 @@ tram_wt			ldr		r2, twt_cpu
 				cmp		r2, #0
 				moveq	pc, lr
 
-twt_write		ldr		r3, twt_mem
-				strb	r1, [r3, r0]
+twt_write		strb	r1, [r9, r0]
 				ldr		r2, twt_tramupd
 				mov		r3, #1
 				strb	r3, [r2, r12, lsr #(32 - 12)]
@@ -131,69 +139,52 @@ twt_nontram		cmp		r0, #&a5000
 				strb	r12, [r2, #GW_WRITABLE]
 				and		r0, r0, #(&f << 1)
 				ldr		r3, [r2, #GW_HIGH]
-				ldr		r12, twt_fontrom
+				add		r12, r9, #FONT_ADRS
 				add		r12, r12, r0 lsr #1
 				strb	r1, [r3, r12]
 				mov		pc, lr
-twt_cpu			dcd		i286core
 twt_vramop		dcd		vramop
-twt_mem			MEMADR
 twt_tramupd		dcd		tramupdate
 twt_gdcs		dcd		gdcs
 twt_cgwnd		dcd		cgwindow
-twt_fontrom		MEMADR	+ FONT_ADRS
-	endif
 
 
-vram_w0			ldr		r2, vw0_cpu
-				ldr		r3, vw0_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
-				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+vram_w0			ldr		r3, vw0_vramop
 				ldr		r2, vw0_gdcs
+				strb	r1, [r0, r9]
+				ldr		r1, [r3, #VRAMOP_VRAMWAIT]
+				ldr		r3, vw0_vramupd
+				mov		r0, r0, lsl #(32 - 15)
 				ldrb	r12, [r2, #GDCS_GRPHDISP]
+				CPUWORK	r1
+				ldrb	r1, [r3, r0, lsr #(32 - 15)]
 				orr		r12, r12, #1
 				strb	r12, [r2, #GDCS_GRPHDISP]
-				ldr		r2, vw0_cpu
-				strb	r1, [r0, r2]
-				ldr		r2, vw0_vramupd
-				mov		r0, r0, lsl #(32 - 15)
-				ldr		r2, vw0_vramupd
-				ldrb	r12, [r2, r0, lsr #(32 - 15)]
-				orr		r12, r12, #1
-				strb	r12, [r2, r0, lsr #(32 - 15)]
+				orr		r1, r1, #1
+				strb	r1, [r3, r0, lsr #(32 - 15)]
 				mov		pc, lr
-vw0_cpu			dcd		i286core - CPU_REG
 vw0_vramop		dcd		vramop
 vw0_gdcs		dcd		gdcs
 vw0_vramupd		dcd		vramupdate
 
-vram_w1			ldr		r2, vw1_cpu
+vram_w1			add		r0, r0, #VRAM_STEP
 				ldr		r3, vw1_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
-				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
 				ldr		r2, vw1_gdcs
+				strb	r1, [r0, r9]
+				ldr		r1, [r3, #VRAMOP_VRAMWAIT]
+				ldr		r3, vw1_vramupd
+				mov		r0, r0, lsl #(32 - 15)
 				ldrb	r12, [r2, #GDCS_GRPHDISP]
+				CPUWORK	r1
+				ldrb	r1, [r3, r0, lsr #(32 - 15)]
 				orr		r12, r12, #2
 				strb	r12, [r2, #GDCS_GRPHDISP]
-				add		r0, r0, #VRAM_STEP
-				ldr		r2, vw1_cpu
-				strb	r1, [r0, r2]
-				ldr		r2, vw1_vramupd
-				mov		r0, r0, lsl #(32 - 15)
-				ldr		r2, vw1_vramupd
-				ldrb	r12, [r2, r0, lsr #(32 - 15)]
-				orr		r12, r12, #2
-				strb	r12, [r2, r0, lsr #(32 - 15)]
+				orr		r1, r1, #2
+				strb	r1, [r3, r0, lsr #(32 - 15)]
 				mov		pc, lr
-vw1_cpu			dcd		i286core - CPU_REG
 vw1_vramop		dcd		vramop
 vw1_gdcs		dcd		gdcs
 vw1_vramupd		dcd		vramupdate
-
 
 
 grcg_tdw0		mov		r0, r0, lsl #(32 - 15)
@@ -220,10 +211,9 @@ grcg_tdw1		mov		r0, r0, lsl #(32 - 15)
 				strb	r12, [r2, #GDCS_GRPHDISP]
 				add		r0, r0, #VRAM_STEP
 
-grcg_tdw		ldr		r2, grw_cpu
-				add		r0, r0, #VRAM_B
+grcg_tdw		add		r0, r0, #VRAM_B
 				ldr		r3, grw_grcg
-				add		r0, r0, r2
+				add		r0, r0, r9
 				ldrb	r2, [r3, #GRCG_MODEREG]
 				orr		r1, r1, r2 lsl #16
 
@@ -243,12 +233,9 @@ grcg_tdw		ldr		r2, grw_cpu
 				ldreqb	r2, [r3, #(GRCG_TILE + 6)]
 				streqb	r2, [r0]
 
-				ldr		r2, grw_cpu
 				ldr		r3, grw_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
 				ldr		r3, [r3, #VRAMOP_GRCGWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+				CPUWORK	r3
 				mov		pc, lr
 
 grcg_rmw0		cmp		r1, #&ff
@@ -283,10 +270,9 @@ grcg_rmw1		cmp		r1, #&ff
 				strb	r12, [r2, #GDCS_GRPHDISP]
 				add		r0, r0, #VRAM_STEP
 
-grcg_rmw		ldr		r2, grw_cpu
-				add		r0, r0, #VRAM_B
+grcg_rmw		add		r0, r0, #VRAM_B
 				ldr		r3, grw_grcg
-				add		r0, r0, r2
+				add		r0, r0, r9
 				ldrb	r2, [r3, #GRCG_MODEREG]
 				orr		r1, r1, r2 lsl #16
 				tst		r1, #(1 << 16)
@@ -325,107 +311,165 @@ grmw_ged		tst		r1, #(8 << 16)
 					orr		r12, r12, r2
 					strb	r12, [r0]
 
-grcg_clock		ldr		r2, grw_cpu
-				ldr		r3, grw_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
+grcg_clock		ldr		r3, grw_vramop
 				ldr		r3, [r3, #VRAMOP_GRCGWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+				CPUWORK	r3
 				mov		pc, lr
 
 grw_vramupd		dcd		vramupdate
 grw_gdcs		dcd		gdcs
 grw_grcg		dcd		grcg
-grw_cpu			dcd		i286core - CPU_REG
 grw_vramop		dcd		vramop
 
+
+; ---- read word
+
+i286_rd			ldrb	r0, [r9, r0]
+				mov		pc, lr
+
+i286_rdex		ldr		r12, [r9, #CPU_ADRSMASK]
+				and		r0, r12, r0
+				ldrb	r0, [r9, r0]
+				mov		pc, lr
+
+
+tram_rd			ldr		r3, trd_vramop
+				cmp		r0, #&a4000
+				bcs		trd_nontram
+				ldr		r12, [r3, #VRAMOP_TRAMWAIT]
+				ldrb	r0, [r9, r0]
+trd_wait		CPUWORK	r12
+				mov		pc, lr
+trd_nontram		ldr		r12, [r3, #VRAMOP_TRAMWAIT]
+				cmp		r0, #&a5000
+				bcs		trd_wait
+				ldr		r2, trd_cgwnd
+				add		r1, r9, #FONT_ADRS
+				tst		r0, #1
+				ldreq	r3, [r2, #GW_LOW]
+				ldrne	r3, [r2, #GW_HIGH]
+				and		r0, r0, #(&f << 1)
+				add		r1, r0, r1
+				CPUWORK	r12
+				ldrb	r0, [r1, r0]
+				mov		pc, lr
+trd_vramop		dcd		vramop
+trd_cgwnd		dcd		cgwindow
+
+
+vram_r0			ldr		r3, trd_vramop
+				ldrb	r0, [r9, r0]
+				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
+				CPUWORK	r3
+				mov		pc, lr
+
+vram_r1			ldr		r3, trd_vramop
+				add		r0, r0, #VRAM_STEP
+				ldrb	r0, [r0, r9]
+				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
+				CPUWORK	r3
+				mov		pc, lr
 
 
 ; ---- write word
 
-vramw_w0		ldr		r2, vww0_cpu
-				ldr		r3, vww0_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
-				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+i286w_wt		add		r2, r9, #1
+				mov		r3, r1 lsr #8
+				strb	r1, [r9, r0]
+				strb	r3, [r2, r0]
+				mov		pc, lr
+
+i286w_wtex		ldr		r12, [r9, #CPU_ADRSMASK]
+				add		r2, r9, #1
+				mov		r3, r1 lsr #8
+				and		r0, r12, r0
+				strb	r1, [r9, r0]
+				strb	r3, [r2, r0]
+				mov		pc, lr
+
+
+vramw_w0		ldr		r3, vww0_vramop
 				ldr		r2, vww0_gdcs
-				ldrb	r12, [r2, #GDCS_GRPHDISP]
-				orr		r12, r12, #1
-				strb	r12, [r2, #GDCS_GRPHDISP]
-
-				ldr		r2, vww0_cpu
-				ldr		r3, vww0_vramupd
-				mov		r12, r0, lsl #(32 - 15)
-				add		r3, r3, r12, lsr #(32 - 15)
-
 				tst		r0, #1
 				bne		vww0_odd
-				strh	r1, [r0, r2]
+				strh	r1, [r0, r9]
+				ldr		r1, [r3, #VRAMOP_VRAMWAIT]
+				ldr		r3, vww0_vramupd
+				mov		r0, r0 lsl #(32 - 15)
+				ldrb	r12, [r2, #GDCS_GRPHDISP]
+				add		r3, r3, r0 lsr #(32 - 15)
+				CPUWORK	r1
 				ldrh	r1, [r3]
+				orr		r12, r12, #1
+				strb	r12, [r2, #GDCS_GRPHDISP]
 				orr		r1, r1, #1
 				orr		r1, r1, #(1 << 8)
 				strh	r1, [r3]
 				mov		pc, lr
-
-vww0_odd		add		r2, r2, r0
-				strb	r1, [r2]
-				mov		r1, r1, lsr #8
-				strb	r1, [r2, #1]
-				ldrb	r12, [r3]
-				orr		r12, r12, #1
-				strb	r12, [r3]
-				ldrb	r12, [r3, #1]
-				orr		r12, r12, #1
-				strb	r12, [r3, #1]
-				mov		pc, lr
-vww0_cpu		dcd		i286core - CPU_REG
 vww0_vramop		dcd		vramop
 vww0_gdcs		dcd		gdcs
 vww0_vramupd	dcd		vramupdate
-
-vramw_w1		ldr		r2, vww1_cpu
-				ldr		r3, vww1_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
-				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
-				ldr		r2, vww1_gdcs
+vww0_odd		add		r12, r0, r9
+				strb	r1, [r0, r9]
+				mov		r1, r1 lsr #8
+				strb	r1, [r12, #1]
+				ldr		r1, [r3, #VRAMOP_VRAMWAIT]
+				ldr		r3, vww0_vramupd
+				mov		r0, r0, lsl #(32 - 15)
 				ldrb	r12, [r2, #GDCS_GRPHDISP]
-				orr		r12, r12, #2
+				add		r3, r3, r0 lsr #(32 - 15)
+				CPUWORK	r1
+				ldrb	r0, [r3]
+				ldrb	r1, [r3, #1]
+				orr		r12, r12, #1
 				strb	r12, [r2, #GDCS_GRPHDISP]
+				orr		r0, r0, #1
+				orr		r1, r1, #1
+				strb	r0, [r3]
+				strb	r1, [r3, #1]
+				mov		pc, lr
 
-				ldr		r2, vww1_cpu
-				add		r2, r2, #VRAM_STEP
-				ldr		r3, vww1_vramupd
-				mov		r12, r0, lsl #(32 - 15)
-				add		r3, r3, r12, lsr #(32 - 15)
-
+vramw_w1		add		r0, r0, #VRAM_STEP
+				ldr		r3, vww1_vramop
+				ldr		r2, vww1_gdcs
 				tst		r0, #1
 				bne		vww1_odd
-				strh	r1, [r0, r2]
+				strh	r1, [r0, r9]
+				ldr		r1, [r3, #VRAMOP_VRAMWAIT]
+				ldr		r3, vww1_vramupd
+				mov		r0, r0 lsl #(32 - 15)
+				ldrb	r12, [r2, #GDCS_GRPHDISP]
+				add		r3, r3, r0 lsr #(32 - 15)
+				CPUWORK	r1
 				ldrh	r1, [r3]
+				orr		r12, r12, #2
+				strb	r12, [r2, #GDCS_GRPHDISP]
 				orr		r1, r1, #2
 				orr		r1, r1, #(2 << 8)
 				strh	r1, [r3]
 				mov		pc, lr
-
-vww1_odd		add		r2, r2, r0
-				strb	r1, [r2]
-				mov		r1, r1, lsr #8
-				strb	r1, [r2, #1]
-				ldrb	r12, [r3]
-				orr		r12, r12, #2
-				strb	r12, [r3]
-				ldrb	r12, [r3, #1]
-				orr		r12, r12, #2
-				strb	r12, [r3, #1]
-				mov		pc, lr
-vww1_cpu		dcd		i286core - CPU_REG
 vww1_vramop		dcd		vramop
 vww1_gdcs		dcd		gdcs
 vww1_vramupd	dcd		vramupdate
-
+vww1_odd		add		r12, r0, r9
+				strb	r1, [r0, r9]
+				mov		r1, r1 lsr #8
+				strb	r1, [r12, #1]
+				ldr		r1, [r3, #VRAMOP_VRAMWAIT]
+				ldr		r3, vww1_vramupd
+				mov		r0, r0, lsl #(32 - 15)
+				ldrb	r12, [r2, #GDCS_GRPHDISP]
+				add		r3, r3, r0 lsr #(32 - 15)
+				CPUWORK	r1
+				ldrb	r0, [r3]
+				ldrb	r1, [r3, #1]
+				orr		r12, r12, #2
+				strb	r12, [r2, #GDCS_GRPHDISP]
+				orr		r0, r0, #2
+				orr		r1, r1, #2
+				strb	r0, [r3]
+				strb	r1, [r3, #1]
+				mov		pc, lr
 
 
 grcgw_tdw0		ldr		r2, grww_gdcs
@@ -458,8 +502,7 @@ grcgw_tdw1		ldr		r2, grww_gdcs
 				orr		r12, r12, #2
 				strb	r12, [r2, #1]
 				add		r0, r0, #VRAM_STEP
-grcgw_tdw		ldr		r2, grww_cpu
-				add		r2, r2, #VRAM_B
+grcgw_tdw		add		r2, r9, #VRAM_B
 				ldr		r3, grww_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -483,12 +526,9 @@ grcgw_tdw		ldr		r2, grww_cpu
 				ldreqb	r2, [r3, #(GRCG_TILE + 6)]
 				streqb	r2, [r0]
 				streqb	r2, [r0, #1]
-				ldr		r2, grww_cpu
 				ldr		r3, grww_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
 				ldr		r3, [r3, #VRAMOP_GRCGWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+				CPUWORK	r3
 				mov		pc, lr
 
 grcgw_rmw0		add		r2, r1, #1
@@ -532,8 +572,7 @@ grcgw_rmw1		add		r2, r1, #1
 				strh	r12, [r2, r0]
 				add		r0, r0, #VRAM_STEP
 
-grcge_rmw		ldr		r2, grww_cpu
-				add		r2, r2, #VRAM_B
+grcge_rmw		add		r2, r9, #VRAM_B
 				ldr		r3, grww_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -573,18 +612,14 @@ grmwe_ged		tst		r1, #(8 << 16)
 					bic		r12, r12, r1
 					orr		r12, r12, r2
 					strh	r12, [r0]
-grmwe_eed		ldr		r2, grww_cpu
-				ldr		r3, grww_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
+grmwe_eed		ldr		r3, grww_vramop
 				ldr		r3, [r3, #VRAMOP_GRCGWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+				CPUWORK	r3
 				mov		pc, lr
 
 grww_gdcs		dcd		gdcs
 grww_vramupd	dcd		vramupdate
 grww_grcg		dcd		grcg
-grww_cpu		dcd		i286core - CPU_REG
 grww_vramop		dcd		vramop
 
 grcgo_rmw0		add		r2, r2, r0
@@ -605,8 +640,7 @@ grcgo_rmw1		add		r2, r2, r0
 				strb	r12, [r2, #1]
 				add		r0, r0, #VRAM_STEP
 
-grcgo_rmw		ldr		r2, grww_cpu
-				add		r2, r2, #VRAM_B
+grcgo_rmw		add		r2, r9, #VRAM_B
 				ldr		r3, grww_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -670,12 +704,39 @@ grmwo_ged		tst		r1, #(8 << 16)
 					orr		r12, r12, r2 lsr #8
 					strb	r12, [r0, #1]
 
-grcgw_clock		ldr		r2, grww_cpu
-				ldr		r3, grww_vramop
-				ldr		r12, [r2, #CPU_REMAINCLOCK]
+grcgw_clock		ldr		r3, grww_vramop
 				ldr		r3, [r3, #VRAMOP_GRCGWAIT]
-				sub		r12, r12, r3
-				str		r12, [r2, #CPU_REMAINCLOCK]
+				CPUWORK	r3
+				mov		pc, lr
+
+
+; ---- read word
+
+i286w_rd		add		r2, r9, #1
+				ldrb	r1, [r9, r0]
+				ldrb	r3, [r2, r0]
+				orr		r0, r1, r3 lsl #8
+				mov		pc, lr
+
+i286w_rdex		ldr		r12, [r9, #CPU_ADRSMASK]
+				add		r2, r9, #1
+				and		r0, r12, r0
+				ldrb	r1, [r9, r0]
+				ldrb	r3, [r2, r0]
+				orr		r0, r1, r3 lsl #8
+				mov		pc, lr
+
+tramw_rd
+twrd_vramop		dcd		vramop
+
+vramw_r1		add		r0, r0, #VRAM_STEP
+vramw_r0		ldr		r3, twrd_vramop
+				add		r2, r9, r0
+				ldrb	r0, [r9, r0]
+				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
+				ldrb	r1, [r2, #1]
+				CPUWORK	r3
+				mov		r0, r0, r1 lsl #1
 				mov		pc, lr
 
 
@@ -685,7 +746,7 @@ i286_nonram_r	mov		r0, #&ff
 				mov		pc, lr
 
 i286_nonram_rw	mov		r0, #&ff
-				add		r0, r0, #&ff00
+				orr		r0, r0, #&ff00
 				mov		pc, lr
 
 
