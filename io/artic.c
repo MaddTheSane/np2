@@ -51,7 +51,7 @@ static UINT32 artic_getcnt(void) {
 
 // ---- I/O
 
-static void IOOUTCALL artic_o5c(UINT port, REG8 dat) {
+static void IOOUTCALL artic_o5f(UINT port, REG8 dat) {
 
 	(void)port;
 	(void)dat;
@@ -86,7 +86,7 @@ void artic_reset(void) {
 
 void artic_bind(void) {
 
-	iocore_attachout(0x005c, artic_o5c);
+	iocore_attachout(0x005f, artic_o5f);
 	iocore_attachinp(0x005c, artic_i5c);
 	iocore_attachinp(0x005d, artic_i5d);
 	iocore_attachinp(0x005e, artic_i5d);
