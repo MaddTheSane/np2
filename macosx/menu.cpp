@@ -214,3 +214,10 @@ void menu_setrecording(bool end) {
     }
 }
 
+void menu_setmsrapid(BYTE value) {
+
+	value &= 1;
+	np2cfg.MOUSERAPID = value;
+	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_MSRAPID, MFCHECK(value));
+}
+

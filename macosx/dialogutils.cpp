@@ -71,3 +71,23 @@ pascal OSStatus changeSlider(ControlRef theControl, WindowRef theWindow, short b
     return( eventNotHandledErr );
 }
 
+void uncheckAllPopupMenuItems(OSType ID, short max, WindowRef win) {
+    MenuRef mhd;
+    short i;
+    mhd = GetControlPopupMenuHandle(getControlRefByID(ID, 0, win));
+    for (i=1; i<max; i++) {
+        CheckMenuItem(mhd, i, false);
+    }
+}
+
+void setjmper(BYTE *board, BYTE value, BYTE bit) {
+    BYTE data;
+    data = *board;
+	if ((data ^ value) & bit) {
+		data &= ~bit;
+		data |= value;
+        *board = data;
+	}
+}
+
+

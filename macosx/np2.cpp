@@ -34,6 +34,7 @@
 #include	"macnewdisk.h"
 #include	"fdefine.h"
 #include	"hid.h"
+#include	"midiopt.h"
 
 #define	USE_RESUME
 #define	NP2OPENING
@@ -329,6 +330,10 @@ static void HandleMenuChoice(long wParam) {
             toggleMenubar();
 			break;
             
+        case IDM_MIDIOPT:
+            initMidiOpt();
+            break;
+            
 		case IDM_MIDIPANIC:
 			rs232c_midipanic();
 			mpu98ii_midipanic();
@@ -513,6 +518,11 @@ static void HandleMenuChoice(long wParam) {
 			menu_setbtnrapid(np2cfg.BTN_RAPID ^ 1);
 			update |= SYS_UPDATECFG;
 			break;
+
+        case IDM_MSRAPID:
+            menu_setmsrapid(np2cfg.MOUSERAPID ^ 1);
+            update |= SYS_UPDATECFG;
+            break;
 
 		case IDM_I286SAVE:
 			debugsub_status();

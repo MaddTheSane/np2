@@ -476,6 +476,7 @@
 				96084019054ED26F00000103,
 				9608401B054ED27C00000103,
 				9608401D054ED28800000103,
+				9695E7FC0551A0D200000103,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -575,6 +576,18 @@
 		};
 		9608401D054ED28800000103 = {
 			fileRef = 9608401C054ED28800000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9695E7FB0551A0D200000103 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			path = midiopt.cpp;
+			refType = 4;
+		};
+		9695E7FC0551A0D200000103 = {
+			fileRef = 9695E7FB0551A0D200000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2042,6 +2055,7 @@
 				96084018054ED26F00000103,
 				9608401A054ED27C00000103,
 				9608401C054ED28800000103,
+				9695E7FB0551A0D200000103,
 			);
 			isa = PBXGroup;
 			name = MacOSX;
