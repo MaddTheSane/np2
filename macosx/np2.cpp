@@ -685,6 +685,7 @@ int main(int argc, char *argv[]) {
 			}
 			else {								// auto skip
 				if (!waitcnt) {
+					UINT cnt;
 #if defined(NP2GCC)
                     mouse_callback();
 #endif
@@ -692,11 +693,24 @@ int main(int argc, char *argv[]) {
 					pccore_exec(framecnt == 0);
 					framecnt++;
 					// ƒeƒXƒg
-					if (framecnt > timing_getcount()) {
+					cnt = timing_getcount();
+					if (framecnt > cnt) {
 						waitcnt = framecnt;
+						if (framemax > 1) {
+							framemax--;
+						}
 					}
-					else if (framecnt >= 12) {
-						waitcnt = framecnt;
+					else if (framecnt >= framemax) {
+						if (framemax < 12) {
+							framemax++;
+						}
+						if (cnt >= 12) {
+							timing_init();
+						}
+						else {
+							timing_setcount(cnt - framecnt);
+						}
+						framecnt = 0;
 					}
 				}
 				else {
