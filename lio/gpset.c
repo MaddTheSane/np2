@@ -15,20 +15,6 @@ typedef struct {
 } GPOINT2;
 
 
-// ---- CLS
-
-REG8 lio_gcls(GLIO lio) {
-
-	SINT16	y;
-
-	lio_updatedraw(lio);
-	for (y=lio->draw.y1; y<=lio->draw.y2; y++) {
-		lio_line(lio, lio->draw.x1, lio->draw.x2, y, lio->work.bgcolor);
-	}
-	return(LIO_SUCCESS);
-}
-
-
 // ---- PSET
 
 REG8 lio_gpset(GLIO lio) {

@@ -31,7 +31,7 @@ void bios_lio(REG8 cmd) {
 //	TRACEOUT(("lio command %.2x", cmd));
 	i286_memstr_read(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
 	lio.palmode = i286_membyte_read(CPU_DS, 0x0a08);
-	lio.wait = 500;
+	lio.wait = 0;
 	switch(cmd) {
 		case 0x00:			// a0: GINIT
 			ret = lio_ginit(&lio);
@@ -101,7 +101,9 @@ void bios_lio(REG8 cmd) {
 			break;
 	}
 	CPU_AH = ret;
-	gdcsub_setslavewait(lio.wait);
+	if (lio.wait) {
+		gdcsub_setslavewait(lio.wait);
+	}
 }
 
 
@@ -235,6 +237,7 @@ void lio_pset(const _GLIO *lio, SINT16 x, SINT16 y, REG8 pal) {
 	pixed8(lio, addr, bit, pal);
 }
 
+#if 0
 void lio_line(const _GLIO *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 
 	UINT	addr;
@@ -284,6 +287,7 @@ void lio_line(const _GLIO *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 		pixed8(lio, addr, dbit, pal);
 	}
 }
+#endif
 
 
 #if 0

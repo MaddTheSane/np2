@@ -131,7 +131,7 @@ void fddmtr_seek(REG8 drv, REG8 c, UINT size) {
 	SINT32	waitcnt;
 
 	drv &= 3;
-	regmove = fddmtr.head[drv] - c;
+	regmove = c - fddmtr.head[drv];
 	fddmtr.head[drv] = c;
 
 	if (!np2cfg.MOTOR) {
@@ -145,7 +145,7 @@ void fddmtr_seek(REG8 drv, REG8 c, UINT size) {
 
 	waitcnt = (size * DISK1ROL_MS) / (1024 * 8);
 	if (regmove < 0) {
-		regmove = 0 - 1;
+		regmove = 0 - regmove;
 	}
 	if (regmove == 1) {
 		if (fddmtr.curevent < 80) {

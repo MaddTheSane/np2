@@ -439,6 +439,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 	if ((adrs >= 0xf9a00) && (adrs < 0x0f9a44)) {
 		if (!(adrs & 3)) {
+			CPU_REMCLOCK -= 500;
 			bios_lio((REG8)((adrs - 0xf9a00) >> 2));
 		}
 		else {
