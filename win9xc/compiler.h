@@ -4,12 +4,6 @@
 
 #define	BYTESEX_LITTLE
 
-#if 1
-#ifndef __cplusplus
-#define	DWORD	xxx
-#define	WORD	xxx
-#endif
-#endif
 
 typedef	short			SINT16;
 typedef	unsigned short	UINT16;

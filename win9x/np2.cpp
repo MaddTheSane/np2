@@ -323,13 +323,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_SCRNMUL10:
 				case IDM_SCRNMUL12:
 				case IDM_SCRNMUL16:
-#if 0
-					if ((SCREENMODE & SCMD_WINDOWED) &&
+					if ((!scrnmng_isfullscreen()) &&
 						!(GetWindowLong(hWndMain, GWL_STYLE) & WS_MINIMIZE)) {
 						xmenu_setscrnmul(wParam - IDM_SCRNMUL);
-						ddraws_setmul(wParam - IDM_SCRNMUL);
+						scrnmng_setmultiple(wParam - IDM_SCRNMUL);
 					}
-#endif
 					break;
 
 				default:
@@ -1110,7 +1108,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	srand((unsigned)time(NULL));
 
-//	np2arg_analize(lpszCmdLine);
+	np2arg_analize(lpszCmdLine);
 
 	CopyMemory(szClassName, np2oscfg.winid, 3);
 

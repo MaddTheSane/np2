@@ -60,10 +60,8 @@ static void setwindowsize(int width, int height) {
 
 	GetWindowRect(hWndMain, &rectwindow);
 	GetClientRect(hWndMain, &rectclient);
-	width += np2oscfg.paddingx * 2;
 	width += rectwindow.right - rectwindow.left;
 	width -= rectclient.right - rectclient.left;
-	height += np2oscfg.paddingy * 2;
 	height += rectwindow.bottom - rectwindow.top;
 	height -= rectclient.bottom - rectclient.top;
 
@@ -108,14 +106,12 @@ static void renewalclientsize(void) {
 
 	int		width;
 	int		height;
-	int		extend;
 	int		multiple;
 	int		scrnwidth;
 	int		scrnheight;
 
 	width = min(scrnstat.width, ddraw.width);
 	height = min(scrnstat.height, ddraw.height);
-	extend = 0;
 
 	// •`‰æ”ÍˆÍ`
 	if (ddraw.scrnmode & SCRNMODE_FULLSCREEN) {
@@ -129,35 +125,28 @@ static void renewalclientsize(void) {
 	else {
 		multiple = scrnstat.multiple;
 		if (!(ddraw.scrnmode & SCRNMODE_ROTATE)) {
-			if (np2oscfg.paddingx) {
-				extend = min(scrnstat.extend, ddraw.extend);
-			}
 			scrnwidth = (width * multiple) >> 3;
 			scrnheight = (height * multiple) >> 3;
-			ddraw.rect.right = width + extend;
+			ddraw.rect.right = width;
 			ddraw.rect.bottom = height;
-			ddraw.scrn.left = np2oscfg.paddingx - extend;
-			ddraw.scrn.top = np2oscfg.paddingy;
+			ddraw.scrn.left = 0;
+			ddraw.scrn.top = 0;
 		}
 		else {
-			if (np2oscfg.paddingy) {
-				extend = min(scrnstat.extend, ddraw.extend);
-			}
 			scrnwidth = (height * multiple) >> 3;
 			scrnheight = (width * multiple) >> 3;
 			ddraw.rect.right = height;
-			ddraw.rect.bottom = width + extend;
-			ddraw.scrn.left = np2oscfg.paddingx;
-			ddraw.scrn.top = np2oscfg.paddingy - extend;
+			ddraw.rect.bottom = width;
+			ddraw.scrn.left = 0;
+			ddraw.scrn.top = 0;
 		}
-		ddraw.scrn.right = np2oscfg.paddingx + scrnwidth;
-		ddraw.scrn.bottom = np2oscfg.paddingy + scrnheight;
+		ddraw.scrn.right = scrnwidth;
+		ddraw.scrn.bottom = scrnheight;
 		setwindowsize(scrnwidth, scrnheight);
 		setwindowsize(scrnwidth, scrnheight);
 	}
 	scrnsurf.width = width;
 	scrnsurf.height = height;
-	scrnsurf.extend = extend;
 }
 
 static void clearoutofrect(const RECT *target, const RECT *base) {
@@ -267,7 +256,7 @@ static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 	ddraw.r16b = sft;
 
 	sft = 0;
-	while((rmask & 0xffffff0) && (sft < 32)) {
+	while((rmask & 0xffffff00) && (sft < 32)) {
 		rmask >>= 1;
 		sft++;
 	}
@@ -275,7 +264,7 @@ static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 	ddraw.l16r = sft;
 
 	sft = 0;
-	while((gmask & 0xffffff0) && (sft < 32)) {
+	while((gmask & 0xffffff00) && (sft < 32)) {
 		gmask >>= 1;
 		sft++;
 	}
@@ -291,7 +280,7 @@ void scrnmng_initialize(void) {
 
 	scrnstat.width = 640;
 	scrnstat.height = 400;
-	scrnstat.extend = 1;
+	scrnstat.extend = 0;
 	scrnstat.multiple = 8;
 	setwindowsize(640, 400);
 }
@@ -414,12 +403,12 @@ BOOL scrnmng_create(BYTE scrnmode) {
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
 		if (!(scrnmode & SCRNMODE_ROTATE)) {
-			ddsd.dwWidth = 641;
+			ddsd.dwWidth = 640;
 			ddsd.dwHeight = 480;
 		}
 		else {
 			ddsd.dwWidth = 480;
-			ddsd.dwHeight = 641;
+			ddsd.dwHeight = 640;
 		}
 
 		if (ddraw2->CreateSurface(&ddsd, &ddraw.backsurf, NULL) != DD_OK) {
@@ -545,8 +534,7 @@ void scrnmng_setwidth(int posx, int width) {
 
 void scrnmng_setextend(int extend) {
 
-	scrnstat.extend = extend;
-	renewalclientsize();
+	(void)extend;
 }
 
 void scrnmng_setheight(int posy, int height) {

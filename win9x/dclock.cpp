@@ -302,6 +302,7 @@ void dclock_init16(void) {
 
 	for (i=0; i<4; i++) {
 		outcolors16[i] = scrnmng_makepal16(dclock_pal[i]);
+		TRACEOUT(("%.4x", outcolors16[i]));
 	}
 }
 

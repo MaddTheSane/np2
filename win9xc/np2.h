@@ -6,8 +6,6 @@
 typedef struct {
 	int		winx;
 	int		winy;
-	UINT	paddingx;
-	UINT	paddingy;
 	BYTE	NOWAIT;
 	BYTE	DRAW_SKIP;
 

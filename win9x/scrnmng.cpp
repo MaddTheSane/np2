@@ -127,7 +127,7 @@ static void renewalclientsize(void) {
 	else {
 		multiple = scrnstat.multiple;
 		if (!(ddraw.scrnmode & SCRNMODE_ROTATE)) {
-			if (np2oscfg.paddingx) {
+			if ((np2oscfg.paddingx) && (multiple == 8)) {
 				extend = min(scrnstat.extend, ddraw.extend);
 			}
 			scrnwidth = (width * multiple) >> 3;
@@ -138,7 +138,7 @@ static void renewalclientsize(void) {
 			ddraw.scrn.top = np2oscfg.paddingy;
 		}
 		else {
-			if (np2oscfg.paddingy) {
+			if ((np2oscfg.paddingy) && (multiple == 8)) {
 				extend = min(scrnstat.extend, ddraw.extend);
 			}
 			scrnwidth = (height * multiple) >> 3;
@@ -269,7 +269,7 @@ static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 	ddraw.r16b = sft;
 
 	sft = 0;
-	while((rmask & 0xffffff0) && (sft < 32)) {
+	while((rmask & 0xffffff00) && (sft < 32)) {
 		rmask >>= 1;
 		sft++;
 	}
@@ -277,7 +277,7 @@ static void make16mask(DWORD bmask, DWORD rmask, DWORD gmask) {
 	ddraw.l16r = sft;
 
 	sft = 0;
-	while((gmask & 0xffffff0) && (sft < 32)) {
+	while((gmask & 0xffffff00) && (sft < 32)) {
 		gmask >>= 1;
 		sft++;
 	}
@@ -445,6 +445,7 @@ BOOL scrnmng_create(BYTE scrnmode) {
 		else {
 			goto scre_err;
 		}
+		ddraw.extend = 1;
 	}
 	scrnmng.bpp = (BYTE)bitcolor;
 	scrnsurf.bpp = bitcolor;
@@ -627,6 +628,14 @@ void scrnmng_update(void) {
 
 
 // ----
+
+void scrnmng_setmultiple(int multiple) {
+
+	if (scrnstat.multiple != multiple) {
+		scrnstat.multiple = multiple;
+		renewalclientsize();
+	}
+}
 
 static const RECT rectclk = {0, 0, DCLOCK_X, DCLOCK_Y};
 

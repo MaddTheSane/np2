@@ -51,7 +51,7 @@ static	const char	szClassName[] = "NP2-MainWindow";
 
 
 		NP2OSCFG	np2oscfg = {
-						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 2,
+						CW_USEDEFAULT, CW_USEDEFAULT, 0, 2,
 						KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
 						0};
@@ -565,8 +565,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			    HBITMAP		hbmp;
 			    BITMAP		bmp;
 			    HINSTANCE	hinst;
-				int			sx = 640 + np2oscfg.paddingx;
-				int			sy = 400 + np2oscfg.paddingy;
+				int			sx = 640;
+				int			sy = 400;
 
 			    hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
 #if 1

@@ -13,25 +13,16 @@ typedef struct {
 
 	BYTE	KEY_MODE;
 	BYTE	SOUND_SW;
-//	BYTE	NOWAIT;		// 0
-//	BYTE	DRAW_SKIP;	// 2
 	BYTE	realpal;												// ver0.28
 	UINT16	samplingrate;
 	UINT16	delayms;
-//	BYTE	WINSNAP;	// 1
-//	BYTE	DISPCLK;	// 0
 	BYTE	MIDIRESET;
-//	BYTE	MOUSE_SW;	// 0
 	BYTE	DISPSYNC;
 	BYTE	EXTMEM;
 	BYTE	PROTECTMEM;												// qn
 
 	BYTE	BTN_RAPID;
 	BYTE	BTN_MODE;
-
-//	BYTE	JOYPAD1;												// ver0.28
-//	BYTE	JOYPAD2;
-//	BYTE	JOY1BTN[4];
 
 	BYTE	snd_x;													// ver0.30
 	BYTE	snd14opt[3];
@@ -52,13 +43,8 @@ typedef struct {
 	UINT32	BG_COLOR;
 	UINT32	FG_COLOR;
 
-//	BYTE	I286SAVE;		// 0
-//	BYTE	MIMPIDEF;		// 0
-//	BYTE	REMOVEHD;		// 0
-//	BYTE	KEYBOARD;		// KEY_UNKNOWN
 	BYTE	MOUSERAPID;
 	BYTE	XSHIFT;
-//	BYTE	F12COPY;		// 0
 	BYTE	skipline;
 	UINT16	skiplight;
 	BYTE	RASTER;
@@ -73,10 +59,7 @@ typedef struct {
 	BYTE	pc9861sw[3];
 	BYTE	pc9861jmp[6];
 
-//	UINT	paddingx;		// 1
-//	UINT	paddingy;		// 1
 	BYTE	grcg;
-//	BYTE	background;		// 0
 	BYTE	color16;
 	BYTE	calendar;
 	BYTE	usefd144;

@@ -290,8 +290,6 @@ static const char inifile[] = "np2.cfg";
 static const INITBL iniitem[] = {
 	{"WindposX", INITYPE_SINT32,	&np2oscfg.winx,			0},
 	{"WindposY", INITYPE_SINT32,	&np2oscfg.winy,			0},
-	{"paddingx", INITYPE_SINT32,	&np2oscfg.paddingx,		0},
-	{"paddingy", INITYPE_SINT32,	&np2oscfg.paddingy,		0},
 
 	{"FDfolder", INITYPE_STR,		fddfolder,				MAX_PATH},
 	{"HDfolder", INITYPE_STR,		hddfolder,				MAX_PATH},
