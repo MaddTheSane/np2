@@ -397,7 +397,7 @@ static const INITBL iniitem[] = {
 	{"GRCG_EGC", INIAND_UINT8,		&np2cfg.grcg,			3},
 	{"color16b", INITYPE_BOOL,		&np2cfg.color16,		0},
 	{"skipline", INITYPE_BOOL,		&np2cfg.skipline,		0},
-	{"skplight", INITYPE_UINT16		&np2cfg.skiplight,		0},
+	{"skplight", INITYPE_UINT16,	&np2cfg.skiplight,		0},
 	{"LCD_MODE", INIAND_UINT8,		&np2cfg.LCD_MODE,		0x03},
 	{"BG_COLOR", INIROAND_HEX32,	&np2cfg.BG_COLOR,		0xffffff},
 	{"FG_COLOR", INIROAND_HEX32,	&np2cfg.FG_COLOR,		0xffffff},

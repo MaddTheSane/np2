@@ -190,7 +190,7 @@ static BOOL np2syspcmp(const char *p) {
 	return(FALSE);
 }
 
-static void IOOUTCALL np2sysp_o7bf(UINT port, BYTE dat) {
+static void IOOUTCALL np2sysp_o7ef(UINT port, BYTE dat) {
 
 	UINT	i;
 
@@ -206,7 +206,7 @@ static void IOOUTCALL np2sysp_o7bf(UINT port, BYTE dat) {
 	(void)port;
 }
 
-static BYTE IOINPCALL np2sysp_i7bf(UINT port) {
+static BYTE IOINPCALL np2sysp_i7ef(UINT port) {
 
 	BYTE	ret;
 
@@ -229,7 +229,7 @@ void np2sysp_reset(void) {
 
 void np2sysp_bind(void) {
 
-	iocore_attachout(0x07bf, np2sysp_o7bf);
-	iocore_attachinp(0x07bf, np2sysp_i7bf);
+	iocore_attachout(0x07ef, np2sysp_o7ef);
+	iocore_attachinp(0x07ef, np2sysp_i7ef);
 }
 
