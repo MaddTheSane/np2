@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.4 2004/01/07 14:50:21 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.5 2004/01/13 16:36:48 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -314,6 +314,11 @@ SIDT32_Ms(DWORD op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
+/* XXX */
+static const char *reg32_str[] = {
+	"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI"
+};
+
 void
 MOV_CdRd(void)
 {
@@ -330,6 +335,7 @@ MOV_CdRd(void)
 
 		src = *(reg32_b20[op]);
 		idx = (op >> 3) & 7;
+
 		switch (idx) {
 		case 0: /* CR0 */
 			/*
@@ -362,7 +368,7 @@ MOV_CdRd(void)
 			src |= CPU_CR0_ET;	/* FPU present */
 #endif
 			CPU_CR0 = src;
-			VERBOSE(("cr0: 0x%08x -> 0x%08x", reg, CPU_CR0));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr0: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR0, reg32_str[op & 7]));
 
 			if ((reg ^ CPU_CR0) & (CPU_CR0_PE|CPU_CR0_PG)) {
 				tlb_flush(FALSE);
@@ -389,7 +395,7 @@ MOV_CdRd(void)
 		case 2: /* CR2 */
 			reg = CPU_CR2;
 			CPU_CR2 = src;	/* page fault linear address */
-			VERBOSE(("cr2: 0x%08x -> 0x%08x", reg, CPU_CR2));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr2: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR2, reg32_str[op & 7]));
 			break;
 
 		case 3: /* CR3 */
@@ -400,7 +406,7 @@ MOV_CdRd(void)
 			 */
 			reg = CPU_CR3;
 			CPU_CR3 = src & 0xfffff018;
-			VERBOSE(("cr3: 0x%08x -> 0x%08x", reg, CPU_CR3));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr3: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR3, reg32_str[op & 7]));
 			tlb_flush(FALSE);
 			break;
 
@@ -428,7 +434,7 @@ MOV_CdRd(void)
 
 			reg = CPU_CR4;
 			CPU_CR4 = src;
-			VERBOSE(("cr4: 0x%08x -> 0x%08x", reg, CPU_CR4));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr4: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR4, reg32_str[op & 7]));
 
 			if ((reg ^ CPU_CR4) & (CPU_CR4_PSE|CPU_CR4_PGE|CPU_CR4_PAE)) {
 				tlb_flush(FALSE);
@@ -450,15 +456,19 @@ MOV_RdCd(void)
 {
 	DWORD *out;
 	DWORD op;
+	int idx;
 
 	CPU_WORKCLOCK(11);
-	PREPART_EA_REG32P(op, out);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
-		switch (op & 7) {
+		out = reg32_b20[op];
+		idx = (op >> 3) & 7;
+
+		switch (idx) {
 		case 0:
 			*out = CPU_CR0;
 			break;
@@ -476,10 +486,11 @@ MOV_RdCd(void)
 			break;
 
 		default:
-			ia32_panic("MOV_RdCd: CR reg index (%d)", op & 7);
+			ia32_panic("MOV_RdCd: CR reg index (%d)", idx);
 			/*NOTREACHED*/
 			break;
 		}
+		VERBOSE(("MOV_RdCd: %04x:%08x: cr%d: 0x%08x -> %s", CPU_CS, CPU_PREV_EIP, idx, *out, reg32_str[op & 7]));
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
