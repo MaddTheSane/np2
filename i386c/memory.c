@@ -813,6 +813,7 @@ REG8 MEMCALL i286_memoryread(UINT32 addr) {
 		}
 #endif
 		else {
+//			TRACEOUT(("out of mem (read8): %x", addr));
 			return(0xff);
 		}
 	}
@@ -844,6 +845,7 @@ REG16 MEMCALL i286_memoryread_w(UINT32 addr) {
 			}
 #endif
 			else {
+//				TRACEOUT(("out of mem (read16): %x", addr));
 				return(0xffff);
 			}
 		}
@@ -902,6 +904,9 @@ void MEMCALL i286_memorywrite(UINT32 addr, REG8 value) {
 			mem9821_w(addr, value);
 		}
 #endif
+		else {
+//			TRACEOUT(("out of mem (write8): %x", addr));
+		}
 	}
 	else {
 		memfn.wr8[(addr >> 15) & 0x1f](addr, value);
@@ -929,6 +934,9 @@ void MEMCALL i286_memorywrite_w(UINT32 addr, REG16 value) {
 				mem9821_ww(addr, value);
 			}
 #endif
+			else {
+//				TRACEOUT(("out of mem (write16): %x", addr));
+			}
 		}
 		else {
 			memfn.wr16[(addr >> 15) & 0x1f](addr, value);

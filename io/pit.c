@@ -342,8 +342,12 @@ void itimer_bind(void) {
 
 	iocore_attachsysoutex(0x0071, 0x0cf1, pito71, 4);
 	iocore_attachsysinpex(0x0071, 0x0cf1, piti71, 4);
+	iocore_attachout(0x3fd9, pit_o71);
 	iocore_attachout(0x3fdb, pit_o73);
+	iocore_attachout(0x3fdd, pit_o75);
 	iocore_attachout(0x3fdf, pit_o77);
+	iocore_attachinp(0x3fd9, pit_i71);
 	iocore_attachinp(0x3fdb, pit_i71);
+	iocore_attachinp(0x3fdd, pit_i71);
 }
 

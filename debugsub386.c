@@ -155,13 +155,13 @@ const char			*p;
 	}
 
 	SPRINTF(work, file_i386cs, filenum);
-	debugwriteseg(work, &CPU_STAT_SREG(CPU_CS_INDEX), 0, 0x10000);
+	debugwriteseg(work, &CPU_STAT_SREG(CPU_CS_INDEX), CPU_EIP & 0xffff0000, 0x10000);
 	SPRINTF(work, file_i386ds, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_DS_INDEX), 0, 0x10000);
 	SPRINTF(work, file_i386es, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_ES_INDEX), 0, 0x10000);
 	SPRINTF(work, file_i386ss, filenum);
-	debugwriteseg(work, &CPU_STAT_SREG(CPU_SS_INDEX), 0, 0x10000);
+	debugwriteseg(work, &CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP & 0xffff0000, 0x10000);
 	filenum++;
 }
 

@@ -1,7 +1,7 @@
 
 typedef struct {
 const char	*mnemonic;
-	char	operand[32];
+	char	operand[44];
 } _UNASM, *UNASM;
 
 

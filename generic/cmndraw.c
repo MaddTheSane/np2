@@ -3,6 +3,7 @@
 #include	"cpucore.h"
 #include	"font.h"
 #include	"cmndraw.h"
+#include	"minifont.res"
 
 
 void cmndraw_getpals(CMNPALFN *fn, CMNPAL *pal, UINT pals) {
@@ -458,16 +459,28 @@ void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal) {
 void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL *pal) {
 
 	UINT	s;
+const BYTE	*ptr;
 	BYTE	src[10];
 
 	if ((vram == NULL) || (str == NULL) || (pal == NULL)) {
 		return;
 	}
-	src[0] = 8;
-	src[1] = 8;
+	src[0] = 0;
+	src[1] = 7;
 	while(*str) {
 		s = (UINT)(*str++);
-		CopyMemory(src + 2, fontrom + 0x82000 + (s * 16), 8);
+		ptr = NULL;
+		if ((s >= 0x20) && (s < 0x80)) {
+			ptr = minifont + (s - 0x20) * 8;
+		}
+		else if ((s >= 0xa0) && (s < 0xe0)) {
+			ptr = minifont + (s - 0xa0 + 0x60) * 8;
+		}
+		if (ptr == NULL) {
+			continue;
+		}
+		src[0] = ptr[0];
+		CopyMemory(src + 2, ptr + 1, 7);
 		switch(vram->bpp) {
 #if defined(SUPPORT_8BPP)
 			case 8:
@@ -490,7 +503,7 @@ void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL *pal) {
 				break;
 #endif
 		}
-		x += 8;
+		x += ptr[0] + 1;
 	}
 }
 

@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.5 2004/03/10 02:42:51 yui Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.6 2004/03/10 07:41:48 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -134,6 +134,65 @@ do { \
 	CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
 } while (/*CONSTCOND*/ 0)
 
+#if 1	// fix ov
+#define	_BYTE_SHRCL(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (c) { \
+		if ((c) >= 0x10) { \
+			(c) = 10; \
+		} \
+		(c)--; \
+		if (c) { \
+			(s) >>= (c); \
+		} \
+		else { \
+			CPU_OV = (s) & 0x80; \
+		} \
+		CPU_FLAGL = (UINT8)((s) & 1); \
+		(s) >>= 1; \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] | A_FLAG); \
+	} \
+	(d) = (s); \
+} while (/*CONSTCOND*/ 0)
+
+#define	_WORD_SHRCL(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (c) { \
+		(c)--; \
+		if (c) { \
+			(s) >>= (c); \
+		} else { \
+			CPU_OV = (s) & 0x8000; \
+		} \
+		CPU_FLAGL = (UINT8)((s) & 1); \
+		(s) >>= 1; \
+		CPU_FLAGL |= szpflag_w[(UINT16)(s)]; \
+	} \
+	(d) = (s); \
+} while (/*CONSTCOND*/ 0)
+
+#define	_DWORD_SHRCL(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (c) { \
+		(c)--; \
+		if (c) { \
+			(s) >>= (c); \
+		} else { \
+			CPU_OV = (s) & 0x80000000; \
+		} \
+		CPU_FLAGL = (UINT8)((s) & 1); \
+		(s) >>= 1; \
+		if ((s) == 0) { \
+			CPU_FLAGL |= Z_FLAG; \
+		} \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] & P_FLAG); \
+	} \
+	(d) = (s); \
+} while (/*CONSTCOND*/ 0)
+#else
 #define	_BYTE_SHRCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
@@ -189,6 +248,7 @@ do { \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
+#endif
 
 /*
  * SHL
@@ -231,7 +291,6 @@ do { \
 		if ((c) > 0x10) { \
 			(c) = 10; \
 		} \
-		CPU_OV = 0; \
 		if ((c) == 1) { \
 			CPU_OV = ((s) + 0x40) & 0x80; \
 		} \
