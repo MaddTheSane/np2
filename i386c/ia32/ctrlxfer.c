@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.2 2004/01/13 16:37:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -41,7 +41,7 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 	selector_t sel2;
 	int rv;
 
-	VERBOSE(("JMPfar_pm: selector = 0x%04x, new_ip = 0x%08x", selector, new_ip));
+	VERBOSE(("JMPfar_pm: EIP = 0x%08x, selector = 0x%04x, new_ip = 0x%08x", CPU_PREV_EIP, selector, new_ip));
 
 	/*
 	 * IF effective address in the CS, DS, ES, FS, GS, or SS segment is illegal
@@ -53,13 +53,17 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 
 	rv = parse_selector(&jmp_sel, selector);
 	if (rv < 0) {
+		VERBOSE(("JMPfar_pm: parse_selector (selector = %04x, rv = %d)", selector, rv));
 		EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 	}
 
 	if (jmp_sel.desc.s) {
 		/* code segment descriptor */
+		VERBOSE(("JMPfar_pm: code or data segment descriptor"));
+
 		if (!jmp_sel.desc.u.seg.c) {
 			/* data segment */
+			VERBOSE(("JMPfar_pm: data segment"));
 			EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 		}
 
@@ -69,18 +73,21 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 			/* 布船 p.119 4.8.1.1. */
 			if ((jmp_sel.rpl > CPU_STAT_CPL)
 			 || (jmp_sel.desc.dpl != CPU_STAT_CPL)) {
+				VERBOSE(("JMPfar_pm: RPL(%d) > CPL(%d) or DPL(%d) != CPL(%d)", jmp_sel.rpl, CPU_STAT_CPL, jmp_sel.desc.dpl, CPU_STAT_CPL));
 				EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 			}
 		} else {
 			VERBOSE(("CONFORMING-CODE-SEGMENT"));
 			/* 布船 p.120 4.8.1.2. */
 			if (jmp_sel.desc.dpl > CPU_STAT_CPL) {
+				VERBOSE(("JMPfar_pm: DPL(%d) > CPL(%d)", jmp_sel.desc.dpl, CPU_STAT_CPL));
 				EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 			}
 		}
 
 		/* not present */
 		if (selector_is_not_present(&jmp_sel)) {
+			VERBOSE(("JMPfar_pm: selector is not present"));
 			EXCEPTION(NP_EXCEPTION, jmp_sel.idx);
 		}
 
@@ -90,13 +97,17 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 
 		/* out of range */
 		if (new_ip > jmp_sel.desc.u.seg.limit) {
+			VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, jmp_sel.desc.u.seg.limit));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
+		VERBOSE(("JMPfar_pm: new CS = %04x, EIP = %08x", jmp_sel.selector, new_ip));
 		load_cs(jmp_sel.selector, &jmp_sel.desc, CPU_STAT_CPL);
 		SET_EIP(new_ip);
 	} else {
 		/* system descriptor */
+		VERBOSE(("JMPfar_pm: system descriptor"));
+
 		switch (jmp_sel.desc.type) {
 		case CPU_SYSDESC_TYPE_CALL_16:
 		case CPU_SYSDESC_TYPE_CALL_32:
@@ -105,22 +116,26 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 			/* check privilege level */
 			if ((jmp_sel.desc.dpl < CPU_STAT_CPL)
 			 || (jmp_sel.desc.dpl < jmp_sel.rpl)) {
+				VERBOSE(("JMPfar_pm: DPL(%d) < CPL(%d) or DPL(%d) < RPL(%d)", jmp_sel.desc.dpl, CPU_STAT_CPL, jmp_sel.desc.dpl, jmp_sel.rpl));
 				EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 			}
 
 			/* not present */
 			if (selector_is_not_present(&jmp_sel)) {
+				VERBOSE(("JMPfar_pm: selector is not present"));
 				EXCEPTION(NP_EXCEPTION, jmp_sel.idx);
 			}
 
 			/* parse call gate selector */
 			rv = parse_selector(&sel2, jmp_sel.desc.u.gate.selector);
 			if (rv < 0) {
+				VERBOSE(("JMPfar_pm: parse_selector (selector = %04x, rv = %d)", jmp_sel.desc.u.gate.selector, rv));
 				EXCEPTION(GP_EXCEPTION, sel2.idx);
 			}
 
 			/* check code segment descriptor */
 			if (!sel2.desc.s || !sel2.desc.u.seg.c) {
+				VERBOSE(("JMPfar_pm: not code segment (%s, %s)", sel2.desc.s ? "code/data" : "system", sel2.desc.u.seg.c ? "code" : "data"));
 				EXCEPTION(GP_EXCEPTION, sel2.idx);
 			}
 
@@ -129,17 +144,20 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 				/* 布船 p.119 4.8.1.1. */
 				if ((sel2.rpl > CPU_STAT_CPL)
 				 || (sel2.desc.dpl != CPU_STAT_CPL)) {
+					VERBOSE(("JMPfar_pm: RPL(%d) > CPL(%d) or DPL(%d) != CPL(%d)", sel2.rpl, CPU_STAT_CPL, sel2.desc.dpl, CPU_STAT_CPL));
 					EXCEPTION(GP_EXCEPTION, sel2.idx);
 				}
 			} else {
 				/* 布船 p.120 4.8.1.2. */
 				if (sel2.desc.dpl > CPU_STAT_CPL) {
+					VERBOSE(("JMPfar_pm: DPL(%d) > CPL(%d)", sel2.desc.dpl, CPU_STAT_CPL));
 					EXCEPTION(GP_EXCEPTION, sel2.idx);
 				}
 			}
 
 			/* not present */
 			if (selector_is_not_present(&sel2)) {
+				VERBOSE(("JMPfar_pm: selector is not present"));
 				EXCEPTION(NP_EXCEPTION, sel2.idx);
 			}
 
@@ -150,9 +168,11 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 
 			/* out of range */
 			if (new_ip > sel2.desc.u.seg.limit) {
+				VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, sel2.desc.u.seg.limit));
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
 
+			VERBOSE(("JMPfar_pm: new CS = %04x, EIP = %08x", sel2.selector, new_ip));
 			load_cs(sel2.selector, &sel2.desc, CPU_STAT_CPL);
 			SET_EIP(new_ip);
 			break;
@@ -176,17 +196,20 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 			/* check privilege level */
 			if ((jmp_sel.desc.dpl < CPU_STAT_CPL)
 			 || (jmp_sel.desc.dpl < jmp_sel.rpl)) {
+				VERBOSE(("JMPfar_pm: DPL(%d) < CPL(%d) or DPL(%d) < RPL(%d)", jmp_sel.desc.dpl, CPU_STAT_CPL, jmp_sel.desc.dpl, jmp_sel.rpl));
 				EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 			}
 
 			/* not present */
 			if (selector_is_not_present(&jmp_sel)) {
+				VERBOSE(("JMPfar_pm: selector is not present"));
 				EXCEPTION(NP_EXCEPTION, jmp_sel.idx);
 			}
 
 			/* parse call tss selector */
 			rv = parse_selector(&sel2, jmp_sel.desc.u.gate.selector);
 			if (rv < 0 || sel2.ldt) {
+				VERBOSE(("JMPfar_pm: parse_selector (selector = %04x, rv = %d, %s)", jmp_sel.desc.u.gate.selector, rv, sel2.ldt ? "LDT" : "GDT"));
 				EXCEPTION(GP_EXCEPTION, sel2.idx);
 			}
 
@@ -197,12 +220,14 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 				break;
 
 			default:
+				VERBOSE(("JMPfar_pm: invalid descriptor type (type = %d)", sel2.desc.type));
 				EXCEPTION(GP_EXCEPTION, sel2.idx);
 				break;
 			}
 
 			/* not present */
 			if (selector_is_not_present(&sel2)) {
+				VERBOSE(("JMPfar_pm: selector is not present"));
 				EXCEPTION(NP_EXCEPTION, sel2.idx);
 			}
 
@@ -210,6 +235,7 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 
 			/* out of range */
 			if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+				VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
 			break;
@@ -221,11 +247,13 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 			/* check privilege level */
 			if ((jmp_sel.desc.dpl < CPU_STAT_CPL)
 			 || (jmp_sel.desc.dpl < jmp_sel.rpl)) {
+				VERBOSE(("JMPfar_pm: DPL(%d) < CPL(%d) or DPL(%d) < RPL(%d)", jmp_sel.desc.dpl, CPU_STAT_CPL, jmp_sel.desc.dpl, jmp_sel.rpl));
 				EXCEPTION(TS_EXCEPTION, jmp_sel.idx);
 			}
 
 			/* not present */
 			if (selector_is_not_present(&jmp_sel)) {
+				VERBOSE(("JMPfar_pm: selector is not present"));
 				EXCEPTION(NP_EXCEPTION, jmp_sel.idx);
 			}
 
@@ -233,6 +261,7 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 
 			/* out of range */
 			if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+				VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
 			break;
@@ -242,6 +271,7 @@ JMPfar_pm(WORD selector, DWORD new_ip)
 			VERBOSE(("JMPfar_pm: task is busy"));
 			/*FALLTHROUGH*/
 		default:
+			VERBOSE(("JMPfar_pm: invalid descriptor type (type = %d)", sel2.desc.type));
 			EXCEPTION(GP_EXCEPTION, jmp_sel.idx);
 			break;
 		}
@@ -274,7 +304,7 @@ CALLfar_pm(WORD selector, DWORD new_ip)
 	selector_t sel2;
 	int rv;
 
-	VERBOSE(("CALLfar_pm: selector = 0x%04x, new_ip = 0x%08x", selector, new_ip));
+	VERBOSE(("CALLfar_pm: EIP = 0x%08x, selector = 0x%04x, new_ip = 0x%08x", CPU_PREV_EIP, selector, new_ip));
 
 	rv = parse_selector(&call_sel, selector);
 	if (rv < 0) {
@@ -329,8 +359,12 @@ CALLfar_pm(WORD selector, DWORD new_ip)
 
 			PUSH0_16(CPU_CS);
 			PUSH0_16(CPU_IP);
+		}
+
+		if (!call_sel.desc.d) {
 			new_ip &= 0xffff;
 		}
+
 		load_cs(call_sel.selector, &call_sel.desc, CPU_STAT_CPL);
 		SET_EIP(new_ip);
 	} else {
@@ -603,7 +637,7 @@ RETfar_pm(DWORD nbytes)
 	DWORD new_ip;
 	WORD selector;
 
-	VERBOSE(("RETfar_pm: nbytes = %d", nbytes));
+	VERBOSE(("RETfar_pm: EIP = 0x%08x, nbytes = %d", CPU_PREV_EIP, nbytes));
 
 	if (CPU_INST_OP32) {
 		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP, 8 + nbytes);
@@ -759,7 +793,7 @@ IRET_pm()
 	DWORD new_ip, new_flags;
 	WORD new_cs;
 
-	VERBOSE(("IRET_pm"));
+	VERBOSE(("IRET_pm: EIP = 0x%08x", CPU_PREV_EIP));
 
 	if (CPU_STAT_VM86) {
 		/* RETURN-FROM-VIRTUAL-8086-MODE */

@@ -1,4 +1,4 @@
-/*	$Id: task.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: task.h,v 1.2 2004/01/13 16:37:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -68,7 +68,7 @@ typedef union {
 } TASK_STATE_T;
 
 void load_tr(WORD selector);
-void get_stack_from_tss(BYTE pl, WORD* new_ss, DWORD* new_esp);
+void get_stack_from_tss(DWORD pl, WORD* new_ss, DWORD* new_esp);
 WORD get_link_selector_from_tss();
 
 void task_switch(selector_t* selector, int type);

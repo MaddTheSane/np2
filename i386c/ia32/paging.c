@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: paging.c,v 1.3 2004/01/13 16:37:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -421,6 +421,7 @@ paging(DWORD laddr, int crw, int user_mode)
 	pde_addr = (CPU_CR3 & CPU_CR3_PD_MASK) | ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
 	if (!(pde & CPU_PDE_PRESENT)) {
+		VERBOSE(("PDE is not present. (laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x)", laddr, pde_addr, pde));
 		err = 0;
 		goto pf_exception;
 	}
@@ -446,6 +447,7 @@ paging(DWORD laddr, int crw, int user_mode)
 		pte_addr = (pde & CPU_PDE_BASEADDR_MASK) | ((laddr >> 10) & 0xffc);
 		pte = cpu_memoryread_d(pte_addr);
 		if (!(pte & CPU_PTE_PRESENT)) {
+			VERBOSE(("PTE is not present. (laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x, pte_addr = 0x%08x, pte = 0x%08x)", laddr, pde_addr, pde, pte_addr, pte));
 			err = 0;
 			goto pf_exception;
 		}
@@ -469,6 +471,7 @@ paging(DWORD laddr, int crw, int user_mode)
 	if (!(page_access_bit[bit]))
 #endif
 	{
+		VERBOSE(("page access violation. (laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x, pte_addr = 0x%08x, pte = 0x%08x, paddr = 0x%08x, bit = 0x%08x)", laddr, pde_addr, pde, pte_addr, pte, paddr, bit));
 		err = 1;
 		goto pf_exception;
 	}
@@ -641,7 +644,7 @@ tlb_flush_page(DWORD vaddr)
 }
 
 static BOOL
-tlb_lookup(DWORD vaddr, int crw, DWORD* paddr)
+tlb_lookup(DWORD laddr, int crw, DWORD* paddr)
 {
 	TLB_ENTRY_T* ep;
 	int idx;
@@ -657,9 +660,9 @@ tlb_lookup(DWORD vaddr, int crw, DWORD* paddr)
 				idx = 0;
 			} else {
 				if (tlb[i].kind & TLB_KIND_SMALL) {
-					idx = (vaddr >> 12) & (tlb[i].idx - 1);
+					idx = (laddr >> 12) & (tlb[i].idx - 1);
 				} else {
-					idx = (vaddr >> 22) & (tlb[i].idx - 1);
+					idx = (laddr >> 22) & (tlb[i].idx - 1);
 				}
 			}
 
@@ -667,7 +670,7 @@ tlb_lookup(DWORD vaddr, int crw, DWORD* paddr)
 			ep = &tlb[i].entry[idx * tlb[i].way];
 			for (i = 0; i < tlb[i].way; i++) {
 				if (ep->valid) {
-					if ((vaddr & ep->mask) == ep->tag) {
+					if ((laddr & ep->mask) == ep->tag) {
 						if (ep->score != (BYTE)~0)
 							ep->score++;
 						*paddr = ep->paddr;
@@ -756,9 +759,9 @@ tlb_flush(BOOL allflush)
 }
 
 void
-tlb_flush_page(DWORD vaddr)
+tlb_flush_page(DWORD laddr)
 {
 
-	(void)vaddr;
+	(void)laddr;
 }
 #endif	/* IA32_SUPPORT_TLB */

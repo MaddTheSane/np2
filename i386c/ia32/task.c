@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: task.c,v 1.2 2004/01/13 16:37:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -74,7 +74,7 @@ load_tr(WORD selector)
 }
 
 void
-get_stack_from_tss(BYTE pl, WORD* new_ss, DWORD* new_esp)
+get_stack_from_tss(DWORD pl, WORD* new_ss, DWORD* new_esp)
 {
 	DWORD tss_stack_addr;
 
@@ -91,7 +91,7 @@ get_stack_from_tss(BYTE pl, WORD* new_ss, DWORD* new_esp)
 
 	case CPU_SYSDESC_TYPE_TSS_BUSY_16:
 		tss_stack_addr = pl * 4 + 2;
-		if (tss_stack_addr + 4 > CPU_TR_DESC.u.seg.limit) {
+		if (tss_stack_addr + 3 > CPU_TR_DESC.u.seg.limit) {
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
 		}
 		tss_stack_addr += CPU_TR_DESC.u.seg.segbase;
@@ -150,12 +150,14 @@ task_switch(selector_t* task_sel, int type)
 
 	cur_base = CPU_TR_DESC.u.seg.segbase;
 	task_base = task_sel->desc.u.seg.segbase;
+	VERBOSE(("task_switch: current task base address = 0x%08x", cur_base));
+	VERBOSE(("task_switch: new task base address = 0x%08x", task_base));
 
 	/* limit check */
 	switch (task_sel->desc.type) {
 	case CPU_SYSDESC_TYPE_TSS_32:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_32:
-		if (task_sel->desc.u.seg.limit < 103) {
+		if (task_sel->desc.u.seg.limit < 0x67) {
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = FALSE;
@@ -164,7 +166,7 @@ task_switch(selector_t* task_sel, int type)
 
 	case CPU_SYSDESC_TYPE_TSS_16:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_16:
-		if (task_sel->desc.u.seg.limit < 43) {
+		if (task_sel->desc.u.seg.limit < 0x2b) {
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = TRUE;
@@ -196,10 +198,11 @@ task_switch(selector_t* task_sel, int type)
 			regs[i] = cpu_lmemoryread_d(task_base + 40 + i * 4);
 		}
 		for (i = 0; i < nsreg; i++) {
-			sreg[i] = (WORD)cpu_lmemoryread_d(task_base + 72 + i * 4);
+			sreg[i] = cpu_lmemoryread_w(task_base + 72 + i * 4);
 		}
-		ldtr = (WORD)cpu_lmemoryread_d(task_base + 96);
+		ldtr = cpu_lmemoryread_w(task_base + 96);
 		t = cpu_lmemoryread_w(task_base + 100);
+		t &= 1;
 		iobase = cpu_lmemoryread_w(task_base + 102);
 	} else {
 		eip = cpu_lmemoryread_w(task_base + 14);
@@ -211,8 +214,25 @@ task_switch(selector_t* task_sel, int type)
 			sreg[i] = cpu_lmemoryread_w(task_base + 34 + i * 2);
 		}
 		ldtr = cpu_lmemoryread_w(task_base + 42);
+		t = 0;
 		iobase = 0;
 	}
+#ifdef VERBOSE
+	VERBOSE(("task_switch: %dbit task", task16 ? 16 : 32));
+	VERBOSE(("task_switch: CR3 = 0x%08x", cr3));
+	VERBOSE(("task_switch: eip = 0x%08x", eip));
+	VERBOSE(("task_switch: eflags = 0x%08x", new_flags));
+	for (i = 0; i < CPU_REG_NUM; i++) {
+		VERBOSE(("task_switch: regs[%d] = 0x%08x", i, regs[i]));
+	}
+	VERBOSE(("task_switch: nsreg = %d", nsreg));
+	for (i = 0; i < nsreg; i++) {
+		VERBOSE(("task_switch: sreg[%d] = 0x%04x", i, sreg[i]));
+	}
+	VERBOSE(("task_switch: ldtr = 0x%04x", ldtr));
+	VERBOSE(("task_switch: t = 0x%04x", t));
+	VERBOSE(("task_switch: iobase = 0x%04x", iobase));
+#endif
 
 	/* if IRET or JMP, clear busy flag in this task: need */
 	/* if IRET, clear NT_FLAG in current EFLAG: need */
@@ -326,8 +346,6 @@ task_switch(selector_t* task_sel, int type)
 		CPU_REGS_SREG(i) = sreg[i];
 		CPU_STAT_SREG_CLEAR(i);
 	}
-	CPU_LDTR = ldtr;
-	CPU_LDTR_DESC.valid = 0;
 
 	/* load LDTR */
 	load_ldtr(ldtr, TS_EXCEPTION);
@@ -335,6 +353,7 @@ task_switch(selector_t* task_sel, int type)
 	/* load CS */
 	rv = parse_selector(&cs_sel, sreg[CPU_CS_INDEX]);
 	if (rv < 0) {
+		VERBOSE(("task_switch: load CS failure (sel = 0x%04x, rv = %d)", sreg[CPU_CS_INDEX], rv));
 		EXCEPTION(TS_EXCEPTION, cs_sel.idx);
 	}
 
