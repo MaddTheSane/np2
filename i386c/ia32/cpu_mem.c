@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.4 2004/01/07 14:49:10 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.5 2004/01/13 16:32:16 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -31,12 +31,10 @@
 #include "cpu.h"
 #include "memory.h"
 
-// あとで…
-// extern DWORD cpumem_addrmask;		// -> CPU_STAT_ADRSMASK
-
 BYTE *cpumem = 0;
 DWORD extmem_size = 0;
 BYTE protectmem_size = 0;
+
 
 /*
  * initialize 1MB-16MB memory
