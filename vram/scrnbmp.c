@@ -7,45 +7,40 @@
 #include	"palettes.h"
 #include	"scrnbmp.h"
 
+#if defined(SUPPORT_PC9821)
+typedef	unsigned int	PALNUM;
+#else
+typedef	unsigned char	PALNUM;
+#endif
 
-static void screenmix(BYTE *dest, const BYTE *src1, const BYTE *src2) {
+typedef union {
+	UINT32	d;
+	BYTE	rgb[4];
+} BMPPAL;
+
+
+static void screenmix(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 
 	int		i;
 
 	for (i=0; i<(SURFACE_WIDTH * SURFACE_HEIGHT); i++) {
-		*dest++ = (*src1++) + (*src2++) + NP2PAL_GRPH;
+		dest[i] = src1[i] + src2[i] + NP2PAL_GRPH;
 	}
 }
 
-static void screenmix2(BYTE *dest, const BYTE *src1, const BYTE *src2) {
+static void screenmix2(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 
 	int		x, y;
 
 	for (y=0; y<(SURFACE_HEIGHT/2); y++) {
 		for (x=0; x<SURFACE_WIDTH; x++) {
-			*dest++ = (*src1++) + (*src2++) + NP2PAL_GRPH;
+			dest[x] = src1[x] + src2[x] + NP2PAL_GRPH;
 		}
-		for (x=0; x<SURFACE_WIDTH; x++) {
-			*dest++ = ((*src1++) >> 4) + NP2PAL_TEXT;
-		}
+		dest += SURFACE_WIDTH;
+		src1 += SURFACE_WIDTH;
 		src2 += SURFACE_WIDTH;
-	}
-}
-
-static void screenmix3(BYTE *dest, const BYTE *src1, const BYTE *src2) {
-
-	BYTE	c;
-	int		x, y;
-
-	for (y=0; y<(SURFACE_HEIGHT/2); y++) {
-		// dest == src1, dest == src2 の時があるので…
 		for (x=0; x<SURFACE_WIDTH; x++) {
-			c = (*(src1 + SURFACE_WIDTH)) >> 4;
-			if (!c) {
-				c = (*src2) + NP2PAL_SKIP;
-			}
-			*(dest + SURFACE_WIDTH) = c;
-			*dest++ = (*src1++) + (*src2++) + NP2PAL_GRPH;
+			dest[x] = (src1[x] >> 4) + NP2PAL_TEXT;
 		}
 		dest += SURFACE_WIDTH;
 		src1 += SURFACE_WIDTH;
@@ -53,21 +48,61 @@ static void screenmix3(BYTE *dest, const BYTE *src1, const BYTE *src2) {
 	}
 }
 
+static void screenmix3(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+
+	PALNUM	c;
+	int		x, y;
+
+	for (y=0; y<(SURFACE_HEIGHT/2); y++) {
+		// dest == src1, dest == src2 の時があるので…
+		for (x=0; x<SURFACE_WIDTH; x++) {
+			c = (src1[x] + SURFACE_WIDTH) >> 4;
+			if (!c) {
+				c = src2[x] + NP2PAL_SKIP;
+			}
+			dest[x + SURFACE_WIDTH] = c;
+			dest[x] = src1[x] + src2[x] + NP2PAL_GRPH;
+		}
+		dest += SURFACE_WIDTH * 2;
+		src1 += SURFACE_WIDTH * 2;
+		src2 += SURFACE_WIDTH * 2;
+	}
+}
+
+#if defined(SUPPORT_PC9821)
+static void screenmix4(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
+
+	int		i;
+
+	for (i=0; i<(SURFACE_WIDTH * SURFACE_HEIGHT); i++) {
+		if (src1[i]) {
+			dest[i] = (src1[i] >> 4) + NP2PAL_TEXTEX;
+		}
+		else {
+			dest[i] = src2[i] + NP2PAL_GRPHEX;
+		}
+	}
+}
+#endif
+
+
 SCRNBMP scrnbmp(void) {
 
 	BMPDATA	bd;
+	UINT	scrnsize;
 	UINT	allocsize;
-	BYTE	*scrn;
+	PALNUM	*scrn;
 	BYTE	*p;
 	BYTE	*q;
+	PALNUM	*s;
 	UINT	pals;
-	UINT32	pal[256];
-	BYTE	remap[256];
-	BYTE	remapflg[256];
+	BMPPAL	pal[NP2PAL_TOTAL];
+	UINT8	remap[NP2PAL_TOTAL];
+	UINT8	remapflg[NP2PAL_TOTAL];
 	int		x;
 	int		y;
-	UINT	col;
-	UINT32	curpal;
+	PALNUM	col;
+	BMPPAL	curpal;
 	UINT	pos;
 	BMPINFO	bi;
 	UINT	type;
@@ -76,86 +111,102 @@ SCRNBMP scrnbmp(void) {
 	SCRNBMP	ret;
 	BMPFILE	*bf;
 	int		r;
+	void	(*mix)(PALNUM *dest, const BYTE *src1, const BYTE *src2);
 
 	bd.width = dsync.scrnxmax;
 	bd.height = dsync.scrnymax;
 	if ((bd.width <= 0) || (bd.height <= 0)) {
 		goto sb_err1;
 	}
-	allocsize = SURFACE_WIDTH * SURFACE_HEIGHT;
-	scrn = (BYTE *)_MALLOC(allocsize, "screen data");
+	scrnsize = SURFACE_WIDTH * SURFACE_HEIGHT;
+	allocsize = scrnsize * sizeof(PALNUM);
+	scrn = (PALNUM *)_MALLOC(allocsize, "screen data");
 	if (scrn == NULL) {
 		goto sb_err1;
 	}
 	ZeroMemory(scrn, allocsize);
 
-	p = scrn;
-	q = scrn;
+#if defined(SUPPORT_PC9821)
+	if (gdc.analog & 2) {
+		mix = screenmix4;
+	}
+	else
+#endif
+	if (!(gdc.mode1 & 0x10)) {
+		mix = screenmix;
+	}
+	else if (!np2cfg.skipline) {
+		mix = screenmix2;
+	}
+	else {
+		mix = screenmix3;
+	}
+	q = p = ((BYTE *)scrn) + (scrnsize * (sizeof(PALNUM) - 1));
 	if (gdcs.textdisp & 0x80) {
 		p = np2_tram;
 	}
 	if (gdcs.grphdisp & 0x80) {
+#if defined(SUPPORT_PC9821)
+		if ((gdc.analog & 6) == 6) {
+			q = np2_vram[0];
+		}
+		else
+#endif
 		q = np2_vram[gdcs.disp];
 	}
-	if (!(gdc.mode1 & 0x10)) {
-		screenmix(scrn, p, q);
-	}
-	else if (!np2cfg.skipline) {
-		screenmix2(scrn, p, q);
-	}
-	else {
-		screenmix3(scrn, p, q);
-	}
+	(*mix)(scrn, p, q);
 
 	// パレット最適化
-	p = scrn;
+	s = scrn;
 	pals = 0;
 	ZeroMemory(pal, sizeof(pal));
 	ZeroMemory(remap, sizeof(remap));
 	ZeroMemory(remapflg, sizeof(remapflg));
 	for (y=0; y<bd.height; y++) {
 		for (x=0; x<bd.width; x++) {
-			col = *p++;
+			col = s[x];
 			if (!remapflg[col]) {
 				remapflg[col] = 1;
-#if defined(BYTESEX_LITTLE)
-				curpal = np2_pal32[col].p.b + (np2_pal32[col].p.g << 8) +
-						(np2_pal32[col].p.r << 16);
-#else
-				curpal = (np2_pal32[col].p.b << 24) +
-							(np2_pal32[col].p.g << 16) +
-							(np2_pal32[col].p.r << 8);
-#endif
+				curpal.rgb[0] = np2_pal32[col].p.b;
+				curpal.rgb[1] = np2_pal32[col].p.g;
+				curpal.rgb[2] = np2_pal32[col].p.r;
 				for (pos=0; pos<pals; pos++) {
-					if (pal[pos] == curpal) {
+					if (pal[pos].d == curpal.d) {
 						break;
 					}
 				}
 				if (pos >= pals) {
-					pal[pos] = curpal;
+					pal[pos].d = curpal.d;
 					pals++;
 				}
-				remap[col] = (BYTE)pos;
+				remap[col] = (PALNUM)pos;
 			}
+			s[x] = remap[col];
 		}
-		p += SURFACE_WIDTH - bd.width;
+		s += SURFACE_WIDTH;
 	}
 
-	allocsize = sizeof(BMPFILE) + sizeof(BMPINFO);
 	if (pals < 2) {
 		type = SCRNBMP_1BIT;
 		bd.bpp = 1;
+		palsize = 4 << 1;
 	}
 	else if (pals < 16) {
 		type = SCRNBMP_4BIT;
 		bd.bpp = 4;
+		palsize = 4 << 4;
 	}
-	else {
+	else if (pals < 256) {
 		type = SCRNBMP_8BIT;
 		bd.bpp = 8;
+		palsize = 4 << 8;
 	}
-	palsize = 4 << bd.bpp;
-	allocsize += palsize;
+	else {
+		type = SCRNBMP_24BIT;
+		bd.bpp = 24;
+		palsize = 0;
+	}
+	allocsize = sizeof(BMPFILE) + sizeof(BMPINFO) + palsize;
 	bmpdata_setinfo(&bi, &bd);
 	allocsize += bmpdata_getdatasize(&bi);
 	align = bmpdata_getalign(&bi);
@@ -175,15 +226,17 @@ SCRNBMP scrnbmp(void) {
 	STOREINTELDWORD(bi.biClrImportant, pals);
 	CopyMemory(q, &bi, sizeof(bi));
 	q += sizeof(bi);
-	CopyMemory(q, pal, palsize);
-	q += palsize;
-	p = scrn + (SURFACE_WIDTH * bd.height);
+	if (palsize) {
+		CopyMemory(q, pal, pals * 4);
+		q += palsize;
+	}
+	s = scrn + (SURFACE_WIDTH * bd.height);
 	do {
-		p -= SURFACE_WIDTH;
+		s -= SURFACE_WIDTH;
 		switch(type) {
 			case SCRNBMP_1BIT:
 				for (x=0; x<bd.width; x++) {
-					if (remap[p[x*2+0]]) {
+					if (s[x*2+0]) {
 						q[x >> 3] |= 0x80 >> (x & 7);
 					}
 				}
@@ -192,21 +245,30 @@ SCRNBMP scrnbmp(void) {
 			case SCRNBMP_4BIT:
 				r = bd.width / 2;
 				for (x=0; x<r; x++) {
-					q[x] = (remap[p[x*2+0]] << 4) + remap[p[x*2+1]];
+					q[x] = (s[x*2+0] << 4) + s[x*2+1];
 				}
 				if (bd.width & 1) {
-					q[x] = remap[p[x*2+0]] << 4;
+					q[x] = s[x*2+0] << 4;
 				}
 				break;
 
 			case SCRNBMP_8BIT:
 				for (x=0; x<bd.width; x++) {
-					q[x] = remap[p[x]];
+					q[x] = (UINT8)s[x];
+				}
+				break;
+
+			case SCRNBMP_24BIT:
+				for (x=0; x<bd.width; x++) {
+					curpal.d = pal[s[x]].d;
+					q[x*3+0] = curpal.rgb[0];
+					q[x*3+1] = curpal.rgb[1];
+					q[x*3+2] = curpal.rgb[2];
 				}
 				break;
 		}
 		q += align;
-	} while(scrn < p);
+	} while(scrn < s);
 	_MFREE(scrn);
 	ret->type = type;
 	ret->ptr = (BYTE *)(ret + 1);
