@@ -20,15 +20,21 @@ static void romeo_restore(BOOL opna) {
 	for (i=0x30; i<0xa0; i++) {
 		juliet_YMF288A(i, opn.reg[i]);
 	}
-	for (i=0xb7; i>=0xa0; i--) {
-		juliet_YMF288A(i, opn.reg[i]);
+	for (i=0; i<3; i++) {
+		juliet_YMF288A((UINT8)(i + 0xa4), opn.reg[i + 0x0a4]);
+		juliet_YMF288A((UINT8)(i + 0xa0), opn.reg[i + 0x0a0]);
+		juliet_YMF288A((UINT8)(i + 0xb0), opn.reg[i + 0x0b0]);
+		juliet_YMF288A((UINT8)(i + 0xb4), opn.reg[i + 0x0b4]);
 	}
 	if (opna) {
 		for (i=0x30; i<0xa0; i++) {
 			juliet_YMF288B(i, opn.reg[i + 0x100]);
 		}
-		for (i=0xb7; i>=0xa0; i--) {
-			juliet_YMF288B(i, opn.reg[i + 0x100]);
+		for (i=0; i<3; i++) {
+			juliet_YMF288B((UINT8)(i + 0xa4), opn.reg[i + 0x1a4]);
+			juliet_YMF288B((UINT8)(i + 0xa0), opn.reg[i + 0x1a0]);
+			juliet_YMF288B((UINT8)(i + 0xb0), opn.reg[i + 0x1b0]);
+			juliet_YMF288B((UINT8)(i + 0xb4), opn.reg[i + 0x1b4]);
 		}
 		juliet_YMF288A(0x11, opn.reg[0x11]);
 		juliet_YMF288A(0x18, opn.reg[0x18]);
