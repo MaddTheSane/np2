@@ -87,10 +87,10 @@ section .text
 	extern	egc_write
 	extern	egc_write_w
 %else
-	extern	@egc_read@4
-	extern	@egc_read_w@4
-	extern	@egc_write@8
-	extern	@egc_write_w@8
+	extern	@memegc_rd8@4
+	extern	@memegc_rd16@4
+	extern	@memegc_wr8@8
+	extern	@memegc_wr16@8
 %endif
 
 ; normal memory
@@ -269,7 +269,7 @@ grcgtdw_end:		pop		ecx
 					jmp		egc_write
 %else
 					pushad
-					call	@egc_write@8
+					call	@memegc_wr8@8
 					popad
 					ret
 %endif
@@ -392,7 +392,7 @@ grcgtcr_end:		not		al
 					jmp		egc_read
 %else
 					pushad
-					call	@egc_read@4
+					call	@memegc_rd8@4
 					mov		[esp + 28], al
 					popad
 					ret
@@ -628,7 +628,7 @@ grcgwtdw_end:		pop		ecx
 					jmp		egc_write_w
 %else
 					pushad
-					call	@egc_write_w@8
+					call	@memegc_wr16@8
 					popad
 					ret
 %endif
@@ -776,7 +776,7 @@ grcgwtcr_end:		not		ax
 					jmp		egc_read_w
 %else
 					pushad
-					call	@egc_read_w@4
+					call	@memegc_rd16@4
 					mov		[esp + 28], ax
 					popad
 					ret

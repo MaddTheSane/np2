@@ -16,6 +16,7 @@ BIN		= $(BINBASE)/cygwin
 BASE		= ..
 COMMON		= ../common
 I286C		= ../i286c
+MEM			= ../mem
 IO			= ../io
 CBUS		= ../cbus
 BIOS		= ../bios
@@ -60,10 +61,10 @@ AOPT	= -f win32
 COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-fsigned-char -mno-cygwin -march=pentium \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
-			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
-			-I$(SOUND) -I$(VERMOUTH) -I$(GETSND) -I$(VRAM) -I$(FDD) -I$(LIO) \
-			-I$(FONT) -I$(GENERIC) -I$(TARGET) -I$(DIALOG) -I$(DEBUGUTY) \
-			-I$(X86ASM)
+			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(MEM) -I$(IO) -I$(CBUS) \
+			-I$(BIOS) -I$(SOUND) -I$(VERMOUTH) -I$(GETSND) -I$(VRAM) \
+			-I$(FDD) -I$(LIO) -I$(FONT) -I$(GENERIC) -I$(TARGET) -I$(DIALOG) \
+			-I$(DEBUGUTY) -I$(X86ASM)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -73,8 +74,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/i286c.o		$(OBJ)/i286c_mn.o	$(OBJ)/i286c_ea.o	\
 			$(OBJ)/i286c_0f.o	$(OBJ)/i286c_8x.o	$(OBJ)/i286c_sf.o	\
 			$(OBJ)/i286c_f6.o	$(OBJ)/i286c_fe.o	$(OBJ)/i286c_rp.o	\
-			$(OBJ)/v30patch.o	$(OBJ)/memory.o		$(OBJ)/egcmem.o		\
-			$(OBJ)/dmap.o												\
+			$(OBJ)/v30patch.o	$(OBJ)/memory.o		$(OBJ)/dmap.o		\
+			$(OBJ)/memegc.o												\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
 			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
@@ -257,12 +258,14 @@ $(OBJ)/memory.o		:	$(I286C)/memory.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(FONT)/font.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/egcmem.o		:	$(I286C)/egcmem.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(I286C)/egcmem.h $(VRAM)/vram.h
-	$(CC) $(COPT) -o $@ $<
-
 $(OBJ)/dmap.o		:	$(I286C)/dmap.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(I286C)/dmap.h
+	$(CC) $(COPT) -o $@ $<
+
+
+
+$(OBJ)/egcmem.o		:	$(MEM)/memegc.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memegc.h $(VRAM)/vram.h
 	$(CC) $(COPT) -o $@ $<
 
 

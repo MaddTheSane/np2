@@ -1,8 +1,8 @@
 #include	"compiler.h"
 #include	"cpucore.h"
-#include	"egcmem.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"memegc.h"
 #include	"vram.h"
 #include	"font.h"
 
@@ -174,7 +174,7 @@ static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {		// VRAM
 static void MEMCALL egc_wt(UINT32 address, REG8 value) {		// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	egc_write(address, value);
+	memegc_wr8(address, value);
 }
 
 static void MEMCALL emmc_wt(UINT32 address, REG8 value) {		// EMS
@@ -286,7 +286,7 @@ const UINT8	*vram;
 static REG8 MEMCALL egc_rd(UINT32 address) {					// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	return(egc_read(address));
+	return(memegc_rd8(address));
 }
 
 static REG8 MEMCALL emmc_rd(UINT32 address) {					// EMS
@@ -451,7 +451,7 @@ static void MEMCALL grcgw_tdw1(UINT32 address, REG16 value) GRCGW_TDW(1)
 static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	egc_write_w(address, value);
+	memegc_wr16(address, value);
 }
 
 static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
@@ -605,7 +605,7 @@ static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
 static REG16 MEMCALL egcw_rd(UINT32 address) {
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	return(egc_read_w(address));
+	return(memegc_rd16(address));
 }
 
 static REG16 MEMCALL emmcw_rd(UINT32 address) {

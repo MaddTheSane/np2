@@ -1,8 +1,8 @@
 #include	"compiler.h"
 #include	"cpucore.h"
-#include	"egcmem.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"memegc.h"
 #include	"vram.h"
 
 

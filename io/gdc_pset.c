@@ -1,8 +1,8 @@
 #include	"compiler.h"
 #include	"cpucore.h"
-#include	"egcmem.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"memegc.h"
 #include	"gdc_sub.h"
 #include	"gdc_pset.h"
 #include	"vram.h"
@@ -94,7 +94,7 @@ static void MEMCALL withegc(GDCPSET pset, UINT addr, UINT bit) {
 		addr &= ~1;
 		data <<= 8;
 	}
-	egc_write_w(pset->base.addr + addr, data);
+	memegc_wr16(pset->base.addr + addr, data);
 }
 
 

@@ -45,7 +45,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -72,7 +72,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /D "SUPPORT_WAVEREC" /D "SUPPORT_MEMDBG32" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /D "SUPPORT_WAVEREC" /D "SUPPORT_MEMDBG32" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -99,7 +99,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /D "IA32_CROSS_CHECK" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /D "IA32_CROSS_CHECK" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -125,7 +125,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
@@ -317,10 +317,6 @@ SOURCE=..\I386C\DMAP.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\egcmem.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\I386C\MEM9821.C
 # End Source File
 # Begin Source File
@@ -328,396 +324,12 @@ SOURCE=..\I386C\MEM9821.C
 SOURCE=..\I386C\memory.c
 # End Source File
 # End Group
-# Begin Group "bios"
+# Begin Group "mem"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\BIOS\BIOS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS09.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS0C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS12.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS13.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS18.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS19.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1A.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1B.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1F.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\SXSIBIOS.C
-# End Source File
-# End Group
-# Begin Group "sound"
-
-# PROP Default_Filter ""
-# Begin Group "vermouth"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDIMOD.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDINST.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDIOUT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDTABLE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
-# End Source File
-# End Group
-# Begin Group "getsnd"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\SOUND\GETSND\GETSMIX.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\GETSND\GETSND.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\GETSND\GETWAVE.C
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=..\SOUND\ADPCMC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\ADPCMG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\BEEPC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\BEEPG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\CS4231C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\CS4231G.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\FMBOARD.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\FMTIMER.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\OPNGENC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\OPNGENG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PCM86C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PCM86G.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PSGGENC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PSGGENG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\RHYTHMC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\S98.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\SOUND.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\SOUNDROM.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\TMS3631C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\TMS3631G.C
-# End Source File
-# End Group
-# Begin Group "fdd"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\FDD\DISKDRV.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FDD\FDD_D88.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FDD\FDD_MTR.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FDD\FDD_XDF.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FDD\FDDFILE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FDD\NEWDISK.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FDD\SXSI.C
-# End Source File
-# End Group
-# Begin Group "lio"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\LIO\GCIRCLE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GLINE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GPSET.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GPUT1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\LIO.C
-# End Source File
-# End Group
-# Begin Group "font"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\FONT\FONT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTDATA.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTFM7.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTMAKE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTPC88.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTPC98.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTV98.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTX1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\FONT\FONTX68K.C
-# End Source File
-# End Group
-# Begin Group "win9x"
-
-# PROP Default_Filter ""
-# Begin Group "dialog"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\DIALOG\D_ABOUT.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_BMP.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_CLND.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_CONFIG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_DISK.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_MPU98.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_SCREEN.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\D_SOUND.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\DIALOGS.CPP
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=.\COMMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DOSIO.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\FONTMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\INI.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\JOYMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\MENU.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\MOUSEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\Np2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\np2.rc
-# End Source File
-# Begin Source File
-
-SOURCE=.\NP2ARG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SCRNMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SOUNDMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SUBWIND.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SYSMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TASKMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TIMEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TRACE.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\WINKBD.CPP
+SOURCE=..\MEM\MEMEGC.C
 # End Source File
 # End Group
 # Begin Group "io"
@@ -900,6 +512,86 @@ SOURCE=..\CBUS\SCSICMD.C
 SOURCE=..\CBUS\SCSIIO.C
 # End Source File
 # End Group
+# Begin Group "bios"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS09.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS0C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS12.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS13.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS18.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS19.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1A.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1B.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1F.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\SXSIBIOS.C
+# End Source File
+# End Group
+# Begin Group "lio"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\LIO\GCIRCLE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GLINE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPSET.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPUT1.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GSCREEN.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\LIO.C
+# End Source File
+# End Group
 # Begin Group "vram"
 
 # PROP Default_Filter ""
@@ -944,6 +636,202 @@ SOURCE=..\VRAM\SDRAW.C
 SOURCE=..\VRAM\VRAM.C
 # End Source File
 # End Group
+# Begin Group "sound"
+
+# PROP Default_Filter ""
+# Begin Group "vermouth"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDIMOD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDINST.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDIOUT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDTABLE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
+# End Source File
+# End Group
+# Begin Group "getsnd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETSMIX.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETSND.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETWAVE.C
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=..\SOUND\ADPCMC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\ADPCMG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\BEEPC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\BEEPG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\CS4231C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\CS4231G.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\FMBOARD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\FMTIMER.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\OPNGENC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\OPNGENG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PCM86C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PCM86G.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PSGGENC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PSGGENG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\RHYTHMC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\S98.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\SOUND.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\SOUNDROM.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\TMS3631C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\TMS3631G.C
+# End Source File
+# End Group
+# Begin Group "fdd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\FDD\DISKDRV.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\FDD_D88.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\FDD_MTR.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\FDD_XDF.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\FDDFILE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\NEWDISK.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSI.C
+# End Source File
+# End Group
+# Begin Group "font"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\FONT\FONT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTDATA.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTFM7.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTMAKE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTPC88.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTPC98.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTV98.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTX1.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FONT\FONTX68K.C
+# End Source File
+# End Group
 # Begin Group "generic"
 
 # PROP Default_Filter ""
@@ -982,6 +870,122 @@ SOURCE=..\GENERIC\NP2INFO.C
 # Begin Source File
 
 SOURCE=..\GENERIC\SOFTKBD.C
+# End Source File
+# End Group
+# Begin Group "win9x"
+
+# PROP Default_Filter ""
+# Begin Group "dialog"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\DIALOG\D_ABOUT.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_BMP.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_CLND.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_CONFIG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_DISK.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_MPU98.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_SCREEN.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\D_SOUND.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\DIALOGS.CPP
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\COMMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\DOSIO.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\FONTMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\INI.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\JOYMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\MENU.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\MOUSEMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\Np2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\np2.rc
+# End Source File
+# Begin Source File
+
+SOURCE=.\NP2ARG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\SCRNMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\SOUNDMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\SUBWIND.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\SYSMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\TASKMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\TIMEMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\TRACE.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\WINKBD.CPP
 # End Source File
 # End Group
 # Begin Source File
