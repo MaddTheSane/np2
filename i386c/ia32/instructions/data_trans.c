@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.2 2003/12/11 15:04:03 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.3 2004/01/14 16:12:41 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1316,6 +1316,7 @@ POP32_GS(void)
 void
 PUSHA(void)
 {
+	WORD sp = CPU_SP;
 
 	CPU_WORKCLOCK(17);
 	if (!CPU_STAT_SS32) {
@@ -1326,7 +1327,7 @@ PUSHA(void)
 		REGPUSH0(CPU_CX);
 		REGPUSH0(CPU_DX);
 		REGPUSH0(CPU_BX);
-		SP_PUSH0(CPU_SP);
+		REGPUSH0(sp);
 		REGPUSH0(CPU_BP);
 		REGPUSH0(CPU_SI);
 		REGPUSH0(CPU_DI);
@@ -1338,7 +1339,7 @@ PUSHA(void)
 		REGPUSH0_16_32(CPU_CX);
 		REGPUSH0_16_32(CPU_DX);
 		REGPUSH0_16_32(CPU_BX);
-		SP_PUSH0_16_32(CPU_SP);
+		REGPUSH0_16_32(sp);
 		REGPUSH0_16_32(CPU_BP);
 		REGPUSH0_16_32(CPU_SI);
 		REGPUSH0_16_32(CPU_DI);
@@ -1348,6 +1349,7 @@ PUSHA(void)
 void
 PUSHAD(void)
 {
+	DWORD esp = CPU_ESP;
 
 	CPU_WORKCLOCK(17);
 	if (!CPU_STAT_SS32) {
@@ -1358,7 +1360,7 @@ PUSHAD(void)
 		REGPUSH0_32_16(CPU_ECX);
 		REGPUSH0_32_16(CPU_EDX);
 		REGPUSH0_32_16(CPU_EBX);
-		ESP_PUSH0_32_16(CPU_ESP);
+		REGPUSH0_32_16(esp);
 		REGPUSH0_32_16(CPU_EBP);
 		REGPUSH0_32_16(CPU_ESI);
 		REGPUSH0_32_16(CPU_EDI);
@@ -1370,7 +1372,7 @@ PUSHAD(void)
 		REGPUSH0_32(CPU_ECX);
 		REGPUSH0_32(CPU_EDX);
 		REGPUSH0_32(CPU_EBX);
-		ESP_PUSH0_32(CPU_ESP);
+		REGPUSH0_32(esp);
 		REGPUSH0_32(CPU_EBP);
 		REGPUSH0_32(CPU_ESI);
 		REGPUSH0_32(CPU_EDI);
@@ -1552,7 +1554,7 @@ OUT_IbEAX(void)
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(port);
-	cpu_out_w(port, CPU_EAX);
+	cpu_out_d(port, CPU_EAX);
 }
 
 /*
@@ -1616,6 +1618,16 @@ MOVSX_GwEb(void)
 }
 
 void
+MOVSX_GwEw(void)
+{
+	WORD *out;
+	DWORD op, src;
+
+	PREPART_REG16_EA(op, src, out, 2, 5);
+	*out = src;
+}
+
+void
 MOVSX_GdEb(void)
 {
 	DWORD *out;
@@ -1646,6 +1658,16 @@ MOVZX_GwEb(void)
 
 	PREPART_REG16_EA8(op, src, out, 2, 5);
 	*out = (BYTE)src;
+}
+
+void
+MOVZX_GwEw(void)
+{
+	WORD *out;
+	DWORD op, src;
+
+	PREPART_REG16_EA(op, src, out, 2, 5);
+	*out = src;
 }
 
 void
