@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.12 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: task.c,v 1.13 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -33,7 +33,7 @@
 
 
 void
-load_tr(WORD selector)
+load_tr(UINT16 selector)
 {
 	selector_t task_sel;
 	int rv;
@@ -78,9 +78,9 @@ load_tr(WORD selector)
 }
 
 void
-get_stack_pointer_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
+get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 {
-	DWORD tss_stack_addr;
+	UINT32 tss_stack_addr;
 
 	__ASSERT(pl < 3);
 
@@ -107,10 +107,10 @@ get_stack_pointer_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
 	VERBOSE(("get_stack_pointer_from_tss: pl = %d, new_esp = 0x%08x, new_ss = 0x%04x", pl, *new_esp, *new_ss));
 }
 
-WORD
+UINT16
 get_backlink_selector_from_tss(void)
 {
-	WORD backlink;
+	UINT16 backlink;
 
 	if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
 		if (4 > CPU_TR_DESC.u.seg.limit) {
@@ -132,24 +132,24 @@ get_backlink_selector_from_tss(void)
 void
 task_switch(selector_t *task_sel, task_switch_type_t type)
 {
-	DWORD regs[CPU_REG_NUM];
-	DWORD eip;
-	DWORD new_flags;
-	DWORD mask;
-	DWORD cr3 = 0;
-	WORD sreg[CPU_SEGREG_NUM];
-	WORD ldtr;
-	WORD t, iobase;
+	UINT32 regs[CPU_REG_NUM];
+	UINT32 eip;
+	UINT32 new_flags;
+	UINT32 mask;
+	UINT32 cr3 = 0;
+	UINT16 sreg[CPU_SEGREG_NUM];
+	UINT16 ldtr;
+	UINT16 t, iobase;
 
 	selector_t cs_sel;
 	int rv;
 
-	DWORD cur_base;		/* current task state */
-	DWORD task_base;	/* new task state */
-	DWORD old_flags = REAL_EFLAGREG;
+	UINT32 cur_base;	/* current task state */
+	UINT32 task_base;	/* new task state */
+	UINT32 old_flags = REAL_EFLAGREG;
 	BOOL task16;
-	DWORD nsreg;
-	DWORD i;
+	UINT nsreg;
+	UINT i;
 
 	VERBOSE(("task_switch: start"));
 
@@ -188,7 +188,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 #if defined(MORE_DEBUG)
 	{
-		DWORD v;
+		UINT32 v;
 
 		VERBOSE(("task_switch: new task"));
 		for (i = 0; i < task_sel->desc.u.seg.limit; i += 4) {
@@ -300,7 +300,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		}
 	} else {
 		cpu_kmemorywrite_w(cur_base + 14, CPU_IP);
-		cpu_kmemorywrite_w(cur_base + 16, (WORD)old_flags);
+		cpu_kmemorywrite_w(cur_base + 16, (UINT16)old_flags);
 		for (i = 0; i < CPU_REG_NUM; i++) {
 			cpu_kmemorywrite_w(cur_base + 18 + i * 2, CPU_REGS_WORD(i));
 		}
@@ -311,7 +311,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 #if defined(MORE_DEBUG)
 	{
-		DWORD v;
+		UINT32 v;
 
 		VERBOSE(("task_switch: current task"));
 		for (i = 0; i < CPU_TR_DESC.u.seg.limit; i += 4) {
@@ -355,7 +355,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	case TASK_SWITCH_IRET:
 		/* check busy flag is active */
 		if (task_sel->desc.valid) {
-			DWORD h;
+			UINT32 h;
 			h = cpu_kmemoryread_d(task_sel->addr + 4);
 			if ((h & CPU_TSS_H_BUSY) == 0) {
 				ia32_panic("task_switch: new task is not busy");
@@ -450,8 +450,8 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	/* I/O deny bitmap */
 	if (!task16) {
-		if (task_sel->desc.u.seg.limit > iobase) {
-			CPU_STAT_IOLIMIT = (WORD)(task_sel->desc.u.seg.limit - iobase);
+		if (iobase != 0 && iobase < task_sel->desc.u.seg.limit) {
+			CPU_STAT_IOLIMIT = (UINT16)(task_sel->desc.u.seg.limit - iobase);
 			CPU_STAT_IOADDR = task_sel->desc.u.seg.segbase + iobase;
 		} else {
 			CPU_STAT_IOLIMIT = 0;

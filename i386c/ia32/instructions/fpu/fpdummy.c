@@ -1,4 +1,4 @@
-/*	$Id: fpdummy.c,v 1.2 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: fpdummy.c,v 1.3 2004/02/20 16:09:05 monaka Exp $	*/
 
 #include "compiler.h"
 #include "cpu.h"
@@ -13,7 +13,7 @@ FWAIT(void)
 void
 ESC0(void)
 {
-	DWORD op, madr;
+	UINT32 op, madr;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {

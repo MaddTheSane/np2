@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.9 2004/02/09 16:12:54 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.10 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -34,12 +34,12 @@
 
 I386CORE	i386core;
 
-BYTE	*reg8_b20[0x100];
-BYTE	*reg8_b53[0x100];
-WORD	*reg16_b20[0x100];
-WORD	*reg16_b53[0x100];
-DWORD	*reg32_b20[0x100];
-DWORD	*reg32_b53[0x100];
+UINT8	*reg8_b20[0x100];
+UINT8	*reg8_b53[0x100];
+UINT16	*reg16_b20[0x100];
+UINT16	*reg16_b53[0x100];
+UINT32	*reg32_b20[0x100];
+UINT32	*reg32_b53[0x100];
 
 
 void
@@ -169,9 +169,9 @@ change_vm(BOOL onoff)
  * flags
  */
 static void
-modify_eflags(DWORD new_flags, DWORD mask)
+modify_eflags(UINT32 new_flags, UINT32 mask)
 {
-	DWORD orig = CPU_EFLAG;
+	UINT32 orig = CPU_EFLAG;
 
 	new_flags &= ALL_EFLAG;
 	mask &= ALL_EFLAG;
@@ -189,7 +189,7 @@ modify_eflags(DWORD new_flags, DWORD mask)
 }
 
 void
-set_flags(WORD new_flags, WORD mask)
+set_flags(UINT16 new_flags, UINT16 mask)
 {
 
 	mask &= I_FLAG|IOPL_FLAG;
@@ -198,7 +198,7 @@ set_flags(WORD new_flags, WORD mask)
 }
 
 void
-set_eflags(DWORD new_flags, DWORD mask)
+set_eflags(UINT32 new_flags, UINT32 mask)
 {
 
 	mask &= I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG;

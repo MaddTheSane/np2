@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: bin_arith.h,v 1.3 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -44,12 +44,12 @@ void ADD_GdEd(void);
 void ADD_ALIb(void);
 void ADD_AXIw(void);
 void ADD_EAXId(void);
-void ADD_EbIb(BYTE *, DWORD);
-void ADD_EwIx(WORD *, DWORD);
-void ADD_EdIx(DWORD *, DWORD);
-void ADD_EbIb_ext(DWORD, DWORD);
-void ADD_EwIx_ext(DWORD, DWORD);
-void ADD_EdIx_ext(DWORD, DWORD);
+void ADD_EbIb(UINT8 *, UINT32);
+void ADD_EwIx(UINT16 *, UINT32);
+void ADD_EdIx(UINT32 *, UINT32);
+void ADD_EbIb_ext(UINT32, UINT32);
+void ADD_EwIx_ext(UINT32, UINT32);
+void ADD_EdIx_ext(UINT32, UINT32);
 
 /* ADC */
 void ADC_EbGb(void);
@@ -61,12 +61,12 @@ void ADC_GdEd(void);
 void ADC_ALIb(void);
 void ADC_AXIw(void);
 void ADC_EAXId(void);
-void ADC_EbIb(BYTE *, DWORD);
-void ADC_EwIx(WORD *, DWORD);
-void ADC_EdIx(DWORD *, DWORD);
-void ADC_EbIb_ext(DWORD, DWORD);
-void ADC_EwIx_ext(DWORD, DWORD);
-void ADC_EdIx_ext(DWORD, DWORD);
+void ADC_EbIb(UINT8 *, UINT32);
+void ADC_EwIx(UINT16 *, UINT32);
+void ADC_EdIx(UINT32 *, UINT32);
+void ADC_EbIb_ext(UINT32, UINT32);
+void ADC_EwIx_ext(UINT32, UINT32);
+void ADC_EdIx_ext(UINT32, UINT32);
 
 /* SUB */
 void SUB_EbGb(void);
@@ -78,12 +78,12 @@ void SUB_GdEd(void);
 void SUB_ALIb(void);
 void SUB_AXIw(void);
 void SUB_EAXId(void);
-void SUB_EbIb(BYTE *, DWORD);
-void SUB_EwIx(WORD *, DWORD);
-void SUB_EdIx(DWORD *, DWORD);
-void SUB_EbIb_ext(DWORD, DWORD);
-void SUB_EwIx_ext(DWORD, DWORD);
-void SUB_EdIx_ext(DWORD, DWORD);
+void SUB_EbIb(UINT8 *, UINT32);
+void SUB_EwIx(UINT16 *, UINT32);
+void SUB_EdIx(UINT32 *, UINT32);
+void SUB_EbIb_ext(UINT32, UINT32);
+void SUB_EwIx_ext(UINT32, UINT32);
+void SUB_EdIx_ext(UINT32, UINT32);
 
 /* SBB */
 void SBB_EbGb(void);
@@ -95,17 +95,17 @@ void SBB_GdEd(void);
 void SBB_ALIb(void);
 void SBB_AXIw(void);
 void SBB_EAXId(void);
-void SBB_EbIb(BYTE *, DWORD);
-void SBB_EwIx(WORD *, DWORD);
-void SBB_EdIx(DWORD *, DWORD);
-void SBB_EbIb_ext(DWORD, DWORD);
-void SBB_EwIx_ext(DWORD, DWORD);
-void SBB_EdIx_ext(DWORD, DWORD);
+void SBB_EbIb(UINT8 *, UINT32);
+void SBB_EwIx(UINT16 *, UINT32);
+void SBB_EdIx(UINT32 *, UINT32);
+void SBB_EbIb_ext(UINT32, UINT32);
+void SBB_EwIx_ext(UINT32, UINT32);
+void SBB_EdIx_ext(UINT32, UINT32);
 
 /* IMUL */
-void IMUL_ALEb(DWORD op);
-void IMUL_AXEw(DWORD op);
-void IMUL_EAXEd(DWORD op);
+void IMUL_ALEb(UINT32 op);
+void IMUL_AXEw(UINT32 op);
+void IMUL_EAXEd(UINT32 op);
 void IMUL_GwEw(void);
 void IMUL_GdEd(void);
 void IMUL_GwEwIb(void);
@@ -114,24 +114,24 @@ void IMUL_GwEwIw(void);
 void IMUL_GdEdId(void);
 
 /* MUL */
-void MUL_ALEb(DWORD op);
-void MUL_AXEw(DWORD op);
-void MUL_EAXEd(DWORD op);
+void MUL_ALEb(UINT32 op);
+void MUL_AXEw(UINT32 op);
+void MUL_EAXEd(UINT32 op);
 
 /* IDIV */
-void IDIV_ALEb(DWORD op);
-void IDIV_AXEw(DWORD op);
-void IDIV_EAXEd(DWORD op);
+void IDIV_ALEb(UINT32 op);
+void IDIV_AXEw(UINT32 op);
+void IDIV_EAXEd(UINT32 op);
 
 /* DIV */
-void DIV_ALEb(DWORD op);
-void DIV_AXEw(DWORD op);
-void DIV_EAXEd(DWORD op);
+void DIV_ALEb(UINT32 op);
+void DIV_AXEw(UINT32 op);
+void DIV_EAXEd(UINT32 op);
 
 /* INC */
-void INC_Eb(DWORD op);
-void INC_Ew(DWORD op);
-void INC_Ed(DWORD op);
+void INC_Eb(UINT32 op);
+void INC_Ew(UINT32 op);
+void INC_Ed(UINT32 op);
 void INC_AX(void);
 void INC_CX(void);
 void INC_DX(void);
@@ -150,9 +150,9 @@ void INC_ESI(void);
 void INC_EDI(void);
 
 /* DEC */
-void DEC_Eb(DWORD op);
-void DEC_Ew(DWORD op);
-void DEC_Ed(DWORD op);
+void DEC_Eb(UINT32 op);
+void DEC_Ew(UINT32 op);
+void DEC_Ed(UINT32 op);
 void DEC_AX(void);
 void DEC_CX(void);
 void DEC_DX(void);
@@ -171,9 +171,9 @@ void DEC_ESI(void);
 void DEC_EDI(void);
 
 /* NEG */
-void NEG_Eb(DWORD op);
-void NEG_Ew(DWORD op);
-void NEG_Ed(DWORD op);
+void NEG_Eb(UINT32 op);
+void NEG_Ew(UINT32 op);
+void NEG_Ed(UINT32 op);
 
 /* CMP */
 void CMP_EbGb(void);
@@ -185,12 +185,12 @@ void CMP_GdEd(void);
 void CMP_ALIb(void);
 void CMP_AXIw(void);
 void CMP_EAXId(void);
-void CMP_EbIb(BYTE *, DWORD);
-void CMP_EwIx(WORD *, DWORD);
-void CMP_EdIx(DWORD *, DWORD);
-void CMP_EbIb_ext(DWORD, DWORD);
-void CMP_EwIx_ext(DWORD, DWORD);
-void CMP_EdIx_ext(DWORD, DWORD);
+void CMP_EbIb(UINT8 *, UINT32);
+void CMP_EwIx(UINT16 *, UINT32);
+void CMP_EdIx(UINT32 *, UINT32);
+void CMP_EbIb_ext(UINT32, UINT32);
+void CMP_EwIx_ext(UINT32, UINT32);
+void CMP_EdIx_ext(UINT32, UINT32);
 
 #ifdef __cplusplus
 }

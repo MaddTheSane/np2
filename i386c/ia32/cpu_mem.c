@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.10 2004/02/05 16:41:32 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.11 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,9 +36,9 @@
  * memory access check
  */
 void
-cpu_memoryread_check(descriptor_t* sd, DWORD offset, DWORD length, int e)
+cpu_memoryread_check(descriptor_t *sd, UINT32 offset, UINT length, int e)
 {
-	DWORD uplimit;
+	UINT32 uplimit;
 
 	if (CPU_STAT_PM) {
 		/* invalid */
@@ -52,52 +52,52 @@ cpu_memoryread_check(descriptor_t* sd, DWORD offset, DWORD length, int e)
 			VERBOSE(("cpu_memoryread_check: not present"));
 			EXCEPTION(e, 0);
 		}
+	}
 
-		switch (sd->type) {
-		case 0:	 case 1:	/* ro */
-		case 2:  case 3:	/* rw */
-		case 10: case 11:	/* rx */
-		case 14: case 15:	/* rxc */
-			if (offset > sd->u.seg.limit - length + 1) {
-				VERBOSE(("cpu_memoryread_check: offset(%08x) > sd->u.seg.limit(%08x) - length(%08x) + 1", offset, sd->u.seg.limit, length));
-				EXCEPTION(e, 0);
-			}
-			if (length - 1 > sd->u.seg.limit) {
-				VERBOSE(("cpu_memoryread_check: length(%08x) - 1 > sd->u.seg.limit(%08x)", length, sd->u.seg.limit));
-				EXCEPTION(e, 0);
-			}
-			break;
-
-		case 4:  case 5:	/* ro (expand down) */
-		case 6:  case 7:	/* rw (expand down) */
-			uplimit = sd->d ? 0xffffffff : 0x0000ffff;
-			if (offset <= sd->u.seg.limit) {
-				VERBOSE(("cpu_memoryread_check: offset(%08x) <= sd->u.seg.limit(%08x)", offset, sd->u.seg.limit));
-				EXCEPTION(e, 0);
-			}
-			if (offset > uplimit) {
-				VERBOSE(("cpu_memoryread_check: offset(%08x) > uplimit(%08x)", offset, uplimit));
-				EXCEPTION(e, 0);
-			}
-			if (uplimit - offset < length - 1) {
-				VERBOSE(("cpu_memoryread_check: uplimit(%08x) - offset(%08x) < length(%08x) - 1", uplimit, offset, length));
-				EXCEPTION(e, 0);
-			}
-			break;
-
-		default:
-			VERBOSE(("cpu_memoryread_check: invalid type (type = %d)", sd->type));
+	switch (sd->type) {
+	case 0:	 case 1:	/* ro */
+	case 2:  case 3:	/* rw */
+	case 10: case 11:	/* rx */
+	case 14: case 15:	/* rxc */
+		if (offset > sd->u.seg.limit - length + 1) {
+			VERBOSE(("cpu_memoryread_check: offset(%08x) > sd->u.seg.limit(%08x) - length(%08x) + 1", offset, sd->u.seg.limit, length));
 			EXCEPTION(e, 0);
-			break;
 		}
+		if (length - 1 > sd->u.seg.limit) {
+			VERBOSE(("cpu_memoryread_check: length(%08x) - 1 > sd->u.seg.limit(%08x)", length, sd->u.seg.limit));
+			EXCEPTION(e, 0);
+		}
+		break;
+
+	case 4:  case 5:	/* ro (expand down) */
+	case 6:  case 7:	/* rw (expand down) */
+		uplimit = sd->d ? 0xffffffff : 0x0000ffff;
+		if (offset <= sd->u.seg.limit) {
+			VERBOSE(("cpu_memoryread_check: offset(%08x) <= sd->u.seg.limit(%08x)", offset, sd->u.seg.limit));
+			EXCEPTION(e, 0);
+		}
+		if (offset > uplimit) {
+			VERBOSE(("cpu_memoryread_check: offset(%08x) > uplimit(%08x)", offset, uplimit));
+			EXCEPTION(e, 0);
+		}
+		if (uplimit - offset < length - 1) {
+			VERBOSE(("cpu_memoryread_check: uplimit(%08x) - offset(%08x) < length(%08x) - 1", uplimit, offset, length));
+			EXCEPTION(e, 0);
+		}
+		break;
+
+	default:
+		VERBOSE(("cpu_memoryread_check: invalid type (type = %d)", sd->type));
+		EXCEPTION(e, 0);
+		break;
 	}
 	sd->flag |= CPU_DESC_FLAG_READABLE;
 }
 
 void
-cpu_memorywrite_check(descriptor_t* sd, DWORD offset, DWORD length, int e)
+cpu_memorywrite_check(descriptor_t *sd, UINT32 offset, UINT length, int e)
 {
-	DWORD uplimit;
+	UINT32 uplimit;
 
 	if (CPU_STAT_PM) {
 		/* invalid */
@@ -116,116 +116,114 @@ cpu_memorywrite_check(descriptor_t* sd, DWORD offset, DWORD length, int e)
 			VERBOSE(("cpu_memorywrite_check: system segment"));
 			EXCEPTION(e, 0);
 		}
+	}
 
-		switch (sd->type) {
-		case 2: case 3:	/* rw */
-			if (offset > sd->u.seg.limit - length + 1) {
-				VERBOSE(("cpu_memorywrite_check: offset(%08x) > sd->u.seg.limit(%08x) - length(%08x) + 1", offset, sd->u.seg.limit, length));
-				EXCEPTION(e, 0);
-			}
-			if (length - 1 > sd->u.seg.limit) {
-				VERBOSE(("cpu_memorywrite_check: length(%08x) - 1 > sd->u.seg.limit(%08x)", length, sd->u.seg.limit));
-				EXCEPTION(e, 0);
-			}
-			break;
-
-		case 6: case 7:	/* rw (expand down) */
-			uplimit = sd->d ? 0xffffffff : 0x0000ffff;
-			if (offset <= sd->u.seg.limit) {
-				VERBOSE(("cpu_memorywrite_check: offset(%08x) <= sd->u.seg.limit(%08x)", offset, sd->u.seg.limit));
-				EXCEPTION(e, 0);
-			}
-			if (offset > uplimit) {
-				VERBOSE(("cpu_memorywrite_check: offset(%08x) > uplimit(%08x)", offset, uplimit));
-				EXCEPTION(e, 0);
-			}
-			if (uplimit - offset < length - 1) {
-				VERBOSE(("cpu_memorywrite_check: uplimit(%08x) - offset(%08x) < length(%08x) - 1", uplimit, offset, length));
-				EXCEPTION(e, 0);
-			}
-			break;
-
-		default:
-			VERBOSE(("cpu_memorywrite_check: invalid type (type = %d)", sd->type));
+	switch (sd->type) {
+	case 2: case 3:	/* rw */
+		if (offset > sd->u.seg.limit - length + 1) {
+			VERBOSE(("cpu_memorywrite_check: offset(%08x) > sd->u.seg.limit(%08x) - length(%08x) + 1", offset, sd->u.seg.limit, length));
 			EXCEPTION(e, 0);
-			break;
 		}
+		if (length - 1 > sd->u.seg.limit) {
+			VERBOSE(("cpu_memorywrite_check: length(%08x) - 1 > sd->u.seg.limit(%08x)", length, sd->u.seg.limit));
+			EXCEPTION(e, 0);
+		}
+		break;
+
+	case 6: case 7:	/* rw (expand down) */
+		uplimit = sd->d ? 0xffffffff : 0x0000ffff;
+		if (offset <= sd->u.seg.limit) {
+			VERBOSE(("cpu_memorywrite_check: offset(%08x) <= sd->u.seg.limit(%08x)", offset, sd->u.seg.limit));
+			EXCEPTION(e, 0);
+		}
+		if (offset > uplimit) {
+			VERBOSE(("cpu_memorywrite_check: offset(%08x) > uplimit(%08x)", offset, uplimit));
+			EXCEPTION(e, 0);
+		}
+		if (uplimit - offset < length - 1) {
+			VERBOSE(("cpu_memorywrite_check: uplimit(%08x) - offset(%08x) < length(%08x) - 1", uplimit, offset, length));
+			EXCEPTION(e, 0);
+		}
+		break;
+
+	default:
+		VERBOSE(("cpu_memorywrite_check: invalid type (type = %d)", sd->type));
+		EXCEPTION(e, 0);
+		break;
 	}
 	sd->flag |= CPU_DESC_FLAG_WRITABLE;
 }
 
 BOOL
-cpu_stack_push_check(descriptor_t* sdp, DWORD esp, DWORD length)
+cpu_stack_push_check(descriptor_t *sd, UINT32 esp, UINT length)
 {
-	DWORD limit;
+	UINT32 limit;
 
-	if (!CPU_STAT_PM)
-		return TRUE;
-
-	if (!sdp->valid || !sdp->p)
-		return FALSE;
-	if (!sdp->s || sdp->u.seg.c || !sdp->u.seg.wr)
-		return FALSE;
-
-	if (!sdp->d) {
-		esp &= 0xffff;
-		limit = 0xffff;
-	} else {
-		limit = 0xffffffff;
-	}
-	if (sdp->u.seg.ec) {
-		/* expand-down stack */
-		if ((esp == 0)
-		 || (esp < length)
-		 || (esp - length <= sdp->u.seg.limit)
-		 || (esp > limit))
+	if (CPU_STAT_PM) {
+		if (!sd->valid || !sd->p)
 			return FALSE;
-	} else {
-		/* expand-up stack */
-		if (esp == 0) {
-			if ((sdp->d && (sdp->u.seg.segend != 0xffffffff))
-			 || (!sdp->d && (sdp->u.seg.segend != 0xffff)))
+		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr)
+			return FALSE;
+
+		if (!sd->d) {
+			esp &= 0xffff;
+			limit = 0xffff;
+		} else {
+			limit = 0xffffffff;
+		}
+		if (sd->u.seg.ec) {
+			/* expand-down stack */
+			if ((esp == 0)
+			 || (esp < length)
+			 || (esp - length <= sd->u.seg.limit)
+			 || (esp > limit))
 				return FALSE;
 		} else {
-			if ((esp < length)
-			 || (esp - 1 > sdp->u.seg.limit))
-				return FALSE;
+			/* expand-up stack */
+			if (esp == 0) {
+				if ((sd->d && (sd->u.seg.segend != 0xffffffff))
+				 || (!sd->d && (sd->u.seg.segend != 0xffff)))
+					return FALSE;
+			} else {
+				if ((esp < length)
+				 || (esp - 1 > sd->u.seg.limit))
+					return FALSE;
+			}
 		}
 	}
 	return TRUE;
 }
 
 BOOL
-cpu_stack_pop_check(descriptor_t* sdp, DWORD esp, DWORD length)
+cpu_stack_pop_check(descriptor_t *sd, UINT32 esp, UINT length)
 {
-	DWORD limit;
+	UINT32 limit;
 
-	if (!CPU_STAT_PM)
-		return TRUE;
-
-	if (!sdp->valid || !sdp->p)
-		return FALSE;
-	if (!sdp->s || sdp->u.seg.c || !sdp->u.seg.wr)
-		return FALSE;
-
-	if (!sdp->d) {
-		esp &= 0xffff;
-		limit = 0xffff;
-	} else {
-		limit = 0xffffffff;
-	}
-	if (sdp->u.seg.ec) {
-		/* expand-down stack */
-		if ((esp == limit)
-		 || ((limit - esp) + 1 < length))
+	if (CPU_STAT_PM) {
+		if (!sd->valid || !sd->p)
 			return FALSE;
-	} else {
-		/* expand-up stack */
-		if ((esp == limit)
-		 || (sdp->u.seg.segend == 0)
-		 || (esp > sdp->u.seg.limit)
-		 || ((sdp->u.seg.limit - esp) + 1 < length))
+		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr)
 			return FALSE;
+
+		if (!sd->d) {
+			esp &= 0xffff;
+			limit = 0xffff;
+		} else {
+			limit = 0xffffffff;
+		}
+		if (sd->u.seg.ec) {
+			/* expand-down stack */
+			if ((esp == limit)
+			 || ((limit - esp) + 1 < length))
+				return FALSE;
+		} else {
+			/* expand-up stack */
+			if ((esp == limit)
+			 || (sd->u.seg.segend == 0)
+			 || (esp > sd->u.seg.limit)
+			 || ((sd->u.seg.limit - esp) + 1 < length))
+				return FALSE;
+		}
 	}
 	return TRUE;
 }
@@ -234,11 +232,11 @@ cpu_stack_pop_check(descriptor_t* sdp, DWORD esp, DWORD length)
 /*
  * code fetch
  */
-BYTE MEMCALL
-cpu_codefetch(DWORD offset)
+UINT8 MEMCALL
+cpu_codefetch(UINT32 offset)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit) {
@@ -251,11 +249,11 @@ cpu_codefetch(DWORD offset)
 	return 0;	/* compiler happy */
 }
 
-WORD MEMCALL
-cpu_codefetch_w(DWORD offset)
+UINT16 MEMCALL
+cpu_codefetch_w(UINT32 offset)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit - 1) {
@@ -268,11 +266,11 @@ cpu_codefetch_w(DWORD offset)
 	return 0;	/* compiler happy */
 }
 
-DWORD MEMCALL
-cpu_codefetch_d(DWORD offset)
+UINT32 MEMCALL
+cpu_codefetch_d(UINT32 offset)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit - 3) {
@@ -289,11 +287,11 @@ cpu_codefetch_d(DWORD offset)
 /*
  * virtual address -> linear address
  */
-BYTE MEMCALL
-cpu_vmemoryread(int idx, DWORD offset)
+UINT8 MEMCALL
+cpu_vmemoryread(int idx, UINT32 offset)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
@@ -340,11 +338,11 @@ err:
 	return 0;	/* compiler happy */
 }
 
-WORD MEMCALL
-cpu_vmemoryread_w(int idx, DWORD offset)
+UINT16 MEMCALL
+cpu_vmemoryread_w(int idx, UINT32 offset)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
@@ -391,11 +389,11 @@ err:
 	return 0;	/* compiler happy */
 }
 
-DWORD MEMCALL
-cpu_vmemoryread_d(int idx, DWORD offset)
+UINT32 MEMCALL
+cpu_vmemoryread_d(int idx, UINT32 offset)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
@@ -444,10 +442,10 @@ err:
 
 /* vaddr memory write */
 void MEMCALL
-cpu_vmemorywrite(int idx, DWORD offset, BYTE val)
+cpu_vmemorywrite(int idx, UINT32 offset, UINT8 val)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
@@ -499,10 +497,10 @@ err:
 }
 
 void MEMCALL
-cpu_vmemorywrite_w(int idx, DWORD offset, WORD val)
+cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 val)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
@@ -554,10 +552,10 @@ err:
 }
 
 void MEMCALL
-cpu_vmemorywrite_d(int idx, DWORD offset, DWORD val)
+cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 val)
 {
 	descriptor_t *sd;
-	DWORD addr;
+	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);

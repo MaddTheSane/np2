@@ -1,4 +1,4 @@
-/*	$Id: disasm.c,v 1.5 2004/02/19 03:04:01 yui Exp $	*/
+/*	$Id: disasm.c,v 1.6 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -82,7 +82,7 @@ static const char *opcode_1byte[2][256] = {
 /*b0*/	"movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  
 	"movw",  "movw",  "movw",  "movw",  "movw",  "movw",  "movw",  "movw",  
 /*c0*/	NULL,    NULL,    "ret",   "ret",   "les",   "lds",   "movb",  "movw",
-	"enter", "leave", "ret",   "ret",   "int3",  "int",   "into",  "iret",
+	"enter", "leave", "retf",  "retf",  "int3",  "int",   "into",  "iret",
 /*d0*/	NULL,    NULL,    NULL,    NULL,    "aam",   "aad",   "salc",  "xlat",
 	"esc0",  "esc1",  "esc2",  "esc3",  "esc4",  "esc5",  "esc6",  "esc7",
 /*e0*/	"loopne","loope", "loop",  "jcxz",  "inb",   "inw",   "outb",  "outw",
@@ -117,7 +117,7 @@ static const char *opcode_1byte[2][256] = {
 /*b0*/	"movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  
 	"movl",  "movl",  "movl",  "movl",  "movl",  "movl",  "movl",  "movl",  
 /*c0*/	NULL,    NULL,    "ret",   "ret",   "les",   "lds",   "movb",  "movl",
-	"enter", "leave", "ret",   "ret",   "int3",  "int",   "into",  "iretd",
+	"enter", "leave", "retf",  "retf",  "int3",  "int",   "into",  "iretd",
 /*d0*/	NULL,    NULL,    NULL,    NULL,    "aam",   "aad",   "salc",  "xlat",
 	"esc0",  "esc1",  "esc2",  "esc3",  "esc4",  "esc5",  "esc6",  "esc7",
 /*e0*/	"loopne","loope", "loop",  "jecxz", "inb",   "inl",   "outb",  "outl",
@@ -339,22 +339,22 @@ static const char *sep[2] = { " ", ", " };
  * context
  */
 typedef struct {
-	DWORD val;
+	UINT32 val;
 
-	DWORD eip;
+	UINT32 eip;
 	BOOL op32;
 	BOOL as32;
 
-	DWORD baseaddr;
-	DWORD opcode[3];
-	DWORD modrm;
-	DWORD sib;
+	UINT32 baseaddr;
+	UINT8 opcode[3];
+	UINT8 modrm;
+	UINT8 sib;
 
 	BOOL useseg;
 	int seg;
 
-	BYTE opbyte[32];
-	int nopbyte;
+	UINT8 opbyte[32];
+	int nopbytes;
 
 	char str[256];
 	size_t remain;
@@ -375,19 +375,21 @@ typedef struct {
 static int
 convert_address(disasm_context_t *ctx)
 {
-	DWORD pde_addr;	/* page directory entry address */
-	DWORD pde;	/* page directory entry */
-	DWORD pte_addr;	/* page table entry address */
-	DWORD pte;	/* page table entry */
-	DWORD addr;
+	UINT32 pde_addr;	/* page directory entry address */
+	UINT32 pde;		/* page directory entry */
+	UINT32 pte_addr;	/* page table entry address */
+	UINT32 pte;		/* page table entry */
+	UINT32 addr;
 
 	if (CPU_STAT_SREG(CPU_CS_INDEX).valid) {
 		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + ctx->eip;
 		if (CPU_STAT_PAGING) {
 			pde_addr = CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc);
 			pde = cpu_memoryread_d(pde_addr);
+			/* XXX: check */
 			pte_addr = (pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc);
 			pte = cpu_memoryread_d(pte_addr);
+			/* XXX: check */
 			addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
 		}
 		ctx->val = addr;
@@ -399,7 +401,7 @@ convert_address(disasm_context_t *ctx)
 static int
 disasm_codefetch_1(disasm_context_t *ctx)
 {
-	BYTE val;
+	UINT8 val;
 	int rv;
 
 	rv = convert_address(ctx);
@@ -409,7 +411,7 @@ disasm_codefetch_1(disasm_context_t *ctx)
 	val = cpu_memoryread(ctx->val);
 	ctx->val = val;
 
-	ctx->opbyte[ctx->nopbyte++] = (BYTE)ctx->val;
+	ctx->opbyte[ctx->nopbytes++] = (UINT8)ctx->val;
 	ctx->eip++;
 
 	return 0;
@@ -418,17 +420,17 @@ disasm_codefetch_1(disasm_context_t *ctx)
 static int
 disasm_codefetch_2(disasm_context_t *ctx)
 {
-	WORD val;
+	UINT16 val;
 	int rv;
 
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
-	val = (WORD)(ctx->val & 0xff);
+	val = (UINT16)(ctx->val & 0xff);
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
-	val |= (WORD)(ctx->val & 0xff) << 8;
+	val |= (UINT16)(ctx->val & 0xff) << 8;
 
 	ctx->val = val;
 	return 0;
@@ -437,7 +439,7 @@ disasm_codefetch_2(disasm_context_t *ctx)
 static int
 disasm_codefetch_4(disasm_context_t *ctx)
 {
-	DWORD val;
+	UINT32 val;
 	int rv;
 
 	rv = disasm_codefetch_1(ctx);
@@ -447,15 +449,15 @@ disasm_codefetch_4(disasm_context_t *ctx)
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
-	val |= (DWORD)(ctx->val & 0xff) << 8;
+	val |= (UINT32)(ctx->val & 0xff) << 8;
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
-	val |= (DWORD)(ctx->val & 0xff) << 16;
+	val |= (UINT32)(ctx->val & 0xff) << 16;
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
-	val |= (DWORD)(ctx->val & 0xff) << 24;
+	val |= (UINT32)(ctx->val & 0xff) << 24;
 
 	ctx->val = val;
 	return 0;
@@ -472,9 +474,8 @@ ea16(disasm_context_t *ctx, char *buf, size_t size)
 		"bx + si", "bx + di", "bp + si", "bp + di",
 		"si", "di", "bp", "bx"
 	};
-//	char tmp[32];
-	DWORD mod, rm;
-	DWORD val;
+	UINT32 val;
+	UINT mod, rm;
 	int rv;
 
 	mod = (ctx->modrm >> 6) & 3;
@@ -487,7 +488,7 @@ ea16(disasm_context_t *ctx, char *buf, size_t size)
 			if (rv)
 				return rv;
 
-			snprintf(buf, size, "[0x%04lx]", ctx->val);
+			snprintf(buf, size, "[0x%04x]", ctx->val);
 		} else {
 			snprintf(buf, size, "[%s]", ea16_str[rm]);
 		}
@@ -510,7 +511,7 @@ ea16(disasm_context_t *ctx, char *buf, size_t size)
 
 			val = ctx->val;
 		}
-		snprintf(buf, size, "[%s + 0x%04lx]", ea16_str[rm], val);
+		snprintf(buf, size, "[%s + 0x%04x]", ea16_str[rm], val);
 	}
 
 	return 0;
@@ -520,13 +521,13 @@ static int
 ea32(disasm_context_t *ctx, char *buf, size_t size)
 {
 	char tmp[32];
-	DWORD count[9];
-	DWORD mod, rm;
-	DWORD sib;
-	DWORD scale;
-	DWORD idx;
-	DWORD base;
-	DWORD val;
+	UINT count[9];
+	UINT32 val;
+	UINT mod, rm;
+	UINT sib;
+	UINT scale;
+	UINT idx;
+	UINT base;
 	int rv;
 	int i, n;
 
@@ -604,7 +605,7 @@ ea32(disasm_context_t *ctx, char *buf, size_t size)
 				milstr_ncat(buf, " + ", size);
 			}
 			if (count[i] > 1) {
-				snprintf(tmp, size, "%s * %ld",
+				snprintf(tmp, size, "%s * %d",
 				    reg32_str[i], count[i]);
 			} else {
 				milstr_ncpy(tmp, reg32_str[i], sizeof(tmp));
@@ -617,7 +618,7 @@ ea32(disasm_context_t *ctx, char *buf, size_t size)
 		if (n > 0) {
 			milstr_ncat(buf, " + ", size);
 		}
-		snprintf(tmp, sizeof(tmp), "0x%08lx", count[8]);
+		snprintf(tmp, sizeof(tmp), "0x%08x", count[8]);
 		milstr_ncat(buf, tmp, size);
 	}
 	milstr_ncat(buf, "]", size);
@@ -673,10 +674,9 @@ static int
 op(disasm_context_t *ctx)
 {
 	const char *opcode;
-//	DWORD type;
-	BYTE op[3];
+	UINT8 op[3];
 	int prefix;
-	int len;
+	size_t len;
 	int rv;
 	int i;
 
@@ -685,7 +685,7 @@ op(disasm_context_t *ctx)
 		if (rv)
 			return rv;
 
-		op[0] = (BYTE)(ctx->val & 0xff);
+		op[0] = (UINT8)(ctx->val & 0xff);
 		if (insttable_info[op[0]] & INST_PREFIX) {
 			if (ctx->prefix == 0)
 				ctx->prefix = ctx->next;
@@ -729,7 +729,7 @@ op(disasm_context_t *ctx)
 			}
 		}
 		len = strlen(ctx->next);
-		len = (len < (int)ctx->remain) ? len : ctx->remain;
+		len = (len < ctx->remain) ? len : ctx->remain;
 		ctx->next += len;
 		ctx->remain -= len;
 	}
@@ -741,7 +741,7 @@ op(disasm_context_t *ctx)
 		if (rv)
 			return rv;
 
-		op[1] = (BYTE)(ctx->val & 0xff);
+		op[1] = (UINT8)(ctx->val & 0xff);
 		ctx->opcode[1] = op[1];
 
 		switch (op[0]) {
@@ -752,7 +752,7 @@ op(disasm_context_t *ctx)
 				if (rv)
 					return rv;
 
-				op[2] = (BYTE)(ctx->val & 0xff);
+				op[2] = (UINT8)(ctx->val & 0xff);
 				ctx->opcode[2] = op[2];
 
 				switch (op[1]) {
@@ -813,10 +813,12 @@ op(disasm_context_t *ctx)
  * interface
  */
 int
-disasm(DWORD *eip, char *buf, size_t size)
+disasm(UINT32 *eip, char *buf, size_t size)
 {
 	disasm_context_t ctx;
+	char tmp[32];
 	int rv;
+	int i;
 
 	memset(&ctx, 0, sizeof(ctx));
 	ctx.remain = sizeof(ctx.str) - 1;
@@ -842,6 +844,17 @@ disasm(DWORD *eip, char *buf, size_t size)
 	}
 
 	*eip = ctx.eip;
-	milstr_ncpy(buf, ctx.str, size);
+
+	memset(buf, 0, size);
+	for (i = 0; i < ctx.nopbytes; i++) {
+		snprintf(tmp, sizeof(tmp), "%02x ", ctx.opbyte[i]);
+		milstr_ncat(buf, tmp, size);
+	}
+
+	milstr_ncpy(tmp, "   ", sizeof(tmp));
+	for (; i < 8; i++) {
+		milstr_ncat(buf, tmp, size);
+	}
+	milstr_ncat(buf, ctx.str, size);
 	return 0;
 }

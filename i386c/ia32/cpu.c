@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.11 2004/02/13 14:52:35 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.12 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,14 +36,30 @@
 
 sigjmp_buf exec_1step_jmpbuf;
 
+int cpu_inst_trace = 0;
+
+
 void
 exec_1step(void)
 {
 	int prefix;
-	BYTE op;
+	UINT32 op;
 
 	CPU_PREV_EIP = CPU_EIP;
 	CPU_STATSAVE.cpu_inst = CPU_STATSAVE.cpu_inst_default;
+
+#if defined(IA32_INSTRUCTION_TRACE)
+	if (cpu_inst_trace) {
+		char buf[256];
+		UINT32 eip = CPU_EIP;
+		int rv;
+
+		rv = disasm(&eip, buf, sizeof(buf) - 1);
+		if (rv == 0) {
+			VERBOSE(("%04x:%08x: %s", CPU_CS, CPU_EIP, buf));
+		}
+	}
+#endif
 
 	for (prefix = 0; prefix < MAX_PREFIX; prefix++) {
 		GET_PCBYTE(op);

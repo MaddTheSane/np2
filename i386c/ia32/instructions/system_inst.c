@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.17 2004/02/19 03:04:02 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.18 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -35,11 +35,11 @@
 
 
 void
-LGDT_Ms(DWORD op)
+LGDT_Ms(UINT32 op)
 {
-	DWORD madr;
-	DWORD base;
-	WORD limit;
+	UINT32 madr;
+	UINT32 base;
+	UINT16 limit;
 
 	if (op < 0xc0) {
 		if (!CPU_STAT_PM || !CPU_STAT_VM86 || CPU_STAT_CPL == 0) {
@@ -66,11 +66,11 @@ LGDT_Ms(DWORD op)
 }
 
 void
-SGDT_Ms(DWORD op)
+SGDT_Ms(UINT32 op)
 {
-	DWORD madr;
-	DWORD base;
-	WORD limit;
+	UINT32 madr;
+	UINT32 base;
+	UINT16 limit;
 
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
@@ -88,9 +88,9 @@ SGDT_Ms(DWORD op)
 }
 
 void
-LLDT_Ew(DWORD op)
+LLDT_Ew(UINT32 op)
 {
-	DWORD src, madr;
+	UINT32 src, madr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (CPU_STAT_CPL == 0) {
@@ -102,7 +102,7 @@ LLDT_Ew(DWORD op)
 				madr = calc_ea_dst(op);
 				src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			}
-			load_ldtr((WORD)src, GP_EXCEPTION);
+			load_ldtr((UINT16)src, GP_EXCEPTION);
 			return;
 		}
 		VERBOSE(("LLDT: CPL(%d) != 0", CPU_STAT_CPL));
@@ -113,10 +113,10 @@ LLDT_Ew(DWORD op)
 }
 
 void
-SLDT_Ew(DWORD op)
+SLDT_Ew(UINT32 op)
 {
-	DWORD madr;
-	WORD ldtr;
+	UINT32 madr;
+	UINT16 ldtr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		ldtr = CPU_LDTR;
@@ -139,9 +139,9 @@ SLDT_Ew(DWORD op)
 }
 
 void
-LTR_Ew(DWORD op)
+LTR_Ew(UINT32 op)
 {
-	DWORD src, madr;
+	UINT32 src, madr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (CPU_STAT_CPL == 0) {
@@ -153,7 +153,7 @@ LTR_Ew(DWORD op)
 				madr = calc_ea_dst(op);
 				src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			}
-			load_tr((WORD)src);
+			load_tr((UINT16)src);
 			return;
 		}
 		VERBOSE(("LTR: CPL(%d) != 0", CPU_STAT_CPL));
@@ -164,10 +164,10 @@ LTR_Ew(DWORD op)
 }
 
 void
-STR_Ew(DWORD op)
+STR_Ew(UINT32 op)
 {
-	DWORD madr;
-	WORD tr;
+	UINT32 madr;
+	UINT16 tr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		tr = CPU_TR;
@@ -190,11 +190,11 @@ STR_Ew(DWORD op)
 }
 
 void
-LIDT_Ms(DWORD op)
+LIDT_Ms(UINT32 op)
 {
-	DWORD madr;
-	DWORD base;
-	WORD limit;
+	UINT32 madr;
+	UINT32 base;
+	UINT16 limit;
 
 	if (op < 0xc0) {
 		if (!CPU_STAT_PM || !CPU_STAT_VM86 || CPU_STAT_CPL == 0) {
@@ -221,11 +221,11 @@ LIDT_Ms(DWORD op)
 }
 
 void
-SIDT_Ms(DWORD op)
+SIDT_Ms(UINT32 op)
 {
-	DWORD madr;
-	DWORD base;
-	WORD limit;
+	UINT32 madr;
+	UINT32 base;
+	UINT16 limit;
 
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
@@ -245,8 +245,8 @@ SIDT_Ms(DWORD op)
 void
 MOV_CdRd(void)
 {
-	DWORD op, src;
-	DWORD reg;
+	UINT32 op, src;
+	UINT32 reg;
 	int idx;
 
 	CPU_WORKCLOCK(11);
@@ -277,7 +277,7 @@ MOV_CdRd(void)
 			 */
 
 			/* 下巻 p.182 割り込み 13 - 一般保護例外 */
-			if ((src & (CPU_CR0_PE|CPU_CR0_PG)) == (DWORD)CPU_CR0_PG) {
+			if ((src & (CPU_CR0_PE|CPU_CR0_PG)) == (UINT32)CPU_CR0_PG) {
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
 			if ((src & (CPU_CR0_NW|CPU_CR0_CD)) == CPU_CR0_NW) {
@@ -315,7 +315,7 @@ MOV_CdRd(void)
 				}
 			}
 
-			CPU_STAT_WP = (BYTE)((CPU_CR0 & CPU_CR0_WP) >> 12);
+			CPU_STAT_WP = (CPU_CR0 & CPU_CR0_WP) ? 0x10 : 0;
 			break;
 
 		case 2: /* CR2 */
@@ -381,8 +381,8 @@ MOV_CdRd(void)
 void
 MOV_RdCd(void)
 {
-	DWORD *out;
-	DWORD op;
+	UINT32 *out;
+	UINT32 op;
 	int idx;
 
 	CPU_WORKCLOCK(11);
@@ -427,10 +427,10 @@ MOV_RdCd(void)
 }
 
 void
-LMSW_Ew(DWORD op)
+LMSW_Ew(UINT32 op)
 {
-	DWORD src, madr;
-	DWORD cr0;
+	UINT32 src, madr;
+	UINT32 cr0;
 
 	if (!CPU_STAT_PM || CPU_STAT_CPL == 0) {
 		if (op >= 0xc0) {
@@ -455,17 +455,17 @@ LMSW_Ew(DWORD op)
 }
 
 void
-SMSW_Ew(DWORD op)
+SMSW_Ew(UINT32 op)
 {
-	DWORD madr;
+	UINT32 madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
-		*(reg16_b20[op]) = (WORD)CPU_CR0;
+		*(reg16_b20[op]) = (UINT16)CPU_CR0;
 	} else {
 		CPU_WORKCLOCK(3);
 		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)CPU_CR0);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)CPU_CR0);
 	}
 }
 
@@ -473,7 +473,7 @@ void
 CLTS(void)
 {
 
-	CPU_WORKCLOCK(2);
+	CPU_WORKCLOCK(5);
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL != 0))) {
 		VERBOSE(("CLTS: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
@@ -484,7 +484,7 @@ CLTS(void)
 void
 ARPL_EwGw(void)
 {
-	DWORD op, src, dst, madr;
+	UINT32 op, src, dst, madr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_EA_REG16(op, src);
@@ -495,7 +495,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				*(reg16_b20[op]) = (WORD)dst;
+				*(reg16_b20[op]) = (UINT16)dst;
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -507,7 +507,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -525,11 +525,11 @@ void
 LAR_GwEw(void)
 {
 	selector_t sel;
-	WORD *out;
-	DWORD op;
-	DWORD h;
+	UINT16 *out;
+	UINT32 op;
+	UINT32 h;
 	int rv;
-	WORD selector;
+	UINT16 selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG16_EA(op, selector, out, 5, 11);
@@ -570,7 +570,7 @@ LAR_GwEw(void)
 		}
 
 		h = cpu_kmemoryread_d(sel.addr + 4);
-		*out = (WORD)(h & 0xff00);
+		*out = (UINT16)(h & 0xff00);
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -582,16 +582,16 @@ void
 LAR_GdEw(void)
 {
 	selector_t sel;
-	DWORD *out;
-	DWORD op;
-	DWORD h;
+	UINT32 *out;
+	UINT32 op;
+	UINT32 h;
 	int rv;
-	DWORD selector;
+	UINT32 selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, (WORD)selector);
+		rv = parse_selector(&sel, (UINT16)selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -639,10 +639,10 @@ void
 LSL_GwEw(void)
 {
 	selector_t sel;
-	WORD *out;
-	DWORD op;
+	UINT16 *out;
+	UINT32 op;
 	int rv;
-	WORD selector;
+	UINT16 selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG16_EA(op, selector, out, 5, 11);
@@ -679,7 +679,7 @@ LSL_GwEw(void)
 			}
 		}
 
-		*out = (WORD)sel.desc.u.seg.limit;
+		*out = (UINT16)sel.desc.u.seg.limit;
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -691,15 +691,15 @@ void
 LSL_GdEw(void)
 {
 	selector_t sel;
-	DWORD *out;
-	DWORD op;
+	UINT32 *out;
+	UINT32 op;
 	int rv;
-	DWORD selector;
+	UINT32 selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, (WORD)selector);
+		rv = parse_selector(&sel, (UINT16)selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -740,12 +740,12 @@ LSL_GdEw(void)
 }
 
 void
-VERR_Ew(DWORD op)
+VERR_Ew(UINT32 op)
 {
 	selector_t sel;
-	DWORD madr;
+	UINT32 madr;
 	int rv;
-	WORD selector;
+	UINT16 selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (op >= 0xc0) {
@@ -791,12 +791,12 @@ VERR_Ew(DWORD op)
 }
 
 void
-VERW_Ew(DWORD op)
+VERW_Ew(UINT32 op)
 {
 	selector_t sel;
-	DWORD madr;
+	UINT32 madr;
 	int rv;
-	WORD selector;
+	UINT16 selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (op >= 0xc0) {
@@ -876,9 +876,9 @@ WBINVD(void)
 }
 
 void
-INVLPG(DWORD op)
+INVLPG(UINT32 op)
 {
-	DWORD madr;
+	UINT32 madr;
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
 		VERBOSE(("INVLPG: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));

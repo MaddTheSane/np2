@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.12 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: interface.c,v 1.13 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -43,7 +43,7 @@ ia32_initreg(void)
 {
 	int i;
 
-	CPU_STATSAVE.cpu_inst_default.seg_base = (DWORD)-1;
+	CPU_STATSAVE.cpu_inst_default.seg_base = (UINT32)-1;
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
 	CPU_EFLAG = 2;
@@ -211,7 +211,7 @@ ia32_step(void)
 }
 
 void CPUCALL
-ia32_interrupt(REG8 vect)
+ia32_interrupt(int vect)
 {
 
 	INTERRUPT(vect, 0, 0, 0);
@@ -280,10 +280,10 @@ ia32_printf(const char *str, ...)
 void
 ia32_bioscall(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
-		adrs = (CPU_EIP - 1) + CPU_STAT_SREGBASE(CPU_CS_INDEX);
+		adrs = (CPU_EIP - 1) + CPU_STAT_CS_BASE;
 		if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
 			biosfunc(adrs);
 			if (!CPU_STAT_PM || CPU_STAT_VM86) {

@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.5 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.6 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -102,7 +102,7 @@ PUSHF_Fw(void)
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
-		WORD flags = REAL_FLAGREG;
+		UINT16 flags = REAL_FLAGREG;
 		flags = (flags & ALL_FLAG) | 2;
 		PUSH0_16(flags);
 		return;
@@ -117,7 +117,7 @@ PUSHFD_Fd(void)
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
-		DWORD flags = REAL_EFLAGREG;
+		UINT32 flags = REAL_EFLAGREG;
 		flags = (flags & ALL_EFLAG) | 2;
 		PUSH0_32(flags);
 		return;
@@ -129,7 +129,7 @@ PUSHFD_Fd(void)
 void
 POPF_Fw(void)
 {
-	WORD flags, mask;
+	UINT16 flags, mask;
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM) {
@@ -163,7 +163,7 @@ POPF_Fw(void)
 void
 POPFD_Fd(void)
 {
-	DWORD flags, mask;
+	UINT32 flags, mask;
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM) {

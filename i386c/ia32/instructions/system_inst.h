@@ -1,4 +1,4 @@
-/*	$Id: system_inst.h,v 1.2 2004/01/14 16:14:50 monaka Exp $	*/
+/*	$Id: system_inst.h,v 1.3 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -35,22 +35,22 @@ extern "C" {
 #endif
 
 /* Load/Store system register */
-void LGDT_Ms(DWORD op);
-void SGDT_Ms(DWORD op);
-void LLDT_Ew(DWORD op);
-void SLDT_Ew(DWORD op);
-void LTR_Ew(DWORD op);
-void STR_Ew(DWORD op);
-void LIDT_Ms(DWORD op);
-void SIDT_Ms(DWORD op);
+void LGDT_Ms(UINT32);
+void SGDT_Ms(UINT32);
+void LLDT_Ew(UINT32);
+void SLDT_Ew(UINT32);
+void LTR_Ew(UINT32);
+void STR_Ew(UINT32);
+void LIDT_Ms(UINT32);
+void SIDT_Ms(UINT32);
 
 /* ctrl reg */
 void MOV_CdRd(void);
 void MOV_RdCd(void);
 
 /* msw */
-void LMSW_Ew(DWORD op);
-void SMSW_Ew(DWORD op);
+void LMSW_Ew(UINT32);
+void SMSW_Ew(UINT32);
 
 /* */
 void CLTS(void);
@@ -63,8 +63,8 @@ void LSL_GwEw(void);
 void LSL_GdEw(void);
 
 /* */
-void VERR_Ew(DWORD op);
-void VERW_Ew(DWORD op);
+void VERR_Ew(UINT32);
+void VERW_Ew(UINT32);
 
 /* dbg reg */
 void MOV_DdRd(void);
@@ -75,7 +75,7 @@ void INVD(void);
 void WBINVD(void);
 
 /* */
-void INVLPG(DWORD op);
+void INVLPG(UINT32);
 
 /* */
 void _LOCK(void);

@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: bit_byte.h,v 1.2 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -39,20 +39,20 @@ extern "C" {
  */
 void BT_EwGw(void);
 void BT_EdGd(void);
-void BT_EwIb(DWORD op);
-void BT_EdIb(DWORD op);
+void BT_EwIb(UINT32);
+void BT_EdIb(UINT32);
 void BTS_EwGw(void);
 void BTS_EdGd(void);
-void BTS_EwIb(DWORD op);
-void BTS_EdIb(DWORD op);
+void BTS_EwIb(UINT32);
+void BTS_EdIb(UINT32);
 void BTR_EwGw(void);
 void BTR_EdGd(void);
-void BTR_EwIb(DWORD op);
-void BTR_EdIb(DWORD op);
+void BTR_EwIb(UINT32);
+void BTR_EdIb(UINT32);
 void BTC_EwGw(void);
 void BTC_EdGd(void);
-void BTC_EwIb(DWORD op);
-void BTC_EdIb(DWORD op);
+void BTC_EwIb(UINT32);
+void BTC_EdIb(UINT32);
 
 /*
  * BSx
@@ -92,9 +92,9 @@ void TEST_ALIb(void);
 void TEST_AXIw(void);
 void TEST_EAXId(void);
 
-void TEST_EbIb(DWORD);
-void TEST_EwIw(DWORD);
-void TEST_EdId(DWORD);
+void TEST_EbIb(UINT32);
+void TEST_EwIw(UINT32);
+void TEST_EdId(UINT32);
 
 #ifdef __cplusplus
 }

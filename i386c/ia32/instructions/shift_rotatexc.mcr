@@ -1,4 +1,4 @@
-/*	$Id: shift_rotatexc.mcr,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: shift_rotatexc.mcr,v 1.2 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -32,11 +32,11 @@
 
 #define	XC_BYTE_SAR1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SAR1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -72,11 +72,11 @@ do { \
 
 #define	XC_WORD_SAR1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SAR1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -112,11 +112,11 @@ do { \
 
 #define	XC_DWORD_SAR1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SAR1((d), (s)); \
 	__R = (d); \
@@ -152,12 +152,12 @@ do { \
 
 #define	XC_BYTE_SARCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SARCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -200,12 +200,12 @@ do { \
 
 #define	XC_WORD_SARCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SARCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -248,12 +248,12 @@ do { \
 
 #define	XC_DWORD_SARCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SARCL((d), (s), (c)); \
 	__R = (d); \
@@ -296,11 +296,11 @@ do { \
 
 #define	XC_BYTE_SHR1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SHR1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -336,11 +336,11 @@ do { \
 
 #define	XC_WORD_SHR1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SHR1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -376,11 +376,11 @@ do { \
 
 #define	XC_DWORD_SHR1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SHR1((d), (s)); \
 	__R = (d); \
@@ -416,12 +416,12 @@ do { \
 
 #define	XC_BYTE_SHRCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SHRCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -464,12 +464,12 @@ do { \
 
 #define	XC_WORD_SHRCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SHRCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -512,12 +512,12 @@ do { \
 
 #define	XC_DWORD_SHRCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SHRCL((d), (s), (c)); \
 	__R = (d); \
@@ -560,11 +560,11 @@ do { \
 
 #define	XC_BYTE_SHL1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SHL1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -600,11 +600,11 @@ do { \
 
 #define	XC_WORD_SHL1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SHL1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -640,11 +640,11 @@ do { \
 
 #define	XC_DWORD_SHL1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SHL1((d), (s)); \
 	__R = (d); \
@@ -680,12 +680,12 @@ do { \
 
 #define	XC_BYTE_SHLCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SHLCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -728,12 +728,12 @@ do { \
 
 #define	XC_WORD_SHLCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SHLCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -776,12 +776,12 @@ do { \
 
 #define	XC_DWORD_SHLCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SHLCL((d), (s), (c)); \
 	__R = (d); \
@@ -824,13 +824,13 @@ do { \
 
 #define	XC_WORD_SHRD(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SHRD((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -877,13 +877,13 @@ do { \
 
 #define	XC_DWORD_SHRD(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SHRD((d), (s), (c)); \
 	__R = (d); \
@@ -930,13 +930,13 @@ do { \
 
 #define	XC_WORD_SHLD(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SHLD((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -983,13 +983,13 @@ do { \
 
 #define	XC_DWORD_SHLD(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SHLD((d), (s), (c)); \
 	__R = (d); \
@@ -1036,11 +1036,11 @@ do { \
 
 #define	XC_BYTE_ROR1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_ROR1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -1076,11 +1076,11 @@ do { \
 
 #define	XC_WORD_ROR1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_ROR1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -1116,11 +1116,11 @@ do { \
 
 #define	XC_DWORD_ROR1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_ROR1((d), (s)); \
 	__R = (d); \
@@ -1156,12 +1156,12 @@ do { \
 
 #define	XC_BYTE_RORCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_RORCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -1204,12 +1204,12 @@ do { \
 
 #define	XC_WORD_RORCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_RORCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -1252,12 +1252,12 @@ do { \
 
 #define	XC_DWORD_RORCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_RORCL((d), (s), (c)); \
 	__R = (d); \
@@ -1300,11 +1300,11 @@ do { \
 
 #define	XC_BYTE_ROL1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_ROL1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -1340,11 +1340,11 @@ do { \
 
 #define	XC_WORD_ROL1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_ROL1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -1380,11 +1380,11 @@ do { \
 
 #define	XC_DWORD_ROL1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_ROL1((d), (s)); \
 	__R = (d); \
@@ -1420,12 +1420,12 @@ do { \
 
 #define	XC_BYTE_ROLCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_ROLCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -1468,12 +1468,12 @@ do { \
 
 #define	XC_WORD_ROLCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_ROLCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -1516,12 +1516,12 @@ do { \
 
 #define	XC_DWORD_ROLCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_ROLCL((d), (s), (c)); \
 	__R = (d); \
@@ -1564,12 +1564,12 @@ do { \
 
 #define	XC_BYTE_RCR1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_BYTE_RCR1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -1608,12 +1608,12 @@ do { \
 
 #define	XC_WORD_RCR1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_WORD_RCR1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -1652,12 +1652,12 @@ do { \
 
 #define	XC_DWORD_RCR1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_DWORD_RCR1((d), (s)); \
 	__R = (d); \
@@ -1696,13 +1696,13 @@ do { \
 
 #define	XC_BYTE_RCRCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_BYTE_RCRCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -1749,13 +1749,13 @@ do { \
 
 #define	XC_WORD_RCRCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_WORD_RCRCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -1802,13 +1802,13 @@ do { \
 
 #define	XC_DWORD_RCRCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_DWORD_RCRCL((d), (s), (c)); \
 	__R = (d); \
@@ -1855,12 +1855,12 @@ do { \
 
 #define	XC_BYTE_RCL1(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_BYTE_RCL1((d), (s)); \
 	__R = (d) & 0xff; \
@@ -1899,12 +1899,12 @@ do { \
 
 #define	XC_WORD_RCL1(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_WORD_RCL1((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -1943,12 +1943,12 @@ do { \
 
 #define	XC_DWORD_RCL1(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_DWORD_RCL1((d), (s)); \
 	__R = (d); \
@@ -1987,13 +1987,13 @@ do { \
 
 #define	XC_BYTE_RCLCL(d, s, c) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_BYTE_RCLCL((d), (s), (c)); \
 	__R = (d) & 0xff; \
@@ -2040,13 +2040,13 @@ do { \
 
 #define	XC_WORD_RCLCL(d, s, c) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_WORD_RCLCL((d), (s), (c)); \
 	__R = (d) & 0xffff; \
@@ -2093,13 +2093,13 @@ do { \
 
 #define	XC_DWORD_RCLCL(d, s, c) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __c = (c) & 0xff; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __c = (c) & 0xff; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_DWORD_RCLCL((d), (s), (c)); \
 	__R = (d); \

@@ -1,4 +1,4 @@
-/*	$Id: cpucore.c,v 1.2 2004/02/05 16:42:14 monaka Exp $	*/
+/*	$Id: cpucore.c,v 1.3 2004/02/20 16:09:04 monaka Exp $	*/
 
 #include	"compiler.h"
 #include	"cpucore.h"
@@ -71,14 +71,14 @@ const UINT8 iflags[512] = {
 	0x81, 0x85, 0x85, 0x81, 0x85, 0x81, 0x81, 0x85
 };
 
-BYTE szpflag_w[0x10000];
+UINT8 szpflag_w[0x10000];
 
 
 void i386c_initialize(void) {
 
-	DWORD	i;
-	DWORD	bit;
-	BYTE	f;
+	UINT32	bit;
+	UINT	i;
+	UINT8	f;
 
 	for (i=0; i<0x10000; i++) {
 		f = P_FLAG;

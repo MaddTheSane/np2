@@ -1,4 +1,4 @@
-/*	$Id: misc_inst.c,v 1.6 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: misc_inst.c,v 1.7 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -38,15 +38,15 @@
 void
 LEA_GwM(void)
 {
-	WORD *out;
-	DWORD op, dst;
+	UINT16 *out;
+	UINT32 op, dst;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg16_b53[op];
 		dst = calc_ea_dst(op);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -55,12 +55,12 @@ LEA_GwM(void)
 void
 LEA_GdM(void)
 {
-	DWORD *out;
-	DWORD op, dst;
+	UINT32 *out;
+	UINT32 op, dst;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg32_b53[op];
 		dst = calc_ea_dst(op);
 		*out = dst;
@@ -166,7 +166,7 @@ AddrSize(void)
 void
 _2byte_ESC16(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_2byte[0][op])();
@@ -175,7 +175,7 @@ _2byte_ESC16(void)
 void
 _2byte_ESC32(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_2byte[1][op])();

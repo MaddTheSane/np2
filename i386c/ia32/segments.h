@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.6 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: segments.h,v 1.7 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -40,37 +40,37 @@ extern "C" {
 typedef struct {
 	union {
 		struct {
-			DWORD	segbase;
-			DWORD	segend;
-			DWORD	limit;
+			UINT32	segbase;
+			UINT32	segend;
+			UINT32	limit;
 
-			BYTE	c;	/* 0 = data, 1 = code */
-			BYTE	g;	/* 4k base */
-			BYTE	wr;	/* readable/writable */
-			BYTE	ec;	/* expand down/conforming */
+			UINT8	c;	/* 0 = data, 1 = code */
+			UINT8	g;	/* 4k base */
+			UINT8	wr;	/* readable/writable */
+			UINT8	ec;	/* expand down/conforming */
 		} seg;
 
 		struct {
-			WORD	selector;
-			WORD	w_pad;
-			DWORD	offset;
+			UINT16	selector;
+			UINT16	w_pad;
+			UINT32	offset;
 
-			BYTE	count;		/* parameter count:call gate */
+			UINT8	count;		/* parameter count:call gate */
 
-			BYTE	b_pad[7];
+			UINT8	b_pad[7];
 		} gate;
 	} u;
 
-	BYTE	valid;	/* descriptor valid flag */
-	BYTE	p;	/* avail flag */
+	UINT8	valid;	/* descriptor valid flag */
+	UINT8	p;	/* avail flag */
 
-	BYTE	type;	/* descriptor type */
-	BYTE	dpl;	/* DPL */
-	BYTE	rpl;	/* RPL */
-	BYTE	s;	/* 0 = system, 1 = code/data */
-	BYTE	d;	/* 0 = 16bit, 1 = 32bit */
+	UINT8	type;	/* descriptor type */
+	UINT8	dpl;	/* DPL */
+	UINT8	rpl;	/* RPL */
+	UINT8	s;	/* 0 = system, 1 = code/data */
+	UINT8	d;	/* 0 = 16bit, 1 = 32bit */
 
-	BYTE	flag;
+	UINT8	flag;
 #define	CPU_DESC_FLAG_READABLE	(1 << 0)
 #define	CPU_DESC_FLAG_WRITABLE	(1 << 1)
 } descriptor_t;
@@ -140,7 +140,7 @@ typedef struct {
 
 #define	CPU_SET_SEGDESC_DEFAULT(dscp, idx, selector) \
 do { \
-	(dscp)->u.seg.segbase = (DWORD)(selector) << 4; \
+	(dscp)->u.seg.segbase = (UINT32)(selector) << 4; \
 	(dscp)->u.seg.segend = (dscp)->u.seg.segbase + (dscp)->u.seg.limit; \
 	(dscp)->u.seg.c = ((idx) == CPU_CS_INDEX) ? 1 : 0; \
 	(dscp)->u.seg.g = 0; \
@@ -155,8 +155,8 @@ do { \
 
 #define	CPU_SET_TASK_BUSY(selector, dscp) \
 do { \
-	DWORD addr; \
-	DWORD h; \
+	UINT32 addr; \
+	UINT32 h; \
 	addr = CPU_GDTR_BASE + ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
 	h = cpu_kmemoryread_d(addr + 4); \
 	if (!(h & CPU_TSS_H_BUSY)) { \
@@ -170,8 +170,8 @@ do { \
 
 #define	CPU_SET_TASK_FREE(selector, dscp) \
 do { \
-	DWORD addr; \
-	DWORD h; \
+	UINT32 addr; \
+	UINT32 h; \
 	addr = CPU_GDTR_BASE + ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
 	h = cpu_kmemoryread_d(addr + 4); \
 	if (h & CPU_TSS_H_BUSY) { \
@@ -183,13 +183,13 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-void load_descriptor(descriptor_t *descp, DWORD addr);
+void load_descriptor(descriptor_t *descp, UINT32 addr);
 
 #define	CPU_SET_SEGREG(idx, selector)	load_segreg(idx, selector, GP_EXCEPTION)
-void load_segreg(int idx, WORD selector, int exc);
-void load_ss(WORD selector, descriptor_t* sdp, DWORD cpl);
-void load_cs(WORD selector, descriptor_t* sdp, DWORD cpl);
-void load_ldtr(WORD selector, int exc);
+void load_segreg(int idx, UINT16 selector, int exc);
+void load_ss(UINT16 selector, descriptor_t *sd, UINT cpl);
+void load_cs(UINT16 selector, descriptor_t *sd, UINT cpl);
+void load_ldtr(UINT16 selector, int exc);
 
 
 /*
@@ -200,18 +200,18 @@ void load_ldtr(WORD selector, int exc);
 #define	CPU_SEGMENT_TABLE_IND		(1 << 2)	/* 0 = GDT, 1 = LDT */
 
 typedef struct {
-	WORD		selector;
-	WORD		idx;
-	WORD		rpl;
-	BYTE		ldt;
-	BYTE		pad;
+	UINT16		selector;
+	UINT16		idx;
+	UINT16		rpl;
+	UINT8		ldt;
+	UINT8		pad;
 
-	DWORD		addr;		/* descriptor linear address */
+	UINT32		addr;		/* descriptor linear address */
 
 	descriptor_t	desc;
 } selector_t;
 
-int parse_selector(selector_t *ssp, WORD selector);
+int parse_selector(selector_t *ssp, UINT16 selector);
 int selector_is_not_present(selector_t *ssp);
 
 #ifdef __cplusplus

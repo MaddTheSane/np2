@@ -1,4 +1,4 @@
-/*	$Id: task.h,v 1.4 2004/02/09 16:13:13 monaka Exp $	*/
+/*	$Id: task.h,v 1.5 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -34,9 +34,9 @@
 extern "C" {
 #endif
 
-void load_tr(WORD selector);
-void get_stack_pointer_from_tss(DWORD pl, WORD* new_ss, DWORD* new_esp);
-WORD get_backlink_selector_from_tss(void);
+void load_tr(UINT16 selector);
+void get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp);
+UINT16 get_backlink_selector_from_tss(void);
 
 /* task_switch type */
 enum task_switch_type {

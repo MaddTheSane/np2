@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.7 2004/02/12 15:46:14 monaka Exp $	*/
+/*	$Id: interface.h,v 1.8 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,13 +30,6 @@
 #ifndef	IA32_CPU_INTERFACE_H__
 #define	IA32_CPU_INTERFACE_H__
 
-typedef signed char		SBYTE;
-typedef signed short		SWORD;
-typedef signed int		SDWORD;
-
-typedef	UINT64			QWORD;
-typedef	SINT64			SQWORD;
-
 #if !defined(QWORD_CONST)
 #define	QWORD_CONST(v)	v ## ULL
 #define	SQWORD_CONST(v)	v ## LL
@@ -54,7 +47,7 @@ typedef	SINT64			SQWORD;
 #define	CPU_EXECV30()		ia32()
 #define	CPU_SHUT()		ia32shut()
 #define	CPU_SETEXTSIZE(size)	ia32_setextsize((UINT32)size << 20)
-// #define CPU_SETEMM(frame, addr)
+#define CPU_SETEMM(frame, addr)
 
 #define	cpu_memorywrite(a,v)	i286_memorywrite(a,v)
 #define	cpu_memorywrite_w(a,v)	i286_memorywrite_w(a,v)
@@ -64,9 +57,5 @@ typedef	SINT64			SQWORD;
 #define	cpu_memoryread_d(a)	i286_memoryread_d(a)
 
 void i386c_initialize(void);
-
-void FASTCALL msgbox_str(char *msg);
-void FASTCALL msgbox_mem(DWORD no);
-void put_cpuinfo(void);
 
 #endif	/* IA32_CPU_INTERFACE_H__ */

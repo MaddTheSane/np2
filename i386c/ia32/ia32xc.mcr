@@ -1,4 +1,4 @@
-/*	$Id: ia32xc.mcr,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: ia32xc.mcr,v 1.2 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,16 +37,16 @@
 /*
  * arith
  */
-#define	XC_ADDBYTE(r, d, s) \
+#define	XC_ADD_BYTE(r, d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ADDBYTE((r), (d), (s)); \
+	_ADD_BYTE((r), (d), (s)); \
 	__R = (r) & 0xff; \
 	\
 	__asm__ __volatile__ ( \
@@ -65,12 +65,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZAPC_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ADDBYTE: __s = %02x, __d = %02x", __s, __d); \
-		ia32_warning("XC_ADDBYTE: __R = %02x, __r = %02x", \
+		ia32_warning("XC_ADD_BYTE: __s = %02x, __d = %02x", __s, __d); \
+		ia32_warning("XC_ADD_BYTE: __R = %02x, __r = %02x", \
 		    __R, __r); \
-		ia32_warning("XC_ADDBYTE: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_ADD_BYTE: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZAPC_FLAG); \
-		ia32_warning("XC_ADDBYTE: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_ADD_BYTE: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZAPC_FLAG) == 0); \
@@ -78,16 +78,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ADDWORD(r, d, s) \
+#define	XC_ADD_WORD(r, d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ADDWORD((r), (d), (s)); \
+	_ADD_WORD((r), (d), (s)); \
 	__R = (r) & 0xffff; \
 	\
 	__asm__ __volatile__ ( \
@@ -106,12 +106,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZAPC_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ADDWORD: __s = %04x, __d = %04x", __s, __d); \
-		ia32_warning("XC_ADDWORD: __R = %04x, __r = %04x", \
+		ia32_warning("XC_ADD_WORD: __s = %04x, __d = %04x", __s, __d); \
+		ia32_warning("XC_ADD_WORD: __R = %04x, __r = %04x", \
 		    __R, __r); \
-		ia32_warning("XC_ADDWORD: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_ADD_WORD: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZAPC_FLAG); \
-		ia32_warning("XC_ADDWORD: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_ADD_WORD: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZAPC_FLAG) == 0); \
@@ -119,16 +119,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ADDDWORD(r, d, s) \
+#define	XC_ADD_DWORD(r, d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ADDDWORD((r), (d), (s)); \
+	_ADD_DWORD((r), (d), (s)); \
 	__R = (r); \
 	\
 	__asm__ __volatile__ ( \
@@ -147,12 +147,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZAPC_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ADDDWORD: __s = %08x, __d = %08x", __s, __d); \
-		ia32_warning("XC_ADDDWORD: __R = %08x, __r = %08x", \
+		ia32_warning("XC_ADD_DWORD: __s = %08x, __d = %08x", __s, __d);\
+		ia32_warning("XC_ADD_DWORD: __R = %08x, __r = %08x", \
 		    __R, __r); \
-		ia32_warning("XC_ADDDWORD: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_ADD_DWORD: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZAPC_FLAG); \
-		ia32_warning("XC_ADDDWORD: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_ADD_DWORD: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZAPC_FLAG) == 0); \
@@ -160,16 +160,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ORBYTE(d, s) \
+#define	XC_OR_BYTE(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ORBYTE((d), (s)); \
+	_OR_BYTE((d), (s)); \
 	__R = (d) & 0xff; \
 	\
 	__asm__ __volatile__ ( \
@@ -188,12 +188,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZP_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ORBYTE: __s = %02x, __d = %02x", __s, __d); \
-		ia32_warning("XC_ORBYTE: __R = %02x, __r = %02x", \
+		ia32_warning("XC_OR_BYTE: __s = %02x, __d = %02x", __s, __d); \
+		ia32_warning("XC_OR_BYTE: __R = %02x, __r = %02x", \
 		    __R, __r); \
-		ia32_warning("XC_ORBYTE: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_OR_BYTE: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZP_FLAG); \
-		ia32_warning("XC_ORBYTE: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_OR_BYTE: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZP_FLAG) == 0); \
@@ -201,16 +201,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ORWORD(d, s) \
+#define	XC_OR_WORD(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ORWORD((d), (s)); \
+	_OR_WORD((d), (s)); \
 	__R = (d) & 0xffff; \
 	\
 	__asm__ __volatile__ ( \
@@ -229,12 +229,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZP_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ORWORD: __s = %04x, __d = %04x", __s, __d); \
-		ia32_warning("XC_ORWORD: __R = %04x, __r = %04x", \
+		ia32_warning("XC_OR_WORD: __s = %04x, __d = %04x", __s, __d); \
+		ia32_warning("XC_OR_WORD: __R = %04x, __r = %04x", \
 		    __R, __r); \
-		ia32_warning("XC_ORWORD: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_OR_WORD: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZP_FLAG); \
-		ia32_warning("XC_ORWORD: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_OR_WORD: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZP_FLAG) == 0); \
@@ -242,16 +242,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ORDWORD(d, s) \
+#define	XC_OR_DWORD(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
 	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ORDWORD((d), (s)); \
+	_OR_DWORD((d), (s)); \
 	__R = (d); \
 	\
 	__asm__ __volatile__ ( \
@@ -270,12 +270,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZP_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ORDWORD: __s = %08x, __d = %08x", __s, __d); \
-		ia32_warning("XC_ORDWORD: __R = %08x, __r = %08x", \
+		ia32_warning("XC_OR_DWORD: __s = %08x, __d = %08x", __s, __d); \
+		ia32_warning("XC_OR_DWORD: __R = %08x, __r = %08x", \
 		    __R, __r); \
-		ia32_warning("XC_ORDWORD: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_OR_DWORD: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZP_FLAG); \
-		ia32_warning("XC_ORDWORD: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_OR_DWORD: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZP_FLAG) == 0); \
@@ -284,17 +284,17 @@ do { \
 } while (/*CONSTCOND*/ 0)
 
 /* flag no check */
-#define	XC_ADCBYTE(r, d, s) \
+#define	XC_ADC_BYTE(r, d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
-	_ADCBYTE((r), (d), (s)); \
+	_ADC_BYTE((r), (d), (s)); \
 	__R = (r) & 0xff; \
 	\
 	__asm__ __volatile__ ( \
@@ -317,12 +317,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZAPC_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ADCBYTE: __s = %02x, __d = %02x", __s, __d); \
-		ia32_warning("XC_ADCBYTE: __R = %02x, __r = %02x", \
+		ia32_warning("XC_ADC_BYTE: __s = %02x, __d = %02x", __s, __d); \
+		ia32_warning("XC_ADC_BYTE: __R = %02x, __r = %02x", \
 		    __R, __r); \
-		ia32_warning("XC_ADCBYTE: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_ADC_BYTE: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZAPC_FLAG); \
-		ia32_warning("XC_ADCBYTE: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_ADC_BYTE: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZAPC_FLAG) == 0); \
@@ -330,17 +330,17 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ADCWORD(r, d, s) \
+#define	XC_ADC_WORD(r, d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
-	_ADCWORD((r), (d), (s)); \
+	_ADC_WORD((r), (d), (s)); \
 	__R = (r) & 0xffff; \
 	\
 	__asm__ __volatile__ ( \
@@ -363,12 +363,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZAPC_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ADCWORD: __s = %04x, __d = %04x", __s, __d); \
-		ia32_warning("XC_ADCWORD: __R = %04x, __r = %04x", \
+		ia32_warning("XC_ADC_WORD: __s = %04x, __d = %04x", __s, __d); \
+		ia32_warning("XC_ADC_WORD: __R = %04x, __r = %04x", \
 		    __R, __r); \
-		ia32_warning("XC_ADCWORD: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_ADC_WORD: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZAPC_FLAG); \
-		ia32_warning("XC_ADCWORD: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_ADC_WORD: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZAPC_FLAG) == 0); \
@@ -376,17 +376,17 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ADCDWORD(r, d, s) \
+#define	XC_ADC_DWORD(r, d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
-	_ADCDWORD((r), (d), (s)); \
+	_ADC_DWORD((r), (d), (s)); \
 	__R = (r); \
 	\
 	__asm__ __volatile__ ( \
@@ -409,12 +409,12 @@ do { \
 	if ((__R != __r) || \
 	    (((__f ^ CPU_FLAGL) & SZAPC_FLAG) != 0) || \
 	    (!CPU_OV != !__o)) { \
-		ia32_warning("XC_ADCDWORD: __s = %08x, __d = %08x", __s, __d); \
-		ia32_warning("XC_ADCDWORD: __R = %08x, __r = %08x", \
+		ia32_warning("XC_ADC_DWORD: __s = %08x, __d = %08x", __s, __d);\
+		ia32_warning("XC_ADC_DWORD: __R = %08x, __r = %08x", \
 		    __R, __r); \
-		ia32_warning("XC_ADCDWORD: CPU_FLAGL = %02x, __f = %02x, " \
+		ia32_warning("XC_ADC_DWORD: CPU_FLAGL = %02x, __f = %02x, " \
 		    "mask = %02x", CPU_FLAGL, __f, SZAPC_FLAG); \
-		ia32_warning("XC_ADCDWORD: CPU_OV = %s, __o = %s", \
+		ia32_warning("XC_ADC_DWORD: CPU_OV = %s, __o = %s", \
 		    CPU_OV ? "OV" : "NV", __o ? "OV" : "NV"); \
 		assert(__R == __r); \
 		assert(((__f ^ CPU_FLAGL) & SZAPC_FLAG) == 0); \
@@ -425,13 +425,13 @@ do { \
 /* flag no check */
 #define	XC_BYTE_SBB(r, d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_BYTE_SBB((r), (d), (s)); \
 	__R = (r) & 0xff; \
@@ -471,13 +471,13 @@ do { \
 
 #define	XC_WORD_SBB(r, d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_WORD_SBB((r), (d), (s)); \
 	__R = (r) & 0xffff; \
@@ -517,13 +517,13 @@ do { \
 
 #define	XC_DWORD_SBB(r, d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
-	BYTE __xc_flagl = CPU_FLAGL; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
+	UINT8 __xc_flagl = CPU_FLAGL; \
 	\
 	_DWORD_SBB((r), (d), (s)); \
 	__R = (r); \
@@ -561,16 +561,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ANDBYTE(d, s) \
+#define	XC_AND_BYTE(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ANDBYTE((d), (s)); \
+	_AND_BYTE((d), (s)); \
 	__R = (d) & 0xff; \
 	\
 	__asm__ __volatile__ ( \
@@ -604,16 +604,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ANDWORD(d, s) \
+#define	XC_AND_WORD(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ANDWORD((d), (s)); \
+	_AND_WORD((d), (s)); \
 	__R = (d) & 0xffff; \
 	\
 	__asm__ __volatile__ ( \
@@ -647,16 +647,16 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	XC_ANDDWORD(d, s) \
+#define	XC_AND_DWORD(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
-	_ANDDWORD((d), (s)); \
+	_AND_DWORD((d), (s)); \
 	__R = (d); \
 	\
 	__asm__ __volatile__ ( \
@@ -692,12 +692,12 @@ do { \
 
 #define	XC_BYTE_SUB(r, d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_SUB((r), (d), (s)); \
 	__R = (r) & 0xff; \
@@ -735,12 +735,12 @@ do { \
 
 #define	XC_WORD_SUB(r, d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_SUB((r), (d), (s)); \
 	__R = (r) & 0xffff; \
@@ -778,12 +778,12 @@ do { \
 
 #define	XC_DWORD_SUB(r, d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_SUB((r), (d), (s)); \
 	__R = (r); \
@@ -821,12 +821,12 @@ do { \
 
 #define	XC_BYTE_XOR(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	BYTE __r = __d; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT8 __r = __d; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_XOR((d), (s)); \
 	__R = (d) & 0xff; \
@@ -864,12 +864,12 @@ do { \
 
 #define	XC_WORD_XOR(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	WORD __r = __d; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT16 __r = __d; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_XOR((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -907,12 +907,12 @@ do { \
 
 #define	XC_DWORD_XOR(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r = __d; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r = __d; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_XOR((d), (s)); \
 	__R = (d); \
@@ -950,11 +950,11 @@ do { \
 
 #define	XC_BYTE_NEG(d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_NEG((d), (s)); \
 	__R = (d) & 0xff; \
@@ -990,11 +990,11 @@ do { \
 
 #define	XC_WORD_NEG(d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_NEG((d), (s)); \
 	__R = (d) & 0xffff; \
@@ -1030,11 +1030,11 @@ do { \
 
 #define	XC_DWORD_NEG(d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_NEG((d), (s)); \
 	__R = (d); \
@@ -1070,12 +1070,12 @@ do { \
 
 #define	XC_BYTE_MUL(r, d, s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __d = (d) & 0xff; \
-	WORD __r; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __d = (d) & 0xff; \
+	UINT16 __r; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_MUL((r), (d), (s)); \
 	__R = (r) & 0xffff; \
@@ -1114,12 +1114,12 @@ do { \
 
 #define	XC_WORD_MUL(r, d, s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __d = (d) & 0xffff; \
-	DWORD __r; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __d = (d) & 0xffff; \
+	UINT32 __r; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_MUL((r), (d), (s)); \
 	__R = (r); \
@@ -1163,13 +1163,13 @@ do { \
 
 #define	XC_DWORD_MUL(r, d, s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __d = (d); \
-	DWORD __r; \
-	DWORD __h; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __d = (d); \
+	UINT32 __r; \
+	UINT32 __h; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_MUL((r), (d), (s)); \
 	__R = (r); \
@@ -1214,12 +1214,12 @@ do { \
 
 #define	XC_BYTE_IMUL(r, d, s) \
 do { \
-	SBYTE __s = (s) & 0xff; \
-	SBYTE __d = (d) & 0xff; \
-	SWORD __R; \
-	SWORD __r; \
-	BYTE __f; \
-	BYTE __o; \
+	SINT8 __s = (s) & 0xff; \
+	SINT8 __d = (d) & 0xff; \
+	SINT16 __R; \
+	SINT16 __r; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_IMUL((r), (d), (s)); \
 	__R = (r) & 0xffff; \
@@ -1258,12 +1258,12 @@ do { \
 
 #define	XC_WORD_IMUL(r, d, s) \
 do { \
-	SWORD __s = (s) & 0xffff; \
-	SWORD __d = (d) & 0xffff; \
-	SDWORD __r; \
-	SDWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	SINT16 __s = (s) & 0xffff; \
+	SINT16 __d = (d) & 0xffff; \
+	SINT32 __r; \
+	SINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_IMUL((r), (d), (s)); \
 	__R = (r); \
@@ -1307,13 +1307,13 @@ do { \
 
 #define	XC_DWORD_IMUL(r, d, s) \
 do { \
-	SQWORD __R; \
-	SDWORD __s = (s); \
-	SDWORD __d = (d); \
-	DWORD __r; \
-	DWORD __h; \
-	BYTE __f; \
-	BYTE __o; \
+	SINT64 __R; \
+	SINT32 __s = (s); \
+	SINT32 __d = (d); \
+	UINT32 __r; \
+	UINT32 __h; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_IMUL((r), (d), (s)); \
 	__R = (r); \
@@ -1360,11 +1360,11 @@ do { \
 /* flag no check */
 #define	XC_BYTE_INC(s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_INC((s)); \
 	__R = (s) & 0xff; \
@@ -1400,11 +1400,11 @@ do { \
 
 #define	XC_WORD_INC(s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_INC((s)); \
 	__R = (s) & 0xffff; \
@@ -1440,11 +1440,11 @@ do { \
 
 #define	XC_DWORD_INC(s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_INC((s)); \
 	__R = (s); \
@@ -1481,11 +1481,11 @@ do { \
 /* flag no check */
 #define	XC_BYTE_DEC(s) \
 do { \
-	BYTE __s = (s) & 0xff; \
-	BYTE __r = __s; \
-	BYTE __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT8 __s = (s) & 0xff; \
+	UINT8 __r = __s; \
+	UINT8 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_BYTE_DEC((s)); \
 	__R = (s) & 0xff; \
@@ -1521,11 +1521,11 @@ do { \
 
 #define	XC_WORD_DEC(s) \
 do { \
-	WORD __s = (s) & 0xffff; \
-	WORD __r = __s; \
-	WORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT16 __s = (s) & 0xffff; \
+	UINT16 __r = __s; \
+	UINT16 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_WORD_DEC((s)); \
 	__R = (s) & 0xffff; \
@@ -1561,11 +1561,11 @@ do { \
 
 #define	XC_DWORD_DEC(s) \
 do { \
-	DWORD __s = (s); \
-	DWORD __r = __s; \
-	DWORD __R; \
-	BYTE __f; \
-	BYTE __o; \
+	UINT32 __s = (s); \
+	UINT32 __r = __s; \
+	UINT32 __R; \
+	UINT8 __f; \
+	UINT8 __o; \
 	\
 	_DWORD_DEC((s)); \
 	__R = (s); \
@@ -1599,21 +1599,21 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	ADDBYTE(r, d, s)	XC_ADDBYTE(r, d, s)
-#define	ADDWORD(r, d, s)	XC_ADDWORD(r, d, s)
-#define	ADDDWORD(r, d, s)	XC_ADDDWORD(r, d, s)
-#define	ORBYTE(d, s)		XC_ORBYTE(d, s)
-#define	ORWORD(d, s)		XC_ORWORD(d, s)
-#define	ORDWORD(d, s)		XC_ORDWORD(d, s)
-#define	ADCBYTE(r, d, s)	XC_ADCBYTE(r, d, s)
-#define	ADCWORD(r, d, s)	XC_ADCWORD(r, d, s)
-#define	ADCDWORD(r, d, s)	XC_ADCDWORD(r, d, s)
+#define	ADD_BYTE(r, d, s)	XC_ADD_BYTE(r, d, s)
+#define	ADD_WORD(r, d, s)	XC_ADD_WORD(r, d, s)
+#define	ADD_DWORD(r, d, s)	XC_ADD_DWORD(r, d, s)
+#define	OR_BYTE(d, s)		XC_OR_BYTE(d, s)
+#define	OR_WORD(d, s)		XC_OR_WORD(d, s)
+#define	OR_DWORD(d, s)		XC_OR_DWORD(d, s)
+#define	ADC_BYTE(r, d, s)	XC_ADC_BYTE(r, d, s)
+#define	ADC_WORD(r, d, s)	XC_ADC_WORD(r, d, s)
+#define	ADC_DWORD(r, d, s)	XC_ADC_DWORD(r, d, s)
 #define	BYTE_SBB(r, d, s)	XC_BYTE_SBB(r, d, s)
 #define	WORD_SBB(r, d, s)	XC_WORD_SBB(r, d, s)
 #define	DWORD_SBB(r, d, s)	XC_DWORD_SBB(r, d, s)
-#define	ANDBYTE(d, s)		XC_ANDBYTE(d, s)
-#define	ANDWORD(d, s)		XC_ANDWORD(d, s)
-#define	ANDDWORD(d, s)		XC_ANDDWORD(d, s)
+#define	AND_BYTE(d, s)		XC_AND_BYTE(d, s)
+#define	AND_WORD(d, s)		XC_AND_WORD(d, s)
+#define	AND_DWORD(d, s)		XC_AND_DWORD(d, s)
 #define	BYTE_SUB(r, d, s)	XC_BYTE_SUB(r, d, s)
 #define	WORD_SUB(r, d, s)	XC_WORD_SUB(r, d, s)
 #define	DWORD_SUB(r, d, s)	XC_DWORD_SUB(r, d, s)
@@ -1636,26 +1636,26 @@ do { \
 #define	WORD_DEC(s)		XC_WORD_DEC(s)
 #define	DWORD_DEC(s)		XC_DWORD_DEC(s)
 
-#define	XC_STORE_FLAGL()	WORD __xc_flagl = CPU_FLAGL
+#define	XC_STORE_FLAGL()	UINT8 __xc_flagl = CPU_FLAGL
 
 #else	/* !(IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__)) */
 
-#define	ADDBYTE(r, d, s)	_ADDBYTE(r, d, s)
-#define	ADDWORD(r, d, s)	_ADDWORD(r, d, s)
-#define	ADDDWORD(r, d, s)	_ADDDWORD(r, d, s)
-#define	ORBYTE(d, s)		_ORBYTE(d, s)
-#define	ORWORD(d, s)		_ORWORD(d, s)
-#define	ORDWORD(d, s)		_ORDWORD(d, s)
-#define	ADCBYTE(r, d, s)	_ADCBYTE(r, d, s)
-#define	ADCWORD(r, d, s)	_ADCWORD(r, d, s)
-#define	ADCDWORD(r, d, s)	_ADCDWORD(r, d, s)
+#define	ADD_BYTE(r, d, s)	_ADD_BYTE(r, d, s)
+#define	ADD_WORD(r, d, s)	_ADD_WORD(r, d, s)
+#define	ADD_DWORD(r, d, s)	_ADD_DWORD(r, d, s)
+#define	OR_BYTE(d, s)		_OR_BYTE(d, s)
+#define	OR_WORD(d, s)		_OR_WORD(d, s)
+#define	OR_DWORD(d, s)		_OR_DWORD(d, s)
+#define	ADC_BYTE(r, d, s)	_ADC_BYTE(r, d, s)
+#define	ADC_WORD(r, d, s)	_ADC_WORD(r, d, s)
+#define	ADC_DWORD(r, d, s)	_ADC_DWORD(r, d, s)
 #define	BYTE_SBB(r, d, s)	_BYTE_SBB(r, d, s)
 #define	WORD_SBB(r, d, s)	_WORD_SBB(r, d, s)
 #define	DWORD_SBB(r, d, s)	_DWORD_SBB(r, d, s)
-#define	ANDBYTE(d, s)		_ANDBYTE(d, s)
-#define	ANDWORD(d, s)		_ANDWORD(d, s)
-#define	ANDDWORD(d, s)		_ANDDWORD(d, s)
-#define	BYTE_SUB(r, d, s)	_BYTE_SUB(r, d, s)
+#define	AND_BYTE(d, s)		_AND_BYTE(d, s)
+#define	AND_WORD(d, s)		_AND_WORD(d, s)
+#define	ANDDWORD(d, s)		_AND_DWORD(d, s)
+#define	BYT_E_SUB(r, d, s)	_BYTE_SUB(r, d, s)
 #define	WORD_SUB(r, d, s)	_WORD_SUB(r, d, s)
 #define	DWORD_SUB(r, d, s)	_DWORD_SUB(r, d, s)
 #define	BYTE_XOR(d, s)		_BYTE_XOR(d, s)

@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.7 2004/02/19 03:04:01 yui Exp $	*/
+/*	$Id: debug.c,v 1.8 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -41,17 +41,17 @@ cpu_reg2str(void)
 {
 	static char buf[512];
 
-	sprintf(buf,
-	    "eax=%08lx ebx=%08lx ecx=%08lx edx=%08lx\n"
-	    "esp=%08lx ebp=%08lx esi=%08lx edi=%08lx\n"
-	    "eip=%08lx prev_eip=%08lx\n"
+	snprintf(buf, sizeof(buf),
+	    "eax=%08x ebx=%08x ecx=%08x edx=%08x\n"
+	    "esp=%08x ebp=%08x esi=%08x edi=%08x\n"
+	    "eip=%08x prev_eip=%08x\n"
 	    "cs=%04x ss=%04x ds=%04x es=%04x fs=%04x gs=%04x\n"
-	    "eflag=%08lx "
+	    "eflag=%08x "
 	    /* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
 	    "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d %s %s %s TF=%d %s %s %s %s %s ]\n"
-	    "gdtr=%08lx:%04x idtr=%08lx:%04x\n"
-	    "ldtr=%04x(%08lx:%04lx) tr=%04x(%08lx:%04lx)\n"
-	    "cr0=%08lx cr1=%08lx cr2=%08lx cr3=%08lx cr4=%08lx mxcsr=%08lx",
+	    "gdtr=%08x:%04x idtr=%08x:%04x\n"
+	    "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
+	    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x",
 	    CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
 	    CPU_ESP, CPU_EBP,CPU_ESI, CPU_EDI,
 	    CPU_EIP, CPU_PREV_EIP,
@@ -94,13 +94,13 @@ fpu_reg2str(void)
 	strcpy(buf, "st=\n");
 	for (no = 0; no < 8; no++) {
 		for (i = 9; i >= 0; i--) {
-			sprintf(tmp, "%02x", FPU_ST[no][i]);
+			snprintf(tmp, sizeof(tmp), "%02x", FPU_ST[no][i]);
 			strcat(buf, tmp);
 		}
 		strcat(buf, "\n");
 	}
 
-	sprintf(tmp,
+	snprintf(tmp, sizeof(tmp),
 	    "ctrl=%04x  status=%04x  tag=%04x\n"
 	    "inst=%08x%04x  data=%08x%04x  op=%03x\n",
 	    FPU_CTRLWORD,
@@ -120,7 +120,8 @@ a20str(void)
 {
 	static char buf[32];
 
-	sprintf(buf, "a20line=%s\n", CPU_STAT_ADRSMASK == 0xffffffff ? "enable" : "disable");
+	snprintf(buf, sizeof(buf), "a20line=%s\n",
+	    (CPU_STAT_ADRSMASK == 0xffffffff) ? "enable" : "disable");
 	return buf;
 }
 
@@ -155,13 +156,13 @@ dbg_printf(const char *str, ...)
 }
 
 void
-memory_dump(int idx, DWORD madr)
+memory_dump(int idx, UINT32 madr)
 {
-	DWORD addr;
+	UINT32 addr;
 	size_t size;
-	unsigned char buf[16];
 	size_t s, i;
-	BYTE p;
+	UINT8 buf[16];
+	UINT8 c;
 
 	if (madr < 0x80) {
 		size = madr + 0x80;
@@ -177,10 +178,10 @@ memory_dump(int idx, DWORD madr)
 			memset(buf, '.', sizeof(buf));
 		}
 
-		p = cpu_vmemoryread(idx, addr + s);
-		VERBOSE(("%02x ", p));
-		if (p >= 0x20 && p <= 0x7e)
-			buf[s % 16] = p;
+		c = cpu_vmemoryread(idx, addr + s);
+		VERBOSE(("%02x ", c));
+		if (c >= 0x20 && c <= 0x7e)
+			buf[s % 16] = c;
 
 		if ((s % 16) == 15) {
 			VERBOSE(("| "));
@@ -192,12 +193,12 @@ memory_dump(int idx, DWORD madr)
 }
 
 void
-gdtr_dump(DWORD base, DWORD limit)
+gdtr_dump(UINT32 base, UINT limit)
 {
-	DWORD v[2];
-	DWORD i;
+	UINT32 v[2];
+	UINT i;
 
-	VERBOSE(("GDTR_DUMP: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x",base,limit));
+	VERBOSE(("GDTR_DUMP: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x", base, limit));
 
 	for (i = 0; i < limit; i += 8) {
 		v[0] = cpu_kmemoryread_d(base + i);
@@ -207,12 +208,12 @@ gdtr_dump(DWORD base, DWORD limit)
 }
 
 void
-ldtr_dump(DWORD base, DWORD limit)
+ldtr_dump(UINT32 base, UINT limit)
 {
-	DWORD v[2];
-	DWORD i;
+	UINT32 v[2];
+	UINT i;
 
-	VERBOSE(("LDTR_DUMP: LDTR_BASE = 0x%08x, LDTR_LIMIT = 0x%04x",base,limit));
+	VERBOSE(("LDTR_DUMP: LDTR_BASE = 0x%08x, LDTR_LIMIT = 0x%04x", base, limit));
 
 	for (i = 0; i < limit; i += 8) {
 		v[0] = cpu_kmemoryread_d(base + i);
@@ -222,12 +223,12 @@ ldtr_dump(DWORD base, DWORD limit)
 }
 
 void
-idtr_dump(DWORD base, DWORD limit)
+idtr_dump(UINT32 base, UINT limit)
 {
-	DWORD v[2];
-	DWORD i;
+	UINT32 v[2];
+	UINT i;
 
-	VERBOSE(("IDTR_DUMP: IDTR_BASE = 0x%08x, IDTR_LIMIT = 0x%04x",base,limit));
+	VERBOSE(("IDTR_DUMP: IDTR_BASE = 0x%08x, IDTR_LIMIT = 0x%04x", base, limit));
 
 	for (i = 0; i < limit; i += 8) {
 		v[0] = cpu_kmemoryread_d(base + i);
@@ -237,10 +238,10 @@ idtr_dump(DWORD base, DWORD limit)
 }
 
 void
-tr_dump(WORD selector, DWORD base, DWORD limit)
+tr_dump(UINT16 selector, UINT32 base, UINT limit)
 {
-	DWORD v;
-	DWORD i;
+	UINT32 v;
+	UINT i;
 
 	VERBOSE(("TR_DUMP: selector = %04x", selector));
 
@@ -250,11 +251,11 @@ tr_dump(WORD selector, DWORD base, DWORD limit)
 	}
 }
 
-DWORD
-pde_dump(DWORD base, int idx)
+UINT32
+pde_dump(UINT32 base, int idx)
 {
-	DWORD paddr;
-	DWORD v;
+	UINT32 paddr;
+	UINT32 v;
 	int i;
 
 	if (idx < 0 && idx > -8192) {
@@ -278,14 +279,14 @@ pde_dump(DWORD base, int idx)
 	return paddr;
 }
 
-DWORD
-convert_laddr_to_paddr(DWORD laddr)
+UINT32
+convert_laddr_to_paddr(UINT32 laddr)
 {
-	DWORD paddr;	/* physical address */
-	DWORD pde_addr;	/* page directory entry address */
-	DWORD pde;	/* page directory entry */
-	DWORD pte_addr;	/* page table entry address */
-	DWORD pte;	/* page table entry */
+	UINT32 paddr;		/* physical address */
+	UINT32 pde_addr;	/* page directory entry address */
+	UINT32 pde;		/* page directory entry */
+	UINT32 pte_addr;	/* page table entry address */
+	UINT32 pte;		/* page table entry */
 
 	pde_addr = (CPU_CR3 & CPU_CR3_PD_MASK) | ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
@@ -302,11 +303,11 @@ convert_laddr_to_paddr(DWORD laddr)
 	return paddr;
 }
 
-DWORD
-convert_vaddr_to_paddr(unsigned int idx, DWORD offset)
+UINT32
+convert_vaddr_to_paddr(unsigned int idx, UINT32 offset)
 {
 	descriptor_t *sdp;
-	DWORD laddr;
+	UINT32 laddr;
 
 	if (idx < CPU_SEGREG_NUM) {
 		sdp = &CPU_STAT_SREG(idx);

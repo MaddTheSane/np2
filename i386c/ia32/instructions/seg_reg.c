@@ -1,4 +1,4 @@
-/*	$Id: seg_reg.c,v 1.3 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: seg_reg.c,v 1.4 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,9 +37,9 @@
 void
 LES_GwMp(void)
 {
-	WORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT16 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -48,7 +48,7 @@ LES_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_ES_INDEX, sreg);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -57,9 +57,9 @@ LES_GwMp(void)
 void
 LES_GdMp(void)
 {
-	DWORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT32 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -77,9 +77,9 @@ LES_GdMp(void)
 void
 LSS_GwMp(void)
 {
-	WORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT16 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -88,7 +88,7 @@ LSS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_SS_INDEX, sreg);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -97,9 +97,9 @@ LSS_GwMp(void)
 void
 LSS_GdMp(void)
 {
-	DWORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT32 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -117,9 +117,9 @@ LSS_GdMp(void)
 void
 LDS_GwMp(void)
 {
-	WORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT16 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -128,7 +128,7 @@ LDS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_DS_INDEX, sreg);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -137,9 +137,9 @@ LDS_GwMp(void)
 void
 LDS_GdMp(void)
 {
-	DWORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT32 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -157,9 +157,9 @@ LDS_GdMp(void)
 void
 LFS_GwMp(void)
 {
-	WORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT16 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -168,7 +168,7 @@ LFS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_FS_INDEX, sreg);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -177,9 +177,9 @@ LFS_GwMp(void)
 void
 LFS_GdMp(void)
 {
-	DWORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT32 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -197,9 +197,9 @@ LFS_GdMp(void)
 void
 LGS_GwMp(void)
 {
-	WORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT16 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
@@ -208,7 +208,7 @@ LGS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_GS_INDEX, sreg);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -217,9 +217,9 @@ LGS_GwMp(void)
 void
 LGS_GdMp(void)
 {
-	DWORD *out;
-	DWORD op, dst, madr;
-	WORD sreg;
+	UINT32 *out;
+	UINT32 op, dst, madr;
+	UINT16 sreg;
 
 	GET_PCBYTE(op);
 	if (op < 0xc0) {

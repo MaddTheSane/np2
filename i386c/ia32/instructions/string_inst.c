@@ -1,4 +1,4 @@
-/*	$Id: string_inst.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: string_inst.c,v 1.2 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -38,7 +38,7 @@
 void
 MOVSB_XbYb(void)
 {
-	BYTE tmp;
+	UINT8 tmp;
 
 	CPU_WORKCLOCK(5);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
@@ -58,7 +58,7 @@ MOVSB_XbYb(void)
 void
 MOVSW_XwYw(void)
 {
-	WORD tmp;
+	UINT16 tmp;
 
 	CPU_WORKCLOCK(5);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
@@ -78,7 +78,7 @@ MOVSW_XwYw(void)
 void
 MOVSD_XdYd(void)
 {
-	DWORD tmp;
+	UINT32 tmp;
 
 	CPU_WORKCLOCK(5);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
@@ -100,7 +100,7 @@ MOVSD_XdYd(void)
 void
 CMPSB_XbYb(void)
 {
-	DWORD src, dst, res;
+	UINT32 src, dst, res;
 
 	CPU_WORKCLOCK(8);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
@@ -122,7 +122,7 @@ CMPSB_XbYb(void)
 void
 CMPSW_XwYw(void)
 {
-	DWORD src, dst, res;
+	UINT32 src, dst, res;
 
 	CPU_WORKCLOCK(8);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
@@ -144,7 +144,7 @@ CMPSW_XwYw(void)
 void
 CMPSD_XdYd(void)
 {
-	DWORD src, dst, res;
+	UINT32 src, dst, res;
 
 	CPU_WORKCLOCK(8);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
@@ -168,7 +168,7 @@ CMPSD_XdYd(void)
 void
 SCASB_ALXb(void)
 {
-	DWORD src, dst, res;
+	UINT32 src, dst, res;
 
 	CPU_WORKCLOCK(7);
 	dst = CPU_AL;
@@ -186,7 +186,7 @@ SCASB_ALXb(void)
 void
 SCASW_AXXw(void)
 {
-	DWORD src, dst, res;
+	UINT32 src, dst, res;
 
 	CPU_WORKCLOCK(7);
 	dst = CPU_AX;
@@ -204,7 +204,7 @@ SCASW_AXXw(void)
 void
 SCASD_EAXXd(void)
 {
-	DWORD src, dst, res;
+	UINT32 src, dst, res;
 
 	CPU_WORKCLOCK(7);
 	dst = CPU_EAX;
@@ -331,9 +331,9 @@ _REPE(void)
 void
 INSB_YbDX(void)
 {
-	BYTE data;
+	UINT8 data;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(12);
 	data = cpu_in(CPU_DX);
 	if (!CPU_INST_AS32) {
 		cpu_vmemorywrite(CPU_ES_INDEX, CPU_DI, data);
@@ -347,9 +347,9 @@ INSB_YbDX(void)
 void
 INSW_YwDX(void)
 {
-	WORD data;
+	UINT16 data;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(12);
 	data = cpu_in_w(CPU_DX);
 	if (!CPU_INST_AS32) {
 		cpu_vmemorywrite_w(CPU_ES_INDEX, CPU_DI, data);
@@ -363,9 +363,9 @@ INSW_YwDX(void)
 void
 INSD_YdDX(void)
 {
-	DWORD data;
+	UINT32 data;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(12);
 	data = cpu_in_d(CPU_DX);
 	if (!CPU_INST_AS32) {
 		cpu_vmemorywrite_d(CPU_ES_INDEX, CPU_DI, data);
@@ -381,9 +381,9 @@ INSD_YdDX(void)
 void
 OUTSB_DXXb(void)
 {
-	BYTE data;
+	UINT8 data;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(14);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	if (!CPU_INST_AS32) {
 		data = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, CPU_SI);
@@ -399,9 +399,9 @@ OUTSB_DXXb(void)
 void
 OUTSW_DXXw(void)
 {
-	WORD data;
+	UINT16 data;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(14);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	if (!CPU_INST_AS32) {
 		data = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, CPU_SI);
@@ -417,9 +417,9 @@ OUTSW_DXXw(void)
 void
 OUTSD_DXXd(void)
 {
-	DWORD data;
+	UINT32 data;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(14);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	if (!CPU_INST_AS32) {
 		data = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, CPU_SI);

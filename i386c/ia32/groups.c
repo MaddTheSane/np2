@@ -1,4 +1,4 @@
-/*	$Id: groups.c,v 1.4 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: groups.c,v 1.5 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -38,14 +38,15 @@
 void
 Grp1_EbIb(void)
 {
-	BYTE *out;
-	DWORD op, madr, src;
+	UINT8 *out;
+	UINT32 madr;
+	UINT32 op, src;
 	int idx;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
 	if (op >= 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg8_b20[op];
 		GET_PCBYTE(src);
 		(*insttable_G1EbIb[idx])(out, src);
@@ -60,14 +61,15 @@ Grp1_EbIb(void)
 void
 Grp1_EwIb(void)
 {
-	WORD *out;
-	DWORD op, madr, src;
+	UINT16 *out;
+	UINT32 madr, src;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
 	if (op >= 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
 		GET_PCBYTES(src);
 		(*insttable_G1EwIx[idx])(out, src);
@@ -82,14 +84,15 @@ Grp1_EwIb(void)
 void
 Grp1_EdIb(void)
 {
-	DWORD *out;
-	DWORD op, madr, src;
+	UINT32 *out;
+	UINT32 madr, src;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
 	if (op >= 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
 		GET_PCBYTESD(src);
 		(*insttable_G1EdIx[idx])(out, src);
@@ -104,14 +107,15 @@ Grp1_EdIb(void)
 void
 Grp1_EwIw(void)
 {
-	WORD *out;
-	DWORD op, madr, src;
+	UINT16 *out;
+	UINT32 madr, src;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
 	if (op >= 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
 		GET_PCWORD(src);
 		(*insttable_G1EwIx[idx])(out, src);
@@ -126,14 +130,15 @@ Grp1_EwIw(void)
 void
 Grp1_EdId(void)
 {
-	DWORD *out;
-	DWORD op, madr, src;
+	UINT32 *out;
+	UINT32 madr, src;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
 	if (op >= 0xc0) {
-		CPU_WORKCLOCK(3);
+		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
 		GET_PCDWORD(src);
 		(*insttable_G1EdIx[idx])(out, src);
@@ -150,10 +155,11 @@ Grp1_EdId(void)
 void
 Grp2_EbIb(void)
 {
-	BYTE *out;
-	DWORD op, madr;
+	UINT8 *out;
+	UINT32 madr;
+	UINT32 op;
+	UINT cl;
 	int idx;
-	BYTE cl;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
@@ -175,10 +181,11 @@ Grp2_EbIb(void)
 void
 Grp2_EwIb(void)
 {
-	WORD *out;
-	DWORD op, madr;
+	UINT16 *out;
+	UINT32 madr;
+	UINT32 op;
+	UINT cl;
 	int idx;
-	BYTE cl;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
@@ -200,10 +207,11 @@ Grp2_EwIb(void)
 void
 Grp2_EdIb(void)
 {
-	DWORD *out;
-	DWORD op, madr;
+	UINT32 *out;
+	UINT32 madr;
+	UINT32 op;
+	UINT cl;
 	int idx;
-	BYTE cl;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
@@ -225,7 +233,7 @@ Grp2_EdIb(void)
 void
 Grp2_Eb(void)
 {
-	DWORD op;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -242,7 +250,7 @@ Grp2_Eb(void)
 void
 Grp2_Ew(void)
 {
-	DWORD op;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -259,7 +267,7 @@ Grp2_Ew(void)
 void
 Grp2_Ed(void)
 {
-	DWORD op;
+	UINT32 op;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -276,10 +284,11 @@ Grp2_Ed(void)
 void
 Grp2_EbCL(void)
 {
-	BYTE *out;
-	DWORD op, madr;
+	UINT8 *out;
+	UINT32 madr;
+	UINT32 op;
+	UINT cl;
 	int idx;
-	BYTE cl;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
@@ -303,10 +312,11 @@ Grp2_EbCL(void)
 void
 Grp2_EwCL(void)
 {
-	WORD *out;
-	DWORD op, madr;
+	UINT16 *out;
+	UINT32 madr;
+	UINT32 op;
+	UINT cl;
 	int idx;
-	BYTE cl;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
@@ -330,10 +340,11 @@ Grp2_EwCL(void)
 void
 Grp2_EdCL(void)
 {
-	DWORD *out;
-	DWORD op, madr;
+	UINT32 *out;
+	UINT32 madr;
+	UINT32 op;
+	UINT cl;
 	int idx;
-	BYTE  cl;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
@@ -359,7 +370,7 @@ Grp2_EdCL(void)
 void
 Grp3_Eb(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G3Eb[(op >> 3) & 7])(op);
@@ -368,7 +379,7 @@ Grp3_Eb(void)
 void
 Grp3_Ew(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G3Ew[(op >> 3) & 7])(op);
@@ -377,7 +388,7 @@ Grp3_Ew(void)
 void
 Grp3_Ed(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G3Ed[(op >> 3) & 7])(op);
@@ -388,7 +399,7 @@ Grp3_Ed(void)
 void
 Grp4(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G4[(op >> 3) & 7])(op);
@@ -399,7 +410,7 @@ Grp4(void)
 void
 Grp5_Ew(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G5Ew[(op >> 3) & 7])(op);
@@ -408,7 +419,7 @@ Grp5_Ew(void)
 void
 Grp5_Ed(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G5Ed[(op >> 3) & 7])(op);
@@ -419,7 +430,7 @@ Grp5_Ed(void)
 void
 Grp6(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G6[(op >> 3) & 7])(op);
@@ -430,7 +441,7 @@ Grp6(void)
 void
 Grp7(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G7[(op >> 3) & 7])(op);
@@ -441,7 +452,7 @@ Grp7(void)
 void
 Grp8_EwIb(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G8EwIb[(op >> 3) & 7])(op);
@@ -450,7 +461,7 @@ Grp8_EwIb(void)
 void
 Grp8_EdIb(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G8EdIb[(op >> 3) & 7])(op);
@@ -461,7 +472,7 @@ Grp8_EdIb(void)
 void
 Grp9(void)
 {
-	DWORD op;
+	UINT32 op;
 
 	GET_PCBYTE(op);
 	(*insttable_G9[(op >> 3) & 7])(op);

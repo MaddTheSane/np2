@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.6 2004/02/12 15:46:14 monaka Exp $	*/
+/*	$Id: inst_table.c,v 1.7 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -60,7 +60,7 @@ undef_op(void)
 }
 
 static void
-undef_op2(DWORD v)
+undef_op2(UINT32 v)
 {
 
 	(void)v;
@@ -68,7 +68,7 @@ undef_op2(DWORD v)
 }
 
 
-BYTE insttable_info[256] = {
+UINT8 insttable_info[256] = {
 	0,				/* 00 */
 	0,
 	0,
@@ -1452,7 +1452,7 @@ void (*insttable_2byte[2][256])(void) = {
  */
 
 /* group 1 */
-void (*insttable_G1EbIb[])(BYTE *, DWORD) = {
+void (*insttable_G1EbIb[])(UINT8 *, UINT32) = {
 	ADD_EbIb,
 	OR_EbIb,
 	ADC_EbIb,
@@ -1462,7 +1462,7 @@ void (*insttable_G1EbIb[])(BYTE *, DWORD) = {
 	XOR_EbIb,
 	CMP_EbIb,
 };
-void (*insttable_G1EbIb_ext[])(DWORD, DWORD) = {
+void (*insttable_G1EbIb_ext[])(UINT32, UINT32) = {
 	ADD_EbIb_ext,
 	OR_EbIb_ext,
 	ADC_EbIb_ext,
@@ -1473,7 +1473,7 @@ void (*insttable_G1EbIb_ext[])(DWORD, DWORD) = {
 	CMP_EbIb_ext,
 };
 
-void (*insttable_G1EwIx[])(WORD *, DWORD) = {
+void (*insttable_G1EwIx[])(UINT16 *, UINT32) = {
 	ADD_EwIx,
 	OR_EwIx,
 	ADC_EwIx,
@@ -1483,7 +1483,7 @@ void (*insttable_G1EwIx[])(WORD *, DWORD) = {
 	XOR_EwIx,
 	CMP_EwIx,
 };
-void (*insttable_G1EwIx_ext[])(DWORD, DWORD) = {
+void (*insttable_G1EwIx_ext[])(UINT32, UINT32) = {
 	ADD_EwIx_ext,
 	OR_EwIx_ext,
 	ADC_EwIx_ext,
@@ -1494,7 +1494,7 @@ void (*insttable_G1EwIx_ext[])(DWORD, DWORD) = {
 	CMP_EwIx_ext,
 };
 
-void (*insttable_G1EdIx[])(DWORD *, DWORD) = {
+void (*insttable_G1EdIx[])(UINT32 *, UINT32) = {
 	ADD_EdIx,
 	OR_EdIx,
 	ADC_EdIx,
@@ -1504,7 +1504,7 @@ void (*insttable_G1EdIx[])(DWORD *, DWORD) = {
 	XOR_EdIx,
 	CMP_EdIx,
 };
-void (*insttable_G1EdIx_ext[])(DWORD, DWORD) = {
+void (*insttable_G1EdIx_ext[])(UINT32, UINT32) = {
 	ADD_EdIx_ext,
 	OR_EdIx_ext,
 	ADC_EdIx_ext,
@@ -1517,7 +1517,7 @@ void (*insttable_G1EdIx_ext[])(DWORD, DWORD) = {
 
 
 /* group 2 */
-void (*insttable_G2Eb[])(BYTE *) = {
+void (*insttable_G2Eb[])(UINT8 *) = {
 	ROL_Eb,
 	ROR_Eb,
 	RCL_Eb,
@@ -1527,7 +1527,7 @@ void (*insttable_G2Eb[])(BYTE *) = {
 	SHL_Eb,
 	SAR_Eb,
 };
-void (*insttable_G2Eb_ext[])(DWORD) = {
+void (*insttable_G2Eb_ext[])(UINT32) = {
 	ROL_Eb_ext,
 	ROR_Eb_ext,
 	RCL_Eb_ext,
@@ -1538,7 +1538,7 @@ void (*insttable_G2Eb_ext[])(DWORD) = {
 	SAR_Eb_ext,
 };
 
-void (*insttable_G2Ew[])(WORD *) = {
+void (*insttable_G2Ew[])(UINT16 *) = {
 	ROL_Ew,
 	ROR_Ew,
 	RCL_Ew,
@@ -1548,7 +1548,7 @@ void (*insttable_G2Ew[])(WORD *) = {
 	SHL_Ew,
 	SAR_Ew,
 };
-void (*insttable_G2Ew_ext[])(DWORD) = {
+void (*insttable_G2Ew_ext[])(UINT32) = {
 	ROL_Ew_ext,
 	ROR_Ew_ext,
 	RCL_Ew_ext,
@@ -1559,7 +1559,7 @@ void (*insttable_G2Ew_ext[])(DWORD) = {
 	SAR_Ew_ext,
 };
 
-void (*insttable_G2Ed[])(DWORD *) = {
+void (*insttable_G2Ed[])(UINT32 *) = {
 	ROL_Ed,
 	ROR_Ed,
 	RCL_Ed,
@@ -1569,7 +1569,7 @@ void (*insttable_G2Ed[])(DWORD *) = {
 	SHL_Ed,
 	SAR_Ed,
 };
-void (*insttable_G2Ed_ext[])(DWORD) = {
+void (*insttable_G2Ed_ext[])(UINT32) = {
 	ROL_Ed_ext,
 	ROR_Ed_ext,
 	RCL_Ed_ext,
@@ -1580,7 +1580,7 @@ void (*insttable_G2Ed_ext[])(DWORD) = {
 	SAR_Ed_ext,
 };
 
-void (*insttable_G2EbCL[])(BYTE *, BYTE) = {
+void (*insttable_G2EbCL[])(UINT8 *, UINT) = {
 	ROL_EbCL,
 	ROR_EbCL,
 	RCL_EbCL,
@@ -1590,7 +1590,7 @@ void (*insttable_G2EbCL[])(BYTE *, BYTE) = {
 	SHL_EbCL,
 	SAR_EbCL,
 };
-void (*insttable_G2EbCL_ext[])(DWORD, BYTE) = {
+void (*insttable_G2EbCL_ext[])(UINT32, UINT) = {
 	ROL_EbCL_ext,
 	ROR_EbCL_ext,
 	RCL_EbCL_ext,
@@ -1601,7 +1601,7 @@ void (*insttable_G2EbCL_ext[])(DWORD, BYTE) = {
 	SAR_EbCL_ext,
 };
 
-void (*insttable_G2EwCL[])(WORD *, BYTE) = {
+void (*insttable_G2EwCL[])(UINT16 *, UINT) = {
 	ROL_EwCL,
 	ROR_EwCL,
 	RCL_EwCL,
@@ -1611,7 +1611,7 @@ void (*insttable_G2EwCL[])(WORD *, BYTE) = {
 	SHL_EwCL,
 	SAR_EwCL,
 };
-void (*insttable_G2EwCL_ext[])(DWORD, BYTE) = {
+void (*insttable_G2EwCL_ext[])(UINT32, UINT) = {
 	ROL_EwCL_ext,
 	ROR_EwCL_ext,
 	RCL_EwCL_ext,
@@ -1622,7 +1622,7 @@ void (*insttable_G2EwCL_ext[])(DWORD, BYTE) = {
 	SAR_EwCL_ext,
 };
 
-void (*insttable_G2EdCL[])(DWORD *, BYTE) = {
+void (*insttable_G2EdCL[])(UINT32 *, UINT) = {
 	ROL_EdCL,
 	ROR_EdCL,
 	RCL_EdCL,
@@ -1632,7 +1632,7 @@ void (*insttable_G2EdCL[])(DWORD *, BYTE) = {
 	SHL_EdCL,
 	SAR_EdCL,
 };
-void (*insttable_G2EdCL_ext[])(DWORD, BYTE) = {
+void (*insttable_G2EdCL_ext[])(UINT32, UINT) = {
 	ROL_EdCL_ext,
 	ROR_EdCL_ext,
 	RCL_EdCL_ext,
@@ -1644,7 +1644,7 @@ void (*insttable_G2EdCL_ext[])(DWORD, BYTE) = {
 };
 
 /* group 3 */
-void (*insttable_G3Eb[])(DWORD) = {
+void (*insttable_G3Eb[])(UINT32) = {
 	TEST_EbIb,
 	TEST_EbIb,
 	NOT_Eb,
@@ -1655,7 +1655,7 @@ void (*insttable_G3Eb[])(DWORD) = {
 	IDIV_ALEb,
 };
 
-void (*insttable_G3Ew[])(DWORD) = {
+void (*insttable_G3Ew[])(UINT32) = {
 	TEST_EwIw,
 	TEST_EwIw,
 	NOT_Ew,
@@ -1666,7 +1666,7 @@ void (*insttable_G3Ew[])(DWORD) = {
 	IDIV_AXEw,
 };
 
-void (*insttable_G3Ed[])(DWORD) = {
+void (*insttable_G3Ed[])(UINT32) = {
 	TEST_EdId,
 	TEST_EdId,
 	NOT_Ed,
@@ -1678,7 +1678,7 @@ void (*insttable_G3Ed[])(DWORD) = {
 };
 
 /* group 4 */
-void (*insttable_G4[])(DWORD) = {
+void (*insttable_G4[])(UINT32) = {
 	INC_Eb,
 	DEC_Eb,
 	undef_op2,
@@ -1690,7 +1690,7 @@ void (*insttable_G4[])(DWORD) = {
 };
 
 /* group 5 */
-void (*insttable_G5Ew[])(DWORD) = {
+void (*insttable_G5Ew[])(UINT32) = {
 	INC_Ew,
 	DEC_Ew,
 	CALL_Ew,
@@ -1701,7 +1701,7 @@ void (*insttable_G5Ew[])(DWORD) = {
 	undef_op2,	/* POP_Ew_G5 */
 };
 
-void (*insttable_G5Ed[])(DWORD) = {
+void (*insttable_G5Ed[])(UINT32) = {
 	INC_Ed,
 	DEC_Ed,
 	CALL_Ed,
@@ -1713,7 +1713,7 @@ void (*insttable_G5Ed[])(DWORD) = {
 };
 
 /* group 6 */
-void (*insttable_G6[])(DWORD) = {
+void (*insttable_G6[])(UINT32) = {
 	SLDT_Ew,
 	STR_Ew,
 	LLDT_Ew,
@@ -1725,7 +1725,7 @@ void (*insttable_G6[])(DWORD) = {
 };
 
 /* group 7 */
-void (*insttable_G7[])(DWORD) = {
+void (*insttable_G7[])(UINT32) = {
 	SGDT_Ms,
 	SIDT_Ms,
 	LGDT_Ms,
@@ -1737,7 +1737,7 @@ void (*insttable_G7[])(DWORD) = {
 };
 
 /* group 8 */
-void (*insttable_G8EwIb[])(DWORD) = {
+void (*insttable_G8EwIb[])(UINT32) = {
 	undef_op2,
 	undef_op2,
 	undef_op2,
@@ -1748,7 +1748,7 @@ void (*insttable_G8EwIb[])(DWORD) = {
 	BTC_EwIb,
 };
 
-void (*insttable_G8EdIb[])(DWORD) = {
+void (*insttable_G8EdIb[])(UINT32) = {
 	undef_op2,
 	undef_op2,
 	undef_op2,
@@ -1760,7 +1760,7 @@ void (*insttable_G8EdIb[])(DWORD) = {
 };
 
 /* group 9 */
-void (*insttable_G9[])(DWORD) = {
+void (*insttable_G9[])(UINT32) = {
 	undef_op2,
 	CMPXCHG8B,
 	undef_op2,

@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.c,v 1.3 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: cpu_io.c,v 1.4 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -34,11 +34,11 @@
 
 
 static void
-check_io(WORD port, DWORD len)
+check_io(UINT port, UINT len)
 {
-	WORD off;
-	BYTE bit;
-	BYTE map;
+	UINT off;
+	UINT8 bit;
+	UINT8 map;
 
 	if (CPU_STAT_IOLIMIT == 0) {
 		VERBOSE(("check_io: CPU_STAT_IOLIMIT == 0 (port = %04x, len = %d)", port, len));
@@ -63,8 +63,8 @@ check_io(WORD port, DWORD len)
 	}
 }
 
-BYTE
-cpu_in(WORD port)
+UINT8
+cpu_in(UINT port)
 {
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
@@ -73,8 +73,8 @@ cpu_in(WORD port)
 	return iocore_inp8(port);
 }
 
-WORD
-cpu_in_w(WORD port)
+UINT16
+cpu_in_w(UINT port)
 {
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
@@ -83,8 +83,8 @@ cpu_in_w(WORD port)
 	return iocore_inp16(port);
 }
 
-DWORD
-cpu_in_d(WORD port)
+UINT32
+cpu_in_d(UINT port)
 {
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
@@ -94,7 +94,7 @@ cpu_in_d(WORD port)
 }
 
 void
-cpu_out(WORD port, BYTE data)
+cpu_out(UINT port, UINT8 data)
 {
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
@@ -104,7 +104,7 @@ cpu_out(WORD port, BYTE data)
 }
 
 void
-cpu_out_w(WORD port, WORD data)
+cpu_out_w(UINT port, UINT16 data)
 {
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
@@ -114,7 +114,7 @@ cpu_out_w(WORD port, WORD data)
 }
 
 void
-cpu_out_d(WORD port, DWORD data)
+cpu_out_d(UINT port, UINT32 data)
 {
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {

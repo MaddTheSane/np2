@@ -913,7 +913,7 @@ void MEMCALL i286_memorywrite_d(UINT32 paddr, UINT32 value) {
 	i286_memorywrite_w(address + 2, (WORD)(value >> 16));
 }
 
-#if 0
+#ifdef NP2_MEMORY_ASM
 REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
 
 	UINT32	address;
@@ -965,7 +965,7 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 		i286_memorywrite_w(address, value);
 	}
 }
-#endif
+#endif /* NP2_MEMORY_ASM */
 
 void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 
@@ -1005,8 +1005,7 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 	}
 }
 
-void MEMCALL i286_memstr_write(UINT seg, UINT off,
-												const void *dat, UINT leng) {
+void MEMCALL i286_memstr_write(UINT seg, UINT off, const void *dat, UINT leng) {
 
 	BYTE	*out;
 	UINT32	adrs;

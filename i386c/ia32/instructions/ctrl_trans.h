@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.h,v 1.4 2004/02/12 15:46:14 monaka Exp $	*/
+/*	$Id: ctrl_trans.h,v 1.5 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -40,12 +40,12 @@ extern "C" {
 void JMP_Jb(void);
 void JMP_Jw(void);
 void JMP_Jd(void);
-void JMP_Ew(DWORD);
-void JMP_Ed(DWORD);
+void JMP_Ew(UINT32);
+void JMP_Ed(UINT32);
 void JMP16_Ap(void);
 void JMP32_Ap(void);
-void JMP16_Ep(DWORD);
-void JMP32_Ep(DWORD);
+void JMP16_Ep(UINT32);
+void JMP32_Ep(UINT32);
 
 /*
  * Jcc
@@ -112,12 +112,12 @@ void LOOP_Jb(void);
  */
 void CALL_Aw(void);
 void CALL_Ad(void);
-void CALL_Ew(DWORD);
-void CALL_Ed(DWORD);
+void CALL_Ew(UINT32);
+void CALL_Ed(UINT32);
 void CALL16_Ap(void);
 void CALL32_Ap(void);
-void CALL16_Ep(DWORD);
-void CALL32_Ep(DWORD);
+void CALL16_Ep(UINT32);
+void CALL32_Ep(UINT32);
 
 /*
  * RET

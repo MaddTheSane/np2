@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.c,v 1.5 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: bit_byte.c,v 1.6 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -33,11 +33,11 @@
 
 #include "bit_byte.h"
 
-#define	BIT_OFFSET16(v)		(2 * (((SWORD)(v)) / 16))
+#define	BIT_OFFSET16(v)		(2 * (((SINT16)(v)) / 16))
 #define	BIT_INDEX16(v)		((v) & 0xf)
 #define	BIT_MAKEBIT16(v)	(1 << BIT_INDEX16(v))
 
-#define	BIT_OFFSET32(v)		(4 * (((SDWORD)(v)) / 32))
+#define	BIT_OFFSET32(v)		(4 * (((SINT32)(v)) / 32))
 #define	BIT_INDEX32(v)		((v) & 0x1f)
 #define	BIT_MAKEBIT32(v)	(1 << BIT_INDEX32(v))
 
@@ -48,7 +48,7 @@
 void
 BT_EwGw(void)
 {
-	DWORD op, src, dst, madr;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
@@ -67,7 +67,7 @@ BT_EwGw(void)
 void
 BT_EdGd(void)
 {
-	DWORD op, src, dst, madr;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
@@ -84,9 +84,9 @@ BT_EdGd(void)
 }
 
 void
-BT_EwIb(DWORD op)
+BT_EwIb(UINT32 op)
 {
-	DWORD src, dst, madr;
+	UINT32 src, dst, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -103,9 +103,9 @@ BT_EwIb(DWORD op)
 }
 
 void
-BT_EdIb(DWORD op)
+BT_EdIb(UINT32 op)
 {
-	DWORD src, dst, madr;
+	UINT32 src, dst, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -127,9 +127,9 @@ BT_EdIb(DWORD op)
 void
 BTS_EwGw(void)
 {
-	WORD *out;
-	DWORD op, src, dst, res, madr;
-	WORD bit;
+	UINT16 *out;
+	UINT32 op, src, dst, res, madr;
+	UINT16 bit;
 
 	PREPART_EA_REG16(op, src);
 	bit = BIT_MAKEBIT16(src);
@@ -142,7 +142,7 @@ BTS_EwGw(void)
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 			res = dst | bit;
-			*out = (WORD)res;
+			*out = (UINT16)res;
 		}
 	} else {
 		CPU_WORKCLOCK(7);
@@ -155,16 +155,16 @@ BTS_EwGw(void)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst | bit;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
 	}
 }
 
 void
 BTS_EdGd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst, res, madr;
-	DWORD bit;
+	UINT32 *out;
+	UINT32 op, src, dst, res, madr;
+	UINT32 bit;
 
 	PREPART_EA_REG32(op, src);
 	bit = BIT_MAKEBIT32(src);
@@ -195,11 +195,11 @@ BTS_EdGd(void)
 }
 
 void
-BTS_EwIb(DWORD op)
+BTS_EwIb(UINT32 op)
 {
-	WORD *out;
-	DWORD src, dst, res, madr;
-	WORD bit;
+	UINT16 *out;
+	UINT32 src, dst, res, madr;
+	UINT16 bit;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -212,7 +212,7 @@ BTS_EwIb(DWORD op)
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 			res = dst | bit;
-			*out = (WORD)res;
+			*out = (UINT16)res;
 		}
 	} else {
 		CPU_WORKCLOCK(6);
@@ -226,16 +226,16 @@ BTS_EwIb(DWORD op)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst | bit;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
 	}
 }
 
 void
-BTS_EdIb(DWORD op)
+BTS_EdIb(UINT32 op)
 {
-	DWORD *out;
-	DWORD src, dst, res, madr;
-	DWORD bit;
+	UINT32 *out;
+	UINT32 src, dst, res, madr;
+	UINT32 bit;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -272,9 +272,9 @@ BTS_EdIb(DWORD op)
 void
 BTR_EwGw(void)
 {
-	WORD *out;
-	DWORD op, src, dst, res, madr;
-	WORD bit;
+	UINT16 *out;
+	UINT32 op, src, dst, res, madr;
+	UINT16 bit;
 
 	PREPART_EA_REG16(op, src);
 	bit = BIT_MAKEBIT16(src);
@@ -285,7 +285,7 @@ BTR_EwGw(void)
 		if (dst & bit) {
 			CPU_FLAGL |= C_FLAG;
 			res = dst & ~bit;
-			*out = (WORD)res;
+			*out = (UINT16)res;
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 		}
@@ -300,16 +300,16 @@ BTR_EwGw(void)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst & ~bit;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
 	}
 }
 
 void
 BTR_EdGd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst, res, madr;
-	DWORD bit;
+	UINT32 *out;
+	UINT32 op, src, dst, res, madr;
+	UINT32 bit;
 
 	PREPART_EA_REG32(op, src);
 	bit = BIT_MAKEBIT32(src);
@@ -340,11 +340,11 @@ BTR_EdGd(void)
 }
 
 void
-BTR_EwIb(DWORD op)
+BTR_EwIb(UINT32 op)
 {
-	WORD *out;
-	DWORD src, dst, res, madr;
-	WORD bit;
+	UINT16 *out;
+	UINT32 src, dst, res, madr;
+	UINT16 bit;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -355,7 +355,7 @@ BTR_EwIb(DWORD op)
 		if (dst & bit) {
 			CPU_FLAGL |= C_FLAG;
 			res = dst & ~bit;
-			*out = (WORD)res;
+			*out = (UINT16)res;
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 		}
@@ -371,16 +371,16 @@ BTR_EwIb(DWORD op)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst & ~bit;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
 	}
 }
 
 void
-BTR_EdIb(DWORD op)
+BTR_EdIb(UINT32 op)
 {
-	DWORD *out;
-	DWORD src, dst, res, madr;
-	DWORD bit;
+	UINT32 *out;
+	UINT32 src, dst, res, madr;
+	UINT32 bit;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -417,9 +417,9 @@ BTR_EdIb(DWORD op)
 void
 BTC_EwGw(void)
 {
-	WORD *out;
-	DWORD op, src, dst, res, madr;
-	WORD bit;
+	UINT16 *out;
+	UINT32 op, src, dst, res, madr;
+	UINT16 bit;
 
 	PREPART_EA_REG16(op, src);
 	bit = BIT_MAKEBIT16(src);
@@ -433,7 +433,7 @@ BTC_EwGw(void)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst ^ bit;
-		*out = (WORD)res;
+		*out = (UINT16)res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -445,16 +445,16 @@ BTC_EwGw(void)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst ^ bit;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
 	}
 }
 
 void
 BTC_EdGd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst, res, madr;
-	DWORD bit;
+	UINT32 *out;
+	UINT32 op, src, dst, res, madr;
+	UINT32 bit;
 
 	PREPART_EA_REG32(op, src);
 	bit = BIT_MAKEBIT32(src);
@@ -485,11 +485,11 @@ BTC_EdGd(void)
 }
 
 void
-BTC_EwIb(DWORD op)
+BTC_EwIb(UINT32 op)
 {
-	WORD *out;
-	DWORD src, dst, res, madr;
-	WORD bit;
+	UINT16 *out;
+	UINT32 src, dst, res, madr;
+	UINT16 bit;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -503,7 +503,7 @@ BTC_EwIb(DWORD op)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst ^ bit;
-		*out = (WORD)res;
+		*out = (UINT16)res;
 	} else {
 		CPU_WORKCLOCK(6);
 		madr = calc_ea_dst(op);
@@ -516,16 +516,16 @@ BTC_EwIb(DWORD op)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst ^ bit;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
 	}
 }
 
 void
-BTC_EdIb(DWORD op)
+BTC_EdIb(UINT32 op)
 {
-	DWORD *out;
-	DWORD src, dst, res, madr;
-	DWORD bit;
+	UINT32 *out;
+	UINT32 src, dst, res, madr;
+	UINT32 bit;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -562,8 +562,8 @@ BTC_EdIb(DWORD op)
 void
 BSF_GwEw(void)
 {
-	WORD *out;
-	DWORD op, src;
+	UINT16 *out;
+	UINT32 op, src;
 	int bit;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
@@ -576,15 +576,15 @@ BSF_GwEw(void)
 			if (src & (1 << bit))
 				break;
 		}
-		*out = (WORD)bit;
+		*out = (UINT16)bit;
 	}
 }
 
 void
 BSF_GdEd(void)
 {
-	DWORD *out;
-	DWORD op, src;
+	UINT32 *out;
+	UINT32 op, src;
 	int bit;
 
 	PREPART_REG32_EA(op, src, out, 2, 7);
@@ -597,7 +597,7 @@ BSF_GdEd(void)
 			if (src & (1 << bit))
 				break;
 		}
-		*out = (DWORD)bit;
+		*out = (UINT32)bit;
 	}
 }
 
@@ -607,8 +607,8 @@ BSF_GdEd(void)
 void
 BSR_GwEw(void)
 {
-	WORD *out;
-	DWORD op, src;
+	UINT16 *out;
+	UINT32 op, src;
 	int bit;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
@@ -621,15 +621,15 @@ BSR_GwEw(void)
 			if (src & (1 << bit))
 				break;
 		}
-		*out = (WORD)bit;
+		*out = (UINT16)bit;
 	}
 }
 
 void
 BSR_GdEd(void)
 {
-	DWORD *out;
-	DWORD op, src;
+	UINT32 *out;
+	UINT32 op, src;
 	int bit;
 
 	PREPART_REG32_EA(op, src, out, 2, 7);
@@ -642,7 +642,7 @@ BSR_GdEd(void)
 			if (src & (1 << bit))
 				break;
 		}
-		*out = (DWORD)bit;
+		*out = (UINT32)bit;
 	}
 }
 
@@ -652,8 +652,8 @@ BSR_GdEd(void)
 void
 SETO_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = CPU_OV ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = CPU_OV ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -669,8 +669,8 @@ SETO_Eb(void)
 void
 SETNO_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = CPU_OV ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = CPU_OV ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -686,8 +686,8 @@ SETNO_Eb(void)
 void
 SETC_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (BYTE)(CPU_FLAGL & C_FLAG);
+	UINT32 op, madr;
+	UINT8 v = (UINT8)(CPU_FLAGL & C_FLAG);
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -703,8 +703,8 @@ SETC_Eb(void)
 void
 SETNC_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & C_FLAG) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & C_FLAG) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -720,8 +720,8 @@ SETNC_Eb(void)
 void
 SETZ_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & Z_FLAG) ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & Z_FLAG) ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -737,8 +737,8 @@ SETZ_Eb(void)
 void
 SETNZ_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & Z_FLAG) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & Z_FLAG) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -754,8 +754,8 @@ SETNZ_Eb(void)
 void
 SETA_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -771,8 +771,8 @@ SETA_Eb(void)
 void
 SETNA_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -788,8 +788,8 @@ SETNA_Eb(void)
 void
 SETS_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & S_FLAG) ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & S_FLAG) ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -805,8 +805,8 @@ SETS_Eb(void)
 void
 SETNS_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & S_FLAG) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & S_FLAG) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -822,8 +822,8 @@ SETNS_Eb(void)
 void
 SETP_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & P_FLAG) ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & P_FLAG) ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -839,8 +839,8 @@ SETP_Eb(void)
 void
 SETNP_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (CPU_FLAGL & P_FLAG) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = (CPU_FLAGL & P_FLAG) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -856,8 +856,8 @@ SETNP_Eb(void)
 void
 SETL_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -873,8 +873,8 @@ SETL_Eb(void)
 void
 SETNL_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -890,8 +890,8 @@ SETNL_Eb(void)
 void
 SETLE_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 1 : 0;
+	UINT32 op, madr;
+	UINT8 v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 1 : 0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -907,8 +907,8 @@ SETLE_Eb(void)
 void
 SETNLE_Eb(void)
 {
-	DWORD op, madr;
-	BYTE v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 0 : 1;
+	UINT32 op, madr;
+	UINT8 v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 0 : 1;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -927,7 +927,7 @@ SETNLE_Eb(void)
 void
 TEST_EbGb(void)
 {
-	DWORD op, src, tmp, madr;
+	UINT32 op, src, tmp, madr;
 
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
@@ -938,13 +938,13 @@ TEST_EbGb(void)
 		madr = calc_ea_dst(op);
 		tmp = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	}
-	ANDBYTE(tmp, src);
+	AND_BYTE(tmp, src);
 }
 
 void
 TEST_EwGw(void)
 {
-	DWORD op, src, tmp, madr;
+	UINT32 op, src, tmp, madr;
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
@@ -955,13 +955,13 @@ TEST_EwGw(void)
 		madr = calc_ea_dst(op);
 		tmp = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
-	ANDWORD(tmp, src);
+	AND_WORD(tmp, src);
 }
 
 void
 TEST_EdGd(void)
 {
-	DWORD op, src, tmp, madr;
+	UINT32 op, src, tmp, madr;
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
@@ -972,46 +972,46 @@ TEST_EdGd(void)
 		madr = calc_ea_dst(op);
 		tmp = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	}
-	ANDDWORD(tmp, src);
+	AND_DWORD(tmp, src);
 }
 
 void
 TEST_ALIb(void)
 {
-	DWORD src, tmp;
+	UINT32 src, tmp;
 
 	CPU_WORKCLOCK(3);
 	tmp = CPU_AL;
 	GET_PCBYTE(src);
-	ANDBYTE(tmp, src);
+	AND_BYTE(tmp, src);
 }
 
 void
 TEST_AXIw(void)
 {
-	DWORD src, tmp;
+	UINT32 src, tmp;
 
 	CPU_WORKCLOCK(3);
 	tmp = CPU_AX;
 	GET_PCWORD(src);
-	ANDWORD(tmp, src);
+	AND_WORD(tmp, src);
 }
 
 void
 TEST_EAXId(void)
 {
-	DWORD src, tmp;
+	UINT32 src, tmp;
 
 	CPU_WORKCLOCK(3);
 	tmp = CPU_EAX;
 	GET_PCDWORD(src);
-	ANDDWORD(tmp, src);
+	AND_DWORD(tmp, src);
 }
 
 void
-TEST_EbIb(DWORD op)
+TEST_EbIb(UINT32 op)
 {
-	DWORD src, tmp, madr;
+	UINT32 src, tmp, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -1022,13 +1022,13 @@ TEST_EbIb(DWORD op)
 		tmp = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	}
 	GET_PCBYTE(src);
-	ANDBYTE(tmp, src);
+	AND_BYTE(tmp, src);
 }
 
 void
-TEST_EwIw(DWORD op)
+TEST_EwIw(UINT32 op)
 {
-	DWORD src, tmp, madr;
+	UINT32 src, tmp, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -1039,13 +1039,13 @@ TEST_EwIw(DWORD op)
 		tmp = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
 	GET_PCWORD(src);
-	ANDWORD(tmp, src);
+	AND_WORD(tmp, src);
 }
 
 void
-TEST_EdId(DWORD op)
+TEST_EdId(UINT32 op)
 {
-	DWORD src, tmp, madr;
+	UINT32 src, tmp, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -1056,5 +1056,5 @@ TEST_EdId(DWORD op)
 		tmp = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	}
 	GET_PCDWORD(src);
-	ANDDWORD(tmp, src);
+	AND_DWORD(tmp, src);
 }

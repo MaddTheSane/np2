@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: ctrlxfer.h,v 1.2 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -34,10 +34,10 @@
 extern "C" {
 #endif
 
-void JMPfar_pm(WORD selector, DWORD new_ip);
-void CALLfar_pm(WORD selector, DWORD new_ip);
-void RETfar_pm(DWORD nbytes);
-void IRET_pm();
+void JMPfar_pm(UINT16 selector, UINT32 new_ip);
+void CALLfar_pm(UINT16 selector, UINT32 new_ip);
+void RETfar_pm(UINT nbytes);
+void IRET_pm(void);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: data_trans.h,v 1.2 2004/01/14 16:14:50 monaka Exp $	*/
+/*	$Id: data_trans.h,v 1.3 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -161,7 +161,7 @@ void XADD_EdGd(void);
 void CMPXCHG_EbGb(void);
 void CMPXCHG_EwGw(void);
 void CMPXCHG_EdGd(void);
-void CMPXCHG8B(DWORD op);
+void CMPXCHG8B(UINT32);
 
 /*
  * PUSH
@@ -198,8 +198,8 @@ void PUSH32_DS(void);
 void PUSH32_FS(void);
 void PUSH32_GS(void);
 
-void PUSH_Ew(DWORD);
-void PUSH_Ed(DWORD);
+void PUSH_Ew(UINT32);
+void PUSH_Ed(UINT32);
 
 /*
  * POP
@@ -233,8 +233,8 @@ void POP32_FS(void);
 void POP16_GS(void);
 void POP32_GS(void);
 
-void POP_Ew_G5(DWORD);
-void POP_Ed_G5(DWORD);
+void POP_Ew_G5(UINT32);
+void POP_Ed_G5(UINT32);
 
 /*
  * PUSHA/POPA

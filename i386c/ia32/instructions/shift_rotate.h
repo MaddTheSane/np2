@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: shift_rotate.h,v 1.2 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,50 +37,50 @@ extern "C" {
 /*
  * SAR
  */
-void SAR_Eb(BYTE *);
-void SAR_Ew(WORD *);
-void SAR_Ed(DWORD *);
-void SAR_Eb_ext(DWORD);
-void SAR_Ew_ext(DWORD);
-void SAR_Ed_ext(DWORD);
-void SAR_EbCL(BYTE *, BYTE);
-void SAR_EbCL_ext(DWORD, BYTE);
-void SAR_EwCL(WORD *, BYTE);
-void SAR_EwCL_ext(DWORD, BYTE);
-void SAR_EdCL(DWORD *, BYTE);
-void SAR_EdCL_ext(DWORD, BYTE);
+void SAR_Eb(UINT8 *);
+void SAR_Ew(UINT16 *);
+void SAR_Ed(UINT32 *);
+void SAR_Eb_ext(UINT32);
+void SAR_Ew_ext(UINT32);
+void SAR_Ed_ext(UINT32);
+void SAR_EbCL(UINT8 *, UINT);
+void SAR_EbCL_ext(UINT32, UINT);
+void SAR_EwCL(UINT16 *, UINT);
+void SAR_EwCL_ext(UINT32, UINT);
+void SAR_EdCL(UINT32 *, UINT);
+void SAR_EdCL_ext(UINT32, UINT);
 
 /*
  * SHR
  */
-void SHR_Eb(BYTE *);
-void SHR_Ew(WORD *);
-void SHR_Ed(DWORD *);
-void SHR_Eb_ext(DWORD);
-void SHR_Ew_ext(DWORD);
-void SHR_Ed_ext(DWORD);
-void SHR_EbCL(BYTE *, BYTE);
-void SHR_EbCL_ext(DWORD, BYTE);
-void SHR_EwCL(WORD *, BYTE);
-void SHR_EwCL_ext(DWORD, BYTE);
-void SHR_EdCL(DWORD *, BYTE);
-void SHR_EdCL_ext(DWORD, BYTE);
+void SHR_Eb(UINT8 *);
+void SHR_Ew(UINT16 *);
+void SHR_Ed(UINT32 *);
+void SHR_Eb_ext(UINT32);
+void SHR_Ew_ext(UINT32);
+void SHR_Ed_ext(UINT32);
+void SHR_EbCL(UINT8 *, UINT);
+void SHR_EbCL_ext(UINT32, UINT);
+void SHR_EwCL(UINT16 *, UINT);
+void SHR_EwCL_ext(UINT32, UINT);
+void SHR_EdCL(UINT32 *, UINT);
+void SHR_EdCL_ext(UINT32, UINT);
 
 /*
  * SHL
  */
-void SHL_Eb(BYTE *);
-void SHL_Ew(WORD *);
-void SHL_Ed(DWORD *);
-void SHL_Eb_ext(DWORD);
-void SHL_Ew_ext(DWORD);
-void SHL_Ed_ext(DWORD);
-void SHL_EbCL(BYTE *, BYTE);
-void SHL_EbCL_ext(DWORD, BYTE);
-void SHL_EwCL(WORD *, BYTE);
-void SHL_EwCL_ext(DWORD, BYTE);
-void SHL_EdCL(DWORD *, BYTE);
-void SHL_EdCL_ext(DWORD, BYTE);
+void SHL_Eb(UINT8 *);
+void SHL_Ew(UINT16 *);
+void SHL_Ed(UINT32 *);
+void SHL_Eb_ext(UINT32);
+void SHL_Ew_ext(UINT32);
+void SHL_Ed_ext(UINT32);
+void SHL_EbCL(UINT8 *, UINT);
+void SHL_EbCL_ext(UINT32, UINT);
+void SHL_EwCL(UINT16 *, UINT);
+void SHL_EwCL_ext(UINT32, UINT);
+void SHL_EdCL(UINT32 *, UINT);
+void SHL_EdCL_ext(UINT32, UINT);
 
 /*
  * SHRD
@@ -101,66 +101,66 @@ void SHLD_EdGdCL(void);
 /*
  * ROR
  */
-void ROR_Eb(BYTE *);
-void ROR_Ew(WORD *);
-void ROR_Ed(DWORD *);
-void ROR_Eb_ext(DWORD);
-void ROR_Ew_ext(DWORD);
-void ROR_Ed_ext(DWORD);
-void ROR_EbCL(BYTE *, BYTE);
-void ROR_EbCL_ext(DWORD, BYTE);
-void ROR_EwCL(WORD *, BYTE);
-void ROR_EwCL_ext(DWORD, BYTE);
-void ROR_EdCL(DWORD *, BYTE);
-void ROR_EdCL_ext(DWORD, BYTE);
+void ROR_Eb(UINT8 *);
+void ROR_Ew(UINT16 *);
+void ROR_Ed(UINT32 *);
+void ROR_Eb_ext(UINT32);
+void ROR_Ew_ext(UINT32);
+void ROR_Ed_ext(UINT32);
+void ROR_EbCL(UINT8 *, UINT);
+void ROR_EbCL_ext(UINT32, UINT);
+void ROR_EwCL(UINT16 *, UINT);
+void ROR_EwCL_ext(UINT32, UINT);
+void ROR_EdCL(UINT32 *, UINT);
+void ROR_EdCL_ext(UINT32, UINT);
 
 /*
  * ROL
  */
-void ROL_Eb(BYTE *);
-void ROL_Ew(WORD *);
-void ROL_Ed(DWORD *);
-void ROL_Eb_ext(DWORD);
-void ROL_Ew_ext(DWORD);
-void ROL_Ed_ext(DWORD);
-void ROL_EbCL(BYTE *, BYTE);
-void ROL_EbCL_ext(DWORD, BYTE);
-void ROL_EwCL(WORD *, BYTE);
-void ROL_EwCL_ext(DWORD, BYTE);
-void ROL_EdCL(DWORD *, BYTE);
-void ROL_EdCL_ext(DWORD, BYTE);
+void ROL_Eb(UINT8 *);
+void ROL_Ew(UINT16 *);
+void ROL_Ed(UINT32 *);
+void ROL_Eb_ext(UINT32);
+void ROL_Ew_ext(UINT32);
+void ROL_Ed_ext(UINT32);
+void ROL_EbCL(UINT8 *, UINT);
+void ROL_EbCL_ext(UINT32, UINT);
+void ROL_EwCL(UINT16 *, UINT);
+void ROL_EwCL_ext(UINT32, UINT);
+void ROL_EdCL(UINT32 *, UINT);
+void ROL_EdCL_ext(UINT32, UINT);
 
 /*
  * RCR
  */
-void RCR_Eb(BYTE *);
-void RCR_Ew(WORD *);
-void RCR_Ed(DWORD *);
-void RCR_Eb_ext(DWORD);
-void RCR_Ew_ext(DWORD);
-void RCR_Ed_ext(DWORD);
-void RCR_EbCL(BYTE *, BYTE);
-void RCR_EbCL_ext(DWORD, BYTE);
-void RCR_EwCL(WORD *, BYTE);
-void RCR_EwCL_ext(DWORD, BYTE);
-void RCR_EdCL(DWORD *, BYTE);
-void RCR_EdCL_ext(DWORD, BYTE);
+void RCR_Eb(UINT8 *);
+void RCR_Ew(UINT16 *);
+void RCR_Ed(UINT32 *);
+void RCR_Eb_ext(UINT32);
+void RCR_Ew_ext(UINT32);
+void RCR_Ed_ext(UINT32);
+void RCR_EbCL(UINT8 *, UINT);
+void RCR_EbCL_ext(UINT32, UINT);
+void RCR_EwCL(UINT16 *, UINT);
+void RCR_EwCL_ext(UINT32, UINT);
+void RCR_EdCL(UINT32 *, UINT);
+void RCR_EdCL_ext(UINT32, UINT);
 
 /*
  * RCL
  */
-void RCL_Eb(BYTE *);
-void RCL_Ew(WORD *);
-void RCL_Ed(DWORD *);
-void RCL_Eb_ext(DWORD);
-void RCL_Ew_ext(DWORD);
-void RCL_Ed_ext(DWORD);
-void RCL_EbCL(BYTE *, BYTE);
-void RCL_EbCL_ext(DWORD, BYTE);
-void RCL_EwCL(WORD *, BYTE);
-void RCL_EwCL_ext(DWORD, BYTE);
-void RCL_EdCL(DWORD *, BYTE);
-void RCL_EdCL_ext(DWORD, BYTE);
+void RCL_Eb(UINT8 *);
+void RCL_Ew(UINT16 *);
+void RCL_Ed(UINT32 *);
+void RCL_Eb_ext(UINT32);
+void RCL_Ew_ext(UINT32);
+void RCL_Ed_ext(UINT32);
+void RCL_EbCL(UINT8 *, UINT);
+void RCL_EbCL_ext(UINT32, UINT);
+void RCL_EwCL(UINT16 *, UINT);
+void RCL_EwCL_ext(UINT32, UINT);
+void RCL_EdCL(UINT32 *, UINT);
+void RCL_EdCL_ext(UINT32, UINT);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: logic_arith.c,v 1.4 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: logic_arith.c,v 1.5 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -40,65 +40,65 @@
 void
 AND_EbGb(void)
 {
-	BYTE *out;
-	DWORD op, src, dst, madr;
+	UINT8 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg8_b20[op];
 		dst = *out;
-		ANDBYTE(dst, src);
-		*out = (BYTE)dst;
+		AND_BYTE(dst, src);
+		*out = (UINT8)dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		ANDBYTE(dst, src);
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+		AND_BYTE(dst, src);
+		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 	}
 }
 
 void
 AND_EwGw(void)
 {
-	WORD *out;
-	DWORD op, src, dst, madr;
+	UINT16 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
 		dst = *out;
-		ANDWORD(dst, src);
-		*out = (WORD)dst;
+		AND_WORD(dst, src);
+		*out = (UINT16)dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		ANDWORD(dst, src);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+		AND_WORD(dst, src);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 	}
 }
 
 void
 AND_EdGd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst, madr;
+	UINT32 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
 		dst = *out;
-		ANDDWORD(dst, src);
+		AND_DWORD(dst, src);
 		*out = dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		ANDDWORD(dst, src);
+		AND_DWORD(dst, src);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, dst);
 	}
 }
@@ -106,132 +106,132 @@ AND_EdGd(void)
 void
 AND_GbEb(void)
 {
-	BYTE *out;
-	DWORD op, src, dst;
+	UINT8 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG8_EA(op, src, out, 2, 7);
 	dst = *out;
-	ANDBYTE(dst, src);
-	*out = (BYTE)dst;
+	AND_BYTE(dst, src);
+	*out = (UINT8)dst;
 }
 
 void
 AND_GwEw(void)
 {
-	WORD *out;
-	DWORD op, src, dst;
+	UINT16 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
 	dst = *out;
-	ANDWORD(dst, src);
-	*out = (WORD)dst;
+	AND_WORD(dst, src);
+	*out = (UINT16)dst;
 }
 
 void
 AND_GdEd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst;
+	UINT32 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG32_EA(op, src, out, 2, 7);
 	dst = *out;
-	ANDDWORD(dst, src);
+	AND_DWORD(dst, src);
 	*out = dst;
 }
 
 void
 AND_ALIb(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(src);
 	dst = CPU_AL;
-	ANDBYTE(dst, src);
-	CPU_AL = (BYTE)dst;
+	AND_BYTE(dst, src);
+	CPU_AL = (UINT8)dst;
 }
 
 void
 AND_AXIw(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCWORD(src);
 	dst = CPU_AX;
-	ANDWORD(dst, src);
-	CPU_AX = (WORD)dst;
+	AND_WORD(dst, src);
+	CPU_AX = (UINT16)dst;
 }
 
 void
 AND_EAXId(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCDWORD(src);
 	dst = CPU_EAX;
-	ANDDWORD(dst, src);
+	AND_DWORD(dst, src);
 	CPU_EAX = dst;
 }
 
 void
-AND_EbIb(BYTE *regp, DWORD src)
+AND_EbIb(UINT8 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
-	ANDBYTE(dst, src);
-	*regp = (BYTE)dst;
+	AND_BYTE(dst, src);
+	*regp = (UINT8)dst;
 }
 
 void
-AND_EbIb_ext(DWORD madr, DWORD src)
+AND_EbIb_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-	ANDBYTE(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+	AND_BYTE(dst, src);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 }
 
 void
-AND_EwIx(WORD *regp, DWORD src)
+AND_EwIx(UINT16 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
-	ANDWORD(dst, src);
-	*regp = (WORD)dst;
+	AND_WORD(dst, src);
+	*regp = (UINT16)dst;
 }
 
 void
-AND_EwIx_ext(DWORD madr, DWORD src)
+AND_EwIx_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-	ANDWORD(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+	AND_WORD(dst, src);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 }
 
 void
-AND_EdIx(DWORD *regp, DWORD src)
+AND_EdIx(UINT32 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
-	ANDDWORD(dst, src);
+	AND_DWORD(dst, src);
 	*regp = dst;
 }
 
 void
-AND_EdIx_ext(DWORD madr, DWORD src)
+AND_EdIx_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-	ANDDWORD(dst, src);
+	AND_DWORD(dst, src);
 	cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, dst);
 }
 
@@ -241,65 +241,65 @@ AND_EdIx_ext(DWORD madr, DWORD src)
 void
 OR_EbGb(void)
 {
-	BYTE *out;
-	DWORD op, src, dst, madr;
+	UINT8 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg8_b20[op];
 		dst = *out;
-		ORBYTE(dst, src);
-		*out = (BYTE)dst;
+		OR_BYTE(dst, src);
+		*out = (UINT8)dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		ORBYTE(dst, src);
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+		OR_BYTE(dst, src);
+		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 	}
 }
 
 void
 OR_EwGw(void)
 {
-	WORD *out;
-	DWORD op, src, dst, madr;
+	UINT16 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
 		dst = *out;
-		ORWORD(dst, src);
-		*out = (WORD)dst;
+		OR_WORD(dst, src);
+		*out = (UINT16)dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		ORWORD(dst, src);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+		OR_WORD(dst, src);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 	}
 }
 
 void
 OR_EdGd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst, madr;
+	UINT32 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
 		dst = *out;
-		ORDWORD(dst, src);
+		OR_DWORD(dst, src);
 		*out = dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		ORDWORD(dst, src);
+		OR_DWORD(dst, src);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, dst);
 	}
 }
@@ -307,132 +307,132 @@ OR_EdGd(void)
 void
 OR_GbEb(void)
 {
-	BYTE *out;
-	DWORD op, src, dst;
+	UINT8 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG8_EA(op, src, out, 2, 7);
 	dst = *out;
-	ORBYTE(dst, src);
-	*out = (BYTE)dst;
+	OR_BYTE(dst, src);
+	*out = (UINT8)dst;
 }
 
 void
 OR_GwEw(void)
 {
-	WORD *out;
-	DWORD op, src, dst;
+	UINT16 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
 	dst = *out;
-	ORWORD(dst, src);
-	*out = (WORD)dst;
+	OR_WORD(dst, src);
+	*out = (UINT16)dst;
 }
 
 void
 OR_GdEd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst;
+	UINT32 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG32_EA(op, src, out, 2, 7);
 	dst = *out;
-	ORDWORD(dst, src);
+	OR_DWORD(dst, src);
 	*out = dst;
 }
 
 void
 OR_ALIb(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(src);
 	dst = CPU_AL;
-	ORBYTE(dst, src);
-	CPU_AL = (BYTE)dst;
+	OR_BYTE(dst, src);
+	CPU_AL = (UINT8)dst;
 }
 
 void
 OR_AXIw(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCWORD(src);
 	dst = CPU_AX;
-	ORWORD(dst, src);
-	CPU_AX = (WORD)dst;
+	OR_WORD(dst, src);
+	CPU_AX = (UINT16)dst;
 }
 
 void
 OR_EAXId(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCDWORD(src);
 	dst = CPU_EAX;
-	ORDWORD(dst, src);
+	OR_DWORD(dst, src);
 	CPU_EAX = dst;
 }
 
 void
-OR_EbIb(BYTE *regp, DWORD src)
+OR_EbIb(UINT8 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
-	ORBYTE(dst, src);
-	*regp = (BYTE)dst;
+	OR_BYTE(dst, src);
+	*regp = (UINT8)dst;
 }
 
 void
-OR_EbIb_ext(DWORD madr, DWORD src)
+OR_EbIb_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-	ORBYTE(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+	OR_BYTE(dst, src);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 }
 
 void
-OR_EwIx(WORD *regp, DWORD src)
+OR_EwIx(UINT16 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
-	ORWORD(dst, src);
-	*regp = (WORD)dst;
+	OR_WORD(dst, src);
+	*regp = (UINT16)dst;
 }
 
 void
-OR_EwIx_ext(DWORD madr, DWORD src)
+OR_EwIx_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-	ORWORD(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+	OR_WORD(dst, src);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 }
 
 void
-OR_EdIx(DWORD *regp, DWORD src)
+OR_EdIx(UINT32 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
-	ORDWORD(dst, src);
+	OR_DWORD(dst, src);
 	*regp = dst;
 }
 
 void
-OR_EdIx_ext(DWORD madr, DWORD src)
+OR_EdIx_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-	ORDWORD(dst, src);
+	OR_DWORD(dst, src);
 	cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, dst);
 }
 
@@ -442,8 +442,8 @@ OR_EdIx_ext(DWORD madr, DWORD src)
 void
 XOR_EbGb(void)
 {
-	BYTE *out;
-	DWORD op, src, dst, madr;
+	UINT8 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
@@ -451,21 +451,21 @@ XOR_EbGb(void)
 		out = reg8_b20[op];
 		dst = *out;
 		BYTE_XOR(dst, src);
-		*out = (BYTE)dst;
+		*out = (UINT8)dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 		BYTE_XOR(dst, src);
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 	}
 }
 
 void
 XOR_EwGw(void)
 {
-	WORD *out;
-	DWORD op, src, dst, madr;
+	UINT16 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
@@ -473,21 +473,21 @@ XOR_EwGw(void)
 		out = reg16_b20[op];
 		dst = *out;
 		WORD_XOR(dst, src);
-		*out = (WORD)dst;
+		*out = (UINT16)dst;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_XOR(dst, src);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 	}
 }
 
 void
 XOR_EdGd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst, madr;
+	UINT32 *out;
+	UINT32 op, src, dst, madr;
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
@@ -508,32 +508,32 @@ XOR_EdGd(void)
 void
 XOR_GbEb(void)
 {
-	BYTE *out;
-	DWORD op, src, dst;
+	UINT8 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG8_EA(op, src, out, 2, 7);
 	dst = *out;
 	BYTE_XOR(dst, src);
-	*out = (BYTE)dst;
+	*out = (UINT8)dst;
 }
 
 void
 XOR_GwEw(void)
 {
-	WORD *out;
-	DWORD op, src, dst;
+	UINT16 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
 	dst = *out;
 	WORD_XOR(dst, src);
-	*out = (WORD)dst;
+	*out = (UINT16)dst;
 }
 
 void
 XOR_GdEd(void)
 {
-	DWORD *out;
-	DWORD op, src, dst;
+	UINT32 *out;
+	UINT32 op, src, dst;
 
 	PREPART_REG32_EA(op, src, out, 2, 7);
 	dst = *out;
@@ -544,31 +544,31 @@ XOR_GdEd(void)
 void
 XOR_ALIb(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTE(src);
 	dst = CPU_AL;
 	BYTE_XOR(dst, src);
-	CPU_AL = (BYTE)dst;
+	CPU_AL = (UINT8)dst;
 }
 
 void
 XOR_AXIw(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCWORD(src);
 	dst = CPU_AX;
 	WORD_XOR(dst, src);
-	CPU_AX = (WORD)dst;
+	CPU_AX = (UINT16)dst;
 }
 
 void
 XOR_EAXId(void)
 {
-	DWORD src, dst;
+	UINT32 src, dst;
 
 	CPU_WORKCLOCK(3);
 	GET_PCDWORD(src);
@@ -578,49 +578,49 @@ XOR_EAXId(void)
 }
 
 void
-XOR_EbIb(BYTE *regp, DWORD src)
+XOR_EbIb(UINT8 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
 	BYTE_XOR(dst, src);
-	*regp = (BYTE)dst;
+	*regp = (UINT8)dst;
 }
 
 void
-XOR_EbIb_ext(DWORD madr, DWORD src)
+XOR_EbIb_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_XOR(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 }
 
 void
-XOR_EwIx(WORD *regp, DWORD src)
+XOR_EwIx(UINT16 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
 	WORD_XOR(dst, src);
-	*regp = (WORD)dst;
+	*regp = (UINT16)dst;
 }
 
 void
-XOR_EwIx_ext(DWORD madr, DWORD src)
+XOR_EwIx_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_XOR(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 }
 
 void
-XOR_EdIx(DWORD *regp, DWORD src)
+XOR_EdIx(UINT32 *regp, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = *regp;
 	DWORD_XOR(dst, src);
@@ -628,9 +628,9 @@ XOR_EdIx(DWORD *regp, DWORD src)
 }
 
 void
-XOR_EdIx_ext(DWORD madr, DWORD src)
+XOR_EdIx_ext(UINT32 madr, UINT32 src)
 {
-	DWORD dst;
+	UINT32 dst;
 
 	dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	DWORD_XOR(dst, src);
@@ -641,9 +641,9 @@ XOR_EdIx_ext(DWORD madr, DWORD src)
  * NOT
  */
 void
-NOT_Eb(DWORD op)
+NOT_Eb(UINT32 op)
 {
-	DWORD dst, madr;
+	UINT32 dst, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -653,14 +653,14 @@ NOT_Eb(DWORD op)
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 		dst = dst ^ 0xff;
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
+		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)dst);
 	}
 }
 
 void
-NOT_Ew(DWORD op)
+NOT_Ew(UINT32 op)
 {
-	DWORD dst, madr;
+	UINT32 dst, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
@@ -670,14 +670,14 @@ NOT_Ew(DWORD op)
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		dst = dst ^ 0xffff;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 	}
 }
 
 void
-NOT_Ed(DWORD op)
+NOT_Ed(UINT32 op)
 {
-	DWORD dst, madr;
+	UINT32 dst, madr;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);

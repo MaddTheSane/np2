@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.11 2004/02/19 03:04:02 yui Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.12 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -41,7 +41,7 @@
 void
 JMP_Jb(void)
 {
-	DWORD ip;
+	UINT32 ip;
 
 	CPU_WORKCLOCK(7);
 	GET_PCBYTESD(ip);
@@ -51,7 +51,7 @@ JMP_Jb(void)
 void
 JMP_Jw(void)
 {
-	DWORD ip;
+	UINT32 ip;
 
 	CPU_WORKCLOCK(7);
 	GET_PCWORDS(ip);
@@ -61,7 +61,7 @@ JMP_Jw(void)
 void
 JMP_Jd(void)
 {
-	DWORD ip;
+	UINT32 ip;
 
 	CPU_WORKCLOCK(7);
 	GET_PCDWORD(ip);
@@ -69,10 +69,10 @@ JMP_Jd(void)
 }
 
 void
-JMP_Ew(DWORD op)
+JMP_Ew(UINT32 op)
 {
-	DWORD madr;
-	DWORD new_ip;
+	UINT32 madr;
+	UINT32 new_ip;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
@@ -87,10 +87,10 @@ JMP_Ew(DWORD op)
 }
 
 void
-JMP_Ed(DWORD op)
+JMP_Ed(UINT32 op)
 {
-	DWORD madr;
-	DWORD new_ip;
+	UINT32 madr;
+	UINT32 new_ip;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
@@ -107,8 +107,8 @@ JMP_Ed(DWORD op)
 void
 JMP16_Ap(void)
 {
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(11);
 	GET_PCWORD(new_ip);
@@ -126,8 +126,8 @@ JMP16_Ap(void)
 void
 JMP32_Ap(void)
 {
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(11);
 	GET_PCDWORD(new_ip);
@@ -143,11 +143,11 @@ JMP32_Ap(void)
 }
 
 void
-JMP16_Ep(DWORD op)
+JMP16_Ep(UINT32 op)
 {
-	DWORD madr;
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 madr;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(11);
 	if (op < 0xc0) {
@@ -168,11 +168,11 @@ JMP16_Ep(DWORD op)
 }
 
 void
-JMP32_Ep(DWORD op)
+JMP32_Ep(UINT32 op)
 {
-	DWORD madr;
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 madr;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(11);
 	if (op < 0xc0) {
@@ -829,7 +829,7 @@ LOOP_Jb(void)
 void
 CALL_Aw(void)
 {
-	DWORD ip;
+	SINT32 ip;
 
 	CPU_WORKCLOCK(7);
 	GET_PCWORDS(ip);
@@ -840,7 +840,7 @@ CALL_Aw(void)
 void
 CALL_Ad(void)
 {
-	DWORD ip;
+	UINT32 ip;
 
 	CPU_WORKCLOCK(7);
 	GET_PCDWORD(ip);
@@ -849,10 +849,10 @@ CALL_Ad(void)
 }
 
 void
-CALL_Ew(DWORD op)
+CALL_Ew(UINT32 op)
 {
-	DWORD madr;
-	DWORD new_ip;
+	UINT32 madr;
+	UINT32 new_ip;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
@@ -867,10 +867,10 @@ CALL_Ew(DWORD op)
 }
 
 void
-CALL_Ed(DWORD op)
+CALL_Ed(UINT32 op)
 {
-	DWORD madr;
-	DWORD new_ip;
+	UINT32 madr;
+	UINT32 new_ip;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
@@ -887,8 +887,8 @@ CALL_Ed(DWORD op)
 void
 CALL16_Ap(void)
 {
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(13);
 	GET_PCWORD(new_ip);
@@ -909,8 +909,8 @@ CALL16_Ap(void)
 void
 CALL32_Ap(void)
 {
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(13);
 	GET_PCDWORD(new_ip);
@@ -929,11 +929,11 @@ CALL32_Ap(void)
 }
 
 void
-CALL16_Ep(DWORD op)
+CALL16_Ep(UINT32 op)
 {
-	DWORD ad;
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 ad;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(16);
 	if (op < 0xc0) {
@@ -957,11 +957,11 @@ CALL16_Ep(DWORD op)
 }
 
 void
-CALL32_Ep(DWORD op)
+CALL32_Ep(UINT32 op)
 {
-	DWORD ad;
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 ad;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(16);
 	if (op < 0xc0) {
@@ -990,7 +990,7 @@ CALL32_Ep(DWORD op)
 void
 RETnear16(void)
 {
-	DWORD new_ip;
+	UINT32 new_ip;
 
 	CPU_WORKCLOCK(11);
 	POP0_16(new_ip);
@@ -1000,7 +1000,7 @@ RETnear16(void)
 void
 RETnear32(void)
 {
-	DWORD new_ip;
+	UINT32 new_ip;
 
 	CPU_WORKCLOCK(11);
 	POP0_32(new_ip);
@@ -1010,42 +1010,42 @@ RETnear32(void)
 void
 RETnear16_Iw(void)
 {
-	DWORD new_ip;
-	DWORD ad;
+	UINT32 new_ip;
+	UINT16 size;
 
 	CPU_WORKCLOCK(11);
-	GET_PCWORD(ad);
+	GET_PCWORD(size);
 	POP0_16(new_ip);
 	SET_EIP(new_ip);
 	if (!CPU_STAT_SS32) {
-		CPU_SP += (WORD)ad;
+		CPU_SP += size;
 	} else {
-		CPU_ESP += ad;
+		CPU_ESP += size;
 	}
 }
 
 void
 RETnear32_Iw(void)
 {
-	DWORD new_ip;
-	DWORD ad;
+	UINT32 new_ip;
+	UINT16 size;
 
 	CPU_WORKCLOCK(11);
-	GET_PCWORD(ad);
+	GET_PCWORD(size);
 	POP0_32(new_ip);
 	SET_EIP(new_ip);
-	if (CPU_STAT_SS32) {
-		CPU_ESP += ad;
+	if (!CPU_STAT_SS32) {
+		CPU_SP += size;
 	} else {
-		CPU_SP += (WORD)ad;
+		CPU_ESP += size;
 	}
 }
 
 void
 RETfar16(void)
 {
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 new_ip;
+	UINT16 new_cs;
 
 	CPU_WORKCLOCK(15);
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -1064,8 +1064,8 @@ RETfar16(void)
 void
 RETfar32(void)
 {
-	DWORD new_ip;
-	DWORD new_cs;
+	UINT32 new_ip;
+	UINT32 new_cs;
 
 	CPU_WORKCLOCK(15);
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -1073,7 +1073,7 @@ RETfar32(void)
 		POP0_32(new_ip);
 		POP0_32(new_cs);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (UINT16)new_cs);
 		SET_EIP(new_ip);
 	} else {
 		/* Protected mode */
@@ -1084,12 +1084,12 @@ RETfar32(void)
 void
 RETfar16_Iw(void)
 {
-	DWORD ad;
-	DWORD new_ip;
-	WORD new_cs;
+	UINT32 new_ip;
+	UINT16 new_cs;
+	UINT16 size;
 
 	CPU_WORKCLOCK(15);
-	GET_PCWORD(ad);
+	GET_PCWORD(size);
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* Real mode or VM86 mode */
 		POP0_16(new_ip);
@@ -1099,55 +1099,55 @@ RETfar16_Iw(void)
 		SET_EIP(new_ip);
 
 		if (!CPU_STAT_SS32) {
-			CPU_SP += (WORD)ad;
+			CPU_SP += size;
 		} else {
-			CPU_ESP += ad;
+			CPU_ESP += size;
 		}
 	} else {
 		/* Protected mode */
-		RETfar_pm(ad);
+		RETfar_pm(size);
 	}
 }
 
 void
 RETfar32_Iw(void)
 {
-	DWORD ad;
-	DWORD new_ip;
-	DWORD new_cs;
+	UINT32 new_ip;
+	UINT32 new_cs;
+	UINT16 size;
 
 	CPU_WORKCLOCK(15);
-	GET_PCWORD(ad);
+	GET_PCWORD(size);
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* Real mode or VM86 mode */
 		POP0_32(new_ip);
 		POP0_32(new_cs);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (UINT16)new_cs);
 		SET_EIP(new_ip);
 
-		if (CPU_STAT_SS32) {
-			CPU_ESP += ad;
+		if (!CPU_STAT_SS32) {
+			CPU_SP += size;
 		} else {
-			CPU_SP += (WORD)ad;
+			CPU_ESP += size;
 		}
 	} else {
 		/* Protected mode */
-		RETfar_pm(ad);
+		RETfar_pm(size);
 	}
 }
 
 void
 IRET(void)
 {
-	DWORD new_ip;
-	DWORD new_flags;
-	DWORD mask;
-	DWORD new_cs;
+	UINT32 new_ip;
+	UINT32 new_flags;
+	UINT32 mask;
+	UINT32 new_cs;
 
-	CPU_WORKCLOCK(31);
 	if (!CPU_STAT_PM) {
 		/* Real mode */
+		CPU_WORKCLOCK(22);
 		mask = I_FLAG|IOPL_FLAG;
 		if (!CPU_INST_OP32) {
 			POP0_16(new_ip);
@@ -1161,7 +1161,7 @@ IRET(void)
 		}
 		set_eflags(new_flags, mask);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (UINT16)new_cs);
 		SET_EIP(new_ip);
 	} else {
 		/* Protected mode */
@@ -1177,7 +1177,7 @@ void
 INT1(void)
 {
 
-	CPU_WORKCLOCK(23);
+	CPU_WORKCLOCK(33);
 	INTERRUPT(1, 1, 0, 0);
 }
 
@@ -1185,7 +1185,7 @@ void
 INT3(void)
 {
 
-	CPU_WORKCLOCK(23);
+	CPU_WORKCLOCK(33);
 	INTERRUPT(3, 2, 0, 0);
 }
 
@@ -1194,19 +1194,19 @@ INTO(void)
 {
 
 	if (!CPU_OV) {
-		CPU_WORKCLOCK(4);
+		CPU_WORKCLOCK(3);
 		return;
 	}
-	CPU_WORKCLOCK(24);
+	CPU_WORKCLOCK(35);
 	INTERRUPT(4, 3, 0, 0);
 }
 
 void
 INT_Ib(void)
 {
-	BYTE vect;
+	UINT8 vect;
 
-	CPU_WORKCLOCK(23);
+	CPU_WORKCLOCK(37);
 	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
 		GET_PCBYTE(vect);
 		INTERRUPT(vect, -1, 0, 0);
@@ -1218,8 +1218,8 @@ INT_Ib(void)
 void
 BOUND_GwMa(void)
 {
-	DWORD op, madr;
-	WORD reg;
+	UINT32 op, madr;
+	UINT16 reg;
 	int vect;
 
 	CPU_WORKCLOCK(13);
@@ -1241,8 +1241,8 @@ BOUND_GwMa(void)
 void
 BOUND_GdMa(void)
 {
-	DWORD op, madr;
-	DWORD reg;
+	UINT32 op, madr;
+	UINT32 reg;
 	int vect;
 
 	CPU_WORKCLOCK(13);
@@ -1267,11 +1267,11 @@ BOUND_GdMa(void)
 void
 ENTER16_IwIb(void)
 {
-	DWORD sp, bp;
-	DWORD size;
-	DWORD val;
-	WORD dimsize;
-	BYTE level;
+	UINT32 sp, bp;
+	UINT32 size;
+	UINT32 val;
+	UINT16 dimsize;
+	UINT8 level;
 
 	GET_PCWORD(dimsize);
 	GET_PCBYTE(level);
@@ -1303,7 +1303,7 @@ ENTER16_IwIb(void)
 			CPU_WORKCLOCK(15);
 			sp = CPU_SP;
 			PUSH0_16(sp);
-			CPU_BP = (WORD)sp;
+			CPU_BP = (UINT16)sp;
 			if (!CPU_STAT_SS32) {
 				CPU_SP -= dimsize;
 			} else {
@@ -1318,7 +1318,7 @@ ENTER16_IwIb(void)
 					bp -= 2;
 					CPU_SP -= 2;
 					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
-					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, (WORD)val);
+					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, (UINT16)val);
 				}
 				REGPUSH0(CPU_BP);
 				CPU_SP -= dimsize;
@@ -1329,7 +1329,7 @@ ENTER16_IwIb(void)
 					bp -= 2;
 					CPU_ESP -= 2;
 					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
-					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, (WORD)val);
+					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, (UINT16)val);
 				}
 				REGPUSH0_16_32(CPU_BP);
 				CPU_ESP -= dimsize;
@@ -1341,11 +1341,11 @@ ENTER16_IwIb(void)
 void
 ENTER32_IwIb(void)
 {
-	DWORD sp, bp;
-	DWORD size;
-	DWORD val;
-	WORD dimsize;
-	BYTE level;
+	UINT32 sp, bp;
+	UINT32 size;
+	UINT32 val;
+	UINT16 dimsize;
+	UINT8 level;
 
 	GET_PCWORD(dimsize);
 	GET_PCBYTE(level);
@@ -1415,9 +1415,9 @@ ENTER32_IwIb(void)
 void
 LEAVE(void)
 {
-	DWORD sp, bp;
+	UINT32 sp, bp;
 
-	CPU_WORKCLOCK(5);
+	CPU_WORKCLOCK(4);
 
 	if (CPU_STAT_PM) {
 		if (!CPU_STAT_SS32) {

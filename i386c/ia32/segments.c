@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.12 2004/02/19 03:04:01 yui Exp $	*/
+/*	$Id: segments.c,v 1.13 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -33,7 +33,7 @@
 
 
 void
-load_segreg(int idx, WORD selector, int exc)
+load_segreg(int idx, UINT16 selector, int exc)
 {
 	selector_t sel;
 	int rv;
@@ -77,9 +77,11 @@ load_segreg(int idx, WORD selector, int exc)
 
 	switch (idx) {
 	case CPU_SS_INDEX:
-		if ((CPU_STAT_CPL != sel.rpl) ||
-		    !sel.desc.s || sel.desc.u.seg.c || !sel.desc.u.seg.wr ||
-		    (CPU_STAT_CPL != sel.desc.dpl)) {
+		if ((CPU_STAT_CPL != sel.rpl)
+		 || (CPU_STAT_CPL != sel.desc.dpl)
+		 || !sel.desc.s
+		 || sel.desc.u.seg.c
+		 || !sel.desc.u.seg.wr) {
 			EXCEPTION(exc, sel.idx);
 		}
 
@@ -129,26 +131,26 @@ load_segreg(int idx, WORD selector, int exc)
  * load SS register
  */
 void
-load_ss(WORD selector, descriptor_t* sdp, DWORD cpl)
+load_ss(UINT16 selector, descriptor_t *sd, UINT cpl)
 {
 
-	CPU_STAT_SS32 = sdp->d;
-	CPU_REGS_SREG(CPU_SS_INDEX) = (WORD)((selector & ~3) | (cpl & 3));
-	CPU_STAT_SREG(CPU_SS_INDEX) = *sdp;
+	CPU_STAT_SS32 = sd->d;
+	CPU_REGS_SREG(CPU_SS_INDEX) = (UINT16)((selector & ~3) | (cpl & 3));
+	CPU_STAT_SREG(CPU_SS_INDEX) = *sd;
 }
 
 /*
  * load CS register
  */
 void
-load_cs(WORD selector, descriptor_t* sdp, DWORD cpl)
+load_cs(UINT16 selector, descriptor_t *sd, UINT cpl)
 {
 
 	CPU_INST_OP32 = CPU_INST_AS32 =
 	    CPU_STATSAVE.cpu_inst_default.op_32 =
-	    CPU_STATSAVE.cpu_inst_default.as_32 = sdp->d;
-	CPU_REGS_SREG(CPU_CS_INDEX) = (WORD)((selector & ~3) | (cpl & 3));
-	CPU_STAT_SREG(CPU_CS_INDEX) = *sdp;
+	    CPU_STATSAVE.cpu_inst_default.as_32 = sd->d;
+	CPU_REGS_SREG(CPU_CS_INDEX) = (UINT16)((selector & ~3) | (cpl & 3));
+	CPU_STAT_SREG(CPU_CS_INDEX) = *sd;
 	CPU_SET_CPL(cpl & 3);
 }
 
@@ -156,7 +158,7 @@ load_cs(WORD selector, descriptor_t* sdp, DWORD cpl)
  * load LDT register
  */
 void
-load_ldtr(WORD selector, int exc)
+load_ldtr(UINT16 selector, int exc)
 {
 	selector_t sel;
 	int rv;
@@ -197,9 +199,9 @@ load_ldtr(WORD selector, int exc)
 }
 
 void
-load_descriptor(descriptor_t *descp, DWORD addr)
+load_descriptor(descriptor_t *descp, UINT32 addr)
 {
-	DWORD l, h;
+	UINT32 l, h;
 
 	memset(descp, 0, sizeof(*descp));
 
@@ -210,8 +212,8 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 	descp->flag = 0;
 
 	descp->p = (h & CPU_DESC_H_P) == CPU_DESC_H_P;
-	descp->type = (BYTE)((h & CPU_DESC_H_TYPE) >> 8);
-	descp->dpl = (BYTE)((h & CPU_DESC_H_DPL) >> 13);
+	descp->type = (UINT8)((h & CPU_DESC_H_TYPE) >> 8);
+	descp->dpl = (UINT8)((h & CPU_DESC_H_DPL) >> 13);
 	descp->s = (h & CPU_DESC_H_S) == CPU_DESC_H_S;
 
 	VERBOSE(("load_descriptor: present = %s, type = %d, DPL = %d", descp->p ? "true" : "false", descp->type, descp->dpl));
@@ -264,7 +266,7 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 
 		case CPU_SYSDESC_TYPE_TASK:		/* task gate */
 			descp->valid = 1;
-			descp->u.gate.selector = (WORD)(l >> 16);
+			descp->u.gate.selector = (UINT16)(l >> 16);
 
 			VERBOSE(("load_descriptor: task descriptor: selector = 0x%04x", descp->u.gate.selector));
 			break;
@@ -302,7 +304,7 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 			if ((h & 0x0000000e0) == 0) {
 				descp->valid = 1;
 				descp->d = (h & CPU_GATEDESC_H_D) ? 1:0;
-				descp->u.gate.selector = (WORD)(l >> 16);
+				descp->u.gate.selector = (UINT16)(l >> 16);
 				descp->u.gate.offset  = h & 0xffff0000;
 				descp->u.gate.offset |= l & 0xffff;
 				descp->u.gate.count = (BYTE)(h & 0x1f);
@@ -324,16 +326,16 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 }
 
 int
-parse_selector(selector_t* ssp, WORD selector)
+parse_selector(selector_t *ssp, UINT16 selector)
 {
-	DWORD base;
-	WORD limit;
-	WORD idx;
+	UINT32 base;
+	UINT limit;
+	UINT idx;
 
 	ssp->selector = selector;
 	ssp->idx = selector & ~3;
 	ssp->rpl = selector & 3;
-	ssp->ldt = (BYTE)(selector & CPU_SEGMENT_TABLE_IND);
+	ssp->ldt = (UINT8)(selector & CPU_SEGMENT_TABLE_IND);
 
 	VERBOSE(("parse_selector: selector = %04x, index = %d, RPL = %d, %cDT", ssp->selector, ssp->idx >> 3, ssp->rpl, ssp->ldt ? 'L' : 'G'));
 
@@ -346,7 +348,7 @@ parse_selector(selector_t* ssp, WORD selector)
 			return -1;
 		}
 		base = CPU_LDTR_BASE;
-		limit = (WORD)CPU_LDTR_LIMIT;
+		limit = CPU_LDTR_LIMIT;
 	} else {
 		/* check null segment */
 		if (idx == 0) {
@@ -375,7 +377,7 @@ parse_selector(selector_t* ssp, WORD selector)
 int
 selector_is_not_present(selector_t *ssp)
 {
-	DWORD h;
+	UINT32 h;
 
 	/* not present */
 	if (!ssp->desc.p) {

@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.h,v 1.3 2004/02/05 16:41:32 monaka Exp $	*/
+/*	$Id: cpu_mem.h,v 1.4 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -40,29 +40,29 @@ extern "C" {
 /*
  * memory access check
  */
-void cpu_memoryread_check(descriptor_t* sd, DWORD madr, DWORD length, int e);
-void cpu_memorywrite_check(descriptor_t* sd, DWORD madr, DWORD length, int e);
-BOOL cpu_stack_push_check(descriptor_t* sd, DWORD madr, DWORD length);
-BOOL cpu_stack_pop_check(descriptor_t* sd, DWORD madr, DWORD length);
+void cpu_memoryread_check(descriptor_t *sd, UINT32 madr, UINT length, int e);
+void cpu_memorywrite_check(descriptor_t *sd, UINT32 madr, UINT length, int e);
+BOOL cpu_stack_push_check(descriptor_t *sd, UINT32 madr, UINT length);
+BOOL cpu_stack_pop_check(descriptor_t *sd, UINT32 madr, UINT length);
 #define	CHECK_STACK_PUSH(sdp, addr, n)	cpu_stack_push_check(sdp, addr, n)
 #define	CHECK_STACK_POP(sdp, addr, n)	cpu_stack_pop_check(sdp, addr, n)
 
 /*
  * virtual address function
  */
-void MEMCALL cpu_vmemorywrite(int idx, DWORD address, BYTE value);
-void MEMCALL cpu_vmemorywrite_w(int idx, DWORD address, WORD value);
-void MEMCALL cpu_vmemorywrite_d(int idx, DWORD address, DWORD value);
-BYTE MEMCALL cpu_vmemoryread(int idx, DWORD address);
-WORD MEMCALL cpu_vmemoryread_w(int idx, DWORD address);
-DWORD MEMCALL cpu_vmemoryread_d(int idx, DWORD address);
+void MEMCALL cpu_vmemorywrite(int idx, UINT32 address, UINT8 value);
+void MEMCALL cpu_vmemorywrite_w(int idx, UINT32 address, UINT16 value);
+void MEMCALL cpu_vmemorywrite_d(int idx, UINT32 address, UINT32 value);
+UINT8 MEMCALL cpu_vmemoryread(int idx, UINT32 address);
+UINT16 MEMCALL cpu_vmemoryread_w(int idx, UINT32 address);
+UINT32 MEMCALL cpu_vmemoryread_d(int idx, UINT32 address);
 
 /*
  * code fetch
  */
-BYTE MEMCALL cpu_codefetch(DWORD madr);
-WORD MEMCALL cpu_codefetch_w(DWORD madr);
-DWORD MEMCALL cpu_codefetch_d(DWORD madr);
+UINT8 MEMCALL cpu_codefetch(UINT32 madr);
+UINT16 MEMCALL cpu_codefetch_w(UINT32 madr);
+UINT32 MEMCALL cpu_codefetch_d(UINT32 madr);
 
 #ifdef __cplusplus
 }

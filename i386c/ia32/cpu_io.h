@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: cpu_io.h,v 1.2 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -34,12 +34,12 @@
 extern "C" {
 #endif
 
-BYTE cpu_in(WORD port);
-WORD cpu_in_w(WORD port);
-DWORD cpu_in_d(WORD port);
-void cpu_out(WORD port, BYTE val);
-void cpu_out_w(WORD port, WORD val);
-void cpu_out_d(WORD port, DWORD val);
+UINT8 cpu_in(UINT port);
+UINT16 cpu_in_w(UINT port);
+UINT32 cpu_in_d(UINT port);
+void cpu_out(UINT port, UINT8 val);
+void cpu_out_w(UINT port, UINT16 val);
+void cpu_out_d(UINT port, UINT32 val);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.3 2004/02/19 03:04:02 yui Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.4 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -35,41 +35,41 @@
  */
 #define	_BYTE_SAR1(d, s) \
 do { \
-	(d) = (BYTE)(((SBYTE)(s)) >> 1); \
+	(d) = (UINT8)(((SINT8)(s)) >> 1); \
 	CPU_OV = 0; \
-	CPU_FLAGL = (BYTE)(szpcflag[(BYTE)(d)] | A_FLAG | ((s) & 1)); \
+	CPU_FLAGL = (UINT8)(szpcflag[(UINT8)(d)] | A_FLAG | ((s) & 1)); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_WORD_SAR1(d, s) \
 do { \
-	(d) = (WORD)(((SWORD)(s)) >> 1); \
+	(d) = (UINT16)(((SINT16)(s)) >> 1); \
 	CPU_OV = 0; \
-	CPU_FLAGL = (BYTE)(szpflag_w[(WORD)(d)] | A_FLAG | ((s) & 1)); \
+	CPU_FLAGL = (UINT8)(szpflag_w[(UINT16)(d)] | A_FLAG | ((s) & 1)); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_DWORD_SAR1(d, s) \
 do { \
-	(d) = (DWORD)(((SDWORD)(s)) >> 1); \
+	(d) = (UINT32)(((SINT32)(s)) >> 1); \
 	CPU_OV = 0; \
-	CPU_FLAGL = (BYTE)(A_FLAG | ((s) & 1)); /* C_FLAG */ \
+	CPU_FLAGL = (UINT8)(A_FLAG | ((s) & 1)); /* C_FLAG */ \
 	if ((d) == 0) { \
 		CPU_FLAGL |= Z_FLAG; \
 	} \
 	if ((d) & 0x80000000) { \
 		CPU_FLAGL |= S_FLAG; \
 	} \
-	CPU_FLAGL |= (szpcflag[(BYTE)(d)] & P_FLAG); \
+	CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_BYTE_SARCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
 	if (c) { \
-		(s) = ((SBYTE)(s)) >> ((c) - 1); \
-		CPU_FLAGL = (BYTE)((s) & 1); /* C_FLAG */ \
-		(s) = (BYTE)(((SBYTE)(s)) >> 1); \
+		(s) = ((SINT8)(s)) >> ((c) - 1); \
+		CPU_FLAGL = (UINT8)((s) & 1); /* C_FLAG */ \
+		(s) = (UINT8)(((SINT8)(s)) >> 1); \
 		CPU_OV = 0; \
-		CPU_FLAGL |= (szpcflag[(BYTE)(s)] | A_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] | A_FLAG); \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -78,11 +78,11 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if (c) { \
-		(s) = ((SWORD)(s)) >> ((c) - 1); \
-		CPU_FLAGL = (BYTE)((s) & 1); /* C_FLAG */ \
-		(s) = (WORD)(((SWORD)(s)) >> 1); \
+		(s) = ((SINT16)(s)) >> ((c) - 1); \
+		CPU_FLAGL = (UINT8)((s) & 1); /* C_FLAG */ \
+		(s) = (UINT16)(((SINT16)(s)) >> 1); \
 		CPU_OV = 0; \
-		CPU_FLAGL |= szpflag_w[(WORD)(s)]; \
+		CPU_FLAGL |= szpflag_w[(UINT16)(s)]; \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -91,9 +91,9 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		(s) = ((SDWORD)(s)) >> ((c) - 1); \
-		CPU_FLAGL = (BYTE)((s) & 1); /* C_FLAG */ \
-		(s) = (DWORD)(((SDWORD)(s)) >> 1); \
+		(s) = ((SINT32)(s)) >> ((c) - 1); \
+		CPU_FLAGL = (UINT8)((s) & 1); /* C_FLAG */ \
+		(s) = (UINT32)(((SINT32)(s)) >> 1); \
 		CPU_OV = 0; \
 		if ((s) == 0) { \
 			CPU_FLAGL |= Z_FLAG; \
@@ -101,7 +101,7 @@ do { \
 		if ((s) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
-		CPU_FLAGL |= (szpcflag[(BYTE)(s)] & P_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] & P_FLAG); \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -113,25 +113,25 @@ do { \
 do { \
 	(d) = (s) >> 1; \
 	CPU_OV = (s) & 0x80; \
-	CPU_FLAGL = (BYTE)(szpcflag[(BYTE)(d)] | A_FLAG | ((s) & 1)); \
+	CPU_FLAGL = (UINT8)(szpcflag[(UINT8)(d)] | A_FLAG | ((s) & 1)); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_WORD_SHR1(d, s) \
 do { \
 	(d) = (s) >> 1; \
 	CPU_OV = (s) & 0x8000; \
-	CPU_FLAGL = (BYTE)(szpflag_w[(WORD)(d)] | A_FLAG | ((s) & 1)); \
+	CPU_FLAGL = (UINT8)(szpflag_w[(UINT16)(d)] | A_FLAG | ((s) & 1)); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_DWORD_SHR1(d, s) \
 do { \
 	(d) = (s) >> 1; \
 	CPU_OV = (s) & 0x80000000; \
-	CPU_FLAGL = (BYTE)(A_FLAG | ((s) & 1)); \
+	CPU_FLAGL = (UINT8)(A_FLAG | ((s) & 1)); \
 	if ((d) == 0) { \
 		CPU_FLAGL |= Z_FLAG; \
 	} \
-	CPU_FLAGL |= (szpcflag[(BYTE)(d)] & P_FLAG); \
+	CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_BYTE_SHRCL(d, s, c) \
@@ -143,10 +143,10 @@ do { \
 			(c) |= 8; \
 		} \
 		(s) >>= (c) - 1; \
-		CPU_FLAGL = (BYTE)((s) & 1); \
+		CPU_FLAGL = (UINT8)((s) & 1); \
 		(s) >>= 1; \
 		CPU_OV = ((s) ^ ((s) >> 1)) & 0x40; \
-		CPU_FLAGL |= (szpcflag[(BYTE)(s)] | A_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] | A_FLAG); \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -162,9 +162,9 @@ do { \
 		} else { \
 			CPU_OV = (s) & 0x8000; \
 		} \
-		CPU_FLAGL = (BYTE)((s) & 1); \
+		CPU_FLAGL = (UINT8)((s) & 1); \
 		(s) >>= 1; \
-		CPU_FLAGL |= szpflag_w[(WORD)(s)]; \
+		CPU_FLAGL |= szpflag_w[(UINT16)(s)]; \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -180,12 +180,12 @@ do { \
 		} else { \
 			CPU_OV = (s) & 0x80000000; \
 		} \
-		CPU_FLAGL = (BYTE)((s) & 1); \
+		CPU_FLAGL = (UINT8)((s) & 1); \
 		(s) >>= 1; \
 		if ((s) == 0) { \
 			CPU_FLAGL |= Z_FLAG; \
 		} \
-		CPU_FLAGL |= (szpcflag[(BYTE)(s)] & P_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] & P_FLAG); \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -197,21 +197,21 @@ do { \
 do { \
 	(d) = (s) << 1; \
 	CPU_OV = ((s) ^ (d)) & 0x80; \
-	CPU_FLAGL = (BYTE)(szpcflag[(d) & 0x1ff] | A_FLAG); \
+	CPU_FLAGL = (UINT8)(szpcflag[(d) & 0x1ff] | A_FLAG); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_WORD_SHL1(d, s) \
 do { \
 	(d) = (s) << 1; \
 	CPU_OV = ((s) ^ (d)) & 0x8000; \
-	CPU_FLAGL = (BYTE)(szpflag_w[(WORD)(d)] | A_FLAG | ((d) >> 16)); \
+	CPU_FLAGL = (UINT8)(szpflag_w[(UINT16)(d)] | A_FLAG | ((d) >> 16)); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_DWORD_SHL1(d, s) \
 do { \
 	(d) = (s) << 1; \
 	CPU_OV = ((s) ^ (d)) & 0x80000000; \
-	CPU_FLAGL = (BYTE)(A_FLAG | (szpcflag[(BYTE)(d)] & P_FLAG)); \
+	CPU_FLAGL = (UINT8)(A_FLAG | (szpcflag[(UINT8)(d)] & P_FLAG)); \
 	if ((s) & 0x80000000) { \
 		CPU_FLAGL |= C_FLAG; \
 	} \
@@ -233,7 +233,7 @@ do { \
 		} \
 		(s) <<= (c); \
 		(s) &= 0x1ff; \
-		CPU_FLAGL = (BYTE)(szpcflag[(s) & 0x1ff] | A_FLAG); \
+		CPU_FLAGL = (UINT8)(szpcflag[(s) & 0x1ff] | A_FLAG); \
 		CPU_OV = ((s) ^ ((s) >> 1)) & 0x80; \
 	} \
 	(d) = (s); \
@@ -249,8 +249,8 @@ do { \
 		} \
 		(s) <<= (c); \
 		(s) &= 0x1ffff; \
-		CPU_FLAGL = (BYTE)(szpflag_w[(WORD)(s)] | A_FLAG); \
-		CPU_FLAGL |= (BYTE)((s) >> 16); /* C_FLAG */ \
+		CPU_FLAGL = (UINT8)(szpflag_w[(UINT16)(s)] | A_FLAG); \
+		CPU_FLAGL |= (UINT8)((s) >> 16); /* C_FLAG */ \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -277,7 +277,7 @@ do { \
 		if ((s) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
-		CPU_FLAGL |= (szpcflag[(BYTE)(s)] & P_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] & P_FLAG); \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -285,26 +285,26 @@ do { \
 /*
  * SHRD
  */
-#define _WORD_SHRD(d, s, c) \
+#define	_WORD_SHRD(d, s, c) \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
 		if ((c) < 16) { \
-			CPU_FLAGL = (BYTE)(((d) >> ((c) - 1)) & 1); /*C_FLAG*/ \
+			CPU_FLAGL = (UINT8)(((d) >> ((c) - 1)) & 1); /*C_FLAG*/ \
 			(d) |= (s) << 16; \
 			(d) >>= (c); \
 			(d) &= 0xffff; \
-			CPU_FLAGL |= szpflag_w[(WORD)(d)] | A_FLAG; \
+			CPU_FLAGL |= szpflag_w[(UINT16)(d)] | A_FLAG; \
 			CPU_OV = (d) & 0x8000; \
 		} \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define _DWORD_SHRD(d, s, c) \
+#define	_DWORD_SHRD(d, s, c) \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		CPU_FLAGL = (BYTE)(((d) >> ((c) - 1)) & 1); /* C_FLAG */ \
+		CPU_FLAGL = (UINT8)(((d) >> ((c) - 1)) & 1); /* C_FLAG */ \
 		(d) >>= (c); \
 		(d) |= (s) << (32 - (c)); \
 		if ((d) == 0) { \
@@ -313,7 +313,7 @@ do { \
 		if ((d) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
-		CPU_FLAGL |= (szpcflag[(BYTE)(d)] & P_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
 		CPU_OV = (d) & 0x80000000; \
 	} \
 } while (/*CONSTCOND*/ 0)
@@ -321,12 +321,12 @@ do { \
 /*
  * SHLD
  */
-#define _WORD_SHLD(d, s, c) \
+#define	_WORD_SHLD(d, s, c) \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
 		if ((c) < 16) { \
-			CPU_FLAGL = (BYTE)(((d) >> (16 - (c))) & 1); /*C_FLAG*/\
+			CPU_FLAGL = (UINT8)(((d) >> (16 - (c))) & 1); /*C_FLAG*/\
 			(d) = ((d) << 16) | (s); \
 			(d) <<= (c); \
 			(d) >>= 16; \
@@ -336,11 +336,11 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define _DWORD_SHLD(d, s, c) \
+#define	_DWORD_SHLD(d, s, c) \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		CPU_FLAGL = (BYTE)(((d) >> (32 - (c))) & 1); /* C_FLAG */ \
+		CPU_FLAGL = (UINT8)(((d) >> (32 - (c))) & 1); /* C_FLAG */ \
 		(d) <<= (c); \
 		(d) |= ((s) >> (32 - (c))); \
 		if ((d) == 0) { \
@@ -349,7 +349,7 @@ do { \
 		if ((d) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
-		CPU_FLAGL |= (szpcflag[(BYTE)(d)] & P_FLAG); \
+		CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
 		CPU_OV = (d) & 0x80000000; \
 	} \
 } while (/*CONSTCOND*/ 0)
@@ -357,27 +357,27 @@ do { \
 /*
  * ROR
  */
-#define _BYTE_ROR1(d, s) \
+#define	_BYTE_ROR1(d, s) \
 do { \
-	DWORD tmp = (s) & 1; \
+	UINT32 tmp = (s) & 1; \
 	(d) = (tmp << 7) + ((s) >> 1); \
 	CPU_FLAGL &= ~C_FLAG; \
 	CPU_FLAGL |= tmp; \
 	CPU_OV = ((s) ^ (d)) & 0x80; \
 } while (/*CONSTCOND*/ 0)
 
-#define _WORD_ROR1(d, s) \
+#define	_WORD_ROR1(d, s) \
 do { \
-	DWORD tmp = (s) & 1; \
+	UINT32 tmp = (s) & 1; \
 	(d) = (tmp << 15) + ((s) >> 1); \
 	CPU_FLAGL &= ~C_FLAG; \
 	CPU_FLAGL |= tmp; \
 	CPU_OV = ((s) ^ (d)) & 0x8000; \
 } while (/*CONSTCOND*/ 0)
 
-#define _DWORD_ROR1(d, s) \
+#define	_DWORD_ROR1(d, s) \
 do { \
-	DWORD tmp = (s) & 1; \
+	UINT32 tmp = (s) & 1; \
 	(d) = (tmp << 31) + ((s) >> 1); \
 	CPU_FLAGL &= ~C_FLAG; \
 	CPU_FLAGL |= tmp; \
@@ -403,7 +403,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp; \
+		UINT32 tmp; \
 		(c)--; \
 		if ((c)) { \
 			(c) &= 0x0f; \
@@ -425,7 +425,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp; \
+		UINT32 tmp; \
 		(c)--; \
 		if ((c)) { \
 			(s) = ((s) >> (c)) | ((s) << (32 - (c))); \
@@ -446,7 +446,7 @@ do { \
  */
 #define	_BYTE_ROL1(d, s)	\
 do { \
-	DWORD tmp = (s) >> 7; /* C_FLAG */ \
+	UINT32 tmp = (s) >> 7; /* C_FLAG */ \
 	(d) = ((s) << 1) + tmp; \
 	CPU_FLAGL &= ~C_FLAG; \
 	CPU_FLAGL |= tmp; \
@@ -455,7 +455,7 @@ do { \
 
 #define	_WORD_ROL1(d, s)	\
 do { \
-	DWORD tmp = (s) >> 15; /* C_FLAG */ \
+	UINT32 tmp = (s) >> 15; /* C_FLAG */ \
 	(d) = ((s) << 1) + tmp; \
 	CPU_FLAGL &= ~C_FLAG; \
 	CPU_FLAGL |= tmp; \
@@ -464,7 +464,7 @@ do { \
 
 #define	_DWORD_ROL1(d, s)	\
 do { \
-	DWORD tmp = (s) >> 31; /* C_FLAG */ \
+	UINT32 tmp = (s) >> 31; /* C_FLAG */ \
 	(d) = ((s) << 1) + tmp; \
 	CPU_FLAGL &= ~C_FLAG; \
 	CPU_FLAGL |= tmp; \
@@ -490,7 +490,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp; \
+		UINT32 tmp; \
 		(c)--; \
 		if ((c)) { \
 			(c) &= 0x0f; \
@@ -512,7 +512,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp; \
+		UINT32 tmp; \
 		(c)--; \
 		if ((c)) { \
 			(s) = ((s) << (c)) | ((s) >> (32 - (c))); \
@@ -559,7 +559,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp = CPU_FLAGL & C_FLAG; \
+		UINT32 tmp = CPU_FLAGL & C_FLAG; \
 		CPU_FLAGL &= ~C_FLAG; \
 		while ((c)--) { \
 			(s) |= (tmp << 8); \
@@ -576,7 +576,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp = CPU_FLAGL & C_FLAG; \
+		UINT32 tmp = CPU_FLAGL & C_FLAG; \
 		CPU_FLAGL &= ~C_FLAG; \
 		CPU_OV = 0; \
 		if ((c) == 1) { \
@@ -596,7 +596,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp = CPU_FLAGL & C_FLAG; \
+		UINT32 tmp = CPU_FLAGL & C_FLAG; \
 		CPU_FLAGL &= ~C_FLAG; \
 		CPU_OV = 0; \
 		if ((c) == 1) { \
@@ -614,7 +614,7 @@ do { \
 /*
  * RCL
  */
-#define _BYTE_RCL1(d, s) \
+#define	_BYTE_RCL1(d, s) \
 do { \
 	(d) = ((s) << 1) | (CPU_FLAGL & C_FLAG); \
 	CPU_FLAGL &= ~C_FLAG; \
@@ -622,7 +622,7 @@ do { \
 	CPU_OV = ((s) ^ (d)) & 0x80; \
 } while (/*CONSTCOND*/ 0)
 
-#define _WORD_RCL1(d, s) \
+#define	_WORD_RCL1(d, s) \
 do { \
 	(d) = ((s) << 1) | (CPU_FLAGL & C_FLAG); \
 	CPU_FLAGL &= ~C_FLAG; \
@@ -630,7 +630,7 @@ do { \
 	CPU_OV = ((s) ^ (d)) & 0x8000; \
 } while (/*CONSTCOND*/ 0)
 
-#define _DWORD_RCL1(d, s) \
+#define	_DWORD_RCL1(d, s) \
 do { \
 	(d) = ((s) << 1) | (CPU_FLAGL & C_FLAG); \
 	CPU_FLAGL &= ~C_FLAG; \
@@ -642,7 +642,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp = CPU_FLAGL & C_FLAG; \
+		UINT32 tmp = CPU_FLAGL & C_FLAG; \
 		CPU_FLAGL &= ~C_FLAG; \
 		while ((c)--) { \
 			(s) = (((s) << 1) | tmp) & 0x1ff; \
@@ -658,7 +658,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp = CPU_FLAGL & C_FLAG; \
+		UINT32 tmp = CPU_FLAGL & C_FLAG; \
 		CPU_FLAGL &= ~C_FLAG; \
 		CPU_OV = 0; \
 		if ((c) == 1) { \
@@ -677,7 +677,7 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		DWORD tmp = CPU_FLAGL & C_FLAG; \
+		UINT32 tmp = CPU_FLAGL & C_FLAG; \
 		CPU_FLAGL &= ~C_FLAG; \
 		CPU_OV = 0; \
 		if ((c) == 1) { \

@@ -1,4 +1,4 @@
-/*	$Id: resolve.c,v 1.5 2004/01/27 15:53:56 monaka Exp $	*/
+/*	$Id: resolve.c,v 1.6 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -32,12 +32,12 @@
 #include "ia32.mcr"
 
 
-DWORD (*calc_ea_dst_tbl[0x100])(void);
-DWORD (*calc_ea32_dst_tbl[0x100])(void);
+UINT32 (*calc_ea_dst_tbl[0x100])(void);
+UINT32 (*calc_ea32_dst_tbl[0x100])(void);
 
 #if defined(DEBUG) || !defined(IA32_INLINE_CALC_EA)
-DWORD
-calc_ea_dst(DWORD op)
+UINT32
+calc_ea_dst(UINT32 op)
 {
 
 	__ASSERT(op < 0x100);
@@ -52,7 +52,7 @@ calc_ea_dst(DWORD op)
 /*
  * common
  */
-DWORD
+UINT32
 ea_nop(void)
 {
 
@@ -68,7 +68,7 @@ ea_nop(void)
 /*
  * ea_dest
  */
-static DWORD
+static UINT32
 ea_bx_si(void)
 {
 
@@ -76,27 +76,27 @@ ea_bx_si(void)
 	return (CPU_BX + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_bx_si_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_BX + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_bx_si_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_BX + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_bx_di(void)
 {
 
@@ -104,27 +104,27 @@ ea_bx_di(void)
 	return (CPU_BX + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_bx_di_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_BX + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_bx_di_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_BX + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_bp_si(void)
 {
 
@@ -132,27 +132,27 @@ ea_bp_si(void)
 	return (CPU_BP + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_bp_si_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return (adrs + CPU_BP + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_bp_si_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return (adrs + CPU_BP + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_bp_di(void)
 {
 
@@ -160,27 +160,27 @@ ea_bp_di(void)
 	return (CPU_BP + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_bp_di_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return (adrs + CPU_BP + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_bp_di_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return (adrs + CPU_BP + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_si(void)
 {
 
@@ -188,27 +188,27 @@ ea_si(void)
 	return CPU_SI;
 }
 
-static DWORD
+static UINT32
 ea_si_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_si_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_SI);
 }
 
-static DWORD
+static UINT32
 ea_di(void)
 {
 
@@ -216,57 +216,57 @@ ea_di(void)
 	return CPU_DI;
 }
 
-static DWORD
+static UINT32
 ea_di_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_di_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_DI);
 }
 
-static DWORD
+static UINT32
 ea_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs;
 }
 
-static DWORD
+static UINT32
 ea_bp_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return (adrs + CPU_BP);
 }
 
-static DWORD
+static UINT32
 ea_bp_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return (adrs + CPU_BP);
 }
 
-static DWORD
+static UINT32
 ea_bx(void)
 {
 
@@ -274,27 +274,27 @@ ea_bx(void)
 	return CPU_BX;
 }
 
-static DWORD
+static UINT32
 ea_bx_disp8(void)
 {
-	SDWORD adrs;
+	UINT32 adrs;
 
-	GET_PCBYTESD(adrs);
+	GET_PCBYTES(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_BX);
 }
 
-static DWORD
+static UINT32
 ea_bx_disp16(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return (adrs + CPU_BX);
 }
 
-static DWORD (*c_ea_dst_tbl[])(void) = {
+static UINT32 (*c_ea_dst_tbl[])(void) = {
 	ea_bx_si,		ea_bx_di,
 	ea_bp_si,		ea_bp_di,
 	ea_si,			ea_di,
@@ -316,7 +316,7 @@ static DWORD (*c_ea_dst_tbl[])(void) = {
 /*
  * ea_dest 32
  */
-static DWORD
+static UINT32
 ea32_eax(void)
 {
 
@@ -324,7 +324,7 @@ ea32_eax(void)
 	return CPU_EAX;
 }
 
-static DWORD
+static UINT32
 ea32_ecx(void)
 {
 
@@ -332,7 +332,7 @@ ea32_ecx(void)
 	return CPU_ECX;
 }
 
-static DWORD
+static UINT32
 ea32_edx(void)
 {
 
@@ -340,7 +340,7 @@ ea32_edx(void)
 	return CPU_EDX;
 }
 
-static DWORD
+static UINT32
 ea32_ebx(void)
 {
 
@@ -348,11 +348,12 @@ ea32_ebx(void)
 	return CPU_EBX;
 }
 
-static DWORD
+static UINT32
 ea32_sib(void)
 {
-	DWORD op, dst;
-	DWORD base, idx, scale;
+	UINT32 dst;
+	UINT32 op;
+	UINT32 base, idx, scale;
 
 	GET_PCBYTE(op);
 	base = op & 7;
@@ -385,17 +386,17 @@ ea32_sib(void)
 	return dst;
 }
 
-static DWORD
+static UINT32
 ea32_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs;
 }
 
-static DWORD
+static UINT32
 ea32_esi(void)
 {
 
@@ -403,7 +404,7 @@ ea32_esi(void)
 	return CPU_ESI;
 }
 
-static DWORD
+static UINT32
 ea32_edi(void)
 {
 
@@ -411,52 +412,52 @@ ea32_edi(void)
 	return CPU_EDI;
 }
 
-static DWORD
+static UINT32
 ea32_eax_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EAX;
 }
 
-static DWORD
+static UINT32
 ea32_ecx_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_ECX;
 }
 
-static DWORD
+static UINT32
 ea32_edx_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EDX;
 }
 
-static DWORD
+static UINT32
 ea32_ebx_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EBX;
 }
 
-static DWORD
+static UINT32
 ea32_sib_disp8(void)
 {
-	SDWORD adrs;
-	DWORD op;
-	DWORD base, idx, scale;
+	SINT32 adrs;
+	UINT32 op;
+	UINT32 base, idx, scale;
 
 	GET_PCBYTE(op);
 	base = op & 7;
@@ -479,82 +480,82 @@ ea32_sib_disp8(void)
 	return CPU_REGS_DWORD(base) + adrs;
 }
 
-static DWORD
+static UINT32
 ea32_ebp_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return adrs + CPU_EBP;
 }
 
-static DWORD
+static UINT32
 ea32_esi_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_ESI;
 }
 
-static DWORD
+static UINT32
 ea32_edi_disp8(void)
 {
-	SDWORD adrs;
+	SINT32 adrs;
 
 	GET_PCBYTESD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EDI;
 }
 
-static DWORD
+static UINT32
 ea32_eax_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EAX;
 }
 
-static DWORD
+static UINT32
 ea32_ecx_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_ECX;
 }
 
-static DWORD
+static UINT32
 ea32_edx_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EDX;
 }
 
-static DWORD
+static UINT32
 ea32_ebx_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EBX;
 }
 
-static DWORD
+static UINT32
 ea32_sib_disp32(void)
 {
-	DWORD adrs;
-	DWORD op;
-	DWORD base, idx, scale;
+	UINT32 adrs;
+	UINT32 op;
+	UINT32 base, idx, scale;
 
 	GET_PCBYTE(op);
 	base = op & 7;
@@ -577,37 +578,37 @@ ea32_sib_disp32(void)
 	return CPU_REGS_DWORD(base) + adrs;
 }
 
-static DWORD
+static UINT32
 ea32_ebp_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = SS_FIX;
 	return adrs + CPU_EBP;
 }
 
-static DWORD
+static UINT32
 ea32_esi_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_ESI;
 }
 
-static DWORD
+static UINT32
 ea32_edi_disp32(void)
 {
-	DWORD adrs;
+	UINT32 adrs;
 
 	GET_PCDWORD(adrs);
 	CPU_INST_SEGREG_INDEX = DS_FIX;
 	return adrs + CPU_EDI;
 }
 
-static DWORD (*c_ea32_dst_tbl[])(void) = {
+static UINT32 (*c_ea32_dst_tbl[])(void) = {
 	ea32_eax,		ea32_ecx, 
 	ea32_edx,		ea32_ebx,
 	ea32_sib,		ea32_disp32,

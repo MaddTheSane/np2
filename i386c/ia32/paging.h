@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.9 2004/02/09 16:13:13 monaka Exp $	*/
+/*	$Id: paging.h,v 1.10 2004/02/20 16:09:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -128,9 +128,9 @@ extern "C" {
 /*
  * linear address memory access function
  */
-DWORD MEMCALL cpu_linear_memory_read(DWORD address, DWORD length, int code, int user_mode);
-void MEMCALL cpu_linear_memory_write(DWORD address, DWORD value, DWORD length, int user_mode);
-void MEMCALL paging_check(DWORD laddr, DWORD length, int crw, int user_mode);
+UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, int code, int user_mode);
+void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, int user_mode);
+void MEMCALL paging_check(UINT32 laddr, UINT length, int crw, int user_mode);
 
 /* crw */
 #define	CPU_PAGE_READ		(0 << 0)
@@ -145,11 +145,11 @@ void MEMCALL paging_check(DWORD laddr, DWORD length, int crw, int user_mode);
 #define	cpu_lmemoryread(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread(a) : \
-	 (BYTE)cpu_linear_memory_read(a,1,CPU_PAGE_READ_DATA,pl)
+	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_DATA,pl)
 #define	cpu_lmemoryread_w(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_w(a) : \
-	 (WORD)cpu_linear_memory_read(a,2,CPU_PAGE_READ_DATA,pl)
+	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_DATA,pl)
 #define	cpu_lmemoryread_d(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_d(a) : \
@@ -174,11 +174,11 @@ void MEMCALL paging_check(DWORD laddr, DWORD length, int crw, int user_mode);
 #define	cpu_lcmemoryread(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread(a) : \
-	 (BYTE)cpu_linear_memory_read(a,1,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
 #define	cpu_lcmemoryread_w(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_w(a) : \
-	 (WORD)cpu_linear_memory_read(a,2,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
+	 (UINT16)cpu_linear_memory_read(a,2,CPU_PAGE_READ_CODE,CPU_STAT_USER_MODE)
 #define	cpu_lcmemoryread_d(a) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_d(a) : \
@@ -211,9 +211,9 @@ do { \
  * TLB function
  */
 #if defined(IA32_SUPPORT_TLB)
-void tlb_init();
+void tlb_init(void);
 void tlb_flush(BOOL allflush);
-void tlb_flush_page(DWORD vaddr);
+void tlb_flush_page(UINT32 vaddr);
 #else
 #define	tlb_init()
 #define	tlb_flush(allflush)	(void)allflush

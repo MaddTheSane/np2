@@ -53,20 +53,20 @@ REG16 MEMCALL i286_memoryread_w(UINT32 address);
 UINT32 MEMCALL i286_memoryread_d(UINT32 address);
 
 #ifdef NP2_MEMORY_ASM
-BYTE MEMCALL i286_membyte_read(WORD seg, WORD off);
-WORD MEMCALL i286_memword_read(WORD seg, WORD off);
-void MEMCALL i286_membyte_write(WORD seg, WORD off, BYTE dat);
-void MEMCALL i286_memword_write(WORD seg, WORD off, WORD dat);
+REG8 MEMCALL i286_membyte_read(UINT seg, UINT off);
+REG16 MEMCALL i286_memword_read(UINT seg, UINT off);
+void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 dat);
+void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 dat);
 #else
 #define	i286_membyte_read(a, b) \
-	i286_memoryread(((DWORD)(a) << 4) + (WORD)(b))
+	i286_memoryread(((UINT32)(a) << 4) + (UINT16)(b))
 #define	i286_memword_read(a, b) \
-	i286_memoryread_w(((DWORD)(a) << 4) + (WORD)(b))
+	i286_memoryread_w(((UINT32)(a) << 4) + (UINT16)(b))
 
 #define	i286_membyte_write(a, b, c) \
-	i286_memorywrite(((DWORD)(a) << 4) + (WORD)(b), (c))
+	i286_memorywrite(((UINT32)(a) << 4) + (UINT16)(b), (c))
 #define	i286_memword_write(a, b, c) \
-	i286_memorywrite_w(((DWORD)(a) << 4) + (WORD)(b), (c))
+	i286_memorywrite_w(((UINT32)(a) << 4) + (UINT16)(b), (c))
 #endif
 
 void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng);

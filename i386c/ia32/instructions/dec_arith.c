@@ -1,4 +1,4 @@
-/*	$Id: dec_arith.c,v 1.2 2004/02/06 16:48:29 monaka Exp $	*/
+/*	$Id: dec_arith.c,v 1.3 2004/02/20 16:09:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -41,17 +41,17 @@ void
 DAA(void)
 {
 #if defined(IA32_CPU_ENABLE_XC)
-	BYTE __s = CPU_AL;
-	BYTE __r = __s;
-	BYTE __R;
-	BYTE __f;
+	UINT8 __s = CPU_AL;
+	UINT8 __r = __s;
+	UINT8 __R;
+	UINT8 __f;
 	XC_STORE_FLAGL();
 #endif
 
 	CPU_WORKCLOCK(3);
 	if ((CPU_FLAGL & A_FLAG) || (CPU_AL & 0x0f) > 9) {
 		CPU_FLAGL |= A_FLAG;
-		CPU_FLAGL |= (((WORD)CPU_AL + 6) >> 8) & 1; /* C_FLAG */
+		CPU_FLAGL |= (((UINT16)CPU_AL + 6) >> 8) & 1; /* C_FLAG */
 		CPU_AL += 6;
 	}
 	if ((CPU_FLAGL & C_FLAG) || (CPU_AL & 0xf0) > 0x90) {
@@ -96,17 +96,17 @@ void
 DAS(void)
 {
 #if defined(IA32_CPU_ENABLE_XC)
-	BYTE __s = CPU_AL;
-	BYTE __r = __s;
-	BYTE __R;
-	BYTE __f;
+	UINT8 __s = CPU_AL;
+	UINT8 __r = __s;
+	UINT8 __R;
+	UINT8 __f;
 	XC_STORE_FLAGL();
 #endif
 
 	CPU_WORKCLOCK(3);
 	if ((CPU_FLAGL & A_FLAG) || (CPU_AL & 0x0f) > 9) {
 		CPU_FLAGL |= A_FLAG;
-		CPU_FLAGL |= (((WORD)CPU_AL - 6) >> 8) & 1; /* C_FLAG */
+		CPU_FLAGL |= (((UINT16)CPU_AL - 6) >> 8) & 1; /* C_FLAG */
 		CPU_AL -= 6;
 	}
 	if ((CPU_FLAGL & C_FLAG) || CPU_AL > 0x9f) {
@@ -151,13 +151,13 @@ void
 AAA(void)
 {
 #if defined(IA32_CPU_ENABLE_XC)
-	BYTE __s = CPU_AL;
-	BYTE __s1 = CPU_AH;
-	BYTE __r = __s;
-	BYTE __r1;
-	BYTE __R;
-	BYTE __R1;
-	BYTE __f;
+	UINT8 __s = CPU_AL;
+	UINT8 __s1 = CPU_AH;
+	UINT8 __r = __s;
+	UINT8 __r1;
+	UINT8 __R;
+	UINT8 __R1;
+	UINT8 __f;
 	XC_STORE_FLAGL();
 #endif
 
@@ -211,13 +211,13 @@ void
 AAS(void)
 {
 #if defined(IA32_CPU_ENABLE_XC)
-	BYTE __s = CPU_AL;
-	BYTE __s1 = CPU_AH;
-	BYTE __r = __s;
-	BYTE __r1;
-	BYTE __R;
-	BYTE __R1;
-	BYTE __f;
+	UINT8 __s = CPU_AL;
+	UINT8 __s1 = CPU_AH;
+	UINT8 __r = __s;
+	UINT8 __r1;
+	UINT8 __R;
+	UINT8 __R1;
+	UINT8 __f;
 	XC_STORE_FLAGL();
 #endif
 
@@ -270,8 +270,8 @@ AAS(void)
 void
 AAM(void)
 {
-	BYTE base;
-	BYTE al;
+	UINT8 base;
+	UINT8 al;
 
 	CPU_WORKCLOCK(16);
 	GET_PCBYTE(base);
@@ -288,11 +288,11 @@ AAM(void)
 void
 AAD(void)
 {
-	DWORD base;
+	UINT32 base;
 
 	CPU_WORKCLOCK(14);
 	GET_PCBYTE(base);
-	CPU_AL += (BYTE)(CPU_AH * base);
+	CPU_AL += (UINT8)(CPU_AH * base);
 	CPU_AH = 0;
 	CPU_FLAGL &= ~(S_FLAG | Z_FLAG | P_FLAG);
 	CPU_FLAGL |= szpcflag[CPU_AL];
