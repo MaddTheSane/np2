@@ -2,14 +2,14 @@ AS		= masm
 AOPT	= /ML /DNP2
 OBJ		= ..\obj\romrel
 
-all: $(OBJ) startup.res hddboot.res
+all: $(OBJ) ..\bios\startup.res hddboot.res
 
 $(OBJ):
 	if not exist $(OBJ) mkdir $(OBJ)
 
 
-startup.res: $(OBJ) $(OBJ)\startup.bin
-	bin2txt $(OBJ)\startup.bin startup > startup.res
+..\bios\startup.res: $(OBJ) $(OBJ)\startup.bin
+	bin2txt $(OBJ)\startup.bin nosyscode > ..\bios\startup.res
 
 $(OBJ)\startup.bin: $(OBJ)\startup.exe
 	exe2bin $(OBJ)\startup $(OBJ)\startup.bin

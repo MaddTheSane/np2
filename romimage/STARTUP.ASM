@@ -8,24 +8,20 @@ FIXCS		equ		2eh
 
 START:			jmp		short nosystems
 START2:			mov		si, offset nobiosmsg
-				jmp		short	dispend
+				jmp		short dispend
 
 nosystems:		mov		si, offset nosysmsg
 
-dispend:		mov		ax, 1000h
+dispend:		mov		cx, 1000h
 				mov		bx, 8000h
-				mov		ss, ax
+				mov		ss, cx
 				mov		sp, bx
+				add		bh, 20h
+				mov		es, bx
 
-				mov		ax, cs
-				mov		ds, ax
-				mov		ax, 0a000h
-				mov		es, ax
-
-				mov		cx, 1000h
-				mov		ax, 0020h
 				xor		di, di
 				cld
+				lea		ax, [di + 20h]
 				rep stosw
 				mov		al, 0e1h
 				mov		cx, 1fe0h
@@ -43,9 +39,12 @@ putmsg:			db		FIXCS
 				stosw
 				or		ah, ah
 				je		short putmsg
-				add		di, 2
+				inc		di
+				inc		di
 				jmp		short putmsg
-putmsgend:		jmp		short putmsgend
+putmsgend:		cli
+				hlt
+				jmp		short putmsgend
 
 
 				; システムディスクをセットしてください
