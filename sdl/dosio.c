@@ -388,7 +388,9 @@ void file_cutseparator(char *path) {
 	int		pos;
 
 	pos = strlen(path) - 1;
-	if ((pos > 0) && (path[pos] == '/')) {
+	if ((pos > 0) &&							// 2文字以上でー
+		(path[pos] == '/') &&					// ケツが \ でー
+		((pos != 1) || (path[0] != '.'))) {		// './' ではなかったら
 		path[pos] = '\0';
 	}
 }
