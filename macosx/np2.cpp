@@ -27,11 +27,18 @@
 #include	"fddfile.h"
 #include	"statsave.h"
 
+#if defined(NP2GCC)
+#include	"mousemng.h"
+#endif
 
 #define	USE_RESUME
 
 
+#if defined(NP2GCC)
+		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0};
+#else
 		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0};
+#endif
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -463,6 +470,14 @@ static void HandleMouseDown(EventRecord *pevent) {
 			break;
 
 		case inContent:
+#if defined(NP2GCC)
+            if (controlKey & GetCurrentKeyModifiers() ) {
+                mouse_btn(MOUSE_RIGHTDOWN);
+            }
+            else {
+                mouse_btn(MOUSE_LEFTDOWN);
+            }
+#endif
 			break;
 
 		case inGoAway:
@@ -491,13 +506,34 @@ static void eventproc(EventRecord *event) {
 				}
 			}
 			else {
+#if defined(NP2GCC)
+                if ((((event->message) & keyCodeMask) >> 8 == 0x6f) && (!np2oscfg.F12COPY)) {
+                    mouse_running(MOUSE_XOR);
+                    menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+                    sysmng_update(SYS_UPDATECFG);
+                }
+                else {
+                    mackbd_down(0, ((event->message) & keyCodeMask) >> 8);
+                }
+#else
 				mackbd_down(0, ((event->message) & keyCodeMask) >> 8);
+#endif
 			}
 			break;
 
 		case keyUp:
 			mackbd_up(((event->message) & keyCodeMask) >> 8);
 			break;
+#if defined(NP2GCC)
+        case mouseUp:
+            if (controlKey & GetCurrentKeyModifiers()) {
+                mouse_btn(MOUSE_RIGHTUP);
+            }
+            else {
+                mouse_btn(MOUSE_LEFTUP);
+            }
+			break;
+#endif
 	}
 }
 
@@ -596,6 +632,11 @@ int main(int argc, char *argv[]) {
 	pccore_init();
 	S98_init();
 
+#if defined(NP2GCC)
+	if (np2oscfg.MOUSE_SW) {										// ver0.30
+		mouse_running(MOUSE_ON);
+	}
+#endif
 	scrndraw_redraw();
 	pccore_reset();
 
@@ -612,6 +653,9 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			if (np2oscfg.NOWAIT) {
+#if defined(NP2GCC)
+				mouse_callback();
+#endif
 				mackbd_callback();
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
@@ -629,6 +673,9 @@ int main(int argc, char *argv[]) {
 			}
 			else if (np2oscfg.DRAW_SKIP) {			// frame skip
 				if (framecnt < np2oscfg.DRAW_SKIP) {
+#if defined(NP2GCC)
+                    mouse_callback();
+#endif
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
@@ -639,6 +686,9 @@ int main(int argc, char *argv[]) {
 			}
 			else {								// auto skip
 				if (!waitcnt) {
+#if defined(NP2GCC)
+                    mouse_callback();
+#endif
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
@@ -672,6 +722,10 @@ int main(int argc, char *argv[]) {
 
 	pccore_term();
 	S98_trash();
+
+#if defined(NP2GCC)
+	mouse_running(MOUSE_OFF);
+#endif
 
 	scrnmng_destroy();
 

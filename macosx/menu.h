@@ -15,3 +15,6 @@ void menu_setf12copy(BYTE value);
 void menu_setextmem(BYTE value);
 void menu_setraster(BYTE value);
 
+#if defined(NP2GCC)
+void menu_setmouse(BYTE value);
+#endif

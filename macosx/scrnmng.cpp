@@ -23,6 +23,31 @@ static	GWorldPtr	gwp;
 static	GDHandle	hgd;
 #endif
 
+#if defined(macosx_only)
+#if defined(SUPPORT_16BPP)
+UINT16 scrnmng_makepal16(RGB32 pal32) {
+//win9xのをちょこっと改造(tk800)
+	RGB32	pal;
+
+	pal.d = pal32.d & 0xF8F8F8;
+	return((UINT16)((pal.p.g << 2) +
+						(pal.p.r << 7) + (pal.p.b >> 3)));
+}
+#else
+UINT16 scrnmng_makepal16(RGB32 pal32) {
+    return(0);
+}
+#endif
+
+//ディスプレイの色深度を返す(tk800)
+int	scrnmng_getbpp(void) {
+    return(CGDisplayBitsPerPixel(kCGDirectMainDisplay));
+}
+#else
+int	scrnmng_getbpp(void) {
+    return(32);
+}
+#endif
 
 void scrnmng_initialize(void) {
 }
@@ -33,12 +58,11 @@ BOOL scrnmng_create(BYTE scrnmode) {
 
 	qd = &qdraw;
 	SetRect(&qd->rect, 0, 0, 640, 480);
-#if defined(macosx_only)   
+#if defined(macosx_only)
 //GWorldの代わりに直接ウィンドウバッファを設定(tk800)
     GrafPtr		dstport;
     dstport = GetWindowPort(hWndMain);
     if (dstport) {
-        LockPortBits(dstport);//こうしないと描画位置がおかしくなる
         qd->pm = GetPortPixMap(dstport);
         qd->exist = TRUE;
         qd->hWnd = hWndMain;
@@ -67,9 +91,6 @@ void scrnmng_destroy(void) {
 		qd->exist = FALSE;
 		DisposeGWorld(qd->gw);
 	}
-#if defined(macosx_only)    
-    UnlockPortBits(GetWindowPort(hWndMain));
-#endif
 }
 
 void scrnmng_setwidth(int posx, int width) {
@@ -93,12 +114,6 @@ const SCRNSURF *scrnmng_surflock(void) {
 
 	QDRAW		qd;
 
-#if 0 && defined(macosx_only)    
-//色深度が32ビットじゃないときはさようなら(tk800)
-    if (CGDisplayBitsPerPixel(kCGDirectMainDisplay)!=32) {
-        return(NULL);
-    }
-#endif
 	qd = &qdraw;
 	if (!qd->exist) {
 		return(NULL);
@@ -106,17 +121,22 @@ const SCRNSURF *scrnmng_surflock(void) {
 
 #if defined(macosx_only)   
 //描画位置をウィンドウバーの下に設定(tk800) 
+    LockPortBits(GetWindowPort(hWndMain));//こうしないと描画位置がおかしくなる(tk800)
 	LockPixels(qd->pm);
-	scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm) + +640*4*22;
+    long	rowbyte = GetPixRowBytes(qd->pm);
+	scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm) + rowbyte*22;
+	scrnsurf.xalign = rowbyte/640;
+    scrnsurf.yalign = rowbyte;
+    scrnsurf.bpp = rowbyte/640 * 8;
 #else
 	GetGWorld(&gwp, &hgd);
 	LockPixels(qd->pm);
 	SetGWorld(qd->gw, NULL);
 
 	scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm);
-#endif
 	scrnsurf.xalign = 4;
 	scrnsurf.yalign = ((*qd->pm)->rowBytes) & 0x3fff;
+#endif
 	scrnsurf.width = 640;
 	scrnsurf.height = 400;
 	scrnsurf.extend = 0;
@@ -135,8 +155,8 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
         GrafPtr		dstport;
         dstport = GetWindowPort(hWndMain);
         QDAddRectToDirtyRegion(dstport, &qd->rect);
-        QDFlushPortBuffer(dstport, NULL);
 		UnlockPixels(qd->pm);
+        UnlockPortBits(dstport);
 #else
 
 #if TARGET_API_MAC_CARBON
@@ -170,4 +190,3 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 #endif
 	}
 }
-

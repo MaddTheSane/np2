@@ -50,11 +50,18 @@ void scrnmng_surfunlock(const SCRNSURF *surf);
 
 #define	scrnmng_isfullscreen()		(0)
 #define	scrnmng_haveextend()		(0)
+#ifdef NP2GCC
+int	scrnmng_getbpp(void);
+#else
 #define	scrnmng_getbpp()			(32)
+#endif
 #define	scrnmng_allflash()
 #define	scrnmng_palchanged()
-
+#ifdef NP2GCC
+UINT16 scrnmng_makepal16(RGB32 pal32);
+#else
 #define	scrnmng_makepal16(pal32)	(0)
+#endif
 
 #ifdef __cplusplus
 }
