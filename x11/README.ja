@@ -187,6 +187,12 @@ Xnp2 - ねこープロジェクト fot X
       音源設定ファイルを指定します。非指定時は $(HOME)/.np2/timidity.cfg を
       使用します。
 
+    --no-shared-pixmap
+      MIT Shared-Memory Extention の shared Pixmap 機能を使用しなくなります。
+      Pixmap が生成できない場合に指定すると解消するかもしれません。
+      また、起動時に読み込む設定ファイルに "sharepix = false" を追加すると
+      常にこのオプションを有効にする事ができます。
+
 
 8. 備考
 
