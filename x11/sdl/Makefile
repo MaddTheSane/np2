@@ -10,8 +10,8 @@ CINCLUDES=	-I. -I.. -I../.. -I../../common -I../../generic -I../debug \
 		-I../../vram \
 		-I../../embed -I../../embed/menu -I../../embed/menubase \
 		`$(SDL_CONFIG) --cflags` \
-		-DUSE_SDL -DUSE_SYSMENU
-COPTS?=		-O2 -W -Wall -Wpointer-arith -DUSE_SDLAUDIO
+		-DUSE_SDL
+COPTS?= 	-O2 -W -Wall -Wpointer-arith -DUSE_SDLAUDIO
 SYSRESPATH?=	/usr/X11R6/lib/X11/xnp2
 
 CFLAGS=		$(COPTS) $(CINCLUDES) -fsigned-char \
@@ -77,10 +77,11 @@ IOOBJS=		../../io/iocore.o ../../io/artic.o ../../io/cgrom.o \
 		../../io/cpuio.o ../../io/crtc.o ../../io/dipsw.o \
 		../../io/dmac.o ../../io/egc.o ../../io/extmem.o \
 		../../io/fdc.o ../../io/fdd320.o ../../io/gdc.o \
-		../../io/gdc_sub.o ../../io/gdc_pset.o ../../io/itf.o \
+		../../io/gdc_sub.o ../../io/gdc_pset.o \
 		../../io/mouseif.o ../../io/nmiio.o ../../io/np2sysp.o \
 		../../io/pic.o ../../io/pit.o ../../io/printif.o \
-		../../io/serial.o ../../io/sysport.o ../../io/upd4990.o
+		../../io/serial.o ../../io/sysport.o ../../io/upd4990.o \
+		../../io/necio.o ../../io/epsonio.o
 
 LIOOBJS=	../../lio/lio.o ../../lio/gscreen.o ../../lio/gview.o \
 		../../lio/gcolor1.o ../../lio/gcolor2.o ../../lio/gcls.o \

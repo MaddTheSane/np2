@@ -58,10 +58,11 @@ SOURCES+= ../../font/font.c ../../font/fontdata.c ../../font/fontmake.c \
 SOURCES+= ../../io/iocore.c ../../io/artic.c ../../io/cgrom.c ../../io/cpuio.c \
           ../../io/crtc.c ../../io/dipsw.c ../../io/dmac.c ../../io/egc.c \
           ../../io/extmem.c ../../io/fdc.c ../../io/fdd320.c ../../io/gdc.c \
-          ../../io/gdc_sub.c ../../io/gdc_pset.c ../../io/itf.c \
+          ../../io/gdc_sub.c ../../io/gdc_pset.c \
           ../../io/mouseif.c ../../io/nmiio.c ../../io/np2sysp.c \
           ../../io/pic.c ../../io/pit.c ../../io/printif.c ../../io/serial.c \
-          ../../io/sysport.c ../../io/upd4990.c
+          ../../io/sysport.c ../../io/upd4990.c \
+	  ../../io/necio.c ../../io/epsonio.c
 
 SOURCES+= ../../lio/lio.c ../../lio/gscreen.c ../../lio/gview.c \
           ../../lio/gcolor1.c ../../lio/gcolor2.c ../../lio/gcls.c \
