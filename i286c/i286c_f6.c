@@ -149,7 +149,7 @@ I286_F6 _idiv_ea8(UINT op) {
 	if (src) {
 		r = tmp / src;
 		if (!((r + 0x80) & 0xff00)) {
-			I286_AL = r;
+			I286_AL = (UINT8)r;
 			I286_AH = tmp % src;
 			return;
 		}

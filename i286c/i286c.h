@@ -67,8 +67,6 @@
 
 typedef void (*I286OP)(void);
 
-extern	UINT8	_szpcflag[0x200];
-
 extern void CPUCALL i286c_intnum(UINT vect, REG16 IP);
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)

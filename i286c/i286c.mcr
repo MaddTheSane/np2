@@ -32,24 +32,21 @@ extern UINT8 WORDSZPCF(UINT32 r);
 
 #elif !defined(MEMOPTIMIZE)
 
-extern	UINT8	_szpcflag8[0x200];
 extern	UINT8	_szpflag16[0x10000];
-#define	BYTESZPF(a)		(_szpcflag8[(a)])
-#define	BYTESZPCF(a)	(_szpcflag8[(a)])
-#define	BYTESZPCF2(a)	(_szpcflag8[(a) & 0x1ff])
+#define	BYTESZPF(a)		(iflags[(a)])
+#define	BYTESZPCF(a)	(iflags[(a)])
+#define	BYTESZPCF2(a)	(iflags[(a) & 0x1ff])
 #define	WORDSZPF(a)		(_szpflag16[(a)])
 #define	WORDSZPCF(a)	(_szpflag16[LOW16(a)] + (((a) >> 16) & 1))
 
 #else
 
-extern	UINT8	_szpcflag8[0x200];
-
-#define	BYTESZPF(a)		(_szpcflag8[(a)])
-#define	BYTESZPCF(a)	(_szpcflag8[(a)])
-#define	BYTESZPCF2(a)	(_szpcflag8[(a) & 0x1ff])
-#define	WORDSZPF(a)		((_szpcflag8[(a) & 0xff] & P_FLAG) + \
+#define	BYTESZPF(a)		(iflags[(a)])
+#define	BYTESZPCF(a)	(iflags[(a)])
+#define	BYTESZPCF2(a)	(iflags[(a) & 0x1ff])
+#define	WORDSZPF(a)		((iflags[(a) & 0xff] & P_FLAG) + \
 									(((a))?0:Z_FLAG) + (((a) >> 8) & S_FLAG))
-#define	WORDSZPCF(a)	((_szpcflag8[(a) & 0xff] & P_FLAG) + \
+#define	WORDSZPCF(a)	((iflags[(a) & 0xff] & P_FLAG) + \
 							((LOW16(a))?0:Z_FLAG) + (((a) >> 8) & S_FLAG) + \
 							(((a) >> 16) & 1))
 
