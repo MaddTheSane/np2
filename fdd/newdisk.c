@@ -76,6 +76,31 @@ void newdisk_thd(const char *fname, UINT hddsize) {
 	}
 }
 
+void newdisk_nhd(const char *fname, UINT hddsize) {
+
+	FILEH	fh;
+	NHDHDR	nhd;
+	UINT	tmp;
+
+	if ((fname == NULL) || (hddsize < 5) || (hddsize > 512)) {
+		return;
+	}
+	fh = file_create(fname);
+	if (fh != FILEH_INVALID) {
+		ZeroMemory(&nhd, sizeof(nhd));
+		CopyMemory(&nhd.sig, sig_nhd, 15);
+		STOREINTELDWORD(nhd.headersize, sizeof(nhd));
+		tmp = hddsize * 16;
+		STOREINTELDWORD(nhd.cylinders, tmp);
+		STOREINTELWORD(nhd.surfaces, 8);
+		STOREINTELWORD(nhd.sectors, 32);
+		STOREINTELWORD(nhd.sectorsize, 256);
+		file_write(fh, &nhd, sizeof(nhd));
+		writehddipl(fh, 256);
+		file_close(fh);
+	}
+}
+
 // hddtype = 0:5MB / 1:10MB / 2:15MB / 3:20MB / 5:30MB / 6:40MB
 void newdisk_hdi(const char *fname, UINT hddtype) {
 

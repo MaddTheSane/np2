@@ -472,8 +472,6 @@ void iocore_bind(void) {
 	iocore_cb(bindfn, sizeof(bindfn)/sizeof(IOCBFN));
 }
 
-#if !defined(TRACE)
-
 void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 
 	IOFUNC	iof;
@@ -489,35 +487,6 @@ REG8 IOINPCALL iocore_inp8(UINT port) {
 	iof = iocore.base[(port >> 8) & 0xff];
 	return(iof->ioinp[port & 0xff](port));
 }
-
-#else
-
-void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
-
-	IOFUNC	iof;
-
-	if (dat & (~0xff)) {
-		TRACEOUT(("error: iocore_out8 - %x %x", port, dat));
-	}
-	iof = iocore.base[(port >> 8) & 0xff];
-	iof->ioout[port & 0xff](port, dat);
-}
-
-REG8 IOINPCALL iocore_inp8(UINT port) {
-
-	IOFUNC	iof;
-	REG8	ret;
-
-	iof = iocore.base[(port >> 8) & 0xff];
-	ret = iof->ioinp[port & 0xff](port);
-
-	if (ret & (~0xff)) {
-		TRACEOUT(("error: iocore_inp8 - %x %x", port, ret));
-	}
-	return(ret);
-}
-
-#endif
 
 void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
 

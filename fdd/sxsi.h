@@ -35,17 +35,6 @@ typedef struct {
 } THDHDR;
 
 typedef struct {
-	BYTE	dummy[4];
-	BYTE	hddtype[4];
-	BYTE	headersize[4];
-	BYTE	hddsize[4];
-	BYTE	sectorsize[4];
-	BYTE	sectors[4];
-	BYTE	surfaces[4];
-	BYTE	cylinders[4];
-} HDIHDR;
-
-typedef struct {
 	char	sig[16];
 	char	comment[0x100];
 	BYTE	headersize[4];
@@ -55,6 +44,17 @@ typedef struct {
 	BYTE	sectorsize[2];
 	BYTE	reserved[0xe2];
 } NHDHDR;
+
+typedef struct {
+	BYTE	dummy[4];
+	BYTE	hddtype[4];
+	BYTE	headersize[4];
+	BYTE	hddsize[4];
+	BYTE	sectorsize[4];
+	BYTE	sectors[4];
+	BYTE	surfaces[4];
+	BYTE	cylinders[4];
+} HDIHDR;
 
 typedef struct {
 	char	sig[3];

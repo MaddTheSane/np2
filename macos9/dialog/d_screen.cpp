@@ -14,16 +14,16 @@
 
 static void setchip(ControlHandle *btn, UINT chip) {
 
-	SetControlValue(btn[0], (chip == 0));
-	SetControlValue(btn[1], (chip == 1));
+	SetControlValue(btn[0], (chip == 0)?1:0);
+	SetControlValue(btn[1], (chip == 1)?1:0);
 }
 
 static void setgrcg(ControlHandle *btn, UINT grcg) {
 
-	SetControlValue(btn[0], (grcg == 0));
-	SetControlValue(btn[1], (grcg == 1));
-	SetControlValue(btn[2], (grcg == 2));
-	SetControlValue(btn[3], (grcg == 3));
+	SetControlValue(btn[0], (grcg == 0)?1:0);
+	SetControlValue(btn[1], (grcg == 1)?1:0);
+	SetControlValue(btn[2], (grcg == 2)?1:0);
+	SetControlValue(btn[3], (grcg == 3)?1:0);
 }
 
 

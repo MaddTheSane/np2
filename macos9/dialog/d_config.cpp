@@ -12,8 +12,8 @@ static const char str_clockfmt[] = "%2u.%.4u";
 
 static void setbase(ControlHandle *btn, UINT base) {
 
-	SetControlValue(btn[0], (base == PCBASECLOCK20));
-	SetControlValue(btn[1], (base == PCBASECLOCK25));
+	SetControlValue(btn[0], (base == PCBASECLOCK20)?1:0);
+	SetControlValue(btn[1], (base == PCBASECLOCK25)?1:0);
 }
 
 static void setclock(Handle hdl, UINT base, UINT multiple) {
@@ -31,16 +31,16 @@ static void setclock(Handle hdl, UINT base, UINT multiple) {
 
 static void setmodel(ControlHandle *btn, UINT model) {
 
-	SetControlValue(btn[0], (model == 0));
-	SetControlValue(btn[1], (model == 1));
-	SetControlValue(btn[2], (model == 2));
+	SetControlValue(btn[0], (model == 0)?1:0);
+	SetControlValue(btn[1], (model == 1)?1:0);
+	SetControlValue(btn[2], (model == 2)?1:0);
 }
 
 static void setrate(ControlHandle *btn, UINT rate) {
 
-	SetControlValue(btn[0], (rate == 11025));
-	SetControlValue(btn[1], (rate == 22050));
-	SetControlValue(btn[2], (rate == 44100));
+	SetControlValue(btn[0], (rate == 11025)?1:0);
+	SetControlValue(btn[1], (rate == 22050)?1:0);
+	SetControlValue(btn[2], (rate == 44100)?1:0);
 }
 
 

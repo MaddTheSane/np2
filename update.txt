@@ -24,7 +24,7 @@
 
 　ver0.73 → ver0.74
 
-　・I/OレベルでのSASIに対応
+　・I/OレベルでのSASIに対応(INT3/DMA#0/BIOS:d0000-d0fff)
 　・SCSI HDDに対応
 　・np2qn形式 HOSTDRVに対応
 　・BIOS - ブート時にディップスイッチで指定した画面モードを反映

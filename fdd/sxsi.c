@@ -128,18 +128,6 @@ const char	*ext;
 		size = 256;
 		totals = cylinders * sectors * surfaces;
 	}
-	else if ((!file_cmpname(ext, str_hdi)) && (!(drv & 0x20))) {
-		HDIHDR hdi;						// ANEX86 HDD (SASI) thanx Mamiya
-		if (file_read(fh, &hdi, sizeof(hdi)) != sizeof(hdi)) {
-			goto sxsiope_err2;
-		}
-		headersize = LOADINTELDWORD(hdi.headersize);
-		surfaces = LOADINTELDWORD(hdi.surfaces);
-		cylinders = LOADINTELDWORD(hdi.cylinders);
-		sectors = LOADINTELDWORD(hdi.sectors);
-		size = LOADINTELDWORD(hdi.sectorsize);
-		totals = cylinders * sectors * surfaces;
-	}
 	else if ((!file_cmpname(ext, str_nhd)) && (!(drv & 0x20))) {
 		NHDHDR nhd;						// T98Next HDD (IDE)
 		if ((file_read(fh, &nhd, sizeof(nhd)) != sizeof(nhd)) ||
@@ -153,13 +141,25 @@ const char	*ext;
 		size = LOADINTELWORD(nhd.sectorsize);
 		totals = cylinders * sectors * surfaces;
 	}
+	else if ((!file_cmpname(ext, str_hdi)) && (!(drv & 0x20))) {
+		HDIHDR hdi;						// ANEX86 HDD (SASI) thanx Mamiya
+		if (file_read(fh, &hdi, sizeof(hdi)) != sizeof(hdi)) {
+			goto sxsiope_err2;
+		}
+		headersize = LOADINTELDWORD(hdi.headersize);
+		surfaces = LOADINTELDWORD(hdi.surfaces);
+		cylinders = LOADINTELDWORD(hdi.cylinders);
+		sectors = LOADINTELDWORD(hdi.sectors);
+		size = LOADINTELDWORD(hdi.sectorsize);
+		totals = cylinders * sectors * surfaces;
+	}
 	else if ((!file_cmpname(ext, str_hdd)) && (drv & 0x20)) {
 		VHDHDR vhd;						// Virtual98 HDD (SCSI)
 		if ((file_read(fh, &vhd, sizeof(vhd)) != sizeof(vhd)) ||
 			(memcmp(vhd.sig, sig_vhd, 5))) {
 			goto sxsiope_err2;
 		}
-		headersize = 220;
+		headersize = sizeof(vhd);
 		surfaces = vhd.surfaces;
 		cylinders = LOADINTELWORD(vhd.cylinders);
 		sectors = vhd.sectors;

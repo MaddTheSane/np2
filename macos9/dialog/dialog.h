@@ -1,6 +1,7 @@
 
 void AboutDialogProc(void);
 void ConfigDialogProc(void);
+void CalendarDialogProc(void);
 
 void ResumeErrorDialogProc(void);
 int ResumeWarningDialogProc(const char *string);

@@ -27,13 +27,15 @@ static const FILESEL fddui = {fddui_title, str_d88, fddui_filter, 3};
 
 static const char sasiui_title[] = "Select SASI/IDE HDD image";
 static const char sasiui_filter[] =										\
-					"T98 harddisk image files (*.THD)\0"				\
-									"*.thd\0"							\
 					"Anex86 harddisk image files (*.HDI)\0"				\
 									"*.hdi\0"							\
+					"T98 harddisk image files (*.THD)\0"				\
+									"*.thd\0"							\
+					"T98-Next harddisk image files (*.NHD)\0"			\
+									"*.nhd\0"							\
 					"All supported Files\0"								\
-									"*.thd;*.hdi\0";
-static const FILESEL sasiui = {sasiui_title, str_thd, sasiui_filter, 3};
+									"*.thd;*.nhd;*.hdi\0";
+static const FILESEL sasiui = {sasiui_title, str_thd, sasiui_filter, 4};
 
 static const char scsiui_title[] = "Select SCSI HDD image";
 static const char scsiui_filter[] =										\
@@ -45,10 +47,12 @@ static const char newdisk_title[] = "Create disk image";
 static const char newdisk_filter[] =									\
 					"D88 image files (*.D88;*.88D)\0"					\
 									"*.d88;*.88d\0"						\
-					"T98 harddisk image files (*.THD)\0"				\
-									"*.thd\0"							\
 					"Anex86 harddisk image files (*.HDI)\0"				\
 									"*.hdi\0"							\
+					"T98 harddisk image files (*.THD)\0"				\
+									"*.thd\0"							\
+					"T98-Next harddisk image files (*.NHD)\0"			\
+									"*.nhd\0"							\
 					"Virtual98 harddisk image files (*.HDD)\0"			\
 									"*.hdd\0";
 static const FILESEL newdiskui = {newdisk_title, str_d88, newdisk_filter, 1};
@@ -305,6 +309,15 @@ void dialog_newdisk(HWND hWnd) {
 			newdisk_thd(path, hddsize);
 		}
 	}
+	else if (!file_cmpname(file_getext(path), str_nhd)) {
+		hddsize = 0;
+		hddminsize = 5;
+		hddmaxsize = 512;
+		if (DialogBox(hinst, MAKEINTRESOURCE(IDD_NEWHDDDISK),
+									hWnd, (DLGPROC)NewHddDlgProc) == IDOK) {
+			newdisk_nhd(path, hddsize);
+		}
+	}
 	else if (!file_cmpname(file_getext(path), str_hdi)) {
 		hddsize = 7;
 		if (DialogBox(hinst, MAKEINTRESOURCE(IDD_NEWSASI),
@@ -323,7 +336,7 @@ void dialog_newdisk(HWND hWnd) {
 	}
 	else {
 		if (DialogBox(hinst,
-				MAKEINTRESOURCE(np2cfg.usefd144?IDD_NEWDISK2:IDD_NEWDISK),
+				MAKEINTRESOURCE((np2cfg.usefd144)?IDD_NEWDISK2:IDD_NEWDISK),
 									hWnd, (DLGPROC)NewdiskDlgProc) == IDOK) {
 			newdisk_fdd(path, makefdtype, disklabel);
 		}

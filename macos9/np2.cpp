@@ -109,17 +109,30 @@ static void MenuBarInit(void) {
 	if (hmenu) {
 		AppendResMenu(hmenu, 'DRVR');
 	}
-#if 0 // defined(SUPPORT_SCSI)
+#if !defined(SUPPORT_SCSI)
 	hmenu = GetMenuHandle(IDM_HARDDISK);
 	if (hmenu) {
-		AppendMenu(hmenu, "\pSCSI #0");
-		AppendMenu(hmenu, "\pSCSI #1");
-		AppendMenu(hmenu, "\pSCSI #2");
-		AppendMenu(hmenu, "\pSCSI #3");
+		DeleteMenuItem(hmenu, 7);
+		DeleteMenuItem(hmenu, 6);
+		DeleteMenuItem(hmenu, 5);
+		DeleteMenuItem(hmenu, 4);
+		DeleteMenuItem(hmenu, 3);
 	}
 #endif
+	if (!np2oscfg.I286SAVE) {
+		hmenu = GetMenuHandle(IDM_OTHER);
+		if (hmenu) {
+			DeleteMenuItem(hmenu, 9);
+		}
+	}
 	InsertMenu(GetMenu(IDM_SASI1), -1);
 	InsertMenu(GetMenu(IDM_SASI2), -1);
+#if defined(SUPPORT_SCSI)
+	InsertMenu(GetMenu(IDM_SCSI0), -1);
+	InsertMenu(GetMenu(IDM_SCSI1), -1);
+	InsertMenu(GetMenu(IDM_SCSI2), -1);
+	InsertMenu(GetMenu(IDM_SCSI3), -1);
+#endif
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
@@ -194,19 +207,51 @@ static void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SASI1OPEN:
-			dialog_changehdd(0);
+			dialog_changehdd(0x00);
 			break;
 
 		case IDM_SASI1REMOVE:
-			diskdrv_sethdd(0, NULL);
+			diskdrv_sethdd(0x00, NULL);
 			break;
 
 		case IDM_SASI2OPEN:
-			dialog_changehdd(1);
+			dialog_changehdd(0x01);
 			break;
 
 		case IDM_SASI2REMOVE:
-			diskdrv_sethdd(1, NULL);
+			diskdrv_sethdd(0x01, NULL);
+			break;
+
+		case IDM_SCSI0OPEN:
+			dialog_changehdd(0x20);
+			break;
+
+		case IDM_SCSI0REMOVE:
+			diskdrv_sethdd(0x20, NULL);
+			break;
+
+		case IDM_SCSI1OPEN:
+			dialog_changehdd(0x21);
+			break;
+
+		case IDM_SCSI1REMOVE:
+			diskdrv_sethdd(0x21, NULL);
+			break;
+
+		case IDM_SCSI2OPEN:
+			dialog_changehdd(0x22);
+			break;
+
+		case IDM_SCSI2REMOVE:
+			diskdrv_sethdd(0x22, NULL);
+			break;
+
+		case IDM_SCSI3OPEN:
+			dialog_changehdd(0x23);
+			break;
+
+		case IDM_SCSI3REMOVE:
+			diskdrv_sethdd(0x23, NULL);
 			break;
 
 		case IDM_ROLNORMAL:
@@ -466,6 +511,10 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_BMPSAVE:
 			dialog_writebmp();
+			break;
+
+		case IDM_CALENDAR:
+			CalendarDialogProc();
 			break;
 
 		case IDM_DISPCLOCK:
