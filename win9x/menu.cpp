@@ -456,11 +456,21 @@ void xmenu_setmouse(BYTE value) {
 	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_MOUSE, MFCHECK(value));
 }
 
+#if defined(SUPPORT_S98)
 void xmenu_sets98logging(BYTE value) {
 
 	CheckMenuItem(np2class_gethmenu(hWndMain),
 											IDM_S98LOGGING, MFCHECK(value));
 }
+#endif
+
+#if defined(SUPPORT_WAVEREC)
+void xmenu_setwaverec(BYTE value) {
+
+	CheckMenuItem(np2class_gethmenu(hWndMain),
+											IDM_WAVEREC, MFCHECK(value));
+}
+#endif
 
 void xmenu_setshortcut(BYTE value) {
 

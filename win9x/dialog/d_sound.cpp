@@ -926,7 +926,7 @@ void dialog_sndopt(HWND hWnd) {
 	HINSTANCE		hinst;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
-	HPROPSHEETPAGE	hpsp[6];										// ver0.29
+	HPROPSHEETPAGE	hpsp[6];
 
 	hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
 
@@ -1013,8 +1013,10 @@ static const FILESEL wrui = {wrui_title, wrui_ext, wrui_filter, 1};
 
 void dialog_waverec(HWND hWnd) {
 
+	BYTE	check;
 	char	path[MAX_PATH];
 
+	check = FALSE;
 	sound_recstop();
 	file_cpyname(path, bmpfilefolder, sizeof(path));
 	file_cutname(path);
@@ -1023,7 +1025,9 @@ void dialog_waverec(HWND hWnd) {
 		(sound_recstart(path) == SUCCESS)) {
 		file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
+		check = TRUE;
 	}
+	xmenu_setwaverec(check);
 }
 #endif
 
