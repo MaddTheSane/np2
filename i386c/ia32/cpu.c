@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.5 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.6 2004/01/16 15:17:51 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -652,10 +652,6 @@ exec_1step(void)
 	int num = 0;
 	int i;
 	BOOL t = cpu_inst_trace;
-
-	if ((CPU_CS == 0x0018) && (eip >= 0x0000b42c) && (eip <= 0x0000b435)) {
-		t = FALSE;
-	}
 
 	if ((fp == NULL) && t) {
 		fp = fopen("ia32trace.txt", "a");
