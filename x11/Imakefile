@@ -93,6 +93,7 @@ CPUOBJS= \
 		../i386c/dmap.o \
 		../i386c/egcmem.o \
 		../i386c/memory.o \
+		../i386c/mem9821.o \
 		../i386c/ia32/interface.o \
 		../i386c/ia32/ia32.o \
 		../i386c/ia32/cpu.o \
@@ -205,7 +206,8 @@ VERMOUTHOBJS=	../sound/vermouth/midiout.o ../sound/vermouth/midimod.o \
 
 VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/dispsync.o ../vram/palettes.o ../vram/maketext.o \
-		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o
+		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o \
+		../vram/makegrex.o
 
 X11OBJS=	dosio.o ini.o trace.o toolkit.o cmmidi.o kdispwin.o \
 		drawmng.o kbdmng.o \

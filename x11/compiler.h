@@ -146,6 +146,9 @@ UINT32 gettick();
 #if defined(CPUCORE_IA32)
 void toolkit_msgbox(const char *title, const char *msg);
 #define	msgbox(title, msg)	toolkit_msgbox(title, msg);
+
+#define	SUPPORT_PC9821
+#define	SUPPORT_CRT31KHZ
 #endif
 
 #if defined(i386) || defined(__i386__)
@@ -158,6 +161,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define	MEMOPTIMIZE	2
 #define	REG8		UINT
 #define	REG16		UINT
+#define	OPNGENARM
 #else
 #define	MEMOPTIMIZE	1
 #endif
@@ -183,6 +187,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #if USE_SDL > 0
 #define	USE_SYSMENU
 #define	SCREEN_BPP	16
+#undef	SUPPORT_8BPP
 #undef	SUPPORT_24BPP
 #undef	SUPPORT_32BPP
 #endif
