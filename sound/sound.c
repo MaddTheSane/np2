@@ -260,6 +260,7 @@ void sound_changeclock(void) {
 		clock = (clock + 1) >> 1;
 		hz = (hz + 1) >> 1;
 	}
+	TRACEOUT(("hzbase/clockbase = %d/%d", hz, clock));
 	soundcfg.hzbase = hz;
 	soundcfg.clockbase = clock;
 	soundcfg.minclock = 2 * clock / hz;

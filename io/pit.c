@@ -337,10 +337,8 @@ static void IOOUTCALL pit_o73(UINT port, REG8 dat) {
 		return;
 	}
 	setbeepevent(pitch->value, NEVENT_ABSOLUTE);
-	if (!(pitch->ctrl & 0x0c)) {
-		beep_lheventset(1);
-	}
-	else {
+	beep_lheventset(1);												// ver0.79
+	if (pitch->ctrl & 0x0c) {
 		beep_hzset(pitch->value);
 	}
 	(void)port;
@@ -428,6 +426,7 @@ void itimer_reset(void) {
 	pit.ch[4].ch = 4;
 #endif
 	setsystimerevent(0, NEVENT_ABSOLUTE);
+	beep_lheventset(1);												// ver0.79
 	beep_hzset(beepcnt);
 }
 

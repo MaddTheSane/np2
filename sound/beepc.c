@@ -15,7 +15,7 @@ void beep_initialize(UINT rate) {
 
 	beepcfg.rate = rate;
 	beepcfg.vol = 2;
-	beepcfg.puchibase = (rate * 3) / (11025 * 2);
+//	beepcfg.puchibase = (rate * 3) / (11025 * 2);
 }
 
 void beep_setvol(UINT vol) {
@@ -53,21 +53,25 @@ void beep_hzset(UINT16 cnt) {
 			return;
 		}
 	}
-	beep.puchi = beepcfg.puchibase;
+//	beep.puchi = beepcfg.puchibase;
 }
 
 void beep_modeset(void) {
 
-	BYTE	newmode;
+	UINT8	newmode;
 
 	newmode = (pit.ch[1].ctrl >> 2) & 3;
-	beep.puchi = beepcfg.puchibase;
+//	beep.puchi = beepcfg.puchibase;
 	if (beep.mode != newmode) {
 		sound_sync();
 		beep.mode = newmode;
+#if 1
+		beep_eventinit();
+#else
 		if (!newmode) {					// mode:#0, #1
 			beep_eventinit();
 		}
+#endif
 	}
 }
 
@@ -77,6 +81,7 @@ static void beep_eventset(void) {
 	int		enable;
 	SINT32	clock;
 
+	TRACEOUT(("beep.enable = %d %d", beep.low, beep.buz));
 	enable = beep.low & beep.buz;
 	if (beep.enable != enable) {
 		beep.enable = enable;
@@ -97,7 +102,6 @@ void beep_eventinit(void) {
 	beep.enable = 0;
 	beep.lastenable = 0;
 	beep.clock = soundcfg.lastclock;
-					// nevent.clock + nevent.baseclock - nevent.remainclock;
 	beep.events = 0;
 }
 
@@ -108,17 +112,16 @@ void beep_eventreset(void) {
 	beep.events = 0;
 }
 
-
 void beep_lheventset(int low) {
 
 	if (beep.low != low) {
 		beep.low = low;
-		if (!beep.mode) {
+//		if (!beep.mode) {
 			if (beep.events >= (BEEPEVENT_MAX / 2)) {
 				sound_sync();
 			}
 			beep_eventset();
-		}
+//		}
 	}
 }
 
@@ -131,15 +134,20 @@ void beep_oneventset(void) {
 	if (beep.buz != buz) {
 		sound_sync();
 		beep.buz = buz;
-		if (buz) {
-			beep.puchi = beepcfg.puchibase;
-		}
+//		if (buz) {
+//			beep.puchi = beepcfg.puchibase;
+//		}
+#if 1
+		beep_eventset();
+//		beep.cnt = 0;
+#else
 		if (!beep.mode) {
 			beep_eventset();
 		}
 		else {
 			beep.cnt = 0;
 		}
+#endif
 	}
 }
 

@@ -15,7 +15,7 @@ typedef struct {
 	UINT16	cnt;
 	UINT16	hz;
 	int		buz;
-	int		puchi;
+	int		__puchi;
 	BYTE	mode;
 	BYTE	padding[3];
 
@@ -30,7 +30,7 @@ typedef struct {
 typedef struct {
 	UINT	rate;
 	UINT	vol;
-	UINT	puchibase;
+	UINT	__puchibase;
 	UINT	samplebase;
 } BEEPCFG;
 

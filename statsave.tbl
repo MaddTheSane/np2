@@ -128,9 +128,9 @@ static const SFENTRY np2tbl[] = {
 	{"CMRS232C",	0,	STATFLAG_COM,	(void *)1,		0},
 	{"DISK",		0,	STATFLAG_DISK,	NULL,			0},
 #if !defined(DISABLE_SOUND)
+	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
 	{"BEEP",		0,	STATFLAG_BIN,	&beep,			sizeof(beep)},
 	{"MUSICGEN",	0,	STATFLAG_BIN,	&musicgen,		sizeof(musicgen)},
-	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
 	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
 #endif
 #if defined(SUPPORT_IDEIO)
