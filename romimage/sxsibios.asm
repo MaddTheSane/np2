@@ -74,6 +74,8 @@ sxsi_init:		push	ds
 				retf
 
 sxsi_bios:		cld
+				mov		dx, cs
+				mov		ds, dx
 				mov		cx, 8
 				mov		si, offset sxsibiosstr
 				mov		dx, 07efh
@@ -90,36 +92,41 @@ sxsi_bios:		cld
 				iret
 
 sxsi_boot:		cmp		al, 0ah
-				je		short boot_main
+				je		short sasi_boot
 				cmp		al, 0bh
-				je		short boot_main
+				je		short sasi_boot
+				cmp		al, 0ch
+				je		short scsi_boot
 				retf
-boot_main:		push	ds
+
+sasi_boot:		push	ds
 				pusha
 				xor		bx, bx
 				mov		ds, bx
 				sub		al, 9
 				mov		dl, 0ffh
 				test	ds:[055dh], al			; sasi
-				je		short bootbioscall
-				mov		dl, 01fh
-				test	ds:[0483h], al			; scsi
 				je		short boot_exit
-bootbioscall:	mov		ah, 06h
-				mov		cx, 1fc0h
+				dec		al
+				mov		ah, 06h
+				jmp		short boot_main
+
+scsi_boot:		push	ds
+				pusha
+				xor		bx, bx
+				mov		ds, bx
+				mov		ax, 4620h
+
+boot_main:		mov		cx, 1fc0h
 				mov		es, cx
-				add		al, dl
 				mov		bp, bx
 				mov		cx, bx
 				mov		dx, bx
 				mov		bh, 4
 				int		1bh
 				jc		boot_exit
-				mov		dl, al
-				or		dl, 80h
-				xor		ax, ax
-				mov		ds, ax
-				mov		byte ptr ds:[0584h], dl
+				or		al, 80h
+				mov		byte ptr ds:[0584h], al
 				db		9ah					; call far
 				dw		0
 				dw		1fc0h
