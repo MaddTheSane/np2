@@ -1044,17 +1044,13 @@ void bios0x1b(void) {
 		}
 	}
 #endif
-#if 0 // def TRACE
-	{
-		char	buf[256];
-		wsprintf(buf, "%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
+#if 0
+	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
 			i286_memword_read(I286_SS, I286_SP+2),
 			i286_memword_read(I286_SS, I286_SP),
 			I286_AX, I286_BX, I286_CL, I286_DH, I286_DL, I286_CH, 
-			I286_ES, I286_BP, ret_ah);
-			TRACE_(buf, 0);
-	}
+			I286_ES, I286_BP, ret_ah));
 #endif
 	I286_AH = ret_ah;
 	flag = i286_membyte_read(I286_SS, I286_SP+4) & 0xfe;

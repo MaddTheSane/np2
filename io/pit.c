@@ -218,6 +218,7 @@ BYTE itimer_getcount(int ch) {
 // system timer
 static void IOOUTCALL pit_o71(UINT port, BYTE dat) {
 
+//	TRACEOUT(("pic71: %d", dat));
 	if (itimer_setcount(0, dat)) {
 		return;
 	}
@@ -258,11 +259,13 @@ static void IOOUTCALL pit_o77(UINT port, BYTE dat) {
 
 	int		ch;
 
+//	TRACEOUT(("pic77: %x", dat));
 	ch = (dat >> 6) & 3;
 	if (ch != 3) {
 		itimer_setflag(ch, dat);
 		if (ch == 0) {			// 書込みで itimerのirrがリセットされる…
 			pic.pi[0].irr &= (~1);
+			setsystimerevent(NEVENT_ABSOLUTE);
 		}
 		if (ch == 1) {
 			beep_modeset();
