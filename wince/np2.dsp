@@ -778,6 +778,10 @@ SOURCE=.\SCRNMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\SOFTKBD.CPP
+# End Source File
+# Begin Source File
+
 SOURCE=.\SOUNDMNG.CPP
 # End Source File
 # Begin Source File

@@ -18,6 +18,7 @@ typedef	unsigned int	UINT32;
 #if !defined(SIZE_VGA)
 #define	SIZE_QVGA
 #define	RGB16			UINT32
+#define	SUPPORT_SOFTKBD
 #endif
 
 // for RISC test

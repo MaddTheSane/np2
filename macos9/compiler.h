@@ -25,6 +25,8 @@ typedef signed int		SINT32;
 typedef unsigned int	UINT32;
 
 typedef Boolean			BOOL;
+typedef signed char		TCHAR;
+typedef signed char		CHAR;
 typedef unsigned char	BYTE;
 
 

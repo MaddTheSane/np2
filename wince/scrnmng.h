@@ -23,12 +23,17 @@ void scrnmng_setwidth(int posx, int width);
 void scrnmng_setheight(int posy, int height);
 const SCRNSURF *scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
-void scrnmng_update(void);
 
 #define	scrnmng_haveextend()	(0)
 #define	scrnmng_getbpp()		(16)
-#define	scrnmng_allflash()		
 #define	scrnmng_palchanged()	
+#define scrnmng_update()		
+
+#if defined(SUPPORT_SOFTKBD)
+void scrnmng_allflash(void);
+#else
+#define scrnmng_allflash()
+#endif
 
 RGB16 scrnmng_makepal16(RGB32 pal32);
 

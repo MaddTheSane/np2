@@ -13,7 +13,6 @@
 #define	OSLANG_EUC
 #define	OSLINEBREAK_LF
 
-typedef	signed char		CHAR;
 typedef	signed int		INT;
 
 typedef	unsigned char	UCHAR;
@@ -28,8 +27,10 @@ typedef	unsigned short	UINT16;
 typedef	signed int		SINT32;
 typedef	unsigned int	UINT32;
 
-typedef	unsigned char	BYTE;
 typedef	int				BOOL;
+typedef	signed char		CHAR;
+typedef	signed char		TCHAR;
+typedef	unsigned char	BYTE;
 
 
 #ifndef	TRUE

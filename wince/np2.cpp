@@ -33,6 +33,9 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"sysmenu.h"
+#if defined(SUPPORT_SOFTKBD)
+#include	"softkbd.h"
+#endif
 
 
 static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
@@ -135,6 +138,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			EndPaint(hWnd, &ps);
 			break;
 
+#if defined(WIN32_PLATFORM_PSPC)
+		case WM_ERASEBKGND:
+			if (sysrunning) {
+				scrndraw_redraw();
+			}
+			break;
+#endif
+
 		case WM_KEYDOWN:
 			if (wParam == VK_F11) {
 				if (menuvram == NULL) {
@@ -165,9 +176,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_MOUSEMOVE:
 			if (scrnmng_mousepos(&lParam) == SUCCESS) {
-				if (menuvram == NULL) {
-				}
-				else {
+				if (menuvram) {
 					menubase_moving(LOWORD(lParam), HIWORD(lParam), 0);
 				}
 			}
@@ -175,22 +184,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_LBUTTONDOWN:
 			if (scrnmng_mousepos(&lParam) == SUCCESS) {
-				if (menuvram == NULL) {
+				if (menuvram) {
+					menubase_moving(LOWORD(lParam), HIWORD(lParam), 1);
 				}
 				else {
-					menubase_moving(LOWORD(lParam), HIWORD(lParam), 1);
+#if defined(SUPPORT_SOFTKBD)
+					softkbd_down(LOWORD(lParam), HIWORD(lParam));
+#endif
 				}
 			}
 			break;
 
 		case WM_LBUTTONUP:
 			if (scrnmng_mousepos(&lParam) == SUCCESS) {
-				if (menuvram == NULL) {
-					sysmenu_menuopen(0, LOWORD(lParam), HIWORD(lParam));
-				}
-				else {
+
+#if defined(SUPPORT_SOFTKBD)
+				softkbd_up();
+				TRACEOUT(("%d %d", LOWORD(lParam), HIWORD(lParam)));
+				if (menuvram) {
 					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
 				}
+				else if ((LOWORD(lParam) < 32) && (HIWORD(lParam) >= 208)) {
+					sysmenu_menuopen(0, LOWORD(lParam), HIWORD(lParam));
+				}
+#else
+				if (menuvram) {
+					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
+				}
+				else {
+					sysmenu_menuopen(0, LOWORD(lParam), HIWORD(lParam));
+				}
+#endif
 			}
 			break;
 

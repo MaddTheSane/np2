@@ -53,6 +53,7 @@ typedef	signed int		SINT32;
 
 #if defined(WIN32_PLATFORM_PSPC)
 #define	MENU_TASKMINIMIZE
+#define SUPPORT_SOFTKBD
 #endif
 
 #define	VERMOUTH_LIB

@@ -632,6 +632,7 @@ void scrnmng_setwidth(int posx, int width) {
 void scrnmng_setextend(int extend) {
 
 	scrnstat.extend = extend;
+	scrnmng.allflash = TRUE;
 	renewalclientsize(TRUE);
 }
 
