@@ -29,6 +29,18 @@
 #include	"keydisp.h"
 
 
+#if defined(MACOS)
+#define	CRLITERAL	"\r"
+#define	CRCONST		str_cr
+#elif defined(WIN32) || defined(X11) || defined(SLZAURUS)
+#define	CRLITERAL	"\n"
+#define	CRCONST		str_lf
+#else
+#define	CRLITERAL	"\r\n"
+#define	CRCONST		str_crlf
+#endif
+
+
 typedef struct {
 	char	name[16];
 	char	vername[28];
@@ -90,9 +102,10 @@ typedef struct {
 
 static void err_append(ERR_BUF *e, char *buf) {
 
+	int		len;
+
 	if ((e) && (buf)) {
 		if (e->buf) {
-			int len;
 			len = strlen(buf);
 			if (e->remain >= len) {
 				CopyMemory(e->buf, buf, len);
@@ -945,6 +958,12 @@ typedef struct {
 	DOSTIME	time;
 } STATDISK;
 
+static const char str_fddx[] = "FDD%u";
+static const char str_sasix[] = "SASI%u";
+static const char str_scsix[] = "SCSI%u";
+static const char str_updated[] = "%s: updated" CRLITERAL;
+static const char str_notfound[] = "%s: not found" CRLITERAL;
+
 static int disksave(NP2FFILE f, const char *path, int readonly) {
 
 	STATDISK	st;
@@ -1003,13 +1022,13 @@ static int diskcheck(NP2FFILE f, const char *name, ERR_BUF *e) {
 			if ((memcmp(&st.date, &date, sizeof(date))) ||
 				(memcmp(&st.time, &time, sizeof(time)))) {
 				ret |= NP2FLAG_DISKCHG;
-				SPRINTF(buf, "%s: updated\n", name);
+				SPRINTF(buf, str_updated, name);
 				err_append(e, buf);
 			}
 		}
 		else {
 			ret |= NP2FLAG_DISKCHG;
-			SPRINTF(buf, "%s: not found\n", name);
+			SPRINTF(buf, str_notfound, name);
 			err_append(e, buf);
 		}
 	}
@@ -1024,16 +1043,16 @@ static int flagcheck_disk(NP2FFILE f, const STENTRY *t, ERR_BUF *e) {
 
 	ret = 0;
 	for (i=0; i<4; i++) {
-		SPRINTF(buf, "FDD%d", i+1);
+		SPRINTF(buf, str_fddx, i+1);
 		ret |= diskcheck(f, buf, e);
 	}
 	sxsi_flash();
 	for (i=0; i<2; i++) {
-		SPRINTF(buf, "SASI%u", i+1);
+		SPRINTF(buf, str_sasix, i+1);
 		ret |= diskcheck(f, buf, e);
 	}
 	for (i=0; i<2; i++) {
-		SPRINTF(buf, "SCSI%d", i+1);
+		SPRINTF(buf, str_scsix, i+1);
 		ret |= diskcheck(f, buf, e);
 	}
 	(void)t;

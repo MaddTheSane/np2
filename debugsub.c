@@ -8,6 +8,18 @@
 #include	"debugsub.h"
 
 
+#if defined(MACOS)
+#define	CRLITERAL	"\r"
+#define	CRCONST		str_cr
+#elif defined(X11) || defined(SLZAURUS)
+#define	CRLITERAL	"\n"
+#define	CRCONST		str_lf
+#else
+#define	CRLITERAL	"\r\n"
+#define	CRCONST		str_crlf
+#endif
+
+
 static const char s_nv[] = "NV";
 static const char s_ov[] = "OV";
 static const char s_dn[] = "DN";
@@ -43,22 +55,23 @@ static const char *flagstr[16][2] = {
 				{NULL, NULL},		// 0x0002
 				{s_nc, s_cy}};		// 0x0001
 
-static const char file_i286reg[] = "i286reg.%03u";
-static const char file_i286cs[] = "i286_cs.%03u";
-static const char file_i286ds[] = "i286_ds.%03u";
-static const char file_i286es[] = "i286_es.%03u";
-static const char file_i286ss[] = "i286_ss.%03u";
-static const char file_i286txt[] = "i286txt.%03u";
+static const char file_i286reg[] = "i286reg.%.3u";
+static const char file_i286cs[] = "i286_cs.%.3u";
+static const char file_i286ds[] = "i286_ds.%.3u";
+static const char file_i286es[] = "i286_es.%.3u";
+static const char file_i286ss[] = "i286_ss.%.3u";
+static const char file_i286txt[] = "i286txt.%.3u";
 static const char file_memorybin[] = "memory.bin";
 
-static const char str_register[] =									\
-					"AX=%04x  BX=%04x  CX=%04x  DX=%04x  "			\
-					"SP=%04x  BP=%04x  SI=%04x  DI=%04x\n"			\
-					"DS=%04x  ES=%04x  SS=%04x  CS=%04x  "			\
-					"IP=%04x   ";
-static const char str_picstat[] = 									\
-					"\nPIC0=%02x:%02x:%02x\nPIC1=%02x:%02x:%02x\n"	\
-					"8255PORTC = %02x / system-port = %02x";
+static const char str_register[] =										\
+					"AX=%.4x  BX=%.4x  CX=%.4x  DX=%.4x  "				\
+					"SP=%.4x  BP=%.4x  SI=%.4x  DI=%.4x" CRLITERAL		\
+					"DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  "				\
+					"IP=%.4x   ";
+static const char str_picstat[] = 										\
+					CRLITERAL "PIC0=%.2x:%.2x:%.2x"						\
+					CRLITERAL "PIC1=%.2x:%.2x:%.2x"						\
+					CRLITERAL "8255PORTC = %.2x / system-port = %.2x";
 
 
 const char *debugsub_flags(UINT16 flag) {
@@ -92,7 +105,7 @@ static char work[256];
 								I286_SP, I286_BP, I286_SI, I286_DI,
 								I286_DS, I286_ES, I286_SS, I286_CS, I286_IP);
 	milstr_ncat(work, debugsub_flags(I286_FLAG), sizeof(work));
-	milstr_ncat(work, str_cr, sizeof(work));
+	milstr_ncat(work, CRCONST, sizeof(work));
 	return(work);
 }
 

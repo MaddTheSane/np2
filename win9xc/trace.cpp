@@ -46,7 +46,6 @@ static const char	ClassName[] = "TRACE-console";
 static const char	ClassEdit[] = "EDIT";
 static const char	traceen[] = "Enable";
 static const char	tracefh[] = "File out";
-static const char	crlf[] = "\r\n";
 
 static	TRACEWIN	tracewin;
 static	HWND		hView = NULL;
@@ -93,7 +92,7 @@ static void View_AddString(const char *lpszString) {
 		strcpy(szView, p);
 	}
 	strcat(szView, lpszString);
-	strcat(szView, crlf);
+	strcat(szView, str_crlf);
 	SetWindowText(hView, szView);
 	View_ScrollToBottom(hView);
 }
@@ -302,7 +301,7 @@ void trace_fmt(const char *fmt, ...) {
 		}
 		if (tracewin.fh != FILEH_INVALID) {
 			file_write(tracewin.fh, buf, strlen(buf));
-			file_write(tracewin.fh, crlf, strlen(crlf));
+			file_write(tracewin.fh, str_crlf, strlen(str_crlf));
 		}
 	}
 }

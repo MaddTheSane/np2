@@ -4,7 +4,9 @@
 const char str_null[] = "";
 const char str_space[] = " ";
 const char str_dot[] = ".";
-const char str_cr[] = "\n";
+
+const char str_cr[] = "\r";
+const char str_crlf[] = "\r\n";
 
 const char str_ini[] = "ini";
 const char str_bmp[] = "bmp";

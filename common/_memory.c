@@ -1,11 +1,25 @@
 #include	"compiler.h"
-#include	"dosio.h"
 
 
 #define	MEMTBLMAX	256
 #define	HDLTBLMAX	256
 
+
 #if defined(MEMTRACE)
+
+#include	"strres.h"
+#include	"dosio.h"
+
+#if defined(MACOS)
+#define	CRLITERAL	"\r"
+#define	CRCONST		str_cr
+#elif defined(X11) || defined(SLZAURUS)
+#define	CRLITERAL	"\n"
+#define	CRCONST		str_lf
+#else
+#define	CRLITERAL	"\r\n"
+#define	CRCONST		str_crlf
+#endif
 
 typedef struct {
 	void	*hdl;
@@ -21,13 +35,15 @@ typedef struct {
 static _MEMTBL	memtbl[MEMTBLMAX];
 static _HDLTBL	hdltbl[HDLTBLMAX];
 
-static const char memstr[] =										\
-				"Handle   Size       Name\r\n"						\
-				"--------------------------------------------\r\n";
+static const char str_memhdr[] =											\
+				"Handle   Size       Name" CRLITERAL						\
+				"--------------------------------------------" CRLITERAL;
 
-static const char hdlstr[] =										\
-				"Handle   Name\r\n"									\
-				"-------------------------------------\r\n";
+static const char str_hdlhdr[] =											\
+				"Handle   Name" CRLITERAL									\
+				"-------------------------------------" CRLITERAL;
+
+static const char str_memused[] = "memused: %d" CRLITERAL;
 
 void _meminit(void) {
 
@@ -77,7 +93,7 @@ void _handle_append(void *hdl, const char *name) {
 		for (i=0; i<HDLTBLMAX; i++) {
 			if (hdltbl[i].hdl == NULL) {
 				hdltbl[i].hdl = hdl;
-				milstr_ncpy(hdltbl[i].name, name, sizeof(hdltbl[0].name)));
+				milstr_ncpy(hdltbl[i].name, name, sizeof(hdltbl[0].name));
 				break;
 			}
 		}
@@ -126,7 +142,7 @@ void _memused(const char *filename) {
 		SPRINTF(work, "memused: %d\r\n", memuses);
 		file_write(fh, work, strlen(work));
 		if (memuses) {
-			file_write(fh, memstr, strlen(memstr));
+			file_write(fh, str_memhdr, strlen(str_memhdr));
 			for (i=0; i<MEMTBLMAX; i++) {
 				if ((memusebit[i>>3] << (i & 7)) & 0x80) {
 					SPRINTF(work, "%08lx %10u %s\r\n",
@@ -134,12 +150,12 @@ void _memused(const char *filename) {
 					file_write(fh, work, strlen(work));
 				}
 			}
-			file_write(fh, "\r\n", 2);
+			file_write(fh, CRCONST, strlen(CRCONST));
 		}
 		SPRINTF(work, "hdlused: %d\r\n", hdluses);
 		file_write(fh, work, strlen(work));
 		if (hdluses) {
-			file_write(fh, hdlstr, strlen(hdlstr));
+			file_write(fh, str_hdlhdr, strlen(str_hdlhdr));
 			for (i=0; i<HDLTBLMAX; i++) {
 				if ((hdlusebit[i>>3] << (i & 7)) & 0x80) {
 					SPRINTF(work, "%08lx %s\r\n",
@@ -147,7 +163,7 @@ void _memused(const char *filename) {
 					file_write(fh, work, strlen(work));
 				}
 			}
-			file_write(fh, "\r\n", 2);
+			file_write(fh, CRCONST, strlen(CRCONST));
 		}
 		file_close(fh);
 	}

@@ -1,6 +1,4 @@
 
-#define	SOUNDMNG_USEBUFFERING
-
 enum {
 	SOUND_PCMSEEK		= 0,
 	SOUND_PCMSEEK1		= 1,
@@ -18,7 +16,7 @@ void soundmng_destroy(void);
 #define soundmng_reset()
 void soundmng_play(void);
 void soundmng_stop(void);
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 void soundmng_sync(void);
 #else
 #define	soundmng_sync()

@@ -1236,6 +1236,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	UINT32		tick;
 #endif
 
+	_MEM_INIT();
+
 	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
@@ -1581,6 +1583,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 
 	TRACETERM();
+	_MEM_USED("report.txt");
 	dosio_term();
 
 	viewer_term();												// ver0.30

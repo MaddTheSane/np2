@@ -11,6 +11,7 @@
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
 #include	"bios.h"
+#include	"biosmem.h"
 #include	"vram.h"
 #include	"scrndraw.h"
 #include	"dispsync.h"
@@ -35,12 +36,12 @@
 	const char	np2version[] = NP2VER_CORE;
 
 	NP2CFG		np2cfg = {
-				PCBASECLOCK25, 4, 0,
+				PCBASECLOCK25, 4, PCMODEL_VX,
 				{0x3e, 0x63, 0x7a},
 				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6E},
 				{0x0c, 0x0c, 0x08, 0x06, 0x03, 0x0c},
 				{1, 1, 6, 1, 8, 1},
-				0, 4, 32, 22050, 800, 0, 1, 1, 0,
+				0, 0, 4, 32, 22050, 800, 0, 1, 1, 0,
 				0, 0,
 				0, {0, 0, 0}, 0xd1, 0x7f, 0xd1, 0, 0, 1, 0x82,		// ver0.30
 				1, 80, 3, 1, 1, 0, 0x000000, 0xffffff,
@@ -211,7 +212,7 @@ void pccore_term(void) {
 	fdd_eject(2);
 	fdd_eject(3);
 
-	extmemmng_clear();												// ver0.28
+	extmemmng_clear();
 
 	iocore_destroy();
 
@@ -230,8 +231,8 @@ void pccore_cfgupdate(void) {
 
 	renewal = FALSE;
 	for (i=0; i<8; i++) {
-		if (np2cfg.memsw[i] != mem[0xa3fe2 + i*4]) {
-			np2cfg.memsw[i] = mem[0xa3fe2 + i*4];
+		if (np2cfg.memsw[i] != mem[MEMB_MSW + i*4]) {
+			np2cfg.memsw[i] = mem[MEMB_MSW + i*4];
 			renewal = TRUE;
 		}
 	}

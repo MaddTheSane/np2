@@ -1,19 +1,32 @@
 
 #include	"nevent.h"
 
+enum {
+	PCBASECLOCK25		= 2457600,
+	PCBASECLOCK20		= 1996800
+};
+
+enum {
+	PCMODEL_VM			= 0,
+	PCMODEL_VX			= 1
+};
+
+#define		CPUMODE_8MHz		0x20
+
 typedef struct {
 	UINT	baseclock;
 	UINT	multiple;
-	BYTE	uPD72020;
+	BYTE	model;
 
 	BYTE	dipsw[3];
 	BYTE	memsw[8];
 	BYTE	vol14[6];
 	BYTE	wait[6];
 
+	BYTE	uPD72020;
 	BYTE	KEY_MODE;
 	BYTE	SOUND_SW;
-	BYTE	realpal;												// ver0.28
+	BYTE	realpal;
 	UINT16	samplingrate;
 	UINT16	delayms;
 	BYTE	MIDIRESET;
@@ -49,13 +62,13 @@ typedef struct {
 	UINT16	skiplight;
 	BYTE	RASTER;
 
-	BYTE	vol_fm;													// ver0.27
+	BYTE	vol_fm;
 	BYTE	vol_ssg;
 	BYTE	vol_adpcm;
 	BYTE	vol_pcm;
 	BYTE	vol_rhythm;
 
-	BYTE	pc9861enable;											// ver0.29
+	BYTE	pc9861enable;
 	BYTE	pc9861sw[3];
 	BYTE	pc9861jmp[6];
 
@@ -82,13 +95,6 @@ typedef struct {
 	UINT32	hsync;
 	BYTE	cpumode;
 } PCCORE;
-
-enum {
-	PCBASECLOCK25		= 2457600,
-	PCBASECLOCK20		= 1996800
-};
-
-#define		CPUMODE_8MHz		0x20
 
 
 #ifdef __cplusplus

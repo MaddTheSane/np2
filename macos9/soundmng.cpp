@@ -19,7 +19,7 @@ typedef struct {
 	UINT			rate;
 	UINT			samples;
 	UINT			buffersize;
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 	SINT16			*indata;
 	SINT16			*extendbuffer;
 #endif
@@ -42,7 +42,7 @@ static pascal void QSoundCallback(SndChannelPtr inCh, SndCommand *inCmd) {
 	QSOUND		qs;
 	int			nextbuf;
 	void		*dst;
-#if !defined(SOUNDMNG_USEBUFFERING)
+#if defined(SOUND_CRITICAL)
 const SINT32	*src;
 #endif
 
@@ -50,7 +50,7 @@ const SINT32	*src;
 		qs = &QSound;
 		nextbuf = inCmd->param1;
 		dst = qs->buf[nextbuf]->sampleArea;
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 		if (qs->indata) {
 			CopyMemory((SINT16 *)dst, qs->indata, qs->buffersize);
 			qs->indata = NULL;
@@ -132,7 +132,7 @@ static BOOL SoundBuffer_Init(UINT rate, UINT samples) {
 	drate = rate;
 	dtox80(&drate, &extFreq);
 
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 	qs->extendbuffer = (SINT16 *)_MALLOC(buffersize, "Extend buffer");
 	if (qs->extendbuffer == NULL) {
 		goto sbinit_err;
@@ -183,7 +183,7 @@ static void SoundBuffer_Term(void) {
 			buf[i] = NULL;
 		}
 	}
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 	qs->indata = NULL;
 	if (qs->extendbuffer) {
 		_MFREE(qs->extendbuffer);
@@ -211,7 +211,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	if (SoundChannel_Init()) {
 		goto qsinit_err;
 	}
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 	samples = rate * ms / (SOUNDBUFFERS * 1000);
 	samples = (samples + 3) & (~3);
 #else
@@ -258,7 +258,7 @@ void soundmng_stop(void) {
 	QSound_Playing = FALSE;
 }
 
-#if defined(SOUNDMNG_USEBUFFERING)
+#if !defined(SOUND_CRITICAL)
 void soundmng_sync(void) {
 
 	QSOUND		qs;

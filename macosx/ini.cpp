@@ -106,7 +106,7 @@ const INITBL	*p;
 					break;
 
                 case INITYPE_ARGS16:
-                    milstr_ncpy(work, data, 512);
+                    milstr_ncpy(work, data, sizeof(work));
                     inirdargs16(work, p);
                     break;
 
@@ -336,6 +336,7 @@ static const INITBL iniitem[] = {
 													sizeof(np2oscfg.titles)},
 	{"clk_base", INITYPE_SINT32,	&np2cfg.baseclock,		0},
 	{"clk_mult", INITYPE_SINT32,	&np2cfg.multiple,		0},
+	{"pc_model", INITYPE_UINT8,		&np2cfg.model,			0},
 
 	{"DIPswtch", INITYPE_BYTEARG,	np2cfg.dipsw,			3},
 	{"MEMswtch", INITYPE_BYTEARG,	np2cfg.memsw,			8},

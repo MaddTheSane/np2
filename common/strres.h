@@ -6,7 +6,10 @@ extern "C" {
 extern const char str_null[];
 extern const char str_space[];
 extern const char str_dot[];
+
 extern const char str_cr[];
+extern const char str_crlf[];
+#define	str_lf	(str_crlf + 1)
 
 extern const char str_ini[];
 extern const char str_bmp[];

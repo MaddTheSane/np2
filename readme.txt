@@ -168,3 +168,16 @@ void sysmng_cpureset(void)
 void taskmng_exit(void)
 　システムを終了する。
 
+
+
+// ----
+
+　改行コードの扱い
+
+　以下のソースコード内で個別に設定しています。
+　　(Windowsが APIによって \r\nの場合と\nの場合があるので…)
+　・common/_memory.c
+　・debugsub.c
+　・statsave.c
+
+
