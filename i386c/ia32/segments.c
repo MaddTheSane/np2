@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.8 2004/01/27 15:56:57 monaka Exp $	*/
+/*	$Id: segments.c,v 1.9 2004/01/29 15:06:21 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -152,7 +152,7 @@ load_cs(WORD selector, descriptor_t* sdp, BYTE cpl)
 	CPU_INST_OP32 = CPU_INST_AS32 =
 	    CPU_STATSAVE.cpu_inst_default.op_32 =
 	    CPU_STATSAVE.cpu_inst_default.as_32 = sdp->d;
-	CPU_REGS_SREG(CPU_CS_INDEX) = (selector & ~3) | (cpl & 3);
+	CPU_REGS_SREG(CPU_CS_INDEX) = selector;
 	CPU_STAT_SREG(CPU_CS_INDEX) = *sdp;
 	CPU_STAT_CPL = cpl & 3;
 }
