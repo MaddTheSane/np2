@@ -107,6 +107,26 @@ static void IOOUTCALL pcm86_oa46a(UINT port, REG8 val) {
 static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val) {
 
 //	TRACEOUT(("86pcm out %.4x %.2x", port, val));
+#if 1
+	if (pcm86.virbuf < PCM86_LOGICALBUF) {
+		pcm86.virbuf++;
+	}
+	pcm86.buffer[pcm86.wrtpos] = val;
+	pcm86.wrtpos = (pcm86.wrtpos + 1) & PCM86_BUFMSK;
+	pcm86.realbuf++;
+	// バッファオーバーフローの監視
+	if (pcm86.realbuf >= PCM86_REALBUFSIZE) {
+#if 1
+		pcm86.realbuf -= 4;
+		pcm86.readpos = (pcm86.readpos + 4) & PCM86_BUFMSK;
+#else
+		pcm86.realbuf &= 3;				// align4決めウチ
+		pcm86.realbuf += PCM86_REALBUFSIZE - 4;
+#endif
+	}
+//	pcm86.write = 1;
+	pcm86.reqirq = 1;
+#else
 	if (pcm86.virbuf < PCM86_LOGICALBUF) {
 		pcm86.virbuf++;
 		pcm86.buffer[pcm86.wrtpos] = val;
@@ -120,6 +140,7 @@ static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val) {
 //		pcm86.write = 1;
 		pcm86.reqirq = 1;
 	}
+#endif
 	(void)port;
 }
 

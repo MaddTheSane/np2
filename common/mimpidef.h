@@ -7,9 +7,9 @@ enum {
 };
 
 typedef struct {
-	BYTE	ch[16];
-	BYTE	map[3][128];
-	BYTE	bank[3][128];
+	UINT8	ch[16];
+	UINT8	map[3][128];
+	UINT8	bank[3][128];
 } MIMPIDEF;
 
 

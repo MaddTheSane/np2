@@ -27,7 +27,7 @@ static void cgwindowset(CGROM cr) {
 				cgwindow.writable |= 1;
 				high += cr->lr;
 			}
-			else if ((code >= 0x08) && (code < 0x0c)) {
+			else if ((code >= 0x09) && (code < 0x0c)) {				// ver0.78
 				if (cr->lr) {
 					high = low;
 				}
@@ -115,10 +115,10 @@ const BYTE	*ptr;
 	ptr = fontrom;
 	type = cr->code & 0x00ff;
 	if ((type >= 0x09) && (type < 0x0c)) {							// ver0.78
-//		if (cr->lr) {
+		if (!cr->lr) {
 			ptr += (cr->code & 0x7f7f) << 4;
 			return(ptr[cr->line & 0x0f]);
-//		}
+		}
 	}
 	else if (cr->code & 0xff00) {
 		ptr += (cr->code & 0x7f7f) << 4;
