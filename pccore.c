@@ -642,7 +642,7 @@ void pccore_exec(BOOL draw) {
 			treip[trpos & (IPTRACE - 1)] = (CPU_CS << 16) + CPU_IP;
 			trpos++;
 #endif
-#if 1
+#if 0
 			if ((CPU_CS == 0xf800) && (CPU_IP == 0x0B5B)) {
 				TRACEOUT(("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
 							mem[0x9000], mem[0x9001],
@@ -679,15 +679,15 @@ void pccore_exec(BOOL draw) {
 				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 			}
 #endif
-#if 1		// VX LIO
+#if 0		// VX LIO
 			if (CPU_CS == 0xf990) {
 				if (CPU_IP == 0x07BE) {
 					TRACEOUT(("%d,%d - %d,%d", CPU_BP, CPU_DX, CPU_SI, CPU_DI));
 				}
 			}
 #endif
-			i286x_step();
-//			i286c_step();
+//			i286x_step();
+			i286c_step();
 		}
 #endif
 		nevent_progress();

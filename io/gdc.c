@@ -173,8 +173,8 @@ void gdc_work(int id) {
 	UINT		i;
 	BYTE		data;
 
-	item = (id==GDCWORK_MASTER)?&gdc.m:&gdc.s;
-	dispflag = (id==GDCWORK_MASTER)?&gdcs.textdisp:&gdcs.grphdisp;
+	item = (id == GDCWORK_MASTER)?&gdc.m:&gdc.s;
+	dispflag = (id == GDCWORK_MASTER)?&gdcs.textdisp:&gdcs.grphdisp;
 
 	for (i=0; i<item->cnt; i++) {
 		data = (BYTE)item->fifo[i];
