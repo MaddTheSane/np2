@@ -12,6 +12,9 @@
 #include	"soundmng.h"
 #include	"fdefine.h"
 
+//for 10.2
+//#define	JAGUAR
+
 enum {
 	IDC_TOOLHDDACC			= 0,
 	IDC_TOOLFDD1ACC,
@@ -441,6 +444,8 @@ static void toolwindestroy(void) {
 static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
     OSStatus	err = eventNotHandledErr;
     HICommand	cmd;
+    ControlRef	sub;
+    int			i;
 
     if (GetEventClass(event)==kEventClassCommand && GetEventKind(event)==kEventCommandProcess ) {
         GetEventParameter(event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd);
@@ -496,6 +501,17 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 toolwin_close();
                 err=noErr;
                 break;
+                
+            case kEventWindowDrawContent:
+            case kEventWindowShown:
+                for (i=0; i<IDC_MAXITEMS; i++) {
+                    sub = toolwin.sub[i];
+                    if (sub) {
+                        Draw1Control(sub);
+                    }
+                }
+                break;
+
                 
             default:
                 break;
@@ -584,17 +600,20 @@ static pascal OSErr DragReceiver( WindowRef theWindow, void *handlerRefCon, Drag
 static WindowRef makeNibWindow (IBNibRef nibRef) {
     OSStatus	err;
     WindowRef	win = NULL;
-#if 0
+#ifndef JAGUAR
     Rect	bounds;
     SetRect(&bounds, 0, 0, 100, 100);
-    err = CreateNewWindow(kOverlayWindowClass, kWindowStandardHandlerAttribute, &bounds, &win);
+    err = CreateNewWindow(kFloatingWindowClass, kWindowStandardHandlerAttribute, &bounds, &win);
 #else
     err = CreateWindowFromNib(nibRef, CFSTR("ToolWindow"), &win);
 #endif
     if (err == noErr) {
+        InstallStandardEventHandler(GetWindowEventTarget(win));
         EventTypeSpec	list[]={ 
             { kEventClassCommand, kEventCommandProcess },
             { kEventClassWindow, kEventWindowClose }, 
+            { kEventClassWindow, kEventWindowShown }, 
+            { kEventClassWindow, kEventWindowDrawContent }, 
         };
         EventHandlerRef	ref;
         InstallWindowEventHandler (win, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)win, &ref);
@@ -777,6 +796,9 @@ void toolwin_open(void) {
 		goto twope_err2;
 	}
     
+#ifndef JAGUAR
+    toolwincreate(hWnd);
+#endif
     SizeWindow(hWnd, bounds.right-bounds.left, bounds.bottom-bounds.top, true);
     ControlButtonContentInfo	info;
     info.contentType = kControlContentPictHandle;
@@ -784,10 +806,12 @@ void toolwin_open(void) {
     CreatePictureControl(hWnd, &bounds, &info, true, &image);
     InstallControlEventHandler (image, NewEventHandlerUPP(cfControlproc), GetEventTypeCount(list), list, (void *)hWnd, &ref);
 
+#ifdef JAGUAR
     toolwincreate(hWnd);
+#endif
 
-#if 0
-    if (np2tool.posy < 30) np2tool.posy = 30;
+#ifndef JAGUAR
+    if (np2tool.posy < 35) np2tool.posy = 35;
     if (np2tool.posx < 5 ) np2tool.posx = 5;
     MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
     ShowWindow(hWnd);
@@ -811,7 +835,11 @@ twope_err1:
 void toolwin_close(void) {
 
     if (toolwin.hwnd) {
+#ifdef JAGUAR
         CloseDrawer(toolwin.hwnd, 0);
+#else
+        DisposeWindow(toolwin.hwnd);
+#endif
         RemoveReceiveHandler(dr, toolwin.hwnd);
         toolwindestroy();
         DisposeWindow(toolwin.hwnd);
