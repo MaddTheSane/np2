@@ -175,7 +175,7 @@ typedef struct {
 
 	UINT8	cpu_type;
 	UINT8	itfbank;						// ver0.72
-	UINT16	romd000;
+	UINT16	ram_d0;
 	SINT32	remainclock;
 	SINT32	baseclock;
 	UINT32	clock;

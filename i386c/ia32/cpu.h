@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.5 2003/12/27 11:55:23 yui Exp $	*/
+/*	$Id: cpu.h,v 1.6 2004/01/05 06:50:15 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -142,12 +142,13 @@ typedef struct {
 typedef struct {
 	descriptor_t	sreg[CPU_SEGREG_NUM];
 
-	DWORD		inport;
+	UINT32		adrsmask;
+//	DWORD		inport;		// -> i386core.e.inport
 	DWORD		ovflag;
 
 	BYTE		ss_32;
+	BYTE		resetreq;
 	BYTE		trap;
-	BYTE		cpu_type;
 	BYTE		_dummy;
 
 	BYTE		cpl;
@@ -177,19 +178,19 @@ typedef struct {
 	CPU_INST	cpu_inst;
 	CPU_INST	cpu_inst_default;
 
+	/* protected by cpu shut */
+	UINT8		cpu_type;
+	UINT8		itfbank;
+	UINT16		ram_d0;
 	SINT32		remainclock;
 	SINT32		baseclock;
 	UINT32		clock;
-
-	UINT32		adrsmask;			/* ? */
-	UINT32		inport;				/* ? */
-	UINT8		resetreq;
-	UINT8		itfbank;
 } I386STAT;
 
 typedef struct {					/* for ver0.73 */
-	BYTE	*ext;
-	UINT32	extsize;
+	BYTE		*ext;
+	UINT32		extsize;
+	UINT32		inport;
 } I386EXT;
 
 typedef struct {
@@ -201,16 +202,20 @@ extern I386CORE		i386core;
 
 #define	CPU_STATSAVE	i386core.s
 
+#define	CPU_ADRSMASK	i386core.s.cpu_stat.adrsmask
+#define	CPU_RESETREQ	i386core.s.cpu_stat.resetreq
+
 #define	CPU_REMCLOCK	i386core.s.remainclock
 #define	CPU_BASECLOCK	i386core.s.baseclock
 #define	CPU_CLOCK	i386core.s.clock
-#define	CPU_ADRSMASK	i386core.s.adrsmask
-#define	CPU_RESETREQ	i386core.s.resetreq
 #define	CPU_ITFBANK	i386core.s.itfbank
-#define	CPU_INPADRS	i386core.s.inport
+
+#define CPU_TYPE	i386core.s.cpu_type
+#define CPUTYPE_V30	0x01
 
 #define	CPU_EXTMEM	i386core.e.ext
 #define	CPU_EXTMEMSIZE	i386core.e.extsize
+#define	CPU_INPADRS	i386core.e.inport
 
 extern BYTE 		iflags[];
 extern jmp_buf		exec_1step_jmpbuf;
@@ -343,7 +348,7 @@ do { \
 #define CPU_FLAGL	CPU_STATSAVE.cpu_regs.eflags.b.l
 #define CPU_FLAGH	CPU_STATSAVE.cpu_regs.eflags.b.h
 #define CPU_TRAP	CPU_STATSAVE.cpu_stat.trap
-#define CPU_INPORT	CPU_STATSAVE.cpu_stat.inport
+// #define CPU_INPORT	CPU_STATSAVE.cpu_stat.inport
 #define CPU_OV		CPU_STATSAVE.cpu_stat.ovflag
 
 #define C_FLAG		(1 << 0)
@@ -377,9 +382,6 @@ void set_flags(WORD new_flags, WORD mask);
 void set_eflags(DWORD new_flags, DWORD mask);
 
 
-#define CPU_TYPE		CPU_STATSAVE.cpu_stat.cpu_type
-#define CPUTYPE_V30		0x01
-
 #define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32
 #define	CPU_INST_AS32		CPU_STATSAVE.cpu_inst.as_32
 #define	CPU_INST_REPUSE		CPU_STATSAVE.cpu_inst.rep_used
@@ -392,7 +394,9 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_STAT_CS_LIMIT	CPU_STATSAVE.cpu_stat.sreg[CPU_CS_INDEX].u.seg.limit
 #define	CPU_STAT_CS_END		CPU_STATSAVE.cpu_stat.sreg[CPU_CS_INDEX].u.seg.segend
 
+#define	CPU_STAT_ADRSMASK	CPU_STATSAVE.cpu_stat.adrsmask
 #define	CPU_STAT_SS32		CPU_STATSAVE.cpu_stat.ss_32
+#define	CPU_STAT_RESETREQ	CPU_STATSAVE.cpu_stat.resetreq
 #define	CPU_STAT_PM		CPU_STATSAVE.cpu_stat.protected_mode
 #define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
 #define	CPU_STAT_PAGING		CPU_STATSAVE.cpu_stat.paging

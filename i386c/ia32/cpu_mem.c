@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.2 2003/12/11 15:03:16 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.3 2004/01/05 06:50:15 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -32,7 +32,7 @@
 #include "memory.h"
 
 // あとで…
-extern DWORD cpumem_addrmask;
+// extern DWORD cpumem_addrmask;		// -> CPU_STAT_ADRSMASK
 
 BYTE *cpumem = 0;
 DWORD extmem_size = 0;
@@ -500,7 +500,7 @@ cpu_vmemorywrite_d(int idx, DWORD madr, DWORD val)
 void MEMCALL
 cpu_memorywrite_d(DWORD address, DWORD value)
 {
-	DWORD adr = address & cpumem_addrmask;
+	DWORD adr = address & CPU_STAT_ADRSMASK;
 
 	if (adr < LOWMEM - 3) {
 		__i286_memorywrite_d(adr, value);
@@ -520,7 +520,7 @@ cpu_memorywrite_d(DWORD address, DWORD value)
 void MEMCALL
 cpu_memorywrite_w(DWORD address, WORD value)
 {
-	DWORD adr = address & cpumem_addrmask;
+	DWORD adr = address & CPU_STAT_ADRSMASK;
 
 	if (adr < LOWMEM - 1) {
 		__i286_memorywrite_w(adr, value);
@@ -540,7 +540,7 @@ cpu_memorywrite_w(DWORD address, WORD value)
 void MEMCALL
 cpu_memorywrite(DWORD address, BYTE value)
 {
-	DWORD adr = address & cpumem_addrmask;
+	DWORD adr = address & CPU_STAT_ADRSMASK;
 
 	if (adr < LOWMEM) {
 		__i286_memorywrite(adr, value);
@@ -557,7 +557,7 @@ cpu_memorywrite(DWORD address, BYTE value)
 DWORD MEMCALL
 cpu_memoryread_d(DWORD address)
 {
-	DWORD adr = address & cpumem_addrmask;
+	DWORD adr = address & CPU_STAT_ADRSMASK;
 	DWORD val;
 
 	if (adr < LOWMEM - 3) {
@@ -580,7 +580,7 @@ cpu_memoryread_d(DWORD address)
 WORD MEMCALL
 cpu_memoryread_w(DWORD address)
 {
-	DWORD adr = address & cpumem_addrmask;
+	DWORD adr = address & CPU_STAT_ADRSMASK;
 	WORD val;
 
 	if (adr < LOWMEM - 1) {
@@ -603,7 +603,7 @@ cpu_memoryread_w(DWORD address)
 BYTE MEMCALL
 cpu_memoryread(DWORD address)
 {
-	DWORD adr = address & cpumem_addrmask;
+	DWORD adr = address & CPU_STAT_ADRSMASK;
 	BYTE val;
 
 	if (adr < LOWMEM) {

@@ -318,11 +318,11 @@ SOURCE=..\IO\IOCORE.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\IO\ITF.C
+SOURCE=..\IO\MOUSEIF.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\IO\MOUSEIF.C
+SOURCE=..\IO\NECIO.C
 # End Source File
 # Begin Source File
 

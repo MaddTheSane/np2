@@ -5,11 +5,6 @@
 #include	"sound.h"
 #include	"fmboard.h"
 
-// å„Ç≈í≤êÆ
-#if defined(CPUCORE_IA32)
-DWORD cpumem_addrmask = 0xfffff;
-#endif
-
 
 // ---- I/O
 
@@ -17,11 +12,7 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 
 	epsonio.cpumode = (CPU_MSW & 1)?'P':'R';
 	CPU_ADRSMASK = 0x0fffff;
-#if defined(CPUCORE_IA32)
-	cpumem_addrmask = 0xfffff;
-#endif
 	CPU_RESETREQ = 1;
-//	CPU_INTERRUPT(0x02);
 	nevent_forceexit();
 	(void)port;
 	(void)dat;
@@ -30,9 +21,6 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 static void IOOUTCALL cpuio_of2(UINT port, REG8 dat) {
 
 	CPU_ADRSMASK = 0xffffffff;
-#if defined(CPUCORE_IA32)
-	cpumem_addrmask = 0xffffffff;
-#endif
 	(void)port;
 	(void)dat;
 }
@@ -68,17 +56,10 @@ static void IOOUTCALL cpuio_of6(UINT port, REG8 dat) {
 	switch(dat) {
 		case 0x02:
 			CPU_ADRSMASK = 0xffffffff;
-#if defined(CPUCORE_IA32)
-			cpumem_addrmask = 0xffffffff;
-#endif
 			break;
 
 		case 0x03:
 			CPU_ADRSMASK = 0x0fffff;
-#if defined(CPUCORE_IA32)
-			cpumem_addrmask = 0xfffff;
-#endif
-			break;
 	}
 	(void)port;
 }
