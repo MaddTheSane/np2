@@ -2,6 +2,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"bios.h"
 #include	"biosmem.h"
 #include	"lio.h"
 #include	"vram.h"
@@ -27,11 +28,7 @@ static void lio_makescreen(const _LIOWORK *lio) {
 
 	UINT16	pos;
 
-	// GDCバッファを空に
-	if (gdc.s.cnt) {
-		gdc_work(GDCWORK_SLAVE);
-	}
-	gdc_forceready(&gdc.s);
+	gdc_forceready(GDCWORK_SLAVE);
 
 	ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
 	if (lio->scrn.lines == 200) {
@@ -57,11 +54,7 @@ REG8 lio_ginit(LIOWORK lio) {
 
 	UINT	i;
 
-	// GDCバッファを空に
-	if (gdc.s.cnt) {
-		gdc_work(GDCWORK_SLAVE);
-	}
-	gdc_forceready(&gdc.s);
+	gdc_forceready(GDCWORK_SLAVE);
 
 	ZeroMemory(lio, sizeof(_LIOWORK));
 	ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
@@ -122,15 +115,23 @@ REG8 lio_gscreen(LIOWORK lio) {
 	if (data.mode != lio->gscreen.mode) {
 		screenmodechange = TRUE;
 	}
-	if (data.sw == 0xff) {
-		data.sw = lio->gscreen.mode;
-	}
 	if (data.act == 0xff) {
 		if (screenmodechange) {
 			data.act = 0;
 		}
 		else {
 			data.act = lio->gscreen.act;
+		}
+	}
+	if (data.sw == 0xff) {
+		data.sw = lio->gscreen.sw;
+	}
+	else {
+		if (!(data.sw & 2)) {
+			bios0x18_40();
+		}
+		else {
+			bios0x18_41();
 		}
 	}
 	if (data.disp == 0xff) {
@@ -259,6 +260,7 @@ REG8 lio_gview(LIOWORK lio) {
 	lio->gview.y2 = y2;
 	lio->gview.vdraw_bg = dat.vdraw_bg;
 	lio->gview.vdraw_ln = dat.vdraw_ln;
+	TRACEOUT(("GVIEW - %d %d", dat.vdraw_bg, dat.vdraw_ln));
 	return(LIO_SUCCESS);
 }
 

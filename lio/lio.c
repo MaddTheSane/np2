@@ -2,6 +2,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"gdc_sub.h"
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"vram.h"
@@ -28,75 +29,82 @@ void lio_initialize(void) {
 void bios_lio(REG8 cmd) {
 
 	LIOWORK	lio;
+	UINT8	ret;
 
-	TRACEOUT(("lio command %.2x", cmd));
+//	TRACEOUT(("lio command %.2x", cmd));
 
 	lio = &liowork;
 	lio->wait = 500;
 	switch(cmd) {
 		case 0x00:			// a0: GINIT
-			CPU_AH = lio_ginit(lio);
+			ret = lio_ginit(lio);
 			break;
 
 		case 0x01:			// a1: GSCREEN
-			CPU_AH = lio_gscreen(lio);
+			ret = lio_gscreen(lio);
 			break;
 
 		case 0x02:			// a2: GVIEW
-			CPU_AH = lio_gview(lio);
+			ret = lio_gview(lio);
 			break;
 
 		case 0x03:			// a3: GCOLOR1
-			CPU_AH = lio_gcolor1(lio);
+			ret = lio_gcolor1(lio);
 			break;
 
 		case 0x04:			// a4: GCOLOR2
-			CPU_AH = lio_gcolor2(lio);
+			ret = lio_gcolor2(lio);
 			break;
 
 		case 0x05:			// a5: GCLS
-			CPU_AH = lio_gcls(lio);
+			ret = lio_gcls(lio);
 			break;
 
 		case 0x06:			// a6: GPSET
-			CPU_AH = lio_gpset(lio);
+			ret = lio_gpset(lio);
 			break;
 
 		case 0x07:			// a7: GLINE
-			CPU_AH = lio_gline(lio);
+			ret = lio_gline(lio);
 			break;
 
-		case 0x08:			// a8: GCIRCLE
-			break;
+//		case 0x08:			// a8: GCIRCLE
+//			break;
 
-		case 0x09:			// a9: GPAINT1
-			break;
+//		case 0x09:			// a9: GPAINT1
+//			break;
 
-		case 0x0a:			// aa: GPAINT2
-			break;
+//		case 0x0a:			// aa: GPAINT2
+//			break;
 
 		case 0x0b:			// ab: GGET
+			ret = lio_gget(lio);
 			break;
 
 		case 0x0c:			// ac: GPUT1
-			CPU_AH = lio_gput1(lio);
+			ret = lio_gput1(lio);
 			break;
 
 		case 0x0d:			// ad: GPUT2
-			CPU_AH = lio_gput2(lio);
+			ret = lio_gput2(lio);
 			break;
 
-		case 0x0e:			// ae: GROLL
-			break;
+//		case 0x0e:			// ae: GROLL
+//			break;
 
 		case 0x0f:			// af: GPOINT2
+			ret = lio_gpoint2(lio);
 			break;
 
-		case 0x10:			// ce: GCOPY
+//		case 0x10:			// ce: GCOPY
+//			break;
+
+		default:
+			ret = LIO_SUCCESS;
 			break;
 	}
+	CPU_AH = ret;
 	gdcsub_setslavewait(lio->wait);
-	TRACEOUT(("lio wait = %d", lio->wait));
 }
 
 
@@ -104,12 +112,22 @@ void bios_lio(REG8 cmd) {
 
 const UINT32 lioplaneadrs[4] = {VRAM_B, VRAM_R, VRAM_G, VRAM_E};
 
-void lio_updaterange(LIOWORK lio) {
+void lio_updatedraw(LIOWORK lio) {
 
-	lio->range.x1 = max(lio->gview.x1, 0);
-	lio->range.y1 = max(lio->gview.y1, 0);
-	lio->range.x2 = min(lio->gview.x2, 639);
-	lio->range.y2 = min(lio->gview.x2, (lio->scrn.lines - 1));
+	lio->draw.x1 = max(lio->gview.x1, 0);
+	lio->draw.y1 = max(lio->gview.y1, 0);
+	lio->draw.x2 = min(lio->gview.x2, 639);
+	lio->draw.y2 = min(lio->gview.x2, (lio->scrn.lines - 1));
+	if (!gdcs.access) {
+		lio->draw.base = 0;
+		lio->draw.bank = 0;
+		lio->draw.sbit = 0x01;
+	}
+	else {
+		lio->draw.base = VRAM_STEP;
+		lio->draw.bank = 1;
+		lio->draw.sbit = 0x02;
+	}
 }
 
 
@@ -139,11 +157,13 @@ static void pixed8(const _LIOWORK *lio, UINT32 vadrs, BYTE bit, REG8 pal) {
 		else {
 			mem[vadrs + VRAM_G] &= ~bit;
 		}
-		if (pal & 8) {
-			mem[vadrs + VRAM_E] |= bit;
-		}
-		else {
-			mem[vadrs + VRAM_E] &= ~bit;
+		if (lio->gcolor1.palmode == 2) {
+			if (pal & 8) {
+				mem[vadrs + VRAM_E] |= bit;
+			}
+			else {
+				mem[vadrs + VRAM_E] &= ~bit;
+			}
 		}
 	}
 	else {
@@ -162,8 +182,8 @@ void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal) {
 	UINT32	adrs;
 	BYTE	bit;
 
-	if ((lio->range.x1 > x) || (lio->range.x2 < x) ||
-		(lio->range.y1 > y) || (lio->range.y2 < y)) {
+	if ((lio->draw.x1 > x) || (lio->draw.x2 < x) ||
+		(lio->draw.y1 > y) || (lio->draw.y2 < y)) {
 		return;
 	}
 	adrs = (y * 80) + (x >> 3);
@@ -171,15 +191,9 @@ void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal) {
 	if (lio->scrn.top) {
 		adrs += 16000;
 	}
-	if (!lio->scrn.bank) {
-		vramupdate[adrs] |= 1;
-		gdcs.grphdisp |= 1;
-	}
-	else {
-		vramupdate[adrs] |= 2;
-		gdcs.grphdisp |= 2;
-		adrs += VRAM_STEP;
-	}
+	vramupdate[adrs] |= lio->draw.sbit;
+	gdcs.grphdisp |= lio->draw.sbit;
+	adrs += lio->draw.base;
 	pixed8(lio, adrs, bit, pal);
 }
 
@@ -190,14 +204,14 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 	BYTE	bit, dbit, sbit;
 	SINT16	width;
 
-	if ((lio->range.y1 > y) || (lio->range.y2 < y)) {
+	if ((lio->draw.y1 > y) || (lio->draw.y2 < y)) {
 		return;
 	}
-	if (lio->range.x1 > x1) {
-		x1 = lio->range.x1;
+	if (lio->draw.x1 > x1) {
+		x1 = lio->draw.x1;
 	}
-	if (lio->range.x2 < x2) {
-		x2 = lio->range.x2;
+	if (lio->draw.x2 < x2) {
+		x2 = lio->draw.x2;
 	}
 	width = x2 - x1 + 1;
 	if (width <= 0) {
@@ -240,6 +254,31 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 	if (dbit) {
 		pixed8(lio, vadrs, dbit, pal);
 		vramupdate[adrs] |= sbit;
+	}
+}
+
+
+void lio_look(UINT vect) {
+
+	BYTE	work[16];
+
+	TRACEOUT(("lio command %.2x [%.4x:%.4x]", vect, CPU_CS, CPU_IP));
+	if (vect == 0xa7) {
+		i286_memstr_read(CPU_DS, CPU_BX, work, 16);
+		TRACEOUT(("LINE %d %d %d %d - %d %d / %d : %.2x %.2x",
+					LOADINTELWORD(work),
+					LOADINTELWORD(work+2),
+					LOADINTELWORD(work+4),
+					LOADINTELWORD(work+6),
+					work[8], work[9], work[10], work[11], work[12]));
+	}
+	else if (vect == 0xad) {
+		i286_memstr_read(CPU_DS, CPU_BX, work, 16);
+		TRACEOUT(("GPUT2 x=%d / y=%d / chr=%.4x / %d / %d %d %d",
+			LOADINTELWORD(work),
+			LOADINTELWORD(work+2),
+			LOADINTELWORD(work+4),
+			work[6], work[7], work[8], work[9]));
 	}
 }
 

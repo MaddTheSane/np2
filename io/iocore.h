@@ -25,7 +25,6 @@ typedef void (*IOCBFN)(void);
 #include	"fdd320.h"
 #include	"gdc.h"
 #include	"gdc_cmd.h"
-#include	"gdc_sub.h"
 #include	"mouseif.h"
 #include	"necio.h"
 #include	"nmiio.h"

@@ -47,7 +47,10 @@ typedef struct {
 	SINT16	y1;
 	SINT16	x2;
 	SINT16	y2;
-} LIORANGE;
+	UINT32	base;
+	UINT8	bank;
+	UINT8	sbit;
+} LIODRAW;
 
 
 typedef struct {
@@ -59,7 +62,7 @@ typedef struct {
 
 	// ---- work
 	UINT32		wait;
-	LIORANGE	range;
+	LIODRAW		draw;
 } _LIOWORK, *LIOWORK;
 
 
@@ -72,7 +75,7 @@ extern const UINT32 lioplaneadrs[4];
 void lio_initialize(void);
 void bios_lio(REG8 cmd);
 
-void lio_updaterange(LIOWORK lio);
+void lio_updatedraw(LIOWORK lio);
 void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal);
 void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal);
 

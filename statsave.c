@@ -8,6 +8,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"gdc_sub.h"
 #include	"cbuscore.h"
 #include	"sasiio.h"
 #include	"scsiio.h"

@@ -3,6 +3,7 @@
 #include	"egcmem.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"gdc_sub.h"
 #include	"gdc_pset.h"
 #include	"vram.h"
 

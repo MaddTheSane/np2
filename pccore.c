@@ -7,6 +7,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"gdc_sub.h"
 #include	"cbuscore.h"
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
@@ -545,7 +546,7 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-// #define	IPTRACE			(1 << 12)
+#define	IPTRACE			(1 << 12)
 
 #if defined(TRACE) && IPTRACE
 static UINT		trpos = 0;
@@ -652,8 +653,11 @@ void pccore_exec(BOOL draw) {
 									CPU_DX, CPU_DS, CPU_DI, mem[0xa3fe0]));
 			}
 #endif
-			i286x_step();
-//			i286c_step();
+//			if ((CPU_CS == 0x2516) && (CPU_IP == 0x97B0)) {
+//				TRACEOUT(("DS = %.4x", CPU_DS));
+//			}
+//			i286x_step();
+			i286c_step();
 		}
 #endif
 		nevent_progress();

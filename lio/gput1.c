@@ -57,6 +57,14 @@ typedef struct {
 	UINT	addr;
 	UINT	sft;
 	UINT	width;
+	UINT8	mask;
+} GETCNTX;
+
+typedef struct {
+	BYTE	*baseptr;
+	UINT	addr;
+	UINT	sft;
+	UINT	width;
 	UINT8	maskl;
 	UINT8	maskr;
 	UINT8	masklr;
@@ -64,21 +72,19 @@ typedef struct {
 	BYTE	pat[84];
 } PUTCNTX;
 
-#if 0
-static void getvram(const PUTCNTX *pt) {
+
+static void getvram(const GETCNTX *gt, BYTE *dst) {
 
 	BYTE	*baseptr;
 	UINT	addr;
-	BYTE	*dst;
 	UINT	width;
 	UINT	dat;
 	UINT	sft;
 
-	baseptr = pt->baseptr;
-	addr = pt->addr;
-	src = pt->pat;
-	width = pt->width;
-	sft = 8 - pt->sft;
+	baseptr = gt->baseptr;
+	addr = gt->addr;
+	width = gt->width;
+	sft = 8 - gt->sft;
 	dat = baseptr[LOW15(addr)];
 	addr++;
 	while(width > 8) {
@@ -86,12 +92,11 @@ static void getvram(const PUTCNTX *pt) {
 		dat = (dat << 8) + baseptr[LOW15(addr)];
 		addr++;
 		*dst = (UINT8)(dat >> sft);
-		dst++
+		dst++;
 	}
 	dat = (dat << 8) + baseptr[LOW15(addr)];
-	*dst = (UINT8)((dat >> sft) & pt->mask);
+	*dst = (UINT8)((dat >> sft) & gt->mask);
 }
-#endif
 
 static void setdirty(UINT addr, UINT width, UINT height, REG8 bit) {
 
@@ -319,7 +324,6 @@ const BYTE	*src;
 static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 
 	UINT	addr;
-	UINT8	sbit;
 	PUTCNTX	pt;
 	UINT	datacnt;
 	UINT	off;
@@ -328,10 +332,10 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 	UINT	pl;
 	UINT	writecnt;
 
-	if ((lput->x < lio->range.x1) ||
-		(lput->y < lio->range.y1) ||
-		((lput->x + lput->width) > lio->range.x2) ||
-		((lput->y + lput->height) > lio->range.y2)) {
+	if ((lput->x < lio->draw.x1) ||
+		(lput->y < lio->draw.y1) ||
+		((lput->x + lput->width) > lio->draw.x2) ||
+		((lput->y + lput->height) > lio->draw.y2)) {
 		return(LIO_ILLEGALFUNC);
 	}
 	if ((lput->width <= 0) || (lput->height <= 0)) {
@@ -342,14 +346,7 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 	if (lio->scrn.top) {
 		addr += 16000;
 	}
-	if (!lio->scrn.bank) {
-		sbit = 1;
-	}
-	else {
-		addr += VRAM_STEP;
-		sbit = 2;
-	}
-	setdirty(addr, (lput->x & 7) + lput->width, lput->height, sbit);
+	setdirty(addr, (lput->x & 7) + lput->width, lput->height, lio->draw.sbit);
 
 	pt.sft = lput->x & 7;
 	pt.width = lput->width;
@@ -364,13 +361,11 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 	flag |= (lput->fg & 15) << 4;
 	flag |= (lput->bg & 15) << 8;
 
-	TRACEOUT(("mode = %d [%.x]", lput->mode, flag));
-
 	// Ç≥Çƒï\é¶ÅB
 	writecnt = 0;
 	for (pl=0; pl<4; pl++) {
 		if (flag & 1) {
-			pt.baseptr = mem + lioplaneadrs[pl];
+			pt.baseptr = mem + lio->draw.base + lioplaneadrs[pl];
 			pt.addr = addr;
 			height = lput->height;
 			do {
@@ -460,11 +455,85 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 REG8 lio_gget(LIOWORK lio) {
 
 	GGET	dat;
+	SINT32	x;
+	SINT32	y;
+	int		x2;
+	int		y2;
+	UINT	off;
+	UINT	seg;
+	UINT32	leng;
+	UINT32	size;
+	UINT	datacnt;
+	UINT	mask;
+	UINT	addr;
+	GETCNTX	gt;
+	BYTE	pat[84];
+	UINT	pl;
+	UINT	height;
 
-	lio_updaterange(lio);
+	lio_updatedraw(lio);
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	x = (SINT16)LOADINTELWORD(dat.x1);
+	y = (SINT16)LOADINTELWORD(dat.y1);
+	x2 = (SINT16)LOADINTELWORD(dat.x2);
+	y2 = (SINT16)LOADINTELWORD(dat.y2);
+	if ((x < lio->draw.x1) || (y < lio->draw.y1) ||
+		(x2 > lio->draw.x2) || (y2 > lio->draw.y2)) {
+		return(LIO_ILLEGALFUNC);
+	}
+	x2 = x2 - x + 1;
+	y2 = y2 - y + 1;
+	if ((x2 <= 0) || (y2 <= 0)) {
+		return(LIO_ILLEGALFUNC);
+	}
+	off = LOADINTELWORD(dat.off);
+	seg = (SINT16)LOADINTELWORD(dat.seg);
 
-	return(0);
+	datacnt = (x2 + 7) >> 3;
+	size = datacnt * y2;
+	leng = LOADINTELWORD(dat.leng);
+	if (lio->scrn.plane & 0x80) {
+		if (lio->gcolor1.palmode == 2) {
+			size *= 4;
+			mask = 0x0f;
+		}
+		else {
+			size *= 3;
+			mask = 0x07;
+		}
+	}
+	else {
+		mask = 1 << (lio->scrn.plane & 3);
+	}
+	if (leng < (size + 4)) {
+		return(LIO_ILLEGALFUNC);
+	}
+	i286_memword_write(seg, off, (REG16)x2);
+	i286_memword_write(seg, off+2, (REG16)y2);
+	off += 4;
+	addr = (x >> 3) + (y * 80);
+	if (lio->scrn.top) {
+		addr += 16000;
+	}
+	gt.sft = x & 7;
+	gt.width = x2;
+	gt.mask = (UINT8)((~0x7f) >> ((x2 - 1) & 7));
+	for (pl=0; pl<4; pl++) {
+		if (mask & 1) {
+			gt.baseptr = mem + lio->draw.base + lioplaneadrs[pl];
+			gt.addr = addr;
+			height = y2;
+			do {
+				getvram(&gt, pat);
+				gt.addr += 80;
+				i286_memstr_write(seg, off, pat, datacnt);
+				off += datacnt;
+			} while(--height);
+		}
+		mask >>= 1;
+	}
+	lio->wait = size * 12;
+	return(LIO_SUCCESS);
 }
 
 
@@ -477,7 +546,7 @@ REG8 lio_gput1(LIOWORK lio) {
 	UINT	leng;
 	UINT	size;
 
-	lio_updaterange(lio);
+	lio_updatedraw(lio);
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);
@@ -511,9 +580,10 @@ REG8 lio_gput1(LIOWORK lio) {
 		else {
 			lput.sw = 1;
 			lput.fg = 0x0f;
-			lput.bg = 0x0f;
+			lput.bg = 0;
 		}
 	}
+	TRACEOUT(("put1 - %d,%d / %d / %d %d %d", lput.width, lput.height, lput.mode, lput.sw, lput.fg, lput.bg));
 	return(putsub(lio, &lput));
 }
 
@@ -527,7 +597,7 @@ REG8 lio_gput2(LIOWORK lio) {
 	UINT16	jis;
 	REG16	size;
 
-	lio_updaterange(lio);
+	lio_updatedraw(lio);
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);

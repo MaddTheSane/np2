@@ -37,6 +37,7 @@ void gdcslavewait(NEVENTITEM item);
 
 void gdcsub_initialize(void);
 void gdcsub_setslavewait(UINT32 clock);
+void gdcsub_setvectl(GDCVECT *vect, int x1, int y1, int x2, int y2);
 
 void gdcsub_vect0(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_vectl(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);

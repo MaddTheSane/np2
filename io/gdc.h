@@ -75,7 +75,7 @@ void gdc_bind(void);
 
 void gdc_vectreset(GDCDATA item);
 void gdc_work(int id);
-void gdc_forceready(GDCDATA item);
+void gdc_forceready(int id);
 void gdc_paletteinit(void);
 
 void gdc_setdegitalpal(int color, REG8 value);

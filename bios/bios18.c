@@ -2,6 +2,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"gdc_sub.h"
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"font.h"
@@ -97,11 +98,7 @@ void bios0x18_0a(REG8 mode) {
 
 const CRTDATA	*crt;
 
-	// GDCバッファを空に
-	if (gdc.m.cnt) {
-		gdc_work(GDCWORK_MASTER);
-	}
-	gdc_forceready(&gdc.m);
+	gdc_forceready(GDCWORK_MASTER);
 
 	gdc.mode1 &= ~(0x2d);
 	mem[MEMB_CRT_STS_FLAG] = mode;
@@ -181,6 +178,25 @@ const char	*p;
 	return(size);
 }
 
+static void bios0x18_1a(REG16 seg, REG16 off, REG16 code) {
+
+	char	*p;
+	BYTE	buf[32];
+	UINT	i;
+
+	if (((code >> 8) & 0x7e) == 0x76) {
+		i286_memstr_read(seg, off + 2, buf, 32);
+		p = fontrom;
+		p += (code & 0x7f) << 12;
+		p += (((code >> 8) - 0x20) & 0x7f) << 4;
+		for (i=0; i<16; i++, p++) {
+			*p = buf[i*2+0];
+			*(p+0x800) = buf[i*2+1];
+		}
+		cgwindow.writable |= 0x80;
+	}
+}
+
 void bios0x18_16(REG8 chr, REG8 atr) {
 
 	UINT32	i;
@@ -195,8 +211,28 @@ void bios0x18_16(REG8 chr, REG8 atr) {
 	gdcs.textdisp |= GDCSCRN_ALLDRAW;
 }
 
-#define	SWAPU16(a, b) { UINT16 tmp; tmp = (a); (a) = (b); (b) = tmp; }
+void bios0x18_40(void) {
 
+	gdc_forceready(GDCWORK_SLAVE);
+	if (!(gdcs.grphdisp & GDCSCRN_ENABLE)) {
+		gdcs.grphdisp |= GDCSCRN_ENABLE;
+		screenupdate |= 2;
+	}
+	mem[MEMB_PRXCRT] |= 0x80;
+}
+
+void bios0x18_41(void) {
+
+	gdc_forceready(GDCWORK_SLAVE);
+	if (gdcs.grphdisp & GDCSCRN_ENABLE) {
+		gdcs.grphdisp &= ~(GDCSCRN_ENABLE);
+		screenupdate |= 2;
+	}
+	mem[MEMB_PRXCRT] &= 0x7f;
+}
+
+
+#define	SWAPU16(a, b) { UINT16 tmp; tmp = (a); (a) = (b); (b) = tmp; }
 
 static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
 
@@ -230,14 +266,8 @@ static void bios0x18_47(void) {
 	SINT16		dx;
 	SINT16		dy;
 
-	// GDCバッファを空に
-	if (gdc.s.cnt) {
-		gdc_work(GDCWORK_SLAVE);
-	}
-	gdc_forceready(&gdc.s);
-
+	gdc_forceready(GDCWORK_SLAVE);
 	i286_memstr_read(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
-
 	GBSX1 = LOADINTELWORD(ucw.GBSX1);
 	GBSY1 = LOADINTELWORD(ucw.GBSY1);
 	GBSX2 = LOADINTELWORD(ucw.GBSX2);
@@ -247,40 +277,7 @@ static void bios0x18_47(void) {
 	data2 = 0;
 	if (ucw.GBDTYP == 0x01) {
 		func = gdcsub_vectl;
-		if ((GBSX1 > GBSX2) ||
-			((GBSX1 == GBSX2) && (GBSY1 > GBSY2))) {
-			SWAPU16(GBSX1, GBSX2);
-			SWAPU16(GBSY1, GBSY2);
-		}
-		dx = GBSX2 - GBSX1;
-		dy = GBSY2 - GBSY1;
-		if (dy > 0) {
-			if (dx < dy) {
-				vect.ope = 0;
-				SWAPU16(dx, dy);
-			}
-			else {
-				vect.ope = 1;
-			}
-		}
-		else {
-			dy = -dy;
-			if (dx > dy) {
-				vect.ope = 2;
-			}
-			else {
-				vect.ope = 3;
-				SWAPU16(dx, dy);
-			}
-		}
-		vect.ope += 0x08;
-		STOREINTELWORD(vect.DC, dx);
-		data = dy * 2;
-		STOREINTELWORD(vect.D1, data);
-		data -= dx;
-		STOREINTELWORD(vect.D, data);
-		data -= dx;
-		STOREINTELWORD(vect.D2, data);
+		gdcsub_setvectl(&vect, GBSX1, GBSY1, GBSX2, GBSY2);
 	}
 	else if (ucw.GBDTYP <= 0x02) {
 		func = gdcsub_vectr;
@@ -363,7 +360,7 @@ static void bios0x18_47(void) {
 
 	// 最後に使った奴を記憶
 	*(UINT16 *)(mem + MEMW_PRXGLS) = *(UINT16 *)(ucw.GBMDOTI);
-	*(UINT16 *)(gdc.s.para + GDC_TEXTW) = *(UINT16 *)(ucw.GBMDOTI);
+	STOREINTELWORD(mem + GDC_TEXTW, GBMDOTI);
 	setbiosgdc(csrw, &vect, ope);
 }
 
@@ -379,11 +376,7 @@ static void bios0x18_49(void) {
 	UINT32		csrw;
 	UINT8		ope;
 
-	// GDCバッファを空に
-	if (gdc.s.cnt) {
-		gdc_work(GDCWORK_SLAVE);
-	}
-	gdc_forceready(&gdc.s);
+	gdc_forceready(GDCWORK_SLAVE);
 
 	i286_memstr_read(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	for (i=0; i<8; i++) {
@@ -438,10 +431,10 @@ void bios0x18(void) {
 		BOOL	b;
 		UINT16	w;
 		UINT32	d;
+		UINT8	col[4];
 	}		tmp;
 
 	UINT	pos;
-	BYTE	buf[34];
 	BYTE	*p;
 	int		i;
 
@@ -530,11 +523,7 @@ void bios0x18(void) {
  			break;
 
 		case 0x0e:						// 一つの表示領域の設定
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
+			gdc_forceready(GDCWORK_MASTER);
 
 			ZeroMemory(&gdc.m.para[GDC_SCROLL], 16);
 			tmp.w = CPU_DX >> 1;
@@ -551,11 +540,7 @@ void bios0x18(void) {
  			break;
 
 		case 0x0f:						// 複数の表示領域の設定
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
+			gdc_forceready(GDCWORK_MASTER);
 
 			SETBIOSMEM16(0x0053e, CPU_CX);
 			SETBIOSMEM16(0x00540, CPU_BX);
@@ -590,21 +575,13 @@ void bios0x18(void) {
 			break;
 
    		case 0x10:						// カーソルタイプの設定
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
+			gdc_forceready(GDCWORK_MASTER);
 
 			bios0x18_10((REG8)(CPU_AL & 1));
  			break;
 
    		case 0x11:						// カーソルの表示開始
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
+			gdc_forceready(GDCWORK_MASTER);
 
 			if (gdc.m.para[GDC_CSRFORM] != (mem[MEMB_CRT_RASTER] | 0x80)) {
 				gdc.m.para[GDC_CSRFORM] = mem[MEMB_CRT_RASTER] | 0x80;
@@ -613,11 +590,7 @@ void bios0x18(void) {
 			break;
 
    		case 0x12:						// カーソルの表示停止
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
+			gdc_forceready(GDCWORK_MASTER);
 
 			if (gdc.m.para[GDC_CSRFORM] != mem[MEMB_CRT_RASTER]) {
 				gdc.m.para[GDC_CSRFORM] = mem[MEMB_CRT_RASTER];
@@ -626,11 +599,7 @@ void bios0x18(void) {
 			break;
 
    		case 0x13:						// カーソル位置の設定
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
+			gdc_forceready(GDCWORK_MASTER);
 
 			tmp.w = CPU_DX >> 1;
 			if (LOADINTELWORD(gdc.m.para + GDC_CSRW) != tmp.w) {
@@ -662,16 +631,7 @@ void bios0x18(void) {
 			break;
 
    		case 0x1a:						// ユーザー文字の定義
-			if ((CPU_DH & 0x7e) == 0x76) {
-				i286_memstr_read(CPU_BX, CPU_CX + 2, buf, 32);
-				p = fontrom + ((CPU_DL & 0x7f) << 12)
-							+ (((CPU_DH - 0x20) & 0x7f) << 4);
-				for (i=0; i<16; i++, p++) {
-					*p = buf[i*2+0];
-					*(p+0x800) = buf[i*2+1];
-				}
-				cgwindow.writable |= 0x80;
-			}
+			bios0x18_1a(CPU_BX, CPU_CX, CPU_DX);
 			break;
 
 		case 0x1b:						// KCGアクセスモードの設定
@@ -691,36 +651,15 @@ void bios0x18(void) {
 			break;
 
    		case 0x40:						// グラフィック画面の表示開始
-			// GDCバッファを空に
-			if (gdc.s.cnt) {
-				gdc_work(GDCWORK_SLAVE);
-			}
-			if (!(gdcs.grphdisp & GDCSCRN_ENABLE)) {
-				gdcs.grphdisp |= GDCSCRN_ENABLE;
-				screenupdate |= 2;
-			}
-			mem[MEMB_PRXCRT] |= 0x80;
+			bios0x18_40();
  			break;
 
    		case 0x41:						// グラフィック画面の表示終了
-			// GDCバッファを空に
-			if (gdc.s.cnt) {
-				gdc_work(GDCWORK_SLAVE);
-			}
-			gdc_forceready(&gdc.s);
-			if (gdcs.grphdisp & GDCSCRN_ENABLE) {
-				gdcs.grphdisp &= ~(GDCSCRN_ENABLE);
-				screenupdate |= 2;
-			}
-			mem[MEMB_PRXCRT] &= 0x7f;
+			bios0x18_41();
  			break;
 
    		case 0x42:						// 表示領域の設定
-			// GDCバッファを空に
-			if (gdc.s.cnt) {
-				gdc_work(GDCWORK_SLAVE);
-			}
-			gdc_forceready(&gdc.s);
+			gdc_forceready(GDCWORK_SLAVE);
 
 			ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
 			if ((CPU_CH & 0xc0) == 0xc0) {		// ALL
@@ -765,11 +704,10 @@ void bios0x18(void) {
 
 		case 0x43:						// パレットの設定
 			i286_memstr_read(CPU_DS, CPU_BX + offsetof(UCWTBL, GBCPC),
-																	buf, 4);
-			tmp.d = LOADINTELDWORD(buf);
-			for (i=8; i--;) {
-				gdc_setdegitalpal(i, (REG8)(tmp.d & 15));
-				tmp.d >>= 4;
+																tmp.col, 4);
+			for (i=0; i<4; i++) {
+				gdc_setdegitalpal(6 - (i*2), (REG8)(tmp.col[i] >> 4));
+				gdc_setdegitalpal(7 - (i*2), (REG8)(tmp.col[i] & 15));
 			}
 			break;
 

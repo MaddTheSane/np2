@@ -24,8 +24,10 @@
 　ver0.74 → ver0.75
 
 　・GDC - ベクタの初期化し忘れを修正
+　・GDC - パターンの修正
 　・EGCの高速化
 　・リズムの修正(PCM 44khz 16bit monoralの制限を外した)
+　・LIOの修正
 
 
 　(Windows)

@@ -3,9 +3,10 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"gdc_cmd.tbl"
+#include	"gdc_sub.h"
 #include	"vram.h"
 #include	"palettes.h"
-#include	"gdc_cmd.tbl"
 #include	"timing.h"
 
 
@@ -279,8 +280,13 @@ void gdc_work(int id) {
 }
 
 // BIOS‚Æ‚©‚Å˜M‚Á‚½‚ÉƒŠƒZƒbƒg
-void gdc_forceready(GDCDATA item) {
+void gdc_forceready(int id) {
 
+	GDCDATA	item;
+	item = (id == GDCWORK_MASTER)?&gdc.m:&gdc.s;
+	if (item->cnt) {
+		gdc_work(id);
+	}
 	item->rcv = 0;
 	item->snd = 0;
 }
