@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"cpucore.h"
+#include	"egcmem.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"gdc_pset.h"
@@ -15,15 +16,15 @@ static void MEMCALL _nop(GDCPSET pset, UINT addr, UINT bit) {
 
 static void MEMCALL _replace(GDCPSET pset, UINT addr, UINT bit) {
 
-	vramupdate[addr] |= pset->update;
+	vramupdate[addr] |= pset->update.b[0];
 	if (pset->pattern & 0x8000) {
 		pset->pattern <<= 1;
 		pset->pattern++;
-		pset->base[addr] |= (0x80 >> bit);
+		pset->base.ptr[addr] |= (0x80 >> bit);
 	}
 	else {
 		pset->pattern <<= 1;
-		pset->base[addr] &= ~(0x80 >> bit);
+		pset->base.ptr[addr] &= ~(0x80 >> bit);
 	}
 }
 
@@ -32,8 +33,8 @@ static void MEMCALL _complemnt(GDCPSET pset, UINT addr, UINT bit) {
 	if (pset->pattern & 0x8000) {
 		pset->pattern <<= 1;
 		pset->pattern++;
-		vramupdate[addr] |= pset->update;
-		pset->base[addr] ^= (0x80 >> bit);
+		vramupdate[addr] |= pset->update.b[0];
+		pset->base.ptr[addr] ^= (0x80 >> bit);
 	}
 	else {
 		pset->pattern <<= 1;
@@ -45,8 +46,8 @@ static void MEMCALL _clear(GDCPSET pset, UINT addr, UINT bit) {
 	if (pset->pattern & 0x8000) {
 		pset->pattern <<= 1;
 		pset->pattern++;
-		vramupdate[addr] |= pset->update;
-		pset->base[addr] &= ~(0x80 >> bit);
+		vramupdate[addr] |= pset->update.b[0];
+		pset->base.ptr[addr] &= ~(0x80 >> bit);
 	}
 	else {
 		pset->pattern <<= 1;
@@ -58,27 +59,32 @@ static void MEMCALL _set(GDCPSET pset, UINT addr, UINT bit) {
 	if (pset->pattern & 0x8000) {
 		pset->pattern <<= 1;
 		pset->pattern++;
-		vramupdate[addr] |= pset->update;
-		pset->base[addr] |= (0x80 >> bit);
+		vramupdate[addr] |= pset->update.b[0];
+		pset->base.ptr[addr] |= (0x80 >> bit);
 	}
 	else {
 		pset->pattern <<= 1;
 	}
 }
 
-static void MEMCALL _tdw(GDCPSET pset, UINT addr, UINT bit) {
+
+// ---- grcg
+
+static void MEMCALL withtdw(GDCPSET pset, UINT addr, UINT bit) {
 
 	BYTE	*ptr;
 
 	if (pset->pattern & 0x8000) {
 		pset->pattern <<= 1;
 		pset->pattern++;
-		vramupdate[addr] |= pset->update;
-		ptr = pset->base + addr;
-		ptr[VRAM_B] = grcg.tile[0].b[0];
-		ptr[VRAM_R] = grcg.tile[1].b[0];
-		ptr[VRAM_G] = grcg.tile[2].b[0];
-		ptr[VRAM_E] = grcg.tile[3].b[0];
+		addr &= ~1;
+
+		*(UINT16 *)(vramupdate + addr) |= pset->update.w;
+		ptr = pset->base.ptr + addr;
+		*(UINT16 *)(ptr + VRAM_B) = grcg.tile[0].w;
+		*(UINT16 *)(ptr + VRAM_R) = grcg.tile[1].w;
+		*(UINT16 *)(ptr + VRAM_G) = grcg.tile[2].w;
+		*(UINT16 *)(ptr + VRAM_E) = grcg.tile[3].w;
 	}
 	else {
 		pset->pattern <<= 1;
@@ -86,7 +92,7 @@ static void MEMCALL _tdw(GDCPSET pset, UINT addr, UINT bit) {
 	(void)bit;
 }
 
-static void MEMCALL _rmw(GDCPSET pset, UINT addr, UINT bit) {
+static void MEMCALL withrmw(GDCPSET pset, UINT addr, UINT bit) {
 
 	BYTE	*ptr;
 	BYTE	data;
@@ -95,8 +101,8 @@ static void MEMCALL _rmw(GDCPSET pset, UINT addr, UINT bit) {
 	if (pset->pattern & 0x8000) {
 		pset->pattern <<= 1;
 		pset->pattern++;
-		vramupdate[addr] |= pset->update;
-		ptr = pset->base + addr;
+		vramupdate[addr] |= pset->update.b[0];
+		ptr = pset->base.ptr + addr;
 		data = (0x80 >> bit);
 		mask = ~data;
 		ptr[VRAM_B] &= mask;
@@ -113,40 +119,66 @@ static void MEMCALL _rmw(GDCPSET pset, UINT addr, UINT bit) {
 	}
 }
 
-static const GDCPSFN psettbl[] = {
-		_replace,	_complemnt,	_clear,		_set,
-		_replace,	_complemnt,	_clear,		_set,
-		_tdw,		_tdw,		_nop,		_tdw,
-		_rmw,		_rmw,		_nop,		_rmw};
+
+// ---- egc
+
+static void MEMCALL withegc(GDCPSET pset, UINT addr, UINT bit) {
+
+	REG16	data;
+
+	if (pset->pattern & 0x8000) {
+		pset->pattern <<= 1;
+		pset->pattern++;
+		data = (0x80 >> bit);
+		if (addr & 1) {
+			addr &= ~1;
+			data <<= 8;
+		}
+		egc_write_w(pset->base.addr + addr, data);
+	}
+	else {
+		pset->pattern <<= 1;
+	}
+}
+
+
+static const GDCPSFN psettbl[] = {_replace, _complemnt, _clear, _set};
 
 
 // ----
 
-void MEMCALL gdcpset_prepare(GDCPSET pset, UINT32 csrw, UINT16 pat, BYTE op) {
+void MEMCALL gdcpset_prepare(GDCPSET pset, UINT32 csrw, REG16 pat, REG8 op) {
 
 	BYTE	*base;
 	BYTE	update;
 
-	base = mem;
-	if (!gdcs.access) {
-		update = 1;
+	if (vramop.operate & VOP_EGCBIT) {
+		pset->func = withegc;
+		pset->base.addr = vramplaneseg[(csrw >> 14) & 3];
 	}
 	else {
-		base += VRAM_STEP;
-		update = 2;
+		base = mem;
+		if (!gdcs.access) {
+			update = 1;
+		}
+		else {
+			base += VRAM_STEP;
+			update = 2;
+		}
+		op &= 3;
+		if (!(grcg.gdcwithgrcg & 0x8)) {
+			pset->func = psettbl[op];
+			pset->base.ptr = base + vramplaneseg[(csrw >> 14) & 3];
+		}
+		else {
+			pset->func = (grcg.gdcwithgrcg & 0x4)?withrmw:withtdw;
+			pset->base.ptr = base;
+		}
+		gdcs.grphdisp |= update;
+		pset->update.b[0] = update;
+		pset->update.b[1] = update;
 	}
-	op &= 3;
-	if (!(grcg.gdcwithgrcg & 0x8)) {
-		base += vramplaneseg[(csrw >> 14) & 3];
-	}
-	else {
-		op += grcg.gdcwithgrcg;
-	}
-	gdcs.grphdisp |= update;
-	pset->func = psettbl[op];
-	pset->base = base;
 	pset->pattern = pat;
-	pset->update = update;
 	pset->x = (UINT16)((((csrw & 0x3fff) % 40) << 4) + ((csrw >> 20) & 0x0f));
 	pset->y = (UINT16)((csrw & 0x3fff) / 40);
 	pset->dots = 0;

@@ -18,10 +18,10 @@ section .bss
 
 	global	_egcshift
 
-	global	@egca_read@4
-	global	@egca_write@8
-	global	@egca_read_w@4
-	global	@egca_write_w@8
+	global	@egc_read@4
+	global	@egc_write@8
+	global	@egc_read_w@4
+	global	@egc_write_w@8
 
 	global	egc_read
 	global	egc_write
@@ -805,7 +805,7 @@ egc_ope00:		ret
 ; ---- byte access
 
 				align	16
-@egca_read@4:
+@egc_read@4:
 egc_read:		pushad
 				mov		ebx, ecx
 				and		ebx, byte 1
@@ -871,7 +871,7 @@ egcr_raw:		mov		al, [VIDEOMEMORY + ebp]
 
 
 				align	16
-@egca_write@8:
+@egc_write@8:
 egc_write:		pushad
 				mov		dh, dl
 egc_write_m:	mov		ebx, ecx
@@ -939,7 +939,7 @@ egcw_ed:		popad
 ; ---- word access
 
 				align	16
-@egca_read_w@4:
+@egc_read_w@4:
 egc_read_w:		test	cl, 1
 				jne		near egcrw_odd
 				pushad
@@ -1023,7 +1023,7 @@ egcrw_oddr:		inc		ecx
 
 
 				align	16
-@egca_write_w@8:
+@egc_write_w@8:
 egc_write_w:	test	cl, 1
 				jne		near egcww_odd
 				pushad
