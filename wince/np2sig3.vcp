@@ -17,7 +17,8 @@ CFG=np2sig3 - Win32 (WCE ARMV4I) Debug
 !MESSAGE 
 !MESSAGE 選択可能なビルド モード :
 !MESSAGE 
-!MESSAGE "np2sig3 - Win32 (WCE ARMV4I) Release" ("Win32 (WCE ARMV4I) Application" 用)
+!MESSAGE "np2sig3 - Win32 (WCE ARMV4I) Release JP" ("Win32 (WCE ARMV4I) Application" 用)
+!MESSAGE "np2sig3 - Win32 (WCE ARMV4I) Release World" ("Win32 (WCE ARMV4I) Application" 用)
 !MESSAGE "np2sig3 - Win32 (WCE ARMV4I) Debug" ("Win32 (WCE ARMV4I) Application" 用)
 !MESSAGE 
 
@@ -30,19 +31,19 @@ CPP=clarm.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "ARMV4IRel"
-# PROP BASE Intermediate_Dir "ARMV4IRel"
+# PROP BASE Output_Dir "ARMV4IRelJP"
+# PROP BASE Intermediate_Dir "ARMV4IRelJP"
 # PROP BASE CPU_ID "{DC70F430-E78B-494F-A9D5-62ADC56443B8}"
 # PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "..\bin\ARM"
-# PROP Intermediate_Dir "..\obj\Sig3Rel"
+# PROP Intermediate_Dir "..\obj\Sig3RelJP"
 # PROP CPU_ID "{DC70F430-E78B-494F-A9D5-62ADC56443B8}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Ignore_Export_Lib 0
@@ -59,6 +60,36 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:THUMB
 # ADD LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /map /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:THUMB
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "ARMV4IRelWorld"
+# PROP BASE Intermediate_Dir "ARMV4IRelWorld"
+# PROP BASE CPU_ID "{DC70F430-E78B-494F-A9D5-62ADC56443B8}"
+# PROP BASE Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\bin\ARM"
+# PROP Intermediate_Dir "..\obj\Sig3RelWorld"
+# PROP CPU_ID "{DC70F430-E78B-494F-A9D5-62ADC56443B8}"
+# PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE RSC /l 0x411 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "NDEBUG" /d "$(CePlatform)" /d "THUMB" /d "_THUMB_" /d "ARM" /d "_ARM_" /d "ARMV4I" /r
+# ADD RSC /l 0x411 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "NDEBUG" /d "$(CePlatform)" /d "THUMB" /d "_THUMB_" /d "ARM" /d "_ARM_" /d "ARMV4I" /r
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "ARM" /D "_ARM_" /D "$(CePlatform)" /D "ARMV4I" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /QRarch4T /QRinterwork-return /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /Oxt /I "..\i286a" /I ".\\" /I ".\wce" /I ".\gx" /I "..\\" /I "..\common" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4I" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "GX_DLL" /D "SIZE_VGA" /D "OSLANG_UTF8" /D "RESOURCE_US" /FAcs /YX /M$(CECrtMT) /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:THUMB
+# ADD LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /map /nodefaultlib:"$(CENoDefaultLib)" /out:"..\bin\ARM/np2sig3w.exe" /subsystem:$(CESubsystem) /MACHINE:THUMB
 
 !ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
 
@@ -94,7 +125,8 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "np2sig3 - Win32 (WCE ARMV4I) Release"
+# Name "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+# Name "np2sig3 - Win32 (WCE ARMV4I) Release World"
 # Name "np2sig3 - Win32 (WCE ARMV4I) Debug"
 # Begin Group "Source Files"
 
@@ -112,7 +144,9 @@ DEP_CPP__MEMO=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -126,6 +160,8 @@ DEP_CPP_BMPDA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -139,6 +175,8 @@ DEP_CPP_CODEC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -151,6 +189,8 @@ DEP_CPP_LSTAR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -163,6 +203,8 @@ DEP_CPP_MILST=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -177,7 +219,9 @@ DEP_CPP_MIMPI=\
 	"..\COMMON\mimpidef.h"\
 	"..\common\rect.h"\
 	"..\COMMON\textfile.h"\
+	"..\common\ucscnv.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -194,8 +238,14 @@ DEP_CPP_PARTS=\
 	".\wce\compiler.h"\
 	
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
@@ -207,10 +257,22 @@ DEP_CPP_PARTS=\
 
 SOURCE=.\ARM\PARTS.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=.\ARM\PARTS.S
+InputName=PARTS
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=.\ARM\PARTS.S
 InputName=PARTS
 
@@ -238,7 +300,9 @@ DEP_CPP_PROFI=\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
+	"..\common\ucscnv.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -251,6 +315,8 @@ DEP_CPP_RECT_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -264,6 +330,8 @@ DEP_CPP_RESIZ=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\resize.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -271,7 +339,15 @@ DEP_CPP_RESIZ=\
 
 SOURCE=..\COMMON\STRRES.C
 DEP_CPP_STRRE=\
+	"..\common.h"\
+	"..\common\_memory.h"\
+	"..\common\lstarray.h"\
+	"..\common\milstr.h"\
+	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
+	".\wce\compiler.h"\
 	
 # End Source File
 # Begin Source File
@@ -284,9 +360,28 @@ DEP_CPP_TEXTF=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\textfile.h"\
+	"..\common\ucscnv.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+# End Source File
+# Begin Source File
+
+SOURCE=..\COMMON\UCSCNV.C
+
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -298,7 +393,23 @@ NODEP_CPP_WAVEF=\
 	"..\COMMON\compiler.h"\
 	"..\COMMON\dosio.h"\
 	
+
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "cpu"
@@ -313,6 +424,7 @@ DEP_CPP_DMAP_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\I286A\dmap.h"\
 	"..\io\artic.h"\
@@ -344,6 +456,7 @@ DEP_CPP_DMAP_=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -356,6 +469,7 @@ DEP_CPP_EGCME=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
@@ -388,6 +502,7 @@ DEP_CPP_EGCME=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -400,7 +515,9 @@ DEP_CPP_I286A=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -408,10 +525,22 @@ DEP_CPP_I286A=\
 
 SOURCE=..\I286A\I286A_0F.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_0F.S
+InputName=I286A_0F
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_0F.S
 InputName=I286A_0F
 
@@ -439,10 +568,22 @@ InputName=I286A_0F
 
 SOURCE=..\I286A\I286A_8X.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_8X.S
+InputName=I286A_8X
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_8X.S
 InputName=I286A_8X
 
@@ -470,10 +611,22 @@ InputName=I286A_8X
 
 SOURCE=..\I286A\I286A_EA.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_EA.S
+InputName=I286A_EA
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_EA.S
 InputName=I286A_EA
 
@@ -501,10 +654,22 @@ InputName=I286A_EA
 
 SOURCE=..\I286A\I286A_F6.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_F6.S
+InputName=I286A_F6
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_F6.S
 InputName=I286A_F6
 
@@ -532,10 +697,22 @@ InputName=I286A_F6
 
 SOURCE=..\I286A\I286A_FE.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_FE.S
+InputName=I286A_FE
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_FE.S
 InputName=I286A_FE
 
@@ -563,10 +740,22 @@ InputName=I286A_FE
 
 SOURCE=..\I286A\I286A_I.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_I.S
+InputName=I286A_I
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_I.S
 InputName=I286A_I
 
@@ -594,10 +783,22 @@ InputName=I286A_I
 
 SOURCE=..\I286A\I286A_MN.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_MN.S
+InputName=I286A_MN
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_MN.S
 InputName=I286A_MN
 
@@ -625,10 +826,22 @@ InputName=I286A_MN
 
 SOURCE=..\I286A\I286A_RP.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_RP.S
+InputName=I286A_RP
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_RP.S
 InputName=I286A_RP
 
@@ -656,10 +869,22 @@ InputName=I286A_RP
 
 SOURCE=..\I286A\I286A_SF.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\I286A_SF.S
+InputName=I286A_SF
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\I286A_SF.S
 InputName=I286A_SF
 
@@ -692,7 +917,9 @@ DEP_CPP_MEMOR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -700,10 +927,22 @@ DEP_CPP_MEMOR=\
 
 SOURCE=..\I286A\MEMORYA.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\MEMORYA.S
+InputName=MEMORYA
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\MEMORYA.S
 InputName=MEMORYA
 
@@ -731,10 +970,22 @@ InputName=MEMORYA
 
 SOURCE=..\I286A\MEMORYD.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=..\I286A\MEMORYD.S
+InputName=MEMORYD
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=..\I286A\MEMORYD.S
 InputName=MEMORYD
 
@@ -771,6 +1022,7 @@ DEP_CPP_ARTIC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -801,6 +1053,7 @@ DEP_CPP_ARTIC=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -813,6 +1066,7 @@ DEP_CPP_CGROM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -844,6 +1098,7 @@ DEP_CPP_CGROM=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -856,6 +1111,7 @@ DEP_CPP_CPUIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -886,6 +1142,7 @@ DEP_CPP_CPUIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -898,6 +1155,7 @@ DEP_CPP_CRTC_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -928,6 +1186,7 @@ DEP_CPP_CRTC_=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -940,6 +1199,7 @@ DEP_CPP_DIPSW=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -972,6 +1232,7 @@ DEP_CPP_DIPSW=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -986,6 +1247,7 @@ DEP_CPP_DMAC_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1018,6 +1280,7 @@ DEP_CPP_DMAC_=\
 	"..\sound\cs4231.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1030,6 +1293,7 @@ DEP_CPP_EGC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
@@ -1062,6 +1326,7 @@ DEP_CPP_EGC_C=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1074,6 +1339,7 @@ DEP_CPP_EMSIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1104,6 +1370,7 @@ DEP_CPP_EMSIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1116,6 +1383,7 @@ DEP_CPP_EPSON=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1146,6 +1414,7 @@ DEP_CPP_EPSON=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1158,6 +1427,7 @@ DEP_CPP_FDC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
 	"..\i286a\cpucore.h"\
@@ -1190,6 +1460,7 @@ DEP_CPP_FDC_C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1202,6 +1473,7 @@ DEP_CPP_FDD32=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1231,6 +1503,7 @@ DEP_CPP_FDD32=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1243,6 +1516,7 @@ DEP_CPP_GDC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1278,6 +1552,7 @@ DEP_CPP_GDC_C=\
 	"..\timing.h"\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -1291,6 +1566,7 @@ DEP_CPP_GDC_P=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
@@ -1325,6 +1601,7 @@ DEP_CPP_GDC_P=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1337,6 +1614,7 @@ DEP_CPP_GDC_S=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1370,6 +1648,7 @@ DEP_CPP_GDC_S=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1385,6 +1664,7 @@ DEP_CPP_IOCOR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1427,6 +1707,7 @@ DEP_CPP_IOCOR=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1439,6 +1720,7 @@ DEP_CPP_MOUSE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1471,6 +1753,7 @@ DEP_CPP_MOUSE=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\mousemng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1483,6 +1766,7 @@ DEP_CPP_NECIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1513,6 +1797,7 @@ DEP_CPP_NECIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1525,6 +1810,7 @@ DEP_CPP_NMIIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1554,6 +1840,7 @@ DEP_CPP_NMIIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1568,6 +1855,7 @@ DEP_CPP_NP2SY=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\hostdrv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -1599,6 +1887,7 @@ DEP_CPP_NP2SY=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	
@@ -1612,6 +1901,7 @@ DEP_CPP_PIC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1642,6 +1932,7 @@ DEP_CPP_PIC_C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1655,6 +1946,7 @@ DEP_CPP_PIT_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1687,6 +1979,7 @@ DEP_CPP_PIT_C=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1699,6 +1992,7 @@ DEP_CPP_PRINT=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1730,6 +2024,7 @@ DEP_CPP_PRINT=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1742,6 +2037,7 @@ DEP_CPP_SERIA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1774,6 +2070,7 @@ DEP_CPP_SERIA=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1786,6 +2083,7 @@ DEP_CPP_SYSPO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1817,6 +2115,7 @@ DEP_CPP_SYSPO=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1830,6 +2129,7 @@ DEP_CPP_UPD49=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1859,6 +2159,7 @@ DEP_CPP_UPD49=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -1878,6 +2179,7 @@ DEP_CPP_AMD98=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1918,6 +2220,7 @@ DEP_CPP_AMD98=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1933,6 +2236,7 @@ DEP_CPP_BOARD=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1974,6 +2278,7 @@ DEP_CPP_BOARD=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -1988,6 +2293,7 @@ DEP_CPP_BOARD1=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2028,6 +2334,7 @@ DEP_CPP_BOARD1=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2042,6 +2349,7 @@ DEP_CPP_BOARD2=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2083,6 +2391,7 @@ DEP_CPP_BOARD2=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2098,6 +2407,7 @@ DEP_CPP_BOARD8=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2139,6 +2449,7 @@ DEP_CPP_BOARD8=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2153,6 +2464,7 @@ DEP_CPP_BOARDS=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2194,6 +2506,7 @@ DEP_CPP_BOARDS=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2209,6 +2522,7 @@ DEP_CPP_BOARDX=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2250,6 +2564,7 @@ DEP_CPP_BOARDX=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2268,6 +2583,7 @@ DEP_CPP_CBUSC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2297,6 +2613,7 @@ DEP_CPP_CBUSC=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2310,6 +2627,7 @@ DEP_CPP_CS423=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2351,6 +2669,7 @@ DEP_CPP_CS423=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2365,6 +2684,7 @@ DEP_CPP_MPU98=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2395,6 +2715,7 @@ DEP_CPP_MPU98=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2409,6 +2730,7 @@ DEP_CPP_PC986=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2439,6 +2761,7 @@ DEP_CPP_PC986=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2452,6 +2775,7 @@ DEP_CPP_PCM86=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2493,6 +2817,7 @@ DEP_CPP_PCM86=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2507,6 +2832,7 @@ DEP_CPP_SASII=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -2539,6 +2865,7 @@ DEP_CPP_SASII=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2555,6 +2882,7 @@ DEP_CPP_SCSIC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -2587,6 +2915,7 @@ DEP_CPP_SCSIC=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2604,6 +2933,7 @@ DEP_CPP_SCSII=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2635,6 +2965,7 @@ DEP_CPP_SCSII=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2660,6 +2991,7 @@ DEP_CPP_BIOS_=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -2696,6 +3028,7 @@ DEP_CPP_BIOS_=\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2710,6 +3043,7 @@ DEP_CPP_BIOS0=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2740,6 +3074,7 @@ DEP_CPP_BIOS0=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2755,6 +3090,7 @@ DEP_CPP_BIOS0C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2785,6 +3121,7 @@ DEP_CPP_BIOS0C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2793,11 +3130,13 @@ DEP_CPP_BIOS0C=\
 SOURCE=..\BIOS\BIOS12.C
 DEP_CPP_BIOS1=\
 	"..\BIOS\bios.h"\
+	"..\BIOS\biosmem.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2828,6 +3167,7 @@ DEP_CPP_BIOS1=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2836,11 +3176,13 @@ DEP_CPP_BIOS1=\
 SOURCE=..\BIOS\BIOS13.C
 DEP_CPP_BIOS13=\
 	"..\BIOS\bios.h"\
+	"..\BIOS\biosmem.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2871,6 +3213,7 @@ DEP_CPP_BIOS13=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2885,6 +3228,7 @@ DEP_CPP_BIOS18=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -2917,6 +3261,7 @@ DEP_CPP_BIOS18=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2932,6 +3277,7 @@ DEP_CPP_BIOS19=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2962,6 +3308,7 @@ DEP_CPP_BIOS19=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -2975,6 +3322,7 @@ DEP_CPP_BIOS1A=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3005,6 +3353,7 @@ DEP_CPP_BIOS1A=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3021,6 +3370,7 @@ DEP_CPP_BIOS1B=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -3055,6 +3405,7 @@ DEP_CPP_BIOS1B=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3071,6 +3422,7 @@ DEP_CPP_BIOS1C=\
 	"..\common\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3101,6 +3453,7 @@ DEP_CPP_BIOS1C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -3116,6 +3469,7 @@ DEP_CPP_BIOS1F=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3146,6 +3500,7 @@ DEP_CPP_BIOS1F=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3162,12 +3517,14 @@ DEP_CPP_SXSIB=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
 	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\timing.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3184,6 +3541,7 @@ DEP_CPP_DISPS=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3215,6 +3573,7 @@ DEP_CPP_DISPS=\
 	"..\statsave.h"\
 	"..\VRAM\dispsync.h"\
 	"..\VRAM\scrndraw.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -3266,8 +3625,14 @@ DEP_CPP_MAKEG=\
 	".\wce\compiler.h"\
 	
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
@@ -3279,10 +3644,22 @@ DEP_CPP_MAKEG=\
 
 SOURCE=.\ARM\MAKEGRPH.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=.\ARM\MAKEGRPH.S
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=.\ARM\MAKEGRPH.S
 InputName=MAKEGRPH
 
@@ -3307,6 +3684,7 @@ DEP_CPP_MAKET=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -3342,6 +3720,7 @@ DEP_CPP_MAKET=\
 	"..\VRAM\maketext.h"\
 	"..\VRAM\scrndraw.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3354,6 +3733,7 @@ DEP_CPP_MAKETG=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -3393,6 +3773,7 @@ DEP_CPP_MAKETG=\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\scrndraw.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3405,6 +3786,7 @@ DEP_CPP_PALET=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3436,6 +3818,7 @@ DEP_CPP_PALET=\
 	"..\statsave.h"\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\scrndraw.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -3450,6 +3833,7 @@ DEP_CPP_SCRNB=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3483,6 +3867,7 @@ DEP_CPP_SCRNB=\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\scrnbmp.h"\
 	"..\VRAM\scrndraw.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3495,6 +3880,7 @@ DEP_CPP_SCRND=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3528,6 +3914,7 @@ DEP_CPP_SCRND=\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -3548,16 +3935,44 @@ DEP_CPP_SDRAW=\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
+
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\ARM\SDRAW.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=.\ARM\SDRAW.S
+InputName=SDRAW
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=.\ARM\SDRAW.S
 InputName=SDRAW
 
@@ -3590,9 +4005,11 @@ DEP_CPP_SDRAWQ=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -3606,8 +4023,10 @@ DEP_CPP_VRAM_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3629,12 +4048,14 @@ DEP_CPP_MIDIM=\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3647,12 +4068,14 @@ DEP_CPP_MIDIN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3665,11 +4088,13 @@ DEP_CPP_MIDIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3682,11 +4107,13 @@ DEP_CPP_MIDTA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3699,11 +4126,13 @@ DEP_CPP_MIDVO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3720,9 +4149,11 @@ DEP_CPP_GETSM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
 	"..\SOUND\GETSND\getsndmn.mcr"\
 	"..\SOUND\GETSND\getsndst.mcr"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3735,7 +4166,9 @@ DEP_CPP_GETSN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3748,7 +4181,9 @@ DEP_CPP_GETWA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3762,9 +4197,11 @@ DEP_CPP_ADPCM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\ADPCM.H"\
 	"..\sound\opngen.h"\
 	"..\sound\sound.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3777,8 +4214,10 @@ DEP_CPP_ADPCMG=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\ADPCM.H"\
 	"..\sound\sound.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3791,6 +4230,7 @@ DEP_CPP_BEEPC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3833,6 +4273,7 @@ DEP_CPP_BEEPC=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3845,8 +4286,10 @@ DEP_CPP_BEEPG=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3859,6 +4302,7 @@ DEP_CPP_CS4231=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3900,6 +4344,7 @@ DEP_CPP_CS4231=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3912,6 +4357,7 @@ DEP_CPP_CS4231G=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3953,6 +4399,7 @@ DEP_CPP_CS4231G=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3975,6 +4422,7 @@ DEP_CPP_FMBOA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\cmndraw.h"\
 	"..\generic\keydisp.h"\
 	"..\io\artic.h"\
@@ -4020,6 +4468,7 @@ DEP_CPP_FMBOA=\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
 	".\joymng.h"\
+	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4033,6 +4482,7 @@ DEP_CPP_FMTIM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4074,6 +4524,7 @@ DEP_CPP_FMTIM=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4086,6 +4537,7 @@ DEP_CPP_OPNGE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\cmndraw.h"\
 	"..\generic\keydisp.h"\
 	"..\io\artic.h"\
@@ -4128,6 +4580,7 @@ DEP_CPP_OPNGE=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4183,8 +4636,14 @@ DEP_CPP_OPNGEN=\
 	".\wce\compiler.h"\
 	
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
@@ -4196,10 +4655,22 @@ DEP_CPP_OPNGEN=\
 
 SOURCE=.\ARM\OPNGENG.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=.\ARM\OPNGENG.S
+InputName=OPNGENG
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=.\ARM\OPNGENG.S
 InputName=OPNGENG
 
@@ -4224,6 +4695,7 @@ DEP_CPP_PCM86C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4265,6 +4737,7 @@ DEP_CPP_PCM86C=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4277,6 +4750,7 @@ DEP_CPP_PCM86G=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4317,6 +4791,7 @@ DEP_CPP_PCM86G=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4329,10 +4804,12 @@ DEP_CPP_PSGGE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\cmndraw.h"\
 	"..\generic\keydisp.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4351,8 +4828,14 @@ DEP_CPP_PSGGEN=\
 	".\wce\compiler.h"\
 	
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
@@ -4364,10 +4847,22 @@ DEP_CPP_PSGGEN=\
 
 SOURCE=.\ARM\PSGGENG.S
 
-!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release"
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
 
 # Begin Custom Build - Assembling... $(InputPath)
-IntDir=.\..\obj\Sig3Rel
+IntDir=.\..\obj\Sig3RelJP
+InputPath=.\ARM\PSGGENG.S
+InputName=PSGGENG
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# Begin Custom Build - Assembling... $(InputPath)
+IntDir=.\..\obj\Sig3RelWorld
 InputPath=.\ARM\PSGGENG.S
 InputName=PSGGENG
 
@@ -4392,11 +4887,13 @@ DEP_CPP_RHYTH=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\rhythm.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4409,6 +4906,7 @@ DEP_CPP_S98_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4451,6 +4949,7 @@ DEP_CPP_S98_C=\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4463,8 +4962,10 @@ DEP_CPP_SNDCS=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\SOUND\sndcsec.h"\
 	"..\sound\sound.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4477,6 +4978,7 @@ DEP_CPP_SOUND=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\COMMON\wavefile.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -4513,6 +5015,7 @@ DEP_CPP_SOUND=\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4526,12 +5029,14 @@ DEP_CPP_SOUNDR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\soundrom.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4544,8 +5049,10 @@ DEP_CPP_TMS36=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4558,8 +5065,10 @@ DEP_CPP_TMS363=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4576,6 +5085,7 @@ DEP_CPP_DISKD=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fddfile.h"\
@@ -4609,6 +5119,7 @@ DEP_CPP_DISKD=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4622,6 +5133,7 @@ DEP_CPP_FDD_D=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_d88.h"\
 	"..\fdd\fddfile.h"\
@@ -4655,6 +5167,7 @@ DEP_CPP_FDD_D=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4667,12 +5180,14 @@ DEP_CPP_FDD_M=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\FDD\fdd_mtr.res"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4686,6 +5201,7 @@ DEP_CPP_FDD_X=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_xdf.h"\
 	"..\fdd\fddfile.h"\
@@ -4719,6 +5235,7 @@ DEP_CPP_FDD_X=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4732,6 +5249,7 @@ DEP_CPP_FDDFI=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_d88.h"\
 	"..\FDD\fdd_xdf.h"\
@@ -4766,6 +5284,7 @@ DEP_CPP_FDDFI=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4779,12 +5298,14 @@ DEP_CPP_NEWDI=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
 	"..\FDD\hddboot.res"\
 	"..\FDD\newdisk.h"\
 	"..\fdd\sxsi.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4798,12 +5319,14 @@ DEP_CPP_SXSI_=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
 	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4821,8 +5344,10 @@ DEP_CPP_GCIRC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\lio\lio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4835,6 +5360,7 @@ DEP_CPP_GLINE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4867,6 +5393,7 @@ DEP_CPP_GLINE=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4879,8 +5406,10 @@ DEP_CPP_GPSET=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\lio\lio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4894,6 +5423,7 @@ DEP_CPP_GPUT1=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4926,6 +5456,7 @@ DEP_CPP_GPUT1=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4940,6 +5471,7 @@ DEP_CPP_GSCRE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4972,6 +5504,7 @@ DEP_CPP_GSCRE=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4986,6 +5519,7 @@ DEP_CPP_LIO_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5020,6 +5554,7 @@ DEP_CPP_LIO_C=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\VRAM\vram.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5037,11 +5572,13 @@ DEP_CPP_FONT_=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5054,10 +5591,12 @@ DEP_CPP_FONTD=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontdata.res"\
 	"..\i286a\cpucore.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5070,10 +5609,12 @@ DEP_CPP_FONTF=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5088,11 +5629,13 @@ DEP_CPP_FONTM=\
 	"..\common\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
 	".\dosio.h"\
 	".\fontmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5105,10 +5648,12 @@ DEP_CPP_FONTP=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5122,10 +5667,12 @@ DEP_CPP_FONTPC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5138,10 +5685,12 @@ DEP_CPP_FONTV=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5155,10 +5704,12 @@ DEP_CPP_FONTX=\
 	"..\common\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5171,10 +5722,12 @@ DEP_CPP_FONTX6=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286a\cpucore.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5191,10 +5744,12 @@ DEP_CPP_COMMN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\GENERIC\cmjasts.h"\
 	"..\generic\cmver.h"\
 	".\commng.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5207,7 +5762,9 @@ DEP_CPP_DOSIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5220,7 +5777,9 @@ DEP_CPP_FONTMN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	".\fontmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5235,12 +5794,14 @@ DEP_CPP_INI_C=\
 	"..\COMMON\profile.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
 	".\ini.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5253,7 +5814,9 @@ DEP_CPP_INPUT=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	".\inputmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5266,7 +5829,9 @@ DEP_CPP_JOYMN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	".\joymng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5279,8 +5844,10 @@ DEP_CPP_MOUSEM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	".\mousemng.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5297,6 +5864,7 @@ DEP_CPP_NP2_C=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -5352,6 +5920,7 @@ DEP_CPP_NP2_C=\
 	".\ini.h"\
 	".\inputmng.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
@@ -5367,6 +5936,23 @@ SOURCE=.\WCE\NP2.RC
 # End Source File
 # Begin Source File
 
+SOURCE=.\OEMTEXT.CPP
+
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\SCRNMNG.CPP
 DEP_CPP_SCRNM=\
 	"..\common.h"\
@@ -5375,6 +5961,7 @@ DEP_CPP_SCRNM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -5388,6 +5975,7 @@ DEP_CPP_SCRNM=\
 	"..\VRAM\scrndraw.h"\
 	".\gx\gx.h"\
 	".\nekop2.res"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5402,10 +5990,12 @@ DEP_CPP_SOUNDM=\
 	"..\common\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\cmver.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5422,6 +6012,7 @@ DEP_CPP_SYSME=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menu\dlgabout.h"\
 	"..\embed\menu\dlgcfg.h"\
 	"..\embed\menu\dlgscr.h"\
@@ -5470,6 +6061,7 @@ DEP_CPP_SYSME=\
 	"..\statsave.h"\
 	".\fontmng.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\sysmenu.h"\
 	".\sysmenu.res"\
@@ -5489,6 +6081,8 @@ DEP_CPP_SYSMN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5502,6 +6096,8 @@ DEP_CPP_TASKM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5515,6 +6111,8 @@ DEP_CPP_TIMEM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
+	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -5528,9 +6126,11 @@ DEP_CPP_WINKB=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\keystat.h"\
 	".\gx\gx.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
 	
@@ -5548,10 +6148,12 @@ DEP_CPP_CMJAS=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\GENERIC\cmjasts.h"\
 	"..\i286a\cpucore.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5565,10 +6167,12 @@ DEP_CPP_CMNDR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\generic\cmndraw.h"\
 	"..\GENERIC\minifont.res"\
 	"..\i286a\cpucore.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5582,24 +6186,58 @@ DEP_CPP_CMVER=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\cmndraw.h"\
 	"..\generic\cmver.h"\
 	"..\generic\keydisp.h"\
 	"..\sound\sound.h"\
 	"..\sound\vermouth\vermouth.h"\
 	".\commng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\DIPSWBMP.C
+
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\KEYDISP.C
+
+!IF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release JP"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Release World"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np2sig3 - Win32 (WCE ARMV4I) Debug"
+
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "embed"
@@ -5618,6 +6256,7 @@ DEP_CPP_DLGAB=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menu\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -5631,6 +6270,7 @@ DEP_CPP_DLGAB=\
 	"..\np2ver.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\sysmenu.res"\
 	".\wce\compiler.h"\
 	
@@ -5645,6 +6285,7 @@ DEP_CPP_DLGCF=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menu\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -5658,6 +6299,7 @@ DEP_CPP_DLGCF=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
@@ -5673,6 +6315,7 @@ DEP_CPP_DLGSC=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menu\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -5713,6 +6356,7 @@ DEP_CPP_DLGSC=\
 	"..\statsave.h"\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\scrndraw.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
@@ -5730,6 +6374,7 @@ DEP_CPP_FILES=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menu\filesel.h"\
 	"..\embed\menu\menustr.h"\
 	"..\embed\menubase\menubase.h"\
@@ -5747,6 +6392,7 @@ DEP_CPP_FILES=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5760,6 +6406,7 @@ DEP_CPP_MENUS=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menu\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -5769,6 +6416,7 @@ DEP_CPP_MENUS=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5785,6 +6433,7 @@ DEP_CPP_MENUB=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -5796,6 +6445,7 @@ DEP_CPP_MENUB=\
 	"..\embed\vramhdl.h"\
 	".\fontmng.h"\
 	".\inputmng.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
@@ -5811,6 +6461,7 @@ DEP_CPP_MENUD=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -5822,6 +6473,7 @@ DEP_CPP_MENUD=\
 	"..\embed\vramhdl.h"\
 	"..\embed\vrammix.h"\
 	".\fontmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5834,6 +6486,7 @@ DEP_CPP_MENUI=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -5842,6 +6495,7 @@ DEP_CPP_MENUI=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5854,6 +6508,7 @@ DEP_CPP_MENUM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -5864,6 +6519,7 @@ DEP_CPP_MENUM=\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
 	".\fontmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5876,6 +6532,7 @@ DEP_CPP_MENUR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -5884,6 +6541,7 @@ DEP_CPP_MENUR=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5896,6 +6554,7 @@ DEP_CPP_MENUSY=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -5908,6 +6567,7 @@ DEP_CPP_MENUSY=\
 	"..\embed\vrammix.h"\
 	".\fontmng.h"\
 	".\inputmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5920,6 +6580,7 @@ DEP_CPP_MENUV=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -5930,6 +6591,7 @@ DEP_CPP_MENUV=\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
 	"..\embed\vrammix.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5944,7 +6606,9 @@ DEP_CPP_VRAMH=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\resize.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\vramhdl.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5957,9 +6621,11 @@ DEP_CPP_VRAMM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\embed\vramhdl.h"\
 	"..\embed\vrammix.h"\
 	".\fontmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5975,9 +6641,11 @@ DEP_CPP_CALEN=\
 	"..\common\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -5992,6 +6660,7 @@ DEP_CPP_DEBUG=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\debugsub.h"\
 	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
@@ -6024,6 +6693,7 @@ DEP_CPP_DEBUG=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -6037,6 +6707,7 @@ DEP_CPP_KEYST=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\textfile.h"\
+	"..\common\ucscnv.h"\
 	"..\generic\cmndraw.h"\
 	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
@@ -6071,6 +6742,7 @@ DEP_CPP_KEYST=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -6083,10 +6755,12 @@ DEP_CPP_NEVEN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -6107,6 +6781,7 @@ DEP_CPP_PCCOR=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\debugsub.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
@@ -6171,6 +6846,7 @@ DEP_CPP_PCCOR=\
 	"..\VRAM\scrndraw.h"\
 	"..\VRAM\vram.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\soundmng.h"\
 	".\sysmng.h"\
 	".\timemng.h"\
@@ -6197,6 +6873,7 @@ DEP_CPP_STATS=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -6255,6 +6932,7 @@ DEP_CPP_STATS=\
 	"..\VRAM\vram.h"\
 	".\commng.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
 	".\timemng.h"\
@@ -6270,12 +6948,14 @@ DEP_CPP_TIMIN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\common\ucscnv.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\timing.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File

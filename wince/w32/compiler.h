@@ -5,7 +5,7 @@
 
 
 #define	BYTESEX_LITTLE
-#if !defined(UNICODE)
+#if !defined(OSLANG_ANK) && !defined(OSLANG_SJIS) && !defined(OSLANG_EUC) && !defined(OSLANG_UTF8) && !defined(OSLANG_UCS2) && !defined(OSLANG_UCS4)
 #define	OSLANG_SJIS
 #endif
 #define	OSLINEBREAK_CRLF

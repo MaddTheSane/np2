@@ -192,6 +192,9 @@ static void iniwrsetarg8(char *work, int size, const BYTE *ptr, int arg) {
 	}
 }
 
+
+static const UINT8 utf8hdr[3] = {0xef, 0xbb, 0xbf};
+
 void ini_write(const char *path, const char *title,
 											const INITBL *tbl, UINT count) {
 
@@ -205,6 +208,7 @@ const INITBL	*pterm;
 	if (fh == FILEH_INVALID) {
 		return;
 	}
+	file_write(fh, utf8hdr, sizeof(utf8hdr));
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
 	milstr_ncat(work, "]\r\n", sizeof(work));
