@@ -164,7 +164,8 @@ FONTOBJS=	../font/font.o ../font/fontdata.o ../font/fontmake.o \
 		../font/fontfm7.o ../font/fontx1.o ../font/fontx68k.o
 
 GENERICOBJS=	../generic/cmndraw.o ../generic/keydisp.o ../generic/cmjasts.o \
-		../generic/hostdrv.o ../generic/hostdrvs.o
+		../generic/hostdrv.o ../generic/hostdrvs.o ../generic/unasm.o \
+		../generic/np2info.o
 
 IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 		../io/crtc.o ../io/dipsw.o ../io/dmac.o ../io/egc.o \
@@ -211,7 +212,7 @@ X11OBJS=	dosio.o ini.o trace.o toolkit.o cmmidi.o kdispwin.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \
 		main.o np2.o
 
-DEBUGOBJS=	debug/unasm.o debug/viewmem.o
+DEBUGOBJS=	debug/viewmem.o
 
 SNDDRVOBJS=	snddrv/esd.o snddrv/netbsd.o snddrv/oss.o snddrv/sdl.o
 
