@@ -416,7 +416,11 @@ fmg_err:
 
 #else
 
+#if defined(SIZE_QVGA)
 #include	"ank10.res"
+#else
+#include	"ank12.res"
+#endif
 
 typedef struct {
 	int		fontsize;
@@ -439,7 +443,7 @@ void *fontmng_create(int size, UINT type, const char *fontface) {
 	int		allocsize;
 	FNTMNG	ret;
 
-	if (size < 10) {
+	if (size < ANKFONTSIZE) {
 		goto fmc_err1;
 	}
 	fontalign = sizeof(_FNTDAT) + (size * size);
@@ -489,7 +493,7 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 	if ((c < 0) || (c >= 0x60)) {
 		c = 0x1f;							// ?
 	}
-	setfdathead(fhdl, fdat, ank10[c * 10]);
+	setfdathead(fhdl, fdat, ankfont[c * ANKFONTSIZE]);
 }
 
 static void getfont1(FNTMNG fhdl, FNTDAT fdat,
@@ -506,14 +510,14 @@ const BYTE	*src;
 	if ((c < 0) || (c >= 0x60)) {
 		c = 0x1f;							// ?
 	}
-	src = ank10 + c * 10;
+	src = ankfont + (c * ANKFONTSIZE);
 	width = *src++;
 	setfdathead(fhdl, fdat, width);
 	dst = (BYTE *)(fdat + 1);
 	ZeroMemory(dst, fdat->width * fdat->height);
-	dst += ((fdat->height - 10) / 2) * fdat->width;
+	dst += ((fdat->height - ANKFONTSIZE) / 2) * fdat->width;
 	dst += (fdat->width - width) / 2;
-	for (y=0; y<9; y++) {
+	for (y=0; y<(ANKFONTSIZE - 1); y++) {
 		dst += fdat->width;
 		for (x=0; x<width; x++) {
 			dst[x] = (src[0] & (0x80 >> x))?0xff:0x00;
