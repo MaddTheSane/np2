@@ -26,37 +26,44 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 // Dialog
 //
 
-IDD_CONFIG DIALOG DISCARDABLE  0, 0, 180, 156
+IDD_CONFIG DIALOG DISCARDABLE  0, 0, 180, 186
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configure"
 CLASS "np2dialog"
 FONT 9, "ÇlÇr ÇoÉSÉVÉbÉN"
 BEGIN
     GROUPBOX        "CPU",IDC_STATIC,8,8,106,44
-    COMBOBOX        IDC_BASECLOCK,14,22,54,43,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_BASECLOCK,14,22,54,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_GROUP | WS_TABSTOP
     LTEXT           "x",IDC_STATIC,72,26,8,8
     COMBOBOX        IDC_MULTIPLE,80,22,28,80,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_GROUP | WS_TABSTOP
     RTEXT           "ClockCount",IDC_CLOCKMSG,58,41,36,8
     LTEXT           "MHz",IDC_STATIC,96,41,14,8
-    GROUPBOX        "Sound",IDC_STATIC,7,58,166,46
-    LTEXT           "Sampling Rate",IDC_STATIC,14,71,43,8
+    GROUPBOX        "Architecture",IDC_STATIC,8,56,166,28
+    CONTROL         "PC-9801VM",IDC_MODELVM,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,16,68,51,10
+    CONTROL         "PC-9801VX",IDC_MODELVX,"Button",BS_AUTORADIOBUTTON,72,
+                    68,50,10
+    CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
+                    68,38,10
+    GROUPBOX        "Sound",IDC_STATIC,8,88,166,46
+    LTEXT           "Sampling Rate",IDC_STATIC,14,101,43,8
     CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,66,70,32,10
-    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,104,70,32,
-                    10
-    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,70,32,
-                    10
-    LTEXT           "Buffer",IDC_STATIC,14,88,19,8
-    EDITTEXT        IDC_SOUNDBUF,66,86,30,12,WS_GROUP
-    LTEXT           "ms",IDC_STATIC,102,88,10,8
+                    WS_GROUP | WS_TABSTOP,66,100,32,10
+    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,104,100,
+                    32,10
+    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,100,
+                    32,10
+    LTEXT           "Buffer",IDC_STATIC,14,118,19,8
+    EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
+    LTEXT           "ms",IDC_STATIC,102,118,10,8
     CONTROL         "Disable MMX",IDC_DISABLEMMX,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,112,162,10
+                    WS_TABSTOP,8,142,162,10
     CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,126,162,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,156,162,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,140,162,10
+                    WS_TABSTOP,8,170,162,10
     DEFPUSHBUTTON   "&OK",IDOK,130,7,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,130,24,44,14
 END
@@ -333,7 +340,7 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "DEF",IDC_MPUDEF,92,24,18,12
     LTEXT           "DIP-SW",IDC_STATIC,8,46,24,8
-    CONTROL         "",IDC_MPUDIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,46, 
+    CONTROL         "",IDC_MPUDIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,46,
                     80,28
     GROUPBOX        "Assign",IDC_STATIC,8,72,166,98
     LTEXT           "MIDI-OUT",IDC_STATIC,16,87,31,8
@@ -850,7 +857,7 @@ END
 
 IDR_TOOLWIN MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Skin",                           IDM_SKIN
+    MENUITEM "&Skin",                       IDM_SKIN
 END
 
 IDR_KEYDISP MENU DISCARDABLE 
@@ -936,12 +943,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "PC-9801series emulator\0"
-            VALUE "FileVersion", "0, 7, 2, 0\0"
+            VALUE "FileVersion", "0, 7, 3, 0\0"
             VALUE "InternalName", "np2\0"
             VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
             VALUE "OriginalFilename", "np2.exe\0"
             VALUE "ProductName", "Neko Project II\0"
-            VALUE "ProductVersion", "0, 7, 2, 0\0"
+            VALUE "ProductVersion", "0, 7, 3, 0\0"
         END
     END
     BLOCK "VarFileInfo"

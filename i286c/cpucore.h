@@ -174,10 +174,6 @@ typedef struct {							// for ver0.73
 	UINT8	grcgwait;
 	UINT8	padding;
 #endif
-#if defined(CPUSTRUC_FONTPTR)
-	BYTE	*fontlow;
-	BYTE	*fonthigh;
-#endif
 } I286EXT;
 
 typedef struct {
@@ -261,10 +257,6 @@ void v30c_step(void);
 #define	MEMWAIT_TRAM	i286core.e.tramwait
 #define	MEMWAIT_VRAM	i286core.e.vramwait
 #define	MEMWAIT_GRCG	i286core.e.grcgwait
-#endif
-#if defined(CPUSTRUC_FONTPTR)
-#define	FONTPTR_LOW		i286core.e.fontlow
-#define	FONTPTR_HIGH	i286core.e.fonthigh
 #endif
 
 

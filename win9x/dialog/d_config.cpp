@@ -60,6 +60,17 @@ static void cfgcreate(HWND hWnd) {
 	wsprintf(work, str_u, np2cfg.multiple);
 	SetDlgItemText(hWnd, IDC_MULTIPLE, work);
 
+	if (!milstr_cmp(np2cfg.model, str_VM)) {
+		val = IDC_MODELVM;
+	}
+	else if (!milstr_cmp(np2cfg.model, str_EPSON)) {
+		val = IDC_MODELEPSON;
+	}
+	else {
+		val = IDC_MODELVX;
+	}
+	SetDlgItemCheck(hWnd, val, TRUE);
+
 	if (np2cfg.samplingrate < AVE(11025, 22050)) {
 		val = IDC_RATE11;
 	}
@@ -91,6 +102,7 @@ static void cfgupdate(HWND hWnd) {
 	UINT	update;
 	char	work[32];
 	UINT	val;
+const char	*str;
 
 	update = 0;
 	GetDlgItemText(hWnd, IDC_BASECLOCK, work, sizeof(work));
@@ -116,6 +128,20 @@ static void cfgupdate(HWND hWnd) {
 	if (np2cfg.multiple != val) {
 		np2cfg.multiple = val;
 		update |= SYS_UPDATECFG | SYS_UPDATECLOCK;
+	}
+
+	if (GetDlgItemCheck(hWnd, IDC_MODELVM)) {
+		str = str_VM;
+	}
+	else if (GetDlgItemCheck(hWnd, IDC_MODELEPSON)) {
+		str = str_EPSON;
+	}
+	else {
+		str = str_VX;
+	}
+	if (milstr_cmp(np2cfg.model, str)) {
+		milstr_ncpy(np2cfg.model, str, sizeof(np2cfg.model));
+		update |= SYS_UPDATECFG;
 	}
 
 	if (GetDlgItemCheck(hWnd, IDC_RATE11)) {

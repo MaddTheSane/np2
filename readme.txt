@@ -44,7 +44,7 @@
 
 
   CPUSTRUC_MEMWAIT … cpucore構造体にメモリウェイト値を移動する(vramop)
-　CPUSTRUC_FONTPTR … cpucore構造体にフォントポインタを保持する
+  CGWND_FONTPTR … cgwindowにフォントポインタを持たせる
 
 
 // ---- screen

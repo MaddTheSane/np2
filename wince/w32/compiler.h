@@ -56,5 +56,4 @@ typedef	unsigned int	UINT32;
 #define	SCREEN_BPP		16
 
 #define	CPUSTRUC_MEMWAIT
-#define	CPUSTRUC_FONTPTR
 

@@ -71,5 +71,4 @@ typedef	signed int		SINT32;
 #endif
 
 #define	CPUSTRUC_MEMWAIT
-#define	CPUSTRUC_FONTPTR
 

@@ -55,6 +55,9 @@ typedef struct {
 enum {
 	NP2FLAG_BIN			= 0,
 	NP2FLAG_TERM,
+#if defined(CGWND_FONTPTR)
+	NP2FLAG_CGW,
+#endif
 	NP2FLAG_CLOCK,
 	NP2FLAG_COM,
 	NP2FLAG_DISK,
@@ -447,6 +450,38 @@ static int flagload_ext(NP2FFILE f, const STENTRY *t) {
 	(void)t;
 	return(ret);
 }
+
+
+// ---- cg window
+
+#if defined(CGWND_FONTPTR)
+static int flagsave_cgwnd(NP2FFILE f, const STENTRY *t) {
+
+	int			ret;
+	_CGWINDOW	cgwnd;
+
+	cgwnd = cgwindow;
+	cgwnd.fontlow -= (long)fontrom;
+	cgwnd.fonthigh -= (long)fontrom;
+	ret = flagsave_create(f, t);
+	if (ret != NP2FLAG_FAILURE) {
+		ret |= flagsave_save(f, &cgwindow, sizeof(cgwindow));
+		ret |= flagsave_close(f);
+	}
+	return(ret);
+}
+
+static int flagload_cgwnd(NP2FFILE f, const STENTRY *t) {
+
+	int		ret;
+
+	ret = flagload_load(f, &cgwindow, sizeof(cgwindow));
+	cgwindow.fontlow += (long)fontrom;
+	cgwindow.fonthigh += (long)fontrom;
+	(void)t;
+	return(ret);
+}
+#endif
 
 
 // ---- dma
@@ -1266,6 +1301,12 @@ const STENTRY	*tblterm;
 				ret |= flagsave_term(&f, tbl);
 				break;
 
+#if defined(CGWND_FONTPTR)
+			case NP2FLAG_CGW:
+				ret |= flagsave_cgwnd(&f, tbl);
+				break;
+#endif
+
 			case NP2FLAG_COM:
 				ret |= flagsave_com(&f, tbl);
 				break;
@@ -1348,6 +1389,9 @@ const STENTRY	*tblterm;
 			if (tbl < tblterm) {
 				switch(tbl->type) {
 					case NP2FLAG_BIN:
+#if defined(CGWND_FONTPTR)
+					case NP2FLAG_CGW:
+#endif
 					case NP2FLAG_CLOCK:
 					case NP2FLAG_MEM:
 						ret |= flagcheck_versize(&f, tbl, &e);
@@ -1432,6 +1476,12 @@ const STENTRY	*tblterm;
 				case NP2FLAG_TERM:
 					done = TRUE;
 					break;
+
+#if defined(CGWND_FONTPTR)
+				case NP2FLAG_CGW:
+					ret |= flagload_cgwnd(&f, tbl);
+					break;
+#endif
 
 				case NP2FLAG_CLOCK:
 					ret |= flagload_clock(&f, tbl);

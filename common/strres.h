@@ -39,6 +39,10 @@ extern const char str_height[];
 extern const char str_np2[];
 extern const char str_resume[];
 
+extern const char str_VM[];
+extern const char str_VX[];
+extern const char str_EPSON[];
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"strres.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -135,9 +136,18 @@ static void setvsyncclock(void) {
 	pc.vsyncclock = cnt - pc.dispclock;
 }
 
-static void setpcclock(UINT base, UINT multiple) {
+static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
 
-	pc.model = PCMODEL_VX;
+	UINT8	model;
+
+	model = PCMODEL_VX;
+	if (!milstr_cmp(modelstr, str_VM)) {
+		model = PCMODEL_VM;
+	}
+	else if (!milstr_cmp(modelstr, str_EPSON)) {
+		model = PCMODEL_EPSON | PCMODEL_VM;
+	}
+	pc.model = model;
 
 	if (base >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
 		pc.baseclock = PCBASECLOCK25;			// 2.5MHz
@@ -296,7 +306,7 @@ void pccore_reset(void) {
 		sound_init();
 	}
 
-	setpcclock(np2cfg.baseclock, np2cfg.multiple);
+	setpcclock(np2cfg.model, np2cfg.baseclock, np2cfg.multiple);
 	sound_changeclock();
 	beep_changeclock();
 	nevent_init();
@@ -550,7 +560,7 @@ void pccore_exec(BOOL draw) {
 			CPU_CLEARPREFETCH();
 		}
 
-#if 1 //ndef TRACE
+#if 1 // ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();
@@ -562,7 +572,7 @@ void pccore_exec(BOOL draw) {
 #else
 		while(CPU_REMCLOCK > 0) {
 			TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
-			i286_step();
+			i286x_step();
 		}
 #endif
 		nevent_progress();

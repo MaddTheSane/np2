@@ -8,7 +8,11 @@ enum {
 
 enum {
 	PCMODEL_VM			= 0,
-	PCMODEL_VX			= 1
+	PCMODEL_VX			= 1,
+	PCMODELMASK			= 0x3f,
+
+	PCMODEL_PC9821		= 0x40,
+	PCMODEL_EPSON		= 0x80
 };
 
 #define		CPUMODE_8MHz		0x20
@@ -99,8 +103,8 @@ typedef struct {
 	UINT32	frame1000;
 	UINT32	raster;
 	UINT32	hsync;
-	BYTE	cpumode;
-	BYTE	model;
+	UINT8	cpumode;
+	UINT8	model;
 } PCCORE;
 
 

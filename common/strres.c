@@ -36,3 +36,7 @@ const char str_height[] = "height";
 const char str_np2[] = "Neko Project II";
 const char str_resume[] = "Resume";
 
+const char str_VM[] = "VM";
+const char str_VX[] = "VX";
+const char str_EPSON[] = "EPSON";
+

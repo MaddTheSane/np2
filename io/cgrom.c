@@ -37,11 +37,12 @@ static void cgwindowset(CGROM cr) {
 	else {
 		high = low;
 	}
+#if !defined(CGWND_FONTPTR)
 	cgwindow.low = low;
 	cgwindow.high = high;
-#if defined(CPUSTRUC_FONTPTR)
-	FONTPTR_LOW = fontrom + low;
-	FONTPTR_HIGH = fontrom + high;
+#else
+	cgwindow.fontlow = fontrom + low;
+	cgwindow.fonthigh = fontrom + high;
 #endif
 }
 
@@ -132,11 +133,12 @@ void cgrom_reset(void) {
 
 	cgw = &cgwindow;
 	ZeroMemory(cgw, sizeof(cgrom));
+#if !defined(CGWND_FONTPTR)
 	cgw->low = 0x7fff0;
 	cgw->high = 0x7fff0;
-#if defined(CPUSTRUC_FONTPTR)
-	FONTPTR_LOW = fontrom + 0x7fff0;
-	FONTPTR_HIGH = fontrom + 0x7fff0;
+#else
+	cgw->fontlow = fontrom + 0x7fff0;
+	cgw->fonthigh = fontrom + 0x7fff0;
 #endif
 	cgw->writable = 0;
 }

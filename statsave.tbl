@@ -76,7 +76,11 @@ static const STENTRY np2tbl[] = {
 	{"CORE",		0,	NP2FLAG_CLOCK,	&pc,			sizeof(pc)},
 	{"ARTIC",		0,	NP2FLAG_BIN,	&artic,			sizeof(artic)},
 	{"CGROM",		0,	NP2FLAG_BIN,	&cgrom,			sizeof(cgrom)},
+#if !defined(CGWND_FONTPTR)
 	{"CGWINDOW",	0,	NP2FLAG_BIN,	&cgwindow,		sizeof(cgwindow)},
+#else
+	{"CGWINDOW",	0,	NP2FLAG_CGW,	&cgwindow,		sizeof(cgwindow)},
+#endif
 	{"CRTC",		0,	NP2FLAG_BIN,	&grcg,			sizeof(grcg)},
 	{"CRTC2",		0,	NP2FLAG_BIN,	&crtc,			sizeof(crtc)},
 	{"DMAC",		0,	NP2FLAG_DMA,	&dmac,			sizeof(dmac)},
