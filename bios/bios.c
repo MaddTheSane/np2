@@ -69,7 +69,7 @@ const IODATA	*pterm;
 
 static void bios_memclear(void) {
 
-	ZeroMemory(mem, 0xa0000);
+//	ZeroMemory(mem, 0xa0000);					// âΩÇ™å¥àˆÇæÅH
 	ZeroMemory(mem + VRAM0_B, 0x18000);
 	ZeroMemory(mem + VRAM0_E, 0x08000);
 	ZeroMemory(mem + VRAM1_B, 0x18000);
