@@ -12,6 +12,7 @@
 #include	"ini.h"
 #include	"sysmng.h"
 #include	"configure.h"
+#include	"dialogutils.h"
 
         int			sound_renewals = 0;
 static	WindowRef	configWin;
@@ -19,23 +20,8 @@ static	WindowRef	configWin;
 #define	AVE(a, b)					\
 			(((a) + (b)) / 2)
 
-static void endLoop(void) {
-    OSStatus	err;
-    HideSheetWindow(configWin);
-    DisposeWindow(configWin);
-    err=QuitAppModalLoopForWindow(configWin);
-}
-
-ControlRef getControlRefByID(OSType sign, int id, WindowRef win) {
-    ControlRef	conRef;
-    ControlID	conID;
-
-    conID.signature=sign;
-    conID.id=id;
-    GetControlByID(win, &conID, &conRef);
-    return conRef;
-}    
-
+#define getSelectedValue(a,b)	GetControlValue(getControlRefByID(a,b,configWin))
+/*
 static SInt16 getSelectedValue(OSType sign, int id) {
     SInt16	value;
     
@@ -43,6 +29,7 @@ static SInt16 getSelectedValue(OSType sign, int id) {
 
     return value;
 }
+*/
 
 static int getMultiple(void) {
     int multi;
@@ -264,12 +251,12 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 }
 
                 sysmng_update(update);
-                endLoop();
+                endLoop(configWin);
                 err=noErr;
                 break;
                 
             case kHICommandCancel:
-                endLoop();
+                endLoop(configWin);
                 err=noErr;
                 break;
         }
@@ -291,7 +278,7 @@ static void makeNibWindow (IBNibRef nibRef) {
         { kEventClassWindow, kEventWindowActivated } };
         EventHandlerRef	ref;
         
-        InstallWindowEventHandler (configWin, NewEventHandlerUPP(cfWinproc), 2, list, (void *)configWin, &ref);
+        InstallWindowEventHandler (configWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)configWin, &ref);
         ShowSheetWindow(configWin, hWndMain);
         
         err=RunAppModalLoopForWindow(configWin);

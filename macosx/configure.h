@@ -7,4 +7,3 @@
  */
 
 void initConfig( void );
-ControlRef getControlRefByID(OSType sign, int id, WindowRef win);

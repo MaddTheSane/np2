@@ -14,26 +14,25 @@
 #include	"scrndraw.h"
 #include	"palettes.h"
 #include	"configure.h"
+#include	"dialogutils.h"
+
+#define	getControlValue(a)		GetControl32BitValue(getControlRefByID(a,0,screenWin))
+#define	setControlValue(a,b)	SetControl32BitValue(getControlRefByID(a,0,screenWin),b)
+
+#define	kMaxNumTabs 3
+enum {kTabMasterSig = 'ScrT',kTabMasterID = 1000,kTabPaneSig= 'ScTb'};
 
 static WindowRef	screenWin;
-static void SetInitialTabState(WindowRef theWindow);
-static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData );
+static UInt16 lastPaneSelected = 1;	// static, to keep track of it long term (in a more complex application
+                                        // you might store this in a data structure in the window refCon)                                            
 
-enum {kTabMasterSig = 'ScrT',kTabMasterID = 1000,kTabPaneSig= 'ScTb',kMaxNumTabs= 3};
-
-static void endLoop(void) {
-    OSStatus	err;
-    HideSheetWindow(screenWin);
-    DisposeWindow(screenWin);
-    err=QuitAppModalLoopForWindow(screenWin);
-}
 
 static void setFieldValue(UInt32 type) {
     ControlRef	conRef;
     Str255		title;
     SInt32		value;
     
-    value = GetControl32BitValue(getControlRefByID(type, 0, screenWin)); 
+    value = getControlValue(type); 
     if (type == 'RPAd') {
         value -= 31;
     }
@@ -44,7 +43,7 @@ static void setFieldValue(UInt32 type) {
 }
 
 static void setReverseStatus(void) {
-    if (GetControl32BitValue(getControlRefByID('LCDy', 0, screenWin))) {
+    if (getControlValue('LCDy')) {
         ActivateControl(getControlRefByID('rvrs', 0, screenWin));
     }
     else {
@@ -53,24 +52,24 @@ static void setReverseStatus(void) {
 }
 
 static void initScreenWindow(void) {
-    SetControl32BitValue(getControlRefByID('LCDy', 0, screenWin), np2cfg.LCD_MODE & 1);
+    setControlValue('LCDy', np2cfg.LCD_MODE & 1);
     setReverseStatus();
-    SetControl32BitValue(getControlRefByID('rvrs', 0, screenWin), np2cfg.LCD_MODE & 2?1:0);
-    SetControl32BitValue(getControlRefByID('uskr', 0, screenWin), np2cfg.skipline);
-    SetControl32BitValue(getControlRefByID('rati', 0, screenWin), np2cfg.skiplight);
+    setControlValue('rvrs', np2cfg.LCD_MODE & 2?1:0);
+    setControlValue('uskr', np2cfg.skipline);
+    setControlValue('rati', np2cfg.skiplight);
     setFieldValue('rati');
     
-    SetControl32BitValue(getControlRefByID('GDCl', 0, screenWin), np2cfg.uPD72020 + 1);
-    SetControl32BitValue(getControlRefByID('GrCh', 0, screenWin), (np2cfg.grcg & 3) + 1);
-    SetControl32BitValue(getControlRefByID('16cl', 0, screenWin), np2cfg.color16);
+    setControlValue('GDCl', np2cfg.uPD72020 + 1);
+    setControlValue('GrCh', (np2cfg.grcg & 3) + 1);
+    setControlValue('16cl', np2cfg.color16);
     
-    SetControl32BitValue(getControlRefByID('tram', 0, screenWin), np2cfg.wait[0]);
+    setControlValue('tram', np2cfg.wait[0]);
     setFieldValue('tram');
-    SetControl32BitValue(getControlRefByID('vram', 0, screenWin), np2cfg.wait[2]);
+    setControlValue('vram', np2cfg.wait[2]);
     setFieldValue('vram');
-    SetControl32BitValue(getControlRefByID('crgc', 0, screenWin), np2cfg.wait[4]);
+    setControlValue('crgc', np2cfg.wait[4]);
     setFieldValue('crgc');
-    SetControl32BitValue(getControlRefByID('RPAd', 0, screenWin), np2cfg.realpal);
+    setControlValue('RPAd', np2cfg.realpal);
     setFieldValue('RPAd');
     
 }
@@ -102,18 +101,17 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 
             case kHICommandOK:
                 renewal = 0;
-                val=GetControl32BitValue(getControlRefByID('uskr', 0, screenWin));
+                val=getControlValue('uskr');
 				if (np2cfg.skipline != val) {
 					np2cfg.skipline = val;
 					renewal = 1;
 				}
-                val=GetControl32BitValue(getControlRefByID('rati', 0, screenWin));
+                val=getControlValue('rati');
                 if (val != np2cfg.skiplight);
 				if (renewal) {
 					pal_makeskiptable();
 				}
-                val=GetControl32BitValue(getControlRefByID('LCDy', 0, screenWin)) |
-                    GetControl32BitValue(getControlRefByID('rvrs', 0, screenWin)) << 1;
+                val=getControlValue('LCDy') | getControlValue('rvrs') << 1;
 				if (np2cfg.LCD_MODE != val) {
 					np2cfg.LCD_MODE = val;
 					pal_makelcdpal();
@@ -125,34 +123,34 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 				}
 
                 update = 0;
-                val=GetControl32BitValue(getControlRefByID('GDCl', 0, screenWin))-1;
+                val=getControlValue('GDCl')-1;
 				if (np2cfg.uPD72020 != val) {
 					np2cfg.uPD72020 = val;
 					update |= SYS_UPDATECFG;
 					gdc_restorekacmode();
 					gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 				}
-                val=GetControl32BitValue(getControlRefByID('GrCh', 0, screenWin))-1;
+                val=getControlValue('GrCh')-1;
 				if (np2cfg.grcg != val) {
 					np2cfg.grcg = val;
 					update |= SYS_UPDATECFG;
 					gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 				}
-                val=GetControl32BitValue(getControlRefByID('16cl', 0, screenWin));
+                val=getControlValue('16cl');
 				if (np2cfg.color16 != val) {
 					np2cfg.color16 = val;
 					update |= SYS_UPDATECFG;
 				}
     
-                value[0]=GetControl32BitValue(getControlRefByID('tram', 0, screenWin));
+                value[0]=getControlValue('tram');
 				if (value[0]) {
 					value[1] = 1;
 				}
-                value[2]=GetControl32BitValue(getControlRefByID('vram', 0, screenWin));
+                value[2]=getControlValue('vram');
 				if (value[0]) {
 					value[3] = 1;
 				}
-                value[4]=GetControl32BitValue(getControlRefByID('crgc', 0, screenWin));
+                value[4]=getControlValue('crgc');
 				if (value[0]) {
 					value[5] = 1;
 				}
@@ -162,19 +160,19 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 						update |= SYS_UPDATECFG;
 					}
 				}
-                val=GetControl32BitValue(getControlRefByID('RPAd', 0, screenWin));
+                val=getControlValue('RPAd');
                 if (val != np2cfg.realpal) {
                     np2cfg.realpal = val;
 					update |= SYS_UPDATECFG;
                 }
                 
                 sysmng_update(update);
-                endLoop();
+                endLoop(screenWin);
                 err=noErr;
                 break;
                 
             case kHICommandCancel:
-                endLoop();
+                endLoop(screenWin);
                 err=noErr;
                 break;
         }
@@ -185,20 +183,29 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
     return err;
 }
 
+static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData )
+{
+    WindowRef theWindow = (WindowRef)inUserData;  // get the windowRef, passed around as userData    
+    short ret;
+    ret = changeTab(theWindow, lastPaneSelected);
+    if (ret) {
+        lastPaneSelected = ret;
+    }
+    return( eventNotHandledErr );
+}
+
 static void makeNibWindow (IBNibRef nibRef) {
     OSStatus	err;
     
     err = CreateWindowFromNib(nibRef, CFSTR("ScreenDialog"), &screenWin);
     if (err == noErr) {
         initScreenWindow();
-        SetInitialTabState(screenWin);
+        SetInitialTabState(screenWin, lastPaneSelected, kMaxNumTabs);
         EventTypeSpec	tabControlEvents[] ={ { kEventClassControl, kEventControlHit }};
         InstallControlEventHandler( getControlRefByID(kTabMasterSig,kTabMasterID,screenWin),  PrefsTabEventHandlerProc , GetEventTypeCount(tabControlEvents), tabControlEvents, screenWin, NULL );
-        EventTypeSpec	list[]={
-        { kEventClassCommand, kEventCommandProcess },
-        };
+        EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },};
         EventHandlerRef	ref;
-        InstallWindowEventHandler (screenWin, NewEventHandlerUPP(cfWinproc), sizeof(list)/sizeof(EventTypeSpec), list, (void *)screenWin, &ref);
+        InstallWindowEventHandler (screenWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)screenWin, &ref);
         ShowSheetWindow(screenWin, hWndMain);
         
         err=RunAppModalLoopForWindow(screenWin);
@@ -219,36 +226,4 @@ void initScreenOpt( void ) {
          return;
     }
 }
-
-static UInt16 lastPaneSelected = 1;	// static, to keep track of it long term (in a more complex application
-                                        // you might store this in a data structure in the window refCon)                                            
-
-static void SetInitialTabState(WindowRef theWindow)
-{
-    short qq;
-
-    for(qq=0;qq<kMaxNumTabs+1;qq++)
-    SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+qq, theWindow), false, true );  
-    
-    SetControlValue(getControlRefByID(kTabMasterSig,kTabMasterID,theWindow),lastPaneSelected );
-    SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+lastPaneSelected, theWindow), true, true );
-}
-
-static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData )
-{
-    WindowRef theWindow = (WindowRef)inUserData;  // get the windowRef, passed around as userData    
-    short controlValue = 2;
-    controlValue = GetControlValue( getControlRefByID(kTabMasterSig,kTabMasterID,theWindow) );
-    if ( controlValue != lastPaneSelected )
-    {
-        SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+lastPaneSelected, theWindow), false, true );
-        SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+controlValue, theWindow), true, true );    
-
-        Draw1Control( getControlRefByID(kTabMasterSig,kTabMasterID,theWindow) );		
-        lastPaneSelected= controlValue;    
-    }
-    
-    return( eventNotHandledErr );
-}
-
                              

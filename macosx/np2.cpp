@@ -32,6 +32,13 @@
 
 
 #define	USE_RESUME
+#define	NP2OPENING
+
+#ifdef		NP2OPENING
+#include	<QuickTime/QuickTime.h>
+#define		OPENING_WAIT		1500
+#endif
+
 
 
 		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0, 1, 0};
@@ -593,6 +600,55 @@ static void flagload(const char *ext) {
 	}
 }
 
+#ifdef		NP2OPENING
+static void openingNP2(void) {
+    Rect		srt, bounds;
+    GrafPtr		port;
+    CFURLRef	openingURL;
+    CFStringRef	path;
+    char		buffer[1024];
+    FSRef		fsr;
+    FSSpec		fsc;
+    PicHandle	pict;
+    GraphicsImportComponent	gi;
+    
+    GetPort(&port);
+    SetPortWindowPort(hWndMain);
+    const RGBColor col = {0, 0, 0};
+    SetRect(&bounds, 0, 0, 640, 400);
+    RGBBackColor(&col);
+    EraseRect(&bounds);
+    
+    openingURL=CFURLCopyAbsoluteURL(CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle()));
+    if (openingURL) {
+        path = CFURLCopyFileSystemPath(openingURL, kCFURLPOSIXPathStyle);
+        if (path) {
+            if (CFStringGetCString(path, buffer, 1024, CFStringGetSystemEncoding())) {
+                strcat(buffer, "/nekop2.bmp");
+                FSPathMakeRef((const UInt8*)buffer, &fsr, NULL);
+                FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fsc, NULL);
+                if (!GetGraphicsImporterForFile(&fsc, &gi)) {
+                    if (!GraphicsImportGetNaturalBounds(gi, &srt)) {
+                        OffsetRect( &srt, -srt.left, -srt.top);
+                        GraphicsImportSetBoundsRect(gi, &srt);
+                        GraphicsImportGetAsPicture(gi, &pict);
+                        OffsetRect(&srt, (640-srt.right)/2, (400-srt.bottom)/2);
+                        DrawPicture(pict,&srt);
+                        QDFlushPortBuffer(GetWindowPort(hWndMain), NULL);
+                        KillPicture(pict);
+                    }
+                    CloseComponent(gi);
+                }
+            }
+            if (path) CFRelease(path);
+        }
+        if (openingURL) CFRelease(openingURL);
+    }
+    SetPort(port);
+}
+#endif
+
+
 int main(int argc, char *argv[]) {
 
 	Rect		wRect;
@@ -601,6 +657,9 @@ int main(int argc, char *argv[]) {
 #endif
     EventRef		theEvent;
     EventTargetRef	theTarget;
+#ifdef OPENING_WAIT
+	UINT32		tick;
+#endif
 
 	dosio_init();
 	file_setcd(target);
@@ -626,6 +685,12 @@ int main(int argc, char *argv[]) {
 	SizeWindow(hWndMain, 640, 400, TRUE);
     setUpCarbonEvent();
 	ShowWindow(hWndMain);
+#ifdef    NP2OPENING
+    openingNP2();
+#endif
+#ifdef OPENING_WAIT
+	tick = GETTICK();
+#endif
 
 	menu_setrotate(0);
 	menu_setdispmode(np2cfg.DISPSYNC);
@@ -660,6 +725,9 @@ int main(int argc, char *argv[]) {
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
 		mouse_running(MOUSE_ON);
 	}
+#endif
+#ifdef OPENING_WAIT
+	while((GETTICK() - tick) < OPENING_WAIT);
 #endif
 	scrndraw_redraw();
 	pccore_reset();
@@ -875,7 +943,7 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
     UInt32		whatHappened;
     OSStatus	result = eventNotHandledErr;    
     long		eventClass;
-    
+    static UInt32 backup = 0;
     
     GetEventParameter(event, kEventParamDirectObject, typeWindowRef, NULL,
                          sizeof(window), NULL, &window);
@@ -923,7 +991,10 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                         else keystat_senddata(0x73 | 0x80);
                         if (modif & controlKey) keystat_senddata(0x74);
                         else keystat_senddata(0x74 | 0x80);
-                        if (modif & alphaLock) keystat_senddata(0x71);
+                        if ((modif & alphaLock) != (backup & alphaLock)) {
+                            keystat_senddata(0x71);
+                            backup = modif;
+                        }
                         result = noErr;
                         break;
                     default: 
