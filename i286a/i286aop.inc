@@ -57,8 +57,8 @@ $label.2	mov		r5, r0
 	MACRO
 $label	OP_R8_EA	$alu, $regclk, $memclk
 $label		REG8EA	r6, $regclk, $memclk
-			ldrb	r2, [r6, #CPU_REG]
-			$alu	r2, r0
+			ldrb	r4, [r6, #CPU_REG]
+			$alu	r4, r0
 			strb	r1, [r6, #CPU_REG]
 			mov		pc, r11
 	MEND
@@ -66,8 +66,8 @@ $label		REG8EA	r6, $regclk, $memclk
 	MACRO
 $label	OP_R16_EA	$alu, $regclk, $memclk
 $label		REG16EA	r6, $regclk, $memclk
-			ldrh	r2, [r6, #CPU_REG]
-			$alu	r2, r0
+			ldrh	r4, [r6, #CPU_REG]
+			$alu	r4, r0
 			strh	r1, [r6, #CPU_REG]
 			mov		pc, r11
 	MEND
@@ -76,8 +76,8 @@ $label		REG16EA	r6, $regclk, $memclk
 $label	OP_AL_D8	$alu, $clk
 $label		CPUWORK	$clk
 			GETPCF8
-			ldrb	r2, [r9, #CPU_AL]
-			$alu	r2, r0
+			ldrb	r4, [r9, #CPU_AL]
+			$alu	r4, r0
 			strb	r1, [r9, #CPU_AL]
 			mov		pc, r11
 	MEND
@@ -86,8 +86,8 @@ $label		CPUWORK	$clk
 $label	OP_AX_D16	$alu, $clk
 $label		CPUWORK	$clk
 			GETPC16
-			ldrh	r2, [r9, #CPU_AX]
-			$alu	r2, r0
+			ldrh	r4, [r9, #CPU_AX]
+			$alu	r4, r0
 			strh	r1, [r9, #CPU_AX]
 			mov		pc, r11
 	MEND
@@ -141,16 +141,16 @@ $label.2	bl		i286a_memoryread_w
 	MACRO
 $label	S_R8_EA		$alu, $regclk, $memclk
 $label		REG8EA	r6, $regclk, $memclk
-			ldrb	r2, [r6, #CPU_REG]
-			$alu	r2, r0
+			ldrb	r4, [r6, #CPU_REG]
+			$alu	r4, r0
 			mov		pc, r11
 	MEND
 
 	MACRO
 $label	S_R16_EA	$alu, $regclk, $memclk
 $label		REG16EA	r6, $regclk, $memclk
-			ldrh	r2, [r6, #CPU_REG]
-			$alu	r2, r0
+			ldrh	r4, [r6, #CPU_REG]
+			$alu	r4, r0
 			mov		pc, r11
 	MEND
 
@@ -158,8 +158,8 @@ $label		REG16EA	r6, $regclk, $memclk
 $label	S_AL_D8		$alu, $clk
 $label		CPUWORK	$clk
 			GETPC8
-			ldrb	r2, [r9, #CPU_AL]
-			$alu	r2, r0
+			ldrb	r4, [r9, #CPU_AL]
+			$alu	r4, r0
 			mov		pc, r11
 	MEND
 
@@ -167,8 +167,8 @@ $label		CPUWORK	$clk
 $label	S_AX_D16	$alu, $clk
 $label		CPUWORK	$clk
 			GETPC16
-			ldrh	r2, [r9, #CPU_AX]
-			$alu	r2, r0
+			ldrh	r4, [r9, #CPU_AX]
+			$alu	r4, r0
 			mov		pc, r11
 	MEND
 
@@ -273,9 +273,9 @@ $label		GETPCF16
 
 	MACRO
 $label	SP_PUSH		$clk
-$label		CPUWORK	$clk
-			ldrh	r1, [r9, #CPU_SP]
+$label		ldrh	r1, [r9, #CPU_SP]
 			ldr		r2, [r9, #CPU_SS_BASE]
+			CPUWORK	$clk
 			sub		r0, r1, #2
 			mov		r3, r0 lsl #16
 			strh	r0, [r9, #CPU_SP]

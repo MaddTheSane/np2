@@ -160,6 +160,8 @@ typedef struct {
 	UINT32	ovflag;
 	I286DTR	GDTR;
 	I286DTR	IDTR;
+	I286DTR	LDTRC;							// ver0.73
+	UINT16	LDTR;							// ver0.73
 	UINT16	MSW;
 	UINT8	resetreq;						// ver0.72
 	UINT8	itfbank;						// ver0.72

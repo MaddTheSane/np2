@@ -86,7 +86,7 @@ i2mrw_ext		stmdb	sp!, {r7, r9, lr}
 				ldmia	sp!, {r7, r9, pc}
 i2mre_memfnrd16	dcd		memfn + (32 * 4) * 2
 i2mre_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
-				ldr		r12, [r3, #CPU_EXTMEM]
+				ldr		r2, [r3, #CPU_EXTMEM]
 				sub		r1, r0, #&100000
 				cmp		r1, r12
 				bcs		i286_nonram_rw
@@ -302,7 +302,7 @@ i2amrw_ext		ldr		r2, i2amre_memfnrdw
 				ldr		pc, [r2, r12 lsr #(15 - 2)]
 i2amre_memfnrdw	dcd		memfn + (32 * 4) * 2
 i2amre_himem	ldr		r12, [r9, #CPU_EXTMEMSIZE]
-				ldr		r12, [r9, #CPU_EXTMEM]
+				ldr		r2, [r9, #CPU_EXTMEM]
 				sub		r1, r0, #&100000
 				cmp		r1, r12
 				bcs		i286_nonram_rw

@@ -364,11 +364,11 @@ repecmpsblp		add		r0, r2, r11 lsr #16
 				beq		repecmpsblp
 repecmpsbbreak		bic		r8, r8, #&ff
 					subs	r1, r10, r0 lsl #24
+					eor		r12, r1, r10
 					ldr		r10, repecmpsb_flag
 					orrvs	r8, r8, #O_FLAG
 					bicvc	r8, r8, #O_FLAG
 					addcc	r8, r8, #C_FLAG
-					eor		r12, r1, r10
 					ldrb	r2, [r10, r1 lsr #24]
 					eor		r12, r1, r0 lsl #24
 					and		r12, r12, #(A_FLAG << 24)
@@ -410,14 +410,14 @@ repecmpswlp		add		r0, r2, r11 lsr #16
 				beq		repecmpswlp
 repecmpswbreak		bic		r8, r8, #&ff
 					subs	r1, r10, r0 lsl #16
+					eor		r12, r1, r10
+					and		r3, r1, #(&ff << 16)
 					ldr		r10, repecmpsw_flag
 					orrvs	r8, r8, #O_FLAG
 					bicvc	r8, r8, #O_FLAG
 					addcc	r8, r8, #C_FLAG
 					addmi	r8, r8, #S_FLAG
 					addeq	r8, r8, #Z_FLAG
-					and		r3, r1, #(&ff << 16)
-					eor		r12, r1, r10
 					ldrb	r2, [r10, r3 lsr #16]
 					eor		r12, r1, r0 lsl #16
 					and		r12, r12, #(A_FLAG << 16)
@@ -461,11 +461,11 @@ repnecmpsblp	add		r0, r2, r11 lsr #16
 				bne		repnecmpsblp
 repnecmpsbbreak		bic		r8, r8, #&ff
 					subs	r1, r10, r0 lsl #24
+					eor		r12, r1, r10
 					ldr		r10, repnecmpsb_flag
 					orrvs	r8, r8, #O_FLAG
 					bicvc	r8, r8, #O_FLAG
 					addcc	r8, r8, #C_FLAG
-					eor		r12, r1, r10
 					ldrb	r2, [r10, r1 lsr #24]
 					eor		r12, r1, r0 lsl #24
 					and		r12, r12, #(A_FLAG << 24)
@@ -507,14 +507,14 @@ repnecmpswlp	add		r0, r2, r11 lsr #16
 				bne		repnecmpswlp
 repnecmpswbreak		bic		r8, r8, #&ff
 					subs	r1, r10, r0 lsl #16
+					eor		r12, r1, r10
+					and		r3, r1, #(&ff << 16)
 					ldr		r10, repnecmpsw_flag
 					orrvs	r8, r8, #O_FLAG
 					bicvc	r8, r8, #O_FLAG
 					addcc	r8, r8, #C_FLAG
 					addmi	r8, r8, #S_FLAG
 					addeq	r8, r8, #Z_FLAG
-					and		r3, r1, #(&ff << 16)
-					eor		r12, r1, r10
 					ldrb	r2, [r10, r3 lsr #16]
 					eor		r12, r1, r0 lsl #16
 					and		r12, r12, #(A_FLAG << 16)
@@ -544,13 +544,13 @@ i286a_repe_scasb
 repescasblp		add		r0, r11, r5 lsr #16
 				add		r5, r5, r6
 				bl		i286a_memoryread
-				ldrb	r3, [r9, #CPU_AL]
+				ldrb	r2, [r9, #CPU_AL]
 				CPUWORK	#8
 				subs	r4, r4, #1
 				beq		repescasbbreak
-				cmp		r3, r0
+				cmp		r2, r0
 				beq		repescasblp
-repescasbbreak	SUB8	r3, r0
+repescasbbreak	SUB8	r2, r0
 				strh	r4, [r9, #CPU_CX]
 				str		r5, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
@@ -569,13 +569,13 @@ i286a_repe_scasw
 repescaswlp		add		r0, r11, r5 lsr #16
 				add		r5, r5, r6
 				bl		i286a_memoryread_w
-				ldrh	r3, [r9, #CPU_AX]
+				ldrh	r2, [r9, #CPU_AX]
 				CPUWORK	#8
 				subs	r4, r4, #1
 				beq		repescaswbreak
-				cmp		r3, r0
+				cmp		r2, r0
 				beq		repescaswlp
-repescaswbreak	SUB16	r3, r0
+repescaswbreak	SUB16	r2, r0
 				strh	r4, [r9, #CPU_CX]
 				str		r5, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
@@ -595,13 +595,13 @@ i286a_repne_scasb
 repnescasblp	add		r0, r11, r5 lsr #16
 				add		r5, r5, r6
 				bl		i286a_memoryread
-				ldrb	r3, [r9, #CPU_AL]
+				ldrb	r2, [r9, #CPU_AL]
 				CPUWORK	#8
 				subs	r4, r4, #1
 				beq		repnescasbbreak
-				cmp		r3, r0
+				cmp		r2, r0
 				bne		repnescasblp
-repnescasbbreak	SUB8	r3, r0
+repnescasbbreak	SUB8	r2, r0
 				strh	r4, [r9, #CPU_CX]
 				str		r5, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
@@ -620,13 +620,13 @@ i286a_repne_scasw
 repnescaswlp	add		r0, r11, r5 lsr #16
 				add		r5, r5, r6
 				bl		i286a_memoryread_w
-				ldrh	r3, [r9, #CPU_AX]
+				ldrh	r2, [r9, #CPU_AX]
 				CPUWORK	#8
 				subs	r4, r4, #1
 				beq		repnescaswbreak
-				cmp		r3, r0
+				cmp		r2, r0
 				bne		repnescaswlp
-repnescaswbreak	SUB16	r3, r0
+repnescaswbreak	SUB16	r2, r0
 				strh	r4, [r9, #CPU_CX]
 				str		r5, [r9, #CPU_SI]
 				ldr		pc, [sp], #4

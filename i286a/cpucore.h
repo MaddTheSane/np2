@@ -240,10 +240,14 @@ void i286a_step(void);
 #define	CPU_FLAG		i286acore.s.r.w.flag
 #define	CPU_FLAGL		i286acore.s.r.b.flag_l
 
+#define	SS_FIX			i286acore.s.ss_fix
+#define	DS_FIX			i286acore.s.ds_fix
+
 #define	CPU_REMCLOCK	i286acore.s.remainclock
 #define	CPU_BASECLOCK	i286acore.s.baseclock
 #define	CPU_CLOCK		i286acore.s.clock
 #define	CPU_ADRSMASK	i286acore.s.adrsmask
+#define	CPU_MSW			i286acore.s.MSW
 #define	CPU_RESETREQ	i286acore.s.resetreq
 #define	CPU_ITFBANK		i286acore.s.itfbank
 #define	CPU_INPADRS		i286acore.s.inport

@@ -11,9 +11,9 @@ $label		mov		r1, $s lsl #24
 			eor		r12, r12, $d
 			addcs	r2, r2, #C_FLAG
 			and		r12, r12, #A_FLAG
-			orr		r3, r2, r12
+			orr		r2, r2, r12
 			bic		r8, r8, #&ff
-			add		r8, r3, r8
+			add		r8, r8, r2
 	MEND
 
 	MACRO
@@ -85,9 +85,9 @@ $label		mov		r1, $d lsl #24
 			eor		r12, r12, $d
 			addcc	r2, r2, #C_FLAG
 			and		r12, r12, #A_FLAG
-			orr		r3, r2, r12
+			orr		r2, r2, r12
 			bic		r8, r8, #&ff
-			add		r8, r3, r8
+			add		r8, r8, r2
 	MEND
 
 	MACRO
@@ -107,9 +107,9 @@ $label		mov		r1, $s lsl #16
 			mov		r1, r1 lsr #16
 			bicvc	r8, r8, #O_FLAG
 			and		r3, r1, #&ff
-			eor		r12, r1, $s
+			eor		r12, r1, $d
 			ldrb	r2, [r10, r3]
-			eor		r12, r12, $d
+			eor		r12, r12, $s
 			and		r2, r2, #P_FLAG
 			addcs	r2, r2, #C_FLAG
 			addeq	r2, r2, #Z_FLAG
@@ -207,9 +207,9 @@ $label		mov		r1, $d lsl #16
 			mov		r1, r1 lsr #16
 			bicvc	r8, r8, #O_FLAG
 			and		r3, r1, #&ff
-			eor		r12, r1, $s
+			eor		r12, r1, $d
 			ldrb	r2, [r10, r3]
-			eor		r12, r12, $d
+			eor		r12, r12, $s
 			and		r2, r2, #P_FLAG
 			addcc	r2, r2, #C_FLAG
 			addeq	r2, r2, #Z_FLAG
@@ -298,7 +298,7 @@ $label		sub		r1, $s, #1
 			tst		r2, #&8000
 			orrne	r8, r8, #O_FLAG
 			ldrb	r2, [r10, r3]
-			movs	r3, r1, lsl #16
+			movs	r3, r1 lsl #16
 			orreq	r12, r12, #Z_FLAG
 			orrmi	r12, r12, #S_FLAG
 			and		r2, r2, #P_FLAG

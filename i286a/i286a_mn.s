@@ -1496,8 +1496,8 @@ jcxz			ldrh	r0, [r9, #CPU_CX]
 				mov		pc, r11
 jcxzj			JMPS	#8
 
-in_al_d8		CPUWORK	#5
-				GETPCF8
+in_al_d8		GETPCF8
+				CPUWORK	#5
 				add		r3, r5, r8 lsr #16
 				CPUSV
 				str		r3, [r9, #CPU_INPUT]
