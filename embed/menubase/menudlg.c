@@ -104,6 +104,7 @@ static BOOL seaprmempty(void *vpItem, void *vpArg) {
 		((DLGPRM)vpItem)->icon = NULL;
 		return(TRUE);
 	}
+	(void)vpArg;
 	return(FALSE);
 }
 
@@ -487,6 +488,7 @@ static void dlglist_reset(MENUDLG dlg, DLGHDL hdl) {
 	hdl->val = -1;
 	hdl->c.dl.scrollbar = 0;
 	hdl->c.dl.basepos = 0;
+	(void)dlg;
 }
 
 static BOOL dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
