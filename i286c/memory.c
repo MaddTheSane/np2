@@ -530,7 +530,7 @@ const VACCTBL	*vacc;
 	memfn.wr16[0xb8000 >> 15] = vacc->wr16;
 	memfn.wr16[0xe0000 >> 15] = vacc->wr16;
 
-	if (!(func & 0x10)) {							// digital
+	if (!(func & (1 << VOPBIT_ANALOG))) {					// digital
 		memfn.rd8[0xe0000 >> 15] = memnc_rd8;
 		memfn.wr8[0xe0000 >> 15] = memnc_wr8;
 		memfn.rd16[0xe0000 >> 15] = memnc_rd16;

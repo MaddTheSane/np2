@@ -19,7 +19,7 @@ void soundmng_stop(void);
 void soundmng_sync(void);
 void soundmng_setreverse(BOOL reverse);
 
-BOOL soundmng_pcmplay(UINT num, BOOL loop);
+BRESULT soundmng_pcmplay(UINT num, BOOL loop);
 void soundmng_pcmstop(UINT num);
 
 #ifdef __cplusplus
@@ -29,7 +29,7 @@ void soundmng_pcmstop(UINT num);
 
 // ---- for windows
 
-BOOL soundmng_initialize(void);
+BRESULT soundmng_initialize(void);
 void soundmng_deinitialize(void);
 
 void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type);

@@ -28,16 +28,16 @@ static const UINT8 clockchr1[11][16] = {
 			{0x78, 0xcc, 0xcc, 0xcc, 0xcc, 0x7c, 0x0c, 0x18, 0x70,}};
 
 static const DCPOS dclockpos1[6] = {
-						{&dclock.dat[0], (WORD)(~0x00fc), 0, 0},
-						{&dclock.dat[0], (WORD)(~0xf801), 7, 0},
-						{&dclock.dat[2], (WORD)(~0x801f), 3, 0},
-						{&dclock.dat[3], (WORD)(~0x003f), 2, 0},
-						{&dclock.dat[4], (WORD)(~0xf003), 6, 0},
-						{&dclock.dat[5], (WORD)(~0xe007), 5, 0}};
+						{dclock.dat + 0, (UINT16)(~0x00fc), 0, 0},
+						{dclock.dat + 0, (UINT16)(~0xf801), 7, 0},
+						{dclock.dat + 2, (UINT16)(~0x801f), 3, 0},
+						{dclock.dat + 3, (UINT16)(~0x003f), 2, 0},
+						{dclock.dat + 4, (UINT16)(~0xf003), 6, 0},
+						{dclock.dat + 5, (UINT16)(~0xe007), 5, 0}};
 
 static void resetfont1(void) {
 
-	DWORD pat;
+	UINT32	pat;
 
 	if (np2oscfg.clk_x) {
 		if (np2oscfg.clk_x <= 4) {
@@ -46,10 +46,10 @@ static void resetfont1(void) {
 		else {
 			pat = 0x30008001;
 		}
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*4+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*5+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*9+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*10+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
 }
 
@@ -71,16 +71,16 @@ static const UINT8 clockchr2[11][16] = {
 			{0x18, 0x24, 0x40, 0x44, 0x48, 0x38, 0x10, 0x20, 0x20,}};
 
 static const DCPOS dclockpos2[6] = {
-						{&dclock.dat[0], (WORD)(~0x00fc), 0, 0},
-						{&dclock.dat[0], (WORD)(~0xf003), 6, 0},
-						{&dclock.dat[2], (WORD)(~0x00fc), 0, 0},
-						{&dclock.dat[2], (WORD)(~0xf003), 6, 0},
-						{&dclock.dat[4], (WORD)(~0x00fc), 0, 0},
-						{&dclock.dat[4], (WORD)(~0xf003), 6, 0}};
+						{dclock.dat + 0, (UINT16)(~0x00fc), 0, 0},
+						{dclock.dat + 0, (UINT16)(~0xf003), 6, 0},
+						{dclock.dat + 2, (UINT16)(~0x00fc), 0, 0},
+						{dclock.dat + 2, (UINT16)(~0xf003), 6, 0},
+						{dclock.dat + 4, (UINT16)(~0x00fc), 0, 0},
+						{dclock.dat + 4, (UINT16)(~0xf003), 6, 0}};
 
 static void resetfont2(void) {
 
-	DWORD pat;
+	UINT32	pat;
 
 	if (np2oscfg.clk_x) {
 		if (np2oscfg.clk_x <= 4) {
@@ -89,11 +89,11 @@ static void resetfont2(void) {
 		else {
 			pat = 0x00020002;
 		}
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*4+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*5+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
 		pat <<= 1;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*9+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*10+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
 }
 
@@ -115,16 +115,16 @@ static const UINT8 clockchr3[11][16] = {
 			{0x60, 0x90, 0x90, 0x90, 0x70, 0x10, 0x90, 0x90, 0x60,}};
 
 static const DCPOS dclockpos3[6] = {
-						{&dclock.dat[0], (WORD)(~0x00f0), 0, 0},
-						{&dclock.dat[0], (WORD)(~0x8007), 5, 0},
-						{&dclock.dat[1], (WORD)(~0xc003), 6, 0},
-						{&dclock.dat[2], (WORD)(~0x001e), 3, 0},
-						{&dclock.dat[3], (WORD)(~0x000f), 4, 0},
-						{&dclock.dat[4], (WORD)(~0x0078), 1, 0}};
+						{dclock.dat + 0, (UINT16)(~0x00f0), 0, 0},
+						{dclock.dat + 0, (UINT16)(~0x8007), 5, 0},
+						{dclock.dat + 1, (UINT16)(~0xc003), 6, 0},
+						{dclock.dat + 2, (UINT16)(~0x001e), 3, 0},
+						{dclock.dat + 3, (UINT16)(~0x000f), 4, 0},
+						{dclock.dat + 4, (UINT16)(~0x0078), 1, 0}};
 
 static void resetfont3(void) {
 
-	DWORD pat;
+	UINT32	pat;
 
 	if (np2oscfg.clk_x) {
 		if (np2oscfg.clk_x <= 4) {
@@ -133,10 +133,10 @@ static void resetfont3(void) {
 		else {
 			pat = 0x00400010;
 		}
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*4+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*5+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*9+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*10+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
 }
 
@@ -159,7 +159,7 @@ static const UINT8 clockchr4[11][16] = {
 
 static void resetfont4(void) {
 
-	DWORD pat;
+	UINT32	pat;
 
 	if (np2oscfg.clk_x) {
 		if (np2oscfg.clk_x <= 4) {
@@ -168,10 +168,10 @@ static void resetfont4(void) {
 		else {
 			pat = 0x00040004;
 		}
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*5+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*6+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*9+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*10+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 6 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
 }
 
@@ -192,16 +192,16 @@ static const UINT8 clockchr5[11][16] = {
 			{0x00, 0x00, 0x70, 0x88, 0x88, 0x88, 0x78, 0x10, 0x60,}};
 
 static const DCPOS dclockpos5[6] = {
-						{&dclock.dat[0], (WORD)(~0x00f8), 0, 0},
-						{&dclock.dat[0], (WORD)(~0xe003), 6, 0},
-						{&dclock.dat[2], (WORD)(~0x007c), 1, 0},
-						{&dclock.dat[2], (WORD)(~0xf001), 7, 0},
-						{&dclock.dat[4], (WORD)(~0x003e), 2, 0},
-						{&dclock.dat[5], (WORD)(~0x00f8), 0, 0}};
+						{dclock.dat + 0, (UINT16)(~0x00f8), 0, 0},
+						{dclock.dat + 0, (UINT16)(~0xe003), 6, 0},
+						{dclock.dat + 2, (UINT16)(~0x007c), 1, 0},
+						{dclock.dat + 2, (UINT16)(~0xf001), 7, 0},
+						{dclock.dat + 4, (UINT16)(~0x003e), 2, 0},
+						{dclock.dat + 5, (UINT16)(~0x00f8), 0, 0}};
 
 static void resetfont5(void) {
 
-	DWORD pat;
+	UINT32	pat;
 
 	if (np2oscfg.clk_x) {
 		if (np2oscfg.clk_x <= 4) {
@@ -210,10 +210,10 @@ static void resetfont5(void) {
 		else {
 			pat = 0x00030006;
 		}
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*6+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*7+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*9+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*10+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 6 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 7 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
 }
 
@@ -235,16 +235,16 @@ static const UINT8 clockchr6[11][16] = {
 			{0x00, 0x00, 0x00, 0x60, 0x90, 0x90, 0x70, 0x20, 0x40,}};
 
 static const DCPOS dclockpos6[6] = {
-						{&dclock.dat[0], (WORD)(~0x00f0), 0, 0},
-						{&dclock.dat[0], (WORD)(~0x8007), 5, 0},
-						{&dclock.dat[1], (WORD)(~0x000f), 4, 0},
-						{&dclock.dat[2], (WORD)(~0x0078), 1, 0},
-						{&dclock.dat[3], (WORD)(~0x00f0), 0, 0},
-						{&dclock.dat[3], (WORD)(~0x8007), 5, 0}};
+						{dclock.dat + 0, (UINT16)(~0x00f0), 0, 0},
+						{dclock.dat + 0, (UINT16)(~0x8007), 5, 0},
+						{dclock.dat + 1, (UINT16)(~0x000f), 4, 0},
+						{dclock.dat + 2, (UINT16)(~0x0078), 1, 0},
+						{dclock.dat + 3, (UINT16)(~0x00f0), 0, 0},
+						{dclock.dat + 3, (UINT16)(~0x8007), 5, 0}};
 
 static void resetfont6(void) {
 
-	DWORD pat;
+	UINT32	pat;
 
 	if (np2oscfg.clk_x) {
 		if (np2oscfg.clk_x <= 4) {
@@ -253,8 +253,8 @@ static void resetfont6(void) {
 		else {
 			pat = 0x00000220;
 		}
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*8+1]) = pat;
-		*(DWORD *)(&dclock.dat[(DCLOCK_X/8)*10+1]) = pat;
+		*(UINT32 *)(dclock.dat + 1 + ( 8 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
 }
 
@@ -284,10 +284,11 @@ void dclock_init(void) {
 									np2oscfg.clk_color1, np2oscfg.clk_color2);
 }
 
-void dclock_init8(void) {
+static void dclock_palset8(void) {
 
-	UINT8	i, j;
-	DWORD	work = 0;							// vc++4.2
+	UINT8	i;
+	UINT8	j;
+	UINT32	work = 0;							// vc++4.2
 
 	for (i=0; i<16; i++) {
 		for (j=1; j<0x10; j<<=1) {
@@ -302,7 +303,7 @@ void dclock_init8(void) {
 	}
 }
 
-void dclock_init16(void) {
+static void dclock_palset16(void) {
 
 	UINT	i;
 
@@ -310,6 +311,22 @@ void dclock_init16(void) {
 		dclockpal.pal16[i] = scrnmng_makepal16(dclockpal.pal32[i]);
 	}
 }
+
+void dclock_palset(UINT bpp) {
+
+	switch(bpp) {
+		case 8:
+			dclock_palset8();
+			break;
+
+		case 16:
+			dclock_palset16();
+			break;
+	}
+}
+
+
+
 
 void dclock_reset(void) {
 
@@ -377,214 +394,7 @@ void dclock_redraw(void) {
 BOOL dclock_disp(void) {
 
 	return((dclock.drawing != 0) ||
-			(*(DWORD *)(dclock.flm + 0) != 0) ||
-			(*(DWORD *)(dclock.flm + 4) != 0));
+			(*(UINT32 *)(dclock.flm + 0) != 0) ||
+			(*(UINT32 *)(dclock.flm + 4) != 0));
 }
-
-
-
-
-
-#if 0
-LABEL void __fastcall dclock_cntdown(UINT8 value) {
-
-	__asm {
-				cmp		np2oscfg.clk_x, 0
-				je		dclock_cdn
-				cmp		dword ptr (dclock.dclock_flm), 0
-				jne		dclock_cdn
-				cmp		dword ptr (dclock.dclock_flm + 4), 0
-				jne		dclock_cdn
-				ret
-
-dclock_cdn:		push	ecx
-				xor		edx, edx
-				cmp		cl, 0
-				jne		dclock_cdnlp
-				inc		cl
-dclock_cdnlp:	movzx	eax, dclock[edx].dclock_flm
-				cmp		eax, 0
-				je		dclock_cdned
-				cmp		eax, DCLOCKY_MAX
-				jae		dclock_upabove
-				mov		ch, dclocky[eax]
-				sub		al, cl
-				jc		dclock_set0
-				cmp		ch, dclocky[eax]
-				je		dclock_outflm
-				jmp		dclock_setdraw
-
-dclock_upabove:	sub		al, cl
-				jc		dclock_set0
-				cmp		al, DCLOCKY_MAX
-				jae		dclock_outflm
-				jmp		dclock_setdraw
-dclock_set0:	xor		eax, eax
-dclock_setdraw:	bts		dclock.dclock_drawing, dx
-dclock_outflm:	mov		dclock[edx].dclock_flm, al
-dclock_cdned:	inc		edx
-				cmp		dl, np2oscfg.clk_x
-				jc		dclock_cdnlp
-				pop		ecx
-				ret
-	}
-}
-
-LABEL void dclock_make(void) {
-
-	__asm {
-				cmp		np2oscfg.clk_x, 0
-				je		dclockmakeend
-				pushad
-				xor		ebx, ebx
-makedclock_lp:	btr		dclock.dclock_drawing, bx
-				jc		makedclock_1
-makedclock_ed:	inc		ebx
-				cmp		bl, np2oscfg.clk_x
-				jc		makedclock_lp
-				popad
-dclockmakeend:	ret
-
-makedclock_1:	mov		eax, dclock_font.dclock_put
-				lea		eax, [eax + ebx*8]
-				mov		edi, [eax]DCLOCK_POS.dclock_pos
-				mov		dx, [eax]DCLOCK_POS.dclock_mask
-				mov		cl, [eax]DCLOCK_POS.dclock_rolbit
-				movzx	eax, dclock[ebx].dclock_flm
-				cmp		eax, 0
-				je		makedclock_y0
-				cmp		eax, DCLOCKY_MAX
-				jb		makedclock_ani
-				movzx	eax, dclock[ebx].dclock_bak
-				jmp		makedclock0put
-
-makedclock_y0:	movzx	eax, dclock[ebx].dclock_now
-				mov		dclock[ebx].dclock_bak, al
-
-makedclock0put:	mov		ch, 3
-makedclock0_up:	and		[edi], dx
-				add		edi, (DCLOCK_X / 8)
-				dec		ch
-				jne		makedclock0_up
-				shl		eax, 4
-				add		eax, dclock_font.dclock_fnt
-				mov		esi, eax
-				mov		ch, 9
-makedclock0_dn:	movzx	eax, byte ptr [esi]
-				ror		ax, cl
-				and		[edi], dx
-				or		[edi], ax
-				inc		esi
-				add		edi, (DCLOCK_X / 8)
-				dec		ch
-				jne		makedclock0_dn
-				jmp		makedclock_ed
-
-makedclock_ani:	movzx	eax, dclocky[eax]
-				push	eax
-				mov		ch, 3
-				sub		ch, al
-				je		makedclock_an2
-makedclkani_up:	and		[edi], dx
-				add		edi, (DCLOCK_X / 8)
-				dec		ch
-				jne		makedclkani_up
-makedclock_an2:	movzx	esi, dclock[ebx].dclock_now
-				shl		esi, 4
-				add		esi, dclock_font.dclock_fnt
-				mov		ch, 9
-makedclkani_md:	movzx	eax, byte ptr [esi]
-				ror		ax, cl
-				and		[edi], dx
-				or		[edi], ax
-				inc		esi
-				add		edi, (DCLOCK_X / 8)
-				dec		ch
-				jne		makedclkani_md
-				pop		eax
-
-				mov		ch, al
-				movzx	esi, dclock[ebx].dclock_bak
-				shl		esi, 4
-				sub		esi, eax
-				add		esi, 9
-				add		esi, dclock_font.dclock_fnt
-makedclkani_dn:	movzx	eax, byte ptr [esi]
-				ror		ax, cl
-				and		[edi], dx
-				or		[edi], ax
-				inc		esi
-				add		edi, (DCLOCK_X / 8)
-				dec		ch
-				jne		makedclkani_dn
-				jmp		makedclock_ed
-	}
-}
-
-LABEL void __fastcall dclock_out8(void *ptr, DWORD width) {
-
-	__asm {
-				pushad
-				mov		esi, offset dclock_dat
-				mov		edi, offset outcolors
-				mov		bh, 4
-dclockout_lp1:	mov		bl, 3
-dclockout_lp2:	mov		ebp, (DCLOCK_X/8)
-dclockout_lp3:	movzx	eax, byte ptr [esi]
-				shr		eax, 4
-				mov		eax, [eax*4 + edi]
-				mov		[ecx], eax
-				movzx	eax, byte ptr [esi]
-				and		eax, 15
-				mov		eax, [eax*4 + edi]
-				mov		[ecx+4], eax
-				inc		esi
-				add		ecx, 8
-				dec		ebp
-				jne		dclockout_lp3
-				lea		ecx, [ecx + edx - DCLOCK_X]
-				dec		bl
-				jne		dclockout_lp2
-				add		edi, 4*16
-				dec		bh
-				jne		dclockout_lp1
-				popad
-				ret
-	}
-}
-
-LABEL void __fastcall dclock_out16(void *ptr, DWORD width) {
-
-	__asm {
-				pushad
-				mov		esi, offset dclock_dat
-				mov		edi, offset outcolors16
-				mov		bh, 4
-dclockout_lp1:	mov		bl, 3
-dclockout_lp2:	push	ebx
-				mov		ebp, (DCLOCK_X/8)
-dclockout_lp3:	mov		bl, [esi]
-				mov		bh, 8
-dclockout_lp4:	rcl		bl, 1
-				sbb		ax, ax
-				and		ax, [edi]
-				mov		[ecx], ax
-				add		ecx, 2
-				dec		bh
-				jne		dclockout_lp4
-				inc		esi
-				dec		ebp
-				jne		dclockout_lp3
-				pop		ebx
-				lea		ecx, [ecx + edx - DCLOCK_X*2]
-				dec		bl
-				jne		dclockout_lp2
-				add		edi, 2
-				dec		bh
-				jne		dclockout_lp1
-				popad
-				ret
-	}
-}
-#endif
 

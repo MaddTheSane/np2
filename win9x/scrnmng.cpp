@@ -336,7 +336,7 @@ void scrnmng_initialize(void) {
 	setwindowsize(hWndMain, 640, 400);
 }
 
-BOOL scrnmng_create(UINT8 scrnmode) {
+BRESULT scrnmng_create(UINT8 scrnmode) {
 
 	DWORD			winstyle;
 	DWORD			winstyleex;
@@ -391,11 +391,14 @@ BOOL scrnmng_create(UINT8 scrnmode) {
 		ddraw2->SetCooperativeLevel(hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 		height = (np2oscfg.force400)?400:480;
+		bitcolor = np2oscfg.fscrnbpp;
+		if (bitcolor == 0) {
 #if !defined(SUPPORT_PC9821)
-		bitcolor = (scrnmode & SCRNMODE_HIGHCOLOR)?16:8;
+			bitcolor = (scrnmode & SCRNMODE_HIGHCOLOR)?16:8;
 #else
-		bitcolor = 16;
+			bitcolor = 16;
 #endif
+		}
 		if (ddraw2->SetDisplayMode(640, height, bitcolor, 0, 0) != DD_OK) {
 			goto scre_err;
 		}
@@ -428,19 +431,26 @@ BOOL scrnmng_create(UINT8 scrnmode) {
 		}
 		if (bitcolor == 8) {
 			paletteinit();
-			dclock_init8();
+		}
+		else if (bitcolor == 16) {
+			make16mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
+		}
+		else if (bitcolor == 24) {
+			goto scre_err;
+		}
+		else if (bitcolor == 32) {
 		}
 		else {
-			make16mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
-			dclock_init16();
+			goto scre_err;
 		}
+		dclock_palset(bitcolor);
 
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-		ddsd.dwWidth = DCLOCK_X;
-		ddsd.dwHeight = DCLOCK_Y;
+		ddsd.dwWidth = DCLOCK_WIDTH;
+		ddsd.dwHeight = DCLOCK_HEIGHT;
 		ddraw2->CreateSurface(&ddsd, &ddraw.clocksurf, NULL);
 		dclock_reset();
 	}
@@ -484,11 +494,7 @@ BOOL scrnmng_create(UINT8 scrnmode) {
 		}
 		bitcolor = ddpf.dwRGBBitCount;
 		if (bitcolor == 8) {
-#if !defined(SUPPORT_PC9821)
 			paletteinit();
-#else
-			goto scre_err;
-#endif
 		}
 		else if (bitcolor == 16) {
 			make16mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
@@ -752,14 +758,14 @@ void scrnmng_setmultiple(int multiple) {
 	}
 }
 
-static const RECT rectclk = {0, 0, DCLOCK_X, DCLOCK_Y};
+static const RECT rectclk = {0, 0, DCLOCK_WIDTH, DCLOCK_HEIGHT};
 
 void scrnmng_dispclock(void) {
 
 	DDSURFACEDESC	dest;
 																// ver0.26
 	if ((ddraw.clocksurf) &&
-		(ddraw.scrn.top >= DCLOCK_Y) && (dclock_disp())) {
+		(ddraw.scrn.top >= DCLOCK_HEIGHT) && (dclock_disp())) {
 		dclock_make();
 		ZeroMemory(&dest, sizeof(dest));
 		dest.dwSize = sizeof(dest);
@@ -767,13 +773,16 @@ void scrnmng_dispclock(void) {
 			if (scrnmng.bpp == 8) {
 				dclock_out8(dest.lpSurface, dest.lPitch);
 			}
-			else {
+			else if (scrnmng.bpp == 16) {
 				dclock_out16(dest.lpSurface, dest.lPitch);
+			}
+			else if (scrnmng.bpp == 32) {
+				dclock_out32(dest.lpSurface, dest.lPitch);
 			}
 			ddraw.clocksurf->Unlock(NULL);
 		}
-		if (ddraw.primsurf->BltFast(640 - DCLOCK_X - 4,
-									ddraw.height - DCLOCK_Y,
+		if (ddraw.primsurf->BltFast(640 - DCLOCK_WIDTH - 4,
+									ddraw.height - DCLOCK_HEIGHT,
 									ddraw.clocksurf, (RECT *)&rectclk,
 									DDBLTFAST_WAIT) == DDERR_SURFACELOST) {
 			ddraw.primsurf->Restore();

@@ -531,12 +531,13 @@ static const INITBL iniitem[] = {
 	{"useromeo", INITYPE_BOOL,		&np2oscfg.useromeo,		0},		// ver0.74
 	{"thickfrm", INITYPE_BOOL,		&np2oscfg.thickframe,	0},		// ver0.77
 	{"xrollkey", INIRO_BOOL,		&np2oscfg.xrollkey,		0},		// ver0.78
+	{"fscrnbpp", INIRO_UINT8,		&np2oscfg.fscrnbpp,		0},
 	{"I286SAVE", INIRO_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 
 void initgetfile(OEMCHAR *path, UINT size) {
 
-	OEMCHAR	*p;
+const OEMCHAR	*ext;
 
 	file_cpyname(path, modulefile, size);
 	if (np2arg.ini) {
@@ -547,8 +548,8 @@ void initgetfile(OEMCHAR *path, UINT size) {
 		else {
 			file_cpyname(path, np2arg.ini, size);
 		}
-		p = file_getext(path);
-		if (!(*p)) {
+		ext = file_getext(path);
+		if (ext[0] != '\0') {
 			file_catname(path, OEMTEXT(".ini"), size);
 		}
 	}

@@ -78,7 +78,7 @@ static	OEMCHAR		szClassName[] = OEMTEXT("NP2-MainWindow");
 						{0, 0, 0x3e, 19200,
 						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];

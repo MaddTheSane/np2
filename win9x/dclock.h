@@ -1,8 +1,10 @@
 
 enum {
-	DCLOCK_X		= 56,
-	DCLOCK_Y		= 12
+	DCLOCK_WIDTH	= 56,
+	DCLOCK_HEIGHT	= 12,
+	DCLOCK_YALIGN	= (56 / 8)
 };
+
 
 typedef struct {
 	UINT8	*pos;
@@ -20,7 +22,7 @@ const DCPOS	*pos;
 	UINT16	drawing;
 	UINT8	clk_x;
 	UINT8	_padding;
-	UINT8	dat[(DCLOCK_X * DCLOCK_Y / 8) + 4];
+	UINT8	dat[(DCLOCK_HEIGHT * DCLOCK_YALIGN) + 4];
 } _DCLOCK, *DCLOCK;
 
 typedef struct {
@@ -38,16 +40,16 @@ extern	_DCLOCK		dclock;
 extern	DCLOCKPAL	dclockpal;
 
 void dclock_init(void);
-void dclock_init8(void);
-void dclock_init16(void);
+void dclock_palset(UINT bpp);
 void dclock_reset(void);
 void dclock_callback(void);
 void dclock_redraw(void);
 BOOL dclock_disp(void);
 void dclock_cntdown(UINT8 value);
 void dclock_make(void);
-void dclock_out8(void *ptr, UINT width);
-void dclock_out16(void *ptr, UINT width);
+void dclock_out8(void *ptr, UINT yalign);
+void dclock_out16(void *ptr, UINT yalign);
+void dclock_out32(void *ptr, UINT yalign);
 
 #ifdef __cplusplus
 }

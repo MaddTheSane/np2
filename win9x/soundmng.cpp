@@ -50,7 +50,7 @@ static	void				(PARTSCALL *fnmix)(SINT16 *dst,
 
 // ---- directsound
 
-static BOOL dsoundcreate(void) {
+static BRESULT dsoundcreate(void) {
 
 	// DirectSoundÇÃèâä˙âª
 	if (FAILED(DirectSoundCreate(0, &pDSound, 0))) {
@@ -408,7 +408,7 @@ void soundmng_pcmvolume(UINT num, int volume) {
 	}
 }
 
-BOOL soundmng_pcmplay(UINT num, BOOL loop) {
+BRESULT soundmng_pcmplay(UINT num, BOOL loop) {
 
 	LPDIRECTSOUNDBUFFER	dsbuf;
 
@@ -438,7 +438,7 @@ void soundmng_pcmstop(UINT num) {
 
 // ----
 
-BOOL soundmng_initialize(void) {
+BRESULT soundmng_initialize(void) {
 
 	if (dsoundcreate() != SUCCESS) {
 		goto smcre_err;

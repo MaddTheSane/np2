@@ -112,7 +112,7 @@ void MEMCALL gdcpset_prepare(GDCPSET pset, UINT32 csrw, REG16 pat, REG8 op) {
 	UINT8	*base;
 	UINT8	update;
 
-	if (vramop.operate & VOP_EGCBIT) {
+	if (vramop.operate & (1 << VOPBIT_EGC)) {
 		pset->func[0] = _nop;
 		pset->func[1] = withegc;
 		pset->base.addr = gdcplaneseg[(csrw >> 14) & 3];

@@ -61,6 +61,7 @@ typedef struct {
 	UINT8	useromeo;
 	UINT8	thickframe;
 	UINT8	xrollkey;
+	UINT8	fscrnbpp;
 } NP2OSCFG;
 
 

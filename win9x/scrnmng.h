@@ -46,12 +46,13 @@ extern "C" {
 extern	SCRNMNG		scrnmng;			// É}ÉNÉçóp
 
 void scrnmng_initialize(void);
-BOOL scrnmng_create(UINT8 scrnmode);
+BRESULT scrnmng_create(UINT8 scrnmode);
 void scrnmng_destroy(void);
 
 void scrnmng_setwidth(int posx, int width);
 void scrnmng_setextend(int extend);
 void scrnmng_setheight(int posy, int height);
+#define scrnmng_setbpp(commendablebpp)
 const SCRNSURF *scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
 void scrnmng_update(void);

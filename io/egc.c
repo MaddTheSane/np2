@@ -21,7 +21,7 @@ static const UINT16 maskword[16][4] = {
 
 static void IOOUTCALL egc_o4a0(UINT port, REG8 value) {
 
-	if (!(vramop.operate & VOP_EGCBIT)) {
+	if (!(vramop.operate & (1 << VOPBIT_EGC))) {
 		return;
 	}
 
@@ -137,7 +137,7 @@ void egc_bind(void) {
 
 void IOOUTCALL egc_w16(UINT port, REG16 value) {
 
-	if (!(vramop.operate & VOP_EGCBIT)) {
+	if (!(vramop.operate & (1 << VOPBIT_EGC))) {
 		return;
 	}
 

@@ -45,7 +45,7 @@ REG8 lio_ginit(GLIO lio) {
 
 	UINT	i;
 
-	vramop.operate &= VOP_ACCESSMASK;
+	vramop.operate &= ~(1 << VOPBIT_ACCESS);
 	i286_vram_dispatch(vramop.operate);
 	bios0x18_42(0x80);
 	bios0x18_40();

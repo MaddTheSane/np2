@@ -1,6 +1,7 @@
 
-DCLOCK_X		equ		56
-DCLOCK_Y		equ		12
+DCLOCK_WIDTH	equ		56
+DCLOCK_HEIGHT	equ		12
+DCLOCK_YALIGN	equ		(56 / 8)
 DCLOCK_PATMAX	equ		13
 
 				struc dclock_t
@@ -35,6 +36,7 @@ section .text
 	global	_dclock_make
 	global	_dclock_out8
 	global	_dclock_out16
+	global	_dclock_out32
 	extern	_dclock
 	extern	_dclockpal
 
@@ -109,7 +111,7 @@ makedclock_y0:	movzx	eax, byte [_dclock + dclock_t.now + ebx]
 				mov		[_dclock + dclock_t.bak + ebx], al
 makedclock0put:	mov		ch, 3
 makedclock0_up:	and		[edi], dx
-				add		edi, byte (DCLOCK_X / 8)
+				add		edi, byte DCLOCK_YALIGN
 				dec		ch
 				jne		short makedclock0_up
 				shl		eax, 4
@@ -121,7 +123,7 @@ makedclock0_dn:	movzx	eax, byte [esi]
 				and		[edi], dx
 				or		[edi], ax
 				inc		esi
-				add		edi, byte (DCLOCK_X / 8)
+				add		edi, byte DCLOCK_YALIGN
 				dec		ch
 				jne		short makedclock0_dn
 				jmp		short dmk_mnnt
@@ -132,7 +134,7 @@ makedclock_ani:	movzx	eax, byte [dclocky + eax]
 				sub		ch, al
 				je		short makedclock_an2
 makedclkani_up:	and		[edi], dx
-				add		edi, byte (DCLOCK_X / 8)
+				add		edi, byte DCLOCK_YALIGN
 				dec		ch
 				jne		short makedclkani_up
 makedclock_an2:	movzx	esi, byte [_dclock + dclock_t.now + ebx]
@@ -144,7 +146,7 @@ makedclkani_md:	movzx	eax, byte [esi]
 				and		[edi], dx
 				or		[edi], ax
 				inc		esi
-				add		edi, (DCLOCK_X / 8)
+				add		edi, DCLOCK_YALIGN
 				dec		ch
 				jne		short makedclkani_md
 				pop		eax
@@ -159,7 +161,7 @@ makedclkani_dn:	movzx	eax, byte [esi]
 				and		[edi], dx
 				or		[edi], ax
 				inc		esi
-				add		edi, byte (DCLOCK_X / 8)
+				add		edi, byte DCLOCK_YALIGN
 				dec		ch
 				jne		short makedclkani_dn
 				jmp		near dmk_mnnt
@@ -170,13 +172,13 @@ _dclock_out8:	push	ebx
 				push	edi
 				push	ebp
 				mov		ecx, [esp+16+4]
-				sub		dword [esp+16+8], byte DCLOCK_X
+				sub		dword [esp+16+8], byte DCLOCK_WIDTH
 				mov		esi, _dclock + dclock_t.dat
 				mov		edi, _dclockpal + dclockpal_t.pal8
 				mov		bh, 4
-do8_lp1:		mov		bl, 3
-do8_lp2:		mov		ebp, (DCLOCK_X / 8)
-do8_lp3:		movzx	eax, byte [esi]
+.lp1:			mov		bl, 3
+.lp2:			mov		ebp, DCLOCK_YALIGN
+.lp3:			movzx	eax, byte [esi]
 				shr		eax, 4
 				mov		eax, [eax*4 + edi]
 				mov		[ecx], eax
@@ -187,13 +189,13 @@ do8_lp3:		movzx	eax, byte [esi]
 				inc		esi
 				add		ecx, byte 8
 				dec		ebp
-				jne		short do8_lp3
+				jne		short .lp3
 				add		ecx, [esp+16+8]
 				dec		bl
-				jne		short do8_lp2
+				jne		short .lp2
 				add		edi, byte 4*16
 				dec		bh
-				jne		short do8_lp1
+				jne		short .lp1
 				pop		ebp
 				pop		edi
 				pop		esi
@@ -208,28 +210,64 @@ _dclock_out16:	push	ebx
 				mov		esi, _dclock + dclock_t.dat
 				mov		edi, _dclockpal + dclockpal_t.pal16
 				mov		ecx, [esp+16+4]
-				sub		dword [esp+16+8], byte (DCLOCK_X * 2)
+				sub		dword [esp+16+8], byte (DCLOCK_WIDTH * 2)
 				mov		dh, 4
-do16_lp1:		mov		dl, 3
-do16_lp2:		mov		ebp, (DCLOCK_X / 8)
-do16_lp3:		mov		bl, [esi]
+.lp1:			mov		dl, 3
+.lp2:			mov		ebp, DCLOCK_YALIGN
+.lp3:			mov		bl, [esi]
 				mov		bh, 8
-do16_lp4:		rcl		bl, 1
+.lp4:			rcl		bl, 1
 				sbb		ax, ax
 				and		ax, [edi]
 				mov		[ecx], ax
 				add		ecx, byte 2
 				dec		bh
-				jne		short do16_lp4
+				jne		short .lp4
 				inc		esi
 				dec		ebp
-				jne		short do16_lp3
+				jne		short .lp3
 				add		ecx, [esp+16+8]
 				dec		dl
-				jne		short do16_lp2
-				add		edi, 2
+				jne		short .lp2
+				add		edi, byte 2
 				dec		dh
-				jne		short do16_lp1
+				jne		short .lp1
+				pop		ebp
+				pop		edi
+				pop		esi
+				pop		ebx
+				ret
+
+				align	16
+_dclock_out32:	push	ebx
+				push	esi
+				push	edi
+				push	ebp
+				mov		esi, _dclock + dclock_t.dat
+				mov		edi, _dclockpal + dclockpal_t.pal32
+				mov		ecx, [esp+16+4]
+				sub		dword [esp+16+8], (DCLOCK_WIDTH * 4)
+				mov		dh, 4
+.lp1:			mov		dl, 3
+.lp2:			mov		ebp, DCLOCK_YALIGN
+.lp3:			mov		bl, [esi]
+				mov		bh, 8
+.lp4:			rcl		bl, 1
+				sbb		eax, eax
+				and		eax, [edi]
+				mov		[ecx], eax
+				add		ecx, byte 4
+				dec		bh
+				jne		short .lp4
+				inc		esi
+				dec		ebp
+				jne		short .lp3
+				add		ecx, [esp+16+8]
+				dec		dl
+				jne		short .lp2
+				add		edi, byte 4
+				dec		dh
+				jne		short .lp1
 				pop		ebp
 				pop		edi
 				pop		esi

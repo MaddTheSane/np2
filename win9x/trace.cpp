@@ -47,26 +47,29 @@ enum {
 	IDM_TRACECL
 };
 
-static const char	ProgTitle[] = "console";
-static const char	ClassName[] = "TRACE-console";
-static const char	ClassEdit[] = "EDIT";
-static const char	trace1[] = "TRACE";
-static const char	trace2[] = "VERBOSE";
-static const char	traceen[] = "Enable";
-static const char	tracefh[] = "File out";
-static const char	tracecl[] = "Clear";
-static const char	crlf[] = "\r\n";
+static const TCHAR ProgTitle[] = _T("console");
+static const TCHAR ClassName[] = _T("TRACE-console");
+static const TCHAR ClassEdit[] = _T("EDIT");
+static const TCHAR trace1[] = _T("TRACE");
+static const TCHAR trace2[] = _T("VERBOSE");
+static const TCHAR traceen[] = _T("Enable");
+static const TCHAR tracefh[] = _T("File out");
+static const TCHAR tracecl[] = _T("Clear");
+static const TCHAR fontface[] = _T(VIEW_TEXT);
+static const TCHAR crlf[] = _T("\r\n");
 
 static	TRACEWIN	tracewin;
 static	HWND		hView = NULL;
 static	HFONT		hfView = NULL;
 static	HBRUSH		hBrush = NULL;
-static	char		szView[VIEW_BUFFERSIZE];
+static	int			viewpos;
+static	int			viewleng;
+static	TCHAR		viewbuf[VIEW_BUFFERSIZE * 2];
 static	TRACECFG	tracecfg;
 static	int			devpos;
 static	char		devstr[256];
 
-static const char	np2trace[] = "np2trace.ini";
+static const OEMCHAR np2trace[] = OEMTEXT("np2trace.ini");
 static const char	inititle[] = "TRACE";
 static const INITBL	initbl[4] = {
 			{"posx",	INITYPE_SINT32,	&tracecfg.posx,		0},
@@ -85,33 +88,48 @@ static void View_ScrollToBottom(HWND hWnd) {
 
 static void View_ClrString(void) {
 
-	szView[0] = '\0';
-	SetWindowText(hView, szView);
+	viewpos = 0;
+	viewleng = 0;
+	viewbuf[0] = '\0';
+	SetWindowText(hView, viewbuf);
 }
 
-static void View_AddString(const char *lpszString) {
+static void View_AddString(const TCHAR *string) {
 
-	int		len, vlen;
-	char	*p;
+	int		slen;
+	int		vpos;
+	int		vlen;
+	TCHAR	c;
 
-	len = strlen(lpszString);
-	if ((!len) || ((len + 3) > VIEW_BUFFERSIZE)) {
+	slen = lstrlen(string);
+	if ((slen == 0) || ((slen + 3) > VIEW_BUFFERSIZE)) {
 		return;
 	}
-	vlen = strlen(szView);
-	if ((vlen + len + 3) > VIEW_BUFFERSIZE) {
-		p = szView;
-		while(*p) {
+	vpos = viewpos;
+	vlen = viewleng;
+	if ((vpos + vlen + slen + 3) > (VIEW_BUFFERSIZE * 2)) {
+		while(vlen > 0) {
 			vlen--;
-			if ((*p++ == 0x0a) && ((vlen + len + 3) <= VIEW_BUFFERSIZE)) {
+			c = viewbuf[vpos++];
+			if ((c == 0x0a) && ((vlen + slen + 3) <= VIEW_BUFFERSIZE)) {
 				break;
 			}
 		}
-		strcpy(szView, p);
+		if (vpos >= VIEW_BUFFERSIZE) {
+			if (vlen) {
+				CopyMemory(viewbuf, viewbuf + vpos, vlen * sizeof(TCHAR));
+			}
+			vpos = 0;
+			viewpos = 0;
+		}
 	}
-	strcat(szView, lpszString);
-	strcat(szView, crlf);
-	SetWindowText(hView, szView);
+	CopyMemory(viewbuf + vpos + vlen, string, slen * sizeof(TCHAR));
+	vlen += slen;
+	viewbuf[vpos + vlen + 0] = '\r';
+	viewbuf[vpos + vlen + 1] = '\n';
+	viewbuf[vpos + vlen + 2] = '\0';
+	viewleng = vlen + 3;
+	SetWindowText(hView, viewbuf + vpos);
 	View_ScrollToBottom(hView);
 }
 
@@ -145,7 +163,7 @@ static void trfh_close(void) {
 	}
 }
 
-static void trfh_open(const char *fname) {
+static void trfh_open(const OEMCHAR *fname) {
 
 	trfh_close();
 	tracewin.fh = file_create(fname);
@@ -228,7 +246,7 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 			hfView = CreateFont(VIEW_SIZE, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, VIEW_TEXT);
+					DEFAULT_QUALITY, FIXED_PITCH, fontface);
 			if (!hfView) {
 				break;
 			}
@@ -349,6 +367,7 @@ void trace_init(void) {
 
 	HWND	hwnd;
 
+	ZeroMemory(&tracewin, sizeof(tracewin));
 	if (!hPrev) {
 		WNDCLASS wc;
 		wc.style = CS_HREDRAW | CS_VREDRAW;

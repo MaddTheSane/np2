@@ -22,18 +22,25 @@ typedef struct {
 //				bit2	grcg bit6
 //				bit3	grcg bit7
 //				bit4	analog enable
+//				bit5	pc9821 vga
 
 enum {
-	VOP_ACCESSBIT	= 0x01,
-	VOP_EGCBIT		= 0x02,
-	VOP_GRCGBIT		= 0x0c,
-	VOP_ANALOGBIT	= 0x10,
-
-	VOP_ACCESSMASK	= ~(0x01),
-	VOP_EGCMASK		= ~(0x02),
-	VOP_GRCGMASK	= ~(0x0c),
-	VOP_ANALOGMASK	= ~(0x10)
+	VOPBIT_ACCESS	= 0,
+	VOPBIT_EGC		= 1,
+	VOPBIT_GRCG		= 2,
+	VOPBIT_ANALOG	= 4,
+	VOPBIT_VGA		= 5
 };
+
+//	VOP_ACCESSBIT	= 0x01,
+//	VOP_EGCBIT		= 0x02,
+//	VOP_GRCGBIT		= 0x0c,
+//	VOP_ANALOGBIT	= 0x10,
+
+//	VOP_ACCESSMASK	= ~(0x01),
+//	VOP_EGCMASK		= ~(0x02),
+//	VOP_GRCGMASK	= ~(0x0c),
+//	VOP_ANALOGMASK	= ~(0x10)
 
 
 #ifdef __cplusplus
