@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.14 2004/03/25 10:41:13 yui Exp $	*/
+/*	$Id: interface.h,v 1.15 2004/03/27 16:14:31 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -41,7 +41,7 @@
 
 #define CPU_isEI		(CPU_FLAG & I_FLAG)
 #define CPU_isDI		(!CPU_isEI)
-#define	CPU_A20EN(en)		CPU_ADRSMASK = (en)?0xffffffff:0x00ffffff;
+#define	CPU_A20EN(en)		CPU_ADRSMASK = (en)?0xffffffff:0x000fffff;
 
 #define CPU_INITIALIZE()		i386c_initialize()
 #define	CPU_DEINITIALIZE()
