@@ -17,7 +17,7 @@
 #include	"menu.h"
 #include	"s98.h"
 #include	"fdefine.h"
-#include	"toolmac.h"
+#include	"toolwin.h"
 
 static Handle GetDlgItem(DialogPtr hWnd, short pos) {
 

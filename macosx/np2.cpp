@@ -37,7 +37,7 @@
 #include	"midiopt.h"
 #include	"macalert.h"
 #include	"np2opening.h"
-#include	"toolmac.h"
+#include	"toolwin.h"
 
 #include	<QuickTime/QuickTime.h>
 #define	USE_RESUME
