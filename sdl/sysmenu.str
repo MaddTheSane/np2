@@ -139,8 +139,7 @@ static const MSYSITEM s_screen[] = {
 		{str_20fps,			NULL,		MID_20FPS,			0},
 		{str_15fps,			NULL,		MID_15FPS,			0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
-		{str_scropt,		NULL,		MID_SCREENOPT,		MENU_GRAY |
-															MENU_DELETED}};
+		{str_scropt,		NULL,		MID_SCREENOPT,		MENU_DELETED}};
 
 static const MSYSITEM s_keybd[] = {
 		{str_keyboard,		NULL,		MID_KEY,			0},
@@ -217,9 +216,9 @@ static const MSYSITEM s_other[] = {
 
 static const MSYSITEM s_main[] = {
 		{str_emulate,		s_emu,		MID_STATIC,			0},
-		{str_fdd1,			s_fdd1,		MID_STATIC,			MENU_GRAY},
-		{str_fdd2,			s_fdd2,		MID_STATIC,			MENU_GRAY},
-		{str_sasi,			s_sasi,		MID_STATIC,			MENU_GRAY},
+		{str_fdd1,			s_fdd1,		MID_STATIC,			0},
+		{str_fdd2,			s_fdd2,		MID_STATIC,			0},
+		{str_sasi,			s_sasi,		MID_STATIC,			0},
 		{str_screen,		s_screen,	MID_STATIC,			0},
 		{str_device,		s_device,	MID_STATIC,			0},
 		{str_other,			s_other,	MID_STATIC,			MENU_DELETED}};

@@ -742,10 +742,6 @@ SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\FILESEL.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\FONTMNG.CPP
 # End Source File
 # Begin Source File
@@ -834,6 +830,10 @@ SOURCE=..\EMBED\MENU\DLGCFG.C
 # Begin Source File
 
 SOURCE=..\EMBED\MENU\DLGSCR.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\FILESEL.C
 # End Source File
 # Begin Source File
 

@@ -11976,89 +11976,6 @@ DEP_CPP_DOSIO=\
 # End Source File
 # Begin Source File
 
-SOURCE=.\FILESEL.CPP
-
-!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
-
-DEP_CPP_FILES=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\EMBED\MENU\menustr.h"\
-	"..\embed\menubase\menubase.h"\
-	"..\embed\menubase\menudlg.h"\
-	"..\embed\menubase\menuicon.h"\
-	"..\embed\menubase\menumbox.h"\
-	"..\embed\menubase\menures.h"\
-	"..\embed\menubase\menusys.h"\
-	"..\embed\menubase\menuvram.h"\
-	"..\embed\vramhdl.h"\
-	"..\fdd\d88head.h"\
-	"..\fdd\diskdrv.h"\
-	"..\fdd\fddfile.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	".\dosio.h"\
-	".\filesel.h"\
-	".\soundmng.h"\
-	".\wce\compiler.h"\
-	".\wce\np2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
-
-DEP_CPP_FILES=\
-	".\dosio.h"\
-	".\filesel.h"\
-	".\soundmng.h"\
-	
-NODEP_CPP_FILES=\
-	".\compiler.h"\
-	".\diskdrv.h"\
-	".\fddfile.h"\
-	".\menubase.h"\
-	".\menustr.h"\
-	".\np2.h"\
-	".\pccore.h"\
-	".\vramhdl.h"\
-	
-
-!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
-
-DEP_CPP_FILES=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\EMBED\MENU\menustr.h"\
-	"..\embed\menubase\menubase.h"\
-	"..\embed\menubase\menudlg.h"\
-	"..\embed\menubase\menuicon.h"\
-	"..\embed\menubase\menumbox.h"\
-	"..\embed\menubase\menures.h"\
-	"..\embed\menubase\menusys.h"\
-	"..\embed\menubase\menuvram.h"\
-	"..\embed\vramhdl.h"\
-	"..\fdd\d88head.h"\
-	"..\fdd\diskdrv.h"\
-	"..\fdd\fddfile.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	".\dosio.h"\
-	".\filesel.h"\
-	".\soundmng.h"\
-	".\wce\compiler.h"\
-	".\wce\np2.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\FONTMNG.CPP
 
 !IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
@@ -12333,6 +12250,7 @@ DEP_CPP_NP2_C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\debugsub.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -12644,6 +12562,7 @@ DEP_CPP_SYSME=\
 	"..\embed\menu\dlgabout.h"\
 	"..\embed\menu\dlgcfg.h"\
 	"..\embed\menu\dlgscr.h"\
+	"..\EMBED\MENU\filesel.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -12682,7 +12601,6 @@ DEP_CPP_SYSME=\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	".\filesel.h"\
 	".\fontmng.h"\
 	".\scrnmng.h"\
 	".\sysmenu.h"\
@@ -12698,7 +12616,6 @@ DEP_CPP_SYSME=\
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_SYSME=\
-	".\filesel.h"\
 	".\fontmng.h"\
 	".\scrnmng.h"\
 	".\sysmenu.h"\
@@ -12714,6 +12631,7 @@ NODEP_CPP_SYSME=\
 	".\diskdrv.h"\
 	".\dlgabout.h"\
 	".\dlgcfg.h"\
+	".\filesel.h"\
 	".\iocore.h"\
 	".\menubase.h"\
 	".\menustr.h"\
@@ -13097,6 +13015,7 @@ DEP_CPP_DLGAB=\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
 	"..\nevent.h"\
+	"..\np2ver.h"\
 	"..\pccore.h"\
 	".\sysmenu.res"\
 	".\wce\compiler.h"\
@@ -13375,6 +13294,103 @@ DEP_CPP_DLGSC=\
 	".\scrnmng.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\FILESEL.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_FILES=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\common\codecnv.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\EMBED\MENU\filesel.h"\
+	"..\EMBED\MENU\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\fdd\d88head.h"\
+	"..\fdd\diskdrv.h"\
+	"..\fdd\fddfile.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\dosio.h"\
+	".\soundmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_FILES=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\common\codecnv.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\EMBED\MENU\filesel.h"\
+	"..\EMBED\MENU\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\fdd\d88head.h"\
+	"..\fdd\diskdrv.h"\
+	"..\fdd\fddfile.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\dosio.h"\
+	".\soundmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_FILES=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\common\codecnv.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\EMBED\MENU\filesel.h"\
+	"..\EMBED\MENU\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\fdd\d88head.h"\
+	"..\fdd\diskdrv.h"\
+	"..\fdd\fddfile.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\dosio.h"\
+	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14270,6 +14286,7 @@ DEP_CPP_PCCOR=\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\vram\vram.h"\
+	".\dosio.h"\
 	".\soundmng.h"\
 	".\sysmng.h"\
 	".\timemng.h"\

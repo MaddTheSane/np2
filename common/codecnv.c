@@ -72,6 +72,52 @@ void codecnv_sjis2euc(char *euc, UINT ecnt, const char *sjis, UINT scnt) {
 	*euc = '\0';
 }
 
+void codecnv_euc2sjis(char *sjis, UINT scnt, const char *euc, UINT ecnt) {
+
+	UINT	h;
+	UINT	l;
+
+	(void)ecnt;			// ”»’è‚µ‚Ä‚È‚¢‚Ì‚©‚æ
+
+	if ((sjis == NULL) || (scnt == 0) || (euc == NULL)) {
+		return;
+	}
+	scnt--;
+	while(1) {
+		h = (BYTE)*euc++;
+		if (h < 0x80) {				// ascii
+			if (!h) {
+				break;
+			}
+			if (scnt == 0) {
+				break;
+			}
+			scnt--;
+			*sjis++ = (char)h;
+		}
+		else {
+			l = (BYTE)*euc++;
+			if ((!l) || (scnt < 2)) {
+				break;
+			}
+			h &= 0x7f;
+			l &= 0x7f;
+			l += ((h & 1) - 1) & 0x5e;
+			if (l >= 0x60) {
+				l++;
+			}
+			h += 0x121;
+			l += 0x1f;
+			h >>= 1;
+			h ^= 0x20;
+			*sjis++ = (char)h;
+			*sjis++ = (char)l;
+			scnt -= 2;
+		}
+	}
+	*sjis = '\0';
+}
+
 
 // ----
 

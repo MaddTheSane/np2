@@ -119,7 +119,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmver.o												\
 			$(OBJ)/vramhdl.o	$(OBJ)/vrammix.o						\
-			$(OBJ)/menustr.o	$(OBJ)/dlgcfg.o		$(OBJ)/dlgabout.o	\
+			$(OBJ)/menustr.o	$(OBJ)/filesel.o	$(OBJ)/dlgcfg.o		\
+			$(OBJ)/dlgscr.o		$(OBJ)/dlgabout.o						\
 			$(OBJ)/menubase.o	$(OBJ)/menuvram.o	$(OBJ)/menuicon.o	\
 			$(OBJ)/menusys.o	$(OBJ)/menudlg.o	$(OBJ)/menumbox.o	\
 			$(OBJ)/menures.o											\
@@ -790,9 +791,22 @@ $(OBJ)/vrammix.o	:	$(EMBED)/vrammix.c $(HEADERS) $(EMBEDS) \
 $(OBJ)/menustr.o	:	$(MENU)/menustr.c $(HEADERS) $(EMBEDS)
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/filesel.o	:	$(MENU)/filesel.c $(HEADERS) $(PCCORE) $(EMBEDS) \
+						$(COMMON)/strres.h $(COMMON)/codecnv.h \
+						$(TARGET)/dosio.h $(TARGET)/soundmng.h \
+						$(FDD)/diskdrv.h $(FDD)/fddfile.h $(MENU)/filesel.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/dlgcfg.o		:	$(MENU)/dlgcfg.c $(HEADERS) $(PCCORE) $(EMBEDS) \
 						$(COMMON)/strres.h $(TARGET)/np2.h \
 						$(TARGET)/sysmng.h $(MENU)/menustr.h \
+						$(TARGET)/sysmenu.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/dlgscr.o		:	$(MENU)/dlgscr.c $(HEADERS) $(PCCORE) $(IOCORE) \
+						$(EMBEDS) $(COMMON)/strres.h $(TARGET)/scrnmng.h \
+						$(TARGET)/sysmng.h $(VRAM)/scrndraw.h \
+						$(VRAM)/palettes.h $(MENU)/menustr.h \
 						$(TARGET)/sysmenu.res
 	$(CC) $(COPT) -o $@ $<
 

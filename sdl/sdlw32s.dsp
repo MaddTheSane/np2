@@ -820,6 +820,14 @@ SOURCE=..\EMBED\MENU\DLGCFG.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\EMBED\MENU\DLGSCR.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\EMBED\MENU\FILESEL.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\EMBED\MENU\MENUSTR.C
 # End Source File
 # End Group

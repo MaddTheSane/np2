@@ -297,9 +297,7 @@ BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft) {
 
 void file_findclose(FILEFINDH hdl) {
 
-	if (hdl) {
-		FindClose(hdl);
-	}
+	FindClose(hdl);
 }
 
 

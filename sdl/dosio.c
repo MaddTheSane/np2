@@ -4,6 +4,8 @@
 #include	"dosio.h"
 #if defined(WIN32)
 #include	<direct.h>
+#else
+#include	<dirent.h>
 #endif
 #if 0
 #include <sys/param.h>
@@ -181,6 +183,101 @@ short file_attr_c(const char *path) {
 	return(file_attr_c(curpath));
 }
 
+#if defined(WIN32)
+FILEFINDH file_find1st(const char *dir, FILEFINDT *fft) {
+
+	char			path[MAX_PATH];
+	HANDLE			hdl;
+	WIN32_FIND_DATA	w32fd;
+
+	milsjis_ncpy(path, dir, sizeof(path));
+	file_setseparator(path, sizeof(path));
+	milsjis_ncat(path, "*.*", sizeof(path));
+	hdl = FindFirstFile(path, &w32fd);
+	if (hdl == INVALID_HANDLE_VALUE) {
+		return(FILEFINDH_INVALID);
+	}
+	if (fft) {
+		milsjis_ncpy(fft->path, w32fd.cFileName, sizeof(fft->path));
+		fft->size = w32fd.nFileSizeLow;
+		fft->attr = w32fd.dwFileAttributes;
+	}
+	return((FILEFINDH)hdl);
+}
+
+BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft) {
+
+	WIN32_FIND_DATA	w32fd;
+
+	if (!FindNextFile((HANDLE)hdl, &w32fd)) {
+		return(FAILURE);
+	}
+	if (fft) {
+		milsjis_ncpy(fft->path, w32fd.cFileName, sizeof(fft->path));
+		fft->size = w32fd.nFileSizeLow;
+		fft->attr = w32fd.dwFileAttributes;
+	}
+	return(SUCCESS);
+}
+
+void file_findclose(FILEFINDH hdl) {
+
+	FindClose((HANDLE)hdl);
+}
+#else
+FILEFINDH file_find1st(const char *dir, FILEFINDT *fft) {
+
+	DIR		*ret;
+
+	ret = opendir(dir);
+	if (ret == NULL) {
+		goto ff1_err;
+	}
+	if (file_findnext((FILEFINDH)ret, fft) == SUCCESS) {
+		return((FILEFINDH)ret);
+	}
+	closedir(ret);
+
+ff1_err:
+	return(FILEFINDH_INVALID);
+}
+
+BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft) {
+
+struct dirent	*de;
+struct stat		sb;
+	UINT32		attr;
+	UINT32		size;
+
+	de = readdir((DIR *)hdl);
+	if (de == NULL) {
+		return(FAILURE);
+	}
+	if (fft) {
+		mileuc_ncpy(fft->path, de->d_name, sizeof(fft->path));
+		size = 0;
+		attr = 0;
+		if (stat(de->d_name, &sb) == 0) {
+			size = sb.st_size;
+			if (S_ISDIR(sb.st_mode)) {
+				attr = FILEATTR_DIRECTORY;
+			}
+			else if (!(sb.st_mode & S_IWUSR)) {
+				attr = FILEATTR_READONLY;
+			}
+		}
+		fft->size = size;
+		fft->attr = attr;
+	}
+	return(SUCCESS);
+}
+
+void file_findclose(FILEFINDH hdl) {
+
+	closedir((DIR *)hdl);
+}
+#endif
+
 void file_catname(char *path, const char *name, int maxlen) {
 
 	char	c;
@@ -197,7 +294,6 @@ void file_catname(char *path, const char *name, int maxlen) {
 		while(maxlen > 0) {
 			maxlen--;
 			c = *name++;
-			maxlen = 0;
 			if (ISKANJI1ST(c)) {
 				if ((maxlen == 0) || (*name == '\0')) {
 					break;

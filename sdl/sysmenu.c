@@ -12,13 +12,16 @@
 #include	"mpu98ii.h"
 #include	"sound.h"
 #include	"beep.h"
+#include	"diskdrv.h"
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"menustr.h"
 #include	"sysmenu.h"
 #include	"sysmenu.res"
 #include	"sysmenu.str"
+#include	"filesel.h"
 #include	"dlgcfg.h"
+#include	"dlgscr.h"
 #include	"dlgabout.h"
 
 
@@ -36,6 +39,38 @@ static void sys_cmd(MENUID id) {
 		case MID_CONFIG:
 			menudlg_create(DLGCFG_WIDTH, DLGCFG_HEIGHT,
 											(char *)mstr_cfg, dlgcfg_cmd);
+			break;
+
+		case MID_FDD1OPEN:
+			filesel_fdd(0);
+			break;
+
+		case MID_FDD1EJECT:
+			diskdrv_setfdd(0, NULL, 0);
+			break;
+
+		case MID_FDD2OPEN:
+			filesel_fdd(1);
+			break;
+
+		case MID_FDD2EJECT:
+			diskdrv_setfdd(1, NULL, 0);
+			break;
+
+		case MID_SASI1OPEN:
+			filesel_sasi(0);
+			break;
+
+		case MID_SASI1EJECT:
+			diskdrv_sethdd(0, NULL);
+			break;
+
+		case MID_SASI2OPEN:
+			filesel_sasi(1);
+			break;
+
+		case MID_SASI2EJECT:
+			diskdrv_sethdd(1, NULL);
 			break;
 
 		case MID_DISPSYNC:
@@ -78,13 +113,10 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATECFG;
 			break;
 
-#if 0
 		case MID_SCREENOPT:
-			winuienter();
-			dialog_scropt(hWnd);
-			winuileave();
+			menudlg_create(DLGSCR_WIDTH, DLGSCR_HEIGHT,
+											(char *)mstr_scropt, dlgscr_cmd);
 			break;
-#endif
 
 		case MID_KEY:
 			np2cfg.KEY_MODE = 0;

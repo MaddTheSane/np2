@@ -14,6 +14,7 @@ typedef struct {
 	void		(*usercb)(void *userdata, BYTE *stream, int len);
 	void		*userdata;
 	WAVEHDR		*wh;
+	int			pause_on;
 } WCTRL;
 
 static	WCTRL			w_ctrl;
@@ -35,8 +36,13 @@ void __sdl_audio_cb(UINT msg, HWAVEOUT hwo, WAVEHDR *whd) {
 	if ((msg == MM_WOM_DONE) && (whd)) {
 		waveOutUnprepareHeader(hwo, whd, sizeof(WAVEHDR));
 		if (whd->lpData) {
-			w_ctrl.usercb(w_ctrl.userdata,
+			if (!w_ctrl.pause_on) {
+				w_ctrl.usercb(w_ctrl.userdata,
 										(BYTE *)whd->lpData, w_ctrl.bufsize);
+			}
+			else {
+				ZeroMemory((BYTE *)whd->lpData, w_ctrl.bufsize);
+			}
 			waveOutPrepareHeader(hwo, whd, sizeof(WAVEHDR));
 			waveOutWrite(hwo, whd, sizeof(WAVEHDR));
 		}
@@ -49,8 +55,13 @@ static void CALLBACK hwavecb(HWAVEOUT hwo, UINT uMsg,
 	if ((uMsg == WOM_DONE) && (dwParam1)) {
 		waveOutUnprepareHeader(hwo, (WAVEHDR *)dwParam1, sizeof(WAVEHDR));
 		if (((WAVEHDR *)dwParam1)->lpData) {
-			w_ctrl.usercb(w_ctrl.userdata,
+			if (!w_ctrl.pause_on) {
+				w_ctrl.usercb(w_ctrl.userdata,
 										(BYTE *)whd->lpData, w_ctrl.bufsize);
+			}
+			else {
+				ZeroMemory((BYTE *)whd->lpData, w_ctrl.bufsize);
+			}
 			waveOutPrepareHeader(hwo, (WAVEHDR *)dwParam1, sizeof(WAVEHDR));
 			waveOutWrite(hwo, (WAVEHDR *)dwParam1, sizeof(WAVEHDR));
 		}
@@ -194,6 +205,7 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
 		goto soa_err2;
 	}
 	w_ctrl.opened = TRUE;
+	w_ctrl.pause_on = 0;
 	w_ctrl.hwave = hwave;
 	for (i=0; i<slice; i++) {
 		waveOutPrepareHeader(hwave, wh + i, sizeof(WAVEHDR));
@@ -237,6 +249,8 @@ void SDL_CloseAudio(void) {
 }
 
 void SDL_PauseAudio(int pause_on) {
+
+	w_ctrl.pause_on = pause_on;
 }
 
 void SDL_MixAudio(BYTE *dst, const BYTE *src, DWORD len, int volume) {

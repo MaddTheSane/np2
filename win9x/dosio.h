@@ -70,7 +70,7 @@ short file_dircreate(const char *path);
 
 											// カレントファイル操作
 void file_setcd(const char *exepath);
-TCHAR *file_getcd(const char *path);
+char *file_getcd(const char *path);
 FILEH file_open_c(const char *path);
 FILEH file_open_rb_c(const char *path);
 FILEH file_create_c(const char *path);

@@ -16,8 +16,14 @@ enum {												// ver0.28
 	FTYPE_MIMPI			// mimpi defaultƒtƒ@ƒCƒ‹
 };
 
-typedef FILE *			FILEH;
-#define	FILEH_INVALID	NULL
+typedef FILE *				FILEH;
+#define	FILEH_INVALID		NULL
+#define	FILEFINDH			long
+#if defined(WIN32)
+#define	FILEFINDH_INVALID	-1
+#else
+#define	FILEFINDH_INVALID	0
+#endif
 
 #define	FSEEK_SET	SEEK_SET
 #define	FSEEK_CUR	SEEK_CUR
@@ -44,8 +50,14 @@ typedef struct {
 	BYTE	second;		/* dh */
 } DOSTIME;
 
+typedef struct {
+	char	path[MAX_PATH];
+	UINT32	size;
+	UINT32	attr;
+} FILEFINDT;
 
-#ifdef	__cplusplus
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -76,6 +88,9 @@ FILEH file_create_c(const char *path);
 short file_delete_c(const char *path);
 short file_attr_c(const char *path);
 
+FILEFINDH file_find1st(const char *dir, FILEFINDT *fft);
+BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft);
+void file_findclose(FILEFINDH hdl);
 
 #define file_cpyname(p, n, m)	milstr_ncpy(p, n, m)
 #if defined(WIN32)
