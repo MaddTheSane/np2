@@ -57,8 +57,9 @@ typedef struct {
 	LIOGCOLOR1	gcolor1;
 	UINT8		degcol[8];
 
+	// ---- work
+	UINT32		wait;
 	LIORANGE	range;
-
 } _LIOWORK, *LIOWORK;
 
 

@@ -8,6 +8,16 @@
 
 
 typedef struct {
+	BYTE	x1[2];
+	BYTE	y1[2];
+	BYTE	x2[2];
+	BYTE	y2[2];
+	BYTE	off[2];
+	BYTE	seg[2];
+	BYTE	leng[2];
+} GGET;
+
+typedef struct {
 	BYTE	x[2];
 	BYTE	y[2];
 	BYTE	off[2];
@@ -306,7 +316,7 @@ const BYTE	*src;
 
 // ----
 
-static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
+static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 
 	UINT	addr;
 	UINT8	sbit;
@@ -316,6 +326,7 @@ static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
 	UINT	height;
 	UINT	flag;
 	UINT	pl;
+	UINT	writecnt;
 
 	if ((lput->x < lio->range.x1) ||
 		(lput->y < lio->range.y1) ||
@@ -345,18 +356,18 @@ static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
 	pt.maskl = (UINT8)(0xff >> pt.sft);
 	pt.maskr = (UINT8)((~0x7f) >> ((pt.width + pt.sft - 1) & 7));
 	pt.masklr = (UINT8)(pt.maskl >> pt.sft);
-	TRACEOUT(("mask - %.2x %.2x %.2x", pt.maskl, pt.maskr, pt.masklr));
 
 	datacnt = (lput->width + 7) >> 3;
 	off = lput->off;
-	TRACEOUT(("datacnt %d - %.4x %.4x", datacnt, lput->seg, lput->off));
 
 	flag = (lio->gcolor1.palmode == 2)?0x0f:0x07;
 	flag |= (lput->fg & 15) << 4;
 	flag |= (lput->bg & 15) << 8;
 
+	TRACEOUT(("mode = %d [%.x]", lput->mode, flag));
+
 	// ‚³‚Ä•\Ž¦B
-	TRACEOUT(("gput mode = %d", lput->mode));
+	writecnt = 0;
 	for (pl=0; pl<4; pl++) {
 		if (flag & 1) {
 			pt.baseptr = mem + lioplaneadrs[pl];
@@ -379,6 +390,7 @@ static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
 						else {
 							putand(&pt);
 						}
+						writecnt += 2;
 						break;
 
 					case 1:		// NOT
@@ -394,32 +406,39 @@ static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
 						else {
 							putand(&pt);
 						}
+						writecnt += 2;
 						break;
 
 					case 2:		// OR
 						if (flag & (1 << 4)) {
 							putor(&pt);
+							writecnt++;
 						}
 						if (flag & (1 << 8)) {
 							putorn(&pt);
+							writecnt++;
 						}
 						break;
 
 					case 3:		// AND
-						if (flag & (1 << 4)) {
-							putand(&pt);
-						}
-						if (flag & (1 << 8)) {
+						if (!(flag & (1 << 4))) {
 							putandn(&pt);
+							writecnt++;
+						}
+						if (!(flag & (1 << 8))) {
+							putand(&pt);
+							writecnt++;
 						}
 						break;
 
 					case 4:		// XOR
 						if (flag & (1 << 4)) {
 							putxor(&pt);
+							writecnt++;
 						}
 						if (flag & (1 << 8)) {
 							putxorn(&pt);
+							writecnt++;
 						}
 						break;
 				}
@@ -431,6 +450,7 @@ static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
 		}
 		flag >>= 1;
 	}
+	lio->wait += writecnt * datacnt * (10 + 10 + 10);
 	return(LIO_SUCCESS);
 }
 
@@ -439,7 +459,10 @@ static REG8 putsub(const _LIOWORK *lio, const LIOPUT *lput) {
 
 REG8 lio_gget(LIOWORK lio) {
 
+	GGET	dat;
+
 	lio_updaterange(lio);
+	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 
 	return(0);
 }

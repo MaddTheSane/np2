@@ -36,6 +36,8 @@ REG8 gdcbitreverse(REG8 data);
 void gdcslavewait(NEVENTITEM item);
 
 void gdcsub_initialize(void);
+void gdcsub_setslavewait(UINT32 clock);
+
 void gdcsub_vect0(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_vectl(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_vectt(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);

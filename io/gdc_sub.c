@@ -104,6 +104,18 @@ void gdcslavewait(NEVENTITEM item) {
 	}
 }
 
+void gdcsub_setslavewait(UINT32 wait) {
+
+	SINT32	clk;
+
+	clk = nevent_getremain(NEVENT_GDCSLAVE);
+	if (clk < 0) {
+		clk = 0;
+	}
+	gdc.s_drawing = 8;							// GDC DRAWING!
+	nevent_set(NEVENT_GDCSLAVE, clk + wait, gdcslavewait, NEVENT_ABSOLUTE);
+}
+
 static void calc_gdcslavewait(UINT dots) {
 
 	SINT32	clk;
@@ -118,8 +130,7 @@ static void calc_gdcslavewait(UINT dots) {
 	clk *= pccore.multiple;
 	clk /= 15625;
 	clk += 30 * pccore.multiple;
-	gdc.s_drawing = 8;							// GDC DRAWING!
-	nevent_set(NEVENT_GDCSLAVE, clk, gdcslavewait, NEVENT_ABSOLUTE);
+	gdcsub_setslavewait(clk);
 }
 
 void gdcsub_vect0(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {

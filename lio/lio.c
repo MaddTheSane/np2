@@ -18,8 +18,9 @@ void lio_initialize(void) {
 	mem[0xf9900] = 0x11;
 	for (i=0; i<0x11; i++) {
 		mem[0xf9904 + i*4] = 0xa0 + i;
-		SETBIOSMEM16(0xf9906 + i*4, 0x100 + i*2);
-		SETBIOSMEM16(0xf9a00 + i*2, 0xcf90);
+		mem[0xf9905 + i*4] = 0x00;
+		SETBIOSMEM16(0xf9906 + i*4, 0x100 + i*4);
+		SETBIOSMEM32(0xf9a00 + i*4, 0xcf90fb90);
 	}
 	mem[0xf9944] = 0xce;
 }
@@ -31,6 +32,7 @@ void bios_lio(REG8 cmd) {
 	TRACEOUT(("lio command %.2x", cmd));
 
 	lio = &liowork;
+	lio->wait = 500;
 	switch(cmd) {
 		case 0x00:			// a0: GINIT
 			CPU_AH = lio_ginit(lio);
@@ -93,7 +95,8 @@ void bios_lio(REG8 cmd) {
 		case 0x10:			// ce: GCOPY
 			break;
 	}
-	// TRACEOUT(("lio cmd-%d, %d", cmd, CPU_AH));
+	gdcsub_setslavewait(lio->wait);
+	TRACEOUT(("lio wait = %d", lio->wait));
 }
 
 

@@ -1328,8 +1328,8 @@ static BOOL fhdl_wr(void *vpItem, void *vpArg) {
 	len = strlen(p);
 	statflag_write((STFLAGH)vpArg, &len, sizeof(len));
 	if (len) {
-		if (len < sizeof(MAX_PATH)) {
-			ZeroMemory(p + len, sizeof(MAX_PATH) - len);
+		if (len < MAX_PATH) {
+			ZeroMemory(p + len, MAX_PATH - len);
 		}
 		statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVFILE));
 	}
@@ -1343,8 +1343,8 @@ static BOOL flist_wr(void *vpItem, void *vpArg) {
 
 	p = ((HDRVLST)vpItem)->realname;
 	len = strlen(p);
-	if (len < sizeof(MAX_PATH)) {
-		ZeroMemory(p + len, sizeof(MAX_PATH) - len);
+	if (len < MAX_PATH) {
+		ZeroMemory(p + len, MAX_PATH - len);
 	}
 	statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVLST));
 	return(FALSE);

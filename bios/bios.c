@@ -288,13 +288,8 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 	UINT16	bootseg;
 
 	if ((CPU_ITFBANK) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
-#if 1					// for epson ITF
+		// for epson ITF
 		return(0);
-#else
-		CPU_IP--;
-		CPU_REMCLOCK = -1;
-		return(1);
-#endif
 	}
 
 	switch(adrs) {
@@ -442,9 +437,16 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(0);
 	}
 
-	if ((adrs >= 0xf9a00) && (adrs < 0x0f9a24)) {
-		if (!(adrs & 1)) {
-			bios_lio((BYTE)((adrs - 0xf9a00) >> 1));
+	if ((adrs >= 0xf9a00) && (adrs < 0x0f9a44)) {
+		if (!(adrs & 3)) {
+			bios_lio((REG8)((adrs - 0xf9a00) >> 2));
+		}
+		else {
+			if (nevent_iswork(NEVENT_GDCSLAVE)) {
+				CPU_IP--;
+				CPU_REMCLOCK = -1;
+				return(1);
+			}
 		}
 		return(0);
 	}
