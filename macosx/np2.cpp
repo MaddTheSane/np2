@@ -827,13 +827,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
     
-	GetWindowBounds(hWndMain, kWindowGlobalPortRgn, &bounds);
-	if ((np2oscfg.winx != bounds.left) || (np2oscfg.winy != bounds.top)) {
-		np2oscfg.winx = bounds.left;
-		np2oscfg.winy = bounds.top;
-		sysmng_update(SYS_UPDATEOSCFG);
-	}
-
 	np2running = FALSE;
     menu_setrecording(true);
 
@@ -841,6 +834,13 @@ int main(int argc, char *argv[]) {
         toggleFullscreen();
     }
     
+	GetWindowBounds(hWndMain, kWindowGlobalPortRgn, &bounds);
+	if ((np2oscfg.winx != bounds.left) || (np2oscfg.winy != bounds.top)) {
+		np2oscfg.winx = bounds.left;
+		np2oscfg.winy = bounds.top;
+		sysmng_update(SYS_UPDATEOSCFG);
+	}
+
 	pccore_cfgupdate();
 
 #if defined(USE_RESUME)
@@ -938,7 +938,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                     result = noErr;
                     break;
                 case kEventMouseDown:
-                    if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
+                    if (buttonKind == kEventMouseButtonSecondary || modif & cmdKey) {
                         mousemng_buttonevent(MOUSEMNG_RIGHTDOWN);
                     }
                     else {
@@ -947,7 +947,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                     result=noErr;
                     break;
                 case kEventMouseUp:
-                    if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
+                    if (buttonKind == kEventMouseButtonSecondary || modif & cmdKey) {
                         mousemng_buttonevent(MOUSEMNG_RIGHTUP);
                     }
                     else if (buttonKind == kEventMouseButtonTertiary) {
@@ -1162,6 +1162,8 @@ static void toggleFullscreen(void) {
         backupheight = bounds.bottom - bounds.top;
         toolwin = np2oscfg.toolwin;
         toolwin_close();
+        np2oscfg.winx = bounds.left;
+        np2oscfg.winy = bounds.top;
         DisposeWindow(hWndMain);
         BeginFullScreen(&bkfullscreen, 0, &w, &h, &hWndMain, NULL, fullScreenAllowEvents);	
         DisableMenuItem(menu, IDM_ROLNORMAL);
