@@ -225,6 +225,8 @@ void xmenu_setextmem(BYTE value) {
 	CheckMenuItem(hmenu, IDM_MEM16, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_MEM36, MFCHECK(value == 3));
 	CheckMenuItem(hmenu, IDM_MEM76, MFCHECK(value == 7));
+	CheckMenuItem(hmenu, IDM_MEM116, MFCHECK(value == 11));
+	CheckMenuItem(hmenu, IDM_MEM136, MFCHECK(value == 13));
 }
 
 void xmenu_setmouse(BYTE value) {

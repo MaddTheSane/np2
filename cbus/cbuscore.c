@@ -2,6 +2,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
+#include	"ideio.h"
 #include	"sasiio.h"
 #include	"scsiio.h"
 #include	"pc9861k.h"
@@ -9,6 +10,7 @@
 
 
 static const IOCBFN resetfn[] = {
+			ideio_reset,
 #if defined(SUPPORT_SASI)
 			sasiio_reset,
 #endif
@@ -21,6 +23,7 @@ static const IOCBFN resetfn[] = {
 			mpu98ii_reset};
 
 static const IOCBFN bindfn[] = {
+			ideio_bind,
 #if defined(SUPPORT_SASI)
 			sasiio_bind,
 #endif

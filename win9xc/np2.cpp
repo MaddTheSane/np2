@@ -444,6 +444,16 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_MEM116:
+			xmenu_setextmem(11);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MEM136:
+			xmenu_setextmem(13);
+			update |= SYS_UPDATECFG;
+			break;
+
 		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
 			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);

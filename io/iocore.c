@@ -434,6 +434,9 @@ static const IOCBFN resetfn[] = {
 #if !defined(CPUCORE_IA32)
 			emsio_reset,
 #endif
+#if defined(SUPPORT_PC9821)
+			pcidev_reset,
+#endif
 		};
 
 static const IOCBFN bindfn[] = {
@@ -452,6 +455,9 @@ static const IOCBFN bindfn[] = {
 			necio_bind,			epsonio_bind,
 #if !defined(CPUCORE_IA32)
 			emsio_bind,
+#endif
+#if defined(SUPPORT_PC9821)
+			pcidev_bind,
 #endif
 		};
 

@@ -18,21 +18,37 @@ static const char str_notexist[] = "not exist";
 static const char str_disable[] = "disable";
 
 static const char str_winclr[] =
-						"256-colors\065536-colors\0full color\0true color";
+						"256-colors\0"				\
+						"65536-colors\0"			\
+						"full color\0"				\
+						"true color";
 static const char str_winmode[] =
-						" (window)\0 (fullscreen)";
+						" (window)\0"				\
+						" (fullscreen)";
 static const char str_grcgchip[] =
-						"\0GRCG \0GRCG CG-Window \0EGC CG-Window ";
+						"\0"						\
+						"GRCG \0"					\
+						"GRCG CG-Window \0"			\
+						"EGC CG-Window ";
 static const char str_clrmode[] =
-						"(Digital)\0(Analog)";
+						"(Digital)\0"				\
+						"(Analog)";
 static const char str_chpan[] =
-						"none\0Mono-R\0Mono-L\0Stereo";
-
+						"none\0"					\
+						"Mono-R\0"					\
+						"Mono-L\0"					\
+						"Stereo";
 static const char str_fmboard[] =
-						"none\0PC-9801-14\0PC-9801-26\0PC-9801-86\0"	\
-						"PC-9801-26 + 86\0PC-9801-118\0"				\
-						"PC-9801-86 + Chibi-oto\0"						\
-						"Speak board\0Spark board\0AMD-98";
+						"none\0"					\
+						"PC-9801-14\0"				\
+						"PC-9801-26\0"				\
+						"PC-9801-86\0"				\
+						"PC-9801-26 + 86\0"			\
+						"PC-9801-118\0"				\
+						"PC-9801-86 + Chibi-oto\0"	\
+						"Speak board\0"				\
+						"Spark board\0"				\
+						"AMD-98";
 
 
 static const char str_V30[] = "V30";

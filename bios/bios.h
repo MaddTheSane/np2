@@ -1,33 +1,28 @@
-#define		BIOS_SEG	0xfd80
-#define		BIOS_BASE	(BIOS_SEG << 4)
 
-// #define	BIOS_OFF	0x0100
-// #define	BIOS_ADR	((BIOS_SEG << 4) + BIOS_OFF)
+enum {
+	BIOS_SEG		= 0xfd80,
+	BIOS_BASE		= (BIOS_SEG << 4),
 
+	BIOS_TABLE		= 0x0040,
 
-enum {	// オフセット～
-	BIOSOFST_IRET	= 0x0100,					// IRET
-	BIOSOFST_EOIM	= 0x0102,					// EOI Master
-	BIOSOFST_EOIS	= 0x0104,					// EOI Slave
+	BIOSOFST_ITF	= 0x0080,
+	BIOSOFST_INIT	= 0x0084,
 
-	BIOSOFST_02		= 0x0106,					// NMI
-	BIOSOFST_08		= 0x0108,					// PIT
-	BIOSOFST_09		= 0x010a,					// Keyboard
-	BIOSOFST_0c		= 0x010c,					// Serial
+	BIOSOFST_09		= 0x0088,					// Keyboard
+	BIOSOFST_0c		= 0x008c,					// Serial
 
-	BIOSOFST_12		= 0x010e,					// FDC
-	BIOSOFST_13		= 0x0110,					// FDC
+	BIOSOFST_12		= 0x0090,					// FDC
+	BIOSOFST_13		= 0x0094,					// FDC
 
-	BIOSOFST_18		= 0x0112,					// Common
-	BIOSOFST_19		= 0x0114,					// RS-232C
-	BIOSOFST_1a		= 0x0116,					// Printer
-	BIOSOFST_1b		= 0x0118,					// Disk
-	BIOSOFST_1c		= 0x011a,					// Timer
-	BIOSOFST_1e		= 0x0000,					// BASIC
-	BIOSOFST_1f		= 0x011c,					// Ext
+	BIOSOFST_18		= 0x0098,					// Common
+	BIOSOFST_19		= 0x009c,					// RS-232C
+	BIOSOFST_CMT	= 0x00a0,					// CMT
+	BIOSOFST_PRT	= 0x00a4,					// Printer
+	BIOSOFST_1b		= 0x00a8,					// Disk
+	BIOSOFST_1c		= 0x00ac,					// Timer
+	BIOSOFST_1f		= 0x00b0,					// Ext
 
-	BIOSOFST_PRT	= (BIOSOFST_1a + 0x19),		// Printer Main
-	BIOSOFST_WAIT	= 0x0140					// FDD waiting
+	BIOSOFST_WAIT	= 0x00b4					// FDD waiting
 };
 
 
@@ -40,10 +35,6 @@ extern	BOOL	biosrom;
 
 void bios_initialize(void);
 UINT MEMCALL biosfunc(UINT32 adrs);
-
-void bios0x02(void);
-
-void bios0x08(void);
 
 void bios0x09(void);
 void bios0x09_init(void);
@@ -65,8 +56,8 @@ void bios0x18_42(REG8 mode);
 
 void bios0x19(void);
 
-void bios0x1a(void);
-void bios0x1a_main(void);
+void bios0x1a_cmt(void);
+void bios0x1a_prt(void);
 
 void bios0x1b(void);
 void fddbios_equip(REG8 type, BOOL clear);
@@ -74,7 +65,8 @@ void fddbios_equip(REG8 type, BOOL clear);
 REG16 bootstrapload(void);
 
 void bios0x1c(void);
-void bios0x1c_03(void);
+
+void bios0x1f(void);
 
 #ifdef __cplusplus
 }

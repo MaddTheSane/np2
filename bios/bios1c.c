@@ -9,18 +9,6 @@
 #include	"biosmem.h"
 
 
-void bios0x1c_03(void) {
-
-	iocore_out8(0x71, 0x00);
-	if (pccore.cpumode & CPUMODE_8MHZ) {
-		iocore_out8(0x71, 0x4e);				// 4MHz
-	}
-	else {
-		iocore_out8(0x71, 0x60);				// 5MHz
-	}
-	pic.pi[0].imr &= ~(PIC_SYSTEMTIMER);
-}
-
 void bios0x1c(void) {
 
 	BYTE	buf[6];
@@ -42,11 +30,17 @@ void bios0x1c(void) {
 			SETBIOSMEM16(0x0001e, CPU_ES);
 			SETBIOSMEM16(0x0058a, CPU_CX);
 			iocore_out8(0x77, 0x36);
-			bios0x1c_03();
-			break;
+			/* through */
 
 		case 0x03:					// continue interval timer
-			bios0x1c_03();
+			iocore_out8(0x71, 0x00);
+			if (pccore.cpumode & CPUMODE_8MHZ) {
+				iocore_out8(0x71, 0x4e);				// 4MHz
+			}
+			else {
+				iocore_out8(0x71, 0x60);				// 5MHz
+			}
+			pic.pi[0].imr &= ~(PIC_SYSTEMTIMER);
 			break;
 	}
 }

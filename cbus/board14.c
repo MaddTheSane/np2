@@ -13,7 +13,7 @@
 
 // ---- 8253C-2
 
-static UINT pit3_latch(void) {
+UINT board14_pitcount(void) {
 
 	SINT32	clock;
 
@@ -29,82 +29,13 @@ static UINT pit3_latch(void) {
 	return(0);
 }
 
-static void pit3_setflag(REG8 value) {
-
-	pit.flag[3] = 0;
-	if (value & 0x30) {
-		pit.mode[3] = value;
-	}
-	else {
-		pit.mode[3] &= ~0x30;
-		pit.latch[3] = pit3_latch();
-	}
-}
-
-static BOOL pit3_setcount(REG8 value) {
-
-	switch(pit.mode[3] & 0x30) {
-		case 0x10:		// access low
-			pit.value[3] = value;
-			break;
-
-		case 0x20:		// access high
-			pit.value[3] = value << 8;
-			break;
-
-		case 0x30:		// access word
-			if (!(pit.flag[3] & 2)) {
-				pit.value[3] &= 0xff00;
-				pit.value[3] += value;
-				pit.flag[3] ^= 2;
-				return(TRUE);
-			}
-			pit.value[3] &= 0x00ff;
-			pit.value[3] += value << 8;
-			pit.flag[3] ^= 2;
-			break;
-	}
-	return(FALSE);
-}
-
-static REG8 pit3_getcount(void) {
-
-	REG8	ret;
-	REG16	w;
-
-	if (!(pit.mode[3] & 0x30)) {
-		w = pit.latch[3];
-	}
-	else {
-		w = pit3_latch();
-	}
-	switch(pit.mode[3] & 0x30) {
-		case 0x10:						// access low
-			return((UINT8)w);
-
-		case 0x20:						// access high
-			return((UINT8)(w >> 8));
-	}
-										// access word
-	if (!(pit.flag[3] & 1)) {
-		ret = (UINT8)w;
-	}
-	else {
-		ret = (UINT8)(w >> 8);
-	}
-	pit.flag[3] ^= 1;
-	return(ret);
-}
-
 
 // ---- intr
 
-static void setmusicgenevent(BOOL absolute) {
+static void setmusicgenevent(UINT32 cnt, BOOL absolute) {
 
-	SINT32	cnt;
-
-	if (pit.value[3] > 4) {						// 根拠なし
-		cnt = pccore.multiple * pit.value[3];
+	if (cnt > 4) {								// 根拠なし
+		cnt *= pccore.multiple;
 	}
 	else {
 		cnt = pccore.multiple << 16;
@@ -118,10 +49,13 @@ static void setmusicgenevent(BOOL absolute) {
 
 void musicgenint(NEVENTITEM item) {
 
+	PITCH	pitch;
+
 	if (item->flag & NEVENT_SETEVENT) {
-		if ((pit.mode[3] & 0x0c) == 0x04) {
+		pitch = pit.ch + 3;
+		if ((pitch->ctrl & 0x0c) == 0x04) {
 			// レートジェネレータ
-			setmusicgenevent(NEVENT_RELATIVE);
+			setmusicgenevent(pitch->value, NEVENT_RELATIVE);
 		}
 	}
 	pic_setirq(0x0c);
@@ -175,15 +109,18 @@ static void IOOUTCALL musicgen_o188(UINT port, REG8 dat) {
 
 static void IOOUTCALL musicgen_o18c(UINT port, REG8 dat) {
 
-	if (!pit3_setcount(dat)) {
-		setmusicgenevent(NEVENT_ABSOLUTE);
+	PITCH	pitch;
+
+	pitch = pit.ch + 3;
+	if (!pit_setcount(pitch, dat)) {
+		setmusicgenevent(pitch->value, NEVENT_ABSOLUTE);
 	}
 	(void)port;
 }
 
 static void IOOUTCALL musicgen_o18e(UINT port, REG8 dat) {
 
-	pit3_setflag(dat);
+	pit_setflag(pit.ch + 3, dat);
 	(void)port;
 }
 
@@ -220,7 +157,7 @@ static REG8 IOINPCALL musicgen_i188(UINT port) {
 static REG8 IOINPCALL musicgen_i18c(UINT port) {
 
 	(void)port;
-	return(pit3_getcount());
+	return(pit_getstat(pit.ch + 3));
 }
 
 static REG8 IOINPCALL musicgen_i18e(UINT port) {

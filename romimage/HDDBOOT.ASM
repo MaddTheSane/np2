@@ -1,41 +1,43 @@
 
-CODE	SEGMENT
-		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing
-		ORG 0000H
+	ORG		0
+	USE16
+	CPU		8086
 
 FIXCS		equ		2eh
+
+segment .hddboot start=0x0000
 
 START:			jmp		short main
 				nop
 				nop
-				db		"IPL1", 0, 0, 0, 01eh
+				db		"IPL1", 0, 0, 0, 0x1e
 
-main:			mov		ax, 0a04h
-				int		18h
-				mov		ah, 16h
-				mov		dx, 0e120h
-				int		18h
+main:			mov		ax, 0x0a04
+				int		0x18
+				mov		ah, 0x16
+				mov		dx, 0xe120
+				int		0x18
 				cli
 				cld
-				mov		ax, 0a000h
+				mov		ax, 0xa000
 				mov		es, ax
-				mov		si, offset nosysmsg
+				mov		si, nosysmsg
 				xor		di, di
 				call	putmsg
 				mov		di, 160
 				call	putmsg
-mine:			hlt
-				jmp		short mine
+.hlt:			hlt
+				jmp		short .hlt
 
 putmsg:			db		FIXCS
 				lodsw
 				test	ax, ax
-				je		short putmsgend
+				je		short .end
 				stosw
 				inc		di
 				inc		di
 				jmp		short putmsg
-putmsgend:		ret
+.end:			ret
 
 
 				; このハードディスクイメージはフォーマットされていません．
@@ -49,6 +51,5 @@ nosysmsg	dw	3304h,4e04h,4f05h,3c01h,4905h,4705h,2305h,3905h
 			dw	7204h,5e21h,7e26h,6518h,2401h,6a05h,3b05h,4305h
 			dw	4805h,3704h,4604h,3c12h,3504h,2404h,2501h,0
 
-CODE	ENDS
-	END START
+	ends
 

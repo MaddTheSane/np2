@@ -4,163 +4,128 @@
 #include	"iocore.h"
 
 
+enum {
+	PIC_OCW2_L		= 0x07,
+	PIC_OCW2_EOI	= 0x20,
+	PIC_OCW2_SL		= 0x40,
+	PIC_OCW2_R		= 0x80,
+
+	PIC_OCW3_RIS	= 0x01,
+	PIC_OCW3_RR		= 0x02,
+	PIC_OCW3_P		= 0x04,
+	PIC_OCW3_SMM	= 0x20,
+	PIC_OCW3_ESMM	= 0x40
+};
+
+
 static const _PICITEM def_master = {
-							0, {0, 0, 0, 0, 0, 0, 0, 0},
-								{7, 6, 5, 4, 3, 2, 1, 0},
-								{0, 0x08, 0x00, 0},
-								0x7d, 0, 0, 0,
-								0, 0, 0, 0};
+								{0x11, 0x08, 0x80, 0x1d},
+								0x7d, 0, 0, 0, 0, 0};
 
 static const _PICITEM def_slave = {
-							0, {0, 0, 0, 0, 0, 0, 0, 0},
-								{7, 6, 5, 4, 3, 2, 1, 0},
-								{0, 0x10, 0x07, 0},
-								0x71, 0, 0, 0,
-								0, 0, 0, 0};
+								{0x11, 0x10, 0x07, 0x09},
+								0x71, 0, 0, 0, 0, 0};
 
 
 // ----
 
-static void pic_rolpry(PICITEM pi) {
-
-	// あははーっ　酷いね…こりゃ
-	*(UINT32 *)(&pi->pry[0]) =
-			(*(UINT32 *)(&pi->pry[0]) + 0x01010101) & 0x07070707;
-	*(UINT32 *)(&pi->pry[4]) =
-			(*(UINT32 *)(&pi->pry[4]) + 0x01010101) & 0x07070707;
-}
-
-
-static void pic_downbylevel(PICITEM picp, UINT level) {
-
-	int		i;
-
-	for (i=0; i<8; i++) {
-		if (picp->pry[i] < picp->pry[level]) {
-			(picp->pry[i])++;
-		}
-	}
-	picp->pry[level] = 0;
-}
-
-
-// eoi処理
-static void pic_forceeoibylevel(PICITEM picp, UINT level) {
-
-	int		i;
-
-	if (picp->isr & (1 << level)) {
-		picp->isr &= ~(1 << level);
-		picp->levels--;
-		for (i=0; (i<picp->levels) && (picp->level[i] != level); i++) { }
-		for (; i<picp->levels; i++) {
-			picp->level[i] = picp->level[i+1];
-		}
-	}
-}
-
-
 void pic_irq(void) {
 
-	int		i;
-	BYTE	bit;
-	SINT8	pry;
-	BYTE	irq;
-	BYTE	sirq;
-	BYTE	targetbit;
 	PIC		p;
+	REG8	imr;
+	REG8	mir;
+	REG8	mis;
+	REG8	sir;
+	REG8	sis;
+	REG8	dat;
+	REG8	num;
+	REG8	bit;
+	REG8	slave;
+	REG8	master;
 
+	// 割込み許可？
+	if (!CPU_isEI) {
+		return;
+	}
 	p = &pic;
 
-	// 割込み許可で　要求あり？
-	if ((CPU_isEI) &&
-			((p->pi[0].irr & (~p->pi[0].imr)) ||
-			(p->pi[1].irr & (~p->pi[1].imr)))) {
+	// マスター
+	imr = p->pi[0].imr;
+	mir = p->pi[0].irr;
+	mis = p->pi[0].isr;
+	if (!(p->pi[0].ocw3 & PIC_OCW3_SMM)) {
+		mir &= ~imr;
+	}
+	else {
+		mis &= imr;
+	}
+	mir &= ~mis;
+	slave = p->pi[0].icw[2];
+	if (mir) {
+		dat = mir | mis;
+		num = p->pi[0].pry;
+		bit = 1 << num;
+		while(!(dat & bit)) {
+			num = (num + 1) & 7;
+			bit = 1 << num;
+		}
+		if ((mir & bit) && (!(slave & bit))) {
+			p->pi[0].isr |= bit;
+			p->pi[0].irr &= ~bit;
+			if (num == 0) {
+				nevent_reset(NEVENT_PICMASK);
+			}
+//			TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | num));
+			CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | num), 0);
+			return;
+		}
+	}
 
-		// マスターの処理
-		if (!p->pi[0].levels) {
-			pry = -1;
+	// スレーヴ許可？
+	dat = slave | mis;
+	if (!dat) {
+		return;
+	}
+	num = p->pi[0].pry;
+	bit = 1 << num;
+	while(!(dat & bit)) {
+		num = (num + 1) & 7;
+		bit = 1 << num;
+	}
+	if (!(slave & bit)) {
+		return;
+	}
+
+	// スレーヴ
+	imr = p->pi[1].imr;
+	sir = p->pi[1].irr;
+	sis = p->pi[1].isr;
+	if (!(p->pi[1].ocw3 & PIC_OCW3_SMM)) {
+		sir &= ~imr;
+	}
+	else {
+		sis &= imr;
+	}
+	sir &= ~sis;
+	if (sir) {
+		dat = sir | sis;
+		num = p->pi[1].pry;
+		bit = 1 << num;
+		while(!(dat & bit)) {
+			num = (num + 1) & 7;
+			bit = 1 << num;
 		}
-		else {
-			pry = (SINT8)p->pi[0].pry[p->pi[0].level[p->pi[0].levels - 1]];
-		}
-		irq = 0xff;
-		targetbit = 0;
-		for (bit=1, i=0; i<8; bit<<=1, i++) {
-			if ((p->pi[0].irr & bit) &&
-				(!((p->pi[0].imr | p->pi[0].isr) & bit))) {
-				if ((SINT8)p->pi[0].pry[i] > pry) {
-					pry = p->pi[0].pry[i];
-					irq = (BYTE)i;
-					targetbit = bit;
-				}
+		if (sir & bit) {
+			p->pi[1].isr |= bit;
+			p->pi[1].irr &= ~bit;
+			master = 1 << (p->pi[1].icw[2] & 7);
+			if (!(p->pi[0].isr & master)) {
+				p->pi[0].isr |= master;
+				p->pi[0].irr &= ~master;
 			}
-		}
-		// スレーヴの要求はある？
-		if (!(p->pi[1].irr & (~p->pi[1].imr))) {
-			sirq = 0xff;
-		}
-		else {
-			sirq = p->pi[1].icw[2] & 7;
-			bit = 1 << sirq;
-			if (!((p->pi[0].imr | p->pi[0].isr) & bit)) {
-				if ((SINT8)p->pi[0].pry[sirq] > pry) {
-					irq = sirq;
-					targetbit = bit;
-				}
-			}
-		}
-		// マスタの割込
-		if (irq != sirq) {
-			if (targetbit) {
-				p->pi[0].isr |= targetbit;
-				p->pi[0].irr &= ~targetbit;
-				p->pi[0].level[p->pi[0].levels++] = irq;
-				if (irq == 0) {									// ver0.28
-					nevent_reset(NEVENT_PICMASK);
-				}
-// TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | irq));
-				CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | irq), 0);
-				return;
-			}
-			if ((!p->pi[0].levels) ||
-				(p->pi[0].level[p->pi[0].levels - 1] != sirq)) {
-				return;
-			}
-		}
-		// スレーヴの処理
-		if (!p->pi[1].levels) {
-			pry = -1;
-		}
-		else {
-			pry = (SINT8)p->pi[1].pry[p->pi[1].level[p->pi[1].levels - 1]];
-		}
-		targetbit = 0;
-		for (bit=1, i=0; i<8; bit<<=1, i++) {
-			if ((p->pi[1].irr & bit) &&
-				(!((p->pi[1].imr | p->pi[1].isr) & bit))) {
-				if ((SINT8)p->pi[1].pry[i] > pry) {
-					pry = p->pi[1].pry[i];
-					irq = (BYTE)i;
-					targetbit = bit;
-				}
-			}
-		}
-		// スレーヴの割込
-		if (targetbit) {
-			if (!(p->pi[0].icw[2] & targetbit)) {
-				p->pi[1].isr |= targetbit;
-				p->pi[1].irr &= ~targetbit;
-				p->pi[1].level[p->pi[1].levels++] = irq;
-				if ((!p->pi[0].levels) ||
-					(p->pi[0].level[p->pi[0].levels - 1] != sirq)) {
-					p->pi[0].isr |= (1 << sirq);
-					p->pi[0].irr &= ~(1 << sirq);
-					p->pi[0].level[p->pi[0].levels++] = sirq;
-				}
-// TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | irq));
-				CPU_INTERRUPT((REG8)((p->pi[1].icw[1] & 0xf8) | irq), 0);
-			}
+//			TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | num));
+			CPU_INTERRUPT((REG8)((p->pi[1].icw[1] & 0xf8) | num), 0);
+			return;
 		}
 	}
 }
@@ -188,10 +153,10 @@ void pic_setirq(REG8 irq) {
 		pi[0].irr |= bit;
 		if (pi[0].imr & bit) {
 			if (bit & PIC_SYSTEMTIMER) {
-				if ((pit.mode[0] & 0x0c) == 0x04) {
+				if ((pit.ch[0].ctrl & 0x0c) == 0x04) {
 					SINT32 cnt;										// ver0.29
-					if (pit.value[0] > 8) {
-						cnt = pccore.multiple * pit.value[0];
+					if (pit.ch[0].value > 8) {
+						cnt = pccore.multiple * pit.ch[0].value;
 						cnt >>= 2;
 					}
 					else {
@@ -226,50 +191,59 @@ void pic_resetirq(REG8 irq) {
 
 static void IOOUTCALL pic_o00(UINT port, REG8 dat) {
 
-	PICITEM		picp;
-	UINT		level;
+	PICITEM	picp;
+	REG8	level;
+	UINT8	ocw3;
 
 //	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
 	picp->writeicw = 0;
 	switch(dat & 0x18) {
-		case 0x00:						// eoi
-			if (dat & 0x40) {
-				level = dat & 7;
+		case 0x00:						// ocw2
+			if (dat & PIC_OCW2_SL) {
+				level = dat & PIC_OCW2_L;
 			}
 			else {
-				if (picp->levels == 0) {
+				if (!picp->isr) {
 					break;
 				}
-				level = picp->level[picp->levels - 1];
-			}
-			if (dat & 0x80) {
-				if (!(dat & 0x40)) {
-					pic_rolpry(picp);
-				}
-				else {
-					pic_downbylevel(picp, level);
+				level = picp->pry;
+				while(!(picp->isr & (1 << level))) {
+					level = (level + 1) & 7;
 				}
 			}
-			if (dat & 0x20) {
-				pic_forceeoibylevel(picp, level);
+			if (dat & PIC_OCW2_R) {
+				picp->pry = (level + 1) & 7;
+			}
+			if (dat & PIC_OCW2_EOI) {
+				picp->isr &= ~(1 << level);
 			}
 			nevent_forceexit();				// mainloop exit
 			break;
 
 		case 0x08:							// ocw3
+			ocw3 = picp->ocw3;
+			if (!(dat & PIC_OCW3_RR)) {
+				dat &= PIC_OCW3_RIS;
+				dat |= (ocw3 & PIC_OCW3_RIS);
+			}
+			if (!(dat & PIC_OCW3_ESMM)) {
+				dat &= ~PIC_OCW3_SMM;
+				dat |= (ocw3 & PIC_OCW3_SMM);
+			}
 			picp->ocw3 = dat;
 			break;
 
 		default:
 			picp->icw[0] = dat;
 			picp->imr = 0;
-			picp->irr = 0;										// ver0.28
-			picp->ocw3 = 0;										// ver0.25
+			picp->irr = 0;
+			picp->ocw3 = 0;
 #if 0
 			picp->levels = 0;
 			picp->isr = 0;
 #endif
+			picp->pry = 0;
 			picp->writeicw = 1;
 			break;
 	}
@@ -308,15 +282,11 @@ static REG8 IOINPCALL pic_i00(UINT port) {
 	PICITEM		picp;
 
 	picp = &pic.pi[(port >> 3) & 1];
-	switch(picp->ocw3 & 0x03) {
-		case 0x02:						// read irr
-			return(picp->irr);
-
-		case 0x03:						// read isr
-			return(picp->isr);
-
-		default:
-			return(0x00);				// can can bunny
+	if (!(picp->ocw3 & PIC_OCW3_RIS)) {
+		return(picp->irr);			// read irr
+	}
+	else {
+		return(picp->isr);			// read isr
 	}
 }
 

@@ -82,7 +82,7 @@ static void calc_mousexy(void) {
 void mouseint(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
-		if (!(mouseif.portc & 0x10)) {
+		if (!(mouseif.upd8255.portc & 0x10)) {
 			pic_setirq(0x0d);
 			nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_RELATIVE);
@@ -92,7 +92,7 @@ void mouseint(NEVENTITEM item) {
 
 static void setportc(REG8 value) {
 
-	if ((value & 0x80) && (!(mouseif.portc & 0x80))) {
+	if ((value & 0x80) && (!(mouseif.upd8255.portc & 0x80))) {
 		calc_mousexy();
 		mouseif.latch_x = mouseif.x;
 		mouseif.x = 0;
@@ -111,7 +111,7 @@ static void setportc(REG8 value) {
 			mouseif.latch_y = -128;
 		}
 	}
-	if ((value ^ mouseif.portc) & 0x10) {
+	if ((value ^ mouseif.upd8255.portc) & 0x10) {
 		if (!(value & 0x10)) {
 			if (!nevent_iswork(NEVENT_MOUSE)) {
 				nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
@@ -119,11 +119,23 @@ static void setportc(REG8 value) {
 			}
 		}
 	}
-	mouseif.portc = (UINT8)value;
+	mouseif.upd8255.portc = (UINT8)value;
 }
 
 
 // ---- I/O
+
+static void IOOUTCALL mouseif_o7fd9(UINT port, REG8 dat) {
+
+	mouseif.upd8255.porta = dat;
+	(void)port;
+}
+
+static void IOOUTCALL mouseif_o7fdb(UINT port, REG8 dat) {
+
+	mouseif.upd8255.portb = dat;
+	(void)port;
+}
 
 static void IOOUTCALL mouseif_o7fdd(UINT port, REG8 dat) {
 
@@ -133,21 +145,23 @@ static void IOOUTCALL mouseif_o7fdd(UINT port, REG8 dat) {
 
 static void IOOUTCALL mouseif_o7fdf(UINT port, REG8 dat) {
 
-	if (!(dat & 0xf0)) {
-		if (dat & 1) {
-			setportc((REG8)(mouseif.portc | (1 << (dat >> 1))));
-		}
-		else {
-			setportc((REG8)(mouseif.portc & (~(1 << (dat >> 1)))));
-		}
-	}
-	else if (dat & 0x80) {
-		mouseif.mode = (UINT8)dat;
+	REG8	portc;
+	UINT	sft;
+
+	portc = 0;
+	if (dat & uPD8255_CTRL) {
+		mouseif.upd8255.mode = (UINT8)dat;
 		pic_resetirq(0x0d);
 		nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_ABSOLUTE);
-		setportc(0);
 	}
+	else {
+		sft = (dat >> 1) & 7;
+		portc = mouseif.upd8255.portc;
+		portc &= (~(1 << sft));
+		portc |= (dat & 1) << sft;
+	}
+	setportc(portc);
 	(void)port;
 }
 
@@ -158,52 +172,62 @@ static REG8 IOINPCALL mouseif_i7fd9(UINT port) {
 	REG8	ret;
 	REG8	portc;
 
-	calc_mousexy();
-	ret = mouseif.b;
-	if (np2cfg.MOUSERAPID) {
-		ret |= mouseif.rapid;
-	}
-	ret &= 0xf0;
-	ret |= 0x50;
-	portc = mouseif.portc;
-	if (portc & 0x80) {
-		x = mouseif.latch_x;
-		y = mouseif.latch_y;
+	if (mouseif.upd8255.mode & uPD8255_PORTA) {
+		calc_mousexy();
+		ret = mouseif.b;
+		if (np2cfg.MOUSERAPID) {
+			ret |= mouseif.rapid;
+		}
+		ret &= 0xf0;
+		ret |= 0x50;
+		portc = mouseif.upd8255.portc;
+		if (portc & 0x80) {
+			x = mouseif.latch_x;
+			y = mouseif.latch_y;
+		}
+		else {
+			x = mouseif.x;
+			y = mouseif.y;
+		}
+		if (portc & 0x40) {
+			x = y;
+		}
+		if (!(portc & 0x20)) {
+			ret |= x & 0x0f;
+		}
+		else {
+			ret |= (x >> 4) & 0x0f;
+		}
+		return(ret);
 	}
 	else {
-		x = mouseif.x;
-		y = mouseif.y;
-	}
-	if (portc & 0x40) {
-		x = y;
-	}
-	if (!(portc & 0x20)) {
-		ret |= x & 0x0f;
-	}
-	else {
-		ret |= (x >> 4) & 0x0f;
+		return(mouseif.upd8255.porta);
 	}
 	(void)port;
-	return(ret);
 }
 
 static REG8 IOINPCALL mouseif_i7fdb(UINT port) {
 
+	if (mouseif.upd8255.mode & uPD8255_PORTB) {
+		return(0x40);
+	}
+	else {
+		return(mouseif.upd8255.portb);
+	}
 	(void)port;
-	return(0x40);
 }
 
 static REG8 IOINPCALL mouseif_i7fdd(UINT port) {
 
-	REG8	ret;
 	REG8	mode;
+	REG8	ret;
 
-	ret = mouseif.portc;
-	mode = mouseif.mode;
-	if (mode & 8) {
+	mode = mouseif.upd8255.mode;
+	ret = mouseif.upd8255.portc;
+	if (mode & uPD8255_PORTCH) {
 		ret &= 0x1f;
 	}
-	if (mode & 1) {
+	if (mode & uPD8255_PORTCL) {
 		ret &= 0xf0;
 		ret |= 0x08;
 		ret |= (np2cfg.dipsw[2] >> 5) & 0x04;
@@ -212,7 +236,6 @@ static REG8 IOINPCALL mouseif_i7fdd(UINT port) {
 	(void)port;
 	return(ret);
 }
-
 
 static void IOOUTCALL mouseif_obfdb(UINT port, REG8 dat) {
 
@@ -226,14 +249,18 @@ static void IOOUTCALL mouseif_obfdb(UINT port, REG8 dat) {
 void mouseif_reset(void) {
 
 	ZeroMemory(&mouseif, sizeof(mouseif));
-	mouseif.mode = 0x93;
-	mouseif.portc = 0x10;
+	mouseif.upd8255.porta = 0x00;
+	mouseif.upd8255.portb = 0x00;
+	mouseif.upd8255.portc = 0x10;
+	mouseif.upd8255.mode = 0x93;
 	mouseif.intrclock = pccore.realclock / 120;
 	mouseif.moveclock = pccore.realclock / 56400;
 }
 
 void mouseif_bind(void) {
 
+	iocore_attachout(0x7fd9, mouseif_o7fd9);
+	iocore_attachout(0x7fdb, mouseif_o7fdb);
 	iocore_attachout(0x7fdd, mouseif_o7fdd);
 	iocore_attachout(0x7fdf, mouseif_o7fdf);
 	iocore_attachinp(0x7fd9, mouseif_i7fd9);

@@ -149,7 +149,7 @@ const char			*p;
 		SPRINTF(work, str_picstat,
 								pic.pi[0].imr, pic.pi[0].irr, pic.pi[0].isr,
 								pic.pi[1].imr, pic.pi[1].irr, pic.pi[1].isr,
-								mouseif.portc, sysport.c);
+								mouseif.upd8255.portc, sysport.c);
 		file_write(fh, work, strlen(work));
 		file_close(fh);
 	}

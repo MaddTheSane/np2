@@ -60,7 +60,7 @@ void beep_modeset(void) {
 
 	BYTE	newmode;
 
-	newmode = (pit.mode[1] >> 2) & 3;
+	newmode = (pit.ch[1].ctrl >> 2) & 3;
 	beep.puchi = beepcfg.puchibase;
 	if (beep.mode != newmode) {
 		sound_sync();

@@ -179,12 +179,10 @@ static void amd98_rhythm(UINT map) {
 
 // ----
 
-static void setamd98event(BOOL absolute) {
+static void setamd98event(UINT32 cnt, BOOL absolute) {
 
-	SINT32	cnt;
-
-	if (pit.value[3] > 8) {						// 根拠なし
-		cnt = pccore.multiple * pit.value[3];
+	if (cnt > 8) {								// 根拠なし
+		cnt *= pccore.multiple;
 	}
 	else {
 		cnt = pccore.multiple << 16;
@@ -197,10 +195,13 @@ static void setamd98event(BOOL absolute) {
 
 void amd98int(NEVENTITEM item) {
 
+	PITCH	pitch;
+
 	if (item->flag & NEVENT_SETEVENT) {
-		if ((pit.mode[3] & 0x0c) == 0x04) {
+		pitch = pit.ch + 4;
+		if ((pitch->ctrl & 0x0c) == 0x04) {
 			// レートジェネレータ
-			setamd98event(NEVENT_RELATIVE);
+			setamd98event(pitch->value, NEVENT_RELATIVE);
 		}
 	}
 	pic_setirq(0x0d);
@@ -244,11 +245,9 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 		if ((b & 1) > (dat & 1)) {
 			b &= 0xc2;
 			if (b == 0x42) {
-//				TRACEOUT(0xfff0, psg_1.reg.io2);
 				amd98.psg3reg = psg1.reg.io2;
 			}
 			else if (b == 0x40) {
-//				TRACEOUT(0xfff1, psg_1.reg.io2);
 				if (amd98.psg3reg < 0x0e) {
 					psggen_setreg(&psg3, amd98.psg3reg, psg1.reg.io2);
 				}
@@ -264,14 +263,19 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 
 static void IOOUTCALL amd_odc(UINT port, REG8 dat) {
 
-	pit_setcount(3, dat);
-	setamd98event(NEVENT_ABSOLUTE);
+	PITCH	pitch;
+
+	pitch = pit.ch + 4;
+	if (pit_setcount(pitch, dat)) {
+		return;
+	}
+	setamd98event(pitch->value, NEVENT_ABSOLUTE);
 	(void)port;
 }
 
 static void IOOUTCALL amd_ode(UINT port, REG8 dat) {
 
-	pit_setflag(3, dat);
+	pit_setflag(pit.ch + 4, dat);
 	(void)port;
 }
 

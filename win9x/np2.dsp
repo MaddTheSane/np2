@@ -364,14 +364,6 @@ SOURCE=..\BIOS\BIOS.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\BIOS\BIOS02.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS08.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\BIOS\BIOS09.C
 # End Source File
 # Begin Source File
@@ -405,6 +397,10 @@ SOURCE=..\BIOS\BIOS1B.C
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1F.C
 # End Source File
 # Begin Source File
 
@@ -555,10 +551,6 @@ SOURCE=..\SOUND\RHYTHMC.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\RHYTHMG.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\SOUND\S98.C
 # End Source File
 # Begin Source File
@@ -615,18 +607,6 @@ SOURCE=..\FDD\SXSI.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\LIO\GCLS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR2.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\LIO\GLINE.C
 # End Source File
 # Begin Source File
@@ -640,10 +620,6 @@ SOURCE=..\LIO\GPUT1.C
 # Begin Source File
 
 SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GVIEW.C
 # End Source File
 # Begin Source File
 
@@ -1126,6 +1102,10 @@ SOURCE=..\CBUS\CBUSCORE.C
 # Begin Source File
 
 SOURCE=..\CBUS\CS4231IO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\IDEIO.C
 # End Source File
 # Begin Source File
 

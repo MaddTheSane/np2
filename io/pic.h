@@ -1,20 +1,15 @@
 
 typedef struct {
-	int		levels;
-	UINT8	level[8];
-
-	UINT8	pry[8];
 	UINT8	icw[4];
 
 	UINT8	imr;			// ocw1
-	UINT8	ocw3;
-	UINT8	irr;
-	UINT8	ext;
-
 	UINT8	isr;
-	UINT8	isrbak;
+	UINT8	irr;
+	UINT8	ocw3;
+
+	UINT8	pry;
 	UINT8	writeicw;
-	UINT8	padding;
+	UINT8	padding[2];
 } _PICITEM, *PICITEM;
 
 

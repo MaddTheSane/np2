@@ -5,6 +5,21 @@
 #include	"bios.h"
 
 
+// ---- CMT
+
+void bios0x1a_cmt(void) {
+
+	if (CPU_AH == 0x04) {
+		CPU_AH = 0x02;
+	}
+	else {
+		CPU_AH = 0x00;
+	}
+}
+
+
+// ---- Printer
+
 static void printerbios_11(void) {
 
 	if (iocore_inp8(0x42) & 0x04) {				// busy?
@@ -20,7 +35,7 @@ static void printerbios_11(void) {
 	}
 }
 
-void bios0x1a_main(void) {											// ver0.30
+void bios0x1a_prt(void) {
 
 	switch(CPU_AH & 0x0f) {
 		case 0x00:
@@ -61,21 +76,6 @@ void bios0x1a_main(void) {											// ver0.30
 		default:
 			CPU_AH = 0x00;
 			break;
-	}
-}
-
-void bios0x1a(void) {
-
-	if (CPU_AH & 0x10) {
-		bios0x1a_main();											// ver0.30
-	}
-	else {
-		if (CPU_AH == 0x04) {
-			CPU_AH = 0x02;
-		}
-		else {
-			CPU_AH = 0x00;
-		}
 	}
 }
 

@@ -8,21 +8,19 @@
 #include	"iocore.h"
 #include	"sound.h"
 #include	"beep.h"
+#include	"board14.h"
 
 
 #define	BEEPCOUNTEREX					// BEEPアイドル時のカウンタをα倍に
-#if defined(CPUCORE_IA32)
-// #define	uPD71054			// だめぽ ＿|￣|○
-#endif
+// #if defined(CPUCORE_IA32)
+#define	uPD71054
+// #endif
 
 
 // --- Interval timer
 
-static void setsystimerevent(BOOL absolute) {
+static void setsystimerevent(UINT32 cnt, BOOL absolute) {
 
-	SINT32	cnt;
-
-	cnt = pit.value[0];
 	if (cnt > 8) {									// 根拠なし
 		cnt *= pccore.multiple;
 	}
@@ -34,19 +32,21 @@ static void setsystimerevent(BOOL absolute) {
 
 void systimer(NEVENTITEM item) {
 
+	PITCH	pitch;
+
 	if (item->flag & NEVENT_SETEVENT) {
-		if (pit.intr[0]) {
-			pit.intr[0] = 0;
+		pitch = pit.ch + 0;
+		if (pitch->flag & PIT_FLAG_I) {
+			pitch->flag &= ~PIT_FLAG_I;
 			pic_setirq(0);
 		}
-		if ((pit.mode[0] & 0x0c) == 0x04) {
+		if ((pitch->ctrl & 0x0c) == 0x04) {
 			// レートジェネレータ
-			pit.intr[0] = 1;
-			setsystimerevent(NEVENT_RELATIVE);
+			pitch->flag |= PIT_FLAG_I;
+			setsystimerevent(pitch->value, NEVENT_RELATIVE);
 		}
 		else {
-			nevent_set(NEVENT_ITIMER, pccore.multiple << 16,
-												systimer, NEVENT_RELATIVE);
+			setsystimerevent(0, NEVENT_RELATIVE);
 		}
 	}
 }
@@ -55,11 +55,8 @@ void systimer(NEVENTITEM item) {
 // --- Beep
 
 #if defined(BEEPCOUNTEREX)
-static void setbeepeventex(BOOL absolute) {
+static void setbeepeventex(UINT32 cnt, BOOL absolute) {
 
-	UINT32	cnt;
-
-	cnt = pit.value[1];
 	if (cnt > 2) {
 		cnt *= pccore.multiple;
 	}
@@ -73,11 +70,8 @@ static void setbeepeventex(BOOL absolute) {
 }
 #endif
 
-static void setbeepevent(BOOL absolute) {
+static void setbeepevent(UINT32 cnt, BOOL absolute) {
 
-	SINT32	cnt;
-
-	cnt = pit.value[1];
 	if (cnt > 2) {
 		cnt *= pccore.multiple;
 	}
@@ -89,20 +83,23 @@ static void setbeepevent(BOOL absolute) {
 
 void beeponeshot(NEVENTITEM item) {
 
+	PITCH	pitch;
+
 	if (item->flag & NEVENT_SETEVENT) {
-		if (!(pit.mode[1] & 0x0c)) {								// ver0.30
+		pitch = pit.ch + 1;
+		if (!(pitch->ctrl & 0x0c)) {
 			beep_lheventset(0);
 		}
 #if defined(uPD71054)
-		if ((pit.mode[1] & 0x06) == 0x02)
+		if ((pitch->ctrl & 0x06) == 0x02)
 #else
-		if (pit.mode[1] & 0x02)
+		if (pitch->ctrl & 0x02)
 #endif
 		{
 #if defined(BEEPCOUNTEREX)
-			setbeepeventex(NEVENT_RELATIVE);
+			setbeepeventex(pitch->value, NEVENT_RELATIVE);
 #else
-			setbeepevent(NEVENT_RELATIVE);
+			setbeepevent(pitch->value, NEVENT_RELATIVE);
 #endif
 		}
 	}
@@ -111,25 +108,27 @@ void beeponeshot(NEVENTITEM item) {
 
 // --- RS-232C
 
-static void setrs232cevent(BOOL absolute) {
+static void setrs232cevent(UINT32 cnt, BOOL absolute) {
 
-	SINT32	cnt;
-
-	if (pit.value[2] > 1) {
-		cnt = pccore.multiple * pit.value[2] * rs232c.mul;
+	if (cnt > 1) {
+		cnt *= pccore.multiple;
 	}
 	else {
-		cnt = (pccore.multiple << 16) * rs232c.mul;
+		cnt = pccore.multiple << 16;
 	}
+	cnt *= rs232c.mul;
 	nevent_set(NEVENT_RS232C, cnt, rs232ctimer, absolute);
 }
 
 void rs232ctimer(NEVENTITEM item) {
 
+	PITCH	pitch;
+
 	if (item->flag & NEVENT_SETEVENT) {
-		if ((pit.mode[2] & 0x0c) == 0x04) {
+		pitch = pit.ch + 2;
+		if ((pitch->ctrl & 0x0c) == 0x04) {
 			// レートジェネレータ
-			setrs232cevent(NEVENT_RELATIVE);
+			setrs232cevent(pitch->value, NEVENT_RELATIVE);
 		}
 	}
 	rs232c_callback();
@@ -138,107 +137,173 @@ void rs232ctimer(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-static UINT pit_latch(int ch) {
+static UINT getcount(const _PITCH *pitch) {
 
 	SINT32	clock;
 
-	if (ch == 1) {
-		switch(pit.mode[1] & 0x06) {
+	switch(pitch->ch) {
+		case 0:
+			clock = nevent_getremain(NEVENT_ITIMER);
+			break;
+
+		case 1:
+			switch(pitch->ctrl & 0x06) {
 #ifdef uPD71054				// ?
-			case 0x00:
+				case 0x00:
 #endif
-			case 0x04:
-				return(pit.value[1]);
+				case 0x04:
+					return(pitch->value);
 #ifdef uPD71054
-			case 0x06:
-				return(pit.value[1] & (~1));
+				case 0x06:
+					return(pitch->value & (~1));
 #endif
-		}
+			}
+			clock = nevent_getremain(NEVENT_BEEP);
 #if defined(BEEPCOUNTEREX)
-		clock = nevent_getremain(NEVENT_ITIMER + ch);
-		if (clock < 0) {
-			return(0);
-		}
-		clock /= pccore.multiple;
-		if (pit.value[1] > 2) {
-			clock %= pit.value[1];
-		}
-		else {
-			clock = LOW16(clock);
-		}
-		return(clock);
+			if (clock >= 0) {
+				clock /= pccore.multiple;
+				if (pitch->value > 2) {
+					clock %= pitch->value;
+				}
+				else {
+					clock = LOW16(clock);
+				}
+				return(clock);
+			}
+#else
+			break;
 #endif
+
+		case 2:
+			clock = nevent_getremain(NEVENT_RS232C);
+			break;
+
+		case 3:
+			return(board14_pitcount());
+
+		default:
+			clock = 0;
+			break;
 	}
-	clock = nevent_getremain(NEVENT_ITIMER + ch);
-	if (clock >= 0) {
+	if (clock > 0) {
 		return(clock / pccore.multiple);
 	}
 	return(0);
 }
 
-void pit_setflag(int ch, REG8 value) {
+static void latchcmd(PITCH pitch, REG8 ctrl) {
 
-	pit.flag[ch] = 0;
-	if (value & 0x30) {
-		pit.mode[ch] = (UINT8)value;
+	UINT8	flag;
+
+	flag = pitch->flag;
+	if (!(ctrl & PIT_LATCH_S)) {
+		flag |= PIT_FLAG_S;
+		pitch->stat = pitch->ctrl;
+	}
+	if (!(ctrl & PIT_LATCH_C)) {
+		flag |= PIT_FLAG_C;
+		flag &= ~PIT_FLAG_L;
+		pitch->latch = getcount(pitch);
+	}
+	pitch->flag = flag;
+}
+
+
+// ----
+
+void pit_setflag(PITCH pitch, REG8 value) {
+
+	if (value & PIT_CTRL_RL) {
+		pitch->ctrl = (UINT8)((value & 0x3f) | PIT_STAT_CMD);
+		pitch->flag &= ~(PIT_FLAG_R | PIT_FLAG_W | PIT_FLAG_L |
+													PIT_FLAG_S | PIT_FLAG_C);
 	}
 	else {														// latch
-		pit.mode[ch] &= ~0x30;
-		pit.latch[ch] = (UINT16)pit_latch(ch);
+		latchcmd(pitch, ~PIT_LATCH_C);
 	}
 }
 
-BOOL pit_setcount(int ch, REG8 value) {
+BOOL pit_setcount(PITCH pitch, REG8 value) {
 
-	switch(pit.mode[ch] & 0x30) {
-		case 0x10:		// access low
-			pit.value[ch] = value;
+	UINT8	flag;
+
+	switch(pitch->ctrl & PIT_CTRL_RL) {
+		case PIT_RL_L:		// access low
+			pitch->value = value;
 			break;
 
-		case 0x20:		// access high
-			pit.value[ch] = value << 8;
+		case PIT_RL_H:		// access high
+			pitch->value = value << 8;
 			break;
 
-		case 0x30:		// access word
-			if (!(pit.flag[ch] & 2)) {
-				pit.value[ch] &= 0xff00;
-				pit.value[ch] += value;
-				pit.flag[ch] ^= 2;
+		case PIT_RL_ALL:	// access word
+			flag = pitch->flag;
+			pitch->flag = flag ^ PIT_FLAG_W;
+			if (!(flag & PIT_FLAG_W)) {
+				pitch->value &= 0xff00;
+				pitch->value += value;
 				return(TRUE);
 			}
-			pit.value[ch] &= 0x00ff;
-			pit.value[ch] += value << 8;
-			pit.flag[ch] ^= 2;
+			pitch->value &= 0x00ff;
+			pitch->value += value << 8;
 			break;
+	}
+	pitch->ctrl &= ~PIT_STAT_CMD;
+	if (((pitch->ctrl & 0x06) == 0x02) && (pitch->flag & PIT_FLAG_I)) {
+		return(TRUE);
 	}
 	return(FALSE);
 }
 
-REG8 pit_getcount(int ch) {
+REG8 pit_getstat(PITCH pitch) {
 
+	UINT8	flag;
+	UINT8	rl;
+	UINT16	w;
 	REG8	ret;
-	REG16	w;
 
-	if (!(pit.mode[ch] & 0x30)) {
-		w = pit.latch[ch];
+	flag = pitch->flag;
+#if defined(uPD71054)
+	if (flag & PIT_FLAG_S) {
+		flag &= ~PIT_FLAG_S;
+		ret = pitch->stat;
 	}
-	else {
-		w = pit_latch(ch);
-	}
-	switch(pit.mode[ch] & 0x30) {
-		case 0x10:						// access low
-			return((UINT8)w);
+	else
+#endif
+	{
+		rl = pitch->ctrl & PIT_CTRL_RL;
+		if (flag & (PIT_FLAG_C | PIT_FLAG_L)) {
+			flag &= ~PIT_FLAG_C;
+			if (rl == PIT_RL_ALL) {
+				flag ^= PIT_FLAG_L;
+			}
+			w = pitch->latch;
+		}
+		else {
+			w = getcount(pitch);
+		}
+		switch(rl) {
+			case PIT_RL_L:						// access low
+				ret = (UINT8)w;
+				break;
 
-		case 0x20:						// access high
-			return((UINT8)(w >> 8));
+			case PIT_RL_H:
+				ret = (UINT8)(w >> 8);
+				break;
+
+			case PIT_RL_ALL:
+			default:
+				if (!(flag & PIT_FLAG_R)) {
+					ret = (UINT8)w;
+				}
+				else {
+					ret = (UINT8)(w >> 8);
+				}
+				flag ^= PIT_FLAG_R;
+				break;
+		}
 	}
-	if (!(pit.flag[ch] & 1)) {			// access word
-		ret = (UINT8)w;
-	}
-	else {
-		ret = (UINT8)(w >> 8);
-	}
-	pit.flag[ch] ^= 1;
+	pitch->flag = flag;
 	return(ret);
 }
 
@@ -248,28 +313,33 @@ REG8 pit_getcount(int ch) {
 // system timer
 static void IOOUTCALL pit_o71(UINT port, REG8 dat) {
 
-//	TRACEOUT(("pic o71: %x", dat));
-	if (pit_setcount(0, dat)) {
+	PITCH	pitch;
+
+	pitch = pit.ch + 0;
+	if (pit_setcount(pitch, dat)) {
 		return;
 	}
 	pic.pi[0].irr &= (~1);
-	pit.intr[0] = 1;
-	setsystimerevent(NEVENT_ABSOLUTE);
+	pitch->flag |= PIT_FLAG_I;
+	setsystimerevent(pitch->value, NEVENT_ABSOLUTE);
 	(void)port;
 }
 
 // beep
 static void IOOUTCALL pit_o73(UINT port, REG8 dat) {
 
-	if (pit_setcount(1, dat)) {
+	PITCH	pitch;
+
+	pitch = pit.ch + 1;
+	if (pit_setcount(pitch, dat)) {
 		return;
 	}
-	setbeepevent(NEVENT_ABSOLUTE);
-	if (!(pit.mode[1] & 0x0c)) {
+	setbeepevent(pitch->value, NEVENT_ABSOLUTE);
+	if (!(pitch->ctrl & 0x0c)) {
 		beep_lheventset(1);
 	}
 	else {
-		beep_hzset(pit.value[1]);
+		beep_hzset(pitch->value);
 	}
 	(void)port;
 }
@@ -277,44 +347,43 @@ static void IOOUTCALL pit_o73(UINT port, REG8 dat) {
 // rs-232c
 static void IOOUTCALL pit_o75(UINT port, REG8 dat) {
 
-	if (pit_setcount(2, dat)) {
+	PITCH	pitch;
+
+	pitch = pit.ch + 2;
+	if (pit_setcount(pitch, dat)) {
 		return;
 	}
 	rs232c_open();
-	setrs232cevent(NEVENT_ABSOLUTE);
+	setrs232cevent(pitch->value, NEVENT_ABSOLUTE);
 	(void)port;
 }
 
 // ctrl
 static void IOOUTCALL pit_o77(UINT port, REG8 dat) {
 
-	int		ch;
+	UINT	chnum;
+	PITCH	pitch;
 
-//	TRACEOUT(("pic o77: %x", dat));
-	ch = (dat >> 6) & 3;
-	if (ch != 3) {
-		pit_setflag(ch, dat);
-		if (ch == 0) {			// 書込みで itimerのirrがリセットされる…
+	chnum = (dat >> 6) & 3;
+	if (chnum != 3) {
+		pitch = pit.ch + chnum;
+		pit_setflag(pitch, dat);
+		if (chnum == 0) {		// 書込みで itimerのirrがリセットされる…
 			pic.pi[0].irr &= (~1);
 			if (dat & 0x30) {	// 一応ラッチ時は割り込みをセットしない
-				pit.intr[0] = 1;
-//				setsystimerevent(NEVENT_ABSOLUTE);
+				pitch->flag |= PIT_FLAG_I;
 			}
 		}
-		if (ch == 1) {
+		if (chnum == 1) {
 			beep_modeset();
 		}
 	}
 #if defined(uPD71054)
 	else {
-		// これ現状じゃだめぽ＿|￣|○ ver0.76に回す…
 		TRACEOUT(("multiple latch commands - %x", dat));
-		for (ch=0; ch<3; ch++) {
-			if (dat & (2 << ch)) {
-				if (!(dat & 0x10)) {
-				}
-				if (!(dat & 0x20)) {
-				}
+		for (chnum=0; chnum<3; chnum++) {
+			if (dat & (2 << chnum)) {
+				latchcmd(pit.ch + chnum, dat);
 			}
 		}
 	}
@@ -324,19 +393,7 @@ static void IOOUTCALL pit_o77(UINT port, REG8 dat) {
 
 static REG8 IOINPCALL pit_i71(UINT port) {
 
-	int		ch;
-
-	ch = (port >> 1) & 3;
-#if defined(uPD71054)
-	if (pit.stat[ch]) {
-		REG8 ret;
-		ret = pit.stat[ch];
-		pit.stat[ch] = 0;
-		TRACEOUT(("stat out -> %d-%x", ch, ret));
-		return(ret);
-	}
-#endif
-	return(pit_getcount(ch));
+	return(pit_getstat(pit.ch + ((port >> 1) & 3)));
 }
 
 
@@ -350,20 +407,24 @@ static const IOINP piti71[4] = {
 
 void itimer_reset(void) {
 
+	UINT16	beepcnt;
+
 	ZeroMemory(&pit, sizeof(pit));
-	if (pccore.cpumode & CPUMODE_8MHZ) {
-		pit.value[1] = 998;				// 4MHz
-	}
-	else {
-		pit.value[1] = 1229;			// 5MHz
-	}
-	pit.intr[0] = 1;
-	pit.mode[0] = 0x30;
-	pit.mode[1] = 0x56;
-	pit.mode[2] = 0xb6;
-	pit.mode[3] = 0x36;
-	setsystimerevent(NEVENT_ABSOLUTE);
-	beep_hzset(pit.value[1]);
+	beepcnt = (pccore.cpumode & CPUMODE_8MHZ)?998:1229;
+	pit.ch[0].ctrl = 0x30;
+	pit.ch[0].ch = 0;
+	pit.ch[0].flag = PIT_FLAG_I;
+	pit.ch[0].ctrl = 0x56 & 0x3f;
+	pit.ch[1].ch = 1;
+	pit.ch[1].value = beepcnt;
+	pit.ch[2].ctrl = 0xb6 & 0x3f;
+	pit.ch[2].ch = 2;
+	pit.ch[3].ctrl = 0x36;
+	pit.ch[3].ch = 3;
+	pit.ch[4].ctrl = 0x36;
+	pit.ch[4].ch = 4;
+	setsystimerevent(0, NEVENT_ABSOLUTE);
+	beep_hzset(beepcnt);
 }
 
 void itimer_bind(void) {

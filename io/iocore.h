@@ -11,6 +11,7 @@ typedef	REG8 (IOINPCALL *IOINP)(UINT port);
 
 typedef void (*IOCBFN)(void);
 
+#include	"lsidef.h"
 
 #include	"artic.h"
 #include	"cgrom.h"
@@ -29,6 +30,7 @@ typedef void (*IOCBFN)(void);
 #include	"necio.h"
 #include	"nmiio.h"
 #include	"np2sysp.h"
+#include	"pcidev.h"
 #include	"pic.h"
 #include	"pit.h"
 #include	"printif.h"

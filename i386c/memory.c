@@ -808,7 +808,10 @@ REG8 MEMCALL i286_memoryread(UINT32 addr) {
 			return(memfn.rd8[(addr >> 15) & 0x1f](addr - 0x00f00000));
 		}
 #if defined(SUPPORT_PC9821)
-		else if (addr >= 0xfff00000) {
+		else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
+			return(mem9821_r(addr));
+		}
+		else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
 			return(mem9821_r(addr));
 		}
 #endif
@@ -840,7 +843,10 @@ REG16 MEMCALL i286_memoryread_w(UINT32 addr) {
 				return(memfn.rd16[(addr >> 15) & 0x1f](addr - 0x00f00000));
 			}
 #if defined(SUPPORT_PC9821)
-			else if (addr >= 0xfff00000) {
+			else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
+				return(mem9821_rw(addr));
+			}
+			else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
 				return(mem9821_rw(addr));
 			}
 #endif
@@ -900,7 +906,10 @@ void MEMCALL i286_memorywrite(UINT32 addr, REG8 value) {
 			memfn.wr8[(addr >> 15) & 0x1f](addr - 0x00f00000, value);
 		}
 #if defined(SUPPORT_PC9821)
-		else if (addr >= 0xfff00000) {
+		else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
+			mem9821_w(addr, value);
+		}
+		else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
 			mem9821_w(addr, value);
 		}
 #endif
@@ -930,7 +939,10 @@ void MEMCALL i286_memorywrite_w(UINT32 addr, REG16 value) {
 				memfn.wr16[(addr >> 15) & 0x1f](addr - 0x00f00000, value);
 			}
 #if defined(SUPPORT_PC9821)
-			else if (addr >= 0xfff00000) {
+			else if ((addr >= 0x00f00000) && (addr < 0x00f80000)) {
+				mem9821_ww(addr, value);
+			}
+			else if ((addr >= 0xfff00000) && (addr < 0xfff80000)) {
 				mem9821_ww(addr, value);
 			}
 #endif

@@ -333,14 +333,6 @@ SOURCE=..\BIOS\BIOS.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\BIOS\BIOS02.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS08.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\BIOS\BIOS09.C
 # End Source File
 # Begin Source File
@@ -374,6 +366,10 @@ SOURCE=..\BIOS\BIOS1B.C
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1F.C
 # End Source File
 # Begin Source File
 
@@ -485,10 +481,6 @@ SOURCE=..\SOUND\RHYTHMC.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\RHYTHMG.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\SOUND\S98.C
 # End Source File
 # Begin Source File
@@ -506,10 +498,6 @@ SOURCE=..\SOUND\TMS3631C.C
 # Begin Source File
 
 SOURCE=..\SOUND\TMS3631G.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\WAVEMIX.C
 # End Source File
 # End Group
 # Begin Group "fdd"
@@ -817,6 +805,10 @@ SOURCE=..\IO\NP2SYSP.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\IO\PCIDEV.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\IO\PIC.C
 # End Source File
 # Begin Source File
@@ -878,6 +870,10 @@ SOURCE=..\CBUS\CBUSCORE.C
 # Begin Source File
 
 SOURCE=..\CBUS\CS4231IO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\IDEIO.C
 # End Source File
 # Begin Source File
 

@@ -1,40 +1,43 @@
 
-CODE	SEGMENT
-		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing
-		ORG 0000H
+	ORG		0
+	USE16
+	CPU		8086
 
 FIXCS		equ		2eh
 
+segment .startup start=0x0000
+
 START:			jmp		short nosystems
-START2:			mov		si, offset nobiosmsg
+START2:			mov		si, nobiosmsg
 				jmp		short dispend
 
-nosystems:		mov		si, offset nosysmsg
+nosystems:		mov		si, nosysmsg
 
-dispend:		mov		ax, 0a04h
-				int		18h
-				mov		ah, 16h
-				mov		dx, 0e120h
-				int		18h
+dispend:		mov		ax, 0x0a04
+				int		0x18
+				mov		ah, 0x16
+				mov		dx, 0xe120
+				int		0x18
 				cli
 				cld
-				mov		ax, 0a000h
+				mov		ax, 0xa000
 				mov		es, ax
 				db		FIXCS
 				lodsw
 				mov		di, ax
-putmsg:			db		FIXCS
+.loop:			db		FIXCS
 				lodsw
 				test	ax, ax
-				je		short putmsgend
+				je		short .end
 				stosw
 				or		ah, ah
-				je		short putmsg
+				je		short .loop
 				inc		di
 				inc		di
-				jmp		short putmsg
-putmsgend:		hlt
-				jmp		short putmsgend
+				jmp		short .loop
+
+.end:			hlt
+				jmp		short .end
 
 
 				; システムディスクをセットしてください
@@ -49,6 +52,5 @@ nobiosmsg	dw	12*160+46
 			dw	4b04h,4f04h,0020h,0042h,0049h,004fh,0053h,002eh
 			dw	0052h,004fh,004dh,2c04h,2c29h,572dh,4704h,3904h,0
 
-CODE	ENDS
-	END START
+	ends
 

@@ -210,20 +210,22 @@
 #define IDM_MEM16                       40072
 #define IDM_MEM36                       40073
 #define IDM_MEM76                       40074
-#define IDM_MOUSE                       40075
-#define IDM_SERIAL1                     40076
-#define IDM_MPUPC98                     40077
-#define IDM_MIDIPANIC                   40078
-#define IDM_SNDOPT                      40079
-#define IDM_BMPSAVE                     40080
-#define IDM_S98LOGGING                  40081
-#define IDM_CALENDAR                    40082
-#define IDM_JOYX                        40083
-#define IDM_RAPID                       40084
-#define IDM_MSRAPID                     40085
-#define IDM_I286SAVE                    40086
-#define IDM_HELP                        40087
-#define IDM_ABOUT                       40088
+#define IDM_MEM116                      40075
+#define IDM_MEM136                      40076
+#define IDM_MOUSE                       40077
+#define IDM_SERIAL1                     40078
+#define IDM_MPUPC98                     40079
+#define IDM_MIDIPANIC                   40080
+#define IDM_SNDOPT                      40081
+#define IDM_BMPSAVE                     40082
+#define IDM_S98LOGGING                  40083
+#define IDM_CALENDAR                    40084
+#define IDM_JOYX                        40085
+#define IDM_RAPID                       40086
+#define IDM_MSRAPID                     40087
+#define IDM_I286SAVE                    40088
+#define IDM_HELP                        40089
+#define IDM_ABOUT                       40090
 
 // Next default values for new objects
 // 
@@ -231,7 +233,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        120
-#define _APS_NEXT_COMMAND_VALUE         40089
+#define _APS_NEXT_COMMAND_VALUE         40091
 #define _APS_NEXT_CONTROL_VALUE         1116
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
