@@ -147,7 +147,7 @@ static const SYSPCMD np2spcmd[] = {
 #endif
 
 #if defined(SUPPORT_HOSTDRV)
-			{str_hdrvcheck,	np2sysp_outstr,		"supported",	0},
+			{str_hdrvcheck,	np2sysp_outstr,		"0.74",			0},
 			{str_hdrvopen,	hostdrv_mount,		NULL,			0},
 			{str_hdrvclose,	hostdrv_unmount,	NULL,			0},
 			{str_hdrvintr,	hostdrv_intr,		NULL,			0},
