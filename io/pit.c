@@ -149,6 +149,7 @@ void itimer_setflag(int ch, BYTE value) {
 		pit.mode[ch] = value;
 	}
 	else {														// latch
+		pit.mode[ch] &= ~0x30;
 		pit.latch[ch].w = itimer_latch(ch);
 	}
 }

@@ -208,7 +208,7 @@ SINT32 nevent_getremain(UINT id) {
 	// 現在進行してるイベントを検索
 	for (i=0; i<nevent.readyevents; i++) {
 		if (nevent.level[i] == id) {
-			return(nevent.item[id].clock - I286_BASECLOCK - I286_REMCLOCK);
+			return(nevent.item[id].clock - (I286_BASECLOCK - I286_REMCLOCK));
 		}
 	}
 	return(-1);
