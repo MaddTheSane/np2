@@ -166,7 +166,7 @@ test_ea_d16		cmp		r0, #&c0
 				R16SRC	r0, r5
 				ldrh	r4, [r5, #CPU_REG]
 				GETPC16
-				AND8	r4, r0
+				AND16	r4, r0
 				mov		pc, r11
 test16m			CPUWORK	#6
 				bl		i286a_ea
