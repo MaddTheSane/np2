@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"bmpdata.h"
 #include	"parts.h"
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 #include	"oemtext.h"
 #endif
 #include	"dosio.h"
@@ -141,7 +141,7 @@ const UINT8	*p;
 	int		height;
 	UINT8	bit;
 	int		i;
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	OEMCHAR	oemwork[4];
 #endif
 
@@ -149,7 +149,7 @@ const UINT8	*p;
 	work[1] = '\0';
 	while(from < to) {
 		work[0] = (char)from;
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 		oemtext_sjistooem(oemwork, NELEMENTS(oemwork), work, -1);
 		dat = fontmng_get(fnt, oemwork);
 #else
@@ -209,7 +209,7 @@ const UINT8	*p;
 	int		height;
 	UINT16	bit;
 	int		i;
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	OEMCHAR	oemwork[4];
 #endif
 
@@ -224,7 +224,7 @@ const UINT8	*p;
 				sjis = jis2sjis(jis);
 				work[0] = (UINT8)(sjis >> 8);
 				work[1] = (UINT8)sjis;
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 				oemtext_sjistooem(oemwork, NELEMENTS(oemwork), work, -1);
 				dat = fontmng_get(fnt, oemwork);
 #else
