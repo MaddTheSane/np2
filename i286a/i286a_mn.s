@@ -24,7 +24,7 @@
 	IMPORT		iocore_out8
 	IMPORT		iocore_out16
 
-	IMPORT		dmap_i286
+	IMPORT		dmax86
 	IMPORT		biosfunc
 
 	IMPORT		i286a_cts
@@ -1735,7 +1735,7 @@ i286a_step		stmdb	sp!, {r4 - r11, lr}
 				mov		r11, pc
 				mov		pc, r1
 
-				bl		dmap_i286
+				bl		dmax86
 				CPUSV
 				ldmia	sp!, {r4 - r11, pc}
 
@@ -1777,7 +1777,7 @@ i286awithdma	adr		r4, optbl1
 				add		r8, r8, #(1 << 16)
 				mov		r11, pc
 				mov		pc, r1
-				bl		dmap_i286
+				bl		dmax86
 				CPUDBGL
 				cmp		r7, #0
 				ldrgt	r5, [r9, #CPU_CS_BASE]
@@ -1792,7 +1792,7 @@ i286awithtrap	adr		r4, optbl1
 				add		r8, r8, #(1 << 16)
 				mov		r11, pc
 				mov		pc, r1
-				bl		dmap_i286
+				bl		dmax86
 				and		r0, r8, #(I_FLAG + T_FLAG)
 				cmp		r0, #(I_FLAG + T_FLAG)
 				bleq	i286a_trapint

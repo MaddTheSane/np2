@@ -48,7 +48,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -74,7 +74,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /D "OSLANG_UTF8" /D "RESOURCE_US" /D "ADDON_SOFTKBD" /D "TRACE" /D "MEMTRACE /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /D "OSLANG_UTF8" /D "RESOURCE_US" /D "ADDON_SOFTKBD" /D "TRACE" /D "MEMTRACE /YX /FD /c"
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -100,7 +100,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SIZE_VGA" /D "TRACE" /D "MEMTRACE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SIZE_VGA" /D "TRACE" /D "MEMTRACE" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -126,7 +126,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SIZE_VGA" /D "ADDON_SOFTKBD" /D "TRACE" /D "MEMTRACE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SIZE_VGA" /D "ADDON_SOFTKBD" /D "TRACE" /D "MEMTRACE" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -152,7 +152,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -177,8 +177,8 @@ LINK32=link.exe
 # PROP Intermediate_Dir "..\obj\wince\vc\vgatest"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SIZE_VGATEST" /YX /FD /c
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SIZE_VGATEST" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -204,7 +204,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "MEMTRACE" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\w32" /I ".\gx" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "MEMTRACE" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
@@ -223,10 +223,10 @@ LINK32=link.exe
 # Name "np2 - Win32 Release"
 # Name "np2 - Win32 Unicode"
 # Name "np2 - Win32 VGA"
+# Name "np2 - Win32 VGA KBD"
 # Name "np2 - Win32 Trace"
 # Name "np2 - Win32 VGA test"
 # Name "np2 - Win32 Debug"
-# Name "np2 - Win32 VGA KBD"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -236,46 +236,233 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\COMMON\_MEMORY.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\BMPDATA.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\LSTARRAY.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\MILSTR.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\PARTS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\PROFILE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\RECT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\RESIZE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\STRRES.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\TEXTFILE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\COMMON\UCSCNV.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "cpu"
@@ -283,55 +470,301 @@ SOURCE=..\COMMON\UCSCNV.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\I286C\DMAP.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\I286C\EGCMEM.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\I286C\I286C.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_0F.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_8X.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_EA.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_F6.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_FE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_MN.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_RP.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\I286C_SF.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\MEMORY.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\I286C\V30PATCH.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# End Group
+# Begin Group "mem"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\MEM\DMAV30.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\DMAX86.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEGC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "io"
@@ -340,102 +773,527 @@ SOURCE=..\I286C\V30PATCH.C
 # Begin Source File
 
 SOURCE=..\IO\ARTIC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\CGROM.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\CPUIO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\CRTC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\DIPSW.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\DMAC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\EGC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\EMSIO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\EPSONIO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\FDC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\FDD320.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\GDC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\GDC_PSET.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\GDC_SUB.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\IOCORE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\MOUSEIF.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\NECIO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\NMIIO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\NP2SYSP.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\PIC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\PIT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\PRINTIF.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\SERIAL.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\SYSPORT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\IO\UPD4990.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "cbus"
@@ -444,50 +1302,254 @@ SOURCE=..\IO\UPD4990.C
 # Begin Source File
 
 SOURCE=..\CBUS\AMD98.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\BOARD118.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\BOARD14.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\BOARD26K.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\BOARD86.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\BOARDSPB.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\BOARDX2.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\CBUSCORE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\CS4231IO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\MPU98II.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\PC9861K.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\CBUS\PCM86IO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "bios"
@@ -496,50 +1558,384 @@ SOURCE=..\CBUS\PCM86IO.C
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS09.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS0C.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS12.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS13.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS18.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS19.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1A.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1B.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1C.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1F.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\BIOS\SXSIBIOS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# End Group
+# Begin Group "lio"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\LIO\GCIRCLE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GLINE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPSET.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPUT1.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GSCREEN.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\LIO.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "vram"
@@ -548,42 +1944,212 @@ SOURCE=..\BIOS\SXSIBIOS.C
 # Begin Source File
 
 SOURCE=..\VRAM\DISPSYNC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\MAKEGRPH.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\MAKETEXT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\MAKETGRP.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\PALETTES.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\SCRNBMP.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\SCRNDRAW.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\SDRAW.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\SDRAWQ16.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\VRAM\VRAM.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "sound"
@@ -595,22 +2161,107 @@ SOURCE=..\VRAM\VRAM.C
 # Begin Source File
 
 SOURCE=..\SOUND\VERMOUTH\MIDIMOD.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\VERMOUTH\MIDINST.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\VERMOUTH\MIDIOUT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\VERMOUTH\MIDTABLE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "getsnd"
@@ -619,107 +2270,549 @@ SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
 # Begin Source File
 
 SOURCE=..\SOUND\GETSND\GETMP3.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\GETSND\GETOGG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\GETSND\GETSMIX.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\GETSND\GETSND.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\GETSND\GETWAVE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Source File
 
 SOURCE=..\SOUND\ADPCMC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\ADPCMG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\BEEPC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\BEEPG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\CS4231C.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\CS4231G.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\FMBOARD.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\FMTIMER.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\OPNGENC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\OPNGENG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\PCM86C.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\PCM86G.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\PSGGENC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\PSGGENG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\RHYTHMC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\S98.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\SNDCSEC.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\SOUND.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\SOUNDROM.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\TMS3631C.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\SOUND\TMS3631G.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "fdd"
@@ -728,58 +2821,149 @@ SOURCE=..\SOUND\TMS3631G.C
 # Begin Source File
 
 SOURCE=..\FDD\DISKDRV.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FDD\FDD_D88.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FDD\FDD_MTR.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FDD\FDD_XDF.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FDD\FDDFILE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FDD\NEWDISK.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FDD\SXSI.C
-# End Source File
-# End Group
-# Begin Group "lio"
 
-# PROP Default_Filter ""
-# Begin Source File
+!IF  "$(CFG)" == "np2 - Win32 Release"
 
-SOURCE=..\LIO\GCIRCLE.C
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
 
-SOURCE=..\LIO\GLINE.C
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
 
-SOURCE=..\LIO\GPSET.C
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
 
-SOURCE=..\LIO\GPUT1.C
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
-SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
 
-SOURCE=..\LIO\LIO.C
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "font"
@@ -788,118 +2972,191 @@ SOURCE=..\LIO\LIO.C
 # Begin Source File
 
 SOURCE=..\FONT\FONT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTDATA.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTFM7.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTMAKE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTPC88.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTPC98.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTV98.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTX1.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\FONT\FONTX68K.C
-# End Source File
-# End Group
-# Begin Group "wince"
 
-# PROP Default_Filter ""
-# Begin Source File
+!IF  "$(CFG)" == "np2 - Win32 Release"
 
-SOURCE=.\COMMNG.CPP
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
 
-SOURCE=.\DOSIO.CPP
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
 
-SOURCE=.\FONTMNG.CPP
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
 
-SOURCE=.\GX\GX.CPP
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
 
-SOURCE=.\INI.CPP
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
 
-SOURCE=.\INPUTMNG.CPP
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
 
-SOURCE=.\JOYMNG.CPP
-# End Source File
-# Begin Source File
+!ENDIF 
 
-SOURCE=.\MOUSEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\NP2.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\W32\NP2.RC
-# End Source File
-# Begin Source File
-
-SOURCE=.\OEMTEXT.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SCRNMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SOUNDMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SYSMENU.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SYSMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TASKMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TIMEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\W32\TRACE.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\WINKBD.CPP
 # End Source File
 # End Group
 # Begin Group "generic"
@@ -908,26 +3165,128 @@ SOURCE=.\WINKBD.CPP
 # Begin Source File
 
 SOURCE=..\GENERIC\CMJASTS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\CMNDRAW.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\CMVER.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\HOSTDRV.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\HOSTDRVS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\SOFTKBD.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "embed"
@@ -939,22 +3298,107 @@ SOURCE=..\GENERIC\SOFTKBD.C
 # Begin Source File
 
 SOURCE=..\EMBED\MENU\DLGABOUT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\EMBED\MENU\DLGCFG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\EMBED\MENU\DLGSCR.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\EMBED\MENU\FILESEL.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\MENU\MENUSTR.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "menubase"
@@ -963,68 +3407,726 @@ SOURCE=..\embed\MENU\MENUSTR.C
 # Begin Source File
 
 SOURCE=..\embed\MENUBASE\MENUBASE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\MENUBASE\MENUDLG.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\EMBED\MENUBASE\MENUICON.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\MENUBASE\MENUMBOX.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\MENUBASE\MENURES.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\MENUBASE\MENUSYS.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\MENUBASE\MENUVRAM.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Source File
 
 SOURCE=..\embed\VRAMHDL.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\embed\VRAMMIX.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# End Group
+# Begin Group "wince"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\COMMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\DOSIO.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\FONTMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\GX\GX.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\INI.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\INPUTMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\JOYMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\MOUSEMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\NP2.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\W32\NP2.RC
+# End Source File
+# Begin Source File
+
+SOURCE=.\OEMTEXT.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\SCRNMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\SOUNDMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\SYSMENU.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\SYSMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\TASKMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\TIMEMNG.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\W32\TRACE.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\WINKBD.CPP
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Source File
 
 SOURCE=..\CALENDAR.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\DEBUGSUB.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\KEYSTAT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\NEVENT.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\PCCORE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\STATSAVE.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\TIMING.C
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Unicode"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA KBD"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 VGA test"
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "Header Files"
