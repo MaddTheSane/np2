@@ -84,7 +84,7 @@ LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
 #define PassCDebugFlags
 
 
-#if defined(IA32)
+#if defined(CPUCORE_IA32)
 
 CPUOBJS= \
 		../i386c/cpucore.o \
