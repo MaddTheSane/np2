@@ -81,112 +81,6 @@ static void MEMCALL memnc_wr16(UINT32 address, REG16 value) {
 
 // ---- write byte
 
-static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {		// VRAM
-
-	REG8	mask;
-	BYTE	*vram;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	mask = ~value;
-	address = LOW15(address);
-	vramupdate[address] |= 1;
-	gdcs.grphdisp |= 1;
-	vram = mem + address;
-	if (!(grcg.modereg & 1)) {
-		vram[VRAM0_B] &= mask;
-		vram[VRAM0_B] |= (value & grcg.tile[0].b[0]);
-	}
-	if (!(grcg.modereg & 2)) {
-		vram[VRAM0_R] &= mask;
-		vram[VRAM0_R] |= (value & grcg.tile[1].b[0]);
-	}
-	if (!(grcg.modereg & 4)) {
-		vram[VRAM0_G] &= mask;
-		vram[VRAM0_G] |= (value & grcg.tile[2].b[0]);
-	}
-	if (!(grcg.modereg & 8)) {
-		vram[VRAM0_E] &= mask;
-		vram[VRAM0_E] |= (value & grcg.tile[3].b[0]);
-	}
-}
-
-static void MEMCALL grcg_rmw1(UINT32 address, REG8 value) {		// VRAM
-
-	REG8	mask;
-	BYTE	*vram;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	mask = ~value;
-	address = LOW15(address);
-	vramupdate[address] |= 2;
-	gdcs.grphdisp |= 2;
-	vram = mem + address;
-	if (!(grcg.modereg & 1)) {
-		vram[VRAM1_B] &= mask;
-		vram[VRAM1_B] |= (value & grcg.tile[0].b[0]);
-	}
-	if (!(grcg.modereg & 2)) {
-		vram[VRAM1_R] &= mask;
-		vram[VRAM1_R] |= (value & grcg.tile[1].b[0]);
-	}
-	if (!(grcg.modereg & 4)) {
-		vram[VRAM1_G] &= mask;
-		vram[VRAM1_G] |= (value & grcg.tile[2].b[0]);
-	}
-	if (!(grcg.modereg & 8)) {
-		vram[VRAM1_E] &= mask;
-		vram[VRAM1_E] |= (value & grcg.tile[3].b[0]);
-	}
-}
-
-static void MEMCALL grcg_tdw0(UINT32 address, REG8 value) {		// VRAM
-
-	BYTE	*vram;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	address = LOW15(address);
-	vramupdate[address] |= 1;
-	gdcs.grphdisp |= 1;
-	vram = mem + address;
-	if (!(grcg.modereg & 1)) {
-		vram[VRAM0_B] = grcg.tile[0].b[0];
-	}
-	if (!(grcg.modereg & 2)) {
-		vram[VRAM0_R] = grcg.tile[1].b[0];
-	}
-	if (!(grcg.modereg & 4)) {
-		vram[VRAM0_G] = grcg.tile[2].b[0];
-	}
-	if (!(grcg.modereg & 8)) {
-		vram[VRAM0_E] = grcg.tile[3].b[0];
-	}
-	(void)value;
-}
-
-static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {		// VRAM
-
-	BYTE	*vram;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	address = LOW15(address);
-	vramupdate[address] |= 2;
-	gdcs.grphdisp |= 2;
-	vram = mem + address;
-	if (!(grcg.modereg & 1)) {
-		vram[VRAM1_B] = grcg.tile[0].b[0];
-	}
-	if (!(grcg.modereg & 2)) {
-		vram[VRAM1_R] = grcg.tile[1].b[0];
-	}
-	if (!(grcg.modereg & 4)) {
-		vram[VRAM1_G] = grcg.tile[2].b[0];
-	}
-	if (!(grcg.modereg & 8)) {
-		vram[VRAM1_E] = grcg.tile[3].b[0];
-	}
-	(void)value;
-}
-
 static void MEMCALL egc_wt(UINT32 address, REG8 value) {		// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
@@ -195,52 +89,6 @@ static void MEMCALL egc_wt(UINT32 address, REG8 value) {		// VRAM
 
 
 // ---- read byte
-
-static REG8 MEMCALL grcg_tcr0(UINT32 address) {					// VRAM
-
-const BYTE	*vram;
-	REG8	ret;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	vram = mem + LOW15(address);
-	ret = 0;
-	if (!(grcg.modereg & 1)) {
-		ret |= vram[VRAM0_B] ^ grcg.tile[0].b[0];
-	}
-	if (!(grcg.modereg & 2)) {
-		ret |= vram[VRAM0_R] ^ grcg.tile[1].b[0];
-	}
-	if (!(grcg.modereg & 4)) {
-		ret |= vram[VRAM0_G] ^ grcg.tile[2].b[0];
-	}
-	if (!(grcg.modereg & 8)) {
-		ret |= vram[VRAM0_E] ^ grcg.tile[3].b[0];
-	}
-	return(ret ^ 0xff);
-}
-
-static REG8 MEMCALL grcg_tcr1(UINT32 address) {					// VRAM
-
-const BYTE	*vram;
-	REG8	ret;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	ret = 0;
-	vram = mem + LOW15(address);
-	if (!(grcg.modereg & 1)) {
-		ret |= vram[VRAM1_B] ^ grcg.tile[0].b[0];
-	}
-	if (!(grcg.modereg & 2)) {
-		ret |= vram[VRAM1_R] ^ grcg.tile[1].b[0];
-	}
-	if (!(grcg.modereg & 4)) {
-		ret |= vram[VRAM1_G] ^ grcg.tile[2].b[0];
-	}
-	if (!(grcg.modereg & 8)) {
-		ret |= vram[VRAM1_E] ^ grcg.tile[3].b[0];
-	}
-	return(ret ^ 0xff);
-}
 
 static REG8 MEMCALL egc_rd(UINT32 address) {					// VRAM
 
@@ -251,84 +99,6 @@ static REG8 MEMCALL egc_rd(UINT32 address) {					// VRAM
 
 // ---- write word
 
-#define GRCGW_RMW(page) {											\
-	BYTE	*vram;													\
-	CPU_REMCLOCK -= MEMWAIT_GRCG;									\
-	address = LOW15(address);										\
-	vramupdate[address] |= (1 << page);								\
-	vramupdate[address + 1] |= (1 << page);							\
-	gdcs.grphdisp |= (1 << page);									\
-	vram = mem + address + (VRAM_STEP * (page));					\
-	if (!(grcg.modereg & 1)) {										\
-		BYTE tmp;													\
-		tmp = (BYTE)value;											\
-		vram[VRAM0_B+0] &= (~tmp);									\
-		vram[VRAM0_B+0] |= (tmp & grcg.tile[0].b[0]);				\
-		tmp = (BYTE)(value >> 8);									\
-		vram[VRAM0_B+1] &= (~tmp);									\
-		vram[VRAM0_B+1] |= (tmp & grcg.tile[0].b[0]);				\
-	}																\
-	if (!(grcg.modereg & 2)) {										\
-		BYTE tmp;													\
-		tmp = (BYTE)value;											\
-		vram[VRAM0_R+0] &= (~tmp);									\
-		vram[VRAM0_R+0] |= (tmp & grcg.tile[1].b[0]);				\
-		tmp = (BYTE)(value >> 8);									\
-		vram[VRAM0_R+1] &= (~tmp);									\
-		vram[VRAM0_R+1] |= (tmp & grcg.tile[1].b[0]);				\
-	}																\
-	if (!(grcg.modereg & 4)) {										\
-		BYTE tmp;													\
-		tmp = (BYTE)value;											\
-		vram[VRAM0_G+0] &= (~tmp);									\
-		vram[VRAM0_G+0] |= (tmp & grcg.tile[2].b[0]);				\
-		tmp = (BYTE)(value >> 8);									\
-		vram[VRAM0_G+1] &= (~tmp);									\
-		vram[VRAM0_G+1] |= (tmp & grcg.tile[2].b[0]);				\
-	}																\
-	if (!(grcg.modereg & 8)) {										\
-		BYTE tmp;													\
-		tmp = (BYTE)value;											\
-		vram[VRAM0_E+0] &= (~tmp);									\
-		vram[VRAM0_E+0] |= (tmp & grcg.tile[3].b[0]);				\
-		tmp = (BYTE)(value >> 8);									\
-		vram[VRAM0_E+1] &= (~tmp);									\
-		vram[VRAM0_E+1] |= (tmp & grcg.tile[3].b[0]);				\
-	}																\
-}
-
-#define GRCGW_TDW(page) {											\
-	BYTE	*vram;													\
-	CPU_REMCLOCK -= MEMWAIT_GRCG;									\
-	address = LOW15(address);										\
-	vramupdate[address] |= (1 << page);								\
-	vramupdate[address + 1] |= (1 << page);							\
-	gdcs.grphdisp |= (1 << page);									\
-	vram = mem + address + (VRAM_STEP * (page));					\
-	if (!(grcg.modereg & 1)) {										\
-		vram[VRAM0_B+0] = grcg.tile[0].b[0];						\
-		vram[VRAM0_B+1] = grcg.tile[0].b[0];						\
-	}																\
-	if (!(grcg.modereg & 2)) {										\
-		vram[VRAM0_R+0] = grcg.tile[1].b[0];						\
-		vram[VRAM0_R+1] = grcg.tile[1].b[0];						\
-	}																\
-	if (!(grcg.modereg & 4)) {										\
-		vram[VRAM0_G+0] = grcg.tile[2].b[0];						\
-		vram[VRAM0_G+1] = grcg.tile[2].b[0];						\
-	}																\
-	if (!(grcg.modereg & 8)) {										\
-		vram[VRAM0_E+0] = grcg.tile[3].b[0];						\
-		vram[VRAM0_E+1] = grcg.tile[3].b[0];						\
-	}																\
-	(void)value;													\
-}
-
-static void MEMCALL grcgw_rmw0(UINT32 address, REG16 value) GRCGW_RMW(0)
-static void MEMCALL grcgw_rmw1(UINT32 address, REG16 value) GRCGW_RMW(1)
-static void MEMCALL grcgw_tdw0(UINT32 address, REG16 value) GRCGW_TDW(0)
-static void MEMCALL grcgw_tdw1(UINT32 address, REG16 value) GRCGW_TDW(1)
-
 static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
@@ -337,52 +107,6 @@ static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
 
 // ---- read word
-
-static REG16 MEMCALL grcgw_tcr0(UINT32 address) {
-
-	BYTE	*vram;
-	REG16	ret;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	ret = 0;
-	vram = mem + LOW15(address);
-	if (!(grcg.modereg & 1)) {
-		ret |= LOADINTELWORD(vram + VRAM0_B) ^ grcg.tile[0].w;
-	}
-	if (!(grcg.modereg & 2)) {
-		ret |= LOADINTELWORD(vram + VRAM0_R) ^ grcg.tile[1].w;
-	}
-	if (!(grcg.modereg & 4)) {
-		ret |= LOADINTELWORD(vram + VRAM0_G) ^ grcg.tile[2].w;
-	}
-	if (!(grcg.modereg & 8)) {
-		ret |= LOADINTELWORD(vram + VRAM0_E) ^ grcg.tile[3].w;
-	}
-	return((UINT16)~ret);
-}
-
-static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
-
-	BYTE	*vram;
-	REG16	ret;
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	ret = 0;
-	vram = mem + LOW15(address);
-	if (!(grcg.modereg & 1)) {
-		ret |= LOADINTELWORD(vram + VRAM1_B) ^ grcg.tile[0].w;
-	}
-	if (!(grcg.modereg & 2)) {
-		ret |= LOADINTELWORD(vram + VRAM1_R) ^ grcg.tile[1].w;
-	}
-	if (!(grcg.modereg & 4)) {
-		ret |= LOADINTELWORD(vram + VRAM1_G) ^ grcg.tile[2].w;
-	}
-	if (!(grcg.modereg & 8)) {
-		ret |= LOADINTELWORD(vram + VRAM1_E) ^ grcg.tile[3].w;
-	}
-	return((UINT16)(~ret));
-}
 
 static REG16 MEMCALL egcw_rd(UINT32 address) {
 
@@ -473,12 +197,12 @@ static const VACCTBL vacctbl[0x10] = {
 		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
 		{memvram0_rd8,	memvram0_wr8,	memvram0_rd16,	memvram0_wr16},
 		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
-		{grcg_tcr0,		grcg_tdw0,		grcgw_tcr0,		grcgw_tdw0},	// 80
-		{grcg_tcr1,		grcg_tdw1,		grcgw_tcr1,		grcgw_tdw1},
+		{memtcr0_rd8,	memtdw0_wr8,	memtcr0_rd16,	memtdw0_wr16},	// 80
+		{memtcr1_rd8,	memtdw1_wr8,	memtcr1_rd16,	memtdw1_wr16},
 		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
 		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
-		{memvram0_rd8,	grcg_rmw0,		memvram0_rd16,	grcgw_rmw0},	// c0
-		{memvram1_rd8,	grcg_rmw1,		memvram1_rd16,	grcgw_rmw1},
+		{memvram0_rd8,	memrmw0_wr8,	memvram0_rd16,	memrmw0_wr16},	// c0
+		{memvram1_rd8,	memrmw1_wr8,	memvram1_rd16,	memrmw1_wr16},
 		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
 		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt}};
 
