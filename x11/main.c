@@ -94,7 +94,7 @@ sighandler(int signo)
 static struct option longopts[] = {
 	{ "config",		required_argument,	0,	'c' },
 	{ "timidity-config",	required_argument,	0,	'C' },
-	{ "no-shared-pixmap",	no_argument,		0,	'p' },
+	{ "shared-pixmap",	no_argument,		0,	'p' },
 	{ "help",		no_argument,		0,	'h' },
 	{ 0,			0,			0,	0   },
 };
@@ -121,7 +121,7 @@ main(int argc, char *argv[])
 	int rv = 1;
 	int ch;
 	int i, drvmax;
-	BOOL shared_pixmap_flag = TRUE;
+	BOOL shared_pixmap_flag = FALSE;
 
 	progname = argv[0];
 
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 			break;
 
 		case 'p':
-			shared_pixmap_flag = FALSE;
+			shared_pixmap_flag = TRUE;
 			break;
 
 		case 'h':

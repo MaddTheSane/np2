@@ -36,10 +36,10 @@ Xnp2 \- PC-9801 シリーズエミュレータ
 ファイルを指定します。
 非指定時は $(HOME)/.np2/timidity.cfg を読み込みます。
 .TP
-.B \--no-shared-pixmap
+.B \--shared-pixmap
 このオプションを指定すると MIT Shared-Memory Extention の shared Pixmap を
-使用しなくなります。起動時に読み込む設定ファイルに
-.B sharepix = false
+使用する様になります。起動時に読み込む設定ファイルに
+.B sharepix = true
 を追加すると常にこのオプションを有効にする事ができます。
 .SH EXAMPLES
 .nf

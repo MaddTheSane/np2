@@ -96,12 +96,7 @@ NP2OSCFG np2oscfg = {
 #endif
 
 	MMXFLAG_DISABLE,	/* disablemmx */
-
-#if defined(MITSHM)		/* shared_pixmap */
-	TRUE,
-#else
-	FALSE,
-#endif
+	FALSE,			/* shared_pixmap */
 };
 
 BOOL np2running = FALSE;
