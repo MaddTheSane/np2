@@ -16,17 +16,22 @@ enum {
 typedef struct {
 	SINT16	x;
 	SINT16	y;
-	SINT16	sx;
-	SINT16	sy;
-} TEXTDIR;
+	SINT16	x2;
+	SINT16	y2;
+} VECTDIR;
 
 static	UINT16	gdc_rt[RT_TABLEMAX+1];
 
-static const TEXTDIR textdir[8] = {
+static const VECTDIR vectdir[16] = {
 					{ 0, 1, 1, 0}, { 1, 1, 1,-1},
 					{ 1, 0, 0,-1}, { 1,-1,-1,-1},
 					{ 0,-1,-1, 0}, {-1,-1,-1, 1},
-					{-1, 0, 0, 1}, {-1, 1, 1, 1}};
+					{-1, 0, 0, 1}, {-1, 1, 1, 1},
+
+					{ 0, 1, 1, 1}, { 1, 1, 1, 0},		// SL
+					{ 1, 0, 1,-1}, { 1,-1, 0,-1},
+					{ 0,-1,-1,-1}, {-1,-1,-1, 0},
+					{-1, 0,-1, 1}, {-1, 1, 0, 1}};
 
 
 void gdcsub_init(void) {
@@ -160,6 +165,7 @@ void gdcsub_box(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 	REG16		x;
 	REG16		y;
 	UINT		i;
+const VECTDIR	*dir;
 
 	gdcpset_prepare(&pset, csrw, pat, ope);
 	d = (LOADINTELWORD(vect->D)) & 0x3fff;
@@ -167,66 +173,26 @@ void gdcsub_box(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 	x = pset.x;
 	y = pset.y;
 	// 回転はなしよ(手抜き)
-	switch((vect->ope) & 7) {
-		case 0:
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x, y++);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x++, y);
-			}
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x, y--);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x--, y);
-			}
-			break;
-
-		case 2:
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x++, y);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x, y--);
-			}
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x--, y);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x, y++);
-			}
-			break;
-
-		case 4:
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x, y--);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x--, y);
-			}
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x, y++);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x++, y);
-			}
-			break;
-
-		case 6:
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x--, y);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x, y++);
-			}
-			for (i=0; i<d; i++) {
-				gdcpset(&pset, x++, y);
-			}
-			for (i=0; i<d2; i++) {
-				gdcpset(&pset, x, y--);
-			}
-			break;
+	dir = vectdir + ((vect->ope) & 7);
+	for (i=0; i<d; i++) {
+		gdcpset(&pset, x, y);
+		x += dir->x;
+		y += dir->y;
+	}
+	for (i=0; i<d2; i++) {
+		gdcpset(&pset, x, y);
+		x += dir->x2;
+		y += dir->y2;
+	}
+	for (i=0; i<d; i++) {
+		gdcpset(&pset, x, y);
+		x -= dir->x;
+		y -= dir->y;
+	}
+	for (i=0; i<d2; i++) {
+		gdcpset(&pset, x, y);
+		x -= dir->x2;
+		y -= dir->y2;
 	}
 	calc_gdcslavewait(pset.dots);
 }
@@ -332,7 +298,7 @@ void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const BYTE *pat,
 	BYTE		multiple;
 	UINT		sx;
 	UINT		sy;
-const TEXTDIR	*dir;
+const VECTDIR	*dir;
 	UINT		patnum;
 	BYTE		muly;
 	REG16		cx;
@@ -343,14 +309,24 @@ const TEXTDIR	*dir;
 
 	gdcpset_prepare(&pset, csrw, 0xffff, ope);
 	multiple = (gdc.s.para[GDC_ZOOM] & 15) + 1;
-#if 0
-	sx = (LOADINTELWORD(vect->DC)) & 0x3fff) + 1;
-	sy = (LOADINTELWORD(vect->D)) & 0x3fff) + 1;
+#if 1
+	sy = LOADINTELWORD(vect->DC);
+	sy = (sy & 0x3fff) + 1;
+	sx = LOADINTELWORD(vect->D);
+	sx = ((sx - 1) & 0x3fff) + 1;
+
+	// てきとーにリミット
+	if (sx >= 768) {
+		sx = 768;
+	}
+	if (sy >= 768) {
+		sy = 768;
+	}
 #else
 	sx = 8;
 	sy = 8;
 #endif
-	dir = textdir + ((vect->ope) & 7);
+	dir = vectdir + (((vect->ope & 0x80) >> 4) + ((vect->ope) & 7));
 	patnum = 0;
 
 	while(sy--) {
@@ -380,8 +356,8 @@ const TEXTDIR	*dir;
 					}
 				}
 			}
-			pset.x += dir->sx;
-			pset.y += dir->sy;
+			pset.x += dir->x2;
+			pset.y += dir->y2;
 		}
 	}
 	calc_gdcslavewait(pset.dots);

@@ -9,7 +9,7 @@
 #include	"timing.h"
 
 
-#define	SEARHC_SYNC
+#define	SEARCH_SYNC
 #define	TURE_SYNC
 
 typedef struct {
@@ -121,7 +121,7 @@ static void vectdraw(void) {
 	csrw = LOADINTELDWORD(gdc.s.para + GDC_CSRW);
 	textw = LOADINTELWORD(gdc.s.para + GDC_TEXTW);
 
-	if (gdc.s.para[GDC_VECTW] & 0x8) {
+	if (gdc.s.para[GDC_VECTW] & 0x08) {
 		gdcsub_line(csrw, (GDCVECT *)(gdc.s.para + GDC_VECTW),
 											textw, gdc.s.para[GDC_WRITE]);
 	}
@@ -211,7 +211,6 @@ void gdc_work(int id) {
 						textdraw();
 					}
 					break;
-				
 			}
 			item->ptr = gdc_cmd[data].pos;
 			item->rcv = gdc_cmd[data].outdatas;
@@ -499,7 +498,7 @@ static REG8 IOINPCALL gdc_i60(UINT port) {
 	else {
 		gdc_work(GDCWORK_MASTER);
 	}
-#ifdef SEARHC_SYNC
+#ifdef SEARCH_SYNC
 	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
@@ -667,7 +666,7 @@ static REG8 IOINPCALL gdc_ia0(UINT port) {
 		gdc_work(GDCWORK_SLAVE);
 		TRACEOUT(("gdc.s.cnt=%d", gdc.s.cnt));
 	}
-#ifdef SEARHC_SYNC
+#ifdef SEARCH_SYNC
 	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;

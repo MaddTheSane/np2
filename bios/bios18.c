@@ -132,8 +132,11 @@ static void bios18_47(void) {
 	GDCSUBFN	func;
 	UINT32		csrw;
 	UINT16		data;
+	UINT16		data2;
 	UINT16		GBMDOTI;
 	UINT8		ope;
+	SINT16		dx;
+	SINT16		dy;
 
 	// GDCバッファを空に
 	if (gdc.s.cnt) {
@@ -149,7 +152,6 @@ static void bios18_47(void) {
 	GBSY2 = LOADINTELWORD(ucw.GBSY2);
 	ZeroMemory(&vect, sizeof(vect));
 	if (ucw.GBDTYP == 0x01) {
-		short dx, dy;
 		func = gdcsub_line;
 		if ((GBSX1 > GBSX2) ||
 			((GBSX1 == GBSX2) && (GBSY1 > GBSY2))) {
@@ -177,6 +179,7 @@ static void bios18_47(void) {
 				SWAPU16(dx, dy);
 			}
 		}
+		vect.ope += 0x08;
 		STOREINTELWORD(vect.DC, dx);
 		data = dy * 2;
 		STOREINTELWORD(vect.D1, data);
@@ -185,24 +188,62 @@ static void bios18_47(void) {
 		data -= dx;
 		STOREINTELWORD(vect.D2, data);
 	}
-	else if (ucw.GBDTYP == 0x02) {
+	else if (ucw.GBDTYP <= 0x02) {
 		func = gdcsub_box;
-		if (GBSX1 > GBSX2) {
-			SWAPU16(GBSX1, GBSX2);
+		vect.ope = 0x40 + (ucw.GBDSP & 7);
+		dx = GBSX2 - GBSX1;
+		if (dx < 0) {
+			dx = 0 - dx;
 		}
-		if (GBSY1 > GBSY2) {
-			SWAPU16(GBSY1, GBSY2);
+		dy = GBSY2 - GBSY1;
+		if (dy < 0) {
+			dy = 0 - dy;
+		}
+		switch(ucw.GBDSP & 3) {
+			case 0:
+				data = dy;
+				data2 = dx;
+				break;
+
+			case 1:
+				data2 = (UINT16)dx + (UINT16)dy;
+				data2 >>= 1;
+				data = (UINT16)dx - (UINT16)dy;
+				data = (data >> 1) & 0x3fff;
+				break;
+
+			case 2:
+				data = dx;
+				data2 = dy;
+				break;
+
+			case 3:
+				data2 = (UINT16)dx + (UINT16)dy;
+				data2 >>= 1;
+				data = (UINT16)dy - (UINT16)dx;
+				data = (data >> 1) & 0x3fff;
+				break;
 		}
 		STOREINTELWORD(vect.DC, 3);
-		STOREINTELWORD(vect.D1, 0xffff);
-		data = GBSX2 - GBSX1;
-		STOREINTELWORD(vect.DM, data);
-		STOREINTELWORD(vect.D2, data);
-		data = GBSY2 - GBSY1;
 		STOREINTELWORD(vect.D, data);
+		STOREINTELWORD(vect.D2, data2);
+		STOREINTELWORD(vect.D1, 0xffff);
+		STOREINTELWORD(vect.DM, data);
 	}
 	else {
-		func = gdcsub_null;
+		func = gdcsub_circle;
+		vect.ope = 0x20 + (ucw.GBDSP & 7);
+		vect.DC[0] = ucw.GBLNG1[0];
+		vect.DC[1] = ucw.GBLNG1[1];
+		data = LOADINTELWORD(ucw.GBLNG2) - 1;
+		STOREINTELWORD(vect.D, data);
+		data >>= 1;
+		STOREINTELWORD(vect.D2, data);
+		STOREINTELWORD(vect.D1, 0x3fff);
+		if (ucw.GBDTYP == 0x04) {
+			vect.DM[0] = ucw.GBMDOT[0];
+			vect.DM[1] = ucw.GBMDOT[1];
+		}
 	}
 	if ((CPU_CH & 0xc0) == 0x40) {
 		GBSY1 += 200;
@@ -703,22 +744,22 @@ const CRTDATA	*crt;
 			}
 			break;
 
-		case 0x44:						// ボーダカラー
+		case 0x44:						// ボーダカラーの設定
 //			if (!(mem[MEMB_PRXCRT] & 0x40)) {
 //				color = i286_membyte_read(CPU_DS, CPU_BX + 1);
 //			}
 			break;
 
 		case 0x47:						// 直線、矩形の描画
-		case 0x48:
+		case 0x48:						// 円の描画
 			bios18_47();
 			break;
 
-		case 0x49:						// 
+		case 0x49:						// グラフィック文字の描画
 			bios18_49();
 			break;
 
-		case 0x4a:						// 
+		case 0x4a:						// 描画モードの設定
 			if (!(mem[MEMB_PRXCRT] & 0x01)) {
 				gdc.s.para[GDC_SYNC] = CPU_CH;
 				gdcs.grphdisp |= GDCSCRN_EXT;
