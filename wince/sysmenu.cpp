@@ -21,6 +21,7 @@
 #include	"sysmenu.str"
 #include	"filesel.h"
 #include	"dlgcfg.h"
+#include	"dlgscr.h"
 #include	"dlgabout.h"
 
 
@@ -112,13 +113,10 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATECFG;
 			break;
 
-#if 0
 		case MID_SCREENOPT:
-			winuienter();
-			dialog_scropt(hWnd);
-			winuileave();
+			menudlg_create(DLGSCR_WIDTH, DLGSCR_HEIGHT,
+											(char *)mstr_scropt, dlgscr_cmd);
 			break;
-#endif
 
 		case MID_KEY:
 			np2cfg.KEY_MODE = 0;

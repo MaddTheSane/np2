@@ -5,6 +5,7 @@
 
 
 const char mstr_cfg[] = "Configure";
+const char mstr_scropt[] = "Screen Option";
 const char mstr_about[] = "About";
 
 

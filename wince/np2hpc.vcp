@@ -12521,6 +12521,7 @@ SOURCE=.\SCRNMNG.CPP
 DEP_CPP_SCRNM=\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
+	"..\COMMON\bmpdata.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
@@ -12534,6 +12535,7 @@ DEP_CPP_SCRNM=\
 	"..\embed\vramhdl.h"\
 	"..\vram\scrndraw.h"\
 	".\gx\gx.h"\
+	".\nekop2.res"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -12641,6 +12643,7 @@ DEP_CPP_SYSME=\
 	"..\COMMON\strres.h"\
 	"..\embed\menu\dlgabout.h"\
 	"..\embed\menu\dlgcfg.h"\
+	"..\embed\menu\dlgscr.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -13217,6 +13220,169 @@ DEP_CPP_DLGCF=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\EMBED\MENU\DLGSCR.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_DLGSC=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\EMBED\MENU\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\vram\palettes.h"\
+	"..\vram\scrndraw.h"\
+	".\scrnmng.h"\
+	".\sysmenu.res"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_DLGSC=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\EMBED\MENU\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\vram\palettes.h"\
+	"..\vram\scrndraw.h"\
+	".\scrnmng.h"\
+	".\sysmenu.res"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_DLGSC=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\EMBED\MENU\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\vram\palettes.h"\
+	"..\vram\scrndraw.h"\
+	".\scrnmng.h"\
+	".\sysmenu.res"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\EMBED\MENU\MENUSTR.C
 
 !IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
@@ -13356,6 +13522,7 @@ DEP_CPP_MENUD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\

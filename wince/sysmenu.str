@@ -139,7 +139,8 @@ static const MSYSITEM s_screen[] = {
 		{str_20fps,			NULL,		MID_20FPS,			0},
 		{str_15fps,			NULL,		MID_15FPS,			0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
-		{str_scropt,		NULL,		MID_SCREENOPT,		MENU_GRAY |
+		{str_scropt,		NULL,		MID_SCREENOPT,		
+															// MENU_GRAY |
 															MENU_DELETED}};
 
 static const MSYSITEM s_keybd[] = {

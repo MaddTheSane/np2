@@ -833,6 +833,10 @@ SOURCE=..\EMBED\MENU\DLGCFG.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\EMBED\MENU\DLGSCR.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\embed\MENU\MENUSTR.C
 # End Source File
 # End Group
