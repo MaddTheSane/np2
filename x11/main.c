@@ -44,6 +44,7 @@
 
 #include "kdispwin.h"
 #include "toolwin.h"
+#include "viewer.h"
 
 #include "commng.h"
 #include "joymng.h"
@@ -237,6 +238,7 @@ main(int argc, char *argv[])
 	keystat_reset();
 
 	kdispwin_initialize();
+	viewer_init();
 
 	toolkit_widget_create();
 	scrnmng_initialize();
@@ -341,6 +343,7 @@ resource_cleanup:
 	TRACETERM();
 	dosio_term();
 
+	viewer_term();
 	toolkit_terminate();
 
 	return rv;
