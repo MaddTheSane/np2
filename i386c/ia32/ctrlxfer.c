@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.10 2004/02/09 16:12:07 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.11 2004/02/13 14:50:17 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1172,6 +1172,11 @@ IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, DWORD new_ip, D
 			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
 		}
 	}
+	if (CPU_INST_OP32) {
+		stacksize = 12;
+	} else {
+		stacksize = 6;
+	}
 
 	/* set new register */
 	load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
@@ -1179,11 +1184,6 @@ IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, DWORD new_ip, D
 
 	set_eflags(new_flags, mask);
 
-	if (CPU_INST_OP32) {
-		stacksize = 12;
-	} else {
-		stacksize = 6;
-	}
 	if (CPU_STAT_SS32) {
 		CPU_ESP += stacksize;
 	} else {
