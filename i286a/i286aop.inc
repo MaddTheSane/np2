@@ -5,8 +5,8 @@ $label		EAREG8	r12
 			ldrb	r6, [r12, #CPU_REG]
 			cmp		r0, #&c0
 			bcc		$label.1
-			CPUWORK	$regclk
 			R8SRC	r0, r5
+			CPUWORK	$regclk
 			ldrb	r4, [r5, #CPU_REG]
 			$alu	r4, r6
 			strb	r1, [r5, #CPU_REG]
@@ -41,10 +41,7 @@ $label		EAREG16	r12
 			mov		pc, r11
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			tst		r0, #1
-			bne		$label.2
-			cmp		r0, #I286_MEMWRITEMAX
-			bcs		$label.2
+			WORDACC	r0, $label.2
 			ldrh	r4, [r9, r0]
 			$alu	r4, r6
 			strh	r1, [r9, r0]
@@ -132,10 +129,7 @@ $label		EAREG16	r12
 			mov		pc, r11
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			tst		r0, #1
-			bne		$label.2
-			cmp		r0, #I286_MEMWRITEMAX
-			bcs		$label.2
+			WORDACC	r0, $label.2
 			ldrh	r4, [r9, r0]
 			$alu	r4, r6
 			mov		pc, r11
@@ -146,8 +140,8 @@ $label.2	bl		i286a_memoryread_w
 
 	MACRO
 $label	S_R8_EA		$alu, $regclk, $memclk
-$label		REG8EA	r5, $regclk, $memclk
-			ldrb	r2, [r5, #CPU_REG]
+$label		REG8EA	r6, $regclk, $memclk
+			ldrb	r2, [r6, #CPU_REG]
 			$alu	r2, r0
 			mov		pc, r11
 	MEND
@@ -217,10 +211,7 @@ $label		cmp		r0, #&c0
 			mov		pc, r11
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			tst		r0, #1
-			bne		$label.2
-			cmp		r0, #I286_MEMWRITEMAX
-			bcs		$label.2
+			WORDACC	r0, $label.2
 			ldrh	r4, [r9, r0]
 			$alu	r4
 			strh	r1, [r9, r0]
@@ -254,9 +245,9 @@ $label		CPUWORK	$clk
 
 	MACRO
 $label	XCHG_AX		$r, $clk
-$label		CPUWORK	$clk
-			ldrh	r0, [r9, #CPU_AX]
+$label		ldrh	r0, [r9, #CPU_AX]
 			ldrh	r1, [r9, $r]
+			CPUWORK	$clk
 			strh	r0, [r9, $r]
 			strh	r1, [r9, #CPU_AX]
 			mov		pc, r11
@@ -265,16 +256,16 @@ $label		CPUWORK	$clk
 
 	MACRO
 $label	MOVIMM8		$r, $clk
-$label		CPUWORK	$clk
-			GETPC8
+$label		GETPCF8
+			CPUWORK	$clk
 			strb	r0, [r9, $r]
 			mov		pc, r11
 	MEND
 
 	MACRO
 $label	MOVIMM16	$r, $clk
-$label		CPUWORK	$clk
-			GETPC16
+$label		GETPCF16
+			CPUWORK	$clk
 			strh	r0, [r9, $r]
 			mov		pc, r11
 	MEND

@@ -10,6 +10,7 @@
 	INCLUDE	i286a.inc
 	IMPORT	i286a_memoryread
 	IMPORT	i286a_memoryread_w
+;;	IMPORT	ea_assert
 
 	EXPORT	i286a_ea
 	EXPORT	i286a_lea
@@ -29,9 +30,9 @@ $label		ldrh	r1, [r9, $r]
 
 	MACRO
 $label	EAR1D8	$r, $b
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label	;;	ldr		r0, [r9, #CPU_CS_BASE]
+			add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread
 			ldrh	r1, [r9, $r]
 			ldr		r2, [r9, $b]
@@ -45,9 +46,9 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 
 	MACRO
 $label	EAR1D16	$r, $b
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label	;;	ldr		r0, [r9, #CPU_CS_BASE]
+			add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread_w
 			ldrh	r1, [r9, $r]
 			ldr		r2, [r9, $b]
@@ -71,9 +72,9 @@ $label		ldrh	r1, [r9, $r1]
 
 	MACRO
 $label	EAR2D8	$r1, $r2, $b
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label	;;	ldr		r0, [r9, #CPU_CS_BASE]
+			add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread
 			ldrh	r1, [r9, $r1]
 			ldrh	r2, [r9, $r2]
@@ -89,9 +90,9 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 
 	MACRO
 $label	EAR2D16	$r1, $r2, $b
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label	;;	ldr		r0, [r9, #CPU_CS_BASE]
+			add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread_w
 			ldrh	r1, [r9, $r1]
 			ldrh	r2, [r9, $r2]
@@ -104,7 +105,20 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 			mov		pc, r4
 	MEND
 
-i286a_ea		and		r1, r0, #(&18 << 3)
+i286a_ea
+	if 0
+				ldr		r1, [r9, #CPU_CS_BASE]
+				cmp		r1, r5
+				beq		ea_r
+				str		r0, [sp, #-4]!
+				mov		r4, lr
+				add		r0, r1, r8 lsr #16
+				bl		ea_assert
+				ldr		r0, [sp], #4
+				mov		lr, r4
+ea_r
+	endif
+				and		r1, r0, #(&18 << 3)
 				and		r2, r0, #7
 				add		r3, pc, r1 lsr #1
 				add		pc, r3, r2 lsl #2
@@ -160,9 +174,9 @@ ea_bx_d16		EAR1D16	#CPU_BX, #CPU_DS_FIX
 ea_bp_d8		EAR1D8	#CPU_BP, #CPU_SS_FIX
 ea_bp_d16		EAR1D16	#CPU_BP, #CPU_SS_FIX
 
-ea_d16			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
+ea_d16		;;	ldr		r0, [r9, #CPU_CS_BASE]
+				add		r0, r5, r8 lsr #16
+				mov		r4, lr
 				bl		i286a_memoryread_w
 				ldr		r1, [r9, #CPU_DS_FIX]
 				add		r8, r8, #(2 << 16)
@@ -180,9 +194,8 @@ $label		ldrh	r0, [r9, $r]
 
 	MACRO
 $label	LER1D8	$r
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label		add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread
 			ldrh	r1, [r9, $r]
 			add		r8, r8, #(1 << 16)
@@ -195,9 +208,8 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 
 	MACRO
 $label	LER1D16	$r
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label		add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread_w
 			ldrh	r1, [r9, $r]
 			add		r8, r8, #(2 << 16)
@@ -217,9 +229,8 @@ $label		ldrh	r1, [r9, $r1]
 
 	MACRO
 $label	LER2D8	$r1, $r2
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label		add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread
 			ldrh	r1, [r9, $r1]
 			ldrh	r2, [r9, $r2]
@@ -234,9 +245,8 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 
 	MACRO
 $label	LER2D16	$r1, $r2
-$label		ldr		r0, [r9, #CPU_CS_BASE]
+$label		add		r0, r5, r8 lsr #16
 			mov		r4, lr
-			add		r0, r0, r8 lsr #16
 			bl		i286a_memoryread_w
 			ldrh	r1, [r9, $r1]
 			ldrh	r2, [r9, $r2]
@@ -303,8 +313,7 @@ lea_bx_d16		LER1D16	#CPU_BX
 lea_bp_d8		LER1D8	#CPU_BP
 lea_bp_d16		LER1D16	#CPU_BP
 
-lea_d16			ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
+lea_d16			add		r0, r5, r8 lsr #16
 				add		r8, r8, #(2 << 16)
 				b		i286a_memoryread_w
 

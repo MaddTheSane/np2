@@ -185,5 +185,13 @@ $label		CPUDBGL
 	MEND
 
 
+	MACRO
+$label	WORDACC	$r, $l
+$label		tst		$r, #1
+			bne		$l
+			cmp		$r, #I286_MEMWRITEMAX
+			bcs		$l
+	MEND
+
 	END
 

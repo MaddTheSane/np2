@@ -32,6 +32,13 @@ $label		add		r0, r5, r8 lsr #16
 			add		r8, r8, #(1 << 16)
 	MEND
 
+	MACRO
+$label	GETPCF16
+$label		add		r0, r5, r8 lsr #16
+			bl		i286a_memoryread_w
+			add		r8, r8, #(2 << 16)
+	MEND
+
 
 	MACRO
 $label	R8SRC	$op, $out

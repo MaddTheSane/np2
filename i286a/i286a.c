@@ -81,3 +81,15 @@ void i286a_reset(void) {
 	CPU_ADRSMASK = 0xfffff;
 }
 
+
+#if 0	// ---- test
+void ea_assert(UINT32 x) {
+
+	TCHAR	buf[32];
+
+	wsprintf(buf, _T("addr = %x [%.2x]"), x, i286_memoryread(x - 2));
+	MessageBox(NULL, buf, _T("!"), MB_OK);
+	exit(1);
+}
+#endif
+

@@ -160,21 +160,21 @@ push16e			ldrh	r2, [r9, #CPU_SP]
 popea16			CPUWORK	#5
 				ldrh	r2, [r9, #CPU_SP]
 				ldr		r3, [r9, #CPU_SS_BASE]
-				mov		r6, r0
+				mov		r4, r0
 				add		r0, r2, r3
 				add		r2, r2, #2
 				bic		r2, r2, #&10000
 				strh	r2, [r9, #CPU_SP]
 				bl		i286a_memoryread_w
-				cmp		r6, #&c0
+				cmp		r4, #&c0
 				bcc		pop16m
-				R16SRC	r6, r1
+				R16SRC	r4, r1
 				strh	r0, [r1, #CPU_REG]
 				mov		pc, r11
-pop16m			mov		r5, r0
-				mov		r0, r6
+pop16m			mov		r6, r0
+				mov		r0, r4
 				bl		i286a_ea
-				mov		r1, r5
+				mov		r1, r6
 				mov		lr, r11
 				b		i286a_memoryread_w
 

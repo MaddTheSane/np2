@@ -20,20 +20,20 @@ i286aop80		GETPCF8
 				cmp		r0, #&c0
 				bcc		ope80m
 				CPUWORK	#3
-				R8SRC	r0, r5
-				add		r5, r5, #CPU_REG
+				R8SRC	r0, r4
+				add		r4, r4, #CPU_REG
 				GETPC8
 				adr		r1, op8x_reg8
-				ldrb	r4, [r5]
+				ldrb	r5, [r4]
 				ldr		pc, [r1, r6 lsr #1]
 ope80m			CPUWORK	#7
 				bl		i286a_ea
 				cmp		r0, #I286_MEMWRITEMAX
 				bcs		ope80e
-				add		r5, r9, r0
+				add		r4, r9, r0
 				GETPC8
 				adr		r1, op8x_reg8
-				ldrb	r4, [r5]
+				ldrb	r5, [r4]
 				ldr		pc, [r1, r6 lsr #1]
 ope80e			mov		r5, r0
 				bl		i286a_memoryread
@@ -60,28 +60,28 @@ op8x_ext8		dcd		add_r8_e
 				dcd		xor_r8_e
 				dcd		cmp_r8_e
 
-add_r8_i		ADD8	r4, r0
-				strb	r1, [r5]
+add_r8_i		ADD8	r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-or_r8_i			OR8		r4, r0
-				strb	r1, [r5]
+or_r8_i			OR8		r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-adc_r8_i		ADC8	r4, r0
-				strb	r1, [r5]
+adc_r8_i		ADC8	r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-sbb_r8_i		SBB8	r4, r0
-				strb	r1, [r5]
+sbb_r8_i		SBB8	r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-and_r8_i		AND8	r4, r0
-				strb	r1, [r5]
+and_r8_i		AND8	r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-sub_r8_i		SUB8	r4, r0
-				strb	r1, [r5]
+sub_r8_i		SUB8	r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-xor_r8_i		XOR8	r4, r0
-				strb	r1, [r5]
+xor_r8_i		XOR8	r5, r0
+				strb	r1, [r4]
 				mov		pc, r11
-cmp_r8_i		SUB8	r4, r0
+cmp_r8_i		SUB8	r5, r0
 				mov		pc, r11
 
 add_r8_e		ADD8	r4, r0
@@ -123,22 +123,19 @@ i286aop81		GETPCF8
 				cmp		r0, #&c0
 				bcc		ope81m
 				CPUWORK	#3
-				R16SRC	r0, r5
-				add		r5, r5, #CPU_REG
+				R16SRC	r0, r4
+				add		r4, r4, #CPU_REG
 				GETPC16
 				adr		r1, op8x_reg16
-				ldrh	r4, [r5]
+				ldrh	r5, [r4]
 				ldr		pc, [r1, r6 lsr #1]
 ope81m			CPUWORK	#7
 				bl		i286a_ea
-				tst		r0, #1
-				bne		ope81e
-				cmp		r0, #I286_MEMWRITEMAX
-				bcs		ope81e
-				add		r5, r9, r0
+				WORDACC	r0, ope81e
+				add		r4, r9, r0
 				GETPC16
 				adr		r1, op8x_reg16
-				ldrh	r4, [r5]
+				ldrh	r5, [r4]
 				ldr		pc, [r1, r6 lsr #1]
 ope81e			mov		r5, r0
 				bl		i286a_memoryread_w
@@ -152,26 +149,23 @@ i286aop83		GETPCF8
 				cmp		r0, #&c0
 				bcc		ope83m
 				CPUWORK	#3
-				R16SRC	r0, r5
-				add		r5, r5, #CPU_REG
+				R16SRC	r0, r4
+				add		r4, r4, #CPU_REG
 				GETPC8
 				tst		r0, #(1 << 7)
 				orrne	r0, r0, #(&ff << 8)
 				adr		r1, op8x_reg16
-				ldrh	r4, [r5]
+				ldrh	r5, [r4]
 				ldr		pc, [r1, r6 lsr #1]
 ope83m			CPUWORK	#7
 				bl		i286a_ea
-				tst		r0, #1
-				bne		ope83e
-				cmp		r0, #I286_MEMWRITEMAX
-				bcs		ope83e
-				add		r5, r9, r0
+				WORDACC	r0, ope83e
+				add		r4, r9, r0
 				GETPC8
 				tst		r0, #(1 << 7)
 				orrne	r0, r0, #(&ff << 8)
 				adr		r1, op8x_reg16
-				ldrh	r4, [r5]
+				ldrh	r5, [r4]
 				ldr		pc, [r1, r6 lsr #1]
 ope83e			mov		r5, r0
 				bl		i286a_memoryread_w
@@ -200,28 +194,28 @@ op8x_ext16		dcd		add_r16_e
 				dcd		xor_r16_e
 				dcd		cmp_r16_e
 
-add_r16_i		ADD16	r4, r0
-				strh	r1, [r5]
+add_r16_i		ADD16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-or_r16_i		OR16	r4, r0
-				strh	r1, [r5]
+or_r16_i		OR16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-adc_r16_i		ADC16	r4, r0
-				strh	r1, [r5]
+adc_r16_i		ADC16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-sbb_r16_i		SBB16	r4, r0
-				strh	r1, [r5]
+sbb_r16_i		SBB16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-and_r16_i		AND16	r4, r0
-				strh	r1, [r5]
+and_r16_i		AND16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-sub_r16_i		SUB16	r4, r0
-				strh	r1, [r5]
+sub_r16_i		SUB16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-xor_r16_i		XOR16	r4, r0
-				strh	r1, [r5]
+xor_r16_i		XOR16	r5, r0
+				strh	r1, [r4]
 				mov		pc, r11
-cmp_r16_i		SUB16	r4, r0
+cmp_r16_i		SUB16	r5, r0
 				mov		pc, r11
 
 add_r16_e		ADD16	r4, r0
