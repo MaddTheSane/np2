@@ -69,9 +69,19 @@ NP2OSCFG np2oscfg = {
 	0,			/* F12KEY */
 
 	0,			/* MOUSE_SW */
+
 	0,			/* JOYPAD1 */
 	0,			/* JOYPAD2 */
-	{ 0, 0, 0, 0 },		/* JOY1BTN */
+	{ 1, 2, 5, 6 },		/* JOY1BTN */
+	{
+		{ 0, 1 },		/* JOYAXISMAP[0] */
+		{ 0, 1 },		/* JOYAXISMAP[1] */
+	},
+	{
+		{ 0, 1, 0xff, 0xff },	/* JOYBTNMAP[0] */
+		{ 0, 1, 0xff, 0xff },	/* JOYBTNMAP[1] */
+	},
+	{ "", "" },		/* JOYDEV */
 
 	{ COMPORT_MIDI, 0, 0x3e, 19200, "", "", "", "" },	/* mpu */
 	{
@@ -311,7 +321,7 @@ mainloop(void *p)
 	UNUSED(p);
 
 	if (np2oscfg.NOWAIT) {
-		joy_flash();
+		joymng_sync();
 		mousemng_callback();
 		pccore_exec(framecnt == 0);
 		if (np2oscfg.DRAW_SKIP) {
@@ -330,7 +340,7 @@ mainloop(void *p)
 	} else if (np2oscfg.DRAW_SKIP) {
 		/* frame skip */
 		if (framecnt < np2oscfg.DRAW_SKIP) {
-			joy_flash();
+			joymng_sync();
 			mousemng_callback();
 			pccore_exec(framecnt == 0);
 			framecnt++;
@@ -341,7 +351,7 @@ mainloop(void *p)
 		/* auto skip */
 		if (waitcnt == 0) {
 			UINT cnt;
-			joy_flash();
+			joymng_sync();
 			mousemng_callback();
 			pccore_exec(framecnt == 0);
 			framecnt++;

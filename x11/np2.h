@@ -1,6 +1,8 @@
 #ifndef	NP2_X11_NP2_H__
 #define	NP2_X11_NP2_H__
 
+#include "joymng.h"
+
 typedef struct {
 	BYTE	port;
 	BYTE	def_en;
@@ -29,7 +31,10 @@ typedef struct {
 	BYTE	MOUSE_SW;
 	BYTE	JOYPAD1;
 	BYTE	JOYPAD2;
-	BYTE	JOY1BTN[4];
+	BYTE	JOY1BTN[JOY_NBUTTON];
+	BYTE	JOYAXISMAP[2][JOY_NAXIS];
+	BYTE	JOYBTNMAP[2][JOY_NBUTTON];
+	char	JOYDEV[2][MAX_PATH];
 
 	COMCFG	mpu;
 	COMCFG	com[3];

@@ -321,6 +321,8 @@ SNDDRVOBJS=	../snddrv/esd.o \
 		../snddrv/oss.o \
 		../snddrv/sdl.o
 
+JOYDRVOBJS=	../joydrv/sdl.o
+
 X11DEPOBJS=	x11_font.o \
 		x11_keyboard.o \
 		x11_mouse.o \
@@ -331,7 +333,8 @@ OBJS=		$(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(GETSNDOBJS) \
 		$(VERMOUTHOBJS) $(VRAMOBJS) $(GENERICOBJS) $(CPUOBJS) \
 		$(EMBEDOBJS) $(MENUOBJS) $(MENUBASEOBJS) \
-		$(X11OBJS) $(DEBUGOBJS) $(SNDDRVOBJS) $(X11DEPOBJS)
+		$(DEBUGOBJS) $(SNDDRVOBJS) $(JOYDRVOBJS) \
+		$(X11OBJS) $(X11DEPOBJS)
 
 CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(FDDOBJS:.o=.c) $(FONTOBJS:.o=.c) $(IOOBJS:.o=.c) \
@@ -339,8 +342,8 @@ CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(SOUNDOBJS:.o=.c) $(GETSNDOBJS:.o=.c) $(VERMOUTHOBJS:.o=.c) \
 		$(VRAMOBJS:.o=.c) $(GENERICOBJS:.o=.c) \
 		$(CPUOBJS:.o=.c) \
-		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(X11OBJS:.o=.c) \
-		$(X11DEPOBJS:.o=.c)
+		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(JOYDRVOBJS:.o=.c) \
+		$(X11OBJS:.o=.c) $(X11DEPOBJS:.o=.c)
 SRCS=		$(CSRCS)
 ALLSRCS=	$(ASRCS) $(CSRCS)
 

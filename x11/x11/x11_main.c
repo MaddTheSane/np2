@@ -1,4 +1,4 @@
-/*	$Id: x11_main.c,v 1.2 2004/07/15 16:10:03 monaka Exp $	*/
+/*	$Id: x11_main.c,v 1.3 2004/07/26 15:53:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -181,6 +181,7 @@ gui_x11_widget_mainloop(void)
 		return;
 
 	while (taskmng_isavail()) {
+		joymng_update();
 		if (XPending(display) > 0) {
 			gui_x11_event_process();
 		} else {

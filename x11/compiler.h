@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.23 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.24 2004/07/26 15:53:26 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -69,15 +69,30 @@
 #define	OSLANG_EUC
 #define	OSLINEBREAK_LF
 
-typedef	signed char		CHAR;
-typedef	signed short		SHORT;
-typedef	signed int		INT;
-typedef	signed long		LONG;
+#if USE_GTK > 0 || USE_GTK2 > 0
 
-typedef	unsigned char		UCHAR;
-typedef	unsigned short		USHORT;
+#include "glib.h"
+
+typedef	guint32		UINT;
+
+typedef	gint8		SINT8;
+typedef	gint16		SINT16;
+typedef	gint32		SINT32;
+typedef	gint64		SINT64;
+
+typedef	guint8		UINT8;
+typedef	guint16		UINT16;
+typedef	guint32		UINT32;
+typedef	guint64		UINT64;
+
+typedef	guint8		BYTE;
+typedef	gchar		TCHAR;
+
+typedef	gboolean	BOOL;
+
+#else	/* USE_GTK == 0 && USE_GTK2 == 0 */
+
 typedef	unsigned int		UINT;
-typedef	unsigned long		ULONG;
 
 typedef	signed char		SINT8;
 typedef	signed short		SINT16;
@@ -90,12 +105,11 @@ typedef	unsigned int		UINT32;
 typedef	unsigned long long	UINT64;
 
 typedef	unsigned char		BYTE;
-typedef	unsigned short		WORD;
-typedef	unsigned int		DWORD;
-
-typedef	unsigned char		TCHAR;
+typedef	char			TCHAR;
 
 typedef	int			BOOL;
+
+#endif	/* USE_GTK > 0 || USE_GTK2 > 0 */
 
 #ifndef	TRUE
 #define	TRUE	1
@@ -240,6 +254,17 @@ void toolkit_msgbox(const char *title, const char *msg);
 #undef	SUPPORT_8BPP
 #undef	SUPPORT_24BPP
 #undef	SUPPORT_32BPP
+#endif
+
+#if ((USE_SDL > 0) && !defined(NOSOUND)) || defined(USE_SDLAUDIO)
+#define	SUPPORT_JOYSTICK
+
+#if ((USE_SDL > 0) && !defined(NOSOUND)) || defined(USE_SDLAUDIO)
+#define	USE_SDL_JOYSTICK
+#else
+#error	unknown joystick driver!!!
+#endif
+
 #endif
 
 /*

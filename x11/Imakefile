@@ -187,6 +187,8 @@ DEBUGOBJS=	debug/viewmem.o
 
 SNDDRVOBJS=	snddrv/esd.o snddrv/netbsd.o snddrv/oss.o snddrv/sdl.o
 
+JOYDRVOBJS=	joydrv/sdl.o
+
 #if defined(CPUCORE_IA32)
 
 CPUOBJS= \
@@ -247,7 +249,8 @@ NP2OBJS+=	../debugsub.o
 OBJS=		$(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(GETSNDOBJS) \
 		$(VERMOUTHOBJS) $(VRAMOBJS) $(GENERICOBJS) $(CPUOBJS) \
-		$(X11OBJS) $(DEBUGOBJS) $(SNDDRVOBJS) $(GTKDEPOBJS)
+		$(X11OBJS) $(DEBUGOBJS) $(SNDDRVOBJS) $(JOYDRVOBJS) \
+		$(GTKDEPOBJS)
 
 CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(FDDOBJS:.o=.c) $(FONTOBJS:.o=.c) $(IOOBJS:.o=.c) \
@@ -255,8 +258,8 @@ CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(SOUNDOBJS:.o=.c) $(GETSNDOBJS:.o=.c) $(VERMOUTHOBJS:.o=.c) \
 		$(VRAMOBJS:.o=.c) $(GENERICOBJS:.o=.c) \
 		$(CPUOBJS:.o=.c) \
-		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(X11OBJS:.o=.c) \
-		$(GTKDEPOBJS:.o=.c)
+		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(JOYDRVOBJS:.o=.c) \
+		$(X11OBJS:.o=.c) $(GTKDEPOBJS:.o=.c)
 SRCS=		$(CSRCS)
 ALLSRCS=	$(ASRCS) $(CSRCS)
 

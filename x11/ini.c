@@ -8,6 +8,7 @@
 #include "strres.h"
 
 #include "commng.h"
+#include "joymng.h"
 #include "kbdmng.h"
 #include "soundmng.h"
 
@@ -556,7 +557,10 @@ static const INITBL iniitem[] = {
 	{"keyboard", INIRO_KB,		&np2oscfg.KEYBOARD,	0},
 	{"F12_COPY", INITYPE_UINT8,	&np2oscfg.F12KEY,	0},
 	{"Joystick", INITYPE_BOOL,	&np2oscfg.JOYPAD1,	0},
-	{"Joy1_btn", INITYPE_ARGH8,	np2oscfg.JOY1BTN,	4},
+	{"Joy1_btn", INITYPE_ARGH8,	np2oscfg.JOY1BTN,	JOY_NBUTTON},
+	{"Joy1_dev", INITYPE_STR,	&np2oscfg.JOYDEV[0],	MAX_PATH},
+	{"Joy1amap", INITYPE_ARGH8,	np2oscfg.JOYAXISMAP[0],	JOY_NAXIS},
+	{"Joy1bmap", INITYPE_ARGH8,	np2oscfg.JOYBTNMAP[0],	JOY_NBUTTON},
 
 	{"confirm_", INITYPE_BOOL,	&np2oscfg.confirm,	0},
 

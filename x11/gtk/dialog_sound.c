@@ -1,3 +1,5 @@
+/*	$Id: dialog_sound.c,v 1.4 2004/07/26 15:53:27 monaka Exp $	*/
+
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.
@@ -37,6 +39,7 @@
 #include "pccore.h"
 #include "iocore.h"
 
+#include "joymng.h"
 #include "soundmng.h"
 #include "sysmng.h"
 
@@ -46,7 +49,7 @@
  */
 static const struct {
 	const char*	name;
-	BYTE*		valp;
+	UINT8*		valp;
 	gfloat		min;
 	gfloat		max;
 } mixer_vol_tbl[] = {
@@ -229,6 +232,57 @@ static GtkObject *spb_vr_level_adj;
 
 
 /*
+ * JoyPad
+ */
+
+static const char *joypad_nodevice_str = "No device";
+static const char *joypad_noconnect_str = "N/C";
+static const char *joypad_num_str[256] = {
+	"0",   "1",   "2",   "3",   "4",   "5",   "6",   "7", 
+	"8",   "9",   "10",  "11",  "12",  "13",  "14",  "15", 
+	"16",  "17",  "18",  "19",  "20",  "21",  "22",  "23", 
+	"24",  "25",  "26",  "27",  "28",  "29",  "30",  "31", 
+	"32",  "33",  "34",  "35",  "36",  "37",  "38",  "39", 
+	"40",  "41",  "42",  "43",  "44",  "45",  "46",  "47", 
+	"48",  "49",  "50",  "51",  "52",  "53",  "54",  "55", 
+	"56",  "57",  "58",  "59",  "60",  "61",  "62",  "63", 
+	"64",  "65",  "66",  "67",  "68",  "69",  "70",  "71", 
+	"72",  "73",  "74",  "75",  "76",  "77",  "78",  "79", 
+	"80",  "81",  "82",  "83",  "84",  "85",  "86",  "87", 
+	"88",  "89",  "90",  "91",  "92",  "93",  "94",  "95", 
+	"96",  "97",  "98",  "99",  "100", "101", "102", "103", 
+	"104", "105", "106", "107", "108", "109", "110", "111", 
+	"112", "113", "114", "115", "116", "117", "118", "119", 
+	"120", "121", "122", "123", "124", "125", "126", "127", 
+	"128", "129", "130", "131", "132", "133", "134", "135", 
+	"136", "137", "138", "139", "140", "141", "142", "143", 
+	"144", "145", "146", "147", "148", "149", "150", "151", 
+	"152", "153", "154", "155", "156", "157", "158", "159", 
+	"160", "161", "162", "163", "164", "165", "166", "167", 
+	"168", "169", "170", "171", "172", "173", "174", "175", 
+	"176", "177", "178", "179", "180", "181", "182", "183", 
+	"184", "185", "186", "187", "188", "189", "190", "191", 
+	"192", "193", "194", "195", "196", "197", "198", "199", 
+	"200", "201", "202", "203", "204", "205", "206", "207", 
+	"208", "209", "210", "211", "212", "213", "214", "215", 
+	"216", "217", "218", "219", "220", "221", "222", "223", 
+	"224", "225", "226", "227", "228", "229", "230", "231", 
+	"232", "233", "234", "235", "236", "237", "238", "239", 
+	"240", "241", "242", "243", "244", "245", "246", "247", 
+	"248", "249", "250", "251", "252", "253", "254", "255", 
+};
+
+static const joydrv_handle_t *joypad_devlist;
+static GtkWidget *joypad_use_checkbutton[1];
+static GtkWidget *joypad_devlist_combo;
+static GtkWidget *joypad_axis_combo[JOY_NAXIS];
+static GtkWidget *joypad_button_combo[JOY_NBUTTON];
+static char joypad_devname[MAX_PATH];
+static UINT8 joypad_axis[JOY_NAXIS];
+static UINT8 joypad_button[JOY_NBUTTON];
+
+
+/*
  * Driver
  */
 
@@ -257,7 +311,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	const gchar *snd26_ioport;
 	const gchar *snd26_intr;
 	const gchar *snd26_romaddr;
-	BYTE snd26opt, snd26opt_mask;
+	UINT8 snd26opt, snd26opt_mask;
 
 	/* PC-9801-86 */
 	const gchar *snd86_ioport;
@@ -265,21 +319,26 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	const gchar *snd86_soundid;
 	gint snd86_interrupt;
 	gint snd86_biosrom;
-	BYTE snd86opt, snd86opt_mask;
+	UINT8 snd86opt, snd86opt_mask;
 
 	/* Speak board */
 	const gchar *spb_ioport;
 	const gchar *spb_intr;
 	const gchar *spb_romaddr;
-	BYTE spb_vrc;
-	BYTE spb_vrl;
-	BYTE spb_x;
-	BYTE spbopt, spbopt_mask;
+	UINT8 spb_vrc;
+	UINT8 spb_vrl;
+	UINT8 spb_x;
+	UINT8 spbopt, spbopt_mask;
+
+	/* JoyPad */
+	UINT8 joypad[1];
+	gint joypad_device_index;
 
 	/* Driver */
 	const gchar *driver_audiodevp;
 
 	/* common */
+	char buf[32];
 	int i;
 	BOOL renewal;
 
@@ -417,7 +476,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	spb_ioport = gtk_entry_get_text(GTK_ENTRY(spb_ioport_entry));
 	spb_intr = gtk_entry_get_text(GTK_ENTRY(spb_int_entry));
 	spb_romaddr = gtk_entry_get_text(GTK_ENTRY(spb_romaddr_entry));
-	spb_vrl = (BYTE)(GTK_ADJUSTMENT(spb_vr_level_adj)->value);
+	spb_vrl = (UINT8)(GTK_ADJUSTMENT(spb_vr_level_adj)->value);
 	spb_x = GTK_TOGGLE_BUTTON(spb_reverse_channel_checkbutton)->active;
 
 	renewal = FALSE;
@@ -474,6 +533,51 @@ ok_button_clicked(GtkButton *b, gpointer d)
 		np2cfg.spbopt |= spbopt;
 		opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
 		sysmng_update(SYS_UPDATEOSCFG);
+	}
+
+	/* JoyPad */
+	if (!(np2oscfg.JOYPAD1 & 2)) {
+		joypad[0] = GTK_TOGGLE_BUTTON(joypad_use_checkbutton[0])->active;
+
+		renewal = FALSE;
+		if ((np2oscfg.JOYPAD1 ^ joypad[0]) & 1) {
+			np2oscfg.JOYPAD1 = joypad[0];
+			renewal = TRUE;
+		}
+
+		joypad_device_index = 0;
+		if (joypad_devlist == NULL) {
+			for (i = 0; joypad_devlist[i] != NULL; ++i) {
+				if (strcmp(joypad_devname, joypad_devlist[i]->devname) == 0) {
+					joypad_device_index = joypad_devlist[i]->devindex;
+					break;
+				}
+			}
+		}
+		g_snprintf(buf, sizeof(buf), "%d", joypad_device_index);
+		if (strcmp(np2oscfg.JOYDEV[0], buf) != 0) {
+			milstr_ncpy(np2oscfg.JOYDEV[0], buf, sizeof(np2oscfg.JOYDEV[0]));
+			renewal = TRUE;
+		}
+
+		for (i = 0; i < JOY_NAXIS; ++i) {
+			if (np2oscfg.JOYAXISMAP[0][i] != joypad_axis[i]) {
+				memcpy(np2oscfg.JOYAXISMAP[0], joypad_axis, sizeof(np2oscfg.JOYAXISMAP[0]));
+				renewal = TRUE;
+			}
+		}
+
+		for (i = 0; i < JOY_NBUTTON; ++i) {
+			if (np2oscfg.JOYBTNMAP[0][i] != joypad_button[i]) {
+				memcpy(np2oscfg.JOYBTNMAP[0], joypad_button, sizeof(np2oscfg.JOYBTNMAP[0]));
+				renewal = TRUE;
+			}
+		}
+
+		if (renewal) {
+			joymng_initialize();
+			sysmng_update(SYS_UPDATEOSCFG);
+		}
 	}
 
 	/* Driver */
@@ -1050,6 +1154,249 @@ create_spb_note(void)
 	return root_widget;
 }
 
+static void
+joypad_device_changed(GtkEditable *e, gpointer d)
+{
+	GtkWidget *axis_entry[JOY_NAXIS];
+	GtkWidget *button_entry[JOY_NBUTTON];
+	const gchar *devname;
+	GList *axis_combo_items;
+	GList *button_combo_items;
+	int drv;
+	int i, j;
+
+	UNUSED(d);
+
+	devname = gtk_entry_get_text(GTK_ENTRY(e));
+	if ((joypad_devlist == NULL)
+	 || (devname == NULL)
+	 || (strcmp(devname, joypad_nodevice_str) == 0)) {
+		milstr_ncpy(joypad_devname, joypad_nodevice_str, sizeof(joypad_devname));
+		return;
+	}
+
+	for (drv = 0; joypad_devlist[drv] != NULL; ++drv) {
+		if (strcmp(devname, joypad_devlist[drv]->devname) == 0) {
+			break;
+		}
+	}
+	if (joypad_devlist[drv] == NULL) {
+		drv = 0;
+		if (joypad_devlist[drv] == NULL) {
+			milstr_ncpy(joypad_devname, joypad_nodevice_str, sizeof(joypad_devname));
+			return;
+		}
+	}
+	milstr_ncpy(joypad_devname, joypad_devlist[drv]->devname, sizeof(joypad_devname));
+
+	/* Axis */
+	for (i = 0; i < JOY_NAXIS; ++i) {
+		axis_combo_items = g_list_append(NULL, (gpointer)joypad_noconnect_str);
+		for (j = 0; j < joypad_devlist[drv]->naxis; j++) {
+			axis_combo_items = g_list_append(axis_combo_items, (gpointer)joypad_num_str[j]);
+		}
+		gtk_combo_set_popdown_strings(GTK_COMBO(joypad_axis_combo[i]), axis_combo_items);
+		g_list_free(axis_combo_items);
+
+		axis_entry[i] = GTK_COMBO(joypad_axis_combo[i])->entry;
+		gtk_widget_show(axis_entry[i]);
+		gtk_entry_set_editable(GTK_ENTRY(axis_entry[i]), FALSE);
+
+		if (np2oscfg.JOYAXISMAP[0][i] < joypad_devlist[drv]->naxis) {
+			gtk_entry_set_text(GTK_ENTRY(axis_entry[i]), joypad_num_str[np2oscfg.JOYAXISMAP[0][i]]);
+		} else {
+			gtk_entry_set_text(GTK_ENTRY(axis_entry[i]), joypad_noconnect_str);
+		}
+	}
+
+	/* Button */
+	for (i = 0; i < JOY_NBUTTON; ++i) {
+		button_combo_items = g_list_append(NULL, (gpointer)joypad_noconnect_str);
+		for (j = 0; j < joypad_devlist[drv]->nbutton; j++) {
+			button_combo_items = g_list_append(button_combo_items, (gpointer)joypad_num_str[j]);
+		}
+		gtk_combo_set_popdown_strings(GTK_COMBO(joypad_button_combo[i]), button_combo_items);
+		g_list_free(button_combo_items);
+
+		button_entry[i] = GTK_COMBO(joypad_button_combo[i])->entry;
+		gtk_widget_show(button_entry[i]);
+		gtk_entry_set_editable(GTK_ENTRY(button_entry[i]), FALSE);
+
+		if (np2oscfg.JOYBTNMAP[0][i] < joypad_devlist[drv]->nbutton) {
+			gtk_entry_set_text(GTK_ENTRY(button_entry[i]), joypad_num_str[np2oscfg.JOYBTNMAP[0][i]]);
+		} else {
+			gtk_entry_set_text(GTK_ENTRY(button_entry[i]), joypad_noconnect_str);
+		}
+	}
+}
+
+static void
+joypad_axis_entry_changed(GtkEditable *e, gpointer d)
+{
+	const gchar *str = gtk_entry_get_text(GTK_ENTRY(e));
+	UINT8 *p = (UINT8 *)d;
+
+	if (strcmp(str, joypad_noconnect_str) == 0) {
+		*p = JOY_AXIS_INVALID;
+	} else {
+		*p = milstr_solveINT(str);
+	}
+}
+
+static void
+joypad_button_entry_changed(GtkEditable *e, gpointer d)
+{
+	const gchar *str = gtk_entry_get_text(GTK_ENTRY(e));
+	UINT8 *p = (UINT8 *)d;
+
+	if (strcmp(str, joypad_noconnect_str) == 0) {
+		*p = JOY_BUTTON_INVALID;
+	} else {
+		*p = milstr_solveINT(str);
+	}
+}
+
+static GtkWidget *
+create_joypad_note(void)
+{
+	char buf[32];
+	GtkWidget *root_widget;
+	GtkWidget *table;
+	GtkWidget *devlist_label;
+	GtkWidget *devlist_entry;
+	GtkWidget *axis_label[JOY_NAXIS];
+	GtkWidget *axis_entry[JOY_NAXIS];
+	GtkWidget *button_label[JOY_NBUTTON];
+	GtkWidget *button_entry[JOY_NBUTTON];
+	GList *devlist_combo_items = NULL;
+	GList *axis_combo_items;
+	GList *button_combo_items;
+	int ndrv, drv;
+	int i;
+
+	root_widget = gtk_vbox_new(FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(root_widget), 5);
+	gtk_widget_show(root_widget);
+
+	table = gtk_table_new(3, 8, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 3);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_box_pack_start(GTK_BOX(root_widget), table, FALSE, FALSE, 0);
+	gtk_widget_show(table);
+
+	/* Use JoyPad-1 */
+	joypad_use_checkbutton[0] = gtk_check_button_new_with_label("Use JoyPad-1");
+	gtk_widget_show(joypad_use_checkbutton[0]);
+	gtk_table_attach_defaults(GTK_TABLE(table), joypad_use_checkbutton[0], 0, 3, 0, 1);
+
+	/* Device */
+	devlist_label = gtk_label_new("Device");
+	gtk_widget_show(devlist_label);
+	gtk_table_attach_defaults(GTK_TABLE(table), devlist_label, 0, 1, 1, 2);
+
+	joypad_devlist_combo = gtk_combo_new();
+	gtk_widget_show(joypad_devlist_combo);
+	gtk_table_attach_defaults(GTK_TABLE(table), joypad_devlist_combo, 1, 3, 1, 2);
+	gtk_combo_set_value_in_list(GTK_COMBO(joypad_devlist_combo), TRUE, FALSE);
+
+	joypad_devlist = joymng_get_devinfo_list();
+	if (joypad_devlist != NULL) {
+		for (i = 0; joypad_devlist[i] != NULL; ++i) {
+			devlist_combo_items = g_list_append(devlist_combo_items, (gpointer)joypad_devlist[i]->devname);
+		}
+		ndrv = i;
+	} else {
+		devlist_combo_items = g_list_append(NULL, (gpointer)joypad_nodevice_str);
+		ndrv = 0;
+	}
+	gtk_combo_set_popdown_strings(GTK_COMBO(joypad_devlist_combo), devlist_combo_items);
+	g_list_free(devlist_combo_items);
+
+	devlist_entry = GTK_COMBO(joypad_devlist_combo)->entry;
+	gtk_widget_show(devlist_entry);
+	gtk_entry_set_editable(GTK_ENTRY(devlist_entry), FALSE);
+	gtk_signal_connect(GTK_OBJECT(devlist_entry), "changed",
+	    GTK_SIGNAL_FUNC(joypad_device_changed), (gpointer)joypad_devlist_combo);
+
+	/* Axis */
+	for (i = 0; i < JOY_NAXIS; ++i) {
+		g_snprintf(buf, sizeof(buf), "%c axis", 'X' + i);
+		axis_label[i] = gtk_label_new(buf);
+		gtk_widget_show(axis_label[i]);
+		gtk_table_attach_defaults(GTK_TABLE(table), axis_label[i], 0, 1, 2+i, 3+i);
+
+		joypad_axis_combo[i] = gtk_combo_new();
+		gtk_widget_show(joypad_axis_combo[i]);
+		gtk_table_attach_defaults(GTK_TABLE(table), joypad_axis_combo[i], 1, 2, 2+i, 3+i);
+		gtk_widget_set_usize(joypad_axis_combo[i], 48, 0);
+		gtk_combo_set_value_in_list(GTK_COMBO(joypad_axis_combo[i]), TRUE, FALSE);
+
+		axis_combo_items = g_list_append(NULL, (gpointer)joypad_noconnect_str);
+		gtk_combo_set_popdown_strings(GTK_COMBO(joypad_axis_combo[i]), axis_combo_items);
+		g_list_free(axis_combo_items);
+
+		axis_entry[i] = GTK_COMBO(joypad_axis_combo[i])->entry;
+		gtk_widget_show(axis_entry[i]);
+		gtk_entry_set_editable(GTK_ENTRY(axis_entry[i]), FALSE);
+		gtk_signal_connect(GTK_OBJECT(axis_entry[i]), "changed",
+		    GTK_SIGNAL_FUNC(joypad_axis_entry_changed),
+		    (gpointer)(&joypad_axis[i]));
+	}
+
+	/* Button */
+	for (i = 0; i < JOY_NBUTTON; ++i) {
+		g_snprintf(buf, sizeof(buf), "%sButton%d", (i >= JOY_NBUTTON / 2) ? "Rapid " : "", i % 2);
+		button_label[i] = gtk_label_new(buf);
+		gtk_widget_show(button_label[i]);
+		gtk_table_attach_defaults(GTK_TABLE(table), button_label[i], 0, 1, 4+i, 5+i);
+
+		joypad_button_combo[i] = gtk_combo_new();
+		gtk_widget_show(joypad_button_combo[i]);
+		gtk_table_attach_defaults(GTK_TABLE(table), joypad_button_combo[i], 1, 2, 4+i, 5+i);
+		gtk_widget_set_usize(joypad_button_combo[i], 48, 0);
+		gtk_combo_set_value_in_list(GTK_COMBO(joypad_button_combo[i]), TRUE, FALSE);
+
+		button_combo_items = g_list_append(NULL, (gpointer)joypad_noconnect_str);
+		gtk_combo_set_popdown_strings(GTK_COMBO(joypad_button_combo[i]), button_combo_items);
+		g_list_free(button_combo_items);
+
+		button_entry[i] = GTK_COMBO(joypad_button_combo[i])->entry;
+		gtk_widget_show(button_entry[i]);
+		gtk_entry_set_editable(GTK_ENTRY(button_entry[i]), FALSE);
+		gtk_signal_connect(GTK_OBJECT(button_entry[i]), "changed",
+		    GTK_SIGNAL_FUNC(joypad_button_entry_changed),
+		    (gpointer)(&joypad_button[i]));
+	}
+
+	/* no joystick device */
+	if ((np2oscfg.JOYPAD1 & 2) || (joypad_devlist == NULL)) {
+		gtk_widget_set_sensitive(joypad_use_checkbutton[0], FALSE);
+		gtk_widget_set_sensitive(joypad_devlist_combo, FALSE);
+		for (i = 0; i < JOY_NAXIS; ++i) {
+			gtk_widget_set_sensitive(joypad_axis_combo[i], FALSE);
+		}
+		for (i = 0; i < JOY_NBUTTON; ++i) {
+			gtk_widget_set_sensitive(joypad_button_combo[i], FALSE);
+		}
+	}
+
+	/* update status */
+	if (joypad_devlist != NULL) {
+		drv = milstr_solveINT(np2oscfg.JOYDEV[0]);
+		if (drv < 0 || drv >= ndrv) {
+			drv = 0;
+		}
+		gtk_entry_set_text(GTK_ENTRY(devlist_entry), joypad_devlist[drv]->devname);
+	} else {
+		gtk_entry_set_text(GTK_ENTRY(devlist_entry), joypad_nodevice_str);
+	}
+	if (np2oscfg.JOYPAD1 & 1) {
+		gtk_signal_emit_by_name(GTK_OBJECT(joypad_use_checkbutton[0]), "clicked");
+	}
+
+	return root_widget;
+}
+
 static GtkWidget *
 create_driver_note(void)
 {
@@ -1081,7 +1428,7 @@ create_driver_note(void)
 		gtk_widget_show(driver_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(driver_vbox), driver_radiobutton[i], TRUE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(driver_radiobutton[i]), "clicked",
-		    GTK_SIGNAL_FUNC(driver_radiobutton_clicked), (gpointer)i);
+		    GTK_SIGNAL_FUNC(driver_radiobutton_clicked), GINT_TO_POINTER(i));
 	}
 #if !defined(USE_NETBSDAUDIO)
 	gtk_widget_set_sensitive(driver_radiobutton[SNDDRV_NETBSD], FALSE);
@@ -1160,6 +1507,7 @@ create_sound_dialog(void)
 	GtkWidget *pc9801_26_note;
 	GtkWidget *pc9801_86_note;
 	GtkWidget *spb_note;
+	GtkWidget *joypad_note;
 	GtkWidget *driver_note;
 	GtkWidget *confirm_widget;
 	GtkWidget *ok_button;
@@ -1203,6 +1551,10 @@ create_sound_dialog(void)
 	/* "SPB" note */
 	spb_note = create_spb_note();
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), spb_note, gtk_label_new("SPB"));
+
+	/* "JoyPad" note */
+	joypad_note = create_joypad_note();
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), joypad_note, gtk_label_new("JoyPad"));
 
 	/* "Driver" note */
 	driver_note = create_driver_note();
