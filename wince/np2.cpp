@@ -42,13 +42,23 @@ static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
 static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 
 
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0};
+		NP2OSCFG	np2oscfg = {0, 2, 0, 0,
+#if defined(WIN32_PLATFORM_PSPC)
+								0, 0,
+#endif
+							};
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
 		char		modulefile[MAX_PATH];
+		GXKeyList	gx_keylist;
 
-static	BOOL		sysrunning;
+enum {
+	SYSRUNNING_MAIN		= 1,
+	SYSRUNNING_FORE		= 2
+};
+
+static	UINT		sysrunning;
 static	UINT		framecnt;
 static	UINT		waitcnt;
 static	UINT		framemax = 1;
@@ -240,13 +250,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			if (sysrunning) {
 				if (LOWORD(wParam) != WA_INACTIVE) {
 					GXResume();
+#if defined(WIN32_PLATFORM_PSPC)
 					scrnmng_enable(TRUE);
+#endif
 					scrndraw_redraw();
 					soundmng_enable(SNDPROC_MAIN);
+					sysrunning |= SYSRUNNING_FORE;
 				}
 				else {
+					sysrunning &= ~SYSRUNNING_FORE;
 					soundmng_disable(SNDPROC_MAIN);
+#if defined(WIN32_PLATFORM_PSPC)
 					scrnmng_enable(FALSE);
+#endif
 					GXSuspend();
 				}
 			}
@@ -399,6 +415,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		DestroyWindow(hWnd);
 		goto np2main_err3;
 	}
+	gx_keylist = GXGetDefaultKeys(GX_NORMALKEYS);
+	scrnmng_keybinds();
+#if defined(WIN32_PLATFORM_PSPC)
+	winkbd_bindinit();
+#endif
 
 	soundmng_initialize();
 	commng_initialize();
@@ -410,7 +431,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	pccore_reset();
 	scrndraw_redraw();
 
-	sysrunning = TRUE;
+#if defined(WIN32_PLATFORM_PSPC)
+	winkbd_bindcur(np2oscfg.bindcur);
+	winkbd_bindbtn(np2oscfg.bindbtn);
+#endif
+
+	sysrunning |= SYSRUNNING_MAIN | SYSRUNNING_FORE;
 
 	if (np2oscfg.resume) {
 		id = flagload(str_sav, str_resume, FALSE);
@@ -436,7 +462,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 #endif
 			DispatchMessage(&msg);
 		}
-		else {
+		else if (sysrunning & SYSRUNNING_FORE) {
 			if (np2oscfg.NOWAIT) {
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
@@ -491,6 +517,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 					waitcnt = framecnt;
 				}
 			}
+		}
+		else {
+			Sleep(100);
 		}
 	}
 

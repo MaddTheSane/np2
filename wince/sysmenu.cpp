@@ -118,6 +118,44 @@ static void sys_cmd(MENUID id) {
 											(char *)mstr_scropt, dlgscr_cmd);
 			break;
 
+#if defined(WIN32_PLATFORM_PSPC)
+		case MID_CURDEF:
+			winkbd_bindcur(0);
+			np2oscfg.bindcur = 0;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_CUR1:
+			winkbd_bindcur(1);
+			np2oscfg.bindcur = 1;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_CUR2:
+			winkbd_bindcur(2);
+			np2oscfg.bindcur = 2;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_BTNDEF:
+			winkbd_bindbtn(0);
+			np2oscfg.bindbtn = 0;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_BTN1:
+			winkbd_bindbtn(1);
+			np2oscfg.bindbtn = 1;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_BTN2:
+			winkbd_bindbtn(2);
+			np2oscfg.bindbtn = 2;
+			update |= SYS_UPDATEOSCFG;
+			break;
+#endif
+
 		case MID_KEY:
 			np2cfg.KEY_MODE = 0;
 			keystat_resetjoykey();
@@ -428,6 +466,17 @@ BOOL sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_30FPS, (b == 2));
 	menusys_setcheck(MID_20FPS, (b == 3));
 	menusys_setcheck(MID_15FPS, (b == 4));
+#if defined(WIN32_PLATFORM_PSPC)
+	b = np2oscfg.bindcur;
+	menusys_setcheck(MID_CURDEF, (b == 0));
+	menusys_setcheck(MID_CUR1, (b == 1));
+	menusys_setcheck(MID_CUR2, (b == 2));
+	b = np2oscfg.bindbtn;
+	menusys_setcheck(MID_BTNDEF, (b == 0));
+	menusys_setcheck(MID_BTN1, (b == 1));
+	menusys_setcheck(MID_BTN2, (b == 2));
+#endif
+
 	b = np2cfg.KEY_MODE;
 	menusys_setcheck(MID_KEY, (b == 0));
 	menusys_setcheck(MID_JOY1, (b == 1));

@@ -1,4 +1,7 @@
 #include	"compiler.h"
+#if defined(WIN32_PLATFORM_PSPC)
+#include	<gx.h>
+#endif
 #include	"np2.h"
 #include	"winkbd.h"
 #include	"pccore.h"
@@ -7,9 +10,13 @@
 
 #define		NC		0xff
 
-static const BYTE key106[256] = {
+#if defined(WIN32_PLATFORM_PSPC)
+static BYTE key106[256] =
+#else
+static const BYTE key106[256] =
+#endif
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
-				  NC,  NC,  NC,0x60,  NC,  NC,  NC,  NC,
+		{		  NC,  NC,  NC,0x60,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08
 				0x0e,0x0f,  NC,  NC,  NC,0x1c,  NC,  NC,
 			//	 SFT,CTRL, ALT,PAUS,CAPS,KANA,    ,    		; 0x10
@@ -73,9 +80,13 @@ static const BYTE key106[256] = {
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
-static const BYTE key106ext[256] = {
+#if defined(WIN32_PLATFORM_PSPC)
+static BYTE key106ext[256] =
+#else
+static const BYTE key106ext[256] =
+#endif
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+		{		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	 SFT,CTRL, ALT,PAUS,CAPS,KANA,    ,    		; 0x10
@@ -216,4 +227,121 @@ void winkbd_resetf12(void) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }
+
+
+// ---- PocketPC keys
+
+#if defined(WIN32_PLATFORM_PSPC)
+
+extern	GXKeyList	gx_keylist;
+
+typedef struct {
+	short	*ptr[4];
+} KEYADRS;
+
+typedef struct {
+	BYTE	key[4];
+} KEYSET;
+
+typedef struct {
+	KEYADRS	curadrs;
+	KEYADRS	btnadrs;
+	KEYSET	curset[2];
+	KEYSET	btnset[2];
+} PPCBTNTBL;
+
+typedef struct {
+	KEYSET	cur;
+	KEYSET	btn;
+} PPCBTNDEF;
+
+
+static const PPCBTNTBL ppcbtntbl = {
+			{&gx_keylist.vkUp, &gx_keylist.vkDown,
+			 &gx_keylist.vkLeft, &gx_keylist.vkRight},
+
+			{&gx_keylist.vkA, &gx_keylist.vkB,
+			 &gx_keylist.vkC, &gx_keylist.vkStart},
+
+			{{0x3a, 0x3d, 0x3b, 0x3c},			// cur
+			 {0x43, 0x4b, 0x46, 0x48}},			// tenkey
+
+			{{0x1c, 0x34,   NC,   NC},		// RET/SP
+			 {0x29, 0x2a,   NC,   NC}}};	// ZX
+
+static	PPCBTNDEF	ppcbtndef;
+
+static void getbind(KEYSET *bind, const BYTE *tbl, const KEYADRS *adrs) {
+
+	int		i;
+	int		key;
+
+	for (i=0; i<4; i++) {
+		key = (*adrs->ptr[i]) & 0xff;
+		bind->key[i] = tbl[key];
+	}
+}
+
+static void setbind(BYTE *tbl, const KEYSET *bind, const KEYADRS *adrs) {
+
+	int		i;
+	int		key;
+
+	for (i=0; i<4; i++) {
+		key = (*adrs->ptr[i]) & 0xff;
+		if (tbl[key] != NC) {
+			keystat_forcerelease(tbl[key]);
+		}
+		tbl[key] = bind->key[i];
+	}
+}
+
+void winkbd_bindinit(void) {
+
+	getbind(&ppcbtndef.cur, key106ext, &ppcbtntbl.curadrs);
+	getbind(&ppcbtndef.btn, key106, &ppcbtntbl.btnadrs);
+}
+
+void winkbd_bindcur(UINT type) {
+
+const KEYSET	*bind;
+
+	switch(type) {
+		case 0:
+		default:
+			bind = &ppcbtndef.cur;
+			break;
+
+		case 1:
+			bind = ppcbtntbl.curset + 0;
+			break;
+
+		case 2:
+			bind = ppcbtntbl.curset + 1;
+			break;
+	}
+	setbind(key106ext, bind, &ppcbtntbl.curadrs);
+}
+
+void winkbd_bindbtn(UINT type) {
+
+const KEYSET	*bind;
+
+	switch(type) {
+		case 0:
+		default:
+			bind = &ppcbtndef.btn;
+			break;
+
+		case 1:
+			bind = ppcbtntbl.btnset + 0;
+			break;
+
+		case 2:
+			bind = ppcbtntbl.btnset + 1;
+			break;
+	}
+	setbind(key106, bind, &ppcbtntbl.btnadrs);
+}
+#endif
 

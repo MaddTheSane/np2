@@ -4,14 +4,26 @@ typedef struct {
 	BYTE	DRAW_SKIP;
 	BYTE	F12KEY;
 	BYTE	resume;
+
+#if defined(WIN32_PLATFORM_PSPC)
+	BYTE	bindcur;
+	BYTE	bindbtn;
+#endif
 } NP2OSCFG;
 
 
 #if defined(SIZE_QVGA)
+#if defined(SUPPORT_SOFTKBD)
 enum {
 	FULLSCREEN_WIDTH	= 320,
 	FULLSCREEN_HEIGHT	= 240
 };
+#else
+enum {
+	FULLSCREEN_WIDTH	= 320,
+	FULLSCREEN_HEIGHT	= 200
+};
+#endif
 #else
 enum {
 	FULLSCREEN_WIDTH	= 640,

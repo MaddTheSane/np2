@@ -43,6 +43,7 @@ RGB16 scrnmng_makepal16(RGB32 pal32);
 void scrnmng_enable(BOOL enable);
 BOOL scrnmng_mousepos(LPARAM *lp);
 void scrnmng_clear(BOOL logo);
+void scrnmng_keybinds(void);
 
 
 // ---- for menubase

@@ -32,6 +32,16 @@ static const char str_15fps[] = "1/4 frame";
 static const char str_scropt[] = "Screen option...";
 
 static const char str_device[] = "Device";
+
+#if defined(WIN32_PLATFORM_PSPC)
+static const char str_cursor[] = "Cursor";
+static const char str_default[] = "Default";
+static const char str_cur2[] = "Tenkey";
+static const char str_botton[] = "Button";
+static const char str_btn1[] = "RET/SPACE";
+static const char str_btn2[] = "Z / X";
+#endif
+
 static const char str_keyboard[] = "Keyboard";
 static const char str_joykey1[] = "JoyKey-1";
 static const char str_joykey2[] = "JoyKey-2";
@@ -143,6 +153,18 @@ static const MSYSITEM s_screen[] = {
 															// MENU_GRAY |
 															MENU_DELETED}};
 
+#if defined(WIN32_PLATFORM_PSPC)
+static const MSYSITEM s_bindcur[] = {
+		{str_default,		NULL,		MID_CURDEF,			0},
+		{str_cursor,		NULL,		MID_CUR1,			0},
+		{str_cur2,			NULL,		MID_CUR2,			MENU_DELETED}};
+
+static const MSYSITEM s_bindbtn[] = {
+		{str_default,		NULL,		MID_BTNDEF,			0},
+		{str_btn1,			NULL,		MID_BTN1,			0},
+		{str_btn2,			NULL,		MID_BTN2,			MENU_DELETED}};
+#endif
+
 static const MSYSITEM s_keybd[] = {
 		{str_keyboard,		NULL,		MID_KEY,			0},
 		{str_joykey1,		NULL,		MID_JOY1,			0},
@@ -185,6 +207,11 @@ static const MSYSITEM s_mem[] = {
 		{str_mem76,			NULL,		MID_MEM76,			MENU_DELETED}};
 
 static const MSYSITEM s_device[] = {
+#if defined(WIN32_PLATFORM_PSPC)
+		{str_cursor,		s_bindcur,	MID_STATIC,			0},
+		{str_botton,		s_bindbtn,	MID_STATIC,			0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+#endif
 		{str_keyboard,		s_keybd,	MID_STATIC,			0},
 		{str_beep,			s_beep,		MID_STATIC,			0},
 		{str_soundboard,	s_snd,		MID_STATIC,			0},

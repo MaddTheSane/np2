@@ -223,9 +223,8 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat, LPCTSTR string,
 			fdat->height = fhdl->bmpheight >> 1;
 		}
 		else {
-			fntsize.cx = min(fntsize.cx, fhdl->bmpwidth);
-			fdat->width = fntsize.cx;
-			fdat->pitch = fntsize.cx;
+			fdat->width = min(fntsize.cx + 1, fhdl->bmpwidth);
+			fdat->pitch = min(fntsize.cx, fhdl->bmpwidth);
 			fdat->height = fhdl->bmpheight;
 		}
 	}

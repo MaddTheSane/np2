@@ -351,7 +351,14 @@ static const INITBL iniitem[] = {
 	{"s_NOWAIT", INITYPE_BOOL,		&np2oscfg.NOWAIT,		0},
 	{"SkpFrame", INITYPE_UINT8,		&np2oscfg.DRAW_SKIP,	0},
 	{"F12_bind", INITYPE_UINT8,		&np2oscfg.F12KEY,		0},
-	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0}};
+	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
+
+#if defined(WIN32_PLATFORM_PSPC)
+	{"pbindcur", INITYPE_UINT8,		&np2oscfg.bindcur,		0},
+	{"pbindbtn", INITYPE_UINT8,		&np2oscfg.bindbtn,		0},
+#endif
+};
+
 
 #define	INIITEMS	(sizeof(iniitem) / sizeof(INITBL))
 

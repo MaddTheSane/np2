@@ -567,7 +567,7 @@ static void eventproc(EventRecord *event) {
 				soundmng_play();
 			}
 			else {
-				mackbd_keydown(keycode);
+				mackbd_keydown(keycode, FALSE);
 			}
 			break;
 

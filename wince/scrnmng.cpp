@@ -39,6 +39,7 @@ static	SCRNSTAT	scrnstat;
 static	SCRNSURF	scrnsurf;
 
 static	BYTE		gx_disable = 1;
+extern	GXKeyList	gx_keylist;
 
 static const TCHAR	errmsg[] = STRLITERAL("Error");
 
@@ -143,19 +144,6 @@ const BYTE		*pal;
 
 b16d_err:
 	return;
-}
-
-void scrnmng_keybinds(struct GXKeyList *gxkey) {
-
-	short	tmp;
-
-	if (scrnmng.rotate) {
-		tmp = gxkey->vkLeft;
-		gxkey->vkLeft = gxkey->vkDown;
-		gxkey->vkDown = gxkey->vkRight;
-		gxkey->vkRight = gxkey->vkUp;
-		gxkey->vkUp = tmp;
-	}
 }
 
 
@@ -407,6 +395,55 @@ BOOL scrnmng_mousepos(LPARAM *lp) {
 	return(SUCCESS);
 }
 
+void scrnmng_clear(BOOL logo) {
+
+	BMPFILE *bf;
+	BYTE	*p;
+	BYTE	*q;
+	int		y;
+	int		x;
+	long	yalign;
+
+	if (gx_disable) {
+		return;
+	}
+	bf = NULL;
+	if (logo) {
+		bf = (BMPFILE *)bmpdata_solvedata(nekop2_bmp);
+	}
+	p = (BYTE *)GXBeginDraw();
+	q = p;
+	y = gx_dp.cyHeight;
+	yalign = gx_dp.cbyPitch - (gx_dp.cbxPitch * gx_dp.cxWidth);
+	do {
+		x = gx_dp.cxWidth;
+		do {
+			*(UINT16 *)q = 0;
+			q += gx_dp.cbxPitch;
+		} while(--x);
+		q += yalign;
+	} while(--y);
+	bmp16draw(bf, p + scrnmng.start, scrnmng.width, scrnmng.height,
+											scrnmng.xalign, scrnmng.yalign);
+	GXEndDraw();
+	if (bf) {
+		_MFREE(bf);
+	}
+}
+
+void scrnmng_keybinds(void) {
+
+	short	tmp;
+
+	if (scrnmng.rotate) {
+		tmp = gx_keylist.vkLeft;
+		gx_keylist.vkLeft = gx_keylist.vkDown;
+		gx_keylist.vkDown = gx_keylist.vkRight;
+		gx_keylist.vkRight = gx_keylist.vkUp;
+		gx_keylist.vkUp = tmp;
+	}
+}
+
 
 // ---- for menubase
 
@@ -481,44 +518,5 @@ const BYTE		*q;
 		a += salign;
 	} while(--dr.height);
 	GXEndDraw();
-}
-
-
-// ---- clear
-
-void scrnmng_clear(BOOL logo) {
-
-	BMPFILE *bf;
-	BYTE	*p;
-	BYTE	*q;
-	int		y;
-	int		x;
-	long	yalign;
-
-	if (gx_disable) {
-		return;
-	}
-	bf = NULL;
-	if (logo) {
-		bf = (BMPFILE *)bmpdata_solvedata(nekop2_bmp);
-	}
-	p = (BYTE *)GXBeginDraw();
-	q = p;
-	y = gx_dp.cyHeight;
-	yalign = gx_dp.cbyPitch - (gx_dp.cbxPitch * gx_dp.cxWidth);
-	do {
-		x = gx_dp.cxWidth;
-		do {
-			*(UINT16 *)q = 0;
-			q += gx_dp.cbxPitch;
-		} while(--x);
-		q += yalign;
-	} while(--y);
-	bmp16draw(bf, p + scrnmng.start, scrnmng.width, scrnmng.height,
-											scrnmng.xalign, scrnmng.yalign);
-	GXEndDraw();
-	if (bf) {
-		_MFREE(bf);
-	}
 }
 
