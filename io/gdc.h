@@ -37,6 +37,9 @@ typedef struct {
 	UINT32		rasterclock;
 	UINT32		hsyncclock;
 
+	UINT32		hclock;
+	UINT32		vclock;
+
 #if defined(SUPPORT_PC9821)
 	UINT8		anareg[16*3 + 256*4];
 #endif

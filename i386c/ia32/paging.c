@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.19 2004/03/23 19:32:37 yui Exp $	*/
+/*	$Id: paging.c,v 1.20 2004/03/23 22:39:40 yui Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -547,7 +547,7 @@ cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_
 	case 3:
 		cpu_memorywrite(paddr[0], (UINT8)value);
 		cpu_memorywrite_w(paddr[0] + 1, (UINT16)(value >> 8));
-		cpu_memorywrite(paddr[1], (BYTE)(value >> 24));
+		cpu_memorywrite(paddr[1], (UINT8)(value >> 24));
 		break;
 
 	case 2:

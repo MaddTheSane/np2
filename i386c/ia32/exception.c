@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.16 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: exception.c,v 1.17 2004/03/23 22:39:40 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -211,8 +211,8 @@ exception(int num, int error_code)
  * D          : ゲートのサイズ．0 = 16 bit, 1 = 32 bit
  */
 
-static void interrupt_task_gate(descriptor_t *gd, int softintp, int errorp, int error_code);
-static void interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_code);
+static void interrupt_task_gate(const descriptor_t *gd, int softintp, int errorp, int error_code);
+static void interrupt_intr_or_trap(const descriptor_t *gd, int softintp, int errorp, int error_code);
 
 void
 interrupt(int num, int softintp, int errorp, int error_code)
@@ -328,7 +328,7 @@ interrupt(int num, int softintp, int errorp, int error_code)
 }
 
 static void
-interrupt_task_gate(descriptor_t *gd, int softintp, int errorp, int error_code)
+interrupt_task_gate(const descriptor_t *gd, int softintp, int errorp, int error_code)
 {
 	selector_t task_sel;
 	int rv;
@@ -373,7 +373,7 @@ interrupt_task_gate(descriptor_t *gd, int softintp, int errorp, int error_code)
 }
 
 static void
-interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_code)
+interrupt_intr_or_trap(const descriptor_t *gd, int softintp, int errorp, int error_code)
 {
 	selector_t cs_sel, ss_sel;
 	UINT stacksize;

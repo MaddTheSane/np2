@@ -404,6 +404,8 @@ const GDCCLK	*clk;
 		y = clk->maxy;
 	}
 	hclock = clk->clock / x;
+	gdc.hclock = hclock;
+	gdc.vclock = hclock * 10 / y;
 	cnt = (pccore.baseclock * y) / hclock;
 	cnt *= pccore.multiple;
 	gdc.rasterclock = cnt / y;

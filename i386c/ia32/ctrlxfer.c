@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.16 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.17 2004/03/23 22:39:40 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,8 +37,8 @@
 /*------------------------------------------------------------------------------
  * JMPfar_pm
  */
-static void JMPfar_pm_code_segment(selector_t *cs_sel, UINT32 new_ip);
-static void JMPfar_pm_call_gate(selector_t *callgate_sel);
+static void JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
+static void JMPfar_pm_call_gate(const selector_t *callgate_sel);
 static void JMPfar_pm_task_gate(selector_t *taskgate_sel);
 static void JMPfar_pm_tss(selector_t *tss_sel);
 
@@ -106,7 +106,7 @@ JMPfar_pm(UINT16 selector, UINT32 new_ip)
  * JMPfar: code segment
  */
 static void
-JMPfar_pm_code_segment(selector_t *cs_sel, UINT32 new_ip)
+JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 {
 
 	VERBOSE(("JMPfar_pm: CODE-SEGMENT"));
@@ -152,7 +152,7 @@ JMPfar_pm_code_segment(selector_t *cs_sel, UINT32 new_ip)
  * JMPfar: call gate
  */
 static void
-JMPfar_pm_call_gate(selector_t *callgate_sel)
+JMPfar_pm_call_gate(const selector_t *callgate_sel)
 {
 	selector_t cs_sel;
 	int rv;
@@ -318,8 +318,8 @@ JMPfar_pm_tss(selector_t *tss_sel)
 /*------------------------------------------------------------------------------
  * CALLfar_pm
  */
-static void CALLfar_pm_code_segment(selector_t *cs_sel, UINT32 new_ip);
-static void CALLfar_pm_call_gate(selector_t *callgate_sel);
+static void CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
+static void CALLfar_pm_call_gate(const selector_t *callgate_sel);
 static void CALLfar_pm_task_gate(selector_t *taskgate_sel);
 static void CALLfar_pm_tss(selector_t *tss_sel);
 
@@ -387,7 +387,7 @@ CALLfar_pm(UINT16 selector, UINT32 new_ip)
  * CALLfar_pm: code segment
  */
 static void
-CALLfar_pm_code_segment(selector_t *cs_sel, UINT32 new_ip)
+CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 {
 	UINT32 sp;
 
@@ -456,11 +456,11 @@ CALLfar_pm_code_segment(selector_t *cs_sel, UINT32 new_ip)
 /*---
  * CALLfar_pm: call gate
  */
-static void CALLfar_pm_call_gate_same_privilege(selector_t *call_sel, selector_t *cs_sel);
-static void CALLfar_pm_call_gate_more_privilege(selector_t *call_sel, selector_t *cs_sel);
+static void CALLfar_pm_call_gate_same_privilege(const selector_t *call_sel, selector_t *cs_sel);
+static void CALLfar_pm_call_gate_more_privilege(const selector_t *call_sel, selector_t *cs_sel);
 
 static void
-CALLfar_pm_call_gate(selector_t *callgate_sel)
+CALLfar_pm_call_gate(const selector_t *callgate_sel)
 {
 	selector_t cs_sel;
 	int rv;
@@ -529,7 +529,7 @@ CALLfar_pm_call_gate(selector_t *callgate_sel)
  * CALLfar_pm: call gate (SAME-PRIVILEGE)
  */
 static void
-CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel)
+CALLfar_pm_call_gate_same_privilege(const selector_t *callgate_sel, selector_t *cs_sel)
 {
 	UINT32 sp;
 
@@ -564,7 +564,7 @@ CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel
  * CALLfar_pm: call gate (MORE-PRIVILEGE)
  */
 static void
-CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel)
+CALLfar_pm_call_gate_more_privilege(const selector_t *callgate_sel, selector_t *cs_sel)
 {
 	UINT32 param[32];	/* copy param */
 	selector_t ss_sel;
@@ -990,8 +990,8 @@ RETfar_pm(UINT nbytes)
  */
 static void IRET_pm_nested_task(void);
 static void IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_protected_mode_return_outer_privilege(selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
+static void IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
+static void IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
 static void IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
 static void IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
 
@@ -1147,7 +1147,7 @@ IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
  * IRET_pm: SAME-PRIVILEGE
  */
 static void
-IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
+IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT32 mask;
 	UINT stacksize;
@@ -1223,7 +1223,7 @@ IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, UINT32 new_ip, 
  * IRET_pm: OUTER-PRIVILEGE
  */
 static void
-IRET_pm_protected_mode_return_outer_privilege(selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
+IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
 {
 	descriptor_t *dp;
 	selector_t ss_sel;

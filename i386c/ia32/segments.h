@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.8 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: segments.h,v 1.9 2004/03/23 22:39:40 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -188,8 +188,8 @@ void load_descriptor(descriptor_t *descp, UINT32 addr);
 
 #define	CPU_SET_SEGREG(idx, selector)	load_segreg(idx, selector, GP_EXCEPTION)
 void load_segreg(int idx, UINT16 selector, int exc);
-void load_ss(UINT16 selector, descriptor_t *sd, UINT cpl);
-void load_cs(UINT16 selector, descriptor_t *sd, UINT cpl);
+void load_ss(UINT16 selector, const descriptor_t *sd, UINT cpl);
+void load_cs(UINT16 selector, const descriptor_t *sd, UINT cpl);
 void load_ldtr(UINT16 selector, int exc);
 
 
@@ -213,7 +213,7 @@ typedef struct {
 } selector_t;
 
 int parse_selector(selector_t *ssp, UINT16 selector);
-int selector_is_not_present(selector_t *ssp);
+int selector_is_not_present(const selector_t *ssp);
 
 #ifdef __cplusplus
 }

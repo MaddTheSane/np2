@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.15 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: segments.c,v 1.16 2004/03/23 22:39:40 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -131,7 +131,7 @@ load_segreg(int idx, UINT16 selector, int exc)
  * load SS register
  */
 void
-load_ss(UINT16 selector, descriptor_t *sd, UINT cpl)
+load_ss(UINT16 selector, const descriptor_t *sd, UINT cpl)
 {
 
 	CPU_STAT_SS32 = sd->d;
@@ -143,7 +143,7 @@ load_ss(UINT16 selector, descriptor_t *sd, UINT cpl)
  * load CS register
  */
 void
-load_cs(UINT16 selector, descriptor_t *sd, UINT cpl)
+load_cs(UINT16 selector, const descriptor_t *sd, UINT cpl)
 {
 
 	CPU_INST_OP32 = CPU_INST_AS32 =
@@ -374,7 +374,7 @@ parse_selector(selector_t *ssp, UINT16 selector)
 }
 
 int
-selector_is_not_present(selector_t *ssp)
+selector_is_not_present(const selector_t *ssp)
 {
 	UINT32 h;
 

@@ -68,6 +68,7 @@ static const char str_memfmt[] = "%3uKB";
 static const char str_memfmt2[] = "%3uKB + %uKB";
 static const char str_memfmt3[] = "%d.%1dMB";
 static const char str_width[] = "width-%u";
+static const char str_dispclock[] = "%u.%.2ukHz / %u.%uHz";
 
 static const char str_pcm86a[] = "   PCM: %dHz %dbit %s";
 static const char str_pcm86b[] = "        %d / %d / 32768";
@@ -179,6 +180,17 @@ static void info_gdc(char *str, int maxlen, NP2INFOEX *ex) {
 
 	milstr_ncpy(str, milstr_list(str_grcgchip, grcg.chip & 3), maxlen);
 	milstr_ncat(str, str_2halfMHz + ((gdc.clock & 0x80)?2:0), maxlen);
+	(void)ex;
+}
+
+static void info_gdc2(char *str, int maxlen, NP2INFOEX *ex) {
+
+	char	textstr[32];
+
+	SPRINTF(textstr, str_dispclock,
+						gdc.hclock / 1000, (gdc.hclock / 10) % 100,
+						gdc.vclock / 10, gdc.vclock % 10);
+	milstr_ncpy(str, textstr, maxlen);
 	(void)ex;
 }
 
@@ -354,6 +366,7 @@ static const INFOPROC infoproc[] = {
 			{"MEM2",		info_mem2},
 			{"MEM3",		info_mem3},
 			{"GDC",			info_gdc},
+			{"GDC2",		info_gdc2},
 			{"TEXT",		info_text},
 			{"GRPH",		info_grph},
 			{"SND",			info_sound},
