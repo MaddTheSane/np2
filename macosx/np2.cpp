@@ -39,6 +39,7 @@
 #include	"toolwin.h"
 #include	"aboutdlg.h"
 #include	"keystat.h"
+#include	"kdispwin.h"
 
 #define	USE_RESUME
 #define	NP2OPENING
@@ -60,7 +61,11 @@
 								0,										//resume
 								1,										//toolwin
 								0,										//jastsnd
-								0};										//I286SAVE
+								0,										//I286SAVE
+#ifdef SUPPORT_KEYDISP
+								1,										//keydisp
+#endif
+								};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -162,6 +167,9 @@ static void MenuBarInit(void) {
     SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2OPEN, kMenuShiftModifier);
     SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2EJECT, kMenuShiftModifier);
     SetMenuItemModifiers(GetMenuRef(IDM_SASI2), IDM_SASI2OPEN, kMenuShiftModifier);
+#ifndef SUPPORT_KEYDISP
+	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_KEYDISP);
+#endif
 	DrawMenuBar();
 #else
     OSStatus	err;
@@ -623,10 +631,22 @@ void HandleMenuChoice(long wParam) {
             menu_setmsrapid(np2cfg.MOUSERAPID ^ 1);
             update |= SYS_UPDATECFG;
             break;
+			
         case IDM_RECORDING:
             menu_setrecording(false);
             break;
 
+#if defined(SUPPORT_KEYDISP)
+		case IDM_KEYDISP:
+			menu_setkeydisp(np2oscfg.keydisp ^ 1);
+			if (np2oscfg.keydisp) {
+				kdispwin_create();
+			}
+			else {
+				kdispwin_destroy();
+			}
+			break;
+#endif
 
 		case IDM_I286SAVE:
 			debugsub_status();
@@ -674,6 +694,7 @@ static void HandleMouseDown(EventRecord *pevent) {
 static void framereset(UINT waitcnt) {
 
 	framecnt = 0;
+	kdispwin_draw((BYTE)waitcnt);
 	toolwin_draw((BYTE)waitcnt);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {
@@ -688,6 +709,7 @@ static void processwait(UINT waitcnt) {
 		timing_setcount(0);
 		framereset(waitcnt);
 	}
+	soundmng_sync();
 }
 
 static void getstatfilename(char *path, const char *ext, int size) {
@@ -758,8 +780,10 @@ int main(int argc, char *argv[]) {
 	TRACEINIT();
     
 	keystat_initialize();
-	
+	kdispwin_initialize();
+
 	toolwin_readini();
+	kdispwin_readini();
     if (!(setupMainWindow())) {
         return(0);
     }
@@ -787,6 +811,9 @@ int main(int argc, char *argv[]) {
 	menu_setdispclk(np2oscfg.DISPCLK);
 	menu_setbtnrapid(np2cfg.BTN_RAPID);
 	menu_setbtnmode(np2cfg.BTN_MODE);
+#if defined(SUPPORT_KEYDISP)
+	menu_setkeydisp(np2oscfg.keydisp);
+#endif
     if (np2oscfg.I286SAVE) {
         AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
     }
@@ -820,6 +847,7 @@ int main(int argc, char *argv[]) {
 		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
 #endif
+
 #ifdef OPENING_WAIT
 	while((GETTICK() - tick) < OPENING_WAIT);
 #endif
@@ -830,9 +858,14 @@ int main(int argc, char *argv[]) {
         flagload(np2resume);
     }
 #endif
+#if defined(SUPPORT_KEYDISP)
+	if (np2oscfg.keydisp) {
+		kdispwin_create();
+	}
+#endif
 
     theTarget = GetEventDispatcherTarget();
-    
+
 	np2running = TRUE;
 	while(np2running) {
         if (ReceiveNextEvent(0, NULL,kEventDurationNoWait,true, &theEvent)== noErr)
@@ -936,16 +969,18 @@ int main(int argc, char *argv[]) {
 #endif
 	scrnmng_destroy();
 
+	kdispwin_destroy();
 	if (sys_updates & (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();						// np2.cfg create
 	    toolwin_writeini();				// np2.cfg append
+		kdispwin_writeini();
 	}
 	TRACETERM();
 	macossub_term();
 	dosio_term();
 
-	DisposeWindow(hWndMain);
     toolwin_close();
+	DisposeWindow(hWndMain);
 
 	(void)argc;
 	(void)argv;

@@ -537,7 +537,6 @@
 		20286C35FDCF999611CA2CEA = {
 			buildActionMask = 2147483647;
 			files = (
-				9668899805F0892600C9A4EE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -761,6 +760,7 @@
 				966AF3F605ED13B6000E305F,
 				966AF3FF05ED13DD000E305F,
 				9668899705F0892600C9A4EE,
+				96497FA705FC4846003A4126,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1073,6 +1073,20 @@
 			settings = {
 			};
 		};
+		96497FA505FC4846003A4126 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = kdispwin.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96497FA705FC4846003A4126 = {
+			fileRef = 96497FA505FC4846003A4126;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		9668883E05EFDE2500C9A4EE = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -1095,22 +1109,8 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		9668899605F0892600C9A4EE = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = cmmidi.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		9668899705F0892600C9A4EE = {
 			fileRef = 9668899505F0892600C9A4EE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9668899805F0892600C9A4EE = {
-			fileRef = 9668899605F0892600C9A4EE;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2164,13 +2164,13 @@
 				967C9221055778CB00000103,
 				967C921E055778CB00000103,
 				9668899505F0892600C9A4EE,
-				9668899605F0892600C9A4EE,
 				967C9233055778CB00000103,
 				967C923D055778CB00000103,
 				967C923F055778CB00000103,
 				967C9241055778CB00000103,
 				967C9244055778CB00000103,
 				967C9246055778CB00000103,
+				96497FA505FC4846003A4126,
 				967C924B055778CB00000103,
 				967C924D055778CB00000103,
 				967C924F055778CB00000103,

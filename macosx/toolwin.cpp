@@ -203,9 +203,7 @@ const char		*p;
     bool		success = false;
     
     GetBevelButtonMenuHandle(hwnd, &menu);
-    while (MenuHasEnabledItems(menu)) {
-        DeleteMenuItem(menu, 1);
-    };
+	DeleteMenuItems(menu, 1, fdd->cnt);
 #if 0
 	GetControlBounds(hwnd, &rc);
 	width = rc.right - rc.left - 6;			// border size?
@@ -265,6 +263,9 @@ const char		*p;
     }
     else {
         SetControlTitleWithCFString(hwnd, CFSTR(" "));
+		for (i=0; i<fdd->cnt; i++) {
+			CheckMenuItem(menu, i+1, 0);
+		}
 	}
 }
 

@@ -256,3 +256,11 @@ void menu_setmsrapid(BYTE value) {
 	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_MSRAPID, MFCHECK(value));
 }
 
+void menu_setkeydisp(BYTE value) {
+
+#if defined(SUPPORT_KEYDISP)
+	value &= 1;
+	np2oscfg.keydisp = value;
+	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_KEYDISP, MFCHECK(value));
+#endif
+}

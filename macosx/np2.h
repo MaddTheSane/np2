@@ -30,8 +30,12 @@ typedef struct {
 	BYTE	resume;
     
 	BYTE	toolwin;
+#if defined(SUPPORT_KEYDISP)
+	BYTE	keydisp;
+#endif
 	BYTE	jastsnd;
 	BYTE	I286SAVE;
+	
 } NP2OSCFG;
 
 

@@ -779,6 +779,9 @@
 				965751CE05E66FBF002889CD,
 				968D8BC405F5229D00CFB890,
 				968D8D8D05F532C900CFB890,
+				963ACEF105FA2C6900B4736B,
+				963AD38D05FA6B8900B4736B,
+				964983E405FD0FD0003A4126,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -938,6 +941,34 @@
 			settings = {
 			};
 		};
+		963ACEF005FA2C6900B4736B = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mem9821.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		963ACEF105FA2C6900B4736B = {
+			fileRef = 963ACEF005FA2C6900B4736B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		963AD38C05FA6B8900B4736B = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = makegrex.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		963AD38D05FA6B8900B4736B = {
+			fileRef = 963AD38C05FA6B8900B4736B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		9645C29B05BF64CE0090B4FD = {
 			fileEncoding = "-2147483647";
 			isa = PBXFileReference;
@@ -1087,6 +1118,20 @@
 		};
 		9645C2E005BFA3B90090B4FD = {
 			fileRef = 9645C2D805BFA3B90090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		964983E305FD0FD0003A4126 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = kdispwin.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		964983E405FD0FD0003A4126 = {
+			fileRef = 964983E305FD0FD0003A4126;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2020,6 +2065,7 @@
 				967C9241055778CB00000103,
 				967C9244055778CB00000103,
 				967C9246055778CB00000103,
+				964983E305FD0FD0003A4126,
 				967C924B055778CB00000103,
 				967C924D055778CB00000103,
 				967C924F055778CB00000103,
@@ -2548,6 +2594,7 @@
 		967C92A7055778CC00000103 = {
 			children = (
 				967C92A8055778CC00000103,
+				963AD38C05FA6B8900B4736B,
 				967C92AA055778CC00000103,
 				967C92AD055778CC00000103,
 				967C92AF055778CC00000103,
@@ -3840,6 +3887,7 @@
 				96EBF1F805DD686400DA3983,
 				96EBF1FA05DD686500DA3983,
 				96EBF1FC05DD686500DA3983,
+				963ACEF005FA2C6900B4736B,
 				96EBF23A05DD686500DA3983,
 			);
 			isa = PBXGroup;

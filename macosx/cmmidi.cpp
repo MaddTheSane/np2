@@ -697,6 +697,7 @@ cmcre_err1:
 
 // ---- midiin callback
 
+#if 0
 static void midiinrecv(CMMIDI midi, const BYTE *data, UINT size) {
 
 	UINT	wpos;
@@ -715,7 +716,6 @@ static void midiinrecv(CMMIDI midi, const BYTE *data, UINT size) {
 	}
 }
 
-#if 0
 void cmmidi_recvdata(MIDIEndpointRef hdr, UINT32 data) {
 
 	CMMIDI	midi;

@@ -13,6 +13,7 @@
 #include "dialog.h"
 #include "dialogutils.h"
 #include "midiopt.h"
+#include "dipswbmp.h"
 
 #define	setControlValue(a,b,c)		SetControl32BitValue(getControlRefByID(a,b,midiWin),c)
 #define getMenuValue				(GetControl32BitValue(getControlRefByID(cmd.commandID,0,midiWin))-1)
@@ -70,6 +71,11 @@ static void setMPUs(void) {
 	
 	setControlValue('usem', 0, mpucfg.def_en);
 	setMIMPIFilename();
+	
+	PicHandle   pict;
+	ControlRef  disp = getControlRefByID('BMP ', 0, midiWin);
+	setbmp(dipswbmp_getmpu(mpu), &pict);
+	SetControlData(disp, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
 }
 
 static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
@@ -149,6 +155,10 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 break;
         }
     }
+	else if (GetEventClass(event)==kEventClassWindow && GetEventKind(event)==kEventWindowShowing ) {
+		//setMPUs();
+		//SysBeep(0);
+	}
 
 	(void)myHandler;
 	(void)userData;
@@ -174,7 +184,8 @@ static void makeNibWindow (IBNibRef nibRef) {
     if (err == noErr) {
     
         initMidiWindow();
-        EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },};
+        EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },
+								 { kEventClassWindow,  kEventWindowShowing} };
         InstallWindowEventHandler (midiWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)midiWin, &ref);
         ShowSheetWindow(midiWin, hWndMain);
         

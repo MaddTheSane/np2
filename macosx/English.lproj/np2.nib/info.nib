@@ -22,6 +22,10 @@
 	<array>
 		<integer>952</integer>
 	</array>
+	<key>IBOpenObjects</key>
+	<array>
+		<integer>743</integer>
+	</array>
 	<key>IBSystem Version</key>
 	<string>7D24</string>
 	<key>targetFramework</key>

@@ -73,17 +73,17 @@ typedef unsigned char	BYTE;
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
+#define SUPPORT_KEYDISP
 
 #define	SOUNDRESERVE	80
 
 #if defined(CPUCORE_IA32)
-typedef signed long long	SINT64;
-typedef unsigned long long  UINT64;
-#define	INLINE				inline
+typedef SInt64			SINT64;
+typedef UInt64			UINT64;
+#define	INLINE			inline
 #define FASTCALL
 #define CPUCALL
 #define MEMCALL
-typedef UINT64  DWORD;
-typedef UINT32  WORD;
+#define	SUPPORT_PC9821
 static inline void msgbox(char* title, char* msg) { }
 #endif

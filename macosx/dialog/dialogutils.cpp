@@ -8,6 +8,7 @@
 
 #include	"compiler.h"
 #include	"dialogutils.h"
+#include	"bmpdata.h"
 
 enum {kTabMasterSig = 'ScrT',kTabMasterID = 1000,kTabPaneSig= 'ScTb'};
 
@@ -46,8 +47,8 @@ short changeTab(WindowRef window, UInt16 pane) {
     if ( controlValue != pane )
     {
         ClearKeyboardFocus(window);
-        SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+pane, window), false, true );
-        SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+controlValue, window), true, true );    
+        SetControlVisibility(getControlRefByID( kTabPaneSig, kTabMasterID+pane, window), false, true );
+        SetControlVisibility(getControlRefByID( kTabPaneSig, kTabMasterID+controlValue, window), true, true );    
         Draw1Control( getControlRefByID(kTabMasterSig,kTabMasterID,window) );		
         return(controlValue);    
     }
@@ -107,3 +108,28 @@ UINT32 getFieldValue(ControlRef cRef)
     return(strtoul(buffer, &retPtr, 10));
 }
 
+void setbmp(BYTE* bmp, PicHandle* pict) {
+    OSErr               err;
+    ComponentInstance   ci=0;
+	ComponentResult		result;
+	Handle				bmphandle;
+	UINT				datasize;
+	BMPFILE*			bmpptr;
+       
+    err = OpenADefaultComponent(GraphicsImporterComponentType, 'BMPf', &ci);
+	if (err == noErr) {
+		bmpptr = (BMPFILE*)bmp;
+		datasize = LOADINTELDWORD(bmpptr->bfSize);
+		PtrToHand(bmp, &bmphandle, datasize);
+		result = GraphicsImportSetDataHandle(ci, bmphandle);
+		if (result == noErr) {
+			Rect	natural;
+			GraphicsImportGetNaturalBounds(ci, &natural);
+			GraphicsImportSetBoundsRect(ci, &natural);
+			GraphicsImportGetAsPicture(ci, pict);
+		}
+		err = CloseComponent(ci);
+		DisposeHandle(bmphandle);
+	}
+	
+}

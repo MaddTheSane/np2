@@ -17,6 +17,7 @@
 #include	"dialogutils.h"
 #include	"hid.h"
 #include	"soundopt.h"
+#include	"dipswbmp.h"
 
 #define	getControlValue(a,b)		GetControl32BitValue(getControlRefByID(a,b,soundWin))
 #define	setControlValue(a,b,c)		SetControl32BitValue(getControlRefByID(a,b,soundWin),c)
@@ -83,8 +84,10 @@ static void setSPB(void) {
 }
 
 static void initSoundWindow(void) {
-    BYTE 	data[5];
-    short	i;
+	PicHandle   pict;
+	ControlRef  disp;
+    BYTE		data[5];
+    short		i;
     for (i=0;i<5;i++) {
         data[i] = *(cfg[i]);
     }
@@ -96,13 +99,19 @@ static void initSoundWindow(void) {
     uncheckAllPopupMenuItems('26in', 4, soundWin);
     uncheckAllPopupMenuItems('26rm', 5, soundWin);
     set26s(snd26, '26io', '26in', '26rm');
+	disp = getControlRefByID('BMP ', 0, soundWin);
+	setbmp(dipswbmp_getsnd26(snd26), &pict);
+	SetControlData(disp, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
 
     snd86 = np2cfg.snd86opt;
     uncheckAllPopupMenuItems('86io', 2, soundWin);
     uncheckAllPopupMenuItems('86in', 4, soundWin);
     uncheckAllPopupMenuItems('86id', 8, soundWin);
     set86s();
-   
+	disp = getControlRefByID('BMP ', 1, soundWin);
+	setbmp(dipswbmp_getsnd86(snd86), &pict);
+	SetControlData(disp, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
+
     spb = np2cfg.spbopt;
     spbvrc = np2cfg.spb_vrc;								// ver0.30
     uncheckAllPopupMenuItems('spio', 2, soundWin);
@@ -111,6 +120,9 @@ static void initSoundWindow(void) {
     setSPB();
     setControlValue('splv', 0, np2cfg.spb_vrl);
     setControlValue('sprv', 0, np2cfg.spb_x);
+	disp = getControlRefByID('BMP ', 2, soundWin);
+	setbmp(dipswbmp_getsndspb(spb, spbvrc), &pict);
+	SetControlData(disp, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
 
     initJoyPad();
 }

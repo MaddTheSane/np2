@@ -19,6 +19,7 @@ void uncheckAllPopupMenuItems(OSType ID, short max, WindowRef win);
 void setjmper(BYTE *board, BYTE value, BYTE bit);
 void getFieldText(ControlRef cRef, char* buffer);
 UINT32 getFieldValue(ControlRef cRef);
+void setbmp(BYTE* bmp, PicHandle* pict);
 
 #ifdef __cplusplus
 }
