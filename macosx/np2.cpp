@@ -765,7 +765,6 @@ int main(int argc, char *argv[]) {
         toggleFullscreen();
     }
     
-    toolwin_writeini();
 	pccore_cfgupdate();
 
 #if defined(USE_RESUME)
@@ -789,7 +788,8 @@ int main(int argc, char *argv[]) {
 	scrnmng_destroy();
 
 	if (sys_updates & (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
-		initsave();
+		initsave();						// np2.cfg create
+	    toolwin_writeini();				// np2.cfg append
 	}
 	TRACETERM();
 	macossub_term();

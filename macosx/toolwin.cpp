@@ -987,6 +987,7 @@ const DISKACC	*accterm;
 // ----
 
 static const char ini_title[] = "NP2 tool";
+static const char inifile[] = "np2.cfg";			// same file name..
 
 static const INITBL iniitem[] = {
 	{"WindposX", INITYPE_SINT32,	&np2tool.posx,			0},
@@ -1014,12 +1015,6 @@ static const INITBL iniitem[] = {
 	{"FD2NAME7", INITYPE_STR,		np2tool.fdd[1].name[7],	MAX_PATH}};
 
 
-void initgetfile(char *path, UINT size) {
-
-	file_cpyname(path, file_getcd("np2"), size);
-    file_catname(path, ".ini", size);
-}
-
 void toolwin_readini(void) {
 
 	char	path[MAX_PATH];
@@ -1027,7 +1022,7 @@ void toolwin_readini(void) {
 	ZeroMemory(&np2tool, sizeof(np2tool));
 	np2tool.posx = 0;
 	np2tool.posy = 0;
-	initgetfile(path, sizeof(path));
+	file_cpyname(path, file_getcd(inifile), sizeof(path));
 	ini_read(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
 }
 
@@ -1035,6 +1030,7 @@ void toolwin_writeini(void) {
 
 	char	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
-	ini_write(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
+	file_cpyname(path, file_getcd(inifile), sizeof(path));
+	ini_write(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL), FALSE);
 }
+

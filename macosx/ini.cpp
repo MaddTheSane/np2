@@ -226,7 +226,7 @@ static void iniwrsetarg8(char *work, int size, const BYTE *ptr, int arg) {
 }
 
 void ini_write(const char *path, const char *title,
-											const INITBL *tbl, UINT count) {
+								const INITBL *tbl, UINT count, BOOL create) {
 
 	FILEH		fh;
 const INITBL	*p;
@@ -234,13 +234,22 @@ const INITBL	*pterm;
 	BOOL		set;
 	char		work[512];
 
-	fh = file_create(path);
+	fh = FILEH_INVALID;
+	if (!create) {
+		fh = file_open(path);
+		if (fh != FILEH_INVALID) {
+			file_seek(fh, 0, FSEEK_END);
+		}
+	}
+	if (fh == FILEH_INVALID) {
+		fh = file_create(path);
+	}
 	if (fh == FILEH_INVALID) {
 		return;
 	}
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
-	milstr_ncat(work, "]\r\n", sizeof(work));
+	milstr_ncat(work, "]\r", sizeof(work));
 	file_write(fh, work, strlen(work));
 
 	p = tbl;
@@ -306,7 +315,7 @@ const INITBL	*pterm;
 			file_write(fh, p->item, strlen(p->item));
 			file_write(fh, " = ", 3);
 			file_write(fh, work, strlen(work));
-			file_write(fh, "\r\n", 2);
+			file_write(fh, "\r", 1);
 		}
 		p++;
 	}
@@ -397,7 +406,7 @@ void initload(void) {
 
 	char	path[MAX_PATH];
 
-	milstr_ncpy(path, file_getcd(inifile), sizeof(path));
+	file_cpyname(path, file_getcd(inifile), sizeof(path));
 	ini_read(path, ini_title, iniitem, INIITEMS);
 }
 
@@ -405,7 +414,7 @@ void initsave(void) {
 
 	char	path[MAX_PATH];
 
-	milstr_ncpy(path, file_getcd(inifile), sizeof(path));
-	ini_write(path, ini_title, iniitem, INIITEMS);
+	file_cpyname(path, file_getcd(inifile), sizeof(path));
+	ini_write(path, ini_title, iniitem, INIITEMS, TRUE);
 }
 

@@ -164,5 +164,9 @@
 　　　　RealPalettes Adjust RealPalettes時のタイミングを調整します。
 
 
+　Windows版と共通点が多いので Windows版ヘルプもご覧ください。
+　　http://www.yui.ne.jp/np2/help.html
+
+
 　　　　　　　　　　　　　　　　　　email: np2@yui.ne.jp
 　　　　　　　　　　　　　　　　　　webpage: http://www.yui.ne.jp/np2/
