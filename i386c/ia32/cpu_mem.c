@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.3 2004/01/05 06:50:15 yui Exp $	*/
+/*	$Id: cpu_mem.c,v 1.4 2004/01/07 14:49:10 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -511,8 +511,9 @@ cpu_memorywrite_d(DWORD address, DWORD value)
 		adr -= LOWMEM;
 		if (adr < extmem_size - 3) {
 			STOREINTELDWORD(cpumem + adr, value);
-		} else {
-			ia32_panic("cpu_memorywrite_d: out of universe.");
+		} else if (adr < extmem_size) {
+			cpu_memorywrite_w(adr, value & 0xffff);
+			cpu_memorywrite_w(adr + 2, (value >> 16) & 0xffff);
 		}
 	}
 }
@@ -531,8 +532,8 @@ cpu_memorywrite_w(DWORD address, WORD value)
 		adr -= LOWMEM;
 		if (adr < extmem_size - 1) {
 			STOREINTELWORD(cpumem + adr, value);
-		} else {
-			ia32_panic("cpu_memorywrite_w: out of universe.");
+		} else if (adr == extmem_size - 1) {
+			cpumem[adr] = value & 0xff;
 		}
 	}
 }
@@ -548,8 +549,6 @@ cpu_memorywrite(DWORD address, BYTE value)
 		adr -= LOWMEM;
 		if (adr < extmem_size) {
 			cpumem[adr] = value;
-		} else {
-			ia32_panic("cpu_memorywrite: out of universe.");
 		}
 	}
 }
@@ -570,8 +569,8 @@ cpu_memoryread_d(DWORD address)
 		if (adr < extmem_size - 3) {
 			val = LOADINTELDWORD(cpumem + adr);
 		} else {
-			ia32_panic("cpu_memoryread_d: out of universe.");
-			val = (DWORD)-1;
+			val = cpu_memoryread_w(adr);
+			val |= (DWORD)cpu_memoryread_w(adr + 2) << 16;
 		}
 	}
 	return val;
@@ -592,8 +591,9 @@ cpu_memoryread_w(DWORD address)
 		adr -= LOWMEM;
 		if (adr < extmem_size - 1) {
 			val = LOADINTELWORD(cpumem + adr);
+		} else if (adr == extmem_size - 1) {
+			val = 0xff00 | cpumem[adr];
 		} else {
-			ia32_panic("cpu_memoryread_w: out of universe.");
 			val = (WORD)-1;
 		}
 	}
@@ -613,7 +613,6 @@ cpu_memoryread(DWORD address)
 		if (adr < extmem_size) {
 			val = cpumem[adr];
 		} else {
-			ia32_panic("cpu_memoryread: out of universe.");
 			val = (BYTE)-1;
 		}
 	}
