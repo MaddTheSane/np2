@@ -11,7 +11,6 @@
 #define	OSLANG_SJIS
 #define	OSLINEBREAK_CR
 
-typedef	unsigned char	TCHAR;
 
 typedef signed int		SINT;
 typedef unsigned int	UINT;
@@ -25,8 +24,10 @@ typedef unsigned short	UINT16;
 typedef signed int		SINT32;
 typedef unsigned int	UINT32;
 
-typedef unsigned char	BYTE;
 typedef Boolean			BOOL;
+typedef signed char		TCHAR;
+typedef signed char		CHAR;
+typedef unsigned char	BYTE;
 
 
 #define	MAX_PATH	260
@@ -74,3 +75,13 @@ typedef Boolean			BOOL;
 
 #define	SOUNDRESERVE	80
 
+#if defined(CPUCORE_IA32)
+typedef signed long long	SINT64;
+typedef unsigned long long  UINT64;
+#define	INLINE				inline
+#define FASTCALL
+#define CPUCALL
+#define MEMCALL
+typedef UINT64  DWORD;
+typedef UINT32  WORD;
+#endif

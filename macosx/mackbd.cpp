@@ -85,15 +85,15 @@ static const BYTE keymac2[128] = {
 
 
 typedef struct {
-	BYTE	f11[4];
-	BYTE	f12[4];
+	BYTE	f11[5];
+	BYTE	f12[5];
 } BINDTBL;
 
 static const BINDTBL bindtbl = {
-						//   カナ  Stop  [＝]  NFER
-							{0x72, 0x60, 0x4d, 0x51},
+						//   カナ  Stop  [＝]  NFER  USER
+							{0x72, 0x60, 0x4d, 0x51, 0x76},
 						//         Copy  [，]  XFER
-							{NC,   0x61, 0x4f, 0x35}};
+							{NC,   0x61, 0x4f, 0x35, 0x77}};
 
 void mackbd_initialize(void) { };
 
