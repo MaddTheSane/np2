@@ -102,9 +102,10 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		$(OBJ)/pcm86g.o		\
 			$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	\
 			$(OBJ)/s98.o												\
-			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdrawq16.o	\
-			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
-			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/scrnbmp.o	\
+			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
+			$(OBJ)/sdrawq16.o	$(OBJ)/dispsync.o	$(OBJ)/palettes.o	\
+			$(OBJ)/maketext.o	$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	\
+			$(OBJ)/scrnbmp.o											\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
