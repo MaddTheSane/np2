@@ -24,20 +24,24 @@ void dialog_changefdd(BYTE drv) {
 void dialog_changehdd(BYTE drv) {
 
 	UINT	num;
+	BOOL	equip;
 	char	fname[MAX_PATH];
 
 	num = drv & 0x0f;
+	equip = FALSE;
 	if (!(drv & 0x20)) {		// SASI/IDE
-		if (num >= 2) {
-			return;
+		if (num < 2) {
+			equip = TRUE;
 		}
 	}
+#if defined(SUPPORT_SCSI)
 	else {						// SCSI
-		if (num >= 4) {
-			return;
+		if (num < 4) {
+			equip = TRUE;
 		}
 	}
-	if (dlgs_selectfile(fname, sizeof(fname))) {
+#endif
+	if ((equip) && (dlgs_selectfile(fname, sizeof(fname)))) {
 		diskdrv_sethdd(drv, fname);
 	}
 }
@@ -280,13 +284,18 @@ void dialog_newdisk(void) {
 			newdisk_hdi(path, hddsize);
 		}
 	}
+#if defined(SUPPORT_SCSI)
 	else if (!file_cmpname(ext, str_hdd)) {
 		hddsize = 0;
 		if (NewHddDlgProc(&hddsize, 2, 512) == IDOK) {
 			newdisk_vhd(path, hddsize);
 		}
 	}
-	else {
+#endif
+	else if ((!file_cmpname(ext, str_d88)) ||
+			(!file_cmpname(ext, str_d98)) ||
+			(!file_cmpname(ext, str_88d)) ||
+			(!file_cmpname(ext, str_98d))) {
 		if (NewdiskDlgProc(&disk) == IDOK) {
 			newdisk_fdd(path, disk.fdtype, disk.label);
 		}

@@ -13,10 +13,6 @@
 	BYTE		fddlasterror;
 
 
-static const char str_88d[] = "88d";
-static const char str_98d[] = "98d";
-
-
 // ----
 
 void fddfile_init(void) {

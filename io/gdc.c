@@ -126,16 +126,16 @@ const GDCVECT	*vect;
 	ope = gdc.s.para[GDC_WRITE];
 
 	if (vect->ope & 0x08) {
-		gdcsub_line(csrw, vect, textw, ope);
+		gdcsub_vectl(csrw, vect, textw, ope);
 	}
 	if (vect->ope & 0x10) {		// undocumented
-		gdcsub_txt(csrw, vect, textw, ope);
+		gdcsub_vectt(csrw, vect, textw, ope);
 	}
 	if (vect->ope & 0x20) {
-		gdcsub_circle(csrw, vect, textw, ope);
+		gdcsub_vectc(csrw, vect, textw, ope);
 	}
 	if (vect->ope & 0x40) {
-		gdcsub_box(csrw, vect, textw, ope);
+		gdcsub_vectr(csrw, vect, textw, ope);
 	}
 }
 
@@ -153,16 +153,16 @@ const GDCVECT	*vect;
 	ope = gdc.s.para[GDC_WRITE];
 
 	if (vect->ope & 0x08) {		// undocumented
-		gdcsub_line(csrw, vect, textw, ope);
+		gdcsub_vectl(csrw, vect, textw, ope);
 	}
 	if (vect->ope & 0x10) {
 		gdcsub_text(csrw, vect, gdc.s.para + GDC_TEXTW, ope);
 	}
 	if (vect->ope & 0x20) {		// undocumented
-		gdcsub_circle(csrw, vect, textw, ope);
+		gdcsub_vectc(csrw, vect, textw, ope);
 	}
 	if (vect->ope & 0x40) {		// undocumented
-		gdcsub_box(csrw, vect, textw, ope);
+		gdcsub_vectr(csrw, vect, textw, ope);
 	}
 }
 

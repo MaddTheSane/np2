@@ -52,7 +52,7 @@ static const char newdisk_title[] = "Create disk image";
 #if defined(SUPPORT_SCSI)
 static const char newdisk_filter[] =									\
 					"D88 image files (*.D88;*.88D)\0"					\
-									"*.d88;*.88d\0"						\
+									"*.d88;*.88d;*.d98;*.98d\0"			\
 					"Anex86 harddisk image files (*.HDI)\0"				\
 									"*.hdi\0"							\
 					"T98 harddisk image files (*.THD)\0"				\
@@ -64,7 +64,7 @@ static const char newdisk_filter[] =									\
 #else
 static const char newdisk_filter[] =									\
 					"D88 image files (*.D88;*.88D)\0"					\
-									"*.d88;*.88d\0"						\
+									"*.d88;*.88d;*.d98;*.98d\0"			\
 					"Anex86 harddisk image files (*.HDI)\0"				\
 									"*.hdi\0"							\
 					"T98 harddisk image files (*.THD)\0"				\
@@ -104,9 +104,9 @@ const char		*p;
 const FILESEL	*hddui;
 	char		path[MAX_PATH];
 
+	num = drv & 0x0f;
 	p = NULL;
 	hddui = NULL;
-	num = drv & 0x0f;
 	if (!(drv & 0x20)) {		// SASI/IDE
 		if (num < 2) {
 			p = np2cfg.sasihdd[num];
@@ -359,7 +359,10 @@ const char		*ext;
 		}
 	}
 #endif
-	else {
+	else if ((!file_cmpname(ext, str_d88)) ||
+			(!file_cmpname(ext, str_d98)) ||
+			(!file_cmpname(ext, str_88d)) ||
+			(!file_cmpname(ext, str_98d))) {
 		if (DialogBox(hinst,
 				MAKEINTRESOURCE((np2cfg.usefd144)?IDD_NEWDISK2:IDD_NEWDISK),
 									hWnd, (DLGPROC)NewdiskDlgProc) == IDOK) {

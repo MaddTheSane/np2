@@ -50,7 +50,7 @@ void sysmng_updatecaption(void) {
 		milstr_ncpy(title, szAppCaption, sizeof(title));
 		SPRINTF(work, " - %u.%1uFPS", workclock.fps / 10, workclock.fps % 10);
 		milstr_ncat(title, work, sizeof(title));
-		SPRINTF(work, " - %2u.%03uMHz",
+		SPRINTF(work, " %2u.%03uMHz",
 								workclock.khz / 1000, workclock.khz % 1000);
 		milstr_ncat(title, work, sizeof(title));
 		SetWindowText(hWndMain, title);

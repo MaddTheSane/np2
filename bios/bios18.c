@@ -109,17 +109,6 @@ void bios0x18_16(BYTE chr, BYTE atr) {
 
 #define	SWAPU16(a, b) { UINT16 tmp; tmp = (a); (a) = (b); (b) = tmp; }
 
-static REG8 swapbit(REG8 bit) {
-
-	REG8	ret;
-
-	ret = 0;
-	while(bit) {
-		ret = (ret << 1) + (bit & 1);
-		bit >>= 1;
-	}
-	return(ret);
-}
 
 static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT vcnt,
 																UINT8 ope) {
@@ -172,7 +161,7 @@ static void bios18_47(void) {
 	data = 0;
 	data2 = 0;
 	if (ucw.GBDTYP == 0x01) {
-		func = gdcsub_line;
+		func = gdcsub_vectl;
 		if ((GBSX1 > GBSX2) ||
 			((GBSX1 == GBSX2) && (GBSY1 > GBSY2))) {
 			SWAPU16(GBSX1, GBSX2);
@@ -209,7 +198,7 @@ static void bios18_47(void) {
 		STOREINTELWORD(vect.D2, data);
 	}
 	else if (ucw.GBDTYP <= 0x02) {
-		func = gdcsub_box;
+		func = gdcsub_vectr;
 		vect.ope = 0x40 + (ucw.GBDSP & 7);
 		dx = GBSX2 - GBSX1;
 		if (dx < 0) {
@@ -251,7 +240,7 @@ static void bios18_47(void) {
 		STOREINTELWORD(vect.DM, data);
 	}
 	else {
-		func = gdcsub_circle;
+		func = gdcsub_vectc;
 		vect.ope = 0x20 + (ucw.GBDSP & 7);
 		vect.DC[0] = ucw.GBLNG1[0];
 		vect.DC[1] = ucw.GBLNG1[1];
@@ -270,7 +259,8 @@ static void bios18_47(void) {
 	}
 	csrw = (GBSY1 * 40) + (GBSX1 >> 4);
 	csrw += (GBSX1 & 0xf) << 20;
-	GBMDOTI = (swapbit(ucw.GBMDOTI[0]) << 8) + swapbit(ucw.GBMDOTI[1]);
+	GBMDOTI = (GDCPATREVERSE(ucw.GBMDOTI[0]) << 8) +
+											GDCPATREVERSE(ucw.GBMDOTI[1]);
 	if ((CPU_CH & 0x30) == 0x30) {
 		ope = (ucw.GBON_PTN & 1)?GDCOPE_SET:GDCOPE_CLEAR;
 		func(csrw + 0x4000, &vect, GBMDOTI, ope);
@@ -313,7 +303,7 @@ static void bios18_49(void) {
 	i286_memstr_read(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	for (i=0; i<8; i++) {
 		mem[MEMW_PRXGLS + i] = ucw.GBMDOTI[i];
-		pat[i] = swapbit(ucw.GBMDOTI[i]);
+		pat[i] = GDCPATREVERSE(ucw.GBMDOTI[i]);
 		gdc.s.para[GDC_TEXTW + i] = pat[i];
 	}
 	vect.ope = 0x10 + (ucw.GBDSP & 7);
