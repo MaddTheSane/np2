@@ -50,7 +50,7 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "NDEBUG" /d "$(CePlatform)" /d "ARM" /d "_ARM_" /r
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /O2 /I ".\\" /I ".\wce" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /FAcs /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /O2 /I ".\\" /I ".\wce" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "ARM" /D "_ARM_" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "GX_DLL" /FAcs /YX /Oxs /M$(CECrtMT) /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
@@ -59,7 +59,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 commctrl.lib coredll.lib aygshell.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
-# ADD LINK32 commctrl.lib coredll.lib gx.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /map /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
+# ADD LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /map /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
@@ -83,7 +83,7 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "NDEBUG" /d "$(CePlatform)" /d "MIPS" /d "_MIPS_" /r
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /O2 /I ".\\" /I ".\wce" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /O2 /I ".\\" /I ".\wce" /I "..\\" /I "..\common" /I "..\i286c" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /I "..\embed" /I "..\embed\menu" /I "..\embed\menubase" /D "MIPS" /D "_MIPS_" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "GX_DLL" /YX /Oxs /M$(CECrtMT) /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
@@ -92,7 +92,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 commctrl.lib coredll.lib aygshell.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:MIPS
-# ADD LINK32 commctrl.lib coredll.lib gx.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:MIPS
+# ADD LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:MIPS
 
 !ENDIF 
 
@@ -256,7 +256,7 @@ SOURCE=.\ARM\PARTS.S
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-# Begin Custom Build - Assambling... $(InputPath)
+# Begin Custom Build - Assembling... $(InputPath)
 IntDir=.\..\obj\PPCARMRel
 InputPath=.\ARM\PARTS.S
 InputName=PARTS
@@ -5824,7 +5824,7 @@ SOURCE=.\ARM\MAKEGRPH.S
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-# Begin Custom Build - Assambling... $(InputPath)
+# Begin Custom Build - Assembling... $(InputPath)
 IntDir=.\..\obj\PPCARMRel
 InputPath=.\ARM\MAKEGRPH.S
 InputName=MAKEGRPH
@@ -6370,7 +6370,7 @@ SOURCE=.\ARM\SDRAWQ16.S
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-# Begin Custom Build - Assambling... $(InputPath)
+# Begin Custom Build - Assembling... $(InputPath)
 IntDir=.\..\obj\PPCARMRel
 InputPath=.\ARM\SDRAWQ16.S
 InputName=SDRAWQ16
@@ -7454,7 +7454,7 @@ SOURCE=.\ARM\OPNGENG.S
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-# Begin Custom Build - Assambling... $(InputPath)
+# Begin Custom Build - Assembling... $(InputPath)
 IntDir=.\..\obj\PPCARMRel
 InputPath=.\ARM\OPNGENG.S
 InputName=OPNGENG
@@ -7746,7 +7746,7 @@ SOURCE=.\ARM\PSGGENG.S
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-# Begin Custom Build - Assambling... $(InputPath)
+# Begin Custom Build - Assembling... $(InputPath)
 IntDir=.\..\obj\PPCARMRel
 InputPath=.\ARM\PSGGENG.S
 InputName=PSGGENG
@@ -9866,7 +9866,9 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_NP2_C=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -9938,7 +9940,9 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_NP2_C=\
+	".\x.h"\
 	
 
 !ENDIF 
@@ -9981,7 +9985,9 @@ DEP_CPP_SCRNM=\
 	".\scrnmng.h"\
 	".\softkbd.res"\
 	".\wce\compiler.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_SCRNM=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10006,7 +10012,9 @@ DEP_CPP_SCRNM=\
 	".\scrnmng.h"\
 	".\softkbd.res"\
 	".\wce\compiler.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_SCRNM=\
+	".\x.h"\
 	
 
 !ENDIF 
@@ -10409,7 +10417,9 @@ DEP_CPP_WINKB=\
 	".\np2.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_WINKB=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10449,7 +10459,9 @@ DEP_CPP_WINKB=\
 	".\np2.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_WINKB=\
+	".\x.h"\
 	
 
 !ENDIF 

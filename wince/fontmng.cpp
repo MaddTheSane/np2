@@ -223,7 +223,11 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat, LPCTSTR string,
 			fdat->height = fhdl->bmpheight >> 1;
 		}
 		else {
+#if 1		// PocketPC‚Ì‚Ý–ß‚è’l‚ª•Ï‚ç‚µ‚¢H
+			fdat->width = min(fntsize.cx, fhdl->bmpwidth);
+#else
 			fdat->width = min(fntsize.cx + 1, fhdl->bmpwidth);
+#endif
 			fdat->pitch = min(fntsize.cx, fhdl->bmpwidth);
 			fdat->height = fhdl->bmpheight;
 		}

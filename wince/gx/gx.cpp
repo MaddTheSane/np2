@@ -1,16 +1,24 @@
 #include	"compiler.h"
 #include	"gx.h"
 
+#if !defined(GX_DLL)
 
-#ifndef SIZE_QVGA
+#if defined(SIZE_QVGA)
+#if defined(SUPPORT_SOFTKBD)
 enum {
-	WINDOW_WIDTH	= 640,
-	WINDOW_HEIGHT	= 400
+	WINDOW_WIDTH	= 320,
+	WINDOW_HEIGHT	= 240
 };
 #else
 enum {
 	WINDOW_WIDTH	= 320,
-	WINDOW_HEIGHT	= 240
+	WINDOW_HEIGHT	= 200
+};
+#endif
+#else
+enum {
+	WINDOW_WIDTH	= 640,
+	WINDOW_HEIGHT	= 400
 };
 #endif
 
@@ -352,4 +360,6 @@ GXKeyList GXGetDefaultKeys(int iOptions) {
 
 	return(gxkl);
 }
+
+#endif
 

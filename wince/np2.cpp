@@ -43,6 +43,9 @@ static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 
 
 		NP2OSCFG	np2oscfg = {0, 2, 0, 0,
+#if !defined(GX_DLL)
+								CW_USEDEFAULT, CW_USEDEFAULT,
+#endif
 #if defined(WIN32_PLATFORM_PSPC)
 								0, 0,
 #endif
@@ -227,6 +230,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			break;
 
+#if !defined(GX_DLL)
+		case WM_MOVE:
+			if (!(GetWindowLong(hWnd, GWL_STYLE) &
+											(WS_MAXIMIZE | WS_MINIMIZE))) {
+				GetWindowRect(hWnd, &rc);
+				np2oscfg.winx = rc.left;
+				np2oscfg.winy = rc.top;
+				sysmng_update(SYS_UPDATEOSCFG);
+			}
+			break;
+#endif
+
 #if !defined(_WIN32_WCE)
 		case WM_ENTERSIZEMOVE:
 			soundmng_stop();
@@ -375,16 +390,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 //	}
 
-#if !defined(WIN32_PLATFORM_PSPC)
+#if !defined(GX_DLL)
 	hWnd = CreateWindow(szClassName, szAppCaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
-						0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT,
+						np2oscfg.winx, np2oscfg.winy,
+						FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT,
 						NULL, NULL, hInstance, NULL);
 #else
 	hWnd = CreateWindow(szClassName, szAppCaption,
 						WS_VISIBLE,
-						0, 0, 
+						0, 0,
 		      			GetSystemMetrics(SM_CXSCREEN),
 		      			GetSystemMetrics(SM_CYSCREEN),
 						NULL, NULL, hInstance, NULL);

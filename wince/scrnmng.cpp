@@ -11,6 +11,11 @@
 #endif
 
 
+#if defined(GX_DLL)
+#pragma comment(lib, "gx.lib")
+#endif
+
+
 typedef struct {
 	BOOL	rotate;
 	VRAMHDL	vram;

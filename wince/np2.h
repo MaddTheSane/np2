@@ -5,6 +5,10 @@ typedef struct {
 	BYTE	F12KEY;
 	BYTE	resume;
 
+#if !defined(GX_DLL)
+	int		posx;
+	int		posy;
+#endif
 #if defined(WIN32_PLATFORM_PSPC)
 	BYTE	bindcur;
 	BYTE	bindbtn;

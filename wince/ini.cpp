@@ -355,6 +355,10 @@ static const INITBL iniitem[] = {
 	{"F12_bind", INITYPE_UINT8,		&np2oscfg.F12KEY,		0},
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
 
+#if !defined(GX_DLL)
+	{"WindposX", INITYPE_SINT32,	&np2oscfg.winx,			0},
+	{"WindposY", INITYPE_SINT32,	&np2oscfg.winy,			0},
+#endif
 #if defined(WIN32_PLATFORM_PSPC)
 	{"pbindcur", INITYPE_UINT8,		&np2oscfg.bindcur,		0},
 	{"pbindbtn", INITYPE_UINT8,		&np2oscfg.bindbtn,		0},
