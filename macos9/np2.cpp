@@ -572,6 +572,10 @@ static void eventproc(EventRecord *event) {
 			mousemng_buttonevent(MOUSEMNG_LEFTUP);
 			mousemng_buttonevent(MOUSEMNG_RIGHTUP);
 			break;
+
+		case activateEvt:
+			mackbd_activate((event->modifiers & activeFlag)?TRUE:FALSE);
+			break;
 	}
 }
 
@@ -722,6 +726,8 @@ int main(int argc, char *argv[]) {
 	if (np2oscfg.resume) {
 		flagload(np2resume);
 	}
+
+	SetScriptManagerVariable(smKeyDisableState, 1);
 
 	SetEventMask(everyEvent);
 

@@ -12,8 +12,14 @@
 
 #if TARGET_API_MAC_CARBON
 
-static	BYTE	keymap[16];
-static	UINT32	shiftchktick = 0;
+typedef struct {
+	UINT32	tick;
+	BYTE	keymap[16];
+	BOOL	active;
+} MACKBD;
+
+static	MACKBD		mackbd;
+
 
 static const BYTE keymac[128] = {
 			//	  ‚`,  ‚r,  ‚c,  ‚e,  ‚g,  ‚f,  ‚y,  ‚w		; 0x00
@@ -51,8 +57,9 @@ static const BYTE keymac[128] = {
 
 void mackbd_initialize(void) {
 
-	shiftchktick = GETTICK();
-	ZeroMemory(&keymap, sizeof(keymap));
+	mackbd.tick = GETTICK();
+	ZeroMemory(&mackbd.keymap, sizeof(mackbd.keymap));
+	mackbd.active = TRUE;
 }
 
 void mackbd_callback(void) {
@@ -64,23 +71,26 @@ void mackbd_callback(void) {
 	UINT	j;
 	BYTE	keycode;
 
-	tick = GETTICK();
-	if (shiftchktick == tick) {
+	if (!mackbd.active) {
 		return;
 	}
-	shiftchktick = tick;
+
+	tick = GETTICK();
+	if (mackbd.tick == tick) {
+		return;
+	}
+	mackbd.tick = tick;
 #if TARGET_API_MAC_CARBON
 	GetKeys((long *)key);
 #else
 	GetKeys((unsigned long *)key);
 #endif
 	for (i=0; i<16; i++) {
-		update = keymap[i] ^ key[i];
+		update = mackbd.keymap[i] ^ key[i];
 		if (update) {
-			keymap[i] = key[i];
+			mackbd.keymap[i] = key[i];
 			for (j=0; j<8; j++) {
 				if (update & (1 << j)) {
-TRACEOUT(("key %x %d", i * 8 + j, (key[i] & (1 << j))?1:0));
 					keycode = keymac[i * 8 + j];
 					if (keycode != NC) {
 						if (key[i] & (1 << j)) {
@@ -124,6 +134,17 @@ BOOL mackbd_keyup(int keycode) {
 		}
 	}
 	return(FALSE);
+}
+
+void mackbd_activate(BOOL active) {
+
+	if (mackbd.active != active) {
+		mackbd.active = active;
+		if (!active) {
+			ZeroMemory(&mackbd.keymap, sizeof(mackbd.keymap));
+			keystat_allrelease();
+		}
+	}
 }
 
 #else
@@ -187,6 +208,7 @@ static const BYTE keymac[128] = {
 typedef struct {
 	UINT32	tick;
 	UINT16	shift;
+	BOOL	active;
 } MACKBD;
 
 static	MACKBD		mackbd;
@@ -194,6 +216,7 @@ static	MACKBD		mackbd;
 void mackbd_initialize(void) {
 
 	ZeroMemory(&mackbd, sizeof(mackbd));
+	mackbd.active = TRUE;
 }
 
 void mackbd_callback(void) {
@@ -203,6 +226,10 @@ void mackbd_callback(void) {
 	UINT16	shift;
 	UINT16	shiftchg;
 	UINT	i;
+
+	if (!mackbd.active) {
+		return;
+	}
 
 	tick = GETTICK();
 	if (mackbd.tick != tick) {
@@ -271,6 +298,16 @@ BOOL mackbd_keyup(int keycode) {
 	}
 	else {
 		return(FALSE);
+	}
+}
+
+void mackbd_activate(BOOL active) {
+
+	if (mackbd.active != active) {
+		mackbd.active = active;
+		if (!active) {
+			keystat_allrelease();
+		}
 	}
 }
 
