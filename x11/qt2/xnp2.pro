@@ -55,6 +55,9 @@ SOURCES+= ../../font/font.c ../../font/fontdata.c ../../font/fontmake.c \
           ../../font/fontpc88.c ../../font/fontpc98.c ../../font/fontv98.c \
           ../../font/fontfm7.c ../../font/fontx1.c ../../font/fontx68k.c \
 
+SOURCES+= ../../generic/cmjasts.c \
+          ../../generic/hostdrv.c ../../generic/hostdrvs.c
+
 SOURCES+= ../../io/iocore.c ../../io/artic.c ../../io/cgrom.c ../../io/cpuio.c \
           ../../io/crtc.c ../../io/dipsw.c ../../io/dmac.c ../../io/egc.c \
           ../../io/extmem.c ../../io/fdc.c ../../io/fdd320.c ../../io/gdc.c \
@@ -81,7 +84,12 @@ SOURCES+= ../../sound/sound.c ../../sound/soundrom.c ../../sound/s98.c \
           ../../sound/psggenc.c ../../sound/psggeng.c \
           ../../sound/rhythmc.c ../../sound/rhythmg.c \
           ../../sound/sndcsec.c \
-          ../../sound/tms3631c.c ../../sound/tms3631g.c
+          ../../sound/tms3631c.c ../../sound/tms3631g.c \
+          ../../sound/wavemix.c
+
+SOURCES+= ../../sound/getsnd/getsnd.c ../../sound/getsnd/getsmix.c \
+          ../../sound/getsnd/getmp3.c ../../sound/getsnd/getogg.c \
+          ../../sound/getsnd/getwave.c
 
 SOURCES+= ../../sound/vermouth/midiout.c ../../sound/vermouth/midimod.c \
           ../../sound/vermouth/midinst.c ../../sound/vermouth/midvoice.c \

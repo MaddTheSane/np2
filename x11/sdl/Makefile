@@ -48,15 +48,6 @@ CBUSOBJS=	../../cbus/cbuscore.o ../../cbus/pc9861k.o \
 		../../cbus/boardspb.o ../../cbus/boardx2.o \
 		../../cbus/cs4231io.o ../../cbus/pcm86io.o
 
-FDDOBJS=	../../fdd/diskdrv.o ../../fdd/newdisk.o ../../fdd/fddfile.o \
-		../../fdd/fdd_xdf.o ../../fdd/fdd_d88.o ../../fdd/fdd_mtr.o \
-		../../fdd/sxsi.o
-
-FONTOBJS=	../../font/font.o ../../font/fontdata.o ../../font/fontmake.o \
-		../../font/fontpc88.o ../../font/fontpc98.o \
-		../../font/fontv98.o ../../font/fontfm7.o ../../font/fontx1.o \
-		../../font/fontx68k.o \
-
 EMBEDOBJS=	../../embed/vramhdl.o ../../embed/vrammix.o
 
 MENUOBJS=	../../embed/menu/dlgabout.o \
@@ -72,6 +63,18 @@ MENUBASEOBJS=	../../embed/menubase/menubase.o \
 		../../embed/menubase/menures.o \
 		../../embed/menubase/menusys.o \
 		../../embed/menubase/menuvram.o
+
+FDDOBJS=	../../fdd/diskdrv.o ../../fdd/newdisk.o ../../fdd/fddfile.o \
+		../../fdd/fdd_xdf.o ../../fdd/fdd_d88.o ../../fdd/fdd_mtr.o \
+		../../fdd/sxsi.o
+
+FONTOBJS=	../../font/font.o ../../font/fontdata.o ../../font/fontmake.o \
+		../../font/fontpc88.o ../../font/fontpc98.o \
+		../../font/fontv98.o ../../font/fontfm7.o ../../font/fontx1.o \
+		../../font/fontx68k.o \
+
+GENERICOBJS=	../../generic/cmjasts.o \
+		../../generic/hostdrv.o ../../generic/hostdrvs.o
 
 IOOBJS=		../../io/iocore.o ../../io/artic.o ../../io/cgrom.o \
 		../../io/cpuio.o ../../io/crtc.o ../../io/dipsw.o \
@@ -100,7 +103,12 @@ SOUNDOBJS=	../../sound/sound.o ../../sound/soundrom.o ../../sound/s98.o \
 		../../sound/psggenc.o ../../sound/psggeng.o \
 		../../sound/rhythmc.o ../../sound/rhythmg.o \
 		../../sound/sndcsec.o \
-		../../sound/tms3631c.o ../../sound/tms3631g.o
+		../../sound/tms3631c.o ../../sound/tms3631g.o \
+		../../sound/wavemix.o
+
+GETSNDOBJS=	../../sound/getsnd/getsnd.o ../../sound/getsnd/getsmix.o \
+		../../sound/getsnd/getmp3.o ../../sound/getsnd/getogg.o \
+		../../sound/getsnd/getwave.o
 
 VERMOUTHOBJS=	../../sound/vermouth/midiout.o ../../sound/vermouth/midimod.o \
 		../../sound/vermouth/midinst.o ../../sound/vermouth/midvoice.o \
@@ -126,9 +134,11 @@ X11SDLOBJS=	sdl_font.o sdl_keyboard.o sdl_mouse.o sdl_screen.o \
 		sdl_main.o
 
 OBJS=		$(CPUOBJS) $(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) \
-		$(FONTOBJS) $(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) \
+		$(FONTOBJS) $(IOOBJS) $(LIOOBJS) $(NP2OBJS) \
+		$(SOUNDOBJS) $(GETSNDOBJS) \
 		$(VERMOUTHOBJS) $(VRAMOBJS) $(SNDDRVOBJS) \
 		$(EMBEDOBJS) $(MENUOBJS) $(MENUBASEOBJS) \
+		$(GENERICOBJS) \
 		$(X11OBJS) $(X11SDLOBJS)
 SRCS=		$(OBJS:.o=.c)
 
