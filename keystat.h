@@ -121,13 +121,6 @@ enum {
 };
 #endif
 
-#if 0
-enum {
-	NKEY_USER1			= 0x76,
-	NKEY_USER2			= 0x77
-};
-#endif
-
 enum {
 	NKEY_SYSTEM			= 0x90,
 
@@ -182,6 +175,7 @@ void keystat_tblreset(void);
 void keystat_tblset(REG8 ref, const UINT8 *key, UINT cnt);
 void keystat_tblload(const char *filename);
 
+void keystat_ctrlinit(void);
 void keystat_ctrlreset(void);
 void keystat_ctrlsend(REG8 dat);
 

@@ -157,9 +157,14 @@ kstbl_err:
 
 // ----
 
-void keystat_ctrlreset(void) {
+void keystat_ctrlinit(void) {
 
 	ZeroMemory(&keyctrl, sizeof(keyctrl));
+}
+
+void keystat_ctrlreset(void) {
+
+	keyctrl.reqparam = 0;
 }
 
 void keystat_ctrlsend(REG8 dat) {
@@ -202,6 +207,7 @@ void keystat_ctrlsend(REG8 dat) {
 #if defined(SUPPORT_PC9801_119)
 			case 0x95:
 				keyctrl.kbdtype = dat;
+				keyboard_ctrl(0xfa);
 				break;
 #endif
 			case 0x9c:
@@ -233,14 +239,16 @@ void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 		}
 		else {
 #if defined(SUPPORT_PC9801_119)
-			if ((keyctrl.kbdtype != 0x03) && (keycode >= 0x75)) {
-				continue;
-			}
-#else
-			if (keycode >= 0x75) {
-				continue;
-			}
+			if (keyctrl.kbdtype != 0x03)
 #endif
+			{
+				if (keycode == 0x7d) {
+					keycode = 0x70;
+				}
+				else if (keycode >= 0x75) {
+					continue;
+				}
+			}
 			if ((np2cfg.XSHIFT) &&
 				(((keycode == 0x70) && (np2cfg.XSHIFT & 1)) ||
 				((keycode == 0x74) && (np2cfg.XSHIFT & 2)) ||
@@ -284,14 +292,16 @@ void keystat_up(const UINT8 *key, REG8 keys, REG8 ref) {
 		}
 		else {
 #if defined(SUPPORT_PC9801_119)
-			if ((keyctrl.kbdtype != 0x03) && (keycode >= 0x75)) {
-				continue;
-			}
-#else
-			if (keycode >= 0x75) {
-				continue;
-			}
+			if (keyctrl.kbdtype != 0x03)
 #endif
+			{
+				if (keycode == 0x7d) {
+					keycode = 0x70;
+				}
+				else if (keycode >= 0x75) {
+					continue;
+				}
+			}
 			if ((np2cfg.XSHIFT) &&
 				(((keycode == 0x70) && (np2cfg.XSHIFT & 1)) ||
 				((keycode == 0x74) && (np2cfg.XSHIFT & 2)) ||

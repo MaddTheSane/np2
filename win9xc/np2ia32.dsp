@@ -645,10 +645,6 @@ SOURCE=.\COMMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGWIN.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
@@ -690,6 +686,10 @@ SOURCE=.\SCRNMNG.CPP
 # Begin Source File
 
 SOURCE=.\SOUNDMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\SUBWIND.CPP
 # End Source File
 # Begin Source File
 
@@ -970,6 +970,10 @@ SOURCE=..\GENERIC\MEMDBG32.C
 # Begin Source File
 
 SOURCE=..\GENERIC\NP2INFO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\SOFTKBD.C
 # End Source File
 # End Group
 # Begin Source File

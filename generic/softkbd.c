@@ -138,7 +138,7 @@ BOOL softkbd_down(int x, int y) {
 		return(TRUE);
 	}
 	else if (key != SOFTKEY_NC) {
-		keystat_senddata((UINT8)key);
+		keystat_down(&key, 1, NKEYREF_SOFTKBD);
 		softkbd.key = key;
 	}
 	return(FALSE);
@@ -147,7 +147,7 @@ BOOL softkbd_down(int x, int y) {
 void softkbd_up(void) {
 
 	if (softkbd.key != SOFTKEY_NC) {
-		keystat_senddata((REG8)(softkbd.key | 0x80));
+		keystat_up(&softkbd.key, 1, NKEYREF_SOFTKBD);
 		softkbd.key = SOFTKEY_NC;
 	}
 }

@@ -72,7 +72,7 @@ static REG8 IOINPCALL keyboard_i43(UINT port) {
 
 	(void)port;
 	TRACEOUT(("in43 -> %02x %.4x:%.8x", keybrd.status, CPU_CS, CPU_EIP));
-	return(keybrd.status);
+	return(keybrd.status | 0x85);
 }
 
 

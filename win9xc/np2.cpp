@@ -18,7 +18,7 @@
 #include	"winkbd.h"
 #include	"ini.h"
 #include	"menu.h"
-#include	"debugwin.h"
+#include	"subwind.h"
 #include	"dialog.h"
 #include	"cpucore.h"
 #include	"pccore.h"
@@ -818,7 +818,7 @@ static void framereset(void) {
 
 	framecnt = 0;
 	sysmng_updatecaption();
-	debugwin_process();
+	memdbg_process();
 }
 
 static void processwait(UINT cnt) {
@@ -851,6 +851,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	file_setcd(modulefile);
 	np2arg_analize(lpszCmdLine);
 	initload();
+	memdbg_readini();
+	skbdwin_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -894,7 +896,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			return(FALSE);
 		}
 	}
-	debugwin_initapp(hInstance);
+	memdbg_initialize(hInstance);
+	skbdwin_initialize(hInstance);
 
 	mousemng_initialize();
 
@@ -978,8 +981,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	pccore_reset();
 
-	debugwin_create();
-
 	np2opening = 0;
 
 	// ‚ê‚¶‚¤‚Þ
@@ -1012,6 +1013,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			diskdrv_delay[i] = 1;
 		}
 	}
+
+	memdbg_create();
+	skbdwin_create();
 
 	while(1) {
 		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
@@ -1103,14 +1107,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 #endif
 
 	pccore_term();
-	debugwin_destroy();
+	memdbg_destroy();
+	skbdwin_destroy();
 
 	soundmng_deinitialize();
 	scrnmng_destroy();
 
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();
+		memdbg_writeini();
+		skbdwin_writeini();
 	}
+
+	skbdwin_deinitialize();
 
 	TRACETERM();
 	_MEM_USED("report.txt");
