@@ -253,49 +253,50 @@ short file_attr_c(const char *path) {
 }
 
 
-FILEFINDH file_find1st(const char *path, FILEFINDT *fft) {
+FLISTH file_list1st(const char *dir, FLINFO *fli) {
 
+	char			path[MAX_PATH];
 	HANDLE			hdl;
 	WIN32_FIND_DATA	w32fd;
 
+	milsjis_ncpy(path, dir, sizeof(path));
+	file_setseparator(path, sizeof(path));
+	milsjis_ncat(path, "*.*", sizeof(path));
 	hdl = FindFirstFile_A(path, &w32fd);
-	if (hdl == INVALID_HANDLE_VALUE) {
-		return(FILEFINDH_INVALID);
-	}
-	if (fft) {
+	if ((hdl != INVALID_HANDLE_VALUE) && (fli)) {
 #if defined(UNICODE)
 		WideCharToMultiByte(CP_ACP, 0, w32fd.cFileName, -1,
-								fft->path, sizeof(fft->path), NULL, NULL);
+								fli->path, sizeof(fli->path), NULL, NULL);
 #else
-		milstr_ncpy(fft->path, w32fd.cFileName, sizeof(fft->path));
+		milstr_ncpy(fli->path, w32fd.cFileName, sizeof(fli->path));
 #endif
-		fft->size = w32fd.nFileSizeLow;
-		fft->attr = w32fd.dwFileAttributes;
+		fli->size = w32fd.nFileSizeLow;
+		fli->attr = w32fd.dwFileAttributes;
 	}
 	return(hdl);
 }
 
-BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft) {
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	WIN32_FIND_DATA	w32fd;
 
 	if (!FindNextFile(hdl, &w32fd)) {
 		return(FAILURE);
 	}
-	if (fft) {
+	if (fli) {
 #if defined(UNICODE)
 		WideCharToMultiByte(CP_ACP, 0, w32fd.cFileName, -1,
-								fft->path, sizeof(fft->path), NULL, NULL);
+								fli->path, sizeof(fli->path), NULL, NULL);
 #else
-		milstr_ncpy(fft->path, w32fd.cFileName, sizeof(fft->path));
+		milstr_ncpy(fli->path, w32fd.cFileName, sizeof(fli->path));
 #endif
-		fft->size = w32fd.nFileSizeLow;
-		fft->attr = w32fd.dwFileAttributes;
+		fli->size = w32fd.nFileSizeLow;
+		fli->attr = w32fd.dwFileAttributes;
 	}
 	return(SUCCESS);
 }
 
-void file_findclose(FILEFINDH hdl) {
+void file_listclose(FLISTH hdl) {
 
 	FindClose(hdl);
 }

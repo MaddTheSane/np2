@@ -73,7 +73,7 @@ static void char2str(char *dst, int size, const UniChar *uni, int unicnt) {
 	CFRelease(cfsr);
 }
 
-void *file_list1st(const char *dir, FLDATA *fl) {
+void *file_list1st(const char *dir, FLINFO *fli) {
 
 	void		*ret;
 	Str255		fname;
@@ -93,7 +93,7 @@ void *file_list1st(const char *dir, FLDATA *fl) {
 	}
 	((FLHDL)ret)->eoff = FALSE;
 	((FLHDL)ret)->fsi = fsi;
-	if (file_listnext(ret, fl) == SUCCESS) {
+	if (file_listnext(ret, fli) == SUCCESS) {
 		return(ret);
 	}
 
@@ -104,7 +104,7 @@ ff1_err1:
 	return(NULL);
 }
 
-BOOL file_listnext(void *hdl, FLDATA *fl) {
+BOOL file_listnext(void *hdl, FLINFO *fli) {
 
 	FLHDL		flhdl;
 	ItemCount	count;
@@ -127,15 +127,15 @@ BOOL file_listnext(void *hdl, FLDATA *fl) {
 		flhdl->eoff = TRUE;
 		goto ffn_err;
 	}
-	if (fl) {
-		char2str(fl->path, sizeof(fl->path),
+	if (fli) {
+		char2str(fli->path, sizeof(fli->path),
 								flhdl->name.unicode, flhdl->name.length);
-		fl->size = (UINT32)flhdl->fsci.dataLogicalSize;
+		fli->size = (UINT32)flhdl->fsci.dataLogicalSize;
 		if (flhdl->fsci.nodeFlags & kFSNodeIsDirectoryMask) {
-			fl->attr = FILEATTR_DIRECTORY;
+			fli->attr = FILEATTR_DIRECTORY;
 		}
 		else {
-			fl->attr = FILEATTR_ARCHIVE;
+			fli->attr = FILEATTR_ARCHIVE;
 		}
 	}
 	return(SUCCESS);
@@ -161,7 +161,7 @@ typedef struct {
 	long		tagid;
 } _FLHDL, *FLHDL;
 
-void *file_list1st(const char *dir, FLDATA *fl) {
+void *file_list1st(const char *dir, FLINFO *fli) {
 
 	Str255	fname;
 	FSSpec	fss;
@@ -193,7 +193,7 @@ void *file_list1st(const char *dir, FLDATA *fl) {
 	}
 	ret->eoff = FALSE;
 	ret->index = 1;
-	if (file_listnext((void *)ret, fl) == SUCCESS) {
+	if (file_listnext((void *)ret, fli) == SUCCESS) {
 		return((void *)ret);
 	}
 
@@ -204,7 +204,7 @@ ff1_err1:
 	return(NULL);
 }
 
-BOOL file_listnext(void *hdl, FLDATA *fl) {
+BOOL file_listnext(void *hdl, FLINFO *fli) {
 
 	FLHDL	flhdl;
 	Str255	fname;
@@ -223,14 +223,14 @@ BOOL file_listnext(void *hdl, FLDATA *fl) {
 		goto ffn_err;
 	}
 	flhdl->index++;
-	if (fl) {
-		mkcstr(fl->path, sizeof(fl->path), fname);
-		fl->size = 0;
+	if (fli) {
+		mkcstr(fli->path, sizeof(fli->path), fname);
+		fli->size = 0;
 		if (flhdl->pb.hFileInfo.ioFlAttrib & 0x10) {
-			fl->attr = FILEATTR_DIRECTORY;
+			fli->attr = FILEATTR_DIRECTORY;
 		}
 		else {
-			fl->attr = FILEATTR_ARCHIVE;
+			fli->attr = FILEATTR_ARCHIVE;
 		}
 	}
 	return(SUCCESS);

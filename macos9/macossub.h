@@ -8,11 +8,14 @@ enum {
 	FILEATTR_ARCHIVE	= 0x20
 };
 
+#define		FLISTH				void *
+#define		FLISTH_INVALID		((FLISTH)0)
+
 typedef struct {
 	char	path[MAX_PATH];
 	UINT32	size;
 	UINT32	attr;
-} FLDATA;
+} FLINFO;
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,9 +29,9 @@ UINT32 macos_gettick(void);
 void mkstr255(Str255 dst, const char *src);
 void mkcstr(char *dst, int size, const Str255 src);
 
-void *file_list1st(const char *dir, FLDATA *fl);
-BOOL file_listnext(void *hdl, FLDATA *fl);
-void file_listclose(void *hdl);
+FLISTH file_list1st(const char *dir, FLINFO *fli);
+BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+void file_listclose(FLISTH hdl);
 
 #ifdef __cplusplus
 }

@@ -105,6 +105,26 @@ void *listarray_getitem(LISTARRAY laHandle, UINT num) {
 	return(NULL);
 }
 
+UINT listarray_getpos(LISTARRAY laHandle, void *vpItem) {
+
+	UINT	pos;
+	UINT	i;
+
+	pos = 0;
+	while(laHandle) {
+		char *p = (char *)(laHandle + 1);
+		for (i=0; i<laHandle->items; i++) {
+			if ((long)p == (long)vpItem) {
+				return(pos + i);
+			}
+			p += laHandle->listsize;
+		}
+		pos += laHandle->items;
+		laHandle = laHandle->laNext;
+	}
+	return((UINT)-1);
+}
+
 void *listarray_enum(LISTARRAY laHandle,
 				BOOL (*cbProc)(void *vpItem, void *vpArg), void *vpArg) {
 

@@ -89,6 +89,7 @@ typedef struct {
 	char	hddfile[2][MAX_PATH];									// ver0.30
 	char	fontfile[MAX_PATH];
 	char	biospath[MAX_PATH];
+	char	hdrvroot[MAX_PATH];
 } NP2CFG;
 
 typedef struct {

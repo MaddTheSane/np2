@@ -17,6 +17,7 @@ void listarray_destroy(LISTARRAY laHandle);
 UINT listarray_getitems(LISTARRAY laHandle);
 void *listarray_append(LISTARRAY laHandle, const void *vpItem);
 void *listarray_getitem(LISTARRAY laHandle, UINT num);
+UINT listarray_getpos(LISTARRAY laHandle, void *vpItem);
 void *listarray_enum(LISTARRAY laHandle,
 				BOOL (*cbProc)(void *vpItem, void *vpArg), void *vpArg);
 

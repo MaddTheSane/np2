@@ -6,10 +6,12 @@
 #include	"iocore.h"
 #include	"bios.h"
 #include	"sxsi.h"
-// #include	"hostdrv.h"
+#if defined(SUPPORT_HOSTDRV)
+#include	"hostdrv.h"
+#endif
 
 
-#define		NP2SYSP_VER			"C"
+#define		NP2SYSP_VER			"B"
 // #define	NP2SYSP_CREDIT		""					// 要るなら・・・
 
 // NP2依存ポート
@@ -169,7 +171,7 @@ static void cmd_sxsibios(const void *arg1, long arg2) {
 }
 
 
-#if 0
+#if defined(SUPPORT_HOSTDRV)
 // ---- hostdrv
 
 enum {
@@ -198,6 +200,7 @@ static void cmd_hostdrv(const void *arg1, long arg2) {
 			hostdrv_intr();
 			break;
 	}
+	(void)arg1;
 }
 #endif
 
@@ -244,11 +247,10 @@ static const SYSPCMD np2spcmd[] = {
 			{str_clock,		cmd_clock,		NULL,			0},
 			{str_multiple,	cmd_multiple,	NULL,			0},
 
-// version:C
-			{str_sxsibios,	cmd_sxsibios,	NULL,			0},
 
-#if 0
 // extension
+			{str_sxsibios,	cmd_sxsibios,	NULL,			0},
+#if defined(SUPPORT_HOSTDRV)
 			{str_hdrvcheck,	cmd_outstr,		"supported",	0},
 			{str_hdrvopen,	cmd_hostdrv,	NULL,			OPEN_HOSTDRV},
 			{str_hdrvclose,	cmd_hostdrv,	NULL,			CLOSE_HOSTDRV},

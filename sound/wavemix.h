@@ -5,8 +5,15 @@ enum {
 	WAVEMIX_SEEK	= 0,
 	WAVEMIX_SEEK1,
 
-	WAVEMIX_CHANNELS
+	WAVEMIX_MAXTRACK
 };
+
+enum {
+	WMFLAG_L		= 0x0001,
+	WMFLAG_R		= 0x0002,
+	WMFLAG_LOOP		= 0x0004
+};
+
 
 #ifdef __cplusplus
 extern "C" {

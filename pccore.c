@@ -33,7 +33,7 @@
 #include	"timing.h"
 #include	"debugsub.h"
 #if defined(SUPPORT_HOSTDRV)
-// #include	"hostdrv.h"
+#include	"hostdrv.h"
 #endif
 
 
@@ -54,7 +54,7 @@
 				1, 0x82,
 				0, {0x17, 0x04, 0x1f}, {0x0c, 0x0c, 0x02, 0x10, 0x3f, 0x3f},
 				1, 80, 0,
-				{"", ""}, "", ""};
+				{"", ""}, "", "", ""};
 
 	PCCORE	pc = {	PCBASECLOCK25,
 					4,
@@ -241,9 +241,17 @@ void pccore_init(void) {
 	pc9861k_construct();
 
 	iocore_create();
+
+#if defined(SUPPORT_HOSTDRV)
+	hostdrv_initialize();
+#endif
 }
 
 void pccore_term(void) {
+
+#if defined(SUPPORT_HOSTDRV)
+	hostdrv_deinitialize();
+#endif
 
 	sound_term();
 
@@ -284,8 +292,6 @@ void pccore_cfgupdate(void) {
 void pccore_reset(void) {
 
 	int		i;
-
-//	reset_hostdrv();
 
 	ZeroMemory(mem, 0x10fff0);									// ver0.28
 	ZeroMemory(mem + VRAM1_B, 0x18000);
@@ -364,6 +370,10 @@ void pccore_reset(void) {
 	sysmng_cpureset();
 
 	soundmng_play();
+
+#if defined(SUPPORT_HOSTDRV)
+	hostdrv_reset();
+#endif
 }
 
 static void drawscreen(void) {

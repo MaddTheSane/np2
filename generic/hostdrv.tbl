@@ -1,0 +1,233 @@
+
+// ---- DOSとの受け渡し用
+
+#define IF4DOSPTR_ADDR	0x0000600
+		// IF4DOSのアドレスが入っているアドレス
+		// (割り込みを止めて、一時的に使用しているだけなので、
+		//  仮にここを使用するBIOS/OS/アプリがあっても大丈夫)
+
+typedef struct {
+	BYTE	off[2];
+	BYTE	seg[2];
+} REALPTR;
+
+typedef struct {
+	UINT8	drive_no;		// 作成したドライブ番号(A:=0)
+	UINT8	dosver_major;
+	UINT8	dosver_minor;
+	BYTE	sda_off[2];
+	BYTE	sda_seg[2];
+} IF4DOS;
+
+typedef struct {
+	BYTE	es[2];
+	BYTE	ds[2];
+	BYTE	di[2];
+	BYTE	si[2];
+	BYTE	bp[2];
+	BYTE	sp[2];
+	BYTE	bx[2];
+	BYTE	dx[2];
+	BYTE	cx[2];
+	BYTE	ax[2];
+	BYTE	ip[2];
+	BYTE	cs[2];
+	BYTE	flag[2];
+} IF4INTR;
+
+typedef struct {
+	BYTE	es[2];
+	BYTE	ds[2];
+	BYTE	di[2];
+	BYTE	si[2];
+	BYTE	bp[2];
+	BYTE	sp[2];
+	UINT8	bl;
+	UINT8	bh;
+	UINT8	dl;
+	UINT8	dh;
+	UINT8	cl;
+	UINT8	ch;
+	UINT8	al;
+	UINT8	ah;
+	BYTE	ip[2];
+	BYTE	cs[2];
+	UINT8	flag_l;
+	UINT8	flag_h;
+} IF4INTR8;
+
+
+// ---- MS-DOSストラクチャー (little endian!)
+
+#pragma pack(push, 1)
+
+/* FindFirst/Next data block */
+typedef struct {
+	UINT8	drive_no;
+	char	srch_mask[11];
+	UINT8	attr_mask;
+	BYTE	dir_entry_no[2];
+	BYTE	dir_sector[2];
+	BYTE	f1[4];
+} _SRCHREC, *SRCHREC;	//	21bytes (see int214E)
+
+/* Directory entry for 'found' file */
+typedef struct {
+	BYTE	file_name[11];
+	UINT8	file_attr;
+	BYTE	f1[10];
+	BYTE	file_time[4];
+	BYTE	start_sector[2];
+	BYTE	file_size[4];
+} _DIRREC, *DIRREC;
+
+/* System File Table entry */
+typedef struct {
+	BYTE	handle_count[2];
+	BYTE	open_mode[2];
+	UINT8	file_attr;
+	BYTE	dev_info_word[2];
+	BYTE 	dev_drvr_ptr[4];
+	BYTE	start_sector[2];
+	BYTE	file_time[4];
+	BYTE	file_size[4];
+	BYTE	file_pos[4];
+	BYTE	rel_sector[2];
+	BYTE	abs_sector[2];
+	BYTE	dir_sector[2];
+	UINT8	dir_entry_no;
+	BYTE	file_name[11];
+} _SFTREC, *SFTREC;
+
+/* Current Directory Structure */
+typedef struct {
+	char	current_path[67];
+	BYTE	flags[2];
+	BYTE	f1[10];
+	BYTE	root_ofs[2];
+} _CDS3, *CDS3;
+
+typedef struct {
+	char	current_path[67];
+	BYTE	flags[2];
+	BYTE	f1[10];
+	BYTE	root_ofs[2];
+	BYTE	f2[7];
+} _CDS4, *CDS4;
+
+/* Swappable DOS Area for DOS3 */
+typedef struct {
+	BYTE		f0[12];
+	REALPTR		current_dta;
+	BYTE		f1[30];
+	UINT8		dd;
+	UINT8		mm;
+	BYTE		yy_1980[2];
+	BYTE		f2[96];
+	char		file_name[128];
+	char		file_name_2[128];
+	_SRCHREC	srchrec;
+	_DIRREC		dirrec;
+	BYTE		f3[81];
+	char		fcb_name[11];
+	BYTE		f4;
+	char		fcb_name_2[11];
+	BYTE		f5[11];
+	UINT8		srch_attr;
+	UINT8		open_mode;
+	BYTE		f6[48];
+	REALPTR		cdsptr;
+	BYTE		f7[72];
+	_SRCHREC	rename_srchrec;
+	_DIRREC		rename_dirrec;
+} _SDA3, *SDA3;		//	(see int215D06)
+
+/* Swappable DOS Area for DOS4+ */
+typedef struct {
+	BYTE		f0[12];
+	REALPTR		current_dta;
+	BYTE		f1[32];
+	BYTE		dd;
+	BYTE		mm;
+	BYTE		yy_1980[2];
+	BYTE		f2[106];
+	char		file_name[128];
+	char		file_name_2[128];
+	_SRCHREC	srchrec;
+	_DIRREC		dirrec;
+	BYTE		f3[88];
+	char		fcb_name[11];
+	BYTE		f4;
+	char		fcb_name_2[11];
+	BYTE		f5[11];
+	UINT8		srch_attr;
+	UINT8		open_mode;
+	BYTE		f6[51];
+	REALPTR		cdsptr;
+	BYTE		f7[87];
+	BYTE		action_2E[2];
+	BYTE		attr_2E[2];
+	BYTE		mode_2E[2];
+	BYTE		f8[29];
+	_SRCHREC	rename_srchrec;
+	_DIRREC		rename_dirrec;
+} _SDA4, *SDA4;		//	(see int215D06)
+
+typedef union {
+	struct {
+		_SDA3	sda;
+		_CDS3	cds;
+	} ver3;
+	struct {
+		_SDA4	sda;
+		_CDS4	cds;
+	} ver4;
+} _SDACDS, *SDACDS;
+
+#pragma pack(pop)
+
+
+
+#if 0
+/* List of Lists Structure */	// SysInitVarsとも呼ばれるね～
+typedef	struct {
+	BYTE		f1[22];
+	LPCDS		cds_ptr;
+	BYTE		f2[7];
+	BYTE		last_drive;
+} LOL, *LPLOL;	//	(see int2152)
+
+typedef	struct {
+	WORD	es, ds, di, si, bp, sp;
+	union {
+		struct { WORD bx,     dx,     cx,     ax;     };
+		struct { BYTE bl, bh, dl, dh, cl, ch, al, ah; };
+	};
+	WORD	ip, cs, flags;
+} INTR_REGS;
+#endif
+
+
+// ----
+
+typedef struct {
+	BOOL	is_chardev;
+	union {
+		IF4INTR8	b;
+		IF4INTR		w;
+	}		r;
+
+	char	*fcbname_ptr;
+	char	*filename_ptr;
+	char	*fcbname_ptr_2;
+	char	*filename_ptr_2;
+	SRCHREC	srchrec_ptr;
+	DIRREC	dirrec_ptr;
+	SRCHREC	srchrec_ptr_2;
+	DIRREC	dirrec_ptr_2;
+	UINT8	*srch_attr_ptr;
+	char	*root_path;
+	char	*current_path;
+} _INTRST, *INTRST;
+
+
