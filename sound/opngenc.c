@@ -187,6 +187,7 @@ void opngen_setVR(BYTE channel, BYTE value) {
 static void set_algorithm(OPNCH *ch) {
 
 	SINT32	*outd;
+	BYTE	outslot;
 
 	outd = &opngen.outdc;
 	if (ch->stereo) {
@@ -205,42 +206,49 @@ static void set_algorithm(OPNCH *ch) {
 			ch->connect1 = &opngen.feedback2;
 			ch->connect2 = &opngen.feedback3;
 			ch->connect3 = &opngen.feedback4;
+			outslot = 0x08;
 			break;
 
 		case 1:
 			ch->connect1 = &opngen.feedback3;
 			ch->connect2 = &opngen.feedback3;
 			ch->connect3 = &opngen.feedback4;
+			outslot = 0x08;
 			break;
 
 		case 2:
 			ch->connect1 = &opngen.feedback4;
 			ch->connect2 = &opngen.feedback3;
 			ch->connect3 = &opngen.feedback4;
+			outslot = 0x08;
 			break;
 
 		case 3:
 			ch->connect1 = &opngen.feedback2;
 			ch->connect2 = &opngen.feedback4;
 			ch->connect3 = &opngen.feedback4;
+			outslot = 0x08;
 			break;
 
 		case 4:
 			ch->connect1 = &opngen.feedback2;
 			ch->connect2 = outd;
 			ch->connect3 = &opngen.feedback4;
+			outslot = 0x0a;
 			break;
 
 		case 5:
 			ch->connect1 = 0;
 			ch->connect2 = outd;
 			ch->connect3 = outd;
+			outslot = 0x0e;
 			break;
 
 		case 6:
 			ch->connect1 = &opngen.feedback2;
 			ch->connect2 = outd;
 			ch->connect3 = outd;
+			outslot = 0x0e;
 			break;
 
 		case 7:
@@ -248,8 +256,10 @@ static void set_algorithm(OPNCH *ch) {
 			ch->connect1 = outd;
 			ch->connect2 = outd;
 			ch->connect3 = outd;
+			outslot = 0x0f;
 	}
 	ch->connect4 = outd;
+	ch->outslot = outslot;
 }
 
 static void set_dt1_mul(OPNSLOT *slot, BYTE value) {

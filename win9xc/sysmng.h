@@ -22,10 +22,14 @@ extern "C" {
 
 extern	UINT	sys_updates;
 
-#define	sysmng_initialize()		sys_updates = 0
-#define	sysmng_update(a)		sys_updates |= (a)
-#define	sysmng_cpureset()		sys_updates	&= \
-										(SYS_UPDATECFG | SYS_UPDATEOSCFG)
+#define	sysmng_initialize()	sys_updates = 0
+#define	sysmng_update(a)	sys_updates |= (a)
+#define	sysmng_cpureset()	sys_updates	&=									\
+										(SYS_UPDATECFG | SYS_UPDATEOSCFG);	\
+							sysmng_workclockreset()
+
+void sysmng_workclockreset(void);
+void sysmng_updatecaption(void);
 
 #ifdef __cplusplus
 }

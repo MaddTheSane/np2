@@ -735,6 +735,7 @@ static void processwait(UINT waitcnt) {
 	else {
 		Sleep(1);
 	}
+	sysmng_updatecaption();
 }
 
 

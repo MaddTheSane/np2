@@ -98,7 +98,7 @@ typedef struct {
 	BYTE	algorithm;			// algorithm
 	BYTE	feedback;			// self feedback
 	BYTE	playing;
-	BYTE	padding1;
+	BYTE	outslot;
 	SINT32	op1fb;				// operator1 feedback
 	SINT32	*connect1;			// operator1 connect
 	SINT32	*connect3;			// operator3 connect

@@ -157,7 +157,7 @@ void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 			opngen.outdr = 0;
 			playing = 0;
 			for (i=0; i<opngen.playchannels; i++) {
-				if (fm[i].playing) {
+				if (fm[i].playing & fm[i].outslot) {
 					calcratechannel(fm + i);
 					playing++;
 				}

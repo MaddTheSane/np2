@@ -5,7 +5,10 @@
 #include	"i286.h"
 #include	"pccore.h"
 #include	"fddfile.h"
-
+#if 1
+#include	"sound.h"
+#include	"fmboard.h"
+#endif
 
 	UINT	sys_updates;
 
@@ -81,6 +84,11 @@ void sysmng_updatecaption(BYTE flag) {
 				milstr_ncpy(clock, " -", sizeof(clock));
 			}
 			milstr_ncat(clock, work, sizeof(clock));
+#if 1
+			SPRINTF(work, " (debug: OPN %d / PSG %s)", opngen.playing,
+									(psg1.mixer & 0x3f)?"ON":"OFF");
+			milstr_ncat(clock, work, sizeof(clock));
+#endif
 		}
 	}
 	milstr_ncpy(work, np2oscfg.titles, sizeof(work));

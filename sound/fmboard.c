@@ -194,7 +194,7 @@ void fmboard_bind(void) {
 			break;
 
 		case 0x06:
-			board86c_bind();
+			boardx2_bind();
 			break;
 
 		case 0x08:
