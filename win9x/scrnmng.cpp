@@ -208,9 +208,17 @@ static void clearoutofrect(const RECT *target, const RECT *base) {
 static void clearoutscreen(void) {
 
 	RECT	base;
+	POINT	clipt;
 	RECT	target;
 
 	GetClientRect(hWndMain, &base);
+	clipt.x = 0;
+	clipt.y = 0;
+	ClientToScreen(hWndMain, &clipt);
+	base.left += clipt.x;
+	base.top += clipt.y;
+	base.right += clipt.x;
+	base.bottom += clipt.y;
 	target.left = base.left + ddraw.scrn.left;
 	target.top = base.top + ddraw.scrn.top;
 	target.right = base.left + ddraw.scrn.right;
