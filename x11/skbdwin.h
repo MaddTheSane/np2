@@ -1,4 +1,4 @@
-/*	$Id: skbdwin.h,v 1.1 2004/06/16 12:50:49 monaka Exp $	*/
+/*	$Id: skbdwin.h,v 1.2 2004/06/18 12:32:51 monaka Exp $	*/
 
 #ifndef	NP2_X11_SKBDWIN_H__
 #define	NP2_X11_SKBDWIN_H__
@@ -26,9 +26,10 @@ void skbdwin_writeini(void);
 #else	/* !SUPPORT_SOFTKBD */
 
 #define	skbdwin_initialize()
+#define	skbdwin_deinitialize()
 #define	skbdwin_create()
 #define	skbdwin_destroy()
-#define	skbdwin_draw()
+#define	skbdwin_process()
 #define	skbdwin_readini()
 #define	skbdwin_writeini()
 
