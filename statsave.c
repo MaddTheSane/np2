@@ -57,7 +57,6 @@ enum {
 #if defined(CGWND_FONTPTR)
 	STATFLAG_CGW,
 #endif
-	STATFLAG_CLOCK,
 	STATFLAG_COM,
 	STATFLAG_DISK,
 	STATFLAG_DMA,
@@ -546,19 +545,6 @@ static int flagsave_common(STFLAGH sfh, const SFENTRY *tbl) {
 static int flagload_common(STFLAGH sfh, const SFENTRY *tbl) {
 
 	return(statflag_read(sfh, tbl->arg1, tbl->arg2));
-}
-
-
-// ----- clock
-
-static int flagload_clock(STFLAGH sfh, const SFENTRY *tbl) {
-
-	int		ret;
-
-	ret = statflag_read(sfh, tbl->arg1, tbl->arg2);
-	sound_changeclock();
-	beep_changeclock();
-	return(ret);
 }
 
 
@@ -1445,7 +1431,6 @@ const SFENTRY	*tblterm;
 		ret |= statflag_createsection(sffh, tbl);
 		switch(tbl->type) {
 			case STATFLAG_BIN:
-			case STATFLAG_CLOCK:
 			case STATFLAG_TERM:
 				ret |= flagsave_common(&sffh->sfh, tbl);
 				break;
@@ -1539,7 +1524,6 @@ const SFENTRY	*tblterm;
 #if defined(CGWND_FONTPTR)
 				case STATFLAG_CGW:
 #endif
-				case STATFLAG_CLOCK:
 				case STATFLAG_MEM:
 					ret |= flagcheck_versize(&sffh->sfh, tbl);
 					break;
@@ -1553,6 +1537,7 @@ const SFENTRY	*tblterm;
 				case STATFLAG_EGC:
 				case STATFLAG_EPSON:
 				case STATFLAG_EVT:
+				case STATFLAG_EXT:
 				case STATFLAG_GIJ:
 				case STATFLAG_FM:
 #if defined(SUPPORT_HOSTDRV)
@@ -1648,10 +1633,6 @@ const SFENTRY	*tblterm;
 					ret |= flagload_cgwnd(&sffh->sfh, tbl);
 					break;
 #endif
-
-				case STATFLAG_CLOCK:
-					ret |= flagload_clock(&sffh->sfh, tbl);
-					break;
 
 				case STATFLAG_COM:
 					ret |= flagload_com(&sffh->sfh, tbl);
