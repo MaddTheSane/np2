@@ -94,6 +94,7 @@ extern char bmpfilefolder[MAX_PATH];
 extern char modulefile[MAX_PATH];
 extern char statpath[MAX_PATH];
 extern char fontname[1024];
+extern char fontfilename[MAX_PATH];
 
 int flagload(const char* ext, const char* title, BOOL force);
 int flagsave(const char* ext);

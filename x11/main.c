@@ -101,6 +101,9 @@ static struct option longopts[] = {
 	{ "config",		required_argument,	0,	'c' },
 	{ "timidity-config",	required_argument,	0,	'C' },
 	{ "shared-pixmap",	no_argument,		0,	'p' },
+#if defined(USE_SDL) || defined(USE_SYSMENU)
+	{ "ttfont",		required_argument,	0,	't' },
+#endif
 	{ "help",		no_argument,		0,	'h' },
 	{ 0,			0,			0,	0   },
 };
@@ -111,7 +114,15 @@ static void
 usage(void)
 {
 
-	printf("Usage: %s [options] [[FD1 image] [[FD2 image] [[FD3 image] [FD4 image]]]]\n", progname);
+	printf("Usage: %s [options] [[FD1 image] [[FD2 image] [[FD3 image] [FD4 image]]]]\n\n", progname);
+	printf("options:\n");
+	printf("\t--help\n          [-h]        : print this message\n");
+	printf("\t--config          [-c] <file> : specify config file\n");
+	printf("\t--timidity-config [-C] <file> : specify timidity config file\n");
+	printf("\t--shared-pixmap   [-p]        : use MIT-SHM pixmap extention\n");
+#if defined(USE_SDL) || defined(USE_SYSMENU)
+	printf("\t--ttfont          [-t] <file> : specify TrueType font\n");
+#endif
 	exit(1);
 }
 
@@ -134,7 +145,7 @@ main(int argc, char *argv[])
 	toolkit_initialize();
 	toolkit_arginit(&argc, &argv);
 
-	while ((ch = getopt_long(argc, argv, "c:C:nh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "c:C:t:ph", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'c':
 			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
@@ -155,6 +166,14 @@ main(int argc, char *argv[])
 			}
 			milstr_ncpy(timidity_cfgfile_path, optarg,
 			    sizeof(timidity_cfgfile_path));
+			break;
+
+		case 't':
+			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
+				fprintf(stderr, "Can't access %s.\n", optarg);
+				exit(1);
+			}
+			milstr_ncpy(fontfilename, optarg, sizeof(fontfilename));
 			break;
 
 		case 'p':

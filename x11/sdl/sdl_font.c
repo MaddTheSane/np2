@@ -1,5 +1,6 @@
 #include "compiler.h"
 
+#include "np2.h"
 #include "codecnv.h"
 
 #include "fontmng.h"
@@ -7,15 +8,9 @@
 #include <SDL_ttf.h>
 
 
+#ifndef	FONTMNG_CACHE
 #define	FONTMNG_CACHE	64
-
-#ifndef	FONTNAME_DEFAULT
-#define	FONTNAME_DEFAULT	"./default.ttf"
 #endif
-static char fontname[MAX_PATH] = FONTNAME_DEFAULT;
-
-static const SDL_Color white = {0xff, 0xff, 0xff, 0};
-
 
 #if defined(FONTMNG_CACHE) && FONTMNG_CACHE > 0
 typedef struct {
@@ -36,6 +31,8 @@ typedef struct {
 	FNTCTBL		cache[FONTMNG_CACHE];
 #endif
 } _FNTMNG, *FNTMNG;
+
+static const SDL_Color white = {0xff, 0xff, 0xff, 0};
 
 
 BOOL
@@ -72,6 +69,8 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 	int fontwork;
 	int allocsize;
 
+	UNUSED(fontface);
+
 	if (size < 0) {
 		size = -size;
 	}
@@ -92,6 +91,7 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 		ptsize *= 2;
 	}
 
+	size++;
 	fontalign = sizeof(_FNTDAT) + (size * size);
 	fontalign = (fontalign + 3) & (~3);
 #if defined(FONTMNG_CACHE) && FONTMNG_CACHE > 0
@@ -110,19 +110,18 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 	ret->fonttype = type;
 	ret->ptsize = ptsize;
 	ret->fontalign = fontalign;
-	ret->ttf_font = TTF_OpenFont(fontname, ptsize);
+	ret->ttf_font = TTF_OpenFont(fontfilename, ptsize);
 	if (ret->ttf_font == NULL) {
 		fprintf(stderr, "Couldn't load %d points font from %s: %s\n",
-		    ptsize, fontname, SDL_GetError());
+		    ptsize, fontfilename, SDL_GetError());
 		goto fmc_err2;
 	}
-	return(ret);
+	return ret;
 
 fmc_err2:
 	_MFREE(ret);
 fmc_err1:
-	(void)fontface;
-	return(NULL);
+	return NULL;
 }
 
 void

@@ -79,13 +79,6 @@ typedef	unsigned char		TCHAR;
 
 typedef	int			BOOL;
 
-#include "common.h"
-#include "milstr.h"
-#include "_memory.h"
-#include "rect.h"
-#include "lstarray.h"
-#include "trace.h"
-
 #ifndef	TRUE
 #define	TRUE	1
 #endif
@@ -145,20 +138,29 @@ UINT32 gettick();
 #undef	MEMOPTIMIZE
 #elif defined(arm) || defined (__arm__)
 #define	MEMOPTIMIZE	2
+#define	REG8		UINT
+#define	REG16		UINT
 #else
 #define	MEMOPTIMIZE	1
 #endif
 
 #define	SUPPORT_EUC
 
-#define	SUPPORT_8BPP
-#define	SUPPORT_24BPP
+#undef	SUPPORT_8BPP
 #define	SUPPORT_16BPP
+#define	SUPPORT_24BPP
 #define	SUPPORT_32BPP
 #define	SUPPORT_NORMALDISP
 
 #if defined(USE_GTK)
 #define	SUPPORT_KEYDISP
+#endif
+
+#if defined(USE_SDL)
+#define	USE_SYSMENU
+#define	SCREEN_BPP	16
+#undef	SUPPORT_24BPP
+#undef	SUPPORT_32BPP
 #endif
 
 /*
@@ -167,5 +169,12 @@ UINT32 gettick();
  */
 extern char timidity_cfgfile_path[MAX_PATH];
 #define	TIMIDITY_CFGFILE	timidity_cfgfile_path
+
+#include "common.h"
+#include "milstr.h"
+#include "_memory.h"
+#include "rect.h"
+#include "lstarray.h"
+#include "trace.h"
 
 #endif	/* NP2_X11_COMPILER_H__ */

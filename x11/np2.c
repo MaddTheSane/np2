@@ -126,6 +126,11 @@ char statpath[MAX_PATH];
 #endif
 char fontname[1024] = FONTFACE;
 
+#ifndef	FONTNAME_DEFAULT
+#define	FONTNAME_DEFAULT	"./default.ttf"
+#endif
+char fontfilename[MAX_PATH] = FONTNAME_DEFAULT;
+
 char timidity_cfgfile_path[MAX_PATH];
 
 BOOL use_shared_pixmap;
