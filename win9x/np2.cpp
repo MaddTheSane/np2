@@ -834,31 +834,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
 			if (np2opening) {
-			    HINSTANCE	hinst;
+				HINSTANCE	hinst;
 				RECT		rect;
 				int			width;
 				int			height;
-			    HBITMAP		hbmp;
-			    BITMAP		bmp;
-			    HDC			hmdc;
+				HBITMAP		hbmp;
+				BITMAP		bmp;
+				HDC			hmdc;
 				HBRUSH		hbrush;
-			    hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
+				hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-    			hbmp = LoadBitmap(hinst, "NP2BMP");
-			    GetObject(hbmp, sizeof(BITMAP), &bmp);
+				hbmp = LoadBitmap(hinst, "NP2BMP");
+				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
 				PatBlt(hdc, 0, 0, width, height, PATCOPY);
 				SelectObject(hdc, hbrush);
-			    hmdc = CreateCompatibleDC(hdc);
-			    SelectObject(hmdc, hbmp);
-			    BitBlt(hdc, (width - bmp.bmWidth) / 2,
-			    			(height - bmp.bmHeight) / 2,
+				hmdc = CreateCompatibleDC(hdc);
+				SelectObject(hmdc, hbmp);
+				BitBlt(hdc, (width - bmp.bmWidth) / 2,
+						(height - bmp.bmHeight) / 2,
 							bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
-			    DeleteDC(hmdc);
-	    		DeleteObject(hbmp);
+				DeleteDC(hmdc);
+				DeleteObject(hbmp);
 			}
 			else {
 //				scrnmng_update();

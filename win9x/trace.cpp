@@ -2,12 +2,8 @@
 #include	<stdarg.h>
 #include	"strres.h"
 #include	"dosio.h"
-
-
-// #define	WRITE_INI
-#if defined(WRITE_INI)
 #include	"ini.h"
-#endif
+
 
 #ifdef TRACE
 
@@ -46,14 +42,13 @@ static	HBRUSH		hBrush = NULL;
 static	char		szView[VIEW_BUFFERSIZE];
 static	TRACECFG	tracecfg;
 
-#if defined(WRITE_INI)
+static const char	np2trace[] = "np2trace.ini";
 static const char	inititle[] = "TRACE";
 static const INITBL	initbl[4] = {
-					{str_posx,		INITYPE_SINT32,	&tracecfg.posx,		0},
-					{str_posy,		INITYPE_SINT32,	&tracecfg.posy,		0},
-					{str_width,		INITYPE_SINT32,	&tracecfg.width,	0},
-					{str_height,	INITYPE_SINT32,	&tracecfg.height,	0}};
-#endif
+			{"posx",	INITYPE_SINT32,	&tracecfg.posx,		0},
+			{"posy",	INITYPE_SINT32,	&tracecfg.posy,		0},
+			{"width",	INITYPE_SINT32,	&tracecfg.width,	0},
+			{"height",	INITYPE_SINT32,	&tracecfg.height,	0}};
 
 
 static void View_ScrollToBottom(HWND hWnd) {
@@ -206,9 +201,7 @@ void trace_init(void) {
 	tracecfg.posy = CW_USEDEFAULT;
 	tracecfg.width = CW_USEDEFAULT;
 	tracecfg.height = CW_USEDEFAULT;
-#if defined(WRITE_INI)
-	ini_read(NULL, inititle, initbl, 4);
-#endif
+	ini_read(file_getcd(np2trace), inititle, initbl, 4);
 
 	hWndConsole = CreateWindowEx(WS_EX_CONTROLPARENT,
 							ClassName, ProgTitle,
@@ -228,9 +221,7 @@ void trace_term(void) {
 	if (hWndConsole) {
 		DestroyWindow(hWndConsole);
 		hWndConsole = NULL;
-#if defined(WRITE_INI)
-		ini_write(NULL, inititle, initbl, 4);
-#endif
+		ini_write(file_getcd(np2trace), inititle, initbl, 4);
 	}
 }
 
