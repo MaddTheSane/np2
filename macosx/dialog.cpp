@@ -6,7 +6,8 @@
 #include	"fddfile.h"
 #include	"diskdrv.h"
 #include	"newdisk.h"
-
+#include	"font.h"
+#include	"iocore.h"
 
 void AboutDialogProc(void) {
 
@@ -176,3 +177,16 @@ void dialog_changehdd(BYTE drv) {
 	}
 }
 
+
+void dialog_font(void) {
+
+    char	name[1024];
+
+	if (dialog_fileselect(name, 1024)) {
+        if ((name != NULL) && (font_load(name, FALSE))) {
+            gdcs.textdisp |= GDCSCRN_ALLDRAW2;
+            milstr_ncpy(np2cfg.fontfile, name, sizeof(np2cfg.fontfile));
+            sysmng_update(SYS_UPDATECFG);
+        }
+    }
+}

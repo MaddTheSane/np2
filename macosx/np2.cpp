@@ -169,6 +169,11 @@ static void HandleMenuChoice(long wParam) {
 			newhdddisk();
 			break;
 #endif
+
+        case IDM_FONT:
+            dialog_font();
+            break;
+            
 		case IDM_EXIT:
 			np2running = FALSE;
 			break;
@@ -975,9 +980,9 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                         break;
                     case kEventRawKeyDown:
                         if (modif & cmdKey) {
-                            char	para;
-                            GetEventParameter (event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &para);
-                            HandleMenuChoice(MenuKey(para));
+                            EventRecord	eve;
+                            ConvertEventRefToEventRecord( event,&eve );
+                            HandleMenuChoice(MenuEvent(&eve));
                         }
                         else {
                             mackbd_f12down(key);
@@ -1031,10 +1036,10 @@ static void setUpCarbonEvent(void) {
 
 	InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
 	InstallApplicationEventHandler(NewEventHandlerUPP(np2appevent),
-								sizeof(appEventList)/sizeof(EventTypeSpec),
+								GetEventTypeCount(appEventList),
 								appEventList, 0, NULL);
 	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(np2windowevent),
-								sizeof(windEventList)/sizeof(EventTypeSpec),
+								GetEventTypeCount(windEventList),
 								windEventList, 0, NULL);
 }
 

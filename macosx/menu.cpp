@@ -71,14 +71,14 @@ void menu_setkey(BYTE value) {
 	MenuHandle	hmenu;
 
 	hmenu = _GetMenu(IDM_KEYBOARD);
-	if (value >= 3) {
+	if (value >= 4) {
 		value = 0;
 	}
 	np2cfg.KEY_MODE = value;
 	_CheckMenuItem(hmenu, IDM_KEY, MFCHECK(value == 0));
 	_CheckMenuItem(hmenu, IDM_JOY1, MFCHECK(value == 1));
 	_CheckMenuItem(hmenu, IDM_JOY2, MFCHECK(value == 2));
-//	_CheckMenuItem(hmenu, IDM_MOUSEKEY, MFCHECK(value == 3));
+	_CheckMenuItem(hmenu, IDM_MOUSEKEY, MFCHECK(value == 3));
 }
 
 void menu_setxshift(BYTE value) {

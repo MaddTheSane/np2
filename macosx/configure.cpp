@@ -21,15 +21,6 @@ static	WindowRef	configWin;
 			(((a) + (b)) / 2)
 
 #define getSelectedValue(a,b)	GetControlValue(getControlRefByID(a,b,configWin))
-/*
-static SInt16 getSelectedValue(OSType sign, int id) {
-    SInt16	value;
-    
-    value=GetControlValue(getControlRefByID(sign, id, configWin));
-
-    return value;
-}
-*/
 
 static int getMultiple(void) {
     int multi;

@@ -218,6 +218,7 @@
 				0249A669FF388E3911CA2CEA,
 				0640BAA4FFF0323A11CA0E50,
 				0640BAA5FFF0323A11CA0E50,
+				96A2026D0549B38300000102,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -475,6 +476,7 @@
 			files = (
 				20286C3CFDCF999611CA2CEA,
 				0249A66AFF388E3911CA2CEA,
+				96A2026E0549B38300000102,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -514,6 +516,18 @@
 		};
 		96A202670549B28C00000102 = {
 			fileRef = 96A202660549B28C00000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96A2026D0549B38300000102 = {
+			isa = PBXFrameworkReference;
+			name = QuickTime.framework;
+			path = /System/Library/Frameworks/QuickTime.framework;
+			refType = 0;
+		};
+		96A2026E0549B38300000102 = {
+			fileRef = 96A2026D0549B38300000102;
 			isa = PBXBuildFile;
 			settings = {
 			};
