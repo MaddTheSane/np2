@@ -262,6 +262,8 @@ grcgtdw_end:		pop		ecx
 ; EGC bridge
 					align	16
 @egc_wt:			VRAMTRACE
+					mov		ebx, [_vramop + vramop_t.grcgwait]
+					sub		[_i286core + i286core_t.remainclock], ebx
 					pop		ebx
 %if USE_EGCASM
 					jmp		egc_write
@@ -383,7 +385,9 @@ grcgtcr_end:		not		al
 
 ; EGC bridge
 					align	16
-@egc_rd:			pop		ebx
+@egc_rd:			mov		ebx, [_vramop + vramop_t.grcgwait]
+					sub		[_i286core + i286core_t.remainclock], ebx
+					pop		ebx
 %if USE_EGCASM
 					jmp		egc_read
 %else
@@ -617,26 +621,14 @@ grcgwtdw_end:		pop		ecx
 ; EGC bridge
 					align	16
 @egcw_wt:			VRAMTRACE_W
+					mov		ebx, [_vramop + vramop_t.grcgwait]
+					sub		[_i286core + i286core_t.remainclock], ebx
 					pop		ebx
 %if USE_EGCASM
 					jmp		egc_write_w
 %else
-					test	ecx, 1
-					jne		short egcw_wtodd
 					pushad
 					call	@egc_write_w@8
-					popad
-					ret
-egcw_wtodd:
-					pushad
-					push	ecx
-					push	edx
-					call	@egc_write@8
-					pop		edx
-					pop		ecx
-					inc		ecx
-					shr		edx, 8
-					call	@egc_write@8
 					popad
 					ret
 %endif
@@ -777,9 +769,9 @@ grcgwtcr_end:		not		ax
 
 ; EGC bridge
 					align	16
-@egcw_rd:			pop		ebx
-					test	ecx, 1
-					jne		short egcw_rdodd
+@egcw_rd:			mov		ebx, [_vramop + vramop_t.grcgwait]
+					sub		[_i286core + i286core_t.remainclock], ebx
+					pop		ebx
 %if USE_EGCASM
 					jmp		egc_read_w
 %else
@@ -790,25 +782,6 @@ grcgwtcr_end:		not		ax
 					ret
 %endif
 
-egcw_rdodd:
-%if USE_EGCASM
-					inc		ecx
-					call	egc_read
-					mov		ah, al
-					dec		ecx
-					jmp		egc_read
-%else
-					pushad
-					push	ecx
-					call	@egc_read@4
-					pop		ecx
-					mov		[esp+28], al
-					inc		ecx
-					call	@egc_read@4
-					mov		[esp+29], al
-					popad
-%endif
-					ret
 
 ; EMM read
 					align	16

@@ -477,3 +477,14 @@ long milstr_solveINT(const char *str) {
 	return(ret * s);
 }
 
+
+const char *milstr_list(const char *lststr, UINT pos) {
+
+	while(pos) {
+		pos--;
+		while(*lststr++ != '\0') {
+		}
+	}
+	return(lststr);
+}
+

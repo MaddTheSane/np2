@@ -730,10 +730,6 @@ SOURCE=.\DIALOG\NP2CLASS.CPP
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\UNASM.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\DEBUGUTY\VIEW1MB.CPP
 # End Source File
 # Begin Source File
@@ -926,10 +922,6 @@ SOURCE=.\NP2.RC
 # Begin Source File
 
 SOURCE=.\NP2ARG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\NP2INFO.CPP
 # End Source File
 # Begin Source File
 
@@ -1249,6 +1241,14 @@ SOURCE=..\GENERIC\HOSTDRVS.C
 # Begin Source File
 
 SOURCE=..\GENERIC\KEYDISP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\NP2INFO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\UNASM.C
 # End Source File
 # End Group
 # Begin Source File

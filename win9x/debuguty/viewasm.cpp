@@ -29,8 +29,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	BYTE		buf[16];
 	char		str[16];
 	HFONT		hfont;
-	PREFIX_T	fix;
-	UNASM_T		una;
+	_UNASM		una;
 	int			step;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
@@ -73,7 +72,6 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 				view->buf2.type = ALLOCTYPE_ASM;
 				view->buf2.arg = seg4 + view->off;
 				off = view->off;
-				unasm_reset(&fix);
 				for (i=0; i<255; i++) {
 					off &= 0xffff;
 					*r++ = off;
@@ -91,7 +89,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 						p = buf;
 						viewmem_read(&(view->dmem), seg4 + off, buf, 16);
 					}
-					step = unasm(off, p, &fix, NULL);
+					step = unasm(NULL, p, 16, FALSE, off);
 					off += (WORD)step;
 				}
 				*r = off;
@@ -106,7 +104,6 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		off = view->off;
 	}
 
-	unasm_reset(&fix);
 	for (y=0; y<rc->bottom; y+=16) {
 		wsprintf(str, "%04x:%04x", view->seg, off);
 		TextOut(hdc, 0, y, str, 9);
@@ -125,7 +122,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			p = buf;
 			viewmem_read(&(view->dmem), seg4 + off, buf, 16);
 		}
-		step = unasm(off, p, &fix, &una);
+		step = unasm(&una, p, 16, FALSE, off);
 		if (!step) {
 			break;
 		}

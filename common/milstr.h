@@ -52,6 +52,9 @@ long milstr_solveHEX(const char *str);
 // STR2INT
 long milstr_solveINT(const char *str);
 
+// STRLIST
+const char *milstr_list(const char *lststr, UINT pos);
+
 #ifdef __cplusplus
 }
 #endif

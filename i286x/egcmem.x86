@@ -609,13 +609,13 @@ eosb_callsub:	jmp		dword [egcsft_proc + esi*4]
 egc_mod:		mov		ax, [_egc + egc_t.mask]
 				mov		[_egc + egc_t.mask2], ax
 				mov		al, [_egc + egc_t.ope + 1]
+				mov		ah, al
 				and		al, 18h
 				jpe		short eow_setdat
 				cmp		al, 10h
 				je		short eow_setpat
 
-eow_setsrc:		mov		al, [_egc + egc_t.ope + 1]
-				test	al, 4
+eow_setsrc:		test	ah, 4
 				je		short eow_srcnf
 				call	egcope_shift
 eow_srcnf:		mov		ax, [_egc + egc_t.srcmask]
@@ -635,8 +635,10 @@ eow_setpat:		mov		al, [_egc + egc_t.fgbg + 1]
 				mov		edx, _egc + egc_t.fgc
 				jmp		short eow_store
 
-eow_setpatsft:	call	egcope_shift
-				mov		ax, [_egc + egc_t.srcmask]
+eow_setpatsft:	test	ah, 4
+				je		short eow_patnf
+				call	egcope_shift
+eow_patnf:		mov		ax, [_egc + egc_t.srcmask]
 				and		[_egc + egc_t.mask2], ax
 				mov		edx, _egc_src
 eow_store:		mov		esi, [edx + 0]
@@ -676,13 +678,7 @@ eo_opesrc:		mov		al, [_egc + egc_t.ope + 1]
 				je		short eo_loadvram
 				mov		edx, _egc + egc_t.patreg
 
-eo_loadvram:	mov		eax, [edx + 0]
-				mov		[_egc_pat + 0], eax
-				mov		eax, [edx + 4]
-				mov		[_egc_pat + 4], eax
-
-				and		ebp, 0fffffffeh
-				mov		ax, [VIDEOMEMORY + ebp + VRAM_R]
+eo_loadvram:	mov		ax, [VIDEOMEMORY + ebp + VRAM_R]
 				shl		eax, 16
 				mov		ax, [VIDEOMEMORY + ebp + VRAM_B]
 				mov		[_egc_dst + 0], eax
@@ -900,6 +896,7 @@ egcw_setpat:	mov		al, [_egc + egc_t.ope + 1]
 				mov		[_egc + egc_t.patreg + ebx + 6], al
 egcw_calc:		mov		esi, [_egc + egc_t.func]
 				add		esi, byte 6
+				sub		ebp, ebx
 				call	egc_mod
 				mov		ah, [_egc + egc_t.mask2 + ebx]
 				test	ah, ah
@@ -907,31 +904,32 @@ egcw_calc:		mov		esi, [_egc + egc_t.func]
 				mov		dh, ah
 				not		dh
 				add		ecx, ebx
+				add		ebp, ebx
 				mov		dl, [_egc + egc_t.access]
 egcw_wb:		shr		dl, 1
 				jc		short egcw_wr
-				and		[VIDEOMEMORY + ebx + VRAM_B], dh
+				and		[VIDEOMEMORY + ebp + VRAM_B], dh
 				mov		al, [ecx]
 				and		al, ah
-				or		[VIDEOMEMORY + ebx + VRAM_B], al
+				or		[VIDEOMEMORY + ebp + VRAM_B], al
 egcw_wr:		shr		dl, 1
 				jc		short egcw_wg
-				and		[VIDEOMEMORY + ebx + VRAM_R], dh
+				and		[VIDEOMEMORY + ebp + VRAM_R], dh
 				mov		al, [ecx + 2]
 				and		al, ah
-				or		[VIDEOMEMORY + ebx + VRAM_R], al
+				or		[VIDEOMEMORY + ebp + VRAM_R], al
 egcw_wg:		shr		dl, 1
 				jc		short egcw_we
-				and		[VIDEOMEMORY + ebx + VRAM_G], dh
+				and		[VIDEOMEMORY + ebp + VRAM_G], dh
 				mov		al, [ecx + 4]
 				and		al, ah
-				or		[VIDEOMEMORY + ebx + VRAM_G], al
+				or		[VIDEOMEMORY + ebp + VRAM_G], al
 egcw_we:		shr		dl, 1
 				jc		short egcw_ed
-				and		[VIDEOMEMORY + ebx + VRAM_E], dh
+				and		[VIDEOMEMORY + ebp + VRAM_E], dh
 				mov		al, [ecx + 6]
 				and		al, ah
-				or		[VIDEOMEMORY + ebx + VRAM_E], al
+				or		[VIDEOMEMORY + ebp + VRAM_E], al
 egcw_ed:		popad
 				ret
 

@@ -1,13 +1,183 @@
 #include	"compiler.h"
+#include	"strres.h"
 #include	"np2.h"
+#include	"scrnmng.h"
 #include	"sysmng.h"
 #include	"sstp.h"
 #include	"sstpres.h"
-#include	"np2info.h"
 #include	"pccore.h"
+#include	"iocore.h"
+#include	"bios.h"
+#include	"sound.h"
+#include	"fmboard.h"
+#include	"np2info.h"
 
 
 static char cr[] = "\\n";
+
+
+// ---- np2info extend
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern	RHYTHMCFG	rhythmcfg;
+#ifdef __cplusplus
+}
+#endif
+
+static const char str_jwinclr[] =
+						"256色\0ハイカラー\0フルカラー\0トゥルーカラー";
+static const char str_jwinmode[] =
+						" (窓モード)\0 (フルスクリーン)";
+
+
+static void info_progtitle(char *str, int maxlen, NP2INFOEX *ex) {
+
+	milstr_ncpy(str, np2oscfg.titles, maxlen);
+}
+
+static void info_jsound(char *str, int maxlen, NP2INFOEX *ex) {
+
+const char	*p;
+
+	switch(usesound) {
+		case 0x01:
+			p = "14ボード";
+			break;
+
+		case 0x02:
+			p = "26音源";
+			break;
+
+		case 0x04:
+			p = "86音源";
+			break;
+
+		case 0x06:
+			p = "２枚刺し";
+			break;
+
+		case 0x08:
+			p = "118音源";
+			break;
+
+		case 0x14:
+			p = "86音源(ちびおと付)";
+			break;
+
+		case 0x20:
+			p = "スピークボード";
+			break;
+
+		case 0x40:
+			p = "スパークボード";
+			break;
+
+		case 0x80:
+			p = "AMD-98";
+			break;
+
+		default:
+			p = "なし";
+			break;
+	}
+	milstr_ncpy(str, p, maxlen);
+}
+
+static void info_jdisp(char *str, int maxlen, NP2INFOEX *ex) {
+
+	UINT	bpp;
+
+	bpp = scrnmng_getbpp();
+	milstr_ncpy(str, milstr_list(str_jwinclr, ((bpp >> 3) - 1) & 3), maxlen);
+	milstr_ncat(str, milstr_list(str_jwinmode, (scrnmng_isfullscreen())?1:0),
+																	maxlen);
+	(void)ex;
+}
+
+static void info_jbios(char *str, int maxlen, NP2INFOEX *ex) {
+
+	str[0] = '\0';
+	if (biosrom) {
+		milstr_ncat(str, str_biosrom, maxlen);
+	}
+	if (soundrom.name[0]) {
+		if (str[0]) {
+			milstr_ncat(str, "と", maxlen);
+		}
+		milstr_ncat(str, soundrom.name, maxlen);
+	}
+	if (str[0] == '\0') {
+		milstr_ncat(str, "なし", maxlen);
+	}
+}
+
+static void info_jrhythm(char *str, int maxlen, NP2INFOEX *ex) {
+
+const char	*p;
+	char	jrhythmstr[16];
+	UINT	rhythmfault;
+	UINT	i;
+
+	if (!(usesound & 0x6c)) {
+		p = "不要やで";
+	}
+	else {
+		milstr_ncpy(jrhythmstr, "BSCHTRや", sizeof(jrhythmstr));
+		rhythmfault = 0;
+		for (i=0; i<6; i++) {
+			if (rhythmcfg.pcm[i].data == NULL) {
+				jrhythmstr[i] = '_';
+				rhythmfault++;
+			}
+		}
+		if (!rhythmfault) {
+			p = "全部あるで";
+		}
+		else if (rhythmfault == 6) {
+			p = "用意されてないんか…";
+		}
+		else {
+			p = jrhythmstr;
+		}
+	}
+	milstr_ncpy(str, p, maxlen);
+}
+
+typedef struct {
+	char	key[8];
+	void	(*proc)(char *str, int maxlen, NP2INFOEX *ex);
+} INFOPROC;
+
+static const INFOPROC infoproc[] = {
+			{"PROG",		info_progtitle},
+			{"JSND",		info_jsound},
+			{"JBIOS",		info_jbios},
+			{"JDISP",		info_jdisp},
+			{"JRHYTHM",		info_jrhythm}};
+
+static BOOL sstpext(char *dst, const char *key, int maxlen, NP2INFOEX *ex) {
+
+const INFOPROC	*inf;
+const INFOPROC	*infterm;
+
+	inf = infoproc;
+	infterm = infoproc + (sizeof(infoproc) / sizeof(INFOPROC));
+	while(inf < infterm) {
+		if (!milstr_cmp(key, inf->key)) {
+			inf->proc(dst, maxlen, ex);
+			return(TRUE);
+		}
+		inf++;
+	}
+	return(FALSE);
+}
+
+static const NP2INFOEX sstpex = {"\\n", sstpext};
+
+
+// ----
 
 static const BYTE prs2[] = {0xaa,0xac,0xae,0xb0,0xb2,0xbe,0xf0,0x9f,
 							0xa1,0xa3,0xa5,0xa7,0xe1,0xe3,0xe5,0xc1,
@@ -17,8 +187,6 @@ static const BYTE prs2[] = {0xaa,0xac,0xae,0xb0,0xb2,0xbe,0xf0,0x9f,
 							0xcb,0xcc,0xcd,0xd0,0xd3,0xd6,0xd9,0xdc,
 							0xdd,0xde,0xdf,0xe0,0xe2,0xe4,0xe6,0xe7,
 							0xe8,0xe9,0xea,0xeb,0xed,0xf1,0xb4,0xb8};
-
-
 
 #define	GETSSTPDAT1(a) {								\
 				(a) = last;								\
@@ -120,6 +288,7 @@ static char *sstpsolve(char *buf, const unsigned char *dat) {
 	*buf = '\0';
 	return(buf);
 }
+
 
 // -------------------------------
 
@@ -233,19 +402,19 @@ void sstpmsg_reset(void) {
 
 	update = sys_updates;
 	if (update & SYS_UPDATECLOCK) {
-		strcat(str, "ＣＰＵクロックを !CLOCKに");
+		strcat(str, "ＣＰＵクロックを %CLOCK%に");
 	}
 	if (update & SYS_UPDATEMEMORY) {
 		if (str[0]) {
 			strcat(str, cr);
 		}
-		strcat(str, "メモリを !MEM3に");
+		strcat(str, "メモリを %MEM3%に");
 	}
 	if (update & SYS_UPDATESBOARD) {
 		if (str[0]) {
 			strcat(str, cr);
 		}
-		strcat(str, "音源を !JSNDに");
+		strcat(str, "音源を %JSND%に");
 	}
 	if (update & (SYS_UPDATERATE | SYS_UPDATESBUF | SYS_UPDATEMIDI |
 					SYS_UPDATEHDD | SYS_UPDATESERIAL1)) {
@@ -283,7 +452,7 @@ void sstpmsg_reset(void) {
 	if (str[0]) {
 		char out[1024];
 		strcat(str, "変更しました。");
-		np2info(out, str, sizeof(out));
+		np2info(out, str, sizeof(out), &sstpex);
 		sstp_send(out, NULL);
 	}
 }
@@ -291,8 +460,8 @@ void sstpmsg_reset(void) {
 
 void sstpmsg_about(void) {
 
-	char	str[2048];
-	char	out[2048];
+	char	str[1024];
+	char	out[1024];
 	char	*p;
 	int		nostat = FALSE;
 
@@ -321,7 +490,7 @@ void sstpmsg_about(void) {
 	if (!nostat) {
 		p = sstpsolve(p, s_info);
 	}
-	np2info(out, str, sizeof(out));
+	np2info(out, str, sizeof(out), &sstpex);
 	sstp_send(out, NULL);
 }
 
@@ -350,7 +519,8 @@ void sstpmsg_config(void) {
 	sstp_send(str, NULL);
 }
 
-// -----------------------------------------------------------
+
+// ----
 
 static char *get_code(char *buf, int *ret) {
 
@@ -413,38 +583,12 @@ static void e_sstpexit(HWND hWnd, char *buf) {
 	}
 }
 
-#if 0
-static void e_sstpexit2(HWND hWnd, char *buf) {
-
-	char	*p;
-	int		ret;
-
-	p = get_code(buf, &ret);
-	if (ret == 200) {
-		if (!memcmp(p, "いい", 4)) {
-			SendMessage(hWnd, WM_NP2CMD, 0, NP2CMD_EXIT2);
-		}
-	}
-}
-#endif
-
 BOOL sstpconfirm_exit(void) {
 
 	char	str[512];
 
-#if 1
 	sstpsolve(str, s_exit);
 	return(sstp_send(str, e_sstpexit));
-#else
-	if (rand() & 3) {
-		sstpsolve(str, s_exit);
-		return(sstp_send(str, e_sstpexit));
-	}
-	else {
-		sstpsolve(str, s_exit2);
-		return(sstp_send(str, e_sstpexit2));
-	}
-#endif
 }
 
 

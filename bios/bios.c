@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"strres.h"
 #include	"dosio.h"
 #include	"cpucore.h"
 #include	"pccore.h"
@@ -19,8 +20,6 @@
 #define	BIOS_SIMULATE
 
 	BOOL	biosrom = FALSE;
-
-static const char file_biosrom[] = "bios.rom";
 
 static const char neccheck[] = "Copyright (C) 1983 by NEC Corporation";
 
@@ -174,7 +173,7 @@ void bios_init(void) {
 
 	// まぁDISK BASIC動くようになるからいいんじゃないですか？
 	// BASIC BIOSは 8086コードのように見えるけど…
-	getbiospath(path, file_biosrom, sizeof(path));
+	getbiospath(path, str_biosrom, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh != FILEH_INVALID) {
 		if (file_read(fh, mem + 0x0e8000, 0x18000) == 0x18000) {

@@ -17,9 +17,12 @@ typedef	unsigned int	UINT32;
 
 #if !defined(SIZE_VGA)
 #define	SIZE_QVGA
+#if !defined(SIZE_VGATEST)
 #define	RGB16			UINT32
+#endif
 #define	SUPPORT_SOFTKBD
 #endif
+
 
 // for RISC test
 #define	REG8		UINT
@@ -56,6 +59,7 @@ typedef	unsigned int	UINT32;
 #define	SCREEN_BPP		16
 
 #define	SUPPORT_HOSTDRV
+#define	SUPPORT_CRT15KHZ
 
 #define	CPUSTRUC_MEMWAIT
 

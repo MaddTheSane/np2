@@ -11,6 +11,14 @@ extern const char str_cr[];
 extern const char str_crlf[];
 #define	str_lf	(str_crlf + 1)
 
+#if defined(OSLINEBREAK_CR)
+#define	str_oscr	str_cr
+#elif defined(OSLINEBREAK_CRLF)
+#define	str_oscr	str_crlf
+#else
+#define	str_oscr	str_lf
+#endif
+
 extern const char str_ini[];
 extern const char str_cfg[];
 extern const char str_sav[];
@@ -47,6 +55,10 @@ extern const char str_resume[];
 extern const char str_VM[];
 extern const char str_VX[];
 extern const char str_EPSON[];
+
+extern const char str_biosrom[];
+extern const char str_sasirom[];
+extern const char str_scsirom[];
 
 #ifdef __cplusplus
 }

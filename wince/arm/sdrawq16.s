@@ -342,6 +342,125 @@ putyed_2i		add		r4, r4, #2
 pal16_2i		dcd		(np2_pal16 + (NP2PAL_GRPH * 4))
 pmask_2i		dcd		(&07e0f81f << 2)
 
+qvga16p_1d		stmdb	sp!, {r4 - r11, lr}
+				add		r0, r0, #S_HDRSIZE
+				ldr		r11, pal16_1d
+				ldr		lr, pmask_1d
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
+				ldrb	r12, [r4, r0]
+				ldr		r8, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
+putylp_1d		cmp		r12, #0
+				beq		putyed_1d
+				str		r4, [r0, #S_Y]
+				ldr		r4, [r7]			; r2 = 0
+				mov		r9, r8
+				mov		r2, #0
+putxlp_1d		and		r5, r4, #255
+				mov		r12, r4 lsr #8
+				and		r12, r12, #255
+				ldr		r5, [r11, r5 lsl #2]
+				ldr		r12, [r11, r12 lsl #2]
+				mov		r6, r4 lsr #16
+				and		r6, r6, #255
+				add		r5, r12, r5
+				mov		r12, r4 lsr #24
+				ldr		r6, [r11, r6 lsl #2]
+				ldr		r12, [r11, r12 lsl #2]
+				and		r5, r5, lr
+				add		r2, r2, #4
+				mov		r4, r5 lsr #1
+				orr		r4, r4, r5 lsr #17
+				add		r6, r12, r6
+				and		r6, r6, lr
+				strh	r4, [r9], r3
+				mov		r12, r6 lsr #1
+				orr		r12, r12, r6 lsr #17
+				cmp		r2, r10
+				strh	r12, [r9], r3
+				ldrcc	r4, [r2, r7]
+				bcc		putxlp_1d
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+putyed_1d		add		r4, r4, #1
+				add		r7, r7, #SURFACE_WIDTH
+				add		r8, r8, r5
+				cmp		r4, r1
+				ldrccb	r12, [r4, r0]
+				bcc		putylp_1d
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
+				ldmia	sp!, {r4 - r11, pc}
+pal16_1d		dcd		(np2_pal16 + (NP2PAL_GRPH * 4))
+pmask_1d		dcd		(&07e0f81f << 1)
+
+qvga16p_2d		stmdb	sp!, {r4 - r11, lr}
+				add		r0, r0, #S_HDRSIZE
+				ldr		r11, pal16_2d
+				ldr		lr, pmask_2d
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_SRC2]
+				ldrb	r12, [r4, r0]
+				ldr		r9, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
+putylp_2d		cmp		r12, #0
+				beq		putyed_2d
+				str		r4, [r0, #S_Y]
+				ldr		r4, [r7]			; r2 = 0
+				ldr		r12, [r8]			; r2 = 0
+				str		r9, [r0, #S_DST]
+				mov		r2, #0
+putxlp_2d		add		r4, r12, r4
+				and		r5, r4, #255
+				mov		r12, r4 lsr #8
+				and		r12, r12, #255
+				ldr		r5, [r11, r5 lsl #2]
+				ldr		r12, [r11, r12 lsl #2]
+				mov		r6, r4 lsr #16
+				and		r6, r6, #255
+				add		r5, r12, r5
+				mov		r12, r4 lsr #24
+				ldr		r6, [r11, r6 lsl #2]
+				ldr		r12, [r11, r12 lsl #2]
+				and		r5, r5, lr
+				add		r2, r2, #4
+				mov		r4, r5 lsr #1
+				orr		r4, r4, r5 lsr #17
+				add		r6, r12, r6
+				and		r6, r6, lr
+				strh	r4, [r9], r3
+				mov		r12, r6 lsr #1
+				orr		r12, r12, r6 lsr #17
+				cmp		r2, r10
+				strh	r12, [r9], r3
+				ldrcc	r4, [r2, r7]
+				ldrcc	r12, [r2, r8]
+				bcc		putxlp_2d
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r9, [r0, #S_DST]
+putyed_2d		add		r4, r4, #1
+				add		r7, r7, #SURFACE_WIDTH
+				add		r8, r8, #SURFACE_WIDTH
+				add		r9, r9, r5
+				cmp		r4, r1
+				ldrccb	r12, [r4, r0]
+				bcc		putylp_2d
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_SRC2]
+				str		r9, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
+				ldmia	sp!, {r4 - r11, pc}
+pal16_2d		dcd		(np2_pal16 + (NP2PAL_GRPH * 4))
+pmask_2d		dcd		(&07e0f81f << 1)
+
 
 sdraw_getproctbl
 				mov		r0, pc
@@ -358,6 +477,10 @@ sdraw_getproctbl
 				dcd		qvga16p_1
 				dcd		qvga16p_gi
 				dcd		qvga16p_2i
+				dcd		qvga16p_0
+				dcd		qvga16p_1d
+				dcd		qvga16p_1d
+				dcd		qvga16p_2d
 
 	END
 

@@ -45,3 +45,7 @@ const char str_VM[] = "VM";
 const char str_VX[] = "VX";
 const char str_EPSON[] = "EPSON";
 
+const char str_biosrom[] = "bios.rom";
+const char str_sasirom[] = "sasi.rom";
+const char str_scsirom[] = "scsi.rom";
+

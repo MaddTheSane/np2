@@ -24,7 +24,9 @@ typedef	signed int		SINT32;
 
 #if !defined(SIZE_VGA)
 #define	SIZE_QVGA
+#if !defined(SIZE_VGATEST)
 #define	RGB16			UINT32
+#endif
 #endif
 
 // for ARM optimize
@@ -69,6 +71,8 @@ typedef	signed int		SINT32;
 #if defined(ARM)
 #define	OPNGENARM
 #endif
+
+#define	SUPPORT_CRT15KHZ
 
 #define	CPUSTRUC_MEMWAIT
 

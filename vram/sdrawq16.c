@@ -5,7 +5,7 @@
 #include	"palettes.h"
 
 
-#if defined(SIZE_QVGA) && defined(SUPPORT_16BPP)
+#if defined(SIZE_QVGA) && !defined(SIZE_VGATEST) && defined(SUPPORT_16BPP)
 
 // vram off
 static void SCRNCALL qvga16p_0(SDRAW sdraw, int maxy) {
@@ -208,11 +208,86 @@ const BYTE	*q;
 	sdraw->y = y;
 }
 
+// text or grph 1ƒvƒŒ[ƒ“ (15kHz)
+static void SCRNCALL qvga16p_1d(SDRAW sdraw, int maxy) {
+
+	int		xbytes;
+const BYTE	*p;
+	BYTE	*q;
+	int		y;
+	int		x;
+	UINT32	work;
+
+	xbytes = sdraw->xalign * sdraw->width / 2;
+	p = sdraw->src;
+	q = sdraw->dst;
+	y = sdraw->y;
+	do {
+		if (sdraw->dirty[y]) {
+			for (x=0; x<sdraw->width; x+=2) {
+				work = np2_pal16[p[x+0] + NP2PAL_GRPH];
+				work += np2_pal16[p[x+1] + NP2PAL_GRPH];
+				work &= 0x07e0f81f << 1;
+				*(UINT16 *)q = (UINT16)((work >> 1) + (work >> 17));
+				q += sdraw->xalign;
+			}
+			q -= xbytes;
+		}
+		p += SURFACE_WIDTH;
+		q += sdraw->yalign;
+	} while(++y < maxy);
+
+	sdraw->src = p;
+	sdraw->dst = q;
+	sdraw->y = y;
+}
+
+// text + grph (15kHz)
+static void SCRNCALL qvga16p_2d(SDRAW sdraw, int maxy) {
+
+	int		xbytes;
+const BYTE	*p;
+const BYTE	*q;
+	BYTE	*r;
+	int		y;
+	int		x;
+	UINT32	work;
+
+	xbytes = sdraw->xalign * sdraw->width / 2;
+	p = sdraw->src;
+	q = sdraw->src2;
+	r = sdraw->dst;
+	y = sdraw->y;
+	do {
+		if (sdraw->dirty[y]) {
+			for (x=0; x<sdraw->width; x+=2) {
+				work = np2_pal16[p[x+0] + q[x+0] + NP2PAL_GRPH];
+				work += np2_pal16[p[x+1] + q[x+1] + NP2PAL_GRPH];
+				work &= 0x07e0f81f << 1;
+				*(UINT16 *)r = (UINT16)((work >> 1) + (work >> 17));
+				r += sdraw->xalign;
+			}
+			r -= xbytes;
+		}
+		p += SURFACE_WIDTH;
+		q += SURFACE_WIDTH;
+		r += sdraw->yalign;
+	} while(++y < maxy);
+
+	sdraw->src = p;
+	sdraw->src2 = q;
+	sdraw->dst = r;
+	sdraw->y = y;
+}
+
 static const SDRAWFN qvga16p[] = {
 		qvga16p_0,		qvga16p_1,		qvga16p_1,		qvga16p_2,
 		qvga16p_0,		qvga16p_1,		qvga16p_gi,		qvga16p_2i,
-		qvga16p_0,		qvga16p_1,		qvga16p_gi,		qvga16p_2i};
-
+		qvga16p_0,		qvga16p_1,		qvga16p_gi,		qvga16p_2i,
+#if defined(SUPPORT_CRT15KHZ)
+		qvga16p_0,		qvga16p_1d,		qvga16p_1d,		qvga16p_2d,
+#endif
+	};
 
 const SDRAWFN *sdraw_getproctbl(const SCRNSURF *surf) {
 

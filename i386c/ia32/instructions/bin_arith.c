@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.c,v 1.7 2004/02/13 15:30:40 monaka Exp $	*/
+/*	$Id: bin_arith.c,v 1.8 2004/02/18 02:03:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -988,7 +988,7 @@ IMUL_GdEdId(void)
 	PREPART_REG32_EA(op, src, out, 21, 24);
 	GET_PCDWORD(dst);
 	DWORD_IMUL(res, dst, src);
-	*out = res;
+	*out = (DWORD)res;
 }
 
 
@@ -1132,7 +1132,7 @@ IDIV_EAXEd(DWORD op)
 		r = tmp / src;
 		if (((r + SQWORD_CONST(0x80000000)) & QWORD_CONST(0xffffffff00000000)) == 0) {
 			CPU_EAX = (SDWORD)r;
-			CPU_EDX = tmp % src;
+			CPU_EDX = (SDWORD)(tmp % src);
 			return;
 		}
 	}

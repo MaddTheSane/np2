@@ -224,6 +224,11 @@ void xmenu_initialize(void) {
 	HMENU	hSubMenu;
 
 	hMenu = np2class_gethmenu(hWndMain);
+	if (np2oscfg.I286SAVE) {
+		hSubMenu = GetSubMenu(hMenu, 6);
+		InsertMenu(hSubMenu, 10,
+					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, xmenu_i286save);
+	}
 
 #if defined(SUPPORT_SCSI)
 	hSubMenu = GetSubMenu(hMenu, 3);
@@ -240,12 +245,6 @@ void xmenu_initialize(void) {
 		addstatsavemenu(hMenu);
 	}
 #endif
-
-	if (np2oscfg.I286SAVE) {
-		hSubMenu = GetSubMenu(hMenu, 6);
-		InsertMenu(hSubMenu, 10,
-					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, xmenu_i286save);
-	}
 }
 
 void xmenu_disablewindow(void) {

@@ -21,6 +21,30 @@
 
 // ----
 
+　ver0.74 → ver0.75
+
+　・EGCの高速化
+
+　(Windows)
+　　・(I286X) EGCバイトアクセス修正
+
+　(WinCE)
+　　・GDC - GDCクロック 1.79MHzのサポート
+
+
+　・内部変更
+　　　win9x/unasmをgenericへ移動(+P6,FPU命令をサポート)
+
+　　　np2infoをgenericへ移動
+　　　　エスケープ文字を !KEY から %KEY%へ変更
+　　　　ex == NULLで OS指定の改行コードになる筈
+　　　　(MacOSXは np2info.cppがそのまんま移動になるかと思われ
+
+
+
+// ----
+
+
 　ver0.73 → ver0.74
 
 　・I/OレベルでのSASIに対応(INT3/DMA#0/BIOS:d0000-d0fff)

@@ -250,7 +250,7 @@ RGB16 scrnmng_makepal16(RGB32 pal32) {
 	RGB16	ret;
 
 	ret = (pal32.p.r & 0xf8) << 8;
-#if defined(SIZE_QVGA)
+#if defined(SIZE_QVGA) && !defined(SIZE_VGATEST)
 	ret += (pal32.p.g & 0xfc) << (3 + 16);
 #else
 	ret += (pal32.p.g & 0xfc) << 3;
@@ -284,8 +284,13 @@ const SCRNSURF *scrnmng_surflock(void) {
 		scrnsurf.xalign = 2;
 		scrnsurf.yalign = scrnmng.vram->yalign;
 	}
+#if !defined(SIZE_VGATEST)
 	scrnsurf.width = min(scrnstat.width, 640);
 	scrnsurf.height = min(scrnstat.height, 400);
+#else
+	scrnsurf.width = min(scrnstat.width, 320);
+	scrnsurf.height = min(scrnstat.height, 200);
+#endif
 	scrnsurf.bpp = 16;
 	scrnsurf.extend = 0;
 	return(&scrnsurf);

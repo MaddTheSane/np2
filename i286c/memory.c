@@ -448,19 +448,7 @@ static void MEMCALL grcgw_tdw1(UINT32 address, REG16 value) GRCGW_TDW(1)
 static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	if (!(address & 1)) {
-		egc_write_w(address, value);
-	}
-	else {
-		if (!(egc.sft & 0x1000)) {
-			egc_write(address, (REG8)value);
-			egc_write(address + 1, (REG8)(value >> 8));
-		}
-		else {
-			egc_write(address + 1, (REG8)(value >> 8));
-			egc_write(address, (REG8)value);
-		}
-	}
+	egc_write_w(address, value);
 }
 
 static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
@@ -589,24 +577,8 @@ static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
 
 static REG16 MEMCALL egcw_rd(UINT32 address) {
 
-	REG16	ret;
-
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	if (!(address & 1)) {
-		return(egc_read_w(address));
-	}
-	else {
-		if (!(egc.sft & 0x1000)) {
-			ret = egc_read(address);
-			ret += egc_read(address + 1) << 8;
-			return(ret);
-		}
-		else {
-			ret = egc_read(address + 1) << 8;
-			ret += egc_read(address);
-			return(ret);
-		}
-	}
+	return(egc_read_w(address));
 }
 
 static REG16 MEMCALL emmcw_rd(UINT32 address) {

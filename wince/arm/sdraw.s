@@ -548,6 +548,119 @@ putyed_2ie		add		r4, r4, #1
 				ldmia	sp!, {r4 - r11, pc}
 pal16_2ie		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
+sdraw16p_1d		stmdb	sp!, {r4 - r11, lr}
+				add		r0, r0, #S_HDRSIZE
+				ldr		r11, pal16_1d
+				ldr		r5, [r0, #S_Y]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		lr, [r0, #S_YALIGN]
+				ldrb	r12, [r5, r0]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
+putylp_1d		cmp		r12, #0
+				beq		putyed_1d
+				str		r8, [r0, #S_DST]
+				ldr		r6, [r7]			; r2 = 0
+				add		r9, r8, lr
+				mov		r2, #0
+putxlp_1d		and		r4, r6, #&ff
+				and		r12, r6, #(&ff << 8)
+				mov		r4, r4 lsl #1
+				mov		r12, r12 lsr #7
+				ldrh	r4, [r4, r11]
+				ldrh	r12, [r12, r11]
+				strh	r4, [r8], r3
+				strh	r4, [r9], r3
+				strh	r12, [r8], r3
+				strh	r12, [r9], r3
+				add		r2, r2, #4
+				and		r4, r6, #(&ff << 16)
+				and		r12, r6, #(&ff << 24)
+				mov		r4, r4 lsr #15
+				mov		r12, r12 lsr #23
+				ldrh	r4, [r4, r11]
+				ldrh	r12, [r12, r11]
+				cmp		r2, r10
+				strh	r4, [r8], r3
+				strh	r4, [r9], r3
+				strh	r12, [r8], r3
+				strh	r12, [r9], r3
+				ldrcc	r6, [r2, r7]
+				bcc		putxlp_1d
+				ldr		r8, [r0, #S_DST]
+putyed_1d		add		r5, r5, #1
+				add		r7, r7, #SURFACE_WIDTH
+				add		r8, r8, lr lsl #1
+				cmp		r5, r1
+				ldrccb	r12, [r5, r0]
+				bcc		putylp_1d
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_DST]
+				str		r5, [r0, #S_Y]
+				ldmia	sp!, {r4 - r11, pc}
+pal16_1d		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
+
+sdraw16p_2d		stmdb	sp!, {r4 - r11, lr}
+				add		r0, r0, #S_HDRSIZE
+				ldr		r11, pal16_2d
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_SRC2]
+				ldrb	r12, [r0, r4]
+				ldr		r9, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
+putylp_2d		cmp		r12, #0
+				beq		putyed_2d
+				ldr		r12, [r7]			; r2 = 0
+				ldr		lr, [r8]
+				str		r9, [r0, #S_DST]
+				mov		r2, #0
+				add		r6, r9, r5
+putxlp_2d		orr		lr, lr, r12
+				and		r5, lr, #&ff
+				and		r12, lr, #(&ff << 8)
+				mov		r5, r5 lsl #1
+				mov		r12, r12 lsr #7
+				ldrh	r5, [r5, r11]
+				ldrh	r12, [r12, r11]
+				add		r2, r2, #4
+				strh	r5, [r9], r3
+				strh	r5, [r6], r3
+				strh	r12, [r9], r3
+				strh	r12, [r6], r3
+				and		r5, lr, #(&ff << 16)
+				and		r12, lr, #(&ff << 24)
+				mov		r5, r5 lsr #15
+				mov		r12, r12 lsr #23
+				ldrh	r5, [r5, r11]
+				ldrh	r12, [r12, r11]
+				cmp		r2, r10
+				strh	r5, [r9], r3
+				strh	r5, [r6], r3
+				strh	r12, [r9], r3
+				strh	r12, [r6], r3
+				ldrcc	r12, [r2, r7]
+				ldrcc	lr, [r2, r8]
+				bcc		putxlp_2d
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r9, [r0, #S_DST]
+putyed_2d		add		r4, r4, #1
+				add		r7, r7, #SURFACE_WIDTH
+				add		r8, r8, #SURFACE_WIDTH
+				add		r9, r9, r5 lsl #1
+				cmp		r4, r1
+				ldrccb	r12, [r4, r0]
+				bcc		putylp_2d
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_SRC2]
+				str		r9, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
+				ldmia	sp!, {r4 - r11, pc}
+pal16_2d		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
+
 
 sdraw_getproctbl
 				mov		r0, pc
@@ -564,6 +677,10 @@ sdraw_getproctbl
 				dcd		sdraw16p_ti
 				dcd		sdraw16p_gie
 				dcd		sdraw16p_2ie
+				dcd		sdraw16p_0
+				dcd		sdraw16p_1d
+				dcd		sdraw16p_1d
+				dcd		sdraw16p_2d
 
 	END
 

@@ -13,17 +13,17 @@ static	SIZE	aboutsize;
 
 static const char str_np2title[] = "Neko Project II  ";
 static const char np2infostr[] = 									\
-						"CPU: !CPU !CLOCK\r\n"						\
-						"MEM: !MEM1\r\n"							\
-						"GDC: !GDC\r\n"								\
-						"TEXT: !TEXT\r\n"							\
-						"GRPH: !GRPH\r\n"							\
-						"SOUND: !EXSND\r\n"							\
-						"\r\n"										\
-						"BIOS: !BIOS\r\n"							\
-						"RHYTHM: !RHYTHM\r\n"						\
-						"\r\n"										\
-						"SCREEN: !DISP";
+						"CPU: %CPU% %CLOCK%\n"						\
+						"MEM: %MEM1%\n"								\
+						"GDC: %GDC%\n"								\
+						"TEXT: %TEXT%\n"							\
+						"GRPH: %GRPH%\n"							\
+						"SOUND: %EXSND%\n"							\
+						"\n"										\
+						"BIOS: %BIOS%\n"							\
+						"RHYTHM: %RHYTHM%\n"						\
+						"\n"										\
+						"SCREEN: %DISP%";
 
 
 static void about_init(HWND hWnd) {
@@ -62,7 +62,7 @@ static void about_more(HWND hWnd) {
 	char	infostr[1024];
 	RECT	rect;
 
-	np2info(infostr, np2infostr, sizeof(infostr));
+	np2info(infostr, np2infostr, sizeof(infostr), NULL);
 	SetDlgItemText(hWnd, IDC_NP2INFO, infostr);
 	EnableWindow(GetDlgItem(hWnd, IDC_MORE), FALSE);
 	GetWindowRect(hWnd, &rect);
