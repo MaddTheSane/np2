@@ -181,6 +181,7 @@ REG8 lio_gscreen(GLIO lio) {
 	}
 
 	lio->work.scrnmode = scrnmode;
+	pos = lio->work.pos;
 	switch(scrnmode) {
 		case 0:
 			mode = (pos)?0x40:0x80;
@@ -200,7 +201,6 @@ REG8 lio_gscreen(GLIO lio) {
 			break;
 	}
 	mode |= disp << 4;
-	TRACEOUT(("bios1842 - %.2x", mode));
 	bios0x18_42(mode);
 	iocore_out8(0x00a6, lio->work.access);
 	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));

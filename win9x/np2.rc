@@ -759,18 +759,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       IDM_EXIT
     END
-    POPUP "FDD&1"
-    BEGIN
-        MENUITEM "&Open...",                    IDM_FDD1OPEN
-        MENUITEM SEPARATOR
-        MENUITEM "&Eject",                      IDM_FDD1EJECT
-    END
-    POPUP "FDD&2"
-    BEGIN
-        MENUITEM "&Open...",                    IDM_FDD2OPEN
-        MENUITEM SEPARATOR
-        MENUITEM "&Eject",                      IDM_FDD2EJECT
-    END
     POPUP "&HardDisk"
     BEGIN
         POPUP "SASI-&1"
@@ -1007,6 +995,42 @@ IDI_ICON2               ICON    DISCARDABLE     "ICONS\\NP2DEBUG.ICO"
 
 SEEKWAV                 EXTROM  DISCARDABLE     "ICONS\\FDDSEEK.WAV"
 SEEK1WAV                EXTROM  DISCARDABLE     "ICONS\\FDDSEEK1.WAV"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TOOLWIN             "&Tool Window"
+    IDS_KEYDISP             "&Key display"
+    IDS_SCREENCENTER        "&Centering"
+    IDS_SNAPENABLE          "&Window Snap"
+    IDS_BACKGROUND          "&Background"
+    IDS_BGSOUND             "Background &Sound"
+    IDS_SCRNMUL4            " 320x200"
+    IDS_SCRNMUL6            " 480x300"
+    IDS_SCRNMUL8            " 640x400"
+    IDS_SCRNMUL10           " 800x500"
+    IDS_SCRNMUL12           " 960x600"
+    IDS_SCRNMUL16           "1280x800"
+    IDS_MEMORYDUMP          "&Memory Dump"
+    IDS_DEBUGUTY            "&Debug Utility"
+    IDS_FDD1                "FDD&1"
+    IDS_FDD2                "FDD&2"
+    IDS_FDD3                "FDD&3"
+    IDS_FDD4                "FDD&4"
+    IDS_SCSI0               "SCSI #0"
+    IDS_SCSI1               "SCSI #1"
+    IDS_SCSI2               "SCSI #2"
+    IDS_SCSI3               "SCSI #3"
+    IDS_I286SAVE            "&i286 save"
+    IDS_OPEN                "&Open..."
+    IDS_EJECT               "&Eject"
+    IDS_REMOVE              "&Remove"
+END
+
 #endif    // “ú–{Œê resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -526,8 +526,7 @@ $(OBJ)/sndcsec.o	:	$(SOUND)/sndcsec.c $(HEADERS) $(SOUND)/sound.h \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/wavemix.o	:	$(SOUND)/wavemix.c $(HEADERS) $(PCCORES) \
-						$(SOUND)/sound.h $(GETSND)/getsnd.h \
-						$(SOUND)/wavemix.res
+						$(SOUND)/sound.h $(GETSND)/getsnd.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \

@@ -7,66 +7,109 @@
 #include	"pccore.h"
 
 
+
 #define	MFCHECK(a) ((a)?MF_CHECKED:MF_UNCHECKED)
 
 typedef struct {
-const char	*str;
-	int		id;
-} SMENUITEM;
+	UINT16	id;
+	UINT16	str;
+} MENUITEMS;
 
-static const char smenu_toolwin[] = "&Tool Window";
-static const char smenu_keydisp[] = "&Key display";
-static const char smenu_center[] = "&Centering";
-static const char smenu_snap[] = "&Window Snap";
-static const char smenu_bg[] = "&Background";
-static const char smenu_bgsnd[] = "Background &Sound";
-static const char smenu_320x200[] = " 320x200";
-static const char smenu_480x300[] = " 480x300";
-static const char smenu_640x400[] = " 640x400";
-static const char smenu_800x500[] = " 800x500";
-static const char smenu_960x600[] = " 960x600";
-static const char smenu_1280x800[] = "1280x600";
 
-static const char smenu_memdump[] = "&Memory Dump";
-static const char smenu_dbguty[] = "&Debug Utility";
+// Ç±ÇÍÇ¡ÇƒAPIÇ†ÇÈÇÃÇ©ÅH
+void menu_addmenubar(HMENU popup, HMENU menubar) {
 
-static const SMENUITEM smenuitem[] = {
-			{smenu_toolwin,		IDM_TOOLWIN},
-			{smenu_keydisp,		IDM_KEYDISP},
-			{NULL,				0},
-			{smenu_center,		IDM_SCREENCENTER},
-			{smenu_snap,		IDM_SNAPENABLE},
-			{smenu_bg,			IDM_BACKGROUND},
-			{smenu_bgsnd,		IDM_BGSOUND},
-			{NULL,				0},
-			{smenu_320x200,		IDM_SCRNMUL4},
-			{smenu_480x300,		IDM_SCRNMUL6},
-			{smenu_640x400,		IDM_SCRNMUL8},
-			{smenu_800x500,		IDM_SCRNMUL10},
-			{smenu_960x600,		IDM_SCRNMUL12},
-			{smenu_1280x800,	IDM_SCRNMUL16},
-			{NULL,				0}};
+	UINT			cnt;
+	UINT			pos;
+	UINT			i;
+	MENUITEMINFO	mii;
+	char			str[128];
+	HMENU			hSubMenu;
+
+	cnt = GetMenuItemCount(menubar);
+	pos = 0;
+	for (i=0; i<cnt; i++) {
+		ZeroMemory(&mii, sizeof(mii));
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU |
+																	MIIM_DATA;
+		mii.dwTypeData = str;
+		mii.cch = sizeof(str);
+		if (GetMenuItemInfo(menubar, i, TRUE, &mii)) {
+			if (mii.hSubMenu) {
+				hSubMenu = CreatePopupMenu();
+				menu_addmenubar(hSubMenu, mii.hSubMenu);
+				mii.hSubMenu = hSubMenu;
+			}
+			InsertMenuItem(popup, pos, TRUE, &mii);
+			pos++;
+		}
+	}
+}
+
+static void insertresmenu(HMENU menu, UINT pos, UINT flag,
+													UINT item, UINT str) {
+
+	char	tmp[128];
+
+	if (LoadString(hInst, str, tmp, sizeof(tmp))) {
+		InsertMenu(menu, pos, flag, item, tmp);
+	}
+}
+
+static void insertresmenus(HMENU menu, UINT pos,
+									const MENUITEMS *item, UINT items) {
+
+const MENUITEMS *iterm;
+
+	iterm = item + items;
+	while(item < iterm) {
+		if (item->id) {
+			insertresmenu(menu, pos, MF_BYPOSITION | MF_STRING,
+													item->id, item->str);
+		}
+		else {
+			InsertMenu(menu, pos, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+		}
+		item++;
+		pos++;
+	}
+}
+
+
+// ----
+
+static const MENUITEMS smenuitem[] = {
+			{IDM_TOOLWIN,		IDS_TOOLWIN},
+			{IDM_KEYDISP,		IDS_KEYDISP},
+			{0,					0},
+			{IDM_SCREENCENTER,	IDS_SCREENCENTER},
+			{IDM_SNAPENABLE,	IDS_SNAPENABLE},
+			{IDM_BACKGROUND,	IDS_BACKGROUND},
+			{IDM_BGSOUND,		IDS_BGSOUND},
+			{0,					0},
+			{IDM_SCRNMUL4,		IDS_SCRNMUL4},
+			{IDM_SCRNMUL6,		IDS_SCRNMUL6},
+			{IDM_SCRNMUL8,		IDS_SCRNMUL8},
+			{IDM_SCRNMUL10,		IDS_SCRNMUL10},
+			{IDM_SCRNMUL12,		IDS_SCRNMUL12},
+			{IDM_SCRNMUL16,		IDS_SCRNMUL16},
+			{0,					0}};
+
+static const MENUITEMS smenuitem2[] = {
+			{IDM_MEMORYDUMP,	IDS_MEMORYDUMP},
+			{IDM_DEBUGUTY,		IDS_DEBUGUTY}};
+
 
 void sysmenu_initialize(void) {
 
 	HMENU	hMenu;
-	UINT	i;
 
 	hMenu = GetSystemMenu(hWndMain, FALSE);
-	for (i=0; i<(sizeof(smenuitem)/sizeof(SMENUITEM)); i++) {
-		if (smenuitem[i].str) {
-			InsertMenu(hMenu, i, MF_BYPOSITION | MF_STRING,
-									smenuitem[i].id, smenuitem[i].str);
-		}
-		else {
-			InsertMenu(hMenu, i, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-		}
-	}
+	insertresmenus(hMenu, 0, smenuitem, sizeof(smenuitem)/sizeof(MENUITEMS));
 	if (np2oscfg.I286SAVE) {
-		InsertMenu(hMenu, 7, MF_BYPOSITION | MF_STRING, IDM_MEMORYDUMP,
-							smenu_memdump);
-		InsertMenu(hMenu, 8, MF_BYPOSITION | MF_STRING, IDM_DEBUGUTY,
-							smenu_dbguty);
+		insertresmenus(hMenu, 7, smenuitem2,
+										sizeof(smenuitem2)/sizeof(MENUITEMS));
 	}
 }
 
@@ -136,60 +179,49 @@ void sysmenu_setscrnmul(BYTE value) {
 
 // ----
 
-// Ç±ÇÍÇ¡ÇƒAPIÇ†ÇÈÇÃÇ©ÅH
-void menu_addmenubar(HMENU popup, HMENU menubar) {
+typedef struct {
+	UINT16		title;
+	MENUITEMS	item[3];
+} DISKMENU;
 
-	UINT			cnt;
-	UINT			pos;
-	UINT			i;
-	MENUITEMINFO	mii;
-	char			str[128];
-	HMENU			hSubMenu;
+static const DISKMENU fddmenu[4] = {
+		{IDS_FDD1,	{{IDM_FDD1OPEN,		IDS_OPEN},
+					{0,					0},
+					{IDM_FDD1EJECT,		IDS_EJECT}}},
+		{IDS_FDD2,	{{IDM_FDD2OPEN,		IDS_OPEN},
+					{0,					0},
+					{IDM_FDD2EJECT,		IDS_EJECT}}},
+		{IDS_FDD3,	{{IDM_FDD3OPEN,		IDS_OPEN},
+					{0,					0},
+					{IDM_FDD3EJECT,		IDS_EJECT}}},
+		{IDS_FDD4,	{{IDM_FDD4OPEN,		IDS_OPEN},
+					{0,					0},
+					{IDM_FDD4EJECT,		IDS_EJECT}}}};
 
-	cnt = GetMenuItemCount(menubar);
-	pos = 0;
-	for (i=0; i<cnt; i++) {
-		ZeroMemory(&mii, sizeof(mii));
-		mii.cbSize = sizeof(mii);
-		mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU |
-																	MIIM_DATA;
-		mii.dwTypeData = str;
-		mii.cch = sizeof(str);
-		if (GetMenuItemInfo(menubar, i, TRUE, &mii)) {
-			if (mii.hSubMenu) {
-				hSubMenu = CreatePopupMenu();
-				menu_addmenubar(hSubMenu, mii.hSubMenu);
-				mii.hSubMenu = hSubMenu;
-			}
-			InsertMenuItem(popup, pos, TRUE, &mii);
-			pos++;
-		}
-	}
-}
-
-
-// ----
-
-static const char xmenu_i286save[] = "&i286 save";
-
-#if defined(SUPPORT_SCSI)
-static const char xmenu_scsi[] = "SCSI #%d";
-static const char xmenu_open[] = "&Open...";
-static const char xmenu_remove[] = "&Remove";
-
-static void addscsimenu(HMENU hMenu, UINT drv, UINT16 open, UINT16 eject) {
+static void insdiskmenu(HMENU hMenu, UINT pos, const DISKMENU *m) {
 
 	HMENU	hSubMenu;
-	char	buf[16];
 
 	hSubMenu = CreatePopupMenu();
-	AppendMenu(hSubMenu, MF_STRING, open, xmenu_open);
-	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
-	AppendMenu(hSubMenu, MF_STRING, eject, xmenu_remove);
-
-	SPRINTF(buf, xmenu_scsi, drv);
-	AppendMenu(hMenu, MF_POPUP, (UINT32)hSubMenu, buf);
+	insertresmenus(hSubMenu, 0, m->item, 3);
+	insertresmenu(hMenu, pos, MF_BYPOSITION | MF_POPUP,
+											(UINT)hSubMenu, m->title);
 }
+
+#if defined(SUPPORT_SCSI)
+static const DISKMENU scsimenu[4] = {
+		{IDS_SCSI0,	{{IDM_SCSI0OPEN,	IDS_OPEN},
+					{0,					0},
+					{IDM_SCSI0EJECT,	IDS_REMOVE}}},
+		{IDS_SCSI1,	{{IDM_SCSI1OPEN,	IDS_OPEN},
+					{0,					0},
+					{IDM_SCSI1EJECT,	IDS_REMOVE}}},
+		{IDS_SCSI2,	{{IDM_SCSI2OPEN,	IDS_OPEN},
+					{0,					0},
+					{IDM_SCSI2EJECT,	IDS_REMOVE}}},
+		{IDS_SCSI3,	{{IDM_SCSI3OPEN,	IDS_OPEN},
+					{0,					0},
+					{IDM_SCSI3EJECT,	IDS_REMOVE}}}};
 #endif
 
 #if defined(SUPPORT_STATSAVE)
@@ -197,7 +229,7 @@ static const char xmenu_stat[] = "S&tat";
 static const char xmenu_statsave[] = "Save %u";
 static const char xmenu_statload[] = "Load %u";
 
-static void addstatsavemenu(HMENU hMenu) {
+static void addstatsavemenu(HMENU hMenu, UINT pos) {
 
 	HMENU	hSubMenu;
 	UINT	i;
@@ -213,7 +245,7 @@ static void addstatsavemenu(HMENU hMenu) {
 		SPRINTF(buf, xmenu_statload, i);
 		AppendMenu(hSubMenu, MF_STRING, IDM_FLAGLOAD + i, buf);
 	}
-	InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP,
+	InsertMenu(hMenu, pos, MF_BYPOSITION | MF_POPUP,
 											(UINT32)hSubMenu, xmenu_stat);
 }
 #endif
@@ -222,27 +254,32 @@ void xmenu_initialize(void) {
 
 	HMENU	hMenu;
 	HMENU	hSubMenu;
+	UINT	i;
 
 	hMenu = np2class_gethmenu(hWndMain);
 	if (np2oscfg.I286SAVE) {
-		hSubMenu = GetSubMenu(hMenu, 6);
-		InsertMenu(hSubMenu, 10,
-					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, xmenu_i286save);
+		hSubMenu = GetSubMenu(hMenu, 4);
+		insertresmenu(hSubMenu, 10, MF_BYPOSITION | MF_STRING,
+												IDM_I286SAVE, IDS_I286SAVE);
 	}
 
 #if defined(SUPPORT_SCSI)
-	hSubMenu = GetSubMenu(hMenu, 3);
+	hSubMenu = GetSubMenu(hMenu, 1);
 	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
-	addscsimenu(hSubMenu, 0, IDM_SCSI0OPEN, IDM_SCSI0EJECT);
-	addscsimenu(hSubMenu, 1, IDM_SCSI1OPEN, IDM_SCSI1EJECT);
-	addscsimenu(hSubMenu, 2, IDM_SCSI2OPEN, IDM_SCSI2EJECT);
-	addscsimenu(hSubMenu, 3, IDM_SCSI3OPEN, IDM_SCSI3EJECT);
+	for (i=0; i<4; i++) {
+		insdiskmenu(hSubMenu, i + 3, scsimenu + i);
+	}
 #endif
 
-	// ÇﬂÇ…Ç„Å[í«â¡
+	for (i=4; i--;) {
+		if (np2cfg.fddequip & (1 << i)) {
+			insdiskmenu(hMenu, 1, fddmenu + i);
+		}
+	}
+
 #if defined(SUPPORT_STATSAVE)
 	if (np2oscfg.statsave) {
-		addstatsavemenu(hMenu);
+		addstatsavemenu(hMenu, 1);
 	}
 #endif
 }

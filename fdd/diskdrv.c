@@ -52,7 +52,7 @@ void diskdrv_sethdd(REG8 drv, const char *fname) {
 
 void diskdrv_setfdd(REG8 drv, const char *fname, int readonly) {
 
-	if (drv < 4) {
+	if ((drv < 4) && (fdc.equip & (1 << drv))) {
 		fdd_eject(drv);
 		diskdrv_delay[drv] = 0;
 		diskdrv_fname[drv][0] = '\0';

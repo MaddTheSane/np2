@@ -396,6 +396,28 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			toolwin_setfdd(1, NULL);
 			break;
 
+		case IDM_FDD3OPEN:
+			winuienter();
+			dialog_changefdd(hWnd, 2);
+			winuileave();
+			break;
+
+		case IDM_FDD3EJECT:
+			diskdrv_setfdd(2, NULL, 0);
+			toolwin_setfdd(2, NULL);
+			break;
+
+		case IDM_FDD4OPEN:
+			winuienter();
+			dialog_changefdd(hWnd, 3);
+			winuileave();
+			break;
+
+		case IDM_FDD4EJECT:
+			diskdrv_setfdd(3, NULL, 0);
+			toolwin_setfdd(3, NULL);
+			break;
+
 		case IDM_SASI1OPEN:
 			winuienter();
 			dialog_changehdd(hWnd, 0x00);

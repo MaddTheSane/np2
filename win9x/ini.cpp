@@ -11,6 +11,26 @@
 #include	"pccore.h"
 
 
+
+static BOOL inigetbmp(const BYTE *ptr, UINT pos) {
+
+	return((ptr[pos >> 3] >> (pos & 7)) & 1);
+}
+
+static void inisetbmp(BYTE *ptr, UINT pos, BOOL set) {
+
+	UINT8	bit;
+
+	ptr += (pos >> 3);
+	bit = 1 << (pos & 7);
+	if (set) {
+		*ptr |= bit;
+	}
+	else {
+		*ptr &= ~bit;
+	}
+}
+
 static void inirdargs16(const char *src, const INITBL *ini) {
 
 	SINT16	*dst;
@@ -162,6 +182,14 @@ const INITBL	*pterm;
 									(*((BYTE *)p->value))?str_true:str_false,
 												work, sizeof(work), path);
 				*((BYTE *)p->value) = (!milstr_cmp(work, str_true))?1:0;
+				break;
+
+			case INITYPE_BITMAP:
+				GetPrivateProfileString(title, p->item,
+					(inigetbmp((BYTE *)p->value, p->arg))?str_true:str_false,
+												work, sizeof(work), path);
+				inisetbmp((BYTE *)p->value, p->arg,
+										(milstr_cmp(work, str_true) == 0));
 				break;
 
 			case INITYPE_ARGS16:
@@ -320,6 +348,7 @@ static const char ini_title[] = "NekoProjectII";
 enum {
 	INIRO_STR			= INITYPE_STR + INIFLAG_RO,
 	INIRO_BOOL			= INITYPE_BOOL + INIFLAG_RO,
+	INIRO_BITMAP		= INITYPE_BITMAP + INIFLAG_RO,
 	INIRO_UINT8			= INITYPE_UINT8 + INIFLAG_RO,
 	INIMAX_UINT8		= INITYPE_UINT8 + INIFLAG_MAX,
 	INIAND_UINT8		= INITYPE_UINT8 + INIFLAG_AND,
@@ -381,7 +410,7 @@ static const INITBL iniitem[] = {
 	{"optSPBVR", INITYPE_HEX8,		&np2cfg.spb_vrc,		0},
 	{"optSPBVL", INIMAX_UINT8,		&np2cfg.spb_vrl,		24},
 	{"optSPB_X", INITYPE_BOOL,		&np2cfg.spb_x,			0},
-	{"optMPU98", INITYPE_HEX8		&np2cfg.mpuopt,			0},
+	{"optMPU98", INITYPE_HEX8,		&np2cfg.mpuopt,			0},
 
 	{"volume_F", INIMAX_UINT8,		&np2cfg.vol_fm,			128},
 	{"volume_S", INIMAX_UINT8,		&np2cfg.vol_ssg,		128},
@@ -420,6 +449,10 @@ static const INITBL iniitem[] = {
 
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
+	{"FDDRIVE1", INIRO_BITMAP,		&np2cfg.fddequip,		0},
+	{"FDDRIVE2", INIRO_BITMAP,		&np2cfg.fddequip,		1},
+	{"FDDRIVE3", INIRO_BITMAP,		&np2cfg.fddequip,		2},
+	{"FDDRIVE4", INIRO_BITMAP,		&np2cfg.fddequip,		3},
 
 
 	// OSàÀë∂ÅH
