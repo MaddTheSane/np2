@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.8 2004/02/03 14:27:07 monaka Exp $	*/
+/*	$Id: paging.c,v 1.9 2004/02/03 14:49:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -213,25 +213,23 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 
 		r = (remain > length) ? length : remain;
 		switch (r) {
-		case 1:
-			value |= (DWORD)cpu_memoryread(paddr) << shift;
-			shift += 8;
+		case 4:
+			value = cpu_memoryread_d(paddr);
 			break;
 
+		case 3:
+			value |= (DWORD)cpu_memoryread(paddr) << shift;
+			shift += 8;
+			paddr++;
+			/*FALLTHROUGH*/
 		case 2:
 			value |= (DWORD)cpu_memoryread_w(paddr) << shift;
 			shift += 16;
 			break;
 
-		case 3:
-			value |= (DWORD)cpu_memoryread_w(paddr) << shift;
-			shift += 16;
-			value |= (DWORD)cpu_memoryread(paddr + 2) << shift;
+		case 1:
+			value |= (DWORD)cpu_memoryread(paddr) << shift;
 			shift += 8;
-			break;
-
-		case 4:
-			value = cpu_memoryread_d(paddr);
 			break;
 
 		default:
@@ -255,7 +253,7 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 }
 
 void MEMCALL
-cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
+cpu_linear_memory_write(DWORD laddr, DWORD value, DWORD length)
 {
 	DWORD paddr;
 	DWORD remain;	/* page remain */
@@ -274,25 +272,23 @@ cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
 
 		r = (remain > length) ? length : remain;
 		switch (r) {
-		case 1:
-			cpu_memorywrite(paddr, value & 0xff);
-			value >>= 8;
+		case 4:
+			cpu_memorywrite_d(paddr, value);
 			break;
 
+		case 3:
+			cpu_memorywrite(paddr, value & 0xff);
+			value >>= 8;
+			paddr++;
+			/*FALLTHROUGH*/
 		case 2:
 			cpu_memorywrite_w(paddr, value & 0xffff);
 			value >>= 16;
 			break;
 
-		case 3:
-			cpu_memorywrite_w(paddr, value & 0xffff);
-			value >>= 16;
-			cpu_memorywrite(paddr + 2, value & 0xff);
+		case 1:
+			cpu_memorywrite(paddr, value & 0xff);
 			value >>= 8;
-			break;
-
-		case 4:
-			cpu_memorywrite_d(paddr, value);
 			break;
 
 		default:
@@ -361,7 +357,7 @@ paging(DWORD laddr, int crw, int user_mode)
 		return paddr;
 #endif	/* IA32_SUPPORT_TLB */
 
-	pde_addr = (CPU_CR3 & CPU_CR3_PD_MASK) | ((laddr >> 20) & 0xffc);
+	pde_addr = CPU_STAT_PDE_BASE | ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
 	if (!(pde & CPU_PDE_PRESENT)) {
 		VERBOSE(("paging: PDE is not present"));

@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.11 2004/01/27 15:51:35 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.12 2004/02/03 14:49:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -163,6 +163,8 @@ typedef struct {
 	BYTE		protected_mode;
 	BYTE		paging;
 	BYTE		vm86;
+
+	DWORD		pde_base;
 
 	DWORD		ioaddr;		/* I/O bitmap linear address */
 	WORD		iolimit;	/* I/O bitmap count */
@@ -410,6 +412,7 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
 #define	CPU_STAT_PAGING		CPU_STATSAVE.cpu_stat.paging
 #define	CPU_STAT_CPL		CPU_STATSAVE.cpu_stat.cpl
+#define	CPU_STAT_PDE_BASE	CPU_STATSAVE.cpu_stat.pde_base
 
 #define	CPU_STAT_IOPL		((CPU_EFLAG & IOPL_FLAG) >> 12)
 #define	CPU_IOPL0		0

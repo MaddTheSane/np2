@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.5 2004/01/27 15:56:57 monaka Exp $	*/
+/*	$Id: paging.h,v 1.6 2004/02/03 14:49:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -138,50 +138,51 @@ void MEMCALL paging_check(DWORD laddr, DWORD length, int rw);
  * linear address function
  */
 DWORD MEMCALL cpu_linear_memory_read(DWORD address, DWORD length, int code);
-void MEMCALL cpu_linear_memory_write(DWORD address, DWORD length, DWORD value);
+void MEMCALL cpu_linear_memory_write(DWORD address, DWORD value, DWORD length);
 
 #define	cpu_lmemoryread(a) \
-	(CPU_STAT_PAGING) ? \
-		(BYTE)cpu_linear_memory_read(a, 1, FALSE) : \
-		cpu_memoryread(a);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memoryread(a) : \
+		(BYTE)cpu_linear_memory_read(a,1,FALSE)
 #define	cpu_lmemoryread_w(a) \
-	(CPU_STAT_PAGING) ? \
-		(WORD)cpu_linear_memory_read(a, 2, FALSE) : \
-		cpu_memoryread_w(a);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memoryread_w(a) : \
+		(WORD)cpu_linear_memory_read(a,2,FALSE)
 #define	cpu_lmemoryread_d(a) \
-	(CPU_STAT_PAGING) ? \
-		cpu_linear_memory_read(a, 4, FALSE) : \
-		cpu_memoryread_d(a);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memoryread_d(a) : \
+		cpu_linear_memory_read(a,4,FALSE)
 
 #define	cpu_lmemorywrite(a,v) \
-	(CPU_STAT_PAGING) ? \
-		cpu_linear_memory_write(a, 1, v) : \
-		cpu_memorywrite(a,v);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memorywrite(a,v) : \
+		cpu_linear_memory_write(a,v,1)
 #define	cpu_lmemorywrite_w(a,v) \
-	(CPU_STAT_PAGING) ? \
-		cpu_linear_memory_write(a, 2, v) : \
-		cpu_memorywrite_w(a,v);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memorywrite_w(a,v) : \
+		cpu_linear_memory_write(a,v,2)
 #define	cpu_lmemorywrite_d(a,v) \
-	(CPU_STAT_PAGING) ? \
-		cpu_linear_memory_write(a, 4, v) : \
-		cpu_memorywrite_d(a,v);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memorywrite_d(a,v) : \
+		cpu_linear_memory_write(a,v,4)
 
 #define	cpu_lcmemoryread(a) \
-	(CPU_STAT_PAGING) ? \
-		(BYTE)cpu_linear_memory_read(a, 1, TRUE) : \
-		cpu_memoryread(a);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memoryread(a) : \
+		(BYTE)cpu_linear_memory_read(a,1,TRUE)
 #define	cpu_lcmemoryread_w(a) \
-	(CPU_STAT_PAGING) ? \
-		(WORD)cpu_linear_memory_read(a, 2, TRUE) : \
-		cpu_memoryread_w(a);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memoryread_w(a) : \
+		(WORD)cpu_linear_memory_read(a,2,TRUE)
 #define	cpu_lcmemoryread_d(a) \
-	(CPU_STAT_PAGING) ? \
-		cpu_linear_memory_read(a, 4, TRUE) : \
-		cpu_memoryread_d(a);
+	(!CPU_STAT_PAGING) ? \
+		cpu_memoryread_d(a) : \
+		cpu_linear_memory_read(a,4,TRUE)
 
 #define	set_CR3(cr3) \
 do { \
 	CPU_CR3 = (cr3) & CPU_CR3_MASK; \
+	CPU_STAT_PDE_BASE = CPU_CR3 & CPU_CR3_PD_MASK; \
 	tlb_flush(FALSE); \
 } while (/*CONSTCOND*/ 0)
 
