@@ -13,10 +13,8 @@ enum {
 #define	PCM86_EXTBUF		pcm86.rescue					// ã~çœâÑëÿÅc
 #define	PCM86_REALBUFSIZE	(PCM86_LOGICALBUF + PCM86_EXTBUF)
 
-#define RECALC_NOWCLKWAIT {												\
-		past /= pcm86.stepclock;										\
-		pcm86.lastclock += (past * pcm86.stepclock);					\
-		pcm86.virbuf -= (past << pcm86.stepbit);						\
+#define RECALC_NOWCLKWAIT(cnt) {										\
+		pcm86.virbuf -= (cnt << pcm86.stepbit);							\
 		if (pcm86.virbuf < 0) {											\
 			pcm86.virbuf &= pcm86.stepmask;								\
 		}																\

@@ -122,7 +122,9 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 	past <<= 6;
 	past -= pcm86.lastclock;
 	if (past >= pcm86.stepclock) {
-		RECALC_NOWCLKWAIT;
+		past = past / pcm86.stepclock;
+		pcm86.lastclock += (past * pcm86.stepclock);
+		RECALC_NOWCLKWAIT(past);
 	}
 
 	bufs = pcm86.realbuf - pcm86.virbuf;

@@ -116,10 +116,12 @@ void bios0x09(void) {
 		}
 	}
 	else {
-		mem[0x0052a + pos] &= ~bit;
-		if ((key >= 0xf0) && (key < 0xf5)) {
-			mem[MEMB_SHIFT_STS] &= ~bit;
-			updateshiftkey();
+		if (key < 0xf5) {
+			mem[0x0052a + pos] &= ~bit;
+			if (key >= 0xf0) {
+				mem[MEMB_SHIFT_STS] &= ~bit;
+				updateshiftkey();
+			}
 		}
 	}
 	iocore_out8(0x00, 0x20);

@@ -167,8 +167,6 @@ const char			*p;
 	SPRINTF(work, file_i386ss, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP & 0xffff0000, 0x10000);
 	filenum++;
-
-	iptrace_out();
 }
 
 void debugsub_memorydump(void) {
@@ -178,9 +176,7 @@ void debugsub_memorydump(void) {
 
 	fh = file_create_c(file_memorybin);
 	if (fh != FILEH_INVALID) {
-		for (i=0; i<34; i++)
-//		for (i=0; i<64; i++)
-		{
+		for (i=0; i<34; i++) {
 			file_write(fh, mem + i*0x8000, 0x8000);
 		}
 		file_close(fh);

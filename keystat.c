@@ -159,6 +159,8 @@ kstbl_err:
 
 void keystat_ctrl(REG8 dat) {
 
+	return;					// ‚Ü‚¾BIOS‚ª–¢‘Î‰ž
+
 	if (!keyctrl.reqparam) {
 		keyctrl.mode = dat;
 		switch(dat) {
