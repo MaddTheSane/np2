@@ -282,7 +282,8 @@ void memdbg_readini(void) {
 	mdbgcfg.posx = CW_USEDEFAULT;
 	mdbgcfg.posy = CW_USEDEFAULT;
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
-	profile_iniread(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(PFTBL));
+	profile_iniread(path, mdbgapp,
+							mdbgini, sizeof(mdbgini)/sizeof(PFTBL), NULL);
 }
 
 void memdbg_writeini(void) {
@@ -290,7 +291,8 @@ void memdbg_writeini(void) {
 	char	path[MAX_PATH];
 
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
-	profile_iniwrite(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(PFTBL));
+	profile_iniwrite(path, mdbgapp,
+							mdbgini, sizeof(mdbgini)/sizeof(PFTBL), NULL);
 }
 #endif
 
@@ -364,7 +366,7 @@ static void skpaintmsg(HWND hWnd) {
 
 static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	swit	ch(msg) {
+	switch(msg) {
 		case WM_CREATE:
 			skcreate(hWnd);
 			break;
@@ -489,7 +491,7 @@ void skbdwin_readini(void) {
 	skbdcfg.posy = CW_USEDEFAULT;
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
 	profile_iniread(path, skbdapp,
-								skbdini, sizeof(skbdini)/sizeof(PFTBL));
+							skbdini, sizeof(skbdini)/sizeof(PFTBL), NULL);
 }
 
 void skbdwin_writeini(void) {
@@ -498,7 +500,7 @@ void skbdwin_writeini(void) {
 
 	file_cpyname(path, file_getcd(inifile), sizeof(path));
 	profile_iniwrite(path, skbdapp,
-								skbdini, sizeof(skbdini)/sizeof(PFTBL));
+							skbdini, sizeof(skbdini)/sizeof(PFTBL), NULL);
 }
 #endif
 

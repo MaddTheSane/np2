@@ -64,10 +64,13 @@ typedef struct {
 	UINT32	arg;
 } PFTBL;
 
+typedef void (*PFREAD)(const PFTBL *item, const char *string);
+typedef char *(*PFWRITE)(const PFTBL *item, char *string, UINT size);
+
 void profile_iniread(const char *path, const char *app,
-											const PFTBL *tbl, UINT count);
+								const PFTBL *tbl, UINT count, PFREAD cb);
 void profile_iniwrite(const char *path, const char *app,
-											const PFTBL *tbl, UINT count);
+								const PFTBL *tbl, UINT count, PFWRITE cb);
 
 #ifdef __cplusplus
 }

@@ -434,7 +434,7 @@ BOOL profile_write(const char *app, const char *key,
 // ----
 
 void profile_iniread(const char *path, const char *app,
-											const PFTBL *tbl, UINT count) {
+								const PFTBL *tbl, UINT count, PFREAD cb) {
 
 	PFILEH	pfh;
 const PFTBL	*p;
@@ -489,6 +489,12 @@ const PFTBL	*pterm;
 				case PFTYPE_HEX32:
 					*(UINT32 *)p->value = (UINT32)milstr_solveHEX(work);
 					break;
+
+				default:
+					if (cb != NULL) {
+						(*cb)(p, work);
+					}
+					break;
 			}
 		}
 		p++;
@@ -497,7 +503,7 @@ const PFTBL	*pterm;
 }
 
 void profile_iniwrite(const char *path, const char *app,
-											const PFTBL *tbl, UINT count) {
+								const PFTBL *tbl, UINT count, PFWRITE cb) {
 
 	PFILEH	pfh;
 const PFTBL	*p;
@@ -566,7 +572,12 @@ const char	*set;
 					break;
 
 				default:
-					set = NULL;
+					if (cb != NULL) {
+						set = (*cb)(p, work, sizeof(work));
+					}
+					else {
+						set = NULL;
+					}
 					break;
 			}
 			if (set) {
