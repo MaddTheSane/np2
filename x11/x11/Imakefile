@@ -77,6 +77,7 @@ CPUOBJS= \
 		../../i386c/dmap.o \
 		../../i386c/egcmem.o \
 		../../i386c/memory.o \
+		../../i386c/mem9821.o \
 		../../i386c/ia32/interface.o \
 		../../i386c/ia32/ia32.o \
 		../../i386c/ia32/cpu.o \
