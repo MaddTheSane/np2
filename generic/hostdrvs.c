@@ -140,7 +140,7 @@ LISTARRAY hostdrvs_getpathlist(const char *realpath) {
 			hdd->di.date = fli.date;
 			hdd->di.time = fli.time;
 			milstr_ncpy(hdd->realname, fli.path, sizeof(hdd->realname));
-			TRACEOUT(("%s -> %11s", fli.path, fcbname));
+//			TRACEOUT(("%s -> %11s", fli.path, fcbname));
 		}
 	} while(file_listnext(flh, &fli) == SUCCESS);
 	if (listarray_getitems(ret) == 0) {

@@ -476,7 +476,8 @@ static void change_currdir(INTRST intrst) {
 		succeed(intrst);
 		return;
 	}
-	if ((is_wildcards(intrst->fcbname_ptr) != FALSE) ||
+	if ((strlen(intrst->filename_ptr) >= (67 - ROOTPATH_SIZE)) ||
+		(is_wildcards(intrst->fcbname_ptr) != FALSE) ||
 		(hostdrvs_getrealpath(&hdp, ptr) != SUCCESS) ||
 		(hdp.di.fcbname[0] == ' ') || (!(hdp.di.attr & 0x10))) {
 		fail(intrst, ERR_PATHNOTFOUND);
