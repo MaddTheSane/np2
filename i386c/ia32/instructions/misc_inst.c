@@ -1,4 +1,4 @@
-/*	$Id: misc_inst.c,v 1.4 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: misc_inst.c,v 1.5 2004/02/12 15:37:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -130,7 +130,7 @@ SALC(void)
 {
 
 	CPU_WORKCLOCK(2);
-	CPU_AL = (CPU_FLAGL & C_FLAG) - 1;
+	CPU_AL = (CPU_FLAGL & C_FLAG) ? 0xff : 0;
 }
 
 /* undoc 286 */
