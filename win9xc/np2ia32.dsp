@@ -945,7 +945,7 @@ SOURCE=..\CALENDAR.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\DEBUGSUB.C
+SOURCE=..\DEBUGSUB386.C
 # End Source File
 # Begin Source File
 

@@ -438,13 +438,24 @@ opeana_ea:
 			break;
 
 		case OP1_FAR:
-			ptr += 4;
-			if (ptr > term) {
-				return(0);
+			if (!(flag & (1 << UAFLAG_D))) {
+				ptr += 4;
+				if (ptr > term) {
+					return(0);
+				}
+				p = set_hex(p, LOADINTELWORD(ptr - 2), 16);
+				*p++ = ':';
+				p = set_hex(p, LOADINTELWORD(ptr - 4), 16);
 			}
-			p = set_hex(p, LOADINTELWORD(ptr - 2), 16);
-			*p++ = ':';
-			p = set_hex(p, LOADINTELWORD(ptr - 4), 16);
+			else {
+				ptr += 6;
+				if (ptr > term) {
+					return(0);
+				}
+				p = set_hex(p, LOADINTELWORD(ptr - 2), 16);
+				*p++ = ':';
+				p = set_hex(p, LOADINTELDWORD(ptr - 6), 32);
+			}
 			break;
 
 		case OP1_I10:

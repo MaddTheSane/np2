@@ -28,6 +28,7 @@ void dmap(void) {
 					addr = ch->adrs.d & 0xffffff;
 				}
 				ch->adrs.d += ((ch->mode & 0x20)?-1:1);
+//				ch->adrs.w[DMA16_LOW] += ((ch->mode & 0x20)?-1:1);
 				switch(ch->mode & 0x0c) {
 					case 0x00:		// verifty
 						ch->proc.inproc();

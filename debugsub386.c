@@ -54,18 +54,18 @@ static const char *flagstr[16][2] = {
 				{NULL, NULL},		// 0x0002
 				{s_nc, s_cy}};		// 0x0001
 
-static const char file_i286reg[] = "i286reg.%.3u";
-static const char file_i286cs[] = "i286_cs.%.3u";
-static const char file_i286ds[] = "i286_ds.%.3u";
-static const char file_i286es[] = "i286_es.%.3u";
-static const char file_i286ss[] = "i286_ss.%.3u";
+static const char file_i386reg[] = "i386reg.%.3u";
+static const char file_i386cs[] = "i386_cs.%.3u";
+static const char file_i386ds[] = "i386_ds.%.3u";
+static const char file_i386es[] = "i386_es.%.3u";
+static const char file_i386ss[] = "i386_ss.%.3u";
 static const char file_memorybin[] = "memory.bin";
 
 static const char str_register[] =										\
-					"AX=%.4x  BX=%.4x  CX=%.4x  DX=%.4x  "				\
-					"SP=%.4x  BP=%.4x  SI=%.4x  DI=%.4x" CRLITERAL		\
+					"EAX=%.8x  EBX=%.8x  ECX=%.8x  EDX=%.8x" CRLITERAL	\
+					"ESP=%.8x  EBP=%.8x  ESI=%.8x  EDI=%.8x" CRLITERAL	\
 					"DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  "				\
-					"IP=%.4x   ";
+					"EIP=%.8x  ";
 static const char str_picstat[] = 										\
 					CRLITERAL "PIC0=%.2x:%.2x:%.2x"						\
 					CRLITERAL "PIC1=%.2x:%.2x:%.2x"						\
@@ -99,9 +99,9 @@ const char *debugsub_regs(void) {
 
 static char work[256];
 
-	SPRINTF(work, str_register, CPU_AX, CPU_BX, CPU_CX, CPU_DX,
-								CPU_SP, CPU_BP, CPU_SI, CPU_DI,
-								CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_IP);
+	SPRINTF(work, str_register, CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
+								CPU_ESP, CPU_EBP, CPU_ESI, CPU_EDI,
+								CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_EIP);
 	milstr_ncat(work, debugsub_flags(CPU_FLAG), sizeof(work));
 	milstr_ncat(work, CRCONST, sizeof(work));
 	return(work);
@@ -131,12 +131,13 @@ static void writeseg(const char *fname, UINT32 addr, UINT limit) {
 
 void debugsub_status(void) {
 
-static int	filenum = 0;
-	FILEH	fh;
-	char	work[512];
-const char	*p;
+static int			filenum = 0;
+	FILEH			fh;
+	char			work[512];
+const char			*p;
+	descriptor_t	*sd;
 
-	SPRINTF(work, file_i286reg, filenum);
+	SPRINTF(work, file_i386reg, filenum);
 	fh = file_create_c(work);
 	if (fh != FILEH_INVALID) {
 		p = debugsub_regs();
@@ -149,14 +150,18 @@ const char	*p;
 		file_close(fh);
 	}
 
-	SPRINTF(work, file_i286cs, filenum);
-	writeseg(work, CS_BASE, 0xffff);
-	SPRINTF(work, file_i286ds, filenum);
-	writeseg(work, DS_BASE, 0xffff);
-	SPRINTF(work, file_i286es, filenum);
-	writeseg(work, ES_BASE, 0xffff);
-	SPRINTF(work, file_i286ss, filenum);
-	writeseg(work, SS_BASE, 0xffff);
+	SPRINTF(work, file_i386cs, filenum);
+	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
+	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	SPRINTF(work, file_i386ds, filenum);
+	sd = &CPU_STAT_SREG(CPU_DS_INDEX);
+	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	SPRINTF(work, file_i386es, filenum);
+	sd = &CPU_STAT_SREG(CPU_ES_INDEX);
+	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	SPRINTF(work, file_i386ss, filenum);
+	sd = &CPU_STAT_SREG(CPU_SS_INDEX);
+	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
 	filenum++;
 }
 

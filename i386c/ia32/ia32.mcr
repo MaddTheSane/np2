@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.14 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.15 2004/03/07 01:23:14 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -688,42 +688,48 @@ do { \
  */
 #define	REGPUSH(reg, clock) \
 do { \
-	CPU_SP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, reg); \
+	UINT16 new_sp = CPU_SP - 2; \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, new_sp, reg); \
+	CPU_SP = new_sp; \
 	CPU_WORKCLOCK(clock); \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH_32(reg, clock) \
 do { \
-	CPU_ESP -= 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, reg); \
+	UINT32 new_esp = CPU_ESP - 4; \
+	cpu_vmemorywrite_d(CPU_SS_INDEX, new_esp, reg); \
+	CPU_ESP = new_esp; \
 	CPU_WORKCLOCK(clock); \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH0(reg) \
 do { \
-	CPU_SP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, (UINT16)reg); \
+	UINT16 new_sp = CPU_SP - 2; \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, new_sp, (UINT16)reg); \
+	CPU_SP = new_sp; \
 } while (/*CONSTCOND*/ 0)
 
 /* Operand Size == 16 && Stack Size == 32 */
 #define	REGPUSH0_16_32(reg) \
 do { \
-	CPU_ESP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, (UINT16)reg); \
+	UINT32 new_esp = CPU_ESP - 2; \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, new_esp, (UINT16)reg); \
+	CPU_ESP = new_esp; \
 } while (/*CONSTCOND*/ 0)
 
 /* Operand Size == 32 && Stack Size == 16 */
 #define	REGPUSH0_32_16(reg) \
 do { \
-	CPU_SP -= 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, reg); \
+	UINT16 new_sp = CPU_SP - 4; \
+	cpu_vmemorywrite_d(CPU_SS_INDEX, new_sp, reg); \
+	CPU_SP = new_sp; \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH0_32(reg) \
 do { \
-	CPU_ESP -= 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, reg); \
+	UINT32 new_esp = CPU_ESP - 4; \
+	cpu_vmemorywrite_d(CPU_SS_INDEX, new_esp, reg); \
+	CPU_ESP = new_esp; \
 } while (/*CONSTCOND*/ 0)
 
 #define	PUSH0_16(reg) \

@@ -16,6 +16,7 @@ extern void trace_init(void);
 extern void trace_term(void);
 extern void trace_fmt(const char *str, ...);
 extern void trace_fmt2(const char *str, ...);
+extern void trace_fileout(const char *fname);
 
 #ifdef __cplusplus
 }

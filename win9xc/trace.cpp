@@ -344,5 +344,16 @@ void trace_fmt2(const char *fmt, ...) {
 	}
 }
 
+void trace_fileout(const char *fname) {
+
+	if (tracewin.fh != FILEH_INVALID) {
+		file_close(tracewin.fh);
+		tracewin.fh = FILEH_INVALID;
+	}
+	if (fname) {
+		tracewin.fh = file_create_c(fname);
+	}
+}
+
 #endif
 
