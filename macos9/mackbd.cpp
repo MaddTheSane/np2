@@ -177,7 +177,7 @@ BOOL mackbd_keydown(int keycode, BOOL cmd) {
 		}
 	}
 	if (data != NC) {
-		keystat_senddata(NC);
+		keystat_senddata(data);
 		return(TRUE);
 	}
 	(void)cmd;
@@ -200,7 +200,7 @@ BOOL mackbd_keyup(int keycode) {
 		}
 	}
 	if (data != NC) {
-		keystat_senddata(NC | 0x80);
+		keystat_senddata(data | 0x80);
 		return(TRUE);
 	}
 	return(FALSE);

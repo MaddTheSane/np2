@@ -131,6 +131,7 @@ DEP_CPP__MEMO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -2502,6 +2503,7 @@ DEP_CPP_ITF_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2539,6 +2541,7 @@ DEP_CPP_ITF_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4685,6 +4688,17 @@ DEP_CPP_BIOS_=\
 	"..\lio\lio.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
+	"..\sound\adpcm.h"\
+	"..\sound\cs4231.h"\
+	"..\sound\fmboard.h"\
+	"..\sound\fmtimer.h"\
+	"..\sound\opngen.h"\
+	"..\sound\pcm86.h"\
+	"..\sound\psggen.h"\
+	"..\sound\rhythm.h"\
+	"..\sound\sound.h"\
+	"..\sound\soundrom.h"\
+	"..\sound\tms3631.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5755,90 +5769,74 @@ DEP_CPP_DISPS=\
 # Begin Source File
 
 SOURCE=..\VRAM\MAKEGRPH.C
+DEP_CPP_MAKEG=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\vram\dispsync.h"\
+	"..\vram\makegrph.h"\
+	"..\VRAM\makegrph.mcr"\
+	"..\vram\scrndraw.h"\
+	"..\vram\vram.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-DEP_CPP_MAKEG=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\extmem.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\itf.h"\
-	"..\io\mouseif.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\vram\dispsync.h"\
-	"..\vram\makegrph.h"\
-	"..\VRAM\makegrph.mcr"\
-	"..\vram\scrndraw.h"\
-	"..\vram\vram.h"\
-	".\wce\compiler.h"\
-	
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
-DEP_CPP_MAKEG=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\extmem.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\itf.h"\
-	"..\io\mouseif.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\vram\dispsync.h"\
-	"..\vram\makegrph.h"\
-	"..\VRAM\makegrph.mcr"\
-	"..\vram\scrndraw.h"\
-	"..\vram\vram.h"\
-	".\wce\compiler.h"\
-	
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ARM\MAKEGRPH.S
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+# Begin Custom Build - Assambling... $(InputPath)
+IntDir=.\..\obj\PPCARMRel
+InputPath=.\ARM\MAKEGRPH.S
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -6344,36 +6342,47 @@ DEP_CPP_SDRAW=\
 # Begin Source File
 
 SOURCE=..\VRAM\SDRAWQ16.C
+DEP_CPP_SDRAWQ=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\vram\palettes.h"\
+	"..\vram\scrndraw.h"\
+	"..\VRAM\sdraw.h"\
+	".\scrnmng.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-DEP_CPP_SDRAWQ=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\vram\palettes.h"\
-	"..\vram\scrndraw.h"\
-	"..\VRAM\sdraw.h"\
-	".\scrnmng.h"\
-	".\wce\compiler.h"\
-	
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
-DEP_CPP_SDRAWQ=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\vram\palettes.h"\
-	"..\vram\scrndraw.h"\
-	"..\VRAM\sdraw.h"\
-	".\scrnmng.h"\
-	".\wce\compiler.h"\
-	
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ARM\SDRAWQ16.S
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+# Begin Custom Build - Assambling... $(InputPath)
+IntDir=.\..\obj\PPCARMRel
+InputPath=.\ARM\SDRAWQ16.S
+InputName=SDRAWQ16
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -7120,6 +7129,8 @@ DEP_CPP_FMBOA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\keydisp.h"\
 	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -7162,9 +7173,6 @@ DEP_CPP_FMBOA=\
 	".\joymng.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_FMBOA=\
-	".\keydisp.h"\
 	
 
 !ENDIF 
@@ -7231,6 +7239,7 @@ DEP_CPP_FMTIM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7336,6 +7345,8 @@ DEP_CPP_OPNGE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\keydisp.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7374,9 +7385,6 @@ DEP_CPP_OPNGE=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_OPNGE=\
-	".\keydisp.h"\
 	
 
 !ENDIF 
@@ -7698,12 +7706,11 @@ DEP_CPP_PSGGE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\keydisp.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_PSGGE=\
-	".\keydisp.h"\
 	
 
 !ENDIF 
@@ -7769,6 +7776,8 @@ DEP_CPP_RHYTH=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\common\wavefile.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
 	"..\sound\rhythm.h"\
 	"..\sound\sound.h"\
 	".\dosio.h"\
@@ -7784,6 +7793,8 @@ DEP_CPP_RHYTH=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\common\wavefile.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
 	"..\sound\rhythm.h"\
 	"..\sound\sound.h"\
 	".\dosio.h"\
@@ -8069,6 +8080,8 @@ DEP_CPP_SOUNDR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
 	"..\sound\soundrom.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -8082,6 +8095,8 @@ DEP_CPP_SOUNDR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
 	"..\sound\soundrom.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -8554,6 +8569,7 @@ DEP_CPP_FDDFI=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\dosio.h"\
+	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8631,6 +8647,7 @@ DEP_CPP_SXSI_=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\dosio.h"\
+	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9568,11 +9585,9 @@ DEP_CPP_COMMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\GENERIC\cmver.h"\
 	".\commng.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_COMMN=\
-	".\cmmidi.h"\
 	
 
 !ENDIF 
@@ -9676,10 +9691,8 @@ DEP_CPP_INI_C=\
 	"..\pccore.h"\
 	".\dosio.h"\
 	".\ini.h"\
+	".\np2.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_INI_C=\
-	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -9773,10 +9786,8 @@ DEP_CPP_MOUSEM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	".\mousemng.h"\
+	".\np2.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_MOUSEM=\
-	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -9920,15 +9931,14 @@ DEP_CPP_NP2_C=\
 	".\inputmng.h"\
 	".\np2.h"\
 	".\scrnmng.h"\
+	".\softkbd.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
 	".\sysmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	
-NODEP_CPP_NP2_C=\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ENDIF 
@@ -9979,14 +9989,24 @@ DEP_CPP_SCRNM=\
 DEP_CPP_SCRNM=\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
+	"..\COMMON\bmpdata.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
+	"..\vram\scrndraw.h"\
+	".\nekop2.res"\
 	".\scrnmng.h"\
+	".\softkbd.res"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_SCRNM=\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ENDIF 
@@ -10107,13 +10127,12 @@ DEP_CPP_SOUNDM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
+	"..\GENERIC\cmver.h"\
 	"..\sound\sound.h"\
-	"..\sound\vermouth\vermouth.h"\
+	".\commng.h"\
+	".\np2.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_SOUNDM=\
-	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -10198,14 +10217,21 @@ DEP_CPP_SYSME=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\embed\menu\dlgabout.h"\
+	"..\embed\menu\dlgcfg.h"\
+	"..\embed\menu\dlgscr.h"\
+	"..\EMBED\MENU\filesel.h"\
 	"..\embed\menu\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
+	"..\fdd\diskdrv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10235,6 +10261,7 @@ DEP_CPP_SYSME=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	".\fontmng.h"\
+	".\np2.h"\
 	".\scrnmng.h"\
 	".\sysmenu.h"\
 	".\sysmenu.res"\
@@ -10243,10 +10270,6 @@ DEP_CPP_SYSME=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	
-NODEP_CPP_SYSME=\
-	"..\embed\menu\np2icon.res"\
-	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -10386,6 +10409,7 @@ DEP_CPP_WINKB=\
 	".\np2.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10422,12 +10446,10 @@ DEP_CPP_WINKB=\
 	"..\io\upd4990.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
-	".\dosio.h"\
+	".\np2.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	
-NODEP_CPP_WINKB=\
-	".\wce\np2.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ENDIF 
@@ -10533,6 +10555,7 @@ DEP_CPP_DLGAB=\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
 	"..\nevent.h"\
+	"..\np2ver.h"\
 	"..\pccore.h"\
 	".\sysmenu.res"\
 	".\wce\compiler.h"\
@@ -10591,12 +10614,10 @@ DEP_CPP_DLGCF=\
 	"..\embed\vramhdl.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
+	".\np2.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_DLGCF=\
-	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -10813,6 +10834,14 @@ DEP_CPP_MENUS=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\embed\menu\menustr.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10862,6 +10891,7 @@ DEP_CPP_MENUB=\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
@@ -10912,9 +10942,11 @@ DEP_CPP_MENUD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
@@ -11009,6 +11041,7 @@ DEP_CPP_MENUM=\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
@@ -11054,6 +11087,7 @@ DEP_CPP_MENUR=\
 	"..\COMMON\rect.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
@@ -11103,6 +11137,7 @@ DEP_CPP_MENUSY=\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
@@ -11153,6 +11188,7 @@ DEP_CPP_MENUV=\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
 	"..\embed\menubase\menumbox.h"\
 	"..\embed\menubase\menures.h"\
 	"..\embed\menubase\menusys.h"\
@@ -11191,6 +11227,7 @@ DEP_CPP_VRAMH=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\common\resize.h"\
 	"..\embed\vramhdl.h"\
 	".\wce\compiler.h"\
 	
@@ -11481,6 +11518,7 @@ DEP_CPP_PCCOR=\
 
 DEP_CPP_PCCOR=\
 	"..\bios\bios.h"\
+	"..\BIOS\biosmem.h"\
 	"..\calendar.h"\
 	"..\cbus\cbuscore.h"\
 	"..\CBUS\mpu98ii.h"\
@@ -11490,6 +11528,7 @@ DEP_CPP_PCCOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\debugsub.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fdd_mtr.h"\
@@ -11522,6 +11561,7 @@ DEP_CPP_PCCOR=\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
 	"..\nevent.h"\
+	"..\np2ver.h"\
 	"..\pccore.h"\
 	"..\sound\adpcm.h"\
 	"..\sound\beep.h"\
@@ -11543,6 +11583,7 @@ DEP_CPP_PCCOR=\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\vram\vram.h"\
+	".\dosio.h"\
 	".\soundmng.h"\
 	".\sysmng.h"\
 	".\timemng.h"\
@@ -11635,6 +11676,7 @@ DEP_CPP_STATS=\
 DEP_CPP_STATS=\
 	"..\bios\bios.h"\
 	"..\calendar.h"\
+	"..\CBUS\amd98.h"\
 	"..\CBUS\board14.h"\
 	"..\cbus\cbuscore.h"\
 	"..\CBUS\mpu98ii.h"\
@@ -11649,6 +11691,8 @@ DEP_CPP_STATS=\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
 	"..\font\font.h"\
+	"..\GENERIC\cmndraw.h"\
+	"..\GENERIC\keydisp.h"\
 	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -11699,9 +11743,6 @@ DEP_CPP_STATS=\
 	".\soundmng.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
-	
-NODEP_CPP_STATS=\
-	".\keydisp.h"\
 	
 
 !ENDIF 
