@@ -113,15 +113,19 @@ static void openpopup(HIPoint location);
 static void skinchange(void);
 static DragReceiveHandlerUPP	dr;
 
+static bool	isPUMA;
+
 // ----
 
-static bool isPuma(void) {
+static void checkOSVersion(void) {
     long	res;
     Gestalt(gestaltSystemVersion, &res);
     if (res<0x1020) {
-        return(true);
+        isPUMA = true;
     }
-    return(false);
+    else {
+        isPUMA = false;
+    }
 }
 
 
@@ -609,7 +613,7 @@ static WindowRef makeNibWindow (IBNibRef nibRef) {
     OSStatus	err;
     WindowRef	win = NULL;
 
-    if (isPuma()) {
+    if (isPUMA) {
         Rect	bounds;
         SetRect(&bounds, 0, 0, 100, 100);
         err = CreateNewWindow(kFloatingWindowClass, kWindowStandardHandlerAttribute, &bounds, &win);
@@ -793,6 +797,8 @@ void toolwin_open(void) {
         toolwin_close();
 		return;
 	}
+    
+    checkOSVersion();
 	ZeroMemory(&toolwin, sizeof(toolwin));
 
 	hbmp = skinload(np2tool.skin, &bounds);
@@ -806,7 +812,7 @@ void toolwin_open(void) {
 		goto twope_err2;
 	}
     
-    if (isPuma()) {
+    if (isPUMA) {
         toolwincreate(hWnd);
     }
     SizeWindow(hWnd, bounds.right-bounds.left, bounds.bottom-bounds.top, true);
@@ -815,11 +821,11 @@ void toolwin_open(void) {
     info.u.picture = hbmp;
     CreatePictureControl(hWnd, &bounds, &info, true, &image);
     InstallControlEventHandler (image, NewEventHandlerUPP(cfControlproc), GetEventTypeCount(list), list, (void *)hWnd, &ref);
-    if (!isPuma()) {
+    if (!isPUMA) {
         toolwincreate(hWnd);
     }
 
-    if (isPuma()) {
+    if (isPUMA) {
         if (np2tool.posy < 35) np2tool.posy = 35;
         if (np2tool.posx < 5 ) np2tool.posx = 5;
         MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
@@ -845,11 +851,11 @@ twope_err1:
 void toolwin_close(void) {
 
     if (toolwin.hwnd) {
-        if (!isPuma()) {
-            CloseDrawer(toolwin.hwnd, 0);
+        if (isPUMA) {
+            HideWindow(toolwin.hwnd);
         }
-        else{
-            DisposeWindow(toolwin.hwnd);
+        else {
+            CloseDrawer(toolwin.hwnd, 0);
         }
         RemoveReceiveHandler(dr, toolwin.hwnd);
         toolwindestroy();
