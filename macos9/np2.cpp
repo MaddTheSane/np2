@@ -396,6 +396,11 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_AMD98:
+			menu_setsound(0x80);
+			update |= SYS_UPDATECFG;
+			break;
+
 		case IDM_SEEKSND:
 			menu_setmotorflg(np2cfg.MOTOR ^ 1);
 			update |= SYS_UPDATECFG;

@@ -127,6 +127,7 @@ void menu_setsound(BYTE value) {
 	_CheckMenuItem(hmenu, IDM_PC9801_118, MFCHECK(value == 0x08));
 	_CheckMenuItem(hmenu, IDM_SPEAKBOARD, MFCHECK(value == 0x20));
 	_CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(value == 0x40));
+	_CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
 }
 
 void menu_setmotorflg(BYTE value) {

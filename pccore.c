@@ -516,7 +516,7 @@ void pccore_exec(BOOL draw) {
 			i286_resetprefetch();
 		}
 
-#ifndef TRACE
+#if 1	// ndef TRACE
 		if (I286_REMCLOCK > 0) {
 			if (!(CPUTYPE & CPUTYPE_V30)) {
 				i286();
@@ -527,23 +527,6 @@ void pccore_exec(BOOL draw) {
 		}
 #else
 		while(I286_REMCLOCK > 0) {
-static BYTE sw = 0;
-if (*(UINT32 *)(mem + 0x48) == 0x18000114) {
-	if (sw == 0) {
-		sw = 1;
-		TRACEOUT(("[%.8x] %.4x:%.4x %s", 
-						*(UINT32 *)(mem + 0x48),
-						I286_CS, I286_IP, debugsub_regs()));
-	}
-}
-else {
-	if (sw != 0) {
-		sw = 0;
-		TRACEOUT(("[%.8x] %.4x:%.4x %s", 
-						*(UINT32 *)(mem + 0x48),
-						I286_CS, I286_IP, debugsub_regs()));
-	}
-}
 			i286_step();
 		}
 #endif

@@ -96,11 +96,16 @@ void keystat_reset(void) {
 	ZeroMemory(keystat, sizeof(keystat));
 }
 
+
 void keystat_senddata(BYTE data) {
 
-	BYTE	key = data & 0x7f;
-	BOOL	keynochange = FALSE;
+	BYTE	key;
+	BOOL	keynochange;
 
+	key = data & 0x7f;
+	keynochange = FALSE;
+
+	// CTRL:カナ 0x71,0x72 bit7==0でトルグ処理 (標準処理)
 	if ((key == 0x71) || (key == 0x72)) {
 		if (data & 0x80) {
 			return;
@@ -120,6 +125,12 @@ void keystat_senddata(BYTE data) {
 			keystat[key] ^= 0x80;
 		}
 		else {
+			// CTRL:カナ 0x79,0x7a bit7をそのまま通知
+			// (ハードウェアでメカニカル処理してる場合)
+			if ((key == 0x79) || (key == 0x7a)) {
+				key -= 0x08;
+				data -= 0x08;
+			}
 			if (!((keystat[key] ^ data) & 0x80)) {
 				keystat[key] ^= 0x80;
 			}
