@@ -73,6 +73,7 @@ typedef	signed int		SINT32;
 #endif
 
 #define	SUPPORT_CRT15KHZ
+#define	SUPPORT_SWSEEKSND
 
 #define	CPUSTRUC_MEMWAIT
 

@@ -30,7 +30,7 @@ typedef struct {
 } LINEPT;
 
 
-static void gline(const _LIOWORK *lio, const LINEPT *lp) {
+static void gline(const _GLIO *lio, const LINEPT *lp) {
 
 	int		x1;
 	int		y1;
@@ -158,7 +158,7 @@ static void gline(const _LIOWORK *lio, const LINEPT *lp) {
 
 // ----
 
-static void nor_linebox(const _LIOWORK *lio, SINT16 x1, SINT16 y1,
+static void nor_linebox(const _GLIO *lio, SINT16 x1, SINT16 y1,
 											SINT16 x2, SINT16 y2, REG8 pal) {
 
 	lio_line(lio, x1, x2, y1, pal);
@@ -171,7 +171,7 @@ static void nor_linebox(const _LIOWORK *lio, SINT16 x1, SINT16 y1,
 	}
 }
 
-static void nor_lineboxfill(const _LIOWORK *lio, SINT16 x1, SINT16 y1,
+static void nor_lineboxfill(const _GLIO *lio, SINT16 x1, SINT16 y1,
 											SINT16 x2, SINT16 y2, REG8 pal) {
 
 	for (; y1<=y2; y1++) {
@@ -182,7 +182,7 @@ static void nor_lineboxfill(const _LIOWORK *lio, SINT16 x1, SINT16 y1,
 
 // ----
 
-REG8 lio_gline(LIOWORK lio) {
+REG8 lio_gline(GLIO lio) {
 
 	GLINE	dat;
 	LINEPT	lp;
@@ -194,7 +194,7 @@ REG8 lio_gline(LIOWORK lio) {
 	lio_updatedraw(lio);
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	if (dat.pal == 0xff) {
-		lp.pal = lio->mem.fgcolor;
+		lp.pal = lio->work.fgcolor;
 	}
 	else {
 		lp.pal = dat.pal;
@@ -215,7 +215,7 @@ REG8 lio_gline(LIOWORK lio) {
 		lp.pat = 0xffff;
 	}
 	if (dat.pal == 0xff) {
-		dat.pal = lio->mem.fgcolor;
+		dat.pal = lio->work.fgcolor;
 	}
 	else if (dat.pal >= lio->draw.palmax) {
 		return(5);

@@ -17,13 +17,13 @@ typedef struct {
 
 // ---- CLS
 
-REG8 lio_gcls(LIOWORK lio) {
+REG8 lio_gcls(GLIO lio) {
 
 	SINT16	y;
 
 	lio_updatedraw(lio);
 	for (y=lio->draw.y1; y<=lio->draw.y2; y++) {
-		lio_line(lio, lio->draw.x1, lio->draw.x2, y, lio->mem.bgcolor);
+		lio_line(lio, lio->draw.x1, lio->draw.x2, y, lio->work.bgcolor);
 	}
 	return(LIO_SUCCESS);
 }
@@ -31,7 +31,7 @@ REG8 lio_gcls(LIOWORK lio) {
 
 // ---- PSET
 
-REG8 lio_gpset(LIOWORK lio) {
+REG8 lio_gpset(GLIO lio) {
 
 	GPSET	dat;
 	SINT16	x;
@@ -43,10 +43,10 @@ REG8 lio_gpset(LIOWORK lio) {
 	y = (SINT16)LOADINTELWORD(dat.y);
 	if (dat.pal == 0xff) {
 		if (CPU_AH == 1) {
-			dat.pal = lio->mem.fgcolor;
+			dat.pal = lio->work.fgcolor;
 		}
 		else {
-			dat.pal = lio->mem.bgcolor;
+			dat.pal = lio->work.bgcolor;
 		}
 	}
 	lio_pset(lio, x, y, dat.pal);
@@ -56,7 +56,7 @@ REG8 lio_gpset(LIOWORK lio) {
 
 // ---- GPOINT2
 
-REG8 lio_gpoint2(LIOWORK lio) {
+REG8 lio_gpoint2(GLIO lio) {
 
 	GPOINT2	dat;
 	SINT16	x;

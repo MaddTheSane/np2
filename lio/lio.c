@@ -25,11 +25,11 @@ void lio_initialize(void) {
 
 void bios_lio(REG8 cmd) {
 
-	_LIOWORK	lio;
-	UINT8		ret;
+	_GLIO	lio;
+	UINT8	ret;
 
 //	TRACEOUT(("lio command %.2x", cmd));
-	i286_memstr_read(CPU_DS, 0x0620, &lio.mem, sizeof(lio.mem));
+	i286_memstr_read(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
 	lio.palmode = i286_membyte_read(CPU_DS, 0x0a08);
 	lio.wait = 500;
 	switch(cmd) {
@@ -109,7 +109,7 @@ void bios_lio(REG8 cmd) {
 
 const UINT32 lioplaneadrs[4] = {VRAM_B, VRAM_R, VRAM_G, VRAM_E};
 
-void lio_updatedraw(LIOWORK lio) {
+void lio_updatedraw(GLIO lio) {
 
 	UINT8	flag;
 	UINT8	colorbit;
@@ -123,38 +123,38 @@ void lio_updatedraw(LIOWORK lio) {
 		flag |= LIODRAW_4BPP;
 		colorbit = 4;
 	}
-	switch(lio->mem.scrnmode) {
+	switch(lio->work.scrnmode) {
 		case 0:
-			if (lio->mem.pos & 1) {
+			if (lio->work.pos & 1) {
 				flag |= LIODRAW_UPPER;
 			}
 			maxline = 199;
 			break;
 
 		case 1:
-			flag |= lio->mem.pos % colorbit;
+			flag |= lio->work.pos % colorbit;
 			flag |= LIODRAW_MONO;
-			if (lio->mem.pos >= colorbit) {
+			if (lio->work.pos >= colorbit) {
 				flag |= LIODRAW_UPPER;
 			}
 			maxline = 199;
 			break;
 
 		case 2:
-			flag |= lio->mem.pos % colorbit;
+			flag |= lio->work.pos % colorbit;
 			flag |= LIODRAW_MONO;
 			break;
 	}
 	lio->draw.flag = flag;
 	lio->draw.palmax = 1 << colorbit;
 
-	tmp = (SINT16)LOADINTELWORD(lio->mem.viewx1);
+	tmp = (SINT16)LOADINTELWORD(lio->work.viewx1);
 	lio->draw.x1 = max(tmp, 0);
-	tmp = (SINT16)LOADINTELWORD(lio->mem.viewy1);
+	tmp = (SINT16)LOADINTELWORD(lio->work.viewy1);
 	lio->draw.y1 = max(tmp, 0);
-	tmp = (SINT16)LOADINTELWORD(lio->mem.viewx2);
+	tmp = (SINT16)LOADINTELWORD(lio->work.viewx2);
 	lio->draw.x2 = min(tmp, 639);
-	tmp = (SINT16)LOADINTELWORD(lio->mem.viewy2);
+	tmp = (SINT16)LOADINTELWORD(lio->work.viewy2);
 	lio->draw.y2 = min(tmp, maxline);
 	if (!gdcs.access) {
 		lio->draw.base = 0;
@@ -171,7 +171,7 @@ void lio_updatedraw(LIOWORK lio) {
 
 // ----
 
-static void pixed8(const _LIOWORK *lio, UINT addr, REG8 bit, REG8 pal) {
+static void pixed8(const _GLIO *lio, UINT addr, REG8 bit, REG8 pal) {
 
 	BYTE	*ptr;
 
@@ -217,7 +217,7 @@ static void pixed8(const _LIOWORK *lio, UINT addr, REG8 bit, REG8 pal) {
 	}
 }
 
-void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal) {
+void lio_pset(const _GLIO *lio, SINT16 x, SINT16 y, REG8 pal) {
 
 	UINT	addr;
 	BYTE	bit;
@@ -235,7 +235,7 @@ void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal) {
 	pixed8(lio, addr, bit, pal);
 }
 
-void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
+void lio_line(const _GLIO *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 
 	UINT	addr;
 	BYTE	bit, dbit;

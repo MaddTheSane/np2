@@ -41,7 +41,7 @@ typedef struct {
 
 // ---- INIT
 
-REG8 lio_ginit(LIOWORK lio) {
+REG8 lio_ginit(GLIO lio) {
 
 	UINT	i;
 
@@ -52,21 +52,21 @@ REG8 lio_ginit(LIOWORK lio) {
 	iocore_out8(0x006a, 0);
 	gdc_paletteinit();
 
-	ZeroMemory(&lio->mem, sizeof(lio->mem));
-//	lio->mem.scrnmode = 0;
-//	lio->mem.pos = 0;
-	lio->mem.plane = 1;
-//	lio->mem.bgcolor = 0;
-	lio->mem.fgcolor = 7;
+	ZeroMemory(&lio->work, sizeof(lio->work));
+//	lio->work.scrnmode = 0;
+//	lio->work.pos = 0;
+	lio->work.plane = 1;
+//	lio->work.bgcolor = 0;
+	lio->work.fgcolor = 7;
 	for (i=0; i<8; i++) {
-		lio->mem.color[i] = (UINT8)i;
+		lio->work.color[i] = (UINT8)i;
 	}
-//	STOREINTELWORD(lio->mem.viewx1, 0);
-//	STOREINTELWORD(lio->mem.viewy1, 0);
-	STOREINTELWORD(lio->mem.viewx2, 639);
-	STOREINTELWORD(lio->mem.viewy2, 399);
+//	STOREINTELWORD(lio->work.viewx1, 0);
+//	STOREINTELWORD(lio->work.viewy1, 0);
+	STOREINTELWORD(lio->work.viewx2, 639);
+	STOREINTELWORD(lio->work.viewy2, 399);
 	lio->palmode = 0;
-	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 }
@@ -74,7 +74,7 @@ REG8 lio_ginit(LIOWORK lio) {
 
 // ---- SCREEN
 
-REG8 lio_gscreen(LIOWORK lio) {
+REG8 lio_gscreen(GLIO lio) {
 
 	GSCREEN	dat;
 	UINT	colorbit;
@@ -96,7 +96,7 @@ REG8 lio_gscreen(LIOWORK lio) {
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	scrnmode = dat.mode;
 	if (scrnmode == 0xff) {
-		scrnmode = lio->mem.scrnmode;
+		scrnmode = lio->work.scrnmode;
 	}
 	else {
 		if ((dat.mode >= 2) && (!(mem[MEMB_PRXCRT] & 0x40))) {
@@ -118,9 +118,9 @@ REG8 lio_gscreen(LIOWORK lio) {
 	mono = ((scrnmode + 1) >> 1) & 1;
 	act = dat.act;
 	if (act == 0xff) {
-		if (scrnmode != lio->mem.scrnmode) {
-			lio->mem.pos = 0;
-			lio->mem.access = 0;
+		if (scrnmode != lio->work.scrnmode) {
+			lio->work.pos = 0;
+			lio->work.access = 0;
 		}
 	}
 	else {
@@ -148,14 +148,14 @@ REG8 lio_gscreen(LIOWORK lio) {
 		if (act >= 2) {
 			goto gscreen_err5;
 		}
-		lio->mem.pos = pos;
-		lio->mem.access = act;
+		lio->work.pos = pos;
+		lio->work.access = act;
 	}
 	disp = dat.disp;
 	if (disp == 0xff) {
-		if (scrnmode != lio->mem.scrnmode) {
-			lio->mem.plane = 1;
-			lio->mem.disp = 0;
+		if (scrnmode != lio->work.scrnmode) {
+			lio->work.plane = 1;
+			lio->work.disp = 0;
 		}
 	}
 	else {
@@ -164,7 +164,7 @@ REG8 lio_gscreen(LIOWORK lio) {
 		if (disp >= 2) {
 			goto gscreen_err5;
 		}
-		lio->mem.disp = disp;
+		lio->work.disp = disp;
 		planemax = 1;
 		if (mono) {
 			planemax <<= colorbit;
@@ -176,11 +176,11 @@ REG8 lio_gscreen(LIOWORK lio) {
 			(plane != (1 << colorbit))) {
 			goto gscreen_err5;
 		}
-		lio->mem.plane = plane;
-		lio->mem.disp = disp;
+		lio->work.plane = plane;
+		lio->work.disp = disp;
 	}
 
-	lio->mem.scrnmode = scrnmode;
+	lio->work.scrnmode = scrnmode;
 	switch(scrnmode) {
 		case 0:
 			mode = (pos)?0x40:0x80;
@@ -202,8 +202,8 @@ REG8 lio_gscreen(LIOWORK lio) {
 	mode |= disp << 4;
 	TRACEOUT(("bios1842 - %.2x", mode));
 	bios0x18_42(mode);
-	iocore_out8(0x00a6, lio->mem.access);
-	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	iocore_out8(0x00a6, lio->work.access);
+	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	return(LIO_SUCCESS);
 
 gscreen_err5:
@@ -215,7 +215,7 @@ gscreen_err5:
 
 // ---- VIEW
 
-REG8 lio_gview(LIOWORK lio) {
+REG8 lio_gview(GLIO lio) {
 
 	GVIEW	dat;
 	int		x1;
@@ -231,27 +231,27 @@ REG8 lio_gview(LIOWORK lio) {
 	if ((x1 >= x2) || (y1 >= y2)) {
 		return(LIO_ILLEGALFUNC);
 	}
-	STOREINTELWORD(lio->mem.viewx1, (UINT16)x1);
-	STOREINTELWORD(lio->mem.viewy1, (UINT16)y1);
-	STOREINTELWORD(lio->mem.viewx2, (UINT16)x2);
-	STOREINTELWORD(lio->mem.viewy2, (UINT16)y2);
-	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	STOREINTELWORD(lio->work.viewx1, (UINT16)x1);
+	STOREINTELWORD(lio->work.viewy1, (UINT16)y1);
+	STOREINTELWORD(lio->work.viewx2, (UINT16)x2);
+	STOREINTELWORD(lio->work.viewy2, (UINT16)y2);
+	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	return(LIO_SUCCESS);
 }
 
 
 // ---- COLOR1
 
-REG8 lio_gcolor1(LIOWORK lio) {
+REG8 lio_gcolor1(GLIO lio) {
 
 	GCOLOR1	dat;
 
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	if (dat.bgcolor != 0xff) {
-		lio->mem.bgcolor = dat.bgcolor;
+		lio->work.bgcolor = dat.bgcolor;
 	}
 	if (dat.fgcolor == 0xff) {
-		lio->mem.fgcolor = dat.fgcolor;
+		lio->work.fgcolor = dat.fgcolor;
 	}
 	if (dat.palmode != 0xff) {
 		if (!(mem[MEMB_PRXCRT] & 1)) {				// 8color lio
@@ -270,7 +270,7 @@ REG8 lio_gcolor1(LIOWORK lio) {
 		}
 		lio->palmode = dat.palmode;
 	}
-	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 
@@ -281,7 +281,7 @@ gcolor1_err5:
 
 // ---- COLOR2
 
-REG8 lio_gcolor2(LIOWORK lio) {
+REG8 lio_gcolor2(GLIO lio) {
 
 	GCOLOR2	dat;
 
@@ -291,7 +291,7 @@ REG8 lio_gcolor2(LIOWORK lio) {
 	}
 	if (!lio->palmode) {
 		dat.color1 &= 7;
-		lio->mem.color[dat.pal] = dat.color1;
+		lio->work.color[dat.pal] = dat.color1;
 		gdc_setdegitalpal(dat.pal, dat.color1);
 	}
 	else {
@@ -302,7 +302,7 @@ REG8 lio_gcolor2(LIOWORK lio) {
 		gdc_setanalogpal(dat.pal, offsetof(RGB32, p.g),
 												(UINT8)(dat.color2 & 0x0f));
 	}
-	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	return(LIO_SUCCESS);
 
 gcolor2_err5:

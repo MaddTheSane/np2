@@ -155,6 +155,51 @@
 　　　　RealPalettes Adjust     RealPalettes時のタイミングを調整します。
 
 
+
+・ディスクイメージ
+
+　　以下にイメージ対応しています。
+　　　FDD  - D88形式, XDF(ベタイメージ)形式
+　　　SASI - THD形式(T98), HDI形式(Anex86)
+
+
+
+・キー設定について
+　　bios.romとかと同じフォルダに(機種によって異なるのでこんな書き方…)
+　　key.txtという名前でテキストファイルを作成して、キー設定を記入して下さい。
+
+　　書式)
+　　　[keyname] = [key1] (key2) (key3)
+　　　[keyname] [TAB] [key1] (key2) (key3)
+　　　userkey[1-2] = [key1] (key2) (key3) ... (key15)
+　　　　フルキー 0～9 A～Z - ^ \ @ [ ] ; : , . / _
+　　　　         STOP COPY ESC TAB BS RET SPC XFER NFER
+                 INS DEL RLUP RLDN HMCL HELP
+　　　　ファンク F1～F10 VF1～VF5
+　　　　テンキー [0]～[9] [-] [/] [*] [+] [=] [,] [.]
+　　　　シフト   SHIFT CAPS KANA GRPH CTRL
+
+　　　通常キーは3個、userkeyは15個の同時押し設定が可能です。
+　　　[=] キーは = で区切られてしまうので TABで区切るか [EQU]として下さい。
+
+　　　例:
+        ----------------------- key.txt
+
+　　　　W = UP                 (ダイアモンドキーをカーソルにしてみたり…)
+　　　　S = LEFT
+　　　　D = RIGHT
+　　　　X = DOWN
+　　　　[7] = [4] [8]          (テンキー斜め同時押しにしてみたり…)
+　　　　[9] = [6] [8]
+　　　　[1] = [4] [2]
+　　　　[3] = [6] [2]
+　　　　userkey1 = CTRL XFER   (CTRL+XFER FEP切り替え)
+　　　　userkey2 = D O A Z     (D+O+A+Z 同時押し)
+
+        -----------------------
+
+
+
 　Windows版と共通点が多いので Windows版ヘルプもご覧ください。
 　　http://www.yui.ne.jp/np2/help.html
 

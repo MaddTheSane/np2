@@ -60,6 +60,7 @@ typedef	unsigned int	UINT32;
 
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_CRT15KHZ
+#define	SUPPORT_SWSEEKSND
 
 #define	CPUSTRUC_MEMWAIT
 

@@ -378,7 +378,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	TRACEINIT();
 
 	inputmng_init();
-	keystat_reset();
+	keystat_initialize();
 
 //	if (!hPreInst) {
 		np2.style = CS_HREDRAW | CS_VREDRAW;

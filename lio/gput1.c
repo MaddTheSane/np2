@@ -321,7 +321,7 @@ const BYTE	*src;
 
 // ----
 
-static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
+static REG8 putsub(GLIO lio, const LIOPUT *lput) {
 
 	UINT	addr;
 	PUTCNTX	pt;
@@ -455,7 +455,7 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 
 // ---- GGET
 
-REG8 lio_gget(LIOWORK lio) {
+REG8 lio_gget(GLIO lio) {
 
 	GGET	dat;
 	SINT32	x;
@@ -539,7 +539,7 @@ REG8 lio_gget(LIOWORK lio) {
 
 // ---- GPUT1
 
-REG8 lio_gput1(LIOWORK lio) {
+REG8 lio_gput1(GLIO lio) {
 
 	GPUT1	dat;
 	LIOPUT	lput;
@@ -567,8 +567,8 @@ REG8 lio_gput1(LIOWORK lio) {
 			lput.bg = dat.bg;
 		}
 		else {
-			lput.fg = lio->mem.fgcolor;
-			lput.bg = lio->mem.bgcolor;
+			lput.fg = lio->work.fgcolor;
+			lput.bg = lio->work.bgcolor;
 		}
 	}
 	else {
@@ -589,7 +589,7 @@ REG8 lio_gput1(LIOWORK lio) {
 
 // ---- GPUT2
 
-REG8 lio_gput2(LIOWORK lio) {
+REG8 lio_gput2(GLIO lio) {
 
 	GPUT2	dat;
 	LIOPUT	lput;
@@ -621,8 +621,8 @@ REG8 lio_gput2(LIOWORK lio) {
 		lput.bg = dat.bg;
 	}
 	else {
-		lput.fg = lio->mem.fgcolor;
-		lput.bg = lio->mem.bgcolor;
+		lput.fg = lio->work.fgcolor;
+		lput.bg = lio->work.bgcolor;
 	}
 	return(putsub(lio, &lput));
 }
