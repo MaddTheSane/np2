@@ -77,7 +77,7 @@ G_CLOCK				equ		(GD_SIZE + &50)
 	INCLUDE	..\..\i286a\i286a.inc
 
 	IMPORT	np2cfg
-	IMPORT	i286core
+	IMPORT	i286acore
 	IMPORT	np2_vram
 	IMPORT	dsync
 	IMPORT	vramupdate
@@ -327,7 +327,7 @@ mg_updclear		ldr		r12, [r7, r4]
 
 gp_dsync		dcd		dsync
 gp_vramupdate	dcd		vramupdate
-gp_vmem			dcd		i286core + CPU_SIZE + VRAM_B
+gp_vmem			dcd		i286acore + CPU_SIZE + VRAM_B
 gp_gdc			dcd		gdc - G_MASTER
 gp_gtable0		dcd		grph_table0
 gp_np2vram		dcd		np2_vram

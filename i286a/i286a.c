@@ -2,7 +2,7 @@
 #include	"cpucore.h"
 
 
-	I286CORE	i286core;
+	I286CORE	i286acore;
 
 const UINT8 iflags[512] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,

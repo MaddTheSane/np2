@@ -19,6 +19,91 @@
 
 ; ---- calc_ea_dst
 
+	MACRO
+$label	EAR1	$r, $b
+$label		ldrh	r1, [r9, $r]
+			ldr		r2, [r9, $b]
+			add		r0, r2, r1
+			mov		pc, lr
+	MEND
+
+	MACRO
+$label	EAR1D8	$r, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread
+			ldrh	r1, [r9, $r]
+			ldr		r2, [r9, $b]
+			mov		r3, r0 lsl #24
+			mov		r12, r1 lsl #16
+			add		r1, r12, r3 asr #8
+			add		r8, r8, #(1 << 16)
+			add		r0, r2, r1 lsr #16
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	EAR1D16	$r, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread_w
+			ldrh	r1, [r9, $r]
+			ldr		r2, [r9, $b]
+			add		r8, r8, #(2 << 16)
+			add		r3, r1, r0
+			bic		r1, r3, #(1 << 16)
+			add		r0, r1, r2
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	EAR2	$r1, $r2, $b
+$label		ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			ldr		r3, [r9, $b]
+			add		r12, r2, r1
+			bic		r12, r12, #(1 << 16)
+			add		r0, r12, r3
+			mov		pc, lr
+	MEND
+
+	MACRO
+$label	EAR2D8	$r1, $r2, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread
+			ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			mov		r12, r0 lsl #24
+			ldr		r3, [r9, $b]
+			mov		r12, r12 asr #8
+			add		r12, r12, r1 lsl #16
+			add		r12, r12, r2 lsl #16
+			add		r8, r8, #(1 << 16)
+			add		r0, r3, r12 lsr #16
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	EAR2D16	$r1, $r2, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread_w
+			ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			ldr		r3, [r9, $b]
+			add		r12, r1, r0
+			add		r8, r8, #(2 << 16)
+			add		r12, r12, r2
+			bic		r12, r12, #(3 << 16)
+			add		r0, r12, r3
+			mov		pc, r4
+	MEND
+
 i286a_ea		and		r1, r0, #(&18 << 3)
 				and		r2, r0, #7
 				add		r3, pc, r1 lsr #1
@@ -51,243 +136,29 @@ i286a_ea		and		r1, r0, #(&18 << 3)
 				b		ea_bp_d16
 				b		ea_bx_d16
 
-ea_bx_si		ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r0, [r9, #CPU_DS_FIX]
-				add		r3, r1, r2
-				bic		r12, r3, #(1 << 16)
-				add		r0, r12, r0
-				mov		pc, lr
-
-ea_bx_si_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r3, [r9, #CPU_DS_FIX]
-				add		r1, r1, r2
-				mov		r12, r0 lsl #24
-				add		r8, r8, #(1 << 16)
-				add		r2, r1, r12 asr #24
-				mov		r1, r2 lsl #16
-				add		r0, r3, r1 lsr #16
-				mov		pc, r4
-
-ea_bx_si_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r3, [r9, #CPU_DS_FIX]
-				add		r12, r1, r2
-				add		r8, r8, #(2 << 16)
-				add		r2, r12, r0
-				bic		r1, r2, #(3 << 16)
-				add		r0, r1, r3
-				mov		pc, r4
-
-ea_bx_di		ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r0, [r9, #CPU_DS_FIX]
-				add		r3, r1, r2
-				bic		r12, r3, #(1 << 16)
-				add		r0, r12, r0
-				mov		pc, lr
-
-ea_bx_di_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r3, [r9, #CPU_DS_FIX]
-				add		r1, r1, r2
-				mov		r12, r0 lsl #24
-				add		r8, r8, #(1 << 16)
-				add		r2, r1, r12 asr #24
-				mov		r1, r2 lsl #16
-				add		r0, r3, r1 lsr #16
-				mov		pc, r4
-
-ea_bx_di_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r3, [r9, #CPU_DS_FIX]
-				add		r12, r1, r2
-				add		r8, r8, #(2 << 16)
-				add		r2, r12, r0
-				bic		r1, r2, #(3 << 16)
-				add		r0, r1, r3
-				mov		pc, r4
-
-ea_bp_si		ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r0, [r9, #CPU_SS_FIX]
-				add		r3, r1, r2
-				bic		r12, r3, #(1 << 16)
-				add		r0, r12, r0
-				mov		pc, lr
-
-ea_bp_si_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r3, [r9, #CPU_SS_FIX]
-				add		r1, r1, r2
-				mov		r12, r0 lsl #24
-				add		r8, r8, #(1 << 16)
-				add		r2, r1, r12 asr #24
-				mov		r1, r2 lsl #16
-				add		r0, r3, r1 lsr #16
-				mov		pc, r4
-
-ea_bp_si_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r3, [r9, #CPU_SS_FIX]
-				add		r12, r1, r2
-				add		r8, r8, #(2 << 16)
-				add		r2, r12, r0
-				bic		r1, r2, #(3 << 16)
-				add		r0, r1, r3
-				mov		pc, r4
-
-ea_bp_di		ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r0, [r9, #CPU_SS_FIX]
-				add		r3, r1, r2
-				bic		r12, r3, #(1 << 16)
-				add		r0, r12, r0
-				mov		pc, lr
-
-ea_bp_di_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r3, [r9, #CPU_SS_FIX]
-				add		r1, r1, r2
-				mov		r12, r0 lsl #24
-				add		r8, r8, #(1 << 16)
-				add		r2, r1, r12 asr #24
-				mov		r1, r2 lsl #16
-				add		r0, r3, r1 lsr #16
-				mov		pc, r4
-
-ea_bp_di_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r3, [r9, #CPU_SS_FIX]
-				add		r12, r1, r2
-				add		r8, r8, #(2 << 16)
-				add		r2, r12, r0
-				bic		r1, r2, #(3 << 16)
-				add		r0, r1, r3
-				mov		pc, r4
-
-ea_si			ldrh	r1, [r9, #CPU_SI]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				add		r0, r1, r2
-				mov		pc, lr
-
-ea_si_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_SI]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				mov		r3, r0 lsl #24
-				mov		r12, r1 lsl #16
-				add		r8, r8, #(1 << 16)
-				add		r1, r12, r3, asr #8
-				add		r0, r2, r1 lsr #16
-				mov		pc, r4
-
-ea_si_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_SI]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				add		r8, r8, #(2 << 16)
-				add		r3, r0, r1
-				bic		r1, r3, #(1 << 16)
-				add		r0, r1, r2
-				mov		pc, r4
-
-ea_di			ldrh	r1, [r9, #CPU_DI]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				add		r0, r1, r2
-				mov		pc, lr
-
-ea_di_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_DI]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				mov		r3, r0 lsl #24
-				mov		r12, r1 lsl #16
-				add		r8, r8, #(1 << 16)
-				add		r1, r12, r3, asr #8
-				add		r0, r2, r1 lsr #16
-				mov		pc, r4
-
-ea_di_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_DI]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				add		r8, r8, #(2 << 16)
-				add		r3, r0, r1
-				bic		r1, r3, #(1 << 16)
-				add		r0, r1, r2
-				mov		pc, r4
-
-ea_bx			ldrh	r1, [r9, #CPU_BX]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				add		r0, r1, r2
-				mov		pc, lr
-
-ea_bx_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				mov		r3, r0 lsl #24
-				mov		r12, r1 lsl #16
-				add		r8, r8, #(1 << 16)
-				add		r1, r12, r3, asr #8
-				add		r0, r2, r1 lsr #16
-				mov		pc, r4
-
-ea_bx_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldr		r2, [r9, #CPU_DS_FIX]
-				add		r8, r8, #(2 << 16)
-				add		r3, r0, r1
-				bic		r1, r3, #(1 << 16)
-				add		r0, r1, r2
-				mov		pc, r4
+ea_bx_si		EAR2	#CPU_BX, #CPU_SI, #CPU_DS_FIX
+ea_bx_si_d8		EAR2D8	#CPU_BX, #CPU_SI, #CPU_DS_FIX
+ea_bx_si_d16	EAR2D16	#CPU_BX, #CPU_SI, #CPU_DS_FIX
+ea_bx_di		EAR2	#CPU_BX, #CPU_DI, #CPU_DS_FIX
+ea_bx_di_d8		EAR2D8	#CPU_BX, #CPU_DI, #CPU_DS_FIX
+ea_bx_di_d16	EAR2D16	#CPU_BX, #CPU_DI, #CPU_DS_FIX
+ea_bp_si		EAR2	#CPU_BP, #CPU_SI, #CPU_SS_FIX
+ea_bp_si_d8		EAR2D8	#CPU_BP, #CPU_SI, #CPU_SS_FIX
+ea_bp_si_d16	EAR2D16	#CPU_BP, #CPU_SI, #CPU_SS_FIX
+ea_bp_di		EAR2	#CPU_BP, #CPU_DI, #CPU_SS_FIX
+ea_bp_di_d8		EAR2D8	#CPU_BP, #CPU_DI, #CPU_SS_FIX
+ea_bp_di_d16	EAR2D16	#CPU_BP, #CPU_DI, #CPU_SS_FIX
+ea_si			EAR1	#CPU_SI, #CPU_DS_FIX
+ea_si_d8		EAR1D8	#CPU_SI, #CPU_DS_FIX
+ea_si_d16		EAR1D16	#CPU_SI, #CPU_DS_FIX
+ea_di			EAR1	#CPU_DI, #CPU_DS_FIX
+ea_di_d8		EAR1D8	#CPU_DI, #CPU_DS_FIX
+ea_di_d16		EAR1D16	#CPU_DI, #CPU_DS_FIX
+ea_bx			EAR1	#CPU_BX, #CPU_DS_FIX
+ea_bx_d8		EAR1D8	#CPU_BX, #CPU_DS_FIX
+ea_bx_d16		EAR1D16	#CPU_BX, #CPU_DS_FIX
+ea_bp_d8		EAR1D8	#CPU_BP, #CPU_SS_FIX
+ea_bp_d16		EAR1D16	#CPU_BP, #CPU_SS_FIX
 
 ea_d16			mov		r4, lr
 				ldr		r0, [r9, #CPU_CS_BASE]
@@ -298,33 +169,83 @@ ea_d16			mov		r4, lr
 				add		r0, r0, r1
 				mov		pc, r4
 
-ea_bp_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldr		r2, [r9, #CPU_SS_FIX]
-				mov		r3, r0 lsl #24
-				mov		r12, r1 lsl #16
-				add		r8, r8, #(1 << 16)
-				add		r1, r12, r3, asr #8
-				add		r0, r2, r1 lsr #16
-				mov		pc, r4
-
-ea_bp_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldr		r2, [r9, #CPU_SS_FIX]
-				add		r8, r8, #(2 << 16)
-				add		r3, r0, r1
-				bic		r1, r3, #(1 << 16)
-				add		r0, r1, r2
-				mov		pc, r4
-
 
 ; ---- calc_lea
+
+	MACRO
+$label	LER1	$r
+$label		ldrh	r0, [r9, $r]
+			mov		pc, lr
+	MEND
+
+	MACRO
+$label	LER1D8	$r
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread
+			ldrh	r1, [r9, $r]
+			add		r8, r8, #(1 << 16)
+			tst		r0, #&80
+			orrne	r0, r0, #&ff00
+			add		r0, r0, r1
+			bic		r0, r0, #(1 << 16)
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	LER1D16	$r
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread_w
+			ldrh	r1, [r9, $r]
+			add		r8, r8, #(2 << 16)
+			add		r3, r1, r0
+			bic		r0, r3, #(1 << 16)
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	LER2	$r1, $r2
+$label		ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			add		r12, r2, r1
+			bic		r0, r12, #(1 << 16)
+			mov		pc, lr
+	MEND
+
+	MACRO
+$label	LER2D8	$r1, $r2
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread
+			ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			tst		r0, #&80
+			orrne	r0, r0, #&ff00
+			add		r0, r0, r1
+			add		r0, r0, r2
+			bic		r0, r0, #(3 << 16)
+			add		r8, r8, #(1 << 16)
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	LER2D16	$r1, $r2
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread_w
+			ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			add		r8, r8, #(2 << 16)
+			add		r12, r1, r0
+			add		r12, r12, r2
+			bic		r0, r12, #(3 << 16)
+			mov		pc, r4
+	MEND
 
 i286a_lea		and		r1, r0, #(&18 << 3)
 				and		r2, r0, #7
@@ -358,240 +279,118 @@ i286a_lea		and		r1, r0, #(&18 << 3)
 				b		lea_bp_d16
 				b		lea_bx_d16
 
-lea_bx_si		ldrh	r0, [r9, #CPU_BX]
-				ldrh	r1, [r9, #CPU_SI]
-				add		r2, r0, r1
-				bic		r0, r2, #&10000
-				mov		pc, lr
+lea_bx_si		LER2	#CPU_BX, #CPU_SI
+lea_bx_si_d8	LER2D8	#CPU_BX, #CPU_SI
+lea_bx_si_d16	LER2D16	#CPU_BX, #CPU_SI
+lea_bx_di		LER2	#CPU_BX, #CPU_DI
+lea_bx_di_d8	LER2D8	#CPU_BX, #CPU_DI
+lea_bx_di_d16	LER2D16	#CPU_BX, #CPU_DI
+lea_bp_si		LER2	#CPU_BP, #CPU_SI
+lea_bp_si_d8	LER2D8	#CPU_BP, #CPU_SI
+lea_bp_si_d16	LER2D16	#CPU_BP, #CPU_SI
+lea_bp_di		LER2	#CPU_BP, #CPU_DI
+lea_bp_di_d8	LER2D8	#CPU_BP, #CPU_DI
+lea_bp_di_d16	LER2D16	#CPU_BP, #CPU_DI
+lea_si			LER1	#CPU_SI
+lea_si_d8		LER1D8	#CPU_SI
+lea_si_d16		LER1D16	#CPU_SI
+lea_di			LER1	#CPU_DI
+lea_di_d8		LER1D8	#CPU_DI
+lea_di_d16		LER1D16	#CPU_DI
+lea_bx			LER1	#CPU_BX
+lea_bx_d8		LER1D8	#CPU_BX
+lea_bx_d16		LER1D16	#CPU_BX
+lea_bp_d8		LER1D8	#CPU_BP
+lea_bp_d16		LER1D16	#CPU_BP
 
-lea_bx_si_d8	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
+lea_d16			ldr		r0, [r9, #CPU_CS_BASE]
 				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-lea_bx_si_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				add		r3, r0, r1
-				add		r1, r3, r2
 				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-lea_bx_di		ldrh	r0, [r9, #CPU_BX]
-				ldrh	r1, [r9, #CPU_DI]
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, lr
-
-lea_bx_di_d8	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-lea_bx_di_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-lea_bp_si		ldrh	r0, [r9, #CPU_BP]
-				ldrh	r1, [r9, #CPU_SI]
-				add		r2, r0, r1
-				bic		r0, r2, #&10000
-				mov		pc, lr
-
-lea_bp_si_d8	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-lea_bp_si_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-lea_bp_di		ldrh	r0, [r9, #CPU_BP]
-				ldrh	r1, [r9, #CPU_DI]
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, lr
-
-lea_bp_di_d8	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-lea_bp_di_d16	mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-lea_si			ldrh	r0, [r9, #CPU_SI]
-				mov		pc, lr
-
-lea_si_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_SI]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_si_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_SI]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_di			ldrh	r0, [r9, #CPU_DI]
-				mov		pc, lr
-
-lea_di_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_DI]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_di_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_DI]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_bx			ldrh	r0, [r9, #CPU_BX]
-				mov		pc, lr
-
-lea_bx_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_bx_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_d16			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				add		r8, r8, #(2 << 16)
-				mov		pc, r4
-
-lea_bp_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-lea_bp_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
+				b		i286a_memoryread_w
 
 
 ; ---- calc_a
+
+	MACRO
+$label	AR1		$r, $b
+$label		ldrh	r0, [r9, $r]
+			ldr		r6, [r9, $b]
+			mov		pc, lr
+	MEND
+
+	MACRO
+$label	AR1D8	$r, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread
+			ldrh	r1, [r9, $r]
+			ldr		r6, [r9, $b]
+			add		r8, r8, #(1 << 16)
+			tst		r0, #&80
+			orrne	r0, r0, #&ff00
+			add		r0, r0, r1
+			bic		r0, r0, #(1 << 16)
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	AR1D16	$r, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread_w
+			ldrh	r1, [r9, $r]
+			ldr		r6, [r9, $b]
+			add		r8, r8, #(2 << 16)
+			add		r3, r1, r0
+			bic		r0, r3, #(1 << 16)
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	AR2		$r1, $r2, $b
+$label		ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			ldr		r6, [r9, $b]
+			add		r12, r2, r1
+			bic		r0, r12, #(1 << 16)
+			mov		pc, lr
+	MEND
+
+	MACRO
+$label	AR2D8	$r1, $r2, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread
+			ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			ldr		r6, [r9, $b]
+			tst		r0, #&80
+			orrne	r0, r0, #&ff00
+			add		r0, r0, r1
+			add		r0, r0, r2
+			bic		r0, r0, #(3 << 16)
+			add		r8, r8, #(1 << 16)
+			mov		pc, r4
+	MEND
+
+	MACRO
+$label	AR2D16	$r1, $r2, $b
+$label		ldr		r0, [r9, #CPU_CS_BASE]
+			mov		r4, lr
+			add		r0, r0, r8 lsr #16
+			bl		i286a_memoryread_w
+			ldrh	r1, [r9, $r1]
+			ldrh	r2, [r9, $r2]
+			ldr		r6, [r9, $b]
+			add		r8, r8, #(2 << 16)
+			add		r12, r1, r0
+			add		r12, r12, r2
+			bic		r0, r12, #(3 << 16)
+			mov		pc, r4
+	MEND
 
 i286a_a			and		r1, r0, #(&18 << 3)
 				and		r2, r0, #7
@@ -625,261 +424,35 @@ i286a_a			and		r1, r0, #(&18 << 3)
 				b		a_bp_d16
 				b		a_bx_d16
 
-a_bx_si			ldrh	r0, [r9, #CPU_BX]
-				ldrh	r1, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r2, r0, r1
-				bic		r0, r2, #&10000
-				mov		pc, lr
+a_bx_si			AR2		#CPU_BX, #CPU_SI, #CPU_DS_FIX
+a_bx_si_d8		AR2D8	#CPU_BX, #CPU_SI, #CPU_DS_FIX
+a_bx_si_d16		AR2D16	#CPU_BX, #CPU_SI, #CPU_DS_FIX
+a_bx_di			AR2		#CPU_BX, #CPU_DI, #CPU_DS_FIX
+a_bx_di_d8		AR2D8	#CPU_BX, #CPU_DI, #CPU_DS_FIX
+a_bx_di_d16		AR2D16	#CPU_BX, #CPU_DI, #CPU_DS_FIX
+a_bp_si			AR2		#CPU_BP, #CPU_SI, #CPU_SS_FIX
+a_bp_si_d8		AR2D8	#CPU_BP, #CPU_SI, #CPU_SS_FIX
+a_bp_si_d16		AR2D16	#CPU_BP, #CPU_SI, #CPU_SS_FIX
+a_bp_di			AR2		#CPU_BP, #CPU_DI, #CPU_SS_FIX
+a_bp_di_d8		AR2D8	#CPU_BP, #CPU_DI, #CPU_SS_FIX
+a_bp_di_d16		AR2D16	#CPU_BP, #CPU_DI, #CPU_SS_FIX
+a_si			AR1		#CPU_SI, #CPU_DS_FIX
+a_si_d8			AR1D8	#CPU_SI, #CPU_DS_FIX
+a_si_d16		AR1D16	#CPU_SI, #CPU_DS_FIX
+a_di			AR1		#CPU_DI, #CPU_DS_FIX
+a_di_d8			AR1D8	#CPU_DI, #CPU_DS_FIX
+a_di_d16		AR1D16	#CPU_DI, #CPU_DS_FIX
+a_bx			AR1		#CPU_BX, #CPU_DS_FIX
+a_bx_d8			AR1D8	#CPU_BX, #CPU_DS_FIX
+a_bx_d16		AR1D16	#CPU_BX, #CPU_DS_FIX
+a_bp_d8			AR1D8	#CPU_BP, #CPU_SS_FIX
+a_bp_d16		AR1D16	#CPU_BP, #CPU_SS_FIX
 
-a_bx_si_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
+a_d16			ldr		r0, [r9, #CPU_CS_BASE]
 				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-a_bx_si_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-a_bx_di			ldrh	r0, [r9, #CPU_BX]
-				ldrh	r1, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, lr
-
-a_bx_di_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-a_bx_di_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-a_bp_si			ldrh	r0, [r9, #CPU_BP]
-				ldrh	r1, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				add		r2, r0, r1
-				bic		r0, r2, #&10000
-				mov		pc, lr
-
-a_bp_si_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-a_bp_si_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-a_bp_di			ldrh	r0, [r9, #CPU_BP]
-				ldrh	r1, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, lr
-
-a_bp_di_d8		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r1, r2, r1
-				add		r8, r8, #(1 << 16)
-				add		r2, r0, r1
-				bic		r0, r2, #(3 << 16)
-				mov		pc, r4
-
-a_bp_di_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				ldrh	r2, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				add		r3, r0, r1
-				add		r1, r3, r2
-				add		r8, r8, #(2 << 16)
-				bic		r0, r1, #(3 << 16)
-				mov		pc, r4
-
-a_si			ldrh	r0, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				mov		pc, lr
-
-a_si_d8			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_SI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_si_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_SI]
 				ldr		r6, [r9, #CPU_DS_FIX]
 				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_di			ldrh	r0, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				mov		pc, lr
-
-a_di_d8			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_di_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_DI]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_bx			ldrh	r0, [r9, #CPU_BX]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				mov		pc, lr
-
-a_bx_d8			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BX]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_bx_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BX]
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_d16			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldr		r6, [r9, #CPU_DS_FIX]
-				add		r8, r8, #(2 << 16)
-				mov		pc, r4
-
-a_bp_d8			mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread
-				ldrh	r1, [r9, #CPU_BP]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				tst		r0, #&80
-				orrne	r0, r0, #&ff00
-				add		r2, r0, r1
-				add		r8, r8, #(1 << 16)
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
-
-a_bp_d16		mov		r4, lr
-				ldr		r0, [r9, #CPU_CS_BASE]
-				ldr		r6, [r9, #CPU_SS_FIX]
-				add		r0, r0, r8 lsr #16
-				bl		i286a_memoryread_w
-				ldrh	r1, [r9, #CPU_BP]
-				add		r8, r8, #(2 << 16)
-				add		r2, r1, r0
-				bic		r0, r2, #(1 << 16)
-				mov		pc, r4
+				b		i286a_memoryread_w
 
 	END
 

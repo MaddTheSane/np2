@@ -1,65 +1,7 @@
 #include	"compiler.h"
 #include	"cpucore.h"
-#include	"egcmem.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"vram.h"
-#include	"font.h"
 
 #define	USE_HIMEM		0x110000
-
-
-REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
-
-	UINT32	address;
-
-	address = (seg << 4) + LOW16(off);
-	if (address < I286_MEMREADMAX) {
-		return(mem[address]);
-	}
-	else {
-		return(i286_memoryread(address));
-	}
-}
-
-REG16 MEMCALL i286_memword_read(UINT seg, UINT off) {
-
-	UINT32	address;
-
-	address = (seg << 4) + LOW16(off);
-	if (address < (I286_MEMREADMAX - 1)) {
-		return(LOADINTELWORD(mem + address));
-	}
-	else {
-		return(i286_memoryread_w(address));
-	}
-}
-
-void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 value) {
-
-	UINT32	address;
-
-	address = (seg << 4) + LOW16(off);
-	if (address < I286_MEMWRITEMAX) {
-		mem[address] = (BYTE)value;
-	}
-	else {
-		i286_memorywrite(address, value);
-	}
-}
-
-void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
-
-	UINT32	address;
-
-	address = (seg << 4) + LOW16(off);
-	if (address < (I286_MEMWRITEMAX - 1)) {
-		STOREINTELWORD(mem + address, value);
-	}
-	else {
-		i286_memorywrite_w(address, value);
-	}
-}
 
 void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 

@@ -1,7 +1,7 @@
 
 	INCLUDE		i286a.inc
 
-	IMPORT		i286core
+	IMPORT		i286acore
 	IMPORT		i286a_memoryread
 	IMPORT		i286a_memorywrite_w
 	EXPORT		i286a_localint
@@ -114,7 +114,7 @@ i286a_interrupt	ldr		r1, iai_r9
 				str		r2, [r9, #CPU_CS_BASE]
 				CPUSV
 				ldmia	sp!, {r4 - r9, pc}
-iai_r9			dcd		i286core + CPU_SIZE
+iai_r9			dcd		i286acore + CPU_SIZE
 
 	END
 

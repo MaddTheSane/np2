@@ -187,7 +187,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	I286CORE	i286core;
+extern	I286CORE	i286acore;
 extern	const UINT8	iflags[];
 
 void i286a_reset(void);
@@ -204,67 +204,67 @@ void i286a_step(void);
 
 // ---- macros
 
-#define	mem				i286core.m
+#define	mem				i286acore.m
 
-#define	CPU_STATSAVE	i286core.s
+#define	CPU_STATSAVE	i286acore.s
 
-#define	CPU_AX			i286core.s.r.w.ax
-#define	CPU_BX			i286core.s.r.w.bx
-#define	CPU_CX			i286core.s.r.w.cx
-#define	CPU_DX			i286core.s.r.w.dx
-#define	CPU_SI			i286core.s.r.w.si
-#define	CPU_DI			i286core.s.r.w.di
-#define	CPU_BP			i286core.s.r.w.bp
-#define	CPU_SP			i286core.s.r.w.sp
-#define	CPU_CS			i286core.s.r.w.cs
-#define	CPU_DS			i286core.s.r.w.ds
-#define	CPU_ES			i286core.s.r.w.es
-#define	CPU_SS			i286core.s.r.w.ss
-#define	CPU_IP			i286core.s.r.w.ip
+#define	CPU_AX			i286acore.s.r.w.ax
+#define	CPU_BX			i286acore.s.r.w.bx
+#define	CPU_CX			i286acore.s.r.w.cx
+#define	CPU_DX			i286acore.s.r.w.dx
+#define	CPU_SI			i286acore.s.r.w.si
+#define	CPU_DI			i286acore.s.r.w.di
+#define	CPU_BP			i286acore.s.r.w.bp
+#define	CPU_SP			i286acore.s.r.w.sp
+#define	CPU_CS			i286acore.s.r.w.cs
+#define	CPU_DS			i286acore.s.r.w.ds
+#define	CPU_ES			i286acore.s.r.w.es
+#define	CPU_SS			i286acore.s.r.w.ss
+#define	CPU_IP			i286acore.s.r.w.ip
 
-#define	ES_BASE			i286core.s.es_base
-#define	CS_BASE			i286core.s.cs_base
-#define	SS_BASE			i286core.s.ss_base
-#define	DS_BASE			i286core.s.ds_base
+#define	ES_BASE			i286acore.s.es_base
+#define	CS_BASE			i286acore.s.cs_base
+#define	SS_BASE			i286acore.s.ss_base
+#define	DS_BASE			i286acore.s.ds_base
 
-#define	CPU_AL			i286core.s.r.b.al
-#define	CPU_BL			i286core.s.r.b.bl
-#define	CPU_CL			i286core.s.r.b.cl
-#define	CPU_DL			i286core.s.r.b.dl
-#define	CPU_AH			i286core.s.r.b.ah
-#define	CPU_BH			i286core.s.r.b.bh
-#define	CPU_CH			i286core.s.r.b.ch
-#define	CPU_DH			i286core.s.r.b.dh
+#define	CPU_AL			i286acore.s.r.b.al
+#define	CPU_BL			i286acore.s.r.b.bl
+#define	CPU_CL			i286acore.s.r.b.cl
+#define	CPU_DL			i286acore.s.r.b.dl
+#define	CPU_AH			i286acore.s.r.b.ah
+#define	CPU_BH			i286acore.s.r.b.bh
+#define	CPU_CH			i286acore.s.r.b.ch
+#define	CPU_DH			i286acore.s.r.b.dh
 
-#define	CPU_FLAG		i286core.s.r.w.flag
-#define	CPU_FLAGL		i286core.s.r.b.flag_l
+#define	CPU_FLAG		i286acore.s.r.w.flag
+#define	CPU_FLAGL		i286acore.s.r.b.flag_l
 
-#define	CPU_REMCLOCK	i286core.s.remainclock
-#define	CPU_BASECLOCK	i286core.s.baseclock
-#define	CPU_CLOCK		i286core.s.clock
-#define	CPU_ADRSMASK	i286core.s.adrsmask
-#define	CPU_RESETREQ	i286core.s.resetreq
-#define	CPU_ITFBANK		i286core.s.itfbank
-#define	CPU_INPADRS		i286core.s.inport
+#define	CPU_REMCLOCK	i286acore.s.remainclock
+#define	CPU_BASECLOCK	i286acore.s.baseclock
+#define	CPU_CLOCK		i286acore.s.clock
+#define	CPU_ADRSMASK	i286acore.s.adrsmask
+#define	CPU_RESETREQ	i286acore.s.resetreq
+#define	CPU_ITFBANK		i286acore.s.itfbank
+#define	CPU_INPADRS		i286acore.s.inport
 
-#define	CPU_EXTMEM		i286core.e.ext
-#define	CPU_EXTMEMSIZE	i286core.e.extsize
+#define	CPU_EXTMEM		i286acore.e.ext
+#define	CPU_EXTMEMSIZE	i286acore.e.extsize
 
-#define	CPU_TYPE		i286core.s.cpu_type
+#define	CPU_TYPE		i286acore.s.cpu_type
 
 #if defined(CPUSTRUC_MEMWAIT)
-#define	MEMWAIT_TRAM	i286core.e.tramwait
-#define	MEMWAIT_VRAM	i286core.e.vramwait
-#define	MEMWAIT_GRCG	i286core.e.grcgwait
+#define	MEMWAIT_TRAM	i286acore.e.tramwait
+#define	MEMWAIT_VRAM	i286acore.e.vramwait
+#define	MEMWAIT_GRCG	i286acore.e.grcgwait
 #endif
 
 
-#define	CPU_isDI		(!(i286core.s.r.w.flag & I_FLAG))
-#define	CPU_isEI		(i286core.s.r.w.flag & I_FLAG)
-#define	CPU_CLI			i286core.s.r.w.flag &= ~I_FLAG;						\
-						i286core.s.trap = 0;
-#define	CPU_STI			i286core.s.r.w.flag |= I_FLAG;						\
-						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
+#define	CPU_isDI		(!(i286acore.s.r.w.flag & I_FLAG))
+#define	CPU_isEI		(i286acore.s.r.w.flag & I_FLAG)
+#define	CPU_CLI			i286acore.s.r.w.flag &= ~I_FLAG;					\
+						i286acore.s.trap = 0;
+#define	CPU_STI			i286acore.s.r.w.flag |= I_FLAG;						\
+						i286acore.s.trap = (i286acore.s.r.w.flag >> 8) & 1;
 
 #define	CPU_INITIALIZE()
 #define	CPU_RESET			i286a_reset
