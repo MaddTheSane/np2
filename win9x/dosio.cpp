@@ -266,8 +266,8 @@ static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
 #if !defined(_WIN32_WCE)
 	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
-		((file_cmpname(w32fd->cFileName, ".")) ||
-		(file_cmpname(w32fd->cFileName, "..")))) {
+		((!file_cmpname(w32fd->cFileName, ".")) ||
+		(!file_cmpname(w32fd->cFileName, "..")))) {
 		return(FAILURE);
 	}
 #endif

@@ -100,6 +100,15 @@ static BOOL hddsea(void *vpItem, void *vpArg) {
 	return(FALSE);
 }
 
+static BOOL hddseadir(void *vpItem, void *vpArg) {
+
+	if ((((HDRVLST)vpItem)->di.attr & 0x10) &&
+		(!memcmp(((HDRVLST)vpItem)->di.fcbname, vpArg, 11))) {
+		return(TRUE);
+	}
+	return(FALSE);
+}
+
 LISTARRAY hostdrvs_getpathlist(const char *realpath) {
 
 	FLISTH		flh;
@@ -237,45 +246,61 @@ hdsgrp_err:
 	return(FAILURE);
 }
 
+BOOL hostdrvs_getrealdir(char *path, int size, char *fcb, char *dospath) {
+
+	LISTARRAY	lst;
+	HDRVLST		hdl;
+
+	file_cpyname(path, np2cfg.hdrvroot, size);
+	if (dospath[0] == '\\') {
+		file_setseparator(path, size);
+		dospath++;
+	}
+	else if (dospath[0] != '\0') {
+		goto hdsgrd_err;
+	}
+	while(1) {
+		dospath = dospath2fcb(fcb, dospath);
+		if (dospath[0] != '\\') {
+			break;
+		}
+		lst = hostdrvs_getpathlist(path);
+		hdl = (HDRVLST)listarray_enum(lst, hddseadir, fcb);
+		if (hdl != NULL) {
+			file_catname(path, hdl->realname, size);
+		}
+		listarray_destroy(lst);
+		if (hdl == NULL) {
+			goto hdsgrd_err;
+		}
+		file_setseparator(path, size);
+		dospath++;
+	}
+	if (dospath[0] != '\0') {
+		goto hdsgrd_err;
+	}
+	return(SUCCESS);
+
+hdsgrd_err:
+	return(FAILURE);
+}
+
 BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 
 	char		path[MAX_PATH];
+	char		fcb[11];
 	LISTARRAY	lst;
 	HDRVLST		hdl;
-	char		fcbname[11];
 	char		dosname[16];
 	UINT		i;
 	char		*p;
 
-	file_cpyname(path, np2cfg.hdrvroot, sizeof(path));
-	lst = NULL;
-	if (dospath[0] != '\\') {
-		goto hdsgrp_err;
+	if ((hostdrvs_getrealdir(path, sizeof(path), fcb, dospath) != SUCCESS) ||
+	 	(fcb[0] == ' ')) {
+		return(FAILURE);
 	}
-	while(1) {
-		file_setseparator(path, sizeof(path));
-		dospath++;
-		if (dospath[0] == '\0') {
-			goto hdsgrp_err;
-		}
-		dospath = dospath2fcb(fcbname, dospath);
-		if (dospath[0] != '\\') {
-			break;
-		}
-		listarray_destroy(lst);
-		lst = hostdrvs_getpathlist(path);
-		hdl = (HDRVLST)listarray_enum(lst, hddsea, fcbname);
-		if ((hdl == NULL) || (!(hdl->di.attr & 0x10))) {
-			goto hdsgrp_err;
-		}
-		file_catname(path, hdl->realname, sizeof(path));
-	}
-	if (dospath[0] != '\0') {
-		goto hdsgrp_err;
-	}
-	listarray_destroy(lst);
 	lst = hostdrvs_getpathlist(path);
-	hdl = (HDRVLST)listarray_enum(lst, hddsea, fcbname);
+	hdl = (HDRVLST)listarray_enum(lst, hddsea, fcb);
 	if (hdl != NULL) {
 		file_catname(path, hdl->realname, sizeof(path));
 		if (hdp) {
@@ -285,30 +310,25 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 	}
 	else {
 		p = dosname;
-		for (i=0; (i<8) && (fcbname[i] != ' '); i++) {
-			*p++ = fcbname[i];
+		for (i=0; (i<8) && (fcb[i] != ' '); i++) {
+			*p++ = fcb[i];
 		}
-		if (fcbname[8] != ' ') {
+		if (fcb[8] != ' ') {
 			*p++ = '.';
-			for (i=8; (i<11) && (fcbname[i] != ' '); i++) {
-				*p++ = fcbname[i];
+			for (i=8; (i<11) && (fcb[i] != ' '); i++) {
+				*p++ = fcb[i];
 			}
 		}
 		*p = '\0';
 		file_catname(path, dosname, sizeof(path));
 		if (hdp) {
-			CopyMemory(hdp->di.fcbname, fcbname, 11);
-			hdp->di.size = 0;
-			hdp->di.attr = 0;
+			ZeroMemory(&hdp->di, sizeof(hdp->di));
+			CopyMemory(hdp->di.fcbname, fcb, 11);
 			file_cpyname(hdp->path, path, sizeof(hdp->path));
 		}
 	}
 	listarray_destroy(lst);
 	return(SUCCESS);
-
-hdsgrp_err:
-	listarray_destroy(lst);
-	return(FAILURE);
 }
 
 

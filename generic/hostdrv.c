@@ -468,6 +468,7 @@ static void change_currdir(INTRST intrst) {
 	}
 
 	ptr = intrst->filename_ptr;
+	TRACEOUT(("change_currdir %s", intrst->filename_ptr));
 	if (ptr[0] == '\0') {							// るーと
 		strcpy(intrst->filename_ptr, "\\");
 		strcpy(intrst->current_path, intrst->filename_ptr);
@@ -732,6 +733,7 @@ static void rename_file(INTRST intrst) {
 		return;
 	}
 
+	// ワイルドカードくるんで要修正…
 	if ((hostdrvs_getrealpath(&hdp1, intrst->filename_ptr) != SUCCESS) ||
 		(hostdrvs_getrealpath(&hdp2, intrst->filename_ptr_2) != SUCCESS)) {
 		fail(intrst, ERR_PATHNOTFOUND);
@@ -740,7 +742,6 @@ static void rename_file(INTRST intrst) {
 	TRACEOUT(("rename_file %s to %s - failed", hdp1.path, hdp2.path));
 	fail(intrst, ERR_ACCESSDENIED);
 }
-
 
 /* 13 */
 static void delete_file(INTRST intrst) {
@@ -752,6 +753,7 @@ static void delete_file(INTRST intrst) {
 		return;
 	}
 
+	// ワイルドカードくるんで要修正…
 	if ((hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
 		(hdp.di.attr & 0x10)) {
 		fail(intrst, ERR_PATHNOTFOUND);

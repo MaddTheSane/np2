@@ -22,6 +22,9 @@ typedef struct {
 // 一覧取得
 LISTARRAY hostdrvs_getpathlist(const char *realpath);
 
+// ホスト側のフォルダを得る
+BOOL hostdrvs_getrealdir(char *path, int size, char *fcb, char *dospath);
+
 // ホスト側のファイル名を得る
 BOOL hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath);
 

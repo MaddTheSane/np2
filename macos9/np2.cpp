@@ -119,12 +119,12 @@ static void MenuBarInit(void) {
 #if TARGET_API_MAC_CARBON
 	hmenu = GetMenuHandle(IDM_FDD2);
 	SetItemCmd(hmenu, LoWord(IDM_FDD2OPEN), 'D');
-	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2OPEN), kMenuOptionModifier);
+	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2OPEN), kMenuShiftModifier);
 	SetItemCmd(hmenu, LoWord(IDM_FDD2EJECT), 'E');
-	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2EJECT), kMenuOptionModifier);
+	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2EJECT), kMenuShiftModifier);
 	hmenu = GetMenuHandle(IDM_SASI2);
 	SetItemCmd(hmenu, LoWord(IDM_SASI2OPEN), 'O');
-	SetMenuItemModifiers(hmenu, LoWord(IDM_SASI2OPEN), kMenuOptionModifier);
+	SetMenuItemModifiers(hmenu, LoWord(IDM_SASI2OPEN), kMenuShiftModifier);
 #else
 	EnableItem(GetMenuHandle(IDM_DEVICE), LoWord(IDM_MOUSE));
 	EnableItem(GetMenuHandle(IDM_KEYBOARD), LoWord(IDM_F12MOUSE));
