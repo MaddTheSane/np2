@@ -2,7 +2,7 @@ AS		= masm
 AOPT	= /ML /DNP2
 OBJ		= ..\obj\romrel
 
-all: $(OBJ) ..\bios\startup.res hddboot.res
+all: $(OBJ) ..\bios\startup.res ..\fdd\hddboot.res
 
 $(OBJ):
 	if not exist $(OBJ) mkdir $(OBJ)
@@ -21,8 +21,8 @@ $(OBJ)\startup.obj: startup.asm
 	$(AS) $(AOPT) $(*B),$*,$*;
 
 
-hddboot.res: $(OBJ) $(OBJ)\hddboot.bin
-	bin2txt $(OBJ)\hddboot.bin hddboot > hddboot.res
+..\fdd\hddboot.res: $(OBJ) $(OBJ)\hddboot.bin
+	bin2txt $(OBJ)\hddboot.bin hdddiskboot > ..\fdd\hddboot.res
 
 $(OBJ)\hddboot.bin: $(OBJ)\hddboot.exe
 	exe2bin $(OBJ)\hddboot $(OBJ)\hddboot.bin
