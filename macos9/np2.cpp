@@ -245,6 +245,10 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_SCREENOPT:
+			dialog_scropt();
+			break;
+
 #if defined(NP2GCC)
         case IDM_MOUSE:
             mouse_running(MOUSE_XOR);

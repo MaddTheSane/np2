@@ -38,7 +38,7 @@ typedef struct {
 	char	index[10];
 	UINT16	ver;
 	UINT32	size;
-} NP2FLAGPART_T;
+} NP2FENT;
 
 enum {
 	NP2FLAG_BIN			= 0,
@@ -138,15 +138,15 @@ static BOOL num2proc(void *func, const PROCTBL *tbl, int size) {
 // ----
 
 typedef struct {
-	FILEH		fh;
-	long		pos;
-	long		bak;
-	long		next;
-	NP2FHDR		f;
-	NP2FLAGPART_T	p;
-} NP2FFILE;
+	FILEH	fh;
+	long	pos;
+	long	bak;
+	long	next;
+	NP2FHDR	f;
+	NP2FENT	p;
+} _NP2FFILE, *NP2FFILE;
 
-static int flagopen(NP2FFILE *f, const char *filename, ERR_BUF *e) {
+static int flagopen(NP2FFILE f, const char *filename, ERR_BUF *e) {
 
 	if (f) {
 		f->fh = file_open(filename);
@@ -185,7 +185,7 @@ static int flagopen(NP2FFILE *f, const char *filename, ERR_BUF *e) {
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagcreate(NP2FFILE *f, const char *filename) {
+static int flagcreate(NP2FFILE f, const char *filename) {
 
 	if (f) {
 		f->fh = file_create(filename);
@@ -203,10 +203,10 @@ static int flagcreate(NP2FFILE *f, const char *filename) {
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagload_create(NP2FFILE *f) {
+static int flagload_create(NP2FFILE f) {
 
 	if (f) {
-		ZeroMemory(&f->p, sizeof(NP2FLAGPART_T));
+		ZeroMemory(&f->p, sizeof(NP2FENT));
 		if (f->pos & 15) {
 			f->pos += 15;
 			f->pos &= ~0xf;
@@ -214,18 +214,17 @@ static int flagload_create(NP2FFILE *f) {
 				return(NP2FLAG_FAILURE);
 			}
 		}
-		if (file_read(f->fh, &f->p, sizeof(NP2FLAGPART_T))
-												!= sizeof(NP2FLAGPART_T)) {
+		if (file_read(f->fh, &f->p, sizeof(NP2FENT)) != sizeof(NP2FENT)) {
 			return(NP2FLAG_FAILURE);
 		}
-		f->pos += sizeof(NP2FLAGPART_T);
+		f->pos += sizeof(NP2FENT);
 		f->next = f->pos + f->p.size;
 		return(NP2FLAG_SUCCESS);
 	}
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagload_load(NP2FFILE *f, void *buf, UINT size) {
+static int flagload_load(NP2FFILE f, void *buf, UINT size) {
 
 	if (f && buf && size && (file_read(f->fh, buf, size) == size)) {
 		f->pos += size;
@@ -234,7 +233,7 @@ static int flagload_load(NP2FFILE *f, void *buf, UINT size) {
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagload_close(NP2FFILE *f) {
+static int flagload_close(NP2FFILE f) {
 
 	if (file_seek(f->fh, f->next, 0) != f->next) {
 		return(NP2FLAG_FAILURE);
@@ -243,11 +242,11 @@ static int flagload_close(NP2FFILE *f) {
 	return(NP2FLAG_SUCCESS);
 }
 
-static int flagsave_create(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_create(NP2FFILE f, const STENTRY *t) {
 
 	if (f && t) {
 		int		len;
-		ZeroMemory(&f->p, sizeof(NP2FLAGPART_T));
+		ZeroMemory(&f->p, sizeof(NP2FENT));
 		if (f->pos & 15) {
 			UINT rem;
 			rem = 16 - (f->pos & 15);
@@ -266,17 +265,16 @@ static int flagsave_create(NP2FFILE *f, const STENTRY *t) {
 			CopyMemory(f->p.index, t->index, len);
 		}
 		f->p.ver = t->ver;
-		if (file_write(f->fh, &f->p, sizeof(NP2FLAGPART_T))
-												!= sizeof(NP2FLAGPART_T)) {
+		if (file_write(f->fh, &f->p, sizeof(NP2FENT)) != sizeof(NP2FENT)) {
 			return(NP2FLAG_FAILURE);
 		}
-		f->pos += sizeof(NP2FLAGPART_T);
+		f->pos += sizeof(NP2FENT);
 		return(NP2FLAG_SUCCESS);
 	}
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagsave_save(NP2FFILE *f, void *buf, UINT size) {
+static int flagsave_save(NP2FFILE f, void *buf, UINT size) {
 
 	if (f && buf && size && (file_write(f->fh, buf, size) == size)) {
 		f->pos += size;
@@ -286,7 +284,7 @@ static int flagsave_save(NP2FFILE *f, void *buf, UINT size) {
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagsave_close(NP2FFILE *f) {
+static int flagsave_close(NP2FFILE f) {
 
 	if (!f) {
 		goto fs_closeerr;
@@ -294,8 +292,7 @@ static int flagsave_close(NP2FFILE *f) {
 	if (file_seek(f->fh, f->bak, 0) != f->bak) {
 		goto fs_closeerr;
 	}
-	if (file_write(f->fh, &f->p, sizeof(NP2FLAGPART_T))
-												!= sizeof(NP2FLAGPART_T)) {
+	if (file_write(f->fh, &f->p, sizeof(NP2FENT)) != sizeof(NP2FENT)) {
 		goto fs_closeerr;
 	}
 	if (file_seek(f->fh, f->pos, 0) == f->pos) {
@@ -306,7 +303,7 @@ fs_closeerr:
 	return(NP2FLAG_FAILURE);
 }
 
-static void flagclose(NP2FFILE *f) {
+static void flagclose(NP2FFILE f) {
 
 	if (f) {
 		file_close(f->fh);
@@ -316,7 +313,7 @@ static void flagclose(NP2FFILE *f) {
 
 // ----
 
-static int flagsave_term(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_term(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 
@@ -328,7 +325,7 @@ static int flagsave_term(NP2FFILE *f, const STENTRY *t) {
 
 // ----
 
-static int flagsave_common(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_common(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 
@@ -340,7 +337,7 @@ static int flagsave_common(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int flagload_common(NP2FFILE *f, const STENTRY *t) {
+static int flagload_common(NP2FFILE f, const STENTRY *t) {
 
 	return(flagload_load(f, t->arg1, t->arg2));
 }
@@ -348,7 +345,7 @@ static int flagload_common(NP2FFILE *f, const STENTRY *t) {
 
 // -----
 
-static int flagload_clock(NP2FFILE *f, const STENTRY *t) {
+static int flagload_clock(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 
@@ -361,7 +358,7 @@ static int flagload_clock(NP2FFILE *f, const STENTRY *t) {
 
 // -----
 
-static int flagsave_dma(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_dma(NP2FFILE f, const STENTRY *t) {
 
 	int			ret;
 	int			i;
@@ -383,7 +380,7 @@ static int flagsave_dma(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int flagload_dma(NP2FFILE *f, const STENTRY *t) {
+static int flagload_dma(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	int		i;
@@ -411,7 +408,7 @@ static int flagload_dma(NP2FFILE *f, const STENTRY *t) {
 
 // -----
 
-static int flagsave_egc(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_egc(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	_EGC	egcbak;
@@ -428,7 +425,7 @@ static int flagsave_egc(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int flagload_egc(NP2FFILE *f, const STENTRY *t) {
+static int flagload_egc(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 
@@ -442,7 +439,7 @@ static int flagload_egc(NP2FFILE *f, const STENTRY *t) {
 
 // -----
 
-static int flagsave_ext(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_ext(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 
@@ -457,7 +454,7 @@ static int flagsave_ext(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int flagload_ext(NP2FFILE *f, const STENTRY *t) {
+static int flagload_ext(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	int		i;
@@ -505,7 +502,7 @@ typedef struct {
 	NEVENTCB	proc;
 } NEVTITEM;
 
-static int nevent_save(NP2FFILE *f, int num) {
+static int nevent_save(NP2FFILE f, int num) {
 
 	NEVTITEM	nit;
 	UINT		i;
@@ -526,7 +523,7 @@ static int nevent_save(NP2FFILE *f, int num) {
 	return(flagsave_save(f, &nit, sizeof(nit)));
 }
 
-static int flagsave_evt(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_evt(NP2FFILE f, const STENTRY *t) {
 
 	NEVTSAVE	nevt;
 	int			ret;
@@ -549,7 +546,7 @@ static int flagsave_evt(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int nevent_load(NP2FFILE *f, UINT *tbl, UINT *pos) {
+static int nevent_load(NP2FFILE f, UINT *tbl, UINT *pos) {
 
 	int			ret;
 	NEVTITEM	nit;
@@ -582,7 +579,7 @@ static int nevent_load(NP2FFILE *f, UINT *tbl, UINT *pos) {
 	return(ret);
 }
 
-static int flagload_evt(NP2FFILE *f, const STENTRY *t) {
+static int flagload_evt(NP2FFILE f, const STENTRY *t) {
 
 	int			ret;
 	NEVTSAVE	nevt;
@@ -606,7 +603,7 @@ static int flagload_evt(NP2FFILE *f, const STENTRY *t) {
 
 // ----
 
-static int flagsave_gij(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_gij(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	int		i;
@@ -627,7 +624,7 @@ static int flagsave_gij(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int flagload_gij(NP2FFILE *f, const STENTRY *t) {
+static int flagload_gij(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	int		i;
@@ -668,7 +665,7 @@ typedef struct {
 	BYTE	extop[4];
 } OPNKEY;
 
-static int flagsave_fm(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_fm(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	UINT	saveflg;
@@ -783,7 +780,7 @@ static void play_psgreg(PSGGEN psg) {
 	}
 }
 
-static int flagload_fm(NP2FFILE *f, const STENTRY *t) {
+static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	UINT	saveflg;
@@ -920,7 +917,7 @@ typedef struct {
 	DOSTIME	time;
 } STATDISK;
 
-static int disksave(NP2FFILE *f, const char *path, int readonly) {
+static int disksave(NP2FFILE f, const char *path, int readonly) {
 
 	STATDISK	st;
 	FILEH		fh;
@@ -938,7 +935,7 @@ static int disksave(NP2FFILE *f, const char *path, int readonly) {
 	return(flagsave_save(f, &st, sizeof(st)));
 }
 
-static int flagsave_disk(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_disk(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 	BYTE	i;
@@ -960,7 +957,7 @@ static int flagsave_disk(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int diskcheck(NP2FFILE *f, const char *name, ERR_BUF *e) {
+static int diskcheck(NP2FFILE f, const char *name, ERR_BUF *e) {
 
 	int			ret;
 	FILEH		fh;
@@ -991,7 +988,7 @@ static int diskcheck(NP2FFILE *f, const char *name, ERR_BUF *e) {
 	return(ret);
 }
 
-static int flagcheck_disk(NP2FFILE *f, const STENTRY *t, ERR_BUF *e) {
+static int flagcheck_disk(NP2FFILE f, const STENTRY *t, ERR_BUF *e) {
 
 	int		ret;
 	int		i;
@@ -1015,7 +1012,7 @@ static int flagcheck_disk(NP2FFILE *f, const STENTRY *t, ERR_BUF *e) {
 	return(ret);
 }
 
-static int flagload_disk(NP2FFILE *f, const STENTRY *t) {
+static int flagload_disk(NP2FFILE f, const STENTRY *t) {
 
 	int			ret;
 	BYTE		i;
@@ -1051,7 +1048,7 @@ static int flagload_disk(NP2FFILE *f, const STENTRY *t) {
 // -----
 
 #ifdef _MIDICH
-static int flagsave_midi(NP2FFILE *f, const STENTRY *t) {
+static int flagsave_midi(NP2FFILE f, const STENTRY *t) {
 
 	UINT	device;
 	COMMNG	cm;
@@ -1083,7 +1080,7 @@ static int flagsave_midi(NP2FFILE *f, const STENTRY *t) {
 	return(ret);
 }
 
-static int flagload_midi(NP2FFILE *f, const STENTRY *t) {
+static int flagload_midi(NP2FFILE f, const STENTRY *t) {
 
 	_MIDICH	mch[16];
 	UINT	device;
@@ -1121,7 +1118,7 @@ static int flagload_midi(NP2FFILE *f, const STENTRY *t) {
 
 // ----
 
-static int flagcheck_versize(NP2FFILE *f, const STENTRY *t, ERR_BUF *e) {
+static int flagcheck_versize(NP2FFILE f, const STENTRY *t, ERR_BUF *e) {
 
 	if ((f) && (t)) {
 		if ((f->p.ver == t->ver) && (f->p.size == t->arg2)) {
@@ -1133,7 +1130,7 @@ static int flagcheck_versize(NP2FFILE *f, const STENTRY *t, ERR_BUF *e) {
 	return(NP2FLAG_FAILURE);
 }
 
-static int flagcheck_veronly(NP2FFILE *f, const STENTRY *t, ERR_BUF *e) {
+static int flagcheck_veronly(NP2FFILE f, const STENTRY *t, ERR_BUF *e) {
 
 	if ((f) && (t)) {
 		if (f->p.ver == t->ver) {
@@ -1150,7 +1147,7 @@ static int flagcheck_veronly(NP2FFILE *f, const STENTRY *t, ERR_BUF *e) {
 
 int statsave_save(const char *filename) {
 
-	NP2FFILE	f;
+	_NP2FFILE	f;
 	int			ret;
 	UINT		i;
 
@@ -1210,7 +1207,7 @@ int statsave_save(const char *filename) {
 
 int statsave_check(const char *filename, char *buf, int size) {
 
-	NP2FFILE	f;
+	_NP2FFILE	f;
 	int			ret;
 	UINT		i;
 	BOOL		done;
@@ -1290,7 +1287,7 @@ int statsave_check(const char *filename, char *buf, int size) {
 
 int statsave_load(const char *filename) {
 
-	NP2FFILE	f;
+	_NP2FFILE	f;
 	int			ret;
 	UINT		i;
 	BOOL		done;
