@@ -47,11 +47,30 @@ SCRN_BUFSIZE	equ		04b000h
 
 GDCCMD_MAX		equ		32
 
-				struc	i286reg_t
+				struc	i286stat_t
 .reg			resw	14
 .remainclock	resd	1
 .baseclock		resd	1
 .clock			resd	1
+.adrsmask		resd	1
+.es_base		resd	1
+.cs_base		resd	1
+.ss_base		resd	1
+.ds_base		resd	1
+.ss_fix			resd	1
+.ds_fix			resd	1
+.prefix			resw	1
+.trap			resb	1
+.cpu_type		resb	1
+.pf_semaphore	resd	1
+.repbak			resd	1
+.inport			resd	1
+.prefetchque	resd	1
+.GDTR			resb	6
+.IDTR			resb	6
+.MSW			resw	1
+.resetreq		resb	1
+.itfbank		resb	1
 				endstruc
 
 				struc	gdcd_t
@@ -107,7 +126,6 @@ GDCCMD_MAX		equ		32
 
 				struc	extmem_t
 .maxmem			resd	1
-.adrsmask		resd	1
 .pageptr		resd	4
 .target			resd	1
 .page			resd	4

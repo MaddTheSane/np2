@@ -1,10 +1,4 @@
 
-#if 0
-#define I286_OUT void
-typedef	BYTE	I286_INB;
-typedef UINT16	I286_INW;
-#endif
-
 #ifndef IOOUTCALL
 #define	IOOUTCALL
 #endif
@@ -50,7 +44,6 @@ extern "C" {
 extern	_ARTIC		artic;
 extern	_CGROM		cgrom;
 extern	_CGWINDOW	cgwindow;
-extern	_CPUIO		cpuio;
 extern	_CRTC		crtc;
 extern	_DMAC		dmac;
 extern	_EGC		egc;
@@ -59,7 +52,6 @@ extern	_FDC		fdc;
 extern	_GDC		gdc;
 extern	_GDCS		gdcs;
 extern	_GRCG		grcg;
-extern	_ITF		itf;
 extern	_KEYB		keyb;
 extern	_MOUSEIF	mouseif;
 extern	_NMIIO		nmiio;

@@ -94,7 +94,7 @@ I286 v30pop_ss(void) {							// 17: pop ss
 				shl		eax, 4					// make segreg
 				mov		SS_BASE, eax
 				mov		SS_FIX, eax
-				cmp		i286reg.prefix, 0		// 00/06/24
+				cmp		i286core.s.prefix, 0	// 00/06/24
 				je		noprefix
 				call	removeprefix
 				pop		eax
@@ -204,7 +204,7 @@ I286 v30mov_seg_ea(void) {						// 8E: mov segrem, EA
 		segsetr:ret
 
 				align	4
-		setss:	cmp		i286reg.prefix, 0		// 00/05/13
+		setss:	cmp		i286core.s.prefix, 0	// 00/05/13
 				je		noprefix
 				pop		eax
 				call	eax						// eax<-offset removeprefix
@@ -1006,7 +1006,7 @@ LABEL void v30(void) {
 
 	__asm {
 				pushad
-				mov		ebx, dword ptr (i286reg.prefetchque)
+				mov		ebx, dword ptr (i286core.s.prefetchque)
 				movzx	esi, I286_IP
 
 				cmp		I286_TRAP, 0
@@ -1019,7 +1019,7 @@ v30_mnlp:		movzx	eax, bl
 				call	v30op[eax*4]
 				cmp		I286_REMCLOCK, 0
 				jg		v30_mnlp
-				mov		dword ptr (i286reg.prefetchque), ebx
+				mov		dword ptr (i286core.s.prefetchque), ebx
 				mov		I286_IP, si
 				popad
 				ret
@@ -1030,7 +1030,7 @@ v30_dma_mnlp:	movzx	eax, bl
 				call	dmap_i286
 				cmp		I286_REMCLOCK, 0
 				jg		v30_dma_mnlp
-				mov		dword ptr (i286reg.prefetchque), ebx
+				mov		dword ptr (i286core.s.prefetchque), ebx
 				mov		I286_IP, si
 				popad
 				ret
@@ -1042,7 +1042,7 @@ v30_trapping:	movzx	eax, bl
 				je		v30notrap
 				mov		ecx, 1
 				call	i286x_localint
-v30notrap:		mov		dword ptr (i286reg.prefetchque), ebx
+v30notrap:		mov		dword ptr (i286core.s.prefetchque), ebx
 				mov		I286_IP, si
 				popad
 				ret
@@ -1053,7 +1053,7 @@ LABEL void v30_step(void) {
 
 	__asm {
 				pushad
-				mov		ebx, dword ptr (i286reg.prefetchque)
+				mov		ebx, dword ptr (i286core.s.prefetchque)
 				movzx	esi, I286_IP
 
 				movzx	eax, bl
@@ -1064,7 +1064,7 @@ LABEL void v30_step(void) {
 				mov		ecx, 1
 				call	i286x_localint
 nexts:
-				mov		dword ptr (i286reg.prefetchque), ebx
+				mov		dword ptr (i286core.s.prefetchque), ebx
 				mov		I286_IP, si
 
 				call	dmap_i286

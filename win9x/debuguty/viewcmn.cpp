@@ -156,8 +156,8 @@ void viewcmn_setbank(NP2VIEW_T *view) {
 
 	dmem = &view->dmem;
 	dmem->vram = gdcs.disp;
-	dmem->itf = itf.bank;
-	dmem->A20 = (BYTE)((extmem.adrsmask >> 20) & 1);
+	dmem->itf = i286core.s.itfbank;
+	dmem->A20 = (BYTE)((i286core.s.adrsmask >> 20) & 1);
 }
 
 

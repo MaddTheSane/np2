@@ -86,7 +86,6 @@ BOOL extmem_init(BYTE usemem) {
 	if (usemem > 13) {											// ver0.28
 		usemem = 13;
 	}
-	extmem.adrsmask = 0x0fffff;
 	extmem.target = 0;
 	extmem.maxmem = 0;
 	for (i=0; i<4; i++) {

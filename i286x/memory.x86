@@ -7,7 +7,7 @@
 section .bss
 
 	extern	_mem
-	extern	_i286reg
+	extern	_i286core
 	extern	_grcg
 	extern	_extmem
 	extern	_gdcs
@@ -15,7 +15,6 @@ section .bss
 	extern	_vramupdate
 	extern	_cgwindow
 ;	extern	___font
-	extern	_itf
 	extern	_vramop
 
 	extern	_extmemmng_ptr
@@ -99,7 +98,7 @@ section .text
 ; normal memory
 					align	16
 @i286_wt:			mov		ebx, ecx
-					and		ebx, [_extmem + extmem_t.adrsmask]
+					and		ebx, [_i286core + i286stat_t.adrsmask]
 					mov		[MAINMEMORY + ebx], dl
 					pop		ebx
 					ret
@@ -107,7 +106,7 @@ section .text
 ; tram write
 					align	16
 @tram_wt:			mov		ebx, [_vramop + vramop_t.tramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		ebx, ecx
 					cmp		ecx, 000a2000h
 					jnc		short wtram_a
@@ -156,7 +155,7 @@ wcgwindow_e:		pop		ebx
 					or		byte [_vramupdate + ebx], 1
 					or		byte [_gdcs + gdcs_t.grphdisp], 1
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -168,7 +167,7 @@ wcgwindow_e:		pop		ebx
 					or		byte [_vramupdate + ebx], 2
 					or		byte [_gdcs + gdcs_t.grphdisp], 2
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -189,7 +188,7 @@ wcgwindow_e:		pop		ebx
 					or		byte [_gdcs + gdcs_t.grphdisp], 1
 
 grcg_rmw:			mov		ebx, [_vramop + vramop_t.grcgwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		ebx, dword [_grcg + grcg_t.mode]
 					mov		bl, dl
 					not		bl
@@ -238,7 +237,7 @@ grcgrmw_end:		pop		ecx
 					or		byte [_gdcs + gdcs_t.grphdisp], 1
 
 grcg_tdw:			mov		ebx, [_vramop + vramop_t.grcgwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		bh, [_grcg + grcg_t.modereg]
 					shr		bh, 1
 					jc		short grcgtdw_r
@@ -297,7 +296,7 @@ grcgtdw_end:		pop		ecx
 ; normal memory
 					align	16
 @i286_rd:			mov		ebx, ecx
-					and		ebx, [_extmem + extmem_t.adrsmask]
+					and		ebx, [_i286core + i286stat_t.adrsmask]
 					mov		al, [MAINMEMORY + ebx]
 					pop		ebx
 					ret
@@ -305,7 +304,7 @@ grcgtdw_end:		pop		ecx
 ; font cg-window
 					align	16
 @tram_rd:			mov		ebx, [_vramop + vramop_t.tramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					cmp		ecx, 0a4000h
 					jnc		rcgwindow_s
 rcgwindow_n:		mov		al, [MAINMEMORY + ecx]
@@ -328,7 +327,7 @@ rcgwindow_s:		cmp		ecx, 0a5000h
 					align	16
 @vram_r0:			mov		al, [VIDEOMEMORY + ecx]
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -336,7 +335,7 @@ rcgwindow_s:		cmp		ecx, 0a5000h
 					align	16
 @vram_r1:			mov		al, [VIDEOMEMORY + VRAM_STEP + ecx]
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -351,7 +350,7 @@ rcgwindow_s:		cmp		ecx, 0a5000h
 					and		ecx, 7fffh
 
 grcg_tcr:			mov		ebx, [_vramop + vramop_t.grcgwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		al, 0
 					mov		bh, [_grcg + grcg_t.modereg]
 					shr		bh, 1
@@ -407,7 +406,7 @@ grcgtcr_end:		not		al
 
 ; BIOS or ITF
 					align	16
-@i286_itf:			cmp		byte [_itf], 0
+@i286_itf:			cmp		byte [_i286core + i286stat_t.itfbank], 0
 					jne		readmem_itr
 					mov		al, [MAINMEMORY + ecx]
 					pop		ebx
@@ -424,7 +423,7 @@ readmem_itr:		mov		ebx, ecx
 ; normal memory
 					align	16
 @i286w_wt:			mov		ebx, ecx
-					and		ebx, [_extmem + extmem_t.adrsmask]
+					and		ebx, [_i286core + i286stat_t.adrsmask]
 					mov		[MAINMEMORY + ebx], dx
 					pop		ebx
 					ret
@@ -432,7 +431,7 @@ readmem_itr:		mov		ebx, ecx
 ; tram write
 					align	16
 @tramw_wt:			mov		ebx, [_vramop + vramop_t.tramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		ebx, ecx
 					cmp		ecx, 000a1fffh
 					jnc		short wtramw_a
@@ -507,7 +506,7 @@ wcgwinw_odd:		add		ebx, dword [_cgwindow + cgwin_t.high]
 					or		word [_vramupdate + ebx], 0101h
 					or		byte [_gdcs + gdcs_t.grphdisp], 1
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -519,7 +518,7 @@ wcgwinw_odd:		add		ebx, dword [_cgwindow + cgwin_t.high]
 					or		word [_vramupdate + ebx], 0202h
 					or		byte [_gdcs + gdcs_t.grphdisp], 2
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -540,7 +539,7 @@ wcgwinw_odd:		add		ebx, dword [_cgwindow + cgwin_t.high]
 					or		byte [_gdcs + gdcs_t.grphdisp], 1
 
 grcgw_rmw:			mov		ebx, [_vramop + vramop_t.grcgwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					push	eax
 					mov		ebx, dword [_grcg + grcg_t.mode]
 					mov		bx, dx
@@ -591,7 +590,7 @@ grcgwrmw_end:		pop		eax
 					or		byte [_gdcs + gdcs_t.grphdisp], 1
 
 grcgw_tdw:			mov		ebx, [_vramop + vramop_t.grcgwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		ebx, [_grcg + grcg_t.mode]
 					test	ebx, 010000h
 					jne		short grcgwtdw_r
@@ -658,7 +657,7 @@ egcw_wtodd:
 ; normal memory
 					align	16
 @i286w_rd:			mov		ebx, ecx
-					and		ebx, [_extmem + extmem_t.adrsmask]
+					and		ebx, [_i286core + i286stat_t.adrsmask]
 					mov		ax, [MAINMEMORY + ebx]
 					pop		ebx
 					ret
@@ -666,7 +665,7 @@ egcw_wtodd:
 ; font cg-window
 					align	16
 @tramw_rd:			mov		ebx, [_vramop + vramop_t.tramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					cmp		ecx, 0a3fffh
 					jnc		rcgwwindow_s
 					mov		ax, [MAINMEMORY + ecx]
@@ -720,7 +719,7 @@ rcgwwindow_a4fff:	mov		ebx, dword [_cgwindow + cgwin_t.high]
 					align	16
 @vramw_r0:			mov		ax, [VIDEOMEMORY + ecx]
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -728,7 +727,7 @@ rcgwwindow_a4fff:	mov		ebx, dword [_cgwindow + cgwin_t.high]
 					align	16
 @vramw_r1:			mov		ax, [VIDEOMEMORY + VRAM_STEP + ecx]
 					mov		ebx, [_vramop + vramop_t.vramwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					pop		ebx
 					ret
 
@@ -743,7 +742,7 @@ rcgwwindow_a4fff:	mov		ebx, dword [_cgwindow + cgwin_t.high]
 					and		ecx, 7fffh
 
 grcgw_tcr:			mov		ebx, [_vramop + vramop_t.grcgwait]
-					sub		[_i286reg + i286reg_t.remainclock], ebx
+					sub		[_i286core + i286stat_t.remainclock], ebx
 					mov		ax, 0
 					mov		ebx, [_grcg + grcg_t.mode]
 					test	ebx, 010000h
@@ -820,7 +819,7 @@ egcw_rdodd:
 
 ; BIOS or ITF
 					align	16
-@i286w_itf:			cmp		byte [_itf], 0
+@i286w_itf:			cmp		byte [_i286core + i286stat_t.itfbank], 0
 					jne		readwmem_itr
 					mov		ax, [MAINMEMORY + ecx]
 					pop		ebx

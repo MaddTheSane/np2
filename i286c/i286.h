@@ -18,68 +18,67 @@ enum {
 #if defined(BYTESEX_LITTLE)
 
 typedef struct {
-	BYTE	al;
-	BYTE	ah;
-	BYTE	cl;
-	BYTE	ch;
-	BYTE	dl;
-	BYTE	dh;
-	BYTE	bl;
-	BYTE	bh;
-	BYTE	sp_l;
-	BYTE	sp_h;
-	BYTE	bp_l;
-	BYTE	bp_h;
-	BYTE	si_l;
-	BYTE	si_h;
-	BYTE	di_l;
-	BYTE	di_h;
-	BYTE	es_l;
-	BYTE	es_h;
-	BYTE	cs_l;
-	BYTE	cs_h;
-	BYTE	ss_l;
-	BYTE	ss_h;
-	BYTE	ds_l;
-	BYTE	ds_h;
-
-	BYTE	flag_l;
-	BYTE	flag_h;
-	BYTE	ip_l;
-	BYTE	ip_h;
+	UINT8	al;
+	UINT8	ah;
+	UINT8	cl;
+	UINT8	ch;
+	UINT8	dl;
+	UINT8	dh;
+	UINT8	bl;
+	UINT8	bh;
+	UINT8	sp_l;
+	UINT8	sp_h;
+	UINT8	bp_l;
+	UINT8	bp_h;
+	UINT8	si_l;
+	UINT8	si_h;
+	UINT8	di_l;
+	UINT8	di_h;
+	UINT8	es_l;
+	UINT8	es_h;
+	UINT8	cs_l;
+	UINT8	cs_h;
+	UINT8	ss_l;
+	UINT8	ss_h;
+	UINT8	ds_l;
+	UINT8	ds_h;
+	UINT8	flag_l;
+	UINT8	flag_h;
+	UINT8	ip_l;
+	UINT8	ip_h;
 } I286REG8;
 
 #else
 
 typedef struct {
-	BYTE	ah;
-	BYTE	al;
-	BYTE	ch;
-	BYTE	cl;
-	BYTE	dh;
-	BYTE	dl;
-	BYTE	bh;
-	BYTE	bl;
-	BYTE	sp_h;
-	BYTE	sp_l;
-	BYTE	bp_h;
-	BYTE	bp_l;
-	BYTE	si_h;
-	BYTE	si_l;
-	BYTE	di_h;
-	BYTE	di_l;
-	BYTE	es_h;
-	BYTE	es_l;
-	BYTE	cs_h;
-	BYTE	cs_l;
-	BYTE	ss_h;
-	BYTE	ss_l;
-	BYTE	ds_h;
-	BYTE	ds_l;
-	BYTE	flag_h;
-	BYTE	flag_l;
-	BYTE	ip_h;
-	BYTE	ip_l;
+	UINT8	ah;
+	UINT8	al;
+	UINT8	ch;
+	UINT8	cl;
+	UINT8	dh;
+	UINT8	dl;
+	UINT8	bh;
+	UINT8	bl;
+	UINT8	sp_h;
+	UINT8	sp_l;
+	UINT8	bp_h;
+	UINT8	bp_l;
+	UINT8	si_h;
+	UINT8	si_l;
+	UINT8	di_h;
+	UINT8	di_l;
+	UINT8	es_h;
+	UINT8	es_l;
+	UINT8	cs_h;
+	UINT8	cs_l;
+	UINT8	ss_h;
+	UINT8	ss_l;
+	UINT8	ds_h;
+	UINT8	ds_l;
+	UINT8	flag_h;
+	UINT8	flag_l;
+	UINT8	ip_h;
+	UINT8	ip_l;
 } I286REG8;
 
 #endif
@@ -104,8 +103,8 @@ typedef struct {
 typedef struct {
 	UINT16	limit;
 	UINT16	base;
-	BYTE	base24;
-	BYTE	reserved;
+	UINT8	base24;
+	UINT8	reserved;
 } I286DTR;
 
 typedef struct {
@@ -116,6 +115,7 @@ typedef struct {
 	SINT32	remainclock;
 	SINT32	baseclock;
 	UINT32	clock;
+	UINT32	adrsmask;						// ver0.72
 	UINT32	es_base;
 	UINT32	cs_base;
 	UINT32	ss_base;
@@ -123,8 +123,8 @@ typedef struct {
 	UINT32	ss_fix;
 	UINT32	ds_fix;
 	UINT16	prefix;
-	BYTE	trap;
-	BYTE	cpu_type;
+	UINT8	trap;
+	UINT8	cpu_type;
 	UINT32	pf_semaphore;
 	UINT32	repbak;
 	UINT32	inport;
@@ -132,62 +132,73 @@ typedef struct {
 	I286DTR	GDTR;
 	I286DTR	IDTR;
 	UINT16	MSW;
-} I286REG;
+	UINT8	resetreq;						// ver0.72
+	UINT8	itfbank;						// ver0.72
+} I286STAT;
+
+typedef struct {							// for ver0.73
+	UINT	dummy;
+} I286EXT;
+
+typedef struct {
+	I286STAT	s;							// STATsave‚³‚ê‚é“z
+	I286EXT		e;
+} I286CORE;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern	I286REG		i286reg;
+extern	I286CORE	i286core;
 extern	const BYTE	iflags[];
 
 
 #define		I286_MEM		mem
 
-#define		I286_REG		i286reg.r
-#define		I286_SEGREG		i286reg.r.w.es
+#define		I286_REG		i286core.s.r
+#define		I286_SEGREG		i286core.s.r.w.es
 
-#define		I286_AX			i286reg.r.w.ax
-#define		I286_BX			i286reg.r.w.bx
-#define		I286_CX			i286reg.r.w.cx
-#define		I286_DX			i286reg.r.w.dx
-#define		I286_SI			i286reg.r.w.si
-#define		I286_DI			i286reg.r.w.di
-#define		I286_BP			i286reg.r.w.bp
-#define		I286_SP			i286reg.r.w.sp
-#define		I286_CS			i286reg.r.w.cs
-#define		I286_DS			i286reg.r.w.ds
-#define		I286_ES			i286reg.r.w.es
-#define		I286_SS			i286reg.r.w.ss
-#define		I286_IP			i286reg.r.w.ip
+#define		I286_AX			i286core.s.r.w.ax
+#define		I286_BX			i286core.s.r.w.bx
+#define		I286_CX			i286core.s.r.w.cx
+#define		I286_DX			i286core.s.r.w.dx
+#define		I286_SI			i286core.s.r.w.si
+#define		I286_DI			i286core.s.r.w.di
+#define		I286_BP			i286core.s.r.w.bp
+#define		I286_SP			i286core.s.r.w.sp
+#define		I286_CS			i286core.s.r.w.cs
+#define		I286_DS			i286core.s.r.w.ds
+#define		I286_ES			i286core.s.r.w.es
+#define		I286_SS			i286core.s.r.w.ss
+#define		I286_IP			i286core.s.r.w.ip
 
-#define		SEG_BASE		i286reg.es_base
-#define		ES_BASE			i286reg.es_base
-#define		CS_BASE			i286reg.cs_base
-#define		SS_BASE			i286reg.ss_base
-#define		DS_BASE			i286reg.ds_base
-#define		SS_FIX			i286reg.ss_fix
-#define		DS_FIX			i286reg.ds_fix
+#define		SEG_BASE		i286core.s.es_base
+#define		ES_BASE			i286core.s.es_base
+#define		CS_BASE			i286core.s.cs_base
+#define		SS_BASE			i286core.s.ss_base
+#define		DS_BASE			i286core.s.ds_base
+#define		SS_FIX			i286core.s.ss_fix
+#define		DS_FIX			i286core.s.ds_fix
 
-#define		I286_AL			i286reg.r.b.al
-#define		I286_BL			i286reg.r.b.bl
-#define		I286_CL			i286reg.r.b.cl
-#define		I286_DL			i286reg.r.b.dl
-#define		I286_AH			i286reg.r.b.ah
-#define		I286_BH			i286reg.r.b.bh
-#define		I286_CH			i286reg.r.b.ch
-#define		I286_DH			i286reg.r.b.dh
+#define		I286_AL			i286core.s.r.b.al
+#define		I286_BL			i286core.s.r.b.bl
+#define		I286_CL			i286core.s.r.b.cl
+#define		I286_DL			i286core.s.r.b.dl
+#define		I286_AH			i286core.s.r.b.ah
+#define		I286_BH			i286core.s.r.b.bh
+#define		I286_CH			i286core.s.r.b.ch
+#define		I286_DH			i286core.s.r.b.dh
 
-#define		I286_FLAG		i286reg.r.w.flag
-#define		I286_FLAGL		i286reg.r.b.flag_l
-#define		I286_FLAGH		i286reg.r.b.flag_h
-#define		I286_TRAP		i286reg.trap
-#define		I286_OV			i286reg.ovflag
+#define		I286_FLAG		i286core.s.r.w.flag
+#define		I286_FLAGL		i286core.s.r.b.flag_l
+#define		I286_FLAGH		i286core.s.r.b.flag_h
+#define		I286_TRAP		i286core.s.trap
+#define		I286_OV			i286core.s.ovflag
 
-#define		I286_REMCLOCK	i286reg.remainclock
-#define		I286_BASECLOCK	i286reg.baseclock
-#define		I286_CLOCK		i286reg.clock
+#define		I286_REMCLOCK	i286core.s.remainclock
+#define		I286_BASECLOCK	i286core.s.baseclock
+#define		I286_CLOCK		i286core.s.clock
 
 
 enum {
@@ -202,12 +213,12 @@ enum {
 	O_FLAG			= 0x0800
 };
 
-#define		CPUTYPE			i286reg.cpu_type
+#define		CPUTYPE			i286core.s.cpu_type
 #define		CPUTYPE_V30		0x01
 
 // ver0.28
-#define		REPPOSBAK		i286reg.repbak
-#define		PREFIX_SMP		i286reg.pf_semaphore
+#define		REPPOSBAK		i286core.s.repbak
+#define		PREFIX_SMP		i286core.s.pf_semaphore
 
 #define		isI286DI		(!(I286_FLAG & I_FLAG))
 #define		isI286EI		(I286_FLAG & I_FLAG)

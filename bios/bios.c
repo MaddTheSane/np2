@@ -154,8 +154,6 @@ void bios_init(void) {
 		CopyMemory(mem + 0x0e8000, nosyscode, sizeof(nosyscode));
 	}
 
-	itf.bank = 0;
-
 	// BIOS hookのアドレス変更
 	for (i=0; i<0x20; i++) {
 		STOREINTELWORD(mem + 0xfd868 + i*2, biosoffset[i]);
@@ -252,7 +250,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 	UINT16	bootseg;
 
-	if ((itf.bank) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
+	if ((i286core.s.itfbank) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
 		I286_IP--;
 		I286_REMCLOCK = -1;
 		return(1);

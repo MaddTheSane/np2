@@ -1,7 +1,6 @@
 
 typedef struct {
 	UINT	maxmem;
-	UINT32	adrsmask;
 	BYTE	*pageptr[4];								// ver0.28
 	UINT	target;
 	UINT32	page[4];

@@ -16,7 +16,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	DWORD		pos;
 	char		str[128];
 	HFONT		hfont;
-	I286REG		*r;
+	I286STAT	*r;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -27,13 +27,13 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	if (view->lock) {
 		if (view->buf1.type != ALLOCTYPE_REG) {
-			if (viewcmn_alloc(&view->buf1, sizeof(i286reg))) {
+			if (viewcmn_alloc(&view->buf1, sizeof(i286core.s))) {
 				view->lock = FALSE;
 				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_REG;
-				CopyMemory(view->buf1.ptr, &i286reg, sizeof(i286reg));
+				CopyMemory(view->buf1.ptr, &i286core.s, sizeof(i286core.s));
 			}
 			viewcmn_putcaption(view);
 		}
@@ -41,10 +41,10 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	pos = view->pos;
 	if (view->lock) {
-		r = (I286REG *)view->buf1.ptr;
+		r = (I286STAT *)view->buf1.ptr;
 	}
 	else {
-		r = &i286reg;
+		r = &i286core.s;
 	}
 
 	for (y=0; y<rc->bottom && pos<4; y+=16, pos++) {

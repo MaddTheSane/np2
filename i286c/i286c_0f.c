@@ -13,10 +13,10 @@ I286_0F _sgdt(UINT op) {
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
-		i286_memorywrite_w(seg + ad, i286reg.GDTR.limit);
-		i286_memorywrite_w(seg + LOW16(ad + 2), i286reg.GDTR.base);
+		i286_memorywrite_w(seg + ad, i286core.s.GDTR.limit);
+		i286_memorywrite_w(seg + LOW16(ad + 2), i286core.s.GDTR.base);
 		i286_memorywrite_w(seg + LOW16(ad + 4),
-									(REG16)(0xff00 + i286reg.GDTR.base24));
+									(REG16)(0xff00 + i286core.s.GDTR.base24));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -31,10 +31,10 @@ I286_0F _sidt(UINT op) {
 	I286_WORKCLOCK(12);
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
-		i286_memorywrite_w(seg + ad, i286reg.IDTR.limit);
-		i286_memorywrite_w(seg + LOW16(ad + 2), i286reg.IDTR.base);
+		i286_memorywrite_w(seg + ad, i286core.s.IDTR.limit);
+		i286_memorywrite_w(seg + LOW16(ad + 2), i286core.s.IDTR.base);
 		i286_memorywrite_w(seg + LOW16(ad + 4),
-									(REG16)(0xff00 + i286reg.IDTR.base24));
+									(REG16)(0xff00 + i286core.s.IDTR.base24));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -49,10 +49,10 @@ I286_0F _lgdt(UINT op) {
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
-		i286reg.GDTR.limit = i286_memoryread_w(seg + ad);
-		i286reg.GDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
-		i286reg.GDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
-		i286reg.GDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
+		i286core.s.GDTR.limit = i286_memoryread_w(seg + ad);
+		i286core.s.GDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
+		i286core.s.GDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
+		i286core.s.GDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -67,10 +67,10 @@ I286_0F _lidt(UINT op) {
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
-		i286reg.IDTR.limit = i286_memoryread_w(seg + ad);
-		i286reg.IDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
-		i286reg.IDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
-		i286reg.IDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
+		i286core.s.IDTR.limit = i286_memoryread_w(seg + ad);
+		i286core.s.IDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
+		i286core.s.IDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
+		i286core.s.IDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -81,11 +81,11 @@ I286_0F _smsw(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		*(REG16_B20(op)) = i286reg.MSW;
+		*(REG16_B20(op)) = i286core.s.MSW;
 	}
 	else {
 		I286_WORKCLOCK(6);
-		i286_memorywrite_w(CALC_EA(op), i286reg.MSW);
+		i286_memorywrite_w(CALC_EA(op), i286core.s.MSW);
 	}
 }
 
@@ -93,11 +93,11 @@ I286_0F _lmsw(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		i286reg.MSW = *(REG16_B20(op));
+		i286core.s.MSW = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(3);
-		i286reg.MSW = i286_memoryread_w(CALC_EA(op));
+		i286core.s.MSW = i286_memoryread_w(CALC_EA(op));
 	}
 }
 
@@ -113,7 +113,7 @@ I286_0F _loadall286(void) {
 	UINT16	tmp;
 
 	I286_WORKCLOCK(195);
-	i286reg.MSW = LOADINTELWORD(mem + 0x804);
+	i286core.s.MSW = LOADINTELWORD(mem + 0x804);
 	tmp = LOADINTELWORD(mem + 0x818);
 	I286_OV = tmp & O_FLAG;
 	I286_FLAG = tmp & (0xfff ^ O_FLAG);

@@ -519,8 +519,8 @@ void pccore_exec(BOOL draw) {
 	resetcnt++;
 #endif
 		pic_irq();
-		if (cpuio.reset_req) {
-			cpuio.reset_req = 0;
+		if (i286core.s.resetreq) {
+			i286core.s.resetreq = 0;
 			I286_CS = 0xf000;
 			CS_BASE = 0xf0000;
 			I286_IP = 0xfff0;

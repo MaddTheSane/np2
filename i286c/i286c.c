@@ -9,7 +9,7 @@
 #include	"i286c.mcr"
 
 
-	I286REG		i286reg;
+	I286CORE	i286core;
 
 const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,
@@ -136,9 +136,10 @@ void i286_initialize(void) {
 void i286_reset(void) {
 
 	i286_initialize();
-	ZeroMemory(&i286reg, sizeof(i286reg));
+	ZeroMemory(&i286core.s, sizeof(i286core.s));
 	I286_CS = 0x1fc0;
 	CS_BASE = 0x1fc00;
+	i286core.s.adrsmask = 0xfffff;
 }
 
 void i286_resetprefetch(void) {

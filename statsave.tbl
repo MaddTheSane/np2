@@ -63,18 +63,16 @@ static const PROCTBL dmaproc[] = {
 			{PROCID('d','m','e','c'), cs4231dmafunc}};
 
 static const STENTRY np2tbl[] = {
-	{"CPU286",		0,	NP2FLAG_CLOCK,	&i286reg,		sizeof(i286reg)},
+	{"CPU286",		0,	NP2FLAG_CLOCK,	&i286core.s,	sizeof(i286core.s)},
 	{"MEMORY",		0,	NP2FLAG_BIN,	mem,			0x10fff0},
 	{"VIDEO",		0,	NP2FLAG_BIN,	mem + VRAM1_B,	0x18000},
 	{"VIDEO2",		0,	NP2FLAG_BIN,	mem + VRAM1_E,	0x8000},
 	{"EXTMEM",		0,	NP2FLAG_EXT,	NULL,			0},
 
-	{"ITF",			0,	NP2FLAG_BIN,	&itf,			sizeof(itf)},
 	{"CORE",		0,	NP2FLAG_CLOCK,	&pc,			sizeof(pc)},
 	{"ARTIC",		0,	NP2FLAG_BIN,	&artic,			sizeof(artic)},
 	{"CGROM",		0,	NP2FLAG_BIN,	&cgrom,			sizeof(cgrom)},
 	{"CGWINDOW",	0,	NP2FLAG_BIN,	&cgwindow,		sizeof(cgwindow)},
-	{"CPUIO",		0,	NP2FLAG_BIN,	&cpuio,			sizeof(cpuio)},
 	{"CRTC",		0,	NP2FLAG_BIN,	&grcg,			sizeof(grcg)},
 	{"CRTC2",		0,	NP2FLAG_BIN,	&crtc,			sizeof(crtc)},
 	{"DMAC",		0,	NP2FLAG_DMA,	&dmac,			sizeof(dmac)},

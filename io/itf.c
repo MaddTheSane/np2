@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
@@ -9,11 +10,11 @@ static void IOOUTCALL itf_o043d(UINT port, BYTE dat) {
 
 	switch(dat) {
 		case 0x10:
-			itf.bank = 1;
+			i286core.s.itfbank = 1;
 			break;
 
 		case 0x12:
-			itf.bank = 0;
+			i286core.s.itfbank = 0;
 			break;
 	}
 	(void)port;
@@ -21,11 +22,6 @@ static void IOOUTCALL itf_o043d(UINT port, BYTE dat) {
 
 
 // ---- I/F
-
-void itf_reset(void) {
-
-	itf.bank = 1;
-}
 
 void itf_bind(void) {
 

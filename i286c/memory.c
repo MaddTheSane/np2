@@ -15,7 +15,7 @@
 
 static void MEMCALL i286_wt(UINT32 address, REG8 value) {
 
-	mem[address & extmem.adrsmask] = (BYTE)value;
+	mem[address & i286core.s.adrsmask] = (BYTE)value;
 }
 
 static void MEMCALL tram_wt(UINT32 address, REG8 value) {
@@ -193,7 +193,7 @@ static void MEMCALL i286_wn(UINT32 address, REG8 value) {
 
 static REG8 MEMCALL i286_rd(UINT32 address) {
 
-	return(mem[address & extmem.adrsmask]);
+	return(mem[address & i286core.s.adrsmask]);
 }
 
 static REG8 MEMCALL tram_rd(UINT32 address) {
@@ -283,7 +283,7 @@ static REG8 MEMCALL emmc_rd(UINT32 address) {
 
 static REG8 MEMCALL i286_itf(UINT32 address) {
 
-	if (itf.bank) {
+	if (i286core.s.itfbank) {
 		address = ITF_ADRS + LOW15(address);
 	}
 	return(mem[address]);
@@ -296,7 +296,7 @@ static void MEMCALL i286w_wt(UINT32 address, REG16 value) {
 
 	BYTE	*ptr;
 
-	ptr = mem + (address & extmem.adrsmask);
+	ptr = mem + (address & i286core.s.adrsmask);
 	STOREINTELWORD(ptr, value);
 }
 
@@ -461,7 +461,7 @@ static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
 	}
 	else {
 		extmem.pageptr[(address >> 14) & 3][0x3fff] = (BYTE)value;
-		extmem.pageptr[((address + 1)>> 14) & 3][0] = (BYTE)(value >> 8);
+		extmem.pageptr[((address + 1) >> 14) & 3][0] = (BYTE)(value >> 8);
 	}
 }
 
@@ -478,7 +478,7 @@ static REG16 MEMCALL i286w_rd(UINT32 address) {
 
 	BYTE	*ptr;
 
-	ptr = mem + (address & extmem.adrsmask);
+	ptr = mem + (address & i286core.s.adrsmask);
 	return(LOADINTELWORD(ptr));
 }
 
@@ -600,7 +600,7 @@ static REG16 MEMCALL emmcw_rd(UINT32 address) {
 
 static REG16 MEMCALL i286w_itf(UINT32 address) {
 
-	if (itf.bank) {
+	if (i286core.s.itfbank) {
 		address = ITF_ADRS + LOW15(address);
 	}
 	return(LOADINTELWORD(mem + address));
@@ -789,6 +789,7 @@ static REG16 MEMCALL _i286_memoryread_w(UINT32 address) {
 REG8 MEMCALL i286_memoryread(UINT32 address) {
 
 	REG8	r;
+
 	r = _i286_memoryread(address);
 	if (r & 0xffffff00) {
 		TRACEOUT(("error i286_memoryread %x %x", address, r));

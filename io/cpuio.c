@@ -10,8 +10,8 @@
 
 static void IOOUTCALL cpuio_of0(UINT port, BYTE dat) {
 
-	cpuio.reset_req = 1;
-	extmem.adrsmask = 0x0fffff;
+	i286core.s.adrsmask = 0x0fffff;
+	i286core.s.resetreq = 1;
 	i286_interrupt(0x02);
 	nevent_forceexit();
 	(void)port;
@@ -20,7 +20,7 @@ static void IOOUTCALL cpuio_of0(UINT port, BYTE dat) {
 
 static void IOOUTCALL cpuio_of2(UINT port, BYTE dat) {
 
-	extmem.adrsmask = 0x1fffff;
+	i286core.s.adrsmask = 0x1fffff;
 	(void)port;
 	(void)dat;
 }
@@ -44,7 +44,7 @@ static BYTE IOINPCALL cpuio_if2(UINT port) {
 	BYTE	ret;
 
 	ret = 0xfe;
-	if (extmem.adrsmask != 0x1fffff) {
+	if (i286core.s.adrsmask != 0x1fffff) {
 		ret++;
 	}
 	(void)port;
@@ -57,11 +57,11 @@ static void IOOUTCALL cpuio_of6(UINT port, BYTE dat) {
 
 	switch(dat) {
 		case 0x02:
-			extmem.adrsmask = 0x1fffff;
+			i286core.s.adrsmask = 0x1fffff;
 			break;
 
 		case 0x03:
-			extmem.adrsmask = 0x0fffff;
+			i286core.s.adrsmask = 0x0fffff;
 			break;
 	}
 	(void)port;
@@ -72,7 +72,7 @@ static BYTE IOINPCALL cpuio_if6(UINT port) {
 	BYTE	ret;
 
 	ret = 0x00;
-	if (extmem.adrsmask != 0x1fffff) {
+	if (i286core.s.adrsmask != 0x1fffff) {
 		ret |= 0x01;
 	}
 	if (nmi.enable) {
@@ -103,11 +103,6 @@ static const IOINP cpuioif0[8] = {
 					cpuio_if0,	cpuio_if2,	NULL,		cpuio_if6,
 					NULL,		NULL,		NULL,		NULL};
 #endif
-
-void cpuio_reset(void) {
-
-	ZeroMemory(&cpuio, sizeof(cpuio));
-}
 
 void cpuio_bind(void) {
 

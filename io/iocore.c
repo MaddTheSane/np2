@@ -12,7 +12,6 @@
 	_ARTIC		artic;
 	_CGROM		cgrom;
 	_CGWINDOW	cgwindow;
-	_CPUIO		cpuio;
 	_CRTC		crtc;
 	_DMAC		dmac;
 	_EGC		egc;
@@ -21,7 +20,6 @@
 	_GDC		gdc;
 	_GDCS		gdcs;
 	_GRCG		grcg;
-	_ITF		itf;
 	_KEYB		keyb;
 	_MOUSEIF	mouseif;
 	_NMIIO		nmiio;
@@ -416,7 +414,7 @@ icbld_err:
 
 static const IOCBFN resetfn[] = {
 			// PC-9801 System...
-			cgrom_reset,		cpuio_reset,		crtc_reset,
+			cgrom_reset,							crtc_reset,
 			dmac_reset,			gdc_reset,			fdc_reset,
 			keyboard_reset,		nmiio_reset,		pic_reset,
 			printif_reset,		rs232c_reset,		systemport_reset,
@@ -426,7 +424,7 @@ static const IOCBFN resetfn[] = {
 			itimer_reset,		mouseif_reset,
 
 			// extend
-			itf_reset,			artic_reset,		egc_reset,
+								artic_reset,		egc_reset,
 			extmem_reset,		np2sysp_reset};
 
 static const IOCBFN bindfn[] = {

@@ -392,17 +392,17 @@ static BYTE IOINPCALL gdc_i60(UINT port) {
 		gdc_work(GDCWORK_MASTER);
 	}
 #ifdef SEARHC_SYNC
-	if ((i286reg.inport) && (I286_REMCLOCK >= 5)) {
+	if ((i286core.s.inport) && (I286_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
-		memv = i286_memoryread_w(i286reg.inport);
+		memv = i286_memoryread_w(i286core.s.inport);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
-			i286reg.inport += 2;
-			memv = i286_memoryread_w(i286reg.inport);
+			i286core.s.inport += 2;
+			memv = i286_memoryread_w(i286core.s.inport);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(i286reg.inport + 2);
+			memv = i286_memoryread_w(i286core.s.inport + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
 					I286_REMCLOCK = -1;
@@ -559,17 +559,17 @@ static BYTE IOINPCALL gdc_ia0(UINT port) {
 		gdc_work(GDCWORK_SLAVE);
 	}
 #ifdef SEARHC_SYNC
-	if ((i286reg.inport) && (I286_REMCLOCK >= 5)) {
+	if ((i286core.s.inport) && (I286_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
-		memv = i286_memoryread_w(i286reg.inport);
+		memv = i286_memoryread_w(i286core.s.inport);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
-			i286reg.inport += 2;
-			memv = i286_memoryread_w(i286reg.inport);
+			i286core.s.inport += 2;
+			memv = i286_memoryread_w(i286core.s.inport);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(i286reg.inport + 2);
+			memv = i286_memoryread_w(i286core.s.inport + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
 					I286_REMCLOCK = -1;
