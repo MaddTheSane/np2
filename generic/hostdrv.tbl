@@ -76,7 +76,8 @@ typedef struct {
 	BYTE	file_name[11];
 	UINT8	file_attr;
 	BYTE	f1[10];
-	BYTE	file_time[4];
+	BYTE	file_time[2];
+	BYTE	file_date[2];
 	BYTE	start_sector[2];
 	BYTE	file_size[4];
 } _DIRREC, *DIRREC;
@@ -89,7 +90,8 @@ typedef struct {
 	BYTE	dev_info_word[2];
 	BYTE 	dev_drvr_ptr[4];
 	BYTE	start_sector[2];
-	BYTE	file_time[4];
+	BYTE	file_time[2];
+	BYTE	file_date[2];
 	BYTE	file_size[4];
 	BYTE	file_pos[4];
 	BYTE	rel_sector[2];

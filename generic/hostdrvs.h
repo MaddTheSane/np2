@@ -1,4 +1,24 @@
 
+typedef struct {
+	char	fcbname[12];
+	UINT	caps;
+	UINT32	size;
+	UINT32	attr;
+	DOSDATE	date;
+	DOSTIME	time;
+} HDRVDIR;
+
+typedef struct {
+	HDRVDIR	di;
+	char	realname[MAX_PATH];
+} _HDRVLST, *HDRVLST;
+
+typedef struct {
+	HDRVDIR	di;
+	char	path[MAX_PATH];
+} HDRVPATH;
+
+
 // ˆê——Žæ“¾
 LISTARRAY hostdrvs_getpathlist(const char *realpath);
 

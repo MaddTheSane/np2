@@ -286,7 +286,6 @@ grcgtdw_end:		pop		ecx
 					ret
 
 @i286_wb:			mov		[MAINMEMORY + 1c8000h - 0e8000h + ecx], dl
-					pop		ecx
 					pop		ebx
 					ret
 
@@ -654,7 +653,6 @@ egcw_wtodd:
 					ret
 
 @i286w_wb:			mov		[MAINMEMORY + 1c8000h - 0e8000h + ecx], dx
-					pop		ecx
 					pop		ebx
 					ret
 

@@ -400,9 +400,9 @@ I286 pop_es(void) {								// 07: pop es
 		__asm {
 				I286CLOCK(5)
 				REGPOP(I286_ES)
+				movzx	eax, ax
 				test	I286_MSW, MSW_PE
 				jne		short pop_es_pe
-				movzx	eax, ax
 				shl		eax, 4					// make segreg
 pop_es_base:	mov		ES_BASE, eax
 				GET_NEXTPRE1
@@ -613,9 +613,9 @@ I286 pop_ss(void) {								// 17: pop ss
 		__asm {
 				I286CLOCK(5)
 				REGPOP(I286_SS)
+				movzx	eax, ax
 				test	I286_MSW, MSW_PE
 				jne		short pop_ss_pe
-				movzx	eax, ax
 				shl		eax, 4					// make segreg
 pop_ss_base:	mov		SS_BASE, eax
 				mov		SS_FIX, eax
@@ -742,9 +742,9 @@ I286 pop_ds(void) {								// 1F: pop ds
 		__asm {
 				I286CLOCK(5)
 				REGPOP(I286_DS)
+				movzx	eax, ax
 				test	I286_MSW, MSW_PE
 				jne		short pop_ds_pe
-				movzx	eax, ax
 				shl		eax, 4					// make segreg
 pop_ds_base:	mov		DS_BASE, eax
 				mov		DS_FIX, eax
@@ -2450,9 +2450,9 @@ I286 mov_seg_ea(void) {							// 8E: mov segrem, EA
 				call	i286_memoryread_w
 		segset:
 				mov		word ptr I286_SEGREG[ebp], ax
+				movzx	eax, ax
 				test	I286_MSW, MSW_PE
 				jne		short mov_seg_pe
-				movzx	eax, ax
 				shl		eax, 4					// make segreg
 mov_seg_base:	mov		SEG_BASE[ebp*2], eax
 				sub		ebp, 2*2

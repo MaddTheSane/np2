@@ -1220,6 +1220,14 @@ SOURCE=..\GENERIC\DIPSWBMP.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\GENERIC\HOSTDRV.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRVS.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\GENERIC\KEYDISP.C
 # End Source File
 # End Group

@@ -22,9 +22,9 @@
 #define ROOTPATH_SIZE		(sizeof(ROOTPATH_NAME) - 1)
 
 static const char ROOTPATH[ROOTPATH_SIZE] = ROOTPATH_NAME;
-static const HDRVDIR hdd_volume = {"_HOSTDRIVE_", 0, 0x08};
-static const HDRVDIR hdd_owner  = {".          ", 0, 0x10};
-static const HDRVDIR hdd_parent = {"..         ", 0, 0x10};
+static const HDRVDIR hdd_volume = {"_HOSTDRIVE_", 0, 0, 0x08, {0}, {0}};
+static const HDRVDIR hdd_owner  = {".          ", 0, 0, 0x10, {0}, {0}};
+static const HDRVDIR hdd_parent = {"..         ", 0, 0, 0x10, {0}, {0}};
 
 
 //	see int2159-BX0000
@@ -171,6 +171,7 @@ static void store_dir(INTRST is, const HDRVDIR *di) {
 
 	DIRREC	dirrec;
 	UINT8	attr;
+	UINT16	reg;
 
 	// SDA“à‚ÌDIRREC‚ÉƒZƒbƒg
 	dirrec = is->dirrec_ptr;
@@ -180,14 +181,28 @@ static void store_dir(INTRST is, const HDRVDIR *di) {
 		attr |= 0x01;
 	}
 	dirrec->file_attr = attr;
-	STOREINTELDWORD(dirrec->file_time, 0);		// di->datetime
-	STOREINTELDWORD(dirrec->start_sector, ((UINT32)-1));
+	reg = 0;
+	if (di->caps & FLICAPS_TIME) {
+		reg |= (di->time.hour & 0x1f) << 11;
+		reg |= (di->time.minute & 0x3f) << 5;
+		reg |= (di->time.second & 0x3e) >> 1;
+	}
+	STOREINTELWORD(dirrec->file_time, reg);
+	reg = 0;
+	if (di->caps & FLICAPS_DATE) {
+		reg |= ((di->date.year - 1980) & 0x7f) << 9;
+		reg |= (di->date.month & 0x0f) << 5;
+		reg |= di->date.day & 0x1f;
+	}
+	STOREINTELWORD(dirrec->file_date, reg);
+	STOREINTELWORD(dirrec->start_sector, ((UINT16)-1));
 	STOREINTELDWORD(dirrec->file_size, di->size);
 }
 
 static void fill_sft(INTRST is, SFTREC sft, UINT num, HDRVDIR *di) {
 
 	UINT8	attr;
+	UINT16	reg;
 
 	attr = di->attr;
 	if (!IS_PERMITWRITE) {
@@ -195,7 +210,21 @@ static void fill_sft(INTRST is, SFTREC sft, UINT num, HDRVDIR *di) {
 	}
 	sft->file_attr = attr;
 	STOREINTELWORD(sft->start_sector, (UINT16)num);
-	STOREINTELDWORD(sft->file_time, 0);					// di->datetime
+
+	reg = 0;
+	if (di->caps & FLICAPS_TIME) {
+		reg |= (di->time.hour & 0x1f) << 11;
+		reg |= (di->time.minute & 0x3f) << 5;
+		reg |= (di->time.second & 0x3e) >> 1;
+	}
+	STOREINTELWORD(sft->file_time, reg);
+	reg = 0;
+	if (di->caps & FLICAPS_DATE) {
+		reg |= ((di->date.year - 1980) & 0x7f) << 9;
+		reg |= (di->date.month & 0x0f) << 5;
+		reg |= di->date.day & 0x1f;
+	}
+	STOREINTELWORD(sft->file_date, reg);
 	STOREINTELDWORD(sft->file_size, di->size);
 	STOREINTELWORD(sft->dir_sector, (UINT16)-1);
 	sft->dir_entry_no = (UINT8)-1;
@@ -679,11 +708,13 @@ static void get_fileattr(INTRST intrst) {
 		return;
 	}
 
+	TRACEOUT(("get_fileattr: ->%s", intrst->fcbname_ptr));
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS)) {
 		fail(intrst, ERR_FILENOTFOUND);
 		return;
 	}
+	TRACEOUT(("get_fileattr: %s - %x", hdp.path, hdp.di.attr));
 	ax = hdp.di.attr & 0x37;
 	if (!IS_PERMITWRITE) {
 		ax |= 0x01;
@@ -747,6 +778,7 @@ static void open_file(INTRST intrst) {
 	}
 	fetch_sft(intrst, &sft);
 
+	TRACEOUT(("open_file: %s %d", hdp.path, sft.open_mode[0] & 7));
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
 		(hdp.di.attr & 0x10)) {

@@ -1,22 +1,6 @@
 
 #define	DIRMAX_DEPTH		8
 
-typedef struct {
-	char	fcbname[12];
-	UINT32	size;
-	UINT32	attr;
-} HDRVDIR;
-
-typedef struct {
-	HDRVDIR	di;
-	char	realname[MAX_PATH];
-} _HDRVLST, *HDRVLST;
-
-typedef struct {
-	HDRVDIR	di;
-	char	path[MAX_PATH];
-} HDRVPATH;
-
 enum {
 	HDFMODE_READ		= 0x01,
 	HDFMODE_WRITE		= 0x02,

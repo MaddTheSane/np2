@@ -16,15 +16,6 @@ enum {												// ver0.28
 	FTYPE_MIMPI			// mimpi defaultƒtƒ@ƒCƒ‹
 };
 
-enum {
-	FILEATTR_READONLY	= 0x01,
-	FILEATTR_HIDDEN		= 0x02,
-	FILEATTR_SYSTEM		= 0x04,
-	FILEATTR_VOLUME		= 0x08,
-	FILEATTR_DIRECTORY	= 0x10,
-	FILEATTR_ARCHIVE	= 0x20
-};
-
 
 #define		FILEH				HANDLE
 #define		FILEH_INVALID		(INVALID_HANDLE_VALUE)
@@ -38,22 +29,41 @@ enum {
 	FSEEK_END	= 2
 };
 
+enum {
+	FILEATTR_READONLY	= 0x01,
+	FILEATTR_HIDDEN		= 0x02,
+	FILEATTR_SYSTEM		= 0x04,
+	FILEATTR_VOLUME		= 0x08,
+	FILEATTR_DIRECTORY	= 0x10,
+	FILEATTR_ARCHIVE	= 0x20
+};
+
+enum {
+	FLICAPS_SIZE		= 0x0001,
+	FLICAPS_ATTR		= 0x0002,
+	FLICAPS_DATE		= 0x0004,
+	FLICAPS_TIME		= 0x0008
+};
+
 typedef struct {
 	UINT16	year;		// cx
-	BYTE	month;		// dh
-	BYTE	day;		// dl
+	UINT8	month;		// dh
+	UINT8	day;		// dl
 } DOSDATE;
 
 typedef struct {
-	BYTE	hour;		// ch
-	BYTE	minute;		// cl
-	BYTE	second;		// dh
+	UINT8	hour;		// ch
+	UINT8	minute;		// cl
+	UINT8	second;		// dh
 } DOSTIME;
 
 typedef struct {
-	char	path[MAX_PATH];
+	UINT	caps;
 	UINT32	size;
 	UINT32	attr;
+	DOSDATE	date;
+	DOSTIME	time;
+	char	path[MAX_PATH];
 } FLINFO;
 
 

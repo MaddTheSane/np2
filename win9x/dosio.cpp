@@ -162,26 +162,35 @@ UINT file_getsize(FILEH handle) {
 	return(GetFileSize(handle, NULL));
 }
 
+static BOOL cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
+
+	FILETIME	localtime;
+	SYSTEMTIME	systime;
+
+	if ((FileTimeToLocalFileTime(file, &localtime) == 0) ||
+		(FileTimeToSystemTime(&localtime, &systime) == 0)) {
+		return(FAILURE);
+	}
+	if (dosdate) {
+		dosdate->year = (UINT16)systime.wYear;
+		dosdate->month = (UINT8)systime.wMonth;
+		dosdate->day = (UINT8)systime.wDay;
+	}
+	if (dostime) {
+		dostime->hour = (UINT8)systime.wHour;
+		dostime->minute = (UINT8)systime.wMinute;
+		dostime->second = (UINT8)systime.wSecond;
+	}
+	return(SUCCESS);
+}
+
 short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime) {
 
 	FILETIME	lastwrite;
-	FILETIME	localwrite;
-	SYSTEMTIME	syswrite;
 
 	if ((GetFileTime(handle, NULL, NULL, &lastwrite) == 0) ||
-		(FileTimeToLocalFileTime(&lastwrite, &localwrite) == 0) ||
-		(FileTimeToSystemTime(&localwrite, &syswrite) == 0)) {
+		(cnvdatetime(&lastwrite, dosdate, dostime) != SUCCESS)) {
 		return(-1);
-	}
-	if (dosdate) {
-		dosdate->year = (WORD)syswrite.wYear;
-		dosdate->month = (BYTE)syswrite.wMonth;
-		dosdate->day = (BYTE)syswrite.wDay;
-	}
-	if (dostime) {
-		dostime->hour = (BYTE)syswrite.wHour;
-		dostime->minute = (BYTE)syswrite.wMinute;
-		dostime->second = (BYTE)syswrite.wSecond;
 	}
 	return(0);
 }
@@ -262,16 +271,20 @@ FLISTH file_list1st(const char *dir, FLINFO *fli) {
 	milsjis_ncpy(path, dir, sizeof(path));
 	file_setseparator(path, sizeof(path));
 	milsjis_ncat(path, "*.*", sizeof(path));
+	TRACEOUT(("file_list1st %s", path));
 	hdl = FindFirstFile_A(path, &w32fd);
 	if ((hdl != INVALID_HANDLE_VALUE) && (fli)) {
+		fli->caps = FLICAPS_SIZE | FLICAPS_ATTR | FLICAPS_DATE | FLICAPS_TIME;
+		fli->size = w32fd.nFileSizeLow;
+		fli->attr = w32fd.dwFileAttributes;
+		cnvdatetime(&w32fd.ftLastWriteTime, &fli->date, &fli->time);
 #if defined(UNICODE)
 		WideCharToMultiByte(CP_ACP, 0, w32fd.cFileName, -1,
 								fli->path, sizeof(fli->path), NULL, NULL);
 #else
 		milstr_ncpy(fli->path, w32fd.cFileName, sizeof(fli->path));
+		TRACEOUT(("-> %s", w32fd.cFileName));
 #endif
-		fli->size = w32fd.nFileSizeLow;
-		fli->attr = w32fd.dwFileAttributes;
 	}
 	return(hdl);
 }
@@ -284,14 +297,16 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 		return(FAILURE);
 	}
 	if (fli) {
+		fli->caps = FLICAPS_SIZE | FLICAPS_ATTR | FLICAPS_DATE | FLICAPS_TIME;
+		fli->size = w32fd.nFileSizeLow;
+		fli->attr = w32fd.dwFileAttributes;
+		cnvdatetime(&w32fd.ftLastWriteTime, &fli->date, &fli->time);
 #if defined(UNICODE)
 		WideCharToMultiByte(CP_ACP, 0, w32fd.cFileName, -1,
 								fli->path, sizeof(fli->path), NULL, NULL);
 #else
 		milstr_ncpy(fli->path, w32fd.cFileName, sizeof(fli->path));
 #endif
-		fli->size = w32fd.nFileSizeLow;
-		fli->attr = w32fd.dwFileAttributes;
 	}
 	return(SUCCESS);
 }

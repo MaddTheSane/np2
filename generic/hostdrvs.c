@@ -5,7 +5,7 @@
 #include	"hostdrvs.h"
 
 
-static const HDRVDIR hddroot = {"           ", 0, 0x10};
+static const HDRVDIR hddroot = {"           ", 0, 0, 0x10, {0}, {0}};
 
 static const BYTE dospathchr[] = {
 			0xfa, 0x23,		// '&%$#"!  /.-,+*)(
@@ -96,9 +96,13 @@ LISTARRAY hostdrvs_getpathlist(const char *realpath) {
 				break;
 			}
 			CopyMemory(hdd->di.fcbname, fcbname, 11);
+			hdd->di.caps = fli.caps;
 			hdd->di.size = fli.size;
 			hdd->di.attr = fli.attr;
+			hdd->di.date = fli.date;
+			hdd->di.time = fli.time;
 			milstr_ncpy(hdd->realname, fli.path, sizeof(hdd->realname));
+			TRACEOUT(("%s -> %11s", fli.path, fcbname));
 		}
 	} while(file_listnext(flh, &fli) == SUCCESS);
 	if (listarray_getitems(ret) == 0) {
