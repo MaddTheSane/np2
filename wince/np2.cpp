@@ -29,7 +29,6 @@
 #include	"fddfile.h"
 #include	"font.h"
 #include	"timing.h"
-#include	"statsave.h"
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"sysmenu.h"

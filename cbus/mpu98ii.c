@@ -630,7 +630,7 @@ void mpu98ii_reset(void) {
 	mpu98.timebase = 2;
 	mpu98.port = 0xc0d0 | ((np2cfg.mpuopt & 0xf0) << 6);
 	mpu98.irqnum = mpuirqnum[np2cfg.mpuopt & 3];
-	pic_registext(mpu98.irqnum);
+//	pic_registext(mpu98.irqnum);
 	makeintclock();
 }
 

@@ -8,6 +8,27 @@
 
 // ----
 
+　ver0.73 → ver0.74
+
+
+　・内部変更
+　　　pccore.h の中で statsave.hをインクルード
+　　　　→ #include "statsave.h" をトル
+
+　　　np2cfg.hddfile[2] -> np2cfg.sasihdd[2]
+
+　　　void diskdrv_sethdd(REG8 drv, const char *fname);
+　　　　drv = BIOSのデバイス番号
+　　　　　0x00～0x01  SASI #0-1
+　　　　　0x20～0x23  SCSI #0-3  (SUPPORT_SCSIを定義した時のみ)
+
+　　　bios/sxsibios.c はリンク必須
+　　　cbus/sasiio.c - SUPPORT_SCSIを定義した時にリンク
+　　　cbus/scsiio.c cbus/scsicmd.c - SUPPORT_SCSIを定義した時にリンク
+
+
+// ----
+
 　ver0.72 → ver0.73
 
 　・主にRISC向けの最適化、その２

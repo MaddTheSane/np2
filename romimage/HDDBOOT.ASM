@@ -6,31 +6,27 @@ CODE	SEGMENT
 
 FIXCS		equ		2eh
 
-START:			mov		cx, 1000h
-				mov		bx, 8000h
-				mov		ss, cx
-				mov		sp, bx
-				add		bh, 20h
-				mov		es, bx
+START:			jmp		short main
+				nop
+				nop
+				db		"IPL1", 0, 0, 0, 01eh
 
-				xor		di, di
+main:			mov		ax, 0a04h
+				int		18h
+				mov		ah, 16h
+				mov		dx, 0e120h
+				int		18h
+				cli
 				cld
-				lea		ax, [di + 20h]
-				rep stosw
-				mov		al, 0e1h
-				mov		cx, 1fe0h
-atrclr:			stosb
-				inc		di
-				loop	atrclr
-
+				mov		ax, 0a000h
+				mov		es, ax
 				mov		si, offset nosysmsg
 				xor		di, di
 				call	putmsg
 				mov		di, 160
 				call	putmsg
-mine:			cli
-				hlt
-				jmp		mine
+mine:			hlt
+				jmp		short mine
 
 putmsg:			db		FIXCS
 				lodsw

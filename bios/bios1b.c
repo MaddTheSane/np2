@@ -4,9 +4,12 @@
 #include	"iocore.h"
 #include	"bios.h"
 #include	"biosmem.h"
+#include	"sxsibios.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
+#include	"scsicmd.h"
+#include	"timing.h"
 
 
 enum {
@@ -15,7 +18,7 @@ enum {
 };
 
 
-		char	fdmode = 0;
+// static	UINT8	fdmode = 0;
 static	BYTE	work[65536];
 static	BYTE	mtr_c = 0;
 static	UINT	mtr_r = 0;
@@ -23,14 +26,20 @@ static	UINT	mtr_r = 0;
 
 // ---- FDD
 
-static void init_fdd_equip(void) {
+void fddbios_equip(REG8 type, BOOL clear) {
 
-	UINT16	diskequip;
+	REG16	diskequip;
 
 	diskequip = GETBIOSMEM16(MEMW_DISK_EQUIP);
-	diskequip &= 0x0f00;
-	diskequip |= (UINT16)(~fdmode) & 3;
-	diskequip |= (UINT16)fdmode << 12;
+	if (clear) {
+		diskequip &= 0x0f00;
+	}
+	if (type == DISKTYPE_2HD) {
+		diskequip |= 0x0003;
+	}
+	if (type == DISKTYPE_2DD) {
+		diskequip |= 0x0300;
+	}
 	SETBIOSMEM16(MEMW_DISK_EQUIP, diskequip);
 }
 
@@ -396,7 +405,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 			break;
 
 		case 0x03:								// 初期化
-			init_fdd_equip();
+			fddbios_equip(type, FALSE);
 			ret_ah = 0x00;
 			break;
 
@@ -653,13 +662,15 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 static void init_sasi_equip(void) {
 
 	UINT16	diskequip;
-	UINT	i;
+	UINT8	i;
 	UINT16	bit;
+	SXSIDEV	sxsi;
 
 	diskequip = GETBIOSMEM16(MEMW_DISK_EQUIP);
 	diskequip &= 0xf0ff;
-	for (i=0, bit=0x0100; i<2; i++, bit<<=1) {
-		if (sxsi_hd[i].fname[0]) {
+	for (i=0x00, bit=0x0100; i<0x02; i++, bit<<=1) {
+		sxsi = sxsi_getptr(i);
+		if ((sxsi) && (sxsi->fname[0])) {
 			diskequip |= bit;
 		}
 	}
@@ -668,18 +679,20 @@ static void init_sasi_equip(void) {
 
 static void init_scsi_equip(void) {
 
-	UINT	i;
-	BYTE	bit;
+	UINT8	i;
+	UINT8	bit;
+	SXSIDEV	sxsi;
 	UINT16	w;
 
 	mem[MEMB_DISK_EQUIPS] = 0;
 	ZeroMemory(&mem[0x00460], 0x20);
-	for (i=0, bit=1; i<2; i++, bit<<=1) {
-		if (sxsi_hd[i+2].fname[0]) {
+	for (i=0, bit=1; i<4; i++, bit<<=1) {
+		sxsi = sxsi_getptr((REG8)(0x20 + i));
+		if ((sxsi) && (sxsi->fname[0])) {
 			mem[MEMB_DISK_EQUIPS] |= bit;
-			mem[0x00460+i*4] = sxsi_hd[i+2].sectors;
-			mem[0x00461+i*4] = sxsi_hd[i+2].surfaces;
-			switch(sxsi_hd[i+2].size) {
+			mem[0x00460+i*4] = sxsi->sectors;
+			mem[0x00461+i*4] = sxsi->surfaces;
+			switch(sxsi->size) {
 				case 256:
 					w = 0 << 12;
 					break;
@@ -692,7 +705,8 @@ static void init_scsi_equip(void) {
 					w = 2 << 12;
 					break;
 			}
-			w |= sxsi_hd[i+2].tracks;
+			w |= 0xc000;
+			w |= sxsi->cylinders;
 			SETBIOSMEM16(0x00462+i*4, w);
 		}
 	}
@@ -700,23 +714,20 @@ static void init_scsi_equip(void) {
 
 static BYTE sxsi_pos(long *pos) {
 
-	SXSIHDD	sxsi;
-	int		np2drv;
+	SXSIDEV	sxsi;
 
 	*pos = 0;
-	np2drv = (CPU_AL & 0x20) >> 4;
-	if ((CPU_AL & 0x0f) >= 2) {
+	sxsi = sxsi_getptr(CPU_AL);
+	if (sxsi == NULL) {
 		return(0x60);
 	}
-	np2drv |= (CPU_AL & 1);
-	sxsi = &sxsi_hd[np2drv];
 	if (CPU_AL & 0x80) {
 		if ((CPU_DL >= sxsi->sectors) ||
 			(CPU_DH >= sxsi->surfaces) ||
-			(CPU_CX >= sxsi->tracks)) {
+			(CPU_CX >= sxsi->cylinders)) {
 			return(0xd0);
 		}
-		(*pos) = ((CPU_CX * sxsi->surfaces) + CPU_DH) * sxsi->sectors
+		*pos = ((CPU_CX * sxsi->surfaces) + CPU_DH) * sxsi->sectors
 															+ CPU_DL;
 	}
 	else {
@@ -731,20 +742,43 @@ static BYTE sxsi_pos(long *pos) {
 	return(0x00);
 }
 
+static REG8 sxsidev_format(REG8 drv, SXSIDEV sxsi) {
 
-UINT8 sxsi_operate(UINT8 type) {
+	UINT	count;
+	REG8	ret;
+	long	trk;
+	long	trkmax;
 
-	BYTE	ret_ah = 0x00;
-	BYTE	drv;
+	count = timing_getcount();						// 時間を止める
+
+	ret = 0;
+	trk = 0;
+	trkmax = sxsi->surfaces * sxsi->cylinders;
+	while(trk < trkmax) {
+		ret = sxsi_format(drv, trk * sxsi->sectors);
+		if (ret) {
+			break;
+		}
+		trk++;
+	}
+
+	timing_setcount(count);							// 再開
+
+	return(ret);
+}
+
+REG8 sxsi_operate(REG8 type) {
+
+	SXSIDEV	sxsi;
+	REG8	ret_ah;
 	long	pos;
-//	int		i;
 
-	drv = (CPU_AL & 0x20) >> 4;
-	if ((CPU_AL & 0x0f) >= 2) {
+	sxsi = sxsi_getptr(CPU_AL);
+	if (sxsi == NULL) {
 		return(0x60);
 	}
-	drv |= (CPU_AL & 1);
 
+	ret_ah = 0x00;
 	switch(CPU_AH & 0x0f) {
 		case 0x01:						// ベリファイ
 		case 0x07:						// リトラクト
@@ -752,27 +786,27 @@ UINT8 sxsi_operate(UINT8 type) {
 			break;
 
    		case 0x03:						// イニシャライズ
-			if (type == HDDTYPE_SASI) {
+			if (type == BIOS1B_SASI) {
 				init_sasi_equip();
 			}
-			else if (type == HDDTYPE_SCSI) {
+			else if (type == BIOS1B_SCSI) {
 				init_scsi_equip();
 			}
 			break;
 
    		case 0x04:						// センス
 			ret_ah = 0x00;
-			if ((CPU_AH == 0x04) && (type == HDDTYPE_SASI)) {
+			if ((CPU_AH == 0x04) && (type == BIOS1B_SASI)) {
 				ret_ah = 0x04;
 			}
-			else if ((CPU_AH == 0x44) && (type == HDDTYPE_SCSI)) {
+			else if ((CPU_AH == 0x44) && (type == BIOS1B_SCSI)) {
 				CPU_BX = 1;
 			}
 			else if (CPU_AH == 0x84) {
-				CPU_BX = sxsi_hd[drv].size;
-				CPU_CX = sxsi_hd[drv].tracks;
-				CPU_DH = sxsi_hd[drv].surfaces;
-				CPU_DL = sxsi_hd[drv].sectors;
+				CPU_BX = sxsi->size;
+				CPU_CX = sxsi->cylinders;
+				CPU_DH = sxsi->surfaces;
+				CPU_DL = sxsi->sectors;
 			}
 			break;
 
@@ -794,15 +828,40 @@ UINT8 sxsi_operate(UINT8 type) {
 			}
 			break;
 
-		case 0x0d:						// フォーマット
-			if (CPU_DL) {
-				ret_ah = 0x30;
-				break;
+		case 0x0a:						// セクタ長設定
+			if ((type == BIOS1B_SCSI) &&
+				(sxsi->size == (128 << (CPU_BH & 3)))) {
+				ret_ah = 0x00;
 			}
-			i286_memstr_read(CPU_ES, CPU_BP, work, CPU_BX);
-			ret_ah = sxsi_pos(&pos);
-			if (!ret_ah) {
-				ret_ah = sxsi_format(CPU_AL, pos);
+			else {
+				ret_ah = 0x40;
+			}
+			break;
+
+		case 0x0c:						// 代替情報取得
+			if (type == BIOS1B_SCSI) {
+				ret_ah = 0x00;
+				CPU_CX = 0;
+			}
+			else {
+				ret_ah = 0x40;
+			}
+			break;
+
+		case 0x0d:						// フォーマット
+			if (CPU_AH & 0x80) {
+				ret_ah = sxsidev_format(CPU_AL, sxsi);
+			}
+			else {
+				if (CPU_DL) {
+					ret_ah = 0x30;
+					break;
+				}
+				i286_memstr_read(CPU_ES, CPU_BP, work, CPU_BX);
+				ret_ah = sxsi_pos(&pos);
+				if (!ret_ah) {
+					ret_ah = sxsi_format(CPU_AL, pos);
+				}
 			}
 			break;
 
@@ -885,13 +944,15 @@ static UINT16 boot_fd(BYTE drv, BYTE type) {						// ver0.27
 		// 1.25MB
 		bootseg = boot_fd1(0);
 		if (bootseg) {
-			mem[MEMB_DISK_BOOT] = (BYTE)(0x90+drv);
+			mem[MEMB_DISK_BOOT] = (UINT8)(0x90 + drv);
+			fddbios_equip(DISKTYPE_2HD, TRUE);
 			return(bootseg);
 		}
 		// 1.44MB
 		bootseg = boot_fd1(1);
 		if (bootseg) {
-			mem[MEMB_DISK_BOOT] = (BYTE)(0x30+drv);
+			mem[MEMB_DISK_BOOT] = (UINT8)(0x30 + drv);
+			fddbios_equip(DISKTYPE_2HD, TRUE);
 			return(bootseg);
 		}
 	}
@@ -900,15 +961,15 @@ static UINT16 boot_fd(BYTE drv, BYTE type) {						// ver0.27
 		CTRL_FDMEDIA = DISKTYPE_2DD;
 		bootseg = boot_fd1(0);
 		if (bootseg) {
-			mem[MEMB_DISK_BOOT] = (BYTE)(0x70+drv);
-			fdmode = 3;
+			mem[MEMB_DISK_BOOT] = (BYTE)(0x70 + drv);
+			fddbios_equip(DISKTYPE_2DD, TRUE);
 			return(bootseg);
 		}
 	}
 	return(0);
 }
 
-static UINT16 boot_hd(BYTE drv) {									// ver0.27
+static REG16 boot_hd(REG8 drv) {
 
 	BYTE	ret;
 
@@ -920,16 +981,17 @@ static UINT16 boot_hd(BYTE drv) {									// ver0.27
 	return(0);
 }
 
-UINT16 bootstrapload(void) {										// ver0.27
+REG16 bootstrapload(void) {
 
 	BYTE	i;
-	UINT16	bootseg;
+	REG16	bootseg;
 
-	fdmode = 0;
+//	fdmode = 0;
 	bootseg = 0;
 	switch(mem[MEMB_MSW5] & 0xf0) {		// うぐぅ…本当はALレジスタの値から
 		case 0x00:					// ノーマル
 			break;
+
 		case 0x20:					// 640KB FDD
 			for (i=0; (i<4) && (!bootseg); i++) {
 				if (fdd_diskready(i)) {
@@ -937,6 +999,7 @@ UINT16 bootstrapload(void) {										// ver0.27
 				}
 			}
 			break;
+
 		case 0x40:					// 1.2MB FDD
 			for (i=0; (i<4) && (!bootseg); i++) {
 				if (fdd_diskready(i)) {
@@ -944,25 +1007,24 @@ UINT16 bootstrapload(void) {										// ver0.27
 				}
 			}
 			break;
+
 		case 0x60:					// MO
 			break;
+
 		case 0xa0:					// SASI 1
-			if (sxsi_hd[0].fname[0]) {
-				bootseg = boot_hd(0x80);
-			}
+			bootseg = boot_hd(0x80);
 			break;
+
 		case 0xb0:					// SASI 2
-			if (sxsi_hd[1].fname[0]) {
-				bootseg = boot_hd(0x81);
-			}
+			bootseg = boot_hd(0x81);
 			break;
+
 		case 0xc0:					// SCSI
-			for (i=0; (i<2) && (!bootseg); i++) {
-				if (sxsi_hd[i+2].fname[0]) {
-					bootseg = boot_hd((BYTE)(0xa0 | i));
-				}
+			for (i=0; (i<4) && (!bootseg); i++) {
+				bootseg = boot_hd((REG8)(0xa0 + i));
 			}
 			break;
+
 		default:					// ROM
 			return(0);
 	}
@@ -972,19 +1034,15 @@ UINT16 bootstrapload(void) {										// ver0.27
 		}
 	}
 	for (i=0; (i<2) && (!bootseg); i++) {
-		if (sxsi_hd[i].fname[0]) {
-			bootseg = boot_hd((BYTE)(0x80 | i));
-		}
+		bootseg = boot_hd((REG8)(0x80 + i));
 	}
-	for (i=0; (i<2) && (!bootseg); i++) {
-		if (sxsi_hd[i+2].fname[0]) {
-			bootseg = boot_hd((BYTE)(0xa0 | i));
-		}
+	for (i=0; (i<4) && (!bootseg); i++) {
+		bootseg = boot_hd((REG8)(0xa0 + i));
 	}
 
-	init_fdd_equip();
-	init_sasi_equip();
-	init_scsi_equip();
+//	init_fdd_equip();
+//	init_sasi_equip();
+//	init_scsi_equip();
 	return(bootseg);
 }
 
@@ -995,7 +1053,19 @@ void bios0x1b(void) {
 	BYTE	ret_ah;
 	REG8	flag;
 
-#if 0			// bypass to disk bios
+#if defined(SUPPORT_SCSI)
+	if ((CPU_AL & 0xf0) == 0xc0) {
+		TRACEOUT(("%.4x:%.4x AX=%.4x BX=%.4x CX=%.4x DX=%.4 ES=%.4x BP=%.4x",
+							i286_memword_read(CPU_SS, CPU_SP+2),
+							i286_memword_read(CPU_SS, CPU_SP),
+							CPU_AX, CPU_BX, CPU_CX, CPU_DX, CPU_ES, CPU_BP));
+		scsicmd_bios();
+		return;
+	}
+#endif
+
+#if 1			// bypass to disk bios
+{
 	REG8	seg;
 	UINT	sp;
 
@@ -1028,6 +1098,7 @@ void bios0x1b(void) {
 		CPU_IP = 0x18;
 		return;
 	}
+}
 #endif
 
 	switch(CPU_AL & 0xf0) {
@@ -1052,12 +1123,15 @@ void bios0x1b(void) {
 
 		case 0x00:
 		case 0x80:
-			ret_ah = sxsi_operate(HDDTYPE_SASI);
+//			ret_ah = sxsi_operate(BIOS1B_SASI);
+			ret_ah = sasibios_operate();
 			break;
-#if 0
+
+#if defined(SUPPORT_SCSI)
 		case 0x20:
 		case 0xa0:
-			ret_ah = sxsi_operate(HDDTYPE_SCSI);
+//			ret_ah = sxsi_operate(BIOS1B_SCSI);
+			ret_ah = scsibios_operate();
 			break;
 #endif
 
@@ -1078,7 +1152,7 @@ void bios0x1b(void) {
 		}
 	}
 #endif
-#if 0
+#if 1
 	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
 							i286_memword_read(CPU_SS, CPU_SP+2),

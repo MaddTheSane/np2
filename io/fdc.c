@@ -632,7 +632,7 @@ static void fdcstatusreset(void) {
 	fdc.status = FDCSTAT_RQM;
 }
 
-void DMACCALL fdc_DataRegWrite(REG8 data) {
+void DMACCALL fdc_datawrite(REG8 data) {
 
 //	if ((fdc.status & (FDCSTAT_RQM | FDCSTAT_DIO)) == FDCSTAT_RQM) {
 		switch(fdc.event) {
@@ -671,7 +671,7 @@ void DMACCALL fdc_DataRegWrite(REG8 data) {
 //	}
 }
 
-REG8 DMACCALL fdc_DataRegRead(void) {
+REG8 DMACCALL fdc_dataread(void) {
 
 //	if ((fdc.status & (FDCSTAT_RQM | FDCSTAT_DIO))
 //									== (FDCSTAT_RQM | FDCSTAT_DIO)) {
@@ -720,7 +720,7 @@ static void IOOUTCALL fdc_o92(UINT port, REG8 dat) {
 //	TRACEOUT(("fdc out %x %x", port, dat));
 	CTRL_FDMEDIA = DISKTYPE_2HD;
 	if ((fdc.status & (FDCSTAT_RQM | FDCSTAT_DIO)) == FDCSTAT_RQM) {
-		fdc_DataRegWrite(dat);
+		fdc_datawrite(dat);
 	}
 	(void)port;
 }
@@ -754,7 +754,7 @@ static REG8 IOINPCALL fdc_i92(UINT port) {
 	CTRL_FDMEDIA = DISKTYPE_2HD;
 	if ((fdc.status & (FDCSTAT_RQM | FDCSTAT_DIO))
 										== (FDCSTAT_RQM | FDCSTAT_DIO)) {
-		ret = fdc_DataRegRead();
+		ret = fdc_dataread();
 	}
 	else {
 		ret = fdc.lastdata;
@@ -776,7 +776,7 @@ static REG8 IOINPCALL fdc_i94(UINT port) {
 static void IOOUTCALL fdc_oca(UINT port, REG8 dat) {
 
 	CTRL_FDMEDIA = DISKTYPE_2DD;
-	fdc_DataRegWrite(dat);
+	fdc_datawrite(dat);
 	(void)port;
 }
 
@@ -800,7 +800,7 @@ static REG8 IOINPCALL fdc_ica(UINT port) {
 	REG8	ret;
 
 	CTRL_FDMEDIA = DISKTYPE_2DD;
-	ret = fdc_DataRegRead();
+	ret = fdc_dataread();
 
 	(void)port;
 	return(ret);
@@ -847,8 +847,8 @@ void fdc_reset(void) {
 	ZeroMemory(&fdc, sizeof(fdc));
 	fdcstatusreset();
 	CTRL_FDMEDIA = DISKTYPE_2HD;
-	dmac_attach(DMADEV_2HD, FDC_DMACH2HD);
-	dmac_attach(DMADEV_2DD, FDC_DMACH2DD);
+	dmac_attach(DMADEV_FDD, FDC_DMACH2HD);
+	dmac_attach(DMADEV_FDD, FDC_DMACH2DD);
 }
 
 void fdc_bind(void) {

@@ -29,6 +29,11 @@ enum {	// オフセット～
 	BIOSOFST_WAIT	= 0x0140					// FDD waiting
 };
 
+enum {
+	BIOS1B_SASI		= 0,
+	BIOS1B_SCSI		= 1
+};
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,12 +63,13 @@ void bios0x18_16(BYTE chr, BYTE atr);
 void bios0x19(void);
 
 void bios0x1a(void);
-void bios0x1a_main(void);											// ver0.30
+void bios0x1a_main(void);
 
 void bios0x1b(void);
-UINT8 sxsi_operate(UINT8 type);
+void fddbios_equip(REG8 type, BOOL clear);
+REG8 sxsi_operate(REG8 type);
 
-UINT16 bootstrapload(void);
+REG16 bootstrapload(void);
 
 void bios0x1c(void);
 void bios0x1c_03(void);

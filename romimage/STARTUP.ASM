@@ -12,23 +12,15 @@ START2:			mov		si, offset nobiosmsg
 
 nosystems:		mov		si, offset nosysmsg
 
-dispend:		mov		cx, 1000h
-				mov		bx, 8000h
-				mov		ss, cx
-				mov		sp, bx
-				add		bh, 20h
-				mov		es, bx
-
-				xor		di, di
+dispend:		mov		ax, 0a04h
+				int		18h
+				mov		ah, 16h
+				mov		dx, 0e120h
+				int		18h
+				cli
 				cld
-				lea		ax, [di + 20h]
-				rep stosw
-				mov		al, 0e1h
-				mov		cx, 1fe0h
-atrclr:			stosb
-				inc		di
-				loop	atrclr
-
+				mov		ax, 0a000h
+				mov		es, ax
 				db		FIXCS
 				lodsw
 				mov		di, ax
@@ -42,8 +34,7 @@ putmsg:			db		FIXCS
 				inc		di
 				inc		di
 				jmp		short putmsg
-putmsgend:		cli
-				hlt
+putmsgend:		hlt
 				jmp		short putmsgend
 
 

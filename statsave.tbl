@@ -1,5 +1,5 @@
 
-#define		NP2STATUS_VERSION		0730
+#define		NP2STATUS_VERSION		0731
 
 static const NP2FHDR np2flagdef = {
 						"Neko Project II",
@@ -7,29 +7,35 @@ static const NP2FHDR np2flagdef = {
 						NP2STATUS_VERSION};
 
 static const PROCTBL evtproc[] = {
-			{PROCID('e','v','s','0'), screendisp},
-			{PROCID('e','v','s','1'), screenvsync},
-			{PROCID('e','v','s','t'), systimer},
-			{PROCID('e','v','s','n'), systimer_noint},
-			{PROCID('e','v','b','o'), beeponeshot},
-			{PROCID('e','v','r','s'), rs232ctimer},
-			{PROCID('e','v','m','g'), musicgenint},
-			{PROCID('e','v','f','a'), fmport_a},
-			{PROCID('e','v','f','b'), fmport_b},
-			{PROCID('e','v','m','o'), mouseint},
-			{PROCID('e','v','k','e'), keyb_callback},
-			{PROCID('e','v','m','0'), midiwaitout},
-			{PROCID('e','v','m','1'), midiint},
-			{PROCID('e','v','p','m'), picmask},
-//			{PROCID('e','v','s','9'), s98timer},
-			{PROCID('e','v','c','s'), cs4231_dma},
-			{PROCID('e','v','g','s'), gdcslavewait},
-			{PROCID('e','v','f','b'), fdbiosout},
-			{PROCID('e','v','f','7'), fdcbusy_error7},
-			{PROCID('e','v','k','1'), pc9861ch1cb},
-			{PROCID('e','v','k','2'), pc9861ch2cb},
-			{PROCID('e','v','8','6'), pcm86_cb},
-			{PROCID('e','v','a','m'), amd98int}};
+			{PROCID('e','s','c','0'), screendisp},
+			{PROCID('e','s','c','1'), screenvsync},
+			{PROCID('e','p','i','t'), systimer},
+			{PROCID('e','b','e','p'), beeponeshot},
+			{PROCID('e','r','s','1'), rs232ctimer},
+			{PROCID('e','m','g','n'), musicgenint},
+			{PROCID('e','f','m','a'), fmport_a},
+			{PROCID('e','f','m','b'), fmport_b},
+			{PROCID('e','m','u','s'), mouseint},
+			{PROCID('e','k','e','y'), keyb_callback},
+			{PROCID('e','m','d','0'), midiwaitout},
+			{PROCID('e','m','d','1'), midiint},
+			{PROCID('e','p','i','c'), picmask},
+//			{PROCID('e','s','9','8'), s98timer},
+			{PROCID('e','c','s','d'), cs4231_dma},
+			{PROCID('e','g','s','w'), gdcslavewait},
+			{PROCID('e','f','b','o'), fdbiosout},
+			{PROCID('e','f','d','7'), fdcbusy_error7},
+			{PROCID('e','p','k','1'), pc9861ch1cb},
+			{PROCID('e','p','k','2'), pc9861ch2cb},
+			{PROCID('e','p','8','6'), pcm86_cb},
+			{PROCID('e','a','m','d'), amd98int},
+#if defined(SUPPORT_SASI)
+			{PROCID('e','s','a','s'), sasiioint},
+#endif
+#if defined(SUPPORT_SCSI)
+			{PROCID('e','s','c','s'), scsiioint},
+#endif
+};
 
 static const ENUMTBL evtnum[] = {
 			{PROCID('m','a','i','n'), NEVENT_FLAMES},
@@ -51,65 +57,70 @@ static const ENUMTBL evtnum[] = {
 			{PROCID('f','d','c','b'), NEVENT_FDCBUSY},
 			{PROCID('k','c','h','1'), NEVENT_PC9861CH1},
 			{PROCID('k','c','h','2'), NEVENT_PC9861CH2},
-			{PROCID('p','c','m','8'), NEVENT_86PCM}};
+			{PROCID('p','c','m','8'), NEVENT_86PCM},
+			{PROCID('s','a','s','i'), NEVENT_SASIIO},
+			{PROCID('s','c','s','i'), NEVENT_SCSIIO},
+};
 
 static const PROCTBL dmaproc[] = {
-			{PROCID('d','m','o','d'), dma_dummyout},
-			{PROCID('d','m','i','d'), dma_dummyin},
-			{PROCID('d','m','e','d'), dma_dummyproc},
-			{PROCID('d','m','o','f'), fdc_DataRegRead},
-			{PROCID('d','m','i','f'), fdc_DataRegWrite},
-			{PROCID('d','m','e','f'), fdc_dmafunc},
-			{PROCID('d','m','e','c'), cs4231dmafunc}};
-
-static const STENTRY np2tbl[] = {
-	{"CPU286",		0,	NP2FLAG_CLOCK,	&CPU_STATSAVE,	sizeof(CPU_STATSAVE)},
-#if 1	// ver0.72
-	{"MEMORY",		0,	NP2FLAG_MEM,	NULL,			0x130000},
-#else
-	{"MEMORY",		0,	NP2FLAG_BIN,	mem,			0x10fff0},
-	{"VIDEO",		0,	NP2FLAG_BIN,	mem + VRAM1_B,	0x18000},
-	{"VIDEO2",		0,	NP2FLAG_BIN,	mem + VRAM1_E,	0x8000},
+			{PROCID('d','o','d','m'), dma_dummyout},
+			{PROCID('d','i','d','m'), dma_dummyin},
+			{PROCID('d','e','d','m'), dma_dummyproc},
+			{PROCID('d','o','f','d'), fdc_dataread},
+			{PROCID('d','i','f','d'), fdc_datawrite},
+			{PROCID('d','e','f','d'), fdc_dmafunc},
+#if defined(SUPPORT_SASI)
+			{PROCID('d','o','s','a'), sasi_dataread},
+			{PROCID('d','i','s','a'), sasi_datawrite},
+			{PROCID('d','e','s','a'), sasi_dmafunc},
 #endif
-	{"EXTMEM",		0,	NP2FLAG_EXT,	NULL,			0},
+			{PROCID('d','e','c','s'), cs4231dmafunc}};
 
-	{"CORE",		0,	NP2FLAG_CLOCK,	&pccore,		sizeof(pccore)},
-	{"ARTIC",		0,	NP2FLAG_BIN,	&artic,			sizeof(artic)},
-	{"CGROM",		0,	NP2FLAG_BIN,	&cgrom,			sizeof(cgrom)},
+static const SFENTRY np2tbl[] = {
+	{"CPU286",		0,	STATFLAG_CLOCK,	&CPU_STATSAVE,	sizeof(CPU_STATSAVE)},
+	{"MEMORY",		0,	STATFLAG_MEM,	NULL,			0x130000},
+	{"EXTMEM",		0,	STATFLAG_EXT,	NULL,			0},
+
+	{"CORE",		0,	STATFLAG_CLOCK,	&pccore,		sizeof(pccore)},
+	{"ARTIC",		0,	STATFLAG_BIN,	&artic,			sizeof(artic)},
+	{"CGROM",		0,	STATFLAG_BIN,	&cgrom,			sizeof(cgrom)},
 #if !defined(CGWND_FONTPTR)
-	{"CGWINDOW",	0,	NP2FLAG_BIN,	&cgwindow,		sizeof(cgwindow)},
+	{"CGWINDOW",	0,	STATFLAG_BIN,	&cgwindow,		sizeof(cgwindow)},
 #else
-	{"CGWINDOW",	0,	NP2FLAG_CGW,	&cgwindow,		sizeof(cgwindow)},
+	{"CGWINDOW",	0,	STATFLAG_CGW,	&cgwindow,		sizeof(cgwindow)},
 #endif
-	{"CRTC",		0,	NP2FLAG_BIN,	&grcg,			sizeof(grcg)},
-	{"CRTC2",		0,	NP2FLAG_BIN,	&crtc,			sizeof(crtc)},
-	{"DMAC",		0,	NP2FLAG_DMA,	&dmac,			sizeof(dmac)},
-	{"EGC",			0,	NP2FLAG_EGC,	NULL,			0},
-	{"EPSON",		0,	NP2FLAG_EPSON,	NULL,			0},
-	{"FDC",			0,	NP2FLAG_BIN,	&fdc,			sizeof(fdc)},
-	{"GDC1",		0,	NP2FLAG_BIN,	&gdc,			sizeof(gdc)},
-	{"GDC2",		0,	NP2FLAG_BIN,	&gdcs,			sizeof(gdcs)},
-	{"PIT",			0,	NP2FLAG_BIN,	&pit,			sizeof(pit)},
-	{"MPU98II",		0,	NP2FLAG_BIN,	&mpu98,			sizeof(mpu98)},
-	{"MOUSE",		0,	NP2FLAG_BIN,	&mouseif,		sizeof(mouseif)},
-	{"NMIIO",		0,	NP2FLAG_BIN,	&nmiio,			sizeof(nmiio)},
-	{"NP2SYSPORT",	0,	NP2FLAG_BIN,	&np2sysp,		sizeof(np2sysp)},
-	{"PIC",			0,	NP2FLAG_BIN,	&pic,			sizeof(pic)},
-	{"RS232C",		0,	NP2FLAG_BIN,	&rs232c,		sizeof(rs232c)},
-	{"SYSTEMPORT",	0,	NP2FLAG_BIN,	&sysport,		sizeof(sysport)},
-	{"uPD4990",		0,	NP2FLAG_BIN,	&uPD4990,		sizeof(uPD4990)},
-	{"VRAMCTRL",	0,	NP2FLAG_BIN,	&vramop,		sizeof(vramop)},
-	{"TEXTRAM",		0,	NP2FLAG_BIN,	&tramflag,		sizeof(tramflag)},
-	{"GAIJI",		0,	NP2FLAG_GIJ,	NULL,			0},
-	{"EVENT",		0,	NP2FLAG_EVT,	&nevent,		sizeof(nevent)},
-	{"CALENDAR",	0,	NP2FLAG_BIN,	&cal,			sizeof(cal)},
-	{"PALEVENT",	0,	NP2FLAG_BIN,	&palevent,		sizeof(palevent)},
-	{"FMBOARD",		0,	NP2FLAG_FM,		NULL,			0},
-	{"AMD98",		0,	NP2FLAG_BIN,	&amd98,			sizeof(amd98)},
-	{"MUSICGEN",	0,	NP2FLAG_BIN,	&musicgen,		sizeof(musicgen)},
-	{"BEEP",		0,	NP2FLAG_BIN,	&beep,			sizeof(beep)},
-	{"CMMPU98",		0,	NP2FLAG_COM,	(void *)0,		0},
-	{"CMRS232C",	0,	NP2FLAG_COM,	(void *)1,		0},
-	{"DISK",		0,	NP2FLAG_DISK,	NULL,			0},
-	{"TERMINATE",	0,	NP2FLAG_TERM,	NULL,			0}};
+	{"CRTC",		0,	STATFLAG_BIN,	&grcg,			sizeof(grcg)},
+	{"CRTC2",		0,	STATFLAG_BIN,	&crtc,			sizeof(crtc)},
+	{"DMAC",		0,	STATFLAG_DMA,	&dmac,			sizeof(dmac)},
+	{"EGC",			0,	STATFLAG_EGC,	NULL,			0},
+	{"EPSON",		0,	STATFLAG_EPSON,	NULL,			0},
+	{"FDC",			0,	STATFLAG_BIN,	&fdc,			sizeof(fdc)},
+	{"GDC1",		0,	STATFLAG_BIN,	&gdc,			sizeof(gdc)},
+	{"GDC2",		0,	STATFLAG_BIN,	&gdcs,			sizeof(gdcs)},
+	{"PIT",			0,	STATFLAG_BIN,	&pit,			sizeof(pit)},
+	{"MPU98II",		0,	STATFLAG_BIN,	&mpu98,			sizeof(mpu98)},
+	{"MOUSE",		0,	STATFLAG_BIN,	&mouseif,		sizeof(mouseif)},
+	{"NMIIO",		0,	STATFLAG_BIN,	&nmiio,			sizeof(nmiio)},
+	{"NP2SYSPORT",	0,	STATFLAG_BIN,	&np2sysp,		sizeof(np2sysp)},
+	{"PIC",			0,	STATFLAG_BIN,	&pic,			sizeof(pic)},
+	{"RS232C",		0,	STATFLAG_BIN,	&rs232c,		sizeof(rs232c)},
+	{"SYSTEMPORT",	0,	STATFLAG_BIN,	&sysport,		sizeof(sysport)},
+	{"uPD4990",		0,	STATFLAG_BIN,	&uPD4990,		sizeof(uPD4990)},
+	{"VRAMCTRL",	0,	STATFLAG_BIN,	&vramop,		sizeof(vramop)},
+	{"TEXTRAM",		0,	STATFLAG_BIN,	&tramflag,		sizeof(tramflag)},
+	{"GAIJI",		0,	STATFLAG_GIJ,	NULL,			0},
+	{"EVENT",		0,	STATFLAG_EVT,	&nevent,		sizeof(nevent)},
+	{"CALENDAR",	0,	STATFLAG_BIN,	&cal,			sizeof(cal)},
+	{"PALEVENT",	0,	STATFLAG_BIN,	&palevent,		sizeof(palevent)},
+	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
+	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
+	{"MUSICGEN",	0,	STATFLAG_BIN,	&musicgen,		sizeof(musicgen)},
+	{"BEEP",		0,	STATFLAG_BIN,	&beep,			sizeof(beep)},
+	{"CMMPU98",		0,	STATFLAG_COM,	(void *)0,		0},
+	{"CMRS232C",	0,	STATFLAG_COM,	(void *)1,		0},
+	{"DISK",		0,	STATFLAG_DISK,	NULL,			0},
+#if defined(SUPPORT_HOSTDRV)
+	{"HOSTDRV",		0,	STATFLAG_HDRV,	NULL,			0},
+#endif
+	{"TERMINATE",	0,	STATFLAG_TERM,	NULL,			0}};
 

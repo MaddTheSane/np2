@@ -17,6 +17,8 @@ typedef struct {
 extern "C" {
 #endif
 
+void np2sysp_outstr(const void *arg1, long arg2);
+
 void np2sysp_reset(void);
 void np2sysp_bind(void);
 

@@ -21,6 +21,7 @@ CBUS		= ../cbus
 BIOS		= ../bios
 SOUND		= ../sound
 VERMOUTH	= ../sound/vermouth
+GETSND		= ../sound/getsnd
 VRAM		= ../vram
 FDD			= ../fdd
 LIO			= ../lio
@@ -37,7 +38,7 @@ HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
 
 CPUCORES	=	$(I286C)/cpucore.h $(I286C)/memory.h
 
-PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
+PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h $(BASE)/statsave.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
@@ -60,8 +61,9 @@ COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-fsigned-char -mno-cygwin -march=pentium \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
-			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
-			-I$(GENERIC) -I$(TARGET) -I$(DIALOG) -I$(DEBUGUTY) -I$(X86ASM)
+			-I$(SOUND) -I$(VERMOUTH) -I$(GETSND) -I$(VRAM) -I$(FDD) -I$(LIO) \
+			-I$(FONT) -I$(GENERIC) -I$(TARGET) -I$(DIALOG) -I$(DEBUGUTY) \
+			-I$(X86ASM)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -819,7 +821,7 @@ $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(CBUS)/mpu98ii.h $(BIOS)/bios.h $(VRAM)/scrndraw.h \
 						$(SOUND)/sound.h $(SOUND)/beep.h $(SOUND)/s98.h \
 						$(FDD)/diskdrv.h $(FDD)/fddfile.h $(BASE)/timing.h \
-						$(BASE)/statsave.h $(BASE)/debugsub.h \
+						$(BASE)/debugsub.h \
 						$(GENERIC)/keydisp.h $(DEBUGUTY)/viewer.h
 	$(CC) $(COPT) -o $@ $<
 
@@ -1146,8 +1148,7 @@ $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(VRAM)/palettes.h $(VRAM)/maketext.h \
 						$(SOUND)/sound.h $(SOUND)/fmboard.h $(SOUND)/beep.h \
 						$(FONT)/font.h $(FDD)/fddfile.h $(FDD)/fdd_mtr.h \
-						$(FDD)/sxsi.h $(BASE)/calendar.h $(BASE)/statsave.h \
-						$(GENERIC)/keydisp.h
+						$(FDD)/sxsi.h $(BASE)/calendar.h $(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/debugsub.o	:	$(BASE)/debugsub.c $(HEADERS) $(PCCORES) $(IOCORES) \

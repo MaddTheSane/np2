@@ -1,5 +1,5 @@
 #include	"compiler.h"
-// #include	"cpucore.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -101,7 +101,7 @@ void fmtimer_reset(UINT irq) {
 	fmtimer.intr = irq & 0xc0;
 	fmtimer.intdisabel = irq & 0x10;
 	fmtimer.irq = irqtable[irq >> 6];
-	pic_registext(fmtimer.irq);
+//	pic_registext(fmtimer.irq);
 }
 
 void fmtimer_setreg(REG8 reg, REG8 value) {

@@ -162,26 +162,35 @@ UINT file_getsize(FILEH handle) {
 	return(GetFileSize(handle, NULL));
 }
 
+static BOOL cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
+
+	FILETIME	localtime;
+	SYSTEMTIME	systime;
+
+	if ((FileTimeToLocalFileTime(file, &localtime) == 0) ||
+		(FileTimeToSystemTime(&localtime, &systime) == 0)) {
+		return(FAILURE);
+	}
+	if (dosdate) {
+		dosdate->year = (UINT16)systime.wYear;
+		dosdate->month = (UINT8)systime.wMonth;
+		dosdate->day = (UINT8)systime.wDay;
+	}
+	if (dostime) {
+		dostime->hour = (UINT8)systime.wHour;
+		dostime->minute = (UINT8)systime.wMinute;
+		dostime->second = (UINT8)systime.wSecond;
+	}
+	return(SUCCESS);
+}
+
 short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime) {
 
 	FILETIME	lastwrite;
-	FILETIME	localwrite;
-	SYSTEMTIME	syswrite;
 
 	if ((GetFileTime(handle, NULL, NULL, &lastwrite) == 0) ||
-		(FileTimeToLocalFileTime(&lastwrite, &localwrite) == 0) ||
-		(FileTimeToSystemTime(&localwrite, &syswrite) == 0)) {
+		(cnvdatetime(&lastwrite, dosdate, dostime) != SUCCESS)) {
 		return(-1);
-	}
-	if (dosdate) {
-		dosdate->year = (WORD)syswrite.wYear;
-		dosdate->month = (BYTE)syswrite.wMonth;
-		dosdate->day = (BYTE)syswrite.wDay;
-	}
-	if (dostime) {
-		dostime->hour = (BYTE)syswrite.wHour;
-		dostime->minute = (BYTE)syswrite.wMinute;
-		dostime->second = (BYTE)syswrite.wSecond;
 	}
 	return(0);
 }
@@ -253,53 +262,65 @@ short file_attr_c(const char *path) {
 }
 
 
-FILEFINDH file_find1st(const char *path, FILEFINDT *fft) {
+static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
-	HANDLE			hdl;
-	WIN32_FIND_DATA	w32fd;
-
-	hdl = FindFirstFile_A(path, &w32fd);
-	if (hdl == INVALID_HANDLE_VALUE) {
-		return(FILEFINDH_INVALID);
-	}
-	if (fft) {
-#if defined(UNICODE)
-		WideCharToMultiByte(CP_ACP, 0, w32fd.cFileName, -1,
-								fft->path, sizeof(fft->path), NULL, NULL);
-#else
-		milstr_ncpy(fft->path, w32fd.cFileName, sizeof(fft->path));
-#endif
-		fft->size = w32fd.nFileSizeLow;
-		fft->attr = w32fd.dwFileAttributes;
-	}
-	return(hdl);
-}
-
-BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft) {
-
-	WIN32_FIND_DATA	w32fd;
-
-	if (!FindNextFile(hdl, &w32fd)) {
+#if !defined(_WIN32_WCE)
+	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
+		((!file_cmpname(w32fd->cFileName, ".")) ||
+		(!file_cmpname(w32fd->cFileName, "..")))) {
 		return(FAILURE);
 	}
-	if (fft) {
-#if defined(UNICODE)
-		WideCharToMultiByte(CP_ACP, 0, w32fd.cFileName, -1,
-								fft->path, sizeof(fft->path), NULL, NULL);
-#else
-		milstr_ncpy(fft->path, w32fd.cFileName, sizeof(fft->path));
 #endif
-		fft->size = w32fd.nFileSizeLow;
-		fft->attr = w32fd.dwFileAttributes;
-	}
+	fli->caps = FLICAPS_SIZE | FLICAPS_ATTR | FLICAPS_DATE | FLICAPS_TIME;
+	fli->size = w32fd->nFileSizeLow;
+	fli->attr = w32fd->dwFileAttributes;
+	cnvdatetime(&w32fd->ftLastWriteTime, &fli->date, &fli->time);
+#if defined(UNICODE)
+	WideCharToMultiByte(CP_ACP, 0, w32fd->cFileName, -1,
+								fli->path, sizeof(fli->path), NULL, NULL);
+#else
+	milstr_ncpy(fli->path, w32fd->cFileName, sizeof(fli->path));
+#endif
 	return(SUCCESS);
 }
 
-void file_findclose(FILEFINDH hdl) {
+FLISTH file_list1st(const char *dir, FLINFO *fli) {
 
-	if (hdl) {
+	char			path[MAX_PATH];
+	HANDLE			hdl;
+	WIN32_FIND_DATA	w32fd;
+
+	milsjis_ncpy(path, dir, sizeof(path));
+	file_setseparator(path, sizeof(path));
+	milsjis_ncat(path, "*.*", sizeof(path));
+	TRACEOUT(("file_list1st %s", path));
+	hdl = FindFirstFile_A(path, &w32fd);
+	if (hdl != INVALID_HANDLE_VALUE) {
+		do {
+			if (setflist(&w32fd, fli) == SUCCESS) {
+				return(hdl);
+			}
+		} while(FindNextFile(hdl, &w32fd));
 		FindClose(hdl);
 	}
+	return(FLISTH_INVALID);
+}
+
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
+
+	WIN32_FIND_DATA	w32fd;
+
+	while(FindNextFile(hdl, &w32fd)) {
+		if (setflist(&w32fd, fli) == SUCCESS) {
+			return(SUCCESS);
+		}
+	}
+	return(FAILURE);
+}
+
+void file_listclose(FLISTH hdl) {
+
+	FindClose(hdl);
 }
 
 

@@ -63,6 +63,7 @@ void extirq_pop(void) {
 		*(UINT32 *)(p->pi[1].level+0) = *(UINT32 *)(p->pi[1].levelbak+0);
 		*(UINT32 *)(p->pi[1].level+4) = *(UINT32 *)(p->pi[1].levelbak+4);
 		p->pi[1].isr = p->pi[1].isrbak;
+//		TRACEOUT(("iret: extirq_pop"));
 	}
 }
 

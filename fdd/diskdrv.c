@@ -11,25 +11,39 @@
 
 #define	DISK_DELAY	20			// (0.4sec)
 
-	int		diskdrv_delay[4];							// ver0.26
-	int		diskdrv_ro[4];								// ver0.26
-	char	diskdrv_fname[4][MAX_PATH];					// ver0.26
+	int		diskdrv_delay[4];
+	int		diskdrv_ro[4];
+	char	diskdrv_fname[4][MAX_PATH];
 
 
-void diskdrv_sethdd(BYTE drv, const char *fname) {
+void diskdrv_sethdd(REG8 drv, const char *fname) {
 
+	UINT	num;
 	char	*p;
+	int		leng;
 
-	if (drv < 2) {
-		p = np2cfg.hddfile[drv];
-		if (fname) {
-			file_cpyname(p, fname, sizeof(np2cfg.hddfile[0]));
+	num = drv & 0x0f;
+	if (!(drv & 0x20)) {			// SASI or IDE
+		if (num >= 2) {
+			return;
 		}
-		else {
-			p[0] = '\0';
-		}
-		sysmng_update(SYS_UPDATEHDD | SYS_UPDATECFG);
+		p = np2cfg.sasihdd[num];
+		leng = sizeof(np2cfg.sasihdd[0]);
 	}
+	else {							// SCSI
+		if (num >= 4) {
+			return;
+		}
+		p = np2cfg.scsihdd[num];
+		leng = sizeof(np2cfg.scsihdd[0]);
+	}
+	if (fname) {
+		file_cpyname(p, fname, leng);
+	}
+	else {
+		p[0] = '\0';
+	}
+	sysmng_update(SYS_UPDATEHDD | SYS_UPDATECFG);
 }
 
 void diskdrv_setfdd(BYTE drv, const char *fname, int readonly) {

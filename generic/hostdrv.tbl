@@ -198,27 +198,6 @@ typedef union {
 #endif
 
 
-
-#if 0
-/* List of Lists Structure */	// SysInitVarsÇ∆Ç‡åƒÇŒÇÍÇÈÇÀÅ`
-typedef	struct {
-	BYTE		f1[22];
-	LPCDS		cds_ptr;
-	BYTE		f2[7];
-	BYTE		last_drive;
-} LOL, *LPLOL;	//	(see int2152)
-
-typedef	struct {
-	WORD	es, ds, di, si, bp, sp;
-	union {
-		struct { WORD bx,     dx,     cx,     ax;     };
-		struct { BYTE bl, bh, dl, dh, cl, ch, al, ah; };
-	};
-	WORD	ip, cs, flags;
-} INTR_REGS;
-#endif
-
-
 // ----
 
 typedef struct {

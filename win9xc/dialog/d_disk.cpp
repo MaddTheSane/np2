@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"strres.h"
 #include	"resource.h"
 #include	"strres.h"
 #include	"np2.h"
@@ -64,7 +65,7 @@ void dialog_changehdd(HWND hWnd, BYTE drv) {
 const char *p;
 
 	if (drv < 2) {
-		p = dlgs_selectfile(hWnd, &hddui, np2cfg.hddfile[drv],
+		p = dlgs_selectfile(hWnd, &hddui, np2cfg.sasihdd[drv],
 									hddfolder, sizeof(hddfolder), NULL);
 		if (p != NULL) {
 			diskdrv_sethdd(drv, p);
@@ -211,7 +212,7 @@ const char		*p;
 		hddsize = 0;
 		if (DialogBox(hinst, MAKEINTRESOURCE(IDD_NEWHDDDISK),
 									hWnd, (DLGPROC)NewHddDlgProc) == IDOK) {
-			newdisk_hdd(p, hddsize);	// (hddsize < 5) || (hddsize > 256)
+			newdisk_thd(p, hddsize);	// (hddsize < 5) || (hddsize > 256)
 		}
 	}
 	else {

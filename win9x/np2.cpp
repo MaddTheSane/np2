@@ -43,7 +43,6 @@
 #include	"diskdrv.h"
 #include	"fddfile.h"
 #include	"timing.h"
-#include	"statsave.h"
 #include	"debugsub.h"
 #include	"keydisp.h"
 #include	"kdispwin.h"
@@ -319,6 +318,8 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 	DestroyMenu(hMenu);
 }
 
+// extern "C" void iptrace_out(void);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	PAINTSTRUCT	ps;
@@ -504,22 +505,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 				case IDM_SASI1OPEN:
 					winuienter();
-					dialog_changehdd(hWnd, 0);
+					dialog_changehdd(hWnd, 0x00);
 					winuileave();
 					break;
 
 				case IDM_SASI1EJECT:
-					diskdrv_sethdd(0, NULL);
+					diskdrv_sethdd(0x00, NULL);
 					break;
 
 				case IDM_SASI2OPEN:
 					winuienter();
-					dialog_changehdd(hWnd, 1);
+					dialog_changehdd(hWnd, 0x01);
 					winuileave();
 					break;
 
 				case IDM_SASI2EJECT:
-					diskdrv_sethdd(1, NULL);
+					diskdrv_sethdd(0x01, NULL);
 					break;
 
 				case IDM_WINDOW:
@@ -861,6 +862,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 				case IDM_I286SAVE:
 					debugsub_status();
+// iptrace_out();
 					break;
 
 				case IDM_HELP:
@@ -1306,13 +1308,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	toolwin_initapp(hInstance);
 	kdispwin_initialize(hPreInst);
-	viewer_init(hPreInst);										// ver0.30
+	viewer_init(hPreInst);
 
-	hWndMain = CreateWindow(szClassName, np2oscfg.titles,
+#if 1
+	hWndMain = CreateWindowEx(0,
+						szClassName, np2oscfg.titles,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_THICKFRAME | WS_MINIMIZEBOX,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
 						NULL, NULL, hInstance, NULL);
+#else	// ƒeƒXƒg
+	hWndMain = CreateWindowEx(0,
+						szClassName, np2oscfg.titles,
+						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
+						WS_MINIMIZEBOX,
+						np2oscfg.winx, np2oscfg.winy, 640, 400,
+						NULL, NULL, hInstance, NULL);
+#endif
 	hWnd = hWndMain;
 	scrnmng_initialize();
 

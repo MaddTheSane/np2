@@ -264,7 +264,6 @@ void bios0x18(void) {
  			break;
 
    		case 0x0a:						// CRTモードの設定
-#if 1
 			mem[MEMB_CRT_STS_FLAG] = 0x80 | (CPU_AL & 0x0f);
 			// GDCバッファを空に
 			if (gdc.m.cnt) {
@@ -304,18 +303,6 @@ void bios0x18(void) {
 			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
 			gdc_restorekacmode();
 			break;
-#else
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
-
-			mem[MEMB_CRT_STS_FLAG] = CPU_AL;
-			if (systemport_r(0x33) & 0x08) {
-				mem[MEMB_CRT_STS_FLAG] |= 0x80;
-			}
-#endif
 
    		case 0x0b:						// CRTモードのセンス
 			CPU_AL = mem[MEMB_CRT_STS_FLAG];

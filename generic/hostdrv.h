@@ -16,13 +16,15 @@ typedef struct {
 } _HDRVFILE, *HDRVFILE;
 
 typedef struct {
-	UINT8	is_mount;
-	UINT8	drive_no;
-	UINT8	dosver_major;
-	UINT8	dosver_minor;
-	UINT16	sda_off;
-	UINT16	sda_seg;
-	UINT	flistpos;
+	struct {
+		UINT8	is_mount;
+		UINT8	drive_no;
+		UINT8	dosver_major;
+		UINT8	dosver_minor;
+		UINT16	sda_off;
+		UINT16	sda_seg;
+		UINT	flistpos;
+	}			stat;
 
 //	LISTARRAY	cache[DIRMAX_DEPTH];
 	LISTARRAY	fhdl;
@@ -42,9 +44,12 @@ void hostdrv_reset(void);
 // void save_hostdrv(void);
 // void load_hostdrv(void);
 
-BOOL hostdrv_mount(void);
-void hostdrv_unmount(void);
-void hostdrv_intr(void);
+void hostdrv_mount(const void *arg1, long arg2);
+void hostdrv_unmount(const void *arg1, long arg2);
+void hostdrv_intr(const void *arg1, long arg2);
+
+int hostdrv_sfsave(STFLAGH sfh, const SFENTRY *tbl);
+int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl);
 
 #ifdef __cplusplus
 }

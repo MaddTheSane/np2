@@ -296,6 +296,10 @@ static const INITBL iniitem[] = {
 	{"bmap_Dir", INITYPE_STR,		bmpfilefolder,			MAX_PATH},
 	{"fontfile", INITYPE_STR,		np2cfg.fontfile,		MAX_PATH},
 	{"biospath", INITYPE_STR,		np2cfg.biospath,		MAX_PATH},
+#if defined(SUPPORT_HOSTDRV)
+	{"hdrvroot", INITYPE_STR,		np2cfg.hdrvroot,		MAX_PATH},
+	{"hdrv_acc", INITYPE_UINT8,		&np2cfg.hdrvacc,		0},
+#endif
 
 	{"pc_model", INITYPE_STR,		&np2cfg.model,
 													sizeof(np2cfg.model)},
@@ -307,8 +311,8 @@ static const INITBL iniitem[] = {
 	{"ExMemory", INITYPE_UINT8,		&np2cfg.EXTMEM,			0},
 	{"ITF_WORK", INITYPE_BOOL,		&np2cfg.ITF_WORK,		0},
 
-	{"HDD1FILE", INITYPE_STR,		np2cfg.hddfile[0],		MAX_PATH},
-	{"HDD2FILE", INITYPE_STR,		np2cfg.hddfile[1],		MAX_PATH},
+	{"HDD1FILE", INITYPE_STR,		np2cfg.sasihdd[0],		MAX_PATH},
+	{"HDD2FILE", INITYPE_STR,		np2cfg.sasihdd[1],		MAX_PATH},
 
 	{"SampleHz", INITYPE_UINT16,	&np2cfg.samplingrate,	0},
 	{"Latencys", INITYPE_UINT16,	&np2cfg.delayms,		0},

@@ -5,6 +5,7 @@
 #include	"iocore.h"
 #include	"bios.h"
 #include	"biosmem.h"
+#include	"sxsibios.h"
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"lio.h"
@@ -15,7 +16,6 @@
 #include	"itfrom.res"
 #include	"startup.res"
 #include	"biosboot.res"
-#include	"sxsibios.res"
 
 
 #define	BIOS_SIMULATE
@@ -36,7 +36,7 @@ static void bios_reinitbyswitch(void) {
 	BYTE	prxdupd;
 	BYTE	biosflag;
 	BYTE	ext_mem;
-
+	UINT8	boot;
 
 #if defined(CPUCORE_IA32)
 	UINT16	org_cs;
@@ -50,6 +50,7 @@ static void bios_reinitbyswitch(void) {
 	SETBIOSMEM16(0x00486, CPU_DX);
 #endif
 
+	mem[MEMB_BIOS_FLAG0] = 0x01;
 	CPU_TYPE = 0;
 	prxcrt = 0xc8;
 	if (gdc.display & 2) {
@@ -88,7 +89,7 @@ static void bios_reinitbyswitch(void) {
 	if (extmem_init(ext_mem)) {										// ver0.28
 		ext_mem = 0;							// メモリ確保に失敗
 	}
-	mem[MEMB_BIOS_FLAG] = biosflag;
+	mem[MEMB_BIOS_FLAG1] = biosflag;
 	mem[MEMB_EXPMMSZ] = (BYTE)(ext_mem << 3);
 	mem[MEMB_CRT_RASTER] = 0x0f;
 
@@ -101,6 +102,26 @@ static void bios_reinitbyswitch(void) {
 	if (((pccore.model & PCMODELMASK) >= PCMODEL_VX) && (usesound & 0x7e)) {
 		iocore_out8(0x188, 0x27);
 		iocore_out8(0x18a, 0x3f);
+	}
+
+	// FDD initialize
+	SETBIOSMEM32(MEMD_F2DD_POINTER, 0xfd801ad7);
+	SETBIOSMEM32(MEMD_F2HD_POINTER, 0xfd801aaf);
+	boot = mem[MEMB_MSW5] & 0xf0;
+	if (boot != 0x20) {		// 1MB
+		fddbios_equip(DISKTYPE_2HD, TRUE);
+		mem[MEMB_BIOS_FLAG0] |= 0x02;
+	}
+	else {					// 640KB
+		fddbios_equip(DISKTYPE_2DD, TRUE);
+		mem[MEMB_BIOS_FLAG0] &= ~0x02;
+	}
+	mem[MEMB_F2DD_MODE] = 0xff;
+
+	// IDE initialize
+	if (pccore.hddif & PCHDD_IDE) {
+		CPU_AX = 0x8300;
+		sasibios_operate();
 	}
 }
 
@@ -116,6 +137,17 @@ static void bios_vectorset(void) {									// ver0.30
 		*(UINT16 *)(mem + (i*4)) = *(UINT16 *)(mem + 0xfd868 + (i*2));
 	}
 	SETBIOSMEM32(0x1e*4, 0xe8000000);
+}
+
+static void bios_screeninit(void) {
+
+	UINT	ax;
+
+	ax = 0x0a04;
+	ax += (np2cfg.dipsw[1] & 0x04) >> 1;
+	ax += (np2cfg.dipsw[1] & 0x08) >> 3;
+	CPU_AX = ax;
+	bios0x18();
 }
 
 
@@ -199,11 +231,9 @@ void bios_init(void) {
 
 	bios_reinitbyswitch();
 	mem[MEMB_CRT_STS_FLAG] = 0x84;
-	mem[MEMB_BIOS_FLAG0] = 0x03;
-	mem[MEMB_F2DD_MODE] = 0xff;										// ver0.29
- 	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);							// ver0.29
-	SETBIOSMEM32(MEMD_F2DD_POINTER, 0xfd801ad7);
-	SETBIOSMEM32(MEMD_F2HD_POINTER, 0xfd801aaf);
+//	mem[MEMB_BIOS_FLAG0] = 0x03;
+//	mem[MEMB_F2DD_MODE] = 0xff;										// ver0.29
+// 	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);							// ver0.29
 	mem[0x005ae] |= 0x03;											// ver0.31
 
 	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
@@ -229,9 +259,6 @@ void bios_init(void) {
 	}
 	extmem_init(np2cfg.EXTMEM);
 #endif
-
-	CopyMemory(mem + 0xd0000, sxsibios, sizeof(sxsibios));
-	CPU_RAM_D000 &= ~(1 << 0);
 
 	CopyMemory(mem + 0x1c0000, mem + ITF_ADRS, 0x08000);
 	CopyMemory(mem + 0x1e8000, mem + 0x0e8000, 0x10000);
@@ -379,8 +406,9 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 		case 0xfd802:					// ブート
 			bios_reinitbyswitch();
 			bios_vectorset();
+			bios_screeninit();
 #if 1																// ver0.73
-			CPU_CS = 0xfd80;
+			CPU_CS = 0xfd80;			// SASI/SCSIリセット
 			CPU_IP = 0x2400;
 #else
 			bootseg = bootstrapload();

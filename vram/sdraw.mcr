@@ -148,7 +148,7 @@ const BYTE	*p;
 
 		if (sdraw->dirty[y+1]) {
 			for (x=0; x<sdraw->width; x++) {
-				*(UINT32 *)q = np2_pal32[NP2PAL_TEXT].d;
+				SDSETPIXEL(q, NP2PAL_TEXT);
 				q += sdraw->xalign;
 			}
 			q -= sdraw->xbytes;
@@ -402,7 +402,7 @@ const BYTE	*q;
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
-			SDSETPIXEL(r, q[0] + NP2PAL_GRPH);
+			SDSETPIXEL(r, q[0] + NP2PAL_GRPH);			// !!
 			r += sdraw->xalign;
 			for (x=1; x<sdraw->width; x++) {
 				SDSETPIXEL(r, p[x-1] + q[x] + NP2PAL_GRPH);

@@ -2290,12 +2290,16 @@ I286FN _int_03(void) {						// CC:	int		3
 	INT_NUM(3, I286_IP);
 }
 
+extern int tr;
 I286FN _int_data8(void) {					// CD:	int		DATA8
 
 	UINT	vect;
 
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(vect)
+	if ((vect == 0x21) && (CPU_AX == 0x5f02)) {
+		tr = 1;
+	}
 	INT_NUM(vect, I286_IP);
 }
 

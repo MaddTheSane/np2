@@ -1,6 +1,7 @@
 
 typedef struct {
-	char	fcbname[12];
+	char	fcbname[11];
+	BYTE	exist;
 	UINT	caps;
 	UINT32	size;
 	UINT32	attr;
@@ -32,7 +33,6 @@ BOOL hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath);
 BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath);
 
 // ファイルハンドルリスト
-void hostdrvs_fhdlreopen(LISTARRAY fhdl);
 void hostdrvs_fhdlallclose(LISTARRAY fhdl);
 HDRVFILE hostdrvs_fhdlsea(LISTARRAY fhdl);
 

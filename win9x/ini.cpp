@@ -357,9 +357,14 @@ static const INITBL iniitem[] = {
 	{"ExMemory", INIMAX_UINT8,		&np2cfg.EXTMEM,			13},
 	{"ITF_WORK", INIRO_BOOL,		&np2cfg.ITF_WORK,		0},
 
-	{"HDD1FILE", INITYPE_STR,		np2cfg.hddfile[0],		MAX_PATH},
-	{"HDD2FILE", INITYPE_STR,		np2cfg.hddfile[1],		MAX_PATH},
-//	{"Removabl", INI_EX|1,	0,		&np2cfg.REMOVEHD,		0},
+	{"HDD1FILE", INITYPE_STR,		np2cfg.sasihdd[0],		MAX_PATH},
+	{"HDD2FILE", INITYPE_STR,		np2cfg.sasihdd[1],		MAX_PATH},
+#if defined(SUPPORT_SCSI)
+	{"SCSIHDD0", INITYPE_STR,		np2cfg.scsihdd[0],		MAX_PATH},
+	{"SCSIHDD1", INITYPE_STR,		np2cfg.scsihdd[1],		MAX_PATH},
+	{"SCSIHDD2", INITYPE_STR,		np2cfg.scsihdd[2],		MAX_PATH},
+	{"SCSIHDD3", INITYPE_STR,		np2cfg.scsihdd[3],		MAX_PATH},
+#endif
 
 	{"SampleHz", INITYPE_UINT16,	&np2cfg.samplingrate,	0},
 	{"Latencys", INITYPE_UINT16,	&np2cfg.delayms,		0},

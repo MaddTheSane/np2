@@ -53,8 +53,8 @@
 				3, {0x0c, 0x0c, 0x08, 0x06, 0x03, 0x0c}, 64, 64, 64, 64, 64,
 				1, 0x82,
 				0, {0x17, 0x04, 0x1f}, {0x0c, 0x0c, 0x02, 0x10, 0x3f, 0x3f},
-				1, 80, 0, 0,
-				{"", ""}, "", "", ""};
+				3, 1, 80, 0, 0,
+				{"", ""}, {"", "", "", ""}, "", "", ""};
 
 	PCCORE	pccore = {	PCBASECLOCK25, 4,
 						0, PCMODEL_VX, 0, 0,
@@ -316,7 +316,29 @@ void pccore_reset(void) {
 		sound_init();
 	}
 
+
+	// さて・・・？
 	setpcclock(np2cfg.model, np2cfg.baseclock, np2cfg.multiple);
+
+	// 拡張メモリ
+	pccore.extmem = 0;
+
+	// HDDの接続 (I/Oの使用状態が変わるので..
+	pccore.hddif = PCHDD_SCSI | PCHDD_IDE;
+
+	// サウンドボードの接続
+	pccore.sound = np2cfg.SOUND_SW;
+
+	// その他CBUSの接続
+	pccore.device = 0;
+	if (np2cfg.pc9861enable) {
+		pccore.device |= PCCBUS_PC9861K;
+	}
+	if (np2cfg.mpuenable) {
+		pccore.device |= PCCBUS_MPU98;
+	}
+
+
 	sound_changeclock();
 	beep_changeclock();
 	nevent_init();
@@ -543,11 +565,46 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
+// #define	IPTRACE			(1 << 16)
+
+#if IPTRACE
+static UINT		trpos;
+static UINT32	treip[IPTRACE];
+
+void iptrace_out(void) {
+
+	FILEH	fh;
+	UINT	s;
+	UINT32	eip;
+	char	buf[32];
+
+	s = trpos;
+	if (s > IPTRACE) {
+		s -= IPTRACE;
+	}
+	else {
+		s = 0;
+	}
+	fh = file_create_c("his.txt");
+	while(s < trpos) {
+		eip = treip[s & (IPTRACE - 1)];
+		s++;
+		SPRINTF(buf, "%.4x:%.4x\r\n", (eip >> 16), eip & 0xffff);
+		file_write(fh, buf, strlen(buf));
+	}
+	file_close(fh);
+}
+#endif
+
+
 #if defined(TRACE)
 static int resetcnt = 0;
 static int execcnt = 0;
 int piccnt = 0;
+int tr = 0;
 #endif
+
+	UINT	cflg;
 
 void pccore_exec(BOOL draw) {
 
@@ -597,8 +654,33 @@ void pccore_exec(BOOL draw) {
 		}
 #else
 		while(CPU_REMCLOCK > 0) {
-			TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
-			i286x_step();
+#if IPTRACE
+			treip[trpos & (IPTRACE - 1)] = (CPU_CS << 16) + CPU_IP;
+			trpos++;
+#endif
+			if (tr) {
+				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
+			}
+#if 0
+			if ((tr & 2) && (mem[0x0471e] == '\\')) {
+				TRACEOUT(("DTA BREAK %.4x:%.4x", CPU_CS, CPU_IP));
+				TRACEOUT(("0471:000e %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
+	mem[0x0471e+0], mem[0x0471e+1], mem[0x0471e+2], mem[0x0471e+3],
+	mem[0x0471e+4], mem[0x0471e+5], mem[0x0471e+6], mem[0x0471e+7]));
+				tr -= 2;
+			}
+			// DOS6
+			if (CPU_CS == 0xffd0) {
+				if (CPU_IP == 0xc4c2) {
+					TRACEOUT(("DS:DX = %.4x:%.4x / CX = %.4x", CPU_DS, CPU_DX, CPU_CX));
+				}
+				else if (CPU_IP == 0xc21d) {
+					TRACEOUT(("-> DS:BX = %.4x:%.4x", CPU_DS, CPU_BX));
+				}
+			}
+#endif
+//			i286x_step();
+			i286c_step();
 		}
 #endif
 		nevent_progress();

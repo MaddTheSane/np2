@@ -29,7 +29,8 @@ static const char np2infostr[] = 									\
 static void about_init(HWND hWnd) {
 
 	char	work[128];
-	RECT	rect;
+	RECT	rectwindow;
+	RECT	rectclient;
 	POINT	pt;
 	RECT	parent;
 
@@ -39,9 +40,10 @@ static void about_init(HWND hWnd) {
 	milstr_ncat(work, NP2VER_WIN9X, sizeof(work));
 #endif
 	SetDlgItemText(hWnd, IDC_NP2VER, work);
-	GetWindowRect(hWnd, &rect);
-	aboutsize.cx = rect.right - rect.left;
-	aboutsize.cy = rect.bottom - rect.top;
+	GetWindowRect(hWnd, &rectwindow);
+	GetClientRect(hWnd, &rectclient);
+	aboutsize.cx = rectwindow.right - rectwindow.left;
+	aboutsize.cy = rectwindow.bottom - rectwindow.top;
 	pt.x = 0;
 	pt.y = 0;
 	ClientToScreen(GetParent(hWnd), &pt);
@@ -49,7 +51,9 @@ static void about_init(HWND hWnd) {
 	np2class_move(hWnd,
 					pt.x + ((parent.right - parent.left - aboutsize.cx) / 2),
 					pt.y + ((parent.bottom - parent.top - aboutsize.cy) / 2),
-					aboutsize.cx, 84);
+					aboutsize.cx,
+					aboutsize.cy + 60 - (rectclient.bottom - rectclient.top));
+
 	SetFocus(GetDlgItem(hWnd, IDOK));
 }
 

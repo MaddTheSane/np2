@@ -69,6 +69,8 @@ typedef	int				SINT32;
 
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_HOSTDRV
+#define	SUPPORT_SASI
+#define	SUPPORT_SCSI
 
 #define	SOUNDRESERVE	20
 

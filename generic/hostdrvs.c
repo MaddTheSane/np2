@@ -11,7 +11,7 @@
 #include	"hostdrvs.h"
 
 
-static const HDRVDIR hddroot = {"           ", 0, 0, 0x10, {0}, {0}};
+static const HDRVDIR hddroot = {"           ", 0, 0, 0, 0x10, {0}, {0}};
 
 static const BYTE dospathchr[] = {
 			0xfa, 0x23,		// '&%$#"!  /.-,+*)(
@@ -137,6 +137,7 @@ LISTARRAY hostdrvs_getpathlist(const char *realpath) {
 				break;
 			}
 			CopyMemory(hdd->di.fcbname, fcbname, 11);
+			hdd->di.exist = 1;
 			hdd->di.caps = fli.caps;
 			hdd->di.size = fli.size;
 			hdd->di.attr = fli.attr;
@@ -336,11 +337,6 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 
 
 // ----
-
-void hostdrvs_fhdlreopen(LISTARRAY fhdl) {
-
-	(void)fhdl;
-}
 
 static BOOL fhdlallclose(void *vpItem, void *vpArg) {
 

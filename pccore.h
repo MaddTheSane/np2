@@ -1,5 +1,6 @@
 
 #include	"nevent.h"
+#include	"statsave.h"
 
 enum {
 	PCBASECLOCK25		= 2457600,
@@ -17,31 +18,34 @@ enum {
 	PCHDD_SCSI			= 0x02,
 	PCHDD_IDE			= 0x04,
 
-	PCSOUND_NONE		= 0x00
+	PCSOUND_NONE		= 0x00,
+
+	PCCBUS_PC9861K		= 0x0001,
+	PCCBUS_MPU98		= 0x0002
 };
 
 #define		CPUMODE_8MHz		0x20
 
 typedef struct {
 	// エミュレート中によく参照される奴
-	BYTE	uPD72020;
-	BYTE	DISPSYNC;
-	BYTE	RASTER;
-	BYTE	realpal;
-	BYTE	LCD_MODE;
-	BYTE	skipline;
+	UINT8	uPD72020;
+	UINT8	DISPSYNC;
+	UINT8	RASTER;
+	UINT8	realpal;
+	UINT8	LCD_MODE;
+	UINT8	skipline;
 	UINT16	skiplight;
 
-	BYTE	KEY_MODE;
-	BYTE	XSHIFT;
-	BYTE	BTN_RAPID;
-	BYTE	BTN_MODE;
+	UINT8	KEY_MODE;
+	UINT8	XSHIFT;
+	UINT8	BTN_RAPID;
+	UINT8	BTN_MODE;
 
 	BYTE	dipsw[3];
-	BYTE	MOUSERAPID;
+	UINT8	MOUSERAPID;
 
-	BYTE	calendar;
-	BYTE	usefd144;
+	UINT8	calendar;
+	UINT8	usefd144;
 	BYTE	wait[6];
 
 
@@ -52,47 +56,49 @@ typedef struct {
 
 	BYTE	memsw[8];
 
-	BYTE	ITF_WORK;
-	BYTE	EXTMEM;
-	BYTE	grcg;
-	BYTE	color16;
+	UINT8	ITF_WORK;
+	UINT8	EXTMEM;
+	UINT8	grcg;
+	UINT8	color16;
 	UINT32	BG_COLOR;
 	UINT32	FG_COLOR;
 
 	UINT16	samplingrate;
 	UINT16	delayms;
-	BYTE	SOUND_SW;
-	BYTE	snd_x;
+	UINT8	SOUND_SW;
+	UINT8	snd_x;
 
 	BYTE	snd14opt[3];
-	BYTE	snd26opt;
-	BYTE	snd86opt;
-	BYTE	spbopt;
-	BYTE	spb_vrc;												// ver0.30
-	BYTE	spb_vrl;												// ver0.30
-	BYTE	spb_x;													// ver0.30
+	UINT8	snd26opt;
+	UINT8	snd86opt;
+	UINT8	spbopt;
+	UINT8	spb_vrc;												// ver0.30
+	UINT8	spb_vrl;												// ver0.30
+	UINT8	spb_x;													// ver0.30
 
-	BYTE	BEEP_VOL;
+	UINT8	BEEP_VOL;
 	BYTE	vol14[6];
-	BYTE	vol_fm;
-	BYTE	vol_ssg;
-	BYTE	vol_adpcm;
-	BYTE	vol_pcm;
-	BYTE	vol_rhythm;
+	UINT8	vol_fm;
+	UINT8	vol_ssg;
+	UINT8	vol_adpcm;
+	UINT8	vol_pcm;
+	UINT8	vol_rhythm;
 
-	BYTE	mpuenable;
-	BYTE	mpuopt;
+	UINT8	mpuenable;
+	UINT8	mpuopt;
 
-	BYTE	pc9861enable;
+	UINT8	pc9861enable;
 	BYTE	pc9861sw[3];
 	BYTE	pc9861jmp[6];
 
-	BYTE	MOTOR;
-	BYTE	MOTORVOL;
-	BYTE	PROTECTMEM;
-	BYTE	hdrvacc;
+	UINT8	fddequip;
+	UINT8	MOTOR;
+	UINT8	MOTORVOL;
+	UINT8	PROTECTMEM;
+	UINT8	hdrvacc;
 
-	char	hddfile[2][MAX_PATH];									// ver0.30
+	char	sasihdd[2][MAX_PATH];									// ver0.74
+	char	scsihdd[4][MAX_PATH];									// ver0.74
 	char	fontfile[MAX_PATH];
 	char	biospath[MAX_PATH];
 	char	hdrvroot[MAX_PATH];
@@ -104,11 +110,11 @@ typedef struct {
 
 	UINT8	cpumode;
 	UINT8	model;
-	UINT8	hddmode;
-	UINT8	padding;
+	UINT8	extmem;
+	UINT8	hddif;
 
-	UINT32	device;
 	UINT32	sound;
+	UINT32	device;
 
 	UINT32	realclock;
 	UINT32	dispclock;

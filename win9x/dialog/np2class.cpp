@@ -140,7 +140,8 @@ void np2class_windowtype(HWND hWnd, BYTE type) {
 	}
 	SetWindowLong(hWnd, GWL_STYLE, style);
 	SetWindowPos(hWnd, 0, 0, 0, 0, 0,
-					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+					SWP_FRAMECHANGED | SWP_DRAWFRAME | 
+					SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 	winloc_setclientsize(hWnd,
 							rect.right - rect.left, rect.bottom - rect.top);
 }

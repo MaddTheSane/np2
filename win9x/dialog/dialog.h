@@ -9,8 +9,8 @@ void dialog_sndopt(HWND hWnd);
 void dialog_s98(HWND hWnd);
 void dialog_serial(HWND hWnd);
 void dialog_newdisk(HWND hWnd);
-void dialog_changefdd(HWND hWnd, BYTE drv);
-void dialog_changehdd(HWND hWnd, BYTE drv);
+void dialog_changefdd(HWND hWnd, REG8 drv);
+void dialog_changehdd(HWND hWnd, REG8 drv);
 void dialog_font(HWND hWnd);
 void dialog_writebmp(HWND hWnd);
 

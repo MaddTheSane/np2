@@ -16,20 +16,6 @@
 
 // --- Interval timer
 
-// ver0.31 èÌÇ…âÒÇ∑Åc
-static void setsystimerevent_noint(BOOL absolute) {
-
-	nevent_set(NEVENT_ITIMER, pccore.multiple << 16,
-												systimer_noint, absolute);
-}
-
-void systimer_noint(NEVENTITEM item) {
-
-	if (item->flag & NEVENT_SETEVENT) {
-		setsystimerevent_noint(NEVENT_RELATIVE);
-	}
-}
-
 static void setsystimerevent(BOOL absolute) {
 
 	SINT32	cnt;

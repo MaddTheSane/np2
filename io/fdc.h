@@ -110,8 +110,8 @@ void fdc_reset(void);
 void fdc_bind(void);
 void fdc_interrupt(void);
 
-void DMACCALL fdc_DataRegWrite(REG8 data);
-REG8 DMACCALL fdc_DataRegRead(void);
+void DMACCALL fdc_datawrite(REG8 data);
+REG8 DMACCALL fdc_dataread(void);
 REG8 DMACCALL fdc_dmafunc(REG8 func);
 
 void fdcsend_error7(void);

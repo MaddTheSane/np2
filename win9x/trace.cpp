@@ -38,7 +38,8 @@ extern	HINSTANCE	hPrev;
 
 enum {
 	IDM_TRACEEN		= 3300,
-	IDM_TRACEFH
+	IDM_TRACEFH,
+	IDM_TRACECL
 };
 
 static const char	ProgTitle[] = "console";
@@ -46,6 +47,7 @@ static const char	ClassName[] = "TRACE-console";
 static const char	ClassEdit[] = "EDIT";
 static const char	traceen[] = "Enable";
 static const char	tracefh[] = "File out";
+static const char	tracecl[] = "Clear";
 static const char	crlf[] = "\r\n";
 
 static	TRACEWIN	tracewin;
@@ -70,6 +72,12 @@ static void View_ScrollToBottom(HWND hWnd) {
 
 	GetScrollRange(hWnd, SB_VERT, &MinPos, &MaxPos);
 	PostMessage(hWnd, EM_LINESCROLL, 0, MaxPos);
+}
+
+static void View_ClrString(void) {
+
+	szView[0] = '\0';
+	SetWindowText(hView, szView);
 }
 
 static void View_AddString(const char *lpszString) {
@@ -110,7 +118,9 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 														IDM_TRACEEN, traceen);
 			InsertMenu(hmenu, 1, MF_BYPOSITION | MF_STRING,
 														IDM_TRACEFH, tracefh);
-			InsertMenu(hmenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			InsertMenu(hmenu, 2, MF_BYPOSITION | MF_STRING,
+														IDM_TRACECL, tracecl);
+			InsertMenu(hmenu, 3, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
 			CheckMenuItem(hmenu, IDM_TRACEEN,
 								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
@@ -160,6 +170,10 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					CheckMenuItem(hmenu, IDM_TRACEFH,
 									(tracewin.fh != FILEH_INVALID)?
 													MF_CHECKED:MF_UNCHECKED);
+					break;
+
+				case IDM_TRACECL:
+					View_ClrString();
 					break;
 
 				default:
@@ -250,8 +264,13 @@ void trace_init(void) {
 		}
 	}
 
+#if 1
 	tracewin.en = 1;
 	tracewin.fh = FILEH_INVALID;
+#else
+	tracewin.en = 0;
+	tracewin.fh = file_create_c("out.txt");
+#endif
 
 	tracecfg.posx = CW_USEDEFAULT;
 	tracecfg.posy = CW_USEDEFAULT;

@@ -34,7 +34,7 @@ void bios0x19(void) {
 		if (speed >= 8) {
 			speed = 4;						// 1200bps
 		}
-		if (mem[MEMB_BIOS_FLAG] & 0x80) {	// 4MHz?
+		if (mem[MEMB_BIOS_FLAG1] & 0x80) {	// 4MHz?
 			speed += 12;
 		}
 

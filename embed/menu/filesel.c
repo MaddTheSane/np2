@@ -411,7 +411,7 @@ void filesel_sasi(BYTE drv) {
 	char	path[MAX_PATH];
 
 	if (drv < 2) {
-		if (selectfile(&hddprm, path, sizeof(path), np2cfg.hddfile[drv])) {
+		if (selectfile(&hddprm, path, sizeof(path), np2cfg.sasihdd[drv])) {
 			diskdrv_sethdd(drv, path);
 		}
 	}
