@@ -4,6 +4,7 @@
 #include	"sysmng.h"
 #include	"cpucore.h"
 #include	"pccore.h"
+#include	"iocore.h"
 #include	"sxsi.h"
 #if defined(SUPPORT_IDEIO)
 #include	"ideio.h"
@@ -70,9 +71,11 @@ void sxsi_initialize(void) {
 	for (i=0; i<SASIHDD_MAX; i++) {
 		sxsi_dev[i].drv = (UINT8)(SXSIDRV_SASI + i);
 	}
+#if defined(SUPPORT_SCSI)
 	for (i=0; i<SCSIHDD_MAX; i++) {
 		sxsi_dev[SASIHDD_MAX + i].drv = (UINT8)(SXSIDRV_SCSI + i);
 	}
+#endif
 	for (i=0; i<NELEMENTS(sxsi_dev); i++) {
 		sxsi_dev[i].fh = (INTPTR)FILEH_INVALID;
 		sxsi_disconnect(sxsi_dev + i);
