@@ -244,15 +244,13 @@ static BOOL msa_open(GETSND snd, WAVE_INFOS *wavehead, UINT headsize) {
 	__COEFPAIR		*coef;
 	BYTE			*p;
 
-	if (snd->bit != 4) {
+	if ((snd->bit != 4) ||
+		(headsize < (sizeof(WAVE_INFOS) + sizeof(WAVE_MSA_INFO)))) {
 		goto msaopn_err;
 	}
 	info = (WAVE_MSA_INFO *)(wavehead + 1);
 	headsize -= sizeof(WAVE_INFOS);
 	headsize -= sizeof(WAVE_MSA_INFO);
-	if ((signed long)headsize < 0) {
-		goto msaopn_err;
-	}
 	exsize = LOADINTELWORD(info->exsize);
 	spb = LOADINTELWORD(info->spb);
 	numcoef = LOADINTELWORD(info->numcoef);
@@ -342,7 +340,7 @@ static UINT ima_dec(GETSND snd, SINT16 *dst) {
 
 	UINT	c;
 	SINT32	val[2];
-	itn		state[2];
+	int		state[2];
 	BYTE	*src;
 	UINT	blk;
 
