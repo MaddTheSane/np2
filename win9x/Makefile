@@ -772,7 +772,7 @@ $(OBJ)/fontmake.o	:	$(FONT)/fontmake.c $(HEADERS) $(COMMON)/bmpdata.h \
 
 $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/strres.h $(COMMON)/parts.h \
-						$(TARGET)/resource.h $(TARGET)/np2.h 
+						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(TARGET)/np2arg.h $(X86ASM)/cputype.h \
 						$(TARGET)/dosio.h $(TARGET)/extromio.h \
 						$(TARGET)/commng.h $(TARGET)/joymng.h \

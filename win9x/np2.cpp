@@ -834,34 +834,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
 			if (np2opening) {
-
-			    HDC			hmdc;
+			    HINSTANCE	hinst;
+				RECT		rect;
+				int			width;
+				int			height;
 			    HBITMAP		hbmp;
 			    BITMAP		bmp;
-			    HINSTANCE	hinst;
-				int			sx = 640 + np2oscfg.paddingx;
-				int			sy = 400 + np2oscfg.paddingy;
-
+			    HDC			hmdc;
+				HBRUSH		hbrush;
 			    hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
-#if 1
+				GetClientRect(hWnd, &rect);
+				width = rect.right - rect.left;
+				height = rect.bottom - rect.top;
     			hbmp = LoadBitmap(hinst, "NP2BMP");
 			    GetObject(hbmp, sizeof(BITMAP), &bmp);
+				hbrush = (HBRUSH)SelectObject(hdc,
+												GetStockObject(BLACK_BRUSH));
+				PatBlt(hdc, 0, 0, width, height, PATCOPY);
+				SelectObject(hdc, hbrush);
 			    hmdc = CreateCompatibleDC(hdc);
 			    SelectObject(hmdc, hbmp);
-			    BitBlt(hdc, (sx - 252) / 2, (sy - 28) / 2,
+			    BitBlt(hdc, (width - bmp.bmWidth) / 2,
+			    			(height - bmp.bmHeight) / 2,
 							bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
 			    DeleteDC(hmdc);
 	    		DeleteObject(hbmp);
-#else
-    			hbmp = LoadBitmap(hinst, "NP2EXT");
-			    GetObject(hbmp, sizeof(BITMAP), &bmp);
-			    hmdc = CreateCompatibleDC(hdc);
-			    SelectObject(hmdc, hbmp);
-			    BitBlt(hdc, (sx - 160) / 2, (sy - 140) / 2,
-							bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
-			    DeleteDC(hmdc);
-	    		DeleteObject(hbmp);
-#endif
 			}
 			else {
 //				scrnmng_update();
@@ -915,6 +912,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_KEYDOWN:
 			if (wParam == VK_F11) {
+				scrnmng_enablemenubar();
 				return(DefWindowProc(hWnd, WM_SYSKEYDOWN, VK_F10, lParam));
 			}
 			if ((wParam == VK_F12) && (!np2oscfg.F12COPY)) {
@@ -926,6 +924,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				winkeydown106(wParam, lParam);
 			}
 			break;
+
 		case WM_KEYUP:
 			if (wParam == VK_F11) {
 				return(DefWindowProc(hWnd, WM_SYSKEYUP, VK_F10, lParam));
@@ -953,10 +952,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			winkeyup106(wParam, lParam);
 			break;
 
+		case WM_MOUSEMOVE:
+			if (scrnmng_isfullscreen()) {
+				POINT p;
+				if (GetCursorPos(&p)) {
+					scrnmng_fullscrnmenu(p.y);
+				}
+			}
+			break;
+
 		case WM_LBUTTONDOWN:
 			if (!mouse_btn(MOUSE_LEFTDOWN)) {
 				if (scrnmng_isfullscreen()) {
-					POINT	p;
+					POINT p;
 					if ((GetCursorPos(&p)) && (p.y >= 466)) {
 						np2oscfg.clk_x++;
 						sysmng_update(SYS_UPDATEOSCFG);
@@ -966,6 +974,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				return(DefWindowProc(hWnd, msg, wParam, lParam));
 			}
 			break;
+
 		case WM_LBUTTONUP:
 			if (!mouse_btn(MOUSE_LEFTUP)) {
 				return(DefWindowProc(hWnd, msg, wParam, lParam));
@@ -1160,7 +1169,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		np2.hInstance = hInstance;
 		np2.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 		np2.hCursor = LoadCursor(NULL, IDC_ARROW);
-		np2.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+		np2.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		np2.lpszMenuName = MAKEINTRESOURCE(IDM_MAIN);
 		np2.lpszClassName = szClassName;
 		if (!RegisterClass(&np2)) {

@@ -70,6 +70,9 @@ RGB16 scrnmng_makepal16(RGB32 pal32);
 
 void scrnmng_setmultiple(int multiple);
 void scrnmng_querypalette(void);
+void scrnmng_enablemenubar(void);
+void scrnmng_disablemenubar(void);
+void scrnmng_fullscrnmenu(int y);
 void scrnmng_topwinui(void);
 void scrnmng_clearwinui(void);
 

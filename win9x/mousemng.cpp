@@ -20,7 +20,7 @@ static void getmaincenter(POINT *cp) {
 }
 
 
-void mouseonoff(BYTE flg) {
+static void mouseonoff(BYTE flg) {
 
 	POINT	cp;
 	RECT	rct;

@@ -31,6 +31,9 @@ typedef struct {
 	BYTE				r16b;
 	BYTE				l16r;
 	BYTE				l16g;
+	BYTE				menudisp;
+	int					menusize;
+	HMENU				menuhdl;
 	RECT				scrn;
 	RECT				rect;
 	PALETTEENTRY		pal[256];
@@ -217,7 +220,13 @@ static void clearoutscreen(void) {
 
 static void clearoutfullscreen(void) {
 
-	clearoutofrect(&ddraw.scrn, &ddraw.rect);
+	RECT	r;
+
+	r.left = 0;
+	r.top = (ddraw.menuhdl)?0:ddraw.menusize;
+	r.right = ddraw.width;			// (+ ddraw.extend)
+	r.bottom = ddraw.height;
+	clearoutofrect(&ddraw.scrn, &r);
 	dclock_redraw();
 }
 
@@ -321,6 +330,10 @@ BOOL scrnmng_create(BYTE scrnmode) {
 		winstyleex |= WS_EX_TOPMOST;
 		CheckMenuItem(hmenu, IDM_WINDOW, MF_UNCHECKED);
 		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_CHECKED);
+		ddraw.menudisp = 0;
+		ddraw.menusize = GetSystemMetrics(SM_CYMENU);
+		ddraw.menuhdl = GetMenu(hWndMain);
+		SetMenu(hWndMain, NULL);
 	}
 	else {
 		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
@@ -488,6 +501,7 @@ void scrnmng_destroy(void) {
 	if (ddraw.ddraw1) {
 		ddraw.ddraw1->Release();
 	}
+	scrnmng_enablemenubar();
 	ZeroMemory(&ddraw, sizeof(ddraw));
 }
 
@@ -505,6 +519,42 @@ RGB16 scrnmng_makepal16(RGB32 pal32) {
 	pal.d = pal32.d & ddraw.pal16mask.d;
 	return((RGB16)((pal.p.g << ddraw.l16g) +
 						(pal.p.r << ddraw.l16r) + (pal.p.b >> ddraw.r16b)));
+}
+
+void scrnmng_enablemenubar(void) {
+
+	if (ddraw.menuhdl) {
+		SetMenu(hWndMain, ddraw.menuhdl);
+		ddraw.menuhdl = NULL;
+		DrawMenuBar(hWndMain);
+	}
+}
+
+void scrnmng_disablemenubar(void) {
+
+	if (ddraw.menuhdl == NULL) {
+		ddraw.menuhdl = GetMenu(hWndMain);
+		SetMenu(hWndMain, NULL);
+	}
+}
+
+void scrnmng_fullscrnmenu(int y) {
+
+	BYTE	menudisp;
+
+	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
+		menudisp = ((y >= 0) && (y < ddraw.menusize))?1:0;
+		if (ddraw.menudisp != menudisp) {
+			ddraw.menudisp = menudisp;
+			if (menudisp == 1) {
+				scrnmng_enablemenubar();
+			}
+			else {
+				scrnmng_disablemenubar();
+				clearoutfullscreen();
+			}
+		}
+	}
 }
 
 void scrnmng_topwinui(void) {
@@ -531,7 +581,9 @@ void scrnmng_clearwinui(void) {
 		}
 	}
 	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
+		scrnmng_disablemenubar();
 		clearoutfullscreen();
+		ddraw.menudisp = 0;
 	}
 	mouse_running(MOUSE_CONT);
 }
