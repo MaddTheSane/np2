@@ -530,11 +530,12 @@ void bios0x18_42(REG8 mode) {
 		gdcs.disp = (mode >> 4) & 1;
 	}
 	if (!(mode & 0x20)) {
-		gdc.mode1 &= ~0x04;
+		gdc.mode2 &= ~0x04;
 	}
 	else {
 		gdc.mode2 |= 0x04;
 	}
+	gdcs.mode2 = gdc.mode2;
 	gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 	screenupdate |= 2;
 }
@@ -765,7 +766,7 @@ void bios0x18(void) {
 	}		tmp;
 	int		i;
 
-#if 0
+#if 1
 	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
 							MEML_READ16(CPU_SS, CPU_SP+2),
 							MEML_READ16(CPU_SS, CPU_SP)));
