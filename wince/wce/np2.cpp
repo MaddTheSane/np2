@@ -286,7 +286,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						framecnt = 0;
+						processwait(0);
 					}
 				}
 				else {

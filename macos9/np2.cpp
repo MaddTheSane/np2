@@ -258,6 +258,12 @@ static void HandleMenuChoice(long wParam) {
 			break;
 #endif
 
+		case IDM_MIDIPANIC:
+			rs232c_midipanic();
+			mpu98ii_midipanic();
+			pc9861k_midipanic();
+			break;
+
 		case IDM_KEY:
 			menu_setkey(0);
 			keystat_resetjoykey();
@@ -472,6 +478,7 @@ static void HandleMouseDown(EventRecord *pevent) {
 			if (np2running) {
 				soundmng_stop();
 				HandleMenuChoice(MenuSelect(pevent->where));
+				soundmng_play();
 			}
 			break;
 
@@ -525,7 +532,9 @@ static void eventproc(EventRecord *event) {
 			if (np2running) {
 				mackbd_f12down(((event->message) & keyCodeMask) >> 8);
 				if (event->modifiers & cmdKey) {
+					soundmng_stop();
 					HandleMenuChoice(MenuKey(event->message & charCodeMask));
+					soundmng_play();
 				}
 			}
 			break;
@@ -553,8 +562,8 @@ static void eventproc(EventRecord *event) {
 static void processwait(UINT waitcnt) {
 
 	if (timing_getcount() >= waitcnt) {
-		timing_setcount(0);
 		framecnt = 0;
+		timing_setcount(0);
 		if (np2oscfg.DISPCLK & 3) {
 			if (sysmng_workclockrenewal()) {
 				sysmng_updatecaption(3);
@@ -701,7 +710,6 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
 				mouse_callback();
 #endif
-				soundmng_play();
 				mackbd_callback();
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
@@ -722,7 +730,6 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
                     mouse_callback();
 #endif
-					soundmng_play();
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
@@ -737,7 +744,6 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
                     mouse_callback();
 #endif
-					soundmng_play();
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
@@ -758,7 +764,7 @@ int main(int argc, char *argv[]) {
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						framecnt = 0;
+						processwait(0);
 					}
 				}
 				else {

@@ -33,7 +33,7 @@
 
 
 #define	USE_RESUME
-#define	NP2OPENING
+// #define	NP2OPENING
 
 #ifdef		NP2OPENING
 #include	<QuickTime/QuickTime.h>
@@ -568,8 +568,8 @@ static void eventproc(EventRecord *event) {
 static void processwait(UINT waitcnt) {
 
 	if (timing_getcount() >= waitcnt) {
-		timing_setcount(0);
 		framecnt = 0;
+		timing_setcount(0);
 		if (np2oscfg.DISPCLK & 3) {
 			if (sysmng_workclockrenewal()) {
 				sysmng_updatecaption(3);
@@ -818,7 +818,7 @@ int main(int argc, char *argv[]) {
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						framecnt = 0;
+						processwait(0);
 					}
 				}
 				else {

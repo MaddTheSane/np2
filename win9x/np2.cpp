@@ -1080,7 +1080,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 
-static void processwait(WORD cnt) {
+static void processwait(UINT cnt) {
 
 	if (timing_getcount() >= cnt) {
 		timing_setcount(0);
@@ -1399,7 +1399,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 							else {
 								timing_setcount(cnt - framecnt);
 							}
-							framecnt = 0;
+							processwait(0);
 						}
 					}
 					else {
