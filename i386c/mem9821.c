@@ -1,4 +1,7 @@
 #include	"compiler.h"
+
+#if defined(SUPPORT_PC9821)
+
 #include	"cpucore.h"
 #include	"mem9821.h"
 #include	"pccore.h"
@@ -115,4 +118,5 @@ REG16 MEMCALL mem9821_b2rw(UINT32 address) {
 	ret |= mem9821_b2r(address + 1) << 8;
 	return(ret);
 }
+#endif
 

@@ -7,7 +7,7 @@
 
 #ifdef TRACE
 
-#define	FILEBUFSIZE			(1 << 20)
+// #define FILEBUFSIZE			(1 << 20)
 // #define FILELASTBUFONLY
 
 #ifdef STRICT
@@ -116,18 +116,20 @@ static void View_AddString(const char *lpszString) {
 
 // ----
 
+#if defined(FILEBUFSIZE)
 static	char	filebuf[FILEBUFSIZE];
 static	UINT32	filebufpos;
+#endif
 
 static void trfh_close(void) {
 
 	FILEH	fh;
-	UINT	size;
 
 	fh = tracewin.fh;
 	tracewin.fh = FILEH_INVALID;
 	if (fh != FILEH_INVALID) {
-		size = filebufpos & (FILEBUFSIZE - 1);
+#if defined(FILEBUFSIZE)
+		UINT size = filebufpos & (FILEBUFSIZE - 1);
 #if defined(FILELASTBUFONLY)
 		if (filebufpos >= FILEBUFSIZE) {
 			file_write(fh, filebuf + size, FILEBUFSIZE - size);
@@ -136,6 +138,7 @@ static void trfh_close(void) {
 		if (size) {
 			file_write(fh, filebuf, size);
 		}
+#endif
 		file_close(fh);
 	}
 }
@@ -144,19 +147,20 @@ static void trfh_open(const char *fname) {
 
 	trfh_close();
 	tracewin.fh = file_create(fname);
+#if defined(FILEBUFSIZE)
 	filebufpos = 0;
+#endif
 }
 
 static void trfh_add(const char *buf) {
 
 	UINT	size;
-	UINT	pos;
-	UINT	rem;
 
 	size = strlen(buf);
+#if defined(FILEBUFSIZE)
 	while(size) {
-		pos = filebufpos & (FILEBUFSIZE - 1);
-		rem = FILEBUFSIZE - pos;
+		UINT pos = filebufpos & (FILEBUFSIZE - 1);
+		UINT rem = FILEBUFSIZE - pos;
 		if (size >= rem) {
 			CopyMemory(filebuf + pos, buf, rem);
 			filebufpos += rem;
@@ -172,6 +176,9 @@ static void trfh_add(const char *buf) {
 			break;
 		}
 	}
+#else
+	file_write(tracewin.fh, buf, size);
+#endif
 }
 
 

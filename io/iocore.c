@@ -484,7 +484,7 @@ void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 
 	IOFUNC	iof;
 
-//	VERBOSE(("iocore_out8(%x, %x)", port, dat));
+	TRACEOUT(("iocore_out8(%.2x, %.2x)", port, dat));
 	CPU_REMCLOCK -= iocore.busclock;
 	iof = iocore.base[(port >> 8) & 0xff];
 	iof->ioout[port & 0xff](port, dat);
@@ -493,11 +493,13 @@ void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 REG8 IOINPCALL iocore_inp8(UINT port) {
 
 	IOFUNC	iof;
+	REG8	ret;
 
-//	VERBOSE(("iocore_inp8(%x)", port));
 	CPU_REMCLOCK -= iocore.busclock;
 	iof = iocore.base[(port >> 8) & 0xff];
-	return(iof->ioinp[port & 0xff](port));
+	ret = iof->ioinp[port & 0xff](port);
+	TRACEOUT(("iocore_inp8(%.2x) -> %.2x", port, ret));
+	return(ret);
 }
 
 void IOOUTCALL iocore_out16(UINT port, REG16 dat) {

@@ -47,7 +47,7 @@ static void IOOUTCALL keyboard_o41(UINT port, REG8 dat) {
 
 static void IOOUTCALL keyboard_o43(UINT port, REG8 dat) {
 
-	TRACEOUT(("out43 -> %02x %.4x:%.8x", dat, CPU_CS, CPU_EIP));
+//	TRACEOUT(("out43 -> %02x %.4x:%.8x", dat, CPU_CS, CPU_EIP));
 	if ((!(dat & 0x08)) && (keybrd.cmd & 0x08)) {
 		keyboard_resetsignal();
 	}
@@ -63,14 +63,14 @@ static REG8 IOINPCALL keyboard_i41(UINT port) {
 	(void)port;
 	keybrd.status &= ~2;
 	pic_resetirq(1);
-	TRACEOUT(("in41 -> %02x %.4x:%.8x", keybrd.data, CPU_CS, CPU_EIP));
+//	TRACEOUT(("in41 -> %02x %.4x:%.8x", keybrd.data, CPU_CS, CPU_EIP));
 	return(keybrd.data);
 }
 
 static REG8 IOINPCALL keyboard_i43(UINT port) {
 
 	(void)port;
-	TRACEOUT(("in43 -> %02x %.4x:%.8x", keybrd.status, CPU_CS, CPU_EIP));
+//	TRACEOUT(("in43 -> %02x %.4x:%.8x", keybrd.status, CPU_CS, CPU_EIP));
 	return(keybrd.status | 0x85);
 }
 

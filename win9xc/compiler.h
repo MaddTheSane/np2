@@ -94,6 +94,7 @@ typedef signed __int64		SINT64;
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SWSEEKSND
 
+
 #if defined(CPUCORE_IA32)
 #define	sigjmp_buf				jmp_buf
 #define	sigsetjmp(env, mask)	setjmp(env)

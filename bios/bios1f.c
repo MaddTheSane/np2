@@ -30,9 +30,11 @@ static REG8 bios0x1f_90(void) {
 		goto p90_err;
 	}
 
+	CPU_A20EN(TRUE);
 	srcbase = work[2] + (work[3] << 8) + (work[4] << 16);
-	dstbase = work[10] + (work[11] << 8) + (work[12] << 16) + dstaddr;
+	dstbase = work[10] + (work[11] << 8) + (work[12] << 16);
 	leng = LOW16(CPU_CX - 1) + 1;
+//	TRACEOUT(("move %.8x %.8x %.4x", srcbase + srcaddr, dstbase + dstaddr, leng));
 	do {
 		l = min(leng, sizeof(work));
 		l = min(l, srclimit - srcaddr);
@@ -47,6 +49,7 @@ static REG8 bios0x1f_90(void) {
 		leng -= l;
 	} while(leng);
 	TRACEOUT(("BIOS1F90 - success"));
+	CPU_A20EN(FALSE);
 	return(0);
 
 p90_err2:
