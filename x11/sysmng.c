@@ -7,6 +7,7 @@
 #include "iocore.h"
 #include "fddfile.h"
 #include "ideio.h"
+#include "sxsi.h"
 #include "sysmng.h"
 #include "toolkit.h"
 
