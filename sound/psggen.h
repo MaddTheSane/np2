@@ -14,7 +14,7 @@ enum {
 typedef struct {
 	SINT32	freq;
 	SINT32	count;
-	BYTE	*pvol;
+	SINT32	*pvol;			// !!
 	UINT16	puchi;
 	BYTE	pan;
 	BYTE	padding;
@@ -47,6 +47,7 @@ typedef struct {
 	BYTE		envmode;
 	BYTE		envvol;
 	char		envvolcnt;
+	SINT32		evol;				// !!
 	UINT		puchicount;
 } _PSGGEN, *PSGGEN;
 

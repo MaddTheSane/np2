@@ -15,7 +15,7 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 	PSGTONE	*tone;
 	PSGTONE	*toneterm;
 	SINT32	samp;
-	UINT	psgvol;
+//	UINT	psgvol;
 	SINT32	vol;
 	UINT	i;
 	UINT	noise;
@@ -50,6 +50,7 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 					psg->envcnt = psg->envmax;
 					psg->envvol = (psg->envvolcnt ^ psg->envmode) & 0x0f;
 				}
+				psg->evol = psggencfg.volume[psg->envvol];
 			}
 		}
 		mixer = psg->mixer;
@@ -69,10 +70,9 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 		tone = psg->tone;
 		toneterm = tone + 3;
 		do {
-			psgvol = (*(tone->pvol)) & 15;
-			if (psgvol) {
+			vol = *(tone->pvol);
+			if (vol) {
 				samp = 0;
-				vol = psggencfg.volume[psgvol];
 				switch(mixer & 9) {
 					case 0:							// no mix
 						if (tone->puchi) {

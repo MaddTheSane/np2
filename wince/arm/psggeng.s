@@ -23,13 +23,12 @@ PN_BASE			equ		56
 P_REG			equ		60
 P_ENVCNT		equ		76
 P_ENVMAX		equ		78
-
 P_MIXER			equ		80
 P_ENVMODE		equ		81
 P_ENVVOL		equ		82
 P_ENVVOLCNT		equ		83
-
-P_PUCHICOUNT	equ		84
+P_EVOL			equ		84
+P_PUCHICOUNT	equ		88
 
 C_VOLUME		equ		0
 C_VOLTBL		equ		64
@@ -62,7 +61,66 @@ CD_BIT31		equ		&80000000
 	AREA	.text, CODE, READONLY
 
 
-psggen_getpcm	ldrb	r12, [r0, #P_MIXER]
+	MACRO
+$label	PSGCALC	$o, $t, $n
+$label		ldr		r12, [r0, #($o + T_PVOL)]
+			tst		r10, $t
+			mov		r3, #0
+			ldr		r12, [r12]
+			beq		$label.n
+			cmp		r12, #0
+			beq		$label.ed
+			ldr		r4, [r0, #($o + T_COUNT)]
+			ldr		r5, [r0, #($o + T_FREQ)]
+			tst		r10, $n
+			bne		$label.tn
+			mov		r6, #PSGADDEDCNT
+$label.tlp	adds	r4, r4, r5
+			addpl	r3, r3, r12
+			submi	r3, r3, r12
+			subs	r6, r6, #1
+			bne		$label.tlp
+			str		r4, [r0, #($o + T_COUNT)]
+			ldrb	r6, [r0, #($o + T_PAN)]
+			b		$label.pan
+$label.tn	add		r6, r9, #1
+$label.tnlp	add		r4, r4, r5
+			tst		r4, r6
+			addpl	r3, r3, r12
+			submi	r3, r3, r12
+			mov		r6, r6 lsl #1
+			tst		r6, #(1 << PSGADDEDCNT)
+			beq		$label.tnlp
+			str		r4, [r0, #($o + T_COUNT)]
+			ldrb	r6, [r0, #($o + T_PAN)]
+			b		$label.pan
+$label.n	cmp		r12, #0
+			beq		$label.ed
+			tst		r10, $n
+			bne		$label.nmn
+			ldrb	r4, [r0, #($o + T_PUCHI)]
+			ldrb	r6, [r0, #($o + T_PAN)]
+			subs	r4, r4, #1
+			strcsb	r4, [r0, #($o + T_PUCHI)]
+			addcs	r3, r3, r12 lsl #PSGADDEDBIT
+			b		$label.pan
+$label.nmn	mov		r4, #(1 << (32 - PSGADDEDCNT))
+			ldrb	r6, [r0, #($o + T_PAN)]
+$label.nlp	tst		r4, r9
+			addeq	r3, r3, r12
+			subne	r3, r3, r12
+			movs	r4, r4 lsl #1
+			bne		$label.nlp
+$label.pan	tst		r6, #1
+			addeq	r7, r7, r3
+			tst		r6, #2
+			addeq	r8, r8, r3
+$label.ed
+	MEND
+
+
+psggen_getpcm
+				ldrb	r12, [r0, #P_MIXER]
 				tst		r12, #&3f
 				bne		countcheck
 				ldr		r3, [r0, #P_PUCHICOUNT]
@@ -88,15 +146,19 @@ psgmake_lp		ldr		r10, [r0, #P_MIXER]
 				tst		r10, #(PSGENV_ONESHOT << 8)
 				beq		calcenvcyc
 				tst		r10, #(PSGENV_LASTON << 8)
+				ldreq	r6, [r11]
+				ldrne	r6, [r11, #(15 * 4)]
 				orrne	r10, r10, #(15 << 16)
-				b		calcenvstr
+				b		calcenvvstr
 calcenvcyc		bic		r10, r10, #(240 << 24)
 				tst		r10, #(PSGENV_ONECYCLE << 8)
 				eoreq	r10, r10, #(PSGENV_INC << 8)
 calcenvnext		ldrh	lr, [r0, #P_ENVMAX]
-				eor		r3, r10, r10, lsr #16
+				eor		r3, r10, r10 lsr #16
 				and		r3, r3, #(15 << 8)
+				ldr		r6, [r11, r3 lsr #(8 - 2)]
 				orr		r10, r10, r3 lsl #8
+calcenvvstr		str		r6, [r0, #P_EVOL]
 calcenvstr		str		r10, [r0, #P_MIXER]
 
 makenoise		tst		r10, #&38
@@ -108,84 +170,28 @@ makenoise		tst		r10, #&38
 				mov		r3, #PSGADDEDCNT
 mknoise_lp		subs	r7, r7, r6
 				bcc		updatenoise
-updatenoiseret	add		r9, r8, r9, lsl #1
+updatenoiseret	add		r9, r8, r9 lsl #1
 				subs	r3, r3, #1
 				bne		mknoise_lp
 				str		r7, [r0, #PN_COUNT]
 
 makesamp		mov		r7, #0
 				mov		r8, #0
-				and		r10, r10, #&3f
-				add		r10, r10, #(8 << 8)
-makesamp_lp		ldr		r12, [r0, #T_PVOL]
-				ldrb	r12, [r12]
-				ands	r12, r12, #15
-				beq		makesamp_nt
-				ldr		r12, [r11, r12, lsl #2]
-				mov		r3, #0
-				tst		r10, #8
-				bne		calcwithnoise
-				tst		r10, #1
-				beq		calcpuchionly
-calctone		ldr		r4, [r0, #T_COUNT]
-				ldr		r5, [r0, #T_FREQ]
-				mov		r6, #PSGADDEDCNT
-calctone_lp		add		r4, r4, r5
-				cmp		r4, #0
-				addge	r3, r3, r12
-				sublt	r3, r3, r12
-				subs	r6, r6, #1
-				bne		calctone_lp
-				str		r4, [r0, #T_COUNT]
-				b		calcpanpot
-calcpuchionly	ldrb	r4, [r0, #T_PUCHI]
-				subs	r4, r4, #1
-				strcsb	r4, [r0, #T_PUCHI]
-				addcs	r3, r3, r12, lsl #PSGADDEDBIT
-				b		calcpanpot
-calcwithnoise	tst		r10, #1
-				bne		calcboth
-calcnoise		mov		r4, #(1 << (32 - PSGADDEDCNT))
-calcnoise_lp	tst		r9, r4
-				addeq	r3, r3, r12
-				subne	r3, r3, r12
-				movs	r4, r4, lsl #1
-				bne		calcnoise_lp
-				b		calcpanpot
-calcboth		ldr		r4, [r0, #T_COUNT]
-				ldr		r5, [r0, #T_FREQ]
-				add		r6, r9, #1
-calcboth_lp		add		r4, r4, r5
-				tst		r4, r6
-				addpl	r3, r3, r12
-				submi	r3, r3, r12
-				mov		r6, r6, lsl #1
-				tst		r6, #(1 << PSGADDEDCNT)
-				beq		calcboth_lp
-				str		r4, [r0, #T_COUNT]
-calcpanpot		ldrb	r4, [r0, #T_PAN]
-				tst		r4, #1
-				addeq	r7, r7, r3
-				tst		r4, #2
-				addeq	r8, r8, r3
-makesamp_nt		mov		r10, r10, lsr #1
-				add		r0, r0, #T_SIZE
-				tst		r10, #(1 << 8)
-				beq		makesamp_lp
-				sub		r0, r0, #(T_SIZE * 3)
+
+psgcalc0		PSGCALC	(T_SIZE * 0), #&01, #&08
+psgcalc1		PSGCALC	(T_SIZE * 1), #&02, #&10
+psgcalc2		PSGCALC	(T_SIZE * 2), #&04, #&20
 
 				ldr		r4, [r1]
+				ldr		r3, [r1, #4]
+				subs	r2, r2, #1
 				add		r4, r4, r7
 				str		r4, [r1], #4
-				ldr		r4, [r1]
-				add		r4, r4, r8
-				str		r4, [r1], #4
-				subs	r2, r2, #1
+				add		r3, r3, r8
+				str		r3, [r1], #4
 				bne		psgmake_lp
-
 				strh	lr, [r0, #P_ENVCNT]
 				ldmia	sp!, {r4 - r11, pc}
-
 psgvoltbl		dcd		psggencfg + C_VOLUME
 
 updatenoise		ldr		r4, randdcd

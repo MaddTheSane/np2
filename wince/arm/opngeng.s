@@ -328,5 +328,3 @@ slot4update		SLTUPD	s4calcenv, (S_SIZE * 3), #&f7
 
 	END
 
-; 14556
-

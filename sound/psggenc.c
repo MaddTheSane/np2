@@ -67,7 +67,7 @@ void psggen_reset(PSGGEN psg) {
 
 	ZeroMemory(psg, sizeof(_PSGGEN));
 	for (i=0; i<3; i++) {
-		psg->tone[i].pvol = &psg->envvol;
+		psg->tone[i].pvol = psggencfg.volume + 0;
 	}
 	for (i=0; i<sizeof(psggen_deftbl); i++) {
 		psggen_setreg(psg, (REG8)i, psggen_deftbl[i]);
@@ -123,10 +123,10 @@ void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
 			ch = reg - 8;
 			keydisp_psgvol(psg, (BYTE)ch);
 			if (value & 0x10) {
-				psg->tone[ch].pvol = &psg->envvol;
+				psg->tone[ch].pvol = &psg->evol;
 			}
 			else {
-				psg->tone[ch].pvol = ((BYTE *)&psg->reg) + reg;
+				psg->tone[ch].pvol = psggencfg.volume + (value & 15);
 			}
 			psg->tone[ch].puchi = psggencfg.puchidec;
 			psg->puchicount = psggencfg.puchidec;
