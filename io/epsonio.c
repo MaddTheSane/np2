@@ -36,6 +36,14 @@ static void IOOUTCALL epsonio_o043d(UINT port, REG8 dat) {
 				bankselect();
 			}
 			break;
+
+		case 0x10:
+			CPU_ITFBANK = 1;
+			break;
+
+		case 0x12:
+			CPU_ITFBANK = 0;
+			break;
 	}
 }
 
