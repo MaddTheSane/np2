@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.3 2004/08/14 03:17:53 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.4 2005/03/05 15:01:03 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -12,8 +12,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -46,6 +44,7 @@
 #include "pc9861k.h"
 #include "s98.h"
 #include "scrnbmp.h"
+#include "sxsi.h"
 
 #include "kdispwin.h"
 #include "toolwin.h"
@@ -906,6 +905,12 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	}
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+	filter = gtk_file_filter_new();
+	if (filter) {
+		gtk_file_filter_set_name(filter, "CUE CD-ROM image files");
+		gtk_file_filter_add_pattern(filter, "*.[cC][uU][eE]");
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	}
 
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
 		goto end;
@@ -916,7 +921,7 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 		if (path) {
 			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
 				file_cpyname(hddfolder, path, sizeof(hddfolder));
-				diskdrv_setcdrom(DISKDRV_CDROM_ATAPI, path, FALSE);
+				sxsi_devopen(0x02, path);
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			g_free(path);
@@ -937,7 +942,7 @@ cb_atapiremove(GtkAction *action, gpointer user_data)
 	UNUSED(action);
 	UNUSED(user_data);
 
-	diskdrv_setcdrom(DISKDRV_CDROM_ATAPI, "", FALSE);
+	sxsi_devclose(0x02);
 }
 #endif	/* SUPPORT_IDEIO */
 
