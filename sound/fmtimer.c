@@ -93,8 +93,8 @@ void fmtimer_reset(BYTE irq) {
 
 	ZeroMemory(&fmtimer, sizeof(fmtimer));
 
-#if 1
-	fmtimer.reg = 0x3f;									// !!
+#if 0													// move
+	fmtimer.reg = 0x3f;
 	set_fmtimeraevent(NEVENT_ABSOLUTE);
 	set_fmtimerbevent(NEVENT_ABSOLUTE);
 #endif

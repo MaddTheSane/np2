@@ -936,12 +936,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "PC-9801series emulator\0"
-            VALUE "FileVersion", "0, 7, 0, 0\0"
+            VALUE "FileVersion", "0, 7, 1, 0\0"
             VALUE "InternalName", "np2\0"
             VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
             VALUE "OriginalFilename", "np2.exe\0"
             VALUE "ProductName", "Neko Project II\0"
-            VALUE "ProductVersion", "0, 7, 0, 0\0"
+            VALUE "ProductVersion", "0, 7, 1, 0\0"
         END
     END
     BLOCK "VarFileInfo"

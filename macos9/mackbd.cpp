@@ -16,6 +16,9 @@ typedef struct {
 	UINT32	tick;
 	BYTE	keymap[16];
 	BOOL	active;
+	UINT32	repbase;
+	UINT32	reptick;
+	BYTE	repkey;
 } MACKBD;
 
 static	MACKBD		mackbd;
@@ -55,11 +58,17 @@ static const BYTE keymac[128] = {
 			//	  F2,  rd,  F1,  ←,  →,  ↓,  ↑,    		; 0x78
 				0x63,0x36,0x62,0x3b,0x3c,0x3d,0x3a,  NC};
 
+static const BYTE repkey[16] = {
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
+		0xff, 0xff, 0xc1, 0xff, 0xc0, 0x0f, 0x07, 0x07};
+
+
 void mackbd_initialize(void) {
 
 	mackbd.tick = GETTICK();
 	ZeroMemory(&mackbd.keymap, sizeof(mackbd.keymap));
 	mackbd.active = TRUE;
+	mackbd.repkey = NC;
 }
 
 void mackbd_callback(void) {
@@ -95,13 +104,31 @@ void mackbd_callback(void) {
 					if (keycode != NC) {
 						if (key[i] & (1 << j)) {
 							keystat_senddata(keycode);
+							if ((repkey[keycode >> 3] << (keycode & 7))
+																	& 0x80) {
+								mackbd.repkey = keycode;
+								mackbd.repbase = tick;
+								mackbd.reptick = 500;
+							}
 						}
 						else {
+							if (mackbd.repkey == keycode) {
+								mackbd.repkey = NC;
+							}
 							keystat_senddata(keycode + 0x80);
 						}
 					}
 				}
 			}
+		}
+	}
+
+	// キーリピート処理
+	if (mackbd.repkey != NC) {
+		if ((tick - mackbd.repbase) >= mackbd.reptick) {
+			keystat_senddata(mackbd.repkey);		// keystat側でbreakする
+			mackbd.repbase = tick;
+			mackbd.reptick = 40;
 		}
 	}
 }
