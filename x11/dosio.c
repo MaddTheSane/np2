@@ -42,11 +42,7 @@ file_open(const char *path)
 FILEH
 file_open_rb(const char *path)
 {
-	FILEH fh;
 
-	fh = fopen(path, "rb+");
-	if (fh)
-		return fh;
 	return fopen(path, "rb");
 }
 
