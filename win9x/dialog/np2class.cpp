@@ -116,8 +116,8 @@ void np2class_enablemenu(HWND hWnd, BOOL enable) {
 
 void np2class_windowtype(HWND hWnd, BYTE type) {
 
-	RECT		rect;
-	DWORD		style;
+	RECT	rect;
+	DWORD	style;
 
 	GetClientRect(hWnd, &rect);
 	style = GetWindowLong(hWnd, GWL_STYLE);
@@ -145,6 +145,29 @@ void np2class_windowtype(HWND hWnd, BYTE type) {
 	winloc_setclientsize(hWnd,
 							rect.right - rect.left, rect.bottom - rect.top);
 }
+
+void np2class_frametype(HWND hWnd, BYTE thick) {
+
+	RECT	rect;
+	DWORD	style;
+
+	GetClientRect(hWnd, &rect);
+	style = GetWindowLong(hWnd, GWL_STYLE);
+	if (thick) {
+		style |= WS_THICKFRAME;
+	}
+	else {
+		style &= ~WS_THICKFRAME;
+	}
+	SetWindowLong(hWnd, GWL_STYLE, style);
+	SetWindowPos(hWnd, 0, 0, 0, 0, 0,
+					SWP_FRAMECHANGED | SWP_DRAWFRAME | 
+					SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+	winloc_setclientsize(hWnd,
+							rect.right - rect.left, rect.bottom - rect.top);
+}
+
+
 
 HMENU np2class_gethmenu(HWND hWnd) {
 

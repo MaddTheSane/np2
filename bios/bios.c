@@ -400,7 +400,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 		case BIOS_BASE + BIOSOFST_CMT:
 			CPU_REMCLOCK -= 200;
 			bios0x1a_cmt();
-			return(1);
+			return(0);											// return(1);
 
 		case BIOS_BASE + BIOSOFST_PRT:
 			CPU_REMCLOCK -= 200;

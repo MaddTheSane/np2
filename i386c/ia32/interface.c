@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.20 2004/03/25 08:51:24 yui Exp $	*/
+/*	$Id: interface.c,v 1.21 2004/05/23 15:01:45 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -281,7 +281,9 @@ ia32_bioscall(void)
 		adrs = (CPU_EIP - 1) + CPU_STAT_CS_BASE;
 #endif
 		if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
-			biosfunc(adrs);
+			if (biosfunc(adrs)) {
+				CPU_PREFETCH_CLEAR();
+			}
 			if (!CPU_STAT_PM || CPU_STAT_VM86) {
 				CPU_SET_SEGREG(CPU_ES_INDEX, CPU_ES);
 				CPU_SET_SEGREG(CPU_CS_INDEX, CPU_CS);

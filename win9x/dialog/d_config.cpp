@@ -84,6 +84,7 @@ static void cfgcreate(HWND hWnd) {
 	wsprintf(work, str_u, np2cfg.delayms);
 	SetDlgItemText(hWnd, IDC_SOUNDBUF, work);
 
+	SetDlgItemCheck(hWnd, IDC_ALLOWRESIZE, np2oscfg.thickframe);
 	if (mmxflag & MMXFLAG_NOTSUPPORT) {
 		EnableWindow(GetDlgItem(hWnd, IDC_DISABLEMMX), FALSE);
 		SetDlgItemCheck(hWnd, IDC_DISABLEMMX, TRUE);
@@ -171,6 +172,12 @@ const char	*str;
 		np2cfg.delayms = (UINT16)val;
 		update |= SYS_UPDATECFG | SYS_UPDATESBUF;
 		soundrenewal = 1;
+	}
+
+	val = GetDlgItemCheck(hWnd, IDC_ALLOWRESIZE);
+	if (np2oscfg.thickframe != (BYTE)val) {
+		np2oscfg.thickframe = (BYTE)val;
+		update |= SYS_UPDATEOSCFG;
 	}
 
 	if (!(mmxflag & MMXFLAG_NOTSUPPORT)) {

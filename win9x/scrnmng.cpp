@@ -365,7 +365,10 @@ BOOL scrnmng_create(BYTE scrnmode) {
 	}
 	else {
 		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
-		winstyle |= WS_SYSMENU | WS_THICKFRAME;
+		winstyle |= WS_SYSMENU;
+		if (np2oscfg.thickframe) {
+			winstyle |= WS_THICKFRAME;
+		}
 		if (np2oscfg.wintype < 2) {
 			winstyle |= WS_CAPTION;
 		}

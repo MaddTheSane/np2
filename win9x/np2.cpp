@@ -74,7 +74,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		char		fddfolder[MAX_PATH];
 		char		hddfolder[MAX_PATH];
@@ -363,6 +363,18 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			sstpmsg_config();
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_CONFIG),
 									hWnd, (DLGPROC)CfgDialogProc);
+			if (!scrnmng_isfullscreen()) {
+				BYTE thick;
+				thick = (GetWindowLong(hWnd, GWL_STYLE) & WS_THICKFRAME)?1:0;
+				if (thick != np2oscfg.thickframe) {
+					WINLOCEX wlex;
+					wlex = np2_winlocexallwin(hWnd);
+					winlocex_setholdwnd(wlex, hWnd);
+					np2class_frametype(hWnd, np2oscfg.thickframe);
+					winlocex_move(wlex);
+					winlocex_destroy(wlex);
+				}
+			}
 			winuileave();
 			break;
 
@@ -1380,6 +1392,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	MSG			msg;
 	HWND		hWnd;
 	UINT		i;
+	DWORD		style;
 #ifdef OPENING_WAIT
 	UINT32		tick;
 #endif
@@ -1454,9 +1467,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	mousemng_initialize();
 
-	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles,
-						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
-						WS_THICKFRAME | WS_MINIMIZEBOX,
+	style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
+	if (np2oscfg.thickframe) {
+		style |= WS_THICKFRAME;
+	}
+	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
 						NULL, NULL, hInstance, NULL);
 	hWndMain = hWnd;
