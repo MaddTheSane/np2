@@ -53,6 +53,13 @@ typedef struct {
 	UINT	bufpos;
 	UINT	bufsize;
 	UINT8	buf[IDEIO_BUFSIZE_MAX];
+
+	// audio
+	UINT	daflag;
+	UINT32	dacurpos;
+	UINT32	daendpos;
+	UINT	dabufpos;
+	UINT8	dabuf[2352];
 } _IDEDRV, *IDEDRV;
 
 typedef struct {
@@ -62,7 +69,8 @@ typedef struct {
 
 typedef struct {
 	UINT8	bank[2];
-	UINT8	padding[2];
+	UINT8	daplaying;
+	UINT8	padding;
 	_IDEDEV	dev[2];
 } IDEIO;
 

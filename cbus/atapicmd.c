@@ -117,6 +117,8 @@ static void atapi_cmd_mode_select(IDEDRV drv);
 static void atapi_cmd_mode_sense(IDEDRV drv);
 static void atapi_cmd_readsubch(IDEDRV drv);
 static void atapi_cmd_readtoc(IDEDRV drv);
+static void atapi_cmd_playaudiomsf(IDEDRV drv);
+static void atapi_cmd_pauseresume(IDEDRV drv);
 
 void atapicmd_a0(IDEDRV drv) {
 
@@ -203,6 +205,16 @@ void atapicmd_a0(IDEDRV drv) {
 	case 0x43:		// read TOC
 		TRACEOUT(("atapicmd: read TOC"));
 		atapi_cmd_readtoc(drv);
+		break;
+
+	case 0x47:		// Play Audio MSF
+		TRACEOUT(("atapicmd: Play Audio MSF"));
+		atapi_cmd_playaudiomsf(drv);
+		break;
+
+	case 0x4b:
+		TRACEOUT(("atapicmd: pause resume"));
+		atapi_cmd_pauseresume(drv);
 		break;
 
 	default:
@@ -509,10 +521,33 @@ length_exceeded:
 }
 
 
+// ---- Audio
+
+static void storemsf(UINT8 *ptr, UINT32 pos) {
+
+	UINT	f;
+	UINT	m;
+
+	f = pos % 75;
+	pos = pos / 75;
+	m = pos % 60;
+	pos = pos / 60;
+	ptr[0] = 0;
+	ptr[1] = (UINT8)pos;
+	ptr[2] = (UINT8)m;
+	ptr[3] = (UINT8)f;
+}
+
+
+// 0x43: READ SUB CHANNEL
 static void atapi_cmd_readsubch(IDEDRV drv) {
 
 	SXSIDEV	sxsi;
 	UINT	leng;
+	CDTRK	trk;
+	UINT	tracks;
+	UINT	r;
+	UINT32	pos;
 
 	sxsi = sxsi_getptr(drv->sxsidrv);
 	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
@@ -520,11 +555,25 @@ static void atapi_cmd_readsubch(IDEDRV drv) {
 		senderror(drv);
 		return;
 	}
+	trk = sxsicd_gettrk(sxsi, &tracks);
 	leng = (drv->buf[7] << 8) + drv->buf[8];
 	switch(drv->buf[3]) {
 		case 0x01:			// CD-ROM current pos
 			ZeroMemory(drv->buf, 16);
 			drv->buf[4] = 0x01;
+			pos = drv->dacurpos + (rand() & 7);
+			r = tracks;
+			while(r) {
+				r--;
+				if (trk[r].pos <= pos) {
+					break;
+				}
+			}
+			drv->buf[5] = trk[r].type;
+			drv->buf[6] = trk[r].track;
+			drv->buf[7] = 1;
+			storemsf(drv->buf + 8, pos + 150);
+			storemsf(drv->buf + 12, pos - trk[r].pos);
 			senddata(drv, 16, leng);
 			break;
 
@@ -534,12 +583,17 @@ static void atapi_cmd_readsubch(IDEDRV drv) {
 	}
 }
 
+// 0x43: READ TOC
 static void atapi_cmd_readtoc(IDEDRV drv) {
 
 	SXSIDEV	sxsi;
 	UINT	leng;
 	UINT	format;
+	CDTRK	trk;
+	UINT	tracks;
 	UINT	datasize;
+	UINT8	*ptr;
+	UINT	i;
 
 	sxsi = sxsi_getptr(drv->sxsidrv);
 	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
@@ -547,6 +601,7 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 		senderror(drv);
 		return;
 	}
+	trk = sxsicd_gettrk(sxsi, &tracks);
 
 	leng = (drv->buf[7] << 8) + drv->buf[8];
 	format = (drv->buf[9] >> 6);
@@ -554,10 +609,21 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 
 	switch (format) {
 	case 0: // track info
-		datasize = sxsicd_gettocinfo(sxsi, drv->buf + 2);
+		datasize = (tracks * 8) + 10;
 		drv->buf[0] = (UINT8)(datasize >> 8);
 		drv->buf[1] = (UINT8)(datasize >> 0);
-		senddata(drv, datasize + 2, leng);
+		drv->buf[2] = 1;
+		drv->buf[3] = (UINT8)tracks;
+		ptr = drv->buf + 4;
+		for (i=0; i<=tracks; i++) {
+			ptr[0] = 0;
+			ptr[1] = trk[i].type;
+			ptr[2] = trk[i].track;
+			ptr[3] = 0;
+			storemsf(ptr + 4, trk[i].pos + 150);
+			ptr += 8;
+		}
+		senddata(drv, (tracks * 8) + 12, leng);
 		break;
 
 	case 1:	// multi session
@@ -577,4 +643,28 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 	}
 }
 
+// 0x47: Play Audio MSF
+static void atapi_cmd_playaudiomsf(IDEDRV drv) {
+
+	UINT32	pos;
+
+	pos = (((drv->buf[6] * 60) + drv->buf[7]) * 75) + drv->buf[8];
+	if (pos >= 150) {
+		pos -= 150;
+	}
+	else {
+		pos = 0;
+	}
+	drv->daendpos = pos;
+	drv->dacurpos = pos;		// èIóπÇµÇΩÇ±Ç∆Ç…Ç∑ÇÈÅB
+	cmddone(drv);
+}
+
+// 0x4B: PAUSE RESUME
+static void atapi_cmd_pauseresume(IDEDRV drv) {
+
+	cmddone(drv);
+}
+
 #endif	/* SUPPORT_IDEIO */
+

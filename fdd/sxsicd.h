@@ -8,8 +8,15 @@ enum {
 	SXSIMEDIA_AUDIO = 0x20
 };
 
+typedef struct {
+	UINT8	type;
+	UINT8	track;
+	UINT32	pos;
+} _CDTRK, *CDTRK;
+
 BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *fname);
-UINT sxsicd_gettocinfo(SXSIDEV sxsi, UINT8 *buf);
+
+CDTRK sxsicd_gettrk(SXSIDEV sxsi, UINT *tracks);
 
 #ifdef __cplusplus
 }

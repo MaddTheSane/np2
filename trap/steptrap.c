@@ -1,5 +1,5 @@
 
-// #define	IPTRACE			(1 << 12)
+#define	IPTRACE			(1 << 12)
 
 #include	"compiler.h"
 
@@ -17,7 +17,7 @@ static	UINT32	treip[IPTRACE];
 
 void CPUCALL steptrap(UINT cs, UINT32 eip) {
 
-//	TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
+//	TRACEOUT(("%.4x:%.4x", cs, eip));
 
 #if IPTRACE
 	trcs[trpos & (IPTRACE - 1)] = cs;
@@ -28,6 +28,19 @@ void CPUCALL steptrap(UINT cs, UINT32 eip) {
 
 // ---- ここにトラップ条件コードを書きます
 //	return;
+
+#if 1
+{
+	static UINT tmp = 0;
+	if (tmp != *(UINT16 *)(mem + 0xa0000 + 18 * 2)) {
+		TRACEOUT(("change text %.4x -> %.4x at %.4x:%.4x", tmp, *(UINT16 *)(mem + 0xa0000 + 18 * 2), cs, eip));
+		tmp = *(UINT16 *)(mem + 0xa0000 + 18 * 2);
+		if (tmp == 0x4303) {
+			steptrap_hisfileout();
+		}
+	}
+}
+#endif
 
 
 	// IDEテスト用

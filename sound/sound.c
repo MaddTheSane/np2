@@ -68,7 +68,7 @@ static void streamprepare(UINT samples) {
 #if defined(SUPPORT_WAVEREC)
 // ---- wave rec
 
-BOOL sound_recstart(const char *filename) {
+BOOL sound_recstart(const OEMCHAR *filename) {
 
 	WAVEWR	rec;
 

@@ -60,10 +60,10 @@ static void nc_destroy(SXSIDEV sxsi) {
 static void sxsi_disconnect(SXSIDEV sxsi) {
 
 	if (sxsi) {
-#if defined(SUPPORT_IDEIO)
-		ideio_notify(sxsi->drv, 0);
-#endif
 		if (sxsi->flag & SXSIFLAG_FILEOPENED) {
+#if defined(SUPPORT_IDEIO)
+			ideio_notify(sxsi->drv, 0);
+#endif
 			(*sxsi->close)(sxsi);
 		}
 		if (sxsi->flag & SXSIFLAG_READY) {

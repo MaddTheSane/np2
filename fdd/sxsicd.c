@@ -11,14 +11,10 @@
 static const UINT8 cd001[7] = {0x01,'C','D','0','0','1',0x01};
 
 typedef struct {
-	UINT	type;
-	UINT32	pos;
-} CDTRK;
-
-typedef struct {
 	FILEH	fh;
 	UINT	type;
-	CDTRK	trk[99];
+	UINT	trks;
+	_CDTRK	trk[100];
 	OEMCHAR	path[MAX_PATH];
 } _CDINFO, *CDINFO;
 
@@ -192,7 +188,7 @@ static const OEMCHAR str_audio[] = OEMTEXT("AUDIO");
 
 
 static BRESULT openimg(SXSIDEV sxsi, const OEMCHAR *path,
-												const CDTRK *trk, UINT trks) {
+												const _CDTRK *trk, UINT trks) {
 
 	FILEH	fh;
 	UINT	type;
@@ -222,23 +218,28 @@ static BRESULT openimg(SXSIDEV sxsi, const OEMCHAR *path,
 	cdinfo->fh = fh;
 	cdinfo->type = type;
 	if ((trk != NULL) && (trks != 0)) {
-		trks = min(trks, NELEMENTS(cdinfo->trk));
-		mediatype = 0;
-		for (i=0; i<trks; i++) {
-			if (trk[i].type == 0x14) {
-				mediatype |= SXSIMEDIA_DATA;
-			}
-			else if (trk[i].type == 0x10) {
-				mediatype |= SXSIMEDIA_AUDIO;
-			}
-		}
-		CopyMemory(cdinfo->trk, trk, trks * sizeof(CDTRK));
+		trks = min(trks, NELEMENTS(cdinfo->trk) - 1);
+		CopyMemory(cdinfo->trk, trk, trks * sizeof(_CDTRK));
 	}
 	else {
 		cdinfo->trk[0].type = 0x14;
+		cdinfo->trk[0].track = 1;
 //		cdinfo->trk[0].pos = 0;
-		mediatype = SXSIMEDIA_DATA;
+		trks = 1;
 	}
+	mediatype = 0;
+	for (i=0; i<trks; i++) {
+		if (cdinfo->trk[i].type == 0x14) {
+			mediatype |= SXSIMEDIA_DATA;
+		}
+		else if (cdinfo->trk[i].type == 0x10) {
+			mediatype |= SXSIMEDIA_AUDIO;
+		}
+	}
+	cdinfo->trk[trks].type = 0x10;
+	cdinfo->trk[trks].track = 0xaa;
+	cdinfo->trk[trks].pos = totals;
+	cdinfo->trks = trks;
 	file_cpyname(cdinfo->path, path, NELEMENTS(cdinfo->path));
 
 	sxsi->reopen = cd_reopen;
@@ -279,7 +280,7 @@ static BRESULT getint2(const OEMCHAR *str, UINT *val) {
 	return(SUCCESS);
 }
 
-static BRESULT getpos(const OEMCHAR *str, UINT32 *pos) {
+static UINT32 getpos(const OEMCHAR *str) {
 
 	UINT	m;
 	UINT	s;
@@ -288,28 +289,28 @@ static BRESULT getpos(const OEMCHAR *str, UINT32 *pos) {
 	if ((getint2(str + 0, &m) != SUCCESS) || (str[2] != ':') ||
 		(getint2(str + 3, &s) != SUCCESS) || (str[5] != ':') ||
 		(getint2(str + 6, &f) != SUCCESS)) {
-		return(FAILURE);
+		return(0);
 	}
-	if (pos) {
-		*pos = (((m * 60) + s) * 75) + f;
-	}
-	return(SUCCESS);
+	return((((m * 60) + s) * 75) + f);
 }
 
 static BRESULT opencue(SXSIDEV sxsi, const OEMCHAR *fname) {
 
-	CDTRK		trk[99];
+	_CDTRK		trk[99];
 	OEMCHAR		path[MAX_PATH];
-	UINT		curtrk;
+	UINT		index;
+	UINT8		curtrk;
+	UINT		curtype;
 	TEXTFILEH	tfh;
 	OEMCHAR		buf[512];
 	OEMCHAR		*argv[8];
 	int			argc;
-	UINT		type;
 
 	ZeroMemory(trk, sizeof(trk));
 	path[0] = '\0';
-	curtrk = -1;
+	index = 0;
+	curtrk = 1;
+	curtype = 0x14;
 	tfh = textfile_open(fname, 0x800);
 	if (tfh == NULL) {
 		return(FAILURE);
@@ -322,26 +323,25 @@ static BRESULT opencue(SXSIDEV sxsi, const OEMCHAR *fname) {
 			file_catname(path, argv[1], NELEMENTS(path));
 		}
 		else if ((argc >= 3) && (!milstr_cmp(argv[0], str_track))) {
-			curtrk = milstr_solveINT(argv[1]) - 1;
-			type = 0;
+			curtrk = (UINT8)milstr_solveINT(argv[1]);
 			if (!milstr_cmp(argv[2], str_mode1)) {
-				type = 0x14;
+				curtype = 0x14;
 			}
 			else if (!milstr_cmp(argv[2], str_audio)) {
-				type = 0x10;
-			}
-			if ((curtrk < NELEMENTS(trk)) && (type != 0)) {
-				trk[curtrk].type = type;
+				curtype = 0x10;
 			}
 		}
 		else if ((argc >= 3) && (!milstr_cmp(argv[0], str_index))) {
-			if (curtrk < NELEMENTS(trk)) {
-				getpos(argv[2], &trk[curtrk].pos);
+			if (index < NELEMENTS(trk)) {
+				trk[index].type = curtype;
+				trk[index].track = curtrk;
+				trk[index].pos = getpos(argv[2]);
+				index++;
 			}
 		}
 	}
 	textfile_close(tfh);
-	return(openimg(sxsi, path, trk, NELEMENTS(trk)));
+	return(openimg(sxsi, path, trk, index));
 }
 
 BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *fname) {
@@ -355,52 +355,14 @@ const OEMCHAR	*ext;
 	return(openimg(sxsi, fname, NULL, 0));
 }
 
-static void storepos(UINT8 *ptr, UINT32 pos) {
-
-	UINT	f;
-	UINT	m;
-
-	pos += 150;
-	f = pos % 75;
-	pos = pos / 75;
-	m = pos % 60;
-	pos = pos / 60;
-	ptr[0] = 0;
-	ptr[1] = (UINT8)pos;
-	ptr[2] = (UINT8)m;
-	ptr[3] = (UINT8)f;
-}
-
-UINT sxsicd_gettocinfo(SXSIDEV sxsi, UINT8 *buf) {
+CDTRK sxsicd_gettrk(SXSIDEV sxsi, UINT *tracks) {
 
 	CDINFO	cdinfo;
-	UINT8	*ptr;
-	UINT	trks;
-	UINT 	i;
-	UINT	type;
 
 	cdinfo = (CDINFO)sxsi->hdl;
-	ptr = buf + 2;
-	trks = 0;
-	for (i=0; i<NELEMENTS(cdinfo->trk); i++) {
-		type = cdinfo->trk[i].type;
-		if (type) {
-			ptr[0] = (UINT8)(type >> 8);
-			ptr[1] = (UINT8)(type >> 0);
-			ptr[2] = (UINT8)(i + 1);
-			ptr[3] = 0;
-			storepos(ptr + 4, cdinfo->trk[i].pos);
-			ptr += 8;
-			trks++;
-		}
+	if (tracks) {
+		*tracks = cdinfo->trks;
 	}
-	buf[0] = 1;
-	buf[1] = (UINT8)trks;
-	ptr[0] = 0x00;
-	ptr[1] = 0x10;
-	ptr[2] = 0xaa;
-	ptr[3] = 0;
-	storepos(ptr + 4, sxsi->totals);
-	return(trks * 8 + 10);
+	return(cdinfo->trk);
 }
 
