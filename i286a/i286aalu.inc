@@ -308,6 +308,55 @@ $label		sub		r1, $s, #1
 
 
 	MACRO
+$label	NOT8	$s
+$label		mvn		r1, $s
+	MEND
+
+	MACRO
+$label	NOT16	$s
+$label		mvn		r1, $s
+	MEND
+
+
+	MACRO
+$label	NEG8	$s
+$label		rsb		r1, $s, #0
+			bic		r8, r8, #O_FLAG
+			and		r12, r1, $s
+			eor		r2, r1, $s
+			bic		r8, r8, #&ff
+			and		r12, r12, #&80
+			and		r2, r2, #A_FLAG
+			orr		r8, r8, r12 lsl #4
+			mov		r12, r1 lsl #(32 - 9)
+			orr		r8, r8, r2
+			ldrb	r2, [r10, r12 lsr #(32 - 9)]
+			orr		r8, r2, r8
+	MEND
+
+	MACRO
+$label	NEG16	$s
+$label		bic		r8, r8, #&ff
+			rsbs	r1, $s, #0
+			addmi	r8, r8, #C_FLAG
+			and		r12, r1, $s
+			bic		r8, r8, #O_FLAG
+			eor		r2, r1, $s
+			and		r12, r12, #&8000
+			and		r2, r2, #A_FLAG
+			orr		r8, r8, r12 lsr #4
+			and		r12, r1, #&ff
+			orr		r8, r8, r2
+			ldrb	r2, [r10, r12]
+			and		r2, r2, #P_FLAG
+			orr		r8, r2, r8
+			movs	r12, r1, lsl #16
+			orreq	r8, r8, #Z_FLAG
+			orrmi	r8, r8, #S_FLAG
+	MEND
+
+
+	MACRO
 $label	MUL8	$d, $s
 			mul		r1, $d, $s
 			movs	r12, r1 lsr #8

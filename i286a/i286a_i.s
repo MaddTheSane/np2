@@ -33,7 +33,7 @@ i286a_localint	CPUWORK	#20
 				bic		r8, r8, #(T_FLAG + I_FLAG)
 				mov		r0, r1 lsr #16
 				orr		r8, r8, r1 lsl #16
-				mov		r2, r1 lsl #4
+				mov		r2, r0 lsl #4
 				strh	r0, [r9, #CPU_CS]
 				str		r2, [r9, #CPU_CS_BASE]
 				mov		pc, r11

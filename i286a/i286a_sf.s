@@ -2,7 +2,6 @@
 	INCLUDE		i286a.inc
 	INCLUDE		i286asft.inc
 
-	IMPORT		_szpcflag8
 	IMPORT		i286a_ea
 	IMPORT		i286_memoryread
 	IMPORT		i286_memoryread_w

@@ -29,6 +29,9 @@
 	IMPORT		i286asft16_cl
 	IMPORT		i286asft16_d8
 
+	IMPORT		i286aopf6
+	IMPORT		i286aopf7
+
 	IMPORT		i286aopfe
 	IMPORT		i286aopff
 
@@ -1702,9 +1705,9 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		0					; leave
 				dcd		0					; ret_far_d16
 				dcd		0					; ret_far
-				dcd		0					; int_03
-				dcd		0					; int_d8
-				dcd		0					; into
+				dcd		int_03
+				dcd		int_d8
+				dcd		into
 				dcd		0					; iret
 
 				dcd		i286asft8_1			; d0
@@ -1724,10 +1727,10 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		esc
 				dcd		esc
 
-				dcd		0					; loopnz	; e0
-				dcd		0					; loopz
-				dcd		0					; loop
-				dcd		0					; jcxz
+				dcd		loopnz				; e0
+				dcd		loopz
+				dcd		loop
+				dcd		jcxz
 				dcd		0					; in_al_d8
 				dcd		0					; in_ax_d8
 				dcd		out_d8_al

@@ -32,7 +32,7 @@ CPU_TRAP			equ		70 - 112
 ; cpu_ovflag		equ		84 - 112
 CPU_GDTR			equ		88 - 112
 CPU_IDTR			equ		94 - 112
-; cpu_MSW			equ		100 - 112
+CPU_MSW				equ		100 - 112
 ; cpu_resetreq		equ		102 - 112
 ; cpu_itfbank		equ		103 - 112
 ; cpu_extmem		equ		104 - 112

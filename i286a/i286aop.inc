@@ -181,6 +181,61 @@ $label		CPUWORK	$clk
 
 
 	MACRO
+$label	OP_EA8		$alu, $regclk, $memclk
+$label		cmp		r0, #&c0
+			bcc		$label.1
+			CPUWORK	$regclk
+			R8SRC	r0, r5
+			ldrb	r4, [r5, #CPU_REG]
+			$alu	r4
+			strb	r1, [r5, #CPU_REG]
+			mov		pc, r11
+$label.1	CPUWORK	$memclk
+			bl		i286a_ea
+			cmp		r0, #I286_MEMWRITEMAX
+			bcs		$label.2
+			ldrb	r4, [r9, r0]
+			$alu	r4
+			strb	r1, [r9, r0]
+			mov		pc, r11
+$label.2	mov		r5, r0
+			bl		i286_memoryread
+			$alu	r0
+			mov		r0, r5
+			mov		lr, r11
+			b		i286_memorywrite
+	MEND
+
+	MACRO
+$label	OP_EA16		$alu, $regclk, $memclk
+$label		cmp		r0, #&c0
+			bcc		$label.1
+			CPUWORK	$regclk
+			R16SRC	r0, r5
+			ldrh	r4, [r5, #CPU_REG]
+			$alu	r4
+			strh	r1, [r5, #CPU_REG]
+			mov		pc, r11
+$label.1	CPUWORK	$memclk
+			bl		i286a_ea
+			tst		r0, #1
+			bne		$label.2
+			cmp		r0, #I286_MEMWRITEMAX
+			bcs		$label.2
+			ldrh	r4, [r9, r0]
+			$alu	r4
+			strh	r1, [r9, r0]
+			mov		pc, r11
+$label.2	mov		r5, r0
+			bl		i286_memoryread_w
+			$alu	r0
+			mov		r0, r5
+			mov		lr, r11
+			b		i286_memorywrite_w
+	MEND
+
+
+	MACRO
 $label	OP_INC16	$r, $clk
 $label		CPUWORK	$clk
 			ldrh	r2, [r9, $r]
