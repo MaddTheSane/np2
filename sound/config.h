@@ -1,0 +1,10 @@
+
+#define	SOUND_BEEP_ASM
+#define	SOUND_MGEN_ASM
+//	#define	SOUND_FM_ASM
+#define	SOUND_PSG_ASM
+#define	SOUND_ADPCM_ASM
+#define	SOUND_RHYTHM_ASM
+#define	SOUND_CS4231_ASM
+#define	SOUND_86PCM_ASM
+

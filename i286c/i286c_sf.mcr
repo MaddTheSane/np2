@@ -1,0 +1,315 @@
+// wordはかなりノーチェック
+
+
+#define	BYTE_ROL1(d, s)	{											\
+		DWORD tmp = ((s) >> 7);										\
+		(d) = ((s) << 1) | tmp;										\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= tmp;											\
+		I286_OV = ((s) ^ (d)) & 0x80;								\
+	}
+
+#define BYTE_ROR1(d, s) {											\
+		DWORD tmp = ((s) & 1);										\
+		(d) = ((tmp << 8) | (s)) >> 1;								\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= tmp;											\
+		I286_OV = ((s) ^ (d)) & 0x80;								\
+	}
+
+#define BYTE_RCL1(d, s)												\
+		(d) = ((s) << 1) | (I286_FLAGL & C_FLAG);					\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= ((s) >> 7);									\
+		I286_OV = ((s) ^ (d)) & 0x80;
+
+#define	BYTE_RCR1(d, s)												\
+		(d) = (((I286_FLAGL & C_FLAG) << 8) | (s)) >> 1;			\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= ((s) & 1);									\
+		I286_OV = ((s) ^ (d)) & 0x80;
+
+#define	BYTE_SHL1(d, s)												\
+		(d) = (s) << 1;												\
+		I286_OV = ((s) ^ (d)) & 0x80;								\
+		I286_FLAGL = szpcflag[(d)] | A_FLAG;
+
+#define	BYTE_SHR1(d, s)												\
+		(d) = (s) >> 1;												\
+		I286_OV = (s) & 0x80;										\
+		I286_FLAGL = (BYTE)(szpcflag[(d)] | A_FLAG | ((s) & 1));
+
+#define	BYTE_SAR1(d, s)												\
+		(d) = (BYTE)(((char)s) >> 1);								\
+		I286_OV = 0;												\
+		I286_FLAGL = (BYTE)(szpcflag[(d)] | A_FLAG | ((s) & 1));
+
+
+
+#define	WORD_ROL1(d, s)	{											\
+		DWORD tmp = ((s) >> 15);									\
+		(d) = ((s) << 1) | tmp;										\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= tmp;											\
+		I286_OV = ((s) ^ (d)) & 0x8000;								\
+	}
+
+#define WORD_ROR1(d, s) {											\
+		DWORD tmp = ((s) & 1);										\
+		(d) = ((tmp << 16) | (s)) >> 1;								\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= tmp;											\
+		I286_OV = ((s) ^ (d)) & 0x8000;								\
+	}
+
+#define WORD_RCL1(d, s)												\
+		(d) = ((s) << 1) | (I286_FLAGL & 1);						\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= ((s) >> 15);									\
+		I286_OV = ((s) ^ (d)) & 0x8000;
+
+#define	WORD_RCR1(d, s)												\
+		(d) = (((I286_FLAGL & 1) << 16) | (s)) >> 1;				\
+		I286_FLAGL &= ~C_FLAG;										\
+		I286_FLAGL |= ((s) & 1);									\
+		I286_OV = ((s) ^ (d)) & 0x8000;
+
+#define	WORD_SHL1(d, s)												\
+		(d) = (s) << 1;												\
+		I286_OV = ((s) ^ (d)) & 0x8000;								\
+		I286_FLAGL = (BYTE)(szpflag_w[(d) & 0xffff] | A_FLAG | ((d) >> 16));
+
+#define	WORD_SHR1(d, s)												\
+		(d) = (s) >> 1;												\
+		I286_OV = (s) & 0x8000;										\
+		I286_FLAGL = (BYTE)(szpflag_w[(d)] | A_FLAG | ((s) & 1));
+
+#define	WORD_SAR1(d, s)												\
+		(d) = (WORD)(((short)s) >> 1);								\
+		I286_OV = 0;												\
+		I286_FLAGL = (BYTE)(szpflag_w[(d)] | A_FLAG | ((s) & 1));
+
+
+
+
+#define	BYTE_ROLCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			(c) = ((c) - 1) & 7;									\
+			if (c) {												\
+				(s) = ((s) << (c)) | ((s) >> (8 - (c)));			\
+				(s) &= 0xff;										\
+			}														\
+			BYTE_ROL1(d, s)											\
+		}															\
+		else {														\
+			(d) = (s);												\
+		}
+
+#define	BYTE_RORCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			(c) = ((c) - 1) & 7;									\
+			if (c) {												\
+				(s) = ((s) >> (c)) | ((s) << (8 - (c)));			\
+				(s) &= 0xff;										\
+			}														\
+			BYTE_ROR1(d, s)											\
+		}															\
+		else {														\
+			(d) = (s);												\
+		}
+
+#define	BYTE_RCLCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			DWORD	tmp;											\
+			tmp = I286_FLAGL & C_FLAG;								\
+			I286_FLAGL &= ~C_FLAG;									\
+			while((c)--) {											\
+				(s) = (((s) << 1) | tmp) & 0x1ff;					\
+				tmp = (s) >> 8;										\
+			}														\
+			I286_OV = ((s) ^ (s >> 1)) & 0x80;						\
+			I286_FLAGL |= tmp;										\
+		}															\
+		(d) = (s);
+
+#define	BYTE_RCRCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			DWORD	tmp;											\
+			tmp = I286_FLAGL & C_FLAG;								\
+			I286_FLAGL &= ~C_FLAG;									\
+			while((c)--) {											\
+				(s) |= tmp << 8;									\
+				tmp = (s) & 1;										\
+				(s) >>= 1;											\
+			}														\
+			I286_OV = ((s) ^ (s >> 1)) & 0x40;						\
+			I286_FLAGL |= tmp;										\
+		}															\
+		(d) = (s);
+
+#define	BYTE_SHLCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			if ((c) >= 0x10) {										\
+				(c) &= 7;											\
+				(c) |= 8;											\
+			}														\
+			(s) <<= (c);											\
+			(s) &= 0x1ff;											\
+			I286_FLAGL = szpcflag[(s)] | A_FLAG;					\
+			I286_OV = ((s) ^ ((s) >> 1)) & 0x80;					\
+		}															\
+		(d) = (s);
+
+#define	BYTE_SHRCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			if ((c) >= 0x10) {										\
+				(c) &= 7;											\
+				(c) |= 8;											\
+			}														\
+			(s) >>= ((c) - 1);										\
+			I286_FLAGL = (BYTE)((s) & 1);							\
+			(s) >>= 1;												\
+			I286_OV = ((s) ^ ((s) >> 1)) & 0x40;					\
+			I286_FLAGL |= szpcflag[(s)] | A_FLAG;					\
+		}															\
+		(d) = (s);
+
+#define	BYTE_SARCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			(s) = ((char)(s)) >> ((c) - 1);							\
+			I286_FLAGL = (BYTE)((s) & 1);							\
+			(s) = (BYTE)(((char)s) >> 1);							\
+			I286_OV = 0;											\
+			I286_FLAGL |= szpcflag[(s)] | A_FLAG;					\
+		}															\
+		(d) = (s);
+
+
+#define	WORD_ROLCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			DWORD tmp;												\
+			(c)--;													\
+			if (c) {												\
+				(c) &= 0x0f;										\
+				(s) = ((s) << (c)) | ((s) >> (16 - (c)));			\
+				(s) &= 0xffff;										\
+				I286_OV = 0;										\
+			}														\
+			else {													\
+				I286_OV = ((s) + 0x4000) & 0x8000;					\
+			}														\
+			tmp = ((s) >> 15);										\
+			(s) = ((s) << 1) | tmp;									\
+			I286_FLAGL &= ~C_FLAG;									\
+			I286_FLAGL |= tmp;										\
+		}															\
+		(d) = (s);
+
+#define	WORD_RORCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			DWORD tmp;												\
+			(c)--;													\
+			if (c) {												\
+				(c) &= 0x0f;										\
+				(s) = ((s) >> (c)) | ((s) << (16 - (c)));			\
+				(s) &= 0xffff;										\
+				I286_OV = 0;										\
+			}														\
+			else {													\
+				I286_OV = ((s) >> 15) ^ ((s) & 1);					\
+			}														\
+			tmp = ((s) & 1);										\
+			(s) = ((tmp << 16) | (s)) >> 1;							\
+			I286_FLAGL &= ~C_FLAG;									\
+			I286_FLAGL |= tmp;										\
+		}															\
+		(d) = (s);
+
+#define	WORD_RCLCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			DWORD	tmp;											\
+			tmp = I286_FLAGL & C_FLAG;								\
+			I286_FLAGL &= ~C_FLAG;									\
+			I286_OV = 0;											\
+			if (((c) == 1) || ((c) == 1+17)) {						\
+				I286_OV = ((s) + 0x4000) & 0x8000;					\
+			}														\
+			while((c)--) {											\
+				(s) = (((s) << 1) | tmp) & 0x1ffff;					\
+				tmp = (s) >> 16;									\
+			}														\
+			I286_FLAGL |= tmp;										\
+		}															\
+		(d) = (s);
+
+#define	WORD_RCRCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			DWORD	tmp;											\
+			tmp = I286_FLAGL & C_FLAG;								\
+			I286_FLAGL &= ~C_FLAG;									\
+			I286_OV = 0;											\
+			if (((c) == 1) || ((c) == 1+17)) {						\
+				I286_OV = ((s) >> 15) ^ tmp;						\
+			}														\
+			while((c)--) {											\
+				(s) |= tmp << 16;									\
+				tmp = (s) & 1;										\
+				(s) >>= 1;											\
+			}														\
+			I286_FLAGL |= tmp;										\
+		}															\
+		(d) = (s);
+
+#define	WORD_SHLCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			I286_OV = 0;											\
+			if ((c) == 1) {											\
+				I286_OV = ((s) + 0x4000) & 0x8000;					\
+			}														\
+			(s) <<= (c);											\
+			(s) &= 0x1ffff;											\
+			I286_FLAGL = szpflag_w[(s) & 0xffff];					\
+			I286_FLAGL |= (WORD)((s) >> 16);						\
+		}															\
+		(d) = (s);
+
+#define	WORD_SHRCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			(c)--;													\
+			if (c) {												\
+				(s) >>= (c);										\
+				I286_OV = 0;										\
+			}														\
+			else {													\
+				I286_OV = (s) & 0x8000;								\
+			}														\
+			I286_FLAGL = (BYTE)((s) & 1);							\
+			(s) >>= 1;												\
+			I286_FLAGL |= szpflag_w[(s)];							\
+		}															\
+		(d) = (s);
+
+#define	WORD_SARCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			(s) = ((short)(s)) >> ((c) - 1);						\
+			I286_FLAGL = (BYTE)((s) & 1);							\
+			(s) = (WORD)(((short)s) >> 1);							\
+			I286_OV = 0;											\
+			I286_FLAGL |= szpflag_w[(s)];							\
+		}															\
+		(d) = (s);
+

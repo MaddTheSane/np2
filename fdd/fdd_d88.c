@@ -1,0 +1,754 @@
+#include	"compiler.h"
+#include	"dosio.h"
+#include	"pccore.h"
+#include	"iocore.h"
+#include	"fddfile.h"
+#include	"fdd_d88.h"
+
+
+#define		D88BUFSIZE		0x6000			// テグザー対策
+#define		D88TRACKMAX		10600
+
+
+static UINT32 nexttrackptr(FDDFILE fdd, UINT32 fptr, UINT32 last) {
+
+	int		t;
+	UINT32	cur;
+
+	for (t=0; t<164; t++) {
+		cur = fdd->inf.d88.ptr[t];
+		if ((cur > fptr) && (cur < last)) {
+			last = cur;
+		}
+	}
+	return(last);
+}
+
+
+// ----
+
+typedef struct {
+	FDDFILE		fdd;
+	UINT		track;
+	BYTE		type;
+	long		fptr;
+	UINT		size;
+	BOOL		write;
+	BYTE		buf[D88BUFSIZE];
+} _D88TRK, *D88TRK;
+
+static	_D88TRK		d88trk;
+
+
+static BOOL d88trk_flushdata(D88TRK trk) {
+
+	FDDFILE		fdd;
+	FILEH		fh;
+
+	fdd = trk->fdd;
+	trk->fdd = NULL;
+	if ((fdd == NULL) || (trk->size == 0) || (!trk->write)) {
+		goto dtfd_exit;
+	}
+	fh = file_open(fdd->fname);
+	if (fh == FILEH_INVALID) {
+		goto dtfd_err1;
+	}
+	if ((file_seek(fh, trk->fptr, FSEEK_SET) != trk->fptr) ||
+		(file_write(fh, trk->buf, trk->size) != trk->size)) {
+		goto dtfd_err2;
+	}
+	file_close(fh);
+
+dtfd_exit:
+	return(SUCCESS);
+
+dtfd_err2:
+	file_close(fh);
+
+dtfd_err1:
+	return(FAILURE);
+}
+
+static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, BYTE type) {
+
+	BYTE	rpm;
+	FILEH	fh;
+	UINT32	fptr;
+	UINT32	size;
+
+	d88trk_flushdata(trk);
+	if (track >= 164) {
+		goto dtrd_err1;
+	}
+
+	rpm = fdc.rpm;
+	switch(fdd->inf.d88.fdtype_major) {
+		case DISKTYPE_2D:
+			if ((rpm) || (type != DISKTYPE_2DD) || (track & 2)) {
+				goto dtrd_err1;
+			}
+			track = ((track >> 1) & 0xfe) | (track & 1);
+			break;
+
+		case DISKTYPE_2DD:
+			if ((rpm) || (type != DISKTYPE_2DD)) {
+				goto dtrd_err1;
+			}
+			break;
+
+		case DISKTYPE_2HD:
+			if (CTRL_FDMEDIA != DISKTYPE_2HD) {
+				goto dtrd_err1;
+			}
+			if ((fdd->inf.d88.fdtype_minor == 0) && (rpm)) {
+				goto dtrd_err1;
+			}
+			break;
+
+		default:
+			goto dtrd_err1;
+	}
+
+	fptr = fdd->inf.d88.ptr[track];
+	if (fptr == 0) {
+		goto dtrd_err1;
+	}
+	size = nexttrackptr(fdd, fptr, fdd->inf.d88.fd_size) - fptr;
+	if (size > D88BUFSIZE) {
+		size = D88BUFSIZE;
+	}
+	fh = file_open_rb(fdd->fname);
+	if (fh == FILEH_INVALID) {
+		goto dtrd_err1;
+	}
+	if ((file_seek(fh, (long)fptr, FSEEK_SET) != (long)fptr) ||
+		(file_read(fh, trk->buf, size) != size)) {
+		goto dtrd_err2;
+	}
+	file_close(fh);
+
+	trk->fdd = fdd;
+	trk->track = track;
+	trk->type = type;
+	trk->fptr = fptr;
+	trk->size = size;
+	trk->write = FALSE;
+	return(SUCCESS);
+
+dtrd_err2:
+	file_close(fh);
+
+dtrd_err1:
+	return(FAILURE);
+}
+
+
+static BOOL rpmcheck(D88SEC sec) {
+
+	FDDFILE	fdd = fddfile + fdc.us;
+	BYTE	rpm;
+
+	rpm = fdc.rpm;
+	switch(fdd->inf.d88.fdtype_major) {
+		case DISKTYPE_2D:
+		case DISKTYPE_2DD:
+			if (rpm) {
+				return(FAILURE);
+			}
+			break;
+
+		case DISKTYPE_2HD:
+			if (fdd->inf.d88.fdtype_minor == 0) {
+				if (rpm) {
+					return(FAILURE);
+				}
+			}
+			else {
+				if (sec->rpm_flg != rpm) {
+					return(FAILURE);
+				}
+			}
+			break;
+
+		default:
+			return(FAILURE);
+	}
+	return(SUCCESS);
+}
+
+
+static D88SEC d88trk_seasector(BOOL check) {
+
+	D88TRK	trk;
+	BYTE	*ptr;
+	BYTE	*ptrend;
+	D88SEC	ret;
+	UINT	sec;
+	UINT	size;
+	UINT	sectors;
+
+	trk = &d88trk;
+	ptr = trk->buf;
+	ptrend = ptr + trk->size;
+	for (sec=0; sec<40; ) {
+		ret = (D88SEC)ptr;
+		ptr += sizeof(_D88SEC);
+		if (ptr > ptrend) {
+			break;
+		}
+		size = LOADINTELWORD(ret->size);
+		ptr += size;
+		if (ptr > ptrend) {
+			break;
+		}
+		if ((ret->c == fdc.C) && (ret->h == fdc.H) &&
+			(ret->r == fdc.R) && (ret->n == fdc.N) && (!rpmcheck(ret))) {
+			if (check) {
+				if ((fdc.mf != 0xff) && (!((fdc.mf ^ ret->mfm_flg) & 0x40))) {
+					break;
+				}
+			}
+			return(ret);
+		}
+		sectors = LOADINTELWORD(ret->sectors);
+		if (++sec >= sectors) {
+			break;
+		}
+	}
+	return(NULL);
+}
+
+
+// ----
+
+static void drvflush(FDDFILE fdd) {
+
+	D88TRK	trk;
+
+	trk = &d88trk;
+	if (trk->fdd == fdd) {
+		d88trk_flushdata(trk);
+	}
+}
+
+static BOOL trkseek(FDDFILE fdd, UINT track) {
+
+	D88TRK	trk;
+	BOOL	r;
+
+	trk = &d88trk;
+	if ((trk->fdd == fdd) && (trk->track == track) &&
+		(trk->type == CTRL_FDMEDIA)) {
+		r = SUCCESS;
+	}
+	else {
+		r = d88trk_read(trk, fdd, track, CTRL_FDMEDIA);
+	}
+	return(r);
+}
+
+
+static D88SEC searchsector_d88(BOOL check) {			// ver0.29
+
+	BYTE	*p;
+	UINT	sec;
+	UINT	pos = 0;
+	UINT	nsize;
+	UINT	sectors;
+	UINT	secsize;
+
+	if (fdc.N < 8) {
+		nsize = 128 << fdc.N;
+	}
+	else {
+		nsize = 128 << 8;
+	}
+
+	p = d88trk.buf;
+	for (sec=0; sec<40; ) {
+		if ((pos + nsize + sizeof(_D88SEC)) > D88BUFSIZE) {
+			break;
+		}
+
+		if ((((D88SEC)p)->c == fdc.C) &&
+			(((D88SEC)p)->h == fdc.H) &&
+			(((D88SEC)p)->r == fdc.R) &&
+			(((D88SEC)p)->n == fdc.N) &&
+			(!rpmcheck((D88SEC)p))) {
+
+			// ver0.29
+			if (check) {
+				if ((fdc.mf != 0xff) &&
+					!((fdc.mf ^ (((D88SEC)p)->mfm_flg)) & 0x40)) {
+					break;
+				}
+			}
+			return((D88SEC)p);
+		}
+		sectors = LOADINTELWORD(((D88SEC)p)->sectors);
+		if (++sec >= sectors) {
+			break;
+		}
+
+		secsize = LOADINTELWORD(((D88SEC)p)->size);
+		secsize += sizeof(_D88SEC);
+		pos += secsize;
+		p += secsize;
+	}
+	return(NULL);
+}
+
+
+// ----
+
+BOOL fddd88_set(FDDFILE fdd, const char *fname, int ro) {
+
+	short	attr;
+	FILEH	fh;
+	UINT	rsize;
+	int		i;
+
+	fddd88_eject(fdd);
+	attr = file_attr(fname);
+	if (attr & 0x18) {
+		goto fdst_err;
+	}
+	fh = file_open(fname);
+	if (fh == FILEH_INVALID) {
+		goto fdst_err;
+	}
+	rsize = file_read(fh, &fdd->inf.d88.head, sizeof(fdd->inf.d88.head));
+	file_close(fh);
+	if (rsize != sizeof(fdd->inf.d88.head)) {
+		goto fdst_err;
+	}
+	fdd->type = DISKTYPE_D88;
+	milstr_ncpy(fdd->fname, fname, sizeof(fdd->fname));
+	fdd->protect = ((attr & 1) || (fdd->inf.d88.head.protect & 0x10) ||
+															(ro))?TRUE:FALSE;
+	fdd->inf.d88.fdtype_major = fdd->inf.d88.head.fd_type >> 4;
+	fdd->inf.d88.fdtype_minor = fdd->inf.d88.head.fd_type & 0x0f;
+	fdd->inf.d88.fd_size = LOADINTELDWORD(fdd->inf.d88.head.fd_size);
+	for (i=0; i<164; i++) {
+		fdd->inf.d88.ptr[i] = LOADINTELDWORD(fdd->inf.d88.head.trackp[i]);
+	}
+	return(SUCCESS);
+
+fdst_err:
+	return(FAILURE);
+}
+
+BOOL fddd88_eject(FDDFILE fdd) {
+
+	drvflush(fdd);
+	fdd->fname[0] = '\0';
+	fdd->type = DISKTYPE_NOTREADY;
+	ZeroMemory(&fdd->inf.d88.head, sizeof(fdd->inf.d88.head));
+	return(SUCCESS);
+}
+
+
+BOOL fdd_diskaccess_d88(void) {										// ver0.31
+
+	FDDFILE	fdd = fddfile + fdc.us;
+	BYTE	rpm;
+
+	rpm = fdc.rpm;
+	switch(fdd->inf.d88.fdtype_major) {
+		case DISKTYPE_2D:
+		case DISKTYPE_2DD:
+			if ((rpm) || (CTRL_FDMEDIA != DISKTYPE_2DD)) {
+				return(FAILURE);
+			}
+			break;
+
+		case DISKTYPE_2HD:
+			if (CTRL_FDMEDIA != DISKTYPE_2HD) {
+				return(FAILURE);
+			}
+			if ((fdd->inf.d88.fdtype_minor == 0) && (rpm)) {
+				return(FAILURE);
+			}
+			break;
+
+		default:
+			return(FAILURE);
+
+	}
+	return(SUCCESS);
+}
+
+BOOL fdd_seek_d88(void) {
+
+	FDDFILE	fdd = fddfile + fdc.us;
+
+	return(trkseek(fdd, (fdc.ncn << 1) + fdc.hd));
+}
+
+BOOL fdd_seeksector_d88(void) {
+
+	FDDFILE	fdd = fddfile + fdc.us;
+
+	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+		return(FAILURE);
+	}
+	if (!searchsector_d88(FALSE)) {
+		return(FAILURE);
+	}
+	return(SUCCESS);
+}
+
+BOOL fdd_read_d88(void) {
+
+	FDDFILE		fdd = fddfile + fdc.us;
+	D88SEC		p;
+	UINT		size;
+	UINT		secsize;
+
+	fddlasterror = 0x00;
+	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+		fddlasterror = 0xe0;									// ver0.28
+		return(FAILURE);
+	}
+	p = searchsector_d88(TRUE);
+	if (!p) {
+		fddlasterror = 0xc0;									// ver0.28
+		return(FAILURE);
+	}
+	if (fdc.N < 8) {
+		size = 128 << fdc.N;
+	}
+	else {
+		size = 128 << 8;
+	}
+	fdc.bufcnt = size;
+	ZeroMemory(fdc.buf, size);
+	secsize = LOADINTELWORD(p->size);
+	if (size > secsize) {
+		size = secsize;
+	}
+	if (size) {
+		CopyMemory(fdc.buf, p+1, size);
+	}
+	fddlasterror = p->stat;
+	return(SUCCESS);
+}
+
+BOOL fdd_write_d88(void) {
+
+	FDDFILE		fdd = fddfile + fdc.us;
+	D88SEC		p;
+	UINT		size;
+	UINT		secsize;
+
+	fddlasterror = 0x00;										// ver0.28
+	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+		fddlasterror = 0xe0;									// ver0.28
+		return(FAILURE);
+	}
+	p = searchsector_d88(FALSE);
+	if (!p) {
+		fddlasterror = 0xc0;									// ver0.28
+		return(FAILURE);
+	}
+	if (fdc.N < 8) {
+		size = 128 << fdc.N;
+	}
+	else {
+		size = 128 << 8;
+	}
+	secsize = LOADINTELWORD(p->size);
+	if (size > secsize) {
+		size = secsize;
+	}
+	if (size) {
+		CopyMemory(p+1, fdc.buf, size);
+		d88trk.write = TRUE;
+	}
+	fddlasterror = 0x00;										// ver0.28
+	return(SUCCESS);
+}
+
+#if 0
+BOOL fddd88_readid(void) {
+
+	FDDFILE		fdd = fddfile + fdc.us;
+
+	D88TRK	trk;
+	BYTE	*ptr;
+	BYTE	*ptrend;
+	D88SEC	cur;
+	UINT	sec;
+	UINT	size;
+	UINT	sectors;
+
+	fddlasterror = 0x00;										// ver0.28
+	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+		fddlasterror = 0xe0;									// ver0.28
+		return(FAILURE);
+	}
+
+	trk = &d88trk;
+	ptr = trk->buf;
+	ptrend = ptr + trk->size;
+	for (sec=0; sec<40; ) {
+		cur = (D88SEC)ptr;
+		ptr += sizeof(_D88SEC);
+		if (ptr > ptrend) {
+			break;
+		}
+		size = LOADINTELWORD(cur->size);
+		ptr += size;
+		if (ptr > ptrend) {
+			break;
+		}
+		sectors = LOADINTELWORD(cur->sectors);
+		if ((sec == (UINT)fdc.crcn) && (!rpmcheck(cur))) {
+			fdc.C = cur->c;
+			fdc.H = cur->h;
+			fdc.R = cur->r;
+			fdc.N = cur->n;
+			fdc.crcn++;
+			if ((UINT)fdc.crcn >= sectors) {
+				fdc.crcn = 0;
+			}
+			if ((fdc.mf == 0xff) || ((fdc.mf ^ cur->mfm_flg) & 0x40)) {
+				fddlasterror = 0x00;
+				return(SUCCESS);
+			}
+		}
+		sec++;
+		if (sec >= sectors) {
+			break;
+		}
+	}
+	fdc.crcn = 0x00;
+	fddlasterror = 0xe0;
+	return(FAILURE);
+}
+#endif
+
+BOOL fdd_readid_d88(void) {
+
+	FDDFILE	fdd = fddfile + fdc.us;
+	BYTE	*p;
+	UINT	sec;
+	UINT	pos = 0;
+	UINT	sectors;
+	UINT	secsize;
+
+	fddlasterror = 0x00;										// ver0.28
+	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+		fddlasterror = 0xe0;									// ver0.28
+		return(FAILURE);
+	}
+	p = d88trk.buf;
+	for (sec=0; sec<40; ) {
+		if (pos > (D88BUFSIZE - sizeof(_D88SEC))) {
+			break;
+		}
+		sectors = LOADINTELWORD(((D88SEC)p)->sectors);
+		if ((sec == fdc.crcn) && (!rpmcheck((D88SEC)p))) {	// ver0.31
+			fdc.C = ((D88SEC)p)->c;
+			fdc.H = ((D88SEC)p)->h;
+			fdc.R = ((D88SEC)p)->r;
+			fdc.N = ((D88SEC)p)->n;
+			fdc.crcn++;
+			if (fdc.crcn >= sectors) {
+				fdc.crcn = 0;
+			}
+																// ver0.29
+			if ((fdc.mf == 0xff) ||
+					((fdc.mf ^ (((D88SEC)p)->mfm_flg)) & 0x40)) {
+				fddlasterror = 0x00;							// ver0.28
+				return(SUCCESS);
+			}
+		}
+		if (++sec >= sectors) {
+			break;
+		}
+		secsize = LOADINTELWORD(((D88SEC)p)->size);
+		secsize += sizeof(_D88SEC);
+		pos += secsize;
+		p += secsize;
+	}
+	fdc.crcn = 0x00;											// ver0.29
+	fddlasterror = 0xe0;										// ver0.31
+	return(FAILURE);
+}
+
+// --------------------------------------------------------------------------
+
+static BOOL formating = FALSE;
+static BYTE formatsec = 0;
+static BYTE formatwrt = 0;
+static UINT formatpos = 0;
+
+static int fileappend(FILEH hdl, FDDFILE fdd,
+									UINT32 ptr, long last, long apsize) {
+
+	long	length;
+	UINT	size;
+	UINT	rsize;
+	int		t;
+	BYTE	tmp[0x1000];
+	UINT32	cur;
+
+	if ((length = last - ptr) <= 0) {			// 書き換える必要なし
+		return(0);
+	}
+	while(length) {
+		if (length >= sizeof(tmp)) {
+			size = sizeof(tmp);
+		}
+		else {
+			size = length;
+		}
+		length -= size;
+		file_seek(hdl, ptr + length, 0);
+		rsize = file_read(hdl, tmp, size);
+		file_seek(hdl, ptr + length + apsize, 0);
+		file_write(hdl, tmp, rsize);
+	}
+
+	for (t=0; t<164; t++) {
+		cur = fdd->inf.d88.ptr[t];
+		if ((cur != 0) && (cur >= ptr)) {
+			cur += apsize;
+			fdd->inf.d88.ptr[t] = cur;
+			STOREINTELDWORD(fdd->inf.d88.head.trackp[t], cur);
+		}
+	}
+	return(0);
+}
+
+
+static void endoftrack(UINT fmtsize, BYTE sectors) {
+
+	FDDFILE	fdd = fddfile + fdc.us;
+
+	FILEH		hdl;
+	int			i;
+	UINT		trk;
+	long		fpointer;
+	long		endpointer;
+	long		lastpointer;
+	long		trksize;
+	int			ptr;
+	long		apsize;
+
+	trk = (fdc.treg[fdc.us] << 1) + fdc.hd;
+
+	ptr = 0;
+	for (i=0; i<(int)sectors; i++) {
+		STOREINTELWORD(((D88SEC)(&d88trk.buf[ptr]))->sectors, sectors);
+		ptr += LOADINTELWORD(((D88SEC)(&d88trk.buf[ptr]))->size);
+		ptr += sizeof(_D88SEC);
+	}
+
+	hdl = file_open(fddfile[fdc.us].fname);
+	if (hdl == FILEH_INVALID) {
+		return;
+	}
+	lastpointer = file_seek(hdl, 0, 2);
+	fpointer = fdd->inf.d88.ptr[trk];
+	if (fpointer == 0) {
+		for (i=trk; i>=0; i--) {					// 新規トラック
+			fpointer = fdd->inf.d88.ptr[i];
+			if (fpointer) {
+				break;
+			}
+		}
+		if (fpointer) {								// ヒットした
+			fpointer = nexttrackptr(fdd, fpointer, lastpointer);
+		}
+		else {
+			fpointer = sizeof(_D88HEAD);
+		}
+		endpointer = fpointer;
+	}
+	else {										// トラックデータは既にある
+		endpointer = nexttrackptr(fdd, fpointer, lastpointer);
+	}
+	trksize = endpointer - fpointer;
+	if ((apsize = (long)fmtsize - trksize) > 0) {
+								// 書き込むデータのほーが大きい
+		fileappend(hdl, fdd, endpointer, lastpointer, apsize);
+		fdd->inf.d88.fd_size += apsize;
+		STOREINTELDWORD(fdd->inf.d88.head.fd_size, fdd->inf.d88.fd_size);
+	}
+	fdd->inf.d88.ptr[trk] = fpointer;
+	STOREINTELDWORD(fdd->inf.d88.head.trackp[trk], fpointer);
+	file_seek(hdl, fpointer, 0);
+	file_write(hdl, d88trk.buf, fmtsize);
+	file_seek(hdl, 0, 0);
+	file_write(hdl, &fdd->inf.d88.head, sizeof(fdd->inf.d88.head));
+	file_close(hdl);
+}
+
+
+BOOL fdd_formatinit_d88(void) {
+
+	if (fdc.treg[fdc.us] < 82) {
+		formating = TRUE;
+		formatsec = 0;
+		formatpos = 0;
+		formatwrt = 0;
+		drvflush(NULL);
+		return(SUCCESS);
+	}
+	return(FAILURE);
+}
+
+	// todo アンフォーマットとか ディスク１周した時の切り捨てとか…
+BOOL fdd_formating_d88(const BYTE *ID) {
+
+	FDDFILE	fdd = fddfile + fdc.us;
+
+	UINT	size;
+	D88SEC	d88sec;
+
+	if (!formating) {
+		return(FAILURE);
+	}
+	if (fdc.N < 8) {
+		size = 128 << fdc.N;
+	}
+	else {
+		size = 128 << 8;
+	}
+	if ((formatpos + sizeof(_D88SEC) + size) < D88TRACKMAX) {
+		d88sec = (D88SEC)(d88trk.buf + formatpos);
+		ZeroMemory(d88sec, sizeof(_D88SEC));
+		d88sec->c = ID[0];
+		d88sec->h = ID[1];
+		d88sec->r = ID[2];
+		d88sec->n = ID[3];
+		STOREINTELWORD(d88sec->size, size);
+		if ((fdd->inf.d88.fdtype_major == DISKTYPE_2HD) &&
+			(fdd->inf.d88.fdtype_minor != 0)) {
+			d88sec->rpm_flg = fdc.rpm;
+		}
+		FillMemory(d88sec + 1, size, fdc.d);
+		formatpos += sizeof(_D88SEC);
+		formatpos += size;
+		formatwrt++;
+	}
+	formatsec++;
+//	TRACE_("format sec", formatsec);
+//	TRACE_("format wrt", formatwrt);
+//	TRACE_("format max", fdc.sc);
+//	TRACE_("format pos", formatpos);
+	if (formatsec >= fdc.sc) {
+		endoftrack(formatpos, formatwrt);
+		formating = FALSE;
+	}
+	return(SUCCESS);
+}
+
+BOOL fdd_isformating_d88(void) {
+
+	return(formating);
+}
+

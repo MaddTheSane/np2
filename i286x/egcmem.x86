@@ -1,0 +1,1394 @@
+; egc - asm version
+;
+; asm version: egcasm.asm + egc.cpp
+
+%include 'x86/np2asm.inc'
+
+section .bss
+
+	extern	_mem
+	extern	_grcg
+	extern	_gdcs
+	extern	_egc
+	extern	_vramupdate
+
+	_egc_src	resd	2
+
+VIDEOMEMORY		equ		_mem
+
+section .data
+
+egcmask_ua	db	0ffh, 07fh, 03fh, 01fh, 00fh, 007h, 003h, 001h
+			db	0feh, 07eh, 03eh, 01eh, 00eh, 006h, 002h, 000h
+			db	0fch, 07ch, 03ch, 01ch, 00ch, 004h, 000h, 000h
+			db	0f8h, 078h, 038h, 018h, 008h, 000h, 000h, 000h
+			db	0f0h, 070h, 030h, 010h, 000h, 000h, 000h, 000h
+			db	0e0h, 060h, 020h, 000h, 000h, 000h, 000h, 000h
+			db	0c0h, 040h, 000h, 000h, 000h, 000h, 000h, 000h
+			db	080h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+egcmask_ub	db	080h, 0c0h, 0e0h, 0f0h, 0f8h, 0fch, 0feh, 0ffh
+
+egcmask_da	db	0ffh, 0feh, 0fch, 0f8h, 0f0h, 0e0h, 0c0h, 080h
+			db	07fh, 07eh, 07ch, 078h, 070h, 060h, 040h, 000h
+			db	03fh, 03eh, 03ch, 038h, 030h, 020h, 000h, 000h
+			db	01fh, 01eh, 01ch, 018h, 010h, 000h, 000h, 000h
+			db	00fh, 00eh, 00ch, 008h, 000h, 000h, 000h, 000h
+			db	007h, 006h, 004h, 000h, 000h, 000h, 000h, 000h
+			db	003h, 002h, 000h, 000h, 000h, 000h, 000h, 000h
+			db	001h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+egcmask_db	db	001h, 003h, 007h, 00fh, 01fh, 03fh, 07fh, 0ffh
+
+vramoffset	dd	VRAM_B, VRAM_R, VRAM_G, VRAM_E
+
+_egc_dst	dd	0, 0
+_egc_xdst	dd	0, 0
+_egc_data	dd	0, 0
+
+
+
+section .text
+
+		global	_egcshift
+
+		global	_egca_read
+		global	_egca_read_w
+		global	_egca_write
+		global	_egca_write_w
+
+				align	16
+_egcshift:		mov		eax, [_egc + egc_t.leng]
+				and		eax, 0fffh
+				inc		eax
+				mov		[_egc + egc_t.remain], eax
+
+				mov		eax, [_egc + egc_t.sft]
+				mov		edx, _egc + egc_t.buf				; offset
+				test	ah, 10h
+				je		egsft_dircalced
+				add		edx, 512 + 3						; jne ÇÃî§
+egsft_dircalced:
+				mov		[_egc + egc_t.inptr], edx
+				mov		[_egc + egc_t.outptr], edx
+				mov		edx, 0
+				mov		[_egc + egc_t.stack], edx
+				setnz	dl
+
+				mov		ah, al								; al = srcbit
+				shr		ah, 4								; ah = dstbit
+				and		ax, 0f0fh
+				mov		[_egc + egc_t.srcbit], al
+				mov		[_egc + egc_t.dstbit], ah
+
+				and		ax, 0707h
+				sub		al, ah							; al = srcbit - dstbit
+				je		short egsft_funcrst				; srcbit == dstbit
+				jc		short egsft_difm
+														; srcbit > dstbit
+				add		edx, 4
+				jmp		short egsft_difcal
+egsft_difm:												; srcbit < dstbit
+				add		edx, 2
+				add		al, 8
+egsft_difcal:
+				mov		[_egc + egc_t.sft8bitl], al
+				dec		al								; +-- al = 8 - al
+				xor		al, 7							; +
+				mov		[_egc + egc_t.sft8bitr], al
+egsft_funcrst:
+				mov		[_egc + egc_t.func], edx
+				ret
+
+
+
+				align	16
+egcsftb_upn_sub:
+				movzx	eax, byte [_egc + egc_t.dstbit]
+				cmp		al, 8
+				jae		short estb_upns_of
+
+				test	al, al
+				jne		short estb_upns_db
+				sub		dword [_egc + egc_t.remain], 8
+				jnc		short estb_upns_cal
+
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				add		edx, 8 - 1
+				mov		al, [egcmask_ub + edx]
+				jmp		short estb_upns_msk
+
+estb_upns_of:	and		byte [_egc + egc_t.dstbit], 7
+				mov		byte [_egc + egc_t.srcmask + ebx], 0
+				ret
+
+estb_upns_db:
+				mov		byte [_egc + egc_t.dstbit], 0
+				mov		edx, 8
+				sub		edx, eax
+				sub		[_egc + egc_t.remain], edx
+				jc		short estb_upns_dbof
+				mov		al, [egcmask_ua + eax]
+				jmp		short estb_upns_msk
+estb_upns_dbof:
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				not		edx							; edx = mask start
+				mov		al, [egcmask_ua + eax + edx*8]
+
+estb_upns_msk:
+				mov		[_egc + egc_t.srcmask + ebx], al
+estb_upns_cal:
+				mov		edx, [_egc + egc_t.outptr]
+				mov		al, [edx + 0]
+				mov		[_egc_src + ebx + 0], al
+				mov		al, [edx + 4]
+				mov		[_egc_src + ebx + 2], al
+				mov		al, [edx + 8]
+				mov		[_egc_src + ebx + 4], al
+				mov		al, [edx + 12]
+				mov		[_egc_src + ebx + 6], al
+				inc		dword [_egc + egc_t.outptr]
+				ret
+
+
+; ****---4 -------8 --------
+; **---4-- -----8-- ------
+; out -> ax <<< (src - dst) -> al
+
+				align	16
+egcsftb_upl_sub:
+				movzx	eax, byte [_egc + egc_t.dstbit]
+				cmp		al, 8
+				jae		short estb_upls_of
+
+				test	al, al
+				jne		short estb_upls_db
+				sub		dword [_egc + egc_t.remain], 8
+				jnc		short estb_upls_cal
+
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				add		edx, 8 - 1
+				mov		al, [egcmask_ub + edx]
+				jmp		short estb_upls_msk
+
+estb_upls_of:	and		byte [_egc + egc_t.dstbit], 7
+				mov		byte [_egc + egc_t.srcmask + ebx], 0
+				ret
+
+estb_upls_db:
+				mov		byte [_egc + egc_t.dstbit], 0
+				mov		edx, 8
+				sub		edx, eax
+				sub		[_egc + egc_t.remain], edx
+				jc		short estb_upls_dbof
+				mov		al, [egcmask_ua + eax]
+				jmp		short estb_upls_msk
+estb_upls_dbof:
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				not		edx							; edx = mask start
+				mov		al, [egcmask_ua + eax + edx*8]
+
+estb_upls_msk:
+				mov		[_egc + egc_t.srcmask + ebx], al
+estb_upls_cal:
+				mov		edx, [_egc + egc_t.outptr]
+				mov		cl, [_egc + egc_t.sft8bitl]
+				mov		ax, [edx + 0]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 0], al
+				mov		ax, [edx + 4]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 2], al
+				mov		ax, [edx + 8]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 4], al
+				mov		ax, [edx + 12]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 6], al
+				inc		dword [_egc + egc_t.outptr]
+				ret
+
+
+; ****---4 -------8 --------
+; ******-- -4------ --8----- --
+; out -> ax >>> (dst - src) -> ah
+
+				align	16
+egcsftb_upr_sub:
+				movzx	eax, byte [_egc + egc_t.dstbit]
+				cmp		al, 8
+				jae		short estb_uprs_of
+
+				test	al, al
+				jne		short estb_uprs_db
+
+				inc		dword [_egc + egc_t.outptr]
+				sub		dword [_egc + egc_t.remain], 8
+				jnc		short estb_uprs_cal
+
+				xchg	eax, [_egc + egc_t.remain]
+				add		eax, 8 - 1
+				mov		al, [egcmask_ub + eax]
+				jmp		short estb_uprs_msk
+
+estb_uprs_of:	and		byte [_egc + egc_t.dstbit], 7
+				mov		byte [_egc + egc_t.srcmask + ebx], 0
+				ret
+estb_uprs_db:
+				mov		byte [_egc + egc_t.dstbit], 0
+				mov		edx, 8
+				sub		edx, eax
+				sub		[_egc + egc_t.remain], edx
+				jc		short estb_uprs_dbof
+				mov		al, [egcmask_ua + eax]
+				jmp		short estb_uprs_msk
+estb_uprs_dbof:
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				not		edx							; edx = mask start
+				mov		al, [egcmask_ua + eax + edx*8]
+estb_uprs_msk:
+				mov		[_egc + egc_t.srcmask + ebx], al
+estb_uprs_cal:
+				mov		edx, [_egc + egc_t.outptr]
+				mov		cl, [_egc + egc_t.sft8bitr]
+				mov		ax, [edx - 1]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 0], ah
+				mov		ax, [edx + 3]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 2], ah
+				mov		ax, [edx + 7]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 4], ah
+				mov		ax, [edx + 11]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 6], ah
+				ret
+
+
+
+				align	16
+egcsftb_dnn_sub:
+				movzx	eax, byte [_egc + egc_t.dstbit]
+				cmp		al, 8
+				jae		short estb_dnns_of
+
+				test	al, al
+				jne		short estb_dnns_db
+				sub		dword [_egc + egc_t.remain], 8
+				jnc		short estb_dnns_cal
+
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				add		edx, 8 - 1
+				mov		al, [egcmask_db + edx]
+				jmp		short estb_dnns_msk
+
+estb_dnns_of:	and		byte [_egc + egc_t.dstbit], 7
+				mov		byte [_egc + egc_t.srcmask + ebx], 0
+				ret
+
+estb_dnns_db:
+				mov		byte [_egc + egc_t.dstbit], 0
+				mov		edx, 8
+				sub		edx, eax
+				sub		[_egc + egc_t.remain], edx
+				jc		short estb_dnns_dbof
+				mov		al, [egcmask_da + eax]
+				jmp		short estb_dnns_msk
+estb_dnns_dbof:
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				not		edx							; edx = mask start
+				mov		al, [egcmask_da + eax + edx*8]
+
+estb_dnns_msk:
+				mov		[_egc + egc_t.srcmask + ebx], al
+estb_dnns_cal:
+				mov		edx, [_egc + egc_t.outptr]
+				mov		al, [edx + 0]
+				mov		[_egc_src + ebx + 0], al
+				mov		al, [edx + 4]
+				mov		[_egc_src + ebx + 2], al
+				mov		al, [edx + 8]
+				mov		[_egc_src + ebx + 4], al
+				mov		al, [edx + 12]
+				mov		[_egc_src + ebx + 6], al
+				dec		dword [_egc + egc_t.outptr]
+				ret
+
+
+;                       al     ah
+;          -------- 8------- 3--*****
+;             ----- ---8---- ---3--**
+; out -> ax >>> (dst - src) -> ah
+
+				align	16
+egcsftb_dnl_sub:
+				movzx	eax, byte [_egc + egc_t.dstbit]
+				cmp		al, 8
+				jae		short estb_dnls_of
+
+				test	al, al
+				jne		short estb_dnls_db
+				sub		dword [_egc + egc_t.remain], 8
+				jnc		short estb_dnls_cal
+
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				add		edx, 8 - 1
+				mov		al, [egcmask_db + edx]
+				jmp		short estb_dnls_msk
+
+estb_dnls_of:	and		byte [_egc + egc_t.dstbit], 7
+				mov		byte [_egc + egc_t.srcmask + ebx], 0
+				ret
+
+estb_dnls_db:
+				mov		byte [_egc + egc_t.dstbit], 0
+				mov		edx, 8
+				sub		edx, eax
+				sub		[_egc + egc_t.remain], edx
+				jc		short estb_dnls_dbof
+				mov		al, [egcmask_da + eax]
+				jmp		short estb_dnls_msk
+estb_dnls_dbof:
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				not		edx							; edx = mask start
+				mov		al, [egcmask_da + eax + edx*8]
+
+estb_dnls_msk:
+				mov		[_egc + egc_t.srcmask + ebx], al
+estb_dnls_cal:
+				dec		dword [_egc + egc_t.outptr]
+				mov		edx, [_egc + egc_t.outptr]
+				mov		cl, [_egc + egc_t.sft8bitl]
+				mov		ax, [edx + 0]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 0], ah
+				mov		ax, [edx + 4]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 2], ah
+				mov		ax, [edx + 8]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 4], ah
+				mov		ax, [edx + 12]
+				ror		ax, cl
+				mov		[_egc_src + ebx + 6], ah
+				ret
+
+
+;          -------- 8------- 6-----**
+;      --- -----8-- -----6-- ---*****
+; out -> ax <<< (dst - src) -> al
+
+				align	16
+egcsftb_dnr_sub:
+				movzx	eax, byte [_egc + egc_t.dstbit]
+				cmp		al, 8
+				jae		short estb_dnrs_of
+
+				test	al, al
+				jne		short estb_dnrs_db
+				dec		dword [_egc + egc_t.outptr]
+				sub		dword [_egc + egc_t.remain], 8
+				jnc		short estb_dnrs_cal
+
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				add		edx, 8 - 1
+				mov		al, [egcmask_db + edx]
+				jmp		short estb_dnrs_msk
+
+estb_dnrs_of:	and		byte [_egc + egc_t.dstbit], 7
+				mov		byte [_egc + egc_t.srcmask + ebx], 0
+				ret
+
+estb_dnrs_db:
+				mov		byte [_egc + egc_t.dstbit], 0
+				mov		edx, 8
+				sub		edx, eax
+				sub		[_egc + egc_t.remain], edx
+				jc		short estb_dnrs_dbof
+				mov		al, [egcmask_da + eax]
+				jmp		short estb_dnrs_msk
+estb_dnrs_dbof:
+				xor		edx, edx
+				xchg	edx, [_egc + egc_t.remain]
+				not		edx							; edx = mask start
+				mov		al, [egcmask_da + eax + edx*8]
+
+estb_dnrs_msk:
+				mov		[_egc + egc_t.srcmask + ebx], al
+estb_dnrs_cal:
+				mov		edx, [_egc + egc_t.outptr]
+				mov		cl, [_egc + egc_t.sft8bitr]
+				mov		ax, [edx + 0]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 0], al
+				mov		ax, [edx + 4]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 2], al
+				mov		ax, [edx + 8]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 4], al
+				mov		ax, [edx + 12]
+				rol		ax, cl
+				mov		[_egc_src + ebx + 6], al
+				ret
+
+; -------------------------------------------------------------------------
+
+%macro	egcsft_byte		1
+				mov		ebx, ebp
+				mov		byte [_egc + egc_t.srcmask + ebx], 0ffh
+				mov		eax, 8
+				sub		al, [_egc + egc_t.dstbit]
+				jc		short %%dstbitover0
+				sub		[_egc + egc_t.stack], eax
+				jc		%%dstbitover1
+				call	%1
+				cmp		dword [_egc + egc_t.remain], 0
+				je		near _egcshift
+				ret
+%%dstbitover0:	sub		byte [_egc + egc_t.dstbit], 8
+				mov		word [_egc + egc_t.srcmask], 0
+				ret
+%%dstbitover1:	add		[_egc + egc_t.stack], eax		; ñﬂÇµÇƒÅc
+				mov		word [_egc + egc_t.srcmask], 0
+				ret
+%endmacro
+
+
+%macro	egcsft_word_up	1
+				xor		ebx, ebx
+				mov		word [_egc + egc_t.srcmask], 0ffffh
+				mov		eax, 16
+				sub		al, [_egc + egc_t.dstbit]
+				cmp		[_egc + egc_t.stack], eax
+				jc		short %%dstbitover
+				sub		[_egc + egc_t.stack], eax
+				call	%1
+				cmp		[_egc + egc_t.remain], ebx
+				je		short %%uplhlf
+				inc		ebx
+				call	%1
+				cmp		dword [_egc + egc_t.remain], 0
+				je		near _egcshift
+				ret
+%%dstbitover:	mov		word [_egc + egc_t.srcmask], bx
+				ret
+%%uplhlf:		mov		byte [_egc + egc_t.srcmask + 1], bl
+				jmp		_egcshift
+%endmacro
+
+
+%macro	egcsft_word_dn	1
+				xor		ebx, ebx
+				mov		word [_egc + egc_t.srcmask], 0ffffh
+				mov		eax, 16
+				sub		al, [_egc + egc_t.dstbit]
+				cmp		[_egc + egc_t.stack], eax
+				jc		short %%dstbitover
+				sub		[_egc + egc_t.stack], eax
+				inc		ebx
+				call	%1
+				dec		ebx
+				cmp		[_egc + egc_t.remain], ebx
+				je		short %%uplhlf
+				call	%1
+				cmp		[_egc + egc_t.remain], ebx
+				je		near _egcshift
+				ret
+
+				align	4
+%%dstbitover:	mov		word [_egc + egc_t.srcmask], bx
+				ret
+
+				align	4
+%%uplhlf:		mov		byte [_egc + egc_t.srcmask], bl
+				jmp		_egcshift
+%endmacro
+
+
+
+
+				align	16
+egcsftb_upn0:	egcsft_byte		egcsftb_upn_sub
+				align	16
+egcsftb_upl0:	egcsft_byte		egcsftb_upl_sub
+				align	16
+egcsftb_upr0:	egcsft_byte		egcsftb_upr_sub
+
+				align	16
+egcsftb_dnn0:	egcsft_byte		egcsftb_dnn_sub
+				align	16
+egcsftb_dnl0:	egcsft_byte		egcsftb_dnl_sub
+				align	16
+egcsftb_dnr0:	egcsft_byte		egcsftb_dnr_sub
+
+				align	16
+egcsftw_upn0:	egcsft_word_up	egcsftb_upn_sub
+				align	16
+egcsftw_upl0:	egcsft_word_up	egcsftb_upl_sub
+				align	16
+egcsftw_upr0:	egcsft_word_up	egcsftb_upr_sub
+
+				align	16
+egcsftw_dnn0:	egcsft_word_dn	egcsftb_dnn_sub
+				align	16
+egcsftw_dnl0:	egcsft_word_dn	egcsftb_dnl_sub
+				align	16
+egcsftw_dnr0:	egcsft_word_dn	egcsftb_dnr_sub
+
+
+section .data
+
+egcsft_proc		dd		egcsftw_upn0,	egcsftw_dnn0
+				dd		egcsftw_upr0,	egcsftw_dnr0
+				dd		egcsftw_upl0,	egcsftw_dnl0
+				dd		egcsftb_upn0,	egcsftb_dnn0
+				dd		egcsftb_upr0,	egcsftb_dnr0
+				dd		egcsftb_upl0,	egcsftb_dnl0
+
+section .text
+
+; --------------------------------------------------------------------------
+
+%macro		CPUSRC2DATA		0
+				mov		ebx, [_egc + egc_t.inptr]
+				xor		eax, eax
+				test	byte [_egc + egc_t.sft + 1], 10h
+				setnz	al
+				sub		ebx, eax
+				mov		[ebx + 0], dx
+				mov		[ebx + 4], dx
+				mov		[ebx + 8], dx
+				mov		[ebx +12], dx
+				cmp		dword [_egc + egc_t.stack], 16
+				ja		short %%cpusrc2d_end
+				lea		eax, [eax*2 - 1]
+				sub		[_egc + egc_t.inptr], eax
+				cmp		esi, 6
+				jae		short %%cpusrc2d_byte
+				cmp		byte [_egc + egc_t.srcbit], 0
+				je		short %%cpusrc2d_w1
+				xor		edx, edx
+				xchg	[_egc + egc_t.srcbit], dl
+				cmp		dl, 8
+				jb		short %%cpusrc2d_w0
+				sub		[_egc + egc_t.outptr], eax
+%%cpusrc2d_w0:	sub		[_egc + egc_t.stack], edx
+%%cpusrc2d_w1:	add		dword [_egc + egc_t.stack], 16
+				sub		[_egc + egc_t.inptr], eax
+				jmp		short %%cpusrc2d_end
+%%cpusrc2d_byte:
+				cmp		byte [_egc + egc_t.srcbit], 0
+				je		short %%cpusrc2d_b1
+				btr		word [_egc + egc_t.srcbit], 3
+				jc		short %%cpusrc2d_end
+				xor		edx, edx
+				xchg	[_egc + egc_t.srcbit], dl
+				sub		[_egc + egc_t.stack], edx
+%%cpusrc2d_b1:	add		dword [_egc + egc_t.stack], 8
+				align	4
+%%cpusrc2d_end:	push	ecx									; ver0.28
+				call	dword [egcsft_proc + esi*4]
+				pop		ecx
+%endmacro
+
+				align	16
+egcopecxx:		CPUSRC2DATA
+egcope_xx:		; making pattern...							; ver0.28
+				mov		dl, [_egc + egc_t.fgbg + 1]
+				and		dl, 60h
+				je		short egca_ww_srcp0
+				cmp		dl, 40h
+				mov		edx, _egc + egc_t.bgc				; !!!
+				jc		short egca_ww_srcpe
+				jne		short egca_ww_srcp0
+				mov		edx, _egc + egc_t.fgc				; !!!
+				jmp		short egca_ww_srcpe
+				align	4
+egca_ww_srcp0:	mov		al, [_egc + egc_t.ope + 1]			; ver0.29
+				and		al, 3
+				dec		al
+				je		near same_srcpat
+				mov		edx, _egc + egc_t.patreg
+
+egca_ww_srcpe:
+				and		ecx, 0fffffffeh
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_R]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_B]
+				mov		[_egc_dst + 0], eax
+				not		eax
+				mov		[_egc_xdst + 0], eax
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_E]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_G]
+				mov		[_egc_dst + 4], eax
+				not		eax
+				mov		[_egc_xdst + 4], eax
+
+				xor		esi, esi
+				xor		edi, edi
+				mov		bl, byte [_egc + egc_t.ope]
+
+				; pat = [edx]	src = _egc_src	dst = _egc_dst
+egca_ww_ope80s:
+				shl		bl, 1
+				jnc		short egca_ww_ope80e
+				mov		eax, [edx]
+				and		eax, [_egc_src + 0]
+				and		eax, [_egc_dst + 0]
+				or		esi, eax
+				mov		eax, [edx + 4]
+				and		eax, [_egc_src + 4]
+				and		eax, [_egc_dst + 4]
+				or		edi, eax
+egca_ww_ope80e:
+				shl		bl, 1
+				jnc		short egca_ww_ope40e
+				mov		eax, [edx]
+				not		eax
+				and		eax, [_egc_src + 0]
+				and		eax, [_egc_dst + 0]
+				or		esi, eax
+				mov		eax, [edx + 4]
+				not		eax
+				and		eax, [_egc_src + 4]
+				and		eax, [_egc_dst + 4]
+				or		edi, eax
+egca_ww_ope40e:
+				shl		bl, 1
+				jnc		short egca_ww_ope20e
+				mov		eax, [edx]
+				and		eax, [_egc_src + 0]
+				and		eax, [_egc_xdst + 0]
+				or		esi, eax
+				mov		eax, [edx + 4]
+				and		eax, [_egc_src + 4]
+				and		eax, [_egc_xdst + 4]
+				or		edi, eax
+egca_ww_ope20e:
+				shl		bl, 1
+				jnc		short egca_ww_ope10e
+				mov		eax, [edx]
+				not		eax
+				and		eax, [_egc_src + 0]
+				and		eax, [_egc_xdst + 0]
+				or		esi, eax
+				mov		eax, [edx + 4]
+				not		eax
+				and		eax, [_egc_src + 4]
+				and		eax, [_egc_xdst + 4]
+				or		edi, eax
+egca_ww_ope10e:
+				test	bl, 0f0h
+				je		egca_ww_ope01e
+				not		dword [_egc_src + 0]
+				not		dword [_egc_src + 4]
+				jmp		egca_ww_ope80s
+egca_ww_ope01e:
+				ret
+
+
+				; ver0.29
+				align	4
+same_srcpat:	and		ecx, 0fffffffeh
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_R]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_B]
+				mov		[_egc_dst + 0], eax
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_E]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_G]
+				mov		[_egc_dst + 4], eax
+
+				xor		esi, esi
+				xor		edi, edi
+				mov		bl, byte [_egc + egc_t.ope]
+
+				; src = _egc_src	dst = _egc_dst
+egca_sm_ope80s:	test	bl, 80h
+				je		short egca_sm_ope80e
+				mov		eax, [_egc_src + 0]
+				and		eax, [_egc_dst + 0]
+				or		esi, eax
+				mov		eax, [_egc_src + 4]
+				and		eax, [_egc_dst + 4]
+				or		edi, eax
+egca_sm_ope80e:	test	bl, 20h
+				je		short egca_sm_ope20e
+				mov		eax, [_egc_dst + 0]
+				not		eax
+				and		eax, [_egc_src + 0]
+				or		esi, eax
+				mov		eax, [_egc_dst + 4]
+				not		eax
+				and		eax, [_egc_src + 4]
+				or		edi, eax
+egca_sm_ope20e:	test	bl, 04h
+				je		short egca_sm_ope04e
+				mov		eax, [_egc_src + 0]
+				not		eax
+				and		eax, [_egc_dst + 0]
+				or		esi, eax
+				mov		eax, [_egc_src + 4]
+				not		eax
+				and		eax, [_egc_dst + 4]
+				or		edi, eax
+egca_sm_ope04e:	test	bl, 01h
+				je		short egca_sm_ope01e
+				mov		eax, [_egc_src + 0]
+				or		eax, [_egc_dst + 0]
+				not		eax
+				or		esi, eax
+				mov		eax, [_egc_src + 4]
+				or		eax, [_egc_dst + 4]
+				not		eax
+				or		edi, eax
+egca_sm_ope01e:	ret
+
+
+
+				align	4
+egcopec00:		mov		word [_egc + egc_t.srcmask], 0ffffh		; ver0.29
+egcope_00:		xor		esi, esi
+				mov		edi, esi
+				ret
+
+				align	4
+egcopecff:		mov		word [_egc + egc_t.srcmask], 0ffffh		; ver0.29
+egcope_ff:		mov		esi, -1
+				mov		edi, esi
+				ret
+
+				align	4
+egcopecc0:		CPUSRC2DATA
+egcope_c0:		; rop:c0 / S*D									; ver0.28
+				and		ecx, 0fffffffeh
+				mov		esi, [_egc_src + 0]
+				mov		edi, [_egc_src + 4]
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_R]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_B]
+				and		esi, eax
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_E]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_G]
+				and		edi, eax
+				ret
+
+				align	4
+egcopecf0:		CPUSRC2DATA
+egcope_f0:		; rop:f0 / S								; ver0.28
+				mov		esi, [_egc_src + 0]
+				mov		edi, [_egc_src + 4]
+				ret
+
+				align	4
+egcopecfc:		CPUSRC2DATA
+egcope_fc:		; rop:fc / S + (~S*D)						; ver0.28
+				and		ecx, 0fffffffeh
+				mov		esi, [_egc_src + 0]
+				not		esi
+				mov		edi, [_egc_src + 4]
+				not		edi
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_R]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_B]
+				and		esi, eax
+				or		esi, [_egc_src + 0]
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_E]
+				shl		eax, 16
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_G]
+				and		edi, eax
+				or		edi, [_egc_src + 4]
+				ret
+
+section .data
+
+egcope_func		dd	egcope_00, egcope_xx, egcope_xx, egcope_xx	; 00
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 10
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 20
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 30
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 40
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 50
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 60
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 70
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 80
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; 90
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; a0
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; b0
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_c0, egcope_xx, egcope_xx, egcope_xx	; c0
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; d0
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx	; e0
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+
+				dd	egcope_f0, egcope_xx, egcope_xx, egcope_xx	; f0
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_xx, egcope_xx, egcope_xx, egcope_xx
+				dd	egcope_fc, egcope_xx, egcope_xx, egcope_ff
+
+
+				; cpu data copy to srcreg
+				dd	egcopec00, egcopecxx, egcopecxx, egcopecxx	; 00
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 10
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 20
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 30
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 40
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 50
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 60
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 70
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 80
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; 90
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; a0
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; b0
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecc0, egcopecxx, egcopecxx, egcopecxx	; c0
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; d0
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx	; e0
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+
+				dd	egcopecf0, egcopecxx, egcopecxx, egcopecxx	; f0
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecxx, egcopecxx, egcopecxx, egcopecxx
+				dd	egcopecfc, egcopecxx, egcopecxx, egcopecff
+
+section .text
+
+				align	4
+_egca_read:		pushad
+				cmp		byte [_gdcs + gdcs_t.access], 0
+				je		short egca_rb_adjed
+				add		ecx, VRAM_STEP
+egca_rb_adjed:	mov		esi, ecx
+				VRAMPOS	esi
+				mov		ebp, ecx
+				and		ebp, 1
+				mov		al, [VIDEOMEMORY + esi + VRAM_B]
+				mov		ah, [VIDEOMEMORY + esi + VRAM_R]
+				mov		bl, [VIDEOMEMORY + esi + VRAM_G]
+				mov		bh, [VIDEOMEMORY + esi + VRAM_E]
+				mov		[_egc + egc_t.lastvram + ebp + 0], al
+				mov		[_egc + egc_t.lastvram + ebp + 2], ah
+				mov		[_egc + egc_t.lastvram + ebp + 4], bl
+				mov		[_egc + egc_t.lastvram + ebp + 6], bh
+				mov		dl, [_egc + egc_t.ope + 1]
+				and		dl, 3
+				cmp		dl, 1
+				jne		short nostorepat_b
+				mov		[_egc + egc_t.patreg + ebp + 0], al
+				mov		[_egc + egc_t.patreg + ebp + 2], ah
+				mov		[_egc + egc_t.patreg + ebp + 4], bl
+				mov		[_egc + egc_t.patreg + ebp + 6], bh
+				align	4
+nostorepat_b:	test	byte [_egc + egc_t.ope + 1], 4
+				je		inputsft_b
+				test	byte [_egc + egc_t.ope + 1], 20h
+				jne		short egca_rb_read1
+				movzx	ecx, byte [_egc + egc_t.fgbg + 1]
+				and		ecx, 3
+				add		esi, [vramoffset + ecx*4]
+				mov		al, [VIDEOMEMORY + esi]
+				mov		[esp + 28], al
+				popad
+				ret
+				align	4
+egca_rb_read1:	mov		al, [VIDEOMEMORY + ecx]
+				mov		[esp + 28], al
+				popad
+				ret
+				align	4
+inputsft_b:		mov		edx, [_egc + egc_t.inptr]
+				mov		[edx + 0], al
+				mov		[edx + 4], ah
+				mov		[edx + 8], bl
+				mov		[edx +12], bh
+				cmp		dword [_egc + egc_t.stack], 16
+				ja		short egca_rb_nonstk
+				xor		edx, edx
+				test	byte [_egc + egc_t.sft + 1], 10h
+				setz	dl
+				lea		edx, [edx*2 - 1]
+				add		[_egc + egc_t.inptr], edx
+				cmp		byte [_egc + egc_t.srcbit], 0
+				je		short egca_rb_adds
+				btr		word [_egc + egc_t.srcbit], 3
+				jc		short egca_rb_nonstk
+				xor		edx, edx
+				xchg	[_egc + egc_t.srcbit], dl
+				sub		[_egc + egc_t.stack], edx
+egca_rb_adds:	add		dword [_egc + egc_t.stack], 8
+egca_rb_nonstk:	mov		edi, ecx
+				mov		ecx, [_egc + egc_t.func]
+				call	dword [egcsft_proc + ecx*4 + 6*4]
+				test	byte [_egc + egc_t.ope + 1], 20h
+				jne		short egca_rb_read0
+				movzx	ecx, byte [_egc + egc_t.fgbg + 1]
+				and		ecx, 3
+				mov		al, [_egc_src + ecx*2 + ebp]
+				mov		[esp + 28], al
+				popad
+				ret
+				align	4
+egca_rb_read0:	mov		al, [VIDEOMEMORY + edi]
+				mov		[esp + 28], al
+				popad
+				ret
+
+
+				align	4
+_egca_read_w:	pushad
+				cmp		byte [_gdcs + gdcs_t.access], 0
+				je		short egca_rw_adjed
+				add		ecx, VRAM_STEP
+egca_rw_adjed:
+				mov		esi, ecx
+				VRAMPOS	esi
+				mov		eax, [VIDEOMEMORY + esi + VRAM_R - 2]
+				mov		ebp, [VIDEOMEMORY + esi + VRAM_E - 2]
+				mov		 ax, [VIDEOMEMORY + esi + VRAM_B]
+				mov		 bp, [VIDEOMEMORY + esi + VRAM_G]
+				mov		[_egc + egc_t.lastvram + 0], eax
+				mov		[_egc + egc_t.lastvram + 4], ebp
+				mov		dl, [_egc + egc_t.ope + 1]
+				and		dl, 3
+				cmp		dl, 1
+				jne		short nostorepat_w
+				mov		[_egc + egc_t.patreg + 0], eax
+				mov		[_egc + egc_t.patreg + 4], ebp
+				align	4
+nostorepat_w:	test	byte [_egc + egc_t.ope + 1], 4
+				je		inputsft_w
+				test	byte [_egc + egc_t.ope + 1], 20h
+				jne		short egca_rw_read1
+				movzx	ecx, byte [_egc + egc_t.fgbg + 1]
+				and		ecx, 3
+				add		esi, [vramoffset + ecx*4]
+				mov		ax, [VIDEOMEMORY + esi]
+				mov		[esp + 28], ax
+				popad
+				ret
+				align	4
+egca_rw_read1:	mov		ax, [VIDEOMEMORY + ecx]
+				mov		[esp + 28], ax
+				popad
+				ret
+				align	4
+inputsft_w:		mov		edi, ecx
+				mov		edx, [_egc + egc_t.inptr]
+				xor		ebx, ebx
+				test	byte [_egc + egc_t.sft + 1], 10h
+				setnz	bl
+				sub		edx, ebx
+				cmp		dword [_egc + egc_t.stack], 16
+				ja		short egca_rw_nonstk
+				lea		ebx, [ebx*4 - 2]
+				sub		[_egc + egc_t.inptr], ebx
+				add		dword [_egc + egc_t.stack], 16
+				cmp		byte [_egc + egc_t.srcbit], 0
+				je		short egca_rw_nonstk
+				xor		ecx, ecx
+				xchg	[_egc + egc_t.srcbit], cl
+				sub		[_egc + egc_t.stack], cl		; byteÇ≈à¯Ç¢ÇƒÇ‡Ç¢Ç¢î§
+				cmp		cl, 8
+				jb		short egca_rw_nonstk
+				sar		ebx, 1
+				sub		[_egc + egc_t.outptr], ebx
+egca_rw_nonstk:	mov		[edx + 0], ax
+				shr		eax, 16
+				mov		[edx + 8], bp
+				shr		ebp, 16
+				mov		[edx + 4], ax
+				mov		[edx +12], bp
+				mov		ecx, [_egc + egc_t.func]
+				call	dword [egcsft_proc + ecx*4]
+				test	byte [_egc + egc_t.ope + 1], 20h
+				jne		short egca_rw_read0
+				movzx	ecx, byte [_egc + egc_t.fgbg + 1]
+				and		ecx, 3
+				mov		ax, [_egc_src + ecx*2]
+				mov		[esp + 28], ax
+				popad
+				ret
+				align	4
+egca_rw_read0:	mov		ax, [VIDEOMEMORY + edi]
+				mov		[esp + 28], ax
+				popad
+				ret
+
+
+
+				align	4
+_egca_write:	pushad
+				mov		dh, dl
+egca_write_m:	and		ecx, 7fffh
+				mov		ebp, ecx
+				and		ebp, 1
+				cmp		byte [_gdcs + gdcs_t.access], 0
+				jne		short egca_wb_pln1
+				or		byte [_gdcs + gdcs_t.grphdisp], 1
+				or		byte [_vramupdate + ecx], 01h
+				jmp		short egca_wb_plned
+egca_wb_pln1:	or		byte [_gdcs + gdcs_t.grphdisp], 2
+				or		byte [_vramupdate + ecx], 02h
+				add		ecx, VRAM_STEP
+egca_wb_plned:	mov		al, [_egc + egc_t.ope + 1]
+				and		al, 3
+				cmp		al, 2
+				jne		short egca_wb_pated
+				mov		al, [VIDEOMEMORY + ecx + VRAM_B]
+				mov		[_egc + egc_t.patreg + ebp + 0], al
+				mov		al, [VIDEOMEMORY + ecx + VRAM_R]
+				mov		[_egc + egc_t.patreg + ebp + 2], al
+				mov		al, [VIDEOMEMORY + ecx + VRAM_G]
+				mov		[_egc + egc_t.patreg + ebp + 4], al
+				mov		al, [VIDEOMEMORY + ecx + VRAM_E]
+				mov		[_egc + egc_t.patreg + ebp + 6], al
+egca_wb_pated:	mov		ax, [_egc + egc_t.mask]
+				mov		[_egc + egc_t.mask2], ax
+				mov		al, [_egc + egc_t.ope + 1]
+				and		al, 18h
+				je		short egca_wb_dat					; al=00h
+				cmp		al, 10h
+				jc		short egca_wb_src					; al=08h
+															; ver0.28
+				ja		short egca_wb_dat					; al=18h
+
+egca_wb_pat:	mov		al, [_egc + egc_t.fgbg + 1]
+				and		al, 60h
+				je		short egca_wb_pat0
+				cmp		al, 40h
+				mov		ebx, _egc + egc_t.bgc				; !!!
+				jc		short egca_wb_pate
+				jne		short egca_wb_pat0
+				mov		ebx, _egc + egc_t.fgc				; !!!
+egca_wb_pate:	jmp		egca_wb_srcout
+egca_wb_pat0:	; !!!! todo!
+
+				mov		ebx, _egc + egc_t.patreg
+				jmp		egca_wb_srcout
+
+egca_wb_dat:	mov		ebx, _egc_data
+				mov		[ebx + 0], dx
+				mov		[ebx + 2], dx
+				mov		[ebx + 4], dx
+				mov		[ebx + 6], dx
+				jmp		egca_wb_srcout
+
+egca_wb_src:	mov		esi, [_egc + egc_t.func]
+				add		esi, 6
+				movzx	eax, byte [_egc + egc_t.ope]
+				test	byte [_egc + egc_t.ope + 1], 4
+				setne	ah
+				push	ecx									; ver0.28
+				call	dword [egcope_func + eax*4]
+				mov		ax, [_egc + egc_t.srcmask]
+				and		[_egc + egc_t.mask2], ax
+				pop		ecx
+
+				mov		[_egc_data + 0], esi
+				mov		[_egc_data + 4], edi
+				mov		ebx, _egc_data
+
+egca_wb_srcout:
+				mov		ah, [_egc + egc_t.mask2 + ebp]
+				test	ah, ah
+				je		near egca_wb_ee
+				mov		dh, ah
+				not		dh
+				add		ebx, ebp
+				mov		dl, [_egc + egc_t.access]
+				shr		dl, 1
+				jc		short egca_wb_be
+				and		[VIDEOMEMORY + ecx + VRAM_B], dh
+				mov		al, [ebx]
+				and		al, ah
+				or		[VIDEOMEMORY + ecx + VRAM_B], al
+egca_wb_be:		shr		dl, 1
+				jc		short egca_wb_re
+				and		[VIDEOMEMORY + ecx + VRAM_R], dh
+				mov		al, [ebx + 2]
+				and		al, ah
+				or		[VIDEOMEMORY + ecx + VRAM_R], al
+egca_wb_re:		shr		dl, 1
+				jc		short egca_wb_ge
+				and		[VIDEOMEMORY + ecx + VRAM_G], dh
+				mov		al, [ebx + 4]
+				and		al, ah
+				or		[VIDEOMEMORY + ecx + VRAM_G], al
+egca_wb_ge:		shr		dl, 1
+				jc		short egca_wb_ee
+				and		[VIDEOMEMORY + ecx + VRAM_E], dh
+				mov		al, [ebx + 6]
+				and		al, ah
+				or		[VIDEOMEMORY + ecx + VRAM_E], al
+egca_wb_ee:		popad
+				ret
+
+
+
+				align	16
+_egca_write_w:	test	ecx, 1								; ver0.28
+				jne		near egca_writeodd
+				pushad
+				and		ecx, 7ffeh
+				cmp		byte [_gdcs + gdcs_t.access], 0
+				jne		short egca_ww_pln1
+				or		byte [_gdcs + gdcs_t.grphdisp], 1
+				or		word [_vramupdate + ecx], 0101h
+				jmp		short egca_ww_plned
+egca_ww_pln1:	or		byte [_gdcs + gdcs_t.grphdisp], 2
+				or		word [_vramupdate + ecx], 0202h
+				add		ecx, VRAM_STEP
+egca_ww_plned:	mov		al, [_egc + egc_t.ope + 1]
+				and		al, 3
+				cmp		al, 2
+				jne		short egca_ww_pated
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_B]
+				mov		[_egc + egc_t.patreg + 0], ax
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_R]
+				mov		[_egc + egc_t.patreg + 2], ax
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_G]
+				mov		[_egc + egc_t.patreg + 4], ax
+				mov		ax, [VIDEOMEMORY + ecx + VRAM_E]
+				mov		[_egc + egc_t.patreg + 6], ax
+egca_ww_pated:	mov		ax, [_egc + egc_t.mask]
+				mov		[_egc + egc_t.mask2], ax
+				mov		al, [_egc + egc_t.ope + 1]
+				and		al, 18h
+				je		short egca_ww_dat
+				cmp		al, 10h
+				ja		short egca_ww_dat
+				je		short egca_ww_pat
+egca_ww_src:	mov		esi, [_egc + egc_t.func]
+				movzx	eax, byte [_egc + egc_t.ope]
+				test	byte [_egc + egc_t.ope + 1], 4
+				setne	ah
+				call	dword [egcope_func + eax*4]
+				mov		ax, [_egc + egc_t.srcmask]
+				and		[_egc + egc_t.mask2], ax
+				mov		[_egc_data + 0], esi
+				mov		[_egc_data + 4], edi
+				mov		ebx, _egc_data
+				jmp		egca_ww_srcout
+				align	4
+egca_ww_dat:	mov		ebx, _egc_data
+				mov		[ebx + 0], dx
+				mov		[ebx + 2], dx
+				mov		[ebx + 4], dx
+				mov		[ebx + 6], dx
+				jmp		egca_ww_srcout
+				align	4
+egca_ww_pat:	mov		al, [_egc + egc_t.fgbg + 1]
+				and		al, 60h
+				je		short egca_ww_pat0
+				cmp		al, 40h
+				mov		ebx, _egc + egc_t.bgc				; !!!
+				jne		short egca_ww_pat0
+				jc		short egca_ww_pate
+				mov		ebx, _egc + egc_t.fgc				; !!!
+egca_ww_pate:	jmp		egca_ww_srcout
+				align	4
+egca_ww_pat0:	mov		ebx, [_egc + egc_t.inptr]			; ver0.28
+				xor		eax, eax
+				test	byte [_egc + egc_t.sft + 1], 10h
+				setnz	al
+				sub		ebx, eax
+				mov		[ebx + 0], dx
+				mov		[ebx + 4], dx
+				mov		[ebx + 8], dx
+				mov		[ebx +12], dx
+				cmp		dword [_egc + egc_t.stack], 16
+				ja		short egca_ww_pwe
+				lea		eax, [eax*2 - 1]
+				sub		[_egc + egc_t.inptr], eax
+				cmp		byte [_egc + egc_t.srcbit], 0
+				je		short egca_ww_pw1
+				xor		edx, edx
+				xchg	[_egc + egc_t.srcbit], dl
+				cmp		dl, 8
+				jb		short egca_ww_pw0
+				sub		[_egc + egc_t.outptr], eax
+egca_ww_pw0:	sub		[_egc + egc_t.stack], edx
+egca_ww_pw1:	add		dword [_egc + egc_t.stack], 16
+				sub		[_egc + egc_t.inptr], eax
+egca_ww_pwe:	push	ecx
+				mov		ecx, [_egc + egc_t.func]
+				call	dword [egcsft_proc + ecx*4]
+				pop		ecx
+				mov		ebx, _egc_src
+				align	4
+egca_ww_srcout:	mov		si, [_egc + egc_t.mask2]
+				test	si, si
+				je		near egca_ww_ee
+				mov		di, si
+				not		di
+				mov		dl, [_egc + egc_t.access]
+				shr		dl, 1
+				jc		short egca_ww_be
+				and		[VIDEOMEMORY + ecx + VRAM_B], di
+				mov		ax, [ebx]
+				and		ax, si
+				or		[VIDEOMEMORY + ecx + VRAM_B], ax
+egca_ww_be:		shr		dl, 1
+				jc		short egca_ww_re
+				and		[VIDEOMEMORY + ecx + VRAM_R], di
+				mov		ax, [ebx + 2]
+				and		ax, si
+				or		[VIDEOMEMORY + ecx + VRAM_R], ax
+egca_ww_re:		shr		dl, 1
+				jc		short egca_ww_ge
+				and		[VIDEOMEMORY + ecx + VRAM_G], di
+				mov		ax, [ebx + 4]
+				and		ax, si
+				or		[VIDEOMEMORY + ecx + VRAM_G], ax
+egca_ww_ge:		shr		dl, 1
+				jc		short egca_ww_ee
+				and		[VIDEOMEMORY + ecx + VRAM_E], di
+				mov		ax, [ebx + 6]
+				and		ax, si
+				or		[VIDEOMEMORY + ecx + VRAM_E], ax
+egca_ww_ee:		popad
+				ret
+
+				align	16
+egca_writeodd:	test	byte [_egc + egc_t.sft + 1], 10h
+				je		egca_writeoddr
+				push	dword _egca_write
+				pushad
+				inc		ecx
+				mov		dl, dh
+				jmp		egca_write_m
+
+egca_writeoddr:	call	_egca_write
+				pushad
+				inc		ecx
+				mov		dl, dh
+				jmp		egca_write_m
+
+
+	ends
+
