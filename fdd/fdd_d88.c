@@ -30,7 +30,7 @@ static UINT32 nexttrackptr(FDDFILE fdd, UINT32 fptr, UINT32 last) {
 typedef struct {
 	FDDFILE	fdd;
 	UINT	track;
-	BYTE	type;
+	UINT	type;
 	long	fptr;
 	UINT	size;
 	BOOL	write;
@@ -71,7 +71,7 @@ dtfd_err1:
 	return(FAILURE);
 }
 
-static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, BYTE type) {
+static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, UINT type) {
 
 	UINT8	rpm;
 	FILEH	fh;
@@ -84,7 +84,6 @@ static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, BYTE type) {
 	}
 
 	rpm = fdc.rpm[fdc.us];
-	TRACEOUT(("d88trk_read(%d,%d)", rpm, track));
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 			TRACEOUT(("DISKTYPE_2D"));

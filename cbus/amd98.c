@@ -279,6 +279,35 @@ static void IOOUTCALL amd_ode(UINT port, REG8 dat) {
 	(void)port;
 }
 
+static REG8 IOINPCALL amd_ida(UINT port) {
+
+	if (opn.opnreg < 0x0e) {
+		return(psggen_getreg(&psg1, opn.opnreg));
+	}
+	else if (opn.opnreg == 0x0f) {
+		return(psg1.reg.io2);
+	}
+	(void)port;
+	return(0xff);
+}
+
+static REG8 IOINPCALL amd_idb(UINT port) {
+
+	if (opn.opnreg < 0x0e) {
+		return(psggen_getreg(&psg2, opn.extreg));
+	}
+	else if (opn.opnreg == 0x0f) {
+		return(psg2.reg.io2);
+	}
+	(void)port;
+	return(0xff);
+}
+
+static REG8 IOINPCALL amd_inp(UINT port) {
+
+	TRACEOUT(("amd inp - %.4x", port));
+	return(0xff);
+}
 
 // ----
 
@@ -309,5 +338,14 @@ void amd98_bind(void) {
 	iocore_attachout(0xdb, amd_odb);
 	iocore_attachout(0xdc, amd_odc);
 	iocore_attachout(0xde, amd_ode);
+
+	iocore_attachinp(0xda, amd_ida);
+	iocore_attachinp(0xdb, amd_idb);
+#if defined(TRACE)
+	iocore_attachinp(0xd8, amd_inp);
+	iocore_attachinp(0xd9, amd_inp);
+	iocore_attachinp(0xdc, amd_inp);
+	iocore_attachinp(0xde, amd_inp);
+#endif
 }
 
