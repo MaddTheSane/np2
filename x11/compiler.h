@@ -113,16 +113,21 @@ typedef	int			BOOL;
 #endif
 
 #define	UNUSED(v)	((void)(v))
-#define	INLINE		__inline
 #define	FASTCALL
 #define	SOUNDCALL
 #define	MEMCALL
 #define	CPUCALL
 
 #ifdef	DEBUG
+#define	INLINE
 #define	__ASSERT(s)	assert(s)
 #else
+#ifndef	__ASSERT
 #define	__ASSERT(s)
+#endif
+#ifndef	INLINE
+#define	INLINE		__inline
+#endif
 #endif
 
 #ifndef	NELEMENTS
