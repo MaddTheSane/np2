@@ -492,38 +492,80 @@ static void movingproc(RECT *rect) {
 		return;
 	}
 
-	changes = FALSE;
-	do {
-		if (toolwin.winflg & 1) {
-			toolwin.wingx += rect->left - toolwin.wintx;
-			rect->left = toolwin.wintx;
+	if (toolwin.winflg & 0x03) {
+		toolwin.wingx += rect->left - toolwin.wintx;
+		rect->left = toolwin.wintx;
+		if ((toolwin.wingx >= SNAPDOTREL) || (toolwin.wingx <= -SNAPDOTREL)) {
+			toolwin.winflg &= ~0x03;
+			rect->left += toolwin.wingx;
+			toolwin.wingx = 0;
 		}
-		else {
-			d = SNAPDOTPULL;
+		rect->right = rect->left + winlx;
+	}
+	if (toolwin.winflg & 0x0c) {
+		toolwin.wingy += rect->top - toolwin.winty;
+		rect->top = toolwin.winty;
+		if ((toolwin.wingy >= SNAPDOTREL) || (toolwin.wingy <= -SNAPDOTREL)) {
+			toolwin.winflg &= ~0x0c;
+			rect->top += toolwin.wingy;
+			toolwin.wingy = 0;
+		}
+		rect->bottom = rect->top + winly;
+	}
+
+	connectx = ((rect->right >= mainrc.left) && (rect->left <= mainrc.right));
+	connecty = ((rect->bottom >= mainrc.top) && (rect->top <= mainrc.bottom));
+	if ((!connectx) || (!connecty)) {
+		if (toolwin.winflg & 0x01) {
+			toolwin.winflg &= ~0x01;
+			rect->left += toolwin.wingx;
+			rect->right = rect->left + winlx;
+			toolwin.wingx = 0;
+		}
+		if (toolwin.winflg & 0x04) {
+			toolwin.winflg &= ~0x04;
+			rect->top += toolwin.wingy;
+			rect->bottom = rect->top + winly;
+			toolwin.wingy = 0;
+		}
+	}
+
+	do {
+		changes = FALSE;
+		if ((!(toolwin.winflg & 0x01)) &&
+			(rect->bottom >= mainrc.top) && (rect->top <= mainrc.bottom)) {
 			do {
-				connecty = ((rect->bottom >= mainrc.top) &&
-							(rect->top <= mainrc.bottom));
-				if (connecty) {
-					d = rect->left - mainrc.right;
+				d = rect->left - mainrc.right;
+				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+					break;
+				}
+				d = rect->right - mainrc.left;
+				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+					break;
+				}
+				if ((rect->bottom == mainrc.top) ||
+					(rect->top == mainrc.bottom)) {
+					d = rect->left - mainrc.left;
 					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 						break;
 					}
-					d = rect->right - mainrc.left;
+					d = rect->right - mainrc.right;
 					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 						break;
-					}
-					if ((rect->bottom == mainrc.top) ||
-						(rect->top == mainrc.bottom)) {
-						d = rect->left - mainrc.left;
-						if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-							break;
-						}
-						d = rect->right - mainrc.right;
-						if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-							break;
-						}
 					}
 				}
+			} while(0);
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				toolwin.winflg |= 0x01;
+				rect->left -= d;
+				rect->right = rect->left + winlx;
+				toolwin.wingx = d;
+				toolwin.wintx = rect->left;
+				changes = TRUE;
+			}
+		}
+		if (!(toolwin.winflg & 0x03)) {
+			do {
 				d = rect->left - workrc.left;
 				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 					break;
@@ -534,53 +576,49 @@ static void movingproc(RECT *rect) {
 				}
 			} while(0);
 			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-				toolwin.winflg |= 1;
+				toolwin.winflg |= 0x02;
 				rect->left -= d;
+				rect->right = rect->left + winlx;
 				toolwin.wingx = d;
 				toolwin.wintx = rect->left;
+				changes = TRUE;
 			}
 		}
-		if ((toolwin.wingx >= SNAPDOTREL) || (toolwin.wingx <= -SNAPDOTREL)) {
-			toolwin.winflg &= ~1;
-			rect->left += toolwin.wingx;
-			toolwin.wingx = 0;
-		}
-		rect->right = rect->left + winlx;
 
-		if (changes) {
-			break;
-		}
-
-		if (toolwin.winflg & 2) {
-			toolwin.wingy += rect->top - toolwin.winty;
-			rect->top = toolwin.winty;
-		}
-		else {
-			d = SNAPDOTPULL;
+		if ((!(toolwin.winflg & 0x04)) &&
+			(rect->right >= mainrc.left) && (rect->left <= mainrc.right)) {
 			do {
-				connectx = ((rect->right >= mainrc.left) &&
-							(rect->left <= mainrc.right));
-				if (connectx) {
-					d = rect->top - mainrc.bottom;
+				d = rect->top - mainrc.bottom;
+				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+					break;
+				}
+				d = rect->bottom - mainrc.top;
+				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+					break;
+				}
+				if ((rect->right == mainrc.left) ||
+					(rect->left == mainrc.right)) {
+					d = rect->top - mainrc.top;
 					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 						break;
 					}
-					d = rect->bottom - mainrc.top;
+					d = rect->bottom - mainrc.bottom;
 					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 						break;
-					}
-					if ((rect->right == mainrc.left) ||
-						(rect->left == mainrc.right)) {
-						d = rect->top - mainrc.top;
-						if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-							break;
-						}
-						d = rect->bottom - mainrc.bottom;
-						if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-							break;
-						}
 					}
 				}
+			} while(0);
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				toolwin.winflg |= 0x04;
+				rect->top -= d;
+				rect->bottom = rect->top + winly;
+				toolwin.wingy = d;
+				toolwin.winty = rect->top;
+				changes = TRUE;
+			}
+		}
+		if (!(toolwin.winflg & 0x0c)) {
+			do {
 				d = rect->top - workrc.top;
 				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 					break;
@@ -591,33 +629,15 @@ static void movingproc(RECT *rect) {
 				}
 			} while(0);
 			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-				toolwin.winflg |= 2;
+				toolwin.winflg |= 0x08;
 				rect->top -= d;
+				rect->bottom = rect->top + winly;
 				toolwin.wingy = d;
 				toolwin.winty = rect->top;
 				changes = TRUE;
 			}
 		}
-		if ((toolwin.wingy >= SNAPDOTREL) || (toolwin.wingy <= -SNAPDOTREL)) {
-			toolwin.winflg &= ~2;
-			rect->top += toolwin.wingy;
-			toolwin.wingy = 0;
-			changes = TRUE;
-		}
-		rect->bottom = rect->top + winly;
 	} while(changes);
-
-	connectx = ((rect->right >= mainrc.left) && (rect->left <= mainrc.right));
-	connecty = ((rect->bottom >= mainrc.top) && (rect->top <= mainrc.bottom));
-	if ((toolwin.winflg & 3) && ((!connectx) || (!connecty))) {
-		toolwin.winflg &= ~3;
-		rect->left += toolwin.wingx;
-		rect->top += toolwin.wingy;
-		rect->right = rect->left + winlx;
-		rect->bottom = rect->top + winly;
-		toolwin.wingx = 0;
-		toolwin.wingy = 0;
-	}
 }
 
 
