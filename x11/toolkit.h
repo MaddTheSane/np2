@@ -41,6 +41,8 @@ typedef struct {
 	void		(*messagebox)(const char *title, const char *msg);
 } gui_toolkit_t;
 
+void toolkit_msgbox(const char *title, const char *msg);
+
 #if (USE_GTK + USE_GTK2 + USE_QT + USE_SDL + USE_X11) > 1
 
 extern gui_toolkit_t* toolkitp;

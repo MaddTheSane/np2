@@ -31,6 +31,7 @@
 #include "np2ver.h"
 
 #include "gtk/xnp2.h"
+#include "gtk/gtk_menu.h"
 
 #include "resources/np2.xpm"
 

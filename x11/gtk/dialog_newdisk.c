@@ -348,7 +348,7 @@ typedef union {
 	newdisk_hd_t     hd;
 } newdisk_t;
 
-void
+static void
 setext(char *path, const char *ext, int maxlen)
 {
 	size_t len;

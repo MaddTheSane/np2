@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "gtk/xnp2.h"
+
 #include <gtk/gtk.h>
 
 #if (GTK_MAJOR_VERSION == 1)

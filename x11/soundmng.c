@@ -141,7 +141,7 @@ calc_fragment(UINT size)
 	return f;
 }
 
-void
+static void
 snddrv_setup(void)
 {
 
