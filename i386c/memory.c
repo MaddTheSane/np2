@@ -796,12 +796,11 @@ REG8 MEMCALL i286_memoryread(UINT32 addr) {
 
 	UINT32	pos;
 
-	addr &= CPU_ADRSMASK;
 	if (addr < I286_MEMREADMAX) {
 		return(mem[addr]);
 	}
 	else if (addr >= USE_HIMEM) {
-		pos = addr - 0x100000;
+		pos = (addr & CPU_ADRSMASK) - 0x100000;
 		if (pos < CPU_EXTMEMSIZE) {
 			return(CPU_EXTMEM[pos]);
 		}
@@ -827,13 +826,12 @@ REG16 MEMCALL i286_memoryread_w(UINT32 addr) {
 	UINT32	pos;
 	REG16	ret;
 
-	addr &= CPU_ADRSMASK;
 	if (addr < (I286_MEMREADMAX - 1)) {
 		return(LOADINTELWORD(mem + addr));
 	}
 	else if ((addr + 1) & 0x7fff) {				// non 32kb boundary
 		if (addr >= USE_HIMEM) {
-			pos = addr - 0x100000;
+			pos = (addr & CPU_ADRSMASK) - 0x100000;
 			if (pos < CPU_EXTMEMSIZE) {
 				return(LOADINTELWORD(CPU_EXTMEM + pos));
 			}
@@ -863,12 +861,11 @@ UINT32 MEMCALL i286_memoryread_d(UINT32 addr) {
 	UINT32	pos;
 	UINT32	ret;
 
-	addr &= CPU_ADRSMASK;
 	if (addr < (I286_MEMREADMAX - 3)) {
 		return(LOADINTELDWORD(mem + addr));
 	}
 	else if (addr >= USE_HIMEM) {
-		pos = addr - 0x100000;
+		pos = (addr & CPU_ADRSMASK) - 0x100000;
 		if ((pos + 3) < CPU_EXTMEMSIZE) {
 			return(LOADINTELDWORD(CPU_EXTMEM + pos));
 		}
@@ -889,12 +886,11 @@ void MEMCALL i286_memorywrite(UINT32 addr, REG8 value) {
 
 	UINT32	pos;
 
-	addr &= CPU_ADRSMASK;
 	if (addr < I286_MEMWRITEMAX) {
 		mem[addr] = (BYTE)value;
 	}
 	else if (addr >= USE_HIMEM) {
-		pos = addr - 0x100000;
+		pos = (addr & CPU_ADRSMASK) - 0x100000;
 		if (pos < CPU_EXTMEMSIZE) {
 			CPU_EXTMEM[pos] = (BYTE)value;
 		}
@@ -919,13 +915,12 @@ void MEMCALL i286_memorywrite_w(UINT32 addr, REG16 value) {
 
 	UINT32	pos;
 
-	addr &= CPU_ADRSMASK;
 	if (addr < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + addr, value);
 	}
 	else if ((addr + 1) & 0x7fff) {				// non 32kb boundary
 		if (addr >= USE_HIMEM) {
-			pos = addr - 0x100000;
+			pos = (addr & CPU_ADRSMASK) - 0x100000;
 			if (pos < CPU_EXTMEMSIZE) {
 				STOREINTELWORD(CPU_EXTMEM + pos, value);
 			}
@@ -952,13 +947,12 @@ void MEMCALL i286_memorywrite_d(UINT32 addr, UINT32 value) {
 
 	UINT32	pos;
 
-	addr &= CPU_ADRSMASK;
 	if (addr < (I286_MEMWRITEMAX - 3)) {
 		STOREINTELDWORD(mem + addr, value);
 		return;
 	}
 	else if (addr >= USE_HIMEM) {
-		pos = addr - 0x100000;
+		pos = (addr & CPU_ADRSMASK) - 0x100000;
 		if ((pos + 3) < CPU_EXTMEMSIZE) {
 			STOREINTELDWORD(CPU_EXTMEM + pos, value);
 			return;
@@ -1031,41 +1025,63 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 
 void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
 
-	if ((address + leng) < I286_MEMREADMAX) {
+	BYTE *out = (BYTE *)dat;
+	UINT pos;
+	UINT diff;
+
+	/* fast memory access */
+	if (address + leng < I286_MEMREADMAX) {
 		CopyMemory(dat, mem + address, leng);
+		return;
+	} else if (address >= USE_HIMEM) {
+		pos = (address & CPU_ADRSMASK) - 0x100000;
+		if (pos + leng < CPU_EXTMEMSIZE) {
+			CopyMemory(dat, CPU_EXTMEM + pos, leng);
+			return;
+		}
+		if (pos < CPU_EXTMEMSIZE) {
+			diff = CPU_EXTMEMSIZE - pos;
+			CopyMemory(out, CPU_EXTMEM + pos, diff);
+			out += diff;
+			leng -= diff;
+			address += diff;
+		}
 	}
-	else {
-		BYTE *out = (BYTE *)dat;
-		if (address < I286_MEMREADMAX) {
-			CopyMemory(out, mem + address, I286_MEMREADMAX - address);
-			out += I286_MEMREADMAX - address;
-			leng -= I286_MEMREADMAX - address;
-			address = I286_MEMREADMAX;
-		}
-		while(leng--) {
-			*out++ = i286_memoryread(address++);
-		}
+
+	/* slow memory access */
+	while (leng-- > 0) {
+		*out++ = i286_memoryread(address++);
 	}
 }
 
-void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng) {
+void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng)
+{
+	const BYTE *out = (BYTE *)dat;
+	UINT pos;
+	UINT diff;
 
-const BYTE	*out;
-
-	if ((address + leng) < I286_MEMWRITEMAX) {
+	/* fast memory access */
+	if (address + leng < I286_MEMREADMAX) {
 		CopyMemory(mem + address, dat, leng);
+		return;
+	} else if (address >= USE_HIMEM) {
+		pos = (address & CPU_ADRSMASK) - 0x100000;
+		if (pos + leng < CPU_EXTMEMSIZE) {
+			CopyMemory(CPU_EXTMEM + pos, dat, leng);
+			return;
+		}
+		if (pos < CPU_EXTMEMSIZE) {
+			diff = CPU_EXTMEMSIZE - pos;
+			CopyMemory(CPU_EXTMEM + pos, dat, diff);
+			out += diff;
+			leng -= diff;
+			address += diff;
+		}
 	}
-	else {
-		out = (BYTE *)dat;
-		if (address < I286_MEMWRITEMAX) {
-			CopyMemory(mem + address, out, I286_MEMWRITEMAX - address);
-			out += I286_MEMWRITEMAX - address;
-			leng -= I286_MEMWRITEMAX - address;
-			address = I286_MEMWRITEMAX;
-		}
-		while(leng--) {
-			i286_memorywrite(address++, *out++);
-		}
+
+	/* slow memory access */
+	while (leng-- > 0) {
+		i286_memorywrite(address++, *out++);
 	}
 }
 #endif
@@ -1083,9 +1099,7 @@ static UINT32 realaddr(UINT32 addr) {
 		if (!(pde & CPU_PDE_PRESENT)) {
 			goto retdummy;
 		}
-		// ページサイズ 4KB固定(ぉ
-		pte = cpu_memoryread_d((pde & CPU_PDE_BASEADDR_MASK)
-													+ ((addr >> 10) & 0xffc));
+		pte = cpu_memoryread_d((pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc));
 		if (!(pte & CPU_PTE_PRESENT)) {
 			goto retdummy;
 		}
