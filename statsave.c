@@ -9,6 +9,8 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
+#include	"sasiio.h"
+#include	"scsiio.h"
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
 #include	"board14.h"
@@ -24,12 +26,9 @@
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
-#include	"calendar.h"
 #include	"keydisp.h"
-#include	"sasiio.h"
-#include	"scsiio.h"
 #include	"hostdrv.h"
-
+#include	"calendar.h"
 
 #if defined(MACOS)
 #define	CRCONST		str_cr

@@ -222,6 +222,7 @@ void scsicmd_bios(void) {
 			default:
 				TRACEOUT(("cmd = %.2x", CPU_AH));
 				SCSICMD_ERR
+				stat = 0x42;
 				break;
 		}
 		ret = stat2ret[stat >> 4] + (stat & 0x0f);
@@ -258,6 +259,7 @@ void scsicmd_bios(void) {
 				default:
 					TRACEOUT(("cmd = %.2x", CPU_AH));
 					SCSICMD_ERR
+					stat = 0x42;
 					break;
 			}
 			ret = stat2ret[stat >> 4] + (stat & 0x0f);
