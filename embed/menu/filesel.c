@@ -41,7 +41,7 @@ static const char str_open[] =					// 開く
 #elif defined(OSLANG_UTF8)
 static const char str_dirname[] =				// ファイルの場所
 			"\343\203\225\343\202\241\343\202\244\343\203\253\343\201\256" \
-			"345\240\264\346\211\200";
+			"\345\240\264\346\211\200";
 static const char str_filename[] =				// ファイル名
 			"\343\203\225\343\202\241\343\202\244\343\203\253\345\220\215";
 static const char str_filetype[] =				// ファイルの種類

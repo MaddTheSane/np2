@@ -70,12 +70,14 @@
 
 　　　　とする？
 
+　　　メモ: http://euc.jp/i18n/charcode.ja.html
 
 　　ステップ.2 (WinNT,MacOSX)
 　　　OEMCHARのUCS2対応
 
 　　ステップ.3 (MacOSX)
 　　　ANSI PageCodeと Macintosh PageCodeの調整
+　　　メモ: http://homepage1.nifty.com/nomenclator/unicode/normalization.htm
 
 　　ステップ.4 (WinNT,WinCE,MacOSX,X11)
 　　　フォント関数回りを SJISからOEMコードに移行
