@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.25 2004/03/12 15:10:38 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.26 2004/03/23 13:32:50 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -486,8 +486,8 @@ CLTS(void)
 void
 ARPL_EwGw(void)
 {
-	UINT32 op, src, madr;
-	UINT16 dst;
+	UINT32 op, madr;
+	UINT src, dst;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_EA_REG16(op, src);
@@ -498,7 +498,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				*(reg16_b20[op]) = dst;
+				*(reg16_b20[op]) = (UINT16)dst;
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -510,7 +510,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -846,7 +846,9 @@ MOV_DdRd(void)
 	UINT32 src;
 	UINT op;
 	int idx;
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	int i;
+#endif
 
 	CPU_WORKCLOCK(11);
 	GET_PCBYTE(op);

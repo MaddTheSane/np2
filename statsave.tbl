@@ -127,6 +127,9 @@ static const SFENTRY np2tbl[] = {
 	{"CMMPU98",		0,	STATFLAG_COM,	(void *)0,		0},
 	{"CMRS232C",	0,	STATFLAG_COM,	(void *)1,		0},
 	{"DISK",		0,	STATFLAG_DISK,	NULL,			0},
+#if defined(SUPPORT_IDEIO)
+	{"IDE",			0,	STATFLAG_BIN,	&ideio,			sizeof(ideio)},
+#endif
 #if defined(SUPPORT_SASI)
 	{"SASI",		0,	STATFLAG_BIN,	&sasiio,		sizeof(sasiio)},
 #endif

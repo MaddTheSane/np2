@@ -1,6 +1,6 @@
 #include	"compiler.h"
 
-// winでidentifyまでは取得に行くんだけどな…
+// winでidentifyまでは取得に行くんだけどな…ってAnex86も同じか
 
 #if defined(SUPPORT_IDEIO)
 
@@ -106,6 +106,7 @@ static BOOL setidentify(IDEDRV drv) {
 		p[1] = (BYTE)(tmp[i] >> 8);
 		p += 2;
 	}
+	drv->bufdir = IDEDIR_IN;
 	drv->bufpos = 0;
 	drv->bufsize = 512;
 	return(SUCCESS);
@@ -143,36 +144,50 @@ static void panic(const char *str, ...) {
 
 static void incsec(IDEDRV drv) {
 
-	if (drv->dr & IDEDEV_LBA) {
+	if (!(drv->dr & IDEDEV_LBA)) {
+		drv->sn++;
+		if (drv->sn <= drv->sectors) {
+			return;
+		}
+		drv->sn = 1;
+		drv->hd++;
+		if (drv->hd < drv->surfaces) {
+			return;
+		}
+		drv->hd = 0;
+		drv->cy++;
+	}
+	else {
 		TRACEOUT(("ideio: incsec() LBA mode?"));
-		return;
+		drv->sn++;
+		if (drv->sn) {
+			return;
+		}
+		drv->cy++;
+		if (drv->cy) {
+			return;
+		}
+		drv->hd++;
 	}
-	drv->sn++;
-	if (drv->sn <= drv->sectors) {
-		return;
-	}
-	drv->sn = 1;
-	drv->hd++;
-	if (drv->hd < drv->surfaces) {
-		return;
-	}
-	drv->hd = 0;
-	drv->cy++;
 }
 
 static long getcursec(const _IDEDRV *drv) {
 
 	long	ret;
 
-	if (drv->dr & IDEDEV_LBA) {
-		TRACEOUT(("ideio: getcursec() LBA mode?"));
-		return(-1);
+	if (!(drv->dr & IDEDEV_LBA)) {
+		ret = drv->cy;
+		ret *= drv->surfaces;
+		ret += drv->hd;
+		ret *= drv->sectors;
+		ret += (drv->sn - 1);
 	}
-	ret = drv->cy;
-	ret *= drv->surfaces;
-	ret += drv->hd;
-	ret *= drv->sectors;
-	ret += (drv->sn - 1);
+	else {
+		TRACEOUT(("ideio: getcursec() LBA mode?"));
+		ret = drv->sn;
+		ret |= (drv->cy << 8);
+		ret |= (drv->hd << 24);
+	}
 	return(ret);
 }
 
@@ -186,7 +201,7 @@ static void readsec(IDEDRV drv) {
 	sec = getcursec(drv);
 	TRACEOUT(("readsec->drv %d sec %x", drv->sxsidrv, sec));
 	if (sxsi_read(drv->sxsidrv, sec, drv->buf, 512)) {
-		TRACEOUT(("readerror!"));
+		TRACEOUT(("read error!"));
 		goto read_err;
 	}
 	drv->bufdir = IDEDIR_IN;
@@ -379,6 +394,7 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 			}
 			break;
 
+		case 0xa1:		// identify
 		case 0xec:		// identify
 			TRACEOUT(("ideio: identify"));
 			if (setidentify(drv) == SUCCESS) {

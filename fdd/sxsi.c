@@ -345,11 +345,11 @@ const _SXSIDEV	*sxsi;
 	if (sxsi == NULL) {
 		return(0x60);
 	}
-	pos = pos * sxsi->size + sxsi->headersize;
-	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
-	if (r == -1) {
+	if ((pos < 0) || (pos >= sxsi->totals)) {
 		return(0x40);
 	}
+	pos = pos * sxsi->size + sxsi->headersize;
+	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
 	if (pos != r) {
 		return(0xd0);
 	}
@@ -375,11 +375,11 @@ const _SXSIDEV	*sxsi;
 	if (sxsi == NULL) {
 		return(0x60);
 	}
-	pos = pos * sxsi->size + sxsi->headersize;
-	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
-	if (r == -1) {
+	if ((pos < 0) || (pos >= sxsi->totals)) {
 		return(0x40);
 	}
+	pos = pos * sxsi->size + sxsi->headersize;
+	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
 	if (pos != r) {
 		return(0xd0);
 	}
@@ -408,11 +408,11 @@ const _SXSIDEV	*sxsi;
 	if (sxsi == NULL) {
 		return(0x60);
 	}
-	pos = pos * sxsi->size + sxsi->headersize;
-	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
-	if (r == -1) {
+	if ((pos < 0) || (pos >= sxsi->totals)) {
 		return(0x40);
 	}
+	pos = pos * sxsi->size + sxsi->headersize;
+	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
 	if (pos != r) {
 		return(0xd0);
 	}
