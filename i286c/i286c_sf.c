@@ -1,7 +1,6 @@
 #include	"compiler.h"
 #include	"cpucore.h"
 #include	"i286c.h"
-#include	"memory.h"
 #include	"i286c.mcr"
 #include	"i286c_sf.mcr"
 

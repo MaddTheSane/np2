@@ -11,7 +11,6 @@
 #include	"viewasm.h"
 #include	"viewsnd.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"bios.h"

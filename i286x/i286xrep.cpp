@@ -3,7 +3,6 @@
 #include	"i286x.h"
 #include	"i286xs.h"
 #include	"i286xrep.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"i286x.mcr"

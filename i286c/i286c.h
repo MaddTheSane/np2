@@ -7,8 +7,6 @@
 #endif
 
 
-#define	I286_MEM		mem
-
 #define	I286_STAT		i286core.s.r
 
 #define	I286_REG		i286core.s.r

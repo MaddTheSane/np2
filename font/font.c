@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"dosio.h"
-#include	"memory.h"
+#include	"cpucore.h"
 #include	"font.h"
 #include	"fontdata.h"
 #include	"fontmake.h"

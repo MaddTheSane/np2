@@ -5,7 +5,6 @@
 #include	"i286xs.h"
 #include	"i286xrep.h"
 #include	"i286xcts.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"bios.h"
 #include	"iocore.h"

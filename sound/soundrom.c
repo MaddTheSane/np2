@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	"dosio.h"
+#include	"cpucore.h"
 #include	"pccore.h"
-#include	"memory.h"
 #include	"soundrom.h"
 
 

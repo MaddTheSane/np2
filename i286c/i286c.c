@@ -2,7 +2,6 @@
 #include	"cpucore.h"
 #include	"i286c.h"
 #include	"v30patch.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"dmap.h"
@@ -152,7 +151,7 @@ const BYTE	*ptr;
 	I286_FLAG &= ~(T_FLAG | I_FLAG);
 	I286_TRAP = 0;
 
-	ptr = I286_MEM + (vect * 4);
+	ptr = mem + (vect * 4);
 	I286_IP = LOADINTELWORD(ptr+0);				// real mode!
 	I286_CS = LOADINTELWORD(ptr+2);				// real mode!
 	CS_BASE = I286_CS << 4;
@@ -175,7 +174,7 @@ const BYTE	*ptr;
 	I286_FLAG &= ~(T_FLAG | I_FLAG);
 	I286_TRAP = 0;
 
-	ptr = I286_MEM + (vect * 4);
+	ptr = mem + (vect * 4);
 	I286_IP = LOADINTELWORD(ptr + 0);			// real mode!
 	I286_CS = LOADINTELWORD(ptr + 2);			// real mode!
 	CS_BASE = I286_CS << 4;

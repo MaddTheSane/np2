@@ -1,7 +1,6 @@
 #include	"compiler.h"
 #include	"scrnmng.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"vram.h"

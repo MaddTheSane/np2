@@ -11,6 +11,9 @@
 #include	"font.h"
 
 
+	BYTE	mem[0x200000];
+
+
 #define	USE_HIMEM
 
 // ---- write byte

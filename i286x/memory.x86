@@ -6,7 +6,7 @@
 
 section .bss
 
-	extern	_mem
+	global	_mem
 	extern	_i286core
 	extern	_grcg
 	extern	_extmem
@@ -16,6 +16,8 @@ section .bss
 	extern	_cgwindow
 ;	extern	___font
 	extern	_vramop
+
+_mem	resb	0x200000
 
 
 MAINMEMORY		equ		_mem
@@ -75,7 +77,6 @@ extern	@tracevramwrite_w@8
 %macro	VRAMTRACE_W		0
 %endmacro
 %endif
-
 
 section .text
 

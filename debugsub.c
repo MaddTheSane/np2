@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"dosio.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"debugsub.h"

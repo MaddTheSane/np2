@@ -1,11 +1,13 @@
 #include	"compiler.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"egcmem.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"vram.h"
 #include	"font.h"
+
+
+	BYTE	mem[0x200000];
 
 
 #define	USE_HIMEM		0x10fff0

@@ -1,4 +1,6 @@
-/*	$Id: cpucore.h,v 1.2 2003/12/08 06:24:03 yui Exp $	*/
+/*	$Id: cpucore.h,v 1.3 2003/12/12 01:04:40 yui Exp $	*/
+
+#include	"memory.h"
 
 #ifndef	NP2_I386C_CPUCORE_H__
 #define	NP2_I386C_CPUCORE_H__

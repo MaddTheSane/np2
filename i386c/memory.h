@@ -1,4 +1,7 @@
 
+#ifndef	NP2_I386C_MEMORY_H__
+#define	NP2_I386C_MEMORY_H__
+
 #ifdef NP2_MEMORY_ASM					// アセンブラ版は 必ずfastcallで
 #undef	MEMCALL
 #define	MEMCALL	FASTCALL
@@ -139,3 +142,6 @@ void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);
 #ifdef __cplusplus
 }
 #endif
+
+#endif	/* !NP2_I386C_MEMORY_H__ */
+

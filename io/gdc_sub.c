@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	<math.h>
-#include	"memory.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"gdc_pset.h"

@@ -3,7 +3,7 @@
 #include	"np2.h"
 #include	"viewer.h"
 #include	"viewmem.h"
-#include	"memory.h"
+#include	"cpucore.h"
 
 
 void viewmem_read(VIEWMEM_T *cfg, DWORD adrs, BYTE *buf, DWORD size) {

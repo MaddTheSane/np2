@@ -4,7 +4,6 @@
 #include	"sysmng.h"
 #include	"timemng.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"np2ver.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -74,8 +73,6 @@ static const BYTE msw_default[8] =
 	int		soundrenewal = 0;
 	BOOL	drawframe;
 	UINT	drawcount = 0;
-
-	BYTE	mem[0x200000];
 
 
 // ---------------------------------------------------------------------------

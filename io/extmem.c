@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 

@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"dosio.h"
-#include	"memory.h"
+#include	"cpucore.h"
 #include	"font.h"
 #include	"fontdata.h"
 

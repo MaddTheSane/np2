@@ -5,7 +5,6 @@
 #include	"soundmng.h"
 #include	"timemng.h"
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"

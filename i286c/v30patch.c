@@ -2,7 +2,6 @@
 #include	"cpucore.h"
 #include	"i286c.h"
 #include	"v30patch.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"bios.h"

@@ -9,19 +9,24 @@
 
 
 #ifndef __GNUC__
-typedef signed char		SINT8;
-typedef unsigned char	UINT8;
-typedef	signed short	SINT16;
-typedef	unsigned short	UINT16;
-typedef	signed int		SINT32;
-typedef	unsigned int	UINT32;
+typedef signed char			SINT8;
+typedef unsigned char		UINT8;
+typedef	signed short		SINT16;
+typedef	unsigned short		UINT16;
+typedef	signed int			SINT32;
+typedef	unsigned int		UINT32;
+typedef signed __int64		SINT64;
+typedef unsigned __int64	UINT64;
+#define	INLINE				__inline
 #else
 #include	<stdlib.h>
-typedef signed char		SINT8;
-typedef unsigned char	UINT8;
-typedef	short			SINT16;
-typedef	unsigned short	UINT16;
-typedef	int				SINT32;
+typedef signed char			SINT8;
+typedef unsigned char		UINT8;
+typedef	short				SINT16;
+typedef	unsigned short		UINT16;
+typedef	int					SINT32;
+typedef signed __int64		SINT64;
+#define	INLINE				inline
 #endif
 
 // for RISC test
