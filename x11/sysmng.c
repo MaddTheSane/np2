@@ -66,10 +66,6 @@ sysmng_updatecaption(BYTE flag)
 			milstr_ncat(titlestr, file_getname((char *)fdd_diskname(1)), sizeof(titlestr));
 		}
 #if defined(SUPPORT_IDEIO)
-{
-	OEMCHAR *p = sxsi_getfilename(0x02);
-	printf("CD-ROM: %s\n", p ? p : "unmount");
-}
 		if (sxsi_getfilename(0x02)) {
 			milstr_ncat(titlestr, "  CD-ROM:", sizeof(titlestr));
 			milstr_ncat(titlestr, file_getname((OEMCHAR *)sxsi_getfilename(0x02)), sizeof(titlestr));
