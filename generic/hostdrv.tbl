@@ -59,7 +59,12 @@ typedef struct {
 
 // ---- MS-DOSストラクチャー (little endian!)
 
+#ifndef	__GNUC__
 #pragma pack(push, 1)
+#define	ATTRIBUTE_PACKED
+#else
+#define	ATTRIBUTE_PACKED	__attribute__((packed))
+#endif
 
 /* FindFirst/Next data block */
 typedef struct {
@@ -69,7 +74,7 @@ typedef struct {
 	BYTE	dir_entry_no[2];
 	BYTE	dir_sector[2];
 	BYTE	f1[4];
-} _SRCHREC, *SRCHREC;	//	21bytes (see int214E)
+} ATTRIBUTE_PACKED _SRCHREC, *SRCHREC;	//	21bytes (see int214E)
 
 /* Directory entry for 'found' file */
 typedef struct {
@@ -80,7 +85,7 @@ typedef struct {
 	BYTE	file_date[2];
 	BYTE	start_sector[2];
 	BYTE	file_size[4];
-} _DIRREC, *DIRREC;
+} ATTRIBUTE_PACKED _DIRREC, *DIRREC;
 
 /* System File Table entry */
 typedef struct {
@@ -99,7 +104,7 @@ typedef struct {
 	BYTE	dir_sector[2];
 	UINT8	dir_entry_no;
 	BYTE	file_name[11];
-} _SFTREC, *SFTREC;
+} ATTRIBUTE_PACKED _SFTREC, *SFTREC;
 
 /* Current Directory Structure */
 typedef struct {
@@ -107,7 +112,7 @@ typedef struct {
 	BYTE	flags[2];
 	BYTE	f1[10];
 	BYTE	root_ofs[2];
-} _CDS3, *CDS3;
+} ATTRIBUTE_PACKED _CDS3, *CDS3;
 
 typedef struct {
 	char	current_path[67];
@@ -115,7 +120,7 @@ typedef struct {
 	BYTE	f1[10];
 	BYTE	root_ofs[2];
 	BYTE	f2[7];
-} _CDS4, *CDS4;
+} ATTRIBUTE_PACKED _CDS4, *CDS4;
 
 /* Swappable DOS Area for DOS3 */
 typedef struct {
@@ -142,7 +147,7 @@ typedef struct {
 	BYTE		f7[72];
 	_SRCHREC	rename_srchrec;
 	_DIRREC		rename_dirrec;
-} _SDA3, *SDA3;		//	(see int215D06)
+} ATTRIBUTE_PACKED _SDA3, *SDA3;		//	(see int215D06)
 
 /* Swappable DOS Area for DOS4+ */
 typedef struct {
@@ -173,20 +178,24 @@ typedef struct {
 	BYTE		f8[29];
 	_SRCHREC	rename_srchrec;
 	_DIRREC		rename_dirrec;
-} _SDA4, *SDA4;		//	(see int215D06)
+} ATTRIBUTE_PACKED _SDA4, *SDA4;		//	(see int215D06)
 
 typedef union {
 	struct {
 		_SDA3	sda;
 		_CDS3	cds;
-	} ver3;
+	} ATTRIBUTE_PACKED ver3;
 	struct {
 		_SDA4	sda;
 		_CDS4	cds;
-	} ver4;
+	} ATTRIBUTE_PACKED ver4;
 } _SDACDS, *SDACDS;
 
+#ifndef	__GNUC__
 #pragma pack(pop)
+#else
+#undef	ATTRIBUTE_PACKED
+#endif
 
 
 
