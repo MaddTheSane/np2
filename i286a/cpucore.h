@@ -296,6 +296,6 @@ void i286a_step(void);
 #define	CPU_EXEC				i286a
 #define	CPU_EXECV30				i286a
 #define	CPU_SHUT				i286a_shut
-#define	CPU_SETEXTSIZE(size)	
-#define	CPU_SETEMM(frame, addr)	
+#define	CPU_SETEXTSIZE(size)	i286a_setextsize((UINT32)(size) << 20)
+#define	CPU_SETEMM(frame, addr)	i286a_setemm(frame, addr)
 

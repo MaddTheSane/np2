@@ -184,7 +184,9 @@ static void pccore_set(void) {
 	if (np2cfg.dipsw[1] & 0x20) {
 		pccore.hddif |= PCHDD_IDE;
 	}
+#if defined(SUPPORT_SCSI)
 	pccore.hddif |= PCHDD_SCSI;
+#endif
 
 	// サウンドボードの接続
 	pccore.sound = np2cfg.SOUND_SW;
