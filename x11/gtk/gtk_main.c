@@ -264,6 +264,9 @@ gui_gtk_widget_create(void)
 {
 	GtkWidget *main_vbox;
 	GtkWidget *menubar;
+#if (GTK_MAJOR_VERSION == 2)
+	gchar *accel = NULL;
+#endif
 
 	main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_policy(GTK_WINDOW(main_window), FALSE, FALSE, TRUE);
@@ -283,6 +286,16 @@ gui_gtk_widget_create(void)
 	gtk_drawing_area_size(GTK_DRAWING_AREA(drawarea), 640, 400);
 	gtk_box_pack_start(GTK_BOX(main_vbox), drawarea, FALSE, TRUE, 0);
 	gtk_widget_show(drawarea);
+
+#if (GTK_MAJOR_VERSION == 2)
+	g_object_get(gtk_widget_get_settings(main_window),
+	    "gtk-menu-bar-accel", &accel, NULL);
+	if (accel) {
+		g_object_set(gtk_widget_get_settings(main_window),
+		    "gtk-menu-bar-accel", "Menu", NULL);
+		g_free(accel);
+	}
+#endif
 
 	gtk_widget_realize(main_window);
 	set_icon_bitmap(main_window);
