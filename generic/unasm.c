@@ -360,7 +360,7 @@ opeana_ea:
 				if (ptr > term) {
 					return(0);
 				}
-				p = set_hex(p, LOADINTELWORD(ptr - 4), 16);
+				p = set_hex(p, LOADINTELDWORD(ptr - 4), 32);
 			}
 			*p++ = ']';
 			break;
@@ -392,14 +392,15 @@ opeana_ea:
 			f = (flag >> UAFLAG_REP) & UAFLAG_REPMASK;
 			if (f) {
 				p = set_str(p, rstr.ope[mnemonic]);
-				mnemonic = RSTR_REP;
+				mnemonic = RSTR_REP + (f - 1);
 			}
 			f = (flag >> UAFLAG_SOR) & UAFLAG_SOMASK;
 			if (f) {
-				p[0] = rstr.reg[RSTR_SEG][f - 1][0];
+				p[0] = ' ';
+				p[1] = rstr.reg[RSTR_SEG][f - 1][0];
 				p[1] = rstr.reg[RSTR_SEG][f - 1][1];
-				p[2] = ':';
-				p += 3;
+				p[3] = ':';
+				p += 4;
 			}
 			break;
 
@@ -430,7 +431,7 @@ opeana_ea:
 				if (ptr > term) {
 					return(0);
 				}
-				addr += LOADINTELWORD(ptr - 4);
+				addr += LOADINTELDWORD(ptr - 4);
 				addr += (ptr - org);
 				p = set_hex(p, addr, 32);
 			}
