@@ -5,7 +5,7 @@
 
 // ----------------------------------------- メイン
 
-void main(int argc, BYTE *argv[], BYTE *envp[]) {
+int main(int argc, BYTE *argv[], BYTE *envp[]) {
 
 	FILEH	fh;
 	BYTE	buf[12];
@@ -15,11 +15,11 @@ void main(int argc, BYTE *argv[], BYTE *envp[]) {
 
 	if (argc < 2) {
 		printf("ファイルを指定して下さい.\n");
-		return;
+		return(1);
 	}
 	if ((fh = file_open(argv[1])) == -1) {
 		printf("ファイルが見つかりません.\n");
-		return;
+		return(2);
 	}
 
 	if (argc >= 3) {
@@ -52,4 +52,7 @@ void main(int argc, BYTE *argv[], BYTE *envp[]) {
 	}
 	file_close(fh);
 	printf("};\n\n");
+
+	return(0);
 }
+

@@ -5,6 +5,7 @@
 #include	"cbuscore.h"
 #include	"sound.h"
 #include	"fmboard.h"
+#include	"ideio.h"
 #include	"cs4231io.h"
 #include	"iocore16.tbl"
 
@@ -506,6 +507,12 @@ void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
 	IOFUNC	iof;
 
 	CPU_REMCLOCK -= iocore.busclock;
+#if defined(SUPPORT_IDEIO)
+	if (port == 0x0640) {
+		ideio_w16(port, dat);
+		return;
+	}
+#endif
 	if ((port & 0xfff1) == 0x04a0) {
 		egc_w16(port, dat);
 		return;
@@ -537,6 +544,11 @@ REG16 IOINPCALL iocore_inp16(UINT port) {
 	REG8	ret;
 
 	CPU_REMCLOCK -= iocore.busclock;
+#if defined(SUPPORT_IDEIO)
+	if (port == 0x0640) {
+		return(ideio_r16(port));
+	}
+#endif
 	if ((port & 0xfffc) == 0x005c) {
 		return(artic_r16(port));
 	}
@@ -570,14 +582,25 @@ REG16 IOINPCALL iocore_inp16(UINT port) {
 
 void IOOUTCALL iocore_out32(UINT port, UINT32 dat) {
 
+#if defined(SUPPORT_PC9821)
+	if ((port & 0xfffb) == 0x0cf8) {
+		pcidev_w32(port, dat);
+		return;
+	}
+#endif
 	iocore_out16(port, (UINT16)dat);
 	iocore_out16(port+2, (UINT16)(dat >> 16));
 }
 
 UINT32 IOINPCALL iocore_inp32(UINT port) {
 
-	REG16	ret;
+	UINT32	ret;
 
+#if defined(SUPPORT_PC9821)
+	if ((port & 0xfffb) == 0x0cf8) {
+		return(pcidev_r32(port));
+	}
+#endif
 	ret = iocore_inp16(port);
 	return(ret + (iocore_inp16(port+2) << 16));
 }

@@ -10,7 +10,9 @@
 
 
 static const IOCBFN resetfn[] = {
+#if defined(SUPPORT_IDEIO)
 			ideio_reset,
+#endif
 #if defined(SUPPORT_SASI)
 			sasiio_reset,
 #endif
@@ -23,7 +25,9 @@ static const IOCBFN resetfn[] = {
 			mpu98ii_reset};
 
 static const IOCBFN bindfn[] = {
+#if defined(SUPPORT_IDEIO)
 			ideio_bind,
+#endif
 #if defined(SUPPORT_SASI)
 			sasiio_bind,
 #endif

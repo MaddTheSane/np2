@@ -401,14 +401,6 @@ SOURCE=..\BIOS\BIOS.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\BIOS\BIOS02.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS08.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\BIOS\BIOS09.C
 # End Source File
 # Begin Source File
@@ -442,6 +434,10 @@ SOURCE=..\BIOS\BIOS1B.C
 # Begin Source File
 
 SOURCE=..\BIOS\BIOS1C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1F.C
 # End Source File
 # Begin Source File
 
@@ -519,6 +515,22 @@ SOURCE=..\SOUND\VERMOUTH\MIDTABLE.C
 SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
 # End Source File
 # End Group
+# Begin Group "getsnd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETSMIX.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETSND.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETWAVE.C
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=..\SOUND\ADPCMC.C
@@ -578,10 +590,6 @@ SOURCE=..\SOUND\PSGGENG.C
 # Begin Source File
 
 SOURCE=..\SOUND\RHYTHMC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\RHYTHMG.C
 # End Source File
 # Begin Source File
 
@@ -645,18 +653,6 @@ SOURCE=..\FDD\SXSI.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\LIO\GCLS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR2.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\LIO\GLINE.C
 # End Source File
 # Begin Source File
@@ -670,10 +666,6 @@ SOURCE=..\LIO\GPUT1.C
 # Begin Source File
 
 SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GVIEW.C
 # End Source File
 # Begin Source File
 

@@ -92,28 +92,25 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/midiout.o	$(OBJ)/midimod.o	$(OBJ)/midinst.o	\
 			$(OBJ)/midvoice.o	$(OBJ)/midtable.o						\
 			$(OBJ)/getsnd.o		$(OBJ)/getwave.o	$(OBJ)/getsmix.o	\
-			$(OBJ)/bios.o		$(OBJ)/bios02.o		$(OBJ)/bios08.o		\
-			$(OBJ)/bios09.o		$(OBJ)/bios0c.o		$(OBJ)/bios12.o		\
-			$(OBJ)/bios13.o		$(OBJ)/bios18.o		$(OBJ)/bios19.o		\
-			$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		$(OBJ)/bios1c.o		\
-			$(OBJ)/sxsibios.o											\
-			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/wavemix.o	\
-			$(OBJ)/fmboard.o	$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		\
-			$(OBJ)/beepg.o		$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	\
-			$(OBJ)/opngenc.o	$(OBJ)/opngeng.oa	$(OBJ)/psggenc.o	\
-			$(OBJ)/psggeng.o	$(OBJ)/rhythmc.o	$(OBJ)/rhythmg.o	\
-			$(OBJ)/adpcmc.o		$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		\
-			$(OBJ)/pcm86g.o		$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	\
-			$(OBJ)/soundrom.o	$(OBJ)/s98.o							\
+			$(OBJ)/bios.o		$(OBJ)/bios09.o		$(OBJ)/bios0c.o		\
+			$(OBJ)/bios12.o		$(OBJ)/bios13.o		$(OBJ)/bios18.o		\
+			$(OBJ)/bios19.o		$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		\
+			$(OBJ)/bios1c.o		$(OBJ)/bios1f.o		$(OBJ)/sxsibios.o	\
+			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
+			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
+			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
+			$(OBJ)/opngeng.oa	$(OBJ)/psggenc.o	$(OBJ)/psggeng.o	\
+			$(OBJ)/rhythmc.o	$(OBJ)/adpcmc.o		$(OBJ)/adpcmg.o		\
+			$(OBJ)/pcm86c.o		$(OBJ)/pcm86g.o		$(OBJ)/cs4231c.o	\
+			$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	$(OBJ)/s98.o		\
 			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
 			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
 			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.oa	$(OBJ)/scrnbmp.o	\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
-			$(OBJ)/lio.o		$(OBJ)/gscreen.o	$(OBJ)/gview.o		\
-			$(OBJ)/gcolor1.o	$(OBJ)/gcolor2.o	$(OBJ)/gcls.o		\
-			$(OBJ)/gpset.o		$(OBJ)/gline.o		$(OBJ)/gput1.o		\
+			$(OBJ)/lio.o		$(OBJ)/gscreen.o	$(OBJ)/gpset.o		\
+			$(OBJ)/gline.o		$(OBJ)/gput1.o							\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
@@ -455,16 +452,8 @@ $(OBJ)/bios.o		:	$(BIOS)/bios.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(TARGET)/dosio.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(BIOS)/fdfmt.h \
 						$(BIOS)/keytable.res $(BIOS)/itfrom.res \
-						$(BIOS)/startup.res $(BIOS)/biosboot.res \
+						$(BIOS)/startup.res $(BIOS)/biosfd80.res \
 						$(LIO)/lio.h $(FDD)/fddfile.h $(FDD)/fdd_mtr.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/bios02.o		:	$(BIOS)/bios02.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(BIOS)/bios.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/bios08.o		:	$(BIOS)/bios08.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(BIOS)/bios.h $(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios09.o		:	$(BIOS)/bios09.c $(HEADERS) $(CPUCORES) $(PCCORES) \
@@ -509,6 +498,10 @@ $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/bios1f.o		:	$(BIOS)/bios1f.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(BIOS)/bios.h $(BIOS)/biosmem.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/sxsibios.o	:	$(BIOS)/sxsibios.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h $(BIOS)/sxsibios.h \
 						$(CBUS)/scsicmd.h $(FDD)/sxsi.h $(BASE)/timing.h
@@ -523,10 +516,6 @@ $(OBJ)/sound.o		:	$(SOUND)/sound.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 
 $(OBJ)/sndcsec.o	:	$(SOUND)/sndcsec.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/sndcsec.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/wavemix.o	:	$(SOUND)/wavemix.c $(HEADERS) $(PCCORES) \
-						$(SOUND)/sound.h $(GETSND)/getsnd.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -582,10 +571,6 @@ $(OBJ)/psggeng.o	:	$(SOUND)/psggeng.c $(HEADERS) $(COMMON)/parts.h \
 $(OBJ)/rhythmc.o	:	$(SOUND)/rhythmc.c $(HEADERS) $(PCCORES) \
 						$(COMMON)/wavefile.h $(TARGET)/dosio.h \
 						$(SOUND)/sound.h $(SOUND)/rhythm.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/rhythmg.o	:	$(SOUND)/rhythmg.c $(HEADERS) $(SOUND)/sound.h \
-						$(SOUND)/rhythm.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/adpcmc.o		:	$(SOUND)/adpcmc.c $(HEADERS) $(SOUND)/sound.h \
@@ -742,8 +727,7 @@ $(OBJ)/fdd_d88.o	:	$(FDD)/fdd_d88.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fdd_mtr.o	:	$(FDD)/fdd_mtr.c $(HEADERS) $(PCCORES) \
-						$(TARGET)/soundmng.h $(SOUND)/wavemix.h \
-						$(FDD)/fdd_mtr.h
+						$(TARGET)/soundmng.h $(FDD)/fdd_mtr.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/sxsi.o		:	$(FDD)/sxsi.c $(HEADERS) $(CPUCORES) $(PCCORES) \
@@ -760,21 +744,6 @@ $(OBJ)/lio.o		:	$(LIO)/lio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 
 $(OBJ)/gscreen.o	:	$(LIO)/gscreen.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gview.o		:	$(LIO)/gview.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gcolor1.o	:	$(LIO)/gcolor1.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gcolor2.o	:	$(LIO)/gcolor2.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gcls.o		:	$(LIO)/gcls.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gpset.o		:	$(LIO)/gpset.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h

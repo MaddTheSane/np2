@@ -537,18 +537,6 @@ SOURCE=..\FDD\SXSI.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\LIO\GCLS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR2.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\LIO\GLINE.C
 # End Source File
 # Begin Source File
@@ -562,10 +550,6 @@ SOURCE=..\LIO\GPUT1.C
 # Begin Source File
 
 SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GVIEW.C
 # End Source File
 # Begin Source File
 
@@ -838,6 +822,10 @@ SOURCE=..\IO\UPD4990.C
 # Begin Source File
 
 SOURCE=..\CBUS\AMD98.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 

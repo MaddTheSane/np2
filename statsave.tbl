@@ -82,6 +82,9 @@ static const SFENTRY np2tbl[] = {
 	{"CPU286",		0,	STATFLAG_BIN,	&CPU_STATSAVE,	sizeof(CPU_STATSAVE)},
 	{"MEMORY",		0,	STATFLAG_MEM,	NULL,			0x130000},
 	{"EXTMEM",		0,	STATFLAG_EXT,	NULL,			0},
+#if defined(SUPPORT_PC9821)
+	{"VRAMEX",		0,	STATFLAG_BIN,	vramex,			sizeof(vramex)},
+#endif
 
 	{"ARTIC",		0,	STATFLAG_BIN,	&artic,			sizeof(artic)},
 	{"CGROM",		0,	STATFLAG_BIN,	&cgrom,			sizeof(cgrom)},

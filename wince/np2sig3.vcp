@@ -324,12 +324,13 @@ DEP_CPP_DMAP_=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -366,12 +367,13 @@ DEP_CPP_EGCME=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -779,12 +781,13 @@ DEP_CPP_ARTIC=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -821,12 +824,13 @@ DEP_CPP_CGROM=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -862,12 +866,13 @@ DEP_CPP_CPUIO=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -902,12 +907,13 @@ DEP_CPP_CRTC_=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -944,12 +950,13 @@ DEP_CPP_DIPSW=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -960,7 +967,6 @@ DEP_CPP_DIPSW=\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
@@ -989,12 +995,13 @@ DEP_CPP_DMAC_=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1005,7 +1012,6 @@ DEP_CPP_DMAC_=\
 	"..\pccore.h"\
 	"..\sound\cs4231.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1034,12 +1040,13 @@ DEP_CPP_EGC_C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1076,12 +1083,13 @@ DEP_CPP_EMSIO=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1117,12 +1125,13 @@ DEP_CPP_EPSON=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1146,6 +1155,7 @@ DEP_CPP_FDC_C=\
 	"..\common\rect.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1159,12 +1169,13 @@ DEP_CPP_FDC_C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1199,12 +1210,13 @@ DEP_CPP_FDD32=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1243,10 +1255,12 @@ DEP_CPP_GDC_C=\
 	"..\IO\gdc_cmd.tbl"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1256,6 +1270,7 @@ DEP_CPP_GDC_C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
+	"..\timing.h"\
 	"..\VRAM\palettes.h"\
 	"..\VRAM\vram.h"\
 	".\scrnmng.h"\
@@ -1272,6 +1287,7 @@ DEP_CPP_GDC_P=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\i286a\cpucore.h"\
+	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1288,10 +1304,12 @@ DEP_CPP_GDC_P=\
 	"..\IO\gdc_pset.h"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1331,10 +1349,12 @@ DEP_CPP_GDC_S=\
 	"..\IO\gdc_pset.h"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1354,6 +1374,7 @@ SOURCE=..\IO\IOCORE.C
 DEP_CPP_IOCOR=\
 	"..\CBUS\cbuscore.h"\
 	"..\CBUS\cs4231io.h"\
+	"..\CBUS\ideio.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
 	"..\common\lstarray.h"\
@@ -1373,13 +1394,14 @@ DEP_CPP_IOCOR=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
 	"..\IO\iocore16.tbl"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1399,7 +1421,6 @@ DEP_CPP_IOCOR=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1427,18 +1448,20 @@ DEP_CPP_MOUSE=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -1469,12 +1492,13 @@ DEP_CPP_NECIO=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1509,12 +1533,13 @@ DEP_CPP_NMIIO=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1553,12 +1578,13 @@ DEP_CPP_NP2SY=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1595,12 +1621,13 @@ DEP_CPP_PIC_C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1617,6 +1644,7 @@ DEP_CPP_PIC_C=\
 
 SOURCE=..\IO\PIT.C
 DEP_CPP_PIT_C=\
+	"..\CBUS\board14.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
 	"..\common\lstarray.h"\
@@ -1636,12 +1664,13 @@ DEP_CPP_PIT_C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1652,7 +1681,6 @@ DEP_CPP_PIT_C=\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1680,12 +1708,13 @@ DEP_CPP_PRINT=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1721,18 +1750,20 @@ DEP_CPP_SERIA=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -1762,12 +1793,13 @@ DEP_CPP_SYSPO=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1778,7 +1810,6 @@ DEP_CPP_SYSPO=\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1806,12 +1837,13 @@ DEP_CPP_UPD49=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1853,12 +1885,13 @@ DEP_CPP_AMD98=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1878,7 +1911,6 @@ DEP_CPP_AMD98=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1908,12 +1940,13 @@ DEP_CPP_BOARD=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1934,7 +1967,6 @@ DEP_CPP_BOARD=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -1963,12 +1995,13 @@ DEP_CPP_BOARD1=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -1988,7 +2021,6 @@ DEP_CPP_BOARD1=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2017,12 +2049,13 @@ DEP_CPP_BOARD2=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2043,7 +2076,6 @@ DEP_CPP_BOARD2=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2073,12 +2105,13 @@ DEP_CPP_BOARD8=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2099,7 +2132,6 @@ DEP_CPP_BOARD8=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2128,12 +2160,13 @@ DEP_CPP_BOARDS=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2154,7 +2187,6 @@ DEP_CPP_BOARDS=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2184,12 +2216,13 @@ DEP_CPP_BOARDX=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2210,7 +2243,6 @@ DEP_CPP_BOARDX=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2220,6 +2252,7 @@ DEP_CPP_BOARDX=\
 SOURCE=..\CBUS\CBUSCORE.C
 DEP_CPP_CBUSC=\
 	"..\CBUS\cbuscore.h"\
+	"..\CBUS\ideio.h"\
 	"..\CBUS\mpu98ii.h"\
 	"..\CBUS\pc9861k.h"\
 	"..\cbus\sasiio.h"\
@@ -2242,12 +2275,13 @@ DEP_CPP_CBUSC=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2284,12 +2318,13 @@ DEP_CPP_CS423=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2309,7 +2344,6 @@ DEP_CPP_CS423=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2338,12 +2372,13 @@ DEP_CPP_MPU98=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2381,12 +2416,13 @@ DEP_CPP_PC986=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2424,12 +2460,13 @@ DEP_CPP_PCM86=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2449,7 +2486,6 @@ DEP_CPP_PCM86=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -2480,12 +2516,13 @@ DEP_CPP_SASII=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2527,12 +2564,13 @@ DEP_CPP_SCSIC=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2574,12 +2612,13 @@ DEP_CPP_SCSII=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2602,7 +2641,7 @@ DEP_CPP_SCSII=\
 SOURCE=..\BIOS\BIOS.C
 DEP_CPP_BIOS_=\
 	"..\BIOS\bios.h"\
-	"..\BIOS\biosboot.res"\
+	"..\BIOS\biosfd80.res"\
 	"..\BIOS\biosmem.h"\
 	"..\BIOS\fdfmt.h"\
 	"..\BIOS\itfrom.res"\
@@ -2614,6 +2653,7 @@ DEP_CPP_BIOS_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
+	"..\COMMON\strres.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -2631,12 +2671,13 @@ DEP_CPP_BIOS_=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2653,51 +2694,9 @@ DEP_CPP_BIOS_=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\BIOS\BIOS02.C
+SOURCE=..\BIOS\BIOS09.C
 DEP_CPP_BIOS0=\
 	"..\BIOS\bios.h"\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS08.C
-DEP_CPP_BIOS08=\
-	"..\BIOS\bios.h"\
 	"..\BIOS\biosmem.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
@@ -2718,55 +2717,13 @@ DEP_CPP_BIOS08=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS09.C
-DEP_CPP_BIOS09=\
-	"..\BIOS\bios.h"\
-	"..\BIOS\biosmem.h"\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2805,12 +2762,13 @@ DEP_CPP_BIOS0C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2847,12 +2805,13 @@ DEP_CPP_BIOS1=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2889,12 +2848,13 @@ DEP_CPP_BIOS13=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2935,10 +2895,12 @@ DEP_CPP_BIOS18=\
 	"..\io\gdc_cmd.h"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -2977,12 +2939,13 @@ DEP_CPP_BIOS19=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3019,12 +2982,13 @@ DEP_CPP_BIOS1A=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3068,12 +3032,13 @@ DEP_CPP_BIOS1B=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3113,12 +3078,13 @@ DEP_CPP_BIOS1C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3129,6 +3095,50 @@ DEP_CPP_BIOS1C=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\timemng.h"\
+	".\wce\compiler.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1F.C
+DEP_CPP_BIOS1F=\
+	"..\BIOS\bios.h"\
+	"..\BIOS\biosmem.h"\
+	"..\common.h"\
+	"..\common\_memory.h"\
+	"..\common\lstarray.h"\
+	"..\common\milstr.h"\
+	"..\common\rect.h"\
+	"..\i286a\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3180,12 +3190,13 @@ DEP_CPP_DISPS=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3302,12 +3313,13 @@ DEP_CPP_MAKET=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3348,12 +3360,13 @@ DEP_CPP_MAKETG=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3396,12 +3409,13 @@ DEP_CPP_PALET=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3440,12 +3454,13 @@ DEP_CPP_SCRNB=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3484,12 +3499,13 @@ DEP_CPP_SCRND=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3740,7 +3756,6 @@ DEP_CPP_ADPCM=\
 	"..\SOUND\ADPCM.H"\
 	"..\sound\opngen.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3755,7 +3770,6 @@ DEP_CPP_ADPCMG=\
 	"..\common\rect.h"\
 	"..\SOUND\ADPCM.H"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3782,12 +3796,13 @@ DEP_CPP_BEEPC=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3808,7 +3823,6 @@ DEP_CPP_BEEPC=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -3824,7 +3838,6 @@ DEP_CPP_BEEPG=\
 	"..\common\rect.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -3850,12 +3863,13 @@ DEP_CPP_CS4231=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3875,7 +3889,6 @@ DEP_CPP_CS4231=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -3903,12 +3916,13 @@ DEP_CPP_CS4231G=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -3928,7 +3942,6 @@ DEP_CPP_CS4231G=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -3967,18 +3980,20 @@ DEP_CPP_FMBOA=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\SOUND\ADPCM.H"\
@@ -3993,7 +4008,6 @@ DEP_CPP_FMBOA=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\joymng.h"\
 	".\soundmng.h"\
@@ -4023,12 +4037,13 @@ DEP_CPP_FMTIM=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4048,7 +4063,6 @@ DEP_CPP_FMTIM=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -4077,12 +4091,13 @@ DEP_CPP_OPNGE=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4102,7 +4117,6 @@ DEP_CPP_OPNGE=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -4213,12 +4227,13 @@ DEP_CPP_PCM86C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4238,7 +4253,6 @@ DEP_CPP_PCM86C=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -4265,12 +4279,13 @@ DEP_CPP_PCM86G=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4290,7 +4305,6 @@ DEP_CPP_PCM86G=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
@@ -4308,7 +4322,6 @@ DEP_CPP_PSGGE=\
 	"..\generic\keydisp.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4368,29 +4381,11 @@ DEP_CPP_RHYTH=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\COMMON\wavefile.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\rhythm.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
-	".\dosio.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\RHYTHMG.C
-DEP_CPP_RHYTHM=\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\sound\rhythm.h"\
-	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4416,12 +4411,13 @@ DEP_CPP_S98_C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4442,7 +4438,6 @@ DEP_CPP_S98_C=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -4459,7 +4454,6 @@ DEP_CPP_SNDCS=\
 	"..\common\rect.h"\
 	"..\SOUND\sndcsec.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4486,12 +4480,13 @@ DEP_CPP_SOUND=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4501,10 +4496,11 @@ DEP_CPP_SOUND=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
+	"..\SOUND\GETSND\getsnd.h"\
 	"..\SOUND\sndcsec.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
+	".\dosio.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4538,7 +4534,6 @@ DEP_CPP_TMS36=\
 	"..\common\rect.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4553,7 +4548,6 @@ DEP_CPP_TMS363=\
 	"..\common\rect.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4586,12 +4580,13 @@ DEP_CPP_DISKD=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4631,12 +4626,13 @@ DEP_CPP_FDD_D=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4660,9 +4656,10 @@ DEP_CPP_FDD_M=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\fdd\fdd_mtr.h"\
+	"..\FDD\fdd_mtr.res"\
 	"..\nevent.h"\
 	"..\pccore.h"\
-	"..\sound\wavemix.h"\
+	"..\sound\sound.h"\
 	"..\statsave.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
@@ -4693,12 +4690,13 @@ DEP_CPP_FDD_X=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4739,12 +4737,13 @@ DEP_CPP_FDDFI=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4803,104 +4802,6 @@ DEP_CPP_SXSI_=\
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\LIO\GCLS.C
-DEP_CPP_GCLS_=\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\lio\lio.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR1.C
-DEP_CPP_GCOLO=\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\lio\lio.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GCOLOR2.C
-DEP_CPP_GCOLOR=\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\lio\lio.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
 SOURCE=..\LIO\GLINE.C
 DEP_CPP_GLINE=\
 	"..\common.h"\
@@ -4909,7 +4810,37 @@ DEP_CPP_GLINE=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\i286a\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
 	"..\lio\lio.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4931,13 +4862,44 @@ DEP_CPP_GPSET=\
 
 SOURCE=..\LIO\GPUT1.C
 DEP_CPP_GPUT1=\
+	"..\BIOS\bios.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\i286a\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
 	"..\lio\lio.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	"..\VRAM\vram.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -4945,6 +4907,8 @@ DEP_CPP_GPUT1=\
 
 SOURCE=..\LIO\GSCREEN.C
 DEP_CPP_GSCRE=\
+	"..\BIOS\bios.h"\
+	"..\BIOS\biosmem.h"\
 	"..\common.h"\
 	"..\common\_memory.h"\
 	"..\common\lstarray.h"\
@@ -4964,12 +4928,13 @@ DEP_CPP_GSCRE=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -4980,48 +4945,7 @@ DEP_CPP_GSCRE=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\wce\compiler.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GVIEW.C
-DEP_CPP_GVIEW=\
-	"..\common.h"\
-	"..\common\_memory.h"\
-	"..\common\lstarray.h"\
-	"..\common\milstr.h"\
-	"..\common\rect.h"\
-	"..\i286a\cpucore.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\lio\lio.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
+	"..\VRAM\vram.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5052,10 +4976,12 @@ DEP_CPP_LIO_C=\
 	"..\io\gdc_cmd.h"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -5369,24 +5295,25 @@ DEP_CPP_NP2_C=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
 	"..\sound\s98.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	"..\timing.h"\
 	"..\VRAM\scrndraw.h"\
@@ -5445,34 +5372,7 @@ DEP_CPP_SOFTK=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
+	"..\keystat.h"\
 	".\np2.h"\
 	".\softkbd.h"\
 	".\wce\compiler.h"\
@@ -5490,7 +5390,6 @@ DEP_CPP_SOUNDM=\
 	"..\common\rect.h"\
 	"..\generic\cmver.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\commng.h"\
 	".\np2.h"\
 	".\soundmng.h"\
@@ -5536,23 +5435,24 @@ DEP_CPP_SYSME=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	".\fontmng.h"\
 	".\np2.h"\
@@ -5614,34 +5514,7 @@ DEP_CPP_WINKB=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\emsio.h"\
-	"..\io\epsonio.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\mouseif.h"\
-	"..\io\necio.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\statsave.h"\
+	"..\keystat.h"\
 	".\gx\gx.h"\
 	".\np2.h"\
 	".\wce\compiler.h"\
@@ -5664,7 +5537,6 @@ DEP_CPP_CMJAS=\
 	"..\GENERIC\cmjasts.h"\
 	"..\i286a\cpucore.h"\
 	"..\sound\sound.h"\
-	"..\sound\wavemix.h"\
 	".\commng.h"\
 	".\wce\compiler.h"\
 	
@@ -5688,7 +5560,6 @@ DEP_CPP_CMVER=\
 	"..\generic\keydisp.h"\
 	"..\sound\sound.h"\
 	"..\sound\vermouth\vermouth.h"\
-	"..\sound\wavemix.h"\
 	".\commng.h"\
 	".\wce\compiler.h"\
 	
@@ -5797,12 +5668,13 @@ DEP_CPP_DLGSC=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -6108,12 +5980,13 @@ DEP_CPP_DEBUG=\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
 	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -6130,6 +6003,47 @@ DEP_CPP_DEBUG=\
 # Begin Source File
 
 SOURCE=..\KEYSTAT.C
+DEP_CPP_KEYST=\
+	"..\common.h"\
+	"..\common\_memory.h"\
+	"..\common\lstarray.h"\
+	"..\common\milstr.h"\
+	"..\common\rect.h"\
+	"..\COMMON\textfile.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\keystat.h"\
+	"..\keystat.tbl"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
+	".\wce\compiler.h"\
+	
 # End Source File
 # Begin Source File
 
@@ -6154,6 +6068,7 @@ DEP_CPP_PCCOR=\
 	"..\BIOS\bios.h"\
 	"..\BIOS\biosmem.h"\
 	"..\calendar.h"\
+	"..\CBUS\amd98.h"\
 	"..\CBUS\cbuscore.h"\
 	"..\CBUS\mpu98ii.h"\
 	"..\CBUS\pc9861k.h"\
@@ -6187,16 +6102,19 @@ DEP_CPP_PCCOR=\
 	"..\io\gdc_cmd.h"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
 	"..\io\serial.h"\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
+	"..\keystat.h"\
 	"..\nevent.h"\
 	"..\np2ver.h"\
 	"..\pccore.h"\
@@ -6213,10 +6131,10 @@ DEP_CPP_PCCOR=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	"..\timing.h"\
 	"..\VRAM\dispsync.h"\
+	"..\vram\makegrex.h"\
 	"..\VRAM\makegrph.h"\
 	"..\VRAM\maketext.h"\
 	"..\VRAM\MAKETGRP.H"\
@@ -6273,10 +6191,12 @@ DEP_CPP_STATS=\
 	"..\io\gdc_cmd.h"\
 	"..\io\gdc_sub.h"\
 	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
 	"..\io\mouseif.h"\
 	"..\io\necio.h"\
 	"..\io\nmiio.h"\
 	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
 	"..\io\pic.h"\
 	"..\io\pit.h"\
 	"..\io\printif.h"\
@@ -6297,7 +6217,6 @@ DEP_CPP_STATS=\
 	"..\sound\sound.h"\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
-	"..\sound\wavemix.h"\
 	"..\statsave.h"\
 	"..\statsave.tbl"\
 	"..\VRAM\maketext.h"\

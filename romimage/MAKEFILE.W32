@@ -1,0 +1,44 @@
+AS		= nasmw
+TS		= bin2txt
+AOPT	= -f bin
+OBJ		= ..\obj\romrel
+
+all: $(OBJ) ..\bios\startup.res ..\bios\biosfd80.res ..\fdd\hddboot.res ..\cbus\idebios.res ..\cbus\sasibios.res ..\cbus\scsibios.res
+
+
+$(OBJ):
+	if not exist $(OBJ) mkdir $(OBJ)
+
+
+..\bios\startup.res: $(OBJ)\startup.bin
+	$(TS) $(OBJ)\startup.bin nosyscode > $*.res
+
+..\bios\biosfd80.res: $(OBJ)\biosfd80.bin
+	$(TS) $(OBJ)\biosfd80.bin biosfd80 > $*.res
+
+..\fdd\hddboot.res: $(OBJ)\hddboot.bin
+	$(TS) $(OBJ)\hddboot.bin hdddiskboot > $*.res
+
+..\cbus\idebios.res: $(OBJ)\idebios.bin
+	$(TS) $(OBJ)\idebios.bin idebios > $*.res
+
+..\cbus\sasibios.res: $(OBJ)\sasibios.bin
+	$(TS) $(OBJ)\sasibios.bin sasibios > $*.res
+
+..\cbus\scsibios.res: $(OBJ)\scsibios.bin
+	$(TS) $(OBJ)\scsibios.bin scsibios > $*.res
+
+
+$(OBJ)\biosfd80.bin:
+	$(AS) .\bios\$(*B).asm $(AOPT) -i.\bios\ -o $*.bin -l $*.lst
+
+
+.asm{$(OBJ)}.bin:
+	$(AS) $(*B).asm $(AOPT) -o $*.bin -l $*.lst
+
+$(OBJ)\startup.bin	:
+$(OBJ)\hddboot.bin	:
+$(OBJ)\idebios.bin	:
+$(OBJ)\sasibios.bin	:
+$(OBJ)\scsibios.bin	:
+
