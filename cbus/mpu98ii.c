@@ -54,8 +54,8 @@ static void makeintclock(void) {
 	if (l < 5*2) {
 		l = 5*2;
 	}
-	l *= mpu98.timebase;						//	*12
-	mpu98.clock = (pc.realclock * 5 / l);		//	/12
+	l *= mpu98.timebase;							//	*12
+	mpu98.clock = (pccore.realclock * 5 / l);		//	/12
 }
 
 static void sendallclocks(REG8 data) {
@@ -526,7 +526,7 @@ static void IOOUTCALL mpu98ii_o0(UINT port, REG8 dat) {
 			}
 		}
 		if (sent) {
-			midiwait(pc.midiclock * sent);
+			midiwait(pccore.midiclock * sent);
 		}
 	}
 	(void)port;
@@ -558,7 +558,7 @@ static void IOOUTCALL mpu98ii_o2(UINT port, REG8 dat) {
 				setrecvdata(MPU_ACK);
 			}
 		}
-		midiwait(pc.realclock / 10000);
+		midiwait(pccore.realclock / 10000);
 	}
 	(void)port;
 }

@@ -997,22 +997,35 @@ void bios0x1b(void) {
 
 #if 0			// bypass to disk bios
 	REG8	seg;
+	UINT	sp;
 
-	seg = mem[0x004b0 + (CPU_AH >> 4)];
+	seg = mem[0x004b0 + (CPU_AL >> 4)];
 	if (seg) {
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 2), CPU_DS);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 4), CPU_SI);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 6), CPU_DI);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 8), CPU_ES);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 10), CPU_BP);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 12), CPU_DX);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 14), CPU_CX);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 16), CPU_BX);
-		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 18), CPU_AX);
-		CPU_SP -= 18;
+		TRACEOUT(("call by %.4x:%.4x",
+							i286_memword_read(CPU_SS, CPU_SP+2),
+							i286_memword_read(CPU_SS, CPU_SP)));
+		sp = CPU_SP;
+		i286_memword_write(CPU_SS, sp - 2, CPU_DS);
+		i286_memword_write(CPU_SS, sp - 4, CPU_SI);
+		i286_memword_write(CPU_SS, sp - 6, CPU_DI);
+		i286_memword_write(CPU_SS, sp - 8, CPU_ES);			// +a
+		i286_memword_write(CPU_SS, sp - 10, CPU_BP);		// +8
+		i286_memword_write(CPU_SS, sp - 12, CPU_DX);		// +6
+		i286_memword_write(CPU_SS, sp - 14, CPU_CX);		// +4
+		i286_memword_write(CPU_SS, sp - 16, CPU_BX);		// +2
+		i286_memword_write(CPU_SS, sp - 18, CPU_AX);		// +0
+		TRACEOUT(("bypass to %.4x:0018", seg << 8));
+		TRACEOUT(("AX=%04x BX=%04x %02x:%02x:%02x:%02x ES=%04x BP=%04x",
+							CPU_AX, CPU_BX, CPU_CL, CPU_DH, CPU_DL, CPU_CH,
+							CPU_ES, CPU_BP));
+		sp -= 18;
+		CPU_SP = sp;
+		CPU_BP = sp;
+		CPU_DS = 0x0000;
+		CPU_BX = 0x04B0;
+		CPU_AX = seg << 8;
 		CPU_CS = seg << 8;
 		CPU_IP = 0x18;
-		TRACEOUT(("bypass to %.4x:%.4x", CPU_CS, CPU_IP));
 		return;
 	}
 #endif

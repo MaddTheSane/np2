@@ -41,14 +41,14 @@ static void calc_mousexy(void) {
 		diff /= 1000;
 		dx = mouseif.sx;
 		if (dx > 0) {
-			dx = dx * diff / pc.frame1000;
+			dx = dx * diff / mouseif.moveclock;
 			if (dx > mouseif.rx) {
 				dx = mouseif.rx;
 			}
 		}
 		else if (dx < 0) {
 			dx *= -1;
-			dx = dx * diff / pc.frame1000;
+			dx = dx * diff / mouseif.moveclock;
 			dx *= -1;
 			if (dx < mouseif.rx) {
 				dx = mouseif.rx;
@@ -59,14 +59,14 @@ static void calc_mousexy(void) {
 
 		dy = mouseif.sy;
 		if (dy > 0) {
-			dy = dy * diff / pc.frame1000;
+			dy = dy * diff / mouseif.moveclock;
 			if (dy > mouseif.ry) {
 				dy = mouseif.ry;
 			}
 		}
 		else if (dy < 0) {
 			dy *= -1;
-			dy = dy * diff / pc.frame1000;
+			dy = dy * diff / mouseif.moveclock;
 			dy *= -1;
 			if (dy < mouseif.ry) {
 				dy = mouseif.ry;
@@ -83,7 +83,7 @@ void mouseint(NEVENTITEM item) {
 	if (item->flag & NEVENT_SETEVENT) {
 		if (!(mouseif.portc & 0x10)) {
 			pic_setirq(0x0d);
-			nevent_set(NEVENT_MOUSE, pc.mouseclock << mouseif.timing,
+			nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_RELATIVE);
 		}
 	}
@@ -113,7 +113,7 @@ static void setportc(REG8 value) {
 	if ((value ^ mouseif.portc) & 0x10) {
 		if (!(value & 0x10)) {
 			if (!nevent_iswork(NEVENT_MOUSE)) {
-				nevent_set(NEVENT_MOUSE, pc.mouseclock << mouseif.timing,
+				nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_ABSOLUTE);
 			}
 		}
@@ -226,7 +226,9 @@ void mouseif_reset(void) {
 
 	ZeroMemory(&mouseif, sizeof(mouseif));
 	mouseif.mode = 0x93;
-	mouseif.portc = 0x10;											// ver0.28
+	mouseif.portc = 0x10;
+	mouseif.intrclock = pccore.realclock / 120;
+	mouseif.moveclock = pccore.realclock / 56400;
 }
 
 void mouseif_bind(void) {

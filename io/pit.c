@@ -19,7 +19,8 @@
 // ver0.31 èÌÇ…âÒÇ∑Åc
 static void setsystimerevent_noint(BOOL absolute) {
 
-	nevent_set(NEVENT_ITIMER, pc.multiple << 16, systimer_noint, absolute);
+	nevent_set(NEVENT_ITIMER, pccore.multiple << 16,
+												systimer_noint, absolute);
 }
 
 void systimer_noint(NEVENTITEM item) {
@@ -35,10 +36,10 @@ static void setsystimerevent(BOOL absolute) {
 
 	cnt = pit.value[0];
 	if (cnt > 8) {									// ç™ãíÇ»Çµ
-		cnt *= pc.multiple;
+		cnt *= pccore.multiple;
 	}
 	else {
-		cnt = pc.multiple << 16;
+		cnt = pccore.multiple << 16;
 	}
 	nevent_set(NEVENT_ITIMER, cnt, systimer, absolute);
 }
@@ -56,7 +57,7 @@ void systimer(NEVENTITEM item) {
 			setsystimerevent(NEVENT_RELATIVE);
 		}
 		else {
-			nevent_set(NEVENT_ITIMER, pc.multiple << 16,
+			nevent_set(NEVENT_ITIMER, pccore.multiple << 16,
 												systimer, NEVENT_RELATIVE);
 		}
 	}
@@ -72,10 +73,10 @@ static void setbeepeventex(BOOL absolute) {
 
 	cnt = pit.value[1];
 	if (cnt > 2) {
-		cnt *= pc.multiple;
+		cnt *= pccore.multiple;
 	}
 	else {
-		cnt = pc.multiple << 16;
+		cnt = pccore.multiple << 16;
 	}
 	while(cnt < 0x100000) {
 		cnt <<= 1;
@@ -90,10 +91,10 @@ static void setbeepevent(BOOL absolute) {
 
 	cnt = pit.value[1];
 	if (cnt > 2) {
-		cnt *= pc.multiple;
+		cnt *= pccore.multiple;
 	}
 	else {
-		cnt = pc.multiple << 16;
+		cnt = pccore.multiple << 16;
 	}
 	nevent_set(NEVENT_BEEP, cnt, beeponeshot, absolute);
 }
@@ -127,10 +128,10 @@ static void setrs232cevent(BOOL absolute) {
 	SINT32	cnt;
 
 	if (pit.value[2] > 1) {
-		cnt = pc.multiple * pit.value[2] * rs232c.mul;
+		cnt = pccore.multiple * pit.value[2] * rs232c.mul;
 	}
 	else {
-		cnt = (pc.multiple << 16) * rs232c.mul;
+		cnt = (pccore.multiple << 16) * rs232c.mul;
 	}
 	nevent_set(NEVENT_RS232C, cnt, rs232ctimer, absolute);
 }
@@ -170,7 +171,7 @@ static UINT pit_latch(int ch) {
 		if (clock < 0) {
 			return(0);
 		}
-		clock /= pc.multiple;
+		clock /= pccore.multiple;
 		if (pit.value[1] > 2) {
 			clock %= pit.value[1];
 		}
@@ -182,7 +183,7 @@ static UINT pit_latch(int ch) {
 	}
 	clock = nevent_getremain(NEVENT_ITIMER + ch);
 	if (clock >= 0) {
-		return(clock / pc.multiple);
+		return(clock / pccore.multiple);
 	}
 	return(0);
 }
@@ -336,7 +337,7 @@ static const IOINP piti71[4] = {
 void itimer_reset(void) {
 
 	ZeroMemory(&pit, sizeof(pit));
-	if (pc.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHz) {
 		pit.value[1] = 998;				// 4MHz
 	}
 	else {

@@ -60,7 +60,7 @@ static void bios_reinitbyswitch(void) {
 	mem[MEMB_PRXDUPD] = prxdupd;
 
 	biosflag = 0x20;
-	if (pc.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHz) {
 		biosflag |= 0x80;
 	}
 	biosflag |= mem[0xa3fea] & 7;
@@ -85,7 +85,7 @@ static void bios_reinitbyswitch(void) {
 	}
 	gdcs.textdisp |= GDCSCRN_EXT;
 
-	if (((pc.model & PCMODELMASK) >= PCMODEL_VX) && (usesound & 0x7e)) {
+	if (((pccore.model & PCMODELMASK) >= PCMODEL_VX) && (usesound & 0x7e)) {
 		iocore_out8(0x188, 0x27);
 		iocore_out8(0x18a, 0x3f);
 	}
@@ -179,7 +179,7 @@ void bios_init(void) {
 	mem[0xffff0] = 0xea;
 	STOREINTELDWORD(mem + 0xffff1, 0xfd800000);
 
-	if ((!biosrom) && (!(pc.model & PCMODEL_EPSON))) {
+	if ((!biosrom) && (!(pccore.model & PCMODEL_EPSON))) {
 		CopyMemory(mem + 0xe8dd8, neccheck, 0x25);
 		pos = LOADINTELWORD(itfrom + 2);
 		CopyMemory(mem + 0xf538e, itfrom + pos, 0x27);
@@ -200,10 +200,10 @@ void bios_init(void) {
 	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
 	mem[ITF_ADRS + 0x7ff0] = 0xea;
 	STOREINTELDWORD(mem + ITF_ADRS + 0x7ff1, 0xf8000000);
-	if (pc.model & PCMODEL_EPSON) {
+	if (pccore.model & PCMODEL_EPSON) {
 		mem[ITF_ADRS + 0x7ff1] = 0x04;
 	}
-	else if ((pc.model & PCMODELMASK) == PCMODEL_VM) {
+	else if ((pccore.model & PCMODELMASK) == PCMODEL_VM) {
 		mem[ITF_ADRS + 0x7ff1] = 0x08;
 	}
 #else
@@ -242,7 +242,7 @@ static void bios_boot(void) {
 	else {
 		CPU_SP = GETBIOSMEM16(0x00404);
 		CPU_SS = GETBIOSMEM16(0x00406);
-		TRACEOUT(("CPU Reset... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
+//		TRACEOUT(("CPU Reset... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
 	}
 }
 
@@ -320,6 +320,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1b:
+			CPU_STI;
 			CPU_REMCLOCK -= 200;
 			bios0x1b();
 			return(1);

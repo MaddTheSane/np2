@@ -12,10 +12,11 @@ START:			xor		ax, ax
 				mov		ss, ax
 				mov		sp, 00feh
 
+				sti
 				mov		word ptr ds:[04ach], 0ch
 				call	diskbios_set
 diskbiosinit1:	mov		es, ds:[04aeh]
-				cmp		word ptr es:[0009h],0aa55h
+				cmp		word ptr es:[0009h], 0aa55h
 				jne		short nextparag1
 				mov		al, [bx]
 				or		al, al

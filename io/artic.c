@@ -9,8 +9,8 @@ void artic_callback(void) {
 	SINT32	mul;
 	SINT32	leng;
 
-	mul = pc.multiple;
-	if (pc.baseclock == PCBASECLOCK25) {
+	mul = pccore.multiple;
+	if (pccore.baseclock == PCBASECLOCK25) {
 		mul *= 16;
 	}
 	else {
@@ -31,8 +31,8 @@ static UINT32 artic_getcnt(void) {
 	SINT32	mul;
 	SINT32	leng;
 
-	mul = pc.multiple;
-	if (pc.baseclock != PCBASECLOCK20) {
+	mul = pccore.multiple;
+	if (pccore.baseclock != PCBASECLOCK20) {
 		mul *= 16;
 	}
 	else {

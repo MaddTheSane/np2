@@ -115,7 +115,7 @@ void epsonio_reset(void) {
 
 void epsonio_bind(void) {
 
-	if (pc.model & PCMODEL_EPSON) {
+	if (pccore.model & PCMODEL_EPSON) {
 		iocore_attachout(0x043d, epsonio_o043d);
 		iocore_attachout(0x043f, epsonio_o043f);
 		iocore_attachout(0x0c07, epsonio_oc07);

@@ -188,7 +188,7 @@ void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute) {
 
 void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, BOOL absolute) {
 
-	nevent_set(id, (pc.realclock / 1000) * ms, proc, absolute);
+	nevent_set(id, (pccore.realclock / 1000) * ms, proc, absolute);
 }
 
 BOOL nevent_iswork(UINT id) {

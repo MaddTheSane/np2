@@ -29,7 +29,7 @@ static REG8 IOINPCALL prt_i42(UINT port) {
 	REG8	ret;
 
 	ret = 0x84;
-	if (pc.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHz) {
 		ret |= 0x20;
 	}
 	if (np2cfg.dipsw[0] & 4) {
@@ -38,7 +38,7 @@ static REG8 IOINPCALL prt_i42(UINT port) {
 	if (np2cfg.dipsw[0] & 0x80) {
 		ret |= 0x08;
 	}
-	if (!(pc.model & PCMODEL_EPSON)) {
+	if (!(pccore.model & PCMODEL_EPSON)) {
 		if (CPU_TYPE & CPUTYPE_V30) {
 			ret |= 0x02;
 		}

@@ -75,14 +75,14 @@ static void info_clock(char *str, int maxlen) {
 	UINT32	clock;
 	char	clockstr[16];
 
-	clock = (pc.realclock + 50000) / 100000;
+	clock = (pccore.realclock + 50000) / 100000;
 	SPRINTF(clockstr, str_clockfmt, clock/10, clock % 10);
 	milstr_ncpy(str, clockstr, maxlen);
 }
 
 static void info_base(char *str, int maxlen) {
 
-	milstr_ncpy(str, (pc.baseclock == PCBASECLOCK25)?str_5MHz:str_8MHz,
+	milstr_ncpy(str, (pccore.baseclock == PCBASECLOCK25)?str_5MHz:str_8MHz,
 																	maxlen);
 }
 

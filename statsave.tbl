@@ -73,7 +73,7 @@ static const STENTRY np2tbl[] = {
 #endif
 	{"EXTMEM",		0,	NP2FLAG_EXT,	NULL,			0},
 
-	{"CORE",		0,	NP2FLAG_CLOCK,	&pc,			sizeof(pc)},
+	{"CORE",		0,	NP2FLAG_CLOCK,	&pccore,		sizeof(pccore)},
 	{"ARTIC",		0,	NP2FLAG_BIN,	&artic,			sizeof(artic)},
 	{"CGROM",		0,	NP2FLAG_BIN,	&cgrom,			sizeof(cgrom)},
 #if !defined(CGWND_FONTPTR)

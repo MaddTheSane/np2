@@ -141,7 +141,7 @@ void sound_changeclock(void) {
 	}
 
 	// とりあえず 25で割り切れる。
-	clock = pc.realclock / 25;
+	clock = pccore.realclock / 25;
 	hz = soundcfg.rate / 25;
 
 	// で、クロック数に合せて調整。(64bit演算しろよな的)

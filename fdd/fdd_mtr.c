@@ -66,7 +66,7 @@ void fddmtr_seek(BYTE drv, BYTE c, UINT size) {
 		FDC_HEAD[curdrv] = c;
 	}
 	if (!np2cfg.MOTOR) {
-		SINT32 s = size * pc.multiple;
+		SINT32 s = size * pccore.multiple;
 		if (s) {													// ver0.28
 			fddmtr_biosbusy = 1;
 			nevent_set(NEVENT_FDBIOSBUSY, s, fdbiosout, NEVENT_ABSOLUTE);

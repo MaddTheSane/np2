@@ -10,9 +10,14 @@ enum {
 	PCMODEL_VM			= 0,
 	PCMODEL_VX			= 1,
 	PCMODELMASK			= 0x3f,
-
 	PCMODEL_PC9821		= 0x40,
-	PCMODEL_EPSON		= 0x80
+	PCMODEL_EPSON		= 0x80,
+
+	PCHDD_SASI			= 0x01,
+	PCHDD_SCSI			= 0x02,
+	PCHDD_IDE			= 0x04,
+
+	PCSOUND_NONE		= 0x00
 };
 
 #define		CPUMODE_8MHz		0x20
@@ -96,17 +101,22 @@ typedef struct {
 typedef struct {
 	UINT32	baseclock;
 	UINT	multiple;
+
+	UINT8	cpumode;
+	UINT8	model;
+	UINT8	hddmode;
+	UINT8	padding;
+
+	UINT32	device;
+	UINT32	sound;
+
 	UINT32	realclock;
 	UINT32	dispclock;
 	UINT32	vsyncclock;
-	UINT32	mouseclock;
 	UINT32	keyboardclock;
 	UINT32	midiclock;
-	UINT32	frame1000;
 	UINT32	raster;
 	UINT32	hsync;
-	UINT8	cpumode;
-	UINT8	model;
 } PCCORE;
 
 
@@ -117,7 +127,7 @@ extern "C" {
 extern const char np2version[];
 
 extern	NP2CFG	np2cfg;
-extern	PCCORE	pc;
+extern	PCCORE	pccore;
 extern	BYTE	screenupdate;
 extern	int		soundrenewal;
 extern	BOOL	drawframe;

@@ -90,7 +90,7 @@ static UINT32 pc9861k_getspeed(REG8 dip) {
 
 static void pc9861_makeclk(PC9861CH m, UINT32 mul2) {
 
-	m->clk = pc.realclock * mul2 / ((m->speed) * 2);
+	m->clk = pccore.realclock * mul2 / ((m->speed) * 2);
 }
 
 static void pc9861ch1_open(void) {

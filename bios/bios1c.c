@@ -12,7 +12,7 @@
 void bios0x1c_03(void) {
 
 	iocore_out8(0x71, 0x00);
-	if (pc.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHz) {
 		iocore_out8(0x71, 0x4e);				// 4MHz
 	}
 	else {

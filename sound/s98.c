@@ -117,7 +117,7 @@ BOOL S98_open(const char *filename) {
 	}
 
 	// ‰Šú‰»
-	s98log.clock = pc.realclock / 1000;
+	s98log.clock = pccore.realclock / 1000;
 	s98log.p = 0;
 
 	// ƒwƒbƒ_‚Ì•Û‘¶

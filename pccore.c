@@ -56,16 +56,15 @@
 				1, 80, 0, 0,
 				{"", ""}, "", "", ""};
 
-	PCCORE	pc = {	PCBASECLOCK25,
-					4,
-					4 * PCBASECLOCK25,
-					4 * PCBASECLOCK25 * 50 / 3104,
-					4 * PCBASECLOCK25 * 5 / 3104,
-					4 * PCBASECLOCK25 / 120,
-					4 * PCBASECLOCK25 / 1920,
-					4 * PCBASECLOCK25 / 3125,
-					4 * PCBASECLOCK25 / 56400,
-					100, 20, 0, PCMODEL_VX};
+	PCCORE	pccore = {	PCBASECLOCK25, 4,
+						0, PCMODEL_VX, 0, 0,
+						0, 0,
+						4 * PCBASECLOCK25,
+						4 * PCBASECLOCK25 * 50 / 3104,
+						4 * PCBASECLOCK25 * 5 / 3104,
+						4 * PCBASECLOCK25 / 1920,
+						4 * PCBASECLOCK25 / 3125,
+						100, 20};
 
 									// on=0, off=1
 //	BYTE	dip_default[3] = {0x3e, 0x63, 0x7a};
@@ -129,11 +128,11 @@ static void setvsyncclock(void) {
 		vs = 1;
 	}
 	maxy = disp + vs;
-	cnt = (pc.realclock * 5) / 282;
-	pc.raster = cnt / maxy;
-	pc.hsync = (pc.raster * 4) / 5;
-	pc.dispclock = pc.raster * disp;
-	pc.vsyncclock = cnt - pc.dispclock;
+	cnt = (pccore.realclock * 5) / 282;
+	pccore.raster = cnt / maxy;
+	pccore.hsync = (pccore.raster * 4) / 5;
+	pccore.dispclock = pccore.raster * disp;
+	pccore.vsyncclock = cnt - pccore.dispclock;
 }
 
 static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
@@ -147,15 +146,15 @@ static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
 	else if (!milstr_cmp(modelstr, str_EPSON)) {
 		model = PCMODEL_EPSON | PCMODEL_VM;
 	}
-	pc.model = model;
+	pccore.model = model;
 
 	if (base >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
-		pc.baseclock = PCBASECLOCK25;			// 2.5MHz
-		pc.cpumode = 0;
+		pccore.baseclock = PCBASECLOCK25;			// 2.5MHz
+		pccore.cpumode = 0;
 	}
 	else {
-		pc.baseclock = PCBASECLOCK20;			// 2.0MHz
-		pc.cpumode = CPUMODE_8MHz;
+		pccore.baseclock = PCBASECLOCK20;			// 2.0MHz
+		pccore.cpumode = CPUMODE_8MHz;
 	}
 	if (multiple == 0) {
 		multiple = 1;
@@ -163,16 +162,14 @@ static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
 	else if (multiple > 32) {
 		multiple = 32;
 	}
-	pc.multiple = multiple;
-	pc.realclock = pc.baseclock * multiple;
-	pc.raster = pc.realclock / 24816;							// ver0.28
-	pc.hsync = (pc.raster * 4) / 5;								// ver0.28
-	pc.dispclock = pc.realclock * 50 / 3102;
-	pc.vsyncclock = pc.realclock * 5 / 3102;
-	pc.mouseclock = pc.realclock / 120;
-	pc.keyboardclock = pc.realclock / 1920;
-	pc.midiclock = pc.realclock / 3125;
-	pc.frame1000 = pc.realclock / 56400;
+	pccore.multiple = multiple;
+	pccore.realclock = pccore.baseclock * multiple;
+	pccore.raster = pccore.realclock / 24816;
+	pccore.hsync = (pccore.raster * 4) / 5;
+	pccore.dispclock = pccore.realclock * 50 / 3102;
+	pccore.vsyncclock = pccore.realclock * 5 / 3102;
+	pccore.keyboardclock = pccore.realclock / 1920;
+	pccore.midiclock = pccore.realclock / 3125;
 }
 
 
@@ -329,7 +326,7 @@ void pccore_reset(void) {
 	wavemix_bind();
 #endif
 
-	if (pc.model & PCMODEL_EPSON) {				// RAM ctrl
+	if (pccore.model & PCMODEL_EPSON) {			// RAM ctrl
 		CPU_RAM_D000 = 0xffff;
 	}
 
@@ -337,7 +334,7 @@ void pccore_reset(void) {
 	cbuscore_reset();
 	fmboard_reset(np2cfg.SOUND_SW);
 
-	i286_memorymap((pc.model & PCMODEL_EPSON)?1:0);
+	i286_memorymap((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();
@@ -534,9 +531,9 @@ void screenvsync(NEVENTITEM item) {
 		gdc.vsyncint = 0;
 		pic_setirq(2);
 	}
-	nevent_set(NEVENT_FLAMES, pc.vsyncclock, screendisp, NEVENT_RELATIVE);
+	nevent_set(NEVENT_FLAMES, pccore.vsyncclock, screendisp, NEVENT_RELATIVE);
 
-	// drawscreenで pc.vsyncclockが変更される可能性があります		// ver0.28
+	// drawscreenで pccore.vsyncclockが変更される可能性があります
 	if (np2cfg.DISPSYNC) {											// ver0.29
 		drawscreen();
 	}
@@ -565,7 +562,7 @@ void pccore_exec(BOOL draw) {
 	MEMWAIT_TRAM = np2cfg.wait[0];
 	MEMWAIT_VRAM = np2cfg.wait[2];
 	MEMWAIT_GRCG = np2cfg.wait[4];
-	nevent_set(NEVENT_FLAMES, pc.dispclock, screenvsync, NEVENT_RELATIVE);
+	nevent_set(NEVENT_FLAMES, pccore.dispclock, screenvsync, NEVENT_RELATIVE);
 
 //	nevent_get1stevent();
 

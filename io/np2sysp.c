@@ -79,7 +79,7 @@ static void cmd_cpu(const void *arg1, long arg2) {
 
 static void cmd_clock(const void *arg1, long arg2) {
 
-	SPRINTF(np2sysp.outstr, str_mhz, (pc.realclock + 500000) / 1000000);
+	SPRINTF(np2sysp.outstr, str_mhz, (pccore.realclock + 500000) / 1000000);
 	np2sysp.outpos = 0;
 	(void)arg1;
 	(void)arg2;
@@ -87,7 +87,7 @@ static void cmd_clock(const void *arg1, long arg2) {
 
 static void cmd_multiple(const void *arg1, long arg2) {
 
-	SPRINTF(np2sysp.outstr, str_u, pc.multiple);
+	SPRINTF(np2sysp.outstr, str_u, pccore.multiple);
 	np2sysp.outpos = 0;
 	(void)arg1;
 	(void)arg2;

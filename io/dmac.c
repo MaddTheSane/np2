@@ -149,7 +149,7 @@ static void IOOUTCALL dmac_o21(UINT port, REG8 dat) {
 	DMACH	dmach;
 
 	dmach = dmac.dmach + (((port >> 1) + 1) & 3);
-	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat;
+	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat & 0x0f;
 }
 
 static REG8 IOINPCALL dmac_i01(UINT port) {

@@ -79,7 +79,9 @@ sxsi_bios:		cld
 				mov		cx, 8
 				mov		si, offset sxsibiosstr
 				mov		dx, 07efh
+				cli
 				rep outsb
+				sti
 				pop		ax
 				pop		bx
 				pop		cx

@@ -378,7 +378,7 @@ static REG8 IOINPCALL gdc_i60(UINT port) {
 	ret = 0x80 | gdc.vsync;		// | m_drawing;
 	remain = nevent_getremain(NEVENT_FLAMES);
 	if (remain >= 0) {
-		if ((remain % pc.raster) < pc.hsync) {
+		if ((remain % pccore.raster) < pccore.hsync) {
 			ret |= 0x40;
 		}
 	}
@@ -545,7 +545,7 @@ static REG8 IOINPCALL gdc_ia0(UINT port) {
 	ret = 0x80 | gdc.vsync | gdc.s_drawing;
 	remain = nevent_getremain(NEVENT_FLAMES);
 	if (remain >= 0) {
-		if ((remain % pc.raster) < (pc.hsync)) {
+		if ((remain % pccore.raster) < (pccore.hsync)) {
 			ret |= 0x40;
 		}
 	}

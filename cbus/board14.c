@@ -19,9 +19,9 @@ static UINT pit3_latch(void) {
 
 	clock = nevent_getremain(NEVENT_MUSICGEN);
 	if (clock >= 0) {
-		clock /= pc.multiple;
+		clock /= pccore.multiple;
 		clock /= 8;
-		if (pc.baseclock == PCBASECLOCK25) {
+		if (pccore.baseclock == PCBASECLOCK25) {
 			clock = clock * 13 / 16;
 		}
 		return(clock);
@@ -104,12 +104,12 @@ static void setmusicgenevent(BOOL absolute) {
 	SINT32	cnt;
 
 	if (pit.value[3] > 4) {						// ª‹’‚È‚µ
-		cnt = pc.multiple * pit.value[3];
+		cnt = pccore.multiple * pit.value[3];
 	}
 	else {
-		cnt = pc.multiple << 16;
+		cnt = pccore.multiple << 16;
 	}
-	if (pc.baseclock == PCBASECLOCK25) {
+	if (pccore.baseclock == PCBASECLOCK25) {
 		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
 	}
 	cnt *= 8;

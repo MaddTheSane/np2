@@ -66,11 +66,11 @@ static void set_fmtimeraevent(BOOL absolute) {
 	SINT32	l;
 
 	l = 18 * (1024 - fmtimer.timera);
-	if (pc.cpumode & CPUMODE_8MHz) {		// 4MHz
-		l = (l * 1248 / 625) * pc.multiple;
+	if (pccore.cpumode & CPUMODE_8MHz) {		// 4MHz
+		l = (l * 1248 / 625) * pccore.multiple;
 	}
-	else {									// 5MHz
-		l = (l * 1536 / 625) * pc.multiple;
+	else {										// 5MHz
+		l = (l * 1536 / 625) * pccore.multiple;
 	}
 	nevent_set(NEVENT_FMTIMERA, l, fmport_a, absolute);
 }
@@ -80,11 +80,11 @@ static void set_fmtimerbevent(BOOL absolute) {
 	SINT32	l;
 
 	l = 288 * (256 - fmtimer.timerb);
-	if (pc.cpumode & CPUMODE_8MHz) {		// 4MHz
-		l = (l * 1248 / 625) * pc.multiple;
+	if (pccore.cpumode & CPUMODE_8MHz) {		// 4MHz
+		l = (l * 1248 / 625) * pccore.multiple;
 	}
-	else {									// 5MHz
-		l = (l * 1536 / 625) * pc.multiple;
+	else {										// 5MHz
+		l = (l * 1536 / 625) * pccore.multiple;
 	}
 	nevent_set(NEVENT_FMTIMERB, l, fmport_b, absolute);
 }

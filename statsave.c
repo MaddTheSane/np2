@@ -572,7 +572,7 @@ static int flagsave_epson(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
 
-	if (!(pc.model & PCMODEL_EPSON)) {
+	if (!(pccore.model & PCMODEL_EPSON)) {
 		return(NP2FLAG_SUCCESS);
 	}
 	ret = flagsave_create(f, t);
@@ -1580,7 +1580,7 @@ const STENTRY	*tblterm;
 	flagclose(&f);
 
 	// I/OçÏÇËíºÇµ
-	i286_memorymap((pc.model & PCMODEL_EPSON)?1:0);
+	i286_memorymap((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();

@@ -57,7 +57,7 @@ static void keyb_int(BOOL absolute) {
 			keyb.buffers--;
 			pic_setirq(1);
 		}
-		nevent_set(NEVENT_KEYBOARD, pc.keyboardclock,
+		nevent_set(NEVENT_KEYBOARD, pccore.keyboardclock,
 											keyb_callback, absolute);
 	}
 	else {

@@ -1,7 +1,8 @@
 
 typedef struct {
 	UINT32	lastc;
-	UINT	rapidclock;
+	UINT32	intrclock;
+	UINT32	moveclock;
 	SINT16	x;
 	SINT16	y;
 	SINT16	rx;

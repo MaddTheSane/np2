@@ -245,11 +245,11 @@ void pic_setirq(REG8 irq) {
 				if ((pit.mode[0] & 0x0c) == 0x04) {
 					SINT32 cnt;										// ver0.29
 					if (pit.value[0] > 8) {
-						cnt = pc.multiple * pit.value[0];
+						cnt = pccore.multiple * pit.value[0];
 						cnt >>= 2;
 					}
 					else {
-						cnt = pc.multiple << (16 - 2);
+						cnt = pccore.multiple << (16 - 2);
 					}
 					nevent_set(NEVENT_PICMASK, cnt, picmask, NEVENT_ABSOLUTE);
 				}

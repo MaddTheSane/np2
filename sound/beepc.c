@@ -28,7 +28,7 @@ void beep_changeclock(void) {
 	UINT32	hz;
 	UINT	rate;
 
-	hz = pc.realclock / 25;
+	hz = pccore.realclock / 25;
 	rate = beepcfg.rate / 25;
 	beepcfg.samplebase = (1 << 16) * rate / hz;
 }
@@ -47,7 +47,7 @@ void beep_hzset(UINT16 cnt) {
 	sound_sync();
 	beep.hz = 0;
 	if ((cnt & 0xff80) && (beepcfg.rate)) {
-		hz = 65536.0 / 4.0 * pc.baseclock / beepcfg.rate / cnt;
+		hz = 65536.0 / 4.0 * pccore.baseclock / beepcfg.rate / cnt;
 		if (hz < 0x8000) {
 			beep.hz = (UINT16)hz;
 			return;
@@ -142,138 +142,4 @@ void beep_oneventset(void) {
 		}
 	}
 }
-
-
-// ----
-
-#if 0
-LABEL void __fastcall beep_update(void *buf, int buflength) {
-
-		__asm {
-				cmp		edx, 0
-				je		beep_end
-
-				cmp		beep.mode, 1
-				jc		beep_onshot
-				jne		beep_end
-
-				cmp		beep.buz, 0
-				je		beep_puchichk
-				mov		ax, beep.hz
-				test	ax, ax
-				je		beep_puchichk
-
-				pushad
-				mov		edi, beeptbl.vol
-				test	edi, edi
-				je		beep_mkend
-				shl		edi, 8
-
-beep_lp1:		mov		esi, 4
-beep_lp2:		add		beep.cnt, ax
-				js		short beep_mina
-					add		[ecx], edi
-					add		[ecx+4], edi
-				jmp		short beep_lped
-beep_mina:			sub		[ecx], edi
-					sub		[ecx+4], edi
-beep_lped:		dec		esi
-				jne		beep_lp2
-				add		ecx, 8
-				dec		edx
-				jne		beep_lp1
-				mov		beep.puchi, edx
-
-beep_mkend:		popad
-beep_end:		ret
-
-				align	4
-beep_puchichk:	cmp		beep.puchi, 0
-				jne		short beep_puchiout
-				ret
-				align	4
-beep_puchiout:	pushad
-				mov		edi, beeptbl.vol
-				shl		edi, 10
-beep_puchilp:	add		[ecx], edi
-				add		[ecx+4], edi
-				add		ecx, 8
-				dec		beep.puchi
-				je		beep_puchiend
-				dec		edx
-				jne		beep_puchilp
-beep_puchiend:	popad
-				ret
-
-				align	4
-beep_onshot:	cmp		beepevent.events, 0
-				je		beep_end
-				cmp		pc.sampleclock, 0
-				je		beep_end
-
-				pushad
-				mov		esi, offset beepevent.event
-				movzx	edi, np2cfg.BEEP_VOL
-				test	edi, edi
-				je		beep1s_mkend
-				shl		edi, 11
-
-beep1shot_lp:	mov		ebp, pc.sampleclock
-				xor		eax, eax
-
-beep1shot_lp1:	mov		ebx, [esi]BEEP1EVENT.clock
-				cmp		ebp, ebx
-				jc		beep1s_envof
-
-				cmp		beepevent.lastenable, 0
-				je		beep1s_rmnchk
-				add		eax, ebx
-beep1s_rmnchk:	mov		edx, [esi]BEEP1EVENT.enable
-				mov		beepevent.lastenable, edx
-				add		esi, type BEEP1EVENT
-				dec		beepevent.events
-				je		beep_nonevents
-				sub		ebp, ebx
-				jne		beep1shot_lp1
-				jmp		short beep1s_calcvol
-
-beep1s_envof:	sub		[esi]BEEP1EVENT.clock, ebp
-				cmp		beepevent.lastenable, 0
-				je		beep1s_calcvol
-				add		eax, ebp
-beep1s_calcvol:	mul		edi
-				div		pc.sampleclock
-				add		[ecx], eax
-				add		[ecx+4], eax
-				add		ecx, 8
-				dec		dword ptr [esp + 20]			; pushad‚Ìedx
-				jne		beep1shot_lp
-				jmp		beep1s_mkend
-
-beep_nonevents:	cmp		beepevent.lastenable, 0
-				je		beep1s_calc2
-				sub		ebp, ebx
-;				shr		ebp, 1
-				add		eax, ebp
-beep1s_calc2:	mul		edi
-				div		pc.sampleclock
-				add		[ecx], eax
-				add		[ecx+4], eax
-				add		ecx, 8
-				dec		dword ptr [esp + 20]			; pushad‚Ìedx
-				je		beep1s_mkend
-				cmp		beepevent.lastenable, 0
-				je		beep1s_mkend
-beep1shot_lp2:	add		[ecx], edi
-				add		[ecx+4], edi
-				add		ecx, 8
-				dec		dword ptr [esp + 20]			; pushad‚Ìedx
-				jne		beep1shot_lp2
-
-beep1s_mkend:
-				popad
-				ret
-		}
-}
-#endif
 

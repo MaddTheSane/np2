@@ -12,12 +12,12 @@ static void setamd98event(BOOL absolute) {
 	SINT32	cnt;
 
 	if (pit.value[3] > 8) {						// ª‹’‚È‚µ
-		cnt = pc.multiple * pit.value[3];
+		cnt = pccore.multiple * pit.value[3];
 	}
 	else {
-		cnt = pc.multiple << 16;
+		cnt = pccore.multiple << 16;
 	}
-	if (pc.baseclock == PCBASECLOCK25) {
+	if (pccore.baseclock == PCBASECLOCK25) {
 		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
 	}
 	nevent_set(NEVENT_MUSICGEN, cnt, amd98int, absolute);
