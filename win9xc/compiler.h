@@ -73,9 +73,8 @@ typedef signed __int64		SINT64;
 
 #define	SOUNDRESERVE	20
 
-#define	SUPPORT_WAVEMIX
-
 #define	SUPPORT_HOSTDRV
+#define	SUPPORT_SWSEEKSND
 
 #define	FASTCALL	__fastcall
 

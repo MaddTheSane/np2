@@ -86,7 +86,7 @@ G_CLOCK				equ		(GD_SIZE + &02)
 	IMPORT	gdc
 
 	EXPORT	grph_table0
-	EXPORT	makegrph_init
+	EXPORT	makegrph_initialize
 	EXPORT	makegrph
 
 	AREA	.rdata, DATA, READONLY
@@ -111,7 +111,8 @@ grph_table0		dcd		&00000000
 
 	AREA	.text, CODE, READONLY
 
-makegrph_init	mov		pc, lr
+makegrph_initialize
+				mov		pc, lr
 
 
 	; r8 = mem

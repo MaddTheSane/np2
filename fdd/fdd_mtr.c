@@ -2,16 +2,83 @@
 #include	"soundmng.h"
 #include	"pccore.h"
 #include	"fdd_mtr.h"
-#if defined(SUPPORT_WAVEMIX)
-#include	"wavemix.h"
+#if defined(SUPPORT_SWSEEKSND)
+#include	"sound.h"
+#include	"fdd_mtr.res"
 #endif
 
 
-		int		fddmtr_biosbusy = 0;							// ver0.26
-static	BYTE	mtr_curevent = 0;
-static	UINT	nextevent = 0;
-static	BYTE	FDC_HEAD[4] = {0, 0, 0, 0};
-static	BYTE	curdrv = 0;
+#if defined(SUPPORT_SWSEEKSND)
+
+static struct {
+	UINT	enable;
+	struct {
+		PMIXHDR	hdr;
+		PMIXTRK	trk[2];
+	}		snd;
+} mtrsnd;
+
+void fddmtrsnd_initialize(UINT rate) {
+
+	ZeroMemory(&mtrsnd, sizeof(mtrsnd));
+	if (np2cfg.MOTORVOL) {
+		mtrsnd.enable = 1;
+		mtrsnd.snd.hdr.enable = 3;
+		pcmmix_regist(&mtrsnd.snd.trk[0].data,
+								(void *)fddseek, sizeof(fddseek), rate);
+		mtrsnd.snd.trk[0].flag = PMIXFLAG_L | PMIXFLAG_R | PMIXFLAG_LOOP;
+		mtrsnd.snd.trk[0].volume = (np2cfg.MOTORVOL << 12) / 100;
+		pcmmix_regist(&mtrsnd.snd.trk[1].data,
+								(void *)fddseek1, sizeof(fddseek1), rate);
+		mtrsnd.snd.trk[1].flag = PMIXFLAG_L | PMIXFLAG_R;
+		mtrsnd.snd.trk[1].volume = (np2cfg.MOTORVOL << 12) / 100;
+	}
+}
+
+void fddmtrsnd_bind(void) {
+
+	if (mtrsnd.enable) {
+		sound_streamregist(&mtrsnd.snd, (SOUNDCB)pcmmix_getpcm);
+	}
+}
+
+void fddmtrsnd_deinitialize(void) {
+
+	int		i;
+	void	*ptr;
+
+	for (i=0; i<2; i++) {
+		ptr = mtrsnd.snd.trk[i].data.sample;
+		mtrsnd.snd.trk[i].data.sample = NULL;
+		if (ptr) {
+			_MFREE(ptr);
+		}
+	}
+}
+
+void fddmtrsnd_play(UINT num, BOOL play) {
+
+	PMIXTRK	*trk;
+
+	if ((mtrsnd.enable) && (num < 2)) {
+		sound_sync();
+		trk = mtrsnd.snd.trk + num;
+		if (play) {
+			if (trk->data.sample) {
+				trk->pcm = trk->data.sample;
+				trk->remain = trk->data.samples;
+				mtrsnd.snd.hdr.playing |= (1 << num);
+			}
+		}
+		else {
+			mtrsnd.snd.hdr.playing &= ~(1 << num);
+		}
+	}
+}
+#endif
+
+
+// ----
 
 enum {
 	MOVE1TCK_MS		= 15,
@@ -19,95 +86,98 @@ enum {
 	DISK1ROL_MS		= 166
 };
 
+	_FDDMTR		fddmtr;
+
 static void fddmtr_event(void) {
 
-	switch(mtr_curevent) {
+	switch(fddmtr.curevent) {
 		case 100:
-#if defined(SUPPORT_WAVEMIX)
-			wavemix_stop(SOUND_PCMSEEK);
+#if defined(SUPPORT_SWSEEKSND)
+			fddmtrsnd_play(0, FALSE);
 #else
 			soundmng_pcmstop(SOUND_PCMSEEK);
 #endif
-			mtr_curevent = 0;
+			fddmtr.curevent = 0;
 			break;
 
 		default:
-			mtr_curevent = 0;
+			fddmtr.curevent = 0;
 			break;
 	}
 }
 
-void fddmtr_init(void) {
+void fddmtr_initialize(void) {
 
 	fddmtr_event();
-	FillMemory(FDC_HEAD, sizeof(FDC_HEAD), 42);
+	FillMemory(fddmtr.head, sizeof(fddmtr.head), 42);
 }
 
 void fddmtr_callback(UINT time) {
 
-	if ((mtr_curevent) && (time >= nextevent)) {
+	if ((fddmtr.curevent) && (time >= fddmtr.nextevent)) {
 		fddmtr_event();
 	}
 }
 
 void fdbiosout(NEVENTITEM item) {
 
-	fddmtr_biosbusy = 0;
+	fddmtr.busy = 0;
 	(void)item;
 }
 
-void fddmtr_seek(BYTE drv, BYTE c, UINT size) {
+void fddmtr_seek(REG8 drv, REG8 c, UINT size) {
 
-	int		regmove = 0;
-	SINT32	waitms = 0;
+	int		regmove;
+	SINT32	waitcnt;
 
-	if (c != 0xff) {
-		regmove = FDC_HEAD[curdrv] - c;
-		FDC_HEAD[curdrv] = c;
-	}
+	drv &= 3;
+	regmove = fddmtr.head[drv] - c;
+	fddmtr.head[drv] = c;
+
 	if (!np2cfg.MOTOR) {
-		SINT32 s = size * pccore.multiple;
-		if (s) {													// ver0.28
-			fddmtr_biosbusy = 1;
-			nevent_set(NEVENT_FDBIOSBUSY, s, fdbiosout, NEVENT_ABSOLUTE);
+		if (size) {
+			fddmtr.busy = 1;
+			nevent_set(NEVENT_FDBIOSBUSY, size * pccore.multiple,
+												fdbiosout, NEVENT_ABSOLUTE);
+			return;
 		}
-		return;
 	}
 
-	if (regmove < 0) {												// ver0.26
-		regmove *= (-1);
+	waitcnt = (size * DISK1ROL_MS) / (1024 * 8);
+	if (regmove < 0) {
+		regmove = 0 - 1;
 	}
 	if (regmove == 1) {
-		if (mtr_curevent < 80) {
+		if (fddmtr.curevent < 80) {
 			fddmtr_event();
-#if defined(SUPPORT_WAVEMIX)
-			wavemix_play(SOUND_PCMSEEK1, FALSE);
+#if defined(SUPPORT_SWSEEKSND)
+			fddmtrsnd_play(1, TRUE);
 #else
 			soundmng_pcmplay(SOUND_PCMSEEK1, FALSE);
 #endif
-			mtr_curevent = 80;
-			nextevent = GETTICK() + MOVEMOTOR1_MS;
+			fddmtr.curevent = 80;
+			fddmtr.nextevent = GETTICK() + MOVEMOTOR1_MS;
 		}
 	}
 	else if (regmove) {
-		if (mtr_curevent < 100) {
+		if (fddmtr.curevent < 100) {
 			fddmtr_event();
-#if defined(SUPPORT_WAVEMIX)
-			wavemix_play(SOUND_PCMSEEK, TRUE);
+#if defined(SUPPORT_SWSEEKSND)
+			fddmtrsnd_play(0, TRUE);
 #else
 			soundmng_pcmplay(SOUND_PCMSEEK, TRUE);
 #endif
-			mtr_curevent = 100;
-			nextevent = GETTICK() + (regmove * MOVE1TCK_MS);
+			fddmtr.curevent = 100;
+			fddmtr.nextevent = GETTICK() + (regmove * MOVE1TCK_MS);
 		}
 		if (regmove >= 32) {
-			waitms += DISK1ROL_MS;
+			waitcnt += DISK1ROL_MS;
 		}
 	}
-	waitms += (size * DISK1ROL_MS) / (1024 * 8);
-	if (waitms) {
-		fddmtr_biosbusy = 1;
-		nevent_setbyms(NEVENT_FDBIOSBUSY, waitms, fdbiosout, NEVENT_ABSOLUTE);
+	if (waitcnt) {
+		fddmtr.busy = 1;
+		nevent_setbyms(NEVENT_FDBIOSBUSY,
+										waitcnt, fdbiosout, NEVENT_ABSOLUTE);
 	}
 	(void)drv;
 }

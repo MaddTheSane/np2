@@ -46,6 +46,10 @@
 　　　io/serial.*に存在した keystat系を /keystat.* へ移動
 　　　　keystat.cをリンク、 keystat.hをインクルード
 
+　　　SUPPORT_WAVEMIX廃止
+　　　　→ SUPPORT_SWSEEKSNDに変更
+　　　　ハードウェアで対応してる場合には 一応 SUPPORT_HWSEEKSNDと定義して
+　　　　くれると嬉すぃ
 
 
 // ----

@@ -38,7 +38,7 @@ extern "C" {
 extern	BOOL	biosrom;
 
 
-void bios_init(void);
+void bios_initialize(void);
 UINT MEMCALL biosfunc(UINT32 adrs);
 
 void bios0x02(void);

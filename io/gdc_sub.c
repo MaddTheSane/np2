@@ -85,7 +85,7 @@ REG8 gdcbitreverse(REG8 data) {
 #endif
 
 
-void gdcsub_init(void) {
+void gdcsub_initialize(void) {
 
 	int		i;
 

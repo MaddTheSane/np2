@@ -42,7 +42,7 @@ extern	VRAM_T	vramop;
 extern	BYTE	tramupdate[0x1000];
 extern	BYTE	vramupdate[0x8000];
 
-void vram_init(void);
+void vram_initialize(void);
 
 #if !defined(CPUSTRUC_MEMWAIT)
 #define	MEMWAIT_TRAM	vramop.tramwait

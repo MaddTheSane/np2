@@ -10,7 +10,7 @@
 	DSYNC	dsync;
 
 
-void dispsync_init(void) {
+void dispsync_initialize(void) {
 
 	ZeroMemory(&dsync, sizeof(dsync));
 	dsync.textymax = 400;

@@ -13,7 +13,7 @@ extern "C" {
 
 extern	_CALENDAR	cal;
 
-void calendar_init(void);
+void calendar_initialize(void);
 void calendar_inc(void);
 void calendar_set(const BYTE *bcd);
 void calendar_get(BYTE *bcd);

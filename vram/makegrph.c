@@ -21,7 +21,7 @@ typedef struct {
 
 	UINT32	grph_table[4*256*2];
 
-void VRAMCALL makegrph_init(void) {
+void makegrph_initialize(void) {
 
 	int		i, j;
 	BYTE	bit;
@@ -64,7 +64,7 @@ void VRAMCALL makegrph_init(void) {
 
 	UINT32	grph_table1[256*2];
 
-void VRAMCALL makegrph_init(void) {
+void makegrph_initialize(void) {
 
 	int		i;
 	BYTE	bit;
@@ -103,7 +103,7 @@ void VRAMCALL makegrph_init(void) {
 
 	UINT32	grph_table0[16];
 
-void VRAMCALL makegrph_init(void) {
+void makegrph_initialize(void) {
 
 	int		i;
 	BYTE	bit;

@@ -56,6 +56,3 @@ UINT timing_getcount(void) {
 	return(timing.cnt);
 }
 
-void timing_term(void) {
-}
-

@@ -13,7 +13,7 @@ extern	BYTE	__font[0x84000];
 #define	fontrom		(__font)
 #endif
 
-void font_init(void);
+void font_initialize(void);
 BYTE font_load(const char *filename, BOOL force);
 
 #ifdef __cplusplus

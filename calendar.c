@@ -89,7 +89,7 @@ static void date2bcd(BYTE *bcd, const _SYSTIME *t) {
 
 // -----
 
-void calendar_init(void) {
+void calendar_initialize(void) {
 
 	timemng_gettime(&cal.dt);
 	cal.steps = 0;

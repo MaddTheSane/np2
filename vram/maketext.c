@@ -14,12 +14,7 @@ static	UINT32	text_table[512];
 static	UINT32	text_tblx2[512][2];
 
 
-void maketext_reset(void) {
-
-	ZeroMemory(&tramflag, sizeof(tramflag));
-}
-
-void maketext_init(void) {
+void maketext_initialize(void) {
 
 	int		i;
 	int		j;
@@ -65,6 +60,11 @@ void maketext_init(void) {
 		text_tblx2[i][1] |= (text_table[i] & 0x000000ff);
 #endif
 	}
+}
+
+void maketext_reset(void) {
+
+	ZeroMemory(&tramflag, sizeof(tramflag));
 }
 
 static BYTE dirtyonblink(void) {

@@ -6,7 +6,7 @@
 	_NEVENT		nevent;
 
 
-void nevent_init(void) {
+void nevent_allreset(void) {
 
 	// ‚·‚×‚Ä‚ğƒŠƒZƒbƒg
 	ZeroMemory(&nevent, sizeof(nevent));

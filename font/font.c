@@ -14,7 +14,7 @@
 static const char fonttmpname[] = "font.tmp";
 
 
-void font_init(void) {
+void font_initialize(void) {
 
 	BYTE	*p;
 	BYTE	*q;

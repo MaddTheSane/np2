@@ -176,9 +176,7 @@ static void sound_init(void) {
 		rate = 0;
 	}
 	sound_create(rate, np2cfg.delayms);
-#if defined(SUPPORT_WAVEMIX)
-	wavemix_initialize(rate);
-#endif
+	fddmtrsnd_initialize(rate);
 	beep_initialize(rate);
 	beep_setvol(np2cfg.BEEP_VOL);
 	tms3631_initialize(rate);
@@ -199,10 +197,8 @@ static void sound_init(void) {
 static void sound_term(void) {
 
 	soundmng_stop();
-#if defined(SUPPORT_WAVEMIX)
-	wavemix_deinitialize();
-#endif
 	rhythm_deinitialize();
+	fddmtrsnd_deinitialize();
 	sound_destroy();
 }
 
@@ -213,15 +209,15 @@ void pccore_init(void) {
 	pal_initlcdtable();
 	pal_makelcdpal();
 	pal_makeskiptable();
-	dispsync_init();
+	dispsync_initialize();
 	sxsi_initialize();
 
-	font_init();
+	font_initialize();
 	font_load(np2cfg.fontfile, TRUE);
-	maketext_init();
-	makegrph_init();
-	gdcsub_init();
-	fddfile_init();
+	maketext_initialize();
+	makegrph_initialize();
+	gdcsub_initialize();
+	fddfile_initialize();
 
 	sound_init();
 
@@ -300,7 +296,7 @@ void pccore_reset(void) {
 	}
 
 	pccore_set();
-	nevent_init();
+	nevent_allreset();
 
 	CPU_RESET();
 	CPU_SETEXTSIZE((UINT32)pccore.extmem);
@@ -332,9 +328,7 @@ void pccore_reset(void) {
 	sound_changeclock();
 	beep_changeclock();
 	sound_reset();
-#if defined(SUPPORT_WAVEMIX)
-	wavemix_bind();
-#endif
+	fddmtrsnd_bind();
 
 	fddfile_reset2dmode();
 	bios0x18_16(0x20, 0xe1);
@@ -349,13 +343,13 @@ void pccore_reset(void) {
 	cbuscore_bind();
 	fmboard_bind();
 
-	fddmtr_init();
-	calendar_init();
-	vram_init();
+	fddmtr_initialize();
+	calendar_initialize();
+	vram_initialize();
 
 	pal_change(1);
 
-	bios_init();
+	bios_initialize();
 
 	if (np2cfg.ITF_WORK) {
 		CS_BASE = 0xf0000;

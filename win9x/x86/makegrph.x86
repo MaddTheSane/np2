@@ -32,10 +32,10 @@ GDC_S_WRITE		equ		(GDC_S_CSRR+5)
 
 section .text
 
-			align	16
-			global	@makegrph_init@0
+		align	16
+		global	_makegrph_initialize
 
-@makegrph_init@0:
+_makegrph_initialize:
 				pushad
 				xor		edx, edx
 				mov		ebp, 4

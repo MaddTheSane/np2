@@ -17,10 +17,6 @@ enum {
 };
 
 
-static	BYTE	mtr_c = 0;
-static	UINT	mtr_r = 0;
-
-
 // ---- FDD
 
 static BOOL setfdcmode(REG8 drv, REG8 type, REG8 rpm) {
@@ -97,7 +93,6 @@ static BOOL biosfd_seek(REG8 track, BOOL ndensity) {
 		}
 	}
 	fdc.ncn = track;
-	mtr_c = track;
 	if (fdd_seek()) {
 		return(FAILURE);
 	}
@@ -298,8 +293,10 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 	BYTE	hd;
 	int		result = FDCBIOS_NORESULT;
 	UINT32	addr;
+	UINT8	mtr_c;
+	UINT	mtr_r;
 
-	mtr_c = 0xff;
+	mtr_c = fdc.ncn;
 	mtr_r = 0;
 
 	// ‚Æ‚è‚ ‚¦‚¸BIOS‚ÌŽž‚Í–³Ž‹‚·‚é
@@ -678,7 +675,9 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 			break;
 	}
 	fdd_int(result);
-	fddmtr_seek(fdc.us, mtr_c, mtr_r);
+	if (mtr_c != fdc.ncn) {
+		fddmtr_seek(fdc.us, mtr_c, mtr_r);
+	}
 	return(ret_ah);
 }
 

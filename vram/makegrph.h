@@ -9,7 +9,7 @@ enum {
 extern "C" {
 #endif
 
-void VRAMCALL makegrph_init(void);
+void makegrph_initialize(void);
 void VRAMCALL makegrph(int page, int alldraw);
 
 #ifdef __cplusplus

@@ -162,7 +162,7 @@ static const UINT16 biosoffset[0x20] = {
 			BIOSOFST_1c,	BIOSOFST_IRET,	BIOSOFST_1e,	BIOSOFST_1f};
 
 
-void bios_init(void) {
+void bios_initialize(void) {
 
 	char	path[MAX_PATH];
 	FILEH	fh;
@@ -372,7 +372,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 		case BIOS_BASE + BIOSOFST_WAIT:
 			CPU_STI;
-			if (fddmtr_biosbusy) {						// ver0.26
+			if (fddmtr.busy) {
 				CPU_IP--;
 				CPU_REMCLOCK = -1;
 			}

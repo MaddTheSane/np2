@@ -62,7 +62,7 @@ extern "C" {
 extern	_NEVENT		nevent;
 
 // 初期化
-void nevent_init(void);
+void nevent_allreset(void);
 
 // 最短イベントのセット
 void nevent_get1stevent(void);

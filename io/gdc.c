@@ -797,13 +797,6 @@ void gdc_reset(void) {
 		gdc.display = 2;
 	}
 	gdc.bitac = 0xff;
-
-#if 0	// bind ‚ÅŒvŽZ‚³‚ê‚é”¤
-	gdc.rasterclock = pccore.realclock / 24816;
-	gdc.hsyncclock = (gdc.rasterclock * 4) / 5;
-	gdc.dispclock = pccore.realclock * 50 / 3102;
-	gdc.vsyncclock = pccore.realclock * 5 / 3102;
-#endif
 }
 
 void gdc_bind(void) {

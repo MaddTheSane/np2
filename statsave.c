@@ -907,7 +907,6 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	// 復元。 これ移動すること！
-	rhythm_update(&rhythm);
 	adpcm_update(&adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
@@ -1348,17 +1347,15 @@ const SFENTRY	*tblterm;
 	sxsi_trash();
 
 	ret |= flagload_common(&sffh->sfh, np2tbl);
-	nevent_init();
 
 	CPU_RESET();
 	CPU_SETEXTSIZE((UINT32)pccore.extmem);
+	nevent_allreset();
 
 	sound_changeclock();
 	beep_changeclock();
 	sound_reset();
-#if defined(SUPPORT_WAVEMIX)
-	wavemix_bind();
-#endif
+	fddmtrsnd_bind();
 
 	iocore_reset();								// サウンドでpicを呼ぶので…
 	cbuscore_reset();

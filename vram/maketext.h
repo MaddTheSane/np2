@@ -32,8 +32,8 @@ extern "C" {
 
 extern	TRAM_T	tramflag;
 
+void maketext_initialize(void);
 void maketext_reset(void);
-void maketext_init(void);
 BYTE maketext_curblink(void);
 void maketext(int text_renewal);
 void maketext40(int text_renewal);

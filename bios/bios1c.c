@@ -33,7 +33,7 @@ void bios0x1c(void) {
 
 		case 0x01:					// put system timer
 			i286_memstr_read(CPU_ES, CPU_BX, buf, 6);
-			mem[MEMB_MSW8] = buf[0];								// ver0.29
+			mem[MEMB_MSW8] = buf[0];
 			calendar_set(buf);
 			break;
 

@@ -3,10 +3,6 @@
 #define	SOUNDCALL
 #endif
 
-#if defined(SUPPORT_WAVEMIX)
-#include	"wavemix.h"
-#endif
-
 typedef void (SOUNDCALL * SOUNDCB)(void *hdl, SINT32 *pcm, UINT count);
 
 typedef struct {

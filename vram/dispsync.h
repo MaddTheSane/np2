@@ -20,7 +20,7 @@ extern "C" {
 
 extern	DSYNC	dsync;
 
-void dispsync_init(void);
+void dispsync_initialize(void);
 BOOL dispsync_renewalmode(void);
 BOOL dispsync_renewalhorizontal(void);
 BOOL dispsync_renewalvertical(void);

@@ -15,7 +15,7 @@
 
 // ----
 
-void fddfile_init(void) {
+void fddfile_initialize(void) {
 
 	ZeroMemory(fddfile, sizeof(fddfile));
 }

@@ -69,7 +69,7 @@ extern	_FDDFILE	fddfile[MAX_FDDFILE];
 extern	BYTE		fddlasterror;
 
 // ‹N“®‚Éˆê‰ñ‚¾‚¯‰Šú‰»
-void fddfile_init(void);
+void fddfile_initialize(void);
 
 void fddfile_reset2dmode(void);
 
