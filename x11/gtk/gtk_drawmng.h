@@ -40,7 +40,6 @@ typedef struct {
 	GtkWidget	*drawarea;
 	GdkImage	*surface;
 	GdkPixmap	*backsurf;
-	BOOL		shared_pixmap;
 } _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
 
 int gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window);
