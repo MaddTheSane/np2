@@ -9,7 +9,13 @@
 #define	SOFTKEY_MENU	0xfe
 #define	SOFTKEY_NC		0xff
 
+#if (SUPPORT_SOFTKBD == 1)
+#include	"softkbd1.res"
+#elif (SUPPORT_SOFTKBD == 2)
+#include	"softkbd2.res"
+#else
 #include	"softkbd.res"
+#endif
 
 typedef struct {
 	BYTE	*bmp;
