@@ -19,6 +19,7 @@ CBUS		= ../cbus
 BIOS		= ../bios
 SOUND		= ../sound
 VERMOUTH	= ../sound/vermouth
+GETSND		= ../sound/getsnd
 VRAM		= ../vram
 FDD			= ../fdd
 LIO			= ../lio
@@ -36,7 +37,7 @@ HEADERS		=	$(TARGET2)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
 
 CPUCORES	=	$(I286C)/cpucore.h $(I286C)/memory.h
 
-PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
+PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h $(BASE)/statsave.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
@@ -65,9 +66,9 @@ COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-fsigned-char -mno-cygwin -march=pentium \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
-			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
-			-I$(GENERIC) -I$(EMBED) -I$(MENU) -I$(MENUBASE) -I$(TARGET) \
-			-I$(TARGET2)
+			-I$(SOUND) -I$(VERMOUTH) -I$(GETSND) -I$(VRAM) -I$(FDD) -I$(LIO) \
+			-I$(FONT) -I$(GENERIC) -I$(EMBED) -I$(MENU) -I$(MENUBASE) \
+			-I$(TARGET) -I$(TARGET2)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -94,10 +95,12 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/amd98.o		$(OBJ)/pcm86io.o	$(OBJ)/cs4231io.o	\
 			$(OBJ)/midiout.o	$(OBJ)/midimod.o	$(OBJ)/midinst.o	\
 			$(OBJ)/midvoice.o	$(OBJ)/midtable.o						\
+			$(OBJ)/getsnd.o		$(OBJ)/getwave.o	$(OBJ)/getsmix.o	\
 			$(OBJ)/bios.o		$(OBJ)/bios02.o		$(OBJ)/bios08.o		\
 			$(OBJ)/bios09.o		$(OBJ)/bios0c.o		$(OBJ)/bios12.o		\
 			$(OBJ)/bios13.o		$(OBJ)/bios18.o		$(OBJ)/bios19.o		\
 			$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		$(OBJ)/bios1c.o		\
+			$(OBJ)/sxsibios.o											\
 			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
 			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
 			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
@@ -374,6 +377,23 @@ $(OBJ)/cbuscore.o	:	$(CBUS)/cbuscore.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(CBUS)/cbuscore.h $(CBUS)/pc9861k.h $(CBUS)/mpu98ii.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/sasiio.o		:	$(CBUS)/sasiio.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/sasiio.h $(FDD)/sxsi.h $(CBUS)/sasibios.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scsiio.o		:	$(CBUS)/scsiio.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/scsiio.h $(CBUS)/scsiio.tbl \
+						$(CBUS)/scsicmd.h $(CBUS)/scsibios.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scsicmd.o	:	$(CBUS)/scsicmd.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/scsiio.h $(CBUS)/scsiio.tbl \
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/pc9861k.o	:	$(CBUS)/pc9861k.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/commng.h $(CBUS)/cbuscore.h \
 						$(CBUS)/pc9861k.h
@@ -493,6 +513,11 @@ $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h 
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/sxsibios.o	:	$(BIOS)/sxsibios.c $(HEADERS) $(PCCORES) \
+						$(BIOS)/bios.h $(BIOS)/biosmem.h $(BIOS)/sxsibios.h \
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/sound.o		:	$(SOUND)/sound.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -608,6 +633,24 @@ $(OBJ)/midvoice.o	:	$(VERMOUTH)/midvoice.c $(HEADERS) $(VERMOUTHS)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/midtable.o	:	$(VERMOUTH)/midtable.c $(HEADERS) $(VERMOUTHS)
+	$(CC) $(COPT) -o $@ $<
+
+
+
+$(OBJ)/getsnd.o		:	$(GETSND)/getsnd.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getwave.o	:	$(GETSND)/getwave.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getmp3.o		:	$(GETSND)/getmp3.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getogg.o		:	$(GETSND)/getogg.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getsmix.o	:	$(GETSND)/getsmix.c $(HEADERS) $(GETSND)/getsnd.h \
+						$(GETSND)/getsndmn.mcr $(GETSND)/getsndst.mcr
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -782,14 +825,24 @@ $(OBJ)/fontmake.o	:	$(FONT)/fontmake.c $(HEADERS) $(COMMON)/bmpdata.h \
 
 
 
+$(OBJ)/cmver.o		:	$(GENERIC)/cmver.c $(HEADERS) $(TARGET)/commng.h \
+						$(SOUND)/sound.h $(VERMOUTH)/vermouth.h \
+						$(GENERIC)/keydisp.h $(GENERIC)/cmver.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/cmjasts.o	:	$(GENERIC)/cmjasts.c $(HEADERS) $(CPUCORES) \
 						$(TARGET)/commng.h $(SOUND)/sound.h \
 						$(GENERIC)/cmjasts.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/cmver.o		:	$(GENERIC)/cmver.c $(HEADERS) $(TARGET)/commng.h \
-						$(SOUND)/sound.h $(VERMOUTH)/vermouth.h \
-						$(GENERIC)/keydisp.h $(GENERIC)/cmver.h
+$(OBJ)/hostdrv.o	:	$(GENERIC)/hostdrv.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrv.tbl $(GENERIC)/hostdrvs.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
 
