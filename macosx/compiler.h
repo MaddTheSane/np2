@@ -11,6 +11,7 @@
 #define	OSLANG_SJIS
 #define	OSLINEBREAK_CR
 
+typedef	unsigned char	TCHAR;
 
 typedef signed int		SINT;
 typedef unsigned int	UINT;

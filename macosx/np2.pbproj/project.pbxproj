@@ -3262,8 +3262,8 @@
 			);
 			isa = PBXGroup;
 			name = generic;
-			path = "/Users/tora/Documents/Project Builder/CVS/np2/generic";
-			refType = 0;
+			path = ../generic;
+			refType = 4;
 		};
 		96EDBDA90577A00600000133 = {
 			fileEncoding = "-2147483647";
