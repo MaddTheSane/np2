@@ -31,7 +31,6 @@ typedef struct {
 	int			palnum;
 	UINT8		degpal[4];
 	RGB32		anapal[16];
-
 	UINT32		dispclock;
 	UINT32		vsyncclock;
 	UINT32		rasterclock;

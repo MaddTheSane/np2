@@ -76,7 +76,7 @@ BOOL dispsync_renewalhorizontal(void) {
 	}
 }
 
-BOOL dispsync_renewalvertical(void) {			// slaveÇ∆î‰ärÇµÇƒÇ¢Ç¢ÇÃÇ©ÅH
+BOOL dispsync_renewalvertical(void) {
 
 	UINT	text_vbp;
 	UINT	grph_vbp;
@@ -105,8 +105,6 @@ BOOL dispsync_renewalvertical(void) {			// slaveÇ∆î‰ärÇµÇƒÇ¢Ç¢ÇÃÇ©ÅH
 
 #if defined(SUPPORT_CRT15KHZ)
 	if (gdc.crt15khz & 2) {
-		text_vbp *= 2;
-		grph_vbp *= 2;
 		textymax *= 2;
 		grphymax *= 2;
 	}

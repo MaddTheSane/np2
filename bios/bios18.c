@@ -549,7 +549,7 @@ void bios0x18(void) {
 			}
  			break;
 
-   		case 0x0a:						// CRTモードの設定
+   		case 0x0a:						// CRTモードの設定(15/24khz)
 			bios0x18_0a(CPU_AL);
 			break;
 
@@ -588,7 +588,7 @@ void bios0x18(void) {
 			screenupdate |= 2;
  			break;
 
-		case 0x0f:						// 複数の表示領域の設定
+		case 0x0f:						// 複数の表示領域の設定(15/24khz)
 			gdc_forceready(GDCWORK_MASTER);
 
 			SETBIOSMEM16(0x0053e, CPU_CX);
@@ -623,7 +623,7 @@ void bios0x18(void) {
 			screenupdate |= 2;
 			break;
 
-   		case 0x10:						// カーソルタイプの設定
+   		case 0x10:						// カーソルタイプの設定(15/24khz)
 			gdc_forceready(GDCWORK_MASTER);
 
 			bios0x18_10((REG8)(CPU_AL & 1));
