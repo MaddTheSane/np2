@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.19 2004/03/04 15:20:13 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.20 2004/03/04 15:53:11 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -840,21 +840,25 @@ VERW_Ew(UINT32 op)
 void
 MOV_DdRd(void)
 {
-	UINT	op;
+	UINT op;
 
 	GET_PCBYTE(op);
 	TRACEOUT(("mov dr, rd - %.4x:%.8x", CPU_CS, CPU_EIP));
-//	ia32_panic("MOV_DdRd: not implemented yet!");
+#if 0
+	ia32_panic("MOV_DdRd: not implemented yet!");
+#endif
 }
 
 void
 MOV_RdDd(void)
 {
-	UINT	op;
+	UINT op;
 
 	GET_PCBYTE(op);
 	TRACEOUT(("mov rd, dr - %.4x:%.8x", CPU_CS, CPU_EIP));
-//	ia32_panic("MOV_DdRd: not implemented yet!");
+#if 0
+	ia32_panic("MOV_DdRd: not implemented yet!");
+#endif
 }
 
 void
@@ -884,7 +888,10 @@ WBINVD(void)
 void
 INVLPG(UINT32 op)
 {
+	descriptor_t *sd;
 	UINT32 madr;
+	int idx;
+	int exc;
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
 		VERBOSE(("INVLPG: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
@@ -894,10 +901,43 @@ INVLPG(UINT32 op)
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
 		madr = calc_ea_dst(op);
-		tlb_flush_page(madr);
-		return;
+
+		idx = CPU_INST_SEGREG_INDEX;
+		sd = &CPU_STAT_SREG(idx);
+		if (!sd->valid) {
+			exc = GP_EXCEPTION;
+			goto err;
+		}
+		switch (sd->type) {
+		case 4: case 5: case 6: case 7:
+			if (madr <= sd->u.seg.limit) {
+				if (idx == CPU_SS_INDEX)
+					exc = SS_EXCEPTION;
+				else
+					exc = GP_EXCEPTION;
+				goto err;
+			}
+			break;
+
+		default:
+			if (madr > sd->u.seg.limit) {
+				if (idx == CPU_SS_INDEX)
+					exc = SS_EXCEPTION;
+				else
+					exc = GP_EXCEPTION;
+				goto err;
+			}
+			break;
+		}
+		tlb_flush_page(sd->u.seg.segbase + madr);
 	}
-	EXCEPTION(UD_EXCEPTION, 0);
+	return;
+
+err:
+#if 0	/* XXX */
+	EXCEPTION(exc, 0);
+#endif
+	return;
 }
 
 void
