@@ -54,8 +54,8 @@ static void makeintclock(void) {
 	if (l < 5*2) {
 		l = 5*2;
 	}
-	l *= mpu98.timebase;							//	*12
-	mpu98.clock = (pccore.realclock * 5 / l);		//	/12
+	l *= mpu98.timebase;								//	*12
+	mpu98.stepclock = (pccore.realclock * 5 / l);		//	/12
 }
 
 static void sendallclocks(REG8 data) {
@@ -75,9 +75,12 @@ static void sendallclocks(REG8 data) {
 
 static void setrecvdata(REG8 data) {
 
-	if (mpu98.cnt < MPU98_RECVBUFS) {
-		mpu98.buf[(mpu98.pos + mpu98.cnt) & (MPU98_RECVBUFS - 1)] = data;
-		mpu98.cnt++;
+	MPURECV	*r;
+
+	r = &mpu98.r;
+	if (r->cnt < MPU98_RECVBUFS) {
+		r->buf[(r->pos + r->cnt) & (MPU98_RECVBUFS - 1)] = data;
+		r->cnt++;
 	}
 }
 
@@ -165,7 +168,7 @@ ch_nextsearch_more:
 
 void midiint(NEVENTITEM item) {
 
-	nevent_set(NEVENT_MIDIINT, mpu98.clock, midiint, NEVENT_RELATIVE);
+	nevent_set(NEVENT_MIDIINT, mpu98.stepclock, midiint, NEVENT_RELATIVE);
 
 	if (mpu98.flag1 & MPU1FLAG_A) {
 		if (!mpu98.fd_remain) {
@@ -280,7 +283,7 @@ static BOOL sendcmd(REG8 cmd) {
 		case 0x95:				// enable clock to host
 			mpu98.flag1 |= MPU1FLAG_A;
 			if (!nevent_iswork(NEVENT_MIDIINT)) {
-				nevent_set(NEVENT_MIDIINT, mpu98.clock,
+				nevent_set(NEVENT_MIDIINT, mpu98.stepclock,
 											midiint, NEVENT_ABSOLUTE);
 			}
 			break;
@@ -289,7 +292,7 @@ static BOOL sendcmd(REG8 cmd) {
 			mpu98.flag1 |= MPU1FLAG_B;
 			mpu98.remainstep = 0;
 			if (!nevent_iswork(NEVENT_MIDIINT)) {
-				nevent_set(NEVENT_MIDIINT, mpu98.clock,
+				nevent_set(NEVENT_MIDIINT, mpu98.stepclock,
 											midiint, NEVENT_ABSOLUTE);
 			}
 			break;
@@ -526,7 +529,7 @@ static void IOOUTCALL mpu98ii_o0(UINT port, REG8 dat) {
 			}
 		}
 		if (sent) {
-			midiwait(pccore.midiclock * sent);
+			midiwait(mpu98.xferclock * sent);
 		}
 	}
 	(void)port;
@@ -569,16 +572,16 @@ static REG8 IOINPCALL mpu98ii_i0(UINT port) {
 		cm_mpu98 = commng_create(COMCREATE_MPU98II);
 	}
 	if (cm_mpu98->connect != COMCONNECT_OFF) {
-		if (mpu98.cnt) {
-			mpu98.cnt--;
-			if (mpu98.cnt) {
+		if (mpu98.r.cnt) {
+			mpu98.r.cnt--;
+			if (mpu98.r.cnt) {
 				mpu98ii_int();
 			}
 			else {
 				pic_resetirq(mpu98.irqnum);
 			}
-			mpu98.data = mpu98.buf[mpu98.pos];
-			mpu98.pos = (mpu98.pos + 1) & (MPU98_RECVBUFS - 1);
+			mpu98.data = mpu98.r.buf[mpu98.r.pos];
+			mpu98.r.pos = (mpu98.r.pos + 1) & (MPU98_RECVBUFS - 1);
 		}
 		return(mpu98.data);
 	}
@@ -595,7 +598,7 @@ static REG8 IOINPCALL mpu98ii_i2(UINT port) {
 	}
 	if (cm_mpu98->connect != COMCONNECT_OFF) {
 		ret = mpu98.status;
-		if (!mpu98.cnt) {
+		if (!mpu98.r.cnt) {
 			ret |= MIDIIN_AVAIL;
 		}
 		return(ret);
@@ -631,13 +634,14 @@ void mpu98ii_reset(void) {
 	mpu98.port = 0xc0d0 | ((np2cfg.mpuopt & 0xf0) << 6);
 	mpu98.irqnum = mpuirqnum[np2cfg.mpuopt & 3];
 //	pic_registext(mpu98.irqnum);
-	makeintclock();
 }
 
 void mpu98ii_bind(void) {
 
 	UINT	port;
 
+	mpu98.xferclock = pccore.realclock / 3125;
+	makeintclock();
 	port = mpu98.port;
 	iocore_attachout(port, mpu98ii_o0);
 	iocore_attachinp(port, mpu98ii_i0);
@@ -651,9 +655,9 @@ void mpu98ii_callback(void) {
 	BYTE	data;
 
 	if (cm_mpu98) {
-		while((mpu98.cnt < MPU98_RECVBUFS) &&
+		while((mpu98.r.cnt < MPU98_RECVBUFS) &&
 			(cm_mpu98->read(cm_mpu98, &data))) {
-			if (!mpu98.cnt) {
+			if (!mpu98.r.cnt) {
 				mpu98ii_int();
 			}
 			setrecvdata(data);

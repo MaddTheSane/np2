@@ -6,6 +6,7 @@ enum {
 };
 
 typedef struct {
+	UINT32	xferclock;
 	UINT8	data;
 	UINT8	mode;
 	UINT8	cmd;
@@ -13,7 +14,7 @@ typedef struct {
 	int		buffers;
 	int		pos;
 	BYTE	buf[KB_BUF];
-} _KEYB, *KEYB;
+} _KEYBRD, *KEYBRD;
 
 typedef struct {
 	UINT8	result;
@@ -43,8 +44,7 @@ void keyext_flash(void);
 BYTE keyext_getjoy(void);
 BYTE keyext_getmouse(SINT16 *x, SINT16 *y);
 
-
-void keyb_callback(NEVENTITEM item);
+void keybrd_callback(NEVENTITEM item);
 
 void keyboard_reset(void);
 void keyboard_bind(void);

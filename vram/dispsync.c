@@ -60,7 +60,8 @@ BOOL dispsync_renewalhorizontal(void) {
 	}
 	scrnxmax = cr + 2;
 	if ((scrnxpos + scrnxmax) > 80) {
-		scrnxmax = 80 - scrnxpos;
+		scrnxmax = min(scrnxmax, 80);
+		scrnxpos = 80 - scrnxmax;
 	}
 	scrnxpos <<= 3;
 	scrnxmax <<= 3;

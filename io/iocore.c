@@ -21,7 +21,7 @@
 	_GDC		gdc;
 	_GDCS		gdcs;
 	_GRCG		grcg;
-	_KEYB		keyb;
+	_KEYBRD		keybrd;
 	_MOUSEIF	mouseif;
 	_NMIIO		nmiio;
 	_NP2SYSP	np2sysp;

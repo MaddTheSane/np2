@@ -60,8 +60,8 @@ BYTE fontx1_read(const char *filename, BYTE loading) {
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 2048) == 2048) {
 				loading &= ~FONT_ANK8;
-				CopyMemory(fontrom + 0x82100, work + 0x100, 0x60*8);
-				CopyMemory(fontrom + 0x82500, work + 0x500, 0x40*8);
+				fontdata_ank8store(work + 0x100, 0x20, 0x60);
+				fontdata_ank8store(work + 0x500, 0xa0, 0x40);
 			}
 			file_close(fh);
 		}

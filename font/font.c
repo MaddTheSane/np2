@@ -24,8 +24,9 @@ void font_init(void) {
 
 	ZeroMemory(fontrom, sizeof(fontrom));
 	p = fontrom + 0x81000;
-	q = fontrom + 0x82800;
+	q = fontrom + 0x82000;
 	for (i=0; i<256; i++) {
+		q += 8;
 		for (j=0; j<4; j++) {
 			dbit = 0;
 			if (i & (0x01 << j)) {
@@ -77,8 +78,8 @@ const char	*p;
 BYTE font_load(const char *filename, BOOL force) {
 
 	UINT	i;
-	BYTE	*q;
 const BYTE	*p;
+	BYTE	*q;
 	UINT	j;
 	char	fname[MAX_PATH];
 	BYTE	type;
@@ -103,7 +104,7 @@ const BYTE	*p;
 		ZeroMemory(q + 0xd80, 0x1000 - 0xd80);
 	}
 
-	CopyMemory(fontrom + 0x82000, fontdata_8, 0x800);
+	fontdata_ank8store(fontdata_8, 0, 256);
 	p = fontdata_8;
 	q = fontrom + 0x80000;
 	for (i=0; i<256; i++) {

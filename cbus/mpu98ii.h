@@ -29,22 +29,21 @@ typedef struct {
 } MPUF9CH;
 
 typedef struct {
-	MPUCH	ch[8];
-	MPUF9CH	f9;
-
-	BYTE	buf[MPU98_RECVBUFS];
-
-	SINT32	clock;
 	int		cnt;
 	int		pos;
+	BYTE	buf[MPU98_RECVBUFS];
+} MPURECV;
 
-	UINT16	port;												// ver0.28
+typedef struct {
+	UINT16	port;
 	UINT8	irqnum;
 	UINT8	data;
 
+	UINT32	xferclock;
+	SINT32	stepclock;
+
 	UINT8	intch;
 	UINT8	intreq;
-
 	UINT8	fd_remain;
 	UINT8	fd_cnt;
 	UINT8	fd_step[4];
@@ -53,15 +52,21 @@ typedef struct {
 	UINT8	mode;
 	UINT8	cmd;
 	UINT8	timebase;
+
 	UINT8	tempo;
 	UINT8	tempos;
 	UINT8	recvevent;
 	UINT8	remainstep;
+
 	UINT8	timing;
 	UINT8	avail;
 	UINT8	bar;
-
 	UINT8	flag1;
+
+	MPURECV	r;
+
+	MPUCH	ch[8];
+	MPUF9CH	f9;
 } _MPU98II, *MPU98II;
 
 
@@ -69,7 +74,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern _MPU98II mpu98;										// ver0.28
+extern _MPU98II mpu98;
 
 void midiint(NEVENTITEM item);
 void midiwaitout(NEVENTITEM item);

@@ -113,17 +113,13 @@ typedef struct {
 	UINT8	model;
 	UINT8	hddif;
 	UINT8	extmem;
+	BYTE	dipsw[3];		// ƒŠƒZƒbƒgŽž‚ÌDIPSW
+	UINT8	padding;
 
 	UINT32	sound;
 	UINT32	device;
 
 	UINT32	realclock;
-	UINT32	dispclock;
-	UINT32	vsyncclock;
-	UINT32	keyboardclock;
-	UINT32	midiclock;
-	UINT32	raster;
-	UINT32	hsync;
 } PCCORE;
 
 

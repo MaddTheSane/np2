@@ -64,9 +64,14 @@ void crtc_reset(void) {
 
 	ZeroMemory(&grcg, sizeof(grcg));
 	ZeroMemory(&crtc, sizeof(crtc));
-	crtc.reg.pl = 0x00;
-	crtc.reg.bl = 0x0f;
-	crtc.reg.cl = 0x10;
+	if (!(np2cfg.dipsw[0] & 0x01)) {
+		crtc.reg.bl = 0x0f;
+		crtc.reg.cl = 0x10;
+	}
+	else {
+		crtc.reg.bl = 0x07;
+		crtc.reg.cl = 0x08;
+	}
 	grcg.chip = np2cfg.grcg & 3;			// GRCGìÆçÏÇÃÉRÉsÅ[
 }
 

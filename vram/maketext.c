@@ -125,6 +125,7 @@ BYTE maketext_curblink(void) {
 
 void maketext(int text_renewal) {
 
+	UINT8	multiple;
 	BYTE	TEXT_LR;
 	int		TEXT_PL;
 	int		TEXT_BL;
@@ -158,6 +159,7 @@ void maketext(int text_renewal) {
 		tramflag.gaiji = 0;
 	}
 
+	multiple = ((!(gdc.mode1 & 8)) && (!gdc.crt15khz))?0x20:0x00;
 	TEXT_LR = gdc.m.para[GDC_CSRFORM] & 0x1f;
 	TEXT_PL = crtc.reg.pl;
 	TEXT_BL = crtc.reg.bl + 1;
@@ -265,10 +267,10 @@ void maketext(int text_renewal) {
 						}
 						else {
 							bitmap[x] = 0x82000 + 
-										(mem[0xa0000 + edi*2] << 3);
-							curx[x] |= 0x20;						// ver0.28
+										(mem[0xa0000 + edi*2] << 4);
+							curx[x] |= multiple;					// ver0.74
 							if ((curx[x] & TXTATR_BG) && (gdc.mode1 & 1)) {
-								bitmap[x] += 0x800;
+								bitmap[x] += 8;
 							}
 						}
 					}
@@ -298,7 +300,7 @@ void maketext(int text_renewal) {
 							bitmap[x] += 8;
 						}
 						else if (!(gdc.mode1 & 8)) {
-							curx[x] |= 0x20;
+							curx[x] |= multiple;
 						}
 					}
 					lastbitp = bitmap[x];
@@ -348,12 +350,12 @@ void maketext(int text_renewal) {
 					// width80
 					for (x=0; x<TEXTXMAX; x++) {
 						int fntline;
-						BYTE data;
-						fntline = nowline & 0x0f;
+						UINT8 data;
+						fntline = nowline;
 						if (curx[x] & 0x20) {
 							fntline >>= 1;
 						}
-						data = fontrom[bitmap[x] + fntline];
+						data = fontrom[bitmap[x] + (fntline & 0x0f)];
 						*(UINT32 *)(q+0) = text_table[color[x] + (data >> 4)];
 						*(UINT32 *)(q+4) = text_table[color[x] + (data & 15)];
 						q += 8;
@@ -434,6 +436,7 @@ void maketext(int text_renewal) {
 
 void maketext40(int text_renewal) {
 
+	UINT8	multiple;
 	BYTE	TEXT_LR;
 	int		TEXT_PL;
 	int		TEXT_BL;
@@ -467,6 +470,7 @@ void maketext40(int text_renewal) {
 		tramflag.gaiji = 0;
 	}
 
+	multiple = ((!(gdc.mode1 & 8)) && (!gdc.crt15khz))?0x20:0x00;
 	TEXT_LR = gdc.m.para[GDC_CSRFORM] & 0x1f;
 	TEXT_PL = crtc.reg.pl;
 	TEXT_BL = crtc.reg.bl + 1;
@@ -574,10 +578,10 @@ void maketext40(int text_renewal) {
 						}
 						else {
 							bitmap[x] = 0x82000 + 
-										(mem[0xa0000 + edi*2] << 3);
-							curx[x] |= 0x20;						// ver0.28
+										(mem[0xa0000 + edi*2] << 4);
+							curx[x] |= multiple;					// ver0.74
 							if ((curx[x] & TXTATR_BG) && (gdc.mode1 & 1)) {
-								bitmap[x] += 0x800;
+								bitmap[x] += 8;
 							}
 						}
 					}
@@ -607,7 +611,7 @@ void maketext40(int text_renewal) {
 							bitmap[x] += 8;
 						}
 						else if (!(gdc.mode1 & 8)) {
-							curx[x] |= 0x20;
+							curx[x] |= multiple;
 						}
 					}
 					lastbitp = bitmap[x];
@@ -658,11 +662,11 @@ void maketext40(int text_renewal) {
 					for (x=0; x<(TEXTXMAX/2); x++) {
 						int fntline;
 						BYTE data;
-						fntline = nowline & 0x0f;
+						fntline = nowline;
 						if (curx[x] & 0x20) {
 							fntline >>= 1;
 						}
-						data = fontrom[bitmap[x] + fntline];
+						data = fontrom[bitmap[x] + (fntline & 0x0f)];
 						*(UINT32 *)(q+ 0) = text_tblx2[color[x] +
 															(data>>4)][0];
 						*(UINT32 *)(q+ 4) = text_tblx2[color[x] +

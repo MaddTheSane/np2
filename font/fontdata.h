@@ -47,6 +47,8 @@ extern const BYTE fontdata_2a[94*16];
 extern const BYTE fontdata_2b[94*16];
 extern const BYTE fontdata_2c[76*16*2];
 
+
+void fontdata_ank8store(const BYTE *ptr, UINT pos, UINT cnt);
 void fontdata_patch16a(void);
 void fontdata_patch16b(void);
 void fontdata_patchjis(void);

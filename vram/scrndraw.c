@@ -59,7 +59,7 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 	clock += np2cfg.realpal;
 	clock -= 32;
 	clock += (gdc.m.para[GDC_SYNC + 5] >> 2) & 0x3f;
-	clock *= pccore.raster;
+	clock *= gdc.rasterclock;
 	event = palevent.event;
 	eventterm = event + palevent.events;
 	nextupdate = 0;
@@ -92,7 +92,7 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 				}
 			}
 		}
-		clock -= 2 * pccore.raster;
+		clock -= 2 * gdc.rasterclock;
 	}
 	if (y < maxy) {
 		if (!(np2cfg.LCD_MODE & 1)) {

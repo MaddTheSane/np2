@@ -103,7 +103,7 @@ BYTE fontpc88_read(const char *filename, BYTE loading) {
 				// 8dot ANKを読む必要があるか
 				if (loading & FONT_ANK8) {
 					loading &= ~FONT_ANK8;
-					CopyMemory(fontrom + 0x82000, work + 0x1000, 8*256);
+					fontdata_ank8store(work + 0x1000, 0, 256);
 				}
 
 				// 16dot ASCIIを読む必要があるか
@@ -165,7 +165,7 @@ BYTE fontpc88_read(const char *filename, BYTE loading) {
 				// 8dot ANKを読む必要があるか
 				if (loading & FONT_ANK8) {
 					loading &= ~FONT_ANK8;
-					CopyMemory(fontrom + 0x82000, work + 0x0000, 8*256);
+					fontdata_ank8store(work + 0x0000, 0, 256);
 				}
 
 				// 16dot ASCIIを読む必要があるか

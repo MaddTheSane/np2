@@ -47,42 +47,39 @@ static const UINT8 kbexflag[0x80] = {
 			   0,   0,   0,   0,   0,   0,   0,   0};
 
 
-static void keyb_int(BOOL absolute) {
+static void keybrd_int(BOOL absolute) {
 
-	if (keyb.buffers) {
-		if (!((pic.pi[0].irr | pic.pi[0].isr) & PIC_KEYBOARD)) {
-			keyb.status |= 2;
-			keyb.data = keyb.buf[keyb.pos];
-			keyb.pos = (keyb.pos + 1) & KB_BUFMASK;
-			keyb.buffers--;
-			pic_setirq(1);
+	if (keybrd.buffers) {
+		if (!(keybrd.status & 2)) {
+			keybrd.status |= 2;
+			keybrd.data = keybrd.buf[keybrd.pos];
+			keybrd.pos = (keybrd.pos + 1) & KB_BUFMASK;
+			keybrd.buffers--;
 		}
-		nevent_set(NEVENT_KEYBOARD, pccore.keyboardclock,
-											keyb_callback, absolute);
-	}
-	else {
-		keyb.status &= ~2;
+		pic_setirq(1);
+		nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
+											keybrd_callback, absolute);
 	}
 }
 
-void keyb_callback(NEVENTITEM item) {
+void keybrd_callback(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
-		keyb_int(NEVENT_RELATIVE);
+		keybrd_int(NEVENT_RELATIVE);
 	}
 }
 
-static void keyb_out(REG8 data) {
+static void keybrd_out(REG8 data) {
 
-	if (keyb.buffers < KB_BUF) {
-		keyb.buf[(keyb.pos + keyb.buffers) & KB_BUFMASK] = data;
-		keyb.buffers++;
+	if (keybrd.buffers < KB_BUF) {
+		keybrd.buf[(keybrd.pos + keybrd.buffers) & KB_BUFMASK] = data;
+		keybrd.buffers++;
 		if (!nevent_iswork(NEVENT_KEYBOARD)) {
-			keyb_int(NEVENT_ABSOLUTE);
+			keybrd_int(NEVENT_ABSOLUTE);
 		}
 	}
 	else {
-		keyb.status |= 0x10;
+		keybrd.status |= 0x10;
 	}
 }
 
@@ -147,9 +144,9 @@ void keystat_senddata(REG8 data) {
 			if (data & 0x80) {						// ver0.30
 				return;
 			}
-			keyb_out((REG8)(data ^ 0x80));
+			keybrd_out((REG8)(data ^ 0x80));
 		}
-		keyb_out(data);
+		keybrd_out(data);
 	}
 }
 
@@ -160,7 +157,7 @@ void keystat_resetcopyhelp(void) {
 	for (i=0x60; i<0x62; i++) {
 		if (keystat[i] & 0x80) {
 			keystat[i] &= 0x7f;
-			keyb_out((REG8)(i | 0x80));
+			keybrd_out((REG8)(i | 0x80));
 		}
 	}
 }
@@ -172,7 +169,7 @@ void keystat_allrelease(void) {
 	for (i=0; i<0x80; i++) {
 		if (keystat[i] & 0x80) {
 			keystat[i] &= ~0x80;
-			keyb_out((REG8)(i | 0x80));
+			keybrd_out((REG8)(i | 0x80));
 		}
 	}
 }
@@ -181,7 +178,7 @@ void keystat_forcerelease(REG8 value) {
 
 	if (keystat[value & 0x7f] & 0x80) {
 		keystat[value & 0x7f] &= ~0x80;
-		keyb_out((REG8)(value | 0x80));
+		keybrd_out((REG8)(value | 0x80));
 	}
 }
 
@@ -194,7 +191,7 @@ void keystat_resetjoykey(void) {
 		key = joykeytable[i];
 		if (keystat[key] & 0x80) {
 			keystat[key] &= 0x7f;
-			keyb_out((REG8)(key | 0x80));
+			keybrd_out((REG8)(key | 0x80));
 		}
 	}
 }
@@ -313,67 +310,73 @@ BYTE keyext_getmouse(SINT16 *x, SINT16 *y) {
 
 // ----
 
-static void IOOUTCALL keyb_o41(UINT port, REG8 dat) {
+static void IOOUTCALL keybrd_o41(UINT port, REG8 dat) {
 
-	keyb.mode = dat;
+	keybrd.mode = dat;
 	(void)port;
 }
 
-static void IOOUTCALL keyb_o43(UINT port, REG8 dat) {
+static void IOOUTCALL keybrd_o43(UINT port, REG8 dat) {
 
-	if ((!(dat & 0x08)) && (keyb.cmd & 0x08)) {
+	if ((!(dat & 0x08)) && (keybrd.cmd & 0x08)) {
 		keyboard_resetsignal();
 	}
 	if (dat & 0x10) {
-		keyb.status &= ~(0x38);
+		keybrd.status &= ~(0x38);
 	}
-	keyb.cmd = dat;
+	keybrd.cmd = dat;
 	(void)port;
 }
 
-static REG8 IOINPCALL keyb_i41(UINT port) {
+static REG8 IOINPCALL keybrd_i41(UINT port) {
 
 	(void)port;
-	return(keyb.data);
+	keybrd.status &= ~2;
+	return(keybrd.data);
 }
 
-static REG8 IOINPCALL keyb_i43(UINT port) {
+static REG8 IOINPCALL keybrd_i43(UINT port) {
 
 	(void)port;
-	return(keyb.status);
+	return(keybrd.status);
 }
 
 
 // ----
 
-static const IOOUT keybo41[2] = {
-					keyb_o41,	keyb_o43};
+static const IOOUT keybrdo41[2] = {
+					keybrd_o41,	keybrd_o43};
 
-static const IOINP keybi41[2] = {
-					keyb_i41,	keyb_i43};
+static const IOINP keybrdi41[2] = {
+					keybrd_i41,	keybrd_i43};
 
 
 void keyboard_reset(void) {
 
-	ZeroMemory(&keyb, sizeof(keyb));
-	keyb.data = 0xff;
-	keyb.mode = 0x5e;
+	ZeroMemory(&keybrd, sizeof(keybrd));
+	keybrd.data = 0xff;
+	keybrd.mode = 0x5e;
 }
 
 void keyboard_bind(void) {
 
-	iocore_attachsysoutex(0x0041, 0x0cf1, keybo41, 2);
-	iocore_attachsysinpex(0x0041, 0x0cf1, keybi41, 2);
+	keybrd.xferclock = pccore.realclock / 1920;
+	iocore_attachsysoutex(0x0041, 0x0cf1, keybrdo41, 2);
+	iocore_attachsysinpex(0x0041, 0x0cf1, keybrdi41, 2);
 }
 
 void keyboard_resetsignal(void) {									// ver0.29
 
 	int		i;
 
-	keyboard_reset();
+	keybrd.mode = 0x5e;
+	keybrd.cmd = 0;
+	keybrd.status = 0;
+	keybrd.buffers = 0;
+	keybrd.pos = 0;
 	for (i=0; i<0x80; i++) {
 		if (keystat[i]) {
-			keyb_out((REG8)i);
+			keybrd_out((REG8)i);
 		}
 	}
 }

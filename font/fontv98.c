@@ -55,7 +55,7 @@ BYTE fontv98_read(const char *filename, BYTE loading) {
 	// 8x8 フォントを読む必要がある？
 	if (loading & FONT_ANK8) {
 		loading &= ~FONT_ANK8;
-		CopyMemory(fontrom + 0x82000, v98fnt, 8*256);
+		fontdata_ank8store(v98fnt, 0, 256);
 	}
 	// 8x16 フォント(～0x7f)を読む必要がある？
 	if (loading & FONT_ANK16a) {

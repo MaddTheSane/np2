@@ -69,8 +69,8 @@ BYTE fontx68k_read(const char *filename, BYTE loading) {
 	// 8dot ANKを読む必要があるか
 	if (loading & FONT_ANK8) {
 		loading &= ~FONT_ANK8;
-		CopyMemory(fontrom + 0x82100, work + 0x3a100, 0x60*8);
-		CopyMemory(fontrom + 0x82500, work + 0x3a500, 0x40*8);
+		fontdata_ank8store(work + 0x3a100, 0x20, 0x60);
+		fontdata_ank8store(work + 0x3a500, 0xa0, 0x40);
 	}
 
 	// 16dot ASCIIを読む必要があるか

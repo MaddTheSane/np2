@@ -100,18 +100,23 @@ GDCCMD_MAX		equ		32
 .s				resb	gdcd_t_size
 .mode1			resb	1
 .mode2			resb	1
+.clock			resb	1
+.crt15khz		resb	1
+.m_drawing		resb	1
+.s_drawing		resb	1
 .vsync			resb	1
 .vsyncint		resb	1
+.display		resb	1
+.bitac			resb	1
+.reserved		resb	2
 .analog			resd	1
 .palnum			resd	1
 .degpal			resb	4
 .anapal			resd	16
-.clock			resb	1
-.display		resb	1
-.bitac			resb	1
-.m_drawing		resb	1
-.s_drawing		resb	1
-.reserved		resb	3
+.dispclock		resd	1
+.vsyncclock		resd	1
+.rasterclock	resd	1
+.hsyncclock		resd	1
 				endstruc
 
 				struc	gdcs_t

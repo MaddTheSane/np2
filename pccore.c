@@ -42,7 +42,7 @@
 	NP2CFG	np2cfg = {
 				0, 1, 0, 32, 0, 0, 0x40,
 				0, 0, 0, 0,
-				{0x3e, 0x63, 0x7b}, 0,
+				{0x3e, 0x73, 0x7b}, 0,
 				0, 0, {1, 1, 6, 1, 8, 1},
 
 				"VX", PCBASECLOCK25, 4,
@@ -57,17 +57,10 @@
 				{"", ""}, {"", "", "", ""}, "", "", ""};
 
 	PCCORE	pccore = {	PCBASECLOCK25, 4,
-						0, PCMODEL_VX, 0, 0,
+						0, PCMODEL_VX, 0, 0, {0x3e, 0x73, 0x7b}, 0,
 						0, 0,
-						4 * PCBASECLOCK25,
-						4 * PCBASECLOCK25 * 50 / 3104,
-						4 * PCBASECLOCK25 * 5 / 3104,
-						4 * PCBASECLOCK25 / 1920,
-						4 * PCBASECLOCK25 / 3125,
-						100, 20};
+						4 * PCBASECLOCK25};
 
-									// on=0, off=1
-//	BYTE	dip_default[3] = {0x3e, 0x63, 0x7a};
 static const BYTE msw_default[8] =
 							{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e};
 
@@ -98,43 +91,6 @@ const char	*p;
 
 
 // ----
-
-static void setvsyncclock(void) {
-
-	UINT	vfp;
-	UINT	vbp;
-	UINT	lf;
-	UINT	disp;
-	UINT	vs;
-	UINT	maxy;
-	UINT	cnt;
-
-	vfp = gdc.m.para[GDC_SYNC + 5] & 0x3f;
-	if (!vfp) {
-		vfp = 1;
-	}
-	vbp = gdc.m.para[GDC_SYNC + 7] >> 2;
-	if (!vbp) {
-		vbp = 1;
-	}
-	lf = LOADINTELWORD(gdc.m.para + GDC_SYNC + 6);
-	lf &= 0x3ff;
-	if (!lf) {
-		lf = 1024;
-	}
-	disp = vfp + vbp + lf;
-	vs = LOADINTELWORD(gdc.m.para + GDC_SYNC + 4);
-	vs = (vs >> 5) & 0x1f;
-	if (!vs) {
-		vs = 1;
-	}
-	maxy = disp + vs;
-	cnt = (pccore.realclock * 5) / 282;
-	pccore.raster = cnt / maxy;
-	pccore.hsync = (pccore.raster * 4) / 5;
-	pccore.dispclock = pccore.raster * disp;
-	pccore.vsyncclock = cnt - pccore.dispclock;
-}
 
 static void pccore_set(void) {
 
@@ -169,13 +125,13 @@ static void pccore_set(void) {
 	}
 	pccore.multiple = multiple;
 	pccore.realclock = pccore.baseclock * multiple;
-	pccore.raster = pccore.realclock / 24816;
-	pccore.hsync = (pccore.raster * 4) / 5;
-	pccore.dispclock = pccore.realclock * 50 / 3102;
-	pccore.vsyncclock = pccore.realclock * 5 / 3102;
-	pccore.keyboardclock = pccore.realclock / 1920;
-	pccore.midiclock = pccore.realclock / 3125;
-
+#if 0
+	keybrd.xferclock = pccore.realclock / 1920;
+	gdc.rasterclock = pccore.realclock / 24816;
+	gdc.hsyncclock = (gdc.rasterclock * 4) / 5;
+	gdc.dispclock = pccore.realclock * 50 / 3102;
+	gdc.vsyncclock = pccore.realclock * 5 / 3102;
+#endif
 	// HDDの接続 (I/Oの使用状態が変わるので..
 	if (np2cfg.dipsw[1] & 0x20) {
 		pccore.hddif |= PCHDD_IDE;
@@ -187,6 +143,7 @@ static void pccore_set(void) {
 		extsize = min(np2cfg.EXTMEM, 13);
 	}
 	pccore.extmem = extsize;
+	CopyMemory(pccore.dipsw, np2cfg.dipsw, 3);
 
 	// サウンドボードの接続
 	pccore.sound = np2cfg.SOUND_SW;
@@ -436,7 +393,7 @@ static void drawscreen(void) {
 
 	if ((gdcs.textdisp & GDCSCRN_EXT) ||						// ver0.28
 		(gdcs.grphdisp & GDCSCRN_EXT)) {
-		setvsyncclock();
+		gdc_updateclock();
 	}
 
 	if (drawframe) {
@@ -576,7 +533,7 @@ void screenvsync(NEVENTITEM item) {
 		gdc.vsyncint = 0;
 		pic_setirq(2);
 	}
-	nevent_set(NEVENT_FLAMES, pccore.vsyncclock, screendisp, NEVENT_RELATIVE);
+	nevent_set(NEVENT_FLAMES, gdc.vsyncclock, screendisp, NEVENT_RELATIVE);
 
 	// drawscreenで pccore.vsyncclockが変更される可能性があります
 	if (np2cfg.DISPSYNC) {											// ver0.29
@@ -642,7 +599,7 @@ void pccore_exec(BOOL draw) {
 	MEMWAIT_TRAM = np2cfg.wait[0];
 	MEMWAIT_VRAM = np2cfg.wait[2];
 	MEMWAIT_GRCG = np2cfg.wait[4];
-	nevent_set(NEVENT_FLAMES, pccore.dispclock, screenvsync, NEVENT_RELATIVE);
+	nevent_set(NEVENT_FLAMES, gdc.dispclock, screenvsync, NEVENT_RELATIVE);
 
 //	nevent_get1stevent();
 

@@ -26,7 +26,7 @@ void timing_setcount(UINT value) {
 	timing.cnt = value;
 }
 
-UINT timing_getcount(void) {			// ver0.12 60.0Hz Å® 56.4Hz
+UINT timing_getcount(void) {
 
 	UINT32	ticknow;
 	UINT32	span;

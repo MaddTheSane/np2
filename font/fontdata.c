@@ -53,6 +53,18 @@ const BYTE	*p;
 
 // ----
 
+void fontdata_ank8store(const BYTE *ptr, UINT pos, UINT cnt) {
+
+	BYTE	*dat;
+
+	dat = fontrom + 0x82000 + (pos * 16);
+	while(cnt--) {
+		CopyMemory(dat, ptr, 8);
+		dat += 16;
+		ptr += 8;
+	}
+}
+
 void fontdata_patch16a(void) {
 
 	CopyMemory(fontrom + 0x80000, fontdata_16 + 0*32*16, 32*16);

@@ -16,7 +16,7 @@ static const PROCTBL evtproc[] = {
 			{PROCID('e','f','m','a'), fmport_a},
 			{PROCID('e','f','m','b'), fmport_b},
 			{PROCID('e','m','u','s'), mouseint},
-			{PROCID('e','k','e','y'), keyb_callback},
+			{PROCID('e','k','e','y'), keybrd_callback},
 			{PROCID('e','m','d','0'), midiwaitout},
 			{PROCID('e','m','d','1'), midiint},
 			{PROCID('e','p','i','c'), picmask},
