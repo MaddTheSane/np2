@@ -1,13 +1,5 @@
 
-typedef struct {
-	long	fh;
-	long	fhpos;
-	UINT	buffersize;
-	UINT	flag;
-	UINT	pos;
-	UINT	remain;
-} _TEXTFILE, *TEXTFILEH;
-
+typedef	void 		*TEXTFILEH;
 
 #ifdef __cplusplus
 extern "C" {

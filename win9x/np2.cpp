@@ -1540,7 +1540,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(scrnmode) != SUCCESS) {
 			if (sstpmsg_dxerror()) {
-				MessageBox(hWnd, OEMTEXT("Couldn't create DirectDraw Object"),
+				MessageBox(hWnd, _T("Couldn't create DirectDraw Object"),
 										np2oscfg.titles, MB_OK | MB_ICONSTOP);
 			}
 			return(FALSE);
@@ -1588,7 +1588,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 		id = flagload(str_sav, str_resume, FALSE);
 		if (id == IDYES) {
-			for (i=0; i<4; i++) np2arg.disk[i] = NULL;
+			for (i=0; i<4; i++) {
+				np2arg.disk[i] = NULL;
+			}
 		}
 		else if (id == IDCANCEL) {
 			DestroyWindow(hWnd);
@@ -1609,8 +1611,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 //	リセットしてから… コマンドラインのディスク挿入。
 	for (i=0; i<4; i++) {
 		if (np2arg.disk[i]) {
-			milstr_ncpy(diskdrv_fname[i], np2arg.disk[i], NELEMENTS(diskdrv_fname[0]));
-			diskdrv_delay[i] = 1;
+			diskdrv_readyfdd((REG8)i, np2arg.disk[i], 0);
 		}
 	}
 

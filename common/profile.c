@@ -340,7 +340,7 @@ PFILEH profile_open(const char *filename, UINT flag) {
 	ret->buffers = size;
 	ret->size = filesize;
 	ret->flag = flag;
-	file_cpyname(ret->path, filename, sizeof(ret->path));
+	file_cpyname(ret->path, filename, NELEMENTS(ret->path));
 	return(ret);
 
 pfore_err3:

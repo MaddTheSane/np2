@@ -50,6 +50,18 @@ void diskdrv_sethdd(REG8 drv, const OEMCHAR *fname) {
 	}
 }
 
+void diskdrv_readyfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
+
+	if ((drv < 4) && (fdc.equip & (1 << drv))) {
+		if ((fname != NULL) && (fname[0] != '\0')) {
+			fdd_set(drv, fname, FTYPE_NONE, readonly);
+			fdc.stat[drv] = FDCRLT_AI | drv;
+			fdc_interrupt();
+			sysmng_update(SYS_UPDATEFDD);
+		}
+	}
+}
+
 void diskdrv_setfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
 
 	if ((drv < 4) && (fdc.equip & (1 << drv))) {
@@ -76,12 +88,9 @@ void diskdrv_callback(void) {
 	for (drv=0; drv<4; drv++) {
 		if (diskdrv_delay[drv]) {
 			diskdrv_delay[drv]--;
-			if ((!diskdrv_delay[drv]) && (diskdrv_fname[drv][0])) {
-				fdd_set(drv, diskdrv_fname[drv], FTYPE_NONE, diskdrv_ro[drv]);
+			if (!diskdrv_delay[drv]) {
+				diskdrv_readyfdd(drv, diskdrv_fname[drv], diskdrv_ro[drv]);
 				diskdrv_fname[drv][0] = '\0';
-				fdc.stat[drv] = FDCRLT_AI | drv;
-				fdc_interrupt();
-				sysmng_update(SYS_UPDATEFDD);
 			}
 		}
 	}

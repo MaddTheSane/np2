@@ -19,19 +19,19 @@
 
 // win32の場合 コマンドラインが stringが返ってくる・・・
 
-static char argstrtmp[1024];
+static	OEMCHAR	argstrtmp[1024];
 
-void np2arg_analize(char *argstr) {
+void np2arg_analize(const TCHAR *argstr) {
 
-	int		np2argc;
-	char	*np2argv[MAXARG];
-	int		i;
-	int		drv = 0;
-	char	c;
-const char	*p;
+	int			np2argc;
+	OEMCHAR		*np2argv[MAXARG];
+	int			i;
+	int			drv = 0;
+	char		c;
+const OEMCHAR	*p;
 
-	milstr_ncpy(argstrtmp, argstr, sizeof(argstrtmp));
-	np2argc = milstr_getarg(argstrtmp, np2argv, sizeof(argstrtmp));
+	milstr_ncpy(argstrtmp, argstr, NELEMENTS(argstrtmp));
+	np2argc = milstr_getarg(argstrtmp, np2argv, NELEMENTS(np2argv));
 
 	for (i=ARG_BASE; i<np2argc; i++) {
 		c = np2argv[i][0];
@@ -41,6 +41,7 @@ const char	*p;
 				case 'f':
 					np2arg.fullscreen = TRUE;
 					break;
+
 				case 'I':
 				case 'i':
 					if (!np2arg.ini) {
@@ -51,7 +52,7 @@ const char	*p;
 		}
 		else {														// ver0.29
 			p = file_getext(np2argv[i]);
-			if (!file_cmpname(p, "INI")) {
+			if (!file_cmpname(p, OEMTEXT("ini"))) {
 				if (!np2arg.ini) {
 					np2arg.ini = np2argv[i];
 				}

@@ -12,71 +12,71 @@
 #include	"np2info.h"
 
 
-static char cr[] = "\\n";
+static const OEMCHAR cr[] = OEMTEXT("\\n");
 
 
 // ---- np2info extend
 
-static const char str_jwinclr[] =
-						"256色\0ハイカラー\0フルカラー\0トゥルーカラー";
-static const char str_jwinmode[] =
-						" (窓モード)\0 (フルスクリーン)";
+static const OEMCHAR str_jwinclr[] =
+					OEMTEXT("256色\0ハイカラー\0フルカラー\0トゥルーカラー");
+static const OEMCHAR str_jwinmode[] =
+					OEMTEXT(" (窓モード)\0 (フルスクリーン)");
 
 
-static void info_progtitle(char *str, int maxlen, const NP2INFOEX *ex) {
+static void info_progtitle(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	milstr_ncpy(str, np2oscfg.titles, maxlen);
 }
 
-static void info_jsound(char *str, int maxlen, const NP2INFOEX *ex) {
+static void info_jsound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-const char	*p;
+const OEMCHAR	*p;
 
 	switch(usesound) {
 		case 0x01:
-			p = "14ボード";
+			p = OEMTEXT("14ボード");
 			break;
 
 		case 0x02:
-			p = "26音源";
+			p = OEMTEXT("26音源");
 			break;
 
 		case 0x04:
-			p = "86音源";
+			p = OEMTEXT("86音源");
 			break;
 
 		case 0x06:
-			p = "２枚刺し";
+			p = OEMTEXT("２枚刺し");
 			break;
 
 		case 0x08:
-			p = "118音源";
+			p = OEMTEXT("118音源");
 			break;
 
 		case 0x14:
-			p = "86音源(ちびおと付)";
+			p = OEMTEXT("86音源(ちびおと付)");
 			break;
 
 		case 0x20:
-			p = "スピークボード";
+			p = OEMTEXT("スピークボード");
 			break;
 
 		case 0x40:
-			p = "スパークボード";
+			p = OEMTEXT("スパークボード");
 			break;
 
 		case 0x80:
-			p = "AMD-98";
+			p = OEMTEXT("AMD-98");
 			break;
 
 		default:
-			p = "なし";
+			p = OEMTEXT("なし");
 			break;
 	}
 	milstr_ncpy(str, p, maxlen);
 }
 
-static void info_jdisp(char *str, int maxlen, const NP2INFOEX *ex) {
+static void info_jdisp(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	bpp;
 
@@ -87,7 +87,7 @@ static void info_jdisp(char *str, int maxlen, const NP2INFOEX *ex) {
 	(void)ex;
 }
 
-static void info_jbios(char *str, int maxlen, const NP2INFOEX *ex) {
+static void info_jbios(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	str[0] = '\0';
 	if (pccore.rom & PCROM_BIOS) {
@@ -95,35 +95,35 @@ static void info_jbios(char *str, int maxlen, const NP2INFOEX *ex) {
 	}
 	if (soundrom.name[0]) {
 		if (str[0]) {
-			milstr_ncat(str, "と", maxlen);
+			milstr_ncat(str, OEMTEXT("と"), maxlen);
 		}
 		milstr_ncat(str, soundrom.name, maxlen);
 	}
 	if (str[0] == '\0') {
-		milstr_ncat(str, "なし", maxlen);
+		milstr_ncat(str, OEMTEXT("なし"), maxlen);
 	}
 }
 
-static void info_jrhythm(char *str, int maxlen, const NP2INFOEX *ex) {
+static void info_jrhythm(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-const char	*p;
-	char	jrhythmstr[16];
-	UINT	exist;
-	UINT	i;
+const OEMCHAR	*p;
+	OEMCHAR		jrhythmstr[16];
+	UINT		exist;
+	UINT		i;
 
 	if (!(usesound & 0x6c)) {
-		p = "不要やで";
+		p = OEMTEXT("不要やで");
 	}
 	else {
 		exist = rhythm_getcaps();
 		if (exist == 0) {
-			p = "用意されてないんか…";
+			p = OEMTEXT("用意されてないんか…");
 		}
 		else if (exist == 0x3f) {
-			p = "全部あるで";
+			p = OEMTEXT("全部あるで");
 		}
 		else {
-			milstr_ncpy(jrhythmstr, "BSCHTRや", sizeof(jrhythmstr));
+			milstr_ncpy(jrhythmstr, OEMTEXT("BSCHTRや"), NELEMENTS(jrhythmstr));
 			for (i=0; i<6; i++) {
 				if (!(exist & (1 << i))) {
 					jrhythmstr[i] = '_';
@@ -136,16 +136,16 @@ const char	*p;
 }
 
 typedef struct {
-	char	key[8];
-	void	(*proc)(char *str, int maxlen, const NP2INFOEX *ex);
+	OEMCHAR	key[8];
+	void	(*proc)(OEMCHAR *str, int maxlen, const NP2INFOEX *ex);
 } INFOPROC;
 
 static const INFOPROC infoproc[] = {
-			{"PROG",		info_progtitle},
-			{"JSND",		info_jsound},
-			{"JBIOS",		info_jbios},
-			{"JDISP",		info_jdisp},
-			{"JRHYTHM",		info_jrhythm}};
+			{OEMTEXT("PROG"),		info_progtitle},
+			{OEMTEXT("JSND"),		info_jsound},
+			{OEMTEXT("JBIOS"),		info_jbios},
+			{OEMTEXT("JDISP"),		info_jdisp},
+			{OEMTEXT("JRHYTHM"),	info_jrhythm}};
 
 static BOOL sstpext(OEMCHAR *dst, const OEMCHAR *key, int maxlen,
 														const NP2INFOEX *ex) {
@@ -165,7 +165,7 @@ const INFOPROC	*infterm;
 	return(FALSE);
 }
 
-static const NP2INFOEX sstpex = {"\\n", sstpext};
+static const NP2INFOEX sstpex = {OEMTEXT("\\n"), sstpext};
 
 
 // ----
@@ -228,7 +228,7 @@ static char *sstpsolve(char *buf, const unsigned char *dat) {
 				ms -= 10;
 			}
 			if (ms) {
-				SPRINTF(buf, "\\w%u", ms);
+				SPRINTF(buf, "\\w%1u", ms);
 				buf += 3;
 			}
 		}
@@ -515,7 +515,7 @@ void sstpmsg_config(void) {
 
 static char *get_code(char *buf, int *ret) {
 
-	int	stat;
+	int		stat;
 
 	stat = 0;
 	if (!memcmp(buf, "SSTP", 4)) {

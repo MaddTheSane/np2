@@ -284,6 +284,14 @@ SOURCE=..\COMMON\TEXTFILE.C
 SOURCE=..\COMMON\WAVEFILE.C
 # End Source File
 # End Group
+# Begin Group "codecnv"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\CODECNV\TEXTCNV.C
+# End Source File
+# End Group
 # Begin Group "cpu"
 
 # PROP Default_Filter ""
