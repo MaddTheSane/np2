@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.8 2004/01/24 18:20:06 yui Exp $	*/
+/*	$Id: interface.c,v 1.9 2004/01/27 15:56:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -33,6 +33,9 @@
 
 #include "dmap.h"
 #include "bios.h"
+#if defined(IA32_REBOOT_ON_PANIC)
+#include "pccore.h"
+#endif
 
 
 static void ia32_initreg(void) {
@@ -98,6 +101,10 @@ ia32(void)
 		VERBOSE(("ia32: return from exception"));
 		break;
 
+	case 2:
+		VERBOSE(("ia32: return from panic"));
+		return;
+
 	default:
 		VERBOSE(("ia32: return from unknown cause"));
 		break;
@@ -121,6 +128,10 @@ ia32withtrap(void)
 	case 1:
 		VERBOSE(("ia32withtrap: return from exception"));
 		break;
+
+	case 2:
+		VERBOSE(("ia32withtrap: return from panic"));
+		return;
 
 	default:
 		VERBOSE(("ia32withtrap: return from unknown cause"));
@@ -149,6 +160,10 @@ ia32withdma(void)
 		VERBOSE(("ia32withdma: return from exception"));
 		break;
 
+	case 2:
+		VERBOSE(("ia32withdma: return from panic"));
+		return;
+
 	default:
 		VERBOSE(("ia32withdma: return from unknown cause"));
 		break;
@@ -173,6 +188,10 @@ ia32_step(void)
 	case 1:
 		VERBOSE(("ia32_step: return from exception"));
 		break;
+
+	case 2:
+		VERBOSE(("ia32_step: return from panic"));
+		return;
 
 	default:
 		VERBOSE(("ia32_step: return from unknown cause"));
@@ -214,8 +233,15 @@ ia32_panic(const char *str, ...)
 
 	msgbox("ia32_panic", buf);
 
+#if defined(IA32_REBOOT_ON_PANIC)
+	VERBOSE(("ia32_panic: reboot"));
+	pccore_cfgupdate();
+	pccore_reset();
+	siglongjmp(exec_1step_jmpbuf, 2);
+#else
 	__ASSERT(0);
 	exit(1);
+#endif
 }
 
 void
@@ -253,14 +279,16 @@ ia32_bioscall(void)
 {
 	DWORD adrs;
 
-	if (!CPU_STAT_PM && !CPU_INST_OP32 && !CPU_INST_AS32) {
-		adrs = ((CPU_IP-1) & 0xffff) + CPU_STAT_SREGBASE(CPU_CS_INDEX);
+	if (!CPU_STAT_PM || CPU_STAT_VM86) {
+		adrs = (CPU_EIP - 1) + CPU_STAT_SREGBASE(CPU_CS_INDEX);
 		if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
 			biosfunc(adrs);
-			CPU_SET_SEGREG(CPU_ES_INDEX, CPU_ES);
-			CPU_SET_SEGREG(CPU_CS_INDEX, CPU_CS);
-			CPU_SET_SEGREG(CPU_SS_INDEX, CPU_SS);
-			CPU_SET_SEGREG(CPU_DS_INDEX, CPU_DS);
+			if (!CPU_STAT_PM || CPU_STAT_VM86) {
+				CPU_SET_SEGREG(CPU_ES_INDEX, CPU_ES);
+				CPU_SET_SEGREG(CPU_CS_INDEX, CPU_CS);
+				CPU_SET_SEGREG(CPU_SS_INDEX, CPU_SS);
+				CPU_SET_SEGREG(CPU_DS_INDEX, CPU_DS);
+			}
 		}
 	}
 }
