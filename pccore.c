@@ -546,7 +546,7 @@ void pccore_exec(BOOL draw) {
 			CPU_CS = 0xf000;
 			CS_BASE = 0xf0000;
 			CPU_IP = 0xfff0;
-#ifdef CPU386											// define‚ð•Ï‚¦‚Ä‚Ë
+#if defined(CPUCORE_IA32)
 			CPU_DX = 0x0300;
 #endif
 			CPU_CLEARPREFETCH();

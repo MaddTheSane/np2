@@ -49,7 +49,11 @@
 static	char		np2help[] = "np2.hlp";
 // static char		np2resume[] = "sav";
 
-static	const char	szAppCaption[] = "Neko Project II - C version";
+#if defined(CPUCORE_IA32)
+		const char szAppCaption[] = "Neko Project II (IA-32)";
+#else
+		const char szAppCaption[] = "Neko Project II (C Version)";
+#endif
 static	const char	szClassName[] = "NP2-MainWindow";
 
 

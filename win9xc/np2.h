@@ -43,6 +43,7 @@ enum {
 	NP2CMD_DUMMY		= 0xffff
 };
 
+extern	const char	szAppCaption[];
 extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;

@@ -31,13 +31,13 @@
 #define	FONT_ADRS	0x110000
 #define	ITF_ADRS	0x1f8000
 
-#if defined(CPU386)
+#if defined(CPUCORE_IA32)
 #if 0
 #define	LOWMEM		0x100000
 #else
 #define	LOWMEM		0x10fff0
 #endif
-#endif	/* CPU386 */
+#endif	/* CPUCORE_IA32 */
 
 
 #if defined(BYTESEX_LITTLE)
@@ -91,14 +91,14 @@ REG8 MEMCALL __i286_memoryread(UINT32 address);
 REG16 MEMCALL __i286_memoryread_w(UINT32 address);
 UINT32 MEMCALL __i286_memoryread_d(UINT32 address);
 
-#ifndef CPU386
+#ifndef CPUCORE_IA32
 #define	i286_memorywrite(a,v)	__i286_memorywrite(a,v)
 #define	i286_memorywrite_w(a,v)	__i286_memorywrite_w(a,v)
 #define	i286_memorywrite_d(a,v)	__i286_memorywrite_d(a,v)
 #define	i286_memoryread(a)		__i286_memoryread(a)
 #define	i286_memoryread_w(a)	__i286_memoryread_w(a)
 #define	i286_memoryread_d(a)	__i286_memoryread_d(a)
-#else	/* CPU386 */
+#else	/* CPUCORE_IA32 */
 void MEMCALL cpu_memorywrite(DWORD address, BYTE value);
 void MEMCALL cpu_memorywrite_w(DWORD address, WORD value);
 void MEMCALL cpu_memorywrite_d(DWORD address, DWORD value);
@@ -111,7 +111,7 @@ DWORD MEMCALL cpu_memoryread_d(DWORD address);
 #define	i286_memoryread(a)		cpu_memoryread(a)
 #define	i286_memoryread_w(a)	cpu_memoryread_w(a)
 #define	i286_memoryread_d(a)	cpu_memoryread_d(a)
-#endif
+#endif	/* !CPUCORE_IA32 */
 
 #ifdef NP2_MEMORY_ASM
 BYTE MEMCALL i286_membyte_read(WORD seg, WORD off);

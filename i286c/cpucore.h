@@ -6,6 +6,10 @@
 //
 //----------------------------------------------------------------------------
 
+#if defined(CPUCORE_IA32)
+#error : not support CPUCORE_IA32
+#endif
+
 #if !defined(CPUDEBUG)
 enum {
 	I286_MEMREADMAX		= 0xa4000,

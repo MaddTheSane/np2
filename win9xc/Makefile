@@ -56,7 +56,7 @@ VERMOUTHS	=	$(VERMOUTH)/midiout.h $(VERMOUTH)/midimod.h \
 AOPT	= -f win32
 COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-fsigned-char -mno-cygwin -march=pentium \
-			-DWIN32 -DNDEBUG -D_WINDOWS -DCPU386 -DTRACE \
+			-DWIN32 -DNDEBUG -D_WINDOWS -DCPUCORE_IA32 -DTRACE \
 			-I$(BASE) -I$(COMMON) -I$(I386C) -I$(IA32) -I$(IA32INST) \
 			-I$(IA32FPU) -I$(IO) -I$(CBUS) -I$(BIOS) -I$(SOUND) \
 			-I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) -I$(GENERIC) \

@@ -6,7 +6,7 @@
 #include	"fmboard.h"
 
 // å„Ç≈í≤êÆ
-#if defined(CPU386)
+#if defined(CPUCORE_IA32)
 DWORD cpumem_addrmask = 0xfffff;
 #endif
 
@@ -16,7 +16,7 @@ DWORD cpumem_addrmask = 0xfffff;
 static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 
 	CPU_ADRSMASK = 0x0fffff;
-#if defined(CPU386)
+#if defined(CPUCORE_IA32)
 	cpumem_addrmask = 0xfffff;
 #endif
 	CPU_RESETREQ = 1;
@@ -29,7 +29,7 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 static void IOOUTCALL cpuio_of2(UINT port, REG8 dat) {
 
 	CPU_ADRSMASK = 0x1fffff;
-#if defined(CPU386)
+#if defined(CPUCORE_IA32)
 	cpumem_addrmask = 0xffffffff;
 #endif
 	(void)port;
@@ -68,20 +68,20 @@ static REG8 IOINPCALL cpuio_if2(UINT port) {
 }
 
 
-#ifdef CPU386											// defineÇïœÇ¶ÇƒÇÀ
+#if defined(CPUCORE_IA32)
 static void IOOUTCALL cpuio_of6(UINT port, REG8 dat) {
 
 	switch(dat) {
 		case 0x02:
 			CPU_ADRSMASK = 0x1fffff;
-#if defined(CPU_386)
+#if defined(CPUCORE_IA32)
 			cpumem_addrmask = 0xffffffff;
 #endif
 			break;
 
 		case 0x03:
 			CPU_ADRSMASK = 0x0fffff;
-#if defined(CPU_386)
+#if defined(CPUCORE_IA32)
 			cpumem_addrmask = 0xfffff;
 #endif
 			break;
@@ -108,7 +108,7 @@ static REG8 IOINPCALL cpuio_if6(UINT port) {
 
 // ---- I/F
 
-#ifndef CPU386											// defineÇïœÇ¶ÇƒÇÀ
+#if !defined(CPUCORE_IA32)
 static const IOOUT cpuioof0[8] = {
 					cpuio_of0,	cpuio_of2,	NULL,		NULL,
 					NULL,		NULL,		NULL,		NULL};

@@ -91,7 +91,7 @@ BOOL extmem_init(BYTE usemem) {
 		return(FAILURE);
 	}
 	extmem.maxmem = usemem + 1;
-#if defined(CPU386)
+#if defined(CPUCORE_IA32)
 	init_cpumem(usemem);
 #endif
 	return(SUCCESS);

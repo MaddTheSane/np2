@@ -47,7 +47,7 @@ void sysmng_updatecaption(void) {
 	char	work[32];
 
 	if (workclockrenewal()) {
-		milstr_ncpy(title, "Neko Project II (C Version)", sizeof(title));
+		milstr_ncpy(title, szAppCaption, sizeof(title));
 		SPRINTF(work, " - %u.%1uFPS", workclock.fps / 10, workclock.fps % 10);
 		milstr_ncat(title, work, sizeof(title));
 		SPRINTF(work, " - %2u.%03uMHz",

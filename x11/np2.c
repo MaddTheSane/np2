@@ -48,7 +48,7 @@
 
 
 NP2OSCFG np2oscfg = {
-#if !defined(CPU386)		/* titles */
+#if !defined(CPUCORE_IA32)		/* titles */
 	"Neko Project II",
 #else
 	"Neko Project II + IA32",
