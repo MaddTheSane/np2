@@ -84,8 +84,6 @@ void getbiospath(char *path, const char *fname, int maxlen) {
 const char	*p;
 
 	p = np2cfg.biospath;
-
-	p = np2cfg.biospath;
 	if (p[0]) {
 		file_cpyname(path, p, maxlen);
 		file_setseparator(path, maxlen);

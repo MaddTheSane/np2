@@ -59,26 +59,26 @@ $label.2	mov		r5, r0
 
 	MACRO
 $label	OP_R8_EA	$alu, $regclk, $memclk
-$label		REG8EA	r5, $regclk, $memclk
-			ldrb	r2, [r5, #CPU_REG]
+$label		REG8EA	r6, $regclk, $memclk
+			ldrb	r2, [r6, #CPU_REG]
 			$alu	r2, r0
-			strb	r1, [r5, #CPU_REG]
+			strb	r1, [r6, #CPU_REG]
 			mov		pc, r11
 	MEND
 
 	MACRO
 $label	OP_R16_EA	$alu, $regclk, $memclk
-$label		REG16EA	r5, $regclk, $memclk
-			ldrh	r2, [r5, #CPU_REG]
+$label		REG16EA	r6, $regclk, $memclk
+			ldrh	r2, [r6, #CPU_REG]
 			$alu	r2, r0
-			strh	r1, [r5, #CPU_REG]
+			strh	r1, [r6, #CPU_REG]
 			mov		pc, r11
 	MEND
 
 	MACRO
 $label	OP_AL_D8	$alu, $clk
 $label		CPUWORK	$clk
-			GETPC8
+			GETPCF8
 			ldrb	r2, [r9, #CPU_AL]
 			$alu	r2, r0
 			strb	r1, [r9, #CPU_AL]
@@ -154,8 +154,8 @@ $label		REG8EA	r5, $regclk, $memclk
 
 	MACRO
 $label	S_R16_EA	$alu, $regclk, $memclk
-$label		REG16EA	r5, $regclk, $memclk
-			ldrh	r2, [r5, #CPU_REG]
+$label		REG16EA	r6, $regclk, $memclk
+			ldrh	r2, [r6, #CPU_REG]
 			$alu	r2, r0
 			mov		pc, r11
 	MEND
@@ -327,12 +327,12 @@ $label		POP		$clk
 	MACRO
 $label	JMPS		$jmpclk
 $label		CPUWORK	$jmpclk
-			ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286a_memoryread
-			mov		r1, r0, lsl #24
+		;;	ldr		r5, [r9, #CPU_CS_BASE]
+			add		r0, r5, r8 lsr #16
+			GETR0
+			mov		r1, r0 lsl #24
 			add		r8, r8, #(1 << 16)
-			mov		r0, r1, asr #8
+			mov		r0, r1 asr #8
 			add		r8, r0, r8
 			mov		pc, r11
 	MEND

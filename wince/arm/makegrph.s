@@ -74,8 +74,10 @@ G_CLOCK				equ		(GD_SIZE + &50)
 ; G_s_drawing		equ		(GD_SIZE + &54)
 
 
+	INCLUDE	..\..\i286a\i286a.inc
+
 	IMPORT	np2cfg
-	IMPORT	mem
+	IMPORT	i286core
 	IMPORT	np2_vram
 	IMPORT	dsync
 	IMPORT	vramupdate
@@ -116,35 +118,41 @@ makegrph_init	mov		pc, lr
 	; r10 = out
 	; r11 = grph_table0
 	; tmp r2, r3, r4, r5, r12
-	MACRO
-$label	PIXADD		$shift
-$label			and		r12, r3, #&0f
-				and		r3, r3, #&f0
-				ldr		r3, [r11, r3, lsr #2]
-				ldr		r12, [r11, r12, lsl #2]
-				orr		r4, r4, r3, lsl #$shift
-				orr		r5, r5, r12, lsl #$shift
-	MEND
 
 		MACRO
 $label	GRPHDATASET
-$label			add		r2, r8, r9, lsr #17
-				ldrb	r3, [r2]
-				add		r2, r2, #(VRAM_R - VRAM_B)
-				and		r12, r3, #&0f
-				and		r3, r3, #&f0
-				ldr		r4, [r11, r3, lsr #2]
-				ldr		r5, [r11, r12, lsl #2]
-				ldrb	r3, [r2]
-				add		r2, r2, #(VRAM_G - VRAM_R)
-				PIXADD	1
-				ldrb	r3, [r2]
-				add		r2, r2, #(VRAM_E - VRAM_G)
-				PIXADD	2
-				ldrb	r3, [r2]
-				PIXADD	3
-				str		r4, [r10]
-				str		r5, [r10, #4]
+$label			add		r3, r8, #(VRAM_R - VRAM_B)
+				ldrb	r2, [r8, r9 lsr #17]
+				ldrb	r3, [r3, r9 lsr #17]
+				add		r8, r8, #(VRAM_G - VRAM_B)
+				and		r12, r2, #&f0
+				and		r2, r2, #&0f
+				ldr		r4, [r11, r12, lsr #2]			; 0
+				ldr		r5, [r11, r2, lsl #2]			; 0
+				and		r12, r3, #&f0					; 1
+				and		r3, r3, #&0f					; 1
+				ldr		r12, [r11, r12, lsr #2]			; 1
+				ldr		r3, [r11, r3, lsl #2]			; 1
+				ldrb	r2, [r8, r9 lsr #17]
+				orr		r4, r4, r12, lsl #1				; 1
+				orr		r5, r5, r3, lsl #1				; 1
+				add		r8, r8, #(VRAM_E - VRAM_G)
+				and		r12, r2, #&f0					; 2
+				and		r2, r2, #&0f					; 2
+				ldr		r12, [r11, r12, lsr #2]			; 2
+				ldrb	r3, [r8, r9 lsr #17]
+				ldr		r2, [r11, r2, lsl #2]			; 2
+				orr		r4, r4, r12, lsl #2				; 2
+				and		r12, r3, #&f0					; 3
+				and		r3, r3, #&0f					; 3
+				ldr		r12, [r11, r12, lsr #2]			; 3
+				ldr		r3, [r11, r3, lsl #2]			; 3
+				orr		r5, r5, r2, lsl #2				; 2
+				orr		r4, r4, r12, lsl #3				; 3
+				orr		r5, r5, r3, lsl #3				; 3
+				sub		r8, r8, #(VRAM_E - VRAM_B)
+				str		r4, [r10, #-8]
+				str		r5, [r10, #-4]
 	MEND
 
 
@@ -161,8 +169,7 @@ $label			add		r2, r8, r9, lsr #17
 	; tmp r2, r3 / r4, r5, r12 (GRPHDATASET)
 	; input - r2 = pos r3 = gdc
 
-gp_all			ldr		r12, [r2, r3]
-				orr		r9, r9, r12, lsl #(1 + 17)	; (vad << 17)
+gp_all			orr		r9, r9, r12, lsl #(1 + 17)	; (vad << 17)
 				mov		r12, r12, lsr #(4 + 16)		; remain
 				orr		r0, r0, r12, lsl #22		; (remain << 22)
 gpa_lineylp1	and		r12, r6, #(&1f << 12)		; mul !
@@ -172,17 +179,19 @@ gpa_lineylp2	add		r1, r1, #640
 				tstne	r6, #(1 << 22)
 				bne		gpa_lineyed
 				sub		r10, r1, #640
-gpa_pixlp		GRPHDATASET
+gpa_pixlp		add		r10, r10, #8
+				GRPHDATASET
 				add		r9, r9, #(1 << 17)
-				add		r10, r10, #8
 				cmp		r10, r1
 				bcc		gpa_pixlp
-				sub		r9, r9, #(80 << 17)
 				ldr		r2, gp_renewline
+				sub		r9, r9, #(80 << 17)
+				;
 				ldrb	r3, [r2, r6, lsr #23]
+				bic		r9, r9, #(3 << 8)
+				;
 				orr		r3, r3, r9
 				strb	r3, [r2, r6, lsr #23]
-				bic		r9, r9, #(3 << 8)
 gpa_lineyed		add		r6, r6, #(1 << 23)
 				cmp		r6, r6, lsl #20
 				bcs		makegrph_ed
@@ -199,8 +208,7 @@ gpa_break		ldr		r3, gp_gdc
 				bic		r6, r6, #(&1f << 17)
 				mov		pc, lr
 
-gp_indirty		ldr		r12, [r2, r3]
-				orr		r9, r9, r12, lsl #(1 + 17)	; (vad << 17)
+gp_indirty		orr		r9, r9, r12, lsl #(1 + 17)	; (vad << 17)
 				mov		r12, r12, lsr #(4 + 16)		; remain
 				orr		r0, r0, r12, lsl #22		; (remain << 22)
 gpi_lineylp1	and		r12, r6, #(&1f << 12)		; mul !
@@ -209,24 +217,26 @@ gpi_lineylp2	add		r1, r1, #640
 				tst		r6, #(1 << 23)
 				tstne	r6, #(1 << 22)
 				bne		gpi_lineyed
+				ldrb	r2, [r7, r9, lsr #17]
 				sub		r10, r1, #640
-gpi_pixlp		ldrb	r2, [r7, r9, lsr #17]
+gpi_pixlp		add		r10, r10, #8
 				ands	r2, r2, r9
 				beq		gpi_pixnt
 				orr		r9, r9, r2, lsl #8
 				GRPHDATASET
 gpi_pixnt		add		r9, r9, #(1 << 17)
-				add		r10, r10, #8
 				cmp		r10, r1
+				ldrccb	r2, [r7, r9, lsr #17]
 				bcc		gpi_pixlp
 				sub		r9, r9, #(80 << 17)
-				tst		r9, #(3 << 8)
+				ldr		r2, gp_renewline				; prepare
+				ands	r10, r9, #(3 << 8)
 				beq		gpi_lineyed
-				ldr		r2, gp_renewline
 				ldrb	r3, [r2, r6, lsr #23]
-				orr		r3, r3, r9, lsr #8
-				strb	r3, [r2, r6, lsr #23]
 				bic		r9, r9, #(3 << 8)
+				;
+				orr		r3, r3, r10, lsr #8
+				strb	r3, [r2, r6, lsr #23]
 gpi_lineyed		add		r6, r6, #(1 << 23)
 				cmp		r6, r6, lsl #20
 				bcs		makegrph_ed
@@ -245,83 +255,82 @@ gpi_break		ldr		r3, gp_gdc
 
 
 makegrph		stmdb	sp!, {r4 - r11, lr}
+				ldr		r4, gp_dsync
 				ldr		r7, gp_vramupdate
 				ldr		r8, gp_vmem
-				ldr		r11, gp_gtable0
-				ldr		r3, gp_gdc
-				ldr		r4, gp_dsync
 				ldr		r2, [r4, #DS_GRPHVAD]
 				ands	r0, r0, #1
-				addne	r2, r2, #SURFACE_SIZE
 				addne	r8, r8, #VRAM_STEP
+				addne	r2, r2, #SURFACE_SIZE
+				ldr		r3, gp_gdc
+				ldr		r11, gp_gtable0
 				mov		r9, #1
+				ldrb	r5, [r3, #G_CLOCK]
 				mov		r9, r9, lsl r0
-				ldrb	r12, [r3, #G_CLOCK]
 				ldrb	r0, [r3, #(G_SLAVE + GD_PARA + GDC_PITCH)]
-				tst		r12, #&80
+				tst		r5, #&80
 				moveq	r0, r0, lsl #1
 				and		r0, r0, #&fe				; mg.pitch
 				ldr		r6, [r4, #DS_GRPH_VBP]
 				ldrb	r12, [r3, #G_MODE1]
+				ldrb	r5, [r3, #(G_SLAVE + GD_PARA + GDC_CSRFORM)]
 				mov		r6, r6, lsl #23				; mg.liney << 23
 				and		r12, r12, #&10
 				orr		r6, r6, r12, lsl #(22 - 4)	; gdc.mode1:bit4 << 22
-				ldrb	r12, [r3, #(G_SLAVE + GD_PARA + GDC_CSRFORM)]
-				and		r12, r12, #&1f
-				orr		r6, r6, r12, lsl #12		; mg.lr << 12
+				and		r5, r5, #&1f
 				ldr		r12, [r4, #DS_GRPHYMAX]
+				orr		r6, r6, r5, lsl #12			; mg.lr << 12
+				ldr		r5, gp_np2vram
 				orr		r6, r6, r12, lsl #3			; dsync.grphymax << 3
-
 				cmp		r1, #0
-				ldr		r1, gp_np2vram
-				add		r1, r1, r2
+				add		r1, r5, r2
 				bne		mg_alp
-mg_ilp			mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 0)
+mg_ilp			ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 0)]
 				bl		gp_indirty
-				mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 4)
+				ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 4)]
 				bl		gp_indirty
 				ldr		r12, gp_np2cfg
 				ldrb	r12, [r12, #NC_UPD72020]
 				cmp		r12, #0
 				bne		mg_ilp
-				mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 8)
+				ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 8)]
 				bl		gp_indirty
-				mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 12)
+				ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 12)]
 				bl		gp_indirty
 				b		mg_ilp
-mg_alp			mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 0)
+mg_alp			ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 0)]
 				bl		gp_all
-				mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 4)
+				ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 4)]
 				bl		gp_all
 				ldr		r12, gp_np2cfg
 				ldrb	r12, [r12, #NC_UPD72020]
 				cmp		r12, #0
 				bne		mg_alp
-				mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 8)
+				ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 8)]
 				bl		gp_all
-				mov		r2, #(G_SLAVE + GD_PARA + GDC_SCROLL + 12)
+				ldr		r12, [r3, #(G_SLAVE + GD_PARA + GDC_SCROLL + 12)]
 				bl		gp_all
 				b		mg_alp
 
-makegrph_ed		mov		r3, r9
-				and		r3, r3, #255
+makegrph_ed		and		r3, r9, #255
+				sub		r8, r7, #4
 				orr		r3, r3, r3, lsl #8
-				orr		r3, r3, r3, lsl #16
 				mov		r4, #0
+				orr		r3, r3, r3, lsl #16
 mg_updclear		ldr		r12, [r7, r4]
-				bic		r12, r12, r3
-				str		r12, [r7, r4]
 				add		r4, r4, #4
 				cmp		r4, #&8000
+				bic		r12, r12, r3
+				str		r12, [r8, r4]
 				bcc		mg_updclear
 				ldmia	sp!, {r4 - r11, pc}
 
-gp_vramupdate	dcd		vramupdate
-gp_vmem			dcd		mem + VRAM_B
-gp_gtable0		dcd		grph_table0
-gp_gdc			dcd		gdc - G_MASTER
-gp_np2vram		dcd		np2_vram
 gp_dsync		dcd		dsync
+gp_vramupdate	dcd		vramupdate
+gp_vmem			dcd		i286core + CPU_SIZE + VRAM_B
+gp_gdc			dcd		gdc - G_MASTER
+gp_gtable0		dcd		grph_table0
+gp_np2vram		dcd		np2_vram
 gp_renewline	dcd		renewal_line
 gp_np2cfg		dcd		np2cfg
 

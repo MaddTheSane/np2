@@ -15,7 +15,7 @@
 
 	AREA	.text, CODE, READONLY
 
-i286aop80		GETPC8
+i286aop80		GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		ope80m
@@ -118,7 +118,7 @@ cmp_r8_e		SUB8	r4, r0
 
 ; ----
 
-i286aop81		GETPC8
+i286aop81		GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		ope81m
@@ -147,7 +147,7 @@ ope81e			mov		r5, r0
 				adr		r1, op8x_ext16
 				ldr		pc, [r1, r6 lsr #1]
 
-i286aop83		GETPC8
+i286aop83		GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		ope83m

@@ -1,43 +1,20 @@
 
-; ÇªÇÍà»ëOÇ…ÉÅÉÇÉäÇ™íxÇ¢Ç©ÇÁ Cî≈Ç∆Ç†ÇÒÇ‹ÇËïœÇÁÇ»Ç¢ÇÊÇ§Ç»Åc
-
-
-NP2PALS_TXT		equ		10
-NP2PALS_GRPH	equ		16
-
-NP2PAL_TEXT		equ		0
-NP2PAL_SKIP		equ		NP2PALS_TXT
-NP2PAL_GRPH		equ		(NP2PAL_SKIP + NP2PALS_GRPH)
-NP2PAL_TEXT2	equ		(NP2PAL_GRPH + NP2PALS_GRPH)
-
-SURFACE_WIDTH	equ		640
-
-S_SRC			equ		0
-S_SRC2			equ		4
-S_DST			equ		8
-S_WIDTH			equ		12
-S_XBYTES		equ		16
-S_Y				equ		20
-S_XALIGN		equ		24
-S_YALIGN		equ		28
-S_DIRTY			equ		32
-
+	INCLUDE	sdraw.inc
 	IMPORT	np2_pal16
-
 	EXPORT	sdraw_getproctbl
 
 	AREA	.text, CODE, READONLY
 
 sdraw16p_0		stmdb	sp!, {r4 - r8, lr}
+				add		r0, r0, #S_HDRSIZE
+				ldr		lr, pal16_0
 				ldr		r6, [r0, #S_SRC]
 				ldr		r7, [r0, #S_DST]
 				ldr		r8, [r0, #S_WIDTH]
 				ldr		r3, [r0, #S_XALIGN]
 				ldr		r4, [r0, #S_Y]
 				ldr		r5, [r0, #S_YALIGN]
-				ldr		lr, pal16_0
-				ldr		lr, [lr]
-				add		r0, r0, #S_DIRTY
+				ldrh	lr, [lr]
 putylp_0		ldrb	r12, [r0, r4]
 				cmp		r12, #0
 				beq		putyed_0
@@ -53,23 +30,23 @@ putyed_0		add		r4, r4, #1
 				add		r7, r7, r5
 				cmp		r4, r1
 				bcc		putylp_0
-				str		r6, [r0, #(S_SRC - S_DIRTY)]
-				str		r7, [r0, #(S_DST - S_DIRTY)]
-				str		r4, [r0, #(S_Y - S_DIRTY)]
+				str		r6, [r0, #S_SRC]
+				str		r7, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
 				ldmia	sp!, {r4 - r8, pc}
 pal16_0			dcd		np2_pal16 + (NP2PAL_TEXT2 * 2)
 
 
 sdraw16p_1		stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_1
-				ldr		r5, [r0, #(S_Y - S_DIRTY)]
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		lr, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r5, [r0, #S_Y]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		lr, [r0, #S_YALIGN]
 				ldrb	r12, [r5, r0]
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
-				ldr		r8, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
 putylp_1		cmp		r12, #0
 				beq		putyed_1
 				ldr		r6, [r7]			; r2 = 0
@@ -101,24 +78,24 @@ putyed_1		add		r5, r5, #1
 				cmp		r5, r1
 				ldrccb	r12, [r5, r0]
 				bcc		putylp_1
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_DST - S_DIRTY)]
-				str		r5, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_DST]
+				str		r5, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_1			dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
 
 sdraw16p_2		stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_2
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		r4, [r0, #(S_Y - S_DIRTY)]
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
-				ldr		r8, [r0, #(S_SRC2 - S_DIRTY)]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_SRC2]
 				ldrb	r12, [r0, r4]
-				ldr		r9, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
+				ldr		r9, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
 putylp_2		cmp		r12, #0
 				beq		putyed_2
 				ldr		r12, [r7]			; r2 = 0
@@ -147,7 +124,7 @@ putxlp_2		orr		lr, lr, r12
 				ldrcc	r12, [r2, r7]
 				ldrcc	lr, [r2, r8]
 				bcc		putxlp_2
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r5, [r0, #S_YALIGN]
 putyed_2		add		r4, r4, #1
 				add		r7, r7, #SURFACE_WIDTH
 				add		r8, r8, #SURFACE_WIDTH
@@ -155,24 +132,24 @@ putyed_2		add		r4, r4, #1
 				cmp		r4, r1
 				ldrccb	r12, [r4, r0]
 				bcc		putylp_2
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_SRC2 - S_DIRTY)]
-				str		r9, [r0, #(S_DST - S_DIRTY)]
-				str		r4, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_SRC2]
+				str		r9, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_2			dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
 
 sdraw16p_ti		stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_ti
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		r5, [r0, #(S_Y - S_DIRTY)]
-				ldr		lr, [r0, #(S_YALIGN - S_DIRTY)]
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r5, [r0, #S_Y]
+				ldr		lr, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
 				ldrb	r12, [r5, r0]
-				ldr		r8, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
+				ldr		r8, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
 putylp_ti		cmp		r12, #0
 				beq		putyod_ti
 				ldr		r6, [r7]			; r2 = 0
@@ -235,23 +212,23 @@ putyed_ti		add		r5, r5, #1
 				cmp		r5, r1
 				ldrccb	r12, [r5, r0]
 				bcc		putylp_ti
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_DST - S_DIRTY)]
-				str		r5, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_DST]
+				str		r5, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_ti		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
 
 sdraw16p_gi		stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_gi
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		r5, [r0, #(S_Y - S_DIRTY)]
-				ldr		lr, [r0, #(S_YALIGN - S_DIRTY)]
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r5, [r0, #S_Y]
+				ldr		lr, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
 				ldrb	r12, [r0, r5]
-				ldr		r8, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
+				ldr		r8, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
 putylp_gi		cmp		r12, #0
 				beq		putyod_gi
 				ldr		r6, [r7]			; r2 = 0
@@ -298,24 +275,24 @@ putyed_gi		add		r5, r5, #1
 				cmp		r5, r1
 				ldrccb	r12, [r5, r0]
 				bcc		putylp_gi
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_DST - S_DIRTY)]
-				str		r5, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_DST]
+				str		r5, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_gi		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
 
 sdraw16p_2i		stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_2i
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		r4, [r0, #(S_Y - S_DIRTY)]
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
-				ldr		r8, [r0, #(S_SRC2 - S_DIRTY)]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_SRC2]
 				ldrb	r12, [r0, r4]
-				ldr		r9, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
+				ldr		r9, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
 putylp_2i		cmp		r12, #0
 				beq		putyod_2i
 				ldr		r12, [r7]			; r2 = 0
@@ -344,7 +321,7 @@ putexlp_2i		orr		lr, lr, r12
 				ldrcc	r12, [r2, r7]
 				ldrcc	lr, [r2, r8]
 				bcc		putexlp_2i
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r5, [r0, #S_YALIGN]
 putyod_2i		add		r4, r4, #1
 				ldrb	r12, [r4, r0]
 				add		r8, r8, #SURFACE_WIDTH
@@ -375,7 +352,7 @@ putoxlp_2i		and		r5, lr, #&f0
 				strh	r12, [r6], r3
 				ldrcc	lr, [r2, r8]
 				bcc		putoxlp_2i
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r5, [r0, #S_YALIGN]
 				add		r11, r11, #((NP2PAL_GRPH - NP2PAL_TEXT) << 1)
 putyed_2i		add		r4, r4, #1
 				add		r7, r7, #(SURFACE_WIDTH * 2)
@@ -384,23 +361,23 @@ putyed_2i		add		r4, r4, #1
 				cmp		r4, r1
 				ldrccb	r12, [r4, r0]
 				bcc		putylp_2i
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_SRC2 - S_DIRTY)]
-				str		r9, [r0, #(S_DST - S_DIRTY)]
-				str		r4, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_SRC2]
+				str		r9, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_2i		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
 
 sdraw16p_gie	stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_gie
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
-				ldr		r8, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		r5, [r0, #(S_Y - S_DIRTY)]
-				ldr		lr, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r5, [r0, #S_Y]
+				ldr		lr, [r0, #S_YALIGN]
 putylp_gie		ldrb	r12, [r0, r5]
 				add		r5, r5, #1
 				cmp		r12, #0
@@ -463,23 +440,23 @@ putyed_gie		add		r5, r5, #1
 				add		r8, r8, lr
 				cmp		r5, r1
 				bcc		putylp_gie
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_DST - S_DIRTY)]
-				str		r5, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_DST]
+				str		r5, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_gie		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 
 
 sdraw16p_2ie	stmdb	sp!, {r4 - r11, lr}
-				add		r0, r0, #S_DIRTY
+				add		r0, r0, #S_HDRSIZE
 				ldr		r11, pal16_2ie
-				ldr		r7, [r0, #(S_SRC - S_DIRTY)]
-				ldr		r8, [r0, #(S_SRC2 - S_DIRTY)]
-				ldr		r9, [r0, #(S_DST - S_DIRTY)]
-				ldr		r10, [r0, #(S_WIDTH - S_DIRTY)]
-				ldr		r3, [r0, #(S_XALIGN - S_DIRTY)]
-				ldr		r4, [r0, #(S_Y - S_DIRTY)]
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r7, [r0, #S_SRC]
+				ldr		r8, [r0, #S_SRC2]
+				ldr		r9, [r0, #S_DST]
+				ldr		r10, [r0, #S_WIDTH]
+				ldr		r3, [r0, #S_XALIGN]
+				ldr		r4, [r0, #S_Y]
+				ldr		r5, [r0, #S_YALIGN]
 putylp_2ie		ldrb	r12, [r0, r4]
 				add		r4, r4, #1
 				cmp		r12, #0
@@ -511,14 +488,14 @@ putexlp_2ie		orr		lr, lr, r12
 				ldrcc	lr, [r2, r8]
 				ldrcc	r12, [r2, r7]
 				bcc		putexlp_2ie
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
+				ldr		r5, [r0, #S_YALIGN]
 putyod_2ie		ldrb	r12, [r0, r4]
 				add		r8, r8, #SURFACE_WIDTH
 				add		r9, r9, r5
 				cmp		r12, #0
 				beq		putyed_2ie
 				mov		r2, #0
-				str		r9, [r0, #(S_DST - S_DIRTY)]
+				str		r9, [r0, #S_DST]
 				ldr		lr, [r8]			; r2 = 0
 				sub		r11, r11, #((NP2PAL_GRPH - (NP2PALS_TXT + NP2PAL_TEXT)) << 1)
 putoxlp_2ie		ldr		r12, [r2, r7]
@@ -555,8 +532,8 @@ putoxlp_2ie		ldr		r12, [r2, r7]
 				ldrcc	lr, [r2, r8]
 				bcc		putoxlp_2ie
 
-				ldr		r5, [r0, #(S_YALIGN - S_DIRTY)]
-				ldr		r9, [r0, #(S_DST - S_DIRTY)]
+				ldr		r5, [r0, #S_YALIGN]
+				ldr		r9, [r0, #S_DST]
 				add		r11, r11, #((NP2PAL_GRPH - (NP2PALS_TXT + NP2PAL_TEXT)) << 1)
 putyed_2ie		add		r4, r4, #1
 				add		r7, r7, #(SURFACE_WIDTH * 2)
@@ -564,10 +541,10 @@ putyed_2ie		add		r4, r4, #1
 				add		r9, r9, r5
 				cmp		r4, r1
 				bcc		putylp_2ie
-				str		r7, [r0, #(S_SRC - S_DIRTY)]
-				str		r8, [r0, #(S_SRC2 - S_DIRTY)]
-				str		r9, [r0, #(S_DST - S_DIRTY)]
-				str		r4, [r0, #(S_Y - S_DIRTY)]
+				str		r7, [r0, #S_SRC]
+				str		r8, [r0, #S_SRC2]
+				str		r9, [r0, #S_DST]
+				str		r4, [r0, #S_Y]
 				ldmia	sp!, {r4 - r11, pc}
 pal16_2ie		dcd		np2_pal16 + (NP2PAL_GRPH * 2)
 

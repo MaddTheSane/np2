@@ -501,7 +501,7 @@ popa			ldrh	r4, [r9, #CPU_SP]
 				strh	r0, [r9, #CPU_SP]
 				mov		pc, r11
 
-bound			GETPC8
+bound			GETPCF8
 				cmp		r0, #&c0
 				bcs		bndreg
 				CPUWORK	#13
@@ -536,7 +536,7 @@ push_d16		CPUWORK	#3
 				mov		lr, r11
 				b		i286a_memorywrite_w
 
-imul_r_ea_d16	REG16EA	r5, #21, #24
+imul_r_ea_d16	REG16EA	r6, #21, #24
 				mov		r4, r0, lsl #16
 				GETPC16
 				mov		r0, r0, lsl #16
@@ -544,7 +544,7 @@ imul_r_ea_d16	REG16EA	r5, #21, #24
 				mov		r0, r0, asr #16
 				mul		r1, r0, r4
 				add		r12, r1, #&8000
-				strh	r1, [r5, #CPU_REG]
+				strh	r1, [r6, #CPU_REG]
 				movs	r12, r12 lsr #16
 				biceq	r8, r8, #O_FLAG
 				biceq	r8, r8, #C_FLAG
@@ -553,7 +553,7 @@ imul_r_ea_d16	REG16EA	r5, #21, #24
 				mov		pc, r11
 
 push_d8			CPUWORK	#3
-				GETPC8
+				GETPCF8
 				ldrh	r2, [r9, #CPU_SP]
 				ldr		r3, [r9, #CPU_SS_BASE]
 				mov		r0, r0 lsl #24
@@ -565,7 +565,7 @@ push_d8			CPUWORK	#3
 				mov		lr, r11
 				b		i286a_memorywrite_w
 
-imul_r_ea_d8	REG16EA	r5, #21, #24
+imul_r_ea_d8	REG16EA	r6, #21, #24
 				mov		r4, r0, lsl #16
 				GETPC8
 				mov		r0, r0, lsl #24
@@ -573,7 +573,7 @@ imul_r_ea_d8	REG16EA	r5, #21, #24
 				mov		r0, r0, asr #24
 				mul		r1, r0, r4
 				add		r12, r1, #&8000
-				strh	r1, [r5, #CPU_REG]
+				strh	r1, [r6, #CPU_REG]
 				movs	r12, r12 lsr #16
 				biceq	r8, r8, #O_FLAG
 				biceq	r8, r8, #C_FLAG
@@ -746,15 +746,15 @@ movear16_1		CPUWORK	#5
 				mov		lr, r11
 				b		i286a_memorywrite_w
 
-mov_r8_ea		REG8EA	r5, #2, #5
-				strb	r0, [r5, #CPU_REG]
+mov_r8_ea		REG8EA	r6, #2, #5
+				strb	r0, [r6, #CPU_REG]
 				mov		pc, r11
 
-mov_r16_ea		REG16EA	r5, #2, #5
-				strh	r0, [r5, #CPU_REG]
+mov_r16_ea		REG16EA	r6, #2, #5
+				strh	r0, [r6, #CPU_REG]
 				mov		pc, r11
 
-mov_ea_seg		GETPC8
+mov_ea_seg		GETPCF8
 				and		r1, r0, #(3 << 3)
 				add		r1, r9, r1 lsr #2
 				ldrh	r5, [r1, #CPU_SEG]
@@ -771,7 +771,7 @@ measegm			CPUWORK	#3
 				b		i286a_memorywrite_w
 
 lea_r16_ea		CPUWORK	#3
-				GETPC8
+				GETPCF8
 				cmp		r0, #&c0
 				bcs		leareg
 				R16DST	r0, r5
@@ -782,7 +782,7 @@ leareg			mov		r6, #6
 				sub		r8, r8, #(2 << 16)
 				b		i286a_localint
 
-mov_seg_ea		GETPC8
+mov_seg_ea		GETPCF8
 				adr		r6, msegea_tbl
 				and		r1, r0, #(3 << 3)
 				mov		r5, r8
@@ -820,12 +820,12 @@ msegea_cs		sub		r8, r5, #(2 << 16)
 				b		i286a_localint
 
 pop_ea			POP		#5
-				mov		r5, r0
-				GETPC8
+				mov		r6, r0
+				GETPCF8
 				cmp		r0, #&c0
 				bcs		popreg
 				bl		i286a_ea
-				mov		r1, r5
+				mov		r1, r6
 				mov		lr, r11
 				b		i286a_memorywrite_w
 popreg			R16SRC	r0, r1
@@ -1157,7 +1157,7 @@ ret_near		CPUWORK	#11
 				orr		r8, r8, r0 lsl #16
 				mov		pc, r11
 
-les_r16_ea		GETPC8
+les_r16_ea		GETPCF8
 				cmp		r0, #&c0
 				bcs		lr16_r
 				CPUWORK	#3
@@ -1178,7 +1178,7 @@ lr16_r			mov		r6, #6
 				sub		r8, r8, #(2 << 16)
 				b		i286a_localint
 
-lds_r16_ea		GETPC8
+lds_r16_ea		GETPCF8
 				cmp		r0, #&c0
 				bcs		lr16_r
 				CPUWORK	#3
@@ -1197,24 +1197,24 @@ lds_r16_ea		GETPC8
 				str		r1, [r9, #CPU_DS_FIX]
 				mov		pc, r11
 
-mov_ea8_d8		GETPC8
+mov_ea8_d8		GETPCF8
 				cmp		r0, #&c0
 				bcs		med8_r
 				CPUWORK	#3
 				bl		i286a_ea
 				mov		r4, r0
-				GETPC8
+				GETPCF8
 				mov		r1, r0
 				mov		r0, r4
 				mov		lr, r11
 				b		i286a_memorywrite
 med8_r			CPUWORK	#2
 				R8DST	r0, r4
-				GETPC8
+				GETPCF8
 				strb	r0, [r4, #CPU_REG]
 				mov		pc, r11
 
-mov_ea16_d16	GETPC8
+mov_ea16_d16	GETPCF8
 				cmp		r0, #&c0
 				bcs		med16_r
 				CPUWORK	#3
@@ -1349,7 +1349,7 @@ int_03			CPUWORK	#3
 				b		i286a_localint
 
 int_d8			CPUWORK	#3
-				GETPC8
+				GETPCF8
 				mov		r6, r0
 				b		i286a_localint
 
@@ -1394,7 +1394,7 @@ iret_pic		dcd		pic
 
 
 aam				CPUWORK	#16
-				GETPC8
+				GETPCF8
 				movs	r0, r0 lsl #7
 				beq		aamzero
 				ldrb	r1, [r9, #CPU_AL]
@@ -1421,7 +1421,7 @@ aamzero			sub		r8, r8, #(2 << 16)
 				b		i286a_localint
 
 aad				CPUWORK	#14
-				GETPC8
+				GETPCF8
 				ldrh	r1, [r9, #CPU_AX]
 				bic		r8, r8, #(S_FLAG + Z_FLAG + P_FLAG)
 				;
@@ -1454,7 +1454,7 @@ xlat			ldrb	r0, [r9, #CPU_AL]
 				mov		pc, r11
 
 esc				CPUWORK	#2
-				GETPC8
+				GETPCF8
 				cmp		r0, #&c0
 				movcs	pc, r11
 				mov		lr, r11
@@ -1509,7 +1509,7 @@ jcxz			ldrh	r0, [r9, #CPU_CX]
 jcxzj			JMPS	#8
 
 in_al_d8		CPUWORK	#5
-				GETPC8
+				GETPCF8
 				add		r3, r0, r8 lsr #16
 				CPUSV
 				str		r3, [r9, #CPU_INPUT]
@@ -1521,7 +1521,7 @@ in_al_d8		CPUWORK	#5
 				mov		pc, r11
 
 in_ax_d8		CPUWORK	#5
-				GETPC8
+				GETPCF8
 				CPUSV
 				bl		iocore_inp16
 				CPULD
@@ -1529,7 +1529,7 @@ in_ax_d8		CPUWORK	#5
 				mov		pc, r11
 
 out_d8_al		CPUWORK	#3
-				GETPC8
+				GETPCF8
 				ldrb	r1, [r9, #CPU_AL]
 				CPUSV
 				bl		iocore_out8
@@ -1537,7 +1537,7 @@ out_d8_al		CPUWORK	#3
 				mov		pc, r11
 
 out_d8_ax		CPUWORK	#3
-				GETPC8
+				GETPCF8
 				ldrh	r1, [r9, #CPU_AX]
 				CPUSV
 				bl		iocore_out16
@@ -1699,12 +1699,12 @@ i286a			stmdb	sp!, {r4 - r11, lr}
 				bne		i286awithdma
 				adr		r4, optbl1
 i286a_lp		add		r0, r5, r8 lsr #16
-				bl		i286a_memoryread
+				GETR0
 				ldr		r1, [r4, r0 lsl #2]
 				add		r8, r8, #(1 << 16)
 				mov		r11, pc
 				mov		pc, r1
-				ldr		r7, [r9, #CPU_REMAINCLOCK]
+				CPUDBGL
 				ldr		r5, [r9, #CPU_CS_BASE]
 				adr		r4, optbl1
 				cmp		r7, #0
@@ -1718,13 +1718,13 @@ ias_r10			dcd		iflags
 
 i286awithdma	adr		r4, optbl1
 i286awdma_lp	add		r0, r5, r8 lsr #16
-				bl		i286a_memoryread
+				GETR0
 				ldr		r1, [r4, r0 lsl #2]
 				add		r8, r8, #(1 << 16)
 				mov		r11, pc
 				mov		pc, r1
 				bl		dmap_i286
-				ldr		r7, [r9, #CPU_REMAINCLOCK]
+				CPUDBGL
 				ldr		r5, [r9, #CPU_CS_BASE]
 				adr		r4, optbl1
 				cmp		r7, #0
@@ -1734,7 +1734,7 @@ i286awdma_lp	add		r0, r5, r8 lsr #16
 
 i286awithtrap	adr		r4, optbl1
 i286awtrp_lp	add		r0, r5, r8 lsr #16
-				bl		i286a_memoryread
+				GETR0
 				ldr		r1, [r4, r0 lsl #2]
 				add		r8, r8, #(1 << 16)
 				mov		r11, pc
@@ -2033,7 +2033,7 @@ $label		ldr		r1, [r9, $b]
 			add		r6, r6, #1
 			cmp		r6, #MAX_PREFIX
 			bcs		prefix_fault
-			bl		i286a_memoryread
+			GETR0
 			ldr		r1, [r4, r0 lsl #2]
 			add		r8, r8, #(1 << 16)
 			strb	r6, [r9, #CPU_PREFIX]
@@ -2070,7 +2070,7 @@ repne			ldrb	r6, [r9, #CPU_PREFIX]
 				add		r6, r6, #1
 				cmp		r6, #MAX_PREFIX
 				bcs		prefix_fault
-				bl		i286a_memoryread
+				GETR0
 				ldr		r1, [r4, r0 lsl #2]
 				add		r8, r8, #(1 << 16)
 				strb	r6, [r9, #CPU_PREFIX]
@@ -2360,7 +2360,7 @@ repe			ldrb	r6, [r9, #CPU_PREFIX]
 				add		r6, r6, #1
 				cmp		r6, #MAX_PREFIX
 				bcs		prefix_fault
-				bl		i286a_memoryread
+				GETR0
 				ldr		r1, [r4, r0 lsl #2]
 				add		r8, r8, #(1 << 16)
 				strb	r6, [r9, #CPU_PREFIX]

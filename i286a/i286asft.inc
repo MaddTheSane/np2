@@ -82,8 +82,8 @@ $label	SAR8	$s
 $label		and		r12, $s, #&80
 			add		r1, r12, $s lsr #1
 			and		r2, $s, #1
-			bic		r8, r8, #O_FLAG
 			ldrb	r12, [r10, r1]
+			bic		r8, r8, #O_FLAG
 			bic		r8, r8, #&ff
 			orr		r12, r2, r12
 			orr		r12, r12, #A_FLAG

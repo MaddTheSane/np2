@@ -19,7 +19,7 @@
 
 	AREA	.text, CODE, READONLY
 
-i286aopf6		GETPC8
+i286aopf6		GETPCF8
 				and		r12, r0, #(7 << 3)
 				adr		r1, opef6tbl
 				ldr		pc, [r1, r12 lsr #1]
@@ -147,7 +147,7 @@ idiv8e_div		dcd		__imp___rt_sdiv
 
 ; ----
 
-i286aopf7		GETPC8
+i286aopf7		GETPCF8
 				and		r12, r0, #(7 << 3)
 				adr		r1, opef7tbl
 				ldr		pc, [r1, r12 lsr #1]

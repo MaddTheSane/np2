@@ -18,10 +18,10 @@
 
 
 i286a_cts		mov		r6, r8
-				GETPC8
+				GETPCF8
 				cmp		r0, #1
 				bne		cts_ldall
-				GETPC8
+				GETPCF8
 				and		r12, r0, #(7 << 3)
 				add		pc, pc, r12 lsr #1
 				nop

@@ -1,8 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  i286c : 80286 Engine for Pentium  ver0.05
+//  i286a : 80286 Engine for ARM  ver0.01
 //
-//                               Copyright by Yui/Studio Milmake 1999-2003
+//                                    Copyright by Yui/Studio Milmake 2003
 //
 //----------------------------------------------------------------------------
 
@@ -174,10 +174,6 @@ typedef struct {							// for ver0.73
 	UINT8	grcgwait;
 	UINT8	padding;
 #endif
-#if defined(CPUSTRUC_FONTPTR)
-	BYTE	*fontlow;
-	BYTE	*fonthigh;
-#endif
 } I286EXT;
 
 typedef struct {
@@ -194,16 +190,12 @@ extern "C" {
 extern	I286CORE	i286core;
 extern	const UINT8	iflags[];
 
-void i286c_initialize(void);
-void i286c_reset(void);
+void i286a_reset(void);
 
-void CPUCALL i286c_interrupt(REG8 vect);
+void CPUCALL i286a_interrupt(REG8 vect);
 
-void i286c(void);
-void i286c_step(void);
-
-void v30c(void);
-void v30c_step(void);
+void i286a(void);
+void i286a_step(void);
 
 #ifdef __cplusplus
 }
@@ -265,10 +257,6 @@ void v30c_step(void);
 #define	MEMWAIT_VRAM	i286core.e.vramwait
 #define	MEMWAIT_GRCG	i286core.e.grcgwait
 #endif
-#if defined(CPUSTRUC_FONTPTR)
-#define	FONTPTR_LOW		i286core.e.fontlow
-#define	FONTPTR_HIGH	i286core.e.fonthigh
-#endif
 
 
 #define	CPU_isDI		(!(i286core.s.r.w.flag & I_FLAG))
@@ -278,10 +266,10 @@ void v30c_step(void);
 #define	CPU_STI			i286core.s.r.w.flag |= I_FLAG;						\
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
 
-#define	CPU_INITIALIZE		i286c_initialize
-#define	CPU_RESET			i286c_reset
+#define	CPU_INITIALIZE()
+#define	CPU_RESET			i286a_reset
 #define	CPU_CLEARPREFETCH()
-#define	CPU_INTERRUPT(v)	i286c_interrupt(v)
-#define	CPU_EXEC			i286c
-#define	CPU_EXECV30			v30c
+#define	CPU_INTERRUPT(v)	i286a_interrupt(v)
+#define	CPU_EXEC			i286a
+#define	CPU_EXECV30			i286a
 

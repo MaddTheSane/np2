@@ -79,52 +79,52 @@ jis2sjis		and		r1, r0, #&7f00
 				orr		r0, r0, r1
 				mov		pc, lr
 
-satuation_s16	movs	r2, r2, lsr #2
+satuation_s16	movs	r2, r2 lsr #2
 				moveq	pc, lr
 				stmdb	sp!, {r4, lr}
 				ldr		lr, dcd_ffff8000
 				mov		r12, #&7f00
 				orr		r12, r12, #&7f
 ss16_lp			ldr		r3, [r1], #4
+				ldr		r4, [r1], #4
 				cmp		r3, r12
 				movgt	r3, r12
 				cmple	r3, lr
 				movlt	r3, lr
-				ldr		r4, [r1], #4
 				mov		r3, r3, lsl #16
 				cmp		r4, r12
 				movgt	r4, r12
 				cmple	r4, lr
 				movlt	r4, lr
 				mov		r4, r4, lsl #16
-				add		r3, r4, r3, lsr #16
+				add		r3, r4, r3 lsr #16
 				str		r3, [r0], #4
 				subs	r2, r2, #1
 				bne		ss16_lp
 				ldmia	sp!, {r4, pc}
 dcd_ffff8000	dcd		&ffff8000
 
-satuation_s16x	movs	r2, r2, lsr #2
+satuation_s16x	movs	r2, r2 lsr #2
 				moveq	pc, lr
 				stmdb	sp!, {r4, lr}
 				ldr		lr, dcd_ffff8000
 				mov		r12, #&7f00
 				orr		r12, r12, #&7f
 ss16x_lp		ldr		r3, [r1], #4
+				ldr		r4, [r1], #4
 				cmp		r3, r12
 				movgt	r3, r12
 				cmple	r3, lr
 				movlt	r3, lr
-				ldr		r4, [r1], #4
 				mov		r3, r3, lsl #16
 				cmp		r4, r12
 				movgt	r4, r12
 				cmple	r4, lr
 				movlt	r4, lr
 				mov		r4, r4, lsl #16
-				add		r3, r3, r4, lsr #16
-				str		r3, [r0], #4
 				subs	r2, r2, #1
+				add		r3, r3, r4 lsr #16
+				str		r3, [r0], #4
 				bne		ss16x_lp
 				ldmia	sp!, {r4, pc}
 

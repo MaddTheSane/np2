@@ -17,7 +17,7 @@
 
 	AREA	.text, CODE, READONLY
 
-i286aopfe		GETPC8
+i286aopfe		GETPCF8
 				tst		r0, #(1 << 3)
 				bne		decea8
 incea8			OP_EA8	INC8, #2, #7
@@ -26,7 +26,7 @@ decea8			OP_EA8	DEC8, #2, #7
 
 ; ----
 
-i286aopff		GETPC8
+i286aopff		GETPCF8
 				and		r12, r0, #(7 << 3)
 				adr		r1, opefftbl
 				ldr		pc, [r1, r12 lsr #1]

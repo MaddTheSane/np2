@@ -18,7 +18,7 @@
 
 	AREA	.text, CODE, READONLY
 
-i286asft8_1		GETPC8
+i286asft8_1		GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft8m
@@ -113,7 +113,7 @@ sar_e8_1		SAR8	r0
 
 ; ----
 
-i286asft16_1	GETPC8
+i286asft16_1	GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft16m
@@ -210,7 +210,7 @@ sar_e16_1		SAR16	r0
 
 ; ----
 
-i286asft8_cl	GETPC8
+i286asft8_cl	GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft8clm
@@ -242,7 +242,7 @@ sft8cle			ldrb	r4, [r9, #CPU_CL]
 				adr		r1, sft_ext8cl
 				ldr		pc, [r1, r6 lsr #1]
 
-i286asft8_d8	GETPC8
+i286asft8_d8	GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft8d8m
@@ -347,7 +347,7 @@ sar_e8_cl		SAR8CL	r0, r4
 
 ; ----
 
-i286asft16_cl	GETPC8
+i286asft16_cl	GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft16clm
@@ -384,7 +384,7 @@ sft16cle		ldrb	r4, [r9, #CPU_CL]
 				adr		r1, sft_ext16cl
 				ldr		pc, [r1, r6 lsr #1]
 
-i286asft16_d8	GETPC8
+i286asft16_d8	GETPCF8
 				and		r6, r0, #(7 << 3)
 				cmp		r0, #&c0
 				bcc		sft16d8m

@@ -7,6 +7,7 @@
 	EXPORT		i286a_localint
 	EXPORT		i286a_trapint
 	IMPORT		i286a_trapintr
+	EXPORT		i286c_interrupt
 	EXPORT		i286a_interrupt
 
 	AREA	.text, CODE, READONLY
@@ -72,7 +73,7 @@ i286a_trapint	ldrh	r4, [r9, #CPU_SP]
 				str		r2, [r9, #CPU_CS_BASE]
 				b		i286a_trapintr
 
-
+i286c_interrupt
 i286a_interrupt	ldr		r1, iai_r9
 				stmdb	sp!, {r4 - r9, lr}
 				mov		r9, r1
@@ -111,7 +112,7 @@ i286a_interrupt	ldr		r1, iai_r9
 				mov		r2, r0 lsl #4
 				strh	r0, [r9, #CPU_CS]
 				str		r2, [r9, #CPU_CS_BASE]
-				CPUSVC
+				CPUSV
 				ldmia	sp!, {r4 - r9, pc}
 iai_r9			dcd		i286core + CPU_SIZE
 
