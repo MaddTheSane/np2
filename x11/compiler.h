@@ -176,6 +176,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #endif
 
 #define	SUPPORT_EUC
+#define	SUPPORT_SJIS
 
 #undef	SUPPORT_8BPP
 #define	SUPPORT_16BPP

@@ -100,6 +100,7 @@ typedef	unsigned char	BYTE;
 #define	VERMOUTH_LIB
 // #define	SOUND_CRITICAL
 
+#define	SUPPORT_SJIS
 #define	SUPPORT_EUC
 
 #define	SUPPORT_16BPP
