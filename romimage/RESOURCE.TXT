@@ -1,4 +1,4 @@
-# = "(C) Studio Milmake 2000"
+# = "(C) Studio Milmake 2000,2003"
 # = "フロッピィ"
 # = "ディスク"
 # = "クロック"
@@ -67,15 +67,15 @@
 
 
 
-res_rev1	= "NEC PC-9800 SERIES Emulator\n\nROM BIOS Revivsion "
-res_revver	= "0.28g"
-res_rev2	= "\n\nCopyright (C) Studio Milmake 2000\n\n"
+res_rev1	= "NEC PC-9800 SERIES Emulator\n\nROM BIOS Revision "
+res_revver	= "0.73"
+res_rev2	= "\n\nCopyright (C) Studio Milmake 2000,2003\n\n"
 
 res_wflash	= "Insert the ROM DATA disk ...Press RETURN key"
 
 res_unknown	= "unknown"
 
-res_firm1	= "Initial Test Firmware  (C) Studio Milmake 2000\n"
+res_firm1	= "Initial Test Firmware  (C) Studio Milmake 2000,2003\n"
 res_firm2	= "\n\nProcessor  is  "
 res_firm3	= "\n\nCPU Clock  is  "
 res_firm4	= "\n\nResolution is  Normal (640x400)\n\n"

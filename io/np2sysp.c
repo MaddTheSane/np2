@@ -121,7 +121,7 @@ static const char str_np2[] = "NP2";
 static const char str_ver[] = "ver";
 static const char str_poweroff[] = "poweroff";
 static const char str_credit[] = "credit";
-static const char str_cpu[] = "credit";
+static const char str_cpu[] = "cpu";
 static const char str_clock[] = "clock";
 static const char str_multiple[] = "multiple";
 
@@ -203,6 +203,7 @@ const SYSPCMD	*cmdterm;
 			cmd->func(cmd->arg1, cmd->arg2);
 			break;
 		}
+		cmd++;
 	}
 	np2sysp.strpos++;
 	np2sysp.strpos &= NP2SYSP_MASK;
