@@ -26,7 +26,8 @@ typedef struct {
 	UINT8		vsyncint;
 	UINT8		display;
 	UINT8		bitac;
-	UINT8		reserved[2];
+	UINT8		ff2;
+	UINT8		reserved;
 	int			analog;
 	int			palnum;
 	UINT8		degpal[4];

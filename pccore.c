@@ -574,6 +574,9 @@ UINT	cflg;
 #endif
 
 
+void pccore_postevent(UINT32 event) {
+}
+
 void pccore_exec(BOOL draw) {
 
 	drawframe = draw;

@@ -933,14 +933,67 @@ static REG8 IOINPCALL gdc_iae(UINT port) {
 #if defined(SUPPORT_PC9821)
 static void IOOUTCALL gdc_o9a0(UINT port, REG8 dat) {
 
+	gdc.ff2 = dat;
 	(void)port;
-	(void)dat;
 }
 
 static REG8 IOINPCALL gdc_i9a0(UINT port) {
 
+	REG8	ret;
+
+	ret = 0;
+	switch(gdc.ff2) {
+		case 0x00:
+			ret = 0xff;
+			break;
+
+		case 0x01:
+			ret = (gdc.mode1 >> 1) & 1;
+			break;
+
+		case 0x02:
+			ret = (gdc.mode1 >> 4) & 1;
+			break;
+
+		case 0x03:
+			ret = (gdc.mode1 >> 7) & 1;
+			break;
+
+		case 0x04:
+			ret = (gdc.mode2 >> 0) & 1;
+			break;
+
+		case 0x05:
+			ret = (gdc.display >> GDCDISP_PLAZMA) & 1;
+			break;
+
+		case 0x07:
+			ret = (gdc.mode2 >> 2) & 1;
+			break;
+
+		case 0x08:
+			ret = (gdc.mode2 >> 3) & 1;
+			break;
+
+		case 0x09:
+			ret = (gdc.clock >> 0) & 1;
+			break;
+
+		case 0x0a:
+			ret = (gdc.analog >> GDCANALOG_256) & 1;
+			break;
+
+		case 0x0b:
+			ret = 1;
+			break;
+
+		case 0x0d:
+			ret = (gdc.analog >> GDCANALOG_256E) & 1;
+			break;
+	}
+	ret |= (gdc.clock & 2);
 	(void)port;
-	return(0);
+	return(ret);
 }
 #endif
 
@@ -1087,7 +1140,7 @@ void gdc_reset(void) {
 void gdc_bind(void) {
 
 	gdc_updateclock();
-#if defined(SUPPORT_PC9821)				// ‚Æ‚è‚ ‚¦‚¸ƒtƒbƒN‚¾‚¯
+#if defined(SUPPORT_PC9821)
 	iocore_attachout(0x09a0, gdc_o9a0);
 	iocore_attachinp(0x09a0, gdc_i9a0);
 #endif

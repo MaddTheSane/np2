@@ -15,7 +15,7 @@ REG8 sasibios_operate(void);
 REG8 scsibios_operate(void);
 #endif
 
-#if defined(SUPPORT_SASI)
+#if defined(SUPPORT_IDEIO) || defined(SUPPORT_SASI)
 void np2sysp_sasi(const void *arg1, long arg2);
 #endif
 

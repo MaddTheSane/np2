@@ -124,6 +124,12 @@ typedef struct {
 	UINT32	realclock;
 } PCCORE;
 
+enum {
+	COREEVENT_SHUT		= 0,
+	COREEVENT_RESET		= 1,
+	COREEVENT_EXIT		= 2
+};
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -150,6 +156,8 @@ void pccore_init(void);
 void pccore_term(void);
 void pccore_reset(void);
 void pccore_exec(BOOL draw);
+
+void pccore_postevent(UINT32 event);
 
 #ifdef __cplusplus
 }

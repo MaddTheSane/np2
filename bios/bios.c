@@ -8,6 +8,7 @@
 #include	"biosmem.h"
 #include	"sxsibios.h"
 #include	"lio.h"
+#include	"vram.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"fdfmt.h"
@@ -66,7 +67,7 @@ const IODATA	*pterm;
 
 static void bios_memclear(void) {
 
-	ZeroMemory(mem + 0x400, 0xa0000 - 0x400);
+	ZeroMemory(mem, 0xa0000);
 	ZeroMemory(mem + 0x100000, 0x10000);
 	if (CPU_EXTMEM) {
 		ZeroMemory(CPU_EXTMEM, CPU_EXTMEMSIZE);
@@ -76,6 +77,9 @@ static void bios_memclear(void) {
 	ZeroMemory(mem + VRAM0_E, 0x08000);
 	ZeroMemory(mem + VRAM1_B, 0x18000);
 	ZeroMemory(mem + VRAM1_E, 0x08000);
+#if defined(SUPPORT_PC9821)
+	ZeroMemory(vramex, sizeof(vramex));
+#endif
 }
 
 static void bios_reinitbyswitch(void) {

@@ -374,7 +374,7 @@ REG8 scsibios_operate(void) {
 
 // ---- np2sysp
 
-#if defined(SUPPORT_SASI) || defined(SUPPORT_SCSI)
+#if defined(SUPPORT_IDEIO) || defined(SUPPORT_SASI) || defined(SUPPORT_SCSI)
 typedef struct {
 	UINT16	ax;
 	UINT16	cx;
@@ -463,7 +463,7 @@ static void reg_store(UINT seg, UINT off) {
 }
 #endif
 
-#if defined(SUPPORT_SASI)
+#if defined(SUPPORT_IDEIO) || defined(SUPPORT_SASI)
 void np2sysp_sasi(const void *arg1, long arg2) {
 
 	UINT	seg;
