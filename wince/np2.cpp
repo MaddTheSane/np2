@@ -5,6 +5,9 @@
 #endif
 #include	"resource.h"
 #include	"strres.h"
+#if defined(UNICODE) && defined(OSLANG_UTF8)
+#include	"codecnv.h"
+#endif
 #include	"np2.h"
 #include	"dosio.h"
 #include	"commng.h"
@@ -322,14 +325,14 @@ static DWORD _GetModuleFileName(HMODULE hModule,
 	}
 	return(nSize);
 }
-#elif defined(OSLANG_UTF8)
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
 static DWORD _GetModuleFileName(HMODULE hModule,
 										OEMCHAR *lpFileName, DWORD nSize) {
 
 	UINT16	ucs2[MAX_PATH];
 
 	GetModuleFileName(hModule, ucs2, NELEMENTS(ucs2));
-	nSize = ucscnv_ucs2toutf8(lpFileName, nSize, ucs2, (UINT)-1);
+	nSize = codecnv_ucs2toutf8(lpFileName, nSize, ucs2, (UINT)-1);
 	if (nSize) {
 		nSize--;
 	}

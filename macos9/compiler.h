@@ -16,25 +16,25 @@
 #define	OSLINEBREAK_CR
 
 
-typedef signed int		SINT;
-typedef unsigned int	UINT;
+typedef	signed int		SINT;
+typedef	unsigned int	UINT;
 
-typedef signed char		SINT8;
-typedef unsigned char	UINT8;
+typedef	signed char		SINT8;
+typedef	unsigned char	UINT8;
 
-typedef signed short	SINT16;
-typedef unsigned short	UINT16;
+typedef	signed short	SINT16;
+typedef	unsigned short	UINT16;
 
-typedef signed int		SINT32;
-typedef unsigned int	UINT32;
+typedef	signed int		SINT32;
+typedef	unsigned int	UINT32;
 
-typedef SInt64			SINT64;
-typedef UInt64			UINT64;
+typedef	SInt64			SINT64;
+typedef	UInt64			UINT64;
 
-typedef Boolean			BOOL;
-typedef signed char		TCHAR;
-typedef signed char		CHAR;
-typedef unsigned char	BYTE;
+typedef	Boolean			BOOL;
+typedef	signed char		TCHAR;
+typedef	signed char		CHAR;
+typedef	unsigned char	BYTE;
 
 
 #define	MAX_PATH	260
@@ -76,7 +76,7 @@ typedef unsigned char	BYTE;
 #if defined(CPUCORE_IA32)
 #define	SUPPORT_CRT31KHZ
 #define	SUPPORT_PC9821
-#define IA32_PAGING_EACHSIZE
+#define	IA32_PAGING_EACHSIZE
 #endif
 #define	SUPPORT_CRT15KHZ
 #define	SUPPORT_HOSTDRV

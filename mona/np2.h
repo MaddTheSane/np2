@@ -1,10 +1,10 @@
 
 typedef struct {
-	BYTE	NOWAIT;
-	BYTE	DRAW_SKIP;
-	BYTE	F12KEY;
-	BYTE	resume;
-	BYTE	jastsnd;
+	UINT8	NOWAIT;
+	UINT8	DRAW_SKIP;
+	UINT8	F12KEY;
+	UINT8	resume;
+	UINT8	jastsnd;
 } NP2OSCFG;
 
 

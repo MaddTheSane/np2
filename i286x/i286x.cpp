@@ -16,7 +16,7 @@
 
 	I286CORE	i286core;
 
-const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
+const UINT8 iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,
 			0x00, 0x04, 0x04, 0x00, 0x04, 0x00, 0x00, 0x04,
 			0x00, 0x04, 0x04, 0x00, 0x04, 0x00, 0x00, 0x04,
@@ -95,7 +95,7 @@ void i286x_setextsize(UINT32 size) {
 			CPU_EXTMEM = NULL;
 		}
 		if (size) {
-			CPU_EXTMEM = (BYTE *)_MALLOC(size + 16, "EXTMEM");
+			CPU_EXTMEM = (UINT8 *)_MALLOC(size + 16, "EXTMEM");
 			if (CPU_EXTMEM == NULL) {
 				size = 0;
 			}
@@ -110,7 +110,7 @@ void i286x_setextsize(UINT32 size) {
 
 void i286x_setemm(UINT frame, UINT32 addr) {
 
-	BYTE	*ptr;
+	UINT8	*ptr;
 
 	frame &= 3;
 	if (addr < USE_HIMEM) {
@@ -138,7 +138,7 @@ LABEL void i286x_resetprefetch(void) {
 	}
 }
 
-LABEL void __fastcall i286x_interrupt(BYTE vect) {
+LABEL void __fastcall i286x_interrupt(UINT8 vect) {
 
 	__asm {
 				pushad

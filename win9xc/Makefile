@@ -1,6 +1,5 @@
-
 # makefile for cygwin
-#   gcc version 3.2 20020927 (prerelease)
+#   gcc version 3.3.3
 
 
 AS		= nasmw
@@ -20,6 +19,7 @@ I386C		= ../i386c
 IA32		= ../i386c/ia32
 IA32INST	= ../i386c/ia32/instructions
 IA32FPU		= ../i386c/ia32/instructions/fpu
+MEM			= ../mem
 IO			= ../io
 CBUS		= ../cbus
 BIOS		= ../bios
@@ -63,9 +63,9 @@ COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-fsigned-char -mno-cygwin -march=pentium \
 			-DWIN32 -DNDEBUG -D_WINDOWS -DCPUCORE_IA32 -DTRACE \
 			-I$(BASE) -I$(COMMON) -I$(I386C) -I$(IA32) -I$(IA32INST) \
-			-I$(IA32FPU) -I$(IO) -I$(CBUS) -I$(BIOS) -I$(SOUND) \
-			-I$(VERMOUTH) -I$(GETSND) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
-			-I$(GENERIC) -I$(TARGET) -I$(DIALOG)
+			-I$(IA32FPU) -I$(MEM) -I$(IO) -I$(CBUS) -I$(BIOS) -I$(LIO) \
+			-I$(VRAM) -I$(SOUND) -I$(VERMOUTH) -I$(GETSND) -I$(FDD) \
+			-I$(FONT) -I$(GENERIC) -I$(TARGET) -I$(DIALOG)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -74,8 +74,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/parts.o												\
 			$(OBJ)/cpu.o		$(OBJ)/cpu_io.o		$(OBJ)/cpu_mem.o	\
 			$(OBJ)/ctrlxfer.o	$(OBJ)/exception.o	$(OBJ)/groups.o		\
-			$(OBJ)/cpucore.o	$(OBJ)/memory.o		$(OBJ)/egcmem.o		\
-			$(OBJ)/mem9821.o	$(OBJ)/dmap.o							\
+			$(OBJ)/cpucore.o	$(OBJ)/memory.o							\
 			$(OBJ)/ia32.o		$(OBJ)/inst_table.o	$(OBJ)/interface.o	\
 			$(OBJ)/paging.o		$(OBJ)/resolve.o	$(OBJ)/segments.o	\
 			$(OBJ)/task.o		$(OBJ)/iadebug.o	$(OBJ)/iadisasm.o	\
@@ -86,6 +85,9 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/seg_reg.o		$(OBJ)/shift_rotate.o				\
 			$(OBJ)/string_inst.o	$(OBJ)/system_inst.o				\
 			$(OBJ)/fpdummy.o											\
+			$(OBJ)/dmax86.o		$(OBJ)/dmav30.o		$(OBJ)/memtram.o	\
+			$(OBJ)/memvram.o	$(OBJ)/memegc.o		$(OBJ)/memvga.o		\
+			$(OBJ)/memems.o		$(OBJ)/memepp.o							\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
 			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/emsio.o		\
@@ -107,6 +109,12 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/bios12.o		$(OBJ)/bios13.o		$(OBJ)/bios18.o		\
 			$(OBJ)/bios19.o		$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		\
 			$(OBJ)/bios1c.o		$(OBJ)/bios1f.o		$(OBJ)/sxsibios.o	\
+			$(OBJ)/lio.o		$(OBJ)/gscreen.o	$(OBJ)/gpset.o		\
+			$(OBJ)/gline.o		$(OBJ)/gcircle.o	$(OBJ)/gput1.o		\
+			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
+			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
+			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/makegrex.o	\
+			$(OBJ)/scrnbmp.o											\
 			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
 			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
 			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
@@ -114,15 +122,9 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/rhythmc.o	$(OBJ)/adpcmc.o		$(OBJ)/adpcmg.o		\
 			$(OBJ)/pcm86c.o		$(OBJ)/pcm86g.o		$(OBJ)/cs4231c.o	\
 			$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	$(OBJ)/s98.o		\
-			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
-			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
-			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/makegrex.o	\
-			$(OBJ)/scrnbmp.o											\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
-			$(OBJ)/lio.o		$(OBJ)/gscreen.o	$(OBJ)/gpset.o		\
-			$(OBJ)/gline.o		$(OBJ)/gcircle.o	$(OBJ)/gput1.o		\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
@@ -197,14 +199,45 @@ $(OBJ)/mimpidef.o	:	$(COMMON)/mimpidef.c $(HEADERS) $(TARGET)/dosio.h \
 						$(COMMON)/textfile.h $(COMMON)/mimpidef.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/codecnv.o	:	$(COMMON)/codecnv.c $(HEADERS) $(COMMON)/codecnv.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/parts.o		:	$(COMMON)/parts.c $(HEADERS) $(COMMON)/codecnv.h
+$(OBJ)/parts.o		:	$(COMMON)/parts.c $(HEADERS)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/parts.oa		:	$(X86ASM)/parts.x86
 	$(AS) $(AOPT) $< -o $@
+
+
+$(OBJ)/dmax86.o		:	$(MEM)/dmax86.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/dmax86.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/dmav30.o		:	$(MEM)/dmav30.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/dmav30.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/memtram.o	:	$(MEM)/memtram.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memtram.h $(VRAM)/vram.h \
+						$(FONT)/font.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/memvram.o	:	$(MEM)/memvram.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memtram.h $(VRAM)/vram.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/memegc.o		:	$(MEM)/memegc.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memegc.h $(VRAM)/vram.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/memvga.o		:	$(MEM)/memvga.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memvga.h $(VRAM)/vram.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/memems.o		:	$(MEM)/memems.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memems.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/memepp.o		:	$(MEM)/memepp.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(MEM)/memepp.h
+	$(CC) $(COPT) -o $@ $<
 
 
 
@@ -239,7 +272,7 @@ $(OBJ)/dmac.o		:	$(IO)/dmac.c $(HEADERS) $(PCCORES) $(IOCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/egc.o		:	$(IO)/egc.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(I386C)/egcmem.h $(VRAM)/vram.h
+						$(IOCORES) $(MEM)/memegc.h $(VRAM)/vram.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/epsonio.o	:	$(IO)/epsonio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
@@ -453,6 +486,90 @@ $(OBJ)/sxsibios.o	:	$(BIOS)/sxsibios.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 
+$(OBJ)/lio.o		:	$(LIO)/lio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(BIOS)/bios.h $(BIOS)/biosmem.h \
+						$(VRAM)/vram.h $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/gscreen.o	:	$(LIO)/gscreen.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/gpset.o		:	$(LIO)/gpset.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/gline.o		:	$(LIO)/gline.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/gcircle.o	:	$(LIO)/gcircle.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/gput1.o		:	$(LIO)/gput1.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+
+
+$(OBJ)/vram.o		:	$(VRAM)/vram.c $(HEADERS) $(CPUCORES) $(VRAM)/vram.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scrndraw.o	:	$(VRAM)/scrndraw.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(TARGET)/scrnmng.h $(VRAM)/scrndraw.h \
+						$(VRAM)/sdraw.h $(VRAM)/dispsync.h $(VRAM)/palettes.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/sdraw.o		:	$(VRAM)/sdraw.c $(HEADERS) $(TARGET)/scrnmng.h \
+						$(VRAM)/scrndraw.h $(VRAM)/sdraw.h \
+						$(VRAM)/palettes.h $(VRAM)/sdraw.mcr
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/sdrawq16.o	:	$(VRAM)/sdrawq16.c $(HEADERS) $(TARGET)/scrnmng.h \
+						$(VRAM)/scrndraw.h $(VRAM)/sdraw.h \
+						$(VRAM)/palettes.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/dispsync.o	:	$(VRAM)/dispsync.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(TARGET)/scrnmng.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/palettes.o	:	$(VRAM)/palettes.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(TARGET)/scrnmng.h $(VRAM)/scrndraw.h \
+						$(VRAM)/palettes.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/maketext.o	:	$(VRAM)/maketext.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h $(VRAM)/maketext.h $(FONT)/font.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/maketgrp.o	:	$(VRAM)/maketgrp.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h $(VRAM)/palettes.h \
+						$(VRAM)/maketext.h $(VRAM)/maketgrp.h \
+						$(VRAM)/makegrph.h $(VRAM)/makegrph.mcr $(FONT)/font.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/makegrph.o	:	$(VRAM)/makegrph.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h $(VRAM)/makegrph.h \
+						$(VRAM)/makegrph.mcr
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/makegrph.oa	:	$(X86ASM)/makegrph.x86
+	$(AS) $(AOPT) $< -o $@
+
+$(OBJ)/makegrex.o	:	$(VRAM)/makegrex.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h $(VRAM)/makegrex.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scrnbmp.o	:	$(VRAM)/scrnbmp.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(COMMON)/bmpdata.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h $(VRAM)/palettes.h \
+						$(VRAM)/scrnbmp.h
+	$(CC) $(COPT) -o $@ $<
+
+
 
 $(OBJ)/sound.o		:	$(SOUND)/sound.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(TARGET)/soundmng.h $(SOUND)/sound.h \
@@ -590,68 +707,6 @@ $(OBJ)/getsmix.o	:	$(GETSND)/getsmix.c $(HEADERS) $(GETSND)/getsnd.h \
 
 
 
-$(OBJ)/vram.o		:	$(VRAM)/vram.c $(HEADERS) $(CPUCORES) $(VRAM)/vram.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/scrndraw.o	:	$(VRAM)/scrndraw.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/scrnmng.h $(VRAM)/scrndraw.h \
-						$(VRAM)/sdraw.h $(VRAM)/dispsync.h $(VRAM)/palettes.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/sdraw.o		:	$(VRAM)/sdraw.c $(HEADERS) $(TARGET)/scrnmng.h \
-						$(VRAM)/scrndraw.h $(VRAM)/sdraw.h \
-						$(VRAM)/palettes.h $(VRAM)/sdraw.mcr
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/sdrawq16.o	:	$(VRAM)/sdrawq16.c $(HEADERS) $(TARGET)/scrnmng.h \
-						$(VRAM)/scrndraw.h $(VRAM)/sdraw.h \
-						$(VRAM)/palettes.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/dispsync.o	:	$(VRAM)/dispsync.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(TARGET)/scrnmng.h $(VRAM)/scrndraw.h \
-						$(VRAM)/dispsync.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/palettes.o	:	$(VRAM)/palettes.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(TARGET)/scrnmng.h $(VRAM)/scrndraw.h \
-						$(VRAM)/palettes.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/maketext.o	:	$(VRAM)/maketext.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
-						$(VRAM)/dispsync.h $(VRAM)/maketext.h $(FONT)/font.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/maketgrp.o	:	$(VRAM)/maketgrp.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
-						$(VRAM)/dispsync.h $(VRAM)/palettes.h \
-						$(VRAM)/maketext.h $(VRAM)/maketgrp.h \
-						$(VRAM)/makegrph.h $(VRAM)/makegrph.mcr $(FONT)/font.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/makegrph.o	:	$(VRAM)/makegrph.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
-						$(VRAM)/dispsync.h $(VRAM)/makegrph.h \
-						$(VRAM)/makegrph.mcr
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/makegrph.oa	:	$(X86ASM)/makegrph.x86
-	$(AS) $(AOPT) $< -o $@
-
-$(OBJ)/makegrex.o	:	$(VRAM)/makegrex.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
-						$(VRAM)/dispsync.h $(VRAM)/makegrex.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/scrnbmp.o	:	$(VRAM)/scrnbmp.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(COMMON)/bmpdata.h $(VRAM)/scrndraw.h \
-						$(VRAM)/dispsync.h $(VRAM)/palettes.h \
-						$(VRAM)/scrnbmp.h
-	$(CC) $(COPT) -o $@ $<
-
-
-
 $(OBJ)/diskdrv.o	:	$(FDD)/diskdrv.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/dosio.h $(TARGET)/sysmng.h \
 						$(FDD)/diskdrv.h $(FDD)/fddfile.h
@@ -683,29 +738,6 @@ $(OBJ)/fdd_mtr.o	:	$(FDD)/fdd_mtr.c $(HEADERS) $(PCCORES) \
 $(OBJ)/sxsi.o		:	$(FDD)/sxsi.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(COMMON)/strres.h $(TARGET)/dosio.h \
 						$(TARGET)/sysmng.h $(FDD)/sxsi.h
-	$(CC) $(COPT) -o $@ $<
-
-
-
-$(OBJ)/lio.o		:	$(LIO)/lio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(BIOS)/bios.h $(BIOS)/biosmem.h \
-						$(VRAM)/vram.h $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gscreen.o	:	$(LIO)/gscreen.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gpset.o		:	$(LIO)/gpset.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gline.o		:	$(LIO)/gline.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gcircle.o	:	$(LIO)/gcircle.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/gput1.o		:	$(LIO)/gput1.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -787,8 +819,8 @@ $(OBJ)/hostdrv.o	:	$(GENERIC)/hostdrv.c $(HEADERS) $(CPUCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(PCCORES) \
-						$(COMMON)/codecnv.h $(TARGET)/dosio.h \
-						$(GENERIC)/hostdrv.h $(GENERIC)/hostdrvs.h
+						$(TARGET)/dosio.h $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/unasm.o		:	$(GENERIC)/unasm.c $(HEADER) $(GENERIC)/unasm.h
@@ -1020,14 +1052,6 @@ $(OBJ)/cpucore.o	:	$(I386C)/cpucore.c
 $(OBJ)/memory.o		:	$(I386C)/memory.c
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/egcmem.o		:	$(I386C)/egcmem.c
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/mem9821.o	:	$(I386C)/mem9821.c
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/dmap.o		:	$(I386C)/dmap.c
-	$(CC) $(COPT) -o $@ $<
 
 
 $(OBJ)/cpu.o		:	$(IA32)/cpu.c

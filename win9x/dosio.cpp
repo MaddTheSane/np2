@@ -5,8 +5,6 @@
 static	OEMCHAR	curpath[MAX_PATH];
 static	OEMCHAR	*curfilep = curpath;
 
-#define ISKANJI(c)	(((((c) ^ 0x20) - 0xa1) & 0xff) < 0x3c)
-
 
 // ----
 
@@ -154,43 +152,37 @@ void DOSIOCALL file_setcd(const OEMCHAR *exepath) {
 
 OEMCHAR * DOSIOCALL file_getcd(const OEMCHAR *path) {
 
-	*curfilep = '\0';
-	file_catname(curpath, path, NELEMENTS(curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(curpath);
 }
 
 FILEH DOSIOCALL file_open_c(const OEMCHAR *path) {
 
-	*curfilep = '\0';
-	file_catname(curpath, path, NELEMENTS(curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_open(curpath));
 }
 
 FILEH DOSIOCALL file_open_rb_c(const OEMCHAR *path) {
 
-	*curfilep = '\0';
-	file_catname(curpath, path, NELEMENTS(curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_open_rb(curpath));
 }
 
 FILEH DOSIOCALL file_create_c(const OEMCHAR *path) {
 
-	*curfilep = '\0';
-	file_catname(curpath, path, NELEMENTS(curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_create(curpath));
 }
 
 short DOSIOCALL file_delete_c(const OEMCHAR *path) {
 
-	*curfilep = '\0';
-	file_catname(curpath, path, NELEMENTS(curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_delete(curpath));
 }
 
 short DOSIOCALL file_attr_c(const OEMCHAR *path) {
 
-	*curfilep = '\0';
-	file_catname(curpath, path, NELEMENTS(curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_attr(curpath));
 }
 
@@ -255,20 +247,16 @@ void DOSIOCALL file_listclose(FLISTH hdl) {
 OEMCHAR * DOSIOCALL file_getname(const OEMCHAR *path) {
 
 const OEMCHAR	*ret;
+	int			csize;
 
 	ret = path;
-	while(*path != '\0') {
-		if (!ISKANJI(*path)) {
+	while((csize = milstr_charsize(path)) != 0) {
+		if (csize == 1) {
 			if ((*path == '\\') || (*path == '/') || (*path == ':')) {
 				ret = path + 1;
 			}
 		}
-		else {
-			if (path[1]) {
-				path++;
-			}
-		}
-		path++;
+		path += csize;
 	}
 	return((OEMCHAR *)ret);
 }
@@ -285,24 +273,17 @@ OEMCHAR * DOSIOCALL file_getext(const OEMCHAR *path) {
 
 const OEMCHAR	*p;
 const OEMCHAR	*q;
+	int			csize;
 
 	p = file_getname(path);
 	q = NULL;
-
-	while(*p != '\0') {
-		if (!ISKANJI(*p)) {
-			if (*p == '.') {
-				q = p + 1;
-			}
+	while((csize = milstr_charsize(p)) != 0) {
+		if ((csize == 1) && (*path == '.')) {
+			q = p + 1;
 		}
-		else {
-			if (p[1]) {
-				p++;
-			}
-		}
-		p++;
+		p += csize;
 	}
-	if (!q) {
+	if (q == NULL) {
 		q = p;
 	}
 	return((OEMCHAR *)q);
@@ -312,21 +293,15 @@ void DOSIOCALL file_cutext(OEMCHAR *path) {
 
 	OEMCHAR	*p;
 	OEMCHAR	*q;
+	int		csize;
 
 	p = file_getname(path);
 	q = NULL;
-	while(*p != '\0') {
-		if (!ISKANJI(*p)) {
-			if (*p == '.') {
-				q = p;
-			}
+	while((csize = milstr_charsize(p)) != 0) {
+		if ((csize == 1) && (*path == '.')) {
+			q = p;
 		}
-		else {
-			if (p[1]) {
-				p++;
-			}
-		}
-		p++;
+		p += csize;
 	}
 	if (q) {
 		*q = '\0';

@@ -457,7 +457,7 @@ void sysmenu_destroy(void) {
 
 BOOL sysmenu_menuopen(UINT menutype, int x, int y) {
 
-	BYTE	b;
+	UINT8	b;
 
 	menusys_setcheck(MID_DISPSYNC, (np2cfg.DISPSYNC & 1));
 	menusys_setcheck(MID_RASTER, (np2cfg.RASTER & 1));

@@ -1,6 +1,9 @@
 #include	"compiler.h"
 #include	<sys/stat.h>
 #include	<time.h>
+#if defined(WIN32) && defined(OSLANG_EUC)
+#include	"codecnv.h"
+#endif
 #include	"dosio.h"
 #if defined(WIN32)
 #include	<direct.h>
@@ -27,7 +30,7 @@ FILEH file_open(const char *path) {
 
 #if defined(WIN32) && defined(OSLANG_EUC)
 	char	sjis[MAX_PATH];
-	codecnv_euc2sjis(sjis, sizeof(sjis), path, (UINT)-1);
+	codecnv_euctosjis(sjis, sizeof(sjis), path, (UINT)-1);
 	return(fopen(sjis, "rb+"));
 #else
 	return(fopen(path, "rb+"));
@@ -38,7 +41,7 @@ FILEH file_open_rb(const char *path) {
 
 #if defined(WIN32) && defined(OSLANG_EUC)
 	char	sjis[MAX_PATH];
-	codecnv_euc2sjis(sjis, sizeof(sjis), path, (UINT)-1);
+	codecnv_euctosjis(sjis, sizeof(sjis), path, (UINT)-1);
 	return(fopen(sjis, "rb+"));
 #else
 	return(fopen(path, "rb+"));
@@ -49,7 +52,7 @@ FILEH file_create(const char *path) {
 
 #if defined(WIN32) && defined(OSLANG_EUC)
 	char	sjis[MAX_PATH];
-	codecnv_euc2sjis(sjis, sizeof(sjis), path, (UINT)-1);
+	codecnv_euctosjis(sjis, sizeof(sjis), path, (UINT)-1);
 	return(fopen(sjis, "wb+"));
 #else
 	return(fopen(path, "wb+"));
@@ -248,7 +251,7 @@ static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 		fli->caps |= FLICAPS_DATE | FLICAPS_TIME;
 	}
 #if defined(OSLANG_EUC)
-	codecnv_sjis2euc(fli->path, sizeof(fli->path),
+	codecnv_sjistoeuc(fli->path, sizeof(fli->path),
 												w32fd->cFileName, (UINT)-1);
 #else
 	file_cpyname(fli->path, w32fd->cFileName, sizeof(fli->path));

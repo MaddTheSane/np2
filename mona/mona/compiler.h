@@ -5,7 +5,7 @@
 #define	BYTESEX_LITTLE
 #define	OSLANG_SJIS
 #define	OSLINEBREAK_CRLF
-#define DISABLE_MATH_H
+#define	DISABLE_MATH_H
 
 typedef	signed char		SINT8;
 typedef	unsigned char	UINT8;
@@ -13,12 +13,7 @@ typedef	signed short	SINT16;
 typedef	unsigned short	UINT16;
 typedef	signed int		SINT32;
 typedef	unsigned int	UINT32;
-
 typedef	int				BOOL;
-typedef	signed char		CHAR;
-typedef	signed char		TCHAR;
-typedef	unsigned char	BYTE;
-
 
 #ifndef	TRUE
 #define	TRUE	1
@@ -65,11 +60,19 @@ typedef	unsigned char	BYTE;
 #define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
 #endif
 
+// for x86
+#define	LOADINTELDWORD(a)		(*((UINT32 *)(a)))
+#define	LOADINTELWORD(a)		(*((UINT16 *)(a)))
+#define	STOREINTELDWORD(a, b)	*(UINT32 *)(a) = (b)
+#define	STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
 
-#if !defined(SIZE_VGA)
-#define	RGB16		UINT32
-#define	SIZE_QVGA
-#endif
+#define	STRCALL		__stdcall
+
+#define	BRESULT				UINT8
+#define	OEMCHAR				char
+#define	OEMTEXT(string)		(string)
+#define	OEMSPRINTF			sprintf
+#define	OEMSTRLEN			strlen
 
 
 #include	"common.h"
@@ -80,12 +83,17 @@ typedef	unsigned char	BYTE;
 #include	"trace.h"
 
 
-#define	GETTICK()	SDL_GetTicks()
-#define	SPRINTF		sprintf
+#define	GETTICK()			SDL_GetTicks()
+#if defined(TRACE)
+#define	__ASSERT(s)			assert(s)
+#else
 #define	__ASSERT(s)
+#endif
+#define	SPRINTF				sprintf
+#define	STRLEN				strlen
 
 #define	LABEL				__declspec(naked)
-#define RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
+#define	RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
 
 
 #define	DISABLE_SOUND
@@ -94,10 +102,10 @@ typedef	unsigned char	BYTE;
 #define	PARTSCALL	__fastcall
 #define	CPUCALL		__fastcall
 #define	MEMCALL		__fastcall
-#define DMACCALL	__fastcall
+#define	DMACCALL	__fastcall
 #define	IOOUTCALL	__fastcall
 #define	IOINPCALL	__fastcall
-#define SOUNDCALL	__fastcall
+#define	SOUNDCALL	__fastcall
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
 

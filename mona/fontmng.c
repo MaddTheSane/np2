@@ -82,9 +82,9 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 											const char *string, int length) {
 
 	int		c;
-const BYTE	*src;
+const UINT8	*src;
 	int		width;
-	BYTE	*dst;
+	UINT8	*dst;
 	int		x;
 	int		y;
 
@@ -95,7 +95,7 @@ const BYTE	*src;
 	src = ankfont + (c * ANKFONTSIZE);
 	width = *src++;
 	setfdathead(fhdl, fdat, width);
-	dst = (BYTE *)(fdat + 1);
+	dst = (UINT8 *)(fdat + 1);
 	ZeroMemory(dst, fdat->width * fdat->height);
 	dst += ((fdat->height - ANKFONTSIZE) / 2) * fdat->width;
 	dst += (fdat->width - width) / 2;

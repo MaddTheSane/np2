@@ -120,7 +120,7 @@ int SDL_main(int argc, char **argv) {
 	int		pos;
 	char	*p;
 	int		id;
-	BYTE	*tmp;
+	UINT8	*tmp;
 
 	tmp = malloc(0x800000);
 	memmng_initialize((UINT32)tmp, 0x800000);

@@ -2,8 +2,8 @@
 
 #if defined(SUPPORT_HOSTDRV)
 
-#if defined(OSLANG_EUC)
-#include	"codecnv.h"
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#include	"oemtext.h"
 #endif
 #include	"dosio.h"
 #include	"pccore.h"
@@ -83,11 +83,8 @@ static BOOL realname2fcb(char *fcbname, FLINFO *fli) {
 	char	*realname;
 	char	*ext;
 
-#if defined(OSLANG_EUC)
-	codecnv_euc2sjis(sjis, sizeof(sjis), fli->path, NELEMENTS(fli->path));
-	realname = sjis;
-#elif defined(OSLANG_UTF8)
-	oemtext_oem2sjis(sjis, sizeof(sjis), fli->path, NELEMENTS(fli->path));
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+	oemtext_oemtosjis(sjis, sizeof(sjis), fli->path, NELEMENTS(fli->path));
 	realname = sjis;
 #else
 	realname = fli->path;
@@ -334,11 +331,8 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 		}
 		*p = '\0';
 		// ここで SJIS->OEMコードに未変換！
-#if defined(OSLANG_EUC)
-		codecnv_sjis2euc(oemname, NELEMENTS(oemname), dosname, (UINT)-1);
-		file_catname(path, oemname, NELEMENTS(path));
-#elif defined(OSLANG_UTF8)
-		oemtext_sjis2oem(oemname, NELEMENTS(oemname), dosname, (UINT)-1);
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+		oemtext_sjistooem(oemname, NELEMENTS(oemname), dosname, (UINT)-1);
 		file_catname(path, oemname, NELEMENTS(path));
 #else
 		file_catname(path, dosname, NELEMENTS(path));

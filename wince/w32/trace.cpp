@@ -1,6 +1,9 @@
 #include	"compiler.h"
 #include	<stdarg.h>
 #include	"strres.h"
+#if defined(UNICODE) && defined(OSLANG_UTF8)
+#include	"codecnv.h"
+#endif
 #include	"dosio.h"
 #include	"ini.h"
 
@@ -47,15 +50,15 @@ enum {
 	IDM_TRACECL
 };
 
-static const TCHAR ProgTitle[] = STRLITERAL("console");
-static const TCHAR ClassName[] = STRLITERAL("TRACE-console");
-static const TCHAR ClassEdit[] = STRLITERAL("EDIT");
-static const TCHAR viewfont[] = STRLITERAL(VIEW_TEXT);
-static const TCHAR trace1[] = STRLITERAL("TRACE");
-static const TCHAR trace2[] = STRLITERAL("VERBOSE");
-static const TCHAR traceen[] = STRLITERAL("Enable");
-static const TCHAR tracefh[] = STRLITERAL("File out");
-static const TCHAR tracecl[] = STRLITERAL("Clear");
+static const TCHAR ProgTitle[] = _T("console");
+static const TCHAR ClassName[] = _T("TRACE-console");
+static const TCHAR ClassEdit[] = _T("EDIT");
+static const TCHAR viewfont[] = _T(VIEW_TEXT);
+static const TCHAR trace1[] = _T("TRACE");
+static const TCHAR trace2[] = _T("VERBOSE");
+static const TCHAR traceen[] = _T("Enable");
+static const TCHAR tracefh[] = _T("File out");
+static const TCHAR tracecl[] = _T("Clear");
 static const char crlf[] = "\r\n";
 
 static	TRACEWIN	tracewin;
@@ -98,8 +101,8 @@ static void View_AddString(const char *lpszString) {
 #if defined(UNICODE) && defined(OSLANG_SJIS)
 	len = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1,
 																NULL, 0) - 1;
-#elif defined(OSLANG_UTF8)
-	len = ucscnv_utf8toucs2(NULL, 0, lpszString, (UINT8)-1) - 1;
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	len = codecnv_utf8toucs2(NULL, 0, lpszString, (UINT8)-1) - 1;
 #else
 	len = strlen(lpszString);
 #endif
@@ -124,8 +127,8 @@ static void View_AddString(const char *lpszString) {
 	p = szView + vlen;
 #if defined(UNICODE) && defined(OSLANG_SJIS)
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1, p, len + 1);
-#elif defined(OSLANG_UTF8)
-	ucscnv_utf8toucs2(p, len + 1, lpszString, (UINT8)-1);
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	codecnv_utf8toucs2(p, len + 1, lpszString, (UINT8)-1);
 #else
 	CopyMemory(p, lpszString, len);
 #endif

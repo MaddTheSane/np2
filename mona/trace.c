@@ -2,8 +2,9 @@
 #if !defined(TARGET_MONA)
 #include	<stdarg.h>
 #endif
+#if defined(WIN32) && defined(OSLANG_EUC)
 #include	"codecnv.h"
-
+#endif
 
 #ifdef TRACE
 void trace_init(void) {

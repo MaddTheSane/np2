@@ -341,8 +341,8 @@ const OEMCHAR	*str;
 	}
 
 	val = menudlg_getval(DID_RESUME);
-	if (np2oscfg.resume != (BYTE)val) {
-		np2oscfg.resume = (BYTE)val;
+	if (np2oscfg.resume != (UINT8)val) {
+		np2oscfg.resume = (UINT8)val;
 		update |= SYS_UPDATEOSCFG;
 	}
 	sysmng_update(update);

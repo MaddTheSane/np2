@@ -10,9 +10,9 @@
 #endif
 #define	OSLINEBREAK_CRLF
 
-typedef signed int			SINT;
-typedef signed char			SINT8;
-typedef unsigned char		UINT8;
+typedef	signed int			SINT;
+typedef	signed char			SINT8;
+typedef	unsigned char		UINT8;
 typedef	signed short		SINT16;
 typedef	unsigned short		UINT16;
 typedef	signed int			SINT32;
@@ -33,7 +33,7 @@ typedef	unsigned int		UINT32;
 
 // for RISC test
 #define	REG8		UINT
-#define REG16		UINT
+#define	REG16		UINT
 #define	LOW12(a)	(((UINT32)((a) << 20)) >> 20)
 #define	LOW14(a)	(((UINT32)((a) << 18)) >> 18)
 #define	LOW15(a)	(((UINT32)((a) << 17)) >> 17)
@@ -55,9 +55,7 @@ typedef	unsigned int		UINT32;
 #endif
 
 #include	"common.h"
-#include	"oemtext.h"
 #include	"milstr.h"
-#include	"ucscnv.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"
@@ -75,7 +73,7 @@ typedef	unsigned int		UINT32;
 #endif
 
 #define	VERMOUTH_LIB
-#define SOUND_CRITICAL
+#define	SOUND_CRITICAL
 
 #define	SUPPORT_SJIS
 #if defined(OSLANG_UTF8)

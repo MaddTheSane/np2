@@ -1,4 +1,7 @@
 #include	"compiler.h"
+#if defined(UNICODE) && defined(OSLANG_UTF8)
+#include	"codecnv.h"
+#endif
 #include	"dosio.h"
 
 
@@ -11,55 +14,30 @@ static	OEMCHAR	*curfilep = curpath;
 void dosio_init(void) { }
 void dosio_term(void) { }
 
+
 											// ƒtƒ@ƒCƒ‹‘€ì
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-static HANDLE _CreateFile(const OEMCHAR *lpFileName,
-					DWORD dwDesiredAccess,
-					DWORD dwShareMode,
-					LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-					DWORD dwCreationDisposition,
-					DWORD dwFlagsAndAttributes,
-					HANDLE hTemplateFile) {
-
-	UINT16	ucs2[MAX_PATH];
-
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpFileName, -1,
-													ucs2, NELEMENTS(ucs2));
-	return(CreateFile(ucs2, dwDesiredAccess, dwShareMode,
-						lpSecurityAttributes, dwCreationDisposition,
-						dwFlagsAndAttributes, hTemplateFile));
-}
-#elif defined(OSLANG_UTF8)
-static HANDLE _CreateFile(const OEMCHAR *lpFileName,
-					DWORD dwDesiredAccess,
-					DWORD dwShareMode,
-					LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-					DWORD dwCreationDisposition,
-					DWORD dwFlagsAndAttributes,
-					HANDLE hTemplateFile) {
-
-	UINT16	ucs2[MAX_PATH];
-
-	ucscnv_utf8toucs2(ucs2, NELEMENTS(ucs2), lpFileName, (UINT)-1);
-	return(CreateFile(ucs2, dwDesiredAccess, dwShareMode,
-						lpSecurityAttributes, dwCreationDisposition,
-						dwFlagsAndAttributes, hTemplateFile));
-}
-#else
-#define	_CreateFile(a, b, c, d, e, f, g)	CreateFile(a, b, c, d, e, f, g)
-#endif
-
-
 FILEH file_open(const OEMCHAR *path) {
 
 	FILEH	ret;
 
-	if ((ret = _CreateFile(path, GENERIC_READ | GENERIC_WRITE,
-						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-													== INVALID_HANDLE_VALUE) {
-		if ((ret = _CreateFile(path, GENERIC_READ,
-						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-													== INVALID_HANDLE_VALUE) {
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+	UINT16	oempath[MAX_PATH];
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
+												oempath, NELEMENTS(oempath));
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	UINT16	oempath[MAX_PATH];
+	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);
+#else
+const OEMCHAR *oempath;
+	oempath = path;
+#endif
+
+	ret = CreateFile(oempath, GENERIC_READ | GENERIC_WRITE,
+						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ret == INVALID_HANDLE_VALUE) {
+		ret = CreateFile(oempath, GENERIC_READ,
+						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (ret == INVALID_HANDLE_VALUE) {
 			return(FILEH_INVALID);
 		}
 	}
@@ -70,24 +48,51 @@ FILEH file_open_rb(const OEMCHAR *path) {
 
 	FILEH	ret;
 
-	if ((ret = _CreateFile(path, GENERIC_READ, FILE_SHARE_READ, 0,
-								OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-													== INVALID_HANDLE_VALUE) {
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+	UINT16	oempath[MAX_PATH];
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
+												oempath, NELEMENTS(oempath));
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	UINT16	oempath[MAX_PATH];
+	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);
+#else
+const OEMCHAR *oempath;
+	oempath = path;
+#endif
+
+	ret = CreateFile(oempath, GENERIC_READ, FILE_SHARE_READ, 0,
+								OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ret != INVALID_HANDLE_VALUE) {
+		return(ret);
+	}
+	else {
 		return(FILEH_INVALID);
 	}
-	return(ret);
 }
 
 FILEH file_create(const OEMCHAR *path) {
 
 	FILEH	ret;
 
-	if ((ret = _CreateFile(path, GENERIC_READ | GENERIC_WRITE,
-						 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
-											== INVALID_HANDLE_VALUE) {
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+	UINT16	oempath[MAX_PATH];
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
+												oempath, NELEMENTS(oempath));
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	UINT16	oempath[MAX_PATH];
+	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);
+#else
+const OEMCHAR *oempath;
+	oempath = path;
+#endif
+	ret = CreateFile(oempath, GENERIC_READ | GENERIC_WRITE,
+						 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ret != INVALID_HANDLE_VALUE) {
+		return(ret);
+	}
+	else {
 		return(FILEH_INVALID);
 	}
-	return(ret);
 }
 
 long file_seek(FILEH handle, long pointer, int method) {
@@ -167,49 +172,50 @@ short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime) {
 short file_delete(const OEMCHAR *path) {
 
 #if defined(UNICODE) && defined(OSLANG_SJIS)
-	UINT16	ucs2[MAX_PATH];
+	UINT16	oempath[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
-													ucs2, NELEMENTS(ucs2));
-	return(DeleteFile(ucs2)?0:-1);
-#elif defined(OSLANG_UTF8)
-	UINT16	ucs2[MAX_PATH];
-	ucscnv_utf8toucs2(ucs2, NELEMENTS(ucs2), path, (UINT)-1);
-	return(DeleteFile(ucs2)?0:-1);
+												oempath, NELEMENTS(oempath));
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	UINT16	oempath[MAX_PATH];
+	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);
 #else
-	return(DeleteFile(path)?0:-1);
+const OEMCHAR *oempath;
+	oempath = path;
 #endif
+	return(DeleteFile(oempath)?0:-1);
 }
 
 short file_attr(const OEMCHAR *path) {
 
 #if defined(UNICODE) && defined(OSLANG_SJIS)
-	UINT16	ucs2[MAX_PATH];
+	UINT16	oempath[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
-													ucs2, NELEMENTS(ucs2));
+												oempath, NELEMENTS(oempath));
 	return((short)GetFileAttributes(ucs2));
-#elif defined(OSLANG_UTF8)
-	UINT16	ucs2[MAX_PATH];
-	ucscnv_utf8toucs2(ucs2, NELEMENTS(ucs2), path, (UINT)-1);
-	return((short)GetFileAttributes(ucs2));
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	UINT16	oempath[MAX_PATH];
+	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);
 #else
-	return((short)GetFileAttributes(path));
+const OEMCHAR *oempath;
+	oempath = path;
 #endif
+	return((short)GetFileAttributes(oempath));
 }
 
 short file_dircreate(const OEMCHAR *path) {
 
 #if defined(UNICODE) && defined(OSLANG_SJIS)
-	UINT16	ucs2[MAX_PATH];
+	UINT16	oempath[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
-													ucs2, NELEMENTS(ucs2));
-	return(CreateDirectory(ucs2, NULL)?0:-1);
-#elif defined(OSLANG_UTF8)
-	UINT16	ucs2[MAX_PATH];
-	ucscnv_utf8toucs2(ucs2, NELEMENTS(ucs2), path, (UINT)-1);
-	return(CreateDirectory(ucs2, NULL)?0:-1);
+												oempath, NELEMENTS(oempath));
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	UINT16	oempath[MAX_PATH];
+	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);
 #else
-	return(CreateDirectory(path, NULL)?0:-1);
+const OEMCHAR *oempath;
+	oempath = path;
 #endif
+	return(CreateDirectory(oempath, NULL)?0:-1);
 }
 
 
@@ -266,13 +272,13 @@ static const OEMCHAR str_parentdir[] = OEMTEXT("..");
 #endif
 static const OEMCHAR str_wildcard[] = OEMTEXT("*.*");
 
-static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
+static BRESULT setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
 #if defined(UNICODE) && defined(OSLANG_SJIS)
 	WideCharToMultiByte(CP_ACP, 0, w32fd->cFileName, -1,
 								fli->path, NELEMENTS(fli->path), NULL, NULL);
-#elif defined(OSLANG_UTF8)
-	ucscnv_ucs2toutf8(fli->path, NELEMENTS(fli->path), w32fd->cFileName, -1);
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
+	codecnv_ucs2toutf8(fli->path, NELEMENTS(fli->path), w32fd->cFileName, -1);
 #else
 	file_cpyname(fli->path, w32fd->cFileName, NELEMENTS(fli->path));
 #endif
@@ -306,9 +312,9 @@ FLISTH file_list1st(const OEMCHAR *dir, FLINFO *fli) {
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
 													ucs2, NELEMENTS(ucs2));
 	hdl = FindFirstFile(ucs2, &w32fd);
-#elif defined(OSLANG_UTF8)
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
 	UINT16	ucs2[MAX_PATH];
-	ucscnv_utf8toucs2(ucs2, NELEMENTS(ucs2), path, (UINT)-1);
+	codecnv_utf8toucs2(ucs2, NELEMENTS(ucs2), path, (UINT)-1);
 	hdl = FindFirstFile(ucs2, &w32fd);
 #else
 	hdl = FindFirstFile(path, &w32fd);

@@ -39,7 +39,6 @@ typedef	signed int		SINT32;
 
 #include	"common.h"
 #include	"milstr.h"
-#include	"codecnv.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"

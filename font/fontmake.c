@@ -150,7 +150,7 @@ const UINT8	*p;
 	while(from < to) {
 		work[0] = (char)from;
 #if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-		oemtext_sjis2oem(oemwork, NELEMENTS(oemwork), work, -1);
+		oemtext_sjistooem(oemwork, NELEMENTS(oemwork), work, -1);
 		dat = fontmng_get(fnt, oemwork);
 #else
 		dat = fontmng_get(fnt, work);
@@ -225,7 +225,7 @@ const UINT8	*p;
 				work[0] = (UINT8)(sjis >> 8);
 				work[1] = (UINT8)sjis;
 #if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-				oemtext_sjis2oem(oemwork, NELEMENTS(oemwork), work, -1);
+				oemtext_sjistooem(oemwork, NELEMENTS(oemwork), work, -1);
 				dat = fontmng_get(fnt, oemwork);
 #else
 				dat = fontmng_get(fnt, work);

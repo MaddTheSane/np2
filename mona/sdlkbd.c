@@ -79,9 +79,9 @@ static const SDLKCNV sdlcnv101[] = {
 //			{SDLK_KP_EQUALS,	0x4d},
 
 
-static	BYTE	keytbl[SDLK_LAST];
+static	UINT8	keytbl[SDLK_LAST];
 
-static const BYTE f12keys[] = {
+static const UINT8 f12keys[] = {
 			0x61, 0x60, 0x4d, 0x4f};
 
 
@@ -95,19 +95,19 @@ const SDLKCNV	*keyterm;
 		keytbl[i] = NC;
 	}
 	key = sdlcnv101;
-	keyterm = key + (sizeof(sdlcnv101)/sizeof(SDLKCNV));
+	keyterm = key + NELEMENTS(sdlcnv101);
 	while(key < keyterm) {
-		keytbl[key->sdlkey] = (BYTE)key->keycode;
+		keytbl[key->sdlkey] = (UINT8)key->keycode;
 		key++;
 	}
 }
 
-static BYTE getf12key(void) {
+static UINT8 getf12key(void) {
 
 	UINT	key;
 
 	key = np2oscfg.F12KEY - 1;
-	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
+	if (key < NELEMENTS(f12keys)) {
 		return(f12keys[key]);
 	}
 	else {
@@ -117,7 +117,7 @@ static BYTE getf12key(void) {
 
 void sdlkbd_keydown(UINT key) {
 
-	BYTE	data;
+	UINT8	data;
 
 	if (key == SDLK_F12) {
 		data = getf12key();
@@ -135,7 +135,7 @@ void sdlkbd_keydown(UINT key) {
 
 void sdlkbd_keyup(UINT key) {
 
-	BYTE	data;
+	UINT8	data;
 
 	if (key == SDLK_F12) {
 		data = getf12key();
@@ -147,7 +147,7 @@ void sdlkbd_keyup(UINT key) {
 		data = NC;
 	}
 	if (data != NC) {
-		keystat_senddata((BYTE)(data | 0x80));
+		keystat_senddata((UINT8)(data | 0x80));
 	}
 }
 
@@ -155,7 +155,7 @@ void sdlkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
+	for (i=0; i<NELEMENTS(f12keys); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }
@@ -215,5 +215,4 @@ void sdlkbd_resetf12(void) {
 //	SDLK_EURO			= 321,
 //	SDLK_UNDO			= 322,
 #endif
-
 

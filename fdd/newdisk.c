@@ -19,7 +19,7 @@ void newdisk_fdd(const OEMCHAR *fname, REG8 type, const OEMCHAR *label) {
 	ZeroMemory(&d88head, sizeof(d88head));
 	STOREINTELDWORD(d88head.fd_size, sizeof(d88head));
 #if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-	oemtext_oem2sjis((char *)d88head.fd_name, sizeof(d88head.fd_name),
+	oemtext_oemtosjis((char *)d88head.fd_name, sizeof(d88head.fd_name),
 															label, (UINT)-1);
 #else
 	milstr_ncpy((char *)d88head.fd_name, label, sizeof(d88head.fd_name));
