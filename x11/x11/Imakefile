@@ -104,7 +104,8 @@ CPUOBJS= \
 		../../i386c/ia32/instructions/shift_rotate.o \
 		../../i386c/ia32/instructions/string_inst.o \
 		../../i386c/ia32/instructions/system_inst.o \
-		../../i386c/ia32/instructions/fpu/fpdummy.o
+		../../i386c/ia32/instructions/fpu/fpdummy.o \
+		../../debugsub386.o
 
 CPUFLAGS=	-DCPUCORE_IA32 \
 		-I../../i386c -I../../i386c/ia32 \
@@ -125,7 +126,8 @@ CPUOBJS=	../../i286c/i286c.o \
 		../../i286c/memory.o \
 		../../i286c/egcmem.o \
 		../../i286c/dmap.o \
-		../../i286c/v30patch.o
+		../../i286c/v30patch.o \
+		../../debugsub.o
 
 CPUFLAGS=	-I../../i286c
 
@@ -146,8 +148,6 @@ COMMONOBJS=	../../common/strres.o \
 		../../common/resize.o
 
 BIOSOBJS=	../../bios/bios.o \
-		../../bios/bios02.o \
-		../../bios/bios08.o \
 		../../bios/bios09.o \
 		../../bios/bios0c.o \
 		../../bios/bios12.o \
@@ -157,6 +157,7 @@ BIOSOBJS=	../../bios/bios.o \
 		../../bios/bios1a.o \
 		../../bios/bios1b.o \
 		../../bios/bios1c.o \
+		../../bios/bios1f.o \
 		../../bios/sxsibios.o
 
 CBUSOBJS=	../../cbus/cbuscore.o \
@@ -173,7 +174,9 @@ CBUSOBJS=	../../cbus/cbuscore.o \
 		../../cbus/pcm86io.o \
 		../../cbus/sasiio.o \
 		../../cbus/scsiio.o \
-		../../cbus/scsicmd.o
+		../../cbus/scsicmd.o \
+		../../cbus/ideio.o \
+		../../cbus/atapicmd.o
 
 FDDOBJS=	../../fdd/diskdrv.o \
 		../../fdd/newdisk.o \
@@ -197,7 +200,11 @@ GENERICOBJS=	../../generic/cmndraw.o \
 		../../generic/keydisp.o \
 		../../generic/cmjasts.o \
 		../../generic/hostdrv.o \
-		../../generic/hostdrvs.o
+		../../generic/hostdrvs.o \
+		../../generic/unasm.o \
+		../../generic/np2info.o \
+		../../generic/memdbg32.o \
+		../../generic/softkbd.o
 
 IOOBJS=		../../io/iocore.o \
 		../../io/artic.o \
@@ -223,16 +230,14 @@ IOOBJS=		../../io/iocore.o \
 		../../io/sysport.o \
 		../../io/upd4990.o \
 		../../io/necio.o \
-		../../io/epsonio.o
+		../../io/epsonio.o \
+		../../io/pcidev.o
 
 LIOOBJS=	../../lio/lio.o \
 		../../lio/gscreen.o \
-		../../lio/gview.o \
-		../../lio/gcolor1.o \
-		../../lio/gcolor2.o \
-		../../lio/gcls.o \
 		../../lio/gpset.o \
 		../../lio/gline.o \
+		../../lio/gcircle.o \
 		../../lio/gput1.o
 
 NP2OBJS=	../../pccore.o \
@@ -240,8 +245,7 @@ NP2OBJS=	../../pccore.o \
 		../../calendar.o \
 		../../keystat.o \
 		../../statsave.o \
-		../../timing.o \
-		../../debugsub.o
+		../../timing.o
 
 SOUNDOBJS=	../../sound/sound.o \
 		../../sound/soundrom.o \
@@ -261,11 +265,9 @@ SOUNDOBJS=	../../sound/sound.o \
 		../../sound/psggenc.o \
 		../../sound/psggeng.o \
 		../../sound/rhythmc.o \
-		../../sound/rhythmg.o \
 		../../sound/sndcsec.o \
 		../../sound/tms3631c.o \
-		../../sound/tms3631g.o \
-		../../sound/wavemix.o
+		../../sound/tms3631g.o
 
 GETSNDOBJS=	../../sound/getsnd/getsnd.o \
 		../../sound/getsnd/getsmix.o \
@@ -287,15 +289,18 @@ VRAMOBJS=	../../vram/vram.o \
 		../../vram/maketext.o \
 		../../vram/maketgrp.o \
 		../../vram/makegrph.o \
-		../../vram/scrnbmp.o
+		../../vram/scrnbmp.o \
+		../../vram/makegrex.o
 
 X11OBJS=	../dosio.o \
 		../ini.o \
 		../trace.o \
 		../cmmidi.o \
+		../cmserial.o \
 		../sysmenu.o \
 		../toolkit.o \
 		../kdispwin.o \
+		../skbdwin.o \
 		../commng.o \
 		../drawmng.o \
 		../inputmng.o \
@@ -308,8 +313,7 @@ X11OBJS=	../dosio.o \
 		../main.o \
 		../np2.o
 
-DEBUGOBJS=	../debug/unasm.o \
-		../debug/viewmem.o
+DEBUGOBJS=	../debug/viewmem.o
 
 SNDDRVOBJS=	../snddrv/esd.o \
 		../snddrv/netbsd.o \
