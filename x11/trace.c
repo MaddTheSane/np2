@@ -5,7 +5,6 @@
 
 int trace_flag = 0;
 
-#ifdef TRACE
 void trace_init(void) {
 }
 
@@ -25,10 +24,8 @@ void trace_fmt(const char *fmt, ...) {
 	va_end(ap);
 #ifndef WIN32
 	codecnv_sjis2euc(euc, sizeof(euc), buf, sizeof(buf));
-	printf("%s\n", euc);
+	fprintf(stderr, "%s\n", euc);
 #else
-	printf("%s\n", buf);
+	fprintf(stderr, "%s\n", buf);
 #endif
 }
-#endif
-
