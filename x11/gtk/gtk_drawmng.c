@@ -101,7 +101,7 @@ gtkdrawmng_create(GtkWidget *parent_window, int width, int height)
 		    visual->depth);
 	}
 	if (hdl->backsurf == NULL) {
-		hdl->shared_pixmap = NULL;
+		hdl->shared_pixmap = FALSE;
 		hdl->backsurf = gdk_pixmap_new(parent_window->window,
 		    hdl->vram.width, hdl->vram.height, visual->depth);
 	}
