@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: bin_arith.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -44,10 +44,10 @@ void ADD_GdEd(void);
 void ADD_ALIb(void);
 void ADD_AXIw(void);
 void ADD_EAXId(void);
-void ADD_EbIb(BYTE *);
+void ADD_EbIb(BYTE *, DWORD);
 void ADD_EwIx(WORD *, DWORD);
 void ADD_EdIx(DWORD *, DWORD);
-void ADD_EbIb_ext(DWORD);
+void ADD_EbIb_ext(DWORD, DWORD);
 void ADD_EwIx_ext(DWORD, DWORD);
 void ADD_EdIx_ext(DWORD, DWORD);
 
@@ -61,10 +61,10 @@ void ADC_GdEd(void);
 void ADC_ALIb(void);
 void ADC_AXIw(void);
 void ADC_EAXId(void);
-void ADC_EbIb(BYTE *);
+void ADC_EbIb(BYTE *, DWORD);
 void ADC_EwIx(WORD *, DWORD);
 void ADC_EdIx(DWORD *, DWORD);
-void ADC_EbIb_ext(DWORD);
+void ADC_EbIb_ext(DWORD, DWORD);
 void ADC_EwIx_ext(DWORD, DWORD);
 void ADC_EdIx_ext(DWORD, DWORD);
 
@@ -78,10 +78,10 @@ void SUB_GdEd(void);
 void SUB_ALIb(void);
 void SUB_AXIw(void);
 void SUB_EAXId(void);
-void SUB_EbIb(BYTE *);
+void SUB_EbIb(BYTE *, DWORD);
 void SUB_EwIx(WORD *, DWORD);
 void SUB_EdIx(DWORD *, DWORD);
-void SUB_EbIb_ext(DWORD);
+void SUB_EbIb_ext(DWORD, DWORD);
 void SUB_EwIx_ext(DWORD, DWORD);
 void SUB_EdIx_ext(DWORD, DWORD);
 
@@ -95,10 +95,10 @@ void SBB_GdEd(void);
 void SBB_ALIb(void);
 void SBB_AXIw(void);
 void SBB_EAXId(void);
-void SBB_EbIb(BYTE *);
+void SBB_EbIb(BYTE *, DWORD);
 void SBB_EwIx(WORD *, DWORD);
 void SBB_EdIx(DWORD *, DWORD);
-void SBB_EbIb_ext(DWORD);
+void SBB_EbIb_ext(DWORD, DWORD);
 void SBB_EwIx_ext(DWORD, DWORD);
 void SBB_EdIx_ext(DWORD, DWORD);
 
@@ -185,10 +185,10 @@ void CMP_GdEd(void);
 void CMP_ALIb(void);
 void CMP_AXIw(void);
 void CMP_EAXId(void);
-void CMP_EbIb(BYTE *);
+void CMP_EbIb(BYTE *, DWORD);
 void CMP_EwIx(WORD *, DWORD);
 void CMP_EdIx(DWORD *, DWORD);
-void CMP_EbIb_ext(DWORD);
+void CMP_EbIb_ext(DWORD, DWORD);
 void CMP_EwIx_ext(DWORD, DWORD);
 void CMP_EdIx_ext(DWORD, DWORD);
 

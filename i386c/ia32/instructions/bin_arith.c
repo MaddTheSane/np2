@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: bin_arith.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -176,22 +176,20 @@ ADD_EAXId(void)
 }
 
 void
-ADD_EbIb(BYTE *regp)
+ADD_EbIb(BYTE *regp, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = *regp;
 	ADDBYTE(res, dst, src);
 	*regp = (BYTE)res;
 }
 
 void
-ADD_EbIb_ext(DWORD madr)
+ADD_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	ADDBYTE(res, dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)res);
@@ -380,22 +378,20 @@ ADC_EAXId(void)
 }
 
 void
-ADC_EbIb(BYTE *regp)
+ADC_EbIb(BYTE *regp, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = *regp;
 	ADCBYTE(res, dst, src);
 	*regp = (BYTE)res;
 }
 
 void
-ADC_EbIb_ext(DWORD madr)
+ADC_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	ADCBYTE(res, dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)res);
@@ -584,22 +580,20 @@ SUB_EAXId(void)
 }
 
 void
-SUB_EbIb(BYTE *regp)
+SUB_EbIb(BYTE *regp, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = *regp;
 	BYTE_SUB(res, dst, src);
 	*regp = (BYTE)res;
 }
 
 void
-SUB_EbIb_ext(DWORD madr)
+SUB_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SUB(res, dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)res);
@@ -788,22 +782,20 @@ SBB_EAXId(void)
 }
 
 void
-SBB_EbIb(BYTE *regp)
+SBB_EbIb(BYTE *regp, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = *regp;
 	BYTE_SBB(res, dst, src);
 	*regp = (BYTE)res;
 }
 
 void
-SBB_EbIb_ext(DWORD madr)
+SBB_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SBB(res, dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)res);
@@ -1586,21 +1578,19 @@ CMP_EAXId(void)
 }
 
 void
-CMP_EbIb(BYTE *regp)
+CMP_EbIb(BYTE *regp, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = *regp;
 	BYTE_SUB(res, dst, src);
 }
 
 void
-CMP_EbIb_ext(DWORD madr)
+CMP_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst, res;
+	DWORD dst, res;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SUB(res, dst, src);
 }

@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: ia32.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -39,7 +39,6 @@ CPU_INST	cpu_inst;
 CPU_INST	cpu_inst_default;
 I386CORE	i386core;
 
-// #if defined(USE_ASM)
 BYTE iflags[] = {
 	0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,
 	0x00, 0x04, 0x04, 0x00, 0x04, 0x00, 0x00, 0x04,
@@ -74,7 +73,6 @@ BYTE iflags[] = {
 	0x84, 0x80, 0x80, 0x84, 0x80, 0x84, 0x84, 0x80,
 	0x80, 0x84, 0x84, 0x80, 0x84, 0x80, 0x80, 0x84,
 };
-// #endif	/* USE_ASM */
 
 BYTE	*reg8_b20[0x100];
 BYTE	*reg8_b53[0x100];
@@ -93,6 +91,7 @@ ia32_init(void)
 	memset(&cpu_sysregs, 0, sizeof(cpu_sysregs));
 	memset(&cpu_stat, 0, sizeof(cpu_stat));
 	memset(&cpu_inst_default, 0, sizeof(cpu_inst_default));
+	cpu_inst_default.seg_base = (DWORD)-1;
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
 	CPU_EFLAG = 2;

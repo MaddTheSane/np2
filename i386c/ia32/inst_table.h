@@ -1,4 +1,4 @@
-/*	$Id: inst_table.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: inst_table.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -47,10 +47,10 @@ extern	void (*insttable_2byte[2][256])(void);
  */
 
 /* group 1 */
-extern	void (*insttable_G1EbIb[])(BYTE *);
+extern	void (*insttable_G1EbIb[])(BYTE *, DWORD);
 extern	void (*insttable_G1EwIx[])(WORD *, DWORD);
 extern	void (*insttable_G1EdIx[])(DWORD *, DWORD);
-extern	void (*insttable_G1EbIb_ext[])(DWORD);
+extern	void (*insttable_G1EbIb_ext[])(DWORD, DWORD);
 extern	void (*insttable_G1EwIx_ext[])(DWORD, DWORD);
 extern	void (*insttable_G1EdIx_ext[])(DWORD, DWORD);
 

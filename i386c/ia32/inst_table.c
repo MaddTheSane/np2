@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: inst_table.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -63,7 +63,7 @@ static void
 undef_op2(DWORD v)
 {
 
-//	UNUSED(v);
+	(void)v;
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -1452,7 +1452,7 @@ void (*insttable_2byte[2][256])(void) = {
  */
 
 /* group 1 */
-void (*insttable_G1EbIb[])(BYTE *) = {
+void (*insttable_G1EbIb[])(BYTE *, DWORD) = {
 	ADD_EbIb,
 	OR_EbIb,
 	ADC_EbIb,
@@ -1462,7 +1462,7 @@ void (*insttable_G1EbIb[])(BYTE *) = {
 	XOR_EbIb,
 	CMP_EbIb,
 };
-void (*insttable_G1EbIb_ext[])(DWORD) = {
+void (*insttable_G1EbIb_ext[])(DWORD, DWORD) = {
 	ADD_EbIb_ext,
 	OR_EbIb_ext,
 	ADC_EbIb_ext,

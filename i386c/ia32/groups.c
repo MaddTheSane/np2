@@ -1,4 +1,4 @@
-/*	$Id: groups.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: groups.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -38,17 +38,22 @@
 void
 Grp1_EbIb(void)
 {
-	DWORD op;
+	BYTE *out;
+	DWORD op, madr, src;
 	int idx;
 
 	GET_PCBYTE(op);
 	idx = (op >> 3) & 7;
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(3);
-		(*insttable_G1EbIb[idx])(reg8_b20[op]);
+		out = reg8_b20[op];
+		GET_PCBYTE(src);
+		(*insttable_G1EbIb[idx])(out, src);
 	} else {
 		CPU_WORKCLOCK(7);
-		(*insttable_G1EbIb_ext[idx])(calc_ea_dst(op));
+		madr = calc_ea_dst(op);
+		GET_PCBYTE(src);
+		(*insttable_G1EbIb_ext[idx])(madr, src);
 	}
 }
 

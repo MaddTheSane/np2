@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: paging.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -272,8 +272,10 @@ static const BYTE page_access_bit[32] = {
  */
 
 static DWORD paging(DWORD laddr, int crw, int user_mode);
+#if defined(IA32_SUPPORT_TLB)
 static BOOL tlb_lookup(DWORD vaddr, int crw, DWORD* paddr);
 static void tlb_update(DWORD paddr, DWORD entry, int crw);
+#endif
 
 
 DWORD MEMCALL
@@ -638,7 +640,7 @@ tlb_flush_page(DWORD vaddr)
 	}
 }
 
-BOOL
+static BOOL
 tlb_lookup(DWORD vaddr, int crw, DWORD* paddr)
 {
 	TLB_ENTRY_T* ep;
@@ -680,7 +682,7 @@ tlb_lookup(DWORD vaddr, int crw, DWORD* paddr)
 	return FALSE;
 }
 
-void
+static void
 tlb_update(DWORD paddr, DWORD entry, int crw)
 {
 	TLB_ENTRY_T* ep;
@@ -750,13 +752,13 @@ void
 tlb_flush(BOOL allflush)
 {
 
-//	UNUSED(allflush);
+	(void)allflush;
 }
 
 void
 tlb_flush_page(DWORD vaddr)
 {
 
-//	UNUSED(vaddr);
+	(void)vaddr;
 }
 #endif	/* IA32_SUPPORT_TLB */

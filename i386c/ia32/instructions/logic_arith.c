@@ -1,4 +1,4 @@
-/*	$Id: logic_arith.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: logic_arith.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -176,22 +176,20 @@ AND_EAXId(void)
 }
 
 void
-AND_EbIb(BYTE *p)
+AND_EbIb(BYTE *p, DWORD src)
 {
-	DWORD src, dst;
+	DWORD dst;
 
-	GET_PCBYTE(src);
 	dst = *p;
 	ANDBYTE(dst, src);
 	*p = (BYTE)dst;
 }
 
 void
-AND_EbIb_ext(DWORD madr)
+AND_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst;
+	DWORD dst;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	ANDBYTE(dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
@@ -379,22 +377,20 @@ OR_EAXId(void)
 }
 
 void
-OR_EbIb(BYTE *p)
+OR_EbIb(BYTE *p, DWORD src)
 {
-	DWORD src, dst;
+	DWORD dst;
 
-	GET_PCBYTE(src);
 	dst = *p;
 	ORBYTE(dst, src);
 	*p = (BYTE)dst;
 }
 
 void
-OR_EbIb_ext(DWORD madr)
+OR_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst;
+	DWORD dst;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	ORBYTE(dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
@@ -582,22 +578,20 @@ XOR_EAXId(void)
 }
 
 void
-XOR_EbIb(BYTE *p)
+XOR_EbIb(BYTE *p, DWORD src)
 {
-	DWORD src, dst;
+	DWORD dst;
 
-	GET_PCBYTE(src);
 	dst = *p;
 	BYTE_XOR(dst, src);
 	*p = (BYTE)dst;
 }
 
 void
-XOR_EbIb_ext(DWORD madr)
+XOR_EbIb_ext(DWORD madr, DWORD src)
 {
-	DWORD src, dst;
+	DWORD dst;
 
-	GET_PCBYTE(src);
 	dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_XOR(dst, src);
 	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);

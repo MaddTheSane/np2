@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: cpu.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -119,8 +119,6 @@ enum {
 	CPU_SEGREG_NUM
 };
 
-#if 1		// パックしないとだめ？
-
 typedef struct {
 	REG32		reg[CPU_REG_NUM];
 	WORD		sreg[CPU_SEGREG_NUM];
@@ -180,70 +178,6 @@ typedef struct {
 	BYTE		seg_used;
 	DWORD		seg_base;
 } CPU_INST;
-
-#else
-
-typedef struct {
-	REG32		reg[CPU_REG_NUM];
-	WORD		sreg[CPU_SEGREG_NUM];
-
-	REG32		eflags;
-
-	REG32		eip;
-	REG32		prev_eip;
-} __attribute__((packed)) CPU_REGS;
-
-typedef struct {
-	WORD		gdtr_limit;
-	DWORD		gdtr_base;
-	WORD		idtr_limit;
-	DWORD		idtr_base;
-
-	WORD		ldtr;
-	WORD		tr;
-	descriptor_t	ldtr_desc;
-	descriptor_t	tr_desc;
-
-	DWORD		cr0;
-	DWORD		cr1;
-	DWORD		cr2;
-	DWORD		cr3;
-	DWORD		cr4;
-	DWORD		mxcsr;
-} __attribute__((packed)) CPU_SYSREGS;
-
-typedef struct {
-	descriptor_t	sreg[CPU_SEGREG_NUM];
-
-	DWORD		inport;
-	DWORD		ovflag;
-
-	BYTE		ss_32;
-	BYTE		trap;
-	BYTE		cpu_type;
-	BYTE		_dummy;
-
-	BYTE		cpl;
-	BYTE		protected_mode;
-	BYTE		paging;
-	BYTE		vm86;
-
-	DWORD		ioaddr;		/* I/O bitmap linear address */
-	WORD		iolimit;	/* I/O bitmap count */
-
-	BYTE		nerror;		/* double fault/ triple fault */
-	BYTE		prev_exception;
-} __attribute__((packed)) CPU_STAT;
-
-typedef struct {
-	BYTE		op_32;
-	BYTE		as_32;
-	BYTE		rep_used;
-	BYTE		seg_used;
-	DWORD		seg_base;
-} __attribute__((packed)) CPU_INST;
-
-#endif
 
 extern CPU_REGS		cpu_regs;
 extern CPU_SYSREGS	cpu_sysregs;
@@ -504,7 +438,7 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_CR4_OSXMMEXCPT	(1 << 10)
 
 
-void ia32_initialize(void);
+void ia32_init(void);
 
 void ia32reset(void);
 void ia32(void);

@@ -1,4 +1,4 @@
-/*	$Id: logic_arith.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: logic_arith.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -46,10 +46,10 @@ void AND_GdEd(void);
 void AND_ALIb(void);
 void AND_AXIw(void);
 void AND_EAXId(void);
-void AND_EbIb(BYTE *);
+void AND_EbIb(BYTE *, DWORD);
 void AND_EwIx(WORD *, DWORD);
 void AND_EdIx(DWORD *, DWORD);
-void AND_EbIb_ext(DWORD);
+void AND_EbIb_ext(DWORD, DWORD);
 void AND_EwIx_ext(DWORD, DWORD);
 void AND_EdIx_ext(DWORD, DWORD);
 
@@ -65,10 +65,10 @@ void OR_GdEd(void);
 void OR_ALIb(void);
 void OR_AXIw(void);
 void OR_EAXId(void);
-void OR_EbIb(BYTE *);
+void OR_EbIb(BYTE *, DWORD);
 void OR_EwIx(WORD *, DWORD);
 void OR_EdIx(DWORD *, DWORD);
-void OR_EbIb_ext(DWORD);
+void OR_EbIb_ext(DWORD, DWORD);
 void OR_EwIx_ext(DWORD, DWORD);
 void OR_EdIx_ext(DWORD, DWORD);
 
@@ -84,10 +84,10 @@ void XOR_GdEd(void);
 void XOR_ALIb(void);
 void XOR_AXIw(void);
 void XOR_EAXId(void);
-void XOR_EbIb(BYTE *);
+void XOR_EbIb(BYTE *, DWORD);
 void XOR_EwIx(WORD *, DWORD);
 void XOR_EdIx(DWORD *, DWORD);
-void XOR_EbIb_ext(DWORD);
+void XOR_EbIb_ext(DWORD, DWORD);
 void XOR_EwIx_ext(DWORD, DWORD);
 void XOR_EdIx_ext(DWORD, DWORD);
 
