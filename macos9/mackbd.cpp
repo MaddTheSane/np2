@@ -9,6 +9,35 @@
 
 #define		NC		0xff
 
+typedef struct {
+	BYTE	f11[4];
+	BYTE	f12[4];
+} BINDTBL;
+
+static const BINDTBL bindtbl = {
+						//   ÉJÉi  Stop  [ÅÅ]  NFER
+							{0x72, 0x60, 0x4d, 0x51},
+						//         Copy  [ÅC]  XFER
+							{NC,   0x61, 0x4f, 0x35}};
+
+void mackbd_resetf11(void) {
+
+	UINT	i;
+
+	for (i=1; i<(sizeof(bindtbl.f11)/sizeof(BYTE)); i++) {
+		keystat_forcerelease(bindtbl.f11[i]);
+	}
+}
+
+void mackbd_resetf12(void) {
+
+	UINT	i;
+
+	for (i=1; i<(sizeof(bindtbl.f12)/sizeof(BYTE)); i++) {
+		keystat_forcerelease(bindtbl.f12[i]);
+	}
+}
+
 
 #if TARGET_API_MAC_CARBON
 
@@ -22,7 +51,6 @@ typedef struct {
 } MACKBD;
 
 static	MACKBD		mackbd;
-
 
 static const BYTE keymac[128] = {
 			//	  Ç`,  Çr,  Çc,  Çe,  Çg,  Çf,  Çy,  Çw		; 0x00
@@ -50,7 +78,7 @@ static const BYTE keymac[128] = {
 			//	 [6], [7],    , [8], [9],  Åè,  ÅQ, [,]		; 0x58
 				0x48,0x42,  NC,0x43,0x44,0x0d,0x33,0x4f,
 			//	  F5,  F6,  F7,  F3,  F8,  F9,    , F11		; 0x60
-				0x66,0x67,0x68,0x64,0x69,0x6a,  NC,0x72,
+				0x66,0x67,0x68,0x64,0x69,0x6a,  NC,  NC,
 			//	    , F13,    , F14,    , F10,    , F12		; 0x68
 				  NC,  NC,  NC,  NC,  NC,0x6b,  NC,  NC,
 			//	    , F15, hlp, hom,  ru, del,  F4, end		; 0x70
@@ -135,15 +163,22 @@ void mackbd_callback(void) {
 
 BOOL mackbd_keydown(int keycode, BOOL cmd) {
 
-	if (keycode == 0x6f) {
-		if (np2oscfg.F12COPY == 1) {
-			keystat_senddata(0x61);
-			return(TRUE);
+	BYTE	data;
+
+	data = NC;
+	if (keycode == 0x67) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
-		else if (np2oscfg.F12COPY == 2) {
-			keystat_senddata(0x60);
-			return(TRUE);
-        }
+	}
+	else if (keycode == 0x6f) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+			data = bindtbl.f12[np2oscfg.F12KEY];
+		}
+	}
+	if (data != NC) {
+		keystat_senddata(NC);
+		return(TRUE);
 	}
 	(void)cmd;
 	return(FALSE);
@@ -151,15 +186,22 @@ BOOL mackbd_keydown(int keycode, BOOL cmd) {
 
 BOOL mackbd_keyup(int keycode) {
 
-	if (keycode == 0x6f) {
-		if (np2oscfg.F12COPY == 1) {
-			keystat_senddata(0x61 | 0x80);
-			return(TRUE);
+	BYTE	data;
+
+	data = NC;
+	if (keycode == 0x67) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
-		else if (np2oscfg.F12COPY == 2) {
-			keystat_senddata(0x60 | 0x80);
-			return(TRUE);
+	}
+	else if (keycode == 0x6f) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
+	}
+	if (data != NC) {
+		keystat_senddata(NC | 0x80);
+		return(TRUE);
 	}
 	return(FALSE);
 }
@@ -225,7 +267,7 @@ static const BYTE keymac[128] = {
 			//	 [6], [7],    , [8], [9],  Åè,  ÅQ, [,]		; 0x58
 				0x48,0x42,  NC,0x43,0x44,0x0d,0x33,0x4f,
 			//	  F5,  F6,  F7,  F3,  F8,  F9,    , F11		; 0x60
-				0x66,0x67,0x68,0x64,0x69,0x6a,  NC,0x72,
+				0x66,0x67,0x68,0x64,0x69,0x6a,  NC,  NC,
 			//	    , F13,    , F14,    , F10,    , F12		; 0x68
 				  NC,  NC,  NC,  NC,  NC,0x6b,  NC,  NC,
 			//	    , F15, hlp, hom,  ru, del,  F4, end		; 0x70
@@ -319,12 +361,14 @@ BOOL mackbd_keydown(int keycode, BOOL cmd) {
 	BYTE	data;
 
 	data = NC;
-	if (keycode == 0x6f) {
-		if (np2oscfg.F12COPY == 1) {
-			data = 0x61;
+	if (keycode == 0x67) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
-		else if (np2oscfg.F12COPY == 2) {
-			data = 0x60;
+	}
+	else if (keycode == 0x6f) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
 	}
 	else if (keycode < 0x80) {
@@ -351,12 +395,14 @@ BOOL mackbd_keyup(int keycode) {
 
 	data = NC;
 	ret = FALSE;
-	if (keycode == 0x6f) {
-		if (np2oscfg.F12COPY == 1) {
-			data = 0x61;
+	if (keycode == 0x67) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
-		else if (np2oscfg.F12COPY == 2) {
-			data = 0x60;
+	}
+	else if (keycode == 0x6f) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
 	}
 	else if (keycode < 0x80) {

@@ -105,7 +105,7 @@ void keystat_senddata(BYTE data) {
 	key = data & 0x7f;
 	keynochange = FALSE;
 
-	// CTRL:カナ 0x71,0x72 bit7==0でトルグ処理 (標準処理)
+	// CTRL:カナ 0x71,0x72 bit7==0でトグル処理 (標準処理)
 	if ((key == 0x71) || (key == 0x72)) {
 		if (data & 0x80) {
 			return;

@@ -34,7 +34,7 @@
 #define	USE_RESUME
 
 
-		NP2OSCFG	np2oscfg = {100, 100, 0, 2, 0, 0,  0, 0, 0};
+		NP2OSCFG	np2oscfg = {100, 100, 0, 2, 0, 0,  0, 0, 0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -316,21 +316,39 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_F11KANA:
+			menu_setf11key(0);
+			mackbd_resetf11();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case IDM_F11STOP:
+			menu_setf11key(1);
+			mackbd_resetf11();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case IDM_F11NFER:
+			menu_setf11key(3);
+			mackbd_resetf11();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
 		case IDM_F12MOUSE:
-			menu_setf12copy(0);
-			keystat_resetcopyhelp();
+			menu_setf12key(0);
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COPY:
-			menu_setf12copy(1);
-			keystat_resetcopyhelp();
+			menu_setf12key(1);
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
-		case IDM_F12STOP:
-			menu_setf12copy(2);
-			keystat_resetcopyhelp();
+		case IDM_F12XFER:
+			menu_setf12key(3);
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
@@ -691,7 +709,8 @@ int main(int argc, char *argv[]) {
 	menu_setframe(np2oscfg.DRAW_SKIP);
 	menu_setkey(0);
 	menu_setxshift(0);
-	menu_setf12copy(np2oscfg.F12COPY);
+	menu_setf11key(np2oscfg.F11KEY);
+	menu_setf12key(np2oscfg.F12KEY);
 	menu_setbeepvol(np2cfg.BEEP_VOL);
 	menu_setsound(np2cfg.SOUND_SW);
 	menu_setmotorflg(np2cfg.MOTOR);
