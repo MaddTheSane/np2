@@ -76,6 +76,7 @@ static const BYTE msw_default[8] =
 	int		soundrenewal = 0;
 	BOOL	drawframe;
 	UINT	drawcount = 0;
+	BOOL	hardwarereset = FALSE;
 
 
 // ---------------------------------------------------------------------------
@@ -178,9 +179,9 @@ static void pccore_set(void) {
 	pccore.extmem = 0;
 
 	// HDDの接続 (I/Oの使用状態が変わるので..
-//	if (np2cfg.dipsw[1] & 0x20) {
+	if (np2cfg.dipsw[1] & 0x20) {
 		pccore.hddif |= PCHDD_IDE;
-//	}
+	}
 	pccore.hddif |= PCHDD_SCSI;
 
 	// サウンドボードの接続
@@ -365,7 +366,6 @@ void pccore_reset(void) {
 	cbuscore_bind();
 	fmboard_bind();
 
-	timing_reset();
 	fddmtr_init();
 	calendar_init();
 	vram_init();
@@ -396,6 +396,8 @@ void pccore_reset(void) {
 #if defined(SUPPORT_HOSTDRV)
 	hostdrv_reset();
 #endif
+
+	timing_reset();
 }
 
 static void drawscreen(void) {
@@ -606,9 +608,9 @@ static int execcnt = 0;
 int piccnt = 0;
 int tr = 0;
 UINT	gr = 0;
+UINT	cflg;
 #endif
 
-	UINT	cflg;
 
 void pccore_exec(BOOL draw) {
 
@@ -704,6 +706,12 @@ void pccore_exec(BOOL draw) {
 	calendar_inc();
 	S98_sync();
 	sound_sync();													// happy!
+
+	if (hardwarereset) {
+		hardwarereset = FALSE;
+		pccore_cfgupdate();
+		pccore_reset();
+	}
 
 #if defined(TRACE)
 	execcnt++;

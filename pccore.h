@@ -138,6 +138,7 @@ extern	BYTE	screenupdate;
 extern	int		soundrenewal;
 extern	BOOL	drawframe;
 extern	UINT	drawcount;
+extern	BOOL	hardwarereset;
 
 void getbiospath(char *path, const char *fname, int maxlen);
 void screendisp(NEVENTITEM item);

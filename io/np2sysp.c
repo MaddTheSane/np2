@@ -10,7 +10,7 @@
 #endif
 
 
-#define		NP2SYSP_VER			"B"
+#define		NP2SYSP_VER			"C"
 // #define	NP2SYSP_CREDIT		""					// 要るなら・・・
 
 // NP2依存ポート
@@ -92,6 +92,13 @@ static void np2sysp_multiple(const void *arg1, long arg2) {
 	(void)arg2;
 }
 
+static void np2sysp_hwreset(const void *arg1, long arg2) {
+
+	hardwarereset = TRUE;
+	(void)arg1;
+	(void)arg2;
+}
+
 
 // ----
 
@@ -102,6 +109,7 @@ static const char str_credit[] = "credit";
 static const char str_cpu[] = "cpu";
 static const char str_clock[] = "clock";
 static const char str_multiple[] = "multiple";
+static const char str_hwreset[] = "hardwarereset";
 static const char str_sasibios[] = "sasibios";
 static const char str_scsibios[] = "scsibios";
 static const char str_scsidev[] = "scsi_dev";
@@ -136,6 +144,9 @@ static const SYSPCMD np2spcmd[] = {
 			{str_cpu,		np2sysp_cpu,		NULL,			0},
 			{str_clock,		np2sysp_clock,		NULL,			0},
 			{str_multiple,	np2sysp_multiple,	NULL,			0},
+
+// version:C
+			{str_hwreset,	np2sysp_hwreset,	NULL,			0},
 
 // extension
 #if defined(SUPPORT_SASI)

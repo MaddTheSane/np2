@@ -1,54 +1,57 @@
 
 
-np2str			db		'NP2', 0
-np2str_ver		db		'ver', 0
-np2str_cpu		db		'cpu', 0
-np2str_clock	db		'clock', 0
+np2str			db	3, 'NP2'
+				db	3, 'ver'
+np2str_cpu		db	3, 'cpu'
+np2str_clock	db	5, 'clock'
+np2str_hwreset	db	13, 'hardwarereset'
 
 
-
-np2commsend:	db		FIXCS
+sendnp2port:	mov		dx, 07efh
+				xor		cx, cx
+				db		FIXCS
 				lodsb
-				test	al, al
-				je		short np2commsnd_end
-				out		dx, al
-				jmps	np2commsend
-np2commsnd_end:	ret
+				mov		cl, al
+				db		FIXCS
+				rep outsb
+				ret
+
+checknp2port:	mov		cl, cs:[si]
+cnp2p_lp:		in		al, dx
+				inc		si
+				cmp		al, cs:[si]
+				loope	short cnp2p_lp
+				ret
 
 
-getnp2verb:		push	dx
-				mov		dx, 07efh
+getnp2verb:		push	cx
+				push	dx
 				push	si
 				mov		si, offset np2str
-				call	np2commsend
-				mov		bx, 4
-				sub		si, bx
-cnp2vb_lp2:		in		al, dx
-				cmp		cs:[si], al
+				call	sendnp2port
+				sub		si, 4
+				call	checknp2port
 				jne		short nonhitnp2verb
 				inc		si
-				dec		bl
-				jne		cnp2vb_lp2
-				mov		si, offset np2str_ver
-				call	np2commsend
+				call	sendnp2port
 				in		al, dx
 				cmp		al, 'B'
-				jae		hitnp2verb
-nonhitnp2verb:	pop		si
-				or		si, si
-				pop		dx
-				ret
-hitnp2verb:		pop		si
-				call	np2commsend
+				jb		short nonhitnp2verb
+				pop		si
+				call	sendnp2port
+
 				mov		si, I2ABUFFER
-				mov		bx, si
-hnp2verb_lp:	in		al, dx
-				mov		[bx], al
-				inc		bx
+				push	si
+rnp2p_lp:		in		al, dx
+				mov		[si], al
+				inc		si
 				test	al, al
-				jne		hnp2verb_lp
+				jne		short rnp2p_lp
+nonhitnp2verb:	pop		si
 				pop		dx
+				pop		cx
 				ret
+
 
 PUT_CPU:		mov		si, offset np2str_cpu
 				call	getnp2verb
@@ -60,3 +63,4 @@ PUT_CLOCK:		mov		si, offset np2str_clock
 				je		short np2verbout
 unknownout:		mov		si, offset res_unknown
 				jmp		TEXTOUT_CS
+

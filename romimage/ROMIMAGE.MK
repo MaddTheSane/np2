@@ -8,7 +8,7 @@ $(OBJ):
 	if not exist $(OBJ) mkdir $(OBJ)
 
 
-..\bios\startup.res: $(OBJ) $(OBJ)\startup.bin
+..\bios\startup.res: $(OBJ)\startup.bin
 	bin2txt $(OBJ)\startup.bin nosyscode > ..\bios\startup.res
 
 $(OBJ)\startup.bin: $(OBJ)\startup.exe
@@ -22,7 +22,7 @@ $(OBJ)\startup.obj: startup.asm
 
 
 
-..\bios\biosboot.res: $(OBJ) $(OBJ)\biosboot.bin
+..\bios\biosboot.res: $(OBJ)\biosboot.bin
 	bin2txt $(OBJ)\biosboot.bin biosboot > ..\bios\biosboot.res
 
 $(OBJ)\biosboot.bin: $(OBJ)\biosboot.exe
@@ -36,7 +36,7 @@ $(OBJ)\biosboot.obj: biosboot.asm
 
 
 
-..\cbus\sasibios.res: $(OBJ) $(OBJ)\sasibios.bin
+..\cbus\sasibios.res: $(OBJ)\sasibios.bin
 	bin2txt $(OBJ)\sasibios.bin sasibios > ..\cbus\sasibios.res
 
 $(OBJ)\sasibios.bin: $(OBJ)\sasibios.exe
@@ -50,7 +50,7 @@ $(OBJ)\sasibios.obj: sasibios.asm
 
 
 
-..\cbus\scsibios.res: $(OBJ) $(OBJ)\scsibios.bin
+..\cbus\scsibios.res: $(OBJ)\scsibios.bin
 	bin2txt $(OBJ)\scsibios.bin scsibios > ..\cbus\scsibios.res
 
 $(OBJ)\scsibios.bin: $(OBJ)\scsibios.exe
@@ -64,7 +64,7 @@ $(OBJ)\scsibios.obj: scsibios.asm
 
 
 
-..\fdd\hddboot.res: $(OBJ) $(OBJ)\hddboot.bin
+..\fdd\hddboot.res: $(OBJ)\hddboot.bin
 	bin2txt $(OBJ)\hddboot.bin hdddiskboot > ..\fdd\hddboot.res
 
 $(OBJ)\hddboot.bin: $(OBJ)\hddboot.exe

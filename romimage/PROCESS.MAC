@@ -7,11 +7,8 @@ ITF_EXIT		macro
 				out		37h, al
 				mov		ax, 0
 				mov		ds, ax
-				mov		al, 2
-				jnc		short itfexitp
-				mov		ax, (0ffffh - 0fd80h) * 16
 itfexitp:		mov		word ptr ds:[04f8h], 0eaeeh
-				mov		word ptr ds:[04fah], ax
+				mov		word ptr ds:[04fah], 00002h
 				mov		word ptr ds:[04fch], 0fd80h
 				mov		dx, 043dh
 				mov		al, 12h

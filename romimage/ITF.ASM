@@ -128,8 +128,21 @@ necmemchk:		add		bx, bx
 retbioswait:	mov		ah, 90
 				call	WAITVSYNC
 
-				clc
-				jmp		exitprocess
+exitprocess:	cli
+				pushf
+ifdef DEBUG_TERM
+				DEBUG_TERM
+endif
+				KEYINT_TERM
+				call	SCREEN_CLEAR
+				mov		di, int09off + 8000h
+				mov		cx, (DATASEGEND - int09off) / 2
+				xor		ax, ax
+				rep stosw
+				popf
+				ITF_EXIT
+
+
 
 include resource.x86
 include itfsub.x86
@@ -320,21 +333,15 @@ curitemputs:	or		dl, 80h
 
 ; ---------------------------------------------------------------------------
 
-REBOOT_PROCESS:	stc
-
-exitprocess:	cli
-				pushf
-ifdef DEBUG_TERM
-				DEBUG_TERM
+REBOOT_PROCESS:
+ifdef NP2
+				cli
+				mov		si, offset np2str_hwreset
+				call	sendnp2port
+hltlp:			hlt
+				jmp		short hltlp
 endif
-				KEYINT_TERM
-				call	SCREEN_CLEAR
-				mov		di, int09off + 8000h
-				mov		cx, (DATASEGEND - int09off) / 2
-				xor		ax, ax
-				rep stosw
-				popf
-				ITF_EXIT
+				jmp		exitprocess
 
 CODE	ENDS
 	END START
