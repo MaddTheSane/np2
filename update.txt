@@ -24,6 +24,8 @@
 　ver0.74 → ver0.75
 
 　・EGCの高速化
+　・リズムの修正(PCM 44khz 16bit monoralの制限を外した)
+
 
 　(Windows)
 　　・(I286X) EGCバイトアクセス修正

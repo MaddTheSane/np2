@@ -251,7 +251,7 @@ void sound_pcmunlock(const SINT32 *hdl) {
 
 // ----
 
-BOOL pcmmix_regist(PMIXTRK *trk, void *datptr, UINT datsize, UINT rate) {
+BOOL pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate) {
 
 	GETSND	gs;
 	BYTE	tmp[256];
@@ -289,8 +289,8 @@ BOOL pcmmix_regist(PMIXTRK *trk, void *datptr, UINT datsize, UINT rate) {
 	}
 	r = getsnd_getpcmbyleng(gs, buf, size);
 	getsnd_destroy(gs);
-	trk->sample = buf;
-	trk->samples = r / 2;
+	dat->sample = buf;
+	dat->samples = r / 2;
 	return(SUCCESS);
 
 pmr_err2:
@@ -300,7 +300,7 @@ pmr_err1:
 	return(FAILURE);
 }
 
-BOOL pcmmix_regfile(PMIXTRK *trk, const char *fname, UINT rate) {
+BOOL pcmmix_regfile(PMIXDAT *dat, const char *fname, UINT rate) {
 
 	FILEH	fh;
 	UINT	size;
@@ -322,7 +322,7 @@ BOOL pcmmix_regfile(PMIXTRK *trk, const char *fname, UINT rate) {
 	}
 	file_read(fh, ptr, size);
 	file_close(fh);
-	r = pcmmix_regist(trk, ptr, size, rate);
+	r = pcmmix_regist(dat, ptr, size, rate);
 	_MFREE(ptr);
 	return(r);
 
@@ -388,8 +388,8 @@ const SINT16	*s;
 				srem -= r;
 				if (srem == 0) {
 					if (flag & PMIXFLAG_LOOP) {
-						s = t->sample;
-						srem = t->samples;
+						s = t->data.sample;
+						srem = t->data.samples;
 					}
 					else {
 						hdl->hdr.playing &= ~bitmap;

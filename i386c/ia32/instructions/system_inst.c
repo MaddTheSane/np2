@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.15 2004/02/09 16:12:07 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.16 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -102,7 +102,7 @@ LLDT_Ew(DWORD op)
 				madr = calc_ea_dst(op);
 				src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			}
-			load_ldtr(src, GP_EXCEPTION);
+			load_ldtr((WORD)src, GP_EXCEPTION);
 			return;
 		}
 		VERBOSE(("LLDT: CPL(%d) != 0", CPU_STAT_CPL));
@@ -153,7 +153,7 @@ LTR_Ew(DWORD op)
 				madr = calc_ea_dst(op);
 				src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			}
-			load_tr(src);
+			load_tr((WORD)src);
 			return;
 		}
 		VERBOSE(("LTR: CPL(%d) != 0", CPU_STAT_CPL));
@@ -315,7 +315,7 @@ MOV_CdRd(void)
 				}
 			}
 
-			CPU_STAT_WP = (CPU_CR0 & CPU_CR0_WP) >> 12;
+			CPU_STAT_WP = (BYTE)((CPU_CR0 & CPU_CR0_WP) >> 12);
 			break;
 
 		case 2: /* CR2 */
@@ -495,7 +495,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				*(reg16_b20[op]) = dst;
+				*(reg16_b20[op]) = (WORD)dst;
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -507,7 +507,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -570,7 +570,7 @@ LAR_GwEw(void)
 		}
 
 		h = cpu_kmemoryread_d(sel.addr + 4);
-		*out = h & 0xff00;
+		*out = h & 0xff00;							// read DWORD?
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -589,7 +589,7 @@ LAR_GdEw(void)
 	WORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		PREPART_REG32_EA(op, selector, out, 5, 11);
+		PREPART_REG32_EA(op, selector, out, 5, 11);		// EA16?
 
 		rv = parse_selector(&sel, selector);
 		if (rv < 0) {
@@ -697,7 +697,7 @@ LSL_GdEw(void)
 	WORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		PREPART_REG32_EA(op, selector, out, 5, 11);
+		PREPART_REG32_EA(op, selector, out, 5, 11);		// EA16?
 
 		rv = parse_selector(&sel, selector);
 		if (rv < 0) {

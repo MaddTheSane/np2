@@ -98,10 +98,10 @@ BOOL getsnd_setmixproc(GETSND snd, UINT samprate, UINT channles) {
 
 	int		funcnum;
 
-	if ((snd->samplingrate < 8000) || (snd->samplingrate > 48000)) {
+	if ((snd->samplingrate < 8000) || (snd->samplingrate > 96000)) {
 		goto gssmp_err;
 	}
-	if ((samprate < 8000) || (samprate > 48000)) {
+	if ((samprate < 8000) || (samprate > 96000)) {
 		goto gssmp_err;
 	}
 

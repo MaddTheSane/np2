@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.10 2004/02/12 15:46:14 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.11 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -705,14 +705,14 @@ do { \
 #define	REGPUSH0(reg) \
 do { \
 	CPU_SP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, reg); \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, (WORD)reg); \
 } while (/*CONSTCOND*/ 0)
 
 /* Operand Size == 16 && Stack Size == 32 */
 #define	REGPUSH0_16_32(reg) \
 do { \
 	CPU_ESP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, reg); \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, (WORD)reg); \
 } while (/*CONSTCOND*/ 0)
 
 /* Operand Size == 32 && Stack Size == 16 */

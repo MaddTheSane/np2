@@ -57,10 +57,14 @@ typedef struct {
 } PMIXHDR;
 
 typedef struct {
+	SINT16	*sample;
+	UINT	samples;
+} PMIXDAT;
+
+typedef struct {
 const SINT16	*pcm;
 	UINT		remain;
-	SINT16		*sample;
-	UINT		samples;
+	PMIXDAT		data;
 	UINT		flag;
 	SINT32		volume;
 } PMIXTRK;
@@ -75,8 +79,8 @@ typedef struct {
 extern "C" {
 #endif
 
-BOOL pcmmix_regist(PMIXTRK *trk, void *datptr, UINT datsize, UINT rate);
-BOOL pcmmix_regfile(PMIXTRK *trk, const char *fname, UINT rate);
+BOOL pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate);
+BOOL pcmmix_regfile(PMIXDAT *dat, const char *fname, UINT rate);
 
 void SOUNDCALL pcmmix_getpcm(PCMMIX hdl, SINT32 *pcm, UINT count);
 

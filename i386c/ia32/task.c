@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.11 2004/02/09 16:12:54 monaka Exp $	*/
+/*	$Id: task.c,v 1.12 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -451,7 +451,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	/* I/O deny bitmap */
 	if (!task16) {
 		if (task_sel->desc.u.seg.limit > iobase) {
-			CPU_STAT_IOLIMIT = task_sel->desc.u.seg.limit - iobase;
+			CPU_STAT_IOLIMIT = (WORD)(task_sel->desc.u.seg.limit - iobase);
 			CPU_STAT_IOADDR = task_sel->desc.u.seg.segbase + iobase;
 		} else {
 			CPU_STAT_IOLIMIT = 0;

@@ -1,4 +1,4 @@
-/*	$Id: misc_inst.c,v 1.5 2004/02/12 15:37:57 monaka Exp $	*/
+/*	$Id: misc_inst.c,v 1.6 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -46,7 +46,7 @@ LEA_GwM(void)
 		CPU_WORKCLOCK(3);
 		out = reg16_b53[op];
 		dst = calc_ea_dst(op);
-		*out = dst;
+		*out = (WORD)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);

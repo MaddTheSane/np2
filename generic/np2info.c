@@ -10,8 +10,6 @@
 #include	"np2info.h"
 
 
-extern	RHYTHMCFG	rhythmcfg;
-
 static const char str_comma[] = ", ";
 static const char str_2halfMHz[] = "2.5MHz";
 #define str_5MHz	(str_2halfMHz + 2)
@@ -271,11 +269,13 @@ static void info_bios(char *str, int maxlen, NP2INFOEX *ex) {
 static void info_rhythm(char *str, int maxlen, NP2INFOEX *ex) {
 
 	char	rhythmstr[8];
+	UINT	exist;
 	UINT	i;
 
+	exist = rhythm_getcaps();
 	milstr_ncpy(rhythmstr, str_rhythm, sizeof(rhythmstr));
 	for (i=0; i<6; i++) {
-		if (rhythmcfg.pcm[i].data == NULL) {
+		if (!(exist & (1 << i))) {
 			rhythmstr[i] = '_';
 		}
 	}

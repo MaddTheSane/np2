@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.16 2004/02/13 14:52:35 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.17 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -525,7 +525,7 @@ void ia32withtrap(void);
 void ia32withdma(void);
 
 void ia32_step(void);
-void CPUCALL ia32_interrupt(BYTE vect);
+void CPUCALL ia32_interrupt(REG8 vect);
 void CPUCALL ia32_exception(DWORD vect, DWORD p1, DWORD p2);
 
 void exec_1step(void);

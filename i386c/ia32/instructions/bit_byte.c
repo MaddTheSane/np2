@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.c,v 1.4 2004/02/11 07:55:04 monaka Exp $	*/
+/*	$Id: bit_byte.c,v 1.5 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -142,7 +142,7 @@ BTS_EwGw(void)
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 			res = dst | bit;
-			*out = res;
+			*out = (WORD)res;
 		}
 	} else {
 		CPU_WORKCLOCK(7);
@@ -212,7 +212,7 @@ BTS_EwIb(DWORD op)
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 			res = dst | bit;
-			*out = res;
+			*out = (WORD)res;
 		}
 	} else {
 		CPU_WORKCLOCK(6);
@@ -285,7 +285,7 @@ BTR_EwGw(void)
 		if (dst & bit) {
 			CPU_FLAGL |= C_FLAG;
 			res = dst & ~bit;
-			*out = res;
+			*out = (WORD)res;
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 		}
@@ -355,7 +355,7 @@ BTR_EwIb(DWORD op)
 		if (dst & bit) {
 			CPU_FLAGL |= C_FLAG;
 			res = dst & ~bit;
-			*out = res;
+			*out = (WORD)res;
 		} else {
 			CPU_FLAGL &= ~C_FLAG;
 		}
@@ -433,7 +433,7 @@ BTC_EwGw(void)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst ^ bit;
-		*out = res;
+		*out = (WORD)res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
@@ -503,7 +503,7 @@ BTC_EwIb(DWORD op)
 			CPU_FLAGL &= ~C_FLAG;
 		}
 		res = dst ^ bit;
-		*out = res;
+		*out = (WORD)res;
 	} else {
 		CPU_WORKCLOCK(6);
 		madr = calc_ea_dst(op);
@@ -687,7 +687,7 @@ void
 SETC_Eb(void)
 {
 	DWORD op, madr;
-	BYTE v = CPU_FLAGL & C_FLAG;
+	BYTE v = (BYTE)(CPU_FLAGL & C_FLAG);
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {

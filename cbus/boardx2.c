@@ -219,7 +219,7 @@ void boardx2_bind(void) {
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
+	rhythm_bind(&rhythm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x088, opn_o, opn_i);
 	cbuscore_attachsndex(0x188, opna_o, opna_i);

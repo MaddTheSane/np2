@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.11 2004/02/05 16:41:32 monaka Exp $	*/
+/*	$Id: interface.c,v 1.12 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -211,7 +211,7 @@ ia32_step(void)
 }
 
 void CPUCALL
-ia32_interrupt(BYTE vect)
+ia32_interrupt(REG8 vect)
 {
 
 	INTERRUPT(vect, 0, 0, 0);

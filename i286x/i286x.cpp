@@ -448,7 +448,7 @@ I286 pop_es(void) {								// 07: pop es
 				I286CLOCK(5)
 				REGPOP(I286_ES)
 				movzx	eax, ax
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short pop_es_pe
 				shl		eax, 4					// make segreg
 pop_es_base:	mov		ES_BASE, eax
@@ -661,7 +661,7 @@ I286 pop_ss(void) {								// 17: pop ss
 				I286CLOCK(5)
 				REGPOP(I286_SS)
 				movzx	eax, ax
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short pop_ss_pe
 				shl		eax, 4					// make segreg
 pop_ss_base:	mov		SS_BASE, eax
@@ -790,7 +790,7 @@ I286 pop_ds(void) {								// 1F: pop ds
 				I286CLOCK(5)
 				REGPOP(I286_DS)
 				movzx	eax, ax
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short pop_ds_pe
 				shl		eax, 4					// make segreg
 pop_ds_base:	mov		DS_BASE, eax
@@ -2498,7 +2498,7 @@ I286 mov_seg_ea(void) {							// 8E: mov segrem, EA
 		segset:
 				mov		word ptr I286_SEGREG[ebp], ax
 				movzx	eax, ax
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short mov_seg_pe
 				shl		eax, 4					// make segreg
 mov_seg_base:	mov		SEG_BASE[ebp*2], eax
@@ -2714,7 +2714,7 @@ I286 call_far(void) {							// 9A: call far
 				mov		si, bx
 				shr		ebx, 16
 				mov		I286_CS, bx
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short call_far_pe
 				shl		ebx, 4
 				mov		CS_BASE, ebx
@@ -3370,13 +3370,17 @@ I286 les_r16_ea(void) {							// C4: les REG16, EA
 				lea		ecx, [edi + ebp]
 				call	i286_memoryread_w
 				mov		I286_ES, ax
-				and		eax, 0000ffffh
+				movzx	eax, ax
+				test	byte ptr (I286_MSW), MSW_PE
+				jne		short les_pe
 				shl		eax, 4					// make segreg
-				mov		ES_BASE, eax
+les_base:		mov		ES_BASE, eax
 				ret
-				align	4
-		src_register:
-				INT_NUM(6)
+
+les_pe:			push	offset les_base
+				jmp		i286x_selector
+
+src_register:	INT_NUM(6)
 		}
 }
 
@@ -3399,14 +3403,19 @@ I286 lds_r16_ea(void) {							// C5: lds REG16, EA
 				lea		ecx, [edi + ebp]
 				call	i286_memoryread_w
 				mov		I286_DS, ax
-				and		eax, 0000ffffh
+				movzx	eax, ax
+				test	byte ptr (I286_MSW), MSW_PE
+				jne		short lds_pe
 				shl		eax, 4					// make segreg
-				mov		DS_BASE, eax
+lds_base:		mov		DS_BASE, eax
 				mov		DS_FIX, eax
 				ret
-				align	16
-		src_register:
-				INT_NUM(6)
+
+lds_pe:			push	offset lds_base
+				jmp		i286x_selector
+
+src_register:	INT_NUM(6)
+
 		}
 }
 
@@ -3559,7 +3568,7 @@ I286 ret_far_data16(void) {						// CA: ret far DATA16
 				call	i286_memoryread_w
 				mov		I286_CS, ax
 				movzx	eax, ax
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short ret_far16_pe
 				shl		eax, 4					// make segreg
 ret_far16_base:	mov		CS_BASE, eax
@@ -3587,7 +3596,7 @@ I286 ret_far(void) {							// CB: ret far
 				call	i286_memoryread_w
 				mov		I286_CS, ax
 				movzx	eax, ax
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short ret_far_pe
 				shl		eax, 4					// make segreg
 ret_far_base:	mov		CS_BASE, eax
@@ -4096,7 +4105,7 @@ I286 jmp_far(void) {							// EA: jmp far
 				mov		si, bx
 				shr		ebx, 16
 				mov		I286_CS, bx
-				test	I286_MSW, MSW_PE
+				test	byte ptr (I286_MSW), MSW_PE
 				jne		short jmp_far_pe
 				shl		ebx, 4					// make segreg
 				mov		CS_BASE, ebx

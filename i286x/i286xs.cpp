@@ -1792,13 +1792,18 @@ I286 call_far_ea16(void) {
 				lea		ecx, [edi + ebp]
 				call	i286_memoryread_w
 				mov		I286_CS, ax
-				and		eax, 0000ffffh
+				movzx	eax, ax
+				test	byte ptr (I286_MSW), MSW_PE
+				jne		short call_far_pe
 				shl		eax, 4					// make segreg
-				mov		CS_BASE, eax
+call_far_base:	mov		CS_BASE, eax
 				RESET_XPREFETCH
 				ret
-				align	4
-		register_eareg16:
+
+call_far_pe:	push	offset call_far_base
+				jmp		i286x_selector
+
+register_eareg16:
 				INT_NUM(6)
 		}
 }
@@ -1837,13 +1842,18 @@ I286 jmp_far_ea16(void) {
 				lea		ecx, [edi + ebp]
 				call	i286_memoryread_w
 				mov		I286_CS, ax
-				and		eax, 0000ffffh
+				movzx	eax, ax
+				test	byte ptr (I286_MSW), MSW_PE
+				jne		short jmp_far_pe
 				shl		eax, 4					// make segreg
-				mov		CS_BASE, eax
+jmp_far_base:	mov		CS_BASE, eax
 				RESET_XPREFETCH
 				ret
-				align	4
-		register_eareg16:
+
+jmp_far_pe:		push	offset jmp_far_base
+				jmp		i286x_selector
+
+register_eareg16:
 				INT_NUM(6)
 		}
 }

@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.12 2004/02/13 15:08:49 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.13 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -643,7 +643,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		if (CPU_STAT_SS32) {
 			CPU_ESP = new_esp;
 		} else {
-			CPU_SP = new_esp;
+			CPU_SP = (WORD)new_esp;
 		}
 
 		load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->desc.dpl);
@@ -673,7 +673,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		if (CPU_STAT_SS32) {
 			CPU_ESP = new_esp;
 		} else {
-			CPU_SP = new_esp;
+			CPU_SP = (WORD)new_esp;
 		}
 
 		load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->desc.dpl);
@@ -863,7 +863,7 @@ RETfar_pm(DWORD nbytes)
 		if (CPU_STAT_SS32) {
 			CPU_ESP += nbytes;
 		} else {
-			CPU_SP += nbytes;
+			CPU_SP += (WORD)nbytes;
 		}
 
 		load_cs(cs_sel.selector, &cs_sel.desc, CPU_STAT_CPL);
@@ -933,7 +933,7 @@ RETfar_pm(DWORD nbytes)
 		if (CPU_STAT_SS32) {
 			CPU_ESP = new_sp + nbytes;
 		} else {
-			CPU_SP = new_sp + nbytes;
+			CPU_SP = (WORD)(new_sp + nbytes);
 		}
 
 		/* check segment register */
@@ -1105,7 +1105,7 @@ IRET_pm_protected_mode_return(DWORD new_cs, DWORD new_ip, DWORD new_flags)
 	/* PROTECTED-MODE-RETURN */
 	VERBOSE(("IRET_pm: PE=1, VM=0 in flags image"));
 
-	rv = parse_selector(&cs_sel, new_cs);
+	rv = parse_selector(&cs_sel, (WORD)new_cs);
 	if (rv < 0) {
 		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", cs_sel.selector, rv));
 		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
@@ -1187,7 +1187,7 @@ IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, DWORD new_ip, D
 	if (CPU_STAT_SS32) {
 		CPU_ESP += stacksize;
 	} else {
-		CPU_SP += stacksize;
+		CPU_SP += (WORD)stacksize;
 	}
 }
 
@@ -1288,7 +1288,7 @@ IRET_pm_protected_mode_return_outer_privilege(selector_t *cs_sel, DWORD new_ip, 
 	if (CPU_STAT_SS32) {
 		CPU_ESP = new_sp;
 	} else {
-		CPU_SP = new_sp;
+		CPU_SP = (WORD)new_sp;
 	}
 
 	/* check segment register */
@@ -1339,7 +1339,7 @@ IRET_pm_return_to_vm86(DWORD new_cs, DWORD new_ip, DWORD new_flags)
 	segsel[CPU_DS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 24);
 	segsel[CPU_FS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 28);
 	segsel[CPU_GS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 32);
-	segsel[CPU_CS_INDEX] = new_cs;
+	segsel[CPU_CS_INDEX] = (WORD)new_cs;
 
 	for (i = 0; i < CPU_SEGREG_NUM; i++) {
 		CPU_REGS_SREG(i) = segsel[i];
@@ -1376,12 +1376,12 @@ IRET_pm_return_from_vm86(DWORD new_cs, DWORD new_ip, DWORD new_flags)
 		if (CPU_STAT_SS32) {
 			CPU_ESP += stacksize;
 		} else {
-			CPU_SP += stacksize;
+			CPU_SP += (WORD)stacksize;
 		}
 
 		set_eflags(new_flags, I_FLAG|RF_FLAG);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
 		SET_EIP(new_ip);
 		return;
 	}

@@ -200,7 +200,7 @@ void boardspb_bind(void) {
 	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
+	rhythm_bind(&rhythm);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
 	cbuscore_attachsndex(0x188 - opn.base, spb_o, spb_i);
 }
@@ -235,7 +235,7 @@ void boardspr_bind(void) {
 	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
+	rhythm_bind(&rhythm);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
 	cbuscore_attachsndex(0x188 - opn.base, spb_o, spb_i);
 	cbuscore_attachsndex(0x588 - opn.base, spr_o, spr_i);

@@ -162,7 +162,7 @@ void board118_bind(void) {
 	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
+	rhythm_bind(&rhythm);
 	cs4231io_bind();
 	cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	iocore_attachout(0xa460, ymf_oa460);

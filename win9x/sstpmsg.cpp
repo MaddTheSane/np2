@@ -18,14 +18,6 @@ static char cr[] = "\\n";
 
 // ---- np2info extend
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern	RHYTHMCFG	rhythmcfg;
-#ifdef __cplusplus
-}
-#endif
-
 static const char str_jwinclr[] =
 						"256色\0ハイカラー\0フルカラー\0トゥルーカラー";
 static const char str_jwinmode[] =
@@ -117,28 +109,27 @@ static void info_jrhythm(char *str, int maxlen, NP2INFOEX *ex) {
 
 const char	*p;
 	char	jrhythmstr[16];
-	UINT	rhythmfault;
+	UINT	exist;
 	UINT	i;
 
 	if (!(usesound & 0x6c)) {
 		p = "不要やで";
 	}
 	else {
-		milstr_ncpy(jrhythmstr, "BSCHTRや", sizeof(jrhythmstr));
-		rhythmfault = 0;
-		for (i=0; i<6; i++) {
-			if (rhythmcfg.pcm[i].data == NULL) {
-				jrhythmstr[i] = '_';
-				rhythmfault++;
-			}
-		}
-		if (!rhythmfault) {
-			p = "全部あるで";
-		}
-		else if (rhythmfault == 6) {
+		exist = rhythm_getcaps();
+		if (exist == 0) {
 			p = "用意されてないんか…";
 		}
+		else if (exist == 0x3f) {
+			p = "全部あるで";
+		}
 		else {
+			milstr_ncpy(jrhythmstr, "BSCHTRや", sizeof(jrhythmstr));
+			for (i=0; i<6; i++) {
+				if (!(exist & (1 << i))) {
+					jrhythmstr[i] = '_';
+				}
+			}
 			p = jrhythmstr;
 		}
 	}

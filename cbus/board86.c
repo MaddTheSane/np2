@@ -158,7 +158,7 @@ void board86_bind(void) {
 	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
+	rhythm_bind(&rhythm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x188 + opn.base, opna_o, opna_i);
 }
@@ -218,7 +218,7 @@ void board86c_bind(void) {
 	fmboard_rhyrestore(&rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&rhythm, (SOUNDCB)rhythm_getpcm);
+	rhythm_bind(&rhythm);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x188 + opn.base, opnac_o, opnac_i);

@@ -1,4 +1,4 @@
-/*	$Id: seg_reg.c,v 1.2 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: seg_reg.c,v 1.3 2004/02/18 20:11:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -48,7 +48,7 @@ LES_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_ES_INDEX, sreg);
-		*out = dst;
+		*out = (WORD)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -88,7 +88,7 @@ LSS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_SS_INDEX, sreg);
-		*out = dst;
+		*out = (WORD)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -128,7 +128,7 @@ LDS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_DS_INDEX, sreg);
-		*out = dst;
+		*out = (WORD)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -168,7 +168,7 @@ LFS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_FS_INDEX, sreg);
-		*out = dst;
+		*out = (WORD)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -208,7 +208,7 @@ LGS_GwMp(void)
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		sreg = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr + 2);
 		CPU_SET_SEGREG(CPU_GS_INDEX, sreg);
-		*out = dst;
+		*out = (WORD)dst;
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
