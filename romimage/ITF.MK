@@ -2,8 +2,8 @@ AS		= masm
 AOPT	= /ML /DNP2
 OBJ		= ..\obj\romrel
 
-itfrom.res: $(OBJ) $(OBJ)\itf.bin
-	bin2txt $(OBJ)\itf.bin itfrom > itfrom.res
+..\bios\itfrom.res: $(OBJ) $(OBJ)\itf.bin
+	bin2txt $(OBJ)\itf.bin itfrom > ..\bios\itfrom.res
 
 $(OBJ):
 	if not exist $(OBJ) mkdir $(OBJ)

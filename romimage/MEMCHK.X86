@@ -51,6 +51,7 @@ res_plusspace	db		"+", 0
 
 extmemory_chk:	push	ax
 				mov		bx, 2000h
+				mov		cl, 0
 				call	bp
 				pop		ax
 				add		ax, 128
@@ -80,6 +81,7 @@ MEMORY_TEST:	mov		bp, offset sub_memchk
 
 				; ÉÅÉCÉìÉÅÉÇÉä Å`128KB
 				mov		bx, 2000h
+				mov		cl, 0
 				call	bp
 				mov		cl, 0e1h
 				mov		si, offset res_memory128ok

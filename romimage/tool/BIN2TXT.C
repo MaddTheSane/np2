@@ -23,7 +23,7 @@ void main(int argc, BYTE *argv[], BYTE *envp[]) {
 	}
 
 	if (argc >= 3) {
-		printf("static unsigned char %s[] = {\n", argv[2]);
+		printf("\nstatic const unsigned char %s[] = {\n", argv[2]);
 	}
 	else {
 		int		i;
@@ -37,7 +37,7 @@ void main(int argc, BYTE *argv[], BYTE *envp[]) {
 			out[i] = argv[1][i];
 		}
 		out[i] = 0;
-		printf("static unsigned char %s[] = {\n", out);
+		printf("\nstatic const unsigned char %s[] = {\n", out);
 	}
 
 	while(1) {
