@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.6 2004/01/16 15:17:51 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.7 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -33,171 +33,8 @@
 
 #include "inst_table.h"
 
-#if defined(IA32_PROFILE_INSTRUCTION)
-UINT32	inst_1byte_count[2][256];
-UINT32	inst_2byte_count[2][256];
-UINT32	ea16_count[24];
-UINT32	ea32_count[24];
-UINT32	sib0_count[256];
-UINT32	sib1_count[256];
-UINT32	sib2_count[256];
 
-static const char *ea16_str[24] = {
-	"BX + SI", "BX + SI + DISP8", "BX + SI + DISP16",
-	"BX + DI", "BX + DI + DISP8", "BX + DI + DISP16",
-	"BP + SI", "BP + SI + DISP8", "BP + SI + DISP16",
-	"BP + DI", "BP + DI + DISP8", "BP + DI + DISP16",
-	"SI",      "SI + DISP8",      "SI + DISP16",
-	"DI",      "DI + DISP8",      "DI + DISP16",
-	"DISP16",  "BP + DISP8",      "BP + DISP16",
-	"BX",      "BX + DISP8",      "BX + DISP16",
-};
-
-static const char *ea32_str[24] = {
-	"EAX", "ECX", "EDX", "EBX", "SIB", "DISP32", "ESI", "EDI",
-	"EAX + DISP8",  "ECX + DISP8",  "EDX + DISP8",  "EBX + DISP8",
-	"SIB + DISP8",  "EBP + DISP8",  "ESI + DISP8",  "EDI + DISP8",
-	"EAX + DISP32", "ECX + DISP32", "EDX + DISP32", "EBX + DISP32",
-	"SIB + DISP32", "EBP + DISP32", "ESI + DISP32", "EDI + DISP32",
-};
-
-static const char *sib0_base_str[8] = {
-	"EAX", "ECX", "EDX", "EBX", "ESP", "DISP32", "ESI", "EDI",
-};
-
-static const char *sib1_base_str[8] = {
-	"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI",
-};
-
-static const char *sib_index_str[8] = {
-	"EAX", "ECX", "EDX", "EBX", "", "EBP", "ESI", "EDI",
-};
-
-static const char *sib_scale_str[4] = {
-	"", "2", "4", "8",
-};
-
-void
-clear_profile_inst(void)
-{
-
-	memset(inst_1byte_count, 0, sizeof(inst_1byte_count));
-	memset(inst_2byte_count, 0, sizeof(inst_2byte_count));
-	memset(ea16_count, 0, sizeof(ea16_count));
-	memset(ea32_count, 0, sizeof(ea32_count));
-	memset(sib0_count, 0, sizeof(sib0_count));
-	memset(sib1_count, 0, sizeof(sib1_count));
-	memset(sib2_count, 0, sizeof(sib2_count));
-}
-
-void
-show_profile_inst(void)
-{
-	int i;
-
-	printf("instruction (16bit)\n");
-	for (i = 0; i < 256; i++) {
-		if (inst_1byte_count[0][i] != 0) {
-			printf("0x%02x: %d\n", i, inst_1byte_count[0][i]);
-		}
-	}
-	for (i = 0; i < 256; i++) {
-		if (inst_2byte_count[0][i] != 0) {
-			printf("0x0f%02x: %d\n", i, inst_2byte_count[0][i]);
-		}
-	}
-
-	printf("instruction (32bit)\n");
-	for (i = 0; i < 256; i++) {
-		if (inst_1byte_count[1][i] != 0) {
-			printf("0x%02x: %d\n", i, inst_1byte_count[1][i]);
-		}
-	}
-	for (i = 0; i < 256; i++) {
-		if (inst_2byte_count[1][i] != 0) {
-			printf("0x0f%02x: %d\n", i, inst_2byte_count[1][i]);
-		}
-	}
-}
-
-void
-show_profile_ea(void)
-{
-	char buf[80];
-	char tmp[80];
-	int i;
-	int t;
-
-	printf("EA16\n");
-	for (i = 0; i < NELEMENTS(ea16_count); i++) {
-		if (ea16_count[i] != 0) {
-			printf("%s: %d\n", ea16_str[i], ea16_count[i]);
-		}
-	}
-	printf("EA32\n");
-	for (i = 0; i < NELEMENTS(ea32_count); i++) {
-		if (ea32_count[i] != 0) {
-			printf("%s: %d\n", ea32_str[i], ea32_count[i]);
-		}
-	}
-	printf("SIB0\n");
-	for (i = 0; i < NELEMENTS(sib0_count); i++) {
-		if (sib0_count[i] != 0) {
-			sprintf(tmp, "%s", sib0_base_str[i & 7]);
-			strcpy(buf, tmp);
-			t = (i >> 3) & 7;
-			if (t != 4) {
-				sprintf(tmp, " + %s", sib_index_str[t]);
-				strcat(buf, tmp);
-			}
-			t = (i >> 6) & 3;
-			if (t != 0) {
-				sprintf(tmp, " * %s", sib_scale_str[t]);
-				strcat(buf, tmp);
-			}
-			printf("%s: %d\n", buf, sib0_count[i]);
-		}
-	}
-	printf("SIB1\n");
-	for (i = 0; i < NELEMENTS(sib1_count); i++) {
-		if (sib1_count[i] != 0) {
-			sprintf(tmp, "%s", sib1_base_str[i & 7]);
-			strcpy(buf, tmp);
-			t = (i >> 3) & 7;
-			if (t != 4) {
-				sprintf(tmp, " + %s", sib_index_str[t]);
-				strcat(buf, tmp);
-			}
-			t = (i >> 6) & 3;
-			if (t != 0) {
-				sprintf(tmp, " * %s", sib_scale_str[t]);
-				strcat(buf, tmp);
-			}
-			printf("%s + DISP8: %d\n", buf, sib1_count[i]);
-		}
-	}
-	printf("SIB2\n");
-	for (i = 0; i < NELEMENTS(sib2_count); i++) {
-		if (sib2_count[i] != 0) {
-			sprintf(tmp, "%s", sib1_base_str[i & 7]);
-			strcpy(buf, tmp);
-			t = (i >> 3) & 7;
-			if (t != 4) {
-				sprintf(tmp, " + %s", sib_index_str[t]);
-				strcat(buf, tmp);
-			}
-			t = (i >> 6) & 3;
-			if (t != 0) {
-				sprintf(tmp, " * %s", sib_scale_str[t]);
-				strcat(buf, tmp);
-			}
-			printf("%s + DISP32: %d\n", buf, sib2_count[i]);
-		}
-	}
-}
-#endif
-
-#ifdef	IA32_INSTRUCTION_TRACE
+#if defined(IA32_INSTRUCTION_TRACE)
 static FILE *fp = NULL;
 BOOL cpu_inst_trace = FALSE;
 
@@ -251,7 +88,7 @@ static const char *opcode_1byte[2][256] = {
 	"decl",  "decl",  "decl",  "decl",  "decl",  "decl",  "decl",  "decl",
 /*50*/	"pushl", "pushl", "pushl", "pushl", "pushl", "pushl", "pushl", "pushl",
 	"popl",  "popl",  "popl",  "popl",  "popl",  "popl",  "popl",  "pop",
-/*60*/	"pushal","popal", "bound", "arpl",  "fs:",   "gs:",   NULL,    NULL,
+/*60*/	"pushad","popad", "bound", "arpl",  "fs:",   "gs:",   NULL,    NULL,
 	"pushl", "imul",  "pushl", "imul",  "insb",  "insl",  "outsb", "outsl",
 /*70*/	"jo",    "jno",   "jc",    "jnc",   "jz",    "jnz",   "jna",   "ja",
 	"js",    "jns",   "jp",    "jnp",   "jl",    "jnl",   "jle",   "jnle",
@@ -264,7 +101,7 @@ static const char *opcode_1byte[2][256] = {
 /*b0*/	"movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  "movb",  
 	"movl",  "movl",  "movl",  "movl",  "movl",  "movl",  "movl",  "movl",  
 /*c0*/	NULL,    NULL,    "ret",   "ret",   "les",   "lds",   "movb",  "movl",
-	"enter", "leave", "retfd", "retfd", "int3",  "int",   "into",  "iret",
+	"enter", "leave", "retfd", "retfd", "int3",  "int",   "into",  "iretd",
 /*d0*/	NULL,    NULL,    NULL,    NULL,    "aam",   "aad",   "salc",  "xlat",
 	"esc0",  "esc1",  "esc2",  "esc3",  "esc4",  "esc5",  "esc6",  "esc7",
 /*e0*/	"loopne","loope", "loop",  "jecxz", "inb",   "inl",   "outb",  "outl",
@@ -479,17 +316,6 @@ static const char *opcode2_g9[8] = {
 	NULL, "cmpxchg8b", NULL, NULL, NULL, NULL, NULL, NULL
 };
 
-static const char *reg8[8] = {
-	"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"
-};
-
-static const char *reg16[8] = { 
-	"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"
-};
-
-static const char *reg32[8] = { 
-	"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
-};
 
 static DWORD
 ea(DWORD eip, DWORD op)
@@ -599,9 +425,9 @@ ea(DWORD eip, DWORD op)
 				}
 				if (count[i] > 1) {
 					SPRINTF(tmp, "%s * %d",
-					    reg32[i], count[i]);
+					    reg32_str[i], count[i]);
 				} else {
-					milstr_ncpy(tmp, reg32[i], sizeof(tmp));
+					milstr_ncpy(tmp, reg32_str[i], sizeof(tmp));
 				}
 				milstr_ncat(buf, tmp, sizeof(buf));
 				n++;
@@ -629,9 +455,8 @@ close_instruction_trace(void)
 		fp = NULL;
 	}
 }
-#endif
+#endif	/* IA32_INSTRUCTION_TRACE */
 
-#define	MAX_PREFIX	8
 
 jmp_buf exec_1step_jmpbuf;
 
@@ -674,7 +499,6 @@ exec_1step(void)
 
 		/* prefix */
 		if (insttable_info[op] & INST_PREFIX) {
-			PROFILE_INC_INST_1BYTE(op);
 			(*insttable_1byte[0][op])();
 			continue;
 		}
@@ -683,7 +507,6 @@ exec_1step(void)
 	if (prefix == MAX_PREFIX) {
 		EXCEPTION(UD_EXCEPTION, 0);
 	}
-	PROFILE_INC_INST_1BYTE(op);
 
 #ifdef	IA32_INSTRUCTION_TRACE
 	if (fp && t) {
@@ -767,14 +590,17 @@ exec_1step(void)
 				}
 			}
 		}
+
+		/* arg */
+		switch (op) {
+		case 0xcd:
+			op2 = cpu_codefetch(eip);
+			eip++;
+			fprintf(fp, "%02xh", op2);
+			break;
+		}
 		fprintf(fp, "\n");
 	}
-#if 0
-	if (fp) {
-		fclose(fp);
-		fp = NULL;
-	}
-#endif
 }
 #endif
 

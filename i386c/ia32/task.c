@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.4 2004/01/15 15:49:52 monaka Exp $	*/
+/*	$Id: task.c,v 1.5 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -69,16 +69,7 @@ load_tr(WORD selector)
 	}
 
 #if defined(DEBUG)
-{
-	DWORD v;
-	DWORD i;
-
-	VERBOSE(("load_tr: selector = %04x", task_sel.selector));
-	for (i = 0; i < task_sel.desc.u.seg.limit; i += 4) {
-		v = cpu_lmemoryread_d(task_sel.desc.u.seg.segbase + i);
-		VERBOSE(("load_tr: %08x: %08x", task_sel.desc.u.seg.segbase + i, v));
-	}
-}
+	tr_dump(task_sel.selector, task_sel.desc.u.seg.segbase, task_sel.desc.u.seg.limit);
 #endif
 
 	CPU_SET_TASK_BUSY(&task_sel.desc);
@@ -87,14 +78,13 @@ load_tr(WORD selector)
 }
 
 void
-get_stack_from_tss(DWORD pl, WORD* new_ss, DWORD* new_esp)
+get_stack_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
 {
 	DWORD tss_stack_addr;
 
 	__ASSERT(pl < 3);
 
-	switch (CPU_TR_DESC.type) {
-	case CPU_SYSDESC_TYPE_TSS_BUSY_32:
+	if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
 		tss_stack_addr = pl * 8 + 4;
 		if (tss_stack_addr + 7 > CPU_TR_DESC.u.seg.limit) {
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
@@ -102,9 +92,7 @@ get_stack_from_tss(DWORD pl, WORD* new_ss, DWORD* new_esp)
 		tss_stack_addr += CPU_TR_DESC.u.seg.segbase;
 		*new_esp = cpu_lmemoryread_d(tss_stack_addr);
 		*new_ss = cpu_lmemoryread_w(tss_stack_addr + 4);
-		break;
-
-	case CPU_SYSDESC_TYPE_TSS_BUSY_16:
+	} else if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_16) {
 		tss_stack_addr = pl * 4 + 2;
 		if (tss_stack_addr + 3 > CPU_TR_DESC.u.seg.limit) {
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
@@ -112,12 +100,8 @@ get_stack_from_tss(DWORD pl, WORD* new_ss, DWORD* new_esp)
 		tss_stack_addr += CPU_TR_DESC.u.seg.segbase;
 		*new_esp = cpu_lmemoryread_w(tss_stack_addr);
 		*new_ss = cpu_lmemoryread_w(tss_stack_addr + 2);
-		break;
-
-	default:
-		ia32_panic("get_stack_from_tss: TR is invalid (%d)\n",
-		    CPU_TR_DESC.type);
-		break;
+	} else {
+		ia32_panic("get_stack_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
 
 	VERBOSE(("get_stack_from_tss: new_esp = 0x%08x, new_ss = 0x%04x", *new_esp, *new_ss));
@@ -137,9 +121,7 @@ get_link_selector_from_tss()
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
 		}
 	} else {
-		ia32_panic("get_link_selector_from_tss: TR is invalid (%d)\n",
-		    CPU_TR_DESC.type);
-		return 0;	/* compiler happy */
+		ia32_panic("get_link_selector_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
 
 	backlink = cpu_lmemoryread_w(CPU_TR_DESC.u.seg.segbase);
@@ -165,8 +147,8 @@ task_switch(selector_t* task_sel, int type)
 	DWORD task_base;	/* new task state */
 	DWORD old_flags = REAL_EFLAGREG;
 	BOOL task16;
-	int nsreg;
-	int i;
+	DWORD nsreg;
+	DWORD i;
 
 	VERBOSE(("task_switch: start"));
 
@@ -203,15 +185,15 @@ task_switch(selector_t* task_sel, int type)
 	}
 
 #if defined(DEBUG)
-{
-	DWORD v;
+	{
+		DWORD v;
 
-	VERBOSE(("task_switch: new task"));
-	for (i = 0; i < task_sel->desc.u.seg.limit; i += 4) {
-		v = cpu_lmemoryread_d(task_base + i);
-		VERBOSE(("task_switch: 0x%08x: %08x", task_base + i, v));
+		VERBOSE(("task_switch: new task"));
+		for (i = 0; i < task_sel->desc.u.seg.limit; i += 4) {
+			v = cpu_lmemoryread_d(task_base + i);
+			VERBOSE(("task_switch: 0x%08x: %08x", task_base + i,v));
+		}
 	}
-}
 #endif
 
 	if (CPU_STAT_PAGING) {
@@ -301,7 +283,7 @@ task_switch(selector_t* task_sel, int type)
 		for (i = 0; i < nsreg; i++) {
 			cpu_lmemorywrite_d(cur_base + 72 + i * 4, CPU_REGS_SREG(i));
 		}
-		cpu_lmemorywrite_d(cur_base + 96, CPU_LDTR);
+		cpu_lmemorywrite_w(cur_base + 96, CPU_LDTR);
 	} else {
 		cpu_lmemorywrite_w(cur_base + 14, CPU_IP);
 		cpu_lmemorywrite_w(cur_base + 16, (WORD)old_flags);
@@ -315,22 +297,22 @@ task_switch(selector_t* task_sel, int type)
 	}
 
 #if defined(DEBUG)
-{
-	DWORD v;
+	{
+		DWORD v;
 
-	VERBOSE(("task_switch: current task"));
-	for (i = 0; i < CPU_TR_DESC.u.seg.limit; i += 4) {
-		v = cpu_lmemoryread_d(cur_base + i);
-		VERBOSE(("task_switch: 0x%08x: %08x", cur_base + i, v));
+		VERBOSE(("task_switch: current task"));
+		for (i = 0; i < CPU_TR_DESC.u.seg.limit; i += 4) {
+			v = cpu_lmemoryread_d(cur_base + i);
+			VERBOSE(("task_switch: 0x%08x: %08x", cur_base + i, v));
+		}
 	}
-}
 #endif
 	/* set back link selector */
 	switch (type) {
 	case TASK_SWITCH_CALL:
 	case TASK_SWITCH_INTR:
 		/* set back link selector */
-		cpu_lmemorywrite_d(task_base, CPU_TR);
+		cpu_lmemorywrite_w(task_base, CPU_TR);
 		break;
 	
 	case TASK_SWITCH_IRET:
@@ -345,7 +327,7 @@ task_switch(selector_t* task_sel, int type)
 
 	/* Now task switching! */
 
-	/* if CALL, INTR, set EFLAG image NT_FLAG */
+	/* if CALL, INTR, set EFLAGS image NT_FLAG */
 	/* if CALL, INTR, JMP set busy flag */
 	switch (type) {
 	case TASK_SWITCH_CALL:
@@ -375,7 +357,7 @@ task_switch(selector_t* task_sel, int type)
 	CPU_TR_DESC = task_sel->desc;
 
 	/* load task state (CR3, EFLAG, EIP, GPR, segreg, LDTR) */
-	if (CPU_STAT_PAGING) {
+	if (!task16) {
 		set_CR3(cr3);
 	}
 
@@ -434,7 +416,7 @@ task_switch(selector_t* task_sel, int type)
 			}
 		}
 
-		/* CS segment is not present */
+		/* code segment is not present */
 		rv = selector_is_not_present(&cs_sel);
 		if (rv < 0) {
 			EXCEPTION(NP_EXCEPTION, cs_sel.idx);
@@ -462,6 +444,12 @@ task_switch(selector_t* task_sel, int type)
 		}
 	} else {
 		CPU_STAT_IOLIMIT = 0;
+	}
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("task_switch: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
 	VERBOSE(("task_switch: done."));

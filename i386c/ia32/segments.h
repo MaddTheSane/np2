@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.2 2003/12/12 15:06:18 monaka Exp $	*/
+/*	$Id: segments.h,v 1.3 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -82,12 +82,27 @@ typedef struct {
 	BYTE	d;	/* 0 = 16bit, 1 = 32bit */
 
 	BYTE	flag;
-#define	CPU_DESC_READABLE	(1 << 0)
-#define	CPU_DESC_WRITABLE	(1 << 1)
+#define	CPU_DESC_FLAG_READABLE	(1 << 0)
+#define	CPU_DESC_FLAG_WRITABLE	(1 << 1)
 
 	BYTE	b_pad;
 } descriptor_t;
 
+
+/*
+ * セグメント・ディスクリプタ
+ *
+ *  31            24 23 22 21 20 19   16 15 14 13 12 11    8 7             0
+ * +----------------+--+--+--+--+-------+--+-----+--+-------+---------------+
+ * |  Base  31..16  | G|DB| 0| A|limit_h| P| DPL | S|  type |  Base  23:16  | 4
+ * +----------------+--+--+--+--+-------+--+-----+--+-------+---------------+
+ *  31                                16 15                                0
+ * +------------------------------------+-----------------------------------+
+ * |           Base  15..00             |            limit  15..0           | 0
+ * +------------------------------------+-----------------------------------+
+ */
+
+/* descriptor common */
 #define	CPU_DESC_H_TYPE		(0xf <<  8)
 #define	CPU_DESC_H_S		(  1 << 12)	/* 0 = system, 1 = code/data */
 #define	CPU_DESC_H_DPL		(  3 << 13)
@@ -132,6 +147,7 @@ typedef struct {
 /*	CPU_SYSDESC_TYPE_TASK		0x05	*/
 #define	CPU_SYSDESC_TYPE_INTR		0x06
 #define	CPU_SYSDESC_TYPE_TRAP		0x07
+#define	CPU_SYSDESC_TYPE_MASKBIT	0x07
 
 #define	CPU_SYSDESC_TYPE_TSS_BUSY_IND	0x02
 
@@ -143,8 +159,7 @@ do { \
 	(dscp)->u.seg.g = 0; \
 	(dscp)->valid = 1; \
 	(dscp)->p = 1; \
-	(dscp)->type = ((idx) == CPU_CS_INDEX) ? 0x0a : \
-	              (((idx) == CPU_SS_INDEX) ? 0x06 : 0x02); \
+	(dscp)->type = 0x02 /* writable */; \
 	(dscp)->dpl = 0; \
 	(dscp)->s = 1;	/* code/data */ \
 	(dscp)->d = 0; \

@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.3 2003/12/25 19:58:24 yui Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.4 2004/01/23 14:33:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -54,10 +54,10 @@ JMP_Jb(void)
 void
 JMP_Jw(void)
 {
-	WORD ip;
+	DWORD ip;
 
 	CPU_WORKCLOCK(7);
-	GET_PCWORD(ip);
+	GET_PCWORDS(ip);
 	ADD_EIP(ip);
 }
 
@@ -75,7 +75,7 @@ void
 JMP_Ew(DWORD op)
 {
 	DWORD madr;
-	WORD new_ip;
+	DWORD new_ip;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
@@ -110,7 +110,7 @@ JMP_Ed(DWORD op)
 void
 JMP16_Ap(void)
 {
-	WORD new_ip;
+	DWORD new_ip;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(11);
@@ -149,7 +149,7 @@ void
 JMP16_Ep(DWORD op)
 {
 	DWORD madr;
-	WORD new_ip;
+	DWORD new_ip;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(11);
@@ -832,10 +832,10 @@ LOOP_Jb(void)
 void
 CALL_Aw(void)
 {
-	WORD ip;
+	DWORD ip;
 
 	CPU_WORKCLOCK(7);
-	GET_PCWORD(ip);
+	GET_PCWORDS(ip);
 	PUSH0_16(CPU_IP);
 	ADD_EIP(ip);
 }
@@ -855,7 +855,7 @@ void
 CALL_Ew(DWORD op)
 {
 	DWORD madr;
-	WORD new_ip;
+	DWORD new_ip;
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
@@ -890,7 +890,7 @@ CALL_Ed(DWORD op)
 void
 CALL16_Ap(void)
 {
-	WORD new_ip;
+	DWORD new_ip;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(13);
@@ -935,7 +935,7 @@ void
 CALL16_Ep(DWORD op)
 {
 	DWORD ad;
-	WORD new_ip;
+	DWORD new_ip;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(16);
@@ -993,7 +993,7 @@ CALL32_Ep(DWORD op)
 void
 RETnear16(void)
 {
-	WORD new_ip;
+	DWORD new_ip;
 
 	CPU_WORKCLOCK(11);
 	POP0_16(new_ip);
@@ -1013,14 +1013,18 @@ RETnear32(void)
 void
 RETnear16_Iw(void)
 {
-	WORD new_ip;
+	DWORD new_ip;
 	WORD ad;
 
 	CPU_WORKCLOCK(11);
 	GET_PCWORD(ad);
 	POP0_16(new_ip);
 	SET_EIP(new_ip);
-	CPU_SP += ad;
+	if (!CPU_STAT_SS32) {
+		CPU_SP += ad;
+	} else {
+		CPU_ESP += ad;
+	}
 }
 
 void
@@ -1030,16 +1034,20 @@ RETnear32_Iw(void)
 	DWORD ad;
 
 	CPU_WORKCLOCK(11);
-	GET_PCDWORD(ad);
+	GET_PCWORD(ad);
 	POP0_32(new_ip);
 	SET_EIP(new_ip);
-	CPU_ESP += ad;
+	if (CPU_STAT_SS32) {
+		CPU_ESP += ad;
+	} else {
+		CPU_SP += ad;
+	}
 }
 
 void
 RETfar16(void)
 {
-	WORD new_ip;
+	DWORD new_ip;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(15);
@@ -1079,8 +1087,8 @@ RETfar32(void)
 void
 RETfar16_Iw(void)
 {
-	WORD ad;
-	WORD new_ip;
+	DWORD ad;
+	DWORD new_ip;
 	WORD new_cs;
 
 	CPU_WORKCLOCK(15);
@@ -1089,10 +1097,15 @@ RETfar16_Iw(void)
 		/* Real mode or VM86 mode */
 		POP0_16(new_ip);
 		POP0_16(new_cs);
-		CPU_SP += ad;
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);
+
+		if (!CPU_STAT_SS32) {
+			CPU_SP += ad;
+		} else {
+			CPU_ESP += ad;
+		}
 	} else {
 		/* Protected mode */
 		RETfar_pm(ad);
@@ -1107,15 +1120,20 @@ RETfar32_Iw(void)
 	WORD new_cs;
 
 	CPU_WORKCLOCK(15);
-	GET_PCDWORD(ad);
+	GET_PCWORD(ad);
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* Real mode or VM86 mode */
 		POP0_32(new_ip);
 		POP0_32(new_cs);
-		CPU_ESP += ad;
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);
+
+		if (CPU_STAT_SS32) {
+			CPU_ESP += ad;
+		} else {
+			CPU_SP += ad;
+		}
 	} else {
 		/* Protected mode */
 		RETfar_pm(ad);
@@ -1125,7 +1143,7 @@ RETfar32_Iw(void)
 void
 IRET(void)
 {
-	WORD new_ip;
+	DWORD new_ip;
 	WORD flag;
 	WORD new_cs;
 
@@ -1165,7 +1183,7 @@ IRETD(void)
 		POP0_32(new_cs);
 		POP0_32(flag);
 
-		CPU_EFLAG = (flag & 0x00257fd5) | (REAL_EFLAGREG & 0x1a0000);
+		CPU_EFLAG = (flag & 0x00257fd5) | (CPU_EFLAG & 0x1a0000);
 		CPU_OV = CPU_FLAG & O_FLAG;
 		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
 

@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.3 2004/01/13 16:37:42 monaka Exp $	*/
+/*	$Id: paging.c,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -30,93 +30,6 @@
 #include "compiler.h"
 #include "cpu.h"
 #include "ia32.mcr"
-
-/*
- * ページ・ディレクトリ・エントリ (4K バイトページ使用時)
- *
- *  31                                    12 11   9 8  7 6 5  4   3   2   1  0 
- * +----------------------------------------+------+-+--+-+-+---+---+---+---+-+
- * |   ページ・テーブルのベース・アドレス   |使用可|G|PS|0|A|PCD|PWT|U/S|R/W|P|
- * +----------------------------------------+------+-+--+-+-+---+---+---+---+-+
- *                                              |   |  | | |  |   |   |   |  |
- * 9-11: システム・プログラマが使用可能 --------+   |  | | |  |   |   |   |  |
- *    8: グローバル・ページ(無視される) ------------+  | | |  |   |   |   |  |
- *    7: ページ・サイズ (0 = 4k バイトページ) ---------+ | |  |   |   |   |  |
- *    6: 予約 (0) ---------------------------------------+ |  |   |   |   |  |
- *    5: アクセス -----------------------------------------+  |   |   |   |  |
- *    4: キャッシュ無効 --------------------------------------+   |   |   |  |
- *    3: ライトスルー --------------------------------------------+   |   |  |
- *    2: ユーザ／スーパバイザ (0 = スーパバイザ) ---------------------+   |  |
- *    1: 読み取り／書き込み (0 = 読み取りのみ) ---------------------------+  |
- *    0: ページ存在 ---------------------------------------------------------+
- */
-#define	CPU_PDE_BASEADDR_MASK	0xfffff000
-#define	CPU_PDE_PAGE_SIZE	(1 << 7)
-#define	CPU_PDE_ACCESS		(1 << 5)
-#define	CPU_PDE_CACHE_DISABLE	(1 << 4)
-#define	CPU_PDE_WRITE_THROUGH	(1 << 3)
-#define	CPU_PDE_USER_MODE	(1 << 2)
-#define	CPU_PDE_WRITABLE	(1 << 1)
-#define	CPU_PDE_PRESENT		(1 << 0)
-
-/*
- * ページ・ディレクトリ・エントリ (4M バイトページ使用時)
- * 
- *  31                        22 21       12 11   9 8  7 6 5  4   3   2   1  0 
- * +----------------------------+-----------+------+-+--+-+-+---+---+---+---+-+
- * |ページテーブルの物理アドレス|  予約済み |使用可|G|PS|D|A|PCD|PWT|U/S|R/W|P|
- * +----------------------------+-----------+------+-+--+-+-+---+---+---+---+-+
- *                                              |   |  | | |  |   |   |   |  |
- * 9-11: システム・プログラマが使用可能 --------+   |  | | |  |   |   |   |  |
- *    8: グローバル・ページ ------------------------+  | | |  |   |   |   |  |
- *    7: ページ・サイズ (1 = 4M バイトページ) ---------+ | |  |   |   |   |  |
- *    6: ダーティ ---------------------------------------+ |  |   |   |   |  |
- *    5: アクセス -----------------------------------------+  |   |   |   |  |
- *    4: キャッシュ無効 --------------------------------------+   |   |   |  |
- *    3: ライトスルー --------------------------------------------+   |   |  |
- *    2: ユーザ／スーパバイザ (0 = スーパバイザ) ---------------------+   |  |
- *    1: 読み取り／書き込み (0 = 読み取りのみ) ---------------------------+  |
- *    0: ページ存在 ---------------------------------------------------------+
- */
-#define	CPU_PDE_4M_BASEADDR_MASK	0xffc00000
-#define	CPU_PDE_4M_GLOBAL_PAGE		(1 << 8)
-#define	CPU_PDE_4M_PAGE_SIZE		(1 << 7)
-#define	CPU_PDE_4M_DIRTY		(1 << 6)
-#define	CPU_PDE_4M_ACCESS		(1 << 5)
-#define	CPU_PDE_4M_CACHE_DISABLE	(1 << 4)
-#define	CPU_PDE_4M_WRITE_THROUGH	(1 << 3)
-#define	CPU_PDE_4M_USER_MODE		(1 << 2)
-#define	CPU_PDE_4M_WRITABLE		(1 << 1)
-#define	CPU_PDE_4M_PRESENT		(1 << 0)
-
-/*
- * ページ・テーブル・エントリ (4k バイト・ページ)
- *
- *  31                                    12 11   9 8 7 6 5  4   3   2   1  0 
- * +----------------------------------------+------+-+-+-+-+---+---+---+---+-+
- * |        ページのベース・アドレス        |使用可|G|0|D|A|PCD|PWT|U/S|R/W|P|
- * +----------------------------------------+------+-+-+-+-+---+---+---+---+-+
- *                                              |   | | | |  |   |   |   |  |
- *  9-11: システム・プログラマが使用可能 -------+   | | | |  |   |   |   |  |
- *     8: グローバル・ページ -----------------------+ | | |  |   |   |   |  |
- *     7: 予約 (0) -----------------------------------+ | |  |   |   |   |  |
- *     6: ダーティ -------------------------------------+ |  |   |   |   |  |
- *     5: アクセス ---------------------------------------+  |   |   |   |  |
- *     4: キャッシュ無効 ------------------------------------+   |   |   |  |
- *     3: ライトスルー ------------------------------------------+   |   |  |
- *     2: ユーザ／スーパバイザ (0 = スーパバイザ) -------------------+   |  |
- *     1: 読み取り／書き込み (0 = 読み取りのみ) -------------------------+  |
- *     0: ページ存在 -------------------------------------------------------+
- */
-#define	CPU_PTE_BASEADDR_MASK	0xfffff000
-#define	CPU_PTE_GLOBAL_PAGE	(1 << 8)
-#define	CPU_PTE_DIRTY		(1 << 6)
-#define	CPU_PTE_ACCESS		(1 << 5)
-#define	CPU_PTE_CACHE_DISABLE	(1 << 4)
-#define	CPU_PTE_WRITE_THROUGH	(1 << 3)
-#define	CPU_PTE_USER_MODE	(1 << 2)
-#define	CPU_PTE_WRITABLE	(1 << 1)
-#define	CPU_PTE_PRESENT		(1 << 0)
 
 /*
  * ページフォルト例外
@@ -284,6 +197,7 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 	DWORD paddr;
 	DWORD remain;	/* page remain */
 	DWORD r;
+	DWORD shift = 0;
 	DWORD value = 0;
 	int crw;
 	int pl;
@@ -300,34 +214,39 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 		r = (remain > length) ? length : remain;
 		switch (r) {
 		case 1:
-			value = (value << 8) | cpu_memoryread(paddr);
+			value = (DWORD)cpu_memoryread(paddr) << shift;
+			shift += 8;
 			break;
 
 		case 2:
-			value = (value << 16) | cpu_memoryread_w(paddr);
+			value |= (DWORD)cpu_memoryread_w(paddr) << shift;
+			shift += 16;
 			break;
 
 		case 3:
-			value <<= 24;
-			value |= cpu_memoryread_w(paddr) << 8;
-			value |= cpu_memoryread(paddr + 2);
+			value |= (DWORD)cpu_memoryread_w(paddr) << shift;
+			value |= (DWORD)cpu_memoryread(paddr + 2) << (shift+16);
+			shift += 24;
 			break;
 
 		case 4:
 			value = cpu_memoryread_d(paddr);
+			shift += 32;
 			break;
 
 		default:
-			ia32_panic("cpu_linear_memory_read(): out of range\n");
+			ia32_panic("cpu_linear_memory_read(): out of range (r = %d)\n", r);
 			break;
 		}
 
 		if (length == r)
 			break;
 
+		laddr += r;
 		length -= r;
 		remain -= r;
-		laddr += r;
+		if (remain <= 0)
+			remain += 0x1000;
 	}
 
 	return value;
@@ -339,14 +258,17 @@ cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
 	DWORD paddr;
 	DWORD remain;	/* page remain */
 	DWORD r;
+	int crw;
 	int pl;
 
+	crw = CPU_PAGING_PAGE_WRITE;
+	crw |= CPU_PAGING_PAGE_DATA;
 	pl = (CPU_STAT_CPL == 3);
 
 	/* XXX: 4MB pages... */
 	remain = 0x1000 - (laddr & 0x00000fff);
 	for (;;) {
-		paddr = paging(laddr, CPU_PAGING_PAGE_WRITE|CPU_PAGING_PAGE_DATA, pl);
+		paddr = paging(laddr, crw, pl);
 
 		r = (remain > length) ? length : remain;
 		switch (r) {
@@ -371,35 +293,48 @@ cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
 			break;
 
 		default:
-			ia32_panic("cpu_linear_memory_write(): out of range\n");
+			ia32_panic("cpu_linear_memory_write(): out of range (r = %d)\n", r);
 			break;
 		}
 
 		if (length == r)
 			break;
 
+		laddr += r;
 		length -= r;
 		remain -= r;
-		laddr += r;
+		if (remain <= 0)
+			remain += 0x1000;
 	}
 }
 
 void MEMCALL
 paging_check(DWORD laddr, DWORD length, int rw)
 {
-	DWORD addr;
-	int n;
+	DWORD paddr;
+	DWORD remain;	/* page remain */
+	DWORD r;
+	int crw;
 	int pl;
 
+	crw = rw;
 	pl = (CPU_STAT_CPL == 3);
 
 	/* XXX: 4MB pages... */
-	n = ((laddr & 0xfff) + length) / 0x1000;
-	addr = (laddr & ~0xfff);
-	do {
-		(void)paging(addr, rw, pl);
-		addr += 0x1000;
-	} while (--n > 0);
+	remain = 0x1000 - (laddr & 0x00000fff);
+	for (;;) {
+		paddr = paging(laddr, crw, pl);
+
+		r = (remain > length) ? length : remain;
+		if (length == r)
+			break;
+
+		laddr += r;
+		length -= r;
+		remain -= r;
+		if (remain <= 0)
+			remain += 0x1000;
+	}
 }
 
 static DWORD
@@ -421,7 +356,9 @@ paging(DWORD laddr, int crw, int user_mode)
 	pde_addr = (CPU_CR3 & CPU_CR3_PD_MASK) | ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
 	if (!(pde & CPU_PDE_PRESENT)) {
-		VERBOSE(("PDE is not present. (laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x)", laddr, pde_addr, pde));
+		VERBOSE(("paging: PDE is not present"));
+		VERBOSE(("paging: CPU_CR3 = 0x%08x", CPU_CR3));
+		VERBOSE(("paging: laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x", laddr, pde_addr, pde));
 		err = 0;
 		goto pf_exception;
 	}
@@ -447,7 +384,9 @@ paging(DWORD laddr, int crw, int user_mode)
 		pte_addr = (pde & CPU_PDE_BASEADDR_MASK) | ((laddr >> 10) & 0xffc);
 		pte = cpu_memoryread_d(pte_addr);
 		if (!(pte & CPU_PTE_PRESENT)) {
-			VERBOSE(("PTE is not present. (laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x, pte_addr = 0x%08x, pte = 0x%08x)", laddr, pde_addr, pde, pte_addr, pte));
+			VERBOSE(("paging: PTE is not present"));
+			VERBOSE(("paging: laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x", laddr, pde_addr, pde));
+			VERBOSE(("paging: pte_addr = 0x%08x, pte = 0x%08x", pte_addr, pte));
 			err = 0;
 			goto pf_exception;
 		}
@@ -460,7 +399,7 @@ paging(DWORD laddr, int crw, int user_mode)
 		paddr = (pte & CPU_PTE_BASEADDR_MASK) | (laddr & 0x00000fff);
 	}
 
-	bit  = crw & 1;
+	bit  = crw & CPU_PAGING_PAGE_WRITE;
 	bit |= (pde & pte & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE));
 	bit |= (user_mode << 3);
 	bit |= (CPU_CR0 & CPU_CR0_WP) >> 12;
@@ -471,12 +410,15 @@ paging(DWORD laddr, int crw, int user_mode)
 	if (!(page_access_bit[bit]))
 #endif
 	{
-		VERBOSE(("page access violation. (laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x, pte_addr = 0x%08x, pte = 0x%08x, paddr = 0x%08x, bit = 0x%08x)", laddr, pde_addr, pde, pte_addr, pte, paddr, bit));
+		VERBOSE(("paging: page access violation."));
+		VERBOSE(("paging: laddr = 0x%08x, pde_addr = 0x%08x, pde = 0x%08x", laddr, pde_addr, pde));
+		VERBOSE(("paging: pte_addr = 0x%08x, pte = 0x%08x", pte_addr, pte));
+		VERBOSE(("paging: paddr = 0x%08x, bit = 0x%08x", paddr, bit));
 		err = 1;
 		goto pf_exception;
 	}
 
-	if ((crw & 1) && !(pte & CPU_PTE_DIRTY)) {
+	if ((crw & CPU_PAGING_PAGE_WRITE) && !(pte & CPU_PTE_DIRTY)) {
 		pte |= CPU_PTE_DIRTY;
 		cpu_memorywrite_d(pte_addr, pte);
 	}
@@ -489,7 +431,7 @@ paging(DWORD laddr, int crw, int user_mode)
 
 pf_exception:
 	CPU_CR2 = laddr;
-	err |= ((crw & 1) << 1) | (user_mode << 2);
+	err |= ((crw & CPU_PAGING_PAGE_WRITE) << 1) | (user_mode << 2);
 	EXCEPTION(PF_EXCEPTION, err);
 	return 0;	/* compiler happy */
 }

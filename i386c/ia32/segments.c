@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.6 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: segments.c,v 1.7 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -50,16 +50,24 @@ load_segreg(int idx, WORD selector, int exc)
 		sd.u.seg.limit = CPU_STAT_SREGLIMIT(idx);
 		CPU_SET_SEGDESC_DEFAULT(&sd, idx, selector);
 		CPU_STAT_SREG(idx) = sd;
+
+		if (idx == CPU_CS_INDEX) {
+			CPU_INST_OP32 = CPU_INST_AS32 =
+			    CPU_STATSAVE.cpu_inst_default.op_32 =
+			    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
+		} else if (idx == CPU_SS_INDEX) {
+			CPU_STAT_SS32 = 0;
+		}
 		return;
 	}
 
 	/*
 	 * protected mode
 	 */
-	VERBOSE(("load_segreg: idx = %d, selector = %04x, exc = %d", idx, selector, exc));
+	VERBOSE(("load_segreg: EIP = %04x:%08x, idx = %d, selector = %04x, exc = %d", CPU_CS, CPU_PREV_EIP, idx, selector, exc));
 
 	if (idx == CPU_CS_INDEX) {
-		ia32_panic("load_segreg: sreg(%d)", idx);
+		ia32_panic("load_segreg: CS");
 	}
 
 	rv = parse_selector(&sel, selector);
@@ -86,16 +94,14 @@ load_segreg(int idx, WORD selector, int exc)
 			EXCEPTION(SS_EXCEPTION, sel.idx);
 		}
 
-		CPU_STAT_SS32 = sel.desc.d;
-		CPU_REGS_SREG(idx) = sel.selector;
-		CPU_STAT_SREG(idx) = sel.desc;
+		load_ss(sel.selector, &sel.desc, sel.selector & 3);
 		break;
 
 	case CPU_ES_INDEX:
 	case CPU_DS_INDEX:
 	case CPU_FS_INDEX:
 	case CPU_GS_INDEX:
-		/* !(system segment || non-readble code segment */
+		/* !(system segment || non-readable code segment) */
 		if (!sel.desc.s
 		 || (sel.desc.u.seg.c && !sel.desc.u.seg.wr)) {
 			EXCEPTION(exc, sel.idx);
@@ -143,8 +149,9 @@ void
 load_cs(WORD selector, descriptor_t* sdp, BYTE cpl)
 {
 
-	CPU_STATSAVE.cpu_inst_default.op_32
-	    = CPU_STATSAVE.cpu_inst_default.as_32 = sdp->d;
+	CPU_INST_OP32 = CPU_INST_AS32 =
+	    CPU_STATSAVE.cpu_inst_default.op_32 =
+	    CPU_STATSAVE.cpu_inst_default.as_32 = sdp->d;
 	CPU_REGS_SREG(CPU_CS_INDEX) = (selector & ~3) | (cpl & 3);
 	CPU_STAT_SREG(CPU_CS_INDEX) = *sdp;
 	CPU_STAT_CPL = cpl & 3;
@@ -187,16 +194,7 @@ load_ldtr(WORD selector, int exc)
 	}
 
 #if defined(DEBUG)
-{
-	DWORD v[2];
-	DWORD i;
-
-	for (i = 0; i < sel.desc.u.seg.limit; i += 8) {
-		v[0] = cpu_lmemoryread_d(sel.desc.u.seg.segbase + i);
-		v[1] = cpu_lmemoryread_d(sel.desc.u.seg.segbase + i + 4);
-		VERBOSE(("load_ldtr: %08x: %08x%08x", sel.desc.u.seg.segbase + i, v[0], v[1]));
-	}
-}
+	ldtr_dump(sel.desc.u.seg.segbase, sel.desc.u.seg.limit);
 #endif
 
 	CPU_LDTR = sel.selector;
@@ -206,6 +204,8 @@ load_ldtr(WORD selector, int exc)
 void
 load_descriptor(descriptor_t *descp, DWORD addr)
 {
+
+	memset(descp, 0, sizeof(*descp));
 
 	descp->addr = addr;
 	descp->l = cpu_lmemoryread_d(descp->addr);
@@ -224,8 +224,8 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 	if (descp->s) {
 		/* code/data */
 		descp->valid = 1;
-
 		descp->d = (descp->h & CPU_SEGDESC_H_D) ? 1 : 0;
+
 		descp->u.seg.c = (descp->h & CPU_SEGDESC_H_D_C) ? 1 : 0;
 		descp->u.seg.g = (descp->h & CPU_SEGDESC_H_G) ? 1 : 0;
 		descp->u.seg.wr = (descp->type & CPU_SEGDESC_TYPE_WR) ? 1 : 0;
@@ -250,58 +250,8 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 		switch (descp->type) {
 		case CPU_SYSDESC_TYPE_LDT:		/* LDT */
 			descp->valid = 1;
-			descp->u.seg.segbase  = descp->h & 0xff000000;
-			descp->u.seg.segbase |= (descp->h & 0xff) << 16;
-			descp->u.seg.segbase |= descp->l >> 16;
-			descp->u.seg.limit  = descp->h & 0xf0000;
-			descp->u.seg.limit |= descp->l & 0xffff;
-			descp->u.seg.segend = descp->u.seg.segbase + descp->u.seg.limit;
-
-			VERBOSE(("load_descriptor: LDT descriptor"));
-			VERBOSE(("load_descriptor: LDT base address = 0x%08x, limit size = 0x%08x", descp->u.seg.segbase, descp->u.seg.limit));
-			break;
-
-		case CPU_SYSDESC_TYPE_TASK:
-			descp->valid = 1;
-			descp->u.gate.selector = descp->l >> 16;
-
-			VERBOSE(("load_descriptor: task descriptor: selector = 0x%04x", descp->u.gate.selector));
-			break;
-
-		case CPU_SYSDESC_TYPE_TSS_16:		/* 286 TSS */
-		case CPU_SYSDESC_TYPE_TSS_BUSY_16:	/* 286 TSS Busy */
-			descp->valid = 1;
-			descp->u.seg.segbase |= (descp->h & 0xff) << 16;
-			descp->u.seg.segbase |= descp->l >> 16;
-			descp->u.seg.limit  = descp->h & 0xf0000;
-			descp->u.seg.limit |= descp->l & 0xffff;
-			descp->u.seg.segend = descp->u.seg.segbase + descp->u.seg.limit;
-
-			VERBOSE(("load_descriptor: 16bit %sTSS descriptor", (descp->type & CPU_SYSDESC_TYPE_TSS_BUSY) ? "busy " : ""));
-			VERBOSE(("load_descriptor: TSS base address = 0x%08x, limit = 0x%08x", descp->u.seg.segbase, descp->u.seg.limit));
-			break;
-
-		case CPU_SYSDESC_TYPE_CALL_16:		/* 286 call gate */
-		case CPU_SYSDESC_TYPE_INTR_16:		/* 286 interrupt gate */
-		case CPU_SYSDESC_TYPE_TRAP_16:		/* 286 trap gate */
-			if ((descp->h & 0x0000000e0) == 0) {
-				descp->valid = 1;
-				descp->u.gate.selector = descp->l >> 16;
-				descp->u.gate.offset = descp->l & 0xffff;
-				descp->u.gate.count = descp->h & 0x1f;
-
-				VERBOSE(("load_descriptor: 16bit %s gate descriptor", (descp->type == CPU_SYSDESC_TYPE_CALL_16) ? "call" : ((descp->type == CPU_SYSDESC_TYPE_INTR_16) ? "interrupt" : "trap")));
-				VERBOSE(("load_descriptor: selector = 0x%04x, offset = 0x%08x, count = %d", descp->u.gate.selector, descp->u.gate.offset, descp->u.gate.count));
-			} else {
-				ia32_panic("load_descriptor: 286 gate is invalid");
-			}
-			break;
-
-		case CPU_SYSDESC_TYPE_TSS_32:		/* 386 TSS */
-		case CPU_SYSDESC_TYPE_TSS_BUSY_32:	/* 386 TSS Busy */
-			descp->valid = 1;
-			descp->d = (descp->h & CPU_SEGDESC_H_D) ? 1 : 0;
 			descp->u.seg.g = (descp->h & CPU_SEGDESC_H_G) ? 1 : 0;
+
 			descp->u.seg.segbase  = descp->h & 0xff000000;
 			descp->u.seg.segbase |= (descp->h & 0xff) << 16;
 			descp->u.seg.segbase |= descp->l >> 16;
@@ -313,11 +263,44 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 			}
 			descp->u.seg.segend = descp->u.seg.segbase + descp->u.seg.limit;
 
-			VERBOSE(("load_descriptor: 32bit %sTSS descriptor", (descp->type & CPU_SYSDESC_TYPE_TSS_BUSY) ? "busy " : ""));
+			VERBOSE(("load_descriptor: LDT descriptor"));
+			VERBOSE(("load_descriptor: LDT base address = 0x%08x, limit size = 0x%08x", descp->u.seg.segbase, descp->u.seg.limit));
+			break;
+
+		case CPU_SYSDESC_TYPE_TASK:		/* task gate */
+			descp->valid = 1;
+			descp->u.gate.selector = descp->l >> 16;
+
+			VERBOSE(("load_descriptor: task descriptor: selector = 0x%04x", descp->u.gate.selector));
+			break;
+
+		case CPU_SYSDESC_TYPE_TSS_16:		/* 286 TSS */
+		case CPU_SYSDESC_TYPE_TSS_BUSY_16:	/* 286 TSS Busy */
+		case CPU_SYSDESC_TYPE_TSS_32:		/* 386 TSS */
+		case CPU_SYSDESC_TYPE_TSS_BUSY_32:	/* 386 TSS Busy */
+			descp->valid = 1;
+			descp->d = (descp->h & CPU_GATEDESC_H_D) ? 1 : 0;
+			descp->u.seg.g = (descp->h & CPU_SEGDESC_H_G) ? 1 : 0;
+
+			descp->u.seg.segbase  = descp->h & 0xff000000;
+			descp->u.seg.segbase |= (descp->h & 0xff) << 16;
+			descp->u.seg.segbase |= descp->l >> 16;
+			descp->u.seg.limit  = descp->h & 0xf0000;
+			descp->u.seg.limit |= descp->l & 0xffff;
+			if (descp->u.seg.g) {
+				descp->u.seg.limit <<= 12;
+				descp->u.seg.limit |= 0xfff;
+			}
+			descp->u.seg.segend = descp->u.seg.segbase + descp->u.seg.limit;
+
+			VERBOSE(("load_descriptor: %dbit %sTSS descriptor", descp->d ? 32 : 16, (descp->type & CPU_SYSDESC_TYPE_TSS_BUSY) ? "busy " : ""));
 			VERBOSE(("load_descriptor: TSS base address = 0x%08x, limit = 0x%08x", descp->u.seg.segbase, descp->u.seg.limit));
 			VERBOSE(("load_descriptor: d = %s, g = %s", descp->d ? "on" : "off", descp->u.seg.g ? "on" : "off"));
 			break;
 
+		case CPU_SYSDESC_TYPE_CALL_16:		/* 286 call gate */
+		case CPU_SYSDESC_TYPE_INTR_16:		/* 286 interrupt gate */
+		case CPU_SYSDESC_TYPE_TRAP_16:		/* 286 trap gate */
 		case CPU_SYSDESC_TYPE_CALL_32:		/* 386 call gate */
 		case CPU_SYSDESC_TYPE_INTR_32:		/* 386 interrupt gate */
 		case CPU_SYSDESC_TYPE_TRAP_32:		/* 386 trap gate */
@@ -329,7 +312,7 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 				descp->u.gate.offset |= descp->l & 0xffff;
 				descp->u.gate.count = descp->h & 0x1f;
 
-				VERBOSE(("load_descriptor: 32bit %s gate descriptor", (descp->type == CPU_SYSDESC_TYPE_CALL_32) ? "call" : ((descp->type == CPU_SYSDESC_TYPE_INTR_32) ? "interrupt" : "trap")));
+				VERBOSE(("load_descriptor: %dbit %s gate descriptor", descp->d ? 32 : 16, ((descp->type & CPU_SYSDESC_TYPE_MASKBIT) == CPU_SYSDESC_TYPE_CALL) ? "call" : (((descp->type & CPU_SYSDESC_TYPE_MASKBIT) == CPU_SYSDESC_TYPE_INTR) ? "interrupt" : "trap")));
 				VERBOSE(("load_descriptor: selector = 0x%04x, offset = 0x%08x, count = %d, d = %s", descp->u.gate.selector, descp->u.gate.offset, descp->u.gate.count, descp->d ? "on" : "off"));
 			} else {
 				ia32_panic("load_descriptor: 386 gate is invalid");
@@ -339,7 +322,7 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 		case 0: case 8: case 10: case 13: /* reserved */
 		default:
 			descp->valid = 0;
-			ia32_panic("bad descriptor (%d)", descp->type);
+			ia32_panic("load_descriptor: bad descriptor (type = %d)", descp->type);
 			break;
 		}
 	}

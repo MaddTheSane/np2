@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.3 2004/01/15 15:49:15 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -117,10 +117,11 @@ do { \
 #define	SET_EIP(v) \
 do { \
 	DWORD __new_ip = (v); \
-	if (!CPU_INST_OP32) { \
+	if (!CPU_STATSAVE.cpu_inst_default.op_32) {\
 		__new_ip &= 0x0000ffff; \
 	} \
 	if (__new_ip > CPU_STAT_CS_LIMIT) { \
+		VERBOSE(("SET_EIP: new_ip = %08x, limit = %08x", __new_ip, CPU_STAT_CS_LIMIT)); \
 		EXCEPTION(GP_EXCEPTION, 0); \
 	} \
 	CPU_EIP = __new_ip; \
@@ -129,10 +130,11 @@ do { \
 #define	ADD_EIP(v) \
 do { \
 	DWORD __tmp_ip = CPU_EIP + (v); \
-	if (!CPU_INST_OP32) { \
+	if (!CPU_STATSAVE.cpu_inst_default.op_32) {\
 		__tmp_ip &= 0x0000ffff; \
 	} \
 	if (__tmp_ip > CPU_STAT_CS_LIMIT) { \
+		VERBOSE(("SET_EIP: new_ip = %08x, limit = %08x", __tmp_ip, CPU_STAT_CS_LIMIT)); \
 		EXCEPTION(GP_EXCEPTION, 0); \
 	} \
 	CPU_EIP = __tmp_ip; \

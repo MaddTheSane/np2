@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.c,v 1.2 2004/01/14 16:11:54 monaka Exp $	*/
+/*	$Id: bit_byte.c,v 1.3 2004/01/23 14:33:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -670,10 +670,10 @@ BSR_GdEd(void)
 void
 SETO_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = CPU_OV ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -687,10 +687,10 @@ SETO_Eb(void)
 void
 SETNO_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = CPU_OV ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -704,10 +704,10 @@ SETNO_Eb(void)
 void
 SETC_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = CPU_FLAGL & C_FLAG;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -721,10 +721,10 @@ SETC_Eb(void)
 void
 SETNC_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & C_FLAG) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -738,10 +738,10 @@ SETNC_Eb(void)
 void
 SETZ_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & Z_FLAG) ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -755,10 +755,10 @@ SETZ_Eb(void)
 void
 SETNZ_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & Z_FLAG) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -772,10 +772,10 @@ SETNZ_Eb(void)
 void
 SETA_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -789,10 +789,10 @@ SETA_Eb(void)
 void
 SETNA_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -806,10 +806,10 @@ SETNA_Eb(void)
 void
 SETS_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & S_FLAG) ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -823,10 +823,10 @@ SETS_Eb(void)
 void
 SETNS_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & S_FLAG) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -840,10 +840,10 @@ SETNS_Eb(void)
 void
 SETP_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & P_FLAG) ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -857,10 +857,10 @@ SETP_Eb(void)
 void
 SETNP_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (CPU_FLAGL & P_FLAG) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -874,10 +874,10 @@ SETNP_Eb(void)
 void
 SETL_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -891,10 +891,10 @@ SETL_Eb(void)
 void
 SETNL_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -908,10 +908,10 @@ SETNL_Eb(void)
 void
 SETLE_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 1 : 0;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;
@@ -925,10 +925,10 @@ SETLE_Eb(void)
 void
 SETNLE_Eb(void)
 {
-	DWORD op, src, madr;
+	DWORD op, madr;
 	BYTE v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 0 : 1;
 
-	PREPART_EA_REG8(op, src);
+	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg8_b20[op]) = v;

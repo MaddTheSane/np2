@@ -1,4 +1,4 @@
-/*	$Id: misc_inst.c,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: misc_inst.c,v 1.3 2004/01/23 14:33:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -169,7 +169,6 @@ _2byte_ESC16(void)
 	DWORD op;
 
 	GET_PCBYTE(op);
-	PROFILE_INC_INST_2BYTE(op);
 	(*insttable_2byte[0][op])();
 }
 
@@ -179,7 +178,6 @@ _2byte_ESC32(void)
 	DWORD op;
 
 	GET_PCBYTE(op);
-	PROFILE_INC_INST_2BYTE(op);
 	(*insttable_2byte[1][op])();
 }
 

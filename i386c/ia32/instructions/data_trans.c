@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.3 2004/01/14 16:12:41 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.4 2004/01/23 14:33:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1071,7 +1071,7 @@ PUSH_Ib(void)
 
 	CPU_WORKCLOCK(3);
 	GET_PCBYTESD(val);
-	XPUSH0((WORD)val);
+	XPUSH0(val);
 }
 
 void

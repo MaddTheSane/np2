@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.8 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.9 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -110,6 +110,18 @@ enum {
 	CPU_SEGREG_NUM
 };
 
+enum {
+	CPU_TEST_REG_NUM = 8
+};
+
+enum {
+	CPU_DEBUG_REG_NUM = 8
+};
+
+enum {
+	MAX_PREFIX = 8
+};
+
 typedef struct {
 	REG32		reg[CPU_REG_NUM];
 	WORD		sreg[CPU_SEGREG_NUM];
@@ -118,6 +130,9 @@ typedef struct {
 
 	REG32		eip;
 	REG32		prev_eip;
+
+	DWORD		tr[CPU_TEST_REG_NUM];
+	DWORD		dr[CPU_DEBUG_REG_NUM];
 } CPU_REGS;
 
 typedef struct {
@@ -230,7 +245,7 @@ extern jmp_buf		exec_1step_jmpbuf;
 #define	CPU_VENDOR_3	0x6c65746e	/* "ntel" */
 
 /* version */
-#define	CPU_FAMILY	6
+#define	CPU_FAMILY	4
 #define	CPU_MODEL	1
 #define	CPU_STEPPING	3
 
@@ -461,6 +476,7 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_CR3_PD_MASK		0xfffff000
 #define	CPU_CR3_PWT		(1 << 3)
 #define	CPU_CR3_PCD		(1 << 4)
+#define	CPU_CR3_MASK		(CPU_CR3_PD_MASK|CPU_CR3_PWT|CPU_CR3_PCD)
 
 #define	CPU_CR4_VME		(1 << 0)
 #define	CPU_CR4_PVI		(1 << 1)
@@ -513,34 +529,17 @@ extern WORD  *reg16_b53[0x100];
 extern DWORD *reg32_b20[0x100];
 extern DWORD *reg32_b53[0x100];
 
-/*
- * Profile
- */
-#if defined(IA32_PROFILE_INSTRUCTION)
-extern UINT32	inst_1byte_count[2][256];
-extern UINT32	inst_2byte_count[2][256];
-extern UINT32	ea16_count[24];
-extern UINT32	ea32_count[24];
-extern UINT32	sib0_count[256];
-extern UINT32	sib1_count[256];
-extern UINT32	sib2_count[256];
+extern const char *reg8_str[8];
+extern const char *reg16_str[8];
+extern const char *reg32_str[8];
 
-#define	PROFILE_INC_INST_1BYTE(op)	inst_1byte_count[CPU_INST_OP32][op]++
-#define	PROFILE_INC_INST_2BYTE(op)	inst_2byte_count[CPU_INST_OP32][op]++
-#define	PROFILE_INC_EA16(idx)		ea16_count[idx]++
-#define	PROFILE_INC_EA32(idx)		ea32_count[idx]++
-#define	PROFILE_INC_SIB0(op)		sib0_count[op]++
-#define	PROFILE_INC_SIB1(op)		sib1_count[op]++
-#define	PROFILE_INC_SIB2(op)		sib2_count[op]++
-#else
-#define	PROFILE_INC_INST_1BYTE(op)
-#define	PROFILE_INC_INST_2BYTE(op)
-#define	PROFILE_INC_EA16(idx)
-#define	PROFILE_INC_EA32(idx)
-#define	PROFILE_INC_SIB0(op)
-#define	PROFILE_INC_SIB1(op)
-#define	PROFILE_INC_SIB2(op)
-#endif
+/*
+ * Misc.
+ */
+void gdtr_dump(DWORD base, DWORD limit);
+void idtr_dump(DWORD base, DWORD limit);
+void ldtr_dump(DWORD base, DWORD limit);
+void tr_dump(WORD selector, DWORD base, DWORD limit);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.8 2004/01/16 15:18:04 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.9 2004/01/23 14:33:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -52,17 +52,7 @@ LGDT_Ms(DWORD op)
 			}
 
 #if defined(DEBUG)
-{
-			DWORD v[2];
-			DWORD i;
-
-			VERBOSE(("LGDT_Ms: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x", base, limit));
-			for (i = 0; i < limit; i += 8) {
-				v[0] = cpu_lmemoryread_d(base + i);
-				v[1] = cpu_lmemoryread_d(base + i + 4);
-				VERBOSE(("LGDT_Ms: %08x: %08x%08x", base + i, v[0], v[1]));
-			}
-}
+			gdtr_dump(base, limit);
 #endif
 
 			CPU_GDTR_BASE = base;
@@ -123,19 +113,21 @@ void
 SLDT_Ew(DWORD op)
 {
 	DWORD madr;
+	WORD ldtr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		ldtr = CPU_LDTR;
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(5);
-			if (!CPU_INST_OP32) {
-				*(reg16_b20[op]) = CPU_LDTR;
+			if (CPU_INST_OP32) {
+				*(reg32_b20[op]) = ldtr;
 			} else {
-				*(reg32_b20[op]) = CPU_LDTR;
+				*(reg16_b20[op]) = ldtr;
 			}
 		} else {
 			CPU_WORKCLOCK(11);
 			madr = calc_ea_dst(op);
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_LDTR);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, ldtr);
 		}
 		return;
 	}
@@ -169,19 +161,21 @@ void
 STR_Ew(DWORD op)
 {
 	DWORD madr;
+	WORD tr;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		tr = CPU_TR;
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(5);
 			if (CPU_INST_OP32) {
-				*(reg16_b20[op]) = CPU_TR;
+				*(reg32_b20[op]) = tr;
 			} else {
-				*(reg32_b20[op]) = CPU_TR;
+				*(reg16_b20[op]) = tr;
 			}
 		} else {
 			CPU_WORKCLOCK(11);
 			madr = calc_ea_dst(op);
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_TR);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, tr);
 		}
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -205,17 +199,7 @@ LIDT_Ms(DWORD op)
 			}
 
 #if defined(DEBUG)
-{
-			DWORD v[2];
-			DWORD i;
-
-			VERBOSE(("LIDT_Ms: IDTR_BASE = 0x%08x, IDTR_LIMIT = 0x%04x", base, limit));
-			for (i = 0; i < limit; i += 8) {
-				v[0] = cpu_lmemoryread_d(base + i);
-				v[1] = cpu_lmemoryread_d(base + i + 4);
-				VERBOSE(("LIDT_Ms: %08x: %08x%08x", base + i, v[0], v[1]));
-			}
-}
+			idtr_dump(base, limit);
 #endif
 
 			CPU_IDTR_BASE = base;
@@ -248,11 +232,6 @@ SIDT_Ms(DWORD op)
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
 }
-
-/* XXX */
-static const char *reg32_str[] = {
-	"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI"
-};
 
 void
 MOV_CdRd(void)
@@ -303,7 +282,7 @@ MOV_CdRd(void)
 			src |= CPU_CR0_ET;	/* FPU present */
 #endif
 			CPU_CR0 = src;
-			VERBOSE(("MOV_CdRd: %04x:%08x: cr0: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR0, reg32_str[op & 7]));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr0: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR0, reg32_str[op & 7]));
 
 			if ((reg ^ CPU_CR0) & (CPU_CR0_PE|CPU_CR0_PG)) {
 				tlb_flush(FALSE);
@@ -330,7 +309,7 @@ MOV_CdRd(void)
 		case 2: /* CR2 */
 			reg = CPU_CR2;
 			CPU_CR2 = src;	/* page fault linear address */
-			VERBOSE(("MOV_CdRd: %04x:%08x: cr2: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR2, reg32_str[op & 7]));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr2: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR2, reg32_str[op & 7]));
 			break;
 
 		case 3: /* CR3 */
@@ -341,10 +320,10 @@ MOV_CdRd(void)
 			 */
 			reg = CPU_CR3;
 			set_CR3(src);
-
-			VERBOSE(("MOV_CdRd: %04x:%08x: cr3: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR3, reg32_str[op & 7]));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr3: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR3, reg32_str[op & 7]));
 			break;
 
+#if CPU_FAMILY >= 5
 		case 4: /* CR4 */
 			/*
 			 * 10 = OSXMMEXCPT (support non masking exception by OS)
@@ -369,12 +348,13 @@ MOV_CdRd(void)
 
 			reg = CPU_CR4;
 			CPU_CR4 = src;
-			VERBOSE(("MOV_CdRd: %04x:%08x: cr4: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR4, reg32_str[op & 7]));
+			VERBOSE(("MOV_CdRd: %04x:%08x: cr4: 0x%08x <- 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR4, reg32_str[op & 7]));
 
 			if ((reg ^ CPU_CR4) & (CPU_CR4_PSE|CPU_CR4_PGE|CPU_CR4_PAE)) {
 				tlb_flush(FALSE);
 			}
 			break;
+#endif	/* CPU_FAMILY >= 5 */
 
 		default:
 			ia32_panic("MOV_CdRd: CR reg index (%d)", idx);
@@ -416,9 +396,11 @@ MOV_RdCd(void)
 			*out = CPU_CR3;
 			break;
 
+#if CPU_FAMILY >= 5
 		case 4:
 			*out = CPU_CR4;
 			break;
+#endif	/* CPU_FAMILY >= 5 */
 
 		default:
 			ia32_panic("MOV_RdCd: CR reg index (%d)", idx);
@@ -478,7 +460,7 @@ CLTS(void)
 {
 
 	CPU_WORKCLOCK(2);
-	if (CPU_STAT_PM && CPU_STAT_CPL != 0) {
+	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL != 0))) {
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	CPU_CR0 &= ~CPU_CR0_TS;
@@ -494,18 +476,26 @@ ARPL_EwGw(void)
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(2);
 			dst = *(reg16_b20[op]);
+			if ((dst & 3) < (src & 3)) {
+				CPU_FLAGL |= Z_FLAG;
+				dst &= ~3;
+				dst |= (src & 3);
+				*(reg16_b20[op]) = dst;
+			} else {
+				CPU_FLAGL &= ~Z_FLAG;
+			}
 		} else {
 			CPU_WORKCLOCK(3);
 			madr = calc_ea_dst(op);
 			dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		}
-
-		if ((dst & 3) < (src & 3)) {
-			dst &= ~3;
-			dst |= (src & 3);
-			CPU_FLAGL |= Z_FLAG;
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
+			if ((dst & 3) < (src & 3)) {
+				CPU_FLAGL |= Z_FLAG;
+				dst &= ~3;
+				dst |= (src & 3);
+				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+			} else {
+				CPU_FLAGL &= ~Z_FLAG;
+			}
 		}
 		return;
 	}

@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.6 2004/01/13 16:34:19 monaka Exp $	*/
+/*	$Id: interface.c,v 1.7 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,6 +30,7 @@
 #include "compiler.h"
 #include "cpu.h"
 #include "ia32.mcr"
+
 #include "dmap.h"
 #include "bios.h"
 
@@ -39,15 +40,26 @@ ia32reset(void)
 {
 	int i;
 
-	memset(&i386core.s, 0, sizeof(i386core.s));			// yui
+	memset(&i386core.s, 0, sizeof(i386core.s));
 	CPU_STATSAVE.cpu_inst_default.seg_base = (DWORD)-1;
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
 	CPU_EFLAG = 2;
 	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW | CPU_CR0_ET;
+#ifndef USE_FPU
+	CPU_CR0 |= CPU_CR0_EM | CPU_CR0_NE;
+	CPU_CR0 &= ~CPU_CR0_MP;
+#endif
 	CPU_MXCSR = 0x1f80;
 	CPU_GDTR_LIMIT = 0xffff;
 	CPU_IDTR_LIMIT = 0xffff;
+
+#if CPU_FAMILY == 4
+	CPU_STATSAVE.cpu_regs.dr[6] = 0xffff1ff0;
+#elif (CPU_FAMILY == 5) || (CPU_FAMILY == 6)
+	CPU_STATSAVE.cpu_regs.dr[6] = 0xffff0ff0;
+	CPU_STATSAVE.cpu_regs.dr[7] = 0x00000400;
+#endif
 
 	for (i = 0; i < CPU_SEGREG_NUM; ++i) {
 		CPU_STAT_SREG_INIT(i);
@@ -55,18 +67,15 @@ ia32reset(void)
 	CPU_LDTR_LIMIT = 0xffff;
 	CPU_TR_LIMIT = 0xffff;
 
-//	CPU_SET_SEGREG(CPU_ES_INDEX, 0x0000);
 	CPU_SET_SEGREG(CPU_CS_INDEX, 0xf000);
-//	CPU_SET_SEGREG(CPU_SS_INDEX, 0x0000);
-//	CPU_SET_SEGREG(CPU_DS_INDEX, 0x0000);
 	CPU_EIP = 0xfff0;
-	CPU_ADRSMASK = 0xfffff;
+	CPU_ADRSMASK = 0x000fffff;
 }
 
 void
 ia32shut(void)
 {
-	SINT32	remainclock;					// 結局ハマるのか漏れ…
+	SINT32	remainclock;			/* 結局ハマるのか漏れ… */
 	SINT32	baseclock;
 	UINT32	clock;
 
@@ -86,17 +95,17 @@ ia32(void)
 {
 	int rv;
 
-#if defined(WIN32)
-	rv = setjmp(exec_1step_jmpbuf);
-#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
-#endif
 	switch (rv) {
 	case 0:
 		break;
-	
+
+	case 1:
+		VERBOSE(("ia32: return from exception"));
+		break;
+
 	default:
-		CPU_EIP = CPU_PREV_EIP;
+		VERBOSE(("ia32: return from unknown cause"));
 		break;
 	}
 
@@ -110,20 +119,19 @@ ia32withtrap(void)
 {
 	int rv;
 
-#if defined(WIN32)
-	rv = setjmp(exec_1step_jmpbuf);
-#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
-#endif
 	switch (rv) {
 	case 0:
 		break;
-	
+
+	case 1:
+		VERBOSE(("ia32withtrap: return from exception"));
+		break;
+
 	default:
-		CPU_EIP = CPU_PREV_EIP;
+		VERBOSE(("ia32withtrap: return from unknown cause"));
 		break;
 	}
-
 
 	do {
 		exec_1step();
@@ -138,20 +146,19 @@ ia32withdma(void)
 {
 	int rv;
 
-#if defined(WIN32)
-	rv = setjmp(exec_1step_jmpbuf);
-#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
-#endif
 	switch (rv) {
 	case 0:
 		break;
-	
+
+	case 1:
+		VERBOSE(("ia32withdma: return from exception"));
+		break;
+
 	default:
-		CPU_EIP = CPU_PREV_EIP;
+		VERBOSE(("ia32withdma: return from unknown cause"));
 		break;
 	}
-
 
 	do {
 		exec_1step();
@@ -164,20 +171,19 @@ ia32_step(void)
 {
 	int rv;
 
-#if defined(WIN32)
-	rv = setjmp(exec_1step_jmpbuf);
-#else
 	rv = sigsetjmp(exec_1step_jmpbuf, 1);
-#endif
 	switch (rv) {
 	case 0:
 		break;
-	
+
+	case 1:
+		VERBOSE(("ia32_step: return from exception"));
+		break;
+
 	default:
-		CPU_EIP = CPU_PREV_EIP;
+		VERBOSE(("ia32_step: return from unknown cause"));
 		break;
 	}
-
 
 	do {
 		exec_1step();
@@ -195,6 +201,7 @@ ia32_interrupt(BYTE vect)
 	INTERRUPT(vect, 0, 0, 0);
 }
 
+
 /*
  * error function
  */
@@ -202,20 +209,17 @@ void
 ia32_panic(const char *str, ...)
 {
 	extern char *cpu_reg2str(void);
-	char buf[1024];
+	char buf[2048];
 	va_list ap;
 
 	va_start(ap, str);
 	vsnprintf(buf, sizeof(buf), str, ap);
 	va_end(ap);
 	strcat(buf, "\n");
+	strcat(buf, cpu_reg2str());
 
-#if defined(_WIN32)
-	MessageBox(NULL, buf, "ia32_panic", MB_OK);
-#endif
+	msgbox("ia32_panic", buf);
 
-	fprintf(stderr, buf);
-	fprintf(stderr, cpu_reg2str());
 	__ASSERT(0);
 	exit(1);
 }
@@ -230,7 +234,7 @@ ia32_warning(const char *str, ...)
 	va_end(ap);
 	strcat(buf, "\n");
 
-	fprintf(stderr, buf);
+	msgbox("ia32_warning", buf);
 }
 
 void
@@ -241,9 +245,11 @@ ia32_printf(const char *str, ...)
 	va_start(ap, str);
 	vsnprintf(buf, sizeof(buf), str, ap);
 	va_end(ap);
+	strcat(buf, "\n");
 
-	fprintf(stderr, buf);
+	msgbox("ia32_printf", buf);
 }
+
 
 /*
  * bios call interface
@@ -251,23 +257,16 @@ ia32_printf(const char *str, ...)
 void
 ia32_bioscall(void)
 {
+	DWORD adrs;
 
-	/* XXX */
 	if (!CPU_STAT_PM && !CPU_INST_OP32 && !CPU_INST_AS32) {
-		DWORD adrs;
-		WORD sreg;
-
 		adrs = ((CPU_IP-1) & 0xffff) + CPU_STAT_SREGBASE(CPU_CS_INDEX);
 		if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
 			biosfunc(adrs);
-			sreg = CPU_ES;
-			CPU_SET_SEGREG(CPU_ES_INDEX, sreg);
-			sreg = CPU_CS;
-			CPU_SET_SEGREG(CPU_CS_INDEX, sreg);
-			sreg = CPU_SS;
-			CPU_SET_SEGREG(CPU_SS_INDEX, sreg);
-			sreg = CPU_DS;
-			CPU_SET_SEGREG(CPU_DS_INDEX, sreg);
+			CPU_SET_SEGREG(CPU_ES_INDEX, CPU_ES);
+			CPU_SET_SEGREG(CPU_CS_INDEX, CPU_CS);
+			CPU_SET_SEGREG(CPU_SS_INDEX, CPU_SS);
+			CPU_SET_SEGREG(CPU_DS_INDEX, CPU_DS);
 		}
 	}
 }

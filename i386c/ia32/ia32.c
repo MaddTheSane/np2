@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.5 2004/01/13 16:33:07 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.6 2004/01/23 14:33:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -144,13 +144,18 @@ change_pm(BOOL onoff)
 
 	if (onoff) {
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			CPU_STAT_SREG(i).valid = TRUE;
+			CPU_STAT_SREG(i).valid = 1;
 			CPU_STAT_SREG(i).dpl = 0;
 		}
 		VERBOSE(("Entering to Protected-Mode..."));
 	} else {
 		VERBOSE(("Leaveing from Protected-Mode..."));
 	}
+
+	CPU_INST_OP32 = CPU_INST_AS32 =
+	    CPU_STATSAVE.cpu_inst_default.op_32 = 
+	    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
+	CPU_STAT_SS32 = 0;
 	CPU_STAT_CPL = 0;
 	CPU_STAT_PM = onoff;
 }
@@ -162,7 +167,7 @@ change_pg(BOOL onoff)
 	if (onoff) {
 		VERBOSE(("Entering to Paging-Mode..."));
 	} else {
-		VERBOSE(("Leaveing from Pagin-Mode..."));
+		VERBOSE(("Leaveing from Paging-Mode..."));
 	}
 	CPU_STAT_PAGING = onoff;
 }
@@ -170,21 +175,22 @@ change_pg(BOOL onoff)
 void FASTCALL
 change_vm(BOOL onoff)
 {
-	descriptor_t sd;
 	int i;
 
+	CPU_STAT_VM86 = onoff;
 	if (onoff) {
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			sd.u.seg.limit = 0xffff;
-			CPU_SET_SEGDESC_DEFAULT(&sd, i, CPU_REGS_SREG(i));
-			sd.dpl = 3;
-			CPU_STAT_SREG(i) = sd;
+			CPU_SET_SEGREG(i, CPU_REGS_SREG(i));
 		}
+		CPU_INST_OP32 = CPU_INST_AS32 =
+		    CPU_STATSAVE.cpu_inst_default.op_32 =
+		    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
+		CPU_STAT_SS32 = 0;
+		CPU_STAT_CPL = 3;
 		VERBOSE(("Entering to Virtual-8086-Mode..."));
 	} else {
 		VERBOSE(("Leaveing from Virtual-8086-Mode..."));
 	}
-	CPU_STAT_VM86 = onoff;
 }
 
 /*
