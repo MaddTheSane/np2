@@ -47,7 +47,7 @@ I286_F6 _not_ea8(UINT op) {
 
 I286_F6 _neg_ea8(UINT op) {
 
-	BYTE	*out;
+	UINT8	*out;
 	UINT	src;
 	UINT	dst;
 	UINT32	madr;
@@ -62,14 +62,14 @@ I286_F6 _neg_ea8(UINT op) {
 		if (madr >= I286_MEMWRITEMAX) {
 			src = i286_memoryread(madr);
 			NEGBYTE(dst, src)
-			i286_memorywrite(madr, (BYTE)dst);
+			i286_memorywrite(madr, (REG8)dst);
 			return;
 		}
 		out = mem + madr;
 	}
 	src = *out;
 	NEGBYTE(dst, src)
-	*out = (BYTE)dst;
+	*out = (UINT8)dst;
 }
 
 I286_F6 _mul_ea8(UINT op) {

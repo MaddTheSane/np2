@@ -53,6 +53,7 @@ void systimer(NEVENTITEM item) {
 			// レートジェネレータ
 			pit.intr[0] = 1;
 			setsystimerevent(NEVENT_RELATIVE);
+			TRACEOUT(("intr-next"));
 		}
 		else {
 			nevent_set(NEVENT_ITIMER, pc.multiple << 16,
@@ -256,6 +257,7 @@ REG8 pit_getcount(int ch) {
 // system timer
 static void IOOUTCALL pit_o71(UINT port, REG8 dat) {
 
+//	TRACEOUT(("pic o71: %x", dat));
 	if (pit_setcount(0, dat)) {
 		return;
 	}
@@ -338,6 +340,7 @@ void itimer_reset(void) {
 	else {
 		pit.value[1] = 1229;			// 5MHz
 	}
+	pit.intr[0] = 1;
 	pit.mode[0] = 0x30;
 	pit.mode[1] = 0x56;
 	pit.mode[2] = 0xb6;

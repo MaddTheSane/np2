@@ -2341,7 +2341,7 @@ I286FN _shift_ea8_cl(void) {			// D2:	shift EA8, cl
 	BYTE	*out;
 	UINT	op;
 	UINT32	madr;
-	BYTE	cl;
+	REG8	cl;
 
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
@@ -2369,7 +2369,7 @@ I286FN _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 	UINT16	*out;
 	UINT	op;
 	UINT32	madr;
-	BYTE	cl;
+	REG8	cl;
 
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {

@@ -104,10 +104,10 @@ typedef void (CPUCALL * I286OPSFTR8)(UINT8 *p);
 typedef void (CPUCALL * I286OPSFTE8)(UINT32 madr);
 typedef void (CPUCALL * I286OPSFTR16)(UINT16 *p);
 typedef void (CPUCALL * I286OPSFTE16)(UINT32 madr);
-typedef void (CPUCALL * I286OPSFTR8CL)(UINT8 *p, BYTE cl);
-typedef void (CPUCALL * I286OPSFTE8CL)(UINT32 madr, BYTE cl);
-typedef void (CPUCALL * I286OPSFTR16CL)(UINT16 *p, BYTE cl);
-typedef void (CPUCALL * I286OPSFTE16CL)(UINT32 madr, BYTE cl);
+typedef void (CPUCALL * I286OPSFTR8CL)(UINT8 *p, REG8 cl);
+typedef void (CPUCALL * I286OPSFTE8CL)(UINT32 madr, REG8 cl);
+typedef void (CPUCALL * I286OPSFTR16CL)(UINT16 *p, REG8 cl);
+typedef void (CPUCALL * I286OPSFTE16CL)(UINT32 madr, REG8 cl);
 
 extern const I286OPSFTR8 sft_r8_table[];
 extern const I286OPSFTE8 sft_e8_table[];

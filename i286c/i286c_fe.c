@@ -17,7 +17,7 @@ I286_F6 _nop_int(UINT op) {
 I286_F6 _inc_ea8(UINT op) {
 
 	UINT32	madr;
-	BYTE	*out;
+	UINT8	*out;
 	REG8	res;
 
 	if (op >= 0xc0) {
@@ -37,13 +37,13 @@ I286_F6 _inc_ea8(UINT op) {
 	}
 	res = *out;
 	INCBYTE(res)
-	*out = (BYTE)res;
+	*out = (UINT8)res;
 }
 
 I286_F6 _dec_ea8(UINT op) {
 
 	UINT32	madr;
-	BYTE	*out;
+	UINT8	*out;
 	REG8	res;
 
 	if (op >= 0xc0) {
@@ -63,7 +63,7 @@ I286_F6 _dec_ea8(UINT op) {
 	}
 	res = *out;
 	DECBYTE(res)
-	*out = (BYTE)res;
+	*out = (UINT8)res;
 }
 
 I286_F6 _inc_ea16(UINT op) {
