@@ -10,7 +10,34 @@
 #include	"pccore.h"
 
 
-static void inirdarg8(const char *src, const INITBL *ini) {
+static void inirdargs16(const char *src, const INITBL *ini) {
+
+	SINT16	*dst;
+	int		dsize;
+	int		i;
+	char	c;
+
+	dst = (SINT16 *)ini->value;
+	dsize = ini->arg;
+
+	for (i=0; i<dsize; i++) {
+		while(*src == ' ') {
+			src++;
+		}
+		if (*src == '\0') {
+			break;
+		}
+		dst[i] = (SINT16)milstr_solveINT(src);
+		while(*src != '\0') {
+			c = *src++;
+			if (c == ',') {
+				break;
+			}
+		}
+	}
+}
+
+static void inirdargh8(const char *src, const INITBL *ini) {
 
 	BYTE	*dst;
 	int		dsize;
@@ -55,7 +82,7 @@ static void inirdarg8(const char *src, const INITBL *ini) {
 	}
 }
 
-static void iniwrsetarg8(char *work, int size, const INITBL *ini) {
+static void iniwrsetargh8(char *work, int size, const INITBL *ini) {
 
 	UINT	i;
 const BYTE	*ptr;
@@ -136,10 +163,16 @@ const INITBL	*pterm;
 				*((BYTE *)p->value) = (!milstr_cmp(work, str_true))?1:0;
 				break;
 
-			case INITYPE_BYTEARG:
+			case INITYPE_ARGS16:
 				GetPrivateProfileString(title, p->item, str_null,
 												work, sizeof(work), path);
-				inirdarg8(work, p);
+				inirdargs16(work, p);
+				break;
+
+			case INITYPE_ARGH8:
+				GetPrivateProfileString(title, p->item, str_null,
+												work, sizeof(work), path);
+				inirdargh8(work, p);
 				break;
 
 			case INITYPE_SINT8:
@@ -226,8 +259,8 @@ const char		*set;
 					set = (*((BYTE *)p->value))?str_true:str_false;
 					break;
 
-				case INITYPE_BYTEARG:
-					iniwrsetarg8(work, sizeof(work), p);
+				case INITYPE_ARGH8:
+					iniwrsetargh8(work, sizeof(work), p);
 					break;
 
 				case INITYPE_SINT8:
@@ -313,8 +346,8 @@ static const INITBL iniitem[] = {
 	{"clk_base", INITYPE_UINT32,	&np2cfg.baseclock,		0},
 	{"clk_mult", INITYPE_UINT32,	&np2cfg.multiple,		0},
 
-	{"DIPswtch", INITYPE_BYTEARG,	np2cfg.dipsw,			3},
-	{"MEMswtch", INITYPE_BYTEARG,	np2cfg.memsw,			8},
+	{"DIPswtch", INITYPE_ARGH8,		np2cfg.dipsw,			3},
+	{"MEMswtch", INITYPE_ARGH8,		np2cfg.memsw,			8},
 	{"ExMemory", INIMAX_UINT8,		&np2cfg.EXTMEM,			13},
 	{"ITF_WORK", INIRO_BOOL,		&np2cfg.ITF_WORK,		0},
 
@@ -328,8 +361,8 @@ static const INITBL iniitem[] = {
 	{"BEEP_vol", INIAND_UINT8,		&np2cfg.BEEP_VOL,		3},
 	{"xspeaker", INIRO_BOOL,		&np2cfg.snd_x,			0},
 
-	{"SND14vol", INITYPE_BYTEARG,	np2cfg.vol14,			6},
-//	{"opt14BRD", INITYPE_BYTEARG,	np2cfg.snd14opt,		3},
+	{"SND14vol", INITYPE_ARGH8,		np2cfg.vol14,			6},
+//	{"opt14BRD", INITYPE_ARGH8,		np2cfg.snd14opt,		3},
 	{"opt26BRD", INITYPE_HEX8,		&np2cfg.snd26opt,		0},
 	{"opt86BRD", INITYPE_HEX8,		&np2cfg.snd86opt,		0},
 	{"optSPBRD", INITYPE_HEX8,		&np2cfg.spbopt,			0},
@@ -353,7 +386,7 @@ static const INITBL iniitem[] = {
 	{"MS_RAPID", INITYPE_BOOL,		&np2cfg.MOUSERAPID,		0},
 
 	{"backgrnd", INIAND_UINT8,		&np2oscfg.background,	3},
-	{"VRAMwait", INITYPE_BYTEARG,	np2cfg.wait,			6},
+	{"VRAMwait", INITYPE_ARGH8,		np2cfg.wait,			6},
 	{"DspClock", INIAND_UINT8,		&np2oscfg.DISPCLK,		3},
 	{"DispSync", INITYPE_BOOL,		&np2cfg.DISPSYNC,		0},
 	{"Real_Pal", INITYPE_BOOL,		&np2cfg.RASTER,			0},
@@ -370,8 +403,8 @@ static const INITBL iniitem[] = {
 	{"FG_COLOR", INIROAND_HEX32,	&np2cfg.FG_COLOR,		0xffffff},
 
 	{"pc9861_e", INITYPE_BOOL,		&np2cfg.pc9861enable,	0},
-	{"pc9861_s", INITYPE_BYTEARG,	np2cfg.pc9861sw,		3},
-	{"pc9861_j", INITYPE_BYTEARG,	np2cfg.pc9861jmp,		6},
+	{"pc9861_s", INITYPE_ARGH8,		np2cfg.pc9861sw,		3},
+	{"pc9861_j", INITYPE_ARGH8,		np2cfg.pc9861jmp,		6},
 
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
@@ -380,7 +413,7 @@ static const INITBL iniitem[] = {
 	{"keyboard", INIRO_KB,			&np2oscfg.KEYBOARD,		0},
 	{"F12_COPY", INITYPE_UINT8,		&np2oscfg.F12COPY,		0},
 	{"Joystick", INITYPE_BOOL,		&np2oscfg.JOYPAD1,		0},
-	{"Joy1_btn", INITYPE_BYTEARG,	np2oscfg.JOY1BTN,		4},
+	{"Joy1_btn", INITYPE_ARGH8,		np2oscfg.JOY1BTN,		4},
 
 	{"clocknow", INITYPE_UINT8,		&np2oscfg.clk_x,		0},
 	{"clockfnt", INITYPE_UINT8,		&np2oscfg.clk_fnt,		0},
