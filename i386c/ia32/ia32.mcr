@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.13 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.14 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -92,6 +92,7 @@ do { \
 		EXCEPTION(GP_EXCEPTION, 0); \
 	} \
 	CPU_EIP = __new_ip; \
+	CPU_PREFETCH_CLEAR(); \
 } while (/*CONSTCOND*/ 0)
 
 #define	ADD_EIP(v) \
@@ -864,6 +865,7 @@ do { \
 	__ip = __CBD(cpu_codefetch(CPU_EIP)); \
 	__ip++; \
 	ADD_EIP(__ip); \
+	CPU_PREFETCH_CLEAR(); \
 } while (/*CONSTCOND*/ 0)
 
 #define	JMPNEAR(clock) \
@@ -873,6 +875,7 @@ do { \
 	__ip = __CWDE(cpu_codefetch_w(CPU_EIP)); \
 	__ip += 2; \
 	ADD_EIP(__ip); \
+	CPU_PREFETCH_CLEAR(); \
 } while (/*CONSTCOND*/ 0)
 
 #define	JMPNEAR_4(clock) \
@@ -882,13 +885,27 @@ do { \
 	__ip = cpu_codefetch_d(CPU_EIP); \
 	__ip += 4; \
 	ADD_EIP(__ip); \
+	CPU_PREFETCH_CLEAR(); \
 } while (/*CONSTCOND*/ 0)
 
+#if !defined(IA32_SUPPORT_PREFETCH_QUEUE)
 #define	JMPNOP(clock, d) \
 do { \
 	CPU_WORKCLOCK(clock); \
 	ADD_EIP((d)); \
 } while (/*CONSTCOND*/ 0)
+#else
+#define	JMPNOP(clock, d) \
+do { \
+	CPU_WORKCLOCK(clock); \
+	if (CPU_PREFETCHQ_REMAIN > (d)) { \
+		CPU_PREFETCHQ_REMAIN -= (d); \
+	} else { \
+		CPU_PREFETCHQ_REMAIN = 0; \
+	} \
+	ADD_EIP((d)); \
+} while (/*CONSTCOND*/ 0)
+#endif
 
 
 /*

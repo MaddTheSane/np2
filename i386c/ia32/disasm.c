@@ -1,4 +1,4 @@
-/*	$Id: disasm.c,v 1.6 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: disasm.c,v 1.7 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -333,40 +333,6 @@ static const char *opcode2_g9[8] = {
 };
 
 static const char *sep[2] = { " ", ", " };
-
-
-/*
- * context
- */
-typedef struct {
-	UINT32 val;
-
-	UINT32 eip;
-	BOOL op32;
-	BOOL as32;
-
-	UINT32 baseaddr;
-	UINT8 opcode[3];
-	UINT8 modrm;
-	UINT8 sib;
-
-	BOOL useseg;
-	int seg;
-
-	UINT8 opbyte[32];
-	int nopbytes;
-
-	char str[256];
-	size_t remain;
-
-	char *next;
-	char *prefix;
-	char *op;
-	char *arg[3];
-	int narg;
-
-	char pad;
-} disasm_context_t;
 
 
 /*
@@ -813,48 +779,33 @@ op(disasm_context_t *ctx)
  * interface
  */
 int
-disasm(UINT32 *eip, char *buf, size_t size)
+disasm(UINT32 *eip, disasm_context_t *ctx)
 {
-	disasm_context_t ctx;
-	char tmp[32];
 	int rv;
-	int i;
 
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.remain = sizeof(ctx.str) - 1;
-	ctx.next = ctx.str;
-	ctx.prefix = 0;
-	ctx.op = 0;
-	ctx.arg[0] = 0;
-	ctx.arg[1] = 0;
-	ctx.arg[2] = 0;
+	memset(ctx, 0, sizeof(disasm_context_t));
+	ctx->remain = sizeof(ctx->str) - 1;
+	ctx->next = ctx->str;
+	ctx->prefix = 0;
+	ctx->op = 0;
+	ctx->arg[0] = 0;
+	ctx->arg[1] = 0;
+	ctx->arg[2] = 0;
 
-	ctx.eip = *eip;
-	ctx.op32 = CPU_INST_OP32;
-	ctx.as32 = CPU_INST_AS32;
-	ctx.seg = -1;
+	ctx->eip = *eip;
+	ctx->op32 = CPU_INST_OP32;
+	ctx->as32 = CPU_INST_AS32;
+	ctx->seg = -1;
 
-	ctx.baseaddr = ctx.eip;
-	ctx.pad = ' ';
+	ctx->baseaddr = ctx->eip;
+	ctx->pad = ' ';
 
-	rv = op(&ctx);
+	rv = op(ctx);
 	if (rv) {
-		memset(&ctx, 0, sizeof(ctx));
+		memset(ctx, 0, sizeof(disasm_context_t));
 		return rv;
 	}
+	*eip = ctx->eip;
 
-	*eip = ctx.eip;
-
-	memset(buf, 0, size);
-	for (i = 0; i < ctx.nopbytes; i++) {
-		snprintf(tmp, sizeof(tmp), "%02x ", ctx.opbyte[i]);
-		milstr_ncat(buf, tmp, size);
-	}
-
-	milstr_ncpy(tmp, "   ", sizeof(tmp));
-	for (; i < 8; i++) {
-		milstr_ncat(buf, tmp, size);
-	}
-	milstr_ncat(buf, ctx.str, size);
 	return 0;
 }

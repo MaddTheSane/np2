@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.11 2004/03/04 16:58:58 yui Exp $	*/
+/*	$Id: paging.h,v 1.12 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -128,7 +128,8 @@ extern "C" {
 /*
  * linear address memory access function
  */
-UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, int code, int user_mode);
+void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, int crw, int user_mode, BYTE *data);
+UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, int crw, int user_mode);
 void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, int user_mode);
 void MEMCALL paging_check(UINT32 laddr, UINT length, int crw, int user_mode);
 
@@ -213,11 +214,11 @@ do { \
 #if defined(IA32_SUPPORT_TLB)
 void tlb_init(void);
 void tlb_flush(BOOL allflush);
-void tlb_flush_page(UINT32 vaddr);
+void tlb_flush_page(UINT32 laddr);
 #else
 #define	tlb_init()
 #define	tlb_flush(allflush)	(void)(allflush)
-#define	tlb_flush_page(vaddr)	(void)(vaddr)
+#define	tlb_flush_page(laddr)	(void)(laddr)
 #endif
 
 #ifdef __cplusplus

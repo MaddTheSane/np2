@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.8 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: debug.c,v 1.9 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -42,7 +42,7 @@ cpu_reg2str(void)
 	static char buf[512];
 
 	snprintf(buf, sizeof(buf),
-	    "eax=%08x ebx=%08x ecx=%08x edx=%08x\n"
+	    "eax=%08x ecx=%08x edx=%08x ebx=%08x\n"
 	    "esp=%08x ebp=%08x esi=%08x edi=%08x\n"
 	    "eip=%08x prev_eip=%08x\n"
 	    "cs=%04x ss=%04x ds=%04x es=%04x fs=%04x gs=%04x\n"
@@ -52,7 +52,7 @@ cpu_reg2str(void)
 	    "gdtr=%08x:%04x idtr=%08x:%04x\n"
 	    "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
 	    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x",
-	    CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
+	    CPU_EAX, CPU_ECX, CPU_EDX, CPU_EBX,
 	    CPU_ESP, CPU_EBP,CPU_ESI, CPU_EDI,
 	    CPU_EIP, CPU_PREV_EIP,
 	    CPU_CS, CPU_SS, CPU_DS, CPU_ES, CPU_FS, CPU_GS,

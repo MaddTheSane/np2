@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.8 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: interface.h,v 1.9 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -41,7 +41,7 @@
 #define CPU_INITIALIZE()	i386c_initialize()
 #define	CPU_DEINITIALIZE()
 #define	CPU_RESET()		ia32reset()
-#define	CPU_CLEARPREFETCH()
+#define	CPU_CLEARPREFETCH()	CPU_PREFETCH_CLEAR()
 #define	CPU_INTERRUPT(vect)	ia32_interrupt(vect)
 #define	CPU_EXEC()		ia32()
 #define	CPU_EXECV30()		ia32()
@@ -55,6 +55,9 @@
 #define	cpu_memoryread(a)	i286_memoryread(a)
 #define	cpu_memoryread_w(a)	i286_memoryread_w(a)
 #define	cpu_memoryread_d(a)	i286_memoryread_d(a)
+
+#define	cpu_memoryread_region(a,p,l)	memp_read(a,p,l)
+#define	cpu_memorywrite_region(a,p,l)	memp_write(a,p,l)
 
 void i386c_initialize(void);
 

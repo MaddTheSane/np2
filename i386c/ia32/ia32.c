@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.10 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.11 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -78,9 +78,6 @@ ia32_init(void)
 	}
 
 	resolve_init();
-#if defined(IA32_SUPPORT_TLB)
-	tlb_init();
-#endif
 #ifdef USE_FPU
 	fpu_init();
 #endif

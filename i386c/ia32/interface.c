@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.13 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: interface.c,v 1.14 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -72,6 +72,8 @@ ia32_initreg(void)
 	CPU_SET_SEGREG(CPU_CS_INDEX, 0xf000);
 	CPU_EIP = 0xfff0;
 	CPU_ADRSMASK = 0x000fffff;
+
+	tlb_init();
 }
 
 void

@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.19 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.20 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -116,6 +116,10 @@ enum {
 	MAX_PREFIX = 8
 };
 
+enum {
+	CPU_PREFETCH_QUEUE_LENGTH = 16
+};
+
 typedef struct {
 	REG32		reg[CPU_REG_NUM];
 	UINT16		sreg[CPU_SEGREG_NUM];
@@ -151,6 +155,9 @@ typedef struct {
 	descriptor_t	sreg[CPU_SEGREG_NUM];
 	descriptor_t	ldtr;
 	descriptor_t	tr;
+
+	BYTE		prefetch[CPU_PREFETCH_QUEUE_LENGTH];
+	UINT32		prefetch_remain;
 
 	UINT32		adrsmask;
 	UINT32		ovflag;
@@ -441,6 +448,15 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 #define	CPU_STAT_EXCEPTION_COUNTER_INC()	CPU_STATSAVE.cpu_stat.nerror++
 #define	CPU_STAT_EXCEPTION_COUNTER_CLEAR()	CPU_STATSAVE.cpu_stat.nerror = 0
 
+#define	CPU_PREFETCHQ		CPU_STATSAVE.cpu_stat.prefetch
+#define	CPU_PREFETCHQ_REMAIN	CPU_STATSAVE.cpu_stat.prefetch_remain
+
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+#define	CPU_PREFETCH_CLEAR()	CPU_PREFETCHQ_REMAIN = 0
+#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
+#define	CPU_PREFETCH_CLEAR()
+#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
+
 #define	CPU_MODE_SUPERVISER	0
 #define	CPU_MODE_USER		1
 #define	CPU_SET_CPL(cpl) \
@@ -538,8 +554,6 @@ void exec_1step(void);
 #define	INST_STRING	(1 << 1)
 #define	REP_CHECKZF	(1 << 7)
 
-int disasm(UINT32 *eip, char *buf, size_t size);
-
 void ia32_printf(const char *buf, ...);
 void ia32_warning(const char *buf, ...);
 void ia32_panic(const char *buf, ...);
@@ -580,6 +594,43 @@ void gdtr_dump(UINT32 base, UINT limit);
 void idtr_dump(UINT32 base, UINT limit);
 void ldtr_dump(UINT32 base, UINT limit);
 void tr_dump(UINT16 selector, UINT32 base, UINT limit);
+
+/*
+ * disasm
+ */
+/* context */
+typedef struct {
+	UINT32 val;
+
+	UINT32 eip;
+	BOOL op32;
+	BOOL as32;
+
+	UINT32 baseaddr;
+	UINT8 opcode[3];
+	UINT8 modrm;
+	UINT8 sib;
+
+	BOOL useseg;
+	int seg;
+
+	UINT8 opbyte[32];
+	int nopbytes;
+
+	char str[256];
+	size_t remain;
+
+	char *next;
+	char *prefix;
+	char *op;
+	char *arg[3];
+	int narg;
+
+	char pad;
+} disasm_context_t;
+
+int disasm(UINT32 *eip, disasm_context_t *ctx);
+
 
 #ifdef __cplusplus
 }

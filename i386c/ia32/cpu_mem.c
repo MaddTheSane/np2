@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.11 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.12 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -229,6 +229,70 @@ cpu_stack_pop_check(descriptor_t *sd, UINT32 esp, UINT length)
 }
 
 
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+/*
+ * code prefetch
+ */
+#define	CPU_PREFETCHQ_MASK	(CPU_PREFETCH_QUEUE_LENGTH - 1)
+
+INLINE static MEMCALL void
+cpu_prefetch(UINT32 address)
+{
+	UINT offset = address & CPU_PREFETCHQ_MASK;
+	UINT length = CPU_PREFETCH_QUEUE_LENGTH - offset;
+
+	cpu_memory_access_la_region(address, length, CPU_PAGE_READ_CODE, CPU_STAT_USER_MODE, CPU_PREFETCHQ + offset);
+	CPU_PREFETCHQ_REMAIN = length;
+}
+
+INLINE static MEMCALL UINT8
+cpu_prefetchq(UINT32 address)
+{
+	UINT8 v;
+
+	CPU_PREFETCHQ_REMAIN--;
+	v = CPU_PREFETCHQ[address & CPU_PREFETCHQ_MASK];
+	return v;
+}
+
+INLINE static MEMCALL UINT16
+cpu_prefetchq_w(UINT32 address)
+{
+	BYTE *p;
+	UINT16 v;
+
+	CPU_PREFETCHQ_REMAIN -= 2;
+	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
+	v = LOADINTELWORD(p);
+	return v;
+}
+
+INLINE static MEMCALL UINT32
+cpu_prefetchq_3(UINT32 address)
+{
+	BYTE *p;
+	UINT32 v;
+
+	CPU_PREFETCHQ_REMAIN -= 3;
+	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
+	v = LOADINTELWORD(p);
+	v += (UINT32)*p << 16;
+	return v;
+}
+
+INLINE static MEMCALL UINT32
+cpu_prefetchq_d(UINT32 address)
+{
+	BYTE *p;
+	UINT32 v;
+
+	CPU_PREFETCHQ_REMAIN -= 4;
+	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
+	v = LOADINTELDWORD(p);
+	return v;
+}
+#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
+
 /*
  * code fetch
  */
@@ -240,10 +304,17 @@ cpu_codefetch(UINT32 offset)
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit) {
-		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + offset;
+		addr = sd->u.seg.segbase + offset;
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+		if (CPU_PREFETCHQ_REMAIN == 0) {
+			cpu_prefetch(addr);
+		}
+		return cpu_prefetchq(addr);
+#else	/* IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PM)
 			return cpu_memoryread(addr);
 		return cpu_lcmemoryread(addr);
+#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
 	return 0;	/* compiler happy */
@@ -254,13 +325,31 @@ cpu_codefetch_w(UINT32 offset)
 {
 	descriptor_t *sd;
 	UINT32 addr;
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+	UINT16 v;
+#endif
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit - 1) {
-		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + offset;
+		addr = sd->u.seg.segbase + offset;
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+		if (CPU_PREFETCHQ_REMAIN == 0) {
+			cpu_prefetch(addr);
+		}
+		if (CPU_PREFETCHQ_REMAIN >= 2) {
+			return cpu_prefetchq_w(addr);
+		}
+
+		v = cpu_prefetchq(addr);
+		addr++;
+		cpu_prefetch(addr);
+		v |= cpu_prefetchq(addr) << 8;
+		return v;
+#else	/* IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PM)
 			return cpu_memoryread_w(addr);
 		return cpu_lcmemoryread_w(addr);
+#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
 	return 0;	/* compiler happy */
@@ -271,13 +360,46 @@ cpu_codefetch_d(UINT32 offset)
 {
 	descriptor_t *sd;
 	UINT32 addr;
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+	UINT32 v;
+#endif
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (offset <= sd->u.seg.limit - 3) {
-		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + offset;
+		addr = sd->u.seg.segbase + offset;
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+		if (CPU_PREFETCHQ_REMAIN == 0) {
+			cpu_prefetch(addr);
+		}
+		if (CPU_PREFETCHQ_REMAIN >= 4) {
+			return cpu_prefetchq_d(addr);
+		} else {
+			switch (CPU_PREFETCHQ_REMAIN) {
+			case 1:
+				v = cpu_prefetchq(addr);
+				cpu_prefetch(addr + 1);
+				v += (UINT32)cpu_prefetchq_3(addr + 1) << 8;
+				break;
+
+			case 2:
+				v = cpu_prefetchq_w(addr);
+				cpu_prefetch(addr + 2);
+				v += (UINT32)cpu_prefetchq_w(addr + 2) << 16;
+				break;
+
+			case 3:
+				v = cpu_prefetchq_3(addr);
+				cpu_prefetch(addr + 3);
+				v += (UINT32)cpu_prefetchq(addr + 3) << 24;
+				break;
+			}
+			return v;
+		}
+#else	/* IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PM)
 			return cpu_memoryread_d(addr);
 		return cpu_lcmemoryread_d(addr);
+#endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
 	return 0;	/* compiler happy */
@@ -328,7 +450,7 @@ cpu_vmemoryread(int idx, UINT32 offset)
 			break;
 		}
 	}
-	addr = CPU_STAT_SREGBASE(idx) + offset;
+	addr = sd->u.seg.segbase + offset;
 	if (!CPU_STAT_PM)
 		return cpu_memoryread(addr);
 	return cpu_lmemoryread(addr, CPU_STAT_USER_MODE);
@@ -379,7 +501,7 @@ cpu_vmemoryread_w(int idx, UINT32 offset)
 			break;
 		}
 	} 
-	addr = CPU_STAT_SREGBASE(idx) + offset;
+	addr = sd->u.seg.segbase + offset;
 	if (!CPU_STAT_PM)
 		return cpu_memoryread_w(addr);
 	return cpu_lmemoryread_w(addr, CPU_STAT_USER_MODE);
@@ -430,7 +552,7 @@ cpu_vmemoryread_d(int idx, UINT32 offset)
 			break;
 		}
 	}
-	addr = CPU_STAT_SREGBASE(idx) + offset;
+	addr = sd->u.seg.segbase + offset;
 	if (!CPU_STAT_PM)
 		return cpu_memoryread_d(addr);
 	return cpu_lmemoryread_d(addr, CPU_STAT_USER_MODE);
@@ -482,7 +604,7 @@ cpu_vmemorywrite(int idx, UINT32 offset, UINT8 val)
 			break;
 		}
 	}
-	addr = CPU_STAT_SREGBASE(idx) + offset;
+	addr = sd->u.seg.segbase + offset;
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		cpu_memorywrite(addr, val);
@@ -537,7 +659,7 @@ cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 val)
 			break;
 		}
 	}
-	addr = CPU_STAT_SREGBASE(idx) + offset;
+	addr = sd->u.seg.segbase + offset;
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		cpu_memorywrite_w(addr, val);
@@ -592,7 +714,7 @@ cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 val)
 			break;
 		}
 	}
-	addr = CPU_STAT_SREGBASE(idx) + offset;
+	addr = sd->u.seg.segbase + offset;
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		cpu_memorywrite_d(addr, val);

@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.12 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.13 2004/03/05 14:17:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,7 +36,22 @@
 
 sigjmp_buf exec_1step_jmpbuf;
 
+#if defined(IA32_INSTRUCTION_TRACE)
+typedef struct {
+	CPU_REGS		regs;
+	disasm_context_t	disasm;
+
+	BYTE			op[MAX_PREFIX + 2];
+	int			opbytes;
+} ia32_context_t;
+
+#define	NCTX	1024
+
+ia32_context_t ctx[NCTX];
+int ctx_index = 0;
+
 int cpu_inst_trace = 0;
+#endif
 
 
 void
@@ -49,20 +64,51 @@ exec_1step(void)
 	CPU_STATSAVE.cpu_inst = CPU_STATSAVE.cpu_inst_default;
 
 #if defined(IA32_INSTRUCTION_TRACE)
+	ctx[ctx_index].regs = CPU_STATSAVE.cpu_regs;
 	if (cpu_inst_trace) {
-		char buf[256];
+		disasm_context_t *d = &ctx[ctx_index].disasm;
 		UINT32 eip = CPU_EIP;
 		int rv;
 
-		rv = disasm(&eip, buf, sizeof(buf) - 1);
+		rv = disasm(&eip, d);
 		if (rv == 0) {
-			VERBOSE(("%04x:%08x: %s", CPU_CS, CPU_EIP, buf));
+			char buf[256];
+			char tmp[32];
+			int len = d->nopbytes > 8 ? 8 : d->nopbytes;
+			int i;
+
+			buf[0] = '\0';
+			for (i = 0; i < len; i++) {
+				snprintf(tmp, sizeof(tmp), "%02x ", d->opcode[i]);
+				milstr_ncat(buf, tmp, sizeof(buf));
+			}
+			for (; i < 8; i++) {
+				milstr_ncat(buf, "   ", sizeof(buf));
+			}
+			VERBOSE(("%04x:%08x: %s%s", CPU_CS, CPU_EIP, buf, d->str));
+
+			buf[0] = '\0';
+			for (; i < d->nopbytes; i++) {
+				snprintf(tmp, sizeof(tmp), "%02x ", d->opcode[i]);
+				milstr_ncat(buf, tmp, sizeof(buf));
+				if ((i % 8) == 7) {
+					VERBOSE(("             : %s", buf));
+					buf[0] = '\0';
+				}
+			}
+			if ((i % 8) != 0) {
+				VERBOSE(("             : %s", buf));
+			}
 		}
 	}
+	ctx[ctx_index].opbytes = 0;
 #endif
-
 	for (prefix = 0; prefix < MAX_PREFIX; prefix++) {
 		GET_PCBYTE(op);
+#if defined(IA32_INSTRUCTION_TRACE)
+		ctx[ctx_index].op[prefix] = op;
+		ctx[ctx_index].opbytes++;
+#endif
 
 		/* prefix */
 		if (insttable_info[op] & INST_PREFIX) {
@@ -74,6 +120,16 @@ exec_1step(void)
 	if (prefix == MAX_PREFIX) {
 		EXCEPTION(UD_EXCEPTION, 0);
 	}
+
+#if defined(IA32_INSTRUCTION_TRACE)
+	if (op == 0x0f) {
+		BYTE op2;
+		op2 = cpu_codefetch(CPU_EIP);
+		ctx[ctx_index].op[prefix + 1] = op2;
+		ctx[ctx_index].opbytes++;
+	}
+	ctx_index = (ctx_index + 1) % NELEMENTS(ctx);
+#endif
 
 	/* normal / rep, but not use */
 	if (!(insttable_info[op] & INST_STRING) || !CPU_INST_REPUSE) {
