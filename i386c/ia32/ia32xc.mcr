@@ -1,4 +1,4 @@
-/*	$Id: ia32xc.mcr,v 1.2 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: ia32xc.mcr,v 1.3 2004/02/22 04:49:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1654,8 +1654,8 @@ do { \
 #define	DWORD_SBB(r, d, s)	_DWORD_SBB(r, d, s)
 #define	AND_BYTE(d, s)		_AND_BYTE(d, s)
 #define	AND_WORD(d, s)		_AND_WORD(d, s)
-#define	ANDDWORD(d, s)		_AND_DWORD(d, s)
-#define	BYT_E_SUB(r, d, s)	_BYTE_SUB(r, d, s)
+#define	AND_DWORD(d, s)		_AND_DWORD(d, s)
+#define	BYTE_SUB(r, d, s)	_BYTE_SUB(r, d, s)
 #define	WORD_SUB(r, d, s)	_WORD_SUB(r, d, s)
 #define	DWORD_SUB(r, d, s)	_DWORD_SUB(r, d, s)
 #define	BYTE_XOR(d, s)		_BYTE_XOR(d, s)
