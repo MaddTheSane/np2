@@ -10,15 +10,26 @@
 
 　ver0.71 → ver0.72
 
-　・主にRISC向けの最適化
-　・PIT … インターバルタイマの割り込みを修正, リカバリ修正
+　・主にRISC向けの最適化(CPU, BEEP, BIOS etc...)
+　・PIT … インターバルタイマの割り込みを修正、リカバリ修正
 　・VRAM … SLとLRの関係をミスってた。
 　・PC-9801-26K … ステータスを修正
 　・マウス … 負方向の演算の不都合を修正
 　・一部の設定だけを変更しても cfgに保存されないのを修正
 　・vermouth … Win9x,MacOS,X11でバンク切替えを有効にした
-            (MacOSX→cmverを使って下さい)
-            (x11→midimod_loadprogram/rhythmの代わりに midimod_loadallを)
+            (済: MacOSX→cmverを使って下さい)
+            (済: x11→midimod_loadprogram/rhythmの代わりに midimod_loadallを)
+
+　(MacOSX)
+　　・Open/Saveダイアログ修正
+　　・ドラッグ＆ドロップ修正
+　　・vermouthをcmverを使うように変更
+
+　(Win9x)
+　　・標準ディスプレイ→プラズマディスプレイ以降時にゴミがのこるのを修正
+
+　(WinCE)
+　　・ソフトウェアキーボードのサポート
 
 
 　でぶねこ補足
@@ -34,12 +45,6 @@
 
 　　基本的には WinCE版とSDL版用のファイルで追加されたファイルで
 　　リンクエラーが発生しない限りは必要はないと思われ。
-
-
-　(MacOSX)
-　　・Open/Saveダイアログ修正
-　　・ドラッグ＆ドロップ修正
-　　・vermouthをcmverを使うように変更
 
 
 // ----

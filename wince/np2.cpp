@@ -200,7 +200,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 #if defined(SUPPORT_SOFTKBD)
 				softkbd_up();
-				TRACEOUT(("%d %d", LOWORD(lParam), HIWORD(lParam)));
 				if (menuvram) {
 					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
 				}

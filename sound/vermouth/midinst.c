@@ -409,6 +409,7 @@ const BYTE		*d;
 		}
 
 		if ((ret->freq) && (!(wave.mode & MODE_LOOPING))) {
+			TRACEOUT(("resample: %s", cfg->name));
 			resample(mod, layer, ret->freq);
 		}
 		if (cfg->flag & TONECFG_NOTAIL) {

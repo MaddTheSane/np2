@@ -143,6 +143,8 @@ void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute) {
 	UINT		eventid;
 	UINT		i;
 
+//	TRACEOUT(("event %d - %xclocks", id, eventclock));
+
 	clock = I286_BASECLOCK - I286_REMCLOCK;
 	item = &nevent.item[id];
 	item->proc = proc;

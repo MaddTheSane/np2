@@ -209,11 +209,13 @@ void bios0x18(void) {
 //	TRACE_("int18", I286_AH);
 
 	sti_waiting ^= 1;
-	if (!sti_waiting) {					// Š„‚İ‹–‰Â‚Ì—V‚Ñ
-		I286_IP--;
+	if (sti_waiting) {					// Š„‚İ‹–‰Â‚Ì—V‚Ñ
 		I286_STI;
-		nevent_forceexit();
-		return;
+		if (PICEXISTINTR) {
+			I286_IP--;
+			nevent_forceexit();
+			return;
+		}
 	}
 
 	switch(I286_AH) {

@@ -10,7 +10,8 @@
 #include	"beep.h"
 
 
-// #define	uPD71054								// NP2はuPD8253Cベース
+// #define	uPD71054					// NP2はuPD8253Cベース
+#define	BEEPCOUNTEREX					// BEEPアイドル時のカウンタをα倍に
 
 
 // --- Interval timer
@@ -48,7 +49,6 @@ void systimer(NEVENTITEM item) {
 		if (pit.intr[0]) {
 			pit.intr[0] = 0;
 			pic_setirq(0);
-//			TRACEOUT(("int-08 [%.2x]", pit.mode[0]));
 		}
 		if ((pit.mode[0] & 0x0c) == 0x04) {
 			// レートジェネレータ
@@ -64,6 +64,25 @@ void systimer(NEVENTITEM item) {
 
 
 // --- Beep
+
+#if defined(BEEPCOUNTEREX)
+static void setbeepeventex(BOOL absolute) {
+
+	UINT32	cnt;
+
+	cnt = pit.value[1];
+	if (cnt > 2) {
+		cnt *= pc.multiple;
+	}
+	else {
+		cnt = pc.multiple << 16;
+	}
+	while(cnt < 0x100000) {
+		cnt <<= 1;
+	}
+	nevent_set(NEVENT_BEEP, (SINT32)cnt, beeponeshot, absolute);
+}
+#endif
 
 static void setbeepevent(BOOL absolute) {
 
@@ -91,7 +110,11 @@ void beeponeshot(NEVENTITEM item) {
 		if (pit.mode[1] & 0x02)
 #endif
 		{
+#if defined(BEEPCOUNTEREX)
+			setbeepeventex(NEVENT_RELATIVE);
+#else
 			setbeepevent(NEVENT_RELATIVE);
+#endif
 		}
 	}
 }
@@ -140,6 +163,20 @@ static UINT16 itimer_latch(int ch) {
 				return(pit.value[1] & 0xfffe);
 #endif
 		}
+#if defined(BEEPCOUNTEREX)
+		clock = nevent_getremain(NEVENT_ITIMER + ch);
+		if (clock < 0) {
+			return(0);
+		}
+		clock /= pc.multiple;
+		if (pit.value[1] > 2) {
+			clock %= pit.value[1];
+		}
+		else {
+			clock >>= 16;
+		}
+		return((UINT16)clock);
+#endif
 	}
 	clock = nevent_getremain(NEVENT_ITIMER + ch);
 	if (clock >= 0) {

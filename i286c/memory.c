@@ -592,10 +592,18 @@ static REG16 MEMCALL egcw_rd(UINT32 address) {
 
 static REG16 MEMCALL emmcw_rd(UINT32 address) {
 
-	BYTE	*ptr;
+const BYTE	*ptr;
+	REG16	ret;
 
-	ptr = extmem.pageptr[(address >> 14) & 3] + LOW14(address);
-	return(LOADINTELWORD(ptr));
+	if ((address & 0x3fff) != 0x3fff) {
+		ptr = extmem.pageptr[(address >> 14) & 3] + LOW14(address);
+		return(LOADINTELWORD(ptr));
+	}
+	else {
+		ret = extmem.pageptr[(address >> 14) & 3][0x3fff];
+		ret += extmem.pageptr[((address + 1) >> 14) & 3][0] << 8;
+		return(ret);
+	}
 }
 
 static REG16 MEMCALL i286w_itf(UINT32 address) {

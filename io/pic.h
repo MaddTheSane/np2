@@ -54,6 +54,10 @@ enum {
 	IRQ_INT6			= 0x0d
 };
 
+#define PICEXISTINTR	(!pic.ext_irq) &&							\
+						((pic.pi[0].irr & (~pic.pi[0].imr)) ||		\
+						(pic.pi[1].irr & (~pic.pi[1].imr)))
+
 
 #ifdef __cplusplus
 extern "C" {

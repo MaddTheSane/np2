@@ -10,10 +10,6 @@
 
 #define	MAX_PREFIX		8
 
-#define EXISTINTR		(isI286EI) && (!pic.ext_irq) &&				\
-						((pic.pi[0].irr & (~pic.pi[0].imr)) ||		\
-						(pic.pi[1].irr & (~pic.pi[1].imr)))
-
 
 #define	NEXT_OPCODE												\
 		if (I286_REMCLOCK < 1) {								\
@@ -1823,7 +1819,7 @@ I286FN _popf(void) {						// 9D:	popf
 	I286_FLAG = flag & (0xfff ^ O_FLAG);
 	I286_TRAP = ((flag & 0x300) == 0x300);
 #if defined(INTR_FAST)
-	if (EXISTINTR) {
+	if ((flag & I_FLAG) && (PICEXISTINTR)) {
 		I286IRQCHECKTERM
 	}
 #else
@@ -2285,7 +2281,7 @@ I286FN _iret(void) {						// CF:	iret
 	I286_TRAP = ((flag & 0x300) == 0x300);
 	CS_BASE = I286_CS << 4;
 #if defined(INTR_FAST)
-	if (EXISTINTR) {
+	if ((flag & I_FLAG) && (PICEXISTINTR)) {
 		I286IRQCHECKTERM
 	}
 #else
@@ -2664,7 +2660,7 @@ I286FN _sti(void) {							// FB:	sti
 	I286_FLAG |= I_FLAG;
 	I286_TRAP = (I286_FLAG & T_FLAG) >> 8;
 #if defined(INTR_FAST)
-	if (EXISTINTR) {
+	if (PICEXISTINTR) {
 		REMAIN_ADJUST(1)
 	}
 #else
