@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.28 2005/02/26 14:13:01 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.29 2005/03/12 12:36:13 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -208,12 +208,10 @@ UINT32 gettick(void);
 #if defined(CPUCORE_IA32)
 void toolkit_msgbox(const char *title, const char *msg);
 #define	msgbox(title, msg)	toolkit_msgbox(title, msg);
-#ifndef	IA32_PAGING_EACHSIZE
-#define	IA32_PAGING_EACHSIZE
-#endif
 
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
+#define	SUPPORT_IDEIO
 #else
 #define	SUPPORT_CRT15KHZ
 #endif
@@ -253,7 +251,6 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
-#undef	SUPPORT_IDEIO
 
 #if USE_GTK > 0 || USE_GTK2 > 0
 #define	SUPPORT_S98
