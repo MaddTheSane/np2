@@ -196,7 +196,7 @@ static REG8 sasibios_sense(UINT type, SXSIDEV sxsi) {
 			CPU_DH = sxsi->surfaces;
 			CPU_DL = sxsi->sectors;
 		}
-		return(0x00);
+		return(0x0f);
 	}
 }
 

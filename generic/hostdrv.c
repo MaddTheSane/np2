@@ -1262,6 +1262,7 @@ void hostdrv_mount(const void *arg1, long arg2) {
 
 	if ((np2cfg.hdrvroot[0] == '\0') || (hostdrv.stat.is_mount)) {
 		np2sysp_outstr("ng", 0);
+		return;
 	}
 	hostdrv.stat.is_mount = TRUE;
 	fetch_if4dos();

@@ -8,7 +8,7 @@
 
 // ---- fdd
 
-void newdisk_fdd(const char *fname, BYTE type, const char *label) {
+void newdisk_fdd(const char *fname, REG8 type, const char *label) {
 
 	_D88HEAD	d88head;
 	FILEH		fh;
@@ -26,8 +26,6 @@ void newdisk_fdd(const char *fname, BYTE type, const char *label) {
 
 
 // ---- hdd
-
-static const char vhd_ver[] = "VHD1.00";
 
 static BOOL writezero(FILEH fh, UINT size) {
 
@@ -121,7 +119,7 @@ void newdisk_vhd(const char *fname, UINT hddsize) {
 	fh = file_create(fname);
 	if (fh != FILEH_INVALID) {
 		ZeroMemory(&vhd, sizeof(vhd));
-		CopyMemory(&vhd.sig, vhd_ver, 7);
+		CopyMemory(&vhd.sig, sig_vhd, 7);
 		STOREINTELWORD(vhd.mbsize, (UINT16)hddsize);
 		STOREINTELWORD(vhd.sectorsize, 256);
 		vhd.sectors = 32;

@@ -25,19 +25,10 @@ enum {
 
 
 typedef struct {
-	char	sig[3];
-	char	ver[4];
-	char	delimita;
-	char	comment[128];
-	BYTE	padding1[4];
-	BYTE	mbsize[2];
-	BYTE	sectorsize[2];
-	BYTE	sectors;
-	BYTE	surfaces;
-	BYTE	cylinders[2];
-	BYTE	totals[4];
-	BYTE	padding2[0x44];
-} VHDHDR;
+	UINT8	sectors;
+	UINT8	surfaces;
+	UINT16	cylinders;
+} SASIHDD;
 
 typedef struct {
 	BYTE	cylinders[2];
@@ -55,6 +46,32 @@ typedef struct {
 } HDIHDR;
 
 typedef struct {
+	char	sig[16];
+	char	comment[0x100];
+	BYTE	headersize[4];
+	BYTE	cylinders[4];
+	BYTE	surfaces[2];
+	BYTE	sectors[2];
+	BYTE	sectorsize[2];
+	BYTE	reserved[0xe2];
+} NHDHDR;
+
+typedef struct {
+	char	sig[3];
+	char	ver[4];
+	char	delimita;
+	char	comment[128];
+	BYTE	padding1[4];
+	BYTE	mbsize[2];
+	BYTE	sectorsize[2];
+	BYTE	sectors;
+	BYTE	surfaces;
+	BYTE	cylinders[2];
+	BYTE	totals[4];
+	BYTE	padding2[0x44];
+} VHDHDR;
+
+typedef struct {
 	long	totals;
 	UINT16	cylinders;
 	UINT16	size;
@@ -66,17 +83,13 @@ typedef struct {
 	char	fname[MAX_PATH];
 } _SXSIDEV, *SXSIDEV;
 
-typedef struct {
-	UINT8	sectors;
-	UINT8	surfaces;
-	UINT16	cylinders;
-} SASIHDD;
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+extern const char sig_vhd[8];
+extern const char sig_nhd[15];
 extern const SASIHDD sasihdd[7];
 
 void sxsi_initialize(void);
