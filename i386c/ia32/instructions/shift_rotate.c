@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.c,v 1.4 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: shift_rotate.c,v 1.5 2004/03/12 15:43:36 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -422,12 +422,14 @@ SHRD_EwGwIb(void)
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg16_b20[op];
 		GET_PCBYTE(cl);
 		dst = *out;
 		WORD_SHRD(dst, src, cl);
 		*out = (UINT16)dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
@@ -445,12 +447,14 @@ SHRD_EdGdIb(void)
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg32_b20[op];
 		GET_PCBYTE(cl);
 		dst = *out;
 		DWORD_SHRD(dst, src, cl);
 		*out = dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
@@ -469,11 +473,13 @@ SHRD_EwGwCL(void)
 	PREPART_EA_REG16(op, src);
 	cl = CPU_CL;
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg16_b20[op];
 		dst = *out;
 		WORD_SHRD(dst, src, cl);
 		*out = (UINT16)dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHRD(dst, src, cl);
@@ -491,11 +497,13 @@ SHRD_EdGdCL(void)
 	PREPART_EA_REG32(op, src);
 	cl = CPU_CL;
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg32_b20[op];
 		dst = *out;
 		DWORD_SHRD(dst, src, cl);
 		*out = dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		DWORD_SHRD(dst, src, cl);
@@ -515,12 +523,15 @@ SHLD_EwGwIb(void)
 
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
+		madr = calc_ea_dst(op);
 		out = reg16_b20[op];
 		GET_PCBYTE(cl);
 		dst = *out;
 		WORD_SHLD(dst, src, cl);
 		*out = (UINT16)dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
@@ -538,12 +549,14 @@ SHLD_EdGdIb(void)
 
 	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg32_b20[op];
 		GET_PCBYTE(cl);
 		dst = *out;
 		DWORD_SHLD(dst, src, cl);
 		*out = dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
@@ -562,11 +575,13 @@ SHLD_EwGwCL(void)
 	PREPART_EA_REG16(op, src);
 	cl = CPU_CL;
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg16_b20[op];
 		dst = *out;
 		WORD_SHLD(dst, src, cl);
 		*out = (UINT16)dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHLD(dst, src, cl);
@@ -584,11 +599,13 @@ SHLD_EdGdCL(void)
 	PREPART_EA_REG32(op, src);
 	cl = CPU_CL;
 	if (op >= 0xc0) {
+		CPU_WORKCLOCK(3);
 		out = reg32_b20[op];
 		dst = *out;
 		DWORD_SHLD(dst, src, cl);
 		*out = dst;
 	} else {
+		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 		DWORD_SHLD(dst, src, cl);
