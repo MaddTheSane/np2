@@ -37,8 +37,11 @@ void keystat_allrelease(void);
 void keystat_forcerelease(BYTE value);
 void keystat_resetcopyhelp(void);
 void keystat_resetjoykey(void);
-BYTE keystat_getjoy(void);
 
+
+void keyext_flash(void);
+BYTE keyext_getjoy(void);
+BYTE keyext_getmouse(SINT16 *x, SINT16 *y);
 
 
 void keyb_callback(NEVENTITEM item);

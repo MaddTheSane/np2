@@ -188,17 +188,114 @@ void keystat_resetjoykey(void) {
 	}
 }
 
-BYTE keystat_getjoy(void) {
 
-	BYTE	ret = 0xff;
-	BYTE	*p = (BYTE *)joykeytable;
+// ----
+
+typedef struct {
+	BYTE	joysync;
+	BYTE	joylast;
+	BYTE	mouselast;
+	BYTE	padding;
+	BYTE	d_up;
+	BYTE	d_dn;
+	BYTE	d_lt;
+	BYTE	d_rt;
+} KEYEXT;
+
+static	KEYEXT	keyext;
+static const BYTE mousedelta[] = {1, 1, 1, 1,
+									2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 4};
+#define	MOUSESTEPMAX ((sizeof(mousedelta) / sizeof(BYTE)) - 1)
+
+void keyext_flash(void) {
+
+	keyext.joysync = 0;
+}
+
+BYTE keyext_getjoy(void) {
+
+	BYTE	flg;
+const BYTE	*p;
 	BYTE	bit;
 
-	for (bit=0x20; bit; bit>>=1, p+=2) {
-		if ((keystat[*p] & 0x80) || (keystat[*(p+1)] & 0x80)) {
-			ret &= ~bit;
+	if (!keyext.joysync) {
+		keyext.joysync = 1;
+		flg = 0xff;
+		p = joykeytable;
+		for (bit=0x20; bit; bit>>=1) {
+			if ((keystat[p[0]] & 0x80) || (keystat[p[1]] & 0x80)) {
+				flg ^= bit;
+			}
+			p += 2;
+		}
+		keyext.joylast = flg;
+	}
+	return(keyext.joylast);
+}
+
+BYTE keyext_getmouse(SINT16 *x, SINT16 *y) {
+
+	BYTE	btn;
+	BYTE	acc;
+	SINT16	tmp;
+	BYTE	ret;
+
+	btn = keyext_getjoy();
+	acc = btn | keyext.mouselast;
+	keyext.mouselast = btn;
+	tmp = 0;
+	if (!(btn & 1)) {
+		tmp -= mousedelta[keyext.d_up];
+	}
+	if (!(acc & 1)) {
+		if (keyext.d_up < MOUSESTEPMAX) {
+			keyext.d_up++;
 		}
 	}
+	else {
+		keyext.d_up = 0;
+	}
+	if (!(btn & 2)) {
+		tmp += mousedelta[keyext.d_dn];
+	}
+	if (!(acc & 2)) {
+		if (keyext.d_dn < MOUSESTEPMAX) {
+			keyext.d_dn++;
+		}
+	}
+	else {
+		keyext.d_dn = 0;
+	}
+	*y += tmp;
+
+	tmp = 0;
+	if (!(btn & 4)) {
+		tmp -= mousedelta[keyext.d_lt];
+	}
+	if (!(acc & 4)) {
+		if (keyext.d_lt < MOUSESTEPMAX) {
+			keyext.d_lt++;
+		}
+	}
+	else {
+		keyext.d_lt = 0;
+	}
+	if (!(btn & 8)) {
+		tmp += mousedelta[keyext.d_rt];
+	}
+	if (!(acc & 8)) {
+		if (keyext.d_rt < MOUSESTEPMAX) {
+			keyext.d_rt++;
+		}
+	}
+	else {
+		keyext.d_rt = 0;
+	}
+	*x += tmp;
+
+	ret = 0x5f;
+	ret += (btn & 0x10) << 3;
+	ret += (btn & 0x20);
 	return(ret);
 }
 

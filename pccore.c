@@ -486,6 +486,7 @@ void screenvsync(NEVENTITEM item) {
 void pccore_exec(BOOL draw) {
 
 	drawframe = draw;
+	keyext_flash();
 	soundmng_sync();
 	mouseif_sync();
 	pal_eventclear();
