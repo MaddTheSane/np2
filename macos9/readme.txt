@@ -93,9 +93,12 @@
 　　　　mechanical SHIFT        ノート風メカニカルシフトにします。
 　　　　mechanical CTRL         ノート風メカニカルコントロールにします。
 　　　　mechanical GRPH         ノート風メカニカルグラフキーにします。
+　　　　F11 = KANA              F11キーをカナキーにアサインします。
+　　　　F11 = Stop              F11キーをStopキーにアサインします。
+　　　　F11 = NFER              F11キーをNFERキーにアサインします。
 　　　　F12 = Mouse             F12キーをマウス切替えにアサインします。(※)
 　　　　F12 = Copy              F12キーをCopyキーにアサインします。
-　　　　F12 = Stop              F12キーをStopキーにアサインします。
+　　　　F12 = XFER              F12キーをXFERキーにアサインします。
 　　　Sound
 　　　　Beep off                ビープを無音にします。
 　　　　Beep low                ビープ音量を小にします。

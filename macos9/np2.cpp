@@ -123,7 +123,7 @@ static void MenuBarInit(void) {
 	SetItemCmd(hmenu, LoWord(IDM_FDD2EJECT), 'E');
 	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2EJECT), kMenuOptionModifier);
 	hmenu = GetMenuHandle(IDM_SASI2);
-	SetItemCmd(hmenu, LoWord(IDM_FDD2OPEN), 'O');
+	SetItemCmd(hmenu, LoWord(IDM_SASI2OPEN), 'O');
 	SetMenuItemModifiers(hmenu, LoWord(IDM_SASI2OPEN), kMenuOptionModifier);
 #else
 	EnableItem(GetMenuHandle(IDM_DEVICE), LoWord(IDM_MOUSE));
@@ -578,9 +578,18 @@ static void eventproc(EventRecord *event) {
 			}
 #endif
 			if (event->modifiers & cmdKey) {
+#if !TARGET_API_MAC_CARBON
+				if (mackbd_keydown(keycode, TRUE)) {
+					break;
+				}
+#endif
 				soundmng_stop();
 				mousemng_disable(MOUSEPROC_MACUI);
+#if TARGET_API_MAC_CARBON
+				HandleMenuChoice(MenuEvent(event));
+#else
 				HandleMenuChoice(MenuKey(event->message & charCodeMask));
+#endif
 				mousemng_enable(MOUSEPROC_MACUI);
 				soundmng_play();
 			}
