@@ -2761,12 +2761,12 @@ I286 _popf(void) {								// 9D: popf
 				je		irqcheck				// fast_intr
 				test	ah, 2
 				je		nextop
-				mov		al, pic.pi[0].imr
-				mov		ah, pic.pi[1].imr
+				mov		al, pic.pi[0 * (type _PICITEM)].imr
+				mov		ah, pic.pi[1 * (type _PICITEM)].imr
 				not		ax
-				test	al, pic.pi[0].irr
+				test	al, pic.pi[0 * (type _PICITEM)].irr
 				jne		irqcheck
-				test	ah, pic.pi[1].irr
+				test	ah, pic.pi[1 * (type _PICITEM)].irr
 				jne		irqcheck
 nextop:			ret
 
@@ -3686,12 +3686,12 @@ I286 _iret(void) {								// CF: iret
 				jne		irqcheck
 				test	I286_FLAG, I_FLAG
 				je		nextop
-				mov		al, pic.pi[0].imr
-				mov		ah, pic.pi[1].imr
+				mov		al, pic.pi[0 * (type _PICITEM)].imr
+				mov		ah, pic.pi[1 * (type _PICITEM)].imr
 				not		ax
-				test	al, pic.pi[0].irr
+				test	al, pic.pi[0 * (type _PICITEM)].irr
 				jne		irqcheck
-				test	ah, pic.pi[1].irr
+				test	ah, pic.pi[1 * (type _PICITEM)].irr
 				jne		irqcheck
 nextop:			ret
 
@@ -4268,12 +4268,12 @@ I286 _sti(void) {								// FB: sti
 				setne	I286_TRAP
 
 				jne		nextopandexit			// fast_intr
-				mov		al, pic.pi[0].imr
-				mov		ah, pic.pi[1].imr
+				mov		al, pic.pi[0 * (type _PICITEM)].imr
+				mov		ah, pic.pi[1 * (type _PICITEM)].imr
 				not		ax
-				test	al, pic.pi[0].irr
+				test	al, pic.pi[0 * (type _PICITEM)].irr
 				jne		nextopandexit
-				test	ah, pic.pi[1].irr
+				test	ah, pic.pi[1 * (type _PICITEM)].irr
 				jne		nextopandexit
 jmp_nextop:		jmp		i286op[ebp*4]
 

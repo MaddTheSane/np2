@@ -103,11 +103,11 @@ static void bios_reinitbyswitch(void) {
 	SETBIOSMEM32(MEMD_F2HD_POINTER, 0xfd801aaf);
 	boot = mem[MEMB_MSW5] & 0xf0;
 	if (boot != 0x20) {		// 1MB
-		fddbios_equip(DISKTYPE_2HD, TRUE);
+		fddbios_equip(3, TRUE);
 		mem[MEMB_BIOS_FLAG0] |= 0x02;
 	}
 	else {					// 640KB
-		fddbios_equip(DISKTYPE_2DD, TRUE);
+		fddbios_equip(0, TRUE);
 		mem[MEMB_BIOS_FLAG0] &= ~0x02;
 	}
 	mem[MEMB_F2DD_MODE] = 0xff;

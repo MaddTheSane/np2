@@ -166,7 +166,6 @@ BOOL fddxdf_diskaccess(FDDFILE fdd) {
 		(CTRL_FDMEDIA != fdd->inf.xdf.disktype)) {
 		return(FAILURE);
 	}
-	(void)fdd;
 	return(SUCCESS);
 }
 
@@ -174,7 +173,7 @@ BOOL fddxdf_seek(FDDFILE fdd) {
 
 	if ((fdd->type != DISKTYPE_BETA) ||
 		(CTRL_FDMEDIA != fdd->inf.xdf.disktype) ||
-		(fdc.rpm != fdd->inf.xdf.rpm) ||
+		(fdc.rpm[fdc.us] != fdd->inf.xdf.rpm) ||
 		(fdc.ncn >= (fdd->inf.xdf.tracks >> 1))) {
 		return(FAILURE);
 	}
@@ -185,7 +184,7 @@ BOOL fddxdf_seeksector(FDDFILE fdd) {
 
 	if ((fdd->type != DISKTYPE_BETA) ||
 		(CTRL_FDMEDIA != fdd->inf.xdf.disktype) ||
-		(fdc.rpm != fdd->inf.xdf.rpm) ||
+		(fdc.rpm[fdc.us] != fdd->inf.xdf.rpm) ||
 		(fdc.treg[fdc.us] >= (fdd->inf.xdf.tracks >> 1))) {
 		fddlasterror = 0xe0;
 		return(FAILURE);
@@ -287,7 +286,8 @@ BOOL fddxdf_write(FDDFILE fdd) {
 BOOL fddxdf_readid(FDDFILE fdd) {
 
 	fddlasterror = 0x00;
-	if ((fdc.rpm != fdd->inf.xdf.rpm) ||
+	if ((!fdc.mf) ||
+		(fdc.rpm[fdc.us] != fdd->inf.xdf.rpm) ||
 		(fdc.crcn >= fdd->inf.xdf.sectors)) {
 		fddlasterror = 0xe0;
 		return(FAILURE);

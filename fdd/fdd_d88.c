@@ -73,7 +73,7 @@ dtfd_err1:
 
 static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, BYTE type) {
 
-	BYTE	rpm;
+	UINT8	rpm;
 	FILEH	fh;
 	UINT32	fptr;
 	UINT32	size;
@@ -83,7 +83,7 @@ static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, BYTE type) {
 		goto dtrd_err1;
 	}
 
-	rpm = fdc.rpm;
+	rpm = fdc.rpm[fdc.us];
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 			if ((rpm) || (type != DISKTYPE_2DD) || (track & 2)) {
@@ -148,9 +148,9 @@ dtrd_err1:
 static BOOL rpmcheck(D88SEC sec) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
-	BYTE	rpm;
+	UINT8	rpm;
 
-	rpm = fdc.rpm;
+	rpm = fdc.rpm[fdc.us];
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 		case DISKTYPE_2DD:
@@ -355,9 +355,9 @@ BOOL fddd88_eject(FDDFILE fdd) {
 BOOL fdd_diskaccess_d88(void) {										// ver0.31
 
 	FDDFILE	fdd = fddfile + fdc.us;
-	BYTE	rpm;
+	UINT8	rpm;
 
-	rpm = fdc.rpm;
+	rpm = fdc.rpm[fdc.us];
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 		case DISKTYPE_2DD:
@@ -734,7 +734,7 @@ BOOL fdd_formating_d88(const BYTE *ID) {
 		STOREINTELWORD(d88sec->size, size);
 		if ((fdd->inf.d88.fdtype_major == DISKTYPE_2HD) &&
 			(fdd->inf.d88.fdtype_minor != 0)) {
-			d88sec->rpm_flg = fdc.rpm;
+			d88sec->rpm_flg = fdc.rpm[fdc.us];
 		}
 		FillMemory(d88sec + 1, size, fdc.d);
 		formatpos += sizeof(_D88SEC);

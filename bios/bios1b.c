@@ -23,6 +23,20 @@ static	UINT	mtr_r = 0;
 
 // ---- FDD
 
+static void setfdcmode(REG8 drv, REG8 type, REG8 rpm) {
+
+	if (drv < 4) {
+		fdc.chgreg = type;
+		fdc.rpm[drv] = rpm;
+		if (type & 2) {
+			CTRL_FDMEDIA = DISKTYPE_2HD;
+		}
+		else {
+			CTRL_FDMEDIA = DISKTYPE_2DD;
+		}
+	}
+}
+
 void fddbios_equip(REG8 type, BOOL clear) {
 
 	REG16	diskequip;
@@ -31,10 +45,12 @@ void fddbios_equip(REG8 type, BOOL clear) {
 	if (clear) {
 		diskequip &= 0x0f00;
 	}
-	if (type == DISKTYPE_2HD) {
+	if (type & 1) {
+		diskequip &= 0xfff0;
 		diskequip |= 0x0003;
 	}
-	if (type == DISKTYPE_2DD) {
+	else {
+		diskequip &= 0xf0ff;
 		diskequip |= 0x0300;
 	}
 	SETBIOSMEM16(MEMW_DISK_EQUIP, diskequip);
@@ -83,7 +99,7 @@ static BOOL biosfd_seek(REG8 track, BOOL ndensity) {
 	return(SUCCESS);
 }
 
-static UINT16 fdfmt_biospara(REG8 fmt, REG8 rpm) {					// ver0.31
+static UINT16 fdfmt_biospara(REG8 type, REG8 rpm, REG8 fmt) {
 
 	UINT	seg;
 	UINT	off;
@@ -93,7 +109,7 @@ static UINT16 fdfmt_biospara(REG8 fmt, REG8 rpm) {					// ver0.31
 	if (n >= 4) {
 		n = 3;
 	}
-	if (CTRL_FDMEDIA == DISKTYPE_2HD) {
+	if (type & 2) {
 		seg = GETBIOSMEM16(MEMW_F2HD_P_SEG);
 		off = GETBIOSMEM16(MEMW_F2HD_P_OFF);
 	}
@@ -115,14 +131,6 @@ static UINT16 fdfmt_biospara(REG8 fmt, REG8 rpm) {					// ver0.31
 	}
 	return(i286_memword_read(seg, off));
 }
-
-static void change_rpm(REG8 rpm) {									// ver0.31
-
-	if (np2cfg.usefd144) {
-		fdc.rpm = rpm;
-	}
-}
-
 
 
 enum {
@@ -261,7 +269,7 @@ static void b0clr(void) {
 }
 #endif
 
-static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
+static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 
 	REG8	ret_ah = 0x60;
 	UINT16	size;
@@ -278,29 +286,26 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 	mtr_c = 0xff;
 	mtr_r = 0;
 
-
 	// ‚Æ‚è‚ ‚¦‚¸BIOS‚ÌŽž‚Í–³Ž‹‚·‚é
 	fdc.mf = 0xff;						// ver0.29
 
 //	TRACE_("int 1Bh", CPU_AH);
 
-	change_rpm(rpm);												// ver0.31
+	setfdcmode(CPU_AL & 3, type, rpm);
+
 	if ((CPU_AH & 0x0f) != 0x0a) {
 		fdc.crcn = 0;
 	}
 	if ((CPU_AH & 0x0f) != 0x03) {
-		CTRL_FDMEDIA = type;
-		switch(type) {
-			case DISKTYPE_2HD:
-				if (pic.pi[1].imr & PIC_INT42) {
-					return(0xd0);
-				}
-				break;
-			case DISKTYPE_2DD:
-				if (pic.pi[1].imr & PIC_INT41) {
-					return(0xd0);
-				}
-				break;
+		if (type & 2) {
+			if (pic.pi[1].imr & PIC_INT42) {
+				return(0x40);
+			}
+		}
+		else {
+			if (pic.pi[1].imr & PIC_INT41) {
+				return(0x40);
+			}
 		}
 		if (fdc.us != (CPU_AL & 0x03)) {
 			fdc.us = CPU_AL & 0x03;
@@ -358,7 +363,7 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 				}
 			}
 			biosfd_setchrn();
-			para = fdfmt_biospara(0, rpm);
+			para = fdfmt_biospara(type, rpm, 0);
 			if (!para) {
 				ret_ah = 0xd0;
 				break;
@@ -447,7 +452,7 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 				}
 			}
 			biosfd_setchrn();
-			para = fdfmt_biospara(0, rpm);
+			para = fdfmt_biospara(type, rpm, 0);
 			if (!para) {
 				ret_ah = 0xd0;
 				break;
@@ -512,7 +517,7 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 				}
 			}
 			biosfd_setchrn();
-			para = fdfmt_biospara(0, rpm);
+			para = fdfmt_biospara(type, rpm, 0);
 			if (!para) {
 				ret_ah = 0xd0;
 				break;
@@ -633,7 +638,7 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 			}
 			fdc.d = CPU_DL;
 			fdc.N = CPU_CH;
-			para = fdfmt_biospara(1, rpm);
+			para = fdfmt_biospara(type, rpm, 1);
 			if (!para) {
 				ret_ah = 0xd0;
 				break;
@@ -664,14 +669,14 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 
 // -------------------------------------------------------------------- BIOS
 
-static UINT16 boot_fd1(REG8 rpm) {									// ver0.31
+static UINT16 boot_fd1(REG8 type, REG8 rpm) {
 
 	UINT	remain;
 	UINT	size;
 	UINT32	pos;
 	UINT16	bootseg;
 
-	change_rpm(rpm);												// ver0.31
+	setfdcmode(fdc.us, type, rpm);
 	if (biosfd_seek(0, 0)) {
 		return(0);
 	}
@@ -722,36 +727,34 @@ static UINT16 boot_fd(REG8 drv, REG8 type) {						// ver0.27
 	if (drv >= 4) {
 		return(0);
 	}
-	fdc.us = drv & 3;
+	fdc.us = drv;
 	if (!fdd_diskready(fdc.us)) {
 		return(0);
 	}
 
 	// 2HD
 	if (type & 1) {
-		CTRL_FDMEDIA = DISKTYPE_2HD;
 		// 1.25MB
-		bootseg = boot_fd1(0);
+		bootseg = boot_fd1(3, 0);
 		if (bootseg) {
 			mem[MEMB_DISK_BOOT] = (UINT8)(0x90 + drv);
-			fddbios_equip(DISKTYPE_2HD, TRUE);
+			fddbios_equip(3, TRUE);
 			return(bootseg);
 		}
 		// 1.44MB
-		bootseg = boot_fd1(1);
+		bootseg = boot_fd1(3, 1);
 		if (bootseg) {
 			mem[MEMB_DISK_BOOT] = (UINT8)(0x30 + drv);
-			fddbios_equip(DISKTYPE_2HD, TRUE);
+			fddbios_equip(3, TRUE);
 			return(bootseg);
 		}
 	}
 	if (type & 2) {										// ver0.29
 		// 2DD
-		CTRL_FDMEDIA = DISKTYPE_2DD;
-		bootseg = boot_fd1(0);
+		bootseg = boot_fd1(0, 0);
 		if (bootseg) {
 			mem[MEMB_DISK_BOOT] = (BYTE)(0x70 + drv);
-			fddbios_equip(DISKTYPE_2DD, TRUE);
+			fddbios_equip(0, TRUE);
 			return(bootseg);
 		}
 	}
@@ -889,22 +892,25 @@ void bios0x1b(void) {
 
 	switch(CPU_AL & 0xf0) {
 		case 0x90:
-			ret_ah = fdd_operate(DISKTYPE_2HD, 0, 0);
+			ret_ah = fdd_operate(3, 0, 0);
 			break;
 
 		case 0x30:
 		case 0xb0:
-			ret_ah = fdd_operate(DISKTYPE_2HD, 0, 1);
+			ret_ah = fdd_operate(3, 1, 0);
 			break;
 
 		case 0x10:
+			ret_ah = fdd_operate(1, 0, 0);
+			break;
+
 		case 0x70:
 		case 0xf0:
-			ret_ah = fdd_operate(DISKTYPE_2DD, 0, 0);
+			ret_ah = fdd_operate(0, 0, 0);
 			break;
 
 		case 0x50:
-			ret_ah = fdd_operate(DISKTYPE_2DD, 1, 0);
+			ret_ah = fdd_operate(0, 0, 1);
 			break;
 
 		case 0x00:

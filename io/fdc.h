@@ -73,8 +73,16 @@ typedef struct {
 	UINT8	lastdata;
 	UINT8	tc;
 
+	UINT8	ctrlfd;
+	UINT8	crcn;
+	UINT8	ctrlreg;
+	UINT8	chgreg;
+	UINT8	reg144;
+	UINT8	padding[3];
+
 	UINT32	stat[4];
 	UINT8	treg[4];
+	UINT8	rpm[4];
 
 	int		event;
 	int		cmdp;
@@ -88,14 +96,6 @@ typedef struct {
 	BYTE	cmds[15];
 	BYTE	data[16];
 
-	UINT8	ctrlfd;
-	UINT8	crcn;
-	UINT8	ctrlreg;
-	UINT8	busy;
-	UINT8	chgreg;
-	UINT8	rpm;													// 1.44
-	UINT8	padding[2];
-
 	BYTE	buf[0x8000];
 } _FDC, *FDC;
 
@@ -106,8 +106,8 @@ extern "C" {
 
 #define	CTRL_FDMEDIA	fdc.ctrlfd
 
-void fdc_reset(void);
-void fdc_bind(void);
+void fdc_intwait(NEVENTITEM item);
+
 void fdc_interrupt(void);
 
 void DMACCALL fdc_datawrite(REG8 data);
@@ -117,7 +117,11 @@ REG8 DMACCALL fdc_dmafunc(REG8 func);
 void fdcsend_error7(void);
 void fdcsend_success7(void);
 
-void fdcbusy_error7(NEVENTITEM item);
+void fdc_reset(void);
+void fdc_bind(void);
+
+void fdc144_reset(void);
+void fdc144_bind(void);
 
 #ifdef __cplusplus
 }

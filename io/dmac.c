@@ -24,7 +24,8 @@ REG8 DMACCALL dma_dummyproc(REG8 func) {
 
 static const DMAPROC dmaproc[] = {
 		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// NONE
-		{fdc_datawrite,		fdc_dataread,		fdc_dmafunc},		// FDD
+		{fdc_datawrite,		fdc_dataread,		fdc_dmafunc},		// 2HD
+		{fdc_datawrite,		fdc_dataread,		fdc_dmafunc},		// 2DD
 #if defined(SUPPORT_SASI)
 		{sasi_datawrite,	sasi_dataread,		sasi_dmafunc},		// SASI
 #else
@@ -239,6 +240,7 @@ static void dmacset(REG8 channel) {
 	if (dmadev >= sizeof(dmaproc) / sizeof(DMAPROC)) {
 		dmadev = 0;
 	}
+	TRACEOUT(("dmac set %d - %d", channel, dmadev));
 	dmac.dmach[channel].proc = dmaproc[dmadev];
 }
 

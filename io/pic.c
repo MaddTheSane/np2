@@ -283,16 +283,14 @@ static void IOOUTCALL pic_o02(UINT port, REG8 dat) {
 
 	PICITEM		picp;
 
-//	TRACEOUT(("pic %x %x", port, dat));
+	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
 	if (!picp->writeicw) {
-#if 1	// マスクのセットだけなら nevent_forceexit()をコールしない
-		if ((CPU_isDI) || ((picp->imr & dat) == picp->imr)) {
-			picp->imr = dat;
-			return;
-		}
+#if 1
+		UINT8	set;
+		set = picp->imr & (~dat);
 		// リセットされたビットは割り込みある？
-		if (!(picp->irr & (picp->imr & (~dat)))) {
+		if ((CPU_isDI) || (!(picp->irr & set))) {
 			picp->imr = dat;
 			return;
 		}
