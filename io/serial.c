@@ -12,8 +12,8 @@ static void keyboard_int(BOOL absolute) {
 	if (keybrd.buffers) {
 		if (!(keybrd.status & 2)) {
 			keybrd.status |= 2;
-			keybrd.data = keybrd.buf[keybrd.pos];
-			keybrd.pos = (keybrd.pos + 1) & KB_BUFMASK;
+			keybrd.data = keybrd.buf[keybrd.bufpos];
+			keybrd.bufpos = (keybrd.bufpos + 1) & KB_BUFMASK;
 			keybrd.buffers--;
 		}
 		pic_setirq(1);
@@ -90,14 +90,14 @@ void keyboard_resetsignal(void) {
 	keybrd.cmd = 0;
 	keybrd.status = 0;
 	keybrd.buffers = 0;
-	keybrd.pos = 0;
+	keybrd.bufpos = 0;
 	keystat_resendstat();
 }
 
 void keyboard_send(REG8 data) {
 
 	if (keybrd.buffers < KB_BUF) {
-		keybrd.buf[(keybrd.pos + keybrd.buffers) & KB_BUFMASK] = data;
+		keybrd.buf[(keybrd.bufpos + keybrd.buffers) & KB_BUFMASK] = data;
 		keybrd.buffers++;
 		if (!nevent_iswork(NEVENT_KEYBOARD)) {
 			keyboard_int(NEVENT_ABSOLUTE);

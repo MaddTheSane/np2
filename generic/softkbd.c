@@ -17,6 +17,44 @@
 #include	"softkbd.res"
 #endif
 
+#if 0
+typedef struct {
+	BMPDATA	inf;
+	BYTE	*ptr;
+	int		height;
+	int		yalign;
+} CMNBMP;
+
+static BOOL cmnbmp_4(const BYTE *dat, CMNBMP *ret) {
+
+	BMPDATA		inf;
+const BMPFILE	*bf;
+
+	bf = (BMPFILE *)dat;
+	if ((bf == NULL) ||
+		(bf->bfType[0] != 'B') || (bf->bfType[1] != 'M') ||
+		(bmpdata_getinfo((BMPINFO *)(bf + 1), &inf) != SUCCESS) ||
+		(inf.bpp == 4)) {
+		return(FAILURE);
+	}
+	if (ret) {
+		ret->inf = inf;
+		ret->ptr = ((BYTE *)bf) + (LOADINTELDWORD(bf->bfOffBits));
+		ret->yalign = bmpdata_getalign((BMPINFO *)(bf + 1));
+		if (inf.height < 0) {
+			ret->height = inf.height * -1;
+		}
+		else {
+			ret->ptr += (inf.height - 1) * ret->yalign;
+			ret->height = inf.height;
+			ret->yalign *= -1;
+		}
+	}
+	return(SUCCESS);
+}
+#endif
+
+
 typedef struct {
 	BYTE	*bmp;
 	UINT	width;
@@ -26,6 +64,9 @@ typedef struct {
 
 static	SOFTKBD	softkbd;
 
+
+
+// ----
 
 void softkbd_initialize(void) {
 
@@ -43,7 +84,12 @@ void softkbd_initialize(void) {
 			(inf.bpp == 4)) {
 			softkbd.bmp = (BYTE *)bf;
 			softkbd.width = inf.width;
-			softkbd.height = inf.height;
+			if (inf.height > 0) {
+				softkbd.height = inf.height;
+			}
+			else {
+				softkbd.height = 0 - inf.height;
+			}
 		}
 		else {
 			_MFREE(bf);
@@ -76,9 +122,10 @@ BOOL softkbd_getsize(int *width, int *height) {
 	return(SUCCESS);
 }
 
-void softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv) {
+BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv) {
 
 	cmddraw_bmp16(vram, softkbd.bmp, cnv, CMNBMP_LEFT | CMNBMP_TOP);
+	return(TRUE);
 }
 
 BOOL softkbd_down(int x, int y) {

@@ -27,11 +27,16 @@ static void cgwindowset(CGROM cr) {
 				cgwindow.writable |= 1;
 				high += cr->lr;
 			}
+			else if ((code >= 0x08) && (code < 0x0c)) {
+				if (cr->lr) {
+					high = low;
+				}
+			}
 			else if (((code >= 0x0c) && (code < 0x10)) ||
 				((code >= 0x58) && (code < 0x60))) {
 				high += cr->lr;
 			}
-			else if ((code < 0x08) || (code >= 0x10)) {
+			else {
 				low = high;
 				high += 0x800;
 			}
@@ -80,7 +85,7 @@ static void IOOUTCALL cgrom_oa5(UINT port, REG8 dat) {
 	CGROM	cr;
 
 	cr = &cgrom;
-	cr->line = dat & 0x0f;
+	cr->line = dat & 0x1f;
 	cr->lr = ((~dat) & 0x20) << 6;
 	cgwindowset(cr);
 	(void)port;
@@ -94,7 +99,7 @@ static void IOOUTCALL cgrom_oa9(UINT port, REG8 dat) {
 	cr = &cgrom;
 	if ((cr->code & 0x007e) == 0x0056) {
 		fontrom[((cr->code & 0x7f7f) << 4) +
-							cr->lr + cr->line] = (UINT8)dat;
+							cr->lr + (cr->line & 0x0f)] = (UINT8)dat;
 		cgwindow.writable |= 0x80;
 	}
 	(void)port;
@@ -107,16 +112,25 @@ const BYTE	*ptr;
 
 	cr = &cgrom;
 	ptr = fontrom;
-	if (cr->code & 0xff00) {
+	TRACEOUT(("read code = %.4x", cr->code));
+	if ((cr->code & 0x00fc) == 0x0008) {
+		if (cr->lr) {
+			ptr += (cr->code & 0x7f7f) << 4;
+			return(ptr[cr->line & 0x0f]);
+		}
+	}
+	else if (cr->code & 0xff00) {
 		ptr += (cr->code & 0x7f7f) << 4;
 		ptr += cr->lr;
+		return(ptr[cr->line & 0x0f]);
 	}
-	else {
+	else if (!(cr->line & 0x10)) {		// ”¼Šp
 		ptr += 0x80000;
 		ptr += cr->code << 4;
+		return(ptr[cr->line]);
 	}
 	(void)port;
-	return(ptr[cr->line]);
+	return(0);
 }
 
 

@@ -124,15 +124,21 @@ static REG8 IOINPCALL pcm86_ia466(UINT port) {
 	UINT32	past;
 	REG8	ret;
 
-	sound_sync();
-	nowclk = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
-	nowclk <<= 6;
-	past = nowclk - pcm86.lastclock;
-	if (past >= pcm86.stepclock) {
-		RECALC_NOWCLKWAIT;
-		past = nowclk - pcm86.lastclock;
+	// こんなんでお茶濁すんなら　ちゃんと書き直しましょうね　漏れ…
+	if (!(pcm86.fifo & 0x80)) {
+		ret = 0;
 	}
-	ret = ((past << 1) >= pcm86.stepclock)?1:0;
+	else {
+		sound_sync();
+		nowclk = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
+		nowclk <<= 6;
+		past = nowclk - pcm86.lastclock;
+		if (past >= pcm86.stepclock) {
+			RECALC_NOWCLKWAIT;
+			past = nowclk - pcm86.lastclock;
+		}
+		ret = ((past << 1) >= pcm86.stepclock)?1:0;
+	}
 	if (pcm86.virbuf >= PCM86_LOGICALBUF) {			// バッファフル
 		ret |= 0x80;
 	}

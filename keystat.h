@@ -121,10 +121,12 @@ enum {
 };
 #endif
 
+#if 0
 enum {
 	NKEY_USER1			= 0x76,
 	NKEY_USER2			= 0x77
 };
+#endif
 
 enum {
 	NKEY_SYSTEM			= 0x90,
@@ -158,12 +160,20 @@ typedef struct {
 	NKEYM15	user[NKEY_USERKEYS];
 } NKEYTBL;
 
+typedef struct {
+	UINT8	mode;
+	UINT8	reqparam;
+	UINT8	kbdtype;
+	UINT8	led;
+} KEYCTRL;
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 extern	NKEYTBL		nkeytbl;
+extern	KEYCTRL		keyctrl;
 
 
 void keystat_initialize(void);

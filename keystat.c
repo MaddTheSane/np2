@@ -8,7 +8,7 @@
 
 
 typedef struct {
-	UINT8	ref[NKEY_SYSTEM];
+	UINT8	ref[0x80];
 	UINT8	extkey;
 	UINT8	mouselast;
 	UINT8	padding;
@@ -20,6 +20,7 @@ typedef struct {
 
 
 		NKEYTBL		nkeytbl;
+		KEYCTRL		keyctrl;
 static	KEYSTAT		keystat;
 
 
@@ -173,6 +174,15 @@ void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 			keystat.ref[keycode] = ref;
 		}
 		else {
+#if defined(SUPPORT_PC9801119)
+			if ((keyctrl.kbdtype != 0x03) && (keycode >= 0x75)) {
+				continue;
+			}
+#else
+			if (keycode >= 0x75) {
+				continue;
+			}
+#endif
 			if ((np2cfg.XSHIFT) &&
 				(((keycode == 0x70) && (np2cfg.XSHIFT & 1)) ||
 				((keycode == 0x74) && (np2cfg.XSHIFT & 2)) ||
@@ -180,26 +190,21 @@ void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 				keydata |= 0x80;
 			}
 			if (!(keydata & 0x80)) {			// シフト
-				if ((keystat.ref[keycode + 0x00] == NKEYREF_NC) &&
-					(keystat.ref[keycode + 0x10] == NKEYREF_NC)) {
-					keyboard_send(keycode);
-				}
-				if (keystat.ref[keycode] > ref) {
+				if (keystat.ref[keycode] == NKEYREF_NC) {
 					keystat.ref[keycode] = ref;
+					keyboard_send(keycode);
 				}
 			}
 			else {								// シフトメカニカル処理
-				if (keystat.ref[keycode + 0x10] == NKEYREF_NC) {
-					keystat.ref[keycode + 0x10] = ref;
+				if (keystat.ref[keycode] == NKEYREF_NC) {
+					keystat.ref[keycode] = ref;
 					data = keycode;
 				}
 				else {
-					keystat.ref[keycode + 0x10] = NKEYREF_NC;
+					keystat.ref[keycode] = NKEYREF_NC;
 					data = (REG8)(keycode + 0x80);
 				}
-				if (keystat.ref[keycode] == NKEYREF_NC) {
-					keyboard_send(data);
-				}
+				keyboard_send(data);
 			}
 		}
 	}
@@ -220,6 +225,15 @@ void keystat_up(const UINT8 *key, REG8 keys, REG8 ref) {
 			}
 		}
 		else {
+#if defined(SUPPORT_PC9801119)
+			if ((keyctrl.kbdtype != 0x03) && (keycode >= 0x75)) {
+				continue;
+			}
+#else
+			if (keycode >= 0x75) {
+				continue;
+			}
+#endif
 			if ((np2cfg.XSHIFT) &&
 				(((keycode == 0x70) && (np2cfg.XSHIFT & 1)) ||
 				((keycode == 0x74) && (np2cfg.XSHIFT & 2)) ||
@@ -227,11 +241,9 @@ void keystat_up(const UINT8 *key, REG8 keys, REG8 ref) {
 				keydata |= 0x80;
 			}
 			if (!(keydata & 0x80)) {			// シフト
-				if (keystat.ref[keycode] == ref) {
+				if (keystat.ref[keycode] != NKEYREF_NC) {
 					keystat.ref[keycode] = NKEYREF_NC;
-					if (keystat.ref[keycode + 0x10] == NKEYREF_NC) {
-						keyboard_send((REG8)(keycode + 0x80));
-					}
+					keyboard_send((REG8)(keycode + 0x80));
 				}
 			}
 		}
@@ -242,15 +254,9 @@ void keystat_resendstat(void) {
 
 	REG8	i;
 
-	for (i=0; i<0x70; i++) {
+	for (i=0; i<0x80; i++) {
 		if (keystat.ref[i] != NKEYREF_NC) {
 			keyboard_send(i);
-		}
-	}
-	for (i=0; i<0x10; i++) {
-		if ((keystat.ref[0x70 + i] != NKEYREF_NC) ||
-			(keystat.ref[0x80 + i] != NKEYREF_NC)) {
-			keyboard_send((REG8)(i + 0x70));
 		}
 	}
 }
@@ -306,24 +312,10 @@ void keystat_releaseref(REG8 ref) {
 
 	REG8	i;
 
-	for (i=0; i<0x70; i++) {
+	for (i=0; i<0x80; i++) {
 		if (keystat.ref[i] == ref) {
 			keystat.ref[i] = NKEYREF_NC;
 			keyboard_send((REG8)(i + 0x80));
-		}
-	}
-	for (i=0; i<0x10; i++) {
-		if (keystat.ref[0x70 + i] == ref) {
-			keystat.ref[0x70 + i] = NKEYREF_NC;
-			if (keystat.ref[0x80 + i] == NKEYREF_NC) {
-				keyboard_send((REG8)(0xf0 + i));
-			}
-		}
-		if (keystat.ref[0x80 + i] == ref) {
-			keystat.ref[0x80 + i] = NKEYREF_NC;
-			if (keystat.ref[0x70 + i] == NKEYREF_NC) {
-				keyboard_send((REG8)(0xf0 + i));
-			}
 		}
 	}
 }
@@ -344,19 +336,9 @@ void keystat_resetjoykey(void) {
 void keystat_releasekey(REG8 key) {
 
 	key &= 0x7f;
-	if (key < 0x70) {
-		if (keystat.ref[key] != NKEYREF_NC) {
-			keystat.ref[key] = NKEYREF_NC;
-			keyboard_send((REG8)(key + 0x80));
-		}
-	}
-	else {
-		if ((keystat.ref[key + 0x00] != NKEYREF_NC) ||
-			(keystat.ref[key + 0x10] != NKEYREF_NC)) {
-			keystat.ref[key + 0x00] = NKEYREF_NC;
-			keystat.ref[key + 0x10] = NKEYREF_NC;
-			keyboard_send((REG8)(key + 0x80));
-		}
+	if (keystat.ref[key] != NKEYREF_NC) {
+		keystat.ref[key] = NKEYREF_NC;
+		keyboard_send((REG8)(key + 0x80));
 	}
 }
 
