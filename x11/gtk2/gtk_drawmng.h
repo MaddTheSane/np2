@@ -1,5 +1,7 @@
+/*	$Id: gtk_drawmng.h,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+
 /*
- * Copyright (c) 2003 NONAKA Kimihiro
+ * Copyright (c) 2003, 2004 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,61 +27,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef	NP2_X11_GTK2_GTKDRAWMNG_H__
+#define	NP2_X11_GTK2_GTKDRAWMNG_H__
+
 #include "compiler.h"
 
-#include "np2.h"
+#include "drawmng.h"
 
-#include "toolkit.h"
+#include "gtk2/xnp2.h"
 
-#include "sysmng.h"
 
-#if (USE_GTK + USE_GTK2 + USE_QT + USE_SDL + USE_X11) > 1
+typedef struct {
+	_DRAWMNG_HDL	d;
 
-gui_toolkit_t* toolkitp;
+	GtkWidget	*drawarea;
+	GdkImage	*surface;
+	GdkPixmap	*backsurf;
+} _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
 
-static struct {
-	gui_toolkit_t*	toolkit;
-} toolkit[] = {
-#if USE_GTK > 0 || USE_GTK2 > 0
-	{ &gtk_toolkit, },
-#endif
-#if USE_QT > 0
-	{ &qt_toolkit, },
-#endif
-#if USE_SDL > 0
-	{ &sdl_toolkit, },
-#endif
-#if USE_X11 > 0
-	{ &x11_toolkit, },
-#endif
-};
+int gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window);
 
-void
-toolkit_initialize(void)
-{
-	int i;
-
-	if (NELEMENTS(toolkit) > 0) {
-		for (i = 0; i < NELEMENTS(toolkit); i++) {
-			gui_toolkit_t* p = toolkit[i].toolkit;
-			if (strcasecmp(p->get_toolkit(), np2oscfg.toolkit) == 0)
-				break;
-		}
-		if (i < NELEMENTS(toolkit)) {
-			toolkitp = toolkit[i].toolkit;
-			return;
-		}
-		sysmng_update(SYS_UPDATEOSCFG);
-		milstr_ncpy(np2oscfg.toolkit, "gtk", sizeof(np2oscfg.toolkit));
-	}
-	toolkitp = &gtk_toolkit;
-}
-
-#endif	/* USE_GTK + USE_QT + USE_SDL + USE_X11 > 1 */
-
-void
-toolkit_msgbox(const char *title, const char *msg)
-{
-
-	toolkit_messagebox(title, msg);
-}
+#endif	/* NP2_X11_GTK2_GTKDRAWMNG_H__ */

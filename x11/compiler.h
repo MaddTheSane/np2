@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.22 2004/07/02 14:53:08 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.23 2004/07/14 16:01:40 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -176,7 +176,7 @@ typedef	int			BOOL;
 #define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
 #endif
 
-UINT32 gettick();
+UINT32 gettick(void);
 #define	GETTICK()	gettick()
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
@@ -228,7 +228,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #undef	SUPPORT_SCSI
 #undef	SUPPORT_IDEIO
 
-#if USE_GTK > 0
+#if USE_GTK > 0 || USE_GTK2 > 0
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_SOFTKBD	0

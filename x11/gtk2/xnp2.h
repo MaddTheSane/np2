@@ -25,61 +25,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "compiler.h"
+#ifndef	NP2_GTK2_XNP2_H__
+#define	NP2_GTK2_XNP2_H__
 
-#include "np2.h"
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
 
-#include "toolkit.h"
+extern GtkWidget *main_window;
+extern GtkWidget *drawarea;
 
-#include "sysmng.h"
+void install_idle_process(void);
+void uninstall_idle_process(void);
 
-#if (USE_GTK + USE_GTK2 + USE_QT + USE_SDL + USE_X11) > 1
+void gdk_window_set_pointer(GdkWindow *window, gint x, gint y);
+void gtk_scale_set_default_values(GtkScale *scale);
+int is_32bpp(GdkWindow *window);
 
-gui_toolkit_t* toolkitp;
-
-static struct {
-	gui_toolkit_t*	toolkit;
-} toolkit[] = {
-#if USE_GTK > 0 || USE_GTK2 > 0
-	{ &gtk_toolkit, },
-#endif
-#if USE_QT > 0
-	{ &qt_toolkit, },
-#endif
-#if USE_SDL > 0
-	{ &sdl_toolkit, },
-#endif
-#if USE_X11 > 0
-	{ &x11_toolkit, },
-#endif
-};
-
-void
-toolkit_initialize(void)
-{
-	int i;
-
-	if (NELEMENTS(toolkit) > 0) {
-		for (i = 0; i < NELEMENTS(toolkit); i++) {
-			gui_toolkit_t* p = toolkit[i].toolkit;
-			if (strcasecmp(p->get_toolkit(), np2oscfg.toolkit) == 0)
-				break;
-		}
-		if (i < NELEMENTS(toolkit)) {
-			toolkitp = toolkit[i].toolkit;
-			return;
-		}
-		sysmng_update(SYS_UPDATEOSCFG);
-		milstr_ncpy(np2oscfg.toolkit, "gtk", sizeof(np2oscfg.toolkit));
-	}
-	toolkitp = &gtk_toolkit;
-}
-
-#endif	/* USE_GTK + USE_QT + USE_SDL + USE_X11 > 1 */
-
-void
-toolkit_msgbox(const char *title, const char *msg)
-{
-
-	toolkit_messagebox(title, msg);
-}
+#endif /* NP2_GTK2_XNP2_H__ */

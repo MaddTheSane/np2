@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 NONAKA Kimihiro
+ * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,61 +25,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "compiler.h"
+#ifndef	NP2_GTK2_GTKMENU_H__
+#define	NP2_GTK2_GTKMENU_H__
 
-#include "np2.h"
+#include "gtk2/xnp2.h"
 
-#include "toolkit.h"
+GtkWidget *create_menu(void);
 
-#include "sysmng.h"
+void create_about_dialog(void);
+void create_calendar_dialog(void);
+void create_configure_dialog(void);
+void create_midi_dialog(void);
+void create_screen_dialog(void);
+void create_sound_dialog(void);
+void create_newdisk_fd_dialog(const gchar *filename);
+void create_newdisk_hd_dialog(const gchar *filename, int kind);
 
-#if (USE_GTK + USE_GTK2 + USE_QT + USE_SDL + USE_X11) > 1
+typedef struct {
+	GtkActionGroup	*action_group;
+	GtkUIManager	*ui_manager;
+} _MENU_HDL, *MENU_HDL;
 
-gui_toolkit_t* toolkitp;
+void xmenu_toggle_item(MENU_HDL, const char *, BOOL);
 
-static struct {
-	gui_toolkit_t*	toolkit;
-} toolkit[] = {
-#if USE_GTK > 0 || USE_GTK2 > 0
-	{ &gtk_toolkit, },
-#endif
-#if USE_QT > 0
-	{ &qt_toolkit, },
-#endif
-#if USE_SDL > 0
-	{ &sdl_toolkit, },
-#endif
-#if USE_X11 > 0
-	{ &x11_toolkit, },
-#endif
-};
-
-void
-toolkit_initialize(void)
-{
-	int i;
-
-	if (NELEMENTS(toolkit) > 0) {
-		for (i = 0; i < NELEMENTS(toolkit); i++) {
-			gui_toolkit_t* p = toolkit[i].toolkit;
-			if (strcasecmp(p->get_toolkit(), np2oscfg.toolkit) == 0)
-				break;
-		}
-		if (i < NELEMENTS(toolkit)) {
-			toolkitp = toolkit[i].toolkit;
-			return;
-		}
-		sysmng_update(SYS_UPDATEOSCFG);
-		milstr_ncpy(np2oscfg.toolkit, "gtk", sizeof(np2oscfg.toolkit));
-	}
-	toolkitp = &gtk_toolkit;
-}
-
-#endif	/* USE_GTK + USE_QT + USE_SDL + USE_X11 > 1 */
-
-void
-toolkit_msgbox(const char *title, const char *msg)
-{
-
-	toolkit_messagebox(title, msg);
-}
+#endif	/* NP2_GTK2_GTKMENU_H__ */

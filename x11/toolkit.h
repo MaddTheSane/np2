@@ -41,7 +41,7 @@ typedef struct {
 	void		(*messagebox)(const char *title, const char *msg);
 } gui_toolkit_t;
 
-#if (USE_GTK + USE_QT + USE_SDL + USE_X11) > 1
+#if (USE_GTK + USE_GTK2 + USE_QT + USE_SDL + USE_X11) > 1
 
 extern gui_toolkit_t* toolkitp;
 
@@ -56,9 +56,13 @@ void toolkit_initialize(void);
 #define	toolkit_set_window_title(s)	(*toolkitp->set_window_title)(s)
 #define	toolkit_messagebox(t,m)		(*toolkitp->messagebox)(t,m)
 
-#elif USE_GTK > 0
+#elif USE_GTK > 0 || USE_GTK2 > 0
 
+#if USE_GTK2 > 0
+#include "gtk2/gtk_toolkit.h"
+#elif USE_GTK > 0
 #include "gtk/gtk_toolkit.h"
+#endif
 
 #define	toolkit_initialize()
 #define	toolkit_terminate()
@@ -67,7 +71,7 @@ void toolkit_initialize(void);
 #define	toolkit_widget_show()		gui_gtk_widget_show()
 #define	toolkit_widget_mainloop()	gui_gtk_widget_mainloop()
 #define	toolkit_widget_quit()		gui_gtk_widget_quit()
-#define	toolkit_event_process()
+#define	toolkit_event_process()		gui_gtk_event_process()
 #define	toolkit_set_window_title(s)	gui_gtk_set_window_title(s)
 #define	toolkit_messagebox(t,m)		gui_gtk_messagebox(t,m)
 
@@ -82,7 +86,7 @@ void toolkit_initialize(void);
 #define	toolkit_widget_show()		gui_qt_widget_show()
 #define	toolkit_widget_mainloop()	gui_qt_widget_mainloop()
 #define	toolkit_widget_quit()		gui_qt_widget_quit()
-#define	toolkit_event_process()
+#define	toolkit_event_process()		gui_qt_event_process()
 #define	toolkit_set_window_title(s)	gui_qt_set_window_title(s)
 #define	toolkit_messagebox(t,m)		gui_qt_messagebox(t,m)
 

@@ -1,5 +1,7 @@
+/*	$Id: gtk_main.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+
 /*
- * Copyright (c) 2003 NONAKA Kimihiro
+ * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,9 +42,9 @@
 #include "soundmng.h"
 #include "taskmng.h"
 
-#include "gtk/xnp2.h"
-#include "gtk/gtk_keyboard.h"
-#include "gtk/gtk_menu.h"
+#include "gtk2/xnp2.h"
+#include "gtk2/gtk_keyboard.h"
+#include "gtk2/gtk_menu.h"
 
 #include "resources/np2.xbm"
 
@@ -63,17 +65,26 @@
 			 | GDK_EXPOSURE_MASK)
 
 
+static gboolean
+destroy_evhandler(GtkWidget *w)
+{
+
+	UNUSED(w);
+
+	toolkit_widget_quit();
+	return TRUE;
+}
 
 /*
  - Signal: gboolean GtkWidget::configure_event(GtkWidget *widget,
           GdkEventConfigure *event, gpointer user_data)
 */
 static gboolean
-configure(GtkWidget *w, GdkEventConfigure *ev, gpointer p)
+configure_evhandler(GtkWidget *w, GdkEventConfigure *ev, gpointer user_data)
 {
 
 	UNUSED(ev);
-	UNUSED(p);
+	UNUSED(user_data);
 
 	gdk_draw_rectangle(w->window, w->style->black_gc, TRUE,
 	    0, 0, w->allocation.width, w->allocation.height);
@@ -86,7 +97,7 @@ configure(GtkWidget *w, GdkEventConfigure *ev, gpointer p)
           GdkEventExpose *event, gpointer user_data)
 */
 static gboolean
-expose(GtkWidget *w, GdkEventExpose *ev, gpointer p)
+expose_evhandler(GtkWidget *w, GdkEventExpose *ev, gpointer p)
 {
 
 	UNUSED(w);
@@ -103,14 +114,14 @@ expose(GtkWidget *w, GdkEventExpose *ev, gpointer p)
           GdkEventKey *event, gpointer user_data)
 */
 static gboolean
-key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
+key_press_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
 	UNUSED(w);
 	UNUSED(p);
 
 	if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
-		xmenu_toggle_item(MOUSE_MODE, !np2oscfg.MOUSE_SW, TRUE);
+		xmenu_toggle_item(NULL, "mousemode", !np2oscfg.MOUSE_SW);
 	else
 		gtkkbd_keydown(ev->keyval);
 	return TRUE;
@@ -121,7 +132,7 @@ key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
           GdkEventKey *event, gpointer user_data)
 */
 static gboolean
-key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
+key_release_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
 	UNUSED(w);
@@ -137,7 +148,7 @@ key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
           GdkEventButton *event, gpointer user_data)
 */
 static gboolean
-button_press(GtkWidget *w, GdkEventButton *ev, gpointer p)
+button_press_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
 
 	UNUSED(w);
@@ -149,7 +160,7 @@ button_press(GtkWidget *w, GdkEventButton *ev, gpointer p)
 		break;
 
 	case 2:
-		xmenu_toggle_item(MOUSE_MODE, !np2oscfg.MOUSE_SW, TRUE);
+		xmenu_toggle_item(NULL, "mousemode", !np2oscfg.MOUSE_SW);
 		break;
 
 	case 3:
@@ -164,7 +175,7 @@ button_press(GtkWidget *w, GdkEventButton *ev, gpointer p)
           GdkEventButton *event, gpointer user_data)
 */
 static gboolean
-button_release(GtkWidget *w, GdkEventButton *ev, gpointer p)
+button_release_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
 
 	UNUSED(w);
@@ -205,14 +216,14 @@ set_icon_bitmap(GtkWidget *w)
  * idle process
  */
 static int install_count = 0;
-static int idle_id;
+static guint idle_id;
 
 void
 install_idle_process(void)
 {
 
 	if (install_count++ == 0) {
-		idle_id = gtk_idle_add((GtkFunction)mainloop, drawarea);
+		idle_id = g_idle_add((GSourceFunc)mainloop, 0);
 		soundmng_play();
 	}
 }
@@ -223,7 +234,7 @@ uninstall_idle_process(void)
 
 	if (--install_count == 0) {
 		soundmng_stop();
-		gtk_idle_remove(idle_id);
+		g_source_remove(idle_id);
 	}
 }
 
@@ -241,16 +252,20 @@ gui_gtk_get_toolkit(void)
 BOOL
 gui_gtk_arginit(int *argcp, char ***argvp)
 {
-	char tmp[MAX_PATH];
+	char buf[MAX_PATH];
 	char *homeenv;
-
-	homeenv = getenv("HOME");
 
 	gtk_set_locale();
 	gtk_init(argcp, argvp);
+
+	homeenv = getenv("HOME");
 	if (homeenv) {
-		g_snprintf(tmp, sizeof(tmp), "%s/.np2/gtkrc", homeenv);
-		gtk_rc_add_default_file(tmp);
+		g_snprintf(buf, sizeof(buf), "%s/.np2/gtkrc", homeenv);
+		gtk_rc_add_default_file(buf);
+
+		g_snprintf(buf, sizeof(buf), "%s/.np2/accels", homeenv);
+		if (g_file_test(buf, G_FILE_TEST_IS_REGULAR))
+			gtk_accel_map_load(buf);
 	}
 
 	return SUCCESS;
@@ -261,15 +276,16 @@ gui_gtk_widget_create(void)
 {
 	GtkWidget *main_vbox;
 	GtkWidget *menubar;
+	gchar *accel = NULL;
 
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
-	gtk_window_set_title(GTK_WINDOW(window), np2oscfg.titles);
-	gtk_widget_add_events(window, EVENT_MASK);
+	main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_set_double_buffered(GTK_WIDGET(main_window), FALSE);
+	gtk_window_set_resizable(GTK_WINDOW(main_window), FALSE);
+	gtk_window_set_title(GTK_WINDOW(main_window), np2oscfg.titles);
+	gtk_widget_add_events(main_window, EVENT_MASK);
 
-	main_vbox = gtk_vbox_new(FALSE, 2);
-	gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
-	gtk_container_add(GTK_CONTAINER(window), main_vbox);
+	main_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(main_window), main_vbox);
 	gtk_widget_show(main_vbox);
 
 	menubar = create_menu();
@@ -277,28 +293,37 @@ gui_gtk_widget_create(void)
 	gtk_widget_show(menubar);
 
 	drawarea = gtk_drawing_area_new();
-	gtk_drawing_area_size(GTK_DRAWING_AREA(drawarea), 640, 400);
-	gtk_box_pack_start(GTK_BOX(main_vbox), drawarea, FALSE, TRUE, 0);
+	gtk_widget_set_double_buffered(GTK_WIDGET(drawarea), FALSE);
+	gtk_widget_set_size_request(GTK_WIDGET(drawarea), 640, 400);
+	gtk_box_pack_end(GTK_BOX(main_vbox), drawarea, FALSE, TRUE, 0);
 	gtk_widget_show(drawarea);
 
-	gtk_widget_realize(window);
-	set_icon_bitmap(window);
+	g_object_get(gtk_widget_get_settings(main_window),
+	    "gtk-menu-bar-accel", &accel, NULL);
+	if (accel) {
+		g_object_set(gtk_widget_get_settings(main_window),
+		    "gtk-menu-bar-accel", "Menu", NULL);
+		g_free(accel);
+	}
 
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", 
-	    GTK_SIGNAL_FUNC(gtk_main_quit), "WM destroy");
-	gtk_signal_connect(GTK_OBJECT(window), "key_press_event",
-	    GTK_SIGNAL_FUNC(key_press), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "key_release_event",
-	    GTK_SIGNAL_FUNC(key_release), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "button_press_event",
-	    GTK_SIGNAL_FUNC(button_press), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "button_release_event",
-	    GTK_SIGNAL_FUNC(button_release), NULL);
+	gtk_widget_realize(main_window);
+	set_icon_bitmap(main_window);
 
-	gtk_signal_connect(GTK_OBJECT(drawarea), "configure_event",
-	    GTK_SIGNAL_FUNC(configure), NULL);
-	gtk_signal_connect(GTK_OBJECT(drawarea), "expose_event",
-	    GTK_SIGNAL_FUNC(expose), NULL);
+	g_signal_connect(GTK_OBJECT(main_window), "destroy", 
+	    GTK_SIGNAL_FUNC(destroy_evhandler), "WM destroy");
+	g_signal_connect(GTK_OBJECT(main_window), "key_press_event",
+	    GTK_SIGNAL_FUNC(key_press_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(main_window), "key_release_event",
+	    GTK_SIGNAL_FUNC(key_release_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(main_window), "button_press_event",
+	    GTK_SIGNAL_FUNC(button_press_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(main_window), "button_release_event",
+	    GTK_SIGNAL_FUNC(button_release_evhandler), NULL);
+
+	g_signal_connect(GTK_OBJECT(drawarea), "configure_event",
+	    GTK_SIGNAL_FUNC(configure_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(drawarea), "expose_event",
+	    GTK_SIGNAL_FUNC(expose_evhandler), NULL);
 }
 
 static void
@@ -312,12 +337,13 @@ void
 gui_gtk_widget_show(void)
 {
 
-	gtk_widget_show(window);
+	gtk_widget_show_all(main_window);
 }
 
 void
 gui_gtk_widget_mainloop(void)
 {
+
 
 	install_idle_process();
 	gtk_main();
@@ -345,15 +371,14 @@ void
 gui_gtk_set_window_title(const char* str)
 {
 
-	gtk_window_set_title(GTK_WINDOW(window), str);
+	gtk_window_set_title(GTK_WINDOW(main_window), str);
 }
 
 void
 gui_gtk_messagebox(const char *title, const char *msg)
 {
 
-	UNUSED(title);
-	g_message(msg);
+	g_message("%s:\n%s", title, msg);
 }
 
 /* toolkit data */
