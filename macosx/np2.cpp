@@ -30,6 +30,7 @@
 #if defined(NP2GCC)
 #include	"mousemng.h"
 #endif
+#include	"configure.h"
 
 #define	USE_RESUME
 
@@ -69,6 +70,8 @@ static const char np2resume[] = "sav";
 #define	AEProc(fn)	NewAEEventHandlerProc(fn)
 #endif
 
+static void setUpCarbonEvent(void);
+
 #ifdef TARGET_API_MAC_CARBON
 static pascal OSErr handleQuitApp(const AppleEvent *event, AppleEvent *reply,
 															long refcon) {
@@ -101,7 +104,7 @@ static void InitToolBox(void) {
 }
 
 static void MenuBarInit(void) {
-
+#if 0
 	Handle		hMenu;
 	MenuHandle	happlemenu;
 
@@ -120,6 +123,13 @@ static void MenuBarInit(void) {
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
 	DrawMenuBar();
+#endif
+    OSStatus	err;
+    IBNibRef	nibRef;    
+    err = CreateNibReference(CFSTR("np2"), &nibRef);
+    if (err!=noErr) return;
+    err = SetMenuBarFromNib(nibRef, CFSTR("MainMenu"));
+    DisposeNibReference(nibRef);
 }
 
 static void changescreen(BYTE mode) {
@@ -141,6 +151,10 @@ static void HandleMenuChoice(long wParam) {
 		case IDM_RESET:
 			pccore_cfgupdate();
 			pccore_reset();
+			break;
+            
+		case IDM_CONFIGURE:
+			initConfig();
 			break;
 
 #if 0
@@ -493,6 +507,7 @@ static void HandleMouseDown(EventRecord *pevent) {
 	}
 }
 
+#if 0
 static void eventproc(EventRecord *event) {
 
 	switch(event->what) {
@@ -528,7 +543,7 @@ static void eventproc(EventRecord *event) {
 #endif
 	}
 }
-
+#endif
 
 // ----
 
@@ -576,7 +591,11 @@ static void flagload(const char *ext) {
 int main(int argc, char *argv[]) {
 
 	Rect		wRect;
+#if 0
 	EventRecord	event;
+#endif
+    EventRef		theEvent;
+    EventTargetRef	theTarget;
 
 	dosio_init();
 	file_setcd(target);
@@ -600,6 +619,7 @@ int main(int argc, char *argv[]) {
 	}
 	scrnmng_initialize();
 	SizeWindow(hWndMain, 640, 400, TRUE);
+    setUpCarbonEvent();
 	ShowWindow(hWndMain);
 
 	menu_setrotate(0);
@@ -643,19 +663,31 @@ int main(int argc, char *argv[]) {
 	flagload(np2resume);
 #endif
 
+#if 0
 	SetEventMask(everyEvent);
-
+#endif
+    theTarget = GetEventDispatcherTarget();
+    
 	np2running = TRUE;
 	while(np2running) {
+        if (ReceiveNextEvent(0, NULL,kEventDurationNoWait,true, &theEvent)== noErr)
+        {
+            SendEventToEventTarget (theEvent, theTarget);
+            ReleaseEvent(theEvent);
+        }
+#if 0
 		if (WaitNextEvent(everyEvent, &event, 0, 0)) {
 			eventproc(&event);
 		}
+#endif
 		else {
 			if (np2oscfg.NOWAIT) {
-#if defined(NP2GCC)
+#if defined(NP2GCC) && 0
 				mouse_callback();
 #endif
+#if 1
 				mackbd_callback();
+#endif
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
 					framecnt++;
@@ -672,10 +704,12 @@ int main(int argc, char *argv[]) {
 			}
 			else if (np2oscfg.DRAW_SKIP) {			// frame skip
 				if (framecnt < np2oscfg.DRAW_SKIP) {
-#if defined(NP2GCC)
+#if defined(NP2GCC) && 0
                     mouse_callback();
 #endif
-					mackbd_callback();
+#if 1
+                    mackbd_callback();
+#endif
 					pccore_exec(framecnt == 0);
 					framecnt++;
 				}
@@ -686,10 +720,12 @@ int main(int argc, char *argv[]) {
 			else {								// auto skip
 				if (!waitcnt) {
 					UINT cnt;
-#if defined(NP2GCC)
+#if defined(NP2GCC) && 0
                     mouse_callback();
 #endif
-					mackbd_callback();
+#if 1
+                    mackbd_callback();
+#endif
 					pccore_exec(framecnt == 0);
 					framecnt++;
 					// テスト
@@ -751,3 +787,171 @@ int main(int argc, char *argv[]) {
 	return(0);
 }
 
+//以下、ごっそりIIxからマージ
+static pascal OSStatus MyAppEventHandler (EventHandlerCallRef myHandlerChain, EventRef event, void* userData)
+{
+    UInt32          whatHappened;
+    OSStatus        result = eventNotHandledErr;
+    
+    long		eventClass;
+    
+    eventClass = GetEventClass(event);
+    whatHappened = GetEventKind(event);
+
+    EventRecord         eve;
+    ConvertEventRefToEventRecord( event,&eve );
+
+    if (IsDialogEvent(&eve)) return result;
+
+    UInt32 modif;
+    EventMouseButton	buttonKind;
+    GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
+    GetEventParameter (event, kEventParamMouseButton, typeMouseButton, NULL, sizeof(EventMouseButton), NULL, &buttonKind);
+    BYTE ret;
+        
+    switch (eventClass)
+        {
+                case kEventClassAppleEvent:  
+                    if (whatHappened == kEventAppleEvent) {
+                        AEProcessAppleEvent(&eve);
+                    }
+                    break;
+                case kEventClassMouse: 
+                    switch (whatHappened)
+                        {
+                        case kEventMouseMoved:
+#if 0
+                            if (isFullScreen)
+                            {
+                                HIPoint delta;
+                                Point pt;
+                                GetEventParameter (event, kEventParamMouseDelta, typeHIPoint, NULL, sizeof(HIPoint), NULL, &delta);
+                                pt.h=(short)delta.x;
+                                pt.v=(short)delta.y;
+                                mouse_callback(pt);
+                            }
+                            else {
+                                mouse_callback(eve.where);
+                            }
+#endif
+                                mouse_callback();
+                                result = noErr;
+                                break;
+                       case kEventMouseDown:
+                            if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
+                                ret=mouse_btn(MOUSE_RIGHTDOWN);
+                            }
+                            else {
+                                HandleMouseDown(&eve);
+                            }
+                            result=noErr;
+                            break;
+                        case kEventMouseUp:
+                                {
+                                    if (buttonKind == kEventMouseButtonSecondary | modif & cmdKey) {
+                                        ret=mouse_btn(MOUSE_RIGHTUP);
+                                    }
+                                    else {
+                                        ret=mouse_btn(MOUSE_LEFTUP);
+                                    }
+                                    result=noErr;
+                                    break;    
+                                }                    
+                        }
+                        break;
+            default:
+                    break; 
+        }
+    return result; 
+}
+
+static pascal OSStatus MyWindowEventHandler(EventHandlerCallRef myHandler,  EventRef event, void* userData)
+{
+    WindowRef	window;
+    UInt32		whatHappened;
+    OSStatus	result = eventNotHandledErr;    
+    long		eventClass;
+    
+    GetEventParameter(event, kEventParamDirectObject, typeWindowRef, NULL,
+                         sizeof(window), NULL, &window);
+    eventClass = GetEventClass(event);
+    whatHappened = GetEventKind(event);
+        
+    switch (eventClass)
+        {        
+            case kEventClassWindow:            
+                if (whatHappened == kEventWindowClose) {
+                    np2running = FALSE;
+                    result = noErr;
+                }
+                break;
+            case kEventClassKeyboard:
+                UInt32 key;
+                GetEventParameter (event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &key);
+                UInt32 modif;
+                GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
+                switch (whatHappened)
+                {
+                    case kEventRawKeyUp:
+                        //mackeyup((int)key);
+                        mackbd_f12up(key);
+                        result = noErr;
+                        break;
+                    case kEventRawKeyRepeat:
+                        //mackeydown(0, (int)key);
+                        mackbd_f12down(key);
+                        result = noErr;
+                        break;
+                    case kEventRawKeyDown:
+                        mackbd_f12down(key);
+                        if (modif & cmdKey) {
+                            //if (!mackeydown(1, (int)key)) {
+                                char	para;
+                                GetEventParameter (event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &para);
+                                HandleMenuChoice(MenuKey(para));
+                            //}
+                        }
+                        else {
+                            //mackeydown(0, (int)key);
+                        }
+                        result = noErr;
+                        break;
+                    case kEventRawKeyModifiersChanged:
+                        if (modif & shiftKey) keystat_senddata(0x70);
+                        else keystat_senddata(0x70 | 0x80);
+                        if (modif & optionKey) keystat_senddata(0x73);
+                        else keystat_senddata(0x73 | 0x80);
+                        if (modif & controlKey) keystat_senddata(0x74);
+                        else keystat_senddata(0x74 | 0x80);
+                        if (modif & alphaLock) keystat_senddata(0x79);
+                        else keystat_senddata(0x79 | 0x80);
+                        result = noErr;
+                        break;
+                    default: 
+                        break;             
+                }
+            default: 
+                break;                
+        }
+
+    return result;
+}
+
+static void setUpCarbonEvent(void)
+{
+    InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
+	EventTypeSpec   appEventList[] ={	{ kEventClassAppleEvent, kEventAppleEvent },
+                                        { kEventClassMouse, kEventMouseDown},
+                                        { kEventClassMouse, kEventMouseMoved},
+                                        { kEventClassMouse, kEventMouseUp}
+                                    };
+    EventTypeSpec   windEventList[] ={	{ kEventClassWindow, kEventWindowClose},
+				                        { kEventClassKeyboard, kEventRawKeyDown},
+                                        { kEventClassKeyboard, kEventRawKeyUp},
+                                        { kEventClassKeyboard, kEventRawKeyRepeat},
+				                        { kEventClassKeyboard, kEventRawKeyModifiersChanged}
+                                     };
+	InstallApplicationEventHandler(NewEventHandlerUPP(MyAppEventHandler), 4, appEventList, 0, NULL); 
+	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(MyWindowEventHandler), 5, windEventList, 0, NULL);
+
+}
