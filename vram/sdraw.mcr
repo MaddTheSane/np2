@@ -661,8 +661,8 @@ const BYTE	*p;
 		if (sdraw->dirty[y+1]) {
 			SDSETPIXEL(q, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
-				SDSETPIXEL(q, p[x] + NP2PAL_SKIP);
 				q += sdraw->xalign;
+				SDSETPIXEL(q, p[x] + NP2PAL_SKIP);
 			}
 			q -= sdraw->xbytes;
 		}
