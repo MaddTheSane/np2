@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"i286.h"
 #include	"i286c.h"
+#include	"v30patch.h"
 #include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -137,6 +138,7 @@ void i286_initialize(void) {
 		szpflag_w[i] = f;
 	}
 #endif
+	v30init();
 }
 
 void i286_reset(void) {
@@ -177,7 +179,7 @@ const BYTE	*ptr;
 	if (op == 0xf4) {							// hlt
 		I286_IP++;
 	}
-	REGPUSH0(REAL_FLAGREG)
+	REGPUSH0(REAL_FLAGREG)						// ‚±‚±V30‚Ε’Òελ‚ª‡‚ν‚Θ‚Ά
 	REGPUSH0(I286_CS)
 	REGPUSH0(I286_IP)
 

@@ -68,7 +68,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/i286c.o		$(OBJ)/i286c_mn.o	$(OBJ)/i286c_ea.o	\
 			$(OBJ)/i286c_0f.o	$(OBJ)/i286c_8x.o	$(OBJ)/i286c_sf.o	\
 			$(OBJ)/i286c_f6.o	$(OBJ)/i286c_fe.o	$(OBJ)/i286c_rp.o	\
-			$(OBJ)/memory.o		$(OBJ)/egcmem.o		$(OBJ)/dmap.o		\
+			$(OBJ)/v30patch.o	$(OBJ)/memory.o		$(OBJ)/egcmem.o		\
+			$(OBJ)/dmap.o												\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
 			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/extmem.o		\
@@ -198,8 +199,8 @@ $(OBJ)/parts.oa		:	$(X86ASM)/parts.x86
 
 
 $(OBJ)/i286c.o		:	$(I286C)/i286c.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/memory.h \
-						$(I286C)/dmap.h $(I286C)/i286c.mcr
+						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/v30patch.h \
+						$(I286C)/memory.h $(I286C)/dmap.h $(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/i286c_mn.o	:	$(I286C)/i286c_mn.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -234,6 +235,12 @@ $(OBJ)/i286c_fe.o	:	$(I286C)/i286c_fe.c $(HEADERS) $(I286C)/i286.h \
 
 $(OBJ)/i286c_rp.o	:	$(I286C)/i286c_rp.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/memory.h \
+						$(I286C)/i286c.mcr
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/v30patch.o	:	$(I286C)/v30patch.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(I286C)/i286.h $(I286C)/i286c.h $(I286C)/v30patch.h \
+						$(I286C)/memory.h $(I286C)/dmap.h $(BIOS)/bios.h \
 						$(I286C)/i286c.mcr
 	$(CC) $(COPT) -o $@ $<
 

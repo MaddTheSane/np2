@@ -182,6 +182,10 @@ SOURCE=..\I286C\I286C_SF.C
 
 SOURCE=..\I286C\MEMORY.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\I286C\V30PATCH.C
+# End Source File
 # End Group
 # Begin Group "io"
 

@@ -226,8 +226,8 @@ void CPUCALL i286_interrupt(BYTE vect);
 void i286(void);
 void i286_step(void);
 
-#define	v30				i286
-#define	v30_step		i286_step
+void v30(void);
+void v30_step(void);
 
 #ifdef __cplusplus
 }

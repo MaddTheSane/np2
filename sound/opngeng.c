@@ -46,7 +46,7 @@ extern	SINT32	sintable[];					// ver0.27
 		((sintable[(((s).freq_cnt + (c)) >> (FREQ_BITS - SIN_BITS)) &		\
 			(SIN_ENT-1)] * envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
 
-
+#if 0
 static SINT32 calcrateenvlope(OPNSLOT *slot) {
 
 	/* calcrate phage generator */
@@ -81,6 +81,7 @@ static SINT32 calcrateenvlope(OPNSLOT *slot) {
 	}
 	return(slot->totallevel - env_curve[slot->env_cnt >> ENV_BITS]);
 }
+#endif
 
 static void calcratechannel(OPNCH *ch) {
 
