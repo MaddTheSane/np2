@@ -5,7 +5,7 @@
 
 #define	SLZAURUS
 #define	BYTESEX_LITTLE
-#define	OSLANG_SJIS
+#define	OSLANG_EUC
 #define	OSLINEBREAK_CRLF
 
 
@@ -34,6 +34,7 @@ typedef	signed int		SINT32;
 
 #include	"common.h"
 #include	"milstr.h"
+#include	"codecnv.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"
@@ -48,6 +49,7 @@ typedef	signed int		SINT32;
 // #define	SOUND_CRITICAL
 
 #define	SUPPORT_SJIS
+#define	SUPPORT_EUC
 
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2

@@ -1,3 +1,5 @@
+#ifndef _COMMON_CODECNV_H
+#define	_COMMON_CODECNV_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,5 +12,7 @@ void codecnv_sjis2utf(UINT16 *utf, UINT ucnt, const char *sjis, UINT scnt);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 

@@ -25,17 +25,35 @@ void dosio_term(void) {
 /* ファイル操作 */
 FILEH file_open(const char *path) {
 
+#if defined(WIN32) && defined(OSLANG_EUC)
+	char	sjis[MAX_PATH];
+	codecnv_euc2sjis(sjis, sizeof(sjis), path, (UINT)-1);
+	return(fopen(sjis, "rb+"));
+#else
 	return(fopen(path, "rb+"));
+#endif
 }
 
 FILEH file_open_rb(const char *path) {
 
+#if defined(WIN32) && defined(OSLANG_EUC)
+	char	sjis[MAX_PATH];
+	codecnv_euc2sjis(sjis, sizeof(sjis), path, (UINT)-1);
+	return(fopen(sjis, "rb+"));
+#else
 	return(fopen(path, "rb+"));
+#endif
 }
 
 FILEH file_create(const char *path) {
 
+#if defined(WIN32) && defined(OSLANG_EUC)
+	char	sjis[MAX_PATH];
+	codecnv_euc2sjis(sjis, sizeof(sjis), path, (UINT)-1);
+	return(fopen(sjis, "wb+"));
+#else
 	return(fopen(path, "wb+"));
+#endif
 }
 
 long file_seek(FILEH handle, long pointer, int method) {
@@ -151,44 +169,44 @@ short file_dircreate(const char *path) {
 /* カレントファイル操作 */
 void file_setcd(const char *exepath) {
 
-	milstr_ncpy(curpath, exepath, sizeof(curpath));
+	file_cpyname(curpath, exepath, sizeof(curpath));
 	curfilep = file_getname(curpath);
 	*curfilep = '\0';
 }
 
 char *file_getcd(const char *path) {
 
-	milstr_ncpy(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(curpath);
 }
 
 FILEH file_open_c(const char *path) {
 
-	milstr_ncpy(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_open(curpath));
 }
 
 FILEH file_open_rb_c(const char *path) {
 
-	milstr_ncpy(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_open_rb(curpath));
 }
 
 FILEH file_create_c(const char *path) {
 
-	milstr_ncpy(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_create(curpath));
 }
 
 short file_delete_c(const char *path) {
 
-	milstr_ncpy(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_delete(curpath));
 }
 
 short file_attr_c(const char *path) {
 
-	milstr_ncpy(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
 	return(file_attr_c(curpath));
 }
 
@@ -229,7 +247,12 @@ static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 																== SUCCESS) {
 		fli->caps |= FLICAPS_DATE | FLICAPS_TIME;
 	}
-	milstr_ncpy(fli->path, w32fd->cFileName, sizeof(fli->path));
+#if defined(OSLANG_EUC)
+	codecnv_sjis2euc(fli->path, sizeof(fli->path),
+												w32fd->cFileName, (UINT)-1);
+#else
+	file_cpyname(fli->path, w32fd->cFileName, sizeof(fli->path));
+#endif
 	return(SUCCESS);
 }
 
@@ -239,9 +262,9 @@ FLISTH file_list1st(const char *dir, FLINFO *fli) {
 	HANDLE			hdl;
 	WIN32_FIND_DATA	w32fd;
 
-	milsjis_ncpy(path, dir, sizeof(path));
+	file_cpyname(path, dir, sizeof(path));
 	file_setseparator(path, sizeof(path));
-	milsjis_ncat(path, "*.*", sizeof(path));
+	file_catname(path, "*.*", sizeof(path));
 	hdl = FindFirstFile(path, &w32fd);
 	if (hdl != INVALID_HANDLE_VALUE) {
 		do {
@@ -332,7 +355,7 @@ void file_listclose(FLISTH hdl) {
 
 void file_catname(char *path, const char *name, int maxlen) {
 
-	char	c;
+	int		csize;
 
 	while(maxlen > 0) {
 		if (*path == '\0') {
@@ -341,51 +364,26 @@ void file_catname(char *path, const char *name, int maxlen) {
 		path++;
 		maxlen--;
 	}
-	if (maxlen > 0) {
-		maxlen--;
-		while(maxlen > 0) {
-			maxlen--;
-			c = *name++;
-			if (ISKANJI1ST(c)) {
-				if ((maxlen == 0) || (*name == '\0')) {
-					break;
-				}
-				*path++ = c;
-				*path++ = *name++;
-			}
-			else if (c == '\\') {
-				*path++ = '/';
-			}
-			else if (c) {
-				*path++ = c;
-			}
-			else {
-				break;
-			}
+	file_cpyname(path, name, maxlen);
+	while((csize = milstr_charsize(path)) != 0) {
+		if ((csize == 1) && (*path == '\\')) {
+			*path = '/';
 		}
-		*path = '\0';
+		path += csize;
 	}
 }
 
 char *file_getname(char *path) {
 
 	char	*ret;
+	int		csize;
 
 	ret = path;
-	while(1) {
-		if (ISKANJI1ST(*path)) {
-			if (*(path+1) == '\0') {
-				break;
-			}
-			path++;
-		}
-		else if (*path == '/') {
+	while((csize = milstr_charsize(path)) != 0) {
+		if ((csize == 1) && (*path == '/')) {
 			ret = path + 1;
 		}
-		else if (*path == '\0') {
-			break;
-		}
-		path++;
+		path += csize;
 	}
 	return(ret);
 }
