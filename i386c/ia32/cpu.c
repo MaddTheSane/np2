@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.19 2004/06/17 14:38:38 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.20 2004/08/14 03:09:43 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -218,7 +218,7 @@ exec_1step(void)
 				/* repe */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_CX == 0 || !(CPU_FLAGL & Z_FLAG))
+					if (--CPU_CX == 0 || CC_NZ)
 						break;
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
@@ -229,7 +229,7 @@ exec_1step(void)
 				/* repne */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_CX == 0 || (CPU_FLAGL & Z_FLAG))
+					if (--CPU_CX == 0 || CC_Z)
 						break;
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
@@ -255,7 +255,7 @@ exec_1step(void)
 				/* repe */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_ECX == 0 || !(CPU_FLAGL & Z_FLAG))
+					if (--CPU_ECX == 0 || CC_NZ)
 						break;
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
@@ -266,7 +266,7 @@ exec_1step(void)
 				/* repne */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_ECX == 0 || (CPU_FLAGL & Z_FLAG))
+					if (--CPU_ECX == 0 || CC_Z)
 						break;
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
