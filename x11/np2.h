@@ -41,6 +41,7 @@ typedef struct {
 	BYTE	toolwin;
 	BYTE	keydisp;
 	BYTE	hostdrv_write;
+	BYTE	jastsnd;
 	BYTE	I286SAVE;
 
 	BYTE	snddrv;

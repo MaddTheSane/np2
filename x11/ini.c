@@ -534,6 +534,7 @@ static const INITBL iniitem[] = {
 #endif
 	{"toolwind", INITYPE_BOOL,	&np2oscfg.toolwin,	0},
 	{"keydispl", INITYPE_BOOL,	&np2oscfg.keydisp,	0},
+	{"jast_snd", INITYPE_BOOL,	&np2oscfg.jastsnd,	0},
 
 	{"sounddrv", INITYPE_SNDDRV,	&np2oscfg.snddrv,	0},
 	{"audiodev", INITYPE_STR,	&np2oscfg.audiodev,	MAX_PATH},

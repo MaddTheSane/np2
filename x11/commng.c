@@ -2,6 +2,7 @@
 
 #include "np2.h"
 #include "commng.h"
+#include "cmjasts.h"
 
 
 // ---- non connect
@@ -78,6 +79,13 @@ commng_create(UINT device)
 	switch (device) {
 	case COMCREATE_MPU98II:
 		cfg = &np2oscfg.mpu;
+		break;
+
+	case COMCREATE_PRINTER:
+		cfg = NULL;
+		if (np2oscfg.jastsnd) {
+			ret = cmjasts_create();
+		}
 		break;
 
 	default:
