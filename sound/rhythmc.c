@@ -2,6 +2,7 @@
 #include	<math.h>
 #include	"wavefile.h"
 #include	"dosio.h"
+#include	"bios.h"
 #include	"sound.h"
 #include	"rhythm.h"
 
@@ -22,6 +23,7 @@ static const char *rhythmfile[RHYTHM_MAX] = {
 
 static BOOL pcmload(RHYTHMPCM *pcm, const char *fname, UINT rate) {
 
+	char		path[MAX_PATH];
 	FILEH		fh;
 	RIFF_HEADER	riff;
 	BOOL		head;
@@ -35,7 +37,8 @@ static BOOL pcmload(RHYTHMPCM *pcm, const char *fname, UINT rate) {
 	UINT		pos;
 	BYTE		work[256];
 
-	fh = file_open_c(fname);
+	bios_getpath(path, fname, sizeof(path));
+	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto pld_err1;
 	}

@@ -36,6 +36,7 @@ extern "C" {
 
 extern	BOOL	biosrom;
 
+void bios_getpath(char *path, const char *name, int maxlen);
 
 void bios_init(void);
 UINT MEMCALL biosfunc(UINT32 adrs);

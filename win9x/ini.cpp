@@ -342,6 +342,7 @@ static const INITBL iniitem[] = {
 	{"HDfolder", INITYPE_STR,		hddfolder,				MAX_PATH},
 	{"bmap_Dir", INITYPE_STR,		bmpfilefolder,			MAX_PATH},
 	{"fontfile", INITYPE_STR,		np2cfg.fontfile,		MAX_PATH},
+	{"biospath", INITYPE_STR,		np2cfg.biospath,		MAX_PATH},
 
 	{"pc_model", INITYPE_STR,		&np2cfg.model,
 													sizeof(np2cfg.model)},

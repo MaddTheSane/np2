@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"dosio.h"
+#include	"bios.h"
 #include	"memory.h"
 #include	"soundrom.h"
 
@@ -16,6 +17,7 @@ static const BYTE defsoundrom[9] = {
 static BOOL loadsoundrom(UINT address, const char *name) {
 
 	char	romname[24];
+	char	path[MAX_PATH];
 	FILEH	fh;
 	UINT	rsize;
 
@@ -24,7 +26,8 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 		file_catname(romname, name, sizeof(romname));
 	}
 	file_catname(romname, file_extrom, sizeof(romname));
-	fh = file_open_c(romname);
+	bios_getpath(path, romname, sizeof(path));
+	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto lsr_err;
 	}

@@ -51,7 +51,7 @@
 				1, 0x82,
 				0, {0x17, 0x04, 0x1f}, {0x0c, 0x0c, 0x02, 0x10, 0x3f, 0x3f},
 				1, 80, 0,
-				{"", ""}, ""};
+				{"", ""}, "", ""};
 
 	PCCORE	pc = {	PCBASECLOCK25,
 					4,
@@ -183,6 +183,8 @@ static void sound_term(void) {
 }
 
 void pccore_init(void) {
+
+	i286_initialize();
 
 	pal_initlcdtable();
 	pal_makelcdpal();

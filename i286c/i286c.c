@@ -135,7 +135,6 @@ void i286_initialize(void) {
 
 void i286_reset(void) {
 
-	i286_initialize();
 	ZeroMemory(&i286core.s, sizeof(i286core.s));
 	I286_CS = 0x1fc0;
 	CS_BASE = 0x1fc00;

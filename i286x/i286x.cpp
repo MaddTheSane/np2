@@ -52,10 +52,14 @@ const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x80, 0x84, 0x84, 0x80, 0x84, 0x80, 0x80, 0x84};
 
 
+void i286_initialize(void) {
+
+	i286xadr_init();
+	v30init();
+}
+
 void i286_reset(void) {
 
-	i286xadr_init();							// ñàâÒí Ç∑ÇÃÇÕÇ«Ç§Ç©Åc
-	v30init();									// ñàâÒí Ç∑ÇÃÇÕÇ«Ç§Ç©Åc
 	ZeroMemory(&i286core.s, sizeof(i286core.s));
 	I286_CS = 0x1fc0;
 	CS_BASE = 0x1fc00;
