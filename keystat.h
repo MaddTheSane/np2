@@ -161,8 +161,8 @@ typedef struct {
 } NKEYTBL;
 
 typedef struct {
-	UINT8	mode;
 	UINT8	reqparam;
+	UINT8	mode;
 	UINT8	kbdtype;
 	UINT8	led;
 } KEYCTRL;
@@ -181,6 +181,8 @@ void keystat_initialize(void);
 void keystat_tblreset(void);
 void keystat_tblset(REG8 ref, const UINT8 *key, UINT cnt);
 void keystat_tblload(const char *filename);
+
+void keystat_ctrl(REG8 dat);
 
 void keystat_keydown(REG8 ref);
 void keystat_keyup(REG8 ref);

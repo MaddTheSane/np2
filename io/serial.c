@@ -9,12 +9,19 @@
 
 static void keyboard_int(BOOL absolute) {
 
-	if (keybrd.buffers) {
+	if ((keybrd.ctrls) || (keybrd.buffers)) {
 		if (!(keybrd.status & 2)) {
 			keybrd.status |= 2;
-			keybrd.data = keybrd.buf[keybrd.bufpos];
-			keybrd.bufpos = (keybrd.bufpos + 1) & KB_BUFMASK;
-			keybrd.buffers--;
+			if (keybrd.ctrls) {
+				keybrd.ctrls--;
+				keybrd.data = keybrd.ctr[keybrd.ctrpos];
+				keybrd.ctrpos = (keybrd.ctrpos + 1) & KB_CTRMASK;
+			}
+			else if (keybrd.buffers) {
+				keybrd.buffers--;
+				keybrd.data = keybrd.buf[keybrd.bufpos];
+				keybrd.bufpos = (keybrd.bufpos + 1) & KB_BUFMASK;
+			}
 		}
 		pic_setirq(1);
 		nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
@@ -31,7 +38,9 @@ void keyboard_callback(NEVENTITEM item) {
 
 static void IOOUTCALL keyboard_o41(UINT port, REG8 dat) {
 
-	keybrd.mode = dat;
+	if (keybrd.cmd & 1) {
+		keystat_ctrl(dat);
+	}
 	(void)port;
 }
 
@@ -74,7 +83,6 @@ void keyboard_reset(void) {
 
 	ZeroMemory(&keybrd, sizeof(keybrd));
 	keybrd.data = 0xff;
-	keybrd.mode = 0x5e;
 }
 
 void keyboard_bind(void) {
@@ -86,12 +94,25 @@ void keyboard_bind(void) {
 
 void keyboard_resetsignal(void) {
 
-	keybrd.mode = 0x5e;
 	keybrd.cmd = 0;
 	keybrd.status = 0;
 	keybrd.buffers = 0;
 	keybrd.bufpos = 0;
 	keystat_resendstat();
+}
+
+void keyboard_ctrl(REG8 data) {
+
+	if ((data == 0xfa) || (data == 0xfc)) {
+		keybrd.ctrls = 0;
+	}
+	if (keybrd.ctrls < KB_CTR) {
+		keybrd.ctr[(keybrd.ctrpos + keybrd.ctrls) & KB_CTRMASK] = data;
+		keybrd.ctrls++;
+		if (!nevent_iswork(NEVENT_KEYBOARD)) {
+			keyboard_int(NEVENT_ABSOLUTE);
+		}
+	}
 }
 
 void keyboard_send(REG8 data) {

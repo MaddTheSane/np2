@@ -46,10 +46,12 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val) {
 		pcm86.wrtpos = 0;
 		pcm86.realbuf = 0;
 		pcm86.virbuf = 0;
-		pcm86.write = 0;
-		pcm86.reqirq = 0;
 		pcm86.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 		pcm86.lastclock <<= 6;
+	}
+	if ((xchgbit & 0x10) && (!(val & 0x10))) {
+		pcm86.write = 0;
+		pcm86.reqirq = 0;
 	}
 	// サンプリングレート変更
 	if (xchgbit & 7) {
@@ -61,7 +63,6 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val) {
 		pcm86.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 		pcm86.lastclock <<= 6;
 	}
-	pcm86.write = 1;
 	pcm86_setnextintr();
 	(void)port;
 }
@@ -154,6 +155,23 @@ static REG8 IOINPCALL pcm86_ia468(UINT port) {
 	REG8	ret;
 
 	ret = pcm86.fifo & (~0x10);
+#if 1
+	if (pcm86gen_intrq()) {
+		ret |= 0x10;
+	}
+#elif 1		// むしろこう？
+	if (pcm86.fifo & 0x20) {
+		sound_sync();
+		if (pcm86.virbuf <= pcm86.fifosize) {
+			if (pcm86.write) {
+				pcm86.write = 0;
+			}
+			else {
+				ret |= 0x10;
+			}
+		}
+	}
+#else
 	if ((pcm86.write) && (pcm86.fifo & 0x20)) {
 //		pcm86.write = 0;
 		sound_sync();
@@ -162,6 +180,7 @@ static REG8 IOINPCALL pcm86_ia468(UINT port) {
 			ret |= 0x10;
 		}
 	}
+#endif
 	(void)port;
 	return(ret);
 }

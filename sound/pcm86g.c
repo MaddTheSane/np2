@@ -7,13 +7,13 @@
 
 #define	PCM86GET8(a)													\
 		(a) = (SINT8)pcm86.buffer[pcm86.readpos & PCM86_BUFMSK] << 8;	\
-		pcm86.readpos++;												\
+		pcm86.readpos++;
 
 #define	PCM86GET16(a)													\
 		(a) = (SINT8)pcm86.buffer[pcm86.readpos & PCM86_BUFMSK] << 8;	\
 		pcm86.readpos++;												\
 		(a) += pcm86.buffer[pcm86.readpos & PCM86_BUFMSK];				\
-		pcm86.readpos++;												\
+		pcm86.readpos++;
 
 #define	BYVOLUME(s)		((((s) >> 6) * pcm86.volume) >> (PCM86_DIVBIT + 4))
 

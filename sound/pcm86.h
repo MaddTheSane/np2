@@ -83,6 +83,8 @@ void pcm86_setnextintr(void);
 void SOUNDCALL pcm86gen_checkbuf(void);
 void SOUNDCALL pcm86gen_getpcm(void *hdl, SINT32 *pcm, UINT count);
 
+BOOL pcm86gen_intrq(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -14,18 +14,13 @@ void fmport_a(NEVENTITEM item) {
 	BOOL	intreq = FALSE;
 
 	if (item->flag & NEVENT_SETEVENT) {
+		intreq = pcm86gen_intrq();
 		if (fmtimer.reg & 0x04) {
 			fmtimer.status |= 0x01;
 			intreq = TRUE;
 		}
-		if (pcm86.fifo & 0x20) {
-			sound_sync();
-			if (pcm86.virbuf <= pcm86.fifosize) {
-				intreq = TRUE;
-			}
-		}
 		if (intreq) {
-			pcm86.write = 1;
+//			pcm86.write = 1;
 			pic_setirq(fmtimer.irq);
 //			TRACEOUT(("fm int-A"));
 		}
@@ -40,18 +35,21 @@ void fmport_b(NEVENTITEM item) {
 	BOOL	intreq = FALSE;
 
 	if (item->flag & NEVENT_SETEVENT) {
+		intreq = pcm86gen_intrq();
 		if (fmtimer.reg & 0x08) {
 			fmtimer.status |= 0x02;
 			intreq = TRUE;
 		}
+#if 0
 		if (pcm86.fifo & 0x20) {
 			sound_sync();
 			if (pcm86.virbuf <= pcm86.fifosize) {
 				intreq = TRUE;
 			}
 		}
+#endif
 		if (intreq) {
-			pcm86.write = 1;
+//			pcm86.write = 1;
 			pic_setirq(fmtimer.irq);
 //			TRACEOUT(("fm int-B"));
 		}

@@ -167,6 +167,8 @@ const char			*p;
 	SPRINTF(work, file_i386ss, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP & 0xffff0000, 0x10000);
 	filenum++;
+
+	iptrace_out();
 }
 
 void debugsub_memorydump(void) {

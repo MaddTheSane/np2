@@ -35,10 +35,10 @@ void pcm86gen_setvol(UINT vol) {
 	pcm86gen_update();
 }
 
-void pcm86_reset(void) {											// ver0.28
+void pcm86_reset(void) {
 
 	ZeroMemory(&pcm86, sizeof(pcm86));
-	pcm86.fifosize = 0x80;											// ver0.29
+	pcm86.fifosize = 0x80;
 	pcm86.dactrl = 0x32;
 	pcm86.stepmask = (1 << 2) - 1;
 	pcm86.stepbit = 2;
@@ -68,7 +68,7 @@ void pcm86_setpcmrate(REG8 val) {
 	}
 }
 
-void pcm86_cb(NEVENTITEM item) {									// ver0.29
+void pcm86_cb(NEVENTITEM item) {
 
 	if (pcm86.reqirq) {
 		sound_sync();
@@ -145,5 +145,17 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 			pcm86.readpos += bufs;
 		}
 	}
+}
+
+
+BOOL pcm86gen_intrq(void) {
+
+	if (pcm86.fifo & 0x20) {
+		sound_sync();
+		if ((pcm86.write) && (pcm86.virbuf <= pcm86.fifosize)) {
+			return(TRUE);
+		}
+	}
+	return(FALSE);
 }
 

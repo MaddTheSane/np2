@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.16 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.17 2004/03/30 07:12:03 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -55,7 +55,7 @@ int cpu_inst_trace = 0;
 #endif
 
 
-// #define	IPTRACE			(1 << 14)
+#define	IPTRACE			(1 << 14)
 
 #if defined(TRACE) && IPTRACE
 static	UINT	trpos = 0;

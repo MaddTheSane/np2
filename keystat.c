@@ -157,6 +157,59 @@ kstbl_err:
 
 // ----
 
+void keystat_ctrl(REG8 dat) {
+
+	if (!keyctrl.reqparam) {
+		keyctrl.mode = dat;
+		switch(dat) {
+#if defined(SUPPORT_PC9801_119)
+			case 0x95:
+#endif
+			case 0x9c:
+			case 0x9d:
+				keyctrl.reqparam = 1;
+				keyboard_ctrl(0xfa);
+				break;
+
+#if defined(SUPPORT_PC9801_119)
+			case 0x96:
+				keyboard_ctrl(0xfa);
+				keyboard_ctrl(0xa0);
+				keyboard_ctrl(0x83);
+				break;
+#endif
+
+			case 0x9f:
+				keyboard_ctrl(0xfa);
+				keyboard_ctrl(0xa0);
+				keyboard_ctrl(0x80);
+				break;
+
+			default:
+				keyboard_ctrl(0xfc);
+				break;
+		}
+	}
+	else {
+		switch(keyctrl.mode) {
+#if defined(SUPPORT_PC9801_119)
+			case 0x95:
+				keyctrl.kbdtype = dat;
+				break;
+#endif
+			case 0x9d:
+				break;
+
+			case 0x9e:
+				break;
+		}
+		keyctrl.reqparam = 0;
+	}
+}
+
+
+// ----
+
 void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 
 	UINT8	keydata;
@@ -174,7 +227,7 @@ void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 			keystat.ref[keycode] = ref;
 		}
 		else {
-#if defined(SUPPORT_PC9801119)
+#if defined(SUPPORT_PC9801_119)
 			if ((keyctrl.kbdtype != 0x03) && (keycode >= 0x75)) {
 				continue;
 			}
@@ -225,7 +278,7 @@ void keystat_up(const UINT8 *key, REG8 keys, REG8 ref) {
 			}
 		}
 		else {
-#if defined(SUPPORT_PC9801119)
+#if defined(SUPPORT_PC9801_119)
 			if ((keyctrl.kbdtype != 0x03) && (keycode >= 0x75)) {
 				continue;
 			}
