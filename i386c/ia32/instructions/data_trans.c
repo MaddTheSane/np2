@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.13 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.14 2004/03/22 14:22:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -374,7 +374,7 @@ CMOVO_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (CPU_OV) {
+	if (CC_O) {
 		*out = (UINT16)src;
 	}
 }
@@ -386,7 +386,7 @@ CMOVO_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (CPU_OV) {
+	if (CC_O) {
 		*out = src;
 	}
 }
@@ -398,7 +398,7 @@ CMOVNO_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (!CPU_OV) {
+	if (CC_NO) {
 		*out = (UINT16)src;
 	}
 }
@@ -410,7 +410,7 @@ CMOVNO_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (!CPU_OV) {
+	if (CC_NO) {
 		*out = src;
 	}
 }
@@ -422,7 +422,7 @@ CMOVC_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & C_FLAG) {
+	if (CC_C) {
 		*out = (UINT16)src;
 	}
 }
@@ -434,7 +434,7 @@ CMOVC_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & C_FLAG) {
+	if (CC_C) {
 		*out = src;
 	}
 }
@@ -446,7 +446,7 @@ CMOVNC_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & C_FLAG)) {
+	if (CC_NC) {
 		*out = (UINT16)src;
 	}
 }
@@ -458,7 +458,7 @@ CMOVNC_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & C_FLAG)) {
+	if (CC_NC) {
 		*out = src;
 	}
 }
@@ -470,7 +470,7 @@ CMOVZ_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & Z_FLAG) {
+	if (CC_Z) {
 		*out = (UINT16)src;
 	}
 }
@@ -482,7 +482,7 @@ CMOVZ_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & Z_FLAG) {
+	if (CC_Z) {
 		*out = src;
 	}
 }
@@ -494,7 +494,7 @@ CMOVNZ_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & Z_FLAG)) {
+	if (CC_NZ) {
 		*out = (UINT16)src;
 	}
 }
@@ -506,7 +506,7 @@ CMOVNZ_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & Z_FLAG)) {
+	if (CC_NZ) {
 		*out = src;
 	}
 }
@@ -518,7 +518,7 @@ CMOVA_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & (Z_FLAG | C_FLAG))) {
+	if (CC_A) {
 		*out = (UINT16)src;
 	}
 }
@@ -530,7 +530,7 @@ CMOVA_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & (Z_FLAG | C_FLAG))) {
+	if (CC_A) {
 		*out = src;
 	}
 }
@@ -542,7 +542,7 @@ CMOVNA_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & (Z_FLAG | C_FLAG)) {
+	if (CC_NA) {
 		*out = (UINT16)src;
 	}
 }
@@ -554,7 +554,7 @@ CMOVNA_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & (Z_FLAG | C_FLAG)) {
+	if (CC_NA) {
 		*out = src;
 	}
 }
@@ -566,7 +566,7 @@ CMOVS_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & S_FLAG) {
+	if (CC_S) {
 		*out = (UINT16)src;
 	}
 }
@@ -578,7 +578,7 @@ CMOVS_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & S_FLAG) {
+	if (CC_S) {
 		*out = src;
 	}
 }
@@ -590,7 +590,7 @@ CMOVNS_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & S_FLAG)) {
+	if (CC_NS) {
 		*out = (UINT16)src;
 	}
 }
@@ -602,7 +602,7 @@ CMOVNS_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & S_FLAG)) {
+	if (CC_NS) {
 		*out = src;
 	}
 }
@@ -614,7 +614,7 @@ CMOVP_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & P_FLAG) {
+	if (CC_P) {
 		*out = (UINT16)src;
 	}
 }
@@ -626,7 +626,7 @@ CMOVP_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (CPU_FLAGL & P_FLAG) {
+	if (CC_P) {
 		*out = src;
 	}
 }
@@ -638,7 +638,7 @@ CMOVNP_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & P_FLAG)) {
+	if (CC_NP) {
 		*out = (UINT16)src;
 	}
 }
@@ -650,7 +650,7 @@ CMOVNP_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if (!(CPU_FLAGL & P_FLAG)) {
+	if (CC_NP) {
 		*out = src;
 	}
 }
@@ -662,7 +662,7 @@ CMOVL_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if ((!CPU_OV) != (!(CPU_FLAGL & S_FLAG))) {
+	if (CC_L) {
 		*out = (UINT16)src;
 	}
 }
@@ -674,7 +674,7 @@ CMOVL_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if ((!CPU_OV) != (!(CPU_FLAGL & S_FLAG))) {
+	if (CC_L) {
 		*out = src;
 	}
 }
@@ -686,7 +686,7 @@ CMOVNL_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if ((!CPU_OV) == (!(CPU_FLAGL & S_FLAG))) {
+	if (CC_NL) {
 		*out = (UINT16)src;
 	}
 }
@@ -698,7 +698,7 @@ CMOVNL_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if ((!CPU_OV) == (!(CPU_FLAGL & S_FLAG))) {
+	if (CC_NL) {
 		*out = src;
 	}
 }
@@ -710,7 +710,7 @@ CMOVLE_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if ((CPU_FLAGL & Z_FLAG) || ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV))) {
+	if (CC_LE) {
 		*out = (UINT16)src;
 	}
 }
@@ -722,7 +722,7 @@ CMOVLE_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if ((CPU_FLAGL & Z_FLAG) || ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV))) {
+	if (CC_LE) {
 		*out = src;
 	}
 }
@@ -734,7 +734,7 @@ CMOVNLE_GwEw(void)
 	UINT32 op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	if ((!(CPU_FLAGL & Z_FLAG)) && ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV))) {
+	if (CC_NLE) {
 		*out = (UINT16)src;
 	}
 }
@@ -746,7 +746,7 @@ CMOVNLE_GdEd(void)
 	UINT32 op, src;
 
 	PREPART_REG32_EA(op, src, out, 2, 5);
-	if ((!(CPU_FLAGL & Z_FLAG)) && ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV))) {
+	if (CC_NLE) {
 		*out = src;
 	}
 }

@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.15 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.16 2004/03/22 14:22:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -200,7 +200,7 @@ void
 JO_Jb(void)
 {
 
-	if (!CPU_OV) {
+	if (CC_NO) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -211,7 +211,7 @@ void
 JO_Jw(void)
 {
 
-	if (!CPU_OV) {
+	if (CC_NO) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -222,7 +222,7 @@ void
 JO_Jd(void)
 {
 
-	if (!CPU_OV) {
+	if (CC_NO) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -234,7 +234,7 @@ void
 JNO_Jb(void)
 {
 
-	if (CPU_OV) {
+	if (CC_O) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -245,7 +245,7 @@ void
 JNO_Jw(void)
 {
 
-	if (CPU_OV) {
+	if (CC_O) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -256,7 +256,7 @@ void
 JNO_Jd(void)
 {
 
-	if (CPU_OV) {
+	if (CC_O) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -268,7 +268,7 @@ void
 JC_Jb(void)
 {
 
-	if (!(CPU_FLAGL & C_FLAG)) {
+	if (CC_NC) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -279,7 +279,7 @@ void
 JC_Jw(void)
 {
 
-	if (!(CPU_FLAGL & C_FLAG)) {
+	if (CC_NC) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -290,7 +290,7 @@ void
 JC_Jd(void)
 {
 
-	if (!(CPU_FLAGL & C_FLAG)) {
+	if (CC_NC) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -302,7 +302,7 @@ void
 JNC_Jb(void)
 {
 
-	if (CPU_FLAGL & C_FLAG) {
+	if (CC_C) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -312,7 +312,7 @@ void
 JNC_Jw(void)
 {
 
-	if (CPU_FLAGL & C_FLAG) {
+	if (CC_C) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -322,7 +322,7 @@ void
 JNC_Jd(void)
 {
 
-	if (CPU_FLAGL & C_FLAG) {
+	if (CC_C) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -334,7 +334,7 @@ void
 JZ_Jb(void)
 {
 
-	if (!(CPU_FLAGL & Z_FLAG)) {
+	if (CC_NZ) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -345,7 +345,7 @@ void
 JZ_Jw(void)
 {
 
-	if (!(CPU_FLAGL & Z_FLAG)) {
+	if (CC_NZ) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -356,7 +356,7 @@ void
 JZ_Jd(void)
 {
 
-	if (!(CPU_FLAGL & Z_FLAG)) {
+	if (CC_NZ) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -368,7 +368,7 @@ void
 JNZ_Jb(void)
 {
 
-	if (CPU_FLAGL & Z_FLAG) {
+	if (CC_Z) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -379,7 +379,7 @@ void
 JNZ_Jw(void)
 {
 
-	if (CPU_FLAGL & Z_FLAG) {
+	if (CC_Z) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -390,7 +390,7 @@ void
 JNZ_Jd(void)
 {
 
-	if (CPU_FLAGL & Z_FLAG) {
+	if (CC_Z) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -402,7 +402,7 @@ void
 JNA_Jb(void)
 {
 
-	if (!(CPU_FLAGL & (Z_FLAG | C_FLAG))) {
+	if (CC_A) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -413,7 +413,7 @@ void
 JNA_Jw(void)
 {
 
-	if (!(CPU_FLAGL & (Z_FLAG | C_FLAG))) {
+	if (CC_A) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -424,7 +424,7 @@ void
 JNA_Jd(void)
 {
 
-	if (!(CPU_FLAGL & (Z_FLAG | C_FLAG))) {
+	if (CC_A) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -436,7 +436,7 @@ void
 JA_Jb(void)
 {
 
-	if (CPU_FLAGL & (Z_FLAG | C_FLAG)) {
+	if (CC_NA) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -447,7 +447,7 @@ void
 JA_Jw(void)
 {
 
-	if (CPU_FLAGL & (Z_FLAG | C_FLAG)) {
+	if (CC_NA) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -458,7 +458,7 @@ void
 JA_Jd(void)
 {
 
-	if (CPU_FLAGL & (Z_FLAG | C_FLAG)) {
+	if (CC_NA) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -470,7 +470,7 @@ void
 JS_Jb(void)
 {
 
-	if (!(CPU_FLAGL & S_FLAG)) {
+	if (CC_NS) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -481,7 +481,7 @@ void
 JS_Jw(void)
 {
 
-	if (!(CPU_FLAGL & S_FLAG)) {
+	if (CC_NS) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -492,7 +492,7 @@ void
 JS_Jd(void)
 {
 
-	if (!(CPU_FLAGL & S_FLAG)) {
+	if (CC_NS) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -504,7 +504,7 @@ void
 JNS_Jb(void)
 {
 
-	if (CPU_FLAGL & S_FLAG) {
+	if (CC_S) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -515,7 +515,7 @@ void
 JNS_Jw(void)
 {
 
-	if (CPU_FLAGL & S_FLAG) {
+	if (CC_S) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -526,7 +526,7 @@ void
 JNS_Jd(void)
 {
 
-	if (CPU_FLAGL & S_FLAG) {
+	if (CC_S) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -538,7 +538,7 @@ void
 JP_Jb(void)
 {
 
-	if (!(CPU_FLAGL & P_FLAG)) {
+	if (CC_NP) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -549,7 +549,7 @@ void
 JP_Jw(void)
 {
 
-	if (!(CPU_FLAGL & P_FLAG)) {
+	if (CC_NP) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -560,7 +560,7 @@ void
 JP_Jd(void)
 {
 
-	if (!(CPU_FLAGL & P_FLAG)) {
+	if (CC_NP) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -572,7 +572,7 @@ void
 JNP_Jb(void)
 {
 
-	if (CPU_FLAGL & P_FLAG) {
+	if (CC_P) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -583,7 +583,7 @@ void
 JNP_Jw(void)
 {
 
-	if (CPU_FLAGL & P_FLAG) {
+	if (CC_P) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -594,7 +594,7 @@ void
 JNP_Jd(void)
 {
 
-	if (CPU_FLAGL & P_FLAG) {
+	if (CC_P) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -606,7 +606,7 @@ void
 JL_Jb(void)
 {
 
-	if ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV)) {
+	if (CC_NL) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -617,7 +617,7 @@ void
 JL_Jw(void)
 {
 
-	if ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV)) {
+	if (CC_NL) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -628,7 +628,7 @@ void
 JL_Jd(void)
 {
 
-	if ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV)) {
+	if (CC_NL) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -640,7 +640,7 @@ void
 JNL_Jb(void)
 {
 
-	if ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV)) {
+	if (CC_L) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -651,7 +651,7 @@ void
 JNL_Jw(void)
 {
 
-	if ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV)) {
+	if (CC_L) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -662,7 +662,7 @@ void
 JNL_Jd(void)
 {
 
-	if ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV)) {
+	if (CC_L) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -674,7 +674,7 @@ void
 JLE_Jb(void)
 {
 
-	if ((!(CPU_FLAGL & Z_FLAG)) && ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV))) {
+	if (CC_NLE) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -685,7 +685,7 @@ void
 JLE_Jw(void)
 {
 
-	if ((!(CPU_FLAGL & Z_FLAG)) && ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV))) {
+	if (CC_NLE) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -696,7 +696,7 @@ void
 JLE_Jd(void)
 {
 
-	if ((!(CPU_FLAGL & Z_FLAG)) && ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV))) {
+	if (CC_NLE) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
@@ -708,7 +708,7 @@ void
 JNLE_Jb(void)
 {
 
-	if ((CPU_FLAGL & Z_FLAG) || ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV))) {
+	if (CC_LE) {
 		JMPNOP(2, 1);
 	} else {
 		JMPSHORT(7);
@@ -719,7 +719,7 @@ void
 JNLE_Jw(void)
 {
 
-	if ((CPU_FLAGL & Z_FLAG) || ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV))) {
+	if (CC_LE) {
 		JMPNOP(2, 2);
 	} else {
 		JMPNEAR(7);
@@ -730,7 +730,7 @@ void
 JNLE_Jd(void)
 {
 
-	if ((CPU_FLAGL & Z_FLAG) || ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV))) {
+	if (CC_LE) {
 		JMPNOP(2, 4);
 	} else {
 		JMPNEAR_4(7);
