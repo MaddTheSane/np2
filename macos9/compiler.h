@@ -84,6 +84,9 @@ typedef unsigned char	BYTE;
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 
+#define	SUPPORT_RESUME
+#define	SUPPORT_STATSAVE
+
 #define	SOUNDRESERVE	80
 
 

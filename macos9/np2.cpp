@@ -31,10 +31,16 @@
 #include	"fddfile.h"
 
 
-#define	USE_RESUME
-
-
-		NP2OSCFG	np2oscfg = {100, 100,  0, 0, 0, 0,  0, 0, 0, 0, 0};
+		NP2OSCFG	np2oscfg = {100, 100,
+								0, 0, 0, 0,
+								0, 0,
+#if defined(SUPPORT_RESUME)
+								0,
+#endif
+#if defined(SUPPORT_STATSAVE)
+								0,
+#endif
+								0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -59,7 +65,64 @@ static const char np2app[] = "np2";
 static const char np2app[] = "np21";
 #endif
 
-static const char np2resume[] = "sav";
+
+// ----
+
+#if defined(SUPPORT_RESUME)
+static const char np2resumeext[] = "sav";
+#endif
+#if defined(SUPPORT_STATSAVE)
+static const char np2flagext[] = ".sv%u";
+#endif
+
+#if defined(SUPPORT_RESUME) || defined(SUPPORT_STATSAVE)
+static void getstatfilename(char *path, const char *ext, UINT size) {
+
+	file_cpyname(path, file_getcd(np2app), size);
+	file_catname(path, ext, size);
+}
+
+static void flagsave(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	statsave_save(path);
+}
+
+static void flagdelete(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	file_delete(path);
+}
+
+static int flagload(const char *ext, BOOL force) {
+
+	char	path[MAX_PATH];
+	char	buf[1024];
+	int		r;
+	int		ret;
+
+	getstatfilename(path, ext, sizeof(path));
+	r = statsave_check(path, buf, sizeof(buf));
+	if (r & (~STATFLAG_DISKCHG)) {
+		ResumeErrorDialogProc();
+		ret = IDCANCEL;
+	}
+	else if ((!force) && (r & STATFLAG_DISKCHG)) {
+		ret = ResumeWarningDialogProc(buf);
+	}
+	else {
+		ret = IDOK;
+	}
+	if (ret == IDOK) {
+		statsave_load(path);
+	}
+	return(ret);
+}
+#endif
 
 
 // ---- ‚¨‚Ü‚¶‚È‚¢
@@ -170,6 +233,14 @@ static void MenuBarInit(void) {
 		DeleteMenu(IDM_FDD4);
 	}
 
+#if defined(SUPPORT_STATSAVE)
+	if (!np2oscfg.statsave) {
+#endif
+		DeleteMenu(IDM_STATSAVE);
+#if defined(SUPPORT_STATSAVE)
+	}
+#endif
+
 	DrawMenuBar();
 }
 
@@ -182,6 +253,10 @@ static void HandleMenuChoice(long wParam) {
 
 	UINT	update;
 	Str255	applname;
+#if defined(SUPPORT_STATSAVE)
+	UINT	num;
+	char	ext[16];
+#endif
 
 	update = 0;
 	switch(wParam) {
@@ -611,6 +686,19 @@ static void HandleMenuChoice(long wParam) {
 				(void)OpenDeskAcc(applname);
 #endif
 			}
+#if defined(SUPPORT_STATSAVE)
+			else if (HiWord(wParam) == IDM_STATSAVE) {
+				num = LoWord(wParam);
+				if ((num >= 1) && (num < (1 + 10))) {
+					SPRINTF(ext, np2flagext, num - 1);
+					flagsave(ext);
+				}
+				else if ((num >= 12) && (num < (12 + 10))) {
+					SPRINTF(ext, np2flagext, num - 12);
+					flagload(ext, TRUE);
+				}
+			}
+#endif
 			break;
 	}
 	sysmng_update(update);
@@ -758,52 +846,6 @@ static void processwait(UINT waitcnt) {
 	}
 }
 
-static void getstatfilename(char *path, const char *ext, int size) {
-
-	file_cpyname(path, file_getcd(np2app), size);
-	file_catname(path, str_dot, size);
-	file_catname(path, ext, size);
-}
-
-static void flagsave(const char *ext) {
-
-	char	path[MAX_PATH];
-
-	getstatfilename(path, ext, sizeof(path));
-	statsave_save(path);
-}
-
-static void flagdelete(const char *ext) {
-
-	char	path[MAX_PATH];
-
-	getstatfilename(path, ext, sizeof(path));
-	file_delete(path);
-}
-
-static int flagload(const char *ext) {
-
-	int		ret;
-	char	path[MAX_PATH];
-	char	buf[1024];
-	int		r;
-
-	ret = IDOK;
-	getstatfilename(path, ext, sizeof(path));
-	r = statsave_check(path, buf, sizeof(buf));
-	if (r & (~STATFLAG_DISKCHG)) {
-		ResumeErrorDialogProc();
-		ret = IDCANCEL;
-	}
-	else if (r & STATFLAG_DISKCHG) {
-		ret = ResumeWarningDialogProc(buf);
-	}
-	if (ret == IDOK) {
-		statsave_load(path);
-	}
-	return(ret);
-}
-
 int main(int argc, char *argv[]) {
 
 	Rect		wRect;
@@ -890,9 +932,11 @@ int main(int argc, char *argv[]) {
 //	scrndraw_redraw();
 	pccore_reset();
 
+#if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume) {
-		flagload(np2resume);
+		flagload(np2resumeext, FALSE);
 	}
+#endif
 
 	SetEventMask(everyEvent);
 
@@ -985,12 +1029,14 @@ int main(int argc, char *argv[]) {
 
 	pccore_cfgupdate();
 
+#if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume) {
-		flagsave(np2resume);
+		flagsave(np2resumeext);
 	}
 	else {
-		flagdelete(np2resume);
+		flagdelete(np2resumeext);
 	}
+#endif
 
 	pccore_term();
 	S98_trash();

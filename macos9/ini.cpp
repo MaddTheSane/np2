@@ -405,7 +405,12 @@ static const INITBL iniitem[] = {
 	{"FDDRIVE2", INITYPE_BITMAP,	&np2cfg.fddequip,		1},
 	{"FDDRIVE3", INITYPE_BITMAP,	&np2cfg.fddequip,		2},
 	{"FDDRIVE4", INITYPE_BITMAP,	&np2cfg.fddequip,		3},
+#if defined(SUPPORT_RESUME)
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
+#endif
+#if defined(SUPPORT_STATSAVE)
+	{"statsave", INITYPE_BOOL,		&np2oscfg.statsave,		0},
+#endif
 	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
 	{"I286SAVE", INITYPE_BOOL,		&np2oscfg.I286SAVE,		0}};
 

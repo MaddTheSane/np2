@@ -10,7 +10,14 @@ typedef struct {
 
 	BYTE	F11KEY;
 	BYTE	F12KEY;
+
+#if defined(SUPPORT_RESUME)
 	BYTE	resume;
+#endif
+#if defined(SUPPORT_STATSAVE)
+	BYTE	statsave;
+#endif
+
 	BYTE	jastsnd;
 	BYTE	I286SAVE;
 } NP2OSCFG;
