@@ -658,6 +658,80 @@ snddrv_stop(void)
 
 #if defined(GCC_CPU_ARCH_AMD64)
 void PARTSCALL
+_saturation_s16(SINT16 *dst, const SINT32 *src, UINT size)
+{
+	asm volatile (
+		"movq	%0, %%rcx;"
+		"movq	%1, %%rdx;"
+		"movl	%2, %%ebx;"
+		"shrl	$1, %%ebx;"
+		"je	.ss16_ed;"
+	".ss16_lp:"
+		"movl	(%%rdx), %%eax;"
+		"cmpl	$0x000008000, %%eax;"
+		"jl	.ss16_min;"
+		"movw	$0x7fff, %%ax;"
+		"jmp	.ss16_set;"
+	".ss16_min:"
+		"cmpl	$0x0ffff8000, %%eax;"
+		"jg	.ss16_set;"
+		"movw	$0x8001, %%ax;"
+	".ss16_set:"
+		"leal	4(%%rdx), %%edx;"
+		"movw	%%ax, (%%rcx);"
+		"decl	%%ebx;"
+		"leal	2(%%rcx), %%ecx;"
+		"jne	.ss16_lp;"
+	".ss16_ed:"
+		: /* output */
+		: "m" (dst), "m" (src), "m" (size)
+		: "ebx");
+}
+
+void PARTSCALL
+_saturation_s16x(SINT16 *dst, const SINT32 *src, UINT size)
+{
+
+	asm volatile (
+		"movq	%0, %%rcx;"
+		"movq	%1, %%rdx;"
+		"movl	%2, %%ebx;"
+		"shrl	$2, %%ebx;"
+		"je	.ss16x_ed;"
+	".ss16x_lp:"
+		"movl	(%%rdx), %%eax;"
+		"cmpl	$0x000008000, %%eax;"
+		"jl	.ss16xl_min;"
+		"movw	$0x7fff, %%ax;"
+		"jmp	.ss16xl_set;"
+	".ss16xl_min:"
+		"cmpl	$0x0ffff8000, %%eax;"
+		"jg	.ss16xl_set;"
+		"movw	$0x8001, %%ax;"
+	".ss16xl_set:"
+		"movw	%%ax, 2(%%rcx);"
+		"movl	4(%%rdx), %%eax;"
+		"cmpl	$0x000008000, %%eax;"
+		"jl	.ss16xr_min;"
+		"movw	$0x7fff, %%ax;"
+		"jmp	.ss16xr_set;"
+	".ss16xr_min:"
+		"cmpl	$0x0ffff8000, %%eax;"
+		"jg	.ss16xr_set;"
+		"mov	$0x8001, %%ax;"
+	".ss16xr_set:"
+		"movw	%%ax, (%%rcx);"
+		"leal	8(%%rdx), %%edx;"
+		"decl	%%ebx;"
+		"leal	4(%%rcx), %%ecx;"
+		"jne	.ss16x_lp;"
+	".ss16x_ed:"
+		: /* output */
+		: "m" (dst), "m" (src), "m" (size)
+		: "ebx");
+}
+
+void PARTSCALL
 saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
 {
 
