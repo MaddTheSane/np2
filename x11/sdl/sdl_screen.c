@@ -144,11 +144,11 @@ scrnmng_create(BYTE mode)
 		scrnmng.width = width;
 		scrnmng.height = height;
 		scrnmng.sm.bpp = fmt->BitsPerPixel;
-		return(SUCCESS);
+		return SUCCESS;
 	}
 
 	fprintf(stderr, "Error: Bad screen mode");
-	return(FAILURE);
+	return FAILURE;
 }
 
 void
@@ -164,11 +164,7 @@ scrnmng_makepal16(RGB32 pal32)
 	RGB16 ret;
 
 	ret = (pal32.p.r & 0xf8) << 8;
-#if defined(SIZE_QVGA)
-	ret += (pal32.p.g & 0xfc) << (3 + 16);
-#else
 	ret += (pal32.p.g & 0xfc) << 3;
-#endif
 	ret += pal32.p.b >> 3;
 
 	return ret;
@@ -196,8 +192,9 @@ void
 scrnmng_setextend(int extend)
 {
 
-	/* nothing to do */
 	UNUSED(extend);
+
+	/* nothing to do */
 }
 
 const SCRNSURF *
@@ -208,7 +205,7 @@ scrnmng_surflock(void)
 	if (scrnmng.vram == NULL) {
 		surface = SDL_GetVideoSurface();
 		if (surface == NULL) {
-			return(NULL);
+			return NULL;
 		}
 		SDL_LockSurface(surface);
 		scrnmng.surface = surface;
@@ -225,7 +222,7 @@ scrnmng_surflock(void)
 	scrnsurf.width = min(scrnstat.width, 640);
 	scrnsurf.height = min(scrnstat.height, 400);
 	scrnsurf.extend = 0;
-	return(&scrnsurf);
+	return &scrnsurf;
 }
 
 static void
@@ -245,10 +242,6 @@ draw_onmenu(void)
 	rt.top = 0;
 	rt.right = min(scrnstat.width, 640);
 	rt.bottom = min(scrnstat.height, 400);
-#if defined(SIZE_QVGA)
-	rt.right >>= 1;
-	rt.bottom >>= 1;
-#endif
 
 	surface = SDL_GetVideoSurface();
 	if (surface == NULL) {
