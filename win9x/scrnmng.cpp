@@ -498,12 +498,12 @@ void scrnmng_querypalette(void) {
 	}
 }
 
-UINT16 scrnmng_makepal16(RGB32 pal32) {
+RGB16 scrnmng_makepal16(RGB32 pal32) {
 
 	RGB32	pal;
 
 	pal.d = pal32.d & ddraw.pal16mask.d;
-	return((UINT16)((pal.p.g << ddraw.l16g) +
+	return((RGB16)((pal.p.g << ddraw.l16g) +
 						(pal.p.r << ddraw.l16r) + (pal.p.b >> ddraw.r16b)));
 }
 

@@ -45,7 +45,7 @@ extern "C" {
 
 extern	RGB32		np2_pal32[256];
 #if defined(SUPPORT_16BPP)
-extern	UINT16		np2_pal16[256];
+extern	RGB16		np2_pal16[256];
 #endif
 extern	PALEVENT	palevent;
 extern	BYTE		pal_monotable[16];

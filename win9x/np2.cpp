@@ -1105,12 +1105,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
-	np2arg_analize(lpszCmdLine);				// タイミング修正	// ver0.29
+	np2arg_analize(lpszCmdLine);
 	initload();
 
 	srand((unsigned)time(NULL));
-
-	np2arg_analize(lpszCmdLine);
 
 	CopyMemory(szClassName, np2oscfg.winid, 3);
 

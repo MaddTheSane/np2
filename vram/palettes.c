@@ -8,7 +8,7 @@
 
 		RGB32		np2_pal32[256];
 #if defined(SUPPORT_16BPP)
-		UINT16		np2_pal16[256];
+		RGB16		np2_pal16[256];
 #endif
 		PALEVENT	palevent;
 static	RGB32		degpal1[8];
@@ -218,7 +218,7 @@ static void pal_makedegital_lcd(const BYTE *paltbl) {
 	UINT	i;
 	UINT32	pal32;
 #if defined(SUPPORT_16BPP)
-	UINT16	pal16;
+	RGB16	pal16;
 #endif
 
 	for (i=0; i<4; i++) {
@@ -267,7 +267,7 @@ static void pal_maketext(void) {
 	UINT	j;
 	UINT	k;
 #if defined(SUPPORT_16BPP)
-	UINT16	pal16;
+	RGB16	pal16;
 #endif
 
 	k = NP2PAL_TEXT2;
@@ -301,7 +301,7 @@ static void pal_maketext_lcd(void) {
 	UINT	j;
 	UINT	k;
 #if defined(SUPPORT_16BPP)
-	UINT16	pal16;
+	RGB16	pal16;
 #endif
 
 	k = NP2PAL_TEXT2;

@@ -63,7 +63,7 @@ void scrnmng_dispclock(void);
 #define	scrnmng_allflash()		scrnmng.allflash = TRUE
 #define	scrnmng_palchanged()	scrnmng.palchanged = TRUE
 
-UINT16 scrnmng_makepal16(RGB32 pal32);
+RGB16 scrnmng_makepal16(RGB32 pal32);
 
 
 // ---- for windows

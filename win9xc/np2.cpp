@@ -756,8 +756,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	srand((unsigned)time(NULL));
 
-//	np2arg_analize(lpszCmdLine);
-
 	if ((hwndorg = FindWindow(szClassName, NULL)) != NULL) {
 		ShowWindow(hwndorg, SW_RESTORE);
 		SetForegroundWindow(hwndorg);
