@@ -216,16 +216,14 @@ drawmng_invalidate(DRAWMNG_HDL dhdl, RECT_T *r)
 	gint x, y, w, h;
 
 	if (r == NULL) {
-		x = y = 0;
-		w = hdl->d.width;
-		h = hdl->d.height;
+		gtk_widget_queue_draw(hdl->drawarea);
 	} else {
 		x = r->left;
 		y = r->top;
 		w = r->right - r->left;
 		h = r->bottom - r->top;
+		gtk_widget_queue_draw_area(hdl->drawarea, x, y, w, h);
 	}
-	gtk_widget_queue_draw_area(hdl->drawarea, x, y, w, h);
 }
 
 void *
