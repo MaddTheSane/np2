@@ -14,8 +14,7 @@
 	BYTE	mem[0x200000];
 
 
-// ‚±‚ê—v‚éHH
-#define	USE_HIMEM		0x10fff0
+#define	USE_HIMEM		0x110000
 
 // ---- write byte
 
@@ -637,7 +636,7 @@ static MEMFN memfn = {
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 80
 			tram_rd,	vram_r0,	vram_r0,	vram_r0,		// a0
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// c0
-			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// f0
+			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// e0
 
 		   {i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 20
@@ -757,7 +756,7 @@ const VACCTBL	*vacc;
 	memfn.wr16[0xb8000 >> 15] = vacc->wr16;
 	memfn.wr16[0xe0000 >> 15] = vacc->wr16;
 
-	if (!(func & 0x10)) {							// degital
+	if (!(func & 0x10)) {							// digital
 		memfn.wr8[0xe0000 >> 15] = i286_wn;
 		memfn.wr16[0xe0000 >> 15] = i286w_wn;
 		memfn.rd8[0xe0000 >> 15] = i286_nonram_r;
@@ -766,12 +765,13 @@ const VACCTBL	*vacc;
 }
 
 
-REG8 MEMCALL __i286_memoryread(UINT32 address) {
+REG8 MEMCALL i286_memoryread(UINT32 paddr) {
+
+	UINT32	address = paddr & CPU_ADRSMASK;
 
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);
 	}
-#if defined(USE_HIMEM)
 	else if (address >= USE_HIMEM) {
 		address -= 0x100000;
 		if (address < CPU_EXTMEMSIZE) {
@@ -781,20 +781,19 @@ REG8 MEMCALL __i286_memoryread(UINT32 address) {
 			return(0xff);
 		}
 	}
-#endif
 	else {
 		return(memfn.rd8[(address >> 15) & 0x1f](address));
 	}
 }
 
-REG16 MEMCALL __i286_memoryread_w(UINT32 address) {
+REG16 MEMCALL i286_memoryread_w(UINT32 paddr) {
 
+	UINT32	address = paddr & CPU_ADRSMASK;
 	REG16	ret;
 
 	if (address < (I286_MEMREADMAX - 1)) {
 		return(LOADINTELWORD(mem + address));
 	}
-#if defined(USE_HIMEM)
 	else if (address >= (USE_HIMEM - 1)) {
 		address -= 0x100000;
 		if (address == (USE_HIMEM - 0x100000 - 1)) {
@@ -815,52 +814,62 @@ REG16 MEMCALL __i286_memoryread_w(UINT32 address) {
 		}
 		return(ret);
 	}
-#endif
 	else if ((address & 0x7fff) != 0x7fff) {
 		return(memfn.rd16[(address >> 15) & 0x1f](address));
 	}
 	else {
 		ret = memfn.rd8[(address >> 15) & 0x1f](address);
 		address++;
-		ret += memfn.rd8[(address >> 15) & 0x1f](address) << 8;
+		ret += (REG16)(memfn.rd8[(address >> 15) & 0x1f](address)) << 8;
 		return(ret);
 	}
 }
 
-UINT32 MEMCALL __i286_memoryread_d(UINT32 address) {
+UINT32 MEMCALL i286_memoryread_d(UINT32 paddr) {
 
-	UINT32 ret;
+	UINT32	address = paddr & CPU_ADRSMASK;
+	UINT32	adrs;
+	UINT32	ret;
 
-	ret = __i286_memoryread_w(address);
-	ret |= (UINT32)__i286_memoryread_w(address + 2) << 16;
-
+	if (address < (I286_MEMREADMAX - 3)) {
+		return(LOADINTELDWORD(mem + address));
+	}
+	else if (address >= USE_HIMEM) {
+		adrs = address - 0x100000;
+		if (adrs + 3 < CPU_EXTMEMSIZE) {
+			return(LOADINTELDWORD(CPU_EXTMEM + adrs));
+		}
+	}
+	ret = i286_memoryread_w(address);
+	ret += (UINT32)i286_memoryread_w(address + 2) << 16;
 	return ret;
 }
 
-void MEMCALL __i286_memorywrite(UINT32 address, REG8 value) {
+void MEMCALL i286_memorywrite(UINT32 paddr, REG8 value) {
+
+	UINT32	address = paddr & CPU_ADRSMASK;
 
 	if (address < I286_MEMWRITEMAX) {
 		mem[address] = (BYTE)value;
 	}
-#if defined(USE_HIMEM)
 	else if (address >= USE_HIMEM) {
 		address -= 0x100000;
 		if (address < CPU_EXTMEMSIZE) {
 			CPU_EXTMEM[address] = (BYTE)value;
 		}
 	}
-#endif
 	else {
 		memfn.wr8[(address >> 15) & 0x1f](address, value);
 	}
 }
 
-void MEMCALL __i286_memorywrite_w(UINT32 address, REG16 value) {
+void MEMCALL i286_memorywrite_w(UINT32 paddr, REG16 value) {
+
+	UINT32	address = paddr & CPU_ADRSMASK;
 
 	if (address < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + address, value);
 	}
-#if defined(USE_HIMEM)
 	else if (address >= (USE_HIMEM - 1)) {
 		address -= 0x100000;
 		if (address == (USE_HIMEM - 0x100000 - 1)) {
@@ -874,7 +883,6 @@ void MEMCALL __i286_memorywrite_w(UINT32 address, REG16 value) {
 			CPU_EXTMEM[address] = (BYTE)(value >> 8);
 		}
 	}
-#endif
 	else if ((address & 0x7fff) != 0x7fff) {
 		memfn.wr16[(address >> 15) & 0x1f](address, value);
 	}
@@ -885,10 +893,24 @@ void MEMCALL __i286_memorywrite_w(UINT32 address, REG16 value) {
 	}
 }
 
-void MEMCALL __i286_memorywrite_d(UINT32 address, UINT32 value) {
+void MEMCALL i286_memorywrite_d(UINT32 paddr, UINT32 value) {
 
-	__i286_memorywrite_w(address, value & 0xffff);
-	__i286_memorywrite_w(address + 2, (WORD)(value >> 16));
+	UINT32	address = paddr & CPU_ADRSMASK;
+	UINT32	adrs;
+
+	if (address < (I286_MEMWRITEMAX - 3)) {
+		STOREINTELDWORD(mem + address, value);
+		return;
+	}
+	else if (address >= USE_HIMEM) {
+		adrs = address - 0x100000;
+		if (adrs + 3 < CPU_EXTMEMSIZE) {
+			STOREINTELDWORD(CPU_EXTMEM + adrs, value);
+			return;
+		}
+	}
+	i286_memorywrite_w(address, value & 0xffff);
+	i286_memorywrite_w(address + 2, (WORD)(value >> 16));
 }
 
 #if 0
@@ -1062,4 +1084,3 @@ const BYTE	*out;
 	}
 }
 #endif
-

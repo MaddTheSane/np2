@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.10 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: interface.c,v 1.11 2004/02/05 16:41:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -38,8 +38,9 @@
 #endif
 
 
-static void ia32_initreg(void) {
-
+void
+ia32_initreg(void)
+{
 	int i;
 
 	CPU_STATSAVE.cpu_inst_default.seg_base = (DWORD)-1;

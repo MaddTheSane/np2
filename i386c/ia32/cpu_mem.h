@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.h,v 1.2 2004/01/25 07:53:09 yui Exp $	*/
+/*	$Id: cpu_mem.h,v 1.3 2004/02/05 16:41:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,16 +30,12 @@
 #ifndef	IA32_CPU_CPU_MEM_H__
 #define	IA32_CPU_CPU_MEM_H__
 
+#include "memory.h"
 #include "segments.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-// extern BYTE *cpumem;
-// extern DWORD extmem_size;
-
-int init_cpumem(UINT8 usemem);
 
 /*
  * memory access check
@@ -50,16 +46,6 @@ BOOL cpu_stack_push_check(descriptor_t* sd, DWORD madr, DWORD length);
 BOOL cpu_stack_pop_check(descriptor_t* sd, DWORD madr, DWORD length);
 #define	CHECK_STACK_PUSH(sdp, addr, n)	cpu_stack_push_check(sdp, addr, n)
 #define	CHECK_STACK_POP(sdp, addr, n)	cpu_stack_pop_check(sdp, addr, n)
-
-/*
- * physcal address function
- */
-void MEMCALL cpu_memorywrite(DWORD address, BYTE value);
-void MEMCALL cpu_memorywrite_w(DWORD address, WORD value);
-void MEMCALL cpu_memorywrite_d(DWORD address, DWORD value);
-BYTE MEMCALL cpu_memoryread(DWORD address);
-WORD MEMCALL cpu_memoryread_w(DWORD address);
-DWORD MEMCALL cpu_memoryread_d(DWORD address);
 
 /*
  * virtual address function
