@@ -441,6 +441,7 @@ BOOL getwave_open(GETSND snd, BYTE *ptr, UINT size) {
 	riff = (RIFF_HEADER *)ptr;
 	pos = sizeof(RIFF_HEADER);
 	if (size < pos) {
+		TRACEOUT(("wav: error RIFF header"));
 		goto gwopn_err;
 	}
 	if (memcmp(riff->head, fmt_riff, 4)) {
@@ -452,6 +453,7 @@ BOOL getwave_open(GETSND snd, BYTE *ptr, UINT size) {
 		head = (WAVE_HEADER *)(ptr + pos);
 		pos += sizeof(WAVE_HEADER);
 		if (size < pos) {
+			TRACEOUT(("wav: error fmt header"));
 			goto gwopn_err;
 		}
 		if (memcmp(head->head, chunk_fmt, 4)) {
@@ -544,11 +546,9 @@ BOOL getwave_open(GETSND snd, BYTE *ptr, UINT size) {
 	// “o˜^`
 	snd->datptr = ptr;
 	snd->datsize = size;
-	TRACEOUT(("ok"));
 	return(SUCCESS);
 
 gwopn_err:
-	TRACEOUT(("err"));
 	return(FAILURE);
 }
 
