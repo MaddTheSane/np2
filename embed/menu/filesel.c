@@ -385,11 +385,15 @@ static const char fddext[] = "d88\088d\0d98\098d\0fdi\0" \
 								"xdf\0hdm\0dup\02hd\0tfd\0";
 static const char hddtitle[] = "Select HDD image";
 static const char sasiext[] = "thd\0nhd\0hdi\0";
-static const char scsiext[] = "hdd\0";
 
 static const FSELPRM fddprm = {fddtitle, diskfilter, fddext};
 static const FSELPRM sasiprm = {hddtitle, diskfilter, sasiext};
+
+#if defined(SUPPORT_SCSI)
+static const char scsiext[] = "hdd\0";
 static const FSELPRM scsiprm = {hddtitle, diskfilter, scsiext};
+#endif
+
 
 void filesel_fdd(REG8 drv) {
 
@@ -405,26 +409,28 @@ void filesel_fdd(REG8 drv) {
 void filesel_hdd(REG8 drv) {
 
 	UINT		num;
-	char		path[MAX_PATH];
 	char		*p;
 const FSELPRM	*prm;
+	char		path[MAX_PATH];
 
 	num = drv & 0x0f;
+	p = NULL;
+	prm = NULL;
 	if (!(drv & 0x20)) {		// SASI/IDE
-		if (num >= 2) {
-			return;
+		if (num < 2) {
+			p = np2cfg.sasihdd[num];
+			prm = &sasiprm;
 		}
-		p = np2cfg.sasihdd[num];
-		prm = &sasiprm;
 	}
+#if defined(SUPPORT_SCSI)
 	else {						// SCSI
-		if (num >= 4) {
-			return;
+		if (num < 4) {
+			p = np2cfg.scsihdd[num];
+			prm = &scsiprm;
 		}
-		p = np2cfg.scsihdd[num];
-		prm = &scsiprm;
 	}
-	if (selectfile(prm, path, sizeof(path), p)) {
+#endif
+	if ((prm) && (selectfile(prm, path, sizeof(path), p))) {
 		diskdrv_sethdd(drv, path);
 	}
 }
