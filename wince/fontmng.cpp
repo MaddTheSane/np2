@@ -249,7 +249,11 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat,
 
 	FillRect(fhdl->hdcimage, &fhdl->rect,
 										(HBRUSH)GetStockObject(BLACK_BRUSH));
+#if !defined(_WIN32_WCE)
 	TextOut(fhdl->hdcimage, 0, 0, string, length);
+#else
+	ExtTextOut(fhdl->hdcimage, 0, 0, ETO_OPAQUE, NULL, string, length, NULL);
+#endif
 	getlength1(fhdl, fdat, string, length);
 }
 
@@ -269,7 +273,12 @@ BRESULT fontmng_getsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 		if (!leng) {
 			break;
 		}
-#if defined(UNICODE) && defined(OSLANG_UTF8)
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+		UINT16 unistr[2];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, string, -1,
+												unistr, NELEMENTS(unistr));
+		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
 		UINT16 unistr[2];
 		codecnv_utf8toucs2(unistr, NELEMENTS(unistr), string, (UINT)-1);
 		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
@@ -308,7 +317,12 @@ BRESULT fontmng_getdrawsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 		if (!leng) {
 			break;
 		}
-#if defined(UNICODE) && defined(OSLANG_UTF8)
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+		UINT16 unistr[2];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, string, -1,
+												unistr, NELEMENTS(unistr));
+		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
 		UINT16 unistr[2];
 		codecnv_utf8toucs2(unistr, NELEMENTS(unistr), string, (UINT)-1);
 		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
@@ -479,7 +493,12 @@ FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
 	fdat = (FNTDAT)(fhdl + 1);
 #endif
 
-#if defined(UNICODE) && defined(OSLANG_UTF8)
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+	UINT16 unistr[2];
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, string, -1,
+												unistr, NELEMENTS(unistr));
+	fontmng_getchar(fhdl, fdat, unistr, 1);
+#elif defined(UNICODE) && defined(OSLANG_UTF8)
 	UINT16 unistr[2];
 	codecnv_utf8toucs2(unistr, NELEMENTS(unistr), string, (UINT)-1);
 	fontmng_getchar(fhdl, fdat, unistr, 1);

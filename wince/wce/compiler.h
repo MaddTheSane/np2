@@ -44,6 +44,20 @@ typedef	signed int		SINT32;
 #define	HIGH16(a)	(((UINT32)(a)) >> 16)
 
 
+#define	BRESULT				UINT8
+#if defined(OSLANG_UCS2)
+#define	OEMCHAR				TCHAR
+#define	OEMTEXT(string)		_T(string)
+#define	OEMSPRINTF			wsprintf
+#define	OEMSTRLEN			lstrlen
+#else
+#define	OEMCHAR				char
+#define	OEMTEXT(string)		(string)
+#define	OEMSPRINTF			sprintf
+#define	OEMSTRLEN			strlen
+#endif
+
+
 #include	"common.h"
 #include	"milstr.h"
 #include	"_memory.h"
@@ -53,9 +67,9 @@ typedef	signed int		SINT32;
 
 
 #define	GETTICK()	GetTickCount()
+#define	__ASSERT(s)
 #define	SPRINTF		sprintf
 #define	STRLEN		strlen
-#define	__ASSERT(s)
 
 #if defined(WIN32_PLATFORM_PSPC)
 #define	MENU_TASKMINIMIZE

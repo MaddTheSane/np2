@@ -155,9 +155,7 @@ DEP_CPP__MEMO=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -183,10 +181,12 @@ DEP_CPP__MEMO=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP__MEMO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -205,8 +205,6 @@ DEP_CPP_BMPDA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -231,9 +229,11 @@ DEP_CPP_BMPDA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BMPDA=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -251,8 +251,6 @@ DEP_CPP_LSTAR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -275,9 +273,11 @@ DEP_CPP_LSTAR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_LSTAR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -295,8 +295,6 @@ DEP_CPP_MILST=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -319,9 +317,11 @@ DEP_CPP_MILST=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MILST=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -340,8 +340,6 @@ DEP_CPP_PARTS=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -366,9 +364,11 @@ DEP_CPP_PARTS=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PARTS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -389,9 +389,7 @@ DEP_CPP_PROFI=\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -421,10 +419,12 @@ DEP_CPP_PROFI=\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PROFI=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -442,8 +442,6 @@ DEP_CPP_RECT_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -466,9 +464,11 @@ DEP_CPP_RECT_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_RECT_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -487,8 +487,6 @@ DEP_CPP_RESIZ=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\common\resize.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -513,9 +511,11 @@ DEP_CPP_RESIZ=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\common\resize.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_RESIZ=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -534,8 +534,6 @@ DEP_CPP_STRRE=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -554,9 +552,11 @@ DEP_CPP_STRRE=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_STRRE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -575,9 +575,7 @@ DEP_CPP_TEXTF=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -603,10 +601,12 @@ DEP_CPP_TEXTF=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_TEXTF=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -628,7 +628,6 @@ DEP_CPP_I286C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -663,8 +662,10 @@ DEP_CPP_I286C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C=\
+	"..\I286C\steptrap.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -720,7 +721,6 @@ DEP_CPP_I286C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -758,6 +758,9 @@ DEP_CPP_I286C=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_I286C=\
+	"..\common\ucscnv.h"\
+	
 
 !ENDIF 
 
@@ -774,11 +777,9 @@ DEP_CPP_I286C_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -804,12 +805,14 @@ DEP_CPP_I286C_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -827,11 +830,9 @@ DEP_CPP_I286C_8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -857,12 +858,14 @@ DEP_CPP_I286C_8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_8=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -880,11 +883,9 @@ DEP_CPP_I286C_E=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -910,12 +911,14 @@ DEP_CPP_I286C_E=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_E=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -933,11 +936,9 @@ DEP_CPP_I286C_F=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -963,12 +964,14 @@ DEP_CPP_I286C_F=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_F=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -986,11 +989,9 @@ DEP_CPP_I286C_FE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -1016,12 +1017,14 @@ DEP_CPP_I286C_FE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_FE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1040,7 +1043,6 @@ DEP_CPP_I286C_M=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -1073,8 +1075,10 @@ DEP_CPP_I286C_M=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_M=\
+	"..\I286C\inttrap.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -1130,7 +1134,6 @@ DEP_CPP_I286C_M=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -1165,6 +1168,9 @@ DEP_CPP_I286C_M=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_M=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1182,7 +1188,6 @@ DEP_CPP_I286C_R=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -1215,7 +1220,6 @@ DEP_CPP_I286C_R=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -1270,7 +1274,6 @@ DEP_CPP_I286C_R=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -1305,6 +1308,9 @@ DEP_CPP_I286C_R=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_R=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1322,12 +1328,10 @@ DEP_CPP_I286C_S=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\i286c_sf.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -1354,13 +1358,15 @@ DEP_CPP_I286C_S=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\i286c_sf.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_S=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1378,7 +1384,6 @@ DEP_CPP_MEMOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -1417,7 +1422,6 @@ DEP_CPP_MEMOR=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -1473,7 +1477,6 @@ DEP_CPP_MEMOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -1515,6 +1518,9 @@ DEP_CPP_MEMOR=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMOR=\
+	"..\common\ucscnv.h"\
+	
 
 !ENDIF 
 
@@ -1532,7 +1538,6 @@ DEP_CPP_V30PA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -1567,8 +1572,10 @@ DEP_CPP_V30PA=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_V30PA=\
+	"..\I286C\steptrap.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -1626,7 +1633,6 @@ DEP_CPP_V30PA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
@@ -1663,6 +1669,9 @@ DEP_CPP_V30PA=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_V30PA=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1684,7 +1693,6 @@ DEP_CPP_DMAV3=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1716,7 +1724,6 @@ DEP_CPP_DMAV3=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -1728,7 +1735,6 @@ DEP_CPP_DMAV3=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1763,6 +1769,9 @@ DEP_CPP_DMAV3=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_DMAV3=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -1772,7 +1781,6 @@ DEP_CPP_DMAV3=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1806,6 +1814,9 @@ DEP_CPP_DMAV3=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DMAV3=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1823,7 +1834,6 @@ DEP_CPP_DMAX8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1855,7 +1865,6 @@ DEP_CPP_DMAX8=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -1867,7 +1876,6 @@ DEP_CPP_DMAX8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1902,6 +1910,9 @@ DEP_CPP_DMAX8=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_DMAX8=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -1911,7 +1922,6 @@ DEP_CPP_DMAX8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1945,6 +1955,9 @@ DEP_CPP_DMAX8=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DMAX8=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -1962,7 +1975,6 @@ DEP_CPP_MEMEG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -1995,7 +2007,6 @@ DEP_CPP_MEMEG=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2007,7 +2018,6 @@ DEP_CPP_MEMEG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2043,6 +2053,9 @@ DEP_CPP_MEMEG=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMEG=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -2052,7 +2065,6 @@ DEP_CPP_MEMEG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2087,6 +2099,9 @@ DEP_CPP_MEMEG=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MEMEG=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2104,7 +2119,6 @@ DEP_CPP_MEMEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2136,7 +2150,6 @@ DEP_CPP_MEMEM=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2148,7 +2161,6 @@ DEP_CPP_MEMEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2183,6 +2195,9 @@ DEP_CPP_MEMEM=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMEM=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -2192,7 +2207,6 @@ DEP_CPP_MEMEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2226,6 +2240,9 @@ DEP_CPP_MEMEM=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MEMEM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2243,7 +2260,6 @@ DEP_CPP_MEMEP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2275,7 +2291,6 @@ DEP_CPP_MEMEP=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2287,7 +2302,6 @@ DEP_CPP_MEMEP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2322,6 +2336,9 @@ DEP_CPP_MEMEP=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMEP=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -2331,7 +2348,6 @@ DEP_CPP_MEMEP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2365,6 +2381,9 @@ DEP_CPP_MEMEP=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MEMEP=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2382,7 +2401,6 @@ DEP_CPP_MEMTR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -2416,7 +2434,6 @@ DEP_CPP_MEMTR=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2428,7 +2445,6 @@ DEP_CPP_MEMTR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -2465,6 +2481,9 @@ DEP_CPP_MEMTR=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMTR=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -2474,7 +2493,6 @@ DEP_CPP_MEMTR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -2510,6 +2528,9 @@ DEP_CPP_MEMTR=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MEMTR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2527,7 +2548,6 @@ DEP_CPP_MEMVR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2560,7 +2580,6 @@ DEP_CPP_MEMVR=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2572,7 +2591,6 @@ DEP_CPP_MEMVR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2608,6 +2626,9 @@ DEP_CPP_MEMVR=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMVR=\
+	"..\common\ucscnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
@@ -2617,7 +2638,6 @@ DEP_CPP_MEMVR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2652,6 +2672,9 @@ DEP_CPP_MEMVR=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MEMVR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2673,7 +2696,6 @@ DEP_CPP_ARTIC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2704,7 +2726,6 @@ DEP_CPP_ARTIC=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2757,7 +2778,6 @@ DEP_CPP_ARTIC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2790,6 +2810,9 @@ DEP_CPP_ARTIC=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_ARTIC=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2807,7 +2830,6 @@ DEP_CPP_CGROM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -2839,7 +2861,6 @@ DEP_CPP_CGROM=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -2893,7 +2914,6 @@ DEP_CPP_CGROM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -2927,6 +2947,9 @@ DEP_CPP_CGROM=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CGROM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -2944,7 +2967,6 @@ DEP_CPP_CPUIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -2975,7 +2997,6 @@ DEP_CPP_CPUIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3028,7 +3049,6 @@ DEP_CPP_CPUIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3061,6 +3081,9 @@ DEP_CPP_CPUIO=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CPUIO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3078,7 +3101,6 @@ DEP_CPP_CRTC_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3109,7 +3131,6 @@ DEP_CPP_CRTC_=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3162,7 +3183,6 @@ DEP_CPP_CRTC_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3195,6 +3215,9 @@ DEP_CPP_CRTC_=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CRTC_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3212,7 +3235,6 @@ DEP_CPP_DIPSW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3245,7 +3267,6 @@ DEP_CPP_DIPSW=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -3302,7 +3323,6 @@ DEP_CPP_DIPSW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3338,6 +3358,9 @@ DEP_CPP_DIPSW=\
 	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DIPSW=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3356,7 +3379,6 @@ DEP_CPP_DMAC_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3389,7 +3411,6 @@ DEP_CPP_DMAC_=\
 	"..\sound\cs4231.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3446,7 +3467,6 @@ DEP_CPP_DMAC_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3481,6 +3501,9 @@ DEP_CPP_DMAC_=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DMAC_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3498,7 +3521,6 @@ DEP_CPP_EGC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3531,7 +3553,6 @@ DEP_CPP_EGC_C=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3586,7 +3607,6 @@ DEP_CPP_EGC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3621,6 +3641,9 @@ DEP_CPP_EGC_C=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_EGC_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3638,7 +3661,6 @@ DEP_CPP_EMSIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3669,7 +3691,6 @@ DEP_CPP_EMSIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3722,7 +3743,6 @@ DEP_CPP_EMSIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3755,6 +3775,9 @@ DEP_CPP_EMSIO=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_EMSIO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3772,7 +3795,6 @@ DEP_CPP_EPSON=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3803,7 +3825,6 @@ DEP_CPP_EPSON=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3856,7 +3877,6 @@ DEP_CPP_EPSON=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -3889,6 +3909,9 @@ DEP_CPP_EPSON=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_EPSON=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -3906,7 +3929,6 @@ DEP_CPP_FDC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
 	"..\i286c\cpucore.h"\
@@ -3939,7 +3961,6 @@ DEP_CPP_FDC_C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -3994,7 +4015,6 @@ DEP_CPP_FDC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
 	"..\i286c\cpucore.h"\
@@ -4029,6 +4049,9 @@ DEP_CPP_FDC_C=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FDC_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -4046,7 +4069,6 @@ DEP_CPP_FDD32=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4076,7 +4098,6 @@ DEP_CPP_FDD32=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -4128,7 +4149,6 @@ DEP_CPP_FDD32=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4160,6 +4180,9 @@ DEP_CPP_FDD32=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FDD32=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -4177,7 +4200,6 @@ DEP_CPP_GDC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4213,7 +4235,6 @@ DEP_CPP_GDC_C=\
 	"..\timing.h"\
 	"..\vram\palettes.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -4273,7 +4294,6 @@ DEP_CPP_GDC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4313,6 +4333,9 @@ DEP_CPP_GDC_C=\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_GDC_C=\
+	"..\common\ucscnv.h"\
+	
 
 !ENDIF 
 
@@ -4329,7 +4352,6 @@ DEP_CPP_GDC_P=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4364,7 +4386,6 @@ DEP_CPP_GDC_P=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -4421,7 +4442,6 @@ DEP_CPP_GDC_P=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4459,6 +4479,9 @@ DEP_CPP_GDC_P=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_GDC_P=\
+	"..\common\ucscnv.h"\
+	
 
 !ENDIF 
 
@@ -4475,7 +4498,6 @@ DEP_CPP_GDC_S=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4509,7 +4531,6 @@ DEP_CPP_GDC_S=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -4565,7 +4586,6 @@ DEP_CPP_GDC_S=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4601,6 +4621,9 @@ DEP_CPP_GDC_S=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GDC_S=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -4621,7 +4644,6 @@ DEP_CPP_IOCOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4664,7 +4686,6 @@ DEP_CPP_IOCOR=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -4735,7 +4756,6 @@ DEP_CPP_IOCOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4780,6 +4800,9 @@ DEP_CPP_IOCOR=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_IOCOR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -4797,7 +4820,6 @@ DEP_CPP_MOUSE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4830,7 +4852,6 @@ DEP_CPP_MOUSE=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\mousemng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -4885,7 +4906,6 @@ DEP_CPP_MOUSE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4920,6 +4940,9 @@ DEP_CPP_MOUSE=\
 	".\mousemng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MOUSE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -4937,7 +4960,6 @@ DEP_CPP_NECIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -4968,7 +4990,6 @@ DEP_CPP_NECIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5021,7 +5042,6 @@ DEP_CPP_NECIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5054,6 +5074,9 @@ DEP_CPP_NECIO=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NECIO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5071,7 +5094,6 @@ DEP_CPP_NMIIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5101,7 +5123,6 @@ DEP_CPP_NMIIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5153,7 +5174,6 @@ DEP_CPP_NMIIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5185,6 +5205,9 @@ DEP_CPP_NMIIO=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NMIIO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5204,7 +5227,6 @@ DEP_CPP_NP2SY=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\generic\hostdrv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -5296,7 +5318,6 @@ DEP_CPP_NP2SY=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\generic\hostdrv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -5331,6 +5352,9 @@ DEP_CPP_NP2SY=\
 	".\oemtext.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NP2SY=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5348,7 +5372,6 @@ DEP_CPP_PIC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5379,7 +5402,6 @@ DEP_CPP_PIC_C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5432,7 +5454,6 @@ DEP_CPP_PIC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5465,6 +5486,9 @@ DEP_CPP_PIC_C=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PIC_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5483,7 +5507,6 @@ DEP_CPP_PIT_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5516,7 +5539,6 @@ DEP_CPP_PIT_C=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5573,7 +5595,6 @@ DEP_CPP_PIT_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5608,6 +5629,9 @@ DEP_CPP_PIT_C=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PIT_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5625,7 +5649,6 @@ DEP_CPP_PRINT=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5657,7 +5680,6 @@ DEP_CPP_PRINT=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5711,7 +5733,6 @@ DEP_CPP_PRINT=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5745,6 +5766,9 @@ DEP_CPP_PRINT=\
 	".\commng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PRINT=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5762,7 +5786,6 @@ DEP_CPP_SERIA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5795,7 +5818,6 @@ DEP_CPP_SERIA=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5850,7 +5872,6 @@ DEP_CPP_SERIA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -5885,6 +5906,9 @@ DEP_CPP_SERIA=\
 	".\commng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SERIA=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -5902,7 +5926,6 @@ DEP_CPP_SYSPO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5934,7 +5957,6 @@ DEP_CPP_SYSPO=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -5988,7 +6010,6 @@ DEP_CPP_SYSPO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6022,6 +6043,9 @@ DEP_CPP_SYSPO=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SYSPO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -6040,7 +6064,6 @@ DEP_CPP_UPD49=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6070,7 +6093,6 @@ DEP_CPP_UPD49=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -6126,7 +6148,6 @@ DEP_CPP_UPD49=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6159,6 +6180,9 @@ DEP_CPP_UPD49=\
 	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_UPD49=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -6182,7 +6206,6 @@ DEP_CPP_AMD98=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6223,7 +6246,6 @@ DEP_CPP_AMD98=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6290,7 +6312,6 @@ DEP_CPP_AMD98=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6333,6 +6354,9 @@ DEP_CPP_AMD98=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_AMD98=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -6353,7 +6377,6 @@ DEP_CPP_BOARD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6395,7 +6418,6 @@ DEP_CPP_BOARD=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6465,7 +6487,6 @@ DEP_CPP_BOARD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6509,6 +6530,9 @@ DEP_CPP_BOARD=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BOARD=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -6528,7 +6552,6 @@ DEP_CPP_BOARD1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6569,7 +6592,6 @@ DEP_CPP_BOARD1=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6636,7 +6658,6 @@ DEP_CPP_BOARD1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6679,6 +6700,9 @@ DEP_CPP_BOARD1=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BOARD1=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -6698,7 +6722,6 @@ DEP_CPP_BOARD2=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6740,7 +6763,6 @@ DEP_CPP_BOARD2=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6808,7 +6830,6 @@ DEP_CPP_BOARD2=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6852,6 +6873,9 @@ DEP_CPP_BOARD2=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BOARD2=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -6872,7 +6896,6 @@ DEP_CPP_BOARD8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6914,7 +6937,6 @@ DEP_CPP_BOARD8=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -6984,7 +7006,6 @@ DEP_CPP_BOARD8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7028,6 +7049,9 @@ DEP_CPP_BOARD8=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BOARD8=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7047,7 +7071,6 @@ DEP_CPP_BOARDS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7089,7 +7112,6 @@ DEP_CPP_BOARDS=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -7157,7 +7179,6 @@ DEP_CPP_BOARDS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7201,6 +7222,9 @@ DEP_CPP_BOARDS=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BOARDS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7221,7 +7245,6 @@ DEP_CPP_BOARDX=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7263,7 +7286,6 @@ DEP_CPP_BOARDX=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -7333,7 +7355,6 @@ DEP_CPP_BOARDX=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7377,6 +7398,9 @@ DEP_CPP_BOARDX=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BOARDX=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7400,7 +7424,6 @@ DEP_CPP_CBUSC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7430,7 +7453,6 @@ DEP_CPP_CBUSC=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -7494,7 +7516,6 @@ DEP_CPP_CBUSC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7526,6 +7547,9 @@ DEP_CPP_CBUSC=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CBUSC=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7544,7 +7568,6 @@ DEP_CPP_CS423=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -7586,7 +7609,6 @@ DEP_CPP_CS423=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -7652,7 +7674,6 @@ DEP_CPP_CS423=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -7696,6 +7717,9 @@ DEP_CPP_CS423=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CS423=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7715,7 +7739,6 @@ DEP_CPP_MPU98=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7746,7 +7769,6 @@ DEP_CPP_MPU98=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -7803,7 +7825,6 @@ DEP_CPP_MPU98=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7836,6 +7857,9 @@ DEP_CPP_MPU98=\
 	".\commng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MPU98=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7855,7 +7879,6 @@ DEP_CPP_PC986=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7886,7 +7909,6 @@ DEP_CPP_PC986=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\commng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -7943,7 +7965,6 @@ DEP_CPP_PC986=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7976,6 +7997,9 @@ DEP_CPP_PC986=\
 	".\commng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PC986=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -7994,7 +8018,6 @@ DEP_CPP_PCM86=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8036,7 +8059,6 @@ DEP_CPP_PCM86=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8102,7 +8124,6 @@ DEP_CPP_PCM86=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8146,6 +8167,9 @@ DEP_CPP_PCM86=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -8176,7 +8200,6 @@ DEP_CPP_BIOS_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -8213,7 +8236,6 @@ DEP_CPP_BIOS_=\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8290,7 +8312,6 @@ DEP_CPP_BIOS_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -8329,6 +8350,9 @@ DEP_CPP_BIOS_=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -8348,7 +8372,6 @@ DEP_CPP_BIOS0=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8379,7 +8402,6 @@ DEP_CPP_BIOS0=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8436,7 +8458,6 @@ DEP_CPP_BIOS0=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8469,6 +8490,9 @@ DEP_CPP_BIOS0=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS0=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -8489,7 +8513,6 @@ DEP_CPP_BIOS0C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8520,7 +8543,6 @@ DEP_CPP_BIOS0C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8579,7 +8601,6 @@ DEP_CPP_BIOS0C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8612,6 +8633,9 @@ DEP_CPP_BIOS0C=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS0C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -8631,7 +8655,6 @@ DEP_CPP_BIOS1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8662,7 +8685,6 @@ DEP_CPP_BIOS1=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8718,7 +8740,6 @@ DEP_CPP_BIOS1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8751,6 +8772,9 @@ DEP_CPP_BIOS1=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -8770,7 +8794,6 @@ DEP_CPP_BIOS13=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8801,7 +8824,6 @@ DEP_CPP_BIOS13=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -8857,7 +8879,6 @@ DEP_CPP_BIOS13=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -8890,6 +8911,9 @@ DEP_CPP_BIOS13=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS13=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -8909,7 +8933,6 @@ DEP_CPP_BIOS18=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -8942,7 +8965,6 @@ DEP_CPP_BIOS18=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9001,7 +9023,6 @@ DEP_CPP_BIOS18=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -9036,6 +9057,9 @@ DEP_CPP_BIOS18=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS18=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9056,7 +9080,6 @@ DEP_CPP_BIOS19=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9087,7 +9110,6 @@ DEP_CPP_BIOS19=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9146,7 +9168,6 @@ DEP_CPP_BIOS19=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9179,6 +9200,9 @@ DEP_CPP_BIOS19=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS19=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9197,7 +9221,6 @@ DEP_CPP_BIOS1A=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9228,7 +9251,6 @@ DEP_CPP_BIOS1A=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9283,7 +9305,6 @@ DEP_CPP_BIOS1A=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9316,6 +9337,9 @@ DEP_CPP_BIOS1A=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1A=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9337,11 +9361,12 @@ DEP_CPP_BIOS1B=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9372,7 +9397,6 @@ DEP_CPP_BIOS1B=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9437,7 +9461,6 @@ DEP_CPP_BIOS1B=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -9474,6 +9497,9 @@ DEP_CPP_BIOS1B=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1B=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9495,7 +9521,6 @@ DEP_CPP_BIOS1C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9526,7 +9551,6 @@ DEP_CPP_BIOS1C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -9589,7 +9613,6 @@ DEP_CPP_BIOS1C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9623,6 +9646,9 @@ DEP_CPP_BIOS1C=\
 	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9642,7 +9668,6 @@ DEP_CPP_BIOS1F=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9673,7 +9698,6 @@ DEP_CPP_BIOS1F=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9730,7 +9754,6 @@ DEP_CPP_BIOS1F=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9763,6 +9786,9 @@ DEP_CPP_BIOS1F=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1F=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9784,14 +9810,14 @@ DEP_CPP_SXSIB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\timing.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9828,7 +9854,6 @@ DEP_CPP_SXSIB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
@@ -9837,6 +9862,9 @@ DEP_CPP_SXSIB=\
 	"..\timing.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SXSIB=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9858,10 +9886,8 @@ DEP_CPP_GCIRC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\lio\lio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9886,11 +9912,13 @@ DEP_CPP_GCIRC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\lio\lio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GCIRC=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -9908,7 +9936,6 @@ DEP_CPP_GLINE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -9941,7 +9968,6 @@ DEP_CPP_GLINE=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -9996,7 +10022,6 @@ DEP_CPP_GLINE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10031,6 +10056,9 @@ DEP_CPP_GLINE=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GLINE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10048,10 +10076,8 @@ DEP_CPP_GPSET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\lio\lio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10076,11 +10102,13 @@ DEP_CPP_GPSET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\lio\lio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GPSET=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10099,7 +10127,6 @@ DEP_CPP_GPUT1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10132,7 +10159,6 @@ DEP_CPP_GPUT1=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10189,7 +10215,6 @@ DEP_CPP_GPUT1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10224,6 +10249,9 @@ DEP_CPP_GPUT1=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GPUT1=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10243,7 +10271,6 @@ DEP_CPP_GSCRE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10276,7 +10303,6 @@ DEP_CPP_GSCRE=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10335,7 +10361,6 @@ DEP_CPP_GSCRE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10370,6 +10395,9 @@ DEP_CPP_GSCRE=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GSCRE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10389,7 +10417,6 @@ DEP_CPP_LIO_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10424,7 +10451,6 @@ DEP_CPP_LIO_C=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10484,7 +10510,6 @@ DEP_CPP_LIO_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10521,6 +10546,9 @@ DEP_CPP_LIO_C=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_LIO_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10542,7 +10570,6 @@ DEP_CPP_DISPS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10574,7 +10601,6 @@ DEP_CPP_DISPS=\
 	"..\statsave.h"\
 	"..\vram\dispsync.h"\
 	"..\vram\scrndraw.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -10630,7 +10656,6 @@ DEP_CPP_DISPS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10665,6 +10690,9 @@ DEP_CPP_DISPS=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DISPS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10682,7 +10710,6 @@ DEP_CPP_MAKEG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10718,7 +10745,6 @@ DEP_CPP_MAKEG=\
 	"..\VRAM\makegrph.mcr"\
 	"..\vram\scrndraw.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10776,7 +10802,6 @@ DEP_CPP_MAKEG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -10814,6 +10839,9 @@ DEP_CPP_MAKEG=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MAKEG=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10831,7 +10859,6 @@ DEP_CPP_MAKET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -10867,7 +10894,6 @@ DEP_CPP_MAKET=\
 	"..\vram\maketext.h"\
 	"..\vram\scrndraw.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -10925,7 +10951,6 @@ DEP_CPP_MAKET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -10963,6 +10988,9 @@ DEP_CPP_MAKET=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MAKET=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -10980,7 +11008,6 @@ DEP_CPP_MAKETG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -11020,7 +11047,6 @@ DEP_CPP_MAKETG=\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11082,7 +11108,6 @@ DEP_CPP_MAKETG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -11124,6 +11149,9 @@ DEP_CPP_MAKETG=\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MAKETG=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11141,7 +11169,6 @@ DEP_CPP_PALET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11173,7 +11200,6 @@ DEP_CPP_PALET=\
 	"..\statsave.h"\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -11229,7 +11255,6 @@ DEP_CPP_PALET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11264,6 +11289,9 @@ DEP_CPP_PALET=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PALET=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11282,7 +11310,6 @@ DEP_CPP_SCRNB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11316,7 +11343,6 @@ DEP_CPP_SCRNB=\
 	"..\vram\palettes.h"\
 	"..\VRAM\scrnbmp.h"\
 	"..\vram\scrndraw.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11374,7 +11400,6 @@ DEP_CPP_SCRNB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11410,6 +11435,9 @@ DEP_CPP_SCRNB=\
 	"..\vram\scrndraw.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SCRNB=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11427,7 +11455,6 @@ DEP_CPP_SCRND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11461,7 +11488,6 @@ DEP_CPP_SCRND=\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -11519,7 +11545,6 @@ DEP_CPP_SCRND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11556,6 +11581,9 @@ DEP_CPP_SCRND=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SCRND=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11573,13 +11601,11 @@ DEP_CPP_SDRAW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
 	"..\VRAM\sdraw.mcr"\
 	"..\VRAM\sdrawex.mcr"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -11609,7 +11635,6 @@ DEP_CPP_SDRAW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
@@ -11618,6 +11643,9 @@ DEP_CPP_SDRAW=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SDRAW=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11635,11 +11663,9 @@ DEP_CPP_SDRAWQ=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -11667,13 +11693,15 @@ DEP_CPP_SDRAWQ=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
 	"..\VRAM\sdraw.h"\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SDRAWQ=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11691,10 +11719,8 @@ DEP_CPP_VRAM_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\vram\vram.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11719,11 +11745,13 @@ DEP_CPP_VRAM_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\vram\vram.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_VRAM_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11750,14 +11778,12 @@ DEP_CPP_MIDIM=\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11790,7 +11816,6 @@ DEP_CPP_MIDIM=\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
@@ -11799,6 +11824,9 @@ DEP_CPP_MIDIM=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MIDIM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11816,14 +11844,12 @@ DEP_CPP_MIDIN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11852,7 +11878,6 @@ DEP_CPP_MIDIN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
@@ -11861,6 +11886,9 @@ DEP_CPP_MIDIN=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MIDIN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11878,13 +11906,11 @@ DEP_CPP_MIDIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11912,7 +11938,6 @@ DEP_CPP_MIDIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
@@ -11920,6 +11945,9 @@ DEP_CPP_MIDIO=\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MIDIO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11937,13 +11965,11 @@ DEP_CPP_MIDTA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -11971,7 +11997,6 @@ DEP_CPP_MIDTA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
@@ -11979,6 +12004,9 @@ DEP_CPP_MIDTA=\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MIDTA=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -11996,13 +12024,11 @@ DEP_CPP_MIDVO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
 	"..\SOUND\VERMOUTH\midtable.h"\
 	"..\SOUND\VERMOUTH\midvoice.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12030,7 +12056,6 @@ DEP_CPP_MIDVO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\VERMOUTH\midimod.h"\
 	"..\SOUND\VERMOUTH\midinst.h"\
 	"..\SOUND\VERMOUTH\midiout.h"\
@@ -12038,6 +12063,9 @@ DEP_CPP_MIDVO=\
 	"..\SOUND\VERMOUTH\midvoice.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MIDVO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12059,11 +12087,9 @@ DEP_CPP_GETSM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
 	"..\SOUND\GETSND\getsndmn.mcr"\
 	"..\SOUND\GETSND\getsndst.mcr"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12089,12 +12115,14 @@ DEP_CPP_GETSM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
 	"..\SOUND\GETSND\getsndmn.mcr"\
 	"..\SOUND\GETSND\getsndst.mcr"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GETSM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12112,9 +12140,7 @@ DEP_CPP_GETSN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12138,10 +12164,12 @@ DEP_CPP_GETSN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GETSN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12159,9 +12187,7 @@ DEP_CPP_GETWA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12185,10 +12211,12 @@ DEP_CPP_GETWA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\GETSND\getsnd.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GETWA=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12207,11 +12235,9 @@ DEP_CPP_ADPCM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\adpcm.h"\
 	"..\sound\opngen.h"\
 	"..\sound\sound.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12237,12 +12263,14 @@ DEP_CPP_ADPCM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\adpcm.h"\
 	"..\sound\opngen.h"\
 	"..\sound\sound.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_ADPCM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12260,10 +12288,8 @@ DEP_CPP_ADPCMG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\adpcm.h"\
 	"..\sound\sound.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12288,11 +12314,13 @@ DEP_CPP_ADPCMG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\adpcm.h"\
 	"..\sound\sound.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_ADPCMG=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12310,7 +12338,6 @@ DEP_CPP_BEEPC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12354,7 +12381,6 @@ DEP_CPP_BEEPC=\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12419,7 +12445,6 @@ DEP_CPP_BEEPC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12465,6 +12490,9 @@ DEP_CPP_BEEPC=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BEEPC=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12482,10 +12510,8 @@ DEP_CPP_BEEPG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12510,11 +12536,13 @@ DEP_CPP_BEEPG=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BEEPG=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12532,7 +12560,6 @@ DEP_CPP_CS4231=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12574,7 +12601,6 @@ DEP_CPP_CS4231=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12638,7 +12664,6 @@ DEP_CPP_CS4231=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12682,6 +12707,9 @@ DEP_CPP_CS4231=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CS4231=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12699,7 +12727,6 @@ DEP_CPP_CS4231G=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12741,7 +12768,6 @@ DEP_CPP_CS4231G=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -12805,7 +12831,6 @@ DEP_CPP_CS4231G=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -12849,6 +12874,9 @@ DEP_CPP_CS4231G=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CS4231G=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -12876,7 +12904,6 @@ DEP_CPP_FMBOA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\io\artic.h"\
@@ -12922,7 +12949,6 @@ DEP_CPP_FMBOA=\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
 	".\joymng.h"\
-	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -13012,7 +13038,6 @@ DEP_CPP_FMBOA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\io\artic.h"\
@@ -13061,6 +13086,9 @@ DEP_CPP_FMBOA=\
 	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FMBOA=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13078,7 +13106,6 @@ DEP_CPP_FMTIM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -13120,7 +13147,6 @@ DEP_CPP_FMTIM=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13184,7 +13210,6 @@ DEP_CPP_FMTIM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -13228,6 +13253,9 @@ DEP_CPP_FMTIM=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FMTIM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13245,7 +13273,6 @@ DEP_CPP_OPNGE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\io\artic.h"\
@@ -13288,7 +13315,6 @@ DEP_CPP_OPNGE=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13353,7 +13379,6 @@ DEP_CPP_OPNGE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\io\artic.h"\
@@ -13398,6 +13423,9 @@ DEP_CPP_OPNGE=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_OPNGE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13415,7 +13443,6 @@ DEP_CPP_OPNGEN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -13456,7 +13483,6 @@ DEP_CPP_OPNGEN=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13519,7 +13545,6 @@ DEP_CPP_OPNGEN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -13562,6 +13587,9 @@ DEP_CPP_OPNGEN=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_OPNGEN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13579,7 +13607,6 @@ DEP_CPP_PCM86C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -13621,7 +13648,6 @@ DEP_CPP_PCM86C=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13685,7 +13711,6 @@ DEP_CPP_PCM86C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
@@ -13729,6 +13754,9 @@ DEP_CPP_PCM86C=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13746,7 +13774,6 @@ DEP_CPP_PCM86G=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -13787,7 +13814,6 @@ DEP_CPP_PCM86G=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13850,7 +13876,6 @@ DEP_CPP_PCM86G=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -13893,6 +13918,9 @@ DEP_CPP_PCM86G=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86G=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13910,12 +13938,10 @@ DEP_CPP_PSGGE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13942,13 +13968,15 @@ DEP_CPP_PSGGE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PSGGE=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -13967,10 +13995,8 @@ DEP_CPP_PSGGEN=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -13997,11 +14023,13 @@ DEP_CPP_PSGGEN=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\psggen.h"\
 	"..\sound\sound.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PSGGEN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14019,13 +14047,11 @@ DEP_CPP_RHYTH=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\rhythm.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14053,7 +14079,6 @@ DEP_CPP_RHYTH=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\rhythm.h"\
@@ -14061,6 +14086,9 @@ DEP_CPP_RHYTH=\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_RHYTH=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14078,7 +14106,6 @@ DEP_CPP_S98_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14121,7 +14148,6 @@ DEP_CPP_S98_C=\
 	"..\sound\tms3631.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14186,7 +14212,6 @@ DEP_CPP_S98_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14231,6 +14256,9 @@ DEP_CPP_S98_C=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_S98_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14248,10 +14276,8 @@ DEP_CPP_SNDCS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\sndcsec.h"\
 	"..\sound\sound.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14276,11 +14302,13 @@ DEP_CPP_SNDCS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\SOUND\sndcsec.h"\
 	"..\sound\sound.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SNDCS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14298,7 +14326,6 @@ DEP_CPP_SOUND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\common\wavefile.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -14335,7 +14362,6 @@ DEP_CPP_SOUND=\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -14396,7 +14422,6 @@ DEP_CPP_SOUND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\common\wavefile.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -14436,6 +14461,9 @@ DEP_CPP_SOUND=\
 	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14453,14 +14481,12 @@ DEP_CPP_SOUNDR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\soundrom.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14489,7 +14515,6 @@ DEP_CPP_SOUNDR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
@@ -14498,6 +14523,9 @@ DEP_CPP_SOUNDR=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SOUNDR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14515,10 +14543,8 @@ DEP_CPP_TMS36=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14543,11 +14569,13 @@ DEP_CPP_TMS36=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_TMS36=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14565,10 +14593,8 @@ DEP_CPP_TMS363=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14593,11 +14619,13 @@ DEP_CPP_TMS363=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\sound\sound.h"\
 	"..\sound\tms3631.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_TMS363=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14619,7 +14647,6 @@ DEP_CPP_DISKD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fddfile.h"\
@@ -14653,7 +14680,6 @@ DEP_CPP_DISKD=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -14711,7 +14737,6 @@ DEP_CPP_DISKD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fddfile.h"\
@@ -14748,6 +14773,9 @@ DEP_CPP_DISKD=\
 	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DISKD=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14765,7 +14793,6 @@ DEP_CPP_FDD_D=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_d88.h"\
 	"..\fdd\fddfile.h"\
@@ -14799,7 +14826,6 @@ DEP_CPP_FDD_D=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -14855,7 +14881,6 @@ DEP_CPP_FDD_D=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_d88.h"\
 	"..\fdd\fddfile.h"\
@@ -14891,6 +14916,9 @@ DEP_CPP_FDD_D=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FDD_D=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14908,14 +14936,12 @@ DEP_CPP_FDD_M=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\FDD\fdd_mtr.res"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\sound.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -14946,7 +14972,6 @@ DEP_CPP_FDD_M=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\FDD\fdd_mtr.res"\
 	"..\nevent.h"\
@@ -14956,6 +14981,9 @@ DEP_CPP_FDD_M=\
 	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FDD_M=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -14973,7 +15001,6 @@ DEP_CPP_FDD_X=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_xdf.h"\
 	"..\fdd\fddfile.h"\
@@ -15007,7 +15034,6 @@ DEP_CPP_FDD_X=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15063,7 +15089,6 @@ DEP_CPP_FDD_X=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_xdf.h"\
 	"..\fdd\fddfile.h"\
@@ -15099,6 +15124,9 @@ DEP_CPP_FDD_X=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FDD_X=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15117,7 +15145,6 @@ DEP_CPP_FDDFI=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_d88.h"\
 	"..\FDD\fdd_xdf.h"\
@@ -15152,7 +15179,6 @@ DEP_CPP_FDDFI=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -15213,7 +15239,6 @@ DEP_CPP_FDDFI=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\FDD\fdd_d88.h"\
 	"..\FDD\fdd_xdf.h"\
@@ -15251,6 +15276,9 @@ DEP_CPP_FDDFI=\
 	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FDDFI=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15268,12 +15296,13 @@ DEP_CPP_NEWDI=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
 	"..\FDD\hddboot.res"\
 	"..\FDD\newdisk.h"\
 	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
@@ -15304,7 +15333,6 @@ DEP_CPP_NEWDI=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
 	"..\FDD\hddboot.res"\
@@ -15313,6 +15341,9 @@ DEP_CPP_NEWDI=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NEWDI=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15325,20 +15356,47 @@ SOURCE=..\FDD\SXSI.C
 !IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
 
 DEP_CPP_SXSI_=\
+	"..\CBUS\ideio.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	"..\i286c\cpucore.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\iocore.h"\
+	"..\io\lsidef.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pcidev.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -15371,7 +15429,6 @@ DEP_CPP_SXSI_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\sxsi.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
@@ -15379,6 +15436,149 @@ DEP_CPP_SXSI_=\
 	"..\statsave.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+NODEP_CPP_SXSI_=\
+	"..\common\ucscnv.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSICD.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_SXSIC=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
+	"..\i286c\cpucore.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_SXSIC=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
+	"..\i286c\cpucore.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SXSIC=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
+	"..\i286c\cpucore.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSIHDD.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_SXSIH=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
+	"..\i286c\cpucore.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_SXSIH=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
+	"..\i286c\cpucore.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
+	".\sysmng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SXSIH=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
+	"..\i286c\cpucore.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\dosio.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -15403,13 +15603,11 @@ DEP_CPP_FONT_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15439,7 +15637,6 @@ DEP_CPP_FONT_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
@@ -15447,6 +15644,9 @@ DEP_CPP_FONT_=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONT_=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15464,12 +15664,10 @@ DEP_CPP_FONTD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontdata.res"\
 	"..\i286c\cpucore.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15496,13 +15694,15 @@ DEP_CPP_FONTD=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontdata.res"\
 	"..\i286c\cpucore.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTD=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15520,12 +15720,10 @@ DEP_CPP_FONTF=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15552,13 +15750,15 @@ DEP_CPP_FONTF=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTF=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15578,7 +15778,6 @@ DEP_CPP_FONTM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
@@ -15616,7 +15815,6 @@ DEP_CPP_FONTM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
@@ -15624,6 +15822,9 @@ DEP_CPP_FONTM=\
 	".\fontmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15641,12 +15842,10 @@ DEP_CPP_FONTP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15673,13 +15872,15 @@ DEP_CPP_FONTP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTP=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15698,12 +15899,10 @@ DEP_CPP_FONTPC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15732,13 +15931,15 @@ DEP_CPP_FONTPC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTPC=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15756,12 +15957,10 @@ DEP_CPP_FONTV=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15788,13 +15987,15 @@ DEP_CPP_FONTV=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTV=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15813,12 +16014,10 @@ DEP_CPP_FONTX=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15847,13 +16046,15 @@ DEP_CPP_FONTX=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTX=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15871,12 +16072,10 @@ DEP_CPP_FONTX6=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15903,13 +16102,15 @@ DEP_CPP_FONTX6=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\i286c\cpucore.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTX6=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15931,12 +16132,10 @@ DEP_CPP_CMJAS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmjasts.h"\
 	"..\i286c\cpucore.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -15963,13 +16162,15 @@ DEP_CPP_CMJAS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmjasts.h"\
 	"..\i286c\cpucore.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CMJAS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -15988,12 +16189,10 @@ DEP_CPP_CMNDR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\minifont.res"\
 	"..\i286c\cpucore.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -16024,7 +16223,6 @@ DEP_CPP_CMNDR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\font\font.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\minifont.res"\
@@ -16032,6 +16230,9 @@ DEP_CPP_CMNDR=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CMNDR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16049,14 +16250,12 @@ DEP_CPP_CMVER=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\cmver.h"\
 	"..\GENERIC\keydisp.h"\
 	"..\sound\sound.h"\
 	"..\sound\vermouth\vermouth.h"\
 	".\commng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -16085,7 +16284,6 @@ DEP_CPP_CMVER=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\cmver.h"\
 	"..\GENERIC\keydisp.h"\
@@ -16094,6 +16292,9 @@ DEP_CPP_CMVER=\
 	".\commng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CMVER=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16119,7 +16320,6 @@ DEP_CPP_DLGAB=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16133,7 +16333,6 @@ DEP_CPP_DLGAB=\
 	"..\np2ver.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\sysmenu.res"\
 	".\wce\compiler.h"\
 	
@@ -16173,7 +16372,6 @@ DEP_CPP_DLGAB=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16190,6 +16388,9 @@ DEP_CPP_DLGAB=\
 	".\oemtext.h"\
 	".\sysmenu.res"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DLGAB=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16208,7 +16409,6 @@ DEP_CPP_DLGCF=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16222,7 +16422,6 @@ DEP_CPP_DLGCF=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
@@ -16264,7 +16463,6 @@ DEP_CPP_DLGCF=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16282,6 +16480,9 @@ DEP_CPP_DLGCF=\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DLGCF=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16300,7 +16501,6 @@ DEP_CPP_DLGSC=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16341,7 +16541,6 @@ DEP_CPP_DLGSC=\
 	"..\statsave.h"\
 	"..\vram\palettes.h"\
 	"..\vram\scrndraw.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
@@ -16412,7 +16611,6 @@ DEP_CPP_DLGSC=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16458,6 +16656,9 @@ DEP_CPP_DLGSC=\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DLGSC=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16472,12 +16673,10 @@ SOURCE=..\EMBED\MENU\FILESEL.C
 DEP_CPP_FILES=\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
-	"..\common\codecnv.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\filesel.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
@@ -16495,7 +16694,6 @@ DEP_CPP_FILES=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -16505,7 +16703,6 @@ DEP_CPP_FILES=\
 DEP_CPP_FILES=\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
-	"..\common\codecnv.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
@@ -16530,18 +16727,19 @@ DEP_CPP_FILES=\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_FILES=\
+	"..\common\codecnv.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
 
 DEP_CPP_FILES=\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
-	"..\common\codecnv.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\filesel.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
@@ -16562,6 +16760,10 @@ DEP_CPP_FILES=\
 	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FILES=\
+	"..\common\codecnv.h"\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16579,7 +16781,6 @@ DEP_CPP_MENUS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16589,7 +16790,6 @@ DEP_CPP_MENUS=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -16621,7 +16821,6 @@ DEP_CPP_MENUS=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\EMBED\MENU\menustr.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
@@ -16633,6 +16832,9 @@ DEP_CPP_MENUS=\
 	"..\embed\vramhdl.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16654,7 +16856,6 @@ DEP_CPP_MENUB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -16666,7 +16867,6 @@ DEP_CPP_MENUB=\
 	"..\embed\vramhdl.h"\
 	".\fontmng.h"\
 	".\inputmng.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
@@ -16704,7 +16904,6 @@ DEP_CPP_MENUB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -16720,6 +16919,9 @@ DEP_CPP_MENUB=\
 	".\scrnmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUB=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16738,7 +16940,6 @@ DEP_CPP_MENUD=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -16750,7 +16951,6 @@ DEP_CPP_MENUD=\
 	"..\embed\vramhdl.h"\
 	"..\EMBED\vrammix.h"\
 	".\fontmng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -16786,7 +16986,6 @@ DEP_CPP_MENUD=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -16800,6 +16999,9 @@ DEP_CPP_MENUD=\
 	".\fontmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUD=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16817,7 +17019,6 @@ DEP_CPP_MENUI=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -16826,7 +17027,6 @@ DEP_CPP_MENUI=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -16857,7 +17057,6 @@ DEP_CPP_MENUI=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -16868,6 +17067,9 @@ DEP_CPP_MENUI=\
 	"..\embed\vramhdl.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUI=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16885,7 +17087,6 @@ DEP_CPP_MENUM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -16896,7 +17097,6 @@ DEP_CPP_MENUM=\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
 	".\fontmng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -16929,7 +17129,6 @@ DEP_CPP_MENUM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -16942,6 +17141,9 @@ DEP_CPP_MENUM=\
 	".\fontmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -16959,7 +17161,6 @@ DEP_CPP_MENUR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -16968,7 +17169,6 @@ DEP_CPP_MENUR=\
 	"..\embed\menubase\menusys.h"\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -16999,7 +17199,6 @@ DEP_CPP_MENUR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -17010,6 +17209,9 @@ DEP_CPP_MENUR=\
 	"..\embed\vramhdl.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17027,7 +17229,6 @@ DEP_CPP_MENUSY=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -17040,7 +17241,6 @@ DEP_CPP_MENUSY=\
 	"..\EMBED\vrammix.h"\
 	".\fontmng.h"\
 	".\inputmng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17075,7 +17275,6 @@ DEP_CPP_MENUSY=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -17090,6 +17289,9 @@ DEP_CPP_MENUSY=\
 	".\inputmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUSY=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17107,7 +17309,6 @@ DEP_CPP_MENUV=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -17118,7 +17319,6 @@ DEP_CPP_MENUV=\
 	"..\embed\menubase\menuvram.h"\
 	"..\embed\vramhdl.h"\
 	"..\EMBED\vrammix.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17151,7 +17351,6 @@ DEP_CPP_MENUV=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\EMBED\MENUBASE\menudeco.inc"\
 	"..\embed\menubase\menudlg.h"\
@@ -17164,6 +17363,9 @@ DEP_CPP_MENUV=\
 	"..\EMBED\vrammix.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MENUV=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17183,9 +17385,7 @@ DEP_CPP_VRAMH=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\common\resize.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\vramhdl.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17211,10 +17411,12 @@ DEP_CPP_VRAMH=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\common\resize.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\vramhdl.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_VRAMH=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17232,11 +17434,9 @@ DEP_CPP_VRAMM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\vramhdl.h"\
 	"..\EMBED\vrammix.h"\
 	".\fontmng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17262,12 +17462,14 @@ DEP_CPP_VRAMM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\vramhdl.h"\
 	"..\EMBED\vrammix.h"\
 	".\fontmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_VRAMM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17289,12 +17491,10 @@ DEP_CPP_COMMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmjasts.h"\
 	"..\GENERIC\cmver.h"\
 	".\commng.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17321,13 +17521,15 @@ DEP_CPP_COMMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmjasts.h"\
 	"..\GENERIC\cmver.h"\
 	".\commng.h"\
 	".\np2.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_COMMN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17345,10 +17547,11 @@ DEP_CPP_DOSIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DOSIO=\
+	".\codecnv.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -17371,10 +17574,12 @@ DEP_CPP_DOSIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DOSIO=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17392,10 +17597,11 @@ DEP_CPP_FONTMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\fontmng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTMN=\
+	".\codecnv.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -17418,10 +17624,12 @@ DEP_CPP_FONTMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\fontmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FONTMN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17439,9 +17647,7 @@ DEP_CPP_GX_CP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\gx\gx.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17465,10 +17671,12 @@ DEP_CPP_GX_CP=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\gx\gx.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GX_CP=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17488,14 +17696,12 @@ DEP_CPP_INI_C=\
 	"..\COMMON\profile.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
 	".\ini.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17528,7 +17734,6 @@ DEP_CPP_INI_C=\
 	"..\COMMON\profile.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -17537,6 +17742,9 @@ DEP_CPP_INI_C=\
 	".\np2.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_INI_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17554,9 +17762,7 @@ DEP_CPP_INPUT=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\inputmng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17580,10 +17786,12 @@ DEP_CPP_INPUT=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\inputmng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_INPUT=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17601,9 +17809,7 @@ DEP_CPP_JOYMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\joymng.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17627,10 +17833,12 @@ DEP_CPP_JOYMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\joymng.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_JOYMN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17648,10 +17856,8 @@ DEP_CPP_MOUSEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\mousemng.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -17676,11 +17882,13 @@ DEP_CPP_MOUSEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\mousemng.h"\
 	".\np2.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MOUSEM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17702,7 +17910,6 @@ DEP_CPP_NP2_C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -17758,7 +17965,6 @@ DEP_CPP_NP2_C=\
 	".\ini.h"\
 	".\inputmng.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
@@ -17766,6 +17972,9 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
+	
+NODEP_CPP_NP2_C=\
+	".\codecnv.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -17856,7 +18065,6 @@ DEP_CPP_NP2_C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -17920,6 +18128,9 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
+	
+NODEP_CPP_NP2_C=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -17951,7 +18162,6 @@ DEP_CPP_SCRNM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -17965,7 +18175,6 @@ DEP_CPP_SCRNM=\
 	"..\vram\scrndraw.h"\
 	".\gx\gx.h"\
 	".\nekop2.res"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -18005,7 +18214,6 @@ DEP_CPP_SCRNM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -18022,6 +18230,9 @@ DEP_CPP_SCRNM=\
 	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SCRNM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18040,12 +18251,10 @@ DEP_CPP_SOUNDM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmver.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
 	
@@ -18076,7 +18285,6 @@ DEP_CPP_SOUNDM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmver.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
@@ -18084,6 +18292,9 @@ DEP_CPP_SOUNDM=\
 	".\oemtext.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SOUNDM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18104,7 +18315,6 @@ DEP_CPP_SYSME=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menu\dlgabout.h"\
 	"..\embed\menu\dlgcfg.h"\
 	"..\embed\menu\dlgscr.h"\
@@ -18153,7 +18363,6 @@ DEP_CPP_SYSME=\
 	"..\statsave.h"\
 	".\fontmng.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\sysmenu.h"\
 	".\sysmenu.res"\
@@ -18244,7 +18453,6 @@ DEP_CPP_SYSME=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\embed\menu\dlgabout.h"\
 	"..\embed\menu\dlgcfg.h"\
 	"..\embed\menu\dlgscr.h"\
@@ -18302,6 +18510,9 @@ DEP_CPP_SYSME=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
+	
+NODEP_CPP_SYSME=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18319,8 +18530,6 @@ DEP_CPP_SYSMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
 	
@@ -18345,10 +18554,12 @@ DEP_CPP_SYSMN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SYSMN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18366,8 +18577,6 @@ DEP_CPP_TASKM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	
@@ -18392,10 +18601,12 @@ DEP_CPP_TASKM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_TASKM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18413,8 +18624,6 @@ DEP_CPP_TIMEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
-	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -18439,10 +18648,12 @@ DEP_CPP_TIMEM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_TIMEM=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18460,11 +18671,9 @@ DEP_CPP_WINKB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\keystat.h"\
 	".\gx\gx.h"\
 	".\np2.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
 	
@@ -18492,13 +18701,15 @@ DEP_CPP_WINKB=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\keystat.h"\
 	".\gx\gx.h"\
 	".\np2.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
+	
+NODEP_CPP_WINKB=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18519,11 +18730,9 @@ DEP_CPP_CALEN=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
@@ -18555,13 +18764,15 @@ DEP_CPP_CALEN=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CALEN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18580,7 +18791,6 @@ DEP_CPP_DEBUG=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\debugsub.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -18613,7 +18823,6 @@ DEP_CPP_DEBUG=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -18670,7 +18879,6 @@ DEP_CPP_DEBUG=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\debugsub.h"\
 	"..\i286c\cpucore.h"\
 	"..\io\artic.h"\
@@ -18705,6 +18913,9 @@ DEP_CPP_DEBUG=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DEBUG=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18723,7 +18934,6 @@ DEP_CPP_KEYST=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
@@ -18758,7 +18968,6 @@ DEP_CPP_KEYST=\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -18817,7 +19026,6 @@ DEP_CPP_KEYST=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\textfile.h"\
-	"..\common\ucscnv.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\generic\softkbd.h"\
 	"..\io\artic.h"\
@@ -18854,6 +19062,9 @@ DEP_CPP_KEYST=\
 	".\dosio.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_KEYST=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18871,12 +19082,10 @@ DEP_CPP_NEVEN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -18903,13 +19112,15 @@ DEP_CPP_NEVEN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\i286c\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NEVEN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -18935,13 +19146,14 @@ DEP_CPP_PCCOR=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\debugsub.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	"..\font\font.h"\
 	"..\generic\hostdrv.h"\
 	"..\i286c\cpucore.h"\
@@ -19000,7 +19212,6 @@ DEP_CPP_PCCOR=\
 	"..\vram\scrndraw.h"\
 	"..\vram\vram.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\soundmng.h"\
 	".\sysmng.h"\
 	".\timemng.h"\
@@ -19109,7 +19320,6 @@ DEP_CPP_PCCOR=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\debugsub.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
@@ -19179,6 +19389,9 @@ DEP_CPP_PCCOR=\
 	".\sysmng.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCCOR=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -19207,11 +19420,12 @@ DEP_CPP_STATS=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	"..\font\font.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\generic\hostdrv.h"\
@@ -19266,7 +19480,6 @@ DEP_CPP_STATS=\
 	"..\vram\vram.h"\
 	".\commng.h"\
 	".\dosio.h"\
-	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
 	".\timemng.h"\
@@ -19375,7 +19588,6 @@ DEP_CPP_STATS=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
@@ -19439,6 +19651,9 @@ DEP_CPP_STATS=\
 	".\soundmng.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_STATS=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 
@@ -19456,14 +19671,12 @@ DEP_CPP_TIMIN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
 	"..\timing.h"\
-	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 
@@ -19492,7 +19705,6 @@ DEP_CPP_TIMIN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\common\ucscnv.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\nevent.h"\
@@ -19501,6 +19713,9 @@ DEP_CPP_TIMIN=\
 	"..\timing.h"\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_TIMIN=\
+	"..\common\ucscnv.h"\
 	
 
 !ENDIF 

@@ -191,7 +191,6 @@ short file_attr(const OEMCHAR *path) {
 	UINT16	oempath[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, path, -1,
 												oempath, NELEMENTS(oempath));
-	return((short)GetFileAttributes(ucs2));
 #elif defined(UNICODE) && defined(OSLANG_UTF8)
 	UINT16	oempath[MAX_PATH];
 	codecnv_utf8toucs2(oempath, NELEMENTS(oempath), path, (UINT)-1);

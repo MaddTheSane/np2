@@ -1332,7 +1332,7 @@ SOURCE=.\MT32SND.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\Np2.cpp
+SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 

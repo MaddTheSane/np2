@@ -113,7 +113,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	$(OBJ)/s98.o		\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
-			$(OBJ)/sxsi.o												\
+			$(OBJ)/sxsi.o		$(OBJ)/sxsihdd.o	$(OBJ)/sxsicd.o		\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
@@ -130,7 +130,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
 			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
 			$(OBJ)/dd2.o		$(OBJ)/toolwin.o	$(OBJ)/subwind.o	\
-			$(OBJ)/np2res.o												\
+			$(OBJ)/mt32snd.o	$(OBJ)/np2res.o							\
 			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
 			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
 			$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		\
@@ -758,6 +758,16 @@ $(OBJ)/sxsi.o		:	$(FDD)/sxsi.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(TARGET)/sysmng.h $(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/sxsihdd.o	:	$(FDD)/sxsihdd.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(COMMON)/strres.h $(TARGET)/dosio.h \
+						$(TARGET)/sysmng.h $(FDD)/sxsi.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/sxsicd.o		:	$(FDD)/sxsicd.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(COMMON)/strres.h $(TARGET)/dosio.h \
+						$(TARGET)/sysmng.h $(FDD)/sxsi.h
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/lio.o		:	$(LIO)/lio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
@@ -1024,6 +1034,10 @@ $(OBJ)/subwind.o	:	$(TARGET)/subwind.cpp $(HEADERS) \
 						$(TARGET)/sysmng.h $(TARGET)/menu.h $(TARGET)/ini.h \
 						$(TARGET)/dd2.h $(TARGET)/subwind.h \
 						$(DIALOG)/np2class.h $(GENERIC)/keydisp.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/mt32snd.o	:	$(TARGET)/mt32snd.cpp $(HEADERS) \
+						$(TARGET)/mt32snd.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h

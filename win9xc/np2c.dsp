@@ -633,6 +633,14 @@ SOURCE=..\FDD\NEWDISK.C
 
 SOURCE=..\FDD\SXSI.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSICD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSIHDD.C
+# End Source File
 # End Group
 # Begin Group "font"
 
@@ -775,11 +783,11 @@ SOURCE=.\MOUSEMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\Np2.cpp
+SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\np2.rc
+SOURCE=.\NP2.RC
 # End Source File
 # Begin Source File
 
