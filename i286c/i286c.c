@@ -94,9 +94,9 @@ const UINT8 iflags[512] = {					// Z_FLAG, S_FLAG, P_FLAG
 
 void i286c_initialize(void) {
 
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 	UINT	i;
-	UINT	bit;
-	REG8	f;
+#endif
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 	for (i=0; i<0x100; i++) {
@@ -124,6 +124,8 @@ void i286c_initialize(void) {
 
 #if !defined(MEMOPTIMIZE)
 	for (i=0; i<0x10000; i++) {
+		REG8 f;
+		UINT bit;
 		f = P_FLAG;
 		for (bit=0x80; bit; bit>>=1) {
 			if (i & bit) {
@@ -150,12 +152,12 @@ static void i286c_initreg(void) {
 	I286_CS = 0xf000;
 	CS_BASE = 0xf0000;
 	I286_IP = 0xfff0;
-	i286core.s.adrsmask = 0xfffff;
+	I286_ADRSMASK = 0xfffff;
 }
 
 void i286c_reset(void) {
 
-	ZeroMemory(&I286_STAT, sizeof(I286_STAT));
+	ZeroMemory(&i286core.s, sizeof(i286core.s));
 	i286c_initreg();
 }
 

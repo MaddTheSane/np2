@@ -26,12 +26,14 @@ CGW_WRITABLE		equ		8
 ; DMACH_mask		equ		27
 DMACH_SIZE			equ		28
 
-; DMA_dmach			equ		0
-; DMA_lh			equ		(DMACH_SIZE * 4) + 0
-; DMA_work			equ		(DMACH_SIZE * 4) + 4
-DMAC_WORKING		equ		(DMACH_SIZE * 4) + 8
-; DMA_mask			equ		(DMACH_SIZE * 4) + 12
-; DMA_stat			equ		(DMACH_SIZE * 4) + 13
+; dmac_dmach		equ		0
+; dmac_lh			equ		(DMACH_SIZE * 4) + 0
+; dmac_work			equ		(DMACH_SIZE * 4) + 4
+DMAC_WORKING		equ		(DMACH_SIZE * 4) + 5
+; dmac_mask			equ		(DMACH_SIZE * 4) + 6
+; dmac_stat			equ		(DMACH_SIZE * 4) + 7
+; dmac_devices		equ		(DMACH_SIZE * 4) + 8
+; dmac_device		equ		(DMACH_SIZE * 4) + 12
 
 
 ; ---- egc

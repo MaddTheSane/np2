@@ -1678,7 +1678,7 @@ i286a			stmdb	sp!, {r4 - r11, lr}
 				ldr		r10, ias_r10
 				CPULD
 				ldr		r5, [r9, #CPU_CS_BASE]
-				ldr		r1, [r2, #DMAC_WORKING]
+				ldrb	r1, [r2, #DMAC_WORKING]
 				and		r0, r8, #(I_FLAG + T_FLAG)
 				cmp		r0, #(I_FLAG + T_FLAG)
 				beq		i286awithtrap

@@ -12,35 +12,36 @@ I_FLAG				equ		&0200
 D_FLAG				equ		&0400
 O_FLAG				equ		&0800
 
-CPU_SIZE			equ		116
+CPU_SIZE			equ		124
 CPU_STAT			equ		(0 - CPU_SIZE)
-CPU_EXT				equ		(104 - CPU_SIZE)
+CPU_EXT				equ		(108 - CPU_SIZE)
 
 CPU_REG				equ		CPU_STAT + 0
 CPU_SEG				equ		CPU_STAT + 16
-CPU_REMAINCLOCK		equ		CPU_STAT + 28
-CPU_BASECLOCK		equ		CPU_STAT + 32
-; cpu_clock			equ		CPU_STAT + 36
-CPU_ADRSMASK		equ		CPU_STAT + 40
-CPU_ES_BASE			equ		CPU_STAT + 44
-CPU_CS_BASE			equ		CPU_STAT + 48
-CPU_SS_BASE			equ		CPU_STAT + 52
-CPU_DS_BASE			equ		CPU_STAT + 56
-CPU_SS_FIX			equ		CPU_STAT + 60
-CPU_DS_FIX			equ		CPU_STAT + 64
-CPU_PREFIX			equ		CPU_STAT + 68
-CPU_TRAP			equ		CPU_STAT + 70
-; cpu_type			equ		CPU_STAT + 71
-; cpu_pf_semaphore	equ		CPU_STAT + 72
-; cpu_repbak		equ		CPU_STAT + 76
-CPU_INPUT			equ		CPU_STAT + 80
-; cpu_ovflag		equ		CPU_STAT + 84
-CPU_GDTR			equ		CPU_STAT + 88
-CPU_IDTR			equ		CPU_STAT + 94
-CPU_MSW				equ		CPU_STAT + 100
-; cpu_resetreq		equ		CPU_STAT + 102
-CPU_ITFBANK			equ		CPU_STAT + 103
-; cpu_stat_size		equ		104
+CPU_ES_BASE			equ		CPU_STAT + 28
+CPU_CS_BASE			equ		CPU_STAT + 32
+CPU_SS_BASE			equ		CPU_STAT + 36
+CPU_DS_BASE			equ		CPU_STAT + 40
+CPU_SS_FIX			equ		CPU_STAT + 44
+CPU_DS_FIX			equ		CPU_STAT + 48
+CPU_ADRSMASK		equ		CPU_STAT + 52
+CPU_PREFIX			equ		CPU_STAT + 56
+CPU_TRAP			equ		CPU_STAT + 58
+; cpu_resetreq		equ		CPU_STAT + 59
+CPU_GDTR			equ		CPU_STAT + 60
+CPU_MSW				equ		CPU_STAT + 66
+CPU_IDTR			equ		CPU_STAT + 68
+CPU_LDTR			equ		CPU_STAT + 74
+CPU_LDTRC			equ		CPU_STAT + 76
+CPU_TR				equ		CPU_STAT + 82
+CPU_TRC				equ		CPU_STAT + 84
+; cpu_type			equ		CPU_STAT + 92
+CPU_ITFBANK			equ		CPU_STAT + 93
+; cpu_ram_d0		equ		CPU_STAT + 94
+CPU_REMAINCLOCK		equ		CPU_STAT + 96
+CPU_BASECLOCK		equ		CPU_STAT + 100
+; cpu_clock			equ		CPU_STAT + 104
+; cpu_stat_size		equ		108
 
 CPU_AL				equ		CPU_STAT + 0
 CPU_AH				equ		CPU_STAT + 1
@@ -69,10 +70,11 @@ CPU_IP				equ		CPU_STAT + 26
 
 CPU_EXTMEM			equ		CPU_EXT + 0
 CPU_EXTMEMSIZE		equ		CPU_EXT + 4
-MEMWAIT_TRAM		equ		CPU_EXT + 8
-MEMWAIT_VRAM		equ		CPU_EXT + 9
-MEMWAIT_GRCG		equ		CPU_EXT + 10
-; cpu_ext_size		equ		12
+CPU_INPUT			equ		CPU_EXT + 8
+MEMWAIT_TRAM		equ		CPU_EXT + 12
+MEMWAIT_VRAM		equ		CPU_EXT + 13
+MEMWAIT_GRCG		equ		CPU_EXT + 14
+; cpu_ext_size		equ		16
 
 MAX_PREFIX			equ		8
 
