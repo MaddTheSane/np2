@@ -241,12 +241,16 @@
 						<dict>
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
-								<string>20286C29FDCF999611CA2CEA</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
-							<array/>
+							<array>
+								<array>
+									<integer>2</integer>
+									<integer>1</integer>
+								</array>
+							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
 							<string>{{0, 0}, {186, 337}}</string>
 						</dict>
@@ -344,9 +348,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>9603DE2706CFCD3700012F11</string>
+				<string>96D230B706D098D00011AF2C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>9603DE2806CFCD3700012F11</string>
+				<string>96D230B806D098D00011AF2C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -374,7 +378,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>9643CE8706CF82E8001307C4</string>
 		<string>1C0AD2B3069F1EA900FABCE6</string>
 		<string>/Users/tora/Documents/Project Builder/CVS/np2/macosx/np2_IA32.pbproj</string>
 	</array>
@@ -848,9 +851,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C0AD2B3069F1EA900FABCE6</string>
-				<string>9603DE2906CFCD3700012F11</string>
+				<string>96D230B906D098D00011AF2C</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>9603DE2A06CFCD3700012F11</string>
+				<string>96D230BA06D098D00011AF2C</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

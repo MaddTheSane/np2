@@ -240,11 +240,16 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>20286C29FDCF999611CA2CEA</string>
+								<string>20286C2CFDCF999611CA2CEA</string>
+								<string>0867D6AAFE840B52C02AAC07</string>
+								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>11</integer>
+									<integer>10</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -317,7 +322,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20506471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Detail</string>
+								<string>Targets</string>
 							</dict>
 							<key>GeometryConfiguration</key>
 							<dict>
@@ -348,9 +353,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>9603DE7C06CFEAB600012F11</string>
+				<string>96D230BB06D098D10011AF2C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>9603DE7D06CFEAB600012F11</string>
+				<string>96D230BC06D098D10011AF2C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -378,11 +383,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>9603DE8906CFEB0E00012F11</string>
-		<string>9603DE8806CFEB0E00012F11</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1C0AD2B3069F1EA900FABCE6</string>
-		<string>9643CE5F06CF80BD001307C4</string>
 		<string>/Users/tora/Documents/Project Builder/CVS/np2/macosx/np2.pbproj</string>
 	</array>
 	<key>WindowString</key>
