@@ -948,7 +948,7 @@ void bios0x1b(void) {
 			ret_ah = 0x40;
 			break;
 	}
-#if 1
+#if 0
 	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
 							i286_memword_read(CPU_SS, CPU_SP+2),

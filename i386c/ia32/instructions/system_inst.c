@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.20 2004/03/04 15:53:11 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.21 2004/03/07 04:09:27 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -389,7 +389,7 @@ MOV_RdCd(void)
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
-			VERBOSE(("MOV_CdRd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
+			VERBOSE(("MOV_RdCd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
@@ -840,11 +840,28 @@ VERW_Ew(UINT32 op)
 void
 MOV_DdRd(void)
 {
-	UINT op;
+#if 1
+	UINT32 op;
+	UINT32 src;
+	int idx;
 
+	CPU_WORKCLOCK(11);
 	GET_PCBYTE(op);
-	TRACEOUT(("mov dr, rd - %.4x:%.8x", CPU_CS, CPU_EIP));
-#if 0
+	if (op >= 0xc0) {
+		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+			TRACEOUT(("MOV_DdRd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, 0);
+		}
+
+		src = *(reg32_b20[op]);
+		idx = (op >> 3) & 7;
+		CPU_STATSAVE.cpu_regs.dr[idx] = src;
+
+		TRACEOUT(("MOV_DdRd: %04x:%08x: dr%d: 0x%08x <- %s", CPU_CS, CPU_PREV_EIP, idx, src, reg32_str[op & 7]));
+		return;
+	}
+	EXCEPTION(UD_EXCEPTION, 0);
+#else
 	ia32_panic("MOV_DdRd: not implemented yet!");
 #endif
 }
@@ -852,11 +869,28 @@ MOV_DdRd(void)
 void
 MOV_RdDd(void)
 {
-	UINT op;
+#if 1
+	UINT32 *out;
+	UINT32 op;
+	int idx;
 
+	CPU_WORKCLOCK(11);
 	GET_PCBYTE(op);
-	TRACEOUT(("mov rd, dr - %.4x:%.8x", CPU_CS, CPU_EIP));
-#if 0
+	if (op >= 0xc0) {
+		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+			TRACEOUT(("MOV_RdDd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, 0);
+		}
+
+		out = reg32_b20[op];
+		idx = (op >> 3) & 7;
+		*out = CPU_STATSAVE.cpu_regs.dr[idx];
+
+		TRACEOUT(("MOV_RdDd: %04x:%08x: dr%d: 0x%08x -> %s", CPU_CS, CPU_PREV_EIP, idx, *out, reg32_str[op & 7]));
+		return;
+	}
+	EXCEPTION(UD_EXCEPTION, 0);
+#else
 	ia32_panic("MOV_DdRd: not implemented yet!");
 #endif
 }
