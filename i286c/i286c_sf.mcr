@@ -309,6 +309,7 @@
 		}															\
 		(d) = (s);
 
+#if !defined(_WIN32_WCE) || (_WIN32_WCE < 300)
 #define	WORD_SARCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
@@ -319,4 +320,18 @@
 			I286_FLAGL |= WORDSZPF(s);								\
 		}															\
 		(d) = (s);
+#else	// eVC`
+#define	WORD_SARCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			SINT32 tmp;												\
+			tmp = (s) << 16;										\
+			tmp = tmp >> (16 + (c) - 1);							\
+			I286_FLAGL = (BYTE)(tmp & 1);							\
+			(s) = (UINT16)(tmp >> 1);								\
+			I286_OV = 0;											\
+			I286_FLAGL |= WORDSZPF(s);								\
+		}															\
+		(d) = (s);
+#endif
 
