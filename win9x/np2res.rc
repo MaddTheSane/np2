@@ -707,6 +707,7 @@ BEGIN
 END
 
 NP2BMP                  BITMAP  DISCARDABLE     "ICONS\\nekop2.bmp"
+NP2TOOL                 BITMAP  DISCARDABLE     "ICONS\\np2tool.bmp"
 
 IDI_ICON1               ICON    DISCARDABLE     "ICONS\\Np2.ico"
 IDI_ICON2               ICON    DISCARDABLE     "ICONS\\NP2DEBUG.ICO"

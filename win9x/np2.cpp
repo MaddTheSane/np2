@@ -24,6 +24,7 @@
 #include	"sstp.h"
 #include	"sstpmsg.h"
 #include	"dclock.h"
+#include	"toolwin.h"
 #ifdef USE_ROMEO
 #include	"juliet.h"
 #endif
@@ -69,7 +70,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0};				// ver0.38
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0};			// ver0.38
 
 		char	fddfolder[MAX_PATH];
 		char	hddfolder[MAX_PATH];
@@ -88,28 +89,6 @@ static	int		np2quitmsg = 0;
 
 static const char np2help[] = "np2.hlp";
 static const char np2resume[] = "sav";
-
-
-typedef struct {
-const char	*str;
-	int		id;
-} SYSMENU_ITEM;
-
-static SYSMENU_ITEM smenu_item[] = {
-			{"&Centering",			IDM_SCREENCENTER},
-			{"&Window Snap",		IDM_SNAPENABLE},
-			{"&Background",			IDM_BACKGROUND},
-			{"Background &Sound",	IDM_BGSOUND},
-			{"&Key display",		IDM_KEYDISP},
-			{NULL,					0},
-			{" 320x200",			IDM_SCRNMUL4},
-			{" 480x300",			IDM_SCRNMUL6},
-			{" 640x400",			IDM_SCRNMUL8},
-			{" 800x500",			IDM_SCRNMUL10},
-			{" 960x600",			IDM_SCRNMUL12},
-			{"1280x800",			IDM_SCRNMUL16},
-			{NULL,					0},
-		};
 
 
 static	BYTE	scrnmode;
@@ -252,6 +231,8 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 	}
 	if (id == IDYES) {
 		statsave_load(path);
+		toolwin_setfdd(0, fdd_diskname(0));
+		toolwin_setfdd(1, fdd_diskname(1));
 	}
 	sysmng_workclockreset();
 	sysmng_updatecaption(1);
@@ -289,13 +270,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #ifndef __GNUC__
 			WINNLSEnableIME(hWnd, FALSE);
 #endif
-//			DragAcceptFiles(hWnd, TRUE);
 			break;
 
 		case WM_SYSCOMMAND:
 			update = 0;
 			switch(wParam) {
-				case IDM_SCREENCENTER:							// ver0.26
+				case IDM_TOOLWIN:
+					toolwin_open();
+					break;
+
+				case IDM_SCREENCENTER:
 					if ((!scrnmng_isfullscreen()) &&
 						(!(GetWindowLong(hWnd, GWL_STYLE) &
 											(WS_MAXIMIZE | WS_MINIMIZE)))) {
@@ -404,6 +388,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 				case IDM_FDD1EJECT:
 					diskdrv_setfdd(0, NULL, 0);
+					toolwin_setfdd(0, NULL);
 					break;
 
 				case IDM_FDD2OPEN:
@@ -414,6 +399,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 				case IDM_FDD2EJECT:
 					diskdrv_setfdd(1, NULL, 0);
+					toolwin_setfdd(1, NULL);
 					break;
 
 				case IDM_SASI1OPEN:
@@ -872,6 +858,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_MOVE:
+			toolwin_movingend();
 			if ((!scrnmng_isfullscreen()) &&
 				(!(GetWindowLong(hWndMain, GWL_STYLE) &
 									(WS_MAXIMIZE | WS_MINIMIZE)))) {
@@ -897,6 +884,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			soundmng_stop();
 			mouse_running(MOUSE_STOP);
 			winloc_movingstart();
+			toolwin_movingstart();
 			break;
 
 		case WM_EXITSIZEMOVE:
@@ -1128,6 +1116,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	file_setcd(modulefile);
 	np2arg_analize(lpszCmdLine);
 	initload();
+	toolwin_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -1175,6 +1164,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		if (!RegisterClass(&np2)) {
 			return(FALSE);
 		}
+		toolwin_initapp(hInstance);
 	}
 	keydisp_initialize(hPreInst);
 	viewer_init(hPreInst);										// ver0.30
@@ -1230,24 +1220,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP, (UINT)hStat, "S&tat");
 	}
-
-	hMenu = GetSystemMenu(hWndMain, FALSE);						// ver0.26
-	for (i=0; i<(sizeof(smenu_item)/sizeof(SYSMENU_ITEM)); i++) {
-		if (smenu_item[i].str) {
-			InsertMenu(hMenu, i, MF_BYPOSITION | MF_STRING,
-							smenu_item[i].id, smenu_item[i].str);
-		}
-		else {
-			InsertMenu(hMenu, i, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-		}
-	}
-
-	if (np2oscfg.I286SAVE) {
-		InsertMenu(hMenu, 5, MF_BYPOSITION | MF_STRING, IDM_MEMORYDUMP,
-							"&Memory Dump");
-		InsertMenu(hMenu, 6, MF_BYPOSITION | MF_STRING, IDM_DEBUGUTY,
-							"&Debug Utility");
-	}
+	sysmenu_init();
 	DrawMenuBar(hWndMain);
 
 	// ver0.30
@@ -1432,6 +1405,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			DispatchMessage(&msg);
 		}
 	}
+	toolwin_close();
 
 	pccore_cfgupdate();
 
@@ -1461,6 +1435,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();
+		toolwin_writeini();
 	}
 
 	TRACETERM();

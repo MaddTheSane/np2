@@ -1,19 +1,5 @@
 
-#if 0
-#define	UPDATE_CLOCK		0x00000001
-#define	UPDATE_RATE			0x00000002
-#define	UPDATE_SBUF			0x00000004
-#define	UPDATE_MIDI			0x00000008
-#define	UPDATE_SBOARD		0x00000010
-#define	UPDATE_HDD			0x00000020
-#define	UPDATE_MEMORY		0x00000040
-#define	UPDATE_SERIAL1		0x00000080
-
-extern int updates;
-#endif
-
-
-
+void sysmenu_init(void);
 
 void disable_windowmenu(void);
 

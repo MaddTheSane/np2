@@ -322,9 +322,9 @@ static const INITBL iniitem[] = {
 	{"HDD2FILE", INITYPE_STR,		np2cfg.hddfile[1],		MAX_PATH},
 //	{"Removabl", INI_EX|1,	0,		&np2cfg.REMOVEHD,		0},
 
-	{"SampleHz", INITYPE_UINT16		&np2cfg.samplingrate,	0},
-	{"Latencys", INITYPE_UINT16		&np2cfg.delayms,		0},
-	{"SNDboard", INITYPE_HEX8		&np2cfg.SOUND_SW,		0},
+	{"SampleHz", INITYPE_UINT16,	&np2cfg.samplingrate,	0},
+	{"Latencys", INITYPE_UINT16,	&np2cfg.delayms,		0},
+	{"SNDboard", INITYPE_HEX8,		&np2cfg.SOUND_SW,		0},
 	{"BEEP_vol", INIAND_UINT8,		&np2cfg.BEEP_VOL,		3},
 	{"xspeaker", INIRO_BOOL,		&np2cfg.snd_x,			0},
 

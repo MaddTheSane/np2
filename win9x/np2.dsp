@@ -965,6 +965,10 @@ SOURCE=.\TIMEMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\TOOLWIN.CPP
+# End Source File
+# Begin Source File
+
 SOURCE=.\TRACE.CPP
 # End Source File
 # Begin Source File

@@ -117,7 +117,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/timemng.o	$(OBJ)/juliet.o		$(OBJ)/sstp.o		\
 			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
 			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
-			$(OBJ)/np2info.o	$(OBJ)/np2res.o							\
+			$(OBJ)/np2info.o	$(OBJ)/toolwin.o	$(OBJ)/np2res.o		\
 			$(OBJ)/d_about.o	$(OBJ)/d_config.o	$(OBJ)/d_mpu98.o	\
 			$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	$(OBJ)/d_sound.o	\
 			$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		$(OBJ)/d_bmp.o		\
@@ -908,6 +908,13 @@ $(OBJ)/np2info.o	:	$(TARGET)/np2info.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/np2.h $(TARGET)/scrnmng.h \
 						$(TARGET)/np2info.h $(I286C)/i286.h \
 						$(I286C)/memory.h $(BIOS)/bios.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/toolwin.o	:	$(TARGET)/toolwin.cpp $(HEADERS) $(PCCORES) \
+						$(COMMON)/strres.h $(TARGET)/resource.h \
+						$(TARGET)/np2.h $(TARGET)/dosio.h $(TARGET)/sysmng.h \
+						$(TARGET)/toolwin.h $(TARGET)/ini.h \
+						$(DIALOG)/dialog.h $(FDD)/diskdrv.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h

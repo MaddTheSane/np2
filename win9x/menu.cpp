@@ -8,6 +8,65 @@
 
 #define	MFCHECK(a) ((a)?MF_CHECKED:MF_UNCHECKED)
 
+typedef struct {
+const char	*str;
+	int		id;
+} SMENUITEM;
+
+static const char smenu_toolwin[] = "&Tool Window";
+static const char smenu_center[] = "&Centering";
+static const char smenu_snap[] = "&Window Snap";
+static const char smenu_bg[] = "&Background";
+static const char smenu_bgsnd[] = "Background &Sound";
+static const char smenu_keydisp[] = "&Key display";
+static const char smenu_320x200[] = " 320x200";
+static const char smenu_480x300[] = " 480x300";
+static const char smenu_640x400[] = " 640x400";
+static const char smenu_800x500[] = " 800x500";
+static const char smenu_960x600[] = " 960x600";
+static const char smenu_1280x800[] = "1280x600";
+
+static const char smenu_memdump[] = "&Memory Dump";
+static const char smenu_dbguty[] = "&Debug Utility";
+
+static const SMENUITEM smenuitem[] = {
+			{smenu_toolwin,		IDM_TOOLWIN},
+			{smenu_center,		IDM_SCREENCENTER},
+			{smenu_snap,		IDM_SNAPENABLE},
+			{smenu_bg,			IDM_BACKGROUND},
+			{smenu_bgsnd,		IDM_BGSOUND},
+			{smenu_keydisp,		IDM_KEYDISP},
+			{NULL,				0},
+			{smenu_320x200,		IDM_SCRNMUL4},
+			{smenu_480x300,		IDM_SCRNMUL6},
+			{smenu_640x400,		IDM_SCRNMUL8},
+			{smenu_800x500,		IDM_SCRNMUL10},
+			{smenu_960x600,		IDM_SCRNMUL12},
+			{smenu_1280x800,	IDM_SCRNMUL16},
+			{NULL,				0}};
+
+void sysmenu_init(void) {
+
+	HMENU	hMenu;
+	UINT	i;
+
+	hMenu = GetSystemMenu(hWndMain, FALSE);
+	for (i=0; i<(sizeof(smenuitem)/sizeof(SMENUITEM)); i++) {
+		if (smenuitem[i].str) {
+			InsertMenu(hMenu, i, MF_BYPOSITION | MF_STRING,
+									smenuitem[i].id, smenuitem[i].str);
+		}
+		else {
+			InsertMenu(hMenu, i, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+		}
+	}
+	if (np2oscfg.I286SAVE) {
+		InsertMenu(hMenu, 6, MF_BYPOSITION | MF_STRING, IDM_MEMORYDUMP,
+							smenu_memdump);
+		InsertMenu(hMenu, 7, MF_BYPOSITION | MF_STRING, IDM_DEBUGUTY,
+							smenu_dbguty);
+	}
+}
 
 void disable_windowmenu(void) {
 

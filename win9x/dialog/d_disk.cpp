@@ -3,6 +3,7 @@
 #include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
+#include	"toolwin.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
@@ -54,6 +55,7 @@ const char	*p;
 									fddfolder, sizeof(fddfolder), &readonly);
 		if (p != NULL) {
 			diskdrv_setfdd(drv, p, readonly);
+			toolwin_setfdd(drv, p);
 		}
 	}
 }
