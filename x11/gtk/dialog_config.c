@@ -45,6 +45,15 @@ static const char *clockmult_str[] = {
 
 static const struct {
 	const char*	label;
+	const char*	arch;
+} architecture[] = {
+	{ "PC-9801VM", "VM" },
+	{ "PC-9801VX", "VX" },
+	{ "PC-286", "EPSON" },
+};
+
+static const struct {
+	const char*	label;
 	const int	rate;
 } samplingrate[] = {
 	{ "11KHz", 11025 },
@@ -59,6 +68,7 @@ static GtkWidget *resume_checkbutton;
 #if defined(__GNUC__) && (defined(i386) || defined(__i386__))
 static GtkWidget *disablemmx_checkbutton;
 #endif
+static const char *arch;
 static int rate;
 
 
@@ -73,6 +83,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	guint bufsize;
 	guint mult;
 	UINT renewal = 0;
+	int i;
 
 	UNUSED(b);
 
@@ -97,6 +108,18 @@ ok_button_clicked(GtkButton *b, gpointer d)
 			renewal |= SYS_UPDATECFG|SYS_UPDATECLOCK;
 		}
 		break;
+	}
+
+	for (i = 0; i < NELEMENTS(architecture); i++) {
+		if (strcmp(arch, architecture[i].arch) == 0) {
+			milstr_ncpy(np2cfg.model, arch, sizeof(np2cfg.model));
+			renewal |= SYS_UPDATECFG;
+			break;
+		}
+	}
+	if (i == NELEMENTS(architecture)) {
+		milstr_ncpy(np2cfg.model, "VX", sizeof(np2cfg.model));
+		renewal |= SYS_UPDATECFG;
 	}
 
 	switch (rate) {
@@ -157,6 +180,15 @@ dialog_destroy(GtkWidget *w, GtkWidget **wp)
 }
 
 static void
+arch_radiobutton_clicked(GtkButton *b, gpointer d)
+{
+
+	UNUSED(b);
+
+	arch = (char *)d;
+}
+
+static void
 rate_radiobutton_clicked(GtkButton *b, gpointer d)
 {
 
@@ -202,6 +234,9 @@ create_configure_dialog(void)
 	GtkWidget *confirm_widget;
 	GtkWidget *ok_button;
 	GtkWidget *cancel_button;
+	GtkWidget *arch_frame;
+	GtkWidget *arch_hbox;
+	GtkWidget *arch_radiobutton[NELEMENTS(architecture)];
 	GtkWidget *sound_frame;
 	GtkWidget *soundframe_vbox;
 	GtkWidget *soundrate_hbox;
@@ -212,6 +247,7 @@ create_configure_dialog(void)
 	GtkWidget *ms_label;
 	GList *baseclock_combo_items = NULL;
 	GList *rate_combo_items = NULL;
+	GSList *arch_group = NULL;
 	GSList *rate_group = NULL;
 	gchar buf[8];
 	int i;
@@ -334,6 +370,39 @@ create_configure_dialog(void)
 	gtk_box_pack_start(GTK_BOX(cpu_hbox), confirm_widget, TRUE, TRUE, 0);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(confirm_widget), GTK_BUTTONBOX_END);
 	gtk_button_box_set_spacing(GTK_BUTTON_BOX(confirm_widget), 0);
+
+	/*
+	 * Architecture frame
+	 */
+	arch_frame = gtk_frame_new("Architecture");
+	gtk_widget_show(arch_frame);
+	gtk_box_pack_start(GTK_BOX(main_widget), arch_frame, TRUE, TRUE, 0);
+
+	/* architecture */
+	arch_hbox = gtk_hbox_new(TRUE, 2);
+	gtk_widget_show(arch_hbox);
+	gtk_container_add(GTK_CONTAINER(arch_frame), arch_hbox);
+
+	for (i = 0; i < NELEMENTS(architecture); i++) {
+		arch_radiobutton[i] = gtk_radio_button_new_with_label(arch_group, architecture[i].label);
+		arch_group = gtk_radio_button_group(GTK_RADIO_BUTTON(arch_radiobutton[i]));
+		gtk_widget_show(arch_radiobutton[i]);
+		gtk_box_pack_start(GTK_BOX(arch_hbox), arch_radiobutton[i], FALSE, FALSE, 0);
+		GTK_WIDGET_UNSET_FLAGS(arch_radiobutton[i], GTK_CAN_FOCUS);
+		gtk_signal_connect(GTK_OBJECT(arch_radiobutton[i]), "clicked",
+		    GTK_SIGNAL_FUNC(arch_radiobutton_clicked), (gpointer)architecture[i].arch);
+	}
+	for (i = 0; i < NELEMENTS(architecture); i++) {
+		if (strcmp(np2cfg.model, architecture[i].arch) == 0) {
+			break;
+		}
+	}
+	if (i == NELEMENTS(architecture)) {
+		i = 1;
+		milstr_ncpy(np2cfg.model, "VX", sizeof(np2cfg.model));
+		sysmng_update(SYS_UPDATECFG);
+	}
+	gtk_signal_emit_by_name(GTK_OBJECT(arch_radiobutton[i]), "clicked");
 
 	/*
 	 * Sound frame
