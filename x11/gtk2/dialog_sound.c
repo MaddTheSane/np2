@@ -1,8 +1,8 @@
-/*	$Id: dialog_sound.c,v 1.2 2004/07/29 15:18:45 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.3 2005/03/12 12:36:57 monaka Exp $	*/
 
 /*
- * Copyright (c) 2002, 2003, 2004
- *    NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp) All rights reserved.
+ * Copyright (c) 2002-2004 NONAKA Kimihiro
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
