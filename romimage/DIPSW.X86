@@ -1,0 +1,126 @@
+
+
+; ソフトディップスイッチ関係
+
+; ds:[DIPSW_1]	DIPSW-1
+; ds:[DIPSW_2]	DIPSW-2
+; ds:[DIPSW_3]	DIPSW-3
+
+
+
+xchgbits:		push	cx					; alのbitを逆転...
+				mov		cx, 8
+				mov		ah, al
+xchgbitslp:		rcr		ah, 1
+				rcl		al, 1
+				loop	xchgbitslp
+				pop		cx
+				ret
+
+check_p:		push	bx					; パリティの計算
+				mov		bx, 80h
+check_plp:		test	al, bl
+				je		short check_p1
+				inc		bh
+check_p1:		shr		bl, 1
+				jne		short check_plp
+				test	bh, 1
+				pop		bx
+				ret
+
+; ---------------------------------------------------------------------------
+
+INIT_DIPSW:		mov		word ptr ds:[DIPSW_1], 0ce7ch
+				mov		byte ptr ds:[DIPSW_3], 05eh
+				ret
+
+
+
+
+; NP2依存部分
+
+GET_DIPSW:		mov		dx, 841eh
+				in		al, dx
+				and		al, 0bch
+				xor		al, 004h
+				call	xchgbits
+				mov		ds:[DIPSW_1], al
+				inc		dh
+				in		al, dx
+				and		al, 0afh
+				call	xchgbits
+				mov		ds:[DIPSW_2], al
+				inc		dh
+				in		al, dx
+				and		al, 03fh
+				xor		al, 008h
+				call	xchgbits
+				mov		ds:[DIPSW_3], al
+				inc		dh
+				in		al, dx
+				test	al, 20h
+				je		short sw25ed
+				or		byte ptr ds:[DIPSW_2], 08h
+sw25ed:
+				mov		dh, 08eh
+				in		al, dx
+				test	al, 10h
+				je		sw38ed
+				or		byte ptr ds:[DIPSW_3], 01h
+sw38ed:
+				ret
+
+
+
+SET_DIPSW:		mov		dx, 841eh
+
+				mov		al, ds:[DIPSW_1]
+				call	xchgbits
+				xor		al, 4
+				and		al, 0bch
+				call	check_p
+				jne		short putdipsw1
+				or		al, 01h
+putdipsw1:		out		dx, al
+
+				inc		dh
+				mov		al, ds:[DIPSW_2]
+				call	xchgbits
+				and		al, 0afh
+				call	check_p
+				jne		short putdipsw2
+				or		al, 10h
+putdipsw2:		out		dx, al
+
+				inc		dh
+				mov		al, ds:[DIPSW_3]
+				call	xchgbits
+				and		al, 03fh
+				xor		al, 008h
+				call	check_p
+				jne		short putdipsw3
+				or		al, 80h
+putdipsw3:		out		dx, al
+
+				inc		dh
+				in		al, dx
+				and		al, 05fh
+				test	byte ptr ds:[DIPSW_2], 08h
+				je		short sw25on
+				or		al, 20h
+sw25on:			call	check_p
+				jne		putdipsw25
+				or		al, 80h
+putdipsw25:		out		dx, al
+
+				mov		dh, 08eh
+				in		al, dx
+				and		al, 6fh
+				test	byte ptr ds:[DIPSW_3], 1
+				je		short sw38on
+				or		al, 10h
+sw38on:			call	check_p
+				jne		putdipsw38
+				or		al, 80h
+putdipsw38:		out		dx, al
+				ret

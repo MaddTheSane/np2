@@ -1,0 +1,156 @@
+
+; MEMORY_CHECK broken ax
+
+ifdef NP2
+sub_memchk:		push	es
+				push	di
+				push	cx
+				mov		es, bx
+				xor		di, di
+				mov		al, cl
+				mov		ah, al
+				mov		cx, 8000h
+memchk1:		stosw
+				loop	memchk1
+				add		bh, 10h
+				mov		es, bx
+				mov		cx, 8000h
+memchk2:		stosw
+				loop	memchk2
+				mov		cx, 8000h
+memchk3:		scasw
+				loopz	memchk3
+				jne		memoryerror
+				sub		bh, 10h
+				mov		es, bx
+				mov		cx, 8000h
+memchk4:		scasw
+				loopz	memchk4
+memoryerror:	pop		cx
+				pop		di
+				pop		es
+				ret
+
+endif
+
+ifdef MSDOS
+sub_memchk:		mov		ah, 1
+				call	WAITVSYNC
+				sub		ax, ax
+				ret
+endif
+
+; --------------------------------------------------------------------------
+
+EXTMEMORYMAX	equ		128						; 128MB MAX
+
+res_memory128ok	db		"MEMORY 128"
+res_memoryok	db		"KB OK", 0
+res_plusspace	db		"+", 0
+
+
+extmemory_chk:	push	ax
+				mov		bx, 2000h
+				call	bp
+				pop		ax
+				add		ax, 128
+				adc		dx, 0
+				push	bp
+				mov		bp, sp
+				push	ax
+				push	dx
+				call	STRING_L2A
+				mov		cl, 0e1h
+				mov		dx, [bp+6+2]					; location
+				mov		si, offset res_plusspace
+				call	TEXTOUT_CS
+				mov		si, [bp+2+2]					; offset
+				call	TEXTOUT_DS
+				mov		si, offset res_memoryok
+				call	TEXTOUT_CS
+				pop		dx
+				pop		ax
+				dec		word ptr [bp+4+2]				; count
+				pop		bp
+				jne		extmemory_chk
+				ret		4
+
+
+MEMORY_TEST:	mov		bp, offset sub_memchk
+
+				; ÉÅÉCÉìÉÅÉÇÉä Å`128KB
+				mov		bx, 2000h
+				call	bp
+				mov		cl, 0e1h
+				mov		si, offset res_memory128ok
+				call	TEXTOUT_CS
+
+				; ÉÅÉCÉìÉÅÉÇÉä 128KBÅ`640KB
+				mov		ch, es:[MEM_MSW3]
+				and		ch, 7
+				je		short mainmemtest_ed
+				cmp		ch, 4
+				jbe		short mainmemtest_st
+				mov		ch, 4
+mainmemtest_st:	mov		cl, -1
+mainmemtest_l1:	call	bp
+				jne		short mainmemtest_ed
+				inc		cl
+				je		mainmemtest_l1
+				add		bh, 20h
+				push	cx
+				push	dx
+				mov		ax, bx
+				shr		ax, 6
+				call	STRING_I2A
+				pop		dx
+				pop		cx
+				mov		dl, 7
+				mov		cl, 0e1h
+				call	TEXTOUT_DS
+				dec		ch
+				jne		mainmemtest_st
+mainmemtest_ed:
+				mov		dl, 13
+				push	dx
+				in		al, 42h
+				test	al, 2
+				jne		short extmemtest_end	; lowÉÇÅ[ÉhÇÕägí£ÉÅÉÇÉäñ≥Çµ
+				xor		bx, bx
+				push	ds
+				mov		ds, bx
+				or		bl, ds:[MEM_EXPMMSZ]
+				pop		ds
+				je		short extmemtest_end
+
+				mov		ah, 12
+				call	WAITVSYNC
+
+				xor		ax, ax
+				mov		dx, ax
+				push	bx
+				push	I2ABUFFER + 5
+				call	extmemory_chk
+
+				push	ds
+				xor		bx, bx
+				mov		ds, bx
+				or		bx, ds:[MEM_EXTMSZ]
+				pop		ds
+				je		short extmemtest_end
+				cmp		bx, (EXTMEMORYMAX - 16)
+				jc		short extmomey_o16
+				mov		bx, (EXTMEMORYMAX - 16)
+extmomey_o16:
+				push	ax
+				mov		ah, 6
+				call	WAITVSYNC
+				pop		ax
+				shl		bx, 3
+				push	bx
+				push	I2ABUFFER + 3
+				call	extmemory_chk
+
+extmemtest_end:	pop		dx
+				ret
+

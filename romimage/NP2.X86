@@ -1,0 +1,62 @@
+
+
+np2str			db		'NP2', 0
+np2str_ver		db		'ver', 0
+np2str_cpu		db		'cpu', 0
+np2str_clock	db		'clock', 0
+
+
+
+np2commsend:	db		FIXCS
+				lodsb
+				test	al, al
+				je		short np2commsnd_end
+				out		dx, al
+				jmps	np2commsend
+np2commsnd_end:	ret
+
+
+getnp2verb:		push	dx
+				mov		dx, 07efh
+				push	si
+				mov		si, offset np2str
+				call	np2commsend
+				mov		bx, 4
+				sub		si, bx
+cnp2vb_lp2:		in		al, dx
+				cmp		cs:[si], al
+				jne		short nonhitnp2verb
+				inc		si
+				dec		bl
+				jne		cnp2vb_lp2
+				mov		si, offset np2str_ver
+				call	np2commsend
+				in		al, dx
+				cmp		al, 'B'
+				jae		hitnp2verb
+nonhitnp2verb:	pop		si
+				or		si, si
+				pop		dx
+				ret
+hitnp2verb:		pop		si
+				call	np2commsend
+				mov		si, I2ABUFFER
+				mov		bx, si
+hnp2verb_lp:	in		al, dx
+				mov		[bx], al
+				inc		bx
+				test	al, al
+				jne		hnp2verb_lp
+				pop		dx
+				ret
+
+PUT_CPU:		mov		si, offset np2str_cpu
+				call	getnp2verb
+np2verbout:		jne		short unknownout
+				jmp		TEXTOUT_DS
+
+PUT_CLOCK:		mov		si, offset np2str_clock
+				call	getnp2verb
+				je		short np2verbout
+unknownout:		mov		si, offset res_unknown
+				jmp		TEXTOUT_CS
