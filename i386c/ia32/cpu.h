@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.14 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.15 2004/02/09 16:12:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -149,8 +149,8 @@ typedef struct {
 
 typedef struct {
 	descriptor_t	sreg[CPU_SEGREG_NUM];
-	descriptor_t	ldtr_desc;
-	descriptor_t	tr_desc;
+	descriptor_t	ldtr;
+	descriptor_t	tr;
 
 	UINT32		adrsmask;
 	DWORD		ovflag;
@@ -161,10 +161,13 @@ typedef struct {
 
 	BYTE		page_wp;
 
-	BYTE		user_mode;
 	BYTE		protected_mode;
 	BYTE		paging;
 	BYTE		vm86;
+	BYTE		user_mode;
+
+	BYTE		hlt;
+	BYTE		pad[3];
 
 	DWORD		pde_base;
 
@@ -417,12 +420,14 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_STAT_SS32		CPU_STATSAVE.cpu_stat.ss_32
 #define	CPU_STAT_RESETREQ	CPU_STATSAVE.cpu_stat.resetreq
 #define	CPU_STAT_PM		CPU_STATSAVE.cpu_stat.protected_mode
-#define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
 #define	CPU_STAT_PAGING		CPU_STATSAVE.cpu_stat.paging
+#define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
 #define	CPU_STAT_WP		CPU_STATSAVE.cpu_stat.page_wp
 #define	CPU_STAT_CPL		CPU_STAT_SREG(CPU_CS_INDEX).rpl
 #define	CPU_STAT_USER_MODE	CPU_STATSAVE.cpu_stat.user_mode
 #define	CPU_STAT_PDE_BASE	CPU_STATSAVE.cpu_stat.pde_base
+
+#define	CPU_STAT_HLT		CPU_STATSAVE.cpu_stat.hlt
 
 #define	CPU_STAT_IOPL		((CPU_EFLAG & IOPL_FLAG) >> 12)
 #define	CPU_IOPL0		0
@@ -433,8 +438,10 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_STAT_IOADDR		CPU_STATSAVE.cpu_stat.ioaddr
 #define	CPU_STAT_IOLIMIT	CPU_STATSAVE.cpu_stat.iolimit
 
-#define	CPU_STAT_NERROR		CPU_STATSAVE.cpu_stat.nerror
-#define	CPU_STAT_PREV_EXCEPTION	CPU_STATSAVE.cpu_stat.prev_exception
+#define	CPU_STAT_PREV_EXCEPTION		CPU_STATSAVE.cpu_stat.prev_exception
+#define	CPU_STAT_EXCEPTION_COUNTER		CPU_STATSAVE.cpu_stat.nerror
+#define	CPU_STAT_EXCEPTION_COUNTER_INC()	CPU_STATSAVE.cpu_stat.nerror++
+#define	CPU_STAT_EXCEPTION_COUNTER_CLEAR()	CPU_STATSAVE.cpu_stat.nerror = 0
 
 #define	CPU_MODE_SUPERVISER	0
 #define	CPU_MODE_USER		1
@@ -455,15 +462,15 @@ do { \
 #define CPU_IDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.idtr_limit
 #define CPU_IDTR_BASE	CPU_STATSAVE.cpu_sysregs.idtr_base
 #define CPU_LDTR	CPU_STATSAVE.cpu_sysregs.ldtr
-#define CPU_LDTR_DESC	CPU_STATSAVE.cpu_stat.ldtr_desc
-#define CPU_LDTR_BASE	CPU_STATSAVE.cpu_stat.ldtr_desc.u.seg.segbase
-#define CPU_LDTR_END	CPU_STATSAVE.cpu_stat.ldtr_desc.u.seg.segend
-#define CPU_LDTR_LIMIT	CPU_STATSAVE.cpu_stat.ldtr_desc.u.seg.limit
+#define CPU_LDTR_DESC	CPU_STATSAVE.cpu_stat.ldtr
+#define CPU_LDTR_BASE	CPU_STATSAVE.cpu_stat.ldtr.u.seg.segbase
+#define CPU_LDTR_END	CPU_STATSAVE.cpu_stat.ldtr.u.seg.segend
+#define CPU_LDTR_LIMIT	CPU_STATSAVE.cpu_stat.ldtr.u.seg.limit
 #define CPU_TR		CPU_STATSAVE.cpu_sysregs.tr
-#define CPU_TR_DESC	CPU_STATSAVE.cpu_stat.tr_desc
-#define CPU_TR_BASE	CPU_STATSAVE.cpu_stat.tr_desc.u.seg.segbase
-#define CPU_TR_END	CPU_STATSAVE.cpu_stat.tr_desc.u.seg.segend
-#define CPU_TR_LIMIT	CPU_STATSAVE.cpu_stat.tr_desc.u.seg.limit
+#define CPU_TR_DESC	CPU_STATSAVE.cpu_stat.tr
+#define CPU_TR_BASE	CPU_STATSAVE.cpu_stat.tr.u.seg.segbase
+#define CPU_TR_END	CPU_STATSAVE.cpu_stat.tr.u.seg.segend
+#define CPU_TR_LIMIT	CPU_STATSAVE.cpu_stat.tr.u.seg.limit
 
 /*
  * control register

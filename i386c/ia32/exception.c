@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.9 2004/02/06 16:49:51 monaka Exp $	*/
+/*	$Id: exception.c,v 1.10 2004/02/09 16:12:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -76,9 +76,9 @@ exception(int num, int error_code)
 	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
 	VERBOSE(("%s", cpu_reg2str()));
 
-	CPU_STAT_NERROR++;
-	if ((CPU_STAT_NERROR >= 3) 
-	 || (CPU_STAT_NERROR == 2 && CPU_STAT_PREV_EXCEPTION == DF_EXCEPTION)) {
+	CPU_STAT_EXCEPTION_COUNTER_INC();
+	if ((CPU_STAT_EXCEPTION_COUNTER >= 3) 
+	 || (CPU_STAT_EXCEPTION_COUNTER == 2 && CPU_STAT_PREV_EXCEPTION == DF_EXCEPTION)) {
 		/* Triple fault */
 		ia32_panic("exception: catch triple fault!");
 	}
@@ -140,7 +140,7 @@ exception(int num, int error_code)
 		break;
 	}
 
-	if (CPU_STAT_NERROR >= 2) {
+	if (CPU_STAT_EXCEPTION_COUNTER >= 2) {
 		if (dftable[exctype[CPU_STAT_PREV_EXCEPTION]][exctype[num]]) {
 			num = DF_EXCEPTION;
 		}
@@ -150,6 +150,7 @@ exception(int num, int error_code)
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
 	INTERRUPT(num, 0, errorp, error_code);
+	CPU_STAT_EXCEPTION_COUNTER_CLEAR();
 	siglongjmp(exec_1step_jmpbuf, 1);
 }
 
@@ -209,7 +210,7 @@ exception(int num, int error_code)
  * D          : ゲートのサイズ．0 = 16 bit, 1 = 32 bit
  */
 
-static void interrupt_task(descriptor_t *gdp, int softintp, int errorp, int error_code);
+static void interrupt_task_gate(descriptor_t *gdp, int softintp, int errorp, int error_code);
 static void interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_code);
 
 void
@@ -230,11 +231,9 @@ interrupt(int num, int softintp, int errorp, int error_code)
 			EXCEPTION(GP_EXCEPTION, idt_idx + 2);
 		}
 
-		if (!softintp) {
-			BYTE op = cpu_codefetch(CPU_IP);
-			if (op == 0xf4)	{	/* hlt */
-				CPU_EIP++;
-			}
+		if (!softintp && CPU_STAT_HLT) {
+			CPU_EIP++;
+			CPU_STAT_HLT = FALSE;
 		}
 
 		REGPUSH0(REAL_FLAGREG);
@@ -252,6 +251,15 @@ interrupt(int num, int softintp, int errorp, int error_code)
 	} else {
 		/* protected mode */
 		VERBOSE(("interrupt: -------------------------------------------------------------- start"));
+
+		VERBOSE(("interrupt: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
+
+#if defined(DEBUG)
+		if (num == 0x80) {
+			/* Linux, FreeBSD, NetBSD, OpenBSD system call */
+			VERBOSE(("interrupt: syscall no = %d\n%s", CPU_EAX, cpu_reg2str()));
+		}
+#endif
 
 		/* VM86 && IOPL < 3 && interrupt cause == INTn */
 		if (CPU_STAT_VM86 && (CPU_STAT_IOPL < CPU_IOPL3) && (softintp == -1)) {
@@ -292,9 +300,14 @@ interrupt(int num, int softintp, int errorp, int error_code)
 			EXCEPTION(GP_EXCEPTION, idt_idx + 2);
 		}
 
+		if (!softintp && CPU_STAT_HLT) {
+			CPU_EIP++;
+			CPU_STAT_HLT = FALSE;
+		}
+
 		switch (gd.type) {
 		case CPU_SYSDESC_TYPE_TASK:
-			interrupt_task(&gd, softintp, errorp, error_code);
+			interrupt_task_gate(&gd, softintp, errorp, error_code);
 			break;
 
 		case CPU_SYSDESC_TYPE_INTR_16:
@@ -314,7 +327,7 @@ interrupt(int num, int softintp, int errorp, int error_code)
 }
 
 static void
-interrupt_task(descriptor_t *gdp, int softintp, int errorp, int error_code)
+interrupt_task_gate(descriptor_t *gdp, int softintp, int errorp, int error_code)
 {
 	selector_t task_sel;
 	int rv;
@@ -371,8 +384,6 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 	DWORD old_ip, old_sp;
 	WORD old_cs, old_ss, new_ss;
 	int rv; 
-
-	VERBOSE(("interrupt: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 
 	new_ip = gdp->u.gate.offset;
 	old_ss = CPU_SS;
@@ -448,7 +459,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 			break;
 		}
 
-		get_stack_from_tss(cs_sel.desc.dpl, &new_ss, &new_sp);
+		get_stack_pointer_from_tss(cs_sel.desc.dpl, &new_ss, &new_sp);
 
 		rv = parse_selector(&ss_sel, new_ss);
 		if (rv < 0) {
@@ -527,7 +538,6 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 			if (errorp) {
 				PUSH0_32(error_code);
 			}
-			set_eflags(new_flags, mask);
 			break;
 
 		case CPU_SYSDESC_TYPE_INTR_16:
@@ -543,9 +553,10 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 			if (errorp) {
 				PUSH0_16(error_code);
 			}
-			set_flags(new_flags, mask);
 			break;
 		}
+
+		set_eflags(new_flags, mask);
 	} else {
 		if (CPU_STAT_VM86) {
 			VERBOSE(("interrupt: VM86"));
@@ -590,7 +601,6 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 			if (errorp) {
 				PUSH0_32(error_code);
 			}
-			set_eflags(new_flags, mask);
 			break;
 
 		case CPU_SYSDESC_TYPE_INTR_16:
@@ -601,9 +611,10 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 			if (errorp) {
 				PUSH0_16(error_code);
 			}
-			set_flags(new_flags, mask);
 			break;
 		}
+
+		set_eflags(new_flags, mask);
 	}
 
 	VERBOSE(("interrupt: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));

@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.9 2004/02/06 16:49:51 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.10 2004/02/09 16:12:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -106,43 +106,45 @@ JMPfar_pm(WORD selector, DWORD new_ip)
  * JMPfar: code segment
  */
 static void
-JMPfar_pm_code_segment(selector_t *code_sel, DWORD new_ip)
+JMPfar_pm_code_segment(selector_t *cs_sel, DWORD new_ip)
 {
 
+	VERBOSE(("JMPfar_pm: CODE-SEGMENT"));
+
 	/* check privilege level */
-	if (!code_sel->desc.u.seg.ec) {
+	if (!cs_sel->desc.u.seg.ec) {
 		VERBOSE(("JMPfar_pm: NON-CONFORMING-CODE-SEGMENT"));
 		/* 下巻 p.119 4.8.1.1. */
-		if (code_sel->rpl > CPU_STAT_CPL) {
-			VERBOSE(("JMPfar_pm: RPL(%d) > CPL(%d)", code_sel->rpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, code_sel->idx);
+		if (cs_sel->rpl > CPU_STAT_CPL) {
+			VERBOSE(("JMPfar_pm: RPL(%d) > CPL(%d)", cs_sel->rpl, CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
 		}
-		if (code_sel->desc.dpl != CPU_STAT_CPL) {
-			VERBOSE(("JMPfar_pm: DPL(%d) != CPL(%d)", code_sel->desc.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, code_sel->idx);
+		if (cs_sel->desc.dpl != CPU_STAT_CPL) {
+			VERBOSE(("JMPfar_pm: DPL(%d) != CPL(%d)", cs_sel->desc.dpl, CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
 		}
 	} else {
 		VERBOSE(("JMPfar_pm: CONFORMING-CODE-SEGMENT"));
 		/* 下巻 p.120 4.8.1.2. */
-		if (code_sel->desc.dpl > CPU_STAT_CPL) {
-			VERBOSE(("JMPfar_pm: DPL(%d) > CPL(%d)", code_sel->desc.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, code_sel->idx);
+		if (cs_sel->desc.dpl > CPU_STAT_CPL) {
+			VERBOSE(("JMPfar_pm: DPL(%d) > CPL(%d)", cs_sel->desc.dpl, CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
 		}
 	}
 
 	/* not present */
-	if (selector_is_not_present(code_sel)) {
+	if (selector_is_not_present(cs_sel)) {
 		VERBOSE(("JMPfar_pm: selector is not present"));
-		EXCEPTION(NP_EXCEPTION, code_sel->idx);
+		EXCEPTION(NP_EXCEPTION, cs_sel->idx);
 	}
 
 	/* out of range */
-	if (new_ip > code_sel->desc.u.seg.limit) {
-		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, code_sel->desc.u.seg.limit));
+	if (new_ip > cs_sel->desc.u.seg.limit) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel->desc.u.seg.limit));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
-	load_cs(code_sel->selector, &code_sel->desc, CPU_STAT_CPL);
+	load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
 	SET_EIP(new_ip);
 }
 
@@ -153,7 +155,6 @@ static void
 JMPfar_pm_call_gate(selector_t *callgate_sel)
 {
 	selector_t cs_sel;
-	DWORD new_ip;
 	int rv;
 
 	VERBOSE(("JMPfar_pm: CALL-GATE"));
@@ -217,14 +218,13 @@ JMPfar_pm_call_gate(selector_t *callgate_sel)
 	}
 
 	/* out of range */
-	new_ip = callgate_sel->desc.u.gate.offset;
-	if (new_ip > cs_sel.desc.u.seg.limit) {
-		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel.desc.u.seg.limit));
+	if (callgate_sel->desc.u.gate.offset > cs_sel.desc.u.seg.limit) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", callgate_sel->desc.u.gate.offset, cs_sel.desc.u.seg.limit));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
 	load_cs(cs_sel.selector, &cs_sel.desc, CPU_STAT_CPL);
-	SET_EIP(new_ip);
+	SET_EIP(callgate_sel->desc.u.gate.offset);
 }
 
 /*---
@@ -237,20 +237,6 @@ JMPfar_pm_task_gate(selector_t *taskgate_sel)
 	int rv;
 
 	VERBOSE(("JMPfar_pm: TASK-GATE"));
-
-	/*
-	 * 中巻 p.373 JMP 命令
-	 *
-	 * JMP 命令でタスク・スイッチを実行するときは EFLAGS レジスタに
-	 * ネストされたタスク・フラグ (NT) がセットされず、新しい TSS の
-	 * 以前のタスク・リンク・フィールドに前のタスクの TSS セレクタが
-	 * ロードされないので注意されたい。したがって、前のタスクへの
-	 * リターンは IRET 命令の実行では実現できない。JMP 命令で
-	 * タスク・スイッチを実行するのは、その点で CALL 命令と異なる。
-	 * すなわち、CALL 命令は NT フラグをセットし、以前の
-	 * タスク・リンク情報をセーブするので、IRET 命令でのコール元
-	 * タスクへのリターンが可能になる。
-	 */
 
 	/* check privilege level */
 	if (taskgate_sel->desc.dpl < CPU_STAT_CPL) {
@@ -337,25 +323,6 @@ static void CALLfar_pm_call_gate(selector_t *call_sel);
 static void CALLfar_pm_task_gate(selector_t *call_sel);
 static void CALLfar_pm_tss(selector_t *call_sel);
 
-/*
- * 4.3.6. 特権レベル間のコール操作
- *
- * 1. アクセス権のチェック(特権チェック)を実行する。
- * 2. SS, ESP, CS, EIP の各レジスタの現在値を一時的に内部にセーブする。
- * 3. TSS レジスタに格納されている新しいスタック(すなわち、現在コールされている
- *    特権レベル用のスタック)のセグメントレジスタとスタックポインタを
- *    SS レジスタと ESP レジスタにロードし、新しいスタックに切り替える。
- * 4. コール元プロシージャのスタックに対して一時的にセーブしておいた SS と
- *    ESP を、この新しいスタックにプッシュする。
- * 5. コール元プロシージャのスタックからパラメータをコピーする。新しいスタック
- *    にコピーされるパラメータの数は、コール・ゲート・ディスクリプタ内の値で
- *    決まる。
- * 6. コール元プロシージャに対して一時的にセーブしておいた CS と EIP を、
- *    新しいスタックにプッシュする。
- * 7. 新しいコード・セグメントのセグメント・セレクタと新しい命令ポインタを、
- *    コール・ゲートから CS レジスタと EIP レジスタにそれぞれロードする。
- * 8. コールされたプロシージャの実行を新しい特権レベルで開始する。
- */
 void
 CALLfar_pm(WORD selector, DWORD new_ip)
 {
@@ -420,35 +387,37 @@ CALLfar_pm(WORD selector, DWORD new_ip)
  * CALLfar_pm: code segment
  */
 static void
-CALLfar_pm_code_segment(selector_t *call_sel, DWORD new_ip)
+CALLfar_pm_code_segment(selector_t *cs_sel, DWORD new_ip)
 {
 	DWORD sp;
 
+	VERBOSE(("CALLfar_pm: CODE-SEGMENT"));
+
 	/* check privilege level */
-	if (!call_sel->desc.u.seg.ec) {
+	if (!cs_sel->desc.u.seg.ec) {
 		VERBOSE(("CALLfar_pm: NON-CONFORMING-CODE-SEGMENT"));
 		/* 下巻 p.119 4.8.1.1. */
-		if (call_sel->rpl > CPU_STAT_CPL) {
-			VERBOSE(("CALLfar_pm: RPL(%d) > CPL(%d)", call_sel->rpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, call_sel->idx);
+		if (cs_sel->rpl > CPU_STAT_CPL) {
+			VERBOSE(("CALLfar_pm: RPL(%d) > CPL(%d)", cs_sel->rpl, CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
 		}
-		if (call_sel->desc.dpl != CPU_STAT_CPL) {
-			VERBOSE(("CALLfar_pm: DPL(%d) != CPL(%d)", call_sel->desc.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, call_sel->idx);
+		if (cs_sel->desc.dpl != CPU_STAT_CPL) {
+			VERBOSE(("CALLfar_pm: DPL(%d) != CPL(%d)", cs_sel->desc.dpl, CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
 		}
 	} else {
 		VERBOSE(("CALLfar_pm: CONFORMING-CODE-SEGMENT"));
 		/* 下巻 p.120 4.8.1.2. */
-		if (call_sel->desc.dpl > CPU_STAT_CPL) {
-			VERBOSE(("CALLfar_pm: DPL(%d) > CPL(%d)", call_sel->desc.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, call_sel->idx);
+		if (cs_sel->desc.dpl > CPU_STAT_CPL) {
+			VERBOSE(("CALLfar_pm: DPL(%d) > CPL(%d)", cs_sel->desc.dpl, CPU_STAT_CPL));
+			EXCEPTION(GP_EXCEPTION, cs_sel->idx);
 		}
 	}
 
 	/* not present */
-	if (selector_is_not_present(call_sel)) {
+	if (selector_is_not_present(cs_sel)) {
 		VERBOSE(("CALLfar_pm: selector is not present"));
-		EXCEPTION(NP_EXCEPTION, call_sel->idx);
+		EXCEPTION(NP_EXCEPTION, cs_sel->idx);
 	}
 
 	if (CPU_STAT_SS32) {
@@ -460,8 +429,8 @@ CALLfar_pm_code_segment(selector_t *call_sel, DWORD new_ip)
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 8);
 
 		/* out of range */
-		if (new_ip > call_sel->desc.u.seg.limit) {
-			VERBOSE(("CALLfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, call_sel->desc.u.seg.limit));
+		if (new_ip > cs_sel->desc.u.seg.limit) {
+			VERBOSE(("CALLfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel->desc.u.seg.limit));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
@@ -471,8 +440,8 @@ CALLfar_pm_code_segment(selector_t *call_sel, DWORD new_ip)
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 4);
 
 		/* out of range */
-		if (new_ip > call_sel->desc.u.seg.limit) {
-			VERBOSE(("CALLfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, call_sel->desc.u.seg.limit));
+		if (new_ip > cs_sel->desc.u.seg.limit) {
+			VERBOSE(("CALLfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel->desc.u.seg.limit));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
@@ -480,7 +449,7 @@ CALLfar_pm_code_segment(selector_t *call_sel, DWORD new_ip)
 		PUSH0_16(CPU_IP);
 	}
 
-	load_cs(call_sel->selector, &call_sel->desc, CPU_STAT_CPL);
+	load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
 	SET_EIP(new_ip);
 }
 
@@ -563,7 +532,6 @@ static void
 CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel)
 {
 	DWORD sp;
-	DWORD new_ip;
 
 	VERBOSE(("CALLfar_pm: SAME-PRIVILEGE"));
 
@@ -572,7 +540,6 @@ CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel
 	} else {
 		sp = CPU_SP;
 	}
-	new_ip = callgate_sel->desc.u.gate.offset;
 
 	if (callgate_sel->desc.type == CPU_SYSDESC_TYPE_CALL_32) {
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 8);
@@ -581,7 +548,7 @@ CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		PUSH0_32(CPU_EIP);
 
 		load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
-		SET_EIP(new_ip);
+		SET_EIP(callgate_sel->desc.u.gate.offset);
 	} else {
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 4);
 
@@ -589,7 +556,7 @@ CALLfar_pm_call_gate_same_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		PUSH0_16(CPU_IP);
 
 		load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
-		SET_EIP(new_ip);
+		SET_EIP(callgate_sel->desc.u.gate.offset);
 	}
 }
 
@@ -601,7 +568,6 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 {
 	DWORD param[32];	/* copy param */
 	selector_t ss_sel;
-	DWORD sp;
 	DWORD old_eip, old_esp;
 	DWORD new_esp;
 	WORD old_cs, old_ss;
@@ -617,15 +583,12 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 	old_ss = CPU_SS;
 	old_eip = CPU_EIP;
 	old_esp = CPU_ESP;
-
-	if (CPU_STAT_SS32) {
-		sp = CPU_ESP;
-	} else {
-		sp = CPU_SP;
+	if (!CPU_STAT_SS32) {
+		old_esp &= 0xffff;
 	}
 
 	/* get stack pointer from TSS */
-	get_stack_from_tss(cs_sel->desc.dpl, &new_ss, &new_esp);
+	get_stack_pointer_from_tss(cs_sel->desc.dpl, &new_ss, &new_esp);
 
 	/* parse stack segment descriptor */
 	rv = parse_selector(&ss_sel, new_ss);
@@ -672,7 +635,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 
 		/* dump param */
 		for (i = 0; i < param_count; i++) {
-			param[i] = cpu_vmemoryread_d(CPU_SS_INDEX, sp + i * 4);
+			param[i] = cpu_vmemoryread_d(CPU_SS_INDEX, old_esp + i * 4);
 			VERBOSE(("CALLfar_pm: get param[%d] = %08x", i, param[i]));
 		}
 
@@ -690,7 +653,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		PUSH0_32(old_esp);
 
 		/* restore param */
-		for (i = param_count; i != 0; i--) {
+		for (i = param_count; i > 0; i--) {
 			PUSH0_32(param[i - 1]);
 			VERBOSE(("CALLfar_pm: set param[%d] = %08x", i - 1, param[i - 1]));
 		}
@@ -702,7 +665,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 
 		/* dump param */
 		for (i = 0; i < param_count; i++) {
-			param[i] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + i * 2);
+			param[i] = cpu_vmemoryread_w(CPU_SS_INDEX, old_esp + i * 2);
 			VERBOSE(("CALLfar_pm: get param[%d] = %04x", i, param[i]));
 		}
 
@@ -720,7 +683,7 @@ CALLfar_pm_call_gate_more_privilege(selector_t *callgate_sel, selector_t *cs_sel
 		PUSH0_16(old_esp);
 
 		/* restore param */
-		for (i = param_count; i != 0; i--) {
+		for (i = param_count; i > 0; i--) {
 			PUSH0_16(param[i - 1]);
 			VERBOSE(("CALLfar_pm: set param[%d] = %04x", i - 1, param[i - 1]));
 		}
@@ -822,30 +785,10 @@ CALLfar_pm_tss(selector_t *tss_sel)
  * RETfar_pm
  */
 
-/*
- * 4.3.6. 特権レベル間のリターン操作
- *
- * 1. 特権チェックを実行する。
- * 2. CS レジスタと EIP レジスタにコール前の値をリストアする。
- * 3. RET 命令にオプション引き数の n がある場合は、パラメータをスタックから
- *    開放するため、n オペランドで指定されたバイト数だけスタック・ポインタを
- *    インクリメントする。コール・ゲート・ディスクリプタが、スタック間で
- *    1 つ以上のパラメータをコピーするよう指定している場合は、RET n 命令を
- *    使用して両スタックからパラメータを開放しなければならない。n オペランド
- *    には、各スタック壌でパラメータが占有するバイト数を指定する。
- *    リターン時に、プロセッサは各スタックに対して n だけ ESP をインクリメント
- *    し、これらのパラメータをスタックから効率よく削除する。
- * 4. SS レジスタと ESP レジスタに、コール前の値をリストアする。これで、
- *    コール元プロシージャのスタックへ切り替えられる。
- * 5. RET 命令にオプション引き数の n がある場合は、パラメータをスタックから
- *    開放するため、n オペランドで指定されたバイト数だけスタック・ポインタを
- *    インクリメントする(ステップ 3 の説明を参照)。
- * 6. コール元プロシージャの実行を再開する。
- */
 void
 RETfar_pm(DWORD nbytes)
 {
-	selector_t ret_sel, ss_sel, temp_sel;
+	selector_t cs_sel, ss_sel, temp_sel;
 	DWORD sp;
 	DWORD new_ip, new_sp;
 	WORD new_cs, new_ss;
@@ -869,48 +812,48 @@ RETfar_pm(DWORD nbytes)
 		new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 2);
 	}
 
-	rv = parse_selector(&ret_sel, new_cs);
+	rv = parse_selector(&cs_sel, new_cs);
 	if (rv < 0) {
-		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d, %s)", ret_sel.selector, rv));
-		EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d, %s)", cs_sel.selector, rv));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
 
 	/* check segment type */
-	if (!ret_sel.desc.s) {
+	if (!cs_sel.desc.s) {
 		VERBOSE(("RETfar_pm: return to system segment"));
-		EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
-	if (!ret_sel.desc.u.seg.c) {
+	if (!cs_sel.desc.u.seg.c) {
 		VERBOSE(("RETfar_pm: return to data segment"));
-		EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
 
 	/* check privilege level */
-	if (ret_sel.rpl < CPU_STAT_CPL) {
-		VERBOSE(("RETfar_pm: RPL(%d) < CPL(%d)", ret_sel.rpl, CPU_STAT_CPL));
-		EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+	if (cs_sel.rpl < CPU_STAT_CPL) {
+		VERBOSE(("RETfar_pm: RPL(%d) < CPL(%d)", cs_sel.rpl, CPU_STAT_CPL));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
-	if (!ret_sel.desc.u.seg.ec && (ret_sel.desc.dpl > ret_sel.rpl)) {
-		VERBOSE(("RETfar_pm: NON-COMFORMING-CODE-SEGMENT and DPL(%d) > RPL(%d)", ret_sel.desc.dpl, ret_sel.rpl));
-		EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+	if (!cs_sel.desc.u.seg.ec && (cs_sel.desc.dpl > cs_sel.rpl)) {
+		VERBOSE(("RETfar_pm: NON-COMFORMING-CODE-SEGMENT and DPL(%d) > RPL(%d)", cs_sel.desc.dpl, cs_sel.rpl));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
 
 	/* not present */
-	if (selector_is_not_present(&ret_sel)) {
+	if (selector_is_not_present(&cs_sel)) {
 		VERBOSE(("RETfar_pm: returned code segment is not present"));
-		EXCEPTION(NP_EXCEPTION, ret_sel.idx);
+		EXCEPTION(NP_EXCEPTION, cs_sel.idx);
 	}
 
-	if (ret_sel.rpl == CPU_STAT_CPL) {
+	if (cs_sel.rpl == CPU_STAT_CPL) {
 		VERBOSE(("RETfar_pm: RETURN-TO-SAME-PRIVILEGE-LEVEL"));
 
 		/* check code segment limit */
-		if (new_ip > ret_sel.desc.u.seg.limit) {
-			VERBOSE(("RETfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, ret_sel.desc.u.seg.limit));
+		if (new_ip > cs_sel.desc.u.seg.limit) {
+			VERBOSE(("RETfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel.desc.u.seg.limit));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
-		VERBOSE(("RETfar_pm: new_ip = %08x, new_cs = %04x", new_ip, ret_sel.selector));
+		VERBOSE(("RETfar_pm: new_ip = %08x, new_cs = %04x", new_ip, cs_sel.selector));
 
 		if (CPU_INST_OP32) {
 			nbytes += 8;
@@ -923,7 +866,7 @@ RETfar_pm(DWORD nbytes)
 			CPU_SP += nbytes;
 		}
 
-		load_cs(ret_sel.selector, &ret_sel.desc, CPU_STAT_CPL);
+		load_cs(cs_sel.selector, &cs_sel.desc, CPU_STAT_CPL);
 		SET_EIP(new_ip);
 	} else {
 		VERBOSE(("RETfar_pm: RETURN-OUTER-PRIVILEGE-LEVEL"));
@@ -947,25 +890,25 @@ RETfar_pm(DWORD nbytes)
 		/* check stack segment descriptor */
 		if (!ss_sel.desc.s) {
 			VERBOSE(("RETfar_pm: stack segment is system segment"));
-			EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 		}
 		if (ss_sel.desc.u.seg.c) {
 			VERBOSE(("RETfar_pm: stack segment is code segment"));
-			EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 		}
 		if (!ss_sel.desc.u.seg.wr) {
 			VERBOSE(("RETfar_pm: stack segment is read-only data segment"));
-			EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 		}
 
 		/* check privilege level */
-		if (ss_sel.rpl != ret_sel.rpl) {
-			VERBOSE(("RETfar_pm: RPL[SS](%d) != RPL[CS](%d)", ss_sel.rpl, ret_sel.rpl));
-			EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+		if (ss_sel.rpl != cs_sel.rpl) {
+			VERBOSE(("RETfar_pm: RPL[SS](%d) != RPL[CS](%d)", ss_sel.rpl, cs_sel.rpl));
+			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 		}
-		if (ss_sel.desc.dpl != ret_sel.rpl) {
-			VERBOSE(("RETfar_pm: DPL[SS](%d) != RPL[CS](%d)", ss_sel.desc.dpl, ret_sel.rpl));
-			EXCEPTION(GP_EXCEPTION, ret_sel.idx);
+		if (ss_sel.desc.dpl != cs_sel.rpl) {
+			VERBOSE(("RETfar_pm: DPL[SS](%d) != RPL[CS](%d)", ss_sel.desc.dpl, cs_sel.rpl));
+			EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 		}
 
 		/* not present */
@@ -975,18 +918,18 @@ RETfar_pm(DWORD nbytes)
 		}
 
 		/* check code segment limit */
-		if (new_ip > ret_sel.desc.u.seg.limit) {
-			VERBOSE(("RETfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, ret_sel.desc.u.seg.limit));
+		if (new_ip > cs_sel.desc.u.seg.limit) {
+			VERBOSE(("RETfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel.desc.u.seg.limit));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
-		VERBOSE(("RETfar_pm: new_ip = %08x, new_cs = %04x", new_ip, ret_sel.selector));
+		VERBOSE(("RETfar_pm: new_ip = %08x, new_cs = %04x", new_ip, cs_sel.selector));
 		VERBOSE(("RETfar_pm: new_sp = %08x, new_ss = %04x", new_sp, ss_sel.selector));
 
-		load_cs(ret_sel.selector, &ret_sel.desc, ret_sel.rpl);
+		load_cs(cs_sel.selector, &cs_sel.desc, cs_sel.rpl);
 		SET_EIP(new_ip);
 
-		load_ss(ss_sel.selector, &ss_sel.desc, ret_sel.rpl);
+		load_ss(ss_sel.selector, &ss_sel.desc, cs_sel.rpl);
 		if (CPU_STAT_SS32) {
 			CPU_ESP = new_sp + nbytes;
 		} else {
@@ -1046,247 +989,58 @@ RETfar_pm(DWORD nbytes)
  * IRET_pm
  */
 static void IRET_pm_nested_task(void);
-static void IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
-static void IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
+static void IRET_pm_protected_mode_return(DWORD new_cs, DWORD new_ip, DWORD new_flags);
+static void IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, DWORD new_ip, DWORD new_flags);
+static void IRET_pm_protected_mode_return_outer_privilege(selector_t *cs_sel, DWORD new_ip, DWORD new_flags);
+static void IRET_pm_return_to_vm86(DWORD new_cs, DWORD new_ip, DWORD new_flags);
+static void IRET_pm_return_from_vm86(DWORD new_cs, DWORD new_ip, DWORD new_flags);
 
 void
 IRET_pm(void)
 {
-	selector_t cs_sel, ss_sel;
-	descriptor_t *dp;
 	DWORD sp;
-	DWORD stacksize;	/* for RETURN-TO-SAME-PRIVILEGE-LEVEL */
-	DWORD mask = 0;
-	DWORD new_ip, new_sp, new_flags;
-	WORD new_cs, new_ss;
-	int op32;
+	DWORD new_ip, new_flags;
+	WORD new_cs;
 	int rv;
-	int i;
 
-	VERBOSE(("IRET_pm: old EIP = %04x:%08x, old ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
+	VERBOSE(("IRET_pm: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 
 	if (!(CPU_EFLAG & VM_FLAG) && (CPU_EFLAG & NT_FLAG)) {
 		/* TASK-RETURN: PE=1, VM=0, NT=1 */
 		IRET_pm_nested_task();
-		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
-		CPU_STAT_NERROR = 0;
-		return;
-	}
-
-	if (CPU_STAT_SS32) {
-		sp = CPU_ESP;
 	} else {
-		sp = CPU_SP;
-	}
-	if (CPU_INST_OP32) {
-		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 12);
-		new_ip = cpu_vmemoryread_d(CPU_SS_INDEX, sp);
-		new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 4);
-		new_flags = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 8);
-	} else {
-		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 6);
-		new_ip = cpu_vmemoryread_w(CPU_SS_INDEX, sp);
-		new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 2);
-		new_flags = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 4);
-	}
-	op32 = CPU_INST_OP32;
-
-	VERBOSE(("IRET_pm: new_ip = %08x, new_cs = %04x, new_eflags = %08x", new_ip, new_cs, new_flags));
-
-	if (CPU_EFLAG & VM_FLAG) {
-		/* RETURN-FROM-VIRTUAL-8086-MODE */
-		IRET_pm_return_from_vm86(new_ip, new_cs, new_flags);
-		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
-		CPU_STAT_NERROR = 0;
-		return;
-	}
-
-	if (new_flags & VM_FLAG) {
-		/* RETURN-TO-VIRTUAL-8086-MODE */
-		IRET_pm_return_to_vm86(new_ip, new_cs, new_flags);
-		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
-		CPU_STAT_NERROR = 0;
-		return;
-	}
-
-	/* PROTECTED-MODE-RETURN */
-	VERBOSE(("IRET_pm: PE=1, VM=0 in flags image"));
-
-	rv = parse_selector(&cs_sel, new_cs);
-	if (rv < 0) {
-		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", cs_sel.selector, rv));
-		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
-	}
-
-	/* check code segment descriptor */
-	if (!cs_sel.desc.s) {
-		VERBOSE(("IRET_pm: return code segment is system segment"));
-		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
-	}
-	if (!cs_sel.desc.u.seg.c) {
-		VERBOSE(("IRET_pm: return code segment is data segment"));
-		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
-	}
-
-	/* check privilege level */
-	if (cs_sel.rpl < CPU_STAT_CPL) {
-		VERBOSE(("IRET_pm: RPL(%d) < CPL(%d)", cs_sel.rpl, CPU_STAT_CPL));
-		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
-	}
-	if (cs_sel.desc.u.seg.ec && (cs_sel.desc.dpl > cs_sel.rpl)) {
-		VERBOSE(("IRET_pm: CONFORMING-CODE-SEGMENT and DPL(%d) != RPL(%d)", cs_sel.desc.dpl, cs_sel.rpl));
-		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
-	}
-
-	/* not present */
-	if (selector_is_not_present(&cs_sel)) {
-		VERBOSE(("IRET_pm: code segment is not present"));
-		EXCEPTION(NP_EXCEPTION, cs_sel.idx);
-	}
-
-	if (cs_sel.rpl > CPU_STAT_CPL) {
-		VERBOSE(("IRET_pm: RETURN-OUTER-PRIVILEGE-LEVEL"));
-
-		if (CPU_INST_OP32) {
-			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 20);
-			new_sp = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 12);
-			new_ss = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 16);
-		} else {
-			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 10);
-			new_sp = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 6);
-			new_ss = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 8);
-		}
-		VERBOSE(("IRET_pm: new_sp = 0x%08x, new_ss = 0x%04x", new_sp, new_ss));
-
-		rv = parse_selector(&ss_sel, new_ss);
-		if (rv < 0) {
-			VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", ss_sel.selector, rv));
-			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
-		}
-
-		/* check privilege level */
-		if (ss_sel.rpl != cs_sel.rpl) {
-			VERBOSE(("IRET_pm: RPL[SS](%d) != RPL[CS](%d)", ss_sel.rpl, cs_sel.rpl));
-			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
-		}
-		if (ss_sel.desc.dpl != cs_sel.rpl) {
-			VERBOSE(("IRET_pm: DPL[SS](%d) != RPL[CS](%d)", ss_sel.desc.dpl, cs_sel.rpl));
-			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
-		}
-
-		/* check stack segment descriptor */
-		if (!ss_sel.desc.s) {
-			VERBOSE(("IRET_pm: stack segment is system segment"));
-			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
-		}
-		if (ss_sel.desc.u.seg.c) {
-			VERBOSE(("IRET_pm: stack segment is code segment"));
-			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
-		}
-		if (!ss_sel.desc.u.seg.wr) {
-			VERBOSE(("IRET_pm: stack segment is read-only data segment"));
-			EXCEPTION(GP_EXCEPTION, ss_sel.idx);
-		}
-
-		/* not present */
-		if (selector_is_not_present(&ss_sel)) {
-			VERBOSE(("IRET_pm: stack segment is not present"));
-			EXCEPTION(SS_EXCEPTION, ss_sel.idx);
-		}
-
-		/* check code segment limit */
-		if (new_ip > cs_sel.desc.u.seg.limit) {
-			VERBOSE(("IRET_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel.desc.u.seg.limit));
-			EXCEPTION(GP_EXCEPTION, 0);
-		}
-
-		mask = 0;
-		if (CPU_INST_OP32)
-			mask |= RF_FLAG;
-		if (CPU_STAT_CPL <= CPU_STAT_IOPL)
-			mask |= I_FLAG;
-		if (CPU_STAT_CPL == 0) {
-			mask |= IOPL_FLAG;
-			if (CPU_INST_OP32) {
-				mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
-			}
-		}
-
-		/* set new register */
-		load_cs(cs_sel.selector, &cs_sel.desc, cs_sel.rpl);
-		SET_EIP(new_ip);
-
-		if (op32) {
-			set_eflags(new_flags, mask);
-		} else {
-			set_flags(new_flags, mask);
-		}
-
-		load_ss(ss_sel.selector, &ss_sel.desc, cs_sel.rpl);
 		if (CPU_STAT_SS32) {
-			CPU_ESP = new_sp;
+			sp = CPU_ESP;
 		} else {
-			CPU_SP = new_sp;
+			sp = CPU_SP;
 		}
-
-		/* check segment register */
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			if ((i != CPU_CS_INDEX) && (i != CPU_SS_INDEX)) {
-				dp = &CPU_STAT_SREG(i);
-				if ((!dp->u.seg.c || !dp->u.seg.ec)
-				 && (CPU_STAT_SREG(i).dpl < CPU_STAT_CPL)) {
-					/* segment register is invalid */
-					CPU_REGS_SREG(i) = 0;
-					CPU_STAT_SREG_CLEAR(i);
-					continue;
-				}
-			}
-		}
-	} else {
-		VERBOSE(("IRET_pm: RETURN-TO-SAME-PRIVILEGE-LEVEL"));
-
-		/* check code segment limit */
-		if (new_ip > cs_sel.desc.u.seg.limit) {
-			VERBOSE(("IRET_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel.desc.u.seg.limit));
-			EXCEPTION(GP_EXCEPTION, 0);
-		}
-
-		mask = 0;
-		if (CPU_INST_OP32)
-			mask |= RF_FLAG;
-		if (CPU_STAT_CPL <= CPU_STAT_IOPL)
-			mask |= I_FLAG;
-		if (CPU_STAT_CPL == 0) {
-			mask |= IOPL_FLAG;
-			if (CPU_INST_OP32) {
-				mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
-			}
-		}
-
-		/* set new register */
-		load_cs(cs_sel.selector, &cs_sel.desc, CPU_STAT_CPL);
-		SET_EIP(new_ip);
-
-		if (op32) {
-			set_eflags(new_flags, mask);
-		} else {
-			set_flags(new_flags, mask);
-		}
-
 		if (CPU_INST_OP32) {
-			stacksize = 12;
+			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 12);
+			new_ip = cpu_vmemoryread_d(CPU_SS_INDEX, sp);
+			new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 4);
+			new_flags = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 8);
 		} else {
-			stacksize = 6;
+			CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 6);
+			new_ip = cpu_vmemoryread_w(CPU_SS_INDEX, sp);
+			new_cs = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 2);
+			new_flags = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 4);
 		}
-		if (CPU_STAT_SS32) {
-			CPU_ESP += stacksize;
+
+		VERBOSE(("IRET_pm: new_ip = %08x, new_cs = %04x, new_eflags = %08x", new_ip, new_cs, new_flags));
+
+		if (CPU_EFLAG & VM_FLAG) {
+			/* RETURN-FROM-VIRTUAL-8086-MODE */
+			IRET_pm_return_from_vm86(new_cs, new_ip, new_flags);
+		} else if (new_flags & VM_FLAG) {
+			/* RETURN-TO-VIRTUAL-8086-MODE */
+			IRET_pm_return_to_vm86(new_cs, new_ip, new_flags);
 		} else {
-			CPU_SP += stacksize;
+			/* PROTECTED-MODE-RETURN */
+			IRET_pm_protected_mode_return(new_cs, new_ip, new_flags);
 		}
 	}
-	CPU_STAT_NERROR = 0;
 
-	VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
+	VERBOSE(("IRET_pm: new EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
 }
 
 /*---
@@ -1301,7 +1055,7 @@ IRET_pm_nested_task(void)
 
 	VERBOSE(("IRET_pm: TASK-RETURN: PE=1, VM=0, NT=1"));
 
-	new_tss = get_link_selector_from_tss();
+	new_tss = get_backlink_selector_from_tss();
 
 	rv = parse_selector(&tss_sel, new_tss);
 	if (rv < 0 || tss_sel.ldt) {
@@ -1340,10 +1094,223 @@ IRET_pm_nested_task(void)
 }
 
 /*---
+ * IRET_pm: PROTECTED-MODE-RETURN
+ */
+static void
+IRET_pm_protected_mode_return(DWORD new_cs, DWORD new_ip, DWORD new_flags)
+{
+	selector_t cs_sel;
+	int rv;
+
+	/* PROTECTED-MODE-RETURN */
+	VERBOSE(("IRET_pm: PE=1, VM=0 in flags image"));
+
+	rv = parse_selector(&cs_sel, new_cs);
+	if (rv < 0) {
+		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", cs_sel.selector, rv));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
+	}
+
+	/* check code segment descriptor */
+	if (!cs_sel.desc.s) {
+		VERBOSE(("IRET_pm: return code segment is system segment"));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
+	}
+	if (!cs_sel.desc.u.seg.c) {
+		VERBOSE(("IRET_pm: return code segment is data segment"));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
+	}
+
+	/* check privilege level */
+	if (cs_sel.rpl < CPU_STAT_CPL) {
+		VERBOSE(("IRET_pm: RPL(%d) < CPL(%d)", cs_sel.rpl, CPU_STAT_CPL));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
+	}
+	if (cs_sel.desc.u.seg.ec && (cs_sel.desc.dpl > cs_sel.rpl)) {
+		VERBOSE(("IRET_pm: CONFORMING-CODE-SEGMENT and DPL(%d) != RPL(%d)", cs_sel.desc.dpl, cs_sel.rpl));
+		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
+	}
+
+	/* not present */
+	if (selector_is_not_present(&cs_sel)) {
+		VERBOSE(("IRET_pm: code segment is not present"));
+		EXCEPTION(NP_EXCEPTION, cs_sel.idx);
+	}
+
+	if (cs_sel.rpl > CPU_STAT_CPL) {
+		IRET_pm_protected_mode_return_outer_privilege(&cs_sel, new_ip, new_flags);
+	} else {
+		IRET_pm_protected_mode_return_same_privilege(&cs_sel, new_ip, new_flags);
+	}
+}
+
+/*---
+ * IRET_pm: SAME-PRIVILEGE
+ */
+static void
+IRET_pm_protected_mode_return_same_privilege(selector_t *cs_sel, DWORD new_ip, DWORD new_flags)
+{
+	DWORD mask;
+	DWORD stacksize;
+
+	VERBOSE(("IRET_pm: RETURN-TO-SAME-PRIVILEGE-LEVEL"));
+
+	/* check code segment limit */
+	if (new_ip > cs_sel->desc.u.seg.limit) {
+		VERBOSE(("IRET_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel->desc.u.seg.limit));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
+
+	mask = 0;
+	if (CPU_INST_OP32)
+		mask |= RF_FLAG;
+	if (CPU_STAT_CPL <= CPU_STAT_IOPL)
+		mask |= I_FLAG;
+	if (CPU_STAT_CPL == 0) {
+		mask |= IOPL_FLAG;
+		if (CPU_INST_OP32) {
+			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
+		}
+	}
+
+	/* set new register */
+	load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
+	SET_EIP(new_ip);
+
+	set_eflags(new_flags, mask);
+
+	if (CPU_INST_OP32) {
+		stacksize = 12;
+	} else {
+		stacksize = 6;
+	}
+	if (CPU_STAT_SS32) {
+		CPU_ESP += stacksize;
+	} else {
+		CPU_SP += stacksize;
+	}
+}
+
+/*---
+ * IRET_pm: OUTER-PRIVILEGE
+ */
+static void
+IRET_pm_protected_mode_return_outer_privilege(selector_t *cs_sel, DWORD new_ip, DWORD new_flags)
+{
+	descriptor_t *dp;
+	selector_t ss_sel;
+	DWORD mask;
+	DWORD sp;
+	DWORD new_sp;
+	WORD new_ss;
+	int rv;
+	int i;
+
+	VERBOSE(("IRET_pm: RETURN-OUTER-PRIVILEGE-LEVEL"));
+
+	if (CPU_STAT_SS32) {
+		sp = CPU_ESP;
+	} else {
+		sp = CPU_SP;
+	}
+	if (CPU_INST_OP32) {
+		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 20);
+		new_sp = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 12);
+		new_ss = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 16);
+	} else {
+		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, 10);
+		new_sp = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 6);
+		new_ss = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 8);
+	}
+	VERBOSE(("IRET_pm: new_sp = 0x%08x, new_ss = 0x%04x", new_sp, new_ss));
+
+	rv = parse_selector(&ss_sel, new_ss);
+	if (rv < 0) {
+		VERBOSE(("IRET_pm: parse_selector (selector = %04x, rv = %d)", ss_sel.selector, rv));
+		EXCEPTION(GP_EXCEPTION, ss_sel.idx);
+	}
+
+	/* check privilege level */
+	if (ss_sel.rpl != cs_sel->rpl) {
+		VERBOSE(("IRET_pm: RPL[SS](%d) != RPL[CS](%d)", ss_sel.rpl, cs_sel->rpl));
+		EXCEPTION(GP_EXCEPTION, ss_sel.idx);
+	}
+	if (ss_sel.desc.dpl != cs_sel->rpl) {
+		VERBOSE(("IRET_pm: DPL[SS](%d) != RPL[CS](%d)", ss_sel.desc.dpl, cs_sel->rpl));
+		EXCEPTION(GP_EXCEPTION, ss_sel.idx);
+	}
+
+	/* check stack segment descriptor */
+	if (!ss_sel.desc.s) {
+		VERBOSE(("IRET_pm: stack segment is system segment"));
+		EXCEPTION(GP_EXCEPTION, ss_sel.idx);
+	}
+	if (ss_sel.desc.u.seg.c) {
+		VERBOSE(("IRET_pm: stack segment is code segment"));
+		EXCEPTION(GP_EXCEPTION, ss_sel.idx);
+	}
+	if (!ss_sel.desc.u.seg.wr) {
+		VERBOSE(("IRET_pm: stack segment is read-only data segment"));
+		EXCEPTION(GP_EXCEPTION, ss_sel.idx);
+	}
+
+	/* not present */
+	if (selector_is_not_present(&ss_sel)) {
+		VERBOSE(("IRET_pm: stack segment is not present"));
+		EXCEPTION(SS_EXCEPTION, ss_sel.idx);
+	}
+
+	/* check code segment limit */
+	if (new_ip > cs_sel->desc.u.seg.limit) {
+		VERBOSE(("IRET_pm: new_ip is out of range. new_ip = %08x, limit = %08x", new_ip, cs_sel->desc.u.seg.limit));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
+
+	mask = 0;
+	if (CPU_INST_OP32)
+		mask |= RF_FLAG;
+	if (CPU_STAT_CPL <= CPU_STAT_IOPL)
+		mask |= I_FLAG;
+	if (CPU_STAT_CPL == 0) {
+		mask |= IOPL_FLAG;
+		if (CPU_INST_OP32) {
+			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
+		}
+	}
+
+	/* set new register */
+	load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->rpl);
+	SET_EIP(new_ip);
+
+	set_eflags(new_flags, mask);
+
+	load_ss(ss_sel.selector, &ss_sel.desc, cs_sel->rpl);
+	if (CPU_STAT_SS32) {
+		CPU_ESP = new_sp;
+	} else {
+		CPU_SP = new_sp;
+	}
+
+	/* check segment register */
+	for (i = 0; i < CPU_SEGREG_NUM; i++) {
+		if ((i != CPU_CS_INDEX) && (i != CPU_SS_INDEX)) {
+			dp = &CPU_STAT_SREG(i);
+			if ((!dp->u.seg.c || !dp->u.seg.ec)
+			 && (CPU_STAT_SREG(i).dpl < CPU_STAT_CPL)) {
+				/* segment register is invalid */
+				CPU_REGS_SREG(i) = 0;
+				CPU_STAT_SREG_CLEAR(i);
+				continue;
+			}
+		}
+	}
+}
+
+/*---
  * IRET_pm: new_flags & VM_FLAG
  */
 static void
-IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
+IRET_pm_return_to_vm86(DWORD new_cs, DWORD new_ip, DWORD new_flags)
 {
 	WORD segsel[CPU_SEGREG_NUM];
 	DWORD sp;
@@ -1382,8 +1349,10 @@ IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 	/* to VM86 mode */
 	set_eflags(new_flags, IOPL_FLAG|I_FLAG|VM_FLAG|RF_FLAG);
 
-	CPU_ESP = new_sp;
+	new_sp &= 0xffff;
 	new_ip &= 0xffff;
+
+	CPU_ESP = new_sp;
 	SET_EIP(new_ip);
 }
 
@@ -1391,7 +1360,7 @@ IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
  * IRET_pm: VM_FLAG
  */
 static void
-IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
+IRET_pm_return_from_vm86(DWORD new_cs, DWORD new_ip, DWORD new_flags)
 {
 	DWORD stacksize;
 
@@ -1410,11 +1379,7 @@ IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 			CPU_SP += stacksize;
 		}
 
-		if (CPU_INST_OP32) {
-			set_eflags(new_flags, I_FLAG|RF_FLAG);
-		} else {
-			set_flags(new_flags, I_FLAG|RF_FLAG);
-		}
+		set_eflags(new_flags, I_FLAG|RF_FLAG);
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);

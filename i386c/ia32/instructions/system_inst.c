@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.14 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.15 2004/02/09 16:12:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -541,12 +541,17 @@ LAR_GwEw(void)
 		}
 
 		if (sel.desc.s) {
-			if (!(sel.desc.u.seg.c && !sel.desc.u.seg.ec) &&
-			    ((sel.desc.dpl < CPU_STAT_CPL) || (sel.desc.dpl < sel.rpl))) {
-				CPU_FLAGL &= ~Z_FLAG;
-				return;
+			/* code or data segment */
+			if (!(sel.desc.u.seg.c && sel.desc.u.seg.ec)) {
+				/* not conforming code segment */
+				if ((sel.desc.dpl < CPU_STAT_CPL)
+				 || (sel.desc.dpl < sel.rpl)) {
+					CPU_FLAGL &= ~Z_FLAG;
+					return;
+				}
 			}
 		} else {
+			/* system segment */
 			switch (sel.desc.type) {
 			case CPU_SYSDESC_TYPE_TSS_16:
 			case CPU_SYSDESC_TYPE_LDT:
@@ -593,12 +598,17 @@ LAR_GdEw(void)
 		}
 
 		if (sel.desc.s) {
-			if (!(sel.desc.u.seg.c && !sel.desc.u.seg.ec)
-			 && ((sel.desc.dpl < CPU_STAT_CPL) || (sel.desc.dpl < sel.rpl))) {
-				CPU_FLAGL &= ~Z_FLAG;
-				return;
+			/* code or data segment */
+			if (!(sel.desc.u.seg.c && sel.desc.u.seg.ec)) {
+				/* not conforming code segment */
+				if ((sel.desc.dpl < CPU_STAT_CPL)
+				 || (sel.desc.dpl < sel.rpl)) {
+					CPU_FLAGL &= ~Z_FLAG;
+					return;
+				}
 			}
 		} else {
+			/* system segment */
 			switch (sel.desc.type) {
 			case CPU_SYSDESC_TYPE_TSS_16:
 			case CPU_SYSDESC_TYPE_LDT:
@@ -644,12 +654,17 @@ LSL_GwEw(void)
 		}
 
 		if (sel.desc.s) {
-			if (!(sel.desc.u.seg.c && !sel.desc.u.seg.ec)
-			 && ((sel.desc.dpl < CPU_STAT_CPL) || (sel.desc.dpl < sel.rpl))) {
-				CPU_FLAGL &= ~Z_FLAG;
-				return;
+			/* code or data segment */
+			if (!(sel.desc.u.seg.c && sel.desc.u.seg.ec)) {
+				/* not conforming code segment */
+				if ((sel.desc.dpl < CPU_STAT_CPL)
+				 || (sel.desc.dpl < sel.rpl)) {
+					CPU_FLAGL &= ~Z_FLAG;
+					return;
+				}
 			}
 		} else {
+			/* system segment */
 			switch (sel.desc.type) {
 			case CPU_SYSDESC_TYPE_TSS_16:
 			case CPU_SYSDESC_TYPE_LDT:
@@ -691,12 +706,17 @@ LSL_GdEw(void)
 		}
 
 		if (sel.desc.s) {
-			if (!(sel.desc.u.seg.c && !sel.desc.u.seg.ec)
-			 && ((CPU_STAT_CPL > sel.desc.dpl) || (sel.rpl > sel.desc.dpl))) {
-				CPU_FLAGL &= ~Z_FLAG;
-				return;
+			/* code or data segment */
+			if (!(sel.desc.u.seg.c && sel.desc.u.seg.ec)) {
+				/* not conforming code segment */
+				if ((sel.desc.dpl < CPU_STAT_CPL)
+				 || (sel.desc.dpl < sel.rpl)) {
+					CPU_FLAGL &= ~Z_FLAG;
+					return;
+				}
 			}
 		} else {
+			/* system segment */
 			switch (sel.desc.type) {
 			case CPU_SYSDESC_TYPE_TSS_16:
 			case CPU_SYSDESC_TYPE_LDT:
@@ -748,17 +768,21 @@ VERR_Ew(DWORD op)
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
 		}
-		/* non-conforming code segment && (CPL > DPL || RPL > DPL) */
-		if ((sel.desc.u.seg.c && !sel.desc.u.seg.ec)
-		 && ((CPU_STAT_CPL > sel.desc.dpl) || (sel.rpl > sel.desc.dpl))) {
-			CPU_FLAGL &= ~Z_FLAG;
-			return;
+		/* not conforming code segment && (CPL > DPL || RPL > DPL) */
+		if (!(sel.desc.u.seg.c && sel.desc.u.seg.ec)) {
+			/* not conforming code segment */
+			if ((sel.desc.dpl < CPU_STAT_CPL)
+			 || (sel.desc.dpl < sel.rpl)) {
+				CPU_FLAGL &= ~Z_FLAG;
+				return;
+			}
 		}
 		/* code segment is not readable */
 		if (sel.desc.u.seg.c && !sel.desc.u.seg.wr) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
 		}
+
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -805,6 +829,7 @@ VERW_Ew(DWORD op)
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
 		}
+
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -887,6 +912,7 @@ HLT(void)
 
 	CPU_HALT();
 	CPU_EIP--;
+	CPU_STAT_HLT = 1;
 }
 
 void
