@@ -9,5 +9,7 @@ enum {
 
 void winkbd_keydown(WPARAM wParam, LPARAM lParam);
 void winkbd_keyup(WPARAM wParam, LPARAM lParam);
+void winkbd_roll(BOOL pcat);
+void winkbd_setf12(UINT f12key);
 void winkbd_resetf12(void);
 

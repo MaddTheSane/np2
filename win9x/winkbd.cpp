@@ -6,7 +6,7 @@
 
 #define		NC		0xff
 
-static const UINT8 key106[256] = {
+static UINT8 key106[256] = {
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 				  NC,  NC,  NC,0x60,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08
@@ -217,6 +217,32 @@ void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 			keystat_senddata(0x47 | 0x80);
 		}
 	}
+}
+
+void winkbd_roll(BOOL pcat) {
+
+	if (pcat) {
+		key106[0x21] = 0x36;
+		key106[0x22] = 0x37;
+	}
+	else {
+		key106[0x21] = 0x37;
+		key106[0x22] = 0x36;
+	}
+}
+
+void winkbd_setf12(UINT f12key) {
+
+	UINT8	key;
+
+	f12key--;
+	if (f12key < (sizeof(f12keys)/sizeof(UINT8))) {
+		key = f12keys[f12key];
+	}
+	else {
+		key = NC;
+	}
+	key106[0x7b] = key;
 }
 
 void winkbd_resetf12(void) {
