@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.7 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.8 2004/03/12 13:31:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -117,7 +117,7 @@ PUSHFD_Fd(void)
 
 	CPU_WORKCLOCK(3);
 	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
-		UINT32 flags = REAL_EFLAGREG;
+		UINT32 flags = REAL_EFLAGREG & ~(RF_FLAG|VM_FLAG);
 		flags = (flags & ALL_EFLAG) | 2;
 		PUSH0_32(flags);
 		return;
@@ -132,6 +132,34 @@ POPF_Fw(void)
 	UINT16 flags, mask;
 
 	CPU_WORKCLOCK(3);
+#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+	mask = ALL_FLAG;
+	if (!CPU_STAT_PM) {
+		/* Real Mode */
+		POP0_16(flags);
+	} else if (!CPU_STAT_VM86) {
+		/* Protected Mode */
+		POP0_16(flags);
+		if (CPU_STAT_CPL > 0) {
+			mask &= ~IOPL_FLAG;
+			if (CPU_STAT_CPL > CPU_STAT_IOPL) {
+				mask &= ~I_FLAG;
+			}
+		}
+	} else {
+		/* Virtual-8086 Mode */
+		if (CPU_STAT_IOPL == CPU_IOPL3) {
+			POP0_16(flags);
+			mask &= ~IOPL_FLAG;
+		} else {
+			/* IOPL < 3 */
+			EXCEPTION(GP_EXCEPTION, 0);
+		}
+	}
+	CPU_FLAG = (flags & mask) | (CPU_FLAG & ~mask);
+	CPU_OV = CPU_FLAG & O_FLAG;
+	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+#else
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_16(flags);
@@ -156,7 +184,8 @@ POPF_Fw(void)
 		mask = 0;
 		/* compiler happy */
 	}
-	set_flags(flags, mask);
+	set_eflags(flags, mask);
+#endif	/* IA32_DONT_USE_SET_EFLAGS_FUNCTION */
 	IRQCHECKTERM();
 }
 
@@ -166,6 +195,36 @@ POPFD_Fd(void)
 	UINT32 flags, mask;
 
 	CPU_WORKCLOCK(3);
+#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+	mask = (ALL_EFLAG & ~VM_FLAG);
+	if (!CPU_STAT_PM) {
+		/* Real Mode */
+		POP0_32(flags);
+		flags &= ~(VIF_FLAG|VIP_FLAG);
+	} else if (!CPU_STAT_VM86) {
+		/* Protected Mode */
+		POP0_32(flags);
+		flags &= ~(VIF_FLAG|VIP_FLAG);
+		if (CPU_STAT_CPL > 0) {
+			mask &= ~IOPL_FLAG;
+			if (CPU_STAT_CPL > CPU_STAT_IOPL) {
+				mask &= ~I_FLAG;
+			}
+		}
+	} else {
+		/* Virtual-8086 Mode */
+		if (CPU_STAT_IOPL == CPU_IOPL3) {
+			POP0_32(flags);
+			mask &= ~(IOPL_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG);
+		} else {
+			/* IOPL < 3 */
+			EXCEPTION(GP_EXCEPTION, 0);
+		}
+	}
+	CPU_EFLAG = (flags & mask) | (CPU_EFLAG & ~mask);
+	CPU_OV = CPU_FLAG & O_FLAG;
+	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+#else
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_32(flags);
@@ -195,6 +254,7 @@ POPFD_Fd(void)
 		/* compiler happy */
 	}
 	set_eflags(flags, mask);
+#endif	/* IA32_DONT_USE_SET_EFLAGS_FUNCTION */
 	IRQCHECKTERM();
 }
 
@@ -203,19 +263,21 @@ STI(void)
 {
 
 	CPU_WORKCLOCK(2);
-	if ((!CPU_STAT_PM)
-	 || (!CPU_STAT_VM86 && (CPU_STAT_CPL <= CPU_STAT_IOPL))
-	 || (CPU_STAT_VM86 && (CPU_STAT_USER_MODE && CPU_STAT_IOPL == CPU_IOPL3))) {
-		CPU_FLAG |= I_FLAG;
-		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-		exec_1step();
-		IRQCHECKTERM();
-	} else if (!CPU_STAT_VM86 && (CPU_STAT_CPL > CPU_STAT_IOPL)) {
-		/* !VM86 && CPL > IOPL */
-		EXCEPTION(GP_EXCEPTION, 0);
-	} else {
-		/* Nothing to do */
+	if (CPU_STAT_PM) {
+		if (!CPU_STAT_VM86) {
+			if (CPU_STAT_CPL > CPU_STAT_IOPL) {
+				EXCEPTION(GP_EXCEPTION, 0);
+			}
+		} else {
+			if (CPU_STAT_IOPL < 3) {
+				EXCEPTION(GP_EXCEPTION, 0);
+			}
+		}
 	}
+	CPU_FLAG |= I_FLAG;
+	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+	exec_1step();
+	IRQCHECKTERM();
 }
 
 void
@@ -223,17 +285,17 @@ CLI(void)
 {
 
 	CPU_WORKCLOCK(2);
-	if ((!CPU_STAT_PM)
-	 || (!CPU_STAT_VM86 && (CPU_STAT_CPL <= CPU_STAT_IOPL))
-	 || (CPU_STAT_IOPL == CPU_IOPL3)) {
-		/* Real-mode or (!VM86 && CPL <= IOPL) or (IOPL == 3) */
-		CPU_FLAG &= ~I_FLAG;
-		CPU_TRAP = 0;
-	} else if ((!CPU_STAT_VM86 && (CPU_STAT_CPL > CPU_STAT_IOPL))
-	        || (CPU_STAT_VM86 && (CPU_STAT_IOPL < 3))) {
-		/* (!VM86 && CPL > IOPL) or (VM86 && IOPL < 3) */
-		EXCEPTION(GP_EXCEPTION, 0);
-	} else {
-		/* Nothing to do */
+	if (CPU_STAT_PM) {
+		if (!CPU_STAT_VM86) {
+			if (CPU_STAT_CPL > CPU_STAT_IOPL) {
+				EXCEPTION(GP_EXCEPTION, 0);
+			}
+		} else {
+			if (CPU_STAT_IOPL < 3) {
+				EXCEPTION(GP_EXCEPTION, 0);
+			}
+		}
 	}
+	CPU_FLAG &= ~I_FLAG;
+	CPU_TRAP = 0;
 }
