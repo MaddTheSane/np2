@@ -180,17 +180,12 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 	file_cutname(path);
 	file_cutseparator(path);
 	file_cutname(path);
+	file_cutseparator(path);
 	l = strlen(path);
-	if (l > 1) {
-		l -= 1;
-		if (milstr_kanji2nd(p, l - 1)) {
-			l--;
-		}
+	work[0] = '\0';
+	if (l) {
+		milstr_ncpy(work, str_browse, sizeof(work));
 	}
-	else {
-		l = 0;
-	}
-	milstr_ncpy(work, str_browse, sizeof(work));
 	milstr_ncat(work, p + l, sizeof(work));
 	GetTextExtentPoint32(hdc, work, strlen(work), &tail);
 	pos = 0;
