@@ -14,13 +14,7 @@
 #include	"pccore.h"
 
 
-
-static BOOL inigetbmp(const UINT8 *ptr, UINT pos) {
-
-	return((ptr[pos >> 3] >> (pos & 7)) & 1);
-}
-
-static void inisetbmp(UINT8 *ptr, UINT pos, BOOL set) {
+static void bitmapset(UINT8 *ptr, UINT pos, BOOL set) {
 
 	UINT8	bit;
 
@@ -34,46 +28,19 @@ static void inisetbmp(UINT8 *ptr, UINT pos, BOOL set) {
 	}
 }
 
-static void inirdargs16(const OEMCHAR *src, const PFTBL *ini) {
+static BOOL bitmapget(const UINT8 *ptr, UINT pos) {
 
-	SINT16	*dst;
-	int		dsize;
-	int		i;
-	OEMCHAR	c;
-
-	dst = (SINT16 *)ini->value;
-	dsize = ini->arg;
-
-	for (i=0; i<dsize; i++) {
-		while(*src == ' ') {
-			src++;
-		}
-		if (*src == '\0') {
-			break;
-		}
-		dst[i] = (SINT16)milstr_solveINT(src);
-		while(*src != '\0') {
-			c = *src++;
-			if (c == ',') {
-				break;
-			}
-		}
-	}
+	return((ptr[pos >> 3] >> (pos & 7)) & 1);
 }
 
-static void inirdargh8(const OEMCHAR *src, const PFTBL *ini) {
+static void binset(UINT8 *bin, UINT binlen, const OEMCHAR *src) {
 
-	UINT8	*dst;
-	int		dsize;
-	int		i;
+	UINT	i;
 	UINT8	val;
 	BOOL	set;
 	OEMCHAR	c;
 
-	dst = (UINT8 *)ini->value;
-	dsize = ini->arg;
-
-	for (i=0; i<dsize; i++) {
+	for (i=0; i<binlen; i++) {
 		val = 0;
 		set = FALSE;
 		while(*src == ' ') {
@@ -102,31 +69,54 @@ static void inirdargh8(const OEMCHAR *src, const PFTBL *ini) {
 		if (set == FALSE) {
 			break;
 		}
-		dst[i] = val;
+		bin[i] = val;
 	}
 }
 
-static void iniwrsetargh8(OEMCHAR *work, int size, const PFTBL *ini) {
+static void binget(OEMCHAR *work, int size, const UINT8 *bin, UINT binlen) {
 
 	UINT	i;
-const UINT8	*ptr;
-	UINT	arg;
 	OEMCHAR	tmp[8];
 
-	ptr = (UINT8 *)ini->value;
-	arg = ini->arg;
-	if (arg > 0) {
-		OEMSPRINTF(tmp, OEMTEXT("%.2x"), ptr[0]);
+	if (binlen) {
+		OEMSPRINTF(tmp, OEMTEXT("%.2x"), bin[0]);
 		milstr_ncpy(work, tmp, size);
 	}
-	for (i=1; i<arg; i++) {
-		OEMSPRINTF(tmp, OEMTEXT(" %.2x"), ptr[i]);
+	for (i=1; i<binlen; i++) {
+		OEMSPRINTF(tmp, OEMTEXT(" %.2x"), bin[i]);
 		milstr_ncat(work, tmp, size);
 	}
 }
 
 
 // ---- user
+
+static void inirdargs16(const OEMCHAR *src, const PFTBL *ini) {
+
+	SINT16	*dst;
+	int		dsize;
+	int		i;
+	OEMCHAR	c;
+
+	dst = (SINT16 *)ini->value;
+	dsize = ini->arg;
+
+	for (i=0; i<dsize; i++) {
+		while(*src == ' ') {
+			src++;
+		}
+		if (*src == '\0') {
+			break;
+		}
+		dst[i] = (SINT16)milstr_solveINT(src);
+		while(*src != '\0') {
+			c = *src++;
+			if (c == ',') {
+				break;
+			}
+		}
+	}
+}
 
 static void inirdbyte3(const OEMCHAR *src, const PFTBL *ini) {
 
@@ -189,22 +179,16 @@ const PFTBL	*pterm;
 
 			case PFTYPE_BITMAP:
 				GetPrivateProfileString(title, p->item,
-					(inigetbmp((UINT8 *)p->value, p->arg))?str_true:str_false,
+					(bitmapget((UINT8 *)p->value, p->arg))?str_true:str_false,
 												work, NELEMENTS(work), path);
-				inisetbmp((UINT8 *)p->value, p->arg,
+				bitmapset((UINT8 *)p->value, p->arg,
 										(milstr_cmp(work, str_true) == 0));
-				break;
-
-			case PFTYPE_ARGS16:
-				GetPrivateProfileString(title, p->item, str_null,
-												work, NELEMENTS(work), path);
-				inirdargs16(work, p);
 				break;
 
 			case PFTYPE_BIN:
 				GetPrivateProfileString(title, p->item, str_null,
 												work, NELEMENTS(work), path);
-				inirdargh8(work, p);
+				binset((UINT8 *)p->value, p->arg, work);
 				break;
 
 			case PFTYPE_SINT8:
@@ -252,6 +236,12 @@ const PFTBL	*pterm;
 				*(UINT32 *)p->value = (UINT32)val;
 				break;
 
+			case PFTYPE_ARGS16:
+				GetPrivateProfileString(title, p->item, str_null,
+												work, NELEMENTS(work), path);
+				inirdargs16(work, p);
+				break;
+
 			case PFTYPE_BYTE3:
 				GetPrivateProfileString(title, p->item, str_null,
 												work, NELEMENTS(work), path);
@@ -291,8 +281,13 @@ const OEMCHAR	*set;
 					set = (*((UINT8 *)p->value))?str_true:str_false;
 					break;
 
+				case PFTYPE_BITMAP:
+					set = (bitmapget((UINT8 *)p->value, p->arg))?
+														str_true:str_false;
+					break;
+
 				case PFTYPE_BIN:
-					iniwrsetargh8(work, NELEMENTS(work), p);
+					binget(work, NELEMENTS(work), (UINT8 *)p->value, p->arg);
 					break;
 
 				case PFTYPE_SINT8:

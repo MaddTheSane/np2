@@ -95,15 +95,15 @@ void MEMCALL memvgaf_wr16(UINT32 address, REG16 value) {
 REG8 MEMCALL memvga0_rd8(UINT32 address)	VGARD8(0, address)
 REG8 MEMCALL memvga1_rd8(UINT32 address)	VGARD8(1, address)
 void MEMCALL memvga0_wr8(UINT32 address, REG8 value)
-											VGAWR8(0, address, value);
+											VGAWR8(0, address, value)
 void MEMCALL memvga1_wr8(UINT32 address, REG8 value)
-											VGAWR8(1, address, value);
+											VGAWR8(1, address, value)
 REG16 MEMCALL memvga0_rd16(UINT32 address)	VGARD16(0, address)
 REG16 MEMCALL memvga1_rd16(UINT32 address)	VGARD16(1, address)
 void MEMCALL memvga0_wr16(UINT32 address, REG16 value)
-											VGAWR16(0, address, value);
+											VGAWR16(0, address, value)
 void MEMCALL memvga1_wr16(UINT32 address, REG16 value)
-											VGAWR16(1, address, value);
+											VGAWR16(1, address, value)
 
 
 // ---- 8086 bank I/O

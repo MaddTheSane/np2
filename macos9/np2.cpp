@@ -887,8 +887,10 @@ int main(int argc, char *argv[]) {
 
 	menu_setrotate(0);
 	menu_setdispmode(np2cfg.DISPSYNC);
+	menu_setraster(np2cfg.RASTER);
 	menu_setwaitflg(np2oscfg.NOWAIT);
 	menu_setframe(np2oscfg.DRAW_SKIP);
+
 	menu_setkey(0);
 	menu_setxshift(0);
 	menu_setf11key(np2oscfg.F11KEY);
@@ -898,6 +900,7 @@ int main(int argc, char *argv[]) {
 	menu_setjastsnd(np2oscfg.jastsnd);
 	menu_setmotorflg(np2cfg.MOTOR);
 	menu_setextmem(np2cfg.EXTMEM);
+
 	menu_setdispclk(np2oscfg.DISPCLK);
 	menu_setbtnrapid(np2cfg.BTN_RAPID);
 	menu_setbtnmode(np2cfg.BTN_MODE);
