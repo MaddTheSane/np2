@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.2 2003/12/12 15:05:13 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.3 2004/01/14 16:13:19 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -101,7 +101,7 @@ PUSHF_Fw(void)
 {
 
 	CPU_WORKCLOCK(3);
-	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_CPL == 3)) {
+	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == 3)) {
 		WORD flags = REAL_FLAGREG;
 		flags = (flags & ALL_FLAG) | 2;
 		PUSH0_16(flags);
@@ -116,7 +116,7 @@ PUSHFD_Fd(void)
 {
 
 	CPU_WORKCLOCK(3);
-	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_CPL == 3)) {
+	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == 3)) {
 		DWORD flags = REAL_EFLAGREG;
 		flags = (flags & ALL_EFLAG) | 2;
 		PUSH0_32(flags);
@@ -196,10 +196,19 @@ STI(void)
 {
 
 	CPU_WORKCLOCK(2);
-	CPU_FLAG |= I_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	exec_1step();
-	IRQCHECKTERM();
+	if ((!CPU_STAT_PM)
+	 || (!CPU_STAT_VM86 && (CPU_STAT_CPL <= CPU_STAT_IOPL))
+	 || (CPU_STAT_VM86 && (CPU_STAT_CPL == 3 && CPU_STAT_IOPL == CPU_IOPL3))) {
+		CPU_FLAG |= I_FLAG;
+		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+		exec_1step();
+		IRQCHECKTERM();
+	} else if (!CPU_STAT_VM86 && (CPU_STAT_CPL > CPU_STAT_IOPL)) {
+		/* !VM86 && CPL > IOPL */
+		EXCEPTION(GP_EXCEPTION, 0);
+	} else {
+		/* Nothing to do */
+	}
 }
 
 void
@@ -207,6 +216,17 @@ CLI(void)
 {
 
 	CPU_WORKCLOCK(2);
-	CPU_FLAG &= ~I_FLAG;
-	CPU_TRAP = 0;
+	if ((!CPU_STAT_PM)
+	 || (!CPU_STAT_VM86 && (CPU_STAT_CPL <= CPU_STAT_IOPL))
+	 || (CPU_STAT_IOPL == CPU_IOPL3)) {
+		/* Real-mode or (!VM86 && CPL < IOPL) or (IOPL == 3) */
+		CPU_FLAG &= ~I_FLAG;
+		CPU_TRAP = 0;
+	} else if ((!CPU_STAT_VM86 && (CPU_STAT_CPL > CPU_STAT_IOPL))
+	        || (CPU_STAT_VM86 && (CPU_STAT_IOPL < 3))) {
+		/* (!VM86 && CPL > IOPL) or (VM86 && IOPL < 3) */
+		EXCEPTION(GP_EXCEPTION, 0);
+	} else {
+		/* Nothing to do */
+	}
 }
