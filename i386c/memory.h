@@ -139,18 +139,3 @@ void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);
 #ifdef __cplusplus
 }
 #endif
-
-
-// ‚Æ‚è‚ ‚¦‚¸
-#define	GETDWORD(a)		(((UINT32)(a)[0]) |				\
-						((UINT32)(a)[1] << 8) |			\
-						((UINT32)(a)[2] << 16) |		\
-						((UINT32)(a)[3] << 24))
-#define	GETWORD(a)		(((UINT16)(a)[0]) | ((UINT16)(a)[1] << 8))
-#define	SETDWORD(a, b)	*((a)+0) = (BYTE)((b));			\
-						*((a)+1) = (BYTE)((b)>>8);		\
-						*((a)+2) = (BYTE)((b)>>16);		\
-						*((a)+3) = (BYTE)((b)>>24)
-#define	SETWORD(a, b)	*((a)+0) = (BYTE)((b));			\
-						*((a)+1) = (BYTE)((b)>>8)
-
