@@ -144,7 +144,7 @@ void board86_reset(void) {
 					((np2cfg.snd86opt & 0x8) << 3));
 	opngen_setcfg(3, OPN_STEREO | 0x038);
 	if (np2cfg.snd86opt & 2) {
-		soundrom_load(0xcc000, "86");
+		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
 	opn.base = (np2cfg.snd86opt & 0x01)?0x000:0x100;
 	fmboard_extreg(extendchannel);

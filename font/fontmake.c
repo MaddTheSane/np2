@@ -1,6 +1,9 @@
 #include	"compiler.h"
 #include	"bmpdata.h"
 #include	"parts.h"
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#include	"oemtext.h"
+#endif
 #include	"dosio.h"
 #include	"fontmng.h"
 #include	"font.h"
@@ -138,12 +141,20 @@ const UINT8	*p;
 	int		height;
 	UINT8	bit;
 	int		i;
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+	OEMCHAR	oemwork[4];
+#endif
 
 	ptr += (2048 * (2048 / 8)) + from;
 	work[1] = '\0';
 	while(from < to) {
 		work[0] = (char)from;
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+		oemtext_sjis2oem(oemwork, NELEMENTS(oemwork), work, -1);
+		dat = fontmng_get(fnt, oemwork);
+#else
 		dat = fontmng_get(fnt, work);
+#endif
 		if (dat) {
 			width = min(dat->width, 8);
 			height = min(dat->height, 16);
@@ -198,6 +209,9 @@ const UINT8	*p;
 	int		height;
 	UINT16	bit;
 	int		i;
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+	OEMCHAR	oemwork[4];
+#endif
 
 	work[2] = '\0';
 	ptr += ((0x80 - 0x21) * 16 * (2048 / 8)) + 2;
@@ -210,7 +224,12 @@ const UINT8	*p;
 				sjis = jis2sjis(jis);
 				work[0] = (UINT8)(sjis >> 8);
 				work[1] = (UINT8)sjis;
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+				oemtext_sjis2oem(oemwork, NELEMENTS(oemwork), work, -1);
+				dat = fontmng_get(fnt, oemwork);
+#else
 				dat = fontmng_get(fnt, work);
+#endif
 				if (dat) {
 					width = min(dat->width, 16);
 					height = min(dat->height, 16);
@@ -263,7 +282,7 @@ static void patchextfnt(UINT8 *ptr, const UINT8 *fnt) {			// 2c24-2c6f
 	} while(--r);
 }
 
-void makepc98bmp(const char *filename) {
+void makepc98bmp(const OEMCHAR *filename) {
 
 	void	*fnt;
 	BMPFILE	bf;

@@ -1,16 +1,16 @@
 
-static const char np2toolclass[] = "np2-toolwin";
-static const char np2tooltitle[] = "NP2 tool";
+static const OEMCHAR np2toolclass[] = OEMTEXT("np2-toolwin");
+static const OEMCHAR np2tooltitle[] = OEMTEXT("NP2 tool");
 
-static const char str_deffont[] = "‚l‚r ‚oƒSƒVƒbƒN";
-static const char str_browse[] = "...";
-static const char str_eject[] = "Eject";
-static const char str_reset[] = "Reset";
-static const char str_power[] = "Power";
+static const OEMCHAR str_deffont[] = OEMTEXT("‚l‚r ‚oƒSƒVƒbƒN");
+static const OEMCHAR str_browse[] = OEMTEXT("...");
+static const OEMCHAR str_eject[] = OEMTEXT("Eject");
+static const OEMCHAR str_reset[] = OEMTEXT("Reset");
+static const OEMCHAR str_power[] = OEMTEXT("Power");
 
-static const char str_static[] = "STATIC";
-static const char str_combobox[] = "COMBOBOX";
-static const char str_button[] = "BUTTON";
+static const OEMCHAR str_static[] = OEMTEXT("STATIC");
+static const OEMCHAR str_combobox[] = OEMTEXT("COMBOBOX");
+static const OEMCHAR str_button[] = OEMTEXT("BUTTON");
 
 static const SUBITEM defsubitem[IDC_MAXITEMS] = {
 		{TCTL_STATIC,	NULL,		 49, 44,   8,   3, 0, 0},
@@ -27,11 +27,11 @@ static const SUBITEM defsubitem[IDC_MAXITEMS] = {
 
 // ----
 
-static const char skintitle[] = "ToolWindow";
+static const OEMCHAR skintitle[] = OEMTEXT("ToolWindow");
 
 static const INITBL skinini1[] = {
-	{"MAIN",		INITYPE_STR,	toolskin.main,	sizeof(toolskin.main)},
-	{"FONT",		INITYPE_STR,	toolskin.font,	sizeof(toolskin.font)},
+	{"MAIN",		INITYPE_STR,	toolskin.main,	NELEMENTS(toolskin.main)},
+	{"FONT",		INITYPE_STR,	toolskin.font,	NELEMENTS(toolskin.font)},
 	{"FONTSIZE",	INITYPE_SINT32,	&toolskin.fontsize,					0},
 	{"COLOR1",		INITYPE_HEX32,	&toolskin.color1,					0},
 	{"COLOR2",		INITYPE_HEX32,	&toolskin.color2,					0}};
@@ -56,16 +56,13 @@ static const INITBL skinini2[] = {
 
 // ----
 
-static const char str_skindef[] = "<&Base Skin>";
-static const char str_skinsel[] = "&Select Skin...";
-static const char str_toolskin[] = "&Skins";
-static const char str_toolclose[] = "&Close";
+static const OEMCHAR str_skindef[] = OEMTEXT("<&Base Skin>");
+static const OEMCHAR str_skinsel[] = OEMTEXT("&Select Skin...");
+static const OEMCHAR str_toolskin[] = OEMTEXT("&Skins");
+static const OEMCHAR str_toolclose[] = OEMTEXT("&Close");
 
-static const char skinui_title[] = "Select skin file";
-static const char skinui_filter[] =								\
-								"ini files (*.ini)\0*.ini\0"	\
-								"text files (*.txt)\0*.txt\0"	\
-								"All files (*.*)\0*.*\0";
-static const char skinui_ext[] = "ini";
+static const OEMCHAR skinui_title[] = OEMTEXT("Select skin file");
+static const OEMCHAR skinui_filter[] = OEMTEXT("ini files (*.ini)\0*.ini\0text files (*.txt)\0*.txt\0All files (*.*)\0*.*\0");
+static const OEMCHAR skinui_ext[] = OEMTEXT("ini");
 static const FILESEL skinui = {skinui_title, skinui_ext, skinui_filter, 1};
 

@@ -6,10 +6,10 @@
 #include	"cpucore.h"
 
 
-static	const char	np2viewclass[] = "NP2-ViewWindow";
-		const char	np2viewfont[] = "ÇlÇr ÉSÉVÉbÉN";
-		NP2VIEW_T	np2view[NP2VIEW_MAX];
-extern	HINSTANCE	hInst;
+static	const OEMCHAR	np2viewclass[] = OEMTEXT("NP2-ViewWindow");
+		const OEMCHAR	np2viewfont[] = OEMTEXT("ÇlÇr ÉSÉVÉbÉN");
+		NP2VIEW_T		np2view[NP2VIEW_MAX];
+extern	HINSTANCE		hInst;
 
 
 static void viewer_segmode(HWND hwnd, BYTE type) {
@@ -226,7 +226,7 @@ void viewer_open(void) {
 	view = np2view;
 	for (i=0; i<NP2VIEW_MAX; i++, view++) {
 		if (!view->alive) {
-			char buf[256];
+			OEMCHAR buf[256];
 			viewcmn_caption(view, buf);
 			ZeroMemory(view, sizeof(NP2VIEW_T));
 			view->alive = TRUE;

@@ -14,7 +14,7 @@ extern	UINT8	__font[0x84000];
 #endif
 
 void font_initialize(void);
-UINT8 font_load(const char *filename, BOOL force);
+UINT8 font_load(const OEMCHAR *filename, BOOL force);
 
 #ifdef __cplusplus
 }

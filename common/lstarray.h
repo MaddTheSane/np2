@@ -19,7 +19,7 @@ void *listarray_append(LISTARRAY laHandle, const void *vpItem);
 void *listarray_getitem(LISTARRAY laHandle, UINT num);
 UINT listarray_getpos(LISTARRAY laHandle, void *vpItem);
 void *listarray_enum(LISTARRAY laHandle,
-				BRESULT (*cbProc)(void *vpItem, void *vpArg), void *vpArg);
+					BOOL (*cbProc)(void *vpItem, void *vpArg), void *vpArg);
 
 #ifdef __cplusplus
 }

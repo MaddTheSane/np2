@@ -78,24 +78,24 @@ const UINT8	*p;
 	}
 }
 
-UINT8 fontpc88_read(const char *filename, UINT8 loading) {
+UINT8 fontpc88_read(const OEMCHAR *filename, UINT8 loading) {
 
 	FILEH	fh;
 	UINT8	*work;
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 
 	work = (UINT8 *)_MALLOC(0x20000, "pc88font");
 	if (work == NULL) {
 		goto fr88_err1;
 	}
-	file_cpyname(fname, filename, sizeof(fname));
+	file_cpyname(fname, filename, NELEMENTS(fname));
 
 	// 第２水準以外を読む必要はある？
 	if (loading & (FONT_ANK8 | FONTLOAD_ANK | FONT_KNJ1)) {
 
 		// あったら読み込んでみる
 		file_cutname(fname);
-		file_catname(fname, pc88knj1name, sizeof(fname));
+		file_catname(fname, pc88knj1name, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 0x20000) == 0x20000) {
@@ -136,7 +136,7 @@ UINT8 fontpc88_read(const char *filename, UINT8 loading) {
 
 		// あったら読み込んでみる
 		file_cutname(fname);
-		file_catname(fname, pc88knj2name, sizeof(fname));
+		file_catname(fname, pc88knj2name, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 0x20000) == 0x20000) {
@@ -155,7 +155,7 @@ UINT8 fontpc88_read(const char *filename, UINT8 loading) {
 
 		// あったら読み込んでみる
 		file_cutname(fname);
-		file_catname(fname, pc88ankname, sizeof(fname));
+		file_catname(fname, pc88ankname, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 

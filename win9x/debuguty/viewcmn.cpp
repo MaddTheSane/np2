@@ -21,26 +21,26 @@ char viewcmn_hex[16] = {
 				'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
-void viewcmn_caption(NP2VIEW_T *view, char *buf) {
+void viewcmn_caption(NP2VIEW_T *view, OEMCHAR *buf) {
 
 	int		num;
-	char	*p;
+	OEMCHAR	*p;
 
 	num = ((int)view - (int)np2view) / sizeof(NP2VIEW_T);
 
 	if (view->lock) {
-		p = "Locked";
+		p = OEMTEXT("Locked");
 	}
 	else {
-		p = "Realtime";
+		p = OEMTEXT("Realtime");
 	}
-	wsprintf(buf, "%d.%s - NP2 Debug Utility", num+1, p);
+	OEMSPRINTF(buf, OEMTEXT("%d.%s - NP2 Debug Utility"), num + 1, p);
 }
 
 
 void viewcmn_putcaption(NP2VIEW_T *view) {
 
-	char	buf[256];
+	OEMCHAR	buf[256];
 
 	viewcmn_caption(view, buf);
 	SetWindowText(view->hwnd, buf);
@@ -163,11 +163,11 @@ void viewcmn_setbank(NP2VIEW_T *view) {
 // ----
 
 static void modmenu(HMENU hmenu, int pos, WORD id,
-											const char *seg, WORD value) {
+											const OEMCHAR *seg, WORD value) {
 
-	char	buf[256];
+	OEMCHAR	buf[256];
 
-	wsprintf(buf, "Seg = &%s [%04x]", seg, value);
+	OEMSPRINTF(buf, OEMTEXT("Seg = &%s [%04x]"), seg, value);
 	ModifyMenu(hmenu, pos, MF_BYPOSITION | MF_STRING, id, buf);
 }
 
@@ -183,10 +183,10 @@ void viewcmn_setmenuseg(HWND hwnd) {
 	hmenu = GetSubMenu(hparent, 2);
 
 	if (hmenu) {
-		modmenu(hmenu, 2, IDM_SEGCS, "CS", CPU_CS);
-		modmenu(hmenu, 3, IDM_SEGDS, "DS", CPU_DS);
-		modmenu(hmenu, 4, IDM_SEGES, "ES", CPU_ES);
-		modmenu(hmenu, 5, IDM_SEGSS, "SS", CPU_SS);
+		modmenu(hmenu, 2, IDM_SEGCS, OEMTEXT("CS"), CPU_CS);
+		modmenu(hmenu, 3, IDM_SEGDS, OEMTEXT("DS"), CPU_DS);
+		modmenu(hmenu, 4, IDM_SEGES, OEMTEXT("ES"), CPU_ES);
+		modmenu(hmenu, 5, IDM_SEGSS, OEMTEXT("SS"), CPU_SS);
 		DrawMenuBar(hwnd);
 	}
 }

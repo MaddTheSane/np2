@@ -50,7 +50,7 @@ typedef struct {
 } _D88INFO, *D88INFO;
 
 typedef struct {
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 	UINT8	type;
 	UINT8	num;
 	UINT8	protect;
@@ -73,11 +73,11 @@ void fddfile_initialize(void);
 
 void fddfile_reset2dmode(void);
 
-const char *fdd_diskname(REG8 drv);
+const OEMCHAR *fdd_diskname(REG8 drv);
 BOOL fdd_diskready(REG8 drv);
 BOOL fdd_diskprotect(REG8 drv);
 
-BOOL fdd_set(REG8 drv, const char *fname, UINT ftype, int ro);
+BOOL fdd_set(REG8 drv, const OEMCHAR *fname, UINT ftype, int ro);
 BOOL fdd_eject(REG8 drv);
 
 BOOL fdd_diskaccess(void);

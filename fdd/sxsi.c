@@ -81,7 +81,7 @@ SXSIDEV sxsi_getptr(REG8 drv) {
 	return(NULL);
 }
 
-const char *sxsi_getname(REG8 drv) {
+const OEMCHAR *sxsi_getname(REG8 drv) {
 
 	SXSIDEV	sxsi;
 
@@ -92,18 +92,18 @@ const char *sxsi_getname(REG8 drv) {
 	return(NULL);
 }
 
-BOOL sxsi_hddopen(REG8 drv, const char *file) {
+BOOL sxsi_hddopen(REG8 drv, const OEMCHAR *file) {
 
-	SXSIDEV	sxsi;
-	FILEH	fh;
-const char	*ext;
-	UINT16	type;
-	long	totals;
-	UINT32	headersize;
-	UINT32	surfaces;
-	UINT32	cylinders;
-	UINT32	sectors;
-	UINT32	size;
+	SXSIDEV		sxsi;
+	FILEH		fh;
+const OEMCHAR	*ext;
+	UINT16		type;
+	long		totals;
+	UINT32		headersize;
+	UINT32		surfaces;
+	UINT32		cylinders;
+	UINT32		sectors;
+	UINT32		size;
 
 	if ((file == NULL) || (file[0] == '\0')) {
 		goto sxsiope_err1;
@@ -116,7 +116,7 @@ const char	*ext;
 	if (fh == FILEH_INVALID) {
 		goto sxsiope_err1;
 	}
-	ext = file_getext((char *)file);
+	ext = file_getext(file);
 	type = SXSITYPE_HDD;
 	if ((!file_cmpname(ext, str_thd)) && (!(drv & 0x20))) {
 		THDHDR thd;						// T98 HDD (IDE)
@@ -196,7 +196,7 @@ const char	*ext;
 	sxsi->type = type;
 	sxsi->headersize = headersize;
 	sxsi->fh = (long)fh;
-	file_cpyname(sxsi->fname, file, sizeof(sxsi->fname));
+	file_cpyname(sxsi->fname, file, NELEMENTS(sxsi->fname));
 	if (type == (SXSITYPE_IDE | SXSITYPE_HDD)) {
 		sasihddcheck(sxsi);
 	}

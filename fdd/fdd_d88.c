@@ -263,7 +263,7 @@ static D88SEC searchsector_d88(BOOL check) {			// ver0.29
 
 // ----
 
-BOOL fddd88_set(FDDFILE fdd, const char *fname, int ro) {
+BOOL fddd88_set(FDDFILE fdd, const OEMCHAR *fname, int ro) {
 
 	short	attr;
 	FILEH	fh;

@@ -4,10 +4,10 @@
 #include	"extromio.h"
 
 
-static const char str_extrom[] = "EXTROM";
+static const OEMCHAR str_extrom[] = OEMTEXT("EXTROM");
 
 
-EXTROMH extromio_open(const char *filename, UINT type) {
+EXTROMH extromio_open(const OEMCHAR *filename, UINT type) {
 
 	EXTROMH	ret;
 	HRSRC	hrsrc;

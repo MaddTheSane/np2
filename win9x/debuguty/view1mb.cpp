@@ -29,7 +29,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	DWORD	off;
 	BYTE	*p;
 	BYTE	buf[16];
-	char	str[16];
+	OEMCHAR	str[16];
 	HFONT	hfont;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
@@ -56,7 +56,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	off = (view->pos) << 4;
 	for (y=0; y<rc->bottom && off<0x10fff0; y+=16, off+=16) {
-		wsprintf(str, "%08x", off);
+		OEMSPRINTF(str, OEMTEXT("%08x"), off);
 		TextOut(hdc, 0, y, str, 8);
 		if (view->lock) {
 			p = (BYTE *)view->buf1.ptr;

@@ -35,7 +35,7 @@ typedef struct {
 } FDIHDR;
 
 
-BOOL fddxdf_set(FDDFILE fdd, const char *fname, int ro) {
+BOOL fddxdf_set(FDDFILE fdd, const OEMCHAR *fname, int ro) {
 
 const _XDFINFO	*xdf;
 	short		attr;
@@ -72,7 +72,7 @@ const _XDFINFO	*xdf;
 }
 
 // ‚±‚Á‚»‚è‘Î‰ž‚µ‚½‚è‚µ‚Ä
-BOOL fddxdf_setfdi(FDDFILE fdd, const char *fname, int ro) {
+BOOL fddxdf_setfdi(FDDFILE fdd, const OEMCHAR *fname, int ro) {
 
 	short	attr;
 	FILEH	fh;
@@ -150,7 +150,7 @@ BOOL fddxdf_setfdi(FDDFILE fdd, const char *fname, int ro) {
 		default:
 			return(FAILURE);
 	}
-	file_cpyname(fdd->fname, fname, sizeof(fdd->fname));
+	file_cpyname(fdd->fname, fname, NELEMENTS(fdd->fname));
 	fdd->type = DISKTYPE_BETA;
 	fdd->protect = ((attr & 1) || (ro))?TRUE:FALSE;
 	fdd->inf.xdf.headersize = headersize;

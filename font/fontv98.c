@@ -27,7 +27,7 @@ const UINT8	*p;
 	}
 }
 
-UINT8 fontv98_read(const char *filename, UINT8 loading) {
+UINT8 fontv98_read(const OEMCHAR *filename, UINT8 loading) {
 
 	FILEH	fh;
 	UINT8	*v98fnt;

@@ -9,19 +9,19 @@
 #include	"pccore.h"
 
 
-static const char str_2halfmhz[] = "2.4576MHz";
-static const char str_2mhz[] = "1.9968MHz";
-static const char *basecstr[2] = {str_2mhz, str_2halfmhz};
+static const OEMCHAR str_2halfmhz[] = OEMTEXT("2.4576MHz");
+static const OEMCHAR str_2mhz[] = OEMTEXT("1.9968MHz");
+static const OEMCHAR *basecstr[2] = {str_2mhz, str_2halfmhz};
 static const UINT32 mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
-static const char str_clockfmt[] = "%2u.%.4u";
+static const OEMCHAR str_clockfmt[] = OEMTEXT("%2u.%.4u");
 
 
 static void setclock(HWND hWnd, UINT multiple) {
 
 	UINT32	clock;
-	char	work[32];
+	OEMCHAR	work[32];
 
-	GetDlgItemText(hWnd, IDC_BASECLOCK, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_BASECLOCK, work, NELEMENTS(work));
 	if (work[0] == '1') {
 		clock = PCBASECLOCK20 / 100;
 	}
@@ -29,7 +29,7 @@ static void setclock(HWND hWnd, UINT multiple) {
 		clock = PCBASECLOCK25 / 100;
 	}
 	if (multiple == 0) {
-		GetDlgItemText(hWnd, IDC_MULTIPLE, work, sizeof(work));
+		GetDlgItemText(hWnd, IDC_MULTIPLE, work, NELEMENTS(work));
 		multiple = (UINT)milstr_solveINT(work);
 	}
 	if (multiple < 1) {
@@ -39,13 +39,13 @@ static void setclock(HWND hWnd, UINT multiple) {
 		multiple = 32;
 	}
 	clock *= multiple;
-	wsprintf(work, str_clockfmt, clock / 10000, clock % 10000);
+	OEMSPRINTF(work, str_clockfmt, clock / 10000, clock % 10000);
 	SetDlgItemText(hWnd, IDC_CLOCKMSG, work);
 }
 
 static void cfgcreate(HWND hWnd) {
 
-	char	work[32];
+	OEMCHAR	work[32];
 	UINT	val;
 
 	SETLISTSTR(hWnd, IDC_BASECLOCK, basecstr);
@@ -57,7 +57,7 @@ static void cfgcreate(HWND hWnd) {
 	}
 	SendDlgItemMessage(hWnd, IDC_BASECLOCK, CB_SETCURSEL, val, 0);
 	SETLISTUINT32(hWnd, IDC_MULTIPLE, mulval);
-	wsprintf(work, str_u, np2cfg.multiple);
+	OEMSPRINTF(work, str_u, np2cfg.multiple);
 	SetDlgItemText(hWnd, IDC_MULTIPLE, work);
 
 	if (!milstr_cmp(np2cfg.model, str_VM)) {
@@ -81,7 +81,7 @@ static void cfgcreate(HWND hWnd) {
 		val = IDC_RATE44;
 	}
 	SetDlgItemCheck(hWnd, val, TRUE);
-	wsprintf(work, str_u, np2cfg.delayms);
+	OEMSPRINTF(work, str_u, np2cfg.delayms);
 	SetDlgItemText(hWnd, IDC_SOUNDBUF, work);
 
 	SetDlgItemCheck(hWnd, IDC_ALLOWRESIZE, np2oscfg.thickframe);
@@ -100,13 +100,13 @@ static void cfgcreate(HWND hWnd) {
 
 static void cfgupdate(HWND hWnd) {
 
-	UINT	update;
-	char	work[32];
-	UINT	val;
-const char	*str;
+	UINT		update;
+	OEMCHAR		work[32];
+	UINT		val;
+const OEMCHAR	*str;
 
 	update = 0;
-	GetDlgItemText(hWnd, IDC_BASECLOCK, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_BASECLOCK, work, NELEMENTS(work));
 	if (work[0] == '1') {
 		val = PCBASECLOCK20;
 	}
@@ -141,7 +141,7 @@ const char	*str;
 		str = str_VX;
 	}
 	if (milstr_cmp(np2cfg.model, str)) {
-		milstr_ncpy(np2cfg.model, str, sizeof(np2cfg.model));
+		milstr_ncpy(np2cfg.model, str, NELEMENTS(np2cfg.model));
 		update |= SYS_UPDATECFG;
 	}
 
@@ -160,7 +160,7 @@ const char	*str;
 		soundrenewal = 1;
 	}
 
-	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, NELEMENTS(work));
 	val = (UINT)milstr_solveINT(work);
 	if (val < 40) {
 		val = 40;

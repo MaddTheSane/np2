@@ -450,7 +450,7 @@ void sasiio_reset(void) {
 		dmac_attach(DMADEV_SASI, SASI_DMACH);
 
 		CPU_RAM_D000 &= ~(1 << 0);
-		fh = file_open_rb_c("sasi.rom");
+		fh = file_open_rb_c(OEMTEXT("sasi.rom"));
 		r = 0;
 		if (fh != FILEH_INVALID) {
 			r = file_read(fh, mem + 0xd0000, 0x1000);

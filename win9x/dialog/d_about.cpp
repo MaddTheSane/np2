@@ -12,37 +12,25 @@
 static	SIZE	aboutsize;
 
 #if !defined(SUPPORT_PC9821)
-static const char str_np2title[] = "Neko Project II  ";
+static const OEMCHAR str_np2title[] = OEMTEXT("Neko Project II  ");
 #else
-static const char str_np2title[] = "Neko Project 21  ";
+static const OEMCHAR str_np2title[] = OEMTEXT("Neko Project 21  ");
 #endif
-static const char np2infostr[] = 								\
-						"CPU: %CPU% %CLOCK%\n"					\
-						"MEM: %MEM1%\n"							\
-						"GDC: %GDC%\n"							\
-						"     %GDC2%\n"							\
-						"TEXT: %TEXT%\n"						\
-						"GRPH: %GRPH%\n"						\
-						"SOUND: %EXSND%\n"						\
-						"\n"									\
-						"BIOS: %BIOS%\n"						\
-						"RHYTHM: %RHYTHM%\n"					\
-						"\n"									\
-						"SCREEN: %DISP%";
+static const OEMCHAR np2infostr[] = OEMTEXT("CPU: %CPU% %CLOCK%\nMEM: %MEM1%\nGDC: %GDC%\n     %GDC2%\nTEXT: %TEXT%\nGRPH: %GRPH%\nSOUND: %EXSND%\n\nBIOS: %BIOS%\nRHYTHM: %RHYTHM%\n\nSCREEN: %DISP%");
 
 
 static void about_init(HWND hWnd) {
 
-	char	work[128];
+	OEMCHAR	work[128];
 	RECT	rectwindow;
 	RECT	rectclient;
 	POINT	pt;
 	RECT	parent;
 
-	milstr_ncpy(work, str_np2title, sizeof(work));
-	milstr_ncat(work, np2version, sizeof(work));
+	milstr_ncpy(work, str_np2title, NELEMENTS(work));
+	milstr_ncat(work, np2version, NELEMENTS(work));
 #if defined(NP2VER_WIN9X)
-	milstr_ncat(work, NP2VER_WIN9X, sizeof(work));
+	milstr_ncat(work, NP2VER_WIN9X, NELEMENTS(work));
 #endif
 	SetDlgItemText(hWnd, IDC_NP2VER, work);
 	GetWindowRect(hWnd, &rectwindow);
@@ -64,10 +52,10 @@ static void about_init(HWND hWnd) {
 
 static void about_more(HWND hWnd) {
 
-	char	infostr[1024];
+	OEMCHAR	infostr[1024];
 	RECT	rect;
 
-	np2info(infostr, np2infostr, sizeof(infostr), NULL);
+	np2info(infostr, np2infostr, NELEMENTS(infostr), NULL);
 	SetDlgItemText(hWnd, IDC_NP2INFO, infostr);
 	EnableWindow(GetDlgItem(hWnd, IDC_MORE), FALSE);
 	GetWindowRect(hWnd, &rect);

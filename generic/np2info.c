@@ -9,80 +9,43 @@
 #include	"np2info.h"
 
 
-static const char str_comma[] = ", ";
-static const char str_2halfMHz[] = "2.5MHz";
+static const OEMCHAR str_comma[] = OEMTEXT(", ");
+static const OEMCHAR str_2halfMHz[] = OEMTEXT("2.5MHz");
 #define str_5MHz	(str_2halfMHz + 2)
-static const char str_8MHz[] = "8MHz";
-static const char str_notexist[] = "not exist";
-static const char str_disable[] = "disable";
+static const OEMCHAR str_8MHz[] = OEMTEXT("8MHz");
+static const OEMCHAR str_notexist[] = OEMTEXT("not exist");
+static const OEMCHAR str_disable[] = OEMTEXT("disable");
 
-static const char str_cpu[] =
-						"8086-2\0"					\
-						"70116\0"					\
-						"80286\0"					\
-						"80386\0"					\
-						"80486\0"					\
-						"Pentium\0"					\
-						"PentiumPro";
-static const char str_winclr[] =
-						"256-colors\0"				\
-						"65536-colors\0"			\
-						"full color\0"				\
-						"true color";
-static const char str_winmode[] =
-						" (window)\0"				\
-						" (fullscreen)";
-static const char str_grcgchip[] =
-						"\0"						\
-						"GRCG \0"					\
-						"GRCG CG-Window \0"			\
-						"EGC CG-Window ";
-static const char str_vrammode[] =
-						"Digital\0"					\
-						"Analog\0"					\
-						"256colors";
-static const char str_vrampage[] =
-						" page-0\0"					\
-						" page-1\0"					\
-						" page-all";
-static const char str_chpan[] =
-						"none\0"					\
-						"Mono-R\0"					\
-						"Mono-L\0"					\
-						"Stereo";
-static const char str_fmboard[] =
-						"none\0"					\
-						"PC-9801-14\0"				\
-						"PC-9801-26\0"				\
-						"PC-9801-86\0"				\
-						"PC-9801-26 + 86\0"			\
-						"PC-9801-118\0"				\
-						"PC-9801-86 + Chibi-oto\0"	\
-						"Speak board\0"				\
-						"Spark board\0"				\
-						"AMD-98";
+static const OEMCHAR str_cpu[] = OEMTEXT("8086-2\00070116\00080286\00080386\00080486\0Pentium\0PentiumPro");
+static const OEMCHAR str_winclr[] = OEMTEXT("256-colors\00065536-colors\0full color\0true color");
+static const OEMCHAR str_winmode[] = OEMTEXT(" (window)\0 (fullscreen)");
+static const OEMCHAR str_grcgchip[] = OEMTEXT("\0GRCG \0GRCG CG-Window \0EGC CG-Window ");
+static const OEMCHAR str_vrammode[] = OEMTEXT("Digital\0Analog\000256colors");
+static const OEMCHAR str_vrampage[] = OEMTEXT(" page-0\0 page-1\0 page-all");
+static const OEMCHAR str_chpan[] = OEMTEXT("none\0Mono-R\0Mono-L\0Stereo");
+static const OEMCHAR str_fmboard[] = OEMTEXT("none\0PC-9801-14\0PC-9801-26\0PC-9801-86\0PC-9801-26 + 86\0PC-9801-118\0PC-9801-86 + Chibi-oto\0Speak board\0Spark board\0AMD-98");
 
-static const char str_clockfmt[] = "%d.%1dMHz";
-static const char str_memfmt[] = "%3uKB";
-static const char str_memfmt2[] = "%3uKB + %uKB";
-static const char str_memfmt3[] = "%d.%1dMB";
-static const char str_width[] = "width-%u";
-static const char str_dispclock[] = "%u.%.2ukHz / %u.%uHz";
+static const OEMCHAR str_clockfmt[] = OEMTEXT("%d.%1dMHz");
+static const OEMCHAR str_memfmt[] = OEMTEXT("%3uKB");
+static const OEMCHAR str_memfmt2[] = OEMTEXT("%3uKB + %uKB");
+static const OEMCHAR str_memfmt3[] = OEMTEXT("%d.%1dMB");
+static const OEMCHAR str_twidth[] = OEMTEXT("width-%u");
+static const OEMCHAR str_dispclock[] = OEMTEXT("%u.%.2ukHz / %u.%uHz");
 
-static const char str_pcm86a[] = "   PCM: %dHz %dbit %s";
-static const char str_pcm86b[] = "        %d / %d / 32768";
-static const char str_rhythm[] = "BSCHTR";
+static const OEMCHAR str_pcm86a[] = OEMTEXT("   PCM: %dHz %dbit %s");
+static const OEMCHAR str_pcm86b[] = OEMTEXT("        %d / %d / 32768");
+static const OEMCHAR str_rhythm[] = OEMTEXT("BSCHTR");
 
 
 // ---- common
 
-static void info_ver(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_ver(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	milstr_ncpy(str, np2version, maxlen);
 	(void)ex;
 }
 
-static void info_cpu(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_cpu(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	family;
 
@@ -95,28 +58,28 @@ static void info_cpu(char *str, int maxlen, NP2INFOEX *ex) {
 	(void)ex;
 }
 
-static void info_clock(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_clock(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT32	clock;
-	char	clockstr[16];
+	OEMCHAR	clockstr[16];
 
 	clock = (pccore.realclock + 50000) / 100000;
-	SPRINTF(clockstr, str_clockfmt, clock/10, clock % 10);
+	OEMSPRINTF(clockstr, str_clockfmt, clock/10, clock % 10);
 	milstr_ncpy(str, clockstr, maxlen);
 	(void)ex;
 }
 
-static void info_base(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_base(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	milstr_ncpy(str,
 				(pccore.cpumode & CPUMODE_8MHZ)?str_8MHz:str_5MHz, maxlen);
 	(void)ex;
 }
 
-static void info_mem1(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_mem1(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	memsize;
-	char	memstr[32];
+	OEMCHAR	memstr[32];
 
 	memsize = np2cfg.memsw[2] & 7;
 	if (memsize < 6) {
@@ -126,19 +89,19 @@ static void info_mem1(char *str, int maxlen, NP2INFOEX *ex) {
 		memsize = 640;
 	}
 	if (pccore.extmem) {
-		SPRINTF(memstr, str_memfmt2, memsize, pccore.extmem * 1024);
+		OEMSPRINTF(memstr, str_memfmt2, memsize, pccore.extmem * 1024);
 	}
 	else {
-		SPRINTF(memstr, str_memfmt, memsize);
+		OEMSPRINTF(memstr, str_memfmt, memsize);
 	}
 	milstr_ncpy(str, memstr, maxlen);
 	(void)ex;
 }
 
-static void info_mem2(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_mem2(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	memsize;
-	char	memstr[16];
+	OEMCHAR	memstr[16];
 
 	memsize = np2cfg.memsw[2] & 7;
 	if (memsize < 6) {
@@ -148,15 +111,15 @@ static void info_mem2(char *str, int maxlen, NP2INFOEX *ex) {
 		memsize = 640;
 	}
 	memsize += pccore.extmem * 1024;
-	SPRINTF(memstr, str_memfmt, memsize);
+	OEMSPRINTF(memstr, str_memfmt, memsize);
 	milstr_ncpy(str, memstr, maxlen);
 	(void)ex;
 }
 
-static void info_mem3(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_mem3(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	memsize;
-	char	memstr[16];
+	OEMCHAR	memstr[16];
 
 	memsize = np2cfg.memsw[2] & 7;
 	if (memsize < 6) {
@@ -166,55 +129,55 @@ static void info_mem3(char *str, int maxlen, NP2INFOEX *ex) {
 		memsize = 640;
 	}
 	if (pccore.extmem > 1) {
-		SPRINTF(memstr, str_memfmt3, pccore.extmem, memsize / 100);
+		OEMSPRINTF(memstr, str_memfmt3, pccore.extmem, memsize / 100);
 	}
 	else {
-		SPRINTF(memstr, str_memfmt, memsize);
+		OEMSPRINTF(memstr, str_memfmt, memsize);
 	}
 	milstr_ncpy(str, memstr, maxlen);
 	(void)ex;
 }
 
-static void info_gdc(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_gdc(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	milstr_ncpy(str, milstr_list(str_grcgchip, grcg.chip & 3), maxlen);
 	milstr_ncat(str, str_2halfMHz + ((gdc.clock & 0x80)?2:0), maxlen);
 	(void)ex;
 }
 
-static void info_gdc2(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_gdc2(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-	char	textstr[32];
+	OEMCHAR	textstr[32];
 
-	SPRINTF(textstr, str_dispclock,
+	OEMSPRINTF(textstr, str_dispclock,
 						gdc.hclock / 1000, (gdc.hclock / 10) % 100,
 						gdc.vclock / 10, gdc.vclock % 10);
 	milstr_ncpy(str, textstr, maxlen);
 	(void)ex;
 }
 
-static void info_text(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_text(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-const char	*p;
-	char	textstr[64];
+const OEMCHAR	*p;
+	OEMCHAR		textstr[64];
 
 	if (!(gdcs.textdisp & GDCSCRN_ENABLE)) {
 		p = str_disable;
 	}
 	else {
-		SPRINTF(textstr, str_width, ((gdc.mode1 & 0x4)?40:80));
+		OEMSPRINTF(textstr, str_twidth, ((gdc.mode1 & 0x4)?40:80));
 		p = textstr;
 	}
 	milstr_ncpy(str, p, maxlen);
 	(void)ex;
 }
 
-static void info_grph(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_grph(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-const char	*p;
-	UINT	md;
-	UINT	pg;
-	char	grphstr[32];
+const OEMCHAR	*p;
+	UINT		md;
+	UINT		pg;
+	OEMCHAR		work[32];
 
 	if (!(gdcs.grphdisp & GDCSCRN_ENABLE)) {
 		p = str_disable;
@@ -230,15 +193,15 @@ const char	*p;
 			}
 		}
 #endif
-		milstr_ncpy(grphstr, milstr_list(str_vrammode, md), sizeof(grphstr));
-		milstr_ncat(grphstr, milstr_list(str_vrampage, pg), sizeof(grphstr));
-		p = grphstr;
+		milstr_ncpy(work, milstr_list(str_vrammode, md), NELEMENTS(work));
+		milstr_ncat(work, milstr_list(str_vrampage, pg), NELEMENTS(work));
+		p = work;
 	}
 	milstr_ncpy(str, p, maxlen);
 	(void)ex;
 }
 
-static void info_sound(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	type;
 
@@ -284,25 +247,25 @@ static void info_sound(char *str, int maxlen, NP2INFOEX *ex) {
 	(void)ex;
 }
 
-static void info_extsnd(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_extsnd(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-	char	buf[64];
+	OEMCHAR	buf[64];
 
 	info_sound(str, maxlen, ex);
 	if (usesound & 4) {
 		milstr_ncat(str, ex->cr, maxlen);
-		SPRINTF(buf, str_pcm86a,
+		OEMSPRINTF(buf, str_pcm86a,
 							pcm86rate8[pcm86.fifo & 7] >> 3,
 							(16 - ((pcm86.dactrl >> 3) & 8)),
 							milstr_list(str_chpan, (pcm86.dactrl >> 4) & 3));
 		milstr_ncat(str, buf, maxlen);
 		milstr_ncat(str, ex->cr, maxlen);
-		SPRINTF(buf, str_pcm86b, pcm86.virbuf, pcm86.fifosize);
+		OEMSPRINTF(buf, str_pcm86b, pcm86.virbuf, pcm86.fifosize);
 		milstr_ncat(str, buf, maxlen);
 	}
 }
 
-static void info_bios(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_bios(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	str[0] = '\0';
 	if (pccore.rom & PCROM_BIOS) {
@@ -320,14 +283,14 @@ static void info_bios(char *str, int maxlen, NP2INFOEX *ex) {
 	(void)ex;
 }
 
-static void info_rhythm(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_rhythm(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
-	char	rhythmstr[8];
+	OEMCHAR	rhythmstr[8];
 	UINT	exist;
 	UINT	i;
 
 	exist = rhythm_getcaps();
-	milstr_ncpy(rhythmstr, str_rhythm, sizeof(rhythmstr));
+	milstr_ncpy(rhythmstr, str_rhythm, NELEMENTS(rhythmstr));
 	for (i=0; i<6; i++) {
 		if (!(exist & (1 << i))) {
 			rhythmstr[i] = '_';
@@ -337,7 +300,7 @@ static void info_rhythm(char *str, int maxlen, NP2INFOEX *ex) {
 	(void)ex;
 }
 
-static void info_display(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_display(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	bpp;
 
@@ -352,42 +315,44 @@ static void info_display(char *str, int maxlen, NP2INFOEX *ex) {
 // ---- make string
 
 typedef struct {
-	char	key[8];
-	void	(*proc)(char *str, int maxlen, NP2INFOEX *ex);
+	OEMCHAR	key[8];
+	void	(*proc)(OEMCHAR *str, int maxlen, const NP2INFOEX *ex);
 } INFOPROC;
 
 static const INFOPROC infoproc[] = {
-			{"VER",			info_ver},
-			{"CPU",			info_cpu},
-			{"CLOCK",		info_clock},
-			{"BASE",		info_base},
-			{"MEM1",		info_mem1},
-			{"MEM2",		info_mem2},
-			{"MEM3",		info_mem3},
-			{"GDC",			info_gdc},
-			{"GDC2",		info_gdc2},
-			{"TEXT",		info_text},
-			{"GRPH",		info_grph},
-			{"SND",			info_sound},
-			{"EXSND",		info_extsnd},
-			{"BIOS",		info_bios},
-			{"RHYTHM",		info_rhythm},
-			{"DISP",		info_display}};
+			{OEMTEXT("VER"),	info_ver},
+			{OEMTEXT("CPU"),	info_cpu},
+			{OEMTEXT("CLOCK"),	info_clock},
+			{OEMTEXT("BASE"),	info_base},
+			{OEMTEXT("MEM1"),	info_mem1},
+			{OEMTEXT("MEM2"),	info_mem2},
+			{OEMTEXT("MEM3"),	info_mem3},
+			{OEMTEXT("GDC"),	info_gdc},
+			{OEMTEXT("GDC2"),	info_gdc2},
+			{OEMTEXT("TEXT"),	info_text},
+			{OEMTEXT("GRPH"),	info_grph},
+			{OEMTEXT("SND"),	info_sound},
+			{OEMTEXT("EXSND"),	info_extsnd},
+			{OEMTEXT("BIOS"),	info_bios},
+			{OEMTEXT("RHYTHM"),	info_rhythm},
+			{OEMTEXT("DISP"),	info_display}};
 
 
-static BOOL defext(char *dst, const char *key, int maxlen, NP2INFOEX *ex) {
+static BOOL defext(OEMCHAR *dst, const OEMCHAR *key, int maxlen,
+														const NP2INFOEX *ex) {
 
 	milstr_ncpy(dst, key, maxlen);
 	(void)ex;
 	return(TRUE);
 }
 
-void np2info(char *dst, const char *src, int maxlen, const NP2INFOEX *ex) {
+void np2info(OEMCHAR *dst, const OEMCHAR *src, int maxlen,
+														const NP2INFOEX *ex) {
 
 	NP2INFOEX	statex;
-	char		c;
+	OEMCHAR		c;
 	int			leng;
-	char		infwork[12];
+	OEMCHAR		infwork[12];
 const INFOPROC	*inf;
 const INFOPROC	*infterm;
 
@@ -395,7 +360,7 @@ const INFOPROC	*infterm;
 		return;
 	}
 	if (ex == NULL) {
-		milstr_ncpy(statex.cr, str_oscr, sizeof(statex.cr));
+		milstr_ncpy(statex.cr, str_oscr, NELEMENTS(statex.cr));
 		statex.ext = NULL;
 	}
 	else {
@@ -434,7 +399,7 @@ const INFOPROC	*infterm;
 				if (c == '%') {
 					break;
 				}
-				if (leng < (int)(sizeof(infwork) - 1)) {
+				if (leng < (int)(NELEMENTS(infwork) - 1)) {
 					infwork[leng++] = c;
 				}
 			}
@@ -454,7 +419,7 @@ const INFOPROC	*infterm;
 				}
 			}
 		}
-		leng = strlen(dst);
+		leng = OEMSTRLEN(dst);
 		dst += leng;
 		maxlen -= leng;
 	}

@@ -27,7 +27,8 @@ static HANDLE check_sakura(void) {
 
 	HANDLE	hsakura;
 
-	if ((hsakura = OpenMutex(MUTEX_ALL_ACCESS, FALSE, "sakura")) != NULL) {
+	hsakura = OpenMutex(MUTEX_ALL_ACCESS, FALSE, OEMTEXT("sakura"));
+	if (hsakura != NULL) {
 		CloseHandle(hsakura);
 	}
 	return(hsakura);
@@ -54,7 +55,7 @@ BOOL sstp_send(char *msg, void (*proc)(HWND hWnd, char *msg)) {
 		return(FAILURE);
 	}
 
-	wsprintf(sstpstr, sendermes, msg);
+	SPRINTF(sstpstr, sendermes, msg);
 	sstprcv[0] = 0;
 	sstppos = 0;
 
@@ -191,7 +192,7 @@ BOOL sstp_sendonly(char *msg) {
 			s_in.sin_port = htons(np2oscfg.sstpport);
 			if (connect(lSocket, (sockaddr *)&s_in, sizeof(s_in))
 															!= SOCKET_ERROR) {
-				wsprintf(msgstr, sendermes, msg);
+				SPRINTF(msgstr, sendermes, msg);
 				send(lSocket, msgstr, strlen(msgstr), 0);
 				ret = SUCCESS;
 			}

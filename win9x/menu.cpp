@@ -23,7 +23,7 @@ void menu_addmenubar(HMENU popup, HMENU menubar) {
 	UINT			pos;
 	UINT			i;
 	MENUITEMINFO	mii;
-	char			str[128];
+	OEMCHAR			str[128];
 	HMENU			hSubMenu;
 
 	cnt = GetMenuItemCount(menubar);
@@ -34,7 +34,7 @@ void menu_addmenubar(HMENU popup, HMENU menubar) {
 		mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU |
 																	MIIM_DATA;
 		mii.dwTypeData = str;
-		mii.cch = sizeof(str);
+		mii.cch = NELEMENTS(str);
 		if (GetMenuItemInfo(menubar, i, TRUE, &mii)) {
 			if (mii.hSubMenu) {
 				hSubMenu = CreatePopupMenu();
@@ -50,9 +50,9 @@ void menu_addmenubar(HMENU popup, HMENU menubar) {
 static void insertresmenu(HMENU menu, UINT pos, UINT flag,
 													UINT item, UINT str) {
 
-	char	tmp[128];
+	OEMCHAR	tmp[128];
 
-	if (LoadString(hInst, str, tmp, sizeof(tmp))) {
+	if (LoadString(hInst, str, tmp, NELEMENTS(tmp))) {
 		InsertMenu(menu, pos, flag, item, tmp);
 	}
 }
@@ -233,24 +233,24 @@ static const DISKMENU scsimenu[4] = {
 #endif
 
 #if defined(SUPPORT_STATSAVE)
-static const char xmenu_stat[] = "S&tat";
-static const char xmenu_statsave[] = "Save %u";
-static const char xmenu_statload[] = "Load %u";
+static const OEMCHAR xmenu_stat[] = OEMTEXT("S&tat");
+static const OEMCHAR xmenu_statsave[] = OEMTEXT("Save %u");
+static const OEMCHAR xmenu_statload[] = OEMTEXT("Load %u");
 
 static void addstatsavemenu(HMENU hMenu, UINT pos) {
 
 	HMENU	hSubMenu;
 	UINT	i;
-	char	buf[16];
+	OEMCHAR	buf[16];
 
 	hSubMenu = CreatePopupMenu();
 	for (i=0; i<SUPPORT_STATSAVE; i++) {
-		SPRINTF(buf, xmenu_statsave, i);
+		OEMSPRINTF(buf, xmenu_statsave, i);
 		AppendMenu(hSubMenu, MF_STRING, IDM_FLAGSAVE + i, buf);
 	}
 	AppendMenu(hSubMenu, MF_MENUBARBREAK, 0, NULL);
 	for (i=0; i<SUPPORT_STATSAVE; i++) {
-		SPRINTF(buf, xmenu_statload, i);
+		OEMSPRINTF(buf, xmenu_statload, i);
 		AppendMenu(hSubMenu, MF_STRING, IDM_FLAGLOAD + i, buf);
 	}
 	InsertMenu(hMenu, pos, MF_BYPOSITION | MF_POPUP,

@@ -80,7 +80,7 @@ void board26k_reset(void) {
 
 	opngen_setcfg(3, 0);
 	fmtimer_reset(np2cfg.snd26opt & 0xc0);
-	soundrom_loadex(np2cfg.snd26opt & 7, "26");
+	soundrom_loadex(np2cfg.snd26opt & 7, OEMTEXT("26"));
 	opn.base = (np2cfg.snd26opt & 0x10)?0x000:0x100;
 }
 

@@ -82,8 +82,8 @@ typedef struct {
 extern "C" {
 #endif
 
-BOOL pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate);
-BOOL pcmmix_regfile(PMIXDAT *dat, const char *fname, UINT rate);
+BRESULT pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate);
+BRESULT pcmmix_regfile(PMIXDAT *dat, const OEMCHAR *fname, UINT rate);
 
 void SOUNDCALL pcmmix_getpcm(PCMMIX hdl, SINT32 *pcm, UINT count);
 

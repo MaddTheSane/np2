@@ -15,7 +15,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	LONG		y;
 	DWORD		pos;
-	char		str[128];
+	OEMCHAR		str[128];
 	HFONT		hfont;
 	I286STAT	*r;
 
@@ -51,26 +51,26 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	for (y=0; y<rc->bottom && pos<4; y+=16, pos++) {
 		switch(pos) {
 			case 0:
-				wsprintf(str, "AX=%.4x  BX=%.4x  CX=%.4x  DX=%.4x",
+				OEMSPRINTF(str, OEMTEXT("AX=%.4x  BX=%.4x  CX=%.4x  DX=%.4x"),
 								r->r.w.ax, r->r.w.bx, r->r.w.cx, r->r.w.dx);
 				break;
 
 			case 1:
-				wsprintf(str, "SP=%.4x  BP=%.4x  SI=%.4x  DI=%.4x",
+				OEMSPRINTF(str, OEMTEXT("SP=%.4x  BP=%.4x  SI=%.4x  DI=%.4x"),
 								r->r.w.sp, r->r.w.bp, r->r.w.si, r->r.w.di);
 				break;
 
 			case 2:
-				wsprintf(str, "CS=%.4x  DS=%.4x  ES=%.4x  SS=%.4x",
+				OEMSPRINTF(str, OEMTEXT("CS=%.4x  DS=%.4x  ES=%.4x  SS=%.4x"),
 								r->r.w.cs, r->r.w.ds, r->r.w.es, r->r.w.ss);
 				break;
 
 			case 3:
-				wsprintf(str, "IP=%.4x   %s",
+				OEMSPRINTF(str, OEMTEXT("IP=%.4x   %s"),
 								r->r.w.ip, debugsub_flags(r->r.w.flag));
 				break;
 		}
-		TextOut(hdc, 0, y, str, strlen(str));
+		TextOut(hdc, 0, y, str, OEMSTRLEN(str));
 	}
 	DeleteObject(SelectObject(hdc, hfont));
 }
@@ -79,7 +79,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	LONG		y;
 	DWORD		pos;
-	char		str[128];
+	OEMCHAR		str[128];
 	HFONT		hfont;
 	I386STAT	*r;
 
@@ -115,7 +115,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	for (y=0; y<rc->bottom && pos<4; y+=16, pos++) {
 		switch(pos) {
 			case 0:
-				wsprintf(str, "EAX=%.8x EBX=%.8x ECX=%.8x EDX=%.8x",
+				OEMSPRINTF(str, OEMTEXT("EAX=%.8x EBX=%.8x ECX=%.8x EDX=%.8x"),
 								r->cpu_regs.reg[CPU_EAX_INDEX].d,
 								r->cpu_regs.reg[CPU_EBX_INDEX].d,
 								r->cpu_regs.reg[CPU_ECX_INDEX].d,
@@ -123,7 +123,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 				break;
 
 			case 1:
-				wsprintf(str, "ESP=%.8x EBP=%.8x ESI=%.8x EDI=%.8x",
+				OEMSPRINTF(str, OEMTEXT("ESP=%.8x EBP=%.8x ESI=%.8x EDI=%.8x"),
 								r->cpu_regs.reg[CPU_ESP_INDEX].d,
 								r->cpu_regs.reg[CPU_EBP_INDEX].d,
 								r->cpu_regs.reg[CPU_ESI_INDEX].d,
@@ -131,8 +131,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 				break;
 
 			case 2:
-				wsprintf(str, "CS=%.4x DS=%.4x ES=%.4x " \
-								"FS=%.4x GS=%.4x SS=%.4x",
+				OEMSPRINTF(str, OEMTEXT("CS=%.4x DS=%.4x ES=%.4x FS=%.4x GS=%.4x SS=%.4x"),
 								r->cpu_regs.sreg[CPU_CS_INDEX],
 								r->cpu_regs.sreg[CPU_DS_INDEX],
 								r->cpu_regs.sreg[CPU_ES_INDEX],
@@ -142,7 +141,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 				break;
 
 			case 3:
-				wsprintf(str, "EIP=%.8x   %s",
+				OEMSPRINTF(str, OEMTEXT("EIP=%.8x   %s"),
 								r->cpu_regs.eip.d,
 								debugsub_flags(r->cpu_regs.eflags.d));
 				break;

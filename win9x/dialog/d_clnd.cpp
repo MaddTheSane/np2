@@ -29,7 +29,7 @@ static const VIRCAL_T vircal[6] = {	{IDC_VIRYEAR,	0x00, 0x99},
 static void set_cal2dlg(HWND hWnd, const UINT8 *cbuf) {
 
 	int		i;
-	TCHAR	work[8];
+	OEMCHAR	work[8];
 
 	for (i=0; i<6; i++) {
 		if (i != 1) {
@@ -52,10 +52,10 @@ static void vircalendar(HWND hWnd, BOOL disp) {
 	EnableWindow(GetDlgItem(hWnd, IDC_SETNOW), disp);
 }
 
-static UINT32 getbcd(char *str, int len) {
+static UINT32 getbcd(const OEMCHAR *str, int len) {
 
 	UINT32	ret;
-	UINT8	c;
+	UINT	c;
 
 	if (!(*str)) {
 		return(0xff);
@@ -77,7 +77,7 @@ static UINT32 getbcd(char *str, int len) {
 
 LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	char	work[32];
+	OEMCHAR	work[32];
 	UINT8	b;
 	int		i;
 	HWND	subwnd;
@@ -109,7 +109,7 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					}
 					for (i=0; i<6; i++) {
 						GetDlgItemText(hWnd, vircal[i].res,
-														work, sizeof(work));
+													work, NELEMENTS(work));
 						b = (UINT8)getbcd(work, 2);
 						if ((b >= vircal[i].min) && (b <= vircal[i].max)) {
 							if (i == 1) {

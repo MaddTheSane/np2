@@ -96,7 +96,7 @@ extern	COMMNG	cm_mpu98;
 extern	COMMNG	cm_rs232c;
 
 typedef struct {
-	char	*buf;
+	OEMCHAR	*buf;
 	int		remain;
 } ERR_BUF;
 
@@ -149,7 +149,7 @@ typedef struct {
 	NP2FHDR		f;
 } _SFFILEH, *SFFILEH;
 
-static SFFILEH statflag_open(const char *filename, char *err, int errlen) {
+static SFFILEH statflag_open(const OEMCHAR *filename, OEMCHAR *err, int errlen) {
 
 	FILEH	fh;
 	SFFILEH	ret;
@@ -261,7 +261,7 @@ sfr_err:
 	return(STATFLAG_FAILURE);
 }
 
-static SFFILEH statflag_create(const char *filename) {
+static SFFILEH statflag_create(const OEMCHAR *filename) {
 
 	SFFILEH	ret;
 	FILEH	fh;
@@ -355,7 +355,7 @@ static void statflag_close(SFFILEH sffh) {
 	}
 }
 
-void statflag_seterr(STFLAGH sfh, const char *str) {
+void statflag_seterr(STFLAGH sfh, const OEMCHAR *str) {
 
 	if ((sfh) && (sfh->errlen)) {
 		milstr_ncat(sfh->err, str, sfh->errlen);
@@ -928,19 +928,19 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 // ---- disk
 
 typedef struct {
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 	int		readonly;
 	DOSDATE	date;
 	DOSTIME	time;
 } STATDISK;
 
-static const char str_fddx[] = "FDD%u";
-static const char str_sasix[] = "SASI%u";
-static const char str_scsix[] = "SCSI%u";
-static const char str_updated[] = "%s: updated";
-static const char str_notfound[] = "%s: not found";
+static const OEMCHAR str_fddx[] = OEMTEXT("FDD%u");
+static const OEMCHAR str_sasix[] = OEMTEXT("SASI%u");
+static const OEMCHAR str_scsix[] = OEMTEXT("SCSI%u");
+static const OEMCHAR str_updated[] = OEMTEXT("%s: updated");
+static const OEMCHAR str_notfound[] = OEMTEXT("%s: not found");
 
-static int disksave(STFLAGH sfh, const char *path, int readonly) {
+static int disksave(STFLAGH sfh, const OEMCHAR *path, int readonly) {
 
 	STATDISK	st;
 	FILEH		fh;
@@ -978,12 +978,12 @@ static int flagsave_disk(STFLAGH sfh, const SFENTRY *tbl) {
 	return(ret);
 }
 
-static int diskcheck(STFLAGH sfh, const char *name) {
+static int diskcheck(STFLAGH sfh, const OEMCHAR *name) {
 
 	int			ret;
 	FILEH		fh;
 	STATDISK	st;
-	char		buf[256];
+	OEMCHAR		buf[256];
 	DOSDATE		date;
 	DOSTIME		time;
 
@@ -996,13 +996,13 @@ static int diskcheck(STFLAGH sfh, const char *name) {
 			if ((memcmp(&st.date, &date, sizeof(date))) ||
 				(memcmp(&st.time, &time, sizeof(time)))) {
 				ret |= STATFLAG_DISKCHG;
-				SPRINTF(buf, str_updated, name);
+				OEMSPRINTF(buf, str_updated, name);
 				statflag_seterr(sfh, buf);
 			}
 		}
 		else {
 			ret |= STATFLAG_DISKCHG;
-			SPRINTF(buf, str_notfound, name);
+			OEMSPRINTF(buf, str_notfound, name);
 			statflag_seterr(sfh, buf);
 		}
 	}
@@ -1013,20 +1013,20 @@ static int flagcheck_disk(STFLAGH sfh, const SFENTRY *tbl) {
 
 	int		ret;
 	int		i;
-	char	buf[8];
+	OEMCHAR	buf[8];
 
 	ret = 0;
 	for (i=0; i<4; i++) {
-		SPRINTF(buf, str_fddx, i+1);
+		OEMSPRINTF(buf, str_fddx, i+1);
 		ret |= diskcheck(sfh, buf);
 	}
 	sxsi_flash();
 	for (i=0; i<2; i++) {
-		SPRINTF(buf, str_sasix, i+1);
+		OEMSPRINTF(buf, str_sasix, i+1);
 		ret |= diskcheck(sfh, buf);
 	}
 	for (i=0; i<4; i++) {
-		SPRINTF(buf, str_scsix, i);
+		OEMSPRINTF(buf, str_scsix, i);
 		ret |= diskcheck(sfh, buf);
 	}
 	(void)tbl;
@@ -1173,7 +1173,7 @@ static int flagcheck_veronly(STFLAGH sfh, const SFENTRY *tbl) {
 
 // ----
 
-int statsave_save(const char *filename) {
+int statsave_save(const OEMCHAR *filename) {
 
 	SFFILEH		sffh;
 	int			ret;
@@ -1256,7 +1256,7 @@ const SFENTRY	*tblterm;
 	return(ret);
 }
 
-int statsave_check(const char *filename, char *buf, int size) {
+int statsave_check(const OEMCHAR *filename, OEMCHAR *buf, int size) {
 
 	SFFILEH		sffh;
 	int			ret;
@@ -1328,7 +1328,7 @@ const SFENTRY	*tblterm;
 	return(ret);
 }
 
-int statsave_load(const char *filename) {
+int statsave_load(const OEMCHAR *filename) {
 
 	SFFILEH		sffh;
 	int			ret;

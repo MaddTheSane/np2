@@ -372,7 +372,7 @@ void sound_pcmunlock(const SINT32 *hdl) {
 
 // ---- pcmmix
 
-BOOL pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate) {
+BRESULT pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate) {
 
 	GETSND	gs;
 	UINT8	tmp[256];
@@ -421,12 +421,12 @@ pmr_err1:
 	return(FAILURE);
 }
 
-BOOL pcmmix_regfile(PMIXDAT *dat, const char *fname, UINT rate) {
+BRESULT pcmmix_regfile(PMIXDAT *dat, const OEMCHAR *fname, UINT rate) {
 
 	FILEH	fh;
 	UINT	size;
 	UINT8	*ptr;
-	BOOL	r;
+	BRESULT	r;
 
 	r = FAILURE;
 	fh = file_open_rb(fname);

@@ -17,7 +17,7 @@ typedef struct {
 typedef struct {
 	STFLAGHDR	hdr;
 	UINT		pos;
-	char		*err;
+	OEMCHAR		*err;
 	int			errlen;
 } _STFLAGH, *STFLAGH;
 
@@ -35,11 +35,11 @@ extern "C" {
 
 int statflag_read(STFLAGH sfh, void *ptr, UINT size);
 int statflag_write(STFLAGH sfh, const void *ptr, UINT size);
-void statflag_seterr(STFLAGH sfh, const char *str);
+void statflag_seterr(STFLAGH sfh, const OEMCHAR *str);
 
-int statsave_save(const char *filename);
-int statsave_check(const char *filename, char *buf, int size);
-int statsave_load(const char *filename);
+int statsave_save(const OEMCHAR *filename);
+int statsave_check(const OEMCHAR *filename, OEMCHAR *buf, int size);
+int statsave_load(const OEMCHAR *filename);
 
 #ifdef __cplusplus
 }

@@ -66,22 +66,22 @@ const UINT8	*p;
 	}
 }
 
-UINT8 fontfm7_read(const char *filename, UINT8 loading) {
+UINT8 fontfm7_read(const OEMCHAR *filename, UINT8 loading) {
 
 	FILEH	fh;
 	UINT8	*work;
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 
 	work = (UINT8 *)_MALLOC(0x20000, "fm7font");
 	if (work == NULL) {
 		goto frf7_err1;
 	}
-	file_cpyname(fname, filename, sizeof(fname));
+	file_cpyname(fname, filename, NELEMENTS(fname));
 
 	// 8dot ANKを読み込む必要はある？
 	if (loading & FONT_ANK8) {
 		file_cutname(fname);
-		file_catname(fname, fm7ankname, sizeof(fname));
+		file_catname(fname, fm7ankname, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 2048) == 2048) {
@@ -96,7 +96,7 @@ UINT8 fontfm7_read(const char *filename, UINT8 loading) {
 	// 16dot ASCII 及び 漢字を読み込む必要はあるか？
 	if (loading & (FONT_ANK16a | FONT_KNJ1)) {
 		file_cutname(fname);
-		file_catname(fname, fm7knjname, sizeof(fname));
+		file_catname(fname, fm7knjname, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 0x20000) == 0x20000) {

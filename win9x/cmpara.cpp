@@ -49,12 +49,12 @@ static void pararelease(COMMNG self) {
 
 COMMNG cmpara_create(UINT port) {
 
-	char	commstr[16];
+	OEMCHAR	commstr[16];
 	HANDLE	hdl;
 	COMMNG	ret;
 	CMPARA	para;
 
-	wsprintf(commstr, "LPT%u", port);
+	OEMSPRINTF(commstr, OEMTEXT("LPT%u"), port);
 	hdl = CreateFile(commstr, GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
 	if (hdl == INVALID_HANDLE_VALUE) {
 		goto cpcre_err1;

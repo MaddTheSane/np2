@@ -5,14 +5,14 @@
 #include	"rhythm.h"
 
 
-static const char file_2608bd[] = "2608_bd.wav";
-static const char file_2608sd[] = "2608_sd.wav";
-static const char file_2608top[] = "2608_top.wav";
-static const char file_2608hh[] = "2608_hh.wav";
-static const char file_2608tom[] = "2608_tom.wav";
-static const char file_2608rim[] = "2608_rim.wav";
+static const OEMCHAR file_2608bd[] = OEMTEXT("2608_bd.wav");
+static const OEMCHAR file_2608sd[] = OEMTEXT("2608_sd.wav");
+static const OEMCHAR file_2608top[] = OEMTEXT("2608_top.wav");
+static const OEMCHAR file_2608hh[] = OEMTEXT("2608_hh.wav");
+static const OEMCHAR file_2608tom[] = OEMTEXT("2608_tom.wav");
+static const OEMCHAR file_2608rim[] = OEMTEXT("2608_rim.wav");
 
-static const char *rhythmfile[6] = {
+static const OEMCHAR *rhythmfile[6] = {
 				file_2608bd,	file_2608sd,	file_2608top,
 				file_2608hh,	file_2608tom,	file_2608rim};
 
@@ -57,11 +57,11 @@ void rhythm_deinitialize(void) {
 static void rhythm_load(void) {
 
 	int		i;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	for (i=0; i<6; i++) {
 		if (rhythmcfg.pcm[i].sample == NULL) {
-			getbiospath(path, rhythmfile[i], sizeof(path));
+			getbiospath(path, rhythmfile[i], NELEMENTS(path));
 			pcmmix_regfile(rhythmcfg.pcm + i, path, rhythmcfg.rate);
 		}
 	}

@@ -53,7 +53,7 @@ const UINT8	*p;
 	}
 }
 
-UINT8 fontpc98_read(const char *filename, UINT8 loading) {
+UINT8 fontpc98_read(const OEMCHAR *filename, UINT8 loading) {
 
 	FILEH	fh;
 	BMPFILE	bf;

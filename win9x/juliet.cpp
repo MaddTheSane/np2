@@ -107,7 +107,6 @@ const DLLPROC	*dterm;
 	while(d < dterm) {
 		proc = (long)GetProcAddress(mod, d->symbol);
 		if (proc == (long)NULL) {
-			MessageBox(NULL, "0", "?", MB_OK);
 			goto jini_err2;
 		}
 		*(long *)(((UINT8 *)&romeo) + (d->addr)) = proc;

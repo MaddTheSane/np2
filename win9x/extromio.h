@@ -23,7 +23,7 @@ enum {
 extern "C" {
 #endif
 
-EXTROMH extromio_open(const char *filename, UINT type);
+EXTROMH extromio_open(const OEMCHAR *filename, UINT type);
 UINT extromio_read(EXTROMH erh, void *buf, UINT size);
 long extromio_seek(EXTROMH erh, long pos, int mothod);
 void extromio_close(EXTROMH erh);

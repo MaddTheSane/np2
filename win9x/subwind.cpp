@@ -56,9 +56,9 @@ typedef struct {
 static	KDISPWIN	kdispwin;
 static	KDISPCFG	kdispcfg;
 
-static const char kdispapp[] = "Key Display";
-static const char kdispclass[] = "NP2-KeyDispWin";
-static const char str_kdclose[] = "&Close";
+static const OEMCHAR kdispapp[] = OEMTEXT("Key Display");
+static const OEMCHAR kdispclass[] = OEMTEXT("NP2-KeyDispWin");
+static const OEMCHAR str_kdclose[] = OEMTEXT("&Close");
 
 static const UINT32 kdisppal[KEYDISP_PALS] =
 									{0x00000000, 0xffffffff, 0xf9ff0000};
@@ -386,20 +386,20 @@ void kdispwin_draw(UINT8 cnt) {
 
 void kdispwin_readini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	ZeroMemory(&kdispcfg, sizeof(kdispcfg));
 	kdispcfg.posx = CW_USEDEFAULT;
 	kdispcfg.posy = CW_USEDEFAULT;
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_read(path, kdispapp, kdispini, NELEMENTS(kdispini));
 }
 
 void kdispwin_writeini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_write(path, kdispapp, kdispini, NELEMENTS(kdispini));
 }
 #endif
@@ -426,8 +426,8 @@ typedef struct {
 static	MDBGWIN		mdbgwin;
 static	MDBGCFG		mdbgcfg;
 
-static const char mdbgapp[] = "Memory Map";
-static const char mdbgclass[] = "NP2-MemDbgWin";
+static const OEMCHAR mdbgapp[] = OEMTEXT("Memory Map");
+static const OEMCHAR mdbgclass[] = OEMTEXT("NP2-MemDbgWin");
 static const INITBL mdbgini[] = {
 	{"WindposX", INITYPE_SINT32,	&mdbgcfg.posx,			0},
 	{"WindposY", INITYPE_SINT32,	&mdbgcfg.posy,			0},
@@ -645,19 +645,19 @@ HWND mdbgwin_gethwnd(void) {
 
 void mdbgwin_readini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	mdbgcfg.posx = CW_USEDEFAULT;
 	mdbgcfg.posy = CW_USEDEFAULT;
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_read(path, mdbgapp, mdbgini, NELEMENTS(mdbgini));
 }
 
 void mdbgwin_writeini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_write(path, mdbgapp, mdbgini, NELEMENTS(mdbgini));
 }
 #endif
@@ -683,8 +683,8 @@ typedef struct {
 static	SKBDWIN		skbdwin;
 static	SKBDCFG		skbdcfg;
 
-static const char skbdapp[] = "Soft Keyboard";
-static const char skbdclass[] = "NP2-SoftKBDWin";
+static const OEMCHAR skbdapp[] = OEMTEXT("Soft Keyboard");
+static const OEMCHAR skbdclass[] = OEMTEXT("NP2-SoftKBDWin");
 static const INITBL skbdini[] = {
 	{"WindposX", INITYPE_SINT32,	&skbdcfg.posx,			0},
 	{"WindposY", INITYPE_SINT32,	&skbdcfg.posy,			0},
@@ -922,19 +922,19 @@ void skbdwin_process(void) {
 
 void skbdwin_readini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	skbdcfg.posx = CW_USEDEFAULT;
 	skbdcfg.posy = CW_USEDEFAULT;
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_read(path, skbdapp, skbdini, NELEMENTS(skbdini));
 }
 
 void skbdwin_writeini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_write(path, skbdapp, skbdini, NELEMENTS(skbdini));
 }
 #endif

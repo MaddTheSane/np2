@@ -6,8 +6,8 @@
 
 #if defined(FONTMNG_CACHE)
 typedef struct {
-	WORD		str;
-	WORD		next;
+	UINT16		str;
+	UINT16		next;
 } FNTCTBL;
 #endif
 
@@ -29,8 +29,8 @@ typedef struct {
 	int			bmpalign;
 
 #if defined(FONTMNG_CACHE)
-	DWORD		caches;
-	DWORD		cachehead;
+	UINT		caches;
+	UINT		cachehead;
 	FNTCTBL		cache[FONTMNG_CACHE];
 #endif
 } _FNTMNG, *FNTMNG;
@@ -619,7 +619,7 @@ FNTDAT fontmng_get(void *hdl, const char *string) {
 		}
 		if (prev < FONTMNG_CACHE) {
 			fct[prev].next = fct[pos].next;
-			fct[pos].next = (WORD)fhdl->cachehead;
+			fct[pos].next = (UINT16)fhdl->cachehead;
 			fhdl->cachehead = pos;
 		}
 		return((FNTDAT)(((BYTE *)(fhdl + 1)) + (pos * fhdl->fontalign)));
@@ -628,8 +628,8 @@ FNTDAT fontmng_get(void *hdl, const char *string) {
 		prev = fhdl->caches;
 		fhdl->caches++;
 	}
-	fct[prev].str = (WORD)str;
-	fct[prev].next = (WORD)fhdl->cachehead;
+	fct[prev].str = (UINT16)str;
+	fct[prev].next = (UINT16)fhdl->cachehead;
 	fhdl->cachehead = prev;
 	fdat = (FNTDAT)(((BYTE *)(fhdl + 1)) + (prev * fhdl->fontalign));
 }

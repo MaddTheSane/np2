@@ -2,16 +2,24 @@
 #define	_WIN32_IE	0x0200
 
 #include	<windows.h>
+#include	<tchar.h>
 #include	<stdio.h>
 #include	<stddef.h>
 #include	<setjmp.h>
+#if defined(TRACE)
+#include	<assert.h>
+#endif
 
 #define	BYTESEX_LITTLE
+#if !defined(UNICODE)
 #define	OSLANG_SJIS
+#else
+#define	OSLANG_UCS2
+#endif
 #define	OSLINEBREAK_CRLF
 
-
 #ifndef __GNUC__
+typedef signed int			SINT;
 typedef signed char			SINT8;
 typedef unsigned char		UINT8;
 typedef	signed short		SINT16;
@@ -48,22 +56,35 @@ typedef signed __int64		SINT64;
 #define	siglongjmp(env, val)	longjmp(env, val)
 #define	msgbox(title, msg)		MessageBox(NULL, msg, title, MB_OK)
 
+#define	STRCALL		__stdcall
+
+#define	BRESULT				UINT8
+#define	OEMCHAR				TCHAR
+#define	OEMTEXT(string)		_T(string)
+#define	OEMSPRINTF			wsprintf
+#define	OEMSTRLEN			lstrlen
 
 #include	"common.h"
 #include	"milstr.h"
 #include	"_memory.h"
+#include	"trace.h"
 #include	"rect.h"
 #include	"lstarray.h"
-#include	"trace.h"
 
 
 #define	GETTICK()			GetTickCount()
+#if defined(TRACE)
+#define	__ASSERT(s)			assert(s)
+#else
+#define	__ASSERT(s)
+#endif
 #if defined(UNICODE)
 #define	SPRINTF				sprintf
+#define	STRLEN				strlen
 #else
 #define	SPRINTF				wsprintf
+#define	STRLEN				lstrlen
 #endif
-#define	__ASSERT(s)
 
 #define	LABEL				__declspec(naked)
 #define RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
@@ -80,7 +101,11 @@ typedef signed __int64		SINT64;
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
 
+#if !defined(UNICODE)
 #define	SUPPORT_SJIS
+#else
+#define	SUPPORT_ANK
+#endif
 
 #define	SUPPORT_8BPP
 #define	SUPPORT_16BPP

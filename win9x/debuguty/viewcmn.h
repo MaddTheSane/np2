@@ -1,6 +1,7 @@
+
 extern char viewcmn_hex[16];
 
-void viewcmn_caption(NP2VIEW_T *view, char *buf);
+void viewcmn_caption(NP2VIEW_T *view, OEMCHAR *buf);
 void viewcmn_putcaption(NP2VIEW_T *view);
 
 

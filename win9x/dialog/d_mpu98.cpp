@@ -20,7 +20,8 @@ extern	COMMNG	cm_mpu98;
 }
 #endif
 
-static const char *mpuinterrupt[4] = {str_int0, str_int1, str_int2, str_int5};
+static const OEMCHAR *mpuinterrupt[4] = {
+									str_int0, str_int1, str_int2, str_int5};
 
 static	UINT8	mpu = 0;
 
@@ -33,9 +34,9 @@ static void setmpuiopara(HWND hWnd, UINT16 res, UINT8 value) {
 
 static UINT8 getmpuio(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	return((milstr_solveHEX(work) >> 6) & 0xf0);
 }
 
@@ -47,10 +48,10 @@ static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {
 
 static UINT8 getmpuint(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 	UINT8	ret;
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	ret = work[3] - '0';
 	if (ret >= 3) {
 		ret = 3;
@@ -73,12 +74,12 @@ static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
 static void mpucreate(HWND hWnd) {
 
 	UINT	i;
-	char	buf[8];
+	OEMCHAR	buf[8];
 	HWND	sub;
 
 	mpu = np2cfg.mpuopt;
 	for (i=0; i<16; i++) {
-		wsprintf(buf, str_4X, 0xC0D0 + (i << 10));
+		OEMSPRINTF(buf, str_4X, 0xC0D0 + (i << 10));
 		SendDlgItemMessage(hWnd, IDC_MPUIO,
 									CB_INSERTSTRING, (WPARAM)i, (LPARAM)buf);
 	}
@@ -104,10 +105,10 @@ static void mpucreate(HWND hWnd) {
 static void mpuupdate(HWND hWnd) {
 
 	union {
-		char	mmap[MAXPNAMELEN];
-		char	mmdl[64];
-		char	mdef[MAX_PATH];
-		char	mdin[MAXPNAMELEN];
+		OEMCHAR	mmap[MAXPNAMELEN];
+		OEMCHAR	mmdl[64];
+		OEMCHAR	mdef[MAX_PATH];
+		OEMCHAR	mdin[MAXPNAMELEN];
 	} s;
 	UINT	update;
 
@@ -116,19 +117,19 @@ static void mpuupdate(HWND hWnd) {
 		np2cfg.mpuopt = mpu;
 		update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
 	}
-	GetDlgItemText(hWnd, IDC_MPU98MMAP, s.mmap, sizeof(s.mmap));
+	GetDlgItemText(hWnd, IDC_MPU98MMAP, s.mmap, NELEMENTS(s.mmap));
 	if (milstr_cmp(np2oscfg.mpu.mout, s.mmap)) {
-		milstr_ncpy(np2oscfg.mpu.mout, s.mmap, sizeof(np2oscfg.mpu.mout));
+		milstr_ncpy(np2oscfg.mpu.mout, s.mmap, NELEMENTS(np2oscfg.mpu.mout));
 		update |= SYS_UPDATEOSCFG | SYS_UPDATEMIDI;
 	}
-	GetDlgItemText(hWnd, IDC_MPU98MDIN, s.mdin, sizeof(s.mdin));
+	GetDlgItemText(hWnd, IDC_MPU98MDIN, s.mdin, NELEMENTS(s.mdin));
 	if (milstr_cmp(np2oscfg.mpu.min, s.mdin)) {
-		milstr_ncpy(np2oscfg.mpu.min, s.mdin, sizeof(np2oscfg.mpu.min));
+		milstr_ncpy(np2oscfg.mpu.min, s.mdin, NELEMENTS(np2oscfg.mpu.min));
 		update |= SYS_UPDATEOSCFG | SYS_UPDATEMIDI;
 	}
-	GetDlgItemText(hWnd, IDC_MPU98MMDL, s.mmdl, sizeof(s.mmdl));
+	GetDlgItemText(hWnd, IDC_MPU98MMDL, s.mmdl, NELEMENTS(s.mmdl));
 	if (milstr_cmp(np2oscfg.mpu.mdl, s.mmdl)) {
-		milstr_ncpy(np2oscfg.mpu.mdl, s.mmdl, sizeof(np2oscfg.mpu.mdl));
+		milstr_ncpy(np2oscfg.mpu.mdl, s.mmdl, NELEMENTS(np2oscfg.mpu.mdl));
 		update |= SYS_UPDATEOSCFG | SYS_UPDATEMIDI;
 	}
 
@@ -136,9 +137,9 @@ static void mpuupdate(HWND hWnd) {
 	if (cm_mpu98) {
 		cm_mpu98->msg(cm_mpu98, COMMSG_MIMPIDEFEN, np2oscfg.mpu.def_en);
 	}
-	GetDlgItemText(hWnd, IDC_MPU98DEFF, s.mdef, sizeof(s.mdef));
+	GetDlgItemText(hWnd, IDC_MPU98DEFF, s.mdef, NELEMENTS(s.mdef));
 	if (milstr_cmp(np2oscfg.mpu.def, s.mdef)) {
-		milstr_ncpy(np2oscfg.mpu.def, s.mdef, sizeof(np2oscfg.mpu.def));
+		milstr_ncpy(np2oscfg.mpu.def, s.mdef, NELEMENTS(np2oscfg.mpu.def));
 		if (cm_mpu98) {
 			cm_mpu98->msg(cm_mpu98, COMMSG_MIMPIDEFFILE, (long)s.mdef);
 		}

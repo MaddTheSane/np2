@@ -204,7 +204,7 @@ void boardx2_reset(void) {
 	fmtimer_reset(0xc0);
 	opn.channels = 6;
 	opngen_setcfg(6, OPN_STEREO | 0x1c0);
-	soundrom_load(0xcc000, "86");
+	soundrom_load(0xcc000, OEMTEXT("86"));
 	fmboard_extreg(extendchannel);
 }
 

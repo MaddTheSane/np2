@@ -216,7 +216,7 @@ void scsiio_reset(void) {
 		scsiio.resent = (3 << 3) + (7 << 0);
 
 		CPU_RAM_D000 |= (3 << 2);				// ram‚É‚·‚é
-		fh = file_open_rb_c("scsi.rom");
+		fh = file_open_rb_c(OEMTEXT("scsi.rom"));
 		r = 0;
 		if (fh != FILEH_INVALID) {
 			r = file_read(fh, scsiio.bios, 0x4000);

@@ -15,25 +15,25 @@
 #include	"dipswbmp.h"
 
 
-static const char str_none[] = "NONE";
-static const char str_com1[] = "COM1";
-static const char str_com2[] = "COM2";
-static const char str_com3[] = "COM3";
-static const char str_com4[] = "COM4";
-static const char str_midi[] = "MIDI";
-static const char str_odd[] = "ODD";
-static const char str_even[] = "EVEN";
-static const char str_one[] = "1";
-static const char str_onehalf[] = "1.5";
-static const char str_two[] = "2";
+static const OEMCHAR str_none[] = OEMTEXT("NONE");
+static const OEMCHAR str_com1[] = OEMTEXT("COM1");
+static const OEMCHAR str_com2[] = OEMTEXT("COM2");
+static const OEMCHAR str_com3[] = OEMTEXT("COM3");
+static const OEMCHAR str_com4[] = OEMTEXT("COM4");
+static const OEMCHAR str_midi[] = OEMTEXT("MIDI");
+static const OEMCHAR str_odd[] = OEMTEXT("ODD");
+static const OEMCHAR str_even[] = OEMTEXT("EVEN");
+static const OEMCHAR str_one[] = OEMTEXT("1");
+static const OEMCHAR str_onehalf[] = OEMTEXT("1.5");
+static const OEMCHAR str_two[] = OEMTEXT("2");
 
-static const char *rsport[] = {str_none, str_com1, str_com2, str_com3,
-								str_com4, str_midi};
+static const OEMCHAR *rsport[] = {str_none, str_com1, str_com2, str_com3,
+									str_com4, str_midi};
 static const UINT32 rscharsize[] = {5, 6, 7, 8};
-static const char *rsparity[] = {str_none, str_odd, str_even};
-static const char *rsstopbit[] = {str_one, str_onehalf, str_two};
+static const OEMCHAR *rsparity[] = {str_none, str_odd, str_even};
+static const OEMCHAR *rsstopbit[] = {str_one, str_onehalf, str_two};
 
-static const char str_seropt[] = "Serial option";
+static const OEMCHAR str_seropt[] = OEMTEXT("Serial option");
 
 
 #ifdef __cplusplus
@@ -148,9 +148,9 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 	UINT8	b;
 	LRESULT	r;
 	union {
-		char	mmap[MAXPNAMELEN];
-		char	mmdl[64];
-		char	mdef[MAX_PATH];
+		OEMCHAR	mmap[MAXPNAMELEN];
+		OEMCHAR	mmdl[64];
+		OEMCHAR	mdef[MAX_PATH];
 	} str;
 	COMCFG	*cfg;
 	UINT	update;
@@ -275,16 +275,16 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 				}
 
 				GetDlgItemText(hWnd, m->idc[ID_MMAP],
-												str.mmap, sizeof(str.mmap));
+											str.mmap, NELEMENTS(str.mmap));
 				if (milstr_cmp(cfg->mout, str.mmap)) {
-					milstr_ncpy(cfg->mout, str.mmap, sizeof(cfg->mout));
+					milstr_ncpy(cfg->mout, str.mmap, NELEMENTS(cfg->mout));
 					update |= SYS_UPDATEOSCFG;
 					update |= m->update;
 				}
 				GetDlgItemText(hWnd, m->idc[ID_MMDL],
-												str.mmdl, sizeof(str.mmdl));
+											str.mmdl, NELEMENTS(str.mmdl));
 				if (milstr_cmp(cfg->mdl, str.mmdl)) {
-					milstr_ncpy(cfg->mdl, str.mmdl, sizeof(cfg->mdl));
+					milstr_ncpy(cfg->mdl, str.mmdl, NELEMENTS(cfg->mdl));
 					update |= SYS_UPDATEOSCFG;
 					update |= m->update;
 				}
@@ -295,9 +295,9 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 					cm->msg(cm, COMMSG_MIMPIDEFEN, cfg->def_en);
 				}
 				GetDlgItemText(hWnd, m->idc[ID_DEFF],
-												str.mdef, sizeof(str.mdef));
+											str.mdef, NELEMENTS(str.mdef));
 				if (milstr_cmp(cfg->def, str.mdef)) {
-					milstr_ncpy(cfg->def, str.mdef, sizeof(cfg->def));
+					milstr_ncpy(cfg->def, str.mdef, NELEMENTS(cfg->def));
 					update |= SYS_UPDATEOSCFG;
 					if (cm) {
 						cm->msg(cm, COMMSG_MIMPIDEFFILE, (long)str.mdef);
@@ -370,11 +370,11 @@ enum {
 static const UINT32 pc9861kint1[] = {0, 1, 2, 3};
 static const UINT32 pc9861kint2[] = {0, 4, 5, 6};
 
-static const char sync0[] = "Start-Stop";
-static const char sync1[] = "ST1";
-static const char sync2[] = "ST2";
-static const char sync3[] = "RD-Sync";
-static const char *pc9861sync[] = {sync0, sync1, sync2, sync3};
+static const OEMCHAR sync0[] = OEMTEXT("Start-Stop");
+static const OEMCHAR sync1[] = OEMTEXT("ST1");
+static const OEMCHAR sync2[] = OEMTEXT("ST2");
+static const OEMCHAR sync3[] = OEMTEXT("RD-Sync");
+static const OEMCHAR *pc9861sync[] = {sync0, sync1, sync2, sync3};
 
 static const UINT pc9861d2sync[] = {1, 2, 3, 0};
 static const UINT pc9861d2int[] = {0, 2, 1, 3};

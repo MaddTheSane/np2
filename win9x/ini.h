@@ -36,13 +36,13 @@ typedef struct {
 extern "C" {
 #endif
 
-void ini_read(const char *path, const char *title,
+void ini_read(const OEMCHAR *path, const OEMCHAR *title,
 											const INITBL *tbl, UINT count);
-void ini_write(const char *path, const char *title,
+void ini_write(const OEMCHAR *path, const OEMCHAR *title,
 											const INITBL *tbl, UINT count);
 
 
-void initgetfile(char *path, UINT size);
+void initgetfile(OEMCHAR *path, UINT size);
 void initload(void);
 void initsave(void);
 

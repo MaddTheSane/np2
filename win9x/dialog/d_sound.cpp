@@ -20,12 +20,18 @@
 #include	"dipswbmp.h"
 
 
-static const char *sndioport[4] = {"0088", "0188", "0288", "0388"};
-static const char *sndinterrupt[4] = {str_int0, str_int4, str_int5, str_int6};
-static const char *sndromaddr[5] = {"C8000", "CC000", "D0000", "D4000", "N/C"};
-static const char *sndid[8] = {"0x", "1x", "2x", "3x", "4x", "5x", "6x", "7x"};
+static const OEMCHAR *sndioport[4] = {
+		OEMTEXT("0088"), OEMTEXT("0188"), OEMTEXT("0288"), OEMTEXT("0388")};
+static const OEMCHAR *sndinterrupt[4] = {
+		str_int0, str_int4, str_int5, str_int6};
+static const OEMCHAR *sndromaddr[5] = {
+		OEMTEXT("C8000"), OEMTEXT("CC000"),
+		OEMTEXT("D0000"), OEMTEXT("D4000"), OEMTEXT("N/C")};
+static const OEMCHAR *sndid[8] = {
+		OEMTEXT("0x"), OEMTEXT("1x"), OEMTEXT("2x"), OEMTEXT("3x"),
+		OEMTEXT("4x"), OEMTEXT("5x"), OEMTEXT("6x"), OEMTEXT("7x")};
 
-static const char str_sndopt[] = "Sound board option";
+static const OEMCHAR str_sndopt[] = OEMTEXT("Sound board option");
 
 
 typedef struct {
@@ -38,9 +44,9 @@ typedef struct {
 
 static void slidersetvaluestr(HWND hWnd, const SLIDERTBL *item, UINT8 value) {
 
-	char	work[32];
+	OEMCHAR	work[32];
 
-	wsprintf(work, str_d, value);
+	OEMSPRINTF(work, str_d, value);
 	SetDlgItemText(hWnd, item->resstr, work);
 }
 
@@ -221,9 +227,9 @@ static void setsnd26iopara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd26io(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	return((UINT8)((work[1] == '1')?0x10:0x00));
 }
 
@@ -235,9 +241,9 @@ static void setsnd26intpara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd26int(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	switch(work[3]) {
 		case '0':
 			return(0x00);
@@ -264,10 +270,10 @@ static void setsnd26rompara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd26rom(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 	UINT32	adrs;
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	adrs = ((UINT32)milstr_solveHEX(work) - 0xc8000) >> 14;
 	if (adrs < 4) {
 		return((UINT8)adrs);
@@ -436,9 +442,9 @@ static void setsnd86iopara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd86io(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	return((UINT8)((work[1] == '1')?0x01:0x00));
 }
 
@@ -450,9 +456,9 @@ static void setsnd86intpara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd86int(HWND hWnd) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 
-	Edit_GetText(hWnd, work, sizeof(work));
+	Edit_GetText(hWnd, work, NELEMENTS(work));
 	switch(work[3]) {
 		case '0':
 			return(0x00);
@@ -473,9 +479,9 @@ static void setsnd86idpara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd86id(HWND hWnd) {
 
-	char	work[8];
+	OEMCHAR	work[8];
 
-	Edit_GetText(hWnd, work, sizeof(work));
+	Edit_GetText(hWnd, work, NELEMENTS(work));
 	return((~work[0] & 7) << 5);
 }
 
@@ -976,25 +982,25 @@ void dialog_sndopt(HWND hWnd) {
 // ----
 
 #if defined(SUPPORT_S98)
-static const char s98ui_file[] = "NP2_%04d.S98";
-static const char s98ui_title[] = "Save as S98 log";
-static const char s98ui_ext[] = "s98";
-static const char s98ui_filter[] = "S98 log (*.s98)\0*.s98\0";
+static const OEMCHAR s98ui_file[] = OEMTEXT("NP2_%04d.S98");
+static const OEMCHAR s98ui_title[] = OEMTEXT("Save as S98 log");
+static const OEMCHAR s98ui_ext[] = OEMTEXT("s98");
+static const OEMCHAR s98ui_filter[] = OEMTEXT("S98 log (*.s98)\0*.s98\0");
 static const FILESEL s98ui = {s98ui_title, s98ui_ext, s98ui_filter, 1};
 
 void dialog_s98(HWND hWnd) {
 
 	BOOL	check;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	S98_close();
 	check = FALSE;
-	file_cpyname(path, bmpfilefolder, sizeof(path));
+	file_cpyname(path, bmpfilefolder, NELEMENTS(path));
 	file_cutname(path);
-	file_catname(path, s98ui_file, sizeof(path));
-	if ((dlgs_selectwritenum(hWnd, &s98ui, path, sizeof(path))) &&
+	file_catname(path, s98ui_file, NELEMENTS(path));
+	if ((dlgs_selectwritenum(hWnd, &s98ui, path, NELEMENTS(path))) &&
 		(S98_open(path) == SUCCESS)) {
-		file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
+		file_cpyname(bmpfilefolder, path, NELEMENTS(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
 		check = TRUE;
 	}
@@ -1006,25 +1012,25 @@ void dialog_s98(HWND hWnd) {
 // ----
 
 #if defined(SUPPORT_WAVEREC)
-static const char wrui_file[] = "NP2_%04d.WAV";
-static const char wrui_title[] = "Save as Sound";
-static const char wrui_ext[] = "WAV";
-static const char wrui_filter[] = "Wave files (*.wav)\0*.wav\0";
+static const OEMCHAR wrui_file[] = OEMTEXT("NP2_%04d.WAV");
+static const OEMCHAR wrui_title[] = OEMTEXT("Save as Sound");
+static const OEMCHAR wrui_ext[] = OEMTEXT("WAV");
+static const OEMCHAR wrui_filter[] = OEMTEXT("Wave files (*.wav)\0*.wav\0");
 static const FILESEL wrui = {wrui_title, wrui_ext, wrui_filter, 1};
 
 void dialog_waverec(HWND hWnd) {
 
 	UINT8	check;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	check = FALSE;
 	sound_recstop();
-	file_cpyname(path, bmpfilefolder, sizeof(path));
+	file_cpyname(path, bmpfilefolder, NELEMENTS(path));
 	file_cutname(path);
-	file_catname(path, wrui_file, sizeof(path));
-	if ((dlgs_selectwritenum(hWnd, &wrui, path, sizeof(path))) &&
+	file_catname(path, wrui_file, NELEMENTS(path));
+	if ((dlgs_selectwritenum(hWnd, &wrui, path, NELEMENTS(path))) &&
 		(sound_recstart(path) == SUCCESS)) {
-		file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
+		file_cpyname(bmpfilefolder, path, NELEMENTS(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
 		check = TRUE;
 	}

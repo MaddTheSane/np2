@@ -126,7 +126,7 @@ UINT listarray_getpos(LISTARRAY laHandle, void *vpItem) {
 }
 
 void *listarray_enum(LISTARRAY laHandle,
-				BRESULT (*cbProc)(void *vpItem, void *vpArg), void *vpArg) {
+					BOOL (*cbProc)(void *vpItem, void *vpArg), void *vpArg) {
 
 	UINT	i;
 

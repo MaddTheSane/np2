@@ -5,6 +5,9 @@
 #include	"profile.h"
 #include	"np2.h"
 #include	"np2arg.h"
+#if defined(OSLANG_UCS2)
+#include	"oemtext.h"
+#endif
 #include	"dosio.h"
 #include	"ini.h"
 #include	"winkbd.h"
@@ -31,12 +34,12 @@ static void inisetbmp(UINT8 *ptr, UINT pos, BOOL set) {
 	}
 }
 
-static void inirdargs16(const char *src, const INITBL *ini) {
+static void inirdargs16(const OEMCHAR *src, const INITBL *ini) {
 
 	SINT16	*dst;
 	int		dsize;
 	int		i;
-	char	c;
+	OEMCHAR	c;
 
 	dst = (SINT16 *)ini->value;
 	dsize = ini->arg;
@@ -58,14 +61,14 @@ static void inirdargs16(const char *src, const INITBL *ini) {
 	}
 }
 
-static void inirdargh8(const char *src, const INITBL *ini) {
+static void inirdargh8(const OEMCHAR *src, const INITBL *ini) {
 
 	UINT8	*dst;
 	int		dsize;
 	int		i;
 	UINT8	val;
 	BOOL	set;
-	char	c;
+	OEMCHAR	c;
 
 	dst = (UINT8 *)ini->value;
 	dsize = ini->arg;
@@ -103,21 +106,21 @@ static void inirdargh8(const char *src, const INITBL *ini) {
 	}
 }
 
-static void iniwrsetargh8(char *work, int size, const INITBL *ini) {
+static void iniwrsetargh8(OEMCHAR *work, int size, const INITBL *ini) {
 
 	UINT	i;
 const UINT8	*ptr;
 	UINT	arg;
-	char	tmp[8];
+	OEMCHAR	tmp[8];
 
 	ptr = (UINT8 *)ini->value;
 	arg = ini->arg;
 	if (arg > 0) {
-		SPRINTF(tmp, "%.2x", ptr[0]);
+		OEMSPRINTF(tmp, OEMTEXT("%.2x"), ptr[0]);
 		milstr_ncpy(work, tmp, size);
 	}
 	for (i=1; i<arg; i++) {
-		SPRINTF(tmp, " %.2x", ptr[i]);
+		OEMSPRINTF(tmp, OEMTEXT(" %.2x"), ptr[i]);
 		milstr_ncat(work, tmp, size);
 	}
 }
@@ -125,7 +128,7 @@ const UINT8	*ptr;
 
 // ---- user
 
-static void inirdbyte3(const char *src, const INITBL *ini) {
+static void inirdbyte3(const OEMCHAR *src, const INITBL *ini) {
 
 	UINT	i;
 
@@ -135,24 +138,24 @@ static void inirdbyte3(const char *src, const INITBL *ini) {
 		}
 		if ((((src[i] - '0') & 0xff) < 9) ||
 			(((src[i] - 'A') & 0xdf) < 26)) {
-			((UINT8 *)ini->value)[i] = src[i];
+			((UINT8 *)ini->value)[i] = (UINT8)src[i];
 		}
 	}
 }
 
-static void inirdkb(const char *src, const INITBL *ini) {
+static void inirdkb(const OEMCHAR *src, const INITBL *ini) {
 
-	if ((!milstr_extendcmp(src, "PC98")) ||
-		(!milstr_cmp(src, "98"))) {
+	if ((!milstr_extendcmp(src, OEMTEXT("PC98"))) ||
+		(!milstr_cmp(src, OEMTEXT("98")))) {
 		*(UINT8 *)ini->value = KEY_PC98;
 	}
-	else if ((!milstr_extendcmp(src, "DOS")) ||
-			(!milstr_cmp(src, "PCAT")) ||
-			(!milstr_cmp(src, "AT"))) {
+	else if ((!milstr_extendcmp(src, OEMTEXT("DOS"))) ||
+			(!milstr_cmp(src, OEMTEXT("PCAT"))) ||
+			(!milstr_cmp(src, OEMTEXT("AT")))) {
 		*(UINT8 *)ini->value = KEY_KEY106;
 	}
-	else if ((!milstr_extendcmp(src, "KEY101")) ||
-			(!milstr_cmp(src, "101"))) {
+	else if ((!milstr_extendcmp(src, OEMTEXT("KEY101"))) ||
+			(!milstr_cmp(src, OEMTEXT("101")))) {
 		*(UINT8 *)ini->value = KEY_KEY101;
 	}
 }
@@ -160,104 +163,114 @@ static void inirdkb(const char *src, const INITBL *ini) {
 
 // ----
 
-void ini_read(const char *path, const char *title,
+void ini_read(const OEMCHAR *path, const OEMCHAR *title,
 											const INITBL *tbl, UINT count) {
 
 const INITBL	*p;
 const INITBL	*pterm;
-	char		work[512];
+#if defined(OSLANG_UCS2)
+	OEMCHAR		item[10];
+#else
+const OEMCHAR	*item;
+#endif
+	OEMCHAR		work[512];
 	UINT32		val;
 
 	p = tbl;
 	pterm = tbl + count;
 	while(p < pterm) {
+#if defined(OSLANG_UCS2)
+		oemtext_sjis2oem(item, NELEMENTS(item), p->item, (UINT)-1);
+#else
+		item = p->item;
+#endif
 		switch(p->itemtype & INITYPE_MASK) {
 			case INITYPE_STR:
-				GetPrivateProfileString(title, p->item, (char *)p->value,
-											(char *)p->value, p->arg, path);
+				GetPrivateProfileString(title, item, (OEMCHAR *)p->value,
+											(OEMCHAR *)p->value, p->arg, path);
 				break;
 
 			case INITYPE_BOOL:
-				GetPrivateProfileString(title, p->item,
+				GetPrivateProfileString(title, item,
 									(*((UINT8 *)p->value))?str_true:str_false,
-												work, sizeof(work), path);
+												work, NELEMENTS(work), path);
 				*((UINT8 *)p->value) = (!milstr_cmp(work, str_true))?1:0;
 				break;
 
 			case INITYPE_BITMAP:
-				GetPrivateProfileString(title, p->item,
+				GetPrivateProfileString(title, item,
 					(inigetbmp((UINT8 *)p->value, p->arg))?str_true:str_false,
-												work, sizeof(work), path);
+												work, NELEMENTS(work), path);
 				inisetbmp((UINT8 *)p->value, p->arg,
 										(milstr_cmp(work, str_true) == 0));
 				break;
 
 			case INITYPE_ARGS16:
-				GetPrivateProfileString(title, p->item, str_null,
-												work, sizeof(work), path);
+				GetPrivateProfileString(title, item, str_null,
+												work, NELEMENTS(work), path);
 				inirdargs16(work, p);
 				break;
 
 			case INITYPE_ARGH8:
-				GetPrivateProfileString(title, p->item, str_null,
-												work, sizeof(work), path);
+				GetPrivateProfileString(title, item, str_null,
+												work, NELEMENTS(work), path);
 				inirdargh8(work, p);
 				break;
 
 			case INITYPE_SINT8:
 			case INITYPE_UINT8:
-				val = (UINT8)GetPrivateProfileInt(title, p->item,
+				val = (UINT8)GetPrivateProfileInt(title, item,
 												*(UINT8 *)p->value, path);
 				*(UINT8 *)p->value = (UINT8)val;
 				break;
 
 			case INITYPE_SINT16:
 			case INITYPE_UINT16:
-				val = (UINT16)GetPrivateProfileInt(title, p->item,
+				val = (UINT16)GetPrivateProfileInt(title, item,
 												*(UINT16 *)p->value, path);
 				*(UINT16 *)p->value = (UINT16)val;
 				break;
 
 			case INITYPE_SINT32:
 			case INITYPE_UINT32:
-				val = (UINT32)GetPrivateProfileInt(title, p->item,
+				val = (UINT32)GetPrivateProfileInt(title, item,
 												*(UINT32 *)p->value, path);
 				*(UINT32 *)p->value = (UINT32)val;
 				break;
 
 			case INITYPE_HEX8:
-				SPRINTF(work, str_x, *(UINT8 *)p->value),
-				GetPrivateProfileString(title, p->item, work,
-												work, sizeof(work), path);
+				OEMSPRINTF(work, str_x, *(UINT8 *)p->value),
+				GetPrivateProfileString(title, item, work,
+												work, NELEMENTS(work), path);
 				val = (UINT8)milstr_solveHEX(work);
 				*(UINT8 *)p->value = (UINT8)val;
 				break;
 
 			case INITYPE_HEX16:
-				SPRINTF(work, str_x, *(UINT16 *)p->value),
-				GetPrivateProfileString(title, p->item, work,
-												work, sizeof(work), path);
+				OEMSPRINTF(work, str_x, *(UINT16 *)p->value),
+				GetPrivateProfileString(title, item, work,
+												work, NELEMENTS(work), path);
 				val = (UINT16)milstr_solveHEX(work);
 				*(UINT16 *)p->value = (UINT16)val;
 				break;
 
 			case INITYPE_HEX32:
-				SPRINTF(work, str_x, *(UINT32 *)p->value),
-				GetPrivateProfileString(title, p->item, work,
-												work, sizeof(work), path);
+				OEMSPRINTF(work, str_x, *(UINT32 *)p->value),
+				GetPrivateProfileString(title, item, work,
+												work, NELEMENTS(work), path);
 				val = (UINT32)milstr_solveHEX(work);
 				*(UINT32 *)p->value = (UINT32)val;
 				break;
 
 			case INITYPE_BYTE3:
-				GetPrivateProfileString(title, p->item, str_null,
-												work, sizeof(work), path);
+				GetPrivateProfileString(title, item, str_null,
+												work, NELEMENTS(work), path);
 				inirdbyte3(work, p);
 				break;
 
 			case INITYPE_KB:
-				GetPrivateProfileString(title, p->item, str_null,
-												work, sizeof(work), path);
+				GetPrivateProfileString(title, item, str_null,
+												work, NELEMENTS(work), path);
 				inirdkb(work, p);
 				break;
 		}
@@ -265,13 +278,13 @@ const INITBL	*pterm;
 	}
 }
 
-void ini_write(const char *path, const char *title,
+void ini_write(const OEMCHAR *path, const OEMCHAR *title,
 											const INITBL *tbl, UINT count) {
 
 const INITBL	*p;
 const INITBL	*pterm;
-const char		*set;
-	char		work[512];
+const OEMCHAR	*set;
+	OEMCHAR		work[512];
 
 	p = tbl;
 	pterm = tbl + count;
@@ -281,7 +294,7 @@ const char		*set;
 			set = work;
 			switch(p->itemtype & INITYPE_MASK) {
 				case INITYPE_STR:
-					set = (char *)p->value;
+					set = (OEMCHAR *)p->value;
 					break;
 
 				case INITYPE_BOOL:
@@ -289,43 +302,43 @@ const char		*set;
 					break;
 
 				case INITYPE_ARGH8:
-					iniwrsetargh8(work, sizeof(work), p);
+					iniwrsetargh8(work, NELEMENTS(work), p);
 					break;
 
 				case INITYPE_SINT8:
-					SPRINTF(work, str_d, *((SINT8 *)p->value));
+					OEMSPRINTF(work, str_d, *((SINT8 *)p->value));
 					break;
 
 				case INITYPE_SINT16:
-					SPRINTF(work, str_d, *((SINT16 *)p->value));
+					OEMSPRINTF(work, str_d, *((SINT16 *)p->value));
 					break;
 
 				case INITYPE_SINT32:
-					SPRINTF(work, str_d, *((SINT32 *)p->value));
+					OEMSPRINTF(work, str_d, *((SINT32 *)p->value));
 					break;
 
 				case INITYPE_UINT8:
-					SPRINTF(work, str_u, *((UINT8 *)p->value));
+					OEMSPRINTF(work, str_u, *((UINT8 *)p->value));
 					break;
 
 				case INITYPE_UINT16:
-					SPRINTF(work, str_u, *((UINT16 *)p->value));
+					OEMSPRINTF(work, str_u, *((UINT16 *)p->value));
 					break;
 
 				case INITYPE_UINT32:
-					SPRINTF(work, str_u, *((UINT32 *)p->value));
+					OEMSPRINTF(work, str_u, *((UINT32 *)p->value));
 					break;
 
 				case INITYPE_HEX8:
-					SPRINTF(work, str_x, *((UINT8 *)p->value));
+					OEMSPRINTF(work, str_x, *((UINT8 *)p->value));
 					break;
 
 				case INITYPE_HEX16:
-					SPRINTF(work, str_x, *((UINT16 *)p->value));
+					OEMSPRINTF(work, str_x, *((UINT16 *)p->value));
 					break;
 
 				case INITYPE_HEX32:
-					SPRINTF(work, str_x, *((UINT32 *)p->value));
+					OEMSPRINTF(work, str_x, *((UINT32 *)p->value));
 					break;
 
 				default:
@@ -333,7 +346,13 @@ const char		*set;
 					break;
 			}
 			if (set) {
+#if defined(OSLANG_UCS2)
+				OEMCHAR	item[10];
+				oemtext_sjis2oem(item, NELEMENTS(item), p->item, (UINT)-1);
+				WritePrivateProfileString(title, item, set, path);
+#else
 				WritePrivateProfileString(title, p->item, set, path);
+#endif
 			}
 		}
 		p++;
@@ -344,9 +363,9 @@ const char		*set;
 // ----
 
 #if !defined(SUPPORT_PC9821)
-static const char ini_title[] = "NekoProjectII";
+static const OEMCHAR ini_title[] = OEMTEXT("NekoProjectII");
 #else
-static const char ini_title[] = "NekoProject21";
+static const OEMCHAR ini_title[] = OEMTEXT("NekoProject21");
 #endif
 
 enum {
@@ -365,7 +384,7 @@ enum {
 
 static const INITBL iniitem[] = {
 	{"np2title", INIRO_STR,			np2oscfg.titles,
-													sizeof(np2oscfg.titles)},
+												NELEMENTS(np2oscfg.titles)},
 	{"np2winid", INIRO_BYTE3,		np2oscfg.winid,			0},
 	{"WindposX", INITYPE_SINT32,	&np2oscfg.winx,			0},
 	{"WindposY", INITYPE_SINT32,	&np2oscfg.winy,			0},
@@ -382,7 +401,7 @@ static const INITBL iniitem[] = {
 	{"hdrv_acc", INIRO_UINT8,		&np2cfg.hdrvacc,		0},
 
 	{"pc_model", INITYPE_STR,		&np2cfg.model,
-													sizeof(np2cfg.model)},
+												NELEMENTS(np2cfg.model)},
 	{"clk_base", INITYPE_UINT32,	&np2cfg.baseclock,		0},
 	{"clk_mult", INITYPE_UINT32,	&np2cfg.multiple,		0},
 
@@ -515,9 +534,9 @@ static const INITBL iniitem[] = {
 	{"I286SAVE", INIRO_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 
-void initgetfile(char *path, UINT size) {
+void initgetfile(OEMCHAR *path, UINT size) {
 
-	char	*p;
+	OEMCHAR	*p;
 
 	file_cpyname(path, modulefile, size);
 	if (np2arg.ini) {
@@ -530,28 +549,28 @@ void initgetfile(char *path, UINT size) {
 		}
 		p = file_getext(path);
 		if (!(*p)) {
-			file_catname(path, ".ini", size);
+			file_catname(path, OEMTEXT(".ini"), size);
 		}
 	}
 	else {
 		file_cutext(path);
-		file_catname(path, ".ini", size);
+		file_catname(path, OEMTEXT(".ini"), size);
 	}
 }
 
 void initload(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_read(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 
 void initsave(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_write(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 

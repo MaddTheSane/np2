@@ -49,7 +49,7 @@ typedef struct {
 extern "C" {
 #endif
 
-WAVEWR wavewr_open(const char *filename, UINT rate, UINT bits, UINT ch);
+WAVEWR wavewr_open(const OEMCHAR *filename, UINT rate, UINT bits, UINT ch);
 UINT wavewr_write(WAVEWR hdl, const void *buf, UINT size);
 void wavewr_close(WAVEWR hdl);
 

@@ -150,7 +150,7 @@ void board118_reset(void) {
 	fmtimer_reset(0xc0);
 	opngen_setcfg(3, OPN_STEREO | 0x038);
 	cs4231io_reset();
-	soundrom_load(0xcc000, "118");
+	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 }
 

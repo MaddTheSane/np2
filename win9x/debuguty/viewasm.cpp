@@ -10,7 +10,7 @@
 #include	"cpucore.h"
 
 
-static void set_viewseg(HWND hwnd, NP2VIEW_T *view, WORD seg) {
+static void set_viewseg(HWND hwnd, NP2VIEW_T *view, UINT16 seg) {
 
 	if (view->seg != seg) {
 		view->seg = seg;
@@ -23,11 +23,11 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	LONG		y;
 	DWORD		seg4;
-	WORD		off;
+	UINT16		off;
 	DWORD		pos;
 	BYTE		*p;
 	BYTE		buf[16];
-	char		str[16];
+	OEMCHAR		str[16];
 	HFONT		hfont;
 	BOOL		opsize;
 	_UNASM		una;
@@ -68,8 +68,8 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			}
 			else {
 				int i;
-				WORD *r;
-				r = (WORD *)view->buf2.ptr;
+				UINT16 *r;
+				r = (UINT16 *)view->buf2.ptr;
 				view->buf2.type = ALLOCTYPE_ASM;
 				view->buf2.arg = seg4 + view->off;
 				off = view->off;
@@ -91,7 +91,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 						viewmem_read(&(view->dmem), seg4 + off, buf, 16);
 					}
 					step = unasm(NULL, p, 16, FALSE, off);
-					off += (WORD)step;
+					off += (UINT16)step;
 				}
 				*r = off;
 			}
@@ -99,14 +99,14 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	}
 
 	if ((pos) && (pos < 256)) {
-		off = *(((WORD *)view->buf2.ptr) + pos);
+		off = *(((UINT16 *)view->buf2.ptr) + pos);
 	}
 	else {
 		off = view->off;
 	}
 
 	for (y=0; y<rc->bottom; y+=16) {
-		wsprintf(str, "%04x:%04x", view->seg, off);
+		OEMSPRINTF(str, OEMTEXT("%04x:%04x"), view->seg, off);
 		TextOut(hdc, 0, y, str, 9);
 		off &= 0xffff;
 		if (view->lock) {
@@ -127,11 +127,11 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		if (!step) {
 			break;
 		}
-		TextOut(hdc, 11 * 8, y, una.mnemonic, strlen(una.mnemonic));
+		TextOut(hdc, 11 * 8, y, una.mnemonic, OEMSTRLEN(una.mnemonic));
 		if (una.operand[0]) {
-			TextOut(hdc, (11 + 7) * 8, y, una.operand, strlen(una.operand));
+			TextOut(hdc, (11 + 7) * 8, y, una.operand, OEMSTRLEN(una.operand));
 		}
-		off += (WORD)step;
+		off += (UINT16)step;
 	}
 
 	DeleteObject(SelectObject(hdc, hfont));
@@ -188,17 +188,17 @@ void viewasm_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 		switch(src->type) {
 			case VIEWMODE_SEG:
 				dst->seg = dst->seg;
-				dst->off = (WORD)(dst->pos << 4);
+				dst->off = (UINT16)(dst->pos << 4);
 				break;
 
 			case VIEWMODE_1MB:
 				if (dst->pos < 0x10000) {
-					dst->seg = (WORD)dst->pos;
+					dst->seg = (UINT16)dst->pos;
 					dst->off = 0;
 				}
 				else {
 					dst->seg = 0xffff;
-					dst->off = (WORD)((dst->pos - 0xffff) << 4);
+					dst->off = (UINT16)((dst->pos - 0xffff) << 4);
 				}
 				break;
 

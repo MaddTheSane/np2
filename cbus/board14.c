@@ -189,7 +189,7 @@ static const IOINP musicgen_i1[4] = {
 void board14_reset(void) {
 
 	ZeroMemory(&musicgen, sizeof(musicgen));
-	soundrom_load(0xcc000, "14");
+	soundrom_load(0xcc000, OEMTEXT("14"));
 }
 
 void board14_bind(void) {

@@ -32,7 +32,7 @@ void soundmng_pcmstop(UINT num);
 BOOL soundmng_initialize(void);
 void soundmng_deinitialize(void);
 
-void soundmng_pcmload(UINT num, const char *filename, UINT type);
+void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type);
 void soundmng_pcmvolume(UINT num, int volume);
 
 enum {

@@ -6,20 +6,20 @@
 #include	"dialogs.h"
 
 
-static const char str_nc[] = "N/C";
+const OEMCHAR str_nc[] = OEMTEXT("N/C");
 
-const char str_int0[] = "INT0";
-const char str_int1[] = "INT1";
-const char str_int2[] = "INT2";
-const char str_int4[] = "INT4";
-const char str_int5[] = "INT5";
-const char str_int6[] = "INT6";
+const OEMCHAR str_int0[] = OEMTEXT("INT0");
+const OEMCHAR str_int1[] = OEMTEXT("INT1");
+const OEMCHAR str_int2[] = OEMTEXT("INT2");
+const OEMCHAR str_int4[] = OEMTEXT("INT4");
+const OEMCHAR str_int5[] = OEMTEXT("INT5");
+const OEMCHAR str_int6[] = OEMTEXT("INT6");
 
 
 // ---- file select
 
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
-											char *path, UINT size, int *ro) {
+										OEMCHAR *path, UINT size, int *ro) {
 
 	OPENFILENAME	ofn;
 
@@ -46,7 +46,7 @@ BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 }
 
 BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
-											char *path, UINT size) {
+											OEMCHAR *path, UINT size) {
 
 	OPENFILENAME	ofn;
 
@@ -70,28 +70,28 @@ BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 }
 
 BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
-											char *path, UINT size) {
+											OEMCHAR *path, UINT size) {
 
-	char	*file;
-	char	*p;
-	char	*q;
+	OEMCHAR	*file;
+	OEMCHAR	*p;
+	OEMCHAR	*q;
 	UINT	i;
 	BOOL	r;
 
 	if ((item == NULL) || (path == NULL) || (size == 0)) {
 		return(FALSE);
 	}
-	file = (char *)_MALLOC(size + 16, path);
+	file = (OEMCHAR *)_MALLOC((size + 16) * sizeof(OEMCHAR), path);
 	if (file == NULL) {
 		return(FALSE);
 	}
 	p = file_getname(path);
 	milstr_ncpy(file, path, size);
 	file_cutname(file);
-	q = file + strlen(file);
+	q = file + OEMSTRLEN(file);
 
 	for (i=0; i<10000; i++) {
-		SPRINTF(q, p, i);
+		OEMSPRINTF(q, p, i);
 		if (file_attr(file) == (short)-1) {
 			break;
 		}
@@ -107,20 +107,20 @@ BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
 
 // ---- mimpi def file
 
-static const char mimpi_title[] = "Open MIMPI define file";
-static const char mimpi_ext[] = "def";
-static const char mimpi_filter[] = "MIMPI define file(*.def)\0*.def\0";
+static const OEMCHAR mimpi_title[] = OEMTEXT("Open MIMPI define file");
+static const OEMCHAR mimpi_ext[] = OEMTEXT("def");
+static const OEMCHAR mimpi_filter[] = OEMTEXT("MIMPI define file(*.def)\0*.def\0");
 static const FILESEL mimpi = {mimpi_title, mimpi_ext, mimpi_filter, 1};
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res) {
 
-	HWND	subwnd;
-	char	path[MAX_PATH];
-const char	*p;
+	HWND		subwnd;
+	OEMCHAR		path[MAX_PATH];
+const OEMCHAR	*p;
 
 	subwnd = GetDlgItem(hWnd, res);
-	GetWindowText(subwnd, path, sizeof(path));
-	if (dlgs_selectfile(hWnd, &mimpi, path, sizeof(path), NULL)) {
+	GetWindowText(subwnd, path, NELEMENTS(path));
+	if (dlgs_selectfile(hWnd, &mimpi, path, NELEMENTS(path), NULL)) {
 		p = path;
 	}
 	else {
@@ -132,7 +132,7 @@ const char	*p;
 
 // ---- list
 
-void dlgs_setliststr(HWND hWnd, UINT16 res, const char **item, UINT items) {
+void dlgs_setliststr(HWND hWnd, UINT16 res, const OEMCHAR **item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;
@@ -147,11 +147,11 @@ void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;
-	char	str[16];
+	OEMCHAR	str[16];
 
 	wnd = GetDlgItem(hWnd, res);
 	for (i=0; i<items; i++) {
-		wsprintf(str, str_u, item[i]);
+		OEMSPRINTF(str, str_u, item[i]);
 		SendMessage(wnd, CB_INSERTSTRING, (WPARAM)i, (LPARAM)str);
 	}
 }
@@ -159,7 +159,7 @@ void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 
 // ---- MIDIデバイスのリスト
 
-void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const char *defname) {
+void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 
 	HWND		wnd;
 	UINT		defcur;
@@ -197,7 +197,7 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const char *defname) {
 	SendMessage(wnd, CB_SETCURSEL, (WPARAM)defcur, (LPARAM)0);
 }
 
-void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const char *defname) {
+void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 
 	HWND		wnd;
 	UINT		defcur;

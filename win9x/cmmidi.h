@@ -5,15 +5,15 @@
 extern "C" {
 #endif
 
-extern const char cmmidi_midimapper[];
+extern const OEMCHAR cmmidi_midimapper[];
 #if defined(VERMOUTH_LIB)
-extern const char cmmidi_vermouth[];
+extern const OEMCHAR cmmidi_vermouth[];
 #endif
-extern const char *cmmidi_mdlname[12];
+extern const OEMCHAR *cmmidi_mdlname[12];
 
 void cmmidi_initailize(void);
-COMMNG cmmidi_create(const char *midiout, const char *midiin,
-														const char *module);
+COMMNG cmmidi_create(const OEMCHAR *midiout, const OEMCHAR *midiin,
+													const OEMCHAR *module);
 void cmmidi_recvdata(HMIDIIN hdr, UINT32 data);
 void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data);
 

@@ -44,7 +44,7 @@ const UINT8	*p;
 	}
 }
 
-UINT8 fontx68k_read(const char *filename, UINT8 loading) {
+UINT8 fontx68k_read(const OEMCHAR *filename, UINT8 loading) {
 
 	FILEH	fh;
 	UINT8	*work;

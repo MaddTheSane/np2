@@ -3,8 +3,8 @@
 extern "C" {
 #endif
 
-BOOL fddxdf_set(FDDFILE fdd, const char *fname, int ro);
-BOOL fddxdf_setfdi(FDDFILE fdd, const char *fname, int ro);
+BOOL fddxdf_set(FDDFILE fdd, const OEMCHAR *fname, int ro);
+BOOL fddxdf_setfdi(FDDFILE fdd, const OEMCHAR *fname, int ro);
 BOOL fddxdf_eject(FDDFILE fdd);
 
 BOOL fddxdf_diskaccess(FDDFILE fdd);

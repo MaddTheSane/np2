@@ -22,7 +22,7 @@ extern "C" {
 
 void S98_init(void);
 void S98_trash(void);
-BOOL S98_open(const char *filename);
+BRESULT S98_open(const OEMCHAR *filename);
 void S98_close(void);
 void S98_put(REG8 module, REG8 addr, REG8 data);
 void S98_sync(void);

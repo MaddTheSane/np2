@@ -40,22 +40,22 @@ const UINT8	*p;
 	}
 }
 
-UINT8 fontx1_read(const char *filename, UINT8 loading) {
+UINT8 fontx1_read(const OEMCHAR *filename, UINT8 loading) {
 
 	FILEH	fh;
 	UINT8	*work;
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 
 	work = (UINT8 *)_MALLOC(306176, "x1font");
 	if (work == NULL) {
 		goto frx1_err1;
 	}
-	file_cpyname(fname, filename, sizeof(fname));
+	file_cpyname(fname, filename, NELEMENTS(fname));
 
 	// 8dot ANKを読み込む必要はある？
 	if (loading & FONT_ANK8) {
 		file_cutname(fname);
-		file_catname(fname, x1ank1name, sizeof(fname));
+		file_catname(fname, x1ank1name, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 2048) == 2048) {
@@ -70,7 +70,7 @@ UINT8 fontx1_read(const char *filename, UINT8 loading) {
 	// 16dot ANKを読み込む必要はあるか？
 	if (loading & FONTLOAD_ANK) {
 		file_cutname(fname);
-		file_catname(fname, x1ank2name, sizeof(fname));
+		file_catname(fname, x1ank2name, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 4096) == 4096) {
@@ -96,7 +96,7 @@ UINT8 fontx1_read(const char *filename, UINT8 loading) {
 	// 漢字を読み込む必要はあるか？
 	if (loading & (FONT_KNJ1 | FONT_KNJ2)) {
 		file_cutname(fname);
-		file_catname(fname, x1knjname, sizeof(fname));
+		file_catname(fname, x1knjname, NELEMENTS(fname));
 		fh = file_open_rb(fname);
 		if (fh != FILEH_INVALID) {
 			if (file_read(fh, work, 306176) == 306176) {

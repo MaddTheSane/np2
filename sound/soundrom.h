@@ -1,6 +1,6 @@
 
 typedef struct {
-	char	name[24];
+	OEMCHAR	name[24];
 	UINT32	address;
 } SOUNDROM;
 
@@ -12,8 +12,8 @@ extern "C" {
 extern	SOUNDROM	soundrom;
 
 void soundrom_reset(void);
-void soundrom_load(UINT32 address, const char *primary);
-void soundrom_loadex(UINT sw, const char *primary);
+void soundrom_load(UINT32 address, const OEMCHAR *primary);
+void soundrom_loadex(UINT sw, const OEMCHAR *primary);
 
 #ifdef __cplusplus
 }

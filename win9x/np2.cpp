@@ -51,7 +51,7 @@
 #define		OPENING_WAIT		1500
 #endif
 
-static	char		szClassName[] = "NP2-MainWindow";
+static	OEMCHAR		szClassName[] = OEMTEXT("NP2-MainWindow");
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
@@ -61,25 +61,29 @@ static	char		szClassName[] = "NP2-MainWindow";
 
 		NP2OSCFG	np2oscfg = {
 #if !defined(SUPPORT_PC9821)
-						"Neko Project II",
+						OEMTEXT("Neko Project II"),
 #else
-						"Neko Project 21",
+						OEMTEXT("Neko Project 21"),
 #endif
-						"NP2",
+						OEMTEXT("NP2"),
 						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 1, 0, 0,
 						0, 0, KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
-						{5, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
-						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
-						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
-						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
+						{5, 0, 0x3e, 19200,
+						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
+						{0, 0, 0x3e, 19200,
+						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
+						{0, 0, 0x3e, 19200,
+						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
+						{0, 0, 0x3e, 19200,
+						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
 						0xffffff, 0xffbf6a, 0, 0,
 						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-		char		fddfolder[MAX_PATH];
-		char		hddfolder[MAX_PATH];
-		char		bmpfilefolder[MAX_PATH];
-		char		modulefile[MAX_PATH];
+		OEMCHAR		fddfolder[MAX_PATH];
+		OEMCHAR		hddfolder[MAX_PATH];
+		OEMCHAR		bmpfilefolder[MAX_PATH];
+		OEMCHAR		modulefile[MAX_PATH];
 
 static	UINT		framecnt = 0;
 static	UINT		waitcnt = 0;
@@ -91,8 +95,8 @@ static	HMENU		hStat = NULL;
 static	UINT8		scrnmode;
 static	WINLOCEX	smwlex;
 
-static const char np2help[] = "np2.chm";
-static const char np2flagext[] = "S%02d";
+static const OEMCHAR np2help[] = OEMTEXT("np2.chm");
+static const OEMCHAR np2flagext[] = OEMTEXT("S%02d");
 
 
 static void winuienter(void) {
@@ -244,7 +248,7 @@ void np2active_renewal(void) {										// ver0.30
 // ---- resume and statsave
 
 #if defined(SUPPORT_RESUME) || defined(SUPPORT_STATSAVE)
-static void getstatfilename(char *path, const char *ext, int size) {
+static void getstatfilename(OEMCHAR *path, const OEMCHAR *ext, int size) {
 
 	file_cpyname(path, modulefile, size);
 	file_cutext(path);
@@ -252,12 +256,12 @@ static void getstatfilename(char *path, const char *ext, int size) {
 	file_catname(path, ext, size);
 }
 
-static int flagsave(const char *ext) {
+static int flagsave(const OEMCHAR *ext) {
 
 	int		ret;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	soundmng_stop();
 	ret = statsave_save(path);
 	if (ret) {
@@ -267,32 +271,32 @@ static int flagsave(const char *ext) {
 	return(ret);
 }
 
-static void flagdelete(const char *ext) {
+static void flagdelete(const OEMCHAR *ext) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	file_delete(path);
 }
 
-static int flagload(const char *ext, const char *title, BOOL force) {
+static int flagload(const OEMCHAR *ext, const OEMCHAR *title, BOOL force) {
 
 	int		ret;
 	int		id;
-	char	path[MAX_PATH];
-	char	buf[1024];
+	OEMCHAR	path[MAX_PATH];
+	OEMCHAR	buf[1024];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	winuienter();
 	id = IDYES;
-	ret = statsave_check(path, buf, sizeof(buf));
+	ret = statsave_check(path, buf, NELEMENTS(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
-		MessageBox(hWndMain, "Couldn't restart", title, MB_OK | MB_ICONSTOP);
+		MessageBox(hWndMain, OEMTEXT("Couldn't restart"), title, MB_OK | MB_ICONSTOP);
 		id = IDNO;
 	}
 	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
-		char buf2[1024 + 256];
-		wsprintf(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		OEMCHAR buf2[1024 + 256];
+		OEMSPRINTF(buf2, OEMTEXT("Conflict!\n\n%s\nContinue?"), buf);
 		id = MessageBox(hWndMain, buf2, title,
 										MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
@@ -344,7 +348,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			}
 			else if (sstpconfirm_reset()) {
 				winuienter();
-				if (MessageBox(hWnd, "Sure?", "Reset",
+				if (MessageBox(hWnd, OEMTEXT("Sure?"), OEMTEXT("Reset"),
 									MB_ICONQUESTION | MB_YESNO) == IDYES) {
 					b = TRUE;
 				}
@@ -894,15 +898,15 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 #if defined(SUPPORT_STATSAVE)
 			if ((cmd >= IDM_FLAGSAVE) &&
 				(cmd < (IDM_FLAGSAVE + SUPPORT_STATSAVE))) {
-				char ext[4];
-				SPRINTF(ext, np2flagext, cmd - IDM_FLAGSAVE);
+				OEMCHAR ext[4];
+				OEMSPRINTF(ext, np2flagext, cmd - IDM_FLAGSAVE);
 				flagsave(ext);
 			}
 			else if ((cmd >= IDM_FLAGLOAD) &&
 				(cmd < (IDM_FLAGLOAD + SUPPORT_STATSAVE))) {
-				char ext[4];
-				SPRINTF(ext, np2flagext, cmd - IDM_FLAGLOAD);
-				flagload(ext, "Status Load", TRUE);
+				OEMCHAR ext[4];
+				OEMSPRINTF(ext, np2flagext, cmd - IDM_FLAGLOAD);
+				flagload(ext, OEMTEXT("Status Load"), TRUE);
 			}
 #endif
 			break;
@@ -1076,7 +1080,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-				hbmp = LoadBitmap(hinst, "NP2BMP");
+				hbmp = LoadBitmap(hinst, OEMTEXT("NP2BMP"));
 				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
@@ -1279,7 +1283,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			else if (sstpconfirm_exit()) {
 				winuienter();
-				if (MessageBox(hWnd, "Sure?", "Exit",
+				if (MessageBox(hWnd, OEMTEXT("Sure?"), OEMTEXT("Exit"),
 									MB_ICONQUESTION | MB_YESNO) == IDYES) {
 					b = TRUE;
 				}
@@ -1400,7 +1404,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	_MEM_INIT();
 
-	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
+	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
 	np2arg_analize(lpszCmdLine);
@@ -1412,7 +1416,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	rand_setseed((unsigned)time(NULL));
 
-	CopyMemory(szClassName, np2oscfg.winid, 3);
+	CopyMemory(szClassName, np2oscfg.winid, 3 * sizeof(OEMCHAR));
 
 	if ((hWnd = FindWindow(szClassName, NULL)) != NULL) {
 		sstpmsg_running();
@@ -1536,7 +1540,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(scrnmode) != SUCCESS) {
 			if (sstpmsg_dxerror()) {
-				MessageBox(hWnd, "Couldn't create DirectDraw Object",
+				MessageBox(hWnd, OEMTEXT("Couldn't create DirectDraw Object"),
 										np2oscfg.titles, MB_OK | MB_ICONSTOP);
 			}
 			return(FALSE);
@@ -1544,8 +1548,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 
 	if (soundmng_initialize() == SUCCESS) {
-		soundmng_pcmload(SOUND_PCMSEEK, "SEEKWAV", EXTROMIO_RES);
-		soundmng_pcmload(SOUND_PCMSEEK1, "SEEK1WAV", EXTROMIO_RES);
+		soundmng_pcmload(SOUND_PCMSEEK, OEMTEXT("SEEKWAV"), EXTROMIO_RES);
+		soundmng_pcmload(SOUND_PCMSEEK1, OEMTEXT("SEEK1WAV"), EXTROMIO_RES);
 		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
@@ -1605,7 +1609,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 //	リセットしてから… コマンドラインのディスク挿入。
 	for (i=0; i<4; i++) {
 		if (np2arg.disk[i]) {
-			milstr_ncpy(diskdrv_fname[i], np2arg.disk[i], MAX_PATH);
+			milstr_ncpy(diskdrv_fname[i], np2arg.disk[i], NELEMENTS(diskdrv_fname[0]));
 			diskdrv_delay[i] = 1;
 		}
 	}

@@ -48,22 +48,22 @@ enum {
 };
 
 typedef struct {
-	char	main[MAX_PATH];
-	char	font[64];
+	OEMCHAR	main[MAX_PATH];
+	OEMCHAR	font[64];
 	SINT32	fontsize;
 	UINT32	color1;
 	UINT32	color2;
 } TOOLSKIN;
 
 typedef struct {
-	UINT	tctl;
-const char	*text;
-	short	posx;
-	short	posy;
-	short	width;
-	short	height;
-	short	extend;
-	short	padding;
+	UINT		tctl;
+const OEMCHAR	*text;
+	short		posx;
+	short		posy;
+	short		width;
+	short		height;
+	short		extend;
+	short		padding;
 } SUBITEM;
 
 typedef struct {
@@ -102,7 +102,7 @@ static	TOOLWIN		toolwin;
 
 
 typedef struct {
-	WORD	idc;
+	UINT16	idc;
 	UINT8	*counter;
 } DISKACC;
 
@@ -117,15 +117,15 @@ static const DISKACC diskacc[3] = {
 
 // ----
 
-static HBITMAP skinload(const char *path) {
+static HBITMAP skinload(const OEMCHAR *path) {
 
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 	UINT	i;
 	HBITMAP	ret;
 
 	ZeroMemory(&toolskin, sizeof(toolskin));
 	toolskin.fontsize = 12;
-	milstr_ncpy(toolskin.font, str_deffont, sizeof(toolskin.font));
+	milstr_ncpy(toolskin.font, str_deffont, NELEMENTS(toolskin.font));
 	toolskin.color1 = 0x600000;
 	toolskin.color2 = 0xff0000;
 	if (path) {
@@ -145,26 +145,26 @@ static HBITMAP skinload(const char *path) {
 		ini_read(path, skintitle, skinini2, NELEMENTS(skinini2));
 	}
 	if (toolskin.main[0]) {
-		milstr_ncpy(fname, path, sizeof(fname));
+		milstr_ncpy(fname, path, NELEMENTS(fname));
 		file_cutname(fname);
-		file_catname(fname, toolskin.main, sizeof(fname));
+		file_catname(fname, toolskin.main, NELEMENTS(fname));
 		ret = (HBITMAP)LoadImage(hInst, fname, IMAGE_BITMAP,
 													0, 0, LR_LOADFROMFILE);
 		if (ret != NULL) {
 			return(ret);
 		}
 	}
-	return(LoadBitmap(hInst, "NP2TOOL"));
+	return(LoadBitmap(hInst, OEMTEXT("NP2TOOL")));
 }
 
 
 // ----
 
-static void calctextsize(char *path, int leng, const char *p, int width) {
+static void calctextsize(OEMCHAR *path, int leng, const OEMCHAR *p, int width) {
 
 	HDC		hdc;
 	SIZE	cur;
-	char	work[MAX_PATH];
+	OEMCHAR	work[MAX_PATH];
 	int		l;
 	SIZE	tail;
 	int		pos;
@@ -172,7 +172,7 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 
 	milstr_ncpy(path, p, leng);
 	hdc = toolwin.hdcfont;
-	GetTextExtentPoint32(hdc, p, strlen(p), &cur);
+	GetTextExtentPoint32(hdc, p, OEMSTRLEN(p), &cur);
 	if (cur.cx < width) {
 		return;
 	}
@@ -181,13 +181,13 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 	file_cutseparator(path);
 	file_cutname(path);
 	file_cutseparator(path);
-	l = strlen(path);
+	l = OEMSTRLEN(path);
 	work[0] = '\0';
 	if (l) {
-		milstr_ncpy(work, str_browse, sizeof(work));
+		milstr_ncpy(work, str_browse, NELEMENTS(work));
 	}
-	milstr_ncat(work, p + l, sizeof(work));
-	GetTextExtentPoint32(hdc, work, strlen(work), &tail);
+	milstr_ncat(work, p + l, NELEMENTS(work));
+	GetTextExtentPoint32(hdc, work, OEMSTRLEN(work), &tail);
 	pos = 0;
 	while(pos < l) {
 		step = ((((p[pos] ^ 0x20) - 0xa1) & 0xff) < 0x3c)?2:1;
@@ -205,35 +205,35 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 
 static void setlist(HWND hwnd, const TOOLFDD *fdd, UINT sel) {
 
-	RECT	rc;
-	int		width;
-	char	basedir[MAX_PATH];
-	UINT	i;
-const char	*p;
-	char	dir[MAX_PATH];
-const char	*q;
+	RECT		rc;
+	int			width;
+	OEMCHAR		basedir[MAX_PATH];
+	UINT		i;
+const OEMCHAR	*p;
+	OEMCHAR		dir[MAX_PATH];
+const OEMCHAR	*q;
 
 	SendMessage(hwnd, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0);
 	GetClientRect(hwnd, &rc);
 	width = rc.right - rc.left - 6;			// border size?
 	basedir[0] = '\0';
 	if (sel < fdd->cnt) {
-		milstr_ncpy(basedir, fdd->name[fdd->pos[sel]], sizeof(basedir));
+		milstr_ncpy(basedir, fdd->name[fdd->pos[sel]], NELEMENTS(basedir));
 		file_cutname(basedir);
 	}
 	for (i=0; i<fdd->cnt; i++) {
 		p = fdd->name[fdd->pos[i]];
-		milstr_ncpy(dir, p, sizeof(dir));
+		milstr_ncpy(dir, p, NELEMENTS(dir));
 		file_cutname(dir);
 		if (!file_cmpname(basedir, dir)) {
-			q = file_getname((char *)p);
+			q = file_getname(p);
 		}
 		else {
-			calctextsize(dir, sizeof(dir), p, width);
+			calctextsize(dir, NELEMENTS(dir), p, width);
 			q = dir;
 		}
 		SendMessage(hwnd, CB_INSERTSTRING, (WPARAM)i, (LPARAM)q);
-		p += sizeof(fdd->name[0]);
+		p += NELEMENTS(fdd->name[0]);
 	}
 	if (sel < fdd->cnt) {
 		SendMessage(hwnd, CB_SETCURSEL, (WPARAM)sel, (LPARAM)0);
@@ -261,10 +261,10 @@ static void sellist(UINT drv) {
 
 static void remakefddlist(HWND hwnd, TOOLFDD *fdd) {
 
-	char	*p;
+	OEMCHAR	*p;
 	UINT	cnt;
-	char	*q;
-	char	*fname[FDDLIST_MAX];
+	OEMCHAR	*q;
+	OEMCHAR	*fname[FDDLIST_MAX];
 	UINT	i;
 	UINT	j;
 	UINT	sel;
@@ -285,7 +285,7 @@ static void remakefddlist(HWND hwnd, TOOLFDD *fdd) {
 			fdd->pos[j] = fdd->pos[j-1];
 		}
 		fdd->pos[i] = cnt;
-		p += sizeof(fdd->name[0]);
+		p += NELEMENTS(fdd->name[0]);
 	}
 	fdd->cnt = cnt;
 	sel = (UINT)-1;
@@ -321,7 +321,7 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	int		dir;
 	UINT	newidc;
 	int		files;
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 
 	idc = GetWindowLong(hWnd, GWL_ID) - IDC_BASE;
 	if (idc >= IDC_MAXITEMS) {
@@ -353,7 +353,7 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	else if (msg == WM_DROPFILES) {
    	    files = DragQueryFile((HDROP)wp, (UINT)-1, NULL, 0);
 		if (files == 1) {
-			DragQueryFile((HDROP)wp, 0, fname, sizeof(fname));
+			DragQueryFile((HDROP)wp, 0, fname, NELEMENTS(fname));
 			if (idc == IDC_TOOLFDD1LIST) {
 				diskdrv_setfdd(0, fname, 0);
 				toolwin_setfdd(0, fname);
@@ -392,7 +392,7 @@ static void toolwincreate(HWND hWnd) {
 const SUBITEM	*p;
 	UINT		i;
 	HWND		sub;
-const char		*cls;
+const OEMCHAR	*cls;
 	DWORD		style;
 
 	toolwin.hfont = CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
@@ -541,15 +541,15 @@ static void tooldrawbutton(HWND hWnd, UINT idc, LPDRAWITEMSTRUCT lpdis) {
 
 static HMENU createskinmenu(void) {
 
-	HMENU	ret;
-	UINT	cnt;
-const char	*base;
-	UINT	flag;
-	char	*p;
-	UINT	i;
-	UINT	j;
-	UINT	id[SKINMRU_MAX];
-const char	*file[SKINMRU_MAX];
+	HMENU		ret;
+	UINT		cnt;
+const OEMCHAR	*base;
+	UINT		flag;
+	OEMCHAR		*p;
+	UINT		i;
+	UINT		j;
+	UINT		id[SKINMRU_MAX];
+const OEMCHAR	*file[SKINMRU_MAX];
 
 	ret = CreatePopupMenu();
 	AppendMenu(ret, MF_STRING, IDM_SKINSEL, str_skinsel);
@@ -585,7 +585,7 @@ const char	*file[SKINMRU_MAX];
 
 static void skinchange(HWND hWnd) {
 
-const char		*p;
+const OEMCHAR	*p;
 	UINT		i;
 	HBITMAP		hbmp;
 	BITMAP		bmp;
@@ -603,7 +603,7 @@ const char		*p;
 												sizeof(np2tool.skinmru[0]));
 			i--;
 		}
-		file_cpyname(np2tool.skinmru[0], p, sizeof(np2tool.skinmru[0]));
+		file_cpyname(np2tool.skinmru[0], p, NELEMENTS(np2tool.skinmru[0]));
 	}
 	ModifyMenu(np2class_gethmenu(hWnd), 0, MF_BYPOSITION | MF_POPUP,
 									(UINT)createskinmenu(), str_toolskin);
@@ -740,7 +740,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				case IDM_SKINSEL:
 					soundmng_disable(SNDPROC_TOOL);
 					r = dlgs_selectfile(hWnd, &skinui, np2tool.skin,
-											sizeof(np2tool.skin), NULL);
+											NELEMENTS(np2tool.skin), NULL);
 					soundmng_enable(SNDPROC_TOOL);
 					if (r) {
 						skinchange(hWnd);
@@ -758,7 +758,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				case IDM_SKINMRU + 3:
 					file_cpyname(np2tool.skin,
 									np2tool.skinmru[LOWORD(wp) - IDM_SKINMRU],
-									sizeof(np2tool.skin));
+									NELEMENTS(np2tool.skin));
 					skinchange(hWnd);
 					break;
 
@@ -940,11 +940,11 @@ HWND toolwin_gethwnd(void) {
 	return(toolwin.hwnd);
 }
 
-void toolwin_setfdd(UINT8 drv, const char *name) {
+void toolwin_setfdd(UINT8 drv, const OEMCHAR *name) {
 
 	TOOLFDD	*fdd;
-	char	*q;
-	char	*p;
+	OEMCHAR	*q;
+	OEMCHAR	*p;
 	UINT	i;
 	HWND	sub;
 
@@ -962,16 +962,16 @@ void toolwin_setfdd(UINT8 drv, const char *name) {
 			if (!file_cmpname(q, name)) {
 				break;
 			}
-			q += sizeof(fdd->name[0]);
+			q += NELEMENTS(fdd->name[0]);
 		}
-		p = q - sizeof(fdd->name[0]);
+		p = q - NELEMENTS(fdd->name[0]);
 		while(i > 0) {
 			i--;
 			CopyMemory(q, p, sizeof(fdd->name[0]));
-			p -= sizeof(fdd->name[0]);
-			q -= sizeof(fdd->name[0]);
+			p -= NELEMENTS(fdd->name[0]);
+			q -= NELEMENTS(fdd->name[0]);
 		}
-		file_cpyname(fdd->name[0], name, sizeof(fdd->name[0]));
+		file_cpyname(fdd->name[0], name, NELEMENTS(fdd->name[0]));
 	}
 	sysmng_update(SYS_UPDATEOSCFG);
 	if (toolwin.hwnd != NULL) {
@@ -1052,7 +1052,7 @@ const DISKACC	*accterm;
 
 // ----
 
-static const char ini_title[] = "NP2 tool";
+static const OEMCHAR ini_title[] = OEMTEXT("NP2 tool");
 
 static const INITBL iniitem[] = {
 	{"WindposX", INITYPE_SINT32,	&np2tool.posx,			0},
@@ -1082,21 +1082,21 @@ static const INITBL iniitem[] = {
 
 void toolwin_readini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	ZeroMemory(&np2tool, sizeof(np2tool));
 	np2tool.posx = CW_USEDEFAULT;
 	np2tool.posy = CW_USEDEFAULT;
 	np2tool.type = 1;
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_read(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 
 void toolwin_writeini(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	initgetfile(path, sizeof(path));
+	initgetfile(path, NELEMENTS(path));
 	ini_write(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 

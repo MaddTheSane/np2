@@ -23,12 +23,12 @@ static const char str_jwinmode[] =
 						" (窓モード)\0 (フルスクリーン)";
 
 
-static void info_progtitle(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_progtitle(char *str, int maxlen, const NP2INFOEX *ex) {
 
 	milstr_ncpy(str, np2oscfg.titles, maxlen);
 }
 
-static void info_jsound(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_jsound(char *str, int maxlen, const NP2INFOEX *ex) {
 
 const char	*p;
 
@@ -76,7 +76,7 @@ const char	*p;
 	milstr_ncpy(str, p, maxlen);
 }
 
-static void info_jdisp(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_jdisp(char *str, int maxlen, const NP2INFOEX *ex) {
 
 	UINT	bpp;
 
@@ -87,7 +87,7 @@ static void info_jdisp(char *str, int maxlen, NP2INFOEX *ex) {
 	(void)ex;
 }
 
-static void info_jbios(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_jbios(char *str, int maxlen, const NP2INFOEX *ex) {
 
 	str[0] = '\0';
 	if (pccore.rom & PCROM_BIOS) {
@@ -104,7 +104,7 @@ static void info_jbios(char *str, int maxlen, NP2INFOEX *ex) {
 	}
 }
 
-static void info_jrhythm(char *str, int maxlen, NP2INFOEX *ex) {
+static void info_jrhythm(char *str, int maxlen, const NP2INFOEX *ex) {
 
 const char	*p;
 	char	jrhythmstr[16];
@@ -137,7 +137,7 @@ const char	*p;
 
 typedef struct {
 	char	key[8];
-	void	(*proc)(char *str, int maxlen, NP2INFOEX *ex);
+	void	(*proc)(char *str, int maxlen, const NP2INFOEX *ex);
 } INFOPROC;
 
 static const INFOPROC infoproc[] = {
@@ -147,7 +147,8 @@ static const INFOPROC infoproc[] = {
 			{"JDISP",		info_jdisp},
 			{"JRHYTHM",		info_jrhythm}};
 
-static BOOL sstpext(char *dst, const char *key, int maxlen, NP2INFOEX *ex) {
+static BOOL sstpext(OEMCHAR *dst, const OEMCHAR *key, int maxlen,
+														const NP2INFOEX *ex) {
 
 const INFOPROC	*inf;
 const INFOPROC	*infterm;
@@ -227,7 +228,7 @@ static char *sstpsolve(char *buf, const unsigned char *dat) {
 				ms -= 10;
 			}
 			if (ms) {
-				wsprintf(buf, "\\w%u", ms);
+				SPRINTF(buf, "\\w%u", ms);
 				buf += 3;
 			}
 		}

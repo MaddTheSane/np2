@@ -8,25 +8,25 @@
 	SOUNDROM	soundrom;
 
 
-static const char file_sound[] = "sound";
-static const char file_extrom[] = ".rom";
+static const OEMCHAR file_sound[] = OEMTEXT("sound");
+static const OEMCHAR file_extrom[] = OEMTEXT(".rom");
 static const UINT8 defsoundrom[9] = {
 							0x01,0x00,0x00,0x00,0xd2,0x00,0x08,0x00,0xcb};
 
 
-static BOOL loadsoundrom(UINT address, const char *name) {
+static BRESULT loadsoundrom(UINT address, const OEMCHAR *name) {
 
-	char	romname[24];
-	char	path[MAX_PATH];
+	OEMCHAR	romname[24];
+	OEMCHAR	path[MAX_PATH];
 	FILEH	fh;
 	UINT	rsize;
 
-	file_cpyname(romname, file_sound, sizeof(romname));
+	file_cpyname(romname, file_sound, NELEMENTS(romname));
 	if (name) {
-		file_catname(romname, name, sizeof(romname));
+		file_catname(romname, name, NELEMENTS(romname));
 	}
-	file_catname(romname, file_extrom, sizeof(romname));
-	getbiospath(path, romname, sizeof(path));
+	file_catname(romname, file_extrom, NELEMENTS(romname));
+	getbiospath(path, romname, NELEMENTS(path));
 	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto lsr_err;
@@ -36,7 +36,7 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 	if (rsize != 0x4000) {
 		goto lsr_err;
 	}
-	file_cpyname(soundrom.name, romname, sizeof(soundrom.name));
+	file_cpyname(soundrom.name, romname, NELEMENTS(soundrom.name));
 	soundrom.address = address;
 	if (address == 0xd0000) {
 		CPU_RAM_D000 &= ~(0x0f << 0);
@@ -58,7 +58,7 @@ void soundrom_reset(void) {
 	ZeroMemory(&soundrom, sizeof(soundrom));
 }
 
-void soundrom_load(UINT32 address, const char *primary) {
+void soundrom_load(UINT32 address, const OEMCHAR *primary) {
 
 	if (primary != NULL) {
 		if (loadsoundrom(address, primary) == SUCCESS) {
@@ -73,7 +73,7 @@ void soundrom_load(UINT32 address, const char *primary) {
 	soundrom.address = address;
 }
 
-void soundrom_loadex(UINT sw, const char *primary) {
+void soundrom_loadex(UINT sw, const OEMCHAR *primary) {
 
 	if (sw < 4) {
 		soundrom_load((0xc8000 + ((UINT32)sw << 14)), primary);

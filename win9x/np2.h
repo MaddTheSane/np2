@@ -4,15 +4,15 @@ typedef struct {
 	UINT8	def_en;
 	UINT8	param;
 	UINT32	speed;
-	char	mout[MAXPNAMELEN];
-	char	min[MAXPNAMELEN];
-	char	mdl[64];
-	char	def[MAX_PATH];
+	OEMCHAR	mout[MAXPNAMELEN];
+	OEMCHAR	min[MAXPNAMELEN];
+	OEMCHAR	mdl[64];
+	OEMCHAR	def[MAX_PATH];
 } COMCFG;
 
 typedef struct {
-	char	titles[256];
-	char	winid[4];
+	OEMCHAR	titles[256];
+	OEMCHAR	winid[4];
 
 	int		winx;
 	int		winy;
@@ -124,10 +124,10 @@ extern	int			mmxflag;
 extern	UINT8		np2break;
 extern	BOOL		winui_en;
 
-extern	char		modulefile[MAX_PATH];
-extern	char		fddfolder[MAX_PATH];
-extern	char		hddfolder[MAX_PATH];
-extern	char		bmpfilefolder[MAX_PATH];
+extern	OEMCHAR		modulefile[MAX_PATH];
+extern	OEMCHAR		fddfolder[MAX_PATH];
+extern	OEMCHAR		hddfolder[MAX_PATH];
+extern	OEMCHAR		bmpfilefolder[MAX_PATH];
 
 void np2active_renewal(void);
 

@@ -87,7 +87,7 @@ typedef struct {
 	UINT16	type;
 	UINT32	headersize;
 	long	fh;
-	char	fname[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
 } _SXSIDEV, *SXSIDEV;
 
 
@@ -102,8 +102,8 @@ extern const SASIHDD sasihdd[7];
 void sxsi_initialize(void);
 
 SXSIDEV sxsi_getptr(REG8 drv);
-const char *sxsi_getname(REG8 drv);
-BOOL sxsi_hddopen(REG8 drv, const char *file);
+const OEMCHAR *sxsi_getname(REG8 drv);
+BOOL sxsi_hddopen(REG8 drv, const OEMCHAR *file);
 
 void sxsi_open(void);
 void sxsi_flash(void);

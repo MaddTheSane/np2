@@ -297,7 +297,7 @@ static void pcmstop(void) {
 	}
 }
 
-void soundmng_pcmload(UINT num, const char *filename, UINT type) {
+void soundmng_pcmload(UINT num, const OEMCHAR *filename, UINT type) {
 
 	EXTROMH				erh;
 	RIFF_HEADER			riff;

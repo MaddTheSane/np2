@@ -13,13 +13,13 @@
 
 
 typedef struct {
-const char	*str;
-	UINT16	reg;
-	UINT16	mask;
+const OEMCHAR	*str;
+	UINT16		reg;
+	UINT16		mask;
 } FMSNDTBL;
 
-static FMSNDTBL fmsndtbl[] = {
-		{"Sound-Board I", 0, 0},
+static const FMSNDTBL fmsndtbl[] = {
+		{OEMTEXT("Sound-Board I"), 0, 0},
 		{NULL, 0x0000, 0xffff},
 		{NULL, 0x0010, 0x3f07},
 		{NULL, 0x0020, 0x07e6},
@@ -45,7 +45,7 @@ static FMSNDTBL fmsndtbl[] = {
 		{NULL, 0x01a0, 0x7777},
 		{NULL, 0x01b0, 0x0077},
 		{str_null, 0, 0},
-		{"Sound-Board II", 0, 0},
+		{OEMTEXT("Sound-Board II"), 0, 0},
 		{NULL, 0x0200, 0xffff},
 		{NULL, 0x0220, 0x07e6},
 		{NULL, 0x0230, 0x7777},
@@ -69,18 +69,16 @@ static FMSNDTBL fmsndtbl[] = {
 		{NULL, 0x02b0, 0x0077}};
 
 
-
-
 static void viewsnd_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	int		x;
 	LONG	y;
-	DWORD	pos;
-	BYTE	*p;
-	char	str[16];
+	UINT	pos;
+const UINT8	*p;
+	OEMCHAR	str[16];
 	HFONT	hfont;
-	DWORD	reg;
-	WORD	mask;
+	UINT	reg;
+	UINT16	mask;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -99,7 +97,7 @@ static void viewsnd_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 				view->buf1.type = ALLOCTYPE_SND;
 				CopyMemory(view->buf1.ptr, opn.reg, 0x400);
 				CopyMemory(view->buf1.ptr, &psg1.reg, 0x10);
-				CopyMemory(((BYTE *)view->buf1.ptr) + 0x200, &psg2.reg, 0x10);
+				CopyMemory(((UINT8 *)view->buf1.ptr) + 0x200, &psg2.reg, 0x10);
 			}
 			viewcmn_putcaption(view);
 		}
@@ -108,27 +106,28 @@ static void viewsnd_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	pos = view->pos;
 	for (y=0; (y<rc->bottom) && (pos<NELEMENTS(fmsndtbl)); y+=16, pos++) {
 		if (fmsndtbl[pos].str) {
-			TextOut(hdc, 0, y, fmsndtbl[pos].str, strlen(fmsndtbl[pos].str));
+			TextOut(hdc, 0, y, fmsndtbl[pos].str,
+												OEMSTRLEN(fmsndtbl[pos].str));
 		}
 		else {
 			reg = fmsndtbl[pos].reg;
 			mask = fmsndtbl[pos].mask;
 
-			wsprintf(str, "%04x", reg & 0x1ff);
+			OEMSPRINTF(str, OEMTEXT("%04x"), reg & 0x1ff);
 			TextOut(hdc, 0, y, str, 4);
 
 			if (view->lock) {
-				p = (BYTE *)view->buf1.ptr;
+				p = (UINT8 *)view->buf1.ptr;
 				p += reg;
 			}
 			else if (reg & 0x1ff) {
 				p = opn.reg + reg;
 			}
 			else if (reg & 0x200) {
-				p = (BYTE *)&psg2.reg;
+				p = (UINT8 *)&psg2.reg;
 			}
 			else {
-				p = (BYTE *)&psg1.reg;
+				p = (UINT8 *)&psg1.reg;
 			}
 			for (x=0; x<16; x++) {
 				if (mask & 1) {

@@ -188,7 +188,7 @@ void boardspb_reset(void) {
 	fmtimer_reset(np2cfg.spbopt & 0xc0);
 	opn.channels = 6;
 	opngen_setcfg(6, OPN_STEREO | 0x03f);
-	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
+	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
 	opn.base = ((np2cfg.spbopt & 0x10)?0x000:0x100);
 }
 
@@ -221,7 +221,7 @@ void boardspr_reset(void) {
 	opn.reg[0x2ff] = 0;
 	opn.channels = 12;
 	opngen_setcfg(12, OPN_STEREO | 0x03f);
-	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
+	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
 	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
 }
 

@@ -108,7 +108,7 @@ void S98_trash(void) {
 	S98_close();
 }
 
-BOOL S98_open(const char *filename) {
+BRESULT S98_open(const OEMCHAR *filename) {
 
 	UINT	i;
 	S98HDR	hdr;

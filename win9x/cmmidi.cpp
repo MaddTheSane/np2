@@ -19,15 +19,15 @@ extern	MIDIMOD	vermouth_module;
 #define MIDIOUTS3(a)		((*(UINT32 *)(a)) & 0xffffff)
 
 
-const char cmmidi_midimapper[] = "MIDI MAPPER";
+const OEMCHAR cmmidi_midimapper[] = OEMTEXT("MIDI MAPPER");
 #if defined(VERMOUTH_LIB)
-const char cmmidi_vermouth[] = "VERMOUTH";
+const OEMCHAR cmmidi_vermouth[] = OEMTEXT("VERMOUTH");
 #endif
-const char *cmmidi_mdlname[12] = {
-			"MT-32",		"CM-32L",		"CM-64",
-			"CM-300",		"CM-500(LA)",	"CM-500(GS)",
-			"SC-55",		"SC-88",		"LA",
-			"GM",			"GS",			"XG"};
+const OEMCHAR *cmmidi_mdlname[12] = {
+		OEMTEXT("MT-32"),	OEMTEXT("CM-32L"),		OEMTEXT("CM-64"),
+		OEMTEXT("CM-300"),	OEMTEXT("CM-500(LA)"),	OEMTEXT("CM-500(GS)"),
+		OEMTEXT("SC-55"),	OEMTEXT("SC-88"),		OEMTEXT("LA"),
+		OEMTEXT("GM"),		OEMTEXT("GS"),			OEMTEXT("XG")};
 
 enum {		MIDI_MT32 = 0,	MIDI_CM32L,		MIDI_CM64,
 			MIDI_CM300,		MIDI_CM500LA,	MIDI_CM500GS,
@@ -139,7 +139,7 @@ static	UINT8	midictrlindex[128];
 
 // ----
 
-static BOOL getmidioutid(const char *midiout, UINT *ret) {
+static BOOL getmidioutid(const OEMCHAR *midiout, UINT *ret) {
 
 	UINT		num;
 	UINT		i;
@@ -160,7 +160,7 @@ static BOOL getmidioutid(const char *midiout, UINT *ret) {
 	return(FAILURE);
 }
 
-static BOOL getmidiinid(const char *midiin, UINT *ret) {
+static BOOL getmidiinid(const OEMCHAR *midiin, UINT *ret) {
 
 	UINT		num;
 	UINT		i;
@@ -181,7 +181,7 @@ static BOOL getmidiinid(const char *midiin, UINT *ret) {
 	return(FAILURE);
 }
 
-static UINT module2number(const char *module) {
+static UINT module2number(const OEMCHAR *module) {
 
 	UINT	i;
 
@@ -577,7 +577,7 @@ static long midimsg(COMMNG self, UINT msg, long param) {
 			break;
 
 		case COMMSG_MIMPIDEFFILE:
-			mimpidef_load(&midi->def, (char *)param);
+			mimpidef_load(&midi->def, (OEMCHAR *)param);
 			return(1);
 
 		case COMMSG_MIMPIDEFEN:
@@ -672,8 +672,8 @@ void cmmidi_initailize(void) {
 	midictrlindex[32] = 1;
 }
 
-COMMNG cmmidi_create(const char *midiout, const char *midiin,
-														const char *module) {
+COMMNG cmmidi_create(const OEMCHAR *midiout, const OEMCHAR *midiin,
+													const OEMCHAR *module) {
 
 	UINT		opened;
 	UINT		id;
