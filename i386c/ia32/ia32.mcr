@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.8 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.9 2004/02/06 16:49:51 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -97,8 +97,8 @@ do { \
 #define	ADD_EIP(v) \
 do { \
 	DWORD __tmp_ip = CPU_EIP + (v); \
-	if (!CPU_STATSAVE.cpu_inst_default.op_32) {\
-		__tmp_ip &= 0x0000ffff; \
+	if (!CPU_STATSAVE.cpu_inst_default.op_32) { \
+		__tmp_ip &= 0xffff; \
 	} \
 	CPU_EIP = __tmp_ip; \
 } while (/*CONSTCOND*/ 0)

@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.9 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: task.c,v 1.10 2004/02/06 16:49:51 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -394,7 +394,11 @@ task_switch(selector_t* task_sel, int type)
 
 	/* set new EFLAGS */
 	mask = I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG;
-	set_eflags(new_flags, mask);
+	if (!task16) {
+		set_eflags(new_flags, mask);
+	} else {
+		set_flags(new_flags, mask);
+	}
 
 	/* load new LDTR */
 	load_ldtr(ldtr, TS_EXCEPTION);

@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.7 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.8 2004/02/06 16:49:51 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1153,13 +1153,14 @@ IRET(void)
 			POP0_16(new_ip);
 			POP0_16(new_cs);
 			POP0_16(new_flags);
+			set_flags(new_flags, mask);
 		} else {
 			POP0_32(new_ip);
 			POP0_32(new_cs);
 			POP0_32(new_flags);
 			mask |= RF_FLAG;
+			set_eflags(new_flags, mask);
 		}
-		set_eflags(new_flags, mask);
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);
