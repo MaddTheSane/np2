@@ -1003,41 +1003,41 @@ I286FN _aas(void) {								// 3f: aas
 	}
 }
 
-I286_P _inc_ax(void) INCWORD(I286_AX, 2) 	// 40:	inc		ax
-I286_P _inc_cx(void) INCWORD(I286_CX, 2)	// 41:	inc		cx
-I286_P _inc_dx(void) INCWORD(I286_DX, 2)	// 42:	inc		dx
-I286_P _inc_bx(void) INCWORD(I286_BX, 2)	// 43:	inc		bx
-I286_P _inc_sp(void) INCWORD(I286_SP, 2)	// 44:	inc		sp
-I286_P _inc_bp(void) INCWORD(I286_BP, 2)	// 45:	inc		bp
-I286_P _inc_si(void) INCWORD(I286_SI, 2)	// 46:	inc		si
-I286_P _inc_di(void) INCWORD(I286_DI, 2)	// 47:	inc		di
-I286_P _dec_ax(void) DECWORD(I286_AX, 2)	// 48:	dec		ax
-I286_P _dec_cx(void) DECWORD(I286_CX, 2)	// 49:	dec		cx
-I286_P _dec_dx(void) DECWORD(I286_DX, 2)	// 4a:	dec		dx
-I286_P _dec_bx(void) DECWORD(I286_BX, 2)	// 4b:	dec		bx
-I286_P _dec_sp(void) DECWORD(I286_SP, 2)	// 4c:	dec		sp
-I286_P _dec_bp(void) DECWORD(I286_BP, 2)	// 4d:	dec		bp
-I286_P _dec_si(void) DECWORD(I286_SI, 2)	// 4e:	dec		si
-I286_P _dec_di(void) DECWORD(I286_DI, 2)	// 4f:	dec		di
+I286FN _inc_ax(void) INCWORD(I286_AX, 2) 	// 40:	inc		ax
+I286FN _inc_cx(void) INCWORD(I286_CX, 2)	// 41:	inc		cx
+I286FN _inc_dx(void) INCWORD(I286_DX, 2)	// 42:	inc		dx
+I286FN _inc_bx(void) INCWORD(I286_BX, 2)	// 43:	inc		bx
+I286FN _inc_sp(void) INCWORD(I286_SP, 2)	// 44:	inc		sp
+I286FN _inc_bp(void) INCWORD(I286_BP, 2)	// 45:	inc		bp
+I286FN _inc_si(void) INCWORD(I286_SI, 2)	// 46:	inc		si
+I286FN _inc_di(void) INCWORD(I286_DI, 2)	// 47:	inc		di
+I286FN _dec_ax(void) DECWORD(I286_AX, 2)	// 48:	dec		ax
+I286FN _dec_cx(void) DECWORD(I286_CX, 2)	// 49:	dec		cx
+I286FN _dec_dx(void) DECWORD(I286_DX, 2)	// 4a:	dec		dx
+I286FN _dec_bx(void) DECWORD(I286_BX, 2)	// 4b:	dec		bx
+I286FN _dec_sp(void) DECWORD(I286_SP, 2)	// 4c:	dec		sp
+I286FN _dec_bp(void) DECWORD(I286_BP, 2)	// 4d:	dec		bp
+I286FN _dec_si(void) DECWORD(I286_SI, 2)	// 4e:	dec		si
+I286FN _dec_di(void) DECWORD(I286_DI, 2)	// 4f:	dec		di
 
-I286_P _push_ax(void) REGPUSH(I286_AX, 3)	// 50:	push	ax
-I286_P _push_cx(void) REGPUSH(I286_CX, 3)	// 51:	push	cx
-I286_P _push_dx(void) REGPUSH(I286_DX, 3)	// 52:	push	dx
-I286_P _push_bx(void) REGPUSH(I286_BX, 3)	// 53:	push	bx
-I286_P _push_sp(void) SP_PUSH(I286_SP, 3)	// 54:	push	sp
-I286_P _push_bp(void) REGPUSH(I286_BP, 3)	// 55:	push	bp
-I286_P _push_si(void) REGPUSH(I286_SI, 3)	// 56:	push	si
-I286_P _push_di(void) REGPUSH(I286_DI, 3)	// 57:	push	di
-I286_P _pop_ax(void) REGPOP(I286_AX, 5)		// 58:	pop		ax
-I286_P _pop_cx(void) REGPOP(I286_CX, 5)		// 59:	pop		cx
-I286_P _pop_dx(void) REGPOP(I286_DX, 5)		// 5A:	pop		dx
-I286_P _pop_bx(void) REGPOP(I286_BX, 5)		// 5B:	pop		bx
-I286_P _pop_sp(void) REGPOP(I286_SP, 5)		// 5C:	pop		sp
-I286_P _pop_bp(void) REGPOP(I286_BP, 5)		// 5D:	pop		bp
-I286_P _pop_si(void) REGPOP(I286_SI, 5)		// 5E:	pop		si
-I286_P _pop_di(void) REGPOP(I286_DI, 5)		// 5F:	pop		di
+I286FN _push_ax(void) REGPUSH(I286_AX, 3)	// 50:	push	ax
+I286FN _push_cx(void) REGPUSH(I286_CX, 3)	// 51:	push	cx
+I286FN _push_dx(void) REGPUSH(I286_DX, 3)	// 52:	push	dx
+I286FN _push_bx(void) REGPUSH(I286_BX, 3)	// 53:	push	bx
+I286FN _push_sp(void) SP_PUSH(I286_SP, 3)	// 54:	push	sp
+I286FN _push_bp(void) REGPUSH(I286_BP, 3)	// 55:	push	bp
+I286FN _push_si(void) REGPUSH(I286_SI, 3)	// 56:	push	si
+I286FN _push_di(void) REGPUSH(I286_DI, 3)	// 57:	push	di
+I286FN _pop_ax(void) REGPOP(I286_AX, 5)		// 58:	pop		ax
+I286FN _pop_cx(void) REGPOP(I286_CX, 5)		// 59:	pop		cx
+I286FN _pop_dx(void) REGPOP(I286_DX, 5)		// 5A:	pop		dx
+I286FN _pop_bx(void) REGPOP(I286_BX, 5)		// 5B:	pop		bx
+I286FN _pop_sp(void) REGPOP(I286_SP, 5)		// 5C:	pop		sp
+I286FN _pop_bp(void) REGPOP(I286_BP, 5)		// 5D:	pop		bp
+I286FN _pop_si(void) REGPOP(I286_SI, 5)		// 5E:	pop		si
+I286FN _pop_di(void) REGPOP(I286_DI, 5)		// 5F:	pop		di
 
-I286_P _pusha(void) {						// 60:	pusha
+I286FN _pusha(void) {						// 60:	pusha
 
 	UINT16	tmp;
 
@@ -1053,7 +1053,7 @@ I286_P _pusha(void) {						// 60:	pusha
 	I286_CLOCK(17)
 }
 
-I286_P _popa(void) {						// 61:	popa
+I286FN _popa(void) {						// 61:	popa
 
 	REGPOP0(I286_DI);
 	REGPOP0(I286_SI);
@@ -1066,7 +1066,7 @@ I286_P _popa(void) {						// 61:	popa
 	I286_CLOCK(19)
 }
 
-I286_P _bound(void) {						// 62:	bound
+I286FN _bound(void) {						// 62:	bound
 
 	UINT	vect = 0;
 	UINT	op;
@@ -1092,7 +1092,7 @@ I286_P _bound(void) {						// 62:	bound
 	INT_NUM(vect, I286_IP);
 }
 
-I286_P _arpl(void) {						// 63:	arpl
+I286FN _arpl(void) {						// 63:	arpl
 
 	UINT	op;
 	UINT	tmp;
@@ -1104,7 +1104,7 @@ I286_P _arpl(void) {						// 63:	arpl
 	INT_NUM(6, I286_IP);
 }
 
-I286_P _push_data16(void) {				// 68:	push	DATA16
+I286FN _push_data16(void) {				// 68:	push	DATA16
 
 	UINT16	tmp;
 
@@ -1112,7 +1112,7 @@ I286_P _push_data16(void) {				// 68:	push	DATA16
 	REGPUSH(tmp, 3)
 }
 
-I286_P _imul_reg_ea_data16(void) {		// 69:	imul	REG, EA, DATA16
+I286FN _imul_reg_ea_data16(void) {		// 69:	imul	REG, EA, DATA16
 
 	UINT16	*out;
 	UINT	op;
@@ -1126,7 +1126,7 @@ I286_P _imul_reg_ea_data16(void) {		// 69:	imul	REG, EA, DATA16
 	*out = (UINT16)res;
 }
 
-I286_P _push_data8(void) {				// 6A:	push	DATA8
+I286FN _push_data8(void) {				// 6A:	push	DATA8
 
 	UINT16	tmp;
 
@@ -1134,7 +1134,7 @@ I286_P _push_data8(void) {				// 6A:	push	DATA8
 	REGPUSH(tmp, 3)
 }
 
-I286_P _imul_reg_ea_data8(void) {		// 6B:	imul	REG, EA, DATA8
+I286FN _imul_reg_ea_data8(void) {		// 6B:	imul	REG, EA, DATA8
 
 	UINT16	*out;
 	UINT	op;
@@ -1148,7 +1148,7 @@ I286_P _imul_reg_ea_data8(void) {		// 6B:	imul	REG, EA, DATA8
 	*out = (UINT16)res;
 }
 
-I286_P _insb(void) {						// 6C:	insb
+I286FN _insb(void) {						// 6C:	insb
 
 	BYTE	dat;
 
@@ -1158,7 +1158,7 @@ I286_P _insb(void) {						// 6C:	insb
 	I286_DI += STRING_DIR;
 }
 
-I286_P _insw(void) {						// 6D:	insw
+I286FN _insw(void) {						// 6D:	insw
 
 	UINT16	dat;
 
@@ -1168,7 +1168,7 @@ I286_P _insw(void) {						// 6D:	insw
 	I286_DI += STRING_DIRx2;
 }
 
-I286_P _outsb(void) {						// 6E:	outsb
+I286FN _outsb(void) {						// 6E:	outsb
 
 	BYTE	dat;
 
@@ -1178,7 +1178,7 @@ I286_P _outsb(void) {						// 6E:	outsb
 	iocore_out8(I286_DX, dat);
 }
 
-I286_P _outsw(void) {						// 6F:	outsw
+I286FN _outsw(void) {						// 6F:	outsw
 
 	UINT16	dat;
 
@@ -1188,92 +1188,92 @@ I286_P _outsw(void) {						// 6F:	outsw
 	iocore_out16(I286_DX, dat);
 }
 
-I286_P _jo_short(void) {					// 70:	jo short
+I286FN _jo_short(void) {					// 70:	jo short
 
 	if (!I286_OV) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jno_short(void) {					// 71:	jno short
+I286FN _jno_short(void) {					// 71:	jno short
 
 	if (I286_OV) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jc_short(void) {					// 72:	jnae/jb/jc short
+I286FN _jc_short(void) {					// 72:	jnae/jb/jc short
 
 	if (!(I286_FLAGL & C_FLAG)) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jnc_short(void) {					// 73:	jae/jnb/jnc short
+I286FN _jnc_short(void) {					// 73:	jae/jnb/jnc short
 
 	if (I286_FLAGL & C_FLAG) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jz_short(void) {					// 74:	je/jz short
+I286FN _jz_short(void) {					// 74:	je/jz short
 
 	if (!(I286_FLAGL & Z_FLAG)) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jnz_short(void) {					// 75:	jne/jnz short
+I286FN _jnz_short(void) {					// 75:	jne/jnz short
 
 	if (I286_FLAGL & Z_FLAG) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jna_short(void) {					// 76:	jna/jbe short
+I286FN _jna_short(void) {					// 76:	jna/jbe short
 
 	if (!(I286_FLAGL & (Z_FLAG | C_FLAG))) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _ja_short(void) {					// 77:	ja/jnbe short
+I286FN _ja_short(void) {					// 77:	ja/jnbe short
 	if (I286_FLAGL & (Z_FLAG | C_FLAG)) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _js_short(void) {					// 78:	js short
+I286FN _js_short(void) {					// 78:	js short
 
 	if (!(I286_FLAGL & S_FLAG)) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jns_short(void) {					// 79:	jns short
+I286FN _jns_short(void) {					// 79:	jns short
 
 	if (I286_FLAGL & S_FLAG) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jp_short(void) {					// 7A:	jp/jpe short
+I286FN _jp_short(void) {					// 7A:	jp/jpe short
 
 	if (!(I286_FLAGL & P_FLAG)) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jnp_short(void) {					// 7B:	jnp/jpo short
+I286FN _jnp_short(void) {					// 7B:	jnp/jpo short
 
 	if (I286_FLAGL & P_FLAG) JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jl_short(void) {					// 7C:	jl/jnge short
+I286FN _jl_short(void) {					// 7C:	jl/jnge short
 
 	if (((I286_FLAGL & S_FLAG) == 0) == (I286_OV == 0))
 												JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jnl_short(void) {					// 7D:	jnl/jge short
+I286FN _jnl_short(void) {					// 7D:	jnl/jge short
 
 	if (((I286_FLAGL & S_FLAG) == 0) != (I286_OV == 0))
 												JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jle_short(void) {					// 7E:	jle/jng short
+I286FN _jle_short(void) {					// 7E:	jle/jng short
 
 	if ((!(I286_FLAGL & Z_FLAG)) &&
 		(((I286_FLAGL & S_FLAG) == 0) == (I286_OV == 0)))
 												JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _jnle_short(void) {					// 7F:	jg/jnle short
+I286FN _jnle_short(void) {					// 7F:	jg/jnle short
 
 	if ((I286_FLAGL & Z_FLAG) ||
 		(((I286_FLAGL & S_FLAG) == 0) != (I286_OV == 0)))
 												JMPNOP(2) else JMPSHORT(7)
 }
 
-I286_P _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
+I286FN _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
 											// 82:	op		EA8, DATA8
 	BYTE	*out;
 	UINT	op;
@@ -1296,7 +1296,7 @@ I286_P _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
 	c_op8xreg8_table[(op >> 3) & 7](out);
 }
 
-I286_P _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
+I286FN _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 
 	UINT16	*out;
 	UINT	op;
@@ -1322,7 +1322,7 @@ I286_P _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 	c_op8xreg16_table[(op >> 3) & 7](out, src);
 }
 
-I286_P _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
+I286FN _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
 
 	UINT16	*out;
 	UINT	op;
@@ -1348,7 +1348,7 @@ I286_P _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
 	c_op8xreg16_table[(op >> 3) & 7](out, src);
 }
 
-I286_P _test_ea_r8(void) {					// 84:	test	EA, REG8
+I286FN _test_ea_r8(void) {					// 84:	test	EA, REG8
 
 	BYTE	*out;
 	UINT	op;
@@ -1375,7 +1375,7 @@ I286_P _test_ea_r8(void) {					// 84:	test	EA, REG8
 	ANDBYTE(tmp, src);
 }
 
-I286_P _test_ea_r16(void) {					// 85:	test	EA, REG16
+I286FN _test_ea_r16(void) {					// 85:	test	EA, REG16
 
 	UINT16	*out;
 	UINT	op;
@@ -1402,7 +1402,7 @@ I286_P _test_ea_r16(void) {					// 85:	test	EA, REG16
 	ANDWORD(tmp, src);
 }
 
-I286_P _xchg_ea_r8(void) {					// 86:	xchg	EA, REG8
+I286FN _xchg_ea_r8(void) {					// 86:	xchg	EA, REG8
 
 	BYTE	*out;
 	BYTE	*src;
@@ -1428,7 +1428,7 @@ I286_P _xchg_ea_r8(void) {					// 86:	xchg	EA, REG8
 	SWAPBYTE(*out, *src);
 }
 
-I286_P _xchg_ea_r16(void) {					// 87:	xchg	EA, REG16
+I286FN _xchg_ea_r16(void) {					// 87:	xchg	EA, REG16
 
 	UINT16	*out;
 	UINT16	*src;
@@ -1454,7 +1454,7 @@ I286_P _xchg_ea_r16(void) {					// 87:	xchg	EA, REG16
 	SWAPWORD(*out, *src);
 }
 
-I286_P _mov_ea_r8(void) {					// 88:	mov		EA, REG8
+I286FN _mov_ea_r8(void) {					// 88:	mov		EA, REG8
 
 	BYTE	src;
 	UINT	op;
@@ -1472,7 +1472,7 @@ I286_P _mov_ea_r8(void) {					// 88:	mov		EA, REG8
 	}
 }
 
-I286_P _mov_ea_r16(void) {					// 89:	mov		EA, REG16
+I286FN _mov_ea_r16(void) {					// 89:	mov		EA, REG16
 
 	UINT16	src;
 	UINT	op;
@@ -1488,7 +1488,7 @@ I286_P _mov_ea_r16(void) {					// 89:	mov		EA, REG16
 	}
 }
 
-I286_P _mov_r8_ea(void) {					// 8A:	mov		REG8, EA
+I286FN _mov_r8_ea(void) {					// 8A:	mov		REG8, EA
 
 	BYTE	*out;
 	BYTE	src;
@@ -1498,7 +1498,7 @@ I286_P _mov_r8_ea(void) {					// 8A:	mov		REG8, EA
 	*out = src;
 }
 
-I286_P _mov_r16_ea(void) {					// 8B:	mov		REG16, EA
+I286FN _mov_r16_ea(void) {					// 8B:	mov		REG16, EA
 
 	UINT16	*out;
 	UINT16	src;
@@ -1508,7 +1508,7 @@ I286_P _mov_r16_ea(void) {					// 8B:	mov		REG16, EA
 	*out = src;
 }
 
-I286_P _mov_ea_seg(void) {					// 8C:	mov		EA, segreg
+I286FN _mov_ea_seg(void) {					// 8C:	mov		EA, segreg
 
 	UINT	op;
 	UINT16	tmp;
@@ -1525,7 +1525,7 @@ I286_P _mov_ea_seg(void) {					// 8C:	mov		EA, segreg
 	}
 }
 
-I286_P _lea_r16_ea(void) {					// 8D:	lea		REG16, EA
+I286FN _lea_r16_ea(void) {					// 8D:	lea		REG16, EA
 
 	UINT	op;
 
@@ -1539,7 +1539,7 @@ I286_P _lea_r16_ea(void) {					// 8D:	lea		REG16, EA
 	}
 }
 
-I286_P _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
+I286FN _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 
 	UINT	op;
 	UINT	tmp;
@@ -1580,7 +1580,7 @@ I286_P _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 	}
 }
 
-I286_P _pop_ea(void) {						// 8F:	pop		EA
+I286FN _pop_ea(void) {						// 8F:	pop		EA
 
 	UINT	op;
 	UINT16	tmp;
@@ -1597,7 +1597,7 @@ I286_P _pop_ea(void) {						// 8F:	pop		EA
 	}
 }
 
-I286_P _nop(void) {							// 90: nop / bios func
+I286FN _nop(void) {							// 90: nop / bios func
 
 #if 1										// call BIOS
 	UINT32	adrs;
@@ -1616,61 +1616,61 @@ I286_P _nop(void) {							// 90: nop / bios func
 	I286_CLOCK(3)
 }
 
-I286_P _xchg_ax_cx(void) { 					// 91:	xchg	ax, cx
+I286FN _xchg_ax_cx(void) { 					// 91:	xchg	ax, cx
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_CX);
 }
 
-I286_P _xchg_ax_dx(void) { 					// 92:	xchg	ax, dx
+I286FN _xchg_ax_dx(void) { 					// 92:	xchg	ax, dx
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_DX);
 }
 
-I286_P _xchg_ax_bx(void) { 					// 93:	xchg	ax, bx
+I286FN _xchg_ax_bx(void) { 					// 93:	xchg	ax, bx
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_BX);
 }
 
-I286_P _xchg_ax_sp(void) { 					// 94:	xchg	ax, sp
+I286FN _xchg_ax_sp(void) { 					// 94:	xchg	ax, sp
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_SP);
 }
 
-I286_P _xchg_ax_bp(void) { 					// 95:	xchg	ax, bp
+I286FN _xchg_ax_bp(void) { 					// 95:	xchg	ax, bp
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_BP);
 }
 
-I286_P _xchg_ax_si(void) { 					// 96:	xchg	ax, si
+I286FN _xchg_ax_si(void) { 					// 96:	xchg	ax, si
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_SI);
 }
 
-I286_P _xchg_ax_di(void) { 					// 97:	xchg	ax, di
+I286FN _xchg_ax_di(void) { 					// 97:	xchg	ax, di
 
 	I286_CLOCK(3);
 	SWAPWORD(I286_AX, I286_DI);
 }
 
-I286_P _cbw(void) {							// 98:	cbw
+I286FN _cbw(void) {							// 98:	cbw
 
 	I286_CLOCK(2)
 	I286_AX = __CBW(I286_AL);
 }
 
-I286_P _cwd(void) {							// 99:	cwd
+I286FN _cwd(void) {							// 99:	cwd
 
 	I286_CLOCK(2)
 	I286_DX = ((I286_AH & 0x80)?0xffff:0x0000);
 }
 
-I286_P _call_far(void) {					// 9A:	call far
+I286FN _call_far(void) {					// 9A:	call far
 
 	UINT16	newip;
 
@@ -1683,17 +1683,17 @@ I286_P _call_far(void) {					// 9A:	call far
 	I286_IP = newip;
 }
 
-I286_P _wait(void) {						// 9B:	wait
+I286FN _wait(void) {						// 9B:	wait
 
 	I286_CLOCK(2)
 }
 
-I286_P _pushf(void) {						// 9C:	pushf
+I286FN _pushf(void) {						// 9C:	pushf
 
 	REGPUSH(REAL_FLAGREG, 3)
 }
 
-I286_P _popf(void) {						// 9D:	popf
+I286FN _popf(void) {						// 9D:	popf
 
 	I286_CLOCK(5)
 	REGPOP0(I286_FLAG)
@@ -1703,19 +1703,19 @@ I286_P _popf(void) {						// 9D:	popf
 	I286IRQCHECKTERM
 }
 
-I286_P _sahf(void) {						// 9E:	sahf
+I286FN _sahf(void) {						// 9E:	sahf
 
 	I286_CLOCK(2)
 	I286_FLAGL = I286_AH;
 }
 
-I286_P _lahf(void) {						// 9F:	lahf
+I286FN _lahf(void) {						// 9F:	lahf
 
 	I286_CLOCK(2)
 	I286_AH = I286_FLAGL;
 }
 
-I286_P _mov_al_m8(void) {					// A0:	mov		al, m8
+I286FN _mov_al_m8(void) {					// A0:	mov		al, m8
 
 	UINT	op;
 
@@ -1724,7 +1724,7 @@ I286_P _mov_al_m8(void) {					// A0:	mov		al, m8
 	I286_AL = i286_memoryread(DS_FIX + op);
 }
 
-I286_P _mov_ax_m16(void) {					// A1:	mov		ax, m16
+I286FN _mov_ax_m16(void) {					// A1:	mov		ax, m16
 
 	UINT	op;
 
@@ -1733,7 +1733,7 @@ I286_P _mov_ax_m16(void) {					// A1:	mov		ax, m16
 	I286_AX = i286_memoryread_w(DS_FIX + op);
 }
 
-I286_P _mov_m8_al(void) {					// A2:	mov		m8, al
+I286FN _mov_m8_al(void) {					// A2:	mov		m8, al
 
 	UINT	op;
 
@@ -1742,7 +1742,7 @@ I286_P _mov_m8_al(void) {					// A2:	mov		m8, al
 	i286_memorywrite(DS_FIX + op, I286_AL);
 }
 
-I286_P _mov_m16_ax(void) {					// A3:	mov		m16, ax
+I286FN _mov_m16_ax(void) {					// A3:	mov		m16, ax
 
 	UINT	op;
 
@@ -1751,7 +1751,7 @@ I286_P _mov_m16_ax(void) {					// A3:	mov		m16, ax
 	i286_memorywrite_w(DS_FIX + op, I286_AX);
 }
 
-I286_P _movsb(void) {						// A4:	movsb
+I286FN _movsb(void) {						// A4:	movsb
 
 	BYTE	tmp;
 
@@ -1762,7 +1762,7 @@ I286_P _movsb(void) {						// A4:	movsb
 	I286_DI += STRING_DIR;
 }
 
-I286_P _movsw(void) {						// A5:	movsw
+I286FN _movsw(void) {						// A5:	movsw
 
 	UINT16	tmp;
 
@@ -1773,7 +1773,7 @@ I286_P _movsw(void) {						// A5:	movsw
 	I286_DI += STRING_DIRx2;
 }
 
-I286_P _cmpsb(void) {						// A6:	cmpsb
+I286FN _cmpsb(void) {						// A6:	cmpsb
 
 	UINT	src;
 	UINT	dst;
@@ -1787,7 +1787,7 @@ I286_P _cmpsb(void) {						// A6:	cmpsb
 	I286_DI += STRING_DIR;
 }
 
-I286_P _cmpsw(void) {						// A7:	cmpsw
+I286FN _cmpsw(void) {						// A7:	cmpsw
 
 	UINT32	src;
 	UINT32	dst;
@@ -1801,7 +1801,7 @@ I286_P _cmpsw(void) {						// A7:	cmpsw
 	I286_DI += STRING_DIRx2;
 }
 
-I286_P _test_al_data8(void) {				// A8:	test	al, DATA8
+I286FN _test_al_data8(void) {				// A8:	test	al, DATA8
 
 	UINT	src;
 	UINT	dst;
@@ -1812,7 +1812,7 @@ I286_P _test_al_data8(void) {				// A8:	test	al, DATA8
 	ANDBYTE(dst, src)
 }
 
-I286_P _test_ax_data16(void) {				// A9:	test	ax, DATA16
+I286FN _test_ax_data16(void) {				// A9:	test	ax, DATA16
 
 	UINT32	src;
 	UINT32	dst;
@@ -1823,35 +1823,35 @@ I286_P _test_ax_data16(void) {				// A9:	test	ax, DATA16
 	ANDWORD(dst, src)
 }
 
-I286_P _stosb(void) {						// AA:	stosw
+I286FN _stosb(void) {						// AA:	stosw
 
 	I286_CLOCK(3)
 	i286_memorywrite(I286_DI + ES_BASE, I286_AL);
 	I286_DI += STRING_DIR;
 }
 
-I286_P _stosw(void) {						// AB:	stosw
+I286FN _stosw(void) {						// AB:	stosw
 
 	I286_CLOCK(3)
 	i286_memorywrite_w(I286_DI + ES_BASE, I286_AX);
 	I286_DI += STRING_DIRx2;
 }
 
-I286_P _lodsb(void) {						// AC:	lodsb
+I286FN _lodsb(void) {						// AC:	lodsb
 
 	I286_CLOCK(5)
 	I286_AL = i286_memoryread(I286_SI + DS_FIX);
 	I286_SI += STRING_DIR;
 }
 
-I286_P _lodsw(void) {						// AD:	lodsw
+I286FN _lodsw(void) {						// AD:	lodsw
 
 	I286_CLOCK(5)
 	I286_AX = i286_memoryread_w(I286_SI + DS_FIX);
 	I286_SI += STRING_DIRx2;
 }
 
-I286_P _scasb(void) {						// AE:	scasb
+I286FN _scasb(void) {						// AE:	scasb
 
 	UINT	src;
 	UINT	dst;
@@ -1864,7 +1864,7 @@ I286_P _scasb(void) {						// AE:	scasb
 	I286_DI += STRING_DIR;
 }
 
-I286_P _scasw(void) {						// AF:	scasw
+I286FN _scasw(void) {						// AF:	scasw
 
 	UINT32	src;
 	UINT32	dst;
@@ -1877,24 +1877,24 @@ I286_P _scasw(void) {						// AF:	scasw
 	I286_DI += STRING_DIRx2;
 }
 
-I286_P _mov_al_imm(void) MOVIMM8(I286_AL)	// B0:	mov		al, imm8
-I286_P _mov_cl_imm(void) MOVIMM8(I286_CL)	// B1:	mov		cl, imm8
-I286_P _mov_dl_imm(void) MOVIMM8(I286_DL)	// B2:	mov		dl, imm8
-I286_P _mov_bl_imm(void) MOVIMM8(I286_BL)	// B3:	mov		bl, imm8
-I286_P _mov_ah_imm(void) MOVIMM8(I286_AH)	// B4:	mov		ah, imm8
-I286_P _mov_ch_imm(void) MOVIMM8(I286_CH)	// B5:	mov		ch, imm8
-I286_P _mov_dh_imm(void) MOVIMM8(I286_DH)	// B6:	mov		dh, imm8
-I286_P _mov_bh_imm(void) MOVIMM8(I286_BH)	// B7:	mov		bh, imm8
-I286_P _mov_ax_imm(void) MOVIMM16(I286_AX)	// B8:	mov		ax, imm16
-I286_P _mov_cx_imm(void) MOVIMM16(I286_CX)	// B9:	mov		cx, imm16
-I286_P _mov_dx_imm(void) MOVIMM16(I286_DX)	// BA:	mov		dx, imm16
-I286_P _mov_bx_imm(void) MOVIMM16(I286_BX)	// BB:	mov		bx, imm16
-I286_P _mov_sp_imm(void) MOVIMM16(I286_SP)	// BC:	mov		sp, imm16
-I286_P _mov_bp_imm(void) MOVIMM16(I286_BP)	// BD:	mov		bp, imm16
-I286_P _mov_si_imm(void) MOVIMM16(I286_SI)	// BE:	mov		si, imm16
-I286_P _mov_di_imm(void) MOVIMM16(I286_DI)	// BF:	mov		di, imm16
+I286FN _mov_al_imm(void) MOVIMM8(I286_AL)	// B0:	mov		al, imm8
+I286FN _mov_cl_imm(void) MOVIMM8(I286_CL)	// B1:	mov		cl, imm8
+I286FN _mov_dl_imm(void) MOVIMM8(I286_DL)	// B2:	mov		dl, imm8
+I286FN _mov_bl_imm(void) MOVIMM8(I286_BL)	// B3:	mov		bl, imm8
+I286FN _mov_ah_imm(void) MOVIMM8(I286_AH)	// B4:	mov		ah, imm8
+I286FN _mov_ch_imm(void) MOVIMM8(I286_CH)	// B5:	mov		ch, imm8
+I286FN _mov_dh_imm(void) MOVIMM8(I286_DH)	// B6:	mov		dh, imm8
+I286FN _mov_bh_imm(void) MOVIMM8(I286_BH)	// B7:	mov		bh, imm8
+I286FN _mov_ax_imm(void) MOVIMM16(I286_AX)	// B8:	mov		ax, imm16
+I286FN _mov_cx_imm(void) MOVIMM16(I286_CX)	// B9:	mov		cx, imm16
+I286FN _mov_dx_imm(void) MOVIMM16(I286_DX)	// BA:	mov		dx, imm16
+I286FN _mov_bx_imm(void) MOVIMM16(I286_BX)	// BB:	mov		bx, imm16
+I286FN _mov_sp_imm(void) MOVIMM16(I286_SP)	// BC:	mov		sp, imm16
+I286FN _mov_bp_imm(void) MOVIMM16(I286_BP)	// BD:	mov		bp, imm16
+I286FN _mov_si_imm(void) MOVIMM16(I286_SI)	// BE:	mov		si, imm16
+I286FN _mov_di_imm(void) MOVIMM16(I286_DI)	// BF:	mov		di, imm16
 
-I286_P _shift_ea8_data8(void) {				// C0:	shift	EA8, DATA8
+I286FN _shift_ea8_data8(void) {				// C0:	shift	EA8, DATA8
 
 	BYTE	*out;
 	UINT	op;
@@ -1922,7 +1922,7 @@ I286_P _shift_ea8_data8(void) {				// C0:	shift	EA8, DATA8
 	sft_r8cl_table[(op >> 3) & 7](out, cl);
 }
 
-I286_P _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
+I286FN _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 
 	UINT16	*out;
 	UINT	op;
@@ -1950,7 +1950,7 @@ I286_P _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 	sft_r16cl_table[(op >> 3) & 7](out, cl);
 }
 
-I286_P _ret_near_data16(void) {				// C2:	ret near DATA16
+I286FN _ret_near_data16(void) {				// C2:	ret near DATA16
 
 	UINT16	ad;
 
@@ -1960,13 +1960,13 @@ I286_P _ret_near_data16(void) {				// C2:	ret near DATA16
 	I286_SP += ad;
 }
 
-I286_P _ret_near(void) {					// C3:	ret near
+I286FN _ret_near(void) {					// C3:	ret near
 
 	I286_CLOCK(11)
 	REGPOP0(I286_IP)
 }
 
-I286_P _les_r16_ea(void) {					// C4:	les		REG16, EA
+I286FN _les_r16_ea(void) {					// C4:	les		REG16, EA
 
 	UINT	op;
 	UINT16	ad;
@@ -1985,7 +1985,7 @@ I286_P _les_r16_ea(void) {					// C4:	les		REG16, EA
 	}
 }
 
-I286_P _lds_r16_ea(void) {					// C5:	lds		REG16, EA
+I286FN _lds_r16_ea(void) {					// C5:	lds		REG16, EA
 
 	UINT	op;
 	UINT16	ad;
@@ -2005,7 +2005,7 @@ I286_P _lds_r16_ea(void) {					// C5:	lds		REG16, EA
 	}
 }
 
-I286_P _mov_ea8_data8(void) {				// C6:	mov		EA8, DATA8
+I286FN _mov_ea8_data8(void) {				// C6:	mov		EA8, DATA8
 
 	UINT	op;
 
@@ -2024,7 +2024,7 @@ I286_P _mov_ea8_data8(void) {				// C6:	mov		EA8, DATA8
 	}
 }
 
-I286_P _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
+I286FN _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 
 	UINT	op;
 
@@ -2043,7 +2043,7 @@ I286_P _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 	}
 }
 
-I286_P _enter(void) {						// C8:	enter	DATA16, DATA8
+I286FN _enter(void) {						// C8:	enter	DATA16, DATA8
 
 	UINT16	dimsize;
 	BYTE	level;
@@ -2084,14 +2084,14 @@ I286_P _enter(void) {						// C8:	enter	DATA16, DATA8
 	}
 }
 
-I286_P leave(void) {						// C9:	leave
+I286FN leave(void) {						// C9:	leave
 
 	I286_CLOCK(5)
 	I286_SP = I286_BP;
 	REGPOP0(I286_BP)
 }
 
-I286_P _ret_far_data16(void) {				// CA:	ret far	DATA16
+I286FN _ret_far_data16(void) {				// CA:	ret far	DATA16
 
 	UINT16	ad;
 
@@ -2103,7 +2103,7 @@ I286_P _ret_far_data16(void) {				// CA:	ret far	DATA16
 	CS_BASE = I286_CS << 4;
 }
 
-I286_P _ret_far(void) {						// CB:	ret far
+I286FN _ret_far(void) {						// CB:	ret far
 
 	I286_CLOCK(15)
 	REGPOP0(I286_IP)
@@ -2111,13 +2111,13 @@ I286_P _ret_far(void) {						// CB:	ret far
 	CS_BASE = I286_CS << 4;
 }
 
-I286_P _int_03(void) {						// CC:	int		3
+I286FN _int_03(void) {						// CC:	int		3
 
 	I286_CLOCK(23)
 	INT_NUM(3, I286_IP);
 }
 
-I286_P _int_data8(void) {					// CD:	int		DATA8
+I286FN _int_data8(void) {					// CD:	int		DATA8
 
 	UINT	vect;
 
@@ -2126,7 +2126,7 @@ I286_P _int_data8(void) {					// CD:	int		DATA8
 	INT_NUM(vect, I286_IP);
 }
 
-I286_P _into(void) {						// CE:	into
+I286FN _into(void) {						// CE:	into
 
 	I286_CLOCK(4)
 	if (I286_OV) {
@@ -2135,7 +2135,7 @@ I286_P _into(void) {						// CE:	into
 	}
 }
 
-I286_P _iret(void) {						// CF:	iret
+I286FN _iret(void) {						// CF:	iret
 
 	extirq_pop();
 	I286_CLOCK(31)
@@ -2149,7 +2149,7 @@ I286_P _iret(void) {						// CF:	iret
 	I286IRQCHECKTERM
 }
 
-I286_P _shift_ea8_1(void) {				// D0:	shift EA8, 1
+I286FN _shift_ea8_1(void) {				// D0:	shift EA8, 1
 
 	BYTE	*out;
 	UINT	op;
@@ -2172,7 +2172,7 @@ I286_P _shift_ea8_1(void) {				// D0:	shift EA8, 1
 	sft_r8_table[(op >> 3) & 7](out);
 }
 
-I286_P _shift_ea16_1(void) {			// D1:	shift EA16, 1
+I286FN _shift_ea16_1(void) {			// D1:	shift EA16, 1
 
 	UINT16	*out;
 	UINT	op;
@@ -2195,7 +2195,7 @@ I286_P _shift_ea16_1(void) {			// D1:	shift EA16, 1
 	sft_r16_table[(op >> 3) & 7](out);
 }
 
-I286_P _shift_ea8_cl(void) {			// D2:	shift EA8, cl
+I286FN _shift_ea8_cl(void) {			// D2:	shift EA8, cl
 
 	BYTE	*out;
 	UINT	op;
@@ -2223,7 +2223,7 @@ I286_P _shift_ea8_cl(void) {			// D2:	shift EA8, cl
 	sft_r8cl_table[(op >> 3) & 7](out, cl);
 }
 
-I286_P _shift_ea16_cl(void) {			// D3:	shift EA16, cl
+I286FN _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 
 	UINT16	*out;
 	UINT	op;
@@ -2251,7 +2251,7 @@ I286_P _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 	sft_r16cl_table[(op >> 3) & 7](out, cl);
 }
 
-I286_P _aam(void) {							// D4:	AAM
+I286FN _aam(void) {							// D4:	AAM
 
 	BYTE	al;
 	BYTE	div;
@@ -2271,7 +2271,7 @@ I286_P _aam(void) {							// D4:	AAM
 	}
 }
 
-I286_P _aad(void) {							// D5:	AAD
+I286FN _aad(void) {							// D5:	AAD
 
 	BYTE	mul;
 
@@ -2283,18 +2283,18 @@ I286_P _aad(void) {							// D5:	AAD
 	I286_FLAGL |= szpcflag[I286_AL];
 }
 
-I286_P _setalc(void) {						// D6:	setalc (80286)
+I286FN _setalc(void) {						// D6:	setalc (80286)
 
 	I286_AL = ((I286_FLAGL & C_FLAG)?0xff:0);
 }
 
-I286_P _xlat(void) {						// D7:	xlat
+I286FN _xlat(void) {						// D7:	xlat
 
 	I286_CLOCK(5)
 	I286_AL = i286_memoryread(((I286_AL + I286_BX) & 0xffff) + DS_FIX);
 }
 
-I286_P _esc(void) {							// D8:	esc
+I286FN _esc(void) {							// D8:	esc
 
 	UINT	op;
 
@@ -2305,30 +2305,30 @@ I286_P _esc(void) {							// D8:	esc
 	}
 }
 
-I286_P _loopnz(void) {						// E0:	loopnz
+I286FN _loopnz(void) {						// E0:	loopnz
 
 	I286_CX--;
 	if ((!I286_CX) || (I286_FLAGL & Z_FLAG)) JMPNOP(4) else JMPSHORT(8)
 }
 
-I286_P _loopz(void) {						// E1:	loopz
+I286FN _loopz(void) {						// E1:	loopz
 
 	I286_CX--;
 	if ((!I286_CX) || (!(I286_FLAGL & Z_FLAG))) JMPNOP(4) else JMPSHORT(8)
 }
 
-I286_P _loop(void) {						// E2:	loop
+I286FN _loop(void) {						// E2:	loop
 
 	I286_CX--;
 	if (!I286_CX) JMPNOP(4) else JMPSHORT(8)
 }
 
-I286_P _jcxz(void) {						// E3:	jcxz
+I286FN _jcxz(void) {						// E3:	jcxz
 
 	if (I286_CX) JMPNOP(4) else JMPSHORT(8)
 }
 
-I286_P _in_al_data8(void) {					// E4:	in		al, DATA8
+I286FN _in_al_data8(void) {					// E4:	in		al, DATA8
 
 	UINT	port;
 
@@ -2339,7 +2339,7 @@ I286_P _in_al_data8(void) {					// E4:	in		al, DATA8
 	i286reg.inport = 0;
 }
 
-I286_P _in_ax_data8(void) {					// E5:	in		ax, DATA8
+I286FN _in_ax_data8(void) {					// E5:	in		ax, DATA8
 
 	UINT	port;
 
@@ -2348,7 +2348,7 @@ I286_P _in_ax_data8(void) {					// E5:	in		ax, DATA8
 	I286_AX = iocore_inp16(port);
 }
 
-I286_P _out_data8_al(void) {				// E6:	out		DATA8, al
+I286FN _out_data8_al(void) {				// E6:	out		DATA8, al
 
 	UINT	port;
 
@@ -2357,7 +2357,7 @@ I286_P _out_data8_al(void) {				// E6:	out		DATA8, al
 	iocore_out8(port, I286_AL);
 }
 
-I286_P _out_data8_ax(void) {				// E7:	out		DATA8, ax
+I286FN _out_data8_ax(void) {				// E7:	out		DATA8, ax
 
 	UINT	port;
 
@@ -2366,7 +2366,7 @@ I286_P _out_data8_ax(void) {				// E7:	out		DATA8, ax
 	iocore_out16(port, I286_AX);
 }
 
-I286_P _call_near(void) {					// E8:	call near
+I286FN _call_near(void) {					// E8:	call near
 
 	UINT16	ad;
 
@@ -2376,7 +2376,7 @@ I286_P _call_near(void) {					// E8:	call near
 	I286_IP += ad;
 }
 
-I286_P _jmp_near(void) {					// E9:	jmp near
+I286FN _jmp_near(void) {					// E9:	jmp near
 
 	UINT16	ad;
 
@@ -2385,7 +2385,7 @@ I286_P _jmp_near(void) {					// E9:	jmp near
 	I286_IP += ad;
 }
 
-I286_P _jmp_far(void) {						// EA:	jmp far
+I286FN _jmp_far(void) {						// EA:	jmp far
 
 	UINT16	ad;
 
@@ -2396,7 +2396,7 @@ I286_P _jmp_far(void) {						// EA:	jmp far
 	I286_IP = ad;
 }
 
-I286_P _jmp_short(void) {					// EB:	jmp short
+I286FN _jmp_short(void) {					// EB:	jmp short
 
 	UINT16	ad;
 
@@ -2405,36 +2405,36 @@ I286_P _jmp_short(void) {					// EB:	jmp short
 	I286_IP += ad;
 }
 
-I286_P _in_al_dx(void) {					// EC:	in		al, dx
+I286FN _in_al_dx(void) {					// EC:	in		al, dx
 
 	I286_CLOCK(5)
 	I286_AL = iocore_inp8(I286_DX);
 }
 
-I286_P _in_ax_dx(void) {					// ED:	in		ax, dx
+I286FN _in_ax_dx(void) {					// ED:	in		ax, dx
 
 	I286_CLOCK(5)
 	I286_AX = iocore_inp16(I286_DX);
 }
 
-I286_P _out_dx_al(void) {					// EE:	out		dx, al
+I286FN _out_dx_al(void) {					// EE:	out		dx, al
 
 	I286_CLOCK(3)
 	iocore_out8(I286_DX, I286_AL);
 }
 
-I286_P _out_dx_ax(void) {					// EF:	out		dx, ax
+I286FN _out_dx_ax(void) {					// EF:	out		dx, ax
 
 	I286_CLOCK(3)
 	iocore_out16(I286_DX, I286_AX);
 }
 
-I286_P _lock(void) {						// F0:	lock
+I286FN _lock(void) {						// F0:	lock
 											// F1:	lock
 	I286_CLOCK(2)
 }
 
-I286_P _repne(void) {						// F2:	repne
+I286FN _repne(void) {						// F2:	repne
 
 	i286reg.prefix++;
 	if (i286reg.prefix < MAX_PREFIX) {
@@ -2448,7 +2448,7 @@ I286_P _repne(void) {						// F2:	repne
 	}
 }
 
-I286_P _repe(void) {						// F3:	repe
+I286FN _repe(void) {						// F3:	repe
 
 	i286reg.prefix++;
 	if (i286reg.prefix < MAX_PREFIX) {
@@ -2462,19 +2462,19 @@ I286_P _repe(void) {						// F3:	repe
 	}
 }
 
-I286_P _hlt(void) {							// F4:	hlt
+I286FN _hlt(void) {							// F4:	hlt
 
 	nevent.remainclock = -1;
 	I286_IP--;
 }
 
-I286_P _cmc(void) {							// F5:	cmc
+I286FN _cmc(void) {							// F5:	cmc
 
 	I286_CLOCK(2)
 	I286_FLAGL ^= C_FLAG;
 }
 
-I286_P _ope0xf6(void) {						// F6:	
+I286FN _ope0xf6(void) {						// F6:	
 
 	UINT	op;
 
@@ -2482,7 +2482,7 @@ I286_P _ope0xf6(void) {						// F6:
 	c_ope0xf6_table[(op >> 3) & 7](op);
 }
 
-I286_P _ope0xf7(void) {						// F7:	
+I286FN _ope0xf7(void) {						// F7:	
 
 	UINT	op;
 
@@ -2490,26 +2490,26 @@ I286_P _ope0xf7(void) {						// F7:
 	c_ope0xf7_table[(op >> 3) & 7](op);
 }
 
-I286_P _clc(void) {							// F8:	clc
+I286FN _clc(void) {							// F8:	clc
 
 	I286_CLOCK(2)
 	I286_FLAGL &= ~C_FLAG;
 }
 
-I286_P _stc(void) {							// F9:	stc
+I286FN _stc(void) {							// F9:	stc
 
 	I286_CLOCK(2)
 	I286_FLAGL |= C_FLAG;
 }
 
-I286_P _cli(void) {							// FA:	cli
+I286FN _cli(void) {							// FA:	cli
 
 	I286_CLOCK(2)
 	I286_FLAG &= ~I_FLAG;
 	I286_TRAP = 0;
 }
 
-I286_P _sti(void) {							// FB:	sti
+I286FN _sti(void) {							// FB:	sti
 
 	I286_CLOCK(2)
 	I286_FLAG |= I_FLAG;
@@ -2518,19 +2518,19 @@ I286_P _sti(void) {							// FB:	sti
 	REMAIN_ADJUST(1)
 }
 
-I286_P _cld(void) {							// FC:	cld
+I286FN _cld(void) {							// FC:	cld
 
 	I286_CLOCK(2)
 	I286_FLAG &= ~D_FLAG;
 }
 
-I286_P _std(void) {							// FD:	std
+I286FN _std(void) {							// FD:	std
 
 	I286_CLOCK(2)
 	I286_FLAG |= D_FLAG;
 }
 
-I286_P _ope0xfe(void) {						// FE:	
+I286FN _ope0xfe(void) {						// FE:	
 
 	UINT	op;
 
@@ -2538,7 +2538,7 @@ I286_P _ope0xfe(void) {						// FE:
 	c_ope0xfe_table[(op >> 3) & 1](op);
 }
 
-I286_P _ope0xff(void) {						// FF:	
+I286FN _ope0xff(void) {						// FF:	
 
 	UINT	op;
 
@@ -2826,7 +2826,7 @@ const I286OP i286op[] = {
 
 // ----------------------------------------------------------------- repe
 
-I286_P _repe_segprefix_es(void) {
+I286FN _repe_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
@@ -2843,7 +2843,7 @@ I286_P _repe_segprefix_es(void) {
 	}
 }
 
-I286_P _repe_segprefix_cs(void) {
+I286FN _repe_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
@@ -2860,7 +2860,7 @@ I286_P _repe_segprefix_cs(void) {
 	}
 }
 
-I286_P _repe_segprefix_ss(void) {
+I286FN _repe_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
@@ -2877,7 +2877,7 @@ I286_P _repe_segprefix_ss(void) {
 	}
 }
 
-I286_P _repe_segprefix_ds(void) {
+I286FN _repe_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
@@ -3171,7 +3171,7 @@ const I286OP i286op_repe[] = {
 
 // ----------------------------------------------------------------- repne
 
-I286_P _repne_segprefix_es(void) {
+I286FN _repne_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
@@ -3188,7 +3188,7 @@ I286_P _repne_segprefix_es(void) {
 	}
 }
 
-I286_P _repne_segprefix_cs(void) {
+I286FN _repne_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
@@ -3205,7 +3205,7 @@ I286_P _repne_segprefix_cs(void) {
 	}
 }
 
-I286_P _repne_segprefix_ss(void) {
+I286FN _repne_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
@@ -3222,7 +3222,7 @@ I286_P _repne_segprefix_ss(void) {
 	}
 }
 
-I286_P _repne_segprefix_ds(void) {
+I286FN _repne_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;

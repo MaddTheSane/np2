@@ -3,7 +3,6 @@
 
 
 #define I286FN	static void
-#define I286_P	static void
 #define I286EXT	void
 
 typedef void (*I286OP)(void);
