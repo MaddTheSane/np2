@@ -60,7 +60,7 @@ static	_ROMEO		romeo = {NULL};
 // Ž©‘O‚ÅŒŸõ‚·‚éi–î–ì‚³‚ñ•ûŽ®j
 
 #define PCIBUSDEVFUNC(b, d, f)	(((b) << 8) | ((d) << 3) | (f))
-#define	DEVVEND(v, d)			((v) | ((d) << 16))
+#define	DEVVEND(v, d)			((ULONG)((v) | ((d) << 16)))
 
 static ULONG searchRomeo(void) {
 

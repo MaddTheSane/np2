@@ -314,6 +314,7 @@ static REG8 scsibios_sense(UINT type, SXSIDEV sxsi) {
 		CPU_BX = 256 << ((scsiinf[3] >> 4) & 3);
 	}
 	(void)type;
+	(void)sxsi;
 	return(0x00);
 }
 

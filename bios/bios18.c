@@ -169,6 +169,8 @@ static void bios18_47(void) {
 	GBSX2 = LOADINTELWORD(ucw.GBSX2);
 	GBSY2 = LOADINTELWORD(ucw.GBSY2);
 	ZeroMemory(&vect, sizeof(vect));
+	data = 0;
+	data2 = 0;
 	if (ucw.GBDTYP == 0x01) {
 		func = gdcsub_line;
 		if ((GBSX1 > GBSX2) ||

@@ -274,7 +274,7 @@ short file_attr(const char *path) {
 	else {
 		ret = FILEATTR_ARCHIVE;
 	}
-	if (pb.hFileInfo.ioFlAttrib & kioFlAttribLockedMask) {
+	if (pb.hFileInfo.ioFlAttrib & 0x01) {
 		ret |= FILEATTR_READONLY;
 	}
 	return(ret);
@@ -561,7 +561,7 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 			fli->size = flhdl->pb.hFileInfo.ioFlLgLen;
 			dt = flhdl->pb.hFileInfo.ioFlMdDat;
 		}
-		if (flhdl->pb.hFileInfo.ioFlAttrib & kioFlAttribLockedMask) {
+		if (flhdl->pb.hFileInfo.ioFlAttrib & 0x01) {
 			fli->attr |= FILEATTR_READONLY;
 		}
 		cnvdatetime(dt, &fli->date, &fli->time);
