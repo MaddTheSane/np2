@@ -18,9 +18,8 @@ typedef struct {
 static	MBOX	mbox;
 
 static const char *menumbox_txt[7] = {
-				(char *)mstr_ok, 	(char *)mstr_cancel,(char *)mstr_abort,
-				(char *)mstr_retry,	(char *)mstr_ignore,(char *)mstr_yes,
-				(char *)mstr_no};
+				mstr_ok, 		mstr_cancel,	mstr_abort,		mstr_retry,
+				mstr_ignore,	mstr_yes,		mstr_no};
 
 static const BYTE b_res[6][4] = {
 				{1, DID_OK,		0,				0},

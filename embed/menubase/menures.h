@@ -4,13 +4,13 @@ extern "C" {
 #endif
 
 extern const char mstr_fontcheck[];
-extern const BYTE mstr_ok[];
-extern const BYTE mstr_cancel[];
-extern const BYTE mstr_abort[];
-extern const BYTE mstr_retry[];
-extern const BYTE mstr_ignore[];
-extern const BYTE mstr_yes[];
-extern const BYTE mstr_no[];
+extern const char mstr_ok[];
+extern const char mstr_cancel[];
+extern const char mstr_abort[];
+extern const char mstr_retry[];
+extern const char mstr_ignore[];
+extern const char mstr_yes[];
+extern const char mstr_no[];
 
 extern const MENURES2 menures_minimize;
 extern const MENURES2 menures_close;

@@ -2,22 +2,31 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 
-
+#if 1
 const char mstr_fontcheck[] = " ";
-const BYTE mstr_ok[] = {			// OK
-		0x4f,0x4b,0};
-const BYTE mstr_cancel[] = {		// キャンセル
-		0xb7,0xac,0xdd,0xbe,0xd9,0};
-const BYTE mstr_abort[] = {			// 中止
-		0x92,0x86,0x8e,0x7e,0x00};
-const BYTE mstr_retry[] = {			// 再試行
-		0x8d,0xc4,0x8e,0x8e,0x8d,0x73,0x00};
-const BYTE mstr_ignore[] = {		// 無視
-		0x96,0xb3,0x8e,0x8b,0x00};
-const BYTE mstr_yes[] = {			// はい
-		0x82,0xcd,0x82,0xa2,0x00};
-const BYTE mstr_no[] = {			// いいえ
-		0x82,0xa2,0x82,0xa2,0x82,0xa6,0x00};
+const char mstr_ok[] = "OK";
+			// キャンセル
+const char mstr_cancel[] = "\267\254\335\276\331";
+			// 中止
+const char mstr_abort[] = "\222\206\216\176";
+			// 再試行
+const char mstr_retry[] = "\215\304\216\216\215\163";
+			// 無視
+const char mstr_ignore[] = "\226\263\216\213";
+			// はい
+const char mstr_yes[] = "\202\315\202\242";
+			// いいえ
+const char mstr_no[] = "\202\242\202\242\202\246";
+#else
+const char mstr_fontcheck[] = " ";
+const char mstr_ok[] = "OK";
+const char mstr_cancel[] = "Cancel";
+const char mstr_abort[] = "Abort";
+const char mstr_retry[] = "Retry";
+const char mstr_ignore[] = "Ignore";
+const char mstr_yes[] = "Yes";
+const char mstr_no[] = "No";
+#endif
 
 
 #ifndef SIZE_QVGA

@@ -44,34 +44,42 @@ typedef struct {
 
 static MENUSYS	menusys;
 
-
-static const BYTE str_sysr[] = {		// 元のサイズに戻す
-		0x8c,0xb3,0x82,0xcc,0x83,0x54,0x83,0x43,0x83,0x59,0x82,0xc9,0x96,
-		0xdf,0x82,0xb7,0x00};
-static const BYTE str_sysm[] = {		// 移動
-		0x88,0xda,0x93,0xae,0x00};
-static const BYTE str_syss[] = {		// サイズ変更
-		0x83,0x54,0x83,0x43,0x83,0x59,0x95,0xcf,0x8d,0x58,0x00};
-static const BYTE str_sysn[] = {		// 最小化
-		0x8d,0xc5,0x8f,0xac,0x89,0xbb,0x00};
-static const BYTE str_sysx[] = {		// 最大化
-		0x8d,0xc5,0x91,0xe5,0x89,0xbb,0x00};
-static const BYTE str_sysc[] = {		// 閉じる
-		0x95,0xc2,0x82,0xb6,0x82,0xe9,0x00};
+#if 1
+			// 元のサイズに戻す
+static const char str_sysr[] = 
+			"\214\263\202\314\203\124\203\103\203\131\202\311\226\337\202\267";
+			// 移動
+static const char str_sysm[] = "\210\332\223\256";
+			// サイズ変更
+static const char str_syss[] = "\203\124\203\103\203\131\225\317\215\130";
+			// 最小化
+static const char str_sysn[] = "\215\305\217\254\211\273";
+			// 最大化
+static const char str_sysx[] = "\215\305\221\345\211\273";
+			// 閉じる
+static const char str_sysc[] = "\225\302\202\266\202\351";
+#else
+static const char str_sysr[] = "Restore";
+static const char str_sysm[] = "Move";
+static const char str_syss[] = "Size";
+static const char str_sysn[] = "Minimize";
+static const char str_sysx[] = "Maximize";
+static const char str_sysc[] = "Close";
+#endif
 
 
 static const MSYSITEM s_exit[] = {
-		{(char *)str_sysr,	NULL,		0,				MENU_GRAY},
-		{(char *)str_sysm,	NULL,		0,				MENU_GRAY},
-		{(char *)str_syss,	NULL,		0,				MENU_GRAY},
+		{str_sysr,			NULL,		0,				MENU_GRAY},
+		{str_sysm,			NULL,		0,				MENU_GRAY},
+		{str_syss,			NULL,		0,				MENU_GRAY},
 #if defined(MENU_TASKMINIMIZE)
-		{(char *)str_sysn,	NULL,		SID_MINIMIZE,	0},
+		{str_sysn,			NULL,		SID_MINIMIZE,	0},
 #else
-		{(char *)str_sysn,	NULL,		0,				MENU_GRAY},
+		{str_sysn,			NULL,		0,				MENU_GRAY},
 #endif
-		{(char *)str_sysx,	NULL,		0,				MENU_GRAY},
+		{str_sysx,			NULL,		0,				MENU_GRAY},
 		{NULL,				NULL,		0,				MENU_SEPARATOR},
-		{(char *)str_sysc,	NULL,		SID_CLOSE,		MENU_DELETED}};
+		{str_sysc,			NULL,		SID_CLOSE,		MENU_DELETED}};
 
 static const MSYSITEM s_root[] = {
 		{NULL,				s_exit,		0,				MENUS_SYSTEM},

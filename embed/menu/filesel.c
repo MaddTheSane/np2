@@ -20,15 +20,23 @@ enum {
 	DID_FILTER
 };
 
-static const BYTE str_dirname[] = {		// ファイルの場所
-		0xcc,0xa7,0xb2,0xd9,0x82,0xcc,0x8f,0xea,0x8f,0x8a,0};
-static const BYTE str_filename[] = {	// ファイル名
-		0xcc,0xa7,0xb2,0xd9,0x96,0xbc,0};
-static const BYTE str_filetype[] = {	// ファイルの種類
-		0xcc,0xa7,0xb2,0xd9,0x82,0xcc,0x8e,0xed,0x97,0xde,0};
-static const BYTE str_open[] = {		// 開く
-		0x8a,0x4a,0x82,0xad,0};
-
+#if 1
+			// ファイルの場所
+static const char str_dirname[] =
+				"\203\164\203\100\203\103\203\213\202\314\217\352\217\212";
+			// ファイル名
+static const char str_filename[] = "\203\164\203\100\203\103\203\213\226\274";
+			// ファイルの種類
+static const char str_filetype[] =
+				"\203\164\203\100\203\103\203\213\202\314\216\355\227\336";
+			// 開く
+static const char str_open[] = "\212\112\202\255";
+#else
+static const char str_dirname[] = "Look in";
+static const char str_filename[] = "File name";
+static const char str_filetype[] = "Files of type";
+static const char str_open[] = "Open";
+#endif
 
 #if defined(SIZE_QVGA)
 enum {
