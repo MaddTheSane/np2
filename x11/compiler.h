@@ -136,7 +136,7 @@ typedef	int			BOOL;
 
 /* archtecture */
 /* amd64 */
-#if defined(amd64) || defined(__AMD64__) || defined(__amd64__)) ||
+#if defined(amd64) || defined(__AMD64__) || defined(__amd64__) || \
     defined(x86_64) || defined(__x86_64__) || defined(__X86_64__)
 #define	NP2_CPU_ARCH_AMD64
 #endif /* amd64 */
