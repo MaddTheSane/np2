@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: segments.c,v 1.2 2003/12/11 14:59:42 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -38,10 +38,7 @@ load_segreg(int idx, WORD selector, int exc)
 	selector_t sel;
 	int rv;
 
-
-	if ((unsigned int)idx >= CPU_SEGREG_NUM) {
-		ia32_panic("load_segreg: sreg(%d)", idx);
-	}
+	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
 
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		descriptor_t sd;
@@ -172,7 +169,7 @@ load_ldtr(WORD selector, int exc)
 	}
 
 	/* check descriptor type */
-	if (!sel.desc.s || (sel.desc.type != CPU_SYSDESC_TYPE_LDT)) {
+	if (sel.desc.s || (sel.desc.type != CPU_SYSDESC_TYPE_LDT)) {
 		EXCEPTION(exc, sel.selector);
 	}
 
