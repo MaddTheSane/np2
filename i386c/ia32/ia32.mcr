@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.16 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.17 2004/03/21 21:30:49 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -908,6 +908,29 @@ do { \
 	ADD_EIP((d)); \
 } while (/*CONSTCOND*/ 0)
 #endif
+
+
+/*
+ * conditions
+ */
+#define	CC_O	(CPU_OV)
+#define	CC_NO	(!CPU_OV)
+#define	CC_C	(CPU_FLAGL & C_FLAG)
+#define	CC_NC	(!(CPU_FLAGL & C_FLAG))
+#define	CC_Z	(CPU_FLAGL & Z_FLAG)
+#define	CC_NZ	(!(CPU_FLAGL & Z_FLAG))
+#define	CC_NA	(CPU_FLAGL & (Z_FLAG | C_FLAG))
+#define	CC_A	(!(CPU_FLAGL & (Z_FLAG | C_FLAG)))
+#define	CC_S	(CPU_FLAGL & S_FLAG)
+#define	CC_NS	(!(CPU_FLAGL & S_FLAG))
+#define	CC_P	(CPU_FLAGL & P_FLAG)
+#define	CC_NP	(!(CPU_FLAGL & P_FLAG))
+#define	CC_L	(((CPU_FLAGL & S_FLAG) == 0) != (CPU_OV == 0))
+#define	CC_NL	(((CPU_FLAGL & S_FLAG) == 0) == (CPU_OV == 0))
+#define	CC_LE	((CPU_FLAGL & Z_FLAG) || \
+				(((CPU_FLAGL & S_FLAG) == 0) != (CPU_OV == 0)))
+#define	CC_NLE	((!(CPU_FLAGL & Z_FLAG)) && \
+				(((CPU_FLAGL & S_FLAG) == 0) == (CPU_OV == 0)))
 
 
 /*

@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.c,v 1.7 2004/03/12 18:19:57 yui Exp $	*/
+/*	$Id: bit_byte.c,v 1.8 2004/03/21 21:30:49 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -663,7 +663,7 @@ void
 SETO_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = CPU_OV ? 1 : 0;
+	UINT8 v = CC_O?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -680,7 +680,7 @@ void
 SETNO_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = CPU_OV ? 0 : 1;
+	UINT8 v = CC_NO?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -697,7 +697,7 @@ void
 SETC_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (UINT8)(CPU_FLAGL & C_FLAG);
+	UINT8 v = CC_C?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -714,7 +714,7 @@ void
 SETNC_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & C_FLAG) ? 0 : 1;
+	UINT8 v = CC_NC?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -731,7 +731,7 @@ void
 SETZ_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & Z_FLAG) ? 1 : 0;
+	UINT8 v = CC_Z?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -748,7 +748,7 @@ void
 SETNZ_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & Z_FLAG) ? 0 : 1;
+	UINT8 v = CC_NZ?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -765,7 +765,7 @@ void
 SETA_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 0 : 1;
+	UINT8 v = CC_A?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -782,7 +782,7 @@ void
 SETNA_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & (Z_FLAG|C_FLAG)) ? 1 : 0;
+	UINT8 v = CC_NA?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -799,7 +799,7 @@ void
 SETS_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & S_FLAG) ? 1 : 0;
+	UINT8 v = CC_S?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -816,7 +816,7 @@ void
 SETNS_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & S_FLAG) ? 0 : 1;
+	UINT8 v = CC_NS?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -833,7 +833,7 @@ void
 SETP_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & P_FLAG) ? 1 : 0;
+	UINT8 v = CC_P?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -850,7 +850,7 @@ void
 SETNP_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (CPU_FLAGL & P_FLAG) ? 0 : 1;
+	UINT8 v = CC_NP?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -867,7 +867,7 @@ void
 SETL_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 1 : 0;
+	UINT8 v = CC_L?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -884,7 +884,7 @@ void
 SETNL_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = (!CPU_OV == !(CPU_FLAGL & S_FLAG)) ? 0 : 1;
+	UINT8 v = CC_NL?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -901,7 +901,7 @@ void
 SETLE_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 1 : 0;
+	UINT8 v = CC_LE?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -918,7 +918,7 @@ void
 SETNLE_Eb(void)
 {
 	UINT32 op, madr;
-	UINT8 v = ((CPU_FLAGL & Z_FLAG) || (!CPU_OV == !(CPU_FLAGL & S_FLAG))) ? 0 : 1;
+	UINT8 v = CC_NLE?1:0;
 
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
