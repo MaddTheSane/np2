@@ -67,9 +67,11 @@ GDCCMD_MAX		equ		32
 .LDTRC			resb	6
 .TR				resw	1
 .TRC			resb	6
+				resb	2
 
 .cpu_type		resb	1
 .itfbank		resb	1
+.ram_d0			resw	1
 .remainclock	resd	1
 .baseclock		resd	1
 .clock			resd	1
