@@ -27,6 +27,12 @@ enum {
 
 #define		CPUMODE_8MHz		0x20
 
+// これ ver0.75で別ファイルへ移動すること
+typedef struct {
+	UINT8	keys;
+	UINT8	key[15];
+} _NKEYM, *NKEYM;
+
 typedef struct {
 	// エミュレート中によく参照される奴
 	UINT8	uPD72020;
@@ -49,7 +55,7 @@ typedef struct {
 	UINT8	usefd144;
 	BYTE	wait[6];
 
-	UINT8	userkey[2][16];
+	_NKEYM	userkey[2];
 
 	// リセット時とかあんまり参照されない奴
 	char	model[8];

@@ -230,8 +230,8 @@ const INITBL	*pterm;
 			case INITYPE_USERKEY:
 				GetPrivateProfileString(title, p->item, str_null,
 												work, sizeof(work), path);
-				((UINT8 *)p->value)[0] = (UINT8)profile_setkeys(work,
-												((UINT8 *)p->value) + 1, 15);
+				((NKEYM)p->value)->keys = (UINT8)profile_setkeys(work,
+												((NKEYM)p->value)->key, 15);
 				break;
 
 			case INITYPE_KB:
@@ -309,7 +309,7 @@ const char		*set;
 
 				case INITYPE_USERKEY:
 					profile_getkeys(work, sizeof(work),
-							((UINT8 *)p->value) + 1, ((UINT8 *)p->value)[0]);
+							((NKEYM)p->value)->key, ((NKEYM)p->value)->keys);
 					break;
 
 				default:
@@ -432,8 +432,8 @@ static const INITBL iniitem[] = {
 
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
-	{"userkey1", INITYPE_USERKEY,	np2cfg.userkey[0],		16},
-	{"userkey2", INITYPE_USERKEY,	np2cfg.userkey[1],		16},
+	{"userkey1", INITYPE_USERKEY,	np2cfg.userkey+0,		0},
+	{"userkey2", INITYPE_USERKEY,	np2cfg.userkey+1,		0},
 
 
 	// OSàÀë∂ÅH
