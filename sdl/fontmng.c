@@ -498,9 +498,8 @@ const UINT8	*src;
 BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 
 	FNTMNG	fhdl;
-	char	buf[4];
-	_FNTDAT	fdat;
 	int		width;
+	_FNTDAT	fdat;
 	int		leng;
 
 	if ((hdl == NULL) || (string == NULL)) {
@@ -509,24 +508,13 @@ BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 	fhdl = (FNTMNG)hdl;
 
 	width = 0;
-	buf[2] = '\0';
 	while(1) {
-		buf[0] = *string++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			buf[1] = *string++;
-			if (buf[1] == '\0') {
-				break;
-			}
-			leng = 2;
-		}
-		else if (buf[0]) {
-			buf[1] = '\0';
-			leng = 1;
-		}
-		else {
+		leng = milstr_charsize(string);
+		if (!leng) {
 			break;
 		}
-		getlength1(fhdl, &fdat, buf, leng);
+		getlength1((FNTMNG)hdl, &fdat, string, leng);
+		string += leng;
 		width += fdat.pitch;
 	}
 	if (pt) {
@@ -542,11 +530,10 @@ fmgs_exit:
 BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt) {
 
 	FNTMNG	fhdl;
-	char	buf[4];
 	_FNTDAT	fdat;
 	int		width;
-	int		leng;
 	int		posx;
+	int		leng;
 
 	if ((hdl == NULL) || (string == NULL)) {
 		goto fmgds_exit;
@@ -555,24 +542,13 @@ BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt) {
 
 	width = 0;
 	posx = 0;
-	buf[2] = '\0';
 	while(1) {
-		buf[0] = *string++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			buf[1] = *string++;
-			if (buf[1] == '\0') {
-				break;
-			}
-			leng = 2;
-		}
-		else if (buf[0]) {
-			buf[1] = '\0';
-			leng = 1;
-		}
-		else {
+		leng = milstr_charsize(string);
+		if (!leng) {
 			break;
 		}
-		getlength1(fhdl, &fdat, buf, leng);
+		getlength1(fhdl, &fdat, string, leng);
+		string += leng;
 		width = posx + max(fdat.width, fdat.pitch);
 		posx += fdat.pitch;
 	}
@@ -590,7 +566,6 @@ FNTDAT fontmng_get(void *hdl, const char *string) {
 
 	FNTMNG	fhdl;
 	FNTDAT	fdat;
-	int		leng;
 
 	if ((hdl == NULL) || (string == NULL)) {
 		goto fmg_err;
@@ -598,12 +573,7 @@ FNTDAT fontmng_get(void *hdl, const char *string) {
 	fhdl = (FNTMNG)hdl;
 	fdat = (FNTDAT)(fhdl + 1);
 
-	leng = 1;
-	if (((((string[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) &&
-		(string[1] != '\0')) {
-		leng = 2;
-	}
-	getfont1(fhdl, fdat, string, leng);
+	getfont1(fhdl, fdat, string, milstr_charsize(string));
 	return(fdat);
 
 fmg_err:
