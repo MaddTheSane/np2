@@ -19,6 +19,7 @@ void kdispwin_writeini(void);
 
 #if !defined(SUPPORT_SOFTKBD)
 #define	skbdwin_initialize(i)	(TRUE)
+#define	skbdwin_deinitialize()
 #define	skbdwin_create()
 #define	skbdwin_destroy()
 #define	skbdwin_gethwnd()		(NULL)
@@ -26,6 +27,7 @@ void kdispwin_writeini(void);
 #define	skbdwin_writeini()
 #else
 BOOL skbdwin_initialize(HINSTANCE hPreInst);
+void skbdwin_deinitialize(void);
 void skbdwin_create(void);
 void skbdwin_destroy(void);
 HWND skbdwin_gethwnd(void);

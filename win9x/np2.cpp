@@ -1687,6 +1687,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		kdispwin_writeini();
 		skbdwin_writeini();
 	}
+	skbdwin_deinitialize();
 
 	TRACETERM();
 	_MEM_USED("report.txt");

@@ -416,6 +416,8 @@ typedef struct {
 	HWND		hwnd;
 	WINLOCEX	wlex;
 	DD2HDL		dd2hdl;
+	int			width;
+	int			height;
 } SKBDWIN;
 
 typedef struct {
@@ -466,8 +468,8 @@ static void skpaintmsg(HWND hWnd) {
 	GetClientRect(hWnd, &rect);
 	draw.left = 0;
 	draw.top = 0;
-	draw.right = min(SOFTKBD_WIDTH, rect.right - rect.left);
-	draw.bottom = min(SOFTKBD_HEIGHT, rect.bottom - rect.top);
+	draw.right = min(skbdwin.width, rect.right - rect.left);
+	draw.bottom = min(skbdwin.height, rect.bottom - rect.top);
 	hdc = BeginPaint(hWnd, &ps);
 	vram = dd2_bsurflock(skbdwin.dd2hdl);
 	if (vram) {
@@ -483,7 +485,7 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	switch(msg) {
 		case WM_CREATE:
 			np2class_wmcreate(hWnd);
-			winloc_setclientsize(hWnd, SOFTKBD_WIDTH, SOFTKBD_HEIGHT);
+			winloc_setclientsize(hWnd, skbdwin.width, skbdwin.height);
 			np2class_windowtype(hWnd, (skbdcfg.type & 1) + 1);
 			break;
 
@@ -589,7 +591,13 @@ BOOL skbdwin_initialize(HINSTANCE hPreInst) {
 			return(FAILURE);
 		}
 	}
+	softkbd_initialize();
 	return(SUCCESS);
+}
+
+void skbdwin_deinitialize(void) {
+
+	softkbd_deinitialize();
 }
 
 void skbdwin_create(void) {
@@ -600,11 +608,14 @@ void skbdwin_create(void) {
 		return;
 	}
 	ZeroMemory(&skbdwin, sizeof(skbdwin));
+	if (softkbd_getsize(&skbdwin.width, &skbdwin.height) != SUCCESS) {
+		return;
+	}
 	hwnd = CreateWindow(np2skclass, np2skcaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						skbdcfg.posx, skbdcfg.posy,
-						SOFTKBD_WIDTH, SOFTKBD_HEIGHT,
+						skbdwin.width, skbdwin.height,
 						NULL, NULL, hInst, NULL);
 	skbdwin.hwnd = hwnd;
 	if (hwnd == NULL) {
@@ -612,7 +623,7 @@ void skbdwin_create(void) {
 	}
 	ShowWindow(hwnd, SW_SHOWNOACTIVATE);
 	UpdateWindow(hwnd);
-	skbdwin.dd2hdl = dd2_create(hwnd, SOFTKBD_WIDTH, SOFTKBD_HEIGHT);
+	skbdwin.dd2hdl = dd2_create(hwnd, skbdwin.width, skbdwin.height);
 	if (skbdwin.dd2hdl == NULL) {
 		goto skcre_err2;
 	}

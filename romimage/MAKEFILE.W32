@@ -1,5 +1,5 @@
 AS		= nasmw
-TS		= bin2txt
+TS		= ..\bin\bin2txt
 AOPT	= -f bin
 OBJ		= ..\obj\romrel
 
@@ -11,22 +11,22 @@ $(OBJ):
 
 
 ..\bios\startup.res: $(OBJ)\startup.bin
-	$(TS) $(OBJ)\startup.bin nosyscode > $*.res
+	$(TS) $(OBJ)\startup.bin $*.res -snosyscode
 
 ..\bios\biosfd80.res: $(OBJ)\biosfd80.bin
-	$(TS) $(OBJ)\biosfd80.bin biosfd80 > $*.res
+	$(TS) $(OBJ)\biosfd80.bin $*.res -sbiosfd80
 
 ..\fdd\hddboot.res: $(OBJ)\hddboot.bin
-	$(TS) $(OBJ)\hddboot.bin hdddiskboot > $*.res
+	$(TS) $(OBJ)\hddboot.bin $*.res -shdddiskboot
 
 ..\cbus\idebios.res: $(OBJ)\idebios.bin
-	$(TS) $(OBJ)\idebios.bin idebios > $*.res
+	$(TS) $(OBJ)\idebios.bin $*.res -sidebios
 
 ..\cbus\sasibios.res: $(OBJ)\sasibios.bin
-	$(TS) $(OBJ)\sasibios.bin sasibios > $*.res
+	$(TS) $(OBJ)\sasibios.bin $*.res -ssasibios
 
 ..\cbus\scsibios.res: $(OBJ)\scsibios.bin
-	$(TS) $(OBJ)\scsibios.bin scsibios > $*.res
+	$(TS) $(OBJ)\scsibios.bin $*.res -sscsibios
 
 
 $(OBJ)\biosfd80.bin:
