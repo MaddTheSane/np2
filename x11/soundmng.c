@@ -95,9 +95,9 @@ static BOOL nosound_setup(void);
 static void PARTSCALL (*fnmix)(SINT16* dst, const SINT32* src, UINT size);
 
 #if defined(__GNUC__) && (defined(i386) || defined(__i386__))
-void PARTSCALL _satuation_s16(SINT16 *dst, const SINT32 *src, UINT size);
-void PARTSCALL _satuation_s16x(SINT16 *dst, const SINT32 *src, UINT size);
-void PARTSCALL satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
+void PARTSCALL _saturation_s16(SINT16 *dst, const SINT32 *src, UINT size);
+void PARTSCALL _saturation_s16x(SINT16 *dst, const SINT32 *src, UINT size);
+void PARTSCALL saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 #endif
 
 /*
@@ -232,13 +232,12 @@ soundmng_create(UINT rate, UINT bufmsec)
 		return 0;
 	}
 
-	snddrv_setup();
-
-	if (bufmsec < 50) {
-		bufmsec = 50;
-	} else if (bufmsec > 1000) {
+	if (bufmsec < 20)
+		bufmsec = 20;
+	else if (bufmsec > 1000)
 		bufmsec = 1000;
-	}
+
+	snddrv_setup();
 
 	samples = (rate * bufmsec) / 1000 / 2;
 	samples = calc_blocksize(samples);
@@ -293,6 +292,7 @@ soundmng_destroy(void)
 		(*snddrv.sndstop)();
 		(*snddrv.drvterm)();
 		buffer_destroy();
+		nosound_setup();
 		audio_fd = -1;
 		opened = FALSE;
 	}
@@ -358,12 +358,12 @@ soundmng_setreverse(BOOL reverse)
 #if defined(__GNUC__) && (defined(i386) || defined(__i386__))
 	if (!reverse) {
 		if (mmxflag & (MMXFLAG_NOTSUPPORT|MMXFLAG_DISABLE)) {
-			fnmix = _satuation_s16;
+			fnmix = _saturation_s16;
 		} else {
-			fnmix = satuation_s16mmx;
+			fnmix = saturation_s16mmx;
 		}
 	} else {
-		fnmix = _satuation_s16x;
+		fnmix = _saturation_s16x;
 	}
 #else
 	if (!reverse) {
@@ -659,7 +659,7 @@ snddrv_stop(void)
 
 #if defined(__GNUC__) && (defined(i386) || defined(__i386__))
 void PARTSCALL
-_satuation_s16(SINT16 *dst, const SINT32 *src, UINT size)
+_saturation_s16(SINT16 *dst, const SINT32 *src, UINT size)
 {
 	asm volatile (
 		"movl	%0, %%ecx;"
@@ -690,7 +690,7 @@ _satuation_s16(SINT16 *dst, const SINT32 *src, UINT size)
 }
 
 void PARTSCALL
-_satuation_s16x(SINT16 *dst, const SINT32 *src, UINT size)
+_saturation_s16x(SINT16 *dst, const SINT32 *src, UINT size)
 {
 
 	asm volatile (
@@ -733,7 +733,7 @@ _satuation_s16x(SINT16 *dst, const SINT32 *src, UINT size)
 }
 
 void PARTSCALL
-satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
+saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
 {
 
 	asm volatile (
