@@ -212,7 +212,7 @@ static void dlgsetlist(void) {
 	BOOL		append;
 	FLIST		fl;
 	ITEMEXPRM	prm;
-#if defined(OSLANG_EUC)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
 	char		sjis[MAX_PATH];
 #endif
 
@@ -220,6 +220,10 @@ static void dlgsetlist(void) {
 
 #if defined(OSLANG_EUC)
 	codecnv_euc2sjis(sjis, sizeof(sjis),
+									file_getname(filesel.path), (UINT)-1);
+	menudlg_settext(DID_FOLDER, sjis);
+#elif defined(OSLANG_UTF8)
+	oemtext_oem2sjis(sjis, sizeof(sjis),
 									file_getname(filesel.path), (UINT)-1);
 	menudlg_settext(DID_FOLDER, sjis);
 #else
@@ -255,6 +259,9 @@ static void dlgsetlist(void) {
 #if defined(OSLANG_EUC)
 		codecnv_euc2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
 		prm.str = sjis;
+#elif defined(OSLANG_UTF8)
+		oemtext_oem2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
+		prm.str = sjis;
 #else
 		prm.str = fl->name;
 #endif
@@ -266,7 +273,7 @@ static void dlgsetlist(void) {
 
 static void dlginit(void) {
 
-#if defined(OSLANG_EUC)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
 	char	sjis[MAX_PATH];
 #endif
 
@@ -274,6 +281,10 @@ static void dlginit(void) {
 	menudlg_seticon(DID_PARENT, MICON_FOLDERPARENT);
 #if defined(OSLANG_EUC)
 	codecnv_euc2sjis(sjis, sizeof(sjis),
+									file_getname(filesel.path), (UINT)-1);
+	menudlg_settext(DID_FILE, sjis);
+#elif defined(OSLANG_UTF8)
+	oemtext_oem2sjis(sjis, sizeof(sjis),
 									file_getname(filesel.path), (UINT)-1);
 	menudlg_settext(DID_FILE, sjis);
 #else
@@ -309,7 +320,7 @@ static BOOL dlgupdate(void) {
 static void dlgflist(void) {
 
 	FLIST	fl;
-#if defined(OSLANG_EUC)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
 	char	sjis[MAX_PATH];
 #endif
 
@@ -317,6 +328,9 @@ static void dlgflist(void) {
 	if ((fl != NULL) && (!fl->isdir)) {
 #if defined(OSLANG_EUC)
 		codecnv_euc2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
+		menudlg_settext(DID_FILE, sjis);
+#elif defined(OSLANG_UTF8)
+		oemtext_oem2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
 		menudlg_settext(DID_FILE, sjis);
 #else
 		menudlg_settext(DID_FILE, fl->name);

@@ -31,7 +31,7 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 		if (c == 0) {
 			break;
 		}
-#if defined(OSLANG_SJIS) || defined(OSLANG_EUC)
+#if defined(OSLANG_SJIS) || defined(OSLANG_EUC) || defined(OSLANG_UTF8)
 		if ((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
 			if ((!slen) || (src[0] == '\0')) {
 				break;
@@ -77,18 +77,23 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 
 static BOOL realname2fcb(char *fcbname, FLINFO *fli) {
 
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+	char	sjis[MAX_PATH];
+#endif
 	char	*realname;
 	char	*ext;
 
 #if defined(OSLANG_EUC)
-	char		sjis[MAX_PATH];
-
 	codecnv_euc2sjis(sjis, sizeof(sjis), fli->path, sizeof(fli->path));
+	realname = sjis;
+#elif defined(OSLANG_UTF8)
+	oemtext_oem2sjis(sjis, sizeof(sjis), fli->path, sizeof(fli->path));
 	realname = sjis;
 #else
 	realname = fli->path;
 #endif
 	FillMemory(fcbname, 11, ' ');
+	// ToDo: SJISÇ…ïœä∑çœÇ›Ç»ÇÃÇ… OEMàÀë∂ÇµÇƒÇÈ
 	ext = file_getext(realname);
 	rcnvfcb(fcbname+0, 8, realname, ext - realname);
 	rcnvfcb(fcbname+8, 3, ext, (UINT)-1);

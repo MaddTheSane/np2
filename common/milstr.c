@@ -1,27 +1,26 @@
 #include	"compiler.h"
 
 
-
-// ---- ANK
+// ---- ANK / UCS2 / UCS4
 
 #if defined(SUPPORT_ANK)
-int milank_charsize(const char *str) {
+int milank_charsize(const OEMCHAR *str) {
 
 	return((str[0] != '\0')?1:0);
 }
 
-int milank_cmp(const char *str, const char *cmp) {
+int milank_cmp(const OEMCHAR *str, const OEMCHAR *cmp) {
 
 	int		s;
 	int		c;
 
 	do {
-		s = (BYTE)*str++;
-		if (((s - 'a') & 0xff) < 26) {
+		s = *str++;
+		if ((s >= 'a') && (s <= 'z')) {
 			s -= 0x20;
 		}
-		c = (BYTE)*cmp++;
-		if (((c - 'a') & 0xff) < 26) {
+		c = *cmp++;
+		if ((c >= 'a') && (c <= 'z')) {
 			c -= 0x20;
 		}
 		if (s != c) {
@@ -31,28 +30,28 @@ int milank_cmp(const char *str, const char *cmp) {
 	return(0);
 }
 
-int milank_memcmp(const char *str, const char *cmp) {
+int milank_memcmp(const OEMCHAR *str, const OEMCHAR *cmp) {
 
 	int		s;
 	int		c;
 
 	do {
-		c = (BYTE)*cmp++;
+		c = *cmp++;
 		if (c == 0) {
 			return(0);
 		}
-		if (((c - 'a') & 0xff) < 26) {
+		if ((c >= 'a') && (c <= 'z')) {
 			c -= 0x20;
 		}
-		s = (BYTE)*str++;
-		if (((s - 'a') & 0xff) < 26) {
+		s = *str++;
+		if ((s >= 'a') && (s <= 'z')) {
 			s -= 0x20;
 		}
 	} while(s == c);
 	return((s > c)?1:-1);
 }
 
-void milank_ncpy(char *dst, const char *src, int maxlen) {
+void milank_ncpy(OEMCHAR *dst, const OEMCHAR *src, int maxlen) {
 
 	int		i;
 
@@ -65,7 +64,7 @@ void milank_ncpy(char *dst, const char *src, int maxlen) {
 	}
 }
 
-void milank_ncat(char *dst, const char *src, int maxlen) {
+void milank_ncat(OEMCHAR *dst, const OEMCHAR *src, int maxlen) {
 
 	int		i;
 	int		j;
@@ -84,7 +83,7 @@ void milank_ncat(char *dst, const char *src, int maxlen) {
 	}
 }
 
-char *milank_chr(const char *str, int c) {
+OEMCHAR *milank_chr(const OEMCHAR *str, int c) {
 
 	int		s;
 
@@ -92,7 +91,7 @@ char *milank_chr(const char *str, int c) {
 		do {
 			s = *str;
 			if (s == c) {
-				return((char *)str);
+				return((OEMCHAR *)str);
 			}
 			str++;
 		} while(s);
@@ -437,14 +436,14 @@ int milutf8_charsize(const char *str) {
 	else if (!(str[0] & 0x80)) {
 		return(1);
 	}
-	else if ((src[0] & 0xe0) == 0xc0) {
-		if ((src[1] & 0xc0) == 0x80) {
+	else if ((str[0] & 0xe0) == 0xc0) {
+		if ((str[1] & 0xc0) == 0x80) {
 			return(2);
 		}
 	}
-	else if ((src[0] & 0xf0) == 0xe0) {
-		if (((src[1] & 0xc0) == 0x80) ||
-			((src[2] & 0xc0) == 0x80)) {
+	else if ((str[0] & 0xf0) == 0xe0) {
+		if (((str[1] & 0xc0) == 0x80) ||
+			((str[2] & 0xc0) == 0x80)) {
 			return(3);
 		}
 	}
@@ -597,25 +596,25 @@ int milstr_extendcmp(const char *str, const char *cmp) {
 	return((s > c)?1:-1);
 }
 
-char *milstr_nextword(const char *str) {
+OEMCHAR *milstr_nextword(const OEMCHAR *str) {
 
 	if (str) {
-		while(!(((*str) - 1) & 0xe0)) {
+		while((*str > '\0') && (*str <= ' ')) {
 			str++;
 		}
 	}
-	return((char *)str);
+	return((OEMCHAR *)str);
 }
 
-int milstr_getarg(char *str, char *arg[], int maxarg) {
+int milstr_getarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg) {
 
 	int		ret = 0;
-	char	*p;
+	OEMCHAR	*p;
 	BOOL	quot;
 
 	while(maxarg--) {
 		quot = FALSE;
-		while((*str) && (((BYTE)*str) <= 0x20)) {
+		while((*str > '\0') && (*str <= ' ')) {
 			str++;
 		}
 		if (*str == '\0') {
@@ -624,10 +623,10 @@ int milstr_getarg(char *str, char *arg[], int maxarg) {
 		arg[ret++] = str;
 		p = str;
 		while(*str) {
-			if (*str == 0x22) {
+			if (*str == '\"') {
 				quot = !quot;
 			}
-			else if ((((BYTE)*str) > 0x20) || (quot)) {
+			else if ((quot) || (*str < '\0') || (*str > ' ')) {
 				*p++ = *str;
 			}
 			else {
@@ -641,7 +640,7 @@ int milstr_getarg(char *str, char *arg[], int maxarg) {
 	return(ret);
 }
 
-long milstr_solveHEX(const char *str) {
+long milstr_solveHEX(const OEMCHAR *str) {
 
 	long	ret;
 	int		i;
@@ -668,7 +667,7 @@ long milstr_solveHEX(const char *str) {
 	return(ret);
 }
 
-long milstr_solveINT(const char *str) {
+long milstr_solveINT(const OEMCHAR *str) {
 
 	long	ret;
 	int		c;
@@ -697,7 +696,7 @@ long milstr_solveINT(const char *str) {
 	return(ret * s);
 }
 
-char *milstr_list(const char *lststr, UINT pos) {
+OEMCHAR *milstr_list(const OEMCHAR *lststr, UINT pos) {
 
 	if (lststr) {
 		while(pos) {
@@ -706,6 +705,6 @@ char *milstr_list(const char *lststr, UINT pos) {
 			}
 		}
 	}
-	return((char *)lststr);
+	return((OEMCHAR *)lststr);
 }
 

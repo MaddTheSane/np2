@@ -83,15 +83,21 @@ FLISTH file_list1st(const char *dir, FLINFO *fli);
 BOOL file_listnext(FLISTH hdl, FLINFO *fli);
 void file_listclose(FLISTH hdl);
 
+#if defined(OSLANG_SJIS)
 #define	file_cpyname(a, b, c)	milsjis_ncpy(a, b, c)
 #define	file_catname(a, b, c)	milsjis_ncat(a, b, c)
 #define	file_cmpname(a, b)		milsjis_cmp(a, b)
-char *file_getname(char *path);
-void file_cutname(char *path);
-char *file_getext(char *path);
-void file_cutext(char *path);
-void file_cutseparator(char *path);
-void file_setseparator(char *path, int maxlen);
+#else
+#define	file_cpyname(a, b, c)	milutf8_ncpy(a, b, c)
+#define	file_catname(a, b, c)	milutf8_ncat(a, b, c)
+#define	file_cmpname(a, b)		milutf8_cmp(a, b)
+#endif
+OEMCHAR *file_getname(const OEMCHAR *path);
+void file_cutname(OEMCHAR *path);
+OEMCHAR *file_getext(const OEMCHAR *path);
+void file_cutext(OEMCHAR *path);
+void file_cutseparator(OEMCHAR *path);
+void file_setseparator(OEMCHAR *path, int maxlen);
 
 #ifdef __cplusplus
 }

@@ -283,12 +283,13 @@ const INITBL	*pterm;
 
 // ----
 
-#if defined(UNICODE) && defined(CHARSET_OEM)
+#if defined(OSLANG_UTF8)
 static const char ini_title[] = "NekoProjectIICE";
+static const char inifile[] = "np2ce.cfg";
 #else
 static const char ini_title[] = "NekoProjectII";
-#endif
 static const char inifile[] = "np2.cfg";
+#endif
 
 static const INITBL iniitem[] = {
 	{"pc_model", INITYPE_STR,		&np2cfg.model,

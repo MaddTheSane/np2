@@ -4,9 +4,7 @@
 #include	<stddef.h>
 
 #define	BYTESEX_LITTLE
-#if defined(UNICODE) && defined(CHARSET_OEM)
-#define	OSLANG_UTF8
-#else
+#if !defined(UNICODE) 
 #define	OSLANG_SJIS
 #endif
 #define	OSLINEBREAK_CRLF
@@ -39,11 +37,13 @@ typedef	unsigned int	UINT32;
 
 
 #include	"common.h"
+#include	"oemtext.h"
 #include	"milstr.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"
 #include	"trace.h"
+#include	"ucscnv.h"
 
 
 #define	GETTICK()	GetTickCount()
@@ -57,10 +57,9 @@ typedef	unsigned int	UINT32;
 #define	VERMOUTH_LIB
 #define SOUND_CRITICAL
 
-#if defined(UNICODE) && defined(CHARSET_OEM)
-#define	SUPPORT_UTF8
-#else
 #define	SUPPORT_SJIS
+#if defined(OSLANG_UTF8)
+#define	SUPPORT_UTF8
 #endif
 
 #define	SUPPORT_16BPP

@@ -55,6 +55,13 @@
 　　・ソフトウェアキーボードを有効にした
 
 
+　・内部変更
+
+　　　char *file_getext(const char *path);
+　　　char *file_getname(const char *path);
+　　　(constが付きます)
+
+
 
 // ----
 

@@ -329,8 +329,12 @@ static DWORD GetModuleFileName_A(HMODULE hModule,
 		FileNameW = (TCHAR *)_MALLOC(nSize * sizeof(TCHAR), "ModuleFile");
 		if (FileNameW) {
 			len = GetModuleFileName(hModule, FileNameW, nSize);
+#if defined(OSLANG_SJIS)
 			nSize = WideCharToMultiByte(CP_ACP, 0, FileNameW, -1,
 										lpFileName, nSize, NULL, NULL);
+#else
+			nSize = ucscnv_ucs2toutf8(lpFileName, (UINT)-1, FileNameW, nSize);
+#endif
 			if (nSize) {
 				nSize--;
 			}
