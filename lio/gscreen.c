@@ -8,7 +8,6 @@
 #include	"vram.h"
 
 
-
 typedef struct {
 	BYTE	mode;
 	BYTE	sw;
@@ -53,19 +52,22 @@ REG8 lio_ginit(LIOWORK lio) {
 	iocore_out8(0x006a, 0);
 	gdc_paletteinit();
 
-	lio->mem.scrnmode = 0;
-	lio->mem.pos = 0;
+	ZeroMemory(&lio->mem, sizeof(lio->mem));
+//	lio->mem.scrnmode = 0;
+//	lio->mem.pos = 0;
 	lio->mem.plane = 1;
-	lio->mem.bgcolor = 0;
+//	lio->mem.bgcolor = 0;
 	lio->mem.fgcolor = 7;
 	for (i=0; i<8; i++) {
 		lio->mem.color[i] = (UINT8)i;
 	}
-	STOREINTELWORD(lio->mem.viewx1, 0);
-	STOREINTELWORD(lio->mem.viewy1, 0);
+//	STOREINTELWORD(lio->mem.viewx1, 0);
+//	STOREINTELWORD(lio->mem.viewy1, 0);
 	STOREINTELWORD(lio->mem.viewx2, 639);
 	STOREINTELWORD(lio->mem.viewy2, 399);
 	lio->palmode = 0;
+	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 }
 
@@ -201,6 +203,7 @@ REG8 lio_gscreen(LIOWORK lio) {
 	TRACEOUT(("bios1842 - %.2x", mode));
 	bios0x18_42(mode);
 	iocore_out8(0x00a6, lio->mem.access);
+	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
 	return(LIO_SUCCESS);
 
 gscreen_err5:
@@ -232,6 +235,7 @@ REG8 lio_gview(LIOWORK lio) {
 	STOREINTELWORD(lio->mem.viewy1, (UINT16)y1);
 	STOREINTELWORD(lio->mem.viewx2, (UINT16)x2);
 	STOREINTELWORD(lio->mem.viewy2, (UINT16)y2);
+	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
 	return(LIO_SUCCESS);
 }
 
@@ -266,6 +270,8 @@ REG8 lio_gcolor1(LIOWORK lio) {
 		}
 		lio->palmode = dat.palmode;
 	}
+	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
+	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 
 gcolor1_err5:
@@ -296,6 +302,7 @@ REG8 lio_gcolor2(LIOWORK lio) {
 		gdc_setanalogpal(dat.pal, offsetof(RGB32, p.g),
 												(UINT8)(dat.color2 & 0x0f));
 	}
+	i286_memstr_write(CPU_DS, 0x0620, &lio->mem, sizeof(lio->mem));
 	return(LIO_SUCCESS);
 
 gcolor2_err5:

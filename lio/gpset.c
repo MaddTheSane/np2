@@ -88,7 +88,7 @@ const BYTE	*ptr;
 				ptr = mem + addr + lioplaneadrs[pl];
 				ret += (((*ptr) >> sft) & 1) << pl;
 			}
-			if (lio->palmode == 2) {
+			if (lio->draw.flag & LIODRAW_4BPP) {
 				ptr = mem + addr + lioplaneadrs[3];
 				ret += (((*ptr) >> sft) & 1) << 3;
 			}

@@ -9,9 +9,6 @@
 #include	"lio.h"
 
 
-static	_LIOWORK	liowork;
-
-
 void lio_initialize(void) {
 
 	UINT	i;
@@ -28,44 +25,44 @@ void lio_initialize(void) {
 
 void bios_lio(REG8 cmd) {
 
-	LIOWORK	lio;
-	UINT8	ret;
+	_LIOWORK	lio;
+	UINT8		ret;
 
 //	TRACEOUT(("lio command %.2x", cmd));
-
-	lio = &liowork;
-	lio->wait = 500;
+	i286_memstr_read(CPU_DS, 0x0620, &lio.mem, sizeof(lio.mem));
+	lio.palmode = i286_membyte_read(CPU_DS, 0x0a08);
+	lio.wait = 500;
 	switch(cmd) {
 		case 0x00:			// a0: GINIT
-			ret = lio_ginit(lio);
+			ret = lio_ginit(&lio);
 			break;
 
 		case 0x01:			// a1: GSCREEN
-			ret = lio_gscreen(lio);
+			ret = lio_gscreen(&lio);
 			break;
 
 		case 0x02:			// a2: GVIEW
-			ret = lio_gview(lio);
+			ret = lio_gview(&lio);
 			break;
 
 		case 0x03:			// a3: GCOLOR1
-			ret = lio_gcolor1(lio);
+			ret = lio_gcolor1(&lio);
 			break;
 
 		case 0x04:			// a4: GCOLOR2
-			ret = lio_gcolor2(lio);
+			ret = lio_gcolor2(&lio);
 			break;
 
 		case 0x05:			// a5: GCLS
-			ret = lio_gcls(lio);
+			ret = lio_gcls(&lio);
 			break;
 
 		case 0x06:			// a6: GPSET
-			ret = lio_gpset(lio);
+			ret = lio_gpset(&lio);
 			break;
 
 		case 0x07:			// a7: GLINE
-			ret = lio_gline(lio);
+			ret = lio_gline(&lio);
 			break;
 
 //		case 0x08:			// a8: GCIRCLE
@@ -78,22 +75,22 @@ void bios_lio(REG8 cmd) {
 //			break;
 
 		case 0x0b:			// ab: GGET
-			ret = lio_gget(lio);
+			ret = lio_gget(&lio);
 			break;
 
 		case 0x0c:			// ac: GPUT1
-			ret = lio_gput1(lio);
+			ret = lio_gput1(&lio);
 			break;
 
 		case 0x0d:			// ad: GPUT2
-			ret = lio_gput2(lio);
+			ret = lio_gput2(&lio);
 			break;
 
 //		case 0x0e:			// ae: GROLL
 //			break;
 
 		case 0x0f:			// af: GPOINT2
-			ret = lio_gpoint2(lio);
+			ret = lio_gpoint2(&lio);
 			break;
 
 //		case 0x10:			// ce: GCOPY
@@ -104,7 +101,7 @@ void bios_lio(REG8 cmd) {
 			break;
 	}
 	CPU_AH = ret;
-	gdcsub_setslavewait(lio->wait);
+	gdcsub_setslavewait(lio.wait);
 }
 
 
@@ -200,7 +197,7 @@ static void pixed8(const _LIOWORK *lio, UINT addr, REG8 bit, REG8 pal) {
 		else {
 			ptr[VRAM_G] &= ~bit;
 		}
-		if (lio->palmode == 2) {
+		if (lio->draw.flag & LIODRAW_4BPP) {
 			if (pal & 8) {
 				ptr[VRAM_E] |= bit;
 			}

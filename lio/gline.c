@@ -140,7 +140,7 @@ static void gline(const _LIOWORK *lio, const LINEPT *lp) {
 							(REG8)((lp->pal & 2)?GDCOPE_SET:GDCOPE_CLEAR));
 		gdcsub_vectl(csrw + 0xc000, &vect, pat,
 							(REG8)((lp->pal & 4)?GDCOPE_SET:GDCOPE_CLEAR));
-		if (lio->palmode == 2) {
+		if (lio->draw.flag & LIODRAW_4BPP) {
 			gdcsub_vectl(csrw, &vect, pat,
 							(REG8)((lp->pal & 8)?GDCOPE_SET:GDCOPE_CLEAR));
 		}
@@ -210,8 +210,6 @@ REG8 lio_gline(LIOWORK lio) {
 	else {
 		lp.pat = 0xffff;
 	}
-
-
 	if (dat.pal == 0xff) {
 		dat.pal = lio->mem.fgcolor;
 	}
