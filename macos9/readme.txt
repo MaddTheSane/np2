@@ -19,7 +19,7 @@
 ・推奨動作環境
 
 　　G3以上のプロセッサ
-　　MacOS9Microsoft-Windows 4.00(Windows95/NT4)
+　　MacOS9/MacOSX (carbon1.00)
 
 
 
