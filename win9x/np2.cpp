@@ -60,7 +60,12 @@ static	char		szClassName[] = "NP2-MainWindow";
 		BOOL		winui_en;
 
 		NP2OSCFG	np2oscfg = {
-						"Neko Project II", "NP2",
+#if !defined(SUPPORT_PC9821)
+						"Neko Project II",
+#else
+						"Neko Project 21",
+#endif
+						"NP2",
 						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 1, 0, 0,
 						0, 0, KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
@@ -209,7 +214,7 @@ static void wincentering(HWND hWnd) {
 	MoveWindow(hWndMain, np2oscfg.winx, np2oscfg.winy, width, height, TRUE);
 }
 
-void np2active_renewal(void) {									// ver0.30
+void np2active_renewal(void) {										// ver0.30
 
 	if (np2break & (~NP2BREAK_MAIN)) {
 		np2stopemulate = 2;
@@ -776,7 +781,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			winuileave();
 			break;
 
-		case IDM_MIDIPANIC:									// ver0.29
+		case IDM_MIDIPANIC:
 			rs232c_midipanic();
 			mpu98ii_midipanic();
 			pc9861k_midipanic();
@@ -982,7 +987,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					viewer_open();
 					break;
 
-				case IDM_SCRNMUL4:								// ver0.26
+				case IDM_SCRNMUL4:
 				case IDM_SCRNMUL6:
 				case IDM_SCRNMUL8:
 				case IDM_SCRNMUL10:
@@ -1210,7 +1215,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			break;
 
-		case WM_MBUTTONDOWN:									// ver0.26
+		case WM_MBUTTONDOWN:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
 			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
 			sysmng_update(SYS_UPDATECFG);
@@ -1409,7 +1414,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 	TRACEINIT();
 
-	if (np2oscfg.KEYBOARD >= KEY_TYPEMAX) {							// ver0.28
+	if (np2oscfg.KEYBOARD >= KEY_TYPEMAX) {
 		int keytype = GetKeyboardType(1);
 		if ((keytype & 0xff00) == 0x0d00) {
 			np2oscfg.KEYBOARD = KEY_PC98;
@@ -1491,8 +1496,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	xmenu_initialize();
 	DrawMenuBar(hWnd);
 
-	// ver0.30
-	if (file_attr_c(np2help) == (short)-1) {
+	if (file_attr_c(np2help) == (short)-1) {						// ver0.30
 		EnableMenuItem(GetMenu(hWnd), IDM_HELP, MF_GRAYED);
 	}
 
@@ -1501,7 +1505,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	sysmenu_setwinsnap(np2oscfg.WINSNAP);
 	sysmenu_setbackground(np2oscfg.background);
 	sysmenu_setbgsound(np2oscfg.background);
-	sysmenu_setscrnmul(8);										// ver0.26
+	sysmenu_setscrnmul(8);
 
 	scrnmode = 0;
 	if (np2arg.fullscreen) {
@@ -1580,7 +1584,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 #endif
 
-//	リセットしてから… コマンドラインのディスク挿入。				// ver0.29
+//	リセットしてから… コマンドラインのディスク挿入。
 	for (i=0; i<4; i++) {
 		if (np2arg.disk[i]) {
 			milstr_ncpy(diskdrv_fname[i], np2arg.disk[i], MAX_PATH);
@@ -1727,7 +1731,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	_MEM_USED("report.txt");
 	dosio_term();
 
-	viewer_term();												// ver0.30
+	viewer_term();													// ver0.30
 
 	return(msg.wParam);
 }

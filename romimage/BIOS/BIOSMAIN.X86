@@ -1,8 +1,8 @@
 
 biosmain:		sti
-				call	biosinit
+				jmp		biosinit
 
-				test	byte [0x0480], 2
+biosmain2:		test	byte [0x0480], 2
 				je		short .cpuided
 
 				CPU		286

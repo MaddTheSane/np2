@@ -11,7 +11,11 @@
 
 static	SIZE	aboutsize;
 
+#if !defined(SUPPORT_PC9821)
 static const char str_np2title[] = "Neko Project II  ";
+#else
+static const char str_np2title[] = "Neko Project 21  ";
+#endif
 static const char np2infostr[] = 								\
 						"CPU: %CPU% %CLOCK%\n"					\
 						"MEM: %MEM1%\n"							\

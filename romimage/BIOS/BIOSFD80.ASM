@@ -85,7 +85,7 @@ itfcall:		nop						; 80
 
 				align	4
 biosinit:		nop						; 84
-				ret
+				jmp		biosmain2
 
 				align	4
 bios09:			nop						; 88

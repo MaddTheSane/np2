@@ -350,6 +350,10 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_INIT:		// ÉuÅ[Ég
+#if 1		// for RanceII
+			bios_memclear();
+#endif
+			bios_vectorset();
 			bios_reinitbyswitch();
 			bios_vectorset();
 			bios_screeninit();
