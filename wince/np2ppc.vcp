@@ -9848,6 +9848,7 @@ DEP_CPP_NP2_C=\
 	".\inputmng.h"\
 	".\np2.h"\
 	".\scrnmng.h"\
+	".\softkbd.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
 	".\sysmng.h"\
@@ -9968,6 +9969,7 @@ DEP_CPP_SCRNM=\
 	"..\vram\scrndraw.h"\
 	".\nekop2.res"\
 	".\scrnmng.h"\
+	".\softkbd.res"\
 	".\wce\compiler.h"\
 	{$(INCLUDE)}"gx.h"\
 	
@@ -9985,6 +9987,91 @@ DEP_CPP_SCRNM=\
 	
 NODEP_CPP_SCRNM=\
 	".\x.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\SOFTKBD.CPP
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+DEP_CPP_SOFTK=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\np2.h"\
+	".\softkbd.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SOFTK=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\np2.h"\
+	".\softkbd.h"\
+	".\wce\compiler.h"\
 	
 
 !ENDIF 
