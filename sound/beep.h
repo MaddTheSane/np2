@@ -42,6 +42,7 @@ extern "C" {
 extern	_BEEP		beep;
 
 void beep_initialize(UINT rate);
+void beep_deinitialize(void);
 void beep_setvol(UINT vol);
 void beep_changeclock(void);
 

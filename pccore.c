@@ -194,6 +194,7 @@ static void sound_term(void) {
 	soundmng_stop();
 	amd98_deinitialize();
 	rhythm_deinitialize();
+	beep_deinitialize();
 	fddmtrsnd_deinitialize();
 	sound_destroy();
 }

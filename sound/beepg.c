@@ -144,26 +144,6 @@ const BPEVENT	*bev;
 	bp->events = 0;
 }
 
-static void rategenerate(BEEP bp, SINT32 *pcm, UINT count) {
-
-	UINT	vol;
-	SINT32	samp;
-	UINT	r;
-
-	vol = beepcfg.vol << 8;
-	do {
-		samp = 0;
-		r = 4;
-		do {
-			bp->cnt += bp->hz;
-			samp += vol * ((bp->cnt & 0x8000)?1:-1);
-		} while(--r);
-		pcm[0] += samp;
-		pcm[1] += samp;
-		pcm += 2;
-	} while(--count);
-}
-
 void SOUNDCALL beep_getpcm(BEEP bp, SINT32 *pcm, UINT count) {
 
 	if ((count) && (beepcfg.vol)) {

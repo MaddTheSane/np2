@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"dosio.h"
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -11,11 +12,44 @@
 	BEEPCFG		beepcfg;
 
 
+// #define	BEEPLOG
+
+#if defined(BEEPLOG)
+static struct {
+	FILEH	fh;
+	UINT	events;
+	UINT32	event[0x10000];
+} bplog;
+
+static void beeplogflash(void) {
+
+	if ((bplog.fh != FILEH_INVALID) && (bplog.events)) {
+		file_write(bplog.fh, bplog.event, bplog.events * sizeof(UINT32));
+		bplog.events = 0;
+	}
+}
+#endif
+
+
 void beep_initialize(UINT rate) {
 
 	beepcfg.rate = rate;
 	beepcfg.vol = 2;
-//	beepcfg.puchibase = (rate * 3) / (11025 * 2);
+#if defined(BEEPLOG)
+	bplog.fh = file_create("beeplog");
+	bplog.events = 0;
+#endif
+}
+
+void beep_deinitialize(void) {
+
+#if defined(BEEPLOG)
+	beeplogflash();
+	if (bplog.fh != FILEH_INVALID) {
+		file_close(bplog.fh);
+		bplog.fh = FILEH_INVALID;
+	}
+#endif
 }
 
 void beep_setvol(UINT vol) {
@@ -53,7 +87,6 @@ void beep_hzset(UINT16 cnt) {
 			return;
 		}
 	}
-//	beep.puchi = beepcfg.puchibase;
 }
 
 void beep_modeset(void) {
@@ -61,17 +94,10 @@ void beep_modeset(void) {
 	UINT8	newmode;
 
 	newmode = (pit.ch[1].ctrl >> 2) & 3;
-//	beep.puchi = beepcfg.puchibase;
 	if (beep.mode != newmode) {
 		sound_sync();
 		beep.mode = newmode;
-#if 1
 		beep_eventinit();
-#else
-		if (!newmode) {					// mode:#0, #1
-			beep_eventinit();
-		}
-#endif
 	}
 }
 
@@ -81,9 +107,25 @@ static void beep_eventset(void) {
 	int		enable;
 	SINT32	clock;
 
-	TRACEOUT(("beep.enable = %d %d", beep.low, beep.buz));
 	enable = beep.low & beep.buz;
 	if (beep.enable != enable) {
+#if defined(BEEPLOG)
+		UINT32	tmp;
+		tmp = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
+		if (enable) {
+			tmp |= 0x80000000;
+		}
+		else {
+			tmp &= ~0x80000000;
+		}
+		bplog.event[bplog.events++] = tmp;
+		if (bplog.events >= (sizeof(bplog.event)/sizeof(UINT32))) {
+			beeplogflash();
+		}
+#endif
+		if (beep.events >= (BEEPEVENT_MAX / 2)) {
+			sound_sync();
+		}
 		beep.enable = enable;
 		if (beep.events < BEEPEVENT_MAX) {
 			clock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
@@ -116,12 +158,7 @@ void beep_lheventset(int low) {
 
 	if (beep.low != low) {
 		beep.low = low;
-//		if (!beep.mode) {
-			if (beep.events >= (BEEPEVENT_MAX / 2)) {
-				sound_sync();
-			}
-			beep_eventset();
-//		}
+		beep_eventset();
 	}
 }
 
@@ -130,24 +167,9 @@ void beep_oneventset(void) {
 	int		buz;
 
 	buz = (sysport.c & 8)?0:1;
-
 	if (beep.buz != buz) {
-		sound_sync();
 		beep.buz = buz;
-//		if (buz) {
-//			beep.puchi = beepcfg.puchibase;
-//		}
-#if 1
 		beep_eventset();
-//		beep.cnt = 0;
-#else
-		if (!beep.mode) {
-			beep_eventset();
-		}
-		else {
-			beep.cnt = 0;
-		}
-#endif
 	}
 }
 
