@@ -112,7 +112,7 @@ char bmpfilefolder[MAX_PATH];
 char modulefile[MAX_PATH];
 char statpath[MAX_PATH];
 
-char timidity_cfgfile_path[MAX_PATH] = TIMIDITY_CFGFILE_PATH;
+char timidity_cfgfile_path[MAX_PATH];
 
 
 UINT32

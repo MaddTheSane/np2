@@ -142,10 +142,6 @@ UINT32 gettick();
  * You could specify a complete path, e.g. "/etc/timidity.cfg", and
  * then specify the library directory in the configuration file.
  */
-#ifndef	TIMIDITY_CFGFILE_PATH
-#define	TIMIDITY_CFGFILE_PATH	"timidity.cfg"
-#endif
-
 extern char timidity_cfgfile_path[MAX_PATH];
 #define	TIMIDITY_CFGFILE	timidity_cfgfile_path
 

@@ -203,6 +203,13 @@ main(int argc, char *argv[])
 			}
 		}
 	}
+	if (timidity_cfgfile_path[0] == '\0') {
+		file_cpyname(timidity_cfgfile_path, modulefile,
+		    sizeof(timidity_cfgfile_path));
+		file_cutname(timidity_cfgfile_path);
+		file_catname(timidity_cfgfile_path, "timidity.cfg",
+		    sizeof(timidity_cfgfile_path));
+	}
 
 	dosio_init();
 	file_setcd(modulefile);
