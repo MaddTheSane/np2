@@ -10,7 +10,6 @@ typedef struct {
     
 	BYTE	comfirm;
 	BYTE	resume;
-	//BYTE	statsave;
     
 	BYTE	I286SAVE;
 } NP2OSCFG;
@@ -28,6 +27,4 @@ enum {
 extern	WindowPtr	hWndMain;
 extern	BOOL		np2running;
 extern	NP2OSCFG	np2oscfg;
-
-void toggleMenubar(void);
-#define	VERMOUTH_LIB
+extern	BYTE		scrnmode;

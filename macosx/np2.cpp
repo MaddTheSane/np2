@@ -35,15 +35,13 @@
 #include	"fdefine.h"
 #include	"hid.h"
 #include	"midiopt.h"
+#include	"macalert.h"
+#include	"np2opening.h"
 
+#include	<QuickTime/QuickTime.h>
 #define	USE_RESUME
 #define	NP2OPENING
-
-#ifdef		NP2OPENING
-#include	<QuickTime/QuickTime.h>
 // #define	OPENING_WAIT	1500
-#endif
-
 
 
 		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0, 1, 0};
@@ -53,7 +51,7 @@
 static	UINT		framecnt = 0;
 static	UINT		waitcnt = 0;
 static	UINT		framemax = 1;
-static	BYTE		scrnmode;
+        BYTE		scrnmode;
 
 
 #define DRAG_THRESHOLD		5
@@ -202,8 +200,10 @@ static void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_RESET:
-			pccore_cfgupdate();
-			pccore_reset();
+            if (ResetWarningDialogProc()) {
+                pccore_cfgupdate();
+                pccore_reset();
+            }
 			break;
             
 		case IDM_CONFIGURE:
@@ -327,7 +327,6 @@ static void HandleMenuChoice(long wParam) {
             mouse_running(MOUSE_XOR);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
             sysmng_update(SYS_UPDATECFG);
-            toggleMenubar();
 			break;
             
         case IDM_MIDIOPT:
@@ -594,57 +593,23 @@ static void flagload(const char *ext) {
 
 	char	path[MAX_PATH];
 	char	buf[1024];
-	int		ret;
+	int		ret, r;
 
+    ret = IDOK;
 	getstatfilename(path, ext, sizeof(path));
-	ret = statsave_check(path, buf, sizeof(buf));
-	if (ret == NP2FLAG_SUCCESS) {
+	r = statsave_check(path, buf, sizeof(buf));
+	if (r & (~NP2FLAG_DISKCHG)) {
+		ResumeErrorDialogProc();
+		ret = IDCANCEL;
+	}
+	else if (r & NP2FLAG_DISKCHG) {
+		ret = ResumeWarningDialogProc(buf);
+	}
+	if (ret == IDOK) {
 		statsave_load(path);
 	}
+	return;
 }
-
-#ifdef		NP2OPENING
-static void openingNP2(void) {
-    Rect		srt, bounds;
-    GrafPtr		port;
-    CFURLRef	openingURL;
-    char		buffer[1024];
-    FSRef		fsr;
-    FSSpec		fsc;
-    PicHandle	pict;
-    GraphicsImportComponent	gi;
-    
-    GetPort(&port);
-    SetPortWindowPort(hWndMain);
-    const RGBColor col = {0, 0, 0};
-    SetRect(&bounds, 0, 0, 640, 400);
-    RGBBackColor(&col);
-    EraseRect(&bounds);
-    
-    openingURL=CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("nekop2"), CFSTR("bmp"), NULL);
-    if (openingURL) {
-        if (CFURLGetFSRef(openingURL, &fsr)) {
-            FSPathMakeRef((const UInt8*)buffer, &fsr, NULL);
-            FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fsc, NULL);
-            if (!GetGraphicsImporterForFile(&fsc, &gi)) {
-                if (!GraphicsImportGetNaturalBounds(gi, &srt)) {
-                    OffsetRect( &srt, -srt.left, -srt.top);
-                    GraphicsImportSetBoundsRect(gi, &srt);
-                    GraphicsImportGetAsPicture(gi, &pict);
-                    OffsetRect(&srt, (640-srt.right)/2, (400-srt.bottom)/2);
-                    DrawPicture(pict,&srt);
-                    QDFlushPortBuffer(GetWindowPort(hWndMain), NULL);
-                    KillPicture(pict);
-                }
-                CloseComponent(gi);
-            }
-        }
-        CFRelease(openingURL);
-    }
-    SetPort(port);
-}
-#endif
-
 
 int main(int argc, char *argv[]) {
 
@@ -1035,7 +1000,19 @@ static void setUpCarbonEvent(void) {
 }
 
 bool setupMainWindow(void) {
-#if defined(NP2GCC) && 0
+#if defined(NP2GCC)
+    OSStatus	err;
+    IBNibRef	nibRef;
+
+    err = CreateNibReference(CFSTR("np2"), &nibRef);
+    if (err ==noErr ) {
+        CreateWindowFromNib(nibRef, CFSTR("MainWindow"), &hWndMain);
+        DisposeNibReference ( nibRef);
+    }
+    else {
+         return(false);
+    }
+    
 #else
     Rect wRect;
     
@@ -1056,7 +1033,7 @@ bool setupMainWindow(void) {
     return(true);
 }
 
-static void toggleFullscreen(void) {
+void toggleFullscreen(void) {
     static Ptr 	bkfullscreen;
     static BYTE mouse = 0;
 
@@ -1089,15 +1066,3 @@ static void toggleFullscreen(void) {
     CheckMenuItem(GetMenuHandle(IDM_SCREEN), LoWord(IDM_FULLSCREEN), scrnmode & SCRNMODE_FULLSCREEN);
     soundmng_play();
 }
-
-void toggleMenubar(void) {
-    if (scrnmode & SCRNMODE_FULLSCREEN) {
-        if (!np2oscfg.MOUSE_SW) {
-            ShowMenuBar();
-        }
-        else {
-            HideMenuBar();
-        }
-    }
-}
-

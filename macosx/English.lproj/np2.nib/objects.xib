@@ -4,7 +4,7 @@
   <object name="rootObject" class="NSCustomObject" id="1">
     <string name="customClass">NSApplication</string>
   </object>
-  <array count="233" name="allObjects">
+  <array count="235" name="allObjects">
     <object class="IBCarbonButton" id="311">
       <string name="bounds">264 208 284 278 </string>
       <ostype name="controlSignature">CfCL</ostype>
@@ -572,7 +572,7 @@
                     <string name="bounds">102 124 122 242 </string>
                     <ostype name="controlSignature">26rm</ostype>
                     <ostype name="command">26rm</ostype>
-                    <int name="selectedItem">5</int>
+                    <int name="selectedItem">2</int>
                     <object name="menu" class="IBCarbonMenu" id="804">
                       <string name="title">Popup:</string>
                       <array count="5" name="items">
@@ -580,6 +580,7 @@
                           <string name="title">C8000</string>
                         </object>
                         <object class="IBCarbonMenuItem" id="853">
+                          <boolean name="checked">TRUE</boolean>
                           <string name="title">CC000</string>
                         </object>
                         <object class="IBCarbonMenuItem" id="854">
@@ -589,7 +590,6 @@
                           <string name="title">D4000</string>
                         </object>
                         <object class="IBCarbonMenuItem" id="803">
-                          <boolean name="checked">TRUE</boolean>
                           <string name="title">N/C</string>
                         </object>
                       </array>
@@ -1493,7 +1493,7 @@
             <string name="viewFrame">104 59 125 20 </string>
             <ostype name="controlSignature">MPin</ostype>
             <ostype name="command">MPin</ostype>
-            <int name="selectedItem">4</int>
+            <int name="selectedItem">3</int>
             <object name="menu" class="IBCarbonMenu" id="926">
               <string name="title">Popup:</string>
               <array count="4" name="items">
@@ -1504,10 +1504,10 @@
                   <string name="title">INT1</string>
                 </object>
                 <object class="IBCarbonMenuItem" id="934">
+                  <boolean name="checked">TRUE</boolean>
                   <string name="title">INT2</string>
                 </object>
                 <object class="IBCarbonMenuItem" id="925">
-                  <boolean name="checked">TRUE</boolean>
                   <string name="title">INT5</string>
                 </object>
               </array>
@@ -1572,8 +1572,22 @@
     <reference idRef="947"/>
     <reference idRef="948"/>
     <reference idRef="949"/>
+    <object class="IBCarbonWindow" id="950">
+      <string name="windowRect">102 202 502 842 </string>
+      <string name="title">Neko Project II</string>
+      <object name="rootControl" class="IBCarbonRootControl" id="951">
+        <string name="bounds">0 0 400 640 </string>
+      </object>
+      <boolean name="hasHorizontalZoom">FALSE</boolean>
+      <boolean name="isResizable">FALSE</boolean>
+      <boolean name="hasVerticalZoom">FALSE</boolean>
+      <boolean name="toolbarButton">TRUE</boolean>
+      <int name="themeBrush">-1</int>
+      <int name="windowPosition">1</int>
+    </object>
+    <reference idRef="951"/>
   </array>
-  <array count="233" name="allParents">
+  <array count="235" name="allParents">
     <reference idRef="330"/>
     <reference idRef="331"/>
     <reference idRef="327"/>
@@ -1807,14 +1821,18 @@
     <reference idRef="918"/>
     <reference idRef="918"/>
     <reference idRef="918"/>
+    <reference idRef="1"/>
+    <reference idRef="950"/>
   </array>
-  <dictionary count="11" name="nameTable">
+  <dictionary count="12" name="nameTable">
     <string>ConfigDialog</string>
     <reference idRef="317"/>
     <string>File&apos;s Owner</string>
     <reference idRef="1"/>
     <string>InputWindow</string>
     <reference idRef="892"/>
+    <string>MainWindow</string>
+    <reference idRef="950"/>
     <string>MidiDialog</string>
     <reference idRef="913"/>
     <string>NSCustomView1</string>
@@ -1832,5 +1850,5 @@
     <string>SoundDialog</string>
     <reference idRef="743"/>
   </dictionary>
-  <unsigned_int name="nextObjectID">950</unsigned_int>
+  <unsigned_int name="nextObjectID">952</unsigned_int>
 </object>

@@ -5,6 +5,7 @@
 #include	"menu.h"
 #include	"pccore.h"
 #include	"soundrecording.h"
+#include	"scrnmng.h"
 
 #define	MFCHECK(a)					((a)?1:0)
 #ifdef TARGET_API_MAC_CARBON
@@ -193,6 +194,14 @@ void menu_setmouse(BYTE value) {
 	value &= 1;
 	np2oscfg.MOUSE_SW = value;
 	_CheckMenuItem(GetMenu(IDM_DEVICE), IDM_MOUSE, MFCHECK(value));
+    if (scrnmode & SCRNMODE_FULLSCREEN) {
+        if (!value) {
+            ShowMenuBar();
+        }
+        else {
+            HideMenuBar();
+        }
+    }
 }
 #endif
 
