@@ -573,13 +573,15 @@ I286 pop_ss(void) {								// 17: pop ss
 				mov		SS_BASE, eax
 				mov		SS_FIX, eax
 				cmp		i286core.s.prefix, 0		// 00/06/24
-				je		noprefix
-				call	removeprefix
-				pop		eax
+				jne		prefix_exist
 		noprefix:
 				movzx	ebp, bh
 				GET_NEXTPRE1
 				jmp		i286op[ebp*4]
+
+prefix_exist:	pop		eax						// eax<-offset removeprefix
+				call	eax
+				jmp		noprefix
 		}
 }
 
@@ -2661,7 +2663,21 @@ I286 _popf(void) {								// 9D: popf
 				and		ah, 3
 				cmp		ah, 3
 				sete	I286_TRAP
-				I286IRQCHECKTERM
+
+				test	ah, 2					// fast_intr
+				je		nextop
+				cmp		pic.ext_irq, 0
+				jne		nextop
+				mov		al, pic.pi[0].imr
+				mov		ah, pic.pi[1].imr
+				not		ax
+				test	al, pic.pi[0].irr
+				jne		irqcheck
+				test	al, pic.pi[1].irr
+				jne		irqcheck
+nextop:			ret
+
+irqcheck:		I286IRQCHECKTERM
 		}
 }
 
@@ -3575,7 +3591,21 @@ I286 _iret(void) {								// CF: iret
 				cmp		ah, 3
 				sete	I286_TRAP
 				RESET_XPREFETCH
-				I286IRQCHECKTERM
+
+				test	I286_FLAG, I_FLAG		// fast_intr
+				je		nextop
+				cmp		pic.ext_irq, 0
+				jne		nextop
+				mov		al, pic.pi[0].imr
+				mov		ah, pic.pi[1].imr
+				not		ax
+				test	al, pic.pi[0].irr
+				jne		irqcheck
+				test	al, pic.pi[1].irr
+				jne		irqcheck
+nextop:			ret
+
+irqcheck:		I286IRQCHECKTERM
 		}
 }
 
@@ -4158,14 +4188,27 @@ I286 _sti(void) {								// FB: sti
 		__asm {
 				GET_NEXTPRE1
 				I286CLOCK(2)
-				or		I286_FLAG, I_FLAG
+				cmp		i286core.s.prefix, 0	// ver0.26 00/10/08
+				jne		prefix_exist			// 前方分岐ジャンプなので。
+		noprefix:
+				movzx	ebp, bl
+				bts		I286_FLAG, 9
+				jne		jmp_nextop
 				test	I286_FLAG, T_FLAG
 				setne	I286_TRAP
 
-				cmp		i286core.s.prefix, 0	// ver0.26 00/10/08
-				jne		prefix_exist			// 前方分岐ジャンプなので。
-noprefix:		movzx	eax, bl
-				call	i286op[eax*4]
+				cmp		pic.ext_irq, 0			// fast_intr
+				jne		jmp_nextop
+				mov		al, pic.pi[0].imr
+				mov		ah, pic.pi[1].imr
+				not		ax
+				test	al, pic.pi[0].irr
+				jne		nextopandexit
+				test	al, pic.pi[1].irr
+				jne		nextopandexit
+jmp_nextop:		jmp		i286op[ebp*4]
+
+nextopandexit:	call	i286op[ebp*4]
 				I286IRQCHECKTERM
 
 prefix_exist:	pop		eax						// eax<-offset removeprefix

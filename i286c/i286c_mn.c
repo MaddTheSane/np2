@@ -1813,11 +1813,11 @@ I286FN _popf(void) {						// 9D:	popf
 
 	UINT	flag;
 
-	I286_WORKCLOCK(5);
 	REGPOP0(flag)
 	I286_OV = flag & O_FLAG;
 	I286_FLAG = flag & (0xfff ^ O_FLAG);
 	I286_TRAP = ((flag & 0x300) == 0x300);
+	I286_WORKCLOCK(5);
 #if defined(INTR_FAST)
 	if ((flag & I_FLAG) && (PICEXISTINTR)) {
 		I286IRQCHECKTERM
@@ -2272,7 +2272,6 @@ I286FN _iret(void) {						// CF:	iret
 	UINT	flag;
 
 	extirq_pop();
-	I286_WORKCLOCK(31);
 	REGPOP0(I286_IP)
 	REGPOP0(I286_CS)
 	REGPOP0(flag)
@@ -2280,6 +2279,7 @@ I286FN _iret(void) {						// CF:	iret
 	I286_FLAG = flag & (0xfff ^ O_FLAG);
 	I286_TRAP = ((flag & 0x300) == 0x300);
 	CS_BASE = I286_CS << 4;
+	I286_WORKCLOCK(31);
 #if defined(INTR_FAST)
 	if ((flag & I_FLAG) && (PICEXISTINTR)) {
 		I286IRQCHECKTERM
@@ -2654,13 +2654,17 @@ I286FN _sti(void) {							// FB:	sti
 	I286_WORKCLOCK(2);
 #if defined(INTR_FAST)
 	if (I286_FLAG & I_FLAG) {
+		NEXT_OPCODE;
 		return;									// XV‚ÌˆÓ–¡‚È‚µ
 	}
 #endif
 	I286_FLAG |= I_FLAG;
 	I286_TRAP = (I286_FLAG & T_FLAG) >> 8;
 #if defined(INTR_FAST)
-	if (PICEXISTINTR) {
+	if (!PICEXISTINTR) {
+		NEXT_OPCODE;
+	}
+	else {
 		REMAIN_ADJUST(1)
 	}
 #else
