@@ -917,7 +917,7 @@ void keydisp_getsize(int *width, int *height) {
 	if (width) {
 		*width = KEYDISP_WIDTH;
 	}
-	if (*height) {
+	if (height) {
 		*height = (getdispkeys() * KEYDISP_KEYCY) + 1;
 	}
 	keydisp.dispflag &= ~KEYDISP_FLAGSIZING;

@@ -2015,12 +2015,21 @@ I286FN _mov_ea8_data8(void) {				// C6:	mov		EA8, DATA8
 		GET_PCBYTE(*(REG8_B53(op)))
 	}
 	else {
+#if 1					// 03/11/23
+		UINT32 ad;
+		BYTE val;
+		I286_WORKCLOCK(3);
+		ad = c_calc_ea_dst[op]();
+		GET_PCBYTE(val)
+		i286_memorywrite(ad, val);
+#else
 		UINT ad;
 		BYTE val;
 		I286_WORKCLOCK(3);
 		ad = c_get_ea[op]();
 		GET_PCBYTE(val)
 		i286_memorywrite(ad + EA_FIX, val);
+#endif
 	}
 }
 
@@ -2034,12 +2043,21 @@ I286FN _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 		GET_PCWORD(*(REG16_B53(op)))
 	}
 	else {
+#if 1					// 03/11/23
+		UINT32	ad;
+		UINT16	val;
+		I286_WORKCLOCK(3);
+		ad = c_calc_ea_dst[op]();
+		GET_PCWORD(val)
+		i286_memorywrite_w(ad, val);
+#else
 		UINT	ad;
 		UINT16	val;
 		I286_WORKCLOCK(3);
 		ad = c_get_ea[op]();
 		GET_PCWORD(val)
 		i286_memorywrite_w(ad + EA_FIX, val);
+#endif
 	}
 }
 

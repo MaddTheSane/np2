@@ -387,7 +387,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 		else {
 			if (np2oscfg.NOWAIT) {
-		  		pccore_exec(framecnt == 0);
+				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
 					framecnt++;
 					if (framecnt >= np2oscfg.DRAW_SKIP) {

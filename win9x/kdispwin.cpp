@@ -132,17 +132,8 @@ static void kdpaintmsg(HWND hWnd) {
 
 	HDC			hdc;
 	PAINTSTRUCT	ps;
-//	RECT		rect;
-//	HBRUSH		hbrush;
 
 	hdc = BeginPaint(hWnd, &ps);
-#if 0
-	GetClientRect(hWnd, &rect);
-	hbrush = (HBRUSH)SelectObject(hdc, GetStockObject(BLACK_BRUSH));
-	PatBlt(hdc, 0, 0, rect.right, 1, PATCOPY);
-	PatBlt(hdc, 0, 0, 1, rect.bottom, PATCOPY);
-	SelectObject(hdc, hbrush);
-#endif
 	drawkeys(hWnd, TRUE);
 	EndPaint(hWnd, &ps);
 }

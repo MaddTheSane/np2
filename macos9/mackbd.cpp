@@ -133,7 +133,7 @@ void mackbd_callback(void) {
 	}
 }
 
-BOOL mackbd_keydown(int keycode) {
+BOOL mackbd_keydown(int keycode, BOOL cmd) {
 
 	if (keycode == 0x6f) {
 		if (np2oscfg.F12COPY == 1) {
@@ -145,6 +145,7 @@ BOOL mackbd_keydown(int keycode) {
 			return(TRUE);
         }
 	}
+	(void)cmd;
 	return(FALSE);
 }
 
@@ -232,6 +233,41 @@ static const BYTE keymac[128] = {
 			//	  F2,  rd,  F1,  Å©,  Å®,  Å´,  Å™,    		; 0x78
 				0x63,0x36,0x62,0x3b,0x3c,0x3d,0x3a,  NC};
 
+// ó—åÁÉLÅ[âüâ∫
+static const BYTE keymac2[128] = {
+			//	  Ç`,  Çr,  Çc,  Çe,  Çg,  Çf,  Çy,  Çw		; 0x00
+				  NC,  NC,  NC,  NC,0x3f,  NC,  NC,  NC,
+			//	  Çb,  Çu,    ,  Ça,  Çp,  Çv,  Çd,  Çq		; 0x08
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	  Çx,  Çs,  ÇP,  ÇQ,  ÇR,  ÇS,  ÇU,  ÇT		; 0x10
+				  NC,  NC,0x62,0x63, 0x64,0x65,0x67,0x66,
+			//	  ÅO,  ÇX,  ÇV,  Å|,  ÇW,  ÇO,  Åm,  Çn 	; 0x18
+				  NC,0x6a,0x68,  NC,0x69,0x6b,  NC,  NC,
+			//	  Çt,  Åó,  Çh,  Ço, ret,  Çk,  Çi,  ÅF		; 0x20
+				  NC,  NC,  NC,  NC,  NC,0x3e,  NC,  NC,
+			//	  Çj,  ÅG,  Ån,  ÅC,  Å^,  Çm,  Çl,  ÅD		; 0x28
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	 TAB, SPC,    ,  BS,    , ESC,    , apl		; 0x30
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	 sft, cps, alt, ctl,    ,    ,    ,    		; 0x38
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	    , [.],    , [*],    ,    , [+],    		; 0x40
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	    ,    ,    ,    , ret,    , [-], clr		; 0x48
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	    , [=], [0], [1], [2], [3], [4], [5]		; 0x50
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	 [6], [7],    , [8], [9],  Åè,  ÅQ, [,]		; 0x58
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	  F5,  F6,  F7,  F3,  F8,  F9,    , F11		; 0x60
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	    , F13,    , F14,    , F10,    , F12		; 0x68
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+			//	    , F15, hlp, hom,  ru, del,  F4, end		; 0x70
+				  NC,  NC,  NC,  NC,  NC,0x38,  NC,  NC,
+			//	  F2,  rd,  F1,  Å©,  Å®,  Å´,  Å™,    		; 0x78
+				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
+
 typedef struct {
 	UINT32	tick;
 	UINT16	shift;
@@ -278,7 +314,7 @@ void mackbd_callback(void) {
 	}
 }
 
-BOOL mackbd_keydown(int keycode) {
+BOOL mackbd_keydown(int keycode, BOOL cmd) {
 
 	BYTE	data;
 
@@ -292,7 +328,12 @@ BOOL mackbd_keydown(int keycode) {
 		}
 	}
 	else if (keycode < 0x80) {
-		data = keymac[keycode];
+		if (!cmd) {
+			data = keymac[keycode];
+		}
+		else {
+			data = keymac2[keycode];
+		}
 	}
 	if (data != NC) {
 		keystat_senddata(data);
@@ -306,8 +347,10 @@ BOOL mackbd_keydown(int keycode) {
 BOOL mackbd_keyup(int keycode) {
 
 	BYTE	data;
+	BOOL	ret;
 
 	data = NC;
+	ret = FALSE;
 	if (keycode == 0x6f) {
 		if (np2oscfg.F12COPY == 1) {
 			data = 0x61;
@@ -318,14 +361,17 @@ BOOL mackbd_keyup(int keycode) {
 	}
 	else if (keycode < 0x80) {
 		data = keymac[keycode];
+		if (data != NC) {
+			keystat_senddata(data | 0x80);
+			ret = TRUE;
+		}
+		data = keymac2[keycode];
 	}
 	if (data != NC) {
 		keystat_senddata(data | 0x80);
-		return(TRUE);
+		ret = TRUE;
 	}
-	else {
-		return(FALSE);
-	}
+	return(ret);
 }
 
 void mackbd_activate(BOOL active) {
@@ -340,40 +386,3 @@ void mackbd_activate(BOOL active) {
 
 #endif
 
-
-#if 0
-// ó—åÁÉLÅ[âüâ∫
-static const BYTE keymac2[128] = {
-			//	  Ç`,  Çr,  Çc,  Çe,  Çg,  Çf,  Çy,  Çw		; 0x00
-				  NC,  NC,  NC,  NC,0x3f,  NC,  NC,  NC,
-			//	  Çb,  Çu,    ,  Ça,  Çp,  Çv,  Çd,  Çq		; 0x08
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	  Çx,  Çs,  ÇP,  ÇQ,  ÇR,  ÇS,  ÇU,  ÇT		; 0x10
-				  NC,  NC,0x62,0x63, 0x64,0x65,0x67,0x66,
-			//	  ÅO,  ÇX,  ÇV,  Å|,  ÇW,  ÇO,  Åm,  Çn 	; 0x18
-				  NC,0x6a,0x68,  NC,0x69,0x6b,  NC,  NC,
-			//	  Çt,  Åó,  Çh,  Ço, ret,  Çk,  Çi,  ÅF		; 0x20
-				  NC,  NC,  NC,  NC,  NC,0x3e,  NC,  NC,
-			//	  Çj,  ÅG,  Ån,  ÅC,  Å^,  Çm,  Çl,  ÅD		; 0x28
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	 TAB, SPC,    ,  BS,    , ESC,    , apl		; 0x30
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	 sft, cps, alt, ctl,    ,    ,    ,    		; 0x38
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	    , [.],    , [*],    ,    , [+],    		; 0x40
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	    ,    ,    ,    , ret,    , [-], clr		; 0x48
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	    , [=], [0], [1], [2], [3], [4], [5]		; 0x50
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	 [6], [7],    , [8], [9],  Åè,  ÅQ, [,]		; 0x58
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	  F5,  F6,  F7,  F3,  F8,  F9,    , F11		; 0x60
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	    , F13,    , F14,    , F10,    , F12		; 0x68
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
-			//	    , F15, hlp, hom,  ru, del,  F4, end		; 0x70
-				  NC,  NC,  NC,  NC,  NC,0x38,  NC,  NC,
-			//	  F2,  rd,  F1,  Å©,  Å®,  Å´,  Å™,    		; 0x78
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
-#endif

@@ -44,17 +44,21 @@ static void setsystimerevent(BOOL absolute) {
 
 void systimer(NEVENTITEM item) {
 
-	if (pit.intr[0]) {
-		pit.intr[0] = 0;
-		pic_setirq(0);
-//		TRACEOUT(("int-08 [%.2x]", pit.mode[0]));
-	}
 	if (item->flag & NEVENT_SETEVENT) {
+		if (pit.intr[0]) {
+			pit.intr[0] = 0;
+			pic_setirq(0);
+//			TRACEOUT(("int-08 [%.2x]", pit.mode[0]));
+		}
 		if ((pit.mode[0] & 0x0c) == 0x04) {
 			// レートジェネレータ
 			pit.intr[0] = 1;
+			setsystimerevent(NEVENT_RELATIVE);
 		}
-		setsystimerevent(NEVENT_RELATIVE);
+		else {
+			nevent_set(NEVENT_ITIMER, pc.multiple << 16,
+												systimer, NEVENT_RELATIVE);
+		}
 	}
 }
 
@@ -119,6 +123,7 @@ void rs232ctimer(NEVENTITEM item) {
 	rs232c_callback();
 }
 
+
 // ---------------------------------------------------------------------------
 
 static UINT16 itimer_latch(int ch) {
@@ -142,7 +147,6 @@ static UINT16 itimer_latch(int ch) {
 	}
 	return(0);
 }
-
 
 void itimer_setflag(int ch, BYTE value) {
 
@@ -217,7 +221,7 @@ BYTE itimer_getcount(int ch) {
 // system timer
 static void IOOUTCALL pit_o71(UINT port, BYTE dat) {
 
-//	TRACEOUT(("pic o71: %x [%.4x %.4x]", dat, I286_CS, I286_IP));
+	TRACEOUT(("pic o71: %x [%.4x %.4x]", dat, I286_CS, I286_IP));
 	if (itimer_setcount(0, dat)) {
 		return;
 	}
@@ -265,10 +269,10 @@ static void IOOUTCALL pit_o77(UINT port, BYTE dat) {
 		itimer_setflag(ch, dat);
 		if (ch == 0) {			// 書込みで itimerのirrがリセットされる…
 			pic.pi[0].irr &= (~1);
-//			if (dat & 0x30) {	// 一応ラッチ時は割り込みをセットしない
+			if (dat & 0x30) {	// 一応ラッチ時は割り込みをセットしない
 				pit.intr[0] = 1;
 //				setsystimerevent(NEVENT_ABSOLUTE);
-//			}
+			}
 		}
 		if (ch == 1) {
 			beep_modeset();
@@ -279,12 +283,6 @@ static void IOOUTCALL pit_o77(UINT port, BYTE dat) {
 
 static BYTE IOINPCALL pit_i71(UINT port) {
 
-	if (port == 0x71) {
-		BYTE x;
-		x = itimer_getcount((port >> 1) & 3);
-//		TRACEOUT(("pic i71 %x [%.4x %.4x]", x, I286_CS, I286_IP));
-		return(x);
-	}
 	return(itimer_getcount((port >> 1) & 3));
 }
 

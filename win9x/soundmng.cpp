@@ -82,8 +82,8 @@ UINT soundmng_create(UINT rate, UINT ms) {
 		(rate != 11025) && (rate != 22050) && (rate != 44100)) {
 		goto stcre_err1;
 	}
-	if (ms < 50) {
-		ms = 50;
+	if (ms < 40) {
+		ms = 40;
 	}
 	else if (ms > 1000) {
 		ms = 1000;

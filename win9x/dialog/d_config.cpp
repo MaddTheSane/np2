@@ -135,8 +135,8 @@ static void cfgupdate(HWND hWnd) {
 
 	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, sizeof(work));
 	val = (UINT)milstr_solveINT(work);
-	if (val < 100) {
-		val = 100;
+	if (val < 40) {
+		val = 40;
 	}
 	else if (val > 1000) {
 		val = 1000;
