@@ -140,6 +140,7 @@ static void pccore_set(void) {
 
 	UINT8	model;
 	UINT32	multiple;
+	UINT8	extsize;
 
 	ZeroMemory(&pccore, sizeof(pccore));
 	model = PCMODEL_VX;
@@ -176,9 +177,11 @@ static void pccore_set(void) {
 	pccore.midiclock = pccore.realclock / 3125;
 
 	// ägí£ÉÅÉÇÉä
+	extsize = 0;
 	if (!(np2cfg.dipsw[2] & 0x80)) {
-		pccore.extmem = np2cfg.EXTMEM;
+		extsize = min(np2cfg.EXTMEM, 13);
 	}
+	pccore.extmem = extsize;
 
 	// HDDÇÃê⁄ë± (I/OÇÃégópèÛë‘Ç™ïœÇÌÇÈÇÃÇ≈..
 	if (np2cfg.dipsw[1] & 0x20) {

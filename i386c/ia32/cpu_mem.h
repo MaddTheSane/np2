@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: cpu_mem.h,v 1.2 2004/01/25 07:53:09 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,11 +36,10 @@
 extern "C" {
 #endif
 
-extern BYTE *cpumem;
-extern BYTE protectmem_size;
-extern DWORD extmem_size;
+// extern BYTE *cpumem;
+// extern DWORD extmem_size;
 
-int init_cpumem(BYTE usemem);
+int init_cpumem(UINT8 usemem);
 
 /*
  * memory access check

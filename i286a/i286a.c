@@ -115,7 +115,10 @@ void i286a_shut(void) {
 void i286a_setextsize(UINT32 size) {
 
 	if (CPU_EXTMEMSIZE != size) {
-		_MFREE(CPU_EXTMEM);
+		if (CPU_EXTMEM) {
+			_MFREE(CPU_EXTMEM);
+			CPU_EXTMEM = NULL;
+		}
 		if (size) {
 			CPU_EXTMEM = (BYTE *)_MALLOC(size + 16, "EXTMEM");
 			if (CPU_EXTMEM == NULL) {

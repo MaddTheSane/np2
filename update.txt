@@ -68,8 +68,13 @@
 　　　IA32でハードウェアEMSを禁止しました。
 　　　　　→ #define CPU_SETEXTSIZE() init_mem() に変更 (済)
 　　　　　→ memory.cの EMM部分をトル (済)
-　　　　　→ cpumem, extmem_size, protectmem_sizeを
-　　　　　　　　　CPU_EXTMEM, CPU_EXTMEMSIZEに変更
+　　　　　→ cpumem extmem_size を CPU_EXTMEM, CPU_EXTMEMSIZEに変更(済)
+　　　　　→ protectmem_sizeをトル (済)
+
+　　　しかし emm386.exeが使えないから ハードウェアEMSを有効にした
+　　　ほーがいいかな？　辻褄は合いそうだし。
+　　　386以降に乗っかってる NEC EMSバンク方式だと あまりにアホだし。
+
 
 
 // ----

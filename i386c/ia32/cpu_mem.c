@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.6 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.7 2004/01/25 07:53:08 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -31,9 +31,11 @@
 #include "cpu.h"
 #include "memory.h"
 
-BYTE *cpumem = 0;
-DWORD extmem_size = 0;
-BYTE protectmem_size = 0;
+// static BYTE *cpumem = 0;
+// static DWORD extmem_size = 0;
+
+#define	cpumem		i386core.e.ext
+#define	extmem_size	i386core.e.extsize
 
 
 /*
@@ -41,33 +43,30 @@ BYTE protectmem_size = 0;
  */
 
 int
-init_cpumem(BYTE usemem)
+init_cpumem(UINT8 usemem)
 {
-	DWORD size;
+	UINT32	size;
 
-	if (usemem > 13)
-		usemem = 13;
 	size = usemem << 20;
-
-	if (extmem_size != size - (LOWMEM - 0x100000)) {
+	if (size >= (LOWMEM - 0x100000)) {
+		size -= (LOWMEM - 0x100000);
+	}
+	else {
+		size = 0;
+	}
+	if (extmem_size != size) {
 		if (cpumem) {
 			free(cpumem);
 			cpumem = 0;
 		}
-		if (size <= LOWMEM - 0x100000) {
-			extmem_size = 0;
-			cpumem = 0;
-		} else {
-			extmem_size = size - (LOWMEM - 0x100000);
-			cpumem = (BYTE *)malloc(extmem_size);
+		if (size) {
+			cpumem = (BYTE *)malloc(size);
 			if (cpumem == NULL) {
-				protectmem_size = 0;
-				return FAILURE;
+				size = 0;
 			}
-			memset(cpumem, 0, extmem_size);
 		}
+		extmem_size = size;
 	}
-	protectmem_size = usemem;
 	return SUCCESS;
 }
 

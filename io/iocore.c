@@ -68,6 +68,7 @@ static void IOOUTCALL defout8(UINT port, REG8 dat) {
 		dipsw_w8(port, dat);
 		return;
 	}
+//	TRACEOUT(("defout8 - %x %x %.4x %.4x", port, dat, CPU_CS, CPU_IP));
 }
 
 static REG8 IOINPCALL definp8(UINT port) {
@@ -78,6 +79,7 @@ static REG8 IOINPCALL definp8(UINT port) {
 	if ((port & 0xf0ff) == 0x801e) {
 		return(dipsw_r8(port));
 	}
+//	TRACEOUT(("definp8 - %x %.4x %.4x", port, CPU_CS, CPU_IP));
 	return(0xff);
 }
 
@@ -495,7 +497,7 @@ void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 	IOFUNC	iof;
 
 	if (dat & (~0xff)) {
-		TRACEOUT(("iocore_out8 - %x %x", port, dat));
+		TRACEOUT(("error: iocore_out8 - %x %x", port, dat));
 	}
 	iof = iocore.base[(port >> 8) & 0xff];
 	iof->ioout[port & 0xff](port, dat);
@@ -510,7 +512,7 @@ REG8 IOINPCALL iocore_inp8(UINT port) {
 	ret = iof->ioinp[port & 0xff](port);
 
 	if (ret & (~0xff)) {
-		TRACEOUT(("iocore_inp8 - %x %x", port, ret));
+		TRACEOUT(("error: iocore_inp8 - %x %x", port, ret));
 	}
 	return(ret);
 }
