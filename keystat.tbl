@@ -121,7 +121,13 @@ static const KEYNAME keyname[] = {
 		{0x71, "CAPS"},
 		{0x72, "KANA"},
 		{0x73, "GRPH"}, {0x73, "ALT"},
-		{0x74, "CTRL"}};
+		{0x74, "CTRL"},
+		{0x77, "LWIN"},
+
+		{0x78, "RWIN"},
+		{0x79, "APP"},
+		{0x7d, "RSHIFT"}};
+
 
 
 // ----
@@ -139,7 +145,7 @@ enum {
 	KBEX_NONREP		= 0x80
 };
 
-static const UINT8 kbexflag[0x80] = {
+static const UINT8 kbexflag[NKEY_SYSTEM] = {
 		//	 ESC,  ÇP,  ÇQ,  ÇR,  ÇS,  ÇT,  ÇU,  ÇV		; 00h
 			   0,   0,   0,   0,   0,   0,   0,   0,
 		//	  ÇW,  ÇX,  ÇO,  Å|,  ÅO,  Åè,  BS, TAB		; 08h
@@ -171,6 +177,10 @@ static const UINT8 kbexflag[0x80] = {
 		//	 SFT,CAPS,KANA,GRPH,CTRL,    ,    ,   		; 70h
 			0x80,0x80,0x80,0x80,0x80,   0,   0,   0,
 		//	    ,    ,    ,    ,    ,    ,    ,   		; 78h
+			   0,   0,   0,   0,   0,   0,   0,   0,
+		//	    ,    ,    ,    ,    ,    ,    ,   		; 80h
+			   0,   0,   0,   0,   0,   0,   0,   0,
+		//	    ,    ,    ,    ,    ,    ,    ,   		; 88h
 			   0,   0,   0,   0,   0,   0,   0,   0};
 
 

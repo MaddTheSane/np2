@@ -877,7 +877,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			np2oscfg.KEYBOARD = KEY_KEY106;
 		}
 	}
-	keystat_reset();
+	keystat_initialize();
 
 	if (!hPreInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;

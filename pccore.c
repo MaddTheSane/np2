@@ -582,7 +582,7 @@ void pccore_postevent(UINT32 event) {	// yet!
 void pccore_exec(BOOL draw) {
 
 	drawframe = draw;
-	keystat_sync();
+//	keystat_sync();
 	soundmng_sync();
 	mouseif_sync();
 	pal_eventclear();

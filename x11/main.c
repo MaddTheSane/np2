@@ -270,7 +270,7 @@ main(int argc, char *argv[])
 	scrnmng_initialize();
 	kbdmng_init();
 	inputmng_init();
-	keystat_reset();
+	keystat_initialize();
 
 	scrnmode = 0;
 	if (np2cfg.RASTER) {

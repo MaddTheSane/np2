@@ -142,7 +142,7 @@ int SDL_main(int argc, char **argv) {
 	}
 	sdlkbd_initialize();
 	inputmng_init();
-	keystat_reset();
+	keystat_initialize();
 
 	if (sysmenu_create() != SUCCESS) {
 		goto np2main_err3;

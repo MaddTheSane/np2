@@ -127,6 +127,11 @@ enum {
 };
 
 enum {
+	NKEY_SYSTEM			= 0x90,
+
+	NKEY_USER			= 0x90,
+	NKEY_USERKEYS		= 2,
+
 	NKEYREF_USER		= 0xf8,
 	NKEYREF_SOFTKBD		= 0xf9,
 	NKEYREF_NC			= 0xff
@@ -149,8 +154,8 @@ typedef struct {
 } NKEYM15;
 
 typedef struct {
-	NKEYM3	key[0x80];
-	NKEYM15	user[2];
+	NKEYM3	key[NKEY_SYSTEM];
+	NKEYM15	user[NKEY_USERKEYS];
 } NKEYTBL;
 
 
@@ -188,10 +193,8 @@ REG8 keystat_getmouse(SINT16 *x, SINT16 *y);
 
 // ---- îpé~ä÷êî
 
-#define	keystat_reset				keystat_initialize
-#define	keystat_sync()
-#define	keystat_forcerelease(k)		keystat_releasekey(k)
 void keystat_senddata(REG8 data);
+void keystat_forcerelease(REG8 data);
 
 #ifdef __cplusplus
 }

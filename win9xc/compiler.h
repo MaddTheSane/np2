@@ -45,6 +45,9 @@ typedef signed __int64		SINT64;
 #define	STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
 
 
+#define	FASTCALL	__fastcall
+
+
 #include	"common.h"
 #include	"milstr.h"
 #include	"_memory.h"
@@ -88,8 +91,6 @@ typedef signed __int64		SINT64;
 #endif
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SWSEEKSND
-
-#define	FASTCALL	__fastcall
 
 
 #if defined(CPUCORE_IA32)
