@@ -43,18 +43,46 @@
         ver0.73でmilstr.hの定義を外し compiler.hで指定した物となります。
 
 
-  CPUSTRUC_MEMWAIT … cpucore構造体にメモリウェイト値を移動する(vramop)
-  CGWND_FONTPTR … cgwindowにフォントポインタを持たせる
+  CPUSTRUC_MEMWAIT
+　　　cpucore構造体にメモリウェイト値を移動する(vramop)
 
-　SUPPORT_CRT15KHZ … 水平走査15.98kHzをサポートする
-　SUPPORT_CRT31KHZ … 水平走査31.47kHzをサポートする
-　SUPPORT_PC9821 … PC-9821拡張のサポート(当然ですが 386必須です…
+  CGWND_FONTPTR
+　　　cgwindowにフォントポインタを持たせる
+　　　現状、あまり意味を持ちません
 
-　SUPPORT_PC9861K … PC-9861K(RS-232C拡張I/F)をサポート
-　SUPPORT_SASI … SASI HDDをサポート (定義がなければ常時IDEとして作動)
-　SUPPORT_SCSI … SCSI HDDをサポート
-　SUPPORT_S98 … S98ログを取得
-　SUPPORT_WAVEREC … Soundレベルで waveファイルの書き出し関数をサポート
+
+　SUPPORT_CRT15KHZ
+　　　水平走査15.98kHzをサポートする(DIPSW1-1)
+
+　SUPPORT_CRT31KHZ
+　　　水平走査31.47kHzをサポートする
+　　　Fellowタイプはこれ
+
+　SUPPORT_PC9821
+　　　PC-9821拡張のサポート
+　　　当然ですが 386必須です。
+　　　また SUPPORT_CRT31KHZも必要です(ハイレゾBIOSを使用する為)
+
+　SUPPORT_PC9861K
+　　　PC-9861K(RS-232C拡張I/F)をサポート
+
+　SUPPORT_IDEIO
+　　　IDEの I/Oレベルでのサポート
+　　　でも ATAのリード程度しかできない…
+
+　SUPPORT_SASI
+　　　SASI HDDをサポート
+　　　定義がなければ常時IDEとして作動します。
+
+　SUPPORT_SCSI
+　　　SCSI HDDをサポート…全然動かない
+
+　SUPPORT_S98
+　　　S98ログを取得
+
+　SUPPORT_WAVEREC
+　　Soundレベルで waveファイルの書き出し関数をサポート
+　　但し書き出し中は サウンド出力が止まるので　ほぼデバグ用
 
 
 // ---- screen
