@@ -6,6 +6,9 @@
 #include	"fmboard.h"
 
 
+extern	CS4231CFG	cs4231cfg;
+
+
 // ---- ï‚äÆÇ≠ÇÁÇ¢ÇµÇÊÇ§ÇÊÅc
 
 BYTE cs4231_nodecode(void) {
@@ -29,7 +32,7 @@ static BYTE cs4231_pcm8s(void) {
 		addr = dmac.dmach[0].adrs.d;
 		do {
 			while(ctime < cs4231.step) {
-				ctime += opna_rate;
+				ctime += cs4231cfg.rate;
 				leng -= 2;
 				if (leng < 0) {
 					leng = 0;
@@ -72,7 +75,7 @@ static BYTE cs4231_pcm8m(void) {
 		addr = dmac.dmach[0].adrs.d;
 		do {
 			while(ctime < cs4231.step) {
-				ctime += opna_rate;
+				ctime += cs4231cfg.rate;
 				leng -= 1;
 				if (leng < 0) {
 					leng = 0;
@@ -117,7 +120,7 @@ static BYTE cs4231_pcm16s(void) {
 // TRACEOUT(("addr: %x", addr));
 		do {
 			while(ctime < cs4231.step) {
-				ctime += opna_rate;
+				ctime += cs4231cfg.rate;
 				leng -= 4;
 				if (leng < 0) {
 					leng = 0;
@@ -162,7 +165,7 @@ static BYTE cs4231_pcm16m(void) {
 		addr = dmac.dmach[0].adrs.d;
 		do {
 			while(ctime < cs4231.step) {
-				ctime += opna_rate;
+				ctime += cs4231cfg.rate;
 				leng -= 2;
 				if (leng < 0) {
 					leng = 0;

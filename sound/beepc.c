@@ -94,7 +94,7 @@ void beep_eventinit(void) {
 	beep.low = 0;
 	beep.enable = 0;
 	beep.lastenable = 0;
-	beep.clock = dsound_lastclock;
+	beep.clock = soundcfg.lastclock;
 					// nevent.clock + nevent.baseclock - nevent.remainclock;
 	beep.events = 0;
 }
@@ -102,7 +102,7 @@ void beep_eventinit(void) {
 void beep_eventreset(void) {
 
 	beep.lastenable = beep.enable;
-	beep.clock = dsound_lastclock;
+	beep.clock = soundcfg.lastclock;
 	beep.events = 0;
 }
 

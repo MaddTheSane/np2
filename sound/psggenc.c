@@ -45,8 +45,10 @@ void psggen_initialize(UINT rate) {
 	if (psggencfg.puchidec == 0) {
 		psggencfg.puchidec = 1;
 	}
-	psggencfg.base = (5000 * (1 << (32 - PSGFREQPADBIT - PSGADDEDBIT)))
+	if (rate) {
+		psggencfg.base = (5000 * (1 << (32 - PSGFREQPADBIT - PSGADDEDBIT)))
 															/ (rate / 25);
+	}
 }
 
 void psggen_setvol(UINT vol) {

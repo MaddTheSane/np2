@@ -79,6 +79,9 @@ static BOOL pcmload(RHYTHMPCM *pcm, const char *fname, UINT rate) {
 		goto pld_err2;
 	}
 	step = 44100 / rate;
+	if (step == 0) {
+		goto pld_err2;
+	}
 	samples = size / 2 / step;
 	if (samples == 0) {
 		goto pld_err2;

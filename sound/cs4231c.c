@@ -6,6 +6,9 @@
 #include	"fmboard.h"
 
 
+	CS4231CFG	cs4231cfg;
+
+
 static const UINT16 cs4231samprate[] = {
 					 8000,	 5510,	16000,	11025,
 					27420,	18900,	32000,	22050,
@@ -18,7 +21,7 @@ static const BYTE dmairq[] = {0xff, 0x03, 0x06, 0x0a, 0x0c, 0xff, 0xff, 0xff};
 
 void cs4231_initialize(UINT rate) {
 
-	(void)rate;
+	cs4231cfg.rate = rate;
 }
 
 void cs4231_setvol(UINT vol) {
@@ -42,8 +45,10 @@ void cs4231_dma(NEVENTITEM item) {
 				pic_setirq(0x0c);
 			}
 		}
-		cnt = pc.realclock * 16 / opna_rate;
-		nevent_set(NEVENT_CS4231, cnt, cs4231_dma, NEVENT_RELATIVE);
+		if (cs4231cfg.rate) {
+			cnt = pc.realclock * 16 / cs4231cfg.rate;
+			nevent_set(NEVENT_CS4231, cnt, cs4231_dma, NEVENT_RELATIVE);
+		}
 	}
 	(void)item;
 }
@@ -54,8 +59,10 @@ BYTE DMACCALL cs4231dmafunc(BYTE func) {
 
 	switch(func) {
 		case DMAEXT_START:
-			cnt = pc.realclock * 16 / opna_rate;
-			nevent_set(NEVENT_CS4231, cnt, cs4231_dma, NEVENT_ABSOLUTE);
+			if (cs4231cfg.rate) {
+				cnt = pc.realclock * 16 / cs4231cfg.rate;
+				nevent_set(NEVENT_CS4231, cnt, cs4231_dma, NEVENT_ABSOLUTE);
+			}
 			break;
 
 		case DMAEXT_BREAK:

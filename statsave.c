@@ -43,7 +43,7 @@ typedef struct {
 enum {
 	NP2FLAG_BIN			= 0,
 	NP2FLAG_TERM,
-	NP2FLAG_CORE,
+	NP2FLAG_CLOCK,
 	NP2FLAG_DMA,
 	NP2FLAG_EGC,
 	NP2FLAG_EXT,
@@ -349,19 +349,12 @@ static int flagload_common(NP2FFILE *f, const STENTRY *t) {
 
 // -----
 
-static int flagload_core(NP2FFILE *f, const STENTRY *t) {
+static int flagload_clock(NP2FFILE *f, const STENTRY *t) {
 
 	int		ret;
 
 	ret = flagload_common(f, t);
-#if 0
-	if (opna_rate) {
-		pc.sampleclock = pc.realclock / opna_rate;
-	}
-	else {
-		pc.sampleclock = 0;
-	}
-#endif
+	sound_changeclock();
 	return(ret);
 }
 
@@ -1167,7 +1160,7 @@ int statsave_save(const char *filename) {
 	for (i=0; i<sizeof(np2tbl)/sizeof(STENTRY); i++) {
 		switch(np2tbl[i].type) {
 			case NP2FLAG_BIN:
-			case NP2FLAG_CORE:
+			case NP2FLAG_CLOCK:
 			case NP2FLAG_BEEP:
 				ret |= flagsave_common(&f, &np2tbl[i]);
 				break;
@@ -1258,7 +1251,7 @@ int statsave_check(const char *filename, char *buf, int size) {
 						done = TRUE;
 						break;
 
-					case NP2FLAG_CORE:
+					case NP2FLAG_CLOCK:
 					case NP2FLAG_DMA:
 					case NP2FLAG_EGC:
 					case NP2FLAG_EXT:
@@ -1337,8 +1330,8 @@ int statsave_load(const char *filename) {
 					done = TRUE;
 					break;
 
-				case NP2FLAG_CORE:
-					ret |= flagload_core(&f, &np2tbl[i]);
+				case NP2FLAG_CLOCK:
+					ret |= flagload_clock(&f, &np2tbl[i]);
 					break;
 
 				case NP2FLAG_DMA:

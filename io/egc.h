@@ -63,8 +63,6 @@ typedef struct {
 extern "C" {
 #endif
 
-extern const UINT32 maskword[16][2];
-
 void egc_reset(void);
 void egc_bind(void);
 void IOOUTCALL egc_w16(UINT port, UINT16 value);

@@ -63,6 +63,10 @@ typedef struct {
 	BYTE		buffer[CS4231_BUFBYTES];
 } _CS4231, *CS4231;
 
+typedef struct {
+	UINT	rate;
+} CS4231CFG;
+
 
 #ifdef __cplusplus
 extern "C" {

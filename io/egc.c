@@ -8,15 +8,15 @@
 
 // エンディアン修正しる。
 
-const UINT32 maskword[16][2] = {
-						{0x00000000, 0x00000000}, {0x0000ffff, 0x00000000},
-						{0xffff0000, 0x00000000}, {0xffffffff, 0x00000000},
-						{0x00000000, 0x0000ffff}, {0x0000ffff, 0x0000ffff},
-						{0xffff0000, 0x0000ffff}, {0xffffffff, 0x0000ffff},
-						{0x00000000, 0xffff0000}, {0x0000ffff, 0xffff0000},
-						{0xffff0000, 0xffff0000}, {0xffffffff, 0xffff0000},
-						{0x00000000, 0xffffffff}, {0x0000ffff, 0xffffffff},
-						{0xffff0000, 0xffffffff}, {0xffffffff, 0xffffffff}};
+static const UINT16 maskword[16][4] = {
+				{0x0000,0x0000,0x0000,0x0000}, {0xffff,0x0000,0x0000,0x0000},
+				{0x0000,0xffff,0x0000,0x0000}, {0xffff,0xffff,0x0000,0x0000},
+				{0x0000,0x0000,0xffff,0x0000}, {0xffff,0x0000,0xffff,0x0000},
+				{0x0000,0xffff,0xffff,0x0000}, {0xffff,0xffff,0xffff,0x0000},
+				{0x0000,0x0000,0x0000,0xffff}, {0xffff,0x0000,0x0000,0xffff},
+				{0x0000,0xffff,0x0000,0xffff}, {0xffff,0xffff,0x0000,0xffff},
+				{0x0000,0x0000,0xffff,0xffff}, {0xffff,0x0000,0xffff,0xffff},
+				{0x0000,0xffff,0xffff,0xffff}, {0xffff,0xffff,0xffff,0xffff}};
 
 
 static void IOOUTCALL egc_o4a0(UINT port, BYTE value) {
@@ -57,8 +57,8 @@ static void IOOUTCALL egc_o4a0(UINT port, BYTE value) {
 		case 0x06:
 			egc.fg &= 0xff00;
 			egc.fg |= value;
-			egc.fgc.d[0] = maskword[value & 15][0];
-			egc.fgc.d[1] = maskword[value & 15][1];
+			egc.fgc.d[0] = *(UINT32 *)(maskword[value & 15] + 0);
+			egc.fgc.d[1] = *(UINT32 *)(maskword[value & 15] + 2);
 			break;
 		case 0x07:
 			egc.fg &= 0x00ff;
@@ -79,8 +79,8 @@ static void IOOUTCALL egc_o4a0(UINT port, BYTE value) {
 		case 0x0a:
 			egc.bg &= 0xff00;
 			egc.bg |= value;
-			egc.bgc.d[0] = maskword[value & 15][0];
-			egc.bgc.d[1] = maskword[value & 15][1];
+			egc.bgc.d[0] = *(UINT32 *)(maskword[value & 15] + 0);
+			egc.bgc.d[1] = *(UINT32 *)(maskword[value & 15] + 2);
 			break;
 		case 0x0b:
 			egc.bg &= 0x00ff;
@@ -152,8 +152,8 @@ void IOOUTCALL egc_w16(UINT port, UINT16 value) {
 
 		case 0x06:
 			egc.fg = value;
-			egc.fgc.d[0] = maskword[value & 15][0];
-			egc.fgc.d[1] = maskword[value & 15][1];
+			egc.fgc.d[0] = *(UINT32 *)(maskword[value & 15] + 0);
+			egc.fgc.d[1] = *(UINT32 *)(maskword[value & 15] + 2);
 			break;
 
 		case 0x08:
@@ -164,8 +164,8 @@ void IOOUTCALL egc_w16(UINT port, UINT16 value) {
 
 		case 0x0a:
 			egc.bg = value;
-			egc.bgc.d[0] = maskword[value & 15][0];
-			egc.bgc.d[1] = maskword[value & 15][1];
+			egc.bgc.d[0] = *(UINT32 *)(maskword[value & 15] + 0);
+			egc.bgc.d[1] = *(UINT32 *)(maskword[value & 15] + 2);
 			break;
 
 		case 0x0c:

@@ -39,7 +39,7 @@
 #include	"pc9861k.h"
 
 
-	const char	np2version[] = "ver.0.37";
+	const char	np2version[] = "ver.0.38";
 
 	NP2CFG		np2cfg = {
 				PCBASECLOCK25, 4, 0,
@@ -64,11 +64,8 @@
 							4 * PCBASECLOCK25 * 50 / 3104,
 							4 * PCBASECLOCK25 * 5 / 3104,
 							4 * PCBASECLOCK25 / 120,
-							4 * PCBASECLOCK25 / 200,
-							4 * PCBASECLOCK25 / 100,
 							4 * PCBASECLOCK25 / 1920,
 							4 * PCBASECLOCK25 / 3125,
-//							(4 * PCBASECLOCK25 / 22050) + 1,
 							(4 * PCBASECLOCK25 / 56400),
 							100, 20,
 							0};
@@ -148,20 +145,9 @@ static void setpcclock(UINT base, UINT multiple) {			// ver0.28
 	pc.dispclock = pc.realclock * 50 / 3102;
 	pc.vsyncclock = pc.realclock * 5 / 3102;
 	pc.mouseclock = pc.realclock / 120;
-	pc.dsoundclock = (pc.realclock) / 200;				// ver0.28
-	pc.dsoundclock2 = pc.realclock / 100;
 	pc.keyboardclock = pc.realclock / 1920;
 	pc.midiclock = pc.realclock / 3125;
 	pc.frame1000 = pc.realclock / 56400;
-#if 0
-	if (opna_rate) {
-//		pc.sampleclock = (pc.realclock / opna_rate) + 1;
-		pc.sampleclock = (pc.realclock / opna_rate);
-	}
-	else {
-		pc.sampleclock = 0;
-	}
-#endif
 }
 
 
@@ -294,6 +280,7 @@ void pccore_reset(void) {
 	}
 
 	setpcclock(np2cfg.baseclock, np2cfg.multiple);
+	sound_changeclock();
 	nevent_init();
 
 	sound_reset();

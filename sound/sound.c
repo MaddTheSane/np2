@@ -8,13 +8,7 @@
 #include	"beep.h"
 
 
-	UINT32	opna_rate = 22050;
-
-static int	writebytes = 0;
-	UINT32	ratebase200 = 110;
-	UINT32	dsound_lastclock = 0;
-
-
+	SOUNDCFG	soundcfg;
 
 
 #define	STREAM_CBMAX	16
@@ -69,20 +63,10 @@ BOOL sound_create(UINT rate, UINT ms) {
 	UINT	samples;
 
 	ZeroMemory(&sndstream, sizeof(sndstream));
-	if (rate == 0) {
-		return(SUCCESS);
-	}
 	switch(rate) {
 		case 11025:
-			opna_rate = 11025;
-			break;
-
 		case 22050:
-			opna_rate = 22050;
-			break;
-
 		case 44100:
-			opna_rate = 44100;
 			break;
 
 		default:
@@ -94,6 +78,9 @@ BOOL sound_create(UINT rate, UINT ms) {
 	}
 	soundmng_reset();
 
+	soundcfg.rate = rate;
+	sound_changeclock();
+
 	sndstream.buffer = (SINT32 *)_MALLOC(samples * 2 * sizeof(SINT32),
 																"stream");
 	if (sndstream.buffer == NULL) {
@@ -101,7 +88,6 @@ BOOL sound_create(UINT rate, UINT ms) {
 	}
 	sndstream.samples = samples;
 	streamreset();
-	ratebase200 = (rate + 199) / 200;
 
 	SNDCSEC_INIT;
 	return(SUCCESS);
@@ -130,9 +116,35 @@ void sound_reset(void) {
 	if (sndstream.buffer) {
 		soundmng_reset();
 		streamreset();
-		dsound_lastclock = I286_CLOCK;
+		soundcfg.lastclock = I286_CLOCK;
 		beep_eventreset();
 	}
+}
+
+void sound_changeclock(void) {
+
+	UINT32	clock;
+	UINT	hz;
+	UINT	hzmax;
+
+	if (sndstream.buffer == NULL) {
+		return;
+	}
+
+	// とりあえず 25で割り切れる。
+	clock = pc.realclock / 25;
+	hz = soundcfg.rate / 25;
+
+	// で、クロック数に合せて調整。(64bit演算しろよな的)
+	hzmax = (1 << (32 - 8)) / (clock >> 8);
+	while(hzmax < hz) {
+		clock = (clock + 1) >> 1;
+		hz = (hz + 1) >> 1;
+	}
+	soundcfg.hzbase = hz;
+	soundcfg.clockbase = clock;
+	soundcfg.minclock = 2 * clock / hz;
+	soundcfg.lastclock = I286_CLOCK;
 }
 
 void sound_streamregist(void *hdl, SOUNDCB cbfn) {
@@ -152,29 +164,29 @@ void sound_streamregist(void *hdl, SOUNDCB cbfn) {
 
 void sound_sync(void) {
 
-	UINT	length;
+	UINT32	length;
 
 	if (sndstream.buffer == NULL) {
 		return;
 	}
 
-	length = (I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK
-											- dsound_lastclock) * ratebase200;
-	if (length < pc.dsoundclock2) {
+	length = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK - soundcfg.lastclock;
+	if (length < soundcfg.minclock) {
 		return;
 	}
-	length /= pc.dsoundclock;
-	if (length) {
-		SNDCSEC_ENTER;
-		streamprepare(length);
-		SNDCSEC_LEAVE;
-		writebytes += length;
-		dsound_lastclock += (length * pc.dsoundclock / ratebase200);
-		beep_eventreset();
+	length = (length * soundcfg.hzbase) / soundcfg.clockbase;
+	if (length == 0) {
+		return;
 	}
+	SNDCSEC_ENTER;
+	streamprepare(length);
+	SNDCSEC_LEAVE;
+	soundcfg.writecount += length;
+	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
+	beep_eventreset();
 
-	if (writebytes >= 100) {
-		writebytes = 0;
+	if (soundcfg.writecount >= 100) {
+		soundcfg.writecount = 0;
 		soundmng_sync();
 	}
 }
@@ -188,7 +200,7 @@ const SINT32 *ret;
 		SNDCSEC_ENTER;
 		if (sndstream.remain) {
 			streamprepare(sndstream.remain);
-			dsound_lastclock = I286_CLOCK;
+			soundcfg.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 			beep_eventreset();
 		}
 	}

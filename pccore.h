@@ -75,11 +75,8 @@ typedef struct {
 	UINT32	dispclock;
 	UINT32	vsyncclock;
 	UINT32	mouseclock;
-	UINT32	dsoundclock;
-	UINT32	dsoundclock2;
 	UINT32	keyboardclock;
 	UINT32	midiclock;
-//	UINT32	sampleclock;
 	UINT32	frame1000;
 	UINT32	raster;
 	UINT32	hsync;

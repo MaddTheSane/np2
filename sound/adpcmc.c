@@ -33,7 +33,9 @@ void adpcm_update(ADPCM ad) {
 
 	UINT32	addr;
 
-	ad->base = ADTIMING * (OPNA_CLOCK / 72) / adpcmcfg.rate;
+	if (adpcmcfg.rate) {
+		ad->base = ADTIMING * (OPNA_CLOCK / 72) / adpcmcfg.rate;
+	}
 	addr = LOADINTELWORD(ad->reg.delta);
 	addr = (addr * ad->base) >> 16;
 	if (addr < 0x80) {
