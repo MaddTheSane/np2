@@ -1,4 +1,5 @@
 #include	<windows.h>
+#include	<tchar.h>
 #include	<stdio.h>
 #include	<stddef.h>
 
@@ -43,7 +44,11 @@ typedef	unsigned int	UINT32;
 
 
 #define	GETTICK()	GetTickCount()
+#if defined(UNICODE)
+#define	SPRINTF		sprintf
+#else
 #define	SPRINTF		wsprintf
+#endif
 #define	__ASSERT(s)
 
 #define	VERMOUTH_LIB

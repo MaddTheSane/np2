@@ -60,6 +60,7 @@ typedef struct {
 	BYTE	jastsnd;
 	BYTE	useromeo;
 	BYTE	thickframe;
+	BYTE	xrollkey;
 } NP2OSCFG;
 
 

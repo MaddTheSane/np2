@@ -1396,6 +1396,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 #ifdef OPENING_WAIT
 	UINT32		tick;
 #endif
+	BOOL		xrollkey;
 
 	_MEM_INIT();
 
@@ -1427,10 +1428,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 	TRACEINIT();
 
+	xrollkey = (np2oscfg.xrollkey == 0);
 	if (np2oscfg.KEYBOARD >= KEY_TYPEMAX) {
 		int keytype = GetKeyboardType(1);
 		if ((keytype & 0xff00) == 0x0d00) {
 			np2oscfg.KEYBOARD = KEY_PC98;
+			xrollkey = !xrollkey;
 		}
 		else if (!keytype) {
 			np2oscfg.KEYBOARD = KEY_KEY101;
@@ -1439,7 +1442,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			np2oscfg.KEYBOARD = KEY_KEY106;
 		}
 	}
-	winkbd_roll(np2oscfg.KEYBOARD != KEY_PC98);
+	winkbd_roll(xrollkey);
 	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 

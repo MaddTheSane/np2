@@ -5,10 +5,6 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"fddfile.h"
-#if 0
-#include	"sound.h"
-#include	"fmboard.h"
-#endif
 
 	UINT	sys_updates;
 

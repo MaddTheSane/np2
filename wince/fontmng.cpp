@@ -208,7 +208,7 @@ int fontmng_getpoint(void *hdl) {
 	return(0);
 }
 
-#ifdef _WIN32_WCE
+#ifdef UNICODE
 static void getlength1(FNTMNG fhdl, FNTDAT fdat, LPCTSTR string,
 													int tleng, int length) {
 

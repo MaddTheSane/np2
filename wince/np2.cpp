@@ -344,9 +344,17 @@ static DWORD GetModuleFileName_A(HMODULE hModule,
 }
 #endif
 
+#if defined(_WIN32_WCE)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
-										LPTSTR lpszCmdLine, int nCmdShow) {
-
+										LPWSTR lpszCmdLine, int nCmdShow)
+#elif defined(UNICODE)
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
+										LPSTR lpszCmdLine, int nCmdShow)
+#else
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
+										LPSTR lpszCmdLine, int nCmdShow)
+#endif
+{
 	HWND		hWnd;
 	WNDCLASS	np2;
 	int			id;

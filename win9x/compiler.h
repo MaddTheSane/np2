@@ -58,7 +58,11 @@ typedef signed __int64		SINT64;
 
 
 #define	GETTICK()			GetTickCount()
+#if defined(UNICODE)
+#define	SPRINTF				sprintf
+#else
 #define	SPRINTF				wsprintf
+#endif
 #define	__ASSERT(s)
 
 #define	LABEL				__declspec(naked)

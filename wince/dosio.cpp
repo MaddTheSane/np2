@@ -264,10 +264,16 @@ short file_attr_c(const char *path) {
 
 static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
+#if defined(UNICODE)
+	WideCharToMultiByte(CP_ACP, 0, w32fd->cFileName, -1,
+								fli->path, sizeof(fli->path), NULL, NULL);
+#else
+	milstr_ncpy(fli->path, w32fd->cFileName, sizeof(fli->path));
+#endif
 #if !defined(_WIN32_WCE)
 	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
-		((!file_cmpname(w32fd->cFileName, ".")) ||
-		(!file_cmpname(w32fd->cFileName, "..")))) {
+		((!file_cmpname(fli->path, ".")) ||
+		(!file_cmpname(fli->path, "..")))) {
 		return(FAILURE);
 	}
 #endif
@@ -275,12 +281,6 @@ static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 	fli->size = w32fd->nFileSizeLow;
 	fli->attr = w32fd->dwFileAttributes;
 	cnvdatetime(&w32fd->ftLastWriteTime, &fli->date, &fli->time);
-#if defined(UNICODE)
-	WideCharToMultiByte(CP_ACP, 0, w32fd->cFileName, -1,
-								fli->path, sizeof(fli->path), NULL, NULL);
-#else
-	milstr_ncpy(fli->path, w32fd->cFileName, sizeof(fli->path));
-#endif
 	return(SUCCESS);
 }
 

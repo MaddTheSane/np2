@@ -29,7 +29,7 @@ static const VIRCAL_T vircal[6] = {	{IDC_VIRYEAR,	0x00, 0x99},
 static void set_cal2dlg(HWND hWnd, const BYTE *cbuf) {
 
 	int		i;
-	char	work[8];
+	TCHAR	work[8];
 
 	for (i=0; i<6; i++) {
 		if (i != 1) {

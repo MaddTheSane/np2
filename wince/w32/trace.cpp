@@ -7,6 +7,9 @@
 
 #ifdef TRACE
 
+#define FILEBUFSIZE			(1 << 20)
+// #define FILELASTBUFONLY
+
 #ifdef STRICT
 #define	SUBCLASSPROC	WNDPROC
 #else
@@ -37,22 +40,29 @@ extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
 
 enum {
-	IDM_TRACEEN		= 3300,
-	IDM_TRACEFH
+	IDM_TRACE1		= 3300,
+	IDM_TRACE2,
+	IDM_TRACEEN,
+	IDM_TRACEFH,
+	IDM_TRACECL
 };
 
-static const char	ProgTitle[] = "console";
-static const char	ClassName[] = "TRACE-console";
-static const char	ClassEdit[] = "EDIT";
-static const char	traceen[] = "Enable";
-static const char	tracefh[] = "File out";
-static const char	crlf[] = "\r\n";
+static const TCHAR ProgTitle[] = STRLITERAL("console");
+static const TCHAR ClassName[] = STRLITERAL("TRACE-console");
+static const TCHAR ClassEdit[] = STRLITERAL("EDIT");
+static const TCHAR viewfont[] = STRLITERAL(VIEW_TEXT);
+static const TCHAR trace1[] = STRLITERAL("TRACE");
+static const TCHAR trace2[] = STRLITERAL("VERBOSE");
+static const TCHAR traceen[] = STRLITERAL("Enable");
+static const TCHAR tracefh[] = STRLITERAL("File out");
+static const TCHAR tracecl[] = STRLITERAL("Clear");
+static const char crlf[] = "\r\n";
 
 static	TRACEWIN	tracewin;
 static	HWND		hView = NULL;
 static	HFONT		hfView = NULL;
 static	HBRUSH		hBrush = NULL;
-static	char		szView[VIEW_BUFFERSIZE];
+static	TCHAR		szView[VIEW_BUFFERSIZE];
 static	TRACECFG	tracecfg;
 
 static const char	np2trace[] = "np2trace.ini";
@@ -72,31 +82,127 @@ static void View_ScrollToBottom(HWND hWnd) {
 	PostMessage(hWnd, EM_LINESCROLL, 0, MaxPos);
 }
 
+static void View_ClrString(void) {
+
+	szView[0] = '\0';
+	SetWindowText(hView, szView);
+}
+
 static void View_AddString(const char *lpszString) {
 
-	int		len, vlen;
-	char	*p;
+	int		len;
+	int		vlen;
+	int		overleng;
+	TCHAR	*p;
 
+#if defined(UNICODE)
+	len = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1,
+																NULL, 0) - 1;
+#else
 	len = strlen(lpszString);
-	if ((!len) || ((len + 3) > VIEW_BUFFERSIZE)) {
+#endif
+	if ((len <= 0) || ((len + 3) > VIEW_BUFFERSIZE)) {
 		return;
 	}
-	vlen = strlen(szView);
+	vlen = lstrlen(szView);
 	if ((vlen + len + 3) > VIEW_BUFFERSIZE) {
-		p = szView;
-		while(*p) {
+		overleng = vlen + len + 3 - VIEW_BUFFERSIZE;
+		p = szView + overleng;
+		vlen -= overleng;
+		while(vlen) {
 			vlen--;
-			if ((*p++ == 0x0a) && ((vlen + len + 3) <= VIEW_BUFFERSIZE)) {
+			if (*p++ == 0x0a) {
 				break;
 			}
 		}
-		strcpy(szView, p);
+		if (vlen) {
+			CopyMemory(szView, p, vlen * sizeof(TCHAR));
+		}
 	}
-	strcat(szView, lpszString);
-	strcat(szView, crlf);
+	p = szView + vlen;
+#if defined(UNICODE)
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1, p, len);
+#else
+	CopyMemory(p, lpszString, len);
+#endif
+	p += len;
+	p[0] = '\r';
+	p[1] = '\n';
+	p[2] = '\0';
 	SetWindowText(hView, szView);
 	View_ScrollToBottom(hView);
 }
+
+
+// ----
+
+#if defined(FILEBUFSIZE)
+static	char	filebuf[FILEBUFSIZE];
+static	UINT32	filebufpos;
+#endif
+
+static void trfh_close(void) {
+
+	FILEH	fh;
+
+	fh = tracewin.fh;
+	tracewin.fh = FILEH_INVALID;
+	if (fh != FILEH_INVALID) {
+#if defined(FILEBUFSIZE)
+		UINT size = filebufpos & (FILEBUFSIZE - 1);
+#if defined(FILELASTBUFONLY)
+		if (filebufpos >= FILEBUFSIZE) {
+			file_write(fh, filebuf + size, FILEBUFSIZE - size);
+		}
+#endif
+		if (size) {
+			file_write(fh, filebuf, size);
+		}
+#endif
+		file_close(fh);
+	}
+}
+
+static void trfh_open(const char *fname) {
+
+	trfh_close();
+	tracewin.fh = file_create(fname);
+#if defined(FILEBUFSIZE)
+	filebufpos = 0;
+#endif
+}
+
+static void trfh_add(const char *buf) {
+
+	UINT	size;
+
+	size = strlen(buf);
+#if defined(FILEBUFSIZE)
+	while(size) {
+		UINT pos = filebufpos & (FILEBUFSIZE - 1);
+		UINT rem = FILEBUFSIZE - pos;
+		if (size >= rem) {
+			CopyMemory(filebuf + pos, buf, rem);
+			filebufpos += rem;
+			buf += rem;
+			size -= rem;
+#if !defined(FILELASTBUFONLY)
+			file_write(tracewin.fh, filebuf, FILEBUFSIZE);
+#endif
+		}
+		else {
+			CopyMemory(filebuf + pos, buf, size);
+			filebufpos += size;
+			break;
+		}
+	}
+#else
+	file_write(tracewin.fh, buf, size);
+#endif
+}
+
+
+// ----
 
 static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
@@ -107,13 +213,24 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_CREATE:
 			hmenu = GetSystemMenu(hWnd, FALSE);
 			InsertMenu(hmenu, 0, MF_BYPOSITION | MF_STRING,
-														IDM_TRACEEN, traceen);
+														IDM_TRACE1, trace1);
 			InsertMenu(hmenu, 1, MF_BYPOSITION | MF_STRING,
-														IDM_TRACEFH, tracefh);
+														IDM_TRACE2, trace2);
 			InsertMenu(hmenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			InsertMenu(hmenu, 3, MF_BYPOSITION | MF_STRING,
+														IDM_TRACEEN, traceen);
+			InsertMenu(hmenu, 4, MF_BYPOSITION | MF_STRING,
+														IDM_TRACEFH, tracefh);
+			InsertMenu(hmenu, 5, MF_BYPOSITION | MF_STRING,
+														IDM_TRACECL, tracecl);
+			InsertMenu(hmenu, 6, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
-			CheckMenuItem(hmenu, IDM_TRACEEN,
+			CheckMenuItem(hmenu, IDM_TRACE1,
 								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
+			CheckMenuItem(hmenu, IDM_TRACE2,
+								(tracewin.en & 2)?MF_CHECKED:MF_UNCHECKED);
+			CheckMenuItem(hmenu, IDM_TRACEEN,
+								(tracewin.en & 4)?MF_CHECKED:MF_UNCHECKED);
 
 			GetClientRect(hWnd, &rc);
 			hView = CreateWindowEx(WS_EX_CLIENTEDGE,
@@ -129,7 +246,7 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 			hfView = CreateFont(VIEW_SIZE, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, VIEW_TEXT);
+					DEFAULT_QUALITY, FIXED_PITCH, viewfont);
 			if (!hfView) {
 				break;
 			}
@@ -141,25 +258,42 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_SYSCOMMAND:
 			switch(wp) {
-				case IDM_TRACEEN:
+				case IDM_TRACE1:
 					tracewin.en ^= 1;
 					hmenu = GetSystemMenu(hWnd, FALSE);
-					CheckMenuItem(hmenu, IDM_TRACEEN,
+					CheckMenuItem(hmenu, IDM_TRACE1,
 								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
+					break;
+
+				case IDM_TRACE2:
+					tracewin.en ^= 2;
+					hmenu = GetSystemMenu(hWnd, FALSE);
+					CheckMenuItem(hmenu, IDM_TRACE2,
+								(tracewin.en & 2)?MF_CHECKED:MF_UNCHECKED);
+					break;
+
+				case IDM_TRACEEN:
+					tracewin.en ^= 4;
+					hmenu = GetSystemMenu(hWnd, FALSE);
+					CheckMenuItem(hmenu, IDM_TRACEEN,
+								(tracewin.en & 4)?MF_CHECKED:MF_UNCHECKED);
 					break;
 
 				case IDM_TRACEFH:
 					if (tracewin.fh != FILEH_INVALID) {
-						file_close(tracewin.fh);
-						tracewin.fh = FILEH_INVALID;
+						trfh_close();
 					}
 					else {
-						tracewin.fh = file_create("traceout.txt");
+						trfh_open("traceout.txt");
 					}
 					hmenu = GetSystemMenu(hWnd, FALSE);
 					CheckMenuItem(hmenu, IDM_TRACEFH,
 									(tracewin.fh != FILEH_INVALID)?
 													MF_CHECKED:MF_UNCHECKED);
+					break;
+
+				case IDM_TRACECL:
+					View_ClrString();
 					break;
 
 				default:
@@ -244,14 +378,20 @@ void trace_init(void) {
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		wc.lpszMenuName = NULL;
-		wc.lpszClassName = (LPCSTR)ClassName;
+		wc.lpszClassName = ClassName;
 		if (!RegisterClass(&wc)) {
 			return;
 		}
 	}
 
-	tracewin.en = 1;
+#if 1
+	tracewin.en = 0;
 	tracewin.fh = FILEH_INVALID;
+#else
+	tracewin.en = 0;
+	tracewin.fh = FILEH_INVALID;
+	trfh_open("traces.txt");
+#endif
 
 	tracecfg.posx = CW_USEDEFAULT;
 	tracecfg.posy = CW_USEDEFAULT;
@@ -276,8 +416,7 @@ void trace_init(void) {
 void trace_term(void) {
 
 	if (tracewin.fh != FILEH_INVALID) {
-		file_close(tracewin.fh);
-		tracewin.fh = FILEH_INVALID;
+		trfh_close();
 	}
 	if (tracewin.hwnd) {
 		DestroyWindow(tracewin.hwnd);
@@ -292,20 +431,42 @@ void trace_fmt(const char *fmt, ...) {
 	va_list	ap;
 	char	buf[0x1000];
 
-	en = (tracewin.en & 1) || (tracewin.fh != FILEH_INVALID);
+	en = (tracewin.en & 1) &&
+		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
 	if (en) {
 		va_start(ap, fmt);
 		vsprintf(buf, fmt, ap);
 		va_end(ap);
-		if ((tracewin.en & 1) && (hView)) {
+		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
 		}
 		if (tracewin.fh != FILEH_INVALID) {
-			file_write(tracewin.fh, buf, strlen(buf));
-			file_write(tracewin.fh, crlf, strlen(crlf));
+			trfh_add(buf);
+			trfh_add(crlf);
 		}
 	}
 }
 
+void trace_fmt2(const char *fmt, ...) {
+
+	BOOL	en;
+	va_list	ap;
+	char	buf[0x1000];
+
+	en = (tracewin.en & 2) &&
+		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
+	if (en) {
+		va_start(ap, fmt);
+		vsprintf(buf, fmt, ap);
+		va_end(ap);
+		if ((tracewin.en & 4) && (hView)) {
+			View_AddString(buf);
+		}
+		if (tracewin.fh != FILEH_INVALID) {
+			trfh_add(buf);
+			trfh_add(crlf);
+		}
+	}
+}
 #endif
 
