@@ -5,10 +5,10 @@
 	INCLUDE		i286aop.inc
 
 	IMPORT		i286a_ea
-	IMPORT		i286_memoryread
-	IMPORT		i286_memoryread_w
-	IMPORT		i286_memorywrite
-	IMPORT		i286_memorywrite_w
+	IMPORT		i286a_memoryread
+	IMPORT		i286a_memoryread_w
+	IMPORT		i286a_memorywrite
+	IMPORT		i286a_memorywrite_w
 	IMPORT		i286a_localint
 
 	IMPORT		__imp___rt_udiv
@@ -48,7 +48,7 @@ test8m			CPUWORK	#6
 				GETPC8
 				AND8	r4, r0
 				mov		pc, r11
-test8e			bl		i286_memoryread
+test8e			bl		i286a_memoryread
 				mov		r4, r0
 				GETPC8
 				AND8	r4, r0
@@ -68,7 +68,7 @@ mul_ea8			cmp		r0, #&c0
 				mov		pc, r11
 mul8m			CPUWORK	#16
 				bl		i286a_ea
-				bl		i286_memoryread
+				bl		i286a_memoryread
 				ldrb	r4, [r9, #CPU_AL]
 				MUL8	r0, r4
 				strh	r1, [r9, #CPU_AX]
@@ -85,7 +85,7 @@ imul_ea8		cmp		r0, #&c0
 				mov		pc, r11
 imul8m			CPUWORK	#16
 				bl		i286a_ea
-				bl		i286_memoryread
+				bl		i286a_memoryread
 				ldrb	r4, [r9, #CPU_AL]				; ldrsb
 				IMUL8	r0, r4
 				strh	r1, [r9, #CPU_AX]
@@ -100,7 +100,7 @@ div_ea8			mov		r6, r8
 				b		div8e
 div8m			CPUWORK	#17
 				bl		i286a_ea
-				bl		i286_memoryread
+				bl		i286a_memoryread
 div8e			cmp		r0, #0
 				beq		div8intr
 				ldrh	r1, [r9, #CPU_AX]
@@ -127,7 +127,7 @@ idiv_ea8		mov		r6, r8
 				b		idiv8e
 idiv8m			CPUWORK	#20
 				bl		i286a_ea
-				bl		i286_memoryread
+				bl		i286a_memoryread
 idiv8e			movs	r0, r0, lsl #24
 				beq		div8intr
 				ldrsh	r1, [r9, #CPU_AX]
@@ -178,7 +178,7 @@ test16m			CPUWORK	#6
 				GETPC16
 				AND16	r4, r0
 				mov		pc, r11
-test16e			bl		i286_memoryread_w
+test16e			bl		i286a_memoryread_w
 				mov		r4, r0
 				GETPC16
 				AND16	r4, r0
@@ -200,7 +200,7 @@ mul_ea16		cmp		r0, #&c0
 				mov		pc, r11
 mul16m			CPUWORK	#24
 				bl		i286a_ea
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				ldrh	r4, [r9, #CPU_AX]
 				MUL16	r0, r4
 				mov		r0, r1 lsr #16
@@ -221,7 +221,7 @@ imul_ea16		cmp		r0, #&c0
 				mov		pc, r11
 imul16m			CPUWORK	#24
 				bl		i286a_ea
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				ldrh	r4, [r9, #CPU_AX]				; ldrsh?
 				IMUL16	r0, r4
 				mov		r0, r1 lsr #16
@@ -238,7 +238,7 @@ div_ea16		mov		r6, r8
 				b		div16e
 div16m			CPUWORK	#25
 				bl		i286a_ea
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 div16e			cmp		r0, #0
 				beq		div16intr
 				ldrh	r2, [r9, #CPU_DX]
@@ -267,7 +267,7 @@ idiv_ea16		mov		r6, r8
 				b		idiv16e
 idiv16m			CPUWORK	#28
 				bl		i286a_ea
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 idiv16e			movs	r0, r0, lsl #16
 				beq		div16intr
 				ldrh	r2, [r9, #CPU_DX]

@@ -43,16 +43,20 @@ CPU_MAINMEM			equ		112
 	EXPORT	i286_memorywrite
 	EXPORT	i286_memorywrite_w
 
+	EXPORT	i286a_memoryread
+	EXPORT	i286a_memoryread_w
+	EXPORT	i286a_memorywrite
+	EXPORT	i286a_memorywrite_w
+
 	MACRO
 $label	MEMADR	$offset
 $label	dcd		(i286core + CPU_MAINMEM) $offset
 	MEND
 
-
 	AREA	.text, CODE, READONLY
 
-
 i286_memoryread
+i286a_memoryread
 				cmp		r0, #I286_MEMREADMAX
 				bcs		i2mr_ext
 				ldr		r1, i2mr_mem
@@ -76,8 +80,8 @@ i2mr_himem		sub		r1, r0, #&100000
 i2mr_cpu		dcd		i286core								; !!
 
 
-
 i286_memoryread_w
+i286a_memoryread_w
 				tst		r0, #1
 				bne		i2mro_main
 				cmp		r0, #I286_MEMREADMAX
@@ -155,8 +159,8 @@ i2mro_cpu		dcd		i286core								; !!
 i2mro_mem10ffff	MEMADR	+ USE_HIMEM - 1
 
 
-
 i286_memorywrite
+i286a_memorywrite
 				cmp		r0, #I286_MEMWRITEMAX
 				bcs		i2mw_ext
 				ldr		r2, i2mw_mem
@@ -179,9 +183,8 @@ i2mw_himem		sub		r2, r0, #&100000
 i2mw_cpu		dcd		i286core								; !!
 
 
-
-	if 1
 i286_memorywrite_w
+i286a_memorywrite_w
 				tst		r0, #1
 				bne		i2mwo_main
 				cmp		r0, #I286_MEMWRITEMAX
@@ -252,8 +255,6 @@ i2mwo_10ffff	ldr		r2, i2mwo_mem10ffff
 				mov		pc, lr
 i2mwo_cpu		dcd		i286core								; !!
 i2mwo_mem10ffff	MEMADR	+ USE_HIMEM - 1
-	endif
-
 
 	END
 

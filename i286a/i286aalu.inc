@@ -417,7 +417,7 @@ $label		CPUWORK	$clk
 			strh	r0, [r9, #CPU_SP]
 			add		r0, r2, r3 lsr #16
 			mov		lr, r11
-			b		i286_memorywrite_w
+			b		i286a_memorywrite_w
 	MEND
 
 	MACRO
@@ -428,7 +428,7 @@ $label		CPUWORK	$clk
 			add		r0, r1, r0
 			add		r1, r1, #2
 			strh	r1, [r9, #CPU_SP]
-			bl		i286_memoryread_w
+			bl		i286a_memoryread_w
 	MEND
 
 	MACRO

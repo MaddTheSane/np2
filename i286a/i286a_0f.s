@@ -5,10 +5,10 @@
 
 	IMPORT		i286a_ea
 	IMPORT		i286a_a
-	IMPORT		i286_memoryread
-	IMPORT		i286_memoryread_w
-	IMPORT		i286_memorywrite
-	IMPORT		i286_memorywrite_w
+	IMPORT		i286a_memoryread
+	IMPORT		i286a_memoryread_w
+	IMPORT		i286a_memorywrite
+	IMPORT		i286a_memorywrite_w
 
 	IMPORT		i286a_localint
 
@@ -42,17 +42,17 @@ sgdt			cmp		r0, #&c0
 				ldrh	r1, [r9, #(CPU_GDTR + 0)]
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				add		r0, r4, r6
 				ldrh	r1, [r9, #(CPU_GDTR + 2)]
 				add		r4, r4, #2
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				ldrb	r1, [r9, #(CPU_GDTR + 4)]
 				bic		r4, r4, #(1 << 16)
 				orr		r1, r1, #&ff00
 				add		r0, r4, r6
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 
 sidt			cmp		r0, #&c0
 				bcs		cts_intr
@@ -62,17 +62,17 @@ sidt			cmp		r0, #&c0
 				ldrh	r1, [r9, #(CPU_IDTR + 0)]
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				add		r0, r4, r6
 				ldrh	r1, [r9, #(CPU_IDTR + 2)]
 				add		r4, r4, #2
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				ldrb	r1, [r9, #(CPU_IDTR + 4)]
 				bic		r4, r4, #(1 << 16)
 				orr		r1, r1, #&ff00
 				add		r0, r4, r6
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 
 lgdt			cmp		r0, #&c0
 				bcs		cts_intr
@@ -81,15 +81,15 @@ lgdt			cmp		r0, #&c0
 				add		r4, r0, #2
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				strh	r0, [r9, #(CPU_GDTR + 0)]
 				add		r0, r4, r6
 				add		r4, r4, #2
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				bic		r4, r4, #(1 << 16)
 				strh	r0, [r9, #(CPU_GDTR + 2)]
 				add		r0, r4, r6
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				strh	r0, [r9, #(CPU_GDTR + 4)]
 				mov		pc, r11
 
@@ -100,15 +100,15 @@ lidt			cmp		r0, #&c0
 				add		r4, r0, #2
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				strh	r0, [r9, #(CPU_IDTR + 0)]
 				add		r0, r4, r6
 				add		r4, r4, #2
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				bic		r4, r4, #(1 << 16)
 				strh	r0, [r9, #(CPU_IDTR + 2)]
 				add		r0, r4, r6
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				strh	r0, [r9, #(CPU_IDTR + 4)]
 				mov		pc, r11
 
@@ -123,7 +123,7 @@ smswm			CPUWORK	#6
 				bl		i286a_ea
 				strh	r1, [r9, #CPU_MSW]
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 
 lmsw			cmp		r0, #&c0
 				bcc		lmswm
@@ -134,7 +134,7 @@ lmsw			cmp		r0, #&c0
 				mov		pc, r11
 lmswm			CPUWORK	#6
 				bl		i286a_ea
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				strh	r0, [r9, #CPU_MSW]
 				mov		pc, r11
 

@@ -20,11 +20,11 @@ $label.1	CPUWORK	$memclk
 			strb	r1, [r9, r0]
 			mov		pc, r11
 $label.2	mov		r5, r0
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			$alu	r0, r6
 			mov		r0, r5
 			mov		lr, r11
-			b		i286_memorywrite
+			b		i286a_memorywrite
 	MEND
 
 	MACRO
@@ -50,11 +50,11 @@ $label.1	CPUWORK	$memclk
 			strh	r1, [r9, r0]
 			mov		pc, r11
 $label.2	mov		r5, r0
-			bl		i286_memoryread_w
+			bl		i286a_memoryread_w
 			$alu	r0, r6
 			mov		r0, r5
 			mov		lr, r11
-			b		i286_memorywrite_w
+			b		i286a_memorywrite_w
 	MEND
 
 	MACRO
@@ -114,7 +114,7 @@ $label.1	CPUWORK	$memclk
 			ldrb	r4, [r9, r0]
 			$alu	r4, r6
 			mov		pc, r11
-$label.2	bl		i286_memoryread
+$label.2	bl		i286a_memoryread
 			$alu	r0, r6
 			mov		pc, r11
 	MEND
@@ -139,7 +139,7 @@ $label.1	CPUWORK	$memclk
 			ldrh	r4, [r9, r0]
 			$alu	r4, r6
 			mov		pc, r11
-$label.2	bl		i286_memoryread_w
+$label.2	bl		i286a_memoryread_w
 			$alu	r0, r6
 			mov		pc, r11
 	MEND
@@ -198,11 +198,11 @@ $label.1	CPUWORK	$memclk
 			strb	r1, [r9, r0]
 			mov		pc, r11
 $label.2	mov		r5, r0
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			$alu	r0
 			mov		r0, r5
 			mov		lr, r11
-			b		i286_memorywrite
+			b		i286a_memorywrite
 	MEND
 
 	MACRO
@@ -226,11 +226,11 @@ $label.1	CPUWORK	$memclk
 			strh	r1, [r9, r0]
 			mov		pc, r11
 $label.2	mov		r5, r0
-			bl		i286_memoryread_w
+			bl		i286a_memoryread_w
 			$alu	r0
 			mov		r0, r5
 			mov		lr, r11
-			b		i286_memorywrite_w
+			b		i286a_memorywrite_w
 	MEND
 
 
@@ -290,7 +290,7 @@ $label		CPUWORK	$clk
 			strh	r0, [r9, #CPU_SP]
 			add		r0, r2, r3 lsr #16
 			mov		lr, r11
-			b		i286_memorywrite_w
+			b		i286a_memorywrite_w
 	MEND
 
 	MACRO
@@ -299,7 +299,7 @@ $label		CPUWORK	$clk
 			ldrh	r0, [r9, #CPU_SP]
 			ldr		r1, [r9, #CPU_SS_BASE]
 			add		r0, r1, r0
-			bl		i286_memoryread_w
+			bl		i286a_memoryread_w
 			strh	r0, [r9, #CPU_SP]
 			mov		pc, r11
 	MEND
@@ -329,7 +329,7 @@ $label	JMPS		$jmpclk
 $label		CPUWORK	$jmpclk
 			ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			mov		r1, r0, lsl #24
 			add		r8, r8, #(1 << 16)
 			mov		r0, r1, asr #8

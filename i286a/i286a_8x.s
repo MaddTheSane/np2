@@ -4,10 +4,10 @@
 	INCLUDE		i286aalu.inc
 
 	IMPORT		i286a_ea
-	IMPORT		i286_memoryread
-	IMPORT		i286_memoryread_w
-	IMPORT		i286_memorywrite
-	IMPORT		i286_memorywrite_w
+	IMPORT		i286a_memoryread
+	IMPORT		i286a_memoryread_w
+	IMPORT		i286a_memorywrite
+	IMPORT		i286a_memorywrite_w
 
 	EXPORT		i286aop80
 	EXPORT		i286aop81
@@ -36,7 +36,7 @@ ope80m			CPUWORK	#7
 ope80e			mov		r4, r0
 				GETPC8
 				mov		r5, r0
-				bl		i286_memoryread
+				bl		i286a_memoryread
 				adr		r1, op8x_ext8
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -93,31 +93,31 @@ cmp_r8_i		ldrb	r6, [r5]
 add_r8_e		ADD8	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 or_r8_e			OR8		r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 adc_r8_e		ADC8	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 sbb_r8_e		SBB8	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 and_r8_e		AND8	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 sub_r8_e		SUB8	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 xor_r8_e		XOR8	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 cmp_r8_e		SUB8	r0, r4
 				mov		pc, r11
 
@@ -145,7 +145,7 @@ ope81m			CPUWORK	#7
 				adr		r1, op8x_reg16
 				ldr		pc, [r1, r6 lsr #1]
 ope81e			mov		r5, r0
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				mov		r4, r0
 				GETPC16
 				adr		r1, op8x_ext16
@@ -176,7 +176,7 @@ ope83m			CPUWORK	#7
 				adr		r1, op8x_reg16
 				ldr		pc, [r1, r6 lsr #1]
 ope83e			mov		r5, r0
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				mov		r4, r0
 				GETPC8
 				tst		r0, #(1 << 7)
@@ -237,31 +237,31 @@ cmp_r16_i		ldrh	r6, [r5]
 add_r16_e		ADD16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 or_r16_e		OR16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 adc_r16_e		ADC16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 sbb_r16_e		SBB16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 and_r16_e		AND16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 sub_r16_e		SUB16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 xor_r16_e		XOR16	r4, r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 cmp_r16_e		SUB16	r4, r0
 				mov		pc, r11
 

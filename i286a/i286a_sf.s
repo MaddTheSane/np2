@@ -4,10 +4,10 @@
 	INCLUDE		i286asft.inc
 
 	IMPORT		i286a_ea
-	IMPORT		i286_memoryread
-	IMPORT		i286_memoryread_w
-	IMPORT		i286_memorywrite
-	IMPORT		i286_memorywrite_w
+	IMPORT		i286a_memoryread
+	IMPORT		i286a_memoryread_w
+	IMPORT		i286a_memorywrite
+	IMPORT		i286a_memorywrite_w
 
 	EXPORT		i286asft8_1
 	EXPORT		i286asft16_1
@@ -37,7 +37,7 @@ sft8m			CPUWORK	#7
 				ldrb	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 sft8e			mov		r5, r0
-				bl		i286_memoryread
+				bl		i286a_memoryread
 				adr		r1, sft_ext8
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -84,31 +84,31 @@ sar_r8_1		SAR8	r4
 rol_e8_1		ROL8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 ror_e8_1		ROR8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 rcl_e8_1		RCL8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 rcr_e8_1		RCR8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 shl_e8_1		SHL8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 shr_e8_1		SHR8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 sar_e8_1		SAR8	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 
 
 ; ----
@@ -134,7 +134,7 @@ sft16m			CPUWORK	#7
 				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 sft16e			mov		r5, r0
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				adr		r1, sft_ext16
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -181,31 +181,31 @@ sar_r16_1		SAR16	r4
 rol_e16_1		ROL16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 ror_e16_1		ROR16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 rcl_e16_1		RCL16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 rcr_e16_1		RCR16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 shl_e16_1		SHL16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 shr_e16_1		SHR16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 sar_e16_1		SAR16	r0
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 
 
 ; ----
@@ -238,7 +238,7 @@ sft8cle			ldrb	r4, [r9, #CPU_CL]
 				ands	r4, r4, #&1f
 				moveq	pc, r11
 				mov		r5, r0
-				bl		i286_memoryread
+				bl		i286a_memoryread
 				adr		r1, sft_ext8cl
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -271,7 +271,7 @@ sft8d8e			mov		r5, r0
 				ands	r4, r0, #&1f
 				moveq	pc, r11
 				mov		r0, r5
-				bl		i286_memoryread
+				bl		i286a_memoryread
 				adr		r1, sft_ext8cl
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -318,31 +318,31 @@ sar_r8_cl		SAR8CL	r4, r0
 rol_e8_cl		ROL8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 ror_e8_cl		ROR8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 rcl_e8_cl		RCL8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 rcr_e8_cl		RCR8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 shl_e8_cl		SHL8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 shr_e8_cl		SHR8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 sar_e8_cl		SAR8CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite
+				b		i286a_memorywrite
 
 
 ; ----
@@ -380,7 +380,7 @@ sft16cle		ldrb	r4, [r9, #CPU_CL]
 				moveq	pc, r11
 				CPUWORK	r4
 				mov		r5, r0
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				adr		r1, sft_ext16cl
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -418,7 +418,7 @@ sft16d8e		mov		r5, r0
 				moveq	pc, r11
 				CPUWORK	r4
 				mov		r0, r5
-				bl		i286_memoryread_w
+				bl		i286a_memoryread_w
 				adr		r1, sft_ext16cl
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -465,31 +465,31 @@ sar_r16_cl		SAR16CL	r4, r0
 rol_e16_cl		ROL16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 ror_e16_cl		ROR16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 rcl_e16_cl		RCL16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 rcr_e16_cl		RCR16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 shl_e16_cl		SHL16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 shr_e16_cl		SHR16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 sar_e16_cl		SAR16CL	r0, r4
 				mov		r0, r5
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286a_memorywrite_w
 
 	END
 

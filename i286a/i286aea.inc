@@ -3,7 +3,7 @@
 $label	GETPC8
 $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			add		r8, r8, #(1 << 16)
 	MEND
 
@@ -11,7 +11,7 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 $label	GETPC16
 $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread_w
+			bl		i286a_memoryread_w
 			add		r8, r8, #(2 << 16)
 	MEND
 
@@ -36,7 +36,7 @@ $label		and		$out, $op, #(6 << 2)
 $label	EAREG8	$src
 $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			add		r8, r8, #(1 << 16)
 			and		$src, r0, #(6 << 2)
 			add		$src, r9, $src lsr #2
@@ -48,7 +48,7 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 $label	REG8EA	$dst, $regclk, $memclk
 $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			add		r8, r8, #(1 << 16)
 			R8DST	r0, $dst
 			cmp		r0, #&c0
@@ -59,7 +59,7 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 			b		$label.2
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			bl		i286_memoryread
+			bl		i286a_memoryread
 $label.2
 	MEND
 
@@ -80,7 +80,7 @@ $label		and		$out, $op, #(7 << 3)
 $label	EAREG16	$src
 $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			add		r8, r8, #(1 << 16)
 			and		$src, r0, #(7 << 3)
 			add		$src, r9, $src lsr #2
@@ -90,7 +90,7 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 $label	REG16EA	$dst, $regclk, $memclk
 $label		ldr		r0, [r9, #CPU_CS_BASE]
 			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
+			bl		i286a_memoryread
 			add		r8, r8, #(1 << 16)
 			R16DST	r0, $dst
 			cmp		r0, #&c0
@@ -101,7 +101,7 @@ $label		ldr		r0, [r9, #CPU_CS_BASE]
 			b		$label.2
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			bl		i286_memoryread_w
+			bl		i286a_memoryread_w
 $label.2
 	MEND
 

@@ -8,33 +8,6 @@ VRAM_E				equ		&0e0000
 FONT_ADRS			equ		&110000
 ITF_ADRS			equ		&1f8000
 
-; cpu_reg			equ		0
-CPU_REMAINCLOCK		equ		28
-; cpu_baseclock		equ		32
-; cpu_clock			equ		36
-CPU_ADRSMASK		equ		40
-; cpu_es_base		equ		44
-; cpu_cs_base		equ		48
-; cpu_ss_base		equ		52
-; cpu_ds_base		equ		56
-; cpu_ss_fix		equ		60
-; cpu_ds_fix		equ		64
-; cpu_prefix		equ		68
-; cpu_trap			equ		70
-; cpu_type			equ		71
-; cpu_pf_semaphore	equ		72
-; cpu_repbak		equ		76
-; cpu_inport		equ		80
-; cpu_ovflag		equ		84
-; cpu_GDTR			equ		88
-; cpu_IDTR			equ		94
-; cpu_MSW			equ		100
-; cpu_resetreq		equ		102
-; cpu_itfbank		equ		103
-CPU_EXTMEM			equ		104
-CPU_EXTMEMSIZE		equ		108
-CPU_MAINMEM			equ		112
-
 ; gdcs_access		equ		0
 ; gdcs_disp			equ		1
 GDCS_TEXTDISP		equ		2
@@ -59,6 +32,8 @@ GW_LOW				equ		0
 GW_HIGH				equ		4
 GW_WRITABLE			equ		8
 
+
+	INCLUDE	i286a.inc
 
 ;	IMPORT	mem
 	IMPORT	memfn
@@ -89,10 +64,6 @@ GW_WRITABLE			equ		8
 	EXPORT	i286_nonram_r
 	EXPORT	i286_nonram_rw
 
-	MACRO
-$label	MEMADR	$offset
-$label	dcd		(i286core + CPU_MAINMEM) $offset
-	MEND
 
 	AREA	.text, CODE, READONLY
 
@@ -184,7 +155,7 @@ vram_w0			ldr		r2, vw0_cpu
 				ldrb	r12, [r2, #GDCS_GRPHDISP]
 				orr		r12, r12, #1
 				strb	r12, [r2, #GDCS_GRPHDISP]
-				ldr		r2, vw0_mem
+				ldr		r2, vw0_cpu
 				strb	r1, [r0, r2]
 				ldr		r2, vw0_vramupd
 				mov		r0, r0, lsl #(32 - 15)
@@ -193,10 +164,9 @@ vram_w0			ldr		r2, vw0_cpu
 				orr		r12, r12, #1
 				strb	r12, [r2, r0, lsr #(32 - 15)]
 				mov		pc, lr
-vw0_cpu			dcd		i286core
+vw0_cpu			dcd		i286core - CPU_REG
 vw0_vramop		dcd		vramop
 vw0_gdcs		dcd		gdcs
-vw0_mem			MEMADR
 vw0_vramupd		dcd		vramupdate
 
 vram_w1			ldr		r2, vw1_cpu
@@ -209,7 +179,8 @@ vram_w1			ldr		r2, vw1_cpu
 				ldrb	r12, [r2, #GDCS_GRPHDISP]
 				orr		r12, r12, #2
 				strb	r12, [r2, #GDCS_GRPHDISP]
-				ldr		r2, vw1_mem
+				add		r0, r0, #VRAM_STEP
+				ldr		r2, vw1_cpu
 				strb	r1, [r0, r2]
 				ldr		r2, vw1_vramupd
 				mov		r0, r0, lsl #(32 - 15)
@@ -218,10 +189,9 @@ vram_w1			ldr		r2, vw1_cpu
 				orr		r12, r12, #2
 				strb	r12, [r2, r0, lsr #(32 - 15)]
 				mov		pc, lr
-vw1_cpu			dcd		i286core
+vw1_cpu			dcd		i286core - CPU_REG
 vw1_vramop		dcd		vramop
 vw1_gdcs		dcd		gdcs
-vw1_mem			MEMADR	+ VRAM_STEP
 vw1_vramupd		dcd		vramupdate
 
 
@@ -250,7 +220,8 @@ grcg_tdw1		mov		r0, r0, lsl #(32 - 15)
 				strb	r12, [r2, #GDCS_GRPHDISP]
 				add		r0, r0, #VRAM_STEP
 
-grcg_tdw		ldr		r2, grw_mem
+grcg_tdw		ldr		r2, grw_cpu
+				add		r0, r0, #VRAM_B
 				ldr		r3, grw_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -312,7 +283,8 @@ grcg_rmw1		cmp		r1, #&ff
 				strb	r12, [r2, #GDCS_GRPHDISP]
 				add		r0, r0, #VRAM_STEP
 
-grcg_rmw		ldr		r2, grw_mem
+grcg_rmw		ldr		r2, grw_cpu
+				add		r0, r0, #VRAM_B
 				ldr		r3, grw_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -363,9 +335,8 @@ grcg_clock		ldr		r2, grw_cpu
 
 grw_vramupd		dcd		vramupdate
 grw_gdcs		dcd		gdcs
-grw_mem			MEMADR	+ VRAM_B
 grw_grcg		dcd		grcg
-grw_cpu			dcd		i286core
+grw_cpu			dcd		i286core - CPU_REG
 grw_vramop		dcd		vramop
 
 
@@ -383,7 +354,7 @@ vramw_w0		ldr		r2, vww0_cpu
 				orr		r12, r12, #1
 				strb	r12, [r2, #GDCS_GRPHDISP]
 
-				ldr		r2, vww0_mem
+				ldr		r2, vww0_cpu
 				ldr		r3, vww0_vramupd
 				mov		r12, r0, lsl #(32 - 15)
 				add		r3, r3, r12, lsr #(32 - 15)
@@ -408,10 +379,9 @@ vww0_odd		add		r2, r2, r0
 				orr		r12, r12, #1
 				strb	r12, [r3, #1]
 				mov		pc, lr
-vww0_cpu		dcd		i286core
+vww0_cpu		dcd		i286core - CPU_REG
 vww0_vramop		dcd		vramop
 vww0_gdcs		dcd		gdcs
-vww0_mem		MEMADR
 vww0_vramupd	dcd		vramupdate
 
 vramw_w1		ldr		r2, vww1_cpu
@@ -425,7 +395,8 @@ vramw_w1		ldr		r2, vww1_cpu
 				orr		r12, r12, #2
 				strb	r12, [r2, #GDCS_GRPHDISP]
 
-				ldr		r2, vww1_mem
+				ldr		r2, vww1_cpu
+				add		r2, r2, #VRAM_STEP
 				ldr		r3, vww1_vramupd
 				mov		r12, r0, lsl #(32 - 15)
 				add		r3, r3, r12, lsr #(32 - 15)
@@ -450,10 +421,9 @@ vww1_odd		add		r2, r2, r0
 				orr		r12, r12, #2
 				strb	r12, [r3, #1]
 				mov		pc, lr
-vww1_cpu		dcd		i286core
+vww1_cpu		dcd		i286core - CPU_REG
 vww1_vramop		dcd		vramop
 vww1_gdcs		dcd		gdcs
-vww1_mem		MEMADR	+ VRAM_STEP
 vww1_vramupd	dcd		vramupdate
 
 
@@ -488,7 +458,8 @@ grcgw_tdw1		ldr		r2, grww_gdcs
 				orr		r12, r12, #2
 				strb	r12, [r2, #1]
 				add		r0, r0, #VRAM_STEP
-grcgw_tdw		ldr		r2, grww_mem
+grcgw_tdw		ldr		r2, grww_cpu
+				add		r2, r2, #VRAM_B
 				ldr		r3, grww_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -561,7 +532,8 @@ grcgw_rmw1		add		r2, r1, #1
 				strh	r12, [r2, r0]
 				add		r0, r0, #VRAM_STEP
 
-grcge_rmw		ldr		r2, grww_mem
+grcge_rmw		ldr		r2, grww_cpu
+				add		r2, r2, #VRAM_B
 				ldr		r3, grww_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
@@ -611,9 +583,8 @@ grmwe_eed		ldr		r2, grww_cpu
 
 grww_gdcs		dcd		gdcs
 grww_vramupd	dcd		vramupdate
-grww_mem		MEMADR	+ VRAM_B
 grww_grcg		dcd		grcg
-grww_cpu		dcd		i286core
+grww_cpu		dcd		i286core - CPU_REG
 grww_vramop		dcd		vramop
 
 grcgo_rmw0		add		r2, r2, r0
@@ -634,7 +605,8 @@ grcgo_rmw1		add		r2, r2, r0
 				strb	r12, [r2, #1]
 				add		r0, r0, #VRAM_STEP
 
-grcgo_rmw		ldr		r2, grww_mem
+grcgo_rmw		ldr		r2, grww_cpu
+				add		r2, r2, #VRAM_B
 				ldr		r3, grww_grcg
 				add		r0, r0, r2
 				ldrb	r2, [r3, #GRCG_MODEREG]
