@@ -41,8 +41,8 @@ PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
 				$(IO)/epsonio.h $(IO)/extmem.h $(IO)/fdc.h $(IO)/fdd320.h \
-				$(IO)/gdc.h $(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/itf.h \
-				$(IO)/mouseif.h $(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h \
+				$(IO)/gdc.h $(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/mouseif.h \
+				$(IO)/necio.h $(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h \
 				$(IO)/pit.h $(IO)/printif.h $(IO)/serial.h $(IO)/sysport.h \
 				$(IO)/upd4990.h
 
@@ -84,7 +84,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
 			$(OBJ)/extmem.o		$(OBJ)/fdc.o		$(OBJ)/fdd320.o		\
 			$(OBJ)/gdc.o		$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	\
-			$(OBJ)/itf.o		$(OBJ)/mouseif.o	$(OBJ)/nmiio.o		\
+			$(OBJ)/mouseif.o	$(OBJ)/necio.o		$(OBJ)/nmiio.o		\
 			$(OBJ)/np2sysp.o	$(OBJ)/pic.o		$(OBJ)/pit.o		\
 			$(OBJ)/printif.o	$(OBJ)/serial.o		$(OBJ)/sysport.o	\
 			$(OBJ)/upd4990.o											\
@@ -328,11 +328,11 @@ $(OBJ)/gdc_pset.o	:	$(IO)/gdc_pset.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(I286C)/memory.h $(IO)/gdc_pset.h $(VRAM)/vram.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/itf.o		:	$(IO)/itf.c $(HEADERS) $(PCCORES) $(IOCORES)
-	$(CC) $(COPT) -o $@ $<
-
 $(OBJ)/mouseif.o	:	$(IO)/mouseif.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/mousemng.h $(I286C)/cpucore.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/necio.o		:	$(IO)/necio.c $(HEADERS) $(PCCORES) $(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/nmiio.o		:	$(IO)/nmiio.c $(HEADERS) $(PCCORES) $(IOCORES) \

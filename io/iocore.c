@@ -425,8 +425,8 @@ static const IOCBFN resetfn[] = {
 			itimer_reset,		mouseif_reset,
 
 			// extend
-								artic_reset,		egc_reset,
-			extmem_reset,		np2sysp_reset};
+			artic_reset,		egc_reset,			extmem_reset,
+			np2sysp_reset,		necio_reset,		epsonio_reset};
 
 static const IOCBFN bindfn[] = {
 			// PC-9801 System...
@@ -440,8 +440,8 @@ static const IOCBFN bindfn[] = {
 			itimer_bind,		mouseif_bind,
 
 			// extend
-			itf_bind,			artic_bind,			egc_bind,
-			extmem_bind,		np2sysp_bind};
+			artic_bind,			egc_bind,			extmem_bind,
+			np2sysp_bind,		necio_bind,			epsonio_bind};
 
 
 void iocore_cb(const IOCBFN *cbfn, UINT count) {

@@ -134,6 +134,7 @@ void bios_init(void) {
 	fh = file_open_rb(path);
 	if (fh != FILEH_INVALID) {
 		if (file_read(fh, mem + 0x0e8000, 0x18000) == 0x18000) {
+			TRACEOUT(("load bios.rom"));
 			biosrom = TRUE;
 		}
 		file_close(fh);
@@ -210,6 +211,9 @@ void bios_init(void) {
 	}
 	extmem_init(np2cfg.EXTMEM);
 #endif
+
+	CopyMemory(mem + 0x1c0000, mem + 0x1f8000, 0x08000);
+	CopyMemory(mem + 0x1e8000, mem + 0x0e8000, 0x10000);
 }
 
 static void bios_boot(void) {

@@ -6,7 +6,7 @@
 
 // ---- I/O
 
-static void IOOUTCALL itf_o043d(UINT port, REG8 dat) {
+static void IOOUTCALL necio_o043d(UINT port, REG8 dat) {
 
 	switch(dat) {
 		case 0x10:
@@ -23,8 +23,13 @@ static void IOOUTCALL itf_o043d(UINT port, REG8 dat) {
 
 // ---- I/F
 
-void itf_bind(void) {
+void necio_reset(void) {
+}
 
-	iocore_attachout(0x043d, itf_o043d);
+void necio_bind(void) {
+
+	if (!(pc.model & PCMODEL_EPSON)) {
+		iocore_attachout(0x043d, necio_o043d);
+	}
 }
 

@@ -1,6 +1,7 @@
 
 typedef struct {
 	UINT8	cpumode;
+	UINT8	bankioen;
 } _EPSONIO;
 
 

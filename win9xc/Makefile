@@ -42,10 +42,11 @@ PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
-				$(IO)/extmem.h $(IO)/fdc.h $(IO)/fdd320.h $(IO)/gdc.h \
-				$(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/itf.h $(IO)/mouseif.h \
-				$(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h $(IO)/pit.h \
-				$(IO)/printif.h $(IO)/serial.h $(IO)/sysport.h $(IO)/upd4990.h
+				$(IO)/epsonio.h $(IO)/extmem.h $(IO)/fdc.h $(IO)/fdd320.h \
+				$(IO)/gdc.h $(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/mouseif.h \
+				$(IO)/necio.h $(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h \
+				$(IO)/pit.h $(IO)/printif.h $(IO)/serial.h $(IO)/sysport.h \
+				$(IO)/upd4990.h
 
 FMBOARDS	=	$(SOUND)/soundrom.h $(SOUND)/tms3631.h $(SOUND)/fmtimer.h \
 				$(SOUND)/opngen.h $(SOUND)/psggen.h $(SOUND)/rhythm.h \
@@ -71,12 +72,13 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/parts.o												\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
-			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/extmem.o		\
-			$(OBJ)/fdc.o		$(OBJ)/fdd320.o		$(OBJ)/gdc.o		\
-			$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	$(OBJ)/itf.o		\
-			$(OBJ)/mouseif.o	$(OBJ)/nmiio.o		$(OBJ)/np2sysp.o	\
-			$(OBJ)/pic.o		$(OBJ)/pit.o		$(OBJ)/printif.o	\
-			$(OBJ)/serial.o		$(OBJ)/sysport.o	$(OBJ)/upd4990.o	\
+			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
+			$(OBJ)/extmem.o		$(OBJ)/fdc.o		$(OBJ)/fdd320.o		\
+			$(OBJ)/gdc.o		$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	\
+			$(OBJ)/mouseif.o	$(OBJ)/necio.o		$(OBJ)/nmiio.o		\
+			$(OBJ)/np2sysp.o	$(OBJ)/pic.o		$(OBJ)/pit.o		\
+			$(OBJ)/printif.o	$(OBJ)/serial.o		$(OBJ)/sysport.o	\
+			$(OBJ)/upd4990.o											\
 			$(OBJ)/cbuscore.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
 			$(OBJ)/board14.o	$(OBJ)/board26k.o	$(OBJ)/board86.o	\
 			$(OBJ)/boardx2.o	$(OBJ)/board118.o	$(OBJ)/boardspb.o	\
@@ -231,6 +233,9 @@ $(OBJ)/egc.o		:	$(IO)/egc.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(I386C)/memory.h $(I386C)/egcmem.h $(VRAM)/vram.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/epsonio.o	:	$(IO)/epsonio.c $(HEADERS) $(PCCORES) $(IOCORES)
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/extmem.o		:	$(IO)/extmem.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(I386C)/cpucore.h $(I386C)/memory.h
 	$(CC) $(COPT) -o $@ $<
@@ -256,11 +261,11 @@ $(OBJ)/gdc_pset.o	:	$(IO)/gdc_pset.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(I386C)/memory.h $(IO)/gdc_pset.h $(VRAM)/vram.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/itf.o		:	$(IO)/itf.c $(HEADERS) $(PCCORES) $(IOCORES)
-	$(CC) $(COPT) -o $@ $<
-
 $(OBJ)/mouseif.o	:	$(IO)/mouseif.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/mousemng.h $(I386C)/cpucore.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/necio.o		:	$(IO)/necio.c $(HEADERS) $(PCCORES) $(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/nmiio.o		:	$(IO)/nmiio.c $(HEADERS) $(PCCORES) $(IOCORES) \

@@ -3,7 +3,8 @@
 extern "C" {
 #endif
 
-void itf_bind(void);
+void necio_reset(void);
+void necio_bind(void);
 
 #ifdef __cplusplus
 }

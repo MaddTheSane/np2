@@ -32,7 +32,8 @@
 
 
 　ver0.73向け
-　　・io/epsonio.c をリンクして下さい(現在はリンクエラーにはならない)
+　　・io/necio.c io/epsonio.c をリンクして下さい
+　　・io/itf.cをリンクよりはずして下さい
 
 　　・configのモデル選択 http://retropc.net/yui/cvs/config.gif
 　　　　np2cfg.model に それぞれ "VM" "VX" "EPSON"の文字列を設定する。

@@ -171,9 +171,11 @@ typedef struct {
 	I286DTR	LDTRC;
 	UINT16	TR;
 	I286DTR	TRC;
+	UINT8	padding[2];
 
 	UINT8	cpu_type;
 	UINT8	itfbank;						// ver0.72
+	UINT16	romd000;
 	SINT32	remainclock;
 	SINT32	baseclock;
 	UINT32	clock;
