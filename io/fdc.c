@@ -712,7 +712,7 @@ REG8 DMACCALL fdc_dataread(void) {
 
 static void IOOUTCALL fdc_o92(UINT port, REG8 dat) {
 
-	TRACEOUT(("fdc out %.2x %.2x [%.4x:%.4x]", port, dat, CPU_CS, CPU_IP));
+//	TRACEOUT(("fdc out %.2x %.2x [%.4x:%.4x]", port, dat, CPU_CS, CPU_IP));
 
 	if (((port >> 4) ^ fdc.chgreg) & 1) {
 		return;
@@ -724,7 +724,7 @@ static void IOOUTCALL fdc_o92(UINT port, REG8 dat) {
 
 static void IOOUTCALL fdc_o94(UINT port, REG8 dat) {
 
-	TRACEOUT(("fdc out %.2x %.2x [%.4x:%.4x]", port, dat, CPU_CS, CPU_IP));
+//	TRACEOUT(("fdc out %.2x %.2x [%.4x:%.4x]", port, dat, CPU_CS, CPU_IP));
 
 	if (((port >> 4) ^ fdc.chgreg) & 1) {
 		return;
@@ -739,8 +739,8 @@ static void IOOUTCALL fdc_o94(UINT port, REG8 dat) {
 
 static REG8 IOINPCALL fdc_i90(UINT port) {
 
-	TRACEOUT(("fdc in %.2x %.2x [%.4x:%.4x]", port, fdc.status,
-															CPU_CS, CPU_IP));
+//	TRACEOUT(("fdc in %.2x %.2x [%.4x:%.4x]", port, fdc.status,
+//															CPU_CS, CPU_IP));
 
 	if (((port >> 4) ^ fdc.chgreg) & 1) {
 		return(0xff);
@@ -762,7 +762,7 @@ static REG8 IOINPCALL fdc_i92(UINT port) {
 	else {
 		ret = fdc.lastdata;
 	}
-	TRACEOUT(("fdc in %.2x %.2x [%.4x:%.4x]", port, ret, CPU_CS, CPU_IP));
+//	TRACEOUT(("fdc in %.2x %.2x [%.4x:%.4x]", port, ret, CPU_CS, CPU_IP));
 	return(ret);
 }
 
