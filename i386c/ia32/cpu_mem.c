@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.7 2004/01/25 07:53:08 yui Exp $	*/
+/*	$Id: cpu_mem.c,v 1.8 2004/01/27 15:54:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,9 +30,6 @@
 #include "compiler.h"
 #include "cpu.h"
 #include "memory.h"
-
-// static BYTE *cpumem = 0;
-// static DWORD extmem_size = 0;
 
 #define	cpumem		i386core.e.ext
 #define	extmem_size	i386core.e.extsize
@@ -270,7 +267,6 @@ cpu_stack_pop_check(descriptor_t* sdp, DWORD esp, DWORD length)
 }
 
 
-#define	AS32_NOCHECK
 #undef	OVERRUN_CHECK
 
 #if defined(OVERRUN_CHECK)
@@ -289,10 +285,6 @@ cpu_codefetch(DWORD offset)
 	DWORD addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (offset <= sd->u.seg.limit) {
 		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + offset;
 		if (!CPU_STAT_PM)
@@ -310,10 +302,6 @@ cpu_codefetch_w(DWORD offset)
 	DWORD addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (offset <= sd->u.seg.limit - 1) {
 		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + offset;
 		if (!CPU_STAT_PM)
@@ -331,10 +319,6 @@ cpu_codefetch_d(DWORD offset)
 	DWORD addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (offset <= sd->u.seg.limit - 3) {
 		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + offset;
 		if (!CPU_STAT_PM)
@@ -364,10 +348,6 @@ cpu_vmemoryread(int idx, DWORD offset)
 		goto err;
 	}
 
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
 		cpu_memoryread_check(sd, offset, 1,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
@@ -419,10 +399,6 @@ cpu_vmemoryread_w(int idx, DWORD offset)
 		goto err;
 	}
 
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
 		cpu_memoryread_check(sd, offset, 2,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
@@ -474,10 +450,6 @@ cpu_vmemoryread_d(int idx, DWORD offset)
 		goto err;
 	}
 
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
 		cpu_memoryread_check(sd, offset, 4,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
@@ -530,10 +502,6 @@ cpu_vmemorywrite(int idx, DWORD offset, BYTE val)
 		goto err;
 	}
 
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
 		cpu_memorywrite_check(sd, offset, 1,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
@@ -589,10 +557,6 @@ cpu_vmemorywrite_w(int idx, DWORD offset, WORD val)
 		goto err;
 	}
 
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
 		cpu_memorywrite_check(sd, offset, 2,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
@@ -648,10 +612,6 @@ cpu_vmemorywrite_d(int idx, DWORD offset, DWORD val)
 		goto err;
 	}
 
-#ifndef	AS32_NOCHECK
-	if (!CPU_INST_AS32)
-		offset &= 0xffff;
-#endif
 	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
 		cpu_memorywrite_check(sd, offset, 4,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
@@ -736,11 +696,11 @@ cpu_memorywrite_d(DWORD address, DWORD value)
 			switch (4 - diff) {
 			case 3:
 				cpumem[off++] = value & 0xff;
-				value >>= 8;
 				if (off >= extmem_size) {
 					OVERRUN_EXCEPTION();
 					break;
 				}
+				value >>= 8;
 				/*FALLTHROUGH*/
 			case 2:
 				cpumem[off++] = value & 0xff;
@@ -763,7 +723,6 @@ cpu_memorywrite_d(DWORD address, DWORD value)
 			STOREINTELDWORD(cpumem + adr, value);
 		} else if (adr < extmem_size) {
 			diff = extmem_size - adr;
-			value >>= (8 * (4 - diff));
 
 			switch (diff) {
 			default:
@@ -771,15 +730,17 @@ cpu_memorywrite_d(DWORD address, DWORD value)
 				break;
 
 			case 3:
-				cpumem[extmem_size - 3] = value & 0xff;
+				cpumem[adr] = value & 0xff;
 				value >>= 8;
+				adr++;
 				/*FALLTHROUGH*/
 			case 2:
-				cpumem[extmem_size - 2] = value & 0xff;
+				cpumem[adr] = value & 0xff;
 				value >>= 8;
+				adr++;
 				/*FALLTHROUGH*/
 			case 1:
-				cpumem[extmem_size - 1] = value & 0xff;
+				cpumem[adr] = value & 0xff;
 				break;
 			}
 			OVERRUN_EXCEPTION();
@@ -800,7 +761,11 @@ cpu_memorywrite_w(DWORD address, WORD value)
 		__i286_memorywrite_w(adr, value);
 	} else if (adr < LOWMEM) {
 		__i286_memorywrite(adr, value & 0xff);
-		cpumem[adr - (LOWMEM - 1)] = (value >> 8) & 0xff;
+		if (extmem_size > 0) {
+			cpumem[0] = (value >> 8) & 0xff;
+		} else {
+			OVERRUN_EXCEPTION();
+		}
 	} else if (extmem_size > 0) {
 		adr -= LOWMEM;
 		if (adr < extmem_size - 1) {
@@ -841,6 +806,7 @@ cpu_memoryread_d(DWORD address)
 	DWORD adr = address & CPU_STAT_ADRSMASK;
 	DWORD val;
 	DWORD diff;
+	int shift;
 
 	if (adr < LOWMEM - 3) {
 		val = __i286_memoryread_d(adr);
@@ -855,9 +821,9 @@ cpu_memoryread_d(DWORD address)
 
 		case 3:
 			val = __i286_memoryread_w(adr);
-			val |= __i286_memoryread(adr + 2);
+			val |= (DWORD)__i286_memoryread(adr + 2) << 16;
 			if (extmem_size > 0) {
-				val |= cpumem[0] << 24;
+				val |= (DWORD)cpumem[0] << 24;
 			} else {
 				val |= 0xff000000;
 				OVERRUN_EXCEPTION();
@@ -867,7 +833,10 @@ cpu_memoryread_d(DWORD address)
 		case 2:
 			val = __i286_memoryread_w(adr);
 			if (extmem_size > 1) {
-				val |= (DWORD)LOADINTELWORD(cpumem) << 16;
+				val |= ((DWORD)LOADINTELWORD(cpumem)) << 16;
+			} else if (extmem_size > 0) {
+				val |= 0xff000000 | ((DWORD)cpumem[0] << 16);
+				OVERRUN_EXCEPTION();
 			} else {
 				val |= 0xffff0000;
 				OVERRUN_EXCEPTION();
@@ -879,6 +848,13 @@ cpu_memoryread_d(DWORD address)
 			if (extmem_size > 2) {
 				val |= (DWORD)LOADINTELWORD(cpumem) << 8;
 				val |= (DWORD)cpumem[2] << 24;
+			} else if (extmem_size > 1) {
+				val |= ((DWORD)LOADINTELWORD(cpumem)) << 8;
+				val |= 0xff000000;
+				OVERRUN_EXCEPTION();
+			} else if (extmem_size > 0) {
+				val |= 0xffff0000 | ((DWORD)cpumem[0] << 8);
+				OVERRUN_EXCEPTION();
 			} else {
 				val |= 0xffffff00;
 				OVERRUN_EXCEPTION();
@@ -892,6 +868,7 @@ cpu_memoryread_d(DWORD address)
 		} else if (adr < extmem_size) {
 			diff = extmem_size - adr;
 			val = 0;
+			shift = 0;
 
 			switch (diff) {
 			default:
@@ -899,16 +876,21 @@ cpu_memoryread_d(DWORD address)
 				break;
 
 			case 3:
-				val |= cpumem[extmem_size - 3];
+				val |= (DWORD)cpumem[adr];
+				shift += 8;
+				adr++;
 				/*FALLTHROUGH*/
 			case 2:
-				val |= (cpumem[extmem_size - 2] << (8 * (diff - 2)));
+				val |= (DWORD)cpumem[adr] << shift;
+				shift += 8;
+				adr++;
 				/*FALLTHROUGH*/
 			case 1:
-				val |= (cpumem[extmem_size - 1] << (8 * (diff - 1)));
+				val |= (DWORD)cpumem[adr] << shift;
+				shift += 8;
 				break;
 			}
-			val |= ((DWORD)-1) << (8 * diff);
+			val |= ((DWORD)-1) << shift;
 			OVERRUN_EXCEPTION();
 		} else {
 			val = (DWORD)-1;
@@ -931,7 +913,12 @@ cpu_memoryread_w(DWORD address)
 		val = __i286_memoryread_w(adr);
 	} else if (adr < LOWMEM) {
 		val = __i286_memoryread(adr);
-		val |= (WORD)cpumem[0] << 8;
+		if (extmem_size > 0) {
+			val |= (WORD)cpumem[0] << 8;
+		} else {
+			val |= 0xff00;
+			OVERRUN_EXCEPTION();
+		}
 	} else if (extmem_size > 0) {
 		adr -= LOWMEM;
 		if (adr < extmem_size - 1) {
