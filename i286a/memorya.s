@@ -35,9 +35,7 @@ GW_WRITABLE			equ		8
 
 	INCLUDE	i286a.inc
 
-;	IMPORT	mem
 	IMPORT	memfn
-;	IMPORT	i286core
 	IMPORT	vramupdate
 	IMPORT	gdcs
 	IMPORT	vramop
@@ -736,7 +734,7 @@ vramw_r0		ldr		r3, twrd_vramop
 				ldr		r3, [r3, #VRAMOP_VRAMWAIT]
 				ldrb	r1, [r2, #1]
 				CPUWORK	r3
-				mov		r0, r0, r1 lsl #1
+				orr		r0, r0, r1 lsl #8
 				mov		pc, lr
 
 

@@ -2,7 +2,7 @@
 	INCLUDE		i286a.inc
 
 	IMPORT		i286core
-	IMPORT		_szpcflag8
+	IMPORT		i286a_memoryread
 	IMPORT		i286_memorywrite_w
 	EXPORT		i286a_localint
 	EXPORT		i286a_trapint
@@ -73,16 +73,20 @@ i286a_trapint	ldrh	r4, [r9, #CPU_SP]
 				b		i286a_trapintr
 
 
-
-i286a_interrupt	stmdb	sp!, {r4 - r10, lr}
-				ldr		r9, iai_r9
-				ldr		r10, iai_r10			; ˆê‰ž
+i286a_interrupt	ldr		r1, iai_r9
+				stmdb	sp!, {r4 - r9, lr}
+				mov		r9, r1
 				mov		r6, r0
 				CPULD
+				ldr		r5, [r9, #CPU_CS_BASE]
 				ldrh	r4, [r9, #CPU_SP]
-				ldr		r5, [r9, #CPU_SS_BASE]
 				CPUWORK	#20
+				add		r0, r5, r8 lsr #16
+				ldr		r5, [r9, #CPU_SS_BASE]
+				bl		i286a_memoryread
 				mov		r4, r4 lsl #16
+				cmp		r0, #&f4
+				addeq	r8, r8, #(1 << 16)
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8
 				add		r0, r5, r4 lsr #16
@@ -108,9 +112,8 @@ i286a_interrupt	stmdb	sp!, {r4 - r10, lr}
 				strh	r0, [r9, #CPU_CS]
 				str		r2, [r9, #CPU_CS_BASE]
 				CPUSVC
-				ldmia	sp!, {r4 - r11, pc}
-iai_r9			dcd		i286core - CPU_REG
-iai_r10			dcd		_szpcflag8
+				ldmia	sp!, {r4 - r9, pc}
+iai_r9			dcd		i286core + CPU_SIZE
 
 	END
 

@@ -27,7 +27,7 @@ i286a_memoryread
 				bcs		i2mr_ext
 				ldrb	r0, [r3, r0]
 				mov		pc, lr
-i2mr_cpu		dcd		i286core - CPU_REG
+i2mr_cpu		dcd		i286core + CPU_SIZE
 i2mr_ext		cmp		r0, #USE_HIMEM
 				bcs		i2mr_himem
 				stmdb	sp!, {r7, r9, lr}
@@ -59,7 +59,7 @@ i286a_memoryread_w
 				bcs		i2mre_ext
 				ldrh	r0, [r3, r0]
 				mov		pc, lr
-i2mrw_cpu		dcd		i286core - CPU_REG
+i2mrw_cpu		dcd		i286core + CPU_SIZE
 i2mre_ext		cmp		r0, #USE_HIMEM
 				bcs		i2mre_himem
 i2mrw_ext		stmdb	sp!, {r7, r9, lr}
@@ -141,7 +141,7 @@ i286a_memorywrite
 				bcs		i2mw_ext
 				strb	r1, [r3, r0]
 				mov		pc, lr
-i2mw_cpu		dcd		i286core - CPU_REG						; !!
+i2mw_cpu		dcd		i286core + CPU_SIZE						; !!
 i2mw_ext		cmp		r0, #USE_HIMEM
 				bcs		i2mw_himem
 				stmdb	sp!, {r7, r9, lr}
@@ -172,7 +172,7 @@ i286a_memorywrite_w
 				bcs		i2mwe_ext
 				strh	r1, [r3, r0]
 				mov		pc, lr
-i2mww_cpu		dcd		i286core - CPU_REG						; !!
+i2mww_cpu		dcd		i286core + CPU_SIZE						; !!
 i2mwe_ext		cmp		r0, #USE_HIMEM
 				bcs		i2mwe_himem
 i2mww_ext		stmdb	sp!, {r7, r9, lr}

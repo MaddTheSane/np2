@@ -12,57 +12,63 @@ I_FLAG				equ		&0200
 D_FLAG				equ		&0400
 O_FLAG				equ		&0800
 
-CPU_REG				equ		0 - 112
-CPU_SEG				equ		16 - 112
-CPU_REMAINCLOCK		equ		28 - 112
-CPU_BASECLOCK		equ		32 - 112
-; cpu_clock			equ		36 - 112
-CPU_ADRSMASK		equ		40 - 112
-CPU_ES_BASE			equ		44 - 112
-CPU_CS_BASE			equ		48 - 112
-CPU_SS_BASE			equ		52 - 112
-CPU_DS_BASE			equ		56 - 112
-CPU_SS_FIX			equ		60 - 112
-CPU_DS_FIX			equ		64 - 112
-CPU_PREFIX			equ		68 - 112
-CPU_TRAP			equ		70 - 112
-; cpu_type			equ		71 - 112
-; cpu_pf_semaphore	equ		72 - 112
-; cpu_repbak		equ		76 - 112
-CPU_INPUT			equ		80 - 112
-; cpu_ovflag		equ		84 - 112
-CPU_GDTR			equ		88 - 112
-CPU_IDTR			equ		94 - 112
-CPU_MSW				equ		100 - 112
-; cpu_resetreq		equ		102 - 112
-; cpu_itfbank		equ		103 - 112
-CPU_EXTMEM			equ		104 - 112
-CPU_EXTMEMSIZE		equ		108 - 112
-; cpu_mainmem		equ		112 - 112
+CPU_SIZE			equ		112
+CPU_STAT			equ		0 - 112
+CPU_EXT				equ		104 - 112
 
-CPU_AL				equ		0 - 112
-CPU_AH				equ		1 - 112
-CPU_CL				equ		2 - 112
-CPU_CH				equ		3 - 112
-CPU_DL				equ		4 - 112
-CPU_DH				equ		5 - 112
-CPU_BL				equ		6 - 112
-CPU_BH				equ		7 - 112
+CPU_REG				equ		CPU_STAT + 0
+CPU_SEG				equ		CPU_STAT + 16
+CPU_REMAINCLOCK		equ		CPU_STAT + 28
+CPU_BASECLOCK		equ		CPU_STAT + 32
+; cpu_clock			equ		CPU_STAT + 36
+CPU_ADRSMASK		equ		CPU_STAT + 40
+CPU_ES_BASE			equ		CPU_STAT + 44
+CPU_CS_BASE			equ		CPU_STAT + 48
+CPU_SS_BASE			equ		CPU_STAT + 52
+CPU_DS_BASE			equ		CPU_STAT + 56
+CPU_SS_FIX			equ		CPU_STAT + 60
+CPU_DS_FIX			equ		CPU_STAT + 64
+CPU_PREFIX			equ		CPU_STAT + 68
+CPU_TRAP			equ		CPU_STAT + 70
+; cpu_type			equ		CPU_STAT + 71
+; cpu_pf_semaphore	equ		CPU_STAT + 72
+; cpu_repbak		equ		CPU_STAT + 76
+CPU_INPUT			equ		CPU_STAT + 80
+; cpu_ovflag		equ		CPU_STAT + 84
+CPU_GDTR			equ		CPU_STAT + 88
+CPU_IDTR			equ		CPU_STAT + 94
+CPU_MSW				equ		CPU_STAT + 100
+; cpu_resetreq		equ		CPU_STAT + 102
+; cpu_itfbank		equ		CPU_STAT + 103
+; cpu_stat_size		equ		104
+CPU_EXTMEM			equ		CPU_STAT + 104
+CPU_EXTMEMSIZE		equ		CPU_STAT + 108
+; cpu_ext_size		equ		8
+; cpu_mainmem		equ		CPU_STAT + 112
 
-CPU_AX				equ		0 - 112
-CPU_CX				equ		2 - 112
-CPU_DX				equ		4 - 112
-CPU_BX				equ		6 - 112
-CPU_SP				equ		8 - 112
-CPU_BP				equ		10 - 112
-CPU_SI				equ		12 - 112
-CPU_DI				equ		14 - 112
-CPU_ES				equ		16 - 112
-CPU_CS				equ		18 - 112
-CPU_SS				equ		20 - 112
-CPU_DS				equ		22 - 112
-CPU_FLAG			equ		24 - 112
-CPU_IP				equ		26 - 112
+CPU_AL				equ		CPU_STAT + 0
+CPU_AH				equ		CPU_STAT + 1
+CPU_CL				equ		CPU_STAT + 2
+CPU_CH				equ		CPU_STAT + 3
+CPU_DL				equ		CPU_STAT + 4
+CPU_DH				equ		CPU_STAT + 5
+CPU_BL				equ		CPU_STAT + 6
+CPU_BH				equ		CPU_STAT + 7
+
+CPU_AX				equ		CPU_STAT + 0
+CPU_CX				equ		CPU_STAT + 2
+CPU_DX				equ		CPU_STAT + 4
+CPU_BX				equ		CPU_STAT + 6
+CPU_SP				equ		CPU_STAT + 8
+CPU_BP				equ		CPU_STAT + 10
+CPU_SI				equ		CPU_STAT + 12
+CPU_DI				equ		CPU_STAT + 14
+CPU_ES				equ		CPU_STAT + 16
+CPU_CS				equ		CPU_STAT + 18
+CPU_SS				equ		CPU_STAT + 20
+CPU_DS				equ		CPU_STAT + 22
+CPU_FLAG			equ		CPU_STAT + 24
+CPU_IP				equ		CPU_STAT + 26
 
 MAX_PREFIX			equ		8
 

@@ -6,7 +6,7 @@
 	INCLUDE		i286aio.inc
 
 	IMPORT		i286core
-	IMPORT		_szpcflag8
+	IMPORT		iflags
 	IMPORT		i286a_localint
 	IMPORT		i286a_trapint
 	EXPORT		i286a_trapintr
@@ -1399,7 +1399,7 @@ iret_pic		dcd		pic
 
 aam				CPUWORK	#16
 				GETPC8
-				movs	r0, r0, lsl #7
+				movs	r0, r0 lsl #7
 				beq		aamzero
 				ldrb	r1, [r9, #CPU_AL]
 				mov		r2, #&80
@@ -1407,6 +1407,7 @@ aam				CPUWORK	#16
 aamlp			cmp		r1, r0
 				subcs	r1, r1, r0
 				orrcs	r3, r2, r3
+				mov		r0, r0 lsr #1
 				movs	r2, r2 lsr #1
 				bne		aamlp
 				ldrb	r2, [r10, r1]
@@ -1684,6 +1685,7 @@ i286a_step		stmdb	sp!, {r4 - r11, lr}
 				mov		r11, pc
 				mov		pc, r1
 
+				bl		dmap_i286
 				str		r8, [r9, #CPU_FLAG]
 				ldmia	sp!, {r4 - r11, pc}
 
@@ -1715,9 +1717,9 @@ i286a_lp		add		r0, r5, r8 lsr #16
 				str		r8, [r9, #CPU_FLAG]
 				ldmia	sp!, {r4 - r11, pc}
 
-ias_r9			dcd		i286core - CPU_REG
+ias_r9			dcd		i286core + CPU_SIZE
 ias_r1			dcd		dmac
-ias_r10			dcd		_szpcflag8
+ias_r10			dcd		iflags
 
 i286awithdma	adr		r4, optbl1
 i286awdma_lp	add		r0, r5, r8 lsr #16

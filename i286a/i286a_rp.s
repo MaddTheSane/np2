@@ -2,7 +2,7 @@
 	INCLUDE		i286a.inc
 	INCLUDE		i286aalu.inc
 
-	IMPORT		_szpcflag8
+	IMPORT		iflags
 
 	IMPORT		i286a_memoryread
 	IMPORT		i286a_memoryread_w
@@ -380,7 +380,7 @@ repecmpsbbreak		bic		r8, r8, #&ff
 				strh	r4, [r9, #CPU_CX]
 				str		r0, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
-repecmpsb_flag	dcd		_szpcflag8
+repecmpsb_flag	dcd		iflags
 
 i286a_repe_cmpsw
 				ldrh	r4, [r9, #CPU_CX]
@@ -430,7 +430,7 @@ repecmpswbreak		bic		r8, r8, #&ff
 				strh	r4, [r9, #CPU_CX]
 				str		r0, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
-repecmpsw_flag	dcd		_szpcflag8
+repecmpsw_flag	dcd		iflags
 
 
 i286a_repne_cmpsb
@@ -477,7 +477,7 @@ repnecmpsbbreak		bic		r8, r8, #&ff
 				strh	r4, [r9, #CPU_CX]
 				str		r0, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
-repnecmpsb_flag	dcd		_szpcflag8
+repnecmpsb_flag	dcd		iflags
 
 i286a_repne_cmpsw
 				ldrh	r4, [r9, #CPU_CX]
@@ -527,7 +527,7 @@ repnecmpswbreak		bic		r8, r8, #&ff
 				strh	r4, [r9, #CPU_CX]
 				str		r0, [r9, #CPU_SI]
 				ldr		pc, [sp], #4
-repnecmpsw_flag	dcd		_szpcflag8
+repnecmpsw_flag	dcd		iflags
 
 
 i286a_repe_scasb
@@ -625,7 +625,7 @@ repnescaswlp	add		r0, r11, r5 lsr #16
 				subs	r4, r4, #1
 				beq		repnescaswbreak
 				cmp		r3, r0
-				beq		repnescaswlp
+				bne		repnescaswlp
 repnescaswbreak	SUB16	r3, r0
 				strh	r4, [r9, #CPU_CX]
 				str		r5, [r9, #CPU_SI]

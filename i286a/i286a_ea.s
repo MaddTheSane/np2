@@ -898,7 +898,7 @@ i286a_ea_test	stmdb	sp!, {r4, r8, r9, lr}
 				mov		r8, r8 lsr #16
 				strh	r8, [r9, #CPU_IP]
 				ldmia	sp!, {r4, r8, r9, pc}
-iet_i286core	dcd		i286core - CPU_REG
+iet_i286core	dcd		i286core + CPU_SIZE
 
 i286a_lea_test	stmdb	sp!, {r4, r8, r9, lr}
 				ldr		r9, ilt_i286core
@@ -908,7 +908,7 @@ i286a_lea_test	stmdb	sp!, {r4, r8, r9, lr}
 				mov		r8, r8 lsr #16
 				strh	r8, [r9, #CPU_IP]
 				ldmia	sp!, {r4, r8, r9, pc}
-ilt_i286core	dcd		i286core - CPU_REG
+ilt_i286core	dcd		i286core + CPU_SIZE
 
 i286a_a_test	stmdb	sp!, {r4, r5, r6, r8, r9, lr}
 				ldr		r9, iat_i286core
@@ -920,7 +920,7 @@ i286a_a_test	stmdb	sp!, {r4, r5, r6, r8, r9, lr}
 				mov		r8, r8 lsr #16
 				strh	r8, [r9, #CPU_IP]
 				ldmia	sp!, {r4, r5, r6, r8, r9, pc}
-iat_i286core	dcd		i286core - CPU_REG
+iat_i286core	dcd		i286core + CPU_SIZE
 
 	END
 

@@ -597,6 +597,7 @@ static REG16 MEMCALL tramw_rd(UINT32 address) {
 #if 0 // defined(ARM)
 REG16 MEMCALL vramw_r0(UINT32 address);
 REG16 MEMCALL vramw_r1(UINT32 address);
+#else
 static REG16 MEMCALL vramw_r0(UINT32 address) {
 
 	CPU_REMCLOCK -= vramop.vramwait;
