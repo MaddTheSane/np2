@@ -102,7 +102,7 @@ void
 commng_destroy(COMMNG hdl)
 {
 
-	if (hdl && (hdl != &com_nc)) {
+	if (hdl) {
 		hdl->release(hdl);
 	}
 }
