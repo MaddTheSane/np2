@@ -1166,35 +1166,32 @@ void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
 
 // ---- Logical Space (BIOS)
 
-static UINT32 physicaladdr(UINT32 addr) {
+static UINT32 physicaladdr(UINT32 addr, BOOL wr) {
 
 	UINT32	a;
 	UINT32	pde;
 	UINT32	pte;
 
-	if (CPU_STAT_PAGING) {
-		a = CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc);
-		pde = i286_memoryread_d(a);
-		if (!(pde & CPU_PDE_PRESENT)) {
-			goto retdummy;
-		}
-#if 0
-		if (!(pde & CPU_PDE_ACCESS)) {
-			i286_memorywrite_d(a, pde | CPU_PDE_ACCESS);
-		}
-#endif
-		a = (pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc);
-		pte = cpu_memoryread_d(a);
-		if (!(pte & CPU_PTE_PRESENT)) {
-			goto retdummy;
-		}
-#if 0
-		if (!(pte & CPU_PTE_ACCESS)) {
-			i286_memorywrite_d(a, pte | CPU_PTE_ACCESS);
-		}
-#endif
-		addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
+	a = CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc);
+	pde = i286_memoryread_d(a);
+	if (!(pde & CPU_PDE_PRESENT)) {
+		goto retdummy;
 	}
+	if (!(pde & CPU_PDE_ACCESS)) {
+		i286_memorywrite(a, (UINT8)(pde | CPU_PDE_ACCESS));
+	}
+	a = (pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc);
+	pte = cpu_memoryread_d(a);
+	if (!(pte & CPU_PTE_PRESENT)) {
+		goto retdummy;
+	}
+	if (!(pte & CPU_PTE_ACCESS)) {
+		i286_memorywrite(a, (UINT8)(pte | CPU_PTE_ACCESS));
+	}
+	if ((wr) && (!(pte & CPU_PTE_DIRTY))) {
+		i286_memorywrite(a, (UINT8)(pte | CPU_PTE_DIRTY));
+	}
+	addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
 	return(addr);
 
 retdummy:
@@ -1208,7 +1205,7 @@ REG8 MEMCALL meml_read8(UINT seg, UINT off) {
 
 	addr = (seg << 4) + LOW16(off);
 	if (CPU_STAT_PAGING) {
-		addr = physicaladdr(addr);
+		addr = physicaladdr(addr, FALSE);
 	}
 	return(i286_memoryread(addr));
 }
@@ -1222,7 +1219,7 @@ REG16 MEMCALL meml_read16(UINT seg, UINT off) {
 		return(i286_memoryread_w(addr));
 	}
 	else if ((addr + 1) & 0xfff) {
-		return(i286_memoryread_w(physicaladdr(addr)));
+		return(i286_memoryread_w(physicaladdr(addr, FALSE)));
 	}
 	return(meml_read8(seg, off) + (meml_read8(seg, off + 1) << 8));
 }
@@ -1233,7 +1230,7 @@ void MEMCALL meml_write8(UINT seg, UINT off, REG8 dat) {
 
 	addr = (seg << 4) + LOW16(off);
 	if (CPU_STAT_PAGING) {
-		addr = physicaladdr(addr);
+		addr = physicaladdr(addr, TRUE);
 	}
 	i286_memorywrite(addr, dat);
 }
@@ -1247,7 +1244,7 @@ void MEMCALL meml_write16(UINT seg, UINT off, REG16 dat) {
 		i286_memorywrite_w(addr, dat);
 	}
 	else if ((addr + 1) & 0xfff) {
-		i286_memorywrite_w(physicaladdr(addr), dat);
+		i286_memorywrite_w(physicaladdr(addr, TRUE), dat);
 	}
 	else {
 		meml_write8(seg, off, (REG8)dat);
@@ -1257,16 +1254,21 @@ void MEMCALL meml_write16(UINT seg, UINT off, REG16 dat) {
 
 void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 
-	UINT32	adrs;
+	UINT32	addr;
+	UINT	rem;
 	UINT	size;
 
 	while(leng) {
 		off = LOW16(off);
-		adrs = (seg << 4) + off;
-		size = 0x1000 - (adrs & 0xfff);
-		size = min(size, leng);
-		size = min(size, 0x10000 - off);
-		memp_read(physicaladdr(adrs), dat, size);
+		addr = (seg << 4) + off;
+		rem = 0x10000 - off;
+		size = min(leng, rem);
+		if (CPU_STAT_PAGING) {
+			rem = 0x1000 - (addr & 0xfff);
+			size = min(size, rem);
+			addr = physicaladdr(addr, FALSE);
+		}
+		memp_read(addr, dat, size);
 		off += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
@@ -1275,16 +1277,21 @@ void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 
 void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
 
-	UINT32	adrs;
+	UINT32	addr;
+	UINT	rem;
 	UINT	size;
 
 	while(leng) {
 		off = LOW16(off);
-		adrs = (seg << 4) + off;
-		size = 0x1000 - (adrs & 0xfff);
-		size = min(size, leng);
-		size = min(size, 0x10000 - off);
-		memp_write(physicaladdr(adrs), dat, size);
+		addr = (seg << 4) + off;
+		rem = 0x10000 - off;
+		size = min(leng, rem);
+		if (CPU_STAT_PAGING) {
+			rem = 0x1000 - (addr & 0xfff);
+			size = min(size, rem);
+			addr = physicaladdr(addr, TRUE);
+		}
+		memp_write(addr, dat, size);
 		off += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
@@ -1302,7 +1309,7 @@ void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
 		while(leng) {
 			size = 0x1000 - (address & 0xfff);
 			size = min(size, leng);
-			memp_read(physicaladdr(address), dat, size);
+			memp_read(physicaladdr(address, FALSE), dat, size);
 			address += size;
 			dat = ((BYTE *)dat) + size;
 			leng -= size;
@@ -1321,7 +1328,7 @@ void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
 		while(leng) {
 			size = 0x1000 - (address & 0xfff);
 			size = min(size, leng);
-			memp_write(physicaladdr(address), dat, size);
+			memp_write(physicaladdr(address, TRUE), dat, size);
 			address += size;
 			dat = ((BYTE *)dat) + size;
 			leng -= size;
