@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.h,v 1.3 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: ctrl_trans.h,v 1.4 2004/02/12 15:46:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -148,8 +148,7 @@ void BOUND_GdMa(void);
  */
 void ENTER16_IwIb(void);
 void ENTER32_IwIb(void);
-void LEAVE16(void);
-void LEAVE32(void);
+void LEAVE(void);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.9 2004/02/09 16:12:54 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.10 2004/02/12 15:46:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1011,7 +1011,7 @@ void
 RETnear16_Iw(void)
 {
 	DWORD new_ip;
-	WORD ad;
+	DWORD ad;
 
 	CPU_WORKCLOCK(11);
 	GET_PCWORD(ad);
@@ -1413,51 +1413,31 @@ ENTER32_IwIb(void)
 }
 
 void
-LEAVE16(void)
+LEAVE(void)
 {
-	DWORD sp, size;
+	DWORD sp, bp;
 
 	CPU_WORKCLOCK(5);
 
 	if (CPU_STAT_PM) {
 		if (!CPU_STAT_SS32) {
 			sp = CPU_SP;
-			size = 2;
+			bp = CPU_BP;
 		} else {
 			sp = CPU_ESP;
-			size = 4;
+			bp = CPU_EBP;
 		}
-		if (CPU_BP < CPU_SP) {
-			ia32_panic("LEAVE16: BP(%04x) < SP(%04x)", CPU_BP, CPU_SP);
-		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (CPU_BP - CPU_SP) + size);
+		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (bp-sp) + 2);
 	}
 
-	CPU_SP = CPU_BP;
-	REGPOP0(CPU_BP);
-}
-
-void
-LEAVE32(void)
-{
-	DWORD sp, size;
-
-	CPU_WORKCLOCK(5);
-
-	if (CPU_STAT_PM) {
-		if (CPU_STAT_SS32) {
-			sp = CPU_ESP;
-			size = 4;
-		} else {
-			sp = CPU_SP;
-			size = 2;
-		}
-		if (CPU_EBP < CPU_ESP) {
-			ia32_panic("LEAVE32: EBP(%08x) < ESP(%08x)", CPU_EBP, CPU_ESP);
-		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (CPU_EBP - CPU_ESP) + size);
+	if (!CPU_STAT_SS32) {
+		CPU_SP = CPU_BP;
+	} else {
+		CPU_ESP = CPU_EBP;
 	}
-
-	CPU_ESP = CPU_EBP;
-	POP0_32(CPU_EBP);
+	if (!CPU_INST_OP32) {
+		REGPOP0(CPU_BP);
+	} else {
+		POP0_32(CPU_EBP);
+	}
 }

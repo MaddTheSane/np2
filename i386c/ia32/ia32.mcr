@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.9 2004/02/06 16:49:51 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.10 2004/02/12 15:46:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -598,7 +598,7 @@ do { \
 do { \
 	CPU_FLAGL &= (Z_FLAG | S_FLAG | A_FLAG | P_FLAG); \
 	(r) = (SQWORD)(d) * (SQWORD)(s); \
-	CPU_OV = (DWORD)(((r) + 0x80000000ULL) >> 32); \
+	CPU_OV = (DWORD)(((r) + QWORD_CONST(0x80000000)) >> 32); \
 	if (CPU_OV) { \
 		CPU_FLAGL |= C_FLAG; \
 	} \

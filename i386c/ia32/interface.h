@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.6 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: interface.h,v 1.7 2004/02/12 15:46:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,6 +36,11 @@ typedef signed int		SDWORD;
 
 typedef	UINT64			QWORD;
 typedef	SINT64			SQWORD;
+
+#if !defined(QWORD_CONST)
+#define	QWORD_CONST(v)	v ## ULL
+#define	SQWORD_CONST(v)	v ## LL
+#endif
 
 #define CPU_isDI		(!(CPU_FLAG & I_FLAG))
 #define CPU_isEI		(CPU_FLAG & I_FLAG)
