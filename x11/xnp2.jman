@@ -10,13 +10,13 @@ Xnp2 \- PC-9801 series emulator - Neko Project II for X
 .B \--timidity-config filename
 ]
 [
-.B fd0 image
+.B FD1 image
 [
-.B fd1 image
+.B FD2 image
 [
-.B fd2 image
+.B FD3 image
 [
-.B fd3 image
+.B FD4 image
 ]
 ]
 ]
@@ -47,7 +47,7 @@ TiMidity 音源設定ファイル /usr/local/lib/timidity/timidity.cfg を指定
 xnp2 --timidity-config /usr/local/lib/timidity/timidity.cfg
 .ft R
 
-FDD0 にイメージファイル system.d88、FDD1 に data.d88 を挿入して起動
+FDD1 にイメージファイル system.d88、FDD2 に data.d88 を挿入して起動
 .ft B
 xnp2 system.d88 data.d88
 .ft R

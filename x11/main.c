@@ -104,7 +104,7 @@ static void
 usage(void)
 {
 
-	printf("Usage: %s [options] [[FD0 image] [[FD1 image] [[FD2 image] [FD3 image]]]]\n", progname);
+	printf("Usage: %s [options] [[FD1 image] [[FD2 image] [[FD3 image] [FD4 image]]]]\n", progname);
 	exit(1);
 }
 
