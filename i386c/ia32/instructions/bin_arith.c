@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.c,v 1.3 2004/01/07 14:49:42 monaka Exp $	*/
+/*	$Id: bin_arith.c,v 1.4 2004/01/14 16:11:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -289,7 +289,7 @@ ADC_EdGd(void)
 	DWORD *out;
 	DWORD op, src, dst, res, madr;
 
-	PREPART_EA_REG16(op, src);
+	PREPART_EA_REG32(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
@@ -1100,7 +1100,7 @@ IDIV_AXEw(DWORD op)
 		madr = calc_ea_dst(op);
 		src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
-	tmp = (SDWORD)(((DWORD)CPU_DX << 16) + CPU_AX);
+	tmp = (SDWORD)(((DWORD)CPU_DX << 16) + (DWORD)CPU_AX);
 	if (src != 0) {
 		r = tmp / src;
 		if (((r + 0x8000) & 0xffff0000) == 0) {
@@ -1127,10 +1127,10 @@ IDIV_EAXEd(DWORD op)
 		madr = calc_ea_dst(op);
 		src = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	}
-	tmp = (SQWORD)(((QWORD)CPU_EDX << 32) + CPU_EAX);
+	tmp = (SQWORD)(((QWORD)CPU_EDX << 32) + (SQWORD)CPU_EAX);
 	if (src != 0) {
 		r = tmp / src;
-		if (((r + 0x80000000) & 0xffffffff00000000ULL) == 0) {
+		if (((r + 0x80000000LL) & 0xffffffff00000000ULL) == 0) {
 			CPU_EAX = (SDWORD)r;
 			CPU_EDX = tmp % src;
 			return;
