@@ -265,7 +265,9 @@ static void IOOUTCALL pit_o77(UINT port, BYTE dat) {
 		itimer_setflag(ch, dat);
 		if (ch == 0) {			// 書込みで itimerのirrがリセットされる…
 			pic.pi[0].irr &= (~1);
-			setsystimerevent(NEVENT_ABSOLUTE);
+			if (dat & 0x30) {	// 一応ラッチ時は割り込みをセットしない
+				setsystimerevent(NEVENT_ABSOLUTE);
+			}
 		}
 		if (ch == 1) {
 			beep_modeset();
