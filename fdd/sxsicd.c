@@ -366,3 +366,28 @@ CDTRK sxsicd_gettrk(SXSIDEV sxsi, UINT *tracks) {
 	return(cdinfo->trk);
 }
 
+BRESULT sxsicd_readraw(SXSIDEV sxsi, long pos, void *buf) {
+
+	CDINFO	cdinfo;
+	FILEH	fh;
+	long	fpos;
+
+	cdinfo = (CDINFO)sxsi->hdl;
+	if (cdinfo->type != 2352) {
+		return(FAILURE);
+	}
+	if (sxsi_prepare(sxsi) != SUCCESS) {
+		return(FAILURE);
+	}
+	if ((pos < 0) || (pos >= sxsi->totals)) {
+		return(FAILURE);
+	}
+	fh = ((CDINFO)sxsi->hdl)->fh;
+	fpos = pos * 2352;
+	if ((file_seek(fh, fpos, FSEEK_SET) != fpos) ||
+		(file_read(fh, buf, 2352) != 2352)) {
+		return(FAILURE);
+	}
+	return(SUCCESS);
+}
+

@@ -561,7 +561,10 @@ static void atapi_cmd_readsubch(IDEDRV drv) {
 		case 0x01:			// CD-ROM current pos
 			ZeroMemory(drv->buf, 16);
 			drv->buf[4] = 0x01;
-			pos = drv->dacurpos + (rand() & 7);
+			pos = drv->dacurpos;
+			if (drv->daflag & 2) {
+				pos += (rand() & 7);
+			}
 			r = tracks;
 			while(r) {
 				r--;
@@ -647,16 +650,27 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 static void atapi_cmd_playaudiomsf(IDEDRV drv) {
 
 	UINT32	pos;
+	UINT32	leng;
 
-	pos = (((drv->buf[6] * 60) + drv->buf[7]) * 75) + drv->buf[8];
+	pos = (((drv->buf[3] * 60) + drv->buf[4]) * 75) + drv->buf[5];
+	leng = (((drv->buf[6] * 60) + drv->buf[7]) * 75) + drv->buf[8];
+	if (leng > pos) {
+		leng -= pos;
+	}
+	else {
+		leng = 0;
+	}
 	if (pos >= 150) {
 		pos -= 150;
 	}
 	else {
 		pos = 0;
 	}
-	drv->daendpos = pos;
-	drv->dacurpos = pos;		// I—¹‚µ‚½‚±‚Æ‚É‚·‚éB
+	ideio.daplaying |= 1 << (drv->sxsidrv & 3);
+	drv->daflag = 1;
+	drv->dacurpos = pos;
+	drv->dalength = leng;
+	drv->dabufrem = 0;
 	cmddone(drv);
 }
 

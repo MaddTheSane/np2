@@ -11,6 +11,7 @@
 #include	"ideio.h"
 #include	"atapicmd.h"
 #include	"sxsi.h"
+#include	"sound.h"
 #include	"idebios.res"
 
 
@@ -919,6 +920,72 @@ REG16 IOINPCALL ideio_r16(UINT port) {
 
 // ----
 
+#if 1
+static BRESULT SOUNDCALL playdevaudio(IDEDRV drv, SINT32 *pcm, UINT count) {
+
+	SXSIDEV	sxsi;
+	UINT	r;
+const UINT8	*ptr;
+	SINT	sampl;
+	SINT	sampr;
+
+	sxsi = sxsi_getptr(drv->sxsidrv);
+	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
+		(!(sxsi->flag & SXSIFLAG_READY))) {
+		drv->daflag = 2;
+		return(FAILURE);
+	}
+	while(count) {
+		r = min(count, drv->dabufrem);
+		if (r) {
+			count -= r;
+			ptr = drv->dabuf + 2352 - (drv->dabufrem * 4);
+			drv->dabufrem -= r;
+			do {
+				sampl = ((SINT8)ptr[1] << 8) + ptr[0];
+				sampr = ((SINT8)ptr[3] << 8) + ptr[2];
+				pcm[0] += sampl;
+				pcm[1] += sampr;
+				ptr += 4;
+				pcm += 2;
+			} while(--r);
+		}
+		if (count == 0) {
+			break;
+		}
+		if ((drv->dalength == 0) ||
+			(sxsicd_readraw(sxsi, drv->dacurpos, drv->dabuf) != SUCCESS)) {
+			drv->daflag = 2;
+			return(FAILURE);
+		}
+		drv->dalength--;
+		drv->dacurpos++;
+		drv->dabufrem = sizeof(drv->dabuf) / 4;
+	}
+	return(SUCCESS);
+}
+
+static void SOUNDCALL playaudio(void *hdl, SINT32 *pcm, UINT count) {
+
+	UINT	bit;
+	IDEDRV	drv;
+
+	bit = ideio.daplaying;
+	if (!bit) {
+		return;
+	}
+	if (bit & 4) {
+		drv = ideio.dev[1].drv + 0;
+		if (playdevaudio(drv, pcm, count) != SUCCESS) {
+			bit = bit & (~4);
+		}
+	}
+	ideio.daplaying = bit;
+}
+#endif
+
+// ----
+
 static void devinit(IDEDRV drv, REG8 sxsidrv) {
 
 	SXSIDEV	sxsi;
@@ -969,6 +1036,9 @@ void ideio_reset(void) {
 void ideio_bind(void) {
 
 	if (pccore.hddif & PCHDD_IDE) {
+#if 1
+		sound_streamregist(NULL, (SOUNDCB)playaudio);
+#endif
 		iocore_attachout(0x0430, ideio_o430);
 		iocore_attachout(0x0432, ideio_o430);
 		iocore_attachinp(0x0430, ideio_i430);

@@ -57,8 +57,8 @@ typedef struct {
 	// audio
 	UINT	daflag;
 	UINT32	dacurpos;
-	UINT32	daendpos;
-	UINT	dabufpos;
+	UINT32	dalength;
+	UINT	dabufrem;
 	UINT8	dabuf[2352];
 } _IDEDRV, *IDEDRV;
 

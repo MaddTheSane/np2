@@ -17,6 +17,7 @@ typedef struct {
 BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *fname);
 
 CDTRK sxsicd_gettrk(SXSIDEV sxsi, UINT *tracks);
+BRESULT sxsicd_readraw(SXSIDEV sxsi, long pos, void *buf);
 
 #ifdef __cplusplus
 }
