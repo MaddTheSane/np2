@@ -25,7 +25,7 @@ static void secinc(_SYSTIME *dt) {
 		goto secinc_exit;
 	}
 	dt->minute = 0;
-	dt->hour = 0;
+	dt->hour++;
 	if (dt->hour < 24) {
 		goto secinc_exit;
 	}

@@ -180,12 +180,11 @@ void bios_init(void) {
 	for (i=0; i<8; i+=2) {
 		STOREINTELWORD(mem + 0xfd800 + 0x1aaf + i, 0x1ab7);
 		STOREINTELWORD(mem + 0xfd800 + 0x1ad7 + i, 0x1adf);
-		STOREINTELWORD(mem + 0xfd800 + 0x2361 + i, 0x1980);			// ver0.31
+		STOREINTELWORD(mem + 0xfd800 + 0x2361 + i, 0x1980);
 	}
 	CopyMemory(mem + 0xfd800 + 0x1ab7, fdfmt2hd, sizeof(fdfmt2hd));
 	CopyMemory(mem + 0xfd800 + 0x1adf, fdfmt2dd, sizeof(fdfmt2dd));
-	CopyMemory(mem + 0xfd800 + 0x1980, fdfmt144, sizeof(fdfmt144));	// ver0.31
-	CopyMemory(mem + 0xfd800 + 0x2400, biosboot, sizeof(biosboot));	// ver0.73
+	CopyMemory(mem + 0xfd800 + 0x1980, fdfmt144, sizeof(fdfmt144));
 
 	SETBIOSMEM16(0xfffe8, 0xcb90);
 	SETBIOSMEM16(0xfffec, 0xcb90);
@@ -219,6 +218,8 @@ void bios_init(void) {
 	else if ((pccore.model & PCMODELMASK) == PCMODEL_VM) {
 		mem[ITF_ADRS + 0x7ff1] = 0x08;
 	}
+
+	CopyMemory(mem + 0xfd800 + 0x2400, biosboot, sizeof(biosboot));
 #else
 	fh = file_open_c("itf.rom");
 	if (fh != FILEH_INVALID) {
