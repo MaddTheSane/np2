@@ -12,6 +12,8 @@
 static struct {
 	PMIXHDR	hdr;
 	PMIXTRK	trk[4];
+	UINT	rate;
+	UINT	enable;
 } amd98r;
 
 
@@ -103,26 +105,8 @@ static void pcmmake2(PMIXDAT *dat, UINT rate,
 
 void amd98_initialize(UINT rate) {
 
-	UINT	i;
-
 	ZeroMemory(&amd98r, sizeof(amd98r));
-	amd98r.hdr.enable = 0x0f;
-	// bd
-	pcmmake1(&amd98r.trk[0].data, rate,
-							24000, 889.0476190476, 0.9446717478);
-	// lt
-	pcmmake2(&amd98r.trk[1].data, rate,
-							6400, 172.9411764706, 0.8665145391, 0.9960000000);
-	// ht
-	pcmmake2(&amd98r.trk[2].data, rate,
-							9600, 213.0000000000, 0.8665145391, 0.9960000000);
-	// sd
-	pcmmake1(&amd98r.trk[3].data, rate,
-							12000, 255.4400000000, 0.8538230481);
-	for (i=0; i<4; i++) {
-		amd98r.trk[i].flag = PMIXFLAG_L | PMIXFLAG_R;
-		amd98r.trk[i].volume = 1 << 12;
-	}
+	amd98r.rate = rate;
 }
 
 void amd98_deinitialize(void) {
@@ -130,6 +114,7 @@ void amd98_deinitialize(void) {
 	int		i;
 	void	*ptr;
 
+	amd98r.hdr.enable = 0;
 	for (i=0; i<4; i++) {
 		ptr = amd98r.trk[i].data.sample;
 		amd98r.trk[i].data.sample = NULL;
@@ -138,6 +123,35 @@ void amd98_deinitialize(void) {
 		}
 	}
 }
+
+static void amd98_rhythmload(void) {
+
+	UINT	i;
+
+	if (!amd98r.hdr.enable) {
+		TRACEOUT(("AMD98 Rhythm load"));
+		amd98r.hdr.enable = 0x0f;
+		// bd
+		pcmmake1(&amd98r.trk[0].data, amd98r.rate,
+							24000, 889.0476190476, 0.9446717478);
+		// lt
+		pcmmake2(&amd98r.trk[1].data, amd98r.rate,
+							6400, 172.9411764706, 0.8665145391, 0.9960000000);
+		// ht
+		pcmmake2(&amd98r.trk[2].data, amd98r.rate,
+							9600, 213.0000000000, 0.8665145391, 0.9960000000);
+		// sd
+		pcmmake1(&amd98r.trk[3].data, amd98r.rate,
+							12000, 255.4400000000, 0.8538230481);
+		for (i=0; i<4; i++) {
+			amd98r.trk[i].flag = PMIXFLAG_L | PMIXFLAG_R;
+			amd98r.trk[i].volume = 1 << 12;
+		}
+	}
+}
+
+
+// ----
 
 static void amd98_rhythm(UINT map) {
 
@@ -272,6 +286,8 @@ static void psgpanset(PSGGEN psg) {
 }
 
 void amd98_bind(void) {
+
+	amd98_rhythmload();
 
 	psgpanset(&psg1);
 	psgpanset(&psg2);

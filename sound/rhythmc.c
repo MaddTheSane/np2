@@ -17,6 +17,8 @@ static const char *rhythmfile[6] = {
 				file_2608hh,	file_2608tom,	file_2608rim};
 
 typedef struct {
+	UINT	rate;
+	UINT	pcmexist;
 	PMIXDAT	pcm[6];
 	UINT	vol;
 	UINT	voltbl[96];
@@ -28,13 +30,10 @@ static	RHYTHMCFG	rhythmcfg;
 void rhythm_initialize(UINT rate) {
 
 	UINT	i;
-	char	path[MAX_PATH];
 
 	ZeroMemory(&rhythmcfg, sizeof(rhythmcfg));
-	for (i=0; i<6; i++) {
-		getbiospath(path, rhythmfile[i], sizeof(path));
-		pcmmix_regfile(rhythmcfg.pcm + i, path, rate);
-	}
+	rhythmcfg.rate = rate;
+
 	for (i=0; i<96; i++) {
 		rhythmcfg.voltbl[i] = (UINT)(32768.0 *
 										pow(2.0, (double)i * (-3.0) / 40.0));
@@ -51,6 +50,19 @@ void rhythm_deinitialize(void) {
 		rhythmcfg.pcm[i].sample = NULL;
 		if (ptr) {
 			_MFREE(ptr);
+		}
+	}
+}
+
+static void rhythm_load(void) {
+
+	int		i;
+	char	path[MAX_PATH];
+
+	for (i=0; i<6; i++) {
+		if (rhythmcfg.pcm[i].sample == NULL) {
+			getbiospath(path, rhythmfile[i], sizeof(path));
+			pcmmix_regfile(rhythmcfg.pcm + i, path, rhythmcfg.rate);
 		}
 	}
 }
@@ -83,6 +95,7 @@ void rhythm_bind(RHYTHM rhy) {
 
 	UINT	i;
 
+	rhythm_load();
 	rhy->hdr.enable = 0x3f;
 	for (i=0; i<6; i++) {
 		rhy->trk[i].data = rhythmcfg.pcm[i];
