@@ -28,6 +28,7 @@ static const char smenu_1280x800[] = "1280x600";
 
 static const char smenu_memdump[] = "&Memory Dump";
 static const char smenu_dbguty[] = "&Debug Utility";
+static const char menu_i286save[] = "&i286 save";
 
 static const SMENUITEM smenuitem[] = {
 			{smenu_toolwin,		IDM_TOOLWIN},
@@ -345,8 +346,9 @@ void xmenu_setsstp(BYTE value) {
 
 void xmenu_seti286save(BYTE value) {
 
-	if (!value) {
-		EnableMenuItem(GetMenu(hWndMain), IDM_I286SAVE, MF_GRAYED);
+	if (value) {
+		InsertMenu(GetSubMenu(GetMenu(hWndMain), 6), 10,
+					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, menu_i286save);
 	}
 }
 

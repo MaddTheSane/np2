@@ -1,9 +1,8 @@
 #include	"compiler.h"
+#include	"np2.h"
 #include	"dosio.h"
 #include	"extromio.h"
 
-
-extern	HINSTANCE	hInst;
 
 static const char str_extrom[] = "EXTROM";
 

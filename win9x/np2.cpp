@@ -1349,14 +1349,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			return(FALSE);
 		}
 	}
-	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
-		if (np2oscfg.toolwin) {
-			toolwin_create();
-		}
-		if (np2oscfg.keydisp) {
-			keydisp_create();
-		}
-	}
 
 	if (soundmng_initialize() == SUCCESS) {
 		soundmng_pcmload(SOUND_PCMSEEK, "SEEKWAV", EXTROMIO_RES);
@@ -1381,7 +1373,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	pccore_init();
 	S98_init();
 
-
 	sstpmsg_welcome();
 
 #ifdef OPENING_WAIT
@@ -1391,6 +1382,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	scrndraw_redraw();
 
 	pccore_reset();
+
+	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
+		if (np2oscfg.toolwin) {
+			toolwin_create();
+		}
+		if (np2oscfg.keydisp) {
+			keydisp_create();
+		}
+	}
 
 	np2opening = 0;
 

@@ -9,6 +9,7 @@
 #include	"joymng.h"
 #include	"sysmng.h"
 #include	"menu.h"
+#include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"bit2res.h"
@@ -1084,13 +1085,14 @@ void dialog_sndopt(HWND hWnd) {
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
-	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON;
+	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	psh.hwndParent = hWnd;
 	psh.hInstance = hinst;
 	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 6;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_sndopt;
+	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);
 }

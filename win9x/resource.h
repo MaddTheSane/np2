@@ -290,32 +290,31 @@
 #define IDM_RAPID                       40072
 #define IDM_MSRAPID                     40073
 #define IDM_SSTP                        40074
-#define IDM_I286SAVE                    40075
-#define IDM_HELP                        40076
-#define IDM_ABOUT                       40077
-#define IDM_KDISPFM                     40078
-#define IDM_KDISPMIDI                   40079
-#define IDM_VIEWWINNEW                  40080
-#define IDM_VIEWWINCLOSE                40081
-#define IDM_VIEWWINALLCLOSE             40082
-#define IDM_VIEWMODEREG                 40083
-#define IDM_VIEWMODESEG                 40084
-#define IDM_VIEWMODE1MB                 40085
-#define IDM_VIEWMODEASM                 40086
-#define IDM_VIEWMODESND                 40087
-#define IDM_VIEWMODELOCK                40088
-#define IDM_SETSEG                      40089
-#define IDM_SEGCS                       40090
-#define IDM_SEGDS                       40091
-#define IDM_SEGES                       40092
-#define IDM_SEGSS                       40093
-#define IDM_SEGTEXT                     40094
-#define IDM_RELOAD                      40095
-#define IDM_VRAM0                       40096
-#define IDM_VRAM1                       40097
-#define IDM_BIOS                        40098
-#define IDM_ITF                         40099
-#define IDM_A20LINE                     40100
+#define IDM_HELP                        40075
+#define IDM_ABOUT                       40076
+#define IDM_KDISPFM                     40077
+#define IDM_KDISPMIDI                   40078
+#define IDM_VIEWWINNEW                  40079
+#define IDM_VIEWWINCLOSE                40080
+#define IDM_VIEWWINALLCLOSE             40081
+#define IDM_VIEWMODEREG                 40082
+#define IDM_VIEWMODESEG                 40083
+#define IDM_VIEWMODE1MB                 40084
+#define IDM_VIEWMODEASM                 40085
+#define IDM_VIEWMODESND                 40086
+#define IDM_VIEWMODELOCK                40087
+#define IDM_SETSEG                      40088
+#define IDM_SEGCS                       40089
+#define IDM_SEGDS                       40090
+#define IDM_SEGES                       40091
+#define IDM_SEGSS                       40092
+#define IDM_SEGTEXT                     40093
+#define IDM_RELOAD                      40094
+#define IDM_VRAM0                       40095
+#define IDM_VRAM1                       40096
+#define IDM_BIOS                        40097
+#define IDM_ITF                         40098
+#define IDM_A20LINE                     40099
 
 // Next default values for new objects
 // 
@@ -323,7 +322,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        127
-#define _APS_NEXT_COMMAND_VALUE         40101
+#define _APS_NEXT_COMMAND_VALUE         40100
 #define _APS_NEXT_CONTROL_VALUE         1189
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

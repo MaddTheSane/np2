@@ -659,7 +659,6 @@ BEGIN
         MENUITEM "Joy &Rapid",                  IDM_RAPID
         MENUITEM "&Mouse Rapid",                IDM_MSRAPID
         MENUITEM "&Use SSTP",                   IDM_SSTP
-        MENUITEM "&i286 save",                  IDM_I286SAVE
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
         MENUITEM "&About...",                   IDM_ABOUT

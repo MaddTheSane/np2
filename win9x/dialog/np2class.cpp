@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	<prsht.h>
 #include	"resource.h"
 #include	"winloc.h"
 #include	"np2class.h"
@@ -52,6 +53,17 @@ void np2class_move(HWND hWnd, int posx, int posy, int cx, int cy) {
 		posy = workrc.top;
 	}
 	MoveWindow(hWnd, posx, posy, cx, cy, TRUE);
+}
+
+// ----
+
+int CALLBACK np2class_propetysheet(HWND hWndDlg, UINT uMsg, LPARAM lParam) {
+
+	if (uMsg == PSCB_INITIALIZED) {
+		SetWindowLong(hWndDlg, GWL_EXSTYLE,
+				GetWindowLong(hWndDlg, GWL_EXSTYLE) & (~WS_EX_CONTEXTHELP));
+	}
+	return(0);
 }
 
 

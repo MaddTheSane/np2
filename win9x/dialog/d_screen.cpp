@@ -6,6 +6,7 @@
 #include	"np2.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
+#include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
@@ -278,13 +279,14 @@ void dialog_scropt(HWND hWnd) {
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
-	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON;
+	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	psh.hwndParent = hWnd;
 	psh.hInstance = hinst;
 	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 3;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_scropt;
+	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWndMain, NULL, TRUE);
 }

@@ -1,3 +1,6 @@
+
+#define	_WIN32_IE	0x0200
+
 #include	<windows.h>
 #include	<stdio.h>
 #include	<stddef.h>
@@ -19,6 +22,13 @@ typedef	unsigned short	UINT16;
 typedef	int				SINT32;
 
 #endif
+
+
+#define	LOADINTELDWORD(a)		(*((UINT32 *)(a)))
+#define	LOADINTELWORD(a)		(*((UINT16 *)(a)))
+#define	STOREINTELDWORD(a, b)	*(UINT32 *)(a) = (b)
+#define	STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
+
 
 #include	"common.h"
 #include	"milstr.h"
