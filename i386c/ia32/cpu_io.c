@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.c,v 1.5 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: cpu_io.c,v 1.6 2004/03/25 15:08:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -28,13 +28,16 @@
  */
 
 #include "compiler.h"
+
 #include "cpu.h"
 #include "pccore.h"
 #include "iocore.h"
+#include "memory.h"
 
+static void IOOUTCALL check_io(UINT port, UINT len) GCC_ATTR_REGPARM;
 
-static void
-check_io(UINT port, UINT len)
+static void IOOUTCALL
+check_io(UINT port, UINT len) 
 {
 	UINT off;
 	UINT8 bit;
@@ -64,7 +67,7 @@ check_io(UINT port, UINT len)
 }
 
 #if defined(IA32_SUPPORT_DEBUG_REGISTER) && CPU_FAMILY >= 5
-INLINE static void
+INLINE static void IOOUTCALL
 check_ioport_break_point(UINT port, UINT length)
 {
 	int i;

@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.23 2004/03/24 16:46:14 yui Exp $	*/
+/*	$Id: paging.c,v 1.24 2004/03/25 15:08:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -184,10 +184,10 @@ static const UINT8 page_access_bit[32] = {
  * +- CR3(物理アドレス)
  */
 
-static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw);
+static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
 #if defined(IA32_SUPPORT_TLB)
-static BOOL tlb_lookup(const UINT32 vaddr, const int crw, UINT32 *paddr);
-static void tlb_update(const UINT32 laddr, const UINT entry, const int crw);
+static BOOL tlb_lookup(const UINT32 vaddr, const int crw, UINT32 *paddr) GCC_ATTR_REGPARM;
+static void tlb_update(const UINT32 laddr, const UINT entry, const int crw) GCC_ATTR_REGPARM;
 #endif
 
 #if defined(IA32_PAGING_EACHSIZE)
@@ -692,7 +692,7 @@ paging(const UINT32 laddr, const int ucrw)
 	UINT err;
 
 #if defined(IA32_SUPPORT_TLB)
-	if (tlb_lookup(laddr, crw, &paddr))
+	if (tlb_lookup(laddr, ucrw, &paddr))
 		return paddr;
 #endif	/* IA32_SUPPORT_TLB */
 

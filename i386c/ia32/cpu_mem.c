@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.16 2004/03/24 14:34:23 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.17 2004/03/25 15:08:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -359,7 +359,7 @@ cpu_codefetch(UINT32 offset)
 #else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread(addr);
-		return cpu_lcmemoryread(addr);
+		return cpu_linear_memory_read_b(addr, CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
@@ -394,7 +394,7 @@ cpu_codefetch_w(UINT32 offset)
 #else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_w(addr);
-		return cpu_lcmemoryread_w(addr);
+		return cpu_linear_memory_read_w(addr, CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 	}
 	EXCEPTION(GP_EXCEPTION, 0);
@@ -441,13 +441,18 @@ cpu_codefetch_d(UINT32 offset)
 				cpu_prefetch(addr);
 				v += (UINT32)cpu_prefetchq(addr) << 24;
 				break;
+
+			default:
+				ia32_panic("cpu_codefetch_d: remain bytes is invalid");
+				v = 0; /* compiler happy */
+				break;
 			}
 			return v;
 		}
 #else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_d(addr);
-		return cpu_lcmemoryread_d(addr);
+		return cpu_linear_memory_read_d(addr, CPU_PAGE_READ_CODE | CPU_STAT_USER_MODE);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 	}
 	EXCEPTION(GP_EXCEPTION, 0);

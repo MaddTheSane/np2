@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.mcr,v 1.2 2004/03/24 14:03:52 monaka Exp $	*/
+/*	$Id: cpu_mem.mcr,v 1.3 2004/03/25 15:08:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -63,7 +63,7 @@ cpu_vmemoryread_##width(int idx, UINT32 offset) \
 	check_memory_break_point(addr, (length), CPU_DR7_RW_RO); \
 	if (!CPU_STAT_PAGING) \
 		return cpu_memoryread_##width(addr); \
-	return cpu_lmemoryread_##width(addr, CPU_STAT_USER_MODE); \
+	return cpu_linear_memory_read_##width(addr, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE); \
 \
 range_failure: \
 	if (idx == CPU_SS_INDEX) { \
@@ -113,7 +113,7 @@ cpu_vmemorywrite_##width(int idx, UINT32 offset, valtype value) \
 	if (!CPU_STAT_PAGING) { \
 		cpu_memorywrite_##width(addr, value); \
 	} else { \
-		cpu_lmemorywrite_##width(addr, value, CPU_STAT_USER_MODE); \
+		cpu_linear_memory_write_##width(addr, value, CPU_PAGE_WRITE_DATA | CPU_STAT_USER_MODE); \
 	} \
 	return; \
 \
