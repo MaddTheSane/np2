@@ -13,7 +13,7 @@
 static	BYTE	cbuf[8];
 
 typedef struct {
-	WORD	res;
+	UINT16	res;
 	BYTE	min;
 	BYTE	max;
 } VIRCAL_T;
