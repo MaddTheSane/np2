@@ -1536,6 +1536,7 @@ const STENTRY	*tblterm;
 	flagclose(&f);
 
 	// I/OçÏÇËíºÇµ
+	i286_memorymap((pc.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();

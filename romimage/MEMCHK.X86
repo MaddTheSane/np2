@@ -175,7 +175,8 @@ epson_memtest:	mov		bx, 2000h				; ƒƒCƒ“ƒƒ‚ƒŠ `128KB
 				cmp		ch, 4
 				jbe		short epmt_main_lp
 				mov		ch, 4
-epmt_main_lp:	call	sub_memchk
+epmt_main_lp:	mov		cl, 0
+				call	sub_memchk
 				add		bh, 20h
 				push	cx
 				push	dx

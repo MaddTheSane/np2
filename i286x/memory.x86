@@ -962,6 +962,7 @@ vramw_write		dd	@vramw_w0,		@vramw_w1		; 00
 
 section .text
 
+	global	@i286_memorymap@4
 	global	@i286_vram_dispatch@4
 
 	global	@i286_memorywrite@8

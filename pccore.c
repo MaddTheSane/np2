@@ -315,6 +315,7 @@ void pccore_reset(void) {
 	cbuscore_reset();
 	fmboard_reset(np2cfg.SOUND_SW);
 
+	i286_memorymap((pc.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();

@@ -202,14 +202,17 @@ static const I286OP_0F cts1_table[] = {
 I286_0F _loadall286(void) {
 
 	UINT16	tmp;
+	UINT32	base;
 
 	I286_WORKCLOCK(195);
 	I286_MSW = LOADINTELWORD(mem + 0x804);
+	I286_TR = LOADINTELWORD(mem + 0x816);			// ver0.73
 	tmp = LOADINTELWORD(mem + 0x818);
 	I286_OV = tmp & O_FLAG;
 	I286_FLAG = tmp & (0xfff ^ O_FLAG);
 	I286_TRAP = ((tmp & 0x300) == 0x300);
 	I286_IP = LOADINTELWORD(mem + 0x81a);
+	I286_LDTR = LOADINTELWORD(mem + 0x81c);			// ver0.73
 	I286_DS = LOADINTELWORD(mem + 0x81e);
 	I286_SS = LOADINTELWORD(mem + 0x820);
 	I286_CS = LOADINTELWORD(mem + 0x822);
@@ -222,12 +225,33 @@ I286_0F _loadall286(void) {
 	I286_DX = LOADINTELWORD(mem + 0x830);
 	I286_CX = LOADINTELWORD(mem + 0x832);
 	I286_AX = LOADINTELWORD(mem + 0x834);
-	ES_BASE = LOADINTELDWORD(mem + 0x836) & 0x00ffffff;
-	CS_BASE = LOADINTELDWORD(mem + 0x83c) & 0x00ffffff;
-	SS_BASE = LOADINTELDWORD(mem + 0x842) & 0x00ffffff;
-	SS_FIX = SS_BASE;
-	DS_BASE = LOADINTELDWORD(mem + 0x848) & 0x00ffffff;
-	DS_FIX = DS_BASE;
+	base = LOADINTELDWORD(mem + 0x836) & 0x00ffffff;
+	ES_BASE = base;
+	base = LOADINTELDWORD(mem + 0x83c) & 0x00ffffff;
+	CS_BASE = base;
+	base = LOADINTELDWORD(mem + 0x842) & 0x00ffffff;
+	SS_BASE = base;
+	SS_FIX = base;
+	base = LOADINTELDWORD(mem + 0x848) & 0x00ffffff;
+	DS_BASE = base;
+	DS_FIX = base;
+
+	I286_GDTR.base = LOADINTELWORD(mem + 0x84e);
+	*(UINT16 *)(&I286_GDTR.base24) = LOADINTELWORD(mem + 0x850);
+	I286_GDTR.limit = LOADINTELWORD(mem + 0x852);
+
+	I286_LDTRC.base = LOADINTELWORD(mem + 0x854);
+	*(UINT16 *)(&I286_LDTRC.base24) = LOADINTELWORD(mem + 0x856);
+	I286_LDTRC.limit = LOADINTELWORD(mem + 0x858);
+
+	I286_IDTR.base = LOADINTELWORD(mem + 0x85a);
+	*(UINT16 *)(&I286_IDTR.base24) = LOADINTELWORD(mem + 0x85c);
+	I286_IDTR.limit = LOADINTELWORD(mem + 0x85e);
+
+	I286_TRC.base = LOADINTELWORD(mem + 0x860);
+	*(UINT16 *)(&I286_TRC.base24) = LOADINTELWORD(mem + 0x8620);
+	I286_TRC.limit = LOADINTELWORD(mem + 0x864);
+
 	I286IRQCHECKTERM
 }
 

@@ -1128,17 +1128,17 @@ emmcw_wt_3fff	eor		r12, r12, #(1 << 14)				; !
 ; ---- itf
 
 i286_rb			ldrb	r2, [r9, #CPU_ITFBANK]
-				orr		r12, r9, #VRAM_STEP
+				orr		r12, r0, #VRAM_STEP
 				cmp		r2, #0
-				ldreqb	r0, [r9, r0]
+				ldreqb	r0, [r0, r9]
 				ldrneb	r0, [r12, r9]
 				mov		pc, lr
 
 
 i286_wb			ldrb	r2, [r9, #CPU_ITFBANK]
-				orr		r12, r9, #(&1c8000 - &0e8000)
+				orr		r12, r0, #(&1c8000 - &0e8000)
 				cmp		r2, #0
-				streqb	r1, [r9, r0]
+				streqb	r1, [r0, r9]
 				strneb	r1, [r12, r9]
 				mov		pc, lr
 

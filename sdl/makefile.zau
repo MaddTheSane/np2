@@ -44,10 +44,11 @@ PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
-				$(IO)/extmem.h $(IO)/fdc.h $(IO)/fdd320.h $(IO)/gdc.h \
-				$(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/itf.h $(IO)/mouseif.h \
-				$(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h $(IO)/pit.h \
-				$(IO)/printif.h $(IO)/serial.h $(IO)/sysport.h $(IO)/upd4990.h
+				$(IO)/epsonio.h $(IO)/extmem.h $(IO)/fdc.h $(IO)/fdd320.h \
+				$(IO)/gdc.h $(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/itf.h \
+				$(IO)/mouseif.h $(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h \
+				$(IO)/pit.h $(IO)/printif.h $(IO)/serial.h $(IO)/sysport.h \
+				$(IO)/upd4990.h
 
 FMBOARDS	=	$(SOUND)/soundrom.h $(SOUND)/tms3631.h $(SOUND)/fmtimer.h \
 				$(SOUND)/opngen.h $(SOUND)/psggen.h $(SOUND)/rhythm.h \
