@@ -262,6 +262,8 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
         }
     }
 
+	(void)myHandler;
+	(void)userData;
     return err;
 }
 

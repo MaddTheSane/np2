@@ -154,6 +154,18 @@ void keystat_resetcopyhelp(void) {
 	}
 }
 
+void keystat_allrelease(void) {
+
+	UINT	i;
+
+	for (i=0; i<0x80; i++) {
+		if (keystat[i] & 0x80) {
+			keystat[i] &= ~0x80;
+			keyb_out((BYTE)(i + 0x80));
+		}
+	}
+}
+
 void keystat_forcerelease(BYTE value) {
 
 	if (keystat[value & 0x7f] & 0x80) {

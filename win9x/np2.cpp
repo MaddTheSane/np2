@@ -810,6 +810,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			if (LOWORD(wParam) != WA_INACTIVE) {
 				np2break &= ~NP2BREAK_MAIN;
 				scrnmng_update();
+				keystat_allrelease();
 				mouse_running(MOUSE_CONT_M);
 			}
 			else {
@@ -1367,11 +1368,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 				}
 				else {								// auto skip
 					if (!waitcnt) {
+						UINT cnt;
 						joy_flash();
 						mouse_callback();
 						pccore_exec(framecnt == 0);
 						dclock_callback();
 						framecnt++;
+#if 1
+						cnt = timing_getcount();
+						if (framecnt > cnt) {
+							waitcnt = framecnt;
+							if (framemax > 1) {
+								framemax--;
+							}
+						}
+						else if (framecnt >= framemax) {
+							if (framemax < 12) {
+								framemax++;
+							}
+							if (cnt >= 12) {
+								timing_init();
+							}
+							else {
+								timing_setcount(cnt - framecnt);
+							}
+							framecnt = 0;
+						}
+#else
 						if (timing_getcount() < framecnt) {
 							waitcnt = framecnt;
 							if (framemax > 1) {
@@ -1384,6 +1407,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 								framemax++;
 							}
 						}
+#endif
 					}
 					else {
 						processwait(waitcnt);

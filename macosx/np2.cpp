@@ -26,20 +26,14 @@
 #include	"diskdrv.h"
 #include	"fddfile.h"
 #include	"statsave.h"
-
-#if defined(NP2GCC)
 #include	"mousemng.h"
-#endif
 #include	"configure.h"
+
 
 #define	USE_RESUME
 
 
-#if defined(NP2GCC)
 		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0};
-#else
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0};
-#endif
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -453,6 +447,7 @@ static void HandleMenuChoice(long wParam) {
 	HiliteMenu(0);
 }
 
+#if 0
 static void HandleUpdateEvent(EventRecord *pevent) {
 
 	WindowPtr	hWnd;
@@ -462,6 +457,7 @@ static void HandleUpdateEvent(EventRecord *pevent) {
 	scrndraw_redraw();
 	EndUpdate(hWnd);
 }
+#endif
 
 static void HandleMouseDown(EventRecord *pevent) {
 
@@ -773,7 +769,7 @@ int main(int argc, char *argv[]) {
 
 	scrnmng_destroy();
 
-	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
+	if (sys_updates & (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();
 	}
 	TRACETERM();
@@ -788,7 +784,7 @@ int main(int argc, char *argv[]) {
 }
 
 //以下、ごっそりIIxからマージ
-static pascal OSStatus MyAppEventHandler (EventHandlerCallRef myHandlerChain, EventRef event, void* userData)
+static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef event, void* userData)
 {
     UInt32          whatHappened;
     OSStatus        result = eventNotHandledErr;
@@ -804,10 +800,14 @@ static pascal OSStatus MyAppEventHandler (EventHandlerCallRef myHandlerChain, Ev
     if (IsDialogEvent(&eve)) return result;
 
     UInt32 modif;
-    EventMouseButton	buttonKind;
     GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
+
+#if defined(NP2GCC)
+    EventMouseButton buttonKind;
     GetEventParameter (event, kEventParamMouseButton, typeMouseButton, NULL, sizeof(EventMouseButton), NULL, &buttonKind);
-    BYTE ret;
+
+	BYTE ret;
+#endif
         
     switch (eventClass)
         {
@@ -816,7 +816,9 @@ static pascal OSStatus MyAppEventHandler (EventHandlerCallRef myHandlerChain, Ev
                         AEProcessAppleEvent(&eve);
                     }
                     break;
+
                 case kEventClassMouse: 
+#if defined(NP2GCC)
                     switch (whatHappened)
                         {
                         case kEventMouseMoved:
@@ -858,14 +860,22 @@ static pascal OSStatus MyAppEventHandler (EventHandlerCallRef myHandlerChain, Ev
                                     break;    
                                 }                    
                         }
+#else
+						if (whatHappened == kEventMouseDown) {
+							HandleMouseDown(&eve);
+						}
+#endif
                         break;
             default:
                     break; 
         }
+
+	(void)myHandlerChain;
+	(void)userData;
     return result; 
 }
 
-static pascal OSStatus MyWindowEventHandler(EventHandlerCallRef myHandler,  EventRef event, void* userData)
+static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef event, void* userData)
 {
     WindowRef	window;
     UInt32		whatHappened;
@@ -934,24 +944,37 @@ static pascal OSStatus MyWindowEventHandler(EventHandlerCallRef myHandler,  Even
                 break;                
         }
 
+	(void)myHandler;
+	(void)userData;
     return result;
 }
 
-static void setUpCarbonEvent(void)
-{
-    InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
-	EventTypeSpec   appEventList[] ={	{ kEventClassAppleEvent, kEventAppleEvent },
-                                        { kEventClassMouse, kEventMouseDown},
-                                        { kEventClassMouse, kEventMouseMoved},
-                                        { kEventClassMouse, kEventMouseUp}
-                                    };
-    EventTypeSpec   windEventList[] ={	{ kEventClassWindow, kEventWindowClose},
-				                        { kEventClassKeyboard, kEventRawKeyDown},
-                                        { kEventClassKeyboard, kEventRawKeyUp},
-                                        { kEventClassKeyboard, kEventRawKeyRepeat},
-				                        { kEventClassKeyboard, kEventRawKeyModifiersChanged}
-                                     };
-	InstallApplicationEventHandler(NewEventHandlerUPP(MyAppEventHandler), 4, appEventList, 0, NULL); 
-	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(MyWindowEventHandler), 5, windEventList, 0, NULL);
+static const EventTypeSpec appEventList[] = {
+				{kEventClassAppleEvent,	kEventAppleEvent},
+				{kEventClassMouse,		kEventMouseDown},
+#if defined(NP2GCC)
+				{kEventClassMouse,		kEventMouseMoved},
+				{kEventClassMouse,		kEventMouseUp},
+#endif
+			};
 
+static const EventTypeSpec windEventList[] = {
+				{kEventClassWindow,		kEventWindowClose},
+				{kEventClassKeyboard,	kEventRawKeyDown},
+				{kEventClassKeyboard,	kEventRawKeyUp},
+				{kEventClassKeyboard,	kEventRawKeyRepeat},
+				{kEventClassKeyboard,	kEventRawKeyModifiersChanged},
+			};
+
+
+static void setUpCarbonEvent(void) {
+
+	InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
+	InstallApplicationEventHandler(NewEventHandlerUPP(np2appevent),
+								sizeof(appEventList)/sizeof(EventTypeSpec),
+								appEventList, 0, NULL);
+	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(np2windowevent),
+								sizeof(windEventList)/sizeof(EventTypeSpec),
+								windEventList, 0, NULL);
 }
+

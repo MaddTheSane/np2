@@ -1,4 +1,6 @@
+
 #if defined(NP2GCC)
+
 #include	"compiler.h"
 #include	"np2.h"
 #include	"mousemng.h"
@@ -129,9 +131,9 @@ BYTE mouse_btn(BYTE btn) {
 }
 
 #else
+
 #include	"compiler.h"
 #include	"mousemng.h"
-
 
 BYTE mousemng_getstat(SINT16 *x, SINT16 *y, int clear) {
 
@@ -142,3 +144,4 @@ BYTE mousemng_getstat(SINT16 *x, SINT16 *y, int clear) {
 }
 
 #endif
+

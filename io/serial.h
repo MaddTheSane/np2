@@ -33,6 +33,7 @@ extern "C" {
 
 void keystat_reset(void);
 void keystat_senddata(BYTE data);
+void keystat_allrelease(void);
 void keystat_forcerelease(BYTE value);
 void keystat_resetcopyhelp(void);
 void keystat_resetjoykey(void);

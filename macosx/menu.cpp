@@ -195,3 +195,4 @@ void menu_setmouse(BYTE value) {
 	_CheckMenuItem(GetMenu(IDM_DEVICE), IDM_MOUSE, MFCHECK(value));
 }
 #endif
+

@@ -18,3 +18,4 @@ void menu_setraster(BYTE value);
 #if defined(NP2GCC)
 void menu_setmouse(BYTE value);
 #endif
+

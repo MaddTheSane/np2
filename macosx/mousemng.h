@@ -1,4 +1,6 @@
+
 #if defined(NP2GCC)
+
 #define	MOUSE_MASK		7
 
 #define	M_RES		0x00

@@ -8,9 +8,9 @@ typedef struct {
 	BYTE	ptr;
 	BYTE	rcv;
 	BYTE	snd;
-	BYTE	cmd;				// ver0.29
-	BYTE	paracb;				// ver0.29
-	BYTE	reserved[3];
+	BYTE	cmd;
+	BYTE	paracb;
+	BYTE	reserved;
 } _GDCDATA, *GDCDATA;
 
 typedef struct {

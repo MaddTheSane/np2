@@ -1,5 +1,5 @@
 // Apple Developer Builder include file.
-// Used by np2gcc.pbproj
+// Used by np2.pbproj
 
 #include <Carbon/Carbon.h>
 

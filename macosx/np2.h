@@ -4,11 +4,7 @@ typedef struct {
 	BYTE	DRAW_SKIP;
 	BYTE	DISPCLK;
 	BYTE	F12COPY;
-
-#if defined(NP2GCC)
 	BYTE	MOUSE_SW;
-#endif
-
 	BYTE	I286SAVE;
 } NP2OSCFG;
 

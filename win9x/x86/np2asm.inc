@@ -62,7 +62,7 @@ GDCCMD_MAX		equ		32
 .snd			resb	1
 .cmd			resb	1
 .paracb			resb	1
-.reserved		resb	3
+.reserved		resb	1
 				endstruc
 
 				struc	gdc_t
