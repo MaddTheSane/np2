@@ -138,7 +138,6 @@ main(int argc, char *argv[])
 	int rv = 1;
 	int ch;
 	int i, drvmax;
-	BOOL shared_pixmap_flag = FALSE;
 
 	progname = argv[0];
 
@@ -252,7 +251,7 @@ main(int argc, char *argv[])
 	mmxflag += np2oscfg.disablemmx ? MMXFLAG_DISABLE : 0;
 #endif
 
-	use_shared_pixmap = np2oscfg.shared_pixmap && shared_pixmap_flag;
+	use_shared_pixmap = np2oscfg.shared_pixmap;
 
 	TRACEINIT();
 
