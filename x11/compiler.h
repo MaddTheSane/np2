@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.29 2005/03/12 12:36:13 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.30 2005/03/23 13:43:23 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -200,7 +200,7 @@ UINT32 gettick(void);
 #define	STRLEN		strlen
 
 #define	OEMCHAR		char
-#define OEMTEXT(s)	(s)
+#define OEMTEXT(s)	s
 #define OEMNULLSTR	OEMTEXT("")
 #define	OEMSPRINTF	sprintf
 #define	OEMSTRLEN	strlen
