@@ -300,6 +300,22 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>rom</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>ROM.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Neko Project IIx ROMファイル</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.ROM</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>hdm</string>
 				<string>dup</string>
 			</array>
@@ -372,7 +388,7 @@
 			<key>CFBundleTypeName</key>
 			<string>Neko Project IIx 初期設定</string>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>None</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -384,7 +400,7 @@
 			<key>CFBundleTypeName</key>
 			<string>Neko Project IIx ツールウィンドウ スキンファイル</string>
 			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
+			<string>None</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -408,7 +424,7 @@
 			<key>CFBundleTypeName</key>
 			<string>Neko Project IIx レジュームファイル</string>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>None</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
@@ -463,6 +479,7 @@
 				961B70280563FAF900000103,
 				961B702B0563FB1900000103,
 				961B702C0563FB1900000103,
+				961B71CA05641E6C00000103,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -767,6 +784,17 @@
 		};
 		961B702C0563FB1900000103 = {
 			fileRef = 961B702A0563FB1900000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B71C905641E6C00000103 = {
+			isa = PBXFileReference;
+			path = ROM.icns;
+			refType = 4;
+		};
+		961B71CA05641E6C00000103 = {
+			fileRef = 961B71C905641E6C00000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3140,6 +3168,7 @@
 				969A834B055A60A500000103,
 				969A834C055A60A500000103,
 				969A834D055A60A500000103,
+				961B71C905641E6C00000103,
 				969A834E055A60A500000103,
 				969A834F055A60A500000103,
 			);

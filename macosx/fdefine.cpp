@@ -105,6 +105,9 @@ static int GetFileExt(char* filename) {
     else if ((!milstr_cmp(p, str_hdi))) {
 			ftype = FTYPE_HDI;
 		}
+    else if ((!milstr_cmp(p, "rom")) || (!milstr_cmp(p, "cfg")) || (!milstr_cmp(p, "sav"))) {
+        ftype = FTYPE_NONE;
+    }
     else {
         ftype = FTYPE_BETA;
     }
