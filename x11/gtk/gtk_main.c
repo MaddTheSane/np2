@@ -265,14 +265,14 @@ gui_gtk_widget_create(void)
 	GtkWidget *main_vbox;
 	GtkWidget *menubar;
 
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
-	gtk_window_set_title(GTK_WINDOW(window), np2oscfg.titles);
-	gtk_widget_add_events(window, EVENT_MASK);
+	main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_policy(GTK_WINDOW(main_window), FALSE, FALSE, TRUE);
+	gtk_window_set_title(GTK_WINDOW(main_window), np2oscfg.titles);
+	gtk_widget_add_events(main_window, EVENT_MASK);
 
 	main_vbox = gtk_vbox_new(FALSE, 2);
 	gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
-	gtk_container_add(GTK_CONTAINER(window), main_vbox);
+	gtk_container_add(GTK_CONTAINER(main_window), main_vbox);
 	gtk_widget_show(main_vbox);
 
 	menubar = create_menu();
@@ -284,18 +284,18 @@ gui_gtk_widget_create(void)
 	gtk_box_pack_start(GTK_BOX(main_vbox), drawarea, FALSE, TRUE, 0);
 	gtk_widget_show(drawarea);
 
-	gtk_widget_realize(window);
-	set_icon_bitmap(window);
+	gtk_widget_realize(main_window);
+	set_icon_bitmap(main_window);
 
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", 
+	gtk_signal_connect(GTK_OBJECT(main_window), "destroy", 
 	    GTK_SIGNAL_FUNC(gtk_main_quit), "WM destroy");
-	gtk_signal_connect(GTK_OBJECT(window), "key_press_event",
+	gtk_signal_connect(GTK_OBJECT(main_window), "key_press_event",
 	    GTK_SIGNAL_FUNC(key_press), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "key_release_event",
+	gtk_signal_connect(GTK_OBJECT(main_window), "key_release_event",
 	    GTK_SIGNAL_FUNC(key_release), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "button_press_event",
+	gtk_signal_connect(GTK_OBJECT(main_window), "button_press_event",
 	    GTK_SIGNAL_FUNC(button_press), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "button_release_event",
+	gtk_signal_connect(GTK_OBJECT(main_window), "button_release_event",
 	    GTK_SIGNAL_FUNC(button_release), NULL);
 
 	gtk_signal_connect(GTK_OBJECT(drawarea), "configure_event",
@@ -315,7 +315,7 @@ void
 gui_gtk_widget_show(void)
 {
 
-	gtk_widget_show(window);
+	gtk_widget_show(main_window);
 }
 
 void
@@ -354,7 +354,7 @@ void
 gui_gtk_set_window_title(const char* str)
 {
 
-	gtk_window_set_title(GTK_WINDOW(window), str);
+	gtk_window_set_title(GTK_WINDOW(main_window), str);
 }
 
 void

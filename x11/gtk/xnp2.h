@@ -1,4 +1,4 @@
-/*	$Id: xnp2.h,v 1.3 2004/07/27 17:07:49 monaka Exp $	*/
+/*	$Id: xnp2.h,v 1.4 2004/07/28 13:53:00 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-extern GtkWidget *window;
+extern GtkWidget *main_window;
 extern GtkWidget *drawarea;
 
 typedef struct {

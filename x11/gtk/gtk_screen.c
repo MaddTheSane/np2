@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.6 2004/07/27 17:07:49 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.7 2004/07/28 13:53:00 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -82,7 +82,7 @@ static X11SCRNSURF scrnsurf;
 
 SCRNMNG *scrnmngp = &scrnmng;
 
-GtkWidget *window;
+GtkWidget *main_window;
 GtkWidget *drawarea;
 
 
@@ -275,7 +275,7 @@ scrnmng_create(UINT8 mode)
 		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
 
 		visual = gtk_widget_get_visual(drawarea);
-		if (!gtkdrawmng_getformat(drawarea, window, &fmt))
+		if (!gtkdrawmng_getformat(drawarea, main_window, &fmt))
 			return FAILURE;
 
 		switch (fmt.bits_per_pixel) {

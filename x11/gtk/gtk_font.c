@@ -110,7 +110,7 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 	allocsize += fontalign;
 
 	/* GTK */
-	colormap = gtk_widget_get_colormap(GTK_WIDGET(window));
+	colormap = gtk_widget_get_colormap(GTK_WIDGET(main_window));
 	color.red = color.green = color.blue = 0;
 	if (gdk_color_alloc(colormap, &color) == 0) {
 		fnt.black_pixel = 0;
@@ -124,7 +124,7 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 		fprintf(stderr, "Warning: Can't create font-set.\n");
 		return NULL;
 	}
-	fnt.pixmap = gdk_pixmap_new(window->window, fnt.fontwidth, fnt.fontheight, -1);
+	fnt.pixmap = gdk_pixmap_new(main_window->window, fnt.fontwidth, fnt.fontheight, -1);
 
 	fntp = _MALLOC(allocsize, "font mng");
 	if (fntp) {
@@ -177,9 +177,9 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const BYTE *str, int len)
 
 	getlength1(fhdl, fdat, str, len);
 
-	gdk_draw_rectangle(fhdl->pixmap, window->style->white_gc, TRUE,
+	gdk_draw_rectangle(fhdl->pixmap, main_window->style->white_gc, TRUE,
 	    0, 0, fhdl->fontwidth, fhdl->fontheight);
-	gdk_draw_text(fhdl->pixmap, fhdl->fontset, window->style->black_gc,
+	gdk_draw_text(fhdl->pixmap, fhdl->fontset, main_window->style->black_gc,
 	    0, 14, str, strlen(str));
 	img = gdk_image_get(fhdl->pixmap, 0, 0, fhdl->fontwidth,
 	    fhdl->fontheight);

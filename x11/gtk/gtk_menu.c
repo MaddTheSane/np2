@@ -728,7 +728,7 @@ exit_from_menu(gpointer data, guint action, GtkWidget *w)
 	UNUSED(action);
 	UNUSED(w);
 
-	gtk_widget_destroy(GTK_WIDGET(window));
+	gtk_widget_destroy(GTK_WIDGET(main_window));
 }
 
 static void
