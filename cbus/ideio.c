@@ -932,7 +932,7 @@ const UINT8	*ptr;
 	sxsi = sxsi_getptr(drv->sxsidrv);
 	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
 		(!(sxsi->flag & SXSIFLAG_READY))) {
-		drv->daflag = 2;
+		drv->daflag = 0x14;
 		return(FAILURE);
 	}
 	while(count) {
@@ -953,9 +953,12 @@ const UINT8	*ptr;
 		if (count == 0) {
 			break;
 		}
-		if ((drv->dalength == 0) ||
-			(sxsicd_readraw(sxsi, drv->dacurpos, drv->dabuf) != SUCCESS)) {
-			drv->daflag = 2;
+		if (drv->dalength == 0) {
+			drv->daflag = 0x13;
+			return(FAILURE);
+		}
+		if (sxsicd_readraw(sxsi, drv->dacurpos, drv->dabuf) != SUCCESS) {
+			drv->daflag = 0x14;
 			return(FAILURE);
 		}
 		drv->dalength--;
@@ -1010,6 +1013,7 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 		if (sxsi->flag & SXSIFLAG_READY) {
 			drv->media |= (IDEIO_MEDIA_CHANGED|IDEIO_MEDIA_LOADED);
 		}
+		drv->daflag = 0x15;
 	}
 	else {
 		drv->status = IDESTAT_ERR;

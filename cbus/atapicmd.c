@@ -539,10 +539,12 @@ static void storemsf(UINT8 *ptr, UINT32 pos) {
 }
 
 
-// 0x43: READ SUB CHANNEL
+// 0x42: READ SUB CHANNEL
 static void atapi_cmd_readsubch(IDEDRV drv) {
 
 	SXSIDEV	sxsi;
+	UINT	subq;
+	UINT	cmd;
 	UINT	leng;
 	CDTRK	trk;
 	UINT	tracks;
@@ -557,26 +559,40 @@ static void atapi_cmd_readsubch(IDEDRV drv) {
 	}
 	trk = sxsicd_gettrk(sxsi, &tracks);
 	leng = (drv->buf[7] << 8) + drv->buf[8];
-	switch(drv->buf[3]) {
+	subq = drv->buf[2] & 0x40;
+	cmd = drv->buf[3];
+
+	drv->buf[0] = 0;
+	drv->buf[1] = (UINT8)drv->daflag;
+	drv->buf[2] = 0;
+	drv->buf[3] = 0;
+	if (!subq) {
+		senddata(drv, 4, leng);
+		return;
+	}
+	switch(cmd) {
 		case 0x01:			// CD-ROM current pos
-			ZeroMemory(drv->buf, 16);
+			ZeroMemory(drv->buf + 4, 12);
+			drv->buf[3] = 0x12;
 			drv->buf[4] = 0x01;
-			pos = drv->dacurpos;
-			if (drv->daflag & 2) {
-				pos += (rand() & 7);
-			}
-			r = tracks;
-			while(r) {
-				r--;
-				if (trk[r].pos <= pos) {
-					break;
+			if (drv->daflag != 0x15) {
+				pos = drv->dacurpos;
+				if ((drv->daflag == 0x12) || (drv->daflag == 0x13)) {
+					pos += (rand() & 7);
 				}
+				r = tracks;
+				while(r) {
+					r--;
+					if (trk[r].pos <= pos) {
+						break;
+					}
+				}
+				drv->buf[5] = trk[r].type;
+				drv->buf[6] = trk[r].track;
+				drv->buf[7] = 1;
+				storemsf(drv->buf + 8, pos + 150);
+				storemsf(drv->buf + 12, pos - trk[r].pos);
 			}
-			drv->buf[5] = trk[r].type;
-			drv->buf[6] = trk[r].track;
-			drv->buf[7] = 1;
-			storemsf(drv->buf + 8, pos + 150);
-			storemsf(drv->buf + 12, pos - trk[r].pos);
 			senddata(drv, 16, leng);
 			break;
 
@@ -667,7 +683,7 @@ static void atapi_cmd_playaudiomsf(IDEDRV drv) {
 		pos = 0;
 	}
 	ideio.daplaying |= 1 << (drv->sxsidrv & 3);
-	drv->daflag = 1;
+	drv->daflag = 0x11;
 	drv->dacurpos = pos;
 	drv->dalength = leng;
 	drv->dabufrem = 0;
@@ -677,6 +693,20 @@ static void atapi_cmd_playaudiomsf(IDEDRV drv) {
 // 0x4B: PAUSE RESUME
 static void atapi_cmd_pauseresume(IDEDRV drv) {
 
+	if (drv->buf[8] & 1) {
+		// resume
+		if (drv->daflag == 0x12) {
+			ideio.daplaying |= 1 << (drv->sxsidrv & 3);
+			drv->daflag = 0x11;
+		}
+	}
+	else {
+		// pause
+		if (drv->daflag == 0x11) {
+			ideio.daplaying &= ~(1 << (drv->sxsidrv & 3));
+			drv->daflag = 0x12;
+		}
+	}
 	cmddone(drv);
 }
 
