@@ -1,5 +1,6 @@
 
 void AboutDialogProc(void);
+void ConfigDialogProc(void);
 
 void dialog_newdisk(void);
 void dialog_changefdd(BYTE drv);

@@ -352,6 +352,7 @@ static const INITBL iniitem[] = {
 	{"pc9861_j", INITYPE_BYTEARG,	np2cfg.pc9861jmp,		6},
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
+	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
 	{"I286SAVE", INITYPE_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 #define	INIITEMS	(sizeof(iniitem) / sizeof(INITBL))

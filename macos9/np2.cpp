@@ -34,11 +34,7 @@
 #define	USE_RESUME
 
 
-#if defined(NP2GCC)
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0};
-#else
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0};
-#endif
+		NP2OSCFG	np2oscfg = {0, 2, 0, 0,  0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -141,6 +137,10 @@ static void HandleMenuChoice(long wParam) {
 		case IDM_RESET:
 			pccore_cfgupdate();
 			pccore_reset();
+			break;
+
+		case IDM_CONFIGURE:
+			ConfigDialogProc();
 			break;
 
 		case IDM_NEWDISK:
@@ -641,9 +641,9 @@ int main(int argc, char *argv[]) {
 	scrndraw_redraw();
 	pccore_reset();
 
-#if defined(USE_RESUME)
-	flagload(np2resume);
-#endif
+	if (np2oscfg.resume) {
+		flagload(np2resume);
+	}
 
 	SetEventMask(everyEvent);
 
@@ -725,9 +725,9 @@ int main(int argc, char *argv[]) {
 
 	pccore_cfgupdate();
 
-#if defined(USE_RESUME)
-	flagsave(np2resume);
-#endif
+	if (np2oscfg.resume) {
+		flagsave(np2resume);
+	}
 
 	pccore_term();
 	S98_trash();
