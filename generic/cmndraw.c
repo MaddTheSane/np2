@@ -502,9 +502,9 @@ void cmndraw_fill2(const CMNVRAM *vram, int x, int y,
 			do {
 				r = cx;
 				do {
-					p[RGB24_R] = fg.pal32.r;
-					p[RGB24_G] = fg.pal32.g;
-					p[RGB24_B] = fg.pal32.b;
+					p[RGB24_R] = fg.pal32.p.r;
+					p[RGB24_G] = fg.pal32.p.g;
+					p[RGB24_B] = fg.pal32.p.b;
 					p += vram->xalign;
 				} while(--r);
 				p += dalign;
@@ -644,10 +644,10 @@ const BYTE	*p;
 						c = *p++;
 					}
 					if (c & bit) {
-						*q = fg;
+						*q = fg.pal8;
 					}
 					else {
-						*q = bg;
+						*q = bg.pal8;
 					}
 					bit >>= 1;
 					q += vram->xalign;

@@ -8,8 +8,6 @@
 #include	"font.h"
 
 
-static	int		sti_waiting = 0;
-
 typedef struct {
 	BYTE	GBON_PTN;
 	BYTE	GBBCC;
@@ -768,17 +766,6 @@ void bios0x18(void) {
 							MEML_READ16(CPU_SS, CPU_SP)));
 #endif
 
-	sti_waiting ^= 1;
-	if (sti_waiting) {					// 割込み許可の遊び
-		CPU_STI;
-		if (PICEXISTINTR) {
-			CPU_IP--;
-			nevent_forceexit();
-			return;
-		}
-	}
-	sti_waiting = 0;
-
 	switch(CPU_AH) {
 		case 0x00:						// キー・データの読みだし
 			if (mem[MEMB_KB_COUNT]) {
@@ -945,12 +932,10 @@ void bios0x18(void) {
 				if (tmp.r8 == 0x05) {
 					CPU_AL = 0;
 					CPU_BH = 0;
-					TRACEOUT(("success"));
 				}
 				else {
 					CPU_AL = 1;
 					CPU_BH = 1;
-					TRACEOUT(("failure"));
 				}
 			}
 			break;

@@ -67,7 +67,7 @@ section	.table start=0x040
 		dw		sendeoi		; 16
 		dw		sendeoi		; 17
 
-		dw		bios18		; 18
+		dw		vect18		; 18
 		dw		bios19		; 19
 		dw		vect1a		; 1a
 		dw		bios1b		; 1b
@@ -103,7 +103,8 @@ bios12:			nop						; 90
 bios13:			nop						; 94
 				iret
 
-				align	4
+vect18:			sti
+				clc
 bios18:			nop						; 98
 				iret
 

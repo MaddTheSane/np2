@@ -437,7 +437,7 @@ static const INITBL np2skini[] = {
 	{"WindposY", INITYPE_SINT32,	&skbdcfg.posy,			0},
 	{"windtype", INITYPE_BOOL,		&skbdcfg.type,			0}};
 
-static void skpalcnv(CMNPAL *dst, RGB32 *src, UINT pals, UINT bpp) {
+static void skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 
 	UINT	i;
 
@@ -485,7 +485,7 @@ static void skpaintmsg(HWND hWnd) {
 	hdc = BeginPaint(hWnd, &ps);
 	vram = dd2_bsurflock(skbdwin.dd2hdl);
 	if (vram) {
-		softkbd_paint(vram, skpalcnv);
+		softkbd_paint(vram, skpalcnv, TRUE);
 		dd2_bsurfunlock(skbdwin.dd2hdl);
 		dd2_blt(skbdwin.dd2hdl, NULL, &draw);
 	}
