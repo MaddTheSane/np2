@@ -857,7 +857,7 @@ I286FN _xor_ax_data16(void) {					// 35: or ax, DATA16
 	WORD_XOR(I286_AX, src);
 }
 
-I286FN _segprefix_ss(void) {					// 36: cs:
+I286FN _segprefix_ss(void) {					// 36: ss:
 
 	SS_FIX = SS_BASE;
 	DS_FIX = SS_BASE;
@@ -1032,7 +1032,7 @@ I286FN _pop_ax(void) REGPOP(I286_AX, 5)		// 58:	pop		ax
 I286FN _pop_cx(void) REGPOP(I286_CX, 5)		// 59:	pop		cx
 I286FN _pop_dx(void) REGPOP(I286_DX, 5)		// 5A:	pop		dx
 I286FN _pop_bx(void) REGPOP(I286_BX, 5)		// 5B:	pop		bx
-I286FN _pop_sp(void) REGPOP(I286_SP, 5)		// 5C:	pop		sp
+I286FN _pop_sp(void) SP_POP(I286_SP, 5)		// 5C:	pop		sp
 I286FN _pop_bp(void) REGPOP(I286_BP, 5)		// 5D:	pop		bp
 I286FN _pop_si(void) REGPOP(I286_SI, 5)		// 5E:	pop		si
 I286FN _pop_di(void) REGPOP(I286_DI, 5)		// 5F:	pop		di

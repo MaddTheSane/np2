@@ -380,6 +380,11 @@
 		I286_SP += 2;												\
 	}
 
+#define	SP_POP(reg, clock) {										\
+		I286_WORKCLOCK(clock);										\
+		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
+	}
+
 
 #define	REGPOP0(reg) 												\
 		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
