@@ -7,6 +7,7 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 void dialog_scropt(HWND hWnd);
 void dialog_sndopt(HWND hWnd);
 void dialog_s98(HWND hWnd);
+void dialog_waverec(HWND hWnd);
 void dialog_newdisk(HWND hWnd);
 void dialog_changefdd(HWND hWnd, REG8 drv);
 void dialog_changehdd(HWND hWnd, REG8 drv);

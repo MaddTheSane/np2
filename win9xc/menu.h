@@ -18,6 +18,7 @@ void xmenu_setmotorflg(BYTE value);
 void xmenu_setextmem(BYTE value);
 void xmenu_setmouse(BYTE value);
 void xmenu_sets98logging(BYTE value);
+void xmenu_setwaverec(BYTE value);
 void xmenu_setbtnmode(BYTE value);
 void xmenu_setbtnrapid(BYTE value);
 void xmenu_setmsrapid(BYTE value);

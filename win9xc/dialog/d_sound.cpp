@@ -973,6 +973,7 @@ void dialog_sndopt(HWND hWnd) {
 
 // ----
 
+#if defined(SUPPORT_S98)
 static const char s98ui_file[] = "NP2_%04d.S98";
 static const char s98ui_title[] = "Save as S98 log";
 static const char s98ui_ext[] = "s98";
@@ -997,4 +998,35 @@ void dialog_s98(HWND hWnd) {
 	}
 	xmenu_sets98logging(check);
 }
+#endif
+
+
+// ----
+
+#if defined(SUPPORT_WAVEREC)
+static const char wrui_file[] = "NP2_%04d.WAV";
+static const char wrui_title[] = "Save as Sound";
+static const char wrui_ext[] = "WAV";
+static const char wrui_filter[] = "Wave files (*.wav)\0*.wav\0";
+static const FILESEL wrui = {wrui_title, wrui_ext, wrui_filter, 1};
+
+void dialog_waverec(HWND hWnd) {
+
+	BYTE	check;
+	char	path[MAX_PATH];
+
+	check = FALSE;
+	sound_recstop();
+	file_cpyname(path, bmpfilefolder, sizeof(path));
+	file_cutname(path);
+	file_catname(path, wrui_file, sizeof(path));
+	if ((dlgs_selectwritenum(hWnd, &wrui, path, sizeof(path))) &&
+		(sound_recstart(path) == SUCCESS)) {
+		file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
+		sysmng_update(SYS_UPDATEOSCFG);
+		check = TRUE;
+	}
+	xmenu_setwaverec(check);
+}
+#endif
 

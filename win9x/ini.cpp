@@ -246,7 +246,7 @@ const INITBL	*pterm;
 				GetPrivateProfileString(title, p->item, work,
 												work, sizeof(work), path);
 				val = (UINT32)milstr_solveHEX(work);
-				*(UINT16 *)p->value = (UINT32)val;
+				*(UINT32 *)p->value = (UINT32)val;
 				break;
 
 			case INITYPE_BYTE3:

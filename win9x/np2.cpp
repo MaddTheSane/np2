@@ -776,12 +776,13 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			dialog_writebmp(hWnd);
 			winuileave();
 			break;
-
+#if defined(SUPPPORT_S98)
 		case IDM_S98LOGGING:
 			winuienter();
 			dialog_s98(hWnd);
 			winuileave();
 			break;
+#endif
 #if defined(SUPPORT_WAVEREC)
 		case IDM_WAVEREC:
 			winuienter();

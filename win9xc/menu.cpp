@@ -28,7 +28,10 @@ void sysmenu_initialize(void) {
 
 // ----
 
-static const char xmenu_i286save[] = "&i286 save";
+static const char str_i286save[] = "&i286 save";
+#if defined(SUPPORT_WAVEREC)
+static const char str_waverec[] = "&Wave Record";
+#endif
 #if defined(SUPPORT_SCSI)
 static const char xmenu_scsi[] = "SCSI #%d";
 static const char xmenu_open[] = "&Open...";
@@ -58,6 +61,17 @@ void xmenu_initialize(void) {
 
 	hMenu = GetMenu(hWndMain);
 
+	if (np2oscfg.I286SAVE) {
+		hSubMenu = GetSubMenu(hMenu, 6);
+		InsertMenu(hSubMenu, 6,
+					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, str_i286save);
+	}
+#if defined(SUPPORT_WAVEREC)
+	hSubMenu = GetSubMenu(hMenu, 6);
+	InsertMenu(hSubMenu, 2,
+					MF_BYPOSITION | MF_STRING, IDM_WAVEREC, str_waverec);
+#endif
+
 #if defined(SUPPORT_SCSI)
 	hSubMenu = GetSubMenu(hMenu, 3);
 	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
@@ -66,12 +80,6 @@ void xmenu_initialize(void) {
 	addscsimenu(hSubMenu, 2, IDM_SCSI2OPEN, IDM_SCSI2EJECT);
 	addscsimenu(hSubMenu, 3, IDM_SCSI3OPEN, IDM_SCSI3EJECT);
 #endif
-
-	if (np2oscfg.I286SAVE) {
-		hSubMenu = GetSubMenu(hMenu, 6);
-		InsertMenu(hSubMenu, 10,
-					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, xmenu_i286save);
-	}
 }
 
 void xmenu_disablewindow(void) {
@@ -236,10 +244,19 @@ void xmenu_setmouse(BYTE value) {
 	CheckMenuItem(GetMenu(hWndMain), IDM_MOUSE, MFCHECK(value));
 }
 
+#if defined(SUPPORT_S98)
 void xmenu_sets98logging(BYTE value) {
 
 	CheckMenuItem(GetMenu(hWndMain), IDM_S98LOGGING, MFCHECK(value));
 }
+#endif
+
+#if defined(SUPPORT_WAVEREC)
+void xmenu_setwaverec(BYTE value) {
+
+	CheckMenuItem(GetMenu(hWndMain), IDM_WAVEREC, MFCHECK(value));
+}
+#endif
 
 void xmenu_setbtnmode(BYTE value) {
 

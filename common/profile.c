@@ -450,11 +450,45 @@ const PFTBL	*pterm;
 	while(p < pterm) {
 		if (profile_read(app, p->item, NULL, work, sizeof(work), pfh)
 																== SUCCESS) {
-			switch(p->itemtype) {
+			switch(p->itemtype & PFITYPE_MASK) {
+				case PFTYPE_STR:
+					milstr_ncpy(p->value, work, p->arg);
+					break;
+
+				case PFTYPE_BOOL:
+					*((UINT8 *)p->value) = (!milstr_cmp(work, str_true))?1:0;
+					break;
+
+				case PFTYPE_BITMAP:		// Todo
+				case PFTYPE_BIN:
+					break;
+
+				case PFTYPE_SINT8:
+				case PFTYPE_UINT8:
+					*(UINT8 *)p->value = (UINT32)milstr_solveINT(work);
+					break;
+
+				case PFTYPE_SINT16:
+				case PFTYPE_UINT16:
+					*(UINT16 *)p->value = (UINT32)milstr_solveINT(work);
+					break;
+
 				case PFTYPE_SINT32:
 				case PFTYPE_UINT32:
-				*(UINT32 *)p->value = (UINT32)milstr_solveINT(work);
-				break;
+					*(UINT32 *)p->value = (UINT32)milstr_solveINT(work);
+					break;
+
+				case PFTYPE_HEX8:
+					*(UINT8 *)p->value = (UINT8)milstr_solveHEX(work);
+					break;
+
+				case PFTYPE_HEX16:
+					*(UINT16 *)p->value = (UINT16)milstr_solveHEX(work);
+					break;
+
+				case PFTYPE_HEX32:
+					*(UINT32 *)p->value = (UINT32)milstr_solveHEX(work);
+					break;
 			}
 		}
 		p++;
@@ -478,19 +512,66 @@ const char	*set;
 	p = tbl;
 	pterm = tbl + count;
 	while(p < pterm) {
-		work[0] = '\0';
-		set = work;
-		switch(p->itemtype) {
-			case PFTYPE_SINT32:
-				SPRINTF(work, str_d, *((SINT32 *)p->value));
-				break;
+		if (!(p->itemtype & PFFLAG_RO)) {
+			work[0] = '\0';
+			set = work;
+			switch(p->itemtype & PFITYPE_MASK) {
+				case PFTYPE_STR:
+					set = (char *)p->value;
+					break;
 
-			default:
-				set = NULL;
-				break;
-		}
-		if (set) {
-			profile_write(app, p->item, set, pfh);
+				case PFTYPE_BOOL:
+					set = (*((UINT8 *)p->value))?str_true:str_false;
+					break;
+
+				case PFTYPE_BITMAP:		// Todo
+				case PFTYPE_BIN:
+					set = NULL;
+					break;
+
+				case PFTYPE_SINT8:
+					SPRINTF(work, str_d, *((SINT8 *)p->value));
+					break;
+
+				case PFTYPE_SINT16:
+					SPRINTF(work, str_d, *((SINT16 *)p->value));
+					break;
+
+				case PFTYPE_SINT32:
+					SPRINTF(work, str_d, *((SINT32 *)p->value));
+					break;
+
+				case PFTYPE_UINT8:
+					SPRINTF(work, str_u, *((UINT8 *)p->value));
+					break;
+
+				case PFTYPE_UINT16:
+					SPRINTF(work, str_u, *((UINT16 *)p->value));
+					break;
+
+				case PFTYPE_UINT32:
+					SPRINTF(work, str_u, *((UINT32 *)p->value));
+					break;
+
+				case PFTYPE_HEX8:
+					SPRINTF(work, str_x, *((UINT8 *)p->value));
+					break;
+
+				case PFTYPE_HEX16:
+					SPRINTF(work, str_x, *((UINT16 *)p->value));
+					break;
+
+				case PFTYPE_HEX32:
+					SPRINTF(work, str_x, *((UINT32 *)p->value));
+					break;
+
+				default:
+					set = NULL;
+					break;
+			}
+			if (set) {
+				profile_write(app, p->item, set, pfh);
+			}
 		}
 		p++;
 	}

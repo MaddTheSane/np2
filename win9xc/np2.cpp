@@ -552,13 +552,20 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			dialog_writebmp(hWnd);
 			winuileave();
 			break;
-
+#if defined(SUPPPORT_S98)
 		case IDM_S98LOGGING:
 			winuienter();
 			dialog_s98(hWnd);
 			winuileave();
 			break;
-
+#endif
+#if defined(SUPPORT_WAVEREC)
+		case IDM_WAVEREC:
+			winuienter();
+			dialog_waverec(hWnd);
+			winuileave();
+			break;
+#endif
 		case IDM_CALENDAR:
 			winuienter();
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_CALENDAR),

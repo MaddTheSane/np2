@@ -976,6 +976,7 @@ void dialog_sndopt(HWND hWnd) {
 
 // ----
 
+#if defined(SUPPORT_S98)
 static const char s98ui_file[] = "NP2_%04d.S98";
 static const char s98ui_title[] = "Save as S98 log";
 static const char s98ui_ext[] = "s98";
@@ -1000,6 +1001,7 @@ void dialog_s98(HWND hWnd) {
 	}
 	xmenu_sets98logging(check);
 }
+#endif
 
 
 // ----
