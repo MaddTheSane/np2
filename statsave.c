@@ -1037,7 +1037,7 @@ static int flagload_fdd(STFLAGH sfh, const SFENTRY *tbl) {
 	for (i=0; i<4; i++) {
 		ret |= statflag_read(sfh, &sp, sizeof(sp));
 		if (sp.path[0]) {
-			fdd_set(i, sp.path, FTYPE_NONE, sp.readonly);
+			fdd_set(i, sp.path, sp.ftype, sp.readonly);
 		}
 	}
 	(void)tbl;
