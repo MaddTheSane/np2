@@ -171,15 +171,15 @@ void gdc_work(int id) {
 	GDCDATA		item;
 	UINT8		*dispflag;
 	UINT		i;
-	BYTE		data;
+	UINT8		data;
 
 	item = (id == GDCWORK_MASTER)?&gdc.m:&gdc.s;
 	dispflag = (id == GDCWORK_MASTER)?&gdcs.textdisp:&gdcs.grphdisp;
 
 	for (i=0; i<item->cnt; i++) {
-		data = (BYTE)item->fifo[i];
+		data = (UINT8)item->fifo[i];
 		if (item->fifo[i] & 0xff00) {
-			item->cmd = data;										// ver0.29
+			item->cmd = data;
 			item->paracb = 0;
 			if ((data & 0x60) == 0x20) {
 				item->para[GDC_WRITE] = data;
@@ -208,7 +208,7 @@ void gdc_work(int id) {
 				case CMD_START:
 				case CMD_SYNC_ON:
 					(*dispflag) |= GDCSCRN_ENABLE | GDCSCRN_ALLDRAW2;
-					screenupdate |= 2;								// ver0.28
+					screenupdate |= 2;
 					break;
 
 				case CMD_STOP_:
@@ -216,7 +216,7 @@ void gdc_work(int id) {
 				case CMD_SYNC_OFF:
 					(*dispflag) &= (~GDCSCRN_ENABLE);
 //					(*dispflag) |= GDCSCRN_ALLDRAW2;
-					screenupdate |= 2;								// ver0.28
+					screenupdate |= 2;
 					break;
 
 				case CMD_VECTE:
@@ -225,7 +225,7 @@ void gdc_work(int id) {
 					}
 					break;
 
-				case CMD_TEXTE:										// ver0.30
+				case CMD_TEXTE:
 					if (id != GDCWORK_MASTER) {
 						textdraw();
 					}
@@ -252,11 +252,11 @@ void gdc_work(int id) {
 				(*dispflag) |= gdc_dirtyflag[id][item->ptr];
 			}
 			(item->ptr)++;
-			(item->rcv)--;					// ver0.29
+			(item->rcv)--;
 			if ((!(item->rcv)) && (id == GDCWORK_SLAVE) &&
 				(((item->cmd) & 0xe4) == 0x20)) {
 				gdcsub_write();
-				item->paracb = 0;			// ver0.29
+				item->paracb = 0;
 			}
 		}
 	}
@@ -378,7 +378,7 @@ static void IOOUTCALL gdc_o68(UINT port, REG8 dat) {
 
 	REG8	bit;
 
-	if (!(dat & 0xf0)) {									// ver0.28
+	if (!(dat & 0xf0)) {
 		bit = 1 << ((dat >> 1) & 7);
 		if (dat & 1) {
 			gdc.mode1 |= bit;
@@ -389,7 +389,7 @@ static void IOOUTCALL gdc_o68(UINT port, REG8 dat) {
 		if (bit & (0x01 | 0x04 | 0x10)) {
 			gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 		}
-		else if (bit == 0x02) {								// ver0.28
+		else if (bit == 0x02) {
 			gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 			gdcs.palchange = GDCSCRN_REDRAW;
 		}
@@ -580,7 +580,7 @@ static void IOOUTCALL gdc_oa0(UINT port, REG8 dat) {
 		gdc.s.fifo[gdc.s.cnt++] = dat;
 	}
 //	TRACEOUT(("GDC-B %.2x", dat));
-	if (gdc.s.paracb) {						// ver0.29
+	if (gdc.s.paracb) {
 		gdc_work(GDCWORK_SLAVE);
 	}
 	(void)port;

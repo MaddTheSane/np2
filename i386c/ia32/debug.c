@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.6 2004/02/04 13:24:35 monaka Exp $	*/
+/*	$Id: debug.c,v 1.7 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -42,16 +42,16 @@ cpu_reg2str(void)
 	static char buf[512];
 
 	sprintf(buf,
-	    "eax=%08x ebx=%08x ecx=%08x edx=%08x\n"
-	    "esp=%08x ebp=%08x esi=%08x edi=%08x\n"
-	    "eip=%08x prev_eip=%08x\n"
+	    "eax=%08lx ebx=%08lx ecx=%08lx edx=%08lx\n"
+	    "esp=%08lx ebp=%08lx esi=%08lx edi=%08lx\n"
+	    "eip=%08lx prev_eip=%08lx\n"
 	    "cs=%04x ss=%04x ds=%04x es=%04x fs=%04x gs=%04x\n"
-	    "eflag=%08x "
+	    "eflag=%08lx "
 	    /* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
 	    "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d %s %s %s TF=%d %s %s %s %s %s ]\n"
-	    "gdtr=%08x:%04x idtr=%08x:%04x\n"
-	    "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
-	    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x",
+	    "gdtr=%08lx:%04x idtr=%08lx:%04x\n"
+	    "ldtr=%04x(%08lx:%04lx) tr=%04x(%08lx:%04lx)\n"
+	    "cr0=%08lx cr1=%08lx cr2=%08lx cr3=%08lx cr4=%08lx mxcsr=%08lx",
 	    CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
 	    CPU_ESP, CPU_EBP,CPU_ESI, CPU_EDI,
 	    CPU_EIP, CPU_PREV_EIP,
@@ -64,7 +64,7 @@ cpu_reg2str(void)
 	    (CPU_EFLAG & VM_FLAG) != 0,
 	    (CPU_EFLAG & RF_FLAG) != 0,
 	    (CPU_EFLAG & NT_FLAG) != 0,
-	    (CPU_EFLAG >> 12) & 3,
+	    (int)((CPU_EFLAG >> 12) & 3),
 	    CPU_OV ? "OV" : "NV",
 	    CPU_EFLAG & D_FLAG ? "UP" : "DN",
 	    CPU_EFLAG & I_FLAG ? "DI" : "EI",

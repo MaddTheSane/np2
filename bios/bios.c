@@ -122,7 +122,7 @@ static void bios_reinitbyswitch(void) {
 	}
 }
 
-static void bios_vectorset(void) {									// ver0.30
+static void bios_vectorset(void) {
 
 	UINT	i;
 
@@ -198,7 +198,7 @@ void bios_initialize(void) {
 	}
 	CopyMemory(mem + BIOS_BASE + BIOSOFST_PRT, printmain, sizeof(printmain));
 
-	bios_vectorset();												// ver0.29
+	bios_vectorset();
 	if (!biosrom) {
 		lio_init();
 	}
@@ -228,8 +228,8 @@ void bios_initialize(void) {
 	bios_reinitbyswitch();
 //	mem[MEMB_CRT_STS_FLAG] = 0x84;		// -> bios_screeninit()
 //	mem[MEMB_BIOS_FLAG0] = 0x03;
-//	mem[MEMB_F2DD_MODE] = 0xff;										// ver0.29
-// 	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);							// ver0.29
+//	mem[MEMB_F2DD_MODE] = 0xff;
+// 	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);
 	mem[0x005ae] |= 0x03;											// ver0.31
 
 	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
@@ -297,7 +297,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 #endif
 	}
 
-	switch(adrs) {													// ver0.30
+	switch(adrs) {
 		case BIOS_BASE + BIOSOFST_EOIM:
 			CPU_REMCLOCK -= 300;
 			iocore_out8(0x00, 0x20);

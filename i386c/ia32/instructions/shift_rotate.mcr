@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.2 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.3 2004/02/19 03:04:02 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -197,7 +197,7 @@ do { \
 do { \
 	(d) = (s) << 1; \
 	CPU_OV = ((s) ^ (d)) & 0x80; \
-	CPU_FLAGL = szpcflag[(d) & 0x1ff] | A_FLAG; \
+	CPU_FLAGL = (BYTE)(szpcflag[(d) & 0x1ff] | A_FLAG); \
 } while (/*CONSTCOND*/ 0)
 
 #define	_WORD_SHL1(d, s) \
@@ -233,7 +233,7 @@ do { \
 		} \
 		(s) <<= (c); \
 		(s) &= 0x1ff; \
-		CPU_FLAGL = (szpcflag[(s) & 0x1ff] | A_FLAG); \
+		CPU_FLAGL = (BYTE)(szpcflag[(s) & 0x1ff] | A_FLAG); \
 		CPU_OV = ((s) ^ ((s) >> 1)) & 0x80; \
 	} \
 	(d) = (s); \
@@ -249,7 +249,7 @@ do { \
 		} \
 		(s) <<= (c); \
 		(s) &= 0x1ffff; \
-		CPU_FLAGL = szpflag_w[(WORD)(s)] | A_FLAG; \
+		CPU_FLAGL = (BYTE)(szpflag_w[(WORD)(s)] | A_FLAG); \
 		CPU_FLAGL |= (BYTE)((s) >> 16); /* C_FLAG */ \
 	} \
 	(d) = (s); \

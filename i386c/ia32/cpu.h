@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.17 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: cpu.h,v 1.18 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -447,7 +447,7 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_MODE_USER		1
 #define	CPU_SET_CPL(cpl) \
 do { \
-	BYTE __t = (cpl) & 3; \
+	BYTE __t = (BYTE)((cpl) & 3); \
 	CPU_STAT_CPL = __t; \
 	CPU_STAT_USER_MODE = (__t == 3) ? CPU_MODE_USER : CPU_MODE_SUPERVISER; \
 } while (/*CONSTCOND*/ 0)

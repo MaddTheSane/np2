@@ -106,14 +106,14 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/bios13.o		$(OBJ)/bios18.o		$(OBJ)/bios19.o		\
 			$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		$(OBJ)/bios1c.o		\
 			$(OBJ)/sxsibios.o											\
-			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/wavemix.o	\
-			$(OBJ)/fmboard.o	$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		\
-			$(OBJ)/beepg.o		$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	\
-			$(OBJ)/opngenc.o	$(OBJ)/opngeng.o	$(OBJ)/psggenc.o	\
-			$(OBJ)/psggeng.o	$(OBJ)/rhythmc.o	$(OBJ)/rhythmg.o	\
-			$(OBJ)/adpcmc.o		$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		\
-			$(OBJ)/pcm86g.o		$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	\
-			$(OBJ)/soundrom.o	$(OBJ)/s98.o							\
+			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
+			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
+			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
+			$(OBJ)/opngeng.o	$(OBJ)/psggenc.o	$(OBJ)/psggeng.o	\
+			$(OBJ)/rhythmc.o	$(OBJ)/rhythmg.o	$(OBJ)/adpcmc.o		\
+			$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		$(OBJ)/pcm86g.o		\
+			$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	\
+			$(OBJ)/s98.o												\
 			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
 			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
 			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/scrnbmp.o	\
@@ -460,11 +460,6 @@ $(OBJ)/sound.o		:	$(SOUND)/sound.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 
 $(OBJ)/sndcsec.o	:	$(SOUND)/sndcsec.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/sndcsec.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/wavemix.o	:	$(SOUND)/wavemix.c $(HEADERS) $(PCCORES) \
-						$(SOUND)/sound.h $(GETSND)/getsnd.h \
-						$(SOUND)/wavemix.res
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \

@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.11 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: ia32.mcr,v 1.12 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -325,7 +325,7 @@ do { \
 do { \
 	(d) |= (s); \
 	CPU_OV = 0; \
-	CPU_FLAGL = szpcflag[(BYTE)(d)] & P_FLAG; \
+	CPU_FLAGL = (BYTE)(szpcflag[(BYTE)(d)] & P_FLAG); \
 	if ((d) == 0) { \
 		CPU_FLAGL |= Z_FLAG; \
 	} \
@@ -430,7 +430,7 @@ do { \
 do { \
 	(d) &= (s); \
 	CPU_OV = 0; \
-	CPU_FLAGL = szpcflag[(BYTE)(d)] & P_FLAG; \
+	CPU_FLAGL = (BYTE)(szpcflag[(BYTE)(d)] & P_FLAG); \
 	if ((d) == 0) { \
 		CPU_FLAGL |= Z_FLAG; \
 	} \
@@ -494,7 +494,7 @@ do { \
 do { \
 	(d) ^= (s); \
 	CPU_OV = 0; \
-	CPU_FLAGL = szpcflag[(BYTE)(d)] & P_FLAG; \
+	CPU_FLAGL = (BYTE)(szpcflag[(BYTE)(d)] & P_FLAG); \
 	if ((d) == 0) { \
 		CPU_FLAGL |= Z_FLAG; \
 	} \

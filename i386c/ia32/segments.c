@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.11 2004/02/05 16:43:44 monaka Exp $	*/
+/*	$Id: segments.c,v 1.12 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -133,7 +133,7 @@ load_ss(WORD selector, descriptor_t* sdp, DWORD cpl)
 {
 
 	CPU_STAT_SS32 = sdp->d;
-	CPU_REGS_SREG(CPU_SS_INDEX) = (selector & ~3) | (cpl & 3);
+	CPU_REGS_SREG(CPU_SS_INDEX) = (WORD)((selector & ~3) | (cpl & 3));
 	CPU_STAT_SREG(CPU_SS_INDEX) = *sdp;
 }
 
@@ -147,7 +147,7 @@ load_cs(WORD selector, descriptor_t* sdp, DWORD cpl)
 	CPU_INST_OP32 = CPU_INST_AS32 =
 	    CPU_STATSAVE.cpu_inst_default.op_32 =
 	    CPU_STATSAVE.cpu_inst_default.as_32 = sdp->d;
-	CPU_REGS_SREG(CPU_CS_INDEX) = (selector & ~3) | (cpl & 3);
+	CPU_REGS_SREG(CPU_CS_INDEX) = (WORD)((selector & ~3) | (cpl & 3));
 	CPU_STAT_SREG(CPU_CS_INDEX) = *sdp;
 	CPU_SET_CPL(cpl & 3);
 }
@@ -210,8 +210,8 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 	descp->flag = 0;
 
 	descp->p = (h & CPU_DESC_H_P) == CPU_DESC_H_P;
-	descp->type = (h & CPU_DESC_H_TYPE) >> 8;
-	descp->dpl = (h & CPU_DESC_H_DPL) >> 13;
+	descp->type = (BYTE)((h & CPU_DESC_H_TYPE) >> 8);
+	descp->dpl = (BYTE)((h & CPU_DESC_H_DPL) >> 13);
 	descp->s = (h & CPU_DESC_H_S) == CPU_DESC_H_S;
 
 	VERBOSE(("load_descriptor: present = %s, type = %d, DPL = %d", descp->p ? "true" : "false", descp->type, descp->dpl));
@@ -264,7 +264,7 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 
 		case CPU_SYSDESC_TYPE_TASK:		/* task gate */
 			descp->valid = 1;
-			descp->u.gate.selector = l >> 16;
+			descp->u.gate.selector = (WORD)(l >> 16);
 
 			VERBOSE(("load_descriptor: task descriptor: selector = 0x%04x", descp->u.gate.selector));
 			break;
@@ -302,10 +302,10 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 			if ((h & 0x0000000e0) == 0) {
 				descp->valid = 1;
 				descp->d = (h & CPU_GATEDESC_H_D) ? 1:0;
-				descp->u.gate.selector = l >> 16;
+				descp->u.gate.selector = (WORD)(l >> 16);
 				descp->u.gate.offset  = h & 0xffff0000;
 				descp->u.gate.offset |= l & 0xffff;
-				descp->u.gate.count = h & 0x1f;
+				descp->u.gate.count = (BYTE)(h & 0x1f);
 
 				VERBOSE(("load_descriptor: %dbit %s gate descriptor", descp->d ? 32 : 16, ((descp->type & CPU_SYSDESC_TYPE_MASKBIT) == CPU_SYSDESC_TYPE_CALL) ? "call" : (((descp->type & CPU_SYSDESC_TYPE_MASKBIT) == CPU_SYSDESC_TYPE_INTR) ? "interrupt" : "trap")));
 				VERBOSE(("load_descriptor: selector = 0x%04x, offset = 0x%08x, count = %d, d = %s", descp->u.gate.selector, descp->u.gate.offset, descp->u.gate.count, descp->d ? "on" : "off"));
@@ -333,7 +333,7 @@ parse_selector(selector_t* ssp, WORD selector)
 	ssp->selector = selector;
 	ssp->idx = selector & ~3;
 	ssp->rpl = selector & 3;
-	ssp->ldt = selector & CPU_SEGMENT_TABLE_IND;
+	ssp->ldt = (BYTE)(selector & CPU_SEGMENT_TABLE_IND);
 
 	VERBOSE(("parse_selector: selector = %04x, index = %d, RPL = %d, %cDT", ssp->selector, ssp->idx >> 3, ssp->rpl, ssp->ldt ? 'L' : 'G'));
 
@@ -346,7 +346,7 @@ parse_selector(selector_t* ssp, WORD selector)
 			return -1;
 		}
 		base = CPU_LDTR_BASE;
-		limit = CPU_LDTR_LIMIT;
+		limit = (WORD)CPU_LDTR_LIMIT;
 	} else {
 		/* check null segment */
 		if (idx == 0) {

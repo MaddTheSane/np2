@@ -526,11 +526,6 @@ $(OBJ)/sndcsec.o	:	$(SOUND)/sndcsec.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/sndcsec.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/wavemix.o	:	$(SOUND)/wavemix.c $(HEADERS) $(PCCORES) \
-						$(SOUND)/sound.h $(GETSND)/getsnd.h \
-						$(SOUND)/wavemix.res
-	$(CC) $(COPT) -o $@ $<
-
 $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(FMBOARDS) $(TARGET)/joymng.h $(TARGET)/soundmng.h \
 						$(CBUS)/cbuscore.h $(CBUS)/board14.h \

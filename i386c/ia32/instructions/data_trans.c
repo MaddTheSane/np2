@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.6 2004/02/05 16:43:45 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.7 2004/02/19 03:04:02 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -44,11 +44,11 @@ MOV_EbGb(void)
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
-		*(reg8_b20[op]) = src;
+		*(reg8_b20[op]) = (BYTE)src;
 	} else {
 		CPU_WORKCLOCK(3);
 		madr = calc_ea_dst(op);
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, src);
+		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)src);
 	}
 }
 
@@ -60,11 +60,11 @@ MOV_EwGw(void)
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
-		*(reg16_b20[op]) = src;
+		*(reg16_b20[op]) = (WORD)src;
 	} else {
 		CPU_WORKCLOCK(3);
 		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, src);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)src);
 	}
 }
 
@@ -91,7 +91,7 @@ MOV_GbEb(void)
 	DWORD op, src;
 
 	PREPART_REG8_EA(op, src, out, 2, 5);
-	*out = src;
+	*out = (BYTE)src;
 }
 
 void
@@ -101,7 +101,7 @@ MOV_GwEw(void)
 	DWORD op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	*out = src;
+	*out = (WORD)src;
 }
 
 void
@@ -121,16 +121,16 @@ MOV_EwSw(void)
 	BYTE idx;
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	idx = (BYTE)((op >> 3) & 7);
 	if (idx < CPU_SEGREG_NUM) {
 		src = CPU_REGS_SREG(idx);
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(2);
-			*(reg16_b20[op]) = src;
+			*(reg16_b20[op]) = (WORD)src;
 		} else {
 			CPU_WORKCLOCK(3);
 			madr = calc_ea_dst(op);
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, src);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)src);
 		}
 		return;
 	}
@@ -144,7 +144,7 @@ MOV_SwEw(void)
 	BYTE idx;
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	idx = ((BYTE)(op >> 3) & 7);
 	if (idx != CPU_CS_INDEX && idx < CPU_SEGREG_NUM) {
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(2);
@@ -154,7 +154,7 @@ MOV_SwEw(void)
 			madr = calc_ea_dst(op);
 			src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		}
-		CPU_SET_SEGREG(idx, src);
+		CPU_SET_SEGREG(idx, (WORD)src);
 		if (idx == CPU_SS_INDEX) {
 			exec_1step();
 		}
@@ -351,7 +351,7 @@ CMOVO_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (CPU_OV) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -375,7 +375,7 @@ CMOVNO_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (!CPU_OV) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -399,7 +399,7 @@ CMOVC_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (CPU_FLAGL & C_FLAG) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -423,7 +423,7 @@ CMOVNC_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (!(CPU_FLAGL & C_FLAG)) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -447,7 +447,7 @@ CMOVZ_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (CPU_FLAGL & Z_FLAG) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -471,7 +471,7 @@ CMOVNZ_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (!(CPU_FLAGL & Z_FLAG)) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -495,7 +495,7 @@ CMOVA_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (!(CPU_FLAGL & (Z_FLAG | C_FLAG))) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -519,7 +519,7 @@ CMOVNA_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (CPU_FLAGL & (Z_FLAG | C_FLAG)) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -543,7 +543,7 @@ CMOVS_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (CPU_FLAGL & S_FLAG) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -567,7 +567,7 @@ CMOVNS_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (!(CPU_FLAGL & S_FLAG)) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -591,7 +591,7 @@ CMOVP_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (CPU_FLAGL & P_FLAG) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -615,7 +615,7 @@ CMOVNP_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if (!(CPU_FLAGL & P_FLAG)) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -639,7 +639,7 @@ CMOVL_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if ((!CPU_OV) != (!(CPU_FLAGL & S_FLAG))) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -663,7 +663,7 @@ CMOVNL_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if ((!CPU_OV) == (!(CPU_FLAGL & S_FLAG))) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -687,7 +687,7 @@ CMOVLE_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if ((CPU_FLAGL & Z_FLAG) || ((!(CPU_FLAGL & S_FLAG)) != (!CPU_OV))) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -711,7 +711,7 @@ CMOVNLE_GwEw(void)
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
 	if ((!(CPU_FLAGL & Z_FLAG)) && ((!(CPU_FLAGL & S_FLAG)) == (!CPU_OV))) {
-		*out = src;
+		*out = (WORD)src;
 	}
 }
 
@@ -866,14 +866,14 @@ XADD_EbGb(void)
 		out = reg8_b20[op];
 		dst = *out;
 		ADDBYTE(res, dst, *src);
-		*src = dst;
+		*src = (BYTE)dst;
 		*out = (BYTE)res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 		ADDBYTE(res, dst, *src);
-		*src = dst;
+		*src = (BYTE)dst;
 		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)res);
 	}
 }
@@ -890,14 +890,14 @@ XADD_EwGw(void)
 		out = reg16_b20[op];
 		dst = *out;
 		ADDWORD(res, dst, *src);
-		*src = dst;
+		*src = (WORD)dst;
 		*out = (WORD)res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		ADDWORD(res, dst, *src);
-		*src = dst;
+		*src = (WORD)dst;
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)res);
 	}
 }
@@ -941,18 +941,18 @@ CMPXCHG_EbGb(void)
 		dst = *out;
 		BYTE_SUB(tmp, CPU_AL, dst);
 		if (CPU_FLAGL & Z_FLAG) {
-			*out = src;
+			*out = (BYTE)src;
 		} else {
-			CPU_AL = dst;
+			CPU_AL = (BYTE)dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 		BYTE_SUB(tmp, CPU_AL, dst);
 		if (CPU_FLAGL & Z_FLAG) {
-			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, src);
+			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)src);
 		} else {
-			CPU_AL = dst;
+			CPU_AL = (BYTE)dst;
 		}
 	}
 }
@@ -969,18 +969,18 @@ CMPXCHG_EwGw(void)
 		dst = *out;
 		WORD_SUB(tmp, CPU_AX, dst);
 		if (CPU_FLAGL & Z_FLAG) {
-			*out = src;
+			*out = (WORD)src;
 		} else {
-			CPU_AX = dst;
+			CPU_AX = (WORD)dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SUB(tmp, CPU_AX, dst);
 		if (CPU_FLAGL & Z_FLAG) {
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, src);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)src);
 		} else {
-			CPU_AX = dst;
+			CPU_AX = (WORD)dst;
 		}
 	}
 }
@@ -1245,7 +1245,7 @@ POP32_ES(void)
 	CPU_WORKCLOCK(5);
 
 	POP0_32(src);
-	CPU_SET_SEGREG(CPU_ES_INDEX, src);
+	CPU_SET_SEGREG(CPU_ES_INDEX, (WORD)src);
 }
 
 void
@@ -1268,7 +1268,7 @@ POP32_SS(void)
 	CPU_WORKCLOCK(5);
 
 	POP0_32(src);
-	CPU_SET_SEGREG(CPU_SS_INDEX, src);
+	CPU_SET_SEGREG(CPU_SS_INDEX, (WORD)src);
 	exec_1step();
 }
 
@@ -1291,7 +1291,7 @@ POP32_DS(void)
 	CPU_WORKCLOCK(5);
 
 	POP0_32(src);
-	CPU_SET_SEGREG(CPU_DS_INDEX, src);
+	CPU_SET_SEGREG(CPU_DS_INDEX, (WORD)src);
 }
 
 void
@@ -1313,7 +1313,7 @@ POP32_FS(void)
 	CPU_WORKCLOCK(5);
 
 	POP0_32(src);
-	CPU_SET_SEGREG(CPU_FS_INDEX, src);
+	CPU_SET_SEGREG(CPU_FS_INDEX, (WORD)src);
 }
 
 void
@@ -1335,7 +1335,7 @@ POP32_GS(void)
 	CPU_WORKCLOCK(5);
 
 	POP0_32(src);
-	CPU_SET_SEGREG(CPU_GS_INDEX, src);
+	CPU_SET_SEGREG(CPU_GS_INDEX, (WORD)src);
 }
 
 /*
@@ -1652,7 +1652,7 @@ MOVSX_GwEw(void)
 	DWORD op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	*out = src;
+	*out = (WORD)src;
 }
 
 void
@@ -1695,7 +1695,7 @@ MOVZX_GwEw(void)
 	DWORD op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
-	*out = src;
+	*out = (WORD)src;
 }
 
 void

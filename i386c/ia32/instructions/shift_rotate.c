@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.c,v 1.2 2004/01/14 16:13:46 monaka Exp $	*/
+/*	$Id: shift_rotate.c,v 1.3 2004/02/19 03:04:02 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -58,7 +58,7 @@ SAR_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SAR1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -78,7 +78,7 @@ SAR_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_SAR1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -109,7 +109,7 @@ SAR_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_SARCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -119,7 +119,7 @@ SAR_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SARCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -129,7 +129,7 @@ SAR_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_SARCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -139,7 +139,7 @@ SAR_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_SARCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -182,7 +182,7 @@ SHR_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SHR1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -202,7 +202,7 @@ SHR_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_SHR1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -233,7 +233,7 @@ SHR_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_SHRCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -243,7 +243,7 @@ SHR_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SHRCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -253,7 +253,7 @@ SHR_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_SHRCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -263,7 +263,7 @@ SHR_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_SHRCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -306,7 +306,7 @@ SHL_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SHL1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -326,7 +326,7 @@ SHL_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_SHL1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -357,7 +357,7 @@ SHL_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_SHLCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -367,7 +367,7 @@ SHL_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_SHLCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -377,7 +377,7 @@ SHL_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_SHLCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -387,7 +387,7 @@ SHL_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_SHLCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -426,13 +426,13 @@ SHRD_EwGwIb(void)
 		GET_PCBYTE(cl);
 		dst = *out;
 		WORD_SHRD(dst, src, cl);
-		*out = dst;
+		*out = (WORD)dst;
 	} else {
 		madr = calc_ea_dst(op);
 		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHRD(dst, src, cl);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 	}
 }
 
@@ -472,12 +472,12 @@ SHRD_EwGwCL(void)
 		out = reg16_b20[op];
 		dst = *out;
 		WORD_SHRD(dst, src, cl);
-		*out = dst;
+		*out = (WORD)dst;
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHRD(dst, src, cl);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 	}
 }
 
@@ -519,13 +519,13 @@ SHLD_EwGwIb(void)
 		GET_PCBYTE(cl);
 		dst = *out;
 		WORD_SHLD(dst, src, cl);
-		*out = dst;
+		*out = (WORD)dst;
 	} else {
 		madr = calc_ea_dst(op);
 		GET_PCBYTE(cl);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHLD(dst, src, cl);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 	}
 }
 
@@ -565,12 +565,12 @@ SHLD_EwGwCL(void)
 		out = reg16_b20[op];
 		dst = *out;
 		WORD_SHLD(dst, src, cl);
-		*out = dst;
+		*out = (WORD)dst;
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		WORD_SHLD(dst, src, cl);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 	}
 }
 
@@ -619,7 +619,7 @@ ROR_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_ROR1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -639,7 +639,7 @@ ROR_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_ROR1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -670,7 +670,7 @@ ROR_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_RORCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -680,7 +680,7 @@ ROR_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_RORCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -690,7 +690,7 @@ ROR_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_RORCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -700,7 +700,7 @@ ROR_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_RORCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -743,7 +743,7 @@ ROL_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_ROL1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -763,7 +763,7 @@ ROL_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_ROL1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -794,7 +794,7 @@ ROL_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_ROLCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -804,7 +804,7 @@ ROL_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_ROLCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -814,7 +814,7 @@ ROL_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_ROLCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -824,7 +824,7 @@ ROL_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_ROLCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -867,7 +867,7 @@ RCR_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_RCR1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -887,7 +887,7 @@ RCR_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_RCR1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -918,7 +918,7 @@ RCR_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_RCRCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -928,7 +928,7 @@ RCR_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_RCRCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -938,7 +938,7 @@ RCR_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_RCRCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -948,7 +948,7 @@ RCR_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_RCRCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -991,7 +991,7 @@ RCL_Eb_ext(DWORD madr)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_RCL1(dst, src);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -1011,7 +1011,7 @@ RCL_Ew_ext(DWORD madr)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_RCL1(dst, src);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void
@@ -1042,7 +1042,7 @@ RCL_EbCL(BYTE *out, BYTE cl)
 
 	src = *out;
 	BYTE_RCLCL(dst, src, cl);
-	*out = dst;
+	*out = (BYTE)dst;
 }
 
 void
@@ -1052,7 +1052,7 @@ RCL_EbCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	BYTE_RCLCL(dst, src, cl);
-	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (BYTE)dst);
 }
 
 void
@@ -1062,7 +1062,7 @@ RCL_EwCL(WORD *out, BYTE cl)
 
 	src = *out;
 	WORD_RCLCL(dst, src, cl);
-	*out = dst;
+	*out = (WORD)dst;
 }
 
 void
@@ -1072,7 +1072,7 @@ RCL_EwCL_ext(DWORD madr, BYTE cl)
 
 	src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	WORD_RCLCL(dst, src, cl);
-	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
+	cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)dst);
 }
 
 void

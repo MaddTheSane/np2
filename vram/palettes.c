@@ -13,18 +13,18 @@
 		PALEVENT	palevent;
 static	RGB32		degpal1[8];
 static	RGB32		degpal2[8];
-static	BYTE		anapal1[16];
-static	BYTE		anapal2[16];
+static	UINT8		anapal1[16];
+static	UINT8		anapal2[16];
 
 static	RGB32		lcdpal[15];
-static	BYTE		lcdtbl[0x1000];
-		BYTE		pal_monotable[16] = {0, 0, 0, 0, 1, 1, 1, 1,
+static	UINT8		lcdtbl[0x1000];
+		UINT8		pal_monotable[16] = {0, 0, 0, 0, 1, 1, 1, 1,
 											0, 0, 0, 0, 1, 1, 1, 1};
 
-static const BYTE lcdpal_a[27] = {0, 1, 2, 3, 5, 2, 4, 4, 6,
+static const UINT8 lcdpal_a[27] = {	0, 1, 2, 3, 5, 2, 4, 4, 6,
 									7, 9, 2,11,13, 2, 4, 4, 6,
 									8, 8,10, 8, 8,10,12,12,14};
-static const BYTE deftbl[4] = {0x04, 0x15, 0x26, 0x37};
+static const UINT8 deftbl[4] = {0x04, 0x15, 0x26, 0x37};
 
 
 void pal_makegrad(RGB32 *pal, int pals, UINT32 bg, UINT32 fg) {
@@ -94,6 +94,7 @@ void pal_makeskiptable(void) {
 
 	int		i;
 	RGB32	pal;
+	UINT8	ana;
 
 	for (i=0; i<8; i++) {
 		pal.p.b = (BYTE)(i & 1);
@@ -104,8 +105,9 @@ void pal_makeskiptable(void) {
 		degpal2[i].d = pal.d * np2cfg.skiplight;
 	}
 	for (i=0; i<16; i++) {
-		anapal1[i] = (BYTE)(i * 0x11);
-		anapal2[i] = (BYTE)((np2cfg.skiplight * anapal1[i]) / 255);
+		ana = (UINT8)(i * 0x11);
+		anapal1[i] = ana;
+		anapal2[i] = (UINT8)((np2cfg.skiplight * anapal1[i]) / 255);
 	}
 }
 

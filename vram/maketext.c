@@ -239,7 +239,7 @@ void maketext(int text_renewal) {
 				edi = esi;
 				gaiji1st = 0;
 				kanji2nd = FALSE;
-				lastbitp = 0;										// ver0.28
+				lastbitp = 0;
 				for (x=0; x<TEXTXMAX; x++) {						// width80
 					if (edi == csrw) {
 						cur_line = x;
@@ -252,9 +252,9 @@ void maketext(int text_renewal) {
 					}
 					if (kanji2nd) {
 						kanji2nd = FALSE;
-						bitmap[x] = lastbitp + 0x800;				// ver0.28
+						bitmap[x] = lastbitp + 0x800;
 						curx[x-1] |= 0x80;
-						curx[x] |= curx[x-1] & 0x20;				// ver0.28
+						curx[x] |= curx[x-1] & 0x20;
 					}
 					else if (!(mem[0xa0001 + edi*2] & gdc.bitac)) {
 						gaiji1st = 0;
@@ -279,7 +279,7 @@ void maketext(int text_renewal) {
 						kc = LOADINTELWORD(mem + 0xa0000 + edi*2);
 						bitmap[x] = (kc & 0x7f7f) << 4;
 						kc &= 0x7e;
-						if (kc == 0x56) {							// ver0.28
+						if (kc == 0x56) {
 							tramflag.gaiji = 1;
 							if ((gaiji1st) &&
 								(bitmap[x] == (lastbitp & (~15)))) {
@@ -294,7 +294,6 @@ void maketext(int text_renewal) {
 								kanji2nd = TRUE;
 							}
 						}
-																	// ver0.28
 						if ((curx[x] & TXTATR_BG) && (gdc.mode1 & 1)) {
 							curx[x] |= 0x20;
 							bitmap[x] += 8;
@@ -335,13 +334,13 @@ void maketext(int text_renewal) {
 					if ((nowline >= (gdc.m.para[GDC_CSRFORM+1] & 0x1f)) &&
 						(nowline <= (gdc.m.para[GDC_CSRFORM+2] >> 3))) {
 						color[cur_line] |= 256;
-						if (curx[cur_line] & 0x80) {				// ver0.28
+						if (curx[cur_line] & 0x80) {
 							color[cur_line+1] |= 256;
 						}
 					}
 					else {
 						color[cur_line] &= ~(256);
-						if (curx[cur_line] & 0x80) {				// ver0.28
+						if (curx[cur_line] & 0x80) {
 							color[cur_line+1] &= ~(256);
 						}
 					}
@@ -389,7 +388,6 @@ void maketext(int text_renewal) {
 					}
 					q += 4;
 				}
-													// virtical line ver0.27
 				if ((line_effect & TXTATR_VL) && (!(gdc.mode1 & 1))) {
 					// width80
 					q -= TEXTXMAX * 8;
@@ -550,7 +548,7 @@ void maketext40(int text_renewal) {
 				edi = esi;
 				gaiji1st = 0;
 				kanji2nd = 0;
-				lastbitp = 0;										// ver0.28
+				lastbitp = 0;
 				for (x=0; x<(TEXTXMAX/2); x++) {					// width40
 					if (edi == csrw) {
 						cur_line = x;
@@ -563,9 +561,9 @@ void maketext40(int text_renewal) {
 					}
 					if (kanji2nd) {
 						kanji2nd = FALSE;
-						bitmap[x] = lastbitp + 0x800;				// ver0.28
+						bitmap[x] = lastbitp + 0x800;
 						curx[x-1] |= 0x80;
-						curx[x] |= curx[x-1] & 0x20;				// ver0.28
+						curx[x] |= curx[x-1] & 0x20;
 					}
 					else if (!(mem[0xa0001 + edi*2] & gdc.bitac)) {
 						gaiji1st = 0;
@@ -590,7 +588,7 @@ void maketext40(int text_renewal) {
 						kc = LOADINTELWORD(mem + 0xa0000 + edi*2);
 						bitmap[x] = (kc & 0x7f7f) << 4;
 						kc &= 0x7e;
-						if (kc == 0x56) {							// ver0.28
+						if (kc == 0x56) {
 							tramflag.gaiji = 1;
 							if ((gaiji1st) &&
 								(bitmap[x] == (lastbitp & (~15)))) {
@@ -605,7 +603,6 @@ void maketext40(int text_renewal) {
 								kanji2nd = TRUE;
 							}
 						}
-																	// ver0.28
 						if ((curx[x] & TXTATR_BG) && (gdc.mode1 & 1)) {
 							curx[x] |= 0x20;
 							bitmap[x] += 8;
@@ -646,13 +643,13 @@ void maketext40(int text_renewal) {
 					if ((nowline >= (gdc.m.para[GDC_CSRFORM+1] & 0x1f)) &&
 						(nowline <= (gdc.m.para[GDC_CSRFORM+2] >> 3))) {
 						color[cur_line] |= 256;
-						if (curx[cur_line] & 0x80) {				// ver0.28
+						if (curx[cur_line] & 0x80) {
 							color[cur_line+1] |= 256;
 						}
 					}
 					else {
 						color[cur_line] &= ~(256);
-						if (curx[cur_line] & 0x80) {				// ver0.28
+						if (curx[cur_line] & 0x80) {
 							color[cur_line+1] &= ~(256);
 						}
 					}
@@ -716,7 +713,6 @@ void maketext40(int text_renewal) {
 					}
 					q += 12;
 				}
-													// virtical line ver0.27
 				if ((line_effect & TXTATR_VL) && (!(gdc.mode1 & 1))) {
 					// width40
 					q -= TEXTXMAX * 8;

@@ -10,6 +10,7 @@
 #include	"cbuscore.h"
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
+#include	"amd98.h"
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"vram.h"
@@ -192,11 +193,13 @@ static void sound_init(void) {
 	pcm86gen_initialize(rate);
 	pcm86gen_setvol(np2cfg.vol_pcm);
 	cs4231_initialize(rate);
+	amd98_initialize(rate);
 }
 
 static void sound_term(void) {
 
 	soundmng_stop();
+	amd98_deinitialize();
 	rhythm_deinitialize();
 	fddmtrsnd_deinitialize();
 	sound_destroy();
@@ -285,7 +288,7 @@ void pccore_reset(void) {
 		sound_init();
 	}
 
-	ZeroMemory(mem, 0x110000);									// ver0.28
+	ZeroMemory(mem, 0x110000);
 	ZeroMemory(mem + VRAM1_B, 0x18000);
 	ZeroMemory(mem + VRAM1_E, 0x08000);
 	ZeroMemory(mem + FONT_ADRS, 0x08000);
@@ -403,7 +406,6 @@ static void drawscreen(void) {
 				gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 			}
 		}
-																// ver0.28/pr4
 		if (gdcs.textdisp & GDCSCRN_EXT) {
 			gdcs.textdisp &= ~GDCSCRN_EXT;
 			dispsync_renewalhorizontal();
@@ -412,8 +414,7 @@ static void drawscreen(void) {
 				screenupdate |= 2;
 			}
 		}
-																// ver0.28/pr4
-		if (gdcs.palchange) {									// grphÇêÊÇ…
+		if (gdcs.palchange) {
 			gdcs.palchange = 0;
 			pal_change(0);
 			screenupdate |= 1;
@@ -510,7 +511,7 @@ void screendisp(NEVENTITEM item) {
 	gdc_work(GDCWORK_SLAVE);
 	gdc.vsync = 0;
 	screendispflag = 0;
-	if (!np2cfg.DISPSYNC) {											// ver0.29
+	if (!np2cfg.DISPSYNC) {
 		drawscreen();
 	}
 	pi = &pic.pi[0];
@@ -535,7 +536,7 @@ void screenvsync(NEVENTITEM item) {
 	nevent_set(NEVENT_FLAMES, gdc.vsyncclock, screendisp, NEVENT_RELATIVE);
 
 	// drawscreenÇ≈ pccore.vsyncclockÇ™ïœçXÇ≥ÇÍÇÈâ¬î\ê´Ç™Ç†ÇËÇ‹Ç∑
-	if (np2cfg.DISPSYNC) {											// ver0.29
+	if (np2cfg.DISPSYNC) {
 		drawscreen();
 	}
 	(void)item;

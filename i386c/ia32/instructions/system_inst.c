@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.16 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.17 2004/02/19 03:04:02 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -570,7 +570,7 @@ LAR_GwEw(void)
 		}
 
 		h = cpu_kmemoryread_d(sel.addr + 4);
-		*out = h & 0xff00;							// read DWORD?
+		*out = (WORD)(h & 0xff00);
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -586,12 +586,12 @@ LAR_GdEw(void)
 	DWORD op;
 	DWORD h;
 	int rv;
-	WORD selector;
+	DWORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		PREPART_REG32_EA(op, selector, out, 5, 11);		// EA16?
+		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector);
+		rv = parse_selector(&sel, (WORD)selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -694,12 +694,12 @@ LSL_GdEw(void)
 	DWORD *out;
 	DWORD op;
 	int rv;
-	WORD selector;
+	DWORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		PREPART_REG32_EA(op, selector, out, 5, 11);		// EA16?
+		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector);
+		rv = parse_selector(&sel, (WORD)selector);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;

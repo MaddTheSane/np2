@@ -1,4 +1,4 @@
-/*	$Id: disasm.c,v 1.4 2004/02/13 14:52:35 monaka Exp $	*/
+/*	$Id: disasm.c,v 1.5 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -409,7 +409,7 @@ disasm_codefetch_1(disasm_context_t *ctx)
 	val = cpu_memoryread(ctx->val);
 	ctx->val = val;
 
-	ctx->opbyte[ctx->nopbyte++] = ctx->val;
+	ctx->opbyte[ctx->nopbyte++] = (BYTE)ctx->val;
 	ctx->eip++;
 
 	return 0;
@@ -424,7 +424,7 @@ disasm_codefetch_2(disasm_context_t *ctx)
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
-	val = ctx->val & 0xff;
+	val = (WORD)(ctx->val & 0xff);
 	rv = disasm_codefetch_1(ctx);
 	if (rv)
 		return rv;
@@ -464,6 +464,7 @@ disasm_codefetch_4(disasm_context_t *ctx)
 /*
  * get effective address.
  */
+
 static int
 ea16(disasm_context_t *ctx, char *buf, size_t size)
 {
@@ -471,7 +472,7 @@ ea16(disasm_context_t *ctx, char *buf, size_t size)
 		"bx + si", "bx + di", "bp + si", "bp + di",
 		"si", "di", "bp", "bx"
 	};
-	char tmp[32];
+//	char tmp[32];
 	DWORD mod, rm;
 	DWORD val;
 	int rv;
@@ -486,7 +487,7 @@ ea16(disasm_context_t *ctx, char *buf, size_t size)
 			if (rv)
 				return rv;
 
-			snprintf(buf, size, "[0x%04x]", ctx->val);
+			snprintf(buf, size, "[0x%04lx]", ctx->val);
 		} else {
 			snprintf(buf, size, "[%s]", ea16_str[rm]);
 		}
@@ -509,7 +510,7 @@ ea16(disasm_context_t *ctx, char *buf, size_t size)
 
 			val = ctx->val;
 		}
-		snprintf(buf, size, "[%s + 0x%04x]", ea16_str[rm], val);
+		snprintf(buf, size, "[%s + 0x%04lx]", ea16_str[rm], val);
 	}
 
 	return 0;
@@ -603,7 +604,7 @@ ea32(disasm_context_t *ctx, char *buf, size_t size)
 				milstr_ncat(buf, " + ", size);
 			}
 			if (count[i] > 1) {
-				snprintf(tmp, size, "%s * %d",
+				snprintf(tmp, size, "%s * %ld",
 				    reg32_str[i], count[i]);
 			} else {
 				milstr_ncpy(tmp, reg32_str[i], sizeof(tmp));
@@ -616,7 +617,7 @@ ea32(disasm_context_t *ctx, char *buf, size_t size)
 		if (n > 0) {
 			milstr_ncat(buf, " + ", size);
 		}
-		snprintf(tmp, sizeof(tmp), "0x%08x", count[8]);
+		snprintf(tmp, sizeof(tmp), "0x%08lx", count[8]);
 		milstr_ncat(buf, tmp, size);
 	}
 	milstr_ncat(buf, "]", size);
@@ -646,7 +647,7 @@ ea(disasm_context_t *ctx)
 	} else {
 		milstr_ncat(ctx->next, sep[1], ctx->remain);
 	}
-	len += strlen(ctx->next);
+	len = strlen(ctx->next);
 	len = (len < ctx->remain) ? len : ctx->remain;
 	ctx->next += len;
 	ctx->remain -= len;
@@ -672,7 +673,7 @@ static int
 op(disasm_context_t *ctx)
 {
 	const char *opcode;
-	DWORD type;
+//	DWORD type;
 	BYTE op[3];
 	int prefix;
 	int len;
@@ -684,7 +685,7 @@ op(disasm_context_t *ctx)
 		if (rv)
 			return rv;
 
-		op[0] = ctx->val & 0xff;
+		op[0] = (BYTE)(ctx->val & 0xff);
 		if (insttable_info[op[0]] & INST_PREFIX) {
 			if (ctx->prefix == 0)
 				ctx->prefix = ctx->next;
@@ -728,7 +729,7 @@ op(disasm_context_t *ctx)
 			}
 		}
 		len = strlen(ctx->next);
-		len = (len < ctx->remain) ? len : ctx->remain;
+		len = (len < (int)ctx->remain) ? len : ctx->remain;
 		ctx->next += len;
 		ctx->remain -= len;
 	}
@@ -740,7 +741,7 @@ op(disasm_context_t *ctx)
 		if (rv)
 			return rv;
 
-		op[1] = ctx->val & 0xff;
+		op[1] = (BYTE)(ctx->val & 0xff);
 		ctx->opcode[1] = op[1];
 
 		switch (op[0]) {
@@ -751,7 +752,7 @@ op(disasm_context_t *ctx)
 				if (rv)
 					return rv;
 
-				op[2] = ctx->val & 0xff;
+				op[2] = (BYTE)(ctx->val & 0xff);
 				ctx->opcode[2] = op[2];
 
 				switch (op[1]) {

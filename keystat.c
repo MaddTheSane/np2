@@ -87,7 +87,7 @@ const _NKEYM	*user;
 	}
 	if ((!np2cfg.KEY_MODE) || (!(kbexflag[key] & 1))) {
 		if (keynochange) {
-			if (data & 0x80) {						// ver0.30
+			if (data & 0x80) {
 				return;
 			}
 			keyboard_send((REG8)(data ^ 0x80));

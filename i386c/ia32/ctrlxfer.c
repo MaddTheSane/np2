@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.13 2004/02/18 20:11:37 yui Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.14 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1001,7 +1001,7 @@ IRET_pm(void)
 	DWORD sp;
 	DWORD new_ip, new_flags;
 	WORD new_cs;
-	int rv;
+//	int rv;
 
 	VERBOSE(("IRET_pm: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 

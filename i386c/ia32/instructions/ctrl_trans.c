@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.10 2004/02/12 15:46:14 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.11 2004/02/19 03:04:02 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1018,7 +1018,7 @@ RETnear16_Iw(void)
 	POP0_16(new_ip);
 	SET_EIP(new_ip);
 	if (!CPU_STAT_SS32) {
-		CPU_SP += ad;
+		CPU_SP += (WORD)ad;
 	} else {
 		CPU_ESP += ad;
 	}
@@ -1037,7 +1037,7 @@ RETnear32_Iw(void)
 	if (CPU_STAT_SS32) {
 		CPU_ESP += ad;
 	} else {
-		CPU_SP += ad;
+		CPU_SP += (WORD)ad;
 	}
 }
 
@@ -1065,7 +1065,7 @@ void
 RETfar32(void)
 {
 	DWORD new_ip;
-	WORD new_cs;
+	DWORD new_cs;
 
 	CPU_WORKCLOCK(15);
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
@@ -1073,7 +1073,7 @@ RETfar32(void)
 		POP0_32(new_ip);
 		POP0_32(new_cs);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
 		SET_EIP(new_ip);
 	} else {
 		/* Protected mode */
@@ -1099,7 +1099,7 @@ RETfar16_Iw(void)
 		SET_EIP(new_ip);
 
 		if (!CPU_STAT_SS32) {
-			CPU_SP += ad;
+			CPU_SP += (WORD)ad;
 		} else {
 			CPU_ESP += ad;
 		}
@@ -1114,7 +1114,7 @@ RETfar32_Iw(void)
 {
 	DWORD ad;
 	DWORD new_ip;
-	WORD new_cs;
+	DWORD new_cs;
 
 	CPU_WORKCLOCK(15);
 	GET_PCWORD(ad);
@@ -1123,13 +1123,13 @@ RETfar32_Iw(void)
 		POP0_32(new_ip);
 		POP0_32(new_cs);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
 		SET_EIP(new_ip);
 
 		if (CPU_STAT_SS32) {
 			CPU_ESP += ad;
 		} else {
-			CPU_SP += ad;
+			CPU_SP += (WORD)ad;
 		}
 	} else {
 		/* Protected mode */
@@ -1143,7 +1143,7 @@ IRET(void)
 	DWORD new_ip;
 	DWORD new_flags;
 	DWORD mask;
-	WORD new_cs;
+	DWORD new_cs;
 
 	CPU_WORKCLOCK(31);
 	if (!CPU_STAT_PM) {
@@ -1161,7 +1161,7 @@ IRET(void)
 		}
 		set_eflags(new_flags, mask);
 
-		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
+		CPU_SET_SEGREG(CPU_CS_INDEX, (WORD)new_cs);
 		SET_EIP(new_ip);
 	} else {
 		/* Protected mode */
@@ -1303,7 +1303,7 @@ ENTER16_IwIb(void)
 			CPU_WORKCLOCK(15);
 			sp = CPU_SP;
 			PUSH0_16(sp);
-			CPU_BP = sp;
+			CPU_BP = (WORD)sp;
 			if (!CPU_STAT_SS32) {
 				CPU_SP -= dimsize;
 			} else {
@@ -1318,7 +1318,7 @@ ENTER16_IwIb(void)
 					bp -= 2;
 					CPU_SP -= 2;
 					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
-					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, val);
+					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, (WORD)val);
 				}
 				REGPUSH0(CPU_BP);
 				CPU_SP -= dimsize;
@@ -1329,7 +1329,7 @@ ENTER16_IwIb(void)
 					bp -= 2;
 					CPU_ESP -= 2;
 					val = cpu_vmemoryread_w(CPU_SS_INDEX, bp);
-					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, val);
+					cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, (WORD)val);
 				}
 				REGPUSH0_16_32(CPU_BP);
 				CPU_ESP -= dimsize;
@@ -1392,7 +1392,7 @@ ENTER32_IwIb(void)
 					bp -= 4;
 					CPU_ESP -= 4;
 					val = cpu_vmemoryread_d(CPU_SS_INDEX, bp);
-					cpu_vmemorywrite(CPU_SS_INDEX, CPU_ESP, val);
+					cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, val);
 				}
 				REGPUSH0_32(CPU_EBP);
 				CPU_ESP -= dimsize;

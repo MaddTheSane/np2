@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.10 2004/02/09 16:12:07 monaka Exp $	*/
+/*	$Id: exception.c,v 1.11 2004/02/19 03:04:01 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -403,6 +403,8 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 	case CPU_SYSDESC_TYPE_TRAP_16:
 	case CPU_SYSDESC_TYPE_TRAP_32:
 		VERBOSE(("interrupt: TRAP-GATE"));
+
+	default:
 		mask = 0;
 		break;
 	}
