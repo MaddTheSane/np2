@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.28 2004/03/25 08:51:24 yui Exp $	*/
+/*	$Id: cpu.h,v 1.29 2004/03/29 05:50:29 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -213,10 +213,11 @@ typedef struct {
 	UINT32		clock;
 } I386STAT;
 
-typedef struct {					/* for ver0.73 */
+typedef struct {
 	BYTE		*ext;
 	UINT32		extsize;
 	UINT32		inport;
+	BYTE		*ems[4];
 } I386EXT;
 
 typedef struct {
@@ -243,6 +244,7 @@ extern I386CORE		i386core;
 #define	CPU_EXTMEM	i386core.e.ext
 #define	CPU_EXTMEMSIZE	i386core.e.extsize
 #define	CPU_INPADRS	i386core.e.inport
+#define	CPU_EMSPTR	i386core.e.ems
 
 extern sigjmp_buf	exec_1step_jmpbuf;
 
@@ -580,6 +582,7 @@ do { \
 void ia32_init(void);
 void ia32_initreg(void);
 void ia32_setextsize(UINT32 size);
+void ia32_setemm(UINT frame, UINT32 addr);
 
 void ia32reset(void);
 void ia32shut(void);

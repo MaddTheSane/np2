@@ -646,7 +646,7 @@ static MEMFN memfn = {
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 80
 			tram_rd,	vram_r0,	vram_r0,	vram_r0,		// a0
 			emmc_rd,	emmc_rd,	i286_rd,	i286_rd,		// c0
-			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// f0
+			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// e0
 
 		   {i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 20

@@ -99,9 +99,7 @@ static const SFENTRY np2tbl[] = {
 	{"EGC",			0,	STATFLAG_EGC,	NULL,			0},
 	{"EPSON",		0,	STATFLAG_EPSON,	NULL,			0},
 	{"FDC",			0,	STATFLAG_BIN,	&fdc,			sizeof(fdc)},
-#if !defined(CPUCORE_IA32)
 	{"EMSIO",		0,	STATFLAG_BIN,	&emsio,			sizeof(emsio)},
-#endif
 	{"GDC1",		0,	STATFLAG_BIN,	&gdc,			sizeof(gdc)},
 	{"GDC2",		0,	STATFLAG_BIN,	&gdcs,			sizeof(gdcs)},
 	{"PIT",			0,	STATFLAG_BIN,	&pit,			sizeof(pit)},

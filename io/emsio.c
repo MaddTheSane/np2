@@ -4,9 +4,6 @@
 #include	"iocore.h"
 
 
-// ñ{I/OÇÕ 80286ÇÃÇ›óLå¯Ç≈Ç∑ÅB
-#if !defined(CPUCORE_IA32)
-
 // ---- I/O
 
 static void IOOUTCALL emsio_o08e1(UINT port, REG8 dat) {
@@ -50,7 +47,9 @@ static REG8 IOINPCALL emsio_i08e9(UINT port) {
 void emsio_reset(void) {
 
 	ZeroMemory(&emsio, sizeof(emsio));
+#if 1 || !defined(CPUCORE_IA32)
 	emsio.maxmem = pccore.extmem;
+#endif
 	emsio.addr[0] = 0xc0000;
 	emsio.addr[1] = 0xc4000;
 	emsio.addr[2] = 0xc8000;
@@ -73,5 +72,4 @@ void emsio_bind(void) {
 		iocore_attachinp(0x08e9, emsio_i08e9);
 	}
 }
-#endif
 

@@ -435,10 +435,7 @@ static const IOCBFN resetfn[] = {
 
 			// extend
 			artic_reset,		egc_reset,			np2sysp_reset,
-			necio_reset,		epsonio_reset,
-#if !defined(CPUCORE_IA32)
-			emsio_reset,
-#endif
+			necio_reset,		epsonio_reset,		emsio_reset,
 #if defined(SUPPORT_PC9821)
 			pcidev_reset,
 #endif
@@ -457,10 +454,7 @@ static const IOCBFN bindfn[] = {
 
 			// extend
 			artic_bind,			egc_bind,			np2sysp_bind,
-			necio_bind,			epsonio_bind,
-#if !defined(CPUCORE_IA32)
-			emsio_bind,
-#endif
+			necio_bind,			epsonio_bind,		emsio_bind,
 #if defined(SUPPORT_PC9821)
 			pcidev_bind,
 #endif

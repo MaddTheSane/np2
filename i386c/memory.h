@@ -43,6 +43,8 @@
 #define	FONT_ADRS	0x110000
 #define	ITF_ADRS	0x1f8000
 
+#define	USE_HIMEM		0x110000
+
 #ifdef __cplusplus
 extern "C" {
 #endif

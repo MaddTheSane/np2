@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.15 2004/03/27 16:14:31 yui Exp $	*/
+/*	$Id: interface.h,v 1.16 2004/03/29 05:50:29 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -52,7 +52,7 @@
 #define	CPU_EXECV30()			ia32()
 #define	CPU_SHUT()			ia32shut()
 #define	CPU_SETEXTSIZE(size)		ia32_setextsize((UINT32)(size) << 20)
-#define CPU_SETEMM(frame, addr)
+#define CPU_SETEMM(frame, addr)		ia32_setemm(frame, addr)
 
 #define	cpu_memorywrite(a,v)	i286_memorywrite(a,v)
 #define	cpu_memorywrite_b(a,v)	i286_memorywrite(a,v)

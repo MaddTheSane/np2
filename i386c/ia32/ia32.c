@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.14 2004/03/12 14:33:06 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.15 2004/03/29 05:50:29 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -101,7 +101,30 @@ ia32_setextsize(UINT32 size)
 		}
 		CPU_EXTMEMSIZE = size;
 	}
+	CPU_EMSPTR[0] = mem + 0xc0000;
+	CPU_EMSPTR[1] = mem + 0xc4000;
+	CPU_EMSPTR[2] = mem + 0xc8000;
+	CPU_EMSPTR[3] = mem + 0xcc000;
 }
+
+void
+ia32_setemm(UINT frame, UINT32 addr) {
+
+	BYTE	*ptr;
+
+	frame &= 3;
+	if (addr < USE_HIMEM) {
+		ptr = mem + addr;
+	}
+	else if ((addr - 0x100000 + 0x4000) <= CPU_EXTMEMSIZE) {
+		ptr = CPU_EXTMEM + (addr - 0x100000);
+	}
+	else {
+		ptr = mem + 0xc0000 + (frame << 14);
+	}
+	CPU_EMSPTR[frame] = ptr;
+}
+
 
 /*
  * モード遷移

@@ -15,8 +15,6 @@
 	BYTE	mem[0x200000];
 
 
-#define	USE_HIMEM		0x110000
-
 // ---- write byte
 
 static void MEMCALL i286_wt(UINT32 address, REG8 value) {	// MAIN
@@ -184,6 +182,11 @@ static void MEMCALL egc_wt(UINT32 address, REG8 value) {	// VRAM
 	egc_write(address, value);
 }
 
+static void MEMCALL emmc_wt(UINT32 address, REG8 value) {
+
+	CPU_EMSPTR[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
+}
+
 static void MEMCALL i286_wd(UINT32 address, REG8 value) {	// D0000Å`DFFFF
 
 	if (CPU_RAM_D000 & (1 << ((address >> 12) & 15))) {
@@ -289,6 +292,11 @@ static REG8 MEMCALL egc_rd(UINT32 address) {
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	return(egc_read(address));
+}
+
+static REG8 MEMCALL emmc_rd(UINT32 address) {
+
+	return(CPU_EMSPTR[(address >> 14) & 3][LOW14(address)]);
 }
 
 static REG8 MEMCALL i286_rb(UINT32 address) {
@@ -463,6 +471,20 @@ static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 	}
 }
 
+static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
+
+	BYTE	*ptr;
+
+	if ((address & 0x3fff) != 0x3fff) {
+		ptr = CPU_EMSPTR[(address >> 14) & 3] + LOW14(address);
+		STOREINTELWORD(ptr, value);
+	}
+	else {
+		CPU_EMSPTR[(address >> 14) & 3][0x3fff] = (BYTE)value;
+		CPU_EMSPTR[((address + 1) >> 14) & 3][0] = (BYTE)(value >> 8);
+	}
+}
+
 static void MEMCALL i286w_wd(UINT32 address, REG16 value) {
 
 	BYTE	*ptr;
@@ -619,6 +641,22 @@ static REG16 MEMCALL egcw_rd(UINT32 address) {
 	}
 }
 
+static REG16 MEMCALL emmcw_rd(UINT32 address) {
+
+const BYTE	*ptr;
+	REG16	ret;
+
+	if ((address & 0x3fff) != 0x3fff) {
+		ptr = CPU_EMSPTR[(address >> 14) & 3] + LOW14(address);
+		return(LOADINTELWORD(ptr));
+	}
+	else {
+		ret = CPU_EMSPTR[(address >> 14) & 3][0x3fff];
+		ret += CPU_EMSPTR[((address + 1) >> 14) & 3][0] << 8;
+		return(ret);
+	}
+}
+
 static REG16 MEMCALL i286w_rb(UINT32 address) {
 
 	if (CPU_ITFBANK) {
@@ -665,7 +703,7 @@ static MEMFN memfn = {
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 60
 			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// 80
 			tram_rd,	vram_r0,	vram_r0,	vram_r0,		// a0
-			i286_rd,	i286_rd,	i286_rd,	i286_rd,		// c0
+			emmc_rd,	emmc_rd,	i286_rd,	i286_rd,		// c0
 			vram_r0,	i286_rd,	i286_rd,	i286_rb},		// e0
 
 		   {i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
@@ -674,7 +712,7 @@ static MEMFN memfn = {
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 60
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 80
 			tram_wt,	vram_w0,	vram_w0,	vram_w0,		// a0
-			i286_wn,	i286_wn,	i286_wd,	i286_wd,		// c0
+			emmc_wt,	emmc_wt,	i286_wd,	i286_wd,		// c0
 			vram_w0,	i286_wn,	i286_wn,	i286_wn},		// e0
 
 		   {i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 00
@@ -683,7 +721,7 @@ static MEMFN memfn = {
 			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 60
 			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// 80
 			tramw_rd,	vramw_r0,	vramw_r0,	vramw_r0,		// a0
-			i286w_rd,	i286w_rd,	i286w_rd,	i286w_rd,		// c0
+			emmcw_rd,	emmcw_rd,	i286w_rd,	i286w_rd,		// c0
 			vramw_r0,	i286w_rd,	i286w_rd,	i286w_rb},		// e0
 
 		   {i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 00
@@ -692,7 +730,7 @@ static MEMFN memfn = {
 			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 60
 			i286w_wt,	i286w_wt,	i286w_wt,	i286w_wt,		// 80
 			tramw_wt,	vramw_w0,	vramw_w0,	vramw_w0,		// a0
-			i286w_wn,	i286w_wn,	i286w_wd,	i286w_wd,		// c0
+			emmcw_wt,	emmcw_wt,	i286w_wd,	i286w_wd,		// c0
 			vramw_w0,	i286w_wn,	i286w_wn,	i286w_wn}};		// e0
 
 static const MMAPTBL mmaptbl[2] = {
