@@ -62,7 +62,7 @@ SOURCES+= ../../generic/cmjasts.c \
 
 SOURCES+= ../../io/iocore.c ../../io/artic.c ../../io/cgrom.c ../../io/cpuio.c \
           ../../io/crtc.c ../../io/dipsw.c ../../io/dmac.c ../../io/egc.c \
-          ../../io/extmem.c ../../io/fdc.c ../../io/fdd320.c ../../io/gdc.c \
+          ../../io/emsio.c ../../io/fdc.c ../../io/fdd320.c ../../io/gdc.c \
           ../../io/gdc_sub.c ../../io/gdc_pset.c \
           ../../io/mouseif.c ../../io/nmiio.c ../../io/np2sysp.c \
           ../../io/pic.c ../../io/pit.c ../../io/printif.c ../../io/serial.c \

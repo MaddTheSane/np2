@@ -80,7 +80,7 @@ GENERICOBJS=	../../generic/cmjasts.o \
 
 IOOBJS=		../../io/iocore.o ../../io/artic.o ../../io/cgrom.o \
 		../../io/cpuio.o ../../io/crtc.o ../../io/dipsw.o \
-		../../io/dmac.o ../../io/egc.o ../../io/extmem.o \
+		../../io/dmac.o ../../io/egc.o ../../io/emsio.o \
 		../../io/fdc.o ../../io/fdd320.o ../../io/gdc.o \
 		../../io/gdc_sub.o ../../io/gdc_pset.o \
 		../../io/mouseif.o ../../io/nmiio.o ../../io/np2sysp.o \
