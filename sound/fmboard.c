@@ -100,6 +100,14 @@ void fmboard_extenable(REG8 enable) {
 
 // ----
 
+static void setfmregs(BYTE *reg) {
+
+	FillMemory(reg + 0x30, 0x60, 0xff);
+	FillMemory(reg + 0x90, 0x20, 0x00);
+	FillMemory(reg + 0xb0, 0x04, 0x00);
+	FillMemory(reg + 0xb4, 0x04, 0xc0);
+}
+
 void fmboard_reset(UINT32 type) {
 
 	BYTE	cross;
@@ -110,10 +118,13 @@ void fmboard_reset(UINT32 type) {
 
 	extfn = NULL;
 	ZeroMemory(&opn, sizeof(opn));
+	setfmregs(opn.reg + 0x000);
+	setfmregs(opn.reg + 0x100);
+	setfmregs(opn.reg + 0x200);
+	setfmregs(opn.reg + 0x300);
+	opn.reg[0xff] = 0x01;
 	opn.channels = 3;
 	opn.adpcmmask = (UINT8)~(0x1c);
-	FillMemory(opn.reg, 0x400, 0xff);
-	opn.reg[0xff] = 0x01;
 
 	ZeroMemory(&musicgen, sizeof(musicgen));
 	ZeroMemory(&amd98, sizeof(amd98));
