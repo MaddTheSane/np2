@@ -224,9 +224,6 @@ UINT
 soundmng_create(UINT rate, UINT bufmsec)
 {
 	UINT samples;
-#if defined(VERMOUTH_LIB)
-	UINT num;
-#endif
 
 	if (opened || ((rate != 11025) && (rate != 22050) && (rate != 44100))) {
 		return 0;
@@ -252,10 +249,7 @@ soundmng_create(UINT rate, UINT bufmsec)
 
 #if defined(VERMOUTH_LIB)
 	vermouth_module = midimod_create(rate);
-	for (num = 0; num < 128; num++) {
-		midimod_loadprogram(vermouth_module, num);
-		midimod_loadrhythm(vermouth_module, num);
-	}
+	midimod_loadall(vermouth_module);
 #endif
 
 	soundmng_setreverse(FALSE);
