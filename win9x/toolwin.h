@@ -6,6 +6,8 @@ enum {
 
 typedef struct {
 	int		insert;
+	UINT	cnt;
+	UINT	pos[FDDLIST_MAX];
 	char	name[FDDLIST_MAX][MAX_PATH];
 } TOOLFDD;
 
@@ -13,6 +15,7 @@ typedef struct {
 	int		posx;
 	int		posy;
 	TOOLFDD	fdd[FDDLIST_DRV];
+	char	skin[MAX_PATH];
 } NP2TOOL;
 
 extern	NP2TOOL		np2tool;

@@ -30,7 +30,6 @@ static const SUBITEM defsubitem[IDC_MAXITEMS] = {
 
 // ----
 
-static const char np2skin[] = "np2skin.ini";
 static const char skintitle[] = "ToolWindow";
 
 static const INITBL skinini[] = {
@@ -52,4 +51,19 @@ static const INITBL skinini[] = {
 
 // static const DWORD mvccol[MVC_MAXCOLOR] = {
 //						0xc0e8f8, 0xd8ecf4, 0x48a8c8, 0x000000};
+
+
+// ----
+
+static const char str_skindef[] = "&Base Skin";
+static const char str_skinsel[] = "&Load Skin...";
+static const char str_toolclose[] = "&Close";
+
+static const char skinui_title[] = "Select skin file";
+static const char skinui_filter[] =								\
+								"ini files (*.ini)\0*.ini\0"	\
+								"text files (*.txt)\0*.txt\0"	\
+								"All files (*.*)\0*.*\0";
+static const char skinui_ext[] = "ini";
+static const FILESEL skinui = {skinui_title, skinui_ext, skinui_filter, 1};
 

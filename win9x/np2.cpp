@@ -110,6 +110,9 @@ static void changescreen(BYTE newmode) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			toolwin_close();
 		}
+		else if (renewal & SCRNMODE_ROTATEMASK) {
+			toolwin_movingstart();
+		}
 		soundmng_stop();
 		mouse_running(MOUSE_STOP);
 		keydisp_destroy();
@@ -127,6 +130,9 @@ static void changescreen(BYTE newmode) {
 		if ((renewal & SCRNMODE_FULLSCREEN) &&
 			(!scrnmng_isfullscreen()) && (np2oscfg.toolwin)) {
 			toolwin_open();
+		}
+		else if (renewal & SCRNMODE_ROTATEMASK) {
+			toolwin_movingend();
 		}
 		mouse_running(MOUSE_CONT);
 		soundmng_play();

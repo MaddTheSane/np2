@@ -9,15 +9,9 @@
 #include	"toolwin.h"
 #include	"ini.h"
 #include	"dialog.h"
+#include	"dialogs.h"
 #include	"pccore.h"
 #include	"diskdrv.h"
-
-
-#ifdef STRICT
-#define	SCPROC	WNDPROC
-#else
-#define	SCPROC	FARPROC
-#endif
 
 
 enum {
@@ -32,7 +26,11 @@ enum {
 	IDC_TOOLFDD2EJECT,
 	IDC_MAXITEMS,
 
-	IDC_BASE				= 3000
+	IDC_BASE				= 3000,
+
+	IDC_SKINDEF				= 3100,
+	IDC_SKINSEL				= 3101,
+	IDC_TOOLCLOSE			= 3102
 };
 
 typedef struct {
@@ -55,24 +53,24 @@ const char	*text;
 } SUBITEM;
 
 typedef struct {
-	HWND	hwnd;
-	HBITMAP	hbmp;
-	BYTE	fddaccess[2];
-	BYTE	hddaccess;
-	BYTE	_padding;
-	int		winflg;
-	int		wingx;
-	int		wingy;
-	int		wintx;
-	int		winty;
-	int		parentcn;
-	int		parentx;
-	int		parenty;
-	HFONT	hfont;
-	HDC		hdcfont;
-	HBRUSH	access[2];
-	HWND	sub[IDC_MAXITEMS];
-	SCPROC	subproc[IDC_MAXITEMS];
+	HWND			hwnd;
+	HBITMAP			hbmp;
+	BYTE			fddaccess[2];
+	BYTE			hddaccess;
+	BYTE			_padding;
+	int				winflg;
+	int				wingx;
+	int				wingy;
+	int				wintx;
+	int				winty;
+	UINT			parentcn;
+	int				parentx;
+	int				parenty;
+	HFONT			hfont;
+	HDC				hdcfont;
+	HBRUSH			access[2];
+	HWND			sub[IDC_MAXITEMS];
+	SUBCLASSPROC	subproc[IDC_MAXITEMS];
 } TOOLWIN;
 
 
@@ -100,7 +98,10 @@ static const DISKACC diskacc[3] = {
 
 // ----
 
-static void skinsetdef(void) {
+static HBITMAP skinload(const char *path) {
+
+	char	fname[MAX_PATH];
+	HBITMAP	ret;
 
 	ZeroMemory(&toolskin, sizeof(toolskin));
 	toolskin.fontsize = 12;
@@ -108,11 +109,6 @@ static void skinsetdef(void) {
 	toolskin.color1 = 0x600000;
 	toolskin.color2 = 0xff0000;
 	CopyMemory(subitem, defsubitem, sizeof(defsubitem));
-}
-
-static HBITMAP skinload(const char *path) {
-
-	char	fname[MAX_PATH];
 
 	if (path) {
 		ini_read(path, skintitle, skinini, sizeof(skinini)/sizeof(INITBL));
@@ -121,12 +117,13 @@ static HBITMAP skinload(const char *path) {
 		milstr_ncpy(fname, path, sizeof(fname));
 		file_cutname(fname);
 		file_catname(fname, toolskin.main, sizeof(fname));
-		return((HBITMAP)LoadImage(hInst, fname, IMAGE_BITMAP,
-													0, 0, LR_LOADFROMFILE));
+		ret = (HBITMAP)LoadImage(hInst, fname, IMAGE_BITMAP,
+													0, 0, LR_LOADFROMFILE);
+		if (ret != NULL) {
+			return(ret);
+		}
 	}
-	else {
-		return(LoadBitmap(hInst, "NP2TOOL"));
-	}
+	return(LoadBitmap(hInst, "NP2TOOL"));
 }
 
 
@@ -180,40 +177,30 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 	milstr_ncat(path, work, leng);
 }
 
-static void setlist(UINT drv) {
+static void setlist(HWND hwnd, const TOOLFDD *fdd, UINT sel) {
 
-	HWND	hwnd;
 	RECT	rc;
 	int		width;
-	TOOLFDD	*fdd;
-	char	*p;
-	UINT	i;
 	char	basedir[MAX_PATH];
+	UINT	i;
+const char	*p;
 	char	dir[MAX_PATH];
-	char	*q;
+const char	*q;
 
-	if (drv >= FDDLIST_DRV) {
-		return;
-	}
-	hwnd = toolwin.sub[fddlist[drv]];
+	SendMessage(hwnd, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0);
 	GetClientRect(hwnd, &rc);
 	width = rc.right - rc.left - 6;			// border size?
-	SendMessage(hwnd, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0);
-	fdd = np2tool.fdd + drv;
-	p = fdd->name[0];
 	basedir[0] = '\0';
-	if (fdd->insert) {
-		milstr_ncpy(basedir, p, sizeof(basedir));
+	if (sel < fdd->cnt) {
+		milstr_ncpy(basedir, fdd->name[fdd->pos[sel]], sizeof(basedir));
 		file_cutname(basedir);
 	}
-	for (i=0; i<FDDLIST_MAX; i++) {
-		if (p[0] == '\0') {
-			break;
-		}
+	for (i=0; i<fdd->cnt; i++) {
+		p = fdd->name[fdd->pos[i]];
 		milstr_ncpy(dir, p, sizeof(dir));
 		file_cutname(dir);
 		if (!file_cmpname(basedir, dir)) {
-			q = file_getname(p);
+			q = file_getname((char *)p);
 		}
 		else {
 			calctextsize(dir, sizeof(dir), p, width);
@@ -222,27 +209,74 @@ static void setlist(UINT drv) {
 		SendMessage(hwnd, CB_INSERTSTRING, (WPARAM)i, (LPARAM)q);
 		p += sizeof(fdd->name[0]);
 	}
-	if (fdd->insert) {
-		SendMessage(hwnd, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
+	if (sel < fdd->cnt) {
+		SendMessage(hwnd, CB_SETCURSEL, (WPARAM)sel, (LPARAM)0);
 	}
 }
 
 static void sellist(UINT drv) {
 
 	HWND	hwnd;
+	TOOLFDD	*fdd;
 	UINT	sel;
-	char	path[MAX_PATH];
 
 	if (drv >= FDDLIST_DRV) {
 		return;
 	}
 	hwnd = toolwin.sub[fddlist[drv]];
+	fdd = np2tool.fdd + drv;
 	sel = (UINT)SendMessage(hwnd, CB_GETCURSEL, 0, 0);
-	if (sel < FDDLIST_MAX) {
-		milstr_ncpy(path, np2tool.fdd[drv].name[sel], sizeof(path));
-		diskdrv_setfdd(drv, path, 0);
-		toolwin_setfdd(drv, path);
+	if (sel < fdd->cnt) {
+		diskdrv_setfdd(drv, fdd->name[fdd->pos[sel]], 0);
+		fdd->insert = 1;
+		setlist(hwnd, fdd, sel);
 	}
+}
+
+static void remakefddlist(UINT drv) {
+
+	TOOLFDD	*fdd;
+	char	*p;
+	UINT	cnt;
+	char	*q;
+	char	*fname[FDDLIST_MAX];
+	UINT	i;
+	UINT	j;
+	UINT	sel;
+
+	if (drv >= FDDLIST_DRV) {
+		return;
+	}
+	fdd = np2tool.fdd + drv;
+	p = fdd->name[0];
+	for (cnt=0; cnt<FDDLIST_MAX; cnt++) {
+		if (p[0] == '\0') {
+			break;
+		}
+		q = file_getname(p);
+		fname[cnt] = q;
+		for (i=0; i<cnt; i++) {
+			if (file_cmpname(q, fname[fdd->pos[i]]) < 0) {
+				break;
+			}
+		}
+		for (j=cnt; j>i; j--) {
+			fdd->pos[j] = fdd->pos[j-1];
+		}
+		fdd->pos[i] = cnt;
+		p += sizeof(fdd->name[0]);
+	}
+	fdd->cnt = cnt;
+	sel = (UINT)-1;
+	if (fdd->insert) {
+		for (i=0; i<cnt; i++) {
+			if (fdd->pos[i] == 0) {
+				sel = i;
+				break;
+			}
+		}
+	}
+	setlist(toolwin.sub[fddlist[drv]], fdd, sel);
 }
 
 static void accdraw(HWND hWnd, BYTE count) {
@@ -331,10 +365,9 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(CallWindowProc(toolwin.subproc[idc], hWnd, msg, wp, lp));
 }
 
-static void toolwincreate(HWND hWnd, LPARAM lp) {
+static void toolwincreate(HWND hWnd) {
 
 	HDC			hdc;
-	HINSTANCE	hinstance;
 const SUBITEM	*p;
 	UINT		i;
 	HWND		sub;
@@ -350,14 +383,13 @@ const SUBITEM	*p;
 	toolwin.access[0] = CreateSolidBrush(0x000060);
 	toolwin.access[1] = CreateSolidBrush(0x0000ff);
 
-	hinstance = ((LPCREATESTRUCT)lp)->hInstance;
 	p = subitem;
 	for (i=0; i<IDC_MAXITEMS; i++) {
 		sub = CreateWindow(p->cname, p->text,
 				WS_CHILD | p->style, p->posx, p->posy, p->width, p->height,
-				hWnd, (HMENU)(i + IDC_BASE), hinstance, NULL);
+				hWnd, (HMENU)(i + IDC_BASE), hInst, NULL);
 		toolwin.sub[i] = sub;
-		toolwin.subproc[i] = (SCPROC)GetWindowLong(sub, GWL_WNDPROC);
+		toolwin.subproc[i] = (SUBCLASSPROC)GetWindowLong(sub, GWL_WNDPROC);
 		SetWindowLong(sub, GWL_WNDPROC, (LONG)twsub);
 		SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.hfont,
 														MAKELPARAM(TRUE, 0));
@@ -365,7 +397,7 @@ const SUBITEM	*p;
 	}
 	for (i=0; i<FDDLIST_DRV; i++) {
 		DragAcceptFiles(toolwin.sub[fddlist[i]], TRUE);
-		setlist((BYTE)i);
+		remakefddlist((BYTE)i);
 	}
 }
 
@@ -373,32 +405,55 @@ static void toolwindestroy(void) {
 
 	UINT	i;
 
-	for (i=0; i<IDC_MAXITEMS; i++) {
-		DestroyWindow(toolwin.sub[i]);
+	if (toolwin.hbmp) {
+		for (i=0; i<IDC_MAXITEMS; i++) {
+			DestroyWindow(toolwin.sub[i]);
+		}
+		DeleteObject(toolwin.access[0]);
+		DeleteObject(toolwin.access[1]);
+		DeleteObject(toolwin.hdcfont);
+		DeleteObject(toolwin.hfont);
+		DeleteObject(toolwin.hbmp);
+		toolwin.hbmp = NULL;
 	}
-	DeleteObject(toolwin.access[0]);
-	DeleteObject(toolwin.access[1]);
-	DeleteObject(toolwin.hdcfont);
-	DeleteObject(toolwin.hfont);
-	DeleteObject(toolwin.hbmp);
 }
 
 static void toolwinpaint(HWND hWnd) {
 
 	HDC			hdc;
 	PAINTSTRUCT	ps;
-	HINSTANCE	hinst;
 	BITMAP		bmp;
 	HDC			hmdc;
 
 	hdc = BeginPaint(hWnd, &ps);
-	hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
-	GetObject(toolwin.hbmp, sizeof(BITMAP), &bmp);
-	hmdc = CreateCompatibleDC(hdc);
-	SelectObject(hmdc, toolwin.hbmp);
-	BitBlt(hdc, 0, 0, bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
-	DeleteDC(hmdc);
+	if (toolwin.hbmp) {
+		GetObject(toolwin.hbmp, sizeof(BITMAP), &bmp);
+		hmdc = CreateCompatibleDC(hdc);
+		SelectObject(hmdc, toolwin.hbmp);
+		BitBlt(hdc, 0, 0, bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
+		DeleteDC(hmdc);
+	}
 	EndPaint(hWnd, &ps);
+}
+
+static void changeskin(HWND hWnd) {
+
+	HBITMAP	hbmp;
+	BITMAP	bmp;
+
+	toolwin_movingstart();
+	toolwindestroy();
+	hbmp = skinload(np2tool.skin);
+	if (hbmp == NULL) {
+		SendMessage(hWnd, WM_CLOSE, 0, 0);
+		return;
+	}
+	GetObject(hbmp, sizeof(BITMAP), &bmp);
+	toolwin.hbmp = hbmp;
+	MoveWindow(hWnd, np2tool.posx, np2tool.posy,
+											bmp.bmWidth, bmp.bmHeight, TRUE);
+	toolwincreate(hWnd);
+	toolwin_movingend();
 }
 
 
@@ -568,7 +623,26 @@ static void movingproc(RECT *rect) {
 
 // ----
 
+static void open_popup(HWND hWnd, LPARAM lp) {
+
+	HMENU		hMenu;
+	POINT		pt;
+
+	hMenu = CreatePopupMenu();
+	AppendMenu(hMenu, MF_STRING, IDC_SKINDEF, str_skindef);
+	AppendMenu(hMenu, MF_STRING, IDC_SKINSEL, str_skinsel);
+	AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenu(hMenu, MF_STRING, IDC_TOOLCLOSE, str_toolclose);
+	pt.x = LOWORD(lp);
+	pt.y = HIWORD(lp);
+	ClientToScreen(hWnd, &pt);
+	TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
+	DestroyMenu(hMenu);
+}
+
 static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+
+	BOOL	r;
 
 	switch(msg) {
 		case WM_CREATE:
@@ -576,7 +650,31 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 							GetWindowLong(hWnd, GWL_STYLE) & (~WS_CAPTION));
 			SetWindowPos(hWnd, 0, 0, 0, 0, 0,
 					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
-			toolwincreate(hWnd, lp);
+			toolwincreate(hWnd);
+			break;
+
+		case WM_SYSCOMMAND:
+			switch(wp) {
+				case IDC_SKINDEF:
+					np2tool.skin[0] = '\0';
+					changeskin(hWnd);
+					sysmng_update(SYS_UPDATEOSCFG);
+					break;
+
+				case IDC_SKINSEL:
+					soundmng_stop();
+					r = dlgs_selectfile(hWnd, &skinui, np2tool.skin,
+											sizeof(np2tool.skin), NULL);
+					soundmng_play();
+					if (r) {
+						changeskin(hWnd);
+						sysmng_update(SYS_UPDATEOSCFG);
+					}
+					break;
+
+				default:
+					return(DefWindowProc(hWnd, msg, wp, lp));
+			}
 			break;
 
 		case WM_COMMAND:
@@ -613,6 +711,15 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				case IDC_BASE + IDC_TOOLFDD2EJECT:
 					diskdrv_setfdd(1, NULL, 0);
 					toolwin_setfdd(1, NULL);
+					break;
+
+				case IDC_SKINDEF:
+				case IDC_SKINSEL:
+					SendMessage(hWnd, WM_SYSCOMMAND, wp, lp);
+					break;
+
+				case IDC_TOOLCLOSE:
+					SendMessage(hWnd, WM_CLOSE, 0, 0);
 					break;
 			}
 			break;
@@ -668,6 +775,10 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0L);
 			break;
 
+		case WM_RBUTTONDOWN:
+			open_popup(hWnd, lp);
+			break;
+
 		default:
 			return(DefWindowProc(hWnd, msg, wp, lp));
 	}
@@ -693,26 +804,22 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 
 void toolwin_open(void) {
 
-	char	path[MAX_PATH];
 	HBITMAP	hbmp;
 	BITMAP	bmp;
 	HWND	hWnd;
+	HMENU	hMenu;
 
 	if (toolwin.hwnd) {
 		return;
 	}
 	ZeroMemory(&toolwin, sizeof(toolwin));
-	skinsetdef();
-	milstr_ncpy(path, modulefile, sizeof(path));
-	file_cutname(path);
-	file_catname(path, np2skin, sizeof(path));
-	hbmp = skinload(path);
+	hbmp = skinload(np2tool.skin);
 	if (hbmp == NULL) {
 		goto twope_err1;
 	}
 	GetObject(hbmp, sizeof(BITMAP), &bmp);
 	toolwin.hbmp = hbmp;
-	hWnd = CreateWindowEx(0, np2toolclass, np2tooltitle, WS_SYSMENU,
+	hWnd = CreateWindow(np2toolclass, np2tooltitle, WS_SYSMENU,
 							np2tool.posx, np2tool.posy,
 							bmp.bmWidth, bmp.bmHeight,
 							NULL, NULL, hInst, NULL);
@@ -722,6 +829,12 @@ void toolwin_open(void) {
 	}
 	UpdateWindow(hWnd);
 	ShowWindow(hWnd, SW_SHOW);
+
+	hMenu = GetSystemMenu(hWnd, FALSE);
+	InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDC_SKINDEF, str_skindef);
+	InsertMenu(hMenu, 1, MF_BYPOSITION | MF_STRING, IDC_SKINSEL, str_skinsel);
+	InsertMenu(hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+	SetForegroundWindow(hWndMain);
 	return;
 
 twope_err2:
@@ -740,6 +853,108 @@ void toolwin_close(void) {
 	}
 }
 
+#if 1
+void toolwin_movingstart(void) {
+
+	RECT	mainrc;
+	RECT	toolrc;
+	UINT	connect;
+
+	if (toolwin.hwnd == NULL) {
+		return;
+	}
+	GetWindowRect(hWndMain, &mainrc);
+	GetWindowRect(toolwin.hwnd, &toolrc);
+	connect = 0;
+	if ((toolrc.bottom >= mainrc.top) && (toolrc.top <= mainrc.bottom)) {
+		if (toolrc.right == mainrc.left) {
+			connect += 0x01;
+		}
+		else if (toolrc.left == mainrc.right) {
+			connect += 0x02;
+		}
+		else if (toolrc.left == mainrc.left) {
+			connect += 0x03;
+		}
+		else if (toolrc.right == mainrc.right) {
+			connect += 0x04;
+		}
+	}
+	if ((toolrc.right >= mainrc.left) && (toolrc.left <= mainrc.right)) {
+		if (toolrc.bottom == mainrc.top) {
+			connect += 1 << 4;
+		}
+		else if (toolrc.top == mainrc.bottom) {
+			connect += 2 << 4;
+		}
+		else if (toolrc.top == mainrc.top) {
+			connect += 3 << 4;
+		}
+		else if (toolrc.bottom == mainrc.bottom) {
+			connect += 4 << 4;
+		}
+	}
+	toolwin.parentcn = connect;
+	toolwin.parentx = mainrc.left;
+	toolwin.parenty = mainrc.top;
+}
+
+void toolwin_movingend(void) {
+
+	UINT	connect;
+	RECT	mainrc;
+	RECT	toolrc;
+	int		cx;
+	int		cy;
+
+	connect = toolwin.parentcn;
+	toolwin.parentcn = 0;
+	if ((toolwin.hwnd == NULL) || (!connect)) {
+		return;
+	}
+	GetWindowRect(hWndMain, &mainrc);
+	GetWindowRect(toolwin.hwnd, &toolrc);
+	cx = toolrc.right - toolrc.left;
+	cy = toolrc.bottom - toolrc.top;
+	toolrc.left += mainrc.left - toolwin.parentx;
+	toolrc.top += mainrc.top - toolwin.parenty;
+	switch(connect & 0x0f) {
+		case 1:
+			toolrc.left = mainrc.left - cx;
+			break;
+
+		case 2:
+			toolrc.left = mainrc.right;
+			break;
+
+		case 3:
+			toolrc.left = mainrc.left;
+			break;
+
+		case 4:
+			toolrc.left = mainrc.right - cx;
+			break;
+	}
+	switch((connect >> 4) & 0x0f) {
+		case 1:
+			toolrc.top = mainrc.top - cy;
+			break;
+
+		case 2:
+			toolrc.top = mainrc.bottom;
+			break;
+
+		case 3:
+			toolrc.top = mainrc.top;
+			break;
+
+		case 4:
+			toolrc.top = mainrc.bottom - cy;
+			break;
+	}
+	MoveWindow(toolwin.hwnd, toolrc.left, toolrc.top, cx, cy, TRUE);
+}
+#else
 void toolwin_movingstart(void) {
 
 	RECT	mainrc;
@@ -778,6 +993,7 @@ void toolwin_movingend(void) {
 	}
 	toolwin.parentcn = 0;
 }
+#endif
 
 void toolwin_setfdd(BYTE drv, const char *name) {
 
@@ -813,11 +1029,10 @@ void toolwin_setfdd(BYTE drv, const char *name) {
 	}
 	sysmng_update(SYS_UPDATEOSCFG);
 	if (toolwin.hwnd != NULL) {
-		setlist(drv);
+		remakefddlist(drv);
 		SetForegroundWindow(hWndMain);
 	}
 }
-
 
 static void setdiskacc(UINT num, BYTE count) {
 
@@ -887,6 +1102,7 @@ static const char ini_title[] = "NP2 tool";
 static const INITBL iniitem[] = {
 	{"WindposX", INITYPE_SINT32,	&np2tool.posx,			0},
 	{"WindposY", INITYPE_SINT32,	&np2tool.posy,			0},
+	{"SkinFile", INITYPE_STR,		np2tool.skin,			MAX_PATH},
 	{"FD1NAME0", INITYPE_STR,		np2tool.fdd[0].name[0],	MAX_PATH},
 	{"FD1NAME1", INITYPE_STR,		np2tool.fdd[0].name[1],	MAX_PATH},
 	{"FD1NAME2", INITYPE_STR,		np2tool.fdd[0].name[2],	MAX_PATH},

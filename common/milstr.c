@@ -9,19 +9,20 @@ BOOL milstr_cmp(const char *str, const char *cmp) {
 	while(1) {
 		s = (BYTE)*str++;
 		if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			if (s != (BYTE)*cmp++) {
+			c = (BYTE)*cmp++;
+			if (s != c) {
 				goto mscp_err;
 			}
 			s = (BYTE)*str++;
 			c = (BYTE)*cmp++;
 		}
 		else {
-			if (((s - 'A') & 0xff) < 0x1a) {
-				s |= 0x20;
+			if (((s - 'a') & 0xff) < 26) {
+				s -= 0x20;
 			}
 			c = (BYTE)*cmp++;
-			if (((c - 'A') & 0xff) < 0x1a) {
-				c |= 0x20;
+			if (((c - 'a') & 0xff) < 26) {
+				c -= 0x20;
 			}
 		}
 		if (s != c) {
@@ -34,7 +35,7 @@ BOOL milstr_cmp(const char *str, const char *cmp) {
 	return(0);
 
 mscp_err:
-	return(1);
+	return((s > c)?1:-1);
 }
 
 BOOL milstr_memcmp(const char *str, const char *cmp) {
@@ -45,19 +46,20 @@ BOOL milstr_memcmp(const char *str, const char *cmp) {
 	do {
 		c = (BYTE)*cmp++;
 		if ((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			if (c != (BYTE)*str++) {
+			s = (BYTE)*str++;
+			if (c != s) {
 				break;
 			}
 			c = (BYTE)*cmp++;
 			s = (BYTE)*str++;
 		}
 		else if (c) {
-			if (((c - 'A') & 0xff) < 26) {
-				c |= 0x20;
+			if (((c - 'a') & 0xff) < 26) {
+				c &= ~0x20;
 			}
 			s = (BYTE)*str++;
-			if (((s - 'A') & 0xff) < 26) {
-				s |= 0x20;
+			if (((s - 'a') & 0xff) < 26) {
+				s &= ~0x20;
 			}
 		}
 		else {
