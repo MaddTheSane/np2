@@ -771,6 +771,8 @@
 				962EA934060C86D500BD925D,
 				969A21A0063041AE007FE890,
 				96F4749F0632E583006DDB7A,
+				9668EEFC069F4E1B00E35005,
+				9668F292069FB00C00E35005,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1150,6 +1152,34 @@
 		};
 		965751CE05E66FBF002889CD = {
 			fileRef = 965751CD05E66FBF002889CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9668EEFB069F4E1A00E35005 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = gcircle.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9668EEFC069F4E1B00E35005 = {
+			fileRef = 9668EEFB069F4E1A00E35005;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9668F291069FB00C00E35005 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = macclnd.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9668F292069FB00C00E35005 = {
+			fileRef = 9668F291069FB00C00E35005;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1939,6 +1969,7 @@
 		};
 		967C91F9055778CB00000103 = {
 			children = (
+				9668EEFB069F4E1A00E35005,
 				967C91FD055778CB00000103,
 				967C91FE055778CB00000103,
 				967C91FF055778CB00000103,
@@ -2038,6 +2069,7 @@
 				967C9225055778CB00000103,
 				967C9227055778CB00000103,
 				968D8D8C05F532C900CFB890,
+				9668F291069FB00C00E35005,
 				967C922B055778CB00000103,
 				967C922D055778CB00000103,
 				967C922F055778CB00000103,

@@ -40,6 +40,7 @@
 #include	"aboutdlg.h"
 #include	"keystat.h"
 #include	"subwind.h"
+#include	"macclnd.h"
 
 #define	NP2OPENING
 // #define	OPENING_WAIT	1500
@@ -663,6 +664,10 @@ void HandleMenuChoice(long wParam) {
 
         case IDM_S98LOGGING:
             dialog_s98();
+            break;
+
+        case IDM_CALENDAR:
+			initClnd();
             break;
             
 		case IDM_DISPCLOCK:
