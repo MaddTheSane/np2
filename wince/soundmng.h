@@ -10,6 +10,7 @@ enum {
 
 enum {
 	SNDPROC_NP2			= 0,
+	SNDPROC_MAIN,
 	SNDPROC_MENU
 };
 

@@ -306,8 +306,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	pccore_init();
 	S98_init();
 
-	scrndraw_redraw();
 	pccore_reset();
+	scrndraw_redraw();
+
+	sysrunning = TRUE;
 
 	if (np2oscfg.resume) {
 		id = flagload(str_sav, str_resume, FALSE);
@@ -316,8 +318,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			goto np2main_err3;
 		}
 	}
-
-	sysrunning = TRUE;
 
 	while(taskmng_isavail()) {
 		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
@@ -388,7 +388,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 	}
 
-	sysrunning = 0;
+	soundmng_disable(SNDPROC_MAIN);
+	sysrunning = FALSE;
 
 	DestroyWindow(hWnd);
 

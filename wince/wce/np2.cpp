@@ -187,13 +187,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_ACTIVATE:
-			if ((LOWORD(wParam) != WA_INACTIVE) &&
-				((BOOL)HIWORD(wParam) == FALSE)) {
+			if (LOWORD(wParam) != WA_INACTIVE) {
 				GXResume();
 				scrnmng_enable(TRUE);
 				scrndraw_redraw();
+				soundmng_enable(SNDPROC_MAIN);
 			}
 			else {
+				soundmng_disable(SNDPROC_MAIN);
 				scrnmng_enable(FALSE);
 				GXSuspend();
 			}
@@ -345,8 +346,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	pccore_init();
 	S98_init();
 
-	scrndraw_redraw();
 	pccore_reset();
+	scrndraw_redraw();
+
+	sysrunning = TRUE;
 
 	if (np2oscfg.resume) {
 		id = flagload(str_sav, str_resume, FALSE);
@@ -355,8 +358,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			goto np2main_err4;
 		}
 	}
-
-	sysrunning = TRUE;
 
 	while(taskmng_isavail()) {
 		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
@@ -427,6 +428,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 	}
 
+	soundmng_disable(SNDPROC_MAIN);
 	sysrunning = FALSE;
 
 	DestroyWindow(hWnd);
