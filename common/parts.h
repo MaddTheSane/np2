@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+void PARTSCALL rand_setseed(SINT32 seed);
+SINT32 PARTSCALL rand_get(void);
 BYTE PARTSCALL AdjustAfterMultiply(BYTE value);
 BYTE PARTSCALL AdjustBeforeDivision(BYTE value);
 UINT PARTSCALL sjis2jis(UINT sjis);

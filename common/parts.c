@@ -2,6 +2,20 @@
 #include	"parts.h"
 
 
+static	SINT32	randseed = 1;
+
+
+void PARTSCALL rand_setseed(SINT32 seed) {
+
+	randseed = seed;
+}
+
+SINT32 PARTSCALL rand_get(void) {
+
+	randseed = (randseed * 0x343fd) + 0x269ec3;
+	return(randseed >> 16);
+}
+
 BYTE PARTSCALL AdjustAfterMultiply(BYTE value) {
 
 	return((BYTE)(((value / 10) << 4) + (value % 10)));

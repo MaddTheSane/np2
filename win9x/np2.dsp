@@ -799,6 +799,49 @@ SOURCE=.\COMMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\x86\CPUTYPE.X86
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\rel
+InputPath=.\x86\CPUTYPE.X86
+InputName=CPUTYPE
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trc
+InputPath=.\x86\CPUTYPE.X86
+InputName=CPUTYPE
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\dbg
+InputPath=.\x86\CPUTYPE.X86
+InputName=CPUTYPE
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\DCLOCK.CPP
 # End Source File
 # Begin Source File
@@ -1196,6 +1239,14 @@ SOURCE=..\TIMING.C
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\ICONS\Np2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\ICONS\NP2DEBUG.ICO
+# End Source File
 # End Group
 # End Target
 # End Project

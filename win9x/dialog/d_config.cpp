@@ -79,6 +79,13 @@ LRESULT CALLBACK CfgDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			wsprintf(work, str_u, np2cfg.delayms);
 			SetDlgItemText(hWnd, IDC_SOUNDBUF, work);
 
+			if (mmxflag & MMXFLAG_NOTSUPPORT) {
+				EnableWindow(GetDlgItem(hWnd, IDC_DISABLEMMX), FALSE);
+				SetDlgItemCheck(hWnd, IDC_DISABLEMMX, TRUE);
+			}
+			else {
+				SetDlgItemCheck(hWnd, IDC_DISABLEMMX, np2oscfg.disablemmx);
+			}
 			SetDlgItemCheck(hWnd, IDC_COMFIRM, np2oscfg.comfirm);
 			SetDlgItemCheck(hWnd, IDC_RESUME, np2oscfg.resume);
 			SetClock(hWnd);
@@ -141,6 +148,16 @@ LRESULT CALLBACK CfgDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 						soundrenewal = 1;
 						np2cfg.delayms = (WORD)val;
 						update |= SYS_UPDATECFG | SYS_UPDATESBUF;
+					}
+
+					if (!(mmxflag & MMXFLAG_NOTSUPPORT)) {
+						bval = GetDlgItemCheck(hWnd, IDC_DISABLEMMX);
+						if (np2oscfg.disablemmx != bval) {
+							np2oscfg.disablemmx = bval;
+							mmxflag &= ~MMXFLAG_DISABLE;
+							mmxflag |= (bval)?MMXFLAG_DISABLE:0;
+							update |= SYS_UPDATEOSCFG;
+						}
 					}
 
 					bval = GetDlgItemCheck(hWnd, IDC_COMFIRM);

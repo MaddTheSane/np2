@@ -1,8 +1,9 @@
 #include	"compiler.h"
 #include	<time.h>
 #include	<winnls32.h>
-#include	"resource.h"
 #include	"strres.h"
+#include	"parts.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"np2arg.h"
 #include	"dosio.h"
@@ -754,7 +755,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	np2arg_analize(lpszCmdLine);				// タイミング修正	// ver0.29
 	initload();
 
-	srand((unsigned)time(NULL));
+	rand_setseed((unsigned)time(NULL));
 
 	if ((hwndorg = FindWindow(szClassName, NULL)) != NULL) {
 		ShowWindow(hwndorg, SW_RESTORE);

@@ -174,7 +174,7 @@ static INI_ITEM iniitem[] = {
 	{"force400", INI_BOOL,	INI_RO,	&np2oscfg.force400,		0},
 	{"e_resume", INI_BOOL,	0,		&np2oscfg.resume,		0},		// ver0.30
 	{"STATSAVE", INI_BOOL,	INI_RO,	&np2oscfg.statsave,		0},		// ver0.30
-
+	{"nousemmx", INI_BOOL,	0,		&np2oscfg.disablemmx,	0},		// ver0.36
 	{"I286SAVE", INI_BOOL,	INI_RO|INIEND,
 									&np2oscfg.I286SAVE,		0}};
 

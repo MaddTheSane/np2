@@ -52,12 +52,9 @@ typedef struct {
 
 	BYTE	resume;													// ver0.30
 	BYTE	statsave;
-
+	BYTE	disablemmx;
 	BYTE	I286SAVE;
 	BYTE	hostdrv_write;
-
-//	BYTE	MIMPIDEF;		// 0
-//	BYTE	REMOVEHD;		// 0
 } NP2OSCFG;
 
 
@@ -107,11 +104,17 @@ enum {
 	NP2CMD_DUMMY		= 0xffff
 };
 
+enum {
+	MMXFLAG_DISABLE		= 1,
+	MMXFLAG_NOTSUPPORT	= 2
+};
+
 
 extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
+extern	int			mmxflag;
 extern	BYTE		np2break;
 extern	char		modulefile[MAX_PATH];
 extern	char		fddfolder[MAX_PATH];

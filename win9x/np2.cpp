@@ -5,8 +5,10 @@
 #endif
 #include	"resource.h"
 #include	"strres.h"
+#include	"parts.h"
 #include	"np2.h"
 #include	"np2arg.h"
+#include	"cputype.h"
 #include	"dosio.h"
 #include	"extromio.h"
 #include	"commng.h"
@@ -55,6 +57,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
+		int			mmxflag;
 
 		NP2OSCFG	np2oscfg = {
 						"Neko Project II", "NP2",
@@ -66,7 +69,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0};					// ver0.34
+						0, 1, 0, 9801, 0, 0, 0, 0, 0};				// ver0.38
 
 		char	fddfolder[MAX_PATH];
 		char	hddfolder[MAX_PATH];
@@ -1117,7 +1120,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	np2arg_analize(lpszCmdLine);
 	initload();
 
-	srand((unsigned)time(NULL));
+	rand_setseed((unsigned)time(NULL));
 
 	CopyMemory(szClassName, np2oscfg.winid, 3);
 
@@ -1131,6 +1134,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	hInst = hInstance;
 	hPrev = hPreInst;
+	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
+	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
 	TRACEINIT();
 
 	if (np2oscfg.KEYBOARD >= KEY_TYPEMAX) {							// ver0.28

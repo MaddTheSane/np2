@@ -1,13 +1,31 @@
 
+section .data
+
+randseed	dd		1
+
 section .text
 
+	global	@rand_setseed@4
+	global	@rand_get@0
 	global	@AdjustAfterMultiply@4
 	global	@AdjustBeforeDivision@4
 	global	@sjis2jis@4
 	global	@jis2sjis@4
 	global	@satuation_s16@12
 	global	@satuation_s16x@12
+	global	@satuation_s16mmx@12
 
+
+				align	16
+@rand_get@0:	mov		eax, [randseed]
+				imul	eax, 343fdh
+				add		eax, 269ec3h
+				mov		[randseed], eax
+				sar		eax, 16
+				ret
+
+@rand_setseed@4:mov		[randseed], ecx
+				ret
 
 				align	16
 @AdjustAfterMultiply@4:
@@ -101,6 +119,23 @@ ss16xr_set:		mov		[ecx], ax
 				jne		short ss16x_lp
 ss16x_ed:		pop		ebx
 				ret		4
+
+				align		16
+@satuation_s16mmx@12:
+				mov			eax, [esp+4]
+				shr			eax, 3
+				je			short ss16m_ed
+				pxor		mm0, mm0
+ss16m_lp:		movq		mm1, [edx]
+				movq		mm2, [edx+8]
+				packssdw	mm1, mm2
+				lea			edx, [edx+16]
+				movq		[ecx], mm1
+				lea			ecx, [ecx+8]
+				dec			eax
+				jne			short ss16m_lp
+				emms
+ss16m_ed:		ret		4
 
 	ends
 

@@ -58,7 +58,7 @@ COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
 			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
-			-I$(TARGET) -I$(DIALOG) -I$(KEYDISP) -I$(DEBUGUTY)
+			-I$(TARGET) -I$(DIALOG) -I$(KEYDISP) -I$(DEBUGUTY) -I$(X86ASM)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -108,16 +108,16 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
-			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/dosio.o		\
-			$(OBJ)/extromio.o	$(OBJ)/trace.o		$(OBJ)/winloc.o		\
-			$(OBJ)/commng.o		$(OBJ)/cmserial.o	$(OBJ)/cmmidi.o		\
-			$(OBJ)/cmpara.o		$(OBJ)/fontmng.o	$(OBJ)/joymng.o		\
-			$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	$(OBJ)/soundmng.o	\
-			$(OBJ)/sysmng.o		$(OBJ)/taskmng.o	$(OBJ)/timemng.o	\
-			$(OBJ)/juliet.o		$(OBJ)/sstp.o		$(OBJ)/sstpmsg.o	\
-			$(OBJ)/winkbd.o		$(OBJ)/dclock.o		$(OBJ)/dclockd.o	\
-			$(OBJ)/menu.o		$(OBJ)/ini.o		$(OBJ)/np2info.o	\
-			$(OBJ)/np2res.o												\
+			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
+			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
+			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
+			$(OBJ)/cmmidi.o		$(OBJ)/cmpara.o		$(OBJ)/fontmng.o	\
+			$(OBJ)/joymng.o		$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	\
+			$(OBJ)/soundmng.o	$(OBJ)/sysmng.o		$(OBJ)/taskmng.o	\
+			$(OBJ)/timemng.o	$(OBJ)/juliet.o		$(OBJ)/sstp.o		\
+			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
+			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
+			$(OBJ)/np2info.o	$(OBJ)/np2res.o							\
 			$(OBJ)/d_about.o	$(OBJ)/d_config.o	$(OBJ)/d_mpu98.o	\
 			$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	$(OBJ)/d_sound.o	\
 			$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		$(OBJ)/d_bmp.o		\
@@ -537,8 +537,8 @@ $(OBJ)/psggenc.o	:	$(SOUND)/psggenc.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/psggen.h $(KEYDISP)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/psggeng.o	:	$(SOUND)/psggeng.c $(HEADERS) $(SOUND)/sound.h \
-						$(SOUND)/psggen.h
+$(OBJ)/psggeng.o	:	$(SOUND)/psggeng.c $(HEADERS) $(COMMON)/parts.h \
+						$(SOUND)/sound.h $(SOUND)/psggen.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/rhythmc.o	:	$(SOUND)/rhythmc.c $(HEADERS) $(COMMON)/wavefile.h \
@@ -771,8 +771,9 @@ $(OBJ)/fontmake.o	:	$(FONT)/fontmake.c $(HEADERS) $(COMMON)/bmpdata.h \
 
 
 $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(COMMON)/strres.h $(TARGET)/resource.h \
-						$(TARGET)/np2.h $(TARGET)/np2arg.h \
+						$(COMMON)/strres.h $(COMMON)/parts.h \
+						$(TARGET)/resource.h $(TARGET)/np2.h 
+						$(TARGET)/np2arg.h $(X86ASM)/cputype.h \
 						$(TARGET)/dosio.h $(TARGET)/extromio.h \
 						$(TARGET)/commng.h $(TARGET)/joymng.h \
 						$(TARGET)/mousemng.h $(TARGET)/scrnmng.h \
@@ -792,6 +793,9 @@ $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 $(OBJ)/np2arg.o		:	$(TARGET)/np2arg.cpp $(HEADERS) $(TARGET)/np2arg.h \
 						$(TARGET)/dosio.h
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/cputype.oa	:	$(X86ASM)/cputype.x86
+	$(AS) $(AOPT) $< -o $@
 
 $(OBJ)/dosio.o		:	$(TARGET)/dosio.cpp $(HEADERS) $(TARGET)/dosio.h
 	$(CC) $(COPT) -o $@ $<
