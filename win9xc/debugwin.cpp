@@ -119,7 +119,7 @@ static const char memdbgtitle[] = "IA32 - MEMORY MAP";
 
 static const UINT32 mdwinpal[MEMDBG32_PALS] =
 			{0x00333333, 0x00000000, 
-				0x00ffaa00, 0x00ff0000, 0x0000ff00, 0xffffffff};
+				0x00ffaa00, 0x00ff0000, 0x00118811, 0x0000ff00, 0xffffffff};
 
 static UINT32 mdwin_getpal32(CMNPALFN *self, UINT num) {
 

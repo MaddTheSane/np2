@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.18 2004/03/09 18:52:12 yui Exp $	*/
+/*	$Id: interface.c,v 1.19 2004/03/10 23:01:08 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -185,10 +185,19 @@ ia32_step(void)
 }
 
 void CPUCALL
-ia32_interrupt(int vect)
+ia32_interrupt(int vect, int soft)
 {
 
-	INTERRUPT(vect, FALSE, FALSE, 0);
+//	TRACEOUT(("int (%x, %x) PE=%d VM=%d",  vect, soft, CPU_STAT_PM, CPU_STAT_VM86));
+	if (!soft) {
+		INTERRUPT(vect, FALSE, FALSE, 0);
+	}
+	else {
+		if (CPU_STAT_VM86 && (CPU_STAT_IOPL < CPU_IOPL3) && (soft == -1)) {
+			TRACEOUT(("BIOS interrupt: VM86 && IOPL < 3 && INTn"));
+		}
+		INTERRUPT(vect, TRUE, FALSE, 0);
+	}
 }
 
 

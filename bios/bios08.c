@@ -16,7 +16,7 @@ void bios0x08(void) {
 	if (catimcnt == 0) {
 		pic.pi[0].imr |= PIC_SYSTEMTIMER;
 		iocore_out8(0x00, 0x20);
-		CPU_INTERRUPT(7);
+		CPU_INTERRUPT(7, -1);
 	}
 	else {
 		iocore_out8(0x00, 0x20);

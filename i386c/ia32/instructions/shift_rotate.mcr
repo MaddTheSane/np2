@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.7 2004/03/10 15:38:51 monaka Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.8 2004/03/10 23:01:08 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -30,6 +30,8 @@
 #ifndef	IA32_CPU_SHIFT_ROTATE_MCR__
 #define	IA32_CPU_SHIFT_ROTATE_MCR__
 
+/* Pentium!!! - シフトカウント != 1の場合はOVは不変らすい */
+
 /*
  * SAR
  */
@@ -54,8 +56,7 @@ do { \
 	CPU_FLAGL = (UINT8)(A_FLAG | ((s) & 1)); /* C_FLAG */ \
 	if ((d) == 0) { \
 		CPU_FLAGL |= Z_FLAG; \
-	} \
-	if ((d) & 0x80000000) { \
+	} else if ((d) & 0x80000000) { \
 		CPU_FLAGL |= S_FLAG; \
 	} \
 	CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
@@ -64,11 +65,15 @@ do { \
 #define	_BYTE_SARCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
-		(s) = ((SINT8)(s)) >> ((c) - 1); \
+	if ((c)) { \
+		(c)--; \
+		if ((c)) { \
+			(s) = ((SINT8)(s)) >> (c); \
+		} else { \
+			CPU_OV = 0; \
+		} \
 		CPU_FLAGL = (UINT8)((s) & 1); /* C_FLAG */ \
 		(s) = (UINT8)(((SINT8)(s)) >> 1); \
-		CPU_OV = 0; \
 		CPU_FLAGL |= (szpcflag[(UINT8)(s)] | A_FLAG); \
 	} \
 	(d) = (s); \
@@ -77,11 +82,15 @@ do { \
 #define	_WORD_SARCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
-		(s) = ((SINT16)(s)) >> ((c) - 1); \
+	if ((c)) { \
+		(c)--; \
+		if ((c)) { \
+			(s) = ((SINT16)(s)) >> (c); \
+		} else { \
+			CPU_OV = 0; \
+		} \
 		CPU_FLAGL = (UINT8)((s) & 1); /* C_FLAG */ \
 		(s) = (UINT16)(((SINT16)(s)) >> 1); \
-		CPU_OV = 0; \
 		CPU_FLAGL |= szpflag_w[(UINT16)(s)]; \
 	} \
 	(d) = (s); \
@@ -91,10 +100,14 @@ do { \
 do { \
 	(c) &= 0x1f; \
 	if ((c)) { \
-		(s) = ((SINT32)(s)) >> ((c) - 1); \
+		(c)--; \
+		if ((c)) { \
+			(s) = ((SINT32)(s)) >> (c); \
+		} else { \
+			CPU_OV = 0; \
+		} \
 		CPU_FLAGL = (UINT8)((s) & 1); /* C_FLAG */ \
 		(s) = (UINT32)(((SINT32)(s)) >> 1); \
-		CPU_OV = 0; \
 		if ((s) == 0) { \
 			CPU_FLAGL |= Z_FLAG; \
 		} else if ((s) & 0x80000000) { \
@@ -136,15 +149,11 @@ do { \
 #define	_BYTE_SHRCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
-		if ((c) >= 0x10) { \
-			(c) = 10; \
-		} \
+	if ((c)) { \
 		(c)--; \
-		if (c) { \
+		if ((c)) { \
 			(s) >>= (c); \
-		} \
-		else { \
+		} else { \
 			CPU_OV = (s) & 0x80; \
 		} \
 		CPU_FLAGL = (UINT8)((s) & 1); \
@@ -157,9 +166,9 @@ do { \
 #define	_WORD_SHRCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
+	if ((c)) { \
 		(c)--; \
-		if (c) { \
+		if ((c)) { \
 			(s) >>= (c); \
 		} else { \
 			CPU_OV = (s) & 0x8000; \
@@ -174,9 +183,9 @@ do { \
 #define	_DWORD_SHRCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
+	if ((c)) { \
 		(c)--; \
-		if (c) { \
+		if ((c)) { \
 			(s) >>= (c); \
 		} else { \
 			CPU_OV = (s) & 0x80000000; \
@@ -226,10 +235,7 @@ do { \
 #define	_BYTE_SHLCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
-		if ((c) > 0x10) { \
-			(c) = 10; \
-		} \
+	if ((c)) { \
 		if ((c) == 1) { \
 			CPU_OV = ((s) + 0x40) & 0x80; \
 		} \
@@ -243,8 +249,7 @@ do { \
 #define	_WORD_SHLCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
-		CPU_OV = 0; \
+	if ((c)) { \
 		if ((c) == 1) { \
 			CPU_OV = ((s) + 0x4000) & 0x8000; \
 		} \
@@ -259,11 +264,10 @@ do { \
 #define	_DWORD_SHLCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
-	if (c) { \
+	if ((c)) { \
 		(c)--; \
 		if ((c)) { \
 			(s) <<= (c); \
-			CPU_OV = 0; \
 		} else { \
 			CPU_OV = ((s) + 0x40000000) & 0x80000000; \
 		} \
@@ -274,8 +278,7 @@ do { \
 		(s) <<= 1; \
 		if ((s) == 0) { \
 			CPU_FLAGL |= Z_FLAG; \
-		} \
-		if ((s) & 0x80000000) { \
+		} else if ((s) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
 		CPU_FLAGL |= (szpcflag[(UINT8)(s)] & P_FLAG); \
@@ -315,8 +318,7 @@ do { \
 		(d) |= (s) << (32 - (c)); \
 		if ((d) == 0) { \
 			CPU_FLAGL |= Z_FLAG; \
-		} \
-		if ((d) & 0x80000000) { \
+		} else if ((d) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
 		CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
@@ -355,8 +357,7 @@ do { \
 		(d) |= ((s) >> (32 - (c))); \
 		if ((d) == 0) { \
 			CPU_FLAGL |= Z_FLAG; \
-		} \
-		if ((d) & 0x80000000) { \
+		} else if ((d) & 0x80000000) { \
 			CPU_FLAGL |= S_FLAG; \
 		} \
 		CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \

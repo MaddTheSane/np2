@@ -8,6 +8,8 @@
 	__asm { mov		ah, CPU_FLAGL	} \
 	__asm { sahf					}
 
+
+
 #define	BYTE_SAR1(d, s) { \
 	UINT8 _d = (s); \
 	UINT8 _f, _ov; \

@@ -10,7 +10,6 @@
 #include	"beep.h"
 
 
-// #define	uPD71054					// NP2はuPD8253Cベース
 #define	BEEPCOUNTEREX					// BEEPアイドル時のカウンタをα倍に
 
 
@@ -303,12 +302,37 @@ static void IOOUTCALL pit_o77(UINT port, REG8 dat) {
 			beep_modeset();
 		}
 	}
+#if defined(uPD71054)
+	else {
+		TRACEOUT(("multiple latch commands - %x", dat));
+		for (ch=0; ch<3; ch++) {
+			if (dat & (2 << ch)) {
+				if (!(dat & 0x10)) {
+				}
+				if (!(dat & 0x20)) {
+				}
+			}
+		}
+	}
+#endif
 	(void)port;
 }
 
 static REG8 IOINPCALL pit_i71(UINT port) {
 
-	return(pit_getcount((port >> 1) & 3));
+	int		ch;
+
+	ch = (port >> 1) & 3;
+#if defined(uPD71054)
+	if (pit.stat[ch]) {
+		REG8 ret;
+		ret = pit.stat[ch];
+		pit.stat[ch] = 0;
+		TRACEOUT(("stat out -> %d-%x", ch, ret));
+		return(ret);
+	}
+#endif
+	return(pit_getcount(ch));
 }
 
 

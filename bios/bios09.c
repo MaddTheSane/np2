@@ -86,10 +86,10 @@ void bios0x09(void) {
 		}
 		else {
 			if (key == 0x60) {
-				CPU_INTERRUPT(6);
+				CPU_INTERRUPT(6, -1);
 			}
 			else if (key == 0x61) {
-				CPU_INTERRUPT(5);
+				CPU_INTERRUPT(5, -1);
 			}
 			else if (key < 0x70) {
 				code = mem[base + key - 0x0c] << 8;

@@ -280,14 +280,14 @@ void v30x_step(void);
 #define	CPU_STI			i286core.s.r.w.flag |= I_FLAG;						\
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
 
-#define	CPU_INITIALIZE			i286x_initialize
-#define	CPU_DEINITIALIZE		i286x_deinitialize
-#define	CPU_RESET				i286x_reset
-#define	CPU_CLEARPREFETCH		i286x_resetprefetch
-#define	CPU_INTERRUPT(v)		i286x_interrupt(v)
-#define	CPU_EXEC				i286x
-#define	CPU_EXECV30				v30x
-#define	CPU_SHUT				i286x_shut
-#define	CPU_SETEXTSIZE(size)	i286x_setextsize((UINT32)(size) << 20)
-#define	CPU_SETEMM(frame, addr)	i286x_setemm(frame, addr)
+#define	CPU_INITIALIZE				i286x_initialize
+#define	CPU_DEINITIALIZE			i286x_deinitialize
+#define	CPU_RESET					i286x_reset
+#define	CPU_CLEARPREFETCH			i286x_resetprefetch
+#define	CPU_INTERRUPT(vect, soft)	i286x_interrupt(vect)
+#define	CPU_EXEC					i286x
+#define	CPU_EXECV30					v30x
+#define	CPU_SHUT					i286x_shut
+#define	CPU_SETEXTSIZE(size)		i286x_setextsize((UINT32)(size) << 20)
+#define	CPU_SETEMM(frame, addr)		i286x_setemm(frame, addr)
 

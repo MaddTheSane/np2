@@ -49,8 +49,11 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 
 	UINT	mode;
 	UINT8	use[16*256];
+	UINT32	pd[1024];
+	UINT	pdmax;
 	UINT	i, j;
 	UINT32	pde;
+	UINT32	pdea;
 	UINT32	pte;
 	char	str[4];
 
@@ -73,14 +76,34 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 											memdbg32.pal + MEMDBG32_PALBDR);
 	ZeroMemory(use, sizeof(use));
 	if (CPU_STAT_PAGING) {
+		pdmax = 0;
 		for (i=0; i<1024; i++) {
 			pde = cpu_memoryread_d(CPU_STAT_PDE_BASE + (i * 4));
 			if (pde & CPU_PDE_PRESENT) {
-				pde &= CPU_PDE_BASEADDR_MASK;
-				for (j=0; j<1024; j++) {
-					pte = cpu_memoryread_d(pde + (j * 4));
-					if ((pte & CPU_PTE_PRESENT) && (pte < 0x1000000)) {
-						use[pte >> 12] = MEMDBG32_PALPAGE;
+				for (j=0; j<pdmax; j++) {
+					if (!((pde ^ pd[j]) & CPU_PDE_BASEADDR_MASK)) {
+						break;
+					}
+				}
+				if (j < pdmax) {
+					pd[j] |= pde & CPU_PDE_ACCESS;
+				}
+				else {
+					pd[pdmax++] = pde;
+				}
+			}
+		}
+		for (i=0; i<pdmax; i++) {
+			pde = pd[i];
+			pdea = pde & CPU_PDE_BASEADDR_MASK;
+			for (j=0; j<1024; j++) {
+				pte = cpu_memoryread_d(pdea + (j * 4));
+				if ((pte & CPU_PTE_PRESENT) && (pte < 0x1000000)) {
+					if ((pde & CPU_PDE_ACCESS) && (pte & CPU_PTE_ACCESS)) {
+						use[pte >> 12] = MEMDBG32_PALPAGE1;
+					}
+					else if (!use[pte >> 12]) {
+						use[pte >> 12] = MEMDBG32_PALPAGE0;
 					}
 				}
 			}

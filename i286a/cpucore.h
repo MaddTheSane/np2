@@ -288,14 +288,14 @@ void i286a_step(void);
 #define	CPU_CLI			i286acore.s.r.w.flag &= ~I_FLAG;
 #define	CPU_STI			i286acore.s.r.w.flag |= I_FLAG;
 
-#define	CPU_INITIALIZE			i286a_initialize
-#define	CPU_DEINITIALIZE		i286a_deinitialize
-#define	CPU_RESET				i286a_reset
-#define	CPU_CLEARPREFETCH()		
-#define	CPU_INTERRUPT(vect)		i286a_interrupt(vect)
-#define	CPU_EXEC				i286a
-#define	CPU_EXECV30				i286a
-#define	CPU_SHUT				i286a_shut
-#define	CPU_SETEXTSIZE(size)	i286a_setextsize((UINT32)(size) << 20)
-#define	CPU_SETEMM(frame, addr)	i286a_setemm(frame, addr)
+#define	CPU_INITIALIZE				i286a_initialize
+#define	CPU_DEINITIALIZE			i286a_deinitialize
+#define	CPU_RESET					i286a_reset
+#define	CPU_CLEARPREFETCH()			
+#define	CPU_INTERRUPT(vect, soft)	i286a_interrupt(vect)
+#define	CPU_EXEC					i286a
+#define	CPU_EXECV30					i286a
+#define	CPU_SHUT					i286a_shut
+#define	CPU_SETEXTSIZE(size)		i286a_setextsize((UINT32)(size) << 20)
+#define	CPU_SETEMM(frame, addr)		i286a_setemm(frame, addr)
 

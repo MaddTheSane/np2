@@ -1095,18 +1095,31 @@ void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
 
 static UINT32 physicaladdr(UINT32 addr) {
 
+	UINT32	a;
 	UINT32	pde;
 	UINT32	pte;
 
 	if (CPU_STAT_PAGING) {
-		pde = i286_memoryread_d(CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc));
+		a = CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc);
+		pde = i286_memoryread_d(a);
 		if (!(pde & CPU_PDE_PRESENT)) {
 			goto retdummy;
 		}
-		pte = cpu_memoryread_d((pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc));
+#if 0
+		if (!(pde & CPU_PDE_ACCESS)) {
+			i286_memorywrite_d(a, pde | CPU_PDE_ACCESS);
+		}
+#endif
+		a = (pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc);
+		pte = cpu_memoryread_d(a);
 		if (!(pte & CPU_PTE_PRESENT)) {
 			goto retdummy;
 		}
+#if 0
+		if (!(pte & CPU_PTE_ACCESS)) {
+			i286_memorywrite_d(a, pte | CPU_PTE_ACCESS);
+		}
+#endif
 		addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
 	}
 	return(addr);
