@@ -1,8 +1,17 @@
 XCOMM
-XCOMM NP2
+XCOMM read config
 XCOMM
 
 #include "config.tmpl"
+
+
+XCOMM
+XCOMM Endian
+XCOMM
+
+#if defined(BIGENDIAN)
+CFLAGS+= -DWORDS_BIGENDIAN
+#endif
 
 
 XCOMM
@@ -63,7 +72,7 @@ PTHREAD_LIB?= -lpthread
 #endif
 
 
-SYSRESPATH?= $(LIBDIR)/xnp2/font
+SYSRESPATH?= $(LIBDIR)/xnp2
 
 DEFINES= ShmDefines \
 	-DSYSRESPATH=\"$(SYSRESPATH)\" \
@@ -186,8 +195,8 @@ ALLSRCS=	$(ASRCS) $(CSRCS)
 
 ComplexProgramTarget(xnp2)
 
-InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH), $(INSTDATFLAGS))
-InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH), $(INSTDATFLAGS))
+InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
+InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
 
 clean::
 	$(RM) $(OBJS)
