@@ -308,13 +308,13 @@ REG8 lio_gline(GLIO lio) {
 	lp.y1 = (SINT16)LOADINTELWORD(dat.y1);
 	lp.x2 = (SINT16)LOADINTELWORD(dat.x2);
 	lp.y2 = (SINT16)LOADINTELWORD(dat.y2);
+
+	TRACEOUT(("lio_gline %d,%d-%d,%d [%d]", lp.x1, lp.y1, lp.x2, lp.y2, dat.type));
+
 	if (dat.pal == 0xff) {
-		lp.pal = lio->work.fgcolor;
+		dat.pal = lio->work.fgcolor;
 	}
-	else {
-		lp.pal = dat.pal;
-	}
-	if (lp.pal >= lio->draw.palmax) {
+	if (dat.pal >= lio->draw.palmax) {
 		goto gline_err;
 	}
 	pat = 0xffff;
@@ -323,6 +323,7 @@ REG8 lio_gline(GLIO lio) {
 			pat = (GDCPATREVERSE(dat.style[0]) << 8) +
 											GDCPATREVERSE(dat.style[1]);
 		}
+		lp.pal = dat.pal;
 		if (dat.type == 0) {
 			gline(lio, &lp, pat);
 		}
@@ -340,7 +341,16 @@ REG8 lio_gline(GLIO lio) {
 			MEML_READSTR(LOADINTELWORD(dat.seg), LOADINTELWORD(dat.off),
 																tile, leng);
 		}
-		gbox(lio, &lp, tile, leng);
+		if (dat.sw != 1) {
+			lp.pal = dat.pal;
+			gbox(lio, &lp, tile, leng);
+		}
+		else {
+			lp.pal = dat.style[0];
+			gbox(lio, &lp, tile, leng);
+			lp.pal = dat.pal;
+			glineb(lio, &lp, 0xffff);
+		}
 	}
 	else {
 		goto gline_err;
