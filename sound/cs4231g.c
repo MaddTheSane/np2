@@ -11,12 +11,13 @@ extern	CS4231CFG	cs4231cfg;
 
 // ---- •âŠ®‚­‚ç‚¢‚µ‚æ‚¤‚æc
 
-REG8 cs4231_nodecode(void) {
+REG8 cs4231_nodecode(DMACH dmach) {
 
+	(void)dmach;
 	return(0);
 }
 
-static REG8 cs4231_pcm8s(void) {
+static REG8 cs4231_pcm8s(DMACH dmach) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -24,12 +25,12 @@ static REG8 cs4231_pcm8s(void) {
 	UINT32	ctime;
 	UINT	wpos;
 
-	leng = dmac.dmach[0].leng.w;
+	leng = dmach->leng.w;
 	if ((leng >= 2) && (cs4231.bufsize < CS4231_BUFFERS)) {
 		indatas = cs4231.bufsize;
 		ctime = cs4231.curtime;
 		wpos = cs4231.writepos;
-		addr = dmac.dmach[0].adrs.d;
+		addr = dmach->adrs.d;
 		do {
 			while(ctime < cs4231.step) {
 				ctime += cs4231cfg.rate;
@@ -49,8 +50,8 @@ static REG8 cs4231_pcm8s(void) {
 		} while(indatas < CS4231_BUFFERS);
 
 p8s_stop:
-		dmac.dmach[0].leng.w = leng;
-		dmac.dmach[0].adrs.d = addr;
+		dmach->leng.w = leng;
+		dmach->adrs.d = addr;
 		cs4231.bufsize = indatas;
 		cs4231.curtime = ctime;
 		cs4231.writepos = wpos;
@@ -58,7 +59,7 @@ p8s_stop:
 	return((leng < 2)?1:0);
 }
 
-static REG8 cs4231_pcm8m(void) {
+static REG8 cs4231_pcm8m(DMACH dmach) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -67,12 +68,12 @@ static REG8 cs4231_pcm8m(void) {
 	UINT	wpos;
 	SINT16	pcmdata;
 
-	leng = dmac.dmach[0].leng.w;
+	leng = dmach->leng.w;
 	if ((leng > 0) && (cs4231.bufsize < CS4231_BUFFERS)) {
 		indatas = cs4231.bufsize;
 		ctime = cs4231.curtime;
 		wpos = cs4231.writepos;
-		addr = dmac.dmach[0].adrs.d;
+		addr = dmach->adrs.d;
 		do {
 			while(ctime < cs4231.step) {
 				ctime += cs4231cfg.rate;
@@ -93,8 +94,8 @@ static REG8 cs4231_pcm8m(void) {
 		} while(indatas < CS4231_BUFFERS);
 
 p8m_stop:
-		dmac.dmach[0].leng.w = leng;
-		dmac.dmach[0].adrs.d = addr;
+		dmach->leng.w = leng;
+		dmach->adrs.d = addr;
 		cs4231.bufsize = indatas;
 		cs4231.curtime = ctime;
 		cs4231.writepos = wpos;
@@ -102,7 +103,7 @@ p8m_stop:
 	return((leng == 0)?1:0);
 }
 
-static REG8 cs4231_pcm16s(void) {
+static REG8 cs4231_pcm16s(DMACH dmach) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -111,12 +112,12 @@ static REG8 cs4231_pcm16s(void) {
 	UINT	wpos;
 	UINT16	samp;
 
-	leng = dmac.dmach[0].leng.w;
+	leng = dmach->leng.w;
 	if ((leng >= 4) && (cs4231.bufsize < CS4231_BUFFERS)) {
 		indatas = cs4231.bufsize;
 		ctime = cs4231.curtime;
 		wpos = cs4231.writepos;
-		addr = dmac.dmach[0].adrs.d;
+		addr = dmach->adrs.d;
 // TRACEOUT(("addr: %x", addr));
 		do {
 			while(ctime < cs4231.step) {
@@ -139,8 +140,8 @@ static REG8 cs4231_pcm16s(void) {
 		} while(indatas < CS4231_BUFFERS);
 
 p16s_stop:
-		dmac.dmach[0].leng.w = leng;
-		dmac.dmach[0].adrs.d = addr;
+		dmach->leng.w = leng;
+		dmach->adrs.d = addr;
 		cs4231.bufsize = indatas;
 		cs4231.curtime = ctime;
 		cs4231.writepos = wpos;
@@ -148,7 +149,7 @@ p16s_stop:
 	return((leng < 4)?1:0);
 }
 
-static REG8 cs4231_pcm16m(void) {
+static REG8 cs4231_pcm16m(DMACH dmach) {
 
 	SINT32	leng;
 	UINT	indatas;
@@ -157,12 +158,12 @@ static REG8 cs4231_pcm16m(void) {
 	UINT	wpos;
 	UINT16	samp;
 
-	leng = dmac.dmach[0].leng.w;
+	leng = dmach->leng.w;
 	if ((leng >= 2) && (cs4231.bufsize < CS4231_BUFFERS)) {
 		indatas = cs4231.bufsize;
 		ctime = cs4231.curtime;
 		wpos = cs4231.writepos;
-		addr = dmac.dmach[0].adrs.d;
+		addr = dmach->adrs.d;
 		do {
 			while(ctime < cs4231.step) {
 				ctime += cs4231cfg.rate;
@@ -184,8 +185,8 @@ static REG8 cs4231_pcm16m(void) {
 		} while(indatas < CS4231_BUFFERS);
 
 p16m_stop:
-		dmac.dmach[0].leng.w = leng;
-		dmac.dmach[0].adrs.d = addr;
+		dmach->leng.w = leng;
+		dmach->adrs.d = addr;
 		cs4231.bufsize = indatas;
 		cs4231.curtime = ctime;
 		cs4231.writepos = wpos;

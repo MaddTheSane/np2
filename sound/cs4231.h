@@ -1,5 +1,5 @@
 
-typedef REG8 (*CS4231DMA)(void);
+typedef REG8 (*CS4231DMA)(DMACH dmach);
 
 enum {
 	CS4231_BUFFERS	= (1 << 6),
@@ -74,7 +74,7 @@ extern "C" {
 
 extern const CS4231DMA cs4231dec[16];
 
-REG8 cs4231_nodecode(void);
+REG8 cs4231_nodecode(DMACH dmach);
 void cs4231_dma(NEVENTITEM item);
 REG8 DMACCALL cs4231dmafunc(REG8 func);
 

@@ -28,18 +28,22 @@ void cs4231_setvol(UINT vol) {
 
 void cs4231_dma(NEVENTITEM item) {
 
+	DMACH	dmach;
 	REG8	ret;
 	SINT32	cnt;
 
 	if (item->flag & NEVENT_SETEVENT) {
-		if (dmac.dmach[0].leng.w) {
-			sound_sync();
-			ret = cs4231.proc();
-			if ((ret) && (cs4231.reg.pinctrl & 2)) {
-				dmac.dmach[0].leng.w = 0;
-				if (cs4231.dmairq != 0xff) {
-					cs4231.intflag = 1;
-					pic_setirq(cs4231.dmairq);
+		if (cs4231.dmach != 0xff) {
+			dmach = dmac.dmach + cs4231.dmach;
+			if (dmach->leng.w) {
+				sound_sync();
+				ret = cs4231.proc(dmach);
+				if ((ret) && (cs4231.reg.pinctrl & 2)) {
+					dmach->leng.w = 0;
+					if (cs4231.dmairq != 0xff) {
+						cs4231.intflag = 1;
+						pic_setirq(cs4231.dmairq);
+					}
 				}
 			}
 		}
@@ -85,6 +89,8 @@ void cs4231_update(void) {
 
 void cs4231_control(UINT index, REG8 value) {
 
+	DMACH	dmach;
+
 	*(((BYTE *)(&cs4231.reg)) + index) = value;
 	switch(index) {
 		case 8:					// playback data format
@@ -93,13 +99,16 @@ void cs4231_control(UINT index, REG8 value) {
 			break;
 
 		case 9:
-			if ((value & 0x5) == 0x5) {
-				dmac.dmach[0].ready = 1;
+			if (cs4231.dmach != 0xff) {
+				dmach = dmac.dmach + cs4231.dmach;
+				if ((value & 0x5) == 0x5) {
+					dmach->ready = 1;
+				}
+				else {
+					dmach->ready = 0;
+				}
+				dmac_check();
 			}
-			else {
-				dmac.dmach[0].ready = 0;
-			}
-			dmac_check();
 			break;
 	}
 }

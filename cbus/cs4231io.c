@@ -80,13 +80,15 @@ void cs4231io_reset(void) {
 
 	cs4231.enable = 1;
 	cs4231.port = 0xf40;
-	cs4231.adrs = 0x21;
-	cs4231.dmairq = cs4231irq[(cs4231.adrs >> 3) & 3];
+	cs4231.adrs = 0x22;
+	cs4231.dmairq = cs4231irq[(cs4231.adrs >> 3) & 7];
 	cs4231.dmach = cs4231dma[cs4231.adrs & 7];
 	cs4231.step = 22050;
 	if (cs4231.dmach != 0xff) {
 		dmac_attach(DMADEV_CS4231, cs4231.dmach);
 	}
+	TRACEOUT(("CS4231 - IRQ = %d", cs4231.dmairq));
+	TRACEOUT(("CS4231 - DMA channel = %d", cs4231.dmach));
 }
 
 void cs4231io_bind(void) {
@@ -105,7 +107,7 @@ void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
 	switch(port & 0x0f) {
 		case 0:
 			cs4231.adrs = value;
-			cs4231.dmairq = cs4231irq[(value >> 3) & 3];
+			cs4231.dmairq = cs4231irq[(value >> 3) & 7];
 			cs4231.dmach = cs4231dma[value & 7];
 			dmac_detach(DMADEV_CS4231);
 			if (cs4231.dmach != 0xff) {

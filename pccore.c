@@ -199,6 +199,7 @@ static void sound_init(void) {
 	adpcm_setvol(np2cfg.vol_adpcm);
 	pcm86gen_initialize(rate);
 	pcm86gen_setvol(np2cfg.vol_pcm);
+	cs4231_initialize(rate);
 }
 
 static void sound_term(void) {
