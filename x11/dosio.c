@@ -1,7 +1,8 @@
-/*	$Id: dosio.c,v 1.10 2004/02/06 16:51:21 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.11 2004/02/08 07:31:47 monaka Exp $	*/
 
 #include "compiler.h"
 
+#include <sys/stat.h>
 #include <time.h>
 
 #include "codecnv.h"
