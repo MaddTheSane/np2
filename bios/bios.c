@@ -161,7 +161,7 @@ static const UINT16 biosoffset[0x20] = {
 			BIOSOFST_EOIS,	BIOSOFST_EOIS,	BIOSOFST_EOIS,	BIOSOFST_EOIS,
 
 			BIOSOFST_18,	BIOSOFST_19,	BIOSOFST_1a,	BIOSOFST_1b,
-			BIOSOFST_1c,	BIOSOFST_IRET,	BIOSOFST_1e,	BIOSOFST_IRET};
+			BIOSOFST_1c,	BIOSOFST_IRET,	BIOSOFST_1e,	BIOSOFST_1f};
 
 
 void bios_init(void) {
@@ -195,7 +195,7 @@ void bios_init(void) {
 	}
 	SETBIOSMEM16(BIOS_BASE + BIOSOFST_IRET, 0x50cf);
 	SETBIOSMEM16(BIOS_BASE + BIOSOFST_WAIT, 0xcf90);
-	for (i=(BIOS_BASE+BIOSOFST_EOIM); i<=(BIOS_BASE+BIOSOFST_1c); i+=2) {
+	for (i=(BIOS_BASE+BIOSOFST_EOIM); i<=(BIOS_BASE+BIOSOFST_1f); i+=2) {
 		SETBIOSMEM16(i, 0xcf90);
 	}
 	CopyMemory(mem + BIOS_BASE + BIOSOFST_PRT, printmain, sizeof(printmain));
@@ -366,6 +366,10 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 		case BIOS_BASE + BIOSOFST_1c:
 			CPU_REMCLOCK -= 200;
 			bios0x1c();
+			return(1);
+
+		case BIOS_BASE + BIOSOFST_1f:
+			CPU_REMCLOCK -= 200;
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_WAIT:

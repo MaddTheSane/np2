@@ -84,11 +84,13 @@ const char		*p;
 	}
 	fdd = fddfile + drv;
 	switch(ftype) {
+		case FTYPE_FDI:
+			if (fddxdf_setfdi(fdd, fname, ro) == SUCCESS) {
+				return(SUCCESS);
+			}
+
 		case FTYPE_BETA:
 			return(fddxdf_set(fdd, fname, ro));
-
-		case FTYPE_FDI:
-			return(fddxdf_setfdi(fdd, fname, ro));
 
 		case FTYPE_D88:
 			return(fddd88_set(fdd, fname, ro));

@@ -24,6 +24,7 @@ enum {	// オフセット～
 	BIOSOFST_1b		= 0x0118,					// Disk
 	BIOSOFST_1c		= 0x011a,					// Timer
 	BIOSOFST_1e		= 0x0000,					// BASIC
+	BIOSOFST_1f		= 0x011c,					// Ext
 
 	BIOSOFST_PRT	= (BIOSOFST_1a + 0x19),		// Printer Main
 	BIOSOFST_WAIT	= 0x0140					// FDD waiting

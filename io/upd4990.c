@@ -29,6 +29,7 @@ static void IOOUTCALL upd4990_o20(UINT port, REG8 dat) {
 				case 0x01:			// register shift
 					uPD4990.regsft = 1;
 					uPD4990.pos = (UPD4990_REGLEN * 8) - 1;
+					uPD4990.cdat = uPD4990.reg[UPD4990_REGLEN - 1] & 1;
 					break;
 
 				case 0x02:			// time set	/ counter hold

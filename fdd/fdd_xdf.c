@@ -36,7 +36,7 @@ BOOL fddxdf_set(FDDFILE fdd, const char *fname, int ro) {
 const _XDFINFO	*xdf;
 	short		attr;
 	FILEH		fh;
-	UINT		fdsize;
+	UINT32		fdsize;
 	UINT		size;
 
 	attr = file_attr(fname);
@@ -47,7 +47,7 @@ const _XDFINFO	*xdf;
 	if (fh == FILEH_INVALID) {
 		return(FAILURE);
 	}
-	fdsize = file_seek(fh, 0, FSEEK_END);
+	fdsize = file_getsize(fh);
 	file_close(fh);
 
 	xdf = supportxdf;
@@ -72,8 +72,9 @@ BOOL fddxdf_setfdi(FDDFILE fdd, const char *fname, int ro) {
 
 	short	attr;
 	FILEH	fh;
-	FDIHDR	fdi;
+	UINT32	fdsize;
 	UINT	r;
+	FDIHDR	fdi;
 	UINT32	fddtype;
 	UINT32	headersize;
 	UINT32	size;
@@ -88,9 +89,11 @@ BOOL fddxdf_setfdi(FDDFILE fdd, const char *fname, int ro) {
 	if (attr & 0x18) {
 		return(FAILURE);
 	}
+	fdsize = 0;
 	r = 0;
 	fh = file_open_rb(fname);
 	if (fh != FILEH_INVALID) {
+		fdsize = file_getsize(fh);
 		r = file_read(fh, &fdi, sizeof(fdi));
 		file_close(fh);
 	}
@@ -107,6 +110,9 @@ BOOL fddxdf_setfdi(FDDFILE fdd, const char *fname, int ro) {
 		(sectors == 0) || (sectors >= 256) ||
 		(surfaces != 2) ||
 		(cylinders == 0) || (cylinders >= 128)) {
+		return(FAILURE);
+	}
+	if (fdsize != (headersize + (size * sectors * surfaces * cylinders))) {
 		return(FAILURE);
 	}
 	size >>= 8;
