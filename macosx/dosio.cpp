@@ -213,11 +213,11 @@ short file_delete(const char *path) {
 
 short file_attr(const char *path) {
 
-#ifdef TARGET_API_MAC_CARBON
 	Str255			fname;
 	FSSpec			fss;
 	FSRef			fsr;
 	FSCatalogInfo	fsci;
+	short			ret;
 
 	mkstr255(fname, path);
 	if ((FSMakeFSSpec(0, 0, fname, &fss) != noErr) ||
@@ -226,38 +226,16 @@ short file_attr(const char *path) {
 										NULL, NULL, NULL) != noErr)) {
 		return(-1);
 	}
-	else if (fsci.nodeFlags & kFSNodeIsDirectoryMask) {
-		return(FILEATTR_DIRECTORY);
+	if (fsci.nodeFlags & kFSNodeIsDirectoryMask) {
+		ret = FILEATTR_DIRECTORY;
 	}
 	else {
-		return(FILEATTR_ARCHIVE);
+		ret = FILEATTR_ARCHIVE;
 	}
-#else
-	Str255		fname;
-	FSSpec		fss;
-	CInfoPBRec	pb;
-
-	mkstr255(fname, path);
-	FSMakeFSSpec(0, 0, fname, &fss);
-	pb.dirInfo.ioNamePtr = fss.name;
-	pb.dirInfo.ioVRefNum = fss.vRefNum;
-	pb.dirInfo.ioDrDirID = fss.parID;
-	if (fss.name[0] == 0) {
-		pb.dirInfo.ioFDirIndex = -1;
+	if (fsci.nodeFlags & kFSNodeLockedMask) {
+		ret |= FILEATTR_READONLY;
 	}
-	else {
-		pb.dirInfo.ioFDirIndex = 0;
-	}
-	if (PBGetCatInfo(&pb, false) != noErr) {
-		return(-1);
-	}
-	if (pb.hFileInfo.ioFlAttrib & 0x10) {
-		return(FILEATTR_DIRECTORY);
-	}
-	else {
-		return(FILEATTR_ARCHIVE);
-	}
-#endif
+	return(ret);
 }
 
 short file_dircreate(const char *path) {

@@ -111,6 +111,9 @@ static int GetFileExt(char* filename) {
     else if ((!milstr_cmp(p, str_hdi))) {
 			ftype = FTYPE_HDI;
 		}
+    else if ((!milstr_cmp(p, str_hdd))) {
+			ftype = FTYPE_HDD;
+		}
     else if ((!milstr_cmp(p, "xdf")) || (!milstr_cmp(p, "dup")) || (!milstr_cmp(p, "hdm"))) {
         ftype = FTYPE_BETA;
     }

@@ -283,6 +283,7 @@ const SINT32	*src;
 }
 #endif
 
+#ifndef SUPPORT_WAVEMIX
 // --------------------------------------------------------------------------
 #include <QuickTime/Movies.h>
 #include "np2.h"
@@ -352,3 +353,4 @@ void soundmng_pcmstop(UINT num) {
     }
 }
 
+#endif

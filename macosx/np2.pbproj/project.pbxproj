@@ -231,8 +231,6 @@
 		};
 		20286C2CFDCF999611CA2CEA = {
 			children = (
-				961B70290563FB1900000103,
-				961B702A0563FB1900000103,
 				961B70230563FAF800000103,
 				961B70240563FAF800000103,
 				961B70250563FAF800000103,
@@ -510,8 +508,6 @@
 				961B70260563FAF900000103,
 				961B70270563FAF900000103,
 				961B70280563FAF900000103,
-				961B702B0563FB1900000103,
-				961B702C0563FB1900000103,
 				961B71CA05641E6C00000103,
 			);
 			isa = PBXResourcesBuildPhase;
@@ -699,6 +695,16 @@
 				96083FF005A936750005CD33,
 				96E2F92205AF0FFB00E73373,
 				96E2F92305AF0FFB00E73373,
+				9645C29C05BF64CE0090B4FD,
+				9645C29E05BF64F10090B4FD,
+				9645C2A005BF64F60090B4FD,
+				9645C2A205BF64FB0090B4FD,
+				9645C2B705BFA3930090B4FD,
+				9645C2D905BFA3B90090B4FD,
+				9645C2DA05BFA3B90090B4FD,
+				9645C2DB05BFA3B90090B4FD,
+				9645C2DC05BFA3B90090B4FD,
+				9645C2E005BFA3B90090B4FD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -844,34 +850,6 @@
 			settings = {
 			};
 		};
-		961B70290563FB1900000103 = {
-			isa = PBXFileReference;
-			lastKnownFileType = audio.wav;
-			name = fddseek.wav;
-			path = Icon/fddseek.wav;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		961B702A0563FB1900000103 = {
-			isa = PBXFileReference;
-			lastKnownFileType = audio.wav;
-			name = fddseek1.wav;
-			path = Icon/fddseek1.wav;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		961B702B0563FB1900000103 = {
-			fileRef = 961B70290563FB1900000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		961B702C0563FB1900000103 = {
-			fileRef = 961B702A0563FB1900000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		961B71C905641E6C00000103 = {
 			isa = PBXFileReference;
 			lastKnownFileType = image.icns;
@@ -881,6 +859,159 @@
 		};
 		961B71CA05641E6C00000103 = {
 			fileRef = 961B71C905641E6C00000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C29B05BF64CE0090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sxsibios.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C29C05BF64CE0090B4FD = {
+			fileRef = 9645C29B05BF64CE0090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C29D05BF64F10090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sasiio.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C29E05BF64F10090B4FD = {
+			fileRef = 9645C29D05BF64F10090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C29F05BF64F60090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = scsicmd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2A005BF64F60090B4FD = {
+			fileRef = 9645C29F05BF64F60090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2A105BF64FB0090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = scsiio.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2A205BF64FB0090B4FD = {
+			fileRef = 9645C2A105BF64FB0090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2B605BFA3930090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = wavemix.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2B705BFA3930090B4FD = {
+			fileRef = 9645C2B605BFA3930090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2D005BFA3B90090B4FD = {
+			children = (
+				9645C2D105BFA3B90090B4FD,
+				9645C2D205BFA3B90090B4FD,
+				9645C2D305BFA3B90090B4FD,
+				9645C2D405BFA3B90090B4FD,
+				9645C2D805BFA3B90090B4FD,
+			);
+			isa = PBXGroup;
+			path = getsnd;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2D105BFA3B90090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getmp3.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2D205BFA3B90090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getogg.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2D305BFA3B90090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getsmix.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2D405BFA3B90090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getsnd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2D805BFA3B90090B4FD = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getwave.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9645C2D905BFA3B90090B4FD = {
+			fileRef = 9645C2D105BFA3B90090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2DA05BFA3B90090B4FD = {
+			fileRef = 9645C2D205BFA3B90090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2DB05BFA3B90090B4FD = {
+			fileRef = 9645C2D305BFA3B90090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2DC05BFA3B90090B4FD = {
+			fileRef = 9645C2D405BFA3B90090B4FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9645C2E005BFA3B90090B4FD = {
+			fileRef = 9645C2D805BFA3B90090B4FD;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1088,6 +1219,7 @@
 				967C916F055778CB00000103,
 				967C9170055778CB00000103,
 				967C9171055778CB00000103,
+				9645C29B05BF64CE0090B4FD,
 			);
 			isa = PBXGroup;
 			name = bios;
@@ -1205,6 +1337,9 @@
 				967C918A055778CB00000103,
 				967C918C055778CB00000103,
 				967C918E055778CB00000103,
+				9645C29D05BF64F10090B4FD,
+				9645C29F05BF64F60090B4FD,
+				9645C2A105BF64FB0090B4FD,
 			);
 			isa = PBXGroup;
 			name = cbus;
@@ -2187,6 +2322,7 @@
 		};
 		967C9275055778CC00000103 = {
 			children = (
+				9645C2D005BFA3B90090B4FD,
 				967C929A055778CC00000103,
 				967C9277055778CC00000103,
 				967C9278055778CC00000103,
@@ -2210,6 +2346,7 @@
 				967C9295055778CC00000103,
 				967C9298055778CC00000103,
 				967C9299055778CC00000103,
+				9645C2B605BFA3930090B4FD,
 			);
 			isa = PBXGroup;
 			name = sound;

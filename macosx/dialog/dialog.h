@@ -1,6 +1,7 @@
 enum {
 	OPEN_FDD	= 0,
-	OPEN_HDD,
+	OPEN_SASI,
+	OPEN_SCSI,
 	OPEN_FONT,
 	OPEN_INI
 };

@@ -40,8 +40,6 @@ static const char str_egc[] = "EGC CG-Window ";
 static const char *grcgchip[4] = {str_null, str_grcg, str_grcgcgwin, str_egc};
 
 
-extern	int		usesound;
-
 #ifdef __cplusplus
 extern "C" {
 #endif

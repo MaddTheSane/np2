@@ -26,7 +26,6 @@
 #include	"s98.h"
 #include	"diskdrv.h"
 #include	"fddfile.h"
-#include	"statsave.h"
 #include	"mousemng.h"
 #include	"configure.h"
 #include	"screenopt.h"
@@ -743,10 +742,12 @@ int main(int argc, char *argv[]) {
 	S98_init();
 
     hid_init();
+#ifndef SUPPORT_WAVEMIX
 	if (soundmng_initialize() == SUCCESS) {
 		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
+#endif
 
 #if defined(NP2GCC)
 	mousemng_initialize();
@@ -865,8 +866,9 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
 	mousemng_disable(MOUSEPROC_SYSTEM);
 #endif
-
+#ifndef SUPPORT_WAVEMIX
 	soundmng_deinitialize();
+#endif
 	scrnmng_destroy();
 
 	if (sys_updates & (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
@@ -1177,7 +1179,7 @@ static void toggleFullscreen(void) {
         np2oscfg.winx = bounds.left;
         np2oscfg.winy = bounds.top;
         DisposeWindow(hWndMain);
-        BeginFullScreen(&bkfullscreen, 0, &w, &h, &hWndMain, NULL, fullScreenAllowEvents);	
+        BeginFullScreen(&bkfullscreen, 0, &w, &h, &hWndMain, NULL, fullScreenAllowEvents | fullScreenCaptureDisplay);	
         DisableMenuItem(menu, IDM_ROLNORMAL);
         DisableMenuItem(menu, IDM_ROLLEFT);
         DisableMenuItem(menu, IDM_ROLRIGHT);

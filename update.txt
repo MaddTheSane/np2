@@ -41,6 +41,11 @@
 　　・テンキーの [+] [/] の修正
 　　・file_attr()で FILEATTR_READONLY を返すように…
 
+　(MacOSX)
+　　・テンキーの [+] [/] の修正
+　　・file_attr()で FILEATTR_READONLY を返すように…
+　　・ToolWindowとか
+
 
 　・内部変更
 　　　pccore.h の中で statsave.hをインクルード

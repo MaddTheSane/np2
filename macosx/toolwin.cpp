@@ -936,7 +936,7 @@ static void openpopup(Point location) {
         switch (sel) {
             case 1:
                 if(dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_INI)) {
-                    if (file_getftype(fname)==FTYPE_TEXT) {
+                    if (file_getftype(fname)==FTYPE_INI) {
                         strcpy(np2tool.skin, fname);
                         skinchange(true);
                     }

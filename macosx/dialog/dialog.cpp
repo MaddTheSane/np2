@@ -121,12 +121,17 @@ static pascal Boolean NavLaunchServicesFilterProc( AEDesc* theItem, void* info, 
                             showItem = true;
                         }
                         break;
-                    case OPEN_HDD:
+                    case OPEN_SASI:
                         if (ret == FTYPE_THD || ret == FTYPE_HDI) {
                             showItem = true;
                         }
                         break;
-                    case OPEN_FONT:
+                     case OPEN_SCSI:
+                        if (ret == FTYPE_HDD) {
+                            showItem = true;
+                        }
+                        break;
+                   case OPEN_FONT:
                         if (ret == FTYPE_BMP || ret == FTYPE_SMIL) {
                             showItem = true;
                         }
@@ -282,11 +287,24 @@ void dialog_changehdd(BYTE drv) {
 
 	char	fname[MAX_PATH];
 
-	if (drv < 2) {
-		if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_HDD)) {
-            if (file_getftype(fname)==FTYPE_HDI || file_getftype(fname)==FTYPE_THD) {
-                diskdrv_sethdd(drv, fname);
-            }
+	if (!(drv & 0x20)) {		// SASI/IDE
+		if (drv < 2) {
+			if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_SASI)) {
+				if (file_getftype(fname)==FTYPE_HDI || file_getftype(fname)==FTYPE_THD) {
+					sysmng_update(SYS_UPDATEOSCFG);
+					diskdrv_sethdd(drv, fname);
+				}
+			}
+		}
+	}
+	else {						// SCSI
+		if ((drv & 0x0f) < 4) {
+			if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_SCSI)) {
+				if (file_getftype(fname)==FTYPE_HDD) {
+					sysmng_update(SYS_UPDATEOSCFG);
+					diskdrv_sethdd(drv, fname);
+				}
+			}
 		}
 	}
 }

@@ -8,10 +8,10 @@
 #include	"macnewdisk.h"
 
 static	WindowRef	diskWin;
-static	SInt32	targetDisk, media, hdsize;
+static	SInt32	targetDisk, media, hdsize, hddtype;
 static	char	disklabel[256];
 enum {kTabMasterSig = 'ScrT',kTabMasterID = 1000,kTabPaneSig= 'ScTb'};
-#define	kMaxNumTabs 2
+#define	kMaxNumTabs 4
 static UInt16		lastPaneSelected = 1;
 #define	getControlValue(a,b)		GetControl32BitValue(getControlRefByID(a,b,diskWin))
 
@@ -30,25 +30,37 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
         GetEventParameter(event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd);
         switch (cmd.commandID)
         {
-            case 'hdsz':
-                data = getControlValue(cmd.commandID,1)-1;
+            case 'hds2':
+                data = getControlValue('hdsz', 3)-1;
                 sprintf(outstr, "%d", defaultsize[data]);
-                SetControlData(getControlRefByID(cmd.commandID,0,diskWin),kControlNoPart,kControlStaticTextTextTag,strlen(outstr),outstr);
-                Draw1Control(getControlRefByID(cmd.commandID,0,diskWin));
+                SetControlData(getControlRefByID('hdsz',2,diskWin),kControlNoPart,kControlStaticTextTextTag,strlen(outstr),outstr);
+                Draw1Control(getControlRefByID('hdsz',2,diskWin));
+                break;
+				
+            case 'hds4':
+                data = getControlValue('hdsz', 5)-1;
+                sprintf(outstr, "%d", defaultsize[data]);
+                SetControlData(getControlRefByID('hdsz',4,diskWin),kControlNoPart,kControlStaticTextTextTag,strlen(outstr),outstr);
+                Draw1Control(getControlRefByID('hdsz',4,diskWin));
                 break;
 
             case kHICommandOK:
                 targetDisk = getControlValue(kTabMasterSig, kTabMasterID);
                 getFieldText(getControlRefByID('fdlb', 0, diskWin), disklabel);
                 media = getControlValue('fdty', 0);
-                data = getFieldValue(getControlRefByID('hdsz', 0, diskWin));
-                if (data < 0) {
-                    data = 0;
-                }
-                else if (data > 512) {
-                    data = 512;
-                }
-                hdsize = data;
+				if (targetDisk==2 || targetDisk==4) {
+					data = getFieldValue(getControlRefByID('hdsz', targetDisk, diskWin));
+					if (data < 0) {
+						data = 0;
+					}
+					else if (data > 512) {
+						data = 512;
+					}
+					hdsize = data;
+				}
+				else if (targetDisk==3) {
+					hdsize = getControlValue('hdsz', 20)-1;
+				}
                 QuitAppModalLoopForWindow(diskWin);
                 err=noErr;
                 break;
@@ -79,8 +91,8 @@ static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, 
         if (ret == 1) {
             focus = getControlRefByID('fdlb', 0, theWindow);
         }
-        else {
-            focus = getControlRefByID('hdsz', 0, theWindow);
+        else if (ret == 2 || ret == 4) {
+            focus = getControlRefByID('hdsz', ret, theWindow);
         }
         SetKeyboardFocus(theWindow, focus, kControlFocusNextPart);
         lastPaneSelected = ret;
@@ -134,7 +146,19 @@ void newdisk(void) {
     else if (targetDisk == 2) {
         if (dialog_filewriteselect('.THD', "Newdisk.thd", &fss, diskWin)) {
             fsspec2path(&fss, fname, sizeof(fname));
-            newdisk_hdd(fname, hdsize);
+            newdisk_thd(fname, hdsize);
+        }
+    }
+    else if (targetDisk == 3) {
+        if (dialog_filewriteselect('.HDI', "Newdisk.hdi", &fss, diskWin)) {
+            fsspec2path(&fss, fname, sizeof(fname));
+            newdisk_hdi(fname, hddtype);
+        }
+    }
+    else if (targetDisk == 4) {
+        if (dialog_filewriteselect('.HDD', "Newdisk.hdd", &fss, diskWin)) {
+            fsspec2path(&fss, fname, sizeof(fname));
+            newdisk_vhd(fname, hdsize);
         }
     }
     HideWindow(diskWin);
