@@ -39,7 +39,7 @@ HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
 
 CPUCORES	=	$(I386C)/cpucore.h $(I386C)/memory.h
 
-PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
+PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h $(BASE)/statsave.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
@@ -71,6 +71,20 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/textfile.o	$(OBJ)/profile.o	$(OBJ)/rect.o		\
 			$(OBJ)/lstarray.o	$(OBJ)/bmpdata.o	$(OBJ)/mimpidef.o	\
 			$(OBJ)/parts.o												\
+			$(OBJ)/cpu.o		$(OBJ)/cpu_io.o		$(OBJ)/cpu_mem.o	\
+			$(OBJ)/ctrlxfer.o	$(OBJ)/exception.o	$(OBJ)/groups.o		\
+			$(OBJ)/cpucore.o	$(OBJ)/memory.o		$(OBJ)/egcmem.o		\
+			$(OBJ)/dmap.o												\
+			$(OBJ)/ia32.o		$(OBJ)/inst_table.o	$(OBJ)/interface.o	\
+			$(OBJ)/paging.o		$(OBJ)/resolve.o	$(OBJ)/segments.o	\
+			$(OBJ)/task.o		$(OBJ)/iadebug.o						\
+			$(OBJ)/bin_arith.o		$(OBJ)/bit_byte.o					\
+			$(OBJ)/ctrl_trans.o		$(OBJ)/data_trans.o					\
+			$(OBJ)/dec_arith.o		$(OBJ)/flag_ctrl.o					\
+			$(OBJ)/logic_arith.o	$(OBJ)/misc_inst.o					\
+			$(OBJ)/seg_reg.o		$(OBJ)/shift_rotate.o				\
+			$(OBJ)/string_inst.o	$(OBJ)/system_inst.o				\
+			$(OBJ)/fpdummy.o											\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
 			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
@@ -80,7 +94,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/np2sysp.o	$(OBJ)/pic.o		$(OBJ)/pit.o		\
 			$(OBJ)/printif.o	$(OBJ)/serial.o		$(OBJ)/sysport.o	\
 			$(OBJ)/upd4990.o											\
-			$(OBJ)/cbuscore.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
+			$(OBJ)/cbuscore.o	$(OBJ)/sasiio.o		$(OBJ)/scsiio.o		\
+			$(OBJ)/scsicmd.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
 			$(OBJ)/board14.o	$(OBJ)/board26k.o	$(OBJ)/board86.o	\
 			$(OBJ)/boardx2.o	$(OBJ)/board118.o	$(OBJ)/boardspb.o	\
 			$(OBJ)/amd98.o		$(OBJ)/pcm86io.o	$(OBJ)/cs4231io.o	\
@@ -91,6 +106,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/bios09.o		$(OBJ)/bios0c.o		$(OBJ)/bios12.o		\
 			$(OBJ)/bios13.o		$(OBJ)/bios18.o		$(OBJ)/bios19.o		\
 			$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		$(OBJ)/bios1c.o		\
+			$(OBJ)/sxsibios.o											\
 			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/wavemix.o	\
 			$(OBJ)/fmboard.o	$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		\
 			$(OBJ)/beepg.o		$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	\
@@ -112,6 +128,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmjasts.o	$(OBJ)/cmver.o		$(OBJ)/dipswbmp.o	\
+			$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o						\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/dosio.o		\
 			$(OBJ)/trace.o		$(OBJ)/commng.o		$(OBJ)/fontmng.o	\
 			$(OBJ)/joymng.o		$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	\
@@ -122,21 +139,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/d_screen.o	$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		\
 			$(OBJ)/d_disk.o		$(OBJ)/d_bmp.o		$(OBJ)/dialogs.o	\
 			$(OBJ)/pccore.o		$(OBJ)/nevent.o		$(OBJ)/calendar.o	\
-			$(OBJ)/timing.o		$(OBJ)/statsave.o	$(OBJ)/debugsub.o	\
-			$(OBJ)/cpucore.o	$(OBJ)/memory.o		$(OBJ)/egcmem.o		\
-			$(OBJ)/dmap.o												\
-			$(OBJ)/cpu.o		$(OBJ)/cpu_io.o		$(OBJ)/cpu_mem.o	\
-			$(OBJ)/ctrlxfer.o	$(OBJ)/exception.o	$(OBJ)/groups.o		\
-			$(OBJ)/ia32.o		$(OBJ)/inst_table.o	$(OBJ)/interface.o	\
-			$(OBJ)/paging.o		$(OBJ)/resolve.o	$(OBJ)/segments.o	\
-			$(OBJ)/task.o		$(OBJ)/iadebug.o						\
-			$(OBJ)/bin_arith.o		$(OBJ)/bit_byte.o		\
-			$(OBJ)/ctrl_trans.o		$(OBJ)/data_trans.o		\
-			$(OBJ)/dec_arith.o		$(OBJ)/flag_ctrl.o		\
-			$(OBJ)/logic_arith.o	$(OBJ)/misc_inst.o		\
-			$(OBJ)/seg_reg.o		$(OBJ)/shift_rotate.o	\
-			$(OBJ)/string_inst.o	$(OBJ)/system_inst.o	\
-			$(OBJ)/fpdummy.o
+			$(OBJ)/timing.o		$(OBJ)/statsave.o	$(OBJ)/debugsub.o
 
 NP2LIB	= -lddraw -ldxguid -ldsound -lwinmm -lcomctl32 -mwindows
 NP2BIN	= $(BIN)/np2.exe
@@ -198,6 +201,9 @@ $(OBJ)/codecnv.o	:	$(COMMON)/codecnv.c $(HEADERS) $(COMMON)/codecnv.h
 
 $(OBJ)/parts.o		:	$(COMMON)/parts.c $(HEADERS) $(COMMON)/codecnv.h
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/parts.oa		:	$(X86ASM)/parts.x86
+	$(AS) $(AOPT) $< -o $@
 
 
 
@@ -307,6 +313,23 @@ $(OBJ)/upd4990.o	:	$(IO)/upd4990.c $(HEADERS) $(PCCORES) $(IOCORES) \
 
 $(OBJ)/cbuscore.o	:	$(CBUS)/cbuscore.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(CBUS)/cbuscore.h $(CBUS)/pc9861k.h $(CBUS)/mpu98ii.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/sasiio.o		:	$(CBUS)/sasiio.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/sasiio.h $(FDD)/sxsi.h $(CBUS)/sasibios.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scsiio.o		:	$(CBUS)/scsiio.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/scsiio.h $(CBUS)/scsiio.tbl \
+						$(CBUS)/scsicmd.h $(CBUS)/scsibios.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scsicmd.o	:	$(CBUS)/scsicmd.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/scsiio.h $(CBUS)/scsiio.tbl \
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pc9861k.o	:	$(CBUS)/pc9861k.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -428,6 +451,11 @@ $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h 
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/sxsibios.o	:	$(BIOS)/sxsibios.c $(HEADERS) $(PCCORES) \
+						$(BIOS)/bios.h $(BIOS)/biosmem.h $(BIOS)/sxsibios.h \
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/sound.o		:	$(SOUND)/sound.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -481,6 +509,9 @@ $(OBJ)/opngenc.o	:	$(SOUND)/opngenc.c $(HEADERS) $(PCCORES) $(IOCORES) \
 $(OBJ)/opngeng.o	:	$(SOUND)/opngeng.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(FMBOARDS) $(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/opngeng.oa	:	$(X86ASM)/opngeng.x86
+	$(AS) $(AOPT) $< -o $@
 
 $(OBJ)/psggenc.o	:	$(SOUND)/psggenc.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/psggen.h $(GENERIC)/keydisp.h
@@ -555,16 +586,17 @@ $(OBJ)/midtable.o	:	$(VERMOUTH)/midtable.c $(HEADERS) $(VERMOUTHS)
 $(OBJ)/getsnd.o		:	$(GETSND)/getsnd.c $(HEADERS) $(GETSND)/getsnd.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/getwave.o	:	$(GETSND)/getwave.c $(HEADERS) $(GETSND)/getsnd.c
+$(OBJ)/getwave.o	:	$(GETSND)/getwave.c $(HEADERS) $(GETSND)/getsnd.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/getmp3.o		:	$(GETSND)/getmp3.c $(HEADERS) $(GETSND)/getsnd.c
+$(OBJ)/getmp3.o		:	$(GETSND)/getmp3.c $(HEADERS) $(GETSND)/getsnd.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/getogg.o		:	$(GETSND)/getogg.c $(HEADERS) $(GETSND)/getsnd.c
+$(OBJ)/getogg.o		:	$(GETSND)/getogg.c $(HEADERS) $(GETSND)/getsnd.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/getsmix.o	:	$(GETSND)/getsmix.c $(HEADERS) $(GETSND)/getsnd.c
+$(OBJ)/getsmix.o	:	$(GETSND)/getsmix.c $(HEADERS) $(GETSND)/getsnd.h \
+						$(GETSND)/getsndmn.mcr $(GETSND)/getsndst.mcr
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -610,6 +642,9 @@ $(OBJ)/makegrph.o	:	$(VRAM)/makegrph.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(VRAM)/dispsync.h $(VRAM)/makegrph.h \
 						$(VRAM)/makegrph.mcr
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/makegrph.oa	:	$(X86ASM)/makegrph.x86
+	$(AS) $(AOPT) $< -o $@
 
 $(OBJ)/scrnbmp.o	:	$(VRAM)/scrnbmp.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/bmpdata.h $(VRAM)/scrndraw.h \
@@ -734,6 +769,20 @@ $(OBJ)/fontmake.o	:	$(FONT)/fontmake.c $(HEADERS) $(COMMON)/bmpdata.h \
 
 
 
+$(OBJ)/cmndraw.o	:	$(GENERIC)/cmndraw.c $(HEADERS) \
+						$(TARGET)/scrnmng.h $(GENERIC)/cmndraw.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/keydisp.o	:	$(GENERIC)/keydisp.c $(HEADERS) $(PCCORES) \
+						$(IOCORES) $(FMBOARDS) $(SOUND)/sound.h \
+						$(GENERIC)/cmndraw.h $(GENERIC)/keydisp.h \
+						$(GENERIC)/keydisp.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
+						$(GENERIC)/dipswbmp.h $(GENERIC)/dipswbmp.res
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/cmjasts.o	:	$(GENERIC)/cmjasts.c $(HEADERS) $(CPUCORES) \
 						$(TARGET)/commng.h $(SOUND)/sound.h \
 						$(GENERIC)/cmjasts.h
@@ -744,8 +793,14 @@ $(OBJ)/cmver.o		:	$(GENERIC)/cmver.c $(HEADERS) $(TARGET)/commng.h \
 						$(GENERIC)/keydisp.h $(GENERIC)/cmver.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
-						$(GENERIC)/dipswbmp.h $(GENERIC)/dipswbmp.res
+$(OBJ)/hostdrv.o	:	$(GENERIC)/hostdrv.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrv.tbl $(GENERIC)/hostdrvs.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -753,8 +808,7 @@ $(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
 $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/strres.h $(COMMON)/parts.h \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
-						$(TARGET)/np2arg.h \
-						$(TARGET)/dosio.h \
+						$(TARGET)/np2arg.h $(TARGET)/dosio.h \
 						$(TARGET)/commng.h $(TARGET)/joymng.h \
 						$(TARGET)/mousemng.h $(TARGET)/scrnmng.h \
 						$(TARGET)/soundmng.h $(TARGET)/sysmng.h \
@@ -780,7 +834,7 @@ $(OBJ)/trace.o		:	$(TARGET)/trace.cpp $(HEADERS) $(COMMON)/strres.h \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/commng.o		:	$(TARGET)/commng.cpp $(HEADERS) $(TARGET)/np2.h \
-						$(TARGET)/commng.h 
+						$(TARGET)/commng.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fontmng.o	:	$(TARGET)/fontmng.cpp $(HEADERS) $(TARGET)/fontmng.h
@@ -938,8 +992,7 @@ $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(VRAM)/palettes.h $(VRAM)/maketext.h \
 						$(SOUND)/sound.h $(SOUND)/fmboard.h $(SOUND)/beep.h \
 						$(FONT)/font.h $(FDD)/fddfile.h $(FDD)/fdd_mtr.h \
-						$(FDD)/sxsi.h $(BASE)/calendar.h $(BASE)/statsave.h \
-						$(GENERIC)/keydisp.h
+						$(FDD)/sxsi.h $(BASE)/calendar.h $(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/debugsub.o	:	$(BASE)/debugsub.c $(HEADERS) $(PCCORES) $(IOCORES) \

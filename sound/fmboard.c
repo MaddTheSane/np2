@@ -20,7 +20,10 @@
 #include	"keydisp.h"
 
 
-	int			usesound = 0;
+	UINT32		usesound;
+	OPN_T		opn;
+	AMD98		amd98;
+	MUSICGEN	musicgen;
 
 	_TMS3631	tms3631;
 	_FMTIMER	fmtimer;
@@ -35,21 +38,16 @@
 	_CS4231		cs4231;
 
 
-	OPN_T		opn;
-	AMD98		amd98;
-	MUSICGEN	musicgen;
-
-
 static void	(*extfn)(REG8 enable);
 
 
 // ----
 
-static	BYTE	rapids = 0;
+static	REG8	rapids = 0;
 
-BYTE fmboard_getjoy(PSGGEN psg) {
+REG8 fmboard_getjoy(PSGGEN psg) {
 
-	BYTE	ret;
+	REG8	ret;
 
 	rapids ^= 0xf0;											// ver0.28
 	ret = 0xff;
@@ -102,23 +100,22 @@ void fmboard_extenable(REG8 enable) {
 
 // ----
 
-void fmboard_reset(BYTE num) {
+void fmboard_reset(UINT32 type) {
 
 	BYTE	cross;
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
 	cross = np2cfg.snd_x;										// ver0.30
-	usesound = num;
 
 	extfn = NULL;
 	ZeroMemory(&opn, sizeof(opn));
-	ZeroMemory(&musicgen, sizeof(musicgen));
-	ZeroMemory(&amd98, sizeof(amd98));
-
 	opn.channels = 3;
 	opn.adpcmmask = (BYTE)~(0x1c);
 	opn.reg[0xff] = 0x01;
+
+	ZeroMemory(&musicgen, sizeof(musicgen));
+	ZeroMemory(&amd98, sizeof(amd98));
 
 	tms3631_reset(&tms3631);
 	opngen_reset();
@@ -130,7 +127,7 @@ void fmboard_reset(BYTE num) {
 	pcm86_reset();
 	cs4231_reset();
 
-	switch(num) {
+	switch(usesound) {
 		case 0x01:
 			board14_reset();
 			break;
@@ -170,11 +167,12 @@ void fmboard_reset(BYTE num) {
 			break;
 
 		default:
-			usesound = 0;
+			type = 0;
 			break;
 	}
+	usesound = type;
 	soundmng_setreverse(cross);
-	keydisp_setfmboard(num);
+	keydisp_setfmboard(type);
 	opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
 }
 

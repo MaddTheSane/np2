@@ -5,7 +5,6 @@
 #include	"sysmng.h"
 #include	"timemng.h"
 #include	"cpucore.h"
-#include	"np2ver.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
@@ -29,12 +28,13 @@
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
-#include	"calendar.h"
-#include	"timing.h"
-#include	"debugsub.h"
 #if defined(SUPPORT_HOSTDRV)
 #include	"hostdrv.h"
 #endif
+#include	"np2ver.h"
+#include	"calendar.h"
+#include	"timing.h"
+#include	"debugsub.h"
 
 
 	const char	np2version[] = NP2VER_CORE;
@@ -176,7 +176,9 @@ static void pccore_set(void) {
 	pccore.midiclock = pccore.realclock / 3125;
 
 	// 拡張メモリ
-	pccore.extmem = 0;
+	if (!(np2cfg.dipsw[2] & 0x80)) {
+		pccore.extmem = np2cfg.EXTMEM;
+	}
 
 	// HDDの接続 (I/Oの使用状態が変わるので..
 	if (np2cfg.dipsw[1] & 0x20) {
@@ -291,6 +293,8 @@ void pccore_term(void) {
 	mpu98ii_destruct();
 
 	sxsi_trash();
+
+	CPU_DEINITIALIZE();
 }
 
 
@@ -315,6 +319,13 @@ void pccore_reset(void) {
 
 	int		i;
 
+	soundmng_stop();
+	if (soundrenewal) {
+		soundrenewal = 0;
+		sound_term();
+		sound_init();
+	}
+
 	ZeroMemory(mem, 0x10fff0);									// ver0.28
 	ZeroMemory(mem + VRAM1_B, 0x18000);
 	ZeroMemory(mem + VRAM1_E, 0x08000);
@@ -334,31 +345,25 @@ void pccore_reset(void) {
 	fddfile_reset2dmode();
 	bios0x18_16(0x20, 0xe1);
 
-	soundmng_stop();
-	if (soundrenewal) {
-		soundrenewal = 0;
-		sound_term();
-		sound_init();
+	pccore_set();
+	nevent_init();
+	CPU_SETEXTMEM(pccore.extmem);
+	if (pccore.model & PCMODEL_EPSON) {			// RAM ctrl
+		CPU_RAM_D000 = 0xffff;
 	}
 
-	pccore_set();
 
 	sound_changeclock();
 	beep_changeclock();
-	nevent_init();
-
 	sound_reset();
 #if defined(SUPPORT_WAVEMIX)
 	wavemix_bind();
 #endif
 
-	if (pccore.model & PCMODEL_EPSON) {			// RAM ctrl
-		CPU_RAM_D000 = 0xffff;
-	}
 
 	iocore_reset();								// サウンドでpicを呼ぶので…
 	cbuscore_reset();
-	fmboard_reset(np2cfg.SOUND_SW);
+	fmboard_reset(pccore.sound);
 
 	i286_memorymap((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
@@ -391,13 +396,12 @@ void pccore_reset(void) {
 	CPU_CLEARPREFETCH();
 	sysmng_cpureset();
 
-	soundmng_play();
-
 #if defined(SUPPORT_HOSTDRV)
 	hostdrv_reset();
 #endif
 
 	timing_reset();
+	soundmng_play();
 }
 
 static void drawscreen(void) {
@@ -648,7 +652,7 @@ void pccore_exec(BOOL draw) {
 #endif
 		}
 
-#if 0 // ndef TRACE
+#if 1 // ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();

@@ -53,7 +53,7 @@ BYTE keydisp_process(BYTE framepast);
 void keydisp_getsize(int *width, int *height);
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
-void keydisp_setfmboard(BYTE board);
+void keydisp_setfmboard(UINT board);
 void keydisp_fmkeyon(BYTE ch, BYTE value);
 void keydisp_psgmix(void *psg);
 void keydisp_psgvol(void *psg, BYTE ch);

@@ -44,6 +44,11 @@ typedef struct {
 extern "C" {
 #endif
 
+extern	UINT32		usesound;
+extern	OPN_T		opn;
+extern	AMD98		amd98;
+extern	MUSICGEN	musicgen;
+
 extern	_TMS3631	tms3631;
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
@@ -56,18 +61,13 @@ extern	_ADPCM		adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 
-extern	int			usesound;
-extern	OPN_T		opn;
-extern	AMD98		amd98;
-extern	MUSICGEN	musicgen;
 
-
-BYTE fmboard_getjoy(PSGGEN psg);
+REG8 fmboard_getjoy(PSGGEN psg);
 
 void fmboard_extreg(void (*ext)(REG8 enable));
 void fmboard_extenable(REG8 enable);
 
-void fmboard_reset(BYTE num);
+void fmboard_reset(UINT32 type);
 void fmboard_bind(void);
 
 #ifdef __cplusplus

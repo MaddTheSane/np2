@@ -540,7 +540,7 @@ static void setpsghdl(BYTE items) {
 	}
 }
 
-void keydisp_setfmboard(BYTE b) {
+void keydisp_setfmboard(UINT b) {
 
 	keydisp.keymax = 0;
 	keydisp.fmmax = 0;

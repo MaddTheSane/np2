@@ -2,13 +2,13 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"scsicmd.h"
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"sxsibios.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
-#include	"scsicmd.h"
 #include	"timing.h"
 
 
@@ -904,14 +904,12 @@ void bios0x1b(void) {
 
 		case 0x00:
 		case 0x80:
-//			ret_ah = sxsi_operate(BIOS1B_SASI);
 			ret_ah = sasibios_operate();
 			break;
 
 #if defined(SUPPORT_SCSI)
 		case 0x20:
 		case 0xa0:
-//			ret_ah = sxsi_operate(BIOS1B_SCSI);
 			ret_ah = scsibios_operate();
 			break;
 #endif

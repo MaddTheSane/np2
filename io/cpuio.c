@@ -2,8 +2,6 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
 
 
 // ---- I/O
@@ -34,7 +32,7 @@ static REG8 IOINPCALL cpuio_if0(UINT port) {
 
 	BYTE	ret;
 
-	if (!(usesound & 0x80)) {
+	if (!(pccore.sound & 0x80)) {
 		ret = 0x00;
 	}
 	else {				// for AMD-98

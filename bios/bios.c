@@ -6,8 +6,6 @@
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"sxsibios.h"
-#include	"sound.h"
-#include	"fmboard.h"
 #include	"lio.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
@@ -110,7 +108,8 @@ static void bios_reinitbyswitch(void) {
 	}
 	gdcs.textdisp |= GDCSCRN_EXT;
 
-	if (((pccore.model & PCMODELMASK) >= PCMODEL_VX) && (usesound & 0x7e)) {
+	if (((pccore.model & PCMODELMASK) >= PCMODEL_VX) &&
+		(pccore.sound & 0x7e)) {
 		iocore_out8(0x188, 0x27);
 		iocore_out8(0x18a, 0x3f);
 	}

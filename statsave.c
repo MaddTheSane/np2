@@ -1070,7 +1070,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	cs4231_reset();
 
 	ret = statflag_read(sfh, &usesound, sizeof(usesound));
-	fmboard_reset((BYTE)usesound);
+	fmboard_reset(usesound);
 
 	fmreg1a = 0x000;
 	fmreg1b = 0x100;

@@ -277,10 +277,12 @@ void v30x_step(void);
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
 
 #define	CPU_INITIALIZE		i286x_initialize
+#define	CPU_DEINITIALIZE()
 #define	CPU_RESET			i286x_reset
 #define	CPU_CLEARPREFETCH	i286x_resetprefetch
 #define	CPU_INTERRUPT(v)	i286x_interrupt(v)
 #define	CPU_EXEC			i286x
 #define	CPU_EXECV30			v30x
 #define	CPU_SHUT			i286x_shut
+#define	CPU_SETEXTMEM(s)
 
