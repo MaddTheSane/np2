@@ -52,7 +52,7 @@ void viewcmn_putcaption(NP2VIEW_T *view) {
 
 BOOL viewcmn_alloc(VIEWMEMBUF *buf, DWORD size) {
 
-	if (buf->type == ALOOCTYPE_ERROR) {
+	if (buf->type == ALLOCTYPE_ERROR) {
 		return(FAILURE);
 	}
 	if (buf->size < size) {
@@ -62,7 +62,7 @@ BOOL viewcmn_alloc(VIEWMEMBUF *buf, DWORD size) {
 		ZeroMemory(buf, sizeof(VIEWMEMBUF));
 		buf->ptr = malloc(size);
 		if (!buf->ptr) {
-			buf->type = ALOOCTYPE_ERROR;
+			buf->type = ALLOCTYPE_ERROR;
 			return(FAILURE);
 		}
 		buf->size = size;

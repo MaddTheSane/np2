@@ -27,10 +27,12 @@ static	SOFTKBD	softkbd;
 #include	"softkbd1.res"
 #elif (SUPPORT_SOFTKBD == 2)
 #include	"softkbd2.res"
-#elif (SUPPORT_SOFTKBD == 3)
-#include	"softkbd3.res"
 #else
+#if !defined(SUPPORT_PC9801_119)
 #include	"softkbd.res"
+#else
+#include	"softkbd3.res"
+#endif
 #endif
 
 

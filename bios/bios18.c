@@ -474,7 +474,7 @@ void bios0x18_42(REG8 mode) {
 	scrn = bios0x18_31bh();
 	if ((mem[MEMB_CRT_BIOS] & 0x80) &&
 		(((scrn & 0x30) == 0x30) || (crtmode == 3))) {
-		bios0x18_30(rate, (crtmode << 4) + 1);
+		bios0x18_30(rate, (REG8)((crtmode << 4) + 1));
 	}
 	else {
 #endif

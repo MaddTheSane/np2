@@ -20,6 +20,11 @@ enum {
 	MEMDBG32_PALS
 };
 
+enum {
+	MEMDBG32_FLAGDRAW		= 0x01,
+	MEMDBG32_FLAGREDRAW		= 0x02
+};
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,6 +32,7 @@ extern "C" {
 
 void memdbg32_initialize(void);
 void memdbg32_getsize(int *width, int *height);
+REG8 memdbg32_process(void);
 BOOL memdbg32_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw);
 
 #ifdef __cplusplus

@@ -22,7 +22,7 @@ enum {
 	ALLOCTYPE_ASM,
 	ALLOCTYPE_SND,
 
-	ALOOCTYPE_ERROR = 0xffffffff
+	ALLOCTYPE_ERROR = 0xffffffff
 };
 
 typedef struct {

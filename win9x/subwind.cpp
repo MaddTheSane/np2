@@ -10,6 +10,7 @@
 #include	"subwind.h"
 #include	"np2class.h"
 #include	"keydisp.h"
+#include	"memdbg32.h"
 #include	"softkbd.h"
 
 
@@ -43,7 +44,7 @@ typedef struct {
 	HWND		hwnd;
 	WINLOCEX	wlex;
 	DD2HDL		dd2hdl;
-} KDWIN;
+} KDISPWIN;
 
 typedef struct {
 	int		posx;
@@ -52,19 +53,17 @@ typedef struct {
 	BYTE	type;
 } KDISPCFG;
 
-static	KDWIN		kdwin;
+static	KDISPWIN	kdispwin;
 static	KDISPCFG	kdispcfg;
 
-static const char np2kdcaption[] = "Key Display";
-static const char np2kdclass[] = "NP2-KeyDispWin";
+static const char kdispapp[] = "Key Display";
+static const char kdispclass[] = "NP2-KeyDispWin";
 static const char str_kdclose[] = "&Close";
 
-static const UINT32 kdwinpal[KEYDISP_PALS] =
+static const UINT32 kdisppal[KEYDISP_PALS] =
 									{0x00000000, 0xffffffff, 0xf9ff0000};
 
-static const char np2kdapp[] = "NP2 keydisp";
-
-static const INITBL np2kdini[] = {
+static const INITBL kdispini[] = {
 	{"WindposX", INITYPE_SINT32,	&kdispcfg.posx,			0},
 	{"WindposY", INITYPE_SINT32,	&kdispcfg.posy,			0},
 	{"keydmode", INITYPE_UINT8,		&kdispcfg.mode,			0},
@@ -74,7 +73,7 @@ static const INITBL np2kdini[] = {
 static BYTE kdgetpal8(CMNPALFN *self, UINT num) {
 
 	if (num < KEYDISP_PALS) {
-		return(kdwinpal[num] >> 24);
+		return(kdisppal[num] >> 24);
 	}
 	return(0);
 }
@@ -82,7 +81,7 @@ static BYTE kdgetpal8(CMNPALFN *self, UINT num) {
 static UINT32 kdgetpal32(CMNPALFN *self, UINT num) {
 
 	if (num < KEYDISP_PALS) {
-		return(kdwinpal[num] & 0xffffff);
+		return(kdisppal[num] & 0xffffff);
 	}
 	return(0);
 }
@@ -106,11 +105,11 @@ static void kddrawkeys(HWND hWnd, BOOL redraw) {
 	if ((draw.right <= 0) || (draw.bottom <= 0)) {
 		return;
 	}
-	vram = dd2_bsurflock(kdwin.dd2hdl);
+	vram = dd2_bsurflock(kdispwin.dd2hdl);
 	if (vram) {
 		keydisp_paint(vram, redraw);
-		dd2_bsurfunlock(kdwin.dd2hdl);
-		dd2_blt(kdwin.dd2hdl, NULL, &draw);
+		dd2_bsurfunlock(kdispwin.dd2hdl);
+		dd2_blt(kdispwin.dd2hdl, NULL, &draw);
 	}
 }
 
@@ -121,9 +120,9 @@ static void kdsetwinsize(void) {
 	WINLOCEX	wlex;
 
 	wlex = np2_winlocexallwin(hWndMain);
-	winlocex_setholdwnd(wlex, kdwin.hwnd);
+	winlocex_setholdwnd(wlex, kdispwin.hwnd);
 	keydisp_getsize(&width, &height);
-	winloc_setclientsize(kdwin.hwnd, width, height);
+	winloc_setclientsize(kdispwin.hwnd, width, height);
 	winlocex_move(wlex);
 	winlocex_destroy(wlex);
 }
@@ -133,7 +132,7 @@ static void kdsetdispmode(BYTE mode) {
 	HMENU	hmenu;
 
 	keydisp_setmode(mode);
-	hmenu = np2class_gethmenu(kdwin.hwnd);
+	hmenu = np2class_gethmenu(kdispwin.hwnd);
 	CheckMenuItem(hmenu, IDM_KDISPFM,
 					((mode == KEYDISP_MODEFM)?MF_CHECKED:MF_UNCHECKED));
 	CheckMenuItem(hmenu, IDM_KDISPMIDI,
@@ -235,17 +234,17 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_ENTERSIZEMOVE:
 			soundmng_disable(SNDPROC_SUBWIND);
-			winlocex_destroy(kdwin.wlex);
-			kdwin.wlex = np2_winlocexallwin(hWnd);
+			winlocex_destroy(kdispwin.wlex);
+			kdispwin.wlex = np2_winlocexallwin(hWnd);
 			break;
 
 		case WM_MOVING:
-			winlocex_moving(kdwin.wlex, (RECT *)lp);
+			winlocex_moving(kdispwin.wlex, (RECT *)lp);
 			break;
 
 		case WM_EXITSIZEMOVE:
-			winlocex_destroy(kdwin.wlex);
-			kdwin.wlex = NULL;
+			winlocex_destroy(kdispwin.wlex);
+			kdispwin.wlex = NULL;
 			soundmng_enable(SNDPROC_SUBWIND);
 			break;
 
@@ -268,8 +267,8 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_DESTROY:
 			np2class_wmdestroy(hWnd);
-			dd2_release(kdwin.dd2hdl);
-			kdwin.hwnd = NULL;
+			dd2_release(kdispwin.dd2hdl);
+			kdispwin.hwnd = NULL;
 			kdsetdispmode(KEYDISP_MODENONE);
 			break;
 
@@ -278,9 +277,6 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	}
 	return(0L);
 }
-
-
-// ----
 
 BOOL kdispwin_initialize(HINSTANCE hPreInst) {
 
@@ -297,7 +293,7 @@ BOOL kdispwin_initialize(HINSTANCE hPreInst) {
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_KEYDISP);
-		wc.lpszClassName = np2kdclass;
+		wc.lpszClassName = kdispclass;
 		if (!RegisterClass(&wc)) {
 			return(FAILURE);
 		}
@@ -312,17 +308,17 @@ void kdispwin_create(void) {
 	BYTE		mode;
 	CMNPALFN	palfn;
 
-	if (kdwin.hwnd != NULL) {
+	if (kdispwin.hwnd != NULL) {
 		return;
 	}
-	ZeroMemory(&kdwin, sizeof(kdwin));
-	hwnd = CreateWindow(np2kdclass, np2kdcaption,
+	ZeroMemory(&kdispwin, sizeof(kdispwin));
+	hwnd = CreateWindow(kdispclass, kdispapp,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						kdispcfg.posx, kdispcfg.posy,
 						CW_USEDEFAULT, CW_USEDEFAULT,
 						NULL, NULL, hInst, NULL);
-	kdwin.hwnd = hwnd;
+	kdispwin.hwnd = hwnd;
 	if (hwnd == NULL) {
 		goto kdcre_err1;
 	}
@@ -339,14 +335,14 @@ void kdispwin_create(void) {
 	kdsetdispmode(mode);
 	ShowWindow(hwnd, SW_SHOWNOACTIVATE);
 	UpdateWindow(hwnd);
-	kdwin.dd2hdl = dd2_create(hwnd, KEYDISP_WIDTH, KEYDISP_HEIGHT);
-	if (kdwin.dd2hdl == NULL) {
+	kdispwin.dd2hdl = dd2_create(hwnd, KEYDISP_WIDTH, KEYDISP_HEIGHT);
+	if (kdispwin.dd2hdl == NULL) {
 		goto kdcre_err2;
 	}
 	palfn.get8 = kdgetpal8;
 	palfn.get32 = kdgetpal32;
 	palfn.cnv16 = kdcnvpal16;
-	palfn.userdata = (long)kdwin.dd2hdl;
+	palfn.userdata = (long)kdispwin.dd2hdl;
 	keydisp_setpal(&palfn);
 	kdispwin_draw(0);
 	SetForegroundWindow(hWndMain);
@@ -362,21 +358,21 @@ kdcre_err1:
 
 void kdispwin_destroy(void) {
 
-	if (kdwin.hwnd != NULL) {
-		DestroyWindow(kdwin.hwnd);
+	if (kdispwin.hwnd != NULL) {
+		DestroyWindow(kdispwin.hwnd);
 	}
 }
 
 HWND kdispwin_gethwnd(void) {
 
-	return(kdwin.hwnd);
+	return(kdispwin.hwnd);
 }
 
 void kdispwin_draw(BYTE cnt) {
 
 	BYTE	flag;
 
-	if (kdwin.hwnd) {
+	if (kdispwin.hwnd) {
 		if (!cnt) {
 			cnt = 1;
 		}
@@ -384,7 +380,7 @@ void kdispwin_draw(BYTE cnt) {
 		if (flag & KEYDISP_FLAGSIZING) {
 			kdsetwinsize();
 		}
-		kddrawkeys(kdwin.hwnd, FALSE);
+		kddrawkeys(kdispwin.hwnd, FALSE);
 	}
 }
 
@@ -396,7 +392,7 @@ void kdispwin_readini(void) {
 	kdispcfg.posx = CW_USEDEFAULT;
 	kdispcfg.posy = CW_USEDEFAULT;
 	initgetfile(path, sizeof(path));
-	ini_read(path, np2kdapp, np2kdini, sizeof(np2kdini)/sizeof(INITBL));
+	ini_read(path, kdispapp, kdispini, sizeof(kdispini)/sizeof(INITBL));
 }
 
 void kdispwin_writeini(void) {
@@ -404,7 +400,251 @@ void kdispwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, np2kdapp, np2kdini, sizeof(np2kdini)/sizeof(INITBL));
+	ini_write(path, kdispapp, kdispini, sizeof(kdispini)/sizeof(INITBL));
+}
+#endif
+
+
+// ---- memdbg
+
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+
+typedef struct {
+	HWND		hwnd;
+	WINLOCEX	wlex;
+	DD2HDL		dd2hdl;
+	int			width;
+	int			height;
+} MDBGWIN;
+
+typedef struct {
+	int		posx;
+	int		posy;
+	UINT8	type;
+} MDBGCFG;
+
+static	MDBGWIN		mdbgwin;
+static	MDBGCFG		mdbgcfg;
+
+static const char mdbgapp[] = "Memory Map";
+static const char mdbgclass[] = "NP2-MemDbgWin";
+static const INITBL mdbgini[] = {
+	{"WindposX", INITYPE_SINT32,	&mdbgcfg.posx,			0},
+	{"WindposY", INITYPE_SINT32,	&mdbgcfg.posy,			0},
+	{"windtype", INITYPE_BOOL,		&mdbgcfg.type,			0}};
+
+
+static void mdpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
+
+	UINT	i;
+
+	switch(bpp) {
+		case 32:
+			for (i=0; i<pals; i++) {
+				dst[i].pal32.d = src[i].d;
+			}
+			break;
+	}
+}
+
+static void mdwincreate(HWND hWnd) {
+
+	int			width;
+	int			height;
+
+	memdbg32_getsize(&width, &height);
+}
+
+static void mddrawwin(HWND hWnd, BOOL redraw) {
+
+	RECT		rect;
+	RECT		draw;
+	CMNVRAM		*vram;
+
+	GetClientRect(hWnd, &rect);
+	draw.left = 0;
+	draw.top = 0;
+	draw.right = min(mdbgwin.width, rect.right - rect.left);
+	draw.bottom = min(mdbgwin.height, rect.bottom - rect.top);
+	vram = dd2_bsurflock(mdbgwin.dd2hdl);
+	if (vram) {
+		memdbg32_paint(vram, mdpalcnv, redraw);
+		dd2_bsurfunlock(mdbgwin.dd2hdl);
+		dd2_blt(mdbgwin.dd2hdl, NULL, &draw);
+	}
+}
+
+static void mdpaintmsg(HWND hWnd) {
+
+	HDC			hdc;
+	PAINTSTRUCT	ps;
+
+	hdc = BeginPaint(hWnd, &ps);
+	mddrawwin(hWnd, TRUE);
+	EndPaint(hWnd, &ps);
+}
+
+static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+
+	switch(msg) {
+		case WM_CREATE:
+			np2class_wmcreate(hWnd);
+			winloc_setclientsize(hWnd, mdbgwin.width, mdbgwin.height);
+			np2class_windowtype(hWnd, (mdbgcfg.type & 1) + 1);
+			break;
+
+		case WM_PAINT:
+			mdpaintmsg(hWnd);
+			break;
+
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+			SendMessage(hWndMain, msg, wp, lp);
+			break;
+
+		case WM_ENTERMENULOOP:
+			soundmng_disable(SNDPROC_SUBWIND);
+			break;
+
+		case WM_EXITMENULOOP:
+			soundmng_enable(SNDPROC_SUBWIND);
+			break;
+
+		case WM_ENTERSIZEMOVE:
+			soundmng_disable(SNDPROC_SUBWIND);
+			winlocex_destroy(mdbgwin.wlex);
+			mdbgwin.wlex = np2_winlocexallwin(hWnd);
+			break;
+
+		case WM_MOVING:
+			winlocex_moving(mdbgwin.wlex, (RECT *)lp);
+			break;
+
+		case WM_EXITSIZEMOVE:
+			winlocex_destroy(mdbgwin.wlex);
+			mdbgwin.wlex = NULL;
+			soundmng_enable(SNDPROC_SUBWIND);
+			break;
+
+		case WM_MOVE:
+			if (!(GetWindowLong(hWnd, GWL_STYLE) &
+									(WS_MAXIMIZE | WS_MINIMIZE))) {
+				RECT rc;
+				GetWindowRect(hWnd, &rc);
+				mdbgcfg.posx = rc.left;
+				mdbgcfg.posy = rc.top;
+				sysmng_update(SYS_UPDATEOSCFG);
+			}
+			break;
+
+		case WM_CLOSE:
+			DestroyWindow(hWnd);
+			break;
+
+		case WM_DESTROY:
+			np2class_wmdestroy(hWnd);
+			dd2_release(mdbgwin.dd2hdl);
+			mdbgwin.hwnd = NULL;
+			break;
+
+		default:
+			return(DefWindowProc(hWnd, msg, wp, lp));
+	}
+	return(0);
+}
+
+BOOL memdbg_initialize(HINSTANCE hInstance) {
+
+	WNDCLASS	wc;
+
+	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = mdproc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = NULL;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = mdbgclass;
+	if (!RegisterClass(&wc)) {
+		return(FAILURE);
+	}
+	memdbg32_initialize();
+	return(SUCCESS);
+}
+
+void memdbg_create(void) {
+
+	HWND	hwnd;
+
+	if (mdbgwin.hwnd != NULL) {
+		return;
+	}
+	ZeroMemory(&mdbgwin, sizeof(mdbgwin));
+	memdbg32_getsize(&mdbgwin.width, &mdbgwin.height);
+	hwnd = CreateWindow(mdbgclass, mdbgapp,
+						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
+						WS_MINIMIZEBOX,
+						mdbgcfg.posx, mdbgcfg.posy,
+						mdbgwin.width, mdbgwin.height,
+						NULL, NULL, hInst, NULL);
+	mdbgwin.hwnd = hwnd;
+	if (hwnd == NULL) {
+		goto mdcre_err1;
+	}
+	ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+	UpdateWindow(hwnd);
+	mdbgwin.dd2hdl = dd2_create(hwnd, mdbgwin.width, mdbgwin.height);
+	if (mdbgwin.dd2hdl == NULL) {
+		goto mdcre_err2;
+	}
+	InvalidateRect(hwnd, NULL, TRUE);
+	SetForegroundWindow(hWndMain);
+	return;
+
+mdcre_err2:
+	DestroyWindow(hwnd);
+
+mdcre_err1:
+	return;
+}
+
+void memdbg_destroy(void) {
+
+	if (mdbgwin.hwnd) {
+		DestroyWindow(mdbgwin.hwnd);
+	}
+}
+
+void memdbg_process(void) {
+
+	if ((mdbgwin.hwnd) && (memdbg32_process())) {
+		mddrawwin(mdbgwin.hwnd, FALSE);
+	}
+}
+
+HWND memdbg_gethwnd(void) {
+
+	return(mdbgwin.hwnd);
+}
+
+void memdbg_readini(void) {
+
+	char	path[MAX_PATH];
+
+	mdbgcfg.posx = CW_USEDEFAULT;
+	mdbgcfg.posy = CW_USEDEFAULT;
+	initgetfile(path, sizeof(path));
+	ini_read(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(INITBL));
+}
+
+void memdbg_writeini(void) {
+
+	char	path[MAX_PATH];
+
+	initgetfile(path, sizeof(path));
+	ini_write(path, mdbgapp, mdbgini, sizeof(mdbgini)/sizeof(INITBL));
 }
 #endif
 
@@ -429,10 +669,9 @@ typedef struct {
 static	SKBDWIN		skbdwin;
 static	SKBDCFG		skbdcfg;
 
-static const char np2skcaption[] = "Soft Keyboard";
-static const char np2skclass[] = "NP2-SoftKBDWin";
-static const char np2skapp[] = "NP2 softbkd";
-static const INITBL np2skini[] = {
+static const char skbdapp[] = "Soft Keyboard";
+static const char skbdclass[] = "NP2-SoftKBDWin";
+static const INITBL skbdini[] = {
 	{"WindposX", INITYPE_SINT32,	&skbdcfg.posx,			0},
 	{"WindposY", INITYPE_SINT32,	&skbdcfg.posy,			0},
 	{"windtype", INITYPE_BOOL,		&skbdcfg.type,			0}};
@@ -585,9 +824,6 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0L);
 }
 
-
-// ----
-
 BOOL skbdwin_initialize(HINSTANCE hPreInst) {
 
 	WNDCLASS	wc;
@@ -603,7 +839,7 @@ BOOL skbdwin_initialize(HINSTANCE hPreInst) {
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = NULL;
-		wc.lpszClassName = np2skclass;
+		wc.lpszClassName = skbdclass;
 		if (!RegisterClass(&wc)) {
 			return(FAILURE);
 		}
@@ -628,7 +864,7 @@ void skbdwin_create(void) {
 	if (softkbd_getsize(&skbdwin.width, &skbdwin.height) != SUCCESS) {
 		return;
 	}
-	hwnd = CreateWindow(np2skclass, np2skcaption,
+	hwnd = CreateWindow(skbdclass, skbdapp,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						skbdcfg.posx, skbdcfg.posy,
@@ -681,7 +917,7 @@ void skbdwin_readini(void) {
 	skbdcfg.posx = CW_USEDEFAULT;
 	skbdcfg.posy = CW_USEDEFAULT;
 	initgetfile(path, sizeof(path));
-	ini_read(path, np2skapp, np2skini, sizeof(np2skini)/sizeof(INITBL));
+	ini_read(path, skbdapp, skbdini, sizeof(skbdini)/sizeof(INITBL));
 }
 
 void skbdwin_writeini(void) {
@@ -689,7 +925,7 @@ void skbdwin_writeini(void) {
 	char	path[MAX_PATH];
 
 	initgetfile(path, sizeof(path));
-	ini_write(path, np2skapp, np2skini, sizeof(np2skini)/sizeof(INITBL));
+	ini_write(path, skbdapp, skbdini, sizeof(skbdini)/sizeof(INITBL));
 }
 #endif
 

@@ -102,8 +102,12 @@ static const MENUITEMS smenuitem[] = {
 			{0,					0}};
 
 static const MENUITEMS smenuitem2[] = {
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+			{IDM_MEMDBG32,		IDS_MEMDBG32},
+#endif
 			{IDM_MEMORYDUMP,	IDS_MEMORYDUMP},
-			{IDM_DEBUGUTY,		IDS_DEBUGUTY}};
+			{IDM_DEBUGUTY,		IDS_DEBUGUTY},
+			{0,					0}};
 
 
 void sysmenu_initialize(void) {
@@ -113,7 +117,7 @@ void sysmenu_initialize(void) {
 	hMenu = GetSystemMenu(hWndMain, FALSE);
 	insertresmenus(hMenu, 0, smenuitem, sizeof(smenuitem)/sizeof(MENUITEMS));
 	if (np2oscfg.I286SAVE) {
-		insertresmenus(hMenu, 7, smenuitem2,
+		insertresmenus(hMenu, 0, smenuitem2,
 										sizeof(smenuitem2)/sizeof(MENUITEMS));
 	}
 }
@@ -447,6 +451,8 @@ void xmenu_setextmem(BYTE value) {
 	CheckMenuItem(hmenu, IDM_MEM16, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_MEM36, MFCHECK(value == 3));
 	CheckMenuItem(hmenu, IDM_MEM76, MFCHECK(value == 7));
+	CheckMenuItem(hmenu, IDM_MEM116, MFCHECK(value == 11));
+	CheckMenuItem(hmenu, IDM_MEM136, MFCHECK(value == 13));
 }
 
 void xmenu_setmouse(BYTE value) {

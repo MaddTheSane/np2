@@ -29,6 +29,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	BYTE		buf[16];
 	char		str[16];
 	HFONT		hfont;
+	BOOL		opsize;
 	_UNASM		una;
 	int			step;
 
@@ -220,3 +221,4 @@ void viewasm_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 	dst->mul = 1;
 	dst->pos = 0;
 }
+

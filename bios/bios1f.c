@@ -80,7 +80,7 @@ void bios0x1f(void) {
 	else {
 		return;
 	}
-	flag = MEML_READ8(CPU_SS, CPU_SP + 4) & (~C_FLAG);
+	flag = (REG8)(MEML_READ8(CPU_SS, CPU_SP + 4) & (~C_FLAG));
 	flag |= cflag;
 	MEML_WRITE8(CPU_SS, CPU_SP + 4, flag);
 }

@@ -369,7 +369,8 @@ void trace_init(void) {
 	tracewin.fh = FILEH_INVALID;
 #else
 	tracewin.en = 0;
-	tracewin.fh = trfh_open("traces.txt");
+	tracewin.fh = FILEH_INVALID;
+	trfh_open("traces.txt");
 #endif
 
 	tracecfg.posx = CW_USEDEFAULT;

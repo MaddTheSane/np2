@@ -168,7 +168,7 @@ BEGIN
                     WS_GROUP | WS_TABSTOP,20,20,42,10
     CONTROL         "uPD72020",IDC_GDC72020,"Button",BS_AUTORADIOBUTTON,72,
                     20,43,10
-    GROUPBOX        "Graphic Charger",IDC_STATIC,8,42,156,28
+    GROUPBOX        "Graphic Charger",IDC_GCBOX,8,42,156,28
     CONTROL         "None",IDC_GRCGNON,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP | WS_TABSTOP,20,54,35,10
     CONTROL         "GRCG",IDC_GRCG,"Button",BS_AUTORADIOBUTTON,54,54,34,10
@@ -961,12 +961,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "PC-9801series emulator\0"
-            VALUE "FileVersion", "0, 7, 5, 0\0"
+            VALUE "FileVersion", "0, 7, 6, 0\0"
             VALUE "InternalName", "np2\0"
             VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
             VALUE "OriginalFilename", "np2.exe\0"
             VALUE "ProductName", "Neko Project II\0"
-            VALUE "ProductVersion", "0, 7, 5, 0\0"
+            VALUE "ProductVersion", "0, 7, 6, 0\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -1005,7 +1005,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_TOOLWIN             "&Tool Window"
     IDS_KEYDISP             "&Key display"
-    IDS_SOFTKBD				"&Soft keyboard"
+    IDS_SOFTKBD             "&Soft keyboard"
     IDS_SCREENCENTER        "&Centering"
     IDS_SNAPENABLE          "&Window Snap"
     IDS_BACKGROUND          "&Background"
@@ -1016,8 +1016,9 @@ BEGIN
     IDS_SCRNMUL10           " 800x500"
     IDS_SCRNMUL12           " 960x600"
     IDS_SCRNMUL16           "1280x800"
-    IDS_MEMORYDUMP          "&Memory Dump"
-    IDS_DEBUGUTY            "&Debug Utility"
+    IDS_MEMDBG32            "Memory Debug"
+    IDS_MEMORYDUMP          "Memory Dump"
+    IDS_DEBUGUTY            "Debug Utility"
     IDS_FDD1                "FDD&1"
     IDS_FDD2                "FDD&2"
     IDS_FDD3                "FDD&3"
@@ -1026,7 +1027,7 @@ BEGIN
     IDS_SCSI1               "SCSI #1"
     IDS_SCSI2               "SCSI #2"
     IDS_SCSI3               "SCSI #3"
-	IDS_WAVEREC				"&Wave Record"
+    IDS_WAVEREC             "&Wave Record"
     IDS_I286SAVE            "&i286 save"
     IDS_OPEN                "&Open..."
     IDS_EJECT               "&Eject"

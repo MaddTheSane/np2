@@ -108,13 +108,14 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 
 	UINT	i;
 	UINT	cnt;
-	HWND	list[4];
+	HWND	list[5];
 
 	cnt = 0;
 	list[cnt++] = hWndMain;
 	list[cnt++] = toolwin_gethwnd();
 	list[cnt++] = kdispwin_gethwnd();
 	list[cnt++] = skbdwin_gethwnd();
+	list[cnt++] = memdbg_gethwnd();
 	for (i=0; i<cnt; i++) {
 		if (list[i] == base) {
 			list[i] = NULL;
@@ -146,6 +147,7 @@ static void changescreen(BYTE newmode) {
 			toolwin_destroy();
 			kdispwin_destroy();
 			skbdwin_destroy();
+			memdbg_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
 			wlex = np2_winlocexallwin(hWndMain);
@@ -738,6 +740,16 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_MEM116:
+			xmenu_setextmem(11);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MEM136:
+			xmenu_setextmem(13);
+			update |= SYS_UPDATECFG;
+			break;
+
 		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
 			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
@@ -924,7 +936,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					skbdwin_create();
 					break;
 #endif
-
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+				case IDM_MEMDBG32:
+					memdbg_create();
+					break;
+#endif
 				case IDM_SCREENCENTER:
 					if ((!scrnmng_isfullscreen()) &&
 						(!(GetWindowLong(hWnd, GWL_STYLE) &
@@ -988,6 +1004,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
 					subwin = skbdwin_gethwnd();
+					if (subwin) {
+						ShowWindow(subwin, SW_SHOWNOACTIVATE);
+					}
+					subwin = memdbg_gethwnd();
 					if (subwin) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
@@ -1319,6 +1339,7 @@ static void framereset(UINT cnt) {
 	scrnmng_dispclock();
 	kdispwin_draw((BYTE)cnt);
 	skbdwin_process();
+	memdbg_process();
 	toolwin_draw((BYTE)cnt);
 	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {
@@ -1361,6 +1382,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	toolwin_readini();
 	kdispwin_readini();
 	skbdwin_readini();
+	memdbg_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -1413,6 +1435,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	toolwin_initapp(hInstance);
 	kdispwin_initialize(hPreInst);
 	skbdwin_initialize(hPreInst);
+	memdbg_initialize(hPreInst);
 	viewer_init(hPreInst);
 
 	mousemng_initialize();
@@ -1656,6 +1679,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	toolwin_destroy();
 	kdispwin_destroy();
 	skbdwin_destroy();
+	memdbg_destroy();
 
 	pccore_cfgupdate();
 
@@ -1686,6 +1710,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		toolwin_writeini();
 		kdispwin_writeini();
 		skbdwin_writeini();
+		memdbg_writeini();
 	}
 	skbdwin_deinitialize();
 

@@ -115,6 +115,14 @@ static LRESULT CALLBACK Scropt2DlgProc(HWND hWnd, UINT msg,
 			}
 			SetDlgItemCheck(hWnd, gdcchip[np2cfg.grcg & 3], TRUE);
 			SetDlgItemCheck(hWnd, IDC_PC980124, np2cfg.color16);
+#if defined(SUPPORT_PC9821)
+			EnableWindow(GetDlgItem(hWnd, IDC_GCBOX), FALSE);
+			EnableWindow(GetDlgItem(hWnd, IDC_GRCGNON), FALSE);
+			EnableWindow(GetDlgItem(hWnd, IDC_GRCG), FALSE);
+			EnableWindow(GetDlgItem(hWnd, IDC_GRCG2), FALSE);
+			EnableWindow(GetDlgItem(hWnd, IDC_EGC), FALSE);
+			EnableWindow(GetDlgItem(hWnd, IDC_PC980124), FALSE);
+#endif
 			return(TRUE);
 
 		case WM_NOTIFY:

@@ -32,6 +32,7 @@ typedef	int					SINT32;
 typedef signed __int64		SINT64;
 #define	INLINE				inline
 #endif
+#define	FASTCALL			__fastcall
 
 // for RISC test
 #define	REG8		UINT
@@ -45,9 +46,6 @@ typedef signed __int64		SINT64;
 #define	STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
 
 
-#define	FASTCALL	__fastcall
-
-
 #include	"common.h"
 #include	"milstr.h"
 #include	"_memory.h"
@@ -55,12 +53,13 @@ typedef signed __int64		SINT64;
 #include	"lstarray.h"
 #include	"trace.h"
 
-#define	GETTICK()	GetTickCount()
-#define	SPRINTF		wsprintf
+
+#define	GETTICK()			GetTickCount()
+#define	SPRINTF				wsprintf
 #define	__ASSERT(s)
 
-#define	LABEL		__declspec(naked)
-#define RELEASE(x) 	if (x) {(x)->Release(); (x) = NULL;}
+#define	LABEL				__declspec(naked)
+#define RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
 
 #define	VERMOUTH_LIB
 #define	PARTSCALL	__fastcall
@@ -88,7 +87,7 @@ typedef signed __int64		SINT64;
 #define	SUPPORT_CRT31KHZ
 #define	SUPPORT_PC9821
 #define	SUPPORT_PC9801_119
-#define	SUPPORT_SOFTKBD			3
+#define	SUPPORT_SOFTKBD			0
 #define IA32_PAGING_EACHSIZE
 #endif
 #define	SUPPORT_HOSTDRV
