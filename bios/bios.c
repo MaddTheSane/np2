@@ -282,6 +282,34 @@ static void bios_boot(void) {
 	}
 }
 
+// ƒeƒXƒg(‚±‚ñ‚È‚ñ‚¶‚á‚¾‚ß‚Û
+static void bios0x1f(void) {
+
+	BYTE	work[256];
+	UINT32	src;
+	UINT32	dst;
+	UINT	leng;
+	UINT	l;
+
+	if (CPU_AH == 0x90) {
+		i286_memstr_read(CPU_ES, CPU_BX + 0x10, work, 0x10);
+		src = work[2] + (work[3] << 8) + (work[4] << 16) + CPU_SI;
+		dst = work[8] + (work[9] << 8) + (work[10] << 16) + CPU_DI;
+		leng = LOW16(CPU_CX - 1) + 1;
+		TRACEOUT(("src:%08x dst:%08x leng:%08x", src, dst, leng));
+		do {
+			l = min(leng, 256);
+			i286_memx_read(src, work, l);
+			i286_memx_write(dst, work, l);
+			src += l;
+			dst += l;
+			leng -= l;
+		} while(leng);
+	}
+	else {
+		TRACEOUT(("unsupport protect bios AH=%.2x", CPU_AH));
+	}
+}
 
 UINT MEMCALL biosfunc(UINT32 adrs) {
 
@@ -363,7 +391,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 		case BIOS_BASE + BIOSOFST_1f:
 			CPU_REMCLOCK -= 200;
-			TRACEOUT(("unsupport protect bios"));
+			bios0x1f();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_WAIT:
