@@ -88,7 +88,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /debug /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:THUMB
-# ADD LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /debug /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /MACHINE:THUMB
+# ADD LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /debug /nodefaultlib:"$(CENoDefaultLib)" /out:"..\bin\ARM/np2sig3d.exe" /subsystem:$(CESubsystem) /MACHINE:THUMB
 
 !ENDIF 
 
@@ -771,7 +771,7 @@ DEP_CPP_ARTIC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -814,7 +814,7 @@ DEP_CPP_CGROM=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\font\font.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -856,7 +856,7 @@ DEP_CPP_CPUIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -940,7 +940,7 @@ DEP_CPP_DIPSW=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -986,7 +986,7 @@ DEP_CPP_DMAC_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1030,8 +1030,8 @@ DEP_CPP_EGC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
-	"..\i286c\egcmem.h"\
+	"..\i286a\cpucore.h"\
+	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1074,7 +1074,7 @@ DEP_CPP_EMSIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1116,7 +1116,7 @@ DEP_CPP_EPSON=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1160,7 +1160,7 @@ DEP_CPP_FDC_C=\
 	"..\common\rect.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\fddfile.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1243,7 +1243,7 @@ DEP_CPP_GDC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1291,8 +1291,8 @@ DEP_CPP_GDC_P=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
-	"..\i286c\egcmem.h"\
+	"..\i286a\cpucore.h"\
+	"..\i286a\egcmem.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1337,7 +1337,7 @@ DEP_CPP_GDC_S=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1385,7 +1385,7 @@ DEP_CPP_IOCOR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1439,7 +1439,7 @@ DEP_CPP_MOUSE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1483,7 +1483,7 @@ DEP_CPP_NECIO=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1569,7 +1569,7 @@ DEP_CPP_NP2SY=\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\generic\hostdrv.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1612,7 +1612,7 @@ DEP_CPP_PIC_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1655,7 +1655,7 @@ DEP_CPP_PIT_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1699,7 +1699,7 @@ DEP_CPP_PRINT=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1742,7 +1742,7 @@ DEP_CPP_SERIA=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2310,7 +2310,7 @@ DEP_CPP_CS423=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2452,7 +2452,7 @@ DEP_CPP_PCM86=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2508,7 +2508,7 @@ DEP_CPP_SASII=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\fdd\sxsi.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2556,7 +2556,7 @@ DEP_CPP_SCSIC=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\fdd\sxsi.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2604,7 +2604,7 @@ DEP_CPP_SCSII=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2663,7 +2663,7 @@ DEP_CPP_BIOS_=\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2710,7 +2710,7 @@ DEP_CPP_BIOS0=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2755,7 +2755,7 @@ DEP_CPP_BIOS0C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2798,7 +2798,7 @@ DEP_CPP_BIOS1=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2841,7 +2841,7 @@ DEP_CPP_BIOS13=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2886,7 +2886,7 @@ DEP_CPP_BIOS18=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\font\font.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2932,7 +2932,7 @@ DEP_CPP_BIOS19=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2975,7 +2975,7 @@ DEP_CPP_BIOS1A=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3025,7 +3025,7 @@ DEP_CPP_BIOS1B=\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3071,7 +3071,7 @@ DEP_CPP_BIOS1C=\
 	"..\common\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3116,7 +3116,7 @@ DEP_CPP_BIOS1F=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3163,7 +3163,7 @@ DEP_CPP_SXSIB=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\fdd\sxsi.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -3308,7 +3308,7 @@ DEP_CPP_MAKET=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\font\font.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3355,7 +3355,7 @@ DEP_CPP_MAKETG=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\font\font.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3606,7 +3606,7 @@ DEP_CPP_VRAM_=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\VRAM\vram.h"\
 	".\wce\compiler.h"\
 	
@@ -3791,7 +3791,7 @@ DEP_CPP_BEEPC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3859,7 +3859,7 @@ DEP_CPP_CS4231=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3912,7 +3912,7 @@ DEP_CPP_CS4231G=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4033,7 +4033,7 @@ DEP_CPP_FMTIM=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4224,7 +4224,7 @@ DEP_CPP_PCM86C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4478,7 +4478,7 @@ DEP_CPP_SOUND=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\COMMON\wavefile.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4526,7 +4526,7 @@ DEP_CPP_SOUNDR=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\sound\soundrom.h"\
@@ -4799,7 +4799,7 @@ DEP_CPP_SXSI_=\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\fdd\sxsi.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -4821,7 +4821,7 @@ DEP_CPP_GCIRC=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
 	
@@ -4835,7 +4835,7 @@ DEP_CPP_GLINE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4879,7 +4879,7 @@ DEP_CPP_GPSET=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
 	
@@ -4894,7 +4894,7 @@ DEP_CPP_GPUT1=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4940,7 +4940,7 @@ DEP_CPP_GSCRE=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4986,7 +4986,7 @@ DEP_CPP_LIO_C=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5015,6 +5015,7 @@ DEP_CPP_LIO_C=\
 	"..\io\sysport.h"\
 	"..\io\upd4990.h"\
 	"..\lio\lio.h"\
+	"..\LIO\lio.res"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -5039,7 +5040,7 @@ DEP_CPP_FONT_=\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontmake.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5056,7 +5057,7 @@ DEP_CPP_FONTD=\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
 	"..\FONT\fontdata.res"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5071,7 +5072,7 @@ DEP_CPP_FONTF=\
 	"..\common\rect.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5106,7 +5107,7 @@ DEP_CPP_FONTP=\
 	"..\common\rect.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5123,7 +5124,7 @@ DEP_CPP_FONTPC=\
 	"..\common\rect.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5139,7 +5140,7 @@ DEP_CPP_FONTV=\
 	"..\common\rect.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5156,7 +5157,7 @@ DEP_CPP_FONTX=\
 	"..\common\rect.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5172,7 +5173,7 @@ DEP_CPP_FONTX6=\
 	"..\common\rect.h"\
 	"..\font\font.h"\
 	"..\FONT\fontdata.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
@@ -5548,7 +5549,7 @@ DEP_CPP_CMJAS=\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
 	"..\GENERIC\cmjasts.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
 	".\wce\compiler.h"\
@@ -5567,7 +5568,7 @@ DEP_CPP_CMNDR=\
 	"..\font\font.h"\
 	"..\generic\cmndraw.h"\
 	"..\GENERIC\minifont.res"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
 	
@@ -5992,7 +5993,7 @@ DEP_CPP_DEBUG=\
 	"..\common\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\debugsub.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6082,7 +6083,7 @@ DEP_CPP_NEVEN=\
 	"..\common\lstarray.h"\
 	"..\common\milstr.h"\
 	"..\common\rect.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -6114,7 +6115,7 @@ DEP_CPP_PCCOR=\
 	"..\fdd\sxsi.h"\
 	"..\font\font.h"\
 	"..\generic\hostdrv.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6204,7 +6205,7 @@ DEP_CPP_STATS=\
 	"..\generic\cmndraw.h"\
 	"..\generic\hostdrv.h"\
 	"..\generic\keydisp.h"\
-	"..\i286c\cpucore.h"\
+	"..\i286a\cpucore.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
