@@ -35,6 +35,8 @@ HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
 				$(COMMON)/_memory.h $(COMMON)/rect.h $(COMMON)/lstarray.h \
 				$(TARGET)/trace.h
 
+CPUCORES	=	$(I286C)/cpucore.h $(I286C)/memory.h
+
 PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
@@ -109,6 +111,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmndraw.o	$(OBJ)/keydisp.o	$(OBJ)/dipswbmp.o	\
+			$(OBJ)/cmjasts.o											\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
 			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
 			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
@@ -786,6 +789,10 @@ $(OBJ)/keydisp.o	:	$(GENERIC)/keydisp.c $(HEADERS) $(PCCORES) \
 
 $(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
 						$(GENERIC)/dipswbmp.h $(GENERIC)/dipswbmp.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/cmjasts.o	:	$(GENERIC)/cmjasts.c $(HEADERS) $(CPUCORES) \
+						$(TARGET)/commng.h $(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
 
 

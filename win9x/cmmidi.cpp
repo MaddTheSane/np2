@@ -470,12 +470,12 @@ static UINT midiwrite(COMMNG self, BYTE data) {
 						if (midi->buffer[1] == 123) {
 							mch->press = 0;
 							mch->bend = 0x4000;
-							mch->ctrl[1] = 0;			// Modulation
-							mch->ctrl[5] = 127;			// Explession
-							mch->ctrl[6] = 0;			// Hold
-							mch->ctrl[7] = 0;			// Portament
-							mch->ctrl[8] = 0;			// Sostenute
-							mch->ctrl[9] = 0;			// Soft
+							mch->ctrl[1+1] = 0;			// Modulation
+							mch->ctrl[5+1] = 127;		// Explession
+							mch->ctrl[6+1] = 0;			// Hold
+							mch->ctrl[7+1] = 0;			// Portament
+							mch->ctrl[8+1] = 0;			// Sostenute
+							mch->ctrl[9+1] = 0;			// Soft
 						}
 						else {
 							mch->ctrl[midictrlindex[midi->buffer[1]]]

@@ -585,7 +585,7 @@ void pccore_exec(BOOL draw) {
 #if defined(TRACE)
 	execcnt++;
 	if (execcnt >= 60) {
-		TRACEOUT(("resetcnt = %d / pic %d", resetcnt, piccnt));
+//		TRACEOUT(("resetcnt = %d / pic %d", resetcnt, piccnt));
 		execcnt = 0;
 		resetcnt = 0;
 		piccnt = 0;

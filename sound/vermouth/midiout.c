@@ -453,6 +453,7 @@ static void ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl, int val) {
 
 		case CTRL_EXPRESS:
 			ch->expression = val;
+			TRACEOUT(("exp = %d", val));
 			volumeupdate(midi, ch);
 			break;
 
@@ -742,6 +743,8 @@ static void longmsg_gm(MIDIHDL hdl, const BYTE *msg, UINT size) {
 static void longmsg_roland(MIDIHDL hdl, const BYTE *msg, UINT size) {
 
 	UINT	addr;
+	UINT	part;
+	CHANNEL	ch;
 
 	if ((size > 10) && (msg[2] == 0x10) &&
 		(msg[3] == 0x42) && (msg[4] == 0x12)) {		// GS data set
@@ -753,6 +756,24 @@ static void longmsg_roland(MIDIHDL hdl, const BYTE *msg, UINT size) {
 		else if (addr == 0x400004) {				// Vol
 			hdl->master = msg[8] & 0x7f;
 			allvolupdate(hdl);
+		}
+		else if ((addr & (~(0x000f00))) == 0x401015) {	// Tone/Rhythm
+			part = (addr >> 8) & 0x0f;
+			if (part == 0) {							// part10
+				part = 9;
+			}
+			else if (part < 10) {						// part1-9
+				part--;
+			}
+			ch = hdl->channel + part;
+			if (msg[8] == 0) {
+				ch->flag &= ~CHANNEL_RHYTHM;
+				TRACEOUT(("ch%d - tone", part + 1));
+			}
+			else if ((msg[8] == 1) || (msg[8] == 2)) {
+				ch->flag |= CHANNEL_RHYTHM;
+				TRACEOUT(("ch%d - rhythm", part + 1));
+			}
 		}
 		else {
 			TRACEOUT(("Roland GS - %.6x", addr));
