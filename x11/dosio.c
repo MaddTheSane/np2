@@ -2,9 +2,6 @@
 
 #include <sys/stat.h>
 #include <time.h>
-#if defined(WIN32)
-#include <direct.h>
-#endif
 
 #include "codecnv.h"
 #include "dosio.h"
@@ -35,14 +32,14 @@ FILEH
 file_open(const char *path)
 {
 
-	return fopen(path, "rb");
+	return fopen(path, "rb+");
 }
 
 FILEH
 file_open_rb(const char *path)
 {
 
-	return fopen(path, "rb");
+	return fopen(path, "rb+");
 }
 
 FILEH
@@ -100,7 +97,7 @@ file_attr(const char *path)
 
 	if (stat(path, &sb) == 0) {
 		if (S_ISDIR(sb.st_mode)) {
-			return(FILEATTR_DIRECTORY);
+			return FILEATTR_DIRECTORY;
 		}
 		attr = 0;
 		if (!(sb.st_mode & S_IWUSR)) {
@@ -215,8 +212,6 @@ file_attr_c(const char *sjis)
 	return file_attr_c(curpath);
 }
 
-
-#if 0
 static int
 euckanji1st(const char *str, int pos)
 {
@@ -228,7 +223,24 @@ euckanji1st(const char *str, int pos)
 	}
 	return ret;
 }
-#endif
+
+void
+file_cpyname(char *dst, const char *src, int maxlen)
+{
+	int i;
+
+	if (maxlen--) {
+		for (i = 0; i < maxlen && src[i] != '\0'; i++) {
+			dst[i] = src[i];
+		}
+		if (i != 0) {
+			if (euckanji1st(src, i-1)) {
+				i--;
+			}
+		}
+		dst[i] = '\0';
+	}
+}
 
 void
 file_catname(char *path, const char *sjis, int maxlen)
@@ -243,22 +255,28 @@ file_catname(char *path, const char *sjis, int maxlen)
 	}
 	if (maxlen) {
 		codecnv_sjis2euc(path, maxlen, sjis, (UINT)-1);
-		for (;;) {
-			if (!ISKANJI(*path)) {
-				if (*(path+1) == '\0') {
+		for (; path[0] != '\0'; path++) {
+			if (!ISKANJI(path[0])) {
+				if (path[1] == '\0') {
 					break;
 				}
 				path++;
-			} else if ((((*path) - 0x41) & 0xff) < 26) {
-				*path |= 0x20;
-			} else if (*path == '\\') {
-				*path = '/';
-			} else if (*path == '\0') {
-				break;
+			} else if ((((path[0]) - 0x41) & 0xff) < 26) {
+				path[0] |= 0x20;
+			} else if (path[0] == '\\') {
+				path[0] = '/';
 			}
-			path++;
 		}
 	}
+}
+
+BOOL
+file_cmpname(const char *path, const char *sjis)
+{
+	char euc[MAX_PATH];
+
+	codecnv_sjis2euc(euc, sizeof(euc), sjis, (UINT)-1);
+	return strcmp(path, euc);
 }
 
 char *
