@@ -81,7 +81,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
         {
             case kEventWindowShowing:
 #if defined(SUPPORT_PC9821)
-				SetWindowTitleWithCFString(aboutWin, CFSTR("About Neko Project 21x"));
+				SetWindowTitleWithCFString(aboutWin, CFCopyLocalizedString(CFSTR("AboutTitle"), "about 21x"));
 #endif
                 image = getControlRefByID('logo', 0, aboutWin);
                 pict = getBMPfromResource("np2logo.tiff", &bounds);

@@ -1,0 +1,5 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleShortVersionString = "バージョン 0.79";
+CFBundleGetInfoString = "Neko Project IIx バージョン 0.79";
+CFBundleName = "ねこープロジェクトIIx";

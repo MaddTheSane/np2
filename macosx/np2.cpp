@@ -196,9 +196,9 @@ static void MenuBarInit(void) {
 #if defined(SUPPORT_PC9821)
 	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("11.6MB"), kMenuItemAttrIconDisabled, NULL, NULL);
 	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("13.6MB"), kMenuItemAttrIconDisabled, NULL, NULL);
-	SetMenuItemTextWithCFString(GetMenuRef(IDM_HELP), IDM_NP2HELP, CFSTR("Neko Project 21x Help"));
-	SetMenuItemTextWithCFString(GetMenuRef(IDM_APPLE), IDM_ABOUT, CFSTR("About Neko Project 21x..."));
-	SetMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), IDM_I286SAVE, CFSTR("i386 save"));
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_HELP), IDM_NP2HELP, CFCopyLocalizedString(CFSTR("Help"), "Help"));
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_APPLE), IDM_ABOUT, CFCopyLocalizedString(CFSTR("About"), "About"));
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), IDM_I286SAVE, CFCopyLocalizedString(CFSTR("i386 save"), "save"));
 #endif
 
 	if (!(np2cfg.fddequip & 1)) {
