@@ -48,12 +48,11 @@ static void
 dialog_destroy(GtkWidget *w, gpointer p)
 {
 
-	if (p) {
-		_MFREE(p);
-	}
+	UNUSED(w);
 
+	if (p)
+		_MFREE(p);
 	install_idle_process();
-	gtk_widget_destroy(w);
 }
 
 
@@ -213,34 +212,152 @@ newdisk_fd(newdisk_fd_t *datap)
 typedef struct {
 	newdisk_common_t com;
 
-	GtkWidget        *hdsize_combo;
+	GtkWidget        *hdsize;
+
+	gint             kind;
+	guint            min_size;
+	guint            max_size;
 } newdisk_hd_t;
 
+
+static guint anex_hdsize = 0;
+
 static void
-newdisk_hd_ok_button_clicked(GtkButton *b, gpointer d)
+newdisk_hd_anex_ok_button_clicked(GtkButton *b, gpointer d)
 {
+	static const int cnv[] = { 0, 1, 2, 3, 5, 6 };
 	newdisk_hd_t *data = (newdisk_hd_t *)d;
-	const gchar *p;
-	int hdsize;
 
 	UNUSED(b);
 
-	p = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(data->hdsize_combo)->entry));
-	if (p != 0 && strlen(p) != 0) {
-		hdsize = milstr_solveINT(p);
-		if (hdsize >= 5 && hdsize <= 256) {
-			newdisk_thd(data->com.filename, hdsize);
+	if (anex_hdsize >= data->min_size && anex_hdsize <= data->max_size) {
+		switch (data->kind) {
+		case 1:	/* hdi */
+			newdisk_hdi(data->com.filename, cnv[anex_hdsize]);
+			break;
 		}
 	}
 	gtk_widget_destroy(GTK_WIDGET(data->com.dialog));
 }
 
 static void
-newdisk_hd(newdisk_hd_t *datap)
+newdisk_hd_anex_hdsize_button_clicked(GtkButton *b, gpointer d)
+{
+
+	UNUSED(b);
+	anex_hdsize = GPOINTER_TO_UINT(d);
+}
+
+static void
+newdisk_hd_anex(newdisk_hd_t *datap)
+{
+	static const int hddsize[] = { 5, 10, 15, 20, 30, 40 };
+	char buf[32];
+	GtkWidget *dialog;
+	GtkWidget *dialog_table;
+	GtkWidget *button[NELEMENTS(hddsize)];
+	GtkWidget *ok_button;
+	GtkWidget *cancel_button;
+	gint i;
+
+	uninstall_idle_process();
+
+	/* dialog */
+	datap->com.dialog = dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(dialog), "Create new Anex hard disk image");
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+	gtk_window_set_policy(GTK_WINDOW(dialog), TRUE, TRUE, TRUE);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
+
+	gtk_signal_connect(GTK_OBJECT(dialog), "destroy",
+	    GTK_SIGNAL_FUNC(dialog_destroy), (gpointer)datap);
+
+	/* dialog table */
+	dialog_table = gtk_table_new(3, 2, FALSE);
+	gtk_table_set_col_spacings(GTK_TABLE(dialog_table), 5);
+	gtk_container_add(GTK_CONTAINER(dialog), dialog_table);
+	gtk_widget_show(dialog_table);
+
+	/* HD size radio button */
+	for (i = 0; i < NELEMENTS(hddsize); ++i) {
+		g_snprintf(buf, sizeof(buf), "%dMB", hddsize[i]);
+		button[i] = gtk_radio_button_new_with_label_from_widget(
+		    (i > 0) ? GTK_RADIO_BUTTON(button[i-1]) : NULL, buf);
+		gtk_widget_show(button[i]);
+		gtk_signal_connect(GTK_OBJECT(button[i]), "clicked",
+		    GTK_SIGNAL_FUNC(newdisk_hd_anex_hdsize_button_clicked),
+		    GUINT_TO_POINTER(i));
+		gtk_table_attach_defaults(GTK_TABLE(dialog_table),
+		    button[i], i % 2, (i % 2) + 1, i / 2, (i / 2) + 1);
+		GTK_WIDGET_UNSET_FLAGS(button[i], GTK_CAN_FOCUS);
+	}
+	if (anex_hdsize >= NELEMENTS(hddsize)) {
+		anex_hdsize = 0;
+	}
+	gtk_signal_emit_by_name(GTK_OBJECT(button[anex_hdsize]), "clicked");
+
+	/* "OK" button */
+	ok_button = gtk_button_new_with_label("OK");
+	gtk_container_set_border_width(GTK_CONTAINER(ok_button), 2);
+	gtk_widget_set_usize(ok_button, 80, 0);
+	gtk_table_attach_defaults(GTK_TABLE(dialog_table), ok_button,
+	    2, 3, 0, 1);
+	gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
+	    GTK_SIGNAL_FUNC(newdisk_hd_anex_ok_button_clicked),(gpointer)datap);
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
+	gtk_widget_grab_default(ok_button);
+	gtk_widget_show(ok_button);
+
+	/* "Cancel" button */
+	cancel_button = gtk_button_new_with_label("Cancel");
+	gtk_container_set_border_width(GTK_CONTAINER(cancel_button), 4);
+	gtk_widget_set_usize(cancel_button, 80, 0);
+	gtk_table_attach_defaults(GTK_TABLE(dialog_table), cancel_button,
+	    2, 3, 1, 2);
+	gtk_signal_connect_object(GTK_OBJECT(cancel_button), "clicked",
+	    GTK_SIGNAL_FUNC(gtk_widget_destroy), GTK_OBJECT(dialog));
+	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
+	gtk_widget_show(cancel_button);
+
+	gtk_widget_show(dialog);
+}
+
+static void
+newdisk_hd_t98_ok_button_clicked(GtkWidget *w, gpointer d)
+{
+	newdisk_hd_t *data = (newdisk_hd_t *)d;
+	const gchar *p;
+	gint hdsize;
+
+	UNUSED(w);
+
+	p = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(data->hdsize)->entry));
+	if (p != 0 && strlen(p) > 0) {
+		hdsize = milstr_solveINT(p);
+		if (hdsize >= data->min_size && hdsize <= data->max_size) {
+			switch (data->kind) {
+			case 2:	/* thd */
+				newdisk_thd(data->com.filename, hdsize);
+				break;
+
+			case 3:	/* nhd */
+				newdisk_nhd(data->com.filename, hdsize);
+				break;
+			}
+		}
+	}
+	gtk_widget_destroy(GTK_WIDGET(data->com.dialog));
+}
+
+static void
+newdisk_hd_t98(newdisk_hd_t *datap)
 {
 	static const char *hddsizestr[] = {
 		"20", "41", "65", "80", "128",
 	};
+	char buf[64];
 	GtkWidget *dialog;
 	GtkWidget *dialog_table;
 	GtkWidget *label;
@@ -256,7 +373,9 @@ newdisk_hd(newdisk_hd_t *datap)
 
 	/* dialog */
 	datap->com.dialog = dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(dialog), "Create new hard disk image");
+	g_snprintf(buf, sizeof(buf), "Create new T98%s hard disk image",
+	    (datap->kind == 2) ? "" : "-Next");
+	gtk_window_set_title(GTK_WINDOW(dialog), buf);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 	gtk_window_set_policy(GTK_WINDOW(dialog), TRUE, TRUE, TRUE);
@@ -283,13 +402,14 @@ newdisk_hd(newdisk_hd_t *datap)
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), hbox, 1, 2, 0, 1);
 	gtk_widget_show(hbox);
 
-	datap->hdsize_combo = combo = gtk_combo_new();
+	datap->hdsize = combo = gtk_combo_new();
 	gtk_combo_set_value_in_list(GTK_COMBO(combo), TRUE, TRUE);
-	gtk_combo_set_use_arrows_always(GTK_COMBO(combo), TRUE);
 	for (items = 0, i = 0; i < NELEMENTS(hddsizestr); ++i)
 		items = g_list_append(items, (gpointer)hddsizestr[i]);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), items);
 	g_list_free(items);
+	gtk_combo_disable_activate(GTK_COMBO(combo));
+	gtk_combo_set_use_arrows(GTK_COMBO(combo), TRUE);
 	gtk_widget_set_usize(combo, 60, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), combo, FALSE, FALSE, 5);
 	gtk_widget_show(combo);
@@ -298,7 +418,8 @@ newdisk_hd(newdisk_hd_t *datap)
 	gtk_entry_set_editable(GTK_ENTRY(entry), TRUE);
 	gtk_entry_set_max_length(GTK_ENTRY(entry), 3);
 	gtk_entry_set_text(GTK_ENTRY(entry), "");
-	gtk_widget_show(entry);
+	gtk_signal_connect(GTK_OBJECT(entry), "activate",
+	    GTK_SIGNAL_FUNC(newdisk_hd_t98_ok_button_clicked), (gpointer)datap);
 
 	/* "MB" label */
 	label = gtk_label_new("MB");
@@ -307,7 +428,8 @@ newdisk_hd(newdisk_hd_t *datap)
 	gtk_widget_show(label);
 
 	/* "(5-256MB)" label */
-	label = gtk_label_new("(5-256MB)");
+	g_snprintf(buf, sizeof(buf), "(%d-%dMB)", datap->min_size, datap->max_size);
+	label = gtk_label_new(buf);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.9, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), label, 1, 2, 1, 2);
 	gtk_widget_show(label);
@@ -319,7 +441,7 @@ newdisk_hd(newdisk_hd_t *datap)
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), ok_button,
 	    2, 3, 0, 1);
 	gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
-	    GTK_SIGNAL_FUNC(newdisk_hd_ok_button_clicked), (gpointer)datap);
+	    GTK_SIGNAL_FUNC(newdisk_hd_t98_ok_button_clicked), (gpointer)datap);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 	gtk_widget_grab_default(ok_button);
@@ -379,11 +501,39 @@ create_newdisk_dialog(const char *filebasename, const char *fileextname)
 
 	extName = file_getext(disk->com.filename);
 	if (milstr_extendcmp(fileextname, "thd") == 0) {
+		disk->hd.kind = 2;
+		disk->hd.min_size = 5;
+		disk->hd.max_size = 256;
+
 		if ((milstr_extendcmp(extName, disk->com.filename) == 0) ||
 		    (milstr_extendcmp(extName, "thd") != 0)) {
-			setext(disk->com.filename, fileextname, sizeof(disk->com.filename));
+			/* check another disk image */
+			if (milstr_extendcmp(extName, "nhd") == 0) {
+				disk->hd.kind = 3;
+				disk->hd.max_size = 512;
+			} else if (milstr_extendcmp(extName, "hdi") == 0) {
+				disk->hd.kind = 1;
+				disk->hd.min_size = 0;
+				disk->hd.max_size = 5;
+			} else {
+				/* append ".thd" */
+				setext(disk->com.filename, fileextname, sizeof(disk->com.filename));
+			}
 		}
-		newdisk_hd(&disk->hd);
+		switch (disk->hd.kind) {
+		case 1:
+			newdisk_hd_anex(&disk->hd);
+			break;
+
+		case 2:
+		case 3:
+			newdisk_hd_t98(&disk->hd);
+			break;
+
+		default:
+			_MFREE(disk);
+			break;
+		}
 	} else if ((milstr_extendcmp(fileextname, "d88") == 0) ||
 	           (milstr_extendcmp(fileextname, "88d") == 0)) {
 		if ((milstr_extendcmp(extName, disk->com.filename) == 0) ||

@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.3 2004/08/14 03:17:53 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -67,11 +67,19 @@ static void cb_bmpsave(GtkAction *action, gpointer user_data);
 static void cb_change_font(GtkAction *action, gpointer user_data);
 static void cb_diskeject(GtkAction *action, gpointer user_data);
 static void cb_diskopen(GtkAction *action, gpointer user_data);
+#if defined(SUPPORT_IDEIO)
+static void cb_ataopen(GtkAction *action, gpointer user_data);
+static void cb_ataremove(GtkAction *action, gpointer user_data);
+static void cb_atapiopen(GtkAction *action, gpointer user_data);
+static void cb_atapiremove(GtkAction *action, gpointer user_data);
+#endif
 static void cb_midipanic(GtkAction *action, gpointer user_data);
 static void cb_newdisk(GtkAction *action, gpointer user_data);
 static void cb_reset(GtkAction *action, gpointer user_data);
+#if !defined(SUPPORT_IDEIO)
 static void cb_sasiopen(GtkAction *action, gpointer user_data);
 static void cb_sasiremove(GtkAction *action, gpointer user_data);
+#endif
 
 static void cb_dialog(GtkAction *action, gpointer user_data);
 static void cb_radio(GtkRadioAction *action, GtkRadioAction *current, gpointer user_data);
@@ -90,10 +98,17 @@ static GtkActionEntry menu_entries[] = {
 { "Drive2Menu",   NULL, "Drive_2",   NULL, NULL, NULL },
 { "Drive3Menu",   NULL, "Drive_3",   NULL, NULL, NULL },
 { "Drive4Menu",   NULL, "Drive_4",   NULL, NULL, NULL },
+#if defined(SUPPORT_IDEIO)
+{ "ATA00Menu",    NULL, "IDE0-_0",   NULL, NULL, NULL },
+{ "ATA01Menu",    NULL, "IDE0-_1",   NULL, NULL, NULL },
+{ "ATAPIMenu",    NULL, "_CD-ROM",   NULL, NULL, NULL },
+#endif
 { "KeyboardMenu", NULL, "_Keyboard", NULL, NULL, NULL },
 { "MemoryMenu",   NULL, "M_emory",   NULL, NULL, NULL },
+#if !defined(SUPPORT_IDEIO)
 { "SASI1Menu",    NULL, "SASI-_1",   NULL, NULL, NULL },
 { "SASI2Menu",    NULL, "SASI-_2",   NULL, NULL, NULL },
+#endif
 { "SoundMenu",    NULL, "_Sound",    NULL, NULL, NULL },
 
 /* MenuItem */
@@ -111,13 +126,23 @@ static GtkActionEntry menu_entries[] = {
 { "disk4open",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_diskopen), },
 { "exit",        NULL, "E_xit",             NULL, NULL, G_CALLBACK(gtk_main_quit) },
 { "font",        NULL, "_Font...",          NULL, NULL, G_CALLBACK(cb_change_font), },
+#if defined(SUPPORT_IDEIO)
+{ "ata00open",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_ataopen), },
+{ "ata00remove", NULL, "_Remove",           NULL, NULL, G_CALLBACK(cb_ataremove), },
+{ "ata01open",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_ataopen), },
+{ "ata01remove", NULL, "_Remove",           NULL, NULL, G_CALLBACK(cb_ataremove), },
+{ "atapiopen",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_atapiopen), },
+{ "atapiremove", NULL, "_Remove",           NULL, NULL, G_CALLBACK(cb_atapiremove), },
+#endif
 { "midiopt",     NULL, "MIDI _option...",   NULL, NULL, G_CALLBACK(cb_dialog) },
 { "midipanic",   NULL, "MIDI _panic",       NULL, NULL, G_CALLBACK(cb_midipanic) },
 { "newdisk",     NULL, "_New disk...",      NULL, NULL, G_CALLBACK(cb_newdisk), },
+#if !defined(SUPPORT_IDEIO)
 { "sasi1open",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_sasiopen), },
 { "sasi1remove", NULL, "_Remove",           NULL, NULL, G_CALLBACK(cb_sasiremove), },
 { "sasi2open",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_sasiopen), },
 { "sasi2remove", NULL, "_Remove",           NULL, NULL, G_CALLBACK(cb_sasiremove), },
+#endif
 { "screenopt",   NULL, "Screen _option...", NULL, NULL, G_CALLBACK(cb_dialog) },
 { "serialopt",   NULL, "Se_rial option...", NULL, NULL, G_CALLBACK(cb_dialog) },
 { "soundopt",    NULL, "So_und option...",  NULL, NULL, G_CALLBACK(cb_dialog) },
@@ -281,6 +306,20 @@ static const gchar *ui_info =
 "  <menu name='FDD' action='FDDMenu'>\n"
 "  </menu>\n"
 "  <menu name='HardDisk' action='HardDiskMenu'>\n"
+#if defined(SUPPORT_IDEIO)
+"   <menu name='ATA00' action='ATA00Menu'>\n"
+"    <menuitem action='ata00open'/>\n"
+"    <menuitem action='ata00remove'/>\n"
+"   </menu>\n"
+"   <menu name='ATA01' action='ATA01Menu'>\n"
+"    <menuitem action='ata01open'/>\n"
+"    <menuitem action='ata01remove'/>\n"
+"   </menu>\n"
+"   <menu name='ATAPI' action='ATAPIMenu'>\n"
+"    <menuitem action='atapiopen'/>\n"
+"    <menuitem action='atapiremove'/>\n"
+"   </menu>\n"
+#else	/* !SUPPORT_IDEIO */
 "   <menu name='SASI1' action='SASI1Menu'>\n"
 "    <menuitem action='sasi1open'/>\n"
 "    <menuitem action='sasi1remove'/>\n"
@@ -289,6 +328,7 @@ static const gchar *ui_info =
 "    <menuitem action='sasi2open'/>\n"
 "    <menuitem action='sasi2remove'/>\n"
 "   </menu>\n"
+#endif	/* SUPPORT_IDEIO */
 "  </menu>\n"
 "  <menu name='Screen' action='ScreenMenu'>\n"
 "   <menuitem action='fullscreen'/>\n"
@@ -720,6 +760,187 @@ end:
 	install_idle_process();
 }
 
+#if defined(SUPPORT_IDEIO)
+static void
+cb_ataopen(GtkAction *action, gpointer user_data)
+{
+	GtkWidget *dialog = NULL;
+	GtkFileFilter *filter;
+	gchar *utf8, *path;
+	struct stat sb;
+	const gchar *name = gtk_action_get_name(action);
+	guint channel, drive;
+
+	UNUSED(user_data);
+
+	/* "ata??open" */
+	if ((strlen(name) < 5)
+	 || (!g_ascii_isdigit(name[3]))
+	 || (!g_ascii_isdigit(name[4]))) {
+		return;
+	}
+
+	channel = g_ascii_digit_value(name[3]);
+	drive = g_ascii_digit_value(name[4]);
+	if (channel != 0 || drive >= 2)
+		return;
+
+	uninstall_idle_process();
+
+	dialog = gtk_file_chooser_dialog_new("Open a IDE disk image",
+	    GTK_WINDOW(main_window), GTK_FILE_CHOOSER_ACTION_OPEN, 
+	    GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+	    NULL);
+	if (dialog == NULL)
+		goto end;
+
+	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
+	if (utf8) {
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
+		g_free(utf8);
+	}
+
+	filter = gtk_file_filter_new();
+	if (filter) {
+		gtk_file_filter_set_name(filter, "All files");
+		gtk_file_filter_add_pattern(filter, "*");
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	}
+	filter = gtk_file_filter_new();
+	if (filter) {
+		gtk_file_filter_set_name(filter, "IDE disk image files");
+		gtk_file_filter_add_pattern(filter, "*.[nN][hH][dD]");
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	}
+	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
+		goto end;
+
+	utf8 = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+	if (utf8) {
+		path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (path) {
+			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
+				file_cpyname(hddfolder, path, sizeof(hddfolder));
+				diskdrv_sethdd(2 * channel + drive, path);
+				sysmng_update(SYS_UPDATEOSCFG);
+			}
+			g_free(path);
+		}
+		g_free(utf8);
+	}
+
+end:
+	if (dialog)
+		gtk_widget_destroy(dialog);
+	install_idle_process();
+}
+
+static void
+cb_ataremove(GtkAction *action, gpointer user_data)
+{
+	const gchar *name = gtk_action_get_name(GTK_ACTION(action));
+	guint channel, drive;
+
+	UNUSED(user_data);
+
+	/* "ata??open" */
+	if ((strlen(name) < 5)
+	 || (!g_ascii_isdigit(name[3]))
+	 || (!g_ascii_isdigit(name[4]))) {
+		return;
+	}
+
+	channel = g_ascii_digit_value(name[3]);
+	drive = g_ascii_digit_value(name[4]);
+	if (channel == 0 && drive < 2) {
+		if (2 * channel + drive < 4) {
+			diskdrv_sethdd(2 * channel + drive, "");
+		}
+	}
+}
+
+static void
+cb_atapiopen(GtkAction *action, gpointer user_data)
+{
+	GtkWidget *dialog = NULL;
+	GtkFileFilter *filter;
+	gchar *utf8, *path;
+	struct stat sb;
+
+	UNUSED(action);
+	UNUSED(user_data);
+
+	uninstall_idle_process();
+
+	dialog = gtk_file_chooser_dialog_new("Open a ATAPI CD-ROM image",
+	    GTK_WINDOW(main_window), GTK_FILE_CHOOSER_ACTION_OPEN, 
+	    GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+	    NULL);
+	if (dialog == NULL)
+		goto end;
+
+	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
+	if (utf8) {
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
+		g_free(utf8);
+	}
+
+	filter = gtk_file_filter_new();
+	if (filter) {
+		gtk_file_filter_set_name(filter, "All files");
+		gtk_file_filter_add_pattern(filter, "*");
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	}
+	filter = gtk_file_filter_new();
+	if (filter) {
+		gtk_file_filter_set_name(filter, "ISO CD-ROM image files");
+		gtk_file_filter_add_pattern(filter, "*.[iI][sS][oO]");
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	}
+	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
+		goto end;
+
+	utf8 = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+	if (utf8) {
+		path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (path) {
+			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
+				file_cpyname(hddfolder, path, sizeof(hddfolder));
+				diskdrv_setcdrom(DISKDRV_CDROM_ATAPI, path, FALSE);
+				sysmng_update(SYS_UPDATEOSCFG);
+			}
+			g_free(path);
+		}
+		g_free(utf8);
+	}
+
+end:
+	if (dialog)
+		gtk_widget_destroy(dialog);
+	install_idle_process();
+}
+
+static void
+cb_atapiremove(GtkAction *action, gpointer user_data)
+{
+
+	UNUSED(action);
+	UNUSED(user_data);
+
+	diskdrv_setcdrom(DISKDRV_CDROM_ATAPI, "", FALSE);
+}
+#endif	/* SUPPORT_IDEIO */
+
 static void
 cb_midipanic(GtkAction *action, gpointer user_data)
 {
@@ -810,57 +1031,65 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 	}
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter[0]);
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
-		goto end;
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
+		gtk_widget_destroy(dialog);
+		install_idle_process();
+		return;
+	}
 
 	utf8 = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	if (utf8) {
-		path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
-		if (path) {
-			kind = -1;
-			ext = file_getext(path);
-			for (i = 0; i < NELEMENTS(exttbl); i++) {
-				if (g_ascii_strcasecmp(ext, exttbl[i].name) == 0) {
-					kind = exttbl[i].kind;
-					break;
-				}
-			}
-			if (i == NELEMENTS(exttbl)) {
-				f = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
-				for (i = 0; i < NELEMENTS(filter); i++) {
-					if (f == filter[i]) {
-						kind = i;
-						tmp = g_strjoin(".", path, extname[i]);
-						if (tmp) {
-							g_free(path);
-							path = tmp;
-						}
-						break;
-					}
-				}
-			}
+	if (utf8 == NULL)
+		goto end;
 
-			uninstall_idle_process();
-			switch (kind) {
-			case 0: /* D88 */
-				create_newdisk_fd_dialog(path);
-				break;
+	path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+	g_free(utf8);
+	if (path == NULL)
+		goto end;
 
-			case 1: /* HDI */
-			case 2: /* THD */
-			case 3: /* NHD */
-				create_newdisk_hd_dialog(path, kind);
-				break;
-
-			default:
-				break;
-			}
-			install_idle_process();
-
-			g_free(path);
+	kind = -1;
+	ext = file_getext(path);
+	for (i = 0; i < NELEMENTS(exttbl); i++) {
+		if (g_ascii_strcasecmp(ext, exttbl[i].name) == 0) {
+			kind = exttbl[i].kind;
+			break;
 		}
-		g_free(utf8);
 	}
+	if (i == NELEMENTS(exttbl)) {
+		f = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
+		for (i = 0; i < NELEMENTS(filter); i++) {
+			if (f == filter[i]) {
+				kind = i;
+				tmp = g_strjoin(".", path, extname[i]);
+				if (tmp) {
+					g_free(path);
+					path = tmp;
+				}
+				break;
+			}
+		}
+	}
+
+	/* XXX system has only one modal dialog? */
+	gtk_widget_destroy(dialog);
+
+	switch (kind) {
+	case 0: /* D88 */
+		create_newdisk_fd_dialog(path);
+		break;
+
+	case 1: /* HDI */
+	case 2: /* THD */
+	case 3: /* NHD */
+		create_newdisk_hd_dialog(path, kind);
+		break;
+
+	default:
+		break;
+	}
+	g_free(path);
+
+	install_idle_process();
+	return;
 
 end:
 	if (dialog)
@@ -879,6 +1108,7 @@ cb_reset(GtkAction *action, gpointer user_data)
 	pccore_reset();
 }
 
+#if !defined(SUPPORT_IDEIO)
 static void
 cb_sasiopen(GtkAction *action, gpointer user_data)
 {
@@ -968,6 +1198,7 @@ cb_sasiremove(GtkAction *action, gpointer user_data)
 		}
 	}
 }
+#endif	/* !SUPPORT_IDEIO */
 
 static void
 cb_dialog(GtkAction *action, gpointer user_data)
