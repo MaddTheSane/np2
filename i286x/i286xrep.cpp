@@ -64,7 +64,7 @@ I286EXT rep_xinsw(void) {
 				movzx	ebp, I286_DI
 				align	4
 insw_lp:		I286CLOCK(4)
-				movzx	cx, I286_DX
+				movzx	ecx, I286_DX
 				call	iocore_inp16
 				lea		ecx, [edi + ebp]
 				mov		dx, ax
@@ -130,7 +130,7 @@ I286EXT rep_xoutsw(void) {
 outsw_lp:		I286CLOCK(4)
 				lea		ecx, [edi + ebp]
 				call	i286_memoryread_w
-				movzx	cx, I286_DX
+				movzx	ecx, I286_DX
 				mov		dx, ax
 				call	iocore_out16
 				STRING_DIRx2

@@ -87,8 +87,12 @@
 // ----
 
 　ver0.80 → ver0.81
-　・MPU-PC98II conductor修正
-　・MPU-PC98II Request PC/Tempo コマンドの追加
+　・80286 (x86版) - rep ins, ２バイトmov8命令の不都合修正
+　・80286 (x86版) - クロック修正 (enter)
+　・80286 (C版) - クロック修正 (cmp, jcc, test, enter)
+　・80286 (ARM版) - クロック修正 (cmp, jcc, test, enter)
+　・MPU-PC98II - conductor修正
+　・MPU-PC98II - Request PC/Tempo コマンドの追加
 　・GDC - ソフトリセット時のフラグ修正
 　・GRCG - ソフトリセット時のフラグ修正
 　・BIOS - 1842h スクリーンモードを破壊する不都合修正 (ver0.75エンバグ)

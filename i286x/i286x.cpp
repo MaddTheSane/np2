@@ -2407,7 +2407,7 @@ I286 mov_ea_r8(void) {							// 88: mov EA, REG8
 		__asm {
 				PREPART_EA_REG8(2)
 					mov		I286_REG[eax], dl
-					GET_NEXTPRE2					// ea_reg‚Ì regreg‚¾‚¯
+					GET_NEXTPRE1					// ea_reg‚Ì regreg‚¾‚¯
 					ret
 					align	16
 			memory_eareg8:
@@ -3509,7 +3509,7 @@ I286 _enter(void) {								// C8: enter DATA16, DATA8
 				je		enter0
 				dec		eax
 				je		enter1
-				lea		ecx, [eax*4 + 12]
+				lea		ecx, [eax*4 + 12 + 4]
 				I286CLOCK(ecx)
 				push	ebx
 				movzx	ebx, I286_BP
