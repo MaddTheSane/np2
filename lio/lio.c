@@ -261,9 +261,10 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 	}
 	gdcs.grphdisp |= lio->draw.sbit;
 	dbit = 0;
-	while(bit && width--) {
+	while((bit) && (width)) {
 		dbit |= bit;
 		bit >>= 1;
+		width--;
 	}
 	pixed8(lio, addr, dbit, pal);
 	addr++;
@@ -274,9 +275,10 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 	}
 	dbit = 0;
 	bit = 0x80;
-	while(bit && width--) {
+	while((bit) && (width)) {
 		dbit |= bit;
 		bit >>= 1;
+		width--;
 	}
 	if (dbit) {
 		pixed8(lio, addr, dbit, pal);

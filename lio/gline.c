@@ -132,6 +132,9 @@ static void gline(const _LIOWORK *lio, const LINEPT *lp) {
 	pat = (UINT16)((lp->pat >> d1) | (lp->pat << (16 - d1)));
 
 	csrw = (y1 * 40) + (x1 >> 4) + ((x1 & 0xf) << 20);
+	if (lio->draw.flag & LIODRAW_UPPER) {
+		csrw += 16000 >> 1;
+	}
 	gdcsub_setvectl(&vect, x1, y1, x2, y2);
 	if (!(lio->draw.flag & LIODRAW_MONO)) {
 		gdcsub_vectl(csrw + 0x4000, &vect, pat,
@@ -203,6 +206,7 @@ REG8 lio_gline(LIOWORK lio) {
 	lp.y1 = (SINT16)LOADINTELWORD(dat.y1);
 	lp.x2 = (SINT16)LOADINTELWORD(dat.x2);
 	lp.y2 = (SINT16)LOADINTELWORD(dat.y2);
+	TRACEOUT(("line %d %d %d %d", lp.x1, lp.y1, lp.x2, lp.y2));
 	if (dat.sw) {
 		lp.pat = (GDCPATREVERSE(dat.style[0]) << 8) +
 											GDCPATREVERSE(dat.style[1]);
