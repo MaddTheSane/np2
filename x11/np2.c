@@ -201,10 +201,10 @@ flagload(const char* ext, const char* title, BOOL force)
 
 	getstatfilename(path, ext, sizeof(path));
 	ret = statsave_check(path, buf, sizeof(buf));
-	if (ret & (~NP2FLAG_DISKCHG)) {
+	if (ret & (~STATFLAG_DISKCHG)) {
 		fprintf(stderr, "Couldn't restart\n");
 		rv = 1;
-	} else if ((!force) && (ret & NP2FLAG_DISKCHG)) {
+	} else if ((!force) && (ret & STATFLAG_DISKCHG)) {
 		fprintf(stderr, "Conflict\n");
 		rv = 1;
 	}

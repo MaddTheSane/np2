@@ -1,17 +1,4 @@
 
-#if 1		// ÇøÇÂÇ¡Ç∆ÇæÇØÇÊÅH
-enum {
-	NP2FLAG_SUCCESS		= 0,
-	NP2FLAG_DISKCHG		= 0x0001,
-	NP2FLAG_VERCHG		= 0x0002,
-	NP2FLAG_WARNING		= 0x0080,
-	NP2FLAG_VERSION		= 0x0100,
-	NP2FLAG_FAILURE		= -1
-};
-#endif
-
-//	Å´Ç…ïœçXÅ`
-
 enum {
 	STATFLAG_SUCCESS	= 0,
 	STATFLAG_DISKCHG	= 0x0001,

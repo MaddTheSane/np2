@@ -742,11 +742,11 @@ static int flagload(const char *ext) {
 	ret = IDOK;
 	getstatfilename(path, ext, sizeof(path));
 	r = statsave_check(path, buf, sizeof(buf));
-	if (r & (~NP2FLAG_DISKCHG)) {
+	if (r & (~STATFLAG_DISKCHG)) {
 		ResumeErrorDialogProc();
 		ret = IDCANCEL;
 	}
-	else if (r & NP2FLAG_DISKCHG) {
+	else if (r & STATFLAG_DISKCHG) {
 		ret = ResumeWarningDialogProc(buf);
 	}
 	if (ret == IDOK) {

@@ -276,11 +276,11 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 	winuienter();
 	id = IDYES;
 	ret = statsave_check(path, buf, sizeof(buf));
-	if (ret & (~NP2FLAG_DISKCHG)) {
+	if (ret & (~STATFLAG_DISKCHG)) {
 		MessageBox(hWndMain, "Couldn't restart", title, MB_OK | MB_ICONSTOP);
 		id = IDNO;
 	}
-	else if ((!force) && (ret & NP2FLAG_DISKCHG)) {
+	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
 		char buf2[1024 + 256];
 		wsprintf(buf2, "Conflict!\n\n%s\nContinue?", buf);
 		id = MessageBox(hWndMain, buf2, title,
