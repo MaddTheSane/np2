@@ -28,7 +28,7 @@ CPU_TRAP			equ		70 - 112
 ; cpu_type			equ		71 - 112
 ; cpu_pf_semaphore	equ		72 - 112
 ; cpu_repbak		equ		76 - 112
-; cpu_inport		equ		80 - 112
+CPU_INPUT			equ		80 - 112
 ; cpu_ovflag		equ		84 - 112
 CPU_GDTR			equ		88 - 112
 CPU_IDTR			equ		94 - 112
@@ -79,12 +79,12 @@ $label		mov		r7, $clock
 
 	MACRO
 $label	CPUSV
-$label
+$label		str		r8, [r9, #CPU_FLAG]
 	MEND
 
 	MACRO
 $label	CPULD
-$label
+$label		ldr		r8, [r9, #CPU_FLAG]
 	MEND
 
 

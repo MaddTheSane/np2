@@ -616,14 +616,14 @@ i286a_a			and		r1, r0, #(&18 << 3)
 				b		a_bp_d8
 				b		a_bx_d8
 
-				b		lea_bx_si_d16
-				b		lea_bx_di_d16
-				b		lea_bp_si_d16
-				b		lea_bp_di_d16
-				b		lea_si_d16
-				b		lea_di_d16
-				b		lea_bp_d16
-				b		lea_bx_d16
+				b		a_bx_si_d16
+				b		a_bx_di_d16
+				b		a_bp_si_d16
+				b		a_bp_di_d16
+				b		a_si_d16
+				b		a_di_d16
+				b		a_bp_d16
+				b		a_bx_d16
 
 a_bx_si			ldrh	r0, [r9, #CPU_BX]
 				ldrh	r1, [r9, #CPU_SI]
@@ -910,7 +910,7 @@ i286a_lea_test	stmdb	sp!, {r4, r8, r9, lr}
 				ldmia	sp!, {r4, r8, r9, pc}
 ilt_i286core	dcd		i286core - CPU_REG
 
-i286a_a_test	stmdb	sp!, {r4, r8, r9, lr}
+i286a_a_test	stmdb	sp!, {r4, r5, r6, r8, r9, lr}
 				ldr		r9, iat_i286core
 				ldrh	r8, [r9, #CPU_IP]
 				mov		r8, r8 lsl #16
@@ -919,7 +919,7 @@ i286a_a_test	stmdb	sp!, {r4, r8, r9, lr}
 				str		r6, [r5]
 				mov		r8, r8 lsr #16
 				strh	r8, [r9, #CPU_IP]
-				ldmia	sp!, {r4, r8, r9, pc}
+				ldmia	sp!, {r4, r5, r6, r8, r9, pc}
 iat_i286core	dcd		i286core - CPU_REG
 
 	END

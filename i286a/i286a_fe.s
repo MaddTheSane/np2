@@ -72,29 +72,29 @@ callfarea16		cmp		r0, #&c0
 				add		r4, r0, #2
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
-				bl		i286_memoryread_w
+				bl		i286_memoryread_w			; ip
 				mov		r5, r8 lsr #16
+				add		r8, r8, r0 lsl #16
 				sub		r8, r8, r5 lsl #16
-				orr		r8, r8, r0 lsl #16
 				add		r0, r4, r6
-				bl		i286_memoryread_w
+				bl		i286_memoryread_w			; cs
 				mov		r2, r0 lsl #4
 				ldrh	r1, [r9, #CPU_CS]
 				strh	r0, [r9, #CPU_CS]
-				str		r2, [r9, #CPU_CS_BASE]
 				ldrh	r4, [r9, #CPU_SP]
 				ldr		r6, [r9, #CPU_SS_BASE]
+				str		r2, [r9, #CPU_CS_BASE]
 				subs	r4, r4, #2
 				addcc	r4, r4, #&10000
 				add		r0, r4, r6
-				bl		i286_memorywrite_w
+				bl		i286_memorywrite_w			; cs
 				subs	r4, r4, #2
 				addcc	r4, r4, #&10000
-				add		r0, r4, r6
-				strh	r3, [r9, #CPU_SP]
 				mov		r1, r5
+				strh	r4, [r9, #CPU_SP]
+				add		r0, r4, r6
 				mov		lr, r11
-				b		i286_memorywrite_w
+				b		i286_memorywrite_w			; ip
 callfar16r		mov		r6, #6
 				sub		r8, r8, #(2 << 16)
 				b		i286a_localint

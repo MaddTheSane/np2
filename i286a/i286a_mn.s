@@ -497,9 +497,9 @@ push_d16		CPUWORK	#3
 				GETPC16
 				ldrh	r2, [r9, #CPU_SP]
 				ldr		r3, [r9, #CPU_SS_BASE]
+				mov		r1, r0
 				subs	r2, r2, #2
 				addcc	r2, r2, #&10000
-				mov		r1, r0
 				strh	r2, [r9, #CPU_SP]
 				add		r0, r2, r3
 				mov		lr, r11
@@ -525,9 +525,9 @@ push_d8			CPUWORK	#3
 				GETPC8
 				ldrh	r2, [r9, #CPU_SP]
 				ldr		r3, [r9, #CPU_SS_BASE]
+				mov		r0, r0 lsl #24
 				subs	r2, r2, #2
 				addcc	r2, r2, #&10000
-				mov		r0, r0 lsl #24
 				mov		r1, r0 asr #24
 				strh	r2, [r9, #CPU_SP]
 				add		r0, r2, r3
@@ -552,7 +552,9 @@ imul_r_ea_d8	REG16EA	r5, #21, #24
 
 insb			CPUWORK	#5
 				ldrh	r0, [r9, #CPU_DX]
+				CPUSV
 				bl		iocore_inp8
+				CPULD
 				ldrh	r2, [r9, #CPU_DI]
 				ldr		r3, [r9, #CPU_ES_BASE]
 				mov		r1, r0
@@ -566,7 +568,9 @@ insb			CPUWORK	#5
 
 insw			CPUWORK	#5
 				ldrh	r0, [r9, #CPU_DX]
+				CPUSV
 				bl		iocore_inp16
+				CPULD
 				ldrh	r2, [r9, #CPU_DI]
 				ldr		r3, [r9, #CPU_ES_BASE]
 				mov		r1, r0
@@ -777,22 +781,23 @@ cwd				CPUWORK	#2
 				mov		pc, r11
 
 call_far		CPUWORK	#13
-				ldrh	r1, [r9, #CPU_CS]
 				ldrh	r4, [r9, #CPU_SP]
+				ldrh	r1, [r9, #CPU_CS]
 				ldr		r5, [r9, #CPU_SS_BASE]
 				mov		r4, r4 lsl #16
 				sub		r4, r4, #(2 << 16)
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
-				add		r12, r8, #(4 << 16)
+				bl		i286_memorywrite_w			; cs
 				sub		r4, r4, #(2 << 16)
+				add		r12, r8, #(4 << 16)
+				mov		r4, r4, lsr #16
 				mov		r1, r12 lsr #16
-				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				add		r0, r4, r5
+				bl		i286_memorywrite_w			; ip
 				ldr		r5, [r9, #CPU_CS_BASE]
 				strh	r4, [r9, #CPU_SP]
 				add		r0, r5, r8 lsr #16
-				bl		i286_memoryread_w
+				bl		i286_memoryread_w			; newip
 				add		r8, r8, #(2 << 16)
 				mov		r4, r0 lsl #16
 				add		r0, r5, r8 lsr #16
@@ -1050,12 +1055,12 @@ les_r16_ea		GETPC8
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
 				bl		i286_memoryread_w
-				ldrh	r0, [r5, #CPU_REG]
+				strh	r0, [r5, #CPU_REG]
 				add		r0, r4, r6
 				bl		i286_memoryread_w
 				mov		r1, r0 lsl #4
-				ldr		r0, [r5, #CPU_ES]
-				ldr		r1, [r5, #CPU_ES_BASE]
+				strh	r0, [r9, #CPU_ES]
+				str		r1, [r9, #CPU_ES_BASE]
 				mov		pc, r11
 lr16_r			mov		r6, #6
 				sub		r8, r8, #(2 << 16)
@@ -1071,13 +1076,13 @@ lds_r16_ea		GETPC8
 				add		r0, r0, r6
 				bic		r4, r4, #(1 << 16)
 				bl		i286_memoryread_w
-				ldrh	r0, [r5, #CPU_REG]
+				strh	r0, [r5, #CPU_REG]
 				add		r0, r4, r6
 				bl		i286_memoryread_w
 				mov		r1, r0 lsl #4
-				ldr		r0, [r5, #CPU_ES]
-				ldr		r1, [r5, #CPU_DS_BASE]
-				ldr		r1, [r5, #CPU_DS_FIX]
+				strh	r0, [r9, #CPU_DS]
+				str		r1, [r9, #CPU_DS_BASE]
+				str		r1, [r9, #CPU_DS_FIX]
 				mov		pc, r11
 
 mov_ea8_d8		GETPC8
@@ -1288,6 +1293,7 @@ xlat			CPUWORK	#5
 				ldrb	r0, [r9, #CPU_AL]
 				ldrh	r1, [r9, #CPU_BX]
 				ldr		r2, [r9, #CPU_DS_FIX]
+				;
 				add		r0, r1, r0
 				bic		r0, r0, #(1 << 16)
 				add		r0, r2, r0
@@ -1344,13 +1350,21 @@ jcxzj			JMPS	#8
 
 in_al_d8		CPUWORK	#5
 				GETPC8
+				add		r3, r0, r8 lsr #16
+				CPUSV
+				str		r3, [r9, #CPU_INPUT]
 				bl		iocore_inp8
+				CPULD
+				mov		r3, #0
 				strb	r0, [r9, #CPU_AL]
+				str		r3, [r9, #CPU_INPUT]
 				mov		pc, r11
 
 in_ax_d8		CPUWORK	#5
 				GETPC8
+				CPUSV
 				bl		iocore_inp16
+				CPULD
 				strh	r0, [r9, #CPU_AX]
 				mov		pc, r11
 
@@ -1384,20 +1398,24 @@ call_near		CPUWORK	#7
 				b		i286_memorywrite_w
 
 jmp_near		CPUWORK	#7
-				GETPC16
-				add		r8, r8, r0 lsl #16
+				ldr		r4, [r9, #CPU_CS_BASE]
+				add		r5, r8, #(2 << 16)
+				;
+				add		r0, r4, r8 lsr #16
+				bl		i286_memoryread_w
+				add		r8, r5, r0 lsl #16
 				mov		pc, r11
 
 jmp_far			CPUWORK	#11
 				ldr		r4, [r9, #CPU_CS_BASE]
+				add		r5, r8, #(2 << 16)
+				mov		r6, r8 lsl #16
 				add		r0, r4, r8 lsr #16
 				bl		i286_memoryread_w
-				add		r8, r8, #(2 << 16)
-				mov		r1, r0, lsl #16
-				add		r0, r4, r8 lsr #16
-				mov		r8, r8, lsl #16
-				orr		r8, r0, r8 lsr #16
+				mov		r8, r0 lsl #16
+				add		r0, r4, r5 lsr #16
 				bl		i286_memoryread_w
+				add		r8, r8, r6 lsr #16
 				mov		r1, r0 lsl #4
 				strh	r0, [r9, #CPU_CS]
 				str		r1, [r9, #CPU_CS_BASE]
@@ -1405,13 +1423,17 @@ jmp_far			CPUWORK	#11
 
 in_al_dx		CPUWORK	#5
 				ldrh	r0, [r9, #CPU_DX]
+				CPUSV
 				bl		iocore_inp8
+				CPULD
 				strb	r0, [r9, #CPU_AL]
 				mov		pc, r11
 
 in_ax_dx		CPUWORK	#5
 				ldrh	r0, [r9, #CPU_DX]
+				CPUSV
 				bl		iocore_inp16
+				CPULD
 				strh	r0, [r9, #CPU_AX]
 				mov		pc, r11
 
@@ -1594,17 +1616,17 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		pusha				; 60
 				dcd		popa
 				dcd		0					; bound
-				dcd		0					; arpl(reserved)
-				dcd		0					; reserved
-				dcd		0					; reserved
-				dcd		0					; reserved
-				dcd		0					; reserved
-				dcd		0					; push_d16
+				dcd		reserved			; arpl(reserved)
+				dcd		reserved
+				dcd		reserved
+				dcd		reserved
+				dcd		reserved
+				dcd			push_d16
 				dcd		0					; imul_reg_ea_d16
-				dcd		0					; push_d8
+				dcd			push_d8
 				dcd		0					; imul_reg_ea_d8
-				dcd		0					; insb
-				dcd		0					; insw
+				dcd			insb
+				dcd			insw
 				dcd		outsb
 				dcd		outsw
 
@@ -1620,10 +1642,10 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		jns_short
 				dcd		jp_short
 				dcd		jnp_short
-				dcd		0					; jl_short
-				dcd		0					; jnl_short
-				dcd		0					; jle_short
-				dcd		0					; jnle_short
+				dcd			jl_short
+				dcd			jnl_short
+				dcd			jle_short
+				dcd			jnle_short
 
 				dcd		i286aop80			; 80
 				dcd		i286aop81
@@ -1652,7 +1674,7 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		xchg_ax_di
 				dcd		cbw
 				dcd		cwd
-				dcd		0					; call_far
+				dcd		call_far
 				dcd		wait
 				dcd		0					; pushf
 				dcd		0					; popf
@@ -1695,16 +1717,16 @@ optbl1			dcd		add_ea_r8			; 00
 
 				dcd		i286asft8_d8		; c0
 				dcd		i286asft16_d8
-				dcd		0					; ret_near_d16
-				dcd		0					; ret_near
-				dcd		0					; les_r16_ea
-				dcd		0					; lds_r16_ea
-				dcd		0					; mov_ea8_d8
-				dcd		0					; mov_ea16_d16
+				dcd			ret_near_d16
+				dcd		ret_near
+				dcd		0					; les_r16_ea (now testing i286a_a)
+				dcd		0					; lds_r16_ea (now testing i286a_a)
+				dcd			mov_ea8_d8
+				dcd			mov_ea16_d16
 				dcd		0					; enter
 				dcd		0					; leave
-				dcd		0					; ret_far_d16
-				dcd		0					; ret_far
+				dcd			ret_far_d16
+				dcd		ret_far
 				dcd		int_03
 				dcd		int_d8
 				dcd		into
@@ -1716,8 +1738,8 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		i286asft16_cl
 				dcd		0					; aam
 				dcd		0					; aad
-				dcd		0					; setalc
-				dcd		0					; xlat
+				dcd			setalc
+				dcd			xlat
 				dcd		esc
 				dcd		esc
 				dcd		esc
@@ -1731,16 +1753,16 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		loopz
 				dcd		loop
 				dcd		jcxz
-				dcd		0					; in_al_d8
-				dcd		0					; in_ax_d8
+				dcd			in_al_d8
+				dcd			in_ax_d8
 				dcd		out_d8_al
 				dcd		out_d8_ax
-				dcd		0					; call_near
-				dcd		0					; jmp_near
-				dcd		0					; jmp_far
+				dcd		call_near
+				dcd		jmp_near
+				dcd		jmp_far
 				dcd		jmp_short
-				dcd		0					; in_al_dx
-				dcd		0					; in_ax_dx
+				dcd			in_al_dx
+				dcd			in_ax_dx
 				dcd		out_dx_al
 				dcd		out_dx_ax
 
@@ -1759,7 +1781,7 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		cld
 				dcd		std
 				dcd		i286aopfe
-				dcd		0					; ope0xff
+				dcd			i286aopff
 
 	END
 
