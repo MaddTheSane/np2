@@ -10,7 +10,8 @@
 #include "sysmng.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkdrawmng.h"
+#include "gtk/gtk_menu.h"
+#include "gtk/gtk_drawmng.h"
 
 
 static UINT32 kdwinpal[KEYDISP_PALS] = {

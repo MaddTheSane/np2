@@ -58,7 +58,7 @@ void toolkit_initialize(void);
 
 #elif defined(USE_GTK)
 
-#include "gtk/gtktoolkit.h"
+#include "gtk/gtk_toolkit.h"
 
 #define	toolkit_initialize()
 #define	toolkit_terminate()

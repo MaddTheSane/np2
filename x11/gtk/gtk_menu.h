@@ -28,6 +28,9 @@
 #ifndef	NP2_GTK_GTKMENU_H__
 #define	NP2_GTK_GTKMENU_H__
 
+#include "gtk/xnp2.h"
+#include <gtk/gtkitemfactory.h>
+
 typedef struct {
 	GtkItemFactory *item_factory;
 } _MENU_HDL, *MENU_HDL;

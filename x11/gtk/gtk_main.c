@@ -31,6 +31,7 @@
 #include "pccore.h"
 #include "scrndraw.h"
 #include "timing.h"
+
 #include "toolkit.h"
 
 #include "joymng.h"
@@ -39,8 +40,8 @@
 #include "soundmng.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkkeyboard.h"
-#include "gtk/gtkmenu.h"
+#include "gtk/gtk_keyboard.h"
+#include "gtk/gtk_menu.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -65,14 +66,15 @@
 
 
 /*
- - Signal: gint GtkWidget::expose_event (GtkWidget *WIDGET,
-          GdkEventExpose *EVENT)
+ - Signal: gboolean GtkWidget::expose_event(GtkWidget *widget,
+          GdkEventExpose *event, gpointer user_data)
 */
-static gint
-expose(GtkWidget *w, GdkEventExpose *ev)
+static gboolean
+expose(GtkWidget *w, GdkEventExpose *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(p);
 
 	if (ev->type == GDK_EXPOSE) {
 		if (ev->count == 0) {
@@ -84,14 +86,15 @@ expose(GtkWidget *w, GdkEventExpose *ev)
 }
 
 /*
- - Signal: gint GtkWidget::key_press_event (GtkWidget *WIDGET,
-          GdkEventKey *EVENT)
+ - Signal: gboolean GtkWidget::key_press_event (GtkWidget *widget,
+          GdkEventKey *event, gpointer user_data)
 */
-static gint
-key_press(GtkWidget *w, GdkEventKey *ev)
+static gboolean
+key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(p);
 
 	if (ev->type == GDK_KEY_PRESS) {
 		if ((ev->keyval == GDK_F12) && (np2oscfg.F12COPY == 0))
@@ -104,14 +107,15 @@ key_press(GtkWidget *w, GdkEventKey *ev)
 }
 
 /*
- - Signal: gint GtkWidget::key_release_event (GtkWidget *WIDGET,
-          GdkEventKey *EVENT)
+ - Signal: gboolean GtkWidget::key_release_event (GtkWidget *widget,
+          GdkEventKey *event, gpointer user_data)
 */
-static gint
-key_release(GtkWidget *w, GdkEventKey *ev)
+static gboolean
+key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(p);
 
 	if (ev->type == GDK_KEY_RELEASE) {
 		if ((ev->keyval != GDK_F12) || (np2oscfg.F12COPY != 0))
@@ -122,14 +126,15 @@ key_release(GtkWidget *w, GdkEventKey *ev)
 }
 
 /*
- - Signal: gint GtkWidget::button_press_event (GtkWidget *WIDGET,
-          GdkEventButton *EVENT)
+ - Signal: gboolean GtkWidget::button_press_event (GtkWidget *widget,
+          GdkEventButton *event, gpointer user_data)
 */
-static gint
-button_press(GtkWidget *w, GdkEventButton *ev)
+static gboolean
+button_press(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(p);
 
 	if (ev->type == GDK_BUTTON_PRESS) {
 		switch (ev->button) {
@@ -151,14 +156,15 @@ button_press(GtkWidget *w, GdkEventButton *ev)
 }
 
 /*
- - Signal: gint GtkWidget::button_release_event (GtkWidget *WIDGET,
-          GdkEventButton *EVENT)
+ - Signal: gboolean GtkWidget::button_release_event (GtkWidget *widget,
+          GdkEventButton *event, gpointer user_data)
 */
-static gint
-button_release(GtkWidget *w, GdkEventButton *ev)
+static gboolean
+button_release(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(p);
 
 	if (ev->type == GDK_BUTTON_RELEASE) {
 		switch (ev->button) {
@@ -179,14 +185,15 @@ button_release(GtkWidget *w, GdkEventButton *ev)
 }
 
 /*
- - Signal: gint GtkWidget::enter_notify_event (GtkWidget *WIDGET,
-          GdkEventCrossing *EVENT)
+ - Signal: gboolean GtkWidget::enter_notify_event (GtkWidget *widget,
+          GdkEventCrossing *event, gpointer user_data)
 */
-static gint
-enter_notify(GtkWidget *w, GdkEventCrossing *ev)
+static gboolean
+enter_notify(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(p);
 
 	if (ev->type == GDK_ENTER_NOTIFY) {
 		scrndraw_redraw();
@@ -294,6 +301,7 @@ gui_gtk_widget_create(void)
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), np2oscfg.titles);
+	gtk_widget_add_events(window, EVENT_MASK);
 
 	main_vbox = gtk_vbox_new(FALSE, 2);
 	gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
@@ -331,8 +339,6 @@ gui_gtk_widget_create(void)
 	    GTK_SIGNAL_FUNC(expose), NULL);
 	gtk_signal_connect(GTK_OBJECT(drawarea), "enter_notify_event",
 	    GTK_SIGNAL_FUNC(enter_notify), NULL);
-
-	gtk_widget_add_events(window, EVENT_MASK);
 }
 
 static void

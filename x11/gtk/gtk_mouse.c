@@ -33,21 +33,32 @@
 
 #include "gtk/xnp2.h"
 
-static BYTE mouse_move_ratio = MOUSE_RATIO_100;
-static BYTE mouse_move_mul;
-static BYTE mouse_move_div;
 
-static GdkPixmap *cursor_pixmap;
-static GdkCursor *cursor;
+typedef struct {
+	int mouserunning;	// showing
+	int lastmouse;		// working
+	short mousex;
+	short mousey;
+	BYTE mouseb;
 
-static int mouserunning = 0;	// showing
-static int lastmouse = 0;	// working
-static short mousex = 0;
-static short mousey = 0;
-static BYTE mouseb = 0xa0;
+	BYTE mouse_move_ratio;
+	BYTE mouse_move_mul;
+	BYTE mouse_move_div;
 
-static void getmaincenter(int *, int *);
-static void mouseonoff(int);
+	GdkPixmap *cursor_pixmap;
+	GdkCursor *cursor;
+} mouse_stat_t;
+
+static mouse_stat_t ms_default = {
+	0, 0, 0, 0, 0xa0,
+	MOUSE_RATIO_100, 1, 1,
+	NULL, NULL,
+};
+static mouse_stat_t ms;
+
+static void getmaincenter(GtkWidget *w, int *cx, int *cy);
+static void mouseonoff(int onoff);
+
 
 int
 mousemng_initialize(void)
@@ -59,11 +70,14 @@ mousemng_initialize(void)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
 
-	cursor_pixmap = gdk_pixmap_create_from_data(
-	    drawarea->window, hide_cursor, 16, 16, 1,
+	ms = ms_default;
+
+	ms.cursor_pixmap = gdk_pixmap_create_from_data(drawarea->window,
+	    hide_cursor, 16, 16, 1,
 	    &drawarea->style->black, &drawarea->style->black);
-	cursor = gdk_cursor_new_from_pixmap(cursor_pixmap, cursor_pixmap,
-	    &drawarea->style->black, &drawarea->style->black, 0, 0);
+	ms.cursor = gdk_cursor_new_from_pixmap(ms.cursor_pixmap,
+	    ms.cursor_pixmap, &drawarea->style->black, &drawarea->style->black,
+	    0, 0);
 
 	return SUCCESS;
 }
@@ -72,16 +86,18 @@ void
 mousemng_term(void)
 {
 
-	if (cursor_pixmap)
-		gdk_pixmap_unref(cursor_pixmap);
+	if (ms.cursor_pixmap) {
+		gdk_pixmap_unref(ms.cursor_pixmap);
+		ms.cursor_pixmap = NULL;
+	}
 }
 
 static void
-getmaincenter(int *cx, int *cy)
+getmaincenter(GtkWidget *w, int *cx, int *cy)
 {
 
-	*cx = drawarea->allocation.x + drawarea->allocation.width / 2;
-	*cy = drawarea->allocation.y + drawarea->allocation.height / 2;
+	*cx = w->allocation.x + w->allocation.width / 2;
+	*cy = w->allocation.y + w->allocation.height / 2;
 }
 
 static void
@@ -89,12 +105,12 @@ mouseonoff(int flag)
 {
 	int curx, cury;
 
-	if ((lastmouse ^ flag) & 1) {
-		lastmouse = flag & 1;
-		if (lastmouse) {
+	if ((ms.lastmouse ^ flag) & 1) {
+		ms.lastmouse = flag & 1;
+		if (ms.lastmouse) {
 			gdk_pointer_grab(drawarea->window, TRUE, 0,
-			    drawarea->window, cursor, 0);
-			getmaincenter(&curx, &cury);
+			    drawarea->window, ms.cursor, 0);
+			getmaincenter(drawarea, &curx, &cury);
 			gdk_window_set_pointer(drawarea->window, curx, cury);
 		} else {
 			gdk_pointer_ungrab(0);
@@ -106,13 +122,13 @@ BYTE
 mouse_flag(void)
 {
 
-	return mouserunning;
+	return ms.mouserunning;
 }
 
 void
 mouse_running(BYTE flg)
 {
-	BYTE mf = mouserunning;
+	BYTE mf = ms.mouserunning;
 
 	switch (flg & 0xc0) {
 	case 0x00:
@@ -128,9 +144,9 @@ mouse_running(BYTE flg)
 		break;
 	}
 
-	if ((mf ^ mouserunning) & MOUSE_MASK) {
-		mouserunning = (mf & MOUSE_MASK);
-		mouseonoff((mouserunning == 1) ? 1 : 0);
+	if ((mf ^ ms.mouserunning) & MOUSE_MASK) {
+		ms.mouserunning = (mf & MOUSE_MASK);
+		mouseonoff((ms.mouserunning == 1) ? 1 : 0);
 	}
 }
 
@@ -140,11 +156,11 @@ mousemng_callback(void)
 	int wx, wy;
 	int cx, cy;
 
-	if (lastmouse & 1) {
+	if (ms.lastmouse & 1) {
 		gdk_window_get_pointer(drawarea->window, &wx, &wy, NULL);
-		getmaincenter(&cx, &cy);
-		mousex += (short)((wx - cx) / 2);
-		mousey += (short)((wy - cy) / 2);
+		getmaincenter(drawarea, &cx, &cy);
+		ms.mousex += (short)((wx - cx) / 2);
+		ms.mousey += (short)((wy - cy) / 2);
 		gdk_window_set_pointer(drawarea->window, cx, cy);
 	}
 }
@@ -153,24 +169,24 @@ BYTE
 mouse_btn(BYTE button)
 {
 
-	if ((lastmouse & 1) == 0)
+	if ((ms.lastmouse & 1) == 0)
 		return 0;
 
 	switch (button) {
 	case MOUSE_LEFTDOWN:
-		mouseb &= 0x7f;
+		ms.mouseb &= 0x7f;
 		break;
 
 	case MOUSE_LEFTUP:
-		mouseb |= 0x80;
+		ms.mouseb |= 0x80;
 		break;
 
 	case MOUSE_RIGHTDOWN:
-		mouseb &= 0xdf;
+		ms.mouseb &= 0xdf;
 		break;
 
 	case MOUSE_RIGHTUP:
-		mouseb |= 0x20;
+		ms.mouseb |= 0x20;
 		break;
 	}
 	return 1;
@@ -180,21 +196,21 @@ BYTE
 mousemng_getstat(short *x, short *y, int clear)
 {
 
-	if (mouse_move_ratio == MOUSE_RATIO_100) {
-		*x = mousex;
-		*y = mousey;
-	} else if (mouse_move_div == 1) {
-		*x = mousex * mouse_move_mul;
-		*y = mousey * mouse_move_mul;
+	if (ms.mouse_move_ratio == MOUSE_RATIO_100) {
+		*x = ms.mousex;
+		*y = ms.mousey;
+	} else if (ms.mouse_move_div == 1) {
+		*x = ms.mousex * ms.mouse_move_mul;
+		*y = ms.mousey * ms.mouse_move_mul;
 	} else {
-		*x = (mousex * mouse_move_mul) / mouse_move_div;
-		*y = (mousey * mouse_move_mul) / mouse_move_div;
+		*x = (ms.mousex * ms.mouse_move_mul) / ms.mouse_move_div;
+		*y = (ms.mousey * ms.mouse_move_mul) / ms.mouse_move_div;
 	}
 	if (clear) {
-		mousex = 0;
-		mousey = 0;
+		ms.mousex = 0;
+		ms.mousey = 0;
 	}
-	return mouseb;
+	return ms.mouseb;
 }
 
 void
@@ -202,7 +218,7 @@ mousemng_set_ratio(BYTE new_ratio)
 {
 
 	np2oscfg.mouse_move_ratio = new_ratio;
-	mouse_move_ratio = np2oscfg.mouse_move_ratio;
-	mouse_move_mul = (mouse_move_ratio >> 4) & 0xf;
-	mouse_move_div = mouse_move_ratio & 0xf;
+	ms.mouse_move_ratio = np2oscfg.mouse_move_ratio;
+	ms.mouse_move_mul = (ms.mouse_move_ratio >> 4) & 0xf;
+	ms.mouse_move_div = ms.mouse_move_ratio & 0xf;
 }

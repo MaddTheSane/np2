@@ -39,6 +39,7 @@
 #include <sys/time.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -50,28 +51,33 @@
 #define	OSLANG_EUC
 #define	OSLINEBREAK_LF
 
-typedef	signed char	CHAR;
-typedef	signed short	SHORT;
-typedef	signed int	INT;
-typedef	signed long	LONG;
+typedef	signed char		CHAR;
+typedef	signed short		SHORT;
+typedef	signed int		INT;
+typedef	signed long		LONG;
 
-typedef	unsigned char	UCHAR;
-typedef	unsigned short	USHORT;
-typedef	unsigned int	UINT;
-typedef	unsigned long	ULONG;
+typedef	unsigned char		UCHAR;
+typedef	unsigned short		USHORT;
+typedef	unsigned int		UINT;
+typedef	unsigned long		ULONG;
 
-typedef	signed char	SINT8;
-typedef	signed short	SINT16;
-typedef	signed int	SINT32;
+typedef	signed char		SINT8;
+typedef	signed short		SINT16;
+typedef	signed int		SINT32;
+typedef	signed long long	SINT64;
 
-typedef	unsigned char	UINT8;
-typedef	unsigned short	UINT16;
-typedef	unsigned int	UINT32;
+typedef	unsigned char		UINT8;
+typedef	unsigned short		UINT16;
+typedef	unsigned int		UINT32;
+typedef	unsigned long long	UINT64;
 
-typedef	unsigned char	BYTE;
-typedef	unsigned char	TCHAR;
+typedef	unsigned char		BYTE;
+typedef	unsigned short		WORD;
+typedef	unsigned int		DWORD;
 
-typedef	int		BOOL;
+typedef	unsigned char		TCHAR;
+
+typedef	int			BOOL;
 
 #include "common.h"
 #include "milstr.h"
@@ -115,7 +121,10 @@ typedef	int		BOOL;
 
 #define	UNUSED(v)	((void)(v))
 #define	INLINE		__inline
+#define	FASTCALL
 #define	SOUNDCALL
+#define	MEMCALL
+#define	CPUCALL
 
 #ifdef	DEBUG
 #define	__ASSERT(s)	assert(s)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 NONAKA Kimihiro
+ * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	NP2_X11_GTK_GTKDRAWMNG_H__
-#define	NP2_X11_GTK_GTKDRAWMNG_H__
+#ifndef	NP2_GTK_GTKKEYBOARD_H__
+#define	NP2_GTK_GTKKEYBOARD_H__
 
-#include "compiler.h"
-
-#include "cmndraw.h"
+#include "kbdmng.h"
 
 #include "gtk/xnp2.h"
 
-typedef struct {
-	RGB32	mask;
-	BYTE	r16b;
-	BYTE	l16r;
-	BYTE	l16g;
-} PAL16MASK;
+void gtkkbd_keydown(guint keysym);
+void gtkkbd_keyup(guint keysym);
+void gtkkbd_resetf12(void);
 
-void drawmng_make16mask(PAL16MASK *pal16, UINT32 bmask, UINT32 rmask, UINT32 gmask);
-RGB16 drawmng_makepal16(PAL16MASK *pal16, RGB32 pal32);
-
-typedef struct {
-	CMNVRAM		vram;
-
-	int		width;
-	int		height;
-	int		lpitch;
-
-	RECT_T		src;
-	POINT_T		dest;
-
-	PAL16MASK	pal16mask;
-
-	GtkWidget	*drawarea;
-	GdkImage	*surface;
-	GdkPixmap	*backsurf;
-	BOOL		shared_pixmap;
-} _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
-
-GTKDRAWMNG_HDL gtkdrawmng_create(GtkWidget *parent, int width, int height);
-void gtkdrawmng_release(GTKDRAWMNG_HDL hdl);
-CMNVRAM *gtkdrawmng_surflock(GTKDRAWMNG_HDL hdl);
-void gtkdrawmng_surfunlock(GTKDRAWMNG_HDL hdl);
-void gtkdrawmng_blt(GTKDRAWMNG_HDL hdl, RECT_T *sr, POINT_T *dp);
-void gtkdrawmng_set_size(GTKDRAWMNG_HDL hdl, int width, int height);
-
-int gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window);
-
-#endif	/* NP2_X11_GTK_GTKDRAWMNG_H__ */
+#endif	/* NP2_GTK_GTKKEYBOARD_H__ */

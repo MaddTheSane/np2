@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2003 NONAKA Kimihiro
+ * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,15 +25,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	NP2_GTK_GTKKEYBOARD_H__
-#define	NP2_GTK_GTKKEYBOARD_H__
+#ifndef	NP2_X11_DRAWMNG_H__
+#define	NP2_X11_DRAWMNG_H__
 
-#include "kbdmng.h"
+#include "compiler.h"
 
-#include "gtk/xnp2.h"
+typedef struct {
+	RGB32	mask;
+	BYTE	r16b;
+	BYTE	l16r;
+	BYTE	l16g;
+} PAL16MASK;
 
-void gtkkbd_keydown(guint keysym);
-void gtkkbd_keyup(guint keysym);
-void gtkkbd_resetf12();
+void drawmng_make16mask(PAL16MASK *pal16, UINT32 bmask, UINT32 rmask, UINT32 gmask);
+RGB16 drawmng_makepal16(PAL16MASK *pal16, RGB32 pal32);
 
-#endif	/* NP2_GTK_GTKKEYBOARD_H__ */
+#endif	/* NP2_X11_DRAWMNG_H__ */

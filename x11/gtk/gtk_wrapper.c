@@ -34,20 +34,19 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
 
+
 void
-gdk_window_set_pointer(GdkWindow *window, gint x, gint y)
+gdk_window_set_pointer(GdkWindow *w, gint x, gint y)
 { 
 	GdkWindowPrivate *private;
 
-	if (!window)
-		window = (GdkWindow *)&gdk_root_parent;
-
-	private = (GdkWindowPrivate *)window;
-	if (private->destroyed)
-		return;
-
-	XWarpPointer(private->xdisplay, None, private->xwindow,
-	    0, 0, 0, 0, x, y);
+	if (w == NULL)
+		w = (GdkWindow *)&gdk_root_parent;
+	private = (GdkWindowPrivate *)w;
+	if (!private->destroyed) {
+		XWarpPointer(private->xdisplay, None, private->xwindow,
+		    0, 0, 0, 0, x, y);
+	}
 }
 
 void
@@ -131,24 +130,24 @@ gdk_image_check_xshm(Display *display)
 }
 
 GdkPixmap *
-gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height, gint depth)
+gdk_pixmap_shpix_new(GdkWindow *w, GdkImage *image, gint width, gint height, gint depth)
 {
 	GdkPixmap *pixmap;
 	GdkImagePrivate *private_image;
 	GdkWindowPrivate *private;
 	GdkWindowPrivate *window_private;
 
-	g_return_val_if_fail((window != NULL) || (depth != -1), NULL);
+	g_return_val_if_fail((w != NULL) || (depth != -1), NULL);
 	g_return_val_if_fail((width != 0) && (height != 0), NULL);
 
-	if (!window)
-		window = (GdkWindow *)&gdk_root_parent;
-	window_private = (GdkWindowPrivate *)window;
+	if (w == NULL)
+		w = (GdkWindow *)&gdk_root_parent;
+	window_private = (GdkWindowPrivate *)w;
 	if (window_private->destroyed)
 		return NULL;
 
 	if (depth == -1)
-		depth = gdk_window_get_visual(window)->depth;
+		depth = gdk_window_get_visual(w)->depth;
 
 	if (gdk_image_check_xshm(window_private->xdisplay) != 2)
 		return NULL;
@@ -182,7 +181,7 @@ gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height
 #else	/* !MITSHM */
 
 GdkPixmap *
-gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height, gint depth)
+gdk_pixmap_shpix_new(GdkWindow *w, GdkImage *image, gint width, gint height, gint depth)
 {
 
 	return NULL;

@@ -38,7 +38,7 @@
 #include "calendar.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkmenu.h"
+#include "gtk/gtk_menu.h"
 
 
 static const char *calendar_kind_str[] = {

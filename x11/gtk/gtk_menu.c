@@ -30,18 +30,12 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#include "gtk/xnp2.h"
-#include "gtk/gtkkeyboard.h"
-#include "gtk/gtkmenu.h"
-
-#include <gdk/gdkkeysyms.h>
-#include <gtk/gtkmenu.h>
-
 #include "np2.h"
 #include "dosio.h"
 #include "ini.h"
 #include "pccore.h"
 #include "iocore.h"
+#include "debugsub.h"
 
 #include "beep.h"
 #include "diskdrv.h"
@@ -50,12 +44,21 @@
 #include "pc9861k.h"
 #include "s98.h"
 #include "scrnbmp.h"
+
 #include "kdispwin.h"
 #include "toolwin.h"
+#include "viewer.h"
 
 #include "mousemng.h"
 #include "scrnmng.h"
 #include "sysmng.h"
+
+#include "gtk/xnp2.h"
+#include "gtk/gtk_menu.h"
+#include "gtk/gtk_keyboard.h"
+
+#include <gdk/gdkkeysyms.h>
+#include <gtk/gtkmenu.h>
 
 
 static void disable_item(const char *);
@@ -63,6 +66,7 @@ static void disable_item(const char *);
 static void disable_unused_items(void);
 
 static void xmenu_select_framerate(int);
+static void xmenu_select_f12key(int);
 static void xmenu_select_beepvol(int);
 static void xmenu_select_soundboard(int);
 static void xmenu_select_extmem(int);
@@ -122,6 +126,12 @@ static void mouse_ratio(gpointer, guint, GtkWidget *);
 static void midi_panic(gpointer, guint, GtkWidget *);
 
 static void bmpsave(gpointer, guint, GtkWidget *);
+
+static void i286_save(GtkWidget *w, GdkEvent *e);
+static void memory_dump(GtkWidget *w, GdkEvent *e);
+#if defined(SUPPORT_VIEWER)
+static void debug_utility(GtkWidget *w, GdkEvent *e);
+#endif
 
 static void toggle(gpointer, guint, GtkWidget *);
 
@@ -349,6 +359,7 @@ GtkWidget *
 create_menu(GtkWidget *w)
 {
 	GtkAccelGroup *accel_group;
+	GtkWidget *menubar;
 
 	accel_group = gtk_accel_group_new();
 	menu_hdl.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
@@ -374,6 +385,7 @@ create_menu(GtkWidget *w)
 	xmenu_toggle_item(KEY_DISPLAY, np2oscfg.keydisp, TRUE);
 
 	xmenu_select_framerate(np2oscfg.DRAW_SKIP);
+	xmenu_select_f12key(np2oscfg.F12COPY);
 	xmenu_select_beepvol(np2cfg.BEEP_VOL);
 	xmenu_select_soundboard(np2cfg.SOUND_SW);
 	xmenu_select_extmem(np2cfg.EXTMEM);
@@ -381,7 +393,48 @@ create_menu(GtkWidget *w)
 
 	inited = 1;
 
-	return gtk_item_factory_get_widget(menu_hdl.item_factory, "<main>");
+	menubar = gtk_item_factory_get_widget(menu_hdl.item_factory, "<main>");
+
+	if (np2oscfg.I286SAVE) {
+		GtkWidget *debug_menu;
+		GtkWidget *debug_item;
+		GtkWidget *i286save_item;
+		GtkWidget *memdump_item;
+#if defined(SUPPORT_VIEWER)
+		GtkWidget *dbgutil_item;
+#endif
+
+		debug_menu = gtk_menu_new();
+
+		i286save_item = gtk_menu_item_new_with_label("i286 save");
+		gtk_widget_show(i286save_item);
+		gtk_menu_append(GTK_MENU(debug_menu), i286save_item);
+		gtk_signal_connect_object(GTK_OBJECT(i286save_item), "activate",
+		    GTK_SIGNAL_FUNC(i286_save), (gpointer)0);
+
+		memdump_item = gtk_menu_item_new_with_label("Memory Dump");
+		gtk_widget_show(memdump_item);
+		gtk_menu_append(GTK_MENU(debug_menu), memdump_item);
+		gtk_signal_connect_object(GTK_OBJECT(memdump_item), "activate",
+		    GTK_SIGNAL_FUNC(memory_dump), (gpointer)0);
+
+#if defined(SUPPORT_VIEWER)
+		dbgutil_item = gtk_menu_item_new_with_label("Debug Utility");
+		gtk_widget_show(dbgutil_item);
+		gtk_menu_append(GTK_MENU(debug_menu), dbgutil_item);
+		gtk_signal_connect_object(GTK_OBJECT(dbgutil_item), "activate",
+		    GTK_SIGNAL_FUNC(debug_utility), (gpointer)0);
+#endif
+
+		debug_item = gtk_menu_item_new_with_label("Debug");
+		gtk_menu_item_right_justify(GTK_MENU_ITEM(debug_item));
+		gtk_widget_show(debug_item);
+
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(debug_item),debug_menu);
+		gtk_menu_bar_append(GTK_MENU_BAR(menubar), debug_item);
+	}
+
+	return menubar;
 }
 
 static void
@@ -460,6 +513,23 @@ xmenu_select_framerate(int kind)
 	};
 
 	if (kind < NUM_FRAMERATE) {
+		xmenu_select_item(&menu_hdl, name[kind]);
+		sysmng_update(SYS_UPDATECFG);
+	}
+}
+
+static void
+xmenu_select_f12key(int kind)
+{
+	static const char *name[] = {
+		"/Device/Keyboard/F12 = Mouse",
+		"/Device/Keyboard/F12 = Copy",
+		"/Device/Keyboard/F12 = Stop",
+		"/Device/Keyboard/F12 = tenkey [=]",
+		"/Device/Keyboard/F12 = tenkey [,]",
+	};
+
+	if (kind < NELEMENTS(name)) {
 		xmenu_select_item(&menu_hdl, name[kind]);
 		sysmng_update(SYS_UPDATECFG);
 	}
@@ -1004,6 +1074,39 @@ s98logging_dialog_destroy_cb(void *arg, BOOL result)
 	if (!result)
 		xmenu_toggle_item(S98_LOGGING, FALSE, TRUE);
 }
+
+/* ----- debug */
+static void
+i286_save(GtkWidget *w, GdkEvent *e)
+{
+
+	UNUSED(w);
+	UNUSED(e);
+
+	debugsub_status();
+}
+
+static void
+memory_dump(GtkWidget *w, GdkEvent *e)
+{
+
+	UNUSED(w);
+	UNUSED(e);
+
+	debugsub_memorydump();
+}
+
+#if defined(SUPPORT_VIEWER)
+static void
+debug_utility(GtkWidget *w, GdkEvent *e)
+{
+
+	UNUSED(w);
+	UNUSED(e);
+
+	viewer_open();
+}
+#endif
 
 /* ----- toggle item */
 static void

@@ -32,7 +32,7 @@
 #include "iocore.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkkeyboard.h"
+#include "gtk/gtk_keyboard.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -239,8 +239,8 @@ static const BYTE xkeyconv_misc[256] = {
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,0x39
 };
 
-static const BYTE *xkeyconv;
-static BYTE shift_stat;
+static const BYTE *xkeyconv = xkeyconv_jis;
+static BYTE shift_stat = 0x00;
 
 static const BYTE f12keys[] = { 0x61, 0x60, 0x4d, 0x4f };
 
@@ -256,7 +256,7 @@ getf12key(void)
 }
 
 void
-gtkkbd_resetf12()
+gtkkbd_resetf12(void)
 {
 	int i;
 

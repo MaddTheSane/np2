@@ -27,17 +27,13 @@
 
 #include "compiler.h"
 
+#include "np2.h"
 #include "codecnv.h"
 
 #include "fontmng.h"
 
-#include "xnp2.h"
+#include "gtk/xnp2.h"
 
-
-#ifndef	FONTFACE
-#define	FONTFACE "-misc-fixed-%s-r-normal--%d-*-*-*-*-*-*-*"
-#endif
-static char fontname[1024] = FONTFACE;
 
 typedef struct {
 	int		fontsize;
@@ -45,30 +41,29 @@ typedef struct {
 	int		fontwidth;
 	int		fontheight;
 
-	GdkFont*	fontset;
-	GdkPixmap*	pixmap;
+	GdkFont		*fontset;
+	GdkPixmap	*pixmap;
 	unsigned long	black_pixel;
 } _FNTMNG, *FNTMNG;
-
 
 void
 fontmng_setdeffontname(const char *name)
 {
 
-	// これじゃ無理
+	/* これじゃ無理 */
 	milstr_ncpy(fontname, name, sizeof(fontname));
 }
 
-void*
+void *
 fontmng_create(int size, UINT type, const TCHAR *fontface)
 {
 	char work[1024];
 	_FNTMNG fnt;
 	FNTMNG fntp;
-	char* ftype;
+	char *ftype;
 	int fontalign;
 	int allocsize;
-	GdkColormap* colormap;
+	GdkColormap *colormap;
 	GdkColor color;
 
 	UNUSED(fontface);
@@ -140,7 +135,7 @@ fontmng_destroy(void *hdl)
 }
 
 static void
-setfdathead(FNTMNG fhdl, FNTDAT fdat, const BYTE* str, int len)
+setfdathead(FNTMNG fhdl, FNTDAT fdat, const BYTE *str, int len)
 {
 
 	UNUSED(str);
@@ -154,16 +149,16 @@ setfdathead(FNTMNG fhdl, FNTDAT fdat, const BYTE* str, int len)
 }
 
 static void
-getlength1(FNTMNG fhdl, FNTDAT fdat, const BYTE* str, int len)
+getlength1(FNTMNG fhdl, FNTDAT fdat, const BYTE *str, int len)
 {
 
 	setfdathead(fhdl, fdat, str, len);
 }
 
 static void
-getfont1(FNTMNG fhdl, FNTDAT fdat, const BYTE* str, int len)
+getfont1(FNTMNG fhdl, FNTDAT fdat, const BYTE *str, int len)
 {
-	GdkImage* img;
+	GdkImage *img;
 
 	getlength1(fhdl, fdat, str, len);
 
@@ -174,7 +169,7 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const BYTE* str, int len)
 	img = gdk_image_get(fhdl->pixmap, 0, 0, fhdl->fontwidth,
 	    fhdl->fontheight);
 	if (img) {
-		BYTE* p = (BYTE*)(fdat + 1);
+		BYTE *p = (BYTE *)(fdat + 1);
 		unsigned long black = fhdl->black_pixel;
 		unsigned long pixel;
 		int x, y;
@@ -197,7 +192,7 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const BYTE* str, int len)
 }
 
 BOOL
-fontmng_getsize(void* hdl, const char* str, POINT_T* pt)
+fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
 	_FNTDAT fdat;
@@ -236,7 +231,7 @@ fontmng_getsize(void* hdl, const char* str, POINT_T* pt)
 }
 
 BOOL
-fontmng_getdrawsize(void* hdl, const char* str, POINT_T* pt)
+fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
 	_FNTDAT fdat;
@@ -278,7 +273,7 @@ fontmng_getdrawsize(void* hdl, const char* str, POINT_T* pt)
 }
 
 FNTDAT
-fontmng_get(void* hdl, const char* str)
+fontmng_get(void *hdl, const char *str)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
 	FNTDAT fdat = (FNTDAT)(fhdl + 1);

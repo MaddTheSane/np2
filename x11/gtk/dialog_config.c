@@ -33,7 +33,7 @@
 #include "sysmng.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkmenu.h"
+#include "gtk/gtk_menu.h"
 
 static const char *baseclock_str[] = {
 	"1.9968MHz", "2.4576MHz"

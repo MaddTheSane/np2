@@ -37,6 +37,7 @@
 
 #include "kdispwin.h"
 #include "toolwin.h"
+#include "viewer.h"
 
 #include "commng.h"
 #include "joymng.h"
@@ -114,6 +115,11 @@ char fddfolder[MAX_PATH];
 char bmpfilefolder[MAX_PATH];
 char modulefile[MAX_PATH];
 char statpath[MAX_PATH];
+
+#ifndef FONTFACE
+#define FONTFACE "-misc-fixed-%s-r-normal--%d-*-*-*-*-*-*-*"
+#endif
+char fontname[1024] = FONTFACE;
 
 char timidity_cfgfile_path[MAX_PATH];
 
@@ -258,6 +264,7 @@ framereset(UINT cnt)
 	scrnmng_dispclock();
 	kdispwin_draw((BYTE)cnt);
 	toolwin_draw((BYTE)cnt);
+	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {
 			sysmng_updatecaption(3);

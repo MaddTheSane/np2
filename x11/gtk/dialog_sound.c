@@ -28,7 +28,7 @@
 #include "compiler.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkmenu.h"
+#include "gtk/gtk_menu.h"
 
 #include "np2.h"
 #include "dosio.h"

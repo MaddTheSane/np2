@@ -34,7 +34,7 @@
 #include "scrnmng.h"
 
 #include "gtk/xnp2.h"
-#include "gtk/gtkdrawmng.h"
+#include "gtk/gtk_drawmng.h"
 
 
 typedef struct {
@@ -142,7 +142,7 @@ renewal_client_size(void)
 }
 
 static void
-clear_out_of_rect(const RECT_T* target, const RECT_T* base)
+clear_out_of_rect(const RECT_T *target, const RECT_T *base)
 {
 	GdkDrawable *d = drawarea->window;
 	GdkGC *gc = drawarea->style->black_gc;
@@ -381,7 +381,7 @@ scrnmng_setextend(int extend)
 	renewal_client_size();
 }
 
-const SCRNSURF*
+const SCRNSURF *
 scrnmng_surflock(void)
 {
 	int lpitch = drawmng.lpitch;
@@ -408,16 +408,17 @@ scrnmng_surflock(void)
 }
 
 void
-scrnmng_surfunlock(const SCRNSURF* surf)
+scrnmng_surfunlock(const SCRNSURF *surf)
 {
-	X11SCRNSURF *ss = (X11SCRNSURF *)surf;
 	GdkDrawable *d = drawarea->window;
 	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
-	BYTE *delta = ss->renewal;
-	RECT_T r;
-	gint h, s;
 
 	if (!drawmng.shared_pixmap) {
+		X11SCRNSURF *ss = (X11SCRNSURF *)surf;
+		BYTE *delta = ss->renewal;
+		RECT_T r;
+		gint h, s;
+
 		r.left = drawmng.scrn.left;
 		r.top = drawmng.scrn.top;
 		r.right = drawmng.rect.right;
@@ -487,8 +488,8 @@ scrnmng_surfunlock(const SCRNSURF* surf)
 			}
 		}
 		gdk_draw_pixmap(d, gc, drawmng.backsurf,
-		    0, 0,					/* src */
-		    drawmng.scrn.left, drawmng.scrn.top,	/* dest */
-		    drawmng.rect.right, drawmng.rect.bottom);	/* w/h */
+		    0, 0,                                     /* src  */
+		    drawmng.scrn.left, drawmng.scrn.top,      /* dest */
+		    drawmng.rect.right, drawmng.rect.bottom); /* w/h  */
 	}
 }

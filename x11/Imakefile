@@ -74,15 +74,55 @@ DEFINES= ShmDefines \
 
 SYS_LIBRARIES= -lm
 
-EXTRA_INCLUDES= -I. -I.. -I../common -I../bios -I../cbus -I../fdd -I../font \
+EXTRA_INCLUDES= -I. -I.. -I./debug -I../common \
+		-I../bios -I../cbus -I../fdd -I../font -I../generic \
 		-I../io -I../lio -I../sound -I../sound/vermouth -I../vram \
-		-I../generic \
 		$(PTHREAD_INCLUDE) $(GTK_INCLUDE) $(SDL_INCLUDE) $(ESD_INCLUDE)
 
 LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
 
 #define PassCDebugFlags
 
+
+#if defined(IA32)
+
+CPUOBJS= \
+		../i386c/cpucore.o \
+		../i386c/dmap.o \
+		../i386c/egcmem.o \
+		../i386c/memory.o \
+		../i386c/ia32/interface.o \
+		../i386c/ia32/ia32.o \
+		../i386c/ia32/cpu.o \
+		../i386c/ia32/cpu_io.o \
+		../i386c/ia32/cpu_mem.o \
+		../i386c/ia32/ctrlxfer.o \
+		../i386c/ia32/exception.o \
+		../i386c/ia32/groups.o \
+		../i386c/ia32/inst_table.o \
+		../i386c/ia32/paging.o \
+		../i386c/ia32/resolve.o \
+		../i386c/ia32/segments.o \
+		../i386c/ia32/task.o \
+		../i386c/ia32/instructions/bin_arith.o \
+		../i386c/ia32/instructions/bit_byte.o \
+		../i386c/ia32/instructions/ctrl_trans.o \
+		../i386c/ia32/instructions/data_trans.o \
+		../i386c/ia32/instructions/dec_arith.o \
+		../i386c/ia32/instructions/flag_ctrl.o \
+		../i386c/ia32/instructions/logic_arith.o \
+		../i386c/ia32/instructions/misc_inst.o \
+		../i386c/ia32/instructions/seg_reg.o \
+		../i386c/ia32/instructions/shift_rotate.o \
+		../i386c/ia32/instructions/string_inst.o \
+		../i386c/ia32/instructions/system_inst.o \
+		../i386c/ia32/instructions/fpu/fpdummy.o
+
+CPUFLAGS=	-DCPUCORE_IA32 \
+		-I../i386c -I../i386c/ia32 \
+		-I../i386c/ia32/instructions -I../i386c/ia32/instructions/fpu
+
+#else
 
 CPUOBJS=	../i286c/i286c.o ../i286c/i286c_mn.o ../i286c/i286c_ea.o \
 		../i286c/i286c_0f.o ../i286c/i286c_8x.o ../i286c/i286c_sf.o \
@@ -91,6 +131,8 @@ CPUOBJS=	../i286c/i286c.o ../i286c/i286c_mn.o ../i286c/i286c_ea.o \
 		../i286c/v30patch.o
 
 CPUFLAGS=	-I../i286c
+
+#endif
 
 COMMONOBJS=	../common/strres.o ../common/milstr.o ../common/_memory.o \
 		../common/textfile.o ../common/profile.o ../common/rect.o \
@@ -151,34 +193,35 @@ VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/dispsync.o ../vram/palettes.o ../vram/maketext.o \
 		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o
 
-X11OBJS=	dosio.o ini.o trace.o cmmidi.o np2.o kdispwin.o toolkit.o \
+X11OBJS=	dosio.o ini.o trace.o toolkit.o \
+		cmmidi.o kdispwin.o drawmng.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \
-		main.o
+		main.o np2.o
+
+DEBUGOBJS=	debug/unasm.o debug/viewmem.o
 
 SNDDRVOBJS=	snddrv/esd.o snddrv/netbsd.o snddrv/oss.o snddrv/sdl.o
 
-#if !defined(DISABLE_GTK)
-GTKDEPOBJS=	gtk/gtkdraw.o gtk/gtkdrawmng.o gtk/gtkfont.o \
-		gtk/gtkkeyboard.o gtk/gtkmenu.o gtk/gtkmouse.o \
-		gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
+GTKDEPOBJS=	gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
 		gtk/dialog_file_selection.o gtk/dialog_midi.o \
 		gtk/dialog_newdisk.o gtk/dialog_screen.o gtk/dialog_sound.o \
-		gtk/window_keydisp.o \
-		gtk/gtkmain.o gtk/gtkwrapper.o
-#endif
-
+		gtk/window_keydisp.o gtk/window_viewer.o \
+		gtk/gtk_drawmng.o gtk/gtk_screen.o gtk/gtk_font.o \
+		gtk/gtk_keyboard.o gtk/gtk_menu.o gtk/gtk_mouse.o \
+		gtk/gtk_main.o gtk/gtk_wrapper.o
 
 OBJS=		$(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(VERMOUTHOBJS) \
 		$(VRAMOBJS) $(GENERICOBJS) $(CPUOBJS) \
-		$(X11OBJS) $(SNDDRVOBJS) $(GTKDEPOBJS)
+		$(X11OBJS) $(DEBUGOBJS) $(SNDDRVOBJS) $(GTKDEPOBJS)
 
 CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(FDDOBJS:.o=.c) $(FONTOBJS:.o=.c) $(IOOBJS:.o=.c) \
 		$(LIOOBJS:.o=.c) $(NP2OBJS:.o=.c) $(SOUNDOBJS:.o=.c) \
 		$(VERMOUTHOBJS:.o=.c) $(VRAMOBJS:.o=.c) $(GENERICOBJS:.o=.c) \
 		$(CPUOBJS:.o=.c) \
-		$(SNDDRVOBJS=.o=.c) $(X11OBJS:.o=.c) $(GTKDEPOBJS:.o=.c)
+		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(X11OBJS:.o=.c) \
+		$(GTKDEPOBJS:.o=.c)
 SRCS=		$(CSRCS)
 ALLSRCS=	$(ASRCS) $(CSRCS)
 
