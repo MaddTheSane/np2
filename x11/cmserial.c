@@ -1,4 +1,4 @@
-/*	$Id: cmserial.c,v 1.1 2004/03/26 13:58:51 monaka Exp $	*/
+/*	$Id: cmserial.c,v 1.2 2004/06/17 14:28:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -42,7 +42,9 @@
 
 
 typedef struct {
-	int	hdl;
+	int		hdl;
+
+	struct termios	tio;
 } _CMSER, *CMSER;
 
 const UINT32 cmserial_speed[10] = {
@@ -118,12 +120,117 @@ serialrelease(COMMNG self)
 {
 	CMSER serial = (CMSER)(self + 1);
 
+	tcsetattr(serial->hdl, TCSANOW, &serial->tio);
 	close(serial->hdl);
 	_MFREE(self);
 }
 
 
 /* ---- interface */
+#if defined(SERIAL_DEBUG)
+static void
+print_status(const struct termios *tio)
+{
+	char *csstr;
+	int cs;
+	speed_t ispeed = cfgetispeed(tio);
+	speed_t ospeed = cfgetospeed(tio);
+
+	fprintf(stderr, " ispeed %d", ispeed);
+	fprintf(stderr, " ospeed %d", ospeed);
+	fprintf(stderr, "%s", "\r\n");
+	fprintf(stderr, " %cIGNBRK", (tio->c_iflag & IGNBRK) ? '+' : '-');
+	fprintf(stderr, " %cBRKINT", (tio->c_iflag & BRKINT) ? '+' : '-');
+	fprintf(stderr, " %cIGNPAR", (tio->c_iflag & IGNPAR) ? '+' : '-');
+	fprintf(stderr, " %cPARMRK", (tio->c_iflag & PARMRK) ? '+' : '-');
+	fprintf(stderr, " %cINPCK", (tio->c_iflag & INPCK) ? '+' : '-');
+	fprintf(stderr, " %cISTRIP", (tio->c_iflag & ISTRIP) ? '+' : '-');
+	fprintf(stderr, " %cINLCR", (tio->c_iflag & INLCR) ? '+' : '-');
+	fprintf(stderr, " %cIGNCR", (tio->c_iflag & IGNCR) ? '+' : '-');
+	fprintf(stderr, " %cICRNL", (tio->c_iflag & ICRNL) ? '+' : '-');
+	fprintf(stderr, " %cIXON", (tio->c_iflag & IXON) ? '+' : '-');
+	fprintf(stderr, " %cIXOFF", (tio->c_iflag & IXOFF) ? '+' : '-');
+	fprintf(stderr, " %cIXANY", (tio->c_iflag & IXANY) ? '+' : '-');
+	fprintf(stderr, " %cIMAXBEL", (tio->c_iflag & IMAXBEL) ? '+' : '-');
+	fprintf(stderr, "%s", "\r\n");
+	fprintf(stderr, " %cOPOST", (tio->c_oflag & OPOST) ? '+' : '-');
+	fprintf(stderr, " %cONLCR", (tio->c_oflag & ONLCR) ? '+' : '-');
+#ifdef OXTABS
+	fprintf(stderr, " %cOXTABS", (tio->c_oflag & OXTABS) ? '+' : '-');
+#endif
+#ifdef TABDLY
+	fprintf(stderr, " %cTABDLY", (tio->c_oflag & TABDLY) == XTABS ? '+' : '-');
+#endif
+#ifdef ONOEOT
+	fprintf(stderr, " %cONOEOT", (tio->c_oflag & ONOEOT) ? '+' : '-');
+#endif
+	fprintf(stderr, "%s", "\r\n");
+
+	cs = tio->c_cflag & CSIZE;
+	switch (cs) {
+	case CS5:
+		csstr = "5";
+		break;
+
+	case CS6:
+		csstr = "6";
+		break;
+
+	case CS7:
+		csstr = "7";
+		break;
+
+	case CS8:
+		csstr = "8";
+		break;
+
+	default:
+		csstr = "?";
+		break;
+	}
+	fprintf(stderr, " cs%s", csstr);
+	fprintf(stderr, " %cCSTOPB", (tio->c_cflag & CSTOPB) ? '+' : '-');
+	fprintf(stderr, " %cCREAD", (tio->c_cflag & CREAD) ? '+' : '-');
+	fprintf(stderr, " %cPARENB", (tio->c_cflag & PARENB) ? '+' : '-');
+	fprintf(stderr, " %cPARODD", (tio->c_cflag & PARODD) ? '+' : '-');
+	fprintf(stderr, " %cHUPCL", (tio->c_cflag & HUPCL) ? '+' : '-');
+	fprintf(stderr, " %cCLOCAL", (tio->c_cflag & CLOCAL) ? '+' : '-');
+#ifdef CCTS_OFLOW
+	fprintf(stderr, " %cCCTS_OFLOW", (tio->c_cflag & CCTS_OFLOW) ? '+' : '-');
+#endif
+	fprintf(stderr, " %cCRTSCTS", (tio->c_cflag & CRTSCTS) ? '+' : '-');
+#ifdef CRTS_IFLOW
+	fprintf(stderr, " %cCRTS_IFLOW", (tio->c_cflag & CRTS_IFLOW) ? '+' : '-');
+#endif
+#ifdef MDMBUF
+	fprintf(stderr, " %cMDMBUF", (tio->c_cflag & MDMBUF) ? '+' : '-');
+#endif
+	fprintf(stderr, " %cECHOKE", (tio->c_lflag & ECHOKE) ? '+' : '-');
+	fprintf(stderr, " %cECHOE", (tio->c_lflag & ECHOE) ? '+' : '-');
+	fprintf(stderr, " %cECHO", (tio->c_lflag & ECHO) ? '+' : '-');
+	fprintf(stderr, " %cECHONL", (tio->c_lflag & ECHONL) ? '+' : '-');
+	fprintf(stderr, " %cECHOPRT", (tio->c_lflag & ECHOPRT) ? '+' : '-');
+	fprintf(stderr, " %cECHOCTL", (tio->c_lflag & ECHOCTL) ? '+' : '-');
+	fprintf(stderr, " %cISIG", (tio->c_lflag & ISIG) ? '+' : '-');
+	fprintf(stderr, " %cICANON", (tio->c_lflag & ICANON) ? '+' : '-');
+#ifdef ALTWERASE
+	fprintf(stderr, " %cALTWERASE", (tio->c_lflag & ALTWERASE) ? '+' : '-');
+#endif
+	fprintf(stderr, " %cIEXTEN", (tio->c_lflag & IEXTEN) ? '+' : '-');
+	fprintf(stderr, "%s", "\r\n");
+#ifdef EXTPROC
+	fprintf(stderr, " %cEXTPROC", (tio->c_lflag & EXTPROC) ? '+' : '-');
+#endif
+	fprintf(stderr, " %cTOSTOP", (tio->c_lflag & TOSTOP) ? '+' : '-');
+	fprintf(stderr, " %cFLUSHO", (tio->c_lflag & FLUSHO) ? '+' : '-');
+#ifdef NOKERNINFO
+	fprintf(stderr, " %cNOKERNINFO", (tio->c_lflag & NOKERNINFO) ? '+' : '-');
+#endif
+	fprintf(stderr, " %cPENDIN", (tio->c_lflag & PENDIN) ? '+' : '-');
+	fprintf(stderr, " %cNOFLSH", (tio->c_lflag & NOFLSH) ? '+' : '-');
+	fprintf(stderr, "%s", "\r\n");
+}
+#endif
 
 COMMNG
 cmserial_create(UINT port, BYTE param, UINT32 speed)
@@ -133,7 +240,7 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 		B9600, B19200, B38400, B57600, B115200
 	};
 	static const int csize[] = { CS5, CS6, CS7, CS8 };
-	struct termios options;
+	struct termios options, origopt;
 	COMMNG ret;
 	CMSER serial;
 	int hdl;
@@ -157,12 +264,17 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 		VERBOSE(("cmserial_create: open failure %s, %s", np2oscfg.com[port].mout, strerror(errno)));
 		goto cscre_failure;
 	}
-	fcntl(hdl, F_SETFL, 0);
+
+	if (!isatty(hdl)) {
+		VERBOSE(("cmserial_create: not terminal file descriptor (%s)", strerror(errno)));
+		goto cscre_close;
+	}
 
 	/* get current options for the port */
 	tcgetattr(hdl, &options);
+	origopt = options;
 
-	/* set the baud rates */
+	/* baud rates */
 	for (i = 0; i < NELEMENTS(cmserial_speed); i++) {
 		if (cmserial_speed[i] >= speed) {
 			VERBOSE(("cmserial_create: spped = %d", cmserial_speed[i]));
@@ -176,18 +288,16 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 	cfsetispeed(&options, cmserial_cflag[i]);
 	cfsetospeed(&options, cmserial_cflag[i]);
 
-	/* set the character size bits */
+	/* character size bits */
 	options.c_cflag &= ~CSIZE;
 	options.c_cflag |= csize[(param >> 2) & 3];
 	VERBOSE(("cmserial_create: charactor size = %d", csize[(param >> 2) & 3]));
 
-	/* set parity check */
+	/* parity check */
 	switch (param & 0x30) {
 	case 0x10:
 		VERBOSE(("cmserial_create: odd parity"));
-		options.c_cflag |= PARENB;
-		options.c_cflag |= PARODD;
-		options.c_cflag &= ~CSTOPB;
+		options.c_cflag |= PARENB | PARODD;
 		options.c_iflag |= INPCK | ISTRIP;
 		break;
 
@@ -195,33 +305,41 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 		VERBOSE(("cmserial_create: even parity"));
 		options.c_cflag |= PARENB;
 		options.c_cflag &= ~PARODD;
-		options.c_cflag &= ~CSTOPB;
 		options.c_iflag |= INPCK | ISTRIP;
 		break;
 
 	default:
 		VERBOSE(("cmserial_create: non parity"));
 		options.c_cflag &= ~PARENB;
-		options.c_cflag &= ~CSTOPB;
 		options.c_iflag &= ~(INPCK | ISTRIP);
 		break;
 	}
 
-	/* set stop bits XXX */
-#if 0
+	/* stop bits */
 	switch (param & 0xc0) {
 	case 0x80:
-		dcb.StopBits = ONE5STOPBITS;
+		VERBOSE(("cmserial_create: stop bits: 1.5"));
 		break;
 
 	case 0xc0:
-		dcb.StopBits = TWOSTOPBITS;
+		VERBOSE(("cmserial_create: stop bits: 2"));
+		options.c_cflag |= CSTOPB;
 		break;
 
 	default:
-		dcb.StopBits = ONESTOPBIT;
+		VERBOSE(("cmserial_create: stop bits: 1"));
+		options.c_cflag &= ~CSTOPB;
 		break;
 	}
+
+	/* set misc flag */
+	cfmakeraw(&options);
+	options.c_cflag |= CLOCAL | CREAD;	/* enable recv and local mode */
+	options.c_cflag |= CRTSCTS;		/* hard flow */
+	options.c_iflag |= ~(IXON | IXOFF);
+
+#if defined(SERIAL_DEBUG)
+	print_status(&options);
 #endif
 
 	ret = (COMMNG)_MALLOC(sizeof(_COMMNG) + sizeof(_CMSER), "SERIAL");
@@ -230,18 +348,8 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 		goto cscre_close;
 	}
 
-	/* set misc flag */
-	options.c_cflag |= CLOCAL | CREAD;	/* enable recv and local mode */
-	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);	/* raw input */
-	options.c_oflag &= ~OPOST;	/* raw output */
-
 	/* set the new options for the port */
 	tcsetattr(hdl, TCSANOW, &options);
-
-#if 0
-	/* set Non-blocking I/O mode */
-	fcntl(hdl, F_SETFL, FNDELAY);
-#endif
 
 #if 1
 	ret->connect = COMCONNECT_MIDI;
@@ -255,6 +363,7 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 	ret->release = serialrelease;
 	serial = (CMSER)(ret + 1);
 	serial->hdl = hdl;
+	serial->tio = origopt;
 	return ret;
 
 cscre_close:
