@@ -49,7 +49,7 @@ typedef	unsigned int		UINT32;
 #define	OEMSTRLEN			lstrlen
 #else
 #define	OEMCHAR				char
-#define	OEMTEXT(string)		(string)
+#define	OEMTEXT(string)		string
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
 #endif
@@ -75,9 +75,12 @@ typedef	unsigned int		UINT32;
 #define	VERMOUTH_LIB
 #define	SOUND_CRITICAL
 
+#if defined(OSLANG_SJIS)
 #define	SUPPORT_SJIS
-#if defined(OSLANG_UTF8)
+#elif defined(OSLANG_UTF8)
 #define	SUPPORT_UTF8
+#else
+#define	SUPPORT_ANK
 #endif
 
 #define	SUPPORT_16BPP

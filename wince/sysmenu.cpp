@@ -38,8 +38,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_CONFIG:
-			menudlg_create(DLGCFG_WIDTH, DLGCFG_HEIGHT,
-											(char *)mstr_cfg, dlgcfg_cmd);
+			menudlg_create(DLGCFG_WIDTH, DLGCFG_HEIGHT, mstr_cfg, dlgcfg_cmd);
 			break;
 
 		case MID_FDD1OPEN:
@@ -148,7 +147,7 @@ static void sys_cmd(MENUID id) {
 
 		case MID_SCREENOPT:
 			menudlg_create(DLGSCR_WIDTH, DLGSCR_HEIGHT,
-											(char *)mstr_scropt, dlgscr_cmd);
+													mstr_scropt, dlgscr_cmd);
 			break;
 
 #if defined(WIN32_PLATFORM_PSPC)
@@ -452,7 +451,7 @@ static void sys_cmd(MENUID id) {
 
 		case MID_ABOUT:
 			menudlg_create(DLGABOUT_WIDTH, DLGABOUT_HEIGHT,
-											(char *)mstr_about, dlgabout_cmd);
+													mstr_about, dlgabout_cmd);
 			break;
 
 #if defined(MENU_TASKMINIMIZE)

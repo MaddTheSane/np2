@@ -226,7 +226,7 @@ void file_setcd(const OEMCHAR *exepath) {
 	*curfilep = '\0';
 }
 
-char *file_getcd(const OEMCHAR *path) {
+OEMCHAR *file_getcd(const OEMCHAR *path) {
 
 	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(curpath);
@@ -414,7 +414,7 @@ void file_cutseparator(OEMCHAR *path) {
 
 	int		pos;
 
-	pos = strlen(path) - 1;
+	pos = OEMSTRLEN(path) - 1;
 	if ((pos > 0) &&							// 2文字以上でー
 		(path[pos] == '\\') &&					// ケツが \ でー
 		(!milstr_kanji2nd(path, pos)) &&		// 漢字の2バイト目ぢゃなくてー
@@ -428,7 +428,7 @@ void file_setseparator(OEMCHAR *path, int maxlen) {
 
 	int		pos;
 
-	pos = strlen(path) - 1;
+	pos = OEMSTRLEN(path) - 1;
 	if ((pos < 0) ||
 		((pos == 1) && (path[1] == ':')) ||
 		((path[pos] == '\\') && (!milstr_kanji2nd(path, pos))) ||

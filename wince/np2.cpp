@@ -111,11 +111,11 @@ static int flagload(const OEMCHAR *ext, const OEMCHAR *title, BOOL force) {
 	id = DID_YES;
 	ret = statsave_check(path, buf, NELEMENTS(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
-		menumbox("Couldn't restart", title, MBOX_OK | MBOX_ICONSTOP);
+		menumbox(OEMTEXT("Couldn't restart"), title, MBOX_OK | MBOX_ICONSTOP);
 		id = DID_NO;
 	}
 	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
-		OEMSPRINTF(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		OEMSPRINTF(buf2, OEMTEXT("Conflict!\n\n%s\nContinue?"), buf);
 		id = menumbox(buf2, title, MBOX_YESNOCAN | MBOX_ICONQUESTION);
 	}
 	if (id == DID_YES) {

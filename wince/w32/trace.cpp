@@ -59,7 +59,7 @@ static const TCHAR trace2[] = _T("VERBOSE");
 static const TCHAR traceen[] = _T("Enable");
 static const TCHAR tracefh[] = _T("File out");
 static const TCHAR tracecl[] = _T("Clear");
-static const char crlf[] = "\r\n";
+static const OEMCHAR crlf[] = OEMTEXT("\r\n");
 
 static	TRACEWIN	tracewin;
 static	HWND		hView = NULL;
@@ -68,13 +68,13 @@ static	HBRUSH		hBrush = NULL;
 static	TCHAR		szView[VIEW_BUFFERSIZE];
 static	TRACECFG	tracecfg;
 
-static const char	np2trace[] = "np2trace.ini";
-static const char	inititle[] = "TRACE";
-static const INITBL	initbl[4] = {
-			{"posx",	INITYPE_SINT32,	&tracecfg.posx,		0},
-			{"posy",	INITYPE_SINT32,	&tracecfg.posy,		0},
-			{"width",	INITYPE_SINT32,	&tracecfg.width,	0},
-			{"height",	INITYPE_SINT32,	&tracecfg.height,	0}};
+static const OEMCHAR np2trace[] = OEMTEXT("np2trace.ini");
+static const OEMCHAR inititle[] = OEMTEXT("TRACE");
+static const PFTBL initbl[4] = {
+			PFVAL("posx",	PFTYPE_SINT32,	&tracecfg.posx),
+			PFVAL("posy",	PFTYPE_SINT32,	&tracecfg.posy),
+			PFVAL("width",	PFTYPE_SINT32,	&tracecfg.width),
+			PFVAL("height",	PFTYPE_SINT32,	&tracecfg.height)};
 
 static void View_ScrollToBottom(HWND hWnd) {
 
@@ -91,7 +91,7 @@ static void View_ClrString(void) {
 	SetWindowText(hView, szView);
 }
 
-static void View_AddString(const char *lpszString) {
+static void View_AddString(const OEMCHAR *lpszString) {
 
 	int		len;
 	int		vlen;
@@ -102,9 +102,9 @@ static void View_AddString(const char *lpszString) {
 	len = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1,
 																NULL, 0) - 1;
 #elif defined(UNICODE) && defined(OSLANG_UTF8)
-	len = codecnv_utf8toucs2(NULL, 0, lpszString, (UINT8)-1) - 1;
+	len = codecnv_utf8toucs2(NULL, 0, lpszString, (UINT)-1) - 1;
 #else
-	len = strlen(lpszString);
+	len = lstrlen(lpszString);
 #endif
 	if ((len <= 0) || ((len + 3) > VIEW_BUFFERSIZE)) {
 		return;
@@ -128,9 +128,9 @@ static void View_AddString(const char *lpszString) {
 #if defined(UNICODE) && defined(OSLANG_SJIS)
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1, p, len + 1);
 #elif defined(UNICODE) && defined(OSLANG_UTF8)
-	codecnv_utf8toucs2(p, len + 1, lpszString, (UINT8)-1);
+	codecnv_utf8toucs2(p, len + 1, lpszString, (UINT)-1);
 #else
-	CopyMemory(p, lpszString, len);
+	CopyMemory(p, lpszString, len * sizeof(TCHAR));
 #endif
 	p += len;
 	p[0] = '\r';
@@ -170,7 +170,7 @@ static void trfh_close(void) {
 	}
 }
 
-static void trfh_open(const char *fname) {
+static void trfh_open(const OEMCHAR *fname) {
 
 	trfh_close();
 	tracewin.fh = file_create(fname);
@@ -179,11 +179,12 @@ static void trfh_open(const char *fname) {
 #endif
 }
 
-static void trfh_add(const char *buf) {
+static void trfh_add(const OEMCHAR *buf) {
 
 	UINT	size;
 
-	size = strlen(buf);
+	size = OEMSTRLEN(buf);
+	size *= sizeof(OEMCHAR);
 #if defined(FILEBUFSIZE)
 	while(size) {
 		UINT pos = filebufpos & (FILEBUFSIZE - 1);
@@ -291,7 +292,7 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 						trfh_close();
 					}
 					else {
-						trfh_open("traceout.txt");
+						trfh_open(OEMTEXT("traceout.txt"));
 					}
 					hmenu = GetSystemMenu(hWnd, FALSE);
 					CheckMenuItem(hmenu, IDM_TRACEFH,
@@ -397,7 +398,7 @@ void trace_init(void) {
 #else
 	tracewin.en = 0;
 	tracewin.fh = FILEH_INVALID;
-	trfh_open("traces.txt");
+	trfh_open(OEMTEXT("traces.txt"));
 #endif
 
 	tracecfg.posx = CW_USEDEFAULT;
@@ -436,13 +437,20 @@ void trace_fmt(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;
-	char	buf[0x1000];
+	OEMCHAR	buf[0x1000];
 
 	en = (tracewin.en & 1) &&
 		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
 	if (en) {
 		va_start(ap, fmt);
+#if defined(_UNICODE) && defined(OSLANG_UCS2)
+		TCHAR cnvfmt[0x800];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
+												cnvfmt, NELEMENTS(cnvfmt));
+		vswprintf(buf, cnvfmt, ap);
+#else
 		vsprintf(buf, fmt, ap);
+#endif
 		va_end(ap);
 		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
@@ -458,13 +466,20 @@ void trace_fmt2(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;
-	char	buf[0x1000];
+	OEMCHAR	buf[0x1000];
 
 	en = (tracewin.en & 2) &&
 		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
 	if (en) {
 		va_start(ap, fmt);
+#if defined(_UNICODE) && defined(OSLANG_UCS2)
+		TCHAR cnvfmt[0x800];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
+												cnvfmt, NELEMENTS(cnvfmt));
+		vswprintf(buf, cnvfmt, ap);
+#else
 		vsprintf(buf, fmt, ap);
+#endif
 		va_end(ap);
 		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);

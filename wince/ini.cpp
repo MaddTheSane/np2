@@ -1,27 +1,20 @@
 #include	"compiler.h"
 #include	"strres.h"
-#include	"profile.h"
+#include	"textfile.h"
 #include	"np2.h"
 #include	"dosio.h"
 #include	"ini.h"
 #include	"pccore.h"
 
 
-typedef struct {
-const char		*title;
-const INITBL	*tbl;
-const INITBL	*tblterm;
-	UINT		count;
-} _INIARG, *INIARG;
+static void binset(UINT8 *bin, UINT binlen, const OEMCHAR *src) {
 
-static void inirdarg8(BYTE *dst, int dsize, const char *src) {
-
-	int		i;
-	BYTE	val;
+	UINT	i;
+	UINT8	val;
 	BOOL	set;
-	char	c;
+	OEMCHAR	c;
 
-	for (i=0; i<dsize; i++) {
+	for (i=0; i<binlen; i++) {
 		val = 0;
 		set = FALSE;
 		while(*src == ' ') {
@@ -50,61 +43,86 @@ static void inirdarg8(BYTE *dst, int dsize, const char *src) {
 		if (set == FALSE) {
 			break;
 		}
-		dst[i] = val;
+		bin[i] = val;
 	}
 }
 
-static BOOL inireadcb(void *arg, const char *para,
-										const char *key, const char *data) {
+static void binget(OEMCHAR *work, int size, const UINT8 *bin, UINT binlen) {
 
-const INITBL	*p;
+	UINT	i;
+	OEMCHAR	tmp[8];
+
+	if (binlen) {
+		OEMSPRINTF(tmp, OEMTEXT("%.2x"), bin[0]);
+		milstr_ncpy(work, tmp, size);
+	}
+	for (i=1; i<binlen; i++) {
+		OEMSPRINTF(tmp, OEMTEXT(" %.2x"), bin[i]);
+		milstr_ncat(work, tmp, size);
+	}
+}
+
+
+// ----
+
+typedef struct {
+const OEMCHAR	*title;
+const PFTBL		*tbl;
+const PFTBL		*tblterm;
+	UINT		count;
+} _PFARG, *PFARG;
+
+static BOOL inireadcb(void *arg, const OEMCHAR *para,
+									const OEMCHAR *key, const OEMCHAR *data) {
+
+const PFTBL	*p;
 
 	if (arg == NULL) {
 		return(FAILURE);
 	}
-	if (milstr_cmp(para, ((INIARG)arg)->title)) {
+	if (milstr_cmp(para, ((PFARG)arg)->title)) {
 		return(SUCCESS);
 	}
-	p = ((INIARG)arg)->tbl;
-	while(p < ((INIARG)arg)->tblterm) {
+	p = ((PFARG)arg)->tbl;
+	while(p < ((PFARG)arg)->tblterm) {
 		if (!milstr_cmp(key, p->item)) {
-			switch(p->itemtype) {
-				case INITYPE_STR:
-					milstr_ncpy((char *)p->value, data, p->size);
+			switch(p->itemtype & PFTYPE_MASK) {
+				case PFTYPE_STR:
+					milstr_ncpy((OEMCHAR *)p->value, data, p->arg);
 					break;
 
-				case INITYPE_BOOL:
-					*((BYTE *)p->value) = (!milstr_cmp(data, str_true))?1:0;
+				case PFTYPE_BOOL:
+					*((UINT8 *)p->value) = (!milstr_cmp(data, str_true))?1:0;
 					break;
 
-				case INITYPE_BYTEARG:
-					inirdarg8((BYTE *)p->value, p->size, data);
+				case PFTYPE_BIN:
+					binset((UINT8 *)p->value, p->arg, data);
 					break;
 
-				case INITYPE_SINT8:
-				case INITYPE_UINT8:
-					*((BYTE *)p->value) = (BYTE)milstr_solveINT(data);
+				case PFTYPE_SINT8:
+				case PFTYPE_UINT8:
+					*((UINT8 *)p->value) = (UINT8)milstr_solveINT(data);
 					break;
 
-				case INITYPE_SINT16:
-				case INITYPE_UINT16:
+				case PFTYPE_SINT16:
+				case PFTYPE_UINT16:
 					*((UINT16 *)p->value) = (UINT16)milstr_solveINT(data);
 					break;
 
-				case INITYPE_SINT32:
-				case INITYPE_UINT32:
+				case PFTYPE_SINT32:
+				case PFTYPE_UINT32:
 					*((UINT32 *)p->value) = (UINT32)milstr_solveINT(data);
 					break;
 
-				case INITYPE_HEX8:
-					*((BYTE *)p->value) = (BYTE)milstr_solveHEX(data);
+				case PFTYPE_HEX8:
+					*((UINT8 *)p->value) = (UINT8)milstr_solveHEX(data);
 					break;
 
-				case INITYPE_HEX16:
+				case PFTYPE_HEX16:
 					*((UINT16 *)p->value) = (UINT16)milstr_solveHEX(data);
 					break;
 
-				case INITYPE_HEX32:
+				case PFTYPE_HEX32:
 					*((UINT32 *)p->value) = (UINT32)milstr_solveHEX(data);
 					break;
 			}
@@ -114,10 +132,10 @@ const INITBL	*p;
 	return(SUCCESS);
 }
 
-void ini_read(const char *path, const char *title,
-											const INITBL *tbl, UINT count) {
+void ini_read(const OEMCHAR *path, const OEMCHAR *title,
+											const PFTBL *tbl, UINT count) {
 
-	_INIARG	iniarg;
+	_PFARG	iniarg;
 
 	if (path == NULL) {
 		return;
@@ -131,16 +149,15 @@ void ini_read(const char *path, const char *title,
 
 // ----
 
-static void iniwrsetstr(char *work, int size, const char *ptr) {
+static void iniwrsetstr(OEMCHAR *work, int size, const OEMCHAR *ptr) {
 
 	int		i;
-	char	c;
+	OEMCHAR	c;
 
 	if (ptr[0] == ' ') {
 		goto iwss_extend;
-		
 	}
-	i = strlen(ptr);
+	i = OEMSTRLEN(ptr);
 	if ((i) && (ptr[i-1] == ' ')) {
 		goto iwss_extend;
 	}
@@ -177,98 +194,77 @@ iwss_extend:
 	}
 }
 
-static void iniwrsetarg8(char *work, int size, const BYTE *ptr, int arg) {
+void ini_write(const OEMCHAR *path, const OEMCHAR *title,
+											const PFTBL *tbl, UINT count) {
 
-	int		i;
-	char	tmp[8];
-
-	if (arg > 0) {
-		OEMSPRINTF(tmp, "%.2x", ptr[0]);
-		milstr_ncpy(work, tmp, size);
-	}
-	for (i=1; i<arg; i++) {
-		OEMSPRINTF(tmp, " %.2x", ptr[i]);
-		milstr_ncat(work, tmp, size);
-	}
-}
-
-
-static const UINT8 utf8hdr[3] = {0xef, 0xbb, 0xbf};
-
-void ini_write(const char *path, const char *title,
-											const INITBL *tbl, UINT count) {
-
-	FILEH		fh;
-const INITBL	*p;
-const INITBL	*pterm;
+	TEXTFILEH	tfh;
+const PFTBL		*p;
+const PFTBL		*pterm;
 	BOOL		set;
-	char		work[512];
+	OEMCHAR		work[512];
 
-	fh = file_create(path);
-	if (fh == FILEH_INVALID) {
+	tfh = textfile_create(path, 0x800);
+	if (tfh == NULL) {
 		return;
 	}
-#if defined(OSLANG_UTF8)
-	file_write(fh, utf8hdr, sizeof(utf8hdr));
-#endif
-	milstr_ncpy(work, "[", sizeof(work));
-	milstr_ncat(work, title, sizeof(work));
-	milstr_ncat(work, "]\r\n", sizeof(work));
-	file_write(fh, work, strlen(work));
+	milstr_ncpy(work, OEMTEXT("["), NELEMENTS(work));
+	milstr_ncat(work, title, NELEMENTS(work));
+	milstr_ncat(work, OEMTEXT("]\r\n"), NELEMENTS(work));
+	textfile_write(tfh, work);
 
 	p = tbl;
 	pterm = tbl + count;
 	while(p < pterm) {
 		work[0] = '\0';
 		set = SUCCESS;
-		switch(p->itemtype) {
-			case INITYPE_STR:
-				iniwrsetstr(work, sizeof(work), (char *)p->value);
+		switch(p->itemtype & PFTYPE_MASK) {
+			case PFTYPE_STR:
+				iniwrsetstr(work, NELEMENTS(work), (OEMCHAR *)p->value);
 				break;
 
-			case INITYPE_BOOL:
-				milstr_ncpy(work, (*((BYTE *)p->value))?str_true:str_false,
-																sizeof(work));
+			case PFTYPE_BOOL:
+				milstr_ncpy(work, (*((UINT8 *)p->value))?str_true:str_false,
+															NELEMENTS(work));
 				break;
 
-			case INITYPE_BYTEARG:
-				iniwrsetarg8(work, sizeof(work), (BYTE *)p->value, p->size);
+			case PFTYPE_BIN:
+				binget(work, NELEMENTS(work), (UINT8 *)p->value, p->arg);
 				break;
 
-			case INITYPE_SINT8:
-				SPRINTF(work, str_d, *((char *)p->value));
+			case PFTYPE_SINT8:
+				OEMSPRINTF(work, str_d, *((SINT8 *)p->value));
 				break;
 
-			case INITYPE_SINT16:
-				SPRINTF(work, str_d, *((SINT16 *)p->value));
+			case PFTYPE_SINT16:
+				OEMSPRINTF(work, str_d, *((SINT16 *)p->value));
 				break;
 
-			case INITYPE_SINT32:
-				SPRINTF(work, str_d, *((SINT32 *)p->value));
+			case PFTYPE_SINT32:
+				OEMSPRINTF(work, str_d, *((SINT32 *)p->value));
 				break;
 
-			case INITYPE_UINT8:
-				SPRINTF(work, str_u, *((BYTE *)p->value));
+			case PFTYPE_UINT8:
+				OEMSPRINTF(work, str_u, *((UINT8 *)p->value));
 				break;
 
-			case INITYPE_UINT16:
-				SPRINTF(work, str_u, *((UINT16 *)p->value));
+			case PFTYPE_UINT16:
+				OEMSPRINTF(work, str_u, *((UINT16 *)p->value));
 				break;
 
-			case INITYPE_UINT32:
-				SPRINTF(work, str_u, *((UINT32 *)p->value));
+			case PFTYPE_UINT32:
+				OEMSPRINTF(work, str_u, *((UINT32 *)p->value));
 				break;
 
-			case INITYPE_HEX8:
-				SPRINTF(work, str_x, *((BYTE *)p->value));
+			case PFTYPE_HEX8:
+				OEMSPRINTF(work, str_x, *((UINT8 *)p->value));
 				break;
 
-			case INITYPE_HEX16:
-				SPRINTF(work, str_x, *((UINT16 *)p->value));
+			case PFTYPE_HEX16:
+				OEMSPRINTF(work, str_x, *((UINT16 *)p->value));
 				break;
 
-			case INITYPE_HEX32:
-				SPRINTF(work, str_x, *((UINT32 *)p->value));
+			case PFTYPE_HEX32:
+				OEMSPRINTF(work, str_x, *((UINT32 *)p->value));
 				break;
 
 			default:
@@ -276,111 +272,118 @@ const INITBL	*pterm;
 				break;
 		}
 		if (set == SUCCESS) {
-			file_write(fh, p->item, strlen(p->item));
-			file_write(fh, "=", 1);
-			file_write(fh, work, strlen(work));
-			file_write(fh, "\r\n", 2);
+			textfile_write(tfh, p->item);
+			textfile_write(tfh, OEMTEXT("="));
+			textfile_write(tfh, work);
+			textfile_write(tfh, OEMTEXT("\r\n"));
 		}
 		p++;
 	}
-	file_close(fh);
+	textfile_close(tfh);
 }
 
 
 // ----
 
 #if defined(OSLANG_UTF8)
-static const char ini_title[] = "NekoProjectIICE";
-static const char inifile[] = "np2ce.cfg";
+static const OEMCHAR ini_title[] = OEMTEXT("NekoProjectIICE");
+static const OEMCHAR inifile[] = OEMTEXT("np2ce.cfg");
 #else
-static const char ini_title[] = "NekoProjectII";
-static const char inifile[] = "np2.cfg";
+static const OEMCHAR ini_title[] = OEMTEXT("NekoProjectII");
+static const OEMCHAR inifile[] = OEMTEXT("np2.cfg");
 #endif
 
-static const INITBL iniitem[] = {
-	{"pc_model", INITYPE_STR,		&np2cfg.model,
-													sizeof(np2cfg.model)},
-	{"clk_base", INITYPE_SINT32,	&np2cfg.baseclock,		0},
-	{"clk_mult", INITYPE_SINT32,	&np2cfg.multiple,		0},
+enum {
+	PFRO_STR		= PFFLAG_RO + PFTYPE_STR,
+	PFRO_BOOL		= PFFLAG_RO + PFTYPE_BOOL,
+	PFRO_HEX32		= PFFLAG_RO + PFTYPE_HEX32
+};
 
-	{"DIPswtch", INITYPE_BYTEARG,	np2cfg.dipsw,			3},
-	{"MEMswtch", INITYPE_BYTEARG,	np2cfg.memsw,			8},
-	{"ExMemory", INITYPE_UINT8,		&np2cfg.EXTMEM,			0},
-	{"ITF_WORK", INITYPE_BOOL,		&np2cfg.ITF_WORK,		0},
+static const PFTBL iniitem[] = {
+	PFSTR("pc_model", PFTYPE_STR,		&np2cfg.model),
+	PFVAL("clk_base", PFTYPE_UINT32,	&np2cfg.baseclock),
+	PFVAL("clk_mult", PFTYPE_UINT32,	&np2cfg.multiple),
 
-	{"HDD1FILE", INITYPE_STR,		np2cfg.sasihdd[0],		MAX_PATH},
-	{"HDD2FILE", INITYPE_STR,		np2cfg.sasihdd[1],		MAX_PATH},
+	PFEXT("DIPswtch", PFTYPE_BIN,		np2cfg.dipsw,			3),
+	PFEXT("MEMswtch", PFTYPE_BIN,		np2cfg.memsw,			8),
+	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			63),
+	PFVAL("ITF_WORK", PFRO_BOOL,		&np2cfg.ITF_WORK),
+
+	PFSTR("HDD1FILE", PFTYPE_STR,		np2cfg.sasihdd[0]),
+	PFSTR("HDD2FILE", PFTYPE_STR,		np2cfg.sasihdd[1]),
 #if defined(SUPPORT_SCSI)
-	{"SCSIHDD0", INITYPE_STR,		np2cfg.scsihdd[0],		MAX_PATH},
-	{"SCSIHDD1", INITYPE_STR,		np2cfg.scsihdd[1],		MAX_PATH},
-	{"SCSIHDD2", INITYPE_STR,		np2cfg.scsihdd[2],		MAX_PATH},
-	{"SCSIHDD3", INITYPE_STR,		np2cfg.scsihdd[3],		MAX_PATH},
+	PFSTR("SCSIHDD0", PFTYPE_STR,		np2cfg.scsihdd[0]),
+	PFSTR("SCSIHDD1", PFTYPE_STR,		np2cfg.scsihdd[1]),
+	PFSTR("SCSIHDD2", PFTYPE_STR,		np2cfg.scsihdd[2]),
+	PFSTR("SCSIHDD3", PFTYPE_STR,		np2cfg.scsihdd[3]),
 #endif
-	{"fontfile", INITYPE_STR,		np2cfg.fontfile,		MAX_PATH},
-	{"biospath", INITYPE_STR,		np2cfg.biospath,		MAX_PATH},
+	PFSTR("fontfile", PFTYPE_STR,		np2cfg.fontfile),
+	PFSTR("biospath", PFRO_STR,			np2cfg.biospath),
 
-	{"SampleHz", INITYPE_UINT16,	&np2cfg.samplingrate,	0},
-	{"Latencys", INITYPE_UINT16,	&np2cfg.delayms,		0},
-	{"SNDboard", INITYPE_HEX8,		&np2cfg.SOUND_SW,		0},
-	{"BEEP_vol", INITYPE_UINT8,		&np2cfg.BEEP_VOL,		0},
-	{"xspeaker", INITYPE_BOOL,		&np2cfg.snd_x,			0},
+	PFVAL("SampleHz", PFTYPE_UINT16,	&np2cfg.samplingrate),
+	PFVAL("Latencys", PFTYPE_UINT16,	&np2cfg.delayms),
+	PFVAL("SNDboard", PFTYPE_HEX8,		&np2cfg.SOUND_SW),
+	PFAND("BEEP_vol", PFTYPE_UINT8,		&np2cfg.BEEP_VOL,		3),
+	PFVAL("xspeaker", PFRO_BOOL,		&np2cfg.snd_x),
 
-	{"SND14vol", INITYPE_BYTEARG,	np2cfg.vol14,			6},
-//	{"opt14BRD", INITYPE_BYTEARG,	np2cfg.snd14opt,		3},
-	{"opt26BRD", INITYPE_HEX8,		&np2cfg.snd26opt,		0},
-	{"opt86BRD", INITYPE_HEX8,		&np2cfg.snd86opt,		0},
-	{"optSPBRD", INITYPE_HEX8,		&np2cfg.spbopt,			0},
-	{"optSPBVR", INITYPE_HEX8,		&np2cfg.spb_vrc,		0},
-	{"optSPBVL", INITYPE_UINT8,		&np2cfg.spb_vrl,		0},
-	{"optSPB_X", INITYPE_BOOL,		&np2cfg.spb_x,			0},
-	{"optMPU98", INITYPE_HEX8,		&np2cfg.mpuopt,			0},
+	PFEXT("SND14vol", PFTYPE_BIN,		np2cfg.vol14,			6),
+//	PFEXT("opt14BRD", PFTYPE_BIN,		np2cfg.snd14opt,		3),
+	PFVAL("opt26BRD", PFTYPE_HEX8,		&np2cfg.snd26opt),
+	PFVAL("opt86BRD", PFTYPE_HEX8,		&np2cfg.snd86opt),
+	PFVAL("optSPBRD", PFTYPE_HEX8,		&np2cfg.spbopt),
+	PFVAL("optSPBVR", PFTYPE_HEX8,		&np2cfg.spb_vrc),
+	PFMAX("optSPBVL", PFTYPE_UINT8,		&np2cfg.spb_vrl,		24),
+	PFVAL("optSPB_X", PFTYPE_BOOL,		&np2cfg.spb_x),
+	PFVAL("optMPU98", PFTYPE_HEX8,		&np2cfg.mpuopt),
 
-	{"volume_F", INITYPE_UINT8,		&np2cfg.vol_fm,			0},
-	{"volume_S", INITYPE_UINT8,		&np2cfg.vol_ssg,		0},
-	{"volume_A", INITYPE_UINT8,		&np2cfg.vol_adpcm,		0},
-	{"volume_P", INITYPE_UINT8,		&np2cfg.vol_pcm,		0},
-	{"volume_R", INITYPE_UINT8,		&np2cfg.vol_rhythm,		0},
+	PFMAX("volume_F", PFTYPE_UINT8,		&np2cfg.vol_fm,			128),
+	PFMAX("volume_S", PFTYPE_UINT8,		&np2cfg.vol_ssg,		128),
+	PFMAX("volume_A", PFTYPE_UINT8,		&np2cfg.vol_adpcm,		128),
+	PFMAX("volume_P", PFTYPE_UINT8,		&np2cfg.vol_pcm,		128),
+	PFMAX("volume_R", PFTYPE_UINT8,		&np2cfg.vol_rhythm,		128),
 
-	{"Seek_Snd", INITYPE_BOOL,		&np2cfg.MOTOR,			0},
-	{"Seek_Vol", INITYPE_UINT8,		&np2cfg.MOTORVOL,		0},
+	PFVAL("Seek_Snd", PFTYPE_BOOL,		&np2cfg.MOTOR),
+	PFMAX("Seek_Vol", PFTYPE_UINT8,		&np2cfg.MOTORVOL,		100),
 
-	{"btnRAPID", INITYPE_BOOL,		&np2cfg.BTN_RAPID,		0},
-	{"btn_MODE", INITYPE_BOOL,		&np2cfg.BTN_MODE,		0},
-	{"MS_RAPID", INITYPE_BOOL,		&np2cfg.MOUSERAPID,		0},
+	PFVAL("btnRAPID", PFTYPE_BOOL,		&np2cfg.BTN_RAPID),
+	PFVAL("btn_MODE", PFTYPE_BOOL,		&np2cfg.BTN_MODE),
+	PFVAL("MS_RAPID", PFTYPE_BOOL,		&np2cfg.MOUSERAPID),
 
-	{"VRAMwait", INITYPE_BYTEARG,	np2cfg.wait,			6},
-	{"DispSync", INITYPE_BOOL,		&np2cfg.DISPSYNC,		0},
-	{"Real_Pal", INITYPE_BOOL,		&np2cfg.RASTER,			0},
-	{"RPal_tim", INITYPE_UINT8,		&np2cfg.realpal,		0},
-	{"uPD72020", INITYPE_BOOL,		&np2cfg.uPD72020,		0},
-	{"GRCG_EGC", INITYPE_UINT8,		&np2cfg.grcg,			0},
-	{"color16b", INITYPE_BOOL,		&np2cfg.color16,		0},
-	{"skipline", INITYPE_BOOL,		&np2cfg.skipline,		0},
-	{"skplight", INITYPE_SINT16,	&np2cfg.skiplight,		0},
-	{"LCD_MODE", INITYPE_UINT8,		&np2cfg.LCD_MODE,		0},
-	{"BG_COLOR", INITYPE_HEX32,		&np2cfg.BG_COLOR,		0},
-	{"FG_COLOR", INITYPE_HEX32,		&np2cfg.FG_COLOR,		0},
-	{"pc9861_e", INITYPE_BOOL,		&np2cfg.pc9861enable,	0},
-	{"pc9861_s", INITYPE_BYTEARG,	np2cfg.pc9861sw,		3},
-	{"pc9861_j", INITYPE_BYTEARG,	np2cfg.pc9861jmp,		6},
-	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
-	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
+	PFEXT("VRAMwait", PFTYPE_BIN,		np2cfg.wait,			6),
+	PFVAL("DispSync", PFTYPE_BOOL,		&np2cfg.DISPSYNC),
+	PFVAL("Real_Pal", PFTYPE_BOOL,		&np2cfg.RASTER),
+	PFMAX("RPal_tim", PFTYPE_UINT8,		&np2cfg.realpal,		64),
+	PFVAL("uPD72020", PFTYPE_BOOL,		&np2cfg.uPD72020),
+	PFAND("GRCG_EGC", PFTYPE_UINT8,		&np2cfg.grcg,			3),
+	PFVAL("color16b", PFTYPE_BOOL,		&np2cfg.color16),
+	PFVAL("skipline", PFTYPE_BOOL,		&np2cfg.skipline),
+	PFVAL("skplight", PFTYPE_UINT16,	&np2cfg.skiplight),
+	PFAND("LCD_MODE", PFTYPE_UINT8,		&np2cfg.LCD_MODE,		0x03),
+	PFAND("BG_COLOR", PFRO_HEX32,		&np2cfg.BG_COLOR,		0xffffff),
+	PFAND("FG_COLOR", PFRO_HEX32,		&np2cfg.FG_COLOR,		0xffffff),
+
+	PFVAL("pc9861_e", PFTYPE_BOOL,		&np2cfg.pc9861enable),
+	PFEXT("pc9861_s", PFTYPE_BIN,		np2cfg.pc9861sw,		3),
+	PFEXT("pc9861_j", PFTYPE_BIN,		np2cfg.pc9861jmp,		6),
+
+	PFVAL("calendar", PFTYPE_BOOL,		&np2cfg.calendar),
+	PFVAL("USE144FD", PFTYPE_BOOL,		&np2cfg.usefd144),
 
 	// OSàÀë∂Å`
-	{"s_NOWAIT", INITYPE_BOOL,		&np2oscfg.NOWAIT,		0},
-	{"SkpFrame", INITYPE_UINT8,		&np2oscfg.DRAW_SKIP,	0},
-	{"F12_bind", INITYPE_UINT8,		&np2oscfg.F12KEY,		0},
-	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
+	PFVAL("s_NOWAIT", PFTYPE_BOOL,		&np2oscfg.NOWAIT),
+	PFVAL("SkpFrame", PFTYPE_UINT8,		&np2oscfg.DRAW_SKIP),
+	PFVAL("F12_bind", PFTYPE_UINT8,		&np2oscfg.F12KEY),
+	PFVAL("e_resume", PFTYPE_BOOL,		&np2oscfg.resume),
 
 #if !defined(GX_DLL)
-	{"WindposX", INITYPE_SINT32,	&np2oscfg.winx,			0},
-	{"WindposY", INITYPE_SINT32,	&np2oscfg.winy,			0},
+	PFVAL("WindposX", PFTYPE_SINT32,	&np2oscfg.winx),
+	PFVAL("WindposY", PFTYPE_SINT32,	&np2oscfg.winy),
 #endif
 #if defined(WIN32_PLATFORM_PSPC)
-	{"pbindcur", INITYPE_UINT8,		&np2oscfg.bindcur,		0},
-	{"pbindbtn", INITYPE_UINT8,		&np2oscfg.bindbtn,		0},
+	PFVAL("pbindcur", PFTYPE_UINT8,		&np2oscfg.bindcur),
+	PFVAL("pbindbtn", PFTYPE_UINT8,		&np2oscfg.bindbtn),
 #endif
-	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
+	PFVAL("jast_snd", PFTYPE_BOOL,		&np2oscfg.jastsnd),
 };
 
 

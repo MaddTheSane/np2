@@ -646,7 +646,7 @@ const PFTBL	*pterm;
 																== SUCCESS) {
 			switch(p->itemtype & PFTYPE_MASK) {
 				case PFTYPE_STR:
-					milstr_ncpy(p->value, work, p->arg);
+					milstr_ncpy((OEMCHAR *)p->value, work, p->arg);
 					break;
 
 				case PFTYPE_BOOL:

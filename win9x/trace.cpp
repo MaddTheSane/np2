@@ -428,7 +428,7 @@ void trace_fmt(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;
-	TCHAR	buf[0x1000];
+	OEMCHAR	buf[0x1000];
 
 	en = (tracewin.en & 1) &&
 		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
@@ -457,7 +457,7 @@ void trace_fmt2(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;
-	TCHAR	buf[0x1000];
+	OEMCHAR	buf[0x1000];
 
 	en = (tracewin.en & 2) &&
 		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
