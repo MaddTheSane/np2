@@ -1,45 +1,54 @@
 
 // ---- 定義
 
-　最適化の為のメモリ使用量の抑制
+  最適化の為のメモリ使用量の抑制
     MEMOPTIMIZE = 0～2
 
-　　CPUにより以下の数値をセットされることを期待している
-　　　MEMOPTIMIZE未定義 … Celeron333A以降のセカンドキャッシュ有効機
-　　　MEMOPTIMIZE = 0   … x86
-　　　MEMOPTIMIZE = 1   … PowerPC等のデスクトップ用RISC
-　　　MEMOPTIMIZE = 2   … StrongARM等の組み込み用RISC
+    CPUにより以下の数値をセットされることを期待している
+      MEMOPTIMIZE未定義 … Celeron333A以降のセカンドキャッシュ有効機
+      MEMOPTIMIZE = 0   … x86
+      MEMOPTIMIZE = 1   … PowerPC等のデスクトップ用RISC
+      MEMOPTIMIZE = 2   … StrongARM等の組み込み用RISC
 
 
-　OSの言語の選択
-　　OSLANG_SJIS … Shift-JISの漢字コードを解釈する
-　　OSLANG_EUC  … EUCの漢字コードを解釈する
-
-　　OSLINEBREAK_CR   … MacOS   "\r"
-　　OSLINEBREAK_LF   … Unix    "\n"
-　　OSLINEBREAK_CRLF … Windows "\r\n"
-
-　　(milstr.h選択用)
-　　SUPPORT_ANK      … ANK文字列操作関数をリンクする
-　　SUPPORT_SJIS     … SJIS文字列操作関数をリンクする
-　　SUPPORT_EUC      … EUC文字列操作関数をリンクする
+  コンパイラの引き数・戻り値の最適化
+    引き数・戻り値でint型以外を指定した場合に、最適化が有効に働かない
+    コンパイラ向けの定義です。
+    通常は common.h の物を使用します。
+      REG8 … UINT8型 / (sizeof(REG8) != 1)の場合 上位ビットを0fillする事
+      REG16 … UINT16型 / (sizeof(REG16) != 2)の場合 上位ビットを0fillする事
+　　　いずれも値をセットする側が0fillし、参照側は0fillしたものと見なします。
 
 
+  OSの言語の選択
+    OSLANG_SJIS … Shift-JISの漢字コードを解釈する
+    OSLANG_EUC  … EUCの漢字コードを解釈する
 
-　現状は以下のソースコード内で個別に設定しています。
-　　(Windowsが APIによって \r\nの場合と\nの場合があるので…)
-　・common/_memory.c
-　・debugsub.c
-　・statsave.c
+    OSLINEBREAK_CR   … MacOS   "\r"
+    OSLINEBREAK_LF   … Unix    "\n"
+    OSLINEBREAK_CRLF … Windows "\r\n"
 
+      ※現在は以下のソースコード内で個別に設定しています。
+        (Windowsが APIによって \r\nの場合と\nの場合があるので…)
+        ・common/_memory.c
+        ・debugsub.c
+        ・statsave.c
+
+    (milstr.h選択用)
+    SUPPORT_ANK      … ANK文字列操作関数をリンクする
+    SUPPORT_SJIS     … SJIS文字列操作関数をリンクする
+    SUPPORT_EUC      … EUC文字列操作関数をリンクする
+
+      ※現在milstr.hですべて定義されたままになっています。
+        ver0.73でmilstr.hの定義を外し compiler.hで指定した物となります。
 
 
 // ---- screen
 
-　PC-9801シリーズの画面サイズは標準で 641x400。
-　VGAでは収まらないので 強制的にVGAに収める為に 画面横サイズは width + extend
+  PC-9801シリーズの画面サイズは標準で 641x400。
+  VGAでは収まらないので 強制的にVGAに収める為に 画面横サイズは width + extend
 とする。
-　8 < width < 640
+  8 < width < 640
   8 < height < 480
   extend = 0 or 1
 
@@ -53,42 +62,42 @@ typedef struct {
 	int		extend;		// 幅拡張
 } SCRNSURF;
 
-　サーフェスサイズは (width + extern) x height。
+  サーフェスサイズは (width + extern) x height。
 
 
 const SCRNSURF *scrnmng_surflock(void);
-　画面描画開始
+  画面描画開始
 
 void scrnmng_surfunlock(const SCRNSURF *surf);
-　画面描画終了(このタイミングで描画)
+  画面描画終了(このタイミングで描画)
 
 
 void scrnmng_setwidth(int posx, int width)
 void scrnmng_setextend(int extend)
 void scrnmng_setheight(int posy, int height)
-　描画サイズの変更
-　ウィンドウサイズの変更する
-　フルスクリーン中であれば 表示領域を変更。
-　SCRNSURFではこの値を返すようにする
-　posx, widthは 8の倍数
+  描画サイズの変更
+  ウィンドウサイズの変更する
+  フルスクリーン中であれば 表示領域を変更。
+  SCRNSURFではこの値を返すようにする
+  posx, widthは 8の倍数
 
-BOOL scrnmng_isfullscreen(void)
-　フルスクリーン状態の取得
-　　return: 非0でフルスクリーン
+BOOL scrnmng_isfullscreen(void) … NP2コアでは未使用
+  フルスクリーン状態の取得
+    return: 非0でフルスクリーン
 
 BOOL scrnmng_haveextend(void)
-　横幅状態の取得
-　　return: 非0で 横幅拡張サポート
+  横幅状態の取得
+    return: 非0で 横幅拡張サポート
 
 UINT scrnmng_getbpp(void)
-　スクリーン色ビット数の取得
-　　return: ビット数(8/16/24/32)
+  スクリーン色ビット数の取得
+    return: ビット数(8/16/24/32)
 
 void scrnmng_palchanged(void)
-　パレット更新の通知(8bitスクリーンサポート時のみ)
+  パレット更新の通知(8bitスクリーンサポート時のみ)
 
 RGB16 scrnmng_makepal16(RGB32 pal32)
-　RGB32から 16bit色を作成する。(16bitスクリーンにサポート時のみ)
+  RGB32から 16bit色を作成する。(16bitスクリーンサポート時のみ)
 
 
 
@@ -101,48 +110,48 @@ NP2のサウンドデータは sound.cの以下の関数より取得
 
 SOUND_CRITICAL  セマフォを入れる(see sndcsec.c)
 SOUNDRESERVE    予約バッファのサイズ(ミリ秒)
-　サウンドを割り込み処理する場合の指定。
-　割り込みの最大延滞時間をSOUNDRESERVEで指定。
-　(Win9xの場合、自前でリングバッファを見張るので 割り込み無し・指定時間通りに
-　サウンドライトが来るので、この処理は不要だった)
+  サウンドを割り込み処理する場合の指定。
+  割り込みの最大延滞時間をSOUNDRESERVEで指定。
+  (Win9xの場合、自前でリングバッファを見張るので 割り込み無し・指定時間通りに
+  サウンドライトが来るので、この処理は不要だった)
 
 
 UINT soundmng_create(UINT rate, UINT ms)
-　サウンドストリームの確保
+  サウンドストリームの確保
     input:  rate    サンプリングレート(11025/22050/44100)
             ms      サンプリングバッファサイズ(ミリ秒)
-　　return: 獲得したバッファのサンプリング数
+    return: 獲得したバッファのサンプリング数
 
             msに従う必要はない(SDLとかバッファサイズが限定されるので)
             NP2のサウンドバッファ操作は 返り値のみを利用しています。
 
 
 void soundmng_destroy(void)
-　サウンドストリームの終了
+  サウンドストリームの終了
 
 void soundmng_reset(void)
-　サウンドストリームのリセット
+  サウンドストリームのリセット
 
 void soundmng_play(void)
-　サウンドストリームの再生
+  サウンドストリームの再生
 
 void soundmng_stop(void)
-　サウンドストリームの停止
+  サウンドストリームの停止
 
 void soundmng_sync(void)
-　サウンドストリームのコールバック
+  サウンドストリームのコールバック
 
 void soundmng_setreverse(BOOL reverse)
-　サウンドストリームの出力反転設定
+  サウンドストリームの出力反転設定
     input:  reverse 非0で左右反転
 
 BOOL soundmng_pcmplay(UINT num, BOOL loop)
-　PCM再生
+  PCM再生
     input:  num     PCM番号
             loop    非0でループ
 
 void soundmng_pcmstop(UINT num)
-　PCM停止
+  PCM停止
     input:  num     PCM番号
 
 
@@ -176,9 +185,9 @@ void commng_destroy(COMMNG hdl)
 // ---- joy stick
 
 BYTE joymng_getstat(void)
-　ジョイスティックの状態取得
+  ジョイスティックの状態取得
 
-　　return: bit0    上ボタンの状態 (0:押下)
+    return: bit0    上ボタンの状態 (0:押下)
             bit1    下ボタンの状態
             bit2    左ボタンの状態
             bit3    右ボタンの状態
@@ -188,17 +197,16 @@ BYTE joymng_getstat(void)
             bit7    ボタン２の状態
 
 
-
 // ----
 
 void sysmng_update(UINT bitmap)
-　状態が変化した場合にコールされる。
+  状態が変化した場合にコールされる。
 
 void sysmng_cpureset(void)
-　リセット時にコールされる
+  リセット時にコールされる
 
 
 
 void taskmng_exit(void)
-　システムを終了する。
+  システムを終了する。
 

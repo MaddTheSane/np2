@@ -232,8 +232,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 #if !defined(GX_DLL)
 		case WM_MOVE:
+#if !defined(_WIN32_WCE)
 			if (!(GetWindowLong(hWnd, GWL_STYLE) &
-											(WS_MAXIMIZE | WS_MINIMIZE))) {
+											(WS_MAXIMIZE | WS_MINIMIZE)))
+#endif
+			{
 				RECT rc;
 				GetWindowRect(hWnd, &rc);
 				np2oscfg.winx = rc.left;
