@@ -1,4 +1,6 @@
 
+#define	IDEIO_MULTIPLE_MAX	0
+
 typedef struct {
 	UINT8	sxsidrv;
 	UINT8	wp;
@@ -17,6 +19,11 @@ typedef struct {
 	UINT8	surfaces;
 	UINT8	sectors;
 	UINT8	bufdir;
+
+	UINT8	mulcnt;
+	UINT8	multhr;
+	UINT8	mulmode;
+	UINT8	dmy;
 
 	UINT	bufpos;
 	UINT	bufsize;
