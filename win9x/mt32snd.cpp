@@ -11,10 +11,10 @@ typedef struct {
 	HMODULE	mod;
 	BOOL	opened;
 	UINT	rate;
-	int		(*Open)(int rate, int reverb, int def, int revtype, int revtime, int revlvl);
-	int		(*Close)(void);
-	int		(*Write)(unsigned char data);
-	int		(*Mix)(void *buff, unsigned long size);
+	int		(WINAPI * Open)(int rate, int reverb, int def, int revtype, int revtime, int revlvl);
+	int		(WINAPI * Close)(void);
+	int		(WINAPI * Write)(unsigned char data);
+	int		(WINAPI * Mix)(void *buff, unsigned long size);
 } MT32SOUND;
 
 static	MT32SOUND	mt32sound;
@@ -117,7 +117,7 @@ void mt32sound_close(void) {
 
 void mt32sound_shortmsg(UINT32 msg) {
 
-	int		(*Write)(unsigned char data);
+	int		(WINAPI * Write)(unsigned char data);
 
 	Write = mt32sound.Write;
 	switch((msg >> 4) & (0xf0 >> 4)) {
@@ -141,7 +141,7 @@ void mt32sound_shortmsg(UINT32 msg) {
 
 void mt32sound_longmsg(const UINT8 *ptr, UINT32 leng) {
 
-	int		(*Write)(unsigned char data);
+	int		(WINAPI * Write)(unsigned char data);
 
 	Write = mt32sound.Write;
 	while(leng) {

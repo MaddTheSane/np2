@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.19 2005/03/05 16:47:04 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.20 2005/03/09 17:12:34 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -401,7 +401,7 @@ cpu_codefetch_d(UINT32 offset)
 /*
  * additional physical address memory access functions
  */
-UINT64
+UINT64 MEMCALL
 cpu_memoryread_q(UINT32 address)
 {
 	UINT64 value;
@@ -412,7 +412,7 @@ cpu_memoryread_q(UINT32 address)
 	return value;
 }
 
-REG80
+REG80 MEMCALL
 cpu_memoryread_f(UINT32 address)
 {
 	REG80 value;
@@ -424,7 +424,7 @@ cpu_memoryread_f(UINT32 address)
 	return value;
 }
 
-void
+void MEMCALL
 cpu_memorywrite_q(UINT32 address, UINT64 value)
 {
 
@@ -432,7 +432,7 @@ cpu_memorywrite_q(UINT32 address, UINT64 value)
 	cpu_memorywrite_d(address + 4, (UINT32)(value >> 32));
 }
 
-void
+void MEMCALL
 cpu_memorywrite_f(UINT32 address, const REG80 *value)
 {
 	UINT i;
