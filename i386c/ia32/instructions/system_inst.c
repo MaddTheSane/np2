@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.11 2004/01/29 02:10:17 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.12 2004/01/29 11:42:58 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -51,7 +51,7 @@ LGDT_Ms(DWORD op)
 				base &= 0x00ffffff;
 			}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 			gdtr_dump(base, limit);
 #endif
 
@@ -183,9 +183,7 @@ STR_Ew(DWORD op)
 			madr = calc_ea_dst(op);
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, tr);
 		}
-#if 1	// 040129 yui 忘れ物〜
 		return;
-#endif
 	}
 	VERBOSE(("STR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -208,7 +206,7 @@ LIDT_Ms(DWORD op)
 				base &= 0x00ffffff;
 			}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 			idtr_dump(base, limit);
 #endif
 
@@ -792,11 +790,7 @@ VERW_Ew(DWORD op)
 			return;
 		}
 		/* data segment is not writable */
-#if 1	// 040129 yui データセグメントの条件違うぽ…
-		if (/* !sel.desc.u.seg.c && */ !sel.desc.u.seg.wr) {
-#else
-		if (sel.desc.u.seg.c && !sel.desc.u.seg.wr) {
-#endif
+		if (!sel.desc.u.seg.wr) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
 		}
