@@ -8,6 +8,8 @@ enum {
 };
 
 enum {
+	CPUMODE_8MHz		= 0x20,
+
 	PCMODEL_VF			= 0,
 	PCMODEL_VM			= 1,
 	PCMODEL_VX			= 2,
@@ -25,7 +27,6 @@ enum {
 	PCCBUS_MPU98		= 0x0002
 };
 
-#define		CPUMODE_8MHz		0x20
 
 // ‚±‚ê ver0.75‚Å•Êƒtƒ@ƒCƒ‹‚ÖˆÚ“®‚·‚é‚±‚Æ
 typedef struct {

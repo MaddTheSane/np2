@@ -26,7 +26,6 @@ static const GDCCLK gdcclk[] = {
 			{25056815 / 8, 106 - 6, 106 + 6, 400, 575},
 			{25175000 / 8, 100 - 4, 100 + 4, 400, 575}};
 
-
 static const UINT8 defdegpal[4] = {0x04,0x15,0x26,0x37};
 
 static const UINT8 defsyncm15[8] = {0x10,0x4e,0x07,0x25,0x0d,0x0f,0xc8,0x94};
@@ -113,6 +112,20 @@ void gdc_paletteinit(void) {
 
 // --------------------------------------------------------------------------
 
+void gdc_vectreset(GDCDATA item) {
+
+	item->para[GDC_VECTW+1] = 0x00;
+	item->para[GDC_VECTW+2] = 0x00;
+	item->para[GDC_VECTW+3] = 0x08;
+	item->para[GDC_VECTW+4] = 0x00;
+	item->para[GDC_VECTW+5] = 0x08;
+	item->para[GDC_VECTW+6] = 0x00;
+	item->para[GDC_VECTW+7] = 0xff;
+	item->para[GDC_VECTW+8] = 0xff;
+	item->para[GDC_VECTW+9] = 0xff;
+	item->para[GDC_VECTW+10] = 0xff;
+}
+
 static void vectdraw(void) {
 
 	UINT32		csrw;
@@ -137,6 +150,7 @@ const GDCVECT	*vect;
 	if (vect->ope & 0x40) {
 		gdcsub_vectr(csrw, vect, textw, ope);
 	}
+	gdc_vectreset(&gdc.s);
 }
 
 static void textdraw(void) {
@@ -164,6 +178,7 @@ const GDCVECT	*vect;
 	if (vect->ope & 0x40) {		// undocumented
 		gdcsub_vectr(csrw, vect, textw, ope);
 	}
+	gdc_vectreset(&gdc.s);
 }
 
 void gdc_work(int id) {
@@ -579,7 +594,7 @@ static void IOOUTCALL gdc_oa0(UINT port, REG8 dat) {
 	if (gdc.s.cnt < GDCCMD_MAX) {
 		gdc.s.fifo[gdc.s.cnt++] = dat;
 	}
-//	TRACEOUT(("GDC-B %.2x", dat));
+//	TRACEOUT(("GDC-B %.2x [%.4x:%.4x]", dat, CPU_CS, CPU_IP));
 	if (gdc.s.paracb) {
 		gdc_work(GDCWORK_SLAVE);
 	}
@@ -683,7 +698,6 @@ static REG8 IOINPCALL gdc_ia0(UINT port) {
 	}
 	else {
 		gdc_work(GDCWORK_SLAVE);
-		TRACEOUT(("gdc.s.cnt=%d", gdc.s.cnt));
 	}
 #ifdef SEARCH_SYNC
 	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
@@ -783,6 +797,8 @@ void gdc_reset(void) {
 		CopyMemory(gdc.m.para + GDC_SYNC, defsyncm15, 8);
 		CopyMemory(gdc.s.para + GDC_SYNC, defsyncs15, 8);
 	}
+	gdc_vectreset(&gdc.m);
+	gdc_vectreset(&gdc.s);
 
 	gdc.clock = 0;
 	gdc.m.para[GDC_PITCH] = 80;

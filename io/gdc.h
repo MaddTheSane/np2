@@ -73,6 +73,7 @@ extern "C" {
 void gdc_reset(void);
 void gdc_bind(void);
 
+void gdc_vectreset(GDCDATA item);
 void gdc_work(int id);
 void gdc_forceready(GDCDATA item);
 void gdc_paletteinit(void);

@@ -149,17 +149,14 @@ void bios0x18_16(REG8 chr, REG8 atr) {
 #define	SWAPU16(a, b) { UINT16 tmp; tmp = (a); (a) = (b); (b) = tmp; }
 
 
-static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT vcnt,
-																UINT8 ope) {
+static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
 
 	gdc.s.para[GDC_CSRW + 0] = (BYTE)csrw;
 	gdc.s.para[GDC_CSRW + 1] = (BYTE)(csrw >> 8);
 	gdc.s.para[GDC_CSRW + 2] = (BYTE)(csrw >> 16);
 
-	vcnt = min(vcnt, 11);
-	if (vcnt) {
-		CopyMemory(gdc.s.para + GDC_VECTW, vect, vcnt);
-	}
+	gdc.s.para[GDC_VECTW] = vect->ope;
+	gdc_vectreset(&gdc.s);
 
 	gdc.s.para[GDC_WRITE] = ope;
 	mem[MEMB_PRXDUPD] &= ~3;
@@ -318,7 +315,7 @@ static void bios18_47(void) {
 	// 最後に使った奴を記憶
 	*(UINT16 *)(mem + MEMW_PRXGLS) = *(UINT16 *)(ucw.GBMDOTI);
 	*(UINT16 *)(gdc.s.para + GDC_TEXTW) = *(UINT16 *)(ucw.GBMDOTI);
-	setbiosgdc(csrw, &vect, (ucw.GBDTYP != 0x01)?11:9, ope);
+	setbiosgdc(csrw, &vect, ope);
 }
 
 static void bios18_49(void) {
@@ -354,8 +351,7 @@ static void bios18_49(void) {
 	}
 	else {
 		STOREINTELWORD(vect.DC, 7);
-		vect.D[0] = gdc.s.para[GDC_VECTW + 3];
-		vect.D[1] = gdc.s.para[GDC_VECTW + 4];
+		STOREINTELWORD(vect.D, 7);
 	}
 
 	GBSX1 = LOADINTELWORD(ucw.GBSX1);
@@ -381,7 +377,7 @@ static void bios18_49(void) {
 	}
 
 	// 最後に使った奴を記憶
-	setbiosgdc(csrw, &vect, 5, ope);
+	setbiosgdc(csrw, &vect, ope);
 }
 
 
