@@ -58,6 +58,7 @@
 
 	PCCORE	pccore = {	PCBASECLOCK25, 4,
 						0, PCMODEL_VX, 0, 0,
+						0, {0, 0, 0},
 						0, 0,
 						4 * PCBASECLOCK25,
 						4 * PCBASECLOCK25 * 50 / 3104,
