@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.10 2004/01/26 15:23:55 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.11 2004/01/29 02:10:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -183,6 +183,9 @@ STR_Ew(DWORD op)
 			madr = calc_ea_dst(op);
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, tr);
 		}
+#if 1	// 040129 yui 忘れ物〜
+		return;
+#endif
 	}
 	VERBOSE(("STR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -789,7 +792,11 @@ VERW_Ew(DWORD op)
 			return;
 		}
 		/* data segment is not writable */
+#if 1	// 040129 yui データセグメントの条件違うぽ…
+		if (/* !sel.desc.u.seg.c && */ !sel.desc.u.seg.wr) {
+#else
 		if (sel.desc.u.seg.c && !sel.desc.u.seg.wr) {
+#endif
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
 		}
