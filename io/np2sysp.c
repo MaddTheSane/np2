@@ -119,6 +119,8 @@ static void np2sysp_hwreset(const void *arg1, long arg2) {
 // ----
 
 static const char cmd_np2[] = "NP2";
+static const OEMCHAR rep_np2[] = OEMTEXT("NP2");
+
 static const char cmd_ver[] = "ver";
 static const char cmd_poweroff[] = "poweroff";
 static const char cmd_credit[] = "credit";
@@ -138,6 +140,7 @@ static const char cmd_hdrvcheck[] = "check_hostdrv";
 static const char cmd_hdrvopen[] = "open_hostdrv";
 static const char cmd_hdrvclose[] = "close_hostdrv";
 static const char cmd_hdrvintr[] = "intr_hostdrv";
+static const OEMCHAR rep_hdrvcheck[] = OEMTEXT("0.74");
 #endif
 
 #if defined(NP2SYSP_VER)
@@ -154,7 +157,7 @@ static const OEMCHAR str_syspcredit[] = OEMTEXT(NP2SYSP_CREDIT);
 
 
 static const SYSPCMD np2spcmd[] = {
-			{cmd_np2,		np2sysp_outstr,		str_np2,		0},
+			{cmd_np2,		np2sysp_outstr,		rep_np2,		0},
 			{cmd_ver,		np2sysp_outstr,		str_syspver,	0},
 
 // version:A
@@ -179,7 +182,7 @@ static const SYSPCMD np2spcmd[] = {
 #endif
 
 #if defined(SUPPORT_HOSTDRV)
-			{cmd_hdrvcheck,	np2sysp_outstr,		OEMTEXT("0.74"),0},
+			{cmd_hdrvcheck,	np2sysp_outstr,		rep_hdrvcheck,	0},
 			{cmd_hdrvopen,	hostdrv_mount,		NULL,			0},
 			{cmd_hdrvclose,	hostdrv_unmount,	NULL,			0},
 			{cmd_hdrvintr,	hostdrv_intr,		NULL,			0},
@@ -187,24 +190,24 @@ static const SYSPCMD np2spcmd[] = {
 };
 
 
-static BOOL np2syspcmp(const char *p) {
+static BRESULT np2syspcmp(const char *p) {
 
 	int		len;
 	int		pos;
 
-	len = strlen(p);
+	len = STRLEN(p);
 	if (!len) {
-		return(TRUE);
+		return(FAILURE);
 	}
 	pos = np2sysp.strpos;
 	while(len--) {
 		if (p[len] != np2sysp.substr[pos]) {
-			return(TRUE);
+			return(FAILURE);
 		}
 		pos--;
 		pos &= NP2SYSP_MASK;
 	}
-	return(FALSE);
+	return(SUCCESS);
 }
 
 static void IOOUTCALL np2sysp_o7ed(UINT port, REG8 dat) {
@@ -256,6 +259,14 @@ static REG8 IOINPCALL np2sysp_i7ef(UINT port) {
 	return(ret);
 }
 
+#if defined(NP2APPDEV)
+static void IOOUTCALL np2sysp_o0e9(UINT port, REG8 dat) {
+
+	APPDEVOUT(dat);
+	(void)port;
+}
+#endif
+
 
 // ---- I/F
 
@@ -270,5 +281,9 @@ void np2sysp_bind(void) {
 	iocore_attachout(0x07ef, np2sysp_o7ef);
 	iocore_attachinp(0x07ef, np2sysp_i7ed);
 	iocore_attachinp(0x07ef, np2sysp_i7ef);
+
+#if defined(NP2APPDEV)
+	iocore_attachout(0x00e9, np2sysp_o0e9);
+#endif
 }
 

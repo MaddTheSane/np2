@@ -63,6 +63,8 @@ static	HFONT		hfView = NULL;
 static	HBRUSH		hBrush = NULL;
 static	char		szView[VIEW_BUFFERSIZE];
 static	TRACECFG	tracecfg;
+static	int			devpos;
+static	char		devstr[256];
 
 static const char	np2trace[] = "np2trace.ini";
 static const char	inititle[] = "TRACE";
@@ -365,13 +367,11 @@ void trace_init(void) {
 	}
 
 #if 1
-	tracewin.en = 0;
-	tracewin.fh = FILEH_INVALID;
+	tracewin.en = 4;
 #else
 	tracewin.en = 0;
-	tracewin.fh = FILEH_INVALID;
-	trfh_open("traces.txt");
 #endif
+	tracewin.fh = FILEH_INVALID;
 
 	tracecfg.posx = CW_USEDEFAULT;
 	tracecfg.posy = CW_USEDEFAULT;
@@ -449,5 +449,26 @@ void trace_fmt2(const char *fmt, ...) {
 	}
 }
 
+void trace_char(char c) {
+
+	if ((c == 0x0a) || (c == 0x0d)) {
+		if (devpos) {
+			devstr[devpos] = '\0';
+			if ((tracewin.en & 4) && (hView)) {
+				View_AddString(devstr);
+			}
+			if (tracewin.fh != FILEH_INVALID) {
+				trfh_add(devstr);
+				trfh_add(crlf);
+			}
+			devpos = 0;
+		}
+	}
+	else {
+		if (devpos < (sizeof(devstr) - 1)) {
+			devstr[devpos++] = c;
+		}
+	}
+}
 #endif
 

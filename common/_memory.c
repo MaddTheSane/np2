@@ -35,15 +35,15 @@ typedef struct {
 static _MEMTBL	memtbl[MEMTBLMAX];
 static _HDLTBL	hdltbl[HDLTBLMAX];
 
-static const char str_memhdr[] =											\
+static const OEMCHAR str_memhdr[] =											\
 				"Handle   Size       Name" CRLITERAL						\
 				"--------------------------------------------" CRLITERAL;
 
-static const char str_hdlhdr[] =											\
+static const OEMCHAR str_hdlhdr[] =											\
 				"Handle   Name" CRLITERAL									\
 				"-------------------------------------" CRLITERAL;
 
-static const char str_memused[] = "memused: %d" CRLITERAL;
+static const OEMCHAR str_memused[] = "memused: %d" CRLITERAL;
 
 void _meminit(void) {
 
@@ -85,7 +85,7 @@ void _memfree(void *hdl) {
 	}
 }
 
-void _handle_append(void *hdl, const char *name) {
+void _handle_append(void *hdl, const OEMCHAR *name) {
 
 	int		i;
 
@@ -113,54 +113,54 @@ void _handle_remove(void *hdl) {
 	}
 }
 
-void _memused(const char *filename) {
+void _memused(const OEMCHAR *filename) {
 
 	int		i;
 	FILEH	fh;
 	int		memuses = 0;
 	int		hdluses = 0;
-	BYTE	memusebit[(MEMTBLMAX+7)/8];
-	BYTE	hdlusebit[(HDLTBLMAX+7)/8];
-	char	work[256];
+	UINT8	memusebit[(MEMTBLMAX+7)/8];
+	UINT8	hdlusebit[(HDLTBLMAX+7)/8];
+	OEMCHAR	work[256];
 
 	ZeroMemory(memusebit, sizeof(memusebit));
 	ZeroMemory(hdlusebit, sizeof(hdlusebit));
 	for (i=0; i<MEMTBLMAX; i++) {
 		if (memtbl[i].hdl) {
-			memusebit[i>>3] |= (BYTE)0x80 >> (i & 7);
+			memusebit[i>>3] |= (UINT8)(0x80 >> (i & 7));
 			memuses++;
 		}
 	}
 	for (i=0; i<HDLTBLMAX; i++) {
 		if (hdltbl[i].hdl) {
-			hdlusebit[i>>3] |= (BYTE)0x80 >> (i & 7);
+			hdlusebit[i>>3] |= (UINT8)(0x80 >> (i & 7));
 			hdluses++;
 		}
 	}
 	fh = file_create_c(filename);
 	if (fh != FILEH_INVALID) {
-		SPRINTF(work, "memused: %d\r\n", memuses);
-		file_write(fh, work, strlen(work));
+		OEMSPRINTF(work, OEMTEXT("memused: %d\r\n"), memuses);
+		file_write(fh, work, OEMSTRLEN(work));
 		if (memuses) {
-			file_write(fh, str_memhdr, strlen(str_memhdr));
+			file_write(fh, str_memhdr, OEMSTRLEN(str_memhdr));
 			for (i=0; i<MEMTBLMAX; i++) {
 				if ((memusebit[i>>3] << (i & 7)) & 0x80) {
-					SPRINTF(work, "%08lx %10u %s\r\n",
+					OEMSPRINTF(work, OEMTEXT("%08lx %10u %s\r\n"),
 						(long)memtbl[i].hdl, memtbl[i].size, memtbl[i].name);
-					file_write(fh, work, strlen(work));
+					file_write(fh, work, OEMSTRLEN(work));
 				}
 			}
-			file_write(fh, CRCONST, strlen(CRCONST));
+			file_write(fh, CRCONST, OEMSTRLEN(CRCONST));
 		}
-		SPRINTF(work, "hdlused: %d\r\n", hdluses);
-		file_write(fh, work, strlen(work));
+		OEMSPRINTF(work, "hdlused: %d\r\n", hdluses);
+		file_write(fh, work, OEMSTRLEN(work));
 		if (hdluses) {
-			file_write(fh, str_hdlhdr, strlen(str_hdlhdr));
+			file_write(fh, str_hdlhdr, OEMSTRLEN(str_hdlhdr));
 			for (i=0; i<HDLTBLMAX; i++) {
 				if ((hdlusebit[i>>3] << (i & 7)) & 0x80) {
-					SPRINTF(work, "%08lx %s\r\n",
+					OEMSPRINTF(work, "%08lx %s\r\n",
 									(long)hdltbl[i].hdl, hdltbl[i].name);
-					file_write(fh, work, strlen(work));
+					file_write(fh, work, OEMSTRLEN(work));
 				}
 			}
 			file_write(fh, CRCONST, strlen(CRCONST));
