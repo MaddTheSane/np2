@@ -46,7 +46,7 @@
 // #define	OPENING_WAIT	1500
 
 
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0, 0, 0, 1, 0};
+		NP2OSCFG	np2oscfg = {"Neko Project IIx", 0, 2, 0, 0, 0, 0, 1, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -169,13 +169,11 @@ static void changescreen(BYTE mode) {
 	}
 	if (renewal) {
 		soundmng_stop();
-		mousemng_disable(MOUSEPROC_SYSTEM);
 		scrnmng_destroy();
 		if (scrnmng_create(mode) == SUCCESS) {
 			scrnmode = mode;
 		}
 		scrndraw_redraw();
-		mousemng_enable(MOUSEPROC_SYSTEM);
 		soundmng_play();
 	}
 	else {
@@ -732,9 +730,6 @@ int main(int argc, char *argv[]) {
         flagload(np2resume);
     }
 #endif
-    if (np2oscfg.toolwin) {
-        toolwin_open();
-    }
 
     theTarget = GetEventDispatcherTarget();
     
@@ -1108,6 +1103,7 @@ static bool setupMainWindow(void) {
     setUpCarbonEvent();
     if (backupwidth) scrnmng_setwidth(0, backupwidth);
     if (backupheight) scrnmng_setheight(0, backupheight);
+    SetWindowTitleWithCFString(hWndMain, CFStringCreateWithCString(NULL, np2oscfg.titles, kCFStringEncodingUTF8));
 	ShowWindow(hWndMain);
     return(true);
 }
@@ -1115,6 +1111,7 @@ static bool setupMainWindow(void) {
 static void toggleFullscreen(void) {
     static Ptr 	bkfullscreen;
     static BYTE mouse = 0;
+    static bool toolwin = false;
     MenuRef	menu = GetMenuRef(IDM_SCREEN);
     Rect	bounds;
     short	w = 640, h = 480;
@@ -1125,9 +1122,10 @@ static void toggleFullscreen(void) {
         GetWindowBounds(hWndMain, kWindowContentRgn, &bounds);
         backupwidth = bounds.right - bounds.left;
         backupheight = bounds.bottom - bounds.top;
+        toolwin = np2oscfg.toolwin;
         toolwin_close();
         DisposeWindow(hWndMain);
-        BeginFullScreen(&bkfullscreen,0,&w,&h,&hWndMain,NULL,(fullScreenAllowEvents | fullScreenDontChangeMenuBar));	
+        BeginFullScreen(&bkfullscreen, 0, &w, &h, &hWndMain, NULL, fullScreenAllowEvents);	
         DisableMenuItem(menu, IDM_ROLNORMAL);
         DisableMenuItem(menu, IDM_ROLLEFT);
         DisableMenuItem(menu, IDM_ROLRIGHT);
@@ -1153,7 +1151,7 @@ static void toggleFullscreen(void) {
         EnableMenuItem(menu, IDM_ROLLEFT);
         EnableMenuItem(menu, IDM_ROLRIGHT);
         ShowMenuBar();
-        if (np2oscfg.toolwin) {
+        if (toolwin) {
             toolwin_open();
         }
     }

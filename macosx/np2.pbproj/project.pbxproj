@@ -281,7 +281,8 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>d88,d98</string>
+				<string>d88</string>
+				<string>d98</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>d88.icns</string>
@@ -298,6 +299,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>hdm</string>
+				<string>dup</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>beta.icns</string>
@@ -394,6 +396,18 @@
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sav</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>preference.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Neko Project IIx レジュームファイル</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Neko Project IIx</string>
@@ -402,7 +416,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.retropc.Neko Project II</string>
+	<string>net.retropc.Neko Project IIx</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -684,7 +698,7 @@
 			fileEncoding = "-2147483647";
 			isa = PBXFileReference;
 			path = np2info.cpp;
-			refType = 4;
+			refType = 2;
 		};
 		961B7001056039CE00000103 = {
 			fileRef = 961B7000056039CE00000103;
@@ -1552,7 +1566,6 @@
 				967C926D055778CC00000103,
 				967C926F055778CC00000103,
 				967C9272055778CC00000103,
-				961B7000056039CE00000103,
 			);
 			isa = PBXGroup;
 			name = macosx;
@@ -1582,6 +1595,7 @@
 				967C922F055778CB00000103,
 				967C9231055778CB00000103,
 				961B7003056048F500000103,
+				961B7000056039CE00000103,
 			);
 			isa = PBXGroup;
 			path = dialog;

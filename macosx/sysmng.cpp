@@ -96,7 +96,7 @@ void sysmng_updatecaption(BYTE flag) {
 		}
 	}
 #if defined(NP2GCC)
-	milstr_ncpy(work, "Neko Project IIx", sizeof(work));
+	milstr_ncpy(work, np2oscfg.titles, sizeof(work));
 #else
 	milstr_ncpy(work, "Neko Project II", sizeof(work));
 #endif

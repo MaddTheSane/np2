@@ -1,5 +1,6 @@
 
 typedef struct {
+	char	titles[256];
 	BYTE	NOWAIT;
 	BYTE	DRAW_SKIP;
 	BYTE	DISPCLK;
