@@ -3,7 +3,6 @@
 	INCLUDE	i286amem.inc
 	INCLUDE	i286aio.inc
 
-	IMPORT	memfn
 	IMPORT	vramupdate
 	IMPORT	tramupdate
 
@@ -12,62 +11,146 @@
 	IMPORT	egc_write_w
 	IMPORT	egc_read_w
 
-	EXPORT	i286_rd
-	EXPORT	i286_rdex
-	EXPORT	i286w_rd
-	EXPORT	i286w_rdex
-	EXPORT	i286_wt
-	EXPORT	i286_wtex
-	EXPORT	i286w_wt
-	EXPORT	i286w_wtex
-
-	EXPORT	tram_rd
-	EXPORT	tramw_rd
-	EXPORT	tram_wt
-	EXPORT	tramw_wt
-
-	EXPORT	vram_r0
-	EXPORT	vram_r1
-	EXPORT	vramw_r0
-	EXPORT	vramw_r1
-	EXPORT	vram_w0
-	EXPORT	vram_w1
-	EXPORT	vramw_w0
-	EXPORT	vramw_w1
-
-	EXPORT	grcg_tcr0
-	EXPORT	grcg_tcr1
-	EXPORT	grcgw_tcr0
-	EXPORT	grcgw_tcr1
-
-	EXPORT	grcg_tdw0
-	EXPORT	grcg_tdw1
-	EXPORT	grcgw_tdw0
-	EXPORT	grcgw_tdw1
-
-	EXPORT	grcg_rmw0
-	EXPORT	grcg_rmw1
-	EXPORT	grcgw_rmw0
-	EXPORT	grcgw_rmw1
-
-;;	EXPORT	egc_rd
-;;	EXPORT	egcw_rd
-;;	EXPORT	egc_wt
-;;	EXPORT	egcw_wt
-
-	EXPORT	emmc_rd
-	EXPORT	emmcw_rd
-	EXPORT	emmc_wt
-	EXPORT	emmcw_wt
-
-	EXPORT	i286_itf
-	EXPORT	i286w_itf
-
-	EXPORT	i286_wn
-	EXPORT	i286w_wn
+	EXPORT	memfn
+	EXPORT	i286_vram_dispatch
 
 	EXPORT	i286_nonram_r
 	EXPORT	i286_nonram_rw
+
+	AREA	.data, DATA, READWRITE
+
+memfn	dcd		i286_rdex		; 00
+		dcd		i286_rdex
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd			; 20
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd			; 40
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd			; 60
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd			; 80
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		tram_rd			; a0
+		dcd		vram_r0
+		dcd		vram_r0
+		dcd		vram_r0
+		dcd		emmc_rd			; c0
+		dcd		emmc_rd
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		vram_r0			; e0
+		dcd		i286_rd
+		dcd		i286_rd
+		dcd		i286_itf
+
+		dcd		i286_wtex		; 00
+		dcd		i286_wtex
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt			; 20
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt			; 40
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt			; 60
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt			; 80
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		i286_wt
+		dcd		tram_wt			; a0
+		dcd		vram_w0
+		dcd		vram_w0
+		dcd		vram_w0
+		dcd		emmc_wt			; c0
+		dcd		emmc_wt
+		dcd		i286_wn
+		dcd		i286_wn
+		dcd		vram_w0			; e0
+		dcd		i286_wn
+		dcd		i286_wn
+		dcd		i286_wn
+
+		dcd		i286w_rdex		; 00
+		dcd		i286w_rdex
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd		; 20
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd		; 40
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd		; 60
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd		; 80
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		tramw_rd		; a0
+		dcd		vramw_r0
+		dcd		vramw_r0
+		dcd		vramw_r0
+		dcd		emmcw_rd		; c0
+		dcd		emmcw_rd
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		vramw_r0		; e0
+		dcd		i286w_rd
+		dcd		i286w_rd
+		dcd		i286w_itf
+
+		dcd		i286w_wtex		; 00
+		dcd		i286w_wtex
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt		; 20
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt		; 40
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt		; 60
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt		; 80
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		i286w_wt
+		dcd		tramw_wt		; a0
+		dcd		vramw_w0
+		dcd		vramw_w0
+		dcd		vramw_w0
+		dcd		emmcw_wt		; c0
+		dcd		emmcw_wt
+		dcd		i286w_wn
+		dcd		i286w_wn
+		dcd		vramw_w0		; e0
+		dcd		i286w_wn
+		dcd		i286w_wn
+		dcd		i286w_wn
+
 
 	AREA	.text, CODE, READONLY
 
@@ -918,15 +1001,63 @@ egc_rd			ldrb	r3, [r9, #MEMWAIT_GRCG]
 				b		egc_read
 
 
-egcw_rd
+egcw_rd			ldrb	r3, [r9, #MEMWAIT_GRCG]
+				ldrb	r2, egcwrd_egc
+				tst		r0, #1
+				CPUWORK	r3
+				beq		egc_read_w
+				ldrh	r12, [r2, #EGC_SFT]
+				tst		r12, #&1000
+				bne		egcwrd_std
+				add		r2, r0, #1
+				mov		r3, r1 lsr #8
+				stmdb	sp!, {r2, r3, lr}
+				bl		egc_write
+				ldmia	sp!, {r0, r1, lr}
+				b		egc_write
+egcwrd_std		stmdb	sp!, {r0, r1, lr}
+				add		r0, r0, #1
+				mov		r1, r1 lsr #8
+				bl		egc_write
+				ldmia	sp!, {r0, r1, lr}
+				b		egc_write
+egcwrd_egc		dcd		egc
 
 
 egc_wt			ldrb	r3, [r9, #MEMWAIT_GRCG]
 				CPUWORK	r3
 				b		egc_write
 
-egcw_wt
-
+egcw_wt			ldrb	r3, [r9, #MEMWAIT_GRCG]
+				ldrb	r2, egcwwt_egc
+				tst		r0, #1
+				CPUWORK	r3
+				beq		egc_write_w
+				ldrh	r12, [r2, #EGC_SFT]
+				stmdb	sp!, {r4, r5, lr}
+				tst		r12, #&1000
+				bne		egcwwt_std
+				add		r4, r0, #1
+				mov		r5, r1 lsr #8
+				bl		egc_read
+				mov		r1, r5
+				mov		r5, r0
+				mov		r0, r4
+				bl		egc_read
+				orr		r0, r5, r0 lsl #8
+				ldmia	sp!, {r4, r5, lr}
+egcwwt_std		mov		r4, r0
+				mov		r5, r1
+				add		r0, r0, #1
+				mov		r1, r1 lsr #8
+				bl		egc_read
+				mov		r1, r5
+				mov		r5, r0
+				mov		r0, r4
+				bl		egc_read
+				orr		r0, r5, r0 lsl #8
+				ldmia	sp!, {r4, r5, lr}
+egcwwt_egc		dcd		egc
 
 
 ; ---- emmc
@@ -1026,13 +1157,117 @@ i286w_itf_odd	cmp		r2, #0
 
 ; ---- other
 
+i286_nonram_rw	orr		r0, r0, #&ff00
 i286_nonram_r	mov		r0, #&ff
+i286w_wn
 i286_wn			mov		pc, lr
 
-i286_nonram_rw	mov		r0, #&ff
-				orr		r0, r0, #&ff00
-i286w_wn		mov		pc, lr
 
+; ---- dispatch
+
+i286_vram_dispatch
+				ldr		r3, i2vd_memfn
+				and		r1, r0, #15
+				adr		r2, vacctbl
+				add		r2, r2, r1 lsl #4
+				ldr		r1, [r2]
+				ldr		r12, [r2, #4]
+				tst		r0, #&10
+				str		r1, [r3, #((0 * 32) + (0xa8000 >> (15 - 2)))]
+				str		r1, [r3, #((0 * 32) + (0xb0000 >> (15 - 2)))]
+				str		r1, [r3, #((0 * 32) + (0xb8000 >> (15 - 2)))]
+				strne	r1, [r3, #((0 * 32) + (0xe0000 >> (15 - 2)))]
+				str		r12, [r3, #((4 * 32) + (0xa8000 >> (15 - 2)))]
+				ldr		r1, [r2, #8]
+				str		r12, [r3, #((4 * 32) + (0xb0000 >> (15 - 2)))]
+				str		r12, [r3, #((4 * 32) + (0xb8000 >> (15 - 2)))]
+				strne	r12, [r3, #((4 * 32) + (0xe0000 >> (15 - 2)))]
+				str		r1, [r3, #((8 * 32) + (0xa8000 >> (15 - 2)))]
+				ldr		r12, [r2, #12]
+				str		r1, [r3, #((8 * 32) + (0xb0000 >> (15 - 2)))]
+				str		r1, [r3, #((8 * 32) + (0xb8000 >> (15 - 2)))]
+				strne	r1, [r3, #((8 * 32) + (0xe0000 >> (15 - 2)))]
+				str		r12, [r3, #((12 * 32) + (0xa8000 >> (15 - 2)))]
+				str		r12, [r3, #((12 * 32) + (0xb0000 >> (15 - 2)))]
+				str		r12, [r3, #((12 * 32) + (0xb8000 >> (15 - 2)))]
+				strne	r12, [r3, #((12 * 32) + (0xe0000 >> (15 - 2)))]
+				movne	pc, lr
+
+				adr		r1, i286_nonram_r
+				str		r1, [r3, #((0 * 32) + (0xe0000 >> (15 - 2)))]
+				adr		r1, i286_wn
+				str		r1, [r3, #((4 * 32) + (0xe0000 >> (15 - 2)))]
+				adr		r1, i286_nonram_rw
+				str		r1, [r3, #((8 * 32) + (0xe0000 >> (15 - 2)))]
+				adr		r1, i286_wn
+				str		r1, [r3, #((12 * 32) + (0xe0000 >> (15 - 2)))]
+				mov		pc, lr
+
+i2vd_memfn		dcd		memfn
+vacctbl			dcd		vram_r0			; 00
+				dcd		vram_w0
+				dcd		vramw_r0
+				dcd		vramw_w0
+				dcd		vram_r1			; 10
+				dcd		vram_w1
+				dcd		vramw_r1
+				dcd		vramw_w1
+				dcd		vram_r0			; 20
+				dcd		vram_w0
+				dcd		vramw_r0
+				dcd		vramw_w0
+				dcd		vram_r1			; 30
+				dcd		vram_w1
+				dcd		vramw_r1
+				dcd		vramw_w1
+				dcd		vram_r0			; 40
+				dcd		vram_w0
+				dcd		vramw_r0
+				dcd		vramw_w0
+				dcd		vram_r1			; 50
+				dcd		vram_w1
+				dcd		vramw_r1
+				dcd		vramw_w1
+				dcd		vram_r0			; 60
+				dcd		vram_w0
+				dcd		vramw_r0
+				dcd		vramw_w0
+				dcd		vram_r1			; 70
+				dcd		vram_w1
+				dcd		vramw_r1
+				dcd		vramw_w1
+				dcd		grcg_tcr0		; 80
+				dcd		grcg_tdw0
+				dcd		grcgw_tcr0
+				dcd		grcgw_tdw0
+				dcd		grcg_tcr1		; 90
+				dcd		grcg_tdw1
+				dcd		grcgw_tcr1
+				dcd		grcgw_tdw1
+				dcd		egc_rd			; a0
+				dcd		egc_wt
+				dcd		egcw_rd
+				dcd		egcw_wt
+				dcd		egc_rd			; b0
+				dcd		egc_wt
+				dcd		egcw_rd
+				dcd		egcw_wt
+				dcd		vram_r0			; c0
+				dcd		grcg_rmw0
+				dcd		vramw_r0
+				dcd		grcgw_rmw0
+				dcd		vram_r1			; d0
+				dcd		grcg_rmw1
+				dcd		vramw_r1
+				dcd		grcgw_rmw1
+				dcd		egc_rd			; e0
+				dcd		egc_wt
+				dcd		egcw_rd
+				dcd		egcw_wt
+				dcd		egc_rd			; f0
+				dcd		egc_wt
+				dcd		egcw_rd
+				dcd		egcw_wt
 
 	END
 

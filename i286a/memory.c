@@ -763,6 +763,8 @@ static REG16 MEMCALL i286w_itf(UINT32 address) {
 
 // ---- table
 
+#if 0
+
 typedef void (MEMCALL * MEM8WRITE)(UINT32 address, REG8 value);
 typedef REG8 (MEMCALL * MEM8READ)(UINT32 address);
 typedef void (MEMCALL * MEM16WRITE)(UINT32 address, REG16 value);
@@ -892,6 +894,7 @@ const VACCTBL	*vacc;
 		memfn.rd16[0xe0000 >> 15] = i286_nonram_rw;
 	}
 }
+#endif
 
 #if !defined(ARM)
 REG8 MEMCALL i286_memoryread(UINT32 address) {

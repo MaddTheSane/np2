@@ -81,12 +81,12 @@ MAX_PREFIX			equ		8
 
 	MACRO
 $label	CPUSVC
-$label
+$label	;;	str		r7, [r9, #CPU_REMAINCLOCK]
 	MEND
 
 	MACRO
 $label	CPULDC
-$label
+$label	;;	ldr		r7, [r9, #CPU_REMAINCLOCK]
 	MEND
 
 	MACRO

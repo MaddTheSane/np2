@@ -34,6 +34,25 @@ DMAC_WORKING		equ		(DMACH_SIZE * 4) + 8
 ; DMA_stat			equ		(DMACH_SIZE * 4) + 13
 
 
+; ---- egc
+
+	IMPORT	egc
+
+; egc_access		equ		0
+; egc_fgbg			equ		2
+; egc_ope			equ		4
+; egc_fg			equ		6
+; egc_mask			equ		8
+; egc_bg			equ		10
+EGC_SFT				equ		12
+; egc_leng			equ		14
+; egc_lastvram		equ		16
+; egc_patreg		equ		24
+; egc_fgc			equ		32
+; egc_bgc			equ		40
+;							and more..
+
+
 ; ---- emm
 
 	IMPORT	extmem
