@@ -1199,7 +1199,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	keydisp_initialize(hPreInst);
 	viewer_init(hPreInst);										// ver0.30
 
-	hWndMain = CreateWindowEx(0, szClassName, np2oscfg.titles,
+	hWndMain = CreateWindow(szClassName, np2oscfg.titles,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
