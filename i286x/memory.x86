@@ -82,10 +82,10 @@ section .text
 
 
 %if USE_EGCASM
-	extern	_egca_read
-	extern	_egca_read_w
-	extern	_egca_write
-	extern	_egca_write_w
+	extern	egc_read
+	extern	egc_read_w
+	extern	egc_write
+	extern	egc_write_w
 %else
 	extern	@egc_read@4
 	extern	@egc_read_w@4
@@ -264,7 +264,7 @@ grcgtdw_end:		pop		ecx
 @egc_wt:			VRAMTRACE
 					pop		ebx
 %if USE_EGCASM
-					jmp		_egca_write
+					jmp		egc_write
 %else
 					pushad
 					call	@egc_write@8
@@ -385,7 +385,7 @@ grcgtcr_end:		not		al
 					align	16
 @egc_rd:			pop		ebx
 %if USE_EGCASM
-					jmp		_egca_read
+					jmp		egc_read
 %else
 					pushad
 					call	@egc_read@4
@@ -619,7 +619,7 @@ grcgwtdw_end:		pop		ecx
 @egcw_wt:			VRAMTRACE_W
 					pop		ebx
 %if USE_EGCASM
-					jmp		_egca_write_w
+					jmp		egc_write_w
 %else
 					test	ecx, 1
 					jne		short egcw_wtodd
@@ -781,7 +781,7 @@ grcgwtcr_end:		not		ax
 					test	ecx, 1
 					jne		short egcw_rdodd
 %if USE_EGCASM
-					jmp		_egca_read_w
+					jmp		egc_read_w
 %else
 					pushad
 					call	@egc_read_w@4
@@ -793,10 +793,10 @@ grcgwtcr_end:		not		ax
 egcw_rdodd:
 %if USE_EGCASM
 					inc		ecx
-					call	_egca_read
+					call	egc_read
 					mov		ah, al
 					dec		ecx
-					jmp		_egca_read
+					jmp		egc_read
 %else
 					pushad
 					push	ecx
