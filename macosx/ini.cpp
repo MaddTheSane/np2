@@ -334,6 +334,8 @@ static const char inifile[] = "np2.cfg";
 static const INITBL iniitem[] = {
 	{"np2title", INITYPE_STR,			np2oscfg.titles,
 													sizeof(np2oscfg.titles)},
+	{"WindposX", INITYPE_SINT32,	&np2oscfg.winx,			0},
+	{"WindposY", INITYPE_SINT32,	&np2oscfg.winy,			0},
 
 	{"pc_model", INITYPE_STR,		&np2cfg.model,
 													sizeof(np2cfg.model)},

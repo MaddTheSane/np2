@@ -1,6 +1,9 @@
 
 typedef struct {
 	char	titles[256];
+	
+	int		winx;
+	int		winy;
 	BYTE	NOWAIT;
 	BYTE	DRAW_SKIP;
 	BYTE	DISPCLK;

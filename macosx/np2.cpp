@@ -46,7 +46,7 @@
 // #define	OPENING_WAIT	1500
 
 
-		NP2OSCFG	np2oscfg = {"Neko Project IIx", 0, 2, 0, 0, 0, 0, 1, 0};
+		NP2OSCFG	np2oscfg = {"Neko Project IIx", -1, -1, 0, 2, 0, 0, 0, 0, 1, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -656,6 +656,7 @@ int main(int argc, char *argv[]) {
 
     EventRef		theEvent;
     EventTargetRef	theTarget;
+    Rect			bounds;
 #ifdef OPENING_WAIT
 	UINT32		tick;
 #endif
@@ -806,6 +807,14 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+    
+	GetWindowBounds(hWndMain, kWindowGlobalPortRgn, &bounds);
+	if ((np2oscfg.winx != bounds.left) || (np2oscfg.winy != bounds.top)) {
+		np2oscfg.winx = bounds.left;
+		np2oscfg.winy = bounds.top;
+		sysmng_update(SYS_UPDATEOSCFG);
+	}
+
 	np2running = FALSE;
     menu_setrecording(true);
 
@@ -1107,7 +1116,9 @@ static bool setupMainWindow(void) {
 	}
 	SizeWindow(hWndMain, 640, 400, TRUE);
 #endif
-
+    if (np2oscfg.winx != -1 && np2oscfg.winy != -1) {
+        MoveWindow(hWndMain, np2oscfg.winx, np2oscfg.winy, false);
+    }
     setUpCarbonEvent();
     if (backupwidth) scrnmng_setwidth(0, backupwidth);
     if (backupheight) scrnmng_setheight(0, backupheight);
