@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"commng.h"
-#include	"cmmidi.h"
+#include	"cmver.h"
 
 
 // ---- non connect
@@ -44,7 +44,7 @@ static const _COMMNG com_nc = {
 
 void commng_initialize(void) {
 
-	cmmidi_initailize();
+	cmvermouth_initialize();
 }
 
 COMMNG commng_create(UINT device) {
@@ -53,7 +53,7 @@ COMMNG commng_create(UINT device) {
 
 	ret = NULL;
 	if (device == COMCREATE_MPU98II) {
-		ret = cmmidi_create();
+		ret = cmvermouth_create();
 	}
 	if (ret == NULL) {
 		ret = (COMMNG)&com_nc;

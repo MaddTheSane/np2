@@ -39,6 +39,7 @@
 　(MacOSX)
 　　・Open/Saveダイアログ修正
 　　・ドラッグ＆ドロップ修正
+　　・vermouthをcmverを使うように変更
 
 
 // ----
