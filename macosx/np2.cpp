@@ -141,9 +141,9 @@ static void MenuBarInit(void) {
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
     ChangeMenuAttributes(GetMenuRef(IDM_EDIT), kMenuAttrAutoDisable, 0);
     DisableAllMenuItems(GetMenuHandle(IDM_EDIT));
-    SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2OPEN, kMenuOptionModifier);
-    SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2EJECT, kMenuOptionModifier);
-    SetMenuItemModifiers(GetMenuRef(IDM_SASI2), IDM_SASI2OPEN, kMenuOptionModifier);
+    SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2OPEN, kMenuShiftModifier);
+    SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2EJECT, kMenuShiftModifier);
+    SetMenuItemModifiers(GetMenuRef(IDM_SASI2), IDM_SASI2OPEN, kMenuShiftModifier);
 	DrawMenuBar();
 #else
     OSStatus	err;
