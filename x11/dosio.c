@@ -1,4 +1,4 @@
-/*	$Id: dosio.c,v 1.12 2004/07/08 14:21:50 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.13 2005/03/05 14:09:37 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -366,9 +366,9 @@ file_cmpname(const char *path, const char *path2)
 }
 
 char *
-file_getname(char *path)
+file_getname(const char *path)
 {
-	char *ret;
+	const char *ret;
 
 	for (ret = path; *path != '\0'; path++) {
 		if (ISKANJI(*path)) {
@@ -380,7 +380,7 @@ file_getname(char *path)
 			ret = path + 1;
 		}
 	}
-	return ret;
+	return (char *)ret;
 }
 
 void
@@ -393,9 +393,9 @@ file_cutname(char *path)
 }
 
 char *
-file_getext(char *path)
+file_getext(const char *path)
 {
-	char *p, *q;
+	const char *p, *q;
 
 	for (p = file_getname(path), q = NULL; *p != '\0'; p++) {
 		if (*p == '.') {
@@ -405,7 +405,7 @@ file_getext(char *path)
 	if (q == NULL) {
 		q = p;
 	}
-	return q;
+	return (char *)q;
 }
 
 void
