@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.11 2004/03/08 20:13:37 yui Exp $	*/
+/*	$Id: data_trans.c,v 1.12 2004/03/09 18:52:12 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -964,21 +964,19 @@ CMPXCHG_EbGb(void)
 	if (op >= 0xc0) {
 		out = reg8_b20[op];
 		dst = *out;
-		if (CPU_AL == dst) {
-			CPU_FLAGL |= Z_FLAG;
+		BYTE_SUB(tmp, CPU_AL, dst);
+		if (CPU_FLAGL & Z_FLAG) {
 			*out = (UINT8)src;
 		} else {
-			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AL = (UINT8)dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		if (CPU_AL == dst) {
-			CPU_FLAGL |= Z_FLAG;
+		BYTE_SUB(tmp, CPU_AL, dst);
+		if (CPU_FLAGL & Z_FLAG) {
 			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)src);
 		} else {
-			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AL = (UINT8)dst;
 		}
 	}
@@ -994,21 +992,19 @@ CMPXCHG_EwGw(void)
 	if (op >= 0xc0) {
 		out = reg16_b20[op];
 		dst = *out;
-		if (CPU_AX == dst) {
-			CPU_FLAGL |= Z_FLAG;
+		WORD_SUB(tmp, CPU_AX, dst);
+		if (CPU_FLAGL & Z_FLAG) {
 			*out = (UINT16)src;
 		} else {
-			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AX = (UINT16)dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		if (CPU_AX == dst) {
-			CPU_FLAGL |= Z_FLAG;
+		WORD_SUB(tmp, CPU_AX, dst);
+		if (CPU_FLAGL & Z_FLAG) {
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
 		} else {
-			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AX = (UINT16)dst;
 		}
 	}
@@ -1024,21 +1020,19 @@ CMPXCHG_EdGd(void)
 	if (op >= 0xc0) {
 		out = reg32_b20[op];
 		dst = *out;
-		if (CPU_EAX == dst) {
-			CPU_FLAGL |= Z_FLAG;
+		DWORD_SUB(tmp, CPU_EAX, dst);
+		if (CPU_FLAGL & Z_FLAG) {
 			*out = src;
 		} else {
-			CPU_FLAGL &= ~Z_FLAG;
 			CPU_EAX = dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		if (CPU_EAX == dst) {
-			CPU_FLAGL |= Z_FLAG;
+		DWORD_SUB(tmp, CPU_EAX, dst);
+		if (CPU_FLAGL & Z_FLAG) {
 			cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
 		} else {
-			CPU_FLAGL &= ~Z_FLAG;
 			CPU_EAX = dst;
 		}
 	}
@@ -1054,19 +1048,21 @@ CMPXCHG_EbGb(void)
 	if (op >= 0xc0) {
 		out = reg8_b20[op];
 		dst = *out;
-		BYTE_SUB(tmp, CPU_AL, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (CPU_AL == dst) {
+			CPU_FLAGL |= Z_FLAG;
 			*out = (UINT8)src;
 		} else {
+			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AL = (UINT8)dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		BYTE_SUB(tmp, CPU_AL, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (CPU_AL == dst) {
+			CPU_FLAGL |= Z_FLAG;
 			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)src);
 		} else {
+			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AL = (UINT8)dst;
 		}
 	}
@@ -1082,19 +1078,21 @@ CMPXCHG_EwGw(void)
 	if (op >= 0xc0) {
 		out = reg16_b20[op];
 		dst = *out;
-		WORD_SUB(tmp, CPU_AX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (CPU_AX == dst) {
+			CPU_FLAGL |= Z_FLAG;
 			*out = (UINT16)src;
 		} else {
+			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AX = (UINT16)dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		WORD_SUB(tmp, CPU_AX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (CPU_AX == dst) {
+			CPU_FLAGL |= Z_FLAG;
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
 		} else {
+			CPU_FLAGL &= ~Z_FLAG;
 			CPU_AX = (UINT16)dst;
 		}
 	}
@@ -1110,19 +1108,21 @@ CMPXCHG_EdGd(void)
 	if (op >= 0xc0) {
 		out = reg32_b20[op];
 		dst = *out;
-		DWORD_SUB(tmp, CPU_EAX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (CPU_EAX == dst) {
+			CPU_FLAGL |= Z_FLAG;
 			*out = src;
 		} else {
+			CPU_FLAGL &= ~Z_FLAG;
 			CPU_EAX = dst;
 		}
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		DWORD_SUB(tmp, CPU_EAX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (CPU_EAX == dst) {
+			CPU_FLAGL |= Z_FLAG;
 			cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
 		} else {
+			CPU_FLAGL &= ~Z_FLAG;
 			CPU_EAX = dst;
 		}
 	}

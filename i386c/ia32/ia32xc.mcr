@@ -1,4 +1,4 @@
-/*	$Id: ia32xc.mcr,v 1.3 2004/02/22 04:49:20 monaka Exp $	*/
+/*	$Id: ia32xc.mcr,v 1.4 2004/03/09 18:52:12 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1637,6 +1637,10 @@ do { \
 #define	DWORD_DEC(s)		XC_DWORD_DEC(s)
 
 #define	XC_STORE_FLAGL()	UINT8 __xc_flagl = CPU_FLAGL
+
+#elif defined(IA32_CROSS_CHECK) && defined(_MSC_VER)
+
+#include	"ia32xc_msc.mcr"
 
 #else	/* !(IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__)) */
 

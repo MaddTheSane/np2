@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.17 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: interface.c,v 1.18 2004/03/09 18:52:12 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -256,7 +256,11 @@ ia32_bioscall(void)
 	UINT32 adrs;
 
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
+#if 1
+		adrs = (CPU_EIP - 1) + ((CPU_REGS_SREG(CPU_CS_INDEX)) << 4);
+#else
 		adrs = (CPU_EIP - 1) + CPU_STAT_CS_BASE;
+#endif
 		if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
 			biosfunc(adrs);
 			if (!CPU_STAT_PM || CPU_STAT_VM86) {
