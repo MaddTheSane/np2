@@ -139,8 +139,8 @@ void fddmtr_seek(REG8 drv, REG8 c, UINT size) {
 			fddmtr.busy = 1;
 			nevent_set(NEVENT_FDBIOSBUSY, size * pccore.multiple,
 												fdbiosout, NEVENT_ABSOLUTE);
-			return;
 		}
+		return;
 	}
 
 	waitcnt = (size * DISK1ROL_MS) / (1024 * 8);
