@@ -721,7 +721,9 @@ static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n) {
 
 	KDKEYPOS	*pos;
 	UINT		pal;
+#if defined(SUPPORT_8BPP)
 	BYTE		pal8;
+#endif
 
 	pos = keydisp.keypos + (kdch->k[n] & 0x7f);
 	pal = kdch->r[n] & 0x7f;
