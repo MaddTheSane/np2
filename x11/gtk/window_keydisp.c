@@ -115,6 +115,10 @@ create_kdispwin_menu(GtkWidget *parent)
 
 	menubar = gtk_item_factory_get_widget(kdwin.menuhdl.item_factory, "<main>");
 
+#if defined(NOSOUND)
+	gtk_widget_set_sensitive(gtk_item_factory_get_widget(kdwin.menuhdl.item_factory, "/Module/FM"), FALSE);
+#endif
+
 	xmenu_select_module(kdispwin_getmode(kdispcfg.mode));
 
 	return menubar;
@@ -180,9 +184,11 @@ kdispwin_getmode(BYTE cfgmode)
 {
 
 	switch (cfgmode) {
-	case KDISPCFG_FM:
 	default:
+#if !defined(NOSOUND)
+	case KDISPCFG_FM:
 		return KEYDISP_MODEFM;
+#endif
 
 	case KDISPCFG_MIDI:
 		return KEYDISP_MODEMIDI;
