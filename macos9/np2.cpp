@@ -69,7 +69,7 @@ static const char np2app[] = "np21";
 // ----
 
 #if defined(SUPPORT_RESUME)
-static const char np2resumeext[] = "sav";
+static const char np2resumeext[] = ".sav";
 #endif
 #if defined(SUPPORT_STATSAVE)
 static const char np2flagext[] = ".sv%u";
