@@ -10,12 +10,12 @@
 	EXPORT	satuation_s16x
 
 
-	AREA	PARMSARN2, DATA, READWRITE
+	AREA	PARTSDATA, DATA, READWRITE
 
 __randseed		dcd		1
 
 
-	AREA	PARMSARN, CODE, READONLY
+	AREA	PARTS, CODE, READONLY
 
 rand_setseed	ldr		r1, prandseed
 				str		r0, [r1]

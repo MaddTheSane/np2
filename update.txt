@@ -11,6 +11,7 @@
 　ver0.71 → ver0.72
 
 　・主にRISC向けの最適化(CPU, BEEP counter, BIOS etc...)
+　・CPU … aaa命令の修正
 　・PIT … インターバルタイマの割り込みを修正、リカバリ修正
 　・VRAM … SLとLRの関係をミスってた。
 　・PC-9801-26K … ステータスを修正

@@ -1,8 +1,8 @@
 
 #if defined(X11) && (defined(i386) || defined(__i386__))
-#define	INHIBIT_WORDP(m)	((m) >= 0x9ffff)
+#define	INHIBIT_WORDP(m)	((m) >= (I286_MEMWRITEMAX - 1))
 #elif (defined(ARM) || defined(X11)) && defined(BYTESEX_LITTLE)
-#define	INHIBIT_WORDP(m)	(((m) & 1) || ((m) >= 0xa0000))
+#define	INHIBIT_WORDP(m)	(((m) & 1) || ((m) >= I286_MEMWRITEMAX))
 #else
 #define	INHIBIT_WORDP(m)	(1)
 #endif
@@ -502,5 +502,5 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 	}
 
 
-#define	INT_NUM(a, b)		i286_intnum(a, b)
+#define	INT_NUM(a, b)		i286_intnum((a), (REG16)(b))
 

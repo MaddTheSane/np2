@@ -934,6 +934,7 @@ I286FN _aaa(void) {								// 37: aaa
 	else {
 		I286_FLAGL &= ~(A_FLAG | C_FLAG);
 	}
+	I286_AL &= 0x0f;
 }
 
 I286FN _cmp_ea_r8(void) {						// 38: cmp EA, REG8

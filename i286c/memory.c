@@ -9,7 +9,9 @@
 
 
 #define	USE_HIMEM
-// #define	MEMORY_DEBUG
+#if defined(TRACE)
+#define	MEMORY_DEBUG
+#endif
 
 // ---- write byte
 
