@@ -39,7 +39,7 @@
 #include	"toolwin.h"
 #include	"aboutdlg.h"
 #include	"keystat.h"
-#include	"kdispwin.h"
+#include	"subwind.h"
 
 #define	NP2OPENING
 // #define	OPENING_WAIT	1500
