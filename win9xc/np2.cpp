@@ -693,6 +693,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			break;
 
+		case WM_SIZE:
+			if (wParam == SIZE_RESTORED) {
+				scrnmng_restoresize();
+			}
+			break;
+
 		case WM_ENTERMENULOOP:
 			winuienter();
 			if (scrnmng_isfullscreen()) {

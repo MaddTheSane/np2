@@ -963,6 +963,10 @@ SOURCE=..\GENERIC\HOSTDRVS.C
 
 SOURCE=..\GENERIC\MEMDBG32.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\NP2INFO.C
+# End Source File
 # End Group
 # Begin Source File
 

@@ -17,6 +17,14 @@ static const char str_8MHz[] = "8MHz";
 static const char str_notexist[] = "not exist";
 static const char str_disable[] = "disable";
 
+static const char str_cpu[] =
+						"8086-2\0"					\
+						"70116\0"					\
+						"80286\0"					\
+						"80386\0"					\
+						"80486\0"					\
+						"Pentium\0"					\
+						"PentiumPro";
 static const char str_winclr[] =
 						"256-colors\0"				\
 						"65536-colors\0"			\
@@ -30,9 +38,14 @@ static const char str_grcgchip[] =
 						"GRCG \0"					\
 						"GRCG CG-Window \0"			\
 						"EGC CG-Window ";
-static const char str_clrmode[] =
-						"(Digital)\0"				\
-						"(Analog)";
+static const char str_vrammode[] =
+						"Digital\0"					\
+						"Analog\0"					\
+						"256colors";
+static const char str_vrampage[] =
+						" page-0\0"					\
+						" page-1\0"					\
+						" page-all";
 static const char str_chpan[] =
 						"none\0"					\
 						"Mono-R\0"					\
@@ -50,16 +63,11 @@ static const char str_fmboard[] =
 						"Spark board\0"				\
 						"AMD-98";
 
-
-static const char str_V30[] = "V30";
-static const char str_i286[] = "i286";
-
 static const char str_clockfmt[] = "%d.%1dMHz";
 static const char str_memfmt[] = "%3uKB";
 static const char str_memfmt2[] = "%3uKB + %uKB";
 static const char str_memfmt3[] = "%d.%1dMB";
 static const char str_width[] = "width-%u";
-static const char str_gdcpage[] = "page-%u %s";
 
 static const char str_pcm86a[] = "   PCM: %dHz %dbit %s";
 static const char str_pcm86b[] = "        %d / %d / 32768";
@@ -76,7 +84,14 @@ static void info_ver(char *str, int maxlen, NP2INFOEX *ex) {
 
 static void info_cpu(char *str, int maxlen, NP2INFOEX *ex) {
 
-	milstr_ncpy(str, (CPU_TYPE & CPUTYPE_V30)?str_V30:str_i286, maxlen);
+	UINT	family;
+
+#if defined(CPU_FAMILY)
+	family = min(CPU_FAMILY, 6);
+#else
+	family = (CPU_TYPE & CPUTYPE_V30)?1:2;
+#endif
+	milstr_ncpy(str, milstr_list(str_cpu, family), maxlen);
 	(void)ex;
 }
 
@@ -186,14 +201,26 @@ const char	*p;
 static void info_grph(char *str, int maxlen, NP2INFOEX *ex) {
 
 const char	*p;
+	UINT	md;
+	UINT	pg;
 	char	grphstr[32];
 
 	if (!(gdcs.grphdisp & GDCSCRN_ENABLE)) {
 		p = str_disable;
 	}
 	else {
-		SPRINTF(grphstr, str_gdcpage, gdcs.access,
-								milstr_list(str_clrmode, (gdc.analog)?1:0));
+		md = (gdc.analog & (1 << GDCANALOG_16))?1:0;
+		pg = gdcs.access;
+#if defined(SUPPORT_PC9821)
+		if (gdc.analog & (1 << (GDCANALOG_256))) {
+			md = 2;
+			if (gdc.analog & (1 << (GDCANALOG_256E))) {
+				pg = 2;
+			}
+		}
+#endif
+		milstr_ncpy(grphstr, milstr_list(str_vrammode, md), sizeof(grphstr));
+		milstr_ncat(grphstr, milstr_list(str_vrampage, pg), sizeof(grphstr));
 		p = grphstr;
 	}
 	milstr_ncpy(str, p, maxlen);

@@ -21,6 +21,7 @@ typedef struct {
 	LPDIRECTDRAWSURFACE	backsurf;
 	LPDIRECTDRAWCLIPPER	clipper;
 	LPDIRECTDRAWPALETTE	palette;
+	UINT8				enable;
 	UINT8				scrnmode;
 	int					width;
 	int					height;
@@ -328,6 +329,9 @@ BOOL scrnmng_create(UINT8 scrnmode) {
 	ddraw.ddraw1->QueryInterface(IID_IDirectDraw2, (void **)&ddraw2);
 	ddraw.ddraw2 = ddraw2;
 
+#if defined(SUPPORT_PC9821)
+	scrnmode |= SCRNMODE_HIGHCOLOR;
+#endif
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		ddraw2->SetCooperativeLevel(hWndMain,
 					DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT);
@@ -454,6 +458,7 @@ BOOL scrnmng_create(UINT8 scrnmode) {
 	}
 	scrnmng.bpp = (BYTE)bitcolor;
 	scrnsurf.bpp = bitcolor;
+	ddraw.enable = TRUE;
 	ddraw.scrnmode = scrnmode;
 	ddraw.width = 640;
 	ddraw.height = 480;
@@ -632,6 +637,13 @@ void scrnmng_update(void) {
 				ddraw.backsurf->Restore();
 			}
 		}
+	}
+}
+
+void scrnmng_restoresize(void) {
+
+	if ((ddraw.enable) && (!(ddraw.scrnmode & SCRNMODE_FULLSCREEN))) {
+		renewalclientsize();
 	}
 }
 

@@ -71,7 +71,7 @@ UINT16 scrnmng_makepal16(RGB32 pal32);
 void scrnmng_querypalette(void);
 void scrnmng_topwinui(void);
 void scrnmng_clearwinui(void);
-
+void scrnmng_restoresize(void);
 
 #ifdef __cplusplus
 }

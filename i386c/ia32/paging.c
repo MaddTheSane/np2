@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.16 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: paging.c,v 1.17 2004/03/23 18:34:05 yui Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -359,7 +359,7 @@ cpu_linear_memory_read(UINT32 laddr, UINT length, const int crw, const int user_
 		break;
 
 	case 1:
-		value = cpu_memoryread(paddr[1]);
+		value = cpu_memoryread(paddr[0]);
 		value += (UINT32)cpu_memoryread(paddr[1]) << 8;
 		if (length == 4) {
 			value += (UINT32)cpu_memoryread_w(paddr[1] + 1) << 16;
@@ -399,7 +399,7 @@ cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_
 			break;
 
 		default:
-			ia32_panic("cpu_memory_access_la_RMW(): invalid length (length = %d)\n", length);
+			ia32_panic("cpu_linear_memory_write(): invalid length (length = %d)\n", length);
 			break;
 		}
 		return;
@@ -428,7 +428,7 @@ cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_
 		break;
 
 	default:
-		ia32_panic("cpu_memory_access_la_RMW(): out of range (remain = %d)\n", remain);
+		ia32_panic("cpu_linear_memory_write(): out of range (remain = %d)\n", remain);
 		break;
 	}
 }

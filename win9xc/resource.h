@@ -136,6 +136,8 @@
 #define IDC_SETNOW                      1113
 #define IDC_NP2ICON                     1114
 #define IDC_NP2VER                      1115
+#define IDC_MORE                        1116
+#define IDC_NP2INFO                     1117
 #define IDM_RESET                       40001
 #define IDM_CONFIG                      40002
 #define IDM_NEWDISK                     40003
@@ -234,7 +236,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        120
 #define _APS_NEXT_COMMAND_VALUE         40091
-#define _APS_NEXT_CONTROL_VALUE         1116
+#define _APS_NEXT_CONTROL_VALUE         1118
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
