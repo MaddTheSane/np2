@@ -332,8 +332,7 @@ main(int argc, char *argv[])
 
 	drvmax = (argc < 4) ? argc : 4;
 	for (i = 0; i < drvmax; i++) {
-		milstr_ncpy(diskdrv_fname[i],argv[i],sizeof(diskdrv_fname[0]));
-		diskdrv_delay[i] = 1;
+		diskdrv_readyfdd(i, argv[i], 0);
 	}
 
 	setup_signal(SIGINT, sighandler);
