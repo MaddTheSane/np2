@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
@@ -7,7 +8,7 @@
 #include	"dialogs.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"scrnbmp.h"
+#include	"scrnsave.h"
 #include	"font.h"
 
 
@@ -26,20 +27,24 @@ void dialog_font(void) {
 
 void dialog_writebmp(void) {
 
-	SCRNBMP	bmp;
-	char	path[MAX_PATH];
-	FILEH	fh;
+	SCRNSAVE	ss;
+	char		path[MAX_PATH];
+const char		*ext;
 
-	bmp = scrnbmp();
-	if (bmp) {
-		if (dlgs_selectwritefile(path, sizeof(path), "np2.bmp")) {
-			fh = file_create(path);
-			if (fh != FILEH_INVALID) {
-				file_write(fh, bmp->ptr, bmp->size);
-				file_close(fh);
-			}
-		}
-		_MFREE(bmp);
+	ss = scrnsave_get();
+	if (ss == NULL) {
+		return;
 	}
+	if (dlgs_selectwritefile(path, sizeof(path), "np2.bmp")) {
+		ext = file_getext(path);
+		if ((ss->type <= SCRNSAVE_8BIT) &&
+			(!file_cmpname(ext, "gif"))) {
+			scrnsave_writegif(ss, path, SCRNSAVE_AUTO);
+		}
+		else if (!file_cmpname(ext, str_bmp)) {
+			scrnsave_writebmp(ss, path, SCRNSAVE_AUTO);
+		}
+	}
+	scrnsave_trash(ss);
 }
 
