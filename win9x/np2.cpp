@@ -90,7 +90,7 @@ static	BYTE	scrnmode;
 		WINLOC		wl;
 		WINLOCEX	wlex;
 
-static const char np2help[] = "np2.hlp";
+static const char np2help[] = "np2.chm";
 static const char np2flagext[] = "S%02d";
 static const char np2resumeext[] = "sav";
 

@@ -646,7 +646,6 @@ static void openpopup(HWND hWnd, LPARAM lp) {
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);
 	TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
-	ModifyMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT)0, str_toolskin);
 	DestroyMenu(hMenu);
 }
 

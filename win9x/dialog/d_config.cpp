@@ -11,7 +11,7 @@
 
 static const char str_2halfmhz[] = "2.4576MHz";
 static const char str_2mhz[] = "1.9968MHz";
-static const char *basecstr[2] = {str_2halfmhz, str_2mhz};
+static const char *basecstr[2] = {str_2mhz, str_2halfmhz};
 static const UINT32 mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
 static const char str_clockfmt[] = "%2u.%.4u";
 
@@ -49,7 +49,7 @@ static void cfgcreate(HWND hWnd) {
 	UINT	val;
 
 	SETLISTSTR(hWnd, IDC_BASECLOCK, basecstr);
-	if (np2cfg.baseclock >= AVE(PCBASECLOCK25, PCBASECLOCK20)) {
+	if (np2cfg.baseclock < AVE(PCBASECLOCK25, PCBASECLOCK20)) {
 		val = 0;
 	}
 	else {
