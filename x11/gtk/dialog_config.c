@@ -112,8 +112,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	}
 
 	bufsize = milstr_solveINT(bufp);
-	if (bufsize < 50)
-		bufsize = 50;
+	if (bufsize < 20)
+		bufsize = 20;
 	else if (bufsize > 1000)
 		bufsize = 1000;
 	if (np2cfg.delayms != bufsize) {
@@ -393,13 +393,15 @@ create_configure_dialog(void)
 	gtk_widget_show(buffer_entry);
 	gtk_box_pack_start(GTK_BOX(soundbuffer_hbox), buffer_entry, FALSE, FALSE, 0);
 	gtk_widget_set_usize(buffer_entry, 48, 0);
-	if (np2cfg.delayms >= 50 && np2cfg.delayms <= 1000) {
+
+	if (np2cfg.delayms >= 20 && np2cfg.delayms <= 1000) {
 		g_snprintf(buf, sizeof(buf), "%d", np2cfg.delayms);
 		gtk_entry_set_text(GTK_ENTRY(buffer_entry), buf);
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(buffer_entry), "800");
 		np2cfg.delayms = 800;
-		sysmng_update(SYS_UPDATECFG|SYS_UPDATERATE);
+		sysmng_update(SYS_UPDATECFG|SYS_UPDATESBUF);
+		soundrenewal = 1;
 	}
 
 	ms_label = gtk_label_new(" ms");
