@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.13 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: task.c,v 1.14 2004/03/02 16:29:16 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,6 +37,7 @@ load_tr(UINT16 selector)
 {
 	selector_t task_sel;
 	int rv;
+	UINT16 iobase;
 
 	rv = parse_selector(&task_sel, selector);
 	if (rv < 0 || task_sel.ldt || task_sel.desc.s) {
@@ -49,12 +50,14 @@ load_tr(UINT16 selector)
 		if (task_sel.desc.u.seg.limit < 0x2b) {
 			EXCEPTION(TS_EXCEPTION, task_sel.idx);
 		}
+		iobase = 0;
 		break;
 
 	case CPU_SYSDESC_TYPE_TSS_32:
 		if (task_sel.desc.u.seg.limit < 0x67) {
 			EXCEPTION(TS_EXCEPTION, task_sel.idx);
 		}
+		iobase = cpu_kmemoryread_w(task_sel.desc.u.seg.segbase + 102);
 		break;
 
 	default:
@@ -75,6 +78,18 @@ load_tr(UINT16 selector)
 	CPU_SET_TASK_BUSY(task_sel.selector, &task_sel.desc);
 	CPU_TR = task_sel.selector;
 	CPU_TR_DESC = task_sel.desc;
+
+	/* I/O deny bitmap */
+	if (task_sel.desc.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
+		if (iobase != 0 && iobase < task_sel.desc.u.seg.limit) {
+			CPU_STAT_IOLIMIT = (UINT16)(task_sel.desc.u.seg.limit - iobase);
+			CPU_STAT_IOADDR = task_sel.desc.u.seg.segbase + iobase;
+		} else {
+			CPU_STAT_IOLIMIT = 0;
+		}
+	} else {
+		CPU_STAT_IOLIMIT = 0;
+	}
 }
 
 void
