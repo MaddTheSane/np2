@@ -58,3 +58,5 @@ typedef Boolean			BOOL;
 // #define SUPPORT_NORMALDISP
 #define	MEMOPTIMIZE		1
 
+#define	SOUNDRESERVE	80
+

@@ -146,7 +146,7 @@ const BYTE	*p;
 	loading = fontpc88_read(file_getcd(pc88ankname), loading);
 	if (loading & FONTLOAD_16) {
 		file_cpyname(fname, file_getcd(fonttmpname), sizeof(fname));
-		if (file_attr_c(fname) == -1) {
+		if (file_attr(fname) == -1) {
 			makepc98bmp(fname);
 		}
 		loading = fontpc98_read(fname, loading);

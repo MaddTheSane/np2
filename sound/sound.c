@@ -22,6 +22,7 @@ typedef struct {
 	SINT32	*buffer;
 	SINT32	*ptr;
 	UINT	samples;
+	UINT	reserve;
 	UINT	remain;
 	CBTBL	*cbreg;
 	CBTBL	cb[STREAM_CBMAX];
@@ -33,7 +34,7 @@ static	SNDSTREAM	sndstream;
 static void streamreset(void) {
 
 	sndstream.ptr = sndstream.buffer;
-	sndstream.remain = sndstream.samples;
+	sndstream.remain = sndstream.samples + sndstream.reserve;
 	sndstream.cbreg = sndstream.cb;
 }
 
@@ -61,6 +62,7 @@ static void streamprepare(UINT samples) {
 BOOL sound_create(UINT rate, UINT ms) {
 
 	UINT	samples;
+	UINT	reserve;
 
 	ZeroMemory(&sndstream, sizeof(sndstream));
 	switch(rate) {
@@ -81,12 +83,18 @@ BOOL sound_create(UINT rate, UINT ms) {
 	soundcfg.rate = rate;
 	sound_changeclock();
 
-	sndstream.buffer = (SINT32 *)_MALLOC(samples * 2 * sizeof(SINT32),
-																"stream");
+#if defined(SOUNDRESERVE)
+	reserve = rate * SOUNDRESERVE / 1000;
+#else
+	reserve = 0;
+#endif
+	sndstream.buffer = (SINT32 *)_MALLOC((samples + reserve) * 2 
+												* sizeof(SINT32), "stream");
 	if (sndstream.buffer == NULL) {
 		goto scre_err2;
 	}
 	sndstream.samples = samples;
+	sndstream.reserve = reserve;
 	streamreset();
 
 	SNDCSEC_INIT;
@@ -198,8 +206,8 @@ const SINT32 *ret;
 	ret = sndstream.buffer;
 	if (ret) {
 		SNDCSEC_ENTER;
-		if (sndstream.remain) {
-			streamprepare(sndstream.remain);
+		if (sndstream.remain > sndstream.reserve) {
+			streamprepare(sndstream.remain - sndstream.reserve);
 			soundcfg.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 			beep_eventreset();
 		}
@@ -209,9 +217,17 @@ const SINT32 *ret;
 
 void sound_pcmunlock(const SINT32 *hdl) {
 
+	int		leng;
+
 	if (hdl) {
-		sndstream.ptr = sndstream.buffer;
-		sndstream.remain = sndstream.samples;
+		leng = sndstream.reserve - sndstream.remain;
+		if (leng > 0) {
+			CopyMemory(sndstream.buffer,
+						sndstream.buffer + sndstream.samples * 2,
+												leng * 2 * sizeof(SINT32));
+		}
+		sndstream.ptr = sndstream.buffer + (leng * 2);
+		sndstream.remain += sndstream.samples;
 		SNDCSEC_LEAVE;
 	}
 }

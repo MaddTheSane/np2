@@ -31,3 +31,5 @@ typedef	unsigned int	UINT32;
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
 
+#define	SOUNDRESERVE	100
+

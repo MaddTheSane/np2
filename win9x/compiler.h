@@ -52,3 +52,5 @@ typedef	int				SINT32;
 #define	SUPPORT_32BPP
 #define SUPPORT_NORMALDISP
 
+#define	SOUNDRESERVE	20
+

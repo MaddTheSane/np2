@@ -42,3 +42,5 @@ typedef	unsigned int	UINT32;
 #define SUPPORT_NORMALDISP
 #define	MEMOPTIMIZE		1
 
+#define	SOUNDRESERVE	20
+
