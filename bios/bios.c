@@ -262,7 +262,7 @@ void bios_initialize(void) {
 		CopyMemory(mem + 0xf538e, itfrom + pos, 0x27);
 	}
 
-	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
+	CopyMemory(mem + 0x0fd800 + 0x0e00, keytable[0], 0x300);
 
 	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
 	mem[ITF_ADRS + 0x7ff0] = 0xea;
@@ -361,7 +361,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_09:
-			CPU_REMCLOCK -= 300;
+			CPU_REMCLOCK -= 500;
 			bios0x09();
 			return(1);
 

@@ -50,7 +50,7 @@ section	.table start=0x040
 		dw		biosnop		; 07
 
 		dw		vect08		; 08
-		dw		bios09		; 09
+		dw		vect09		; 09
 		dw		sendeoi		; 0a
 		dw		sendeoi		; 0b
 		dw		bios0c		; 0c
@@ -89,7 +89,7 @@ biosinit:		nop						; 84
 
 				align	4
 bios09:			nop						; 88
-				iret
+				ret
 
 				align	4
 bios0c:			nop						; 8c
@@ -139,6 +139,7 @@ biosfdcwait:	nop						; b4
 %include	'eoi.x86'
 %include	'vect02.x86'
 %include	'vect08.x86'
+%include	'vect09.x86'
 %include	'vect1a.x86'
 %include	'vect1f.x86'
 

@@ -179,6 +179,10 @@ SOURCE=..\COMMON\STRRES.C
 
 SOURCE=..\COMMON\TEXTFILE.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\COMMON\WAVEFILE.C
+# End Source File
 # End Group
 # Begin Group "cpu"
 

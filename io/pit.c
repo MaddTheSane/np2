@@ -12,9 +12,9 @@
 
 
 #define	BEEPCOUNTEREX					// BEEPアイドル時のカウンタをα倍に
-// #if defined(CPUCORE_IA32)
+#if defined(CPUCORE_IA32)
 #define	uPD71054
-// #endif
+#endif
 
 
 // --- Interval timer
@@ -149,7 +149,7 @@ static UINT getcount(const _PITCH *pitch) {
 		case 1:
 			switch(pitch->ctrl & 0x06) {
 #ifdef uPD71054				// ?
-				case 0x00:
+//				case 0x00:
 #endif
 				case 0x04:
 					return(pitch->value);

@@ -127,6 +127,7 @@ enum {
 	NKEY_USER			= 0x90,
 	NKEY_USERKEYS		= 2,
 
+	NKEYREF_uPD8255		= 0xf7,
 	NKEYREF_USER		= 0xf8,
 	NKEYREF_SOFTKBD		= 0xf9,
 	NKEYREF_NC			= 0xff
@@ -157,7 +158,9 @@ typedef struct {
 	UINT8	reqparam;
 	UINT8	mode;
 	UINT8	kbdtype;
-	UINT8	led;
+	UINT8	keyrep;
+	UINT8	capsref;
+	UINT8	kanaref;
 } KEYCTRL;
 
 
@@ -175,7 +178,6 @@ void keystat_tblreset(void);
 void keystat_tblset(REG8 ref, const UINT8 *key, UINT cnt);
 void keystat_tblload(const char *filename);
 
-void keystat_ctrlinit(void);
 void keystat_ctrlreset(void);
 void keystat_ctrlsend(REG8 dat);
 

@@ -292,7 +292,6 @@ void pccore_reset(void) {
 
 	pccore_set();
 	nevent_allreset();
-	keystat_ctrlinit();
 
 	CPU_RESET();
 	CPU_SETEXTSIZE((UINT32)pccore.extmem);

@@ -29,7 +29,9 @@ $(OBJ):
 	$(TS) $(OBJ)\scsibios.bin $*.res -sscsibios
 
 
-$(OBJ)\biosfd80.bin:
+$(OBJ)\biosfd80.bin:	bios\biosfd80.asm bios\biosmain.x86 bios\eoi.x86 \
+						bios\vect02.x86 bios\vect08.x86 bios\vect09.x86 \
+						bios\vect1a.x86 bios\vect1f.x86
 	$(AS) .\bios\$(*B).asm $(AOPT) -i.\bios\ -o $*.bin -l $*.lst
 
 

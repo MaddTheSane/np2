@@ -877,9 +877,6 @@ void bios0x1b(void) {
 
 	seg = mem[0x004b0 + (CPU_AL >> 4)];
 	if (seg) {
-		TRACEOUT(("call by %.4x:%.4x",
-							MEML_READ16(CPU_SS, CPU_SP+2),
-							MEML_READ16(CPU_SS, CPU_SP)));
 		sp = CPU_SP;
 		MEML_WRITE16(CPU_SS, sp - 2, CPU_DS);
 		MEML_WRITE16(CPU_SS, sp - 4, CPU_SI);
@@ -891,6 +888,9 @@ void bios0x1b(void) {
 		MEML_WRITE16(CPU_SS, sp - 16, CPU_BX);		// +2
 		MEML_WRITE16(CPU_SS, sp - 18, CPU_AX);		// +0
 #if 0
+		TRACEOUT(("call by %.4x:%.4x",
+							MEML_READ16(CPU_SS, CPU_SP+2),
+							MEML_READ16(CPU_SS, CPU_SP)));
 		TRACEOUT(("bypass to %.4x:0018", seg << 8));
 		TRACEOUT(("AX=%04x BX=%04x %02x:%02x:%02x:%02x ES=%04x BP=%04x",
 							CPU_AX, CPU_BX, CPU_CL, CPU_DH, CPU_DL, CPU_CH,

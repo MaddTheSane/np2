@@ -18,7 +18,6 @@ typedef struct {
 	UINT8	d_rt;
 } KEYSTAT;
 
-
 		NKEYTBL		nkeytbl;
 		KEYCTRL		keyctrl;
 static	KEYSTAT		keystat;
@@ -27,6 +26,11 @@ static	KEYSTAT		keystat;
 void keystat_initialize(void) {
 
 	char	path[MAX_PATH];
+
+	ZeroMemory(&keyctrl, sizeof(keyctrl));
+	keyctrl.keyrep = 0x21;
+	keyctrl.capsref = NKEYREF_NC;
+	keyctrl.kanaref = NKEYREF_NC;
 
 	ZeroMemory(&keystat, sizeof(keystat));
 	FillMemory(keystat.ref, sizeof(keystat.ref), NKEYREF_NC);
@@ -157,19 +161,34 @@ kstbl_err:
 
 // ----
 
-void keystat_ctrlinit(void) {
+static REG8 getledstat(void) {
 
-	ZeroMemory(&keyctrl, sizeof(keyctrl));
+	REG8	ret;
+
+	ret = 0;
+	if (keyctrl.kanaref != NKEYREF_NC) {
+		ret |= 8;
+	}
+	if (keyctrl.capsref != NKEYREF_NC) {
+		ret |= 4;
+	}
+	return(ret);
+}
+
+static void reloadled(void) {
+
+	keyctrl.kanaref = keystat.ref[0x72];
+	keyctrl.capsref = keystat.ref[0x71];
 }
 
 void keystat_ctrlreset(void) {
 
 	keyctrl.reqparam = 0;
+	keystat.ref[0x72] = keyctrl.kanaref;
+	keystat.ref[0x71] = keyctrl.capsref;
 }
 
 void keystat_ctrlsend(REG8 dat) {
-
-//	return;					// ‚Ü‚¾ƒeƒXƒg
 
 	if (!keyctrl.reqparam) {
 		keyctrl.mode = dat;
@@ -212,6 +231,19 @@ void keystat_ctrlsend(REG8 dat) {
 #endif
 			case 0x9c:
 				keyboard_ctrl(0xfa);
+				break;
+
+			case 0x9d:
+				if (dat == 0x60) {
+					keyboard_ctrl(0xfa);
+					keyboard_ctrl((REG8)(0x70 + getledstat()));
+				}
+				else if ((dat & 0xf0) == 0x70) {
+					keyboard_ctrl(0xfa);
+					keystat.ref[0x72] = (dat & 8)?NKEYREF_uPD8255:NKEYREF_NC;
+					keystat.ref[0x71] = (dat & 4)?NKEYREF_uPD8255:NKEYREF_NC;
+					reloadled();
+				}
 				break;
 		}
 		keyctrl.reqparam = 0;
@@ -272,6 +304,9 @@ void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 				}
 				keyboard_send(data);
 			}
+			if ((keycode == 0x71) || (keycode == 0x72)) {
+				reloadled();
+			}
 		}
 	}
 }
@@ -312,6 +347,9 @@ void keystat_up(const UINT8 *key, REG8 keys, REG8 ref) {
 				if (keystat.ref[keycode] != NKEYREF_NC) {
 					keystat.ref[keycode] = NKEYREF_NC;
 					keyboard_send((REG8)(keycode + 0x80));
+					if ((keycode == 0x71) || (keycode == 0x72)) {
+						reloadled();
+					}
 				}
 			}
 		}
@@ -404,9 +442,11 @@ void keystat_resetjoykey(void) {
 void keystat_releasekey(REG8 key) {
 
 	key &= 0x7f;
-	if (keystat.ref[key] != NKEYREF_NC) {
-		keystat.ref[key] = NKEYREF_NC;
-		keyboard_send((REG8)(key + 0x80));
+	if ((key != 0x71) && (key != 0x72)) {
+		if (keystat.ref[key] != NKEYREF_NC) {
+			keystat.ref[key] = NKEYREF_NC;
+			keyboard_send((REG8)(key + 0x80));
+		}
 	}
 }
 

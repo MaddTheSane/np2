@@ -17,18 +17,17 @@ void bios0x09_init(void) {
 	SETBIOSMEM16(MEMW_KB_BUF_HEAD, 0x0502);
 	SETBIOSMEM16(MEMW_KB_BUF_TAIL, 0x0502);
 	SETBIOSMEM16(MEMW_KB_CODE_OFF, 0x0e00);
-	SETBIOSMEM16(MEMW_KB_CODE_SEG, 0xfd00);
-	keyboard_resetsignal();
+	SETBIOSMEM16(MEMW_KB_CODE_SEG, 0xfd80);
 }
 
 static void updateshiftkey(void) {
 
-	BYTE	shiftsts;
+	UINT8	shiftsts;
 	UINT	base;
 
 	shiftsts = mem[MEMB_SHIFT_STS];
 	mem[0xa3ff6] &= 0x3f;							// KEYBOARD LED
-	mem[0xa3ff6] |= (BYTE)(shiftsts << 5);
+	mem[0xa3ff6] |= (UINT8)(shiftsts << 5);
 	if (shiftsts & 0x10) {
 		base = 7;
 	}
@@ -54,14 +53,14 @@ void bios0x09(void) {
 	UINT32	base;
 	UINT	kbbuftail;
 
-	key = iocore_inp8(0x41);
+	key = CPU_AL;
 	pos = (key & 0x7f) >> 3;
 	bit = 1 << (key & 7);
 	if (!(key & 0x80)) {
 		mem[0x0052a + pos] |= bit;
 		code = 0xffff;
 		base = GETBIOSMEM16(MEMW_KB_SHIFT_TBL);
-		base += 0xfd000;
+		base += 0xfd800;
 		if (key <= 0x51) {
 			if ((key == 0x51) || (key == 0x35) || (key == 0x3e)) {
 				code = mem[base + key] << 8;
@@ -124,6 +123,5 @@ void bios0x09(void) {
 			}
 		}
 	}
-	iocore_out8(0x00, 0x20);
 }
 

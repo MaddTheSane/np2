@@ -8,33 +8,28 @@
 
 // ---- Keyboard
 
-static void keyboard_int(BOOL absolute) {
-
-	if ((keybrd.ctrls) || (keybrd.buffers)) {
-		if (!(keybrd.status & 2)) {
-			keybrd.status |= 2;
-			if (keybrd.ctrls) {
-				keybrd.ctrls--;
-				keybrd.data = keybrd.ctr[keybrd.ctrpos];
-				keybrd.ctrpos = (keybrd.ctrpos + 1) & KB_CTRMASK;
-			}
-			else if (keybrd.buffers) {
-				keybrd.buffers--;
-				keybrd.data = keybrd.buf[keybrd.bufpos];
-				keybrd.bufpos = (keybrd.bufpos + 1) & KB_BUFMASK;
-			}
-			TRACEOUT(("recv -> %02x", keybrd.data));
-		}
-		pic_setirq(1);
-		nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
-											keyboard_callback, absolute);
-	}
-}
-
 void keyboard_callback(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
-		keyboard_int(NEVENT_RELATIVE);
+		if ((keybrd.ctrls) || (keybrd.buffers)) {
+			if (!(keybrd.status & 2)) {
+				keybrd.status |= 2;
+				if (keybrd.ctrls) {
+					keybrd.ctrls--;
+					keybrd.data = keybrd.ctr[keybrd.ctrpos];
+					keybrd.ctrpos = (keybrd.ctrpos + 1) & KB_CTRMASK;
+				}
+				else if (keybrd.buffers) {
+					keybrd.buffers--;
+					keybrd.data = keybrd.buf[keybrd.bufpos];
+					keybrd.bufpos = (keybrd.bufpos + 1) & KB_BUFMASK;
+				}
+				TRACEOUT(("recv -> %02x", keybrd.data));
+			}
+			pic_setirq(1);
+			nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
+										keyboard_callback, NEVENT_RELATIVE);
+		}
 	}
 }
 
@@ -64,6 +59,7 @@ static REG8 IOINPCALL keyboard_i41(UINT port) {
 
 	(void)port;
 	keybrd.status &= ~2;
+	pic_resetirq(1);
 	TRACEOUT(("in41 -> %02x %.4x:%.8x", keybrd.data, CPU_CS, CPU_EIP));
 	return(keybrd.data);
 }
@@ -93,6 +89,7 @@ void keyboard_reset(void) {
 
 void keyboard_bind(void) {
 
+	keystat_ctrlreset();
 	keybrd.xferclock = pccore.realclock / 1920;
 	iocore_attachsysoutex(0x0041, 0x0cf1, keybrdo41, 2);
 	iocore_attachsysinpex(0x0041, 0x0cf1, keybrdi41, 2);
@@ -100,6 +97,7 @@ void keyboard_bind(void) {
 
 void keyboard_resetsignal(void) {
 
+	nevent_reset(NEVENT_KEYBOARD);
 	keybrd.cmd = 0;
 	keybrd.status = 0;
 	keybrd.ctrls = 0;
@@ -117,7 +115,8 @@ void keyboard_ctrl(REG8 data) {
 		keybrd.ctr[(keybrd.ctrpos + keybrd.ctrls) & KB_CTRMASK] = data;
 		keybrd.ctrls++;
 		if (!nevent_iswork(NEVENT_KEYBOARD)) {
-			keyboard_int(NEVENT_ABSOLUTE);
+			nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
+										keyboard_callback, NEVENT_ABSOLUTE);
 		}
 	}
 }
@@ -128,7 +127,8 @@ void keyboard_send(REG8 data) {
 		keybrd.buf[(keybrd.bufpos + keybrd.buffers) & KB_BUFMASK] = data;
 		keybrd.buffers++;
 		if (!nevent_iswork(NEVENT_KEYBOARD)) {
-			keyboard_int(NEVENT_ABSOLUTE);
+			nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
+										keyboard_callback, NEVENT_ABSOLUTE);
 		}
 	}
 	else {
