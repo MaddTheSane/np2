@@ -40,6 +40,9 @@
 　　　　ex == NULLで OS指定の改行コードになる筈
 　　　　(MacOSXは np2info.cppがそのまんま移動になるかと思われ
 
+　　　io/serial.*に存在した keystat系を /keystat.* へ移動
+　　　　keystat.cをリンク、 keystat.hをインクルード
+
 
 
 // ----

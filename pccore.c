@@ -34,6 +34,7 @@
 #include	"np2ver.h"
 #include	"calendar.h"
 #include	"timing.h"
+#include	"keystat.h"
 #include	"debugsub.h"
 
 
@@ -593,7 +594,7 @@ UINT	cflg;
 void pccore_exec(BOOL draw) {
 
 	drawframe = draw;
-	keyext_flash();
+	keystat_sync();
 	soundmng_sync();
 	mouseif_sync();
 	pal_eventclear();

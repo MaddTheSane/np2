@@ -970,6 +970,10 @@ SOURCE=..\DEBUGSUB.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\KEYSTAT.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\NEVENT.C
 # End Source File
 # Begin Source File

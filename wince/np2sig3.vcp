@@ -6129,6 +6129,10 @@ DEP_CPP_DEBUG=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\KEYSTAT.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\NEVENT.C
 DEP_CPP_NEVEN=\
 	"..\common.h"\

@@ -32,23 +32,12 @@ typedef struct {
 extern "C" {
 #endif
 
-void keystat_reset(void);
-void keystat_senddata(REG8 data);
-void keystat_allrelease(void);
-void keystat_forcerelease(REG8 value);
-void keystat_resetcopyhelp(void);
-void keystat_resetjoykey(void);
-
-
-void keyext_flash(void);
-BYTE keyext_getjoy(void);
-BYTE keyext_getmouse(SINT16 *x, SINT16 *y);
-
-void keybrd_callback(NEVENTITEM item);
+void keyboard_callback(NEVENTITEM item);
 
 void keyboard_reset(void);
 void keyboard_bind(void);
 void keyboard_resetsignal(void);
+void keyboard_send(REG8 data);
 
 
 

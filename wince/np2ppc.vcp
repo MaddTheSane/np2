@@ -845,7 +845,6 @@ DEP_CPP_DMAP_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -866,6 +865,7 @@ DEP_CPP_DMAP_=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_DMAP_=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -895,7 +895,6 @@ DEP_CPP_EGCME=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -917,6 +916,7 @@ DEP_CPP_EGCME=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_EGCME=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -949,7 +949,6 @@ DEP_CPP_I286C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -971,6 +970,7 @@ DEP_CPP_I286C=\
 	
 NODEP_CPP_I286C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1132,7 +1132,6 @@ DEP_CPP_I286C_M=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1154,6 +1153,7 @@ DEP_CPP_I286C_M=\
 	
 NODEP_CPP_I286C_M=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1184,7 +1184,6 @@ DEP_CPP_I286C_R=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1206,6 +1205,7 @@ DEP_CPP_I286C_R=\
 	
 NODEP_CPP_I286C_R=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1263,7 +1263,6 @@ DEP_CPP_MEMOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1286,6 +1285,7 @@ DEP_CPP_MEMOR=\
 	
 NODEP_CPP_MEMOR=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1319,7 +1319,6 @@ DEP_CPP_V30PA=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1341,6 +1340,7 @@ DEP_CPP_V30PA=\
 	
 NODEP_CPP_V30PA=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1416,7 +1416,6 @@ DEP_CPP_ARTIC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1438,6 +1437,7 @@ DEP_CPP_ARTIC=\
 	
 NODEP_CPP_ARTIC=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1505,7 +1505,6 @@ DEP_CPP_CGROM=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1526,6 +1525,7 @@ DEP_CPP_CGROM=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_CGROM=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1591,7 +1591,6 @@ DEP_CPP_CPUIO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1624,6 +1623,7 @@ DEP_CPP_CPUIO=\
 	
 NODEP_CPP_CPUIO=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1689,7 +1689,6 @@ DEP_CPP_CRTC_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1711,6 +1710,7 @@ DEP_CPP_CRTC_=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_CRTC_=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1780,7 +1780,6 @@ DEP_CPP_DIPSW=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1805,6 +1804,7 @@ DEP_CPP_DIPSW=\
 	
 NODEP_CPP_DIPSW=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1873,7 +1873,6 @@ DEP_CPP_DMAC_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1896,6 +1895,7 @@ DEP_CPP_DMAC_=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_DMAC_=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -1964,7 +1964,6 @@ DEP_CPP_EGC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -1986,6 +1985,7 @@ DEP_CPP_EGC_C=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_EGC_C=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2139,7 +2139,6 @@ DEP_CPP_EPSON=\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2160,6 +2159,7 @@ DEP_CPP_EPSON=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_EPSON=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2228,7 +2228,6 @@ DEP_CPP_FDC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2249,6 +2248,7 @@ DEP_CPP_FDC_C=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_FDC_C=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2313,7 +2313,6 @@ DEP_CPP_FDD32=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2334,6 +2333,7 @@ DEP_CPP_FDD32=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_FDD32=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2403,7 +2403,6 @@ DEP_CPP_GDC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2429,6 +2428,7 @@ DEP_CPP_GDC_C=\
 	
 NODEP_CPP_GDC_C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2496,7 +2496,6 @@ DEP_CPP_GDC_P=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2519,6 +2518,7 @@ DEP_CPP_GDC_P=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_GDC_P=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2586,7 +2586,6 @@ DEP_CPP_GDC_S=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2609,6 +2608,7 @@ DEP_CPP_GDC_S=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_GDC_S=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2691,7 +2691,6 @@ DEP_CPP_IOCOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2725,6 +2724,7 @@ DEP_CPP_IOCOR=\
 	
 NODEP_CPP_IOCOR=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2791,7 +2791,6 @@ DEP_CPP_MOUSE=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2814,6 +2813,7 @@ DEP_CPP_MOUSE=\
 	
 NODEP_CPP_MOUSE=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -2881,7 +2881,6 @@ DEP_CPP_NECIO=\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
 	"..\io\epsonio.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2901,6 +2900,9 @@ DEP_CPP_NECIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NECIO=\
+	"..\io\extmem.h"\
 	
 
 !ENDIF 
@@ -2964,7 +2966,6 @@ DEP_CPP_NMIIO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -2986,6 +2987,7 @@ DEP_CPP_NMIIO=\
 	
 NODEP_CPP_NMIIO=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3056,7 +3058,6 @@ DEP_CPP_NP2SY=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3079,6 +3080,7 @@ DEP_CPP_NP2SY=\
 	
 NODEP_CPP_NP2SY=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3144,7 +3146,6 @@ DEP_CPP_PIC_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3166,6 +3167,7 @@ DEP_CPP_PIC_C=\
 	
 NODEP_CPP_PIC_C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3234,7 +3236,6 @@ DEP_CPP_PIT_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3258,6 +3259,7 @@ DEP_CPP_PIT_C=\
 	
 NODEP_CPP_PIT_C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3324,7 +3326,6 @@ DEP_CPP_PRINT=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3346,6 +3347,7 @@ DEP_CPP_PRINT=\
 	
 NODEP_CPP_PRINT=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3411,7 +3413,6 @@ DEP_CPP_SERIA=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3433,6 +3434,7 @@ DEP_CPP_SERIA=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_SERIA=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3500,7 +3502,6 @@ DEP_CPP_SYSPO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3523,6 +3524,7 @@ DEP_CPP_SYSPO=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_SYSPO=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3590,7 +3592,6 @@ DEP_CPP_UPD49=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3612,6 +3613,7 @@ DEP_CPP_UPD49=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_UPD49=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3696,7 +3698,6 @@ DEP_CPP_AMD98=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3728,6 +3729,7 @@ DEP_CPP_AMD98=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_AMD98=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3811,7 +3813,6 @@ DEP_CPP_BOARD=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3844,6 +3845,7 @@ DEP_CPP_BOARD=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_BOARD=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -3924,7 +3926,6 @@ DEP_CPP_BOARD1=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -3956,6 +3957,7 @@ DEP_CPP_BOARD1=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_BOARD1=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4037,7 +4039,6 @@ DEP_CPP_BOARD2=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4070,6 +4071,7 @@ DEP_CPP_BOARD2=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_BOARD2=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4153,7 +4155,6 @@ DEP_CPP_BOARD8=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4186,6 +4187,7 @@ DEP_CPP_BOARD8=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_BOARD8=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4267,7 +4269,6 @@ DEP_CPP_BOARDS=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4300,6 +4301,7 @@ DEP_CPP_BOARDS=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_BOARDS=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4383,7 +4385,6 @@ DEP_CPP_BOARDX=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4416,6 +4417,7 @@ DEP_CPP_BOARDX=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_BOARDX=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4488,7 +4490,6 @@ DEP_CPP_CBUSC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4509,6 +4510,7 @@ DEP_CPP_CBUSC=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_CBUSC=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4588,7 +4590,6 @@ DEP_CPP_CS423=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4620,6 +4621,7 @@ DEP_CPP_CS423=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_CS423=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4689,7 +4691,6 @@ DEP_CPP_MPU98=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4711,6 +4712,7 @@ DEP_CPP_MPU98=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_MPU98=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4780,7 +4782,6 @@ DEP_CPP_PC986=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4802,6 +4803,7 @@ DEP_CPP_PC986=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_PC986=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -4881,7 +4883,6 @@ DEP_CPP_PCM86=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -4914,6 +4915,7 @@ DEP_CPP_PCM86=\
 	
 NODEP_CPP_PCM86=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5004,7 +5006,6 @@ DEP_CPP_BIOS_=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5039,6 +5040,7 @@ DEP_CPP_BIOS_=\
 	
 NODEP_CPP_BIOS_=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5106,7 +5108,6 @@ DEP_CPP_BIOS0=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5128,6 +5129,7 @@ DEP_CPP_BIOS0=\
 	
 NODEP_CPP_BIOS0=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5197,7 +5199,6 @@ DEP_CPP_BIOS08=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5219,6 +5220,7 @@ DEP_CPP_BIOS08=\
 	
 NODEP_CPP_BIOS08=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5288,7 +5290,6 @@ DEP_CPP_BIOS09=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5310,6 +5311,7 @@ DEP_CPP_BIOS09=\
 	
 NODEP_CPP_BIOS09=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5381,7 +5383,6 @@ DEP_CPP_BIOS0C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5403,6 +5404,7 @@ DEP_CPP_BIOS0C=\
 	
 NODEP_CPP_BIOS0C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5470,7 +5472,6 @@ DEP_CPP_BIOS1=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5492,6 +5493,7 @@ DEP_CPP_BIOS1=\
 	
 NODEP_CPP_BIOS1=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5559,7 +5561,6 @@ DEP_CPP_BIOS13=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5581,6 +5582,7 @@ DEP_CPP_BIOS13=\
 	
 NODEP_CPP_BIOS13=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5652,7 +5654,6 @@ DEP_CPP_BIOS18=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5674,6 +5675,7 @@ DEP_CPP_BIOS18=\
 	
 NODEP_CPP_BIOS18=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5745,7 +5747,6 @@ DEP_CPP_BIOS19=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5767,6 +5768,7 @@ DEP_CPP_BIOS19=\
 	
 NODEP_CPP_BIOS19=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5834,7 +5836,6 @@ DEP_CPP_BIOS1A=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5856,6 +5857,7 @@ DEP_CPP_BIOS1A=\
 	
 NODEP_CPP_BIOS1A=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -5935,7 +5937,6 @@ DEP_CPP_BIOS1B=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -5957,6 +5958,7 @@ DEP_CPP_BIOS1B=\
 	
 NODEP_CPP_BIOS1B=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6031,7 +6033,6 @@ DEP_CPP_BIOS1C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6054,6 +6055,7 @@ DEP_CPP_BIOS1C=\
 	
 NODEP_CPP_BIOS1C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6173,7 +6175,6 @@ DEP_CPP_DISPS=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6197,6 +6198,7 @@ DEP_CPP_DISPS=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_DISPS=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6219,7 +6221,6 @@ DEP_CPP_MAKEG=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6245,6 +6246,7 @@ DEP_CPP_MAKEG=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_MAKEG=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6345,7 +6347,6 @@ DEP_CPP_MAKET=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6370,6 +6371,7 @@ DEP_CPP_MAKET=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_MAKET=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6445,7 +6447,6 @@ DEP_CPP_MAKETG=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6474,6 +6475,7 @@ DEP_CPP_MAKETG=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_MAKETG=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6541,7 +6543,6 @@ DEP_CPP_PALET=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6565,6 +6566,7 @@ DEP_CPP_PALET=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_PALET=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6635,7 +6637,6 @@ DEP_CPP_SCRNB=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6660,6 +6661,7 @@ DEP_CPP_SCRNB=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_SCRNB=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -6729,7 +6731,6 @@ DEP_CPP_SCRND=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -6755,6 +6756,7 @@ DEP_CPP_SCRND=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_SCRND=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -7334,7 +7336,6 @@ DEP_CPP_BEEPC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7368,6 +7369,7 @@ DEP_CPP_BEEPC=\
 	
 NODEP_CPP_BEEPC=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -7478,7 +7480,6 @@ DEP_CPP_CS4231=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7510,6 +7511,7 @@ DEP_CPP_CS4231=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_CS4231=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -7587,7 +7589,6 @@ DEP_CPP_CS4231G=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7619,6 +7620,7 @@ DEP_CPP_CS4231G=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_CS4231G=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -7722,7 +7724,6 @@ DEP_CPP_FMBOA=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7758,6 +7759,7 @@ DEP_CPP_FMBOA=\
 	
 NODEP_CPP_FMBOA=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -7835,7 +7837,6 @@ DEP_CPP_FMTIM=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7868,6 +7869,7 @@ DEP_CPP_FMTIM=\
 	
 NODEP_CPP_FMTIM=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -7948,7 +7950,6 @@ DEP_CPP_OPNGE=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -7980,6 +7981,7 @@ DEP_CPP_OPNGE=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_OPNGE=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8002,7 +8004,6 @@ DEP_CPP_OPNGEN=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8034,6 +8035,7 @@ DEP_CPP_OPNGEN=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_OPNGEN=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8140,7 +8142,6 @@ DEP_CPP_PCM86C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8173,6 +8174,7 @@ DEP_CPP_PCM86C=\
 	
 NODEP_CPP_PCM86C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8249,7 +8251,6 @@ DEP_CPP_PCM86G=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8281,6 +8282,7 @@ DEP_CPP_PCM86G=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_PCM86G=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8521,7 +8523,6 @@ DEP_CPP_S98_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8555,6 +8556,7 @@ DEP_CPP_S98_C=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_S98_C=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8659,7 +8661,6 @@ DEP_CPP_SOUND=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8685,6 +8686,7 @@ DEP_CPP_SOUND=\
 	
 NODEP_CPP_SOUND=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8868,7 +8870,6 @@ DEP_CPP_DISKD=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8891,6 +8892,7 @@ DEP_CPP_DISKD=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_DISKD=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -8962,7 +8964,6 @@ DEP_CPP_FDD_D=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -8984,6 +8985,7 @@ DEP_CPP_FDD_D=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_FDD_D=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9094,7 +9096,6 @@ DEP_CPP_FDD_X=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9116,6 +9117,7 @@ DEP_CPP_FDD_X=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_FDD_X=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9192,7 +9194,6 @@ DEP_CPP_FDDFI=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9215,6 +9216,7 @@ DEP_CPP_FDDFI=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_FDDFI=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9404,7 +9406,6 @@ DEP_CPP_GCOLO=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9427,6 +9428,7 @@ DEP_CPP_GCOLO=\
 	
 NODEP_CPP_GCOLO=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9493,7 +9495,6 @@ DEP_CPP_GCOLOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9516,6 +9517,7 @@ DEP_CPP_GCOLOR=\
 	
 NODEP_CPP_GCOLOR=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9687,7 +9689,6 @@ DEP_CPP_GSCRE=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9710,6 +9711,7 @@ DEP_CPP_GSCRE=\
 	
 NODEP_CPP_GSCRE=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9776,7 +9778,6 @@ DEP_CPP_GVIEW=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9799,6 +9800,7 @@ DEP_CPP_GVIEW=\
 	
 NODEP_CPP_GVIEW=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -9870,7 +9872,6 @@ DEP_CPP_LIO_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -9894,6 +9895,7 @@ DEP_CPP_LIO_C=\
 	
 NODEP_CPP_LIO_C=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -10558,7 +10560,9 @@ DEP_CPP_NP2_C=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_NP2_C=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10592,7 +10596,6 @@ DEP_CPP_NP2_C=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -10631,6 +10634,7 @@ DEP_CPP_NP2_C=\
 	".\winkbd.h"\
 	
 NODEP_CPP_NP2_C=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	".\x.h"\
 	
@@ -10675,7 +10679,9 @@ DEP_CPP_SCRNM=\
 	".\scrnmng.h"\
 	".\softkbd.res"\
 	".\wce\compiler.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_SCRNM=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10768,7 +10774,6 @@ DEP_CPP_SOFTK=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -10791,6 +10796,7 @@ DEP_CPP_SOFTK=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_SOFTK=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -10943,7 +10949,6 @@ DEP_CPP_SYSME=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -10975,6 +10980,7 @@ DEP_CPP_SYSME=\
 	".\winkbd.h"\
 	
 NODEP_CPP_SYSME=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -11117,7 +11123,9 @@ DEP_CPP_WINKB=\
 	".\np2.h"\
 	".\wce\compiler.h"\
 	".\winkbd.h"\
-	{$(INCLUDE)}"gx.h"\
+	
+NODEP_CPP_WINKB=\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -11135,7 +11143,6 @@ DEP_CPP_WINKB=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -11158,6 +11165,7 @@ DEP_CPP_WINKB=\
 	".\winkbd.h"\
 	
 NODEP_CPP_WINKB=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	".\x.h"\
 	
@@ -11457,7 +11465,6 @@ DEP_CPP_DLGSC=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -11483,6 +11490,7 @@ DEP_CPP_DLGSC=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_DLGSC=\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -12131,7 +12139,6 @@ DEP_CPP_DEBUG=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -12154,7 +12161,95 @@ DEP_CPP_DEBUG=\
 	
 NODEP_CPP_DEBUG=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\KEYSTAT.C
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+DEP_CPP_KEYST=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\keystat.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_KEYST=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\emsio.h"\
+	"..\io\epsonio.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\mouseif.h"\
+	"..\io\necio.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\keystat.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\statsave.h"\
+	".\wce\compiler.h"\
 	
 
 !ENDIF 
@@ -12312,7 +12407,6 @@ DEP_CPP_PCCOR=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -12359,6 +12453,7 @@ DEP_CPP_PCCOR=\
 	
 NODEP_CPP_PCCOR=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 
@@ -12478,7 +12573,6 @@ DEP_CPP_STATS=\
 	"..\io\dipsw.h"\
 	"..\io\dmac.h"\
 	"..\io\egc.h"\
-	"..\io\extmem.h"\
 	"..\io\fdc.h"\
 	"..\io\fdd320.h"\
 	"..\io\gdc.h"\
@@ -12522,6 +12616,7 @@ DEP_CPP_STATS=\
 	
 NODEP_CPP_STATS=\
 	"..\I286C\i286.h"\
+	"..\io\extmem.h"\
 	"..\io\itf.h"\
 	
 

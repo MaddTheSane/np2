@@ -3,6 +3,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"keystat.h"
 
 
 // ƒ}ƒEƒX ver0.28
@@ -19,7 +20,7 @@ void mouseif_sync(void) {
 	// ¡‰ñ‚ÌˆÚ“®—Ê‚ğæ“¾
 	mouseif.b = mousemng_getstat(&mouseif.sx, &mouseif.sy, 1);
 	if (np2cfg.KEY_MODE == 3) {
-		mouseif.b &= keyext_getmouse(&mouseif.sx, &mouseif.sy);
+		mouseif.b &= keystat_getmouse(&mouseif.sx, &mouseif.sy);
 	}
 	mouseif.rx = mouseif.sx;
 	mouseif.ry = mouseif.sy;

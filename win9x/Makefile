@@ -119,6 +119,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmndraw.o	$(OBJ)/keydisp.o	$(OBJ)/dipswbmp.o	\
 			$(OBJ)/cmjasts.o	$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o	\
+			$(OBJ)/unasm.o		$(OBJ)/np2info.o						\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
 			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
 			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
@@ -128,8 +129,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/timemng.o	$(OBJ)/juliet.o		$(OBJ)/sstp.o		\
 			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
 			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
-			$(OBJ)/np2info.o	$(OBJ)/toolwin.o	$(OBJ)/dd2.o		\
-			$(OBJ)/kdispwin.o	$(OBJ)/np2res.o							\
+			$(OBJ)/toolwin.o	$(OBJ)/dd2.o		$(OBJ)/kdispwin.o	\
+			$(OBJ)/np2res.o												\
 			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
 			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
 			$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		\
@@ -137,9 +138,9 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/viewer.o		$(OBJ)/viewcmn.o	$(OBJ)/viewmenu.o	\
 			$(OBJ)/viewmem.o	$(OBJ)/viewreg.o	$(OBJ)/viewseg.o	\
 			$(OBJ)/view1mb.o	$(OBJ)/viewasm.o	$(OBJ)/viewsnd.o	\
-			$(OBJ)/unasm.o												\
 			$(OBJ)/pccore.o		$(OBJ)/nevent.o		$(OBJ)/calendar.o	\
-			$(OBJ)/timing.o		$(OBJ)/statsave.o	$(OBJ)/debugsub.o
+			$(OBJ)/timing.o		$(OBJ)/keystat.o	$(OBJ)/statsave.o	\
+			$(OBJ)/debugsub.o
 
 
 NP2LIB	= -lddraw -ldxguid -ldsound -lwinmm -lcomctl32 -lwsock32 -mwindows
@@ -864,6 +865,15 @@ $(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(PCCORES) \
 						$(GENERIC)/hostdrv.h $(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/unasm.o		:	$(GENERIC)/unasm.c $(HEADER) $(GENERIC)/unasm.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/np2info.o	:	$(GENERIC)/np2info.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(FMBOARDS) $(COMMON)/strres.h \
+						$(TARGET)/scrnmng.h $(BIOS)/bios.h \
+						$(GENERIC)/np2info.h
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -973,7 +983,7 @@ $(OBJ)/sstp.o		:	$(TARGET)/sstp.cpp $(HEADERS) $(TARGET)/np2.h \
 
 $(OBJ)/sstpmsg.o	:	$(TARGET)/sstpmsg.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/np2.h $(TARGET)/sysmng.h $(TARGET)/sstp.h \
-						$(TARGET)/sstpres.h $(TARGET)/np2info.h
+						$(TARGET)/sstpres.h $(GENERIC)/np2info.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/winkbd.o		:	$(TARGET)/winkbd.cpp $(HEADERS) $(PCCORES) \
@@ -997,13 +1007,6 @@ $(OBJ)/menu.o		:	$(TARGET)/menu.cpp $(HEADERS) $(PCCORES) \
 $(OBJ)/ini.o		:	$(TARGET)/ini.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/np2.h $(TARGET)/np2arg.h $(TARGET)/dosio.h \
 						$(TARGET)/ini.h $(TARGET)/winkbd.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/np2info.o	:	$(TARGET)/np2info.cpp $(HEADERS) $(PCCORES) \
-						$(IOCORES) $(FMBOARDS) $(COMMON)/strres.h \
-						$(TARGET)/np2.h $(TARGET)/scrnmng.h \
-						$(TARGET)/np2info.h $(I286C)/cpucore.h \
-						$(I286C)/memory.h $(BIOS)/bios.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/toolwin.o	:	$(TARGET)/toolwin.cpp $(HEADERS) $(PCCORES) \
@@ -1034,8 +1037,8 @@ $(OBJ)/np2class.o	:	$(DIALOG)/np2class.cpp $(HEADERS) $(TARGET)/resource.h
 
 $(OBJ)/d_about.o	:	$(DIALOG)/d_about.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
-						$(TARGET)/np2info.h $(DIALOG)/dialog.h \
-						$(DIALOG)/dialogs.h
+						$(DIALOG)/dialog.h $(DIALOG)/dialogs.h \
+						$(GENERIC)/np2info.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/d_config.o	:	$(DIALOG)/d_config.cpp $(HEADERS) $(PCCORES) \
@@ -1167,9 +1170,6 @@ $(OBJ)/viewsnd.o	:	$(DEBUGUTY)/viewsnd.cpp $(HEADERS) $(PCCORES) \
 						$(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/unasm.o		:	$(DEBUGUTY)/unasm.cpp $(HEADER) $(DEBUGUTY)/unasm.h
-	$(CC) $(COPT) -o $@ $<
-
 
 
 $(OBJ)/pccore.o		:	$(BASE)/pccore.c $(HEADERS) $(CPUCORES) $(PCCORES) \
@@ -1198,6 +1198,10 @@ $(OBJ)/calendar.o	:	$(BASE)/calendar.c $(HEADERS) $(PCCORES) \
 
 $(OBJ)/timing.o		:	$(BASE)/timing.c $(HEADERS) $(PCCORES) \
 						$(FDD)/diskdrv.h $(FDD)/fdd_mtr.h $(BASE)/timing.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/keystat.o	:	$(BASE)/keystat.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(BASE)/keystat.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(CPUCORES) $(PCCORES) \

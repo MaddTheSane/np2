@@ -1,7 +1,6 @@
 #include	"compiler.h"
 #include	"joymng.h"
 #include	"soundmng.h"
-// #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
@@ -18,6 +17,7 @@
 #include	"fmboard.h"
 #include	"beep.h"
 #include	"keydisp.h"
+#include	"keystat.h"
 
 
 	UINT32		usesound;
@@ -54,12 +54,12 @@ REG8 fmboard_getjoy(PSGGEN psg) {
 	if (!(psg->reg.io2 & 0x40)) {
 		ret &= (joymng_getstat() | (rapids & 0x30));
 		if (np2cfg.KEY_MODE == 1) {
-			ret &= keyext_getjoy();
+			ret &= keystat_getjoy();
 		}
 	}
 	else {
 		if (np2cfg.KEY_MODE == 2) {
-			ret &= keyext_getjoy();
+			ret &= keystat_getjoy();
 		}
 	}
 	if (np2cfg.BTN_RAPID) {

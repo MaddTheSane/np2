@@ -138,4 +138,3 @@ const static unsigned char sstp_res[] = {
 #define s_exit	(sstp_res+935)
 #define s_exit2	(sstp_res+1016)
 #define s_error	(sstp_res+1106)
-

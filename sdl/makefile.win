@@ -138,7 +138,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/timemng.o	$(OBJ)/sdlkbd.o		$(OBJ)/ini.o		\
 			$(OBJ)/sysmenu.o											\
 			$(OBJ)/pccore.o		$(OBJ)/nevent.o		$(OBJ)/calendar.o	\
-			$(OBJ)/timing.o		$(OBJ)/statsave.o	$(OBJ)/debugsub.o	\
+			$(OBJ)/timing.o		$(OBJ)/keystat.o	$(OBJ)/statsave.o	\
+			$(OBJ)/debugsub.o											\
 			$(OBJ)/SDL.o		$(OBJ)/SDLmpw.o		$(OBJ)/SDLevent.o	\
 			$(OBJ)/SDLvideo.o	$(OBJ)/SDLaudio.o	$(OBJ)/SDL_ttf.o
 
@@ -865,6 +866,15 @@ $(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(PCCORES) \
 						$(GENERIC)/hostdrv.h $(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/unasm.o		:	$(GENERIC)/unasm.c $(HEADER) $(GENERIC)/unasm.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/np2info.o	:	$(GENERIC)/np2info.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(FMBOARDS) $(COMMON)/strres.h \
+						$(TARGET)/scrnmng.h $(BIOS)/bios.h \
+						$(GENERIC)/np2info.h
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/vramhdl.o	:	$(EMBED)/vramhdl.c $(HEADERS) $(EMBEDS) \
@@ -1036,6 +1046,10 @@ $(OBJ)/calendar.o	:	$(BASE)/calendar.c $(HEADERS) $(PCCORES) \
 
 $(OBJ)/timing.o		:	$(BASE)/timing.c $(HEADERS) $(PCCORES) \
 						$(FDD)/diskdrv.h $(FDD)/fdd_mtr.h $(BASE)/timing.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/keystat.o	:	$(BASE)/keystat.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(BASE)/keystat.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(CPUCORES) $(PCCORES) \
