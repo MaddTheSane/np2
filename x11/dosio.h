@@ -18,11 +18,11 @@ enum {
 	FTYPE_MIMPI		// mimpi defaultファイル
 };
 
-typedef FILE*			FILEH;
+typedef FILE *			FILEH;
 #define	FILEH_INVALID		NULL
 
-typedef	void*			FILEFINDH;
-#define	FILEFINDH_INVALID	NULL
+typedef	void *			FLISTH;
+#define	FLISTH_INVALID		NULL
 
 #define	FSEEK_SET		SEEK_SET
 #define	FSEEK_CUR		SEEK_CUR
@@ -35,6 +35,13 @@ enum {
 	FILEATTR_VOLUME		= 0x08,
 	FILEATTR_DIRECTORY	= 0x10,
 	FILEATTR_ARCHIVE	= 0x20
+};
+
+enum {
+	FLICAPS_SIZE		= (1 << 0),
+	FLICAPS_ATTR		= (1 << 1),
+	FLICAPS_DATE		= (1 << 2),
+	FLICAPS_TIME		= (1 << 3)
 };
 
 typedef struct {
@@ -50,10 +57,13 @@ typedef struct {
 } DOSTIME;
 
 typedef struct {
-	char	path[MAX_PATH];
+	UINT	caps;
 	UINT32	size;
 	UINT32	attr;
-} FILEFINDT;
+	DOSDATE	date;
+	DOSTIME	time;
+	char	path[MAX_PATH];
+} FLINFO;
 
 
 #ifdef	__cplusplus
@@ -87,9 +97,9 @@ FILEH file_create_c(const char *sjis);
 short file_delete_c(const char *sjis);
 short file_attr_c(const char *sjis);
 
-FILEFINDH file_find1st(const char *dir, FILEFINDT *fft);
-BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft);
-void file_findclose(FILEFINDH hdl);
+FLISTH file_list1st(const char *dir, FLINFO *fli);
+BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+void file_listclose(FLISTH hdl);
 
 void file_cpyname(char *dst, const char *src, int maxlen);
 void file_catname(char *path, const char *sjis, int maxlen);
