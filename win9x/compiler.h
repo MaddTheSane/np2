@@ -30,6 +30,7 @@ typedef	unsigned int	UINT32;
 #define	LABEL		__declspec(naked)
 #define RELEASE(x) 	if (x) {(x)->Release(); (x) = NULL;}
 
+#define	OPNGENX86
 #define	VERMOUTH_LIB
 #define	PARTSCALL	__fastcall
 #define	CPUCALL		__fastcall

@@ -1,5 +1,4 @@
 
-#include	"config.h"
 #include	"soundrom.h"
 #include	"tms3631.h"
 #include	"fmtimer.h"
@@ -48,6 +47,7 @@ extern "C" {
 extern	_TMS3631	tms3631;
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
+extern	OPNCH		opnch[OPNCH_MAX];
 extern	_PSGGEN		psg1;
 extern	_PSGGEN		psg2;
 extern	_PSGGEN		psg3;

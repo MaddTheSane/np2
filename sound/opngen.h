@@ -9,7 +9,7 @@ enum {
 };
 
 
-#ifdef SOUND_FM_ASM
+#ifdef OPNGENX86
 
 enum {
 	FMDIV_BITS		= 8,
@@ -114,16 +114,27 @@ typedef struct {
 } OPNCH;
 
 typedef struct {
-	int		dummy;
+	UINT	playchannels;
+	SINT32	feedback2;
+	SINT32	feedback3;
+	SINT32	feedback4;
+	SINT32	outdl;
+	SINT32	outdc;
+	SINT32	outdr;
+	SINT32	calcremain;
+	BYTE	keyreg[OPNCH_MAX];
 } _OPNGEN, *OPNGEN;
+
+typedef struct {
+	SINT32	calc1024;
+	SINT32	fmvol;
+	UINT	ratebit;
+} OPNCFG;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern	BYTE	fm_keyreg[OPNCH_MAX];
-extern	OPNCH	opnch[OPNCH_MAX];
 
 void opngen_initialize(UINT rate);
 void opngen_setvol(UINT vol);

@@ -1,7 +1,9 @@
 #include	"compiler.h"
 #include	<math.h>
+#include	"pccore.h"
+#include	"iocore.h"
 #include	"sound.h"
-#include	"opngen.h"
+#include	"fmboard.h"
 #include	"keydisp.h"
 
 
@@ -15,29 +17,14 @@
 #define	FREQBASE4096	((double)OPNA_CLOCK / calcrate / 64)
 
 
+	OPNCFG	opncfg;
 	SINT32	env_curve[EVC_ENT*2 + 1];
 	SINT32	envtable[EVC_ENT];
 	SINT32	sintable[SIN_ENT];
-#ifdef SOUND_FM_ASM
+#ifdef OPNGENX86
 	char	envshift[EVC_ENT];
 	char	sinshift[SIN_ENT];
 #endif
-	BYTE	baseratebit;
-
-	OPNCH	opnch[OPNCH_MAX];
-	BYTE	fm_keyreg[OPNCH_MAX];
-
-	UINT	playchannels;
-	SINT32	feedback2;
-	SINT32	feedback3;
-	SINT32	feedback4;
-	SINT32	outdl;
-	SINT32	outdc;
-	SINT32	outdr;
-	SINT32	calc1024;
-	SINT32	calcremain;
-	SINT32	fmvolforasm;
-	SINT32	fmvolforc;
 
 
 static	SINT32	detunetable[8][32];
@@ -76,10 +63,10 @@ void opngen_initialize(UINT rate) {
 
 	calcrate = rate * 55466 / 44100;
 
-	calc1024 = FMDIV_ENT * 44100 / 55466;
+	opncfg.calc1024 = FMDIV_ENT * 44100 / 55466;
 
 	for (i=0; i<EVC_ENT; i++) {
-#ifdef SOUND_FM_ASM
+#ifdef OPNGENX86
 		char sft;
 		sft = ENVTBL_BIT;
 		while(sft < (ENVTBL_BIT + 8)) {
@@ -97,7 +84,7 @@ void opngen_initialize(UINT rate) {
 #endif
 	}
 	for (i=0; i<SIN_ENT; i++) {
-#ifdef SOUND_FM_ASM
+#ifdef OPNGENX86
 		char sft;
 		sft = SINTBL_BIT;
 		while(sft < (SINTBL_BIT + 8)) {
@@ -129,13 +116,13 @@ void opngen_initialize(UINT rate) {
 
 //	Ç±Ç±Ç≈ FREQ_BITS >= 16Ç™èåè
 	if (rate == 44100) {
-		baseratebit = 0 + (FREQ_BITS - 16);
+		opncfg.ratebit = 0 + (FREQ_BITS - 16);
 	}
 	else if (rate == 22050) {
-		baseratebit = 1 + (FREQ_BITS - 16);
+		opncfg.ratebit = 1 + (FREQ_BITS - 16);
 	}
 	else {
-		baseratebit = 2 + (FREQ_BITS - 16);
+		opncfg.ratebit = 2 + (FREQ_BITS - 16);
 	}
 
 	for (i=0; i<4; i++) {
@@ -176,8 +163,10 @@ void opngen_initialize(UINT rate) {
 
 void opngen_setvol(UINT vol) {
 
-	fmvolforc = vol * 5 / 4;
-	fmvolforasm = fmvolforc << FMASMSHIFT;
+	opncfg.fmvol = vol * 5 / 4;
+#if defined(OPNGENX86)
+	opncfg.fmvol <<= FMASMSHIFT;
+#endif
 }
 
 
@@ -187,47 +176,47 @@ static void set_algorithm(OPNCH *ch) {
 
 	SINT32	*outd;
 
-	outd = &outdc;
+	outd = &opngen.outdc;
 	if (ch->stereo) {
 		switch(ch->pan & 0xc0) {
 			case 0x80:
-				outd = &outdl;
+				outd = &opngen.outdl;
 				break;
 
 			case 0x40:
-				outd = &outdr;
+				outd = &opngen.outdr;
 				break;
 		}
 	}
 	switch(ch->algorithm) {
 		case 0:
-			ch->connect1 = &feedback2;
-			ch->connect2 = &feedback3;
-			ch->connect3 = &feedback4;
+			ch->connect1 = &opngen.feedback2;
+			ch->connect2 = &opngen.feedback3;
+			ch->connect3 = &opngen.feedback4;
 			break;
 
 		case 1:
-			ch->connect1 = &feedback3;
-			ch->connect2 = &feedback3;
-			ch->connect3 = &feedback4;
+			ch->connect1 = &opngen.feedback3;
+			ch->connect2 = &opngen.feedback3;
+			ch->connect3 = &opngen.feedback4;
 			break;
 
 		case 2:
-			ch->connect1 = &feedback4;
-			ch->connect2 = &feedback3;
-			ch->connect3 = &feedback4;
+			ch->connect1 = &opngen.feedback4;
+			ch->connect2 = &opngen.feedback3;
+			ch->connect3 = &opngen.feedback4;
 			break;
 
 		case 3:
-			ch->connect1 = &feedback2;
-			ch->connect2 = &feedback4;
-			ch->connect3 = &feedback4;
+			ch->connect1 = &opngen.feedback2;
+			ch->connect2 = &opngen.feedback4;
+			ch->connect3 = &opngen.feedback4;
 			break;
 
 		case 4:
-			ch->connect1 = &feedback2;
+			ch->connect1 = &opngen.feedback2;
 			ch->connect2 = outd;
-			ch->connect3 = &feedback4;
+			ch->connect3 = &opngen.feedback4;
 			break;
 
 		case 5:
@@ -237,7 +226,7 @@ static void set_algorithm(OPNCH *ch) {
 			break;
 
 		case 6:
-			ch->connect1 = &feedback2;
+			ch->connect1 = &opngen.feedback2;
 			ch->connect2 = outd;
 			ch->connect3 = outd;
 			break;
@@ -380,9 +369,9 @@ void opngen_reset(void) {
 	OPNSLOT	*slot;
 	UINT	j;
 
+	ZeroMemory(&opngen, sizeof(opngen));
 	ZeroMemory(opnch, sizeof(opnch));
-	ZeroMemory(fm_keyreg, sizeof(fm_keyreg));
-	playchannels = 3;
+	opngen.playchannels = 3;
 
 	ch = opnch;
 	for (i=0; i<OPNCH_MAX; i++) {
@@ -415,7 +404,7 @@ void opngen_setcfg(BYTE maxch, UINT flag) {
 	OPNCH	*ch;
 	UINT	i;
 
-	playchannels = maxch;
+	opngen.playchannels = maxch;
 	ch = opnch;
 	if ((flag & OPN_CHMASK) == OPN_STEREO) {
 		for (i=0; i<OPNCH_MAX; i++) {
@@ -502,7 +491,7 @@ void opngen_setreg(BYTE chbase, BYTE reg, BYTE value) {
 				fn = ((ch->keyfunc[0] & 7) << 8) + value;
 				ch->kcode[0] = (blk << 2) | kftable[fn >> 7];
 //				ch->keynote[0] = fn * opmbaserate / (1L << (22-blk));
-				ch->keynote[0] = (fn << (baseratebit + blk)) >> 6;
+				ch->keynote[0] = (fn << (opncfg.ratebit + blk)) >> 6;
 				channleupdate(ch);
 				break;
 
@@ -516,7 +505,7 @@ void opngen_setreg(BYTE chbase, BYTE reg, BYTE value) {
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos+1] = (blk << 2) | kftable[fn >> 7];
 //				ch->keynote[chpos+1] = fn * opmbaserate / (1L << (22-blk));
-				ch->keynote[chpos+1] = (fn << (baseratebit + blk)) >> 6;
+				ch->keynote[chpos+1] = (fn << (opncfg.ratebit + blk)) >> 6;
 				channleupdate(ch);
 				break;
 
@@ -553,7 +542,7 @@ void opngen_keyon(UINT chnum, BYTE value) {
 	UINT	i;
 
 	sound_sync();
-	fm_keyreg[chnum] = value;
+	opngen.keyreg[chnum] = value;
 	ch = opnch + chnum;
 	slot = ch->slot;
 	bit = 0x10;

@@ -742,7 +742,7 @@ static int flagsave_fm(NP2FFILE *f, const STENTRY *t) {
 		if (saveflg & FLAG_FM1A) {
 			ret |= flagsave_save(f, &fmtimer, sizeof(fmtimer));
 			ret |= flagsave_save(f, &opn, sizeof(opn));
-			CopyMemory(opnkey.keyreg, fm_keyreg, sizeof(fm_keyreg));
+			CopyMemory(opnkey.keyreg, opngen.keyreg, sizeof(opngen.keyreg));
 			opnkey.extop[0] = opnch[2].extop;
 			opnkey.extop[1] = opnch[5].extop;
 			opnkey.extop[2] = opnch[8].extop;
@@ -784,7 +784,7 @@ static void play_fmreg(BYTE num) {
 		opngen_setreg((BYTE)chbase, (BYTE)i, opn.reg[reg + i]);
 	}
 	for (i=0; i<3; i++) {
-		opngen_keyon(chbase + i, fm_keyreg[chbase + i]);
+		opngen_keyon(chbase + i, opngen.keyreg[chbase + i]);
 	}
 }
 
@@ -867,7 +867,7 @@ static int flagload_fm(NP2FFILE *f, const STENTRY *t) {
 		ret |= flagload_load(f, &fmtimer, sizeof(fmtimer));
 		ret |= flagload_load(f, &opn, sizeof(opn));
 		ret |= flagload_load(f, &opnkey, sizeof(opnkey));
-		CopyMemory(fm_keyreg, &opnkey.keyreg, sizeof(fm_keyreg));
+		CopyMemory(opngen.keyreg, &opnkey.keyreg, sizeof(opngen.keyreg));
 		opnch[2].extop = opnkey.extop[0];
 		opnch[5].extop = opnkey.extop[1];
 		opnch[8].extop = opnkey.extop[2];

@@ -25,6 +25,7 @@
 	_TMS3631	tms3631;
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
+	OPNCH		opnch[OPNCH_MAX];
 	_PSGGEN		psg1;
 	_PSGGEN		psg2;
 	_PSGGEN		psg3;
