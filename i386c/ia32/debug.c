@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: debug.c,v 1.2 2004/01/13 16:32:36 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -27,14 +27,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "compiler.h"
+
 #include "cpu.h"
 #ifdef USE_FPU
- #include "instructions/fpu/fpu.h"
+#include "instructions/fpu/fpu.h"
 #endif
 
+#if 0
 extern BOOL is_a20(void);	/* in ../cpuio.c */
+#endif
 
-static char *cpu_reg2str(void)
+char *cpu_reg2str(void)
 {
   static char buf[512];
 
@@ -47,28 +51,28 @@ static char *cpu_reg2str(void)
       "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d%d %s %s %s TF=%d %s %s %s %s %s ]\n"
     "gdtr=%08x:%04x idtr=%08x:%04x ldtr=%04x tr=%04x\n"
     "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x\n",
-    I286_EAX, I286_EBX, I286_ECX, I286_EDX, I286_ESI, I286_EDI,
-    I286_EIP, I286_ESP, I286_EBP, CPU_PREV_EIP,
-    I286_CS, I286_SS, I286_DS, I286_ES, I286_FS, I286_GS,
-    I286_EFLAG,
-      (I286_EFLAG & ID_FLAG) != 0,
-      (I286_EFLAG & VIP_FLAG) != 0,
-      (I286_EFLAG & VIF_FLAG) != 0,
-      (I286_EFLAG & AC_FLAG) != 0,
-      (I286_EFLAG & VM_FLAG) != 0,
-      (I286_EFLAG & RF_FLAG) != 0,
-      (I286_EFLAG & NT_FLAG) != 0,
-      I286_EFLAG >> 13 & 1,
-      I286_EFLAG >> 12 & 1,
-      I286_EFLAG & O_FLAG ? "OV" : "NV",
-      I286_EFLAG & D_FLAG ? "UP" : "DN",
-      I286_EFLAG & I_FLAG ? "DI" : "EI",
-      (I286_EFLAG & T_FLAG) != 0,
-      I286_EFLAG & S_FLAG ? "NG" : "PL",
-      I286_EFLAG & Z_FLAG ? "ZR" : "NZ",
-      I286_EFLAG & A_FLAG ? "AC" : "NA",
-      I286_EFLAG & P_FLAG ? "PE" : "PO",
-      I286_EFLAG & C_FLAG ? "CY" : "NC",
+    CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX, CPU_ESI, CPU_EDI,
+    CPU_EIP, CPU_ESP, CPU_EBP, CPU_PREV_EIP,
+    CPU_CS, CPU_SS, CPU_DS, CPU_ES, CPU_FS, CPU_GS,
+    CPU_EFLAG,
+      (CPU_EFLAG & ID_FLAG) != 0,
+      (CPU_EFLAG & VIP_FLAG) != 0,
+      (CPU_EFLAG & VIF_FLAG) != 0,
+      (CPU_EFLAG & AC_FLAG) != 0,
+      (CPU_EFLAG & VM_FLAG) != 0,
+      (CPU_EFLAG & RF_FLAG) != 0,
+      (CPU_EFLAG & NT_FLAG) != 0,
+      CPU_EFLAG >> 13 & 1,
+      CPU_EFLAG >> 12 & 1,
+      CPU_EFLAG & O_FLAG ? "OV" : "NV",
+      CPU_EFLAG & D_FLAG ? "UP" : "DN",
+      CPU_EFLAG & I_FLAG ? "DI" : "EI",
+      (CPU_EFLAG & T_FLAG) != 0,
+      CPU_EFLAG & S_FLAG ? "NG" : "PL",
+      CPU_EFLAG & Z_FLAG ? "ZR" : "NZ",
+      CPU_EFLAG & A_FLAG ? "AC" : "NA",
+      CPU_EFLAG & P_FLAG ? "PE" : "PO",
+      CPU_EFLAG & C_FLAG ? "CY" : "NC",
     CPU_GDTR_BASE, CPU_GDTR_LIMIT, CPU_IDTR_BASE, CPU_IDTR_LIMIT, CPU_LDTR, CPU_TR,
     CPU_CR0, CPU_CR1, CPU_CR2, CPU_CR3, CPU_CR4, CPU_MXCSR);
 
@@ -76,7 +80,7 @@ static char *cpu_reg2str(void)
 }
 
 #ifdef USE_FPU
-static char *fpu_reg2str(void)
+char *fpu_reg2str(void)
 {
   static char buf[512];
   char tmp[128];
@@ -109,6 +113,7 @@ static char *fpu_reg2str(void)
 }
 #endif
 
+#if 0
 static char *a20str(void)
 {
   static char buf[32];
@@ -160,7 +165,7 @@ void FASTCALL msgbox_mem(DWORD no)
   strcat(buf, fpu_reg2str());
   strcat(buf, "\n");
 #endif
-  strcat(buf, mem2str(I286_CS, I286_IP));
+  strcat(buf, mem2str(CPU_CS, CPU_IP));
   strcat(buf, "\n");
   sprintf(tmp, "no=%08x\n", no);
   strcat(buf, tmp);
@@ -182,3 +187,4 @@ void put_cpuinfo(void)
 
   printf(buf);
 }
+#endif
