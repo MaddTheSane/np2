@@ -364,8 +364,14 @@ static void atapi_cmd_mode_sense(IDEDRV drv) {
 	if (!(drv->media & IDEIO_MEDIA_LOADED)) {
 		drv->buf[2] = 0x70;	// Door closed, no disc present
 	}
+	else if ((drv->media & (IDEIO_MEDIA_COMBINE)) == IDEIO_MEDIA_AUDIO) {
+		drv->buf[2] = 0x02;	// 120mm CD-ROM audio only
+	}
+	else if ((drv->media & (IDEIO_MEDIA_COMBINE)) == IDEIO_MEDIA_COMBINE) {
+		drv->buf[2] = 0x03;	// 120mm CD-ROM data & audio combined
+	}
 	else {
-		drv->buf[2] = 0x00;	// 120mm CD-ROM data only
+		drv->buf[2] = 0x01;	// 120mm CD-ROM data only
 	}
 	cnt = 8;
 	if (cnt > leng) {
@@ -441,6 +447,11 @@ static void atapi_cmd_mode_sense(IDEDRV drv) {
 		if (cnt > leng) {
 			goto length_exceeded;
 		}
+#if 0
+		/*FALLTHROUGH*/
+
+	case 0x00:
+#endif
 		break;
 
 	default:
@@ -476,18 +487,19 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 	leng = (drv->buf[7] << 8) + drv->buf[8];
 	format = (drv->buf[9] >> 6);
 	TRACEOUT(("atapi_cmd_readtoc fmt=%d leng=%d", format, leng));
-	switch(format) {
-		case 1:	// multi session
-			ZeroMemory(drv->buf, 12);
-			drv->buf[1] = 0x0a;
-			drv->buf[2] = 0x01;
-			drv->buf[3] = 0x01;
-			senddata(drv, 12, leng);
-			break;
 
-		default:
-			senderror(drv);
-			break;
+	switch (format) {
+	case 1:	// multi session
+		ZeroMemory(drv->buf, 12);
+		drv->buf[1] = 0x0a;
+		drv->buf[2] = 0x01;
+		drv->buf[3] = 0x01;
+		senddata(drv, 12, leng);
+		break;
+
+	default:
+		senderror(drv);
+		break;
 	}
 }
 

@@ -138,10 +138,18 @@ static REG8 sec2352_read(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size) {
 
 static REG8 cd_write(SXSIDEV sxsi, long pos, const UINT8 *buf, UINT size) {
 
+	(void)sxsi;
+	(void)pos;
+	(void)buf;
+	(void)size;
+
 	return(0x60);
 }
 
 static REG8 cd_format(SXSIDEV sxsi, long pos) {
+
+	(void)sxsi;
+	(void)pos;
 
 	return(0x60);
 }
@@ -171,7 +179,7 @@ BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *file) {
 		sxsi->sectors = 1;
 		sxsi->surfaces = 1;
 		sxsi->headersize = 0;
-		sxsi->mediatype = 0;
+		sxsi->mediatype = SXSIMEDIA_DATA;
 		return(SUCCESS);
 	}
 	totals = issec2352(fh);
@@ -187,7 +195,7 @@ BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *file) {
 		sxsi->sectors = 1;
 		sxsi->surfaces = 1;
 		sxsi->headersize = 0;
-		sxsi->mediatype = 0;
+		sxsi->mediatype = SXSIMEDIA_DATA;
 		return(SUCCESS);
 	}
 	file_close(fh);

@@ -1,10 +1,5 @@
 #include	"compiler.h"
 
-#ifdef	TRACEOUT
-#undef	TRACEOUT
-#endif
-#define	TRACEOUT(s)	trace_fmt s
-
 // win‚Åidentify‚Ü‚Å‚ÍŽæ“¾‚És‚­‚ñ‚¾‚¯‚Ç‚Èc‚Á‚ÄAnex86‚à“¯‚¶‚©
 
 #if defined(SUPPORT_IDEIO)
@@ -56,7 +51,7 @@ static const char model[] = "QUANTUM FIREBALL CR                     ";
 
 static const char cdrom_serial[] = "1.0                 ";
 static const char cdrom_firm[]   = "        ";
-static const char cdrom_model[]  = "NP2 VIRTUAL CD-ROM DRIVE                ";
+static const char cdrom_model[]  = "NEC CD-ROM DRIVE                        ";
 
 static BRESULT setidentify(IDEDRV drv) {
 
@@ -946,7 +941,7 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 		drv->error = 0;
 		drv->media = IDEIO_MEDIA_EJECTABLE;
 		if (sxsi->flag & SXSIFLAG_READY) {
-			drv->media |= (IDEIO_MEDIA_CHANGED | IDEIO_MEDIA_LOADED);
+			drv->media |= (IDEIO_MEDIA_CHANGED|IDEIO_MEDIA_LOADED);
 		}
 	}
 	else {
@@ -1002,19 +997,38 @@ void ideio_bind(void) {
 
 void ideio_notify(REG8 sxsidrv, UINT action) {
 
+	SXSIDEV sxsi;
 	IDEDRV	drv;
+	REG8 i;
 
-	if ((sxsidrv >= 0) && (sxsidrv < 4)) {
-		drv = ideio.dev[sxsidrv >> 1].drv + (sxsidrv & 1);
-		switch(action) {
-			case 1:
-				drv->media |= (IDEIO_MEDIA_CHANGED | IDEIO_MEDIA_LOADED);
-				break;
+	sxsi = sxsi_getptr(sxsidrv);
+	if ((sxsi == NULL)
+	 || (!(sxsi->flag & SXSIFLAG_READY))
+	 || (sxsi->devtype != SXSIDEV_CDROM)) {
+		return;
+	}
 
-			case 0:
-				drv->media &= ~IDEIO_MEDIA_LOADED;
-				break;
+	for (i=0; i<4; i++) {
+		drv = ideio.dev[i >> 1].drv + (i & 1);
+		if ((drv != NULL) && (drv->sxsidrv == sxsidrv)) {
+			goto do_notify;
 		}
+	}
+	return;
+
+do_notify:
+	switch(action) {
+		case 1:
+			drv->media |= (IDEIO_MEDIA_CHANGED|IDEIO_MEDIA_LOADED);
+			if (sxsi->mediatype & SXSIMEDIA_DATA)
+				drv->media |= IDEIO_MEDIA_DATA;
+			if (sxsi->mediatype & SXSIMEDIA_AUDIO)
+				drv->media |= IDEIO_MEDIA_AUDIO;
+			break;
+
+		case 0:
+			drv->media &= ~(IDEIO_MEDIA_LOADED|IDEIO_MEDIA_COMBINE);
+			break;
 	}
 }
 

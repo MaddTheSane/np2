@@ -5,8 +5,13 @@
 #define	IDEIO_MEDIA_EJECTABLE	(1 << 7)
 #define	IDEIO_MEDIA_PREVENT		(1 << 6)
 #define	IDEIO_MEDIA_PERSIST		(1 << 5)
+//								(1 << 4)
+#define	IDEIO_MEDIA_AUDIO		(1 << 3)
+#define	IDEIO_MEDIA_DATA		(1 << 2)
 #define	IDEIO_MEDIA_CHANGED		(1 << 1)
 #define	IDEIO_MEDIA_LOADED		(1 << 0)
+
+#define	IDEIO_MEDIA_COMBINE		(IDEIO_MEDIA_DATA|IDEIO_MEDIA_AUDIO)
 
 typedef struct {
 	UINT8	sxsidrv;
