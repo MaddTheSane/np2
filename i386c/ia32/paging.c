@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: paging.c,v 1.5 2004/01/23 16:17:51 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -214,7 +214,7 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 		r = (remain > length) ? length : remain;
 		switch (r) {
 		case 1:
-			value = (DWORD)cpu_memoryread(paddr) << shift;
+			value |= (DWORD)cpu_memoryread(paddr) << shift;
 			shift += 8;
 			break;
 
@@ -225,13 +225,13 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 
 		case 3:
 			value |= (DWORD)cpu_memoryread_w(paddr) << shift;
-			value |= (DWORD)cpu_memoryread(paddr + 2) << (shift+16);
-			shift += 24;
+			shift += 16;
+			value |= (DWORD)cpu_memoryread(paddr + 2) << shift;
+			shift += 8;
 			break;
 
 		case 4:
 			value = cpu_memoryread_d(paddr);
-			shift += 32;
 			break;
 
 		default:
@@ -273,19 +273,20 @@ cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
 		r = (remain > length) ? length : remain;
 		switch (r) {
 		case 1:
-			cpu_memorywrite(paddr, value);
+			cpu_memorywrite(paddr, value & 0xff);
 			value >>= 8;
 			break;
 
 		case 2:
-			cpu_memorywrite_w(paddr, value);
+			cpu_memorywrite_w(paddr, value & 0xffff);
 			value >>= 16;
 			break;
 
 		case 3:
-			cpu_memorywrite_w(paddr, value);
-			cpu_memorywrite(paddr, value >> 16);
-			value >>= 24;
+			cpu_memorywrite_w(paddr, value & 0xffff);
+			value >>= 16;
+			cpu_memorywrite(paddr, value & 0xff);
+			value >>= 8;
 			break;
 
 		case 4:
