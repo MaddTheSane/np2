@@ -390,10 +390,12 @@ void gdcsub_write(void) {
 	BYTE	*ptr;
 	UINT16	updatebit;
 
+#if 0
 	TRACEOUT(("gdcsub_write"));
 	if (grcg.gdcwithgrcg & 0x8) {
 		MessageBox(NULL, "!!! grcg working", "?", MB_OK);
 	}
+#endif
 
 	mask = LOADINTELWORD(gdc.s.para + GDC_MASK);
 #if defined(BYTESEX_LITTLE)
