@@ -29,6 +29,7 @@
 #include	"calendar.h"
 #include	"timing.h"
 //#include	"hostdrv.h"
+#include	"debugsub.h"
 
 
 	const char	np2version[] = NP2VER_CORE;
@@ -515,7 +516,7 @@ void pccore_exec(BOOL draw) {
 			i286_resetprefetch();
 		}
 
-#if 1 // ndef TRACE
+#ifndef TRACE
 		if (I286_REMCLOCK > 0) {
 			if (!(CPUTYPE & CPUTYPE_V30)) {
 				i286();
@@ -525,19 +526,23 @@ void pccore_exec(BOOL draw) {
 			}
 		}
 #else
-		while(nevent.remainclock > 0) {
-{
-static FILEH fh = FILEH_INVALID;
-if (I286_CS == 0x0e14) {
-	if (fh == FILEH_INVALID) {
-		fh = file_create("log.txt");
+		while(I286_REMCLOCK > 0) {
+static BYTE sw = 0;
+if (*(UINT32 *)(mem + 0x48) == 0x18000114) {
+	if (sw == 0) {
+		sw = 1;
+		TRACEOUT(("[%.8x] %.4x:%.4x %s", 
+						*(UINT32 *)(mem + 0x48),
+						I286_CS, I286_IP, debugsub_regs()));
 	}
 }
-if (fh != FILEH_INVALID) {
-char buf[32];
-wsprintf(buf, "%.4x:%.4x\r\n", I286_CS, I286_IP);
-file_write(fh, buf, strlen(buf));
-}
+else {
+	if (sw != 0) {
+		sw = 0;
+		TRACEOUT(("[%.8x] %.4x:%.4x %s", 
+						*(UINT32 *)(mem + 0x48),
+						I286_CS, I286_IP, debugsub_regs()));
+	}
 }
 			i286_step();
 		}

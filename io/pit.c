@@ -32,7 +32,7 @@ static void setsystimerevent(BOOL absolute) {
 
 	SINT32	cnt;
 
-	cnt = pit.value[0].w;
+	cnt = pit.value[0];
 	if (cnt > 8) {									// ª‹’‚È‚µ
 		cnt *= pc.multiple;
 	}
@@ -63,7 +63,7 @@ static void setbeepevent(BOOL absolute) {
 
 	SINT32	cnt;
 
-	cnt = pit.value[1].w;
+	cnt = pit.value[1];
 	if (cnt > 2) {
 		cnt *= pc.multiple;
 	}
@@ -97,11 +97,11 @@ static void setrs232cevent(BOOL absolute) {
 
 	SINT32	cnt;
 
-	if (pit.value[2].w > 1) {
-		cnt = pc.multiple * pit.value[2].w * rs232c.mul;			// ver0.29
+	if (pit.value[2] > 1) {
+		cnt = pc.multiple * pit.value[2] * rs232c.mul;
 	}
 	else {
-		cnt = (pc.multiple << 16) * rs232c.mul;						// ver0.29
+		cnt = (pc.multiple << 16) * rs232c.mul;
 	}
 	nevent_set(NEVENT_RS232C, cnt, rs232ctimer, absolute);
 }
@@ -127,10 +127,10 @@ static UINT16 itimer_latch(int ch) {
 		switch(pit.mode[1] & 0x06) {
 			case 0x00:
 			case 0x04:
-				return(pit.value[1].w);
+				return(pit.value[1]);
 #ifdef uPD71054
 			case 0x06:
-				return(pit.value[1].w & 0xfffe);
+				return(pit.value[1] & 0xfffe);
 #endif
 		}
 	}
@@ -150,7 +150,7 @@ void itimer_setflag(int ch, BYTE value) {
 	}
 	else {														// latch
 		pit.mode[ch] &= ~0x30;
-		pit.latch[ch].w = itimer_latch(ch);
+		pit.latch[ch] = itimer_latch(ch);
 	}
 }
 
@@ -158,22 +158,22 @@ BOOL itimer_setcount(int ch, BYTE value) {
 
 	switch(pit.mode[ch] & 0x30) {
 		case 0x10:		// access low
-			pit.value[ch].w = value;
+			pit.value[ch] = value;
 			break;
 
 		case 0x20:		// access high
-			pit.value[ch].w = value << 8;
+			pit.value[ch] = value << 8;
 			break;
 
 		case 0x30:		// access word
 			if (!(pit.flag[ch] & 2)) {
-				pit.value[ch].w &= 0xff00;
-				pit.value[ch].w += value;
+				pit.value[ch] &= 0xff00;
+				pit.value[ch] += value;
 				pit.flag[ch] ^= 2;
 				return(TRUE);
 			}
-			pit.value[ch].w &= 0x00ff;
-			pit.value[ch].w += value << 8;
+			pit.value[ch] &= 0x00ff;
+			pit.value[ch] += value << 8;
 			pit.flag[ch] ^= 2;
 			break;
 	}
@@ -183,30 +183,27 @@ BOOL itimer_setcount(int ch, BYTE value) {
 BYTE itimer_getcount(int ch) {
 
 	BYTE	ret;
-	union {
-		BYTE	b[2];
-		UINT16	w;
-	} tim;
+	UINT16	w;
 
 	if (!(pit.mode[ch] & 0x30)) {
-		tim.w = pit.latch[ch].w;
+		w = pit.latch[ch];
 	}
 	else {
-		tim.w = itimer_latch(ch);									// ver0.30
+		w = itimer_latch(ch);
 	}
 	switch(pit.mode[ch] & 0x30) {
 		case 0x10:						// access low
-			return((BYTE)tim.w);
+			return((BYTE)w);
 
 		case 0x20:						// access high
-			return((BYTE)(tim.w >> 8));
+			return((BYTE)(w >> 8));
 	}
 										// access word
 	if (!(pit.flag[ch] & 1)) {
-		ret = (BYTE)tim.w;
+		ret = (BYTE)w;
 	}
 	else {
-		ret = (BYTE)(tim.w >> 8);
+		ret = (BYTE)(w >> 8);
 	}
 	pit.flag[ch] ^= 1;
 	return(ret);
@@ -238,7 +235,7 @@ static void IOOUTCALL pit_o73(UINT port, BYTE dat) {
 		beep_lheventset(1);
 	}
 	else {
-		beep_hzset(pit.value[1].w);
+		beep_hzset(pit.value[1]);
 	}
 	(void)port;
 }
@@ -294,17 +291,17 @@ void itimer_reset(void) {
 
 	ZeroMemory(&pit, sizeof(pit));
 	if (pc.cpumode & CPUMODE_8MHz) {
-		pit.value[1].w = 998;			// 4MHz
+		pit.value[1] = 998;				// 4MHz
 	}
 	else {
-		pit.value[1].w = 1229;			// 5MHz
+		pit.value[1] = 1229;			// 5MHz
 	}
 	pit.mode[0] = 0x30;
 	pit.mode[1] = 0x56;
 	pit.mode[2] = 0xb6;
 	pit.mode[3] = 0x36;
 	setsystimerevent(NEVENT_ABSOLUTE);
-	beep_hzset(pit.value[1].w);
+	beep_hzset(pit.value[1]);
 }
 
 void itimer_bind(void) {

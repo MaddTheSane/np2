@@ -40,15 +40,15 @@ void tms3631_setvol(const BYTE *vol) {
 	UINT	j;
 	SINT32	data;
 
-	tms3631cfg.left = (vol[0] & 15) << 6;
-	tms3631cfg.right = (vol[1] & 15) << 6;
+	tms3631cfg.left = (vol[0] & 15) << 5;
+	tms3631cfg.right = (vol[1] & 15) << 5;
 	vol += 2;
 	for (i=0; i<16; i++) {
 		data = 0;
 		for (j=0; j<4; j++) {
 			data += (vol[j] & 15) * ((i & (1 << j))?1:-1);
 		}
-		tms3631cfg.feet[i] = data << 6;
+		tms3631cfg.feet[i] = data << 5;
 	}
 }
 

@@ -1,16 +1,10 @@
 
 typedef struct {
-	BYTE		mode[4];
-	BYTE		flag[4];
-	BYTE		high[4];
-	union {
-		BYTE	b[2];
-		UINT16	w;
-	} value[4];
-	union {
-		BYTE	b[2];
-		UINT16	w;
-	} latch[4];
+	BYTE	mode[4];
+	BYTE	flag[4];
+	BYTE	high[4];
+	UINT16	value[4];
+	UINT16	latch[4];
 } _PIT, *PIT;
 
 

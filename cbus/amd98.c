@@ -11,8 +11,8 @@ static void setamd98event(BOOL absolute) {
 
 	SINT32	cnt;
 
-	if (pit.value[3].w > 8) {					// ª‹’‚È‚µ
-		cnt = pc.multiple * pit.value[3].w;
+	if (pit.value[3] > 8) {						// ª‹’‚È‚µ
+		cnt = pc.multiple * pit.value[3];
 	}
 	else {
 		cnt = pc.multiple << 16;

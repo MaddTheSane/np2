@@ -7,18 +7,112 @@
 #include	"fmboard.h"
 
 
+// Ç«Ç§Ç‡ 8253C-2ÇÕ 4MHz/16ÇÁÇ∑Ç¢ÅH
+// Ç∆ÇËÇ†Ç¶Ç∏ 1996800/8Çì¸óÕÇµÇƒÇ›ÇÈ... (ver0.71)
+
+
+// ---- 8253C-2
+
+static UINT16 pit3_latch(void) {
+
+	SINT32	clock;
+
+	clock = nevent_getremain(NEVENT_MUSICGEN);
+	if (clock >= 0) {
+		clock /= pc.multiple;
+		clock /= 8;
+		if (pc.baseclock == PCBASECLOCK25) {
+			clock = clock * 13 / 16;
+		}
+		return((UINT16)clock);
+	}
+	return(0);
+}
+
+static void pit3_setflag(BYTE value) {
+
+	pit.flag[3] = 0;
+	if (value & 0x30) {
+		pit.mode[3] = value;
+	}
+	else {
+		pit.mode[3] &= ~0x30;
+		pit.latch[3] = pit3_latch();
+	}
+}
+
+static BOOL pit3_setcount(BYTE value) {
+
+	switch(pit.mode[3] & 0x30) {
+		case 0x10:		// access low
+			pit.value[3] = value;
+			break;
+
+		case 0x20:		// access high
+			pit.value[3] = value << 8;
+			break;
+
+		case 0x30:		// access word
+			if (!(pit.flag[3] & 2)) {
+				pit.value[3] &= 0xff00;
+				pit.value[3] += value;
+				pit.flag[3] ^= 2;
+				return(TRUE);
+			}
+			pit.value[3] &= 0x00ff;
+			pit.value[3] += value << 8;
+			pit.flag[3] ^= 2;
+			break;
+	}
+	return(FALSE);
+}
+
+static BYTE pit3_getcount(void) {
+
+	BYTE	ret;
+	UINT16	w;
+
+	if (!(pit.mode[3] & 0x30)) {
+		w = pit.latch[3];
+	}
+	else {
+		w = pit3_latch();
+	}
+	switch(pit.mode[3] & 0x30) {
+		case 0x10:						// access low
+			return((BYTE)w);
+
+		case 0x20:						// access high
+			return((BYTE)(w >> 8));
+	}
+										// access word
+	if (!(pit.flag[3] & 1)) {
+		ret = (BYTE)w;
+	}
+	else {
+		ret = (BYTE)(w >> 8);
+	}
+	pit.flag[3] ^= 1;
+	return(ret);
+}
+
+
 // ---- intr
 
 static void setmusicgenevent(BOOL absolute) {
 
 	SINT32	cnt;
 
-	if (pit.value[3].w > 8) {						// ç™ãíÇ»Çµ
-		cnt = pc.multiple * pit.value[3].w;
+	if (pit.value[3] > 4) {						// ç™ãíÇ»Çµ
+		cnt = pc.multiple * pit.value[3];
 	}
 	else {
 		cnt = pc.multiple << 16;
 	}
+	if (pc.baseclock == PCBASECLOCK25) {
+		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
+	}
+	cnt *= 8;
 	nevent_set(NEVENT_MUSICGEN, cnt, musicgenint, absolute);
 }
 
@@ -81,14 +175,15 @@ static void IOOUTCALL musicgen_o188(UINT port, BYTE dat) {
 
 static void IOOUTCALL musicgen_o18c(UINT port, BYTE dat) {
 
-	itimer_setcount(3, dat);
-	setmusicgenevent(NEVENT_ABSOLUTE);
+	if (!pit3_setcount(dat)) {
+		setmusicgenevent(NEVENT_ABSOLUTE);
+	}
 	(void)port;
 }
 
 static void IOOUTCALL musicgen_o18e(UINT port, BYTE dat) {
 
-	itimer_setflag(3, dat);
+	pit3_setflag(dat);
 	(void)port;
 }
 
@@ -125,13 +220,17 @@ static BYTE IOINPCALL musicgen_i188(UINT port) {
 static BYTE IOINPCALL musicgen_i18c(UINT port) {
 
 	(void)port;
-	return(itimer_getcount(3));
+	return(pit3_getcount());
 }
 
 static BYTE IOINPCALL musicgen_i18e(UINT port) {
 
 	(void)port;
+#if 1
+	return(0x80);					// INT-5
+#else
 	return(0x40);					// INT-5
+#endif
 }
 
 
