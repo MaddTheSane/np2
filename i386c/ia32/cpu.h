@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.20 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.21 2004/03/06 18:07:37 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -542,9 +542,6 @@ void ia32_setextsize(UINT32 size);
 void ia32reset(void);
 void ia32shut(void);
 void ia32(void);
-void ia32withtrap(void);
-void ia32withdma(void);
-
 void ia32_step(void);
 void CPUCALL ia32_interrupt(int vect);
 void CPUCALL ia32_exception(int vect, int p1, int p2);

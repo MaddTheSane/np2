@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.14 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: interface.c,v 1.15 2004/03/06 18:07:37 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -31,6 +31,8 @@
 #include "cpu.h"
 #include "ia32.mcr"
 
+#include "pccore.h"
+#include "iocore.h"
 #include "dmap.h"
 #include "bios.h"
 #if defined(IA32_REBOOT_ON_PANIC)
@@ -115,69 +117,24 @@ ia32(void)
 		break;
 	}
 
-	do {
-		exec_1step();
-	} while (CPU_REMCLOCK > 0);
-}
-
-void
-ia32withtrap(void)
-{
-	int rv;
-
-	rv = sigsetjmp(exec_1step_jmpbuf, 1);
-	switch (rv) {
-	case 0:
-		break;
-
-	case 1:
-		VERBOSE(("ia32withtrap: return from exception"));
-		break;
-
-	case 2:
-		VERBOSE(("ia32withtrap: return from panic"));
-		return;
-
-	default:
-		VERBOSE(("ia32withtrap: return from unknown cause"));
-		break;
+	if (CPU_TRAP) {
+		do {
+			exec_1step();
+			if (CPU_TRAP) {
+				ia32_interrupt(1);
+			}
+			dmap_i286();
+		} while (CPU_REMCLOCK > 0);
+	} else if (dmac.working) {
+		do {
+			exec_1step();
+			dmap_i286();
+		} while (CPU_REMCLOCK > 0);
+	} else {
+		do {
+			exec_1step();
+		} while (CPU_REMCLOCK > 0);
 	}
-
-	do {
-		exec_1step();
-		if (CPU_TRAP) {
-			ia32_interrupt(1);
-		}
-	} while (CPU_REMCLOCK > 0);
-}
-
-void
-ia32withdma(void)
-{
-	int rv;
-
-	rv = sigsetjmp(exec_1step_jmpbuf, 1);
-	switch (rv) {
-	case 0:
-		break;
-
-	case 1:
-		VERBOSE(("ia32withdma: return from exception"));
-		break;
-
-	case 2:
-		VERBOSE(("ia32withdma: return from panic"));
-		return;
-
-	default:
-		VERBOSE(("ia32withdma: return from unknown cause"));
-		break;
-	}
-
-	do {
-		exec_1step();
-		dmap_i286();
-	} while (CPU_REMCLOCK > 0);
 }
 
 void
