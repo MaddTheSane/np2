@@ -6,7 +6,9 @@
 #define	TRACEINIT()
 #define	TRACETERM()
 #define	TRACEOUT(a)
-#define	VERBOSE(a)
+#ifndef	VERBOSE
+#define	VERBOSE(s)
+#endif
 
 #else
 
@@ -21,7 +23,9 @@ void trace_fmt(const char *str, ...);
 #define	TRACEINIT()		trace_init()
 #define	TRACETERM()		trace_term()
 #define	TRACEOUT(arg)	trace_fmt arg
+#ifndef	VERBOSE
 #define	VERBOSE(arg)	trace_fmt arg
+#endif
 
 #ifdef	__cplusplus
 };
