@@ -682,10 +682,10 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_SKINSEL:
-					soundmng_stop();
+					soundmng_disable(SNDPROC_TOOL);
 					r = dlgs_selectfile(hWnd, &skinui, np2tool.skin,
 											sizeof(np2tool.skin), NULL);
-					soundmng_play();
+					soundmng_enable(SNDPROC_TOOL);
 					if (r) {
 						changeskin(hWnd);
 						sysmng_update(SYS_UPDATEOSCFG);
@@ -706,9 +706,9 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1BROWSE:
-					soundmng_stop();
+					soundmng_disable(SNDPROC_TOOL);
 					dialog_changefdd(hWnd, 0);
-					soundmng_play();
+					soundmng_enable(SNDPROC_TOOL);
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1EJECT:
@@ -723,9 +723,9 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2BROWSE:
-					soundmng_stop();
+					soundmng_disable(SNDPROC_TOOL);
 					dialog_changefdd(hWnd, 1);
-					soundmng_play();
+					soundmng_enable(SNDPROC_TOOL);
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2EJECT:
@@ -749,20 +749,20 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_ENTERMENULOOP:
-			soundmng_stop();
+			soundmng_disable(SNDPROC_TOOL);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_play();
+			soundmng_enable(SNDPROC_TOOL);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_stop();
+			soundmng_disable(SNDPROC_TOOL);
 			movingstart();
 			break;
 
 		case WM_EXITSIZEMOVE:
-			soundmng_play();
+			soundmng_enable(SNDPROC_TOOL);
 			break;
 
 		case WM_MOVING:
@@ -809,7 +809,7 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 
 	WNDCLASS wc;
 
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = twproc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
@@ -873,7 +873,6 @@ void toolwin_close(void) {
 	}
 }
 
-#if 1
 void toolwin_movingstart(void) {
 
 	RECT	mainrc;
@@ -974,46 +973,6 @@ void toolwin_movingend(void) {
 	}
 	MoveWindow(toolwin.hwnd, toolrc.left, toolrc.top, cx, cy, TRUE);
 }
-#else
-void toolwin_movingstart(void) {
-
-	RECT	mainrc;
-	RECT	toolrc;
-
-	if (toolwin.hwnd == NULL) {
-		return;
-	}
-	GetWindowRect(hWndMain, &mainrc);
-	GetWindowRect(toolwin.hwnd, &toolrc);
-	if (((toolrc.right >= mainrc.left) && (toolrc.left <= mainrc.right) &&
-		((toolrc.bottom == mainrc.top) || (toolrc.top == mainrc.bottom))) ||
-		((toolrc.bottom >= mainrc.top) && (toolrc.top <= mainrc.bottom) &&
-		((toolrc.right == mainrc.left) || (toolrc.left == mainrc.right)))) {
-		toolwin.parentcn = 1;
-		toolwin.parentx = mainrc.left;
-		toolwin.parenty = mainrc.top;
-	}
-}
-
-void toolwin_movingend(void) {
-
-	RECT	mainrc;
-	RECT	toolrc;
-	int		dx;
-	int		dy;
-
-	if ((toolwin.hwnd) && (toolwin.parentcn)) {
-		GetWindowRect(hWndMain, &mainrc);
-		GetWindowRect(toolwin.hwnd, &toolrc);
-		dx = mainrc.left - toolwin.parentx;
-		dy = mainrc.top - toolwin.parenty;
-		MoveWindow(toolwin.hwnd, toolrc.left + dx, toolrc.top + dy,
-								toolrc.right - toolrc.left,
-								toolrc.bottom - toolrc.top, TRUE);
-	}
-	toolwin.parentcn = 0;
-}
-#endif
 
 void toolwin_setfdd(BYTE drv, const char *name) {
 

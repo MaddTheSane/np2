@@ -712,6 +712,10 @@ SOURCE=.\DIALOG\D_SOUND.CPP
 
 SOURCE=.\DIALOG\DIALOGS.CPP
 # End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\NP2CLASS.CPP
+# End Source File
 # End Group
 # Begin Group "keydisp"
 
@@ -1252,5 +1256,13 @@ SOURCE=.\ICONS\Np2.ico
 SOURCE=.\ICONS\NP2DEBUG.ICO
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\ICONS\Fddseek.wav
+# End Source File
+# Begin Source File
+
+SOURCE=.\ICONS\Fddseek1.wav
+# End Source File
 # End Target
 # End Project

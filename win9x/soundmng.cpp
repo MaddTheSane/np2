@@ -38,7 +38,7 @@ static	LPDIRECTSOUNDBUFFER	pDSData3;
 static	UINT				dsstreambytes;
 static	BYTE				dsstreamevent;
 static	LPDIRECTSOUNDBUFFER pDSwave3[SOUND_MAXPCM];
-static	BYTE				mute;
+static	UINT				mute;
 static	void				(PARTSCALL *fnmix)(SINT16 *dst,
 												const SINT32 *src, UINT size);
 
@@ -465,21 +465,24 @@ void soundmng_deinitialize(void) {
 
 // ----
 
-void soundmng_enable(void) {
+void soundmng_enable(UINT proc) {
 
-	if (mute) {
-		mute = 0;
+	if (!(mute & (1 << proc))) {
+		return;
+	}
+	mute &= ~(1 << proc);
+	if (!mute) {
 		soundmng_reset();
 		streamenable(TRUE);
 	}
 }
 
-void soundmng_disable(void) {
+void soundmng_disable(UINT proc) {
 
 	if (!mute) {
-		mute = 1;
 		streamenable(FALSE);
 		pcmstop();
 	}
+	mute |= 1 << proc;
 }
 

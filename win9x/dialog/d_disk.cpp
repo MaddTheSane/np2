@@ -48,11 +48,16 @@ static const FILESEL newdiskui = {newdisk_title, str_d88, newdisk_filter, 1};
 
 void dialog_changefdd(HWND hWnd, BYTE drv) {
 
+const char	*p;
 	char	path[MAX_PATH];
 	int		readonly;
 
 	if (drv < 4) {
-		file_cpyname(path, fdd_diskname(drv), sizeof(path));
+		p = fdd_diskname(drv);
+		if ((p == NULL) || (p[0] == '\0')) {
+			p = fddfolder;
+		}
+		file_cpyname(path, p, sizeof(path));
 		if (dlgs_selectfile(hWnd, &fddui, path, sizeof(path), &readonly)) {
 			file_cpyname(fddfolder, path, sizeof(fddfolder));
 			sysmng_update(SYS_UPDATEOSCFG);
@@ -64,10 +69,15 @@ void dialog_changefdd(HWND hWnd, BYTE drv) {
 
 void dialog_changehdd(HWND hWnd, BYTE drv) {
 
+const char	*p;
 	char	path[MAX_PATH];
 
 	if (drv < 2) {
-		file_cpyname(path, np2cfg.hddfile[drv], sizeof(path));
+		p = np2cfg.hddfile[drv];
+		if ((p == NULL) || (p[0] == '\0')) {
+			p = hddfolder;
+		}
+		file_cpyname(path, p, sizeof(path));
 		if (dlgs_selectfile(hWnd, &hddui, path, sizeof(path), NULL)) {
 			file_cpyname(hddfolder, path, sizeof(hddfolder));
 			sysmng_update(SYS_UPDATEOSCFG);

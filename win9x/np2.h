@@ -122,7 +122,6 @@ extern	char		modulefile[MAX_PATH];
 extern	char		fddfolder[MAX_PATH];
 extern	char		hddfolder[MAX_PATH];
 extern	char		bmpfilefolder[MAX_PATH];
-extern	char		mimpideffile[MAX_PATH];
 
 void np2active_renewal(void);
 

@@ -747,9 +747,10 @@ void dialog_serial(HWND hWnd) {
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
-	psh.dwFlags = PSH_NOAPPLYNOW;
+	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON;
 	psh.hwndParent = hWnd;
 	psh.hInstance = hinst;
+	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_seropt;

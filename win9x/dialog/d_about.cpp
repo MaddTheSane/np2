@@ -1,13 +1,16 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"np2class.h"
 #include	"np2info.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
 
 
-static	RECT	aboutrct;
+static	SIZE	aboutsize;
+
+static const char str_np2title[] = "Neko Project II  ";
 static const char np2infostr[] = 									\
 						"CPU: !CPU !CLOCK\r\n"						\
 						"MEM: !MEM1\r\n"							\
@@ -22,34 +25,40 @@ static const char np2infostr[] = 									\
 						"SCREEN: !DISP";
 
 
-// ----
-
 static void about_init(HWND hWnd) {
 
 	char	work[128];
+	RECT	rect;
+	POINT	pt;
+	RECT	parent;
 
-	strcpy(work, "Neko Project II  ");
-	strcat(work, np2version);
-#ifdef NEW286
-	strcat(work, "+");
-#endif
+	milstr_ncpy(work, str_np2title, sizeof(work));
+	milstr_ncat(work, np2version, sizeof(work));
 	SetDlgItemText(hWnd, IDC_NP2VER, work);
-	GetWindowRect(hWnd, &aboutrct);
-	MoveWindow(hWnd, aboutrct.left, aboutrct.top,
-								aboutrct.right - aboutrct.left, 84, TRUE);
+	GetWindowRect(hWnd, &rect);
+	aboutsize.cx = rect.right - rect.left;
+	aboutsize.cy = rect.bottom - rect.top;
+	pt.x = 0;
+	pt.y = 0;
+	ClientToScreen(GetParent(hWnd), &pt);
+	GetClientRect(GetParent(hWnd), &parent);
+	np2class_move(hWnd,
+					pt.x + ((parent.right - parent.left - aboutsize.cx) / 2),
+					pt.y + ((parent.bottom - parent.top - 84) / 2),
+					aboutsize.cx, 84);
 	SetFocus(GetDlgItem(hWnd, IDOK));
 }
 
 static void about_more(HWND hWnd) {
 
 	char	infostr[1024];
+	RECT	rect;
 
 	np2info(infostr, np2infostr, sizeof(infostr));
 	SetDlgItemText(hWnd, IDC_NP2INFO, infostr);
 	EnableWindow(GetDlgItem(hWnd, IDC_MORE), FALSE);
-	MoveWindow(hWnd, aboutrct.left, aboutrct.top,
-							aboutrct.right - aboutrct.left,
-							aboutrct.bottom - aboutrct.top, TRUE);
+	GetWindowRect(hWnd, &rect);
+	np2class_move(hWnd, rect.left, rect.top, aboutsize.cx, aboutsize.cy);
 	SetFocus(GetDlgItem(hWnd, IDOK));
 }
 
@@ -57,7 +66,6 @@ LRESULT CALLBACK AboutDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	switch (msg) {
 		case WM_INITDIALOG:
-			ShowWindow(GetDlgItem(hWnd, IDC_EXTICON), SW_HIDE);
 			about_init(hWnd);
 			return(FALSE);
 
@@ -66,9 +74,11 @@ LRESULT CALLBACK AboutDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				case IDOK:
 					EndDialog(hWnd, IDOK);
 					break;
+
 				case IDC_MORE:
 					about_more(hWnd);
 					break;
+
 				default:
 					return(FALSE);
 			}

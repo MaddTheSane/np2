@@ -28,6 +28,7 @@
 #ifdef USE_ROMEO
 #include	"juliet.h"
 #endif
+#include	"np2class.h"
 #include	"dialog.h"
 #include	"memory.h"
 #include	"pccore.h"
@@ -75,7 +76,6 @@ static	char		szClassName[] = "NP2-MainWindow";
 		char	fddfolder[MAX_PATH];
 		char	hddfolder[MAX_PATH];
 		char	bmpfilefolder[MAX_PATH];
-		char	mimpideffile[MAX_PATH];
 		char	modulefile[MAX_PATH];
 
 static	UINT	framecnt = 0;
@@ -92,6 +92,19 @@ static const char np2resume[] = "sav";
 
 
 static	BYTE	scrnmode;
+
+
+static void winuienter(void) {
+
+	soundmng_disable(SNDPROC_MAIN);
+	scrnmng_topwinui();
+}
+
+static void winuileave(void) {
+
+	scrnmng_clearwinui();
+	soundmng_enable(SNDPROC_MAIN);
+}
 
 static void changescreen(BYTE newmode) {
 
@@ -167,7 +180,7 @@ void np2active_renewal(void) {									// ver0.30
 
 	if (np2break & (~NP2BREAK_MAIN)) {
 		np2stopemulate = 2;
-		soundmng_disable();
+		soundmng_disable(SNDPROC_MASTER);
 	}
 	else if (np2break & NP2BREAK_MAIN) {
 		if (np2oscfg.background & 1) {
@@ -177,15 +190,15 @@ void np2active_renewal(void) {									// ver0.30
 			np2stopemulate = 0;
 		}
 		if (np2oscfg.background) {
-			soundmng_disable();
+			soundmng_disable(SNDPROC_MASTER);
 		}
 		else {
-			soundmng_enable();
+			soundmng_enable(SNDPROC_MASTER);
 		}
 	}
 	else {
 		np2stopemulate = 0;
-		soundmng_enable();
+		soundmng_enable(SNDPROC_MASTER);
 	}
 }
 
@@ -228,8 +241,7 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 	char	buf[1024];
 
 	getstatfilename(path, ext, sizeof(path));
-	soundmng_stop();
-	scrnmng_topwinui();
+	winuienter();
 	id = IDYES;
 	ret = statsave_check(path, buf, sizeof(buf));
 	if (ret & (~NP2FLAG_DISKCHG)) {
@@ -249,25 +261,12 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 	}
 	sysmng_workclockreset();
 	sysmng_updatecaption(1);
-	scrnmng_clearwinui();
-	soundmng_play();
+	winuileave();
 	return(id);
 }
 
 
 // ---- proc
-
-static void winuienter(void) {
-
-	soundmng_stop();
-	scrnmng_topwinui();
-}
-
-static void winuileave(void) {
-
-	scrnmng_clearwinui();
-	soundmng_play();
-}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -909,7 +908,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_stop();
+			soundmng_disable(SNDPROC_MAIN);
 			mouse_running(MOUSE_STOP);
 			winloc_movingstart();
 			toolwin_movingstart();
@@ -918,7 +917,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_EXITSIZEMOVE:
 			toolwin_movingend();
 			mouse_running(MOUSE_CONT);
-			soundmng_play();
+			soundmng_enable(SNDPROC_MAIN);
 			break;
 
 		case WM_MOVING:
@@ -1180,6 +1179,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	keystat_reset();
 
+	np2class_initialize(hInstance);
 	if (!hPreInst) {
 		np2.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
 		np2.lpfnWndProc = WndProc;
@@ -1194,8 +1194,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		if (!RegisterClass(&np2)) {
 			return(FALSE);
 		}
-		toolwin_initapp(hInstance);
 	}
+	toolwin_initapp(hInstance);
 	keydisp_initialize(hPreInst);
 	viewer_init(hPreInst);										// ver0.30
 

@@ -1072,10 +1072,11 @@ void dialog_sndopt(HWND hWnd) {
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
-	psh.dwFlags = PSH_NOAPPLYNOW;
+	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON;
 	psh.hwndParent = hWnd;
 	psh.hInstance = hinst;
-	psh.nPages = 6;													// ver0.29
+	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
+	psh.nPages = 6;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_sndopt;
 	PropertySheet(&psh);

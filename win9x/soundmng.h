@@ -22,6 +22,10 @@ void soundmng_setreverse(BOOL reverse);
 BOOL soundmng_pcmplay(UINT num, BOOL loop);
 void soundmng_pcmstop(UINT num);
 
+#ifdef __cplusplus
+}
+#endif
+
 
 // ---- for windows
 
@@ -31,10 +35,12 @@ void soundmng_deinitialize(void);
 void soundmng_pcmload(UINT num, const char *filename, UINT type);
 void soundmng_pcmvolume(UINT num, int volume);
 
-void soundmng_enable(void);
-void soundmng_disable(void);
+enum {
+	SNDPROC_MASTER		= 0,
+	SNDPROC_MAIN,
+	SNDPROC_TOOL
+};
 
-#ifdef __cplusplus
-}
-#endif
+void soundmng_enable(UINT proc);
+void soundmng_disable(UINT proc);
 
