@@ -1054,31 +1054,31 @@ const DISKACC	*accterm;
 
 static const OEMCHAR ini_title[] = OEMTEXT("NP2 tool");
 
-static const INITBL iniitem[] = {
-	{"WindposX", INITYPE_SINT32,	&np2tool.posx,			0},
-	{"WindposY", INITYPE_SINT32,	&np2tool.posy,			0},
-	{"WindType", INITYPE_BOOL,		&np2tool.type,			0},
-	{"SkinFile", INITYPE_STR,		np2tool.skin,			MAX_PATH},
-	{"SkinMRU0", INITYPE_STR,		np2tool.skinmru[0],		MAX_PATH},
-	{"SkinMRU1", INITYPE_STR,		np2tool.skinmru[1],		MAX_PATH},
-	{"SkinMRU2", INITYPE_STR,		np2tool.skinmru[2],		MAX_PATH},
-	{"SkinMRU3", INITYPE_STR,		np2tool.skinmru[3],		MAX_PATH},
-	{"FD1NAME0", INITYPE_STR,		np2tool.fdd[0].name[0],	MAX_PATH},
-	{"FD1NAME1", INITYPE_STR,		np2tool.fdd[0].name[1],	MAX_PATH},
-	{"FD1NAME2", INITYPE_STR,		np2tool.fdd[0].name[2],	MAX_PATH},
-	{"FD1NAME3", INITYPE_STR,		np2tool.fdd[0].name[3],	MAX_PATH},
-	{"FD1NAME4", INITYPE_STR,		np2tool.fdd[0].name[4],	MAX_PATH},
-	{"FD1NAME5", INITYPE_STR,		np2tool.fdd[0].name[5],	MAX_PATH},
-	{"FD1NAME6", INITYPE_STR,		np2tool.fdd[0].name[6],	MAX_PATH},
-	{"FD1NAME7", INITYPE_STR,		np2tool.fdd[0].name[7],	MAX_PATH},
-	{"FD2NAME0", INITYPE_STR,		np2tool.fdd[1].name[0],	MAX_PATH},
-	{"FD2NAME1", INITYPE_STR,		np2tool.fdd[1].name[1],	MAX_PATH},
-	{"FD2NAME2", INITYPE_STR,		np2tool.fdd[1].name[2],	MAX_PATH},
-	{"FD2NAME3", INITYPE_STR,		np2tool.fdd[1].name[3],	MAX_PATH},
-	{"FD2NAME4", INITYPE_STR,		np2tool.fdd[1].name[4],	MAX_PATH},
-	{"FD2NAME5", INITYPE_STR,		np2tool.fdd[1].name[5],	MAX_PATH},
-	{"FD2NAME6", INITYPE_STR,		np2tool.fdd[1].name[6],	MAX_PATH},
-	{"FD2NAME7", INITYPE_STR,		np2tool.fdd[1].name[7],	MAX_PATH}};
+static const PFTBL iniitem[] = {
+	PFVAL("WindposX", PFTYPE_SINT32,	&np2tool.posx),
+	PFVAL("WindposY", PFTYPE_SINT32,	&np2tool.posy),
+	PFVAL("WindType", PFTYPE_BOOL,		&np2tool.type),
+	PFSTR("SkinFile", PFTYPE_STR,		np2tool.skin),
+	PFSTR("SkinMRU0", PFTYPE_STR,		np2tool.skinmru[0]),
+	PFSTR("SkinMRU1", PFTYPE_STR,		np2tool.skinmru[1]),
+	PFSTR("SkinMRU2", PFTYPE_STR,		np2tool.skinmru[2]),
+	PFSTR("SkinMRU3", PFTYPE_STR,		np2tool.skinmru[3]),
+	PFSTR("FD1NAME0", PFTYPE_STR,		np2tool.fdd[0].name[0]),
+	PFSTR("FD1NAME1", PFTYPE_STR,		np2tool.fdd[0].name[1]),
+	PFSTR("FD1NAME2", PFTYPE_STR,		np2tool.fdd[0].name[2]),
+	PFSTR("FD1NAME3", PFTYPE_STR,		np2tool.fdd[0].name[3]),
+	PFSTR("FD1NAME4", PFTYPE_STR,		np2tool.fdd[0].name[4]),
+	PFSTR("FD1NAME5", PFTYPE_STR,		np2tool.fdd[0].name[5]),
+	PFSTR("FD1NAME6", PFTYPE_STR,		np2tool.fdd[0].name[6]),
+	PFSTR("FD1NAME7", PFTYPE_STR,		np2tool.fdd[0].name[7]),
+	PFSTR("FD2NAME0", PFTYPE_STR,		np2tool.fdd[1].name[0]),
+	PFSTR("FD2NAME1", PFTYPE_STR,		np2tool.fdd[1].name[1]),
+	PFSTR("FD2NAME2", PFTYPE_STR,		np2tool.fdd[1].name[2]),
+	PFSTR("FD2NAME3", PFTYPE_STR,		np2tool.fdd[1].name[3]),
+	PFSTR("FD2NAME4", PFTYPE_STR,		np2tool.fdd[1].name[4]),
+	PFSTR("FD2NAME5", PFTYPE_STR,		np2tool.fdd[1].name[5]),
+	PFSTR("FD2NAME6", PFTYPE_STR,		np2tool.fdd[1].name[6]),
+	PFSTR("FD2NAME7", PFTYPE_STR,		np2tool.fdd[1].name[7])};
 
 void toolwin_readini(void) {
 

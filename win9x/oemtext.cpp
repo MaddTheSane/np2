@@ -1,7 +1,8 @@
 #include	"compiler.h"
+#include	"oemtext.h"
 
 #if defined(OSLANG_UTF8)
-UINT oemtext_sjistooem(char *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_sjistooem(OEMCHAR *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
 	UINT16	*ucs2;
@@ -23,7 +24,7 @@ UINT oemtext_sjistooem(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	return(ret);
 }
 
-UINT oemtext_oemtosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_oemtosjis(char *dst, UINT dcnt, const OEMCHAR *src, UINT scnt) {
 
 	UINT	leng;
 	UINT16	*ucs2;
@@ -43,6 +44,16 @@ UINT oemtext_oemtosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	ret = WideCharToMultiByte(CP_ACP, 0, ucs2, leng, dst, dcnt, NULL, NULL);
 	_MFREE(ucs2);
 	return(ret);
+}
+#elif defined(OSLANG_UCS2)
+UINT oemtext_sjistooem(OEMCHAR *dst, UINT dcnt, const char *src, UINT scnt) {
+
+	return(MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, -1, dst, dcnt));
+}
+
+UINT oemtext_oemtosjis(char *dst, UINT dcnt, const OEMCHAR *src, UINT scnt) {
+
+	return(WideCharToMultiByte(CP_ACP, 0, src, -1, dst, dcnt, NULL, NULL));
 }
 #endif
 

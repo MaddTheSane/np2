@@ -63,11 +63,11 @@ static const OEMCHAR str_kdclose[] = OEMTEXT("&Close");
 static const UINT32 kdisppal[KEYDISP_PALS] =
 									{0x00000000, 0xffffffff, 0xf9ff0000};
 
-static const INITBL kdispini[] = {
-	{"WindposX", INITYPE_SINT32,	&kdispcfg.posx,			0},
-	{"WindposY", INITYPE_SINT32,	&kdispcfg.posy,			0},
-	{"keydmode", INITYPE_UINT8,		&kdispcfg.mode,			0},
-	{"windtype", INITYPE_BOOL,		&kdispcfg.type,			0}};
+static const PFTBL kdispini[] = {
+				PFVAL("WindposX", PFTYPE_SINT32,	&kdispcfg.posx),
+				PFVAL("WindposY", PFTYPE_SINT32,	&kdispcfg.posy),
+				PFVAL("keydmode", PFTYPE_UINT8,		&kdispcfg.mode),
+				PFVAL("windtype", PFTYPE_BOOL,		&kdispcfg.type)};
 
 
 static UINT8 kdgetpal8(CMNPALFN *self, UINT num) {
@@ -429,9 +429,9 @@ static	MDBGCFG		mdbgcfg;
 static const OEMCHAR mdbgapp[] = OEMTEXT("Memory Map");
 static const OEMCHAR mdbgclass[] = OEMTEXT("NP2-MemDbgWin");
 static const INITBL mdbgini[] = {
-	{"WindposX", INITYPE_SINT32,	&mdbgcfg.posx,			0},
-	{"WindposY", INITYPE_SINT32,	&mdbgcfg.posy,			0},
-	{"windtype", INITYPE_BOOL,		&mdbgcfg.type,			0}};
+				PFVAL("WindposX", PFTYPE_SINT32,	&mdbgcfg.posx),
+				PFVAL("WindposY", PFTYPE_SINT32,	&mdbgcfg.posy),
+				PFVAL("windtype", PFTYPE_BOOL,		&mdbgcfg.type)};
 
 
 static void mdpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
@@ -685,10 +685,10 @@ static	SKBDCFG		skbdcfg;
 
 static const OEMCHAR skbdapp[] = OEMTEXT("Soft Keyboard");
 static const OEMCHAR skbdclass[] = OEMTEXT("NP2-SoftKBDWin");
-static const INITBL skbdini[] = {
-	{"WindposX", INITYPE_SINT32,	&skbdcfg.posx,			0},
-	{"WindposY", INITYPE_SINT32,	&skbdcfg.posy,			0},
-	{"windtype", INITYPE_BOOL,		&skbdcfg.type,			0}};
+static const PFTBL skbdini[] = {
+				PFVAL("WindposX", PFTYPE_SINT32,	&skbdcfg.posx),
+				PFVAL("WindposY", PFTYPE_SINT32,	&skbdcfg.posy),
+				PFVAL("windtype", PFTYPE_BOOL,		&skbdcfg.type)};
 
 static void skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 

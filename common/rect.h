@@ -1,8 +1,4 @@
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
 	int		x;
 	int		y;
@@ -33,6 +29,10 @@ typedef struct {
 	RECT_T	r;
 } UNIRECT;
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 BRESULT rect_in(const RECT_T *rect, int x, int y);
 int rect_num(const RECT_T *rect, int cnt, int x, int y);

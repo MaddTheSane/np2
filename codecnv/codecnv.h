@@ -1,5 +1,6 @@
-#ifndef _CODECNV_H
-#define	_CODECNV_H
+
+#if !defined(NP2_CODECNV_H__)
+#define	NP2_CODECNV_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,5 +20,5 @@ UINT codecnv_ucs2toutf8(char *dst, UINT dcnt, const UINT16 *src, UINT scnt);
 }
 #endif
 
-#endif
+#endif	// !defined(NP2_CODECNV_H__)
 

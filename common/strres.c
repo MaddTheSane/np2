@@ -2,6 +2,10 @@
 #include	"strres.h"
 
 
+const UINT8 str_utf8[3] = {0xef, 0xbb, 0xbf};
+const UINT16 str_ucs2[1] = {0xfeff};
+
+
 const OEMCHAR str_null[] = OEMTEXT("");
 const OEMCHAR str_space[] = OEMTEXT(" ");
 const OEMCHAR str_dot[] = OEMTEXT(".");

@@ -1,14 +1,15 @@
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct _la {
 	UINT	maxitems;
 	size_t	listsize;
 	UINT	items;
 struct _la	*laNext;
 } _LISTARRAY, *LISTARRAY;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 LISTARRAY listarray_new(size_t listsize, UINT maxitems);
 void listarray_clr(LISTARRAY laHandle);

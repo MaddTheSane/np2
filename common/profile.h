@@ -1,12 +1,15 @@
 
+#if !defined(NP2_PROFILE_H__)
+#define	NP2_PROFILE_H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-BOOL profile_enum(const char *filename, void *arg,
-							BOOL (*proc)(void *arg, const char *para,
-									const char *key, const char *data));
-const char *profile_getarg(const char *str, char *buf, UINT leng);
+BOOL profile_enum(const OEMCHAR *filename, void *arg,
+							BOOL (*proc)(void *arg, const OEMCHAR *para,
+								const OEMCHAR *key, const OEMCHAR *data));
+const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng);
 
 
 
@@ -19,19 +22,21 @@ enum {
 };
 
 typedef struct {
-	char	*buffer;
+	OEMCHAR	*buffer;
 	UINT	buffers;
 	UINT	size;
+	UINT8	hdr[4];
+	UINT	hdrsize;
 	UINT	flag;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 } _PFILEH, *PFILEH;
 
-PFILEH profile_open(const char *filename, UINT flag);
+PFILEH profile_open(const OEMCHAR *filename, UINT flag);
 void profile_close(PFILEH hdl);
-BOOL profile_read(const char *app, const char *key, const char *def,
-										char *ret, UINT size, PFILEH hdl);
-BOOL profile_write(const char *app, const char *key,
-											const char *data, PFILEH hdl);
+BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
+					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl);
+BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
+											const OEMCHAR *data, PFILEH hdl);
 
 
 enum {
@@ -48,9 +53,8 @@ enum {
 	PFTYPE_HEX8,
 	PFTYPE_HEX16,
 	PFTYPE_HEX32,
-	PFTYPE_BYTE3,
 	PFTYPE_USER,
-	PFITYPE_MASK		= 0xff,
+	PFTYPE_MASK			= 0xff,
 
 	PFFLAG_RO			= 0x0100,
 	PFFLAG_MAX			= 0x0200,
@@ -58,21 +62,29 @@ enum {
 };
 
 typedef struct {
-	char	item[10];
-	UINT16	itemtype;
+	OEMCHAR	item[12];
+	UINT	itemtype;
 	void	*value;
 	UINT32	arg;
 } PFTBL;
 
-typedef void (*PFREAD)(const PFTBL *item, const char *string);
-typedef char *(*PFWRITE)(const PFTBL *item, char *string, UINT size);
+#define	PFSTR(k, f, a)		{OEMTEXT(k), f, a, NELEMENTS(a)}
+#define	PFVAL(k, f, a)		{OEMTEXT(k), f, a, 0}
+#define	PFMAX(k, f, a, v)	{OEMTEXT(k), f | PFFLAG_MAX, a, v}
+#define	PFAND(k, f, a, v)	{OEMTEXT(k), f | PFFLAG_AND, a, v}
+#define	PFEXT(k, f, a, v)	{OEMTEXT(k), f, a, v}
 
-void profile_iniread(const char *path, const char *app,
+typedef void (*PFREAD)(const PFTBL *item, const OEMCHAR *string);
+typedef OEMCHAR *(*PFWRITE)(const PFTBL *item, OEMCHAR *string, UINT size);
+
+void profile_iniread(const OEMCHAR *path, const OEMCHAR *app,
 								const PFTBL *tbl, UINT count, PFREAD cb);
-void profile_iniwrite(const char *path, const char *app,
+void profile_iniwrite(const OEMCHAR *path, const OEMCHAR *app,
 								const PFTBL *tbl, UINT count, PFWRITE cb);
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif	// defined(NP2_PROFILE_H__)
 

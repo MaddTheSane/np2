@@ -3,6 +3,9 @@
 extern "C" {
 #endif
 
+extern const UINT8 str_utf8[3];
+extern const UINT16 str_ucs2[1];
+
 extern const OEMCHAR str_null[];
 extern const OEMCHAR str_space[];
 extern const OEMCHAR str_dot[];

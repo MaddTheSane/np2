@@ -5,9 +5,9 @@
 #include	"profile.h"
 
 
-static void strdelspace(char **buf, int *size) {
+static void strdelspace(OEMCHAR **buf, int *size) {
 
-	char	*p;
+	OEMCHAR	*p;
 	int		len;
 
 	p = *buf;
@@ -23,13 +23,13 @@ static void strdelspace(char **buf, int *size) {
 	*size = len;
 }
 
-static char *profana(char *buf, char **data) {
+static OEMCHAR *profana(OEMCHAR *buf, OEMCHAR **data) {
 
 	int		len;
-	char	*buf2;
+	OEMCHAR	*buf2;
 	int		l;
 
-	len = strlen(buf);
+	len = OEMSTRLEN(buf);
 	strdelspace(&buf, &len);
 	if ((len >= 2) && (buf[0] == '[') && (buf[len - 1] == ']')) {
 		buf++;
@@ -62,15 +62,15 @@ static char *profana(char *buf, char **data) {
 	return(NULL);
 }
 
-BOOL profile_enum(const char *filename, void *arg,
-							BOOL (*proc)(void *arg, const char *para,
-									const char *key, const char *data)) {
+BOOL profile_enum(const OEMCHAR *filename, void *arg,
+							BOOL (*proc)(void *arg, const OEMCHAR *para,
+								const OEMCHAR *key, const OEMCHAR *data)) {
 	TEXTFILEH	fh;
 	BOOL		r;
-	char		buf[0x200];
-	char		para[0x100];
-	char		*key;
-	char		*data;
+	OEMCHAR		buf[0x200];
+	OEMCHAR		para[0x100];
+	OEMCHAR		*key;
+	OEMCHAR		*data;
 
 	r = FALSE;
 	if (proc == NULL) {
@@ -82,13 +82,13 @@ BOOL profile_enum(const char *filename, void *arg,
 	}
 	para[0] = '\0';
 	while(1) {
-		if (textfile_read(fh, buf, sizeof(buf)) != SUCCESS) {
+		if (textfile_read(fh, buf, NELEMENTS(buf)) != SUCCESS) {
 			break;
 		}
 		key = profana(buf, &data);
 		if (key) {
 			if (data == NULL) {
-				milstr_ncpy(para, key, sizeof(para));
+				milstr_ncpy(para, key, NELEMENTS(para));
 			}
 			else {
 				r = proc(arg, para, key, data);
@@ -107,7 +107,7 @@ gden_err0:
 
 // ----
 
-const char *profile_getarg(const char *str, char *buf, UINT leng) {
+const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng) {
 
 	UINT8	c;
 
@@ -149,16 +149,18 @@ const char *profile_getarg(const char *str, char *buf, UINT leng) {
 // ---- ‚Ü‚¾ƒeƒXƒg
 
 typedef struct {
-	UINT	applen;
-	UINT	keylen;
-	UINT	pos;
-	UINT	size;
-	UINT	apphit;
-const char	*data;
-	UINT	datasize;
+	UINT		applen;
+	UINT		keylen;
+	UINT		pos;
+	UINT		size;
+	UINT		apphit;
+const OEMCHAR	*data;
+	UINT		datasize;
 } PFPOS;
 
-static char *delspace(const char *buf, UINT *len) {
+#define	PFBUFSIZE	(1 << 8)
+
+static OEMCHAR *delspace(const OEMCHAR *buf, UINT *len) {
 
 	UINT	l;
 
@@ -173,15 +175,16 @@ static char *delspace(const char *buf, UINT *len) {
 		}
 		*len = l;
 	}
-	return((char *)buf);
+	return((OEMCHAR *)buf);
 }
 
-static BOOL seakey(PFILEH hdl, PFPOS *pfp, const char *app, const char *key) {
+static BRESULT seakey(PFILEH hdl, PFPOS *pfp, const OEMCHAR *app,
+														const OEMCHAR *key) {
 
 	PFPOS	ret;
 	UINT	pos;
 	UINT	size;
-	char	*buf;
+	OEMCHAR	*buf;
 	UINT	len;
 	UINT	cnt;
 
@@ -189,8 +192,8 @@ static BOOL seakey(PFILEH hdl, PFPOS *pfp, const char *app, const char *key) {
 		return(FAILURE);
 	}
 	ZeroMemory(&ret, sizeof(ret));
-	ret.applen = strlen(app);
-	ret.keylen = strlen(key);
+	ret.applen = OEMSTRLEN(app);
+	ret.keylen = OEMSTRLEN(key);
 	if ((ret.applen == 0) || (ret.keylen == 0)) {
 		return(FAILURE);
 	}
@@ -259,12 +262,12 @@ static BOOL seakey(PFILEH hdl, PFPOS *pfp, const char *app, const char *key) {
 	return(SUCCESS);
 }
 
-static BOOL replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
+static BRESULT replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
 
 	UINT	cnt;
-	UINT	size;
-	char	*p;
-	char	*q;
+	UINT	newsize;
+	OEMCHAR	*p;
+	OEMCHAR	*q;
 
 	size1 += pos;
 	size2 += pos;
@@ -273,11 +276,21 @@ static BOOL replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
 	}
 	cnt = hdl->size - size1;
 	if (size1 < size2) {
-		size = size2 - size1;
-		if ((hdl->size + size) > hdl->buffers) {
-			return(FAILURE);
+		newsize = hdl->size + size2 - size1;
+		if (newsize > hdl->buffers) {
+			newsize = (newsize & (PFBUFSIZE - 1)) + PFBUFSIZE;
+			p = (OEMCHAR *)_MALLOC(newsize * sizeof(OEMCHAR), "profile");
+			if (p == NULL) {
+				return(FAILURE);
+			}
+			CopyMemory(p, hdl->buffer, hdl->buffers * sizeof(OEMCHAR));
+			if (hdl->buffer) {
+				_MFREE(hdl->buffer);
+			}
+			hdl->buffer = p;
+			hdl->buffers = newsize;
 		}
-		hdl->size += size;
+		hdl->size = newsize;
 		if (cnt) {
 			p = hdl->buffer + size1;
 			q = hdl->buffer + size2;
@@ -301,56 +314,141 @@ static BOOL replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
 	return(SUCCESS);
 }
 
-PFILEH profile_open(const char *filename, UINT flag) {
+static PFILEH registfile(FILEH fh) {
 
-	FILEH	fh;
-	UINT	filesize;
+	UINT	hdrsize;
+	UINT	srcwidth;
+	BOOL	xendian;
+	UINT	rsize;
+	UINT8	hdr[4];
 	UINT	size;
+	UINT	newsize;
+	OEMCHAR *buf;
 	PFILEH	ret;
 
-	if (filename == NULL) {
-		goto pfore_err1;
+	hdrsize = 0;
+	srcwidth = 1;
+	xendian = FALSE;
+	rsize = file_read(fh, hdr, sizeof(hdr));
+	if ((rsize >= 3) &&
+		(hdr[0] == 0xef) && (hdr[1] == 0xbb) && (hdr[2] == 0xbf)) {
+		// UTF-8
+		hdrsize = 3;
 	}
-	fh = file_open(filename);
-	filesize = 0;
-	if (fh != FILEH_INVALID) {
-		filesize = file_getsize(fh);
+	else if ((rsize >= 2) && (hdr[0] == 0xff) && (hdr[1] == 0xfe)) {
+		// UCSLE
+		hdrsize = 2;
+		srcwidth = 2;
+#if defined(BYTESEX_BIG)
+		xendian = TRUE;
+#endif
 	}
-	else if (flag & PFILEH_READONLY) {
-		goto pfore_err1;
+	else if ((rsize >= 2) && (hdr[0] == 0xfe) && (hdr[1] == 0xff)) {
+		// UCS2BE
+		hdrsize = 2;
+		srcwidth = 2;
+#if defined(BYTESEX_LITTLE)
+		xendian = TRUE;
+#endif
 	}
-	else {
-		fh = file_create(filename);
-		if (fh == FILEH_INVALID) {
-			goto pfore_err1;
-		}
+
+	if (srcwidth != sizeof(OEMCHAR)) {
+		goto rf_err1;
 	}
-	size = filesize + 0x2000;
-	ret = (PFILEH)_MALLOC(sizeof(_PFILEH) + size, filename);
+	size = file_getsize(fh);
+	if (size < hdrsize) {
+		goto rf_err1;
+	}
+	if (file_seek(fh, (long)hdrsize, FSEEK_SET) != (long)hdrsize) {
+		goto rf_err1;
+	}
+	size = (size - hdrsize) / srcwidth;
+	newsize = (size & (PFBUFSIZE - 1)) + PFBUFSIZE;
+	buf = (OEMCHAR *)_MALLOC(newsize * srcwidth, "profile");
+	if (buf == NULL) {
+		goto rf_err1;
+	}
+	rsize = file_read(fh, buf, newsize * srcwidth) / srcwidth;
+
+	ret = (PFILEH)_MALLOC(sizeof(_PFILEH), "profile");
 	if (ret == NULL) {
-		goto pfore_err2;
+		goto rf_err2;
 	}
-	if (filesize) {
-		if (file_read(fh, ret + 1, filesize) != filesize) {
-			goto pfore_err3;
-		}
+	ZeroMemory(ret, sizeof(_PFILEH));
+	ret->buffer = buf;
+	ret->buffers = newsize;
+	ret->size = rsize;
+	if (hdrsize) {
+		CopyMemory(ret->hdr, hdr, hdrsize);
 	}
-	file_close(fh);
-	ret->buffer = (char *)(ret + 1);
-	ret->buffers = size;
-	ret->size = filesize;
-	ret->flag = flag;
-	file_cpyname(ret->path, filename, NELEMENTS(ret->path));
+	ret->hdrsize = hdrsize;
 	return(ret);
 
-pfore_err3:
-	_MFREE(ret);
+rf_err2:
+	_MFREE(buf);
 
-pfore_err2:
-	file_close(fh);
-
-pfore_err1:
+rf_err1:
 	return(NULL);
+}
+
+static PFILEH registnew(void) {
+
+const UINT8	*hdr;
+	UINT	hdrsize;
+	PFILEH	ret;
+
+#if defined(OSLANG_UTF8)
+	hdr = str_utf8;
+	hdrsize = sizeof(str_utf8);
+#elif defined(OSLANG_UCS2) 
+	hdr = (UINT8 *)str_ucs2;
+	hdrsize = sizeof(str_ucs2);
+#else
+	hdr = NULL;
+	hdrsize = 0;
+#endif
+
+	ret = (PFILEH)_MALLOC(sizeof(_PFILEH), "profile");
+	if (ret == NULL) {
+		goto rn_err;
+	}
+	ZeroMemory(ret, sizeof(_PFILEH));
+//	ret->buffer = NULL;
+//	ret->buffers = 0;
+//	ret->size = 0;
+	if (hdrsize) {
+		CopyMemory(ret->hdr, hdr, hdrsize);
+	}
+	ret->hdrsize = hdrsize;
+	return(ret);
+
+rn_err:
+	return(NULL);
+}
+
+PFILEH profile_open(const OEMCHAR *filename, UINT flag) {
+
+	PFILEH	ret;
+	FILEH	fh;
+
+	ret = NULL;
+	if (filename != NULL) {
+		fh = file_open_rb(filename);
+		if (fh != FILEH_INVALID) {
+			ret = registfile(fh);
+			file_close(fh);
+		}
+		else if (flag & PFILEH_READONLY) {
+		}
+		else {
+			ret = registnew();
+		}
+	}
+	if (ret) {
+		ret->flag = flag;
+		file_cpyname(ret->path, filename, NELEMENTS(ret->path));
+	}
+	return(ret);
 }
 
 void profile_close(PFILEH hdl) {
@@ -361,7 +459,8 @@ void profile_close(PFILEH hdl) {
 		if (hdl->flag & PFILEH_MODIFY) {
 			fh = file_create(hdl->path);
 			if (fh != FILEH_INVALID) {
-				file_write(fh, hdl->buffer, hdl->size);
+				file_write(fh, hdl->hdr, hdl->hdrsize);
+				file_write(fh, hdl->buffer, hdl->size * sizeof(OEMCHAR));
 				file_close(fh);
 			}
 		}
@@ -369,8 +468,8 @@ void profile_close(PFILEH hdl) {
 	}
 }
 
-BOOL profile_read(const char *app, const char *key, const char *def,
-										char *ret, UINT size, PFILEH hdl) {
+BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
+					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl) {
 
 	PFPOS	pfp;
 
@@ -388,13 +487,13 @@ BOOL profile_read(const char *app, const char *key, const char *def,
 	}
 }
 
-BOOL profile_write(const char *app, const char *key,
-											const char *data, PFILEH hdl) {
+BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
+											const OEMCHAR *data, PFILEH hdl) {
 
 	PFPOS	pfp;
 	UINT	newsize;
 	UINT	datalen;
-	char	*buf;
+	OEMCHAR	*buf;
 
 	if ((hdl == NULL) || (hdl->flag & PFILEH_READONLY) ||
 		(data == NULL) || (seakey(hdl, &pfp, app, key) != SUCCESS)) {
@@ -424,7 +523,7 @@ BOOL profile_write(const char *app, const char *key,
 #endif
 		pfp.pos += newsize;
 	}
-	datalen = strlen(data);
+	datalen = OEMSTRLEN(data);
 	newsize = pfp.keylen + 1 + datalen;
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
 	newsize++;
@@ -450,6 +549,9 @@ BOOL profile_write(const char *app, const char *key,
 	return(SUCCESS);
 }
 
+
+// ----
+
 static void bitmapset(UINT8 *ptr, UINT pos, BOOL set) {
 
 	UINT8	bit;
@@ -469,12 +571,12 @@ static BOOL bitmapget(const UINT8 *ptr, UINT pos) {
 	return((ptr[pos >> 3] >> (pos & 7)) & 1);
 }
 
-static void binset(UINT8 *bin, UINT binlen, const char *src) {
+static void binset(UINT8 *bin, UINT binlen, const OEMCHAR *src) {
 
 	UINT	i;
 	UINT8	val;
 	BOOL	set;
-	char	c;
+	OEMCHAR	c;
 
 	for (i=0; i<binlen; i++) {
 		val = 0;
@@ -509,28 +611,28 @@ static void binset(UINT8 *bin, UINT binlen, const char *src) {
 	}
 }
 
-static void binget(char *work, int size, const UINT8 *bin, UINT binlen) {
+static void binget(OEMCHAR *work, int size, const UINT8 *bin, UINT binlen) {
 
 	UINT	i;
-	char	tmp[8];
+	OEMCHAR	tmp[8];
 
 	if (binlen) {
-		SPRINTF(tmp, "%.2x", bin[0]);
+		OEMSPRINTF(tmp, OEMTEXT("%.2x"), bin[0]);
 		milstr_ncpy(work, tmp, size);
 	}
 	for (i=1; i<binlen; i++) {
-		SPRINTF(tmp, " %.2x", bin[i]);
+		OEMSPRINTF(tmp, OEMTEXT(" %.2x"), bin[i]);
 		milstr_ncat(work, tmp, size);
 	}
 }
 
-void profile_iniread(const char *path, const char *app,
+void profile_iniread(const OEMCHAR *path, const OEMCHAR *app,
 								const PFTBL *tbl, UINT count, PFREAD cb) {
 
 	PFILEH	pfh;
 const PFTBL	*p;
 const PFTBL	*pterm;
-	char	work[512];
+	OEMCHAR	work[512];
 
 	pfh = profile_open(path, 0);
 	if (pfh == NULL) {
@@ -541,7 +643,7 @@ const PFTBL	*pterm;
 	while(p < pterm) {
 		if (profile_read(app, p->item, NULL, work, sizeof(work), pfh)
 																== SUCCESS) {
-			switch(p->itemtype & PFITYPE_MASK) {
+			switch(p->itemtype & PFTYPE_MASK) {
 				case PFTYPE_STR:
 					milstr_ncpy(p->value, work, p->arg);
 					break;
@@ -598,14 +700,14 @@ const PFTBL	*pterm;
 	profile_close(pfh);
 }
 
-void profile_iniwrite(const char *path, const char *app,
+void profile_iniwrite(const OEMCHAR *path, const OEMCHAR *app,
 								const PFTBL *tbl, UINT count, PFWRITE cb) {
 
-	PFILEH	pfh;
-const PFTBL	*p;
-const PFTBL	*pterm;
-const char	*set;
-	char	work[512];
+	PFILEH		pfh;
+const PFTBL		*p;
+const PFTBL		*pterm;
+const OEMCHAR	*set;
+	OEMCHAR		work[512];
 
 	pfh = profile_open(path, 0);
 	if (pfh == NULL) {
@@ -617,9 +719,9 @@ const char	*set;
 		if (!(p->itemtype & PFFLAG_RO)) {
 			work[0] = '\0';
 			set = work;
-			switch(p->itemtype & PFITYPE_MASK) {
+			switch(p->itemtype & PFTYPE_MASK) {
 				case PFTYPE_STR:
-					set = (char *)p->value;
+					set = (OEMCHAR *)p->value;
 					break;
 
 				case PFTYPE_BOOL:
@@ -632,48 +734,48 @@ const char	*set;
 					break;
 
 				case PFTYPE_BIN:
-					binget(work, sizeof(work), (UINT8 *)p->value, p->arg);
+					binget(work, NELEMENTS(work), (UINT8 *)p->value, p->arg);
 					break;
 
 				case PFTYPE_SINT8:
-					SPRINTF(work, str_d, *((SINT8 *)p->value));
+					OEMSPRINTF(work, str_d, *((SINT8 *)p->value));
 					break;
 
 				case PFTYPE_SINT16:
-					SPRINTF(work, str_d, *((SINT16 *)p->value));
+					OEMSPRINTF(work, str_d, *((SINT16 *)p->value));
 					break;
 
 				case PFTYPE_SINT32:
-					SPRINTF(work, str_d, *((SINT32 *)p->value));
+					OEMSPRINTF(work, str_d, *((SINT32 *)p->value));
 					break;
 
 				case PFTYPE_UINT8:
-					SPRINTF(work, str_u, *((UINT8 *)p->value));
+					OEMSPRINTF(work, str_u, *((UINT8 *)p->value));
 					break;
 
 				case PFTYPE_UINT16:
-					SPRINTF(work, str_u, *((UINT16 *)p->value));
+					OEMSPRINTF(work, str_u, *((UINT16 *)p->value));
 					break;
 
 				case PFTYPE_UINT32:
-					SPRINTF(work, str_u, *((UINT32 *)p->value));
+					OEMSPRINTF(work, str_u, *((UINT32 *)p->value));
 					break;
 
 				case PFTYPE_HEX8:
-					SPRINTF(work, str_x, *((UINT8 *)p->value));
+					OEMSPRINTF(work, str_x, *((UINT8 *)p->value));
 					break;
 
 				case PFTYPE_HEX16:
-					SPRINTF(work, str_x, *((UINT16 *)p->value));
+					OEMSPRINTF(work, str_x, *((UINT16 *)p->value));
 					break;
 
 				case PFTYPE_HEX32:
-					SPRINTF(work, str_x, *((UINT32 *)p->value));
+					OEMSPRINTF(work, str_x, *((UINT32 *)p->value));
 					break;
 
 				default:
 					if (cb != NULL) {
-						set = (*cb)(p, work, sizeof(work));
+						set = (*cb)(p, work, NELEMENTS(work));
 					}
 					else {
 						set = NULL;

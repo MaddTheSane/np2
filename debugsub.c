@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"strres.h"
+#include	"textfile.h"
 #include	"dosio.h"
 #include	"cpucore.h"
 #include	"pccore.h"
@@ -136,21 +137,21 @@ static void writeseg(const OEMCHAR *fname, UINT32 addr, UINT limit) {
 void debugsub_status(void) {
 
 static int		filenum = 0;
-	FILEH		fh;
+	TEXTFILEH	tfh;
 	OEMCHAR		work[512];
 const OEMCHAR	*p;
 
 	OEMSPRINTF(work, file_i286reg, filenum);
-	fh = file_create_c(work);
-	if (fh != FILEH_INVALID) {
+	tfh = textfile_create(file_getcd(work), 0);
+	if (tfh != NULL) {
 		p = debugsub_regs();
-		file_write(fh, p, OEMSTRLEN(p) * sizeof(OEMCHAR));
+		textfile_write(tfh, p);
 		OEMSPRINTF(work, str_picstat,
 								pic.pi[0].imr, pic.pi[0].irr, pic.pi[0].isr,
 								pic.pi[1].imr, pic.pi[1].irr, pic.pi[1].isr,
 								mouseif.upd8255.portc, sysport.c);
-		file_write(fh, work, OEMSTRLEN(work) * sizeof(OEMCHAR));
-		file_close(fh);
+		textfile_write(tfh, work);
+		textfile_close(tfh);
 	}
 
 	OEMSPRINTF(work, file_i286cs, filenum);

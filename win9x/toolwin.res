@@ -29,25 +29,26 @@ static const SUBITEM defsubitem[IDC_MAXITEMS] = {
 
 static const OEMCHAR skintitle[] = OEMTEXT("ToolWindow");
 
-static const INITBL skinini1[] = {
-	{"MAIN",		INITYPE_STR,	toolskin.main,	NELEMENTS(toolskin.main)},
-	{"FONT",		INITYPE_STR,	toolskin.font,	NELEMENTS(toolskin.font)},
-	{"FONTSIZE",	INITYPE_SINT32,	&toolskin.fontsize,					0},
-	{"COLOR1",		INITYPE_HEX32,	&toolskin.color1,					0},
-	{"COLOR2",		INITYPE_HEX32,	&toolskin.color2,					0}};
+static const PFTBL skinini1[] = {
+	PFSTR("MAIN",		PFTYPE_STR,		toolskin.main),
+	PFSTR("FONT",		PFTYPE_STR,		toolskin.font),
+	PFVAL("FONTSIZE",	PFTYPE_SINT32,	&toolskin.fontsize),
+	PFVAL("COLOR1",		PFTYPE_HEX32,	&toolskin.color1),
+	PFVAL("COLOR2",		PFTYPE_HEX32,	&toolskin.color2)};
 
-static const INITBL skinini2[] = {
-	{"HDDACC",		INITYPE_ARGS16,	&subitem[IDC_TOOLHDDACC].posx,		5},
-	{"FD1ACC",		INITYPE_ARGS16,	&subitem[IDC_TOOLFDD1ACC].posx,		5},
-	{"FD1LIST",		INITYPE_ARGS16,	&subitem[IDC_TOOLFDD1LIST].posx,	5},
-	{"FD1BROWSE",	INITYPE_ARGS16,	&subitem[IDC_TOOLFDD1BROWSE].posx,	5},
-	{"FD1EJECT",	INITYPE_ARGS16,	&subitem[IDC_TOOLFDD1EJECT].posx,	5},
-	{"FD2ACC",		INITYPE_ARGS16,	&subitem[IDC_TOOLFDD2ACC].posx,		5},
-	{"FD2LIST",		INITYPE_ARGS16,	&subitem[IDC_TOOLFDD2LIST].posx,	5},
-	{"FD2BROWSE",	INITYPE_ARGS16,	&subitem[IDC_TOOLFDD2BROWSE].posx,	5},
-	{"FD2EJECT",	INITYPE_ARGS16,	&subitem[IDC_TOOLFDD2EJECT].posx,	5},
-	{"RESETBTN",	INITYPE_ARGS16,	&subitem[IDC_TOOLRESET].posx,		5},
-	{"POWERBTN",	INITYPE_ARGS16,	&subitem[IDC_TOOLPOWER].posx,		5}};
+static const PFTBL skinini2[] = {
+	PFEXT("HDDACC",		PFTYPE_ARGS16,	&subitem[IDC_TOOLHDDACC].posx,		5),
+	PFEXT("FD1ACC",		PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD1ACC].posx,		5),
+	PFEXT("FD1LIST",	PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD1LIST].posx,	5),
+	PFEXT("FD1BROWSE",	PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD1BROWSE].posx,	5),
+	PFEXT("FD1EJECT",	PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD1EJECT].posx,	5),
+	PFEXT("FD2ACC",		PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD2ACC].posx,		5),
+	PFEXT("FD2LIST",	PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD2LIST].posx,	5),
+	PFEXT("FD2BROWSE",	PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD2BROWSE].posx,	5),
+	PFEXT("FD2EJECT",	PFTYPE_ARGS16,	&subitem[IDC_TOOLFDD2EJECT].posx,	5),
+	PFEXT("RESETBTN",	PFTYPE_ARGS16,	&subitem[IDC_TOOLRESET].posx,		5),
+	PFEXT("POWERBTN",	PFTYPE_ARGS16,	&subitem[IDC_TOOLPOWER].posx,		5)
+};
 
 
 // static const DWORD mvccol[MVC_MAXCOLOR] = {
