@@ -87,7 +87,7 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 				}
 				if (renewal) {
 					scrndraw_redraw();
-					sysmng_update(update);
+					sysmng_update(SYS_UPDATECFG);
 				}
 				return(TRUE);
 			}

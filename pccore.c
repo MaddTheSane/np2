@@ -36,7 +36,7 @@
 	NP2CFG		np2cfg = {
 				PCBASECLOCK25, 4, 0,
 				{0x3e, 0x63, 0x7a},
-				{0x48, 0x05, 0x0c, 0x00, 0x01, 0x00, 0x00, 0x6E},
+				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6E},
 				{0x0c, 0x0c, 0x08, 0x06, 0x03, 0x0c},
 				{1, 1, 6, 1, 8, 1},
 				0, 4, 32, 22050, 800, 0, 1, 1, 0,
@@ -61,9 +61,10 @@
 							100, 20,
 							0};
 
-									// on=0, off=1
-	BYTE	dip_default[3] = {0x3e, 0x63, 0x7a};
-	BYTE	msw_default[8] = {0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6E};
+//									// on=0, off=1
+//	BYTE	dip_default[3] = {0x3e, 0x63, 0x7a};
+static const BYTE msw_default[8] =
+							{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6E};
 
 	BYTE	screenupdate = 3;
 	int		screendispflag = 1;
@@ -71,12 +72,12 @@
 	BOOL	drawframe;
 	UINT	drawcount = 0;
 
-	BYTE	mem[0x200000];								// ver0.28
+	BYTE	mem[0x200000];
 
 
 // ---------------------------------------------------------------------------
 
-static void setvsyncclock(void) {								// ver0.28
+static void setvsyncclock(void) {
 
 	UINT	vfp;
 	UINT	vbp;

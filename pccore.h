@@ -99,8 +99,6 @@ extern const char np2version[];
 
 extern	NP2CFG	np2cfg;
 extern	PCCORE	pc;
-extern	BYTE	dip_default[3];
-extern	BYTE	msw_default[8];
 extern	BYTE	screenupdate;
 extern	int		soundrenewal;
 extern	BOOL	drawframe;
