@@ -108,7 +108,12 @@ static void fddmtr_event(void) {
 
 void fddmtr_initialize(void) {
 
-	fddmtr_event();
+#if defined(SUPPORT_SWSEEKSND)
+	fddmtrsnd_play(0, FALSE);
+#else
+	soundmng_pcmstop(SOUND_PCMSEEK);
+#endif
+	ZeroMemory(&fddmtr, sizeof(fddmtr));
 	FillMemory(fddmtr.head, sizeof(fddmtr.head), 42);
 }
 
