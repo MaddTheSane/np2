@@ -141,6 +141,9 @@ static pascal Boolean NavLaunchServicesFilterProc( AEDesc* theItem, void* info, 
                             showItem = true;
                         }
                         break;
+                    case OPEN_MIMPI:
+						showItem = true;
+                        break;
                 }
             }
         }
@@ -163,9 +166,14 @@ BOOL dialog_fileselect(char *name, int size, WindowRef parent, int opentype) {
 	ret = FALSE;
     NavGetDefaultDialogCreationOptions(&optNav);
     optNav.clientName = CFSTR("Neko Project IIx");
-    optNav.modality=kWindowModalityWindowModal;
-    optNav.parentWindow=parent;
+	if (parent) {
+		optNav.modality=kWindowModalityWindowModal;
+		optNav.parentWindow=parent;
+	}
     switch (opentype) {
+        case OPEN_MIMPI:
+            optNav.message = CFCopyLocalizedString(CFSTR("Choose MIMPI file."),"MIMPI Message");
+            break;
         case OPEN_FONT:
             optNav.message = CFCopyLocalizedString(CFSTR("Choose font file."),"FontSelect Message");
             break;

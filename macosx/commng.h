@@ -23,6 +23,19 @@ enum {
 	COMMSG_USER
 };
 
+enum {
+	COMSIG_COM1				= 0x314d4f43,
+	COMSIG_COM2				= 0x324d4f43,
+	COMSIG_COM3				= 0x334d4f43,
+	COMSIG_COM4				= 0x344d4f43,
+	COMSIG_MIDI				= 0x4944494d
+};
+
+enum {
+	COMMSG_MIMPIDEFFILE		= COMMSG_USER,
+	COMMSG_MIMPIDEFEN
+};
+
 struct _commng;
 typedef struct _commng	_COMMNG;
 typedef struct _commng	*COMMNG;

@@ -3,7 +3,8 @@ enum {
 	OPEN_SASI,
 	OPEN_SCSI,
 	OPEN_FONT,
-	OPEN_INI
+	OPEN_INI,
+	OPEN_MIMPI
 };
 
 void dialog_changefdd(BYTE drv);

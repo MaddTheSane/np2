@@ -1,5 +1,16 @@
 
 typedef struct {
+	BYTE	port;
+	BYTE	def_en;
+	BYTE	param;
+	UINT32	speed;
+	char	mout[MAX_PATH];
+	char	min[MAX_PATH];
+	char	mdl[64];
+	char	def[MAX_PATH];
+} COMCFG;
+
+typedef struct {
 	char	titles[256];
 	
 	int		winx;
@@ -13,6 +24,8 @@ typedef struct {
 	BYTE	MOUSE_SW;
 	BYTE	JOYPAD1;
     
+	COMCFG	mpu;
+
 	BYTE	comfirm;
 	BYTE	resume;
     
@@ -35,5 +48,3 @@ extern	WindowPtr	hWndMain;
 extern	BOOL		np2running;
 extern	NP2OSCFG	np2oscfg;
 extern	BYTE		scrnmode;
-
-void recieveCommand(long param);

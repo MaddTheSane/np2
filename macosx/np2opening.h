@@ -6,8 +6,6 @@
  *
  */
 
-#define	CFSTRj(name)	CFStringCreateWithCString(NULL,name,CFStringGetSystemEncoding())
-
 #ifdef __cplusplus
 extern "C" {
 #endif

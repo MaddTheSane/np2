@@ -21,7 +21,6 @@ typedef struct {
 
 extern	NP2TOOL		np2tool;
 
-//BOOL toolwin_initapp(HINSTANCE hInstance);
 void toolwin_open(void);
 void toolwin_close(void);
 

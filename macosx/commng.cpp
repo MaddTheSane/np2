@@ -1,9 +1,8 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"commng.h"
-#include	"cmver.h"
 #include	"cmjasts.h"
-
+#include	"cmmidi.h"
 
 // ---- non connect
 
@@ -46,13 +45,14 @@ static const _COMMNG com_nc = {
 
 void commng_initialize(void) {
 
-	cmvermouth_initialize();
+	cmmidi_initailize();
 }
 
 COMMNG commng_create(UINT device) {
 
 	COMMNG	ret;
-
+	COMCFG* cfg;
+	
 	ret = NULL;
 	switch(device) {
 		case COMCREATE_PRINTER:
@@ -62,7 +62,12 @@ COMMNG commng_create(UINT device) {
 			break;
 
 		case COMCREATE_MPU98II:
-			ret = cmvermouth_create();
+			cfg = &np2oscfg.mpu;;
+			ret = cmmidi_create(cfg->mout, cfg->min, cfg->mdl);
+			if (ret) {
+				ret->msg(ret, COMMSG_MIMPIDEFFILE, (long)cfg->def);
+				ret->msg(ret, COMMSG_MIMPIDEFEN, (long)cfg->def_en);
+			}
 			break;
 
 		default:

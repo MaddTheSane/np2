@@ -16,6 +16,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 
+extern void HandleMenuChoice(long wParam);
 
 enum {
 	IDC_TOOLHDDACC			= 0,
@@ -528,7 +529,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
         switch (cmd.commandID)
         {
             case 'rset':
-                recieveCommand(IDM_RESET);
+                HandleMenuChoice(IDM_RESET);
                 err=noErr;
                 break;
                 
@@ -538,12 +539,12 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 break;
                                 
             case 'opn1':
-                recieveCommand(IDM_FDD1OPEN);
+                HandleMenuChoice(IDM_FDD1OPEN);
                 err=noErr;
                 break;
                 
             case 'ejt1':
-                recieveCommand(IDM_FDD1EJECT);
+                HandleMenuChoice(IDM_FDD1EJECT);
                 err=noErr;
                 break;
                 
@@ -553,17 +554,17 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 break;
                                 
             case 'opn2':
-                recieveCommand(IDM_FDD2OPEN);
+                HandleMenuChoice(IDM_FDD2OPEN);
                 err=noErr;
                 break;
                 
             case 'ejt2':
-                recieveCommand(IDM_FDD2EJECT);
+                HandleMenuChoice(IDM_FDD2EJECT);
                 err=noErr;
                 break;
                 
             case 'exit':
-                recieveCommand(IDM_EXIT);
+                HandleMenuChoice(IDM_EXIT);
                 err=noErr;
                 break;
                 
@@ -617,7 +618,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                     EventRecord	eve;
                     ConvertEventRefToEventRecord( event,&eve );
                     mousemng_disable(MOUSEPROC_MACUI);
-                    recieveCommand(MenuEvent(&eve));
+                    HandleMenuChoice(MenuEvent(&eve));
                     mousemng_enable(MOUSEPROC_MACUI);
                 }
                 else {

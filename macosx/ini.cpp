@@ -413,6 +413,12 @@ static const INITBL iniitem[] = {
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
 	{"Mouse_sw", INITYPE_BOOL,		&np2oscfg.MOUSE_SW,		0},
 	{"comfirm_", INITYPE_BOOL,		&np2oscfg.comfirm,		0},
+	
+	{"mpu98map", INITYPE_STR,		np2oscfg.mpu.mout,		MAX_PATH},
+	{"mpu98min", INITYPE_STR,		np2oscfg.mpu.min,		MAX_PATH},
+	{"mpu98mdl", INITYPE_STR,		np2oscfg.mpu.mdl,		64},
+	{"mpu98def", INITYPE_STR,		np2oscfg.mpu.def,		MAX_PATH},
+
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},		// ver0.30
 	{"toolwind", INITYPE_BOOL,		&np2oscfg.toolwin,		0},		// ver0.38
 	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73

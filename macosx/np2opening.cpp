@@ -12,7 +12,6 @@
 #include "np2opening.h"
 
 
-
 static PicHandle getbmp(FSSpec fsc, Rect* srt) {
     PicHandle	pict = NULL;
     GraphicsImportComponent	gi;

@@ -40,13 +40,27 @@
 #include	"aboutdlg.h"
 #include	"keystat.h"
 
-#include	<QuickTime/QuickTime.h>
 #define	USE_RESUME
 #define	NP2OPENING
 // #define	OPENING_WAIT	1500
 
 
-		NP2OSCFG	np2oscfg = {"Neko Project IIx", -1, -1, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+		NP2OSCFG	np2oscfg = {"Neko Project IIx",						//titles
+								-1,										//winx
+								-1,										//winy
+								0,										//NOWAIT
+								0,										//DRAW_SKIP
+								0,										//DISPCLK
+								0,										//F11KEY
+								0,										//F12KEY
+								0,										//MOUSE_SW
+								0,										//JOYPAD1
+								{5, 0, 0x3e, 19200, "", "", "GM", ""},  //mpu
+								0,										//confirm
+								0,										//resume
+								1,										//toolwin
+								0,										//jastsnd
+								0};										//I286SAVE
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -186,7 +200,7 @@ static void changescreen(BYTE mode) {
 	}
 }
 
-static void HandleMenuChoice(long wParam) {
+void HandleMenuChoice(long wParam) {
 
 	UINT	update;
 
@@ -1266,8 +1280,4 @@ static void toggleFullscreen(void) {
     }
     CheckMenuItem(GetMenuHandle(IDM_SCREEN), LoWord(IDM_FULLSCREEN), scrnmode & SCRNMODE_FULLSCREEN);
     soundmng_play();
-}
-
-void recieveCommand(long param) {
-    HandleMenuChoice(param);
 }
