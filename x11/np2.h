@@ -78,7 +78,7 @@ extern "C" {
 #endif
 
 /* np2.c */
-extern BOOL np2running;
+extern volatile BOOL np2running;
 extern NP2OSCFG np2oscfg;
 extern BYTE scrnmode;
 
