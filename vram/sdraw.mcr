@@ -261,6 +261,7 @@ const BYTE	*q;
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
+			sdraw->dirty[y+1] |= 0xff;
 			for (x=0; x<sdraw->width; x++) {
 				SDSETPIXEL(r, p[x] + q[x] + NP2PAL_GRPH);
 				r += sdraw->xalign;

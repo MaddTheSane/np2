@@ -33,9 +33,11 @@ static	SNDSTREAM	sndstream;
 
 static void streamreset(void) {
 
+	SNDCSEC_ENTER;
 	sndstream.ptr = sndstream.buffer;
 	sndstream.remain = sndstream.samples + sndstream.reserve;
 	sndstream.cbreg = sndstream.cb;
+	SNDCSEC_TERM;
 }
 
 static void streamprepare(UINT samples) {
@@ -95,9 +97,9 @@ BOOL sound_create(UINT rate, UINT ms) {
 	}
 	sndstream.samples = samples;
 	sndstream.reserve = reserve;
-	streamreset();
 
 	SNDCSEC_INIT;
+	streamreset();
 	return(SUCCESS);
 
 scre_err2:
@@ -111,6 +113,7 @@ void sound_destroy(void) {
 
 	if (sndstream.buffer) {
 		soundmng_stop();
+		streamreset();
 		soundmng_destroy();
 		SNDCSEC_TERM;
 		_MFREE(sndstream.buffer);

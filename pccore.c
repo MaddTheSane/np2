@@ -201,6 +201,8 @@ void pccore_init(void) {
 
 void pccore_term(void) {
 
+	sound_term();
+
 	fdd_eject(0);
 	fdd_eject(1);
 	fdd_eject(2);
@@ -213,8 +215,6 @@ void pccore_term(void) {
 	pc9861k_destruct();
 	rs232c_destruct();
 	mpu98ii_destruct();
-
-	sound_term();
 
 	sxsi_trash();
 }
