@@ -86,59 +86,6 @@ LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
 #define PassCDebugFlags
 
 
-#if defined(CPUCORE_IA32)
-
-CPUOBJS= \
-		../i386c/cpucore.o \
-		../i386c/dmap.o \
-		../i386c/egcmem.o \
-		../i386c/memory.o \
-		../i386c/mem9821.o \
-		../i386c/ia32/interface.o \
-		../i386c/ia32/ia32.o \
-		../i386c/ia32/cpu.o \
-		../i386c/ia32/cpu_io.o \
-		../i386c/ia32/cpu_mem.o \
-		../i386c/ia32/ctrlxfer.o \
-		../i386c/ia32/debug.o \
-		../i386c/ia32/disasm.o \
-		../i386c/ia32/exception.o \
-		../i386c/ia32/groups.o \
-		../i386c/ia32/inst_table.o \
-		../i386c/ia32/paging.o \
-		../i386c/ia32/resolve.o \
-		../i386c/ia32/segments.o \
-		../i386c/ia32/task.o \
-		../i386c/ia32/instructions/bin_arith.o \
-		../i386c/ia32/instructions/bit_byte.o \
-		../i386c/ia32/instructions/ctrl_trans.o \
-		../i386c/ia32/instructions/data_trans.o \
-		../i386c/ia32/instructions/dec_arith.o \
-		../i386c/ia32/instructions/flag_ctrl.o \
-		../i386c/ia32/instructions/logic_arith.o \
-		../i386c/ia32/instructions/misc_inst.o \
-		../i386c/ia32/instructions/seg_reg.o \
-		../i386c/ia32/instructions/shift_rotate.o \
-		../i386c/ia32/instructions/string_inst.o \
-		../i386c/ia32/instructions/system_inst.o \
-		../i386c/ia32/instructions/fpu/fpdummy.o
-
-CPUFLAGS=	-DCPUCORE_IA32 \
-		-I../i386c -I../i386c/ia32 \
-		-I../i386c/ia32/instructions -I../i386c/ia32/instructions/fpu
-
-#else
-
-CPUOBJS=	../i286c/i286c.o ../i286c/i286c_mn.o ../i286c/i286c_ea.o \
-		../i286c/i286c_0f.o ../i286c/i286c_8x.o ../i286c/i286c_sf.o \
-		../i286c/i286c_f6.o ../i286c/i286c_fe.o ../i286c/i286c_rp.o \
-		../i286c/memory.o ../i286c/egcmem.o ../i286c/dmap.o \
-		../i286c/v30patch.o
-
-CPUFLAGS=	-I../i286c
-
-#endif
-
 COMMONOBJS=	../common/strres.o ../common/milstr.o ../common/_memory.o \
 		../common/textfile.o ../common/profile.o ../common/rect.o \
 		../common/lstarray.o ../common/bmpdata.o ../common/mimpidef.o \
@@ -181,7 +128,7 @@ LIOOBJS=	../lio/lio.o ../lio/gscreen.o ../lio/gview.o ../lio/gcolor1.o \
 		../lio/gput1.o
 
 NP2OBJS=	../pccore.o ../nevent.o ../calendar.o ../timing.o \
-		../debugsub.o ../statsave.o ../keystat.o
+		../statsave.o ../keystat.o
 
 SOUNDOBJS=	../sound/sound.o ../sound/soundrom.o ../sound/s98.o \
 		../sound/adpcmc.o ../sound/adpcmg.o \
@@ -225,6 +172,63 @@ GTKDEPOBJS=	gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
 		gtk/gtk_drawmng.o gtk/gtk_screen.o gtk/gtk_font.o \
 		gtk/gtk_keyboard.o gtk/gtk_menu.o gtk/gtk_mouse.o \
 		gtk/gtk_main.o gtk/gtk_wrapper.o
+
+#if defined(CPUCORE_IA32)
+
+CPUOBJS= \
+		../i386c/cpucore.o \
+		../i386c/dmap.o \
+		../i386c/egcmem.o \
+		../i386c/memory.o \
+		../i386c/mem9821.o \
+		../i386c/ia32/interface.o \
+		../i386c/ia32/ia32.o \
+		../i386c/ia32/cpu.o \
+		../i386c/ia32/cpu_io.o \
+		../i386c/ia32/cpu_mem.o \
+		../i386c/ia32/ctrlxfer.o \
+		../i386c/ia32/debug.o \
+		../i386c/ia32/disasm.o \
+		../i386c/ia32/exception.o \
+		../i386c/ia32/groups.o \
+		../i386c/ia32/inst_table.o \
+		../i386c/ia32/paging.o \
+		../i386c/ia32/resolve.o \
+		../i386c/ia32/segments.o \
+		../i386c/ia32/task.o \
+		../i386c/ia32/instructions/bin_arith.o \
+		../i386c/ia32/instructions/bit_byte.o \
+		../i386c/ia32/instructions/ctrl_trans.o \
+		../i386c/ia32/instructions/data_trans.o \
+		../i386c/ia32/instructions/dec_arith.o \
+		../i386c/ia32/instructions/flag_ctrl.o \
+		../i386c/ia32/instructions/logic_arith.o \
+		../i386c/ia32/instructions/misc_inst.o \
+		../i386c/ia32/instructions/seg_reg.o \
+		../i386c/ia32/instructions/shift_rotate.o \
+		../i386c/ia32/instructions/string_inst.o \
+		../i386c/ia32/instructions/system_inst.o \
+		../i386c/ia32/instructions/fpu/fpdummy.o
+
+CPUFLAGS=	-DCPUCORE_IA32 \
+		-I../i386c -I../i386c/ia32 \
+		-I../i386c/ia32/instructions -I../i386c/ia32/instructions/fpu
+
+NP2OBJS+=	../debugsub386.o
+
+#else
+
+CPUOBJS=	../i286c/i286c.o ../i286c/i286c_mn.o ../i286c/i286c_ea.o \
+		../i286c/i286c_0f.o ../i286c/i286c_8x.o ../i286c/i286c_sf.o \
+		../i286c/i286c_f6.o ../i286c/i286c_fe.o ../i286c/i286c_rp.o \
+		../i286c/memory.o ../i286c/egcmem.o ../i286c/dmap.o \
+		../i286c/v30patch.o
+
+CPUFLAGS=	-I../i286c
+
+NP2OBJS+=	../debugsub.o
+
+#endif
 
 OBJS=		$(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(GETSNDOBJS) \
