@@ -1,4 +1,7 @@
 #include	"compiler.h"
+#if defined(OSLANG_EUC)
+#include	"codecnv.h"
+#endif
 #include	"dosio.h"
 #include	"pccore.h"
 #include	"hostdrv.h"
@@ -25,6 +28,7 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 		if (c == 0) {
 			break;
 		}
+#if defined(OSLANG_SJIS) || defined(OSLANG_EUC)
 		if ((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
 			if ((!slen) || (src[0] == '\0')) {
 				break;
@@ -37,16 +41,34 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 			dst += 2;
 			dlen -= 2;
 		}
-		else {
+		else if (((c - 0x20) & 0xff) < 0x60) {
 			if (((c - 'a') & 0xff) < 26) {
 				c -= 0x20;
 			}
-			if ((c >= 0x20) && (c < 0x80) &&
-				(dospathchr[(c >> 3) - (0x20 >> 3)] & (1 << (c & 7)))) {
+			if (dospathchr[(c >> 3) - (0x20 >> 3)] & (1 << (c & 7))) {
 				*dst++ = c;
 				dlen--;
 			}
 		}
+		else if (((c - 0xa0) & 0xff) < 0x40) {
+			*dst++ = c;
+			dlen--;
+		}
+#else
+		if (((c - 0x20) & 0xff) < 0x60) {
+			if (((c - 'a') & 0xff) < 26) {
+				c -= 0x20;
+			}
+			if (dospathchr[(c >> 3) - (0x20 >> 3)] & (1 << (c & 7))) {
+				*dst++ = c;
+				dlen--;
+			}
+		}
+		else if (c >= 0x80) {
+			*dst++ = c;
+			dlen--;
+		}
+#endif
 	}
 }
 
@@ -55,7 +77,14 @@ static BOOL realname2fcb(char *fcbname, FLINFO *fli) {
 	char	*realname;
 	char	*ext;
 
+#if defined(OSLANG_EUC)
+	char		sjis[MAX_PATH];
+
+	codecnv_euc2sjis(sjis, sizeof(sjis), fli->path, sizeof(fli->path));
+	realname = sjis;
+#else
 	realname = fli->path;
+#endif
 	FillMemory(fcbname, 11, ' ');
 	ext = file_getext(realname);
 	rcnvfcb(fcbname+0, 8, realname, ext - realname);
