@@ -24,7 +24,7 @@ CPU_DS_BASE			equ		56 - 112
 CPU_SS_FIX			equ		60 - 112
 CPU_DS_FIX			equ		64 - 112
 ; cpu_prefix		equ		68 - 112
-; cpu_trap			equ		70 - 112
+CPU_TRAP			equ		70 - 112
 ; cpu_type			equ		71 - 112
 ; cpu_pf_semaphore	equ		72 - 112
 ; cpu_repbak		equ		76 - 112
@@ -68,6 +68,12 @@ CPU_IP				equ		26 - 112
 $label	CPUWORK	$clock
 $label		ldr		r7, [r9, #CPU_REMAINCLOCK]
 			sub		r7, r7, $clock
+			str		r7, [r9, #CPU_REMAINCLOCK]
+	MEND
+
+	MACRO
+$label	CREMSET	$clock
+$label		mov		r7, $clock
 			str		r7, [r9, #CPU_REMAINCLOCK]
 	MEND
 

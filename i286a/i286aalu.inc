@@ -308,6 +308,56 @@ $label		sub		r1, $s, #1
 
 
 	MACRO
+$label	MUL8	$d, $s
+			mul		r1, $d, $s
+			movs	r12, r1 lsr #8
+			biceq	r8, r8, #O_FLAG
+			biceq	r8, r8, #C_FLAG
+			orrne	r8, r8, #O_FLAG
+			orrne	r8, r8, #C_FLAG
+	MEND
+
+	MACRO
+$label	MUL16	$d, $s
+			mul		r1, $d, $s
+			movs	r12, r1 lsr #16
+			biceq	r8, r8, #O_FLAG
+			biceq	r8, r8, #C_FLAG
+			orrne	r8, r8, #O_FLAG
+			orrne	r8, r8, #C_FLAG
+	MEND
+
+	MACRO
+$label	IMUL8	$d, $s
+			mov		r1, $d lsl #24
+			mov		r12, $s lsl #24
+			mov		r1, r1 asr #24
+			mov		r12, r12 asr #24
+			mul		r1, r12, r1
+			add		r12, r1, #&80
+			movs	r12, r12 lsr #8
+			biceq	r8, r8, #O_FLAG
+			biceq	r8, r8, #C_FLAG
+			orrne	r8, r8, #O_FLAG
+			orrne	r8, r8, #C_FLAG
+	MEND
+
+	MACRO
+$label	IMUL16	$d, $s
+			mov		r1, $d lsl #16
+			mov		r12, $s lsl #16
+			mov		r1, r1 asr #16
+			mov		r12, r12 asr #16
+			mul		r1, r12, r1
+			add		r12, r1, #&8000
+			movs	r12, r12 lsr #16
+			biceq	r8, r8, #O_FLAG
+			biceq	r8, r8, #C_FLAG
+			orrne	r8, r8, #O_FLAG
+			orrne	r8, r8, #C_FLAG
+	MEND
+
+	MACRO
 $label	REGPUSH	$r, $clk
 $label		CPUWORK	$clk
 			ldrh	r0, [r9, #CPU_SP]
