@@ -7,10 +7,10 @@
 
 	PSGGENCFG	psggencfg;
 
-static const BYTE psggen_deftbl[0x10] =
+static const UINT8 psggen_deftbl[0x10] =
 				{0, 0, 0, 0, 0, 0, 0, 0xbf, 0, 0, 0, 0, 0, 0, 0xff, 0xff};
 
-static const BYTE psgenv_pat[16] = {
+static const UINT8 psgenv_pat[16] = {
 					PSGENV_ONESHOT,
 					PSGENV_ONESHOT,
 					PSGENV_ONESHOT,
@@ -79,7 +79,7 @@ void psggen_restore(PSGGEN psg) {
 	REG8	i;
 
 	for (i=0; i<0x0e; i++) {
-		psggen_setreg(psg, i, ((BYTE *)&psg->reg)[i]);
+		psggen_setreg(psg, i, ((UINT8 *)&psg->reg)[i]);
 	}
 }
 
@@ -92,7 +92,7 @@ void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
 	if (reg < 14) {
 		sound_sync();
 	}
-	((BYTE *)&psg->reg)[reg] = value;
+	((UINT8 *)&psg->reg)[reg] = value;
 	switch(reg) {
 		case 0:
 		case 1:
@@ -130,7 +130,7 @@ void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
 		case 9:
 		case 10:
 			ch = reg - 8;
-			keydisp_psgvol(psg, (BYTE)ch);
+			keydisp_psgvol(psg, (UINT8)ch);
 			if (value & 0x10) {
 				psg->tone[ch].pvol = &psg->evol;
 			}
@@ -162,7 +162,7 @@ void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
 
 REG8 psggen_getreg(PSGGEN psg, REG8 reg) {
 
-	return(((BYTE *)&psg->reg)[reg & 15]);
+	return(((UINT8 *)&psg->reg)[reg & 15]);
 }
 
 void psggen_setpan(PSGGEN psg, UINT ch, REG8 pan) {

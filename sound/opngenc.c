@@ -366,8 +366,8 @@ static void channleupdate(OPNCH *ch) {
 
 	int		i;
 	UINT32	fc = ch->keynote[0];						// ver0.27
-	BYTE	kc = ch->kcode[0];
-	BYTE	evr;
+	UINT8	kc = ch->kcode[0];
+	UINT	evr;
 	OPNSLOT	*slot;
 	int		s;
 
@@ -375,7 +375,7 @@ static void channleupdate(OPNCH *ch) {
 	if (!(ch->extop)) {
 		for (i=0; i<4; i++, slot++) {
 			slot->freq_inc = (fc + slot->detune1[kc]) * slot->multiple;
-			evr = (BYTE)(kc >> slot->keyscale);
+			evr = kc >> slot->keyscale;
 			if (slot->envratio != evr) {
 				slot->envratio = evr;
 				slot->env_inc_attack = slot->attack[evr];
@@ -390,7 +390,7 @@ static void channleupdate(OPNCH *ch) {
 			s = extendslot[i];
 			slot->freq_inc = (ch->keynote[s] + slot->detune1[ch->kcode[s]])
 														* slot->multiple;
-			evr = (BYTE)(ch->kcode[s] >> slot->keyscale);
+			evr = ch->kcode[s] >> slot->keyscale;
 			if (slot->envratio != evr) {
 				slot->envratio = evr;
 				slot->env_inc_attack = slot->attack[evr];
@@ -483,7 +483,7 @@ void opngen_setreg(REG8 chbase, REG8 reg, REG8 value) {
 	OPNCH	*ch;
 	OPNSLOT	*slot;
 	UINT	fn;
-	BYTE	blk;
+	UINT8	blk;
 
 	chpos = reg & 3;
 	if (chpos == 3) {
@@ -558,7 +558,7 @@ void opngen_setreg(REG8 chbase, REG8 reg, REG8 value) {
 				break;
 
 			case 0xb0:
-				ch->algorithm = (BYTE)(value & 7);
+				ch->algorithm = (UINT8)(value & 7);
 				value = (value >> 3) & 7;
 				if (value) {
 					ch->feedback = 8 - value;
@@ -570,7 +570,7 @@ void opngen_setreg(REG8 chbase, REG8 reg, REG8 value) {
 				break;
 
 			case 0xb4:
-				ch->pan = (BYTE)(value & 0xc0);
+				ch->pan = (UINT8)(value & 0xc0);
 				set_algorithm(ch);
 				break;
 		}
@@ -618,6 +618,6 @@ void opngen_keyon(UINT chnum, REG8 value) {
 		slot++;
 		bit <<= 1;
 	}
-	keydisp_fmkeyon((BYTE)chnum, value);
+	keydisp_fmkeyon((UINT8)chnum, value);
 }
 

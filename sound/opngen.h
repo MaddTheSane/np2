@@ -88,17 +88,17 @@ typedef struct {
 	SINT32		*detune1;			// detune1
 	SINT32		totallevel;			// total level
 	SINT32		decaylevel;			// decay level
-const SINT32	*attack;			// attack raito
-const SINT32	*decay1;			// decay1 raito
-const SINT32	*decay2;			// decay2 raito
-const SINT32	*release;			// release raito
+const SINT32	*attack;			// attack ratio
+const SINT32	*decay1;			// decay1 ratio
+const SINT32	*decay2;			// decay2 ratio
+const SINT32	*release;			// release ratio
 	SINT32 		freq_cnt;			// frequency count
 	SINT32		freq_inc;			// frequency step
 	SINT32		multiple;			// multiple
-	BYTE		keyscale;			// key scale
-	BYTE		env_mode;			// envelope mode
-	BYTE		envratio;			// envelope raito
-	BYTE		ssgeg1;				// SSG-EG
+	UINT8		keyscale;			// key scale
+	UINT8		env_mode;			// envelope mode
+	UINT8		envratio;			// envelope ratio
+	UINT8		ssgeg1;				// SSG-EG
 
 	SINT32		env_cnt;			// envelope count
 	SINT32		env_end;			// envelope end count
@@ -111,10 +111,10 @@ const SINT32	*release;			// release raito
 
 typedef struct {
 	OPNSLOT	slot[4];
-	BYTE	algorithm;			// algorithm
-	BYTE	feedback;			// self feedback
-	BYTE	playing;
-	BYTE	outslot;
+	UINT8	algorithm;			// algorithm
+	UINT8	feedback;			// self feedback
+	UINT8	playing;
+	UINT8	outslot;
 	SINT32	op1fb;				// operator1 feedback
 	SINT32	*connect1;			// operator1 connect
 	SINT32	*connect3;			// operator3 connect
@@ -122,12 +122,12 @@ typedef struct {
 	SINT32	*connect4;			// operator4 connect
 	UINT32	keynote[4];			// key note				// ver0.27
 
-	BYTE	keyfunc[4];			// key function
-	BYTE	kcode[4];			// key code
-	BYTE	pan;				// pan
-	BYTE	extop;				// extendopelator-enable
-	BYTE	stereo;				// stereo-enable
-	BYTE	padding2;
+	UINT8	keyfunc[4];			// key function
+	UINT8	kcode[4];			// key code
+	UINT8	pan;				// pan
+	UINT8	extop;				// extendopelator-enable
+	UINT8	stereo;				// stereo-enable
+	UINT8	padding2;
 } OPNCH;
 
 typedef struct {
@@ -140,7 +140,7 @@ typedef struct {
 	SINT32	outdc;
 	SINT32	outdr;
 	SINT32	calcremain;
-	BYTE	keyreg[OPNCH_MAX];
+	UINT8	keyreg[OPNCH_MAX];
 } _OPNGEN, *OPNGEN;
 
 typedef struct {

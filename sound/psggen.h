@@ -16,8 +16,8 @@ typedef struct {
 	SINT32	count;
 	SINT32	*pvol;			// !!
 	UINT16	puchi;
-	BYTE	pan;
-	BYTE	padding;
+	UINT8	pan;
+	UINT8	padding;
 } PSGTONE;
 
 typedef struct {
@@ -27,14 +27,14 @@ typedef struct {
 } PSGNOISE;
 
 typedef struct {
-	BYTE	tune[3][2];		// 0
-	BYTE	noise;			// 6
-	BYTE	mixer;			// 7
-	BYTE	vol[3];			// 8
-	BYTE	envtime[2];		// b
-	BYTE	env;			// d
-	BYTE	io1;
-	BYTE	io2;
+	UINT8	tune[3][2];		// 0
+	UINT8	noise;			// 6
+	UINT8	mixer;			// 7
+	UINT8	vol[3];			// 8
+	UINT8	envtime[2];		// b
+	UINT8	env;			// d
+	UINT8	io1;
+	UINT8	io2;
 } PSGREG;
 
 typedef struct {
@@ -43,10 +43,10 @@ typedef struct {
 	PSGREG		reg;
 	UINT16		envcnt;
 	UINT16		envmax;
-	BYTE		mixer;
-	BYTE		envmode;
-	BYTE		envvol;
-	char		envvolcnt;
+	UINT8		mixer;
+	UINT8		envmode;
+	UINT8		envvol;
+	SINT8		envvolcnt;
 	SINT32		evol;				// !!
 	UINT		puchicount;
 } _PSGGEN, *PSGGEN;

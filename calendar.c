@@ -35,7 +35,7 @@ static void secinc(_SYSTIME *dt) {
 	month = dt->month - 1;
 	if (month < 12) {
 		daylimit = days[month];
-		if ((daylimit == 28) && (!(cal.dt.year & 3))) {
+		if ((daylimit == 28) && (!(dt->year & 3))) {
 			daylimit++;						// = 29;
 		}
 	}
@@ -59,7 +59,7 @@ secinc_exit:
 	return;
 }
 
-static void date2deg(_SYSTIME *t, const BYTE *bcd) {
+static void date2deg(_SYSTIME *t, const UINT8 *bcd) {
 
 	UINT16	year;
 
@@ -76,14 +76,14 @@ static void date2deg(_SYSTIME *t, const BYTE *bcd) {
 	t->second = (UINT16)AdjustBeforeDivision(bcd[5]);
 }
 
-static void date2bcd(BYTE *bcd, const _SYSTIME *t) {
+static void date2bcd(UINT8 *bcd, const _SYSTIME *t) {
 
-	bcd[0] = AdjustAfterMultiply((BYTE)((t->year) % 100));
-	bcd[1] = (BYTE)(((t->month) << 4) + (t->week));
-	bcd[2] = AdjustAfterMultiply((BYTE)t->day);
-	bcd[3] = AdjustAfterMultiply((BYTE)t->hour);
-	bcd[4] = AdjustAfterMultiply((BYTE)t->minute);
-	bcd[5] = AdjustAfterMultiply((BYTE)t->second);
+	bcd[0] = AdjustAfterMultiply((UINT8)(t->year % 100));
+	bcd[1] = (UINT8)((t->month << 4) + t->week);
+	bcd[2] = AdjustAfterMultiply((UINT8)t->day);
+	bcd[3] = AdjustAfterMultiply((UINT8)t->hour);
+	bcd[4] = AdjustAfterMultiply((UINT8)t->minute);
+	bcd[5] = AdjustAfterMultiply((UINT8)t->second);
 }
 
 
@@ -109,23 +109,23 @@ void calendar_inc(void) {
 	secinc(&cal.dt);
 }
 
-void calendar_set(const BYTE *bcd) {
+void calendar_set(const UINT8 *bcd) {
 
 	date2deg(&cal.dt, bcd);
 }
 
-void calendar_getvir(BYTE *bcd) {
+void calendar_getvir(UINT8 *bcd) {
 
 	date2bcd(bcd, &cal.dt);
 }
 
-void calendar_getreal(BYTE *bcd) {
+void calendar_getreal(UINT8 *bcd) {
 
 	timemng_gettime(&cal.realc);
 	date2bcd(bcd, &cal.realc);
 }
 
-void calendar_get(BYTE *bcd) {
+void calendar_get(UINT8 *bcd) {
 
 	if (!np2cfg.calendar) {
 		date2bcd(bcd, &cal.dt);

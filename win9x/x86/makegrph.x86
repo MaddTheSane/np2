@@ -91,9 +91,9 @@ maketbl_4:		mov		[esi], eax
 				mov		edi, _np2_vram
 				add		edi, [_dsync + dsync_t.grphvad]
 				and		ecx, 1
-				je		short adjustpage
+				je		short .adjustpage
 				add		edi, SCRN_BUFSIZE
-adjustpage:		inc		cl
+.adjustpage:	inc		cl
 				mov		byte [esp+21], cl				; DISPPAGE
 				mov		ch, cl
 				movzx	eax, cx
