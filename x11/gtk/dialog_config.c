@@ -486,6 +486,9 @@ create_configure_dialog(void)
 	if (np2oscfg.resume) {
 		gtk_signal_emit_by_name(GTK_OBJECT(resume_checkbutton), "clicked");
 	}
+#if defined(CPUCORE_IA32)
+	gtk_widget_set_sensitive(resume_checkbutton, FALSE);
+#endif
 
 #if defined(GCC_CPU_ARCH_IA32)
 	/* Disable MMX */

@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.3 2004/08/14 03:12:51 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -474,6 +474,9 @@ create_configure_dialog(void)
 	if (np2oscfg.resume) {
 		g_signal_emit_by_name(GTK_OBJECT(resume_checkbutton), "clicked");
 	}
+#if defined(CPUCORE_IA32)
+	gtk_widget_set_sensitive(resume_checkbutton, FALSE);
+#endif
 
 #if defined(GCC_CPU_ARCH_IA32)
 	/* Disable MMX */
