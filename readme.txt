@@ -36,7 +36,7 @@ void scrnmng_setheight(int posy, int height)
 　ウィンドウサイズの変更する
 　フルスクリーン中であれば 表示領域を変更。
 　SCRNSURFではこの値を返すようにする
-
+　posx, widthは 8の倍数
 
 BOOL scrnmng_isfullscreen(void)
 　フルスクリーン状態の取得
@@ -53,7 +53,7 @@ UINT scrnmng_getbpp(void)
 void scrnmng_palchanged(void)
 　パレット更新の通知(8bitスクリーンサポート時のみ)
 
-UINT16 scrnmng_makepal16(RGB32 pal32)
+RGB16 scrnmng_makepal16(RGB32 pal32)
 　RGB32から 16bit色を作成する。(16bitスクリーンにサポート時のみ)
 
 
@@ -65,11 +65,23 @@ NP2のサウンドデータは sound.cの以下の関数より取得
   void sound_pcmunlock(const SINT32 *hdl)
 
 
+SOUND_CRITICAL  セマフォを入れる(see sndcsec.c)
+SOUNDRESERVE    予約バッファのサイズ(ミリ秒)
+　サウンドを割り込み処理する場合の指定。
+　割り込みの最大延滞時間をSOUNDRESERVEで指定。
+　(Win9xの場合、自前でリングバッファを見張るので 割り込み無し・指定時間通りに
+　サウンドライトが来るので、この処理は不要だった)
+
+
 UINT soundmng_create(UINT rate, UINT ms)
 　サウンドストリームの確保
     input:  rate    サンプリングレート(11025/22050/44100)
             ms      サンプリングバッファサイズ(ミリ秒)
 　　return: 獲得したバッファのサンプリング数
+
+            msに従う必要はない(SDLとかバッファサイズが限定されるので)
+            NP2のサウンドバッファ操作は 返り値のみを利用しています。
+
 
 void soundmng_destroy(void)
 　サウンドストリームの終了
