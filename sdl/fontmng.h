@@ -25,8 +25,8 @@ extern "C" {
 void *fontmng_create(int size, UINT type, const char *fontface);
 void fontmng_destroy(void *hdl);
 
-BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt);
-BOOL fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt);
+BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt);
+BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt);
 FNTDAT fontmng_get(void *hdl, const char *string);
 
 

@@ -19,7 +19,7 @@ enum {
 	DID_FILTER
 };
 
-#if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
+#if defined(OSLANG_SJIS) && !defined(RESOURCE_US)
 static const OEMCHAR str_dirname[] =			// ファイルの場所
 			"\203\164\203\100\203\103\203\213\202\314\217\352\217\212";
 static const OEMCHAR str_filename[] =			// ファイル名

@@ -255,15 +255,15 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat,
 
 BRESULT fontmng_getsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 
-	_FNTDAT	fdat;
 	int		width;
+	_FNTDAT	fdat;
 	int		leng;
 
-	width = 0;
 	if ((hdl == NULL) || (string == NULL)) {
 		goto fmgs_exit;
 	}
 
+	width = 0;
 	while(1) {
 		leng = milstr_charsize(string);
 		if (!leng) {

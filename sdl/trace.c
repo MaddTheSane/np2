@@ -1,7 +1,8 @@
 #include	"compiler.h"
 #include	<stdarg.h>
+#if defined(WIN32) && defined(OSLANG_EUC)
 #include	"codecnv.h"
-
+#endif
 
 #ifdef TRACE
 void trace_init(void) {
@@ -22,7 +23,7 @@ void trace_fmt(const char *fmt, ...) {
 	vsprintf(buf, fmt, ap);
 	va_end(ap);
 #if defined(WIN32) && defined(OSLANG_EUC)
-	codecnv_euc2sjis(sjis, sizeof(sjis), buf, (UINT)-1);
+	codecnv_euctosjis(sjis, NELEMENTS(sjis), buf, (UINT)-1);
 	printf("%s\n", sjis);
 #else
 	printf("%s\n", buf);

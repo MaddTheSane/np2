@@ -44,7 +44,7 @@ typedef struct {
 
 static MENUSYS	menusys;
 
-#if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
+#if defined(OSLANG_SJIS) && !defined(RESOURCE_US)
 static const OEMCHAR str_sysr[] = 			// å≥ÇÃÉTÉCÉYÇ…ñﬂÇ∑
 			"\214\263\202\314\203\124\203\103\203\131\202\311" \
 			"\226\337\202\267";

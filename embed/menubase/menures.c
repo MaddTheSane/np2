@@ -3,7 +3,7 @@
 #include	"menubase.h"
 
 
-#if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
+#if defined(OSLANG_SJIS) && !defined(RESOURCE_US)
 const OEMCHAR mstr_fontcheck[] = " ";
 const OEMCHAR mstr_ok[] = "OK";
 			// ƒLƒƒƒ“ƒZƒ‹
