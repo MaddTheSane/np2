@@ -112,7 +112,7 @@ void fmboard_reset(UINT32 type) {
 	ZeroMemory(&opn, sizeof(opn));
 	opn.channels = 3;
 	opn.adpcmmask = (UINT8)~(0x1c);
-	FillMemory(opn.reg, 0xff, 0x400);
+	FillMemory(opn.reg, 0x400, 0xff);
 	opn.reg[0xff] = 0x01;
 
 	ZeroMemory(&musicgen, sizeof(musicgen));
