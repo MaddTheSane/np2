@@ -135,28 +135,46 @@ void mackbd_callback(void) {
 }
 #endif
 
-static const BYTE f12keys[] = {
-			0x61, 0x60, 0x4d, 0x4f};
+#define	STOPKEY	0x61
+#define	COPYKEY	0x60
+#define	TENKEYEQUAL	0x4d
+#define	TENKEYCOMMA	0x4f
+#define	XFERKEY	0x35
+#define	NFERKEY	0x51
 
+#define	KANAKEY	0x72
 
-static BYTE getf12key(void) {
+enum {
+	F11PUSHED			= 0,
+	F12PUSHED,
+};
+
+static const BYTE f11f12keys[] = {
+			STOPKEY, COPYKEY, TENKEYEQUAL, TENKEYCOMMA, NFERKEY, XFERKEY};
+            
+static BYTE getf11f12key(int whichkey) {
 
 	UINT	key;
 
-	key = np2oscfg.F12COPY - 1;
-	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
-		return(f12keys[key]);
-	}
-	else {
-		return(NC);
-	}
+    if (whichkey == F11PUSHED) {
+        key = (np2oscfg.F11KEY - 1) * 2;
+    }
+    else {
+        key = (np2oscfg.F12KEY - 1) * 2 + 1;
+    }
+    if (key < (sizeof(f11f12keys)/sizeof(BYTE))) {
+        return(f11f12keys[key]);
+    }
+    else {
+        return(NC);
+    }
 }
 
 void mackbd_keydown(int keycode) {
 
 	if (keycode == 0x6f) {
-		if (np2oscfg.F12COPY) {
-			keystat_senddata(getf12key());
+		if (np2oscfg.F12KEY) {
+			keystat_senddata(getf11f12key(F12PUSHED));
         }
 #if defined(NP2GCC)
         else {
@@ -165,6 +183,14 @@ void mackbd_keydown(int keycode) {
             sysmng_update(SYS_UPDATECFG);
 		}
 #endif
+    }
+	else if (keycode == 0x67) {
+		if (np2oscfg.F11KEY) {
+			keystat_senddata(getf11f12key(F11PUSHED));
+        }
+        else {
+            keystat_senddata(KANAKEY);
+		}
     }
     else {
         BYTE	data;
@@ -178,8 +204,13 @@ void mackbd_keydown(int keycode) {
 void mackbd_keyup(int keycode) {
 
 	if (keycode == 0x6f) {
-		if (np2oscfg.F12COPY) {
-			keystat_senddata(getf12key() | 0x80);
+		if (np2oscfg.F12KEY) {
+			keystat_senddata(getf11f12key(F12PUSHED) | 0x80);
+		}
+    }
+	else if (keycode == 0x67) {
+		if (np2oscfg.F11KEY) {
+			keystat_senddata(getf11f12key(F11PUSHED) | 0x80);
 		}
     }
     else {
@@ -191,11 +222,11 @@ void mackbd_keyup(int keycode) {
 	}
 }
 
-void mackbd_resetf12(void) {
+void mackbd_resetf11f12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
-		keystat_forcerelease(f12keys[i]);
+	for (i=0; i<(sizeof(f11f12keys)/sizeof(BYTE)); i++) {
+		keystat_forcerelease(f11f12keys[i]);
 	}
 }

@@ -11,7 +11,8 @@ void menu_setrotate(BYTE value);
 void menu_setbtnrapid(BYTE value);
 void menu_setbtnmode(BYTE value);
 void menu_setxshift(BYTE value);
-void menu_setf12copy(BYTE value);
+void menu_setf11key(BYTE value);
+void menu_setf12key(BYTE value);
 void menu_setextmem(BYTE value);
 void menu_setraster(BYTE value);
 

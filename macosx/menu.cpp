@@ -93,20 +93,34 @@ void menu_setxshift(BYTE value) {
 	_CheckMenuItem(hmenu, IDM_XGRPH, MFCHECK(value & 4));
 }
 
-void menu_setf12copy(BYTE value) {
+void menu_setf11key(BYTE value) {
 
 	MenuHandle	hmenu;
 
 	hmenu = _GetMenu(IDM_KEYBOARD);
-	if (value >= 5) {
+	if (value >= 4) {
 		value = 0;
 	}
-	np2oscfg.F12COPY = value;
+	np2oscfg.F11KEY = value;
+	_CheckMenuItem(hmenu, IDM_F11KANA, MFCHECK(value == 0));
+	_CheckMenuItem(hmenu, IDM_F11STOP, MFCHECK(value == 1));
+	_CheckMenuItem(hmenu, IDM_F11EQU, MFCHECK(value == 2));
+	_CheckMenuItem(hmenu, IDM_F11NFER, MFCHECK(value == 3));
+}
+
+void menu_setf12key(BYTE value) {
+
+	MenuHandle	hmenu;
+
+	hmenu = _GetMenu(IDM_KEYBOARD);
+	if (value >= 4) {
+		value = 0;
+	}
+	np2oscfg.F12KEY = value;
 	_CheckMenuItem(hmenu, IDM_F12MOUSE, MFCHECK(value == 0));
 	_CheckMenuItem(hmenu, IDM_F12COPY, MFCHECK(value == 1));
-	_CheckMenuItem(hmenu, IDM_F12STOP, MFCHECK(value == 2));
-	_CheckMenuItem(hmenu, IDM_F12EQU, MFCHECK(value == 3));
-	_CheckMenuItem(hmenu, IDM_F12COMMA, MFCHECK(value == 4));
+	_CheckMenuItem(hmenu, IDM_F12COMMA, MFCHECK(value == 2));
+	_CheckMenuItem(hmenu, IDM_F12XFER, MFCHECK(value == 3));
 }
 
 void menu_setbeepvol(BYTE value) {

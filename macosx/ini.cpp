@@ -377,7 +377,8 @@ static const INITBL iniitem[] = {
 	{"Seek_Snd", INITYPE_BOOL,		&np2cfg.MOTOR,			0},
 	{"Seek_Vol", INITYPE_UINT8,		&np2cfg.MOTORVOL,		0},
 
-	{"F12_COPY", INITYPE_UINT8,		&np2oscfg.F12COPY,		0},
+	{"F11_bind", INITYPE_UINT8,		&np2oscfg.F11KEY,		0},
+	{"F12_bind", INITYPE_UINT8,		&np2oscfg.F12KEY,		0},
 	{"btnRAPID", INITYPE_BOOL,		&np2cfg.BTN_RAPID,		0},
 	{"btn_MODE", INITYPE_BOOL,		&np2cfg.BTN_MODE,		0},
 	{"MS_RAPID", INITYPE_BOOL,		&np2cfg.MOUSERAPID,		0},
