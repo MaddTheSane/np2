@@ -8,7 +8,7 @@ typedef UINT32 (*CALCEA)(void);
 typedef UINT16 (*CALCLEA)(void);
 typedef UINT16 (*GETLEA)(void);
 
-extern	DWORD	EA_FIX;
+extern	UINT32	EA_FIX;
 extern	BYTE	*reg8_b53[256];
 extern	BYTE	*reg8_b20[256];
 extern	UINT16	*reg16_b53[256];
@@ -19,7 +19,7 @@ extern	CALCEA	c_calc_ea_dst[];
 extern	CALCLEA	c_calc_lea[];
 extern	GETLEA	c_get_ea[];
 
-extern void CPUCALL i286_intnum(DWORD vect, WORD IP);
+extern void CPUCALL i286_intnum(UINT vect, UINT16 IP);
 
 
 extern const I286OP i286op[];
@@ -33,16 +33,16 @@ extern const GETLEA i286c_ea_tbl[];
 
 
 #define	I286_0F	static void CPUCALL
-typedef void (CPUCALL * I286OP_0F)(DWORD op);
+typedef void (CPUCALL * I286OP_0F)(UINT op);
 
 I286EXT i286c_cts(void);
 
 
 #define	I286_8X	static void CPUCALL
 typedef void (CPUCALL * I286OP8XREG8)(BYTE *p);
-typedef void (CPUCALL * I286OP8XEXT8)(DWORD madr);
-typedef void (CPUCALL * I286OP8XREG16)(WORD *p, DWORD src);
-typedef void (CPUCALL * I286OP8XEXT16)(DWORD madr, DWORD src);
+typedef void (CPUCALL * I286OP8XEXT8)(UINT32 madr);
+typedef void (CPUCALL * I286OP8XREG16)(UINT16 *p, UINT32 src);
+typedef void (CPUCALL * I286OP8XEXT16)(UINT32 madr, UINT32 src);
 
 extern const I286OP8XREG8 c_op8xreg8_table[];
 extern const I286OP8XEXT8 c_op8xext8_table[];
@@ -52,13 +52,13 @@ extern const I286OP8XEXT16 c_op8xext16_table[];
 
 #define	I286_SFT static void CPUCALL
 typedef void (CPUCALL * I286OPSFTR8)(BYTE *p);
-typedef void (CPUCALL * I286OPSFTE8)(DWORD madr);
-typedef void (CPUCALL * I286OPSFTR16)(WORD *p);
-typedef void (CPUCALL * I286OPSFTE16)(DWORD madr);
+typedef void (CPUCALL * I286OPSFTE8)(UINT32 madr);
+typedef void (CPUCALL * I286OPSFTR16)(UINT16 *p);
+typedef void (CPUCALL * I286OPSFTE16)(UINT32 madr);
 typedef void (CPUCALL * I286OPSFTR8CL)(BYTE *p, BYTE cl);
-typedef void (CPUCALL * I286OPSFTE8CL)(DWORD madr, BYTE cl);
-typedef void (CPUCALL * I286OPSFTR16CL)(WORD *p, BYTE cl);
-typedef void (CPUCALL * I286OPSFTE16CL)(DWORD madr, BYTE cl);
+typedef void (CPUCALL * I286OPSFTE8CL)(UINT32 madr, BYTE cl);
+typedef void (CPUCALL * I286OPSFTR16CL)(UINT16 *p, BYTE cl);
+typedef void (CPUCALL * I286OPSFTE16CL)(UINT32 madr, BYTE cl);
 
 extern const I286OPSFTR8 sft_r8_table[];
 extern const I286OPSFTE8 sft_e8_table[];

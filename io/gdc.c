@@ -47,15 +47,20 @@ void gdc_setanalogpal(int color, int rgb, BYTE value) {
 	PAL1EVENT	*event;
 
 	ptr = ((BYTE *)(gdc.anapal + color)) + rgb;
-	if ((*ptr ^ value) & 0x0f) {
+	if (((*ptr) ^ value) & 0x0f) {
 		gdcs.palchange = GDCSCRN_REDRAW;
-		if ((palevent.events < PALEVENTMAX) && (!gdc.vsync)) {
-			event = palevent.event + palevent.events;
-			event->clock = nevent.item[NEVENT_FLAMES].clock -
+		if (palevent.events < PALEVENTMAX) {
+			if (!gdc.vsync) {
+				event = palevent.event + palevent.events;
+				event->clock = nevent.item[NEVENT_FLAMES].clock -
 									(nevent.baseclock - nevent.remainclock);
-			event->color = (color * sizeof(RGB32)) + rgb;
-			event->value = value;
-			palevent.events++;
+				event->color = (color * sizeof(RGB32)) + rgb;
+				event->value = value;
+				palevent.events++;
+			}
+			else {
+				palevent.vsyncpal = 1;
+			}
 		}
 	}
 	*ptr = value;

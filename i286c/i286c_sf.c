@@ -11,7 +11,8 @@
 
 I286_SFT _rol_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_ROL1(dst, src)
@@ -20,7 +21,8 @@ I286_SFT _rol_r8_1(BYTE *p) {
 
 I286_SFT _ror_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_ROR1(dst, src)
@@ -29,7 +31,8 @@ I286_SFT _ror_r8_1(BYTE *p) {
 
 I286_SFT _rcl_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_RCL1(dst, src)
@@ -38,7 +41,8 @@ I286_SFT _rcl_r8_1(BYTE *p) {
 
 I286_SFT _rcr_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_RCR1(dst, src)
@@ -47,7 +51,8 @@ I286_SFT _rcr_r8_1(BYTE *p) {
 
 I286_SFT _shl_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_SHL1(dst, src)
@@ -56,7 +61,8 @@ I286_SFT _shl_r8_1(BYTE *p) {
 
 I286_SFT _shr_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_SHR1(dst, src)
@@ -65,7 +71,8 @@ I286_SFT _shr_r8_1(BYTE *p) {
 
 I286_SFT _sar_r8_1(BYTE *p) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_SAR1(dst, src)
@@ -73,57 +80,71 @@ I286_SFT _sar_r8_1(BYTE *p) {
 }
 
 
-I286_SFT _rol_e8_1(DWORD madr) {
+I286_SFT _rol_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_ROL1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _ror_e8_1(DWORD madr) {
+I286_SFT _ror_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_ROR1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _rcl_e8_1(DWORD madr) {
+I286_SFT _rcl_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_RCL1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _rcr_e8_1(DWORD madr) {
+I286_SFT _rcr_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_RCR1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _shl_e8_1(DWORD madr) {
+I286_SFT _shl_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_SHL1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _shr_e8_1(DWORD madr) {
+I286_SFT _shr_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_SHR1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _sar_e8_1(DWORD madr) {
+I286_SFT _sar_e8_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
+
 	src = i286_memoryread(madr);
 	BYTE_SAR1(dst, src)
 	i286_memorywrite(madr, (BYTE)dst);
@@ -141,131 +162,145 @@ const I286OPSFTE8 sft_e8_table[] = {
 
 // ------------------------------------------------------------------------
 
-I286_SFT _rol_r16_1(WORD *p) {
+I286_SFT _rol_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_ROL1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _ror_r16_1(WORD *p) {
+I286_SFT _ror_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_ROR1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _rcl_r16_1(WORD *p) {
+I286_SFT _rcl_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_RCL1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _rcr_r16_1(WORD *p) {
+I286_SFT _rcr_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_RCR1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _shl_r16_1(WORD *p) {
+I286_SFT _shl_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_SHL1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _shr_r16_1(WORD *p) {
+I286_SFT _shr_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_SHR1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _sar_r16_1(WORD *p) {
+I286_SFT _sar_r16_1(UINT16 *p) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_SAR1(dst, src)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
 
-I286_SFT _rol_e16_1(DWORD madr) {
+I286_SFT _rol_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_ROL1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _ror_e16_1(DWORD madr) {
+I286_SFT _ror_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_ROR1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _rcl_e16_1(DWORD madr) {
+I286_SFT _rcl_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_RCL1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _rcr_e16_1(DWORD madr) {
+I286_SFT _rcr_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_RCR1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _shl_e16_1(DWORD madr) {
+I286_SFT _shl_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_SHL1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _shr_e16_1(DWORD madr) {
+I286_SFT _shr_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_SHR1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _sar_e16_1(DWORD madr) {
+I286_SFT _sar_e16_1(UINT32 madr) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_SAR1(dst, src)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
 
@@ -281,7 +316,8 @@ const I286OPSFTE16 sft_e16_table[] = {
 
 I286_SFT _rol_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_ROLCL(dst, src, cl)
@@ -290,7 +326,8 @@ I286_SFT _rol_r8_cl(BYTE *p, BYTE cl) {
 
 I286_SFT _ror_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_RORCL(dst, src, cl)
@@ -299,7 +336,8 @@ I286_SFT _ror_r8_cl(BYTE *p, BYTE cl) {
 
 I286_SFT _rcl_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_RCLCL(dst, src, cl)
@@ -308,7 +346,8 @@ I286_SFT _rcl_r8_cl(BYTE *p, BYTE cl) {
 
 I286_SFT _rcr_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_RCRCL(dst, src, cl)
@@ -317,7 +356,8 @@ I286_SFT _rcr_r8_cl(BYTE *p, BYTE cl) {
 
 I286_SFT _shl_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_SHLCL(dst, src, cl)
@@ -326,7 +366,8 @@ I286_SFT _shl_r8_cl(BYTE *p, BYTE cl) {
 
 I286_SFT _shr_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_SHRCL(dst, src, cl)
@@ -335,7 +376,8 @@ I286_SFT _shr_r8_cl(BYTE *p, BYTE cl) {
 
 I286_SFT _sar_r8_cl(BYTE *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = *p;
 	BYTE_SARCL(dst, src, cl)
@@ -343,63 +385,70 @@ I286_SFT _sar_r8_cl(BYTE *p, BYTE cl) {
 }
 
 
-I286_SFT _rol_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _rol_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_ROLCL(dst, src, cl)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _ror_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _ror_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_RORCL(dst, src, cl)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _rcl_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _rcl_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_RCLCL(dst, src, cl)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _rcr_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _rcr_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_RCRCL(dst, src, cl)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _shl_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _shl_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_SHLCL(dst, src, cl)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _shr_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _shr_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_SHRCL(dst, src, cl)
 	i286_memorywrite(madr, (BYTE)dst);
 }
 
-I286_SFT _sar_e8_cl(DWORD madr, BYTE cl) {
+I286_SFT _sar_e8_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	src = i286_memoryread(madr);
 	BYTE_SARCL(dst, src, cl)
@@ -418,131 +467,145 @@ const I286OPSFTE8CL sft_e8cl_table[] = {
 
 // ------------------------------------------------------------------------
 
-I286_SFT _rol_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _rol_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_ROLCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _ror_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _ror_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_RORCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _rcl_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _rcl_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_RCLCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _rcr_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _rcr_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_RCRCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _shl_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _shl_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_SHLCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _shr_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _shr_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_SHRCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
-I286_SFT _sar_r16_cl(WORD *p, BYTE cl) {
+I286_SFT _sar_r16_cl(UINT16 *p, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = *p;
 	WORD_SARCL(dst, src, cl)
-	*p = (WORD)dst;
+	*p = (UINT16)dst;
 }
 
 
-I286_SFT _rol_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _rol_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_ROLCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _ror_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _ror_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_RORCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _rcl_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _rcl_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_RCLCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _rcr_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _rcr_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_RCRCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _shl_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _shl_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_SHLCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _shr_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _shr_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_SHRCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
-I286_SFT _sar_e16_cl(DWORD madr, BYTE cl) {
+I286_SFT _sar_e16_cl(UINT32 madr, BYTE cl) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	src = i286_memoryread_w(madr);
 	WORD_SARCL(dst, src, cl)
-	i286_memorywrite_w(madr, (WORD)dst);
+	i286_memorywrite_w(madr, (UINT16)dst);
 }
 
 
@@ -553,3 +616,4 @@ const I286OPSFTR16CL sft_r16cl_table[] = {
 const I286OPSFTE16CL sft_e16cl_table[] = {
 		_rol_e16_cl,	_ror_e16_cl,	_rcl_e16_cl,	_rcr_e16_cl,
 		_shl_e16_cl,	_shr_e16_cl,	_shl_e16_cl,	_sar_e16_cl};
+

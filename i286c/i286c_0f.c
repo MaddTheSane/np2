@@ -6,7 +6,7 @@
 #include	"nevent.h"
 
 
-I286_0F _sgdt(DWORD op) {
+I286_0F _sgdt(UINT op) {
 
 	I286_CLOCK(11)
 	if (op < 0xc0) {
@@ -23,7 +23,7 @@ I286_0F _sgdt(DWORD op) {
 	}
 }
 
-I286_0F _sidt(DWORD op) {
+I286_0F _sidt(UINT op) {
 
 	I286_CLOCK(12)
 	if (op < 0xc0) {
@@ -40,11 +40,11 @@ I286_0F _sidt(DWORD op) {
 	}
 }
 
-I286_0F _lgdt(DWORD op) {
+I286_0F _lgdt(UINT op) {
 
 	I286_CLOCK(11)
 	if (op < 0xc0) {
-		WORD ad = c_get_ea[op]();
+		UINT16 ad = c_get_ea[op]();
 		i286reg.GDTR.limit = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		i286reg.GDTR.base = i286_memoryread_w(ad + EA_FIX);
@@ -58,11 +58,11 @@ I286_0F _lgdt(DWORD op) {
 	}
 }
 
-I286_0F _lidt(DWORD op) {
+I286_0F _lidt(UINT op) {
 
 	I286_CLOCK(11)
 	if (op < 0xc0) {
-		WORD ad = c_get_ea[op]();
+		UINT16 ad = c_get_ea[op]();
 		i286reg.IDTR.limit = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		i286reg.IDTR.base = i286_memoryread_w(ad + EA_FIX);
@@ -76,7 +76,7 @@ I286_0F _lidt(DWORD op) {
 	}
 }
 
-I286_0F _smsw(DWORD op) {
+I286_0F _smsw(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_CLOCK(3)
@@ -88,7 +88,7 @@ I286_0F _smsw(DWORD op) {
 	}
 }
 
-I286_0F _lmsw(DWORD op) {
+I286_0F _lmsw(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2)
@@ -141,8 +141,9 @@ I286_0F _loadall286(void) {
 
 I286EXT i286c_cts(void) {
 
-	WORD	ip;
-	DWORD	op, op2;
+	UINT16	ip;
+	UINT	op;
+	UINT	op2;
 
 	ip = I286_IP;
 	GET_PCBYTE(op);

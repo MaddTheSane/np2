@@ -47,7 +47,7 @@ const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 
 // ----
 
-	DWORD	EA_FIX;
+	UINT32	EA_FIX;
 	BYTE	*reg8_b53[256];
 	BYTE	*reg8_b20[256];
 	UINT16	*reg16_b53[256];
@@ -144,7 +144,7 @@ void i286_reset(void) {
 void i286_resetprefetch(void) {
 }
 
-void CPUCALL i286_intnum(DWORD vect, WORD IP) {
+void CPUCALL i286_intnum(UINT vect, UINT16 IP) {
 
 const BYTE	*ptr;
 
@@ -164,7 +164,7 @@ const BYTE	*ptr;
 
 void CPUCALL i286_interrupt(BYTE vect) {
 
-	BYTE	op;
+	UINT	op;
 const BYTE	*ptr;
 
 	op = i286_memoryread(I286_IP + CS_BASE);
@@ -181,7 +181,7 @@ const BYTE	*ptr;
 	ptr = I286_MEM + (vect * 4);
 	I286_IP = LOADINTELWORD(ptr+0);				// real mode!
 	I286_CS = LOADINTELWORD(ptr+2);				// real mode!
-	CS_BASE = (UINT32)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 	I286_CLOCK(20)
 }
 

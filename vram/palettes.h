@@ -33,6 +33,7 @@ typedef struct {
 	UINT16		anabit;
 	UINT16		degbit;
 	RGB32		pal[16];
+	UINT		vsyncpal;
 	UINT		events;
 	PAL1EVENT	event[PALEVENTMAX];
 } PALEVENT;

@@ -10,7 +10,8 @@
 
 I286_F6 _test_ea8_data8(UINT op) {
 
-	DWORD	src, dst;
+	UINT	src;
+	UINT	dst;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2);
@@ -26,7 +27,7 @@ I286_F6 _test_ea8_data8(UINT op) {
 
 I286_F6 _not_ea8(UINT op) {
 
-	DWORD	madr;
+	UINT32	madr;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2);
@@ -48,7 +49,9 @@ I286_F6 _not_ea8(UINT op) {
 I286_F6 _neg_ea8(UINT op) {
 
 	BYTE	*out;
-	DWORD	src, dst, madr;
+	UINT	src;
+	UINT	dst;
+	UINT32	madr;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2);
@@ -73,7 +76,7 @@ I286_F6 _neg_ea8(UINT op) {
 I286_F6 _mul_ea8(UINT op) {
 
 	BYTE	src;
-	DWORD	res;
+	UINT	res;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(13);
@@ -84,13 +87,13 @@ I286_F6 _mul_ea8(UINT op) {
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	BYTE_MUL(res, I286_AL, src)
-	I286_AX = (WORD)res;
+	I286_AX = (UINT16)res;
 }
 
 I286_F6 _imul_ea8(UINT op) {
 
 	BYTE	src;
-	long	res;
+	SINT32	res;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(13);
@@ -101,14 +104,14 @@ I286_F6 _imul_ea8(UINT op) {
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	BYTE_IMUL(res, I286_AL, src)
-	I286_AX = (WORD)res;
+	I286_AX = (UINT16)res;
 }
 
 I286_F6 _div_ea8(UINT op) {
 
-	WORD	tmp;
+	UINT16	tmp;
 	BYTE	src;
-	WORD	ip;
+	UINT16	ip;
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
@@ -120,7 +123,7 @@ I286_F6 _div_ea8(UINT op) {
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	tmp = I286_AX;
-	if (tmp < ((WORD)src << 8)) {
+	if (tmp < ((UINT16)src << 8)) {
 		I286_AL = tmp / src;
 		I286_AH = tmp % src;
 	}
@@ -131,9 +134,9 @@ I286_F6 _div_ea8(UINT op) {
 
 I286_F6 _idiv_ea8(UINT op) {
 
-	short	tmp, r;
+	SINT16	tmp, r;
 	char	src;
-	WORD	ip;
+	UINT16	ip;
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
@@ -144,7 +147,7 @@ I286_F6 _idiv_ea8(UINT op) {
 		I286_CLOCK(25);
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
-	tmp = (short)I286_AX;
+	tmp = (SINT16)I286_AX;
 	if (src) {
 		r = tmp / src;
 		if (!((r + 0x80) & 0xff00)) {
@@ -159,7 +162,8 @@ I286_F6 _idiv_ea8(UINT op) {
 
 I286_F6 _test_ea16_data16(UINT op) {
 
-	DWORD	src, dst;
+	UINT32	src;
+	UINT32	dst;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2);
@@ -175,7 +179,7 @@ I286_F6 _test_ea16_data16(UINT op) {
 
 I286_F6 _not_ea16(UINT op) {
 
-	DWORD	madr;
+	UINT32	madr;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2);
@@ -188,7 +192,7 @@ I286_F6 _not_ea16(UINT op) {
 			*(mem + madr) ^= 0xffff;
 		}
 		else {
-			WORD value = i286_memoryread_w(madr);
+			UINT16 value = i286_memoryread_w(madr);
 			value = ~value;
 			i286_memorywrite_w(madr, value);
 		}
@@ -197,8 +201,10 @@ I286_F6 _not_ea16(UINT op) {
 
 I286_F6 _neg_ea16(UINT op) {
 
-	WORD	*out;
-	DWORD	src, dst, madr;
+	UINT16	*out;
+	UINT32	src;
+	UINT32	dst;
+	UINT32	madr;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2);
@@ -210,20 +216,20 @@ I286_F6 _neg_ea16(UINT op) {
 		if (INHIBIT_WORDP(madr)) {
 			src = i286_memoryread_w(madr);
 			WORD_NEG(dst, src)
-			i286_memorywrite_w(madr, (WORD)dst);
+			i286_memorywrite_w(madr, (UINT16)dst);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	src = *out;
 	WORD_NEG(dst, src)
-	*out = (WORD)dst;
+	*out = (UINT16)dst;
 }
 
 I286_F6 _mul_ea16(UINT op) {
 
-	WORD	src;
-	DWORD	res;
+	UINT16	src;
+	UINT32	res;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(21);
@@ -234,14 +240,14 @@ I286_F6 _mul_ea16(UINT op) {
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	WORD_MUL(res, I286_AX, src)
-	I286_AX = (WORD)res;
-	I286_DX = (WORD)(res >> 16);
+	I286_AX = (UINT16)res;
+	I286_DX = (UINT16)(res >> 16);
 }
 
 I286_F6 _imul_ea16(UINT op) {
 
-	short	src;
-	long	res;
+	SINT16	src;
+	SINT32	res;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(21);
@@ -252,15 +258,15 @@ I286_F6 _imul_ea16(UINT op) {
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	WORD_IMUL(res, I286_AX, src)
-	I286_AX = (WORD)res;
-	I286_DX = (WORD)(res >> 16);
+	I286_AX = (UINT16)res;
+	I286_DX = (UINT16)(res >> 16);
 }
 
 I286_F6 _div_ea16(UINT op) {
 
-	DWORD	tmp;
-	WORD	src;
-	WORD	ip;
+	UINT32	tmp;
+	UINT32	src;
+	UINT16	ip;
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
@@ -271,10 +277,10 @@ I286_F6 _div_ea16(UINT op) {
 		I286_CLOCK(25);
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
-	tmp = ((DWORD)I286_DX << 16) | I286_AX;
-	if (tmp < ((DWORD)src << 16)) {
-		I286_AX = (short)(tmp / src);
-		I286_DX = (short)(tmp % src);
+	tmp = (I286_DX << 16) + I286_AX;
+	if (tmp < (src << 16)) {
+		I286_AX = (SINT16)(tmp / src);
+		I286_DX = (SINT16)(tmp % src);
 	}
 	else {
 		INT_NUM(0, ip - 2);										// 80x86
@@ -283,9 +289,10 @@ I286_F6 _div_ea16(UINT op) {
 
 I286_F6 _idiv_ea16(UINT op) {
 
-	long	tmp, r;
-	short	src;
-	WORD	ip;
+	SINT32	tmp;
+	SINT32	r;
+	SINT16	src;
+	UINT16	ip;
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
@@ -296,11 +303,11 @@ I286_F6 _idiv_ea16(UINT op) {
 		I286_CLOCK(25);
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
-	tmp = (long)(((DWORD)I286_DX << 16) | I286_AX);
+	tmp = (SINT32)((I286_DX << 16) + I286_AX);
 	if (src) {
 		r = tmp / src;
 		if (!((r + 0x8000) & 0xffff0000)) {
-			I286_AX = (short)r;
+			I286_AX = (SINT16)r;
 			I286_DX = tmp % src;
 			return;
 		}

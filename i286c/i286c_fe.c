@@ -9,7 +9,7 @@
 // ------------------------------------------------------------ opecode 0xfe,f
 
 #if 0
-I286_F6 _nop_int(DWORD op) {
+I286_F6 _nop_int(UINT op) {
 
 	INT_NUM(6, I286_IP - 2);
 }
@@ -74,12 +74,12 @@ I286_F6 _inc_ea16(UINT op) {
 		I286_CLOCK(7)
 		madr = c_calc_ea_dst[op]();
 		if (INHIBIT_WORDP(madr)) {
-			WORD value = i286_memoryread_w(madr);
+			UINT16 value = i286_memoryread_w(madr);
 			WORD_INC(value)
 			i286_memorywrite_w(madr, value);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	WORD_INC(*out)
 }
@@ -97,12 +97,12 @@ I286_F6 _dec_ea16(UINT op) {
 		I286_CLOCK(7)
 		madr = c_calc_ea_dst[op]();
 		if (INHIBIT_WORDP(madr)) {
-			WORD value = i286_memoryread_w(madr);
+			UINT16 value = i286_memoryread_w(madr);
 			WORD_DEC(value)
 			i286_memorywrite_w(madr, value);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	WORD_DEC(*out)
 }
@@ -133,7 +133,7 @@ I286_F6 _call_far_ea16(UINT op) {
 		I286_IP = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		I286_CS = i286_memoryread_w(ad + EA_FIX);
-		CS_BASE = (DWORD)I286_CS << 4;
+		CS_BASE = I286_CS << 4;
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);

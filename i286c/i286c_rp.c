@@ -29,7 +29,7 @@ I286EXT i286c_rep_insw(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
 		do {
-			WORD dat = iocore_inp16(I286_DX);
+			UINT16 dat = iocore_inp16(I286_DX);
 			i286_memorywrite_w(I286_DI + ES_BASE, dat);
 			I286_DI += stp;
 			I286_CLOCK(4)
@@ -59,7 +59,7 @@ I286EXT i286c_rep_outsw(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
 		do {
-			WORD dat = i286_memoryread_w(I286_SI + DS_FIX);
+			UINT16 dat = i286_memoryread_w(I286_SI + DS_FIX);
 			I286_SI += stp;
 			iocore_out16(I286_DX, dat);
 			I286_CLOCK(4)
@@ -90,7 +90,7 @@ I286EXT i286c_rep_movsw(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
 		do {
-			WORD dat = i286_memoryread_w(I286_SI + DS_FIX);
+			UINT16 dat = i286_memoryread_w(I286_SI + DS_FIX);
 			i286_memorywrite_w(I286_DI + ES_BASE, dat);
 			I286_SI += stp;
 			I286_DI += stp;
@@ -163,9 +163,9 @@ I286EXT i286c_repe_cmpsb(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIR;
 		do {
-			DWORD res;
-			DWORD dst = i286_memoryread(I286_SI + DS_FIX);
-			DWORD src = i286_memoryread(I286_DI + ES_BASE);
+			UINT res;
+			UINT dst = i286_memoryread(I286_SI + DS_FIX);
+			UINT src = i286_memoryread(I286_DI + ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_CLOCK(9)
@@ -181,9 +181,9 @@ I286EXT i286c_repne_cmpsb(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIR;
 		do {
-			DWORD res;
-			DWORD dst = i286_memoryread(I286_SI + DS_FIX);
-			DWORD src = i286_memoryread(I286_DI + ES_BASE);
+			UINT res;
+			UINT dst = i286_memoryread(I286_SI + DS_FIX);
+			UINT src = i286_memoryread(I286_DI + ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_CLOCK(9)
@@ -199,9 +199,9 @@ I286EXT i286c_repe_cmpsw(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
 		do {
-			DWORD res;
-			DWORD dst = i286_memoryread_w(I286_SI + DS_FIX);
-			DWORD src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 res;
+			UINT32 dst = i286_memoryread_w(I286_SI + DS_FIX);
+			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_CLOCK(9)
@@ -217,9 +217,9 @@ I286EXT i286c_repne_cmpsw(void) {
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
 		do {
-			DWORD res;
-			DWORD dst = i286_memoryread_w(I286_SI + DS_FIX);
-			DWORD src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 res;
+			UINT32 dst = i286_memoryread_w(I286_SI + DS_FIX);
+			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_CLOCK(9)
@@ -236,10 +236,10 @@ I286EXT i286c_repe_scasb(void) {
 	I286_CLOCK(5)
 	if (I286_CX) {
 		SINT16 stp = STRING_DIR;
-		DWORD dst = I286_AL;
+		UINT dst = I286_AL;
 		do {
-			DWORD res;
-			DWORD src = i286_memoryread(I286_DI + ES_BASE);
+			UINT res;
+			UINT src = i286_memoryread(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_CLOCK(8)
 			BYTE_SUB(res, dst, src)
@@ -253,10 +253,10 @@ I286EXT i286c_repne_scasb(void) {
 	I286_CLOCK(5)
 	if (I286_CX) {
 		SINT16 stp = STRING_DIR;
-		DWORD dst = I286_AL;
+		UINT dst = I286_AL;
 		do {
-			DWORD res;
-			DWORD src = i286_memoryread(I286_DI + ES_BASE);
+			UINT res;
+			UINT src = i286_memoryread(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_CLOCK(8)
 			BYTE_SUB(res, dst, src)
@@ -270,10 +270,10 @@ I286EXT i286c_repe_scasw(void) {
 	I286_CLOCK(5)
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
-		DWORD dst = I286_AX;
+		UINT32 dst = I286_AX;
 		do {
-			DWORD res;
-			DWORD src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 res;
+			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_CLOCK(8)
 			WORD_SUB(res, dst, src)
@@ -287,10 +287,10 @@ I286EXT i286c_repne_scasw(void) {
 	I286_CLOCK(5)
 	if (I286_CX) {
 		SINT16 stp = STRING_DIRx2;
-		DWORD dst = I286_AX;
+		UINT32 dst = I286_AX;
 		do {
-			DWORD res;
-			DWORD src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 res;
+			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_CLOCK(8)
 			WORD_SUB(res, dst, src)

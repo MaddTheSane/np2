@@ -408,6 +408,7 @@ void pal_eventclear(void) {
 	}
 	else {
 		CopyMemory(palevent.pal, gdc.anapal, sizeof(gdc.anapal));
+		palevent.vsyncpal = 0;
 	}
 }
 

@@ -109,7 +109,10 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 		}
 		(*sdrawfn)(sdraw, maxy);
 	}
-	if (nextupdate) {
+	if (palevent.vsyncpal) {
+		return(2);
+	}
+	else if (nextupdate) {
 		for (y=0; y<nextupdate; y+=2) {
 			*(UINT16 *)(renewal_line + y) |= 0x8080;
 		}

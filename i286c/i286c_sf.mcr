@@ -2,16 +2,16 @@
 
 
 #define	BYTE_ROL1(d, s)	{											\
-		DWORD tmp = ((s) >> 7);										\
-		(d) = ((s) << 1) | tmp;										\
+		UINT tmp = ((s) >> 7);										\
+		(d) = ((s) << 1) + tmp;										\
 		I286_FLAGL &= ~C_FLAG;										\
 		I286_FLAGL |= tmp;											\
 		I286_OV = ((s) ^ (d)) & 0x80;								\
 	}
 
 #define BYTE_ROR1(d, s) {											\
-		DWORD tmp = ((s) & 1);										\
-		(d) = ((tmp << 8) | (s)) >> 1;								\
+		UINT tmp = ((s) & 1);										\
+		(d) = ((tmp << 8) + (s)) >> 1;								\
 		I286_FLAGL &= ~C_FLAG;										\
 		I286_FLAGL |= tmp;											\
 		I286_OV = ((s) ^ (d)) & 0x80;								\
@@ -47,16 +47,16 @@
 
 
 #define	WORD_ROL1(d, s)	{											\
-		DWORD tmp = ((s) >> 15);									\
-		(d) = ((s) << 1) | tmp;										\
+		UINT32 tmp = ((s) >> 15);									\
+		(d) = ((s) << 1) + tmp;										\
 		I286_FLAGL &= ~C_FLAG;										\
 		I286_FLAGL |= tmp;											\
 		I286_OV = ((s) ^ (d)) & 0x8000;								\
 	}
 
 #define WORD_ROR1(d, s) {											\
-		DWORD tmp = ((s) & 1);										\
-		(d) = ((tmp << 16) | (s)) >> 1;								\
+		UINT32 tmp = ((s) & 1);										\
+		(d) = ((tmp << 16) + (s)) >> 1;								\
 		I286_FLAGL &= ~C_FLAG;										\
 		I286_FLAGL |= tmp;											\
 		I286_OV = ((s) ^ (d)) & 0x8000;								\
@@ -69,7 +69,7 @@
 		I286_OV = ((s) ^ (d)) & 0x8000;
 
 #define	WORD_RCR1(d, s)												\
-		(d) = (((I286_FLAGL & 1) << 16) | (s)) >> 1;				\
+		(d) = (((I286_FLAGL & 1) << 16) + (s)) >> 1;				\
 		I286_FLAGL &= ~C_FLAG;										\
 		I286_FLAGL |= ((s) & 1);									\
 		I286_OV = ((s) ^ (d)) & 0x8000;
@@ -85,7 +85,7 @@
 		I286_FLAGL = (BYTE)(szpflag_w[(d)] | A_FLAG | ((s) & 1));
 
 #define	WORD_SAR1(d, s)												\
-		(d) = (WORD)(((short)s) >> 1);								\
+		(d) = (UINT16)(((SINT16)s) >> 1);							\
 		I286_OV = 0;												\
 		I286_FLAGL = (BYTE)(szpflag_w[(d)] | A_FLAG | ((s) & 1));
 
@@ -123,7 +123,7 @@
 #define	BYTE_RCLCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			DWORD	tmp;											\
+			UINT tmp;												\
 			tmp = I286_FLAGL & C_FLAG;								\
 			I286_FLAGL &= ~C_FLAG;									\
 			while((c)--) {											\
@@ -138,7 +138,7 @@
 #define	BYTE_RCRCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			DWORD	tmp;											\
+			UINT tmp;												\
 			tmp = I286_FLAGL & C_FLAG;								\
 			I286_FLAGL &= ~C_FLAG;									\
 			while((c)--) {											\
@@ -195,7 +195,7 @@
 #define	WORD_ROLCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			DWORD tmp;												\
+			UINT tmp;												\
 			(c)--;													\
 			if (c) {												\
 				(c) &= 0x0f;										\
@@ -207,7 +207,7 @@
 				I286_OV = ((s) + 0x4000) & 0x8000;					\
 			}														\
 			tmp = ((s) >> 15);										\
-			(s) = ((s) << 1) | tmp;									\
+			(s) = ((s) << 1) + tmp;									\
 			I286_FLAGL &= ~C_FLAG;									\
 			I286_FLAGL |= tmp;										\
 		}															\
@@ -216,7 +216,7 @@
 #define	WORD_RORCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			DWORD tmp;												\
+			UINT32 tmp;												\
 			(c)--;													\
 			if (c) {												\
 				(c) &= 0x0f;										\
@@ -228,7 +228,7 @@
 				I286_OV = ((s) >> 15) ^ ((s) & 1);					\
 			}														\
 			tmp = ((s) & 1);										\
-			(s) = ((tmp << 16) | (s)) >> 1;							\
+			(s) = ((tmp << 16) + (s)) >> 1;							\
 			I286_FLAGL &= ~C_FLAG;									\
 			I286_FLAGL |= tmp;										\
 		}															\
@@ -237,7 +237,7 @@
 #define	WORD_RCLCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			DWORD	tmp;											\
+			UINT tmp;												\
 			tmp = I286_FLAGL & C_FLAG;								\
 			I286_FLAGL &= ~C_FLAG;									\
 			I286_OV = 0;											\
@@ -245,7 +245,7 @@
 				I286_OV = ((s) + 0x4000) & 0x8000;					\
 			}														\
 			while((c)--) {											\
-				(s) = (((s) << 1) | tmp) & 0x1ffff;					\
+				(s) = (((s) << 1) + tmp) & 0x1ffff;					\
 				tmp = (s) >> 16;									\
 			}														\
 			I286_FLAGL |= tmp;										\
@@ -255,7 +255,7 @@
 #define	WORD_RCRCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			DWORD	tmp;											\
+			UINT32 tmp;												\
 			tmp = I286_FLAGL & C_FLAG;								\
 			I286_FLAGL &= ~C_FLAG;									\
 			I286_OV = 0;											\
@@ -281,7 +281,7 @@
 			(s) <<= (c);											\
 			(s) &= 0x1ffff;											\
 			I286_FLAGL = szpflag_w[(s) & 0xffff];					\
-			I286_FLAGL |= (WORD)((s) >> 16);						\
+			I286_FLAGL |= (BYTE)((s) >> 16);						\
 		}															\
 		(d) = (s);
 
@@ -305,9 +305,9 @@
 #define	WORD_SARCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			(s) = ((short)(s)) >> ((c) - 1);						\
+			(s) = ((SINT16)(s)) >> ((c) - 1);						\
 			I286_FLAGL = (BYTE)((s) & 1);							\
-			(s) = (WORD)(((short)s) >> 1);							\
+			(s) = (UINT16)(((SINT16)s) >> 1);						\
 			I286_OV = 0;											\
 			I286_FLAGL |= szpflag_w[(s)];							\
 		}															\

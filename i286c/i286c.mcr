@@ -361,7 +361,7 @@
 
 
 #define	SP_PUSH(reg, clock)	{										\
-		WORD sp = reg;												\
+		UINT16 sp = reg;											\
 		I286_SP -= 2;												\
 		i286_memorywrite_w(I286_SP + SS_BASE, sp);					\
 		I286_CLOCK(clock);											\
