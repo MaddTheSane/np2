@@ -9,7 +9,7 @@
 			explicitFileType = wrapper.application;
 			fallbackIsa = PBXFileReference;
 			isa = PBXApplicationReference;
-			path = "Neko Project-21x.app";
+			path = "Neko Project 21x.app";
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -293,7 +293,7 @@
 				OTHER_REZFLAGS = "";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = np2gcc_ia32.h;
-				PRODUCT_NAME = "Neko Project-21x";
+				PRODUCT_NAME = "Neko Project 21x";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -509,15 +509,15 @@
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>Neko Project-21x</string>
+	<string>Neko Project 21x</string>
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.retropc.Neko Project-21x</string>
+	<string>net.retropc.Neko Project 21x</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Neko Project-21x</string>
+	<string>Neko Project 21x</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
@@ -4066,7 +4066,7 @@
 			sourceTree = "<group>";
 		};
 		96EBF23205DD686500DA3983 = {
-			fileEncoding = "-2147483647";
+			fileEncoding = 3;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			path = paging.c;

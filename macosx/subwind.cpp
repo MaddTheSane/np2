@@ -11,7 +11,11 @@
 #include	"dosio.h"
 #include	"softkbd.h"
 
+#if !defined(SUPPORT_PC9821)
 static const char inifile[] = "np2.cfg";			// same file name..
+#else
+static const char inifile[] = "np21.cfg";
+#endif
 #define	FLOATINGWINDOWTITLEOFFSET 16
 
 #if defined(SUPPORT_KEYDISP)

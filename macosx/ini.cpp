@@ -328,8 +328,13 @@ const INITBL	*pterm;
 extern	int		winx;
 extern	int		winy;
 
+#if !defined(SUPPORT_PC9821)
 static const char ini_title[] = "NekoProjectII";
 static const char inifile[] = "np2.cfg";
+#else
+static const char ini_title[] = "NekoProject21";
+static const char inifile[] = "np21.cfg";
+#endif
 
 static const INITBL iniitem[] = {
 	{"np2title", INITYPE_STR,			np2oscfg.titles,

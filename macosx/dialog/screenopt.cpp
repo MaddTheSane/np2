@@ -51,6 +51,12 @@ static void initScreenWindow(void) {
     setControlValue('sl/f', 2, np2cfg.wait[2]);
     setControlValue('sl/f', 3, np2cfg.wait[4]);
     setControlValue('sl/f', 4, np2cfg.realpal);
+	
+#if defined(SUPPORT_PC9821)
+	DisableControl(getControlRefByID('Gral', 0, screenWin));
+	DisableControl(getControlRefByID('16cl', 0, screenWin));
+#endif
+
 }
 
 static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {

@@ -45,7 +45,11 @@
 // #define	OPENING_WAIT	1500
 
 
+#if !defined(SUPPORT_PC9821)
 		NP2OSCFG	np2oscfg = {"Neko Project IIx",						//titles
+#else
+		NP2OSCFG	np2oscfg = {"Neko Project 21x",						//titles
+#endif
 								-1,										//winx
 								-1,										//winy
 								0,										//NOWAIT
@@ -59,11 +63,15 @@
 								0,										//confirm
 								0,										//resume
 								1,										//toolwin
+#if defined(SUPPORT_KEYDISP)
+								0,										//keydisp
+#endif
+#if defined(SUPPORT_SOFTKBD)
+								0,										//softkey
+#endif
+
 								0,										//jastsnd
 								0,										//I286SAVE
-#ifdef SUPPORT_KEYDISP
-								1,										//keydisp
-#endif
 								};
 
 		WindowPtr	hWndMain;
@@ -183,6 +191,14 @@ static void MenuBarInit(void) {
     if (np2oscfg.I286SAVE) {
         AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
     }
+	
+#if defined(SUPPORT_PC9821)
+	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("11.6MB"), kMenuItemAttrIconDisabled, NULL, NULL);
+	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("13.6MB"), kMenuItemAttrIconDisabled, NULL, NULL);
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_HELP), IDM_NP2HELP, CFSTR("Neko Project 21x Help"));
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_APPLE), IDM_ABOUT, CFSTR("About Neko Project 21x..."));
+	SetMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), IDM_I286SAVE, CFSTR("i386 save"));
+#endif
 
 	if (!(np2cfg.fddequip & 1)) {
 		DisableAllMenuItems(GetMenuRef(IDM_FDD1));
@@ -628,6 +644,16 @@ void HandleMenuChoice(long wParam) {
 
 		case IDM_MEM76:
 			menu_setextmem(7);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MEM116:
+			menu_setextmem(11);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MEM136:
+			menu_setextmem(13);
 			update |= SYS_UPDATECFG;
 			break;
 

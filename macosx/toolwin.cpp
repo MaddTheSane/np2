@@ -1193,7 +1193,11 @@ const DISKACC	*accterm;
 // ----
 
 static const char ini_title[] = "NP2 tool";
+#if !defined(SUPPORT_PC9821)
 static const char inifile[] = "np2.cfg";			// same file name..
+#else
+static const char inifile[] = "np21.cfg";
+#endif
 
 static const INITBL iniitem[] = {
 	{"WindposX", INITYPE_SINT32,	&np2tool.posx,			0},

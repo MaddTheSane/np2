@@ -98,7 +98,11 @@ void sysmng_updatecaption(BYTE flag) {
 #if defined(NP2GCC)
 	milstr_ncpy(work, np2oscfg.titles, sizeof(work));
 #else
+#if !defined(SUPPORT_PC9821)
 	milstr_ncpy(work, "Neko Project II", sizeof(work));
+#else
+	milstr_ncpy(work, "Neko Project 21", sizeof(work));
+#endif
 #endif
 	milstr_ncat(work, strtitle, sizeof(work));
 	milstr_ncat(work, strclock, sizeof(work));

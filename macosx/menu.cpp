@@ -181,6 +181,8 @@ void menu_setextmem(BYTE value) {								// ver0.28
 	_CheckMenuItem(hmenu, IDM_MEM16, MFCHECK(value == 1));
 	_CheckMenuItem(hmenu, IDM_MEM36, MFCHECK(value == 3));
 	_CheckMenuItem(hmenu, IDM_MEM76, MFCHECK(value == 7));
+	_CheckMenuItem(hmenu, IDM_MEM116, MFCHECK(value == 11));
+	_CheckMenuItem(hmenu, IDM_MEM136, MFCHECK(value == 13));
 }
 
 void menu_setdispclk(BYTE value) {

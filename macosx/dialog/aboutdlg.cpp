@@ -80,6 +80,9 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
         switch (GetEventKind(event))
         {
             case kEventWindowShowing:
+#if defined(SUPPORT_PC9821)
+				SetWindowTitleWithCFString(aboutWin, CFSTR("About Neko Project 21x"));
+#endif
                 image = getControlRefByID('logo', 0, aboutWin);
                 pict = getBMPfromResource("np2logo.tiff", &bounds);
                 SetControlData(image, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
