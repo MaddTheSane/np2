@@ -19,7 +19,7 @@
 ・推奨動作環境
 
 　　G3以上のプロセッサ
-　　MacOS9/MacOSX (carbon1.00)
+　　MacOS9/MacOSX (Carbon版はcarbonlib1.00)
 
 
 
@@ -52,113 +52,108 @@
 ・メニュー
 
 　　Emulate
-　　　Reset                 ハードウェアリセットします。
-　　　Configure             設定を開きます。
-　　　NewDisk               ブランクディスクイメージを作成します。
-　　　Font                  フォントファイルを選択します。
-　　　Exit                  ねこープロジェクトIIを終了します。
+　　　Reset                     ハードウェアリセットします。
+　　　Configure                 設定を開きます。
+　　　NewDisk                   ブランクディスクイメージを作成します。
+　　　Font                      フォントファイルを選択します。
 
 　　FDD1
-　　　Open                  ドライブ１のディスクイメージを選択します。
-　　　Eject                 ドライブ１のディスクイメージを取出します。
+　　　Open                      ドライブ１のディスクイメージを選択します。
+　　　Eject                     ドライブ１のディスクイメージを取出します。
 
 　　FDD2
-　　　Open                  ドライブ２のディスクイメージを選択します。
-　　　Eject                 ドライブ２のディスクイメージを取出します。
+　　　Open                      ドライブ２のディスクイメージを選択します。
+　　　Eject                     ドライブ２のディスクイメージを取出します。
 
 　　HardDisk
 　　　SASI-1
-　　　　Open                SASI-1のハードディスクイメージを選択します。
-　　　　Remove              SASI-1を未設続状態に戻します。
+　　　　Open                    SASI-1のハードディスクイメージを選択します。
+　　　　Remove                  SASI-1を未設続状態に戻します。
 　　　SASI-2
-　　　　Open                SASI-2のハードディスクイメージを選択します。
-　　　　Remove              SASI-2を未設続状態に戻します。
+　　　　Open                    SASI-2のハードディスクイメージを選択します。
+　　　　Remove                  SASI-2を未設続状態に戻します。
 
 　　Screen
-　　　Window                ウィンドウモードになります。
-　　　FullScreen            フルスクリーンモードになります。
-　　　Normal                画面を回転させません。
-　　　Left Rotated          画面を左に90度回転させます。
-　　　Right Rotated         画面を右に90度回転させます。
-　　　Disp Vsync            描画タイミング (チェックでVsync時)
-　　　Real Palettes         パレット更新タイミング (チェックでラスタごと)
-　　　No Wait               タイミングを取りません。
-　　　Auto frame            表示タイミングを自動的に決定します。
-　　　Full frame            全てのフレームを表示します。
-　　　1/2 frame             ２回に１度描画します。
-　　　1/3 frame             ３回に１度描画します。
-　　　1/4 frame             ４回に１度描画します。
-　　　Screen option         スクリーン設定を開きます。
+　　　Disp Vsync                描画タイミング (チェックでVsync時)
+　　　Real Palettes             パレット更新タイミング (チェックでラスタごと)
+　　　No Wait                   タイミングを取りません。
+　　　Auto frame                表示タイミングを自動的に決定します。
+　　　Full frame                全てのフレームを表示します。
+　　　1/2 frame                 ２回に１度描画します。
+　　　1/3 frame                 ３回に１度描画します。
+　　　1/4 frame                 ４回に１度描画します。
+　　　Screen option             スクリーン設定を開きます。
 
 　　Device
 　　　Keyboard
-　　　　Keyboard            テンキーをキーボードとして扱います。
-　　　　JoyKey-1            テンキーをジョイスティック１に割り当てます。
-　　　　JoyKey-2            テンキーをジョイスティック２に割り当てます。
-　　　　MouseKey            テンキーをマウスに割り当てます。
-　　　　mechanical SHIFT    ノート風メカニカルシフトにします。
-　　　　mechanical CTRL     ノート風メカニカルコントロールにします。
-　　　　mechanical GRPH     ノート風メカニカルグラフキーにします。
-　　　　F12 = Mouse         F12キーをマウス切替えにアサインします。
-　　　　F12 = Copy          F12キーをCopyキーにアサインします。
-　　　　F12 = Stop          F12キーをStopキーにアサインします。
-　　　　F12 = tenkey [=]    F12キーをテンキーの=キーにアサインします。
-　　　　F12 = tenkey [,]    F12キーをテンキーの,キーにアサインします。
+　　　　Keyboard                テンキーをキーボードとして扱います。
+　　　　JoyKey-1                テンキーをジョイスティック１に割り当てます。
+　　　　JoyKey-2                テンキーをジョイスティック２に割り当てます。
+　　　　MouseKey                テンキーをマウスに割り当てます。
+　　　　mechanical SHIFT        ノート風メカニカルシフトにします。
+　　　　mechanical CTRL         ノート風メカニカルコントロールにします。
+　　　　mechanical GRPH         ノート風メカニカルグラフキーにします。
+　　　　F12 = Mouse             F12キーをマウス切替えにアサインします。(※)
+　　　　F12 = Copy              F12キーをCopyキーにアサインします。
+　　　　F12 = Stop              F12キーをStopキーにアサインします。
 　　　Sound
-　　　　Beep off            ビープを無音にします。
-　　　　Beep low            ビープ音量を小にします。
-　　　　Beep mid            ビープ音量を中にします。
-　　　　Beep high           ビープ音量を大にします。
-　　　　Disable boards      FM音源ボードを使用しません。
-　　　　PC-9801-14          ミュージックジェネレータボードを使用します。
-　　　　PC-9801-26K         PC-9801-26Kボードを使用します。
-　　　　PC-9801-86          PC-9801-86ボードを使用します。
-　　　　PC-9801-118         PC-9801-118ボードを使用します。
-　　　　Chibi-oto           (PC-9801-86拡張チップの)ちびおとを使用します。
-　　　　Speak board         スピークボードを使用します。
-　　　　Spark board         スパークボードを使用します。
-　　　　AMD-98              AMD-98を使用します。
-　　　　Seek Sound          ディスクシークタイミングを取ります。
+　　　　Beep off                ビープを無音にします。
+　　　　Beep low                ビープ音量を小にします。
+　　　　Beep mid                ビープ音量を中にします。
+　　　　Beep high               ビープ音量を大にします。
+　　　　Disable boards          FM音源ボードを使用しません。
+　　　　PC-9801-14              ミュージックジェネレータボードを使用します。
+　　　　PC-9801-26K             PC-9801-26Kボードを使用します。
+　　　　PC-9801-86              PC-9801-86ボードを使用します。
+　　　　PC-9801-26K + 86        PC-9801-26Kと86ボードを使用します。
+　　　　PC-9801-86 + Chibi-oto  PC-9801-86ボードとちびおとを使用します。
+　　　　PC-9801-118             PC-9801-118ボードを使用します。
+　　　　Speak board             スピークボードを使用します。
+　　　　Spark board             スパークボードを使用します。
+　　　　AMD-98                  AMD-98を使用します。
+　　　　Seek Sound              ディスクシークタイミングを取ります。
 　　　Memory
-　　　　640KB               メモリをメインメモリのみ使用します。
-　　　　1.6MB               メインメモリと拡張メモリ1MBを使用します。
-　　　　3.6MB               メインメモリと拡張メモリ3MBを使用します。
-　　　　7.6MB               メインメモリと拡張メモリ7MBを使用します。
-　　　Mouse                 マウス操作を切替えます。
-　　　MIDI panic            MIDIを消音します。
+　　　　640KB                   メモリをメインメモリのみ使用します。
+　　　　1.6MB                   メインメモリと拡張メモリ1MBを使用します。
+　　　　3.6MB                   メインメモリと拡張メモリ3MBを使用します。
+　　　　7.6MB                   メインメモリと拡張メモリ7MBを使用します。
+　　　Mouse                     マウス操作を切替えます。
+　　　MIDI panic                MIDIを消音します。
 
 　　Other
-　　　BMP Save              エミュレーション中の画面をBMP形式で保存します。
-　　　Clock Disp            クロック数を表示します。
-　　　Frame Disp            フレーム数を表示します。
+　　　BMP Save                  エミュレーション中の画面をBMP形式で保存します。
+　　　Clock Disp                クロック数を表示します。
+　　　Frame Disp                フレーム数を表示します。
 
 
 ・設定ダイアログ
 
 　　Configue
 　　　CPU
-　　　　Base Clock          CPUのベースクロックを指定します。
-　　　　Multiple            CPUのクロック倍率を指定します。
+　　　　Base Clock              CPUのベースクロックを指定します。
+　　　　Multiple                CPUのクロック倍率を指定します。
 　　　Sound
-　　　　Sampling Rate       サウンドの出力周波数を指定します。
-　　　　Buffer              サウンドのバッファサイズを指定します。
-      Resume                レジューム機能を使用します。
+　　　　Sampling Rate           サウンドの出力周波数を指定します。
+　　　　Buffer                  サウンドのバッファサイズを指定します。
+      Resume                    レジューム機能を使用します。
 
 　　Screen option
 　　　Video
-　　　　LCD                 PC-98ノートの液晶モードになります。
-　　　　Reverse             液晶表示を反転します。
-　　　　Use skipline rev    スキップラインを補正します。
-　　　　Ratio               スキップラインの明るさを指定します。
+　　　　LCD                     PC-98ノートの液晶モードになります。
+　　　　Reverse                 液晶表示を反転します。
+　　　　Use skipline rev        スキップラインを補正します。
+　　　　Ratio                   スキップラインの明るさを指定します。
 　　　Chip
-　　　　GDC                 GDCチップを指定します。
-　　　　GRCG                GRCGチップを指定します。
-　　　　Enable 16color      アナログ16色カラーを有効にします。
+　　　　GDC                     GDCチップを指定します。
+　　　　GRCG                    GRCGチップを指定します。
+　　　　Enable 16color          アナログ16色カラーを有効にします。
 　　　Timing
-　　　　T-RAM               テキストRAMアクセスウェイト値を指定します。
-　　　　V-RAM               ヴィデオRAMアクセスウェイト値を指定します。
-　　　　GRCG                GRCG使用時のアクセスウェイト値を指定します。
-　　　　RealPalettes Adjust RealPalettes時のタイミングを調整します。
+　　　　T-RAM                   テキストRAMアクセスウェイト値を指定します。
+　　　　V-RAM                   ヴィデオRAMアクセスウェイト値を指定します。
+　　　　GRCG                    GRCG使用時のアクセスウェイト値を指定します。
+　　　　RealPalettes Adjust     RealPalettes時のタイミングを調整します。
+
+　　※ Classic版のみ
 
 
 　Windows版と共通点が多いので Windows版ヘルプもご覧ください。
