@@ -93,7 +93,46 @@ static void bios0x18_10(REG8 curdel) {
 	gdcs.textdisp |= GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
 }
 
-void bios0x18_16(BYTE chr, BYTE atr) {
+void bios0x18_0a(REG8 mode) {
+
+const CRTDATA	*crt;
+
+	// GDCバッファを空に
+	if (gdc.m.cnt) {
+		gdc_work(GDCWORK_MASTER);
+	}
+	gdc_forceready(&gdc.m);
+
+	gdc.mode1 &= ~(0x2d);
+	mem[MEMB_CRT_STS_FLAG] = mode;
+	crt = crtdata;
+	if (!(np2cfg.dipsw[0] & 1)) {
+		mem[MEMB_CRT_STS_FLAG] |= 0x80;
+		gdc.mode1 |= 0x08;
+		crt += 2;
+	}
+	if (mode & 0x01) {
+		crt += 1;					// 20行
+	}
+	if (mode & 0x02) {
+		gdc.mode1 |= 0x04;				// 40桁
+	}
+	if (mode & 0x04) {
+		gdc.mode1 |= 0x01;				// アトリビュート
+	}
+	if (mode & 0x08) {
+		gdc.mode1 |= 0x20;				// コードアクセス
+	}
+	mem[MEMB_CRT_RASTER] = crt->raster;
+	crtc.reg.pl = crt->pl;
+	crtc.reg.bl = crt->bl;
+	crtc.reg.cl = crt->cl;
+	crtc.reg.ssl = 0;
+	gdc_restorekacmode();
+	bios0x18_10(0);
+}
+
+void bios0x18_16(REG8 chr, REG8 atr) {
 
 	UINT32	i;
 
@@ -354,7 +393,6 @@ void bios0x18(void) {
 		BOOL	b;
 		UINT16	w;
 		UINT32	d;
-const CRTDATA	*crt;
 	}		tmp;
 
 	UINT	pos;
@@ -425,39 +463,7 @@ const CRTDATA	*crt;
  			break;
 
    		case 0x0a:						// CRTモードの設定
-			// GDCバッファを空に
-			if (gdc.m.cnt) {
-				gdc_work(GDCWORK_MASTER);
-			}
-			gdc_forceready(&gdc.m);
-
-			gdc.mode1 &= ~(0x2d);
-			mem[MEMB_CRT_STS_FLAG] = CPU_AL;
-			tmp.crt = crtdata;
-			if (!(np2cfg.dipsw[0] & 1)) {
-				mem[MEMB_CRT_STS_FLAG] |= 0x80;
-				gdc.mode1 |= 0x08;
-				tmp.crt += 2;
-			}
-			if (CPU_AL & 0x01) {
-				tmp.crt += 1;					// 20行
-			}
-			if (CPU_AL & 0x02) {
-				gdc.mode1 |= 0x04;				// 40桁
-			}
-			if (CPU_AL & 0x04) {
-				gdc.mode1 |= 0x01;				// アトリビュート
-			}
-			if (CPU_AL & 0x08) {
-				gdc.mode1 |= 0x20;				// コードアクセス
-			}
-			mem[MEMB_CRT_RASTER] = tmp.crt->raster;
-			crtc.reg.pl = tmp.crt->pl;
-			crtc.reg.bl = tmp.crt->bl;
-			crtc.reg.cl = tmp.crt->cl;
-			crtc.reg.ssl = 0;
-			gdc_restorekacmode();
-			bios0x18_10(0);
+			bios0x18_0a(CPU_AL);
 			break;
 
    		case 0x0b:						// CRTモードのセンス
@@ -500,6 +506,12 @@ const CRTDATA	*crt;
  			break;
 
 		case 0x0f:						// 複数の表示領域の設定
+			// GDCバッファを空に
+			if (gdc.m.cnt) {
+				gdc_work(GDCWORK_MASTER);
+			}
+			gdc_forceready(&gdc.m);
+
 			SETBIOSMEM16(0x0053e, CPU_CX);
 			SETBIOSMEM16(0x00540, CPU_BX);
 			mem[0x00547] = CPU_DH;

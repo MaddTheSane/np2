@@ -139,13 +139,12 @@ static void bios_vectorset(void) {									// ver0.30
 
 static void bios_screeninit(void) {
 
-	UINT	ax;
+	REG8	al;
 
-	ax = 0x0a04;
-	ax += (np2cfg.dipsw[1] & 0x04) >> 1;
-	ax += (np2cfg.dipsw[1] & 0x08) >> 3;
-	CPU_AX = ax;
-	bios0x18();
+	al = 4;
+	al += (np2cfg.dipsw[1] & 0x04) >> 1;
+	al += (np2cfg.dipsw[1] & 0x08) >> 3;
+	bios0x18_0a(al);
 }
 
 
