@@ -56,7 +56,7 @@ void diskdrv_setfdd(REG8 drv, const char *fname, int readonly) {
 		fdd_eject(drv);
 		diskdrv_delay[drv] = 0;
 		diskdrv_fname[drv][0] = '\0';
-		fdc.stat[drv] = FDCRLT_IC0 | FDCRLT_IC1 | FDCRLT_NR | drv;
+		fdc.stat[drv] = FDCRLT_AI | FDCRLT_NR | drv;
 		fdc_interrupt();
 
 		if (fname) {
@@ -78,7 +78,7 @@ void diskdrv_callback(void) {
 			if ((!diskdrv_delay[drv]) && (diskdrv_fname[drv][0])) {
 				fdd_set(drv, diskdrv_fname[drv], FTYPE_NONE, diskdrv_ro[drv]);
 				diskdrv_fname[drv][0] = '\0';
-				fdc.stat[drv] = FDCRLT_IC0 | FDCRLT_IC1 | drv;
+				fdc.stat[drv] = FDCRLT_AI | drv;
 				fdc_interrupt();
 				sysmng_update(SYS_UPDATEFDD);
 			}

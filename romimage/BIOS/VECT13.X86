@@ -32,6 +32,7 @@ vect13:			push	ax
 				and		cl, al
 				shl		ah, cl
 
+%if 0
 				test	al, 0x80
 				je		short .setfddi
 				test	byte [es:0x055e], ah
@@ -39,6 +40,7 @@ vect13:			push	ax
 .droplp:		call	fdc_recvforce
 				je		short .droplp
 				jmp		short .mainlp
+%endif
 
 .setfddi:		or		byte [es:0x055e], ah
 .recvlp:		stosb
