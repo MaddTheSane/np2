@@ -1,8 +1,9 @@
 
+#if (!defined(SUPPORT_ANK)) && (!defined(SUPPORT_SJIS)) && (!defined(SUPPORT_EUC))
 #define	SUPPORT_ANK
 #define	SUPPORT_SJIS
 #define	SUPPORT_EUC
-
+#endif
 
 #ifdef __cplusplus
 extern "C" {
