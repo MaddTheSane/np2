@@ -44,6 +44,7 @@
 #include "pc9861k.h"
 #include "s98.h"
 #include "scrnbmp.h"
+#include "sxsi.h"
 
 #include "kdispwin.h"
 #include "toolwin.h"
@@ -81,6 +82,10 @@ static void fddopen(GtkMenuItem *, gpointer);
 static void fddeject(GtkMenuItem *, gpointer);
 static void sasiopen(gpointer, guint, GtkWidget *);
 static void sasiremove(gpointer, guint, GtkWidget *);
+#if defined(SUPPORT_IDEIO)
+static void atapiopen(gpointer, guint, GtkWidget *);
+static void atapiremove(gpointer, guint, GtkWidget *);
+#endif
 
 static void change_font(gpointer, guint, GtkWidget *);
 
@@ -223,12 +228,24 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Emulate/E_xit",		NULL, f(exit_from_menu), 0, NULL },
 { "/FDD",			NULL, NULL, 0, "<Branch>" },
 { "/HardDisk",			NULL, NULL, 0, "<Branch>" },
+#if !defined(SUPPORT_IDEIO)
 { "/HardDisk/SASI-_1",		NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-1/_Open...",	NULL, f(sasiopen), 0, NULL },
 { "/HardDisk/SASI-1/_Remove",	NULL, f(sasiremove), 0, NULL },
 { "/HardDisk/SASI-_2",		NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-2/_Open...",	NULL, f(sasiopen), 1, NULL },
 { "/HardDisk/SASI-2/_Remove",	NULL, f(sasiremove), 1, NULL },
+#else
+{ "/HardDisk/IDE0-_0",		NULL, NULL, 0, "<Branch>" },
+{ "/HardDisk/IDE0-0/_Open...",	NULL, f(sasiopen), 0, NULL },
+{ "/HardDisk/IDE0-0/_Remove",	NULL, f(sasiremove), 0, NULL },
+{ "/HardDisk/IDE0-_1",		NULL, NULL, 0, "<Branch>" },
+{ "/HardDisk/IDE0-1/_Open...",	NULL, f(sasiopen), 1, NULL },
+{ "/HardDisk/IDE0-1/_Remove",	NULL, f(sasiremove), 1, NULL },
+{ "/HardDisk/_CD-ROM",		NULL, NULL, 0, "<Branch>" },
+{ "/HardDisk/CD-ROM/_Open...",	NULL, f(atapiopen), 0x02, NULL },
+{ "/HardDisk/CD-ROM/_Remove",	NULL, f(atapiremove), 0x02, NULL},
+#endif
 { "/Screen",			NULL, NULL, 0, "<Branch>" },
 { "/Screen/_Window",		NULL, NULL, 0, "<RadioItem>" },
 { "/Screen/_FullScreen",	NULL, NULL, 0, "/Screen/Window" },
@@ -803,7 +820,7 @@ fddeject(GtkMenuItem *w, gpointer data)
 
 }
 
-/* ----- SASI */
+/* ----- SASI/IDE */
 static BOOL
 sasiopen_dialog_ok_cb(void *arg, const char *path)
 {
@@ -830,7 +847,7 @@ sasiopen(gpointer data, guint action, GtkWidget *w)
 	UNUSED(data);
 	UNUSED(w);
 
-	create_file_selection("Open SASI image", hddfolder, (void *)action,
+	create_file_selection("Open hard disk image", hddfolder, (void *)action,
 	    sasiopen_dialog_ok_cb, NULL);
 }
 
@@ -849,8 +866,51 @@ sasiremove(gpointer data, guint action, GtkWidget *w)
 	} else {
 		diskdrv_sethdd(action, "");
 	}
-
 }
+
+#if defined(SUPPORT_IDEIO)
+/* ---- ATAPI */
+static BOOL
+atapiopen_dialog_ok_cb(void *arg, const char *path)
+{
+	struct stat sb;
+	int drive = GPOINTER_TO_UINT(arg);
+	BOOL result = FALSE;
+
+	if (stat(path, &sb) == 0) {
+		if (S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
+			file_cpyname(hddfolder, path, sizeof(hddfolder));
+			sxsi_devopen(drive, path);
+			result = TRUE;
+		}
+	}
+
+	return result;
+}
+
+static void
+atapiopen(gpointer data, guint action, GtkWidget *w)
+{
+
+	UNUSED(data);
+	UNUSED(w);
+
+	create_file_selection("Open CD-ROM image", hddfolder,
+	    GUINT_TO_POINTER(action), atapiopen_dialog_ok_cb, NULL);
+}
+
+static void
+atapiremove(gpointer data, guint action, GtkWidget *w)
+{
+
+	UNUSED(data);
+	UNUSED(w);
+
+	if (action == 0x02) {
+		sxsi_devclose(action);
+	}
+}
+#endif
 
 /* ---- font */
 static BOOL

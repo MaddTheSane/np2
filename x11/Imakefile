@@ -137,7 +137,7 @@ CBUSOBJS=	../cbus/cbuscore.o ../cbus/pc9861k.o ../cbus/mpu98ii.o \
 
 FDDOBJS=	../fdd/diskdrv.o ../fdd/newdisk.o ../fdd/fddfile.o \
 		../fdd/fdd_xdf.o ../fdd/fdd_d88.o ../fdd/fdd_mtr.o \
-		../fdd/sxsi.o
+		../fdd/sxsi.o ../fdd/sxsihdd.o ../fdd/sxsicd.o
 
 FONTOBJS=	../font/font.o ../font/fontdata.o ../font/fontmake.o \
 		../font/fontpc88.o ../font/fontpc98.o ../font/fontv98.o \

@@ -2,9 +2,11 @@
 
 #include "np2.h"
 #include "dosio.h"
-#include "fddfile.h"
 #include "cpucore.h"
 #include "pccore.h"
+#include "iocore.h"
+#include "fddfile.h"
+#include "ideio.h"
 #include "sysmng.h"
 #include "toolkit.h"
 
@@ -63,6 +65,16 @@ sysmng_updatecaption(BYTE flag)
 			milstr_ncat(titlestr, "  FDD2:", sizeof(titlestr));
 			milstr_ncat(titlestr, file_getname((char *)fdd_diskname(1)), sizeof(titlestr));
 		}
+#if defined(SUPPORT_IDEIO)
+{
+	OEMCHAR *p = sxsi_getfilename(0x02);
+	printf("CD-ROM: %s\n", p ? p : "unmount");
+}
+		if (sxsi_getfilename(0x02)) {
+			milstr_ncat(titlestr, "  CD-ROM:", sizeof(titlestr));
+			milstr_ncat(titlestr, file_getname((OEMCHAR *)sxsi_getfilename(0x02)), sizeof(titlestr));
+		}
+#endif
 	}
 	if (flag & 2) {
 		clockstr[0] = '\0';
