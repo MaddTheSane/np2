@@ -1319,15 +1319,15 @@ typedef struct {
 
 static BOOL fhdl_wr(void *vpItem, void *vpArg) {
 
-	char	*p;
+	OEMCHAR	*p;
 	UINT	len;
 
 	p = ((HDRVFILE)vpItem)->path;
-	len = strlen(p);
+	len = OEMSTRLEN(p);
 	statflag_write((STFLAGH)vpArg, &len, sizeof(len));
 	if (len) {
 		if (len < MAX_PATH) {
-			ZeroMemory(p + len, MAX_PATH - len);
+			ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));
 		}
 		statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVFILE));
 	}
@@ -1336,13 +1336,13 @@ static BOOL fhdl_wr(void *vpItem, void *vpArg) {
 
 static BOOL flist_wr(void *vpItem, void *vpArg) {
 
-	char	*p;
+	OEMCHAR	*p;
 	int		len;
 
 	p = ((HDRVLST)vpItem)->realname;
-	len = strlen(p);
+	len = OEMSTRLEN(p);
 	if (len < MAX_PATH) {
-		ZeroMemory(p + len, MAX_PATH - len);
+		ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));
 	}
 	statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVLST));
 	return(FALSE);

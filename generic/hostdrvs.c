@@ -2,7 +2,7 @@
 
 #if defined(SUPPORT_HOSTDRV)
 
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 #include	"oemtext.h"
 #endif
 #include	"dosio.h"
@@ -31,7 +31,7 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 		if (c == 0) {
 			break;
 		}
-#if defined(OSLANG_SJIS) || defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#if defined(OSLANG_SJIS) || defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 		if ((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
 			if ((!slen) || (src[0] == '\0')) {
 				break;
@@ -77,13 +77,13 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 
 static BOOL realname2fcb(char *fcbname, FLINFO *fli) {
 
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	char	sjis[MAX_PATH];
 #endif
 	char	*realname;
 	char	*ext;
 
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	oemtext_oemtosjis(sjis, sizeof(sjis), fli->path, NELEMENTS(fli->path));
 	realname = sjis;
 #else
@@ -300,7 +300,7 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 	char		dosname[16];
 	UINT		i;
 	char		*p;
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	OEMCHAR		oemname[64];
 #endif
 
@@ -331,7 +331,7 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 		}
 		*p = '\0';
 		// ここで SJIS->OEMコードに未変換！
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 		oemtext_sjistooem(oemname, NELEMENTS(oemname), dosname, (UINT)-1);
 		file_catname(path, oemname, NELEMENTS(path));
 #else

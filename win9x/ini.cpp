@@ -180,7 +180,7 @@ const OEMCHAR	*item;
 	pterm = tbl + count;
 	while(p < pterm) {
 #if defined(OSLANG_UCS2)
-		oemtext_sjis2oem(item, NELEMENTS(item), p->item, (UINT)-1);
+		oemtext_sjistooem(item, NELEMENTS(item), p->item, (UINT)-1);
 #else
 		item = p->item;
 #endif

@@ -36,7 +36,6 @@ typedef	signed char		TCHAR;
 typedef	signed char		CHAR;
 typedef	unsigned char	BYTE;
 
-
 #define	MAX_PATH	260
 
 #define	ZeroMemory(a, b)		memset((a),  0 , (b))
@@ -45,6 +44,12 @@ typedef	unsigned char	BYTE;
 
 #define	max(a, b)				(((a)>(b))?(a):(b))
 #define	min(a, b)				(((a)<(b))?(a):(b))
+
+#define	BRESULT				UINT8
+#define	OEMCHAR				char
+#define	OEMTEXT(string)		(string)
+#define	OEMSPRINTF			sprintf
+#define	OEMSTRLEN			strlen
 
 
 #include	"common.h"
@@ -55,9 +60,11 @@ typedef	unsigned char	BYTE;
 #include	"lstarray.h"
 #include	"trace.h"
 
+
 #define	GETTICK()			macos_gettick()
-#define	SPRINTF				sprintf
 #define	__ASSERT(s)
+#define	SPRINTF				sprintf
+#define	STRLEN				strlen
 
 #define	VERMOUTH_LIB
 // #define SOUND_CRITICAL

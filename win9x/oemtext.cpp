@@ -1,7 +1,7 @@
 #include	"compiler.h"
 
 #if defined(OSLANG_UTF8)
-UINT oemtext_sjis2oem(char *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_sjistooem(char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
 	UINT16	*ucs2;
@@ -23,7 +23,7 @@ UINT oemtext_sjis2oem(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	return(ret);
 }
 
-UINT oemtext_oem2sjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_oemtosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
 	UINT16	*ucs2;

@@ -30,7 +30,7 @@ enum {
 enum {
 	MIDIE_STEP			= 0x01,
 	MIDIE_EVENT			= 0x02,
-	MIDIE_DATA			= 0x04,
+	MIDIE_DATA			= 0x04
 };
 
 enum {
