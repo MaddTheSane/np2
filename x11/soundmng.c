@@ -349,7 +349,17 @@ void
 soundmng_setreverse(BOOL reverse)
 {
 
-#if defined(GCC_CPU_ARCH_IA32)
+#if defined(GCC_CPU_ARCH_AMD64)
+	if (!reverse) {
+		if (mmxflag & (MMXFLAG_NOTSUPPORT|MMXFLAG_DISABLE)) {
+			fnmix = satuation_s16;
+		} else {
+			fnmix = saturation_s16mmx;
+		}
+	} else {
+		fnmix = satuation_s16x;
+	}
+#elif defined(GCC_CPU_ARCH_IA32)
 	if (!reverse) {
 		if (mmxflag & (MMXFLAG_NOTSUPPORT|MMXFLAG_DISABLE)) {
 			fnmix = _saturation_s16;
@@ -646,7 +656,33 @@ snddrv_stop(void)
 
 #endif	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO */
 
-#if defined(GCC_CPU_ARCH_IA32)
+#if defined(GCC_CPU_ARCH_AMD64)
+void PARTSCALL
+saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
+{
+
+	asm volatile (
+		"movq	%0, %%rcx;"
+		"movq	%1, %%rdx;"
+		"movl	%2, %%eax;"
+		"shrl	$3, %%eax;"
+		"je	.ss16m_ed;"
+		"pxor	%%mm0, %%mm0;"
+	".ss16m_lp:"
+		"movq	(%%rdx), %%mm1;"
+		"movq	8(%%rdx), %%mm2;"
+		"packssdw %%mm2, %%mm1;"
+		"leaq	16(%%rdx), %%rdx;"
+		"movq	%%mm1, (%%rcx);"
+		"leaq	8(%%rcx), %%rcx;"
+		"dec	%%eax;"
+		"jne	.ss16m_lp;"
+		"emms;"
+	".ss16m_ed:"
+		: /* output */
+		: "m" (dst), "m" (src), "m" (size));
+}
+#elif defined(GCC_CPU_ARCH_IA32)
 void PARTSCALL
 _saturation_s16(SINT16 *dst, const SINT32 *src, UINT size)
 {
@@ -746,6 +782,6 @@ saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
 		: /* output */
 		: "m" (dst), "m" (src), "m" (size));
 }
-#endif	/* __GNUC__ && GCC_CPU_ARCH_IA32 */
+#endif	/* GCC_CPU_ARCH_AMD64 */
 
 #endif	/* !NOSOUND */

@@ -379,6 +379,9 @@ havemmx(void)
 {
 	int rv;
 
+#if defined(GCC_CPU_ARCH_AMD64)
+	rv = 1;
+#else	/* !GCC_CPU_ARCH_AMD64 */
 	asm volatile (
 		"pushf;"
 		"popl	%%eax;"
@@ -399,7 +402,8 @@ havemmx(void)
 		"andl	$0x00800000, %0;"
 	".nocpuid:"
 		: "=a" (rv));
-
+#endif /* GCC_CPU_ARCH_AMD64 */
 	return rv;
 }
+
 #endif /* GCC_CPU_ARCH_IA32 */
