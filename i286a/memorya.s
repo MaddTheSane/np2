@@ -6,10 +6,10 @@
 	IMPORT	vramupdate
 	IMPORT	tramupdate
 
-	IMPORT	memegc_wr8
-	IMPORT	memegc_rd8
-	IMPORT	memegc_wr16
-	IMPORT	memegc_rd16
+	IMPORT	egc_writebyte
+	IMPORT	egc_readbyte
+	IMPORT	egc_writeword
+	IMPORT	egc_readword
 
 	EXPORT	memfn
 	EXPORT	i286_memorymap
@@ -998,63 +998,63 @@ grcgw_clock	;;	ldr		r3, grww_vramop
 
 egc_rd			ldrb	r3, [r9, #MEMWAIT_GRCG]
 				CPUWORK	r3
-				b		memegc_rd8
+				b		egc_readbyte
 
 
 egcw_rd			ldrb	r3, [r9, #MEMWAIT_GRCG]
 				ldrb	r2, egcwrd_egc
 				tst		r0, #1
 				CPUWORK	r3
-				beq		memegc_rd16
+				beq		egc_readword
 				ldrh	r12, [r2, #EGC_SFT]
 				tst		r12, #&1000
 				bne		egcwrd_std
 				add		r2, r0, #1
 				mov		r3, r1 lsr #8
 				stmdb	sp!, {r2, r3, lr}
-				bl		memegc_wr8
+				bl		egc_writebyte
 				ldmia	sp!, {r0, r1, lr}
-				b		memegc_wr8
+				b		egc_writebyte
 egcwrd_std		stmdb	sp!, {r0, r1, lr}
 				add		r0, r0, #1
 				mov		r1, r1 lsr #8
-				bl		memegc_wr8
+				bl		egc_writebyte
 				ldmia	sp!, {r0, r1, lr}
-				b		memegc_wr8
+				b		egc_writebyte
 egcwrd_egc		dcd		egc
 
 
 egc_wt			ldrb	r3, [r9, #MEMWAIT_GRCG]
 				CPUWORK	r3
-				b		memegc_wr8
+				b		egc_writebyte
 
 egcw_wt			ldrb	r3, [r9, #MEMWAIT_GRCG]
 				ldrb	r2, egcwwt_egc
 				tst		r0, #1
 				CPUWORK	r3
-				beq		memegc_wr16
+				beq		egc_writeword
 				ldrh	r12, [r2, #EGC_SFT]
 				stmdb	sp!, {r4, r5, lr}
 				tst		r12, #&1000
 				bne		egcwwt_std
 				add		r4, r0, #1
 				mov		r5, r1 lsr #8
-				bl		memegc_rd8
+				bl		egc_readbyte
 				mov		r1, r5
 				mov		r5, r0
 				mov		r0, r4
-				bl		memegc_rd8
+				bl		egc_readbyte
 				orr		r0, r5, r0 lsl #8
 				ldmia	sp!, {r4, r5, lr}
 egcwwt_std		mov		r4, r0
 				mov		r5, r1
 				add		r0, r0, #1
 				mov		r1, r1 lsr #8
-				bl		memegc_rd8
+				bl		egc_readbyte
 				mov		r1, r5
 				mov		r5, r0
 				mov		r0, r4
-				bl		memegc_rd8
+				bl		egc_readbyte
 				orr		r0, r5, r0 lsl #8
 				ldmia	sp!, {r4, r5, lr}
 egcwwt_egc		dcd		egc

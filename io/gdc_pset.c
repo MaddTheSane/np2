@@ -94,7 +94,7 @@ static void MEMCALL withegc(GDCPSET pset, UINT addr, UINT bit) {
 		addr &= ~1;
 		data <<= 8;
 	}
-	memegc_wr16(pset->base.addr + addr, data);
+	egc_writeword(pset->base.addr + addr, data);
 }
 
 

@@ -1009,7 +1009,10 @@ static const EGCQUAD * MEMCALL egc_opew(UINT32 ad, REG16 value) {
 	}
 }
 
-REG8 MEMCALL memegc_rd8(UINT32 addr) {
+
+// ----
+
+REG8 MEMCALL egc_readbyte(UINT32 addr) {
 
 	UINT32	ad;
 	UINT	ext;
@@ -1052,7 +1055,7 @@ REG8 MEMCALL memegc_rd8(UINT32 addr) {
 }
 
 
-void MEMCALL memegc_wr8(UINT32 addr, REG8 value) {
+void MEMCALL egc_writebyte(UINT32 addr, REG8 value) {
 
 	UINT		ext;
 const EGCQUAD	*data;
@@ -1096,123 +1099,151 @@ const EGCQUAD	*data;
 	}
 }
 
-REG16 MEMCALL memegc_rd16(UINT32 addr) {
+REG16 MEMCALL egc_readword(UINT32 addr) {
 
 	UINT32	ad;
 
-	if (!(addr & 1)) {
-		if (gdcs.access) {
-			addr += VRAM_STEP;
-		}
-		ad = VRAMADDRMASKEX(addr);
-		egc.lastvram.w[0] = *(UINT16 *)(&mem[ad + VRAM_B]);
-		egc.lastvram.w[1] = *(UINT16 *)(&mem[ad + VRAM_R]);
-		egc.lastvram.w[2] = *(UINT16 *)(&mem[ad + VRAM_G]);
-		egc.lastvram.w[3] = *(UINT16 *)(&mem[ad + VRAM_E]);
+	__ASSERT(!(addr & 1));
+	if (gdcs.access) {
+		addr += VRAM_STEP;
+	}
+	ad = VRAMADDRMASKEX(addr);
+	egc.lastvram.w[0] = *(UINT16 *)(&mem[ad + VRAM_B]);
+	egc.lastvram.w[1] = *(UINT16 *)(&mem[ad + VRAM_R]);
+	egc.lastvram.w[2] = *(UINT16 *)(&mem[ad + VRAM_G]);
+	egc.lastvram.w[3] = *(UINT16 *)(&mem[ad + VRAM_E]);
 
-		// shift input
+	// shift input
+	if (!(egc.ope & 0x400)) {
+		if (!(egc.sft & 0x1000)) {
+			egc.inptr[ 0] = egc.lastvram._b[0][EGCADDR_L];
+			egc.inptr[ 1] = egc.lastvram._b[0][EGCADDR_H];
+			egc.inptr[ 4] = egc.lastvram._b[1][EGCADDR_L];
+			egc.inptr[ 5] = egc.lastvram._b[1][EGCADDR_H];
+			egc.inptr[ 8] = egc.lastvram._b[2][EGCADDR_L];
+			egc.inptr[ 9] = egc.lastvram._b[2][EGCADDR_H];
+			egc.inptr[12] = egc.lastvram._b[3][EGCADDR_L];
+			egc.inptr[13] = egc.lastvram._b[3][EGCADDR_H];
+			shiftinput_incw();
+		}
+		else {
+			egc.inptr[-1] = egc.lastvram._b[0][EGCADDR_L];
+			egc.inptr[ 0] = egc.lastvram._b[0][EGCADDR_H];
+			egc.inptr[ 3] = egc.lastvram._b[1][EGCADDR_L];
+			egc.inptr[ 4] = egc.lastvram._b[1][EGCADDR_H];
+			egc.inptr[ 7] = egc.lastvram._b[2][EGCADDR_L];
+			egc.inptr[ 8] = egc.lastvram._b[2][EGCADDR_H];
+			egc.inptr[11] = egc.lastvram._b[3][EGCADDR_L];
+			egc.inptr[12] = egc.lastvram._b[3][EGCADDR_H];
+			shiftinput_decw();
+		}
+	}
+
+	if ((egc.ope & 0x0300) == 0x0100) {
+		egc.patreg.d[0] = egc.lastvram.d[0];
+		egc.patreg.d[1] = egc.lastvram.d[1];
+	}
+	if (!(egc.ope & 0x2000)) {
+		int pl = (egc.fgbg >> 8) & 3;
 		if (!(egc.ope & 0x400)) {
-			if (!(egc.sft & 0x1000)) {
-				egc.inptr[ 0] = egc.lastvram._b[0][EGCADDR_L];
-				egc.inptr[ 1] = egc.lastvram._b[0][EGCADDR_H];
-				egc.inptr[ 4] = egc.lastvram._b[1][EGCADDR_L];
-				egc.inptr[ 5] = egc.lastvram._b[1][EGCADDR_H];
-				egc.inptr[ 8] = egc.lastvram._b[2][EGCADDR_L];
-				egc.inptr[ 9] = egc.lastvram._b[2][EGCADDR_H];
-				egc.inptr[12] = egc.lastvram._b[3][EGCADDR_L];
-				egc.inptr[13] = egc.lastvram._b[3][EGCADDR_H];
-				shiftinput_incw();
-			}
-			else {
-				egc.inptr[-1] = egc.lastvram._b[0][EGCADDR_L];
-				egc.inptr[ 0] = egc.lastvram._b[0][EGCADDR_H];
-				egc.inptr[ 3] = egc.lastvram._b[1][EGCADDR_L];
-				egc.inptr[ 4] = egc.lastvram._b[1][EGCADDR_H];
-				egc.inptr[ 7] = egc.lastvram._b[2][EGCADDR_L];
-				egc.inptr[ 8] = egc.lastvram._b[2][EGCADDR_H];
-				egc.inptr[11] = egc.lastvram._b[3][EGCADDR_L];
-				egc.inptr[12] = egc.lastvram._b[3][EGCADDR_H];
-				shiftinput_decw();
-			}
+			return(LOADINTELWORD(egc_src._b[pl]));
 		}
+		else {
+			return(LOADINTELWORD(mem + ad + planead[pl]));
+		}
+	}
+	return(LOADINTELWORD(mem + addr));
+}
 
-		if ((egc.ope & 0x0300) == 0x0100) {
-			egc.patreg.d[0] = egc.lastvram.d[0];
-			egc.patreg.d[1] = egc.lastvram.d[1];
+void MEMCALL egc_writeword(UINT32 addr, REG16 value) {
+
+const EGCQUAD	*data;
+
+	__ASSERT(!(addr & 1));
+	addr = LOW15(addr);
+	if (!gdcs.access) {
+		gdcs.grphdisp |= 1;
+		*(UINT16 *)(vramupdate + addr) |= 0x0101;
+	}
+	else {
+		gdcs.grphdisp |= 2;
+		*(UINT16 *)(vramupdate + addr) |= 0x0202;
+		addr += VRAM_STEP;
+	}
+	if ((egc.ope & 0x0300) == 0x0200) {
+		egc.patreg.w[0] = *(UINT16 *)(&mem[addr + VRAM_B]);
+		egc.patreg.w[1] = *(UINT16 *)(&mem[addr + VRAM_R]);
+		egc.patreg.w[2] = *(UINT16 *)(&mem[addr + VRAM_G]);
+		egc.patreg.w[3] = *(UINT16 *)(&mem[addr + VRAM_E]);
+	}
+	data = egc_opew(addr, value);
+	if (egc.mask2.w) {
+		if (!(egc.access & 1)) {
+			*(UINT16 *)(&mem[addr + VRAM_B]) &= ~egc.mask2.w;
+			*(UINT16 *)(&mem[addr + VRAM_B]) |= data->w[0] & egc.mask2.w;
 		}
-		if (!(egc.ope & 0x2000)) {
-			int pl = (egc.fgbg >> 8) & 3;
-			if (!(egc.ope & 0x400)) {
-				return(LOADINTELWORD(egc_src._b[pl]));
-			}
-			else {
-				return(LOADINTELWORD(mem + ad + planead[pl]));
-			}
+		if (!(egc.access & 2)) {
+			*(UINT16 *)(&mem[addr + VRAM_R]) &= ~egc.mask2.w;
+			*(UINT16 *)(&mem[addr + VRAM_R]) |= data->w[1] & egc.mask2.w;
 		}
-		return(LOADINTELWORD(mem + addr));
+		if (!(egc.access & 4)) {
+			*(UINT16 *)(&mem[addr + VRAM_G]) &= ~egc.mask2.w;
+			*(UINT16 *)(&mem[addr + VRAM_G]) |= data->w[2] & egc.mask2.w;
+		}
+		if (!(egc.access & 8)) {
+			*(UINT16 *)(&mem[addr + VRAM_E]) &= ~egc.mask2.w;
+			*(UINT16 *)(&mem[addr + VRAM_E]) |= data->w[3] & egc.mask2.w;
+		}
+	}
+}
+
+
+// ----
+
+REG8 MEMCALL memegc_rd8(UINT32 addr) {
+
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
+	return(egc_readbyte(addr));
+}
+
+void MEMCALL memegc_wr8(UINT32 addr, REG8 value) {
+
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
+	egc_writebyte(addr, value);
+}
+
+REG16 MEMCALL memegc_rd16(UINT32 addr) {
+
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
+	if (!(addr & 1)) {
+		return(egc_readword(addr));
 	}
 	else if (!(egc.sft & 0x1000)) {
 		REG16 ret;
-		ret = memegc_rd8(addr);
-		ret |= memegc_rd8(addr+1) << 8;
+		ret = egc_readbyte(addr);
+		ret |= egc_readbyte(addr+1) << 8;
 		return(ret);
 	}
 	else {
 		REG16 ret;
-		ret = memegc_rd8(addr+1) << 8;
-		ret |= memegc_rd8(addr);
+		ret = egc_readbyte(addr+1) << 8;
+		ret |= egc_readbyte(addr);
 		return(ret);
 	}
 }
 
 void MEMCALL memegc_wr16(UINT32 addr, REG16 value) {
 
-const EGCQUAD	*data;
-
-	if (!(addr & 1)) {											// word access
-		addr = LOW15(addr);
-		if (!gdcs.access) {
-			gdcs.grphdisp |= 1;
-			*(UINT16 *)(vramupdate + addr) |= 0x0101;
-		}
-		else {
-			gdcs.grphdisp |= 2;
-			*(UINT16 *)(vramupdate + addr) |= 0x0202;
-			addr += VRAM_STEP;
-		}
-		if ((egc.ope & 0x0300) == 0x0200) {
-			egc.patreg.w[0] = *(UINT16 *)(&mem[addr + VRAM_B]);
-			egc.patreg.w[1] = *(UINT16 *)(&mem[addr + VRAM_R]);
-			egc.patreg.w[2] = *(UINT16 *)(&mem[addr + VRAM_G]);
-			egc.patreg.w[3] = *(UINT16 *)(&mem[addr + VRAM_E]);
-		}
-		data = egc_opew(addr, value);
-		if (egc.mask2.w) {
-			if (!(egc.access & 1)) {
-				*(UINT16 *)(&mem[addr + VRAM_B]) &= ~egc.mask2.w;
-				*(UINT16 *)(&mem[addr + VRAM_B]) |= data->w[0] & egc.mask2.w;
-			}
-			if (!(egc.access & 2)) {
-				*(UINT16 *)(&mem[addr + VRAM_R]) &= ~egc.mask2.w;
-				*(UINT16 *)(&mem[addr + VRAM_R]) |= data->w[1] & egc.mask2.w;
-			}
-			if (!(egc.access & 4)) {
-				*(UINT16 *)(&mem[addr + VRAM_G]) &= ~egc.mask2.w;
-				*(UINT16 *)(&mem[addr + VRAM_G]) |= data->w[2] & egc.mask2.w;
-			}
-			if (!(egc.access & 8)) {
-				*(UINT16 *)(&mem[addr + VRAM_E]) &= ~egc.mask2.w;
-				*(UINT16 *)(&mem[addr + VRAM_E]) |= data->w[3] & egc.mask2.w;
-			}
-		}
+	CPU_REMCLOCK -= MEMWAIT_GRCG;
+	if (!(addr & 1)) {
+		egc_writeword(addr, value);
 	}
 	else if (!(egc.sft & 0x1000)) {
-		memegc_wr8(addr, (REG8)value);
-		memegc_wr8(addr+1, (REG8)(value >> 8));
+		egc_writebyte(addr, (REG8)value);
+		egc_writebyte(addr+1, (REG8)(value >> 8));
 	}
 	else {
-		memegc_wr8(addr+1, (REG8)(value >> 8));
-		memegc_wr8(addr, (REG8)value);
+		egc_writebyte(addr+1, (REG8)(value >> 8));
+		egc_writebyte(addr, (REG8)value);
 	}
 }
-

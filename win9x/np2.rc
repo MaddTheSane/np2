@@ -553,7 +553,7 @@ BEGIN
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,10,60,10
     CONTROL         "Virtual Calendar",IDC_CLNDVIR,"Button",
                     BS_AUTORADIOBUTTON,8,26,63,10
-    EDITTEXT        IDC_VIRYEAR,20,42,13,12
+    EDITTEXT        IDC_VIRYEAR,20,42,13,12,WS_GROUP | WS_TABSTOP
     LTEXT           "/",IDC_STATIC,35,44,7,8
     EDITTEXT        IDC_VIRMONTH,42,42,13,12
     LTEXT           "/",IDC_STATIC,57,44,7,8

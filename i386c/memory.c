@@ -76,45 +76,6 @@ static void MEMCALL memnc_wr16(UINT32 address, REG16 value) {
 }
 
 
-
-
-
-// ---- write byte
-
-static void MEMCALL egc_wt(UINT32 address, REG8 value) {		// VRAM
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	memegc_wr8(address, value);
-}
-
-
-// ---- read byte
-
-static REG8 MEMCALL egc_rd(UINT32 address) {					// VRAM
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	return(memegc_rd8(address));
-}
-
-
-// ---- write word
-
-static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	memegc_wr16(address, value);
-}
-
-
-// ---- read word
-
-static REG16 MEMCALL egcw_rd(UINT32 address) {
-
-	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	return(memegc_rd16(address));
-}
-
-
 // ---- table
 
 typedef void (MEMCALL * MEM8WRITE)(UINT32 address, REG8 value);
@@ -199,12 +160,12 @@ static const VACCTBL vacctbl[0x10] = {
 		{memvram1_rd8,	memvram1_wr8,	memvram1_rd16,	memvram1_wr16},
 		{memtcr0_rd8,	memtdw0_wr8,	memtcr0_rd16,	memtdw0_wr16},	// 80
 		{memtcr1_rd8,	memtdw1_wr8,	memtcr1_rd16,	memtdw1_wr16},
-		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
-		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
+		{memegc_rd8,	memegc_wr8,		memegc_rd16,	memegc_wr16},
+		{memegc_rd8,	memegc_wr8,		memegc_rd16,	memegc_wr16},
 		{memvram0_rd8,	memrmw0_wr8,	memvram0_rd16,	memrmw0_wr16},	// c0
 		{memvram1_rd8,	memrmw1_wr8,	memvram1_rd16,	memrmw1_wr16},
-		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt},
-		{egc_rd,		egc_wt,			egcw_rd,		egcw_wt}};
+		{memegc_rd8,	memegc_wr8,		memegc_rd16,	memegc_wr16},
+		{memegc_rd8,	memegc_wr8,		memegc_rd16,	memegc_wr16}};
 
 
 void MEMCALL i286_memorymap(UINT type) {

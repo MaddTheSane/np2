@@ -92,7 +92,7 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 		bi->bmiColors[i].rgbReserved = PC_RESERVED;
 	}
 
-    hdc = GetDC(NULL);
+	hdc = GetDC(NULL);
 	ret->hBitmap = CreateDIBSection(hdc, bi, DIB_RGB_COLORS,
 											(void **)&ret->image, NULL, 0);
 	ret->hdcimage = CreateCompatibleDC(hdc);
