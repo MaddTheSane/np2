@@ -181,6 +181,21 @@ void debugsub_memorydump(void) {
 	}
 }
 
+void debugsub_memorydumpall(void) {
+
+	FILEH	fh;
+	int		i;
+
+	fh = file_create_c(file_memorybin);
+	if (fh != FILEH_INVALID) {
+		file_write(fh, mem, 0x110000);
+		if (CPU_EXTMEMSIZE > 0x10000) {
+			file_write(fh, CPU_EXTMEM + 0x10000, CPU_EXTMEMSIZE - 0x10000);
+		}
+		file_close(fh);
+	}
+}
+
 
 #if 1	// 俺用デバグ
 

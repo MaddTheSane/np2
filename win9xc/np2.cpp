@@ -57,7 +57,7 @@ static	const char	szClassName[] = "NP2-MainWindow";
 						CW_USEDEFAULT, CW_USEDEFAULT, 0, 0,
 						KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
-						0, 0};
+						0, 0, 0};
 
 		char		modulefile[MAX_PATH];
 		char		fddfolder[MAX_PATH];
@@ -122,6 +122,74 @@ static void changescreen(BYTE newmode) {
 		scrnmode = newmode;
 	}
 }
+
+
+// ---- resume and statsave
+
+#define	SUPPORT_RESUME
+
+#if defined(SUPPORT_RESUME) || defined(SUPPORT_STATSAVE)
+static void getstatfilename(char *path, const char *ext, int size) {
+
+	file_cpyname(path, modulefile, size);
+	file_cutext(path);
+	file_catname(path, str_dot, size);
+	file_catname(path, ext, size);
+}
+
+static int flagsave(const char *ext) {
+
+	int		ret;
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	soundmng_stop();
+	ret = statsave_save(path);
+	if (ret) {
+		file_delete(path);
+	}
+	soundmng_play();
+	return(ret);
+}
+
+static void flagdelete(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	file_delete(path);
+}
+
+static int flagload(const char *ext, const char *title, BOOL force) {
+
+	int		ret;
+	int		id;
+	char	path[MAX_PATH];
+	char	buf[1024];
+
+	getstatfilename(path, ext, sizeof(path));
+	winuienter();
+	id = IDYES;
+	ret = statsave_check(path, buf, sizeof(buf));
+	if (ret & (~STATFLAG_DISKCHG)) {
+		MessageBox(hWndMain, "Couldn't restart", title, MB_OK | MB_ICONSTOP);
+		id = IDNO;
+	}
+	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
+		char buf2[1024 + 256];
+		wsprintf(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		id = MessageBox(hWndMain, buf2, title,
+										MB_YESNOCANCEL | MB_ICONQUESTION);
+	}
+	if (id == IDYES) {
+		statsave_load(path);
+	}
+	sysmng_workclockreset();
+	sysmng_updatecaption();
+	winuileave();
+	return(id);
+}
+#endif
 
 
 // ---- proc
@@ -908,6 +976,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	np2opening = 0;
 
+	// れじうむ
+#if defined(SUPPORT_RESUME)
+	if (np2oscfg.resume) {
+		int		id;
+
+		id = flagload(str_sav, str_resume, FALSE);
+		if (id == IDYES) {
+			for (i=0; i<4; i++) np2arg.disk[i] = NULL;
+		}
+		else if (id == IDCANCEL) {
+			DestroyWindow(hWnd);
+			mousemng_disable(MOUSEPROC_WINUI);
+			S98_trash();
+			pccore_term();
+			soundmng_deinitialize();
+			scrnmng_destroy();
+			TRACETERM();
+			dosio_term();
+			return(0);
+		}
+	}
+#endif
+
 //	リセットしてから… コマンドラインのディスク挿入。				// ver0.29
 	for (i=0; i<4; i++) {
 		if (np2arg.disk[i]) {
@@ -995,6 +1086,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	mousemng_disable(MOUSEPROC_WINUI);
 	S98_trash();
+
+#if defined(SUPPORT_RESUME)
+	if (np2oscfg.resume) {
+		flagsave(str_sav);
+	}
+	else {
+		flagdelete(str_sav);
+	}
+#endif
 
 	pccore_term();
 	debugwin_destroy();

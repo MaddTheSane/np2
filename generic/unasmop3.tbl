@@ -43,14 +43,14 @@ static const UINT32 op3tbl[OP3_MAX][8] = {
 		OP_W_(RSTR_CMP,		OP_EA,	OP_IMM,	0)},
 
 		// 83
-	   {OP_W_(RSTR_ADD,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_OR,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_ADC,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_SBB,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_AND,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_SUB,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_XOR,		OP_EA,	OP_IS8,	0),
-		OP_W_(RSTR_CMP,		OP_EA,	OP_IS8,	0)},
+	   {OP_W_(RSTR_ADD,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_OR,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_ADC,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_SBB,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_AND,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_SUB,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_XOR,		OP_PEA,	OP_IS8,	0),
+		OP_W_(RSTR_CMP,		OP_PEA,	OP_IS8,	0)},
 
 		// d0
 	   {OP_B_(RSTR_SFT+0,	OP_EA,	OP_1,	0),

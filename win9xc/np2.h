@@ -17,6 +17,7 @@ typedef struct {
 	BYTE	JOYPAD2;
 	BYTE	JOY1BTN[4];
 
+	BYTE	resume;
 	BYTE	jastsnd;
 	BYTE	I286SAVE;
 } NP2OSCFG;

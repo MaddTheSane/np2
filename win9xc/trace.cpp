@@ -163,7 +163,7 @@ static void trfh_add(const char *buf) {
 			buf += rem;
 			size -= rem;
 #if !defined(FILELASTBUFONLY)
-			file_write(tracewin.fh, buf, strlen(buf));
+			file_write(tracewin.fh, filebuf, FILEBUFSIZE);
 #endif
 		}
 		else {
@@ -198,8 +198,12 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 														IDM_TRACECL, tracecl);
 			InsertMenu(hmenu, 6, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
-			CheckMenuItem(hmenu, IDM_TRACEEN,
+			CheckMenuItem(hmenu, IDM_TRACE1,
 								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
+			CheckMenuItem(hmenu, IDM_TRACE2,
+								(tracewin.en & 2)?MF_CHECKED:MF_UNCHECKED);
+			CheckMenuItem(hmenu, IDM_TRACEEN,
+								(tracewin.en & 4)?MF_CHECKED:MF_UNCHECKED);
 
 			GetClientRect(hWnd, &rc);
 			hView = CreateWindowEx(WS_EX_CLIENTEDGE,
@@ -436,19 +440,6 @@ void trace_fmt2(const char *fmt, ...) {
 		}
 	}
 }
-
-#if 0
-void trace_fileout(const char *fname) {
-
-	if (tracewin.fh != FILEH_INVALID) {
-		file_close(tracewin.fh);
-		tracewin.fh = FILEH_INVALID;
-	}
-	if (fname) {
-		tracewin.fh = file_create_c(fname);
-	}
-}
-#endif
 
 #endif
 

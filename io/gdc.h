@@ -92,8 +92,9 @@ void gdc_forceready(int id);
 void gdc_paletteinit(void);
 
 void gdc_setdegitalpal(int color, REG8 value);
-void gdc_setanalogpal(int color, int rgb, REG8 value);
 void gdc_setdegpalpack(int color, REG8 value);
+void gdc_setanalogpal(int color, int rgb, REG8 value);
+void gdc_setanalogpalall(const UINT16 *paltbl);
 
 #if defined(SUPPORT_PC9821)
 void gdc_analogext(BOOL extend);
