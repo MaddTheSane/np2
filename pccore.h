@@ -21,6 +21,12 @@ enum {
 	PCHDD_SCSI			= 0x02,
 	PCHDD_IDE			= 0x04,
 
+	PCROM_BIOS			= 0x01,
+	PCROM_SOUND			= 0x02,
+	PCROM_SASI			= 0x04,
+	PCROM_SCSI			= 0x08,
+	PCROM_BIOS9821		= 0x10,
+
 	PCSOUND_NONE		= 0x00,
 
 	PCCBUS_PC9861K		= 0x0001,
@@ -116,7 +122,7 @@ typedef struct {
 	UINT8	hddif;
 	UINT8	extmem;
 	BYTE	dipsw[3];		// ƒŠƒZƒbƒgŽž‚ÌDIPSW
-	UINT8	padding;
+	UINT8	rom;
 
 	UINT32	sound;
 	UINT32	device;

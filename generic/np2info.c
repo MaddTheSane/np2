@@ -4,7 +4,6 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"bios.h"
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"np2info.h"
@@ -306,7 +305,7 @@ static void info_extsnd(char *str, int maxlen, NP2INFOEX *ex) {
 static void info_bios(char *str, int maxlen, NP2INFOEX *ex) {
 
 	str[0] = '\0';
-	if (biosrom) {
+	if (pccore.rom & PCROM_BIOS) {
 		milstr_ncat(str, str_biosrom, maxlen);
 	}
 	if (soundrom.name[0]) {

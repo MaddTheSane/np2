@@ -30,7 +30,7 @@ enum {
 extern "C" {
 #endif
 
-extern	BOOL	biosrom;
+// extern	BOOL	biosrom;
 
 
 void bios_initialize(void);

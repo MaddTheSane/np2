@@ -20,8 +20,6 @@
 
 #define	BIOS_SIMULATE
 
-	BOOL	biosrom = FALSE;
-
 static const char neccheck[] = "Copyright (C) 1983 by NEC Corporation";
 
 typedef struct {
@@ -195,6 +193,7 @@ static void bios_screeninit(void) {
 
 void bios_initialize(void) {
 
+	BOOL	biosrom;
 	char	path[MAX_PATH];
 	FILEH	fh;
 	UINT	i;
@@ -210,6 +209,7 @@ void bios_initialize(void) {
 	}
 	if (biosrom) {
 		TRACEOUT(("load bios.rom"));
+		pccore.rom |= PCROM_BIOS;
 		// PnP BIOS‚ð’×‚·
 		for (i=0; i<0x10000; i+=0x10) {
 			tmp = LOADINTELDWORD(mem + 0xf0000 + i);

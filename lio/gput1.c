@@ -5,7 +5,6 @@
 #include	"bios.h"
 #include	"lio.h"
 #include	"vram.h"
-#include	"liofont.res"
 
 
 typedef struct {

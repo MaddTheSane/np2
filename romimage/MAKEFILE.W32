@@ -3,7 +3,7 @@ TS		= ..\bin\bin2txt
 AOPT	= -f bin
 OBJ		= ..\obj\romrel
 
-all: $(OBJ) ..\bios\startup.res ..\bios\biosfd80.res ..\fdd\hddboot.res ..\cbus\idebios.res ..\cbus\sasibios.res ..\cbus\scsibios.res
+all: $(OBJ) ..\bios\startup.res ..\bios\biosfd80.res ..\lio\lio.res ..\fdd\hddboot.res ..\cbus\idebios.res ..\cbus\sasibios.res ..\cbus\scsibios.res
 
 
 $(OBJ):
@@ -15,6 +15,9 @@ $(OBJ):
 
 ..\bios\biosfd80.res: $(OBJ)\biosfd80.bin
 	$(TS) $(OBJ)\biosfd80.bin $*.res -sbiosfd80
+
+..\lio\lio.res: $(OBJ)\lio.bin
+	$(TS) $(OBJ)\lio.bin $*.res -sliorom
 
 ..\fdd\hddboot.res: $(OBJ)\hddboot.bin
 	$(TS) $(OBJ)\hddboot.bin $*.res -shdddiskboot
@@ -39,6 +42,7 @@ $(OBJ)\biosfd80.bin:	bios\biosfd80.asm bios\biosmain.x86 bios\eoi.x86 \
 	$(AS) $(*B).asm $(AOPT) -o $*.bin -l $*.lst
 
 $(OBJ)\startup.bin	:
+$(OBJ)\lio.bin		:
 $(OBJ)\hddboot.bin	:
 $(OBJ)\idebios.bin	:
 $(OBJ)\sasibios.bin	:
