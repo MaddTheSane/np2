@@ -197,7 +197,7 @@ void rhythm_setreg(RHYTHM rhy, REG8 reg, REG8 value) {
 			r++;
 		}
 	}
-	else if (reg == 0x11) {										// ver0.28
+	else if (reg == 0x11) {
 		sound_sync();
 		rhy->vol = (~value) & 0x3f;
 		rhythm_update(rhy);

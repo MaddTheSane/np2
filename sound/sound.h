@@ -41,3 +41,46 @@ void sound_pcmunlock(const SINT32 *hdl);
 }
 #endif
 
+
+
+// ---- PCM MIX
+
+enum {
+	PMIXFLAG_L		= 0x0001,
+	PMIXFLAG_R		= 0x0002,
+	PMIXFLAG_LOOP	= 0x0004
+};
+
+typedef struct {
+	UINT32	playing;
+	UINT32	enable;
+} PMIXHDR;
+
+typedef struct {
+const SINT16	*pcm;
+	UINT		remain;
+	SINT16		*sample;
+	UINT		samples;
+	UINT		flag;
+	SINT32		volume;
+} PMIXTRK;
+
+typedef struct {
+	PMIXHDR		hdr;
+	PMIXTRK		trk[1];
+} _PCMMIX, *PCMMIX;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+BOOL pcmmix_regist(PMIXTRK *trk, void *datptr, UINT datsize, UINT rate);
+BOOL pcmmix_regfile(PMIXTRK *trk, const char *fname, UINT rate);
+
+void SOUNDCALL pcmmix_getpcm(PCMMIX hdl, SINT32 *pcm, UINT count);
+
+#ifdef __cplusplus
+}
+#endif
+

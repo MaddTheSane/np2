@@ -130,7 +130,6 @@ void keystat_reset(void);
 void keystat_senddata(REG8 data);
 void keystat_allrelease(void);
 void keystat_forcerelease(REG8 value);
-void keystat_resetcopyhelp(void);
 void keystat_resetjoykey(void);
 
 

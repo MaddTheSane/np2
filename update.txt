@@ -27,6 +27,7 @@
 
 　(Windows)
 　　・(I286X) EGCバイトアクセス修正
+　　・(I286X) ストリング命令修正
 
 　(WinCE)
 　　・GDC - GDCクロック 1.79MHzのサポート

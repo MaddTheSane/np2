@@ -2714,10 +2714,17 @@ I286 call_far(void) {							// 9A: call far
 				mov		si, bx
 				shr		ebx, 16
 				mov		I286_CS, bx
+				test	I286_MSW, MSW_PE
+				jne		short call_far_pe
 				shl		ebx, 4
 				mov		CS_BASE, ebx
-				RESET_XPREFETCH
+call_far_base:	RESET_XPREFETCH
 				ret
+
+call_far_pe:	mov		eax, ebx
+				call	i286x_selector
+				mov		CS_BASE, eax
+				jmp		short call_far_base
 		}
 }
 
@@ -2867,10 +2874,8 @@ I286 _movsb(void) {								// A4: movsb
 				add		ecx, DS_FIX
 				call	i286_memoryread
 				mov		dl, al
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				STRING_DIR
 				add		I286_SI, ax
 				add		I286_DI, ax
@@ -2887,10 +2892,8 @@ I286 _movsw(void) {								// A5: movsw
 				add		ecx, DS_FIX
 				call	i286_memoryread_w
 				mov		dx, ax
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				STRING_DIRx2
 				add		I286_SI, ax
 				add		I286_DI, ax
@@ -2907,10 +2910,8 @@ I286 _cmpsb(void) {								// A6: cmpsb
 				add		ecx, DS_FIX
 				call	i286_memoryread
 				mov		dl, al
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				call	i286_memoryread
 				cmp		dl, al
 				FLAG_STORE_OF
@@ -2930,10 +2931,8 @@ I286 _cmpsw(void) {								// A7: cmpsw
 				add		ecx, DS_FIX
 				call	i286_memoryread_w
 				mov		edx, eax
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				call	i286_memoryread_w
 				cmp		dx, ax
 				FLAG_STORE_OF
@@ -2972,10 +2971,8 @@ I286 _stosb(void) {								// AA: stosb
 		__asm {
 				GET_NEXTPRE1
 				I286CLOCK(3)
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				STRING_DIR
 				add		I286_DI, ax
 				mov		dl, I286_AL
@@ -2988,10 +2985,8 @@ I286 _stosw(void) {								// AB: stosw
 		__asm {
 				GET_NEXTPRE1
 				I286CLOCK(3)
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				STRING_DIRx2
 				add		I286_DI, ax
 				mov		dx, I286_AX
@@ -3034,10 +3029,8 @@ I286 _scasb(void) {								// AE: scasb
 		__asm {
 				GET_NEXTPRE1
 				I286CLOCK(7)
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				call	i286_memoryread
 				cmp		I286_AL, al
 				FLAG_STORE_OF
@@ -3052,10 +3045,8 @@ I286 _scasw(void) {								// AF: scasw
 		__asm {
 				GET_NEXTPRE1
 				I286CLOCK(7)
-				movzx	ecx, I286_ES
-				shl		ecx, 4
-				movzx	eax, I286_DI
-				add		ecx, eax
+				movzx	ecx, I286_DI
+				add		ecx, ES_BASE
 				call	i286_memoryread_w
 				cmp		I286_AX, ax
 				FLAG_STORE_OF
@@ -3567,12 +3558,17 @@ I286 ret_far_data16(void) {						// CA: ret far DATA16
 				lea		ecx, [edi + ebp]
 				call	i286_memoryread_w
 				mov		I286_CS, ax
-				and		eax, 0000ffffh
+				movzx	eax, ax
+				test	I286_MSW, MSW_PE
+				jne		short ret_far16_pe
 				shl		eax, 4					// make segreg
-				mov		CS_BASE, eax
+ret_far16_base:	mov		CS_BASE, eax
 				add		I286_SP, 4
 				RESET_XPREFETCH
 				ret
+
+ret_far16_pe:	push	offset ret_far16_base
+				jmp		i286x_selector
 		}
 }
 
@@ -3590,13 +3586,18 @@ I286 ret_far(void) {							// CB: ret far
 				add		bx, 2
 				call	i286_memoryread_w
 				mov		I286_CS, ax
-				and		eax, 0000ffffh
+				movzx	eax, ax
+				test	I286_MSW, MSW_PE
+				jne		short ret_far_pe
 				shl		eax, 4					// make segreg
-				mov		CS_BASE, eax
+ret_far_base:	mov		CS_BASE, eax
 				mov		ebp, eax
 				mov		I286_SP, bx
 				RESET_XPREFETCH
 				ret
+
+ret_far_pe:		push	offset ret_far_base
+				jmp		i286x_selector
 		}
 }
 
@@ -4095,10 +4096,17 @@ I286 jmp_far(void) {							// EA: jmp far
 				mov		si, bx
 				shr		ebx, 16
 				mov		I286_CS, bx
+				test	I286_MSW, MSW_PE
+				jne		short jmp_far_pe
 				shl		ebx, 4					// make segreg
 				mov		CS_BASE, ebx
-				RESET_XPREFETCH
+jmp_far_base:	RESET_XPREFETCH
 				ret
+
+jmp_far_pe:		mov		eax, ebx
+				call	i286x_selector
+				mov		CS_BASE, eax
+				jmp		short jmp_far_base
 		}
 }
 
