@@ -88,13 +88,13 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fpdummy.o											\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
-			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
-			$(OBJ)/fdc.o		$(OBJ)/fdd320.o		$(OBJ)/gdc.o		\
-			$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	$(OBJ)/mouseif.o	\
-			$(OBJ)/necio.o		$(OBJ)/nmiio.o		$(OBJ)/np2sysp.o	\
-			$(OBJ)/pcidev.o		$(OBJ)/pic.o		$(OBJ)/pit.o		\
-			$(OBJ)/printif.o	$(OBJ)/serial.o		$(OBJ)/sysport.o	\
-			$(OBJ)/upd4990.o											\
+			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/emsio.o		\
+			$(OBJ)/epsonio.o	$(OBJ)/fdc.o		$(OBJ)/fdd320.o		\
+			$(OBJ)/gdc.o		$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	\
+			$(OBJ)/mouseif.o	$(OBJ)/necio.o		$(OBJ)/nmiio.o		\
+			$(OBJ)/np2sysp.o	$(OBJ)/pcidev.o		$(OBJ)/pic.o		\
+			$(OBJ)/pit.o		$(OBJ)/printif.o	$(OBJ)/serial.o		\
+			$(OBJ)/sysport.o	$(OBJ)/upd4990.o						\
 			$(OBJ)/cbuscore.o	$(OBJ)/sasiio.o		$(OBJ)/scsiio.o		\
 			$(OBJ)/scsicmd.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
 			$(OBJ)/board14.o	$(OBJ)/board26k.o	$(OBJ)/board86.o	\
@@ -128,12 +128,13 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmjasts.o	$(OBJ)/cmver.o		$(OBJ)/dipswbmp.o	\
 			$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o	$(OBJ)/np2info.o	\
+			$(OBJ)/softkbd.o	$(OBJ)/cmndraw.o						\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/dosio.o		\
 			$(OBJ)/trace.o		$(OBJ)/commng.o		$(OBJ)/fontmng.o	\
 			$(OBJ)/joymng.o		$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	\
 			$(OBJ)/soundmng.o	$(OBJ)/sysmng.o		$(OBJ)/taskmng.o	\
 			$(OBJ)/timemng.o	$(OBJ)/winkbd.o		$(OBJ)/menu.o		\
-			$(OBJ)/ini.o		$(OBJ)/np2res.o							\
+			$(OBJ)/ini.o		$(OBJ)/np2res.o		$(OBJ)/subwind.o	\
 			$(OBJ)/d_about.o	$(OBJ)/d_config.o	$(OBJ)/d_mpu98.o	\
 			$(OBJ)/d_screen.o	$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		\
 			$(OBJ)/d_disk.o		$(OBJ)/d_bmp.o		$(OBJ)/dialogs.o	\
@@ -880,6 +881,14 @@ $(OBJ)/menu.o		:	$(TARGET)/menu.cpp $(HEADERS) $(PCCORES) \
 $(OBJ)/ini.o		:	$(TARGET)/ini.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/np2.h $(TARGET)/np2arg.h $(TARGET)/dosio.h \
 						$(TARGET)/ini.h $(TARGET)/winkbd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/subwind.o	:	$(TARGET)/subwind.cpp $(HEADERS) \
+						$(TARGET)/resource.h $(TARGET)/np2.h \
+						$(TARGET)/soundmng.h $(TARGET)/sysmng.h \
+						$(TARGET)/menu.h $(TARGET)/ini.h \
+						$(TARGET)/subwind.h \
+						$(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h
