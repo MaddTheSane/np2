@@ -30,27 +30,27 @@ typedef REG16 (MEMCALL * MEM16READ)(UINT32 address);
 
 static REG8 MEMCALL memmain_rd8(UINT32 address) {
 
-	return(mem[address & CPU_ADRSMASK]);
+	return(mem[address]);
 }
 
 static REG16 MEMCALL memmain_rd16(UINT32 address) {
 
 const UINT8	*ptr;
 
-	ptr = mem + (address & CPU_ADRSMASK);
+	ptr = mem + address;
 	return(LOADINTELWORD(ptr));
 }
 
 static void MEMCALL memmain_wr8(UINT32 address, REG8 value) {
 
-	mem[address & CPU_ADRSMASK] = (UINT8)value;
+	mem[address] = (UINT8)value;
 }
 
 static void MEMCALL memmain_wr16(UINT32 address, REG16 value) {
 
 	UINT8	*ptr;
 
-	ptr = mem + (address & CPU_ADRSMASK);
+	ptr = mem + address;
 	STOREINTELWORD(ptr, value);
 }
 
@@ -82,13 +82,13 @@ static void MEMCALL memnc_wr16(UINT32 address, REG16 value) {
 }
 
 
-// ---- memory 000000-0ffffff
+// ---- memory 000000-0ffffff + 64KB
 
 typedef struct {
-	MEM8READ	rd8[0x20];
-	MEM8WRITE	wr8[0x20];
-	MEM16READ	rd16[0x20];
-	MEM16WRITE	wr16[0x20];
+	MEM8READ	rd8[0x22];
+	MEM8WRITE	wr8[0x22];
+	MEM16READ	rd16[0x22];
+	MEM16WRITE	wr16[0x22];
 } MEMFN0;
 
 typedef struct {
@@ -115,7 +115,8 @@ static MEMFN0 memfn0 = {
 		memmain_rd8,	memmain_rd8,	memmain_rd8,	memmain_rd8,	// 80
 		memtram_rd8,	memvram0_rd8,	memvram0_rd8,	memvram0_rd8,	// a0
 		memems_rd8,		memems_rd8,		memmain_rd8,	memmain_rd8,	// c0
-		memvram0_rd8,	memmain_rd8,	memmain_rd8,	memf800_rd8},	// e0
+		memvram0_rd8,	memmain_rd8,	memmain_rd8,	memf800_rd8,	// e0
+		memmain_rd8,	memmain_rd8},
 
 	   {memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 00
 		memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 20
@@ -124,7 +125,8 @@ static MEMFN0 memfn0 = {
 		memmain_wr8,	memmain_wr8,	memmain_wr8,	memmain_wr8,	// 80
 		memtram_wr8,	memvram0_wr8,	memvram0_wr8,	memvram0_wr8,	// a0
 		memems_wr8,		memems_wr8,		memd000_wr8,	memd000_wr8,	// c0
-		memvram0_wr8,	memnc_wr8,		memnc_wr8,		memnc_wr8},		// e0
+		memvram0_wr8,	memnc_wr8,		memnc_wr8,		memnc_wr8,		// e0
+		memmain_wr8,	memmain_wr8},
 
 	   {memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 00
 		memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 20
@@ -133,7 +135,8 @@ static MEMFN0 memfn0 = {
 		memmain_rd16,	memmain_rd16,	memmain_rd16,	memmain_rd16,	// 80
 		memtram_rd16,	memvram0_rd16,	memvram0_rd16,	memvram0_rd16,	// a0
 		memems_rd16,	memems_rd16,	memmain_rd16,	memmain_rd16,	// c0
-		memvram0_rd16,	memmain_rd16,	memmain_rd16,	memf800_rd16},	// e0
+		memvram0_rd16,	memmain_rd16,	memmain_rd16,	memf800_rd16,	// e0
+		memmain_rd16,	memmain_rd16},
 
 	   {memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 00
 		memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 20
@@ -142,7 +145,8 @@ static MEMFN0 memfn0 = {
 		memmain_wr16,	memmain_wr16,	memmain_wr16,	memmain_wr16,	// 80
 		memtram_wr16,	memvram0_wr16,	memvram0_wr16,	memvram0_wr16,	// a0
 		memems_wr16,	memems_wr16,	memd000_wr16,	memd000_wr16,	// c0
-		memvram0_wr16,	memnc_wr16,		memnc_wr16,		memnc_wr16}};	// e0
+		memvram0_wr16,	memnc_wr16,		memnc_wr16,		memnc_wr16,		// e0
+		memmain_wr16,	memmain_wr16}};
 
 static const MMAPTBL mmaptbl[2] = {
 		   {memmain_rd8,	memf800_rd8,	memnc_wr8,
@@ -228,22 +232,22 @@ const VACCTBL	*vacc;
 	}
 	else {
 		memfn0.rd8[0xa8000 >> 15] = memvga0_rd8;
-		memfn0.rd8[0xb0000 >> 15] = memvga0_rd8;
+		memfn0.rd8[0xb0000 >> 15] = memvga1_rd8;
 		memfn0.rd8[0xb8000 >> 15] = memnc_rd8;
 		memfn0.rd8[0xe0000 >> 15] = memvgaio_rd8;
 
 		memfn0.wr8[0xa8000 >> 15] = memvga0_wr8;
-		memfn0.wr8[0xb0000 >> 15] = memvga0_wr8;
+		memfn0.wr8[0xb0000 >> 15] = memvga1_wr8;
 		memfn0.wr8[0xb8000 >> 15] = memnc_wr8;
 		memfn0.wr8[0xe0000 >> 15] = memvgaio_wr8;
 
 		memfn0.rd16[0xa8000 >> 15] = memvga0_rd16;
-		memfn0.rd16[0xb0000 >> 15] = memvga0_rd16;
+		memfn0.rd16[0xb0000 >> 15] = memvga1_rd16;
 		memfn0.rd16[0xb8000 >> 15] = memnc_rd16;
 		memfn0.rd16[0xe0000 >> 15] = memvgaio_rd16;
 
 		memfn0.wr16[0xa8000 >> 15] = memvga0_wr16;
-		memfn0.wr16[0xb0000 >> 15] = memvga0_wr16;
+		memfn0.wr16[0xb0000 >> 15] = memvga1_wr16;
 		memfn0.wr16[0xb8000 >> 15] = memnc_wr16;
 		memfn0.wr16[0xe0000 >> 15] = memvgaio_wr16;
 	}
@@ -264,25 +268,25 @@ typedef struct {
 static REG8 MEMCALL memsys_rd8(UINT32 address) {
 
 	address -= 0xf00000;
-	return(memfn0.rd8[(address >> 15) & 0x1f](address));
+	return(memfn0.rd8[address >> 15](address));
 }
 
 static REG16 MEMCALL memsys_rd16(UINT32 address) {
 
 	address -= 0xf00000;
-	return(memfn0.rd16[(address >> 15) & 0x1f](address));
+	return(memfn0.rd16[address >> 15](address));
 }
 
 static void MEMCALL memsys_wr8(UINT32 address, REG8 value) {
 
 	address -= 0xf00000;
-	memfn0.wr8[(address >> 15) & 0x1f](address, value);
+	memfn0.wr8[address >> 15](address, value);
 }
 
 static void MEMCALL memsys_wr16(UINT32 address, REG16 value) {
 
 	address -= 0xf00000;
-	memfn0.wr16[(address >> 15) & 0x1f](address, value);
+	memfn0.wr16[address >> 15](address, value);
 }
 
 #if defined(SUPPORT_PC9821)
@@ -320,7 +324,7 @@ REG8 MEMCALL i286_memoryread(UINT32 addr) {
 	else {
 		addr = addr & CPU_ADRSMASK;
 		if (addr < USE_HIMEM) {
-			return(memfn0.rd8[(addr >> 15) & 0x1f](addr));
+			return(memfn0.rd8[addr >> 15](addr));
 		}
 		else if (addr < CPU_EXTLIMIT16) {
 			return(CPU_EXTMEMBASE[addr]);
@@ -356,7 +360,7 @@ REG16 MEMCALL i286_memoryread_w(UINT32 addr) {
 	else if ((addr + 1) & 0x7fff) {				// non 32kb boundary
 		addr = addr & CPU_ADRSMASK;
 		if (addr < USE_HIMEM) {
-			return(memfn0.rd16[(addr >> 15) & 0x1f](addr));
+			return(memfn0.rd16[addr >> 15](addr));
 		}
 		else if (addr < CPU_EXTLIMIT16) {
 			return(LOADINTELWORD(CPU_EXTMEMBASE + addr));
@@ -396,9 +400,9 @@ UINT32 MEMCALL i286_memoryread_d(UINT32 addr) {
 		return(LOADINTELDWORD(mem + addr));
 	}
 	else if (addr >= USE_HIMEM) {
-		pos = (addr & CPU_ADRSMASK) - 0x100000;
-		if ((pos + 3) < CPU_EXTMEMSIZE) {
-			return(LOADINTELDWORD(CPU_EXTMEM + pos));
+		pos = addr & CPU_ADRSMASK;
+		if ((pos >= USE_HIMEM) && ((pos + 3) < CPU_EXTLIMIT16)) {
+			return(LOADINTELDWORD(CPU_EXTMEMBASE + pos));
 		}
 	}
 	if (!(addr & 1)) {
@@ -421,7 +425,7 @@ void MEMCALL i286_memorywrite(UINT32 addr, REG8 value) {
 	else {
 		addr = addr & CPU_ADRSMASK;
 		if (addr < USE_HIMEM) {
-			memfn0.wr8[(addr >> 15) & 0x1f](addr, value);
+			memfn0.wr8[addr >> 15](addr, value);
 		}
 		else if (addr < CPU_EXTLIMIT16) {
 			CPU_EXTMEMBASE[addr] = (UINT8)value;
@@ -453,7 +457,7 @@ void MEMCALL i286_memorywrite_w(UINT32 addr, REG16 value) {
 	else if ((addr + 1) & 0x7fff) {				// non 32kb boundary
 		addr = addr & CPU_ADRSMASK;
 		if (addr < USE_HIMEM) {
-			memfn0.wr16[(addr >> 15) & 0x1f](addr, value);
+			memfn0.wr16[addr >> 15](addr, value);
 		}
 		else if (addr < CPU_EXTLIMIT16) {
 			STOREINTELWORD(CPU_EXTMEMBASE + addr, value);
@@ -490,9 +494,9 @@ void MEMCALL i286_memorywrite_d(UINT32 addr, UINT32 value) {
 		return;
 	}
 	else if (addr >= USE_HIMEM) {
-		pos = (addr & CPU_ADRSMASK) - 0x100000;
-		if ((pos + 3) < CPU_EXTMEMSIZE) {
-			STOREINTELDWORD(CPU_EXTMEM + pos, value);
+		pos = addr & CPU_ADRSMASK;
+		if ((pos >= USE_HIMEM) && ((pos + 3) < CPU_EXTLIMIT16)) {
+			STOREINTELDWORD(CPU_EXTMEMBASE + pos, value);
 			return;
 		}
 	}
@@ -510,26 +514,24 @@ void MEMCALL i286_memorywrite_d(UINT32 addr, UINT32 value) {
 void MEMCALL memp_read(UINT32 address, void *dat, UINT leng) {
 
 	UINT8 *out = (UINT8 *)dat;
-	UINT pos;
 	UINT diff;
 
 	/* fast memory access */
-	if (address + leng < I286_MEMREADMAX) {
+	if ((address + leng) < I286_MEMREADMAX) {
 		CopyMemory(dat, mem + address, leng);
 		return;
-	} else if (address >= USE_HIMEM) {
-		pos = (address & CPU_ADRSMASK) - 0x100000;
-		if (pos + leng < CPU_EXTMEMSIZE) {
-			CopyMemory(dat, CPU_EXTMEM + pos, leng);
+	}
+	address = address & CPU_ADRSMASK;
+	if ((address >= USE_HIMEM) && (address < CPU_EXTLIMIT16)) {
+		diff = CPU_EXTLIMIT16 - address;
+		if (diff >= leng) {
+			CopyMemory(dat, CPU_EXTMEMBASE + address, leng);
 			return;
 		}
-		if (pos < CPU_EXTMEMSIZE) {
-			diff = CPU_EXTMEMSIZE - pos;
-			CopyMemory(out, CPU_EXTMEM + pos, diff);
-			out += diff;
-			leng -= diff;
-			address += diff;
-		}
+		CopyMemory(dat, CPU_EXTMEMBASE + address, diff);
+		out += diff;
+		leng -= diff;
+		address += diff;
 	}
 
 	/* slow memory access */
@@ -541,26 +543,24 @@ void MEMCALL memp_read(UINT32 address, void *dat, UINT leng) {
 void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
 
 	const UINT8 *out = (UINT8 *)dat;
-	UINT pos;
 	UINT diff;
 
 	/* fast memory access */
-	if (address + leng < I286_MEMREADMAX) {
+	if ((address + leng) < I286_MEMREADMAX) {
 		CopyMemory(mem + address, dat, leng);
 		return;
-	} else if (address >= USE_HIMEM) {
-		pos = (address & CPU_ADRSMASK) - 0x100000;
-		if (pos + leng < CPU_EXTMEMSIZE) {
-			CopyMemory(CPU_EXTMEM + pos, dat, leng);
+	}
+	address = address & CPU_ADRSMASK;
+	if ((address >= USE_HIMEM) && (address < CPU_EXTLIMIT16)) {
+		diff = CPU_EXTLIMIT16 - address;
+		if (diff >= leng) {
+			CopyMemory(CPU_EXTMEMBASE + address, dat, leng);
 			return;
 		}
-		if (pos < CPU_EXTMEMSIZE) {
-			diff = CPU_EXTMEMSIZE - pos;
-			CopyMemory(CPU_EXTMEM + pos, dat, diff);
-			out += diff;
-			leng -= diff;
-			address += diff;
-		}
+		CopyMemory(CPU_EXTMEMBASE + address, dat, diff);
+		out += diff;
+		leng -= diff;
+		address += diff;
 	}
 
 	/* slow memory access */

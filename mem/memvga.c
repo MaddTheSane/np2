@@ -11,11 +11,11 @@
 
 // ---- macros
 
-#if 0
 #define	VGARD8(p, a) {													\
 	UINT32	addr;														\
 	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
-	addr += LOW15((a));													\
+	addr += (a);														\
+	addr -= (0xa8000 + ((p) * 0x8000));									\
 	return(vramex[addr]);												\
 }
 
@@ -23,7 +23,8 @@
 	UINT32	addr;														\
 	UINT8	bit;														\
 	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
-	addr += LOW15((a));													\
+	addr += (a);														\
+	addr -= (0xa8000 + ((p) * 0x8000));									\
 	vramex[addr] = (v);													\
 	bit = (addr & 0x40000)?2:1;											\
 	vramupdate[LOW15(addr >> 3)] |= bit;								\
@@ -33,7 +34,8 @@
 #define	VGARD16(p, a) {													\
 	UINT32	addr;														\
 	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
-	addr += LOW15((a));													\
+	addr += (a);														\
+	addr -= (0xa8000 + ((p) * 0x8000));									\
 	return(LOADINTELWORD(vramex + addr));								\
 }
 
@@ -41,15 +43,14 @@
 	UINT32	addr;														\
 	UINT8	bit;														\
 	addr = (vramop.mio1[(p) * 2] & 15) << 15;							\
-	addr += LOW15((a));													\
+	addr += (a);														\
+	addr -= (0xa8000 + ((p) * 0x8000));									\
 	STOREINTELWORD(vramex + addr, (v));									\
 	bit = (addr & 0x40000)?2:1;											\
 	vramupdate[LOW15((addr + 0) >> 3)] |= bit;							\
 	vramupdate[LOW15((addr + 1) >> 3)] |= bit;							\
 	gdcs.grphdisp |= bit;												\
 }
-#endif
-
 
 
 // ---- flat
@@ -91,42 +92,18 @@ void MEMCALL memvgaf_wr16(UINT32 address, REG16 value) {
 
 // ---- 8086 bank memory
 
-REG8 MEMCALL memvga0_rd8(UINT32 address) {
-
-	UINT32	addr;
-
-	address -= 0xa8000;
-	addr = (vramop.mio1[((address >> 14) & 2)] & 15) << 15;
-	addr += LOW15(address);
-	return(vramex[addr]);
-}
-
-void MEMCALL memvga0_wr8(UINT32 address, REG8 value) {
-
-	UINT32	addr;
-
-	address -= 0xa8000;
-	addr = (vramop.mio1[((address >> 14) & 2)] & 15) << 15;
-	addr += LOW15(address);
-	vramex[addr] = value;
-	vramupdate[LOW15(addr >> 3)] |= (addr & 0x40000)?2:1;
-	gdcs.grphdisp |= (addr & 0x40000)?2:1;
-}
-
-REG16 MEMCALL memvga0_rd16(UINT32 address) {
-
-	REG16	ret;
-
-	ret = memvga0_rd8(address);
-	ret |= memvga0_rd8(address + 1) << 8;
-	return(ret);
-}
-
-void MEMCALL memvga0_wr16(UINT32 address, REG16 value) {
-
-	memvga0_wr8(address + 0, (REG8)value);
-	memvga0_wr8(address + 1, (REG8)(value >> 8));
-}
+REG8 MEMCALL memvga0_rd8(UINT32 address)	VGARD8(0, address)
+REG8 MEMCALL memvga1_rd8(UINT32 address)	VGARD8(1, address)
+void MEMCALL memvga0_wr8(UINT32 address, REG8 value)
+											VGAWR8(0, address, value);
+void MEMCALL memvga1_wr8(UINT32 address, REG8 value)
+											VGAWR8(1, address, value);
+REG16 MEMCALL memvga0_rd16(UINT32 address)	VGARD16(0, address)
+REG16 MEMCALL memvga1_rd16(UINT32 address)	VGARD16(1, address)
+void MEMCALL memvga0_wr16(UINT32 address, REG16 value)
+											VGAWR16(0, address, value);
+void MEMCALL memvga1_wr16(UINT32 address, REG16 value)
+											VGAWR16(1, address, value);
 
 
 // ---- 8086 bank I/O
