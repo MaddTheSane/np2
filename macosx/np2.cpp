@@ -93,18 +93,19 @@ pascal OSErr OpenAppleEventHandler(const AppleEvent *event, AppleEvent *reply,lo
 	DescType	rtype;
 	AEKeyword	key;
 	AEDescList	dlist;
+    OSErr		err = noErr;
         
 	if(!AEGetParamDesc(event,keyDirectObject,typeAEList,&dlist))	{
 		AECountItems( &dlist,&ct );
 		for( i=1;i<=ct;i++ )	{
             pp=&fsc;
 			if (!AEGetNthPtr( &dlist,i,typeFSS,&key,&rtype,(Ptr)pp,(long)sizeof(FSSpec),&len))	{
-                setDropFile(fsc, i-1);
+                err = setDropFile(fsc, i-1);
 			}
 		}
 		AEDisposeDesc( &dlist );
 	}
-	return( 0 );
+	return(err);
 }
 
 

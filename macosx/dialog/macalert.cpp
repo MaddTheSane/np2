@@ -34,6 +34,7 @@ void ResumeErrorDialogProc(void) {
     DialogItemIndex	hit;
     
     GetStandardAlertDefaultParams(&param, kStdCFStringAlertVersionOne);   
+    param.movable = true;
     CreateStandardAlert(kAlertStopAlert, CFCopyLocalizedString(CFSTR("Couldn't restart"), "Resume Error Message"), 
                                          CFCopyLocalizedString(CFSTR("An error occured when reading the np2.sav file. Neko Project IIx couldn't restart."), "Resume Error Description"),
                                          &param, &ret);

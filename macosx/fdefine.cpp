@@ -140,14 +140,14 @@ int file_getftype(char* filename) {
 	FInfo	fndrInfo;
     int		ftype;
 
-    mkstr255(fname, filename);
-    FSMakeFSSpec(0, 0, fname, &fss);
-    if (FSpGetFInfo(&fss, &fndrInfo) != noErr) {
-        return(FTYPE_NONE);
-    }
-    ftype = Getfiletype(&fndrInfo);
+    ftype = GetFileExt(filename);
 	if (ftype == FTYPE_NONE) {
-        ftype = GetFileExt(filename);
+        mkstr255(fname, filename);
+        FSMakeFSSpec(0, 0, fname, &fss);
+        if (FSpGetFInfo(&fss, &fndrInfo) != noErr) {
+            return(FTYPE_NONE);
+        }
+        ftype = Getfiletype(&fndrInfo);
     }
 	return(ftype);
 }
