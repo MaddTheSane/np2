@@ -1,5 +1,9 @@
 
+#if defined(ARM) && defined(BYTESEX_LITTLE)
+#define	INHIBIT_WORDP(m)	(((m) & 1) || ((m) >= 0xa0000))
+#else
 #define	INHIBIT_WORDP(m)	(1)
+#endif
 
 #define	__CBW(src)		(UINT16)((char)(src))
 #define	__CBD(src)		((char)(src))
@@ -404,25 +408,51 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 	}
 
 
-#define	REGPUSH(reg, clock)	{										\
-		I286_WORKCLOCK(clock);										\
-		I286_SP -= 2;												\
-		i286_memorywrite_w(I286_SP + SS_BASE, reg);					\
-	}
-
+// ---- stack
 
 #define	REGPUSH0(reg)												\
 		I286_SP -= 2;												\
 		i286_memorywrite_w(I286_SP + SS_BASE, reg);
 
+#define	REGPOP0(reg) 												\
+		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
+		I286_SP += 2;
 
-#define	SP_PUSH(reg, clock)	{										\
-		UINT16 sp = reg;											\
-		I286_SP -= 2;												\
-		i286_memorywrite_w(I286_SP + SS_BASE, sp);					\
+#if defined(ARM) && defined(BYTESEX_LITTLE)
+
+#define	REGPUSH(reg, clock)	{										\
+		UINT32 addr;												\
 		I286_WORKCLOCK(clock);										\
+		I286_SP -= 2;												\
+		addr = I286_SP + SS_BASE;									\
+		if (INHIBIT_WORDP(addr)) {									\
+			i286_memorywrite_w(addr, reg);							\
+		}															\
+		else {														\
+			*(UINT16 *)(mem + addr) = (reg);						\
+		}															\
 	}
 
+#define	REGPOP(reg, clock) {										\
+		UINT32 addr;												\
+		I286_WORKCLOCK(clock);										\
+		addr = I286_SP + SS_BASE;									\
+		if (INHIBIT_WORDP(addr)) {									\
+			(reg) = i286_memoryread_w(addr);						\
+		}															\
+		else {														\
+			(reg) = *(UINT16 *)(mem + addr);						\
+		}															\
+		I286_SP += 2;												\
+	}
+
+#else
+
+#define	REGPUSH(reg, clock)	{										\
+		I286_WORKCLOCK(clock);										\
+		I286_SP -= 2;												\
+		i286_memorywrite_w(I286_SP + SS_BASE, reg);					\
+	}
 
 #define	REGPOP(reg, clock) {										\
 		I286_WORKCLOCK(clock);										\
@@ -430,16 +460,19 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		I286_SP += 2;												\
 	}
 
+#endif
+
+#define	SP_PUSH(reg, clock)	{										\
+		REG16 sp = (reg);											\
+		I286_SP -= 2;												\
+		i286_memorywrite_w(I286_SP + SS_BASE, sp);					\
+		I286_WORKCLOCK(clock);										\
+	}
+
 #define	SP_POP(reg, clock) {										\
 		I286_WORKCLOCK(clock);										\
 		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
 	}
-
-
-#define	REGPOP0(reg) 												\
-		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
-		I286_SP += 2;
-
 
 
 #define	JMPSHORT(clock) {											\

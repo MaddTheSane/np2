@@ -488,7 +488,14 @@ void screenvsync(NEVENTITEM item) {
 	(void)item;
 }
 
+
 // ---------------------------------------------------------------------------
+
+#if defined(TRACE)
+static int resetcnt = 0;
+static int execcnt = 0;
+int piccnt = 0;
+#endif
 
 void pccore_exec(BOOL draw) {
 
@@ -508,6 +515,9 @@ void pccore_exec(BOOL draw) {
 //	nevent_get1stevent();
 
 	while(screendispflag) {
+#if defined(TRACE)
+	resetcnt++;
+#endif
 		pic_irq();
 		if (cpuio.reset_req) {
 			cpuio.reset_req = 0;
@@ -520,7 +530,7 @@ void pccore_exec(BOOL draw) {
 			i286_resetprefetch();
 		}
 
-#if 1	// ndef TRACE
+#if 1 // ndef TRACE
 		if (I286_REMCLOCK > 0) {
 			if (!(CPUTYPE & CPUTYPE_V30)) {
 				i286();
@@ -531,6 +541,7 @@ void pccore_exec(BOOL draw) {
 		}
 #else
 		while(I286_REMCLOCK > 0) {
+			TRACEOUT(("%.4x:%.4x", I286_CS, I286_IP));
 			i286_step();
 		}
 #endif
@@ -541,5 +552,15 @@ void pccore_exec(BOOL draw) {
 	diskdrv_callback();
 	calendar_inc();
 	sound_sync();													// happy!
+
+#if defined(TRACE)
+	execcnt++;
+	if (execcnt >= 60) {
+		TRACEOUT(("resetcnt = %d / pic %d", resetcnt, piccnt));
+		execcnt = 0;
+		resetcnt = 0;
+		piccnt = 0;
+	}
+#endif
 }
 

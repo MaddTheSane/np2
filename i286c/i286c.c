@@ -144,13 +144,13 @@ void i286_reset(void) {
 void i286_resetprefetch(void) {
 }
 
-void CPUCALL i286_intnum(UINT vect, UINT IP) {
+void CPUCALL i286_intnum(UINT vect, REG16 IP) {
 
 const BYTE	*ptr;
 
 	REGPUSH0(REAL_FLAGREG)
 	REGPUSH0(I286_CS)
-	REGPUSH0((UINT16)IP)
+	REGPUSH0(IP)
 
 	I286_FLAG &= ~(T_FLAG | I_FLAG);
 	I286_TRAP = 0;

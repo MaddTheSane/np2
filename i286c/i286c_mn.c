@@ -10,6 +10,11 @@
 
 #define	MAX_PREFIX		8
 
+#define EXISTINTR		(isI286EI) && (!pic.ext_irq) &&				\
+						((pic.pi[0].irr & (~pic.pi[0].imr)) ||		\
+						(pic.pi[1].irr & (~pic.pi[1].imr)))
+
+
 #define	NEXT_OPCODE												\
 		if (I286_REMCLOCK < 1) {								\
 			I286_BASECLOCK += (1 - I286_REMCLOCK);				\
@@ -1085,9 +1090,74 @@ I286FN _pop_bp(void) REGPOP(I286_BP, 5)		// 5D:	pop		bp
 I286FN _pop_si(void) REGPOP(I286_SI, 5)		// 5E:	pop		si
 I286FN _pop_di(void) REGPOP(I286_DI, 5)		// 5F:	pop		di
 
+#if defined(ARM) && defined(BYTESEX_LITTLE)
+
 I286FN _pusha(void) {						// 60:	pusha
 
-	UINT16	tmp;
+	REG16	tmp;
+	UINT32	addr;
+
+	I286_WORKCLOCK(17);
+	tmp = I286_SP;
+	addr = tmp + SS_BASE;
+	if ((tmp < 16) || (INHIBIT_WORDP(addr))) {
+		REGPUSH0(I286_AX)
+		REGPUSH0(I286_CX)
+		REGPUSH0(I286_DX)
+		REGPUSH0(I286_BX)
+	    REGPUSH0(tmp)
+		REGPUSH0(I286_BP)
+		REGPUSH0(I286_SI)
+		REGPUSH0(I286_DI)
+	}
+	else {
+		*(UINT16 *)(mem + addr - 2) = I286_AX;
+		*(UINT16 *)(mem + addr - 4) = I286_CX;
+		*(UINT16 *)(mem + addr - 6) = I286_DX;
+		*(UINT16 *)(mem + addr - 8) = I286_BX;
+		*(UINT16 *)(mem + addr - 10) = tmp;
+		*(UINT16 *)(mem + addr - 12) = I286_BP;
+		*(UINT16 *)(mem + addr - 14) = I286_SI;
+		*(UINT16 *)(mem + addr - 16) = I286_DI;
+		I286_SP -= 16;
+	}
+}
+
+I286FN _popa(void) {						// 61:	popa
+
+	UINT	tmp;
+	UINT32	addr;
+
+	I286_WORKCLOCK(19);
+	tmp = I286_SP + 16;
+	addr = tmp + SS_BASE;
+	if ((tmp >= 0x10000) || (INHIBIT_WORDP(addr))) {
+		REGPOP0(I286_DI);
+		REGPOP0(I286_SI);
+		REGPOP0(I286_BP);
+		I286_SP += 2;
+		REGPOP0(I286_BX);
+		REGPOP0(I286_DX);
+		REGPOP0(I286_CX);
+		REGPOP0(I286_AX);
+	}
+	else {
+		I286_DI = *(UINT16 *)(mem + addr - 16);
+		I286_SI = *(UINT16 *)(mem + addr - 14);
+		I286_BP = *(UINT16 *)(mem + addr - 12);
+		I286_BX = *(UINT16 *)(mem + addr - 8);
+		I286_DX = *(UINT16 *)(mem + addr - 6);
+		I286_CX = *(UINT16 *)(mem + addr - 4);
+		I286_AX = *(UINT16 *)(mem + addr - 2);
+		I286_SP = tmp;
+	}
+}
+
+#else
+
+I286FN _pusha(void) {						// 60:	pusha
+
+	REG16	tmp;
 
 	tmp = I286_SP;
 	REGPUSH0(I286_AX)
@@ -1113,6 +1183,8 @@ I286FN _popa(void) {						// 61:	popa
 	REGPOP0(I286_AX);
 	I286_WORKCLOCK(19);
 }
+
+#endif
 
 I286FN _bound(void) {						// 62:	bound
 
@@ -1743,12 +1815,20 @@ I286FN _pushf(void) {						// 9C:	pushf
 
 I286FN _popf(void) {						// 9D:	popf
 
+	UINT	flag;
+
 	I286_WORKCLOCK(5);
-	REGPOP0(I286_FLAG)
-	I286_OV = I286_FLAG & O_FLAG;
-	I286_FLAG &= (0xfff ^ O_FLAG);
-	I286_TRAP = ((I286_FLAG & 0x300) == 0x300);
+	REGPOP0(flag)
+	I286_OV = flag & O_FLAG;
+	I286_FLAG = flag & (0xfff ^ O_FLAG);
+	I286_TRAP = ((flag & 0x300) == 0x300);
+#if defined(INTR_FAST)
+	if (EXISTINTR) {
+		I286IRQCHECKTERM
+	}
+#else
 	I286IRQCHECKTERM
+#endif
 }
 
 I286FN _sahf(void) {						// 9E:	sahf
@@ -2193,16 +2273,24 @@ I286FN _into(void) {						// CE:	into
 
 I286FN _iret(void) {						// CF:	iret
 
+	UINT	flag;
+
 	extirq_pop();
 	I286_WORKCLOCK(31);
 	REGPOP0(I286_IP)
 	REGPOP0(I286_CS)
-	REGPOP0(I286_FLAG)
-	I286_OV = I286_FLAG & O_FLAG;
-	I286_FLAG &= 0x7ff;
-	I286_TRAP = ((I286_FLAG & 0x300) == 0x300);
+	REGPOP0(flag)
+	I286_OV = flag & O_FLAG;
+	I286_FLAG = flag & (0xfff ^ O_FLAG);
+	I286_TRAP = ((flag & 0x300) == 0x300);
 	CS_BASE = I286_CS << 4;
+#if defined(INTR_FAST)
+	if (EXISTINTR) {
+		I286IRQCHECKTERM
+	}
+#else
 	I286IRQCHECKTERM
+#endif
 }
 
 I286FN _shift_ea8_1(void) {				// D0:	shift EA8, 1
@@ -2568,10 +2656,20 @@ I286FN _cli(void) {							// FA:	cli
 I286FN _sti(void) {							// FB:	sti
 
 	I286_WORKCLOCK(2);
+#if defined(INTR_FAST)
+	if (I286_FLAG & I_FLAG) {
+		return;									// XV‚ÌˆÓ–¡‚È‚µ
+	}
+#endif
 	I286_FLAG |= I_FLAG;
-	I286_TRAP = (I286_FLAG & T_FLAG) >> 8;		// ToDo
-
+	I286_TRAP = (I286_FLAG & T_FLAG) >> 8;
+#if defined(INTR_FAST)
+	if (EXISTINTR) {
+		REMAIN_ADJUST(1)
+	}
+#else
 	REMAIN_ADJUST(1)
+#endif
 }
 
 I286FN _cld(void) {							// FC:	cld

@@ -1,4 +1,6 @@
 
+#define INTR_FAST
+
 // #define	I286C_TEST
 #if defined(I286C_TEST)
 #undef MEMOPTIMIZE
@@ -11,7 +13,7 @@ typedef void (*I286OP)(void);
 
 extern	BYTE	_szpcflag[0x200];
 
-extern void CPUCALL i286_intnum(UINT vect, UINT IP);
+extern void CPUCALL i286_intnum(UINT vect, REG16 IP);
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 extern void i286cea_initialize(void);

@@ -338,6 +338,10 @@ static void IOOUTCALL pic_o00(UINT port, BYTE dat) {
 	}
 }
 
+#if defined(TRACE)
+extern int piccnt;
+#endif
+
 static void IOOUTCALL pic_o02(UINT port, BYTE dat) {
 
 	PICITEM		picp;
@@ -345,7 +349,22 @@ static void IOOUTCALL pic_o02(UINT port, BYTE dat) {
 //	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
 	if (!picp->writeicw) {
+#if 1	// マスクのセットだけなら nevent_forceexit()をコールしない
+		if ((isI286DI) || (pic.ext_irq) ||
+			((picp->imr & dat) == picp->imr)) {
+			picp->imr = dat;
+			return;
+		}
+		// リセットされたビットは割り込みある？
+		if (!(picp->irr & (picp->imr & (~dat)))) {
+			picp->imr = dat;
+			return;
+		}
+#endif
 		picp->imr = dat;
+#if defined(TRACE)
+		piccnt++;
+#endif
 	}
 	else {
 		picp->icw[picp->writeicw] = dat;
