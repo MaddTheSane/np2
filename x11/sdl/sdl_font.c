@@ -1,88 +1,90 @@
-#include "compiler.h"
-
-#include "np2.h"
-#include "codecnv.h"
-
-#include "fontmng.h"
-
-#include <SDL_ttf.h>
+#include	"compiler.h"
+#include	<SDL_ttf.h>
+#include	"fontmng.h"
+#include	"codecnv.h"
 
 
-#ifndef	FONTMNG_CACHE
-#define	FONTMNG_CACHE	64
+#if !defined(RESOURCE_US)		// use TTF
+
+#define	FONTMNG_CACHE		64
+
+
+#ifndef	FONTNAME_DEFAULT
+#define	FONTNAME_DEFAULT	"./default.ttf"
 #endif
 
-#if defined(FONTMNG_CACHE) && FONTMNG_CACHE > 0
+static	char	fontname[MAX_PATH] = FONTNAME_DEFAULT;
+
+static	const SDL_Color white = {0xff, 0xff, 0xff, 0};
+
+
+#if defined(FONTMNG_CACHE)
 typedef struct {
-	UINT16	str;
-	UINT16	next;
+	UINT16		str;
+	UINT16		next;
 } FNTCTBL;
 #endif
 
 typedef struct {
-	int		fontsize;
+	int			fontsize;
 	UINT		fonttype;
-	int		ptsize;
-	int		fontalign;
+	int			ptsize;
+	int			fontalign;
 	TTF_Font	*ttf_font;
-#if defined(FONTMNG_CACHE) && FONTMNG_CACHE > 0
+#if defined(FONTMNG_CACHE)
 	UINT		caches;
 	UINT		cachehead;
 	FNTCTBL		cache[FONTMNG_CACHE];
 #endif
 } _FNTMNG, *FNTMNG;
 
-static const SDL_Color white = {0xff, 0xff, 0xff, 0};
 
-
-BOOL
-fontmng_init(void)
-{
+BOOL fontmng_init(void) {
 
 	if (TTF_Init() < 0) {
-		fprintf(stderr,"Couldn't initialize TTF: %s\n", SDL_GetError());
-		return FAILURE;
+		fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
+		return(FAILURE);
 	}
-	return SUCCESS;
+#ifndef WIN32
+	atexit(TTF_Quit);
+#endif
+	return(SUCCESS);
 }
 
 void
 fontmng_terminate(void)
 {
 
-	TTF_Quit();
+       TTF_Quit();
 }
 
-void
-fontmng_setdeffontname(const char *name)
-{
+void fontmng_setdeffontname(const char *name) {
 
 	milstr_ncpy(fontname, name, sizeof(fontname));
 }
 
-void *
-fontmng_create(int size, UINT type, const TCHAR *fontface)
-{
-	FNTMNG ret;
-	int ptsize;
-	int fontalign;
-	int fontwork;
-	int allocsize;
+void *fontmng_create(int size, UINT type, const char *fontface) {
 
-	UNUSED(fontface);
+	int			ptsize;
+	int			fontalign;
+	int			fontwork;
+	int			allocsize;
+	FNTMNG		ret;
 
 	if (size < 0) {
 		size = -size;
 	}
 	if (size < 6) {
 		size = 6;
-	} else if (size > 128) {
+	}
+	else if (size > 128) {
 		size = 128;
 	}
 
 	if (size < 10) {
 		type |= FDAT_ALIAS;
-	} else if (size < 16) {
+	}
+	else if (size < 16) {
 		type &= ~FDAT_BOLD;
 	}
 
@@ -91,10 +93,9 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 		ptsize *= 2;
 	}
 
-	size++;
 	fontalign = sizeof(_FNTDAT) + (size * size);
 	fontalign = (fontalign + 3) & (~3);
-#if defined(FONTMNG_CACHE) && FONTMNG_CACHE > 0
+#if defined(FONTMNG_CACHE)
 	fontwork = fontalign * FONTMNG_CACHE;
 #else
 	fontwork = fontalign;
@@ -110,24 +111,25 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 	ret->fonttype = type;
 	ret->ptsize = ptsize;
 	ret->fontalign = fontalign;
-	ret->ttf_font = TTF_OpenFont(fontfilename, ptsize);
+	ret->ttf_font = TTF_OpenFont(fontname, ptsize);
 	if (ret->ttf_font == NULL) {
 		fprintf(stderr, "Couldn't load %d points font from %s: %s\n",
-		    ptsize, fontfilename, SDL_GetError());
+										ptsize, fontname, SDL_GetError());
 		goto fmc_err2;
 	}
-	return ret;
+	return(ret);
 
 fmc_err2:
 	_MFREE(ret);
+
 fmc_err1:
-	return NULL;
+	(void)fontface;
+	return(NULL);
 }
 
-void
-fontmng_destroy(void *hdl)
-{
-	FNTMNG fnt;
+void fontmng_destroy(void *hdl) {
+
+	FNTMNG	fnt;
 
 	if (hdl) {
 		fnt = (FNTMNG)hdl;
@@ -136,16 +138,15 @@ fontmng_destroy(void *hdl)
 	}
 }
 
-#if defined(FONTMNG_CACHE) && FONTMNG_CACHE > 0
-static BOOL
-fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat)
-{
+#if defined(FONTMNG_CACHE)
+static BOOL fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat) {
+
+	BOOL	r;
+	UINT	str;
 	FNTCTBL	*fct;
-	UINT str;
-	UINT pos;
-	UINT prev;
-	UINT cnt;
-	BOOL r;
+	UINT	pos;
+	UINT	prev;
+	UINT	cnt;
 
 	r = FALSE;
 	str = string[0] & 0xff;
@@ -154,7 +155,7 @@ fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat)
 	cnt = fhdl->caches;
 	pos = fhdl->cachehead;
 	prev = FONTMNG_CACHE;
-	while (cnt--) {
+	while(cnt--) {
 		if (fct[pos].str != str) {
 			prev = pos;
 			pos = fct[pos].next;
@@ -172,7 +173,8 @@ fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat)
 		if (fhdl->caches < FONTMNG_CACHE) {
 			pos = fhdl->caches;
 			fhdl->caches++;
-		} else {
+		}
+		else {
 			pos = prev;
 		}
 		fct[pos].str = (UINT16)str;
@@ -180,20 +182,18 @@ fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat)
 		fhdl->cachehead = pos;
 	}
 	if (pfdat) {
-		*pfdat = (FNTDAT)(((BYTE *)(fhdl + 1)) + (pos * fhdl->fontalign));
+		*pfdat = (FNTDAT)(((UINT8 *)(fhdl + 1)) + (pos * fhdl->fontalign));
 	}
-	return r;
+	return(r);
 }
-#else
-#define	fdatgetcache(h, str, p)	(*(p) = (FNTDAT)(((FNTMNG)(h)) + 1)), 0 
 #endif
 
-static void
-setfdathead(FNTMNG fhdl, FNTDAT fdat, int length, SDL_Surface *text)
-{
-	int width;
-	int pitch;
-	int height;
+static void setfdathead(FNTMNG fhdl, FNTDAT fdat, int length,
+														SDL_Surface *text) {
+
+	int		width;
+	int		pitch;
+	int		height;
 
 	if ((fhdl->fonttype & FDAT_PROPORTIONAL) && (text)) {
 		width = min(text->w, fhdl->ptsize);
@@ -207,10 +207,12 @@ setfdathead(FNTMNG fhdl, FNTDAT fdat, int length, SDL_Surface *text)
 		fdat->width = width;
 		fdat->pitch = pitch;
 		fdat->height = height;
-	} else {
+	}
+	else {
 		if (length < 2) {
 			fdat->pitch = fhdl->fontsize >> 1;
-		} else {
+		}
+		else {
 			fdat->pitch = fhdl->fontsize;
 		}
 		fdat->width = fhdl->fontsize;
@@ -218,59 +220,59 @@ setfdathead(FNTMNG fhdl, FNTDAT fdat, int length, SDL_Surface *text)
 	}
 }
 
-static void
-getlength1(FNTMNG fhdl, FNTDAT fdat, const char *string, int length)
-{
-	SDL_Surface *text;
-	UINT16 utext[2];
+static void getlength1(FNTMNG fhdl, FNTDAT fdat,
+											const char *string, int length) {
+
+	UINT16		utext[2];
+	SDL_Surface	*text;
 
 	if (fhdl->fonttype & FDAT_PROPORTIONAL) {
-		codecnv_sjis2utf(utext, 2, string, length);
+		codecnv_euctoucs2(utext, NELEMENTS(utext), string, length);
 		text = TTF_RenderUNICODE_Solid(fhdl->ttf_font, utext, white);
 		setfdathead(fhdl, fdat, length, text);
 		if (text) {
 			SDL_FreeSurface(text);
 		}
-	} else {
+	}
+	else {
 		setfdathead(fhdl, fdat, length, NULL);
 	}
 }
 
-static BYTE
-getpixeldepth(SDL_Surface *s, int x, int y)
-{
-	const BYTE *ptr;
-	int bpp;
+static UINT8 getpixeldepth(SDL_Surface *s, int x, int y) {
+
+	int		bpp;
+const UINT8	*ptr;
 
 	if ((x >= 0) && (x < s->w) && (y >= 0) && (y < s->h)) {
 		bpp = s->format->BytesPerPixel;
-		ptr = (BYTE *)s->pixels + (y * s->pitch) + (x * bpp);
-		switch (bpp) {
-		case 1:
-			return (ptr[0] != 0) ? FDAT_DEPTH : 0;
+		ptr = (UINT8 *)s->pixels + (y * s->pitch) + (x * bpp);
+		switch(bpp) {
+			case 1:
+				return((ptr[0] != 0)?FDAT_DEPTH:0);
 
-		case 3:
-		case 4:
-			return ptr[0] * FDAT_DEPTH / 255;
+			case 3:
+			case 4:
+				return(ptr[0] * FDAT_DEPTH / 255);
 		}
 	}
-	return 0;
+	return(0);
 }
 
-static void
-getfont1(FNTMNG fhdl, FNTDAT fdat, const char *string, int length)
-{
-	SDL_Surface *text;
-	BYTE *dst;
-	int x;
-	int y;
-	int depth;
-	UINT16 utext[2];
+static void getfont1(FNTMNG fhdl, FNTDAT fdat,
+											const char *string, int length) {
 
-	codecnv_sjis2utf(utext, 2, string, length);
+	UINT16		utext[2];
+	SDL_Surface	*text;
+	UINT8		*dst;
+	int			x;
+	int			y;
+	int			depth;
+
+	codecnv_euctoucs2(utext, NELEMENTS(utext), string, length);
 	text = TTF_RenderUNICODE_Solid(fhdl->ttf_font, utext, white);
 	setfdathead(fhdl, fdat, length, text);
-	dst = (BYTE *)(fdat + 1);
+	dst = (UINT8 *)(fdat + 1);
 	if (text) {
 		if (fhdl->fonttype & FDAT_ALIAS) {
 			for (y=0; y<fdat->height; y++) {
@@ -279,10 +281,11 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const char *string, int length)
 					depth += getpixeldepth(text, x*2+1, y*2+0);
 					depth += getpixeldepth(text, x*2+0, y*2+1);
 					depth += getpixeldepth(text, x*2+1, y*2+1);
-					*dst++ = (BYTE)((depth + 2) / 4);
+					*dst++ = (UINT8)((depth + 2) / 4);
 				}
 			}
-		} else {
+		}
+		else {
 			for (y=0; y<fdat->height; y++) {
 				for (x=0; x<fdat->width; x++) {
 					*dst++ = getpixeldepth(text, x, y);
@@ -290,82 +293,269 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const char *string, int length)
 			}
 		}
 		SDL_FreeSurface(text);
-	} else {
+	}
+	else {
 		ZeroMemory(dst, fdat->width * fdat->height);
 	}
 }
 
-BOOL
-fontmng_getsize(void *hdl, const char *string, POINT_T *pt)
-{
-	_FNTDAT fdat;
-	FNTMNG fhdl;
-	int width;
-	int leng;
-	char buf[4];
+BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
 
-	if ((hdl == NULL) || (string == NULL))
-		return FAILURE;
+	int		width;
+	int		leng;
+	_FNTDAT	fdat;
 
-	fhdl = (FNTMNG)hdl;
+	if ((hdl == NULL) || (string == NULL)) {
+		goto fmgs_exit;
+	}
+
 	width = 0;
-	buf[2] = '\0';
-	for (;;) {
-		buf[0] = *string++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			buf[1] = *string++;
-			if (buf[1] == '\0') {
-				break;
-			}
-			leng = 2;
-		} else if (buf[0]) {
-			buf[1] = '\0';
-			leng = 1;
-		} else {
+	while(1) {
+		leng = milstr_charsize(string);
+		if (!leng) {
 			break;
 		}
-		getlength1(fhdl, &fdat, buf, leng);
+		getlength1((FNTMNG)hdl, &fdat, string, leng);
+		string += leng;
+		width += fdat.pitch;
+	}
+
+	if (pt) {
+		pt->x = width;
+		pt->y = ((FNTMNG)hdl)->fontsize;
+	}
+	return(SUCCESS);
+
+fmgs_exit:
+	return(FAILURE);
+}
+
+BOOL fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt) {
+
+	int		width;
+	int		posx;
+	int		leng;
+	_FNTDAT	fdat;
+
+	if ((hdl == NULL) || (string == NULL)) {
+		goto fmgds_exit;
+	}
+
+	width = 0;
+	posx = 0;
+	while(1) {
+		leng = milstr_charsize(string);
+		if (!leng) {
+			break;
+		}
+		getlength1((FNTMNG)hdl, &fdat, string, leng);
+		string += leng;
+		width = posx + max(fdat.width, fdat.pitch);
+		posx += fdat.pitch;
+	}
+	if (pt) {
+		pt->x = width;
+		pt->y = ((FNTMNG)hdl)->fontsize;
+	}
+	return(SUCCESS);
+
+fmgds_exit:
+	return(FAILURE);
+}
+
+FNTDAT fontmng_get(void *hdl, const char *string) {
+
+	FNTMNG	fhdl;
+	FNTDAT	fdat;
+	int		leng;
+
+	if ((hdl == NULL) || (string == NULL)) {
+		goto fmg_err;
+	}
+	fhdl = (FNTMNG)hdl;
+
+#if defined(FONTMNG_CACHE)
+	if (fdatgetcache(fhdl, string, &fdat)) {
+		return(fdat);
+	}
+#else
+	fdat = (FNTDAT)(fhdl + 1);
+#endif
+
+	leng = milstr_charsize(string);
+	getfont1(fhdl, fdat, string, leng);
+	return(fdat);
+
+fmg_err:
+	return(NULL);
+}
+
+#else
+
+#if defined(SIZE_QVGA)
+#include	"ank10.res"
+#else
+#include	"ank12.res"
+#endif
+
+typedef struct {
+	int		fontsize;
+	UINT	fonttype;
+} _FNTMNG, *FNTMNG;
+
+BOOL fontmng_init(void) {
+
+	return(SUCCESS);
+}
+
+void fontmng_setdeffontname(const char *name) {
+
+	(void)name;
+}
+
+void *fontmng_create(int size, UINT type, const char *fontface) {
+
+	int		fontalign;
+	int		allocsize;
+	FNTMNG	ret;
+
+	if (size < ANKFONTSIZE) {
+		goto fmc_err1;
+	}
+	fontalign = sizeof(_FNTDAT) + (size * size);
+	fontalign = (fontalign + 3) & (~3);
+	allocsize = sizeof(_FNTMNG) + fontalign;
+	ret = (FNTMNG)_MALLOC(allocsize, "font mng");
+	if (ret == NULL) {
+		goto fmc_err1;
+	}
+	ZeroMemory(ret, allocsize);
+	ret->fontsize = size;
+	ret->fonttype = type;
+	return(ret);
+
+fmc_err1:
+	(void)fontface;
+	return(NULL);
+}
+
+void fontmng_destroy(void *hdl) {
+
+	if (hdl) {
+		_MFREE(hdl);
+	}
+}
+
+static void setfdathead(FNTMNG fhdl, FNTDAT fdat, int width) {
+
+	if (fhdl->fonttype & FDAT_PROPORTIONAL) {
+		fdat->width = width;
+		fdat->pitch = width + 1;
+		fdat->height = fhdl->fontsize;
+	}
+	else {
+		fdat->width = max(width, fhdl->fontsize >> 1);
+		fdat->pitch = (fhdl->fontsize >> 1) + 1;
+		fdat->height = fhdl->fontsize;
+	}
+}
+
+static void getlength1(FNTMNG fhdl, FNTDAT fdat,
+											const char *string, int length) {
+
+	int		c;
+
+	c = string[0] - 0x20;
+	if ((c < 0) || (c >= 0x60)) {
+		c = 0x1f;							// ?
+	}
+	setfdathead(fhdl, fdat, ankfont[c * ANKFONTSIZE]);
+}
+
+static void getfont1(FNTMNG fhdl, FNTDAT fdat,
+											const char *string, int length) {
+
+	int		c;
+const UINT8	*src;
+	int		width;
+	UINT8	*dst;
+	int		x;
+	int		y;
+
+	c = string[0] - 0x20;
+	if ((c < 0) || (c >= 0x60)) {
+		c = 0x1f;							// ?
+	}
+	src = ankfont + (c * ANKFONTSIZE);
+	width = *src++;
+	setfdathead(fhdl, fdat, width);
+	dst = (UINT8 *)(fdat + 1);
+	ZeroMemory(dst, fdat->width * fdat->height);
+	dst += ((fdat->height - ANKFONTSIZE) / 2) * fdat->width;
+	dst += (fdat->width - width) / 2;
+	for (y=0; y<(ANKFONTSIZE - 1); y++) {
+		dst += fdat->width;
+		for (x=0; x<width; x++) {
+			dst[x] = (src[0] & (0x80 >> x))?0xff:0x00;
+		}
+		src++;
+	}
+}
+
+BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt) {
+
+	FNTMNG	fhdl;
+	int		width;
+	_FNTDAT	fdat;
+	int		leng;
+
+	if ((hdl == NULL) || (string == NULL)) {
+		goto fmgs_exit;
+	}
+	fhdl = (FNTMNG)hdl;
+
+	width = 0;
+	while(1) {
+		leng = milstr_charsize(string);
+		if (!leng) {
+			break;
+		}
+		getlength1((FNTMNG)hdl, &fdat, string, leng);
+		string += leng;
 		width += fdat.pitch;
 	}
 	if (pt) {
 		pt->x = width;
 		pt->y = fhdl->fontsize;
 	}
-	return SUCCESS;
+	return(SUCCESS);
+
+fmgs_exit:
+	return(FAILURE);
 }
 
-BOOL
-fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt)
-{
-	_FNTDAT fdat;
-	FNTMNG fhdl;
-	int width;
-	int leng;
-	int posx;
-	char buf[4];
+BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt) {
 
-	if ((hdl == NULL) || (string == NULL))
-		return FAILURE;
+	FNTMNG	fhdl;
+	_FNTDAT	fdat;
+	int		width;
+	int		posx;
+	int		leng;
 
+	if ((hdl == NULL) || (string == NULL)) {
+		goto fmgds_exit;
+	}
 	fhdl = (FNTMNG)hdl;
+
 	width = 0;
 	posx = 0;
-	buf[2] = '\0';
 	while(1) {
-		buf[0] = *string++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			buf[1] = *string++;
-			if (buf[1] == '\0') {
-				break;
-			}
-			leng = 2;
-		} else if (buf[0]) {
-			buf[1] = '\0';
-			leng = 1;
-		} else {
+		leng = milstr_charsize(string);
+		if (!leng) {
 			break;
 		}
-		getlength1(fhdl, &fdat, buf, leng);
+		getlength1(fhdl, &fdat, string, leng);
+		string += leng;
 		width = posx + max(fdat.width, fdat.pitch);
 		posx += fdat.pitch;
 	}
@@ -373,29 +563,28 @@ fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt)
 		pt->x = width;
 		pt->y = fhdl->fontsize;
 	}
-	return SUCCESS;
+	return(SUCCESS);
+
+fmgds_exit:
+	return(FAILURE);
 }
 
-FNTDAT
-fontmng_get(void *hdl, const char *string)
-{
-	FNTMNG fhdl;
-	FNTDAT fdat;
-	int leng;
+FNTDAT fontmng_get(void *hdl, const char *string) {
 
-	if ((hdl == NULL) || (string == NULL))
-		return NULL;
+	FNTMNG	fhdl;
+	FNTDAT	fdat;
 
-	fhdl = (FNTMNG)hdl;
-	if (fdatgetcache(fhdl, string, &fdat))
-		return fdat;
-
-	leng = 1;
-	if (((((string[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) &&
-		(string[1] != '\0')) {
-		leng = 2;
+	if ((hdl == NULL) || (string == NULL)) {
+		goto fmg_err;
 	}
-	getfont1(fhdl, fdat, string, leng);
-	return fdat;
+	fhdl = (FNTMNG)hdl;
+	fdat = (FNTDAT)(fhdl + 1);
+
+	getfont1(fhdl, fdat, string, milstr_charsize(string));
+	return(fdat);
+
+fmg_err:
+	return(NULL);
 }
+#endif
 
