@@ -246,6 +246,14 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+#if defined(NP2GCC)
+        case IDM_MOUSE:
+            mouse_running(MOUSE_XOR);
+            menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+            sysmng_update(SYS_UPDATECFG);
+			break;
+#endif
+
 		case IDM_KEY:
 			menu_setkey(0);
 			keystat_resetjoykey();

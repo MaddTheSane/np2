@@ -192,6 +192,6 @@ void menu_setmouse(BYTE value) {
 
 	value &= 1;
 	np2oscfg.MOUSE_SW = value;
-	_CheckMenuItem(GetMenu(IDM_DEVICE), MAKE_MENUID(IDM_DEVICE, 4), MFCHECK(value));
+	_CheckMenuItem(GetMenu(IDM_DEVICE), IDM_MOUSE, MFCHECK(value));
 }
 #endif
