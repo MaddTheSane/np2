@@ -14,6 +14,8 @@
 #include	"macnewdisk.h"
 #include	"scrnbmp.h"
 #include	"dosio.h"
+#include	"menu.h"
+#include	"s98.h"
 
 static Handle GetDlgItem(DialogPtr hWnd, short pos) {
 
@@ -243,4 +245,24 @@ void dialog_writebmp(void) {
 		}
 		_MFREE(bmp);
 	}
+}
+
+void dialog_s98(void) {
+
+	static BOOL	check = FALSE;
+	char	fname[MAX_PATH];
+    FSSpec	fsc;
+
+	S98_close();
+
+    if (check) {
+        check = FALSE;
+    }
+    else if (saveFile('.S98', "S98 log.s98", &fsc)) {
+        fsspec2path(&fsc, fname, MAX_PATH);
+        if (S98_open(fname) == SUCCESS) {
+            check = TRUE;
+        }
+    }    
+	menu_sets98logging(check);
 }

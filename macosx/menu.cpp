@@ -196,12 +196,10 @@ void menu_setmouse(BYTE value) {
 }
 #endif
 
-#if 0
 void menu_sets98logging(BYTE value) {
 
 	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_S98LOGGING, MFCHECK(value));
 }
-#endif
 
 void menu_setrecording(bool end) {
     int ret;

@@ -8,3 +8,4 @@ void dialog_font(void);
 
 void fsspec2path(FSSpec *fs, char *dst, int leng);
 void dialog_writebmp(void);
+void dialog_s98(void);

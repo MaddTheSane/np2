@@ -146,6 +146,9 @@ static void MenuBarInit(void) {
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
+    SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2OPEN, kMenuOptionModifier);
+    SetMenuItemModifiers(GetMenuRef(IDM_FDD2), IDM_FDD2EJECT, kMenuOptionModifier);
+    SetMenuItemModifiers(GetMenuRef(IDM_SASI2), IDM_SASI2OPEN, kMenuOptionModifier);
 	DrawMenuBar();
 #else
     OSStatus	err;
@@ -487,11 +490,9 @@ static void HandleMenuChoice(long wParam) {
 			dialog_writebmp();
 			break;
 
-#if 0
         case IDM_S98LOGGING:
-            menu_sets98logging(S98_logging());
+            dialog_s98();
             break;
-#endif
             
 		case IDM_DISPCLOCK:
 			menu_setdispclk(np2oscfg.DISPCLK ^ 1);
