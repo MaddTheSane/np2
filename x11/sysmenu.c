@@ -62,19 +62,19 @@ sys_cmd(MENUID id)
 		break;
 
 	case MID_SASI1OPEN:
-		filesel_sasi(0);
+		filesel_hdd(0x00);
 		break;
 
 	case MID_SASI1EJECT:
-		diskdrv_sethdd(0, NULL);
+		diskdrv_sethdd(0x00, NULL);
 		break;
 
 	case MID_SASI2OPEN:
-		filesel_sasi(1);
+		filesel_hdd(0x01);
 		break;
 
 	case MID_SASI2EJECT:
-		diskdrv_sethdd(1, NULL);
+		diskdrv_sethdd(0x01, NULL);
 		break;
 
 	case MID_DISPSYNC:
