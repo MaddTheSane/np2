@@ -105,7 +105,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	$(OBJ)/s98.o		\
 			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
 			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
-			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.oa	$(OBJ)/scrnbmp.o	\
+			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.oa	$(OBJ)/scrnsave.o	\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
@@ -694,10 +694,10 @@ $(OBJ)/makegrph.o	:	$(VRAM)/makegrph.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 $(OBJ)/makegrph.oa	:	$(X86ASM)/makegrph.x86
 	$(AS) $(AOPT) $< -o $@
 
-$(OBJ)/scrnbmp.o	:	$(VRAM)/scrnbmp.c $(HEADERS) $(PCCORES) $(IOCORES) \
+$(OBJ)/scrnsave.o	:	$(VRAM)/scrnsave.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/bmpdata.h $(VRAM)/scrndraw.h \
 						$(VRAM)/dispsync.h $(VRAM)/palettes.h \
-						$(VRAM)/scrnbmp.h
+						$(VRAM)/scrnsave.h
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -1074,7 +1074,7 @@ $(OBJ)/d_bmp.o		:	$(DIALOG)/d_bmp.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/strres.h $(TARGET)/resource.h \
 						$(TARGET)/np2.h $(TARGET)/dosio.h \
 						$(TARGET)/sysmng.h $(DIALOG)/dialog.h \
-						$(DIALOG)/dialogs.h $(VRAM)/scrnbmp.h $(FONT)/font.h
+						$(DIALOG)/dialogs.h $(VRAM)/scrnsave.h $(FONT)/font.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dialogs.o	:	$(DIALOG)/dialogs.cpp $(HEADERS) $(COMMON)/strres.h \

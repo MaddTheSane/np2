@@ -1329,11 +1329,11 @@ SOURCE=..\VRAM\PALETTES.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\VRAM\SCRNBMP.C
+SOURCE=..\VRAM\SCRNDRAW.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\VRAM\SCRNDRAW.C
+SOURCE=..\VRAM\SCRNSAVE.C
 # End Source File
 # Begin Source File
 

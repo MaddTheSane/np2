@@ -106,6 +106,17 @@
 　　　char *file_getname(const char *path);
 　　　(constが付きます)
 
+　　　記念に gif保存に対応してみたり
+　　　　vram/scrnbmp.c の代わりに vram/scrnsave.c をリンクして
+
+　　　　　SCRNSAVE ss = scrnsave_get();
+　　　　　scrnsave_writegif(ss, "out.gif", SCRNSAVE_AUTO);
+	　　　scrnsave_trash(ss);
+
+　　　　　bmpなら scrnsave_writebmp(ss, "out.bmp", SCRNSAVE_AUTO);
+
+　　　　　np21のVGA時に 257色以上になるのに注意
+　　　　　(ss->type == SCRNSAVE_24BITの時にgif保存出来ません)
 
 
 // ----

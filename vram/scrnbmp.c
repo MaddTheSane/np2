@@ -97,7 +97,7 @@ SCRNBMP scrnbmp(void) {
 	PALNUM	*s;
 	UINT	pals;
 	BMPPAL	pal[NP2PAL_TOTAL];
-	UINT8	remap[NP2PAL_TOTAL];
+	PALNUM	remap[NP2PAL_TOTAL];
 	UINT8	remapflg[NP2PAL_TOTAL];
 	int		x;
 	int		y;
