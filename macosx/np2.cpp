@@ -41,7 +41,6 @@
 #include	"keystat.h"
 #include	"kdispwin.h"
 
-#define	USE_RESUME
 #define	NP2OPENING
 // #define	OPENING_WAIT	1500
 
@@ -142,23 +141,30 @@ static void InitToolBox(void) {
 static void MenuBarInit(void) {
 #if 1
 	Handle		hMenu;
-	MenuHandle	happlemenu;
 
 	hMenu = GetNewMBar(IDM_MAINMENU);
 	if (!hMenu) {
 		ExitToShell();
 	}
 	SetMenuBar(hMenu);
-	happlemenu = GetMenuHandle(IDM_APPLE);
-	if (happlemenu) {
-		AppendResMenu(happlemenu, 'DRVR');
+#if !defined(SUPPORT_SCSI)
+	hmenu = GetMenuHandle(IDM_HDD);
+	if (hmenu) {
+		DeleteMenuItem(hmenu, 7);
+		DeleteMenuItem(hmenu, 6);
+		DeleteMenuItem(hmenu, 5);
+		DeleteMenuItem(hmenu, 4);
+		DeleteMenuItem(hmenu, 3);
 	}
+#endif
 	InsertMenu(GetMenu(IDM_SASI1), -1);
 	InsertMenu(GetMenu(IDM_SASI2), -1);
+#if defined(SUPPORT_SCSI)
 	InsertMenu(GetMenu(IDM_SCSI0), -1);
 	InsertMenu(GetMenu(IDM_SCSI1), -1);
 	InsertMenu(GetMenu(IDM_SCSI2), -1);
 	InsertMenu(GetMenu(IDM_SCSI3), -1);
+#endif
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
@@ -170,6 +176,26 @@ static void MenuBarInit(void) {
 #ifndef SUPPORT_KEYDISP
 	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_KEYDISP);
 #endif
+    if (np2oscfg.I286SAVE) {
+        AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
+    }
+
+	if (!(np2cfg.fddequip & 1)) {
+		DisableAllMenuItems(GetMenuRef(IDM_FDD1));
+	}
+	if (!(np2cfg.fddequip & 2)) {
+		DisableAllMenuItems(GetMenuRef(IDM_FDD2));
+	}
+#if 0
+//Later...
+	if (!(np2cfg.fddequip & 4)) {
+		DisableAllMenuItems(GetMenuRef(IDM_FDD3));
+	}
+	if (!(np2cfg.fddequip & 8)) {
+		DisableAllMenuItems(GetMenuRef(IDM_FDD4));
+	}
+#endif
+
 	DrawMenuBar();
 #else
     OSStatus	err;
@@ -276,6 +302,7 @@ void HandleMenuChoice(long wParam) {
 			diskdrv_sethdd(1, NULL);
 			break;
 
+#if defined(SUPPORT_SCSI)
 		case IDM_SCSI0OPEN:
 			dialog_changehdd(0x20);
 			break;
@@ -307,6 +334,7 @@ void HandleMenuChoice(long wParam) {
 		case IDM_SCSI3REMOVE:
 			diskdrv_sethdd(0x23, NULL);
 			break;
+#endif
 
 		case IDM_FULLSCREEN:
             toggleFullscreen();
@@ -773,9 +801,9 @@ int main(int argc, char *argv[]) {
 
 	InitToolBox();
 	macossub_init();
-	MenuBarInit();
-
 	initload();
+
+	MenuBarInit();
 
 	TRACEINIT();
     
@@ -814,9 +842,6 @@ int main(int argc, char *argv[]) {
 #if defined(SUPPORT_KEYDISP)
 	menu_setkeydisp(np2oscfg.keydisp);
 #endif
-    if (np2oscfg.I286SAVE) {
-        AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
-    }
 
 	scrnmng_initialize();
 	if (scrnmng_create(scrnmode) != SUCCESS) {

@@ -57,6 +57,13 @@
 　(X11)
 　　・Configure Dialog にてアーキテクチャの指定を追加
 
+　(MacOSX)
+　　・フロッピードライブ接続状態指定（FDD1、FDD2のみ）
+　　・設定ダイアログのディップスイッチ画像表示
+　　・CoreMID経由のMIDI演奏に対応
+　　・MPU-PC98IIの設定ダイアログ拡充
+　　・Key Display対応（マウスクリックでFMとMIDIが切り替わります）
+
 
 　・200ラインモードについて (正式サポート / #define SUPPORT_CRT15KHZ)
 　　PC-9801シリーズ(FELLOW、PC-9821、ハイレゾ機を除く)に搭載されている

@@ -27,21 +27,7 @@ static SInt16 showCautionAlert(CFStringRef title, CFStringRef string, CFStringRe
     RunStandardAlert(ret, NULL, &hit);
     return(hit);
 }
-/*
-#if defined(CPUCORE_IA32)
-void msgbox (char* title, char* msg) {
-    DialogItemIndex hit;
-	CFStringRef		cftitle, cfmsg;
-    
-	cftitle = CFSTRj(title);
-	cfmsg = CFSTRj(msg);  
-    hit = showCautionAlert(cftitle, cfmsg, NULL);
-	if (cftitle) CFRelease(cftitle);
-	if (cfmsg) CFRelease(cfmsg);
-    return;
-}
-#endif
-*/
+
 void ResumeErrorDialogProc(void) {
     DialogRef	ret;
     AlertStdCFStringAlertParamRec	param;
