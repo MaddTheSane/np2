@@ -203,6 +203,7 @@
 		20286C2CFDCF999611CA2CEA = {
 			children = (
 				96A202640549B26600000102,
+				96E7E2C50556630F00000103,
 				96EFFA58054716B900000102,
 				F50908FE053EDAC2014E43C7,
 				0867D6AAFE840B52C02AAC07,
@@ -302,6 +303,7 @@
 				0867D6ACFE840B52C02AAC07,
 				96EFFA5A054716B900000102,
 				96A202650549B26600000102,
+				96E7E2C60556630F00000103,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -478,6 +480,8 @@
 				9695E8520552C7A700000103,
 				9695E8540552C7A700000103,
 				9695E8560552C7A700000103,
+				96E7E2C4055662F100000103,
+				96E7E2C80556632800000103,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -699,6 +703,41 @@
 		};
 		96A2026E0549B38300000102 = {
 			fileRef = 96A2026D0549B38300000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96E7E2C3055662F100000103 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			path = toolwin.cpp;
+			refType = 4;
+		};
+		96E7E2C4055662F100000103 = {
+			fileRef = 96E7E2C3055662F100000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96E7E2C50556630F00000103 = {
+			isa = PBXFileReference;
+			path = np2tool.bmp;
+			refType = 4;
+		};
+		96E7E2C60556630F00000103 = {
+			fileRef = 96E7E2C50556630F00000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96E7E2C70556632800000103 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			path = np2opening.cpp;
+			refType = 4;
+		};
+		96E7E2C80556632800000103 = {
+			fileRef = 96E7E2C70556632800000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2101,6 +2140,8 @@
 				96084018054ED26F00000103,
 				9608401A054ED27C00000103,
 				9608401C054ED28800000103,
+				96E7E2C70556632800000103,
+				96E7E2C3055662F100000103,
 				9695E8370552C7A700000103,
 			);
 			isa = PBXGroup;

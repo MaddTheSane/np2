@@ -37,6 +37,7 @@
 #include	"midiopt.h"
 #include	"macalert.h"
 #include	"np2opening.h"
+#include	"toolmac.h"
 
 #include	<QuickTime/QuickTime.h>
 #define	USE_RESUME
@@ -92,21 +93,12 @@ pascal OSErr OpenAppleEventHandler(const AppleEvent *event, AppleEvent *reply,lo
 	AEKeyword	key;
 	AEDescList	dlist;
         
-	if( ! AEGetParamDesc( event,keyDirectObject,typeAEList,&dlist ) )	{
+	if(!AEGetParamDesc(event,keyDirectObject,typeAEList,&dlist))	{
 		AECountItems( &dlist,&ct );
 		for( i=1;i<=ct;i++ )	{
             pp=&fsc;
-			if( ! AEGetNthPtr( &dlist,i,typeFSS,&key,&rtype,(Ptr)pp,(long)sizeof(FSSpec),&len ) )	{
-                char		fname[MAX_PATH];
-                int			ftype;
-                fsspec2path(&fsc, fname, MAX_PATH);
-                ftype = file_getftype(fname);
-                if ((ftype != FTYPE_D88) && (ftype != FTYPE_BETA)) {
-                    diskdrv_sethdd(0, fname);
-                }
-                else {
-                    diskdrv_setfdd(i-1, fname, 0);
-                }
+			if (!AEGetNthPtr( &dlist,i,typeFSS,&key,&rtype,(Ptr)pp,(long)sizeof(FSSpec),&len))	{
+                setDropFile(fsc, i-1);
 			}
 		}
 		AEDisposeDesc( &dlist );
@@ -232,6 +224,7 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_FDD1EJECT:
 			diskdrv_setfdd(0, NULL, 0);
+            toolwin_setfdd(0, NULL);
 			break;
 
 		case IDM_FDD2OPEN:
@@ -240,6 +233,7 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_FDD2EJECT:
 			diskdrv_setfdd(1, NULL, 0);
+            toolwin_setfdd(1, NULL);
 			break;
 
 		case IDM_SASI1OPEN:
@@ -558,6 +552,7 @@ static void processwait(UINT waitcnt) {
 	if (timing_getcount() >= waitcnt) {
 		framecnt = 0;
 		timing_setcount(0);
+		toolwin_draw((BYTE)waitcnt);
 		if (np2oscfg.DISPCLK & 3) {
 			if (sysmng_workclockrenewal()) {
 				sysmng_updatecaption(3);
@@ -607,6 +602,8 @@ static void flagload(const char *ext) {
 	}
 	if (ret == IDOK) {
 		statsave_load(path);
+		toolwin_setfdd(0, fdd_diskname(0));
+		toolwin_setfdd(1, fdd_diskname(1));
 	}
 	return;
 }
@@ -629,7 +626,8 @@ int main(int argc, char *argv[]) {
 	initload();
 
 	TRACEINIT();
-
+    
+    toolwin_readini();
     if (!(setupMainWindow())) {
         return(0);
     }
@@ -767,6 +765,7 @@ int main(int argc, char *argv[]) {
         toggleFullscreen();
     }
     
+    toolwin_writeini();
 	pccore_cfgupdate();
 
 #if defined(USE_RESUME)
@@ -797,6 +796,7 @@ int main(int argc, char *argv[]) {
 	dosio_term();
 
 	DisposeWindow(hWndMain);
+    toolwin_close();
 
 	(void)argc;
 	(void)argv;
@@ -908,11 +908,17 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                         np2running = FALSE;
                         result = noErr;
                         break;
-                    case kEventWindowShowing:
-                        scrndraw_redraw();
-                       break;
                     case kEventWindowActivated:
                         DisableAllMenuItems(GetMenuHandle(IDM_EDIT));
+                        break;
+                    case kEventWindowToolbarSwitchMode:
+                        toolwin_open();
+                        break;
+                    case kEventWindowDragStarted:
+                        soundmng_stop();
+                        break;
+                    case kEventWindowDragCompleted:
+                        soundmng_play();
                         break;
                 }
                 break;
@@ -978,8 +984,10 @@ static const EventTypeSpec appEventList[] = {
 
 static const EventTypeSpec windEventList[] = {
 				{kEventClassWindow,		kEventWindowClose},
-				{kEventClassWindow,		kEventWindowShowing},
 				{kEventClassWindow,		kEventWindowActivated},
+				{kEventClassWindow,		kEventWindowToolbarSwitchMode},
+				{kEventClassWindow,		kEventWindowDragStarted},
+				{kEventClassWindow,		kEventWindowDragCompleted},
 				{kEventClassKeyboard,	kEventRawKeyDown},
 				{kEventClassKeyboard,	kEventRawKeyUp},
 				{kEventClassKeyboard,	kEventRawKeyRepeat},
@@ -999,7 +1007,7 @@ static void setUpCarbonEvent(void) {
     InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
 }
 
-bool setupMainWindow(void) {
+static bool setupMainWindow(void) {
 #if defined(NP2GCC)
     OSStatus	err;
     IBNibRef	nibRef;
@@ -1033,7 +1041,7 @@ bool setupMainWindow(void) {
     return(true);
 }
 
-void toggleFullscreen(void) {
+static void toggleFullscreen(void) {
     static Ptr 	bkfullscreen;
     static BYTE mouse = 0;
 
@@ -1065,4 +1073,8 @@ void toggleFullscreen(void) {
     }
     CheckMenuItem(GetMenuHandle(IDM_SCREEN), LoWord(IDM_FULLSCREEN), scrnmode & SCRNMODE_FULLSCREEN);
     soundmng_play();
+}
+
+void recieveCommand(long param) {
+    HandleMenuChoice(param);
 }

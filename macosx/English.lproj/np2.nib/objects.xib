@@ -4,7 +4,7 @@
   <object name="rootObject" class="NSCustomObject" id="1">
     <string name="customClass">NSApplication</string>
   </object>
-  <array count="235" name="allObjects">
+  <array count="237" name="allObjects">
     <object class="IBCarbonButton" id="311">
       <string name="bounds">264 208 284 278 </string>
       <ostype name="controlSignature">CfCL</ostype>
@@ -1415,16 +1415,13 @@
       <string name="title">MPU-PC98II</string>
       <object name="rootControl" class="IBCarbonRootControl" id="914">
         <string name="bounds">0 0 139 326 </string>
-        <string name="viewFrame">0 0 326 139 </string>
         <array count="7" name="subviews">
           <object class="IBCarbonStaticText" id="915">
             <string name="bounds">20 20 36 96 </string>
-            <string name="viewFrame">20 20 76 16 </string>
             <string name="title">I/O port</string>
           </object>
           <object class="IBCarbonPopupButton" id="917">
             <string name="bounds">19 104 39 229 </string>
-            <string name="viewFrame">104 19 125 20 </string>
             <ostype name="controlSignature">MPio</ostype>
             <ostype name="command">MPio</ostype>
             <int name="selectedItem">15</int>
@@ -1485,12 +1482,10 @@
           </object>
           <object class="IBCarbonStaticText" id="922">
             <string name="bounds">60 20 76 96 </string>
-            <string name="viewFrame">20 60 76 16 </string>
             <string name="title">Interrupt</string>
           </object>
           <object class="IBCarbonPopupButton" id="923">
             <string name="bounds">59 104 79 229 </string>
-            <string name="viewFrame">104 59 125 20 </string>
             <ostype name="controlSignature">MPin</ostype>
             <ostype name="command">MPin</ostype>
             <int name="selectedItem">3</int>
@@ -1515,21 +1510,18 @@
           </object>
           <object class="IBCarbonButton" id="932">
             <string name="bounds">99 20 119 90 </string>
-            <string name="viewFrame">20 99 70 20 </string>
             <ostype name="controlSignature">MPDF</ostype>
             <string name="title">Default</string>
             <ostype name="command">MPDF</ostype>
           </object>
           <object class="IBCarbonButton" id="935">
             <string name="bounds">99 236 119 306 </string>
-            <string name="viewFrame">236 99 70 20 </string>
             <string name="title">OK</string>
             <ostype name="command">ok  </ostype>
             <int name="buttonType">1</int>
           </object>
           <object class="IBCarbonButton" id="936">
             <string name="bounds">99 154 119 224 </string>
-            <string name="viewFrame">154 99 70 20 </string>
             <string name="title">Cancel</string>
             <ostype name="command">not!</ostype>
             <int name="buttonType">2</int>
@@ -1537,7 +1529,6 @@
         </array>
       </object>
       <boolean name="isResizable">FALSE</boolean>
-      <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">11</int>
       <int name="themeBrush">53</int>
       <int name="windowPosition">4</int>
@@ -1586,8 +1577,24 @@
       <int name="windowPosition">1</int>
     </object>
     <reference idRef="951"/>
+    <object class="IBCarbonWindow" id="952">
+      <string name="windowRect">160 136 283 619 </string>
+      <string name="title"></string>
+      <object name="rootControl" class="IBCarbonRootControl" id="953">
+        <string name="bounds">0 0 123 483 </string>
+        <string name="viewFrame">0 0 483 123 </string>
+      </object>
+      <boolean name="hasHorizontalZoom">FALSE</boolean>
+      <boolean name="isResizable">FALSE</boolean>
+      <boolean name="hasSideTitle">TRUE</boolean>
+      <boolean name="hasVerticalZoom">FALSE</boolean>
+      <boolean name="compositing">TRUE</boolean>
+      <int name="carbonWindowClass">20</int>
+      <int name="themeBrush">-2</int>
+    </object>
+    <reference idRef="953"/>
   </array>
-  <array count="235" name="allParents">
+  <array count="237" name="allParents">
     <reference idRef="330"/>
     <reference idRef="331"/>
     <reference idRef="327"/>
@@ -1823,8 +1830,10 @@
     <reference idRef="918"/>
     <reference idRef="1"/>
     <reference idRef="950"/>
+    <reference idRef="1"/>
+    <reference idRef="952"/>
   </array>
-  <dictionary count="12" name="nameTable">
+  <dictionary count="13" name="nameTable">
     <string>ConfigDialog</string>
     <reference idRef="317"/>
     <string>File&apos;s Owner</string>
@@ -1849,6 +1858,8 @@
     <reference idRef="343"/>
     <string>SoundDialog</string>
     <reference idRef="743"/>
+    <string>ToolWindow</string>
+    <reference idRef="952"/>
   </dictionary>
-  <unsigned_int name="nextObjectID">952</unsigned_int>
+  <unsigned_int name="nextObjectID">998</unsigned_int>
 </object>

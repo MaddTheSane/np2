@@ -42,8 +42,11 @@ void sysmng_hddaccess(BYTE drv);
 			sys_updates &= (SYS_UPDATECFG | SYS_UPDATEOSCFG);			\
 			sysmng_workclockreset()
 
-#define	sysmng_fddaccess(a)
-#define	sysmng_hddaccess(a)
+#define	sysmng_fddaccess(a)												\
+			toolwin_fddaccess((a))
+
+#define	sysmng_hddaccess(a)												\
+			toolwin_hddaccess((a));
 
 #endif
 

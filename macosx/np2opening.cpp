@@ -11,38 +11,63 @@
 #include "np2.h"
 #include "np2opening.h"
 
+
+
+static PicHandle getbmp(FSSpec fsc, Rect* srt) {
+    PicHandle	pict = NULL;
+    GraphicsImportComponent	gi;
+    
+    if (!GetGraphicsImporterForFile(&fsc, &gi)) {
+        if (!GraphicsImportGetNaturalBounds(gi, srt)) {
+            OffsetRect( srt, -(*srt).left, -(*srt).top);
+            GraphicsImportSetBoundsRect(gi, srt);
+            GraphicsImportGetAsPicture(gi, &pict);
+        }
+        CloseComponent(gi);
+    }
+    return pict;
+}
+
+PicHandle getBMPfromPath(char* path, Rect* srt) {
+    
+    Str255		fname;
+    FSSpec		fsc;
+    
+	mkstr255(fname, path);
+	FSMakeFSSpec(0, 0, fname, &fsc);
+    return(getbmp(fsc, srt));
+}
+
+PicHandle getBMPfromResource(const char* name, Rect* srt) {
+    CFURLRef	url = NULL;
+    FSRef		fsr;
+    FSSpec		fsc;
+    PicHandle	pict = NULL;
+    
+    url=CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTRj(name), CFSTR("bmp"), NULL);
+    if (url) {
+        if (CFURLGetFSRef(url, &fsr)) {
+            FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fsc, NULL);
+            pict = getbmp(fsc, srt);
+        }
+        CFRelease(url);
+    }
+    return(pict);
+}
+
 void openingNP2(void) {
     Rect		srt;
     GrafPtr		port;
-    CFURLRef	openingURL;
-    char		buffer[1024];
-    FSRef		fsr;
-    FSSpec		fsc;
-    PicHandle	pict;
-    GraphicsImportComponent	gi;
-    
-    GetPort(&port);
-    SetPortWindowPort(hWndMain);
+    PicHandle	pict = NULL;
 
-    openingURL=CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("nekop2"), CFSTR("bmp"), NULL);
-    if (openingURL) {
-        if (CFURLGetFSRef(openingURL, &fsr)) {
-            FSPathMakeRef((const UInt8*)buffer, &fsr, NULL);
-            FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fsc, NULL);
-            if (!GetGraphicsImporterForFile(&fsc, &gi)) {
-                if (!GraphicsImportGetNaturalBounds(gi, &srt)) {
-                    OffsetRect( &srt, -srt.left, -srt.top);
-                    GraphicsImportSetBoundsRect(gi, &srt);
-                    GraphicsImportGetAsPicture(gi, &pict);
-                    OffsetRect(&srt, (640-srt.right)/2, (400-srt.bottom)/2);
-                    DrawPicture(pict,&srt);
-                    QDFlushPortBuffer(GetWindowPort(hWndMain), NULL);
-                    KillPicture(pict);
-                }
-                CloseComponent(gi);
-            }
-        }
-        CFRelease(openingURL);
+    pict = getBMPfromResource("nekop2", &srt);
+    if (pict) {
+        GetPort(&port);
+        SetPortWindowPort(hWndMain);
+        OffsetRect(&srt, (640-srt.right)/2, (400-srt.bottom)/2);
+        DrawPicture(pict,&srt);
+        QDFlushPortBuffer(GetWindowPort(hWndMain), NULL);
+        SetPort(port);
+        KillPicture(pict);
     }
-    SetPort(port);
 }

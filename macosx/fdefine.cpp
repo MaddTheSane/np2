@@ -2,6 +2,7 @@
 
 #include	"dosio.h"
 #include	"fdefine.h"
+#include	"strres.h"
 
 void Setfiletype(int ftype, OSType *creator, OSType *fileType) {
 
@@ -79,16 +80,48 @@ static int Getfiletype(FInfo *fndrinfo) {
 	return(FTYPE_NONE);
 }
 
+static int GetFileExt(char* filename) {
+
+    char*	p;
+    int		ftype;
+    
+    p = file_getext((char *)filename);
+    if ((!milstr_cmp(p, str_d88)) || (!milstr_cmp(p, str_d98))) {
+			ftype = FTYPE_D88;
+		}
+    else if ((!milstr_cmp(p, str_ini))) {
+			ftype = FTYPE_TEXT;
+		}
+    else if ((!milstr_cmp(p, str_bmp))) {
+			ftype = FTYPE_BMP;
+		}
+    else if ((!milstr_cmp(p, str_thd))) {
+			ftype = FTYPE_THD;
+		}
+    else if ((!milstr_cmp(p, str_hdi))) {
+			ftype = FTYPE_HDI;
+		}
+    else {
+        ftype = FTYPE_BETA;
+    }
+    return(ftype);
+}
+
 int file_getftype(char* filename) {
 
 	FSSpec	fss;
 	Str255	fname;
 	FInfo	fndrInfo;
+    int		ftype;
 
 	mkstr255(fname, filename);
 	FSMakeFSSpec(0, 0, fname, &fss);
 	if (FSpGetFInfo(&fss, &fndrInfo) != noErr) {
 		return(FTYPE_NONE);
 	}
-	return(Getfiletype(&fndrInfo));
+    ftype = Getfiletype(&fndrInfo);
+	if (ftype == FTYPE_NONE) {
+        ftype = GetFileExt(filename);
+	}
+	return(ftype);
 }

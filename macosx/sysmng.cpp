@@ -7,8 +7,6 @@
 #include	"fddfile.h"
 #include	"diskdrv.h"
 
-static bool getLongFileName(char* dst, const char* path);
-
 	UINT	sys_updates;
 
 
@@ -107,35 +105,4 @@ void sysmng_updatecaption(BYTE flag) {
 	mkstr255(str, work);
 	SetWTitle(hWndMain, str);
 #endif
-}
-
-static bool getLongFileName(char* dst, const char* path) {
-	FSSpec	fss;
-	Str255	fname;
-    FSRef	fref;
-    char	buffer[1024];
-	char 	*ret, *val;
-
-    if (*path == '\0') {
-        return(false);
-    }
-	mkstr255(fname, path);
-	if (FSMakeFSSpec(0, 0, fname, &fss) != noErr) {
-        return(false);
-    }
-    if (FSpMakeFSRef(&fss, &fref) != noErr) {
-        return(false);
-    }
-    if (FSRefMakePath(&fref, (UInt8*)buffer, 1024) != noErr) {
-        return(false);
-    }
-	val = buffer;
-    ret = val;
-	while(*val != '\0') {
- 		if (*val++ == '/') {
-			ret = val;
-		}
-	}
-    strcpy(dst, ret);
-    return(true);
 }

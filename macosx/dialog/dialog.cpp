@@ -16,6 +16,8 @@
 #include	"dosio.h"
 #include	"menu.h"
 #include	"s98.h"
+#include	"fdefine.h"
+#include	"toolmac.h"
 
 static Handle GetDlgItem(DialogPtr hWnd, short pos) {
 
@@ -128,7 +130,7 @@ static pascal void dummyproc(NavEventCallbackMessage sel, NavCBRecPtr prm,
 	(void)ud;
 }
 
-static BOOL dialog_fileselect(char *name, int size) {
+BOOL dialog_fileselect(char *name, int size, WindowRef parent) {
 
 	BOOL				ret;
 	OSErr				err;
@@ -142,7 +144,7 @@ static BOOL dialog_fileselect(char *name, int size) {
 	ret = FALSE;
     NavGetDefaultDialogCreationOptions(&optNav);
     optNav.modality=kWindowModalityWindowModal;
-    optNav.parentWindow=hWndMain;
+    optNav.parentWindow=parent;
     optNav.optionFlags+=kNavNoTypePopup;
 	proc = NewNavEventUPP(dummyproc);
     ret=NavCreateChooseFileDialog(&optNav,NULL,proc,NULL,NULL,NULL,&navWin);
@@ -174,7 +176,7 @@ fsel_exit:
 	return(ret);
 }
 #else
-BOOL dialog_fileselect(char *name, int size) {
+BOOL dialog_fileselect(char *name, int size, WindowRef parent) {
 
 	StandardFileReply	sfr;
 
@@ -186,6 +188,7 @@ BOOL dialog_fileselect(char *name, int size) {
 	else {
 		return(FALSE);
 	}
+    (void)paret;
 }
 #endif
 
@@ -195,8 +198,11 @@ void dialog_changefdd(BYTE drv) {
 	char	fname[MAX_PATH];
 
 	if (drv < 4) {
-		if (dialog_fileselect(fname, sizeof(fname))) {
-			diskdrv_setfdd(drv, fname, 0);
+		if (dialog_fileselect(fname, sizeof(fname), hWndMain)) {
+            if (file_getftype(fname)==FTYPE_D88 || file_getftype(fname)==FTYPE_BETA) {
+                diskdrv_setfdd(drv, fname, 0);
+                toolwin_setfdd(drv, fname);
+            }
 		}
 	}
 }
@@ -206,8 +212,10 @@ void dialog_changehdd(BYTE drv) {
 	char	fname[MAX_PATH];
 
 	if (drv < 2) {
-		if (dialog_fileselect(fname, sizeof(fname))) {
-			diskdrv_sethdd(drv, fname);
+		if (dialog_fileselect(fname, sizeof(fname), hWndMain)) {
+            if (file_getftype(fname)==FTYPE_HDI || file_getftype(fname)==FTYPE_THD) {
+                diskdrv_sethdd(drv, fname);
+            }
 		}
 	}
 }
@@ -217,7 +225,7 @@ void dialog_font(void) {
 
     char	name[1024];
 
-	if (dialog_fileselect(name, 1024)) {
+	if (dialog_fileselect(name, 1024, hWndMain)) {
         if ((name != NULL) && (font_load(name, FALSE))) {
             gdcs.textdisp |= GDCSCRN_ALLDRAW2;
             milstr_ncpy(np2cfg.fontfile, name, sizeof(np2cfg.fontfile));

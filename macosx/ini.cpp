@@ -14,6 +14,33 @@ const INITBL	*tblterm;
 	UINT		count;
 } _INIARG, *INIARG;
 
+static void inirdargs16(const char *src, const INITBL *ini) {
+
+	SINT16	*dst;
+	int		dsize;
+	int		i;
+	char	c;
+
+	dst = (SINT16 *)ini->value;
+	dsize = ini->size;
+
+	for (i=0; i<dsize; i++) {
+		while(*src == ' ') {
+			src++;
+		}
+		if (*src == '\0') {
+			break;
+		}
+		dst[i] = (SINT16)milstr_solveINT(src);
+		while(*src != '\0') {
+			c = *src++;
+			if (c == ',') {
+				break;
+			}
+		}
+	}
+}
+
 static void inirdarg8(BYTE *dst, int dsize, const char *src) {
 
 	int		i;
@@ -58,6 +85,7 @@ static BOOL inireadcb(void *arg, const char *para,
 										const char *key, const char *data) {
 
 const INITBL	*p;
+      char		work[512];
 
 	if (arg == NULL) {
 		return(FAILURE);
@@ -76,6 +104,11 @@ const INITBL	*p;
 				case INITYPE_BOOL:
 					*((BYTE *)p->value) = (!milstr_cmp(data, str_true))?1:0;
 					break;
+
+                case INITYPE_ARGS16:
+                    milstr_ncpy(work, data, 512);
+                    inirdargs16(work, p);
+                    break;
 
 				case INITYPE_BYTEARG:
 					inirdarg8((BYTE *)p->value, p->size, data);

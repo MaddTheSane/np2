@@ -30,6 +30,8 @@ void *file_list1st(const char *dir, FLDATA *fl);
 BOOL file_listnext(void *hdl, FLDATA *fl);
 void file_listclose(void *hdl);
 
+bool getLongFileName(char* dst, const char* path);
+
 #ifdef __cplusplus
 }
 #endif
