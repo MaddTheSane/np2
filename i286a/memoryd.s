@@ -33,12 +33,12 @@ i2mr_ext		cmp		r0, #USE_HIMEM
 				stmdb	sp!, {r7, r9, lr}
 				ldr		r2, i2mr_memfnrd8
 				and		r12, r0, #(&1f << 15)
-			;	ldr		r7, [r3, #CPU_REMAINCLOCK]
-				ldr		r2, [r2, r12 lsr #(15 - 2)]
 				mov		r9, r3						; cpu
+				ldr		r2, [r2, r12 lsr #(15 - 2)]
+				CPULDC
 				mov		lr, pc
 				mov		pc, r2
-			;	str		r7, [r9, #CPU_REMAINCLOCK]
+				CPUSVC
 				ldmia	sp!, {r7, r9, pc}
 i2mr_memfnrd8	dcd		memfn
 i2mr_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
@@ -65,12 +65,12 @@ i2mre_ext		cmp		r0, #USE_HIMEM
 i2mrw_ext		stmdb	sp!, {r7, r9, lr}
 				ldr		r2, i2mre_memfnrd16
 				and		r12, r0, #(&1f << 15)
-			;	ldr		r7, [r3, #CPU_REMAINCLOCK]
-				ldr		r2, [r2, r12 lsr #(15 - 2)]
 				mov		r9, r3						; cpu
+				ldr		r2, [r2, r12 lsr #(15 - 2)]
+				CPULDC
 				mov		lr, pc
 				mov		pc, r2
-			;	str		r7, [r9, #CPU_REMAINCLOCK]
+				CPUSVC
 				ldmia	sp!, {r7, r9, pc}
 i2mre_memfnrd16	dcd		memfn + (32 * 4) * 2
 i2mre_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
@@ -94,9 +94,9 @@ i2mro_ext		cmp		r1, #USE_HIMEM
 				bne		i2mrw_ext
 				stmdb	sp!, {r4 - r7, r9, lr}		; ここチェックするように…
 				ldr		r4, i2mro_memfnrd8
-					and		r1, r0, #(&1f << 15)
-			;	ldr		r7, [r3, #CPU_REMAINCLOCK]
 				mov		r9, r3
+					and		r1, r0, #(&1f << 15)
+				CPULDC
 					ldr		r2, [r4, r1 lsr #(15 - 2)]
 				add		r5, r0, #1
 					mov		lr, pc
@@ -108,7 +108,7 @@ i2mro_ext		cmp		r1, #USE_HIMEM
 					mov		lr, pc
 					mov		pc, r2
 				add		r0, r6, r0 lsl #8
-			;	str		r7, [r9, #CPU_REMAINCLOCK]
+				CPUSVC
 				ldmia	sp!, {r4 - r7, r9, pc}
 i2mro_memfnrd8	dcd		memfn
 i2mro_himem		ldr		r2, [r3, #CPU_EXTMEM]
@@ -147,12 +147,12 @@ i2mw_ext		cmp		r0, #USE_HIMEM
 				stmdb	sp!, {r7, r9, lr}
 				ldr		r2, i2mw_memfnwr8
 				and		r12, r0, #(&1f << 15)
-			;	ldr		r7, [r3, #CPU_REMAINCLOCK]
-				ldr		r2, [r2, r12, lsr #(15 - 2)]
 				mov		r9, r3
+				ldr		r2, [r2, r12, lsr #(15 - 2)]
+				CPULDC
 				mov		lr, pc
 				mov		pc, r2
-			;	str		r7, [r9, #CPU_REMAINCLOCK]
+				CPUSVC
 				ldmia	sp!, {r7, r9, pc}
 i2mw_memfnwr8	dcd		memfn + (32 * 4)
 i2mw_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
@@ -178,12 +178,12 @@ i2mwe_ext		cmp		r0, #USE_HIMEM
 i2mww_ext		stmdb	sp!, {r7, r9, lr}
 				ldr		r2, i2mwe_memfnwr16
 				and		r12, r0, #(&1f << 15)
-			;	ldr		r7, [r3, #CPU_REMAINCLOCK]
-				ldr		r2, [r2, r12 lsr #(15 - 2)]
 				mov		r9, r3						; cpu
+				ldr		r2, [r2, r12 lsr #(15 - 2)]
+				CPULDC
 				mov		lr, pc
 				mov		pc, r2
-			;	str		r7, [r9, #CPU_REMAINCLOCK]
+				CPUSVC
 				ldmia	sp!, {r7, r9, pc}
 i2mwe_memfnwr16	dcd		memfn + (32 * 4) * 3
 i2mwe_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
@@ -209,9 +209,9 @@ i2mwo_ext		cmp		r2, #USE_HIMEM
 
 				stmdb	sp!, {r4 - r7, r9, lr}		; ここチェックするように…
 				ldr		r4, i2mwo_memfnwr8
-					and		r12, r0, #(&1f << 15)
-			;	ldr		r7, [r3, #CPU_REMAINCLOCK]
 				mov		r9, r3
+					and		r12, r0, #(&1f << 15)
+				CPULDC
 					ldr		r2, [r4, r12 lsr #(15 - 2)]
 				add		r5, r0, #1
 				mov		r6, r1 lsr #8
@@ -223,7 +223,7 @@ i2mwo_ext		cmp		r2, #USE_HIMEM
 				mov		r1, r6
 					mov		lr, pc
 					mov		pc, r2
-			;	str		r7, [r9, #CPU_REMAINCLOCK]
+				CPUSVC
 				ldmia	sp!, {r4 - r7, r9, pc}
 i2mwo_memfnwr8	dcd		memfn + (32 * 4)
 
@@ -239,7 +239,7 @@ i2mwo_himem		ldr		r12, [r3, #CPU_EXTMEM]
 				mov		pc, lr
 i2mwo_10ffff	add		r3, r3, #USE_HIMEM
 				mov		r2, r1 lsr #8
-				strb	r1, [r3]
+				strb	r1, [r3, #-1]
 				cmp		r0, #0
 				strneb	r1, [r12]
 				mov		pc, lr

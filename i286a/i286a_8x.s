@@ -33,10 +33,10 @@ ope80m			CPUWORK	#7
 				GETPC8
 				adr		r1, op8x_reg8
 				ldr		pc, [r1, r6 lsr #1]
-ope80e			mov		r4, r0
-				GETPC8
-				mov		r5, r0
+ope80e			mov		r5, r0
 				bl		i286a_memoryread
+				mov		r4, r0
+				GETPC8
 				adr		r1, op8x_ext8
 				ldr		pc, [r1, r6 lsr #1]
 
@@ -90,35 +90,35 @@ cmp_r8_i		ldrb	r6, [r5]
 				SUB8	r6, r0
 				mov		pc, r11
 
-add_r8_e		ADD8	r0, r4
+add_r8_e		ADD8	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-or_r8_e			OR8		r0, r4
+or_r8_e			OR8		r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-adc_r8_e		ADC8	r0, r4
+adc_r8_e		ADC8	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-sbb_r8_e		SBB8	r0, r4
+sbb_r8_e		SBB8	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-and_r8_e		AND8	r0, r4
+and_r8_e		AND8	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-sub_r8_e		SUB8	r0, r4
+sub_r8_e		SUB8	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-xor_r8_e		XOR8	r0, r4
+xor_r8_e		XOR8	r4, r0
 				mov		r0, r5
 				mov		lr, r11
 				b		i286a_memorywrite
-cmp_r8_e		SUB8	r0, r4
+cmp_r8_e		SUB8	r4, r0
 				mov		pc, r11
 
 

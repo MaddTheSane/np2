@@ -217,7 +217,7 @@ imul_ea16		cmp		r0, #&c0
 				IMUL16	r0, r4
 				mov		r0, r1 lsr #16
 				strh	r1, [r9, #CPU_AX]
-				strh	r0, [r9, #CPU_AX]
+				strh	r0, [r9, #CPU_DX]
 				mov		pc, r11
 imul16m			CPUWORK	#24
 				bl		i286a_ea

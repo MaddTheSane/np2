@@ -121,7 +121,7 @@ twt_write		strb	r1, [r9, r0]
 				strb	r3, [r2, r12, lsr #(32 - 12)]
 				ldr		r2, twt_gdcs
 				ldrb	r12, [r2, #GDCS_TEXTDISP]
-				orr		r2, r2, r3
+				orr		r12, r12, r3
 				strb	r12, [r2, #GDCS_TEXTDISP]
 				mov		pc, lr
 

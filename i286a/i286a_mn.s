@@ -1674,8 +1674,7 @@ i286a_step		stmdb	sp!, {r4 - r11, lr}
 				ldr		r10, ias_r10
 				;
 				ldr		r5, [r9, #CPU_CS_BASE]
-		;		ldr		r7, [r9, #CPU_REMAINCLOCK]
-				ldr		r8, [r9, #CPU_FLAG]
+				CPULD
 
 				adr		r4, optbl1
 				add		r0, r5, r8 lsr #16
@@ -1686,7 +1685,7 @@ i286a_step		stmdb	sp!, {r4 - r11, lr}
 				mov		pc, r1
 
 				bl		dmap_i286
-				str		r8, [r9, #CPU_FLAG]
+				CPUSV
 				ldmia	sp!, {r4 - r11, pc}
 
 
@@ -1694,7 +1693,7 @@ i286a			stmdb	sp!, {r4 - r11, lr}
 				ldr		r9, ias_r9
 				ldr		r2, ias_r1
 				ldr		r10, ias_r10
-				ldr		r8, [r9, #CPU_FLAG]
+				CPULD
 				ldr		r5, [r9, #CPU_CS_BASE]
 				ldr		r1, [r2, #DMAC_WORKING]
 				and		r0, r8, #(I_FLAG + T_FLAG)
@@ -1714,7 +1713,7 @@ i286a_lp		add		r0, r5, r8 lsr #16
 				adr		r4, optbl1
 				cmp		r7, #0
 				bgt		i286a_lp
-				str		r8, [r9, #CPU_FLAG]
+				CPUSV
 				ldmia	sp!, {r4 - r11, pc}
 
 ias_r9			dcd		i286core + CPU_SIZE
@@ -1734,7 +1733,7 @@ i286awdma_lp	add		r0, r5, r8 lsr #16
 				adr		r4, optbl1
 				cmp		r7, #0
 				bgt		i286awdma_lp
-				str		r8, [r9, #CPU_FLAG]
+				CPUSV
 				ldmia	sp!, {r4 - r11, pc}
 
 i286awithtrap	adr		r4, optbl1
@@ -1748,7 +1747,7 @@ i286awtrp_lp	add		r0, r5, r8 lsr #16
 				and		r0, r8, #(I_FLAG + T_FLAG)
 				cmp		r0, #(I_FLAG + T_FLAG)
 				beq		i286a_trapint
-i286a_trapintr	str		r8, [r9, #CPU_FLAG]
+i286a_trapintr	CPUSV
 				ldmia	sp!, {r4 - r11, pc}
 
 optbl1			dcd		add_ea_r8			; 00
