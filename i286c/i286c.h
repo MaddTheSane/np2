@@ -61,9 +61,10 @@
 #define	I286_BASECLOCK	i286core.s.baseclock
 #define	I286_CLOCK		i286core.s.clock
 #define	I286_ADRSMASK	i286core.s.adrsmask
-#define	I286_INPADRS	i286core.s.inport
 
 #define	I286_PREFIX		i286core.s.prefix
+
+#define	I286_INPADRS	i286core.e.inport
 
 
 #define I286FN	static void

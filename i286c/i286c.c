@@ -145,33 +145,24 @@ void i286c_initialize(void) {
 	v30cinit();
 }
 
-void i286c_reset(void) {
+static void i286c_initreg(void) {
 
-	ZeroMemory(&I286_STAT, sizeof(I286_STAT));
 	I286_CS = 0xf000;
 	CS_BASE = 0xf0000;
 	I286_IP = 0xfff0;
-	I286_ADRSMASK = 0xfffff;
+	i286core.s.adrsmask = 0xfffff;
+}
+
+void i286c_reset(void) {
+
+	ZeroMemory(&I286_STAT, sizeof(I286_STAT));
+	i286c_initreg();
 }
 
 void i286c_shut(void) {
 
-	I286_MSW = 0;
-
-	I286_ES = 0;
-	I286_CS = 0xf000;
-	I286_SS = 0;
-	I286_DS = 0;
-
-	ES_BASE = 0;
-	CS_BASE = 0xf0000;
-	SS_BASE = 0;
-	DS_BASE = 0;
-	SS_FIX = 0;
-	DS_FIX = 0;
-
-	I286_IP = 0xfff0;
-	I286_ADRSMASK = 0xfffff;
+	ZeroMemory(&i286core.s, offsetof(I286STAT, cpu_type));
+	i286c_initreg();
 }
 
 void CPUCALL i286c_intnum(UINT vect, REG16 IP) {

@@ -6,11 +6,16 @@
 //
 //----------------------------------------------------------------------------
 
-#include	"memory.h"
 
 #if defined(CPUCORE_IA32)
 #error : not support CPUCORE_IA32
 #endif
+#if defined(CPUSTRUC_MEMWAIT)
+#error : not support CPUSTRUC_MEMWAIT
+#endif
+
+#include	"memory.h"
+
 
 #if !defined(CPUDEBUG)
 enum {
@@ -34,6 +39,13 @@ enum {
 	I_FLAG			= 0x0200,
 	D_FLAG			= 0x0400,
 	O_FLAG			= 0x0800
+};
+
+enum {
+	MSW_PE			= 0x0001,
+	MSW_MP			= 0x0002,
+	MSW_EM			= 0x0004,
+	MSW_TS			= 0x0008
 };
 
 enum {
@@ -141,33 +153,37 @@ typedef struct {
 		I286REG8	b;
 		I286REG16	w;
 	}		r;
-	SINT32	remainclock;
-	SINT32	baseclock;
-	UINT32	clock;
-	UINT32	adrsmask;						// ver0.72
 	UINT32	es_base;
 	UINT32	cs_base;
 	UINT32	ss_base;
 	UINT32	ds_base;
 	UINT32	ss_fix;
 	UINT32	ds_fix;
+	UINT32	adrsmask;						// ver0.72
 	UINT16	prefix;
 	UINT8	trap;
-	UINT8	cpu_type;
-	UINT32	pf_semaphore;
-	UINT32	repbak;
-	UINT32	inport;
+	UINT8	resetreq;						// ver0.72
 	BYTE	prefetchque[4];
 	I286DTR	GDTR;
-	I286DTR	IDTR;
 	UINT16	MSW;
-	UINT8	resetreq;						// ver0.72
+	I286DTR	IDTR;
+	UINT16	LDTR;							// ver0.73
+	I286DTR	LDTRC;
+	UINT16	TR;
+	I286DTR	TRC;
+
+	UINT8	cpu_type;
 	UINT8	itfbank;						// ver0.72
+	SINT32	remainclock;
+	SINT32	baseclock;
+	UINT32	clock;
 } I286STAT;
 
 typedef struct {							// for ver0.73
 	BYTE	*ext;
 	UINT32	extsize;
+	UINT32	repbak;
+	UINT32	inport;
 } I286EXT;
 
 typedef struct {
@@ -243,10 +259,10 @@ void v30x_step(void);
 #define	CPU_MSW			i286core.s.MSW
 #define	CPU_RESETREQ	i286core.s.resetreq
 #define	CPU_ITFBANK		i286core.s.itfbank
-#define	CPU_INPADRS		i286core.s.inport
 
 #define	CPU_EXTMEM		i286core.e.ext
 #define	CPU_EXTMEMSIZE	i286core.e.extsize
+#define	CPU_INPADRS		i286core.e.inport
 
 #define	CPU_TYPE		i286core.s.cpu_type
 

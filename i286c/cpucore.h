@@ -148,22 +148,16 @@ typedef struct {
 		I286REG8	b;
 		I286REG16	w;
 	}		r;
-	SINT32	remainclock;
-	SINT32	baseclock;
-	UINT32	clock;
-	UINT32	adrsmask;						// ver0.72
 	UINT32	es_base;
 	UINT32	cs_base;
 	UINT32	ss_base;
 	UINT32	ds_base;
 	UINT32	ss_fix;
 	UINT32	ds_fix;
+	UINT32	adrsmask;						// ver0.72
 	UINT16	prefix;
 	UINT8	trap;
-	UINT8	cpu_type;
-	UINT32	____pf_semaphore;				// 未使用
-	UINT32	____repbak;						// 未使用
-	UINT32	inport;
+	UINT8	resetreq;						// ver0.72
 	UINT32	ovflag;
 	I286DTR	GDTR;
 	UINT16	MSW;
@@ -172,13 +166,18 @@ typedef struct {
 	I286DTR	LDTRC;
 	UINT16	TR;
 	I286DTR	TRC;
-	UINT8	resetreq;						// ver0.72
+
+	UINT8	cpu_type;
 	UINT8	itfbank;						// ver0.72
+	SINT32	remainclock;
+	SINT32	baseclock;
+	UINT32	clock;
 } I286STAT;
 
 typedef struct {							// for ver0.73
 	BYTE	*ext;
 	UINT32	extsize;
+	UINT32	inport;
 #if defined(CPUSTRUC_MEMWAIT)
 	UINT8	tramwait;
 	UINT8	vramwait;
@@ -259,10 +258,10 @@ void v30c_step(void);
 #define	CPU_MSW			i286core.s.MSW
 #define	CPU_RESETREQ	i286core.s.resetreq
 #define	CPU_ITFBANK		i286core.s.itfbank
-#define	CPU_INPADRS		i286core.s.inport
 
 #define	CPU_EXTMEM		i286core.e.ext
 #define	CPU_EXTMEMSIZE	i286core.e.extsize
+#define	CPU_INPADRS		i286core.e.inport
 
 #define	CPU_TYPE		i286core.s.cpu_type
 

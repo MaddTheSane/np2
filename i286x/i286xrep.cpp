@@ -16,7 +16,7 @@
 #define	REPLOOP(a)												\
 				__asm {	cmp		I286_REMCLOCK, 0			}	\
 				__asm {	jg		(a)							}	\
-				__asm {	mov		esi, REPPOSBAK				}
+				__asm {	mov		esi, I286_REPPOSBAK			}
 
 
 // ---------------------------------------------------------------------- ins

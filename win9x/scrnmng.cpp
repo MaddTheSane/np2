@@ -385,7 +385,7 @@ BOOL scrnmng_create(BYTE scrnmode) {
 
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		dclock_init();
-#if 1
+#if 0
 		ddraw2->SetCooperativeLevel(hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 #else

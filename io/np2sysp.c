@@ -18,7 +18,7 @@
 #define		CLOSE_HOSTDRV		2
 
 // NP2依存ポート
-// port:07edh	reserved
+// port:07edh	np2 value comm
 // port:07efh	np2 string comm
 
 // 基本的に STRINGでやり取りする
@@ -264,6 +264,11 @@ static BOOL np2syspcmp(const char *p) {
 	return(FALSE);
 }
 
+static void IOOUTCALL np2sysp_o7ed(UINT port, REG8 dat) {
+
+	np2sysp.outval = (dat << 24) + (np2sysp.outval >> 8);
+}
+
 static void IOOUTCALL np2sysp_o7ef(UINT port, REG8 dat) {
 
 const SYSPCMD	*cmd;
@@ -282,6 +287,15 @@ const SYSPCMD	*cmdterm;
 	np2sysp.strpos++;
 	np2sysp.strpos &= NP2SYSP_MASK;
 	(void)port;
+}
+
+static REG8 IOINPCALL np2sysp_i7ed(UINT port) {
+
+	REG8	ret;
+
+	ret = (REG8)(np2sysp.inpval & 0xff);
+	np2sysp.inpval = (ret << 24) + (np2sysp.inpval >> 8);
+	return(ret);
 }
 
 static REG8 IOINPCALL np2sysp_i7ef(UINT port) {
@@ -307,7 +321,9 @@ void np2sysp_reset(void) {
 
 void np2sysp_bind(void) {
 
+	iocore_attachout(0x07ef, np2sysp_o7ed);
 	iocore_attachout(0x07ef, np2sysp_o7ef);
+	iocore_attachinp(0x07ef, np2sysp_i7ed);
 	iocore_attachinp(0x07ef, np2sysp_i7ef);
 }
 

@@ -44,18 +44,20 @@
 #define	I286_OV			i286core.s.ovflag
 
 #define	I286_GDTR		i286core.s.GDTR
-#define	I286_IDTR		i286core.s.IDTR
 #define	I286_MSW		i286core.s.MSW
+#define	I286_IDTR		i286core.s.IDTR
+#define	I286_LDTR		i286core.s.LDTR
+#define	I286_LDTRC		i286core.s.LDTRC
+#define	I286_TR			i286core.s.TR
+#define	I286_TRC		i286core.s.TRC
 
+#define	I286_ADRSMASK	i286core.s.adrsmask
 #define	I286_REMCLOCK	i286core.s.remainclock
 #define	I286_BASECLOCK	i286core.s.baseclock
 #define	I286_CLOCK		i286core.s.clock
-#define	I286_ADRSMASK	i286core.s.adrsmask
-#define	I286_INPADRS	i286core.s.inport
 
-// ver0.28
-#define		REPPOSBAK		i286core.s.repbak
-#define		PREFIX_SMP		i286core.s.pf_semaphore
+#define	I286_REPPOSBAK	i286core.e.repbak
+#define	I286_INPADRS	i286core.e.inport
 
 
 #define I286 __declspec(naked) static void
@@ -74,7 +76,7 @@
 #define		I286PREFIX(proc)								\
 				__asm {	bts		i286core.s.prefix, 0	}	\
 				__asm {	jc		fixed					}	\
-				__asm {	mov		REPPOSBAK, esi			}	\
+				__asm {	mov		I286_REPPOSBAK, esi		}	\
 				__asm {	push	offset removeprefix		}	\
 			fixed:											\
 				GET_NEXTPRE1								\
@@ -83,6 +85,7 @@
 
 
 extern void __fastcall i286x_localint(void);
+extern void __fastcall i286x_selector(void);
 extern void removeprefix(void);
 
 extern void (*i286op[])(void);

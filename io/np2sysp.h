@@ -8,6 +8,8 @@ typedef struct {
 	char	outstr[NP2SYSP_LEN];
 	int		strpos;
 	int		outpos;
+	UINT32	outval;
+	UINT32	inpval;
 } _NP2SYSP, *NP2SYSP;
 
 

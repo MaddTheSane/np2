@@ -37,6 +37,13 @@ enum {
 };
 
 enum {
+	MSW_PE			= 0x0001,
+	MSW_MP			= 0x0002,
+	MSW_EM			= 0x0004,
+	MSW_TS			= 0x0008
+};
+
+enum {
 	CPUTYPE_V30		= 0x01
 };
 

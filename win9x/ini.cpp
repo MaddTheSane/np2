@@ -454,7 +454,7 @@ static const INITBL iniitem[] = {
 	{"com3mmdl", INITYPE_STR,		np2oscfg.com3.mdl,		64},
 	{"com3mdef", INITYPE_STR,		np2oscfg.com3.def,		MAX_PATH},
 
-	{"force400", INITYPE_BOOL,		&np2oscfg.force400,		0},
+	{"force400", INIRO_BOOL,		&np2oscfg.force400,		0},
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
 	{"STATSAVE", INIRO_BOOL,		&np2oscfg.statsave,		0},
 	{"nousemmx", INITYPE_BOOL,		&np2oscfg.disablemmx,	0},		// ver0.36
