@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.3 2003/12/22 18:00:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -37,15 +37,6 @@
 
 #ifndef IA32_CPU_CPU_H__
 #define IA32_CPU_CPU_H__
-
-#if 0		// -> compiler.h
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <unistd.h>
-#include <setjmp.h>
-#endif
 
 #include "interface.h"
 
@@ -179,13 +170,49 @@ typedef struct {
 	DWORD		seg_base;
 } CPU_INST;
 
-extern CPU_REGS		cpu_regs;
-extern CPU_SYSREGS	cpu_sysregs;
-extern CPU_STAT		cpu_stat;
-extern CPU_INST		cpu_inst;
-extern CPU_INST		cpu_inst_default;
-extern BYTE 		iflags[];
+typedef struct {
+	CPU_REGS	cpu_regs;
+	CPU_SYSREGS	cpu_sysregs;
+	CPU_STAT	cpu_stat;
+	CPU_INST	cpu_inst;
+	CPU_INST	cpu_inst_default;
 
+	SINT32		remainclock;
+	SINT32		baseclock;
+	UINT32		clock;
+
+	UINT32		adrsmask;			/* ? */
+	UINT32		inport;				/* ? */
+	UINT8		resetreq;
+	UINT8		itfbank;
+} I386STAT;
+
+typedef struct {					/* for ver0.73 */
+	BYTE	*ext;
+	UINT32	extsize;
+} I386EXT;
+
+typedef struct {
+	I386STAT	s;				/* STATsaveされる奴 */
+	I386EXT		e;
+} I386CORE;
+
+extern I386CORE		i386core;
+
+#define	CPU_STATSAVE	i386core.s
+
+#define	CPU_REMCLOCK	i386core.s.remainclock
+#define	CPU_BASECLOCK	i386core.s.baseclock
+#define	CPU_CLOCK	i386core.s.clock
+#define	CPU_ADRSMASK	i386core.s.adrsmask
+#define	CPU_RESETREQ	i386core.s.resetreq
+#define	CPU_ITFBANK	i386core.s.itfbank
+#define	CPU_INPADRS	i386core.s.inport
+
+#define	CPU_EXTMEM	i386core.e.ext
+#define	CPU_EXTMEMSIZE	i386core.e.extsize
+
+extern BYTE 		iflags[];
 extern jmp_buf		exec_1step_jmpbuf;
 
 
@@ -242,16 +269,16 @@ extern jmp_buf		exec_1step_jmpbuf;
 #endif
 
 
-#define	CPU_REGS_BYTEL(n)	cpu_regs.reg[(n)].b.l
-#define	CPU_REGS_BYTEH(n)	cpu_regs.reg[(n)].b.h
-#define	CPU_REGS_WORD(n)	cpu_regs.reg[(n)].w.w
-#define	CPU_REGS_DWORD(n)	cpu_regs.reg[(n)].d
-#define	CPU_REGS_SREG(n)	cpu_regs.sreg[(n)]
+#define	CPU_REGS_BYTEL(n)	CPU_STATSAVE.cpu_regs.reg[(n)].b.l
+#define	CPU_REGS_BYTEH(n)	CPU_STATSAVE.cpu_regs.reg[(n)].b.h
+#define	CPU_REGS_WORD(n)	CPU_STATSAVE.cpu_regs.reg[(n)].w.w
+#define	CPU_REGS_DWORD(n)	CPU_STATSAVE.cpu_regs.reg[(n)].d
+#define	CPU_REGS_SREG(n)	CPU_STATSAVE.cpu_regs.sreg[(n)]
 
-#define	CPU_STAT_SREG(n)	cpu_stat.sreg[(n)]
-#define	CPU_STAT_SREGBASE(n)	cpu_stat.sreg[(n)].u.seg.segbase
-#define	CPU_STAT_SREGEND(n)	cpu_stat.sreg[(n)].u.seg.segend
-#define	CPU_STAT_SREGLIMIT(n)	cpu_stat.sreg[(n)].u.seg.limit
+#define	CPU_STAT_SREG(n)	CPU_STATSAVE.cpu_stat.sreg[(n)]
+#define	CPU_STAT_SREGBASE(n)	CPU_STATSAVE.cpu_stat.sreg[(n)].u.seg.segbase
+#define	CPU_STAT_SREGEND(n)	CPU_STATSAVE.cpu_stat.sreg[(n)].u.seg.segend
+#define	CPU_STAT_SREGLIMIT(n)	CPU_STATSAVE.cpu_stat.sreg[(n)].u.seg.limit
 #define	CPU_STAT_SREG_CLEAR(n) \
 do { \
 	memset(&CPU_STAT_SREG(n), 0, sizeof(descriptor_t)); \
@@ -284,7 +311,7 @@ do { \
 #define	CPU_BP		CPU_REGS_WORD(CPU_EBP_INDEX)
 #define	CPU_SI		CPU_REGS_WORD(CPU_ESI_INDEX)
 #define	CPU_DI		CPU_REGS_WORD(CPU_EDI_INDEX)
-#define CPU_IP		cpu_regs.eip.w.w
+#define CPU_IP		CPU_STATSAVE.cpu_regs.eip.w.w
 
 #define	CPU_EAX		CPU_REGS_DWORD(CPU_EAX_INDEX)
 #define	CPU_ECX		CPU_REGS_DWORD(CPU_ECX_INDEX)
@@ -294,8 +321,8 @@ do { \
 #define	CPU_EBP		CPU_REGS_DWORD(CPU_EBP_INDEX)
 #define	CPU_ESI		CPU_REGS_DWORD(CPU_ESI_INDEX)
 #define	CPU_EDI		CPU_REGS_DWORD(CPU_EDI_INDEX)
-#define CPU_EIP		cpu_regs.eip.d
-#define CPU_PREV_EIP	cpu_regs.prev_eip.d
+#define CPU_EIP		CPU_STATSAVE.cpu_regs.eip.d
+#define CPU_PREV_EIP	CPU_STATSAVE.cpu_regs.prev_eip.d
 
 #define	CPU_ES		CPU_REGS_SREG(CPU_ES_INDEX)
 #define	CPU_CS		CPU_REGS_SREG(CPU_CS_INDEX)
@@ -304,20 +331,20 @@ do { \
 #define	CPU_FS		CPU_REGS_SREG(CPU_FS_INDEX)
 #define	CPU_GS		CPU_REGS_SREG(CPU_GS_INDEX)
 
-#define ES_BASE		cpu_stat.sreg[CPU_ES_INDEX].u.seg.segbase
-#define CS_BASE		cpu_stat.sreg[CPU_CS_INDEX].u.seg.segbase
-#define SS_BASE		cpu_stat.sreg[CPU_SS_INDEX].u.seg.segbase
-#define DS_BASE		cpu_stat.sreg[CPU_DS_INDEX].u.seg.segbase
-#define FS_BASE		cpu_stat.sreg[CPU_FS_INDEX].u.seg.segbase
-#define GS_BASE		cpu_stat.sreg[CPU_GS_INDEX].u.seg.segbase
+#define ES_BASE		CPU_STATSAVE.cpu_stat.sreg[CPU_ES_INDEX].u.seg.segbase
+#define CS_BASE		CPU_STATSAVE.cpu_stat.sreg[CPU_CS_INDEX].u.seg.segbase
+#define SS_BASE		CPU_STATSAVE.cpu_stat.sreg[CPU_SS_INDEX].u.seg.segbase
+#define DS_BASE		CPU_STATSAVE.cpu_stat.sreg[CPU_DS_INDEX].u.seg.segbase
+#define FS_BASE		CPU_STATSAVE.cpu_stat.sreg[CPU_FS_INDEX].u.seg.segbase
+#define GS_BASE		CPU_STATSAVE.cpu_stat.sreg[CPU_GS_INDEX].u.seg.segbase
 
-#define CPU_EFLAG	cpu_regs.eflags.d
-#define CPU_FLAG	cpu_regs.eflags.w.w
-#define CPU_FLAGL	cpu_regs.eflags.b.l
-#define CPU_FLAGH	cpu_regs.eflags.b.h
-#define CPU_TRAP	cpu_stat.trap
-#define CPU_INPORT	cpu_stat.inport
-#define CPU_OV		cpu_stat.ovflag
+#define CPU_EFLAG	CPU_STATSAVE.cpu_regs.eflags.d
+#define CPU_FLAG	CPU_STATSAVE.cpu_regs.eflags.w.w
+#define CPU_FLAGL	CPU_STATSAVE.cpu_regs.eflags.b.l
+#define CPU_FLAGH	CPU_STATSAVE.cpu_regs.eflags.b.h
+#define CPU_TRAP	CPU_STATSAVE.cpu_stat.trap
+#define CPU_INPORT	CPU_STATSAVE.cpu_stat.inport
+#define CPU_OV		CPU_STATSAVE.cpu_stat.ovflag
 
 #define C_FLAG		(1 << 0)
 #define P_FLAG		(1 << 2)
@@ -349,26 +376,27 @@ do { \
 void set_flags(WORD new_flags, WORD mask);
 void set_eflags(DWORD new_flags, DWORD mask);
 
-#define CPU_TYPE	cpu_stat.cpu_type
-#define CPUTYPE_V30	0x01
 
-#define	CPU_INST_OP32		cpu_inst.op_32
-#define	CPU_INST_AS32		cpu_inst.as_32
-#define	CPU_INST_REPUSE		cpu_inst.rep_used
-#define	CPU_INST_SEGUSE		cpu_inst.seg_used
-#define	CPU_INST_SEGREG_INDEX	cpu_inst.seg_base
+#define CPU_TYPE		CPU_STATSAVE.cpu_stat.cpu_type
+#define CPUTYPE_V30		0x01
+
+#define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32
+#define	CPU_INST_AS32		CPU_STATSAVE.cpu_inst.as_32
+#define	CPU_INST_REPUSE		CPU_STATSAVE.cpu_inst.rep_used
+#define	CPU_INST_SEGUSE		CPU_STATSAVE.cpu_inst.seg_used
+#define	CPU_INST_SEGREG_INDEX	CPU_STATSAVE.cpu_inst.seg_base
 #define	DS_FIX	(!CPU_INST_SEGUSE ? CPU_DS_INDEX : CPU_INST_SEGREG_INDEX)
 #define	SS_FIX	(!CPU_INST_SEGUSE ? CPU_SS_INDEX : CPU_INST_SEGREG_INDEX)
 
-#define	CPU_STAT_CS_BASE	cpu_stat.sreg[CPU_CS_INDEX].u.seg.limit
-#define	CPU_STAT_CS_LIMIT	cpu_stat.sreg[CPU_CS_INDEX].u.seg.limit
-#define	CPU_STAT_CS_END		cpu_stat.sreg[CPU_CS_INDEX].u.seg.segend
+#define	CPU_STAT_CS_BASE	CPU_STATSAVE.cpu_stat.sreg[CPU_CS_INDEX].u.seg.limit
+#define	CPU_STAT_CS_LIMIT	CPU_STATSAVE.cpu_stat.sreg[CPU_CS_INDEX].u.seg.limit
+#define	CPU_STAT_CS_END		CPU_STATSAVE.cpu_stat.sreg[CPU_CS_INDEX].u.seg.segend
 
-#define	CPU_STAT_SS32		cpu_stat.ss_32
-#define	CPU_STAT_PM		cpu_stat.protected_mode
-#define	CPU_STAT_VM86		cpu_stat.vm86
-#define	CPU_STAT_PAGING		cpu_stat.paging
-#define	CPU_STAT_CPL		cpu_stat.cpl
+#define	CPU_STAT_SS32		CPU_STATSAVE.cpu_stat.ss_32
+#define	CPU_STAT_PM		CPU_STATSAVE.cpu_stat.protected_mode
+#define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
+#define	CPU_STAT_PAGING		CPU_STATSAVE.cpu_stat.paging
+#define	CPU_STAT_CPL		CPU_STATSAVE.cpu_stat.cpl
 
 #define	CPU_STAT_IOPL		((CPU_EFLAG & IOPL_FLAG) >> 12)
 #define	CPU_IOPL0		0
@@ -376,54 +404,57 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_IOPL2		2
 #define	CPU_IOPL3		3
 
-#define	CPU_STAT_IOADDR		cpu_stat.ioaddr
-#define	CPU_STAT_IOLIMIT	cpu_stat.iolimit
+#define	CPU_STAT_IOADDR		CPU_STATSAVE.cpu_stat.ioaddr
+#define	CPU_STAT_IOLIMIT	CPU_STATSAVE.cpu_stat.iolimit
 
-#define	CPU_STAT_NERROR		cpu_stat.nerror
-#define	CPU_STAT_PREV_EXCEPTION	cpu_stat.prev_exception
+#define	CPU_STAT_NERROR		CPU_STATSAVE.cpu_stat.nerror
+#define	CPU_STAT_PREV_EXCEPTION	CPU_STATSAVE.cpu_stat.prev_exception
 
 #define CPU_CLI		do { CPU_FLAG &= ~I_FLAG;	\
 					CPU_TRAP = 0; } while (/*CONSTCOND*/ 0)
 #define CPU_STI		do { CPU_FLAG |= I_FLAG;	\
 					CPU_TRAP = (CPU_FLAG >> 8) & 1; } while (/*CONSTCOND*/0)
 
-#define CPU_GDTR_LIMIT	cpu_sysregs.gdtr_limit
-#define CPU_GDTR_BASE	cpu_sysregs.gdtr_base
-#define CPU_IDTR_LIMIT	cpu_sysregs.idtr_limit
-#define CPU_IDTR_BASE	cpu_sysregs.idtr_base
-#define CPU_LDTR	cpu_sysregs.ldtr
-#define CPU_LDTR_DESC	cpu_sysregs.ldtr_desc
-#define CPU_LDTR_BASE	cpu_sysregs.ldtr_desc.u.seg.segbase
-#define CPU_LDTR_END	cpu_sysregs.ldtr_desc.u.seg.segend
-#define CPU_LDTR_LIMIT	cpu_sysregs.ldtr_desc.u.seg.limit
-#define CPU_TR		cpu_sysregs.tr
-#define CPU_TR_DESC	cpu_sysregs.tr_desc
-#define CPU_TR_BASE	cpu_sysregs.tr_desc.u.seg.segbase
-#define CPU_TR_END	cpu_sysregs.tr_desc.u.seg.segend
-#define CPU_TR_LIMIT	cpu_sysregs.tr_desc.u.seg.limit
+#define CPU_GDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.gdtr_limit
+#define CPU_GDTR_BASE	CPU_STATSAVE.cpu_sysregs.gdtr_base
+#define CPU_IDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.idtr_limit
+#define CPU_IDTR_BASE	CPU_STATSAVE.cpu_sysregs.idtr_base
+#define CPU_LDTR	CPU_STATSAVE.cpu_sysregs.ldtr
+#define CPU_LDTR_DESC	CPU_STATSAVE.cpu_sysregs.ldtr_desc
+#define CPU_LDTR_BASE	CPU_STATSAVE.cpu_sysregs.ldtr_desc.u.seg.segbase
+#define CPU_LDTR_END	CPU_STATSAVE.cpu_sysregs.ldtr_desc.u.seg.segend
+#define CPU_LDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.ldtr_desc.u.seg.limit
+#define CPU_TR		CPU_STATSAVE.cpu_sysregs.tr
+#define CPU_TR_DESC	CPU_STATSAVE.cpu_sysregs.tr_desc
+#define CPU_TR_BASE	CPU_STATSAVE.cpu_sysregs.tr_desc.u.seg.segbase
+#define CPU_TR_END	CPU_STATSAVE.cpu_sysregs.tr_desc.u.seg.segend
+#define CPU_TR_LIMIT	CPU_STATSAVE.cpu_sysregs.tr_desc.u.seg.limit
 
-#define CPU_CR0		cpu_sysregs.cr0
-#define CPU_CR1		cpu_sysregs.cr1
-#define CPU_CR2		cpu_sysregs.cr2
-#define CPU_CR3		cpu_sysregs.cr3
-#define CPU_CR4		cpu_sysregs.cr4
-#define CPU_MXCSR	cpu_sysregs.mxcsr
+/*
+ * control register
+ */
+#define CPU_CR0			CPU_STATSAVE.cpu_sysregs.cr0
+#define CPU_CR1			CPU_STATSAVE.cpu_sysregs.cr1
+#define CPU_CR2			CPU_STATSAVE.cpu_sysregs.cr2
+#define CPU_CR3			CPU_STATSAVE.cpu_sysregs.cr3
+#define CPU_CR4			CPU_STATSAVE.cpu_sysregs.cr4
+#define CPU_MXCSR		CPU_STATSAVE.cpu_sysregs.mxcsr
 
-#define	CPU_CR0_PE	(1 << 0)
-#define	CPU_CR0_MP	(1 << 1)
-#define	CPU_CR0_EM	(1 << 2)
-#define	CPU_CR0_TS	(1 << 3)
-#define	CPU_CR0_ET	(1 << 4)
-#define	CPU_CR0_NE	(1 << 5)
-#define	CPU_CR0_WP	(1 << 16)
-#define	CPU_CR0_AM	(1 << 18)
-#define	CPU_CR0_NW	(1 << 29)
-#define	CPU_CR0_CD	(1 << 30)
-#define	CPU_CR0_PG	(1 << 31)
+#define	CPU_CR0_PE		(1 << 0)
+#define	CPU_CR0_MP		(1 << 1)
+#define	CPU_CR0_EM		(1 << 2)
+#define	CPU_CR0_TS		(1 << 3)
+#define	CPU_CR0_ET		(1 << 4)
+#define	CPU_CR0_NE		(1 << 5)
+#define	CPU_CR0_WP		(1 << 16)
+#define	CPU_CR0_AM		(1 << 18)
+#define	CPU_CR0_NW		(1 << 29)
+#define	CPU_CR0_CD		(1 << 30)
+#define	CPU_CR0_PG		(1 << 31)
 
-#define	CPU_CR3_PD_MASK	0xfffff000
-#define	CPU_CR3_PWT	(1 << 3)
-#define	CPU_CR3_PCD	(1 << 4)
+#define	CPU_CR3_PD_MASK		0xfffff000
+#define	CPU_CR3_PWT		(1 << 3)
+#define	CPU_CR3_PCD		(1 << 4)
 
 #define	CPU_CR4_VME		(1 << 0)
 #define	CPU_CR4_PVI		(1 << 1)
@@ -475,44 +506,34 @@ extern WORD  *reg16_b53[0x100];
 extern DWORD *reg32_b20[0x100];
 extern DWORD *reg32_b53[0x100];
 
+/*
+ * Profile
+ */
+#if defined(IA32_PROFILE_INSTRUCTION)
+extern UINT32	inst_1byte_count[2][256];
+extern UINT32	inst_2byte_count[2][256];
+extern UINT32	ea16_count[24];
+extern UINT32	ea32_count[24];
+extern UINT32	sib0_count[256];
+extern UINT32	sib1_count[256];
+extern UINT32	sib2_count[256];
 
-// ---- i286
-
-typedef struct {
-	SINT32	remainclock;
-	SINT32	baseclock;
-	UINT32	clock;
-
-	UINT32	adrsmask;			// ?
-	UINT32	inport;				// ?
-	UINT8	resetreq;
-	UINT8	itfbank;
-} I386STAT;
-
-typedef struct {							// for ver0.73
-	BYTE	*ext;
-	UINT32	extsize;
-} I386EXT;
-
-typedef struct {
-	I386STAT	s;							// STATsaveされる奴
-	I386EXT		e;
-} I386CORE;
-
-extern	I386CORE	i386core;
-
-#define	CPU_STATSAVE		i386core.s
-
-#define	CPU_REMCLOCK		i386core.s.remainclock
-#define	CPU_BASECLOCK		i386core.s.baseclock
-#define	CPU_CLOCK		i386core.s.clock
-#define	CPU_ADRSMASK		i386core.s.adrsmask
-#define	CPU_RESETREQ		i386core.s.resetreq
-#define	CPU_ITFBANK		i386core.s.itfbank
-#define	CPU_INPADRS		i386core.s.inport
-
-#define	CPU_EXTMEM		i386core.e.ext
-#define	CPU_EXTMEMSIZE		i386core.e.extsize
+#define	PROFILE_INC_INST_1BYTE(op)	inst_1byte_count[CPU_INST_OP32][op]++
+#define	PROFILE_INC_INST_2BYTE(op)	inst_2byte_count[CPU_INST_OP32][op]++
+#define	PROFILE_INC_EA16(idx)		ea16_count[idx]++
+#define	PROFILE_INC_EA32(idx)		ea32_count[idx]++
+#define	PROFILE_INC_SIB0(op)		sib0_count[op]++
+#define	PROFILE_INC_SIB1(op)		sib1_count[op]++
+#define	PROFILE_INC_SIB2(op)		sib2_count[op]++
+#else
+#define	PROFILE_INC_INST_1BYTE(op)
+#define	PROFILE_INC_INST_2BYTE(op)
+#define	PROFILE_INC_EA16(idx)
+#define	PROFILE_INC_EA32(idx)
+#define	PROFILE_INC_SIB0(op)
+#define	PROFILE_INC_SIB1(op)
+#define	PROFILE_INC_SIB2(op)
+#endif
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: paging.h,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -99,6 +99,7 @@ void MEMCALL cpu_linear_memory_write(DWORD address, DWORD length, DWORD value);
 void tlb_init();
 void tlb_flush(BOOL allflush);
 void tlb_flush_page(DWORD vaddr);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,4 +1,4 @@
-/*	$Id: misc_inst.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: misc_inst.c,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -153,14 +153,14 @@ void
 OpSize(void)
 {
 
-	CPU_INST_OP32 = !cpu_inst_default.op_32;
+	CPU_INST_OP32 = !CPU_STATSAVE.cpu_inst_default.op_32;
 }
 
 void
 AddrSize(void)
 {
 
-	CPU_INST_AS32 = !cpu_inst_default.as_32;
+	CPU_INST_AS32 = !CPU_STATSAVE.cpu_inst_default.as_32;
 }
 
 void
@@ -169,6 +169,7 @@ _2byte_ESC16(void)
 	DWORD op;
 
 	GET_PCBYTE(op);
+	PROFILE_INC_INST_2BYTE(op);
 	(*insttable_2byte[0][op])();
 }
 
@@ -178,6 +179,7 @@ _2byte_ESC32(void)
 	DWORD op;
 
 	GET_PCBYTE(op);
+	PROFILE_INC_INST_2BYTE(op);
 	(*insttable_2byte[1][op])();
 }
 

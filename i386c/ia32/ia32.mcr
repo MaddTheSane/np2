@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: ia32.mcr,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -816,10 +816,10 @@ do { \
 
 #define	PUSH0_32(reg) \
 do { \
-	if (!CPU_STAT_SS32) { \
-		REGPUSH0_32_16(reg); \
-	} else { \
+	if (CPU_STAT_SS32) { \
 		REGPUSH0_32(reg); \
+	} else { \
+		REGPUSH0_32_16(reg); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
@@ -847,12 +847,12 @@ do { \
 #define	SP_PUSH0_32(reg) \
 do { \
 	DWORD esp = CPU_ESP; \
-	if (!CPU_STAT_SS32) { \
-		CPU_SP -= 4; \
-		cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, esp); \
-	} else { \
+	if (CPU_STAT_SS32) { \
 		CPU_ESP -= 4; \
 		cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, esp); \
+	} else { \
+		CPU_SP -= 4; \
+		cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, esp); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
@@ -905,10 +905,10 @@ do { \
 
 #define	POP0_32(reg) \
 do { \
-	if (!CPU_STAT_SS32) { \
-		REGPOP0_32_16(reg); \
-	} else { \
+	if (CPU_STAT_SS32) { \
 		REGPOP0_32(reg); \
+	} else { \
+		REGPOP0_32_16(reg); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
@@ -923,10 +923,10 @@ do { \
 
 #define	ESP_POP0_32(reg) \
 do { \
-	if (!CPU_STAT_SS32) { \
-		(reg) = cpu_vmemoryread_d(CPU_SS_INDEX, CPU_SP); \
-	} else { \
+	if (CPU_STAT_SS32) { \
 		(reg) = cpu_vmemoryread_d(CPU_SS_INDEX, CPU_ESP); \
+	} else { \
+		(reg) = cpu_vmemoryread_d(CPU_SS_INDEX, CPU_SP); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
@@ -944,7 +944,7 @@ do { \
 
 #define	JMPNEAR(clock) \
 do { \
-	WORD __ip; \
+	DWORD __ip; \
 	CPU_WORKCLOCK(clock); \
 	__ip = __CWDE(cpu_codefetch_w(CPU_EIP)); \
 	__ip += 2; \

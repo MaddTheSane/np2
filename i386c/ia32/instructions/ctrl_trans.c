@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -857,15 +857,13 @@ CALL_Ew(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
 		new_ip = *(reg16_b20[op]);
-		PUSH0_16(CPU_IP);
-		SET_EIP(new_ip);
 	} else {
 		CPU_WORKCLOCK(11);
 		madr = calc_ea_dst(op);
 		new_ip = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		PUSH0_16(CPU_IP);
-		SET_EIP(new_ip);
 	}
+	PUSH0_16(CPU_IP);
+	SET_EIP(new_ip);
 }
 
 void
@@ -877,15 +875,13 @@ CALL_Ed(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(7);
 		new_ip = *(reg32_b20[op]);
-		PUSH0_32(CPU_EIP);
-		SET_EIP(new_ip);
 	} else {
 		CPU_WORKCLOCK(11);
 		madr = calc_ea_dst(op);
 		new_ip = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		PUSH0_32(CPU_EIP);
-		SET_EIP(new_ip);
 	}
+	PUSH0_32(CPU_EIP);
+	SET_EIP(new_ip);
 }
 
 void
