@@ -151,6 +151,20 @@ static void MenuBarInit(void) {
 	EnableItem(GetMenuHandle(IDM_DEVICE), LoWord(IDM_MOUSE));
 	EnableItem(GetMenuHandle(IDM_KEYBOARD), LoWord(IDM_F12MOUSE));
 #endif
+
+	if (!(np2cfg.fddequip & 1)) {
+		DeleteMenu(IDM_FDD1);
+	}
+	if (!(np2cfg.fddequip & 2)) {
+		DeleteMenu(IDM_FDD2);
+	}
+	if (!(np2cfg.fddequip & 4)) {
+		DeleteMenu(IDM_FDD3);
+	}
+	if (!(np2cfg.fddequip & 8)) {
+		DeleteMenu(IDM_FDD4);
+	}
+
 	DrawMenuBar();
 }
 
@@ -788,9 +802,9 @@ int main(int argc, char *argv[]) {
 
 	InitToolBox();
 	macossub_init();
-	MenuBarInit();
-
 	initload();
+
+	MenuBarInit();
 
 	TRACEINIT();
 
