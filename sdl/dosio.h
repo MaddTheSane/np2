@@ -94,9 +94,9 @@ void file_listclose(FLISTH hdl);
 #define file_cmpname(p, n)		strcmp(p, n)
 #endif
 void file_catname(char *path, const char *name, int maxlen);
-char *file_getname(char *path);
+char *file_getname(const char *path);
 void file_cutname(char *path);
-char *file_getext(char *path);
+char *file_getext(const char *path);
 void file_cutext(char *path);
 void file_cutseparator(char *path);
 void file_setseparator(char *path, int maxlen);

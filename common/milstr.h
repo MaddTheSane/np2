@@ -69,7 +69,7 @@ long milstr_solveHEX(const OEMCHAR *str);
 long milstr_solveINT(const OEMCHAR *str);
 
 // STRLIST
-char *milstr_list(const OEMCHAR *lststr, UINT pos);
+OEMCHAR *milstr_list(const OEMCHAR *lststr, UINT pos);
 
 #ifdef __cplusplus
 }
@@ -79,7 +79,6 @@ char *milstr_list(const OEMCHAR *lststr, UINT pos);
 // ---- macros
 
 #if defined(OSLANG_SJIS)
-#define	ISKANJI1ST(c)			((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c)
 #define milstr_charsize(s)		milsjis_charsize(s)
 #define	milstr_cmp(s, c)		milsjis_cmp(s, c)
 #define	milstr_memcmp(s, c)		milsjis_memcmp(s, c)
@@ -89,7 +88,6 @@ char *milstr_list(const OEMCHAR *lststr, UINT pos);
 #define	milstr_ncat(d, s, l)	milsjis_ncat(d, s, l)
 #define	milstr_chr(s, c)		milsjis_chr(s, c)
 #elif defined(OSLANG_EUC)
-#define	ISKANJI1ST(c)			(((c - 0xa1) & 0xff) < 0x5d)
 #define milstr_charsize(s)		mileuc_charsize(s)
 #define	milstr_cmp(s, c)		mileuc_cmp(s, c)
 #define	milstr_memcmp(s, c)		mileuc_memcmp(s, c)
@@ -108,7 +106,6 @@ char *milstr_list(const OEMCHAR *lststr, UINT pos);
 #define	milstr_ncat(d, s, l)	milutf8_ncat(d, s, l)
 #define	milstr_chr(s, c)		milutf8_chr(s, c)
 #else
-#define	ISKANJI1ST(c)			(0)
 #define milstr_charsize(s)		milank_charsize(s)
 #define	milstr_cmp(s, c)		milank_cmp(s, c)
 #define	milstr_memcmp(s, c)		milank_memcmp(s, c)

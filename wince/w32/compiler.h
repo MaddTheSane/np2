@@ -3,11 +3,13 @@
 #include	<stdio.h>
 #include	<stddef.h>
 
+
 #define	BYTESEX_LITTLE
-#if !defined(UNICODE) 
+#if !defined(UNICODE)
 #define	OSLANG_SJIS
 #endif
 #define	OSLINEBREAK_CRLF
+
 
 typedef signed char		SINT8;
 typedef unsigned char	UINT8;
@@ -39,18 +41,20 @@ typedef	unsigned int	UINT32;
 #include	"common.h"
 #include	"oemtext.h"
 #include	"milstr.h"
+#include	"ucscnv.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"
 #include	"trace.h"
-#include	"ucscnv.h"
 
 
 #define	GETTICK()	GetTickCount()
 #if defined(UNICODE)
 #define	SPRINTF		sprintf
+#define	STRLEN		strlen
 #else
 #define	SPRINTF		wsprintf
+#define	STRLEN		lstrlen
 #endif
 #define	__ASSERT(s)
 

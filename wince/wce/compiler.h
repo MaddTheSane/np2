@@ -2,14 +2,18 @@
 #include	<stdio.h>
 #include	<stddef.h>
 
+
 #define	BYTESEX_LITTLE
+#if !defined(OSLANG_ANK) && !defined(OSLANG_SJIS) && !defined(OSLANG_EUC) && !defined(OSLANG_UTF8) && !defined(OSLANG_UCS2) && !defined(OSLANG_UCS4)
 #define	OSLANG_SJIS
+#endif
 #define	OSLINEBREAK_CRLF
 
 
 typedef signed char		SINT8;
 typedef	signed short	SINT16;
 typedef	signed int		SINT32;
+
 
 #ifndef	ZeroMemory
 #define	ZeroMemory(a, b)		memset((a),  0 , (b))
@@ -29,6 +33,7 @@ typedef	signed int		SINT32;
 #endif
 #endif
 
+
 // for ARM optimize
 #define	REG8		UINT
 #define REG16		UINT
@@ -40,7 +45,9 @@ typedef	signed int		SINT32;
 
 
 #include	"common.h"
+#include	"oemtext.h"
 #include	"milstr.h"
+#include	"ucscnv.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"
@@ -49,6 +56,7 @@ typedef	signed int		SINT32;
 
 #define	GETTICK()	GetTickCount()
 #define	SPRINTF		sprintf
+#define	STRLEN		strlen
 #define	__ASSERT(s)
 
 #if defined(WIN32_PLATFORM_PSPC) && defined(SIZE_QVGA)
@@ -60,6 +68,9 @@ typedef	signed int		SINT32;
 #define SOUND_CRITICAL
 
 #define	SUPPORT_SJIS
+#if defined(OSLANG_UTF8)
+#define	SUPPORT_UTF8
+#endif
 
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2

@@ -373,9 +373,9 @@ void file_catname(char *path, const char *name, int maxlen) {
 	}
 }
 
-char *file_getname(char *path) {
+char *file_getname(const char *path) {
 
-	char	*ret;
+const char	*ret;
 	int		csize;
 
 	ret = path;
@@ -385,7 +385,7 @@ char *file_getname(char *path) {
 		}
 		path += csize;
 	}
-	return(ret);
+	return((char *)ret);
 }
 
 void file_cutname(char *path) {
@@ -396,10 +396,10 @@ void file_cutname(char *path) {
 	*p = '\0';
 }
 
-char *file_getext(char *path) {
+char *file_getext(const char *path) {
 
-	char	*p;
-	char	*q;
+const char	*p;
+const char	*q;
 
 	p = file_getname(path);
 	q = NULL;
@@ -412,7 +412,7 @@ char *file_getext(char *path) {
 	if (q == NULL) {
 		q = p;
 	}
-	return(q);
+	return((char *)q);
 }
 
 void file_cutext(char *path) {

@@ -3,7 +3,6 @@
 #include	"wavefile.h"
 
 
-
 static BOOL headwrite(WAVEWR hdl) {
 
 	RIFF_HEADER		rif;
