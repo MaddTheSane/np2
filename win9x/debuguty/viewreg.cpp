@@ -16,7 +16,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	DWORD		pos;
 	char		str[128];
 	HFONT		hfont;
-	I286REGS	*r;
+	I286REG		*r;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -27,13 +27,13 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	if (view->lock) {
 		if (view->buf1.type != ALLOCTYPE_REG) {
-			if (viewcmn_alloc(&view->buf1, sizeof(I286REGS))) {
+			if (viewcmn_alloc(&view->buf1, sizeof(i286reg))) {
 				view->lock = FALSE;
 				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_REG;
-				CopyMemory(view->buf1.ptr, &i286r, sizeof(I286REGS));
+				CopyMemory(view->buf1.ptr, &i286reg, sizeof(i286reg));
 			}
 			viewcmn_putcaption(view);
 		}
@@ -41,32 +41,32 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	pos = view->pos;
 	if (view->lock) {
-		r = (I286REGS *)view->buf1.ptr;
+		r = (I286REG *)view->buf1.ptr;
 	}
 	else {
-		r = &i286r;
+		r = &i286reg;
 	}
 
 	for (y=0; y<rc->bottom && pos<4; y+=16, pos++) {
 		switch(pos) {
 			case 0:
 				wsprintf(str, "AX=%04x  BX=%04x  CX=%04x  DX=%04x",
-									r->w.ax, r->w.bx, r->w.cx, r->w.dx);
+								r->r.w.ax, r->r.w.bx, r->r.w.cx, r->r.w.dx);
 				break;
 
 			case 1:
 				wsprintf(str, "SP=%04x  BP=%04x  SI=%04x  DI=%04x",
-									r->w.sp, r->w.bp, r->w.si, r->w.di);
+								r->r.w.sp, r->r.w.bp, r->r.w.si, r->r.w.di);
 				break;
 
 			case 2:
 				wsprintf(str, "DS=%04x  ES=%04x  SS=%04x  CS=%04x",
-									r->w.ds, r->w.es, r->w.ss, r->w.cs);
+								r->r.w.ds, r->r.w.es, r->r.w.ss, r->r.w.cs);
 				break;
 
 			case 3:
 				wsprintf(str, "IP=%04x   %s",
-									r->w.ip, debugsub_flags(r->w.flag));
+								r->r.w.ip, debugsub_flags(r->r.w.flag));
 				break;
 		}
 		TextOut(hdc, 0, y, str, strlen(str));
@@ -109,3 +109,4 @@ void viewreg_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 	dst->mul = 1;
 	dst->pos = 0;
 }
+

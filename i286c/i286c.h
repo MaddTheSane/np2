@@ -71,7 +71,7 @@ extern const I286OPSFTE16CL sft_e16cl_table[];
 
 
 #define	I286_F6 static void CPUCALL
-typedef void (CPUCALL * I286OPF6)(DWORD madr);
+typedef void (CPUCALL * I286OPF6)(UINT op);
 
 extern const I286OPF6 c_ope0xf6_table[];
 extern const I286OPF6 c_ope0xf7_table[];

@@ -15,9 +15,9 @@ I286_F6 _nop_int(DWORD op) {
 }
 #endif
 
-I286_F6 _inc_ea8(DWORD op) {
+I286_F6 _inc_ea8(UINT op) {
 
-	DWORD	madr;
+	UINT32	madr;
 	BYTE	*out;
 
 	if (op >= 0xc0) {
@@ -38,9 +38,9 @@ I286_F6 _inc_ea8(DWORD op) {
 	BYTE_INC(*out)
 }
 
-I286_F6 _dec_ea8(DWORD op) {
+I286_F6 _dec_ea8(UINT op) {
 
-	DWORD	madr;
+	UINT32	madr;
 	BYTE	*out;
 
 	if (op >= 0xc0) {
@@ -61,10 +61,10 @@ I286_F6 _dec_ea8(DWORD op) {
 	BYTE_DEC(*out)
 }
 
-I286_F6 _inc_ea16(DWORD op) {
+I286_F6 _inc_ea16(UINT op) {
 
-	DWORD	madr;
-	WORD	*out;
+	UINT32	madr;
+	UINT16	*out;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2)
@@ -84,10 +84,10 @@ I286_F6 _inc_ea16(DWORD op) {
 	WORD_INC(*out)
 }
 
-I286_F6 _dec_ea16(DWORD op) {
+I286_F6 _dec_ea16(UINT op) {
 
-	DWORD	madr;
-	WORD	*out;
+	UINT32	madr;
+	UINT16	*out;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(2)
@@ -107,9 +107,9 @@ I286_F6 _dec_ea16(DWORD op) {
 	WORD_DEC(*out)
 }
 
-I286_F6 _call_ea16(DWORD op) {
+I286_F6 _call_ea16(UINT op) {
 
-	WORD	src;
+	UINT16	src;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(7)
@@ -123,11 +123,11 @@ I286_F6 _call_ea16(DWORD op) {
 	I286_IP = src;
 }
 
-I286_F6 _call_far_ea16(DWORD op) {
+I286_F6 _call_far_ea16(UINT op) {
 
 	I286_CLOCK(16)
 	if (op < 0xc0) {
-		WORD ad = c_get_ea[op]();
+		UINT16 ad = c_get_ea[op]();
 		REGPUSH0(I286_CS)								// ToDo
 		REGPUSH0(I286_IP)
 		I286_IP = i286_memoryread_w(ad + EA_FIX);
@@ -140,7 +140,7 @@ I286_F6 _call_far_ea16(DWORD op) {
 	}
 }
 
-I286_F6 _jmp_ea16(DWORD op) {
+I286_F6 _jmp_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_CLOCK(7)
@@ -152,24 +152,24 @@ I286_F6 _jmp_ea16(DWORD op) {
 	}
 }
 
-I286_F6 _jmp_far_ea16(DWORD op) {
+I286_F6 _jmp_far_ea16(UINT op) {
 
 	I286_CLOCK(11)
 	if (op < 0xc0) {
-		WORD ad = c_get_ea[op]();
+		UINT16 ad = c_get_ea[op]();
 		I286_IP = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		I286_CS = i286_memoryread_w(ad + EA_FIX);
-		CS_BASE = (DWORD)I286_CS << 4;
+		CS_BASE = I286_CS << 4;
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
 	}
 }
 
-I286_F6 _push_ea16(DWORD op) {
+I286_F6 _push_ea16(UINT op) {
 
-	WORD	src;
+	UINT16	src;
 
 	if (op >= 0xc0) {
 		I286_CLOCK(3)
@@ -182,9 +182,9 @@ I286_F6 _push_ea16(DWORD op) {
 	REGPUSH0(src);
 }
 
-I286_F6 _pop_ea16(DWORD op) {
+I286_F6 _pop_ea16(UINT op) {
 
-	WORD	src;
+	UINT16	src;
 
 	REGPOP0(src);
 	I286_CLOCK(5)

@@ -533,9 +533,14 @@ static void flagsave(const char *ext) {
 static void flagload(const char *ext) {
 
 	char	path[MAX_PATH];
+	char	buf[1024];
+	int		ret;
 
 	getstatfilename(path, ext, sizeof(path));
-	statsave_load(path);
+	ret = statsave_check(path, buf, sizeof(buf));
+	if (ret == NP2FLAG_SUCCESS) {
+		statsave_load(path);
+	}
 }
 
 int main(int argc, char *argv[]) {

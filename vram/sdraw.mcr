@@ -1,7 +1,7 @@
 
 // ---- plasma display
 
-// vram off / 32bit色
+// vram off
 static void SCRNCALL SDSYM(p_0)(SDRAW sdraw, int maxy) {
 
 	BYTE	*p;
@@ -25,7 +25,7 @@ static void SCRNCALL SDSYM(p_0)(SDRAW sdraw, int maxy) {
 	sdraw->y = y;
 }
 
-// text or grph 1プレーン / 32bit色
+// text or grph 1プレーン
 static void SCRNCALL SDSYM(p_1)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -53,7 +53,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// text + grph / 32bit色
+// text + grph
 static void SCRNCALL SDSYM(p_2)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -85,7 +85,7 @@ const BYTE	*q;
 	sdraw->y = y;
 }
 
-// text + (grph:interleave) / 32bit色
+// text + (grph:interleave)
 static void SCRNCALL SDSYM(p_ti)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -124,7 +124,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// grph:interleave / 32bit色
+// grph:interleave
 static void SCRNCALL SDSYM(p_gi)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -163,7 +163,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// text + grph:interleave / 32bit色
+// text + grph:interleave
 static void SCRNCALL SDSYM(p_2i)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -206,7 +206,7 @@ const BYTE	*q;
 	sdraw->y = y;
 }
 
-//	grph:interleave ex / 32bit色
+//	grph:interleave ex
 static void SCRNCALL SDSYM(p_gie)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -245,7 +245,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-//	text + grph:interleave ex / 32bit色
+//	text + grph:interleave ex
 static void SCRNCALL SDSYM(p_2ie)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -303,7 +303,7 @@ static const SDRAWFN SDSYM(p)[] = {
 
 #ifdef SUPPORT_NORMALDISP
 
-// vram off / 32bit色
+// vram off
 static void SCRNCALL SDSYM(n_0)(SDRAW sdraw, int maxy) {
 
 	BYTE	*p;
@@ -328,7 +328,7 @@ static void SCRNCALL SDSYM(n_0)(SDRAW sdraw, int maxy) {
 	sdraw->y = y;
 }
 
-// text 1プレーン / 32bit色
+// text 1プレーン
 static void SCRNCALL SDSYM(n_t)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -357,7 +357,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// grph 1プレーン / 32bit色
+// grph 1プレーン
 static void SCRNCALL SDSYM(n_g)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -386,7 +386,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// text + grph / 32bit色
+// text + grph
 static void SCRNCALL SDSYM(n_2)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -421,7 +421,7 @@ const BYTE	*q;
 	sdraw->y = y;
 }
 
-// text + (grph:interleave) / 32bit色
+// text + (grph:interleave)
 static void SCRNCALL SDSYM(n_ti)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -466,7 +466,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// grph:interleave / 32bit色
+// grph:interleave
 static void SCRNCALL SDSYM(n_gi)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -507,7 +507,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-// text + grph:interleave / 32bit色
+// text + grph:interleave
 static void SCRNCALL SDSYM(n_2i)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -557,7 +557,7 @@ const BYTE	*q;
 	sdraw->y = y;
 }
 
-//	grph:interleave ex / 32bit色
+//	grph:interleave ex
 static void SCRNCALL SDSYM(n_gie)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;
@@ -598,7 +598,7 @@ const BYTE	*p;
 	sdraw->y = y;
 }
 
-//	text + grph:interleave ex / 32bit色
+//	text + grph:interleave ex
 static void SCRNCALL SDSYM(n_2ie)(SDRAW sdraw, int maxy) {
 
 const BYTE	*p;

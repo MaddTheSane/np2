@@ -8,7 +8,7 @@
 
 // ------------------------------------------------------------ opecode 0xf6,7
 
-I286_F6 _test_ea8_data8(DWORD op) {
+I286_F6 _test_ea8_data8(UINT op) {
 
 	DWORD	src, dst;
 
@@ -24,7 +24,7 @@ I286_F6 _test_ea8_data8(DWORD op) {
 	ANDBYTE(dst, src)
 }
 
-I286_F6 _not_ea8(DWORD op) {
+I286_F6 _not_ea8(UINT op) {
 
 	DWORD	madr;
 
@@ -45,7 +45,7 @@ I286_F6 _not_ea8(DWORD op) {
 	}
 }
 
-I286_F6 _neg_ea8(DWORD op) {
+I286_F6 _neg_ea8(UINT op) {
 
 	BYTE	*out;
 	DWORD	src, dst, madr;
@@ -70,7 +70,7 @@ I286_F6 _neg_ea8(DWORD op) {
 	*out = (BYTE)dst;
 }
 
-I286_F6 _mul_ea8(DWORD op) {
+I286_F6 _mul_ea8(UINT op) {
 
 	BYTE	src;
 	DWORD	res;
@@ -87,7 +87,7 @@ I286_F6 _mul_ea8(DWORD op) {
 	I286_AX = (WORD)res;
 }
 
-I286_F6 _imul_ea8(DWORD op) {
+I286_F6 _imul_ea8(UINT op) {
 
 	BYTE	src;
 	long	res;
@@ -104,7 +104,7 @@ I286_F6 _imul_ea8(DWORD op) {
 	I286_AX = (WORD)res;
 }
 
-I286_F6 _div_ea8(DWORD op) {
+I286_F6 _div_ea8(UINT op) {
 
 	WORD	tmp;
 	BYTE	src;
@@ -129,7 +129,7 @@ I286_F6 _div_ea8(DWORD op) {
 	}
 }
 
-I286_F6 _idiv_ea8(DWORD op) {
+I286_F6 _idiv_ea8(UINT op) {
 
 	short	tmp, r;
 	char	src;
@@ -157,7 +157,7 @@ I286_F6 _idiv_ea8(DWORD op) {
 }
 
 
-I286_F6 _test_ea16_data16(DWORD op) {
+I286_F6 _test_ea16_data16(UINT op) {
 
 	DWORD	src, dst;
 
@@ -173,7 +173,7 @@ I286_F6 _test_ea16_data16(DWORD op) {
 	ANDWORD(dst, src)
 }
 
-I286_F6 _not_ea16(DWORD op) {
+I286_F6 _not_ea16(UINT op) {
 
 	DWORD	madr;
 
@@ -195,7 +195,7 @@ I286_F6 _not_ea16(DWORD op) {
 	}
 }
 
-I286_F6 _neg_ea16(DWORD op) {
+I286_F6 _neg_ea16(UINT op) {
 
 	WORD	*out;
 	DWORD	src, dst, madr;
@@ -220,7 +220,7 @@ I286_F6 _neg_ea16(DWORD op) {
 	*out = (WORD)dst;
 }
 
-I286_F6 _mul_ea16(DWORD op) {
+I286_F6 _mul_ea16(UINT op) {
 
 	WORD	src;
 	DWORD	res;
@@ -238,7 +238,7 @@ I286_F6 _mul_ea16(DWORD op) {
 	I286_DX = (WORD)(res >> 16);
 }
 
-I286_F6 _imul_ea16(DWORD op) {
+I286_F6 _imul_ea16(UINT op) {
 
 	short	src;
 	long	res;
@@ -256,7 +256,7 @@ I286_F6 _imul_ea16(DWORD op) {
 	I286_DX = (WORD)(res >> 16);
 }
 
-I286_F6 _div_ea16(DWORD op) {
+I286_F6 _div_ea16(UINT op) {
 
 	DWORD	tmp;
 	WORD	src;
@@ -281,7 +281,7 @@ I286_F6 _div_ea16(DWORD op) {
 	}
 }
 
-I286_F6 _idiv_ea16(DWORD op) {
+I286_F6 _idiv_ea16(UINT op) {
 
 	long	tmp, r;
 	short	src;

@@ -15,11 +15,7 @@
 #include	"dmap.h"
 
 
-	I286REGS	i286r;
-	I286STAT	i286s;
-	I286DTR		GDTR;
-	I286DTR		IDTR;
-	UINT16		MSW;
+	I286REG	i286reg;
 
 const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,
@@ -60,13 +56,9 @@ void i286_reset(void) {
 
 	i286xadr_init();							// 毎回通すのはどうか…
 	v30init();									// 毎回通すのはどうか…
-	ZeroMemory(&i286r, sizeof(i286r));
-	ZeroMemory(&i286s, sizeof(i286s));
+	ZeroMemory(&i286reg, sizeof(i286reg));
 	I286_CS = 0x1fc0;
 	CS_BASE = 0x1fc00;
-	ZeroMemory(&GDTR, sizeof(GDTR));
-	ZeroMemory(&IDTR, sizeof(IDTR));
-	MSW = 0;
 }
 
 
@@ -76,7 +68,7 @@ LABEL void i286_resetprefetch(void) {
 				pushad
 				movzx	esi, I286_IP
 				RESET_XPREFETCH
-				mov		dword ptr (i286s.prefetchque), ebx
+				mov		dword ptr (i286reg.prefetchque), ebx
 				popad
 				ret
 	}
@@ -92,7 +84,7 @@ LABEL void __fastcall i286_interrupt(BYTE vect) {
 				sub		bx, 2
 
 				// hlt..
-				cmp		byte ptr (i286s.prefetchque), 0f4h		// hlt
+				cmp		byte ptr (i286reg.prefetchque), 0f4h		// hlt
 				jne		short nonhlt
 				inc		I286_IP
 nonhlt:			mov		edi, SS_BASE
@@ -124,7 +116,7 @@ nonhlt:			mov		edi, SS_BASE
 				shl		eax, 4					// make segreg
 				mov		CS_BASE, eax
 				RESET_XPREFETCH
-				mov		dword ptr (i286s.prefetchque), ebx
+				mov		dword ptr (i286reg.prefetchque), ebx
 
 				popad
 				ret
@@ -176,7 +168,7 @@ LABEL void i286(void) {
 
 	__asm {
 				pushad
-				mov		ebx, dword ptr (i286s.prefetchque)
+				mov		ebx, dword ptr (i286reg.prefetchque)
 				movzx	esi, I286_IP
 
 				cmp		I286_TRAP, 0
@@ -188,7 +180,7 @@ i286_mnlp:		movzx	eax, bl
 				call	i286op[eax*4]
 				cmp		nevent.remainclock, 0
 				jg		i286_mnlp
-				mov		dword ptr (i286s.prefetchque), ebx
+				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
 				popad
 				ret
@@ -199,7 +191,7 @@ i286_dma_mnlp:	movzx	eax, bl
 				call	dmap_i286
 				cmp		nevent.remainclock, 0
 				jg		i286_dma_mnlp
-				mov		dword ptr (i286s.prefetchque), ebx
+				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
 				popad
 				ret
@@ -211,7 +203,7 @@ i286_trapping:	movzx	eax, bl
 				je		i286notrap
 				mov		ecx, 1
 				call	i286x_localint
-i286notrap:		mov		dword ptr (i286s.prefetchque), ebx
+i286notrap:		mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
 				popad
 				ret
@@ -224,7 +216,7 @@ LABEL void i286_step(void) {
 
 	__asm {
 				pushad
-				mov		ebx, dword ptr (i286s.prefetchque)
+				mov		ebx, dword ptr (i286reg.prefetchque)
 				movzx	esi, I286_IP
 
 				movzx	eax, bl
@@ -235,7 +227,7 @@ LABEL void i286_step(void) {
 				mov		ecx, 1
 				call	i286x_localint
 nexts:
-				mov		dword ptr (i286s.prefetchque), ebx
+				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
 
 				call	dmap_i286
@@ -250,7 +242,7 @@ nexts:
 LABEL void removeprefix(void) {
 
 		__asm {
-				mov		i286s.prefix, 0
+				mov		i286reg.prefix, 0
 				mov		eax, DS_BASE
 				mov		DS_FIX, eax
 				mov		eax, SS_BASE
@@ -579,7 +571,7 @@ I286 pop_ss(void) {								// 17: pop ss
 				shl		eax, 4					// make segreg
 				mov		SS_BASE, eax
 				mov		SS_FIX, eax
-				cmp		i286s.prefix, 0			// 00/06/24
+				cmp		i286reg.prefix, 0		// 00/06/24
 				je		noprefix
 				call	removeprefix
 				pop		eax
@@ -2420,7 +2412,7 @@ I286 mov_seg_ea(void) {							// 8E: mov segrem, EA
 		segsetr:ret
 
 				align	16
-		setss:	cmp		i286s.prefix, 0			// 00/05/13
+		setss:	cmp		i286reg.prefix, 0		// 00/05/13
 				je		noprefix
 				pop		eax
 				call	eax						// eax<-offset removeprefix
@@ -3897,7 +3889,7 @@ I286 in_al_data8(void) {						// E4: in al, DATA8
 				I286CLOCK(5)
 				lea		eax, [esi + 2]
 				add		eax, CS_BASE
-				mov		i286s.inport, eax
+				mov		i286reg.inport, eax
 				movzx	ecx, bh
 #if 1
 				call	iocore_inp8
@@ -3905,7 +3897,7 @@ I286 in_al_data8(void) {						// E4: in al, DATA8
 				call	i286_in
 #endif
 				mov		I286_AL, al
-				mov		i286s.inport, 0
+				mov		i286reg.inport, 0
 				GET_NEXTPRE2
 				ret
 		}
@@ -3917,7 +3909,6 @@ I286 in_ax_data8(void) {						// E5: in ax, DATA8
 				I286CLOCK(5)
 				lea		eax, [esi + 2]
 				add		eax, CS_BASE
-				mov		i286s.inport, eax
 				movzx	ecx, bh
 				call	iocore_inp16
 				mov		I286_AX, ax
@@ -4170,7 +4161,7 @@ I286 _sti(void) {								// FB: sti
 				test	I286_FLAG, T_FLAG
 				setne	I286_TRAP
 
-				cmp		i286s.prefix, 0			// ver0.26 00/10/08
+				cmp		i286reg.prefix, 0		// ver0.26 00/10/08
 				jne		prefix_exist			// 前方分岐ジャンプなので。
 noprefix:		movzx	eax, bl
 				call	i286op[eax*4]

@@ -138,7 +138,7 @@ I286FN _add_ax_data16(void) {					// 05: add ax, DATA16
 	I286_CLOCK(3)
 	GET_PCWORD(src);
 	ADDWORD(res, I286_AX, src);
-	I286_AX = (WORD)res;
+	I286_AX = (UINT16)res;
 }
 
 I286FN _push_es(void) {							// 06: push es
@@ -178,7 +178,7 @@ I286FN _or_ea_r8(void) {						// 08: or EA, REG8
 
 I286FN _or_ea_r16(void) {							// 09: or EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -192,10 +192,10 @@ I286FN _or_ea_r16(void) {							// 09: or EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ORWORD(dst, src);
-			i286_memorywrite_w(madr, (WORD)dst);
+			i286_memorywrite_w(madr, (UINT16)dst);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	ORWORD(*out, src);
 }
@@ -211,7 +211,7 @@ I286FN _or_r8_ea(void) {						// 0a: or REG8, EA
 
 I286FN _or_r16_ea(void) {						// 0b: or REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
@@ -269,7 +269,7 @@ I286FN _adc_ea_r8(void) {						// 10: adc EA, REG8
 
 I286FN _adc_ea_r16(void) {						// 11: adc EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -283,14 +283,14 @@ I286FN _adc_ea_r16(void) {						// 11: adc EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ADCWORD(res, dst, src);
-			i286_memorywrite_w(madr, (WORD)res);
+			i286_memorywrite_w(madr, (UINT16)res);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	dst = *out;
 	ADCWORD(res, dst, src);
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286FN _adc_r8_ea(void) {						// 12: adc REG8, EA
@@ -306,13 +306,13 @@ I286FN _adc_r8_ea(void) {						// 12: adc REG8, EA
 
 I286FN _adc_r16_ea(void) {						// 13: adc REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
 	dst = *out;
 	ADCWORD(res, dst, src);
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286FN _adc_al_data8(void) {					// 14: adc al, DATA8
@@ -332,7 +332,7 @@ I286FN _adc_ax_data16(void) {					// 15: adc ax, DATA16
 	I286_CLOCK(3)
 	GET_PCWORD(src);
 	ADCWORD(res, I286_AX, src);
-	I286_AX = (WORD)res;
+	I286_AX = (UINT16)res;
 }
 
 I286FN _push_ss(void) {							// 16: push ss
@@ -343,7 +343,7 @@ I286FN _push_ss(void) {							// 16: push ss
 I286FN _pop_ss(void) {							// 17: pop ss
 
 	REGPOP(I286_SS, 5)
-	SS_BASE = (DWORD)I286_SS << 4;
+	SS_BASE = I286_SS << 4;
 	SS_FIX = SS_BASE;
 	NEXT_OPCODE
 }
@@ -376,7 +376,7 @@ I286FN _sbb_ea_r8(void) {						// 18: sbb EA, REG8
 
 I286FN _sbb_ea_r16(void) {						// 19: sbb EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -390,14 +390,14 @@ I286FN _sbb_ea_r16(void) {						// 19: sbb EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			SBBWORD(res, dst, src);
-			i286_memorywrite_w(madr, (WORD)res);
+			i286_memorywrite_w(madr, (UINT16)res);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	dst = *out;
 	SBBWORD(res, dst, src);
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286FN _sbb_r8_ea(void) {						// 1a: sbb REG8, EA
@@ -413,13 +413,13 @@ I286FN _sbb_r8_ea(void) {						// 1a: sbb REG8, EA
 
 I286FN _sbb_r16_ea(void) {						// 1b: sbb REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
 	dst = *out;
 	SBBWORD(res, dst, src);
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286FN _sbb_al_data8(void) {					// 1c: adc al, DATA8
@@ -439,7 +439,7 @@ I286FN _sbb_ax_data16(void) {					// 1d: adc ax, DATA16
 	I286_CLOCK(3)
 	GET_PCWORD(src);
 	SBBWORD(res, I286_AX, src);
-	I286_AX = (WORD)res;
+	I286_AX = (UINT16)res;
 }
 
 I286FN _push_ds(void) {							// 1e: push ds
@@ -450,7 +450,7 @@ I286FN _push_ds(void) {							// 1e: push ds
 I286FN _pop_ds(void) {							// 1f: pop ds
 
 	REGPOP(I286_DS, 5)
-	DS_BASE = (DWORD)I286_DS << 4;
+	DS_BASE = I286_DS << 4;
 	DS_FIX = DS_BASE;
 }
 
@@ -480,7 +480,7 @@ I286FN _and_ea_r8(void) {						// 20: and EA, REG8
 
 I286FN _and_ea_r16(void) {						// 21: and EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -494,10 +494,10 @@ I286FN _and_ea_r16(void) {						// 21: and EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ANDWORD(dst, src);
-			i286_memorywrite_w(madr, (WORD)dst);
+			i286_memorywrite_w(madr, (UINT16)dst);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	ANDWORD(*out, src);
 }
@@ -513,7 +513,7 @@ I286FN _and_r8_ea(void) {						// 22: and REG8, EA
 
 I286FN _and_r16_ea(void) {						// 23: and REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
@@ -542,13 +542,13 @@ I286FN _segprefix_es(void) {					// 26: es:
 
 	SS_FIX = ES_BASE;
 	DS_FIX = ES_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -602,7 +602,7 @@ I286FN _sub_ea_r8(void) {						// 28: sub EA, REG8
 
 I286FN _sub_ea_r16(void) {						// 29: sub EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -616,14 +616,14 @@ I286FN _sub_ea_r16(void) {						// 29: sub EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			WORD_SUB(res, dst, src);
-			i286_memorywrite_w(madr, (WORD)res);
+			i286_memorywrite_w(madr, (UINT16)res);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	dst = *out;
 	WORD_SUB(res, dst, src);
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286FN _sub_r8_ea(void) {						// 2a: sub REG8, EA
@@ -639,13 +639,13 @@ I286FN _sub_r8_ea(void) {						// 2a: sub REG8, EA
 
 I286FN _sub_r16_ea(void) {						// 2b: sub REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
 	dst = *out;
 	WORD_SUB(res, dst, src);
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286FN _sub_al_data8(void) {					// 2c: sub al, DATA8
@@ -665,20 +665,20 @@ I286FN _sub_ax_data16(void) {					// 2d: sub ax, DATA16
 	I286_CLOCK(3)
 	GET_PCWORD(src);
 	WORD_SUB(res, I286_AX, src);
-	I286_AX = (WORD)res;
+	I286_AX = (UINT16)res;
 }
 
 I286FN _segprefix_cs(void) {					// 2e: cs:
 
 	SS_FIX = CS_BASE;
 	DS_FIX = CS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -727,7 +727,7 @@ I286FN _xor_ea_r8(void) {						// 30: xor EA, REG8
 
 I286FN _xor_ea_r16(void) {						// 31: xor EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -741,10 +741,10 @@ I286FN _xor_ea_r16(void) {						// 31: xor EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			WORD_XOR(dst, src);
-			i286_memorywrite_w(madr, (WORD)dst);
+			i286_memorywrite_w(madr, (UINT16)dst);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	WORD_XOR(*out, src);
 }
@@ -760,7 +760,7 @@ I286FN _xor_r8_ea(void) {						// 32: xor REG8, EA
 
 I286FN _xor_r16_ea(void) {						// 33: or REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src;
 
 	PREPART_REG16_EA(op, src, out, 2, 7);
@@ -789,13 +789,13 @@ I286FN _segprefix_ss(void) {					// 36: cs:
 
 	SS_FIX = SS_BASE;
 	DS_FIX = SS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -861,7 +861,7 @@ I286FN _cmp_r8_ea(void) {						// 3a: cmp REG8, EA
 
 I286FN _cmp_r16_ea(void) {						// 3b: cmp REG16, EA
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, dst, res;
 
 	PREPART_REG16_EA(op, src, out, 2, 6);
@@ -891,13 +891,13 @@ I286FN _segprefix_ds(void) {					// 3e: ds:
 
 	SS_FIX = DS_BASE;
 	DS_FIX = DS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -953,8 +953,9 @@ I286_P _pop_di(void) REGPOP(I286_DI, 5)		// 5F:	pop		di
 
 I286_P _pusha(void) {						// 60:	pusha
 
-	WORD	tmp = I286_SP;
+	UINT16	tmp;
 
+	tmp = I286_SP;
 	REGPUSH0(I286_AX)
 	REGPUSH0(I286_CX)
 	REGPUSH0(I286_DX)
@@ -984,7 +985,7 @@ I286_P _bound(void) {						// 62:	bound
 	DWORD	vect = 0;
 	DWORD	op;
 	DWORD	madr;
-	WORD	reg;
+	UINT16	reg;
 
 	I286_CLOCK(13);										// ToDo
 	GET_PCBYTE(op);
@@ -1019,7 +1020,7 @@ I286_P _arpl(void) {						// 63:	arpl
 
 I286_P _push_data16(void) {				// 68:	push	DATA16
 
-	WORD	tmp;
+	UINT16	tmp;
 
 	GET_PCWORD(tmp)
 	REGPUSH(tmp, 3)
@@ -1027,7 +1028,7 @@ I286_P _push_data16(void) {				// 68:	push	DATA16
 
 I286_P _imul_reg_ea_data16(void) {		// 69:	imul	REG, EA, DATA16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op;
 	short	src, dst;
 	long	res;
@@ -1035,12 +1036,12 @@ I286_P _imul_reg_ea_data16(void) {		// 69:	imul	REG, EA, DATA16
 	PREPART_REG16_EA(op, src, out, 21, 24)
 	GET_PCWORD(dst)
 	WORD_IMUL(res, dst, src)
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286_P _push_data8(void) {				// 6A:	push	DATA8
 
-	WORD	tmp;
+	UINT16	tmp;
 
 	GET_PCBYTES(tmp)
 	REGPUSH(tmp, 3)
@@ -1048,7 +1049,7 @@ I286_P _push_data8(void) {				// 6A:	push	DATA8
 
 I286_P _imul_reg_ea_data8(void) {		// 6B:	imul	REG, EA, DATA8
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op;
 	short	src, dst;
 	long	res;
@@ -1056,7 +1057,7 @@ I286_P _imul_reg_ea_data8(void) {		// 6B:	imul	REG, EA, DATA8
 	PREPART_REG16_EA(op, src, out, 21, 24)
 	GET_PCBYTES(dst)
 	WORD_IMUL(res, dst, src)
-	*out = (WORD)res;
+	*out = (UINT16)res;
 }
 
 I286_P _insb(void) {						// 6C:	insb
@@ -1071,7 +1072,7 @@ I286_P _insb(void) {						// 6C:	insb
 
 I286_P _insw(void) {						// 6D:	insw
 
-	WORD	dat;
+	UINT16	dat;
 
 	I286_CLOCK(5)
 	dat = iocore_inp16(I286_DX);
@@ -1091,7 +1092,7 @@ I286_P _outsb(void) {						// 6E:	outsb
 
 I286_P _outsw(void) {						// 6F:	outsw
 
-	WORD	dat;
+	UINT16	dat;
 
 	I286_CLOCK(3)
 	dat = i286_memoryread_w(I286_SI + DS_FIX);
@@ -1208,7 +1209,7 @@ I286_P _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
 
 I286_P _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, madr, src;
 
 	GET_PCBYTE(op)
@@ -1224,7 +1225,7 @@ I286_P _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 			c_op8xext16_table[(op >> 3) & 7](madr, src);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	GET_PCWORD(src);
 	c_op8xreg16_table[(op >> 3) & 7](out, src);
@@ -1232,7 +1233,7 @@ I286_P _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 
 I286_P _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, madr, src;
 
 	GET_PCBYTE(op)
@@ -1248,7 +1249,7 @@ I286_P _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
 			c_op8xext16_table[(op >> 3) & 7](madr, src);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	GET_PCBYTES(src);
 	c_op8xreg16_table[(op >> 3) & 7](out, src);
@@ -1280,7 +1281,7 @@ I286_P _test_ea_r8(void) {					// 84:	test	EA, REG8
 
 I286_P _test_ea_r16(void) {					// 85:	test	EA, REG16
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, src, tmp, madr;
 
 	PREPART_EA_REG16(op, src);
@@ -1296,7 +1297,7 @@ I286_P _test_ea_r16(void) {					// 85:	test	EA, REG16
 			ANDWORD(tmp, src);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	tmp = *out;
 	ANDWORD(tmp, src);
@@ -1328,7 +1329,7 @@ I286_P _xchg_ea_r8(void) {					// 86:	xchg	EA, REG8
 
 I286_P _xchg_ea_r16(void) {					// 87:	xchg	EA, REG16
 
-	WORD	*out, *src;
+	UINT16	*out, *src;
 	DWORD	op, madr;
 
 	PREPART_EA_REG16P(op, src);
@@ -1345,7 +1346,7 @@ I286_P _xchg_ea_r16(void) {					// 87:	xchg	EA, REG16
 			*src = tmp;
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	SWAPWORD(*out, *src);
 }
@@ -1369,7 +1370,7 @@ I286_P _mov_ea_r8(void) {					// 88:	mov		EA, REG8
 
 I286_P _mov_ea_r16(void) {					// 89:	mov		EA, REG16
 
-	WORD	src;
+	UINT16	src;
 	DWORD	op;
 
 	PREPART_EA_REG16(op, src);
@@ -1395,8 +1396,8 @@ I286_P _mov_r8_ea(void) {					// 8A:	mov		REG8, EA
 
 I286_P _mov_r16_ea(void) {					// 8B:	mov		REG16, EA
 
-	WORD	*out;
-	WORD	src;
+	UINT16	*out;
+	UINT16	src;
 	DWORD	op;
 
 	PREPART_REG16_EA(op, src, out, 2, 5);
@@ -1406,7 +1407,7 @@ I286_P _mov_r16_ea(void) {					// 8B:	mov		REG16, EA
 I286_P _mov_ea_seg(void) {					// 8C:	mov		EA, segreg
 
 	DWORD	op;
-	WORD	tmp;
+	UINT16	tmp;
 
 	GET_PCBYTE(op);
 	tmp = *SEGMENTPTR((op >> 3) & 3);
@@ -1437,8 +1438,8 @@ I286_P _lea_r16_ea(void) {					// 8D:	lea		REG16, EA
 I286_P _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 
 	DWORD	op;
-	WORD	tmp;
-	WORD	ipbak;
+	UINT	tmp;
+	UINT16	ipbak;
 
 	ipbak = I286_IP;
 	GET_PCBYTE(op);
@@ -1452,20 +1453,20 @@ I286_P _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 	}
 	switch(op & 0x18) {
 		case 0x00:			// es
-			I286_ES = tmp;
-			ES_BASE = (DWORD)tmp << 4;
+			I286_ES = (UINT16)tmp;
+			ES_BASE = tmp << 4;
 			break;
 
 		case 0x10:			// ss
-			I286_SS = tmp;
-			SS_BASE = (DWORD)tmp << 4;
+			I286_SS = (UINT16)tmp;
+			SS_BASE = tmp << 4;
 			SS_FIX = SS_BASE;
 			NEXT_OPCODE
 			break;
 
 		case 0x18:			// ds
-			I286_DS = tmp;
-			DS_BASE = (DWORD)tmp << 4;
+			I286_DS = (UINT16)tmp;
+			DS_BASE = tmp << 4;
 			DS_FIX = DS_BASE;
 			break;
 
@@ -1478,7 +1479,7 @@ I286_P _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 I286_P _pop_ea(void) {						// 8F:	pop		EA
 
 	DWORD	op;
-	WORD	tmp;
+	UINT16	tmp;
 
 	I286_CLOCK(5)
 	REGPOP0(tmp)
@@ -1495,16 +1496,16 @@ I286_P _pop_ea(void) {						// 8F:	pop		EA
 I286_P _nop(void) {							// 90: nop / bios func
 
 #if 1										// call BIOS
-	DWORD	adrs;
+	UINT32	adrs;
 
 	adrs = ((I286_IP - 1) & 0xffff) + CS_BASE;
 	if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
 		biosfunc(adrs);
-		ES_BASE = (DWORD)I286_ES << 4;
-		CS_BASE = (DWORD)I286_CS << 4;
-		SS_BASE = (DWORD)I286_SS << 4;
+		ES_BASE = I286_ES << 4;
+		CS_BASE = I286_CS << 4;
+		SS_BASE = I286_SS << 4;
 		SS_FIX = SS_BASE;
-		DS_BASE = (DWORD)I286_DS << 4;
+		DS_BASE = I286_DS << 4;
 		DS_FIX = DS_BASE;
 	}
 #endif
@@ -1567,13 +1568,13 @@ I286_P _cwd(void) {							// 99:	cwd
 
 I286_P _call_far(void) {					// 9A:	call far
 
-	WORD	newip;
+	UINT16	newip;
 
 	I286_CLOCK(13)
 	REGPUSH0(I286_CS)
 	GET_PCWORD(newip)
 	GET_PCWORD(I286_CS)
-	CS_BASE = (DWORD)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 	REGPUSH0(I286_IP)
 	I286_IP = newip;
 }
@@ -1659,7 +1660,7 @@ I286_P _movsb(void) {						// A4:	movsb
 
 I286_P _movsw(void) {						// A5:	movsw
 
-	WORD	tmp;
+	UINT16	tmp;
 
 	I286_CLOCK(5)
 	tmp = i286_memoryread_w(I286_SI + DS_FIX);
@@ -1808,7 +1809,7 @@ I286_P _shift_ea8_data8(void) {				// C0:	shift	EA8, DATA8
 
 I286_P _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, madr;
 	BYTE	cl;
 
@@ -1826,7 +1827,7 @@ I286_P _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 			sft_e16cl_table[(op >> 3) & 7](madr, cl);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	GET_PCBYTE(cl);
 	I286_CLOCK(cl);
@@ -1835,7 +1836,7 @@ I286_P _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 
 I286_P _ret_near_data16(void) {				// C2:	ret near DATA16
 
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(11)
 	GET_PCWORD(ad)
@@ -1852,7 +1853,7 @@ I286_P _ret_near(void) {					// C3:	ret near
 I286_P _les_r16_ea(void) {					// C4:	les		REG16, EA
 
 	DWORD	op;
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(3)
 	GET_PCBYTE(op)
@@ -1861,7 +1862,7 @@ I286_P _les_r16_ea(void) {					// C4:	les		REG16, EA
 		*(reg16_b53[op]) = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		I286_ES = i286_memoryread_w(ad + EA_FIX);
-		ES_BASE = (DWORD)I286_ES << 4;
+		ES_BASE = I286_ES << 4;
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -1871,7 +1872,7 @@ I286_P _les_r16_ea(void) {					// C4:	les		REG16, EA
 I286_P _lds_r16_ea(void) {					// C5:	lds		REG16, EA
 
 	DWORD	op;
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(3)
 	GET_PCBYTE(op)
@@ -1917,8 +1918,8 @@ I286_P _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 		GET_PCWORD(*(reg16_b53[op]))
 	}
 	else {
-		WORD	ad;
-		WORD	val;
+		UINT	ad;
+		UINT16	val;
 		I286_CLOCK(3)
 		ad = c_get_ea[op]();
 		GET_PCWORD(val)
@@ -1928,7 +1929,7 @@ I286_P _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 
 I286_P _enter(void) {						// C8:	enter	DATA16, DATA8
 
-	WORD	dimsize;
+	UINT16	dimsize;
 	BYTE	level;
 
 	GET_PCWORD(dimsize)
@@ -1943,7 +1944,7 @@ I286_P _enter(void) {						// C8:	enter	DATA16, DATA8
 	else {
 		level--;
 		if (!level) {							// enter level=1
-			WORD tmp;
+			UINT16 tmp;
 			I286_CLOCK(15)
 			tmp = I286_SP;
 			REGPUSH0(tmp)
@@ -1951,12 +1952,12 @@ I286_P _enter(void) {						// C8:	enter	DATA16, DATA8
 			I286_SP -= dimsize;
 		}
 		else {									// enter level=2-31
-			WORD	bp;
+			UINT16 bp;
 			I286_CLOCK(12 + level*4)
 			bp = I286_BP;
 			I286_BP = I286_SP;
 			while(level--) {
-				WORD val = i286_memoryread_w(bp + SS_BASE);
+				UINT16 val = i286_memoryread_w(bp + SS_BASE);
 				i286_memorywrite_w(I286_SP + SS_BASE, val);
 				bp -= 2;
 				I286_SP -= 2;
@@ -1976,14 +1977,14 @@ I286_P leave(void) {						// C9:	leave
 
 I286_P _ret_far_data16(void) {				// CA:	ret far	DATA16
 
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(15)
 	GET_PCWORD(ad)
 	REGPOP0(I286_IP)
 	REGPOP0(I286_CS)
 	I286_SP += ad;
-	CS_BASE = (DWORD)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 }
 
 I286_P _ret_far(void) {						// CB:	ret far
@@ -1991,7 +1992,7 @@ I286_P _ret_far(void) {						// CB:	ret far
 	I286_CLOCK(15)
 	REGPOP0(I286_IP)
 	REGPOP0(I286_CS)
-	CS_BASE = (DWORD)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 }
 
 I286_P _int_03(void) {						// CC:	int		3
@@ -2028,7 +2029,7 @@ I286_P _iret(void) {						// CF:	iret
 	I286_OV = I286_FLAG & O_FLAG;
 	I286_FLAG &= 0x7ff;
 	I286_TRAP = ((I286_FLAG & 0x300) == 0x300);
-	CS_BASE = (DWORD)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 	I286IRQCHECKTERM
 }
 
@@ -2056,7 +2057,7 @@ I286_P _shift_ea8_1(void) {				// D0:	shift EA8, 1
 
 I286_P _shift_ea16_1(void) {			// D1:	shift EA16, 1
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, madr;
 
 	GET_PCBYTE(op)
@@ -2071,7 +2072,7 @@ I286_P _shift_ea16_1(void) {			// D1:	shift EA16, 1
 			sft_e16_table[(op >> 3) & 7](madr);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	sft_r16_table[(op >> 3) & 7](out);
 }
@@ -2105,7 +2106,7 @@ I286_P _shift_ea8_cl(void) {			// D2:	shift EA8, cl
 
 I286_P _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 
-	WORD	*out;
+	UINT16	*out;
 	DWORD	op, madr;
 	BYTE	cl;
 
@@ -2123,7 +2124,7 @@ I286_P _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 			sft_e16cl_table[(op >> 3) & 7](madr, cl);
 			return;
 		}
-		out = (WORD *)(mem + madr);
+		out = (UINT16 *)(mem + madr);
 	}
 	cl = I286_CL;
 	I286_CLOCK(cl);
@@ -2209,16 +2210,18 @@ I286_P _jcxz(void) {						// E3:	jcxz
 
 I286_P _in_al_data8(void) {					// E4:	in		al, DATA8
 
-	WORD	port;
+	UINT	port;
 
 	I286_CLOCK(5)
 	GET_PCBYTE(port)
+	i286reg.inport = CS_BASE + I286_IP;
 	I286_AL = iocore_inp8(port);
+	i286reg.inport = 0;
 }
 
 I286_P _in_ax_data8(void) {					// E5:	in		ax, DATA8
 
-	WORD	port;
+	UINT	port;
 
 	I286_CLOCK(5)
 	GET_PCBYTE(port)
@@ -2227,7 +2230,7 @@ I286_P _in_ax_data8(void) {					// E5:	in		ax, DATA8
 
 I286_P _out_data8_al(void) {				// E6:	out		DATA8, al
 
-	WORD	port;
+	UINT	port;
 
 	I286_CLOCK(3)
 	GET_PCBYTE(port);
@@ -2236,7 +2239,7 @@ I286_P _out_data8_al(void) {				// E6:	out		DATA8, al
 
 I286_P _out_data8_ax(void) {				// E7:	out		DATA8, ax
 
-	WORD	port;
+	UINT	port;
 
 	I286_CLOCK(3)
 	GET_PCBYTE(port);
@@ -2245,7 +2248,7 @@ I286_P _out_data8_ax(void) {				// E7:	out		DATA8, ax
 
 I286_P _call_near(void) {					// E8:	call near
 
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(7)
 	GET_PCWORD(ad)
@@ -2255,7 +2258,7 @@ I286_P _call_near(void) {					// E8:	call near
 
 I286_P _jmp_near(void) {					// E9:	jmp near
 
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(7)
 	GET_PCWORD(ad)
@@ -2264,18 +2267,18 @@ I286_P _jmp_near(void) {					// E9:	jmp near
 
 I286_P _jmp_far(void) {						// EA:	jmp far
 
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(11)
 	GET_PCWORD(ad);
 	GET_PCWORD(I286_CS);
-	CS_BASE = (DWORD)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 	I286_IP = ad;
 }
 
 I286_P _jmp_short(void) {					// EB:	jmp short
 
-	WORD	ad;
+	UINT16	ad;
 
 	I286_CLOCK(7)
 	GET_PCBYTES(ad)
@@ -2313,12 +2316,12 @@ I286_P _lock(void) {						// F0:	lock
 
 I286_P _repne(void) {						// F2:	repne
 
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2327,12 +2330,12 @@ I286_P _repne(void) {						// F2:	repne
 
 I286_P _repe(void) {						// F3:	repe
 
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2706,13 +2709,13 @@ I286_P _repe_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2723,13 +2726,13 @@ I286_P _repe_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2740,13 +2743,13 @@ I286_P _repe_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -2757,13 +2760,13 @@ I286_P _repe_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repe[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3051,13 +3054,13 @@ I286_P _repne_segprefix_es(void) {
 
 	DS_FIX = ES_BASE;
 	SS_FIX = ES_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3068,13 +3071,13 @@ I286_P _repne_segprefix_cs(void) {
 
 	DS_FIX = CS_BASE;
 	SS_FIX = CS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3085,13 +3088,13 @@ I286_P _repne_segprefix_ss(void) {
 
 	DS_FIX = SS_BASE;
 	SS_FIX = SS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3102,13 +3105,13 @@ I286_P _repne_segprefix_ds(void) {
 
 	DS_FIX = DS_BASE;
 	SS_FIX = DS_BASE;
-	i286s.prefix++;
-	if (i286s.prefix < MAX_PREFIX) {
+	i286reg.prefix++;
+	if (i286reg.prefix < MAX_PREFIX) {
 		DWORD	op;
 		GET_PCBYTE(op);
 		i286op_repne[op]();
 		REMOVE_PREFIX
-		i286s.prefix = 0;
+		i286reg.prefix = 0;
 	}
 	else {
 		INT_NUM(6, I286_IP);
@@ -3408,7 +3411,7 @@ void INTR_CALL i286c_interrupt(BYTE vect) {
 	REGPUSH0(I286_IP)
 	I286_IP = GETWORD(mem + vect*4);			// real mode!
 	I286_CS = GETWORD(mem + vect*4 + 2);		// real mode!
-	CS_BASE = (DWORD)I286_CS << 4;
+	CS_BASE = I286_CS << 4;
 	I286_CLOCK(20)
 }
 

@@ -8,11 +8,7 @@
 #include	"i286c.mcr"
 
 
-	I286REGS	i286r;
-	I286STAT	i286s;
-	I286DTR		GDTR;
-	I286DTR		IDTR;
-	UINT16		MSW;
+	I286REG		i286reg;
 
 const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 			0x44, 0x00, 0x00, 0x04, 0x00, 0x04, 0x04, 0x00,
@@ -99,16 +95,16 @@ void i286_initialize(void) {
 		pos = ((i & 0x20)?0:1);
 #endif
 		pos += ((i >> 3) & 3) * 2;
-		reg8_b53[i] = ((BYTE *)&i286r) + pos;
+		reg8_b53[i] = ((BYTE *)&I286_REG) + pos;
 #if defined(BYTESEX_LITTLE)
 		pos = ((i & 0x4)?1:0);
 #else
 		pos = ((i & 0x4)?0:1);
 #endif
 		pos += (i & 3) * 2;
-		reg8_b20[i] = ((BYTE *)&i286r) + pos;
-		reg16_b53[i] = ((UINT16 *)&i286r) + ((i >> 3) & 7);
-		reg16_b20[i] = ((UINT16 *)&i286r) + (i & 7);
+		reg8_b20[i] = ((BYTE *)&I286_REG) + pos;
+		reg16_b53[i] = ((UINT16 *)&I286_REG) + ((i >> 3) & 7);
+		reg16_b20[i] = ((UINT16 *)&I286_REG) + (i & 7);
 	}
 
 	for (i=0; i<0xc0; i++) {
@@ -140,13 +136,9 @@ void i286_initialize(void) {
 void i286_reset(void) {
 
 	i286_initialize();
-	ZeroMemory(&i286r, sizeof(i286r));
-	ZeroMemory(&i286s, sizeof(i286s));
+	ZeroMemory(&i286reg, sizeof(i286reg));
 	I286_CS = 0x1fc0;
 	CS_BASE = 0x1fc00;
-	ZeroMemory(&GDTR, sizeof(GDTR));
-	ZeroMemory(&IDTR, sizeof(IDTR));
-	MSW = 0;
 }
 
 void i286_resetprefetch(void) {

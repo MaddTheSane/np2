@@ -13,7 +13,7 @@
 
 
 #define		I286PREFIX(proc)								\
-				__asm {	bts		i286s.prefix, 0			}	\
+				__asm {	bts		i286reg.prefix, 0		}	\
 				__asm {	jc		fixed					}	\
 				__asm {	mov		REPPOSBAK, esi			}	\
 				__asm {	push	offset removeprefix		}	\

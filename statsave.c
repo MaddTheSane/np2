@@ -43,7 +43,6 @@ typedef struct {
 enum {
 	NP2FLAG_BIN			= 0,
 	NP2FLAG_TERM,
-	NP2FLAG_286,
 	NP2FLAG_CORE,
 	NP2FLAG_DMA,
 	NP2FLAG_EGC,
@@ -345,32 +344,6 @@ static int flagsave_common(NP2FFILE *f, const STENTRY *t) {
 static int flagload_common(NP2FFILE *f, const STENTRY *t) {
 
 	return(flagload_load(f, t->arg1, t->arg2));
-}
-
-
-// -----
-
-static int flagsave_286(NP2FFILE *f, const STENTRY *t) {
-
-	int		ret;
-
-	ret = flagsave_create(f, t);
-	if (ret != NP2FLAG_FAILURE) {
-		ret |= flagsave_save(f, &i286r, sizeof(I286REGS));
-		ret |= flagsave_save(f, &i286s, sizeof(I286STAT));
-		ret |= flagsave_close(f);
-	}
-	return(ret);
-}
-
-static int flagload_286(NP2FFILE *f, const STENTRY *t) {
-
-	int		ret;
-
-	ret = flagload_load(f, &i286r, sizeof(I286REGS));
-	ret |= flagload_load(f, &i286s, sizeof(I286STAT));
-	(void)t;
-	return(ret);
 }
 
 
@@ -1210,10 +1183,6 @@ int statsave_save(const char *filename) {
 				ret |= flagsave_term(&f, &np2tbl[i]);
 				break;
 
-			case NP2FLAG_286:
-				ret |= flagsave_286(&f, &np2tbl[i]);
-				break;
-
 			case NP2FLAG_DMA:
 				ret |= flagsave_dma(&f, &np2tbl[i]);
 				break;
@@ -1296,7 +1265,6 @@ int statsave_check(const char *filename, char *buf, int size) {
 						done = TRUE;
 						break;
 
-					case NP2FLAG_286:
 					case NP2FLAG_CORE:
 					case NP2FLAG_DMA:
 					case NP2FLAG_EGC:
@@ -1374,10 +1342,6 @@ int statsave_load(const char *filename) {
 
 				case NP2FLAG_TERM:
 					done = TRUE;
-					break;
-
-				case NP2FLAG_286:
-					ret |= flagload_286(&f, &np2tbl[i]);
 					break;
 
 				case NP2FLAG_CORE:

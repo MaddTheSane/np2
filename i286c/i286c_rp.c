@@ -13,7 +13,7 @@ I286EXT i286c_rep_insb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			BYTE dat = iocore_inp8(I286_DX);
 			i286_memorywrite(I286_DI + ES_BASE, dat);
@@ -27,7 +27,7 @@ I286EXT i286c_rep_insw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			WORD dat = iocore_inp16(I286_DX);
 			i286_memorywrite_w(I286_DI + ES_BASE, dat);
@@ -43,7 +43,7 @@ I286EXT i286c_rep_outsb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			BYTE dat = i286_memoryread(I286_SI + DS_FIX);
 			I286_SI += stp;
@@ -57,7 +57,7 @@ I286EXT i286c_rep_outsw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			WORD dat = i286_memoryread_w(I286_SI + DS_FIX);
 			I286_SI += stp;
@@ -73,7 +73,7 @@ I286EXT i286c_rep_movsb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			BYTE dat = i286_memoryread(I286_SI + DS_FIX);
 			i286_memorywrite(I286_DI + ES_BASE, dat);
@@ -88,7 +88,7 @@ I286EXT i286c_rep_movsw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			WORD dat = i286_memoryread_w(I286_SI + DS_FIX);
 			i286_memorywrite_w(I286_DI + ES_BASE, dat);
@@ -105,7 +105,7 @@ I286EXT i286c_rep_lodsb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			I286_AL = i286_memoryread(I286_SI + DS_FIX);
 			I286_SI += stp;
@@ -118,7 +118,7 @@ I286EXT i286c_rep_lodsw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			I286_AX = i286_memoryread_w(I286_SI + DS_FIX);
 			I286_SI += stp;
@@ -133,7 +133,7 @@ I286EXT i286c_rep_stosb(void) {
 
 	I286_CLOCK(4)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			i286_memorywrite(I286_DI + ES_BASE, I286_AL);
 			I286_DI += stp;
@@ -146,7 +146,7 @@ I286EXT i286c_rep_stosw(void) {
 
 	I286_CLOCK(4)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			i286_memorywrite_w(I286_DI + ES_BASE, I286_AX);
 			I286_DI += stp;
@@ -161,7 +161,7 @@ I286EXT i286c_repe_cmpsb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			DWORD res;
 			DWORD dst = i286_memoryread(I286_SI + DS_FIX);
@@ -179,7 +179,7 @@ I286EXT i286c_repne_cmpsb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		do {
 			DWORD res;
 			DWORD dst = i286_memoryread(I286_SI + DS_FIX);
@@ -197,7 +197,7 @@ I286EXT i286c_repe_cmpsw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			DWORD res;
 			DWORD dst = i286_memoryread_w(I286_SI + DS_FIX);
@@ -215,7 +215,7 @@ I286EXT i286c_repne_cmpsw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		do {
 			DWORD res;
 			DWORD dst = i286_memoryread_w(I286_SI + DS_FIX);
@@ -235,7 +235,7 @@ I286EXT i286c_repe_scasb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		DWORD dst = I286_AL;
 		do {
 			DWORD res;
@@ -252,7 +252,7 @@ I286EXT i286c_repne_scasb(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIR;
+		SINT16 stp = STRING_DIR;
 		DWORD dst = I286_AL;
 		do {
 			DWORD res;
@@ -269,7 +269,7 @@ I286EXT i286c_repe_scasw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		DWORD dst = I286_AX;
 		do {
 			DWORD res;
@@ -286,7 +286,7 @@ I286EXT i286c_repne_scasw(void) {
 
 	I286_CLOCK(5)
 	if (I286_CX) {
-		WORD stp = STRING_DIRx2;
+		SINT16 stp = STRING_DIRx2;
 		DWORD dst = I286_AX;
 		do {
 			DWORD res;

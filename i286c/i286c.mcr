@@ -1,7 +1,7 @@
 
 #define	INHIBIT_WORDP(m)	(1)
 
-#define	__CBW(src)		(WORD)((char)(src))
+#define	__CBW(src)		(UINT16)((char)(src))
 #define	__CBD(src)		((char)(src))
 #define	WORD2LONG(src)	((short)(src))
 
