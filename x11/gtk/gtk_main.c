@@ -206,6 +206,9 @@ set_icon_bitmap(GtkWidget *w)
  */
 static int install_count = 0;
 static int idle_id;
+#if defined(SUPPORT_JOYSTICK)
+static int joymng_task_id;
+#endif
 
 void
 install_idle_process(void)
@@ -319,6 +322,9 @@ void
 gui_gtk_widget_mainloop(void)
 {
 
+#if defined(SUPPORT_JOYSTICK)
+	joymng_task_id = gtk_idle_add((GtkFunction)joymng_update_task, NULL);
+#endif
 	install_idle_process();
 	gtk_main();
 	uninstall_idle_process();
@@ -328,6 +334,9 @@ void
 gui_gtk_widget_quit(void)
 {
 
+#if defined(SUPPORT_JOYSTICK)
+	gtk_idle_remove(joymng_task_id);
+#endif
 	taskmng_exit();
 	gtk_main_quit();
 }
