@@ -1,3 +1,5 @@
-extern void (*p_ea_dst[256])(void);
-extern void (*p_lea[256])(void);
-extern void (*p_get_ea[256])(void);
+
+extern	I286TBL	p_ea_dst[256];
+extern	I286TBL	p_lea[256];
+extern	I286TBL	p_get_ea[256];
+

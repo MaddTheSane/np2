@@ -2,6 +2,7 @@
 #include	"cpucore.h"
 #include	"i286x.h"
 #include	"i286xadr.h"
+#include	"i286xs.h"
 #include	"i286x.mcr"
 #include	"i286xea.mcr"
 
@@ -161,12 +162,12 @@ I286 cmp_ext8_i(void) {
 
 
 									// dest: I286_REG[eax] src: dl
-void (*op8xreg8_xtable[])(void) = {
+const I286TBL op8xreg8_xtable[8] = {
 		add_r8_i,		or_r8_i,		adc_r8_i,		sbb_r8_i,
 		and_r8_i,		sub_r8_i,		xor_r8_i,		cmp_r8_i};
 
 									// dest: ecx  src: dl
-void (*op8xext8_xtable[])(void) = {
+const I286TBL op8xext8_xtable[8] = {
 		add_ext8_i,		or_ext8_i,		adc_ext8_i,		sbb_ext8_i,
 		and_ext8_i,		sub_ext8_i,		xor_ext8_i,		cmp_ext8_i};
 
@@ -328,12 +329,12 @@ I286 cmp_ext16_i(void) {
 
 
 									// dest: ebp src: bx
-void (*op8xreg16_xtable[])(void) = {
+const I286TBL op8xreg16_xtable[8] = {
 		add_r16_i,		or_r16_i,		adc_r16_i,		sbb_r16_i,
 		and_r16_i,		sub_r16_i,		xor_r16_i,		cmp_r16_i};
 
 									// dest: [ecx]=dx  src: bx
-void (*op8xext16_xtable[])(void) = {
+const I286TBL op8xext16_xtable[8] = {
 		add_ext16_i,	or_ext16_i,		adc_ext16_i,	sbb_ext16_i,
 		and_ext16_i,	sub_ext16_i,	xor_ext16_i,	cmp_ext16_i};
 
@@ -416,7 +417,7 @@ I286 cmp_ext16a_i(void) {
 }
 
 									// dest: [ecx]=dx  src: ax
-void (*op8xext16_atable[])(void) = {
+const I286TBL op8xext16_atable[8] = {
 		add_ext16a_i,	or_ext16a_i,	adc_ext16a_i,	sbb_ext16a_i,
 		and_ext16a_i,	sub_ext16a_i,	xor_ext16a_i,	cmp_ext16a_i};
 
@@ -661,15 +662,15 @@ I286 sar_ext8_1(void) {
 }
 
 
-void (*sftreg8_xtable[])(void) = {
+const I286TBL sftreg8_xtable[8] = {
 		rol_r8_1,		ror_r8_1,		rcl_r8_1,		rcr_r8_1,
 		shl_r8_1,		shr_r8_1,		shl_r8_1,		sar_r8_1};
 
-void (*sftmem8_xtable[])(void) = {
+const I286TBL sftmem8_xtable[8] = {
 		rol_mem8_1,		ror_mem8_1,		rcl_mem8_1,		rcr_mem8_1,
 		shl_mem8_1,		shr_mem8_1,		shl_mem8_1,		sar_mem8_1};
 
-void (*sftext8_xtable[])(void) = {
+const I286TBL sftext8_xtable[8] = {
 		rol_ext8_1,		ror_ext8_1,		rcl_ext8_1,		rcr_ext8_1,
 		shl_ext8_1,		shr_ext8_1,		shl_ext8_1,		sar_ext8_1};
 
@@ -914,15 +915,15 @@ I286 sar_ext16_1(void) {
 }
 
 
-void (*sftreg16_xtable[])(void) = {
+const I286TBL sftreg16_xtable[8] = {
 		rol_r16_1,		ror_r16_1,		rcl_r16_1,		rcr_r16_1,
 		shl_r16_1,		shr_r16_1,		shl_r16_1,		sar_r16_1};
 
-void (*sftmem16_xtable[])(void) = {
+const I286TBL sftmem16_xtable[8] = {
 		rol_mem16_1,	ror_mem16_1,	rcl_mem16_1,	rcr_mem16_1,
 		shl_mem16_1,	shr_mem16_1,	shl_mem16_1,	sar_mem16_1};
 
-void (*sftext16_xtable[])(void) = {
+const I286TBL sftext16_xtable[8] = {
 		rol_ext16_1,	ror_ext16_1,	rcl_ext16_1,	rcr_ext16_1,
 		shl_ext16_1,	shr_ext16_1,	shl_ext16_1,	sar_ext16_1};
 
@@ -1096,11 +1097,11 @@ I286 sar_ext8_cl(void) {
 }
 
 
-void (*sftreg8cl_xtable[])(void) = {
+const I286TBL sftreg8cl_xtable[8] = {
 		rol_r8_cl,		ror_r8_cl,		rcl_r8_cl,		rcr_r8_cl,
 		shl_r8_cl,		shr_r8_cl,		shl_r8_cl,		sar_r8_cl};
 
-void (*sftext8cl_xtable[])(void) = {
+const I286TBL sftext8cl_xtable[8] = {
 		rol_ext8_cl,	ror_ext8_cl,	rcl_ext8_cl,	rcr_ext8_cl,
 		shl_ext8_cl,	shr_ext8_cl,	shl_ext8_cl,	sar_ext8_cl};
 
@@ -1274,11 +1275,11 @@ I286 sar_ext16_cl(void) {
 }
 
 
-void (*sftreg16cl_xtable[])(void) = {
+const I286TBL sftreg16cl_xtable[8] = {
 		rol_r16_cl,		ror_r16_cl,		rcl_r16_cl,		rcr_r16_cl,
 		shl_r16_cl,		shr_r16_cl,		shl_r16_cl,		sar_r16_cl};
 
-void (*sftext16cl_xtable[])(void) = {
+const I286TBL sftext16cl_xtable[8] = {
 		rol_ext16_cl,	ror_ext16_cl,	rcl_ext16_cl,	rcr_ext16_cl,
 		shl_ext16_cl,	shr_ext16_cl,	shl_ext16_cl,	sar_ext16_cl};
 
@@ -1396,6 +1397,7 @@ I286 imul_ea8(void) {
 I286 div_ea8(void) {
 
 		__asm {
+				push	esi
 				PREPART_EA8(14)
 					movzx	ebp, byte ptr I286_REG[eax]
 					GET_NEXTPRE2
@@ -1405,29 +1407,32 @@ I286 div_ea8(void) {
 					jmp		divcheck
 				EXTMEM_EA8
 					movzx	ebp, al
-					align	4
-		divcheck:
-					test	ebp, ebp
-					je		divovf
-					mov		ax, I286_AX
-					xor		dx, dx
-					div		bp
-					mov		I286_AL, al
-					mov		I286_AH, dl
-					mov		dx, ax
-					FLAG_STORE_OF
-					test	dh, dh
-					jne		divovf
-					ret
-					align	4
-		divovf:
-					INT_NUM(0)
+
+				align	4
+	divcheck:	test	ebp, ebp
+				je		divovf
+				mov		ax, I286_AX
+				xor		dx, dx
+				div		bp
+				mov		I286_AL, al
+				mov		I286_AH, dl
+				mov		dx, ax
+				FLAG_STORE_OF
+				test	dh, dh
+				jne		divovf
+				pop		eax
+				ret
+
+				align	4
+	divovf:		pop		esi
+				INT_NUM(0)
 		}
 }
 
 I286 idiv_ea8(void) {
 
 		__asm {
+				push	esi
 				PREPART_EA8(17)
 					movsx	ebp, byte ptr I286_REG[eax]
 					GET_NEXTPRE2
@@ -1437,24 +1442,26 @@ I286 idiv_ea8(void) {
 					jmp		idivcheck
 				EXTMEM_EA8
 					movsx	ebp, al
-					align	4
-		idivcheck:
-					test	ebp, ebp
-					je		idivovf
-					mov		ax, I286_AX
-					cwd
-					idiv	bp
-					mov		I286_AL, al
-					mov		I286_AH, dl
-					mov		dx, ax
-					FLAG_STORE_OF
-					bt		dx, 7
-					adc		dh, 0
-					jne		idivovf
-					ret
-					align	4
-		idivovf:
-					INT_NUM(0)
+
+				align	4
+	idivcheck:	test	ebp, ebp
+				je		idivovf
+				mov		ax, I286_AX
+				cwd
+				idiv	bp
+				mov		I286_AL, al
+				mov		I286_AH, dl
+				mov		dx, ax
+				FLAG_STORE_OF
+				bt		dx, 7
+				adc		dh, 0
+				jne		idivovf
+				pop		eax
+				ret
+
+				align	4
+	idivovf:	pop		esi
+				INT_NUM(0)
 		}
 }
 
@@ -1575,6 +1582,7 @@ I286 imul_ea16(void) {
 I286 div_ea16(void) {
 
 		__asm {
+				push	esi
 				PREPART_EA16(22)
 					movzx	ebp, word ptr I286_REG[eax*2]
 					GET_NEXTPRE2
@@ -1584,30 +1592,33 @@ I286 div_ea16(void) {
 					jmp		divcheck
 				EXTMEM_EA16
 					movzx	ebp, ax
-					align	4
-		divcheck:
-					test	ebp, ebp
-					je		divovf
-					movzx	eax, I286_DX
-					shl		eax, 16
-					mov		ax, I286_AX
-					xor		edx, edx
-					div		ebp
-					mov		I286_AX, ax
-					mov		I286_DX, dx
-					FLAG_STORE_OF
-					cmp		eax, 10000h
-					jae		divovf
-					ret
-					align	4
-			divovf:
-					INT_NUM(0)
+
+				align	4
+	divcheck:	test	ebp, ebp
+				je		divovf
+				movzx	eax, I286_DX
+				shl		eax, 16
+				mov		ax, I286_AX
+				xor		edx, edx
+				div		ebp
+				mov		I286_AX, ax
+				mov		I286_DX, dx
+				FLAG_STORE_OF
+				cmp		eax, 10000h
+				jae		divovf
+				pop		eax
+				ret
+
+				align	4
+	divovf:		pop		esi
+				INT_NUM(0)
 		}
 }
 
 I286 idiv_ea16(void) {
 
 		__asm {
+				push	esi
 				PREPART_EA16(25)
 					movsx	ebp, word ptr I286_REG[eax*2]
 					GET_NEXTPRE2
@@ -1618,36 +1629,38 @@ I286 idiv_ea16(void) {
 				EXTMEM_EA16
 					cwde
 					mov		ebp, eax
-					align	4
-		idivcheck:
-					test	ebp, ebp
-					je		idivovf
-					movzx	eax, I286_DX
-					shl		eax, 16
-					mov		ax, I286_AX
-					cdq
-					idiv	ebp
-					mov		I286_AX, ax
-					mov		I286_DX, dx
-					mov		edx, eax
-					FLAG_STORE_OF
-					shr		edx, 16
-					adc		dx, 0
-					jne		idivovf
-					ret
-					align	4
-		idivovf:
-					INT_NUM(0)
+
+				align	4
+	idivcheck:	test	ebp, ebp
+				je		idivovf
+				movzx	eax, I286_DX
+				shl		eax, 16
+				mov		ax, I286_AX
+				cdq
+				idiv	ebp
+				mov		I286_AX, ax
+				mov		I286_DX, dx
+				mov		edx, eax
+				FLAG_STORE_OF
+				shr		edx, 16
+				adc		dx, 0
+				jne		idivovf
+				pop		eax
+				ret
+
+				align	4
+	idivovf:	pop		esi
+				INT_NUM(0)
 		}
 }
 
-void (*ope0xf6_xtable[])(void) = {
+const I286TBL ope0xf6_xtable[8] = {
 			test_ea8_data8,		test_ea8_data8,
 			not_ea8,			neg_ea8,
 			mul_ea8,			imul_ea8,
 			div_ea8,			idiv_ea8};
 
-void (*ope0xf7_xtable[])(void) = {
+const I286TBL ope0xf7_xtable[8] = {
 			test_ea16_data16,	test_ea16_data16,
 			not_ea16,			neg_ea16,
 			mul_ea16,			imul_ea16,
@@ -1906,10 +1919,10 @@ I286 pop_ea16(void) {
 }
 
 
-void (*ope0xfe_xtable[])(void) = {
+const I286TBL ope0xfe_xtable[2] = {
 			inc_ea8,			dec_ea8};
 
-void (*ope0xff_xtable[])(void) = {
+const I286TBL ope0xff_xtable[8] = {
 			inc_ea16,			dec_ea16,
 			call_ea16,			call_far_ea16,
 			jmp_ea16,			jmp_far_ea16,

@@ -63,6 +63,9 @@
 #define I286 __declspec(naked) static void
 #define I286EXT __declspec(naked) void
 
+typedef void (*I286TBL)(void);
+
+
 #define		I286IRQCHECKTERM								\
 				__asm {	xor		eax, eax				}	\
 				__asm { cmp		I286_REMCLOCK, eax		}	\
@@ -88,13 +91,13 @@ extern void __fastcall i286x_localint(void);
 extern void __fastcall i286x_selector(void);
 extern void removeprefix(void);
 
-extern void (*i286op[])(void);
-extern void (*i286op_repne[])(void);
-extern void (*i286op_repe[])(void);
+extern const I286TBL i286op[256];
+extern const I286TBL i286op_repne[256];
+extern const I286TBL i286op_repe[256];
 
-extern void (*v30op[])(void);
-extern void (*v30op_repne[])(void);
-extern void (*v30op_repe[])(void);
+extern I286TBL v30op[256];
+extern I286TBL v30op_repne[256];
+extern I286TBL v30op_repe[256];
 
 void i286xadr_init(void);
 

@@ -15,8 +15,14 @@
 
 typedef struct {
 	UINT	opnum;
-	void	(*v30opcode)(void);
-} V30PATCH_T;
+	I286TBL	v30opcode;
+} V30PATCH;
+
+static	I286TBL v30op[256];
+static	I286TBL v30op_repne[256];
+static	I286TBL	v30op_repe[256];
+static	I286TBL	v30ope0xf6_xtable[8];
+static	I286TBL v30ope0xf7_xtable[8];
 
 
 static const BYTE shiftbase16[256] =
@@ -792,8 +798,164 @@ I286 v30_repe(void) {							// F3: repe
 		}
 }
 
+I286 v30div_ea8(void) {							// F6-6: div ea8
 
-static V30PATCH_T v30patch_op[] = {
+		__asm {
+				PREPART_EA8(14)
+					movzx	ebp, byte ptr I286_REG[eax]
+					GET_NEXTPRE2
+					jmp		divcheck
+				MEMORY_EA8(17)
+					movzx	ebp, byte ptr I286_MEM[ecx]
+					jmp		divcheck
+				EXTMEM_EA8
+					movzx	ebp, al
+
+				align	4
+	divcheck:	test	ebp, ebp
+				je		divovf
+				mov		ax, I286_AX
+				xor		dx, dx
+				div		bp
+				mov		I286_AL, al
+				mov		I286_AH, dl
+				mov		dx, ax
+				FLAG_STORE_OF
+				test	dh, dh
+				jne		divovf
+				ret
+
+				align	4
+	divovf:		INT_NUM(0)
+		}
+}
+
+I286 v30idiv_ea8(void) {						// F6-7 idiv ea8
+
+		__asm {
+				PREPART_EA8(17)
+					movsx	ebp, byte ptr I286_REG[eax]
+					GET_NEXTPRE2
+					jmp		idivcheck
+				MEMORY_EA8(20)
+					movsx	ebp, byte ptr I286_MEM[ecx]
+					jmp		idivcheck
+				EXTMEM_EA8
+					movsx	ebp, al
+
+				align	4
+	idivcheck:	test	ebp, ebp
+				je		idivovf
+				mov		ax, I286_AX
+				cwd
+				idiv	bp
+				mov		I286_AL, al
+				mov		I286_AH, dl
+				mov		dx, ax
+				FLAG_STORE_OF
+				bt		dx, 7
+				adc		dh, 0
+				jne		idivovf
+				ret
+
+				align	4
+	idivovf:	INT_NUM(0)
+		}
+}
+
+I286 v30_ope0xf6(void) {						// F6: 
+
+		__asm {
+				movzx	eax, bh
+				mov		edi, eax
+				shr		edi, 3-2
+				and		edi, 7*4
+				jmp		v30ope0xf6_xtable[edi]
+		}
+}
+
+I286 v30div_ea16(void) {						// F7-6: div ea16
+
+		__asm {
+				PREPART_EA16(22)
+					movzx	ebp, word ptr I286_REG[eax*2]
+					GET_NEXTPRE2
+					jmp		divcheck
+				MEMORY_EA16(25)
+					movzx	ebp, word ptr I286_MEM[ecx]
+					jmp		divcheck
+				EXTMEM_EA16
+					movzx	ebp, ax
+
+				align	4
+	divcheck:	test	ebp, ebp
+				je		divovf
+				movzx	eax, I286_DX
+				shl		eax, 16
+				mov		ax, I286_AX
+				xor		edx, edx
+				div		ebp
+				mov		I286_AX, ax
+				mov		I286_DX, dx
+				FLAG_STORE_OF
+				cmp		eax, 10000h
+				jae		divovf
+				ret
+
+				align	4
+	divovf:		INT_NUM(0)
+		}
+}
+
+I286 v30idiv_ea16(void) {						// F7-7: idiv ea16
+
+		__asm {
+				PREPART_EA16(25)
+					movsx	ebp, word ptr I286_REG[eax*2]
+					GET_NEXTPRE2
+					jmp		idivcheck
+				MEMORY_EA16(28)
+					movsx	ebp, word ptr I286_MEM[ecx]
+					jmp		idivcheck
+				EXTMEM_EA16
+					cwde
+					mov		ebp, eax
+
+				align	4
+	idivcheck:	test	ebp, ebp
+				je		idivovf
+				movzx	eax, I286_DX
+				shl		eax, 16
+				mov		ax, I286_AX
+				cdq
+				idiv	ebp
+				mov		I286_AX, ax
+				mov		I286_DX, dx
+				mov		edx, eax
+				FLAG_STORE_OF
+				shr		edx, 16
+				adc		dx, 0
+				jne		idivovf
+				ret
+
+				align	4
+	idivovf:	INT_NUM(0)
+		}
+}
+
+I286 v30_ope0xf7(void) {						// F7: 
+
+		__asm {
+				movzx	eax, bh
+				mov		edi, eax
+				shr		edi, 3-2
+				and		edi, 7*4
+				jmp		v30ope0xf7_xtable[edi]
+		}
+}
+
+
+static const V30PATCH v30patch_op[] = {
 			{0x17, v30pop_ss},				// 17:	pop		ss
 			{0x26, v30segprefix_es},		// 26:	es:
 			{0x2e, v30segprefix_cs},		// 2E:	cs:
@@ -817,8 +979,10 @@ static V30PATCH_T v30patch_op[] = {
 			{0xd5, v30_aad},				// D5:	AAD
 			{0xd6, v30_xlat},				// D6:	xlat (8086/V30)
 			{0xf2, v30_repne},				// F2:	repne
-			{0xf3, v30_repe}				// F3:	repe
-};
+			{0xf3, v30_repe},				// F3:	repe
+			{0xf6, v30_ope0xf6},			// F6: 
+			{0xf7, v30_ope0xf7}};			// F7: 
+
 
 // ----------------------------------------------------------------- repe
 
@@ -871,7 +1035,7 @@ I286 v30repe_segprefix_ds(void) {
 }
 
 
-static V30PATCH_T v30patch_repe[] = {
+static const V30PATCH v30patch_repe[] = {
 			{0x17, v30pop_ss},				// 17:	pop		ss
 			{0x26, v30repe_segprefix_es},	// 26:	repe es:
 			{0x2e, v30repe_segprefix_cs},	// 2E:	repe cs:
@@ -895,8 +1059,10 @@ static V30PATCH_T v30patch_repe[] = {
 			{0xd5, v30_aad},				// D5:	AAD
 			{0xd6, v30_xlat},				// D6:	xlat (8086/V30)
 			{0xf2, v30_repne},				// F2:	repne
-			{0xf3, v30_repe}				// F3:	repe
-};
+			{0xf3, v30_repe},				// F3:	repe
+			{0xf6, v30_ope0xf6},			// F6: 
+			{0xf7, v30_ope0xf7}};			// F7: 
+
 
 // ----------------------------------------------------------------- repne
 
@@ -948,7 +1114,7 @@ I286 v30repne_segprefix_ds(void) {
 		}
 }
 
-static V30PATCH_T v30patch_repne[] = {
+static const V30PATCH v30patch_repne[] = {
 			{0x17, v30pop_ss},				// 17:	pop		ss
 			{0x26, v30repne_segprefix_es},	// 26:	repne es:
 			{0x2e, v30repne_segprefix_cs},	// 2E:	repne cs:
@@ -972,16 +1138,14 @@ static V30PATCH_T v30patch_repne[] = {
 			{0xd5, v30_aad},				// D5:	AAD
 			{0xd6, v30_xlat},				// D6:	xlat (8086/V30)
 			{0xf2, v30_repne},				// F2:	repne
-			{0xf3, v30_repe}				// F3:	repe
-};
+			{0xf3, v30_repe},				// F3:	repe
+			{0xf6, v30_ope0xf6},			// F6: 
+			{0xf7, v30_ope0xf7}};			// F7: 
+
 
 // ---------------------------------------------------------------------------
 
-void (*v30op[256])(void);
-void (*v30op_repne[256])(void);
-void (*v30op_repe[256])(void);
-
-static void v30patching(void (*dst[])(void), V30PATCH_T *patch, int length) {
+static void v30patching(I286TBL *dst, const V30PATCH *patch, int length) {
 
 	while(length--) {
 		dst[patch->opnum] = patch->v30opcode;
@@ -989,7 +1153,7 @@ static void v30patching(void (*dst[])(void), V30PATCH_T *patch, int length) {
 	}
 }
 
-#define	V30PATCHING(a, b)	v30patching(a, b, sizeof(b)/sizeof(V30PATCH_T))
+#define	V30PATCHING(a, b)	v30patching(a, b, sizeof(b)/sizeof(V30PATCH))
 
 void v30xinit(void) {
 
@@ -999,6 +1163,12 @@ void v30xinit(void) {
 	V30PATCHING(v30op_repne, v30patch_repne);
 	CopyMemory(v30op_repe, i286op_repe, sizeof(v30op_repe));
 	V30PATCHING(v30op_repe, v30patch_repe);
+	CopyMemory(v30ope0xf6_xtable, ope0xf6_xtable, sizeof(v30ope0xf6_xtable));
+	v30ope0xf6_xtable[6] = v30div_ea8;
+	v30ope0xf6_xtable[7] = v30idiv_ea8;
+	CopyMemory(v30ope0xf7_xtable, ope0xf7_xtable, sizeof(v30ope0xf7_xtable));
+	v30ope0xf7_xtable[6] = v30div_ea16;
+	v30ope0xf7_xtable[7] = v30idiv_ea16;
 }
 
 LABEL void v30x(void) {

@@ -1,29 +1,24 @@
-extern void (*op8xreg8_xtable[])(void);
-extern void (*op8xext8_xtable[])(void);
-extern void (*op8xreg16_xtable[])(void);
-extern void (*op8xext16_xtable[])(void);
-extern void (*op8xext16_atable[])(void);
 
-extern void (*sftreg8_xtable[])(void);
-extern void (*sftmem8_xtable[])(void);
-extern void (*sftext8_xtable[])(void);
-extern void (*sftreg16_xtable[])(void);
-extern void (*sftmem16_xtable[])(void);
-extern void (*sftext16_xtable[])(void);
+extern const I286TBL op8xreg8_xtable[8];
+extern const I286TBL op8xext8_xtable[8];
+extern const I286TBL op8xreg16_xtable[8];
+extern const I286TBL op8xext16_xtable[8];
+extern const I286TBL op8xext16_atable[8];
 
-extern void (*sftreg8cl_xtable[])(void);
-extern void (*sftext8cl_xtable[])(void);
-extern void (*sftreg16cl_xtable[])(void);
-extern void (*sftext16cl_xtable[])(void);
+extern const I286TBL sftreg8_xtable[8];
+extern const I286TBL sftmem8_xtable[8];
+extern const I286TBL sftext8_xtable[8];
+extern const I286TBL sftreg16_xtable[8];
+extern const I286TBL sftmem16_xtable[8];
+extern const I286TBL sftext16_xtable[8];
 
-extern void (*ope0xf6_xtable[])(void);
-extern void (*ope0xf7_xtable[])(void);
-extern void (*ope0xfe_xtable[])(void);
-extern void (*ope0xff_xtable[])(void);
+extern const I286TBL sftreg8cl_xtable[8];
+extern const I286TBL sftext8cl_xtable[8];
+extern const I286TBL sftreg16cl_xtable[8];
+extern const I286TBL sftext16cl_xtable[8];
 
-#if 0
-extern void (*sftreg8v30_table[])(void);
-extern void (*sftext8v30_table[])(void);
-extern void (*sftreg16v30_table[])(void);
-extern void (*sftext16v30_table[])(void);
-#endif
+extern const I286TBL ope0xf6_xtable[8];
+extern const I286TBL ope0xf7_xtable[8];
+extern const I286TBL ope0xfe_xtable[2];
+extern const I286TBL ope0xff_xtable[8];
+

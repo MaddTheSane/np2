@@ -330,7 +330,7 @@ LABEL static void p2ea_bx_disp16(void) {
 	}
 }
 
-static void (* const peadst_tbl[])(void) = {
+static const I286TBL peadst_tbl[] = {
 				p2ea_bx_si,			p2ea_bx_di,
 				p2ea_bp_si,			p2ea_bp_di,
 				p2ea_si,			p2ea_di,
@@ -635,7 +635,7 @@ LABEL static void p2lea_bx_disp16(void) {
 	}
 }
 
-static void (* const plea_tbl[])(void) = {
+static const I286TBL plea_tbl[] = {
 				p2lea_bx_si,		p2lea_bx_di,
 				p2lea_bp_si,		p2lea_bp_di,
 				p2lea_si,			p2lea_di,
@@ -980,7 +980,7 @@ LABEL static void a_bx_disp16(void) {
 	}
 }
 
-static void (* const pgetea_tbl[])(void) = {
+static const I286TBL pgetea_tbl[] = {
 				a_bx_si,			a_bx_di,
 				a_bp_si,			a_bp_di,
 				a_si,				a_di,
@@ -999,9 +999,9 @@ static void (* const pgetea_tbl[])(void) = {
 
 // --------------------------------------------------------------------------
 
-	void	(*p_ea_dst[256])(void);
-	void	(*p_lea[256])(void);
-	void	(*p_get_ea[256])(void);
+	I286TBL	p_ea_dst[256];
+	I286TBL	p_lea[256];
+	I286TBL	p_get_ea[256];
 
 
 void i286xadr_init(void) {

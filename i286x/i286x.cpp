@@ -343,7 +343,7 @@ LABEL void removeprefix(void) {
 I286 _reserved(void) {
 
 		__asm {
-				inc		si						// 01/08/31
+//				inc		si						// 01/08/31
 				INT_NUM(6)
 		}
 }
@@ -1695,7 +1695,7 @@ I286 _arpl(void) {
 				xor		eax, eax
 				cmp		bh, 0c0h
 				setc	al
-				add		si, ax
+		//		add		si, ax
 				add		eax, 10
 				I286CLOCK(eax)
 				INT_NUM(6)
@@ -3660,7 +3660,8 @@ I286 _into(void) {								// CE: into
 				GET_NEXTPRE1
 				ret
 
-		intovf:	INT_NUM(4)
+		intovf:	inc		si											// ver0.80
+				INT_NUM(4)
 		}
 }
 
@@ -4348,7 +4349,7 @@ I286 _ope0xff(void) {							// FF:
 
 // -------------------------------------------------------------------------
 
-void (*i286op[])(void) = {
+const I286TBL i286op[256] = {
 			add_ea_r8,						// 00:	add		EA, REG8
 			add_ea_r16,						// 01:	add		EA, REG16
 			add_r8_ea,						// 02:	add		REG8, EA
@@ -4672,7 +4673,7 @@ I286 repe_segprefix_ds(void) {
 		}
 }
 
-void (*i286op_repe[])(void) = {
+const I286TBL i286op_repe[256] = {
 			add_ea_r8,						// 00:	add		EA, REG8
 			add_ea_r16,						// 01:	add		EA, REG16
 			add_r8_ea,						// 02:	add		REG8, EA
@@ -4996,7 +4997,7 @@ I286 repne_segprefix_ds(void) {
 		}
 }
 
-void (*i286op_repne[])(void) = {
+const I286TBL i286op_repne[256] = {
 			add_ea_r8,						// 00:	add		EA, REG8
 			add_ea_r16,						// 01:	add		EA, REG16
 			add_r8_ea,						// 02:	add		REG8, EA
