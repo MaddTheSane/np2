@@ -226,7 +226,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/HardDisk/_Remove All",	NULL, f(sasiremove), ~0, NULL },
 { "/_Screen",			NULL, NULL, 0, "<Branch>" },
 { "/Screen/_Window",		NULL, NULL, 0, "<RadioItem>" },
-{ "/Screen/_Fullscreen",	NULL, NULL, 0, "/Screen/Window" },
+{ "/Screen/_FullScreen",	NULL, NULL, 0, "/Screen/Window" },
 { "/Screen/sep1",		NULL, NULL, 0, "<Separator>" },
 { "/Screen/Nor_mal",		NULL, f(rotate), 0, "<RadioItem>"},
 { "/Screen/_Left Rotated",	NULL, f(rotate), SCRNMODE_ROTATELEFT,"/Screen/Normal"},
@@ -236,10 +236,10 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Screen/Real _Palettes",	NULL, f(toggle), REAL_PALETTES, "<ToggleItem>"},
 { "/Screen/_No Wait",		NULL, f(toggle), NO_WAIT, "<ToggleItem>" },
 { "/Screen/_Auto frame",	NULL, f(framerate), FRAME_AUTO, "<RadioItem>" },
-{ "/Screen/_60 FPS",		NULL, f(framerate), FRAME_FULL, "/Screen/Auto frame" },
-{ "/Screen/_30 FPS",		NULL, f(framerate), FRAME_30, "/Screen/60 FPS"},
-{ "/Screen/_20 FPS",		NULL, f(framerate), FRAME_20, "/Screen/30 FPS"},
-{ "/Screen/_15 FPS",		NULL, f(framerate), FRAME_15, "/Screen/20 FPS"},
+{ "/Screen/_60 fps",		NULL, f(framerate), FRAME_FULL, "/Screen/Auto frame" },
+{ "/Screen/_30 fps",		NULL, f(framerate), FRAME_30, "/Screen/60 fps"},
+{ "/Screen/_20 fps",		NULL, f(framerate), FRAME_20, "/Screen/30 fps"},
+{ "/Screen/_15 fps",		NULL, f(framerate), FRAME_15, "/Screen/20 fps"},
 { "/Screen/sep3",		NULL, NULL, 0, "<Separator>" },
 { "/Screen/_Screen option...",	NULL, f(_create_screen_dialog), 0, NULL },
 { "/_Device",			NULL, NULL, 0, "<Branch>" },
@@ -389,7 +389,7 @@ static void
 disable_unused_items(void)
 {
 	static const char *items[] = {
-		"/Screen/Fullscreen",
+		"/Screen/FullScreen",
 		"/Other/Tool Window",
 		"/Other/Key Display",
 #if defined(NOSOUND)
@@ -455,10 +455,10 @@ xmenu_select_framerate(int kind)
 {
 	static const char *name[NUM_FRAMERATE] = {
 		"/Screen/Auto frame",
-		"/Screen/60 FPS",
-		"/Screen/30 FPS",
-		"/Screen/20 FPS",
-		"/Screen/15 FPS",
+		"/Screen/60 fps",
+		"/Screen/30 fps",
+		"/Screen/20 fps",
+		"/Screen/15 fps",
 	};
 
 	if (kind < NUM_FRAMERATE) {
