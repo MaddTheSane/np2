@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.2 2003/12/12 15:05:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -168,7 +168,7 @@ POPFD_Fd(void)
 		POP0_32(flags);
 		flags &= ~(VIF_FLAG|VIP_FLAG);
 		mask = I_FLAG|IOPL_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG;
-	} if (!CPU_STAT_VM86) {
+	} else if (!CPU_STAT_VM86) {
 		/* Protected Mode */
 		POP0_32(flags);
 		if (CPU_STAT_CPL == 0) {
