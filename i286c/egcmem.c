@@ -6,10 +6,16 @@
 #include	"vram.h"
 
 
-// エンディアン修正しる！
-
 // C版EGCのみ ROPの回数を記録する
 // #define		LOG_EGCROP
+
+
+enum {
+	EGCADDR_L		= 0,
+	EGCADDR_H		= 1
+};
+#define	EGCADDR(a)	(a)
+
 
 
 static	EGCQUAD		egc_src;
@@ -794,10 +800,18 @@ static void gdc_ope(UINT32 ad, UINT16 value, int func) {
 			}
 			break;
 		default:
+#if defined(BYTESEX_LITTLE)
 			data.w[0] = value;
 			data.w[1] = value;
 			data.w[2] = value;
 			data.w[3] = value;
+#else
+			data._b[0][0] = (BYTE)value;
+			data._b[0][1] = (BYTE)(value >> 8);
+			data.w[1] = data.w[0];
+			data.w[2] = data.w[0];
+			data.w[3] = data.w[0];
+#endif
 			break;
 	}
 }
@@ -942,7 +956,7 @@ UINT16 MEMCALL egc_read_w(UINT32 addr) {
 		if (!(egc.ope & 0x2000)) {
 			int pl = (egc.fgbg >> 8) & 3;
 			if (!(egc.ope & 0x400)) {
-				return(egc_src.w[pl]);
+				return(LOADINTELWORD(egc_src._b[pl]));
 			}
 			else {
 				return(LOADINTELWORD(mem + ad + planead[pl]));

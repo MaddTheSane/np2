@@ -10,24 +10,6 @@ typedef union {
 	UINT32	d[2];
 } EGCQUAD;
 
-#if defined(BYTESEX_LITTLE)
-
-enum {
-	EGCADDR_L		= 0,
-	EGCADDR_H		= 1
-};
-#define	EGCADDR(a)	(a)
-
-#elif defined(BYTESEX_BIG)
-
-enum {
-	EGCADDR_L		= 1,
-	EGCADDR_H		= 0
-};
-#define	EGCADDR(a)	((a) ^ 1)
-
-#endif
-
 typedef struct {
 	UINT16	access;
 	UINT16	fgbg;
