@@ -7,40 +7,27 @@ enum {
 
 
 typedef struct {
-	UINT8	mode;
-	UINT8	sw;
-	UINT8	act;
-	UINT8	disp;
-} LIOGSCREEN;
-
-typedef struct {
-	SINT16	x1;
-	SINT16	y1;
-	SINT16	x2;
-	SINT16	y2;
-	UINT8	vdraw_bg;
-	UINT8	vdraw_ln;
-} LIOGVIEW;
-
-typedef struct {
-	UINT8	palmax;
-	UINT8	bgcolor;
-	UINT8	bdcolor;
-	UINT8	fgcolor;
-	UINT8	palmode;
-} LIOGCOLOR1;
-
-
-// ----
-
-typedef struct {
-	UINT16	top;
-	UINT16	lines;
-	UINT8	bank;
+	UINT8	scrnmode;
+	UINT8	pos;
 	UINT8	plane;
+	UINT8	fgcolor;
+	UINT8	bgcolor;
+	UINT8	padding;
+	UINT8	color[8];
+	BYTE	viewx1[2];
+	BYTE	viewy1[2];
+	BYTE	viewx2[2];
+	BYTE	viewy2[2];
 	UINT8	disp;
-	UINT8	dbit;
-} LIO_SCRN;
+	UINT8	access;
+} LIOMEM;
+
+enum {
+	LIODRAW_PMASK	= 0x03,
+	LIODRAW_MONO	= 0x04,
+	LIODRAW_UPPER	= 0x20,
+	LIODRAW_4BPP	= 0x40
+};
 
 typedef struct {
 	SINT16	x1;
@@ -48,21 +35,20 @@ typedef struct {
 	SINT16	x2;
 	SINT16	y2;
 	UINT32	base;
+	UINT8	flag;
+	UINT8	palmax;
 	UINT8	bank;
 	UINT8	sbit;
 } LIODRAW;
 
 
 typedef struct {
-	LIO_SCRN	scrn;
-	LIOGSCREEN	gscreen;
-	LIOGVIEW	gview;
-	LIOGCOLOR1	gcolor1;
-	UINT8		degcol[8];
+	LIOMEM	mem;
+	UINT8	palmode;
 
 	// ---- work
-	UINT32		wait;
-	LIODRAW		draw;
+	UINT32	wait;
+	LIODRAW	draw;
 } _LIOWORK, *LIOWORK;
 
 

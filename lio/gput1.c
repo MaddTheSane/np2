@@ -343,7 +343,7 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 	}
 
 	addr = (lput->x >> 3) + (lput->y * 80);
-	if (lio->scrn.top) {
+	if (lio->draw.flag & LIODRAW_UPPER) {
 		addr += 16000;
 	}
 	setdirty(addr, (lput->x & 7) + lput->width, lput->height, lio->draw.sbit);
@@ -357,7 +357,7 @@ static REG8 putsub(LIOWORK lio, const LIOPUT *lput) {
 	datacnt = (lput->width + 7) >> 3;
 	off = lput->off;
 
-	flag = (lio->gcolor1.palmode == 2)?0x0f:0x07;
+	flag = (lio->palmode == 2)?0x0f:0x07;
 	flag |= (lput->fg & 15) << 4;
 	flag |= (lput->bg & 15) << 8;
 
@@ -492,8 +492,8 @@ REG8 lio_gget(LIOWORK lio) {
 	datacnt = (x2 + 7) >> 3;
 	size = datacnt * y2;
 	leng = LOADINTELWORD(dat.leng);
-	if (lio->scrn.plane & 0x80) {
-		if (lio->gcolor1.palmode == 2) {
+	if (!(lio->draw.flag & LIODRAW_MONO)) {
+		if (lio->draw.flag & LIODRAW_4BPP) {
 			size *= 4;
 			mask = 0x0f;
 		}
@@ -503,7 +503,7 @@ REG8 lio_gget(LIOWORK lio) {
 		}
 	}
 	else {
-		mask = 1 << (lio->scrn.plane & 3);
+		mask = 1 << (lio->draw.flag & LIODRAW_PMASK);
 	}
 	if (leng < (size + 4)) {
 		return(LIO_ILLEGALFUNC);
@@ -512,7 +512,7 @@ REG8 lio_gget(LIOWORK lio) {
 	i286_memword_write(seg, off+2, (REG16)y2);
 	off += 4;
 	addr = (x >> 3) + (y * 80);
-	if (lio->scrn.top) {
+	if (lio->draw.flag & LIODRAW_UPPER) {
 		addr += 16000;
 	}
 	gt.sft = x & 7;
@@ -567,8 +567,8 @@ REG8 lio_gput1(LIOWORK lio) {
 			lput.bg = dat.bg;
 		}
 		else {
-			lput.fg = lio->gcolor1.fgcolor;
-			lput.bg = lio->gcolor1.bgcolor;
+			lput.fg = lio->mem.fgcolor;
+			lput.bg = lio->mem.bgcolor;
 		}
 	}
 	else {
@@ -583,7 +583,6 @@ REG8 lio_gput1(LIOWORK lio) {
 			lput.bg = 0;
 		}
 	}
-	TRACEOUT(("put1 - %d,%d / %d / %d %d %d", lput.width, lput.height, lput.mode, lput.sw, lput.fg, lput.bg));
 	return(putsub(lio, &lput));
 }
 
@@ -622,8 +621,8 @@ REG8 lio_gput2(LIOWORK lio) {
 		lput.bg = dat.bg;
 	}
 	else {
-		lput.fg = lio->gcolor1.fgcolor;
-		lput.bg = lio->gcolor1.bgcolor;
+		lput.fg = lio->mem.fgcolor;
+		lput.bg = lio->mem.bgcolor;
 	}
 	return(putsub(lio, &lput));
 }

@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"dosio.h"
 #include	"textfile.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -24,9 +25,13 @@ static	KEYSTAT		keystat;
 
 void keystat_initialize(void) {
 
+	char	path[MAX_PATH];
+
 	ZeroMemory(&keystat, sizeof(keystat));
 	FillMemory(keystat.ref, sizeof(keystat.ref), NKEYREF_NC);
 	keystat_tblreset();
+	getbiospath(path, "key.txt", sizeof(path));
+	keystat_tblload(path);
 }
 
 void keystat_tblreset(void) {
@@ -40,10 +45,33 @@ void keystat_tblreset(void) {
 	}
 }
 
+void keystat_tblset(REG8 ref, const UINT8 *key, UINT cnt) {
+
+	UINT8	keycode;
+	NKEYM	*nkey;
+
+	keycode = ref & 0x7f;
+	if ((keycode != NKEY_USER1) && (keycode != NKEY_USER2)) {
+		nkey = (NKEYM *)(nkeytbl.key + keycode);
+	}
+	else {
+		nkey = (NKEYM *)(nkeytbl.user + (keycode - NKEY_USER1));
+		cnt = min(cnt, 15);
+	}
+	cnt = min(cnt, 3);
+	nkey->keys = (UINT8)cnt;
+	if (cnt) {
+		CopyMemory(nkey->key, key, cnt);
+	}
+}
+
 
 // ---- config...
 
-static REG8 searchkeynum(const char *str) {
+static const char str_userkey1[] = "userkey1";
+static const char str_userkey2[] = "userkey2";
+
+static REG8 searchkeynum(const char *str, BOOL user) {
 
 const KEYNAME	*n;
 const KEYNAME	*nterm;
@@ -56,17 +84,27 @@ const KEYNAME	*nterm;
 		}
 		n++;
 	}
+	if (user) {
+		if (!milstr_cmp(str_userkey1, str)) {
+			return(NKEY_USER1);
+		}
+		if (!milstr_cmp(str_userkey2, str)) {
+			return(NKEY_USER2);
+		}
+	}
 	return(0xff);
 }
 
 void keystat_tblload(const char *filename) {
 
 	TEXTFILEH	tfh;
-	char		work[128];
+	char		work[256];
 	char		*p;
 	char		*q;
 	char		*r;
-	REG8		key;
+	UINT8		ref;
+	UINT8		key[15];
+	UINT		cnt;
 
 	tfh = textfile_open(filename, 0x800);
 	if (tfh == NULL) {
@@ -82,21 +120,27 @@ void keystat_tblload(const char *filename) {
 			continue;
 		}
 		*q++ = '\0';
-		r = (char *)milstr_chr(p, ' ');
+		r = milstr_chr(p, ' ');
 		if (r != NULL) {
 			*r = '\0';
 		}
-		key = searchkeynum(p);
-
-		while(q) {
+		ref = searchkeynum(p, TRUE);
+		if (ref == 0xff) {
+			continue;
+		}
+		cnt = 0;
+		while((q) && (cnt < 16)) {
 			p = milstr_nextword(q);
 			q = milstr_chr(p, ' ');
 			if (q != NULL) {
 				*q++ = '\0';
 			}
-			key = searchkeynum(p);
-
+			key[cnt] = searchkeynum(p, FALSE);
+			if (key[cnt] != 0xff) {
+				cnt++;
+			}
 		}
+		keystat_tblset(ref, key, cnt);
 	}
 	textfile_close(tfh);
 
@@ -213,10 +257,9 @@ void keystat_resendstat(void) {
 
 void keystat_keydown(REG8 ref) {
 
-	UINT8		keycode;
-	UINT8		shift;
-const NKEYM3	*nkey3;
-const NKEYM15	*nkey15;
+	UINT8	keycode;
+	UINT8	shift;
+const NKEYM	*nkey;
 
 	keycode = ref & 0x7f;
 	if (np2cfg.KEY_MODE) {
@@ -227,25 +270,20 @@ const NKEYM15	*nkey15;
 		}
 	}
 	if ((keycode != NKEY_USER1) && (keycode != NKEY_USER2)) {
-		nkey3 = nkeytbl.key + keycode;
-		keystat_down(nkey3->key, nkey3->keys, keycode);
+		nkey = (NKEYM *)(nkeytbl.key + keycode);
+		keystat_down(nkey->key, nkey->keys, keycode);
 	}
 	else {
-#if 0
-		nkey15 = nkeytbl.user + (keycode - NKEY_USER1);
-#else
-		nkey15 = (NKEYM15 *)(np2cfg.userkey + (keycode - NKEY_USER1));
-#endif
-		keystat_down(nkey15->key, nkey15->keys, NKEYREF_USER);
+		nkey = (NKEYM *)(nkeytbl.user + (keycode - NKEY_USER1));
+		keystat_down(nkey->key, nkey->keys, NKEYREF_USER);
 	}
 }
 
 void keystat_keyup(REG8 ref) {
 
-	UINT8		keycode;
-	UINT8		shift;
-const NKEYM3	*nkey3;
-const NKEYM15	*nkey15;
+	UINT8	keycode;
+	UINT8	shift;
+const NKEYM	*nkey;
 
 	keycode = ref & 0x7f;
 	if (np2cfg.KEY_MODE) {
@@ -256,16 +294,12 @@ const NKEYM15	*nkey15;
 		}
 	}
 	if ((keycode != NKEY_USER1) && (keycode != NKEY_USER2)) {
-		nkey3 = nkeytbl.key + keycode;
-		keystat_up(nkey3->key, nkey3->keys, keycode);
+		nkey = (NKEYM *)(nkeytbl.key + keycode);
+		keystat_up(nkey->key, nkey->keys, keycode);
 	}
 	else {
-#if 0
-		nkey15 = nkeytbl.user + (keycode - NKEY_USER1);
-#else
-		nkey15 = (NKEYM15 *)(np2cfg.userkey + (keycode - NKEY_USER1));
-#endif
-		keystat_up(nkey15->key, nkey15->keys, NKEYREF_USER);
+		nkey = (NKEYM *)(nkeytbl.user + (keycode - NKEY_USER1));
+		keystat_up(nkey->key, nkey->keys, NKEYREF_USER);
 	}
 }
 

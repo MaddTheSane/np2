@@ -135,6 +135,11 @@ enum {
 
 typedef struct {
 	UINT8	keys;
+	UINT8	key[1];
+} NKEYM;
+
+typedef struct {
+	UINT8	keys;
 	UINT8	key[3];
 } NKEYM3;
 
@@ -159,6 +164,7 @@ extern	NKEYTBL		nkeytbl;
 void keystat_initialize(void);
 
 void keystat_tblreset(void);
+void keystat_tblset(REG8 ref, const UINT8 *key, UINT cnt);
 void keystat_tblload(const char *filename);
 
 void keystat_keydown(REG8 ref);

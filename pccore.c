@@ -47,7 +47,6 @@
 				0, 0, 0, 0,
 				{0x3e, 0x73, 0x7b}, 0,
 				0, 0, {1, 1, 6, 1, 8, 1},
-				{{0, {0, }}, {0, {0, }}},
 
 				"VX", PCBASECLOCK25, 4,
 				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e},
@@ -133,13 +132,7 @@ static void pccore_set(void) {
 	}
 	pccore.multiple = multiple;
 	pccore.realclock = pccore.baseclock * multiple;
-#if 0
-	keybrd.xferclock = pccore.realclock / 1920;
-	gdc.rasterclock = pccore.realclock / 24816;
-	gdc.hsyncclock = (gdc.rasterclock * 4) / 5;
-	gdc.dispclock = pccore.realclock * 50 / 3102;
-	gdc.vsyncclock = pccore.realclock * 5 / 3102;
-#endif
+
 	// HDDÇÃê⁄ë± (I/OÇÃégópèÛë‘Ç™ïœÇÌÇÈÇÃÇ≈..
 	if (np2cfg.dipsw[1] & 0x20) {
 		pccore.hddif |= PCHDD_IDE;

@@ -231,8 +231,57 @@ void bios0x18_41(void) {
 	mem[MEMB_PRXCRT] &= 0x7f;
 }
 
+void bios0x18_42(REG8 mode) {
 
-#define	SWAPU16(a, b) { UINT16 tmp; tmp = (a); (a) = (b); (b) = tmp; }
+	BOOL	b;
+
+	gdc_forceready(GDCWORK_SLAVE);
+	ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
+	if ((mode & 0xc0) == 0xc0) {		// ALL
+		b = FALSE;
+		if ((mem[MEMB_PRXDUPD] & 0x24) == 0x20) {
+			mem[MEMB_PRXDUPD] ^= 4;
+			gdc.clock |= 3;
+			CopyMemory(gdc.s.para + GDC_SYNC, sync400m, 8);
+			gdc.s.para[GDC_PITCH] = 80;
+			gdcs.grphdisp |= GDCSCRN_EXT;
+			mem[MEMB_PRXDUPD] |= 0x08;
+		}
+	}
+	else {
+		b = TRUE;
+		if ((mem[MEMB_PRXDUPD] & 0x24) == 0x24) {
+			mem[MEMB_PRXDUPD] ^= 4;
+			gdc.clock &= ~3;
+			CopyMemory(gdc.s.para + GDC_SYNC,
+						(mem[MEMB_PRXCRT] & 0x40)?sync200m:sync200l, 8);
+			gdc.s.para[GDC_PITCH] = 40;
+			gdcs.grphdisp |= GDCSCRN_EXT;
+			mem[MEMB_PRXDUPD] |= 0x08;
+		}
+		if (mode & 0x40) {				// UPPER
+			gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
+			gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
+		}
+	}
+	if ((!b) || (!(mem[MEMB_PRXCRT] & 0x40))) {
+		gdc.mode1 &= ~(0x10);
+		gdc.s.para[GDC_CSRFORM] = 0;
+	}
+	else {
+		gdc.mode1 |= 0x10;
+		gdc.s.para[GDC_CSRFORM] = 1;
+	}
+	gdcs.disp = (mode >> 4) & 1;
+	if (!(mode & 0x20)) {
+		gdc.mode1 &= ~0x04;
+	}
+	else {
+		gdc.mode2 |= 0x04;
+	}
+	gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
+	screenupdate |= 2;
+}
 
 static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
 
@@ -659,47 +708,7 @@ void bios0x18(void) {
  			break;
 
    		case 0x42:						// 表示領域の設定
-			gdc_forceready(GDCWORK_SLAVE);
-
-			ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
-			if ((CPU_CH & 0xc0) == 0xc0) {		// ALL
-				tmp.b = FALSE;
-				if ((mem[MEMB_PRXDUPD] & 0x24) == 0x20) {
-					mem[MEMB_PRXDUPD] ^= 4;
-					gdc.clock |= 3;
-					CopyMemory(gdc.s.para + GDC_SYNC, sync400m, 8);
-					gdc.s.para[GDC_PITCH] = 80;
-					gdcs.grphdisp |= GDCSCRN_EXT;
-					mem[MEMB_PRXDUPD] |= 0x08;
-				}
-			}
-			else {
-				tmp.b = TRUE;
-				if ((mem[MEMB_PRXDUPD] & 0x24) == 0x24) {
-					mem[MEMB_PRXDUPD] ^= 4;
-					gdc.clock &= ~3;
-					CopyMemory(gdc.s.para + GDC_SYNC,
-						(mem[MEMB_PRXCRT] & 0x40)?sync200m:sync200l, 8);
-					gdc.s.para[GDC_PITCH] = 40;
-					gdcs.grphdisp |= GDCSCRN_EXT;
-					mem[MEMB_PRXDUPD] |= 0x08;
-				}
-				if (CPU_CH & 0x40) {			// UPPER
-					gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
-					gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
-				}
-			}
-			if ((!tmp.b) || (!(mem[MEMB_PRXCRT] & 0x40))) {
-				gdc.mode1 &= ~(0x10);
-				gdc.s.para[GDC_CSRFORM] = 0;
-			}
-			else {
-				gdc.mode1 |= 0x10;
-				gdc.s.para[GDC_CSRFORM] = 1;
-			}
-			gdcs.disp = (CPU_CH >> 4) & 1;
-			gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
-			screenupdate |= 2;
+			bios0x18_42(CPU_CH);
  			break;
 
 		case 0x43:						// パレットの設定

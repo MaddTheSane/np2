@@ -8,6 +8,14 @@
 #include	"vram.h"
 
 
+
+typedef struct {
+	BYTE	mode;
+	BYTE	sw;
+	BYTE	act;
+	BYTE	disp;
+} GSCREEN;
+
 typedef struct {
 	BYTE	x1[2];
 	BYTE	y1[2];
@@ -18,34 +26,18 @@ typedef struct {
 } GVIEW;
 
 typedef struct {
-	UINT8	pal;
-	UINT8	color1;
-	UINT8	color2;
+	BYTE	dummy;
+	BYTE	bgcolor;
+	BYTE	bdcolor;
+	BYTE	fgcolor;
+	BYTE	palmode;
+} GCOLOR1;
+
+typedef struct {
+	BYTE	pal;
+	BYTE	color1;
+	BYTE	color2;
 } GCOLOR2;
-
-
-static void lio_makescreen(const _LIOWORK *lio) {
-
-	UINT16	pos;
-
-	gdc_forceready(GDCWORK_SLAVE);
-
-	ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
-	if (lio->scrn.lines == 200) {
-		gdc.mode1 |= 0x10;
-		gdc.s.para[GDC_CSRFORM] = 1;
-		pos = lio->scrn.top >> 1;
-		STOREINTELWORD(gdc.s.para + GDC_SCROLL + 0, pos);
-	}
-	else {
-		gdc.mode1 &= ~0x10;
-		gdc.s.para[GDC_CSRFORM] = 0;
-	}
-	gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
-	gdcs.disp = lio->scrn.disp & 1;
-	screenupdate |= 2;
-	iocore_out8(0x00a6, lio->scrn.bank);
-}
 
 
 // ---- INIT
@@ -54,39 +46,26 @@ REG8 lio_ginit(LIOWORK lio) {
 
 	UINT	i;
 
-	gdc_forceready(GDCWORK_SLAVE);
-
-	ZeroMemory(lio, sizeof(_LIOWORK));
-	ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
-	gdc.mode1 |= 0x10;
-	gdc.s.para[GDC_CSRFORM] = 1;
-	screenupdate |= 2;
-	gdcs.access = gdcs.disp = 0;
 	vramop.operate &= VOP_ACCESSMASK;
 	i286_vram_dispatch(vramop.operate);
+	bios0x18_42(0x80);
+	bios0x18_40();
 	iocore_out8(0x006a, 0);
-	gdcs.grphdisp |= GDCSCRN_ENABLE;
 	gdc_paletteinit();
 
-	lio->scrn.top = 0;
-	lio->scrn.lines = 200;
-	lio->scrn.bank = 0;
-	lio->scrn.plane = 0x80;
-
-	lio->gcolor1.palmax = 8;
-	lio->gcolor1.bgcolor = 0;
-	lio->gcolor1.bdcolor = 0;
-	lio->gcolor1.fgcolor = 7;
-	lio->gcolor1.palmode = 0;
-
-	lio->gview.x1 = 0;
-	lio->gview.y1 = 0;
-	lio->gview.x2 = 639;
-	lio->gview.y2 = 399;
-
+	lio->mem.scrnmode = 0;
+	lio->mem.pos = 0;
+	lio->mem.plane = 1;
+	lio->mem.bgcolor = 0;
+	lio->mem.fgcolor = 7;
 	for (i=0; i<8; i++) {
-		lio->degcol[i] = (UINT8)i;
+		lio->mem.color[i] = (UINT8)i;
 	}
+	STOREINTELWORD(lio->mem.viewx1, 0);
+	STOREINTELWORD(lio->mem.viewy1, 0);
+	STOREINTELWORD(lio->mem.viewx2, 639);
+	STOREINTELWORD(lio->mem.viewy2, 399);
+	lio->palmode = 0;
 	return(LIO_SUCCESS);
 }
 
@@ -95,141 +74,138 @@ REG8 lio_ginit(LIOWORK lio) {
 
 REG8 lio_gscreen(LIOWORK lio) {
 
-	LIOGSCREEN	data;
-	LIO_SCRN	scrn;
-	BOOL		screenmodechange = FALSE;
-	BYTE		bit;
-	int			disp;
+	GSCREEN	dat;
+	UINT	colorbit;
+	UINT8	scrnmode;
+	UINT8	mono;
+	UINT8	act;
+	UINT8	pos;
+	UINT8	disp;
+	UINT8	plane;
+	UINT8	planemax;
+	UINT8	mode;
 
-	i286_memstr_read(CPU_DS, CPU_BX, &data, sizeof(data));
-	if (data.mode == 0xff) {
-		data.mode = lio->gscreen.mode;
-	}
-	if (data.mode > 4) {
-		goto gscreen_err5;
-	}
-	else if ((data.mode >= 2) && (!(mem[MEMB_PRXCRT] & 0x40))) {
-		goto gscreen_err5;
-	}
-
-	if (data.mode != lio->gscreen.mode) {
-		screenmodechange = TRUE;
-	}
-	if (data.act == 0xff) {
-		if (screenmodechange) {
-			data.act = 0;
-		}
-		else {
-			data.act = lio->gscreen.act;
-		}
-	}
-	if (data.sw == 0xff) {
-		data.sw = lio->gscreen.sw;
+	if (lio->palmode != 2) {
+		colorbit = 3;
 	}
 	else {
-		if (!(data.sw & 2)) {
+		colorbit = 4;
+	}
+	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	scrnmode = dat.mode;
+	if (scrnmode == 0xff) {
+		scrnmode = lio->mem.scrnmode;
+	}
+	else {
+		if ((dat.mode >= 2) && (!(mem[MEMB_PRXCRT] & 0x40))) {
+			goto gscreen_err5;
+		}
+	}
+	if (scrnmode >= 4) {
+		goto gscreen_err5;
+	}
+	if (dat.sw != 0xff) {
+		if (!(dat.sw & 2)) {
 			bios0x18_40();
 		}
 		else {
 			bios0x18_41();
 		}
 	}
-	if (data.disp == 0xff) {
-		if (screenmodechange) {
-			data.disp = 1;
-		}
-		else {
-			data.disp = lio->gscreen.disp;
-		}
-	}
 
-	if (data.mode >= 0x04) {
-		return(5);
-	}
-	if (data.sw >= 0x04) {
-		return(5);
-	}
-	if (lio->gcolor1.palmode != 2) {
-		bit = 3;
+	mono = ((scrnmode + 1) >> 1) & 1;
+	act = dat.act;
+	if (act == 0xff) {
+		if (scrnmode != lio->mem.scrnmode) {
+			lio->mem.pos = 0;
+			lio->mem.access = 0;
+		}
 	}
 	else {
-		bit = 4;
+		switch(scrnmode) {
+			case 0:
+				pos = act & 1;
+				act >>= 1;
+				break;
+
+			case 1:
+				pos = act % (colorbit * 2);
+				act = act / (colorbit * 2);
+				break;
+
+			case 2:
+				pos = act % colorbit;
+				act = act / colorbit;
+				break;
+
+			case 3:
+			default:
+				pos = 0;
+				break;
+		}
+		if (act >= 2) {
+			goto gscreen_err5;
+		}
+		lio->mem.pos = pos;
+		lio->mem.access = act;
 	}
-	switch(data.mode) {
+	disp = dat.disp;
+	if (disp == 0xff) {
+		if (scrnmode != lio->mem.scrnmode) {
+			lio->mem.plane = 1;
+			lio->mem.disp = 0;
+		}
+	}
+	else {
+		plane = disp & ((2 << colorbit) - 1);
+		disp >>= (colorbit + 1);
+		if (disp >= 2) {
+			goto gscreen_err5;
+		}
+		lio->mem.disp = disp;
+		planemax = 1;
+		if (mono) {
+			planemax <<= colorbit;
+		}
+		if (!(scrnmode & 2)) {
+			planemax <<= 1;
+		}
+		if ((plane > planemax) &&
+			(plane != (1 << colorbit))) {
+			goto gscreen_err5;
+		}
+		lio->mem.plane = plane;
+		lio->mem.disp = disp;
+	}
+
+	lio->mem.scrnmode = scrnmode;
+	switch(scrnmode) {
 		case 0:
-			if (data.act >= 4) {
-				return(5);
-			}
-			scrn.top = (data.act & 1) * 16000;
-			scrn.lines = 200;
-			scrn.bank = data.act >> 1;
-			scrn.plane = 0x80;
-			scrn.disp = (data.disp >> (bit + 1)) & 1;
-			if (data.disp & ((1 << bit) - 1)) {
-				scrn.dbit = (1 << bit) - 1;
-				if ((data.disp & ((1 << (bit + 1)) - 1)) >= 3) {
-					return(5);
-				}
-			}
-			else {
-				scrn.dbit = 0;
-			}
+			mode = (pos)?0x40:0x80;
 			break;
 
 		case 1:
-			disp = data.act / bit;
-			if (disp >= 4) {
-				return(5);
-			}
-			scrn.top = (disp & 1) * 16000;
-			scrn.lines = 200;
-			scrn.bank = disp >> 1;
-			scrn.plane = data.act % bit;
-			scrn.disp = (data.disp >> (bit + 1)) & 1;
-			scrn.dbit = data.disp & ((1 << bit) - 1);
+			mode = (pos >= colorbit)?0x60:0xa0;
 			break;
 
 		case 2:
-			disp = data.act / bit;
-			if (disp >= 2) {
-				return(5);
-			}
-			scrn.top = 0;
-			scrn.lines = 400;
-			scrn.bank = disp;
-			scrn.plane = data.act % bit;
-			scrn.disp = (data.disp >> (bit + 1)) & 1;
-			scrn.dbit = data.disp & ((1 << bit) - 1);
-			if ((scrn.dbit) && (data.disp & (1 << bit))) {
-				return(5);
-			}
+			mode = 0xe0;
 			break;
 
 		case 3:
-			if (data.act >= 2) {
-				return(5);
-			}
-			scrn.top = 0;
-			scrn.lines = 400;
-			scrn.bank = data.act;
-			scrn.plane = 0x80;
-			scrn.disp = (data.disp >> (bit + 1)) & 1;
-			if (data.disp & ((1 << bit) - 1)) {
-				scrn.dbit = (1 << bit) - 1;
-				if ((data.disp & ((1 << (bit + 1)) - 1)) >= 2) {
-					return(5);
-				}
-			}
-			else {
-				scrn.dbit = 0;
-			}
+		default:
+			mode = 0xc0;
 			break;
 	}
-	lio->scrn = scrn;
-	lio_makescreen(lio);
+	mode |= disp << 4;
+	TRACEOUT(("bios1842 - %.2x", mode));
+	bios0x18_42(mode);
+	iocore_out8(0x00a6, lio->mem.access);
 	return(LIO_SUCCESS);
 
 gscreen_err5:
+	TRACEOUT(("screen error! %d %d %d %d",
+								dat.mode, dat.sw, dat.act, dat.disp));
 	return(LIO_ILLEGALFUNC);
 }
 
@@ -239,28 +215,23 @@ gscreen_err5:
 REG8 lio_gview(LIOWORK lio) {
 
 	GVIEW	dat;
-	SINT16	x1;
-	SINT16	y1;
-	SINT16	x2;
-	SINT16	y2;
+	int		x1;
+	int		y1;
+	int		x2;
+	int		y2;
 
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x1 = (SINT16)LOADINTELWORD(dat.x1);
 	y1 = (SINT16)LOADINTELWORD(dat.y1);
 	x2 = (SINT16)LOADINTELWORD(dat.x2);
 	y2 = (SINT16)LOADINTELWORD(dat.y2);
-	if (((dat.x1 >= dat.x2) || (dat.y1 >= dat.y2)) ||
-		((dat.vdraw_bg >= lio->gcolor1.palmax) && (dat.vdraw_bg != 0xff)) ||
-		((dat.vdraw_ln >= lio->gcolor1.palmax) && (dat.vdraw_ln != 0xff))) {
+	if ((x1 >= x2) || (y1 >= y2)) {
 		return(LIO_ILLEGALFUNC);
 	}
-	lio->gview.x1 = x1;
-	lio->gview.y1 = y1;
-	lio->gview.x2 = x2;
-	lio->gview.y2 = y2;
-	lio->gview.vdraw_bg = dat.vdraw_bg;
-	lio->gview.vdraw_ln = dat.vdraw_ln;
-	TRACEOUT(("GVIEW - %d %d", dat.vdraw_bg, dat.vdraw_ln));
+	STOREINTELWORD(lio->mem.viewx1, (UINT16)x1);
+	STOREINTELWORD(lio->mem.viewy1, (UINT16)y1);
+	STOREINTELWORD(lio->mem.viewx2, (UINT16)x2);
+	STOREINTELWORD(lio->mem.viewy2, (UINT16)y2);
 	return(LIO_SUCCESS);
 }
 
@@ -269,37 +240,32 @@ REG8 lio_gview(LIOWORK lio) {
 
 REG8 lio_gcolor1(LIOWORK lio) {
 
-	LIOGCOLOR1	dat;
+	GCOLOR1	dat;
 
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
-	if (dat.bgcolor == 0xff) {
-		dat.bgcolor = lio->gcolor1.bgcolor;
-	}
-	if (dat.bdcolor == 0xff) {
-		dat.bdcolor = lio->gcolor1.bdcolor;
+	if (dat.bgcolor != 0xff) {
+		lio->mem.bgcolor = dat.bgcolor;
 	}
 	if (dat.fgcolor == 0xff) {
-		dat.fgcolor = lio->gcolor1.fgcolor;
+		lio->mem.fgcolor = dat.fgcolor;
 	}
-	if (dat.palmode == 0xff) {
-		dat.palmode = lio->gcolor1.palmode;
-	}
-	else if (!(mem[MEMB_PRXCRT] & 1)) {				// 16color lio
-		dat.palmode = 0;
-	}
-	else {
-		if (!(mem[MEMB_PRXCRT] & 4)) {				// have e-plane?
-			goto gcolor1_err5;
-		}
-		dat.palmax = (dat.palmode == 2)?16:8;
-		if (!dat.palmode) {
-			iocore_out8(0x006a, 0);
+	if (dat.palmode != 0xff) {
+		if (!(mem[MEMB_PRXCRT] & 1)) {				// 8color lio
+			dat.palmode = 0;
 		}
 		else {
-			iocore_out8(0x006a, 1);
+			if (!(mem[MEMB_PRXCRT] & 4)) {			// have e-plane?
+				goto gcolor1_err5;
+			}
+			if (!dat.palmode) {
+				iocore_out8(0x006a, 0);
+			}
+			else {
+				iocore_out8(0x006a, 1);
+			}
 		}
+		lio->palmode = dat.palmode;
 	}
-	lio->gcolor1 = dat;
 	return(LIO_SUCCESS);
 
 gcolor1_err5:
@@ -314,12 +280,12 @@ REG8 lio_gcolor2(LIOWORK lio) {
 	GCOLOR2	dat;
 
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
-	if (dat.pal >= lio->gcolor1.palmax) {
+	if (dat.pal >= ((lio->palmode == 2)?16:8)) {
 		goto gcolor2_err5;
 	}
-	if (!lio->gcolor1.palmode) {
+	if (!lio->palmode) {
 		dat.color1 &= 7;
-		lio->degcol[dat.pal] = dat.color1;
+		lio->mem.color[dat.pal] = dat.color1;
 		gdc_setdegitalpal(dat.pal, dat.color1);
 	}
 	else {

@@ -133,21 +133,22 @@ static void gline(const _LIOWORK *lio, const LINEPT *lp) {
 
 	csrw = (y1 * 40) + (x1 >> 4) + ((x1 & 0xf) << 20);
 	gdcsub_setvectl(&vect, x1, y1, x2, y2);
-	if (lio->scrn.plane & 0x80) {
+	if (!(lio->draw.flag & LIODRAW_MONO)) {
 		gdcsub_vectl(csrw + 0x4000, &vect, pat,
-									(lp->pal & 1)?GDCOPE_SET:GDCOPE_CLEAR);
+							(REG8)((lp->pal & 1)?GDCOPE_SET:GDCOPE_CLEAR));
 		gdcsub_vectl(csrw + 0x8000, &vect, pat,
-									(lp->pal & 2)?GDCOPE_SET:GDCOPE_CLEAR);
+							(REG8)((lp->pal & 2)?GDCOPE_SET:GDCOPE_CLEAR));
 		gdcsub_vectl(csrw + 0xc000, &vect, pat,
-									(lp->pal & 4)?GDCOPE_SET:GDCOPE_CLEAR);
-		if (lio->gcolor1.palmode == 2) {
+							(REG8)((lp->pal & 4)?GDCOPE_SET:GDCOPE_CLEAR));
+		if (lio->palmode == 2) {
 			gdcsub_vectl(csrw, &vect, pat,
-									(lp->pal & 8)?GDCOPE_SET:GDCOPE_CLEAR);
+							(REG8)((lp->pal & 8)?GDCOPE_SET:GDCOPE_CLEAR));
 		}
 	}
 	else {
-		csrw += ((lio->scrn.plane + 1) & 3) << 12;
-		gdcsub_vectl(csrw, &vect, pat, (lp->pal)?GDCOPE_SET:GDCOPE_CLEAR);
+		csrw += ((lio->draw.flag + 1) & LIODRAW_PMASK) << 12;
+		gdcsub_vectl(csrw, &vect, pat,
+								(REG8)((lp->pal)?GDCOPE_SET:GDCOPE_CLEAR));
 	}
 }
 
@@ -190,12 +191,12 @@ REG8 lio_gline(LIOWORK lio) {
 	lio_updatedraw(lio);
 	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	if (dat.pal == 0xff) {
-		lp.pal = lio->gcolor1.fgcolor;
+		lp.pal = lio->mem.fgcolor;
 	}
 	else {
 		lp.pal = dat.pal;
 	}
-	if (lp.pal >= lio->gcolor1.palmax) {
+	if (lp.pal >= lio->draw.palmax) {
 		return(LIO_ILLEGALFUNC);
 	}
 	lp.x1 = (SINT16)LOADINTELWORD(dat.x1);
@@ -212,9 +213,9 @@ REG8 lio_gline(LIOWORK lio) {
 
 
 	if (dat.pal == 0xff) {
-		dat.pal = lio->gcolor1.fgcolor;
+		dat.pal = lio->mem.fgcolor;
 	}
-	else if (dat.pal >= lio->gcolor1.palmax) {
+	else if (dat.pal >= lio->draw.palmax) {
 		return(5);
 	}
 	x1 = (SINT16)LOADINTELWORD(dat.x1);
@@ -223,7 +224,7 @@ REG8 lio_gline(LIOWORK lio) {
 	y2 = (SINT16)LOADINTELWORD(dat.y2);
 	switch(dat.type) {
 		case 0:
-//			gline0();
+			gline(lio, &lp);
 			break;
 
 		case 1:

@@ -114,10 +114,51 @@ const UINT32 lioplaneadrs[4] = {VRAM_B, VRAM_R, VRAM_G, VRAM_E};
 
 void lio_updatedraw(LIOWORK lio) {
 
-	lio->draw.x1 = max(lio->gview.x1, 0);
-	lio->draw.y1 = max(lio->gview.y1, 0);
-	lio->draw.x2 = min(lio->gview.x2, 639);
-	lio->draw.y2 = min(lio->gview.x2, (lio->scrn.lines - 1));
+	UINT8	flag;
+	UINT8	colorbit;
+	SINT16	maxline;
+	SINT16	tmp;
+
+	flag = 0;
+	colorbit = 3;
+	maxline = 399;
+	if (lio->palmode == 2) {
+		flag |= LIODRAW_4BPP;
+		colorbit = 4;
+	}
+	switch(lio->mem.scrnmode) {
+		case 0:
+			if (lio->mem.pos & 1) {
+				flag |= LIODRAW_UPPER;
+			}
+			maxline = 199;
+			break;
+
+		case 1:
+			flag |= lio->mem.pos % colorbit;
+			flag |= LIODRAW_MONO;
+			if (lio->mem.pos >= colorbit) {
+				flag |= LIODRAW_UPPER;
+			}
+			maxline = 199;
+			break;
+
+		case 2:
+			flag |= lio->mem.pos % colorbit;
+			flag |= LIODRAW_MONO;
+			break;
+	}
+	lio->draw.flag = flag;
+	lio->draw.palmax = 1 << colorbit;
+
+	tmp = (SINT16)LOADINTELWORD(lio->mem.viewx1);
+	lio->draw.x1 = max(tmp, 0);
+	tmp = (SINT16)LOADINTELWORD(lio->mem.viewy1);
+	lio->draw.y1 = max(tmp, 0);
+	tmp = (SINT16)LOADINTELWORD(lio->mem.viewx2);
+	lio->draw.x2 = min(tmp, 639);
+	tmp = (SINT16)LOADINTELWORD(lio->mem.viewy2);
+	lio->draw.y2 = min(tmp, maxline);
 	if (!gdcs.access) {
 		lio->draw.base = 0;
 		lio->draw.bank = 0;
@@ -133,75 +174,74 @@ void lio_updatedraw(LIOWORK lio) {
 
 // ----
 
-static const BYTE bit_l[8] = {0xff, 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01};
-static const BYTE bit_r[8] = {0x00, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe};
+static void pixed8(const _LIOWORK *lio, UINT addr, REG8 bit, REG8 pal) {
 
-static void pixed8(const _LIOWORK *lio, UINT32 vadrs, BYTE bit, REG8 pal) {
+	BYTE	*ptr;
 
-	if (lio->scrn.plane & 0x80) {
+	addr = LOW15(addr);
+	vramupdate[addr] |= lio->draw.sbit;
+	ptr = mem + lio->draw.base + addr;
+	if (!(lio->draw.flag & LIODRAW_MONO)) {
 		if (pal & 1) {
-			mem[vadrs + VRAM_B] |= bit;
+			ptr[VRAM_B] |= bit;
 		}
 		else {
-			mem[vadrs + VRAM_B] &= ~bit;
+			ptr[VRAM_B] &= ~bit;
 		}
 		if (pal & 2) {
-			mem[vadrs + VRAM_R] |= bit;
+			ptr[VRAM_R] |= bit;
 		}
 		else {
-			mem[vadrs + VRAM_R] &= ~bit;
+			ptr[VRAM_R] &= ~bit;
 		}
 		if (pal & 4) {
-			mem[vadrs + VRAM_G] |= bit;
+			ptr[VRAM_G] |= bit;
 		}
 		else {
-			mem[vadrs + VRAM_G] &= ~bit;
+			ptr[VRAM_G] &= ~bit;
 		}
-		if (lio->gcolor1.palmode == 2) {
+		if (lio->palmode == 2) {
 			if (pal & 8) {
-				mem[vadrs + VRAM_E] |= bit;
+				ptr[VRAM_E] |= bit;
 			}
 			else {
-				mem[vadrs + VRAM_E] &= ~bit;
+				ptr[VRAM_E] &= ~bit;
 			}
 		}
 	}
 	else {
-		vadrs += lioplaneadrs[lio->scrn.plane & 3];
+		ptr += lioplaneadrs[lio->draw.flag & LIODRAW_PMASK];
 		if (pal) {
-			mem[vadrs] |= bit;
+			*ptr |= bit;
 		}
 		else {
-			mem[vadrs] &= ~bit;
+			*ptr &= ~bit;
 		}
 	}
 }
 
 void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal) {
 
-	UINT32	adrs;
+	UINT	addr;
 	BYTE	bit;
 
 	if ((lio->draw.x1 > x) || (lio->draw.x2 < x) ||
 		(lio->draw.y1 > y) || (lio->draw.y2 < y)) {
 		return;
 	}
-	adrs = (y * 80) + (x >> 3);
+	addr = (y * 80) + (x >> 3);
 	bit = 0x80 >> (x & 7);
-	if (lio->scrn.top) {
-		adrs += 16000;
+	if (lio->draw.flag & LIODRAW_UPPER) {
+		addr += 16000;
 	}
-	vramupdate[adrs] |= lio->draw.sbit;
 	gdcs.grphdisp |= lio->draw.sbit;
-	adrs += lio->draw.base;
-	pixed8(lio, adrs, bit, pal);
+	pixed8(lio, addr, bit, pal);
 }
 
 void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 
-	UINT	adrs;
-	UINT32	vadrs;
-	BYTE	bit, dbit, sbit;
+	UINT	addr;
+	BYTE	bit, dbit;
 	SINT16	width;
 
 	if ((lio->draw.y1 > y) || (lio->draw.y2 < y)) {
@@ -217,33 +257,23 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 	if (width <= 0) {
 		return;
 	}
-	adrs = (y * 80) + (x1 >> 3);
+	addr = (y * 80) + (x1 >> 3);
 	bit = 0x80 >> (x1 & 7);
-	if (lio->scrn.top) {
-		adrs += 16000;
+	if (lio->draw.flag & LIODRAW_UPPER) {
+		addr += 16000;
 	}
-	if (!lio->scrn.bank) {
-		vadrs = adrs;
-		sbit = 1;
-		gdcs.grphdisp |= 1;
-	}
-	else {
-		vadrs = adrs + VRAM_STEP;
-		sbit = 2;
-		gdcs.grphdisp |= 2;
-	}
-
+	gdcs.grphdisp |= lio->draw.sbit;
 	dbit = 0;
 	while(bit && width--) {
 		dbit |= bit;
 		bit >>= 1;
 	}
-	pixed8(lio, vadrs++, dbit, pal);
-	vramupdate[adrs++] |= sbit;
+	pixed8(lio, addr, dbit, pal);
+	addr++;
 	while(width >= 8) {
 		width -= 8;
-		pixed8(lio, vadrs++, 0xff, pal);
-		vramupdate[adrs++] |= sbit;
+		pixed8(lio, addr, 0xff, pal);
+		addr++;
 	}
 	dbit = 0;
 	bit = 0x80;
@@ -252,8 +282,7 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 		bit >>= 1;
 	}
 	if (dbit) {
-		pixed8(lio, vadrs, dbit, pal);
-		vramupdate[adrs] |= sbit;
+		pixed8(lio, addr, dbit, pal);
 	}
 }
 

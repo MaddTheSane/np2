@@ -227,13 +227,6 @@ const INITBL	*pterm;
 				inirdbyte3(work, p);
 				break;
 
-			case INITYPE_USERKEY:
-				GetPrivateProfileString(title, p->item, str_null,
-												work, sizeof(work), path);
-				((NKEYM)p->value)->keys = (UINT8)profile_setkeys(work,
-												((NKEYM)p->value)->key, 15);
-				break;
-
 			case INITYPE_KB:
 				GetPrivateProfileString(title, p->item, str_null,
 												work, sizeof(work), path);
@@ -305,11 +298,6 @@ const char		*set;
 
 				case INITYPE_HEX32:
 					SPRINTF(work, str_x, *((UINT32 *)p->value));
-					break;
-
-				case INITYPE_USERKEY:
-					profile_getkeys(work, sizeof(work),
-							((NKEYM)p->value)->key, ((NKEYM)p->value)->keys);
 					break;
 
 				default:
@@ -432,8 +420,6 @@ static const INITBL iniitem[] = {
 
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
-	{"userkey1", INITYPE_USERKEY,	np2cfg.userkey+0,		0},
-	{"userkey2", INITYPE_USERKEY,	np2cfg.userkey+1,		0},
 
 
 	// OSàÀë∂ÅH
