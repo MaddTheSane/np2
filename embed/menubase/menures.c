@@ -18,7 +18,7 @@ const char mstr_ignore[] = "\226\263\216\213";
 const char mstr_yes[] = "\202\315\202\242";
 			// ‚¢‚¢‚¦
 const char mstr_no[] = "\202\242\202\242\202\246";
-#elif defined(OSLANG_EUC)
+#elif defined(OSLANG_EUC) && !defined(RESOURCE_US)
 const char mstr_fontcheck[] = " ";
 const char mstr_ok[] = "OK";
 			// ƒLƒƒƒ“ƒZƒ‹

@@ -58,7 +58,7 @@ static const char str_sysx[] =				// ç≈ëÂâª
 			"\215\305\221\345\211\273";
 static const char str_sysc[] =				// ï¬Ç∂ÇÈ
 			"\225\302\202\266\202\351";
-#elif defined(OSLANG_EUC)
+#elif defined(OSLANG_EUC) && !defined(RESOURCE_US)
 static const char str_sysr[] = 				// å≥ÇÃÉTÉCÉYÇ…ñﬂÇ∑
 			"\270\265\244\316\245\265\245\244\245\272\244\313" \
 			"\314\341\244\271";

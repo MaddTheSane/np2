@@ -29,7 +29,7 @@ static const char str_filetype[] =				// ファイルの種類
 			"\203\164\203\100\203\103\203\213\202\314\216\355\227\336";
 static const char str_open[] =					// 開く
 			"\212\112\202\255";
-#elif defined(OSLANG_EUC)
+#elif defined(OSLANG_EUC) && !defined(RESOURCE_US)
 static const char str_dirname[] =				// ファイルの場所
 			"\245\325\245\241\245\244\245\353\244\316\276\354\275\352";
 static const char str_filename[] =				// ファイル名
