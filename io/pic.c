@@ -15,7 +15,7 @@ static const _PICITEM def_slave = {
 							0, {0, 0, 0, 0, 0, 0, 0, 0},
 								{7, 6, 5, 4, 3, 2, 1, 0},
 								{0, 0x10, 0x07, 0},
-								0x70, 0, 0, 0,
+								0x71, 0, 0, 0,
 								0, 0, 0, 0};
 
 
@@ -275,10 +275,6 @@ static void IOOUTCALL pic_o00(UINT port, REG8 dat) {
 	}
 }
 
-#if defined(TRACE)
-extern int piccnt;
-#endif
-
 static void IOOUTCALL pic_o02(UINT port, REG8 dat) {
 
 	PICITEM		picp;
@@ -296,9 +292,6 @@ static void IOOUTCALL pic_o02(UINT port, REG8 dat) {
 		}
 #endif
 		picp->imr = dat;
-#if defined(TRACE)
-		piccnt++;
-#endif
 	}
 	else {
 		picp->icw[picp->writeicw] = dat;
