@@ -75,22 +75,15 @@ void mouse_running(BYTE flg) {
 }
 
 
-void mouse_callback(void) {
+void mouse_callback(HIPoint delta) {
 
 	Point	cp;
-    CGMouseDelta	x,y;
-    static	CGMouseDelta	pastx=0,pasty=0;
 
 	if (lastmouse & 1) {
-        CGGetLastMouseDelta(&x, &y);
-        if ((pastx!=x) && (pasty!=y)) {
-            mousex += (short)x;
-            mousey += (short)y;
-            pastx = x;
-            pasty = y;
-            getmaincenter(&cp);
-            CGWarpMouseCursorPosition(CGPointMake(cp.h, cp.v));
-       }
+        mousex += (short)delta.x;
+        mousey += (short)delta.y;
+        getmaincenter(&cp);
+        CGWarpMouseCursorPosition(CGPointMake(cp.h, cp.v));
 	}
 }
 

@@ -35,7 +35,7 @@ BYTE mousemng_getstat(short *x, short *y, int clear);
 
 BYTE mouse_flag(void);
 void mouse_running(BYTE flg);
-void mouse_callback(void);
+void mouse_callback(HIPoint delta);
 BYTE mouse_btn(BYTE btn);
 
 #else

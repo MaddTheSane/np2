@@ -30,7 +30,7 @@ static const BYTE keymac[128] = {
 			//	 TAB, SPC,    ,  BS,    , ESC,    , apl		; 0x30
 				0x0f,0x34,  NC,0x0e,  NC,0x00,  NC,  NC,
 			//	 sft, ctl, alt, cps,    ,    ,    ,    		; 0x38
-				0x70,0x74,0x73,0x79,  NC,  NC,  NC,  NC,
+				0x70,0x74,0x73,0x71,  NC,  NC,  NC,  NC,
 			//	    , [.],    , [*],    ,    , [+],    		; 0x40
 				  NC,0x50,  NC,0x45,  NC,  NC,0x49,  NC,
 			//	    ,    ,    ,    , ret,    , [-], clr		; 0x48
@@ -149,6 +149,14 @@ void mackbd_f12down(int keycode) {
             sysmng_update(SYS_UPDATECFG);
 		}
 #endif
+    }
+    else {
+        BYTE	data;
+        data = keymac[keycode];
+        if (data == 0x71) SysBeep(0);
+        if (data != NC) {
+            keystat_senddata(data);
+        }
 	}
 }
 
@@ -161,6 +169,13 @@ void mackbd_f12up(int keycode) {
 		else if (np2oscfg.F12COPY == 2) {
 			keystat_senddata(0x60 | 0x80);
 		}
+    }
+    else {
+        BYTE	data;
+        data = keymac[keycode];
+        if (data != NC) {
+            keystat_senddata(data | 0x80);
+        }
 	}
 }
 

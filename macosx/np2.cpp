@@ -469,6 +469,7 @@ static void HandleMouseDown(EventRecord *pevent) {
 	WindowPtr	hWnd;
 	Rect		rDrag;
 
+    soundmng_stop();
 	switch(FindWindow(pevent->where, &hWnd)) {
 		case inMenuBar:
 			HandleMenuChoice(MenuSelect(pevent->where));
@@ -501,11 +502,14 @@ static void HandleMouseDown(EventRecord *pevent) {
 #endif
 			break;
 
+#ifndef NP2GCC
 		case inGoAway:
 			if (TrackGoAway(hWnd, pevent->where)) { }
 			np2running = FALSE;
 			break;
+#endif
 	}
+    soundmng_play();
 }
 
 #if 0
@@ -685,10 +689,7 @@ int main(int argc, char *argv[]) {
 #endif
 		else {
 			if (np2oscfg.NOWAIT) {
-#if defined(NP2GCC) && 0
-				mouse_callback();
-#endif
-#if 1
+#if 0
 				mackbd_callback();
 #endif
 				pccore_exec(framecnt == 0);
@@ -707,10 +708,7 @@ int main(int argc, char *argv[]) {
 			}
 			else if (np2oscfg.DRAW_SKIP) {			// frame skip
 				if (framecnt < np2oscfg.DRAW_SKIP) {
-#if defined(NP2GCC) && 0
-                    mouse_callback();
-#endif
-#if 1
+#if 0
                     mackbd_callback();
 #endif
 					pccore_exec(framecnt == 0);
@@ -723,10 +721,7 @@ int main(int argc, char *argv[]) {
 			else {								// auto skip
 				if (!waitcnt) {
 					UINT cnt;
-#if defined(NP2GCC) && 0
-                    mouse_callback();
-#endif
-#if 1
+#if 0
                     mackbd_callback();
 #endif
 					pccore_exec(framecnt == 0);
@@ -811,6 +806,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
     GetEventParameter (event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modif);
 
 #if defined(NP2GCC)
+    HIPoint delta;
     EventMouseButton buttonKind;
     GetEventParameter (event, kEventParamMouseButton, typeMouseButton, NULL, sizeof(EventMouseButton), NULL, &buttonKind);
 
@@ -830,23 +826,10 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                     switch (whatHappened)
                         {
                         case kEventMouseMoved:
-#if 0
-                            if (isFullScreen)
-                            {
-                                HIPoint delta;
-                                Point pt;
-                                GetEventParameter (event, kEventParamMouseDelta, typeHIPoint, NULL, sizeof(HIPoint), NULL, &delta);
-                                pt.h=(short)delta.x;
-                                pt.v=(short)delta.y;
-                                mouse_callback(pt);
-                            }
-                            else {
-                                mouse_callback(eve.where);
-                            }
-#endif
-                                mouse_callback();
-                                result = noErr;
-                                break;
+                            GetEventParameter (event, kEventParamMouseDelta, typeHIPoint, NULL, sizeof(HIPoint), NULL, &delta);
+                            mouse_callback(delta);
+                            result = noErr;
+                            break;
                        case kEventMouseDown:
                             if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
                                 ret=mouse_btn(MOUSE_RIGHTDOWN);
@@ -857,16 +840,19 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                             result=noErr;
                             break;
                         case kEventMouseUp:
-                                {
-                                    if (buttonKind == kEventMouseButtonSecondary | modif & cmdKey) {
-                                        ret=mouse_btn(MOUSE_RIGHTUP);
-                                    }
-                                    else {
-                                        ret=mouse_btn(MOUSE_LEFTUP);
-                                    }
-                                    result=noErr;
-                                    break;    
-                                }                    
+                            if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
+                                ret=mouse_btn(MOUSE_RIGHTUP);
+                            }
+                            else if (buttonKind == kEventMouseButtonTertiary) {
+                                mouse_running(MOUSE_XOR);
+                                menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+                                sysmng_update(SYS_UPDATECFG);
+                            }
+                            else {
+                                ret=mouse_btn(MOUSE_LEFTUP);
+                            }
+                            result=noErr;
+                            break;    
                         }
 #else
 						if (whatHappened == kEventMouseDown) {
@@ -890,6 +876,7 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
     OSStatus	result = eventNotHandledErr;    
     long		eventClass;
     
+    
     GetEventParameter(event, kEventParamDirectObject, typeWindowRef, NULL,
                          sizeof(window), NULL, &window);
     eventClass = GetEventClass(event);
@@ -911,26 +898,21 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                 switch (whatHappened)
                 {
                     case kEventRawKeyUp:
-                        //mackeyup((int)key);
                         mackbd_f12up(key);
                         result = noErr;
                         break;
                     case kEventRawKeyRepeat:
-                        //mackeydown(0, (int)key);
                         mackbd_f12down(key);
                         result = noErr;
                         break;
                     case kEventRawKeyDown:
-                        mackbd_f12down(key);
                         if (modif & cmdKey) {
-                            //if (!mackeydown(1, (int)key)) {
-                                char	para;
-                                GetEventParameter (event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &para);
-                                HandleMenuChoice(MenuKey(para));
-                            //}
+                            char	para;
+                            GetEventParameter (event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &para);
+                            HandleMenuChoice(MenuKey(para));
                         }
                         else {
-                            //mackeydown(0, (int)key);
+                            mackbd_f12down(key);
                         }
                         result = noErr;
                         break;
@@ -941,8 +923,7 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                         else keystat_senddata(0x73 | 0x80);
                         if (modif & controlKey) keystat_senddata(0x74);
                         else keystat_senddata(0x74 | 0x80);
-                        if (modif & alphaLock) keystat_senddata(0x79);
-                        else keystat_senddata(0x79 | 0x80);
+                        if (modif & alphaLock) keystat_senddata(0x71);
                         result = noErr;
                         break;
                     default: 
