@@ -119,7 +119,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
 			$(OBJ)/lio.o		$(OBJ)/gscreen.o	$(OBJ)/gpset.o		\
-			$(OBJ)/gline.o		$(OBJ)/gput1.o							\
+			$(OBJ)/gline.o		$(OBJ)/gcircle.o	$(OBJ)/gput1.o		\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
@@ -765,6 +765,9 @@ $(OBJ)/gpset.o		:	$(LIO)/gpset.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gline.o		:	$(LIO)/gline.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/gcircle.o	:	$(LIO)/gcircle.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/gput1.o		:	$(LIO)/gput1.c $(HEADERS) $(CPUCORES) $(LIO)/lio.h
