@@ -1103,16 +1103,23 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                 break;
 		case kEventClassKeyboard:
                 if (GetEventKind(event)==kEventRawKeyModifiersChanged) {
-					static UInt32 backup = 0;
-                    if (modif & shiftKey) keystat_senddata(0x70);
-                    else keystat_senddata(0x70 | 0x80);
-                    if (modif & optionKey) keystat_senddata(0x73);
-                    else keystat_senddata(0x73 | 0x80);
-                    if (modif & controlKey) keystat_senddata(0x74);
-                    else keystat_senddata(0x74 | 0x80);
-                    if ((modif & alphaLock) != (backup & alphaLock)) {
+					static  UInt32  backup = 0;
+					UInt32  change = backup ^ modif;
+					backup = modif;
+					if (change & shiftKey) {
+						if (modif & shiftKey) keystat_senddata(0x70);
+						else keystat_senddata(0x70 | 0x80);
+					}
+					if (change & optionKey) {
+						if (modif & optionKey) keystat_senddata(0x73);
+						else keystat_senddata(0x73 | 0x80);
+					}
+					if (change & controlKey) {
+						if (modif & controlKey) keystat_senddata(0x74);
+						else keystat_senddata(0x74 | 0x80);
+					}
+                    if (change & alphaLock) {
                         keystat_senddata(0x71);
-                        backup = modif;
                     }
                     result = noErr;
 				}
