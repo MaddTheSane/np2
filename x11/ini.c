@@ -20,6 +20,27 @@ typedef struct {
 } _INIARG, *INIARG;
 
 
+static BOOL
+inigetbmp(const BYTE *ptr, UINT pos)
+{
+
+	return ((ptr[pos >> 3] >> (pos & 7)) & 1);
+}
+
+static void
+inisetbmp(BYTE *ptr, UINT pos, BOOL set)
+{
+	UINT8 bit;
+
+	ptr += (pos >> 3);
+	bit = 1 << (pos & 7);
+	if (set) {
+		*ptr |= bit;
+	} else {
+		*ptr &= ~bit;
+	}
+}
+
 static void
 inirdargs16(const char *src, const INITBL *ini)
 {
@@ -185,6 +206,10 @@ inireadcb(void *arg, const char *para, const char *key, const char *data)
 
 			case INITYPE_BOOL:
 				*((BYTE *)p->value) = (!milstr_cmp(data, str_true))?1:0;
+				break;
+
+			case INITYPE_BITMAP:
+				inisetbmp((BYTE *)p->value, p->arg, milstr_cmp(data, str_true) == 0);
 				break;
 
 			case INITYPE_ARGS16:
@@ -356,6 +381,10 @@ ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BO
 				milstr_ncpy(work, (*((BYTE *)p->value)) ? str_true : str_false, sizeof(work));
 				break;
 
+			case INITYPE_BITMAP:
+				milstr_ncpy(work, inigetbmp((BYTE *)p->value, p->arg) ? str_true : str_false, sizeof(work));
+				break;
+
 			case INITYPE_ARGH8:
 				iniwrsetargh8(work, sizeof(work), p);
 				break;
@@ -430,6 +459,7 @@ static const char ini_title[] = "NekoProjectII";
 enum {
 	INIRO_STR	= INIFLAG_RO | INITYPE_STR,
 	INIRO_BOOL	= INIFLAG_RO | INITYPE_BOOL,
+	INIRO_BITMAP	= INIFLAG_RO | INITYPE_BITMAP,
 	INIRO_UINT8	= INIFLAG_RO | INITYPE_UINT8,
 	INIMAX_UINT8	= INIFLAG_MAX | INITYPE_UINT8,
 	INIAND_UINT8	= INIFLAG_AND | INITYPE_UINT8,
@@ -518,6 +548,10 @@ static const INITBL iniitem[] = {
 
 	{"calendar", INITYPE_BOOL,	&np2cfg.calendar,	0},
 	{"USE144FD", INITYPE_BOOL,	&np2cfg.usefd144,	0},
+	{"FDDRIVE1", INIRO_BITMAP,	&np2cfg.fddequip,	0},
+	{"FDDRIVE2", INIRO_BITMAP,	&np2cfg.fddequip,	1},
+	{"FDDRIVE3", INIRO_BITMAP,	&np2cfg.fddequip,	2},
+	{"FDDRIVE4", INIRO_BITMAP,	&np2cfg.fddequip,	3},
 
 	{"keyboard", INIRO_KB,		&np2oscfg.KEYBOARD,	0},
 	{"F12_COPY", INITYPE_UINT8,	&np2oscfg.F12KEY,	0},
@@ -620,10 +654,16 @@ read_iniread_flag(const INITBL *p)
 	return FALSE;
 }
 
+NP2CFG np2cfg_default;
+NP2OSCFG np2oscfg_default;
+
 void
 initload(void)
 {
 	char path[MAX_PATH];
+
+	np2cfg_default = np2cfg;
+	np2oscfg_default = np2oscfg;
 
 	milstr_ncpy(path, modulefile, sizeof(path));
 	ini_read(path, ini_title, iniitem, INIITEMS);
