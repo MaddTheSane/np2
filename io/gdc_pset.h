@@ -6,7 +6,7 @@ typedef struct _gdcps	*GDCPSET;
 typedef void (MEMCALL * GDCPSFN)(GDCPSET pset, UINT addr, UINT bit);
 
 struct _gdcps {
-	GDCPSFN	func;
+	GDCPSFN	func[2];
 	union {
 		BYTE	*ptr;			// raw access / grcg
 		UINT32	addr;			// egc
