@@ -462,6 +462,7 @@ static void tremolo_update(VOICE v) {
 	int		depth;
 	int		cnt;
 	int		vol;
+	int		pos;
 
 	depth = v->sample->tremolo_depth << 8;
 	if (v->tremolo.sweepstep) {
@@ -476,10 +477,11 @@ static void tremolo_update(VOICE v) {
 	}
 	v->tremolo.count += v->tremolo.step;
 	cnt = v->tremolo.count >> TRERATE_SHIFT;
-	vol = envsin12q[cnt & ((1 << (SINENT_BIT - 2)) - 1)];
+	pos = cnt & ((1 << (SINENT_BIT - 2)) - 1);
 	if (cnt & (1 << (SINENT_BIT - 2))) {
-		vol = (1 << 12) - vol;
+		pos ^= ((1 << (SINENT_BIT - 2)) - 1);
 	}
+	vol = envsin12q[pos];
 	if (cnt & (1 << (SINENT_BIT - 1))) {
 		vol = 0 - vol;
 	}
