@@ -81,7 +81,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
         {
             case kEventWindowShowing:
                 image = getControlRefByID('logo', 0, aboutWin);
-                pict = getBMPfromResource("np2logo", &bounds, CFSTR("tiff"));
+                pict = getBMPfromResource("np2logo.tiff", &bounds);
                 SetControlData(image, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
                 version = getControlRefByID('vers', 0, aboutWin);
                 SetControlData(version, kControlNoPart, kControlStaticTextTextTag, sizeof(NP2VER_CORE), NP2VER_CORE);

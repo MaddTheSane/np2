@@ -543,7 +543,7 @@ static void HandleMenuChoice(long wParam) {
             {
                 ICInstance inst;
                 long start, fin;
-                const char	urlStr[] = "http://retropc.net/tk800/np2x/help.html";
+                const char	urlStr[] = "http://retropc.net/tk800/np2x/help/help.html";
 
                 ICStart(&inst, 'SMil');
                 start = 0;
@@ -875,7 +875,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                 if (cmd.commandID == kHICommandAppHelp) {
                     ICInstance inst;
                     long start, fin;
-                    const char	urlStr[] = "http://retropc.net/tk800/np2x/help.html";
+                    const char	urlStr[] = "http://retropc.net/tk800/np2x/help/help.html";
 
                     ICStart(&inst, 'SMil');
                     start = 0;

@@ -10,6 +10,7 @@
 #endif
 
 #include	"soundrecording.h"
+#include	"np2opening.h"
 
 #define	SOUNDBUFFERS	2
 
@@ -306,12 +307,15 @@ static	Movie	setupWAV(const char* name) {
     short	resID = 0;
     Movie	wav = NULL;    
 
-	char	path[MAX_PATH];
-	Str255	fname;
+    if (!getResourceFile(name, &fs)) {
+        char	path[MAX_PATH];
+        Str255	fname;
 
-	file_cpyname(path, file_getcd(name), MAX_PATH);
-	mkstr255(fname, path);
-	FSMakeFSSpec(0, 0, fname, &fs);
+        file_cpyname(path, file_getcd(name), MAX_PATH);
+        mkstr255(fname, path);
+        FSMakeFSSpec(0, 0, fname, &fs);
+    }
+
     if (OpenMovieFile( &fs, &movieRefNum, fsRdPerm ) == noErr) {
         if (NewMovieFromFile(&wav,movieRefNum, &resID, NULL, newMovieActive, NULL) != noErr) {
             return NULL;
@@ -330,8 +334,8 @@ void soundmng_deinitialize(void) {
 
 BOOL soundmng_initialize(void) {
     EnterMovies();
-    seekWAV[0] = setupWAV("Fddseek.wav");
-    seekWAV[1] = setupWAV("Fddseek1.wav");
+    seekWAV[0] = setupWAV("fddseek.wav");
+    seekWAV[1] = setupWAV("fddseek1.wav");
     if (seekWAV[0] == NULL || seekWAV[1] == NULL) {
         return  false;
     }

@@ -203,10 +203,12 @@
 		};
 		20286C2CFDCF999611CA2CEA = {
 			children = (
+				961B70290563FB1900000103,
+				961B702A0563FB1900000103,
+				961B70230563FAF800000103,
+				961B70240563FAF800000103,
+				961B70250563FAF800000103,
 				969A8347055A60A500000103,
-				96A202640549B26600000102,
-				96E7E2C50556630F00000103,
-				961B6B800560290B00000103,
 				96EFFA58054716B900000102,
 				F50908FE053EDAC2014E43C7,
 				969A7EB20559979000000103,
@@ -447,8 +449,6 @@
 			files = (
 				0867D6ACFE840B52C02AAC07,
 				96EFFA5A054716B900000102,
-				96A202650549B26600000102,
-				96E7E2C60556630F00000103,
 				969A7EB30559979000000103,
 				969A8350055A60A500000103,
 				969A8351055A60A500000103,
@@ -458,7 +458,11 @@
 				969A8355055A60A500000103,
 				969A8356055A60A500000103,
 				969A8357055A60A500000103,
-				961B6B810560290B00000103,
+				961B70260563FAF900000103,
+				961B70270563FAF900000103,
+				961B70280563FAF900000103,
+				961B702B0563FB1900000103,
+				961B702C0563FB1900000103,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -683,17 +687,6 @@
 			settings = {
 			};
 		};
-		961B6B800560290B00000103 = {
-			isa = PBXFileReference;
-			path = np2logo.tiff;
-			refType = 4;
-		};
-		961B6B810560290B00000103 = {
-			fileRef = 961B6B800560290B00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		961B7000056039CE00000103 = {
 			fileEncoding = "-2147483647";
 			isa = PBXFileReference;
@@ -714,6 +707,66 @@
 		};
 		961B7005056048F500000103 = {
 			fileRef = 961B7003056048F500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B70230563FAF800000103 = {
+			isa = PBXFileReference;
+			name = nekop2.bmp;
+			path = Icon/nekop2.bmp;
+			refType = 4;
+		};
+		961B70240563FAF800000103 = {
+			isa = PBXFileReference;
+			name = np2logo.tiff;
+			path = Icon/np2logo.tiff;
+			refType = 4;
+		};
+		961B70250563FAF800000103 = {
+			isa = PBXFileReference;
+			name = np2tool.bmp;
+			path = Icon/np2tool.bmp;
+			refType = 4;
+		};
+		961B70260563FAF900000103 = {
+			fileRef = 961B70230563FAF800000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B70270563FAF900000103 = {
+			fileRef = 961B70240563FAF800000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B70280563FAF900000103 = {
+			fileRef = 961B70250563FAF800000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B70290563FB1900000103 = {
+			isa = PBXFileReference;
+			name = fddseek.wav;
+			path = Icon/fddseek.wav;
+			refType = 4;
+		};
+		961B702A0563FB1900000103 = {
+			isa = PBXFileReference;
+			name = fddseek1.wav;
+			path = Icon/fddseek1.wav;
+			refType = 4;
+		};
+		961B702B0563FB1900000103 = {
+			fileRef = 961B70290563FB1900000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		961B702C0563FB1900000103 = {
+			fileRef = 961B702A0563FB1900000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3182,17 +3235,6 @@
 			settings = {
 			};
 		};
-		96A202640549B26600000102 = {
-			isa = PBXFileReference;
-			path = nekop2.bmp;
-			refType = 4;
-		};
-		96A202650549B26600000102 = {
-			fileRef = 96A202640549B26600000102;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		96A2026D0549B38300000102 = {
 			isa = PBXFrameworkReference;
 			name = QuickTime.framework;
@@ -3201,17 +3243,6 @@
 		};
 		96A2026E0549B38300000102 = {
 			fileRef = 96A2026D0549B38300000102;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		96E7E2C50556630F00000103 = {
-			isa = PBXFileReference;
-			path = np2tool.bmp;
-			refType = 4;
-		};
-		96E7E2C60556630F00000103 = {
-			fileRef = 96E7E2C50556630F00000103;
 			isa = PBXBuildFile;
 			settings = {
 			};

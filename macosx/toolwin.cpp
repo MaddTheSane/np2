@@ -168,7 +168,7 @@ static PicHandle skinload(const char *path, Rect* bounds) {
 			return(ret);
 		}
 	}
-	return(getBMPfromResource("np2tool", bounds, CFSTR("bmp")));
+	return(getBMPfromResource("np2tool.bmp", bounds));
 }
 
 // ----
