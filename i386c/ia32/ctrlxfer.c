@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.5 2004/01/27 15:55:49 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.6 2004/02/03 14:26:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1034,14 +1034,9 @@ RETfar_pm(DWORD nbytes)
 /*------------------------------------------------------------------------------
  * IRET_pm
  */
-
-#define	IA32_RETURN_FROM_VM86
-
 static void IRET_pm_nested_task(void);
 static void IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
-#if defined(IA32_RETURN_FROM_VM86)
 static void IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
-#endif	/* IA32_RETURN_FROM_VM86 */
 
 void
 IRET_pm(void)
@@ -1085,7 +1080,6 @@ IRET_pm(void)
 	}
 	VERBOSE(("IRET_pm: new_ip = %08x, new_cs = %04x, new_eflags = %08x", new_ip, new_cs, new_flags));
 
-#ifdef	IA32_RETURN_FROM_VM86
 	if (CPU_EFLAG & VM_FLAG) {
 		/* RETURN-FROM-VIRTUAL-8086-MODE */
 		IRET_pm_return_from_vm86(new_ip, new_cs, new_flags);
@@ -1093,7 +1087,6 @@ IRET_pm(void)
 		CPU_STAT_NERROR = 0;
 		return;
 	}
-#endif	/* IA32_RETURN_FROM_VM86 */
 
 	if (new_flags & VM_FLAG) {
 		/* RETURN-TO-VIRTUAL-8086-MODE */
@@ -1355,7 +1348,6 @@ IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 	SET_EIP(new_ip);
 }
 
-#ifdef	IA32_RETURN_FROM_VM86
 /*---
  * IRET_pm: VM_FLAG
  */
@@ -1388,4 +1380,3 @@ IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 	VERBOSE(("IRET_pm: trap to virtual-8086 monitor: VM=1, IOPL<3"));
 	EXCEPTION(GP_EXCEPTION, 0);
 }
-#endif	/* IA32_RETURN_FROM_VM86 */
