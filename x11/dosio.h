@@ -1,11 +1,10 @@
 #ifndef	NP2_X11_DOSIO_H__
 #define	NP2_X11_DOSIO_H__
 
+#include <dirent.h>
+
 typedef FILE *			FILEH;
 #define	FILEH_INVALID		NULL
-
-typedef	void *			FLISTH;
-#define	FLISTH_INVALID		NULL
 
 #define	FSEEK_SET		SEEK_SET
 #define	FSEEK_CUR		SEEK_CUR
@@ -38,6 +37,12 @@ typedef struct {
 	BYTE	minute;		/* cl */
 	BYTE	second;		/* dh */
 } DOSTIME;
+
+typedef struct {
+	char	path[MAX_PATH];
+	DIR	*hdl;
+} _FLISTH, *FLISTH;
+#define	FLISTH_INVALID		NULL
 
 typedef struct {
 	UINT	caps;

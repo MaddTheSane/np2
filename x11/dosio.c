@@ -1,10 +1,8 @@
-#define	VERBOSE(s)	printf s
+/*	$Id: dosio.c,v 1.9 2004/02/05 13:45:06 monaka Exp $	*/
 
 #include "compiler.h"
 
-#include <sys/stat.h>
 #include <time.h>
-#include <dirent.h>
 
 #include "codecnv.h"
 #include "dosio.h"
@@ -230,43 +228,55 @@ file_attr_c(const char *sjis)
 FLISTH
 file_list1st(const char *dir, FLINFO *fli)
 {
-	char eucpath[MAX_PATH];
-	DIR *ret;
+	FLISTH ret;
 
-	mileuc_ncpy(eucpath, dir, sizeof(eucpath));
-	file_setseparator(eucpath, sizeof(eucpath));
-	ret = opendir(eucpath);
-	VERBOSE(("file_list1st: opendir(%s)\n", eucpath));
+	ret = (FLISTH)malloc(sizeof(_FLISTH));
 	if (ret == NULL) {
+		VERBOSE(("file_list1st: couldn't alloc memory (size = %d)", sizeof(_FLISTH)));
+		return FLISTH_INVALID;
+	}
+
+	mileuc_ncpy(ret->path, dir, sizeof(ret->path));
+	file_setseparator(ret->path, sizeof(ret->path));
+	ret->hdl = opendir(ret->path);
+	VERBOSE(("file_list1st: opendir(%s)", ret->path));
+	if (ret->hdl == NULL) {
 		VERBOSE(("file_list1st: opendir failure"));
+		free(ret);
 		return FLISTH_INVALID;
 	}
 	if (file_listnext((FLISTH)ret, fli) == SUCCESS) {
 		return (FLISTH)ret;
 	}
-	VERBOSE(("file_list1st: file_listnext failure\n"));
-	closedir(ret);
+	VERBOSE(("file_list1st: file_listnext failure"));
+	closedir(ret->hdl);
+	free(ret);
 	return FLISTH_INVALID;
 }
 
 BOOL
 file_listnext(FLISTH hdl, FLINFO *fli)
 {
+	char buf[MAX_PATH];
 	struct dirent *de;
 	struct stat sb;
 
-	de = readdir((DIR *)hdl);
+	de = readdir(hdl->hdl);
 	if (de == NULL) {
-		VERBOSE(("file_listnext: readdir failure\n"));
+		VERBOSE(("file_listnext: readdir failure"));
 		return FAILURE;
 	}
-	if (stat(de->d_name, &sb) != 0) {
-		VERBOSE(("file_listnext: stat failure\n"));
+
+	milstr_ncpy(buf, hdl->path, sizeof(buf));
+	milstr_ncat(buf, de->d_name, sizeof(buf));
+	if (stat(buf, &sb) != 0) {
+		VERBOSE(("file_listnext: stat failure. (path = %s)", buf));
 		return FAILURE;
 	}
 
 	fli->caps = FLICAPS_SIZE | FLICAPS_ATTR | FLICAPS_DATE | FLICAPS_TIME;
 	fli->size = sb.st_size;
+	fli->attr = 0;
 	if (S_ISDIR(sb.st_mode)) {
 		fli->attr |= FILEATTR_DIRECTORY;
 	}
@@ -275,8 +285,7 @@ file_listnext(FLISTH hdl, FLINFO *fli)
 	}
 	cnvdatetime(&sb, &fli->date, &fli->time);
 	mileuc_ncpy(fli->path, de->d_name, sizeof(fli->path));
-
-	VERBOSE(("file_listnext: success\n"));
+	VERBOSE(("file_listnext: success"));
 	return SUCCESS;
 }
 
@@ -284,7 +293,10 @@ void
 file_listclose(FLISTH hdl)
 {
 
-	closedir((DIR *)hdl);
+	if (hdl) {
+		closedir(hdl->hdl);
+		free(hdl);
+	}
 }
 
 static int
