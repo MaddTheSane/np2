@@ -391,13 +391,12 @@ static void drawscreen(void) {
 		tramflag.renewal |= 1;
 	}
 
-	if ((gdcs.textdisp & GDCSCRN_EXT) ||						// ver0.28
-		(gdcs.grphdisp & GDCSCRN_EXT)) {
+	if (gdcs.textdisp & GDCSCRN_EXT) {
 		gdc_updateclock();
 	}
 
 	if (drawframe) {
-		if ((gdcs.textdisp & GDCSCRN_EXT) ||					// ver0.26
+		if ((gdcs.textdisp & GDCSCRN_EXT) ||
 			(gdcs.grphdisp & GDCSCRN_EXT)) {
 			if (dispsync_renewalvertical()) {
 				gdcs.textdisp |= GDCSCRN_ALLDRAW2;

@@ -159,7 +159,7 @@ void maketext(int text_renewal) {
 		tramflag.gaiji = 0;
 	}
 
-	multiple = ((!(gdc.mode1 & 8)) && (!gdc.crt15khz))?0x20:0x00;
+	multiple = ((!(gdc.mode1 & 8)) && (!(gdc.crt15khz & 1)))?0x20:0x00;
 	TEXT_LR = gdc.m.para[GDC_CSRFORM] & 0x1f;
 	TEXT_PL = crtc.reg.pl;
 	TEXT_BL = crtc.reg.bl + 1;
@@ -470,7 +470,7 @@ void maketext40(int text_renewal) {
 		tramflag.gaiji = 0;
 	}
 
-	multiple = ((!(gdc.mode1 & 8)) && (!gdc.crt15khz))?0x20:0x00;
+	multiple = ((!(gdc.mode1 & 8)) && (!(gdc.crt15khz & 1)))?0x20:0x00;
 	TEXT_LR = gdc.m.para[GDC_CSRFORM] & 0x1f;
 	TEXT_PL = crtc.reg.pl;
 	TEXT_BL = crtc.reg.bl + 1;

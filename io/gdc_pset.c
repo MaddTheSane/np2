@@ -8,6 +8,10 @@
 
 
 static void MEMCALL _nop(GDCPSET pset, UINT addr, UINT bit) {
+
+	(void)pset;
+	(void)addr;
+	(void)bit;
 }
 
 static void MEMCALL _replace0(GDCPSET pset, UINT addr, UINT bit) {
@@ -93,7 +97,7 @@ static void MEMCALL withegc(GDCPSET pset, UINT addr, UINT bit) {
 }
 
 
-static const GDCPSFN psettbl[4][2] = {
+static const GDCPFN psettbl[4][2] = {
 				{_replace0,	_replace1},
 				{_nop,		_complemnt},
 				{_nop,		_clear},
@@ -142,13 +146,15 @@ void MEMCALL gdcpset_prepare(GDCPSET pset, UINT32 csrw, REG16 pat, REG8 op) {
 	pset->dots = 0;
 }
 
-void MEMCALL gdcpset(GDCPSET pset, UINT16 x, UINT16 y) {
+void MEMCALL gdcpset(GDCPSET pset, REG16 x, REG16 y) {
 
 	UINT	dot;
 
 	dot = pset->pattern & 1;
 	pset->pattern = (pset->pattern >> 1) + (dot << 15);
 	pset->dots++;
+	x = LOW16(x);
+	y = LOW16(y);
 	if (y > 409) {
 		return;
 	}

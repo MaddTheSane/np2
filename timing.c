@@ -5,8 +5,11 @@
 #include	"timing.h"
 
 
+#define	MSSHIFT		16
+
 typedef struct {
 	UINT32	tick;
+	UINT32	msstep;
 	UINT	cnt;
 	UINT32	fraction;
 } TIMING;
@@ -21,6 +24,11 @@ void timing_reset(void) {
 	timing.fraction = 0;
 }
 
+void timing_setrate(UINT lines, UINT crthz) {
+
+	timing.msstep = (crthz << (MSSHIFT - 3)) / lines / (1000 >> 3);
+}
+
 void timing_setcount(UINT value) {
 
 	timing.cnt = value;
@@ -30,24 +38,20 @@ UINT timing_getcount(void) {
 
 	UINT32	ticknow;
 	UINT32	span;
-	UINT	steps;
+	UINT32	fraction;
 
 	ticknow = GETTICK();
 	span = ticknow - timing.tick;
 	if (span) {
+		timing.tick = ticknow;
 		fddmtr_callback(ticknow);
 
-		timing.tick = ticknow;
-		if (span < 1000) {
-			timing.fraction += (span * 388);
-			steps = timing.fraction / 6875;
-			timing.cnt += steps;
-			timing.fraction -= (steps * 6875);
+		if (span >= 1000) {
+			span = 1000;
 		}
-		else {
-			timing.fraction = 0;
-			timing.cnt += 56;
-		}
+		fraction = timing.fraction + (span * timing.msstep);
+		timing.cnt += fraction >> MSSHIFT;
+		timing.fraction = fraction & ((1 << MSSHIFT) - 1);
 	}
 	return(timing.cnt);
 }

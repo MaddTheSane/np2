@@ -76,7 +76,7 @@ BOOL dispsync_renewalhorizontal(void) {
 	}
 }
 
-BOOL dispsync_renewalvertical(void) {
+BOOL dispsync_renewalvertical(void) {			// slave‚Æ”äŠr‚µ‚Ä‚¢‚¢‚Ì‚©H
 
 	UINT	text_vbp;
 	UINT	grph_vbp;
@@ -96,26 +96,25 @@ BOOL dispsync_renewalvertical(void) {
 	}
 
 	textymax = LOADINTELWORD(gdc.m.para + GDC_SYNC + 6);
-	textymax &= 0x3ff;
-	if (textymax) {
-		textymax += text_vbp;
-		if (textymax > SURFACE_HEIGHT) {
-			textymax = SURFACE_HEIGHT;
-		}
-	}
-	else {
-		textymax = SURFACE_HEIGHT;
-	}
+	textymax = ((textymax - 1) & 0x3ff) + 1;
+	textymax += text_vbp;
 
 	grphymax = LOADINTELWORD(gdc.s.para + GDC_SYNC + 6);
-	grphymax &= 0x3ff;
-	if (grphymax) {
-		grphymax += grph_vbp;
-		if (grphymax > SURFACE_HEIGHT) {
-			grphymax = SURFACE_HEIGHT;
-		}
+	grphymax = ((grphymax - 1) & 0x3ff) + 1;
+	grphymax += grph_vbp;
+
+#if defined(SUPPORT_CRT15KHZ)
+	if (gdc.crt15khz & 2) {
+		text_vbp *= 2;
+		grph_vbp *= 2;
+		textymax *= 2;
+		grphymax *= 2;
 	}
-	else {
+#endif
+	if (textymax > SURFACE_HEIGHT) {
+		textymax = SURFACE_HEIGHT;
+	}
+	if (grphymax > SURFACE_HEIGHT) {
 		grphymax = SURFACE_HEIGHT;
 	}
 	if ((dsync.text_vbp == text_vbp) && (dsync.grph_vbp == grph_vbp) &&

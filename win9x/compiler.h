@@ -67,6 +67,7 @@ typedef	int				SINT32;
 #define	SUPPORT_32BPP
 #define SUPPORT_NORMALDISP
 
+#define	SUPPORT_CRT15KHZ
 #define	SUPPORT_ROMEO
 #define	SUPPORT_PC9861K
 #define	SUPPORT_S98

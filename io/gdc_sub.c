@@ -64,12 +64,20 @@ static void calc_gdcslavewait(UINT dots) {
 	nevent_set(NEVENT_GDCSLAVE, clk, gdcslavewait, NEVENT_ABSOLUTE);
 }
 
-void gdcsub_line(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
+void gdcsub_null(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
+
+	(void)csrw;
+	(void)vect;
+	(void)pat;
+	(void)ope;
+}
+
+void gdcsub_line(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 
 	_GDCPSET	pset;
 	UINT		dc;
-	UINT16		x;
-	UINT16		y;
+	REG16		x;
+	REG16		y;
 	UINT		i;
 	UINT16		step;
 	UINT		d1;
@@ -87,56 +95,56 @@ void gdcsub_line(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 			case 0:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, (UINT16)(x + step), y++);
+					gdcpset(&pset, (REG16)(x + step), y++);
 				}
 				break;
 
 			case 1:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, x++, (UINT16)(y + step));
+					gdcpset(&pset, x++, (REG16)(y + step));
 				}
 				break;
 
 			case 2:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, x++, (UINT16)(y - step));
+					gdcpset(&pset, x++, (REG16)(y - step));
 				}
 				break;
 
 			case 3:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, (UINT16)(x + step), y--);
+					gdcpset(&pset, (REG16)(x + step), y--);
 				}
 				break;
 
 			case 4:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, (UINT16)(x - step), y--);
+					gdcpset(&pset, (REG16)(x - step), y--);
 				}
 				break;
 
 			case 5:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, x--, (UINT16)(y - step));
+					gdcpset(&pset, x--, (REG16)(y - step));
 				}
 				break;
 
 			case 6:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, x--, (UINT16)(y + step));
+					gdcpset(&pset, x--, (REG16)(y + step));
 				}
 				break;
 
 			case 7:
 				for (i=0; i<=dc; i++) {
 					step = (UINT16)((((d1 * i) / dc) + 1) >> 1);
-					gdcpset(&pset, (UINT16)(x - step), y++);
+					gdcpset(&pset, (REG16)(x - step), y++);
 				}
 				break;
 		}
@@ -144,13 +152,13 @@ void gdcsub_line(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 	calc_gdcslavewait(pset.dots);
 }
 
-void gdcsub_box(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
+void gdcsub_box(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 
 	_GDCPSET	pset;
 	UINT		d;
 	UINT		d2;
-	UINT16		x;
-	UINT16		y;
+	REG16		x;
+	REG16		y;
 	UINT		i;
 
 	gdcpset_prepare(&pset, csrw, pat, ope);
@@ -223,7 +231,7 @@ void gdcsub_box(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 	calc_gdcslavewait(pset.dots);
 }
 
-void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
+void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 
 	_GDCPSET	pset;
 	UINT		r;
@@ -253,7 +261,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x + s), (UINT16)(y + i));
+					gdcpset(&pset, (REG16)(x + s), (REG16)(y + i));
 				}
 				break;
 
@@ -261,7 +269,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x + i), (UINT16)(y + s));
+					gdcpset(&pset, (REG16)(x + i), (REG16)(y + s));
 				}
 				break;
 
@@ -269,7 +277,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x + i), (UINT16)(y - s));
+					gdcpset(&pset, (REG16)(x + i), (REG16)(y - s));
 				}
 				break;
 
@@ -277,7 +285,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x + s), (UINT16)(y - i));
+					gdcpset(&pset, (REG16)(x + s), (REG16)(y - i));
 				}
 				break;
 
@@ -285,7 +293,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x - s), (UINT16)(y - i));
+					gdcpset(&pset, (REG16)(x - s), (REG16)(y - i));
 				}
 				break;
 
@@ -293,7 +301,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x - i), (UINT16)(y - s));
+					gdcpset(&pset, (REG16)(x - i), (REG16)(y - s));
 				}
 				break;
 
@@ -301,7 +309,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x - i), (UINT16)(y + s));
+					gdcpset(&pset, (REG16)(x - i), (REG16)(y + s));
 				}
 				break;
 
@@ -309,7 +317,7 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 				for (; i<=t; i++) {
 					s = (gdc_rt[(i << RT_TABLEBIT) / m] * r);
 					s = (s + (1 << (RT_MULBIT - 1))) >> RT_MULBIT;
-					gdcpset(&pset, (UINT16)(x - s), (UINT16)(y + i));
+					gdcpset(&pset, (REG16)(x - s), (REG16)(y + i));
 				}
 				break;
 		}
@@ -317,7 +325,8 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 	calc_gdcslavewait(pset.dots);
 }
 
-void gdcsub_text(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
+void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const BYTE *pat,
+																REG8 ope) {
 
 	_GDCPSET	pset;
 	BYTE		multiple;
@@ -326,13 +335,13 @@ void gdcsub_text(UINT32 csrw, const GDCVECT *vect, UINT16 pat, BYTE ope) {
 const TEXTDIR	*dir;
 	UINT		patnum;
 	BYTE		muly;
-	UINT16		cx;
-	UINT16		cy;
+	REG16		cx;
+	REG16		cy;
 	UINT		xrem;
 	BYTE		bit;
 	BYTE		mulx;
 
-	gdcpset_prepare(&pset, csrw, pat, ope);
+	gdcpset_prepare(&pset, csrw, 0xffff, ope);
 	multiple = (gdc.s.para[GDC_ZOOM] & 15) + 1;
 #if 0
 	sx = (LOADINTELWORD(vect->DC)) & 0x3fff) + 1;
@@ -350,7 +359,7 @@ const TEXTDIR	*dir;
 		while(muly--) {
 			cx = pset.x;
 			cy = pset.y;
-			bit = gdc.s.para[GDC_TEXTW + (patnum & 7)];
+			bit = pat[patnum & 7];
 			xrem = sx;
 			while(xrem--) {
 				mulx = multiple;

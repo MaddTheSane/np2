@@ -131,6 +131,7 @@ const SDRAWFN	*sdrawfn;
 	_SDRAW		sdraw;
 	BYTE		bit;
 	int			i;
+	int			height;
 
 	if (redraw) {
 		updateallline(0x80808080);
@@ -165,12 +166,23 @@ const SDRAWFN	*sdrawfn;
 			renewal_line[i] &= ~bit;
 		}
 	}
-	if (gdc.mode1 & 0x10) {
-		sdrawfn += 4;
-		if (np2cfg.skipline) {
-			sdrawfn += 4;
-		}
+	height = surf->height;
+#if defined(SUPPORT_CRT15KHZ)
+	if (gdc.crt15khz & 2) {
+		sdrawfn += 12;
+		height >>= 1;
 	}
+	else {
+#endif
+		if (gdc.mode1 & 0x10) {
+			sdrawfn += 4;
+			if (np2cfg.skipline) {
+				sdrawfn += 4;
+			}
+		}
+#if defined(SUPPORT_CRT15KHZ)
+	}
+#endif
 	switch(bit & 7) {
 		case 1:								// grph1
 			sdrawfn += 2;
@@ -206,10 +218,10 @@ const SDRAWFN	*sdrawfn;
 	sdraw.xalign = surf->xalign;
 	sdraw.yalign = surf->yalign;
 	if ((!gdc.analog) || (palevent.events >= PALEVENTMAX)) {
-		(*(*sdrawfn))(&sdraw, surf->height);
+		(*(*sdrawfn))(&sdraw, height);
 	}
 	else {
-		ret = rasterdraw(*sdrawfn, &sdraw, surf->height);
+		ret = rasterdraw(*sdrawfn, &sdraw, height);
 	}
 
 sddr_exit2:

@@ -281,7 +281,7 @@ static const GDCCMD gdc_cmd[256] = {
 
 
 static const BYTE gdc_dirtyflag[2][GDC_TERMDATA] = {
-			{	0,									//GDC_SYNC
+			{	0,									// GDC_SYNC
 				GDCSCRN_EXT,
 				GDCSCRN_EXT,
 				GDCSCRN_EXT,
@@ -318,11 +318,11 @@ static const BYTE gdc_dirtyflag[2][GDC_TERMDATA] = {
 				0, 0,								// GDC_MASK
 				0, 0, 0, 0, 0,						// GDC_CSRR
 				0,									// GDC_WRITE
-				0, 0,								// GDC_CODE		// ver0.29
+				0, 0,								// GDC_CODE
 			},
 
 			{	0,									// GDC_SYNC
-				GDCSCRN_EXT,										// ver0.29
+				GDCSCRN_EXT,
 				GDCSCRN_EXT,
 				GDCSCRN_EXT,
 				GDCSCRN_EXT,
@@ -356,5 +356,5 @@ static const BYTE gdc_dirtyflag[2][GDC_TERMDATA] = {
 				0, 0,								// GDC_MASK
 				0, 0, 0, 0, 0,						// GDC_CSRR
 				0,									// GDC_WRITE
-				0, 0,								// GDC_CODE		// ver0.29
+				0, 0,								// GDC_CODE
 			}};

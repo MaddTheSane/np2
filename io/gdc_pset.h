@@ -1,12 +1,12 @@
 
-struct _gdcps;
-typedef struct _gdcps	_GDCPSET;
-typedef struct _gdcps	*GDCPSET;
+struct _gdcpset;
+typedef struct _gdcpset		_GDCPSET;
+typedef struct _gdcpset		*GDCPSET;
 
-typedef void (MEMCALL * GDCPSFN)(GDCPSET pset, UINT addr, UINT bit);
+typedef void (MEMCALL * GDCPFN)(GDCPSET pen, UINT addr, UINT bit);
 
-struct _gdcps {
-	GDCPSFN	func[2];
+struct _gdcpset {
+	GDCPFN	func[2];
 	union {
 		BYTE	*ptr;			// raw access / grcg
 		UINT32	addr;			// egc
@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 void MEMCALL gdcpset_prepare(GDCPSET pset, UINT32 csrw, REG16 pat, REG8 op);
-void MEMCALL gdcpset(GDCPSET pset, UINT16 x, UINT16 y);
+void MEMCALL gdcpset(GDCPSET pset, REG16 x, REG16 y);
 
 #ifdef __cplusplus
 }

@@ -59,7 +59,10 @@ static void bios_reinitbyswitch(void) {
 	}
 
 	mem[MEMB_BIOS_FLAG0] = 0x01;
-	prxcrt = 0x48;								// ver0.74
+	prxcrt = 0x08;
+	if (!(np2cfg.dipsw[0] & 0x01)) {			// dipsw1-1 on
+		prxcrt |= 0x40;
+	}
 	if (gdc.display & 2) {
 		prxcrt |= 0x04;							// color16
 	}
@@ -225,7 +228,7 @@ void bios_init(void) {
 	}
 
 	bios_reinitbyswitch();
-	mem[MEMB_CRT_STS_FLAG] = 0x84;
+//	mem[MEMB_CRT_STS_FLAG] = 0x84;		// -> bios_screeninit()
 //	mem[MEMB_BIOS_FLAG0] = 0x03;
 //	mem[MEMB_F2DD_MODE] = 0xff;										// ver0.29
 // 	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);							// ver0.29
