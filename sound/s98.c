@@ -133,23 +133,25 @@ BOOL S98_open(const char *filename) {
 		S98_putc(*(((BYTE *)&hdr) + i));
 	}
 
-#if 0
+#if 1
 	// FM
 	for (i=0x30; i<0xb6; i++) {
 		if ((i & 3) != 3) {
 			S98_putc(NORMAL2608);
 			S98_putc((BYTE)i);
-			S98_putc(opna.reg.b[i]);
+			S98_putc(opn.reg[i]);
+#if 0
 			S98_putc(EXTEND2608);
 			S98_putc((BYTE)i);
-			S98_putc(opna.reg.b[i+0x100]);
+			S98_putc(opn.reg[i+0x100]);
+#endif
 		}
 	}
 	// PSG
 	for (i=0x00; i<0x0e; i++) {
 		S98_putc(NORMAL2608);
 		S98_putc((BYTE)i);
-		S98_putc(opna.reg.b[i]);
+		S98_putc(((BYTE *)&psg1.reg)[i]);
 	}
 #endif
 

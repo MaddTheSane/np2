@@ -43,10 +43,10 @@ typedef struct {
 	PSGREG		reg;
 	UINT16		envcnt;
 	UINT16		envmax;
+	BYTE		mixer;
 	BYTE		envmode;
 	BYTE		envvol;
 	char		envvolcnt;
-	BYTE		mixer;
 	UINT		puchicount;
 } _PSGGEN, *PSGGEN;
 

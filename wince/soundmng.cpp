@@ -111,6 +111,9 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	if (waveopened) {
 		return(0);
 	}
+
+	mute = 1 << SNDPROC_NP2;
+
 	switch(rate) {
 		case 11025:
 			type = 0;
@@ -183,7 +186,6 @@ UINT soundmng_create(UINT rate, UINT ms) {
 			curms = ms;
 			waveopened = TRUE;
 			TRACEOUT(("soundmng success."));
-			mute = 0;
 			return(w_ctrl.samples);
 		}
 		_MFREE(w_ctrl.buffer);

@@ -230,30 +230,44 @@ DEP_CPP_MILST=\
 # Begin Source File
 
 SOURCE=..\COMMON\PARTS.C
+DEP_CPP_PARTS=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\parts.h"\
+	"..\COMMON\rect.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-DEP_CPP_PARTS=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\parts.h"\
-	"..\COMMON\rect.h"\
-	".\wce\compiler.h"\
-	
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
-DEP_CPP_PARTS=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\parts.h"\
-	"..\COMMON\rect.h"\
-	".\wce\compiler.h"\
-	
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ARM\PARTS.S
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+# Begin Custom Build - Assambling... $(InputPath)
+IntDir=.\..\obj\PPCARMRel
+InputPath=.\ARM\PARTS.S
+InputName=PARTS
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -7370,102 +7384,80 @@ NODEP_CPP_OPNGE=\
 # Begin Source File
 
 SOURCE=..\SOUND\OPNGENG.C
+DEP_CPP_OPNGEN=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	"..\sound\adpcm.h"\
+	"..\sound\cs4231.h"\
+	"..\sound\fmboard.h"\
+	"..\sound\fmtimer.h"\
+	"..\sound\opngen.h"\
+	"..\sound\pcm86.h"\
+	"..\sound\psggen.h"\
+	"..\sound\rhythm.h"\
+	"..\sound\sound.h"\
+	"..\sound\soundrom.h"\
+	"..\sound\tms3631.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
-DEP_CPP_OPNGEN=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\extmem.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\itf.h"\
-	"..\io\mouseif.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\sound\adpcm.h"\
-	"..\sound\cs4231.h"\
-	"..\sound\fmboard.h"\
-	"..\sound\fmtimer.h"\
-	"..\sound\opngen.h"\
-	"..\sound\pcm86.h"\
-	"..\sound\psggen.h"\
-	"..\sound\rhythm.h"\
-	"..\sound\sound.h"\
-	"..\sound\soundrom.h"\
-	"..\sound\tms3631.h"\
-	".\wce\compiler.h"\
-	
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
-DEP_CPP_OPNGEN=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\io\artic.h"\
-	"..\io\cgrom.h"\
-	"..\io\cpuio.h"\
-	"..\io\crtc.h"\
-	"..\io\dipsw.h"\
-	"..\io\dmac.h"\
-	"..\io\egc.h"\
-	"..\io\extmem.h"\
-	"..\io\fdc.h"\
-	"..\io\fdd320.h"\
-	"..\io\gdc.h"\
-	"..\io\gdc_cmd.h"\
-	"..\io\gdc_sub.h"\
-	"..\io\iocore.h"\
-	"..\io\itf.h"\
-	"..\io\mouseif.h"\
-	"..\io\nmiio.h"\
-	"..\io\np2sysp.h"\
-	"..\io\pic.h"\
-	"..\io\pit.h"\
-	"..\io\printif.h"\
-	"..\io\serial.h"\
-	"..\io\sysport.h"\
-	"..\io\upd4990.h"\
-	"..\nevent.h"\
-	"..\pccore.h"\
-	"..\sound\adpcm.h"\
-	"..\sound\cs4231.h"\
-	"..\sound\fmboard.h"\
-	"..\sound\fmtimer.h"\
-	"..\sound\opngen.h"\
-	"..\sound\pcm86.h"\
-	"..\sound\psggen.h"\
-	"..\sound\rhythm.h"\
-	"..\sound\sound.h"\
-	"..\sound\soundrom.h"\
-	"..\sound\tms3631.h"\
-	".\wce\compiler.h"\
-	
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ARM\OPNGENG.S
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+# Begin Custom Build - Assambling... $(InputPath)
+IntDir=.\..\obj\PPCARMRel
+InputPath=.\ARM\OPNGENG.S
+InputName=OPNGENG
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -7719,9 +7711,6 @@ NODEP_CPP_PSGGE=\
 # Begin Source File
 
 SOURCE=..\SOUND\PSGGENG.C
-
-!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
-
 DEP_CPP_PSGGEN=\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
@@ -7734,18 +7723,34 @@ DEP_CPP_PSGGEN=\
 	".\wce\compiler.h"\
 	
 
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+# PROP Exclude_From_Build 1
+
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
 
-DEP_CPP_PSGGEN=\
-	"..\common.h"\
-	"..\COMMON\_memory.h"\
-	"..\COMMON\lstarray.h"\
-	"..\COMMON\milstr.h"\
-	"..\COMMON\rect.h"\
-	"..\sound\psggen.h"\
-	"..\sound\sound.h"\
-	".\wce\compiler.h"\
-	
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ARM\PSGGENG.S
+
+!IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
+
+# Begin Custom Build - Assambling... $(InputPath)
+IntDir=.\..\obj\PPCARMRel
+InputPath=.\ARM\PSGGENG.S
+InputName=PSGGENG
+
+"$(IntDir)\$(InputName)_arm.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	armasm -32 $(InputPath) $(IntDir)\$(InputName)_arm.obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
+
+# PROP Exclude_From_Build 1
 
 !ENDIF 
 

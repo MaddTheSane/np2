@@ -409,7 +409,7 @@ static void psgmix(BYTE ch, PSGGEN psg) {
 			}
 			else if ((!(k->mix & bit)) && (psg->reg.vol[i] & 0x1f)) {
 				k->flag |= bit;
-				k->fto[i] = (*(UINT16 *)(psg->reg.tune[i])) & 0xfff;
+				k->fto[i] = LOADINTELWORD(psg->reg.tune[i]) & 0xfff;
 				k->lastnote[i] = getpsgnote(k->fto[i]);
 				delaysetevent(pos, (BYTE)(k->lastnote[i] | 0x80));
 			}
