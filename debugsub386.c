@@ -184,7 +184,6 @@ void debugsub_memorydump(void) {
 void debugsub_memorydumpall(void) {
 
 	FILEH	fh;
-	int		i;
 
 	fh = file_create_c(file_memorybin);
 	if (fh != FILEH_INVALID) {

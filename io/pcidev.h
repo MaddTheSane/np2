@@ -3,6 +3,13 @@
 
 #if defined(SUPPORT_PC9821)
 
+typedef struct {
+	UINT32	base;
+
+	UINT8	membankd0;
+} _PCIDEV, *PCIDEV;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -449,6 +449,7 @@ void sasiio_reset(void) {
 	if (pccore.hddif & PCHDD_SASI) {
 		dmac_attach(DMADEV_SASI, SASI_DMACH);
 
+		CPU_RAM_D000 &= ~(1 << 0);
 		fh = file_open_rb_c("sasi.rom");
 		r = 0;
 		if (fh != FILEH_INVALID) {

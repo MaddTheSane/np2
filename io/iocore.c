@@ -33,6 +33,10 @@
 	_SYSPORT	sysport;
 	_UPD4990	uPD4990;
 
+#if defined(SUPPORT_PC9821)
+	_PCIDEV		pcidev;
+#endif
+
 
 // ----
 
@@ -582,6 +586,7 @@ REG16 IOINPCALL iocore_inp16(UINT port) {
 
 void IOOUTCALL iocore_out32(UINT port, UINT32 dat) {
 
+	CPU_REMCLOCK -= iocore.busclock;
 #if defined(SUPPORT_PC9821)
 	if ((port & 0xfffb) == 0x0cf8) {
 		pcidev_w32(port, dat);
@@ -596,6 +601,7 @@ UINT32 IOINPCALL iocore_inp32(UINT port) {
 
 	UINT32	ret;
 
+	CPU_REMCLOCK -= iocore.busclock;
 #if defined(SUPPORT_PC9821)
 	if ((port & 0xfffb) == 0x0cf8) {
 		return(pcidev_r32(port));
