@@ -165,7 +165,7 @@ const BYTE	*ptr;
 	I286_IP = LOADINTELWORD(ptr+0);				// real mode!
 	I286_CS = LOADINTELWORD(ptr+2);				// real mode!
 	CS_BASE = I286_CS << 4;
-	I286_CLOCK(20)
+	I286_WORKCLOCK(20);
 }
 
 void CPUCALL i286_interrupt(BYTE vect) {
@@ -188,7 +188,7 @@ const BYTE	*ptr;
 	I286_IP = LOADINTELWORD(ptr+0);				// real mode!
 	I286_CS = LOADINTELWORD(ptr+2);				// real mode!
 	CS_BASE = I286_CS << 4;
-	I286_CLOCK(20)
+	I286_WORKCLOCK(20);
 }
 
 void i286(void) {
@@ -203,20 +203,20 @@ void i286(void) {
 				i286_interrupt(1);
 			}
 			dmap_i286();
-		} while(nevent.remainclock > 0);
+		} while(I286_REMCLOCK > 0);
 	}
 	else if (dmac.working) {
 		do {
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
 			dmap_i286();
-		} while(nevent.remainclock > 0);
+		} while(I286_REMCLOCK > 0);
 	}
 	else {
 		do {
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
-		} while(nevent.remainclock > 0);
+		} while(I286_REMCLOCK > 0);
 	}
 }
 

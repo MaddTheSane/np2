@@ -246,13 +246,13 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 	if ((itf.bank) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
 		I286_IP--;
-		nevent.remainclock = -1;
+		I286_REMCLOCK = -1;
 		return(1);
 	}
 
 	switch(adrs) {													// ver0.30
 		case BIOS_BASE + BIOSOFST_EOIM:
-			nevent.remainclock -= 300;
+			I286_REMCLOCK -= 300;
 			iocore_out8(0x00, 0x20);
 			return(0);
 
@@ -264,57 +264,57 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(0);
 
 		case BIOS_BASE + BIOSOFST_02:
-			nevent.remainclock -= 300;
+			I286_REMCLOCK -= 300;
 			bios0x02();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_08:
-			nevent.remainclock -= 300;
+			I286_REMCLOCK -= 300;
 			bios0x08();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_09:
-			nevent.remainclock -= 300;
+			I286_REMCLOCK -= 300;
 			bios0x09();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_0c:
-			nevent.remainclock -= 500;
+			I286_REMCLOCK -= 500;
 			bios0x0c();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_12:
-			nevent.remainclock -= 500;
+			I286_REMCLOCK -= 500;
 			bios0x12();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_13:
-			nevent.remainclock -= 500;
+			I286_REMCLOCK -= 500;
 			bios0x13();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_18:
-			nevent.remainclock -= 200;
+			I286_REMCLOCK -= 200;
 			bios0x18();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_19:
-			nevent.remainclock -= 200;
+			I286_REMCLOCK -= 200;
 			bios0x19();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1a:
-			nevent.remainclock -= 200;
+			I286_REMCLOCK -= 200;
 			bios0x1a();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1b:
-			nevent.remainclock -= 200;
+			I286_REMCLOCK -= 200;
 			bios0x1b();
 			return(1);
 
 		case BIOS_BASE + BIOSOFST_1c:
-			nevent.remainclock -= 200;
+			I286_REMCLOCK -= 200;
 			bios0x1c();
 			return(1);
 
@@ -322,20 +322,20 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			I286_STI;
 			if (fddmtr_biosbusy) {						// ver0.26
 				I286_IP--;
-				nevent.remainclock = -1;
+				I286_REMCLOCK = -1;
 			}
 			else {
 				switch(CTRL_FDMEDIA) {
 					case DISKTYPE_2HD:
 						if (pic.pi[1].isr & PIC_INT42) {
 							I286_IP--;
-							nevent.remainclock -= 1000;
+							I286_REMCLOCK -= 1000;
 						}
 						break;
 					case DISKTYPE_2DD:
 						if (pic.pi[1].isr & PIC_INT41) {
 							I286_IP--;
-							nevent.remainclock -= 1000;
+							I286_REMCLOCK -= 1000;
 						}
 						break;
 				}
@@ -363,7 +363,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(1);
 
 		case 0xfffe8:					// ブートストラップロード
-			nevent.remainclock -= 2000;
+			I286_REMCLOCK -= 2000;
 			bootseg = bootstrapload();
 			if (bootseg) {
 				I286_STI;
@@ -376,7 +376,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(0);
 
 		case 0xfffec:
-			nevent.remainclock -= 2000;
+			I286_REMCLOCK -= 2000;
 			bootstrapload();
 			return(0);
 	}
@@ -392,7 +392,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 		return(0);
 	}
 	I286_IP--;
-	nevent.remainclock = -1;
+	I286_REMCLOCK = -1;
 	return(1);
 }
 

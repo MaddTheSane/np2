@@ -1017,7 +1017,7 @@ LABEL void v30(void) {
 				align	4
 v30_mnlp:		movzx	eax, bl
 				call	v30op[eax*4]
-				cmp		nevent.remainclock, 0
+				cmp		I286_REMCLOCK, 0
 				jg		v30_mnlp
 				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
@@ -1028,7 +1028,7 @@ v30_mnlp:		movzx	eax, bl
 v30_dma_mnlp:	movzx	eax, bl
 				call	v30op[eax*4]
 				call	dmap_i286
-				cmp		nevent.remainclock, 0
+				cmp		I286_REMCLOCK, 0
 				jg		v30_dma_mnlp
 				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si

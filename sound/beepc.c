@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -69,7 +70,7 @@ static void beep_eventset(void) {
 	if (beep.enable != enable) {
 		beep.enable = enable;
 		if (beep.events < BEEPEVENT_MAX) {
-			clock = nevent.clock + nevent.baseclock - nevent.remainclock;
+			clock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 			evt = beep.event + beep.events;
 			beep.events++;
 			evt->clock = clock - beep.clock;

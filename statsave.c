@@ -499,9 +499,6 @@ static int flagload_ext(NP2FFILE *f, const STENTRY *t) {
 // -----
 
 typedef struct {
-	SINT32		remainclock;
-	SINT32		baseclock;
-	UINT32		clock;
 	UINT		readyevents;
 	UINT		waitevents;
 } NEVTSAVE;
@@ -540,9 +537,6 @@ static int flagsave_evt(NP2FFILE *f, const STENTRY *t) {
 	int			ret;
 	UINT		i;
 
-	nevt.remainclock = nevent.remainclock;
-	nevt.baseclock = nevent.baseclock;
-	nevt.clock = nevent.clock;
 	nevt.readyevents = nevent.readyevents;
 	nevt.waitevents = nevent.waitevents;
 
@@ -601,9 +595,6 @@ static int flagload_evt(NP2FFILE *f, const STENTRY *t) {
 
 	ret = flagload_load(f, &nevt, sizeof(nevt));
 
-	nevent.remainclock = nevt.remainclock;
-	nevent.baseclock = nevt.baseclock;
-	nevent.clock = nevt.clock;
 	nevent.readyevents = 0;
 	nevent.waitevents = 0;
 

@@ -15,7 +15,7 @@
 				__asm {	movzx	ebp, I286_SI				}
 
 #define	REPLOOP(a)												\
-				__asm {	cmp		nevent.remainclock, 0		}	\
+				__asm {	cmp		I286_REMCLOCK, 0			}	\
 				__asm {	jg		(a)							}	\
 				__asm {	mov		esi, REPPOSBAK				}
 

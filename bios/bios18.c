@@ -223,7 +223,7 @@ void bios0x18(void) {
 			}
 			else {
 				I286_IP--;
-				nevent.remainclock = -1;
+				I286_REMCLOCK = -1;
 				break;
 			}
 			break;

@@ -45,9 +45,6 @@ struct _neventitem {
 };
 
 typedef struct {
-	SINT32		remainclock;
-	SINT32		baseclock;
-	UINT32		clock;
 	UINT		readyevents;
 	UINT		waitevents;
 	UINT		level[NEVENT_MAXEVENTS];

@@ -53,7 +53,7 @@ void gdc_setanalogpal(int color, int rgb, BYTE value) {
 			if (!gdc.vsync) {
 				event = palevent.event + palevent.events;
 				event->clock = nevent.item[NEVENT_FLAMES].clock -
-									(nevent.baseclock - nevent.remainclock);
+											(I286_BASECLOCK - I286_REMCLOCK);
 				event->color = (color * sizeof(RGB32)) + rgb;
 				event->value = value;
 				palevent.events++;
@@ -394,7 +394,7 @@ static BYTE IOINPCALL gdc_i60(UINT port) {
 		gdc_work(GDCWORK_MASTER);
 	}
 #ifdef SEARHC_SYNC
-	if ((i286reg.inport) && (nevent.remainclock >= 5)) {
+	if ((i286reg.inport) && (I286_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
 		memv = i286_memoryread_w(i286reg.inport);
@@ -407,20 +407,19 @@ static BYTE IOINPCALL gdc_i60(UINT port) {
 			memv = i286_memoryread_w(i286reg.inport + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
-					nevent.remainclock = -1;
+					I286_REMCLOCK = -1;
 				}
 			}
 			else if (memv == (jadr + 1)) {		// jne
 				if (gdc.vsync) {
-					nevent.remainclock = -1;
+					I286_REMCLOCK = -1;
 				}
 			}
 		}
 	}
 #endif
 #ifdef TURE_SYNC				// クロックイベントの誤差修正
-	if (nevent.item[NEVENT_FLAMES].clock <
-								(nevent.baseclock - nevent.remainclock)) {
+	if (nevent.item[NEVENT_FLAMES].clock < (I286_BASECLOCK - I286_REMCLOCK)) {
 		ret ^= 0x20;
 	}
 #endif
@@ -560,7 +559,7 @@ static BYTE IOINPCALL gdc_ia0(UINT port) {
 		gdc_work(GDCWORK_SLAVE);
 	}
 #ifdef SEARHC_SYNC
-	if ((i286reg.inport) && (nevent.remainclock >= 5)) {
+	if ((i286reg.inport) && (I286_REMCLOCK >= 5)) {
 		UINT16 jadr = 0xfa74;
 		UINT16 memv;
 		memv = i286_memoryread_w(i286reg.inport);
@@ -573,20 +572,19 @@ static BYTE IOINPCALL gdc_ia0(UINT port) {
 			memv = i286_memoryread_w(i286reg.inport + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
-					nevent.remainclock = -1;
+					I286_REMCLOCK = -1;
 				}
 			}
 			else if (memv == (jadr + 1)) {		// jne
 				if (gdc.vsync) {
-					nevent.remainclock = -1;
+					I286_REMCLOCK = -1;
 				}
 			}
 		}
 	}
 #endif
 #ifdef TURE_SYNC				// クロックイベントの誤差修正
-	if (nevent.item[NEVENT_FLAMES].clock <
-								(nevent.baseclock - nevent.remainclock)) {
+	if (nevent.item[NEVENT_FLAMES].clock < (I286_BASECLOCK - I286_REMCLOCK)) {
 		ret ^= 0x20;
 	}
 #endif

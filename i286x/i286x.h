@@ -4,10 +4,10 @@
 
 #define		I286IRQCHECKTERM								\
 				__asm {	xor		eax, eax				}	\
-				__asm { cmp		nevent.remainclock, eax	}	\
+				__asm { cmp		I286_REMCLOCK, eax		}	\
 				__asm {	jle		short nonremainclr		}	\
-				__asm { xchg	nevent.remainclock, eax	}	\
-				__asm {	sub		nevent.baseclock, eax	}	\
+				__asm { xchg	I286_REMCLOCK, eax		}	\
+				__asm {	sub		I286_BASECLOCK, eax		}	\
 		nonremainclr:										\
 				__asm {	ret								}
 

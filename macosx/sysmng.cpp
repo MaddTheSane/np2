@@ -1,6 +1,7 @@
 #include	"compiler.h"
-#include	"dosio.h"
 #include	"np2.h"
+#include	"dosio.h"
+#include	"i286.h"
 #include	"sysmng.h"
 #include	"pccore.h"
 #include	"fddfile.h"
@@ -23,7 +24,7 @@ static struct {
 void sysmng_workclockreset(void) {
 
 	workclock.tick = GETTICK();
-	workclock.clock = nevent.clock;
+	workclock.clock = I286_CLOCK;
 	workclock.draws = drawcount;
 }
 
@@ -38,8 +39,8 @@ BOOL sysmng_workclockrenewal(void) {
 	workclock.tick += tick;
 	workclock.fps = ((drawcount - workclock.draws) * 10000) / tick;
 	workclock.draws = drawcount;
-	workclock.khz = (nevent.clock - workclock.clock) / tick;
-	workclock.clock = nevent.clock;
+	workclock.khz = (I286_CLOCK - workclock.clock) / tick;
+	workclock.clock = I286_CLOCK;
 	return(TRUE);
 }
 

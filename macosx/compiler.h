@@ -23,10 +23,6 @@ typedef unsigned int	UINT32;
 
 typedef Boolean			BOOL;
 
-#if 1	// for test
-typedef unsigned short	WORD;
-typedef unsigned int	DWORD;
-#endif
 
 #define	MAX_PATH	260
 
@@ -53,10 +49,10 @@ typedef unsigned int	DWORD;
 #define	VERMOUTH_LIB
 #define SOUND_CRITICAL
 
-#define	SUPPORT_8BPP
-#define	SUPPORT_16BPP
-#define	SUPPORT_24BPP
+// #define	SUPPORT_8BPP
+// #define	SUPPORT_16BPP
+// #define	SUPPORT_24BPP
 #define	SUPPORT_32BPP
-#define SUPPORT_NORMALDISP
-// #define	MEMOPTIMIZE		1
+// #define SUPPORT_NORMALDISP
+#define	MEMOPTIMIZE		1
 

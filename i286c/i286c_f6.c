@@ -14,11 +14,11 @@ I286_F6 _test_ea8_data8(UINT op) {
 	UINT	dst;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		dst = *(reg8_b20[op]);
 	}
 	else {
-		I286_CLOCK(6);
+		I286_WORKCLOCK(6);
 		dst = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	GET_PCBYTE(src)
@@ -30,11 +30,11 @@ I286_F6 _not_ea8(UINT op) {
 	UINT32	madr;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		*(reg8_b20[op]) ^= 0xff;
 	}
 	else {
-		I286_CLOCK(7);
+		I286_WORKCLOCK(7);
 		madr = c_calc_ea_dst[op]();
 		if (madr >= I286_MEMWRITEMAX) {
 			BYTE value = i286_memoryread(madr);
@@ -54,11 +54,11 @@ I286_F6 _neg_ea8(UINT op) {
 	UINT32	madr;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		out = reg8_b20[op];
 	}
 	else {
-		I286_CLOCK(7);
+		I286_WORKCLOCK(7);
 		madr = c_calc_ea_dst[op]();
 		if (madr >= I286_MEMWRITEMAX) {
 			src = i286_memoryread(madr);
@@ -79,11 +79,11 @@ I286_F6 _mul_ea8(UINT op) {
 	UINT	res;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(13);
+		I286_WORKCLOCK(13);
 		src = *(reg8_b20[op]);
 	}
 	else {
-		I286_CLOCK(16);
+		I286_WORKCLOCK(16);
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	BYTE_MUL(res, I286_AL, src)
@@ -96,11 +96,11 @@ I286_F6 _imul_ea8(UINT op) {
 	SINT32	res;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(13);
+		I286_WORKCLOCK(13);
 		src = *(reg8_b20[op]);
 	}
 	else {
-		I286_CLOCK(16);
+		I286_WORKCLOCK(16);
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	BYTE_IMUL(res, I286_AL, src)
@@ -115,11 +115,11 @@ I286_F6 _div_ea8(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		src = *(reg8_b20[op]);
 	}
 	else {
-		I286_CLOCK(7);
+		I286_WORKCLOCK(7);
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	tmp = I286_AX;
@@ -140,11 +140,11 @@ I286_F6 _idiv_ea8(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_CLOCK(17);
+		I286_WORKCLOCK(17);
 		src = *(reg8_b20[op]);
 	}
 	else {
-		I286_CLOCK(25);
+		I286_WORKCLOCK(25);
 		src = i286_memoryread(c_calc_ea_dst[op]());
 	}
 	tmp = (SINT16)I286_AX;
@@ -166,11 +166,11 @@ I286_F6 _test_ea16_data16(UINT op) {
 	UINT32	dst;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		dst = *(reg16_b20[op]);
 	}
 	else {
-		I286_CLOCK(6);
+		I286_WORKCLOCK(6);
 		dst = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	GET_PCWORD(src)
@@ -182,11 +182,11 @@ I286_F6 _not_ea16(UINT op) {
 	UINT32	madr;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		*(reg16_b20[op]) ^= 0xffff;
 	}
 	else {
-		I286_CLOCK(7);
+		I286_WORKCLOCK(7);
 		madr = c_calc_ea_dst[op]();
 		if (!(INHIBIT_WORDP(madr))) {
 			*(mem + madr) ^= 0xffff;
@@ -207,11 +207,11 @@ I286_F6 _neg_ea16(UINT op) {
 	UINT32	madr;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(2);
+		I286_WORKCLOCK(2);
 		out = reg16_b20[op];
 	}
 	else {
-		I286_CLOCK(7);
+		I286_WORKCLOCK(7);
 		madr = c_calc_ea_dst[op]();
 		if (INHIBIT_WORDP(madr)) {
 			src = i286_memoryread_w(madr);
@@ -232,11 +232,11 @@ I286_F6 _mul_ea16(UINT op) {
 	UINT32	res;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(21);
+		I286_WORKCLOCK(21);
 		src = *(reg16_b20[op]);
 	}
 	else {
-		I286_CLOCK(24);
+		I286_WORKCLOCK(24);
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	WORD_MUL(res, I286_AX, src)
@@ -250,11 +250,11 @@ I286_F6 _imul_ea16(UINT op) {
 	SINT32	res;
 
 	if (op >= 0xc0) {
-		I286_CLOCK(21);
+		I286_WORKCLOCK(21);
 		src = *(reg16_b20[op]);
 	}
 	else {
-		I286_CLOCK(24);
+		I286_WORKCLOCK(24);
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	WORD_IMUL(res, I286_AX, src)
@@ -270,11 +270,11 @@ I286_F6 _div_ea16(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_CLOCK(17);
+		I286_WORKCLOCK(17);
 		src = *(reg16_b20[op]);
 	}
 	else {
-		I286_CLOCK(25);
+		I286_WORKCLOCK(25);
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	tmp = (I286_DX << 16) + I286_AX;
@@ -296,11 +296,11 @@ I286_F6 _idiv_ea16(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_CLOCK(17);
+		I286_WORKCLOCK(17);
 		src = *(reg16_b20[op]);
 	}
 	else {
-		I286_CLOCK(25);
+		I286_WORKCLOCK(25);
 		src = i286_memoryread_w(c_calc_ea_dst[op]());
 	}
 	tmp = (SINT32)((I286_DX << 16) + I286_AX);

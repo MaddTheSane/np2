@@ -122,12 +122,10 @@ static void MenuBarInit(void) {
 	DrawMenuBar();
 }
 
-
 static void changescreen(BYTE mode) {
 
 	(void)mode;
 }
-
 
 static void HandleMenuChoice(long wParam) {
 
@@ -500,14 +498,14 @@ static void eventproc(EventRecord *event) {
 
 		case keyDown:
 		case autoKey:
+			mackbd_f12down(((event->message) & keyCodeMask) >> 8);
 			if (event->modifiers & cmdKey) {
-				if (!mackbd_down(1, ((event->message) & keyCodeMask) >> 8)) {
-					HandleMenuChoice(MenuKey(event->message & charCodeMask));
-				}
+				HandleMenuChoice(MenuKey(event->message & charCodeMask));
 			}
 			else {
 #if defined(NP2GCC)
-                if ((((event->message) & keyCodeMask) >> 8 == 0x6f) && (!np2oscfg.F12COPY)) {
+                if ((((event->message & keyCodeMask) >> 8) == 0x6f) &&
+                	(!np2oscfg.F12COPY)) {
                     mouse_running(MOUSE_XOR);
                     menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
                     sysmng_update(SYS_UPDATECFG);
@@ -515,15 +513,14 @@ static void eventproc(EventRecord *event) {
                 else {
                     mackbd_down(0, ((event->message) & keyCodeMask) >> 8);
                 }
-#else
-				mackbd_down(0, ((event->message) & keyCodeMask) >> 8);
 #endif
 			}
 			break;
 
 		case keyUp:
-			mackbd_up(((event->message) & keyCodeMask) >> 8);
+			mackbd_f12up(((event->message) & keyCodeMask) >> 8);
 			break;
+
 #if defined(NP2GCC)
         case mouseUp:
             if (controlKey & GetCurrentKeyModifiers()) {
@@ -537,6 +534,8 @@ static void eventproc(EventRecord *event) {
 	}
 }
 
+
+// ----
 
 static void processwait(UINT waitcnt) {
 
@@ -593,10 +592,13 @@ int main(int argc, char *argv[]) {
 
 	initload();
 
+	TRACEINIT();
+
 	SetRect(&wRect, 100, 100, 100, 100);
 	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
 								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
 	if (!hWndMain) {
+		TRACETERM();
 		macossub_term();
 		dosio_term();
 		return(0);
@@ -622,6 +624,7 @@ int main(int argc, char *argv[]) {
 
 	scrnmode = 0;
 	if (scrnmng_create(scrnmode) != SUCCESS) {
+		TRACETERM();
 		macossub_term();
 		dosio_term();
 		DisposeWindow(hWndMain);
@@ -629,6 +632,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	sysmng_initialize();
+	mackbd_initialize();
 	pccore_init();
 	S98_init();
 

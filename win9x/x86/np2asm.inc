@@ -46,6 +46,13 @@ SCRN_BUFSIZE	equ		04b000h
 
 GDCCMD_MAX		equ		32
 
+				struc	i286reg_t
+.reg			resw	14
+.remainclock	resd	1
+.baseclock		resd	1
+.clock			resd	1
+				endstruc
+
 				struc	gdcd_t
 .para			resb	256
 .fifo			resw	GDCCMD_MAX
@@ -76,7 +83,6 @@ GDCCMD_MAX		equ		32
 .s_drawing		resb	1
 .reserved		resb	3
 				endstruc
-
 
 				struc	gdcs_t
 .access			resb	1
@@ -110,12 +116,6 @@ GDCCMD_MAX		equ		32
 .low			resd	1
 .high			resd	1
 .writable		resb	1
-				endstruc
-
-				struc	nevent_t
-.remainclock	resd	1
-.baseclock		resd	1
-.clock			resd	1
 				endstruc
 
 				struc	vramop_t
@@ -154,7 +154,6 @@ GDCCMD_MAX		equ		32
 .sft8bitl		resb	1
 .sft8bitr		resb	1
 				endstruc
-
 
 				struc	dsync_t
 .text_vbp		resd	1

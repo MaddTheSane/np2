@@ -1,7 +1,7 @@
 #define	I286CLOCK(clock)												\
-				__asm {	sub		nevent.remainclock, clock			}
+				__asm {	sub		I286_REMCLOCK, clock				}
 #define	I286CLOCKDEC													\
-				__asm {	inc		nevent.remainclock					}
+				__asm {	inc		I286_REMCLOCK						}
 
 #define	FLAG_LOAD														\
 				__asm {	mov		ah, I286_FLAGL						}	\

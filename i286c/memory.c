@@ -19,7 +19,7 @@ static void MEMCALL i286_wt(UINT32 address, BYTE value) {
 
 static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 
-	nevent.remainclock -= vramop.tramwait;
+	I286_REMCLOCK -= vramop.tramwait;
 	if (address < 0xa2000) {
 		mem[address] = value;
 		tramupdate[(address >> 1) & 0x0fff] = 1;
@@ -51,7 +51,7 @@ static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 
 static void MEMCALL vram_w0(UINT32 address, BYTE value) {
 
-	nevent.remainclock -= vramop.vramwait;
+	I286_REMCLOCK -= vramop.vramwait;
 	mem[address] = value;
 	vramupdate[address & 0x7fff] |= 1;
 	gdcs.grphdisp |= 1;
@@ -59,7 +59,7 @@ static void MEMCALL vram_w0(UINT32 address, BYTE value) {
 
 static void MEMCALL vram_w1(UINT32 address, BYTE value) {
 
-	nevent.remainclock -= vramop.vramwait;
+	I286_REMCLOCK -= vramop.vramwait;
 	mem[address + VRAM_STEP] = value;
 	vramupdate[address & 0x7fff] |= 2;
 	gdcs.grphdisp |= 2;
@@ -70,7 +70,7 @@ static void MEMCALL grcg_rmw0(UINT32 address, BYTE value) {
 	BYTE	mask;
 	BYTE	*vram;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	mask = ~value;
 	address &= 0x7fff;
 	vramupdate[address] |= 1;
@@ -99,7 +99,7 @@ static void MEMCALL grcg_rmw1(UINT32 address, BYTE value) {
 	BYTE	mask;
 	BYTE	*vram;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	mask = ~value;
 	address &= 0x7fff;
 	vramupdate[address] |= 2;
@@ -127,7 +127,7 @@ static void MEMCALL grcg_tdw0(UINT32 address, BYTE value) {
 
 	BYTE	*vram;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	address &= 0x7fff;
 	vramupdate[address] |= 1;
 	gdcs.grphdisp |= 1;
@@ -151,7 +151,7 @@ static void MEMCALL grcg_tdw1(UINT32 address, BYTE value) {
 
 	BYTE	*vram;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	address &= 0x7fff;
 	vramupdate[address] |= 2;
 	gdcs.grphdisp |= 2;
@@ -197,7 +197,7 @@ static BYTE MEMCALL i286_rd(UINT32 address) {
 
 static BYTE MEMCALL tram_rd(UINT32 address) {
 
-	nevent.remainclock -= vramop.tramwait;
+	I286_REMCLOCK -= vramop.tramwait;
 	if (address < 0xa4000) {
 		return(mem[address]);
 	}
@@ -214,13 +214,13 @@ static BYTE MEMCALL tram_rd(UINT32 address) {
 
 static BYTE MEMCALL vram_r0(UINT32 address) {
 
-	nevent.remainclock -= vramop.vramwait;
+	I286_REMCLOCK -= vramop.vramwait;
 	return(mem[address]);
 }
 
 static BYTE MEMCALL vram_r1(UINT32 address) {
 
-	nevent.remainclock -= vramop.vramwait;
+	I286_REMCLOCK -= vramop.vramwait;
 	return(mem[address + VRAM_STEP]);
 }
 
@@ -229,7 +229,7 @@ static BYTE MEMCALL grcg_tcr0(UINT32 address) {
 const BYTE	*vram;
 	BYTE	ret;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	vram = mem + (address & 0x7fff);
 	ret = 0;
 	if (!(grcg.modereg & 1)) {
@@ -252,7 +252,7 @@ static BYTE MEMCALL grcg_tcr1(UINT32 address) {
 	BYTE	*vram;
 	BYTE	ret;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
 	vram = mem + (address & 0x7fff);
 	if (!(grcg.modereg & 1)) {
@@ -346,7 +346,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 
 
 #define GRCGW_NON(page) {											\
-	nevent.remainclock -= vramop.vramwait;							\
+	I286_REMCLOCK -= vramop.vramwait;								\
 	STOREINTELWORD(mem + address + VRAM_STEP*(page), value);		\
 	vramupdate[address & 0x7fff] |= (1 << page);					\
 	vramupdate[(address + 1) & 0x7fff] |= (1 << page);				\
@@ -355,7 +355,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 
 #define GRCGW_RMW(page) {											\
 	BYTE	*vram;													\
-	nevent.remainclock -= vramop.grcgwait;							\
+	I286_REMCLOCK -= vramop.grcgwait;								\
 	address &= 0x7fff;												\
 	vramupdate[address] |= (1 << page);								\
 	vramupdate[address + 1] |= (1 << page);							\
@@ -401,7 +401,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 
 #define GRCGW_TDW(page) {											\
 	BYTE	*vram;													\
-	nevent.remainclock -= vramop.grcgwait;							\
+	I286_REMCLOCK -= vramop.grcgwait;								\
 	address &= 0x7fff;												\
 	vramupdate[address] |= (1 << page);								\
 	vramupdate[address + 1] |= (1 << page);							\
@@ -483,7 +483,7 @@ static UINT16 MEMCALL i286w_rd(UINT32 address) {
 
 static UINT16 MEMCALL tramw_rd(UINT32 address) {
 
-	nevent.remainclock -= vramop.tramwait;
+	I286_REMCLOCK -= vramop.tramwait;
 	if (address < (0xa4000 - 1)) {
 		return(LOADINTELWORD(mem + address));
 	}
@@ -512,13 +512,13 @@ static UINT16 MEMCALL tramw_rd(UINT32 address) {
 
 static UINT16 MEMCALL vramw_r0(UINT32 address) {
 
-	nevent.remainclock -= vramop.vramwait;
+	I286_REMCLOCK -= vramop.vramwait;
 	return(LOADINTELWORD(mem + address));
 }
 
 static UINT16 MEMCALL vramw_r1(UINT32 address) {
 
-	nevent.remainclock -= vramop.vramwait;
+	I286_REMCLOCK -= vramop.vramwait;
 	return(LOADINTELWORD(mem + address + VRAM_STEP));
 }
 
@@ -527,7 +527,7 @@ static UINT16 MEMCALL grcgw_tcr0(UINT32 address) {
 	BYTE	*vram;
 	UINT16	ret;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
 	vram = mem + (address & 0x7fff);
 	if (!(grcg.modereg & 1)) {
@@ -550,7 +550,7 @@ static UINT16 MEMCALL grcgw_tcr1(UINT32 address) {
 	BYTE	*vram;
 	UINT16	ret;
 
-	nevent.remainclock -= vramop.grcgwait;
+	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
 	vram = mem + (address & 0x7fff);
 	if (!(grcg.modereg & 1)) {

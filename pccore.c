@@ -39,7 +39,7 @@
 #include	"pc9861k.h"
 
 
-	const char	np2version[] = "ver.0.36";
+	const char	np2version[] = "ver.0.37";
 
 	NP2CFG		np2cfg = {
 				PCBASECLOCK25, 4, 0,
@@ -533,7 +533,7 @@ void pccore_exec(BOOL draw) {
 		}
 
 #if 1 // ndef TRACE
-		if (nevent.remainclock > 0) {
+		if (I286_REMCLOCK > 0) {
 			if (!(CPUTYPE & CPUTYPE_V30)) {
 				i286();
 			}

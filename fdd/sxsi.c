@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"dosio.h"
+#include	"i286.h"
 #include	"pccore.h"
 #include	"sxsi.h"
 
@@ -243,7 +244,7 @@ const _SXSIHDD	*sxsi;
 	}
 	while(size) {
 		rsize = min(size, sxsi->size);
-		nevent.remainclock -= rsize;
+		I286_REMCLOCK -= rsize;
 		if (file_read((FILEH)sxsi->fh, buf, rsize) != rsize) {
 			return(0xd0);
 		}
@@ -273,7 +274,7 @@ const _SXSIHDD	*sxsi;
 	}
 	while(size) {
 		wsize = min(size, sxsi->size);
-		nevent.remainclock -= wsize;
+		I286_REMCLOCK -= wsize;
 		if (file_write((FILEH)sxsi->fh, buf, wsize) != wsize) {
 			return(0x70);
 		}
@@ -310,7 +311,7 @@ const _SXSIHDD	*sxsi;
 		while(size) {
 			wsize = min(size, sizeof(work));
 			size -= wsize;
-			nevent.remainclock -= wsize;
+			I286_REMCLOCK -= wsize;
 			if (file_write((FILEH)sxsi->fh, work, wsize) != wsize) {
 				return(0x70);
 			}

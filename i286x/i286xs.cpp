@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	"nevent.h"
 #include	"i286.h"
 #include	"i286x.h"
 #include	"i286xadr.h"

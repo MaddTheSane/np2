@@ -49,8 +49,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, BYTE val) {
 		pcm86.virbuf = 0;
 		pcm86.write = 0;
 		pcm86.reqirq = 0;
-		pcm86.lastclock = nevent.clock + nevent.baseclock -
-														nevent.remainclock;
+		pcm86.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 		pcm86.lastclock <<= 6;
 	}
 	// サンプリングレート変更
@@ -60,8 +59,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, BYTE val) {
 	}
 	pcm86.fifo = val & (~0x10);
 	if ((xchgbit & 0x80) && (val & 0x80)) {
-		pcm86.lastclock = nevent.clock + nevent.baseclock -
-														nevent.remainclock;
+		pcm86.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 		pcm86.lastclock <<= 6;
 	}
 	pcm86.write = 1;
@@ -128,7 +126,7 @@ static BYTE IOINPCALL pcm86_ia466(UINT port) {
 	BYTE	ret;
 
 	sound_sync();
-	nowclk = nevent.clock + nevent.baseclock - nevent.remainclock;
+	nowclk = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 	nowclk <<= 6;
 	past = nowclk - pcm86.lastclock;
 	if (past >= pcm86.stepclock) {

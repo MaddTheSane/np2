@@ -118,7 +118,7 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 	long	bufs;
 	UINT32	past;
 
-	past = nevent.clock + nevent.baseclock - nevent.remainclock;
+	past = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 	past <<= 6;
 	past -= pcm86.lastclock;
 	if (past >= pcm86.stepclock) {

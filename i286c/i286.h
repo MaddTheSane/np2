@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------
 //
-//  i286y : 80286 Engine for Pentium  ver0.02
+//  i286x : 80286 Engine for Pentium  ver0.02
 //
 //                               Copyright by Yui/Studio Milmake 1999-2000
 //
@@ -113,6 +113,9 @@ typedef struct {
 		I286REG8	b;
 		I286REG16	w;
 	}		r;
+	SINT32	remainclock;
+	SINT32	baseclock;
+	UINT32	clock;
 	UINT32	es_base;
 	UINT32	cs_base;
 	UINT32	ss_base;
@@ -181,6 +184,11 @@ extern	const BYTE	iflags[];
 #define		I286_FLAGH		i286reg.r.b.flag_h
 #define		I286_TRAP		i286reg.trap
 #define		I286_OV			i286reg.ovflag
+
+#define		I286_REMCLOCK	i286reg.remainclock
+#define		I286_BASECLOCK	i286reg.baseclock
+#define		I286_CLOCK		i286reg.clock
+
 
 enum {
 	C_FLAG			= 0x0001,

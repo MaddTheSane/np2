@@ -25,7 +25,6 @@ typedef struct {
 } ADPCMREG;
 
 typedef struct {
-	BYTE		buf[0x40000];
 	ADPCMREG	reg;
 	UINT32		pos;
 	UINT32		start;
@@ -46,6 +45,8 @@ typedef struct {
 	BYTE		mask;
 	BYTE		fifopos;
 	BYTE		fifo[2];
+	BYTE		padding[2];
+	BYTE		buf[0x40000];
 } _ADPCM, *ADPCM;
 
 typedef struct {

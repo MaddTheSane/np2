@@ -178,7 +178,7 @@ LABEL void i286(void) {
 
 i286_mnlp:		movzx	eax, bl
 				call	i286op[eax*4]
-				cmp		nevent.remainclock, 0
+				cmp		I286_REMCLOCK, 0
 				jg		i286_mnlp
 				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
@@ -189,7 +189,7 @@ i286_mnlp:		movzx	eax, bl
 i286_dma_mnlp:	movzx	eax, bl
 				call	i286op[eax*4]
 				call	dmap_i286
-				cmp		nevent.remainclock, 0
+				cmp		I286_REMCLOCK, 0
 				jg		i286_dma_mnlp
 				mov		dword ptr (i286reg.prefetchque), ebx
 				mov		I286_IP, si
@@ -4084,7 +4084,7 @@ I286 _repe(void) {								// F3: repe
 I286 _hlt(void) {								// F4: hlt
 
 		__asm {
-				mov		nevent.remainclock, -1
+				mov		I286_REMCLOCK, -1
 				ret
 		}
 }

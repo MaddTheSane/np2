@@ -16,7 +16,7 @@ void artic_callback(void) {
 	else {
 		mul *= 13;
 	}
-	leng = nevent.clock + nevent.baseclock - nevent.remainclock;
+	leng = I286_CLOCK + I286_BASECLOCK + I286_REMCLOCK;
 	leng *= 2;
 	leng -= artic.lastclk2;
 	if (leng > 0) {
@@ -38,7 +38,7 @@ static UINT32 artic_getcnt(void) {
 	else {
 		mul *= 13;
 	}
-	leng = nevent.clock + nevent.baseclock - nevent.remainclock;
+	leng = I286_CLOCK + I286_BASECLOCK + I286_REMCLOCK;
 	leng *= 2;
 	leng -= artic.lastclk2;
 	if (leng > 0) {
@@ -55,7 +55,7 @@ static void IOOUTCALL artic_o5c(UINT port, BYTE dat) {
 
 	(void)port;
 	(void)dat;
-	nevent.remainclock -= 20;
+	I286_REMCLOCK -= 20;
 }
 
 static BYTE IOINPCALL artic_i5c(UINT port) {

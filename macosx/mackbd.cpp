@@ -25,7 +25,7 @@ static const BYTE keymac[128] = {
 			//	 TAB, SPC,    ,  BS,    , ESC,    , apl		; 0x30
 				0x0f,0x34,  NC,0x0e,  NC,0x00,  NC,  NC,
 			//	 sft, ctl, alt, cps,    ,    ,    ,    		; 0x38
-				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
+				0x70,0x74,0x73,0x79,  NC,  NC,  NC,  NC,
 			//	    , [.],    , [*],    ,    , [+],    		; 0x40
 				  NC,0x50,  NC,0x45,  NC,  NC,0x49,  NC,
 			//	    ,    ,    ,    , ret,    , [-], clr		; 0x48
@@ -37,12 +37,11 @@ static const BYTE keymac[128] = {
 			//	  F5,  F6,  F7,  F3,  F8,  F9,    , F11		; 0x60
 				0x66,0x67,0x68,0x64,0x69,0x6a,  NC,0x72,
 			//	    , F13,    , F14,    , F10,    , F12		; 0x68
-				  NC,  NC,  NC,  NC,  NC,0x6b,  NC,0x80,
+				  NC,  NC,  NC,  NC,  NC,0x6b,  NC,  NC,
 			//	    , F15, hlp, hom,  ru, del,  F4, end		; 0x70
 				  NC,  NC,0x3f,0x3e,0x37,0x39,0x65,0x3f,
 			//	  F2,  rd,  F1,  Å©,  Å®,  Å´,  Å™,    		; 0x78
 				0x63,0x36,0x62,0x3b,0x3c,0x3d,0x3a,  NC};
-
 
 // ó—åÁÉLÅ[âüâ∫
 static const BYTE keymac2[128] = {
@@ -80,123 +79,76 @@ static const BYTE keymac2[128] = {
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
 
-enum {
-	kMac_base		= 0x01,
-
-	kMac_kana		= 0x37,
-	kMac_shift		= 0x38,
-	kMac_caps		= 0x39,
-	kMac_alt		= 0x3a,
-	kMac_ctrl		= 0x3b
-};
-
-#define	kMac_Basebit(a)		(1 << ((a) & 15))
-
-static	UINT16	shiftback = 0;
+static	BYTE	keymap[16];
 static	UINT32	shiftchktick = 0;
 
-typedef struct {
-	UINT16	bit;
-	BYTE	code;
-} KEYSEA;
+void mackbd_initialize(void) {
 
-static const KEYSEA keysea[] = {
-					{kMac_Basebit(kMac_shift),	0x70},
-					{kMac_Basebit(kMac_caps),	0x79},
-//					{kMac_Basebit(kMac_kana),	0x72},
-					{kMac_Basebit(kMac_alt),	0x73},
-					{kMac_Basebit(kMac_ctrl),	0x74}};
-
-
-void mackbd_init(void) {
-
-	shiftback = 0;
-	shiftchktick = 0;
+	shiftchktick = GETTICK();
+	ZeroMemory(&keymap, sizeof(keymap));
 }
 
 void mackbd_callback(void) {
 
 	UINT32	tick;
-	BYTE	mackeymap[16];
-	UINT16	tmp;
-	UINT16	keyxor;
+	BYTE	key[16];
 	UINT	i;
+	BYTE	update;
+	UINT	j;
+	BYTE	keycode;
 
 	tick = GETTICK();
-	if (shiftchktick != tick) {
-		shiftchktick = tick;
-
-#if TARGET_API_MAC_CARBON
-		GetKeys((long *)mackeymap);
-#else
-		GetKeys((unsigned long *)mackeymap);
-#endif
-		tmp = (mackeymap[7] << 8) + mackeymap[6];
-		keyxor = shiftback ^ tmp;
-		shiftback = tmp;
-		for (i=0; i<(sizeof(keysea) / sizeof(KEYSEA)); i++) {
-			if (keyxor & keysea[i].bit) {
-				if (shiftback & keysea[i].bit) {
-					keystat_senddata(keysea[i].code);
-				}
-				else {
-					keystat_senddata(keysea[i].code | 0x80);
-				}
-			}
-		}
-	}
-}
-
-BOOL mackbd_down(int cmd, int keycode) {
-
-	BYTE	data;
-
-	if (keycode >= 0x80) {
-		return(FALSE);
-	}
-	if (!cmd) {
-		data = keymac[keycode];
-	}
-	else {
-		data = keymac2[keycode];
-	}
-	if (data != NC) {
-		if (data == 0x80) {
-			if (np2oscfg.F12COPY == 1) {
-				data = 0x61;
-			}
-			else {
-				data = 0x60;
-			}
-		}
-		keystat_senddata(data);
-		return(TRUE);
-	}
-	return(FALSE);
-}
-
-void mackbd_up(int keycode) {
-
-	BYTE	data, data2;
-
-	if (keycode >= 0x80) {
+	if (shiftchktick == tick) {
 		return;
 	}
-	data = keymac[keycode];
-	if (data != NC) {
-		if (data == 0x80) {
-			if (np2oscfg.F12COPY == 1) {
-				data = 0x61;
-			}
-			else {
-				data = 0x60;
+	shiftchktick = tick;
+#if TARGET_API_MAC_CARBON
+	GetKeys((long *)key);
+#else
+	GetKeys((unsigned long *)key);
+#endif
+	for (i=0; i<16; i++) {
+		update = keymap[i] ^ key[i];
+		if (update) {
+			keymap[i] = key[i];
+			for (j=0; j<8; j++) {
+				if (update & (1 << j)) {
+					keycode = keymac[i * 8 + j];
+					if (keycode != NC) {
+						if (key[i] & (1 << j)) {
+							keystat_senddata(keycode);
+						}
+						else {
+							keystat_senddata(keycode + 0x80);
+						}
+					}
+				}
 			}
 		}
-		keystat_senddata(data | 0x80);
 	}
-	data2 = keymac2[keycode];
-	if (data2 != NC) {
-		keystat_senddata(data2 | 0x80);
+}
+
+void mackbd_f12down(int keycode) {
+
+	if (keycode == 0x6f) {
+		if (np2oscfg.F12COPY == 1) {
+			keystat_senddata(0x61);
+		}
+		else if (np2oscfg.F12COPY == 2) {
+			keystat_senddata(0x60);
+		}
+	}
+}
+
+void mackbd_f12up(int keycode) {
+
+	if (keycode == 0x6f) {
+		if (np2oscfg.F12COPY == 1) {
+			keystat_senddata(0x61 | 0x80);
+		}
+		else if (np2oscfg.F12COPY == 2) {
+			keystat_senddata(0x60 | 0x80);
+		}
 	}
 }
 

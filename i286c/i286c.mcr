@@ -36,9 +36,9 @@
 
 
 #define	I286IRQCHECKTERM											\
-		if (nevent.remainclock > 0) {								\
-			nevent.baseclock -= nevent.remainclock;					\
-			nevent.remainclock = 0;									\
+		if (I286_REMCLOCK > 0) {									\
+			I286_BASECLOCK -= I286_REMCLOCK;						\
+			I286_REMCLOCK = 0;										\
 		}
 
 
@@ -47,7 +47,7 @@
 		DS_FIX = DS_BASE;
 
 
-#define	I286_CLOCK(clock)	nevent.remainclock -= (clock);
+#define	I286_WORKCLOCK(c)	I286_REMCLOCK -= (c)
 
 
 #define	GET_PCBYTE(b)												\
@@ -93,11 +93,11 @@
 #define PREPART_REG8_EA(b, s, d, regclk, memclk)					\
 		GET_PCBYTE((b))												\
 		if ((b) >= 0xc0) {											\
-			I286_CLOCK(regclk)										\
+			I286_WORKCLOCK(regclk);									\
 			(s) = *(reg8_b20[b]);									\
 		}															\
 		else {														\
-			I286_CLOCK(memclk)										\
+			I286_WORKCLOCK(memclk);									\
 			(s) = i286_memoryread(c_calc_ea_dst[(b)]());			\
 		}															\
 		(d) = reg8_b53[(b)];
@@ -106,11 +106,11 @@
 #define	PREPART_REG16_EA(b, s, d, regclk, memclk)					\
 		GET_PCBYTE(b)												\
 		if (b >= 0xc0) {											\
-			I286_CLOCK(regclk)										\
+			I286_WORKCLOCK(regclk);									\
 			s = *(reg16_b20[b]);									\
 		}															\
 		else {														\
-			I286_CLOCK(memclk)										\
+			I286_WORKCLOCK(memclk);									\
 			s = i286_memoryread_w(c_calc_ea_dst[b]());				\
 		}															\
 		d = reg16_b53[b];
@@ -338,7 +338,7 @@
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)(((w) ^ bak) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPF(w);									\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 	}
 
 
@@ -350,12 +350,12 @@
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)((w ^ bak) & A_FLAG);					\
 		I286_FLAGL |= WORDSZPF(w);									\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 	}
 
 
 #define	REGPUSH(reg, clock)	{										\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 		I286_SP -= 2;												\
 		i286_memorywrite_w(I286_SP + SS_BASE, reg);					\
 	}
@@ -370,12 +370,12 @@
 		UINT16 sp = reg;											\
 		I286_SP -= 2;												\
 		i286_memorywrite_w(I286_SP + SS_BASE, sp);					\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 	}
 
 
 #define	REGPOP(reg, clock) {										\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
 		I286_SP += 2;												\
 	}
@@ -388,26 +388,26 @@
 
 
 #define	JMPSHORT(clock) {											\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 		I286_IP += __CBW(i286_memoryread(CS_BASE + I286_IP));		\
 		I286_IP++;													\
 	}
 
 
 #define	JMPNOP(clock) {												\
-		I286_CLOCK(clock);											\
+		I286_WORKCLOCK(clock);										\
 		I286_IP++;													\
 	}
 
 
 #define	MOVIMM8(reg) {												\
-		I286_CLOCK(2)												\
+		I286_WORKCLOCK(2);											\
 		GET_PCBYTE(reg)												\
 	}
 
 
 #define	MOVIMM16(reg) {												\
-		I286_CLOCK(2)												\
+		I286_WORKCLOCK(2);											\
 		GET_PCWORD(reg)												\
 	}
 
