@@ -426,6 +426,139 @@ char *mileuc_chr(const char *str, int c) {
 #endif
 
 
+// ---- UTF8
+
+#if defined(SUPPORT_UTF8)
+int milutf8_charsize(const char *str) {
+
+	if (str[0] == '\0') {
+		return(0);
+	}
+	else if (!(str[0] & 0x80)) {
+		return(1);
+	}
+	else if ((src[0] & 0xe0) == 0xc0) {
+		if ((src[1] & 0xc0) == 0x80) {
+			return(2);
+		}
+	}
+	else if ((src[0] & 0xf0) == 0xe0) {
+		if (((src[1] & 0xc0) == 0x80) ||
+			((src[2] & 0xc0) == 0x80)) {
+			return(3);
+		}
+	}
+	return(0);
+}
+
+int milutf8_cmp(const char *str, const char *cmp) {
+
+	int		s;
+	int		c;
+
+	do {
+		s = (UINT8)*str++;
+		if (((s - 'a') & 0xff) < 26) {
+			s -= 0x20;
+		}
+		c = (BYTE)*cmp++;
+		if (((c - 'a') & 0xff) < 26) {
+			c -= 0x20;
+		}
+		if (s != c) {
+			return((s > c)?1:-1);
+		}
+	} while(s);
+	return(0);
+}
+
+int milutf8_memcmp(const char *str, const char *cmp) {
+
+	int		s;
+	int		c;
+
+	do {
+		c = (UINT8)*cmp++;
+		if (c == 0) {
+			return(0);
+		}
+		if (((c - 'a') & 0xff) < 26) {
+			c -= 0x20;
+		}
+		s = (UINT8)*str++;
+		if (((s - 'a') & 0xff) < 26) {
+			s -= 0x20;
+		}
+	} while(s == c);
+	return((s > c)?1:-1);
+}
+
+int milutf8_kanji1st(const char *str, int pos) {
+
+	return(((str[pos] & 0xc0) >= 0xc0)?1:0);
+}
+
+int milutf8_kanji2nd(const char *str, int pos) {
+
+	return(((str[pos] & 0xc0) == 0x80)?1:0);
+}
+
+void milutf8_ncpy(char *dst, const char *src, int maxlen) {
+
+	int		i;
+
+	if (maxlen > 0) {
+		maxlen--;
+		for (i=0; i<maxlen && src[i]; i++) {
+			dst[i] = src[i];
+		}
+		while((i) && ((dst[i] & 0xc0) == 0x80)) {
+			i--;
+		}
+		dst[i] = '\0';
+	}
+}
+
+void milutf8_ncat(char *dst, const char *src, int maxlen) {
+
+	int		i;
+	int		j;
+
+	if (maxlen > 0) {
+		maxlen--;
+		for (i=0; i<maxlen; i++) {
+			if (!dst[i]) {
+				break;
+			}
+		}
+		for (j=0; i<maxlen && src[j]; i++, j++) {
+			dst[i] = src[j];
+		}
+		while((i) && ((dst[i] & 0xc0) == 0x80)) {
+			i--;
+		}
+		dst[i] = '\0';
+	}
+}
+
+char *milutf8_chr(const char *str, int c) {
+
+	int		s;
+
+	if (str) {
+		do {
+			s = *str;
+			if (s == c) {
+				return((char *)str);
+			}
+			str++;
+		} while(s);
+	}
+	return(NULL);
+}
+#endif
+
+
 // ---- other
 
 int milstr_extendcmp(const char *str, const char *cmp) {
