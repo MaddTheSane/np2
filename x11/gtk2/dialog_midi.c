@@ -1,4 +1,4 @@
-/*	$Id: dialog_midi.c,v 1.1 2004/07/15 14:24:33 monaka Exp $	*/
+/*	$Id: dialog_midi.c,v 1.2 2004/07/15 15:46:24 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -83,7 +83,8 @@ static BYTE mpuopt;
 static void
 ok_button_clicked(GtkButton *b, gpointer d)
 {
-	const gchar *p;
+	const gchar *utf8;
+	gchar *p;
 	BOOL enable;
 	UINT update;
 	int i;
@@ -94,30 +95,42 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	if (np2cfg.mpuopt != mpuopt) {
 		update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
 	}
-	p = gtk_entry_get_text(GTK_ENTRY(mpu98_midiout_entry));
-	if (p != NULL) {
-		if (milstr_cmp(np2oscfg.mpu.mout, p)) {
-			milstr_ncpy(np2oscfg.mpu.mout, p, sizeof(np2oscfg.mpu.mout));
-			update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
+	utf8 = gtk_entry_get_text(GTK_ENTRY(mpu98_midiout_entry));
+	if (utf8 != NULL) {
+		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (p != NULL) {
+			if (milstr_cmp(np2oscfg.mpu.mout, p)) {
+				milstr_ncpy(np2oscfg.mpu.mout, p, sizeof(np2oscfg.mpu.mout));
+				update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
+			}
+			g_free(p);
 		}
 	}
-	p = gtk_entry_get_text(GTK_ENTRY(mpu98_midiin_entry));
-	if (p != NULL) {
-		if (milstr_cmp(np2oscfg.mpu.min, p)) {
-			milstr_ncpy(np2oscfg.mpu.min, p, sizeof(np2oscfg.mpu.min));
-			update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
+	utf8 = gtk_entry_get_text(GTK_ENTRY(mpu98_midiin_entry));
+	if (utf8 != NULL) {
+		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (p != NULL) {
+			if (milstr_cmp(np2oscfg.mpu.min, p)) {
+				milstr_ncpy(np2oscfg.mpu.min, p, sizeof(np2oscfg.mpu.min));
+				update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
+			}
+			g_free(p);
 		}
 	}
-	p = gtk_entry_get_text(GTK_ENTRY(mpu98_module_entry));
-	if (p != NULL) {
-		if (milstr_cmp(np2oscfg.mpu.mdl, p)) {
-			milstr_ncpy(np2oscfg.mpu.mdl, p, sizeof(np2oscfg.mpu.mdl));
-			update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
+	utf8 = gtk_entry_get_text(GTK_ENTRY(mpu98_module_entry));
+	if (utf8 != NULL) {
+		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (p != NULL) {
+			if (milstr_cmp(np2oscfg.mpu.mdl, p)) {
+				milstr_ncpy(np2oscfg.mpu.mdl, p, sizeof(np2oscfg.mpu.mdl));
+				update |= SYS_UPDATECFG | SYS_UPDATEMIDI;
+			}
+			g_free(p);
 		}
 	}
 
 	/* MIMPI def enable/file */
-	enable = GTK_TOGGLE_BUTTON(mpu98_mimpi_def_checkbutton)->active ? 1 : 0;
+	enable = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(mpu98_mimpi_def_checkbutton)) ? 1 : 0;
 	if (np2oscfg.mpu.def_en != enable) {
 		np2oscfg.mpu.def_en = enable;
 		if (cm_mpu98) {
@@ -125,24 +138,32 @@ ok_button_clicked(GtkButton *b, gpointer d)
 		}
 		update |= SYS_UPDATEOSCFG;
 	}
-	p = gtk_entry_get_text(GTK_ENTRY(mpu98_mimpi_def_entry));
-	if (p != NULL) {
-		if (milstr_cmp(np2oscfg.mpu.def, p)) {
-			milstr_ncpy(np2oscfg.mpu.def, p, sizeof(np2oscfg.mpu.def));
-			if (cm_mpu98) {
-				(*cm_mpu98->msg)(cm_mpu98, COMMSG_MIMPIDEFFILE, (long)p);
+	utf8 = gtk_entry_get_text(GTK_ENTRY(mpu98_mimpi_def_entry));
+	if (utf8 != NULL) {
+		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (p != NULL) {
+			if (milstr_cmp(np2oscfg.mpu.def, p)) {
+				milstr_ncpy(np2oscfg.mpu.def, p, sizeof(np2oscfg.mpu.def));
+				if (cm_mpu98) {
+					(*cm_mpu98->msg)(cm_mpu98, COMMSG_MIMPIDEFFILE, (long)p);
+				}
+				update |= SYS_UPDATEOSCFG;
 			}
-			update |= SYS_UPDATEOSCFG;
+			g_free(p);
 		}
 	}
 
 	/* MIDI-IN/OUT device */
 	for (i = 0; i < NELEMENTS(mpu98_devname_str); i++) {
-		p = gtk_entry_get_text(GTK_ENTRY(mpu98_devname_entry[i]));
-		if (p != NULL) {
-			if (milstr_cmp(np2oscfg.MIDIDEV[i], p)) {
-				milstr_ncpy(np2oscfg.MIDIDEV[i], p, sizeof(np2oscfg.MIDIDEV[0]));
-				update |= SYS_UPDATEOSCFG;
+		utf8 = gtk_entry_get_text(GTK_ENTRY(mpu98_devname_entry[i]));
+		if (utf8 != NULL) {
+			p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+			if (p != NULL) {
+				if (milstr_cmp(np2oscfg.MIDIDEV[i], p)) {
+					milstr_ncpy(np2oscfg.MIDIDEV[i], p, sizeof(np2oscfg.MIDIDEV[0]));
+					update |= SYS_UPDATEOSCFG;
+				}
+				g_free(p);
 			}
 		}
 	}
@@ -167,33 +188,48 @@ dialog_destroy(GtkWidget *w, GtkWidget **wp)
 static void
 mpu98_ioport_entry_changed(GtkEditable *e, gpointer d)
 {
-	const gchar *p;
+	const gchar *utf8;
+	gchar *p;
 	BYTE val;
 
 	UNUSED(d);
-	p = gtk_entry_get_text(GTK_ENTRY(e));
-	if ((p != NULL) && (strlen(p) >= 4)) {
-		val = (milstr_solveHEX(p) >> 6) & 0xf0;
-		mpuopt &= ~0xf0;
-		mpuopt |= val;
+
+	utf8 = gtk_entry_get_text(GTK_ENTRY(e));
+	if (utf8 != NULL) {
+		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (p != NULL) {
+			if (strlen(p) >= 4) {
+				val = (milstr_solveHEX(p) >> 6) & 0xf0;
+				mpuopt &= ~0xf0;
+				mpuopt |= val;
+			}
+			g_free(p);
+		}
 	}
 }
 
 static void
 mpu98_intr_entry_changed(GtkEditable *e, gpointer d)
 {
-	const gchar *p;
+	const gchar *utf8;
+	gchar *p;
 	BYTE val;
 
 	UNUSED(d);
 
-	p = gtk_entry_get_text(GTK_ENTRY(e));
-	if ((p != NULL) && (strlen(p) >= 4)) {
-		val = p[3] - '0';
-		if (val >= 3)
-			val = 3;
-		mpuopt &= ~0x03;
-		mpuopt |= val;
+	utf8 = gtk_entry_get_text(GTK_ENTRY(e));
+	if (utf8 != NULL) {
+		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (p != NULL) {
+			if (strlen(p) >= 4) {
+				val = p[3] - '0';
+				if (val >= 3)
+					val = 3;
+				mpuopt &= ~0x03;
+				mpuopt |= val;
+			}
+			g_free(p);
+		}
 	}
 }
 
@@ -225,14 +261,16 @@ mpu98_mimpi_def_button_clicked(GtkButton *b, gpointer d)
 	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	    NULL);
 	if (dialog == NULL)
-		return;
+		goto end;
 
 	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
-	utf8 = g_filename_to_utf8(np2oscfg.mpu.def, -1, NULL, NULL, NULL);
-	if (utf8) {
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
-		g_free(utf8);
+	if (np2oscfg.mpu.def[0] != '\0') {
+		utf8 = g_filename_to_utf8(np2oscfg.mpu.def, -1, NULL, NULL, NULL);
+		if (utf8) {
+			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
+			g_free(utf8);
+		}
 	}
 
 	filter = gtk_file_filter_new();
@@ -249,20 +287,24 @@ mpu98_mimpi_def_button_clicked(GtkButton *b, gpointer d)
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	}
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
-		utf8 = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-		if (utf8) {
-			path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
-			if (path) {
-				if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
-					gtk_entry_set_text(GTK_ENTRY(mpu98_mimpi_def_entry), utf8);
-				}
-				g_free(path);
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
+		goto end;
+
+	utf8 = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+	if (utf8) {
+		path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
+		if (path) {
+			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
+				gtk_entry_set_text(GTK_ENTRY(mpu98_mimpi_def_entry), utf8);
 			}
-			g_free(utf8);
+			g_free(path);
 		}
+		g_free(utf8);
 	}
-	gtk_widget_destroy(dialog);
+
+end:
+	if (dialog)
+		gtk_widget_destroy(dialog);
 }
 
 void
@@ -290,6 +332,7 @@ create_midi_dialog(void)
 	GtkWidget *ok_button;
 	GtkWidget *cancel_button;
 	GtkWidget *mpu98_default_button;
+	gchar *utf8;
 	int i;
 
 	uninstall_idle_process();
@@ -317,7 +360,6 @@ create_midi_dialog(void)
 	    0, 1, 0, 1);
 
 	ioport_combo = gtk_combo_box_entry_new_text();
-	gtk_widget_set_size_request(ioport_combo, 80, -1);
 	gtk_widget_show(ioport_combo);
 	gtk_table_attach_defaults(GTK_TABLE(main_widget), ioport_combo,
 	    1, 2, 0, 1);
@@ -342,7 +384,6 @@ create_midi_dialog(void)
 	    0, 1, 1, 2);
 
 	intr_combo = gtk_combo_box_entry_new_text();
-	gtk_widget_set_size_request(intr_combo, 80, -1);
 	gtk_widget_show(intr_combo);
 	gtk_table_attach_defaults(GTK_TABLE(main_widget), intr_combo,
 	    1, 2, 1, 2);
@@ -385,8 +426,13 @@ create_midi_dialog(void)
 		gtk_table_attach_defaults(GTK_TABLE(deviceframe_widget),
 		    mpu98_devname_entry[i], 1, 6, i, i + 1);
 
-		gtk_entry_set_text(GTK_ENTRY(mpu98_devname_entry[i]),
-		    np2oscfg.MIDIDEV[i]);
+		if (np2oscfg.MIDIDEV[i][0] != '\0') {
+			utf8 = g_filename_to_utf8(np2oscfg.MIDIDEV[i], -1, NULL, NULL, NULL);
+			if (utf8 != NULL) {
+				gtk_entry_set_text(GTK_ENTRY(mpu98_devname_entry[i]), np2oscfg.MIDIDEV[i]);
+				g_free(utf8);
+			}
+		}
 	}
 	/* MIDI-IN disable */
 	gtk_widget_set_sensitive(mpu98_devname_entry[1], FALSE);
@@ -512,14 +558,20 @@ create_midi_dialog(void)
 	gtk_table_attach(GTK_TABLE(assignframe_widget), mpu98_mimpi_def_entry,
 	    0, 5, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	gtk_widget_set_sensitive(mpu98_mimpi_def_entry, FALSE);
-	gtk_entry_set_text(GTK_ENTRY(mpu98_mimpi_def_entry), np2oscfg.mpu.def);
+	if (np2oscfg.mpu.def[0] != '\0') {
+		utf8 = g_filename_to_utf8(np2oscfg.mpu.def, -1, NULL, NULL, NULL);
+		if (utf8 != NULL) {
+			gtk_entry_set_text(GTK_ENTRY(mpu98_mimpi_def_entry), np2oscfg.mpu.def);
+			g_free(utf8);
+		}
+	}
 
 	mimpi_button = gtk_button_new_with_label("...");
 	gtk_widget_show(mimpi_button);
 	gtk_table_attach(GTK_TABLE(assignframe_widget), mimpi_button,
 	    5, 6, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	g_signal_connect(GTK_OBJECT(mimpi_button), "clicked",
-	    GTK_SIGNAL_FUNC(mpu98_mimpi_def_button_clicked), 0);
+	    GTK_SIGNAL_FUNC(mpu98_mimpi_def_button_clicked), midi_dialog);
 
 	/*
 	 * "Default" button
