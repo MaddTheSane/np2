@@ -613,7 +613,7 @@ void pccore_exec(BOOL draw) {
 
 	while(screendispflag) {
 #if defined(TRACE)
-	resetcnt++;
+		resetcnt++;
 #endif
 		pic_irq();
 		if (CPU_RESETREQ) {
@@ -636,6 +636,7 @@ void pccore_exec(BOOL draw) {
 			treip[trpos & (IPTRACE - 1)] = (CPU_CS << 16) + CPU_IP;
 			trpos++;
 #endif
+//			TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 			i286x_step();
 //			i286c_step();
 		}
