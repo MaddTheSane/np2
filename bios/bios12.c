@@ -3,6 +3,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"bios.h"
+#include	"biosmem.h"
 
 
 #define	baseport 0x00c8

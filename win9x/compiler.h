@@ -96,7 +96,7 @@ typedef signed __int64		SINT64;
 #endif
 #define	SUPPORT_CRT15KHZ
 #define	SUPPORT_PC9861K
-// #define	SUPPORT_SOFTKBD		0
+#define	SUPPORT_SOFTKBD		0
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_MEMDBG32

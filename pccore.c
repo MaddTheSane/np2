@@ -259,8 +259,8 @@ void pccore_cfgupdate(void) {
 
 	renewal = FALSE;
 	for (i=0; i<8; i++) {
-		if (np2cfg.memsw[i] != mem[MEMB_MSW + i*4]) {
-			np2cfg.memsw[i] = mem[MEMB_MSW + i*4];
+		if (np2cfg.memsw[i] != mem[MEMX_MSW + i*4]) {
+			np2cfg.memsw[i] = mem[MEMX_MSW + i*4];
 			renewal = TRUE;
 		}
 	}

@@ -147,7 +147,7 @@ enum {
 
 static void fdd_int(int result) {
 
-	if (result == FDCBIOS_NORESULT) {						// ver0.29
+	if (result == FDCBIOS_NORESULT) {
 		return;
 	}
 	switch(CPU_AH & 0x0f) {
@@ -202,10 +202,10 @@ static void fdd_int(int result) {
 			return;
 	}
 	if (fdc.chgreg & 1) {
-		mem[0x0055e] &= ~(0x01 << fdc.us);
+		mem[MEMB_DISK_INTL] &= ~(0x01 << fdc.us);
 	}
 	else {
-		mem[0x0055f] &= ~(0x10 << fdc.us);
+		mem[MEMB_DISK_INTH] &= ~(0x10 << fdc.us);
 	}
 	CPU_IP = BIOSOFST_WAIT;
 }
@@ -295,12 +295,13 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 	UINT32	addr;
 	UINT8	mtr_c;
 	UINT	mtr_r;
+	UINT	fmode;
 
 	mtr_c = fdc.ncn;
 	mtr_r = 0;
 
 	// とりあえずBIOSの時は無視する
-	fdc.mf = 0xff;						// ver0.29
+	fdc.mf = 0xff;
 
 //	TRACE_("int 1Bh", CPU_AH);
 
@@ -333,10 +334,10 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 		}
 		if (!fdd_diskready(fdc.us)) {
 			fdd_int(FDCBIOS_NONREADY);
-			if (CPU_AH == 0x84) {								// ver0.28
+			if (CPU_AH == 0x84) {
 				return(0x68);			// 新センスは 両用ドライブ情報も
 			}
-			if (CPU_AH == 0xc4) {								// ver0.31
+			if (CPU_AH == 0xc4) {									// ver0.31
 				if (fdc.support144) {
 					return(0x6c);
 				}
@@ -346,10 +347,11 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 		}
 	}
 
-	// 2DDのモード選択							// ver0.29
-	if (type == DISKTYPE_2DD) {
-		if (!(mem[MEMB_F2DD_MODE] & (0x10 << fdc.us))) {
-			ndensity = 1;
+	// モード選択													// ver0.78
+	fmode = (type & 1)?MEMB_F2HD_MODE:MEMB_F2DD_MODE;
+	if (!(CPU_AL & 0x80)) {
+		if (!(mem[fmode] & (0x10 << fdc.us))) {
+			ndensity = TRUE;
 		}
 	}
 
@@ -401,7 +403,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 					break;
 				}
 				size -= accesssize;
-				mtr_r += accesssize;						// ver0.26
+				mtr_r += accesssize;
 				if ((fdc.R++ == (UINT8)para) &&
 					(CPU_AH & 0x80) && (!fdc.hd)) {
 					fdc.hd = 1;
@@ -439,14 +441,14 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				ret_ah |= 0x01;
 			}
 			else {								// 2DD
-				if (mem[0x005ca] & (0x01 << fdc.us)) {
-					ret_ah++;
+				if (mem[fmode] & (0x01 << fdc.us)) {
+					ret_ah |= 0x01;
 				}
-				if (mem[0x005ca] & (0x10 << fdc.us)) {				// ver0.30
+				if (mem[fmode] & (0x10 << fdc.us)) {				// ver0.30
 					ret_ah |= 0x04;
 				}
 			}
-			if (CPU_AH & 0x80) {				// ver0.30
+			if (CPU_AH & 0x80) {									// ver0.30
 				ret_ah |= 8;					// 1MB/640KB両用ドライブ
 				if ((CPU_AH & 0x40) && (fdc.support144)) {
 					ret_ah |= 4;				// 1.44対応ドライブ
@@ -497,7 +499,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				}
 				addr += accesssize;
 				size -= accesssize;
-				mtr_r += accesssize;						// ver0.26
+				mtr_r += accesssize;
 				if ((fdc.R++ == (UINT8)para) &&
 					(CPU_AH & 0x80) && (!fdc.hd)) {
 					fdc.hd = 1;
@@ -513,7 +515,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				result = FDCBIOS_SUCCESS;
 			}
 			else {
-				ret_ah = fddlasterror;			// 0xc0		// ver0.28
+				ret_ah = fddlasterror;			// 0xc0
 				result = FDCBIOS_WRITEERROR;
 			}
 			break;
@@ -563,7 +565,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				MEML_WRITE(addr, fdc.buf, accesssize);
 				addr += accesssize;
 				size -= accesssize;
-				mtr_r += accesssize;						// ver0.26
+				mtr_r += accesssize;
 				if (fdc.R++ == (UINT8)para) {
 					if ((CPU_AH & 0x80) && (!fdc.hd)) {
 						fdc.hd = 1;
@@ -601,7 +603,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 			}
 #endif
 			else {
-				ret_ah = fddlasterror;				// 0xc0;	// ver0.28
+				ret_ah = fddlasterror;				// 0xc0;
 				result = FDCBIOS_READERROR;
 			}
 			break;
@@ -613,8 +615,8 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 			break;
 
 		case 0x0a:						// READ ID
-			fdc.mf = CPU_AH & 0x40;							// ver0.29
-			if (CPU_AH & 0x10) {							// ver0.28
+			fdc.mf = CPU_AH & 0x40;
+			if (CPU_AH & 0x10) {
 				if (!biosfd_seek(CPU_CL, ndensity)) {
 					result = FDCBIOS_SEEKSUCCESS;
 				}
@@ -625,10 +627,10 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				}
 			}
 			if (fdd_readid()) {
-				ret_ah = fddlasterror;			// 0xa0;	// ver0.28
+				ret_ah = fddlasterror;			// 0xa0;
 				break;
 			}
-			if (fdc.N < 8) {								// ver0.26
+			if (fdc.N < 8) {
 				mtr_r += 128 << fdc.N;
 			}
 			else {
@@ -670,6 +672,18 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				else {
 					mtr_r += 128 << 8;
 				}
+			}
+			ret_ah = 0x00;
+			break;
+
+		case 0x0e:													// ver0.78
+			if (CPU_AH & 0x80) {			// 密度設定
+				mem[fmode] &= 0x0f;
+				mem[fmode] |= (UINT8)((CPU_AH & 0x0f) << 4);
+			}
+			else {							// 面設定
+				mem[fmode] &= 0xf0;
+				mem[fmode] |= (UINT8)(CPU_AH & 0x0f);
 			}
 			ret_ah = 0x00;
 			break;
@@ -737,7 +751,7 @@ static UINT16 boot_fd1(REG8 type, REG8 rpm) {
 	return(bootseg);
 }
 
-static UINT16 boot_fd(REG8 drv, REG8 type) {						// ver0.27
+static UINT16 boot_fd(REG8 drv, REG8 type) {
 
 	UINT16	bootseg;
 
@@ -766,7 +780,7 @@ static UINT16 boot_fd(REG8 drv, REG8 type) {						// ver0.27
 			return(bootseg);
 		}
 	}
-	if (type & 2) {										// ver0.29
+	if (type & 2) {
 		// 2DD
 		bootseg = boot_fd1(0, 0);
 		if (bootseg) {
@@ -875,7 +889,7 @@ void bios0x1b(void) {
 	REG8	seg;
 	UINT	sp;
 
-	seg = mem[0x004b0 + (CPU_AL >> 4)];
+	seg = mem[MEMX_DISK_XROM + (CPU_AL >> 4)];
 	if (seg) {
 		sp = CPU_SP;
 		MEML_WRITE16(CPU_SS, sp - 2, CPU_DS);
@@ -911,25 +925,25 @@ void bios0x1b(void) {
 
 	switch(CPU_AL & 0xf0) {
 		case 0x90:
-			ret_ah = fdd_operate(3, 0, 0);
+			ret_ah = fdd_operate(3, 0, FALSE);
 			break;
 
 		case 0x30:
 		case 0xb0:
-			ret_ah = fdd_operate(3, 1, 0);
+			ret_ah = fdd_operate(3, 1, FALSE);
 			break;
 
 		case 0x10:
-			ret_ah = fdd_operate(1, 0, 0);
+			ret_ah = fdd_operate(1, 0, FALSE);
 			break;
 
 		case 0x70:
 		case 0xf0:
-			ret_ah = fdd_operate(0, 0, 0);
+			ret_ah = fdd_operate(0, 0, FALSE);
 			break;
 
 		case 0x50:
-			ret_ah = fdd_operate(0, 0, 1);
+			ret_ah = fdd_operate(0, 0, TRUE);
 			break;
 
 		case 0x00:
@@ -948,7 +962,7 @@ void bios0x1b(void) {
 			ret_ah = 0x40;
 			break;
 	}
-#if 0
+#if 1
 	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
 							MEML_READ16(CPU_SS, CPU_SP+2),
@@ -962,5 +976,36 @@ void bios0x1b(void) {
 		flag += 1;
 	}
 	MEML_WRITE8(CPU_SS, CPU_SP + 4, flag);
+}
+
+UINT bios0x1b_wait(void) {
+
+	UINT	addr;
+	REG8	bit;
+
+	if (fddmtr.busy) {
+		CPU_IP--;
+		CPU_REMCLOCK = -1;
+	}
+	else {
+		if (fdc.chgreg & 1) {
+			addr = MEMB_DISK_INTL;
+			bit = 0x01;
+		}
+		else {
+			addr = MEMB_DISK_INTH;
+			bit = 0x10;
+		}
+		bit <<= fdc.us;
+		if (mem[addr] & bit) {
+			mem[addr] &= ~bit;
+			return(0);
+		}
+		else {
+			CPU_REMCLOCK -= 1000;
+		}
+	}
+	CPU_IP--;
+	return(1);
 }
 

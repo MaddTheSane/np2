@@ -147,6 +147,7 @@ static void bios_reinitbyswitch(void) {
 		fddbios_equip(0, TRUE);
 		mem[MEMB_BIOS_FLAG0] &= ~0x02;
 	}
+	mem[MEMB_F2HD_MODE] = 0xff;
 	mem[MEMB_F2DD_MODE] = 0xff;
 
 #if defined(SUPPORT_CRT31KHZ)
@@ -300,7 +301,7 @@ static void bios_itfcall(void) {
 
 	if (!np2cfg.ITF_WORK) {
 		for (i=0; i<8; i++) {
-			mem[MEMB_MSW + (i*4)] = msw_default[i];
+			mem[MEMX_MSW + (i*4)] = msw_default[i];
 		}
 		CPU_FLAGL |= C_FLAG;
 	}
@@ -425,25 +426,29 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 		case BIOS_BASE + BIOSOFST_WAIT:
 			CPU_STI;
+#if 1
+			return(bios0x1b_wait());								// ver0.78
+#else
 			if (fddmtr.busy) {
 				CPU_IP--;
 				CPU_REMCLOCK = -1;
 			}
 			else {
 				if (fdc.chgreg & 1) {
-					if (!(mem[0x0055e] & (0x01 << fdc.us))) {
+					if (!(mem[MEMB_DISK_INTL] & (0x01 << fdc.us))) {
 						CPU_IP--;
 						CPU_REMCLOCK -= 1000;
 					}
 				}
 				else {
-					if (!(mem[0x0055f] & (0x10 << fdc.us))) {
+					if (!(mem[MEMB_DISK_INTH] & (0x10 << fdc.us))) {
 						CPU_IP--;
 						CPU_REMCLOCK -= 1000;
 					}
 				}
 			}
 			return(1);
+#endif
 
 		case 0xfffe8:					// ブートストラップロード
 			CPU_REMCLOCK -= 2000;

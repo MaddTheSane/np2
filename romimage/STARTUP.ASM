@@ -15,6 +15,8 @@ nosystems:		mov		si, nosysmsg
 
 dispend:		mov		ax, 0x0a04
 				int		0x18
+				mov		ah, 0x0c
+				int		0x18
 				mov		ah, 0x16
 				mov		dx, 0xe120
 				int		0x18

@@ -56,7 +56,7 @@ static void screenmix3(PALNUM *dest, const BYTE *src1, const BYTE *src2) {
 	for (y=0; y<(SURFACE_HEIGHT/2); y++) {
 		// dest == src1, dest == src2 ‚ÌŽž‚ª‚ ‚é‚Ì‚Åc
 		for (x=0; x<SURFACE_WIDTH; x++) {
-			c = (src1[x] + SURFACE_WIDTH) >> 4;
+			c = (src1[x + SURFACE_WIDTH]) >> 4;
 			if (!c) {
 				c = src2[x] + NP2PAL_SKIP;
 			}

@@ -60,6 +60,7 @@ void bios0x1a_cmt(void);
 void bios0x1a_prt(void);
 
 void bios0x1b(void);
+UINT bios0x1b_wait(void);
 void fddbios_equip(REG8 type, BOOL clear);
 
 REG16 bootstrapload(void);

@@ -278,8 +278,8 @@ void maketext(int text_renewal) {
 						UINT kc;
 						kc = LOADINTELWORD(mem + 0xa0000 + edi*2);
 						bitmap[x] = (kc & 0x7f7f) << 4;
-						kc &= 0x7e;
-						if (kc == 0x56) {
+						kc &= 0x7f;									// ver0.78
+						if ((kc == 0x56) || (kc == 0x57)) {
 							tramflag.gaiji = 1;
 							if ((gaiji1st) &&
 								(bitmap[x] == (lastbitp & (~15)))) {
@@ -290,7 +290,7 @@ void maketext(int text_renewal) {
 						}
 						else {
 							gaiji1st = 0;
-							if ((kc < 0x09) || (kc >= 0x0c)) {		// ver0.78
+							if ((kc < 0x09) || (kc >= 0x0c)) {
 								kanji2nd = TRUE;
 							}
 						}
@@ -587,8 +587,8 @@ void maketext40(int text_renewal) {
 						UINT kc;
 						kc = LOADINTELWORD(mem + 0xa0000 + edi*2);
 						bitmap[x] = (kc & 0x7f7f) << 4;
-						kc &= 0x7e;
-						if (kc == 0x56) {
+						kc &= 0x7f;									// ver0.78
+						if ((kc == 0x56) || (kc == 0x57)) {
 							tramflag.gaiji = 1;
 							if ((gaiji1st) &&
 								(bitmap[x] == (lastbitp & (~15)))) {
@@ -599,7 +599,7 @@ void maketext40(int text_renewal) {
 						}
 						else {
 							gaiji1st = 0;
-							if ((kc < 0x09) || (kc >= 0x0c)) {		// ver0.78
+							if ((kc < 0x09) || (kc >= 0x0c)) {
 								kanji2nd = TRUE;
 							}
 						}

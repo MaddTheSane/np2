@@ -26,8 +26,8 @@ static void updateshiftkey(void) {
 	UINT	base;
 
 	shiftsts = mem[MEMB_SHIFT_STS];
-	mem[0xa3ff6] &= 0x3f;							// KEYBOARD LED
-	mem[0xa3ff6] |= (UINT8)(shiftsts << 5);
+	mem[MEMB_MSW6] &= 0x3f;							// KEYBOARD LED
+	mem[MEMB_MSW6] |= (UINT8)(shiftsts << 5);
 	if (shiftsts & 0x10) {
 		base = 7;
 	}
@@ -57,7 +57,7 @@ void bios0x09(void) {
 	pos = (key & 0x7f) >> 3;
 	bit = 1 << (key & 7);
 	if (!(key & 0x80)) {
-		mem[0x0052a + pos] |= bit;
+		mem[MEMX_KB_KY_STS + pos] |= bit;
 		code = 0xffff;
 		base = GETBIOSMEM16(MEMW_KB_SHIFT_TBL);
 		base += 0xfd800;
@@ -115,7 +115,7 @@ void bios0x09(void) {
 		}
 	}
 	else {
-		mem[0x0052a + pos] &= ~bit;
+		mem[MEMX_KB_KY_STS + pos] &= ~bit;
 		if ((key >= 0xf0) && (key < 0xf5)) {
 			mem[MEMB_SHIFT_STS] &= ~bit;
 			updateshiftkey();

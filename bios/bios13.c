@@ -3,6 +3,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"bios.h"
+#include	"biosmem.h"
 
 
 #define	baseport 0x0090
@@ -42,13 +43,13 @@ void bios0x13(void) {
 		drvbit = 1 << drv;
 #if 0
 		if (result & FDCRLT_IC1) {
-			if (mem[0x0055e] & drvbit) {
+			if (mem[MEMB_DISK_INTL] & drvbit) {
 				continue;
 			}
 			drvbit = 0;
 		}
 #endif
-		p = &mem[0x00564 + (drv * 8)];
+		p = mem + MEMX_DISK_RESULT + (drv * 8);
 		while(1) {
 			*p++ = result;
 			stat = iocore_inp8(baseport);
@@ -58,9 +59,9 @@ void bios0x13(void) {
 			}
 			result = iocore_inp8(baseport+2);
 		}
-		mem[0x0055e] |= drvbit;
+		mem[MEMB_DISK_INTL] |= drvbit;
 	}
-	if (mem[0x00480] & 0x10) {
+	if (mem[MEMB_SYS_TYPE] & 0x10) {
 		if (mem[0x00485]) {
 			if (!(--mem[0x00485])) {
 				mem[0x005a4] |= 0x0f;

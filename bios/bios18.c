@@ -799,7 +799,7 @@ void bios0x18(void) {
 			break;
 
    		case 0x04:						// キー入力状態のセンス
-			CPU_AH = mem[0x00052a + (CPU_AL & 0x0f)];
+			CPU_AH = mem[MEMX_KB_KY_STS + (CPU_AL & 0x0f)];
  			break;
 
    		case 0x05:						// キー入力センス
