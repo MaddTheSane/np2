@@ -3,6 +3,7 @@
 #include	"resource.h"
 #include	"np2.h"
 #include	"winloc.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -148,13 +149,19 @@ static HBITMAP skinload(const OEMCHAR *path) {
 		milstr_ncpy(fname, path, NELEMENTS(fname));
 		file_cutname(fname);
 		file_catname(fname, toolskin.main, NELEMENTS(fname));
-		ret = (HBITMAP)LoadImage(hInst, fname, IMAGE_BITMAP,
+#if defined(OSLANG_UTF8)
+		TCHAR tchr[MAX_PATH];
+		oemtotchar(tchr, NELEMENTS(tchr), fname, -1);
+#else
+		const TCHAR *tchr = fname;
+#endif
+		ret = (HBITMAP)LoadImage(hInst, tchr, IMAGE_BITMAP,
 													0, 0, LR_LOADFROMFILE);
 		if (ret != NULL) {
 			return(ret);
 		}
 	}
-	return(LoadBitmap(hInst, OEMTEXT("NP2TOOL")));
+	return(LoadBitmap(hInst, _T("NP2TOOL")));
 }
 
 
@@ -353,7 +360,13 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	else if (msg == WM_DROPFILES) {
    	    files = DragQueryFile((HDROP)wp, (UINT)-1, NULL, 0);
 		if (files == 1) {
+#if defined(OSLANG_UTF8)
+			TCHAR tchr[MAX_PATH];
+			DragQueryFile((HDROP)wp, 0, tchr, NELEMENTS(tchr));
+			tchartooem(fname, NELEMENTS(fname), tchr, -1);
+#else
 			DragQueryFile((HDROP)wp, 0, fname, NELEMENTS(fname));
+#endif
 			if (idc == IDC_TOOLFDD1LIST) {
 				diskdrv_setfdd(0, fname, 0);
 				toolwin_setfdd(0, fname);
@@ -388,17 +401,16 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 static void toolwincreate(HWND hWnd) {
 
-	HDC			hdc;
-const SUBITEM	*p;
-	UINT		i;
-	HWND		sub;
-const OEMCHAR	*cls;
-	DWORD		style;
-
+#if defined(OSLANG_UTF8)
+	TCHAR fontface[64];
+	oemtotchar(fontface, NELEMENTS(fontface), toolskin.font, -1);
+#else
+	const TCHAR *fontface = toolskin.font;
+#endif
 	toolwin.hfont = CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, toolskin.font);
-    hdc = GetDC(NULL);
+					DEFAULT_QUALITY, FIXED_PITCH, fontface);
+	HDC hdc = GetDC(NULL);
 	toolwin.hdcfont = CreateCompatibleDC(hdc);
 	ReleaseDC(NULL, hdc);
 	SelectObject(toolwin.hdcfont, toolwin.hfont);
@@ -406,10 +418,12 @@ const OEMCHAR	*cls;
 	toolwin.access[0] = CreateSolidBrush(0x000060);
 	toolwin.access[1] = CreateSolidBrush(0x0000ff);
 
-	p = subitem;
+	const SUBITEM *p = subitem;
+	UINT i;
 	for (i=0; i<IDC_MAXITEMS; i++) {
-		sub = NULL;
-		cls = NULL;
+		HWND sub = NULL;
+		const TCHAR *cls = NULL;
+		DWORD style;
 		switch(p->tctl) {
 			case TCTL_STATIC:
 				cls = str_static;
@@ -433,7 +447,13 @@ const OEMCHAR	*cls;
 				break;
 		}
 		if ((cls) && (p->width > 0) && (p->height > 0)) {
-			sub = CreateWindow(cls, p->text, WS_CHILD | WS_VISIBLE | style,
+#if defined(OSLANG_UTF8)
+			TCHAR ptext[64];
+			oemtotchar(ptext, NELEMENTS(ptext), p->text, -1);
+#else
+			const TCHAR *ptext = p->text;
+#endif
+			sub = CreateWindow(cls, ptext, WS_CHILD | WS_VISIBLE | style,
 							p->posx, p->posy, p->width, p->height,
 							hWnd, (HMENU)(i + IDC_BASE), hInst, NULL);
 		}
@@ -448,7 +468,7 @@ const OEMCHAR	*cls;
 		p++;
 	}
 	for (i=0; i<FDDLIST_DRV; i++) {
-		sub = toolwin.sub[fddlist[i]];
+		HWND sub = toolwin.sub[fddlist[i]];
 		if (sub) {
 			DragAcceptFiles(sub, TRUE);
 			remakefddlist(sub, np2tool.fdd + i);
@@ -578,7 +598,13 @@ const OEMCHAR	*file[SKINMRU_MAX];
 	for (i=0; i<cnt; i++) {
 		j = id[i];
 		flag = (!file_cmpname(base, np2tool.skinmru[j]))?MF_CHECKED:0;
-		AppendMenu(ret, MF_STRING + flag, IDM_SKINMRU + j, file[j]);
+#if defined(OSLANG_UTF8)
+		TCHAR path[MAX_PATH];
+		oemtotchar(path, NELEMENTS(path), file[j], -1);
+#else
+		const TCHAR *path = file[j];
+#endif
+		AppendMenu(ret, MF_STRING + flag, IDM_SKINMRU + j, path);
 	}
 	return(ret);
 }

@@ -2,7 +2,7 @@
 // 猫用、拡張クラス。
 
 
-extern	const OEMCHAR np2dlgclass[];
+extern const TCHAR np2dlgclass[];
 
 void np2class_initialize(HINSTANCE hinst);
 void np2class_deinitialize(void);

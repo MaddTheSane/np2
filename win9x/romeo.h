@@ -35,7 +35,7 @@ enum {
 };
 
 
-#define	PCIDEBUG_DLL	OEMTEXT("pcidebug.dll")
+#define	PCIDEBUG_DLL	_T("pcidebug.dll")
 
 #define	FN_PCIFINDDEV	"_pciFindPciDevice"
 #define	FN_PCICFGREAD32	"_pciConfigReadLong"

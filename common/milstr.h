@@ -84,7 +84,7 @@ OEMCHAR * STRCALL milstr_list(const OEMCHAR *lststr, UINT pos);
 // ---- macros
 
 #if defined(OSLANG_SJIS)
-#define milstr_charsize(s)		milsjis_charsize(s)
+#define	milstr_charsize(s)		milsjis_charsize(s)
 #define	milstr_cmp(s, c)		milsjis_cmp(s, c)
 #define	milstr_memcmp(s, c)		milsjis_memcmp(s, c)
 #define	milstr_kanji1st(s, p)	milsjis_kanji1st(s, p)
@@ -93,7 +93,7 @@ OEMCHAR * STRCALL milstr_list(const OEMCHAR *lststr, UINT pos);
 #define	milstr_ncat(d, s, l)	milsjis_ncat(d, s, l)
 #define	milstr_chr(s, c)		milsjis_chr(s, c)
 #elif defined(OSLANG_EUC)
-#define milstr_charsize(s)		mileuc_charsize(s)
+#define	milstr_charsize(s)		mileuc_charsize(s)
 #define	milstr_cmp(s, c)		mileuc_cmp(s, c)
 #define	milstr_memcmp(s, c)		mileuc_memcmp(s, c)
 #define	milstr_kanji1st(s, p)	mileuc_kanji1st(s, p)
@@ -102,7 +102,7 @@ OEMCHAR * STRCALL milstr_list(const OEMCHAR *lststr, UINT pos);
 #define	milstr_ncat(d, s, l)	mileuc_ncat(d, s, l)
 #define	milstr_chr(s, c)		mileuc_chr(s, c)
 #elif defined(OSLANG_UTF8)
-#define milstr_charsize(s)		milutf8_charsize(s)
+#define	milstr_charsize(s)		milutf8_charsize(s)
 #define	milstr_cmp(s, c)		milutf8_cmp(s, c)
 #define	milstr_memcmp(s, c)		milutf8_memcmp(s, c)
 #define	milstr_kanji1st(s, p)	milutf8_kanji1st(s, p)
@@ -111,7 +111,7 @@ OEMCHAR * STRCALL milstr_list(const OEMCHAR *lststr, UINT pos);
 #define	milstr_ncat(d, s, l)	milutf8_ncat(d, s, l)
 #define	milstr_chr(s, c)		milutf8_chr(s, c)
 #else
-#define milstr_charsize(s)		milank_charsize(s)
+#define	milstr_charsize(s)		milank_charsize(s)
 #define	milstr_cmp(s, c)		milank_cmp(s, c)
 #define	milstr_memcmp(s, c)		milank_memcmp(s, c)
 #define	milstr_kanji1st(s, p)	(0)

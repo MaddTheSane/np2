@@ -1,10 +1,11 @@
 #include	"compiler.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"extromio.h"
 
 
-static const OEMCHAR str_extrom[] = OEMTEXT("EXTROM");
+static const TCHAR str_extrom[] = _T("EXTROM");
 
 
 EXTROMH extromio_open(const OEMCHAR *filename, UINT type) {
@@ -25,7 +26,13 @@ EXTROMH extromio_open(const OEMCHAR *filename, UINT type) {
 		}
 	}
 	else if (type == EXTROMIO_RES) {
+#if defined(OSLANG_UTF8)
+		TCHAR tchr[MAX_PATH];
+		oemtotchar(tchr, NELEMENTS(tchr), filename, -1);
+		hrsrc = FindResource(hInst, tchr, str_extrom);
+#else
 		hrsrc = FindResource(hInst, filename, str_extrom);
+#endif
 		if (hrsrc) {
 			hg = LoadResource(hInst, hrsrc);
 			ret->fh = (void *)LockResource(hg);

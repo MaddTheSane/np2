@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 
 
@@ -14,14 +15,20 @@ void dosio_term(void) { }
 											// ƒtƒ@ƒCƒ‹‘€ì
 FILEH DOSIOCALL file_open(const OEMCHAR *path) {
 
-	FILEH	ret;
 
-	if ((ret = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
-						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-													== INVALID_HANDLE_VALUE) {
-		if ((ret = CreateFile(path, GENERIC_READ,
-						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-													== INVALID_HANDLE_VALUE) {
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	FILEH ret;
+	ret = CreateFile(tchr, GENERIC_READ | GENERIC_WRITE,
+						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ret == INVALID_HANDLE_VALUE) {
+		ret = CreateFile(tchr, GENERIC_READ,
+						0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (ret == INVALID_HANDLE_VALUE) {
 			return(FILEH_INVALID);
 		}
 	}
@@ -30,11 +37,16 @@ FILEH DOSIOCALL file_open(const OEMCHAR *path) {
 
 FILEH DOSIOCALL file_open_rb(const OEMCHAR *path) {
 
-	FILEH	ret;
-
-	if ((ret = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, 0,
-								OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-													== INVALID_HANDLE_VALUE) {
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	FILEH ret;
+	ret = CreateFile(tchr, GENERIC_READ, FILE_SHARE_READ, 0,
+								OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ret == INVALID_HANDLE_VALUE) {
 		return(FILEH_INVALID);
 	}
 	return(ret);
@@ -42,11 +54,16 @@ FILEH DOSIOCALL file_open_rb(const OEMCHAR *path) {
 
 FILEH DOSIOCALL file_create(const OEMCHAR *path) {
 
-	FILEH	ret;
-
-	if ((ret = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
-						 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
-											== INVALID_HANDLE_VALUE) {
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	FILEH ret;
+	ret = CreateFile(tchr, GENERIC_READ | GENERIC_WRITE,
+						 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ret == INVALID_HANDLE_VALUE) {
 		return(FILEH_INVALID);
 	}
 	return(ret);
@@ -128,17 +145,35 @@ short DOSIOCALL file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostim
 
 short DOSIOCALL file_delete(const OEMCHAR *path) {
 
-	return(DeleteFile(path)?0:-1);
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	return(DeleteFile(tchr)?0:-1);
 }
 
 short DOSIOCALL file_attr(const OEMCHAR *path) {
 
-	return((short)GetFileAttributes(path));
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	return((short)GetFileAttributes(tchr));
 }
 
 short DOSIOCALL file_dircreate(const OEMCHAR *path) {
 
-	return(CreateDirectory(path, NULL)?0:-1);
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	return(CreateDirectory(tchr, NULL)?0:-1);
 }
 
 
@@ -191,8 +226,8 @@ static BRESULT DOSIOCALL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
 #if !defined(_WIN32_WCE)
 	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
-		((!file_cmpname(w32fd->cFileName, OEMTEXT("."))) ||
-		(!file_cmpname(w32fd->cFileName, OEMTEXT(".."))))) {
+		((!lstrcmp(w32fd->cFileName, _T("."))) ||
+		(!lstrcmp(w32fd->cFileName, _T(".."))))) {
 		return(FAILURE);
 	}
 #endif
@@ -200,21 +235,31 @@ static BRESULT DOSIOCALL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 	fli->size = w32fd->nFileSizeLow;
 	fli->attr = w32fd->dwFileAttributes;
 	cnvdatetime(&w32fd->ftLastWriteTime, &fli->date, &fli->time);
+#if defined(OSLANG_UTF8)
+	tchartooem(fli->path, NELEMENTS(fli->path), w32fd->cFileName, -1);
+#else
 	milstr_ncpy(fli->path, w32fd->cFileName, NELEMENTS(fli->path));
+#endif
 	return(SUCCESS);
 }
 
 FLISTH DOSIOCALL file_list1st(const OEMCHAR *dir, FLINFO *fli) {
 
-	OEMCHAR			path[MAX_PATH];
-	HANDLE			hdl;
-	WIN32_FIND_DATA	w32fd;
 
+	OEMCHAR path[MAX_PATH];
 	milstr_ncpy(path, dir, NELEMENTS(path));
 	file_setseparator(path, NELEMENTS(path));
 	milstr_ncat(path, OEMTEXT("*.*"), NELEMENTS(path));
 	TRACEOUT(("file_list1st %s", path));
-	hdl = FindFirstFile(path, &w32fd);
+#if defined(OSLANG_UTF8)
+	TCHAR tchr[MAX_PATH];
+	oemtotchar(tchr, NELEMENTS(tchr), path, -1);
+#else
+	const TCHAR *tchr = path;
+#endif
+	HANDLE hdl;
+	WIN32_FIND_DATA	w32fd;
+	hdl = FindFirstFile(tchr, &w32fd);
 	if (hdl != INVALID_HANDLE_VALUE) {
 		do {
 			if (setflist(&w32fd, fli) == SUCCESS) {

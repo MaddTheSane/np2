@@ -30,7 +30,7 @@ static HANDLE check_sakura(void) {
 
 	HANDLE	hsakura;
 
-	hsakura = OpenMutex(MUTEX_ALL_ACCESS, FALSE, OEMTEXT("sakura"));
+	hsakura = OpenMutex(MUTEX_ALL_ACCESS, FALSE, _T("sakura"));
 	if (hsakura != NULL) {
 		CloseHandle(hsakura);
 	}

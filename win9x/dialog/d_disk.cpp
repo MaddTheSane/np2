@@ -2,6 +2,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"toolwin.h"
@@ -13,31 +14,67 @@
 #include	"newdisk.h"
 
 
-static const OEMCHAR fddui_title[] = OEMTEXT("Select floppy image");
-static const OEMCHAR fddui_filter[] = OEMTEXT("D88 image files (*.D88;*.D98)\0*.d88;*.88d;*.d98;*.98d\0Floppy disk images (*.XDF;*.HDM;*.DUP;*.2HD)\0*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0All supported Files\0*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0All files (*.*)\0*.*\0");
-static const FILESEL fddui = {fddui_title, str_d88, fddui_filter, 3};
+static const TCHAR fddui_title[] = _T("Select floppy image");
+static const TCHAR fddui_filter[] =										\
+				_T("D88 image files (*.D88;*.D98)\0")					\
+								_T("*.d88;*.88d;*.d98;*.98d\0")			\
+				_T("Floppy disk images (*.XDF;*.HDM;*.DUP;*.2HD)\0")	\
+								_T("*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0")	\
+				_T("All supported Files\0")								\
+								_T("*.d88;*.88d;*.d98;*.98d;*.fdi;")	\
+								_T("*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0")	\
+				_T("All files (*.*)\0*.*\0");
+static const FILESEL fddui = {fddui_title, tchar_d88, fddui_filter, 3};
 
 #if defined(SUPPORT_SASI)
-static const OEMCHAR sasiui_title[] = OEMTEXT("Select SASI/IDE HDD image");
+static const TCHAR sasiui_title[] = _T("Select SASI/IDE HDD image");
 #else
-static const OEMCHAR sasiui_title[] = OEMTEXT("Select HDD image");
+static const TCHAR sasiui_title[] = _T("Select HDD image");
 #endif
-static const OEMCHAR sasiui_filter[] = OEMTEXT("Anex86 harddisk image files (*.HDI)\0*.hdi\0T98 harddisk image files (*.THD)\0*.thd\0T98-Next harddisk image files (*.NHD)\0*.nhd\0All supported Files\0*.thd;*.nhd;*.hdi\0");
-static const FILESEL sasiui = {sasiui_title, str_thd, sasiui_filter, 4};
+static const TCHAR sasiui_filter[] =									\
+				_T("Anex86 harddisk image files (*.HDI)\0")				\
+								_T("*.hdi\0")							\
+				_T("T98 harddisk image files (*.THD)\0")				\
+								_T("*.thd\0")							\
+				_T("T98-Next harddisk image files (*.NHD)\0")			\
+								_T("*.nhd\0")							\
+				_T("All supported Files\0")								\
+								_T("*.thd;*.nhd;*.hdi\0");
+static const FILESEL sasiui = {sasiui_title, tchar_thd, sasiui_filter, 4};
 
 #if defined(SUPPORT_SCSI)
-static const OEMCHAR scsiui_title[] = OEMTEXT("Select SCSI HDD image");
-static const OEMCHAR scsiui_filter[] = OEMTEXT("Virtual98 harddisk image files (*.HDD)\0*.hdd\0");
-static const FILESEL scsiui = {scsiui_title, str_hdd, scsiui_filter, 1};
+static const TCHAR scsiui_title[] = _T("Select SCSI HDD image");
+static const TCHAR scsiui_filter[] =									\
+				_T("Virtual98 harddisk image files (*.HDD)\0")			\
+								_T("*.hdd\0");
+static const FILESEL scsiui = {scsiui_title, tchar_hdd, scsiui_filter, 1};
 #endif
 
-static const OEMCHAR newdisk_title[] = OEMTEXT("Create disk image");
+static const TCHAR newdisk_title[] = _T("Create disk image");
 #if defined(SUPPORT_SCSI)
-static const OEMCHAR newdisk_filter[] = OEMTEXT("D88 image files (*.D88;*.88D)\0*.d88;*.88d;*.d98;*.98d\0Anex86 harddisk image files (*.HDI)\0*.hdi\0T98 harddisk image files (*.THD)\0*.thd\0T98-Next harddisk image files (*.NHD)\0*.nhd\0Virtual98 harddisk image files (*.HDD)\0*.hdd\0");
+static const TCHAR newdisk_filter[] =									\
+				_T("D88 image files (*.D88;*.88D)\0")					\
+								_T("*.d88;*.88d;*.d98;*.98d\0")			\
+				_T("Anex86 harddisk image files (*.HDI)\0")				\
+								_T("*.hdi\0")							\
+				_T("T98 harddisk image files (*.THD)\0")				\
+								_T("*.thd\0")							\
+				_T("T98-Next harddisk image files (*.NHD)\0")			\
+								_T("*.nhd\0")							\
+				_T("Virtual98 harddisk image files (*.HDD)\0")			\
+								_T("*.hdd\0");
 #else
-static const OEMCHAR newdisk_filter[] = OEMTEXT("D88 image files (*.D88;*.88D)\0*.d88;*.88d;*.d98;*.98d\0Anex86 harddisk image files (*.HDI)\0*.hdi\0T98 harddisk image files (*.THD)\0*.thd\0T98-Next harddisk image files (*.NHD)\0*.nhd\0");
+static const TCHAR newdisk_filter[] =									\
+				_T("D88 image files (*.D88;*.88D)\0")					\
+								_T("*.d88;*.88d;*.d98;*.98d\0")			\
+				_T("Anex86 harddisk image files (*.HDI)\0")				\
+								_T("*.hdi\0")							\
+				_T("T98 harddisk image files (*.THD)\0")				\
+								_T("*.thd\0")							\
+				_T("T98-Next harddisk image files (*.NHD)\0")			\
+								_T("*.nhd\0");
 #endif
-static const FILESEL newdiskui = {newdisk_title, str_d88, newdisk_filter, 1};
+static const FILESEL newdiskui = {newdisk_title, tchar_d88, newdisk_filter, 1};
 
 
 // ----
@@ -122,12 +159,12 @@ static LRESULT CALLBACK NewHddDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
 	UINT	val;
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 
 	switch (msg) {
 		case WM_INITDIALOG:
 			SETLISTUINT32(hWnd, IDC_HDDSIZE, hddsizetbl);
-			OEMSPRINTF(work, OEMTEXT("(%d-%dMB)"), hddminsize, hddmaxsize);
+			wsprintf(work, _T("(%d-%dMB)"), hddminsize, hddmaxsize);
 			SetWindowText(GetDlgItem(hWnd, IDC_HDDLIMIT), work);
 			SetFocus(GetDlgItem(hWnd, IDC_HDDSIZE));
 			return(FALSE);
@@ -137,7 +174,7 @@ static LRESULT CALLBACK NewHddDlgProc(HWND hWnd, UINT msg,
 				case IDOK:
 					GetWindowText(GetDlgItem(hWnd, IDC_HDDSIZE),
 													work, NELEMENTS(work));
-					val = (UINT)milstr_solveINT(work);
+					val = (UINT)miltchar_solveINT(work);
 					if (val < hddminsize) {
 						val = hddminsize;
 					}
@@ -215,6 +252,9 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
 	UINT16	res;
+#if defined(OSLANG_UTF8)
+	TCHAR	buf[17];
+#endif
 
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -238,11 +278,17 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDOK:
+#if defined(OSLANG_UTF8)
+					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
+														buf, NELEMENTS(buf));
+					tchartooem(disklabel, NELEMENTS(disklabel), buf, -1);
+#else
 					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
 											disklabel, NELEMENTS(disklabel));
 					if (milstr_kanji1st(disklabel, NELEMENTS(disklabel) - 1)) {
 						disklabel[NELEMENTS(disklabel) - 1] = '\0';
 					}
+#endif
 					if (GetDlgItemCheck(hWnd, IDC_MAKE2DD)) {
 						makefdtype = (DISKTYPE_2DD << 4);
 					}

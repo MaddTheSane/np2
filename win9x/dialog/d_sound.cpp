@@ -5,6 +5,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"joymng.h"
 #include	"sysmng.h"
@@ -20,18 +21,33 @@
 #include	"dipswbmp.h"
 
 
-static const OEMCHAR *sndioport[4] = {
-		OEMTEXT("0088"), OEMTEXT("0188"), OEMTEXT("0288"), OEMTEXT("0388")};
-static const OEMCHAR *sndinterrupt[4] = {
-		str_int0, str_int4, str_int5, str_int6};
-static const OEMCHAR *sndromaddr[5] = {
-		OEMTEXT("C8000"), OEMTEXT("CC000"),
-		OEMTEXT("D0000"), OEMTEXT("D4000"), OEMTEXT("N/C")};
-static const OEMCHAR *sndid[8] = {
-		OEMTEXT("0x"), OEMTEXT("1x"), OEMTEXT("2x"), OEMTEXT("3x"),
-		OEMTEXT("4x"), OEMTEXT("5x"), OEMTEXT("6x"), OEMTEXT("7x")};
+static const TCHAR str_0088[] = _T("0088");
+static const TCHAR str_0188[] = _T("0188");
+static const TCHAR str_0288[] = _T("0288");
+static const TCHAR str_0388[] = _T("0388");
+static const TCHAR str_c8000[] = _T("C8000");
+static const TCHAR str_cc000[] = _T("CC000");
+static const TCHAR str_d0000[] = _T("D0000");
+static const TCHAR str_d4000[] = _T("D4000");
+static const TCHAR str_n0x[] = _T("0x");
+static const TCHAR str_n1x[] = _T("1x");
+static const TCHAR str_n2x[] = _T("2x");
+static const TCHAR str_n3x[] = _T("3x");
+static const TCHAR str_n4x[] = _T("4x");
+static const TCHAR str_n5x[] = _T("5x");
+static const TCHAR str_n6x[] = _T("6x");
+static const TCHAR str_n7x[] = _T("7x");
+static const TCHAR *sndioport[4] =
+						{str_0088, str_0188, str_0288, str_0388};
+static const TCHAR *sndinterrupt[4] =
+						{str_int0, str_int4, str_int5, str_int6};
+static const TCHAR *sndromaddr[5] =
+						{str_c8000, str_cc000, str_d0000, str_d4000, str_nc};
+static const TCHAR *sndid[8] =
+						{str_n0x, str_n1x, str_n2x, str_n3x,
+						 str_n4x, str_n5x, str_n6x, str_n7x};
 
-static const OEMCHAR str_sndopt[] = OEMTEXT("Sound board option");
+static const TCHAR str_sndopt[] = _T("Sound board option");
 
 
 typedef struct {
@@ -44,19 +60,19 @@ typedef struct {
 
 static void slidersetvaluestr(HWND hWnd, const SLIDERTBL *item, UINT8 value) {
 
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 
-	OEMSPRINTF(work, str_d, value);
+	wsprintf(work, tchar_d, value);
 	SetDlgItemText(hWnd, item->resstr, work);
 }
 
 static void slidersetvalue(HWND hWnd, const SLIDERTBL *item, UINT8 value) {
 
-	if (value > (UINT8)(item->max)) {
-		value = (UINT8)(item->max);
+	if (value > (UINT8)item->max) {
+		value = (UINT8)item->max;
 	}
-	else if (value < (UINT8)(item->min)) {
-		value = (UINT8)(item->min);
+	else if (value < (UINT8)item->min) {
+		value = (UINT8)item->min;
 	}
 	SendDlgItemMessage(hWnd, item->res, TBM_SETPOS, TRUE, value);
 	slidersetvaluestr(hWnd, item, value);
@@ -74,11 +90,11 @@ static void sliderresetpos(HWND hWnd, const SLIDERTBL *item) {
 	UINT8	value;
 
 	value = (UINT8)SendDlgItemMessage(hWnd, item->res, TBM_GETPOS, 0, 0);
-	if (value > (UINT8)(item->max)) {
-		value = (UINT8)(item->max);
+	if (value > (UINT8)item->max) {
+		value = (UINT8)item->max;
 	}
-	else if (value < (UINT8)(item->min)) {
-		value = (UINT8)(item->min);
+	else if (value < (UINT8)item->min) {
+		value = (UINT8)item->min;
 	}
 	slidersetvaluestr(hWnd, item, value);
 }
@@ -89,11 +105,11 @@ static UINT8 sliderrestore(HWND hWnd, const SLIDERTBL *item) {
 	UINT8	ret;
 
 	value = (UINT8)SendDlgItemMessage(hWnd, item->res, TBM_GETPOS, 0, 0);
-	if (value > (UINT8)(item->max)) {
-		value = (UINT8)(item->max);
+	if (value > (UINT8)item->max) {
+		value = (UINT8)item->max;
 	}
-	else if (value < (UINT8)(item->min)) {
-		value = (UINT8)(item->min);
+	else if (value < (UINT8)item->min) {
+		value = (UINT8)item->min;
 	}
 	ret = (*(item->value)) - value;
 	if (ret) {
@@ -227,7 +243,7 @@ static void setsnd26iopara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd26io(HWND hWnd, UINT16 res) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	return((UINT8)((work[1] == '1')?0x10:0x00));
@@ -241,7 +257,7 @@ static void setsnd26intpara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd26int(HWND hWnd, UINT16 res) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	switch(work[3]) {
@@ -270,11 +286,11 @@ static void setsnd26rompara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd26rom(HWND hWnd, UINT16 res) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 	UINT32	adrs;
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
-	adrs = ((UINT32)milstr_solveHEX(work) - 0xc8000) >> 14;
+	adrs = ((UINT32)miltchar_solveHEX(work) - 0xc8000) >> 14;
 	if (adrs < 4) {
 		return((UINT8)adrs);
 	}
@@ -442,7 +458,7 @@ static void setsnd86iopara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd86io(HWND hWnd, UINT16 res) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	return((UINT8)((work[1] == '1')?0x01:0x00));
@@ -456,7 +472,7 @@ static void setsnd86intpara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd86int(HWND hWnd) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	Edit_GetText(hWnd, work, NELEMENTS(work));
 	switch(work[3]) {
@@ -479,7 +495,7 @@ static void setsnd86idpara(HWND hWnd, UINT8 value) {
 
 static UINT8 getsnd86id(HWND hWnd) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	Edit_GetText(hWnd, work, NELEMENTS(work));
 	return((~work[0] & 7) << 5);
@@ -983,9 +999,9 @@ void dialog_sndopt(HWND hWnd) {
 
 #if defined(SUPPORT_S98)
 static const OEMCHAR s98ui_file[] = OEMTEXT("NP2_%04d.S98");
-static const OEMCHAR s98ui_title[] = OEMTEXT("Save as S98 log");
-static const OEMCHAR s98ui_ext[] = OEMTEXT("s98");
-static const OEMCHAR s98ui_filter[] = OEMTEXT("S98 log (*.s98)\0*.s98\0");
+static const TCHAR s98ui_title[] = _T("Save as S98 log");
+static const TCHAR s98ui_ext[] = _T("s98");
+static const TCHAR s98ui_filter[] = _T("S98 log (*.s98)\0*.s98\0");
 static const FILESEL s98ui = {s98ui_title, s98ui_ext, s98ui_filter, 1};
 
 void dialog_s98(HWND hWnd) {
@@ -1013,9 +1029,9 @@ void dialog_s98(HWND hWnd) {
 
 #if defined(SUPPORT_WAVEREC)
 static const OEMCHAR wrui_file[] = OEMTEXT("NP2_%04d.WAV");
-static const OEMCHAR wrui_title[] = OEMTEXT("Save as Sound");
-static const OEMCHAR wrui_ext[] = OEMTEXT("WAV");
-static const OEMCHAR wrui_filter[] = OEMTEXT("Wave files (*.wav)\0*.wav\0");
+static const TCHAR wrui_title[] = _T("Save as Sound");
+static const TCHAR wrui_ext[] = _T("WAV");
+static const TCHAR wrui_filter[] = _T("Wave files (*.wav)\0*.wav\0");
 static const FILESEL wrui = {wrui_title, wrui_ext, wrui_filter, 1};
 
 void dialog_waverec(HWND hWnd) {

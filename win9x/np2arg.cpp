@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"np2arg.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 
 												// ver0.26 np2arg.cpp append
@@ -28,7 +29,11 @@ void np2arg_analize(void) {
 	OEMCHAR		c;
 const OEMCHAR	*p;
 
+#if defined(OSLANG_UTF8)
+	tchartooem(argstrtmp, NELEMENTS(argstrtmp), GetCommandLine(), -1);
+#else
 	milstr_ncpy(argstrtmp, GetCommandLine(), NELEMENTS(argstrtmp));
+#endif
 	np2argc = milstr_getarg(argstrtmp, np2argv, NELEMENTS(np2argv));
 
 	for (i=ARG_BASE; i<np2argc; i++) {

@@ -10,6 +10,15 @@
 #include	"calendar.h"
 
 
+#if !defined(OSLANG_UTF8)
+#define	tchar_2x		str_2x
+#define	tchar_2d		str_2d
+#else
+static const TCHAR tchar_2x[] = _T("%.2x");
+static const TCHAR tchar_2d[] = _T("%.2d");
+#endif
+
+
 static	UINT8	cbuf[8];
 
 typedef struct {
@@ -29,14 +38,14 @@ static const VIRCAL_T vircal[6] = {	{IDC_VIRYEAR,	0x00, 0x99},
 static void set_cal2dlg(HWND hWnd, const UINT8 *cbuf) {
 
 	int		i;
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	for (i=0; i<6; i++) {
 		if (i != 1) {
-			wsprintf(work, str_2x, cbuf[i]);
+			wsprintf(work, tchar_2x, cbuf[i]);
 		}
 		else {
-			wsprintf(work, str_2d, cbuf[1] >> 4);
+			wsprintf(work, tchar_2d, cbuf[1] >> 4);
 		}
 		SetDlgItemText(hWnd, vircal[i].res, work);
 	}
@@ -52,10 +61,10 @@ static void vircalendar(HWND hWnd, BOOL disp) {
 	EnableWindow(GetDlgItem(hWnd, IDC_SETNOW), disp);
 }
 
-static UINT8 getbcd(const OEMCHAR *str, int len) {
+static UINT8 getbcd(const TCHAR *str, int len) {
 
 	UINT	ret;
-	OEMCHAR	c;
+	TCHAR	c;
 
 	ret = 0;
 	while(len--) {
@@ -74,7 +83,7 @@ static UINT8 getbcd(const OEMCHAR *str, int len) {
 
 LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 	UINT8	b;
 	int		i;
 	HWND	subwnd;

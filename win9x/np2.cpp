@@ -291,7 +291,8 @@ static int flagload(const OEMCHAR *ext, const OEMCHAR *title, BOOL force) {
 	id = IDYES;
 	ret = statsave_check(path, buf, NELEMENTS(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
-		MessageBox(hWndMain, OEMTEXT("Couldn't restart"), title, MB_OK | MB_ICONSTOP);
+		MessageBox(hWndMain, _T("Couldn't restart"), title,
+										MB_OK | MB_ICONSTOP);
 		id = IDNO;
 	}
 	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
@@ -1080,7 +1081,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-				hbmp = LoadBitmap(hinst, OEMTEXT("NP2BMP"));
+				hbmp = LoadBitmap(hinst, _T("NP2BMP"));
 				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
@@ -1283,7 +1284,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			else if (sstpconfirm_exit()) {
 				winuienter();
-				if (MessageBox(hWnd, OEMTEXT("Sure?"), OEMTEXT("Exit"),
+				if (MessageBox(hWnd, _T("Sure?"), _T("Exit"),
 									MB_ICONQUESTION | MB_YESNO) == IDYES) {
 					b = TRUE;
 				}

@@ -2,6 +2,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"dialog.h"
@@ -9,17 +10,17 @@
 #include	"pccore.h"
 
 
-static const OEMCHAR str_2halfmhz[] = OEMTEXT("2.4576MHz");
-static const OEMCHAR str_2mhz[] = OEMTEXT("1.9968MHz");
-static const OEMCHAR *basecstr[2] = {str_2mhz, str_2halfmhz};
+static const TCHAR str_2halfmhz[] = _T("2.4576MHz");
+static const TCHAR str_2mhz[] = _T("1.9968MHz");
+static const TCHAR *basecstr[2] = {str_2mhz, str_2halfmhz};
 static const UINT32 mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
-static const OEMCHAR str_clockfmt[] = OEMTEXT("%2u.%.4u");
+static const TCHAR str_clockfmt[] = _T("%2u.%.4u");
 
 
 static void setclock(HWND hWnd, UINT multiple) {
 
 	UINT32	clock;
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 
 	GetDlgItemText(hWnd, IDC_BASECLOCK, work, NELEMENTS(work));
 	if (work[0] == '1') {
@@ -30,7 +31,7 @@ static void setclock(HWND hWnd, UINT multiple) {
 	}
 	if (multiple == 0) {
 		GetDlgItemText(hWnd, IDC_MULTIPLE, work, NELEMENTS(work));
-		multiple = (UINT)milstr_solveINT(work);
+		multiple = (UINT)miltchar_solveINT(work);
 	}
 	if (multiple < 1) {
 		multiple = 1;
@@ -39,13 +40,13 @@ static void setclock(HWND hWnd, UINT multiple) {
 		multiple = 32;
 	}
 	clock *= multiple;
-	OEMSPRINTF(work, str_clockfmt, clock / 10000, clock % 10000);
+	wsprintf(work, str_clockfmt, clock / 10000, clock % 10000);
 	SetDlgItemText(hWnd, IDC_CLOCKMSG, work);
 }
 
 static void cfgcreate(HWND hWnd) {
 
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 	UINT	val;
 
 	SETLISTSTR(hWnd, IDC_BASECLOCK, basecstr);
@@ -57,7 +58,7 @@ static void cfgcreate(HWND hWnd) {
 	}
 	SendDlgItemMessage(hWnd, IDC_BASECLOCK, CB_SETCURSEL, val, 0);
 	SETLISTUINT32(hWnd, IDC_MULTIPLE, mulval);
-	OEMSPRINTF(work, str_u, np2cfg.multiple);
+	wsprintf(work, tchar_u, np2cfg.multiple);
 	SetDlgItemText(hWnd, IDC_MULTIPLE, work);
 
 	if (!milstr_cmp(np2cfg.model, str_VM)) {
@@ -81,7 +82,7 @@ static void cfgcreate(HWND hWnd) {
 		val = IDC_RATE44;
 	}
 	SetDlgItemCheck(hWnd, val, TRUE);
-	OEMSPRINTF(work, str_u, np2cfg.delayms);
+	wsprintf(work, tchar_u, np2cfg.delayms);
 	SetDlgItemText(hWnd, IDC_SOUNDBUF, work);
 
 	SetDlgItemCheck(hWnd, IDC_ALLOWRESIZE, np2oscfg.thickframe);
@@ -101,7 +102,7 @@ static void cfgcreate(HWND hWnd) {
 static void cfgupdate(HWND hWnd) {
 
 	UINT		update;
-	OEMCHAR		work[32];
+	TCHAR		work[32];
 	UINT		val;
 const OEMCHAR	*str;
 
@@ -119,7 +120,7 @@ const OEMCHAR	*str;
 	}
 
 	GetDlgItemText(hWnd, IDC_MULTIPLE, work, sizeof(work));
-	val = (UINT)milstr_solveINT(work);
+	val = (UINT)miltchar_solveINT(work);
 	if (val < 1) {
 		val = 1;
 	}
@@ -161,7 +162,7 @@ const OEMCHAR	*str;
 	}
 
 	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, NELEMENTS(work));
-	val = (UINT)milstr_solveINT(work);
+	val = (UINT)miltchar_solveINT(work);
 	if (val < 40) {
 		val = 40;
 	}

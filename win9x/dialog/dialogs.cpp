@@ -9,14 +9,14 @@
 #endif
 
 
-const OEMCHAR str_nc[] = OEMTEXT("N/C");
+const TCHAR str_nc[] = _T("N/C");
 
-const OEMCHAR str_int0[] = OEMTEXT("INT0");
-const OEMCHAR str_int1[] = OEMTEXT("INT1");
-const OEMCHAR str_int2[] = OEMTEXT("INT2");
-const OEMCHAR str_int4[] = OEMTEXT("INT4");
-const OEMCHAR str_int5[] = OEMTEXT("INT5");
-const OEMCHAR str_int6[] = OEMTEXT("INT6");
+const TCHAR str_int0[] = _T("INT0");
+const TCHAR str_int1[] = _T("INT1");
+const TCHAR str_int2[] = _T("INT2");
+const TCHAR str_int4[] = _T("INT4");
+const TCHAR str_int5[] = _T("INT5");
+const TCHAR str_int6[] = _T("INT6");
 
 
 // ---- file select
@@ -110,9 +110,9 @@ BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
 
 // ---- mimpi def file
 
-static const OEMCHAR mimpi_title[] = OEMTEXT("Open MIMPI define file");
-static const OEMCHAR mimpi_ext[] = OEMTEXT("def");
-static const OEMCHAR mimpi_filter[] = OEMTEXT("MIMPI define file(*.def)\0*.def\0");
+static const TCHAR mimpi_title[] = _T("Open MIMPI define file");
+static const TCHAR mimpi_ext[] = _T("def");
+static const TCHAR mimpi_filter[] = _T("MIMPI define file(*.def)\0*.def\0");
 static const FILESEL mimpi = {mimpi_title, mimpi_ext, mimpi_filter, 1};
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res) {
@@ -135,7 +135,7 @@ const OEMCHAR	*p;
 
 // ---- list
 
-void dlgs_setliststr(HWND hWnd, UINT16 res, const OEMCHAR **item, UINT items) {
+void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;

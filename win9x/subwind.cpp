@@ -56,13 +56,18 @@ typedef struct {
 static	KDISPWIN	kdispwin;
 static	KDISPCFG	kdispcfg;
 
-static const OEMCHAR kdispapp[] = OEMTEXT("Key Display");
-static const OEMCHAR kdispclass[] = OEMTEXT("NP2-KeyDispWin");
-static const OEMCHAR str_kdclose[] = OEMTEXT("&Close");
+static const TCHAR kdisptitle[] = _T("Key Display");
+static const TCHAR kdispclass[] = _T("NP2-KeyDispWin");
+static const TCHAR str_kdclose[] = _T("&Close");
 
 static const UINT32 kdisppal[KEYDISP_PALS] =
 									{0x00000000, 0xffffffff, 0xf9ff0000};
 
+#if defined(OSLANG_UTF8)
+static const OEMCHAR kdispapp[] = OEMTEXT("Key Display");
+#else
+#define	kdispapp	kdisptitle
+#endif
 static const PFTBL kdispini[] = {
 				PFVAL("WindposX", PFTYPE_SINT32,	&kdispcfg.posx),
 				PFVAL("WindposY", PFTYPE_SINT32,	&kdispcfg.posy),
@@ -312,7 +317,7 @@ void kdispwin_create(void) {
 		return;
 	}
 	ZeroMemory(&kdispwin, sizeof(kdispwin));
-	hwnd = CreateWindow(kdispclass, kdispapp,
+	hwnd = CreateWindow(kdispclass, kdisptitle,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						kdispcfg.posx, kdispcfg.posy,
@@ -426,9 +431,15 @@ typedef struct {
 static	MDBGWIN		mdbgwin;
 static	MDBGCFG		mdbgcfg;
 
+static const TCHAR mdbgtitle[] = _T("Memory Map");
+static const TCHAR mdbgclass[] = _T("NP2-MemDbgWin");
+
+#if defined(OSLANG_UTF8)
 static const OEMCHAR mdbgapp[] = OEMTEXT("Memory Map");
-static const OEMCHAR mdbgclass[] = OEMTEXT("NP2-MemDbgWin");
-static const INITBL mdbgini[] = {
+#else
+#define	mdbgapp		mdbgtitle
+#endif
+static const PFTBL mdbgini[] = {
 				PFVAL("WindposX", PFTYPE_SINT32,	&mdbgcfg.posx),
 				PFVAL("WindposY", PFTYPE_SINT32,	&mdbgcfg.posy),
 				PFVAL("windtype", PFTYPE_BOOL,		&mdbgcfg.type)};
@@ -597,7 +608,7 @@ void mdbgwin_create(void) {
 	}
 	ZeroMemory(&mdbgwin, sizeof(mdbgwin));
 	memdbg32_getsize(&mdbgwin.width, &mdbgwin.height);
-	hwnd = CreateWindow(mdbgclass, mdbgapp,
+	hwnd = CreateWindow(mdbgclass, mdbgtitle,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						mdbgcfg.posx, mdbgcfg.posy,
@@ -683,8 +694,14 @@ typedef struct {
 static	SKBDWIN		skbdwin;
 static	SKBDCFG		skbdcfg;
 
+static const TCHAR skbdtitle[] = _T("Soft Keyboard");
+static const TCHAR skbdclass[] = _T("NP2-SoftKBDWin");
+
+#if defined(OSLANG_UTF8)
 static const OEMCHAR skbdapp[] = OEMTEXT("Soft Keyboard");
-static const OEMCHAR skbdclass[] = OEMTEXT("NP2-SoftKBDWin");
+#else
+#define	skbdapp		skbdtitle
+#endif
 static const PFTBL skbdini[] = {
 				PFVAL("WindposX", PFTYPE_SINT32,	&skbdcfg.posx),
 				PFVAL("WindposY", PFTYPE_SINT32,	&skbdcfg.posy),
@@ -874,7 +891,7 @@ void skbdwin_create(void) {
 	if (softkbd_getsize(&skbdwin.width, &skbdwin.height) != SUCCESS) {
 		return;
 	}
-	hwnd = CreateWindow(skbdclass, skbdapp,
+	hwnd = CreateWindow(skbdclass, skbdtitle,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						skbdcfg.posx, skbdcfg.posy,

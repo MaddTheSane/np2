@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"
@@ -32,7 +33,13 @@ static void about_init(HWND hWnd) {
 #if defined(NP2VER_WIN9X)
 	milstr_ncat(work, NP2VER_WIN9X, NELEMENTS(work));
 #endif
+#if defined(OSLANG_UTF8)
+	TCHAR	tchr[128];
+	oemtotchar(tchr, NELEMENTS(tchr), work, -1);
+	SetDlgItemText(hWnd, IDC_NP2VER, tchr);
+#else
 	SetDlgItemText(hWnd, IDC_NP2VER, work);
+#endif
 	GetWindowRect(hWnd, &rectwindow);
 	GetClientRect(hWnd, &rectclient);
 	aboutsize.cx = rectwindow.right - rectwindow.left;
@@ -56,7 +63,13 @@ static void about_more(HWND hWnd) {
 	RECT	rect;
 
 	np2info(infostr, np2infostr, NELEMENTS(infostr), NULL);
+#if defined(OSLANG_UTF8)
+	TCHAR	tchr[1024];
+	oemtotchar(tchr, NELEMENTS(tchr), infostr, -1);
+	SetDlgItemText(hWnd, IDC_NP2INFO, tchr);
+#else
 	SetDlgItemText(hWnd, IDC_NP2INFO, infostr);
+#endif
 	EnableWindow(GetDlgItem(hWnd, IDC_MORE), FALSE);
 	GetWindowRect(hWnd, &rect);
 	np2class_move(hWnd, rect.left, rect.top, aboutsize.cx, aboutsize.cy);

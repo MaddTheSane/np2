@@ -11,10 +11,12 @@
 #endif
 
 #define	BYTESEX_LITTLE
+#if !defined(OSLANG_UTF8)
 #if !defined(_UNICODE)
 #define	OSLANG_SJIS
 #else
 #define	OSLANG_UCS2
+#endif
 #endif
 #define	OSLINEBREAK_CRLF
 
@@ -59,10 +61,17 @@ typedef	signed __int64		SINT64;
 #define	STRCALL		__stdcall
 
 #define	BRESULT				UINT8
+#if !defined(OSLANG_UTF8)
 #define	OEMCHAR				TCHAR
 #define	OEMTEXT(string)		_T(string)
 #define	OEMSPRINTF			wsprintf
 #define	OEMSTRLEN			lstrlen
+#else
+#define	OEMCHAR				char
+#define	OEMTEXT(string)		string
+#define	OEMSPRINTF			sprintf
+#define	OEMSTRLEN			strlen
+#endif
 
 
 #include	"common.h"
@@ -103,8 +112,10 @@ typedef	signed __int64		SINT64;
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
 
-#if !defined(_UNICODE)
+#if defined(OSLANG_SJIS)
 #define	SUPPORT_SJIS
+#elif defined(OSLANG_UTF8)
+#define	SUPPORT_UTF8
 #else
 #define	SUPPORT_ANK
 #endif

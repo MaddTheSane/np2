@@ -1,6 +1,6 @@
 
-static const OEMCHAR np2toolclass[] = OEMTEXT("np2-toolwin");
-static const OEMCHAR np2tooltitle[] = OEMTEXT("NP2 tool");
+static const TCHAR np2tooltitle[] = _T("NP2 tool");
+static const TCHAR np2toolclass[] = _T("np2-toolwin");
 
 static const OEMCHAR str_deffont[] = OEMTEXT("‚l‚r ‚oƒSƒVƒbƒN");
 static const OEMCHAR str_browse[] = OEMTEXT("...");
@@ -8,9 +8,9 @@ static const OEMCHAR str_eject[] = OEMTEXT("Eject");
 static const OEMCHAR str_reset[] = OEMTEXT("Reset");
 static const OEMCHAR str_power[] = OEMTEXT("Power");
 
-static const OEMCHAR str_static[] = OEMTEXT("STATIC");
-static const OEMCHAR str_combobox[] = OEMTEXT("COMBOBOX");
-static const OEMCHAR str_button[] = OEMTEXT("BUTTON");
+static const TCHAR str_static[] = _T("STATIC");
+static const TCHAR str_combobox[] = _T("COMBOBOX");
+static const TCHAR str_button[] = _T("BUTTON");
 
 static const SUBITEM defsubitem[IDC_MAXITEMS] = {
 		{TCTL_STATIC,	NULL,		 49, 44,   8,   3, 0, 0},
@@ -57,13 +57,16 @@ static const PFTBL skinini2[] = {
 
 // ----
 
-static const OEMCHAR str_skindef[] = OEMTEXT("<&Base Skin>");
-static const OEMCHAR str_skinsel[] = OEMTEXT("&Select Skin...");
-static const OEMCHAR str_toolskin[] = OEMTEXT("&Skins");
-static const OEMCHAR str_toolclose[] = OEMTEXT("&Close");
+static const TCHAR str_skindef[] = _T("<&Base Skin>");
+static const TCHAR str_skinsel[] = _T("&Select Skin...");
+static const TCHAR str_toolskin[] = _T("&Skins");
+static const TCHAR str_toolclose[] = _T("&Close");
 
-static const OEMCHAR skinui_title[] = OEMTEXT("Select skin file");
-static const OEMCHAR skinui_filter[] = OEMTEXT("ini files (*.ini)\0*.ini\0text files (*.txt)\0*.txt\0All files (*.*)\0*.*\0");
-static const OEMCHAR skinui_ext[] = OEMTEXT("ini");
+static const TCHAR skinui_title[] = _T("Select skin file");
+static const TCHAR skinui_filter[] =								\
+					_T("ini files (*.ini)\0*.ini\0")				\
+					_T("text files (*.txt)\0*.txt\0")				\
+					_T("All files (*.*)\0*.*\0");
+static const TCHAR skinui_ext[] = _T("ini");
 static const FILESEL skinui = {skinui_title, skinui_ext, skinui_filter, 1};
 

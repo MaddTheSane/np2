@@ -4,6 +4,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
 #include	"np2class.h"
@@ -15,12 +16,12 @@
 #include	"palettes.h"
 
 
-static const OEMCHAR str_scropt[] = OEMTEXT("Screen option");
+static const TCHAR str_scropt[] = _T("Screen option");
 
 
 static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 	UINT16	ret;
 	UINT8	b;
 	int		renewal;
@@ -36,7 +37,7 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 											MAKELONG(0, 255));
 			SendDlgItemMessage(hWnd, IDC_SKIPLIGHT, TBM_SETPOS, TRUE,
 											np2cfg.skiplight);
-			OEMSPRINTF(work, str_d, np2cfg.skiplight);
+			wsprintf(work, tchar_u, np2cfg.skiplight);
 			SetDlgItemText(hWnd, IDC_LIGHTSTR, work);
 			return(TRUE);
 
@@ -54,7 +55,7 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 				case IDC_SKIPLIGHT:
 					ret = (UINT16)SendDlgItemMessage(hWnd, IDC_SKIPLIGHT,
 													TBM_GETPOS, 0, 0);
-					OEMSPRINTF(work, str_d, ret);
+					wsprintf(work, tchar_u, ret);
 					SetDlgItemText(hWnd, IDC_LIGHTSTR, work);
 					break;
 			}
@@ -68,8 +69,9 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 					np2cfg.skipline = b;
 					renewal = 1;
 				}
-				if ((ret = (UINT16)SendDlgItemMessage(hWnd, IDC_SKIPLIGHT,
-												TBM_GETPOS, 0, 0)) > 255) {
+				ret = (UINT16)SendDlgItemMessage(hWnd, IDC_SKIPLIGHT,
+														TBM_GETPOS, 0, 0);
+				if (ret > 255) {
 					ret = 255;
 				}
 				if (np2cfg.skiplight != ret) {
@@ -157,7 +159,7 @@ static LRESULT CALLBACK Scropt2DlgProc(HWND hWnd, UINT msg,
 static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
-	OEMCHAR	work[32];
+	TCHAR	work[32];
 	UINT8	value[6];
 	UINT8	b;
 	UINT	update;
@@ -168,26 +170,26 @@ static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 											MAKELONG(0, 32));
 			SendDlgItemMessage(hWnd, IDC_TRAMWAIT, TBM_SETPOS, TRUE,
 											np2cfg.wait[0]);
-			OEMSPRINTF(work, str_u, np2cfg.wait[0]);
+			wsprintf(work, tchar_u, np2cfg.wait[0]);
 			SetDlgItemText(hWnd, IDC_TRAMSTR, work);
 			SendDlgItemMessage(hWnd, IDC_VRAMWAIT, TBM_SETRANGE, TRUE,
 											MAKELONG(0, 32));
 			SendDlgItemMessage(hWnd, IDC_VRAMWAIT, TBM_SETPOS, TRUE,
 											np2cfg.wait[2]);
-			OEMSPRINTF(work, str_u, np2cfg.wait[2]);
+			wsprintf(work, tchar_u, np2cfg.wait[2]);
 			SetDlgItemText(hWnd, IDC_VRAMSTR, work);
 			SendDlgItemMessage(hWnd, IDC_GRCGWAIT, TBM_SETRANGE, TRUE,
 											MAKELONG(0, 32));
 			SendDlgItemMessage(hWnd, IDC_GRCGWAIT, TBM_SETPOS, TRUE,
 											np2cfg.wait[4]);
-			OEMSPRINTF(work, str_u, np2cfg.wait[4]);
+			wsprintf(work, tchar_u, np2cfg.wait[4]);
 			SetDlgItemText(hWnd, IDC_GRCGSTR, work);
 
 			SendDlgItemMessage(hWnd, IDC_REALPAL, TBM_SETRANGE, TRUE,
 											MAKELONG(0, 64));
 			SendDlgItemMessage(hWnd, IDC_REALPAL, TBM_SETPOS, TRUE,
 											np2cfg.realpal);
-			OEMSPRINTF(work, str_d, (int)np2cfg.realpal - 32);
+			wsprintf(work, tchar_d, (int)np2cfg.realpal - 32);
 			SetDlgItemText(hWnd, IDC_REALPALSTR, work);
 
 			return(TRUE);
@@ -197,25 +199,28 @@ static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 				case IDC_TRAMWAIT:
 					b = (UINT8)SendDlgItemMessage(hWnd, IDC_TRAMWAIT,
 													TBM_GETPOS, 0, 0);
-					OEMSPRINTF(work, str_u, b);
+					wsprintf(work, tchar_u, b);
 					SetDlgItemText(hWnd, IDC_TRAMSTR, work);
 					break;
+
 				case IDC_VRAMWAIT:
 					b = (UINT8)SendDlgItemMessage(hWnd, IDC_VRAMWAIT,
 													TBM_GETPOS, 0, 0);
-					OEMSPRINTF(work, str_u, b);
+					wsprintf(work, tchar_u, b);
 					SetDlgItemText(hWnd, IDC_VRAMSTR, work);
 					break;
+
 				case IDC_GRCGWAIT:
 					b = (UINT8)SendDlgItemMessage(hWnd, IDC_GRCGWAIT,
 													TBM_GETPOS, 0, 0);
-					OEMSPRINTF(work, str_u, b);
+					wsprintf(work, tchar_u, b);
 					SetDlgItemText(hWnd, IDC_GRCGSTR, work);
 					break;
+
 				case IDC_REALPAL:
 					b = (UINT8)SendDlgItemMessage(hWnd, IDC_REALPAL,
 													TBM_GETPOS, 0, 0);
-					OEMSPRINTF(work, str_d, (int)b - 32);
+					wsprintf(work, tchar_d, (int)b - 32);
 					SetDlgItemText(hWnd, IDC_REALPALSTR, work);
 			}
 			break;

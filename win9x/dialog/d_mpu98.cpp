@@ -2,6 +2,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"commng.h"
 #include	"sysmng.h"
 #include	"dialog.h"
@@ -20,7 +21,7 @@ extern	COMMNG	cm_mpu98;
 }
 #endif
 
-static const OEMCHAR *mpuinterrupt[4] = {
+static const TCHAR *mpuinterrupt[4] = {
 									str_int0, str_int1, str_int2, str_int5};
 
 static	UINT8	mpu = 0;
@@ -34,10 +35,10 @@ static void setmpuiopara(HWND hWnd, UINT16 res, UINT8 value) {
 
 static UINT8 getmpuio(HWND hWnd, UINT16 res) {
 
-	OEMCHAR	work[8];
+	TCHAR	work[8];
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
-	return((milstr_solveHEX(work) >> 6) & 0xf0);
+	return((miltchar_solveHEX(work) >> 6) & 0xf0);
 }
 
 static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {
@@ -48,15 +49,18 @@ static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {
 
 static UINT8 getmpuint(HWND hWnd, UINT16 res) {
 
-	OEMCHAR	work[8];
-	UINT8	ret;
+	TCHAR	work[8];
+	TCHAR	ret;
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	ret = work[3] - '0';
-	if (ret >= 3) {
+	if (ret < 0) {
+		ret = 0;
+	}
+	else if (ret >= 3) {
 		ret = 3;
 	}
-	return(ret);
+	return((UINT8)ret);
 }
 
 static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
@@ -74,12 +78,12 @@ static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
 static void mpucreate(HWND hWnd) {
 
 	UINT	i;
-	OEMCHAR	buf[8];
+	TCHAR	buf[8];
 	HWND	sub;
 
 	mpu = np2cfg.mpuopt;
 	for (i=0; i<16; i++) {
-		OEMSPRINTF(buf, str_4X, 0xC0D0 + (i << 10));
+		wsprintf(buf, tchar_4X, 0xC0D0 + (i << 10));
 		SendDlgItemMessage(hWnd, IDC_MPUIO,
 									CB_INSERTSTRING, (WPARAM)i, (LPARAM)buf);
 	}

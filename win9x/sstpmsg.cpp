@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
 #include	"sstp.h"
@@ -10,9 +11,6 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"np2info.h"
-#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-#include	"oemtext.h"
-#endif
 
 
 static const OEMCHAR cr[] = OEMTEXT("\\n");
@@ -314,25 +312,24 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 
 // -------------------------------
 
+static const UINT8 *prcs[4] = {k_keropi, k_winx68k, k_t98next, k_anex86};
+
 static int check_keropi(void) {
 
-	OEMCHAR	buf[64];
+	UINT	i;
 
-	sstpsolve(buf, k_keropi);
-	if (FindWindow(buf, NULL)) {
-		return(1);
-	}
-	sstpsolve(buf, k_winx68k);
-	if (FindWindow(buf, NULL)) {
-		return(2);
-	}
-	sstpsolve(buf, k_t98next);
-	if (FindWindow(NULL, buf)) {
-		return(3);
-	}
-	sstpsolve(buf, k_anex86);
-	if (FindWindow(NULL, buf)) {
-		return(4);
+	for (i=0; i<NELEMENTS(prcs); i++) {
+		OEMCHAR	buf[64];
+		sstpsolve(buf, prcs[i]);
+#if defined(OSLANG_UTF8)
+		TCHAR tchr[64];
+		oemtotchar(tchr, NELEMENTS(tchr), buf, -1);
+#else
+		const TCHAR *tchr = buf;
+#endif
+		if (FindWindow(tchr, NULL)) {
+			return(i + 1);
+		}
 	}
 	return(0);
 }
@@ -342,7 +339,7 @@ static int check_keropi(void) {
 
 void sstpmsg_welcome(void) {
 
-	int		kero;
+	UINT	kero;
 	OEMCHAR	*p;
 	OEMCHAR	buf[512];
 
@@ -389,9 +386,11 @@ void sstpmsg_welcome(void) {
 					case 0:
 						p = sstpsolve(p, s_keropi1);
 						break;
+
 					case 1:
 						p = sstpsolve(p, s_keropi2);
 						break;
+
 					default:
 						p = sstpsolve(p, s_keropi3);
 						break;

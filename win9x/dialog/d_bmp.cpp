@@ -2,6 +2,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"dialog.h"
@@ -12,17 +13,35 @@
 #include	"font.h"
 
 
-static const OEMCHAR fontui_title[] = OEMTEXT("Select font file");
-static const OEMCHAR fontui_filter[] = OEMTEXT("PC-98 BMP font (*.bmp)\0*.bmp\0Virtual98 font\0font.rom\0All supported files\0*.bmp;pc88.fnt;kanji1.rom;kanji2.rom;font.rom;subsys_c.rom;kanji.rom;fnt0808.x1;fnt0816.x1;fnt1616.x1;cgrom.dat\0");
-static const FILESEL fontui = {fontui_title, str_bmp, fontui_filter, 3};
+static const TCHAR fontui_title[] = _T("Select font file");
+static const TCHAR fontui_filter[] =									\
+					_T("PC-98 BMP font (*.bmp)\0")						\
+						_T("*.bmp\0")									\
+					_T("Virtual98 font\0")								\
+						_T("font.rom\0")								\
+					_T("All supported files\0")							\
+						_T("*.bmp;")									\
+						_T("pc88.fnt;kanji1.rom;kanji2.rom;")			\
+						_T("font.rom;")									\
+						_T("subsys_c.rom;kanji.rom;")					\
+						_T("fnt0808.x1;fnt0816.x1;fnt1616.x1;")			\
+						_T("cgrom.dat\0");
+static const FILESEL fontui = {fontui_title, tchar_bmp, fontui_filter, 3};
 
 static const OEMCHAR bmpui_file[] = OEMTEXT("NP2_%04d.BMP");
-static const OEMCHAR bmpui_title[] = OEMTEXT("Save as bitmap file");
-static const OEMCHAR bmpui_filter1[] = OEMTEXT("1bit-bitmap (*.bmp)\0*.bmp\0Graphics Interchange Format (*.gif)\0*.gif\0");
-static const OEMCHAR bmpui_filter4[] = OEMTEXT("4bit-bitmap (*.bmp)\0*.bmp\0Graphics Interchange Format (*.gif)\0*.gif\0");
-static const OEMCHAR bmpui_filter8[] = OEMTEXT("8bit-bitmap (*.bmp)\0*.bmp\0Graphics Interchange Format (*.gif)\0*.gif\0");
-static const OEMCHAR bmpui_filter24[] = OEMTEXT("24bit-bitmap (*.bmp)\0*.bmp\0");
-static const OEMCHAR *bmpui_filter[4] = {
+
+static const TCHAR bmpui_title[] = _T("Save as bitmap file");
+static const TCHAR bmpui_filter1[] =									\
+					_T("1bit-bitmap (*.bmp)\0*.bmp\0")					\
+					_T("Graphics Interchange Format (*.gif)\0*.gif\0");
+static const TCHAR bmpui_filter4[] =									\
+					_T("4bit-bitmap (*.bmp)\0*.bmp\0")					\
+					_T("Graphics Interchange Format (*.gif)\0*.gif\0");
+static const TCHAR bmpui_filter8[] =									\
+					_T("8bit-bitmap (*.bmp)\0*.bmp\0")
+					_T("Graphics Interchange Format (*.gif)\0*.gif\0");
+static const TCHAR bmpui_filter24[] = _T("24bit-bitmap (*.bmp)\0*.bmp\0");
+static const TCHAR *bmpui_filter[4] = {
 				bmpui_filter1, bmpui_filter4, bmpui_filter8, bmpui_filter24};
 
 
@@ -51,7 +70,7 @@ const OEMCHAR	*ext;
 		return;
 	}
 	bmpui.title = bmpui_title;
-	bmpui.ext = str_bmp;
+	bmpui.ext = tchar_bmp;
 	bmpui.filter = bmpui_filter[ss->type];
 	bmpui.defindex = 1;
 	file_cpyname(path, bmpfilefolder, NELEMENTS(path));

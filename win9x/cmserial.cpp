@@ -75,14 +75,14 @@ static void serialrelease(COMMNG self) {
 
 COMMNG cmserial_create(UINT port, UINT8 param, UINT32 speed) {
 
-	OEMCHAR	commstr[16];
+	TCHAR	commstr[16];
 	HANDLE	hdl;
 	DCB		dcb;
 	UINT	i;
 	COMMNG	ret;
 	CMSER	serial;
 
-	OEMSPRINTF(commstr, OEMTEXT("COM%u"), port);
+	wsprintf(commstr, _T("COM%u"), port);
 	hdl = CreateFile(commstr, GENERIC_READ | GENERIC_WRITE,
 												0, 0, OPEN_EXISTING, 0, NULL);
 	if (hdl == INVALID_HANDLE_VALUE) {

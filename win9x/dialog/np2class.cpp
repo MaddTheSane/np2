@@ -5,7 +5,7 @@
 #include	"np2class.h"
 
 
-const OEMCHAR np2dlgclass[] = OEMTEXT("np2dialog");
+const TCHAR np2dlgclass[] = _T("np2dialog");
 
 
 void np2class_initialize(HINSTANCE hinst) {

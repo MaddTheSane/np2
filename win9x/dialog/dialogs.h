@@ -6,19 +6,19 @@
 #endif
 
 typedef struct {
-const OEMCHAR	*title;
-const OEMCHAR	*ext;
-const OEMCHAR	*filter;
-	int			defindex;
+const TCHAR	*title;
+const TCHAR	*ext;
+const TCHAR	*filter;
+	int		defindex;
 } FILESEL;
 
-extern const OEMCHAR str_nc[];
-extern const OEMCHAR str_int0[];
-extern const OEMCHAR str_int1[];
-extern const OEMCHAR str_int2[];
-extern const OEMCHAR str_int4[];
-extern const OEMCHAR str_int5[];
-extern const OEMCHAR str_int6[];
+extern const TCHAR str_nc[];
+extern const TCHAR str_int0[];
+extern const TCHAR str_int1[];
+extern const TCHAR str_int2[];
+extern const TCHAR str_int4[];
+extern const TCHAR str_int5[];
+extern const TCHAR str_int6[];
 
 #define	SetDlgItemCheck(a, b, c)	\
 			SendDlgItemMessage((a), (b), BM_SETCHECK, (c), 0)
@@ -30,13 +30,13 @@ extern const OEMCHAR str_int6[];
 			(((a) + (b)) / 2)
 
 #define	SETLISTSTR(a, b, c)			\
-			dlgs_setliststr((a), (b), (c), sizeof((c))/sizeof(OEMCHAR *))
+			dlgs_setliststr((a), (b), (c), NELEMENTS((c)))
 
 #define	SETnLISTSTR(a, b, c, d)		\
 			dlgs_setliststr((a), (b), (c), (d))
 
 #define	SETLISTUINT32(a, b, c)		\
-			dlgs_setlistuint32((a), (b), (c), sizeof((c))/sizeof(UINT32))
+			dlgs_setlistuint32((a), (b), (c), NELEMENTS((c)))
 
 
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
@@ -48,7 +48,7 @@ BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 
-void dlgs_setliststr(HWND hWnd, UINT16 res, const OEMCHAR **item, UINT items);
+void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items);
 void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items);
 
 void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname);
