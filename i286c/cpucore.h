@@ -191,6 +191,7 @@ extern	const UINT8	iflags[];
 
 void i286c_initialize(void);
 void i286c_reset(void);
+void i286c_shut(void);
 
 void CPUCALL i286c_interrupt(REG8 vect);
 
@@ -273,4 +274,5 @@ void v30c_step(void);
 #define	CPU_INTERRUPT(v)	i286c_interrupt(v)
 #define	CPU_EXEC			i286c
 #define	CPU_EXECV30			v30c
+#define	CPU_SHUT			i286c_shut
 

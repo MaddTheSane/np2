@@ -49,12 +49,15 @@ void bios0x1a_main(void) {											// ver0.30
 				CPU_AH = (iocore_inp8(0x42) >> 2) & 1;
 			}
 			break;
+
 		case 0x01:
 			printerbios_11();
 			break;
+
 		case 0x02:
 			CPU_AH = (iocore_inp8(0x42) >> 2) & 1;
 			break;
+
 		default:
 			CPU_AH = 0x00;
 			break;

@@ -60,9 +60,18 @@ void i286x_initialize(void) {
 void i286x_reset(void) {
 
 	ZeroMemory(&i286core.s, sizeof(i286core.s));
-	I286_CS = 0x1fc0;
-	CS_BASE = 0x1fc00;
+	I286_CS = 0xffff;
+	CS_BASE = 0xffff0;
 	i286core.s.adrsmask = 0xfffff;
+}
+
+void i286x_shut(void) {
+
+	CPU_CS = 0xffff;
+	CS_BASE = 0xffff0;
+	CPU_IP = 0;
+	CPU_ADRSMASK = 0xfffff;
+	i286x_resetprefetch();
 }
 
 

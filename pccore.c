@@ -549,6 +549,9 @@ void pccore_exec(BOOL draw) {
 		pic_irq();
 		if (CPU_RESETREQ) {
 			CPU_RESETREQ = 0;
+#if 1
+			CPU_SHUT();
+#else
 			CPU_CS = 0xf000;
 			CS_BASE = 0xf0000;
 			CPU_IP = 0xfff0;
@@ -556,6 +559,7 @@ void pccore_exec(BOOL draw) {
 			CPU_DX = 0x0300;
 #endif
 			CPU_CLEARPREFETCH();
+#endif
 		}
 
 #if 1 // ndef TRACE

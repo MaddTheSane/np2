@@ -148,8 +148,17 @@ void i286c_initialize(void) {
 void i286c_reset(void) {
 
 	ZeroMemory(&I286_STAT, sizeof(I286_STAT));
-	I286_CS = 0x1fc0;
-	CS_BASE = 0x1fc00;
+	I286_CS = 0xffff;
+	CS_BASE = 0xffff0;
+	I286_ADRSMASK = 0xfffff;
+}
+
+void i286c_shut(void) {
+
+	I286_MSW = 0;
+	I286_CS = 0xffff;
+	CS_BASE = 0xffff0;
+	I286_IP = 0;
 	I286_ADRSMASK = 0xfffff;
 }
 

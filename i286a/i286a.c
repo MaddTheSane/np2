@@ -76,8 +76,16 @@ const UINT8 iflags[512] = {					// Z_FLAG, S_FLAG, P_FLAG
 void i286a_reset(void) {
 
 	ZeroMemory(&CPU_STATSAVE, sizeof(CPU_STATSAVE));
-	CPU_CS = 0x1fc0;
-	CS_BASE = 0x1fc00;
+	CPU_CS = 0xffff;
+	CS_BASE = 0xffff0;
+	CPU_ADRSMASK = 0xfffff;
+}
+
+void i286a_shut(void) {
+
+	CPU_CS = 0xffff;
+	CS_BASE = 0xffff0;
+	CPU_IP = 0;
 	CPU_ADRSMASK = 0xfffff;
 }
 

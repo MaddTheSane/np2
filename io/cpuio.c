@@ -20,7 +20,7 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 	cpumem_addrmask = 0xfffff;
 #endif
 	CPU_RESETREQ = 1;
-	CPU_INTERRUPT(0x02);
+//	CPU_INTERRUPT(0x02);
 	nevent_forceexit();
 	(void)port;
 	(void)dat;
@@ -28,7 +28,7 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 
 static void IOOUTCALL cpuio_of2(UINT port, REG8 dat) {
 
-	CPU_ADRSMASK = 0x1fffff;
+	CPU_ADRSMASK = 0xffffffff;
 #if defined(CPUCORE_IA32)
 	cpumem_addrmask = 0xffffffff;
 #endif
@@ -54,15 +54,8 @@ static REG8 IOINPCALL cpuio_if2(UINT port) {
 
 	REG8	ret;
 
-#if 1
 	ret = 0xff;
 	ret -= (REG8)((CPU_ADRSMASK >> 20) & 1);
-#else
-	ret = 0xfe;
-	if (CPU_ADRSMASK != 0x1fffff) {
-		ret++;
-	}
-#endif
 	(void)port;
 	return(ret);
 }
@@ -73,7 +66,7 @@ static void IOOUTCALL cpuio_of6(UINT port, REG8 dat) {
 
 	switch(dat) {
 		case 0x02:
-			CPU_ADRSMASK = 0x1fffff;
+			CPU_ADRSMASK = 0xffffffff;
 #if defined(CPUCORE_IA32)
 			cpumem_addrmask = 0xffffffff;
 #endif
@@ -94,7 +87,7 @@ static REG8 IOINPCALL cpuio_if6(UINT port) {
 	REG8	ret;
 
 	ret = 0x00;
-	if (CPU_ADRSMASK != 0x1fffff) {
+	if (!(CPU_ADRSMASK & (1 << 20))) {
 		ret |= 0x01;
 	}
 	if (nmiio.enable) {

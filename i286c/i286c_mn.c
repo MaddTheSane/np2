@@ -22,6 +22,22 @@
 			I286_REMCLOCK = (c);								\
 		}
 
+// ---- select...
+
+static UINT32 segselect(UINT sel) {
+
+	I286DTR	*dtr;
+	UINT32	addr;
+	UINT32	ret;
+
+	dtr = (sel & 4)?&I286_IDTR:&I286_GDTR;
+	addr = (dtr->base24 << 16) + dtr->base + (sel & (~7));
+	ret = i286_memoryread_w(addr+2);
+	ret += i286_memoryread(addr+4) << 16;
+	TRACEOUT(("PE - select %.4x %.8x", sel, ret));
+	return(ret);
+}
+
 
 // ----
 
@@ -147,8 +163,17 @@ I286FN _push_es(void) {							// 06: push es
 
 I286FN _pop_es(void) {							// 07: pop es
 
-	REGPOP(I286_ES, 5)
-	ES_BASE = (UINT32)I286_ES << 4;
+	UINT	tmp;
+
+	REGPOP(tmp, 5)
+	I286_ES = tmp;
+	if (!(I286_MSW & 1)) {
+		ES_BASE = tmp << 4;
+		NEXT_OPCODE
+	}
+	else {
+		ES_BASE = segselect(tmp);
+	}
 }
 
 I286FN _or_ea_r8(void) {						// 08: or EA, REG8
@@ -381,10 +406,22 @@ I286FN _push_ss(void) {							// 16: push ss
 
 I286FN _pop_ss(void) {							// 17: pop ss
 
-	REGPOP(I286_SS, 5)
-	SS_BASE = I286_SS << 4;
-	SS_FIX = SS_BASE;
-	NEXT_OPCODE
+	UINT	tmp;
+	UINT32	base;
+
+	REGPOP(tmp, 5)
+	I286_SS = tmp;
+	if (!(I286_MSW & 1)) {
+		SS_BASE = tmp << 4;
+		SS_FIX = tmp << 4;
+		NEXT_OPCODE
+	}
+	else {
+		base = segselect(tmp);
+		SS_BASE = base;
+		SS_FIX = base;
+		NEXT_OPCODE
+	}
 }
 
 I286FN _sbb_ea_r8(void) {						// 18: sbb EA, REG8
@@ -504,9 +541,22 @@ I286FN _push_ds(void) {							// 1e: push ds
 
 I286FN _pop_ds(void) {							// 1f: pop ds
 
-	REGPOP(I286_DS, 5)
-	DS_BASE = I286_DS << 4;
-	DS_FIX = DS_BASE;
+	UINT	tmp;
+	UINT32	base;
+
+	REGPOP(tmp, 5)
+	I286_DS = tmp;
+	if (!(I286_MSW & 1)) {
+		DS_BASE = tmp << 4;
+		DS_FIX = tmp << 4;
+		NEXT_OPCODE
+	}
+	else {
+		base = segselect(tmp);
+		DS_BASE = base;
+		DS_FIX = base;
+		NEXT_OPCODE
+	}
 }
 
 I286FN _and_ea_r8(void) {						// 20: and EA, REG8
@@ -1658,6 +1708,7 @@ I286FN _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 
 	UINT	op;
 	UINT	tmp;
+	UINT32	base;
 	UINT16	ipbak;
 
 	ipbak = I286_IP;
@@ -1670,23 +1721,30 @@ I286FN _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 		I286_WORKCLOCK(5);
 		tmp = i286_memoryread_w(CALC_EA(op));
 	}
+	if (!(I286_MSW & 1)) {
+		base = tmp << 4;
+	}
+	else {
+		base = segselect(tmp);
+	}
+
 	switch(op & 0x18) {
 		case 0x00:			// es
 			I286_ES = (UINT16)tmp;
-			ES_BASE = tmp << 4;
+			ES_BASE = base;
 			break;
 
 		case 0x10:			// ss
 			I286_SS = (UINT16)tmp;
-			SS_BASE = tmp << 4;
-			SS_FIX = SS_BASE;
+			SS_BASE = base;
+			SS_FIX = base;
 			NEXT_OPCODE
 			break;
 
 		case 0x18:			// ds
 			I286_DS = (UINT16)tmp;
-			DS_BASE = tmp << 4;
-			DS_FIX = DS_BASE;
+			DS_BASE = base;
+			DS_FIX = base;
 			break;
 
 		default:			// cs

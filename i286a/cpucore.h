@@ -191,6 +191,7 @@ extern	I286CORE	i286acore;
 extern	const UINT8	iflags[];
 
 void i286a_reset(void);
+void i286a_shut(void);
 
 void CPUCALL i286a_interrupt(REG8 vect);
 
@@ -272,4 +273,5 @@ void i286a_step(void);
 #define	CPU_INTERRUPT(v)	i286a_interrupt(v)
 #define	CPU_EXEC			i286a
 #define	CPU_EXECV30			i286a
+#define	CPU_SHUT			i286a_shut
 

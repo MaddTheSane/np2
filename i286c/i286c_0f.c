@@ -51,7 +51,7 @@ I286_0F _lgdt(UINT op) {
 		I286_GDTR.limit = i286_memoryread_w(seg + ad);
 		I286_GDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
 		I286_GDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
-		I286_GDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
+//		I286_GDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -69,7 +69,8 @@ I286_0F _lidt(UINT op) {
 		I286_IDTR.limit = i286_memoryread_w(seg + ad);
 		I286_IDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
 		I286_IDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
-		I286_IDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
+//		I286_IDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
+		TRACEOUT(("IDT:%.2x%.4x", I286_IDTR.base24, I286_IDTR.base));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -97,6 +98,9 @@ I286_0F _lmsw(UINT op) {
 	else {
 		I286_WORKCLOCK(3);
 		I286_MSW = i286_memoryread_w(CALC_EA(op));
+	}
+	if (I286_MSW & 1) {
+		TRACEOUT(("enable PE %.4x:%.4x", I286_CS, I286_IP));
 	}
 }
 
