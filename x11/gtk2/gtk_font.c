@@ -1,4 +1,4 @@
-/*	$Id: gtk_font.c,v 1.4 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: gtk_font.c,v 1.5 2005/04/01 15:11:45 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -225,28 +225,18 @@ fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
 	int width;
 	int len;
 
-	if ((fhdl == NULL) || (str == NULL))
+	if ((fhdl == NULL) || (str == NULL)) {
 		return FAILURE;
+	}
 
 	width = 0;
-	buf[2] = '\0';
 	for (;;) {
-		buf[0] = *str++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c && *str != '\0') {
-			buf[1] = *str++;
-			len = 2;
-		} else if (buf[0] >= 0xa1 && buf[1] <= 0xdf) {
-			buf[1] = buf[0];
-			buf[0] = 0x8e;
-			len = 1;
-		} else if (buf[0]) {
-			buf[1] = '\0';
-			len = 1;
-		} else {
-			break;
+		while ((len = milstr_charsize(str)) != 0) {
+			memcpy(buf, str, len * sizeof(char));
+			buf[len] = '\0';
+			getlength1(fhdl, &fdat, buf, len);
+			width += fdat.pitch;
 		}
-		getlength1(fhdl, &fdat, buf, len);
-		width += fdat.pitch;
 	}
 	if (pt) {
 		pt->x = width;
@@ -265,30 +255,20 @@ fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
 	int len;
 	int posx;
 
-	if ((hdl == NULL) || (str == NULL))
+	if ((hdl == NULL) || (str == NULL)) {
 		return FAILURE;
+	}
 
 	width = 0;
 	posx = 0;
-	buf[2] = '\0';
 	for (;;) {
-		buf[0] = *str++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c && *str != '\0') {
-			buf[1] = *str++;
-			len = 2;
-		} else if (buf[0] >= 0xa1 && buf[0] <= 0xdf) {
-			buf[1] = buf[0];
-			buf[0] = 0x8e;
-			len = 1;
-		} else if (buf[0]) {
-			buf[1] = '\0';
-			len = 1;
-		} else {
-			break;
+		while ((len = milstr_charsize(str)) != 0) {
+			memcpy(buf, str, len * sizeof(char));
+			buf[len] = '\0';
+			getlength1(fhdl, &fdat, buf, len);
+			width = posx + max(fdat.width, fdat.pitch);
+			posx += fdat.pitch;
 		}
-		getlength1(fhdl, &fdat, buf, len);
-		width = posx + max(fdat.width, fdat.pitch);
-		posx += fdat.pitch;
 	}
 	if (pt) {
 		pt->x = width;
@@ -310,24 +290,15 @@ fontmng_get(void *hdl, const char *str)
 		return NULL;
 	}
 
-	if (((((str[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) && (str[1] != '\0')) {
-		codecnv_sjistoeuc(buf, 4, str, 2);
-		len = 2;
-	} else if ((UINT8)str[0] >= 0xa1 && (UINT8)str[0] <= 0xdf) {
-		buf[0] = 0x8e;
-		buf[1] = str[0];
-		buf[2] = '\0';
-		len = 1;
-	} else {
-		buf[0] = str[0];
-		buf[1] = '\0';
-		len = 1;
+	while ((len = milstr_charsize(str)) != 0) {
+		memcpy(buf, str, len * sizeof(char));
+		buf[len] = '\0';
+		utf8 = g_locale_to_utf8(buf, -1, NULL, NULL, NULL);
+		if (utf8) {
+			getfont1(fhdl, fdat, utf8, len);
+			g_free(utf8);
+		}
+		str += len;
 	}
-	utf8 = g_locale_to_utf8(buf, -1, NULL, NULL, NULL);
-	if (utf8) {
-		getfont1(fhdl, fdat, utf8, len);
-		g_free(utf8);
-		return fdat;
-	}
-	return NULL;
+	return fdat;
 }
