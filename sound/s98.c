@@ -12,23 +12,20 @@
 #include	"s98.h"
 
 
-#define S98LOG_BUFSIZE (32*1024)
+#define S98LOG_BUFSIZE (32 * 1024)
 
-typedef struct {						// UINT32は 常に 0fillされてる
+typedef struct {
 	BYTE	magic[3];
 	BYTE	formatversion;
-	UINT32	timerinfo;
-	UINT32	timerinfo2;
-	UINT32	compressing;
-	UINT32	offset;
-	UINT32	dumpdata;
-	UINT32	looppoint;
+	BYTE	timerinfo[4];
+	BYTE	timerinfo2[4];
+	BYTE	compressing[4];
+	BYTE	offset[4];
+	BYTE	dumpdata[4];
+	BYTE	looppoint[4];
 	BYTE	headerreserved[0x24];
 	BYTE	title[0x40];
 } S98HDR;
-
-static const S98HDR s98hdr =
-					{{'S','9','8'}, '1', 1, 0, 0, 0x40, 0x80, 0, {0}, {0}};
 
 static struct {
 	FILEH	fh;
@@ -111,6 +108,7 @@ void S98_trash(void) {
 BOOL S98_open(const char *filename) {
 
 	UINT	i;
+	S98HDR	hdr;
 
 	// ファイルのオープン
 	s98log.fh = file_create(filename);
@@ -123,8 +121,16 @@ BOOL S98_open(const char *filename) {
 	s98log.p = 0;
 
 	// ヘッダの保存
-	for (i=0; i<sizeof(s98hdr); i++) {
-		S98_putc(*(((BYTE *)&s98hdr) + i));
+	ZeroMemory(&hdr, sizeof(hdr));
+	hdr.magic[0] = 'S';
+	hdr.magic[1] = '9';
+	hdr.magic[2] = '8';
+	hdr.formatversion = '1';
+	STOREINTELDWORD(hdr.timerinfo, 1);
+	STOREINTELDWORD(hdr.offset, offsetof(S98HDR, title));
+	STOREINTELDWORD(hdr.dumpdata, sizeof(S98HDR));
+	for (i=0; i<sizeof(hdr); i++) {
+		S98_putc(*(((BYTE *)&hdr) + i));
 	}
 
 #if 0
