@@ -54,6 +54,9 @@
 　　・(I286A) メモリの修正
 　　・GDC - GDCクロック 1.79MHzのサポート
 
+　(X11)
+　　・Configure Dialog にてアーキテクチャの指定を追加
+
 
 　・200ラインモードについて (正式サポート / #define SUPPORT_CRT15KHZ)
 　　PC-9801シリーズ(FELLOW、PC-9821、ハイレゾ機を除く)に搭載されている
