@@ -58,10 +58,8 @@ void bios_lio(REG8 cmd) {
 			break;
 
 		case 0x08:			// a8: GCIRCLE
-#if 0
 			ret = lio_gcircle(&lio);
 			break;
-#endif
 
 //		case 0x09:			// a9: GPAINT1
 //			break;

@@ -79,6 +79,7 @@ REG8 lio_gcircle(GLIO lio) {
 	while(d1 <= d2) {
 		draw4(lio, cx, cy, d1, d2, pal);
 		draw4(lio, cx, cy, d2, d1, pal);
+		lio->wait += 8 * (10 + 10 + 10);
 		d1++;
 		d3 += (d1 * 2) - 1;
 		if (d3 >= 0) {

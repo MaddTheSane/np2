@@ -24,7 +24,7 @@ void keyboard_callback(NEVENTITEM item) {
 					keybrd.data = keybrd.buf[keybrd.bufpos];
 					keybrd.bufpos = (keybrd.bufpos + 1) & KB_BUFMASK;
 				}
-				TRACEOUT(("recv -> %02x", keybrd.data));
+//				TRACEOUT(("recv -> %02x", keybrd.data));
 			}
 			pic_setirq(1);
 			nevent_set(NEVENT_KEYBOARD, keybrd.xferclock,
@@ -36,7 +36,7 @@ void keyboard_callback(NEVENTITEM item) {
 static void IOOUTCALL keyboard_o41(UINT port, REG8 dat) {
 
 	if (keybrd.cmd & 1) {
-		TRACEOUT(("send -> %02x", dat));
+//		TRACEOUT(("send -> %02x", dat));
 		keystat_ctrlsend(dat);
 	}
 	else {

@@ -284,7 +284,7 @@ void makepc98bmp(const char *filename) {
 		goto mfnt_err2;
 	}
 	FillMemory(ptr, size, 0xff);
-	setank(ptr, fnt, 0x20, 0x80);
+	setank(ptr, fnt, 0x20, 0x7f);
 	setank(ptr, fnt, 0xa1, 0xe0);
 	patchank(ptr, fontdata_16 + 0*32*16, 0x00);
 	patchank(ptr, fontdata_16 + 1*32*16, 0x80);

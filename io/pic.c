@@ -29,6 +29,7 @@ static const _PICITEM def_slave = {
 
 // ----
 
+#if 0	// スレーブがおかしい…
 void pic_irq(void) {
 
 	PIC		p;
@@ -54,7 +55,7 @@ void pic_irq(void) {
 	slave = 1 << (p->pi[1].icw[2] & 7);
 	dat = mir;
 	if (sir) {
-		dat |= slave;
+		dat |= slave & (~p->pi[0].imr);
 	}
 	if (!(p->pi[0].ocw3 & PIC_OCW3_SMM)) {
 		dat |= p->pi[0].isr;
@@ -81,6 +82,73 @@ void pic_irq(void) {
 			p->pi[0].irr &= ~slave;
 			p->pi[1].isr |= bit;
 			p->pi[1].irr &= ~bit;
+			TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | num));
+			CPU_INTERRUPT((REG8)((p->pi[1].icw[1] & 0xf8) | num), 0);
+		}
+	}
+	else if (!(p->pi[0].isr & bit)) {				// マスター
+		p->pi[0].isr |= bit;
+		p->pi[0].irr &= ~bit;
+		if (num == 0) {
+			nevent_reset(NEVENT_PICMASK);
+		}
+		TRACEOUT(("hardware-int %.2x [%.4x:%.4x]", (p->pi[0].icw[1] & 0xf8) | num, CPU_CS, CPU_IP));
+		CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | num), 0);
+	}
+}
+#else
+void pic_irq(void) {												// ver0.78
+
+	PIC		p;
+	REG8	mir;
+	REG8	sir;
+	REG8	num;
+	REG8	bit;
+	REG8	slave;
+
+	// 割込み許可？
+	if (!CPU_isEI) {
+		return;
+	}
+	p = &pic;
+
+	sir = p->pi[1].irr & (~p->pi[1].imr);
+	slave = 1 << (p->pi[1].icw[2] & 7);
+	mir = p->pi[0].irr;
+	if (sir) {
+		mir |= slave;
+	}
+	mir &= (~p->pi[0].imr);
+	if (mir == 0) {
+		return;
+	}
+	if (!(p->pi[0].ocw3 & PIC_OCW3_SMM)) {
+		mir |= p->pi[0].isr;
+	}
+	num = p->pi[0].pry;
+	bit = 1 << num;
+	while(!(mir & bit)) {
+		num = (num + 1) & 7;
+		bit = 1 << num;
+	}
+	if (p->pi[0].icw[2] & bit) {					// スレーヴ
+		if (sir == 0) {
+			return;
+		}
+		if (!(p->pi[1].ocw3 & PIC_OCW3_SMM)) {
+			sir |= p->pi[1].isr;
+		}
+		num = p->pi[1].pry;
+		bit = 1 << num;
+		while(!(sir & bit)) {
+			num = (num + 1) & 7;
+			bit = 1 << num;
+		}
+		if (!(p->pi[1].isr & bit)) {
+			p->pi[0].isr |= slave;
+			p->pi[0].irr &= ~slave;
+			p->pi[1].isr |= bit;
+			p->pi[1].irr &= ~bit;
 //			TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | num));
 			CPU_INTERRUPT((REG8)((p->pi[1].icw[1] & 0xf8) | num), 0);
 		}
@@ -91,10 +159,11 @@ void pic_irq(void) {
 		if (num == 0) {
 			nevent_reset(NEVENT_PICMASK);
 		}
-//		TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | num));
+//		TRACEOUT(("hardware-int %.2x [%.4x:%.4x]", (p->pi[0].icw[1] & 0xf8) | num, CPU_CS, CPU_IP));
 		CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | num), 0);
 	}
 }
+#endif
 
 
 // 簡易モード(SYSTEM TIMERだけ)

@@ -450,9 +450,6 @@ BOOL profile_write(const char *app, const char *key,
 	return(SUCCESS);
 }
 
-
-// ----
-
 static void bitmapset(BYTE *ptr, UINT pos, BOOL set) {
 
 	UINT8	bit;
@@ -526,7 +523,6 @@ static void binget(char *work, int size, const BYTE *bin, UINT binlen) {
 		milstr_ncat(work, tmp, size);
 	}
 }
-
 
 void profile_iniread(const char *path, const char *app,
 								const PFTBL *tbl, UINT count, PFREAD cb) {
