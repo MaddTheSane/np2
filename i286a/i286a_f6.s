@@ -1,5 +1,6 @@
 
 	INCLUDE		i286a.inc
+	INCLUDE		i286aea.inc
 	INCLUDE		i286aalu.inc
 	INCLUDE		i286aop.inc
 

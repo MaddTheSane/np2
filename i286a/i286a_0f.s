@@ -1,5 +1,6 @@
 
 	INCLUDE		i286a.inc
+	INCLUDE		i286aea.inc
 	INCLUDE		i286aalu.inc
 
 	IMPORT		i286a_ea
@@ -22,23 +23,16 @@ i286a_cts		mov		r6, r8
 				bne		cts_ldall
 				GETPC8
 				and		r12, r0, #(7 << 3)
-				adr		r1, cts1tbl
-				ldr		pc, [r1, r12 lsr #1]
-cts1tbl			dcd		sgdt
-				dcd		sidt
-				dcd		lgdt
-				dcd		lidt
-				dcd		smsw
-				dcd		smsw
-				dcd		lmsw
-				dcd		lmsw
-
-cts_ldall		cmp		r0, #5
-				bne		cts_intr
-
-cts_intr		sub		r8, r6, #(1 << 16)
-				mov		r6, #6
-				b		i286a_localint
+				add		pc, pc, r12 lsr #1
+				nop
+				b		sgdt
+				b		sidt
+				b		lgdt
+				b		lidt
+				b		smsw
+				b		smsw
+				b		lmsw
+				b		lmsw
 
 sgdt			cmp		r0, #&c0
 				bcs		cts_intr
@@ -143,6 +137,66 @@ lmswm			CPUWORK	#6
 				bl		i286_memoryread_w
 				strh	r0, [r9, #CPU_MSW]
 				mov		pc, r11
+
+cts_ldall		cmp		r0, #5
+				bne		cts_intr
+				add		r6, r9, #&800
+				CPUWORK	#195
+				ldrh	r0, [r6, #&04]			; MSW
+				ldr		r8, [r6, #&18]			; IP:flag
+				mov		r2, #3
+				strh	r0, [r9, #CPU_MSW]
+				and		r2, r2, r8 lsr #8
+				bic		r8, r8, #&f000
+				and		r2, r2, r2 lsr #1
+				strb	r2, [r9, #CPU_TRAP]
+				ldrh	r0, [r6, #&1e]			; DS
+				ldr		r1, [r6, #&20]			; CS:SS
+				ldr		r2, [r6, #&24]			; DI:ES
+				strh	r0, [r9, #CPU_DS]
+				mov		r0, r1 lsr #16
+				strh	r1, [r9, #CPU_SS]
+				strh	r0, [r9, #CPU_CS]
+				mov		r0, r2 lsr #16
+				strh	r2, [r9, #CPU_ES]
+				strh	r0, [r9, #CPU_DI]
+
+				ldr		r0, [r6, #&28]			; BP:SI
+				ldr		r1, [r6, #&2c]			; BX:SP
+				ldr		r2, [r6, #&30]			; CX:DX
+				mov		r12, r0 lsr #16
+				strh	r0, [r9, #CPU_SI]
+				strh	r12, [r9, #CPU_BP]
+				mov		r12, r1 lsr #16
+				strh	r1, [r9, #CPU_SP]
+				strh	r12, [r9, #CPU_BX]
+				mov		r12, r2 lsr #16
+				strh	r2, [r9, #CPU_DX]
+				strh	r12, [r9, #CPU_CX]
+
+				ldrh	r0, [r6, #&34]			; AX
+				ldrh	r1, [r6, #&36]			; ES
+				ldrb	r2, [r6, #&38]			; ES
+				ldr		r3, [r6, #&3c]			; CS
+				ldrh	r4, [r6, #&42]			; SS
+				ldrb	r5, [r6, #&44]			; SS
+				ldr		r6, [r6, #&48]			; DS
+				strh	r0, [r9, #CPU_AX]
+				orr		r1, r1, r2 lsl #16
+				bic		r3, r3, #(&ff << 24)
+				orr		r4, r4, r5 lsl #16
+				bic		r6, r6, #(&ff << 24)
+				str		r1, [r9, #CPU_ES_BASE]
+				str		r3, [r9, #CPU_CS_BASE]
+				str		r4, [r9, #CPU_SS_BASE]
+				str		r6, [r9, #CPU_DS_BASE]
+				str		r4, [r9, #CPU_SS_FIX]
+				str		r6, [r9, #CPU_DS_FIX]
+				I286IRQCHECKTERM
+
+cts_intr		sub		r8, r6, #(1 << 16)
+				mov		r6, #6
+				b		i286a_localint
 
 	END
 

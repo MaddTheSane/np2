@@ -13,8 +13,9 @@ D_FLAG				equ		&0400
 O_FLAG				equ		&0800
 
 CPU_REG				equ		0 - 112
+CPU_SEG				equ		16 - 112
 CPU_REMAINCLOCK		equ		28 - 112
-; cpu_baseclock		equ		32 - 112
+CPU_BASECLOCK		equ		32 - 112
 ; cpu_clock			equ		36 - 112
 ; cpu_adrsmask		equ		40 - 112
 CPU_ES_BASE			equ		44 - 112
@@ -23,7 +24,7 @@ CPU_SS_BASE			equ		52 - 112
 CPU_DS_BASE			equ		56 - 112
 CPU_SS_FIX			equ		60 - 112
 CPU_DS_FIX			equ		64 - 112
-; cpu_prefix		equ		68 - 112
+CPU_PREFIX			equ		68 - 112
 CPU_TRAP			equ		70 - 112
 ; cpu_type			equ		71 - 112
 ; cpu_pf_semaphore	equ		72 - 112
@@ -63,6 +64,19 @@ CPU_DS				equ		22 - 112
 CPU_FLAG			equ		24 - 112
 CPU_IP				equ		26 - 112
 
+MAX_PREFIX			equ		8
+
+
+	MACRO
+$label	CPUSV
+$label		str		r8, [r9, #CPU_FLAG]
+	MEND
+
+	MACRO
+$label	CPULD
+$label		ldr		r8, [r9, #CPU_FLAG]
+	MEND
+
 
 	MACRO
 $label	CPUWORK	$clock
@@ -78,122 +92,46 @@ $label		mov		r7, $clock
 	MEND
 
 	MACRO
-$label	CPUSV
-$label		str		r8, [r9, #CPU_FLAG]
+$label	NEXT_OPCODE
+$label		ldr		r7, [r9, #CPU_REMAINCLOCK]
+			cmp		r7, #1
+			movge	pc, r11
+			ldr		r0, [r9, #CPU_BASECLOCK]
+			rsb		r1, r7, #1
+			mov		r7, #1
+			add		r0, r0, r1
+			str		r0, [r9, #CPU_BASECLOCK]
+			str		r7, [r9, #CPU_REMAINCLOCK]
+			mov		pc, r11
 	MEND
 
 	MACRO
-$label	CPULD
-$label		ldr		r8, [r9, #CPU_FLAG]
-	MEND
-
-
-	MACRO
-$label	GETPC8
-$label		ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
-			add		r8, r8, #(1 << 16)
-	MEND
-
-	MACRO
-$label	GETPC16
-$label		ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread_w
-			add		r8, r8, #(2 << 16)
-	MEND
-
-
-	MACRO
-$label	R8SRC	$op, $out
-$label		and		$out, $op, #3
-			add		$out, r9, $out lsl #1
-			tst		$op, #(1 << 2)
-			addne	$out, $out, #1
+$label	REMAIN_ADJUST	$clk
+$label		ldr		r7, [r9, #CPU_REMAINCLOCK]
+			cmp		r7, $clk
+			moveq	pc, r11
+			ldr		r0, [r9, #CPU_BASECLOCK]
+			rsb		r1, r7, $clk
+			mov		r7, $clk
+			add		r0, r0, r1
+			str		r0, [r9, #CPU_BASECLOCK]
+			str		r7, [r9, #CPU_REMAINCLOCK]
+			mov		pc, r11
 	MEND
 
 	MACRO
-$label	R8DST	$op, $out
-$label		and		$out, $op, #(6 << 2)
-			add		$out, r9, $out lsr #2
-			tst		$op, #(1 << 5)
-			addne	$out, $out, #1
+$label	I286IRQCHECKTERM
+$label		ldr		r7, [r9, #CPU_REMAINCLOCK]
+			cmp		r7, #0
+			movgt	pc, r11
+			ldr		r0, [r9, #CPU_BASECLOCK]
+			mov		r1, r7
+			mov		r7, #0
+			sub		r0, r0, r1
+			str		r7, [r9, #CPU_REMAINCLOCK]
+			str		r0, [r9, #CPU_BASECLOCK]
+			mov		pc, r11
 	MEND
-
-	MACRO
-$label	EAREG8	$src
-$label		ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
-			add		r8, r8, #(1 << 16)
-			and		$src, r0, #(6 << 2)
-			add		$src, r9, $src lsr #2
-			tst		r0, #(1 << 5)
-			addne	$src, $src, #1
-	MEND
-
-	MACRO
-$label	REG8EA	$dst, $regclk, $memclk
-$label		ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
-			add		r8, r8, #(1 << 16)
-			R8DST	r0, $dst
-			cmp		r0, #&c0
-			bcc		$label.1
-			CPUWORK	$regclk
-			R8SRC	r0, r12
-			ldrb	r0, [r12, #CPU_REG]
-			b		$label.2
-$label.1	CPUWORK	$memclk
-			bl		i286a_ea
-			bl		i286_memoryread
-$label.2
-	MEND
-
-
-	MACRO
-$label	R16SRC	$op, $out
-$label		and		$out, $op, #7
-			add		$out, r9, $out lsl #1
-	MEND
-
-	MACRO
-$label	R16DST	$op, $out
-$label		and		$out, $op, #(7 << 3)
-			add		$out, r9, $out lsr #2
-	MEND
-
-	MACRO
-$label	EAREG16	$src
-$label		ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
-			add		r8, r8, #(1 << 16)
-			and		$src, r0, #(7 << 3)
-			add		$src, r9, $src lsr #2
-	MEND
-
-	MACRO
-$label	REG16EA	$dst, $regclk, $memclk
-$label		ldr		r0, [r9, #CPU_CS_BASE]
-			add		r0, r0, r8 lsr #16
-			bl		i286_memoryread
-			add		r8, r8, #(1 << 16)
-			R16DST	r0, $dst
-			cmp		r0, #&c0
-			bcc		$label.1
-			CPUWORK	$regclk
-			R16SRC	r0, r12
-			ldrh	r0, [r12, #CPU_REG]
-			b		$label.2
-$label.1	CPUWORK	$memclk
-			bl		i286a_ea
-			bl		i286_memoryread_w
-$label.2
-	MEND
-
 
 	END
 

@@ -1,5 +1,6 @@
 
 	INCLUDE		i286a.inc
+	INCLUDE		i286aea.inc
 	INCLUDE		i286aalu.inc
 	INCLUDE		i286aop.inc
 
@@ -168,7 +169,7 @@ popea16			CPUWORK	#5
 				cmp		r6, #&c0
 				bcc		pop16m
 				R16SRC	r6, r1
-				ldrh	r0, [r1, #CPU_REG]
+				strh	r0, [r1, #CPU_REG]
 				mov		pc, r11
 pop16m			mov		r5, r0
 				mov		r0, r6
