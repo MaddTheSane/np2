@@ -113,6 +113,8 @@ static void np2sysp_sxsi(const void *arg1, const void *arg2) {
 	UINT8	ret;
 	REG8	flag;
 
+	TRACEOUT(("np2sysp_sxsi"));
+
 	org.r_ax = CPU_AX;
 	org.r_cx = CPU_CX;
 	org.r_dx = CPU_DX;

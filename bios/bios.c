@@ -14,6 +14,7 @@
 #include	"keytable.res"
 #include	"itfrom.res"
 #include	"startup.res"
+#include	"biosboot.res"
 #include	"sxsibios.res"
 
 
@@ -171,6 +172,7 @@ void bios_init(void) {
 	CopyMemory(mem + 0xfd800 + 0x1ab7, fdfmt2hd, sizeof(fdfmt2hd));
 	CopyMemory(mem + 0xfd800 + 0x1adf, fdfmt2dd, sizeof(fdfmt2dd));
 	CopyMemory(mem + 0xfd800 + 0x1980, fdfmt144, sizeof(fdfmt144));	// ver0.31
+	CopyMemory(mem + 0xfd800 + 0x2400, biosboot, sizeof(biosboot));	// ver0.73
 
 	SETBIOSMEM16(0xfffe8, 0xcb90);
 	SETBIOSMEM16(0xfffec, 0xcb90);
@@ -212,7 +214,8 @@ void bios_init(void) {
 	}
 	extmem_init(np2cfg.EXTMEM);
 #endif
-//	CopyMemory(mem + 0xd0000, sxsibios, sizeof(sxsibios));
+
+	CopyMemory(mem + 0xd0000, sxsibios, sizeof(sxsibios));
 
 	CopyMemory(mem + 0x1c0000, mem + 0x1f8000, 0x08000);
 	CopyMemory(mem + 0x1e8000, mem + 0x0e8000, 0x10000);
@@ -353,8 +356,12 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(1);
 
 		case 0xfd802:					// ブート
-			bios_reinitbyswitch();									// ver0.27
-			bios_vectorset();										// ver0.29
+			bios_reinitbyswitch();
+			bios_vectorset();
+#if 1																// ver0.73
+			CPU_CS = 0xfd80;
+			CPU_IP = 0x2400;
+#else
 			bootseg = bootstrapload();
 			CPU_STI;
 			CPU_CS = (bootseg != 0)?bootseg:0xe800;
@@ -362,6 +369,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			CPU_SS = 0x0030;
 			CPU_SP = 0x00e6;
 			CPU_IP = 0x0000;
+#endif
 			return(1);
 
 		case 0xfffe8:					// ブートストラップロード
@@ -371,8 +379,6 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 				CPU_STI;
 				CPU_CS = bootseg;
 				CPU_IP = 0x0000;
-				CPU_SS = 0x0030;
-				CPU_SP = 0x00e6;
 				return(1);
 			}
 			return(0);

@@ -2,7 +2,7 @@ AS		= masm
 AOPT	= /ML /DNP2
 OBJ		= ..\obj\romrel
 
-all: $(OBJ) ..\bios\startup.res ..\bios\sxsibios.res ..\fdd\hddboot.res
+all: $(OBJ) ..\bios\startup.res ..\bios\biosboot.res ..\bios\sxsibios.res ..\fdd\hddboot.res
 
 $(OBJ):
 	if not exist $(OBJ) mkdir $(OBJ)
@@ -18,6 +18,20 @@ $(OBJ)\startup.exe: $(OBJ)\startup.obj
 	link $(OBJ)\startup,$(OBJ)\startup;
 
 $(OBJ)\startup.obj: startup.asm
+	$(AS) $(AOPT) $(*B),$*,$*;
+
+
+
+..\bios\biosboot.res: $(OBJ) $(OBJ)\biosboot.bin
+	bin2txt $(OBJ)\biosboot.bin biosboot > ..\bios\biosboot.res
+
+$(OBJ)\biosboot.bin: $(OBJ)\biosboot.exe
+	exe2bin $(OBJ)\biosboot $(OBJ)\biosboot.bin
+
+$(OBJ)\biosboot.exe: $(OBJ)\biosboot.obj
+	link $(OBJ)\biosboot,$(OBJ)\biosboot;
+
+$(OBJ)\biosboot.obj: biosboot.asm
 	$(AS) $(AOPT) $(*B),$*,$*;
 
 

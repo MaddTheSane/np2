@@ -61,7 +61,7 @@ sxsi_init:		push	ds
 				mov		ds:[04bah], bh
 				mov		bl, bh
 				mov		bh, 0
-				mov		bl, 0fh
+				and		bl, 0fh
 				mov		byte ptr ds:[bx+04d0h],45h
 				pop		bx
 				push	ax

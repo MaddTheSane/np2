@@ -995,6 +995,28 @@ void bios0x1b(void) {
 	BYTE	ret_ah;
 	REG8	flag;
 
+#if 0			// bypass to disk bios
+	REG8	seg;
+
+	seg = mem[0x004b0 + (CPU_AH >> 4)];
+	if (seg) {
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 2), CPU_DS);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 4), CPU_SI);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 6), CPU_DI);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 8), CPU_ES);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 10), CPU_BP);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 12), CPU_DX);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 14), CPU_CX);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 16), CPU_BX);
+		i286_memword_write(CPU_SS, (REG16)(CPU_SP - 18), CPU_AX);
+		CPU_SP -= 18;
+		CPU_CS = seg << 8;
+		CPU_IP = 0x18;
+		TRACEOUT(("bypass to %.4x:%.4x", CPU_CS, CPU_IP));
+		return;
+	}
+#endif
+
 	switch(CPU_AL & 0xf0) {
 		case 0x90:
 			ret_ah = fdd_operate(DISKTYPE_2HD, 0, 0);
