@@ -10,6 +10,21 @@
 
 　ver0.73 → ver0.74
 
+　・I/OレベルでのSASIに対応
+　・SCSI HDDに対応
+　・np2qn形式 HOSTDRVに対応
+　・BIOS - ブート時にディップスイッチで指定した画面モードを反映
+　・VRAM - 標準ディスプレイ時にメモリを破壊するバグを修正
+　・
+
+
+
+　(Windows)
+　　・Aboutダイアログの修正
+
+　(MacOS9)
+　　・テンキーの [+] [/] の修正
+
 
 　・内部変更
 　　　pccore.h の中で statsave.hをインクルード

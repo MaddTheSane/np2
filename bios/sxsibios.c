@@ -201,19 +201,24 @@ static const SXSIFUNC sasifunc[16] = {
 
 REG8 sasibios_operate(void) {
 
-	SXSIDEV	sxsi;
 	UINT	type;
+	SXSIDEV	sxsi;
 
+	if (pccore.hddif & PCHDD_IDE) {
+		type = SXSIBIOS_IDE;
+	}
+#if defined(SUPPORT_SASI)
+	else if (pccore.hddif & PCHDD_SASI) {
+		type = SXSIBIOS_SASI;
+	}
+#endif
+	else {
+		return(0x60);
+	}
 	sxsi = sxsi_getptr(CPU_AL);
 	if (sxsi == NULL) {
 		return(0x60);
 	}
-	type = SXSIBIOS_IDE;
-#if defined(SUPPORT_SASI)
-	if (pccore.hddif & PCHDD_SASI) {
-		type = SXSIBIOS_SASI;
-	}
-#endif
 	return((*sasifunc[CPU_AH & 0x0f])(type, sxsi));
 }
 
@@ -311,6 +316,9 @@ REG8 scsibios_operate(void) {
 
 	SXSIDEV	sxsi;
 
+	if (!(pccore.hddif & PCHDD_SCSI)) {
+		return(0x60);
+	}
 	sxsi = sxsi_getptr(CPU_AL);
 	if (sxsi == NULL) {
 		return(0x60);

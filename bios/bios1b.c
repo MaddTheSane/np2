@@ -18,8 +18,6 @@ enum {
 };
 
 
-// static	UINT8	fdmode = 0;
-static	BYTE	work[65536];
 static	BYTE	mtr_c = 0;
 static	UINT	mtr_r = 0;
 
@@ -68,7 +66,7 @@ static void biosfd_resultout(UINT32 result) {
 }
 #endif
 
-static BOOL biosfd_seek(BYTE track, BOOL ndensity) {
+static BOOL biosfd_seek(REG8 track, BOOL ndensity) {
 
 	if (ndensity) {
 		if (track < 42) {
@@ -86,7 +84,7 @@ static BOOL biosfd_seek(BYTE track, BOOL ndensity) {
 	return(SUCCESS);
 }
 
-static UINT16 fdfmt_biospara(BYTE fmt, BYTE rpm) {					// ver0.31
+static UINT16 fdfmt_biospara(REG8 fmt, REG8 rpm) {					// ver0.31
 
 	UINT	seg;
 	UINT	off;
@@ -116,10 +114,10 @@ static UINT16 fdfmt_biospara(BYTE fmt, BYTE rpm) {					// ver0.31
 	if (fmt) {
 		off += 2;
 	}
-	return(i286_memword_read(seg, LOW16(off)));
+	return(i286_memword_read(seg, off));
 }
 
-static void change_rpm(BYTE rpm) {									// ver0.31
+static void change_rpm(REG8 rpm) {									// ver0.31
 
 	if (np2cfg.usefd144) {
 		fdc.rpm = rpm;
@@ -264,9 +262,9 @@ static void b0clr(void) {
 }
 #endif
 
-static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
+static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 
-	BYTE	ret_ah = 0x60;
+	REG8	ret_ah = 0x60;
 	UINT16	size;
 	UINT16	pos;
 	UINT16	accesssize;
@@ -385,7 +383,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				}
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26
-				if ((fdc.R++ == (BYTE)para) && (CPU_AH & 0x80) && (!fdc.hd)) {
+				if ((fdc.R++ == (UINT8)para) &&
+					(CPU_AH & 0x80) && (!fdc.hd)) {
 					fdc.hd = 1;
 					fdc.H = 1;
 					fdc.R = 1;
@@ -481,7 +480,8 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				addr += accesssize;
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26
-				if ((fdc.R++ == (BYTE)para) && (CPU_AH & 0x80) && (!fdc.hd)) {
+				if ((fdc.R++ == (UINT8)para) &&
+					(CPU_AH & 0x80) && (!fdc.hd)) {
 					fdc.hd = 1;
 					fdc.H = 1;
 					fdc.R = 1;
@@ -546,7 +546,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				addr += accesssize;
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26
-				if (fdc.R++ == (BYTE)para) {
+				if (fdc.R++ == (UINT8)para) {
 					if ((CPU_AH & 0x80) && (!fdc.hd)) {
 						fdc.hd = 1;
 						fdc.H = 1;
@@ -639,7 +639,7 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 				ret_ah = 0xd0;
 				break;
 			}
-			fdc.sc = (BYTE)para;
+			fdc.sc = (UINT8)para;
 			fdd_formatinit();
 			pos = CPU_BP;
 			for (s=0; s<fdc.sc; s++) {
@@ -657,225 +657,9 @@ static BYTE fdd_operate(BYTE type, BOOL ndensity, BYTE rpm) {		// ver0.31
 }
 
 
-// ---- SASI
-
-static void init_sasi_equip(void) {
-
-	UINT16	diskequip;
-	UINT8	i;
-	UINT16	bit;
-	SXSIDEV	sxsi;
-
-	diskequip = GETBIOSMEM16(MEMW_DISK_EQUIP);
-	diskequip &= 0xf0ff;
-	for (i=0x00, bit=0x0100; i<0x02; i++, bit<<=1) {
-		sxsi = sxsi_getptr(i);
-		if ((sxsi) && (sxsi->fname[0])) {
-			diskequip |= bit;
-		}
-	}
-	SETBIOSMEM16(MEMW_DISK_EQUIP, diskequip);
-}
-
-static void init_scsi_equip(void) {
-
-	UINT8	i;
-	UINT8	bit;
-	SXSIDEV	sxsi;
-	UINT16	w;
-
-	mem[MEMB_DISK_EQUIPS] = 0;
-	ZeroMemory(&mem[0x00460], 0x20);
-	for (i=0, bit=1; i<4; i++, bit<<=1) {
-		sxsi = sxsi_getptr((REG8)(0x20 + i));
-		if ((sxsi) && (sxsi->fname[0])) {
-			mem[MEMB_DISK_EQUIPS] |= bit;
-			mem[0x00460+i*4] = sxsi->sectors;
-			mem[0x00461+i*4] = sxsi->surfaces;
-			switch(sxsi->size) {
-				case 256:
-					w = 0 << 12;
-					break;
-
-				case 512:
-					w = 1 << 12;
-					break;
-
-				default:
-					w = 2 << 12;
-					break;
-			}
-			w |= 0xc000;
-			w |= sxsi->cylinders;
-			SETBIOSMEM16(0x00462+i*4, w);
-		}
-	}
-}
-
-static BYTE sxsi_pos(long *pos) {
-
-	SXSIDEV	sxsi;
-
-	*pos = 0;
-	sxsi = sxsi_getptr(CPU_AL);
-	if (sxsi == NULL) {
-		return(0x60);
-	}
-	if (CPU_AL & 0x80) {
-		if ((CPU_DL >= sxsi->sectors) ||
-			(CPU_DH >= sxsi->surfaces) ||
-			(CPU_CX >= sxsi->cylinders)) {
-			return(0xd0);
-		}
-		*pos = ((CPU_CX * sxsi->surfaces) + CPU_DH) * sxsi->sectors
-															+ CPU_DL;
-	}
-	else {
-		*pos = (CPU_DL << 16) | CPU_CX;
-		if (!(CPU_AL & 0x20)) {
-			(*pos) &= 0x1fffff;
-		}
-		if ((*pos) >= sxsi->totals) {
-			return(0xd0);
-		}
-	}
-	return(0x00);
-}
-
-static REG8 sxsidev_format(REG8 drv, SXSIDEV sxsi) {
-
-	UINT	count;
-	REG8	ret;
-	long	trk;
-	long	trkmax;
-
-	count = timing_getcount();						// 時間を止める
-
-	ret = 0;
-	trk = 0;
-	trkmax = sxsi->surfaces * sxsi->cylinders;
-	while(trk < trkmax) {
-		ret = sxsi_format(drv, trk * sxsi->sectors);
-		if (ret) {
-			break;
-		}
-		trk++;
-	}
-
-	timing_setcount(count);							// 再開
-
-	return(ret);
-}
-
-REG8 sxsi_operate(REG8 type) {
-
-	SXSIDEV	sxsi;
-	REG8	ret_ah;
-	long	pos;
-
-	sxsi = sxsi_getptr(CPU_AL);
-	if (sxsi == NULL) {
-		return(0x60);
-	}
-
-	ret_ah = 0x00;
-	switch(CPU_AH & 0x0f) {
-		case 0x01:						// ベリファイ
-		case 0x07:						// リトラクト
-		case 0x0f:						// リトラクト
-			break;
-
-   		case 0x03:						// イニシャライズ
-			if (type == BIOS1B_SASI) {
-				init_sasi_equip();
-			}
-			else if (type == BIOS1B_SCSI) {
-				init_scsi_equip();
-			}
-			break;
-
-   		case 0x04:						// センス
-			ret_ah = 0x00;
-			if ((CPU_AH == 0x04) && (type == BIOS1B_SASI)) {
-				ret_ah = 0x04;
-			}
-			else if ((CPU_AH == 0x44) && (type == BIOS1B_SCSI)) {
-				CPU_BX = 1;
-			}
-			else if (CPU_AH == 0x84) {
-				CPU_BX = sxsi->size;
-				CPU_CX = sxsi->cylinders;
-				CPU_DH = sxsi->surfaces;
-				CPU_DL = sxsi->sectors;
-			}
-			break;
-
-		case 0x05:						// データの書き込み
-			i286_memx_read(ES_BASE + CPU_BP, work, CPU_BX);
-			ret_ah = sxsi_pos(&pos);
-			if (!ret_ah) {
-				ret_ah = sxsi_write(CPU_AL, pos, work, CPU_BX);
-			}
-			break;
-
-		case 0x06:						// データの読み込み
-			ret_ah = sxsi_pos(&pos);
-			if (!ret_ah) {
-				ret_ah = sxsi_read(CPU_AL, pos, work, CPU_BX);
-				if (ret_ah < 0x20) {
-					i286_memx_write(ES_BASE + CPU_BP, work, CPU_BX);
-				}
-			}
-			break;
-
-		case 0x0a:						// セクタ長設定
-			if ((type == BIOS1B_SCSI) &&
-				(sxsi->size == (128 << (CPU_BH & 3)))) {
-				ret_ah = 0x00;
-			}
-			else {
-				ret_ah = 0x40;
-			}
-			break;
-
-		case 0x0c:						// 代替情報取得
-			if (type == BIOS1B_SCSI) {
-				ret_ah = 0x00;
-				CPU_CX = 0;
-			}
-			else {
-				ret_ah = 0x40;
-			}
-			break;
-
-		case 0x0d:						// フォーマット
-			if (CPU_AH & 0x80) {
-				ret_ah = sxsidev_format(CPU_AL, sxsi);
-			}
-			else {
-				if (CPU_DL) {
-					ret_ah = 0x30;
-					break;
-				}
-				i286_memstr_read(CPU_ES, CPU_BP, work, CPU_BX);
-				ret_ah = sxsi_pos(&pos);
-				if (!ret_ah) {
-					ret_ah = sxsi_format(CPU_AL, pos);
-				}
-			}
-			break;
-
-		default:
-			ret_ah = 0x40;
-			break;
-	}
-	return(ret_ah);
-}
-
-
 // -------------------------------------------------------------------- BIOS
 
-static UINT16 boot_fd1(BYTE rpm) {									// ver0.31
+static UINT16 boot_fd1(REG8 rpm) {									// ver0.31
 
 	UINT	remain;
 	UINT	size;
@@ -926,7 +710,7 @@ static UINT16 boot_fd1(BYTE rpm) {									// ver0.31
 	return(bootseg);
 }
 
-static UINT16 boot_fd(BYTE drv, BYTE type) {						// ver0.27
+static UINT16 boot_fd(REG8 drv, REG8 type) {						// ver0.27
 
 	UINT16	bootseg;
 
@@ -971,7 +755,7 @@ static UINT16 boot_fd(BYTE drv, BYTE type) {						// ver0.27
 
 static REG16 boot_hd(REG8 drv) {
 
-	BYTE	ret;
+	REG8	ret;
 
 	ret = sxsi_read(drv, 0, mem + 0x1fc00, 0x400);
 	if (ret < 0x20) {
@@ -1039,18 +823,15 @@ REG16 bootstrapload(void) {
 	for (i=0; (i<4) && (!bootseg); i++) {
 		bootseg = boot_hd((REG8)(0xa0 + i));
 	}
-
-//	init_fdd_equip();
-//	init_sasi_equip();
-//	init_scsi_equip();
 	return(bootseg);
 }
+
 
 // --------------------------------------------------------------------------
 
 void bios0x1b(void) {
 
-	BYTE	ret_ah;
+	REG8	ret_ah;
 	REG8	flag;
 
 #if defined(SUPPORT_SCSI)
@@ -1140,19 +921,6 @@ void bios0x1b(void) {
 			break;
 	}
 #if 0
-	{
-		static BYTE p = 0;
-		if ((CPU_CL == 0x4d) && (ret_ah == 0xe0)) {
-			if (!p) {
-				trace_sw = 1;
-				p++;
-				debug_status();
-				memorydump();
-			}
-		}
-	}
-#endif
-#if 1
 	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
 							i286_memword_read(CPU_SS, CPU_SP+2),

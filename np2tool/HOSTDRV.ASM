@@ -187,6 +187,11 @@ drvcheck:		and		al, 0dfh
 				mov		dx, offset int2f
 				int		21h
 
+				mov		cl, 13
+				mov		dx, offset user
+				mov		ax, 5e01h
+				int		21h
+
 				sti
 				mov		al, ds:inf.drive_no
 				add		byte ptr ds:sty_drive, al
@@ -255,6 +260,7 @@ title_msg		db	"host-drive driver for np2+dos ("
 				db	VERSION_ID
 				db	 ")"
 crlf			db	13, 10, "$"
+user			db	"NekoProjectII  "
 
 
 stay_param		db	13, "check_hostdrv"

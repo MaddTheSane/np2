@@ -135,20 +135,22 @@ static void setvsyncclock(void) {
 	pccore.vsyncclock = cnt - pccore.dispclock;
 }
 
-static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
+static void pccore_set(void) {
 
 	UINT8	model;
+	UINT32	multiple;
 
+	ZeroMemory(&pccore, sizeof(pccore));
 	model = PCMODEL_VX;
-	if (!milstr_cmp(modelstr, str_VM)) {
+	if (!milstr_cmp(np2cfg.model, str_VM)) {
 		model = PCMODEL_VM;
 	}
-	else if (!milstr_cmp(modelstr, str_EPSON)) {
+	else if (!milstr_cmp(np2cfg.model, str_EPSON)) {
 		model = PCMODEL_EPSON | PCMODEL_VM;
 	}
 	pccore.model = model;
 
-	if (base >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
+	if (np2cfg.baseclock >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
 		pccore.baseclock = PCBASECLOCK25;			// 2.5MHz
 		pccore.cpumode = 0;
 	}
@@ -156,6 +158,7 @@ static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
 		pccore.baseclock = PCBASECLOCK20;			// 2.0MHz
 		pccore.cpumode = CPUMODE_8MHz;
 	}
+	multiple = np2cfg.multiple;
 	if (multiple == 0) {
 		multiple = 1;
 	}
@@ -170,6 +173,27 @@ static void setpcclock(const char *modelstr, UINT base, UINT multiple) {
 	pccore.vsyncclock = pccore.realclock * 5 / 3102;
 	pccore.keyboardclock = pccore.realclock / 1920;
 	pccore.midiclock = pccore.realclock / 3125;
+
+	// 拡張メモリ
+	pccore.extmem = 0;
+
+	// HDDの接続 (I/Oの使用状態が変わるので..
+//	if (np2cfg.dipsw[1] & 0x20) {
+		pccore.hddif |= PCHDD_IDE;
+//	}
+	pccore.hddif |= PCHDD_SCSI;
+
+	// サウンドボードの接続
+	pccore.sound = np2cfg.SOUND_SW;
+
+	// その他CBUSの接続
+	pccore.device = 0;
+	if (np2cfg.pc9861enable) {
+		pccore.device |= PCCBUS_PC9861K;
+	}
+	if (np2cfg.mpuenable) {
+		pccore.device |= PCCBUS_MPU98;
+	}
 }
 
 
@@ -316,28 +340,7 @@ void pccore_reset(void) {
 		sound_init();
 	}
 
-
-	// さて・・・？
-	setpcclock(np2cfg.model, np2cfg.baseclock, np2cfg.multiple);
-
-	// 拡張メモリ
-	pccore.extmem = 0;
-
-	// HDDの接続 (I/Oの使用状態が変わるので..
-	pccore.hddif = PCHDD_SCSI | PCHDD_IDE;
-
-	// サウンドボードの接続
-	pccore.sound = np2cfg.SOUND_SW;
-
-	// その他CBUSの接続
-	pccore.device = 0;
-	if (np2cfg.pc9861enable) {
-		pccore.device |= PCCBUS_PC9861K;
-	}
-	if (np2cfg.mpuenable) {
-		pccore.device |= PCCBUS_MPU98;
-	}
-
+	pccore_set();
 
 	sound_changeclock();
 	beep_changeclock();
