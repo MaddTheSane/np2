@@ -333,6 +333,7 @@ static const INITBL iniitem[] = {
 	{"MS_RAPID", INITYPE_BOOL,		&np2cfg.MOUSERAPID,		0},
 
 	{"VRAMwait", INITYPE_BYTEARG,	np2cfg.wait,			6},
+	{"DspClock", INITYPE_UINT8,		&np2oscfg.DISPCLK,		0},
 	{"DispSync", INITYPE_BOOL,		&np2cfg.DISPSYNC,		0},
 	{"Real_Pal", INITYPE_BOOL,		&np2cfg.RASTER,			0},
 	{"RPal_tim", INITYPE_UINT8,		&np2cfg.realpal,		0},

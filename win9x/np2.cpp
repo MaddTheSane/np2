@@ -1079,9 +1079,9 @@ static void processwait(WORD cnt) {
 		scrnmng_dispclock();
 		keydisp_draw(np2oscfg.DRAW_SKIP);
 		viewer_allreload(FALSE);
-		if (np2oscfg.DISPCLK & 2) {
+		if (np2oscfg.DISPCLK & 3) {
 			if (sysmng_workclockrenewal()) {
-				sysmng_updatecaption(2);
+				sysmng_updatecaption(3);
 			}
 		}
 	}

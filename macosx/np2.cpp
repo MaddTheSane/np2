@@ -507,9 +507,9 @@ static void processwait(UINT waitcnt) {
 	if (timing_getcount() >= waitcnt) {
 		timing_setcount(0);
 		framecnt = 0;
-		if (np2oscfg.DISPCLK & 2) {
+		if (np2oscfg.DISPCLK & 3) {
 			if (sysmng_workclockrenewal()) {
-				sysmng_updatecaption(2);
+				sysmng_updatecaption(3);
 			}
 		}
 	}
