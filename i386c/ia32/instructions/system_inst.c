@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.2 2003/12/11 15:01:00 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -236,7 +236,6 @@ LIDT16_Ms(DWORD op)
 	DWORD base;
 	WORD limit;
 
-	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
 		madr = get_ea(op);
@@ -257,7 +256,6 @@ LIDT32_Ms(DWORD op)
 	DWORD base;
 	WORD limit;
 
-	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
 		madr = get_ea(op);
@@ -277,7 +275,6 @@ SIDT16_Ms(DWORD op)
 	DWORD base;
 	WORD limit;
 
-	GET_PCBYTE(op);
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
 		base = CPU_IDTR_BASE & 0x00ffffff;
@@ -357,6 +354,7 @@ MOV_CdRd(void)
 			src |= CPU_CR0_ET;	/* FPU present */
 #endif
 			CPU_CR0 = src;
+			VERBOSE(("cr0: 0x%08x -> 0x%08x", reg, CPU_CR0));
 
 			if ((reg ^ CPU_CR0) & (CPU_CR0_PE|CPU_CR0_PG)) {
 				tlb_flush(FALSE);
@@ -381,7 +379,9 @@ MOV_CdRd(void)
 			break;
 
 		case 2: /* CR2 */
+			reg = CPU_CR2;
 			CPU_CR2 = src;	/* page fault linear address */
+			VERBOSE(("cr2: 0x%08x -> 0x%08x", reg, CPU_CR2));
 			break;
 
 		case 3: /* CR3 */
@@ -390,7 +390,9 @@ MOV_CdRd(void)
 			 * 4 = PCD (page level cache diable)
 			 * 3 = PWT (page level write throgh)
 			 */
+			reg = CPU_CR3;
 			CPU_CR3 = src & 0xfffff018;
+			VERBOSE(("cr3: 0x%08x -> 0x%08x", reg, CPU_CR3));
 			tlb_flush(FALSE);
 			break;
 
@@ -416,8 +418,9 @@ MOV_CdRd(void)
 				ia32_warning("MOV_CdRd: CR4 <- 0x%08x", src);
 			}
 
-			reg = CPU_CR0;
+			reg = CPU_CR4;
 			CPU_CR4 = src;
+			VERBOSE(("cr4: 0x%08x -> 0x%08x", reg, CPU_CR4));
 
 			if ((reg ^ CPU_CR4) & (CPU_CR4_PSE|CPU_CR4_PGE|CPU_CR4_PAE)) {
 				tlb_flush(FALSE);
@@ -525,7 +528,7 @@ SMSW_Ed(DWORD op)
 	} else {
 		CPU_WORKCLOCK(3);
 		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)CPU_CR0);
+		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, CPU_CR0);
 	}
 }
 
