@@ -20,7 +20,7 @@ static const char fddui_filter[] =										\
 					"Floppy disk images (*.XDF;*.HDM;*.DUP;*.2HD)\0"	\
 									"*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0"	\
 					"All supported Files\0"								\
-									"*.d88;*.88d;*.d98;*.98d;"			\
+									"*.d88;*.88d;*.d98;*.98d;*.fdi;"	\
 									"*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0"	\
 					"All files (*.*)\0*.*\0";
 static const FILESEL fddui = {fddui_title, str_d88, fddui_filter, 3};

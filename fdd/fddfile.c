@@ -75,6 +75,9 @@ const char		*p;
 			(!milstr_cmp(p, str_d98)) || (!milstr_cmp(p, str_98d))) {
 			ftype = FTYPE_D88;
 		}
+		else if (!milstr_cmp(p, str_fdi)) {
+			ftype = FTYPE_FDI;
+		}
 		else {
 			ftype = FTYPE_BETA;
 		}
@@ -83,6 +86,9 @@ const char		*p;
 	switch(ftype) {
 		case FTYPE_BETA:
 			return(fddxdf_set(fdd, fname, ro));
+
+		case FTYPE_FDI:
+			return(fddxdf_setfdi(fdd, fname, ro));
 
 		case FTYPE_D88:
 			return(fddd88_set(fdd, fname, ro));

@@ -33,11 +33,12 @@ enum {
 };
 
 typedef struct {
-	BYTE	tracks;
-	BYTE	sectors;
-	BYTE	n;
-	BYTE	meida;
-	BYTE	rpm;
+	UINT32	headersize;
+	UINT8	tracks;
+	UINT8	sectors;
+	UINT8	n;
+	UINT8	disktype;
+	UINT8	rpm;
 } _XDFINFO, *XDFINFO;
 
 typedef struct {

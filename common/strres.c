@@ -16,6 +16,7 @@ const char str_d88[] = "d88";
 const char str_d98[] = "d98";
 const char str_thd[] = "thd";
 const char str_hdi[] = "hdi";
+const char str_fdi[] = "fdi";
 const char str_hdd[] = "hdd";
 const char str_nhd[] = "nhd";
 

@@ -208,14 +208,7 @@ static void dlgsetlist(void) {
 		do {
 			append = FALSE;
 			if (fli.attr & 0x10) {
-#if defined(WIN32) && !defined(_WIN32_WCE)
-				if ((file_cmpname(fli.path, ".")) &&
-					(file_cmpname(fli.path, ".."))) {
-					append = TRUE;
-				}
-#else
 				append = TRUE;
-#endif
 			}
 			else if (!(fli.attr & 0x08)) {
 				append = checkext(fli.path, filesel.ext);
@@ -386,9 +379,10 @@ const char	*title;
 
 // ----
 
-static const char diskfilter[] = "All supported Files";
+static const char diskfilter[] = "All supported files";
 static const char fddtitle[] = "Select floppy image";
-static const char fddext[] = "d88\088d\0d98\098d\0xdf\0hdm\0dup\02hd\0tfd\0";
+static const char fddext[] = "d88\088d\0d98\098d\0fdi\0" \
+								"xdf\0hdm\0dup\02hd\0tfd\0";
 static const char hddtitle[] = "Select HDD image";
 static const char sasiext[] = "thd\0nhd\0hdi\0";
 static const char scsiext[] = "hdd\0";

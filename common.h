@@ -93,3 +93,25 @@ typedef union {
 #endif
 #endif
 
+
+enum {
+	FTYPE_NONE = 0,		// Ž©“®”»•Ê or PC
+	FTYPE_SMIL,
+	FTYPE_TEXT,
+	FTYPE_BMP,
+	FTYPE_PICT,
+	FTYPE_PNG,
+	FTYPE_WAV,
+	FTYPE_OGG,
+	FTYPE_D88,
+	FTYPE_FDI,
+	FTYPE_BETA,
+	FTYPE_THD,
+	FTYPE_NHD,
+	FTYPE_HDI,
+	FTYPE_HDD,
+	FTYPE_S98,
+	FTYPE_MIMPI,
+	FTYPE_USER
+};
+
