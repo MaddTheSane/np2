@@ -53,7 +53,7 @@
 static	UINT		framecnt = 0;
 static	UINT		waitcnt = 0;
 static	UINT		framemax = 1;
-        BYTE		scrnmode;
+        BYTE		scrnmode = 0;
 
 
 #define DRAG_THRESHOLD		5
@@ -694,7 +694,7 @@ int main(int argc, char *argv[]) {
         AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
     }
 
-	scrnmode = 0;
+	scrnmng_initialize();
 	if (scrnmng_create(scrnmode) != SUCCESS) {
 		TRACETERM();
 		macossub_term();
@@ -882,7 +882,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                     long start, fin;
                     const char	urlStr[] = "http://retropc.net/tk800/np2x/help.html";
 
-                    ICStart(&inst, '????');
+                    ICStart(&inst, 'SMil');
                     start = 0;
                     fin = strlen(urlStr);
                     ICLaunchURL(inst, "\p", urlStr, strlen(urlStr), &start, &fin);
@@ -1072,6 +1072,8 @@ static void setUpCarbonEvent(void) {
 								windEventList, 0, NULL);
 }
 
+static short	backupwidth=0, backupheight=0;
+
 static bool setupMainWindow(void) {
 #if defined(NP2GCC)
     OSStatus	err;
@@ -1100,8 +1102,10 @@ static bool setupMainWindow(void) {
 	}
 	SizeWindow(hWndMain, 640, 400, TRUE);
 #endif
-	scrnmng_initialize();
+
     setUpCarbonEvent();
+    if (backupwidth) scrnmng_setwidth(0, backupwidth);
+    if (backupheight) scrnmng_setheight(0, backupheight);
 	ShowWindow(hWndMain);
     return(true);
 }
@@ -1109,13 +1113,22 @@ static bool setupMainWindow(void) {
 static void toggleFullscreen(void) {
     static Ptr 	bkfullscreen;
     static BYTE mouse = 0;
+    MenuRef	menu = GetMenuRef(IDM_SCREEN);
+    Rect	bounds;
+    short	w = 640, h = 480;
 
     soundmng_stop();
-    if (!scrnmode & SCRNMODE_FULLSCREEN) {
-        RGBColor col = {0, 0, 0};
-        short	w=640, h=480;
+    if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
+        HandleMenuChoice(IDM_ROLNORMAL);
+        GetWindowBounds(hWndMain, kWindowContentRgn, &bounds);
+        backupwidth = bounds.right - bounds.left;
+        backupheight = bounds.bottom - bounds.top;
+        toolwin_close();
         DisposeWindow(hWndMain);
-        BeginFullScreen(&bkfullscreen,0,&w,&h,&hWndMain,&col,(fullScreenAllowEvents | fullScreenDontChangeMenuBar));	
+        BeginFullScreen(&bkfullscreen,0,&w,&h,&hWndMain,NULL,(fullScreenAllowEvents | fullScreenDontChangeMenuBar));	
+        DisableMenuItem(menu, IDM_ROLNORMAL);
+        DisableMenuItem(menu, IDM_ROLLEFT);
+        DisableMenuItem(menu, IDM_ROLRIGHT);
         HideMenuBar();
         setUpCarbonEvent();
         if (!np2oscfg.MOUSE_SW) {
@@ -1134,7 +1147,13 @@ static void toggleFullscreen(void) {
             mouse_running(MOUSE_OFF);
             menu_setmouse(0);
         }
+        EnableMenuItem(menu, IDM_ROLNORMAL);
+        EnableMenuItem(menu, IDM_ROLLEFT);
+        EnableMenuItem(menu, IDM_ROLRIGHT);
         ShowMenuBar();
+        if (np2oscfg.toolwin) {
+            toolwin_open();
+        }
     }
     CheckMenuItem(GetMenuHandle(IDM_SCREEN), LoWord(IDM_FULLSCREEN), scrnmode & SCRNMODE_FULLSCREEN);
     soundmng_play();

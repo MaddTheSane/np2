@@ -56,6 +56,10 @@ void Setfiletype(int ftype, OSType *creator, OSType *fileType) {
             *creator = 'hook';
             break;
 #endif
+        case FTYPE_INI:
+            *fileType = 'TEXT';
+            *creator = 'SMil';
+            break;
 	}
 }
 
@@ -90,7 +94,7 @@ static int GetFileExt(char* filename) {
 			ftype = FTYPE_D88;
 		}
     else if ((!milstr_cmp(p, str_ini))) {
-			ftype = FTYPE_TEXT;
+			ftype = FTYPE_INI;
 		}
     else if ((!milstr_cmp(p, str_bmp))) {
 			ftype = FTYPE_BMP;

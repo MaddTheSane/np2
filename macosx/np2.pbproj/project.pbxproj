@@ -281,7 +281,7 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>d88</string>
+				<string>d88,d98</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>d88.icns</string>

@@ -57,6 +57,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                     SizeWindow(aboutWin, 292, 230, true);
                 }
                 else {
+                    ZeroMemory(infostr, sizeof(infostr));
                     np2info(infostr, np2infostr, sizeof(infostr));
                     SetControlData(more,kControlNoPart,kControlEditTextTextTag,sizeof(infostr), infostr);
                     SetControl32BitValue(getControlRefByID('detl',0,aboutWin),3);
@@ -84,7 +85,6 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 SetControlData(image, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
                 version = getControlRefByID('vers', 0, aboutWin);
                 SetControlData(version, kControlNoPart, kControlStaticTextTextTag, sizeof(NP2VER_CORE), NP2VER_CORE);
-                ZeroMemory(infostr, sizeof(infostr));
                 err=noErr;
                 break;
                 

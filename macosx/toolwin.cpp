@@ -107,24 +107,27 @@ static const OSType subcommand[11] ={	'----',
                                         'exit',
                                     };
 
+#define	BASENUMBER	4
 static const ControlID popup[2] = { {'pop1', 1}, {'pop2', 2} };
 
 static DragReceiveHandlerUPP	dr;
 static bool	isPUMA;
 
 static void openpopup(HIPoint location);
-static void skinchange(void);
+static void skinchange(bool remake);
 
 // ----
 
 static void checkOSVersion(void) {
-    long	res;
-    Gestalt(gestaltSystemVersion, &res);
-    if (res<0x1020) {
-        isPUMA = true;
-    }
-    else {
-        isPUMA = false;
+    static	long	res = 0;
+    if (!res) {
+        Gestalt(gestaltSystemVersion, &res);
+        if (res<0x1020) {
+            isPUMA = true;
+        }
+        else {
+            isPUMA = false;
+        }
     }
 }
 
@@ -565,7 +568,7 @@ OSErr setDropFile(FSSpec spec, int drv) {
             
         case FTYPE_TEXT:
             strcpy(np2tool.skin, fname);
-            skinchange();
+            skinchange(true);
             break;
         
         case FTYPE_THD:
@@ -672,9 +675,6 @@ static void createskinmenu(MenuRef ret) {
 const char	*base;
 	char	*p;
 	UINT	i;
-	UINT	j;
-	UINT	id[SKINMRU_MAX];
-const char	*file[SKINMRU_MAX];
     char	longname[256];
 
 	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."),"Slect Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
@@ -683,50 +683,40 @@ const char	*file[SKINMRU_MAX];
 	base = np2tool.skin;
 	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("<Base Skin>"),"Base Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
 	if (base[0] == '\0') {
-        DisableMenuItem(ret, 3);
+        CheckMenuItem(ret, BASENUMBER-1, true);
     }
 	for (cnt=0; cnt<SKINMRU_MAX; cnt++) {
 		p = np2tool.skinmru[cnt];
 		if (p[0] == '\0') {
 			break;
 		}
-		getLongFileName(longname, p);
-        p = longname;
-		for (i=0; i<cnt; i++) {
-			if (file_cmpname(p, file[id[i]]) < 0) {
-				break;
-			}
-		}
-		for (j=cnt; j>i; j--) {
-			id[j] = id[j-1];
-		}
-		id[i] = cnt;
-		file[cnt] = p;
+        UInt32	attr = kMenuItemAttrIconDisabled;
+        if (file_attr(p) != FILEATTR_ARCHIVE) {
+            attr |= kMenuItemAttrDisabled;
+        }
+        ZeroMemory(longname, sizeof(longname));
+		if (!getLongFileName(longname, p)) {
+            strcpy(longname, file_getname(p));
+        }
+        AppendMenuItemTextWithCFString(ret, CFStringCreateWithCString(NULL, longname, kCFStringEncodingUTF8), attr, NULL, NULL);
 	}
 	for (i=0; i<cnt; i++) {
-		j = id[i];
-        if (file[j][0] != '\0') {
-            UInt32	attr = kMenuItemAttrIconDisabled;
-            if (!file_cmpname(base, np2tool.skinmru[j])) {
-                attr |= kMenuItemAttrDisabled;
-            }
-            else if (file_attr(np2tool.skinmru[j]) == -1) {
-                attr |= kMenuItemAttrDisabled;
-            }
-            AppendMenuItemTextWithCFString(ret, CFStringCreateWithCString(NULL, file[j], kCFStringEncodingUTF8), attr, NULL, NULL);
+        if (!file_cmpname(base, np2tool.skinmru[i])) {
+            CheckMenuItem(ret, i+BASENUMBER, true);
+            break;
         }
 	}
 	return;
 }
 
-static void skinchange(void) {
+static void skinchange(bool remake) {
 
 const char		*p;
 	UINT		i;
 
     toolwin_close();
 	p = np2tool.skin;
-	if (p[0]) {
+	if (p[0] && remake) {
 		for (i=0; i<(SKINMRU_MAX - 1); i++) {
 			if (!file_cmpname(p, np2tool.skinmru[i])) {
 				break;
@@ -757,7 +747,6 @@ static void openpopup(HIPoint location) {
 	createskinmenu(hMenu);
 	AppendMenu(hMenu, "\p-");
     AppendMenuItemTextWithCFString(hMenu, CFCopyLocalizedString(CFSTR("Close"),"ToolWin Close"), kMenuItemAttrIconDisabled, NULL, NULL);
-
     DeleteMenu(222);
     selectclose = CountMenuItems(hMenu);
     sel = LoWord(PopUpMenuSelect(hMenu, (short)location.y, (short)location.x, 0));
@@ -771,20 +760,24 @@ static void openpopup(HIPoint location) {
                 if(dialog_fileselect(fname, sizeof(fname), hWndMain)) {
                     if (file_getftype(fname)==FTYPE_TEXT) {
                         strcpy(np2tool.skin, fname);
-                        skinchange();
+                        skinchange(true);
                     }
                 }
                 break;
             case 3:
-                np2tool.skin[0] = '\0';
-                skinchange();
+                if (np2tool.skin[0]) {
+                    np2tool.skin[0] = '\0';
+                    skinchange(false);
+                }
                 break;
             case 4:
             case 5:
             case 6:
             case 7:
-                file_cpyname(np2tool.skin, np2tool.skinmru[sel - 4], sizeof(np2tool.skin));
-                skinchange();
+                if (file_cmpname(np2tool.skin, np2tool.skinmru[sel - BASENUMBER])) {
+                    file_cpyname(np2tool.skin, np2tool.skinmru[sel - BASENUMBER], sizeof(np2tool.skin));
+                    skinchange(false);
+                }
                 break;
             default:
                 break;
@@ -848,8 +841,16 @@ void toolwin_open(void) {
         ShowWindow(hWnd);
     }
     else {
+        Rect	mainbounds;
+        int		width;
         SetDrawerParent(hWnd, hWndMain);
-        SetDrawerOffsets(hWnd, (640-(bounds.right-bounds.left))/2-11, (640-(bounds.right-bounds.left))/2-11);
+        GetWindowBounds(hWndMain, kWindowContentRgn, &mainbounds);
+        width = (mainbounds.right-mainbounds.left)-(bounds.right-bounds.left);
+        if (width/2-11<0) {
+            toolwin_close();
+            return;
+        }
+        SetDrawerOffsets(hWnd, width/2-11, width/2-11);
         SetDrawerPreferredEdge(hWnd, kWindowEdgeTop);
         OpenDrawer(hWnd, kWindowEdgeDefault, 1);
     }

@@ -1,14 +1,19 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"scrnmng.h"
+#include	"toolwin.h"
 
 
 typedef struct {
+	int				width;
+	int				height;
 	BOOL			exist;
 	WindowPtr		hWnd;
 	GWorldPtr		gw;
 	PixMapHandle	pm;
 	Rect			rect;
+	GWorldPtr		gwp;
+	GDHandle		hgd;
 } _QDRAW, *QDRAW;
 
 
@@ -22,6 +27,40 @@ static	SCRNSURF	scrnsurf;
 static	GWorldPtr	gwp;
 static	GDHandle	hgd;
 #endif
+
+static void changeclientsize(int width, int height, BYTE mode) {
+
+	QDRAW		qd;
+    int			scrnwidth, scrnheight;
+    BYTE		opentoolwin = np2oscfg.toolwin;
+
+	qd = &qdraw;
+	if (!qd->exist) {
+		return;
+	}
+    if (opentoolwin) {
+        toolwin_close();
+    }
+    if (!(mode & SCRNMODE_ROTATE)) {
+        scrnwidth = width;
+        scrnheight = height;
+    }
+    else {
+        scrnwidth = height;
+        scrnheight = width;
+    }
+    if (mode & SCRNMODE_FULLSCREEN) {
+        GetWindowBounds(hWndMain, kWindowContentRgn, &qd->rect);
+    }
+    else {
+        SizeWindow(qd->hWnd, scrnwidth, scrnheight, TRUE);
+        SetRect(&qd->rect, 0, 0, scrnwidth, scrnheight);
+    }
+    if (opentoolwin) {
+        toolwin_open();
+    }
+}
+
 
 #if defined(macosx_only)
 #if defined(SUPPORT_16BPP)
@@ -50,14 +89,19 @@ int	scrnmng_getbpp(void) {
 #endif
 
 void scrnmng_initialize(void) {
-}
-
-BOOL scrnmng_create(BYTE scrnmode) {
 
 	QDRAW	qd;
 
 	qd = &qdraw;
-	SetRect(&qd->rect, 0, 0, 640, 480);
+	qd->width = 640;
+	qd->height = 400;
+}
+
+BOOL scrnmng_create(BYTE mode) {
+
+	QDRAW	qd;
+
+	qd = &qdraw;
 #if defined(macosx_only)
 //GWorldの代わりに直接ウィンドウバッファを設定(tk800)
     GrafPtr		dstport;
@@ -66,9 +110,13 @@ BOOL scrnmng_create(BYTE scrnmode) {
         qd->pm = GetPortPixMap(dstport);
         qd->exist = TRUE;
         qd->hWnd = hWndMain;
+        if (!(mode & SCRNMODE_FULLSCREEN)) {
+            changeclientsize(qd->width, qd->height, mode);
+        }
         return(SUCCESS);
     }
 #else        
+	SetRect(&qd->rect, 0, 0, 640, 480);
 	if (NewGWorld(&qd->gw, 32, &qd->rect, NULL, NULL, useTempMem) == noErr) {
 		qd->pm = GetGWorldPixMap(qd->gw);
 		qd->exist = TRUE;
@@ -77,7 +125,7 @@ BOOL scrnmng_create(BYTE scrnmode) {
 	}
 #endif
 	else {
-		(void)scrnmode;
+		(void)mode;
 		return(FAILURE);
 	}
 }
@@ -89,14 +137,22 @@ void scrnmng_destroy(void) {
 	qd = &qdraw;
 	if (qd->exist) {
 		qd->exist = FALSE;
+#if defined(macosx_only)
 		DisposeGWorld(qd->gw);
+#endif
 	}
 }
 
 void scrnmng_setwidth(int posx, int width) {
 
+	QDRAW	qd;
+
+	qd = &qdraw;
+	if (qd->width != width) {
+		qd->width = width;
+		changeclientsize(width, qd->height, scrnmode);
+	}
 	(void)posx;
-	(void)width;
 }
 
 void scrnmng_setextend(int extend) {
@@ -106,8 +162,14 @@ void scrnmng_setextend(int extend) {
 
 void scrnmng_setheight(int posy, int height) {
 
+	QDRAW	qd;
+
+	qd = &qdraw;
+	if (qd->height != height) {
+		qd->height = height;
+		changeclientsize(qd->width, height, scrnmode);
+	}
 	(void)posy;
-	(void)height;
 }
 
 const SCRNSURF *scrnmng_surflock(void) {
@@ -119,15 +181,31 @@ const SCRNSURF *scrnmng_surflock(void) {
 		return(NULL);
 	}
 
+	scrnsurf.width = qd->width;
+	scrnsurf.height = qd->height;
 #if defined(macosx_only)   
 //描画位置をウィンドウバーの下に設定(tk800) 
     LockPortBits(GetWindowPort(hWndMain));//こうしないと描画位置がおかしくなる(tk800)
 	LockPixels(qd->pm);
     long	rowbyte = GetPixRowBytes(qd->pm);
-	scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm) + rowbyte*22;
-	scrnsurf.xalign = rowbyte/640;
-    scrnsurf.yalign = rowbyte;
-    scrnsurf.bpp = rowbyte/640 * 8;
+	scrnsurf.bpp = scrnmng_getbpp();
+	if (!(scrnmode & SCRNMODE_ROTATE)) {
+		scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm) + rowbyte*22;
+		scrnsurf.xalign = scrnsurf.bpp >> 3;
+		scrnsurf.yalign = rowbyte;
+	}
+	else if (!(scrnmode & SCRNMODE_ROTATEDIR)) {
+		scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm) + rowbyte*22;
+		scrnsurf.ptr += (scrnsurf.width - 1) * rowbyte;
+		scrnsurf.xalign = 0 - rowbyte;
+		scrnsurf.yalign = scrnsurf.bpp >> 3;
+	}
+	else {
+		scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm) + rowbyte*22;
+		scrnsurf.ptr += (scrnsurf.height - 1) * (scrnsurf.bpp >> 3);
+		scrnsurf.xalign = rowbyte;
+		scrnsurf.yalign = 0 - (scrnsurf.bpp >> 3);
+    }
 #else
 	GetGWorld(&gwp, &hgd);
 	LockPixels(qd->pm);
@@ -136,9 +214,8 @@ const SCRNSURF *scrnmng_surflock(void) {
 	scrnsurf.ptr = (BYTE *)GetPixBaseAddr(qd->pm);
 	scrnsurf.xalign = 4;
 	scrnsurf.yalign = ((*qd->pm)->rowBytes) & 0x3fff;
+    scrnsurf.bpp = 32;
 #endif
-	scrnsurf.width = 640;
-	scrnsurf.height = 400;
 	scrnsurf.extend = 0;
 	return(&scrnsurf);
 }

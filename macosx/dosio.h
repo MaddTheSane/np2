@@ -13,7 +13,8 @@ enum {												// ver0.28
 	FTYPE_HDI,			// .hdi ハードディスクイメージ
 	FTYPE_HDD,			// .hdd ハードディスクイメージ (予約)
 	FTYPE_S98,			// .s98 ハードディスクイメージ
-	FTYPE_MIMPI			// mimpi defaultファイル
+	FTYPE_MIMPI,		// mimpi defaultファイル
+	FTYPE_INI			// Tool Window iniファイル
 };
 
 #define	FILEH			SInt16

@@ -1806,7 +1806,7 @@
           <object class="IBCarbonTriangle" id="1043">
             <string name="bounds">192 20 208 142 </string>
             <ostype name="controlSignature">detl</ostype>
-            <string name="title">detail</string>
+            <string name="title">More</string>
             <ostype name="command">detl</ostype>
             <boolean name="drawTitle">TRUE</boolean>
           </object>
