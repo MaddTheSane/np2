@@ -5,6 +5,20 @@
 　mov SS直後に割り込みが発生するとか不都合があります。
 　これについては、直す気力があれば(286コードを追っかける時だけだし…)
 
+// ---- IA-32 info
+
+  ・CPU panic や警告表示時に msgbox() という API を使用します。
+    compiler.h あたりで適当に定義してください。
+
+  ・sigsetjmp(3), siglongjmp(3) が無いアーキテクチャは以下の define を
+    compiler.h あたりに追加してください。
+
+-------------------------------------------------------------------------------
+#define	sigjmp_buf		jmp_buf
+#define	sigsetjmp(env, mask)	setjmp(env)
+#define	siglongjmp(env, val)	longjmp(env, val)
+-------------------------------------------------------------------------------
+
 
 // ----
 
