@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.3 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: segments.h,v 1.4 2004/01/27 15:55:26 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -168,37 +168,49 @@ do { \
 
 #define	CPU_SET_SEGDESC_POSTPART(dscp) \
 do { \
-	if ((dscp)->s) { \
-		if (!((dscp)->h & CPU_SEGDESC_H_A)) { \
-			(dscp)->h |= CPU_SEGDESC_H_A; \
-			cpu_lmemorywrite_d((dscp)->addr + 4, (dscp)->h); \
+	if ((dscp)->valid) { \
+		if ((dscp)->s) { \
+			if (!((dscp)->h & CPU_SEGDESC_H_A)) { \
+				(dscp)->h |= CPU_SEGDESC_H_A; \
+				cpu_lmemorywrite_d((dscp)->addr+4, (dscp)->h); \
+			} \
 		} \
+	} else { \
+		ia32_panic("CPU_SET_SEGDESC_POSTPART: descriptor is invalid"); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
 #define	CPU_SET_TASK_BUSY(dscp) \
 do { \
-	DWORD h; \
-	h = cpu_lmemoryread_d((dscp)->addr + 4); \
-	if (!(h & CPU_TSS_H_BUSY)) { \
-		(dscp)->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
-		h |= CPU_TSS_H_BUSY; \
-		cpu_lmemorywrite_d((dscp)->addr + 4, h); \
+	if ((dscp)->valid) { \
+		DWORD h; \
+		h = cpu_lmemoryread_d((dscp)->addr + 4); \
+		if (!(h & CPU_TSS_H_BUSY)) { \
+			(dscp)->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
+			h |= CPU_TSS_H_BUSY; \
+			cpu_lmemorywrite_d((dscp)->addr + 4, h); \
+		} else { \
+			ia32_panic("CPU_SET_TASK_BUSY: already busy (%x)", h); \
+		} \
 	} else { \
-		ia32_panic("CPU_SET_TASK_BUSY: already busy (%x)", h); \
+		ia32_panic("CPU_SET_TASK_BUSY: descriptor is invalid"); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
 #define	CPU_SET_TASK_FREE(dscp) \
 do { \
-	DWORD h; \
-	h = cpu_lmemoryread_d((dscp)->addr + 4); \
-	if (h & CPU_TSS_H_BUSY) { \
-		(dscp)->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
-		h &= ~CPU_TSS_H_BUSY; \
-		cpu_lmemorywrite_d((dscp)->addr + 4, h); \
+	if ((dscp)->valid) { \
+		DWORD h; \
+		h = cpu_lmemoryread_d((dscp)->addr + 4); \
+		if (h & CPU_TSS_H_BUSY) { \
+			(dscp)->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
+			h &= ~CPU_TSS_H_BUSY; \
+			cpu_lmemorywrite_d((dscp)->addr + 4, h); \
+		} else { \
+			ia32_panic("CPU_SET_TASK_FREE: already free (%x)", h); \
+		} \
 	} else { \
-		ia32_panic("CPU_SET_TASK_FREE: already free (%x)", h); \
+		ia32_panic("CPU_SET_TASK_FREE: descriptor is invalid"); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
