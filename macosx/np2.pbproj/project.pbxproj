@@ -696,6 +696,7 @@
 				96EDBDB80577A00600000133,
 				96EDBDBB0577A00600000133,
 				969790EA059DE00F009015EE,
+				96083EB305A8FDB40005CD33,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -728,6 +729,20 @@
 //962
 //963
 //964
+		96083EB205A8FDB40005CD33 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = cmjasts.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96083EB305A8FDB40005CD33 = {
+			fileRef = 96083EB205A8FDB40005CD33;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		9608400C054ED1E900000103 = {
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
@@ -3698,6 +3713,7 @@
 		};
 		96EDBDA80577A00600000133 = {
 			children = (
+				96083EB205A8FDB40005CD33,
 				96EDBDA90577A00600000133,
 				96EDBDAB0577A00600000133,
 				96EDBDAD0577A00600000133,

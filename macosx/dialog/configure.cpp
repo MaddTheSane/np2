@@ -7,6 +7,7 @@
  */
 
 #include	"compiler.h"
+#include	"strres.h"
 #include	"np2.h"
 #include	"pccore.h"
 #include	"ini.h"
@@ -85,6 +86,7 @@ static void setCPUClock(void) {
 
 static void initConfigWindow(void) {
         SInt16	i;
+		SInt32  val;
         Str255	title;
     
         if (np2cfg.baseclock >= AVE(PCBASECLOCK25, PCBASECLOCK20)) {
@@ -133,6 +135,18 @@ static void initConfigWindow(void) {
         }
         SetControlValue(getControlRefByID('Mltp', 5, configWin), i);
         setCPUClock();
+		
+		if (!milstr_cmp(np2cfg.model, str_VM)) {
+			val = 1;
+		}
+		else if (!milstr_cmp(np2cfg.model, str_EPSON)) {
+			val = 3;
+		}
+		else {
+			val = 2;
+		}
+        SetControlValue(getControlRefByID('Arch', 0, configWin), val);
+
         NumToString(np2cfg.delayms, title);
         if (np2cfg.samplingrate < AVE(11025, 22050)) {
             i=1;
@@ -157,6 +171,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
     UINT32	dval;
     UINT16	wval;
 	UINT	update;
+const char	*str;
 
     if (GetEventClass(event)==kEventClassCommand && GetEventKind(event)==kEventCommandProcess ) {
         GetEventParameter(event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd);
@@ -187,7 +202,22 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                     np2cfg.multiple = dval;
                     update |= SYS_UPDATECFG | SYS_UPDATECLOCK;
                 }
-                
+
+				dval=getSelectedValue('Arch', 0);
+				if (dval == 1) {
+					str = str_VM;
+				}
+				else if (dval == 3) {
+					str = str_EPSON;
+				}
+				else {
+					str = str_VX;
+				}
+				if (milstr_cmp(np2cfg.model, str)) {
+					milstr_ncpy(np2cfg.model, str, sizeof(np2cfg.model));
+					update |= SYS_UPDATECFG;
+				}
+
                 dval=getSelectedValue('Rate', 8);
                 if (dval==1) {
                     wval = 11025;

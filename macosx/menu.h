@@ -5,6 +5,7 @@ void menu_setkey(BYTE value);
 void menu_setwaitflg(BYTE value);
 void menu_setframe(BYTE value);
 void menu_setdispmode(BYTE value);
+void menu_setjastsound(BYTE value);
 void menu_setmotorflg(BYTE value);
 void menu_setdispclk(BYTE value);
 void menu_setrotate(BYTE value);

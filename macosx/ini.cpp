@@ -407,6 +407,7 @@ static const INITBL iniitem[] = {
 	{"comfirm_", INITYPE_BOOL,		&np2oscfg.comfirm,		0},
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},		// ver0.30
 	{"toolwind", INITYPE_BOOL,		&np2oscfg.toolwin,		0},		// ver0.38
+	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
 	{"I286SAVE", INITYPE_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 #define	INIITEMS	(sizeof(iniitem) / sizeof(INITBL))
