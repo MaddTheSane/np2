@@ -68,13 +68,35 @@ MAX_PREFIX			equ		8
 
 
 	MACRO
-$label	CPUSV
+$label	CPUSVC
+$label
+	MEND
+
+	MACRO
+$label	CPULDC
+$label
+	MEND
+
+	MACRO
+$label	CPUSVF
 $label		str		r8, [r9, #CPU_FLAG]
 	MEND
 
 	MACRO
-$label	CPULD
+$label	CPULDF
 $label		ldr		r8, [r9, #CPU_FLAG]
+	MEND
+
+	MACRO
+$label	CPUSV
+$label	CPUSVF
+		CPUSVC
+	MEND
+
+	MACRO
+$label	CPULD
+$label	CPULDF
+		CPULDC
 	MEND
 
 
@@ -82,6 +104,13 @@ $label		ldr		r8, [r9, #CPU_FLAG]
 $label	CPUWORK	$clock
 $label		ldr		r7, [r9, #CPU_REMAINCLOCK]
 			sub		r7, r7, $clock
+			str		r7, [r9, #CPU_REMAINCLOCK]
+	MEND
+
+	MACRO
+$label	CPUWKS	$clock
+$label		ldr		r7, [r9, #CPU_REMAINCLOCK]
+			subs	r7, r7, $clock
 			str		r7, [r9, #CPU_REMAINCLOCK]
 	MEND
 

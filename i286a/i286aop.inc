@@ -1,5 +1,4 @@
 
-
 	MACRO
 $label	OP_EA_R8	$alu, $regclk, $memclk
 $label		EAREG8	r12

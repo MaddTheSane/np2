@@ -1,7 +1,6 @@
 
 	INCLUDE		i286a.inc
 
-	IMPORT		i286core
 	IMPORT		i286_memorywrite_w
 	EXPORT		i286a_localint
 

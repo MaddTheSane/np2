@@ -24,6 +24,7 @@
 
 	IMPORT		biosfunc
 
+	IMPORT		dmac
 	IMPORT		pic
 	IMPORT		extirq_pop
 
@@ -46,6 +47,26 @@
 	IMPORT		i286aopfe
 	IMPORT		i286aopff
 
+	IMPORT		i286a_rep_insb
+	IMPORT		i286a_rep_insw
+	IMPORT		i286a_rep_outsb
+	IMPORT		i286a_rep_outsw
+	IMPORT		i286a_rep_movsb
+	IMPORT		i286a_rep_movsw
+	IMPORT		i286a_rep_lodsb
+	IMPORT		i286a_rep_lodsw
+	IMPORT		i286a_rep_stosb
+	IMPORT		i286a_rep_stosw
+	IMPORT		i286a_repe_cmpsb
+	IMPORT		i286a_repe_cmpsw
+	IMPORT		i286a_repne_cmpsb
+	IMPORT		i286a_repne_cmpsw
+	IMPORT		i286a_repe_scasb
+	IMPORT		i286a_repe_scasw
+	IMPORT		i286a_repne_scasb
+	IMPORT		i286a_repne_scasw
+
+	EXPORT		i286a
 	EXPORT		i286a_step
 	EXPORT		optbl1
 
@@ -1648,48 +1669,6 @@ std				CPUWORK	#2
 				mov		pc, r11
 
 
-	MACRO
-$label	SEGPREFIX	$b
-$label		ldr		r1, [r9, $b]
-			ldrb	r6, [r9, #CPU_PREFIX]
-			add		r0, r5, r8 lsr #16
-			str		r1, [r9, #CPU_SS_FIX]
-			str		r1, [r9, #CPU_DS_FIX]
-			adr		r2, removeprefix
-			cmp		r2, r11
-			strne	r11, [sp, #-4]!
-			movne	r11, r2
-			add		r6, r6, #1
-			cmp		r6, #MAX_PREFIX
-			bcs		prefix_segfault
-			bl		i286_memoryread
-			ldr		r1, [r4, r0 lsl #2]
-			add		r8, r8, #(1 << 16)
-			strb	r6, [r9, #CPU_PREFIX]
-			mov		pc, r1
-	MEND
-
-segprefix_es	SEGPREFIX	#CPU_ES_BASE
-segprefix_cs	SEGPREFIX	#CPU_CS_BASE
-segprefix_ss	SEGPREFIX	#CPU_SS_BASE
-segprefix_ds	SEGPREFIX	#CPU_DS_BASE
-
-prefix_fault	adr		r1, removeprefix
-				cmp		r1, r11
-				strne	r11, [sp, #-4]!
-prefix_segfault	sub		r8, r8, #(MAX_PREFIX << 16)
-				mov		r6, #6
-				mov		r11, pc
-				b		i286a_localint
-removeprefix	ldr		r0, [r9, #CPU_SS_BASE]
-				ldr		r1, [r9, #CPU_DS_BASE]
-				mov		r2, #0
-				str		r0, [r9, #CPU_SS_FIX]
-				str		r1, [r9, #CPU_DS_FIX]
-				strb	r2, [r9, #CPU_PREFIX]
-				ldr		pc, [sp], #4
-
-
 ; ---- cpu execute
 
 i286a_step		stmdb	sp!, {r4 - r11, lr}
@@ -1711,8 +1690,32 @@ i286a_step		stmdb	sp!, {r4 - r11, lr}
 				str		r8, [r9, #CPU_FLAG]
 				ldmia	sp!, {r4 - r11, pc}
 
+
+i286a			stmdb	sp!, {r4 - r11, lr}
+				ldr		r9, ias_r9
+				ldr		r1, ias_r1
+				ldr		r10, ias_r10
+				ldr		r5, [r9, #CPU_CS_BASE]
+				ldr		r8, [r9, #CPU_FLAG]
+				adr		r4, optbl1
+i286a_lp		add		r0, r5, r8 lsr #16
+				bl		i286_memoryread
+				ldr		r1, [r4, r0 lsl #2]
+				add		r8, r8, #(1 << 16)
+				mov		r11, pc
+				mov		pc, r1
+				ldr		r7, [r9, #CPU_REMAINCLOCK]
+				ldr		r5, [r9, #CPU_CS_BASE]
+				adr		r4, optbl1
+				cmp		r7, #0
+				bgt		i286a_lp
+				str		r8, [r9, #CPU_FLAG]
+				ldmia	sp!, {r4 - r11, pc}
+
 ias_r9			dcd		i286core - CPU_REG
+ias_r1			dcd		dmac
 ias_r10			dcd		_szpcflag8
+
 
 optbl1			dcd		add_ea_r8			; 00
 				dcd		add_ea_r16
@@ -1754,7 +1757,7 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		and_r16_ea
 				dcd		and_al_d8
 				dcd		and_ax_d16
-				dcd		0					; segprefix_es
+				dcd			segprefix_es
 				dcd			daa
 				dcd		sub_ea_r8
 				dcd		sub_ea_r16
@@ -1762,7 +1765,7 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		sub_r16_ea
 				dcd		sub_al_d8
 				dcd		sub_ax_d16
-				dcd		0					; segprefix_cs
+				dcd			segprefix_cs
 				dcd			das
 
 				dcd		xor_ea_r8			; 30
@@ -1771,7 +1774,7 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		xor_r16_ea
 				dcd		xor_al_d8
 				dcd		xor_ax_d16
-				dcd		0					; segprefix_ss
+				dcd			segprefix_ss
 				dcd			aaa
 				dcd		cmp_ea_r8
 				dcd		cmp_ea_r16
@@ -1779,7 +1782,7 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		cmp_r16_ea
 				dcd		cmp_al_d8
 				dcd		cmp_ax_d16
-				dcd		0					; segprefix_ds
+				dcd			segprefix_ds
 				dcd			aas
 
 				dcd		inc_ax				; 40
@@ -1922,8 +1925,8 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd		i286asft16_d8
 				dcd			ret_near_d16
 				dcd		ret_near
-				dcd		0					; les_r16_ea (now testing i286a_a)
-				dcd		0					; lds_r16_ea (now testing i286a_a)
+				dcd				les_r16_ea		; (now testing i286a_a)
+				dcd				lds_r16_ea		; (now testing i286a_a)
 				dcd			mov_ea8_d8
 				dcd			mov_ea16_d16
 				dcd		enter
@@ -1971,8 +1974,8 @@ optbl1			dcd		add_ea_r8			; 00
 
 				dcd		lock				; f0
 				dcd		lock
-				dcd		0					; repne
-				dcd		0					; repe
+				dcd			repne
+				dcd			repe
 				dcd		hlt
 				dcd		cmc
 				dcd			i286aopf6
@@ -1987,11 +1990,54 @@ optbl1			dcd		add_ea_r8			; 00
 				dcd			i286aopff
 
 
+	MACRO
+$label	SEGPREFIX	$b
+$label		ldr		r1, [r9, $b]
+			ldrb	r6, [r9, #CPU_PREFIX]
+		;;	ldr		r5, [r9, #CPU_CS_BASE]
+			add		r0, r5, r8 lsr #16
+			str		r1, [r9, #CPU_SS_FIX]
+			str		r1, [r9, #CPU_DS_FIX]
+			cmp		r6, #0
+			streq	r11, [sp, #-4]!
+			adreq	r11, prefix1_remove
+			add		r6, r6, #1
+			cmp		r6, #MAX_PREFIX
+			bcs		prefix_fault
+			bl		i286_memoryread
+			ldr		r1, [r4, r0 lsl #2]
+			add		r8, r8, #(1 << 16)
+			strb	r6, [r9, #CPU_PREFIX]
+			mov		pc, r1
+	MEND
+
+segprefix_es	SEGPREFIX	#CPU_ES_BASE
+segprefix_cs	SEGPREFIX	#CPU_CS_BASE
+segprefix_ss	SEGPREFIX	#CPU_SS_BASE
+segprefix_ds	SEGPREFIX	#CPU_DS_BASE
+
+prefix_fault	sub		r8, r8, #((MAX_PREFIX - 1) << 16)
+				mov		r6, #6
+				mov		r11, pc
+				b		i286a_localint
+prefix1_remove	ldr		r0, [r9, #CPU_SS_BASE]
+				ldr		r1, [r9, #CPU_DS_BASE]
+				mov		r2, #0
+				str		r0, [r9, #CPU_SS_FIX]
+				str		r1, [r9, #CPU_DS_FIX]
+				strb	r2, [r9, #CPU_PREFIX]
+				ldr		pc, [sp], #4
+
+
 ; ---- repne
 
 repne			ldrb	r6, [r9, #CPU_PREFIX]
 				adr		r4, optblne
+			;;	ldr		r5, [r9, #CPU_CS_BASE]
 				add		r0, r5, r8 lsr #16
+				cmp		r6, #0
+				streq	r11, [sp, #-4]!
+				adreq	r11, prefix1_remove
 				add		r6, r6, #1
 				cmp		r6, #MAX_PREFIX
 				bcs		prefix_fault
@@ -2115,10 +2161,10 @@ optblne			dcd		add_ea_r8			; 00
 				dcd		imul_r_ea_d16
 				dcd		push_d8
 				dcd		imul_r_ea_d8
-				dcd		0 ; i286a_rep_insb
-				dcd		0 ; i286a_rep_insw
-				dcd		0 ; i286a_rep_outsb
-				dcd		0 ; i286a_rep_outsw
+				dcd			i286a_rep_insb
+				dcd			i286a_rep_insw
+				dcd			i286a_rep_outsb
+				dcd			i286a_rep_outsw
 
 				dcd		jo_short			; 70
 				dcd		jno_short
@@ -2175,18 +2221,18 @@ optblne			dcd		add_ea_r8			; 00
 				dcd		mov_ax_m16
 				dcd		mov_m8_al
 				dcd		mov_m16_ax
-				dcd		0 ; i286a_rep_movsb
-				dcd		0 ; i286a_rep_movsw
-				dcd		0 ; i286a_repne_cmpsb
-				dcd		0 ; i286a_repne_cmpsw
+				dcd		i286a_rep_movsb
+				dcd		i286a_rep_movsw
+				dcd			i286a_repne_cmpsb
+				dcd			i286a_repne_cmpsw
 				dcd		test_al_d8
 				dcd		test_ax_d16
-				dcd		0 ; i286a_rep_stosb
-				dcd		0 ; i286a_rep_stosw
-				dcd		0 ; i286a_rep_lodsb
-				dcd		0 ; i286a_rep_lodsw
-				dcd		0 ; i286a_repne_scasb
-				dcd		0 ; i286a_repne_scasw
+				dcd			i286a_rep_stosb
+				dcd			i286a_rep_stosw
+				dcd			i286a_rep_lodsb
+				dcd			i286a_rep_lodsw
+				dcd			i286a_repne_scasb
+				dcd			i286a_repne_scasw
 
 				dcd		mov_al_imm			; b0
 				dcd		mov_cl_imm
@@ -2277,7 +2323,11 @@ optblne			dcd		add_ea_r8			; 00
 
 repe			ldrb	r6, [r9, #CPU_PREFIX]
 				adr		r4, optble
+			;;	ldr		r5, [r9, #CPU_CS_BASE]
 				add		r0, r5, r8 lsr #16
+				cmp		r6, #0
+				streq	r11, [sp, #-4]!
+				adreq	r11, prefix2_remove
 				add		r6, r6, #1
 				cmp		r6, #MAX_PREFIX
 				bcs		prefix_fault
@@ -2286,6 +2336,14 @@ repe			ldrb	r6, [r9, #CPU_PREFIX]
 				add		r8, r8, #(1 << 16)
 				strb	r6, [r9, #CPU_PREFIX]
 				mov		pc, r1
+
+prefix2_remove	ldr		r0, [r9, #CPU_SS_BASE]
+				ldr		r1, [r9, #CPU_DS_BASE]
+				mov		r2, #0
+				str		r0, [r9, #CPU_SS_FIX]
+				str		r1, [r9, #CPU_DS_FIX]
+				strb	r2, [r9, #CPU_PREFIX]
+				ldr		pc, [sp], #4
 
 optble			dcd		add_ea_r8			; 00
 				dcd		add_ea_r16
@@ -2401,10 +2459,10 @@ optble			dcd		add_ea_r8			; 00
 				dcd		imul_r_ea_d16
 				dcd		push_d8
 				dcd		imul_r_ea_d8
-				dcd		0 ; i286a_rep_insb
-				dcd		0 ; i286a_rep_insw
-				dcd		0 ; i286a_rep_outsb
-				dcd		0 ; i286a_rep_outsw
+				dcd			i286a_rep_insb
+				dcd			i286a_rep_insw
+				dcd			i286a_rep_outsb
+				dcd			i286a_rep_outsw
 
 				dcd		jo_short			; 70
 				dcd		jno_short
@@ -2461,18 +2519,18 @@ optble			dcd		add_ea_r8			; 00
 				dcd		mov_ax_m16
 				dcd		mov_m8_al
 				dcd		mov_m16_ax
-				dcd		0 ; i286a_rep_movsb
-				dcd		0 ; i286a_rep_movsw
-				dcd		0 ; i286a_repe_cmpsb
-				dcd		0 ; i286a_repe_cmpsw
+				dcd		i286a_rep_movsb
+				dcd		i286a_rep_movsw
+				dcd			i286a_repe_cmpsb
+				dcd			i286a_repe_cmpsw
 				dcd		test_al_d8
 				dcd		test_ax_d16
-				dcd		0 ; i286a_rep_stosb
-				dcd		0 ; i286a_rep_stosw
-				dcd		0 ; i286a_rep_lodsb
-				dcd		0 ; i286a_rep_lodsw
-				dcd		0 ; i286a_repe_scasb
-				dcd		0 ; i286a_repe_scasw
+				dcd			i286a_rep_stosb
+				dcd			i286a_rep_stosw
+				dcd			i286a_rep_lodsb
+				dcd			i286a_rep_lodsw
+				dcd			i286a_repe_scasb
+				dcd			i286a_repe_scasw
 
 				dcd		mov_al_imm			; b0
 				dcd		mov_cl_imm
