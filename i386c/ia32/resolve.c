@@ -1,4 +1,4 @@
-/*	$Id: resolve.c,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: resolve.c,v 1.5 2004/01/27 15:53:56 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -32,10 +32,10 @@
 #include "ia32.mcr"
 
 
-static DWORD (*calc_ea_dst_tbl[0x100])(void);
-static DWORD (*calc_ea32_dst_tbl[0x100])(void);
+DWORD (*calc_ea_dst_tbl[0x100])(void);
+DWORD (*calc_ea32_dst_tbl[0x100])(void);
 
-
+#if defined(DEBUG) || !defined(IA32_INLINE_CALC_EA)
 DWORD
 calc_ea_dst(DWORD op)
 {
@@ -46,6 +46,7 @@ calc_ea_dst(DWORD op)
 		return ((*calc_ea_dst_tbl[op])() & 0xffff);
 	return (*calc_ea32_dst_tbl[op])();
 }
+#endif	/* IA32_INLINE_CALC_EA */
 
 
 /*
