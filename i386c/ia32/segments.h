@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: segments.h,v 1.2 2003/12/12 15:06:18 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -156,7 +156,7 @@ do { \
 	if ((dscp)->s) { \
 		if (!((dscp)->h & CPU_SEGDESC_H_A)) { \
 			(dscp)->h |= CPU_SEGDESC_H_A; \
-			cpu_memorywrite_d((dscp)->addr + 4, (dscp)->h); \
+			cpu_lmemorywrite_d((dscp)->addr + 4, (dscp)->h); \
 		} \
 	} \
 } while (/*CONSTCOND*/ 0)
@@ -164,11 +164,11 @@ do { \
 #define	CPU_SET_TASK_BUSY(dscp) \
 do { \
 	DWORD h; \
-	h = cpu_memoryread_d((dscp)->addr + 4); \
+	h = cpu_lmemoryread_d((dscp)->addr + 4); \
 	if (!(h & CPU_TSS_H_BUSY)) { \
 		(dscp)->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
 		h |= CPU_TSS_H_BUSY; \
-		cpu_memorywrite_d((dscp)->addr + 4, h); \
+		cpu_lmemorywrite_d((dscp)->addr + 4, h); \
 	} else { \
 		ia32_panic("CPU_SET_TASK_BUSY: already busy (%x)", h); \
 	} \
@@ -177,11 +177,11 @@ do { \
 #define	CPU_SET_TASK_FREE(dscp) \
 do { \
 	DWORD h; \
-	h = cpu_memoryread_d((dscp)->addr + 4); \
+	h = cpu_lmemoryread_d((dscp)->addr + 4); \
 	if (h & CPU_TSS_H_BUSY) { \
 		(dscp)->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
 		h &= ~CPU_TSS_H_BUSY; \
-		cpu_memorywrite_d((dscp)->addr + 4, h); \
+		cpu_lmemorywrite_d((dscp)->addr + 4, h); \
 	} else { \
 		ia32_panic("CPU_SET_TASK_FREE: already free (%x)", h); \
 	} \
