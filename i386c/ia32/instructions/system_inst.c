@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.26 2004/03/23 13:32:50 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.27 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -142,7 +142,8 @@ SLDT_Ew(UINT32 op)
 void
 LTR_Ew(UINT32 op)
 {
-	UINT32 src, madr;
+	UINT32 madr;
+	UINT16 src;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (CPU_STAT_CPL == 0) {
@@ -154,7 +155,7 @@ LTR_Ew(UINT32 op)
 				madr = calc_ea_dst(op);
 				src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			}
-			load_tr((UINT16)src);
+			load_tr(src);
 			return;
 		}
 		VERBOSE(("LTR: CPL(%d) != 0", CPU_STAT_CPL));
@@ -286,7 +287,7 @@ MOV_CdRd(void)
 			}
 
 			reg = CPU_CR0;
-			src &= 0xe005003f;
+			src &= CPU_CR0_ALL;
 #ifndef USE_FPU
 			src |= CPU_CR0_EM | CPU_CR0_NE;
 			src &= ~(CPU_CR0_MP | CPU_CR0_ET);

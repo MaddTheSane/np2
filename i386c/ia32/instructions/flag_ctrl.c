@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.8 2004/03/12 13:31:20 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.9 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -154,6 +154,9 @@ POPF_Fw(void)
 		} else {
 			/* IOPL < 3 */
 			EXCEPTION(GP_EXCEPTION, 0);
+			flags = 0;
+			mask = 0;
+			/* compiler happy */
 		}
 	}
 	CPU_FLAG = (flags & mask) | (CPU_FLAG & ~mask);
@@ -219,6 +222,9 @@ POPFD_Fd(void)
 		} else {
 			/* IOPL < 3 */
 			EXCEPTION(GP_EXCEPTION, 0);
+			flags = 0;
+			mask = 0;
+			/* compiler happy */
 		}
 	}
 	CPU_EFLAG = (flags & mask) | (CPU_EFLAG & ~mask);

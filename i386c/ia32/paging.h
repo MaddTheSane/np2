@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.12 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: paging.h,v 1.13 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -128,10 +128,11 @@ extern "C" {
 /*
  * linear address memory access function
  */
-void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, int crw, int user_mode, BYTE *data);
-UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, int crw, int user_mode);
-void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, int user_mode);
-void MEMCALL paging_check(UINT32 laddr, UINT length, int crw, int user_mode);
+void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, const int crw, const int user_mode, BYTE *data);
+UINT32 MEMCALL cpu_memory_access_la_RMW(UINT32 laddr, UINT length, const int user_mode, UINT32 (*func)(UINT32, void *), void *arg);
+UINT32 MEMCALL cpu_linear_memory_read(UINT32 address, UINT length, const int crw, const int user_mode);
+void MEMCALL cpu_linear_memory_write(UINT32 address, UINT32 value, UINT length, const int user_mode);
+void MEMCALL paging_check(UINT32 laddr, UINT length, const int crw, const int user_mode);
 
 /* crw */
 #define	CPU_PAGE_READ		(0 << 0)
@@ -147,6 +148,7 @@ void MEMCALL paging_check(UINT32 laddr, UINT length, int crw, int user_mode);
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread(a) : \
 	 (UINT8)cpu_linear_memory_read(a,1,CPU_PAGE_READ_DATA,pl)
+#define	cpu_lmemoryread_b(a,pl) cpu_lmemoryread(a,pl)
 #define	cpu_lmemoryread_w(a,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memoryread_w(a) : \
@@ -160,6 +162,7 @@ void MEMCALL paging_check(UINT32 laddr, UINT length, int crw, int user_mode);
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memorywrite(a,v) : \
 	 cpu_linear_memory_write(a,v,1,pl)
+#define	cpu_lmemorywrite_b(a,v,pl) cpu_lmemorywrite(a,v,pl)
 #define	cpu_lmemorywrite_w(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
 	 cpu_memorywrite_w(a,v) : \

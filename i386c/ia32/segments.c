@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.14 2004/03/04 15:20:13 yui Exp $	*/
+/*	$Id: segments.c,v 1.15 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -319,9 +319,6 @@ load_descriptor(descriptor_t *descp, UINT32 addr)
 		case 0: case 8: case 10: case 13: /* reserved */
 		default:
 			descp->valid = 0;
-			if (descp->p) {			// ---- for test!
-				ia32_panic("load_descriptor: bad descriptor (type = %d)", descp->type);
-			}
 			break;
 		}
 	}

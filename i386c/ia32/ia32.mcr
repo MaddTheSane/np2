@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.17 2004/03/21 21:30:49 yui Exp $	*/
+/*	$Id: ia32.mcr,v 1.18 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,6 +36,9 @@
 #define	__CBW(src)	((UINT16)((SINT8)(src)))
 #define	__CBD(src)	((UINT32)((SINT8)(src)))
 #define	__CWDE(src)	((SINT16)(src))
+
+#define	PTR_TO_UINT32(p)	((UINT32)(unsigned long)(p))
+#define	UINT32_TO_PTR(v)	((void *)(unsigned long)(v))
 
 #define	SWAP_BYTE(p, q) \
 do { \
@@ -680,6 +683,21 @@ do { \
 	} \
 	CPU_FLAGL |= szpcflag[(UINT8)(__b)] & P_FLAG; \
 	(s) = __b; \
+} while (/*CONSTCOND*/ 0)
+
+#define	BYTE_NOT(s) \
+do { \
+	(s) ^= 0xff; \
+} while (/*CONSTCOND*/ 0)
+
+#define	WORD_NOT(s) \
+do { \
+	(s) ^= 0xffff; \
+} while (/*CONSTCOND*/ 0)
+
+#define	DWORD_NOT(s) \
+do { \
+	(s) ^= 0xffffffff; \
 } while (/*CONSTCOND*/ 0)
 
 

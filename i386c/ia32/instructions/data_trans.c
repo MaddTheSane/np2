@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.14 2004/03/22 14:22:26 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.15 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -153,7 +153,6 @@ MOV_EdSw(void)
 		} else {
 			CPU_WORKCLOCK(3);
 			madr = calc_ea_dst(op);
-			// LSB only...
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
 		}
 		return;
@@ -754,12 +753,19 @@ CMOVNLE_GdEd(void)
 /*
  * XCHG
  */
+static UINT32
+XCHG(UINT32 dst, void *arg)
+{
+	UINT32 src = PTR_TO_UINT32(arg);
+	(void)dst;
+	return src;
+}
+
 void
 XCHG_EbGb(void)
 {
 	UINT8 *out, *src;
 	UINT32 op, madr;
-	UINT8 tmp;
 
 	PREPART_EA_REG8P(op, src);
 	if (op >= 0xc0) {
@@ -769,9 +775,7 @@ XCHG_EbGb(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		tmp = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, *src);
-		*src = tmp;
+		*src = (UINT8)cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -780,7 +784,6 @@ XCHG_EwGw(void)
 {
 	UINT16 *out, *src;
 	UINT32 op, madr;
-	UINT16 tmp;
 
 	PREPART_EA_REG16P(op, src);
 	if (op >= 0xc0) {
@@ -790,9 +793,7 @@ XCHG_EwGw(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		tmp = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, *src);
-		*src = tmp;
+		*src = (UINT16)cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -801,7 +802,6 @@ XCHG_EdGd(void)
 {
 	UINT32 *out, *src;
 	UINT32 op, madr;
-	UINT32 tmp;
 
 	PREPART_EA_REG32P(op, src);
 	if (op >= 0xc0) {
@@ -811,9 +811,7 @@ XCHG_EdGd(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		tmp = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, *src);
-		*src = tmp;
+		*src = cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -878,6 +876,33 @@ void BSWAP_EDI(void) { CPU_WORKCLOCK(2); CPU_EDI = BSWAP_DWORD(CPU_EDI); }
 /*
  * XADD
  */
+static UINT32
+XADD1(UINT32 dst, void *arg)
+{
+	UINT32 src = PTR_TO_UINT32(arg);
+	UINT32 res;
+	BYTE_ADD(res, dst, src);
+	return res;
+}
+
+static UINT32
+XADD2(UINT32 dst, void *arg)
+{
+	UINT32 src = PTR_TO_UINT32(arg);
+	UINT32 res;
+	WORD_ADD(res, dst, src);
+	return res;
+}
+
+static UINT32
+XADD4(UINT32 dst, void *arg)
+{
+	UINT32 src = PTR_TO_UINT32(arg);
+	UINT32 res;
+	DWORD_ADD(res, dst, src);
+	return res;
+}
+
 void
 XADD_EbGb(void)
 {
@@ -889,16 +914,13 @@ XADD_EbGb(void)
 		CPU_WORKCLOCK(2);
 		out = reg8_b20[op];
 		dst = *out;
-		ADD_BYTE(res, dst, *src);
+		BYTE_ADD(res, dst, *src);
 		*src = (UINT8)dst;
 		*out = (UINT8)res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		ADD_BYTE(res, dst, *src);
-		*src = (UINT8)dst;
-		cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)res);
+		*src = (UINT8)cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, XADD1, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -913,16 +935,13 @@ XADD_EwGw(void)
 		CPU_WORKCLOCK(2);
 		out = reg16_b20[op];
 		dst = *out;
-		ADD_WORD(res, dst, *src);
+		WORD_ADD(res, dst, *src);
 		*src = (UINT16)dst;
 		*out = (UINT16)res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		ADD_WORD(res, dst, *src);
-		*src = (UINT16)dst;
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)res);
+		*src = (UINT16)cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, XADD2, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -937,35 +956,32 @@ XADD_EdGd(void)
 		CPU_WORKCLOCK(2);
 		out = reg32_b20[op];
 		dst = *out;
-		ADD_DWORD(res, dst, *src);
+		DWORD_ADD(res, dst, *src);
 		*src = dst;
 		*out = res;
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		ADD_DWORD(res, dst, *src);
-		*src = dst;
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, res);
+		*src = cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, XADD4, UINT32_TO_PTR(*src));
 	}
 }
 
 /*
  * CMPXCHG
  */
-#if 1
 void
 CMPXCHG_EbGb(void)
 {
 	UINT8 *out;
 	UINT32 op, src, dst, madr, tmp;
+	UINT8 al;
 
 	PREPART_EA_REG8(op, src);
+	al = CPU_AL;
 	if (op >= 0xc0) {
 		out = reg8_b20[op];
 		dst = *out;
-		BYTE_SUB(tmp, CPU_AL, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (al == dst) {
 			*out = (UINT8)src;
 		} else {
 			CPU_AL = (UINT8)dst;
@@ -973,13 +989,13 @@ CMPXCHG_EbGb(void)
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		BYTE_SUB(tmp, CPU_AL, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (al == dst) {
 			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)src);
 		} else {
 			CPU_AL = (UINT8)dst;
 		}
 	}
+	BYTE_SUB(tmp, al, dst);
 }
 
 void
@@ -987,13 +1003,14 @@ CMPXCHG_EwGw(void)
 {
 	UINT16 *out;
 	UINT32 op, src, dst, madr, tmp;
+	UINT16 ax;
 
 	PREPART_EA_REG16(op, src);
+	ax = CPU_AX;
 	if (op >= 0xc0) {
 		out = reg16_b20[op];
 		dst = *out;
-		WORD_SUB(tmp, CPU_AX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (ax == dst) {
 			*out = (UINT16)src;
 		} else {
 			CPU_AX = (UINT16)dst;
@@ -1001,13 +1018,13 @@ CMPXCHG_EwGw(void)
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		WORD_SUB(tmp, CPU_AX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (ax == dst) {
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
 		} else {
 			CPU_AX = (UINT16)dst;
 		}
 	}
+	WORD_SUB(tmp, ax, dst);
 }
 
 void
@@ -1015,13 +1032,14 @@ CMPXCHG_EdGd(void)
 {
 	UINT32 *out;
 	UINT32 op, src, dst, madr, tmp;
+	UINT32 eax;
 
 	PREPART_EA_REG32(op, src);
+	eax = CPU_EAX;
 	if (op >= 0xc0) {
 		out = reg32_b20[op];
 		dst = *out;
-		DWORD_SUB(tmp, CPU_EAX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (eax == dst) {
 			*out = src;
 		} else {
 			CPU_EAX = dst;
@@ -1029,105 +1047,14 @@ CMPXCHG_EdGd(void)
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		DWORD_SUB(tmp, CPU_EAX, dst);
-		if (CPU_FLAGL & Z_FLAG) {
+		if (eax == dst) {
 			cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
 		} else {
 			CPU_EAX = dst;
 		}
 	}
+	DWORD_SUB(tmp, eax, dst);
 }
-#else
-void
-CMPXCHG_EbGb(void)
-{
-	UINT8 *out;
-	UINT32 op, src, dst, madr, tmp;
-
-	PREPART_EA_REG8(op, src);
-	if (op >= 0xc0) {
-		out = reg8_b20[op];
-		dst = *out;
-		if (CPU_AL == dst) {
-			CPU_FLAGL |= Z_FLAG;
-			*out = (UINT8)src;
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
-			CPU_AL = (UINT8)dst;
-		}
-	} else {
-		madr = calc_ea_dst(op);
-		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
-		if (CPU_AL == dst) {
-			CPU_FLAGL |= Z_FLAG;
-			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)src);
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
-			CPU_AL = (UINT8)dst;
-		}
-	}
-}
-
-void
-CMPXCHG_EwGw(void)
-{
-	UINT16 *out;
-	UINT32 op, src, dst, madr, tmp;
-
-	PREPART_EA_REG16(op, src);
-	if (op >= 0xc0) {
-		out = reg16_b20[op];
-		dst = *out;
-		if (CPU_AX == dst) {
-			CPU_FLAGL |= Z_FLAG;
-			*out = (UINT16)src;
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
-			CPU_AX = (UINT16)dst;
-		}
-	} else {
-		madr = calc_ea_dst(op);
-		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		if (CPU_AX == dst) {
-			CPU_FLAGL |= Z_FLAG;
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
-			CPU_AX = (UINT16)dst;
-		}
-	}
-}
-
-void
-CMPXCHG_EdGd(void)
-{
-	UINT32 *out;
-	UINT32 op, src, dst, madr, tmp;
-
-	PREPART_EA_REG32(op, src);
-	if (op >= 0xc0) {
-		out = reg32_b20[op];
-		dst = *out;
-		if (CPU_EAX == dst) {
-			CPU_FLAGL |= Z_FLAG;
-			*out = src;
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
-			CPU_EAX = dst;
-		}
-	} else {
-		madr = calc_ea_dst(op);
-		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		if (CPU_EAX == dst) {
-			CPU_FLAGL |= Z_FLAG;
-			cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
-		} else {
-			CPU_FLAGL &= ~Z_FLAG;
-			CPU_EAX = dst;
-		}
-	}
-}
-#endif
 
 void
 CMPXCHG8B(UINT32 op)

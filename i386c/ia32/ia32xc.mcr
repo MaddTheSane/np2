@@ -1,4 +1,4 @@
-/*	$Id: ia32xc.mcr,v 1.4 2004/03/09 18:52:12 yui Exp $	*/
+/*	$Id: ia32xc.mcr,v 1.5 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1599,21 +1599,21 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	ADD_BYTE(r, d, s)	XC_ADD_BYTE(r, d, s)
-#define	ADD_WORD(r, d, s)	XC_ADD_WORD(r, d, s)
-#define	ADD_DWORD(r, d, s)	XC_ADD_DWORD(r, d, s)
-#define	OR_BYTE(d, s)		XC_OR_BYTE(d, s)
-#define	OR_WORD(d, s)		XC_OR_WORD(d, s)
-#define	OR_DWORD(d, s)		XC_OR_DWORD(d, s)
-#define	ADC_BYTE(r, d, s)	XC_ADC_BYTE(r, d, s)
-#define	ADC_WORD(r, d, s)	XC_ADC_WORD(r, d, s)
-#define	ADC_DWORD(r, d, s)	XC_ADC_DWORD(r, d, s)
+#define	BYTE_ADD(r, d, s)	XC_ADD_BYTE(r, d, s)
+#define	WORD_ADD(r, d, s)	XC_ADD_WORD(r, d, s)
+#define	DWORD_ADD(r, d, s)	XC_ADD_DWORD(r, d, s)
+#define	BYTE_OR(d, s)		XC_OR_BYTE(d, s)
+#define	WORD_OR(d, s)		XC_OR_WORD(d, s)
+#define	DWORD_OR(d, s)		XC_OR_DWORD(d, s)
+#define	BYTE_ADC(r, d, s)	XC_ADC_BYTE(r, d, s)
+#define	WORD_ADC(r, d, s)	XC_ADC_WORD(r, d, s)
+#define	DWORD_ADC(r, d, s)	XC_ADC_DWORD(r, d, s)
 #define	BYTE_SBB(r, d, s)	XC_BYTE_SBB(r, d, s)
 #define	WORD_SBB(r, d, s)	XC_WORD_SBB(r, d, s)
 #define	DWORD_SBB(r, d, s)	XC_DWORD_SBB(r, d, s)
-#define	AND_BYTE(d, s)		XC_AND_BYTE(d, s)
-#define	AND_WORD(d, s)		XC_AND_WORD(d, s)
-#define	AND_DWORD(d, s)		XC_AND_DWORD(d, s)
+#define	BYTE_AND(d, s)		XC_AND_BYTE(d, s)
+#define	WORD_AND(d, s)		XC_AND_WORD(d, s)
+#define	DWORD_AND(d, s)		XC_AND_DWORD(d, s)
 #define	BYTE_SUB(r, d, s)	XC_BYTE_SUB(r, d, s)
 #define	WORD_SUB(r, d, s)	XC_WORD_SUB(r, d, s)
 #define	DWORD_SUB(r, d, s)	XC_DWORD_SUB(r, d, s)
@@ -1636,6 +1636,19 @@ do { \
 #define	WORD_DEC(s)		XC_WORD_DEC(s)
 #define	DWORD_DEC(s)		XC_DWORD_DEC(s)
 
+#define	ADD_BYTE(r, d, s)	XC_ADD_BYTE(r, d, s)
+#define	ADD_WORD(r, d, s)	XC_ADD_WORD(r, d, s)
+#define	ADD_DWORD(r, d, s)	XC_ADD_DWORD(r, d, s)
+#define	OR_BYTE(d, s)		XC_OR_BYTE(d, s)
+#define	OR_WORD(d, s)		XC_OR_WORD(d, s)
+#define	OR_DWORD(d, s)		XC_OR_DWORD(d, s)
+#define	ADC_BYTE(r, d, s)	XC_ADC_BYTE(r, d, s)
+#define	ADC_WORD(r, d, s)	XC_ADC_WORD(r, d, s)
+#define	ADC_DWORD(r, d, s)	XC_ADC_DWORD(r, d, s)
+#define	AND_BYTE(d, s)		XC_AND_BYTE(d, s)
+#define	AND_WORD(d, s)		XC_AND_WORD(d, s)
+#define	AND_DWORD(d, s)		XC_AND_DWORD(d, s)
+
 #define	XC_STORE_FLAGL()	UINT8 __xc_flagl = CPU_FLAGL
 
 #elif defined(IA32_CROSS_CHECK) && defined(_MSC_VER)
@@ -1644,21 +1657,21 @@ do { \
 
 #else	/* !(IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__)) */
 
-#define	ADD_BYTE(r, d, s)	_ADD_BYTE(r, d, s)
-#define	ADD_WORD(r, d, s)	_ADD_WORD(r, d, s)
-#define	ADD_DWORD(r, d, s)	_ADD_DWORD(r, d, s)
-#define	OR_BYTE(d, s)		_OR_BYTE(d, s)
-#define	OR_WORD(d, s)		_OR_WORD(d, s)
-#define	OR_DWORD(d, s)		_OR_DWORD(d, s)
-#define	ADC_BYTE(r, d, s)	_ADC_BYTE(r, d, s)
-#define	ADC_WORD(r, d, s)	_ADC_WORD(r, d, s)
-#define	ADC_DWORD(r, d, s)	_ADC_DWORD(r, d, s)
+#define	BYTE_ADD(r, d, s)	_ADD_BYTE(r, d, s)
+#define	WORD_ADD(r, d, s)	_ADD_WORD(r, d, s)
+#define	DWORD_ADD(r, d, s)	_ADD_DWORD(r, d, s)
+#define	BYTE_OR(d, s)		_OR_BYTE(d, s)
+#define	WORD_OR(d, s)		_OR_WORD(d, s)
+#define	DWORD_OR(d, s)		_OR_DWORD(d, s)
+#define	BYTE_ADC(r, d, s)	_ADC_BYTE(r, d, s)
+#define	WORD_ADC(r, d, s)	_ADC_WORD(r, d, s)
+#define	DWORD_ADC(r, d, s)	_ADC_DWORD(r, d, s)
 #define	BYTE_SBB(r, d, s)	_BYTE_SBB(r, d, s)
 #define	WORD_SBB(r, d, s)	_WORD_SBB(r, d, s)
 #define	DWORD_SBB(r, d, s)	_DWORD_SBB(r, d, s)
-#define	AND_BYTE(d, s)		_AND_BYTE(d, s)
-#define	AND_WORD(d, s)		_AND_WORD(d, s)
-#define	AND_DWORD(d, s)		_AND_DWORD(d, s)
+#define	BYTE_AND(d, s)		_AND_BYTE(d, s)
+#define	WORD_AND(d, s)		_AND_WORD(d, s)
+#define	DWORD_AND(d, s)		_AND_DWORD(d, s)
 #define	BYTE_SUB(r, d, s)	_BYTE_SUB(r, d, s)
 #define	WORD_SUB(r, d, s)	_WORD_SUB(r, d, s)
 #define	DWORD_SUB(r, d, s)	_DWORD_SUB(r, d, s)
@@ -1680,6 +1693,19 @@ do { \
 #define	BYTE_DEC(s)		_BYTE_DEC(s)
 #define	WORD_DEC(s)		_WORD_DEC(s)
 #define	DWORD_DEC(s)		_DWORD_DEC(s)
+
+#define	ADD_BYTE(r, d, s)	_ADD_BYTE(r, d, s)
+#define	ADD_WORD(r, d, s)	_ADD_WORD(r, d, s)
+#define	ADD_DWORD(r, d, s)	_ADD_DWORD(r, d, s)
+#define	OR_BYTE(d, s)		_OR_BYTE(d, s)
+#define	OR_WORD(d, s)		_OR_WORD(d, s)
+#define	OR_DWORD(d, s)		_OR_DWORD(d, s)
+#define	ADC_BYTE(r, d, s)	_ADC_BYTE(r, d, s)
+#define	ADC_WORD(r, d, s)	_ADC_WORD(r, d, s)
+#define	ADC_DWORD(r, d, s)	_ADC_DWORD(r, d, s)
+#define	AND_BYTE(d, s)		_AND_BYTE(d, s)
+#define	AND_WORD(d, s)		_AND_WORD(d, s)
+#define	AND_DWORD(d, s)		_AND_DWORD(d, s)
 
 #define	XC_STORE_FLAGL()
 

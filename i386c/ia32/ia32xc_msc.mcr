@@ -1,7 +1,7 @@
 
 // Crosscheck for VC++
 
-#define ADC_BYTE(r, d, s) { \
+#define BYTE_ADC(r, d, s) { \
 	UINT8 _d = (d); \
 	UINT8 _s = (s); \
 	UINT8 _r; \
@@ -17,7 +17,7 @@
 	if ((_r != (UINT8)(r)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("adcb r=%x:%x f=%x:%x o=%d %d", _r, r, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define ADC_WORD(r, d, s) { \
+#define WORD_ADC(r, d, s) { \
 	UINT16 _d = (d); \
 	UINT16 _s = (s); \
 	UINT16 _r; \
@@ -33,7 +33,7 @@
 	if ((_r != (UINT16)(r)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("adcw r=%x:%x f=%x:%x o=%d %d", _r, r, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define ADC_DWORD(r, d, s) { \
+#define DWORD_ADC(r, d, s) { \
 	UINT32 _d = (d); \
 	UINT32 _s = (s); \
 	UINT32 _r; \
@@ -51,7 +51,7 @@
 
 
 
-#define ADD_BYTE(r, d, s) { \
+#define BYTE_ADD(r, d, s) { \
 	UINT8 _d = (d); \
 	UINT8 _s = (s); \
 	UINT8 _r; \
@@ -66,7 +66,7 @@
 	if ((_r != (UINT8)(r)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("addb r=%x:%x f=%x:%x o=%d %d", _r, r, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define ADD_WORD(r, d, s) { \
+#define WORD_ADD(r, d, s) { \
 	UINT16 _d = (d); \
 	UINT16 _s = (s); \
 	UINT16 _r; \
@@ -81,7 +81,7 @@
 	if ((_r != (UINT16)(r)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("addw r=%x:%x f=%x:%x o=%d %d", _r, r, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define ADD_DWORD(r, d, s) { \
+#define DWORD_ADD(r, d, s) { \
 	UINT32 _d = (d); \
 	UINT32 _s = (s); \
 	UINT32 _r; \
@@ -98,7 +98,7 @@
 
 
 
-#define AND_BYTE(d, s) { \
+#define BYTE_AND(d, s) { \
 	UINT8 _d = (d); \
 	UINT8 _s = (s); \
 	UINT8 _f, _ov; \
@@ -111,7 +111,7 @@
 	if ((_d != (UINT8)(d)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("andb r=%x:%x f=%x:%x o=%d %d", _d, d, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define AND_WORD(d, s) { \
+#define WORD_AND(d, s) { \
 	UINT16 _d = (d); \
 	UINT16 _s = (s); \
 	UINT8 _f, _ov; \
@@ -124,7 +124,7 @@
 	if ((_d != (UINT16)(d)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("andw r=%x:%x f=%x:%x o=%d %d", _d, d, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define AND_DWORD(d, s) { \
+#define DWORD_AND(d, s) { \
 	UINT32 _d = (d); \
 	UINT32 _s = (s); \
 	UINT8 _f, _ov; \
@@ -250,7 +250,7 @@
 
 
 
-#define OR_BYTE(d, s) { \
+#define BYTE_OR(d, s) { \
 	UINT8 _d = (d); \
 	UINT8 _s = (s); \
 	UINT8 _f, _ov; \
@@ -263,7 +263,7 @@
 	if ((_d != (UINT8)(d)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("orb r=%x:%x f=%x:%x o=%d %d", _d, d, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define OR_WORD(d, s) { \
+#define WORD_OR(d, s) { \
 	UINT16 _d = (d); \
 	UINT16 _s = (s); \
 	UINT8 _f, _ov; \
@@ -276,7 +276,7 @@
 	if ((_d != (UINT16)(d)) || ((_f ^ CPU_FLAGL) & SZAPC_FLAG) || ((!_ov) != (!CPU_OV))) TRACEOUT(("orw r=%x:%x f=%x:%x o=%d %d", _d, d, _f, CPU_FLAGL, _ov, CPU_OV)); \
 }
 
-#define OR_DWORD(d, s) { \
+#define DWORD_OR(d, s) { \
 	UINT32 _d = (d); \
 	UINT32 _s = (s); \
 	UINT8 _f, _ov; \

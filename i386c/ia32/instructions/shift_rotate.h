@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.h,v 1.2 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: shift_rotate.h,v 1.3 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -43,12 +43,12 @@ void SAR_Ed(UINT32 *);
 void SAR_Eb_ext(UINT32);
 void SAR_Ew_ext(UINT32);
 void SAR_Ed_ext(UINT32);
-void SAR_EbCL(UINT8 *, UINT);
-void SAR_EbCL_ext(UINT32, UINT);
-void SAR_EwCL(UINT16 *, UINT);
-void SAR_EwCL_ext(UINT32, UINT);
-void SAR_EdCL(UINT32 *, UINT);
-void SAR_EdCL_ext(UINT32, UINT);
+void SAR_EbCL(UINT8 *, UINT32);
+void SAR_EbCL_ext(UINT32, UINT32);
+void SAR_EwCL(UINT16 *, UINT32);
+void SAR_EwCL_ext(UINT32, UINT32);
+void SAR_EdCL(UINT32 *, UINT32);
+void SAR_EdCL_ext(UINT32, UINT32);
 
 /*
  * SHR
@@ -59,12 +59,12 @@ void SHR_Ed(UINT32 *);
 void SHR_Eb_ext(UINT32);
 void SHR_Ew_ext(UINT32);
 void SHR_Ed_ext(UINT32);
-void SHR_EbCL(UINT8 *, UINT);
-void SHR_EbCL_ext(UINT32, UINT);
-void SHR_EwCL(UINT16 *, UINT);
-void SHR_EwCL_ext(UINT32, UINT);
-void SHR_EdCL(UINT32 *, UINT);
-void SHR_EdCL_ext(UINT32, UINT);
+void SHR_EbCL(UINT8 *, UINT32);
+void SHR_EbCL_ext(UINT32, UINT32);
+void SHR_EwCL(UINT16 *, UINT32);
+void SHR_EwCL_ext(UINT32, UINT32);
+void SHR_EdCL(UINT32 *, UINT32);
+void SHR_EdCL_ext(UINT32, UINT32);
 
 /*
  * SHL
@@ -75,12 +75,12 @@ void SHL_Ed(UINT32 *);
 void SHL_Eb_ext(UINT32);
 void SHL_Ew_ext(UINT32);
 void SHL_Ed_ext(UINT32);
-void SHL_EbCL(UINT8 *, UINT);
-void SHL_EbCL_ext(UINT32, UINT);
-void SHL_EwCL(UINT16 *, UINT);
-void SHL_EwCL_ext(UINT32, UINT);
-void SHL_EdCL(UINT32 *, UINT);
-void SHL_EdCL_ext(UINT32, UINT);
+void SHL_EbCL(UINT8 *, UINT32);
+void SHL_EbCL_ext(UINT32, UINT32);
+void SHL_EwCL(UINT16 *, UINT32);
+void SHL_EwCL_ext(UINT32, UINT32);
+void SHL_EdCL(UINT32 *, UINT32);
+void SHL_EdCL_ext(UINT32, UINT32);
 
 /*
  * SHRD
@@ -107,12 +107,12 @@ void ROR_Ed(UINT32 *);
 void ROR_Eb_ext(UINT32);
 void ROR_Ew_ext(UINT32);
 void ROR_Ed_ext(UINT32);
-void ROR_EbCL(UINT8 *, UINT);
-void ROR_EbCL_ext(UINT32, UINT);
-void ROR_EwCL(UINT16 *, UINT);
-void ROR_EwCL_ext(UINT32, UINT);
-void ROR_EdCL(UINT32 *, UINT);
-void ROR_EdCL_ext(UINT32, UINT);
+void ROR_EbCL(UINT8 *, UINT32);
+void ROR_EbCL_ext(UINT32, UINT32);
+void ROR_EwCL(UINT16 *, UINT32);
+void ROR_EwCL_ext(UINT32, UINT32);
+void ROR_EdCL(UINT32 *, UINT32);
+void ROR_EdCL_ext(UINT32, UINT32);
 
 /*
  * ROL
@@ -123,12 +123,12 @@ void ROL_Ed(UINT32 *);
 void ROL_Eb_ext(UINT32);
 void ROL_Ew_ext(UINT32);
 void ROL_Ed_ext(UINT32);
-void ROL_EbCL(UINT8 *, UINT);
-void ROL_EbCL_ext(UINT32, UINT);
-void ROL_EwCL(UINT16 *, UINT);
-void ROL_EwCL_ext(UINT32, UINT);
-void ROL_EdCL(UINT32 *, UINT);
-void ROL_EdCL_ext(UINT32, UINT);
+void ROL_EbCL(UINT8 *, UINT32);
+void ROL_EbCL_ext(UINT32, UINT32);
+void ROL_EwCL(UINT16 *, UINT32);
+void ROL_EwCL_ext(UINT32, UINT32);
+void ROL_EdCL(UINT32 *, UINT32);
+void ROL_EdCL_ext(UINT32, UINT32);
 
 /*
  * RCR
@@ -139,12 +139,12 @@ void RCR_Ed(UINT32 *);
 void RCR_Eb_ext(UINT32);
 void RCR_Ew_ext(UINT32);
 void RCR_Ed_ext(UINT32);
-void RCR_EbCL(UINT8 *, UINT);
-void RCR_EbCL_ext(UINT32, UINT);
-void RCR_EwCL(UINT16 *, UINT);
-void RCR_EwCL_ext(UINT32, UINT);
-void RCR_EdCL(UINT32 *, UINT);
-void RCR_EdCL_ext(UINT32, UINT);
+void RCR_EbCL(UINT8 *, UINT32);
+void RCR_EbCL_ext(UINT32, UINT32);
+void RCR_EwCL(UINT16 *, UINT32);
+void RCR_EwCL_ext(UINT32, UINT32);
+void RCR_EdCL(UINT32 *, UINT32);
+void RCR_EdCL_ext(UINT32, UINT32);
 
 /*
  * RCL
@@ -155,12 +155,12 @@ void RCL_Ed(UINT32 *);
 void RCL_Eb_ext(UINT32);
 void RCL_Ew_ext(UINT32);
 void RCL_Ed_ext(UINT32);
-void RCL_EbCL(UINT8 *, UINT);
-void RCL_EbCL_ext(UINT32, UINT);
-void RCL_EwCL(UINT16 *, UINT);
-void RCL_EwCL_ext(UINT32, UINT);
-void RCL_EdCL(UINT32 *, UINT);
-void RCL_EdCL_ext(UINT32, UINT);
+void RCL_EbCL(UINT8 *, UINT32);
+void RCL_EbCL_ext(UINT32, UINT32);
+void RCL_EwCL(UINT16 *, UINT32);
+void RCL_EwCL_ext(UINT32, UINT32);
+void RCL_EdCL(UINT32 *, UINT32);
+void RCL_EdCL_ext(UINT32, UINT32);
 
 #ifdef __cplusplus
 }

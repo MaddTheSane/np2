@@ -1,4 +1,4 @@
-/*	$Id: groups.c,v 1.5 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: groups.c,v 1.6 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -158,7 +158,7 @@ Grp2_EbIb(void)
 	UINT8 *out;
 	UINT32 madr;
 	UINT32 op;
-	UINT cl;
+	UINT32 cl;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -184,7 +184,7 @@ Grp2_EwIb(void)
 	UINT16 *out;
 	UINT32 madr;
 	UINT32 op;
-	UINT cl;
+	UINT32 cl;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -210,7 +210,7 @@ Grp2_EdIb(void)
 	UINT32 *out;
 	UINT32 madr;
 	UINT32 op;
-	UINT cl;
+	UINT32 cl;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -287,7 +287,7 @@ Grp2_EbCL(void)
 	UINT8 *out;
 	UINT32 madr;
 	UINT32 op;
-	UINT cl;
+	UINT32 cl;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -315,7 +315,7 @@ Grp2_EwCL(void)
 	UINT16 *out;
 	UINT32 madr;
 	UINT32 op;
-	UINT cl;
+	UINT32 cl;
 	int idx;
 
 	GET_PCBYTE(op);
@@ -343,7 +343,7 @@ Grp2_EdCL(void)
 	UINT32 *out;
 	UINT32 madr;
 	UINT32 op;
-	UINT cl;
+	UINT32 cl;
 	int idx;
 
 	GET_PCBYTE(op);

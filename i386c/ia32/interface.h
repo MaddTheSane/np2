@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.11 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: interface.h,v 1.12 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -50,9 +50,11 @@
 #define CPU_SETEMM(frame, addr)
 
 #define	cpu_memorywrite(a,v)	i286_memorywrite(a,v)
+#define	cpu_memorywrite_b(a,v)	i286_memorywrite(a,v)
 #define	cpu_memorywrite_w(a,v)	i286_memorywrite_w(a,v)
 #define	cpu_memorywrite_d(a,v)	i286_memorywrite_d(a,v)
 #define	cpu_memoryread(a)	i286_memoryread(a)
+#define	cpu_memoryread_b(a)	i286_memoryread(a)
 #define	cpu_memoryread_w(a)	i286_memoryread_w(a)
 #define	cpu_memoryread_d(a)	i286_memoryread_d(a)
 

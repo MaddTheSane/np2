@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.25 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.26 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -522,6 +522,7 @@ do { \
 #define	CPU_CR0_NW		(1 << 29)
 #define	CPU_CR0_CD		(1 << 30)
 #define	CPU_CR0_PG		(1 << 31)
+#define	CPU_CR0_ALL		(CPU_CR0_PE|CPU_CR0_MP|CPU_CR0_EM|CPU_CR0_TS|CPU_CR0_ET|CPU_CR0_NE|CPU_CR0_WP|CPU_CR0_AM|CPU_CR0_NW|CPU_CR0_CD|CPU_CR0_PG)
 
 #define	CPU_CR3_PD_MASK		0xfffff000
 #define	CPU_CR3_PWT		(1 << 3)

@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.8 2004/03/10 23:01:08 yui Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.9 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -29,6 +29,281 @@
 
 #ifndef	IA32_CPU_SHIFT_ROTATE_MCR__
 #define	IA32_CPU_SHIFT_ROTATE_MCR__
+
+/*
+ * shift/rorate instruction macro
+ */
+#define	SHIFT_ROTATE_INSTRUCTION(inst) \
+static UINT32 \
+inst##1(UINT32 src, void *arg) \
+{ \
+	UINT32 dst; \
+	(void)arg; \
+	BYTE_##inst##1(dst, src); \
+	return dst; \
+} \
+static UINT32 \
+inst##2(UINT32 src, void *arg) \
+{ \
+	UINT32 dst; \
+	(void)arg; \
+	WORD_##inst##1(dst, src); \
+	return dst; \
+} \
+static UINT32 \
+inst##4(UINT32 src, void *arg) \
+{ \
+	UINT32 dst; \
+	(void)arg; \
+	DWORD_##inst##1(dst, src); \
+	return dst; \
+} \
+static UINT32 \
+inst##CL1(UINT32 src, void *arg) \
+{ \
+	UINT32 cl = PTR_TO_UINT32(arg); \
+	UINT32 dst; \
+	BYTE_##inst##CL(dst, src, cl); \
+	return dst; \
+} \
+static UINT32 \
+inst##CL2(UINT32 src, void *arg) \
+{ \
+	UINT32 cl = PTR_TO_UINT32(arg); \
+	UINT32 dst; \
+	WORD_##inst##CL(dst, src, cl); \
+	return dst; \
+} \
+static UINT32 \
+inst##CL4(UINT32 src, void *arg) \
+{ \
+	UINT32 cl = PTR_TO_UINT32(arg); \
+	UINT32 dst; \
+	DWORD_##inst##CL(dst, src, cl); \
+	return dst; \
+} \
+\
+void \
+inst##_Eb(UINT8 *out) \
+{ \
+	UINT32 src, dst; \
+\
+	src = *out; \
+	BYTE_##inst##1(dst, src); \
+	*out = (UINT8)dst; \
+} \
+\
+void \
+inst##_Eb_ext(UINT32 madr) \
+{ \
+\
+	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##1, 0); \
+} \
+\
+void \
+inst##_Ew(UINT16 *out) \
+{ \
+	UINT32 src, dst; \
+\
+	src = *out; \
+	WORD_##inst##1(dst, src); \
+	*out = (UINT16)dst; \
+} \
+\
+void \
+inst##_Ew_ext(UINT32 madr) \
+{ \
+\
+	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, 0); \
+} \
+\
+void \
+inst##_Ed(UINT32 *out) \
+{ \
+	UINT32 src, dst; \
+\
+	src = *out; \
+	DWORD_##inst##1(dst, src); \
+	*out = dst; \
+} \
+\
+void \
+inst##_Ed_ext(UINT32 madr) \
+{ \
+\
+	cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, 0); \
+} \
+\
+/* ExCL, ExIb */ \
+void \
+inst##_EbCL(UINT8 *out, UINT32 cl) \
+{ \
+	UINT32 src, dst; \
+\
+	src = *out; \
+	BYTE_##inst##CL(dst, src, cl); \
+	*out = (UINT8)dst; \
+} \
+\
+void \
+inst##_EbCL_ext(UINT32 madr, UINT32 cl) \
+{ \
+\
+	cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, inst##CL1, (void *)cl); \
+} \
+\
+void \
+inst##_EwCL(UINT16 *out, UINT32 cl) \
+{ \
+	UINT32 src, dst; \
+\
+	src = *out; \
+	WORD_##inst##CL(dst, src, cl); \
+	*out = (UINT16)dst; \
+} \
+\
+void \
+inst##_EwCL_ext(UINT32 madr, UINT32 cl) \
+{ \
+\
+	cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##CL2, (void *)cl); \
+} \
+\
+void \
+inst##_EdCL(UINT32 *out, UINT32 cl) \
+{ \
+	UINT32 src, dst; \
+\
+	src = *out; \
+	DWORD_##inst##CL(dst, src, cl); \
+	*out = dst; \
+} \
+\
+void \
+inst##_EdCL_ext(UINT32 madr, UINT32 cl) \
+{ \
+\
+	cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##CL4, (void *)cl); \
+}
+
+/*
+ * shift double-words instructions
+ */
+struct SHxD_arg {
+	UINT32	src;
+	UINT32	cl;
+};
+
+#define	SHxD_INSTRUCTION(inst) \
+static UINT32 \
+inst##2(UINT32 dst, void *arg) \
+{ \
+	struct SHxD_arg *p = (struct SHxD_arg *)arg; \
+	UINT32 src = p->src; \
+	UINT32 cl = p->cl; \
+	WORD_##inst(dst, src, cl); \
+	return dst; \
+} \
+static UINT32 \
+inst##4(UINT32 dst, void *arg) \
+{ \
+	struct SHxD_arg *p = (struct SHxD_arg *)arg; \
+	UINT32 src = p->src; \
+	UINT32 cl = p->cl; \
+	DWORD_##inst(dst, src, cl); \
+	return dst; \
+} \
+\
+void \
+inst##_EwGwIb(void) \
+{ \
+	struct SHxD_arg arg; \
+	UINT16 *out; \
+	UINT32 op, dst, madr; \
+\
+	PREPART_EA_REG16(op, arg.src); \
+	if (op >= 0xc0) { \
+		CPU_WORKCLOCK(3); \
+		GET_PCBYTE(arg.cl); \
+		out = reg16_b20[op]; \
+		dst = *out; \
+		WORD_##inst(dst, arg.src, arg.cl); \
+		*out = (UINT16)dst; \
+	} else { \
+		CPU_WORKCLOCK(7); \
+		madr = calc_ea_dst(op); \
+		GET_PCBYTE(arg.cl); \
+		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, &arg); \
+	} \
+} \
+\
+void \
+inst##_EdGdIb(void) \
+{ \
+	struct SHxD_arg arg; \
+	UINT32 *out; \
+	UINT32 op, dst, madr; \
+\
+	PREPART_EA_REG32(op, arg.src); \
+	if (op >= 0xc0) { \
+		CPU_WORKCLOCK(3); \
+		GET_PCBYTE(arg.cl); \
+		out = reg32_b20[op]; \
+		dst = *out; \
+		DWORD_##inst(dst, arg.src, arg.cl); \
+		*out = dst; \
+	} else { \
+		CPU_WORKCLOCK(7); \
+		madr = calc_ea_dst(op); \
+		GET_PCBYTE(arg.cl); \
+		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, &arg); \
+	} \
+} \
+\
+void \
+inst##_EwGwCL(void) \
+{ \
+	struct SHxD_arg arg; \
+	UINT16 *out; \
+	UINT32 op, dst, madr; \
+\
+	PREPART_EA_REG16(op, arg.src); \
+	arg.cl = CPU_CL; \
+	if (op >= 0xc0) { \
+		CPU_WORKCLOCK(3); \
+		out = reg16_b20[op]; \
+		dst = *out; \
+		WORD_##inst(dst, arg.src, arg.cl); \
+		*out = (UINT16)dst; \
+	} else { \
+		CPU_WORKCLOCK(7); \
+		madr = calc_ea_dst(op); \
+		cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##2, (void *)&arg); \
+	} \
+} \
+\
+void \
+inst##_EdGdCL(void) \
+{ \
+	struct SHxD_arg arg; \
+	UINT32 *out; \
+	UINT32 op, dst, madr; \
+\
+	PREPART_EA_REG32(op, arg.src); \
+	arg.cl = CPU_CL; \
+	if (op >= 0xc0) { \
+		CPU_WORKCLOCK(3); \
+		out = reg32_b20[op]; \
+		dst = *out; \
+		DWORD_##inst(dst, arg.src, arg.cl); \
+		*out = dst; \
+	} else { \
+		CPU_WORKCLOCK(7); \
+		madr = calc_ea_dst(op); \
+		cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##4, (void *)&arg); \
+	} \
+}
+
 
 /* Pentium!!! - シフトカウント != 1の場合はOVは不変らすい */
 

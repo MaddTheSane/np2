@@ -1,7 +1,7 @@
-/*	$Id: cpu_mem.c,v 1.14 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.15 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
- * Copyright (c) 2002-2003 NONAKA Kimihiro
+ * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -357,7 +357,7 @@ cpu_codefetch(UINT32 offset)
 		}
 		return cpu_prefetchq(addr);
 #else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
-		if (!CPU_STAT_PM)
+		if (!CPU_STAT_PAGING)
 			return cpu_memoryread(addr);
 		return cpu_lcmemoryread(addr);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
@@ -392,7 +392,7 @@ cpu_codefetch_w(UINT32 offset)
 		v += (UINT16)cpu_prefetchq(addr) << 8;
 		return v;
 #else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
-		if (!CPU_STAT_PM)
+		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_w(addr);
 		return cpu_lcmemoryread_w(addr);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
@@ -445,7 +445,7 @@ cpu_codefetch_d(UINT32 offset)
 			return v;
 		}
 #else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
-		if (!CPU_STAT_PM)
+		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_d(addr);
 		return cpu_lcmemoryread_d(addr);
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
@@ -456,311 +456,10 @@ cpu_codefetch_d(UINT32 offset)
 
 
 /*
- * virtual address -> linear address
+ * virtual address memory access functions
  */
-UINT8 MEMCALL
-cpu_vmemoryread(int idx, UINT32 offset)
-{
-	descriptor_t *sd;
-	UINT32 addr;
-	int exc;
+#include "cpu_mem.mcr"
 
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-
-	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
-		cpu_memoryread_check(sd, offset, 1,
-		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 4: case 5: case 6: case 7:
-			if (offset <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit)
-				goto range_failure;
-			break;
-		}
-	}
-	addr = sd->u.seg.segbase + offset;
-	check_memory_break_point(addr, 1, CPU_DR7_RW_RO);
-	if (!CPU_STAT_PM)
-		return cpu_memoryread(addr);
-	return cpu_lmemoryread(addr, CPU_STAT_USER_MODE);
-
-range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemoryread: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
-err:
-	EXCEPTION(exc, 0);
-	return 0;	/* compiler happy */
-}
-
-UINT16 MEMCALL
-cpu_vmemoryread_w(int idx, UINT32 offset)
-{
-	descriptor_t *sd;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-
-	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
-		cpu_memoryread_check(sd, offset, 2,
-		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 4: case 5: case 6: case 7:
-			if (offset - 1 <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - 1)
-				goto range_failure;
-			break;
-		}
-	} 
-	addr = sd->u.seg.segbase + offset;
-	check_memory_break_point(addr, 2, CPU_DR7_RW_RO);
-	if (!CPU_STAT_PM)
-		return cpu_memoryread_w(addr);
-	return cpu_lmemoryread_w(addr, CPU_STAT_USER_MODE);
-
-range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemoryread_w: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
-err:
-	EXCEPTION(exc, 0);
-	return 0;	/* compiler happy */
-}
-
-UINT32 MEMCALL
-cpu_vmemoryread_d(int idx, UINT32 offset)
-{
-	descriptor_t *sd;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-
-	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
-		cpu_memoryread_check(sd, offset, 4,
-		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 4: case 5: case 6: case 7:
-			if (offset - 3 <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - 3)
-				goto range_failure;
-			break;
-		}
-	}
-	addr = sd->u.seg.segbase + offset;
-	check_memory_break_point(addr, 4, CPU_DR7_RW_RO);
-	if (!CPU_STAT_PM)
-		return cpu_memoryread_d(addr);
-	return cpu_lmemoryread_d(addr, CPU_STAT_USER_MODE);
-
-range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemoryread_d: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
-err:
-	EXCEPTION(exc, 0);
-	return 0;	/* compiler happy */
-}
-
-/* vaddr memory write */
-void MEMCALL
-cpu_vmemorywrite(int idx, UINT32 offset, UINT8 val)
-{
-	descriptor_t *sd;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-
-	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
-		cpu_memorywrite_check(sd, offset, 1,
-		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 6: case 7:
-			if (offset <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit)
-				goto range_failure;
-			break;
-		}
-	}
-	addr = sd->u.seg.segbase + offset;
-	check_memory_break_point(addr, 1, CPU_DR7_RW_RW);
-	if (!CPU_STAT_PM) {
-		/* real mode */
-		cpu_memorywrite(addr, val);
-	} else {
-		/* protected mode */
-		cpu_lmemorywrite(addr, val, CPU_STAT_USER_MODE);
-	}
-	return;
-
-range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemorywrite: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
-err:
-	EXCEPTION(exc, 0);
-}
-
-void MEMCALL
-cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 val)
-{
-	descriptor_t *sd;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-
-	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
-		cpu_memorywrite_check(sd, offset, 2,
-		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 6: case 7:
-			if (offset - 1 <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - 1)
-				goto range_failure;
-			break;
-		}
-	}
-	addr = sd->u.seg.segbase + offset;
-	check_memory_break_point(addr, 2, CPU_DR7_RW_RW);
-	if (!CPU_STAT_PM) {
-		/* real mode */
-		cpu_memorywrite_w(addr, val);
-	} else {
-		/* protected mode */
-		cpu_lmemorywrite_w(addr, val, CPU_STAT_USER_MODE);
-	}
-	return;
-
-range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemorywrite_w: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
-err:
-	EXCEPTION(exc, 0);
-}
-
-void MEMCALL
-cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 val)
-{
-	descriptor_t *sd;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-
-	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
-		cpu_memorywrite_check(sd, offset, 4,
-		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 6: case 7:
-			if (offset - 3 <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - 3)
-				goto range_failure;
-			break;
-		}
-	}
-	addr = sd->u.seg.segbase + offset;
-	check_memory_break_point(addr, 4, CPU_DR7_RW_RW);
-	if (!CPU_STAT_PM) {
-		/* real mode */
-		cpu_memorywrite_d(addr, val);
-	} else {
-		/* protected mode */
-		cpu_lmemorywrite_d(addr, val, CPU_STAT_USER_MODE);
-	}
-	return;
-
-range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemorywrite_d: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
-err:
-	EXCEPTION(exc, 0);
-}
+VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(b, UINT8, 1)
+VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(w, UINT16, 2)
+VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(d, UINT32, 4)

@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.17 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: task.c,v 1.18 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,7 +37,9 @@ load_tr(UINT16 selector)
 {
 	selector_t task_sel;
 	int rv;
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	int i;
+#endif
 	UINT16 iobase;
 
 	rv = parse_selector(&task_sel, selector);
@@ -63,8 +65,7 @@ load_tr(UINT16 selector)
 
 	default:
 		EXCEPTION(GP_EXCEPTION, task_sel.idx);
-		iobase = 0;	/* compiler happy */
-		break;
+		return;
 	}
 
 	/* not present */
@@ -93,14 +94,16 @@ load_tr(UINT16 selector)
 		CPU_STAT_IOLIMIT = 0;
 	}
 
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	/* clear local break point flags */
-	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3));
+	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3)|CPU_DR7_LE);
 	CPU_STAT_BP = 0;
 	for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
 		if (CPU_DR7 & CPU_DR7_G(i)) {
 			CPU_STAT_BP |= (1 << i);
 		}
 	}
+#endif
 }
 
 void
@@ -458,7 +461,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	}
 
 	/* clear local break point flags */
-	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3));
+	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3)|CPU_DR7_LE);
 	CPU_STAT_BP = 0;
 	for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
 		if (CPU_DR7 & CPU_DR7_G(i)) {

@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.15 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: exception.c,v 1.16 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -143,7 +143,11 @@ exception(int num, int error_code)
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	if (num != BP_EXCEPTION) {
 		if (CPU_INST_OP32) {
+#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+			CPU_EFLAG |= RF_FLAG;
+#else
 			set_eflags(REAL_EFLAGREG|RF_FLAG, RF_FLAG);
+#endif
 		}
 	}
 #endif

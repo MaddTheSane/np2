@@ -1,4 +1,4 @@
-/*	$Id: resolve.c,v 1.6 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: resolve.c,v 1.7 2004/03/23 15:29:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -34,19 +34,6 @@
 
 UINT32 (*calc_ea_dst_tbl[0x100])(void);
 UINT32 (*calc_ea32_dst_tbl[0x100])(void);
-
-#if defined(DEBUG) || !defined(IA32_INLINE_CALC_EA)
-UINT32
-calc_ea_dst(UINT32 op)
-{
-
-	__ASSERT(op < 0x100);
-
-	if (!CPU_INST_AS32)
-		return ((*calc_ea_dst_tbl[op])() & 0xffff);
-	return (*calc_ea32_dst_tbl[op])();
-}
-#endif	/* IA32_INLINE_CALC_EA */
 
 
 /*
