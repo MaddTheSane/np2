@@ -3,6 +3,8 @@
 #include	"codecnv.h"
 
 
+int trace_flag = 0;
+
 #ifdef TRACE
 void trace_init(void) {
 }
