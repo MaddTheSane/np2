@@ -1,4 +1,4 @@
-/*	$Id: dosio.c,v 1.13 2005/03/05 14:09:37 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.14 2005/03/09 16:13:24 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -9,8 +9,8 @@
 #include "dosio.h"
 
 
-static char curpath[MAX_PATH];
-static char *curfilep = curpath;
+static OEMCHAR curpath[MAX_PATH];
+static OEMCHAR *curfilep = curpath;
 
 #define ISKANJI(c)	((((c) - 0xa1) & 0xff) < 0x5c)
 
@@ -31,7 +31,7 @@ dosio_term(void)
 
 /* ファイル操作 */
 FILEH
-file_open(const char *path)
+file_open(const OEMCHAR *path)
 {
 	FILEH fh;
 
@@ -42,14 +42,14 @@ file_open(const char *path)
 }
 
 FILEH
-file_open_rb(const char *path)
+file_open_rb(const OEMCHAR *path)
 {
 
 	return fopen(path, "rb");
 }
 
 FILEH
-file_create(const char *path)
+file_create(const OEMCHAR *path)
 {
 
 	return fopen(path, "wb+");
@@ -96,7 +96,7 @@ file_getsize(FILEH handle)
 }
 
 short
-file_attr(const char *path)
+file_attr(const OEMCHAR *path)
 {
 	struct stat sb;
 	short attr;
@@ -148,14 +148,14 @@ file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime)
 }
 
 short
-file_delete(const char *path)
+file_delete(const OEMCHAR *path)
 {
 
 	return (short)unlink(path);
 }
 
 short
-file_dircreate(const char *path)
+file_dircreate(const OEMCHAR *path)
 {
 
 	return (short)mkdir(path, 0777);
@@ -164,7 +164,7 @@ file_dircreate(const char *path)
 
 /* カレントファイル操作 */
 void
-file_setcd(const char *exepath)
+file_setcd(const OEMCHAR *exepath)
 {
 
 	milstr_ncpy(curpath, exepath, sizeof(curpath));
@@ -173,7 +173,7 @@ file_setcd(const char *exepath)
 }
 
 char *
-file_getcd(const char *filename)
+file_getcd(const OEMCHAR *filename)
 {
 
 	*curfilep = '\0';
@@ -182,7 +182,7 @@ file_getcd(const char *filename)
 }
 
 FILEH
-file_open_c(const char *filename)
+file_open_c(const OEMCHAR *filename)
 {
 
 	*curfilep = '\0';
@@ -191,7 +191,7 @@ file_open_c(const char *filename)
 }
 
 FILEH
-file_open_rb_c(const char *filename)
+file_open_rb_c(const OEMCHAR *filename)
 {
 
 	*curfilep = '\0';
@@ -200,7 +200,7 @@ file_open_rb_c(const char *filename)
 }
 
 FILEH
-file_create_c(const char *filename)
+file_create_c(const OEMCHAR *filename)
 {
 
 	*curfilep = '\0';
@@ -209,7 +209,7 @@ file_create_c(const char *filename)
 }
 
 short
-file_delete_c(const char *filename)
+file_delete_c(const OEMCHAR *filename)
 {
 
 	*curfilep = '\0';
@@ -218,7 +218,7 @@ file_delete_c(const char *filename)
 }
 
 short
-file_attr_c(const char *filename)
+file_attr_c(const OEMCHAR *filename)
 {
 
 	*curfilep = '\0';
@@ -227,7 +227,7 @@ file_attr_c(const char *filename)
 }
 
 FLISTH
-file_list1st(const char *dir, FLINFO *fli)
+file_list1st(const OEMCHAR *dir, FLINFO *fli)
 {
 	FLISTH ret;
 
@@ -258,7 +258,7 @@ file_list1st(const char *dir, FLINFO *fli)
 BOOL
 file_listnext(FLISTH hdl, FLINFO *fli)
 {
-	char buf[MAX_PATH];
+	OEMCHAR buf[MAX_PATH];
 	struct dirent *de;
 	struct stat sb;
 
@@ -301,7 +301,7 @@ file_listclose(FLISTH hdl)
 }
 
 static int
-euckanji1st(const char *str, int pos)
+euckanji1st(const OEMCHAR *str, int pos)
 {
 	int ret;
 	int c;
@@ -315,7 +315,7 @@ euckanji1st(const char *str, int pos)
 }
 
 void
-file_cpyname(char *dst, const char *src, int maxlen)
+file_cpyname(OEMCHAR *dst, const OEMCHAR *src, int maxlen)
 {
 	int i;
 
@@ -333,7 +333,7 @@ file_cpyname(char *dst, const char *src, int maxlen)
 }
 
 void
-file_catname(char *path, const char *filename, int maxlen)
+file_catname(OEMCHAR *path, const OEMCHAR *filename, int maxlen)
 {
 
 	for (; maxlen > 0; path++, maxlen--) {
@@ -359,16 +359,16 @@ file_catname(char *path, const char *filename, int maxlen)
 }
 
 BOOL
-file_cmpname(const char *path, const char *path2)
+file_cmpname(const OEMCHAR *path, const OEMCHAR *path2)
 {
 
 	return strcmp(path, path2);
 }
 
-char *
-file_getname(const char *path)
+OEMCHAR *
+file_getname(const OEMCHAR *path)
 {
-	const char *ret;
+	const OEMCHAR *ret;
 
 	for (ret = path; *path != '\0'; path++) {
 		if (ISKANJI(*path)) {
@@ -380,22 +380,22 @@ file_getname(const char *path)
 			ret = path + 1;
 		}
 	}
-	return (char *)ret;
+	return (OEMCHAR *)ret;
 }
 
 void
-file_cutname(char *path)
+file_cutname(OEMCHAR *path)
 {
-	char *p;
+	OEMCHAR *p;
 
 	p = file_getname(path);
 	*p = '\0';
 }
 
-char *
-file_getext(const char *path)
+OEMCHAR *
+file_getext(const OEMCHAR *path)
 {
-	const char *p, *q;
+	const OEMCHAR *p, *q;
 
 	for (p = file_getname(path), q = NULL; *p != '\0'; p++) {
 		if (*p == '.') {
@@ -409,9 +409,9 @@ file_getext(const char *path)
 }
 
 void
-file_cutext(char *path)
+file_cutext(OEMCHAR *path)
 {
-	char *p, *q;
+	OEMCHAR *p, *q;
 
 	for (p = file_getname(path), q = NULL; *p != '\0'; p++) {
 		if (*p == '.') {
@@ -424,7 +424,7 @@ file_cutext(char *path)
 }
 
 void
-file_cutseparator(char *path)
+file_cutseparator(OEMCHAR *path)
 {
 	int pos;
 
@@ -435,7 +435,7 @@ file_cutseparator(char *path)
 }
 
 void
-file_setseparator(char *path, int maxlen)
+file_setseparator(OEMCHAR *path, int maxlen)
 {
 	int pos;
 
