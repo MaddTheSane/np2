@@ -55,6 +55,7 @@ static void loadbmp(const char *filename) {
 		}
 	}
 	softkbd.flag |= SOFTKEY_FLAGREDRAW;
+	(void)filename;
 }
 
 void softkbd_initialize(void) {
