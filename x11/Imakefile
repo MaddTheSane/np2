@@ -63,7 +63,7 @@ PTHREAD_LIB?= -lpthread
 #endif
 
 
-SYSRESPATH?= $(LIBDIR)/np2/font
+SYSRESPATH?= $(LIBDIR)/xnp2/font
 
 DEFINES= ShmDefines \
 	-DSYSRESPATH=\"$(SYSRESPATH)\" \
@@ -184,7 +184,7 @@ ALLSRCS=	$(ASRCS) $(CSRCS)
 .c.o:
 	$(CC) -o $@ $(CFLAGS) $(_NOOP_) -c $<
 
-ComplexProgramTarget(np2)
+ComplexProgramTarget(xnp2)
 
 InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH), $(INSTDATFLAGS))
 InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH), $(INSTDATFLAGS))
