@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.13 2004/03/05 14:17:36 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.14 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1172,6 +1172,11 @@ IRET(void)
 		/* Protected mode */
 		IRET_pm();
 	}
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
+	if (CPU_EFLAG & RF_FLAG) {
+		CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_RF;
+	}
+#endif
 	IRQCHECKTERM();
 }
 

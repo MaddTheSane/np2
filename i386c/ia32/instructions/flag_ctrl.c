@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.6 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.7 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -169,11 +169,12 @@ POPFD_Fd(void)
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_32(flags);
-		flags &= ~(VIF_FLAG|VIP_FLAG);
+		flags &= ~(RF_FLAG|VIF_FLAG|VIP_FLAG);
 		mask = I_FLAG|IOPL_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG;
 	} else if (!CPU_STAT_VM86) {
 		/* Protected Mode */
 		POP0_32(flags);
+		flags &= ~RF_FLAG;
 		if (CPU_STAT_CPL == 0) {
 			flags &= ~(VIP_FLAG|VIF_FLAG);
 			mask = I_FLAG|IOPL_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG;
@@ -181,7 +182,7 @@ POPFD_Fd(void)
 			flags &= ~(VIP_FLAG|VIF_FLAG);
 			mask = I_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG;
 		} else {
-			mask = 0;
+			mask = RF_FLAG;
 		}
 	} else if (CPU_STAT_IOPL == CPU_IOPL3) {
 		/* Virtual-8086 Mode, IOPL == 3 */

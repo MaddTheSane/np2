@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.16 2004/03/06 18:25:36 yui Exp $	*/
+/*	$Id: interface.c,v 1.17 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -60,7 +60,7 @@ ia32_initreg(void)
 
 #if CPU_FAMILY == 4
 	CPU_STATSAVE.cpu_regs.dr[6] = 0xffff1ff0;
-#elif (CPU_FAMILY == 5) || (CPU_FAMILY == 6)
+#elif CPU_FAMILY >= 5
 	CPU_STATSAVE.cpu_regs.dr[6] = 0xffff0ff0;
 	CPU_STATSAVE.cpu_regs.dr[7] = 0x00000400;
 #endif
@@ -117,11 +117,20 @@ ia32(void)
 		break;
 	}
 
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
+	do {
+		exec_1step();
+		if (dmac.working) {
+			dmap();
+		}
+	} while (CPU_REMCLOCK > 0);
+#else
 	if (CPU_TRAP) {
 		do {
 			exec_1step();
 			if (CPU_TRAP) {
-				ia32_interrupt(1);
+				CPU_DR6 |= CPU_DR6_BS;
+				INTERRUPT(1, TRUE, FALSE, 0);
 			}
 			dmap();
 		} while (CPU_REMCLOCK > 0);
@@ -135,6 +144,7 @@ ia32(void)
 			exec_1step();
 		} while (CPU_REMCLOCK > 0);
 	}
+#endif
 }
 
 void
@@ -162,10 +172,15 @@ ia32_step(void)
 
 	do {
 		exec_1step();
+#if !defined(IA32_SUPPORT_DEBUG_REGISTER)
 		if (CPU_TRAP) {
-			ia32_interrupt(1);
+			CPU_DR6 |= CPU_DR6_BS;
+			INTERRUPT(1, TRUE, FALSE, 0);
 		}
-		dmap();
+#endif
+		if (dmac.working) {
+			dmap();
+		}
 	} while (CPU_REMCLOCK > 0);
 }
 
@@ -173,7 +188,7 @@ void CPUCALL
 ia32_interrupt(int vect)
 {
 
-	INTERRUPT(vect, 0, 0, 0);
+	INTERRUPT(vect, FALSE, FALSE, 0);
 }
 
 
@@ -197,7 +212,6 @@ ia32_panic(const char *str, ...)
 
 #if defined(IA32_REBOOT_ON_PANIC)
 	VERBOSE(("ia32_panic: reboot"));
-	pccore_cfgupdate();
 	pccore_reset();
 	siglongjmp(exec_1step_jmpbuf, 2);
 #else

@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.c,v 1.4 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: cpu_io.c,v 1.5 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -63,6 +63,28 @@ check_io(UINT port, UINT len)
 	}
 }
 
+#if defined(IA32_SUPPORT_DEBUG_REGISTER) && CPU_FAMILY >= 5
+INLINE static void
+check_ioport_break_point(UINT port, UINT length)
+{
+	int i;
+
+	if (CPU_STAT_BP && !(CPU_EFLAG & RF_FLAG)) {
+		for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
+			if ((CPU_STAT_BP & (1 << i))
+			 && (CPU_DR7_GET_RW(i) == CPU_DR7_RW_IO)
+
+			 && ((port <= CPU_DR(i) && port + length > CPU_DR(i))
+			  || (port > CPU_DR(i) && port <= CPU_DR(i) + CPU_DR7_GET_LEN(i)))) {
+				CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_B(i);
+			}
+		}
+	}
+}
+#else
+#define	check_ioport_break_point(port, length)
+#endif
+
 UINT8
 cpu_in(UINT port)
 {
@@ -70,6 +92,7 @@ cpu_in(UINT port)
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
 		check_io(port, 1);
 	}
+	check_ioport_break_point(port, 1);
 	return iocore_inp8(port);
 }
 
@@ -80,6 +103,7 @@ cpu_in_w(UINT port)
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
 		check_io(port, 2);
 	}
+	check_ioport_break_point(port, 2);
 	return iocore_inp16(port);
 }
 
@@ -90,6 +114,7 @@ cpu_in_d(UINT port)
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
 		check_io(port, 4);
 	}
+	check_ioport_break_point(port, 4);
 	return iocore_inp32(port);
 }
 
@@ -100,6 +125,7 @@ cpu_out(UINT port, UINT8 data)
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
 		check_io(port, 1);
 	}
+	check_ioport_break_point(port, 1);
 	iocore_out8(port, data);
 }
 
@@ -110,6 +136,7 @@ cpu_out_w(UINT port, UINT16 data)
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
 		check_io(port, 2);
 	}
+	check_ioport_break_point(port, 2);
 	iocore_out16(port, data);
 }
 
@@ -120,5 +147,6 @@ cpu_out_d(UINT port, UINT32 data)
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL > CPU_STAT_IOPL))) {
 		check_io(port, 4);
 	}
+	check_ioport_break_point(port, 4);
 	iocore_out32(port, data);
 }

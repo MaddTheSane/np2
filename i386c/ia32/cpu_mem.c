@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.12 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.13 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -242,7 +242,7 @@ cpu_prefetch(UINT32 address)
 	UINT length = CPU_PREFETCH_QUEUE_LENGTH - offset;
 
 	cpu_memory_access_la_region(address, length, CPU_PAGE_READ_CODE, CPU_STAT_USER_MODE, CPU_PREFETCHQ + offset);
-	CPU_PREFETCHQ_REMAIN = length;
+	CPU_PREFETCHQ_REMAIN = (SINT8)length;
 }
 
 INLINE static MEMCALL UINT8
@@ -276,7 +276,7 @@ cpu_prefetchq_3(UINT32 address)
 	CPU_PREFETCHQ_REMAIN -= 3;
 	p = CPU_PREFETCHQ + (address & CPU_PREFETCHQ_MASK);
 	v = LOADINTELWORD(p);
-	v += (UINT32)*p << 16;
+	v += ((UINT32)p[2]) << 16;
 	return v;
 }
 
@@ -293,6 +293,28 @@ cpu_prefetchq_d(UINT32 address)
 }
 #endif	/* IA32_SUPPORT_PREFETCH_QUEUE */
 
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
+INLINE static void
+check_memory_break_point(UINT32 address, UINT length, UINT rw)
+{
+	int i;
+
+	if (CPU_STAT_BP && !(CPU_EFLAG & RF_FLAG)) {
+		for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
+			if ((CPU_STAT_BP & (1 << i))
+			 && (CPU_DR7_GET_RW(i) & rw)
+
+			 && ((address <= CPU_DR(i) && address + length > CPU_DR(i))
+			  || (address > CPU_DR(i) && address < CPU_DR(i) + CPU_DR7_GET_LEN(i)))) {
+				CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_B(i);
+			}
+		}
+	}
+}
+#else
+#define	check_memory_break_point(address, length, rw)
+#endif
+
 /*
  * code fetch
  */
@@ -306,11 +328,11 @@ cpu_codefetch(UINT32 offset)
 	if (offset <= sd->u.seg.limit) {
 		addr = sd->u.seg.segbase + offset;
 #if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-		if (CPU_PREFETCHQ_REMAIN == 0) {
+		if (CPU_PREFETCHQ_REMAIN <= 0) {
 			cpu_prefetch(addr);
 		}
 		return cpu_prefetchq(addr);
-#else	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PM)
 			return cpu_memoryread(addr);
 		return cpu_lcmemoryread(addr);
@@ -333,7 +355,7 @@ cpu_codefetch_w(UINT32 offset)
 	if (offset <= sd->u.seg.limit - 1) {
 		addr = sd->u.seg.segbase + offset;
 #if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-		if (CPU_PREFETCHQ_REMAIN == 0) {
+		if (CPU_PREFETCHQ_REMAIN <= 0) {
 			cpu_prefetch(addr);
 		}
 		if (CPU_PREFETCHQ_REMAIN >= 2) {
@@ -343,9 +365,9 @@ cpu_codefetch_w(UINT32 offset)
 		v = cpu_prefetchq(addr);
 		addr++;
 		cpu_prefetch(addr);
-		v |= cpu_prefetchq(addr) << 8;
+		v += (UINT16)cpu_prefetchq(addr) << 8;
 		return v;
-#else	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PM)
 			return cpu_memoryread_w(addr);
 		return cpu_lcmemoryread_w(addr);
@@ -368,7 +390,7 @@ cpu_codefetch_d(UINT32 offset)
 	if (offset <= sd->u.seg.limit - 3) {
 		addr = sd->u.seg.segbase + offset;
 #if defined(IA32_SUPPORT_PREFETCH_QUEUE)
-		if (CPU_PREFETCHQ_REMAIN == 0) {
+		if (CPU_PREFETCHQ_REMAIN <= 0) {
 			cpu_prefetch(addr);
 		}
 		if (CPU_PREFETCHQ_REMAIN >= 4) {
@@ -377,25 +399,28 @@ cpu_codefetch_d(UINT32 offset)
 			switch (CPU_PREFETCHQ_REMAIN) {
 			case 1:
 				v = cpu_prefetchq(addr);
-				cpu_prefetch(addr + 1);
-				v += (UINT32)cpu_prefetchq_3(addr + 1) << 8;
+				addr++;
+				cpu_prefetch(addr);
+				v += (UINT32)cpu_prefetchq_3(addr) << 8;
 				break;
 
 			case 2:
 				v = cpu_prefetchq_w(addr);
-				cpu_prefetch(addr + 2);
-				v += (UINT32)cpu_prefetchq_w(addr + 2) << 16;
+				addr += 2;
+				cpu_prefetch(addr);
+				v += (UINT32)cpu_prefetchq_w(addr) << 16;
 				break;
 
 			case 3:
 				v = cpu_prefetchq_3(addr);
-				cpu_prefetch(addr + 3);
-				v += (UINT32)cpu_prefetchq(addr + 3) << 24;
+				addr += 3;
+				cpu_prefetch(addr);
+				v += (UINT32)cpu_prefetchq(addr) << 24;
 				break;
 			}
 			return v;
 		}
-#else	/* IA32_SUPPORT_PREFETCH_QUEUE */
+#else	/* !IA32_SUPPORT_PREFETCH_QUEUE */
 		if (!CPU_STAT_PM)
 			return cpu_memoryread_d(addr);
 		return cpu_lcmemoryread_d(addr);
@@ -451,6 +476,7 @@ cpu_vmemoryread(int idx, UINT32 offset)
 		}
 	}
 	addr = sd->u.seg.segbase + offset;
+	check_memory_break_point(addr, 1, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PM)
 		return cpu_memoryread(addr);
 	return cpu_lmemoryread(addr, CPU_STAT_USER_MODE);
@@ -502,6 +528,7 @@ cpu_vmemoryread_w(int idx, UINT32 offset)
 		}
 	} 
 	addr = sd->u.seg.segbase + offset;
+	check_memory_break_point(addr, 2, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PM)
 		return cpu_memoryread_w(addr);
 	return cpu_lmemoryread_w(addr, CPU_STAT_USER_MODE);
@@ -553,6 +580,7 @@ cpu_vmemoryread_d(int idx, UINT32 offset)
 		}
 	}
 	addr = sd->u.seg.segbase + offset;
+	check_memory_break_point(addr, 4, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PM)
 		return cpu_memoryread_d(addr);
 	return cpu_lmemoryread_d(addr, CPU_STAT_USER_MODE);
@@ -605,6 +633,7 @@ cpu_vmemorywrite(int idx, UINT32 offset, UINT8 val)
 		}
 	}
 	addr = sd->u.seg.segbase + offset;
+	check_memory_break_point(addr, 1, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		cpu_memorywrite(addr, val);
@@ -660,6 +689,7 @@ cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 val)
 		}
 	}
 	addr = sd->u.seg.segbase + offset;
+	check_memory_break_point(addr, 2, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		cpu_memorywrite_w(addr, val);
@@ -715,6 +745,7 @@ cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 val)
 		}
 	}
 	addr = sd->u.seg.segbase + offset;
+	check_memory_break_point(addr, 4, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		cpu_memorywrite_d(addr, val);

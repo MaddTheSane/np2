@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.21 2004/03/06 18:07:37 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.22 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -109,7 +109,8 @@ enum {
 };
 
 enum {
-	CPU_DEBUG_REG_NUM = 8
+	CPU_DEBUG_REG_NUM = 8,
+	CPU_DEBUG_REG_INDEX_NUM = 4
 };
 
 enum {
@@ -157,7 +158,8 @@ typedef struct {
 	descriptor_t	tr;
 
 	BYTE		prefetch[CPU_PREFETCH_QUEUE_LENGTH];
-	UINT32		prefetch_remain;
+	SINT8		prefetch_remain;
+	UINT8		pad2[2];
 
 	UINT32		adrsmask;
 	UINT32		ovflag;
@@ -174,7 +176,9 @@ typedef struct {
 	UINT8		user_mode;
 
 	UINT8		hlt;
-	UINT8		pad[3];
+	UINT8		bp;	/* break point bitmap */
+	UINT8		bp_ev;	/* break point event */
+	UINT8		pad;
 
 	UINT32		pde_base;
 
@@ -534,6 +538,41 @@ do { \
 #define	CPU_CR4_OSFXSR		(1 << 9)
 #define	CPU_CR4_OSXMMEXCPT	(1 << 10)
 
+/*
+ * debug register
+ */
+#define	CPU_DR(r)		CPU_STATSAVE.cpu_regs.dr[(r)]
+#define	CPU_DR6			CPU_DR(6)
+#define	CPU_DR7			CPU_DR(7)
+
+#define	CPU_STAT_BP		CPU_STATSAVE.cpu_stat.bp
+#define	CPU_STAT_BP_EVENT	CPU_STATSAVE.cpu_stat.bp_ev
+#define	CPU_STAT_BP_EVENT_B(r)	(1 << (r))
+#define	CPU_STAT_BP_EVENT_DR	(1 << 4)	/* fault */
+#define	CPU_STAT_BP_EVENT_STEP	(1 << 5)	/* as CPU_TRAP */
+#define	CPU_STAT_BP_EVENT_TASK	(1 << 6)
+#define	CPU_STAT_BP_EVENT_RF	(1 << 7)	/* RF_FLAG */
+
+#define	CPU_DR6_B(r)		(1 << (r))
+#define	CPU_DR6_BD		(1 << 13)
+#define	CPU_DR6_BS		(1 << 14)
+#define	CPU_DR6_BT		(1 << 15)
+
+#define	CPU_DR7_L(r)		(1 << ((r) * 2))
+#define	CPU_DR7_G(r)		(1 << ((r) * 2 + 1))
+#define	CPU_DR7_LE		(1 << 8)
+#define	CPU_DR7_GE		(1 << 9)
+#define	CPU_DR7_GD		(1 << 13)
+#define	CPU_DR7_RW(r)		(3 << ((r) * 4 + 16))
+#define	CPU_DR7_LEN(r)		(3 << ((r) * 4 + 16 + 2))
+
+#define	CPU_DR7_GET_RW(r)	((CPU_DR7) >> (16 + (r) * 4))
+#define	CPU_DR7_RW_CODE		0
+#define	CPU_DR7_RW_RO		1
+#define	CPU_DR7_RW_IO		2
+#define	CPU_DR7_RW_RW		3
+
+#define	CPU_DR7_GET_LEN(r)	((CPU_DR7) >> (16 + 2 + (r) * 4))
 
 void ia32_init(void);
 void ia32_initreg(void);

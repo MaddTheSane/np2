@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.9 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: debug.c,v 1.10 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -45,7 +45,7 @@ cpu_reg2str(void)
 	    "eax=%08x ecx=%08x edx=%08x ebx=%08x\n"
 	    "esp=%08x ebp=%08x esi=%08x edi=%08x\n"
 	    "eip=%08x prev_eip=%08x\n"
-	    "cs=%04x ss=%04x ds=%04x es=%04x fs=%04x gs=%04x\n"
+	    "es=%04x cs=%04x ss=%04x ds=%04x fs=%04x gs=%04x\n"
 	    "eflag=%08x "
 	    /* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
 	    "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d %s %s %s TF=%d %s %s %s %s %s ]\n"

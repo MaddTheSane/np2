@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.14 2004/03/06 12:59:54 yui Exp $	*/
+/*	$Id: paging.c,v 1.15 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -504,11 +504,13 @@ typedef struct {
 
 #if CPU_FAMILY == 4
 #define	NTLB	1
-#define	NENTRY	8
-#define	NWAY	4
+#define	NENTRY	(1 << 3)
+#define	NWAY	(1 << 2)
 
 #define	TLB_ENTRY_SHIFT	12
-#define	TLB_WAY_SHIFT	14
+#define	TLB_ENTRY_MASK	(NENTRY - 1)
+#define	TLB_WAY_SHIFT	15
+#define	TLB_WAY_MASK	(NWAY - 1)
 #endif
 
 typedef struct {
@@ -543,7 +545,7 @@ tlb_flush(BOOL allflush)
 	for (i = 0; i < NENTRY ; i++) {
 		for (j = 0; j < NWAY; j++) {
 			ep = &tlb.entry[i][j];
-			if (TLB_IS_VALID(ep) && (allflush || !TLB_IS_GLOBAL(ep))) {
+			if (TLB_IS_VALID(ep) && (!TLB_IS_GLOBAL(ep) || allflush)) {
 				TLB_CLEAR_VALID(ep);
 				PROFILE_INC(tlb_entry_flushes);
 			}

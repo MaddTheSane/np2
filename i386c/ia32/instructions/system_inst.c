@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.21 2004/03/07 04:09:27 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.22 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -840,59 +840,140 @@ VERW_Ew(UINT32 op)
 void
 MOV_DdRd(void)
 {
-#if 1
-	UINT32 op;
 	UINT32 src;
+	UINT op;
 	int idx;
+	int i;
 
 	CPU_WORKCLOCK(11);
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
-			TRACEOUT(("MOV_DdRd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
+			VERBOSE(("MOV_DdRd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, 0);
+		}
+
+		if (CPU_DR7 & CPU_DR7_GD) {
+			CPU_DR6 |= CPU_DR6_BD;
+			CPU_DR7 &= ~CPU_DR7_GD;
+			EXCEPTION(DB_EXCEPTION, 0);
 		}
 
 		src = *(reg32_b20[op]);
 		idx = (op >> 3) & 7;
-		CPU_STATSAVE.cpu_regs.dr[idx] = src;
 
-		TRACEOUT(("MOV_DdRd: %04x:%08x: dr%d: 0x%08x <- %s", CPU_CS, CPU_PREV_EIP, idx, src, reg32_str[op & 7]));
+		CPU_DR(idx) = src;
+		switch (idx) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			CPU_DR(idx) = src;
+			break;
+
+#if CPU_FAMILY >= 5
+		case 4:
+			if (CPU_CR4 & CPU_CR4_DE) {
+				EXCEPTION(UD_EXCEPTION, 0);
+			}
+#endif
+		case 6:
+			CPU_DR6 = src;
+			break;
+
+#if CPU_FAMILY >= 5
+		case 5:
+			if (CPU_CR4 & CPU_CR4_DE) {
+				EXCEPTION(UD_EXCEPTION, 0);
+			}
+#endif
+		case 7:
+			CPU_DR7 = src;
+			CPU_STAT_BP = 0;
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
+			for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
+				if (CPU_DR7 & (CPU_DR7_L(i)|CPU_DR7_G(i))) {
+					CPU_STAT_BP |= (1 << i);
+				}
+			}
+#endif	/* IA32_SUPPORT_DEBUG_REGISTER */
+			break;
+
+		default:
+			ia32_panic("MOV_DdRd: DR reg index (%d)", idx);
+			/*NOTREACHED*/
+			break;
+		}
+
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
-#else
-	ia32_panic("MOV_DdRd: not implemented yet!");
-#endif
 }
 
 void
 MOV_RdDd(void)
 {
-#if 1
 	UINT32 *out;
-	UINT32 op;
+	UINT op;
 	int idx;
 
 	CPU_WORKCLOCK(11);
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
-			TRACEOUT(("MOV_RdDd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
+			VERBOSE(("MOV_RdDd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, 0);
+		}
+
+		if (CPU_DR7 & CPU_DR7_GD) {
+			CPU_DR6 |= CPU_DR6_BD;
+			CPU_DR7 &= ~CPU_DR7_GD;
+			EXCEPTION(DB_EXCEPTION, 0);
 		}
 
 		out = reg32_b20[op];
 		idx = (op >> 3) & 7;
-		*out = CPU_STATSAVE.cpu_regs.dr[idx];
 
-		TRACEOUT(("MOV_RdDd: %04x:%08x: dr%d: 0x%08x -> %s", CPU_CS, CPU_PREV_EIP, idx, *out, reg32_str[op & 7]));
+		switch (idx) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			*out = CPU_DR(idx);
+			break;
+
+		case 4:
+#if CPU_FAMILY >= 5
+			if (CPU_CR4 & CPU_CR4_DE) {
+				EXCEPTION(UD_EXCEPTION, 0);
+			}
+#endif
+		case 6:
+#if CPU_FAMILY == 4
+			*out = (CPU_DR6 & 0x0000f00f) | 0xffff0ff0;
+#elif CPU_FAMILY >= 5
+			*out = (CPU_DR6 & 0x0000e00f) | 0xffff0ff0;
+#endif
+			break;
+
+#if CPU_FAMILY >= 5
+		case 5:
+			if (CPU_CR4 & CPU_CR4_DE) {
+				EXCEPTION(UD_EXCEPTION, 0);
+			}
+#endif
+		case 7:
+			*out = CPU_DR7;
+			break;
+
+		default:
+			ia32_panic("MOV_RdDd: DR reg index (%d)", idx);
+			/*NOTREACHED*/
+			break;
+		}
 		return;
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
-#else
-	ia32_panic("MOV_DdRd: not implemented yet!");
-#endif
 }
 
 void
@@ -992,6 +1073,9 @@ HLT(void)
 
 	CPU_HALT();
 	CPU_EIP--;
+#if defined(IA32_SUPPORT_PREFETCH_QUEUE)
+	CPU_PREFETCHQ_REMAIN++;
+#endif
 	CPU_STAT_HLT = 1;
 }
 

@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.13 2004/03/02 16:36:28 monaka Exp $	*/
+/*	$Id: exception.c,v 1.14 2004/03/08 12:56:22 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -85,12 +85,19 @@ exception(int num, int error_code)
 
 	switch (num) {
 	case DE_EXCEPTION:	/* (F) 除算エラー */
+	case DB_EXCEPTION:	/* (F/T) デバッグ */
 	case BR_EXCEPTION:	/* (F) BOUND の範囲外 */
 	case UD_EXCEPTION:	/* (F) 無効オペコード */
 	case NM_EXCEPTION:	/* (F) デバイス使用不可 (FPU が無い) */
+	case MF_EXCEPTION:	/* (F) 浮動小数点エラー */
+#if CPU_FAMILY >= 5
+	case MC_EXCEPTION:	/* (A) マシンチェック */
+#endif
+#if CPU_FAMILY >= 6
+	case XF_EXCEPTION:	/* (F) ストリーミング SIMD 拡張命令 */
+#endif
 		CPU_EIP = CPU_PREV_EIP;
 		/*FALLTHROUGH*/
-	case DB_EXCEPTION:	/* (F/T) デバッグ */
 	case NMI_EXCEPTION:	/* (I) NMI 割り込み */
 	case BP_EXCEPTION:	/* (T) ブレークポイント */
 	case OF_EXCEPTION:	/* (T) オーバーフロー */
@@ -116,25 +123,6 @@ exception(int num, int error_code)
 		errorp = 1;
 		break;
 
-	case MF_EXCEPTION:	/* (F) 浮動小数点エラー */
-		CPU_EIP = CPU_PREV_EIP;
-		errorp = 0;
-		break;
-
-#if CPU_FAMILY >= 5
-	case MC_EXCEPTION:	/* (A) マシンチェック */
-		CPU_EIP = CPU_PREV_EIP;
-		errorp = 0;
-		break;
-#endif
-
-#if CPU_FAMILY >= 6
-	case XF_EXCEPTION:	/* (F) ストリーミング SIMD 拡張命令 */
-		CPU_EIP = CPU_PREV_EIP;
-		errorp = 0;
-		break;
-#endif
-
 	default:
 		ia32_panic("exception: unknown exception (%d)", num);
 		break;
@@ -143,6 +131,8 @@ exception(int num, int error_code)
 	if (CPU_STAT_EXCEPTION_COUNTER >= 2) {
 		if (dftable[exctype[CPU_STAT_PREV_EXCEPTION]][exctype[num]]) {
 			num = DF_EXCEPTION;
+			errorp = 1;
+			error_code = 0;
 		}
 	}
 	CPU_STAT_PREV_EXCEPTION = num;
@@ -150,6 +140,13 @@ exception(int num, int error_code)
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
 	INTERRUPT(num, 0, errorp, error_code);
+#if defined(IA32_SUPPORT_DEBUG_REGISTER)
+	if (num != BP_EXCEPTION) {
+		if (CPU_INST_OP32) {
+			set_eflags(REAL_EFLAGREG|RF_FLAG, RF_FLAG);
+		}
+	}
+#endif
 	CPU_STAT_EXCEPTION_COUNTER_CLEAR();
 	siglongjmp(exec_1step_jmpbuf, 1);
 }
