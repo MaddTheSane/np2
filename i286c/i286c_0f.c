@@ -7,14 +7,17 @@
 
 I286_0F _sgdt(UINT op) {
 
+	UINT32	seg;
+	UINT16	ad;
+
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
-		UINT16 ad = c_get_ea[op]();
-		i286_memorywrite_w(ad + EA_FIX, i286reg.GDTR.limit);
+		ad = GET_EA(op, &seg);
+		i286_memorywrite_w(seg + ad, i286reg.GDTR.limit);
 		ad += 2;
-		i286_memorywrite_w(ad + EA_FIX, i286reg.GDTR.base);
+		i286_memorywrite_w(seg + ad, i286reg.GDTR.base);
 		ad += 2;
-		i286_memorywrite_w(ad + EA_FIX,
+		i286_memorywrite_w(seg + ad,
 									(UINT16)(0xff00 + i286reg.GDTR.base24));
 	}
 	else {
@@ -24,14 +27,17 @@ I286_0F _sgdt(UINT op) {
 
 I286_0F _sidt(UINT op) {
 
+	UINT32	seg;
+	UINT16	ad;
+
 	I286_WORKCLOCK(12);
 	if (op < 0xc0) {
-		UINT16 ad = c_get_ea[op]();
-		i286_memorywrite_w(ad + EA_FIX, i286reg.IDTR.limit);
+		ad = GET_EA(op, &seg);
+		i286_memorywrite_w(seg + ad, i286reg.IDTR.limit);
 		ad += 2;
-		i286_memorywrite_w(ad + EA_FIX, i286reg.IDTR.base);
+		i286_memorywrite_w(seg + ad, i286reg.IDTR.base);
 		ad += 2;
-		i286_memorywrite_w(ad + EA_FIX,
+		i286_memorywrite_w(seg + ad,
 									(UINT16)(0xff00 + i286reg.IDTR.base24));
 	}
 	else {
@@ -41,16 +47,19 @@ I286_0F _sidt(UINT op) {
 
 I286_0F _lgdt(UINT op) {
 
+	UINT32	seg;
+	UINT16	ad;
+
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
-		UINT16 ad = c_get_ea[op]();
-		i286reg.GDTR.limit = i286_memoryread_w(ad + EA_FIX);
+		ad = GET_EA(op, &seg);
+		i286reg.GDTR.limit = i286_memoryread_w(seg + ad);
 		ad += 2;
-		i286reg.GDTR.base = i286_memoryread_w(ad + EA_FIX);
+		i286reg.GDTR.base = i286_memoryread_w(seg + ad);
 		ad += 2;
-		i286reg.GDTR.base24 = i286_memoryread(ad + EA_FIX);
+		i286reg.GDTR.base24 = i286_memoryread(seg + ad);
 		ad++;
-		i286reg.GDTR.reserved = i286_memoryread(ad + EA_FIX);
+		i286reg.GDTR.reserved = i286_memoryread(seg + ad);
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -59,16 +68,19 @@ I286_0F _lgdt(UINT op) {
 
 I286_0F _lidt(UINT op) {
 
+	UINT32	seg;
+	UINT16	ad;
+
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
-		UINT16 ad = c_get_ea[op]();
-		i286reg.IDTR.limit = i286_memoryread_w(ad + EA_FIX);
+		ad = GET_EA(op, &seg);
+		i286reg.IDTR.limit = i286_memoryread_w(seg + ad);
 		ad += 2;
-		i286reg.IDTR.base = i286_memoryread_w(ad + EA_FIX);
+		i286reg.IDTR.base = i286_memoryread_w(seg + ad);
 		ad += 2;
-		i286reg.IDTR.base24 = i286_memoryread(ad + EA_FIX);
+		i286reg.IDTR.base24 = i286_memoryread(seg + ad);
 		ad++;
-		i286reg.IDTR.reserved = i286_memoryread(ad + EA_FIX);
+		i286reg.IDTR.reserved = i286_memoryread(seg + ad);
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -83,7 +95,7 @@ I286_0F _smsw(UINT op) {
 	}
 	else {
 		I286_WORKCLOCK(6);
-		i286_memorywrite_w(c_calc_ea_dst[op](), i286reg.MSW);
+		i286_memorywrite_w(CALC_EA(op), i286reg.MSW);
 	}
 }
 
@@ -95,7 +107,7 @@ I286_0F _lmsw(UINT op) {
 	}
 	else {
 		I286_WORKCLOCK(3);
-		i286reg.MSW = i286_memoryread_w(c_calc_ea_dst[op]());
+		i286reg.MSW = i286_memoryread_w(CALC_EA(op));
 	}
 }
 

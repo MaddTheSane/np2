@@ -178,7 +178,7 @@ I286FN v30mov_seg_ea(void) {				// 8E:	mov		segrem, EA
 	}
 	else {
 		I286_WORKCLOCK(5);
-		tmp = i286_memoryread_w(c_calc_ea_dst[op]());
+		tmp = i286_memoryread_w(CALC_EA(op));
 	}
 	switch(op & 0x18) {
 		case 0x00:			// es
@@ -236,7 +236,7 @@ I286FN v30shift_ea8_data8(void) {			// C0:	shift	EA8, DATA8
 	}
 	else {
 		I286_WORKCLOCK(8);
-		madr = c_calc_ea_dst[op]();
+		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
 			GET_PCBYTE(cl)
 			if ((op & 0x30) == 0x10) {		// rotate with carry
@@ -276,7 +276,7 @@ I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 	}
 	else {
 		I286_WORKCLOCK(8);
-		madr = c_calc_ea_dst[op]();
+		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
 			GET_PCBYTE(cl);
 			if ((op & 0x30) == 0x10) {		// rotate with carry
@@ -316,7 +316,7 @@ I286FN v30shift_ea8_cl(void) {				// D2:	shift EA8, cl
 	}
 	else {
 		I286_WORKCLOCK(8);
-		madr = c_calc_ea_dst[op]();
+		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
 			cl = I286_CL;
 			I286_WORKCLOCK(cl);
@@ -356,7 +356,7 @@ I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
 	}
 	else {
 		I286_WORKCLOCK(8);
-		madr = c_calc_ea_dst[op]();
+		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
 			cl = I286_CL;
 			I286_WORKCLOCK(cl);

@@ -6,7 +6,7 @@
 #define	WORD2LONG(src)	((short)(src))
 
 
-#define	SEGMENTPTR(s)	((UINT16 *)(&I286_SEGREG) + (s))
+#define	SEGMENTPTR(s)	(((UINT16 *)&I286_SEGREG) + (s))
 
 #define REAL_FLAGREG	(UINT16)((I286_FLAG & 0x7ff) | (I286_OV?O_FLAG:0))
 
@@ -14,6 +14,7 @@
 #define	STRING_DIRx2	((I286_FLAG & D_FLAG)?-2:2)
 
 #if !defined(MEMOPTIMIZE)
+extern	BYTE	szpflag_w[0x10000];
 #define	WORDSZPF(a)		szpflag_w[(a)]
 #else
 #define	WORDSZPF(a)		((szpcflag[(a) & 0xff] & P_FLAG) | \
@@ -21,6 +22,8 @@
 #endif
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+extern	BYTE	*_reg8_b53[256];
+extern	BYTE	*_reg8_b20[256];
 #define	REG8_B53(op)		_reg8_b53[(op)]
 #define	REG8_B20(op)		_reg8_b20[(op)]
 #else
@@ -38,11 +41,29 @@
 #endif
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+extern	UINT16	*_reg16_b53[256];
+extern	UINT16	*_reg16_b20[256];
 #define	REG16_B53(op)		_reg16_b53[(op)]
 #define	REG16_B20(op)		_reg16_b20[(op)]
 #else
 #define	REG16_B53(op)		(((UINT16 *)&I286_REG) + (((op) >> 3) & 7))
 #define	REG16_B20(op)		(((UINT16 *)&I286_REG) + ((op) & 7))
+#endif
+
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+extern	CALCEA	_calc_ea_dst[];
+extern	CALCLEA	_calc_lea[];
+extern	GETLEA	_get_ea[];
+#define	CALC_EA(o)		(_calc_ea_dst[(o)]())
+#define	CALC_LEA(o)		(_calc_lea[(o)]())
+#define	GET_EA(o, s)	(_get_ea[(o)](s))
+#else
+extern UINT32 calc_ea_dst(UINT op);
+extern UINT16 calc_lea(UINT op);
+extern UINT16 calc_a(UINT op, UINT32 *seg);
+#define	CALC_EA(o)		(calc_ea_dst(o))
+#define	CALC_LEA(o)		(calc_lea(o))
+#define	GET_EA(o, s)	(calc_a(o, s))
 #endif
 
 #define	SWAPBYTE(p, q) {											\
@@ -123,7 +144,7 @@
 		}															\
 		else {														\
 			I286_WORKCLOCK(memclk);									\
-			(s) = i286_memoryread(c_calc_ea_dst[(b)]());			\
+			(s) = i286_memoryread(CALC_EA(b));						\
 		}															\
 		(d) = REG8_B53(b);
 
@@ -136,7 +157,7 @@
 		}															\
 		else {														\
 			I286_WORKCLOCK(memclk);									\
-			s = i286_memoryread_w(c_calc_ea_dst[b]());				\
+			s = i286_memoryread_w(CALC_EA(b));						\
 		}															\
 		d = REG16_B53(b);
 
