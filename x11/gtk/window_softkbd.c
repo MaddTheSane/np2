@@ -1,4 +1,4 @@
-/*	$Id: window_softkbd.c,v 1.1 2004/06/16 12:50:49 monaka Exp $	*/
+/*	$Id: window_softkbd.c,v 1.2 2004/06/17 14:36:34 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -19,10 +19,9 @@
  */
 
 typedef struct {
-	GtkWidget	*window;
-	GTKDRAWMNG_HDL	hdl;
+	DRAWMNG_HDL	hdl;
 
-	BOOL		drawing;
+	GtkWidget	*window;
 } SKBDWIN;
 
 static SKBDWIN skwin;
@@ -57,18 +56,16 @@ skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp)
 }
 
 static void
-skbdwin_draw(BOOL redraw)
+skbdwin_draw(void)
 {
 	CMNVRAM *vram;
 
-	skwin.drawing = TRUE;
-	vram = gtkdrawmng_surflock(skwin.hdl);
+	vram = drawmng_surflock(skwin.hdl);
 	if (vram) {
-		softkbd_paint(vram, skpalcnv, redraw);
-		gtkdrawmng_surfunlock(skwin.hdl);
-		gtkdrawmng_blt(skwin.hdl, NULL, NULL);
+		softkbd_paint(vram, skpalcnv, TRUE);
+		drawmng_surfunlock(skwin.hdl);
+		drawmng_blt(skwin.hdl, NULL, NULL);
 	}
-	skwin.drawing = FALSE;
 }
 
 /*
@@ -83,9 +80,7 @@ skbdwin_window_destroy(GtkWidget *w, gpointer p)
 
 	if (skwin.window)
 		skwin.window = NULL;
-	while (skwin.drawing)
-		usleep(1);
-	gtkdrawmng_release(skwin.hdl);
+	drawmng_release(skwin.hdl);
 	skwin.hdl = NULL;
 }
 
@@ -97,7 +92,7 @@ skbdwin_expose(GtkWidget *w, GdkEventExpose *ev)
 
 	if (ev->type == GDK_EXPOSE) {
 		if (ev->count == 0) {
-			skbdwin_draw(TRUE);
+			skbdwin_draw();
 			return TRUE;
 		}
 	}
@@ -183,6 +178,7 @@ void
 skbdwin_create(void)
 {
 	GtkWidget *main_widget;
+	GtkWidget *da;
 	int width, height;
 
 	if (skwin.window)
@@ -202,13 +198,14 @@ skbdwin_create(void)
 	gtk_widget_show(main_widget);
 	gtk_container_add(GTK_CONTAINER(skwin.window), main_widget);
 
-	skwin.hdl = gtkdrawmng_create(skwin.window, width, height);
+	skwin.hdl = drawmng_create(skwin.window, width, height);
 	if (skwin.hdl == NULL) {
 		goto destroy;
 	}
-	gtk_box_pack_start(GTK_BOX(main_widget), skwin.hdl->drawarea,
-	    FALSE, TRUE, 0);
-	gtk_widget_show(skwin.hdl->drawarea);
+
+	da = GTK_WIDGET(drawmng_get_widget_handle(skwin.hdl));
+	gtk_box_pack_start(GTK_BOX(main_widget), da, FALSE, TRUE, 0);
+	gtk_widget_show(da);
 	gtk_widget_realize(skwin.window);
 
 	gtk_signal_connect(GTK_OBJECT(skwin.window), "key_press_event",
@@ -220,14 +217,13 @@ skbdwin_create(void)
 	gtk_signal_connect(GTK_OBJECT(skwin.window), "button_release_event",
 	    GTK_SIGNAL_FUNC(skbdwin_button_release), NULL);
 
-	gtk_signal_connect(GTK_OBJECT(skwin.hdl->drawarea),
-	    "expose_event", GTK_SIGNAL_FUNC(skbdwin_expose), NULL);
+	gtk_signal_connect(GTK_OBJECT(da), "expose_event",
+	    GTK_SIGNAL_FUNC(skbdwin_expose), NULL);
 
-	skwin.drawing = FALSE;
 	gtk_widget_show(skwin.window);
 
-	gtkdrawmng_set_size(skwin.hdl, width, height);
-	skbdwin_draw(TRUE);
+	drawmng_set_size(skwin.hdl, width, height);
+	drawmng_invalidate(skwin.hdl, NULL);
 	return;
 
 destroy:
@@ -250,7 +246,7 @@ skbdwin_process(void)
 {
 
 	if (skwin.window && softkbd_process()) {
-		skbdwin_draw(FALSE);
+		drawmng_invalidate(skwin.hdl, NULL);
 	}
 }
 #endif	/* SUPPORT_SOFTKBD */

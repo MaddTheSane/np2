@@ -90,7 +90,7 @@ static void
 newdisk_fd_ok_button_clicked(GtkButton *b, gpointer d)
 {
 	newdisk_fd_t *data = (newdisk_fd_t *)d;
-	gchar *p;
+	const gchar *p;
 
 	UNUSED(b);
 
@@ -118,7 +118,7 @@ newdisk_fd(newdisk_fd_t *datap)
 	uninstall_idle_process();
 
 	/* dialog */
-	datap->com.dialog = dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	datap->com.dialog = dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(dialog),"Create new floppy disk image");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
@@ -220,7 +220,7 @@ static void
 newdisk_hd_ok_button_clicked(GtkButton *b, gpointer d)
 {
 	newdisk_hd_t *data = (newdisk_hd_t *)d;
-	gchar *p;
+	const gchar *p;
 	int hdsize;
 
 	UNUSED(b);
@@ -255,7 +255,7 @@ newdisk_hd(newdisk_hd_t *datap)
 	uninstall_idle_process();
 
 	/* dialog */
-	datap->com.dialog = dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	datap->com.dialog = dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(dialog), "Create new hard disk image");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);

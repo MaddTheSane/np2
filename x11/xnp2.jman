@@ -35,12 +35,6 @@ Xnp2 \- PC-9801 シリーズエミュレータ
 に内蔵されている TiMidity 互換のソフトウェア MIDI 音源で使用する音源設定
 ファイルを指定します。
 非指定時は $(HOME)/.np2/timidity.cfg を読み込みます。
-.TP
-.B \--shared-pixmap
-このオプションを指定すると MIT Shared-Memory Extention の shared Pixmap を
-使用する様になります。起動時に読み込む設定ファイルに
-.B sharepix = true
-を追加すると常にこのオプションを有効にする事ができます。
 .SH EXAMPLES
 .nf
 設定ファイル np2.cfg を指定

@@ -18,7 +18,11 @@ XCOMM
 XCOMM GUI Toolkit
 XCOMM
 
+#if defined(USE_GTK2)
+GTK_CONFIG?= pkg-config gtk+-2.0
+#else
 GTK_CONFIG?= gtk-config
+#endif
 GTK_DEFINE= -DUSE_GTK=1
 GTK_INCLUDE= `$(GTK_CONFIG) --cflags`
 GTK_LIB= `$(GTK_CONFIG) --libs`

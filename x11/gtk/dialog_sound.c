@@ -254,30 +254,30 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	guint snd14_vol14[NELEMENTS(snd14_vol_str)];
 
 	/* PC-9801-26 */
-	gchar *snd26_ioport;
-	gchar *snd26_intr;
-	gchar *snd26_romaddr;
+	const gchar *snd26_ioport;
+	const gchar *snd26_intr;
+	const gchar *snd26_romaddr;
 	BYTE snd26opt, snd26opt_mask;
 
 	/* PC-9801-86 */
-	gchar *snd86_ioport;
-	gchar *snd86_intr;
-	gchar *snd86_soundid;
+	const gchar *snd86_ioport;
+	const gchar *snd86_intr;
+	const gchar *snd86_soundid;
 	gint snd86_interrupt;
 	gint snd86_biosrom;
 	BYTE snd86opt, snd86opt_mask;
 
 	/* Speak board */
-	gchar *spb_ioport;
-	gchar *spb_intr;
-	gchar *spb_romaddr;
+	const gchar *spb_ioport;
+	const gchar *spb_intr;
+	const gchar *spb_romaddr;
 	BYTE spb_vrc;
 	BYTE spb_vrl;
 	BYTE spb_x;
 	BYTE spbopt, spbopt_mask;
 
 	/* Driver */
-	gchar *driver_audiodevp;
+	const gchar *driver_audiodevp;
 
 	/* common */
 	int i;
@@ -1167,7 +1167,7 @@ create_sound_dialog(void)
 
 	uninstall_idle_process();
 
-	sound_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	sound_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(sound_dialog), "Sound option");
 	gtk_window_set_position(GTK_WINDOW(sound_dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(sound_dialog), TRUE);

@@ -1,3 +1,31 @@
+/*	$Id: compiler.h,v 1.21 2004/06/17 14:36:33 monaka Exp $	*/
+
+/*-
+ * Copyright (c) 2003, 2004 NONAKA Kimihiro
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
 #ifndef	NP2_X11_COMPILER_H__
 #define	NP2_X11_COMPILER_H__
 
@@ -14,26 +42,12 @@
 #if !defined(USE_NETBSDAUDIO) && !defined(USE_OSSAUDIO) && !defined(USE_ESDAUDIO) && !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
 #ifndef	NOSOUND
 #define	NOSOUND
+#undef	VERMOUTH_LIB
 #endif	/* !NOSOUND */
 #else	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO || USE_SDLAUDIO || USE_SDLMIXER */
 #undef	NOSOUND
-#endif	/* !USE_NETBSDAUDIO && !USE_OSSAUDIO && !USE_ESDAUDIO && !USE_SDLAUDIO && !USE_SDMIXER */
-
-#if defined(NOSOUND)
-
-#undef	VERMOUTH_LIB
-#undef	SOUND_CRITICAL
-#undef	SOUNDRESERVE
-
-#else	/* !NOSOUND */
-
-#include <pthread.h>
-
 #define	VERMOUTH_LIB
-#undef	SOUND_CRITICAL
-#undef	SOUNDRESERVE
-
-#endif  /* NOSOUND */
+#endif	/* !USE_NETBSDAUDIO && !USE_OSSAUDIO && !USE_ESDAUDIO && !USE_SDLAUDIO && !USE_SDMIXER */
 
 #include <sys/param.h>
 #include <sys/time.h>
@@ -201,12 +215,15 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define	SUPPORT_32BPP
 #define	SUPPORT_NORMALDISP
 
+#undef	SOUND_CRITICAL
+#undef	SOUNDRESERVE
+
 #define	SUPPORT_PC9861K
 #define	SUPPORT_HOSTDRV
 
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
-#undef	SUPPORT_IDE
+#undef	SUPPORT_IDEIO
 
 #if USE_GTK > 0
 #define	SUPPORT_S98

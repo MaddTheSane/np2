@@ -81,7 +81,7 @@ static BYTE mpuopt;
 static void
 ok_button_clicked(GtkButton *b, gpointer d)
 {
-	gchar *p;
+	const gchar *p;
 	BOOL enable;
 	UINT update;
 	int i;
@@ -165,7 +165,7 @@ dialog_destroy(GtkWidget *w, GtkWidget **wp)
 static void
 mpu98_ioport_entry_changed(GtkEditable *e, gpointer d)
 {
-	gchar *p;
+	const gchar *p;
 	BYTE val;
 
 	UNUSED(d);
@@ -180,7 +180,7 @@ mpu98_ioport_entry_changed(GtkEditable *e, gpointer d)
 static void
 mpu98_intr_entry_changed(GtkEditable *e, gpointer d)
 {
-	gchar *p;
+	const gchar *p;
 	BYTE val;
 
 	UNUSED(d);
@@ -268,7 +268,7 @@ create_midi_dialog(void)
 
 	uninstall_idle_process();
 
-	midi_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	midi_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(midi_dialog), "MPU-PC98II");
 	gtk_window_set_position(GTK_WINDOW(midi_dialog),GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(midi_dialog), TRUE);

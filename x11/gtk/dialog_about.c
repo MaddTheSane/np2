@@ -59,7 +59,7 @@ create_about_dialog(void)
 
 	uninstall_idle_process();
 
-	about_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	about_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(about_dialog), "About Neko Project II");
 	gtk_window_set_position(GTK_WINDOW(about_dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(about_dialog), TRUE);

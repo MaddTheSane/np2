@@ -102,7 +102,6 @@ sighandler(int signo)
 static struct option longopts[] = {
 	{ "config",		required_argument,	0,	'c' },
 	{ "timidity-config",	required_argument,	0,	'C' },
-	{ "shared-pixmap",	no_argument,		0,	'p' },
 #if defined(USE_SDL) || defined(USE_SYSMENU)
 	{ "ttfont",		required_argument,	0,	't' },
 #endif
@@ -121,7 +120,6 @@ usage(void)
 	printf("\t--help            [-h]        : print this message\n");
 	printf("\t--config          [-c] <file> : specify config file\n");
 	printf("\t--timidity-config [-C] <file> : specify timidity config file\n");
-	printf("\t--shared-pixmap   [-p]        : use MIT-SHM pixmap extention\n");
 #if defined(USE_SDL) || defined(USE_SYSMENU)
 	printf("\t--ttfont          [-t] <file> : specify TrueType font\n");
 #endif
@@ -176,10 +174,6 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 			milstr_ncpy(fontfilename, optarg, sizeof(fontfilename));
-			break;
-
-		case 'p':
-			shared_pixmap_flag = TRUE;
 			break;
 
 		case 'h':

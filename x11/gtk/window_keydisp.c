@@ -19,16 +19,15 @@ static UINT32 kdwinpal[KEYDISP_PALS] = {
 };
 
 typedef struct {
+	DRAWMNG_HDL	hdl;
+
 	GtkWidget	*window;
 	_MENU_HDL	menuhdl;
-	GTKDRAWMNG_HDL	hdl;
-
-	BOOL		drawing;
 } KDWIN;
 
 static KDWIN kdwin;
 
-static void drawkeys(BOOL redraw);
+static void drawkeys(void);
 static void setkeydispmode(BYTE mode);
 static BYTE kdispwin_getmode(BYTE cfgmode);
 
@@ -49,9 +48,7 @@ kdispwin_window_destroy(GtkWidget *w, gpointer p)
 
 	if (kdwin.window)
 		kdwin.window = NULL;
-	while (kdwin.drawing)
-		usleep(1);
-	gtkdrawmng_release(kdwin.hdl);
+	drawmng_release(kdwin.hdl);
 	kdwin.hdl = NULL;
 }
 
@@ -108,15 +105,19 @@ static GtkWidget *
 create_kdispwin_menu(GtkWidget *parent)
 {
 	GtkAccelGroup *accel_group;
+	GtkWidget *menubar;
+
+	(void)parent;
 
 	accel_group = gtk_accel_group_new();
 	kdwin.menuhdl.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
 	gtk_item_factory_create_items(kdwin.menuhdl.item_factory, NELEMENTS(menu_items), menu_items, NULL);
-	gtk_accel_group_attach(accel_group, GTK_OBJECT(parent));
+
+	menubar = gtk_item_factory_get_widget(kdwin.menuhdl.item_factory, "<main>");
 
 	xmenu_select_module(kdispwin_getmode(kdispcfg.mode));
 
-	return gtk_item_factory_get_widget(kdwin.menuhdl.item_factory, "<main>");
+	return menubar;
 }
 
 /*
@@ -130,7 +131,7 @@ kdispwin_expose(GtkWidget *w, GdkEventExpose *ev)
 
 	if (ev->type == GDK_EXPOSE) {
 		if (ev->count == 0) {
-			drawkeys(TRUE);
+			drawkeys();
 			return TRUE;
 		}
 	}
@@ -189,18 +190,16 @@ kdispwin_getmode(BYTE cfgmode)
 }
 
 static void
-drawkeys(BOOL redraw)
+drawkeys(void)
 {
 	CMNVRAM *vram;
 
-	kdwin.drawing = TRUE;
-	vram = gtkdrawmng_surflock(kdwin.hdl);
+	vram = drawmng_surflock(kdwin.hdl);
 	if (vram) {
-		keydisp_paint(vram, redraw);
-		gtkdrawmng_surfunlock(kdwin.hdl);
-		gtkdrawmng_blt(kdwin.hdl, NULL, NULL);
+		keydisp_paint(vram, TRUE);
+		drawmng_surfunlock(kdwin.hdl);
+		drawmng_blt(kdwin.hdl, NULL, NULL);
 	}
-	kdwin.drawing = FALSE;
 }
 
 static void
@@ -209,7 +208,7 @@ setkdwinsize(void)
 	int width, height;
 
 	keydisp_getsize(&width, &height);
-	gtkdrawmng_set_size(kdwin.hdl, width, height);
+	drawmng_set_size(kdwin.hdl, width, height);
 }
 
 static void
@@ -227,6 +226,7 @@ kdispwin_create(void)
 {
 	GtkWidget *main_widget;
 	GtkWidget *kdispwin_menu;
+	GtkWidget *da;
 	CMNPALFN palfn;
 	BYTE mode;
 
@@ -250,18 +250,17 @@ kdispwin_create(void)
 	gtk_widget_show(kdispwin_menu);
 
 	/* keydisp ²èÌÌÎÎ°è */
-	kdwin.hdl = gtkdrawmng_create(kdwin.window, KEYDISP_WIDTH, KEYDISP_HEIGHT);
+	kdwin.hdl = drawmng_create(kdwin.window, KEYDISP_WIDTH, KEYDISP_HEIGHT);
 	if (kdwin.hdl == NULL) {
 		goto destroy;
 	}
-	gtk_box_pack_start(GTK_BOX(main_widget), kdwin.hdl->drawarea,
-	    FALSE, TRUE, 0);
-	gtk_widget_show(kdwin.hdl->drawarea);
-	gtk_widget_realize(kdwin.window);
-	gtk_signal_connect(GTK_OBJECT(kdwin.hdl->drawarea), "expose_event",
-	    GTK_SIGNAL_FUNC(kdispwin_expose), NULL);
 
-	kdwin.drawing = FALSE;
+	da = GTK_WIDGET(drawmng_get_widget_handle(kdwin.hdl));
+	gtk_box_pack_start(GTK_BOX(main_widget), da, FALSE, TRUE, 0);
+	gtk_widget_show(da);
+	gtk_widget_realize(kdwin.window);
+	gtk_signal_connect(GTK_OBJECT(da), "expose_event",
+	    GTK_SIGNAL_FUNC(kdispwin_expose), NULL);
 
 	mode = kdispwin_getmode(kdispcfg.mode);
 	setkeydispmode(mode);
@@ -272,7 +271,7 @@ kdispwin_create(void)
 	palfn.get32 = getpal32;
 	palfn.cnv16 = cnvpal16;
 	keydisp_setpal(&palfn);
-	kdispwin_draw(0);
+	drawmng_invalidate(kdwin.hdl, NULL);
 	return;
 
 destroy:
@@ -305,7 +304,7 @@ kdispwin_draw(BYTE cnt)
 		if (flag & KEYDISP_FLAGSIZING) {
 			setkdwinsize();
 		}
-		drawkeys(FALSE);
+		drawmng_invalidate(kdwin.hdl, NULL);
 	}
 }
 

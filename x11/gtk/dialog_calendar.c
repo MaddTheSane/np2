@@ -90,7 +90,7 @@ static void
 ok_button_clicked(GtkButton *b, gpointer d)
 {
 	BYTE calendar_buf[8];
-	gchar *entryp;
+	const gchar *entryp;
 	BOOL renewal;
 	BYTE val;
 	int i;
@@ -202,7 +202,7 @@ create_calendar_dialog(void)
 
 	uninstall_idle_process();
 
-	calendar_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	calendar_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(calendar_dialog), "Calendar");
 	gtk_window_set_position(GTK_WINDOW(calendar_dialog),GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(calendar_dialog), TRUE);

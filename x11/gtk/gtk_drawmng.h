@@ -30,35 +30,18 @@
 
 #include "compiler.h"
 
-#include "cmndraw.h"
 #include "drawmng.h"
 
 #include "gtk/xnp2.h"
 
 typedef struct {
-	CMNVRAM		vram;
-
-	int		width;
-	int		height;
-	int		lpitch;
-
-	RECT_T		src;
-	POINT_T		dest;
-
-	PAL16MASK	pal16mask;
+	_DRAWMNG_HDL	d;
 
 	GtkWidget	*drawarea;
 	GdkImage	*surface;
 	GdkPixmap	*backsurf;
 	BOOL		shared_pixmap;
 } _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
-
-GTKDRAWMNG_HDL gtkdrawmng_create(GtkWidget *parent, int width, int height);
-void gtkdrawmng_release(GTKDRAWMNG_HDL hdl);
-CMNVRAM *gtkdrawmng_surflock(GTKDRAWMNG_HDL hdl);
-void gtkdrawmng_surfunlock(GTKDRAWMNG_HDL hdl);
-void gtkdrawmng_blt(GTKDRAWMNG_HDL hdl, RECT_T *sr, POINT_T *dp);
-void gtkdrawmng_set_size(GTKDRAWMNG_HDL hdl, int width, int height);
 
 int gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window);
 

@@ -335,10 +335,10 @@ scrnmng_create(BYTE mode)
 void
 scrnmng_destroy(void)
 {
+#if 0
 	GdkVisual *visual;
 
 	visual = gtk_widget_get_visual(drawarea);
-#if 0
 	if (visual->class == PseudoColor)
 		XFreeColors(display, cmap, pixel, 24, 0);
 #endif

@@ -427,7 +427,7 @@ create_screen_dialog(void)
 
 	uninstall_idle_process();
 
-	screen_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	screen_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(screen_dialog), "Screen option");
 	gtk_window_set_position(GTK_WINDOW(screen_dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(screen_dialog), TRUE);

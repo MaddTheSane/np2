@@ -30,6 +30,8 @@
 
 #include "compiler.h"
 
+#include "cmndraw.h"
+
 typedef struct {
 	RGB32	mask;
 	BYTE	r16b;
@@ -37,9 +39,32 @@ typedef struct {
 	BYTE	l16g;
 } PAL16MASK;
 
+typedef struct {
+	CMNVRAM		vram;
+
+	int		width;
+	int		height;
+	int		lpitch;
+
+	RECT_T		src;
+	POINT_T		dest;
+
+	PAL16MASK	pal16mask;
+	BOOL		drawing;
+} _DRAWMNG_HDL, *DRAWMNG_HDL;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+DRAWMNG_HDL drawmng_create(void *parent, int width, int height);
+void drawmng_release(DRAWMNG_HDL hdl);
+CMNVRAM *drawmng_surflock(DRAWMNG_HDL hdl);
+void drawmng_surfunlock(DRAWMNG_HDL hdl);
+void drawmng_blt(DRAWMNG_HDL hdl, RECT_T *sr, POINT_T *dp);
+void drawmng_set_size(DRAWMNG_HDL hdl, int width, int height);
+void drawmng_invalidate(DRAWMNG_HDL hdl, RECT_T *r);
+void *drawmng_get_widget_handle(DRAWMNG_HDL hdl);
 
 void drawmng_make16mask(PAL16MASK *pal16, UINT32 bmask, UINT32 rmask, UINT32 gmask);
 RGB16 drawmng_makepal16(PAL16MASK *pal16, RGB32 pal32);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2003 NONAKA Kimihiro
+ * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,22 +32,15 @@
 #include <stdlib.h>
 
 #include <gtk/gtk.h>
+
+#if (GTK_MAJOR_VERSION == 1)
 #include <gdk/gdkprivate.h>
+#elif (GTK_MAJOR_VERSION == 2)
+#include <gdk/gdkx.h>
+#else
+#error	GTK+ version error
+#endif
 
-
-void
-gdk_window_set_pointer(GdkWindow *w, gint x, gint y)
-{ 
-	GdkWindowPrivate *private;
-
-	if (w == NULL)
-		w = (GdkWindow *)&gdk_root_parent;
-	private = (GdkWindowPrivate *)w;
-	if (!private->destroyed) {
-		XWarpPointer(private->xdisplay, None, private->xwindow,
-		    0, 0, 0, 0, x, y);
-	}
-}
 
 void
 gtk_scale_set_default_values(GtkScale *scale)
@@ -59,22 +52,43 @@ gtk_scale_set_default_values(GtkScale *scale)
 	gtk_scale_set_draw_value(scale, TRUE);
 }
 
+void
+gdk_window_set_pointer(GdkWindow *w, gint x, gint y)
+{ 
+	Display *xdisplay;
+	Window xwindow;
+
+	if (w) {
+#if (GTK_MAJOR_VERSION == 1)
+		GdkWindowPrivate *private = (GdkWindowPrivate *)w;
+		xdisplay = private->xdisplay;
+		xwindow = private->xwindow;
+#elif (GTK_MAJOR_VERSION == 2)
+		xdisplay = GDK_WINDOW_XDISPLAY(w);
+		xwindow = GDK_WINDOW_XWINDOW(w);
+#endif
+		XWarpPointer(xdisplay, None, xwindow, 0, 0, 0, 0, x, y);
+	}
+}
+
 int
 is_32bpp(GdkWindow *w)
 {
-	GdkWindowPrivate *private;
+	Display *xdisplay;
 	XPixmapFormatValues *format;
 	int nbit = 0;
 	int count;
 	int i;
 
 	if (w == NULL)
-		w = (GdkWindow *)&gdk_root_parent;
-	private = (GdkWindowPrivate *)w;
-	if (private->destroyed)
 		return 0;
 
-	format = XListPixmapFormats(private->xdisplay, &count);
+#if (GTK_MAJOR_VERSION == 1)
+	xdisplay = ((GdkWindowPrivate *)w)->xdisplay;
+#elif (GTK_MAJOR_VERSION == 2)
+	xdisplay = GDK_WINDOW_XDISPLAY(w);
+#endif
+	format = XListPixmapFormats(xdisplay, &count);
 	if (format != 0) {
 		for (i = 0; i < count; i++) {
 			if (format[i].depth != 24)
@@ -101,7 +115,7 @@ is_32bpp(GdkWindow *w)
 	return (nbit == 32) ? 1 : 0;
 }
 
-#if defined(MITSHM)
+#if defined(MITSHM) && (GTK_MMAJOR_VERSION == 1)
 
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -111,10 +125,10 @@ is_32bpp(GdkWindow *w)
 #include <X11/extensions/XShm.h>
 
 /* 
- * Desc: query the server for support for the MIT_SHM extension
- * Return:  0 = not available
- *          1 = shared XImage support available
- *          2 = shared Pixmap support available also
+ * Description: query the server for support for the MIT_SHM extension
+ * Return:      0: not available
+ *              1: shared XImage support available
+ *              2: shared Pixmap support available also
  */
 static int
 gdk_image_check_xshm(Display *display)
@@ -178,13 +192,19 @@ gdk_pixmap_shpix_new(GdkWindow *w, GdkImage *image, gint width, gint height, gin
 	return pixmap;
 }
 
-#else	/* !MITSHM */
+#else	/* !MITSHM || GTK_MAJOR_VERSION != 1 */
 
 GdkPixmap *
 gdk_pixmap_shpix_new(GdkWindow *w, GdkImage *image, gint width, gint height, gint depth)
 {
 
+	(void)w;
+	(void)image;
+	(void)width;
+	(void)height;
+	(void)depth;
+
 	return NULL;
 }
 
-#endif	/* MITSHM */
+#endif	/* MITSHM && GTK_MAJOR_VERSION == 1 */

@@ -1,4 +1,4 @@
-/*	$Id: window_debug.c,v 1.1 2004/03/23 15:16:43 monaka Exp $	*/
+/*	$Id: window_debug.c,v 1.2 2004/06/17 14:36:34 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -19,10 +19,9 @@
  */
 
 typedef struct {
-	GtkWidget	*window;
-	GTKDRAWMNG_HDL	hdl;
+	DRAWMNG_HDL	hdl;
 
-	BOOL		drawing;
+	GtkWidget	*window;
 } MEMDBG;
 
 static MEMDBG memdbg;
@@ -71,14 +70,12 @@ memdbg_draw(BOOL redraw)
 {
 	CMNVRAM *vram;
 
-	memdbg.drawing = TRUE;
-	vram = gtkdrawmng_surflock(memdbg.hdl);
+	vram = drawmng_surflock(memdbg.hdl);
 	if (vram) {
 		memdbg32_paint(vram, redraw);
-		gtkdrawmng_surfunlock(memdbg.hdl);
-		gtkdrawmng_blt(memdbg.hdl, NULL, NULL);
+		drawmng_surfunlock(memdbg.hdl);
+		drawmng_blt(memdbg.hdl, NULL, NULL);
 	}
-	memdbg.drawing = FALSE;
 }
 
 static void
@@ -87,7 +84,7 @@ setclientsize(void)
 	int width, height;
 
 	memdbg32_getsize(&width, &height);
-	gtkdrawmng_set_size(memdbg.hdl, width, height);
+	drawmng_set_size(memdbg.hdl, width, height);
 }
 
 /*
@@ -102,9 +99,7 @@ memdbg_window_destroy(GtkWidget *w, gpointer p)
 
 	if (memdbg.window)
 		memdbg.window = NULL;
-	while (memdbg.drawing)
-		usleep(1);
-	gtkdrawmng_release(memdbg.hdl);
+	drawmng_release(memdbg.hdl);
 	memdbg.hdl = NULL;
 }
 
@@ -149,7 +144,7 @@ memdbg_create(void)
 	gtk_widget_show(main_widget);
 	gtk_container_add(GTK_CONTAINER(memdbg.window), main_widget);
 
-	memdbg.hdl = gtkdrawmng_create(memdbg.window, width, height);
+	memdbg.hdl = drawmng_create(memdbg.window, width, height);
 	if (memdbg.hdl == NULL) {
 		goto destroy;
 	}
@@ -160,7 +155,6 @@ memdbg_create(void)
 	gtk_signal_connect(GTK_OBJECT(memdbg.hdl->drawarea), "expose_event",
 	    GTK_SIGNAL_FUNC(memdbg_expose), NULL);
 
-	memdbg.drawing = FALSE;
 	gtk_widget_show(memdbg.window);
 
 	palfn.get8 = getpal8;

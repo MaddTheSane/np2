@@ -37,24 +37,27 @@
 #include "gtk/gtk_drawmng.h"
 
 
-GTKDRAWMNG_HDL
-gtkdrawmng_create(GtkWidget *parent_window, int width, int height)
+DRAWMNG_HDL
+drawmng_create(void *parent, int width, int height)
 {
 	GTKDRAWMNG_HDL hdl = NULL;
+	GtkWidget *parent_window;
 	GdkVisual *visual;
 	int bitcolor;
 	int bytes_per_pixel;
 
-	if (parent_window == NULL)
+	if (parent == NULL)
 		return NULL;
+	parent_window = GTK_WIDGET(parent);
 
 	hdl = (GTKDRAWMNG_HDL)_MALLOC(sizeof(_GTKDRAWMNG_HDL), "drawmng hdl");
 	if (hdl == NULL)
 		return NULL;
 	memset(hdl, 0, sizeof(_GTKDRAWMNG_HDL));
 
-	hdl->width = width;
-	hdl->height = height;
+	hdl->d.width = width;
+	hdl->d.height = height;
+	hdl->d.drawing = FALSE;
 
 	hdl->drawarea = gtk_drawing_area_new();
 	gtk_drawing_area_size(GTK_DRAWING_AREA(hdl->drawarea), width, height);
@@ -66,53 +69,53 @@ gtkdrawmng_create(GtkWidget *parent_window, int width, int height)
 	bytes_per_pixel = bitcolor / 8;
 
 	if (bitcolor == 16) {
-		drawmng_make16mask(&hdl->pal16mask, visual->blue_mask,
+		drawmng_make16mask(&hdl->d.pal16mask, visual->blue_mask,
 		    visual->red_mask, visual->green_mask);
 	}
 
-	hdl->dest.x = hdl->dest.x = 0;
-	hdl->src.left = hdl->src.top = 0;
-	hdl->src.right = width;
-	hdl->src.bottom = height;
-	hdl->lpitch = hdl->src.right * bytes_per_pixel;
-	if (hdl->lpitch % 4) {
-		hdl->src.right += (hdl->lpitch % 4) / bytes_per_pixel;
-		hdl->lpitch = hdl->src.right * bytes_per_pixel;
+	hdl->d.dest.x = hdl->d.dest.x = 0;
+	hdl->d.src.left = hdl->d.src.top = 0;
+	hdl->d.src.right = width;
+	hdl->d.src.bottom = height;
+	hdl->d.lpitch = hdl->d.src.right * bytes_per_pixel;
+	if (hdl->d.lpitch % 4) {
+		hdl->d.src.right += (hdl->d.lpitch % 4) / bytes_per_pixel;
+		hdl->d.lpitch = hdl->d.src.right * bytes_per_pixel;
 	}
 
 	/* image */
 	hdl->surface = gdk_image_new(GDK_IMAGE_FASTEST, visual,
-	    hdl->src.right, hdl->src.bottom);
+	    hdl->d.src.right, hdl->d.src.bottom);
 	if (hdl->surface == NULL)
 		goto destroy;
 
-	hdl->vram.width = hdl->src.right;
-	hdl->vram.height = hdl->src.bottom;
-	hdl->vram.xalign = bytes_per_pixel;
-	hdl->vram.yalign = hdl->lpitch;
-	hdl->vram.bpp = bitcolor;
+	hdl->d.vram.width = hdl->d.src.right;
+	hdl->d.vram.height = hdl->d.src.bottom;
+	hdl->d.vram.xalign = bytes_per_pixel;
+	hdl->d.vram.yalign = hdl->d.lpitch;
+	hdl->d.vram.bpp = bitcolor;
 
 	/* pixmap */
 	hdl->shared_pixmap = use_shared_pixmap;
 	hdl->backsurf = NULL;
 	if (use_shared_pixmap) {
 		hdl->backsurf = gdk_pixmap_shpix_new(parent_window->window,
-		    hdl->surface, hdl->vram.width, hdl->vram.height,
+		    hdl->surface, hdl->d.vram.width, hdl->d.vram.height,
 		    visual->depth);
 	}
 	if (hdl->backsurf == NULL) {
 		hdl->shared_pixmap = FALSE;
 		hdl->backsurf = gdk_pixmap_new(parent_window->window,
-		    hdl->vram.width, hdl->vram.height, visual->depth);
+		    hdl->d.vram.width, hdl->d.vram.height, visual->depth);
 	}
 	if (hdl->backsurf == NULL)
 		goto destroy;
 
-	return hdl;
+	return (DRAWMNG_HDL)hdl;
 
 destroy:
 	if (hdl) {
-		gtkdrawmng_release(hdl);
+		drawmng_release((DRAWMNG_HDL)hdl);
 		if (hdl->drawarea) {
 			gtk_widget_unref(hdl->drawarea);
 		}
@@ -121,10 +124,13 @@ destroy:
 }
 
 void
-gtkdrawmng_release(GTKDRAWMNG_HDL hdl)
+drawmng_release(DRAWMNG_HDL dhdl)
 {
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
 
 	if (hdl) {
+		while (hdl->d.drawing)
+			usleep(1);
 		if (hdl->backsurf) {
 			gdk_pixmap_unref(hdl->backsurf);
 		}
@@ -136,56 +142,110 @@ gtkdrawmng_release(GTKDRAWMNG_HDL hdl)
 }
 
 CMNVRAM *
-gtkdrawmng_surflock(GTKDRAWMNG_HDL hdl)
+drawmng_surflock(DRAWMNG_HDL dhdl)
 {
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
 
-	hdl->vram.ptr = (BYTE *)hdl->surface->mem;
-
-	return &hdl->vram;
+	if (hdl) {
+		hdl->d.vram.ptr = (BYTE *)hdl->surface->mem;
+		if (hdl->d.vram.ptr) {
+			hdl->d.drawing = TRUE;
+			return &hdl->d.vram;
+		}
+	}
+	return NULL;
 }
 
 void
-gtkdrawmng_surfunlock(GTKDRAWMNG_HDL hdl)
+drawmng_surfunlock(DRAWMNG_HDL dhdl)
 {
-	GdkGC *gc =hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
+	GdkGC *gc;
 
-	if (!hdl->shared_pixmap) {
-		gdk_draw_image(hdl->backsurf, gc, hdl->surface,
-		    0, 0, 0, 0, hdl->width, hdl->height);
+	if (hdl) {
+		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+		if (!hdl->shared_pixmap) {
+			gdk_draw_image(hdl->backsurf, gc, hdl->surface,
+			    0, 0, 0, 0, hdl->d.width, hdl->d.height);
+		}
+		hdl->d.drawing = FALSE;
 	}
 }
 
 void
-gtkdrawmng_blt(GTKDRAWMNG_HDL hdl, RECT_T *sr, POINT_T *dp)
+drawmng_blt(DRAWMNG_HDL dhdl, RECT_T *sr, POINT_T *dp)
 {
-	GdkGC *gc =hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
+	RECT_T r;
+	POINT_T p;
+	GdkGC *gc;
+	int width, height;
 
-	if (sr || dp) {
-		POINT_T p;
-		RECT_T r;
-		int width, height;
+	if (hdl) {
+		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+		if (sr || dp) {
 
-		if (sr) {
-			r = *sr;
+			if (sr) {
+				r = *sr;
+			} else {
+				r.left = r.top = 0;
+				r.right = hdl->d.width;
+				r.bottom = hdl->d.height;
+			}
+			if (dp) {
+				p = *dp;
+			} else {
+				p.x = p.y = 0;
+			}
+			width = r.right - p.x;
+			height = r.bottom - p.y;
+
+			gdk_draw_pixmap(hdl->drawarea->window, gc,
+			    hdl->backsurf,
+			    r.left, r.top, p.x, p.y, width, height);
 		} else {
-			r.left = r.top = 0;
-			r.right = hdl->width;
-			r.bottom = hdl->height;
+			gdk_draw_pixmap(hdl->drawarea->window, gc,
+			    hdl->backsurf,
+			    0, 0, 0, 0, hdl->d.width, hdl->d.height);
 		}
-		if (dp) {
-			p = *dp;
-		} else {
-			p.x = p.y = 0;
-		}
-		width = r.right - p.x;
-		height = r.bottom - p.y;
+	}
+}
 
-		gdk_draw_pixmap(hdl->drawarea->window, gc, hdl->backsurf,
-		    r.left, r.top, p.x, p.y, width, height);
+void
+drawmng_set_size(DRAWMNG_HDL dhdl, int width, int height)
+{
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
+
+	hdl->d.width = width;
+	hdl->d.height = height;
+	gtk_widget_set_usize(hdl->drawarea, width, height);
+}
+
+void
+drawmng_invalidate(DRAWMNG_HDL dhdl, RECT_T *r)
+{
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
+	gint x, y, w, h;
+
+	if (r == NULL) {
+		x = y = 0;
+		w = hdl->d.width;
+		h = hdl->d.height;
 	} else {
-		gdk_draw_pixmap(hdl->drawarea->window, gc, hdl->backsurf,
-		    0, 0, 0, 0, hdl->width, hdl->height);
+		x = r->left;
+		y = r->top;
+		w = r->right - r->left;
+		h = r->bottom - r->top;
 	}
+	gtk_widget_queue_draw_area(hdl->drawarea, x, y, w, h);
+}
+
+void *
+drawmng_get_widget_handle(DRAWMNG_HDL dhdl)
+{
+	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
+
+	return hdl->drawarea;
 }
 
 int
@@ -229,14 +289,4 @@ gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window)
 	}
 
 	return bitcolor;
-}
-
-
-void
-gtkdrawmng_set_size(GTKDRAWMNG_HDL hdl, int width, int height)
-{
-
-	hdl->width = width;
-	hdl->height = height;
-	gtk_widget_set_usize(hdl->drawarea, width, height);
 }

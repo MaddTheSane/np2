@@ -75,9 +75,9 @@ static int rate;
 static void
 ok_button_clicked(GtkButton *b, gpointer d)
 {
-	gchar *bufp = gtk_entry_get_text(GTK_ENTRY(buffer_entry));
-	gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
-	gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
+	const gchar *bufp = gtk_entry_get_text(GTK_ENTRY(buffer_entry));
+	const gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
+	const gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
 	gint resume = GTK_TOGGLE_BUTTON(resume_checkbutton)->active;
 #if defined(GCC_CPU_ARCH_IA32)
 	gint disablemmx = GTK_TOGGLE_BUTTON(disablemmx_checkbutton)->active;
@@ -202,8 +202,8 @@ rate_radiobutton_clicked(GtkButton *b, gpointer d)
 static void
 clock_changed(GtkEditable *e, gpointer d)
 {
-	gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
-	gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
+	const gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
+	const gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
 	guint mult = milstr_solveINT(multp);
 	gchar buf[80];
 	gint clock;
@@ -256,7 +256,7 @@ create_configure_dialog(void)
 
 	uninstall_idle_process();
 
-	config_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+	config_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(config_dialog), "Configure");
 	gtk_window_set_position(GTK_WINDOW(config_dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(config_dialog), TRUE);

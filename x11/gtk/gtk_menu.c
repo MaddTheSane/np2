@@ -360,15 +360,18 @@ static BOOL inited = FALSE;
  * menu initialize
  */
 GtkWidget *
-create_menu(GtkWidget *w)
+create_menu(GtkWidget *parent)
 {
 	GtkAccelGroup *accel_group;
 	GtkWidget *menubar;
 
+	(void)parent;
+
 	accel_group = gtk_accel_group_new();
 	menu_hdl.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
 	gtk_item_factory_create_items(menu_hdl.item_factory, NELEMENTS(menu_items), menu_items, NULL);
-	gtk_accel_group_attach(accel_group, GTK_OBJECT(w));
+
+	menubar = gtk_item_factory_get_widget(menu_hdl.item_factory, "<main>");
 
 	disable_unused_items();
 
@@ -397,8 +400,6 @@ create_menu(GtkWidget *w)
 	xmenu_select_mouse_move_ratio(np2oscfg.mouse_move_ratio);
 
 	inited = 1;
-
-	menubar = gtk_item_factory_get_widget(menu_hdl.item_factory, "<main>");
 
 	if (np2oscfg.I286SAVE) {
 		GtkWidget *debug_menu;
