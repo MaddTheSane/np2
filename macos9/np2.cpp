@@ -123,7 +123,7 @@ static void MenuBarInit(void) {
 	if (!np2oscfg.I286SAVE) {
 		hmenu = GetMenuHandle(IDM_OTHER);
 		if (hmenu) {
-			DeleteMenuItem(hmenu, 10);
+			DeleteMenuItem(hmenu, 9);
 		}
 	}
 	InsertMenu(GetMenu(IDM_SASI1), -1);
