@@ -1,4 +1,4 @@
-/*	$Id: window_keydisp.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: window_keydisp.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -30,8 +30,8 @@ typedef struct {
 static KDWIN kdwin;
 
 static void drawkeys(void);
-static void setkeydispmode(BYTE mode);
-static BYTE kdispwin_getmode(BYTE cfgmode);
+static void setkeydispmode(UINT8 mode);
+static UINT8 kdispwin_getmode(UINT8 cfgmode);
 
 
 /*
@@ -81,7 +81,7 @@ change_module(gpointer data, guint action, GtkWidget *w)
 }
 
 static void
-xmenu_select_module(BYTE mode)
+xmenu_select_module(UINT8 mode)
 {
 	static const char *name[] = {
 		NULL,
@@ -150,7 +150,7 @@ kdispwin_expose(GtkWidget *w, GdkEventExpose *ev)
 /*
  * keydisp local function
  */
-static BYTE
+static UINT8
 getpal8(CMNPALFN *self, UINT num)
 {
 
@@ -183,8 +183,8 @@ cnvpal16(CMNPALFN *self, RGB32 pal32)
 	return (UINT16)drawmng_makepal16(&kdwin.hdl->pal16mask, pal32);
 }
 
-static BYTE
-kdispwin_getmode(BYTE cfgmode)
+static UINT8
+kdispwin_getmode(UINT8 cfgmode)
 {
 
 	switch (cfgmode) {
@@ -222,7 +222,7 @@ setkdwinsize(void)
 }
 
 static void
-setkeydispmode(BYTE mode)
+setkeydispmode(UINT8 mode)
 {
 
 	keydisp_setmode(mode);
@@ -240,7 +240,7 @@ kdispwin_create(void)
 #endif
 	GtkWidget *da;
 	CMNPALFN palfn;
-	BYTE mode;
+	UINT8 mode;
 
 	if (kdwin.window)
 		return;
@@ -303,9 +303,9 @@ kdispwin_destroy(void)
 }
 
 void
-kdispwin_draw(BYTE cnt)
+kdispwin_draw(UINT8 cnt)
 {
-	BYTE flag;
+	UINT8 flag;
 
 	if (kdwin.window) {
 		if (cnt == 0) {

@@ -1,4 +1,4 @@
-/*	$Id: gtk_drawmng.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: gtk_drawmng.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -139,7 +139,7 @@ drawmng_surflock(DRAWMNG_HDL dhdl)
 	GTKDRAWMNG_HDL hdl = (GTKDRAWMNG_HDL)dhdl;
 
 	if (hdl) {
-		hdl->d.vram.ptr = (BYTE *)hdl->surface->mem;
+		hdl->d.vram.ptr = (UINT8 *)hdl->surface->mem;
 		if (hdl->d.vram.ptr) {
 			hdl->d.drawing = TRUE;
 			return &hdl->d.vram;

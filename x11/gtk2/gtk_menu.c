@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -99,7 +99,7 @@ static GtkActionEntry menu_entries[] = {
 /* MenuItem */
 { "about",       NULL, "_About",            NULL, NULL, G_CALLBACK(cb_dialog) },
 { "bmpsave",     NULL, "_BMP save...",      NULL, NULL, G_CALLBACK(cb_bmpsave) },
-{ "calender",    NULL, "Ca_lender...",      NULL, NULL, G_CALLBACK(cb_dialog) },
+{ "calendar",    NULL, "Ca_lendar...",      NULL, NULL, G_CALLBACK(cb_dialog) },
 { "configure",   NULL, "_Configure...",     NULL, NULL, G_CALLBACK(cb_dialog) },
 { "disk1eject",  NULL, "_Eject",            NULL, NULL, G_CALLBACK(cb_diskeject), },
 { "disk1open",   NULL, "_Open...",          NULL, NULL, G_CALLBACK(cb_diskopen), },
@@ -366,7 +366,7 @@ static const gchar *ui_info =
 "  <menu name='Other' action='OtherMenu'>\n"
 "   <menuitem action='bmpsave'/>\n"
 "   <menuitem action='s98logging'/>\n"
-"   <menuitem action='calender'/>\n"
+"   <menuitem action='calendar'/>\n"
 "   <menuitem action='clockdisp'/>\n"
 "   <menuitem action='framedisp'/>\n"
 "   <menuitem action='joyreverse'/>\n"
@@ -979,10 +979,14 @@ cb_dialog(GtkAction *action, gpointer user_data)
 	if (g_ascii_strcasecmp(name, "configure") == 0) {
 		create_configure_dialog();
 	} else if (g_ascii_strcasecmp(name, "soundopt") == 0) {
+		create_sound_dialog();
 	} else if (g_ascii_strcasecmp(name, "screenopt") == 0) {
+		create_screen_dialog();
 	} else if (g_ascii_strcasecmp(name, "midiopt") == 0) {
+		create_midi_dialog();
 	} else if (g_ascii_strcasecmp(name, "serialopt") == 0) {
-	} else if (g_ascii_strcasecmp(name, "calender") == 0) {
+	} else if (g_ascii_strcasecmp(name, "calendar") == 0) {
+		create_calendar_dialog();
 	} else if (g_ascii_strcasecmp(name, "about") == 0) {
 		create_about_dialog();
 	}

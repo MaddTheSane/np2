@@ -39,7 +39,7 @@
 
 #define	NC	KEYBOARD_KC_NC
 
-static const BYTE xkeyconv_jis[256] = {
+static const UINT8 xkeyconv_jis[256] = {
 	/*	    ,    ,    ,    ,    ,    ,    ,    		; 0x00 */
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 	/*	    ,    ,    ,    ,    ,    ,    ,    		; 0x08 */
@@ -106,7 +106,7 @@ static const BYTE xkeyconv_jis[256] = {
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC
 };
 
-static const BYTE xkeyconv_ascii[256] = {
+static const UINT8 xkeyconv_ascii[256] = {
 	/*	    ,    ,    ,    ,    ,    ,    ,    		; 0x00 */
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 	/*	    ,    ,    ,    ,    ,    ,    ,    		; 0x08 */
@@ -173,7 +173,7 @@ static const BYTE xkeyconv_ascii[256] = {
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 };
 
-static const BYTE xkeyconv_misc[256] = {
+static const UINT8 xkeyconv_misc[256] = {
 	/*	    ,    ,    ,    ,    ,    ,    ,  		; 0x00 */
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 	/*	  BS, TAB,  LF, CLR,    , RET,    ,   		; 0x08 */
@@ -240,8 +240,8 @@ static const BYTE xkeyconv_misc[256] = {
 		  NC,  NC,  NC,  NC,  NC,  NC,  NC,0x39
 };
 
-static const BYTE *xkeyconv = xkeyconv_jis;
-static BYTE shift_stat = 0x00;
+static const UINT8 *xkeyconv = xkeyconv_jis;
+static UINT8 shift_stat = 0x00;
 
 BOOL
 kbdmng_init(void)
@@ -256,10 +256,10 @@ kbdmng_init(void)
 	return SUCCESS;
 }
 
-static BYTE
-get_data(guint keysym, BYTE down)
+static UINT8
+get_data(guint keysym, UINT8 down)
 {
-	BYTE data;
+	UINT8 data;
 
 	if (keysym & ~0xff) {
 		if (keysym == GDK_VoidSymbol) {
@@ -290,14 +290,14 @@ get_data(guint keysym, BYTE down)
 void
 gtkkbd_keydown(guint keysym)
 {
-	BYTE data;
+	UINT8 data;
 
 	data = get_data(keysym, 0x80);
 	if (data != NC) {
 		if ((data & 0x80) == 0) {
 			keystat_senddata(data);
 		} else {
-			BYTE s = (shift_stat & 0x80) | 0x70;
+			UINT8 s = (shift_stat & 0x80) | 0x70;
 			keystat_senddata(s);
 			keystat_senddata(data & 0x7f);
 			keystat_senddata(s ^ 0x80);
@@ -308,7 +308,7 @@ gtkkbd_keydown(guint keysym)
 void
 gtkkbd_keyup(guint keysym)
 {
-	BYTE data;
+	UINT8 data;
 
 	data = get_data(keysym, 0x00);
 	if (data != NC) {

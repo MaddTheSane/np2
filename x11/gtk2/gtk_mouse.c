@@ -39,11 +39,11 @@ typedef struct {
 	int lastmouse;		// working
 	short mousex;
 	short mousey;
-	BYTE mouseb;
+	UINT8 mouseb;
 
-	BYTE mouse_move_ratio;
-	BYTE mouse_move_mul;
-	BYTE mouse_move_div;
+	UINT8 mouse_move_ratio;
+	UINT8 mouse_move_mul;
+	UINT8 mouse_move_div;
 
 	GdkPixmap *cursor_pixmap;
 	GdkCursor *cursor;
@@ -118,7 +118,7 @@ mouseonoff(int flag)
 	}
 }
 
-BYTE
+UINT8
 mouse_flag(void)
 {
 
@@ -126,9 +126,9 @@ mouse_flag(void)
 }
 
 void
-mouse_running(BYTE flg)
+mouse_running(UINT8 flg)
 {
-	BYTE mf = ms.mouserunning;
+	UINT8 mf = ms.mouserunning;
 
 	switch (flg & 0xc0) {
 	case 0x00:
@@ -165,8 +165,8 @@ mousemng_callback(void)
 	}
 }
 
-BYTE
-mouse_btn(BYTE button)
+UINT8
+mouse_btn(UINT8 button)
 {
 
 	if ((ms.lastmouse & 1) == 0)
@@ -192,7 +192,7 @@ mouse_btn(BYTE button)
 	return 1;
 }
 
-BYTE
+UINT8
 mousemng_getstat(short *x, short *y, int clear)
 {
 
@@ -214,7 +214,7 @@ mousemng_getstat(short *x, short *y, int clear)
 }
 
 void
-mousemng_set_ratio(BYTE new_ratio)
+mousemng_set_ratio(UINT8 new_ratio)
 {
 
 	np2oscfg.mouse_move_ratio = new_ratio;

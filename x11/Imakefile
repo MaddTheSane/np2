@@ -23,7 +23,9 @@ GTK_CONFIG?= pkg-config gtk+-2.0
 CFLAGS+= -DGTK_DISABLE_DEPRECATED
 GTK_DEFINE= -DUSE_GTK2=1
 
-GTKDEPOBJS=	gtk2/dialog_about.o gtk2/dialog_config.o gtk2/dialog_newdisk.o \
+GTKDEPOBJS=	gtk2/dialog_about.o gtk2/dialog_calendar.o \
+		gtk2/dialog_config.o gtk2/dialog_midi.o gtk2/dialog_newdisk.o \
+		gtk2/dialog_screen.o gtk2/dialog_sound.o \
 		gtk2/window_keydisp.o gtk2/window_softkbd.o \
 		gtk2/gtk_drawmng.o gtk2/gtk_screen.o gtk2/gtk_font.o \
 		gtk2/gtk_keyboard.o gtk2/gtk_menu.o gtk2/gtk_mouse.o \

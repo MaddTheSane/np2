@@ -1,3 +1,5 @@
+/*	$Id: dialog_screen.c,v 1.1 2004/07/15 14:24:33 monaka Exp $	*/
+
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.
@@ -27,8 +29,8 @@
 
 #include "compiler.h"
 
-#include "gtk/xnp2.h"
-#include "gtk/gtk_menu.h"
+#include "gtk2/xnp2.h"
+#include "gtk2/gtk_menu.h"
 
 #include "np2.h"
 #include "dosio.h"
@@ -222,7 +224,7 @@ create_video_note(void)
 	gtk_box_pack_start(GTK_BOX(main_widget), video_lcd_checkbutton,
 	    FALSE, FALSE, 0);
 	if (np2cfg.LCD_MODE & 1) {
-		gtk_signal_emit_by_name(GTK_OBJECT(video_lcd_checkbutton),
+		g_signal_emit_by_name(GTK_OBJECT(video_lcd_checkbutton),
 		    "clicked");
 	}
 
@@ -235,13 +237,13 @@ create_video_note(void)
 	    GTK_CONTAINER(video_lcd_reverse_checkbutton), 5);
 	if (np2cfg.LCD_MODE & 1) {
 		if (np2cfg.LCD_MODE & 2) {
-			gtk_signal_emit_by_name(
+			g_signal_emit_by_name(
 			  GTK_OBJECT(video_lcd_reverse_checkbutton), "clicked");
 		}
 	} else {
 		gtk_widget_set_sensitive(video_lcd_reverse_checkbutton, FALSE);
 	}
-	gtk_signal_connect(GTK_OBJECT(video_lcd_checkbutton), "clicked",
+	g_signal_connect(GTK_OBJECT(video_lcd_checkbutton), "clicked",
 	    GTK_SIGNAL_FUNC(lcd_checkbutton_clicked),
 	    (gpointer)video_lcd_reverse_checkbutton);
 
@@ -251,7 +253,7 @@ create_video_note(void)
 	gtk_box_pack_start(GTK_BOX(main_widget), video_skipline_checkbutton,
 	    FALSE, FALSE, 0);
 	if (np2cfg.skipline) {
-		gtk_signal_emit_by_name(GTK_OBJECT(video_skipline_checkbutton),
+		g_signal_emit_by_name(GTK_OBJECT(video_skipline_checkbutton),
 		    "clicked");
 	}
 
@@ -266,10 +268,9 @@ create_video_note(void)
 	video_skipline_ratio_adj = gtk_adjustment_new(np2cfg.skiplight,
 	    0.0, 255.0, 1.0, 1.0, 0.0);
 	ratio_scale = gtk_hscale_new(GTK_ADJUSTMENT(video_skipline_ratio_adj));
-	gtk_widget_set_usize(ratio_scale, 200, 0);
 	gtk_scale_set_default_values(GTK_SCALE(ratio_scale));
 	gtk_scale_set_digits(GTK_SCALE(ratio_scale), 0);
-	gtk_box_pack_start(GTK_BOX(ratio_hbox), ratio_scale, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ratio_hbox), ratio_scale, TRUE, TRUE, 0);
 	gtk_widget_show(ratio_scale);
 
 	return main_widget;
@@ -287,8 +288,6 @@ create_chip_note(void)
 	GtkWidget *gc_frame;
 	GtkWidget *gc_hbox;
 	GtkWidget *gc_radiobutton[NELEMENTS(gc_str)];
-	GSList *gdc_group = NULL;
-	GSList *gc_group = NULL;
 	int i;
 
 	main_widget = gtk_vbox_new(FALSE, 0);
@@ -308,14 +307,13 @@ create_chip_note(void)
 	gtk_container_add(GTK_CONTAINER(gdc_frame), gdc_hbox);
 
 	for (i = 0; i < NELEMENTS(gdc_str); i++) {
-		upd72020_radiobutton[i] = gtk_radio_button_new_with_label(gdc_group, gdc_str[i]);
-		gdc_group = gtk_radio_button_group(GTK_RADIO_BUTTON(upd72020_radiobutton[i]));
+		upd72020_radiobutton[i] = gtk_radio_button_new_with_label_from_widget(i > 0 ? GTK_RADIO_BUTTON(upd72020_radiobutton[i-1]) : NULL, gdc_str[i]);
 		gtk_widget_show(upd72020_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(gdc_hbox), upd72020_radiobutton[i], TRUE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(upd72020_radiobutton[i]), "clicked",
+		g_signal_connect(GTK_OBJECT(upd72020_radiobutton[i]), "clicked",
 		    GTK_SIGNAL_FUNC(uPD72020_radiobutton_clicked), (gpointer)i);
 	}
-	gtk_signal_emit_by_name(GTK_OBJECT(upd72020_radiobutton[np2cfg.uPD72020 ? 1 : 0]), "clicked");
+	g_signal_emit_by_name(GTK_OBJECT(upd72020_radiobutton[np2cfg.uPD72020 ? 1 : 0]), "clicked");
 
 	/*
 	 * Graphic Charger
@@ -330,14 +328,13 @@ create_chip_note(void)
 	gtk_container_add(GTK_CONTAINER(gc_frame), gc_hbox);
 
 	for (i = 0; i < NELEMENTS(gc_str); i++) {
-		gc_radiobutton[i] = gtk_radio_button_new_with_label(gc_group, gc_str[i]);
-		gc_group = gtk_radio_button_group(GTK_RADIO_BUTTON(gc_radiobutton[i]));
+		gc_radiobutton[i] = gtk_radio_button_new_with_label_from_widget(i > 0 ? GTK_RADIO_BUTTON(gc_radiobutton[i-1]) : NULL, gc_str[i]);
 		gtk_widget_show(gc_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(gc_hbox), gc_radiobutton[i], TRUE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(gc_radiobutton[i]), "clicked",
+		g_signal_connect(GTK_OBJECT(gc_radiobutton[i]), "clicked",
 		GTK_SIGNAL_FUNC(gc_radiobutton_clicked), (gpointer)i);
 	}
-	gtk_signal_emit_by_name(GTK_OBJECT(gc_radiobutton[np2cfg.grcg & 3]), "clicked");
+	g_signal_emit_by_name(GTK_OBJECT(gc_radiobutton[np2cfg.grcg & 3]), "clicked");
 
 	/*
 	 * Use 16 colors
@@ -346,7 +343,7 @@ create_chip_note(void)
 	gtk_widget_show(chip_enable_color16_checkbutton);
 	gtk_box_pack_start(GTK_BOX(main_widget), chip_enable_color16_checkbutton, FALSE, FALSE, 2);
 	if (np2cfg.color16) {
-		gtk_signal_emit_by_name(GTK_OBJECT(chip_enable_color16_checkbutton), "clicked");
+		g_signal_emit_by_name(GTK_OBJECT(chip_enable_color16_checkbutton), "clicked");
 	}
 
 	return main_widget;
@@ -370,7 +367,6 @@ create_timing_note(void)
 
 	for (i = 0; i < NELEMENTS(timing_waitclock_str); i++) {
 		waitclk[i].name_label = gtk_label_new(timing_waitclock_str[i]);
-		gtk_widget_set_usize(waitclk[i].name_label, 40, 0);
 		gtk_widget_show(waitclk[i].name_label);
 		gtk_table_attach(GTK_TABLE(main_widget), waitclk[i].name_label,
 		    0, 1, i, i + 1,
@@ -378,7 +374,6 @@ create_timing_note(void)
 
 		timing_waitclock_adj[i] = gtk_adjustment_new(np2cfg.wait[i * 2], 0.0, 32.0, 1.0, 1.0, 0.0);
 		waitclk[i].clock_scale = gtk_hscale_new(GTK_ADJUSTMENT(timing_waitclock_adj[i]));
-		gtk_widget_set_usize(waitclk[i].clock_scale, 160, 0);
 		gtk_widget_show(waitclk[i].clock_scale);
 		gtk_scale_set_default_values(GTK_SCALE(waitclk[i].clock_scale));
 		gtk_scale_set_digits(GTK_SCALE(waitclk[i].clock_scale), 0);
@@ -402,7 +397,6 @@ create_timing_note(void)
 	timing_realpal_adj = gtk_adjustment_new(np2cfg.realpal - 32,
 	    -32.0, 32.0, 1.0, 1.0, 0.0);
 	realpal_scale = gtk_hscale_new(GTK_ADJUSTMENT(timing_realpal_adj));
-	gtk_widget_set_usize(realpal_scale, 200, 0);
 	gtk_widget_show(realpal_scale);
 	gtk_scale_set_default_values(GTK_SCALE(realpal_scale));
 	gtk_scale_set_digits(GTK_SCALE(realpal_scale), 0);
@@ -431,10 +425,10 @@ create_screen_dialog(void)
 	gtk_window_set_title(GTK_WINDOW(screen_dialog), "Screen option");
 	gtk_window_set_position(GTK_WINDOW(screen_dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_modal(GTK_WINDOW(screen_dialog), TRUE);
-	gtk_window_set_policy(GTK_WINDOW(screen_dialog), FALSE, FALSE, FALSE);
+	gtk_window_set_resizable(GTK_WINDOW(screen_dialog), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(screen_dialog), 5);
 
-	gtk_signal_connect(GTK_OBJECT(screen_dialog), "destroy",
+	g_signal_connect(GTK_OBJECT(screen_dialog), "destroy",
 	    GTK_SIGNAL_FUNC(dialog_destroy), NULL);
 
 	main_widget = gtk_vbox_new(FALSE, 0);
@@ -465,19 +459,17 @@ create_screen_dialog(void)
 	gtk_widget_show(confirm_widget);
 	gtk_box_pack_start(GTK_BOX(main_widget), confirm_widget, TRUE, TRUE, 0);
 
-	cancel_button = gtk_button_new_with_label("Cancel");
+	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_widget_show(cancel_button);
 	gtk_box_pack_end(GTK_BOX(confirm_widget),cancel_button,FALSE, FALSE, 0);
-	gtk_widget_set_usize(cancel_button, 80, 0);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
-	gtk_signal_connect_object(GTK_OBJECT(cancel_button), "clicked",
+	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
 	    GTK_SIGNAL_FUNC(gtk_widget_destroy), GTK_OBJECT(screen_dialog));
 
-	ok_button = gtk_button_new_with_label("OK");
+	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_widget_show(ok_button);
 	gtk_box_pack_end(GTK_BOX(confirm_widget), ok_button, FALSE, FALSE, 0);
-	gtk_widget_set_usize(ok_button, 80, 0);
-	gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
+	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
 	    GTK_SIGNAL_FUNC(ok_button_clicked), (gpointer)screen_dialog);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);

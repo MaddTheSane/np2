@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -40,8 +40,8 @@
 
 
 typedef struct {
-	BYTE		scrnmode;
-	BYTE		drawing;
+	UINT8		scrnmode;
+	UINT8		drawing;
 	int		width;
 	int		height;
 	int		extend;
@@ -72,7 +72,7 @@ typedef struct {
 typedef struct {
 	SCRNSURF	ss;
 
-	BYTE		renewal[SURFACE_HEIGHT];
+	UINT8		renewal[SURFACE_HEIGHT];
 } X11SCRNSURF;
 
 static SCRNMNG scrnmng;
@@ -250,14 +250,14 @@ scrnmng_initialize(void)
 }
 
 BOOL
-scrnmng_create(BYTE mode)
+scrnmng_create(UINT8 mode)
 {
 	GdkVisual *visual;
 	RECT_T rect;
 	int height;
 	int bitcolor;
 	UINT lpitch;
-	BYTE bytes_per_pixel;
+	UINT8 bytes_per_pixel;
 
 	while (drawmng.drawing)
 		gtk_main_iteration_do(FALSE);
@@ -316,7 +316,7 @@ scrnmng_create(BYTE mode)
 		gdk_draw_rectangle(drawmng.backsurf, drawarea->style->black_gc,
 		    TRUE, 0, 0, rect.right, rect.bottom);
 	}
-	scrnmng.bpp = (BYTE)bitcolor;
+	scrnmng.bpp = (UINT8)bitcolor;
 	drawmng.lpitch = lpitch;
 	scrnsurf.ss.bpp = bitcolor;
 	drawmng.scrnmode = mode;
@@ -389,7 +389,7 @@ scrnmng_surflock(void)
 	memcpy(scrnsurf.renewal, renewal_line, sizeof(scrnsurf.renewal));
 #endif
 
-	scrnsurf.ss.ptr = (BYTE *)drawmng.surface->mem;
+	scrnsurf.ss.ptr = (UINT8 *)drawmng.surface->mem;
 	if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
 		scrnsurf.ss.xalign = bytes_per_pixel;
 		scrnsurf.ss.yalign = lpitch;
@@ -413,7 +413,7 @@ scrnmng_surfunlock(const SCRNSURF *surf)
 	GdkDrawable *d = drawarea->window;
 	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
 	X11SCRNSURF *ss = (X11SCRNSURF *)surf;
-	BYTE *delta = ss->renewal;
+	UINT8 *delta = ss->renewal;
 	RECT_T r;
 	gint h, s;
 

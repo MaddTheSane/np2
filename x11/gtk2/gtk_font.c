@@ -1,4 +1,4 @@
-/*	$Id: gtk_font.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: gtk_font.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -197,7 +197,7 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const gchar *str, int len)
 	img = gdk_drawable_get_image(fhdl->backsurf,
 	    0, 0, fhdl->rect.width, fhdl->rect.height);
 	if (img) {
-		BYTE *p = (BYTE *)(fdat + 1);
+		UINT8 *p = (UINT8 *)(fdat + 1);
 		unsigned long pixel;
 		int x, y;
 
@@ -315,7 +315,7 @@ fontmng_get(void *hdl, const char *str)
 	if (((((str[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) && (str[1] != '\0')) {
 		codecnv_sjis2euc(buf, 4, str, 2);
 		len = 2;
-	} else if ((BYTE)str[0] >= 0xa1 && (BYTE)str[0] <= 0xdf) {
+	} else if ((UINT8)str[0] >= 0xa1 && (UINT8)str[0] <= 0xdf) {
 		buf[0] = 0x8e;
 		buf[1] = str[0];
 		buf[2] = '\0';

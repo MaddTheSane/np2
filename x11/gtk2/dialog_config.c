@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -491,7 +491,6 @@ create_configure_dialog(void)
 	 * OK, Cancel button
 	 */
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
-	//gtk_widget_set_usize(ok_button, 80, 0);
 	gtk_widget_show(ok_button);
 	gtk_container_add(GTK_CONTAINER(confirm_widget), ok_button);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
@@ -501,7 +500,6 @@ create_configure_dialog(void)
 	gtk_widget_grab_default(ok_button);
 
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	//gtk_widget_set_usize(cancel_button, 80, 0);
 	gtk_widget_show(cancel_button);
 	gtk_container_add(GTK_CONTAINER(confirm_widget), cancel_button);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
