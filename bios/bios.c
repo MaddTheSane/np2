@@ -52,7 +52,7 @@ static void bios_reinitbyswitch(void) {
 
 	mem[MEMB_BIOS_FLAG0] = 0x01;
 	CPU_TYPE = 0;
-	prxcrt = 0xc8;
+	prxcrt = 0x48;								// ver0.74
 	if (gdc.display & 2) {
 		prxcrt |= 0x04;							// color16
 	}

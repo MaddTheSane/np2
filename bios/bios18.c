@@ -205,7 +205,9 @@ void bios0x18(void) {
 	UINT16	tmp;
 	UINT32	pal;
 
-//	TRACE_("int18", CPU_AH);
+	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
+							i286_memword_read(CPU_SS, CPU_SP+2),
+							i286_memword_read(CPU_SS, CPU_SP)));
 
 	sti_waiting ^= 1;
 	if (sti_waiting) {					// 割込み許可の遊び
@@ -508,17 +510,28 @@ void bios0x18(void) {
 			break;
 
    		case 0x40:						// グラフィック画面の表示開始
+			// GDCバッファを空に
+			if (gdc.s.cnt) {
+				gdc_work(GDCWORK_SLAVE);
+			}
 			if (!(gdcs.grphdisp & GDCSCRN_ENABLE)) {
 				gdcs.grphdisp |= GDCSCRN_ENABLE;
 				screenupdate |= 2;
 			}
+			mem[MEMB_PRXCRT] |= 0x80;
  			break;
 
    		case 0x41:						// グラフィック画面の表示終了
+			// GDCバッファを空に
+			if (gdc.s.cnt) {
+				gdc_work(GDCWORK_SLAVE);
+			}
+			gdc_forceready(&gdc.s);
 			if (gdcs.grphdisp & GDCSCRN_ENABLE) {
 				gdcs.grphdisp &= ~(GDCSCRN_ENABLE);
 				screenupdate |= 2;
 			}
+			mem[MEMB_PRXCRT] &= 0x7f;
  			break;
 
    		case 0x42:						// 表示領域の設定

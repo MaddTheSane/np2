@@ -605,6 +605,7 @@ static int resetcnt = 0;
 static int execcnt = 0;
 int piccnt = 0;
 int tr = 0;
+UINT	gr = 0;
 #endif
 
 	UINT	cflg;
@@ -662,7 +663,9 @@ void pccore_exec(BOOL draw) {
 			trpos++;
 #endif
 			if (tr) {
-				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
+				if ((CPU_CS == 0xf760) || (CPU_CS == 0xf990)) {
+					TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
+				}
 			}
 #if 0
 			if ((tr & 2) && (mem[0x0471e] == '\\')) {
@@ -682,8 +685,15 @@ void pccore_exec(BOOL draw) {
 				}
 			}
 #endif
-//			i286x_step();
-			i286c_step();
+			{
+				UINT r = (gdcs.grphdisp & GDCSCRN_ENABLE);
+				if (gr != r) {
+					TRACEOUT(("gdcs.grphdisp = %.2x [%.4x:%.4x]", r, CPU_CS, CPU_IP));
+					gr = r;
+				}
+			}
+			i286x_step();
+//			i286c_step();
 		}
 #endif
 		nevent_progress();

@@ -229,6 +229,7 @@ short file_attr(const char *path) {
 	FSSpec			fss;
 	FSRef			fsr;
 	FSCatalogInfo	fsci;
+	short			ret;
 
 	mkstr255(fname, path);
 	if ((FSMakeFSSpec(0, 0, fname, &fss) != noErr) ||
@@ -237,16 +238,21 @@ short file_attr(const char *path) {
 										NULL, NULL, NULL) != noErr)) {
 		return(-1);
 	}
-	else if (fsci.nodeFlags & kFSNodeIsDirectoryMask) {
-		return(FILEATTR_DIRECTORY);
+	if (fsci.nodeFlags & kFSNodeIsDirectoryMask) {
+		ret = FILEATTR_DIRECTORY;
 	}
 	else {
-		return(FILEATTR_ARCHIVE);
+		ret = FILEATTR_ARCHIVE;
 	}
+	if (fsci.nodeFlags & kFSNodeLockedMask) {
+		ret |= FILEATTR_READONLY;
+	}
+	return(ret);
 #else
 	Str255		fname;
 	FSSpec		fss;
 	CInfoPBRec	pb;
+	short		ret;
 
 	mkstr255(fname, path);
 	FSMakeFSSpec(0, 0, fname, &fss);
@@ -262,12 +268,16 @@ short file_attr(const char *path) {
 	if (PBGetCatInfo(&pb, false) != noErr) {
 		return(-1);
 	}
-	if (pb.hFileInfo.ioFlAttrib & 0x10) {
-		return(FILEATTR_DIRECTORY);
+	if (pb.hFileInfo.ioFlAttrib & ioDirMask) {
+		ret = FILEATTR_DIRECTORY;
 	}
 	else {
-		return(FILEATTR_ARCHIVE);
+		ret = FILEATTR_ARCHIVE;
 	}
+	if (pb.hFileInfo.ioFlAttrib & kioFlAttribLockedMask) {
+		ret |= FILEATTR_READONLY;
+	}
+	return(ret);
 #endif
 }
 
@@ -422,6 +432,9 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 			fli->size = (UINT32)flhdl->fsci.dataLogicalSize;
 			dt = &flhdl->fsci.contentModDate;
 		}
+		if (flhdl->fsci.nodeFlags & kFSNodeLockedMask) {
+			fli->attr |= FILEATTR_READONLY;
+		}
 		cnvdatetime(dt, &fli->date, &fli->time);
 		char2str(fli->path, sizeof(fli->path),
 								flhdl->name.unicode, flhdl->name.length);
@@ -538,7 +551,7 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 	flhdl->index++;
 	if (fli) {
 		fli->caps = FLICAPS_SIZE | FLICAPS_ATTR | FLICAPS_DATE | FLICAPS_TIME;
-		if (flhdl->pb.hFileInfo.ioFlAttrib & 0x10) {
+		if (flhdl->pb.hFileInfo.ioFlAttrib & ioDirMask) {
 			fli->attr = FILEATTR_DIRECTORY;
 			fli->size = 0;
 			dt = flhdl->pb.dirInfo.ioDrCrDat;
@@ -547,6 +560,9 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 			fli->attr = FILEATTR_ARCHIVE;
 			fli->size = flhdl->pb.hFileInfo.ioFlLgLen;
 			dt = flhdl->pb.hFileInfo.ioFlMdDat;
+		}
+		if (flhdl->pb.hFileInfo.ioFlAttrib & kioFlAttribLockedMask) {
+			fli->attr |= FILEATTR_READONLY;
 		}
 		cnvdatetime(dt, &fli->date, &fli->time);
 		mkcstr(fli->path, sizeof(fli->path), fname);
