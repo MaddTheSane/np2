@@ -95,7 +95,7 @@ void bios0x19(void) {
 		// É|ÉCÉìÉ^Å`
 		SETBIOSMEM16(MEMW_RS_CH0_OFST, CPU_DI);
 		SETBIOSMEM16(MEMW_RS_CH0_SEG, CPU_ES);
-		i286_memstr_write(CPU_ES, CPU_DI, &rsb, sizeof(rsb));
+		MEML_WRITESTR(CPU_ES, CPU_DI, &rsb, sizeof(rsb));
 
 		CPU_AH = 0;
 	}

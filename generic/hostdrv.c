@@ -68,7 +68,7 @@ static void fetch_if4dos(void) {
 
 	off = i286_memoryread_w(IF4DOSPTR_ADDR);
 	seg = i286_memoryread_w(IF4DOSPTR_ADDR + 2);
-	i286_memstr_read(seg, off, &if4dos, sizeof(if4dos));
+	MEML_READSTR(seg, off, &if4dos, sizeof(if4dos));
 	hostdrv.stat.drive_no = if4dos.drive_no;
 	hostdrv.stat.dosver_major = if4dos.dosver_major;
 	hostdrv.stat.dosver_minor = if4dos.dosver_minor;
@@ -83,12 +83,12 @@ static void fetch_if4dos(void) {
 
 static void fetch_intr_regs(INTRST is) {
 
-	i286_memstr_read(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
+	MEML_READSTR(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
 }
 
 static void store_intr_regs(INTRST is) {
 
-	i286_memstr_write(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
+	MEML_WRITESTR(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
 }
 
 
@@ -98,18 +98,18 @@ static void fetch_sda_currcds(SDACDS sc) {
 	REG16	seg;
 
 	if (hostdrv.stat.dosver_major == 3) {
-		i286_memstr_read(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEML_READSTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver3.sda, sizeof(sc->ver3.sda));
 		off = LOADINTELWORD(sc->ver3.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver3.sda.cdsptr.seg);
-		i286_memstr_read(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
+		MEML_READSTR(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
 	}
 	else {
-		i286_memstr_read(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEML_READSTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver4.sda, sizeof(sc->ver4.sda));
 		off = LOADINTELWORD(sc->ver4.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver4.sda.cdsptr.seg);
-		i286_memstr_read(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
+		MEML_READSTR(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
 	}
 }
 
@@ -119,18 +119,18 @@ static void store_sda_currcds(SDACDS sc) {
 	REG16	seg;
 
 	if (hostdrv.stat.dosver_major == 3) {
-		i286_memstr_write(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEML_WRITESTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver3.sda, sizeof(sc->ver3.sda));
 		off = LOADINTELWORD(sc->ver3.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver3.sda.cdsptr.seg);
-		i286_memstr_write(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
+		MEML_WRITESTR(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
 	}
 	else {
-		i286_memstr_write(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEML_WRITESTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver4.sda, sizeof(sc->ver4.sda));
 		off = LOADINTELWORD(sc->ver4.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver4.sda.cdsptr.seg);
-		i286_memstr_write(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
+		MEML_WRITESTR(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
 	}
 }
 
@@ -142,7 +142,7 @@ static void fetch_sft(INTRST is, SFTREC sft) {
 
 	off = LOADINTELWORD(is->r.w.di);
 	seg = LOADINTELWORD(is->r.w.es);
-	i286_memstr_read(seg, off, sft, sizeof(_SFTREC));
+	MEML_READSTR(seg, off, sft, sizeof(_SFTREC));
 }
 
 static void store_sft(INTRST is, SFTREC sft) {
@@ -152,7 +152,7 @@ static void store_sft(INTRST is, SFTREC sft) {
 
 	off = LOADINTELWORD(is->r.w.di);
 	seg = LOADINTELWORD(is->r.w.es);
-	i286_memstr_write(seg, off, sft, sizeof(_SFTREC));
+	MEML_WRITESTR(seg, off, sft, sizeof(_SFTREC));
 }
 
 
@@ -359,7 +359,7 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 		if (file_read(fh, work, r) != r) {
 			return(FAILURE);
 		}
-		i286_memstr_write(seg, off, work, r);
+		MEML_WRITESTR(seg, off, work, r);
 		off += r;
 		size -= r;
 	}
@@ -387,7 +387,7 @@ static BOOL write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 	else {
 		do {
 			r = min(size, sizeof(work));
-			i286_memstr_read(seg, off, work, r);
+			MEML_READSTR(seg, off, work, r);
 			if (file_write(fh, work, r) != r) {
 				return(FAILURE);
 			}
@@ -981,14 +981,12 @@ static void do_redir(INTRST intrst) {
 			}
 			i286_memword_write(CPU_DS, CPU_BX + 2, 4);
 			i286_memword_write(CPU_DS, CPU_BX + 4, 1);
-//			STOREINTELWORD(intrst->r.w.bx, 4);
-//			STOREINTELWORD(intrst->r.w.cx, 1);
 			tmp[0] = (char)('A' + hostdrv.stat.drive_no);
 			tmp[1] = ':';
 			tmp[2] = '\0';
-			i286_memstr_write(LOADINTELWORD(intrst->r.w.ds),
+			MEML_WRITESTR(LOADINTELWORD(intrst->r.w.ds),
 							LOADINTELWORD(intrst->r.w.si), tmp, 3);
-			i286_memstr_write(LOADINTELWORD(intrst->r.w.es),
+			MEML_WRITESTR(LOADINTELWORD(intrst->r.w.es),
 							LOADINTELWORD(intrst->r.w.di),
 							ROOTPATH, ROOTPATH_SIZE + 1);
 			break;

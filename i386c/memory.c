@@ -902,9 +902,6 @@ void MEMCALL i286_memorywrite(UINT32 addr, REG8 value) {
 			mem9821_w(addr, value);
 		}
 #endif
-		else {
-			TRACEOUT(("mem_w %x %x", addr, value));
-		}
 	}
 	else {
 		memfn.wr8[(addr >> 15) & 0x1f](addr, value);
@@ -1088,7 +1085,7 @@ void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
 
 // ---- Logical Space (BIOS)
 
-static UINT32 realaddr(UINT32 addr) {
+static UINT32 physicaladdr(UINT32 addr) {
 
 	UINT32	pde;
 	UINT32	pte;
@@ -1110,7 +1107,7 @@ retdummy:
 	return(0x01000000);		// ÇƒÇ´Ç∆Å[Ç…ÉÅÉÇÉäÇ™ë∂ç›ÇµÇ»Ç¢èÍèä
 }
 
-void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
+void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 
 	UINT32	adrs;
 	UINT	size;
@@ -1121,15 +1118,14 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 		size = 0x1000 - (adrs & 0xfff);
 		size = min(size, leng);
 		size = min(size, 0x10000 - off);
-		memp_read(realaddr(adrs), dat, size);
+		memp_read(physicaladdr(adrs), dat, size);
 		off += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
 	}
 }
 
-void MEMCALL i286_memstr_write(UINT seg, UINT off,
-												const void *dat, UINT leng) {
+void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
 
 	UINT32	adrs;
 	UINT	size;
@@ -1140,7 +1136,7 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 		size = 0x1000 - (adrs & 0xfff);
 		size = min(size, leng);
 		size = min(size, 0x10000 - off);
-		memp_write(realaddr(adrs), dat, size);
+		memp_write(physicaladdr(adrs), dat, size);
 		off += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
@@ -1154,7 +1150,7 @@ void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
 	while(leng) {
 		size = 0x1000 - (address & 0xfff);
 		size = min(size, leng);
-		memp_read(realaddr(address), dat, size);
+		memp_read(physicaladdr(address), dat, size);
 		address += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
@@ -1168,7 +1164,7 @@ void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
 	while(leng) {
 		size = 0x1000 - (address & 0xfff);
 		size = min(size, leng);
-		memp_write(realaddr(address), dat, size);
+		memp_write(physicaladdr(address), dat, size);
 		address += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;

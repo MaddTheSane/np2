@@ -66,7 +66,7 @@ REG8 lio_ginit(GLIO lio) {
 	STOREINTELWORD(lio->work.viewx2, 639);
 	STOREINTELWORD(lio->work.viewy2, 399);
 	lio->palmode = 0;
-	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
+	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 }
@@ -93,7 +93,7 @@ REG8 lio_gscreen(GLIO lio) {
 	else {
 		colorbit = 4;
 	}
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	scrnmode = dat.mode;
 	if (scrnmode == 0xff) {
 		scrnmode = lio->work.scrnmode;
@@ -203,7 +203,7 @@ REG8 lio_gscreen(GLIO lio) {
 	TRACEOUT(("bios1842 - %.2x", mode));
 	bios0x18_42(mode);
 	iocore_out8(0x00a6, lio->work.access);
-	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
+	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	return(LIO_SUCCESS);
 
 gscreen_err5:
@@ -223,7 +223,7 @@ REG8 lio_gview(GLIO lio) {
 	int		x2;
 	int		y2;
 
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x1 = (SINT16)LOADINTELWORD(dat.x1);
 	y1 = (SINT16)LOADINTELWORD(dat.y1);
 	x2 = (SINT16)LOADINTELWORD(dat.x2);
@@ -235,7 +235,7 @@ REG8 lio_gview(GLIO lio) {
 	STOREINTELWORD(lio->work.viewy1, (UINT16)y1);
 	STOREINTELWORD(lio->work.viewx2, (UINT16)x2);
 	STOREINTELWORD(lio->work.viewy2, (UINT16)y2);
-	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
+	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	return(LIO_SUCCESS);
 }
 
@@ -246,7 +246,7 @@ REG8 lio_gcolor1(GLIO lio) {
 
 	GCOLOR1	dat;
 
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	if (dat.bgcolor != 0xff) {
 		lio->work.bgcolor = dat.bgcolor;
 	}
@@ -270,7 +270,7 @@ REG8 lio_gcolor1(GLIO lio) {
 		}
 		lio->palmode = dat.palmode;
 	}
-	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
+	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 
@@ -285,7 +285,7 @@ REG8 lio_gcolor2(GLIO lio) {
 
 	GCOLOR2	dat;
 
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	if (dat.pal >= ((lio->palmode == 2)?16:8)) {
 		goto gcolor2_err5;
 	}
@@ -302,7 +302,7 @@ REG8 lio_gcolor2(GLIO lio) {
 		gdc_setanalogpal(dat.pal, offsetof(RGB32, p.g),
 												(UINT8)(dat.color2 & 0x0f));
 	}
-	i286_memstr_write(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
+	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
 	return(LIO_SUCCESS);
 
 gcolor2_err5:

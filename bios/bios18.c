@@ -210,7 +210,7 @@ const BYTE	*p;
 			size = 0x0101;
 			i286_memword_write(seg, off, 0x0101);
 			p = fontrom + 0x82000 + ((code & 0xff) << 4);
-			i286_memstr_write(seg, off + 2, p, 8);
+			MEML_WRITESTR(seg, off + 2, p, 8);
 			break;
 
 		case 0x28:			// 8x16 KANJI
@@ -222,13 +222,13 @@ const BYTE	*p;
 			p = fontrom;
 			p += (code & 0x7f) << 12;
 			p += (((code >> 8) - 0x20) & 0x7f) << 4;
-			i286_memstr_write(seg, off + 2, p, 16);
+			MEML_WRITESTR(seg, off + 2, p, 16);
 			break;
 
 		case 0x80:			// 8x16 ANK
 			size = 0x0102;
 			p = fontrom + 0x80000 + ((code & 0xff) << 4);
-			i286_memstr_write(seg, off + 2, p, 16);
+			MEML_WRITESTR(seg, off + 2, p, 16);
 			break;
 
 		default:
@@ -240,7 +240,7 @@ const BYTE	*p;
 				buf[i*2+0] = *p;
 				buf[i*2+1] = *(p+0x800);
 			}
-			i286_memstr_write(seg, off + 2, buf, 32);
+			MEML_WRITESTR(seg, off + 2, buf, 32);
 			break;
 	}
 	i286_memword_write(seg, off, size);
@@ -254,7 +254,7 @@ static void bios0x18_1a(REG16 seg, REG16 off, REG16 code) {
 	UINT	i;
 
 	if (((code >> 8) & 0x7e) == 0x76) {
-		i286_memstr_read(seg, off + 2, buf, 32);
+		MEML_READSTR(seg, off + 2, buf, 32);
 		p = fontrom;
 		p += (code & 0x7f) << 12;
 		p += (((code >> 8) - 0x20) & 0x7f) << 4;
@@ -561,7 +561,7 @@ static void bios0x18_47(void) {
 	SINT16		dy;
 
 	gdc_forceready(GDCWORK_SLAVE);
-	i286_memstr_read(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
+	MEML_READSTR(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	GBSX1 = LOADINTELWORD(ucw.GBSX1);
 	GBSY1 = LOADINTELWORD(ucw.GBSY1);
 	GBSX2 = LOADINTELWORD(ucw.GBSX2);
@@ -672,7 +672,7 @@ static void bios0x18_49(void) {
 
 	gdc_forceready(GDCWORK_SLAVE);
 
-	i286_memstr_read(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
+	MEML_READSTR(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	for (i=0; i<8; i++) {
 		mem[MEMW_PRXGLS + i] = ucw.GBMDOTI[i];
 		pat[i] = GDCPATREVERSE(ucw.GBMDOTI[i]);
@@ -970,7 +970,7 @@ void bios0x18(void) {
  			break;
 
 		case 0x43:						// ƒpƒŒƒbƒg‚ÌÝ’è
-			i286_memstr_read(CPU_DS, CPU_BX + offsetof(UCWTBL, GBCPC),
+			MEML_READSTR(CPU_DS, CPU_BX + offsetof(UCWTBL, GBCPC),
 																tmp.col, 4);
 			for (i=0; i<4; i++) {
 				gdc_setdegitalpal(6 - (i*2), (REG8)(tmp.col[i] >> 4));

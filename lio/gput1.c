@@ -371,7 +371,7 @@ static REG8 putsub(GLIO lio, const LIOPUT *lput) {
 			flag >>= 1;
 			if (flag & 8) {
 				pt.baseptr = mem + lio->draw.base + lioplaneadrs[pl];
-				i286_memstr_read(lput->seg, off, pt.pat, datacnt);
+				MEML_READSTR(lput->seg, off, pt.pat, datacnt);
 				if (lput->sw) {
 					off += datacnt;
 				}
@@ -473,7 +473,7 @@ REG8 lio_gget(GLIO lio) {
 	UINT	pl;
 
 	lio_updatedraw(lio);
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x = (SINT16)LOADINTELWORD(dat.x1);
 	y = (SINT16)LOADINTELWORD(dat.y1);
 	x2 = (SINT16)LOADINTELWORD(dat.x2);
@@ -526,7 +526,7 @@ REG8 lio_gget(GLIO lio) {
 			if (mask & 8) {
 				gt.baseptr = mem + lio->draw.base + lioplaneadrs[pl];
 				getvram(&gt, pat);
-				i286_memstr_write(seg, off, pat, datacnt);
+				MEML_WRITESTR(seg, off, pat, datacnt);
 				off += datacnt;
 			}
 		}
@@ -547,7 +547,7 @@ REG8 lio_gput1(GLIO lio) {
 	UINT	size;
 
 	lio_updatedraw(lio);
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);
 	lput.off = (UINT16)(LOADINTELWORD(dat.off) + 4);
@@ -597,7 +597,7 @@ REG8 lio_gput2(GLIO lio) {
 	REG16	size;
 
 	lio_updatedraw(lio);
-	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);
 	jis = LOADINTELWORD(dat.chr);

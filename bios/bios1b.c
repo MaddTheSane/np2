@@ -661,7 +661,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 			fdd_formatinit();
 			pos = CPU_BP;
 			for (s=0; s<fdc.sc; s++) {
-				i286_memstr_read(CPU_ES, pos, ID, 4);
+				MEML_READSTR(CPU_ES, pos, ID, 4);
 				fdd_formating(ID);
 				pos += 4;
 				if (ID[3] < 8) {

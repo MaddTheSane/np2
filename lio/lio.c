@@ -29,7 +29,7 @@ void bios_lio(REG8 cmd) {
 	UINT8	ret;
 
 //	TRACEOUT(("lio command %.2x", cmd));
-	i286_memstr_read(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
+	MEML_READSTR(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
 	lio.palmode = i286_membyte_read(CPU_DS, 0x0a08);
 	lio.wait = 0;
 	switch(cmd) {

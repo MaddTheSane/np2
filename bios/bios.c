@@ -307,7 +307,7 @@ static void bios0x1f(void) {
 	UINT	l;
 
 	if (CPU_AH == 0x90) {
-		i286_memstr_read(CPU_ES, CPU_BX + 0x10, work, 0x10);
+		MEML_READSTR(CPU_ES, CPU_BX + 0x10, work, 0x10);
 		src = work[2] + (work[3] << 8) + (work[4] << 16) + CPU_SI;
 		dst = work[10] + (work[11] << 8) + (work[12] << 16) + CPU_DI;
 		leng = LOW16(CPU_CX - 1) + 1;

@@ -72,8 +72,8 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 dat);
 void MEMCALL memp_read(UINT32 address, void *dat, UINT leng);
 void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng);
 
-void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng);
-void MEMCALL i286_memstr_write(UINT seg, UINT off, const void *dat, UINT leng);
+void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng);
+void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng);
 void MEMCALL meml_read(UINT32 address, void *dat, UINT leng);
 void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng);
 
@@ -103,9 +103,9 @@ void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng);
 #define	MEML_WRITE16(seg, off, dat)			\
 			i286_memorywrite_w(((UINT32)(seg) << 4) + LOW16(off), (dat))
 #define MEML_READSTR(seg, off, dat, leng)	\
-			i286_memstr_read((seg), (off), (dat), (leng))
+			meml_readstr((seg), (off), (dat), (leng))
 #define MEML_WRITESTR(seg, off, dat, leng)	\
-			i286_memstr_write((seg), (off), (dat), (leng))
+			meml_writestr((seg), (off), (dat), (leng))
 #define MEML_READ(addr, dat, leng)			\
 			meml_read((addr), (dat), (leng))
 #define MEML_WRITE(addr, dat, leng)			\
