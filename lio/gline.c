@@ -187,7 +187,12 @@ static void gbox(const _GLIO *lio, const LINEPT *lp, BYTE *tile, UINT leng) {
 	int		tmp;
 	UINT32	csrw;
 	GDCVECT	vect;
-	UINT16	pat[4];
+	UINT	planes;
+	UINT	adrs[4];
+	UINT8	ope[4];
+	UINT16	pat;
+	BYTE	*tterm;
+	UINT	r;
 
 	x1 = lp->x1;
 	y1 = lp->y1;
@@ -212,44 +217,59 @@ static void gbox(const _GLIO *lio, const LINEPT *lp, BYTE *tile, UINT leng) {
 	y1 = max(y1, lio->draw.y1);
 	x2 = min(x2, lio->draw.x2);
 	y2 = min(y2, lio->draw.y2);
-	pat[0] = 0xffff;
-	pat[1] = 0xffff;
-	pat[2] = 0xffff;
-	pat[3] = 0xffff;
-	if (leng != 0) {
+
+	csrw = 0;
+	if (lio->draw.flag & LIODRAW_UPPER) {
+		csrw += 16000 >> 1;
 	}
 	if (!(lio->draw.flag & LIODRAW_MONO)) {
-		while(y1 <= y2) {
-			gdcsub_setvectl(&vect, x1, y1, x2, y1);
-			csrw = (y1 * 40) + (x1 >> 4) + ((x1 & 0xf) << 20);
-			if (lio->draw.flag & LIODRAW_UPPER) {
-				csrw += 16000 >> 1;
-			}
-			gdcsub_vectl(csrw + 0x4000, &vect, pat[0],
-							(REG8)((lp->pal & 1)?GDCOPE_SET:GDCOPE_CLEAR));
-			gdcsub_vectl(csrw + 0x8000, &vect, pat[1],
-							(REG8)((lp->pal & 2)?GDCOPE_SET:GDCOPE_CLEAR));
-			gdcsub_vectl(csrw + 0xc000, &vect, pat[2],
-							(REG8)((lp->pal & 4)?GDCOPE_SET:GDCOPE_CLEAR));
-			if (lio->draw.flag & LIODRAW_4BPP) {
-				gdcsub_vectl(csrw, &vect, pat[3],
-							(REG8)((lp->pal & 8)?GDCOPE_SET:GDCOPE_CLEAR));
-			}
-			y1++;
-		}
+		planes = (lio->draw.flag & LIODRAW_4BPP)?4:3;
+		adrs[0] = csrw + 0x4000;
+		adrs[1] = csrw + 0x8000;
+		adrs[2] = csrw + 0xc000;
+		adrs[3] = csrw + 0x0000;
+		ope[0] = (lp->pal & 1)?GDCOPE_SET:GDCOPE_CLEAR;
+		ope[1] = (lp->pal & 2)?GDCOPE_SET:GDCOPE_CLEAR;
+		ope[2] = (lp->pal & 4)?GDCOPE_SET:GDCOPE_CLEAR;
+		ope[3] = (lp->pal & 8)?GDCOPE_SET:GDCOPE_CLEAR;
 	}
 	else {
-		while(y1 <= y2) {
-			gdcsub_setvectl(&vect, x1, y1, x2, y1);
-			csrw = (y1 * 40) + (x1 >> 4) + ((x1 & 0xf) << 20);
-			if (lio->draw.flag & LIODRAW_UPPER) {
-				csrw += 16000 >> 1;
+		planes = 1;
+		adrs[0] = csrw + (((lio->draw.flag + 1) & LIODRAW_PMASK) << 12);
+		ope[0] = (lp->pal)?GDCOPE_SET:GDCOPE_CLEAR;
+	}
+
+	if (leng == 0) {
+		tile = NULL;
+		tterm = NULL;
+	}
+	else {
+		tterm = tile + leng;
+		tmp = (x1 - lio->draw.x1) & 7;
+		do {
+			r = GDCPATREVERSE(*tile);
+			*tile = (BYTE)((r << tmp) | (r >> (8 - tmp)));
+		} while(++tile < tterm);
+		tile -= leng;
+		tmp = (y1 - lio->draw.y1) * planes;
+		tile += tmp % leng;
+	}
+
+	pat = 0xffff;
+	while(y1 <= y2) {
+		gdcsub_setvectl(&vect, x1, y1, x2, y1);
+		csrw = (y1 * 40) + (x1 >> 4) + ((x1 & 0xf) << 20);
+		r = 0;
+		do {
+			if (tile) {
+				pat = (*tile << 8) | *tile;
+				if (++tile >= tterm) {
+					tile -= leng;
+				}
 			}
-			csrw += ((lio->draw.flag + 1) & LIODRAW_PMASK) << 12;
-			gdcsub_vectl(csrw, &vect, pat[0],
-								(REG8)((lp->pal)?GDCOPE_SET:GDCOPE_CLEAR));
-			y1++;
-		}
+			gdcsub_vectl(csrw + adrs[r], &vect, pat, ope[r]);
+		} while(++r < planes);
+		y1++;
 	}
 }
 
@@ -279,7 +299,7 @@ REG8 lio_gline(GLIO lio) {
 	LINEPT	lp;
 	UINT16	pat;
 	UINT	leng;
-	UINT	lengmin;
+//	UINT	lengmin;
 	BYTE	tile[256];
 
 	lio_updatedraw(lio);
@@ -312,7 +332,7 @@ REG8 lio_gline(GLIO lio) {
 	}
 	else if (dat.type == 2) {
 		leng = 0;
-		if (dat.sw != 2) {
+		if (dat.sw == 2) {
 			leng = dat.patleng;
 			if (leng == 0) {
 				goto gline_err;
