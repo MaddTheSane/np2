@@ -85,10 +85,33 @@ static UINT pcm_dec(GETSND snd, void *dst) {
 	return(size);
 }
 #elif defined(BYTESEX_BIG)
-static UINT pcm_dec(SMIXTRACK *trk, short *dst) {
+static UINT pcm_dec(GETSND snd, BYTE *dst) {
 
-#error pcm_dec: unsupported
-	return(0);
+	UINT	size;
+	UINT	cnt;
+	BYTE	*src;
+
+	size = min(snd->blocksize, snd->datsize);
+	if (size) {
+		if (snd->bit == 16) {
+			cnt = size >> 1;
+			src = snd->datptr;
+			while(cnt) {
+				cnt--;
+				dst[0] = src[1];
+				dst[1] = src[0];
+				src += 2;
+				dst += 2;
+			}
+		}
+		else {
+			CopyMemory(dst, snd->datptr, size);
+		}
+		snd->datptr += size;
+		snd->datsize -= size;
+		size >>= (int)(long)snd->snd;
+	}
+	return(size);
 }
 #endif
 
@@ -108,7 +131,7 @@ static BOOL pcm_open(GETSND snd) {
 	snd->blocksamples = 0x800;					// 適当に。
 	snd->blocksize *= snd->blocksamples;
 	snd->snd = (void *)(long)abits[align - 1];
-	snd->dec = pcm_dec;
+	snd->dec = (GSDEC)pcm_dec;
 	return(SUCCESS);
 
 pcmopn_err:
@@ -119,8 +142,8 @@ pcmopn_err:
 // ---- MS-ADPCM
 
 typedef struct {
-	short Coef1;
-	short Coef2;
+	SINT16	Coef1;
+	SINT16	Coef2;
 } __COEFPAIR;
 
 static const int MSADPCMTable[16] = {
@@ -128,7 +151,7 @@ static const int MSADPCMTable[16] = {
 	768, 614, 512, 409, 307, 230, 230, 230 
 };
 
-static UINT msa_dec(GETSND snd, short *dst) {
+static UINT msa_dec(GETSND snd, SINT16 *dst) {
 
 	BYTE		*buf;
 	UINT		size;
@@ -138,7 +161,7 @@ static UINT msa_dec(GETSND snd, short *dst) {
 	BYTE		indata;
 	__COEFPAIR	*coef;
 	UINT		ch;
-	long		outdata;
+	SINT32		outdata;
 
 	buf = snd->datptr;						// ワーク使ってません。
 	size = min(snd->datsize, snd->blocksize);
@@ -152,8 +175,8 @@ static UINT msa_dec(GETSND snd, short *dst) {
 			pred[1]  = 0;
 			delta[0] = LOADINTELWORD(buf+1);
 			delta[1] = 0;
-			*dst++   = (short)LOADINTELWORD(buf+5);
-			*dst++   = (short)LOADINTELWORD(buf+3);
+			*dst++   = (SINT16)LOADINTELWORD(buf+5);
+			*dst++   = (SINT16)LOADINTELWORD(buf+3);
 			buf += 7;
 			outsamples = 2 + ((size - 7) * 2);
 		}
@@ -164,10 +187,10 @@ static UINT msa_dec(GETSND snd, short *dst) {
 			pred[1]  = buf[1];
 			delta[0] = LOADINTELWORD(buf+2);
 			delta[1] = LOADINTELWORD(buf+4);
-			*dst++   = (short)LOADINTELWORD(buf+10);
-			*dst++   = (short)LOADINTELWORD(buf+12);
-			*dst++   = (short)LOADINTELWORD(buf+6);
-			*dst++   = (short)LOADINTELWORD(buf+8);
+			*dst++   = (SINT16)LOADINTELWORD(buf+10);
+			*dst++   = (SINT16)LOADINTELWORD(buf+12);
+			*dst++   = (SINT16)LOADINTELWORD(buf+6);
+			*dst++   = (SINT16)LOADINTELWORD(buf+8);
 			buf += 14;
 			outsamples = 2 + (size - 14);
 		}
@@ -200,7 +223,7 @@ static UINT msa_dec(GETSND snd, short *dst) {
 			else if (outdata < -32768) {
 				outdata = -32768;
 			}
-			*dst++ = (short)outdata;
+			*dst++ = (SINT16)outdata;
 		}
 	}
 	return(outsamples);
@@ -315,10 +338,11 @@ static void ima_inittable(void) {
 	}
 }
 
-static UINT ima_dec(GETSND snd, short *dst) {
+static UINT ima_dec(GETSND snd, SINT16 *dst) {
 
 	UINT	c;
-	int		val[2], state[2];
+	SINT32	val[2];
+	itn		state[2];
 	BYTE	*src;
 	UINT	blk;
 
@@ -331,10 +355,10 @@ static UINT ima_dec(GETSND snd, short *dst) {
 
 	blk = snd->blocksamples;
 	for (c=0; c<snd->channels; c++) {
-		short tmp;
+		SINT16 tmp;
 		tmp = LOADINTELWORD(src);
 		val[c] = tmp;
-		*dst++ = (short)val[c];
+		*dst++ = (SINT16)val[c];
 		state[c] = src[2];
 		if (state[c] >= IMA_MAXSTEP) {
 			state[c] = 0;
@@ -372,7 +396,7 @@ static UINT ima_dec(GETSND snd, short *dst) {
 						val[c] = -32768;
 					}
 				}
-				*dst = (short)val[c];
+				*dst = (SINT16)val[c];
 				dst += snd->channels;
 			} while(--r);
 			dst -= (8 * snd->channels);
