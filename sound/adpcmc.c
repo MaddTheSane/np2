@@ -6,7 +6,6 @@
 
 	ADPCMCFG	adpcmcfg;
 
-
 void adpcm_initialize(UINT rate) {
 
 	adpcmcfg.rate = rate;
@@ -21,7 +20,7 @@ void adpcm_reset(ADPCM ad) {
 
 	ZeroMemory(ad, sizeof(_ADPCM));
 	ad->mask = 0;					// (BYTE)~0x1c;
-	ad->delta = 128;
+	ad->delta = 127;
 	STOREINTELWORD(ad->reg.stop, 0x0002);
 	STOREINTELWORD(ad->reg.limit, 0xffff);
 	ad->stop = 0x000060;
@@ -58,7 +57,7 @@ void adpcm_setreg(ADPCM ad, REG8 reg, REG8 value) {
 				ad->play = 0x20;
 				ad->pos = ad->start;
 				ad->samp = 0;
-				ad->delta = 128;
+				ad->delta = 127;
 				ad->remain = 0;
 			}
 			if (value & 1) {
