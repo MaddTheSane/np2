@@ -6,6 +6,7 @@ section .text
 	global	@sjis2jis@4
 	global	@jis2sjis@4
 	global	@satuation_s16@12
+	global	@satuation_s16x@12
 
 
 				align	16
@@ -70,6 +71,36 @@ ss16_set:		lea		edx, [edx+4]
 ss16_ed:		pop		ebx
 				ret		4
 
+				align	16
+@satuation_s16x@12:
+				push	ebx
+				mov		ebx, [esp+8]
+				shr		ebx, 2
+				je		short ss16x_ed
+ss16x_lp:		mov		eax, [edx]
+				cmp		eax, 000008000h
+				jl		short ss16xl_min
+				mov		ax, 7fffh
+				jmp		short ss16xl_set
+ss16xl_min:		cmp		eax, 0ffff8000h
+				jg		short ss16xl_set
+				mov		ax, 8001h
+ss16xl_set:		mov		[ecx+2], ax
+				mov		eax, [edx+4]
+				cmp		eax, 000008000h
+				jl		short ss16xr_min
+				mov		ax, 7fffh
+				jmp		short ss16xr_set
+ss16xr_min:		cmp		eax, 0ffff8000h
+				jg		short ss16xr_set
+				mov		ax, 8001h
+ss16xr_set:		mov		[ecx], ax
+				lea		edx, [edx+8]
+				dec		ebx
+				lea		ecx, [ecx+4]
+				jne		short ss16x_lp
+ss16x_ed:		pop		ebx
+				ret		4
 
 	ends
 

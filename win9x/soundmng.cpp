@@ -31,6 +31,8 @@ static	UINT				dsstreambytes;
 static	BYTE				dsstreamevent;
 static	LPDIRECTSOUNDBUFFER pDSwave3[SOUND_MAXPCM];
 static	BYTE				mute;
+static	void				(PARTSCALL *fnmix)(SINT16 *dst,
+												const SINT32 *src, UINT size);
 
 #if defined(VERMOUTH_LIB)
 		MIDIMOD		vermouth_module = NULL;
@@ -85,6 +87,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	samples = (rate * ms) / 2000;
 	samples = (samples + 3) & (~3);
 	dsstreambytes = samples * 2 * sizeof(SINT16);
+	fnmix = satuation_s16;
 
 	ZeroMemory(&pcmwf, sizeof(PCMWAVEFORMAT));
 	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
@@ -204,7 +207,7 @@ const SINT32	*pcm;
 	}
 	if (SUCCEEDED(hr)) {
 		if (pcm) {
-			satuation_s16((SINT16 *)blockptr1, pcm, blocksize1);
+			(*fnmix)((SINT16 *)blockptr1, pcm, blocksize1);
 		}
 		else {
 			ZeroMemory(blockptr1, blocksize1);
@@ -238,6 +241,8 @@ void soundmng_sync(void) {
 }
 
 void soundmng_setreverse(BOOL reverse) {
+
+	fnmix = (reverse)?satuation_s16x:satuation_s16;
 }
 
 
