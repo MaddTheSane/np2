@@ -550,7 +550,7 @@ void pccore_exec(BOOL draw) {
 			CPU_CLEARPREFETCH();
 		}
 
-#ifndef TRACE
+#if 1 //ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();
