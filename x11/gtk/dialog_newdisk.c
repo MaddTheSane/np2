@@ -349,11 +349,24 @@ typedef union {
 } newdisk_t;
 
 void
+setext(char *path, const char *ext, int maxlen)
+{
+	size_t len;
+
+	len = strlen(path);
+	if (len > 0) {
+		if (path[len - 1] != '.') {
+			milstr_ncat(path, ".", maxlen);
+		}
+	}
+	milstr_ncat(path, ext, maxlen);
+}
+
+void
 create_newdisk_dialog(const char *filebasename, const char *fileextname)
 {
 	newdisk_t *disk;
 	char *extName;
-	size_t len;
 
 	disk = _MALLOC(sizeof(*disk), "newdisk work");
 	if (disk == NULL) {
@@ -368,24 +381,14 @@ create_newdisk_dialog(const char *filebasename, const char *fileextname)
 	if (milstr_extendcmp(fileextname, "thd") == 0) {
 		if ((milstr_extendcmp(extName, disk->com.filename) == 0) ||
 		    (milstr_extendcmp(extName, "thd") != 0)) {
-			len = strlen(disk->com.filename);
-			if (disk->com.filename[len - 1] != '.')
-				milstr_ncat(disk->com.filename, ".",
-				    sizeof(disk->com.filename));
-			milstr_ncat(disk->com.filename, fileextname,
-			    sizeof(disk->com.filename));
+			setext(disk->com.filename, fileextname, sizeof(disk->com.filename));
 		}
 		newdisk_hd(&disk->hd);
 	} else if ((milstr_extendcmp(fileextname, "d88") == 0) ||
 	           (milstr_extendcmp(fileextname, "88d") == 0)) {
 		if ((milstr_extendcmp(extName, disk->com.filename) == 0) ||
 		    ((milstr_extendcmp(extName, "d88") != 0) && (milstr_extendcmp(extName, "88d") != 0))) {
-			len = strlen(disk->com.filename);
-			if (disk->com.filename[len - 1] != '.')
-				milstr_ncat(disk->com.filename, ".",
-				    sizeof(disk->com.filename));
-			milstr_ncat(disk->com.filename, fileextname,
-			    sizeof(disk->com.filename));
+			setext(disk->com.filename, fileextname, sizeof(disk->com.filename));
 		}
 		newdisk_fd(&disk->fd);
 	}
