@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.16 2004/05/22 16:35:07 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.17 2005/03/12 12:33:47 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -12,8 +12,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -836,33 +834,16 @@ void XCHG_EDIEAX(void) { CPU_WORKCLOCK(3); SWAP_DWORD(CPU_EDI, CPU_EAX); }
 /*
  * BSWAP
  */
-#if defined(bswap32) && !defined(IA32_USE_ASM_BSWAP)
-#define	BSWAP_DWORD(v)	bswap32(v)
-#else	/* !bswap32 || IA32_USE_ASM_BSWAP */
 INLINE static UINT32
 BSWAP_DWORD(UINT32 val)
 {
-#if defined(GCC_CPU_ARCH_IA32)
-	__asm__ __volatile__ (
-#if defined(IA32_USE_ASM_BSWAP) || defined(GCC_CPU_ARCH_AMD64)
-		"bswap %0"
-#else	/* !(IA32_USE_ASM_BSWAP || GCC_CPU_ARCH_AMD64) */
-		"rorw $8, %w1\n\t"
-		"rorl $16, %1\n\t"
-		"rorw $8, %w1\n\t"
-#endif	/* IA32_USE_ASM_BSWAP || GCC_CPU_ARCH_AMD64 */
-		: "=r" (val) : "0" (val));
-	return val;
-#else	/* !(__GNUC__ && GCC_CPU_ARCH_IA32) */
 	UINT32 v;
 	v  = (val & 0x000000ff) << 24;
 	v |= (val & 0x0000ff00) << 8;
 	v |= (val & 0x00ff0000) >> 8;
 	v |= (val & 0xff000000) >> 24;
 	return v;
-#endif	/* __GNUC__ && GCC_CPU_ARCH_IA32 */
 }
-#endif	/* bswap32 && !IA32_USE_ASM_BSWAP */
 
 void BSWAP_EAX(void) { CPU_WORKCLOCK(2); CPU_EAX = BSWAP_DWORD(CPU_EAX); }
 void BSWAP_ECX(void) { CPU_WORKCLOCK(2); CPU_ECX = BSWAP_DWORD(CPU_ECX); }
