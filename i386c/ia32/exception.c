@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.12 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: exception.c,v 1.13 2004/03/02 16:36:28 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -619,5 +619,5 @@ interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_cod
 		set_eflags(new_flags, mask);
 	}
 
-	VERBOSE(("interrupt: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
+	VERBOSE(("interrupt: new EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
 }
