@@ -15,6 +15,7 @@
 	_CRTC		crtc;
 	_DMAC		dmac;
 	_EGC		egc;
+	_EPSONIO	epsonio;
 	_EXTMEM		extmem;
 	_FDC		fdc;
 	_GDC		gdc;

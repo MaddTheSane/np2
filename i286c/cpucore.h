@@ -256,6 +256,7 @@ void v30c_step(void);
 #define	CPU_BASECLOCK	i286core.s.baseclock
 #define	CPU_CLOCK		i286core.s.clock
 #define	CPU_ADRSMASK	i286core.s.adrsmask
+#define	CPU_MSW			i286core.s.MSW
 #define	CPU_RESETREQ	i286core.s.resetreq
 #define	CPU_ITFBANK		i286core.s.itfbank
 #define	CPU_INPADRS		i286core.s.inport

@@ -15,6 +15,7 @@ DWORD cpumem_addrmask = 0xfffff;
 
 static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 
+	epsonio.cpumode = (CPU_MSW & 1)?'P':'R';
 	CPU_ADRSMASK = 0x0fffff;
 #if defined(CPUCORE_IA32)
 	cpumem_addrmask = 0xfffff;

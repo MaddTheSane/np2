@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.3 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.4 2003/12/26 22:24:06 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -433,6 +433,8 @@ void set_eflags(DWORD new_flags, DWORD mask);
 /*
  * control register
  */
+#define CPU_MSW			CPU_STATSAVE.cpu_sysregs.cr0
+
 #define CPU_CR0			CPU_STATSAVE.cpu_sysregs.cr0
 #define CPU_CR1			CPU_STATSAVE.cpu_sysregs.cr1
 #define CPU_CR2			CPU_STATSAVE.cpu_sysregs.cr2
