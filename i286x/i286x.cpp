@@ -2407,7 +2407,7 @@ I286 mov_ea_r8(void) {							// 88: mov EA, REG8
 		__asm {
 				PREPART_EA_REG8(2)
 					mov		I286_REG[eax], dl
-					GET_NEXTPRE1					// ea_reg‚Ì regreg‚¾‚¯
+					GET_NEXTPRE2					// ea_reg‚Ì regreg‚¾‚¯
 					ret
 					align	16
 			memory_eareg8:
@@ -3453,7 +3453,7 @@ I286 mov_ea8_data8(void) {						// C6: mov EA8, DATA8
 				bt		bp, 2
 				rcl		ebp, 1
 				and		ebp, 7
-				GET_NEXTPRE2
+				GET_NEXTPRE3
 				mov		byte ptr I286_REG[ebp], dh
 				ret
 				align	16
