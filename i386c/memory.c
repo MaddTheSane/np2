@@ -3,7 +3,6 @@
 #ifndef NP2_MEMORY_ASM
 
 #include	"cpucore.h"
-#include	"memory.h"
 #include	"egcmem.h"
 #include	"mem9821.h"
 #include	"pccore.h"
@@ -17,12 +16,12 @@
 
 // ---- write byte
 
-static void MEMCALL i286_wt(UINT32 address, REG8 value) {	// MAIN
+static void MEMCALL i286_wt(UINT32 address, REG8 value) {		// MAIN
 
 	mem[address & CPU_ADRSMASK] = (BYTE)value;
 }
 
-static void MEMCALL tram_wt(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL tram_wt(UINT32 address, REG8 value) {		// TRAM
 
 	CPU_REMCLOCK -= MEMWAIT_TRAM;
 	if (address < 0xa2000) {
@@ -54,7 +53,7 @@ static void MEMCALL tram_wt(UINT32 address, REG8 value) {	// VRAM
 	}
 }
 
-static void MEMCALL vram_w0(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL vram_w0(UINT32 address, REG8 value) {		// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	mem[address] = (BYTE)value;
@@ -62,7 +61,7 @@ static void MEMCALL vram_w0(UINT32 address, REG8 value) {	// VRAM
 	gdcs.grphdisp |= 1;
 }
 
-static void MEMCALL vram_w1(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL vram_w1(UINT32 address, REG8 value) {		// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	mem[address + VRAM_STEP] = (BYTE)value;
@@ -70,7 +69,7 @@ static void MEMCALL vram_w1(UINT32 address, REG8 value) {	// VRAM
 	gdcs.grphdisp |= 2;
 }
 
-static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {		// VRAM
 
 	REG8	mask;
 	BYTE	*vram;
@@ -99,7 +98,7 @@ static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {	// VRAM
 	}
 }
 
-static void MEMCALL grcg_rmw1(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL grcg_rmw1(UINT32 address, REG8 value) {		// VRAM
 
 	REG8	mask;
 	BYTE	*vram;
@@ -128,7 +127,7 @@ static void MEMCALL grcg_rmw1(UINT32 address, REG8 value) {	// VRAM
 	}
 }
 
-static void MEMCALL grcg_tdw0(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL grcg_tdw0(UINT32 address, REG8 value) {		// VRAM
 
 	BYTE	*vram;
 
@@ -152,7 +151,7 @@ static void MEMCALL grcg_tdw0(UINT32 address, REG8 value) {	// VRAM
 	(void)value;
 }
 
-static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {		// VRAM
 
 	BYTE	*vram;
 
@@ -176,30 +175,30 @@ static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {	// VRAM
 	(void)value;
 }
 
-static void MEMCALL egc_wt(UINT32 address, REG8 value) {	// VRAM
+static void MEMCALL egc_wt(UINT32 address, REG8 value) {		// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	egc_write(address, value);
 }
 
-static void MEMCALL emmc_wt(UINT32 address, REG8 value) {
+static void MEMCALL emmc_wt(UINT32 address, REG8 value) {		// EMS
 
 	CPU_EMSPTR[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
 }
 
-static void MEMCALL i286_wd(UINT32 address, REG8 value) {	// D0000Å`DFFFF
+static void MEMCALL i286_wd(UINT32 address, REG8 value) {		// D000Å`DFFF
 
 	if (CPU_RAM_D000 & (1 << ((address >> 12) & 15))) {
 		mem[address] = (BYTE)value;
 	}
 }
 
-static void MEMCALL i286_wb(UINT32 address, REG8 value) {	// F8000Å`FFFFF
+static void MEMCALL i286_wb(UINT32 address, REG8 value) {		// F800Å`FFFF
 
 	mem[address + 0x1c8000 - 0xe8000] = (BYTE)value;
 }
 
-static void MEMCALL i286_wn(UINT32 address, REG8 value) {
+static void MEMCALL i286_wn(UINT32 address, REG8 value) {		// NONE
 
 	(void)address;
 	(void)value;
@@ -208,12 +207,12 @@ static void MEMCALL i286_wn(UINT32 address, REG8 value) {
 
 // ---- read byte
 
-static REG8 MEMCALL i286_rd(UINT32 address) {
+static REG8 MEMCALL i286_rd(UINT32 address) {					// MAIN
 
 	return(mem[address & CPU_ADRSMASK]);
 }
 
-static REG8 MEMCALL tram_rd(UINT32 address) {
+static REG8 MEMCALL tram_rd(UINT32 address) {					// TRAM
 
 	CPU_REMCLOCK -= MEMWAIT_TRAM;
 	if (address < 0xa4000) {
@@ -230,19 +229,19 @@ static REG8 MEMCALL tram_rd(UINT32 address) {
 	return(mem[address]);
 }
 
-static REG8 MEMCALL vram_r0(UINT32 address) {
+static REG8 MEMCALL vram_r0(UINT32 address) {					// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	return(mem[address]);
 }
 
-static REG8 MEMCALL vram_r1(UINT32 address) {
+static REG8 MEMCALL vram_r1(UINT32 address) {					// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_VRAM;
 	return(mem[address + VRAM_STEP]);
 }
 
-static REG8 MEMCALL grcg_tcr0(UINT32 address) {
+static REG8 MEMCALL grcg_tcr0(UINT32 address) {					// VRAM
 
 const BYTE	*vram;
 	REG8	ret;
@@ -265,7 +264,7 @@ const BYTE	*vram;
 	return(ret ^ 0xff);
 }
 
-static REG8 MEMCALL grcg_tcr1(UINT32 address) {
+static REG8 MEMCALL grcg_tcr1(UINT32 address) {					// VRAM
 
 const BYTE	*vram;
 	REG8	ret;
@@ -288,18 +287,18 @@ const BYTE	*vram;
 	return(ret ^ 0xff);
 }
 
-static REG8 MEMCALL egc_rd(UINT32 address) {
+static REG8 MEMCALL egc_rd(UINT32 address) {					// VRAM
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
 	return(egc_read(address));
 }
 
-static REG8 MEMCALL emmc_rd(UINT32 address) {
+static REG8 MEMCALL emmc_rd(UINT32 address) {					// EMS
 
 	return(CPU_EMSPTR[(address >> 14) & 3][LOW14(address)]);
 }
 
-static REG8 MEMCALL i286_rb(UINT32 address) {
+static REG8 MEMCALL i286_rb(UINT32 address) {					// F800-FFFF
 
 	if (CPU_ITFBANK) {
 		address += VRAM_STEP;
@@ -456,19 +455,7 @@ static void MEMCALL grcgw_tdw1(UINT32 address, REG16 value) GRCGW_TDW(1)
 static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	if (!(address & 1)) {
-		egc_write_w(address, value);
-	}
-	else {
-		if (!(egc.sft & 0x1000)) {
-			egc_write(address, (REG8)value);
-			egc_write(address + 1, (REG8)(value >> 8));
-		}
-		else {
-			egc_write(address + 1, (REG8)(value >> 8));
-			egc_write(address, (REG8)value);
-		}
-	}
+	egc_write_w(address, value);
 }
 
 static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
@@ -621,24 +608,8 @@ static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
 
 static REG16 MEMCALL egcw_rd(UINT32 address) {
 
-	REG16	ret;
-
 	CPU_REMCLOCK -= MEMWAIT_GRCG;
-	if (!(address & 1)) {
-		return(egc_read_w(address));
-	}
-	else {
-		if (!(egc.sft & 0x1000)) {
-			ret = egc_read(address);
-			ret += egc_read(address + 1) << 8;
-			return(ret);
-		}
-		else {
-			ret = egc_read(address + 1) << 8;
-			ret += egc_read(address);
-			return(ret);
-		}
-	}
+	return(egc_read_w(address));
 }
 
 static REG16 MEMCALL emmcw_rd(UINT32 address) {

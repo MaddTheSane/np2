@@ -269,6 +269,7 @@ void v30c_step(void);
 #define	CPU_EXTMEM		i286core.e.ext
 #define	CPU_EXTMEMSIZE	i286core.e.extsize
 #define	CPU_INPADRS		i286core.e.inport
+#define	CPU_EMSPTR		i286core.e.ems
 
 #define	CPU_TYPE		i286core.s.cpu_type
 
