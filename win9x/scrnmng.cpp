@@ -617,7 +617,7 @@ void scrnmng_clearwinui(void) {
 	else {
 		if (np2oscfg.wintype) {
 			np2class_enablemenu(hWndMain, FALSE);
-			scrnmng_update();						// ˆê‰c
+			InvalidateRect(hWndMain, NULL, TRUE);
 		}
 	}
 	mousemng_enable(MOUSEPROC_WINUI);
