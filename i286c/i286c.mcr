@@ -325,7 +325,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 
 #define	BYTE_IMUL(r, d, s)											\
 		I286_FLAGL &= (Z_FLAG | S_FLAG | A_FLAG | P_FLAG);			\
-		(r) = (char)(d) * (char)(s);								\
+		(r) = (SINT8)(d) * (SINT8)(s);								\
 		I286_OV = ((r) + 0x80) & 0xffffff00;						\
 		if (I286_OV) {												\
 			I286_FLAGL |= C_FLAG;									\
@@ -333,7 +333,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 
 #define	WORD_IMUL(r, d, s)											\
 		I286_FLAGL &= (Z_FLAG | S_FLAG | A_FLAG | P_FLAG);			\
-		(r) = (short)(d) * (short)(s);								\
+		(r) = (SINT16)(d) * (SINT16)(s);							\
 		I286_OV = ((r) + 0x8000) & 0xffff0000;						\
 		if (I286_OV) {												\
 			I286_FLAGL |= C_FLAG;									\

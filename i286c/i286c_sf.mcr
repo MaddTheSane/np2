@@ -40,7 +40,7 @@
 		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
 
 #define	BYTE_SAR1(d, s)												\
-		(d) = (BYTE)(((char)s) >> 1);								\
+		(d) = (BYTE)(((SINT8)s) >> 1);								\
 		I286_OV = 0;												\
 		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
 
@@ -183,9 +183,9 @@
 #define	BYTE_SARCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			(s) = ((char)(s)) >> ((c) - 1);							\
+			(s) = ((SINT8)(s)) >> ((c) - 1);						\
 			I286_FLAGL = (BYTE)((s) & 1);							\
-			(s) = (BYTE)(((char)s) >> 1);							\
+			(s) = (BYTE)(((SINT8)s) >> 1);							\
 			I286_OV = 0;											\
 			I286_FLAGL |= BYTESZPF(s) | A_FLAG;						\
 		}															\
