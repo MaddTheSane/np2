@@ -82,7 +82,11 @@ void sysmng_updatecaption(BYTE flag) {
 			milstr_ncat(strclock, work, sizeof(strclock));
 		}
 	}
+#if !defined(SUPPORT_PC9821)
 	milstr_ncpy(work, "Neko Project II", sizeof(work));
+#else
+	milstr_ncpy(work, "Neko Project 21", sizeof(work));
+#endif
 	milstr_ncat(work, strtitle, sizeof(work));
 	milstr_ncat(work, strclock, sizeof(work));
 

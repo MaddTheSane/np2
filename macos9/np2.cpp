@@ -561,6 +561,16 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_MEM116:
+			menu_setextmem(11);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MEM136:
+			menu_setextmem(13);
+			update |= SYS_UPDATECFG;
+			break;
+
 		case IDM_BMPSAVE:
 			dialog_writebmp();
 			break;
