@@ -23,6 +23,7 @@ void kdispwin_writeini(void);
 #define	skbdwin_create()
 #define	skbdwin_destroy()
 #define	skbdwin_gethwnd()		(NULL)
+#define	skbdwin_process()
 #define	skbdwin_readini()
 #define	skbdwin_writeini()
 #else
@@ -31,6 +32,7 @@ void skbdwin_deinitialize(void);
 void skbdwin_create(void);
 void skbdwin_destroy(void);
 HWND skbdwin_gethwnd(void);
+void skbdwin_process(void);
 void skbdwin_readini(void);
 void skbdwin_writeini(void);
 #endif

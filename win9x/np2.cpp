@@ -323,8 +323,6 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 	DestroyMenu(hMenu);
 }
 
-// extern "C" void iptrace_out(void);
-
 static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 	UINT	update;
@@ -1320,6 +1318,7 @@ static void framereset(UINT cnt) {
 	framecnt = 0;
 	scrnmng_dispclock();
 	kdispwin_draw((BYTE)cnt);
+	skbdwin_process();
 	toolwin_draw((BYTE)cnt);
 	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {

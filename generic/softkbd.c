@@ -6,19 +6,16 @@
 #include	"softkbd.h"
 #include	"keystat.h"
 
+
 #define	SOFTKEY_MENU	0xfe
 #define	SOFTKEY_NC		0xff
 
-enum {
-	KBDDRAW_BMP		= 0x01,
-	KBDDRAW_LED		= 0x02
-};
 
 typedef struct {
 	UINT8	key;
 	UINT8	key2;
 	UINT8	led;
-	UINT8	draw;
+	UINT8	flag;
 	void	*ptr;
 	CMNBMP	bmp;
 	CMNPAL	pal[16];
@@ -49,7 +46,7 @@ static void loadbmp(const char *filename) {
 			_MFREE(ptr);
 		}
 	}
-	softkbd.draw |= KBDDRAW_BMP;
+	softkbd.flag |= SOFTKEY_FLAGREDRAW;
 }
 
 void softkbd_initialize(void) {
@@ -84,23 +81,28 @@ BOOL softkbd_getsize(int *width, int *height) {
 	return(SUCCESS);
 }
 
+REG8 softkbd_process(void) {
+
+	return(softkbd.flag);
+}
+
 BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw) {
 
-	UINT8	draw;
+	UINT8	flag;
 	BOOL	ret;
 
-	draw = softkbd.draw;
-	softkbd.draw = 0;
+	flag = softkbd.flag;
+	softkbd.flag = 0;
 	if (redraw) {
-		draw = KBDDRAW_BMP | KBDDRAW_LED;
+		flag = SOFTKEY_FLAGREDRAW | SOFTKEY_FLAGDRAW;
 	}
 	ret = FALSE;
-	if ((draw & KBDDRAW_BMP) && (vram) && (cnv)) {
+	if ((flag & SOFTKEY_FLAGREDRAW) && (vram) && (cnv)) {
 		(*cnv)(softkbd.pal, softkbd.bmp.paltbl, softkbd.bmp.pals, vram->bpp);
 		cmndraw_bmp16(vram, softkbd.ptr, cnv, CMNBMP_LEFT | CMNBMP_TOP);
 		ret = TRUE;
 	}
-	if (draw & KBDDRAW_LED) {
+	if (flag & SOFTKEY_FLAGDRAW) {
 		TRACEOUT(("softkbd_paint"));
 		ledpaint(vram);
 		ret = TRUE;
@@ -137,7 +139,7 @@ void softkbd_led(REG8 led) {
 	TRACEOUT(("softkbd_led(%x)", led));
 	if (softkbd.led != led) {
 		softkbd.led = led;
-		softkbd.draw |= KBDDRAW_LED;
+		softkbd.flag |= SOFTKEY_FLAGDRAW;
 	}
 }
 #endif

@@ -364,7 +364,7 @@ static void skpaintmsg(HWND hWnd) {
 
 static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	switch(msg) {
+	swit	ch(msg) {
 		case WM_CREATE:
 			skcreate(hWnd);
 			break;

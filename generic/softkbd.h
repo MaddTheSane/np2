@@ -9,6 +9,11 @@ enum {
 	LEDFLAG_KANA	= 0x08
 };
 
+enum {
+	SOFTKEY_FLAGDRAW		= 0x01,
+	SOFTKEY_FLAGREDRAW		= 0x02
+};
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,6 +22,7 @@ extern "C" {
 void softkbd_initialize(void);
 void softkbd_deinitialize(void);
 BOOL softkbd_getsize(int *width, int *height);
+REG8 softkbd_process(void);
 BOOL softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw);
 BOOL softkbd_down(int x, int y);
 void softkbd_up(void);

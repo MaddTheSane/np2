@@ -468,27 +468,32 @@ static void skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 	}
 }
 
-static void skpaintmsg(HWND hWnd) {
+static void skdrawkeys(HWND hWnd, BOOL redraw) {
 
-	HDC			hdc;
-	PAINTSTRUCT	ps;
 	RECT		rect;
 	RECT		draw;
 	CMNVRAM		*vram;
 
-	TRACEOUT(("skpaintmsg"));
 	GetClientRect(hWnd, &rect);
 	draw.left = 0;
 	draw.top = 0;
 	draw.right = min(skbdwin.width, rect.right - rect.left);
 	draw.bottom = min(skbdwin.height, rect.bottom - rect.top);
-	hdc = BeginPaint(hWnd, &ps);
 	vram = dd2_bsurflock(skbdwin.dd2hdl);
 	if (vram) {
-		softkbd_paint(vram, skpalcnv, TRUE);
+		softkbd_paint(vram, skpalcnv, redraw);
 		dd2_bsurfunlock(skbdwin.dd2hdl);
 		dd2_blt(skbdwin.dd2hdl, NULL, &draw);
 	}
+}
+
+static void skpaintmsg(HWND hWnd) {
+
+	HDC			hdc;
+	PAINTSTRUCT	ps;
+
+	hdc = BeginPaint(hWnd, &ps);
+	skdrawkeys(hWnd, TRUE);
 	EndPaint(hWnd, &ps);
 }
 
@@ -660,6 +665,13 @@ void skbdwin_destroy(void) {
 HWND skbdwin_gethwnd(void) {
 
 	return(skbdwin.hwnd);
+}
+
+void skbdwin_process(void) {
+
+	if ((skbdwin.hwnd) && (softkbd_process())) {
+		skdrawkeys(skbdwin.hwnd, FALSE);
+	}
 }
 
 void skbdwin_readini(void) {
