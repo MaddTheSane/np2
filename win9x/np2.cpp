@@ -1374,7 +1374,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 						pccore_exec(framecnt == 0);
 						dclock_callback();
 						framecnt++;
-#if 1
 						cnt = timing_getcount();
 						if (framecnt > cnt) {
 							waitcnt = framecnt;
@@ -1387,27 +1386,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 								framemax++;
 							}
 							if (cnt >= 12) {
-								timing_init();
+								timing_reset();
 							}
 							else {
 								timing_setcount(cnt - framecnt);
 							}
 							framecnt = 0;
 						}
-#else
-						if (timing_getcount() < framecnt) {
-							waitcnt = framecnt;
-							if (framemax > 1) {
-								framemax--;
-							}
-						}
-						else if (framecnt >= framemax) {
-							waitcnt = framecnt;
-							if (framemax < 12) {
-								framemax++;
-							}
-						}
-#endif
 					}
 					else {
 						processwait(waitcnt);

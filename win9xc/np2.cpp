@@ -928,21 +928,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			}
 			else {								// auto skip
 				if (!waitcnt) {
+					UINT cnt;
 					joy_flash();
 					mouse_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
-					if (timing_getcount() < framecnt) {
+					cnt = timing_getcount();
+					if (framecnt > cnt) {
 						waitcnt = framecnt;
 						if (framemax > 1) {
 							framemax--;
 						}
 					}
 					else if (framecnt >= framemax) {
-						waitcnt = framecnt;
 						if (framemax < 12) {
 							framemax++;
 						}
+						if (cnt >= 12) {
+							timing_reset();
+						}
+						else {
+							timing_setcount(cnt - framecnt);
+						}
+						framecnt = 0;
 					}
 				}
 				else {

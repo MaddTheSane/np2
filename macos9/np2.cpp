@@ -143,11 +143,9 @@ static void HandleMenuChoice(long wParam) {
 			pccore_reset();
 			break;
 
-#if 0
 		case IDM_NEWDISK:
-			newdisk();
+			dialog_newdisk();
 			break;
-#endif
 
 		case IDM_FONT:
 			dialog_font();
@@ -696,7 +694,6 @@ int main(int argc, char *argv[]) {
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
-					// ƒeƒXƒg
 					cnt = timing_getcount();
 					if (framecnt > cnt) {
 						waitcnt = framecnt;
@@ -709,7 +706,7 @@ int main(int argc, char *argv[]) {
 							framemax++;
 						}
 						if (cnt >= 12) {
-							timing_init();
+							timing_reset();
 						}
 						else {
 							timing_setcount(cnt - framecnt);

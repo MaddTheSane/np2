@@ -40,7 +40,6 @@
 				{1, 1, 6, 1, 8, 1},
 				0, 4, 32, 22050, 800, 0, 1, 1, 0,
 				0, 0,
-//				0, 0, {1, 2, 2, 1},							// ver0.28
 				0, {0, 0, 0}, 0xd1, 0x7f, 0xd1, 0, 0, 1, 0x82,		// ver0.30
 				1, 80, 3, 1, 1, 0, 0x000000, 0xffffff,
 				0, 0, 0, 0x40, 0,
@@ -286,7 +285,7 @@ void pccore_reset(void) {
 	cbuscore_bind();
 	fmboard_bind();
 
-	timing_init();
+	timing_reset();
 	fddmtr_init();
 	calendar_init();
 	vram_init();

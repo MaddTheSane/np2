@@ -3,6 +3,17 @@
 #include	"dialogs.h"
 
 
+Handle GetDlgItem(DialogPtr hWnd, short pos) {
+
+	Handle	ret;
+	Rect	rct;
+	short	s;
+
+	GetDialogItem(hWnd, pos, &s, &ret, &rct);
+	return(ret);
+}
+
+
 // ---- file select
 
 static const BYTE pathsep[2] = {0x01, ':'};

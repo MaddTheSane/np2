@@ -1,7 +1,7 @@
 #include	"compiler.h"
-// #include	"strres.h"
+#include	"strres.h"
 #include	"resource.h"
-// #include	"sysmng.h"
+#include	"dosio.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
@@ -35,154 +35,137 @@ void dialog_changehdd(BYTE drv) {
 
 // ---- newdisk
 
-#if 0
+static const char str_newdisk[] = "newdisk.d88";
 
-static const char str_newdisk[] = "newdisk";
-static const UINT32 hddsizetbl[5] = {20, 41, 65, 80, 128};
+typedef struct {
+	BYTE	fdtype;
+	char	label[16+1];
+} NEWDISK;
 
-static	BYTE	makefdtype = DISKTYPE_2HD << 4;
-static	char	disklabel[16+1];
-static	UINT	hddsize;
+static int NewHddDlgProc(UINT *hddsize) {
 
-static LRESULT CALLBACK NewHddDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
+	DialogPtr	hDlg;
+	Str255		sizestr;
+	int			done;
+	short		item;
+	char		work[16];
 
-	UINT	val;
-	char	work[32];
-
-	switch (msg) {
-		case WM_INITDIALOG:
-			SETLISTUINT32(hWnd, IDC_HDDSIZE, hddsizetbl);
-			SetFocus(GetDlgItem(hWnd, IDC_HDDSIZE));
-			return(FALSE);
-
-		case WM_COMMAND:
-			switch (LOWORD(wp)) {
-				case IDOK:
-					GetWindowText(GetDlgItem(hWnd, IDC_HDDSIZE),
-													work, sizeof(work));
-					val = (UINT)milstr_solveINT(work);
-					if (val < 0) {
-						val = 0;
-					}
-					else if (val > 512) {
-						val = 512;
-					}
-					hddsize = val;
-					EndDialog(hWnd, IDOK);
-					break;
-
-				case IDCANCEL:
-					EndDialog(hWnd, IDCANCEL);
-					break;
-
-				default:
-					return(FALSE);
-			}
-			break;
-
-		case WM_CLOSE:
-			PostMessage(hWnd, WM_COMMAND, IDCANCEL, 0);
-			break;
-
-		default:
-			return(FALSE);
+	hDlg = GetNewDialog(IDD_NEWHDDDISK, NULL, (WindowPtr)-1);
+	if (!hDlg) {
+		return(0);
 	}
-	return(TRUE);
+
+	mkstr255(sizestr, "41");
+	SetDialogItemText(GetDlgItem(hDlg, IDC_HDDSIZE), sizestr);
+	SelectDialogItemText(hDlg, IDC_HDDSIZE, 0x0000, 0x7fff);
+	SetDialogDefaultItem(hDlg, IDOK);
+	SetDialogCancelItem(hDlg, IDCANCEL);
+
+	done = 0;
+	while(!done) {
+		ModalDialog(NULL, &item);
+		switch(item) {
+			case IDOK:
+				GetDialogItemText(GetDlgItem(hDlg, IDC_HDDSIZE), sizestr);
+				mkcstr(work, sizeof(work), sizestr);
+				*hddsize = milstr_solveINT(work);
+				done = IDOK;
+				break;
+
+			case IDCANCEL:
+				done = IDCANCEL;
+				break;
+		}
+	}
+	DisposeDialog(hDlg);
+	return(done);
 }
 
-static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
+static int NewdiskDlgProc(NEWDISK *newdisk) {
 
-	WORD	res;
+	DialogPtr		hDlg;
+	int				media;
+	int				done;
+	short			item;
+	Str255			disklabel;
+	ControlHandle	btn[2];
 
-	switch (msg) {
-		case WM_INITDIALOG:
-			switch(makefdtype) {
-				case (DISKTYPE_2DD << 4):
-					res = IDC_MAKE2DD;
-					break;
-
-				case (DISKTYPE_2HD << 4):
-					res = IDC_MAKE2HD;
-					break;
-
-				default:
-					res = IDC_MAKE144;
-					break;
-			}
-			SetDlgItemCheck(hWnd, res, 1);
-			SetFocus(GetDlgItem(hWnd, IDC_DISKLABEL));
-			return(FALSE);
-
-		case WM_COMMAND:
-			switch (LOWORD(wp)) {
-				case IDOK:
-					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
-											disklabel, sizeof(disklabel));
-					if (milstr_kanji1st(disklabel, sizeof(disklabel) - 1)) {
-						disklabel[sizeof(disklabel) - 1] = '\0';
-					}
-					if (GetDlgItemCheck(hWnd, IDC_MAKE2DD)) {
-						makefdtype = (DISKTYPE_2DD << 4);
-					}
-					else if (GetDlgItemCheck(hWnd, IDC_MAKE2HD)) {
-						makefdtype = (DISKTYPE_2HD << 4);
-					}
-					else {
-						makefdtype = (DISKTYPE_2HD << 4) + 1;
-					}
-					EndDialog(hWnd, IDOK);
-					break;
-
-				case IDCANCEL:
-					EndDialog(hWnd, IDCANCEL);
-					break;
-
-				default:
-					return(FALSE);
-			}
-			break;
-
-		case WM_CLOSE:
-			PostMessage(hWnd, WM_COMMAND, IDCANCEL, 0);
-			break;
-
-		default:
-			return(FALSE);
+	hDlg = GetNewDialog(IDD_NEWFDDDISK, NULL, (WindowPtr)-1);
+	if (!hDlg) {
+		return(0);
 	}
-	return(TRUE);
+
+	SelectDialogItemText(hDlg, IDC_DISKLABEL, 0x0000, 0x7fff);
+	btn[0] = (ControlHandle)GetDlgItem(hDlg, IDC_MAKE2DD);
+	btn[1] = (ControlHandle)GetDlgItem(hDlg, IDC_MAKE2HD);
+	SetControlValue(btn[0], 0);
+	SetControlValue(btn[1], 1);
+	media = 1;
+	SetDialogDefaultItem(hDlg, IDOK);
+	SetDialogCancelItem(hDlg, IDCANCEL);
+
+	done = 0;
+	while(!done) {
+		ModalDialog(NULL, &item);
+		switch(item) {
+			case IDOK:
+				if (media == 0) {
+					newdisk->fdtype = (DISKTYPE_2DD << 4);
+				}
+				else if (media == 1) {
+					newdisk->fdtype = (DISKTYPE_2HD << 4);
+				}
+				else {
+					newdisk->fdtype = (DISKTYPE_2HD << 4) + 1;
+				}
+				GetDialogItemText(GetDlgItem(hDlg, IDC_DISKLABEL), disklabel);
+				mkcstr(newdisk->label, sizeof(newdisk->label), disklabel);
+				done = IDOK;
+				break;
+
+			case IDCANCEL:
+				done = IDCANCEL;
+				break;
+
+			case IDC_DISKLABEL:
+				break;
+
+			case IDC_MAKE2DD:
+				SetControlValue(btn[0], 1);
+				SetControlValue(btn[1], 0);
+				media = 0;
+				break;
+
+			case IDC_MAKE2HD:
+				SetControlValue(btn[0], 0);
+				SetControlValue(btn[1], 1);
+				media = 1;
+				break;
+		}
+	}
+	DisposeDialog(hDlg);
+	return(done);
 }
 
-void dialog_newdisk(HWND hWnd) {
+void dialog_newdisk(void) {
 
-	char		path[MAX_PATH];
-const char		*p;
-	HINSTANCE	hinst;
+	char	path[MAX_PATH];
+	UINT	hddsize;
+	NEWDISK	disk;
 
-	file_cpyname(path, fddfolder, sizeof(path));
-	file_cutname(path);
-	file_catname(path, str_newdisk, sizeof(path));
-
-	p = dlgs_selectwritefile(hWnd, &newdiskui, path, NULL, 0);
-	if (p == NULL) {
+	if (!dlgs_selectwritefile(path, sizeof(path), str_newdisk)) {
 		return;
 	}
-	hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
-	if (!file_cmpname(file_getext((char *)p), str_thd)) {
+	if (!file_cmpname(file_getext(path), str_thd)) {
 		hddsize = 0;
-		if (DialogBox(hinst, MAKEINTRESOURCE(IDD_NEWHDDDISK),
-									hWnd, (DLGPROC)NewHddDlgProc) == IDOK) {
-			newdisk_hdd(p, hddsize);	// (hddsize < 5) || (hddsize > 256)
+		if (NewHddDlgProc(&hddsize) == IDOK) {
+			newdisk_hdd(path, hddsize);
 		}
 	}
 	else {
-		if (DialogBox(hinst,
-				MAKEINTRESOURCE(np2cfg.usefd144?IDD_NEWDISK2:IDD_NEWDISK),
-									hWnd, (DLGPROC)NewdiskDlgProc) == IDOK) {
-			newdisk_fdd(p, makefdtype, disklabel);
+		if (NewdiskDlgProc(&disk) == IDOK) {
+			newdisk_fdd(path, disk.fdtype, disk.label);
 		}
 	}
 }
-#endif
 

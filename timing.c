@@ -10,7 +10,7 @@ static	UINT32	tick = 0;
 static	UINT32	cnt = 0;
 
 
-void timing_init(void) {
+void timing_reset(void) {
 
 	cnt = 0;
 	timercnt = 0;
