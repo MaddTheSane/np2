@@ -653,8 +653,8 @@ void pccore_exec(BOOL draw) {
 			if (CPU_CS == 0x8b6) {
 				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 			}
-//			i286x_step();
-			i286c_step();
+			i286x_step();
+//			i286c_step();
 		}
 #endif
 		nevent_progress();

@@ -151,9 +151,11 @@ static void IOOUTCALL mouseif_o7fdf(UINT port, REG8 dat) {
 	portc = 0;
 	if (dat & uPD8255_CTRL) {
 		mouseif.upd8255.mode = (UINT8)dat;
+#if 0
 		pic_resetirq(0x0d);
 		nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_ABSOLUTE);
+#endif
 	}
 	else {
 		sft = (dat >> 1) & 7;
