@@ -69,9 +69,6 @@
 						0, 0,
 						4 * PCBASECLOCK25};
 
-static const BYTE msw_default[8] =
-							{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e};
-
 	BYTE	screenupdate = 3;
 	int		screendispflag = 1;
 	int		soundrenewal = 0;
@@ -349,19 +346,10 @@ void pccore_reset(void) {
 
 	bios_initialize();
 
-	if (np2cfg.ITF_WORK) {
-		CS_BASE = 0xf0000;
-		CPU_CS = 0xf000;
-		CPU_IP = 0xfff0;
-	}
-	else {
-		for (i=0; i<8; i++) {
-			mem[0xa3fe2 + i*4] = msw_default[i];
-		}
-		CS_BASE = 0xfd800;
-		CPU_CS = 0xfd80;
-		CPU_IP = 0x0002;
-	}
+	CS_BASE = 0xf0000;
+	CPU_CS = 0xf000;
+	CPU_IP = 0xfff0;
+
 	CPU_CLEARPREFETCH();
 	sysmng_cpureset();
 

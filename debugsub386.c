@@ -107,24 +107,29 @@ static char work[256];
 	return(work);
 }
 
-static void writeseg(const char *fname, UINT32 addr, UINT limit) {
+void debugwriteseg(const char *fname, const descriptor_t *sd,
+												UINT32 addr, UINT32 size) {
 
 	FILEH	fh;
-	UINT	size;
 	BYTE	buf[0x1000];
+	UINT32	limit;
 
+	limit = sd->u.seg.limit;
+	if (limit <= addr) {
+		return;
+	}
+	size = min(limit - addr, size - 1) + 1;
 	fh = file_create_c(fname);
 	if (fh == FILEH_INVALID) {
 		return;
 	}
-	limit = min(limit, 0xffff);
-	limit++;
-	while(limit) {
-		size = min(limit, sizeof(buf));
-		MEML_READ(addr, buf, size);
-		file_write(fh, buf, size);
-		addr += size;
-		limit -= size;
+	addr += sd->u.seg.segbase;
+	while(size) {
+		limit = min(size, sizeof(buf));
+		MEML_READ(addr, buf, limit);
+		file_write(fh, buf, limit);
+		addr += limit;
+		size -= limit;
 	}
 	file_close(fh);
 }
@@ -135,7 +140,6 @@ static int			filenum = 0;
 	FILEH			fh;
 	char			work[512];
 const char			*p;
-	descriptor_t	*sd;
 
 	SPRINTF(work, file_i386reg, filenum);
 	fh = file_create_c(work);
@@ -151,17 +155,13 @@ const char			*p;
 	}
 
 	SPRINTF(work, file_i386cs, filenum);
-	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	debugwriteseg(work, &CPU_STAT_SREG(CPU_CS_INDEX), 0, 0x10000);
 	SPRINTF(work, file_i386ds, filenum);
-	sd = &CPU_STAT_SREG(CPU_DS_INDEX);
-	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	debugwriteseg(work, &CPU_STAT_SREG(CPU_DS_INDEX), 0, 0x10000);
 	SPRINTF(work, file_i386es, filenum);
-	sd = &CPU_STAT_SREG(CPU_ES_INDEX);
-	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	debugwriteseg(work, &CPU_STAT_SREG(CPU_ES_INDEX), 0, 0x10000);
 	SPRINTF(work, file_i386ss, filenum);
-	sd = &CPU_STAT_SREG(CPU_SS_INDEX);
-	writeseg(work, sd->u.seg.segbase, sd->u.seg.limit);
+	debugwriteseg(work, &CPU_STAT_SREG(CPU_SS_INDEX), 0, 0x10000);
 	filenum++;
 }
 

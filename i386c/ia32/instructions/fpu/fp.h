@@ -1,4 +1,4 @@
-/*	$Id: fp.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: fp.h,v 1.2 2004/03/08 12:45:58 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -36,6 +36,8 @@ extern "C" {
 
 void FWAIT(void);
 void ESC0(void);
+
+#if 1
 void ESC1(void);
 void ESC2(void);
 void ESC3(void);
@@ -43,7 +45,7 @@ void ESC4(void);
 void ESC5(void);
 void ESC6(void);
 void ESC7(void);
-
+#else
 #define	ESC1	ESC0
 #define	ESC2	ESC0
 #define	ESC3	ESC0
@@ -51,6 +53,7 @@ void ESC7(void);
 #define	ESC5	ESC0
 #define	ESC6	ESC0
 #define	ESC7	ESC0
+#endif
 
 #ifdef __cplusplus
 }

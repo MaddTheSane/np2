@@ -226,7 +226,7 @@ static const REGSTR rstr = {
 		"rol",		"ror",		"rcl",		"rcr",
 		"shl",		"shr",		"shl",		"sar",
 
-		"lock",		"repn",		"repne",
+		"lock",		"repne",	"repe",
 		"cmpsw",	"cmpsd",	"cmpsb",
 		"insw",		"insd",		"insb",
 		"lodsw",	"lodsd",	"lodsb",

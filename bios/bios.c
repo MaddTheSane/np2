@@ -26,6 +26,55 @@ static const char neccheck[] = "Copyright (C) 1983 by NEC Corporation";
 						// 00/05/18 MS-DOS6.2 on PC-9801VX calling proc
 static const BYTE printmain[] = {0x90, 0x5a, 0x1f, 0xcf};
 
+typedef struct {
+	UINT8	port;
+	UINT8	data;
+} IODATA;
+
+static const IODATA iodata[] = {
+			// DMA
+				{0x29, 0x00}, {0x29, 0x01}, {0x29, 0x02}, {0x29, 0x03},
+				{0x27, 0x00}, {0x21, 0x00}, {0x23, 0x00}, {0x25, 0x00},
+				{0x1b, 0x00}, {0x11, 0x40},
+
+			// PIT
+				{0x77, 0x30}, {0x71, 0x00}, {0x71, 0x00},
+				{0x77, 0x76}, {0x73, 0xcd}, {0x73, 0x04},
+				{0x77, 0xb6},
+
+			// PIC
+				{0x00, 0x11}, {0x02, 0x08}, {0x02, 0x80}, {0x02, 0x1d},
+				{0x08, 0x11}, {0x0a, 0x10}, {0x0a, 0x07}, {0x0a, 0x09},
+				{0x02, 0x7d}, {0x0a, 0x71}};
+
+static const UINT8 msw_default[8] =
+							{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e};
+
+
+static void bios_itfprepare(void) {
+
+const IODATA	*p;
+const IODATA	*pterm;
+
+	p = iodata;
+	pterm = iodata + (sizeof(iodata) / sizeof(IODATA));
+	while(p < pterm) {
+		iocore_out8(p->port, p->data);
+		p++;
+	}
+
+	// GDCÇÃèâä˙âªÅB
+	// Åc
+}
+
+static void bios_memclear(void) {
+
+	ZeroMemory(mem, 0xa0000);
+	ZeroMemory(mem + VRAM0_B, 0x18000);
+	ZeroMemory(mem + VRAM0_E, 0x08000);
+	ZeroMemory(mem + VRAM1_B, 0x18000);
+	ZeroMemory(mem + VRAM1_E, 0x08000);
+}
 
 static void bios_reinitbyswitch(void) {
 
@@ -121,13 +170,6 @@ static void bios_reinitbyswitch(void) {
 		CPU_AX = 0x8300;
 		sasibios_operate();
 	}
-}
-
-static void bios_memclear(void) {
-
-	ZeroMemory(mem, 0xa0000);
-	ZeroMemory(mem + VRAM1_B, 0x18000);
-	ZeroMemory(mem + VRAM1_E, 0x08000);
 }
 
 static void bios_vectorset(void) {
@@ -269,13 +311,16 @@ void bios_initialize(void) {
 
 static void bios_boot(void) {
 
+	int		i;
+
 	if (!(sysport.c & 0x80)) {
 		CPU_SP = GETBIOSMEM16(0x00404);
 		CPU_SS = GETBIOSMEM16(0x00406);
 //		TRACEOUT(("CPU Reset... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
 	}
 	else {
-//		bios_memclear();
+		bios_itfprepare();
+		bios_memclear();
 		bios_vectorset();
 		bios0x09_init();
 		bios_reinitbyswitch();
@@ -292,6 +337,11 @@ static void bios_boot(void) {
 			SETBIOSMEM16(0x004fc, 0xffff);
 		}
 		else {
+			if (!np2cfg.ITF_WORK) {
+				for (i=0; i<8; i++) {
+					mem[MEMB_MSW + (i*4)] = msw_default[i];
+				}
+			}
 			CPU_IP = 0x0002;
 		}
 	}
