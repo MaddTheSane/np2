@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.9 2004/03/07 23:04:51 yui Exp $	*/
+/*	$Id: data_trans.c,v 1.10 2004/03/08 18:45:18 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1019,7 +1019,7 @@ CMPXCHG_EdGd(void)
 	if (op >= 0xc0) {
 		out = reg32_b20[op];
 		dst = *out;
-		WORD_SUB(tmp, CPU_EAX, dst);
+		DWORD_SUB(tmp, CPU_EAX, dst);
 		if (CPU_FLAGL & Z_FLAG) {
 			*out = src;
 		} else {
@@ -1028,7 +1028,7 @@ CMPXCHG_EdGd(void)
 	} else {
 		madr = calc_ea_dst(op);
 		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
-		DWORD_SUB(tmp, CPU_AX, dst);
+		DWORD_SUB(tmp, CPU_EAX, dst);
 		if (CPU_FLAGL & Z_FLAG) {
 			cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
 		} else {
