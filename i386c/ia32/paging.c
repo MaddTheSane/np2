@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.5 2004/01/23 16:17:51 monaka Exp $	*/
+/*	$Id: paging.c,v 1.6 2004/01/26 15:22:16 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -285,7 +285,7 @@ cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
 		case 3:
 			cpu_memorywrite_w(paddr, value & 0xffff);
 			value >>= 16;
-			cpu_memorywrite(paddr, value & 0xff);
+			cpu_memorywrite(paddr + 2, value & 0xff);
 			value >>= 8;
 			break;
 
@@ -347,7 +347,7 @@ paging(DWORD laddr, int crw, int user_mode)
 	DWORD pte_addr;	/* page table entry address */
 	DWORD pte;	/* page table entry */
 	DWORD bit;
-	DWORD err = 0;
+	DWORD err;
 
 #if defined(IA32_SUPPORT_TLB)
 	if (tlb_lookup(laddr, crw, &paddr))
