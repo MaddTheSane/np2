@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.13 2004/03/12 13:34:08 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.14 2004/03/12 14:33:06 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -153,6 +153,7 @@ change_vm(BOOL onoff)
 	CPU_STAT_VM86 = onoff;
 	if (onoff) {
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
+			CPU_STAT_SREGLIMIT(i) = 0xffff;
 			CPU_SET_SEGREG(i, CPU_REGS_SREG(i));
 		}
 		CPU_INST_OP32 = CPU_INST_AS32 =
@@ -166,6 +167,7 @@ change_vm(BOOL onoff)
 	}
 }
 
+#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
 /*
  * flags
  */
@@ -191,7 +193,6 @@ modify_eflags(UINT32 new_flags, UINT32 mask)
 	}
 }
 
-#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
 void
 set_flags(UINT16 new_flags, UINT16 mask)
 {
