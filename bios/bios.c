@@ -354,6 +354,9 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			bios_memclear();
 #endif
 			bios_vectorset();
+#if 1
+			bios0x09_init();
+#endif
 			bios_reinitbyswitch();
 			bios_vectorset();
 			bios_screeninit();
