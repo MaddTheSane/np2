@@ -11,6 +11,9 @@
 
 
 #define	BEEPCOUNTEREX					// BEEPアイドル時のカウンタをα倍に
+#if defined(CPUCORE_IA32)
+// #define	uPD71054			// だめぽ ＿|￣|○
+#endif
 
 
 // --- Interval timer
@@ -304,6 +307,7 @@ static void IOOUTCALL pit_o77(UINT port, REG8 dat) {
 	}
 #if defined(uPD71054)
 	else {
+		// これ現状じゃだめぽ＿|￣|○ ver0.76に回す…
 		TRACEOUT(("multiple latch commands - %x", dat));
 		for (ch=0; ch<3; ch++) {
 			if (dat & (2 << ch)) {

@@ -1,13 +1,9 @@
 
-#if defined(CPUCORE_IA32)
-#define	uPD71054
-#endif
-
 typedef struct {
 	UINT8	mode[4];
 	UINT8	flag[4];
 	UINT8	intr[4];
-#if defined(uPD71054)
+#if 0
 	UINT8	stat[4];
 #endif
 	UINT16	value[4];

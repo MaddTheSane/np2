@@ -14,6 +14,26 @@ const INITBL	*tblterm;
 	UINT		count;
 } _INIARG, *INIARG;
 
+
+static BOOL inigetbmp(const BYTE *ptr, UINT pos) {
+
+	return((ptr[pos >> 3] >> (pos & 7)) & 1);
+}
+
+static void inisetbmp(BYTE *ptr, UINT pos, BOOL set) {
+
+	UINT8	bit;
+
+	ptr += (pos >> 3);
+	bit = 1 << (pos & 7);
+	if (set) {
+		*ptr |= bit;
+	}
+	else {
+		*ptr &= ~bit;
+	}
+}
+
 static void inirdarg8(BYTE *dst, int dsize, const char *src) {
 
 	int		i;
@@ -75,6 +95,11 @@ const INITBL	*p;
 
 				case INITYPE_BOOL:
 					*((BYTE *)p->value) = (!milstr_cmp(data, str_true))?1:0;
+					break;
+
+				case INITYPE_BITMAP:
+					inisetbmp((BYTE *)p->value, p->size,
+										(milstr_cmp(data, str_true) == 0));
 					break;
 
 				case INITYPE_BYTEARG:
@@ -225,6 +250,12 @@ const INITBL	*pterm;
 																sizeof(work));
 				break;
 
+			case INITYPE_BITMAP:
+				milstr_ncpy(work,
+					(inigetbmp((BYTE *)p->value, p->size))?str_true:str_false,
+																sizeof(work));
+				break;
+
 			case INITYPE_BYTEARG:
 				iniwrsetarg8(work, sizeof(work), (BYTE *)p->value, p->size);
 				break;
@@ -365,6 +396,10 @@ static const INITBL iniitem[] = {
 	{"pc9861_j", INITYPE_BYTEARG,	np2cfg.pc9861jmp,		6},
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
+	{"FDDRIVE1", INITYPE_BITMAP,	&np2cfg.fddequip,		0},
+	{"FDDRIVE2", INITYPE_BITMAP,	&np2cfg.fddequip,		1},
+	{"FDDRIVE3", INITYPE_BITMAP,	&np2cfg.fddequip,		2},
+	{"FDDRIVE4", INITYPE_BITMAP,	&np2cfg.fddequip,		3},
 	{"e_resume", INITYPE_BOOL,		&np2oscfg.resume,		0},
 	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
 	{"I286SAVE", INITYPE_BOOL,		&np2oscfg.I286SAVE,		0}};

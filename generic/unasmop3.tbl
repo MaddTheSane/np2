@@ -153,12 +153,12 @@ static const UINT32 op3tbl[OP3_MAX][8] = {
 		OP_W_(RSTR_SFT+7,	OP_EA,	OP_I8,	0)},
 
 		// 0f00
-	   {OP_W_(RSTR_SLDT,	OP_EA,	OP_I8,	0),
-		OP_W_(RSTR_STR,		OP_EA,	OP_I8,	0),
-		OP_W_(RSTR_LLDT,	OP_EA,	OP_I8,	0),
-		OP_W_(RSTR_LTR,		OP_EA,	OP_I8,	0),
-		OP_W_(RSTR_VERR,	OP_EA,	OP_I8,	0),
-		OP_W_(RSTR_VERW,	OP_EA,	OP_I8,	0),
+	   {OP_W_(RSTR_SLDT,	OP_EA,	0,		0),
+		OP_W_(RSTR_STR,		OP_EA,	0,		0),
+		OP_W_(RSTR_LLDT,	OP_EA,	0,		0),
+		OP_W_(RSTR_LTR,		OP_EA,	0,		0),
+		OP_W_(RSTR_VERR,	OP_EA,	0,		0),
+		OP_W_(RSTR_VERW,	OP_EA,	0,		0),
 		OP_ER,
 		OP_ER},
 

@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.c,v 1.6 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: bit_byte.c,v 1.7 2004/03/12 18:19:57 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -33,6 +33,15 @@
 
 #include "bit_byte.h"
 
+#if 1
+#define	BIT_OFFSET16(v)		(2 * (((SINT16)(v)) >> 4))
+#define	BIT_INDEX16(v)		((v) & 0xf)
+#define	BIT_MAKEBIT16(v)	(1 << BIT_INDEX16(v))
+
+#define	BIT_OFFSET32(v)		(4 * (((SINT32)(v)) >> 5))
+#define	BIT_INDEX32(v)		((v) & 0x1f)
+#define	BIT_MAKEBIT32(v)	(1 << BIT_INDEX32(v))
+#else
 #define	BIT_OFFSET16(v)		(2 * (((SINT16)(v)) / 16))
 #define	BIT_INDEX16(v)		((v) & 0xf)
 #define	BIT_MAKEBIT16(v)	(1 << BIT_INDEX16(v))
@@ -40,6 +49,7 @@
 #define	BIT_OFFSET32(v)		(4 * (((SINT32)(v)) / 32))
 #define	BIT_INDEX32(v)		((v) & 0x1f)
 #define	BIT_MAKEBIT32(v)	(1 << BIT_INDEX32(v))
+#endif
 
 
 /*

@@ -9,6 +9,7 @@
 static void IOOUTCALL necio_o0439(UINT port, REG8 dat) {
 
 	necio.port0439 = dat;
+	(void)port;
 }
 
 static void IOOUTCALL necio_o043d(UINT port, REG8 dat) {

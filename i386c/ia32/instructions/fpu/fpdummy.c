@@ -1,4 +1,4 @@
-/*	$Id: fpdummy.c,v 1.5 2004/03/09 23:39:19 yui Exp $	*/
+/*	$Id: fpdummy.c,v 1.6 2004/03/12 18:19:57 yui Exp $	*/
 
 #include "compiler.h"
 #include "cpu.h"
@@ -34,6 +34,10 @@ ESC1(void)
 	if (op >= 0xc0) {
 	} else {
 		madr = calc_ea_dst(op);
+		if ((op & 0x38) == 0x38) {
+			TRACEOUT(("FSTCW"));
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, 0xffff);
+		}
 	}
 }
 

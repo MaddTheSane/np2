@@ -1,6 +1,7 @@
 
 void AboutDialogProc(void);
 void ConfigDialogProc(void);
+void MPU98DialogProc(void);
 void CalendarDialogProc(void);
 
 void ResumeErrorDialogProc(void);

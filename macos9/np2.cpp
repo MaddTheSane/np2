@@ -123,7 +123,7 @@ static void MenuBarInit(void) {
 	if (!np2oscfg.I286SAVE) {
 		hmenu = GetMenuHandle(IDM_OTHER);
 		if (hmenu) {
-			DeleteMenuItem(hmenu, 9);
+			DeleteMenuItem(hmenu, 10);
 		}
 	}
 	InsertMenu(GetMenu(IDM_SASI1), -1);
@@ -205,6 +205,22 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_FDD2EJECT:
 			diskdrv_setfdd(1, NULL, 0);
+			break;
+
+		case IDM_FDD3OPEN:
+			dialog_changefdd(2);
+			break;
+
+		case IDM_FDD3EJECT:
+			diskdrv_setfdd(2, NULL, 0);
+			break;
+
+		case IDM_FDD4OPEN:
+			dialog_changefdd(3);
+			break;
+
+		case IDM_FDD4EJECT:
+			diskdrv_setfdd(3, NULL, 0);
 			break;
 
 		case IDM_SASI1OPEN:
@@ -320,6 +336,10 @@ static void HandleMenuChoice(long wParam) {
 			mousemng_toggle(MOUSEPROC_SYSTEM);
 			menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
 			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_MIDIOPT:
+			MPU98DialogProc();
 			break;
 
 		case IDM_MIDIPANIC:

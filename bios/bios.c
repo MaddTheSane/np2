@@ -403,6 +403,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 		return(0);
 	}
 
+//	TRACEOUT(("biosfunc(%x)", adrs));
 #if defined(CPUCORE_IA32) && defined(TRACE)
 	if (CPU_STAT_PAGING) {
 		UINT32 pde = i286_memoryread_d(CPU_STAT_PDE_BASE);
