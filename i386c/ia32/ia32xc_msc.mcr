@@ -539,5 +539,9 @@
 
 // ----
 
+#define AND_BYTE(d, s)		BYTE_AND(d, s)
+#define AND_WORD(d, s)		WORD_AND(d, s)
+#define AND_DWORD(d, s)		DWORD_AND(d, s)
+
 #define	XC_STORE_FLAGL()
 
