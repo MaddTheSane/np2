@@ -53,6 +53,7 @@ typedef struct {
 	BYTE	resume;													// ver0.30
 	BYTE	statsave;
 	BYTE	disablemmx;
+	BYTE	wintype;
 	BYTE	toolwin;
 	BYTE	keydisp;
 	BYTE	I286SAVE;
@@ -120,6 +121,8 @@ extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
 extern	int			mmxflag;
 extern	BYTE		np2break;
+extern	BOOL		winui_en;
+
 extern	char		modulefile[MAX_PATH];
 extern	char		fddfolder[MAX_PATH];
 extern	char		hddfolder[MAX_PATH];

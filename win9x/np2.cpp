@@ -60,6 +60,8 @@ static	char		szClassName[] = "NP2-MainWindow";
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
 		int			mmxflag;
+		BYTE		np2break = 0;									// ver0.30
+		BOOL		winui_en;
 
 		NP2OSCFG	np2oscfg = {
 						"Neko Project II", "NP2",
@@ -71,32 +73,32 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0};		// ver0.38
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0};		// ver0.38
 
-		char	fddfolder[MAX_PATH];
-		char	hddfolder[MAX_PATH];
-		char	bmpfilefolder[MAX_PATH];
-		char	modulefile[MAX_PATH];
+		char		fddfolder[MAX_PATH];
+		char		hddfolder[MAX_PATH];
+		char		bmpfilefolder[MAX_PATH];
+		char		modulefile[MAX_PATH];
 
-static	UINT	framecnt = 0;
-static	UINT	waitcnt = 0;
-static	UINT	framemax = 1;
-		BYTE	np2break = 0;									// ver0.30
-static	BYTE	np2stopemulate = 0;
-static	int		np2opening = 1;
-static	int		np2quitmsg = 0;
-		HMENU	hStat = NULL;
-static	BYTE	scrnmode;
-		WINLOC		wl;
-		WINLOCEX	wlex;
+static	UINT		framecnt = 0;
+static	UINT		waitcnt = 0;
+static	UINT		framemax = 1;
+static	BYTE		np2stopemulate = 0;
+static	int			np2opening = 1;
+static	int			np2quitmsg = 0;
+static	HMENU		hStat = NULL;
+static	BYTE		scrnmode;
+static	WINLOCEX	smwlex;
 
 static const char np2help[] = "np2.chm";
 static const char np2flagext[] = "S%02d";
 static const char np2resumeext[] = "sav";
 
 
+
 static void winuienter(void) {
 
+	winui_en = TRUE;
 	soundmng_disable(SNDPROC_MAIN);
 	scrnmng_topwinui();
 }
@@ -105,6 +107,7 @@ static void winuileave(void) {
 
 	scrnmng_clearwinui();
 	soundmng_enable(SNDPROC_MAIN);
+	winui_en = FALSE;
 }
 
 WINLOCEX np2_winlocexallwin(HWND base) {
@@ -130,9 +133,11 @@ static void changescreen(BYTE newmode) {
 
 	BYTE		change;
 	BYTE		renewal;
+	WINLOCEX	wlex;
 
 	change = scrnmode ^ newmode;
 	renewal = (change & SCRNMODE_FULLSCREEN);
+	wlex = NULL;
 	if (newmode & SCRNMODE_FULLSCREEN) {
 		renewal |= (change & SCRNMODE_HIGHCOLOR);
 	}
@@ -145,11 +150,10 @@ static void changescreen(BYTE newmode) {
 			keydisp_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
-			winlocex_destroy(wlex);
 			wlex = np2_winlocexallwin(hWndMain);
 		}
 		soundmng_stop();
-		mouse_running(MOUSE_STOP);
+		mousemng_disable(MOUSEPROC_WINUI);
 		scrnmng_destroy();
 		if (scrnmng_create(newmode) == SUCCESS) {
 			scrnmode = newmode;
@@ -174,9 +178,8 @@ static void changescreen(BYTE newmode) {
 		else if (renewal & SCRNMODE_ROTATEMASK) {
 			winlocex_move(wlex);
 			winlocex_destroy(wlex);
-			wlex = NULL;
 		}
-		mouse_running(MOUSE_CONT);
+		mousemng_enable(MOUSEPROC_WINUI);
 		soundmng_play();
 	}
 	else {
@@ -305,9 +308,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	BOOL		b;
 	UINT		update;
 	HWND		subwin;
+	WINLOCEX	wlex;
 
 	switch (msg) {
 		case WM_CREATE:
+			np2class_wmcreate(hWnd);
+			np2class_windowtype(hWnd, np2oscfg.wintype);
 			sstp_construct(hWnd);
 #ifndef __GNUC__
 			WINNLSEnableIME(hWnd, FALSE);
@@ -342,12 +348,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if ((!scrnmng_isfullscreen()) &&
 						(!(GetWindowLong(hWnd, GWL_STYLE) &
 											(WS_MAXIMIZE | WS_MINIMIZE)))) {
-						winlocex_destroy(wlex);
 						wlex = np2_winlocexallwin(hWnd);
 						wincentering(hWnd);
 						winlocex_move(wlex);
 						winlocex_destroy(wlex);
-						wlex = NULL;
 					}
 					break;
 
@@ -388,11 +392,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case SC_MINIMIZE:
-					winlocex_destroy(wlex);
 					wlex = np2_winlocexallwin(hWnd);
 					winlocex_close(wlex);
 					winlocex_destroy(wlex);
-					wlex = NULL;
 					return(DefWindowProc(hWnd, msg, wParam, lParam));
 
 				case SC_RESTORE:
@@ -772,7 +774,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_MOUSE:
-					mouse_running(MOUSE_XOR);
+					mousemng_toggle(MOUSEPROC_SYSTEM);
 					xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
 					update |= SYS_UPDATECFG;
 					break;
@@ -899,11 +901,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				np2break &= ~NP2BREAK_MAIN;
 				scrnmng_update();
 				keystat_allrelease();
-				mouse_running(MOUSE_CONT_M);
+				mousemng_enable(MOUSEPROC_BG);
 			}
 			else {
 				np2break |= NP2BREAK_MAIN;
-				mouse_running(MOUSE_STOP_M);
+				mousemng_disable(MOUSEPROC_BG);
 			}
 			np2active_renewal();
 			break;
@@ -973,32 +975,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_ENTERSIZEMOVE:
 			soundmng_disable(SNDPROC_MAIN);
-			mouse_running(MOUSE_STOP);
-			winlocex_destroy(wlex);
-			wlex = np2_winlocexallwin(hWnd);
+			mousemng_disable(MOUSEPROC_WINUI);
+			winlocex_destroy(smwlex);
+			smwlex = np2_winlocexallwin(hWnd);
+			scrnmng_entersizing();
 			break;
 
 		case WM_MOVING:
 			if (np2oscfg.WINSNAP) {
-				winlocex_moving(wlex, (RECT *)lParam);
+				winlocex_moving(smwlex, (RECT *)lParam);
 			}
 			break;
 
+		case WM_SIZING:
+			scrnmng_sizing((UINT)wParam, (RECT *)lParam);
+			break;
+
 		case WM_EXITSIZEMOVE:
-			winlocex_move(wlex);
-			winlocex_destroy(wlex);
-			wlex = NULL;
-			mouse_running(MOUSE_CONT);
+			scrnmng_exitsizing();
+			winlocex_move(smwlex);
+			winlocex_destroy(smwlex);
+			smwlex = NULL;
+			mousemng_enable(MOUSEPROC_WINUI);
 			soundmng_enable(SNDPROC_MAIN);
 			break;
 
 		case WM_KEYDOWN:
 			if (wParam == VK_F11) {
-				scrnmng_enablemenubar();
+				np2class_enablemenu(hWndMain, TRUE);
 				return(DefWindowProc(hWnd, WM_SYSKEYDOWN, VK_F10, lParam));
 			}
 			if ((wParam == VK_F12) && (!np2oscfg.F12COPY)) {
-				mouse_running(MOUSE_XOR);
+				mousemng_toggle(MOUSEPROC_SYSTEM);
 				xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
 				sysmng_update(SYS_UPDATECFG);
 			}
@@ -1044,8 +1052,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_LBUTTONDOWN:
-			if (!mouse_btn(MOUSE_LEFTDOWN)) {
-				if (scrnmng_isfullscreen()) {
+			if (!mousemng_buttonevent(MOUSEMNG_LEFTDOWN)) {
+				if (!scrnmng_isfullscreen()) {
+					if (np2oscfg.wintype == 2) {
+						return(SendMessage(hWnd, WM_NCLBUTTONDOWN,
+															HTCAPTION, 0L));
+					}
+				}
+				else {
 					POINT p;
 					if ((GetCursorPos(&p)) && (p.y >= 466)) {
 						np2oscfg.clk_x++;
@@ -1058,19 +1072,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_LBUTTONUP:
-			if (!mouse_btn(MOUSE_LEFTUP)) {
+			if (!mousemng_buttonevent(MOUSEMNG_LEFTUP)) {
 				return(DefWindowProc(hWnd, msg, wParam, lParam));
 			}
 			break;
 
 		case WM_MBUTTONDOWN:									// ver0.26
-			mouse_running(MOUSE_XOR);
+			mousemng_toggle(MOUSEPROC_SYSTEM);
 			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
 			sysmng_update(SYS_UPDATECFG);
 			break;
 
 		case WM_RBUTTONDOWN:
-			if (!mouse_btn(MOUSE_RIGHTDOWN)) {
+			if (!mousemng_buttonevent(MOUSEMNG_RIGHTDOWN)) {
 				if (scrnmng_isfullscreen()) {
 					POINT	p;
 					if ((GetCursorPos(&p)) && (p.y >= 466) &&
@@ -1085,8 +1099,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_RBUTTONUP:
-			if (!mouse_btn(MOUSE_RIGHTUP)) {
+			if (!mousemng_buttonevent(MOUSEMNG_RIGHTUP)) {
 				return(DefWindowProc(hWnd, msg, wParam, lParam));
+			}
+			break;
+
+		case WM_LBUTTONDBLCLK:
+			if (!scrnmng_isfullscreen()) {
+				np2oscfg.wintype++;
+				if (np2oscfg.wintype >= 3) {
+					np2oscfg.wintype = 0;
+				}
+				wlex = np2_winlocexallwin(hWnd);
+				np2class_windowtype(hWnd, np2oscfg.wintype);
+				winlocex_move(wlex);
+				winlocex_destroy(wlex);
+				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			break;
 
@@ -1112,6 +1140,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_DESTROY:
 			DestroyMenu(hStat);
+			np2class_wmdestroy(hWnd);
 			PostQuitMessage(0);
 			break;
 
@@ -1197,7 +1226,7 @@ static void processwait(UINT cnt) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										LPSTR lpszCmdLine, int nCmdShow) {
-	WNDCLASS	np2;
+	WNDCLASS	wc;
 	MSG			msg;
 	HMENU		hMenu;
 	HWND		hwndorg;
@@ -1248,17 +1277,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	np2class_initialize(hInstance);
 	if (!hPreInst) {
-		np2.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
-		np2.lpfnWndProc = WndProc;
-		np2.cbClsExtra = 0;
-		np2.cbWndExtra = 0;
-		np2.hInstance = hInstance;
-		np2.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-		np2.hCursor = LoadCursor(NULL, IDC_ARROW);
-		np2.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-		np2.lpszMenuName = MAKEINTRESOURCE(IDM_MAIN);
-		np2.lpszClassName = szClassName;
-		if (!RegisterClass(&np2)) {
+		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+		wc.lpfnWndProc = WndProc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = NP2GWL_SIZE;
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
+		wc.lpszClassName = szClassName;
+		if (!RegisterClass(&wc)) {
 			return(FALSE);
 		}
 	}
@@ -1268,7 +1297,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	hWndMain = CreateWindow(szClassName, np2oscfg.titles,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
-						WS_MINIMIZEBOX,
+						WS_THICKFRAME | WS_MINIMIZEBOX,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
 						NULL, NULL, hInstance, NULL);
 	scrnmng_initialize();
@@ -1317,7 +1346,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP, (UINT)hStat, "S&tat");
 	}
-	sysmenu_init();
+	sysmenu_initialize();
 	DrawMenuBar(hWndMain);
 
 	// ver0.30
@@ -1362,8 +1391,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	juliet_prepare();
 #endif
 
+	mousemng_initialize();
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
-		mouse_running(MOUSE_ON);
+		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
 
 	commng_initialize();
@@ -1404,7 +1434,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 		else if (id == IDCANCEL) {
 			DestroyWindow(hWndMain);
-			mouse_running(MOUSE_OFF);
+			mousemng_disable(MOUSEPROC_WINUI);
 			S98_trash();
 			pccore_term();
 			sstp_destruct();
@@ -1441,7 +1471,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			else {
 				if (np2oscfg.NOWAIT) {
 					joy_flash();
-					mouse_callback();
+					mousemng_callback();
 					pccore_exec(framecnt == 0);
 					dclock_callback();
 					if (np2oscfg.DRAW_SKIP) {		// nowait frame skip
@@ -1460,7 +1490,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 				else if (np2oscfg.DRAW_SKIP) {		// frame skip
 					if (framecnt < np2oscfg.DRAW_SKIP) {
 						joy_flash();
-						mouse_callback();
+						mousemng_callback();
 						pccore_exec(framecnt == 0);
 						dclock_callback();
 						framecnt++;
@@ -1473,7 +1503,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 					if (!waitcnt) {
 						UINT cnt;
 						joy_flash();
-						mouse_callback();
+						mousemng_callback();
 						pccore_exec(framecnt == 0);
 						dclock_callback();
 						framecnt++;
@@ -1517,7 +1547,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	pccore_cfgupdate();
 
-	mouse_running(MOUSE_OFF);
+	mousemng_disable(MOUSEPROC_WINUI);
 	S98_trash();
 
 	if (np2oscfg.resume) {

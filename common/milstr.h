@@ -5,7 +5,7 @@ extern "C" {
 
 // ‘å•¶š¬•¶š‚ğ“¯ˆê‹‚µ‚Ä”äŠr
 // ret 0:ˆê’v
-BOOL milstr_cmp(const char *str, const char *cmp);
+int milstr_cmp(const char *str, const char *cmp);
 
 // ‘å•¶š¬•¶š‚ğ “¯ˆê‹‚µ‚Äcmp‚Ìƒkƒ‹‚Ü‚Å”äŠr
 // ret 0:ˆê’v

@@ -1,7 +1,7 @@
 #include	"compiler.h"
 
 
-BOOL milstr_cmp(const char *str, const char *cmp) {
+int milstr_cmp(const char *str, const char *cmp) {
 
 	int		s;
 	int		c;

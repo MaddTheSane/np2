@@ -1,11 +1,13 @@
 
-void sysmenu_init(void);
+void sysmenu_initialize(void);
 void sysmenu_settoolwin(BYTE value);
 void sysmenu_setkeydisp(BYTE value);
 void sysmenu_setwinsnap(BYTE value);
 void sysmenu_setbackground(BYTE value);
 void sysmenu_setbgsound(BYTE value);
 void sysmenu_setscrnmul(BYTE value);
+
+void menu_addmenubar(HMENU popup, HMENU menubar);
 
 void xmenu_disablewindow(void);
 void xmenu_setroltate(BYTE value);

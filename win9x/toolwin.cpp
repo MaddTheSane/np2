@@ -35,10 +35,10 @@ enum {
 
 	IDC_BASE				= 3000,
 
-	IDC_SKINSEL				= 3100,
-	IDC_SKINDEF				= 3101,
-	IDC_SKINMRU				= 3102,
-	IDC_TOOLCLOSE			= IDC_SKINMRU + SKINMRU_MAX
+	IDM_SKINSEL				= 3100,
+	IDM_SKINDEF				= 3101,
+	IDM_SKINMRU				= 3102,
+	IDM_TOOLCLOSE			= IDM_SKINMRU + SKINMRU_MAX
 };
 
 enum {
@@ -557,12 +557,12 @@ const char	*base;
 const char	*file[SKINMRU_MAX];
 
 	ret = CreatePopupMenu();
-	AppendMenu(ret, MF_STRING, IDC_SKINSEL, str_skinsel);
+	AppendMenu(ret, MF_STRING, IDM_SKINSEL, str_skinsel);
 	AppendMenu(ret, MF_SEPARATOR, 0, NULL);
 
 	base = np2tool.skin;
 	flag = (base[0] == '\0')?MF_CHECKED:0;
-	AppendMenu(ret, MF_STRING + flag, IDC_SKINDEF, str_skindef);
+	AppendMenu(ret, MF_STRING + flag, IDM_SKINDEF, str_skindef);
 	for (cnt=0; cnt<SKINMRU_MAX; cnt++) {
 		p = np2tool.skinmru[cnt];
 		if (p[0] == '\0') {
@@ -583,7 +583,7 @@ const char	*file[SKINMRU_MAX];
 	for (i=0; i<cnt; i++) {
 		j = id[i];
 		flag = (!file_cmpname(base, np2tool.skinmru[j]))?MF_CHECKED:0;
-		AppendMenu(ret, MF_STRING + flag, IDC_SKINMRU + j, file[j]);
+		AppendMenu(ret, MF_STRING + flag, IDM_SKINMRU + j, file[j]);
 	}
 	return(ret);
 }
@@ -610,6 +610,8 @@ const char		*p;
 		}
 		file_cpyname(np2tool.skinmru[0], p, sizeof(np2tool.skinmru[0]));
 	}
+	ModifyMenu(np2class_gethmenu(hWnd), 0, MF_BYPOSITION | MF_POPUP,
+									(UINT)createskinmenu(), str_toolskin);
 	ModifyMenu(GetSystemMenu(hWnd, FALSE), 0, MF_BYPOSITION | MF_POPUP,
 									(UINT)createskinmenu(), str_toolskin);
 	DrawMenuBar(hWnd);
@@ -636,12 +638,17 @@ const char		*p;
 static void openpopup(HWND hWnd, LPARAM lp) {
 
 	HMENU	hMenu;
+	HMENU	mainmenu;
 	POINT	pt;
 
 	hMenu = CreatePopupMenu();
+	if (!winui_en) {
+		mainmenu = np2class_gethmenu(hWndMain);
+		menu_addmenubar(hMenu, mainmenu);
+	}
 	AppendMenu(hMenu, MF_POPUP, (UINT)createskinmenu(), str_toolskin);
 	AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-	AppendMenu(hMenu, MF_STRING, IDC_TOOLCLOSE, str_toolclose);
+	AppendMenu(hMenu, MF_STRING, IDM_TOOLCLOSE, str_toolclose);
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);
@@ -658,23 +665,26 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	switch(msg) {
 		case WM_CREATE:
+			np2class_wmcreate(hWnd);
+			ModifyMenu(np2class_gethmenu(hWnd), 0, MF_BYPOSITION | MF_POPUP,
+									(UINT)createskinmenu(), str_toolskin);
 			hMenu = GetSystemMenu(hWnd, FALSE);
 			InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP,
 									(UINT)createskinmenu(), str_toolskin);
 			InsertMenu(hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
-			np2class_windowtype(hWnd, np2tool.type);
+			np2class_windowtype(hWnd, (np2tool.type & 1) << 1);
 			toolwincreate(hWnd);
 			break;
 
 		case WM_SYSCOMMAND:
 			switch(wp) {
-				case IDC_SKINSEL:
-				case IDC_SKINDEF:
-				case IDC_SKINMRU + 0:
-				case IDC_SKINMRU + 1:
-				case IDC_SKINMRU + 2:
-				case IDC_SKINMRU + 3:
+				case IDM_SKINSEL:
+				case IDM_SKINDEF:
+				case IDM_SKINMRU + 0:
+				case IDM_SKINMRU + 1:
+				case IDM_SKINMRU + 2:
+				case IDM_SKINMRU + 3:
 					return(SendMessage(hWnd, WM_COMMAND, wp, lp));
 
 				default:
@@ -691,9 +701,9 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1BROWSE:
-					soundmng_disable(SNDPROC_TOOL);
-					dialog_changefdd(hWnd, 0);
-					soundmng_enable(SNDPROC_TOOL);
+					if (!winui_en) {
+						SendMessage(hWndMain, WM_COMMAND, IDM_FDD1OPEN, 0);
+					}
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1EJECT:
@@ -708,9 +718,9 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2BROWSE:
-					soundmng_disable(SNDPROC_TOOL);
-					dialog_changefdd(hWnd, 1);
-					soundmng_enable(SNDPROC_TOOL);
+					if (!winui_en) {
+						SendMessage(hWndMain, WM_COMMAND, IDM_FDD2OPEN, 0);
+					}
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2EJECT:
@@ -719,15 +729,19 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLRESET:
-					SendMessage(hWndMain, WM_COMMAND, IDM_RESET, 0);
-					SetForegroundWindow(hWndMain);
+					if (!winui_en) {
+						SendMessage(hWndMain, WM_COMMAND, IDM_RESET, 0);
+						SetForegroundWindow(hWndMain);
+					}
 					break;
 
 				case IDC_BASE + IDC_TOOLPOWER:
-					SendMessage(hWndMain, WM_CLOSE, 0, 0L);
+					if (!winui_en) {
+						SendMessage(hWndMain, WM_CLOSE, 0, 0L);
+					}
 					break;
 
-				case IDC_SKINSEL:
+				case IDM_SKINSEL:
 					soundmng_disable(SNDPROC_TOOL);
 					r = dlgs_selectfile(hWnd, &skinui, np2tool.skin,
 											sizeof(np2tool.skin), NULL);
@@ -737,23 +751,29 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					}
 					break;
 
-				case IDC_SKINDEF:
+				case IDM_SKINDEF:
 					np2tool.skin[0] = '\0';
 					skinchange(hWnd);
 					break;
 
-				case IDC_SKINMRU + 0:
-				case IDC_SKINMRU + 1:
-				case IDC_SKINMRU + 2:
-				case IDC_SKINMRU + 3:
+				case IDM_SKINMRU + 0:
+				case IDM_SKINMRU + 1:
+				case IDM_SKINMRU + 2:
+				case IDM_SKINMRU + 3:
 					file_cpyname(np2tool.skin,
-									np2tool.skinmru[LOWORD(wp) - IDC_SKINMRU],
+									np2tool.skinmru[LOWORD(wp) - IDM_SKINMRU],
 									sizeof(np2tool.skin));
 					skinchange(hWnd);
 					break;
 
-				case IDC_TOOLCLOSE:
+				case IDM_TOOLCLOSE:
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
+					break;
+
+				default:
+					if (!winui_en) {
+						return(SendMessage(hWndMain, msg, wp, lp));
+					}
 					break;
 			}
 			break;
@@ -766,7 +786,13 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				}
 				return(0);
 			}
-			break;
+			return(SendMessage(hWndMain, msg, wp, lp));
+
+		case WM_KEYUP:
+			if ((short)wp == VK_TAB) {
+				return(0);
+			}
+			return(SendMessage(hWndMain, msg, wp, lp));
 
 		case WM_PAINT:
 			toolwinpaint(hWnd);
@@ -818,7 +844,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_DESTROY:
-			np2class_destroymenu(hWnd);
+			np2class_wmdestroy(hWnd);
 			toolwindestroy();
 			toolwin.hwnd = NULL;
 			break;
@@ -836,7 +862,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_LBUTTONDBLCLK:
 			np2tool.type ^= 1;
 			wlex = np2_winlocexallwin(hWndMain);
-			np2class_windowtype(hWnd, np2tool.type);
+			np2class_windowtype(hWnd, (np2tool.type & 1) << 1);
 			winlocex_move(wlex);
 			winlocex_destroy(wlex);
 			sysmng_update(SYS_UPDATEOSCFG);
@@ -860,7 +886,7 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = MAKEINTRESOURCE(IDR_TOOLWIN);
 	wc.lpszClassName = np2toolclass;
 	return(RegisterClass(&wc));
 }
@@ -893,6 +919,7 @@ void toolwin_create(void) {
 	}
 	UpdateWindow(hWnd);
 	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+	SetForegroundWindow(hWndMain);
 	return;
 
 twope_err2:

@@ -32,7 +32,7 @@ void np2class_deinitialize(HINSTANCE hinst) {
 }
 
 
-// ---- 
+// ----
 
 void np2class_move(HWND hWnd, int posx, int posy, int cx, int cy) {
 
@@ -69,31 +69,76 @@ int CALLBACK np2class_propetysheet(HWND hWndDlg, UINT uMsg, LPARAM lParam) {
 
 // ----
 
+void np2class_wmcreate(HWND hWnd) {
+
+	SetWindowLong(hWnd, NP2GWL_HMENU, 0);
+}
+
+void np2class_wmdestroy(HWND hWnd) {
+
+	HMENU	hmenu;
+
+	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	if (hmenu != NULL) {
+		DestroyMenu(hmenu);
+		SetWindowLong(hWnd, NP2GWL_HMENU, 0);
+	}
+}
+
+void np2class_enablemenu(HWND hWnd, BOOL enable) {
+
+	HMENU	hmenu;
+	BOOL	draw;
+
+	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	draw = FALSE;
+	if (enable) {
+		if (hmenu) {
+			SetMenu(hWnd, hmenu);
+			hmenu = NULL;
+			draw = TRUE;
+		}
+	}
+	else {
+		if (hmenu == NULL) {
+			hmenu = GetMenu(hWnd);
+			if (hmenu) {
+				SetMenu(hWnd, NULL);
+				draw = TRUE;
+			}
+		}
+	}
+	SetWindowLong(hWnd, NP2GWL_HMENU, (LONG)hmenu);
+	if (draw) {
+		DrawMenuBar(hWnd);
+	}
+}
+
 void np2class_windowtype(HWND hWnd, BYTE type) {
 
 	RECT		rect;
 	DWORD		style;
-	HMENU		hmenu;
 
 	GetClientRect(hWnd, &rect);
 	style = GetWindowLong(hWnd, GWL_STYLE);
-	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
-	if (!(type & 1)) {
-		style |= WS_CAPTION;
-		if (hmenu) {
-			SetMenu(hWnd, hmenu);
-			hmenu = NULL;
-		}
-	}
-	else {
-		style &= ~WS_CAPTION;
-		if (hmenu == NULL) {
-			hmenu = GetMenu(hWnd);
-			SetMenu(hWnd, NULL);
-		}
+	switch(type) {
+		case 0:
+		default:
+			style |= WS_CAPTION;
+			np2class_enablemenu(hWnd, TRUE);
+			break;
+
+		case 1:
+			style |= WS_CAPTION;
+			np2class_enablemenu(hWnd, FALSE);
+			break;
+
+		case 2:
+			style &= ~WS_CAPTION;
+			np2class_enablemenu(hWnd, FALSE);
+			break;
 	}
 	SetWindowLong(hWnd, GWL_STYLE, style);
-	SetWindowLong(hWnd, NP2GWL_HMENU, (LONG)hmenu);
 	SetWindowPos(hWnd, 0, 0, 0, 0, 0,
 					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 	winloc_setclientsize(hWnd,
@@ -109,16 +154,5 @@ HMENU np2class_gethmenu(HWND hWnd) {
 		ret = GetMenu(hWnd);
 	}
 	return(ret);
-}
-
-void np2class_destroymenu(HWND hWnd) {
-
-	HMENU	hmenu;
-
-	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
-	if (hmenu != NULL) {
-		DestroyMenu(hmenu);
-		SetWindowLong(hWnd, NP2GWL_HMENU, 0);
-	}
 }
 

@@ -16,7 +16,9 @@ enum {
 	NP2GWL_SIZE		= 4
 };
 
+void np2class_wmcreate(HWND hWnd);
+void np2class_wmdestroy(HWND hWnd);
+void np2class_enablemenu(HWND hWnd, BOOL enable);
 void np2class_windowtype(HWND hWnd, BYTE type);
 HMENU np2class_gethmenu(HWND hWnd);
-void np2class_destroymenu(HWND hWnd);
 

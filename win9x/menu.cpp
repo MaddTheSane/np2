@@ -3,6 +3,7 @@
 #include	"np2.h"
 #include	"sysmng.h"
 #include	"menu.h"
+#include	"np2class.h"
 #include	"pccore.h"
 
 
@@ -47,7 +48,7 @@ static const SMENUITEM smenuitem[] = {
 			{smenu_1280x800,	IDM_SCRNMUL16},
 			{NULL,				0}};
 
-void sysmenu_init(void) {
+void sysmenu_initialize(void) {
 
 	HMENU	hMenu;
 	UINT	i;
@@ -136,11 +137,45 @@ void sysmenu_setscrnmul(BYTE value) {
 
 // ----
 
+// Ç±ÇÍÇ¡ÇƒAPIÇ†ÇÈÇÃÇ©ÅH
+void menu_addmenubar(HMENU popup, HMENU menubar) {
+
+	UINT			cnt;
+	UINT			pos;
+	UINT			i;
+	MENUITEMINFO	mii;
+	char			str[128];
+	HMENU			hSubMenu;
+
+	cnt = GetMenuItemCount(menubar);
+	pos = 0;
+	for (i=0; i<cnt; i++) {
+		ZeroMemory(&mii, sizeof(mii));
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU |
+																	MIIM_DATA;
+		mii.dwTypeData = str;
+		mii.cch = sizeof(str);
+		if (GetMenuItemInfo(menubar, i, TRUE, &mii)) {
+			if (mii.hSubMenu) {
+				hSubMenu = CreatePopupMenu();
+				menu_addmenubar(hSubMenu, mii.hSubMenu);
+				mii.hSubMenu = hSubMenu;
+			}
+			InsertMenuItem(popup, pos, TRUE, &mii);
+			pos++;
+		}
+	}
+}
+
+
+// ----
+
 void xmenu_disablewindow(void) {
 
 	HMENU	hmenu;
 
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	EnableMenuItem(hmenu, IDM_WINDOW, MF_GRAYED);
 	EnableMenuItem(hmenu, IDM_FULLSCREEN, MF_GRAYED);
 }
@@ -149,7 +184,7 @@ void xmenu_setroltate(BYTE value) {
 
 	HMENU	hmenu;
 
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_ROLNORMAL, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_ROLLEFT, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_ROLRIGHT, MFCHECK(value == 2));
@@ -159,21 +194,21 @@ void xmenu_setdispmode(BYTE value) {
 
 	value &= 1;
 	np2cfg.DISPSYNC = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_DISPSYNC, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_DISPSYNC, MFCHECK(value));
 }
 
 void xmenu_setraster(BYTE value) {
 
 	value &= 1;
 	np2cfg.RASTER = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_RASTER, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_RASTER, MFCHECK(value));
 }
 
 void xmenu_setwaitflg(BYTE value) {
 
 	value &= 1;
 	np2oscfg.NOWAIT = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_NOWAIT, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_NOWAIT, MFCHECK(value));
 }
 
 void xmenu_setframe(BYTE value) {
@@ -181,7 +216,7 @@ void xmenu_setframe(BYTE value) {
 	HMENU	hmenu;
 
 	np2oscfg.DRAW_SKIP = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_AUTOFPS, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_60FPS, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_30FPS, MFCHECK(value == 2));
@@ -197,7 +232,7 @@ void xmenu_setkey(BYTE value) {
 		value = 0;
 	}
 	np2cfg.KEY_MODE = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_KEY, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_JOY1, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_JOY2, MFCHECK(value == 2));
@@ -208,7 +243,7 @@ void xmenu_setxshift(BYTE value) {
 	HMENU	hmenu;
 
 	np2cfg.XSHIFT = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_XSHIFT, MFCHECK(value & 1));
 	CheckMenuItem(hmenu, IDM_XCTRL, MFCHECK(value & 2));
 	CheckMenuItem(hmenu, IDM_XGRPH, MFCHECK(value & 4));
@@ -222,7 +257,7 @@ void xmenu_setf12copy(BYTE value) {
 		value = 0;
 	}
 	np2oscfg.F12COPY = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_F12MOUSE, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_F12COPY, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_F12STOP, MFCHECK(value == 2));
@@ -236,7 +271,7 @@ void xmenu_setbeepvol(BYTE value) {
 
 	value &= 3;
 	np2cfg.BEEP_VOL = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_BEEPOFF, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_BEEPLOW, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_BEEPMID, MFCHECK(value == 2));
@@ -249,7 +284,7 @@ void xmenu_setsound(BYTE value) {
 
 	sysmng_update(SYS_UPDATESBOARD);
 	np2cfg.SOUND_SW = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_NOSOUND, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_PC9801_14, MFCHECK(value & 1));
 	CheckMenuItem(hmenu, IDM_PC9801_26K, MFCHECK(value & 2));
@@ -265,7 +300,7 @@ void xmenu_setmotorflg(BYTE value) {
 
 	value &= 1;
 	np2cfg.MOTOR = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_SEEKSND, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_SEEKSND, MFCHECK(value));
 }
 
 void xmenu_setextmem(BYTE value) {
@@ -274,7 +309,7 @@ void xmenu_setextmem(BYTE value) {
 
 	sysmng_update(SYS_UPDATEMEMORY);
 	np2cfg.EXTMEM = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_MEM640, MFCHECK(value == 0));
 	CheckMenuItem(hmenu, IDM_MEM16, MFCHECK(value == 1));
 	CheckMenuItem(hmenu, IDM_MEM36, MFCHECK(value == 3));
@@ -285,12 +320,13 @@ void xmenu_setmouse(BYTE value) {
 
 	value &= 1;
 	np2oscfg.MOUSE_SW = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_MOUSE, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_MOUSE, MFCHECK(value));
 }
 
 void xmenu_sets98logging(BYTE value) {
 
-	CheckMenuItem(GetMenu(hWndMain), IDM_S98LOGGING, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain),
+											IDM_S98LOGGING, MFCHECK(value));
 }
 
 void xmenu_setshortcut(BYTE value) {
@@ -298,7 +334,7 @@ void xmenu_setshortcut(BYTE value) {
 	HMENU	hmenu;
 
 	np2oscfg.shortcut = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_ALTENTER, MFCHECK(value & 1));
 	CheckMenuItem(hmenu, IDM_ALTF4, MFCHECK(value & 2));
 }
@@ -309,7 +345,7 @@ void xmenu_setdispclk(BYTE value) {
 
 	value &= 3;
 	np2oscfg.DISPCLK = value;
-	hmenu = GetMenu(hWndMain);
+	hmenu = np2class_gethmenu(hWndMain);
 	CheckMenuItem(hmenu, IDM_DISPCLOCK, MFCHECK(value & 1));
 	CheckMenuItem(hmenu, IDM_DISPFRAME, MFCHECK(value & 2));
 	sysmng_workclockrenewal();
@@ -320,34 +356,34 @@ void xmenu_setbtnmode(BYTE value) {
 
 	value &= 1;
 	np2cfg.BTN_MODE = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_JOYX, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_JOYX, MFCHECK(value));
 }
 
 void xmenu_setbtnrapid(BYTE value) {
 
 	value &= 1;
 	np2cfg.BTN_RAPID = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_RAPID, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_RAPID, MFCHECK(value));
 }
 
 void xmenu_setmsrapid(BYTE value) {
 
 	value &= 1;
 	np2cfg.MOUSERAPID = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_MSRAPID, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_MSRAPID, MFCHECK(value));
 }
 
 void xmenu_setsstp(BYTE value) {
 
 	value &= 1;
 	np2oscfg.sstp = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_SSTP, MFCHECK(value));
+	CheckMenuItem(np2class_gethmenu(hWndMain), IDM_SSTP, MFCHECK(value));
 }
 
 void xmenu_seti286save(BYTE value) {
 
 	if (value) {
-		InsertMenu(GetSubMenu(GetMenu(hWndMain), 6), 10,
+		InsertMenu(GetSubMenu(np2class_gethmenu(hWndMain), 6), 10,
 					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, menu_i286save);
 	}
 }

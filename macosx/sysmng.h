@@ -20,6 +20,10 @@ enum {
 extern "C" {
 #endif
 
+void toolwin_fddaccess(BYTE drv);
+void toolwin_hddaccess(BYTE drv);
+
+
 extern	UINT	sys_updates;
 
 #if 0

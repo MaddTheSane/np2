@@ -202,7 +202,7 @@ BOOL viewer_init(HINSTANCE hPreInst) {
 		np2vc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
 		np2vc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		np2vc.hbrBackground = (HBRUSH)0;
-		np2vc.lpszMenuName = MAKEINTRESOURCE(IDM_VIEW);
+		np2vc.lpszMenuName = MAKEINTRESOURCE(IDR_VIEW);
 		np2vc.lpszClassName = np2viewclass;
 		if (!RegisterClass(&np2vc)) {
 			return(FAILURE);
