@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.13 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: paging.c,v 1.14 2004/03/06 12:59:54 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -191,7 +191,7 @@ static void tlb_update(UINT32 laddr, UINT entry, int crw);
 #endif
 
 
-void
+void MEMCALL
 cpu_memory_access_la_region(UINT32 laddr, UINT length, int crw, int user_mode, BYTE *data)
 {
 	UINT32 paddr;
