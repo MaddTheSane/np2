@@ -172,6 +172,7 @@ BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *file) {
 		sxsi->surfaces = 1;
 		sxsi->headersize = 0;
 		sxsi->mediatype = 0;
+		return(SUCCESS);
 	}
 	totals = issec2352(fh);
 	if (totals >= 0) {
