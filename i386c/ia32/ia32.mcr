@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.3 2004/01/15 15:49:15 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -392,10 +392,11 @@ do { \
 
 #define	_ADCDWORD(r, d, s) \
 do { \
-	(r) = (CPU_FLAGL & C_FLAG) + (s) + (d); \
+	DWORD __c = (CPU_FLAGL & C_FLAG); \
+	(r) = (s) + (d) + __c; \
 	CPU_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x80000000; \
 	CPU_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG); \
-	if ((r) < (s)) { \
+	if ((!__c && (r) < (s)) || (__c && (r) <= (s))) { \
 		CPU_FLAGL |= C_FLAG; \
 	} \
 	if ((r) == 0) { \
@@ -430,10 +431,11 @@ do { \
 
 #define	_DWORD_SBB(r, d, s) \
 do { \
-	(r) = (d) - (s) - (CPU_FLAGL & C_FLAG); \
+	DWORD __c = (CPU_FLAGL & C_FLAG); \
+	(r) = (d) - (s) - __c; \
 	CPU_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x80000000; \
 	CPU_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG); \
-	if ((d) < (s)) { \
+	if ((d) < (s) + __c) { \
 		CPU_FLAGL |= C_FLAG; \
 	} \
 	if ((r) == 0) { \
