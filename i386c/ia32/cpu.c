@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.18 2004/03/30 08:48:46 yui Exp $	*/
+/*	$Id: cpu.c,v 1.19 2004/06/17 14:38:38 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -205,38 +205,74 @@ exec_1step(void)
 		if (CPU_CX != 0) {
 			if (!(insttable_info[op] & REP_CHECKZF)) {
 				/* rep */
-				do {
+				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-				} while (--CPU_CX);
+					if (--CPU_CX == 0)
+						break;
+					if (CPU_REMCLOCK <= 0) {
+						CPU_EIP = CPU_PREV_EIP;
+						break;
+					}
+				}
 			} else if (CPU_INST_REPUSE != 0xf2) {
 				/* repe */
-				do {
+				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-				} while (--CPU_CX && (CPU_FLAGL & Z_FLAG));
+					if (--CPU_CX == 0 || !(CPU_FLAGL & Z_FLAG))
+						break;
+					if (CPU_REMCLOCK <= 0) {
+						CPU_EIP = CPU_PREV_EIP;
+						break;
+					}
+				}
 			} else {
 				/* repne */
-				do {
+				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-				} while (--CPU_CX && !(CPU_FLAGL & Z_FLAG));
+					if (--CPU_CX == 0 || (CPU_FLAGL & Z_FLAG))
+						break;
+					if (CPU_REMCLOCK <= 0) {
+						CPU_EIP = CPU_PREV_EIP;
+						break;
+					}
+				}
 			}
 		}
 	} else {
 		if (CPU_ECX != 0) {
 			if (!(insttable_info[op] & REP_CHECKZF)) {
 				/* rep */
-				do {
+				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-				} while (--CPU_ECX);
+					if (--CPU_ECX == 0)
+						break;
+					if (CPU_REMCLOCK <= 0) {
+						CPU_EIP = CPU_PREV_EIP;
+						break;
+					}
+				}
 			} else if (CPU_INST_REPUSE != 0xf2) {
 				/* repe */
-				do {
+				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-				} while (--CPU_ECX && (CPU_FLAGL & Z_FLAG));
+					if (--CPU_ECX == 0 || !(CPU_FLAGL & Z_FLAG))
+						break;
+					if (CPU_REMCLOCK <= 0) {
+						CPU_EIP = CPU_PREV_EIP;
+						break;
+					}
+				}
 			} else {
 				/* repne */
-				do {
+				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-				} while (--CPU_ECX && !(CPU_FLAGL & Z_FLAG));
+					if (--CPU_ECX == 0 || (CPU_FLAGL & Z_FLAG))
+						break;
+					if (CPU_REMCLOCK <= 0) {
+						CPU_EIP = CPU_PREV_EIP;
+						break;
+					}
+				}
 			}
 		}
 	}
