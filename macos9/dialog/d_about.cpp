@@ -1,25 +1,23 @@
 #include	"compiler.h"
-#include	"strres.h"
 #include	"resource.h"
 #include	"dialog.h"
+#include	"dialogs.h"
 #include	"pccore.h"
 
 
 void AboutDialogProc(void) {
 
 	DialogPtr	hDlg;
+	Str255		verstr;
 	int			done;
 	short		item;
-	Str255		ver;
-	Str255		dummy;
 
 	hDlg = GetNewDialog(IDD_ABOUT, NULL, (WindowPtr)-1);
 	if (!hDlg) {
 		return;
 	}
-	mkstr255(ver, np2version);
-	mkstr255(dummy, str_null);
-	ParamText(ver, dummy, dummy, dummy);
+	mkstr255(verstr, np2version);
+	SetDialogItemText(GetDlgItem(hDlg, IDD_VERSION), verstr);
 	SetDialogDefaultItem(hDlg, IDOK);
 
 	done = 0;

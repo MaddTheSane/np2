@@ -458,6 +458,7 @@ static void HandleMouseDown(EventRecord *pevent) {
 
 	switch(FindWindow(pevent->where, &hWnd)) {
 		case inMenuBar:
+			soundmng_stop();
 			HandleMenuChoice(MenuSelect(pevent->where));
 			break;
 
@@ -562,17 +563,35 @@ static void flagsave(const char *ext) {
 	statsave_save(path);
 }
 
-static void flagload(const char *ext) {
+static void flagdelete(const char *ext) {
 
 	char	path[MAX_PATH];
-	char	buf[1024];
-	int		ret;
 
 	getstatfilename(path, ext, sizeof(path));
-	ret = statsave_check(path, buf, sizeof(buf));
-	if (ret == NP2FLAG_SUCCESS) {
+	file_delete(path);
+}
+
+static int flagload(const char *ext) {
+
+	int		ret;
+	char	path[MAX_PATH];
+	char	buf[1024];
+	int		r;
+
+	ret = IDOK;
+	getstatfilename(path, ext, sizeof(path));
+	r = statsave_check(path, buf, sizeof(buf));
+	if (r & (~NP2FLAG_DISKCHG)) {
+		ResumeErrorDialogProc();
+		ret = IDCANCEL;
+	}
+	else if (r & NP2FLAG_DISKCHG) {
+		ret = ResumeWarningDialogProc(buf);
+	}
+	if (ret == IDOK) {
 		statsave_load(path);
 	}
+	return(ret);
 }
 
 int main(int argc, char *argv[]) {
@@ -657,6 +676,7 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
 				mouse_callback();
 #endif
+				soundmng_play();
 				mackbd_callback();
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
@@ -677,6 +697,7 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
                     mouse_callback();
 #endif
+					soundmng_play();
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
@@ -691,6 +712,7 @@ int main(int argc, char *argv[]) {
 #if defined(NP2GCC)
                     mouse_callback();
 #endif
+					soundmng_play();
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
@@ -727,6 +749,9 @@ int main(int argc, char *argv[]) {
 
 	if (np2oscfg.resume) {
 		flagsave(np2resume);
+	}
+	else {
+		flagdelete(np2resume);
 	}
 
 	pccore_term();
