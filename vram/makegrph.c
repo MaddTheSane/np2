@@ -12,7 +12,7 @@
 typedef struct {
 	UINT32	*vm;
 	UINT	liney;
-	UINT	pitch;
+//	UINT	pitch;
 	UINT	lr;
 } _MKGRPH, *MKGRPH;
 
@@ -133,6 +133,7 @@ static BOOL grphput_indirty0(MKGRPH mkgrph, int gpos) {
 	_MKGRPH	mg;
 	UINT	vad;
 	UINT	remain;
+	UINT	pitch;
 	UINT	mul;
 	UINT	vc;
 	UINT32	*p;
@@ -142,6 +143,11 @@ static BOOL grphput_indirty0(MKGRPH mkgrph, int gpos) {
 	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
 	vad = LOW15(vad << 1);
 	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	pitch = gdc.s.para[GDC_PITCH];
+	if (!(remain & (1 << 14))) {
+		pitch <<= 1;
+	}
+	pitch &= 0xfe;
 	remain = LOW14(remain) >> 4;
 	mul = mg.lr;
 	while(1) {
@@ -170,7 +176,7 @@ static BOOL grphput_indirty0(MKGRPH mkgrph, int gpos) {
 		mul--;
 		if (!mul) {
 			mul = mg.lr;
-			vad = LOW15(vad + mg.pitch);
+			vad = LOW15(vad + pitch);
 		}
 	}
 	mkgrph->vm = mg.vm;
@@ -183,6 +189,7 @@ static BOOL grphput_indirty1(MKGRPH mkgrph, int gpos) {
 	_MKGRPH	mg;
 	UINT	vad;
 	UINT	remain;
+	UINT	pitch;
 	UINT	mul;
 	UINT	vc;
 	UINT32	*p;
@@ -192,6 +199,11 @@ static BOOL grphput_indirty1(MKGRPH mkgrph, int gpos) {
 	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
 	vad = LOW15(vad << 1);
 	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	pitch = gdc.s.para[GDC_PITCH];
+	if (!(remain & (1 << 14))) {
+		pitch <<= 1;
+	}
+	pitch &= 0xfe;
 	remain = LOW14(remain) >> 4;
 	mul = mg.lr;
 	while(1) {
@@ -220,7 +232,7 @@ static BOOL grphput_indirty1(MKGRPH mkgrph, int gpos) {
 		mul--;
 		if (!mul) {
 			mul = mg.lr;
-			vad = LOW15(vad + mg.pitch);
+			vad = LOW15(vad + pitch);
 		}
 	}
 	mkgrph->vm = mg.vm;
@@ -233,6 +245,7 @@ static BOOL grphput_all0(MKGRPH mkgrph, int gpos) {
 	_MKGRPH	mg;
 	UINT	vad;
 	UINT	remain;
+	UINT	pitch;
 	UINT	mul;
 	UINT	vc;
 	UINT32	*p;
@@ -242,6 +255,11 @@ static BOOL grphput_all0(MKGRPH mkgrph, int gpos) {
 	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
 	vad = LOW15(vad << 1);
 	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	pitch = gdc.s.para[GDC_PITCH];
+	if (!(remain & (1 << 14))) {
+		pitch <<= 1;
+	}
+	pitch &= 0xfe;
 	remain = LOW14(remain) >> 4;
 	mul = mg.lr;
 	while(1) {
@@ -268,7 +286,7 @@ static BOOL grphput_all0(MKGRPH mkgrph, int gpos) {
 		mul--;
 		if (!mul) {
 			mul = mg.lr;
-			vad = LOW15(vad + mg.pitch);
+			vad = LOW15(vad + pitch);
 		}
 	}
 	mkgrph->vm = mg.vm;
@@ -281,6 +299,7 @@ static BOOL grphput_all1(MKGRPH mkgrph, int gpos) {
 	_MKGRPH	mg;
 	UINT	vad;
 	UINT	remain;
+	UINT	pitch;
 	UINT	mul;
 	UINT	vc;
 	UINT32	*p;
@@ -290,6 +309,11 @@ static BOOL grphput_all1(MKGRPH mkgrph, int gpos) {
 	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
 	vad = LOW15(vad << 1);
 	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	pitch = gdc.s.para[GDC_PITCH];
+	if (!(remain & (1 << 14))) {
+		pitch <<= 1;
+	}
+	pitch &= 0xfe;
 	remain = LOW14(remain) >> 4;
 	mul = mg.lr;
 	while(1) {
@@ -316,7 +340,7 @@ static BOOL grphput_all1(MKGRPH mkgrph, int gpos) {
 		mul--;
 		if (!mul) {
 			mul = mg.lr;
-			vad = LOW15(vad + mg.pitch);
+			vad = LOW15(vad + pitch);
 		}
 	}
 	mkgrph->vm = mg.vm;
@@ -329,11 +353,11 @@ void VRAMCALL makegrph(int page, int alldraw) {
 	_MKGRPH	mg;
 	int		i;
 
-	mg.pitch = gdc.s.para[GDC_PITCH];
-	if (!(gdc.clock & 0x80)) {
-		mg.pitch <<= 1;
-	}
-	mg.pitch &= 0xfe;
+//	mg.pitch = gdc.s.para[GDC_PITCH];
+//	if (!(gdc.clock & 0x80)) {
+//		mg.pitch <<= 1;
+//	}
+//	mg.pitch &= 0xfe;
 	mg.lr = (gdc.s.para[GDC_CSRFORM] & 0x1f) + 1;
 	mg.liney = dsync.grph_vbp;
 
