@@ -46,8 +46,6 @@ class emulationWindow : public QMainWindow
 
 protected:
 	void closeEvent(QCloseEvent *);
-	void mousePressEvent(QMouseEvent *ev);
-	void mouseReleaseEvent(QMouseEvent *ev);
 	void keyPressEvent(QKeyEvent *ev);
 	void keyReleaseEvent(QKeyEvent *ev);
 
@@ -94,6 +92,7 @@ extern "C" {
 #endif
 
 const ScreenInfo qt_getScreenInfo();
+bool hasPendingEvents();
 void qt_setPointer(QWidget *w, int x, int y);
 void qt_getPointer(QWidget *w, int *x, int *y);
 

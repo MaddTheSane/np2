@@ -18,12 +18,15 @@ enum {
 	FTYPE_MIMPI		// mimpi defaultファイル
 };
 
-typedef FILE*		FILEH;
-#define	FILEH_INVALID	NULL
+typedef FILE*			FILEH;
+#define	FILEH_INVALID		NULL
 
-#define	FSEEK_SET	SEEK_SET
-#define	FSEEK_CUR	SEEK_CUR
-#define	FSEEK_END	SEEK_END
+typedef	void*			FILEFINDH;
+#define	FILEFINDH_INVALID	NULL
+
+#define	FSEEK_SET		SEEK_SET
+#define	FSEEK_CUR		SEEK_CUR
+#define	FSEEK_END		SEEK_END
 
 enum {
 	FILEATTR_READONLY	= 0x01,
@@ -45,6 +48,12 @@ typedef struct {
 	BYTE	minute;		/* cl */
 	BYTE	second;		/* dh */
 } DOSTIME;
+
+typedef struct {
+	char	path[MAX_PATH];
+	UINT32	size;
+	UINT32	attr;
+} FILEFINDT;
 
 
 #ifdef	__cplusplus
@@ -77,6 +86,10 @@ FILEH file_open_rb_c(const char *sjis);
 FILEH file_create_c(const char *sjis);
 short file_delete_c(const char *sjis);
 short file_attr_c(const char *sjis);
+
+FILEFINDH file_find1st(const char *dir, FILEFINDT *fft);
+BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft);
+void file_findclose(FILEFINDH hdl);
 
 void file_cpyname(char *dst, const char *src, int maxlen);
 void file_catname(char *path, const char *sjis, int maxlen);

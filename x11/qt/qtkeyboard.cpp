@@ -38,7 +38,7 @@
 #include <qkeycode.h>
 
 
-#define	NC	0xff
+#define	NC	KEYBOARD_KC_NC
 
 static BYTE get_data(int keysym, BYTE down);
 
@@ -53,7 +53,7 @@ emulationWindow::keyPressEvent(QKeyEvent *ev)
 {
 	int keysym = ev->key();
 
-	if ((keysym == Qt::Key_F12) && (np2oscfg.F12COPY == 0)) {
+	if ((keysym == Qt::Key_F12) && (np2oscfg.F12KEY == 0)) {
 		mouse_running(M_XOR);	// XXX
 		return;
 	}
@@ -76,7 +76,7 @@ emulationWindow::keyReleaseEvent(QKeyEvent *ev)
 {
 	int keysym = ev->key();
 
-	if ((keysym == Qt::Key_F12) && (np2oscfg.F12COPY == 0)) {
+	if ((keysym == Qt::Key_F12) && (np2oscfg.F12KEY == 0)) {
 		return;
 	}
 
@@ -225,7 +225,6 @@ static const BYTE keyconv_misc[256] = {				// 0x10xx
 };
 
 static const BYTE *keyconv;
-static const BYTE f12keys[] = { 0x61, 0x60, 0x4d, 0x4f };
 
 
 BOOL
@@ -238,27 +237,6 @@ kbdmng_init(void)
 }
 
 static BYTE
-getf12key(void)
-{
-	int key;
-
-	key = np2oscfg.F12COPY - 1;
-	if (key < NELEMENTS(f12keys))
-		return f12keys[key];
-	return NC;
-}
-
-void
-qtkbd_resetf12()
-{
-	int i;
-
-	for (i = 0; i < NELEMENTS(f12keys); i++) {
-		keystat_forcerelease(f12keys[i]);
-	}
-}
-
-static BYTE
 get_data(int keysym, BYTE down)
 {
 	BYTE data;
@@ -267,7 +245,7 @@ get_data(int keysym, BYTE down)
 		if ((keysym & 0xffffff00) != 0x00001000) {
 			data = NC;
 		} else if (keysym == Qt::Key_F12) {
-			data = getf12key();
+			data = kbdmng_getf12key();
 		} else {
 			data = keyconv_misc[keysym & 0xff];
 			if (data == 0x70) {

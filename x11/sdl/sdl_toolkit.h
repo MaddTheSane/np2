@@ -25,81 +25,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "compiler.h"
+#ifndef	NP2_SDL_SDLTOOLKIT_H__
+#define	NP2_SDL_SDLTOOLKIT_H__
 
-#include "np2.h"
-#include "codecnv.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "fontmng.h"
+extern gui_toolkit_t sdl_toolkit;
 
-#include "qt/xnp2.h"
+const char *gui_sdl_get_toolkit(void);
+BOOL gui_sdl_arginit(int *argcp, char ***argvp);
+void gui_sdl_widget_create(void);
+void gui_sdl_widget_show(void);
+void gui_sdl_widget_mainloop(void);
+void gui_sdl_widget_quit(void);
+void gui_sdl_event_process(void);
+void gui_sdl_set_window_title(const char* str);
 
-
-BOOL
-fontmng_init(void)
-{
-
-	return SUCCESS;
+#ifdef __cplusplus
 }
+#endif
 
-void
-fontmng_terminate(void)
-{
-}
-
-void
-fontmng_setdeffontname(const char *name)
-{
-
-	UNUSED(name);
-}
-
-void *
-fontmng_create(int size, UINT type, const TCHAR *fontface)
-{
-
-	UNUSED(size);
-	UNUSED(type);
-	UNUSED(fontface);
-
-	return 0;
-}
-
-void
-fontmng_destroy(void *hdl)
-{
-
-	UNUSED(hdl);
-}
-
-BOOL
-fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-	UNUSED(pt);
-
-	return FAILURE;
-}
-
-BOOL
-fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-	UNUSED(pt);
-
-	return FAILURE;
-}
-
-FNTDAT
-fontmng_get(void* hdl, const char* str)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-
-	return 0;
-}
+#endif	/* NP2_SDL_SDLTOOLKIT_H__ */

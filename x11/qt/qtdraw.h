@@ -35,6 +35,7 @@
 #include <qpixmap.h>
 #include <qpainter.h>
 
+#include "drawmng.h"
 #include "scrnmng.h"
 
 
@@ -47,14 +48,14 @@ class emulationScreen : public QWidget
 
 protected:
 	void paintEvent(QPaintEvent *ev);
+	void mousePressEvent(QMouseEvent *ev);
+	void mouseReleaseEvent(QMouseEvent *ev);
 
 private:
 	void setWindowSize(int width, int height);
 	void renewalWindowSize();
 	void clearOutOfRect(const QRect& target, const QRect& base);
 	void clearOutOfScreen();
-
-	void make16mask(UINT32 bmask, UINT32 rmask, UINT32 gmask);
 
 public:
 	emulationScreen(QWidget *parent, const char *name, WFlags f = 0);
@@ -63,11 +64,8 @@ public:
 	BOOL createScreen(BYTE mode);
 	void destroyScreen();
 
-	RGB16 makePal16(RGB32 pal32) {
-		RGB32 pal;
-
-		pal.d = pal32.d & m_pal16mask.d;
-		return (RGB16)((pal.p.g << m_l16g) + (pal.p.r << m_l16r) + (pal.p.b >> m_r16b));
+	RGB16 makePalette16bpp(RGB32 pal32) {
+		return drawmng_makepal16(&m_pal16mask, pal32);
 	}
 
 	void setScreenWidth(int width) {
@@ -111,10 +109,7 @@ private:
 	QSize		m_DefaultSize;
 	int		m_DefaultExtend;
 
-	RGB32		m_pal16mask;
-	BYTE		m_r16b;
-	BYTE		m_l16r;
-	BYTE		m_l16g;
+	PAL16MASK	m_pal16mask;
 };
 
 #endif	/* NP2_QT_QTDRAW_H__ */

@@ -39,7 +39,9 @@
 static emulationScreen *pEmulationScreen = 0;
 
 static SCRNSURF scrnsurf;
-SCRNMNG scrnmng;
+static SCRNMNG scrnmng;
+
+SCRNMNG *scrnmngp = &scrnmng;
 
 
 void
@@ -69,7 +71,7 @@ RGB16
 scrnmng_makepal16(RGB32 pal32)
 {
 
-	return pEmulationScreen->makePal16(pal32);
+	return pEmulationScreen->makePalette16bpp(pal32);
 }
 
 void
@@ -122,40 +124,14 @@ emulationScreen::paintEvent(QPaintEvent *ev)
 	UNUSED(ev);
 
 	if (m_Painter == 0) {
+#if !defined(Q_WS_QWS)
 		m_Painter = new QPainter(this);
+#else
+		m_Painter = new QDirectPainter(this);
+#endif
 		scrndraw_redraw();
 		DELETE(m_Painter);
 	}
-}
-
-void
-emulationScreen::make16mask(UINT32 bmask, UINT32 rmask, UINT32 gmask)
-{
-	BYTE sft;
-
-	sft = 0;
-	while ((!(bmask & 0x80)) && (sft < 32)) {
-		bmask <<= 1;
-		sft++;
-	}
-	m_pal16mask.p.b = (BYTE)bmask;
-	m_r16b = sft;
-
-	sft = 0;
-	while ((rmask & 0xffffff00) && (sft < 32)) {
-		rmask >>= 1;
-		sft++;
-	}
-	m_pal16mask.p.r = (BYTE)rmask;
-	m_l16r = sft;
-
-	sft = 0;
-	while ((gmask & 0xffffff00) && (sft < 32)) {
-		gmask >>= 1;
-		sft++;
-	}
-	m_pal16mask.p.g = (BYTE)gmask;
-	m_l16g = sft;
 }
 
 BOOL
@@ -212,7 +188,7 @@ emulationScreen::createScreen(BYTE mode)
 		m_DefaultExtend = 1;
 
 		if (inf.bpp == 16) {
-			make16mask(inf.mask.red, inf.mask.green, inf.mask.blue);
+			drawmng_make16mask(&m_pal16mask, inf.mask.red, inf.mask.green, inf.mask.blue);
 		} else if (inf.bpp == 8) {
 		}
 	}
@@ -373,6 +349,7 @@ emulationScreen::unlockSurface(const SCRNSURF *surf)
 {
 
 	if (surf) {
+#if !defined(Q_WS_QWS)
 		*m_Offscreen = *m_Surface;
 
 		if (scrnmng.palchanged) {
@@ -392,5 +369,8 @@ emulationScreen::unlockSurface(const SCRNSURF *surf)
 			}
 			bitBlt(this, m_DestPoint, m_Offscreen, m_SrcRect, Qt::CopyROP);
 		}
+#else
+		// not implemented yet...
+#endif
 	}
 }

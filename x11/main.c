@@ -43,16 +43,20 @@
 #include "toolkit.h"
 
 #include "kdispwin.h"
+#include "sysmenu.h"
 #include "toolwin.h"
 #include "viewer.h"
 
 #include "commng.h"
+#include "fontmng.h"
+#include "inputmng.h"
 #include "joymng.h"
 #include "kbdmng.h"
 #include "mousemng.h"
 #include "scrnmng.h"
 #include "soundmng.h"
 #include "sysmng.h"
+#include "taskmng.h"
 
 
 /*
@@ -235,7 +239,8 @@ main(int argc, char *argv[])
 
 	TRACEINIT();
 
-	keystat_reset();
+	if (fontmng_init() != SUCCESS)
+		goto fontmng_failure;
 
 	kdispwin_initialize();
 	viewer_init();
@@ -243,13 +248,17 @@ main(int argc, char *argv[])
 	toolkit_widget_create();
 	scrnmng_initialize();
 	kbdmng_init();
+	inputmng_init();
+	keystat_reset();
 
 	scrnmode = 0;
 	if (np2cfg.RASTER) {
 		scrnmode |= SCRNMODE_HIGHCOLOR;
 	}
+	if (sysmenu_create() != SUCCESS)
+		goto sysmenu_failure;
 	if (scrnmng_create(scrnmode) != SUCCESS)
-		goto resource_cleanup;
+		goto scrnmng_failure;
 
 	if (soundmng_initialize() == SUCCESS) {
 		result = soundmng_pcmload(SOUND_PCMSEEK, file_getcd("fddseek.wav"));
@@ -276,6 +285,7 @@ main(int argc, char *argv[])
 
 	commng_initialize();
 	sysmng_initialize();
+	taskmng_initialize();
 
 	joy_init();
 	pccore_init();
@@ -309,9 +319,7 @@ main(int argc, char *argv[])
 	setup_signal(SIGINT, sighandler);
 	setup_signal(SIGTERM, sighandler);
 
-	np2running = TRUE;
 	toolkit_widget_mainloop();
-	np2running = FALSE;
 	rv = 0;
 
 	kdispwin_destroy();
@@ -333,7 +341,13 @@ main(int argc, char *argv[])
 	soundmng_deinitialize();
 	scrnmng_destroy();
 
-resource_cleanup:
+scrnmng_failure:
+	sysmenu_destroy();
+
+sysmenu_failure:
+	fontmng_terminate();
+
+fontmng_failure:
 	if (sys_updates & (SYS_UPDATECFG|SYS_UPDATEOSCFG)) {
 		initsave();
 		toolwin_writeini();

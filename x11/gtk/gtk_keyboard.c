@@ -36,7 +36,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#define	NC	0xff
+#define	NC	KEYBOARD_KC_NC
 
 static const BYTE xkeyconv_jis[256] = {
 	/*	    ,    ,    ,    ,    ,    ,    ,    		; 0x00 */
@@ -242,29 +242,6 @@ static const BYTE xkeyconv_misc[256] = {
 static const BYTE *xkeyconv = xkeyconv_jis;
 static BYTE shift_stat = 0x00;
 
-static const BYTE f12keys[] = { 0x61, 0x60, 0x4d, 0x4f };
-
-static BYTE
-getf12key(void)
-{
-	int key;
-
-	key = np2oscfg.F12COPY - 1;
-	if (key < NELEMENTS(f12keys))
-		return f12keys[key];
-	return NC;
-}
-
-void
-gtkkbd_resetf12(void)
-{
-	int i;
-
-	for (i = 0; i < NELEMENTS(f12keys); i++) {
-		keystat_forcerelease(f12keys[i]);
-	}
-}
-
 BOOL
 kbdmng_init(void)
 {
@@ -287,7 +264,7 @@ get_data(guint keysym, BYTE down)
 		if (keysym == GDK_VoidSymbol) {
 			data = NC;
 		} else if (keysym == GDK_F12) {
-			data = getf12key();
+			data = kbdmng_getf12key();
 		} else if ((keysym & 0xff00) == 0xff00) {
 			data = xkeyconv_misc[keysym & 0xff];
 			if (data == 0x70) {

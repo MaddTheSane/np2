@@ -25,81 +25,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "compiler.h"
+#ifndef	NP2_SDL_XNP2_H__
+#define	NP2_SDL_XNP2_H__
 
-#include "np2.h"
-#include "codecnv.h"
+#include "SDL.h"
 
-#include "fontmng.h"
-
-#include "qt/xnp2.h"
-
-
-BOOL
-fontmng_init(void)
-{
-
-	return SUCCESS;
-}
-
-void
-fontmng_terminate(void)
-{
-}
-
-void
-fontmng_setdeffontname(const char *name)
-{
-
-	UNUSED(name);
-}
-
-void *
-fontmng_create(int size, UINT type, const TCHAR *fontface)
-{
-
-	UNUSED(size);
-	UNUSED(type);
-	UNUSED(fontface);
-
-	return 0;
-}
-
-void
-fontmng_destroy(void *hdl)
-{
-
-	UNUSED(hdl);
-}
-
-BOOL
-fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-	UNUSED(pt);
-
-	return FAILURE;
-}
-
-BOOL
-fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-	UNUSED(pt);
-
-	return FAILURE;
-}
-
-FNTDAT
-fontmng_get(void* hdl, const char* str)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-
-	return 0;
-}
+#endif /* NP2_SDL_XNP2_H__ */

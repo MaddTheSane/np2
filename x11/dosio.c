@@ -2,6 +2,7 @@
 
 #include <sys/stat.h>
 #include <time.h>
+#include <dirent.h>
 
 #include "codecnv.h"
 #include "dosio.h"
@@ -214,6 +215,60 @@ file_attr_c(const char *sjis)
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
 	return file_attr_c(curpath);
+}
+
+FILEFINDH
+file_find1st(const char *dir, FILEFINDT *fft)
+{
+	DIR *ret;
+
+	ret = opendir(dir);
+	if (ret == NULL) {
+		return FILEFINDH_INVALID;
+	}
+	if (file_findnext((FILEFINDH)ret, fft) == SUCCESS) {
+		return (FILEFINDH)ret;
+	}
+	closedir(ret);
+	return FILEFINDH_INVALID;
+}
+
+BOOL
+file_findnext(FILEFINDH hdl, FILEFINDT *fft)
+{
+	struct dirent *de;
+	struct stat sb;
+	UINT32 attr;
+	UINT32 size;
+
+	de = readdir((DIR *)hdl);
+	if (de == NULL) {
+		return FAILURE;
+	}
+	if (fft) {
+		mileuc_ncpy(fft->path, de->d_name, sizeof(fft->path));
+		size = 0;
+		attr = 0;
+		if (stat(de->d_name, &sb) == 0) {
+			size = sb.st_size;
+			if (S_ISDIR(sb.st_mode)) {
+				attr = FILEATTR_DIRECTORY;
+			}
+			else if (!(sb.st_mode & S_IWUSR)) {
+				attr = FILEATTR_READONLY;
+			}
+		}
+		fft->size = size;
+		fft->attr = attr;
+	}
+	return SUCCESS;
+}
+
+void
+file_findclose(FILEFINDH hdl)
+{
+
+	closedir((DIR *)hdl);
 }
 
 static int

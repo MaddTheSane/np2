@@ -41,6 +41,7 @@ void gui_qt_widget_create(void);
 void gui_qt_widget_show(void);
 void gui_qt_widget_mainloop(void);
 void gui_qt_widget_quit(void);
+void gui_qt_event_process(void);
 void gui_qt_set_window_title(const char* str);
 
 #ifdef __cplusplus

@@ -28,78 +28,31 @@
 #include "compiler.h"
 
 #include "np2.h"
-#include "codecnv.h"
+#include "pccore.h"
+#include "iocore.h"
 
-#include "fontmng.h"
+#include "kbdmng.h"
 
-#include "qt/xnp2.h"
+const BYTE kbdmng_f12keys[4] = { 0x61, 0x60, 0x4f, 0x4d };
 
 
-BOOL
-fontmng_init(void)
+BYTE
+kbdmng_getf12key(void)
 {
+	int key;
 
-	return SUCCESS;
+	key = np2oscfg.F12KEY - 1;
+	if (key < NELEMENTS(kbdmng_f12keys))
+		return kbdmng_f12keys[key];
+	return KEYBOARD_KC_NC;
 }
 
 void
-fontmng_terminate(void)
+kbdmng_resetf12(void)
 {
-}
+	int i;
 
-void
-fontmng_setdeffontname(const char *name)
-{
-
-	UNUSED(name);
-}
-
-void *
-fontmng_create(int size, UINT type, const TCHAR *fontface)
-{
-
-	UNUSED(size);
-	UNUSED(type);
-	UNUSED(fontface);
-
-	return 0;
-}
-
-void
-fontmng_destroy(void *hdl)
-{
-
-	UNUSED(hdl);
-}
-
-BOOL
-fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-	UNUSED(pt);
-
-	return FAILURE;
-}
-
-BOOL
-fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-	UNUSED(pt);
-
-	return FAILURE;
-}
-
-FNTDAT
-fontmng_get(void* hdl, const char* str)
-{
-
-	UNUSED(hdl);
-	UNUSED(str);
-
-	return 0;
+	for (i = 0; i < NELEMENTS(kbdmng_f12keys); i++) {
+		keystat_forcerelease(kbdmng_f12keys[i]);
+	}
 }

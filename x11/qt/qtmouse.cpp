@@ -32,78 +32,91 @@
 #include "mousemng.h"
 
 #include "qt/xnp2.h"
+#include "qt/qtdraw.h"
 
 #include <qcursor.h>
 
-static QWidget *pEmulationScreen = 0;
-static QCursor blankCursor(Qt::BlankCursor);
+typedef struct {
+	int	mouserunning;	// showing
+	int	lastmouse;	// working
+	short	mousex;
+	short	mousey;
+	BYTE	mouseb;
 
-static BYTE mouse_move_ratio = MOUSE_RATIO_100;
-static BYTE mouse_move_mul;
-static BYTE mouse_move_div;
+	BYTE	mouse_move_ratio;
+	BYTE	mouse_move_mul;
+	BYTE	mouse_move_div;
 
-static int mouserunning = 0;	// showing
-static int lastmouse = 0;	// working
-static short mousex = 0;
-static short mousey = 0;
-static BYTE mouseb = 0xa0;
+	QWidget	*pEmulationScreen;
+} mouse_stat_t;
+
+static mouse_stat_t ms_default = {
+	0, 0, 0, 0, 0xa0,
+	MOUSE_RATIO_100, 1, 1,
+	NULL,
+};
+static mouse_stat_t ms;
 
 
 //
 // Event
 //
 void
-emulationWindow::mousePressEvent(QMouseEvent *ev)
+emulationScreen::mousePressEvent(QMouseEvent *ev)
 {
 
 	switch (ev->button() & MouseButtonMask) {
-	case LeftButton:
+	case Qt::LeftButton:
 		mouse_btn(MOUSE_LEFTDOWN);
 		break;
 
-	case MidButton:
+	case Qt::MidButton:
 		mouse_running(M_XOR);
 		break;
 
-	case RightButton:
+	case Qt::RightButton:
 		mouse_btn(MOUSE_RIGHTDOWN);
 		break;
 
-	case NoButton:
-	case MouseButtonMask:
-	case ShiftButton:
-	case ControlButton:
-	case MetaButton:
-	case KeyButtonMask:
-	case Keypad:
+	case Qt::NoButton:
+	case Qt::MouseButtonMask:
+	case Qt::ShiftButton:
+	case Qt::ControlButton:
+#if QT_VERSION >= 300
+	case Qt::MetaButton:
+#endif
+	case Qt::KeyButtonMask:
+	case Qt::Keypad:
 	default:
 		break;
 	}
 }
 
 void
-emulationWindow::mouseReleaseEvent(QMouseEvent *ev)
+emulationScreen::mouseReleaseEvent(QMouseEvent *ev)
 {
 
 	switch (ev->button() & MouseButtonMask) {
-	case LeftButton:
+	case Qt::LeftButton:
 		mouse_btn(MOUSE_LEFTUP);
 		break;
 
-	case MidButton:
+	case Qt::MidButton:
 		break;
 
-	case RightButton:
+	case Qt::RightButton:
 		mouse_btn(MOUSE_RIGHTUP);
 		break;
 
-	case NoButton:
-	case MouseButtonMask:
-	case ShiftButton:
-	case ControlButton:
-	case MetaButton:
-	case KeyButtonMask:
-	case Keypad:
+	case Qt::NoButton:
+	case Qt::MouseButtonMask:
+	case Qt::ShiftButton:
+	case Qt::ControlButton:
+#if QT_VERSION >= 300
+	case Qt::MetaButton:
+#endif
+	case Qt::KeyButtonMask:
+	case Qt::Keypad:
 	default:
 		break;
 	}
@@ -117,7 +130,8 @@ int
 mousemng_initialize(void)
 {
 
-	pEmulationScreen = (QWidget *)np2EmulationWindow->getEmulationScreen();
+	ms = ms_default;
+	ms.pEmulationScreen = (QWidget *)np2EmulationWindow->getEmulationScreen();
 
 	return SUCCESS;
 }
@@ -131,8 +145,8 @@ static void
 getmaincenter(int *cx, int *cy)
 {
 
-	*cx = pEmulationScreen->width() / 2;
-	*cy = pEmulationScreen->height() / 2;
+	*cx = ms.pEmulationScreen->width() / 2;
+	*cy = ms.pEmulationScreen->height() / 2;
 }
 
 static void
@@ -140,14 +154,14 @@ mouseonoff(int flag)
 {
 	int curx, cury;
 
-	if ((lastmouse ^ flag) & 1) {
-		lastmouse = flag & 1;
-		if (lastmouse) {
-			pEmulationScreen->grabMouse(blankCursor);
+	if ((ms.lastmouse ^ flag) & 1) {
+		ms.lastmouse = flag & 1;
+		if (ms.lastmouse) {
+			ms.pEmulationScreen->grabMouse(Qt::blankCursor);
 			getmaincenter(&curx, &cury);
-			qt_setPointer(pEmulationScreen, curx, cury);
+			qt_setPointer(ms.pEmulationScreen, curx, cury);
 		} else {
-			pEmulationScreen->releaseMouse();
+			ms.pEmulationScreen->releaseMouse();
 		}
 	}
 }
@@ -156,13 +170,13 @@ BYTE
 mouse_flag(void)
 {
 
-	return mouserunning;
+	return ms.mouserunning;
 }
 
 void
 mouse_running(BYTE flg)
 {
-	BYTE mf = mouserunning;
+	BYTE mf = ms.mouserunning;
 
 	switch (flg & 0xc0) {
 	case M_RES:
@@ -178,9 +192,9 @@ mouse_running(BYTE flg)
 		break;
 	}
 
-	if ((mf ^ mouserunning) & MOUSE_MASK) {
-		mouserunning = (mf & MOUSE_MASK);
-		mouseonoff((mouserunning == 1) ? 1 : 0);
+	if ((mf ^ ms.mouserunning) & MOUSE_MASK) {
+		ms.mouserunning = (mf & MOUSE_MASK);
+		mouseonoff((ms.mouserunning == 1) ? 1 : 0);
 	}
 }
 
@@ -190,12 +204,12 @@ mousemng_callback(void)
 	int wx, wy;
 	int cx, cy;
 
-	if (lastmouse & 1) {
-		qt_getPointer(pEmulationScreen, &wx, &wy);
+	if (ms.lastmouse & 1) {
+		qt_getPointer(ms.pEmulationScreen, &wx, &wy);
 		getmaincenter(&cx, &cy);
-		mousex += (short)((wx - cx) / 2);
-		mousey += (short)((wy - cy) / 2);
-		qt_setPointer(pEmulationScreen, cx, cy);
+		ms.mousex += (short)((wx - cx) / 2);
+		ms.mousey += (short)((wy - cy) / 2);
+		qt_setPointer(ms.pEmulationScreen, cx, cy);
 	}
 }
 
@@ -203,24 +217,24 @@ BYTE
 mouse_btn(BYTE button)
 {
 
-	if ((lastmouse & 1) == 0)
+	if ((ms.lastmouse & 1) == 0)
 		return 0;
 
 	switch (button) {
 	case MOUSE_LEFTDOWN:
-		mouseb &= 0x7f;
+		ms.mouseb &= 0x7f;
 		break;
 
 	case MOUSE_LEFTUP:
-		mouseb |= 0x80;
+		ms.mouseb |= 0x80;
 		break;
 
 	case MOUSE_RIGHTDOWN:
-		mouseb &= 0xdf;
+		ms.mouseb &= 0xdf;
 		break;
 
 	case MOUSE_RIGHTUP:
-		mouseb |= 0x20;
+		ms.mouseb |= 0x20;
 		break;
 	}
 	return 1;
@@ -230,21 +244,21 @@ BYTE
 mousemng_getstat(short *x, short *y, int clear)
 {
 
-	if (mouse_move_ratio == MOUSE_RATIO_100) {
-		*x = mousex;
-		*y = mousey;
-	} else if (mouse_move_div == 1) {
-		*x = mousex * mouse_move_mul;
-		*y = mousey * mouse_move_mul;
+	if (ms.mouse_move_ratio == MOUSE_RATIO_100) {
+		*x = ms.mousex;
+		*y = ms.mousey;
+	} else if (ms.mouse_move_div == 1) {
+		*x = ms.mousex * ms.mouse_move_mul;
+		*y = ms.mousey * ms.mouse_move_mul;
 	} else {
-		*x = (mousex * mouse_move_mul) / mouse_move_div;
-		*y = (mousey * mouse_move_mul) / mouse_move_div;
+		*x = (ms.mousex * ms.mouse_move_mul) / ms.mouse_move_div;
+		*y = (ms.mousey * ms.mouse_move_mul) / ms.mouse_move_div;
 	}
 	if (clear) {
-		mousex = 0;
-		mousey = 0;
+		ms.mousex = 0;
+		ms.mousey = 0;
 	}
-	return mouseb;
+	return ms.mouseb;
 }
 
 void
@@ -252,7 +266,7 @@ mousemng_set_ratio(BYTE new_ratio)
 {
 
 	np2oscfg.mouse_move_ratio = new_ratio;
-	mouse_move_ratio = np2oscfg.mouse_move_ratio;
-	mouse_move_mul = (mouse_move_ratio >> 4) & 0xf;
-	mouse_move_div = mouse_move_ratio & 0xf;
+	ms.mouse_move_ratio = np2oscfg.mouse_move_ratio;
+	ms.mouse_move_mul = (ms.mouse_move_ratio >> 4) & 0xf;
+	ms.mouse_move_div = ms.mouse_move_ratio & 0xf;
 }

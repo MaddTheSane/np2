@@ -45,7 +45,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern SCRNMNG scrnmng;
+extern SCRNMNG *scrnmngp;
 
 void scrnmng_initialize(void);
 BOOL scrnmng_create(BYTE scrnmode);
@@ -60,12 +60,26 @@ void scrnmng_surfunlock(const SCRNSURF *surf);
 #define	scrnmng_dispclock()
 
 #define	scrnmng_isfullscreen()	(0)
-#define	scrnmng_haveextend()	(scrnmng.flag & SCRNFLAG_HAVEEXTEND)
-#define	scrnmng_getbpp()	(scrnmng.bpp)
-#define	scrnmng_allflash()	do { scrnmng.allflash = TRUE; } while (0)
-#define	scrnmng_palchanged()	do { scrnmng.palchanged = TRUE; } while (0)
+#define	scrnmng_haveextend()	(scrnmngp->flag & SCRNFLAG_HAVEEXTEND)
+#define	scrnmng_getbpp()	(scrnmngp->bpp)
+#define	scrnmng_allflash()	do { scrnmngp->allflash = TRUE; } while (0)
+#define	scrnmng_palchanged()	do { scrnmngp->palchanged = TRUE; } while (0)
 
 RGB16 scrnmng_makepal16(RGB32 pal32);
+
+/*
+ * for menubase
+ */
+
+typedef struct {
+	int		width;
+	int		height;
+	int		bpp;
+} SCRNMENU;
+
+BOOL scrnmng_entermenu(SCRNMENU *smenu);
+void scrnmng_leavemenu(void);
+void scrnmng_menudraw(const RECT_T *rct);
 
 #ifdef __cplusplus
 }

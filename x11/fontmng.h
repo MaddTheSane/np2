@@ -23,8 +23,10 @@ typedef struct {
 extern "C" {
 #endif
 
+BOOL fontmng_init(void);
 void* fontmng_create(int size, UINT type, const TCHAR *fontface);
 void fontmng_destroy(void *hdl);
+void fontmng_terminate(void);
 
 BOOL fontmng_getsize(void *hdl, const char *string, POINT_T *pt);
 BOOL fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt);

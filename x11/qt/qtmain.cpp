@@ -11,7 +11,9 @@
 #include "qt/xnp2.h"
 #include "qt/qtdraw.h"
 
+#if QT_VERSION >= 300
 #include <qeventloop.h>
+#endif
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
@@ -99,6 +101,13 @@ gui_qt_widget_quit(void)
 }
 
 void
+gui_qt_event_process(void)
+{
+
+	// XXX Nothing to do
+}
+
+void
 gui_qt_set_window_title(const char* str)
 {
 
@@ -114,6 +123,7 @@ gui_toolkit_t qt_toolkit = {
 	gui_qt_widget_show,
 	gui_qt_widget_mainloop,
 	gui_qt_widget_quit,
+	gui_qt_event_process,
 	gui_qt_set_window_title,
 };
 
@@ -174,7 +184,12 @@ void
 emulationWindow::mainLoop()
 {
 
-	if (!QApplication::eventLoop()->hasPendingEvents()) {
+#if QT_VERSION >= 300
+	if (!QApplication::eventLoop()->hasPendingEvents())
+#else
+	if (!hasPendingEvents())
+#endif
+	{
 		mainloop(0);
 	}
 }

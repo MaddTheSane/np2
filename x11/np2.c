@@ -46,6 +46,7 @@
 #include "scrnmng.h"
 #include "soundmng.h"
 #include "sysmng.h"
+#include "taskmng.h"
 
 
 NP2OSCFG np2oscfg = {
@@ -64,7 +65,7 @@ NP2OSCFG np2oscfg = {
 	0,			/* DISPCLK */
 
 	KEY_KEY106,		/* KEYBOARD */
-	0,			/* F12COPY */
+	0,			/* F12KEY */
 
 	0,			/* MOUSE_SW */
 	0,			/* JOYPAD1 */
@@ -92,8 +93,12 @@ NP2OSCFG np2oscfg = {
 
 #if defined(USE_GTK)		/* toolkit */
 	"gtk",
-#else
+#elif defined(USE_QT)
 	"qt",
+#elif defined(USE_SDL)
+	"sdl",
+#else
+	"unknown",
 #endif
 
 	MMXFLAG_DISABLE,	/* disablemmx */
@@ -280,7 +285,7 @@ processwait(UINT cnt)
 		timing_setcount(0);
 		framereset(cnt);
 	} else {
-		usleep(1);
+		taskmng_sleep(1);
 	}
 }
 

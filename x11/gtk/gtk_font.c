@@ -46,6 +46,21 @@ typedef struct {
 	unsigned long	black_pixel;
 } _FNTMNG, *FNTMNG;
 
+
+BOOL
+fontmng_init(void)
+{
+
+	return SUCCESS;
+}
+
+void
+fontmng_terminate(void)
+{
+
+	/* Nothing to do */
+}
+
 void
 fontmng_setdeffontname(const char *name)
 {

@@ -97,7 +97,7 @@ key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
 	UNUSED(p);
 
 	if (ev->type == GDK_KEY_PRESS) {
-		if ((ev->keyval == GDK_F12) && (np2oscfg.F12COPY == 0))
+		if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
 			xmenu_toggle_item(MOUSE_MODE, !np2oscfg.MOUSE_SW, TRUE);
 		else
 			gtkkbd_keydown(ev->keyval);
@@ -118,7 +118,7 @@ key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
 	UNUSED(p);
 
 	if (ev->type == GDK_KEY_RELEASE) {
-		if ((ev->keyval != GDK_F12) || (np2oscfg.F12COPY != 0))
+		if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
 			gtkkbd_keyup(ev->keyval);
 		return TRUE;
 	}
@@ -372,6 +372,13 @@ gui_gtk_widget_quit(void)
 }
 
 void
+gui_gtk_event_process(void)
+{
+
+	/* XXX: Nothing to do */
+}
+
+void
 gui_gtk_set_window_title(const char* str)
 {
 
@@ -387,5 +394,6 @@ gui_toolkit_t gtk_toolkit = {
 	gui_gtk_widget_show,
 	gui_gtk_widget_mainloop,
 	gui_gtk_widget_quit,
+	gui_gtk_event_process,
 	gui_gtk_set_window_title,
 };

@@ -44,6 +44,7 @@ typedef struct {
 typedef struct {
 	void		*window;
 	void		*widget;
+	void		*vscr;
 	void		*menu;
 	void		*font;
 	UINT32		index;

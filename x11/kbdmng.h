@@ -38,7 +38,13 @@ enum {
 	KEY_TYPEMAX
 };
 
+enum {
+	KEYBOARD_KC_NC = 0xff
+};
+
 BOOL kbdmng_init(void);
+BYTE kbdmng_getf12key(void);
+void kbdmng_resetf12(void);
 
 #ifdef __cplusplus
 }

@@ -73,11 +73,12 @@ typedef struct {
 	BYTE		renewal[SURFACE_HEIGHT];
 } X11SCRNSURF;
 
+static SCRNMNG scrnmng;
 static DRAWMNG drawmng;
 static SCRNSTAT scrnstat;
 static X11SCRNSURF scrnsurf;
 
-SCRNMNG scrnmng;
+SCRNMNG *scrnmngp = &scrnmng;
 
 GtkWidget *window;
 GtkWidget *drawarea;

@@ -57,6 +57,7 @@ static void viewseg_expose(NP2VIEW_T *view);
 
 /* misc */
 static void invalidate(NP2VIEW_T *view);
+static void viewer_set_adjustment(NP2VIEW_T *view);
 
 
 /*-----------------------------------------------------------------------------
@@ -137,6 +138,7 @@ viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, BYTE type)
 		viewseg_init(dst, src);
 		break;
 	}
+	viewer_set_adjustment(dst);
 }
 
 static void
@@ -148,18 +150,6 @@ viewcmn_setbank(NP2VIEW_T *view)
 	dmem->vram = gdcs.disp;
 	dmem->itf = i286core.s.itfbank;
 	dmem->A20 = (BYTE)((i286core.s.adrsmask >> 20) & 1);
-}
-
-static void
-viewer_segmode(NP2VIEW_T *view, BYTE type)
-{
-
-	if (view->type != type) {
-		viewcmn_setmode(view, view, type);
-		viewcmn_setbank(view);
-		viewcmn_setvscroll(view);
-		invalidate(view);
-	}
 }
 
 static void
@@ -366,6 +356,18 @@ viewseg_expose(NP2VIEW_T *view)
 static GtkWidget *viewer_create_menu(NP2VIEW_T *view, GtkWidget *parent);
 
 static void
+viewer_segmode(NP2VIEW_T *view, BYTE type)
+{
+
+	if (view->type != type) {
+		viewcmn_setmode(view, view, type);
+		viewcmn_setbank(view);
+		viewcmn_setvscroll(view);
+		invalidate(view);
+	}
+}
+
+static void
 viewer_close(NP2VIEW_T *view)
 {
 
@@ -474,6 +476,37 @@ viewer_value_changed(GtkAdjustment *adj, gpointer p)
 	return TRUE;
 }
 
+static void
+viewer_set_adjustment(NP2VIEW_T *view)
+{
+	GtkWidget *w = GTK_WIDGET(view->widget);
+	GtkWidget *vscr;
+	GtkObject *adj;
+
+	if (view->vscr) {
+		vscr = view->vscr;
+		view->vscr = NULL;
+		gtk_container_remove(GTK_CONTAINER(w->parent), vscr);
+		gtk_widget_destroy(vscr);
+	}
+
+	printf("height = %d\n", w->allocation.height);
+	printf("fontsize = %d\n", view->fontsize);
+	printf("pos = %d\n", view->pos);
+	printf("maxline = %d\n", view->maxline);
+
+	adj = gtk_adjustment_new(0.0, 0.0, 3.0, 1.0, 1.0, 1.0);
+	gtk_signal_connect_object(adj, "changed",
+	    GTK_SIGNAL_FUNC(viewer_changed), (gpointer)view);
+	gtk_signal_connect_object(adj, "value_changed",
+	    GTK_SIGNAL_FUNC(viewer_value_changed),
+	    (gpointer)view);
+	vscr = gtk_vscrollbar_new(GTK_ADJUSTMENT(adj));
+	view->vscr = vscr;
+	gtk_widget_show(vscr);
+	gtk_box_pack_start(GTK_BOX(w->parent), vscr, FALSE, TRUE, 0);
+}
+
 static gboolean
 view_fontload(NP2VIEW_T *view, UINT8 size)
 {
@@ -541,8 +574,6 @@ viewer_open(void)
 	GtkWidget *rw;
 	GtkWidget *bw;
 	GtkWidget *cw;
-	GtkWidget *vscr;
-	GtkObject *adj;
 	NP2VIEW_T *view;
 	int i;
 
@@ -584,18 +615,7 @@ viewer_open(void)
 			gtk_signal_connect(GTK_OBJECT(cw), "expose_event",
 			    GTK_SIGNAL_FUNC(viewer_expose), (gpointer)view);
 
-			adj = gtk_adjustment_new(0.0, 0.0, 3.0, 1.0, 1.0, 1.0);
-			gtk_signal_connect_object(adj, "changed",
-			    GTK_SIGNAL_FUNC(viewer_changed), (gpointer)view);
-			gtk_signal_connect_object(adj, "value_changed",
-			    GTK_SIGNAL_FUNC(viewer_value_changed),
-			    (gpointer)view);
-			vscr = gtk_vscrollbar_new(GTK_ADJUSTMENT(adj));
-			gtk_widget_show(vscr);
-			gtk_box_pack_start(GTK_BOX(bw), vscr, FALSE, TRUE, 0);
-
 			view_fontload(view, DEFAULT_FONTSIZE);
-
 			viewcmn_setmode(view, NULL, VIEWMODE_REG);
 
 			gtk_widget_realize(view->window);

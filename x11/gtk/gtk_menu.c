@@ -385,7 +385,7 @@ create_menu(GtkWidget *w)
 	xmenu_toggle_item(KEY_DISPLAY, np2oscfg.keydisp, TRUE);
 
 	xmenu_select_framerate(np2oscfg.DRAW_SKIP);
-	xmenu_select_f12key(np2oscfg.F12COPY);
+	xmenu_select_f12key(np2oscfg.F12KEY);
 	xmenu_select_beepvol(np2cfg.BEEP_VOL);
 	xmenu_select_soundboard(np2cfg.SOUND_SW);
 	xmenu_select_extmem(np2cfg.EXTMEM);
@@ -914,9 +914,9 @@ f12(gpointer data, guint action, GtkWidget *w)
 	if (action >= 5)
 		action = 0;
 
-	if (np2oscfg.F12COPY != action) {
-		np2oscfg.F12COPY = action;
-		gtkkbd_resetf12();
+	if (np2oscfg.F12KEY != action) {
+		np2oscfg.F12KEY = action;
+		kbdmng_resetf12();
 		sysmng_update(SYS_UPDATEOSCFG);
 	}
 }
@@ -929,6 +929,7 @@ beepvol(gpointer data, guint action, GtkWidget *w)
 	UNUSED(w);
 
 	if (np2cfg.BEEP_VOL != action) {
+		np2cfg.BEEP_VOL = action;
 		beep_setvol(action);
 		sysmng_update(SYS_UPDATECFG);
 	}

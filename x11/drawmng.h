@@ -37,7 +37,15 @@ typedef struct {
 	BYTE	l16g;
 } PAL16MASK;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void drawmng_make16mask(PAL16MASK *pal16, UINT32 bmask, UINT32 rmask, UINT32 gmask);
 RGB16 drawmng_makepal16(PAL16MASK *pal16, RGB32 pal32);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* NP2_X11_DRAWMNG_H__ */

@@ -31,6 +31,7 @@
 #include "qt/xnp2.h"
 
 #include <X11/Xlib.h>
+#include <qcursor.h>
 
 
 const ScreenInfo
@@ -96,29 +97,30 @@ qt_getScreenInfo()
 	return info;
 }
 
+bool
+hasPendingEvents()
+{
+
+	return XPending(QPaintDevice::x11AppDisplay());
+}
+
 void
 qt_setPointer(QWidget *w, int x, int y)
 {
+	QPoint gp;
 
-#if defined(Q_WS_X11)
-	::XWarpPointer(QPaintDevice::x11AppDisplay(), None,
-	    w->winId(), 0, 0, 0, 0, x, y);
-#endif
+	gp = w->mapToGlobal(QPoint(x, y));
+	QCursor::setPos(gp);
 }
 
 void
 qt_getPointer(QWidget *w, int *x, int *y)
 {
+	QPoint gp;
+	QPoint wp;
 
-#if defined(Q_WS_X11)
-	Window root, child;
-	int rootx, rooty;
-	int winx = 0, winy = 0;
-	unsigned int xmask;
-
-	::XQueryPointer(QPaintDevice::x11AppDisplay(), w->winId(),
-	    &root, &child, &rootx, &rooty, &winx, &winy, &xmask);
-	*x = winx;
-	*y = winy;
-#endif
+	gp = QCursor::pos();
+	wp = w->mapFromGlobal(gp);
+	*x = wp.x();
+	*y = wp.y();
 }

@@ -2,39 +2,15 @@ TEMPLATE= app
 
 TARGET= xnp2
 
-CONFIG+= qt warn_on release
+CONFIG+= qt x11 warn_on release thread
+DESTDIR= .
 
-# kluge for NetBSD
-QMAKE_RUN_CC      = $$QMAKE_CC -c $(CFLAGS) $(INCPATH) -o $obj $src
-QMAKE_RUN_CC_IMP  = $$QMAKE_CC -c $(CFLAGS) $(INCPATH) -o $@ $<
-QMAKE_RUN_CXX     = $$QMAKE_CXX -c $(CXXFLAGS) $(INCPATH) -o $obj $src
-QMAKE_RUN_CXX_IMP = $$QMAKE_CXX -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+DEFINES+= SYSRESPATH=\"/usr/X11R6/lib/X11/xnp2\"
 
-# Load config
-exists(qtconfig.tmpl) {
-	include (qtconfig.tmpl)
-}
-
-# set SYSRESPATH
-isEmpty(SYSRESPATH) {
-	SYSRESPATH=/usr/X11R6/lib/X11/xnp2
-}
-DEFINES+= SYSRESPATH=\"$$SYSRESPATH\"
-
-
-#
-# audio part
-#
-
-# SDL_mixer
-contains(SOUND_DRIVER, SDLMIXER) {
-	CONFIG*= thread
-	DEFINES+= USE_SDLMIXER
-	QMAKE_CFLAGS*= `sdl-config --cflags`
-	QMAKE_CXXFLAGS*= `sdl-config --cflags`
-	QMAKE_LIBS*= `sdl-config --libs`
-	QMAKE_LIBS+= -lSDL_mixer
-}
+DEFINES+= USE_SDLMIXER
+TMAKE_CFLAGS+= `sdl-config --cflags`
+TMAKE_CXXFLAGS+= `sdl-config --cflags`
+TMAKE_LIBS+= `sdl-config --libs` -lSDL_mixer
 
 
 #
@@ -115,15 +91,16 @@ SOURCES+= ../../vram/vram.c ../../vram/scrndraw.c ../../vram/sdraw.c \
           ../../vram/maketgrp.c ../../vram/makegrph.c ../../vram/scrnbmp.c
 
 SOURCES+= ../dosio.c ../ini.c ../trace.c ../cmmidi.c ../np2.c ../toolkit.c \
-          ../commng.c ../drawmng.c ../joymng.c ../kbdmng.c ../soundmng.c \
-	  ../sysmng.c ../taskmng.c ../timemng.c \
+          ../drawmng.c ../kbdmng.c \
+          ../commng.c ../joymng.c ../soundmng.c ../sysmng.c ../taskmng.c \
+          ../timemng.c \
           ../main.c
 
 SOURCES+= ../snddrv/esd.c ../snddrv/netbsd.c ../snddrv/oss.c ../snddrv/sdl.c
 
-SOURCES+= qtdraw.cpp qtfont.cpp qtkeyboard.cpp qtmouse.cpp \
-          qtmain.cpp qtwrapper.cpp
+SOURCES+= ../qt/qtdraw.cpp ../qt/qtfont.cpp ../qt/qtkeyboard.cpp \
+          ../qt/qtmouse.cpp ../qt/qtmain.cpp ../qt/qtwrapper.cpp
 
-HEADERS+= xnp2.h qtdraw.h
+HEADERS+= ../qt/xnp2.h ../qt/qtdraw.h
 
-TRANSLATIONS= xnp2_ja.ts
+TRANSLATIONS= ../qt/xnp2_ja.ts

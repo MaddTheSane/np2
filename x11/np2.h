@@ -1,3 +1,6 @@
+#ifndef	NP2_X11_NP2_H__
+#define	NP2_X11_NP2_H__
+
 typedef struct {
 	BYTE	port;
 	BYTE	def_en;
@@ -21,7 +24,7 @@ typedef struct {
 	BYTE	DISPCLK;
 
 	BYTE	KEYBOARD;
-	BYTE	F12COPY;
+	BYTE	F12KEY;
 
 	BYTE	MOUSE_SW;
 	BYTE	JOYPAD1;
@@ -109,3 +112,5 @@ int havemmx(void);
 #ifdef __cplusplus
 }
 #endif
+
+#endif	/* NP2_X11_NP2_H__ */

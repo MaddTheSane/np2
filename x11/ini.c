@@ -516,7 +516,7 @@ static const INITBL iniitem[] = {
 	{"USE144FD", INITYPE_BOOL,	&np2cfg.usefd144,	0},
 
 	{"keyboard", INIRO_KB,		&np2oscfg.KEYBOARD,	0},
-	{"F12_COPY", INITYPE_UINT8,	&np2oscfg.F12COPY,	0},
+	{"F12_COPY", INITYPE_UINT8,	&np2oscfg.F12KEY,	0},
 	{"Joystick", INITYPE_BOOL,	&np2oscfg.JOYPAD1,	0},
 	{"Joy1_btn", INITYPE_ARGH8,	np2oscfg.JOY1BTN,	4},
 

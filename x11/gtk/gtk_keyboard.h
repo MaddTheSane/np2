@@ -34,6 +34,5 @@
 
 void gtkkbd_keydown(guint keysym);
 void gtkkbd_keyup(guint keysym);
-void gtkkbd_resetf12(void);
 
 #endif	/* NP2_GTK_GTKKEYBOARD_H__ */
