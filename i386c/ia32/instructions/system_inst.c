@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.6 2004/01/14 16:14:50 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.7 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -340,9 +340,9 @@ MOV_CdRd(void)
 			 * 3 = PWT (page level write throgh)
 			 */
 			reg = CPU_CR3;
-			CPU_CR3 = src & 0xfffff018;
+			set_CR3(src);
+
 			VERBOSE(("MOV_CdRd: %04x:%08x: cr3: 0x%08x -> 0x%08x(%s)", CPU_CS, CPU_PREV_EIP, reg, CPU_CR3, reg32_str[op & 7]));
-			tlb_flush(FALSE);
 			break;
 
 		case 4: /* CR4 */

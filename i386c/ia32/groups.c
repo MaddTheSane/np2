@@ -1,4 +1,4 @@
-/*	$Id: groups.c,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
+/*	$Id: groups.c,v 1.4 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -287,13 +287,15 @@ Grp2_EbCL(void)
 		CPU_WORKCLOCK(5);
 		out = reg8_b20[op];
 		cl = CPU_CL;
-		CPU_WORKCLOCK(cl & 0x1f);
+		cl &= 0x1f;
+		CPU_WORKCLOCK(cl);
 		(*insttable_G2EbCL[idx])(out, cl);
 	} else {
 		CPU_WORKCLOCK(8);
 		madr = calc_ea_dst(op);
 		cl = CPU_CL;
-		CPU_WORKCLOCK(cl & 0x1f);
+		cl &= 0x1f;
+		CPU_WORKCLOCK(cl);
 		(*insttable_G2EbCL_ext[idx])(madr, cl);
 	}
 }
@@ -312,13 +314,15 @@ Grp2_EwCL(void)
 		CPU_WORKCLOCK(5);
 		out = reg16_b20[op];
 		cl = CPU_CL;
-		CPU_WORKCLOCK(cl & 0x1f);
+		cl &= 0x1f;
+		CPU_WORKCLOCK(cl);
 		(*insttable_G2EwCL[idx])(out, cl);
 	} else {
 		CPU_WORKCLOCK(8);
 		madr = calc_ea_dst(op);
 		cl = CPU_CL;
-		CPU_WORKCLOCK(cl & 0x1f);
+		cl &= 0x1f;
+		CPU_WORKCLOCK(cl);
 		(*insttable_G2EwCL_ext[idx])(madr, cl);
 	}
 }
@@ -337,13 +341,15 @@ Grp2_EdCL(void)
 		CPU_WORKCLOCK(5);
 		out = reg32_b20[op];
 		cl = CPU_CL;
-		CPU_WORKCLOCK(cl & 0x1f);
+		cl &= 0x1f;
+		CPU_WORKCLOCK(cl);
 		(*insttable_G2EdCL[idx])(out, cl);
 	} else {
 		CPU_WORKCLOCK(8);
 		madr = calc_ea_dst(op);
 		cl = CPU_CL;
-		CPU_WORKCLOCK(cl & 0x1f);
+		cl &= 0x1f;
+		CPU_WORKCLOCK(cl);
 		(*insttable_G2EdCL_ext[idx])(madr, cl);
 	}
 }
@@ -353,7 +359,6 @@ Grp2_EdCL(void)
 void
 Grp3_Eb(void)
 {
-
 	DWORD op;
 
 	GET_PCBYTE(op);
@@ -363,7 +368,6 @@ Grp3_Eb(void)
 void
 Grp3_Ew(void)
 {
-
 	DWORD op;
 
 	GET_PCBYTE(op);
@@ -373,7 +377,6 @@ Grp3_Ew(void)
 void
 Grp3_Ed(void)
 {
-
 	DWORD op;
 
 	GET_PCBYTE(op);

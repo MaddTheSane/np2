@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.3 2004/01/14 16:13:19 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.4 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -219,7 +219,7 @@ CLI(void)
 	if ((!CPU_STAT_PM)
 	 || (!CPU_STAT_VM86 && (CPU_STAT_CPL <= CPU_STAT_IOPL))
 	 || (CPU_STAT_IOPL == CPU_IOPL3)) {
-		/* Real-mode or (!VM86 && CPL < IOPL) or (IOPL == 3) */
+		/* Real-mode or (!VM86 && CPL <= IOPL) or (IOPL == 3) */
 		CPU_FLAG &= ~I_FLAG;
 		CPU_TRAP = 0;
 	} else if ((!CPU_STAT_VM86 && (CPU_STAT_CPL > CPU_STAT_IOPL))

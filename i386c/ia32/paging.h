@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: paging.h,v 1.3 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -92,6 +92,13 @@ void MEMCALL cpu_linear_memory_write(DWORD address, DWORD length, DWORD value);
 	(CPU_STAT_PAGING) ? \
 		cpu_linear_memory_read(a, 4, TRUE) : \
 		cpu_memoryread_d(a);
+
+#define	set_CR3(cr3) \
+do { \
+	CPU_CR3 = (cr3) & 0xfffff018; \
+	tlb_flush(FALSE); \
+} while (/*CONSTCOND*/ 0)
+
 
 /*
  * TLB function

@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.c,v 1.4 2004/01/14 16:11:13 monaka Exp $	*/
+/*	$Id: bin_arith.c,v 1.5 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -136,7 +136,7 @@ ADD_GdEd(void)
 	PREPART_REG32_EA(op, src, out, 2, 7);
 	dst = *out;
 	ADDDWORD(res, dst, src);
-	*out = (DWORD)res;
+	*out = res;
 }
 
 void

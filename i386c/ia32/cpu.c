@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.4 2004/01/14 16:14:49 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.5 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -651,12 +651,17 @@ exec_1step(void)
 	DWORD eip = CPU_EIP;
 	int num = 0;
 	int i;
+	BOOL t = cpu_inst_trace;
 
-	if (cpu_inst_trace && (fp == NULL)) {
+	if ((CPU_CS == 0x0018) && (eip >= 0x0000b42c) && (eip <= 0x0000b435)) {
+		t = FALSE;
+	}
+
+	if ((fp == NULL) && t) {
 		fp = fopen("ia32trace.txt", "a");
 	}
-	if (fp) {
-		fprintf(fp, "%04x:%08x:", CPU_CS, CPU_EIP);
+	if (fp && t) {
+		fprintf(fp, "%04x:%08x:", CPU_CS, eip);
 	}
 #endif
 
@@ -665,7 +670,7 @@ exec_1step(void)
 
 #ifdef	IA32_INSTRUCTION_TRACE
 		eip++;
-		if (fp) {
+		if (fp && t) {
 			opcode[num++] = op;
 			fprintf(fp, " %02x", op);
 		}
@@ -685,7 +690,7 @@ exec_1step(void)
 	PROFILE_INC_INST_1BYTE(op);
 
 #ifdef	IA32_INSTRUCTION_TRACE
-	if (fp) {
+	if (fp && t) {
 		BYTE op2 = 0;
 		if ((op == 0x0f)
 		 || (op >= 0x80 && op <= 0x83)

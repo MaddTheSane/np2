@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.2 2003/12/08 02:09:17 yui Exp $	*/
+/*	$Id: exception.c,v 1.3 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -68,6 +68,29 @@ memory_dump(int idx, DWORD madr)
 	}
 }
 
+static const char *exception_str[EXCEPTION_NUM] = {
+	"DE_EXCEPTION",
+	"DB_EXCEPTION",
+	"NMI_EXCEPTION",
+	"BP_EXCEPTION",
+	"OF_EXCEPTION",
+	"BR_EXCEPTION",
+	"UD_EXCEPTION",
+	"NM_EXCEPTION",
+	"DF_EXCEPTION",
+	"CoProcesser Segment Overrun",
+	"TS_EXCEPTION",
+	"NP_EXCEPTION",
+	"SS_EXCEPTION",
+	"GP_EXCEPTION",
+	"PF_EXCEPTION",
+	"Reserved",
+	"MF_EXCEPTION",
+	"AC_EXCEPTION",
+	"MC_EXCEPTION",
+	"XF_EXCEPTION",
+};
+
 static const int exctype[EXCEPTION_NUM] = {
 	1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
 };
@@ -84,7 +107,9 @@ exception(int num, int error_code)
 {
 	int errorp = 0;
 
-	VERBOSE(("exception: num = 0x%02x, error_code = %x", num, error_code));
+	__ASSERT((unsigned int)num < EXCEPTION_NUM);
+
+	VERBOSE(("exception: %s, error_code = %x", exception_str[num], error_code));
 
 	CPU_STAT_NERROR++;
 	if ((CPU_STAT_NERROR >= 3) 

@@ -1,4 +1,4 @@
-/*	$Id: logic_arith.c,v 1.3 2004/01/14 16:14:50 monaka Exp $	*/
+/*	$Id: logic_arith.c,v 1.4 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -176,13 +176,13 @@ AND_EAXId(void)
 }
 
 void
-AND_EbIb(BYTE *p, DWORD src)
+AND_EbIb(BYTE *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	ANDBYTE(dst, src);
-	*p = (BYTE)dst;
+	*regp = (BYTE)dst;
 }
 
 void
@@ -196,13 +196,13 @@ AND_EbIb_ext(DWORD madr, DWORD src)
 }
 
 void
-AND_EwIx(WORD *p, DWORD src)
+AND_EwIx(WORD *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	ANDWORD(dst, src);
-	*p = (WORD)dst;
+	*regp = (WORD)dst;
 }
 
 void
@@ -216,13 +216,13 @@ AND_EwIx_ext(DWORD madr, DWORD src)
 }
 
 void
-AND_EdIx(DWORD *p, DWORD src)
+AND_EdIx(DWORD *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	ANDDWORD(dst, src);
-	*p = dst;
+	*regp = dst;
 }
 
 void
@@ -377,13 +377,13 @@ OR_EAXId(void)
 }
 
 void
-OR_EbIb(BYTE *p, DWORD src)
+OR_EbIb(BYTE *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	ORBYTE(dst, src);
-	*p = (BYTE)dst;
+	*regp = (BYTE)dst;
 }
 
 void
@@ -397,13 +397,13 @@ OR_EbIb_ext(DWORD madr, DWORD src)
 }
 
 void
-OR_EwIx(WORD *p, DWORD src)
+OR_EwIx(WORD *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	ORWORD(dst, src);
-	*p = (WORD)dst;
+	*regp = (WORD)dst;
 }
 
 void
@@ -417,13 +417,13 @@ OR_EwIx_ext(DWORD madr, DWORD src)
 }
 
 void
-OR_EdIx(DWORD *p, DWORD src)
+OR_EdIx(DWORD *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	ORDWORD(dst, src);
-	*p = dst;
+	*regp = dst;
 }
 
 void

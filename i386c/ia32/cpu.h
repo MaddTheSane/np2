@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.7 2004/01/05 14:30:34 yui Exp $	*/
+/*	$Id: cpu.h,v 1.8 2004/01/15 15:50:33 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -143,7 +143,6 @@ typedef struct {
 	descriptor_t	sreg[CPU_SEGREG_NUM];
 
 	UINT32		adrsmask;
-//	DWORD		inport;		// -> i386core.e.inport
 	DWORD		ovflag;
 
 	BYTE		ss_32;
@@ -292,7 +291,7 @@ do { \
 #define	CPU_STAT_SREG_INIT(n) \
 do { \
 	descriptor_t sd; \
-	memset(&CPU_STAT_SREG(n), 0, sizeof(CPU_STAT_SREG(n))); \
+\
 	memset(&sd, 0, sizeof(sd)); \
 	sd.u.seg.limit = 0xffff; \
 	CPU_SET_SEGDESC_DEFAULT(&sd, (n), 0); \
