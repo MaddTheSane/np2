@@ -117,9 +117,9 @@ void gdc_setanalogpalall(const UINT16 *paltbl) {
 		gdc.anareg[(c * 3) + 1] = (pal >> 4) & 15;
 		gdc.anareg[(c * 3) + 2] = (pal >> 0) & 15;
 #endif
-		gdc_setanalogpal(c, offsetof(RGB32, p.g), (pal >> 8) & 15);
-		gdc_setanalogpal(c, offsetof(RGB32, p.r), (pal >> 4) & 15);
-		gdc_setanalogpal(c, offsetof(RGB32, p.b), (pal >> 0) & 15);
+		gdc_setanalogpal(c, offsetof(RGB32, p.g), (REG8)((pal >> 8) & 15));
+		gdc_setanalogpal(c, offsetof(RGB32, p.r), (REG8)((pal >> 4) & 15));
+		gdc_setanalogpal(c, offsetof(RGB32, p.b), (REG8)((pal >> 0) & 15));
 	}
 }
 

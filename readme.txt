@@ -54,6 +54,7 @@
 　SUPPORT_SASI … SASI HDDをサポート (定義がなければ常時IDEとして作動)
 　SUPPORT_SCSI … SCSI HDDをサポート
 　SUPPORT_S98 … S98ログを取得
+　SUPPORT_WAVEREC … Soundレベルで waveファイルの書き出し関数をサポート
 
 
 // ---- screen

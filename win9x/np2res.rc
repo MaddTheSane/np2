@@ -775,6 +775,7 @@ BEGIN
     IDS_SCSI1               "SCSI #1"
     IDS_SCSI2               "SCSI #2"
     IDS_SCSI3               "SCSI #3"
+	IDS_WAVEREC				"&Wave Record"
     IDS_I286SAVE            "&i286 save"
     IDS_OPEN                "&Open..."
     IDS_EJECT               "&Eject"

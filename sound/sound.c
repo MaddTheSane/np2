@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"wavefile.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"cpucore.h"
@@ -26,6 +27,9 @@ typedef struct {
 	UINT	samples;
 	UINT	reserve;
 	UINT	remain;
+#if defined(SUPPORT_WAVEREC)
+	WAVEWR	rec;
+#endif
 	CBTBL	*cbreg;
 	CBTBL	cb[STREAM_CBMAX];
 } SNDSTREAM;
@@ -59,6 +63,70 @@ static void streamprepare(UINT samples) {
 		sndstream.remain -= count;
 	}
 }
+
+
+#if defined(SUPPORT_WAVEREC)
+// ---- wave rec
+
+BOOL sound_recstart(const char *filename) {
+
+	WAVEWR	rec;
+
+	sound_recstop();
+	if (sndstream.buffer == NULL) {
+		return(FAILURE);
+	}
+	rec = wavewr_open(filename, soundcfg.rate, 16, 2);
+	sndstream.rec = rec;
+	if (rec) {
+		return(SUCCESS);
+	}
+	return(FAILURE);
+}
+
+void sound_recstop(void) {
+
+	WAVEWR	rec;
+
+	rec = sndstream.rec;
+	sndstream.rec = NULL;
+	wavewr_close(rec);
+}
+
+static void streamfilewrite(UINT samples) {
+
+	CBTBL	*cb;
+	UINT	count;
+	SINT32	buf32[2*512];
+	BYTE	buf[2*2*512];
+	UINT	i;
+	SINT32	samp;
+
+	while(samples) {
+		count = min(samples, 512);
+		ZeroMemory(buf32, count * 2 * sizeof(SINT32));
+		cb = sndstream.cb;
+		while(cb < sndstream.cbreg) {
+			cb->cbfn(cb->hdl, buf32, count);
+			cb++;
+		}
+		for (i=0; i<count*2; i++) {
+			samp = buf32[i];
+			if (samp > 32767) {
+				samp = 32767;
+			}
+			else if (samp < -32768) {
+				samp = -32768;
+			}
+			// little endian‚È‚Ì‚Å satuation_s16‚ÍŽg‚¦‚È‚¢
+			buf[i*2+0] = (BYTE)samp;
+			buf[i*2+1] = (BYTE)(samp >> 8);
+		}
+		wavewr_write(sndstream.rec, buf, count * 4);
+		samples -= count;
+	}
+}
+#endif
 
 
 // ----
@@ -114,6 +182,9 @@ scre_err1:
 void sound_destroy(void) {
 
 	if (sndstream.buffer) {
+#if defined(SUPPORT_WAVEREC)
+		sound_recstop();
+#endif
 		soundmng_stop();
 		streamreset();
 		soundmng_destroy();
@@ -190,6 +261,14 @@ void sound_sync(void) {
 	if (length == 0) {
 		return;
 	}
+#if defined(SUPPORT_WAVEREC)
+	if (sndstream.rec) {
+		streamfilewrite(length);
+		soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
+		beep_eventreset();
+		return;
+	}
+#endif
 	SNDCSEC_ENTER;
 	streamprepare(length);
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
@@ -209,6 +288,11 @@ const SINT32 *sound_pcmlock(void) {
 
 const SINT32 *ret;
 
+#if defined(SUPPORT_WAVEREC)
+	if (sndstream.rec) {
+		return(NULL);
+	}
+#endif
 	if (locks) {
 		TRACEOUT(("sound pcm lock: already locked"));
 		return(NULL);
@@ -249,7 +333,7 @@ void sound_pcmunlock(const SINT32 *hdl) {
 }
 
 
-// ----
+// ---- pcmmix
 
 BOOL pcmmix_regist(PMIXDAT *dat, void *datptr, UINT datsize, UINT rate) {
 

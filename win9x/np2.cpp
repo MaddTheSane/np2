@@ -779,7 +779,13 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			dialog_s98(hWnd);
 			winuileave();
 			break;
-
+#if defined(SUPPORT_WAVEREC)
+		case IDM_WAVEREC:
+			winuienter();
+			dialog_waverec(hWnd);
+			winuileave();
+			break;
+#endif
 		case IDM_DISPCLOCK:
 			xmenu_setdispclk(np2oscfg.DISPCLK ^ 1);
 			update |= SYS_UPDATECFG;

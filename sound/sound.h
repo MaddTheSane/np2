@@ -33,6 +33,11 @@ void sound_sync(void);
 const SINT32 *sound_pcmlock(void);
 void sound_pcmunlock(const SINT32 *hdl);
 
+#if defined(SUPPORT_WAVEREC)
+BOOL sound_recstart(const char *filename);
+void sound_recstop(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

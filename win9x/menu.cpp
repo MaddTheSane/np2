@@ -262,6 +262,11 @@ void xmenu_initialize(void) {
 		insertresmenu(hSubMenu, 10, MF_BYPOSITION | MF_STRING,
 												IDM_I286SAVE, IDS_I286SAVE);
 	}
+#if defined(SUPPORT_WAVEREC)
+	hSubMenu = GetSubMenu(hMenu, 4);
+	insertresmenu(hSubMenu, 2, MF_BYPOSITION | MF_STRING,
+												IDM_WAVEREC, IDS_WAVEREC);
+#endif
 
 #if defined(SUPPORT_SCSI)
 	hSubMenu = GetSubMenu(hMenu, 1);
