@@ -294,8 +294,16 @@ static void bios0x1f(void) {
 	if (CPU_AH == 0x90) {
 		i286_memstr_read(CPU_ES, CPU_BX + 0x10, work, 0x10);
 		src = work[2] + (work[3] << 8) + (work[4] << 16) + CPU_SI;
-		dst = work[8] + (work[9] << 8) + (work[10] << 16) + CPU_DI;
+		dst = work[10] + (work[11] << 8) + (work[12] << 16) + CPU_DI;
 		leng = LOW16(CPU_CX - 1) + 1;
+		TRACEOUT(("protect bios: memmove"));
+		TRACEOUT(("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
+				work[0], work[1], work[2], work[3],
+				work[4], work[5], work[6], work[7]));
+		TRACEOUT(("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
+				work[8], work[9], work[10], work[11],
+				work[12], work[13], work[14], work[15]));
+		TRACEOUT(("SI=%.4x DI=%.4x CX=%.4x", CPU_SI, CPU_DI, CPU_CX));
 		TRACEOUT(("src:%08x dst:%08x leng:%08x", src, dst, leng));
 		do {
 			l = min(leng, 256);
