@@ -23,7 +23,7 @@ void trace_fmt(const char *fmt, ...) {
 	vsprintf(buf, fmt, ap);
 	va_end(ap);
 #ifndef WIN32
-	codecnv_sjis2euc(euc, sizeof(euc), buf, sizeof(buf));
+	codecnv_sjistoeuc(euc, sizeof(euc), buf, sizeof(buf));
 	fprintf(stderr, "%s\n", euc);
 #else
 	fprintf(stderr, "%s\n", buf);

@@ -1,4 +1,4 @@
-/*	$Id: gtk_font.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
+/*	$Id: gtk_font.c,v 1.3 2005/02/26 13:32:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -313,7 +313,7 @@ fontmng_get(void *hdl, const char *str)
 	}
 
 	if (((((str[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) && (str[1] != '\0')) {
-		codecnv_sjis2euc(buf, 4, str, 2);
+		codecnv_sjistoeuc(buf, 4, str, 2);
 		len = 2;
 	} else if ((UINT8)str[0] >= 0xa1 && (UINT8)str[0] <= 0xdf) {
 		buf[0] = 0x8e;

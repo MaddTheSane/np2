@@ -300,7 +300,7 @@ fontmng_get(void *hdl, const char *str)
 	}
 
 	if (((((str[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) && (str[1] != '\0')) {
-		codecnv_sjis2euc(buf, 4, str, 2);
+		codecnv_sjistoeuc(buf, 4, str, 2);
 		len = 2;
 	} else if ((BYTE)str[0] >= 0xa1 && (BYTE)str[0] <= 0xdf) {
 		buf[0] = 0x8e;

@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.26 2004/07/29 13:06:09 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.27 2005/02/26 13:32:14 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -197,6 +197,9 @@ UINT32 gettick(void);
 #define	GETTICK()	gettick()
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
+#define	STRLEN		strlen
+#define	OEMSPRINTF	sprintf
+#define	OEMSTRLEN	strlen
 
 #if defined(CPUCORE_IA32)
 void toolkit_msgbox(const char *title, const char *msg);

@@ -101,9 +101,9 @@ DEFINES= ShmDefines \
 
 SYS_LIBRARIES= -lm
 
-EXTRA_INCLUDES= -I. -I.. -I./debug -I../common \
+EXTRA_INCLUDES= -I. -I.. -I./debug -I../common -I../codecnv \
 		-I../bios -I../cbus -I../fdd -I../font -I../generic \
-		-I../io -I../lio \
+		-I../io -I../lio -I../mem \
 		-I../sound -I../sound/vermouth -I../sound/getsnd \
 		-I../vram \
 		$(PTHREAD_INCLUDE) $(GTK_INCLUDE) $(SDL_INCLUDE) $(ESD_INCLUDE)
@@ -116,7 +116,11 @@ LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
 COMMONOBJS=	../common/strres.o ../common/milstr.o ../common/_memory.o \
 		../common/textfile.o ../common/profile.o ../common/rect.o \
 		../common/lstarray.o ../common/bmpdata.o ../common/mimpidef.o \
-		../common/codecnv.o ../common/parts.o ../common/wavefile.o
+		../common/parts.o ../common/wavefile.o
+
+CODECNVOBJS=	../codecnv/eucsjis.o ../codecnv/eucucs2.o \
+		../codecnv/sjiseuc.o ../codecnv/sjisucs2.o \
+		../codecnv/ucs2utf8.o ../codecnv/utf8ucs2.o
 
 BIOSOBJS=	../bios/bios.o ../bios/bios09.o ../bios/bios0c.o \
 		../bios/bios12.o ../bios/bios13.o ../bios/bios18.o \
@@ -154,6 +158,10 @@ IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 LIOOBJS=	../lio/lio.o ../lio/gscreen.o ../lio/gpset.o ../lio/gline.o \
 		../lio/gcircle.o ../lio/gput1.o
 
+MEMOBJS=	../mem/dmav30.o ../mem/dmax86.o ../mem/memegc.o \
+		../mem/memems.o ../mem/memepp.o ../mem/memtram.o \
+		../mem/memvga.o ../mem/memvram.o
+
 NP2OBJS=	../pccore.o ../nevent.o ../calendar.o ../timing.o \
 		../statsave.o ../keystat.o
 
@@ -181,7 +189,8 @@ VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o \
 		../vram/makegrex.o
 
-X11OBJS=	dosio.o ini.o trace.o toolkit.o kdispwin.o skbdwin.o \
+X11OBJS=	dosio.o ini.o trace.o oemtext.o \
+		toolkit.o kdispwin.o skbdwin.o \
 		cmmidi.o cmserial.o \
 		drawmng.o kbdmng.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \
@@ -197,10 +206,7 @@ JOYDRVOBJS=	joydrv/sdl.o
 
 CPUOBJS= \
 		../i386c/cpucore.o \
-		../i386c/dmap.o \
-		../i386c/egcmem.o \
 		../i386c/memory.o \
-		../i386c/mem9821.o \
 		../i386c/ia32/interface.o \
 		../i386c/ia32/ia32.o \
 		../i386c/ia32/cpu.o \
@@ -241,7 +247,7 @@ NP2OBJS+=	../debugsub386.o
 CPUOBJS=	../i286c/i286c.o ../i286c/i286c_mn.o ../i286c/i286c_ea.o \
 		../i286c/i286c_0f.o ../i286c/i286c_8x.o ../i286c/i286c_sf.o \
 		../i286c/i286c_f6.o ../i286c/i286c_fe.o ../i286c/i286c_rp.o \
-		../i286c/memory.o ../i286c/egcmem.o ../i286c/dmap.o \
+		../i286c/memory.o \
 		../i286c/v30patch.o
 
 CPUFLAGS=	-I../i286c
@@ -250,18 +256,21 @@ NP2OBJS+=	../debugsub.o
 
 #endif
 
-OBJS=		$(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
+OBJS=		$(COMMONOBJS) $(CODECNVOBJS) \
+		$(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(GETSNDOBJS) \
-		$(VERMOUTHOBJS) $(VRAMOBJS) $(GENERICOBJS) $(CPUOBJS) \
+		$(VERMOUTHOBJS) $(VRAMOBJS) $(GENERICOBJS) \
+		$(CPUOBJS) $(MEMOBJS) \
 		$(X11OBJS) $(DEBUGOBJS) $(SNDDRVOBJS) $(JOYDRVOBJS) \
 		$(GTKDEPOBJS)
 
-CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
+CSRCS=		$(COMMONOBJS:.o=.c) $(CODECNVOBJS:.o=.c) \
+		$(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(FDDOBJS:.o=.c) $(FONTOBJS:.o=.c) $(IOOBJS:.o=.c) \
 		$(LIOOBJS:.o=.c) $(NP2OBJS:.o=.c) \
 		$(SOUNDOBJS:.o=.c) $(GETSNDOBJS:.o=.c) $(VERMOUTHOBJS:.o=.c) \
 		$(VRAMOBJS:.o=.c) $(GENERICOBJS:.o=.c) \
-		$(CPUOBJS:.o=.c) \
+		$(CPUOBJS:.o=.c) $(MEMOBJS:.o=.c) \
 		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(JOYDRVOBJS:.o=.c) \
 		$(X11OBJS:.o=.c) $(GTKDEPOBJS:.o=.c)
 SRCS=		$(CSRCS)
