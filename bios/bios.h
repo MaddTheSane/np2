@@ -61,6 +61,7 @@ void bios0x1a(void);
 void bios0x1a_main(void);											// ver0.30
 
 void bios0x1b(void);
+UINT8 sxsi_operate(UINT8 type);
 
 UINT16 bootstrapload(void);
 

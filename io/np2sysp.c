@@ -4,6 +4,8 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"bios.h"
+#include	"sxsi.h"
 // #include	"hostdrv.h"
 // #include	"hostdir.h"
 
@@ -94,6 +96,74 @@ static void np2sysp_mul(const void *arg1, const void *arg2) {
 	(void)arg2;
 }
 
+typedef struct {
+	UINT16	r_ax;
+	UINT16	r_bx;
+	UINT16	r_cx;
+	UINT16	r_dx;
+	UINT16	r_bp;
+	UINT16	r_es;
+} B1BREG;
+
+static void np2sysp_sxsi(const void *arg1, const void *arg2) {
+
+	B1BREG	org;
+	UINT32	esbase_org;
+	B1BREG	r;
+	UINT8	ret;
+	REG8	flag;
+
+	org.r_ax = CPU_AX;
+	org.r_cx = CPU_CX;
+	org.r_dx = CPU_DX;
+	org.r_bx = CPU_BX;
+	org.r_bp = CPU_BP;
+	org.r_es = CPU_ES;
+	esbase_org = ES_BASE;
+
+	i286_memstr_read(CPU_SS, CPU_SP, &r, sizeof(r));
+	CPU_AX = r.r_ax;
+	CPU_BX = r.r_bx;
+	CPU_CX = r.r_cx;
+	CPU_DX = r.r_dx;
+	CPU_BP = r.r_bp;
+	CPU_ES = r.r_es;
+	ES_BASE = r.r_es << 4;
+	switch(r.r_ax & 0xf0) {
+		case 0x00:
+		case 0x20:
+			ret = sxsi_operate(HDDTYPE_SASI);
+			break;
+
+		case 0x80:
+		case 0xa0:
+			ret = sxsi_operate(HDDTYPE_SCSI);
+			break;
+
+		default:
+			ret = 0x40;
+			break;
+	}
+	r.r_ax = CPU_AL + (ret << 8);
+	r.r_bx = CPU_BX;
+	r.r_cx = CPU_CX;
+	r.r_dx = CPU_DX;
+	i286_memstr_write(CPU_SS, CPU_SP, &r, 8);
+	flag = i286_membyte_read(CPU_SS, CPU_SP + 0x16) & 0xfe;
+	if (ret >= 0x20) {
+		flag += 1;
+	}
+	i286_membyte_write(CPU_SS, CPU_SP + 0x16, flag);
+
+	CPU_AX = org.r_ax;
+	CPU_CX = org.r_cx;
+	CPU_DX = org.r_dx;
+	CPU_BX = org.r_bx;
+	CPU_BP = org.r_bp;
+	CPU_ES = org.r_es;
+	ES_BASE = esbase_org;
+}
+
 #if 0
 static void np2sysp_hostdrv(const void *arg1, const void *arg2) {
 
@@ -124,6 +194,7 @@ static const char str_credit[] = "credit";
 static const char str_cpu[] = "cpu";
 static const char str_clock[] = "clock";
 static const char str_multiple[] = "multiple";
+static const char str_sxsibios[] = "sxsibios";
 
 #if defined(NP2SYSP_VER)
 static const char str_syspver[] = NP2SYSP_VER;
@@ -150,6 +221,9 @@ static const SYSPCMD np2spcmd[] = {
 			{str_cpu,		np2sysp_cpu,	NULL,			NULL},
 			{str_clock,		np2sysp_clock,	NULL,			NULL},
 			{str_multiple,	np2sysp_mul,	NULL,			NULL},
+
+// version:C
+			{str_sxsibios,	np2sysp_sxsi,	NULL,			NULL},
 
 #if 0
 // hostdrv

@@ -732,7 +732,7 @@ static BYTE sxsi_pos(long *pos) {
 }
 
 
-static BYTE sxsi_operate(BYTE type) {
+UINT8 sxsi_operate(UINT8 type) {
 
 	BYTE	ret_ah = 0x00;
 	BYTE	drv;
