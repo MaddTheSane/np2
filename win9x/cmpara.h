@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+COMMNG cmpara_create(UINT port);
 
 #ifdef __cplusplus
 }
