@@ -38,6 +38,7 @@
 #include <sys/param.h>
 #include <sys/time.h>
 #include <assert.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <setjmp.h>
 #include <stdio.h>
@@ -142,11 +143,17 @@ UINT32 gettick();
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
 
+#if defined(CPUCORE_IA32)
 void toolkit_msgbox(const char *title, const char *msg);
 #define	msgbox(title, msg)	toolkit_msgbox(title, msg);
+#endif
 
 #if defined(i386) || defined(__i386__)
 #undef	MEMOPTIMIZE
+#define LOADINTELDWORD(a)	(*((UINT32 *)(a)))
+#define LOADINTELWORD(a)	(*((UINT16 *)(a)))
+#define STOREINTELDWORD(a, b)	*(UINT32 *)(a) = (b)
+#define STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
 #elif defined(arm) || defined (__arm__)
 #define	MEMOPTIMIZE	2
 #define	REG8		UINT
@@ -164,6 +171,9 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define	SUPPORT_NORMALDISP
 
 #define	SUPPORT_HOSTDRV
+
+#undef	SUPPORT_SASI
+#undef	SUPPORT_SCSI
 
 #if defined(USE_GTK)
 #define	SUPPORT_S98
