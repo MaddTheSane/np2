@@ -745,6 +745,10 @@ SOURCE=..\IO\EGC.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\IO\EMSIO.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\IO\EPSONIO.C
 # End Source File
 # Begin Source File

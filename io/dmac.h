@@ -98,6 +98,7 @@ void dmac_bind(void);
 void dmac_extbind(void);
 
 void dmac_check(void);
+UINT dmac_getdatas(DMACH dmach, BYTE *buf, UINT size);
 
 void dmac_procset(void);
 void dmac_attach(REG8 device, REG8 channel);

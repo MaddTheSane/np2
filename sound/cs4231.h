@@ -1,9 +1,7 @@
 
-typedef REG8 (*CS4231DMA)(DMACH dmach);
-
 enum {
-	CS4231_BUFFERS	= (1 << 6),
-	CS4231_BUFBYTES	= (CS4231_BUFFERS * 4)
+	CS4231_BUFFERS	= (1 << 9),
+	CS4231_BUFMASK	= (CS4231_BUFFERS - 1)
 };
 
 typedef struct {
@@ -16,7 +14,7 @@ typedef struct {
 	BYTE	dac_l;				// 6
 	BYTE	dac_r;				// 7
 	BYTE	datafmt;			// 8
-	BYTE	intconfig;			// 9
+	BYTE	iface;				// 9
 	BYTE	pinctrl;			// a
 	BYTE	errorstatus;
 	BYTE	mode_id;
@@ -40,27 +38,28 @@ typedef struct {
 
 typedef struct {
 	UINT		bufsize;
-	UINT		readpos;
-	UINT		writepos;
-	UINT32		curtime;
-	UINT32		step;
-	SINT16		pcmdata[2];
-	CS4231DMA	proc;
+	UINT		bufdatas;
+	UINT		bufpos;
+//	UINT32		curtime;
+//	UINT32		step;
+//	SINT32		pcmdata[2];
+	UINT32		pos12;
+	UINT32		step12;
 
-	BYTE		enable;
-	BYTE		portctrl;
+	UINT8		enable;
+	UINT8		portctrl;
 	UINT16		port;
-	BYTE		dmairq;
-	BYTE		dmach;
-	BYTE		adrs;
-	BYTE		index;
-	BYTE		intflag;
-	BYTE		outenable;
-	BYTE		extfunc;
-	BYTE		padding;
+	UINT8		dmairq;
+	UINT8		dmach;
+	UINT8		adrs;
+	UINT8		index;
+	UINT8		intflag;
+	UINT8		outenable;
+	UINT8		extfunc;
+	UINT8		padding;
 
 	CS4231REG	reg;
-	BYTE		buffer[CS4231_BUFBYTES];
+	BYTE		buffer[CS4231_BUFFERS];
 } _CS4231, *CS4231;
 
 typedef struct {
@@ -72,18 +71,16 @@ typedef struct {
 extern "C" {
 #endif
 
-extern const CS4231DMA cs4231dec[16];
-
-REG8 cs4231_nodecode(DMACH dmach);
 void cs4231_dma(NEVENTITEM item);
 REG8 DMACCALL cs4231dmafunc(REG8 func);
+void cs4231_datasend(REG8 dat);
 
 void cs4231_initialize(UINT rate);
 void cs4231_setvol(UINT vol);
 
 void cs4231_reset(void);
 void cs4231_update(void);
-void cs4231_control(UINT index, REG8 value);
+void cs4231_control(UINT index, REG8 dat);
 
 void SOUNDCALL cs4231_getpcm(CS4231 cs, SINT32 *pcm, UINT count);
 

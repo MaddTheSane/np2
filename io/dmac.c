@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -52,7 +53,7 @@ void dmac_check(void) {
 			if (!(dmac.work & bit)) {
 				dmac.work |= bit;
 				if (ch->proc.extproc(DMAEXT_START)) {
-					dmac.stat &= ~bit;						// ver0.27
+					dmac.stat &= ~bit;
 					dmac.working |= bit;
 					workchg = TRUE;
 				}
@@ -72,6 +73,35 @@ void dmac_check(void) {
 	if (workchg) {
 		nevent_forceexit();
 	}
+}
+
+UINT dmac_getdatas(DMACH dmach, BYTE *buf, UINT size) {
+
+	UINT	leng;
+	UINT32	addr;
+	UINT	i;
+
+	leng = min(dmach->leng.w, size);
+	if (leng) {
+		addr = dmach->adrs.d;					// + mask
+		if (!(dmach->mode & 0x20)) {			// dir +
+			for (i=0; i<leng; i++) {
+				buf[i] = MEMP_READ8(addr + i);
+			}
+			dmach->adrs.d += leng;
+		}
+		else {									// dir -
+			for (i=0; i<leng; i++) {
+				buf[i] = MEMP_READ8(addr - i);
+			}
+			dmach->adrs.d -= leng;
+		}
+		dmach->leng.w -= leng;
+		if (dmach->leng.w == 0) {
+			dmach->proc.extproc(DMAEXT_END);
+		}
+	}
+	return(leng);
 }
 
 

@@ -905,7 +905,6 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 	if (saveflg & FLAG_CS4231) {
 		ret |= statflag_read(sfh, &cs4231, sizeof(cs4231));
-		cs4231.proc = cs4231dec[cs4231.reg.datafmt >> 4];
 	}
 
 	// •œŒ³B ‚±‚êˆÚ“®‚·‚é‚±‚ÆI

@@ -83,7 +83,6 @@ void cs4231io_reset(void) {
 	cs4231.adrs = 0x22;
 	cs4231.dmairq = cs4231irq[(cs4231.adrs >> 3) & 7];
 	cs4231.dmach = cs4231dma[cs4231.adrs & 7];
-	cs4231.step = 22050;
 	if (cs4231.dmach != 0xff) {
 		dmac_attach(DMADEV_CS4231, cs4231.dmach);
 	}
@@ -125,6 +124,10 @@ void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
 
 		case 6:
 			cs4231.intflag = 0;
+			break;
+
+		case 7:
+			cs4231_datasend(value);
 			break;
 	}
 }
