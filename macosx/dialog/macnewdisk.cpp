@@ -70,10 +70,19 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 
 static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData )
 {
-    WindowRef theWindow = (WindowRef)inUserData;  // get the windowRef, passed around as userData    
-    short ret;
+    WindowRef	theWindow = (WindowRef)inUserData;  // get the windowRef, passed around as userData    
+    short		ret;
+    ControlRef	focus;
+
     ret = changeTab(theWindow, lastPaneSelected);
     if (ret) {
+        if (ret == 1) {
+            focus = getControlRefByID('fdlb', 0, theWindow);
+        }
+        else {
+            focus = getControlRefByID('hdsz', 0, theWindow);
+        }
+        SetKeyboardFocus(theWindow, focus, kControlFocusNextPart);
         lastPaneSelected = ret;
     }
     return( eventNotHandledErr );

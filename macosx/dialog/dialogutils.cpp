@@ -45,9 +45,9 @@ short changeTab(WindowRef window, UInt16 pane) {
     controlValue = GetControlValue( getControlRefByID(kTabMasterSig,kTabMasterID,window) );
     if ( controlValue != pane )
     {
+        ClearKeyboardFocus(window);
         SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+pane, window), false, true );
         SetControlVisibility( getControlRefByID(  kTabPaneSig,  kTabMasterID+controlValue, window), true, true );    
-
         Draw1Control( getControlRefByID(kTabMasterSig,kTabMasterID,window) );		
         return(controlValue);    
     }
