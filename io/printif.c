@@ -1,10 +1,27 @@
 #include	"compiler.h"
+#include	"commng.h"
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
 
+	COMMNG	cm_prt;
+
+
 // ---- I/O
+
+static void IOOUTCALL prt_o40(UINT port, REG8 dat) {
+
+	COMMNG	prt;
+
+	prt = cm_prt;
+	if (prt == NULL) {
+		prt = commng_create(COMCREATE_PRINTER);
+		cm_prt = prt;
+	}
+	prt->write(prt, (UINT8)dat);
+//	TRACEOUT(("prt - %.2x", dat));
+}
 
 static REG8 IOINPCALL prt_i42(UINT port) {
 
@@ -37,14 +54,21 @@ static REG8 IOINPCALL prt_i42(UINT port) {
 
 // ---- I/F
 
+static const IOOUT prto40[4] = {
+					prt_o40,	NULL,		NULL,		NULL};
+
 static const IOINP prti40[4] = {
 					NULL,		prt_i42,	NULL,		NULL};
 
 void printif_reset(void) {
+
+	commng_destroy(cm_prt);
+	cm_prt = NULL;
 }
 
 void printif_bind(void) {
 
+	iocore_attachsysoutex(0x0040, 0x0cf1, prto40, 4);
 	iocore_attachsysinpex(0x0040, 0x0cf1, prti40, 4);
 }
 
