@@ -84,6 +84,7 @@ typedef signed __int64		SINT64;
 #if defined(CPUCORE_IA32)
 #define	SUPPORT_CRT31KHZ
 #define	SUPPORT_PC9821
+#define IA32_PAGING_EACHSIZE
 #endif
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SWSEEKSND
