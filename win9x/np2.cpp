@@ -1407,7 +1407,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
-	np2arg_analize(lpszCmdLine);
+	np2arg_analize();
 	initload();
 	toolwin_readini();
 	kdispwin_readini();

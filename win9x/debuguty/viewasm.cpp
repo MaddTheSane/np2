@@ -25,13 +25,16 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	DWORD		seg4;
 	UINT16		off;
 	DWORD		pos;
-	BYTE		*p;
-	BYTE		buf[16];
+	UINT8		*p;
+	UINT8		buf[16];
 	OEMCHAR		str[16];
 	HFONT		hfont;
 	BOOL		opsize;
 	_UNASM		una;
 	int			step;
+#if defined(UNICODE)
+	TCHAR		cnv[64];
+#endif
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -127,9 +130,20 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		if (!step) {
 			break;
 		}
+#if defined(UNICODE)
+		TextOut(hdc, 11 * 8, y, cnv, MultiByteToWideChar(CP_ACP, 
+					MB_PRECOMPOSED, una.mnemonic, -1, cnv, NELEMENTS(cnv)));
+#else
 		TextOut(hdc, 11 * 8, y, una.mnemonic, OEMSTRLEN(una.mnemonic));
+#endif
 		if (una.operand[0]) {
-			TextOut(hdc, (11 + 7) * 8, y, una.operand, OEMSTRLEN(una.operand));
+#if defined(UNICODE)
+			TextOut(hdc, (11 + 7) * 8, y, cnv, MultiByteToWideChar(CP_ACP,
+					MB_PRECOMPOSED, una.operand, -1, cnv, NELEMENTS(cnv)));
+#else
+			TextOut(hdc, (11 + 7) * 8, y,
+										una.operand, OEMSTRLEN(una.operand));
+#endif
 		}
 		off += (UINT16)step;
 	}

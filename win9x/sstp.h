@@ -12,8 +12,8 @@ void sstp_connect(void);
 void sstp_readSocket(void);
 void sstp_disconnect(void);
 
-BOOL sstp_send(char *msg, void (*proc)(HWND hWnd, char *msg));
+BOOL sstp_send(const OEMCHAR *msg, void (*proc)(HWND hWnd, char *msg));
 int sstp_result(void);
 
-BOOL sstp_sendonly(char *msg);
+BOOL sstp_sendonly(const OEMCHAR *msg);
 

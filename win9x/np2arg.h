@@ -7,5 +7,5 @@ typedef struct {
 
 extern NP2ARG_T	np2arg;
 
-void np2arg_analize(const TCHAR *argstr);
+void np2arg_analize(void);
 

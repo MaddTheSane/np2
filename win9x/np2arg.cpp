@@ -9,7 +9,7 @@
 
 
 #define	MAXARG		32
-#define	ARG_BASE	0				// win32のlpszCmdLineの場合
+#define	ARG_BASE	1				// win32のlpszCmdLineの場合
 									// 実行ファイル名無し
 
 	NP2ARG_T	np2arg = {{NULL, NULL, NULL, NULL},
@@ -17,20 +17,18 @@
 
 // ---------------------------------------------------------------------
 
-// win32の場合 コマンドラインが stringが返ってくる・・・
+static	OEMCHAR	argstrtmp[2048];
 
-static	OEMCHAR	argstrtmp[1024];
-
-void np2arg_analize(const TCHAR *argstr) {
+void np2arg_analize(void) {
 
 	int			np2argc;
 	OEMCHAR		*np2argv[MAXARG];
 	int			i;
 	int			drv = 0;
-	char		c;
+	OEMCHAR		c;
 const OEMCHAR	*p;
 
-	milstr_ncpy(argstrtmp, argstr, NELEMENTS(argstrtmp));
+	milstr_ncpy(argstrtmp, GetCommandLine(), NELEMENTS(argstrtmp));
 	np2argc = milstr_getarg(argstrtmp, np2argv, NELEMENTS(np2argv));
 
 	for (i=ARG_BASE; i<np2argc; i++) {

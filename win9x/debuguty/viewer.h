@@ -50,7 +50,7 @@ typedef struct {
 	SCROLLINFO	si;
 } NP2VIEW_T;
 
-extern	const OEMCHAR	np2viewfont[];
+extern	const TCHAR		np2viewfont[];
 extern	NP2VIEW_T		np2view[NP2VIEW_MAX];
 
 

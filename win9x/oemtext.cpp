@@ -43,7 +43,6 @@ UINT oemtext_oemtosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	ret = WideCharToMultiByte(CP_ACP, 0, ucs2, leng, dst, dcnt, NULL, NULL);
 	_MFREE(ucs2);
 	return(ret);
-
 }
 #endif
 

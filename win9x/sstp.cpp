@@ -3,6 +3,9 @@
 #include	"np2.h"
 #include	"scrnmng.h"
 #include	"sstp.h"
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+#include	"oemtext.h"
+#endif
 
 
 static	HWND		sstphwnd = NULL;
@@ -14,13 +17,13 @@ static	char		sstprcv[0x1000];
 static	DWORD		sstppos = 0;
 static	void		(*sstpproc)(HWND, char *) = NULL;
 
-static const char sendermes[] = 										\
-						"SEND SSTP/1.2\r\n"								\
-						"Sender: Neko Project II\r\n"					\
-						"Script: \\h\\s0%s\\e\r\n"						\
-						"Option: notranslate\r\n"						\
-						"Charset: Shift_JIS\r\n"						\
-						"\r\n";
+static const OEMCHAR sendermes[] = 										\
+					OEMTEXT("SEND SSTP/1.2\r\n")						\
+					OEMTEXT("Sender: Neko Project II\r\n")				\
+					OEMTEXT("Script: \\h\\s0%s\\e\r\n")					\
+					OEMTEXT("Option: notranslate\r\n")					\
+					OEMTEXT("Charset: Shift_JIS\r\n")					\
+					OEMTEXT("\r\n");
 
 
 static HANDLE check_sakura(void) {
@@ -37,7 +40,7 @@ static HANDLE check_sakura(void) {
 
 // ------------------------------------------------------------------ Async...
 
-BOOL sstp_send(char *msg, void (*proc)(HWND hWnd, char *msg)) {
+BOOL sstp_send(const OEMCHAR *msg, void (*proc)(HWND hWnd, char *msg)) {
 
 	sockaddr_in	s_in;
 
@@ -55,7 +58,13 @@ BOOL sstp_send(char *msg, void (*proc)(HWND hWnd, char *msg)) {
 		return(FAILURE);
 	}
 
-	SPRINTF(sstpstr, sendermes, msg);
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+	OEMCHAR	oem[0x1000];
+	OEMSPRINTF(oem, sendermes, msg);
+	oemtext_oemtosjis(sstpstr, NELEMENTS(sstpstr), oem, -1);
+#else
+	OEMSPRINTF(sstpstr, sendermes, msg);
+#endif
 	sstprcv[0] = 0;
 	sstppos = 0;
 
@@ -176,7 +185,7 @@ int sstp_result(void) {
 
 // ä÷êîàÍî≠ÅAëóêMì¶Ç∞ÅB
 
-BOOL sstp_sendonly(char *msg) {
+BOOL sstp_sendonly(const OEMCHAR *msg) {
 
 	WSAData		lwsadata;
 	SOCKET		lSocket;
@@ -192,7 +201,13 @@ BOOL sstp_sendonly(char *msg) {
 			s_in.sin_port = htons(np2oscfg.sstpport);
 			if (connect(lSocket, (sockaddr *)&s_in, sizeof(s_in))
 															!= SOCKET_ERROR) {
-				SPRINTF(msgstr, sendermes, msg);
+#if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+				OEMCHAR	oem[0x1000];
+				OEMSPRINTF(oem, sendermes, msg);
+				oemtext_oemtosjis(msgstr, NELEMENTS(msgstr), oem, -1);
+#else
+				OEMSPRINTF(msgstr, sendermes, msg);
+#endif
 				send(lSocket, msgstr, strlen(msgstr), 0);
 				ret = SUCCESS;
 			}

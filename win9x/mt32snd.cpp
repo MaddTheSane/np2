@@ -21,15 +21,15 @@ static	MT32SOUND	mt32sound;
 
 
 typedef struct {
-const TCHAR	*symbol;
+const char	*symbol;
 	UINT	addr;
 } DLLPROC;
 
-static const TCHAR	mt32sounddll[] = _T("mt32sound.dll");
-static const TCHAR	fn_mt32soundopen[] = _T("MT32Sound_Open");
-static const TCHAR	fn_mt32soundclose[] = _T("MT32Sound_Close");
-static const TCHAR	fn_mt32soundwrite[] = _T("MT32Sound_Write");
-static const TCHAR	fn_mt32soundmix[] = _T("MT32Sound_Mix");
+static const TCHAR mt32sounddll[] = _T("mt32sound.dll");
+static const char fn_mt32soundopen[] = "MT32Sound_Open";
+static const char fn_mt32soundclose[] = "MT32Sound_Close";
+static const char fn_mt32soundwrite[] = "MT32Sound_Write";
+static const char fn_mt32soundmix[] = "MT32Sound_Mix";
 
 static const DLLPROC dllproc[] = {
 				{fn_mt32soundopen,	offsetof(MT32SOUND, Open)},
