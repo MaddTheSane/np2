@@ -442,17 +442,29 @@ static void skpalcnv(CMNPAL *dst, RGB32 *src, UINT pals, UINT bpp) {
 	UINT	i;
 
 	switch(bpp) {
+#if defined(SUPPORT_8BPP)
+		case 8:
+			break;
+#endif
+#if defined(SUPPORT_16BPP)
 		case 16:
 			for (i=0; i<pals; i++) {
 				dst[i].pal16 = dd2_get16pal(skbdwin.dd2hdl, src[i]);
 			}
 			break;
-
+#endif
+#if defined(SUPPORT_24BPP)
+		case 24:
+#endif
+#if defined(SUPPORT_32BPP)
 		case 32:
+#endif
+#if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
 			for (i=0; i<pals; i++) {
 				dst[i].pal32.d = src[i].d;
 			}
 			break;
+#endif
 	}
 }
 

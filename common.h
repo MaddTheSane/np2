@@ -72,24 +72,26 @@ enum {
 #if !defined(RGB32)
 #if defined(BYTESEX_LITTLE)
 typedef union {
+	UINT32	d;
 	struct {
 		UINT8	b;
 		UINT8	g;
 		UINT8	r;
 		UINT8	e;
 	} p;
-	UINT32	d;
 } RGB32;
+#define	RGB32D(r, g, b)		(((r) << 16) + ((g) << 8) + ((b) << 0))
 #elif defined(BYTESEX_BIG)
 typedef union {
+	UINT32	d;
 	struct {
 		UINT8	e;
 		UINT8	r;
 		UINT8	g;
 		UINT8	b;
 	} p;
-	UINT32	d;
 } RGB32;
+#define	RGB32D(r, g, b)		(((r) << 16) + ((g) << 8) + ((b) << 0))
 #endif
 #endif
 
