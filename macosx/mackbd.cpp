@@ -147,6 +147,7 @@ void mackbd_f12down(int keycode) {
             mouse_running(MOUSE_XOR);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
             sysmng_update(SYS_UPDATECFG);
+            toggleMenubar();
 		}
 #endif
     }

@@ -74,6 +74,8 @@ static const char np2resume[] = "sav";
 #endif
 
 static void setUpCarbonEvent(void);
+static bool setupMainWindow(void);
+static void toggleFullscreen(void);
 
 #ifdef TARGET_API_MAC_CARBON
 static pascal OSErr handleQuitApp(const AppleEvent *event, AppleEvent *reply,
@@ -136,8 +138,35 @@ static void MenuBarInit(void) {
 }
 
 static void changescreen(BYTE mode) {
-
+#if 0
 	(void)mode;
+#endif
+
+	BYTE	change;
+	BYTE	renewal;
+
+	change = scrnmode ^ mode;
+	renewal = (change & SCRNMODE_FULLSCREEN);
+	if (mode & SCRNMODE_FULLSCREEN) {
+		renewal |= (change & SCRNMODE_HIGHCOLOR);
+	}
+	else {
+		renewal |= (change & SCRNMODE_ROTATEMASK);
+	}
+	if (renewal) {
+		soundmng_stop();
+		mouse_running(MOUSE_STOP);
+		scrnmng_destroy();
+		if (scrnmng_create(mode) == SUCCESS) {
+			scrnmode = mode;
+		}
+		scrndraw_redraw();
+		mouse_running(MOUSE_CONT);
+		soundmng_play();
+	}
+	else {
+		scrnmode = mode;
+	}
 }
 
 static void HandleMenuChoice(long wParam) {
@@ -211,6 +240,10 @@ static void HandleMenuChoice(long wParam) {
 			diskdrv_sethdd(1, NULL);
 			break;
 
+		case IDM_FULLSCREEN:
+            toggleFullscreen();
+            break;
+            
 		case IDM_ROLNORMAL:
 			menu_setrotate(0);
 			changescreen(scrnmode & (~SCRNMODE_ROTATEMASK));
@@ -277,6 +310,7 @@ static void HandleMenuChoice(long wParam) {
             mouse_running(MOUSE_XOR);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
             sysmng_update(SYS_UPDATECFG);
+            toggleMenubar();
 			break;
 #endif
 
@@ -657,8 +691,8 @@ static void openingNP2(void) {
 
 int main(int argc, char *argv[]) {
 
-	Rect		wRect;
 #if 0
+	Rect		wRect;
 	EventRecord	event;
 #endif
     EventRef		theEvent;
@@ -678,6 +712,7 @@ int main(int argc, char *argv[]) {
 
 	TRACEINIT();
 
+#if 0
 	SetRect(&wRect, 100, 100, 100, 100);
 	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
 								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
@@ -691,6 +726,11 @@ int main(int argc, char *argv[]) {
 	SizeWindow(hWndMain, 640, 400, TRUE);
     setUpCarbonEvent();
 	ShowWindow(hWndMain);
+#endif
+    if (!(setupMainWindow())) {
+        return(0);
+    }
+
 #ifdef    NP2OPENING
     openingNP2();
 #endif
@@ -830,6 +870,10 @@ int main(int argc, char *argv[]) {
 	}
 	np2running = FALSE;
 
+    if (scrnmode & SCRNMODE_FULLSCREEN) {
+        toggleFullscreen();
+    }
+    
 	pccore_cfgupdate();
 
 #if defined(USE_RESUME)
@@ -964,6 +1008,9 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                     np2running = FALSE;
                     result = noErr;
                 }
+                else if (whatHappened == kEventWindowShowing) {
+                    scrndraw_redraw();
+                }
                 break;
             case kEventClassKeyboard:
                 UInt32 key;
@@ -1027,6 +1074,7 @@ static const EventTypeSpec appEventList[] = {
 
 static const EventTypeSpec windEventList[] = {
 				{kEventClassWindow,		kEventWindowClose},
+				{kEventClassWindow,		kEventWindowShowing},
 				{kEventClassKeyboard,	kEventRawKeyDown},
 				{kEventClassKeyboard,	kEventRawKeyUp},
 				{kEventClassKeyboard,	kEventRawKeyRepeat},
@@ -1043,5 +1091,72 @@ static void setUpCarbonEvent(void) {
 	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(np2windowevent),
 								GetEventTypeCount(windEventList),
 								windEventList, 0, NULL);
+}
+
+bool setupMainWindow(void) {
+#if defined(NP2GCC) && 0
+#else
+    Rect wRect;
+    
+	SetRect(&wRect, 100, 100, 100, 100);
+	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
+								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
+	if (!hWndMain) {
+		TRACETERM();
+		macossub_term();
+		dosio_term();
+		return(false);
+	}
+	SizeWindow(hWndMain, 640, 400, TRUE);
+#endif
+	scrnmng_initialize();
+    setUpCarbonEvent();
+	ShowWindow(hWndMain);
+    return(true);
+}
+
+static void toggleFullscreen(void) {
+    static Ptr 	bkfullscreen;
+    static BYTE mouse = 0;
+
+    soundmng_stop();
+    if (!scrnmode & SCRNMODE_FULLSCREEN) {
+        RGBColor col = {0, 0, 0};
+        short	w=640, h=480;
+        DisposeWindow(hWndMain);
+        BeginFullScreen(&bkfullscreen,0,&w,&h,&hWndMain,&col,(fullScreenAllowEvents | fullScreenDontChangeMenuBar));	
+        HideMenuBar();
+        setUpCarbonEvent();
+        if (!np2oscfg.MOUSE_SW) {
+            mouse = np2oscfg.MOUSE_SW;
+            mouse_running(MOUSE_ON);
+            menu_setmouse(1);
+        }
+        changescreen(scrnmode | SCRNMODE_FULLSCREEN);
+    }
+    else {
+        scrnmng_destroy();
+        EndFullScreen(bkfullscreen, 0);
+        setupMainWindow();
+        changescreen(scrnmode & (~SCRNMODE_FULLSCREEN));
+        if (!mouse) {
+            mouse_running(MOUSE_OFF);
+            menu_setmouse(0);
+        }
+        ShowMenuBar();
+    }
+    CheckMenuItem(GetMenuHandle(IDM_SCREEN), LoWord(IDM_FULLSCREEN), scrnmode & SCRNMODE_FULLSCREEN);
+    soundmng_play();
+}
+
+void toggleMenubar(void) {
+    if (scrnmode & SCRNMODE_FULLSCREEN) {
+        if (!np2oscfg.MOUSE_SW) {
+            ShowMenuBar();
+        }
+        else {
+            HideMenuBar();
+        }
+    }
 }
 
