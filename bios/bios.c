@@ -50,6 +50,17 @@ static void bios_reinitbyswitch(void) {
 	SETBIOSMEM16(0x00486, CPU_DX);
 #endif
 
+	if (!(np2cfg.dipsw[2] & 0x80)) {
+#if defined(CPUCORE_IA32)
+		mem[MEMB_SYS_TYPE] = 0x02;		// 80386Å`
+#else
+		mem[MEMB_SYS_TYPE] = 0x01;		// 80286
+#endif
+	}
+	else {
+		mem[MEMB_SYS_TYPE] = 0x00;		// V30
+	}
+
 	mem[MEMB_BIOS_FLAG0] = 0x01;
 	CPU_TYPE = 0;
 	prxcrt = 0x48;								// ver0.74
@@ -120,6 +131,7 @@ static void bios_reinitbyswitch(void) {
 
 	// IDE initialize
 	if (pccore.hddif & PCHDD_IDE) {
+		mem[MEMB_SYS_TYPE] |= 0x80;		// IDE
 		CPU_AX = 0x8300;
 		sasibios_operate();
 	}

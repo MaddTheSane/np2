@@ -205,9 +205,11 @@ void bios0x18(void) {
 	UINT16	tmp;
 	UINT32	pal;
 
+#if 0
 	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
 							i286_memword_read(CPU_SS, CPU_SP+2),
 							i286_memword_read(CPU_SS, CPU_SP)));
+#endif
 
 	sti_waiting ^= 1;
 	if (sti_waiting) {					// äÑçûÇ›ãñâ¬ÇÃóVÇ—

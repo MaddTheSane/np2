@@ -101,11 +101,15 @@ void extmem_reset(void) {
 
 void extmem_bind(void) {
 
-	iocore_attachout(0x08e1, emm_o08e1);
-	iocore_attachout(0x08e3, emm_o08e1);
-	iocore_attachout(0x08e5, emm_o08e1);
-	iocore_attachout(0x08e7, emm_o08e1);
-	iocore_attachout(0x08e9, emm_o08e9);
-	iocore_attachinp(0x08e9, emm_i08e9);
+#if !defined(CPUCORE_IA32)
+	if (!(np2cfg.dipsw[2] & 0x80)) {
+		iocore_attachout(0x08e1, emm_o08e1);
+		iocore_attachout(0x08e3, emm_o08e1);
+		iocore_attachout(0x08e5, emm_o08e1);
+		iocore_attachout(0x08e7, emm_o08e1);
+		iocore_attachout(0x08e9, emm_o08e9);
+		iocore_attachinp(0x08e9, emm_i08e9);
+	}
+#endif
 }
 

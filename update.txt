@@ -17,6 +17,7 @@
 　・VRAM - 標準ディスプレイ時にメモリを破壊するバグを修正
 　・ITF - SSP終了時にハードウェアリセットをかけるように修正
 　・IDE - ディップスィッチ内容を反映するように修正
+　・拡張メモリの修正 (80286)
 
 
 　(Windows)
@@ -41,6 +42,14 @@
 　　　bios/sxsibios.c はリンク必須
 　　　cbus/sasiio.c - SUPPORT_SCSIを定義した時にリンク
 　　　cbus/scsiio.c cbus/scsicmd.c - SUPPORT_SCSIを定義した時にリンク
+
+　　　IA32でハードウェアEMSを禁止しました。
+　　　※コア側のインタフェイスを調整後に…
+　　　　　　　→ init_mem() トル
+　　　　　　　→ cpumem, extmem_size, protectmem_sizeを
+　　　　　　　　　CPU_EXTMEM, CPU_EXTMEMSIZEに変更
+　　　　　　　→ リアルアドレス C0000-CFFFFのメモリリードライト変更
+　　　　むしろ メモリ確保はそれぞれの CPUルーチンに入れるべきか？
 
 
 // ----

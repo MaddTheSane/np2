@@ -607,7 +607,6 @@ static int resetcnt = 0;
 static int execcnt = 0;
 int piccnt = 0;
 int tr = 0;
-UINT	gr = 0;
 UINT	cflg;
 #endif
 
@@ -649,7 +648,7 @@ void pccore_exec(BOOL draw) {
 #endif
 		}
 
-#if 1 // ndef TRACE
+#if 0 // ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();
@@ -687,13 +686,11 @@ void pccore_exec(BOOL draw) {
 				}
 			}
 #endif
-			{
-				UINT r = (gdcs.grphdisp & GDCSCRN_ENABLE);
-				if (gr != r) {
-					TRACEOUT(("gdcs.grphdisp = %.2x [%.4x:%.4x]", r, CPU_CS, CPU_IP));
-					gr = r;
-				}
+#if 0
+			if ((CPU_CS == 0x0620) || (CPU_CS == 0x08a0)) {
+				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 			}
+#endif
 			i286x_step();
 //			i286c_step();
 		}

@@ -230,7 +230,7 @@ static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 
 	UINT8	i;
 	UINT8	bit;
-	UINT16	w;
+	UINT32	dat;
 
 	mem[MEMB_DISK_EQUIPS] = 0;
 	ZeroMemory(&mem[0x00460], 0x20);
@@ -238,24 +238,25 @@ static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 		sxsi = sxsi_getptr((REG8)(0x20 + i));
 		if ((sxsi) && (sxsi->fname[0])) {
 			mem[MEMB_DISK_EQUIPS] |= bit;
-			mem[0x00460+i*4] = sxsi->sectors;
-			mem[0x00461+i*4] = sxsi->surfaces;
+			dat = sxsi->sectors;
+			dat |= (sxsi->surfaces << 8);
+			dat |= sxsi->cylinders & 0xf000;
+			dat |= (sxsi->cylinders & 0xfff) << 16;
 			switch(sxsi->size) {
 				case 256:
-					w = 0 << 12;
+				//	dat |= 0 << (12 + 16);
 					break;
 
 				case 512:
-					w = 1 << 12;
+					dat |= 1 << (12 + 16);
 					break;
 
 				default:
-					w = 2 << 12;
+					dat |= 2 << (12 + 16);
 					break;
 			}
-			w |= 0xc000;
-			w |= sxsi->cylinders;
-			SETBIOSMEM16(0x00462+i*4, w);
+			dat |= 0xc0000000;
+			SETBIOSMEM32(0x00460+i*4, dat);
 		}
 	}
 	(void)type;
