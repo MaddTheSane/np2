@@ -1,5 +1,5 @@
 
-#define		NP2STATUS_VERSION		0770
+#define		NP2STATUS_VERSION		800
 
 static const NP2FHDR np2flagdef = {
 						"Neko Project II",
@@ -126,7 +126,8 @@ static const SFENTRY np2tbl[] = {
 	{"MPU98II",		0,	STATFLAG_BIN,	&mpu98,			sizeof(mpu98)},
 	{"CMMPU98",		0,	STATFLAG_COM,	(void *)0,		0},
 	{"CMRS232C",	0,	STATFLAG_COM,	(void *)1,		0},
-	{"DISK",		0,	STATFLAG_DISK,	NULL,			0},
+	{"FDD",			0,	STATFLAG_FDD,	NULL,			0},
+	{"SXSI",		0,	STATFLAG_SXSI,	NULL,			0},
 #if !defined(DISABLE_SOUND)
 	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
 	{"BEEP",		0,	STATFLAG_BIN,	&beep,			sizeof(beep)},

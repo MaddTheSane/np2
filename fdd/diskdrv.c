@@ -12,8 +12,9 @@
 #define	DISK_DELAY	20			// (0.4sec)
 
 	int		diskdrv_delay[4];
-	int		diskdrv_ro[4];
 	OEMCHAR	diskdrv_fname[4][MAX_PATH];
+	UINT	diskdrv_ftype[4];
+	int		diskdrv_ro[4];
 
 
 void diskdrv_sethdd(REG8 drv, const OEMCHAR *fname) {
@@ -50,11 +51,12 @@ void diskdrv_sethdd(REG8 drv, const OEMCHAR *fname) {
 	}
 }
 
-void diskdrv_readyfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
+void diskdrv_readyfddex(REG8 drv, const OEMCHAR *fname,
+												UINT ftype, int readonly) {
 
 	if ((drv < 4) && (fdc.equip & (1 << drv))) {
 		if ((fname != NULL) && (fname[0] != '\0')) {
-			fdd_set(drv, fname, FTYPE_NONE, readonly);
+			fdd_set(drv, fname, ftype, readonly);
 			fdc.stat[drv] = FDCRLT_AI | drv;
 			fdc_interrupt();
 			sysmng_update(SYS_UPDATEFDD);
@@ -62,7 +64,8 @@ void diskdrv_readyfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
 	}
 }
 
-void diskdrv_setfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
+void diskdrv_setfddex(REG8 drv, const OEMCHAR *fname,
+												UINT ftype, int readonly) {
 
 	if ((drv < 4) && (fdc.equip & (1 << drv))) {
 		fdd_eject(drv);
@@ -73,6 +76,7 @@ void diskdrv_setfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
 
 		if (fname) {
 			diskdrv_delay[drv] = DISK_DELAY;
+			diskdrv_ftype[drv] = ftype;
 			diskdrv_ro[drv] = readonly;
 			file_cpyname(diskdrv_fname[drv], fname,
 												NELEMENTS(diskdrv_fname[0]));
@@ -89,7 +93,8 @@ void diskdrv_callback(void) {
 		if (diskdrv_delay[drv]) {
 			diskdrv_delay[drv]--;
 			if (!diskdrv_delay[drv]) {
-				diskdrv_readyfdd(drv, diskdrv_fname[drv], diskdrv_ro[drv]);
+				diskdrv_readyfddex(drv, diskdrv_fname[drv],
+										diskdrv_ftype[drv], diskdrv_ro[drv]);
 				diskdrv_fname[drv][0] = '\0';
 			}
 		}

@@ -139,7 +139,7 @@ BRESULT sxsi_prepare(SXSIDEV sxsi) {
 	}
 	fh = (FILEH)sxsi->fh;
 	if (fh == FILEH_INVALID) {
-		fh = file_open(sxsi->filename);
+		fh = file_open(sxsi->fname);
 		sxsi->fh = (INTPTR)fh;
 		if (fh == FILEH_INVALID) {
 			sxsi->flag = 0;
@@ -179,7 +179,7 @@ const OEMCHAR *sxsi_getfilename(REG8 drv) {
 
 	sxsi = sxsi_getptr(drv);
 	if ((sxsi) && (sxsi->flag & SXSIFLAG_READY)) {
-		return(sxsi->filename);
+		return(sxsi->fname);
 	}
 	return(NULL);
 }
@@ -201,12 +201,25 @@ BRESULT sxsi_setdevtype(REG8 drv, UINT8 dev) {
 	}
 }
 
-BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *file) {
+UINT8 sxsi_getdevtype(REG8 drv) {
+
+	SXSIDEV	sxsi;
+
+	sxsi = sxsi_getptr(drv);
+	if (sxsi) {
+		return(sxsi->devtype);
+	}
+	else {
+		return(SXSIDEV_NC);
+	}
+}
+
+BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *fname) {
 
 	SXSIDEV		sxsi;
 	BRESULT		r;
 
-	if ((file == NULL) || (file[0] == '\0')) {
+	if ((fname == NULL) || (fname[0] == '\0')) {
 		goto sxsiope_err;
 	}
 	sxsi = sxsi_getptr(drv);
@@ -215,11 +228,11 @@ BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *file) {
 	}
 	switch(sxsi->devtype) {
 		case SXSIDEV_HDD:
-			r = sxsihdd_open(sxsi, file);
+			r = sxsihdd_open(sxsi, fname);
 			break;
 
 		case SXSIDEV_CDROM:
-			r = sxsicd_open(sxsi, file);
+			r = sxsicd_open(sxsi, fname);
 			break;
 
 		default:
@@ -229,7 +242,7 @@ BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *file) {
 	if (r != SUCCESS) {
 		goto sxsiope_err;
 	}
-	file_cpyname(sxsi->filename, file, NELEMENTS(sxsi->filename));
+	file_cpyname(sxsi->fname, fname, NELEMENTS(sxsi->fname));
 	sxsi->flag = SXSIFLAG_READY;
 #if defined(SUPPORT_IDEIO)
 	ideio_notify(sxsi->drv, 1);
@@ -258,7 +271,7 @@ BOOL sxsi_issasi(void) {
 	for (drv=0x00; drv<0x04; drv++) {
 		sxsi = sxsi_getptr(drv);
 		if (sxsi) {
-			if (sxsi->devtype == SXSIDEV_HDD) {
+			if ((drv < 0x02) && (sxsi->devtype == SXSIDEV_HDD)) {
 				if (sxsi->flag & SXSIFLAG_READY) {
 					if (sxsi->mediatype & SXSIMEDIA_INVSASI) {
 						return(FALSE);

@@ -197,7 +197,11 @@ static void calctextsize(OEMCHAR *path, int leng, const OEMCHAR *p, int width) {
 	GetTextExtentPoint32(hdc, work, OEMSTRLEN(work), &tail);
 	pos = 0;
 	while(pos < l) {
-		step = ((((p[pos] ^ 0x20) - 0xa1) & 0xff) < 0x3c)?2:1;
+#if defined(_UNICODE)
+		step = 1;
+#else
+		step = (IsDBCSLeadByte((BYTE)p[pos]))?2:1;
+#endif
 		GetTextExtentPoint32(hdc, p, pos + step, &cur);
 		if (cur.cx + tail.cx >= width) {
 			break;

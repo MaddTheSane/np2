@@ -30,12 +30,29 @@ void fddfile_reset2dmode(void) { 			// ver0.29
 #endif
 }
 
-const OEMCHAR *fdd_diskname(REG8 drv) {
+OEMCHAR *fdd_diskname(REG8 drv) {
 
 	if (drv >= MAX_FDDFILE) {
-		return(str_null);
+		return((OEMCHAR *)str_null);
 	}
 	return(fddfile[drv].fname);
+}
+
+OEMCHAR *fdd_getfileex(REG8 drv, UINT *ftype, int *ro) {
+
+	FDDFILE	fdd;
+
+	if (drv >= MAX_FDDFILE) {
+		return((OEMCHAR *)str_null);
+	}
+	fdd = fddfile + drv;
+	if (ftype) {
+		*ftype = fdd->ftype;
+	}
+	if (ro) {
+		*ro = fdd->ro;
+	}
+	return(fdd->fname);
 }
 
 BOOL fdd_diskready(REG8 drv) {
@@ -60,36 +77,51 @@ BOOL fdd_diskprotect(REG8 drv) {
 BRESULT fdd_set(REG8 drv, const OEMCHAR *fname, UINT ftype, int ro) {
 
 	FDDFILE		fdd;
+	UINT		fddtype;
 const OEMCHAR	*p;
+	BRESULT		r;
 
 	if (drv >= MAX_FDDFILE) {
 		return(FAILURE);
 	}
-	if (ftype == FTYPE_NONE) {
+	fddtype = ftype;
+	if (fddtype == FTYPE_NONE) {
 		p = file_getext(fname);
 		if ((!milstr_cmp(p, str_d88)) || (!milstr_cmp(p, str_88d)) ||
 			(!milstr_cmp(p, str_d98)) || (!milstr_cmp(p, str_98d))) {
-			ftype = FTYPE_D88;
+			fddtype = FTYPE_D88;
 		}
 		else if (!milstr_cmp(p, str_fdi)) {
-			ftype = FTYPE_FDI;
+			fddtype = FTYPE_FDI;
 		}
 		else {
-			ftype = FTYPE_BETA;
+			fddtype = FTYPE_BETA;
 		}
 	}
 	fdd = fddfile + drv;
-	switch(ftype) {
+	switch(fddtype) {
 		case FTYPE_FDI:
-			if (fddxdf_setfdi(fdd, fname, ro) == SUCCESS) {
-				return(SUCCESS);
+			r = fddxdf_setfdi(fdd, fname, ro);
+			if (r == SUCCESS) {
+				break;
 			}
+			/* FALLTHROUGH */
 
 		case FTYPE_BETA:
-			return(fddxdf_set(fdd, fname, ro));
+			r = fddxdf_set(fdd, fname, ro);
+			break;
 
 		case FTYPE_D88:
-			return(fddd88_set(fdd, fname, ro));
+			r = fddd88_set(fdd, fname, ro);
+			break;
+
+		default:
+			r = FAILURE;
+	}
+	if (r == SUCCESS) {
+		file_cpyname(fdd->fname, fname, NELEMENTS(fdd->fname));
+		fdd->ftype = ftype;
+		fdd->ro = ro;
 	}
 	return(FAILURE);
 }

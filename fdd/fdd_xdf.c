@@ -60,7 +60,6 @@ const _XDFINFO	*xdf;
 		size *= xdf->sectors;
 		size <<= (7 + xdf->n);
 		if (size == fdsize) {
-			file_cpyname(fdd->fname, fname, sizeof(fdd->fname));
 			fdd->type = DISKTYPE_BETA;
 			fdd->protect = ((attr & 1) || (ro))?TRUE:FALSE;
 			fdd->inf.xdf = *xdf;
@@ -150,7 +149,6 @@ BRESULT fddxdf_setfdi(FDDFILE fdd, const OEMCHAR *fname, int ro) {
 		default:
 			return(FAILURE);
 	}
-	file_cpyname(fdd->fname, fname, NELEMENTS(fdd->fname));
 	fdd->type = DISKTYPE_BETA;
 	fdd->protect = ((attr & 1) || (ro))?TRUE:FALSE;
 	fdd->inf.xdf.headersize = headersize;

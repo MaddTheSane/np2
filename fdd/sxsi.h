@@ -54,7 +54,8 @@ struct _sxsidev {
 	UINT8	padding;
 	UINT32	headersize;
 
-	OEMCHAR	filename[MAX_PATH];
+	OEMCHAR	fname[MAX_PATH];
+	UINT	ftype;
 };
 
 
@@ -71,6 +72,7 @@ BRESULT sxsi_prepare(SXSIDEV sxsi);
 SXSIDEV sxsi_getptr(REG8 drv);
 const OEMCHAR *sxsi_getfilename(REG8 drv);
 BRESULT sxsi_setdevtype(REG8 drv, UINT8 dev);
+UINT8 sxsi_getdevtype(REG8 drv);
 BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *file);
 void sxsi_devclose(REG8 drv);
 REG8 sxsi_read(REG8 drv, long pos, UINT8 *buf, UINT size);

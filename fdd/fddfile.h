@@ -51,6 +51,8 @@ typedef struct {
 
 typedef struct {
 	OEMCHAR	fname[MAX_PATH];
+	UINT	ftype;
+	int		ro;
 	UINT8	type;
 	UINT8	num;
 	UINT8	protect;
@@ -73,7 +75,8 @@ void fddfile_initialize(void);
 
 void fddfile_reset2dmode(void);
 
-const OEMCHAR *fdd_diskname(REG8 drv);
+OEMCHAR *fdd_diskname(REG8 drv);
+OEMCHAR *fdd_getfileex(REG8 drv, UINT *ftype, int *ro);
 BOOL fdd_diskready(REG8 drv);
 BOOL fdd_diskprotect(REG8 drv);
 
