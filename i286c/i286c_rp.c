@@ -221,7 +221,7 @@ I286EXT i286c_repe_cmpsb(void) {
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
-			BYTE_SUB(res, dst, src)
+			SUBBYTE(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (I286_FLAGL & Z_FLAG));
 	}
@@ -239,7 +239,7 @@ I286EXT i286c_repne_cmpsb(void) {
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
-			BYTE_SUB(res, dst, src)
+			SUBBYTE(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (!(I286_FLAGL & Z_FLAG)));
 	}
@@ -257,7 +257,7 @@ I286EXT i286c_repe_cmpsw(void) {
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
-			WORD_SUB(res, dst, src)
+			SUBWORD(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (I286_FLAGL & Z_FLAG));
 	}
@@ -275,7 +275,7 @@ I286EXT i286c_repne_cmpsw(void) {
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
-			WORD_SUB(res, dst, src)
+			SUBWORD(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (!(I286_FLAGL & Z_FLAG)));
 	}
@@ -295,7 +295,7 @@ I286EXT i286c_repe_scasb(void) {
 			UINT src = i286_memoryread(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
-			BYTE_SUB(res, dst, src)
+			SUBBYTE(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (I286_FLAGL & Z_FLAG));
 	}
@@ -312,7 +312,7 @@ I286EXT i286c_repne_scasb(void) {
 			UINT src = i286_memoryread(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
-			BYTE_SUB(res, dst, src)
+			SUBBYTE(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (!(I286_FLAGL & Z_FLAG)));
 	}
@@ -329,7 +329,7 @@ I286EXT i286c_repe_scasw(void) {
 			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
-			WORD_SUB(res, dst, src)
+			SUBWORD(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (I286_FLAGL & Z_FLAG));
 	}
@@ -346,7 +346,7 @@ I286EXT i286c_repne_scasw(void) {
 			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
-			WORD_SUB(res, dst, src)
+			SUBWORD(res, dst, src)
 			I286_CX--;
 		} while((I286_CX) && (!(I286_FLAGL & Z_FLAG)));
 	}

@@ -18,6 +18,7 @@ I286_F6 _inc_ea8(UINT op) {
 
 	UINT32	madr;
 	BYTE	*out;
+	REG8	res;
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
@@ -27,20 +28,23 @@ I286_F6 _inc_ea8(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
-			REG8 value = i286_memoryread(madr);
-			BYTE_INC(value)
-			i286_memorywrite(madr, value);
+			res = i286_memoryread(madr);
+			INCBYTE(res)
+			i286_memorywrite(madr, res);
 			return;
 		}
 		out = mem + madr;
 	}
-	BYTE_INC(*out)
+	res = *out;
+	INCBYTE(res)
+	*out = (BYTE)res;
 }
 
 I286_F6 _dec_ea8(UINT op) {
 
 	UINT32	madr;
 	BYTE	*out;
+	REG8	res;
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
@@ -50,20 +54,23 @@ I286_F6 _dec_ea8(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
-			REG8 value = i286_memoryread(madr);
-			BYTE_DEC(value)
-			i286_memorywrite(madr, value);
+			res = i286_memoryread(madr);
+			DECBYTE(res)
+			i286_memorywrite(madr, res);
 			return;
 		}
 		out = mem + madr;
 	}
-	BYTE_DEC(*out)
+	res = *out;
+	DECBYTE(res)
+	*out = (BYTE)res;
 }
 
 I286_F6 _inc_ea16(UINT op) {
 
 	UINT32	madr;
 	UINT16	*out;
+	REG16	res;
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
@@ -73,20 +80,23 @@ I286_F6 _inc_ea16(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
-			REG16 value = i286_memoryread_w(madr);
-			WORD_INC(value)
-			i286_memorywrite_w(madr, value);
+			res = i286_memoryread_w(madr);
+			INCWORD(res)
+			i286_memorywrite_w(madr, res);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
-	WORD_INC(*out)
+	res = *out;
+	INCWORD(res)
+	*out = (UINT16)res;
 }
 
 I286_F6 _dec_ea16(UINT op) {
 
 	UINT32	madr;
 	UINT16	*out;
+	REG16	res;
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
@@ -96,14 +106,16 @@ I286_F6 _dec_ea16(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
-			REG16 value = i286_memoryread_w(madr);
-			WORD_DEC(value)
-			i286_memorywrite_w(madr, value);
+			res = i286_memoryread_w(madr);
+			DECWORD(res)
+			i286_memorywrite_w(madr, res);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
-	WORD_DEC(*out)
+	res = *out;
+	DECWORD(res)
+	*out = (UINT16)res;
 }
 
 I286_F6 _call_ea16(UINT op) {

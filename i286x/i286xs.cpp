@@ -1401,7 +1401,7 @@ I286 div_ea8(void) {
 					movzx	ebp, byte ptr I286_REG[eax]
 					GET_NEXTPRE2
 					jmp		divcheck
-				MEMORY_EA8(22)
+				MEMORY_EA8(17)
 					movzx	ebp, byte ptr I286_MEM[ecx]
 					jmp		divcheck
 				EXTMEM_EA8
@@ -1433,7 +1433,7 @@ I286 idiv_ea8(void) {
 					movsx	ebp, byte ptr I286_REG[eax]
 					GET_NEXTPRE2
 					jmp		idivcheck
-				MEMORY_EA8(25)
+				MEMORY_EA8(20)
 					movsx	ebp, byte ptr I286_MEM[ecx]
 					jmp		idivcheck
 				EXTMEM_EA8
@@ -1576,7 +1576,7 @@ I286 imul_ea16(void) {
 I286 div_ea16(void) {
 
 		__asm {
-				PREPART_EA16(17)
+				PREPART_EA16(22)
 					movzx	ebp, word ptr I286_REG[eax*2]
 					GET_NEXTPRE2
 					jmp		divcheck
@@ -1609,7 +1609,7 @@ I286 div_ea16(void) {
 I286 idiv_ea16(void) {
 
 		__asm {
-				PREPART_EA16(20)
+				PREPART_EA16(25)
 					movsx	ebp, word ptr I286_REG[eax*2]
 					GET_NEXTPRE2
 					jmp		idivcheck

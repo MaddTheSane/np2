@@ -61,14 +61,14 @@ I286_F6 _neg_ea8(UINT op) {
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
 			src = i286_memoryread(madr);
-			BYTE_NEG(dst, src)
+			NEGBYTE(dst, src)
 			i286_memorywrite(madr, (BYTE)dst);
 			return;
 		}
 		out = mem + madr;
 	}
 	src = *out;
-	BYTE_NEG(dst, src)
+	NEGBYTE(dst, src)
 	*out = (BYTE)dst;
 }
 
@@ -114,11 +114,11 @@ I286_F6 _div_ea8(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_WORKCLOCK(2);
+		I286_WORKCLOCK(14);
 		src = *(REG8_B20(op));
 	}
 	else {
-		I286_WORKCLOCK(7);
+		I286_WORKCLOCK(17);
 		src = i286_memoryread(CALC_EA(op));
 	}
 	tmp = I286_AX;
@@ -143,7 +143,7 @@ I286_F6 _idiv_ea8(UINT op) {
 		src = *(REG8_B20(op));
 	}
 	else {
-		I286_WORKCLOCK(25);
+		I286_WORKCLOCK(20);
 		src = i286_memoryread(CALC_EA(op));
 	}
 	tmp = (SINT16)I286_AX;
@@ -214,14 +214,14 @@ I286_F6 _neg_ea16(UINT op) {
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
 			src = i286_memoryread_w(madr);
-			WORD_NEG(dst, src)
+			NEGWORD(dst, src)
 			i286_memorywrite_w(madr, (REG16)dst);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
 	src = *out;
-	WORD_NEG(dst, src)
+	NEGWORD(dst, src)
 	*out = (UINT16)dst;
 }
 
@@ -269,7 +269,7 @@ I286_F6 _div_ea16(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_WORKCLOCK(17);
+		I286_WORKCLOCK(22);
 		src = *(REG16_B20(op));
 	}
 	else {
@@ -295,11 +295,11 @@ I286_F6 _idiv_ea16(UINT op) {
 
 	ip = I286_IP;
 	if (op >= 0xc0) {
-		I286_WORKCLOCK(17);
+		I286_WORKCLOCK(25);
 		src = *(REG16_B20(op));
 	}
 	else {
-		I286_WORKCLOCK(25);
+		I286_WORKCLOCK(28);
 		src = i286_memoryread_w(CALC_EA(op));
 	}
 	tmp = (SINT32)((I286_DX << 16) + I286_AX);

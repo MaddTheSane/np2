@@ -9,7 +9,7 @@
 
 
 #define	USE_HIMEM
-#define	MEMORY_DEBUG
+// #define	MEMORY_DEBUG
 
 // ---- write byte
 
@@ -543,7 +543,7 @@ static REG16 MEMCALL grcgw_tcr0(UINT32 address) {
 	if (!(grcg.modereg & 8)) {
 		ret |= LOADINTELWORD(vram + VRAM0_E) ^ grcg.tile[3].w;
 	}
-	return(~ret);
+	return((UINT16)~ret);
 }
 
 static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
@@ -791,7 +791,7 @@ REG8 MEMCALL i286_memoryread(UINT32 address) {
 	REG8	r;
 	r = _i286_memoryread(address);
 	if (r & 0xffffff00) {
-		TRACEOUT(("error i286_memoryread %x", r));
+		TRACEOUT(("error i286_memoryread %x %x", address, r));
 	}
 	return(r);
 }
@@ -802,7 +802,7 @@ REG16 MEMCALL i286_memoryread_w(UINT32 address) {
 
 	r = _i286_memoryread_w(address);
 	if (r & 0xffff0000) {
-		TRACEOUT(("error i286_memoryread_w %x", r));
+		TRACEOUT(("error i286_memoryread_w %x %x", address, r));
 	}
 	return(r);
 }
