@@ -34,33 +34,31 @@
 #include "scrnmng.h"
 
 #include "gtk/xnp2.h"
+#include "gtk/gtkdrawmng.h"
 
 
 typedef struct {
-	BYTE	scrnmode;
-	int	width;
-	int	height;
-	int	extend;
-	int	clipping;
+	BYTE		scrnmode;
+	int		width;
+	int		height;
+	int		extend;
+	int		clipping;
 
-	RGB32	pal16mask;
-	BYTE	r16b;
-	BYTE	l16r;
-	BYTE	l16g;
+	PAL16MASK	pal16mask;
 
-	RECT_T	scrn;
-	RECT_T	rect;
+	RECT_T		scrn;
+	RECT_T		rect;
 
-	int	lpitch;
-	int	scrw;
-	int	scrh;
+	int		lpitch;
+	int		scrw;
+	int		scrh;
 
 	/* toolkit depend */
 	GdkImage	*surface;
 	GdkPixmap	*backsurf;
-	unsigned long	pixel[24];	/* pallete */
-
 	BOOL		shared_pixmap;
+
+	unsigned long	pixel[24];	/* pallete */
 } DRAWMNG;
 
 typedef struct {
@@ -237,37 +235,6 @@ palette_set(void)
 	}
 }
 
-
-static void
-make16mask(UINT32 bmask, UINT32 rmask, UINT32 gmask)
-{
-	BYTE sft;
-
-	sft = 0;
-	while ((!(bmask & 0x80)) && (sft < 32)) {
-		bmask <<= 1;
-		sft++;
-	}
-	drawmng.pal16mask.p.b = (BYTE)bmask;
-	drawmng.r16b = sft;
-
-	sft = 0;
-	while ((rmask & 0xffffff00) && (sft < 32)) {
-		rmask >>= 1;
-		sft++;
-	}
-	drawmng.pal16mask.p.r = (BYTE)rmask;
-	drawmng.l16r = sft;
-
-	sft = 0;
-	while ((gmask & 0xffffff00) && (sft < 32)) {
-		gmask >>= 1;
-		sft++;
-	}
-	drawmng.pal16mask.p.g = (BYTE)gmask;
-	drawmng.l16g = sft;
-}
-
 void
 scrnmng_initialize(void)
 {
@@ -299,43 +266,13 @@ scrnmng_create(BYTE mode)
 		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
 
 		visual = gtk_widget_get_visual(drawarea);
-		switch (visual->type) {
-		case GDK_VISUAL_TRUE_COLOR:
-			break;
-
-		case GDK_VISUAL_PSEUDO_COLOR:
-			break;
-
-		case GDK_VISUAL_DIRECT_COLOR:
-			if (visual->depth > 8) {
-				break;
-			}
-			/* FALLTHROUGH */
-		default:
-			fprintf(stderr, "No support visual class.\n");
-			return 1;
-		}
-
-		if (visual->depth == 32) {
-			bitcolor = 32;
-		} else if (visual->depth == 24) {
-			if (is_32bpp(window->window)) {
-				bitcolor = 32;
-			} else {
-				bitcolor = 24;
-			}
-		} else if (visual->depth == 15 || visual->depth == 16) {
-			bitcolor = 16;
-			make16mask(visual->blue_mask, visual->red_mask, visual->green_mask);
-		} else if (visual->depth == 8) {
-			bitcolor = 8;
+		bitcolor = gtkdrawmng_getbpp(drawarea, window);
+		if (bitcolor == 0) {
+			return FAILURE;
+		} else if (bitcolor == 16) {
+			drawmng_make16mask(&drawmng.pal16mask, visual->blue_mask, visual->red_mask, visual->green_mask);
+		} else if (bitcolor == 8) {
 			palette_init();
-		} else if (visual->depth < 8) {
-			fprintf(stderr, "Too few allocable color.\n");
-			return FAILURE;
-		} else {
-			fprintf(stderr, "No support depth.\n");
-			return FAILURE;
 		}
 		drawmng.extend = 1;
 		bytes_per_pixel = bitcolor >> 3;
@@ -346,12 +283,13 @@ scrnmng_create(BYTE mode)
 			lpitch = rect.right * bytes_per_pixel;
 			if (lpitch % 4) {
 				rect.right += (lpitch % 4) / bytes_per_pixel;
+				lpitch = rect.right * bytes_per_pixel;
 			}
 		} else {
 			rect.right = 480;
 			rect.bottom = 641;
+			lpitch = rect.right * bytes_per_pixel;
 		}
-		lpitch = rect.right * bytes_per_pixel;
 		height = 480;
 
 		drawmng.surface = gdk_image_new(GDK_IMAGE_FASTEST, visual,
@@ -361,6 +299,7 @@ scrnmng_create(BYTE mode)
 			return FAILURE;
 		}
 
+		drawmng.shared_pixmap = use_shared_pixmap;
 		drawmng.backsurf = NULL;
 		if (use_shared_pixmap) {
 			drawmng.backsurf = gdk_pixmap_shpix_new(
@@ -410,10 +349,8 @@ scrnmng_destroy(void)
 RGB16
 scrnmng_makepal16(RGB32 pal32)
 {
-	RGB32 pal;
 
-	pal.d = pal32.d & drawmng.pal16mask.d;
-	return (RGB16)((pal.p.g << drawmng.l16g) + (pal.p.r << drawmng.l16r) + (pal.p.b >> drawmng.r16b));
+	return drawmng_makepal16(&drawmng.pal16mask, pal32);
 }
 
 void
@@ -480,12 +417,12 @@ scrnmng_surfunlock(const SCRNSURF* surf)
 	RECT_T r;
 	gint h, s;
 
-	r.left = drawmng.scrn.left;
-	r.top = drawmng.scrn.top;
-	r.right = drawmng.rect.right;
-	r.bottom = drawmng.rect.bottom;
-
 	if (!drawmng.shared_pixmap) {
+		r.left = drawmng.scrn.left;
+		r.top = drawmng.scrn.top;
+		r.right = drawmng.rect.right;
+		r.bottom = drawmng.rect.bottom;
+
 		if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
 			/* normal */
 			for (s = h = 0; h < r.bottom; h++) {

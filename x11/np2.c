@@ -35,7 +35,7 @@
 #include "timing.h"
 #include "toolkit.h"
 
-#include "keydisp.h"
+#include "kdispwin.h"
 #include "toolwin.h"
 
 #include "commng.h"
@@ -219,7 +219,7 @@ changescreen(BYTE newmode)
 	if (renewal) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			toolwin_destroy();
-			keydisp_destroy();
+			kdispwin_destroy();
 		}
 		soundmng_stop();
 		mouse_running(MOUSE_STOP);
@@ -239,7 +239,7 @@ changescreen(BYTE newmode)
 					toolwin_create();
 				}
 				if (np2oscfg.keydisp) {
-					keydisp_create();
+					kdispwin_create();
 				}
 			}
 		}
@@ -256,7 +256,7 @@ framereset(UINT cnt)
 
 	framecnt = 0;
 	scrnmng_dispclock();
-	keydisp_draw((BYTE)cnt);
+	kdispwin_draw((BYTE)cnt);
 	toolwin_draw((BYTE)cnt);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {

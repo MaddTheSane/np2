@@ -2,7 +2,7 @@
 
 #include "np2.h"
 #include "commng.h"
-#include "keydisp.h"
+#include "kdispwin.h"
 #include "mimpidef.h"
 #include "sound.h"
 

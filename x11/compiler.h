@@ -142,6 +142,10 @@ UINT32 gettick();
 #define	SUPPORT_32BPP
 #define	SUPPORT_NORMALDISP
 
+#if defined(USE_GTK)
+#define	SUPPORT_KEYDISP
+#endif
+
 /*
  * You could specify a complete path, e.g. "/etc/timidity.cfg", and
  * then specify the library directory in the configuration file.

@@ -18,19 +18,10 @@ XCOMM
 XCOMM GUI Toolkit
 XCOMM
 
-#if !defined(DISABLE_GTK)
 GTK_CONFIG?= gtk-config
 GTK_DEFINE= -DUSE_GTK
 GTK_INCLUDE= `$(GTK_CONFIG) --cflags`
 GTK_LIB= `$(GTK_CONFIG) --libs`
-#endif
-
-#if defined(USE_QT)
-QT_CONFIG?=
-QT_DEFINE= -DUSE_QT
-QT_INCLUDE=
-QT_LIB=
-#endif
 
 
 XCOMM
@@ -76,18 +67,17 @@ SYSRESPATH?= $(LIBDIR)/xnp2
 
 DEFINES= ShmDefines \
 	-DSYSRESPATH=\"$(SYSRESPATH)\" \
-	$(SOUND_DEFINE) $(GTK_DEFINE) $(QT_DEFINE) \
+	$(SOUND_DEFINE) $(GTK_DEFINE) \
 	$(CPUFLAGS) 
 
 SYS_LIBRARIES= -lm
 
 EXTRA_INCLUDES= -I. -I.. -I../common -I../bios -I../cbus -I../fdd -I../font \
 		-I../io -I../lio -I../sound -I../sound/vermouth -I../vram \
-		$(PTHREAD_INCLUDE) $(GTK_INCLUDE) $(QT_INCLUDE) \
-		$(SDL_INCLUDE) $(ESD_INCLUDE)
+		-I../generic \
+		$(PTHREAD_INCLUDE) $(GTK_INCLUDE) $(SDL_INCLUDE) $(ESD_INCLUDE)
 
-LOCAL_LIBRARIES= $(XLIB) \
-		$(PTHREAD_LIB) $(GTK_LIB) $(QT_LIB) $(SDL_LIB) $(ESD_LIB)
+LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
 
 #define PassCDebugFlags
 
@@ -123,6 +113,8 @@ FONTOBJS=	../font/font.o ../font/fontdata.o ../font/fontmake.o \
 		../font/fontpc88.o ../font/fontpc98.o ../font/fontv98.o \
 		../font/fontfm7.o ../font/fontx1.o ../font/fontx68k.o \
 
+GENERICOBJS=	../generic/cmndraw.o ../generic/keydisp.o
+
 IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 		../io/crtc.o ../io/dipsw.o ../io/dmac.o ../io/egc.o \
 		../io/extmem.o ../io/fdc.o ../io/fdd320.o ../io/gdc.o \
@@ -157,36 +149,34 @@ VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/dispsync.o ../vram/palettes.o ../vram/maketext.o \
 		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o
 
-X11OBJS=	dosio.o ini.o trace.o cmmidi.o np2.o toolkit.o \
+X11OBJS=	dosio.o ini.o trace.o cmmidi.o np2.o kdispwin.o toolkit.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \
 		main.o
 
 SNDDRVOBJS=	snddrv/esd.o snddrv/netbsd.o snddrv/oss.o snddrv/sdl.o
 
 #if !defined(DISABLE_GTK)
-GTKDEPOBJS=	gtk/gtkdraw.o gtk/gtkfont.o gtk/gtkkeyboard.o \
-		gtk/gtkmenu.o gtk/gtkmouse.o \
+GTKDEPOBJS=	gtk/gtkdraw.o gtk/gtkdrawmng.o gtk/gtkfont.o \
+		gtk/gtkkeyboard.o gtk/gtkmenu.o gtk/gtkmouse.o \
 		gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
 		gtk/dialog_file_selection.o gtk/dialog_midi.o \
 		gtk/dialog_newdisk.o gtk/dialog_screen.o gtk/dialog_sound.o \
+		gtk/window_keydisp.o \
 		gtk/gtkmain.o gtk/gtkwrapper.o
 #endif
 
-#if defined(USE_QT)
-QTDEPOBJS=
-#endif
 
 OBJS=		$(COMMONOBJS) $(BIOSOBJS) $(CBUSOBJS) $(FDDOBJS) $(FONTOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(VERMOUTHOBJS) \
-		$(VRAMOBJS) $(CPUOBJS) \
-		$(X11OBJS) $(SNDDRVOBJS) $(GTKDEPOBJS) $(QTDEPOBJS)
+		$(VRAMOBJS) $(GENERICOBJS) $(CPUOBJS) \
+		$(X11OBJS) $(SNDDRVOBJS) $(GTKDEPOBJS)
 
 CSRCS=		$(COMMONOBJS:.o=.c) $(BIOSOBJS:.o=.c) $(CBUSOBJS:.o=.c) \
 		$(FDDOBJS:.o=.c) $(FONTOBJS:.o=.c) $(IOOBJS:.o=.c) \
 		$(LIOOBJS:.o=.c) $(NP2OBJS:.o=.c) $(SOUNDOBJS:.o=.c) \
-		$(VERMOUTHOBJS:.o=.c) $(VRAMOBJS:.o=.c) $(CPUOBJS:.o=.c) \
-		$(SNDDRVOBJS=.o=.c) $(X11OBJS:.o=.c) \
-		$(GTKDEPOBJS:.o=.c) $(QTDEPOBJS:.o=.c)
+		$(VERMOUTHOBJS:.o=.c) $(VRAMOBJS:.o=.c) $(GENERICOBJS:.o=.c) \
+		$(CPUOBJS:.o=.c) \
+		$(SNDDRVOBJS=.o=.c) $(X11OBJS:.o=.c) $(GTKDEPOBJS:.o=.c)
 SRCS=		$(CSRCS)
 ALLSRCS=	$(ASRCS) $(CSRCS)
 

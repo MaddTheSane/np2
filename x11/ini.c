@@ -315,7 +315,7 @@ iwss_extend:
 static BOOL read_iniread_flag(const INITBL *p);
 
 void
-ini_write(const char *path, const char *title, const INITBL *tbl, UINT count)
+ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BOOL create)
 {
 	char		work[512];
 	const INITBL	*p;
@@ -323,9 +323,17 @@ ini_write(const char *path, const char *title, const INITBL *tbl, UINT count)
 	FILEH		fh;
 	BOOL		set;
 
-	fh = file_create(path);
-	if (fh == FILEH_INVALID)
-		return;
+	fh = FILEH_INVALID;
+	if (!create) {
+		fh = file_open(path);
+		if (fh != FILEH_INVALID)
+			file_seek(fh, 0L, FSEEK_END);
+	}
+	if (fh == FILEH_INVALID) {
+		fh = file_create(path);
+		if (fh == FILEH_INVALID)
+			return;
+	}
 
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
@@ -599,5 +607,5 @@ initsave(void)
 	char path[MAX_PATH];
 
 	milstr_ncpy(path, modulefile, sizeof(path));
-	ini_write(path, ini_title, iniitem, INIITEMS);
+	ini_write(path, ini_title, iniitem, INIITEMS, TRUE);
 }

@@ -42,7 +42,7 @@
 #include "timing.h"
 #include "toolkit.h"
 
-#include "keydisp.h"
+#include "kdispwin.h"
 #include "toolwin.h"
 
 #include "commng.h"
@@ -221,7 +221,7 @@ main(int argc, char *argv[])
 	file_setcd(modulefile);
 	initload();
 	toolwin_readini();
-	keydisp_readini();
+	kdispwin_readini();
 
 	rand_setseed((SINT32)time(NULL));
 
@@ -235,6 +235,8 @@ main(int argc, char *argv[])
 	TRACEINIT();
 
 	keystat_reset();
+
+	kdispwin_initialize();
 
 	toolkit_widget_create();
 	scrnmng_initialize();
@@ -287,7 +289,7 @@ main(int argc, char *argv[])
 			toolwin_create();
 		}
 		if (np2oscfg.keydisp) {
-			keydisp_create();
+			kdispwin_create();
 		}
 	}
 
@@ -310,7 +312,7 @@ main(int argc, char *argv[])
 	np2running = FALSE;
 	rv = 0;
 
-	keydisp_destroy();
+	kdispwin_destroy();
 	toolwin_destroy();
 
 	pccore_cfgupdate();
@@ -333,7 +335,7 @@ resource_cleanup:
 	if (sys_updates & (SYS_UPDATECFG|SYS_UPDATEOSCFG)) {
 		initsave();
 		toolwin_writeini();
-		keydisp_writeini();
+		kdispwin_writeini();
 	}
 
 	TRACETERM();

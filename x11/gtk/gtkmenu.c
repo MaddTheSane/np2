@@ -50,7 +50,7 @@
 #include "pc9861k.h"
 #include "s98.h"
 #include "scrnbmp.h"
-#include "keydisp.h"
+#include "kdispwin.h"
 #include "toolwin.h"
 
 #include "mousemng.h"
@@ -59,7 +59,6 @@
 
 
 static void disable_item(const char *);
-static void select_item(const char *);
 
 static void disable_unused_items(void);
 
@@ -196,7 +195,7 @@ _create_about_dialog(gpointer p, guint action, GtkWidget *w)
  */
 #define	f(f)	((GtkItemFactoryCallback)(f))
 static GtkItemFactoryEntry menu_items[] = {
-{ "/_Emulate", 			NULL, NULL, 0, "<Branch>" },
+{ "/Emulate", 			NULL, NULL, 0, "<Branch>" },
 { "/Emulate/_Reset", 		NULL, f(reset), 0, NULL },
 { "/Emulate/sep1",		NULL, NULL, 0, "<Separator>" },
 { "/Emulate/_Configure...",	NULL, f(_create_configure_dialog), 0, NULL },
@@ -206,7 +205,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Emulate/_Font...",		NULL, f(change_font), 0, NULL },
 { "/Emulate/sep2",		NULL, NULL, 0, "<Separator>" },
 { "/Emulate/E_xit",		NULL, f(exit_from_menu), 0, NULL },
-{ "/_FDD",			NULL, NULL, 0, "<Branch>" },
+{ "/FDD",			NULL, NULL, 0, "<Branch>" },
 { "/FDD/Drive_1",		NULL, NULL, 0, "<Branch>" },
 { "/FDD/Drive1/_Open...",	NULL, f(fddopen), 0, NULL },
 { "/FDD/Drive1/_Eject",		NULL, f(fddeject), 0, NULL },
@@ -215,7 +214,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/FDD/Drive2/_Eject",		NULL, f(fddeject), 1, NULL },
 { "/FDD/sep1",			NULL, NULL, 0, "<Separator>" },
 { "/FDD/_Eject All",		NULL, f(fddeject), ~0, NULL },
-{ "/_HardDisk",			NULL, NULL, 0, "<Branch>" },
+{ "/HardDisk",			NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-_1",		NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-1/_Open...",	NULL, f(sasiopen), 0, NULL },
 { "/HardDisk/SASI-1/_Remove",	NULL, f(sasiremove), 0, NULL },
@@ -224,7 +223,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/HardDisk/SASI-2/_Remove",	NULL, f(sasiremove), 1, NULL },
 { "/HardDisk/sep1",		NULL, NULL, 0, "<Separator>" },
 { "/HardDisk/_Remove All",	NULL, f(sasiremove), ~0, NULL },
-{ "/_Screen",			NULL, NULL, 0, "<Branch>" },
+{ "/Screen",			NULL, NULL, 0, "<Branch>" },
 { "/Screen/_Window",		NULL, NULL, 0, "<RadioItem>" },
 { "/Screen/_FullScreen",	NULL, NULL, 0, "/Screen/Window" },
 { "/Screen/sep1",		NULL, NULL, 0, "<Separator>" },
@@ -242,7 +241,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Screen/_15 fps",		NULL, f(framerate), FRAME_15, "/Screen/20 fps"},
 { "/Screen/sep3",		NULL, NULL, 0, "<Separator>" },
 { "/Screen/_Screen option...",	NULL, f(_create_screen_dialog), 0, NULL },
-{ "/_Device",			NULL, NULL, 0, "<Branch>" },
+{ "/Device",			NULL, NULL, 0, "<Branch>" },
 { "/Device/_Keyboard",		NULL, NULL, 0, "<Branch>" },
 { "/Device/Keyboard/_Keyboard",	NULL, f(keyboard), 0, "<RadioItem>" },
 { "/Device/Keyboard/Joykey-_1",	NULL, f(keyboard), 1, "/Device/Keyboard/Keyboard"},
@@ -274,7 +273,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Device/Sound/_AMD98",	NULL, f(sound_board), SPARK_BOARD, "/Device/Sound/Spark board" },
 { "/Device/Sound/sep2",		NULL, NULL, 0, "<Separator>" },
 { "/Device/Sound/_Seek Sound",	NULL, NULL, 0, "<ToggleItem>" },
-{ "/Device/Memory",		NULL, NULL, 0, "<Branch>" },
+{ "/Device/M_emory",		NULL, NULL, 0, "<Branch>" },
 { "/Device/Memory/64_0KB",	NULL, f(memory), 0, "<RadioItem>" },
 { "/Device/Memory/_1.6MB",	NULL, f(memory), 1, "/Device/Memory/640KB" },
 { "/Device/Memory/_3.6MB",	NULL, f(memory), 2, "/Device/Memory/1.6MB" },
@@ -297,7 +296,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Device/MIDI _Panic",	NULL, f(midi_panic), 0, NULL },
 { "/Device/sep3",		NULL, NULL, 0, "<Separator>" },
 { "/Device/So_und option...",	NULL, f(_create_sound_dialog), 0, NULL },
-{ "/_Other",			NULL, NULL, 0, "<Branch>" },
+{ "/Other",			NULL, NULL, 0, "<Branch>" },
 { "/Other/_BMP Save...",	NULL, f(bmpsave), 0, NULL },
 { "/Other/_S98 logging...",	NULL, f(toggle), S98_LOGGING, "<ToggleItem>" },
 { "/Other/Ca_lendar...",	NULL, f(_create_calendar_dialog), 0, NULL },
@@ -340,7 +339,7 @@ static struct {
 	{ "/Other/Key Display",			0, SYS_UPDATEOSCFG },
 };
 
-static GtkItemFactory *item_factory;
+static _MENU_HDL menu_hdl;
 static BOOL inited = FALSE;
 
 /*
@@ -352,8 +351,8 @@ create_menu(GtkWidget *w)
 	GtkAccelGroup *accel_group;
 
 	accel_group = gtk_accel_group_new();
-	item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
-	gtk_item_factory_create_items(item_factory, NELEMENTS(menu_items), menu_items, NULL);
+	menu_hdl.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
+	gtk_item_factory_create_items(menu_hdl.item_factory, NELEMENTS(menu_items), menu_items, NULL);
 	gtk_accel_group_attach(accel_group, GTK_OBJECT(w));
 
 	disable_unused_items();
@@ -382,7 +381,7 @@ create_menu(GtkWidget *w)
 
 	inited = 1;
 
-	return gtk_item_factory_get_widget(item_factory, "<main>");
+	return gtk_item_factory_get_widget(menu_hdl.item_factory, "<main>");
 }
 
 static void
@@ -391,7 +390,6 @@ disable_unused_items(void)
 	static const char *items[] = {
 		"/Screen/FullScreen",
 		"/Other/Tool Window",
-		"/Other/Key Display",
 #if defined(NOSOUND)
 		"/Device/Sound/Beep low",
 		"/Device/Sound/Beep mid",
@@ -419,19 +417,19 @@ disable_unused_items(void)
 static void
 disable_item(const char* name)
 {
-	GtkWidget *menu_item;
+	GtkWidget *w;
 
-	menu_item = gtk_item_factory_get_widget(item_factory, name);
-	gtk_widget_set_sensitive(menu_item, FALSE);
+	w = gtk_item_factory_get_widget(menu_hdl.item_factory, name);
+	gtk_widget_set_sensitive(w, FALSE);
 }
 
-static void
-select_item(const char* name)
+void
+xmenu_select_item(MENU_HDL hdl, const char* name)
 {
-	GtkWidget *menu_item;
+	GtkWidget *w;
 
-	menu_item = gtk_item_factory_get_widget(item_factory, name);
-	gtk_signal_emit_by_name(GTK_OBJECT(menu_item), "activate-item");
+	w = gtk_item_factory_get_widget(hdl->item_factory, name);
+	gtk_signal_emit_by_name(GTK_OBJECT(w), "activate-item");
 }
 
 void
@@ -442,7 +440,7 @@ xmenu_toggle_item(int arg, int onoff, int emitp)
 		if (onoff != toggle_items[arg].stat) {
 			toggle_items[arg].stat = onoff;
 			if (emitp)
-				select_item(toggle_items[arg].name);
+				xmenu_select_item(&menu_hdl, toggle_items[arg].name);
 			if (inited && arg != MOUSE_MODE) {
 				sysmng_update(toggle_items[arg].flag);
 			}
@@ -462,7 +460,7 @@ xmenu_select_framerate(int kind)
 	};
 
 	if (kind < NUM_FRAMERATE) {
-		select_item(name[kind]);
+		xmenu_select_item(&menu_hdl, name[kind]);
 		sysmng_update(SYS_UPDATECFG);
 	}
 }
@@ -479,14 +477,14 @@ xmenu_select_beepvol(int kind)
 	};
 
 	if (kind < NUM_BEEP) {
-		select_item(name[kind]);
+		xmenu_select_item(&menu_hdl, name[kind]);
 		sysmng_update(SYS_UPDATECFG);
 	}
 #else
 	UNUSED(kind);
 
 	np2cfg.BEEP_VOL = 0;
-	select_item("/Device/Sound/Beep off");
+	xmenu_select_item(&menu_hdl, "/Device/Sound/Beep off");
 #endif
 }
 
@@ -512,7 +510,7 @@ xmenu_select_soundboard(int kind)
 
 	for (i = 0; i < NELEMENTS(soundboard); i++) {
 		if (kind == soundboard[i].num) {
-			select_item(soundboard[i].name);
+			xmenu_select_item(&menu_hdl, soundboard[i].name);
 			sysmng_update(SYS_UPDATECFG);
 			break;
 		}
@@ -521,7 +519,7 @@ xmenu_select_soundboard(int kind)
 	UNUSED(kind);
 
 	np2cfg.SOUND_SW = 0;
-	select_item("/Device/Sound/Disable board");
+	xmenu_select_item(&menu_hdl, "/Device/Sound/Disable board");
 #endif
 }
 
@@ -544,12 +542,12 @@ xmenu_select_extmem(int kind)
 
 	for (i = 0; i < NELEMENTS(extmem); i++) {
 		if (kind == extmem[i].num) {
-			select_item(extmem[i].name);
+			xmenu_select_item(&menu_hdl, extmem[i].name);
 			sysmng_update(SYS_UPDATECFG);
 			return;
 		}
 	}
-	select_item("/Device/Memory/1.6MB");
+	xmenu_select_item(&menu_hdl, "/Device/Memory/1.6MB");
 	sysmng_update(SYS_UPDATECFG);
 }
 
@@ -572,12 +570,12 @@ xmenu_select_mouse_move_ratio(int kind)
 
 	for (i = 0; i < NELEMENTS(moveratio); i++) {
 		if (kind == moveratio[i].num) {
-			select_item(moveratio[i].name);
+			xmenu_select_item(&menu_hdl, moveratio[i].name);
 			sysmng_update(SYS_UPDATEOSCFG);
 			return;
 		}
 	}
-	select_item("/Device/Mouse/x1.0");
+	xmenu_select_item(&menu_hdl, "/Device/Mouse/x1.0");
 	sysmng_update(SYS_UPDATEOSCFG);
 }
 
@@ -1128,9 +1126,9 @@ toggle(gpointer data, guint action, GtkWidget *w)
 		np2oscfg.keydisp = !np2oscfg.keydisp;
 		xmenu_toggle_item(KEY_DISPLAY, np2oscfg.keydisp, FALSE);
 		if (np2oscfg.keydisp) {
-			keydisp_create();
+			kdispwin_create();
 		} else {
-			keydisp_destroy();
+			kdispwin_destroy();
 		}
 		break;
 

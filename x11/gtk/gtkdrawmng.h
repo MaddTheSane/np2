@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2003 NONAKA Kimihiro
+ * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,52 +25,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	NP2_GTK_GTKMENU_H__
-#define	NP2_GTK_GTKMENU_H__
+#ifndef	NP2_X11_GTK_GTKDRAWMNG_H__
+#define	NP2_X11_GTK_GTKDRAWMNG_H__
+
+#include "compiler.h"
+
+#include "cmndraw.h"
+
+#include "gtk/xnp2.h"
 
 typedef struct {
-	GtkItemFactory *item_factory;
-} _MENU_HDL, *MENU_HDL;
+	RGB32	mask;
+	BYTE	r16b;
+	BYTE	l16r;
+	BYTE	l16g;
+} PAL16MASK;
 
-enum {
-	DISP_VSYNC,
-	REAL_PALETTES,
-	NO_WAIT,
-	SEEK_SOUND,
-	MOUSE_MODE,
-	XSHIFT_SHIFT,
-	XSHIFT_CTRL,
-	XSHIFT_GRPH,
-	CLOCK_DISP,
-	FRAME_DISP,
-	JOY_REVERSE,
-	JOY_RAPID,
-	MOUSE_RAPID,
-	S98_LOGGING,
-	TOOL_WINDOW,
-	KEY_DISPLAY,
-	NUM_TOGGLE_ITEMS
-};
+void drawmng_make16mask(PAL16MASK *pal16, UINT32 bmask, UINT32 rmask, UINT32 gmask);
+RGB16 drawmng_makepal16(PAL16MASK *pal16, RGB32 pal32);
 
-GtkWidget *create_menu(GtkWidget *);
+typedef struct {
+	CMNVRAM		vram;
 
-void xmenu_toggle_item(int, int, int);
-void xmenu_select_item(MENU_HDL, const char *);
+	int		width;
+	int		height;
+	int		lpitch;
 
-typedef BOOL file_selection_ok_callback(void *arg, const char *path);
-typedef void file_selection_destrroy_callback(void *arg, BOOL result);
+	RECT_T		src;
+	POINT_T		dest;
 
-void create_file_selection(const char *, const char *, void *,
-                              file_selection_ok_callback *,
-                              file_selection_destrroy_callback *);
+	PAL16MASK	pal16mask;
 
+	GtkWidget	*drawarea;
+	GdkImage	*surface;
+	GdkPixmap	*backsurf;
+	BOOL		shared_pixmap;
+} _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
 
-void create_about_dialog(void);
-void create_calendar_dialog(void);
-void create_configure_dialog(void);
-void create_midi_dialog(void);
-void create_screen_dialog(void);
-void create_sound_dialog(void);
-void create_newdisk_dialog(const char *filebasename, const char *fileextname);
+GTKDRAWMNG_HDL gtkdrawmng_create(GtkWidget *parent, int width, int height);
+void gtkdrawmng_release(GTKDRAWMNG_HDL hdl);
+CMNVRAM *gtkdrawmng_surflock(GTKDRAWMNG_HDL hdl);
+void gtkdrawmng_surfunlock(GTKDRAWMNG_HDL hdl);
+void gtkdrawmng_blt(GTKDRAWMNG_HDL hdl, RECT_T *sr, POINT_T *dp);
+void gtkdrawmng_set_size(GTKDRAWMNG_HDL hdl, int width, int height);
 
-#endif	/* NP2_GTK_GTKMENU_H__ */
+int gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window);
+
+#endif	/* NP2_X11_GTK_GTKDRAWMNG_H__ */
