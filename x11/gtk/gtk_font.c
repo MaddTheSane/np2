@@ -62,7 +62,7 @@ fontmng_terminate(void)
 }
 
 void
-fontmng_setdeffontname(const char *name)
+fontmng_setdeffontname(const TCHAR *name)
 {
 
 	/* これじゃ無理 */
