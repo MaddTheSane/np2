@@ -33,14 +33,16 @@ static IDEDEV getidedev(void) {
 static IDEDRV getidedrv(void) {
 
 	IDEDEV	dev;
+	IDEDRV	drv;
 
 	dev = getidedev();
 	if (dev) {
-		return(dev->drv + dev->drivesel);
+		drv = dev->drv + dev->drivesel;
+		if (drv->device != IDETYPE_NONE) {
+			return(drv);
+		}
 	}
-	else {
-		return(NULL);
-	}
+	return(NULL);
 }
 
 static const char serial[] = "824919341192        ";
@@ -339,9 +341,43 @@ static void IOOUTCALL ideio_o64c(UINT port, REG8 dat) {
 
 static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 
-	IDEDRV	drv, d;
+	IDEDRV	drv;
 	IDEDEV	dev;
-	int		i;
+
+	// execute device diagnostic
+	if (dat == 0x90) {
+		TRACEOUT(("ideio set cmd %.2x [%.4x:%.8x]", dat, CPU_CS, CPU_EIP));
+		TRACEOUT(("ideio: execute device diagnostic"));
+		dev = getidedev();
+		if (dev) {
+			IDEDRV d;
+			int i;
+
+			for (i = 0; i < 2; i++) {
+				d = dev->drv + i;
+				d->hd = 0x00;
+				d->sc = 0x01;
+				d->sn = 0x01;
+				d->cy = 0x0000;
+				d->status = IDESTAT_DRDY;
+				d->error = 0x01;
+				if (i == 0) {
+					if (dev->drv[0].device == IDETYPE_NONE) {
+						d->error = 0x00;
+					}
+					if (dev->drv[1].device == IDETYPE_NONE) {
+						d->error |= 0x80;
+					}
+				}
+				else {
+					if (dev->drv[1].device == IDETYPE_NONE) {
+						d->error = 0x00;
+					}
+				}
+			}
+		}
+		return;
+	}
 
 	drv = getidedrv();
 	if (drv == NULL) {
@@ -352,7 +388,11 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 	switch(dat) {
 		case 0x08:		// device reset
 			TRACEOUT(("ideio: device reset"));
-			if (drv->device == IDETYPE_HDD) {
+			if (drv->device == IDETYPE_NONE) {
+				cmdabort(drv);
+				break;
+			}
+			else if (drv->device == IDETYPE_HDD) {
 				drv->hd = 0x00;
 				drv->sc = 0x01;
 				drv->sn = 0x01;
@@ -382,9 +422,7 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 					}
 				}
 			}
-			if (drv->device != IDETYPE_NONE) {
-				setintr(drv);
-			}
+			setintr(drv);
 			break;
 
 		case 0x10:		// calibrate
@@ -411,53 +449,10 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 			readsec(drv);
 			break;
 
-		case 0x90:		// execute device diagnostic
-			TRACEOUT(("ideio: execute device diagnostic"));
-			dev = getidedev();
-			if (dev) {
-				for (i = 0; i < 2; i++) {
-					d = dev->drv + i;
-					if (d->device == IDETYPE_HDD) {
-						d->hd = 0x00;
-						d->sc = 0x01;
-						d->sn = 0x01;
-						d->cy = 0x0000;
-					}
-					else if (d->device == IDETYPE_CDROM) {
-						d->hd = 0x10;
-						d->sc = 0x01;
-						d->sn = 0x01;
-						d->cy = 0xeb14;
-					}
-					d->status = IDESTAT_DRDY;
-					d->error = 0x01;
-					if (i == 0) {
-						if (dev->drv[0].device == IDETYPE_NONE) {
-							d->error = 0x00;
-						}
-						if (dev->drv[1].device == IDETYPE_NONE) {
-							d->error |= 0x80;
-						}
-					}
-					else {
-						if (dev->drv[1].device == IDETYPE_NONE) {
-							d->error = 0x00;
-						}
-					}
-				}
-				if (drv->device != IDETYPE_NONE) {
-					setintr(drv);
-				}
-			}
-			else {
-				cmdabort(drv);
-			}
-			break;
-
 		case 0x91:		// set parameters
 			TRACEOUT(("ideio: set parameters dh=%x sec=%x",
 											drv->dr | drv->hd, drv->sc));
-			if (drv->device) {
+			if (drv->device != IDETYPE_NONE) {
 				drv->surfaces = drv->hd + 1;
 				drv->sectors = drv->sc;
 				drv->status &= ~(IDESTAT_BSY | IDESTAT_DRQ | IDESTAT_ERR);
