@@ -102,7 +102,7 @@ static MENUHDL append1(MENUSYS *sys, const MSYSITEM *item) {
 	hdl.id = item->id;
 	hdl.flag = item->flag & (~MENU_DELETED);
 	if (item->string) {
-		milstr_ncpy(hdl.string, item->string, sizeof(hdl.string));
+		milsjis_ncpy(hdl.string, item->string, sizeof(hdl.string));
 	}
 	ret = (MENUHDL)listarray_enum(sys->res, seaempty, NULL);
 	if (ret) {
@@ -687,7 +687,7 @@ BOOL menusys_create(const MSYSITEM *item, void (*cmd)(MENUID id),
 	}
 	ret->cmd = cmd;
 	if (title) {
-		milstr_ncpy(ret->title, title, sizeof(ret->title));
+		milsjis_ncpy(ret->title, title, sizeof(ret->title));
 	}
 	r = listarray_new(sizeof(_MENUHDL), 32);
 	if (r == NULL) {
@@ -1051,7 +1051,7 @@ static void menusys_settxt(MENUID id, void *arg) {
 	}
 
 	if (arg) {
-		milstr_ncpy(itm->string, (char *)arg, sizeof(itm->string));
+		milsjis_ncpy(itm->string, (char *)arg, sizeof(itm->string));
 	}
 	else {
 		itm->string[0] = '\0';

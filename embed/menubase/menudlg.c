@@ -123,7 +123,7 @@ static DLGPRM resappend(MENUDLG dlg, const char *str) {
 		prm->icon = NULL;
 		prm->str[0] = '\0';
 		if (str) {
-			milstr_ncpy(prm->str, str, sizeof(prm->str));
+			milsjis_ncpy(prm->str, str, sizeof(prm->str));
 		}
 	}
 	return(prm);
@@ -733,7 +733,7 @@ static BOOL dlglist_setex(MENUDLG dlg, DLGHDL hdl, const ITEMEXPRM *arg) {
 	}
 	resattachicon(dlg, dp, arg->icon, hdl->c.dl.fontsize,
 											hdl->c.dl.fontsize);
-	milstr_ncpy(dp->str, arg->str, sizeof(dp->str));
+	milsjis_ncpy(dp->str, arg->str, sizeof(dp->str));
 	return(dlglist_drawsub(hdl, arg->pos, (arg->pos == hdl->val)));
 }
 
@@ -1562,7 +1562,7 @@ const void	*str;
 		if (str == NULL) {
 			str = str_null;
 		}
-		milstr_ncpy(hdl->prm->str, str, sizeof(hdl->prm->str));
+		milsjis_ncpy(hdl->prm->str, str, sizeof(hdl->prm->str));
 		fontmng_getsize(hdl->c.dt.font, str, &hdl->c.dt.pt);
 	}
 	(void)dlg;
