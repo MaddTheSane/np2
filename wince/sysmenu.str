@@ -72,6 +72,7 @@ static const char str_pc9801118[] = "PC-9801-118";
 static const char str_spreakboard[] = "Speak board";
 static const char str_sparkboard[] = "Spark board";
 static const char str_amd98[] = "AMD-98";
+static const char str_jastsnd[] = "JAST SOUND";
 static const char str_seeksound[] = "Seek Sound";
 
 static const char str_memory[] = "Memory";
@@ -197,6 +198,7 @@ static const MSYSITEM s_snd[] = {
 		{str_spreakboard,	NULL,		MID_SPEAKBOARD,		0},
 		{str_sparkboard,	NULL,		MID_SPARKBOARD,		0},
 		{str_amd98,			NULL,		MID_AMD98,			0},
+		{str_jastsnd,		NULL,		MID_JASTSND,		0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_seeksound,		NULL,		MID_SEEKSND,		MENU_DELETED}};
 

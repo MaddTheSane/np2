@@ -58,7 +58,7 @@ static	const char	szClassName[] = "NP2-MainWindow";
 
 
 		NP2OSCFG	np2oscfg = {
-						CW_USEDEFAULT, CW_USEDEFAULT, 0, 2,
+						CW_USEDEFAULT, CW_USEDEFAULT, 0, 0,
 						KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
 						0, 0};

@@ -34,7 +34,7 @@
 #define	USE_RESUME
 
 
-		NP2OSCFG	np2oscfg = {100, 100, 0, 2, 0, 0,  0, 0, 0, 0};
+		NP2OSCFG	np2oscfg = {100, 100,  0, 0, 0, 0,  0, 0, 0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;

@@ -1,6 +1,8 @@
 #include	"compiler.h"
+#include	"np2.h"
 #include	"commng.h"
 #include	"cmver.h"
+#include	"cmjasts.h"
 
 
 // ---- non connect
@@ -54,6 +56,11 @@ COMMNG commng_create(UINT device) {
 	ret = NULL;
 	if (device == COMCREATE_MPU98II) {
 		ret = cmvermouth_create();
+	}
+	else if (device == COMCREATE_PRINTER) {
+		if (np2oscfg.jastsnd) {
+			ret = cmjasts_create();
+		}
 	}
 	if (ret == NULL) {
 		ret = (COMMNG)&com_nc;

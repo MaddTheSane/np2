@@ -363,6 +363,7 @@ static const INITBL iniitem[] = {
 	{"pbindcur", INITYPE_UINT8,		&np2oscfg.bindcur,		0},
 	{"pbindbtn", INITYPE_UINT8,		&np2oscfg.bindbtn,		0},
 #endif
+	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
 };
 
 

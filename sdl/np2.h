@@ -4,6 +4,7 @@ typedef struct {
 	BYTE	DRAW_SKIP;
 	BYTE	F12KEY;
 	BYTE	resume;
+	BYTE	jastsnd;
 } NP2OSCFG;
 
 

@@ -302,6 +302,15 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case MID_JASTSND:
+			np2oscfg.jastsnd ^= 1;
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case MID_SEEKSND:
+			np2cfg.MOTOR ^= 1;
+			update |= SYS_UPDATECFG;
+			break;
 #if 0
 		case IDM_SNDOPT:
 			winuienter();
@@ -309,11 +318,6 @@ static void sys_cmd(MENUID id) {
 			winuileave();
 			break;
 #endif
-		case MID_SEEKSND:
-			np2cfg.MOTOR ^= 1;
-			update |= SYS_UPDATECFG;
-			break;
-
 		case MID_MEM640:
 			np2cfg.EXTMEM = 0;
 			update |= SYS_UPDATECFG;
@@ -514,6 +518,7 @@ BOOL sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_SPEAKBOARD, (b == 0x20));
 	menusys_setcheck(MID_SPARKBOARD, (b == 0x40));
 	menusys_setcheck(MID_AMD98, (b == 0x80));
+	menusys_setcheck(MID_JASTSND, (np2oscfg.jastsnd & 1));
 	menusys_setcheck(MID_SEEKSND, (np2cfg.MOTOR & 1));
 	b = np2cfg.EXTMEM;
 	menusys_setcheck(MID_MEM640, (b == 0));

@@ -42,14 +42,14 @@ static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
 static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 
 
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0,
+		NP2OSCFG	np2oscfg = {0, 0, 0, 0,
 #if !defined(GX_DLL)
 								CW_USEDEFAULT, CW_USEDEFAULT,
 #endif
 #if defined(WIN32_PLATFORM_PSPC)
 								0, 0,
 #endif
-							};
+								0};
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;

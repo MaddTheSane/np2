@@ -60,7 +60,7 @@ NP2OSCFG np2oscfg = {
 	0,			/* paddingy */
 
 	0,			/* NOWAIT */
-	2,			/* DRAW_SKIP */
+	0,			/* DRAW_SKIP */
 
 	0,			/* DISPCLK */
 

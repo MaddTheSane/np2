@@ -25,7 +25,6 @@ typedef struct {
 
 	BYTE	background;
 	BYTE	DISPCLK;
-
 	BYTE	KEYBOARD;
 	BYTE	F12COPY;
 

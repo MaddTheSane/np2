@@ -13,6 +13,8 @@ typedef struct {
 	BYTE	bindcur;
 	BYTE	bindbtn;
 #endif
+
+	BYTE	jastsnd;
 } NP2OSCFG;
 
 

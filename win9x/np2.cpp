@@ -66,7 +66,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 
 		NP2OSCFG	np2oscfg = {
 						"Neko Project II", "NP2",
-						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 1, 0, 2,
+						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 1, 0, 0,
 						0, 0, KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
 						{5, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
