@@ -29,7 +29,7 @@ typedef struct {
 	UINT	rate;
 	UINT	vol;
 	UINT	puchibase;
-	UINT	sampleclock;
+	UINT	samplebase;
 } BEEPCFG;
 
 
@@ -41,6 +41,7 @@ extern	_BEEP		beep;
 
 void beep_initialize(UINT rate);
 void beep_setvol(UINT vol);
+void beep_changeclock(void);
 
 void beep_reset(void);
 void beep_hzset(UINT16 cnt);

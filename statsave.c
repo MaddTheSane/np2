@@ -50,7 +50,6 @@ enum {
 	NP2FLAG_EVT,
 	NP2FLAG_GIJ,
 	NP2FLAG_FM,
-	NP2FLAG_BEEP,
 	NP2FLAG_MIDI,
 	NP2FLAG_DISK
 };
@@ -355,6 +354,7 @@ static int flagload_clock(NP2FFILE *f, const STENTRY *t) {
 
 	ret = flagload_common(f, t);
 	sound_changeclock();
+	beep_changeclock();
 	return(ret);
 }
 
@@ -1161,7 +1161,6 @@ int statsave_save(const char *filename) {
 		switch(np2tbl[i].type) {
 			case NP2FLAG_BIN:
 			case NP2FLAG_CLOCK:
-			case NP2FLAG_BEEP:
 				ret |= flagsave_common(&f, &np2tbl[i]);
 				break;
 
@@ -1257,7 +1256,6 @@ int statsave_check(const char *filename, char *buf, int size) {
 					case NP2FLAG_EXT:
 					case NP2FLAG_EVT:
 					case NP2FLAG_GIJ:
-					case NP2FLAG_BEEP:
 #if defined(MIDICH)
 					case NP2FLAG_MIDI:
 #endif
@@ -1322,7 +1320,6 @@ int statsave_load(const char *filename) {
 		if (i < (sizeof(np2tbl)/sizeof(STENTRY))) {
 			switch(np2tbl[i].type) {
 				case NP2FLAG_BIN:
-				case NP2FLAG_BEEP:
 					ret |= flagload_common(&f, &np2tbl[i]);
 					break;
 

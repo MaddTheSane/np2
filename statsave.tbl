@@ -97,7 +97,7 @@ static const STENTRY np2tbl[] = {
 	{"CALENDAR",	0,	NP2FLAG_BIN,	&cal,			sizeof(cal)},
 	{"PALEVENT",	0,	NP2FLAG_BIN,	&palevent,		sizeof(palevent)},
 	{"FMBOARD",		0,	NP2FLAG_FM,		NULL,			0},
-	{"BEEP",		0,	NP2FLAG_BEEP,	&beep,			sizeof(beep)},
+	{"BEEP",		0,	NP2FLAG_BIN,	&beep,			sizeof(beep)},
 #if defined(MIDICH)
 	{"MIDI_MPU",	0,	NP2FLAG_MIDI,	(void *)0,		0},
 	{"MIDI_RS",		0,	NP2FLAG_MIDI,	(void *)1,		0},

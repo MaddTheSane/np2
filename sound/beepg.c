@@ -14,11 +14,11 @@ static void oneshot(BEEP bp, SINT32 *pcm, UINT count) {
 	SINT32	remain;
 	BPEVENT	*bev;
 
-	vol = beepcfg.vol << 11;
+	vol = beepcfg.vol;
 	bev = bp->event;
 
 	do {
-		remain = beepcfg.sampleclock;
+		remain = (1 << 16);
 		samp = 0;
 		while(remain >= bev->clock) {
 			if (--bp->events) {
@@ -33,7 +33,7 @@ static void oneshot(BEEP bp, SINT32 *pcm, UINT count) {
 				if (bp->lastenable) {
 					samp += remain;
 					samp *= vol;
-					samp /= beepcfg.sampleclock;
+					samp >>= (16 - 11);
 					do {
 						pcm[0] += samp;
 						pcm[1] += samp;
@@ -43,7 +43,7 @@ static void oneshot(BEEP bp, SINT32 *pcm, UINT count) {
 				}
 				else {
 					samp *= vol;
-					samp /= beepcfg.sampleclock;
+					samp >>= (16 - 11);
 					pcm[0] += samp;
 					pcm[1] += samp;
 				}
@@ -56,7 +56,7 @@ static void oneshot(BEEP bp, SINT32 *pcm, UINT count) {
 			samp += remain;
 		}
 		samp *= vol;
-		samp /= beepcfg.sampleclock;
+		samp >>= (16 - 11);
 		pcm[0] += samp;
 		pcm[1] += samp;
 		pcm += 2;
@@ -87,7 +87,7 @@ void SOUNDCALL beep_getpcm(BEEP bp, SINT32 *pcm, UINT count) {
 
 	if ((count) && (beepcfg.vol)) {
 		if (bp->mode == 0) {
-			if ((bp->events) && (beepcfg.sampleclock)) {
+			if (bp->events) {
 				oneshot(bp, pcm, count);
 			}
 		}

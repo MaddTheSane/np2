@@ -281,6 +281,7 @@ void pccore_reset(void) {
 
 	setpcclock(np2cfg.baseclock, np2cfg.multiple);
 	sound_changeclock();
+	beep_changeclock();
 	nevent_init();
 
 	sound_reset();

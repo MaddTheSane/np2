@@ -23,19 +23,22 @@ void beep_setvol(UINT vol) {
 	beepcfg.vol = vol & 3;
 }
 
+void beep_changeclock(void) {
+
+	UINT32	hz;
+	UINT	rate;
+
+	hz = pc.realclock / 25;
+	rate = beepcfg.rate / 25;
+	beepcfg.samplebase = (1 << 16) * rate / hz;
+}
+
 void beep_reset(void) {
 
-	if (beepcfg.rate) {
-		beepcfg.sampleclock = (pc.realclock / beepcfg.rate);
-//		TRACEOUT(("%d %d", pc.realclock, beepcfg.rate));
-	}
-	else {
-		beepcfg.sampleclock = 0;
-	}
+	beep_changeclock();
 	ZeroMemory(&beep, sizeof(beep));
 	beep.mode = 1;
 }
-
 
 void beep_hzset(UINT16 cnt) {
 
@@ -81,10 +84,9 @@ static void beep_eventset(void) {
 			clock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 			evt = beep.event + beep.events;
 			beep.events++;
-			evt->clock = clock - beep.clock;
+			evt->clock = (clock - beep.clock) * beepcfg.samplebase;
 			evt->enable = enable;
 			beep.clock = clock;
-//			TRACEOUT(("%d %d", evt->clock, evt->enable));
 		}
 	}
 }
