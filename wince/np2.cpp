@@ -51,7 +51,7 @@ static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
-		char		modulefile[MAX_PATH];
+		OEMCHAR		modulefile[MAX_PATH];
 		GXKeyList	gx_keylist;
 
 enum {
@@ -316,37 +316,37 @@ static void processwait(UINT cnt) {
 
 // ----
 
-#if !defined(UNICODE)
-#define	GetModuleFileName_A(a, b, c)	GetModuleFileName(a, b, c)
-#else
-static DWORD GetModuleFileName_A(HMODULE hModule,
-								LPSTR lpFileName, DWORD nSize) {
+#if defined(UNICODE) && defined(OSLANG_SJIS)
+static DWORD _GetModuleFileName(HMODULE hModule,
+										OEMCHAR *lpFileName, DWORD nSize) {
 
-	TCHAR	*FileNameW;
-	DWORD	len;
+	UINT16	ucs2[MAX_PATH];
 
-	if (nSize) {
-		FileNameW = (TCHAR *)_MALLOC(nSize * sizeof(TCHAR), "ModuleFile");
-		if (FileNameW) {
-			len = GetModuleFileName(hModule, FileNameW, nSize);
-#if defined(OSLANG_SJIS)
-			nSize = WideCharToMultiByte(CP_ACP, 0, FileNameW, -1,
+	GetModuleFileName(hModule, ucs2, NELEMENTS(ucs2));
+	nSize = WideCharToMultiByte(CP_ACP, 0, ucs2, -1,
 										lpFileName, nSize, NULL, NULL);
-#else
-			nSize = ucscnv_ucs2toutf8(lpFileName, (UINT)-1, FileNameW, nSize);
-#endif
-			if (nSize) {
-				nSize--;
-			}
-			_MFREE(FileNameW);
-		}
-		else {
-			nSize = 0;
-		}
+	if (nSize) {
+		nSize--;
 	}
 	return(nSize);
 }
+#elif defined(OSLANG_UTF8)
+static DWORD _GetModuleFileName(HMODULE hModule,
+										OEMCHAR *lpFileName, DWORD nSize) {
+
+	UINT16	ucs2[MAX_PATH];
+
+	GetModuleFileName(hModule, ucs2, NELEMENTS(ucs2));
+	nSize = ucscnv_ucs2toutf8(lpFileName, nSize, ucs2, (UINT)-1);
+	if (nSize) {
+		nSize--;
+	}
+	return(nSize);
+}
+#else
+#define	_GetModuleFileName(a, b, c)		GetModuleFileName(a, b, c)
 #endif
+
 
 #if defined(_WIN32_WCE)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
@@ -376,7 +376,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		return(0);
 	}
 
-	GetModuleFileName_A(NULL, modulefile, sizeof(modulefile));
+	_GetModuleFileName(NULL, modulefile, sizeof(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
 	initload();
