@@ -1498,7 +1498,7 @@ jcxzj			JMPS	#8
 
 in_al_d8		CPUWORK	#5
 				GETPCF8
-				add		r3, r0, r8 lsr #16
+				add		r3, r5, r8 lsr #16
 				CPUSV
 				str		r3, [r9, #CPU_INPUT]
 				bl		iocore_inp8
