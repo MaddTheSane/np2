@@ -5,6 +5,7 @@
 #endif
 #include	"resource.h"
 #include	"np2.h"
+#include	"winloc.h"
 #include	"mousemng.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
@@ -14,6 +15,9 @@
 #include	"pccore.h"
 #include	"scrndraw.h"
 #include	"palettes.h"
+
+
+extern WINLOCEX np2_winlocexallwin(HWND base);
 
 
 typedef struct {
@@ -35,7 +39,6 @@ typedef struct {
 	BYTE				l16g;
 	BYTE				menudisp;
 	int					menusize;
-//	HMENU				menuhdl;
 	RECT				scrn;
 	RECT				rect;
 	PALETTEENTRY		pal[256];
@@ -117,14 +120,15 @@ static void setwindowsize(HWND hWnd, int width, int height) {
 	} while(--cnt);
 }
 
-static void renewalclientsize(void) {
+static void renewalclientsize(BOOL winloc) {
 
-	int		width;
-	int		height;
-	int		extend;
-	int		multiple;
-	int		scrnwidth;
-	int		scrnheight;
+	int			width;
+	int			height;
+	int			extend;
+	int			multiple;
+	int			scrnwidth;
+	int			scrnheight;
+	WINLOCEX	wlex;
 
 	width = min(scrnstat.width, ddraw.width);
 	height = min(scrnstat.height, ddraw.height);
@@ -165,7 +169,14 @@ static void renewalclientsize(void) {
 		}
 		ddraw.scrn.right = np2oscfg.paddingx + scrnwidth;
 		ddraw.scrn.bottom = np2oscfg.paddingy + scrnheight;
+		wlex = NULL;
+		if (winloc) {
+			wlex = np2_winlocexallwin(hWndMain);
+		}
+		winlocex_setholdwnd(wlex, hWndMain);
 		setwindowsize(hWndMain, scrnwidth, scrnheight);
+		winlocex_move(wlex);
+		winlocex_destroy(wlex);
 	}
 	scrnsurf.width = width;
 	scrnsurf.height = height;
@@ -238,13 +249,13 @@ static void clearoutscreen(void) {
 
 static void clearoutfullscreen(void) {
 
-	RECT	r;
+	RECT	base;
 
-	r.left = 0;
-	r.top = (GetWindowLong(hWndMain, NP2GWL_HMENU))?0:ddraw.menusize;
-	r.right = ddraw.width;			// (+ ddraw.extend)
-	r.bottom = ddraw.height;
-	clearoutofrect(&ddraw.scrn, &r);
+	base.left = 0;
+	base.top = (GetWindowLong(hWndMain, NP2GWL_HMENU))?0:ddraw.menusize;
+	base.right = ddraw.width;			// (+ ddraw.extend)
+	base.bottom = ddraw.height;
+	clearoutofrect(&ddraw.scrn, &base);
 	dclock_redraw();
 }
 
@@ -492,11 +503,8 @@ BOOL scrnmng_create(BYTE scrnmode) {
 	ddraw.width = 640;
 	ddraw.height = height;
 	ddraw.cliping = 0;
-	renewalclientsize();
+	renewalclientsize(FALSE);
 	screenupdate = 3;					// update!
-	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
-		np2class_enablemenu(hWndMain, (!np2oscfg.wintype));
-	}
 	return(SUCCESS);
 
 scre_err:
@@ -506,7 +514,9 @@ scre_err:
 
 void scrnmng_destroy(void) {
 
-//	np2class_enablemenu(hWndMain, TRUE);
+	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
+		np2class_enablemenu(hWndMain, (!np2oscfg.wintype));
+	}
 	if (ddraw.clocksurf) {
 		ddraw.clocksurf->Release();
 		ddraw.clocksurf = NULL;
@@ -610,19 +620,19 @@ void scrnmng_clearwinui(void) {
 void scrnmng_setwidth(int posx, int width) {
 
 	scrnstat.width = width;
-	renewalclientsize();
+	renewalclientsize(TRUE);
 }
 
 void scrnmng_setextend(int extend) {
 
 	scrnstat.extend = extend;
-	renewalclientsize();
+	renewalclientsize(TRUE);
 }
 
 void scrnmng_setheight(int posy, int height) {
 
 	scrnstat.height = height;
-	renewalclientsize();
+	renewalclientsize(TRUE);
 }
 
 const SCRNSURF *scrnmng_surflock(void) {
@@ -726,7 +736,7 @@ void scrnmng_setmultiple(int multiple) {
 
 	if (scrnstat.multiple != multiple) {
 		scrnstat.multiple = multiple;
-		renewalclientsize();
+		renewalclientsize(TRUE);
 	}
 }
 

@@ -172,11 +172,13 @@ static void mpucmddipsw(HWND hWnd) {
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
+	BOOL	redraw;
 	BYTE	bit;
 
 	GetWindowRect(GetDlgItem(hWnd, IDC_MPUDIP), &rect1);
 	GetClientRect(GetDlgItem(hWnd, IDC_MPUDIP), &rect2);
 	GetCursorPos(&p);
+	redraw = FALSE;
 	p.x += rect2.left - rect1.left;
 	p.y += rect2.top - rect1.top;
 	p.x /= 9;
@@ -188,7 +190,7 @@ static void mpucmddipsw(HWND hWnd) {
 		bit = 0x80 >> (p.x - 2);
 		mpu ^= bit;
 		setmpuiopara(hWnd, IDC_MPUIO, mpu);
-		InvalidateRect(GetDlgItem(hWnd, IDC_MPUDIP), NULL, TRUE);
+		redraw = TRUE;
 	}
 	else if ((p.x >= 9) && (p.x < 13)) {
 		bit = (BYTE)(12 - p.x);
@@ -196,8 +198,11 @@ static void mpucmddipsw(HWND hWnd) {
 			mpu &= ~0x3;
 			mpu |= bit;
 			setmpuintpara(hWnd, IDC_MPUINT, mpu);
-			InvalidateRect(GetDlgItem(hWnd, IDC_MPUDIP), NULL, TRUE);
+			redraw = TRUE;
 		}
+	}
+	if (redraw) {
+		InvalidateRect(GetDlgItem(hWnd, IDC_MPUDIP), NULL, TRUE);
 	}
 }
 

@@ -35,11 +35,14 @@ typedef struct {
 	int		ty;
 	HWND	base;
 	RECT	rect;
+	HWND	hold;
+	UINT	holdflag;
 	UINT	count;
 } _WINLOCEX, *WINLOCEX;
 
 WINLOCEX winlocex_create(HWND base, const HWND *child, UINT count);
 void winlocex_destroy(WINLOCEX wle);
+void winlocex_setholdwnd(WINLOCEX wle, HWND hold);
 void winlocex_moving(WINLOCEX wle, RECT *rect);
 void winlocex_move(WINLOCEX wle);
 void winlocex_close(WINLOCEX wle);

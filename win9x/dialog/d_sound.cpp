@@ -161,7 +161,7 @@ static LRESULT CALLBACK SndmixDlgProc(HWND hWnd, UINT msg,
 }
 
 
-// -------------------------------------------------------- PC-9801-14
+// ---- PC-9801-14
 
 static const SLIDERTBL snd14item[] = {
 		{IDC_VOL14L,	IDC_VOL14LSTR,		np2cfg.vol14+0,		0,15},
@@ -298,59 +298,11 @@ void setsnd26romdip(BYTE *image, int px, int py, int align, BYTE v) {
 	dlgs_setjumpery(image, px + v, py, align);
 }
 
+
 // ---- PC-9801-26
 
-static	BYTE			snd26 = 0;
-static	SUBCLASSPROC	oldidc_snd26jmp = NULL;
+static	BYTE	snd26 = 0;
 
-static LRESULT CALLBACK Snd26jmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
-
-	PAINTSTRUCT			ps;
-	HDC					hdc;
-	HBITMAP				hBitmap;
-	HDC					hMemDC;
-	BYTE				*image;
-	HANDLE				hwork;
-	BITMAPINFO			*work;
-	BYTE				*imgbtm;
-	int					align;
-
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&snd26dip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &snd26dip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &snd26dip);
-			align = ((snd26dip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (snd26dip.y - 1);
-			setsnd26iodip(imgbtm, 15, 1, align, snd26);
-			setsnd26intdip(imgbtm, 9, 1, align, snd26);
-			setsnd26romdip(imgbtm, 2, 1, align, snd26);
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, snd26dip.x, snd26dip.y, hMemDC,
-									0, 0, snd26dip.x, snd26dip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_snd26jmp, hWnd, msg, wp, lp));
-	}
-	return(FALSE);
-}
 
 static void set26jmp(HWND hWnd, BYTE value, BYTE bit) {
 
@@ -361,16 +313,19 @@ static void set26jmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static void snd26cmddipsw(HWND hWnd) {
+static void snd26cmdjmp(HWND hWnd) {
 
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
-	BYTE	b, bit;
+	BOOL	redraw;
+	BYTE	b;
+	BYTE	bit;
 
 	GetWindowRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect1);
 	GetClientRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect2);
 	GetCursorPos(&p);
+	redraw = FALSE;
 	p.x += rect2.left - rect1.left;
 	p.y += rect2.top - rect1.top;
 	p.x /= 9;
@@ -384,7 +339,7 @@ static void snd26cmddipsw(HWND hWnd) {
 			snd26 &= ~0x07;
 			snd26 |= b;
 			setsnd26rompara(GetDlgItem(hWnd, IDC_SND26ROM), b);
-			InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+			redraw = TRUE;
 		}
 	}
 	else if ((p.x >= 9) && (p.x < 12)) {
@@ -406,7 +361,7 @@ static void snd26cmddipsw(HWND hWnd) {
 		if (snd26 != b) {
 			snd26 = b;
 			setsnd26intpara(GetDlgItem(hWnd, IDC_SND26INT), b);
-			InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+			redraw = TRUE;
 		}
 	}
 	else if ((p.x >= 15) && (p.x < 17)) {
@@ -415,13 +370,48 @@ static void snd26cmddipsw(HWND hWnd) {
 			snd26 &= ~0x10;
 			snd26 |= b;
 			setsnd26iopara(GetDlgItem(hWnd, IDC_SND26IO), b);
-			InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+			redraw = TRUE;
 		}
 	}
+	if (redraw) {
+		InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+	}
+}
+
+static void snd26drawjmp(HWND hWnd, HDC hdc) {
+
+	BITMAPINFO	*bmi;
+	HBITMAP		hbmp;
+	BYTE		*image;
+	int			align;
+	BYTE		*imgbtm;
+	HDC			hmdc;
+
+	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&snd26dip), "bitmap");
+	if (bmi == NULL) {
+		return;
+	}
+	bit2res_sethead(bmi, &snd26dip);
+	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
+												(void **)&image, NULL, 0);
+	bit2res_setdata(image, &snd26dip);
+	align = ((snd26dip.x + 7) / 2) & ~3;
+	imgbtm = image + align * (snd26dip.y - 1);
+	setsnd26iodip(imgbtm, 15, 1, align, snd26);
+	setsnd26intdip(imgbtm, 9, 1, align, snd26);
+	setsnd26romdip(imgbtm, 2, 1, align, snd26);
+	hmdc = CreateCompatibleDC(hdc);
+	SelectObject(hmdc, hbmp);
+	BitBlt(hdc, 0, 0, snd26dip.x, snd26dip.y, hmdc, 0, 0, SRCCOPY);
+	DeleteDC(hmdc);
+	DeleteObject(hbmp);
+	_MFREE(bmi);
 }
 
 static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
+
+	HWND	sub;
 
 	switch(msg) {
 		case WM_INITDIALOG:
@@ -432,10 +422,9 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 			setsnd26intpara(GetDlgItem(hWnd, IDC_SND26INT), snd26);
 			SETLISTSTR(hWnd, IDC_SND26ROM, sndromaddr);
 			setsnd26rompara(GetDlgItem(hWnd, IDC_SND26ROM), snd26);
-			oldidc_snd26jmp = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_SND26JMP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_SND26JMP), GWL_WNDPROC,
-													(LONG)Snd26jmp);
+			sub = GetDlgItem(hWnd, IDC_SND26JMP);
+			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
 			return(TRUE);
 
 		case WM_COMMAND:
@@ -461,7 +450,7 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 					break;
 
 				case IDC_SND26JMP:
-					snd26cmddipsw(hWnd);
+					snd26cmdjmp(hWnd);
 					break;
 			}
 			break;
@@ -475,71 +464,23 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 				return(TRUE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_SND26JMP) {
+				snd26drawjmp(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+			}
+			return(FALSE);
 	}
 	return(FALSE);
 }
+
 
 // ---- PC-9801-86
 
-static	BYTE			snd86 = 0;
-static	SUBCLASSPROC	oldidc_snd86dip = NULL;
+static	BYTE	snd86 = 0;
 
 static const UINT snd86paranum[4] = {0, 1, 3, 2};
 
-static LRESULT CALLBACK snd86jmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
-
-	PAINTSTRUCT			ps;
-	HDC					hdc;
-	HBITMAP				hBitmap;
-	HDC					hMemDC;
-	BYTE				*image;
-	HANDLE				hwork;
-	BITMAPINFO			*work;
-	BYTE				*imgbtm;
-	int					align;
-	int					i;
-	int					x, y, yl;
-
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&snd86dip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &snd86dip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &snd86dip);
-			align = ((snd86dip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (snd86dip.y - 1);
-			for (i=0; i<8; i++) {
-				x = i * 8 + 17;
-				y = ((snd86&(1<<i))?16:9);
-				for (yl=0; yl<7; yl++) {
-					dlgs_linex(imgbtm, x, y++, 6, align, 3);
-				}
-			}
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, snd86dip.x, snd86dip.y, hMemDC,
-									0, 0, snd86dip.x, snd86dip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_snd86dip, hWnd, msg, wp, lp));
-	}
-	return(FALSE);
-}
 
 
 static void setsnd86iopara(HWND hWnd, BYTE value) {
@@ -601,12 +542,92 @@ static void set86jmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
+static void snd86cmddipsw(HWND hWnd) {
 
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
+
+	GetWindowRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect1);
+	GetClientRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect2);
+	GetCursorPos(&p);
+	p.x += rect2.left - rect1.left;
+	p.y += rect2.top - rect1.top;
+	p.x /= 8;
+	p.y /= 8;
+	if ((p.x < 2) || (p.x >= 10) ||
+		(p.y < 1) || (p.y >= 3)) {
+		return;
+	}
+	p.x -= 2;
+	snd86 ^= (1 << p.x);
+	switch(p.x) {
+		case 0:
+			setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO), snd86);
+			break;
+
+		case 1:
+			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), snd86 & 2);
+			break;
+
+		case 2:
+		case 3:
+			setsnd86intpara(GetDlgItem(hWnd, IDC_SND86INTA), snd86);
+			break;
+
+		case 4:
+			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT), snd86 & 0x10);
+			break;
+
+		case 5:
+		case 6:
+		case 7:
+			setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID), snd86);
+			break;
+	}
+	InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP), NULL, TRUE);
+}
+
+static void snd86drawdipsw(HWND hWnd, HDC hdc) {
+
+	BITMAPINFO	*bmi;
+	HBITMAP		hbmp;
+	BYTE		*image;
+	int			align;
+	BYTE		*imgbtm;
+	HDC			hmdc;
+	int			i;
+	int			x, y, yl;
+
+	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&snd86dip), "bitmap");
+	if (bmi == NULL) {
+		return;
+	}
+	bit2res_sethead(bmi, &snd86dip);
+	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
+												(void **)&image, NULL, 0);
+	bit2res_setdata(image, &snd86dip);
+	align = ((snd86dip.x + 7) / 2) & ~3;
+	imgbtm = image + align * (snd86dip.y - 1);
+	for (i=0; i<8; i++) {
+		x = i * 8 + 17;
+		y = (snd86 & (1 << i))?16:9;
+		for (yl=0; yl<7; yl++) {
+			dlgs_linex(imgbtm, x, y++, 6, align, 3);
+		}
+	}
+	hmdc = CreateCompatibleDC(hdc);
+	SelectObject(hmdc, hbmp);
+	BitBlt(hdc, 0, 0, snd86dip.x, snd86dip.y, hmdc, 0, 0, SRCCOPY);
+	DeleteDC(hmdc);
+	DeleteObject(hbmp);
+	_MFREE(bmi);
+}
+
+static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
+													WPARAM wp, LPARAM lp) {
+
+	HWND	sub;
 
 	switch(msg) {
 		case WM_INITDIALOG:
@@ -619,10 +640,10 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 			SETLISTSTR(hWnd, IDC_SND86ID, sndid);
 			setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID), snd86);
 			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), snd86 & 2);
-			oldidc_snd86dip = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_SND86DIP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_SND86DIP), GWL_WNDPROC,
-													(LONG)snd86jmp);
+
+			sub = GetDlgItem(hWnd, IDC_SND86DIP);
+			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
 			return(TRUE);
 
 		case WM_COMMAND:
@@ -648,6 +669,7 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 					set86jmp(hWnd,
 						getsnd86id(GetDlgItem(hWnd, IDC_SND86ID)), 0xe0);
 					break;
+
 				case IDC_SND86DEF:
 					snd86 = 0x7f;
 					setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO), snd86);
@@ -657,47 +679,9 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 					Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), TRUE);
 					InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP), NULL, TRUE);
 					break;
+
 				case IDC_SND86DIP:
-					GetWindowRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect1);
-					GetClientRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect2);
-					GetCursorPos(&p);
-					p.x += rect2.left - rect1.left;
-					p.y += rect2.top - rect1.top;
-					p.x /= 8;
-					p.y /= 8;
-					if ((p.x < 2) || (p.x >= 10) ||
-						(p.y < 1) || (p.y >= 3)) {
-						break;
-					}
-					p.x -= 2;
-					snd86 ^= (1 << p.x);
-					switch(p.x) {
-						case 0:
-							setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO),
-																snd86);
-							break;
-						case 1:
-							Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM),
-																snd86 & 2);
-							break;
-						case 2:
-						case 3:
-							setsnd86intpara(GetDlgItem(hWnd, IDC_SND86INTA),
-																snd86);
-							break;
-						case 4:
-							Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT),
-																snd86 & 0x10);
-							break;
-						case 5:
-						case 6:
-						case 7:
-							setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID),
-																snd86);
-							break;
-					}
-					InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP),
-																NULL, TRUE);
+					snd86cmddipsw(hWnd);
 					break;
 			}
 			break;
@@ -711,69 +695,160 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 				return(TRUE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_SND86DIP) {
+				snd86drawdipsw(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+			}
+			return(FALSE);
 	}
 	return(FALSE);
 }
 
-// ------------------------------------------------------ Speak board
 
-static	BYTE			spb = 0;
-static	BYTE			spbvrc = 0;
-static	SUBCLASSPROC	oldidc_spbjmp = NULL;
+// ---- Speak board
+
+static	BYTE	spb = 0;
+static	BYTE	spbvrc = 0;
 
 
-static LRESULT CALLBACK spbjmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+static void setspbVRch(HWND hWnd) {
 
-	PAINTSTRUCT			ps;
-	HDC					hdc;
-	HBITMAP				hBitmap;
-	HDC					hMemDC;
-	BYTE				*image;
-	HANDLE				hwork;
-	BITMAPINFO			*work;
-	BYTE				*imgbtm;
-	int					align;
+	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRL), spbvrc & 1);
+	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRR), spbvrc & 2);
+}
 
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&spbdip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &spbdip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &spbdip);
-			align = ((spbdip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (spbdip.y - 1);
-			setsnd26intdip(imgbtm, 2, 1, align, spb);
-			setsnd26iodip(imgbtm, 10, 1, align, spb);
-			setsnd26romdip(imgbtm, 14, 1, align, spb);
-			if (spb & 0x20) {
-				dlgs_setjumpery(imgbtm, 7, 1, align);
-			}
-			dlgs_setjumperx(imgbtm, ((spbvrc&2)?21:22), 1, align);
-			dlgs_setjumperx(imgbtm, ((spbvrc&1)?21:22), 2, align);
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, spbdip.x, spbdip.y, hMemDC,
-									0, 0, spbdip.x, spbdip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_spbjmp, hWnd, msg, wp, lp));
+static void spbcreate(HWND hWnd) {
+
+	HWND	sub;
+
+	spb = np2cfg.spbopt;
+	SETnLISTSTR(hWnd, IDC_SPBIO, sndioport, 2);
+	setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), spb);
+	SETLISTSTR(hWnd, IDC_SPBINT, sndinterrupt);
+	setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), spb);
+	SETLISTSTR(hWnd, IDC_SPBROM, sndromaddr);
+	setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), spb);
+	spbvrc = np2cfg.spb_vrc;								// ver0.30
+	setspbVRch(hWnd);
+	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETRANGE, TRUE,
+															MAKELONG(0, 24));
+	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETPOS, TRUE,
+															np2cfg.spb_vrl);
+	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE), np2cfg.spb_x);
+
+	sub = GetDlgItem(hWnd, IDC_SPBJMP);
+	SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
+}
+
+static void spbcmdjmp(HWND hWnd) {
+
+	RECT	rect1;
+	RECT	rect2;
+	POINT	p;
+	BOOL	redraw;
+	BYTE	b;
+	BYTE	bit;
+
+	GetWindowRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect1);
+	GetClientRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect2);
+	GetCursorPos(&p);
+	redraw = FALSE;
+	p.x += rect2.left - rect1.left;
+	p.y += rect2.top - rect1.top;
+	p.x /= 9;
+	p.y /= 9;
+	if ((p.y < 1) || (p.y >= 3)) {
+		return;
 	}
-	return(FALSE);
+	if ((p.x >= 2) && (p.x < 5)) {
+		b = spb;
+		bit = 0x40 << (2 - p.y);
+		switch(p.x) {
+			case 2:
+				b |= bit;
+				break;
+
+			case 3:
+				b ^= bit;
+				break;
+
+			case 4:
+				b &= ~bit;
+				break;
+		}
+		if (spb != b) {
+			spb = b;
+			setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), b);
+			redraw = TRUE;
+		}
+	}
+	else if (p.x == 7) {
+		spb ^= 0x20;
+		redraw = TRUE;
+	}
+	else if ((p.x >= 10) && (p.x < 12)) {
+		b = (BYTE)((p.x - 10) << 4);
+		if ((spb ^ b) & 0x10) {
+			spb &= ~0x10;
+			spb |= b;
+			setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), b);
+			redraw = TRUE;
+		}
+	}
+	else if ((p.x >= 14) && (p.x < 19)) {
+		b = (BYTE)(p.x - 14);
+		if ((spb ^ b) & 7) {
+			spb &= ~0x07;
+			spb |= b;
+			setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), b);
+			redraw = TRUE;
+		}
+	}
+	else if ((p.x >= 21) && (p.x < 24)) {
+		spbvrc ^= (BYTE)(3 - p.y);
+		setspbVRch(hWnd);
+		redraw = TRUE;
+	}
+	if (redraw) {
+		InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
+	}
+}
+
+static void spbdrawjumper(HWND hWnd, HDC hdc) {
+
+	BITMAPINFO	*bmi;
+	HBITMAP		hbmp;
+	BYTE		*image;
+	int			align;
+	BYTE		*imgbtm;
+	HDC			hmdc;
+
+	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&spbdip), "bitmap");
+	if (bmi == NULL) {
+		return;
+	}
+	bit2res_sethead(bmi, &spbdip);
+	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
+												(void **)&image, NULL, 0);
+	bit2res_setdata(image, &spbdip);
+	align = ((spbdip.x + 7) / 2) & ~3;
+	imgbtm = image + align * (spbdip.y - 1);
+	setsnd26intdip(imgbtm, 2, 1, align, spb);
+	setsnd26iodip(imgbtm, 10, 1, align, spb);
+	setsnd26romdip(imgbtm, 14, 1, align, spb);
+	if (spb & 0x20) {
+		dlgs_setjumpery(imgbtm, 7, 1, align);
+	}
+	dlgs_setjumperx(imgbtm, ((spbvrc&2)?21:22), 1, align);
+	dlgs_setjumperx(imgbtm, ((spbvrc&1)?21:22), 2, align);
+	hmdc = CreateCompatibleDC(hdc);
+	SelectObject(hmdc, hbmp);
+	BitBlt(hdc, 0, 0, spbdip.x, spbdip.y, hmdc, 0, 0, SRCCOPY);
+	DeleteDC(hmdc);
+	DeleteObject(hbmp);
+	_MFREE(bmi);
 }
 
 static void setspbjmp(HWND hWnd, BYTE value, BYTE bit) {
@@ -785,16 +860,11 @@ static void setspbjmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static void setspbVRch(HWND hWnd) {
-
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRL), spbvrc & 1);
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRR), spbvrc & 2);
-}
-
 static BYTE getspbVRch(HWND hWnd) {
 
-	BYTE	ret = 0;
+	BYTE	ret;
 
+	ret = 0;
 	if (Button_GetCheck(GetDlgItem(hWnd, IDC_SPBVRL))) {
 		ret++;
 	}
@@ -804,36 +874,14 @@ static BYTE getspbVRch(HWND hWnd) {
 	return(ret);
 }
 
-
 static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
-	BYTE	b, bit;
-	RECT	rect1;
-	RECT	rect2;
-	POINT	p;
+	BYTE	b;
 	UINT	update;
 
 	switch(msg) {
 		case WM_INITDIALOG:
-			spb = np2cfg.spbopt;
-			SETnLISTSTR(hWnd, IDC_SPBIO, sndioport, 2);
-			setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), spb);
-			SETLISTSTR(hWnd, IDC_SPBINT, sndinterrupt);
-			setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), spb);
-			SETLISTSTR(hWnd, IDC_SPBROM, sndromaddr);
-			setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), spb);
-			spbvrc = np2cfg.spb_vrc;								// ver0.30
-			setspbVRch(hWnd);
-			SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETRANGE, TRUE,
-															MAKELONG(0, 24));
-			SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETPOS, TRUE,
-															np2cfg.spb_vrl);
-			Button_SetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE), np2cfg.spb_x);
-
-			oldidc_spbjmp = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_SPBJMP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_SPBJMP), GWL_WNDPROC,
-													(LONG)spbjmp);
+			spbcreate(hWnd);
 			return(TRUE);
 
 		case WM_COMMAND:
@@ -841,12 +889,15 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 				case IDC_SPBIO:
 					setspbjmp(hWnd, getsnd26io(hWnd, IDC_SPBIO), 0x10);
 					break;
+
 				case IDC_SPBINT:
 					setspbjmp(hWnd, getsnd26int(hWnd, IDC_SPBINT), 0xc0);
 					break;
+
 				case IDC_SPBROM:
 					setspbjmp(hWnd, getsnd26rom(hWnd, IDC_SPBROM), 0x07);
 					break;
+
 				case IDC_SPBDEF:
 					spb = 0xd1;
 					setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), spb);
@@ -856,6 +907,7 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 					setspbVRch(hWnd);
 					InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
 					break;
+
 				case IDC_SPBVRL:
 				case IDC_SPBVRR:
 					b = getspbVRch(hWnd);
@@ -865,69 +917,9 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 																NULL, TRUE);
 					}
 					break;
+
 				case IDC_SPBJMP:
-					GetWindowRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect1);
-					GetClientRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect2);
-					GetCursorPos(&p);
-					p.x += rect2.left - rect1.left;
-					p.y += rect2.top - rect1.top;
-					p.x /= 9;
-					p.y /= 9;
-					if ((p.y < 1) || (p.y >= 3)) {
-						break;
-					}
-					if ((p.x >= 2) && (p.x < 5)) {
-						b = spb;
-						bit = 0x40 << (2 - p.y);
-						switch(p.x) {
-							case 2:
-								b |= bit;
-								break;
-							case 3:
-								b ^= bit;
-								break;
-							case 4:
-								b &= ~bit;
-								break;
-						}
-						if (spb != b) {
-							spb = b;
-							setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-						}
-					}
-					else if (p.x == 7) {
-						spb ^= 0x20;
-						InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-					}
-					else if ((p.x >= 10) && (p.x < 12)) {
-						b = (BYTE)((p.x - 10) << 4);
-						if ((spb ^ b) & 0x10) {
-							spb &= ~0x10;
-							spb |= b;
-							setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-						}
-					}
-					else if ((p.x >= 14) && (p.x < 19)) {
-						b = (BYTE)(p.x - 14);
-						if ((spb ^ b) & 7) {
-							spb &= ~0x07;
-							spb |= b;
-							setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-						}
-					}
-					else if ((p.x >= 21) && (p.x < 24)) {
-						spbvrc ^= (BYTE)(3 - p.y);
-						setspbVRch(hWnd);
-						InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-					}
+					spbcmdjmp(hWnd);
 					break;
 			}
 			break;
@@ -959,6 +951,12 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 				return(TRUE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_SPBJMP) {
+				spbdrawjumper(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+			}
+			return(FALSE);
 	}
 	return(FALSE);
 }

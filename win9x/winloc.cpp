@@ -209,12 +209,12 @@ WINLOCEX winlocex_create(HWND base, const HWND *child, UINT count) {
 	}
 	ret = NULL;
 	list = NULL;
+	inlist = 0;
 	if (count) {
 		list = (HWND *)_MALLOC(count * sizeof(HWND *), "wnd list");
 		if (list == NULL) {
 			goto wlecre_err1;
 		}
-		inlist = 0;
 		for (i=0; i<count; i++) {
 			hwnd = child[i];
 			if ((hwnd != NULL) && (hwnd != base) &&
@@ -307,13 +307,42 @@ void winlocex_destroy(WINLOCEX wle) {
 	}
 }
 
+void winlocex_setholdwnd(WINLOCEX wle, HWND hold) {
+
+	RECT	workrc;
+	RECT	rect;
+	UINT	flag;
+
+	if ((wle == NULL) || (hold == NULL)) {
+		return;
+	}
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
+	GetWindowRect(hold, &rect);
+	flag = 0;
+	if (workrc.left == rect.left) {
+		flag = 1;
+	}
+	else if (workrc.right == rect.right) {
+		flag = 2;
+	}
+	if (workrc.top == rect.top) {
+		flag += 1 << 4;
+	}
+	else if (workrc.bottom == rect.bottom) {
+		flag += 2 << 4;
+	}
+	wle->hold = hold;
+	wle->holdflag = flag;
+}
+
 static BOOL gravityx(WINLOCEX wle, RECT *rect) {
 
-	UINT	i;
-	WLEXWND	*wnd;
 	int		d;
+	WLEXWND	*wnd;
+	UINT	i;
 	RECT	workrc;
 
+	d = SNAPDOTPULL;
 	wnd = (WLEXWND *)(wle + 1);
 	for (i=0; i<wle->count; i++, wnd++) {
 		if (!wnd->connect) {
@@ -392,11 +421,12 @@ static BOOL gravityx(WINLOCEX wle, RECT *rect) {
 
 static BOOL gravityy(WINLOCEX wle, RECT *rect) {
 
-	UINT	i;
-	WLEXWND	*wnd;
 	int		d;
+	WLEXWND	*wnd;
+	UINT	i;
 	RECT	workrc;
 
+	d = SNAPDOTPULL;
 	wnd = (WLEXWND *)(wle + 1);
 	for (i=0; i<wle->count; i++, wnd++) {
 		if (!wnd->connect) {
@@ -548,26 +578,59 @@ void winlocex_moving(WINLOCEX wle, RECT *rect) {
 
 void winlocex_move(WINLOCEX wle) {
 
+	RECT	workrc;
 	WLEXWND	*wnd;
-	RECT	baserect;
-	int		dx;
-	int		dy;
 	UINT	i;
 	RECT	rect;
 	int		cx;
 	int		cy;
+	RECT	baserect;
+	int		dx;
+	int		dy;
 	UINT	num;
 	RECT	*rc;
 
 	if ((wle == NULL) || (wle->base == NULL)) {
 		return;
 	}
-	GetWindowRect(wle->base, &baserect);
-	dx = baserect.left - wle->rect.left;
-	dy = baserect.top - wle->rect.top;
 
 	wnd = (WLEXWND *)(wle + 1);
 	for (i=0; i<wle->count; i++) {
+		if ((wle->hold == wnd->hwnd) && (wnd->connect)) {
+			break;
+		}
+	}
+	if ((i >= wle->count) && (wle->holdflag)) {
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
+		GetWindowRect(wle->hold, &rect);
+		cx = rect.right - rect.left;
+		cy = rect.bottom - rect.top;
+		switch(wle->holdflag & 0x0f) {
+			case 1:
+				rect.left = workrc.left;
+				break;
+
+			case 2:
+				rect.left = workrc.right - cx;
+				break;
+		}
+		switch(wle->holdflag >> 4) {
+			case 1:
+				rect.top = workrc.top;
+				break;
+
+			case 2:
+				rect.top = workrc.bottom - cy;
+				break;
+		}
+		MoveWindow(wle->hold, rect.left, rect.top, cx, cy, TRUE);
+	}
+
+	GetWindowRect(wle->base, &baserect);
+	dx = baserect.left - wle->rect.left;
+	dy = baserect.top - wle->rect.top;
+	wnd = (WLEXWND *)(wle + 1);
+	for (i=0; i<wle->count; i++, wnd++) {
 		if (wnd->connect) {
 			GetWindowRect(wnd->hwnd, &rect);
 			cx = rect.right - rect.left;
@@ -621,7 +684,6 @@ void winlocex_move(WINLOCEX wle) {
 			wnd->rect.right = rect.left + cx;
 			wnd->rect.bottom = rect.top + cy;
 		}
-		wnd++;
 	}
 }
 

@@ -618,6 +618,7 @@ const char		*p;
 	sysmng_update(SYS_UPDATEOSCFG);
 
 	wlex = np2_winlocexallwin(hWndMain);
+	winlocex_setholdwnd(wlex, hWnd);
 	toolwindestroy();
 	hbmp = skinload(np2tool.skin);
 	if (hbmp == NULL) {
@@ -862,6 +863,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_LBUTTONDBLCLK:
 			np2tool.type ^= 1;
 			wlex = np2_winlocexallwin(hWndMain);
+			winlocex_setholdwnd(wlex, hWnd);
 			np2class_windowtype(hWnd, (np2tool.type & 1) << 1);
 			winlocex_move(wlex);
 			winlocex_destroy(wlex);

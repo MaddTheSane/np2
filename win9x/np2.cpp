@@ -151,6 +151,7 @@ static void changescreen(BYTE newmode) {
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
 			wlex = np2_winlocexallwin(hWndMain);
+			winlocex_setholdwnd(wlex, hWndMain);
 		}
 		soundmng_stop();
 		mousemng_disable(MOUSEPROC_WINUI);
@@ -299,6 +300,25 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 
 
 // ---- proc
+
+static void np2popup(HWND hWnd, LPARAM lp) {
+
+	HMENU	mainmenu;
+	HMENU	hMenu;
+	POINT	pt;
+
+	mainmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	if (mainmenu == NULL) {
+		return;
+	}
+	hMenu = CreatePopupMenu();
+	menu_addmenubar(hMenu, mainmenu);
+	pt.x = LOWORD(lp);
+	pt.y = HIWORD(lp);
+	ClientToScreen(hWnd, &pt);
+	TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
+	DestroyMenu(hMenu);
+}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -1085,8 +1105,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_RBUTTONDOWN:
 			if (!mousemng_buttonevent(MOUSEMNG_RIGHTDOWN)) {
-				if (scrnmng_isfullscreen()) {
-					POINT	p;
+				if (!scrnmng_isfullscreen()) {
+					np2popup(hWnd, lParam);
+				}
+				else {
+					POINT p;
 					if ((GetCursorPos(&p)) && (p.y >= 466) &&
 												(np2oscfg.clk_x)) {
 						np2oscfg.clk_fnt++;
@@ -1111,6 +1134,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					np2oscfg.wintype = 0;
 				}
 				wlex = np2_winlocexallwin(hWnd);
+				winlocex_setholdwnd(wlex, hWnd);
 				np2class_windowtype(hWnd, np2oscfg.wintype);
 				winlocex_move(wlex);
 				winlocex_destroy(wlex);
