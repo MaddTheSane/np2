@@ -64,9 +64,13 @@ static const PROCTBL dmaproc[] = {
 
 static const STENTRY np2tbl[] = {
 	{"CPU286",		0,	NP2FLAG_CLOCK,	&i286core.s,	sizeof(i286core.s)},
+#if 1	// ver0.72
+	{"MEMORY",		0,	NP2FLAG_MEM,	NULL,			0x130000},
+#else
 	{"MEMORY",		0,	NP2FLAG_BIN,	mem,			0x10fff0},
 	{"VIDEO",		0,	NP2FLAG_BIN,	mem + VRAM1_B,	0x18000},
 	{"VIDEO2",		0,	NP2FLAG_BIN,	mem + VRAM1_E,	0x8000},
+#endif
 	{"EXTMEM",		0,	NP2FLAG_EXT,	NULL,			0},
 
 	{"CORE",		0,	NP2FLAG_CLOCK,	&pc,			sizeof(pc)},

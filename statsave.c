@@ -57,14 +57,15 @@ enum {
 	NP2FLAG_BIN			= 0,
 	NP2FLAG_TERM,
 	NP2FLAG_CLOCK,
+	NP2FLAG_COM,
+	NP2FLAG_DISK,
 	NP2FLAG_DMA,
 	NP2FLAG_EGC,
-	NP2FLAG_EXT,
 	NP2FLAG_EVT,
-	NP2FLAG_GIJ,
+	NP2FLAG_EXT,
 	NP2FLAG_FM,
-	NP2FLAG_COM,
-	NP2FLAG_DISK
+	NP2FLAG_GIJ,
+	NP2FLAG_MEM
 };
 
 typedef struct {
@@ -337,7 +338,7 @@ static int flagsave_term(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// ----
+// ---- common
 
 static int flagsave_common(NP2FFILE f, const STENTRY *t) {
 
@@ -357,7 +358,7 @@ static int flagload_common(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// -----
+// ----- clock
 
 static int flagload_clock(NP2FFILE f, const STENTRY *t) {
 
@@ -370,88 +371,35 @@ static int flagload_clock(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// -----
+// ---- memory
 
-static int flagsave_dma(NP2FFILE f, const STENTRY *t) {
+static int flagsave_mem(NP2FFILE f, const STENTRY *t) {
 
-	int			ret;
-	int			i;
-	_DMAC		dmabak;
+	int		ret;
 
-	dmabak = dmac;
-	for (i=0; i<4; i++) {
-		if ((PROC2NUM(dmabak.dmach[i].outproc, dmaproc)) ||
-			(PROC2NUM(dmabak.dmach[i].inproc, dmaproc)) ||
-			(PROC2NUM(dmabak.dmach[i].extproc, dmaproc))) {
-			return(NP2FLAG_FAILURE);
-		}
-	}
 	ret = flagsave_create(f, t);
 	if (ret != NP2FLAG_FAILURE) {
-		ret |= flagsave_save(f, &dmabak, sizeof(dmabak));
+		ret |= flagsave_save(f, mem, 0x110000);
+		ret |= flagsave_save(f, mem + VRAM1_B, 0x18000);
+		ret |= flagsave_save(f, mem + VRAM1_E, 0x8000);
 		ret |= flagsave_close(f);
 	}
 	return(ret);
 }
 
-static int flagload_dma(NP2FFILE f, const STENTRY *t) {
+static int flagload_mem(NP2FFILE f, const STENTRY *t) {
 
 	int		ret;
-	int		i;
 
-	ret = flagload_load(f, &dmac, sizeof(dmac));
-
-	for (i=0; i<4; i++) {
-		if (NUM2PROC(dmac.dmach[i].outproc, dmaproc)) {
-			dmac.dmach[i].outproc = dma_dummyout;
-			ret |= NP2FLAG_WARNING;
-		}
-		if (NUM2PROC(dmac.dmach[i].inproc, dmaproc)) {
-			dmac.dmach[i].inproc = dma_dummyin;
-			ret |= NP2FLAG_WARNING;
-		}
-		if (NUM2PROC(dmac.dmach[i].extproc, dmaproc)) {
-			dmac.dmach[i].extproc = dma_dummyproc;
-			ret |= NP2FLAG_WARNING;
-		}
-	}
+	ret = flagload_load(f, mem, 0x110000);
+	ret |= flagload_load(f, mem + VRAM1_B, 0x18000);
+	ret |= flagload_load(f, mem + VRAM1_E, 0x8000);
 	(void)t;
 	return(ret);
 }
 
 
-// -----
-
-static int flagsave_egc(NP2FFILE f, const STENTRY *t) {
-
-	int		ret;
-	_EGC	egcbak;
-
-	egcbak = egc;
-	egcbak.inptr -= (long)egc.buf;
-	egcbak.outptr -= (long)egc.buf;
-
-	ret = flagsave_create(f, t);
-	if (ret != NP2FLAG_FAILURE) {
-		ret |= flagsave_save(f, &egcbak, sizeof(egcbak));
-		ret |= flagsave_close(f);
-	}
-	return(ret);
-}
-
-static int flagload_egc(NP2FFILE f, const STENTRY *t) {
-
-	int		ret;
-
-	ret = flagload_load(f, &egc, sizeof(egc));
-	egc.inptr += (long)egc.buf;
-	egc.outptr += (long)egc.buf;
-	(void)t;
-	return(ret);
-}
-
-
-// -----
+// ---- ext memory
 
 static int flagsave_ext(NP2FFILE f, const STENTRY *t) {
 
@@ -502,7 +450,88 @@ static int flagload_ext(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// -----
+// ---- dma
+
+static int flagsave_dma(NP2FFILE f, const STENTRY *t) {
+
+	int			ret;
+	int			i;
+	_DMAC		dmabak;
+
+	dmabak = dmac;
+	for (i=0; i<4; i++) {
+		if ((PROC2NUM(dmabak.dmach[i].outproc, dmaproc)) ||
+			(PROC2NUM(dmabak.dmach[i].inproc, dmaproc)) ||
+			(PROC2NUM(dmabak.dmach[i].extproc, dmaproc))) {
+			return(NP2FLAG_FAILURE);
+		}
+	}
+	ret = flagsave_create(f, t);
+	if (ret != NP2FLAG_FAILURE) {
+		ret |= flagsave_save(f, &dmabak, sizeof(dmabak));
+		ret |= flagsave_close(f);
+	}
+	return(ret);
+}
+
+static int flagload_dma(NP2FFILE f, const STENTRY *t) {
+
+	int		ret;
+	int		i;
+
+	ret = flagload_load(f, &dmac, sizeof(dmac));
+
+	for (i=0; i<4; i++) {
+		if (NUM2PROC(dmac.dmach[i].outproc, dmaproc)) {
+			dmac.dmach[i].outproc = dma_dummyout;
+			ret |= NP2FLAG_WARNING;
+		}
+		if (NUM2PROC(dmac.dmach[i].inproc, dmaproc)) {
+			dmac.dmach[i].inproc = dma_dummyin;
+			ret |= NP2FLAG_WARNING;
+		}
+		if (NUM2PROC(dmac.dmach[i].extproc, dmaproc)) {
+			dmac.dmach[i].extproc = dma_dummyproc;
+			ret |= NP2FLAG_WARNING;
+		}
+	}
+	(void)t;
+	return(ret);
+}
+
+
+// ---- egc
+
+static int flagsave_egc(NP2FFILE f, const STENTRY *t) {
+
+	int		ret;
+	_EGC	egcbak;
+
+	egcbak = egc;
+	egcbak.inptr -= (long)egc.buf;
+	egcbak.outptr -= (long)egc.buf;
+
+	ret = flagsave_create(f, t);
+	if (ret != NP2FLAG_FAILURE) {
+		ret |= flagsave_save(f, &egcbak, sizeof(egcbak));
+		ret |= flagsave_close(f);
+	}
+	return(ret);
+}
+
+static int flagload_egc(NP2FFILE f, const STENTRY *t) {
+
+	int		ret;
+
+	ret = flagload_load(f, &egc, sizeof(egc));
+	egc.inptr += (long)egc.buf;
+	egc.outptr += (long)egc.buf;
+	(void)t;
+	return(ret);
+}
+
+
+// ---- event
 
 typedef struct {
 	UINT		readyevents;
@@ -615,7 +644,7 @@ static int flagload_evt(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// ----
+// ---- gaiji
 
 static int flagsave_gij(NP2FFILE f, const STENTRY *t) {
 
@@ -658,7 +687,7 @@ static int flagload_gij(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// -----
+// ---- FM
 
 enum {
 	FLAG_MG			= 0x0001,
@@ -1092,7 +1121,7 @@ static int flagload_disk(NP2FFILE f, const STENTRY *t) {
 }
 
 
-// -----
+// ---- com
 
 static int flagsave_com(NP2FFILE f, const STENTRY *t) {
 
@@ -1218,55 +1247,63 @@ int statsave_save(const char *filename) {
 
 	_NP2FFILE	f;
 	int			ret;
-	UINT		i;
+const STENTRY	*tbl;
+const STENTRY	*tblterm;
 
 	ret = flagcreate(&f, filename);
 	if (ret == NP2FLAG_FAILURE) {
 		return(ret);
 	}
-	for (i=0; i<sizeof(np2tbl)/sizeof(STENTRY); i++) {
-		switch(np2tbl[i].type) {
+	tbl = np2tbl;
+	tblterm = tbl + (sizeof(np2tbl)/sizeof(STENTRY));
+	while(tbl < tblterm) {
+		switch(tbl->type) {
 			case NP2FLAG_BIN:
 			case NP2FLAG_CLOCK:
-				ret |= flagsave_common(&f, &np2tbl[i]);
+				ret |= flagsave_common(&f, tbl);
 				break;
 
 			case NP2FLAG_TERM:
-				ret |= flagsave_term(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_DMA:
-				ret |= flagsave_dma(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_EGC:
-				ret |= flagsave_egc(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_EXT:
-				ret |= flagsave_ext(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_EVT:
-				ret |= flagsave_evt(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_GIJ:
-				ret |= flagsave_gij(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_FM:
-				ret |= flagsave_fm(&f, &np2tbl[i]);
-				break;
-
-			case NP2FLAG_DISK:
-				ret |= flagsave_disk(&f, &np2tbl[i]);
+				ret |= flagsave_term(&f, tbl);
 				break;
 
 			case NP2FLAG_COM:
-				ret |= flagsave_com(&f, &np2tbl[i]);
+				ret |= flagsave_com(&f, tbl);
+				break;
+
+			case NP2FLAG_DISK:
+				ret |= flagsave_disk(&f, tbl);
+				break;
+
+			case NP2FLAG_DMA:
+				ret |= flagsave_dma(&f, tbl);
+				break;
+
+			case NP2FLAG_EGC:
+				ret |= flagsave_egc(&f, tbl);
+				break;
+
+			case NP2FLAG_EVT:
+				ret |= flagsave_evt(&f, tbl);
+				break;
+
+			case NP2FLAG_EXT:
+				ret |= flagsave_ext(&f, tbl);
+				break;
+
+			case NP2FLAG_FM:
+				ret |= flagsave_fm(&f, tbl);
+				break;
+
+			case NP2FLAG_GIJ:
+				ret |= flagsave_gij(&f, tbl);
+				break;
+
+			case NP2FLAG_MEM:
+				ret |= flagsave_mem(&f, tbl);
 				break;
 		}
+		tbl++;
 	}
 	flagclose(&f);
 	return(ret);
@@ -1274,11 +1311,12 @@ int statsave_save(const char *filename) {
 
 int statsave_check(const char *filename, char *buf, int size) {
 
+	ERR_BUF		e;
 	_NP2FFILE	f;
 	int			ret;
-	UINT		i;
 	BOOL		done;
-	ERR_BUF		e;
+const STENTRY	*tbl;
+const STENTRY	*tblterm;
 
 	e.buf = buf;
 	e.remain = size;
@@ -1300,36 +1338,38 @@ int statsave_check(const char *filename, char *buf, int size) {
 			ret |= flagload_create(&f);
 			CopyMemory(index, f.p.index, sizeof(f.p.index));
 			index[10] = 0;
-			for (i=0; i<sizeof(np2tbl)/sizeof(STENTRY); i++) {
-				if (!strcmp(index, np2tbl[i].index)) {
+			tbl = np2tbl;
+			tblterm = tbl + (sizeof(np2tbl)/sizeof(STENTRY));
+			while(tbl < tblterm) {
+				if (!strcmp(index, tbl->index)) {
 					break;
 				}
+				tbl++;
 			}
-			if (i < (sizeof(np2tbl)/sizeof(STENTRY))) {
-				switch(np2tbl[i].type) {
+			if (tbl < tblterm) {
+				switch(tbl->type) {
 					case NP2FLAG_BIN:
 					case NP2FLAG_CLOCK:
-						ret |= flagcheck_versize(&f, &np2tbl[i], &e);
+					case NP2FLAG_MEM:
+						ret |= flagcheck_versize(&f, tbl, &e);
 						break;
 
 					case NP2FLAG_TERM:
 						done = TRUE;
 						break;
 
+					case NP2FLAG_COM:
 					case NP2FLAG_DMA:
 					case NP2FLAG_EGC:
-					case NP2FLAG_EXT:
 					case NP2FLAG_EVT:
+					case NP2FLAG_EXT:
 					case NP2FLAG_GIJ:
-					case NP2FLAG_COM:
-						ret |= flagcheck_veronly(&f, &np2tbl[i], &e);
+					case NP2FLAG_FM:
+						ret |= flagcheck_veronly(&f, tbl, &e);
 						break;
 
 					case NP2FLAG_DISK:
-						ret |= flagcheck_disk(&f, &np2tbl[i], &e);
-						break;
-
-					case NP2FLAG_FM:							// ver0.31
+						ret |= flagcheck_disk(&f, tbl, &e);
 						break;
 
 					default:
@@ -1354,8 +1394,9 @@ int statsave_load(const char *filename) {
 
 	_NP2FFILE	f;
 	int			ret;
-	UINT		i;
 	BOOL		done;
+const STENTRY	*tbl;
+const STENTRY	*tblterm;
 
 	ret = flagopen(&f, filename, NULL);
 	if (ret == NP2FLAG_FAILURE) {
@@ -1375,15 +1416,18 @@ int statsave_load(const char *filename) {
 		ret |= flagload_create(&f);
 		CopyMemory(index, f.p.index, sizeof(f.p.index));
 		index[10] = 0;
-		for (i=0; i<sizeof(np2tbl)/sizeof(STENTRY); i++) {
-			if (!strcmp(index, np2tbl[i].index)) {
+		tbl = np2tbl;
+		tblterm = tbl + (sizeof(np2tbl)/sizeof(STENTRY));
+		while(tbl < tblterm) {
+			if (!strcmp(index, tbl->index)) {
 				break;
 			}
+			tbl++;
 		}
-		if (i < (sizeof(np2tbl)/sizeof(STENTRY))) {
-			switch(np2tbl[i].type) {
+		if (tbl < tblterm) {
+			switch(tbl->type) {
 				case NP2FLAG_BIN:
-					ret |= flagload_common(&f, &np2tbl[i]);
+					ret |= flagload_common(&f, tbl);
 					break;
 
 				case NP2FLAG_TERM:
@@ -1391,39 +1435,43 @@ int statsave_load(const char *filename) {
 					break;
 
 				case NP2FLAG_CLOCK:
-					ret |= flagload_clock(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_DMA:
-					ret |= flagload_dma(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_EGC:
-					ret |= flagload_egc(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_EXT:
-					ret |= flagload_ext(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_EVT:
-					ret |= flagload_evt(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_GIJ:
-					ret |= flagload_gij(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_FM:
-					ret |= flagload_fm(&f, &np2tbl[i]);
-					break;
-
-				case NP2FLAG_DISK:
-					ret |= flagload_disk(&f, &np2tbl[i]);
+					ret |= flagload_clock(&f, tbl);
 					break;
 
 				case NP2FLAG_COM:
-					ret |= flagload_com(&f, &np2tbl[i]);
+					ret |= flagload_com(&f, tbl);
+					break;
+
+				case NP2FLAG_DISK:
+					ret |= flagload_disk(&f, tbl);
+					break;
+
+				case NP2FLAG_DMA:
+					ret |= flagload_dma(&f, tbl);
+					break;
+
+				case NP2FLAG_EGC:
+					ret |= flagload_egc(&f, tbl);
+					break;
+
+				case NP2FLAG_EVT:
+					ret |= flagload_evt(&f, tbl);
+					break;
+
+				case NP2FLAG_EXT:
+					ret |= flagload_ext(&f, tbl);
+					break;
+
+				case NP2FLAG_FM:
+					ret |= flagload_fm(&f, tbl);
+					break;
+
+				case NP2FLAG_GIJ:
+					ret |= flagload_gij(&f, tbl);
+					break;
+
+				case NP2FLAG_MEM:
+					ret |= flagload_mem(&f, tbl);
 					break;
 
 				default:
