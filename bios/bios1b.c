@@ -873,19 +873,7 @@ void bios0x1b(void) {
 	REG8	ret_ah;
 	REG8	flag;
 
-#if defined(SUPPORT_SCSI)
-	if ((CPU_AL & 0xf0) == 0xc0) {
-		TRACEOUT(("%.4x:%.4x AX=%.4x BX=%.4x CX=%.4x DX=%.4 ES=%.4x BP=%.4x",
-							MEML_READ16(CPU_SS, CPU_SP+2),
-							MEML_READ16(CPU_SS, CPU_SP),
-							CPU_AX, CPU_BX, CPU_CX, CPU_DX, CPU_ES, CPU_BP));
-		scsicmd_bios();
-		return;
-	}
-#endif
-
 #if 1			// bypass to disk bios
-{
 	REG8	seg;
 	UINT	sp;
 
@@ -920,7 +908,17 @@ void bios0x1b(void) {
 		CPU_IP = 0x18;
 		return;
 	}
-}
+#endif
+
+#if defined(SUPPORT_SCSI)
+	if ((CPU_AL & 0xf0) == 0xc0) {
+		TRACEOUT(("%.4x:%.4x AX=%.4x BX=%.4x CX=%.4x DX=%.4 ES=%.4x BP=%.4x",
+							MEML_READ16(CPU_SS, CPU_SP+2),
+							MEML_READ16(CPU_SS, CPU_SP),
+							CPU_AX, CPU_BX, CPU_CX, CPU_DX, CPU_ES, CPU_BP));
+		scsicmd_bios();
+		return;
+	}
 #endif
 
 	switch(CPU_AL & 0xf0) {

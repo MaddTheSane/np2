@@ -265,6 +265,14 @@ static void IOOUTCALL np2sysp_o0e9(UINT port, REG8 dat) {
 	APPDEVOUT(dat);
 	(void)port;
 }
+
+static void IOOUTCALL np2sysp_o0eb(UINT port, REG8 dat) {
+
+	TRACEOUT(("mask %x", CPU_ADRSMASK));
+	TRACEOUT(("%s", debugsub_regs()));
+	(void)port;
+	(void)dat;
+}
 #endif
 
 
@@ -284,6 +292,7 @@ void np2sysp_bind(void) {
 
 #if defined(NP2APPDEV)
 	iocore_attachout(0x00e9, np2sysp_o0e9);
+	iocore_attachout(0x00eb, np2sysp_o0eb);
 #endif
 }
 

@@ -259,8 +259,10 @@ void bios_initialize(void) {
 		}
 		file_close(fh);
 	}
+#if defined(BIOS_SIMULATE)
 	mem[0xf8e80] = 0x98;
 	mem[0xf8e81] = 0x21;
+#endif
 #endif
 
 #if defined(BIOS_SIMULATE)

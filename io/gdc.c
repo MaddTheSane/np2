@@ -490,8 +490,6 @@ static void IOOUTCALL gdc_o6a(UINT port, REG8 dat) {
 
 	REG8	bit;
 
-	TRACEOUT(("port:%.4x %.2x", port, dat));
-
 	if (!(dat & 0xf8)) {
 		bit = (dat >> 1) & 3;
 		dat &= 1;
@@ -938,7 +936,6 @@ static REG8 IOINPCALL gdc_iae(UINT port) {
 #if defined(SUPPORT_PC9821)
 static void IOOUTCALL gdc_o9a0(UINT port, REG8 dat) {
 
-	TRACEOUT(("port:%.4x,%.2x", port, dat));
 	gdc.ff2 = dat;
 	(void)port;
 }
@@ -1090,6 +1087,12 @@ void gdc_biosreset(void) {
 	gdcs.access = 0;
 	gdc.analog &= ~(1 << GDCANALOG_16);
 	gdcs.palchange = GDCSCRN_REDRAW;
+
+	gdc.mode2 &= ~(1 << 0);
+	gdc.mode2 &= ~(1 << 2);
+	gdc.mode2 &= ~(1 << 3);
+	gdcs.mode2 = gdc.mode2;
+
 	vramop.operate &= ~(1 << VOPBIT_ACCESS);
 	vramop.operate &= ~(1 << VOPBIT_EGC);
 	vramop.operate &= ~(1 << VOPBIT_ANALOG);

@@ -89,8 +89,9 @@
 　ver0.80 → ver0.81
 　・MPU-PC98II conductor修正
 　・MPU-PC98II Request PC/Tempo コマンドの追加
+　・GDC - ソフトリセット時のフラグ修正
+　・BIOS - CRTBIOSフラグ修正 (PC-9821モード)
 　・一部(というか大部分…)のキーボードのmake/break関係を修正
-　・CRTBIOSフラグ修正 (PC-9821モード)
 
 　・内部変更
 　　CPUフォルダの DMA EGC等がほぼ同様のコードなので memフォルダへ移動し

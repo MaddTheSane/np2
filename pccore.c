@@ -548,7 +548,7 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-// #define SINGLESTEPONLY
+// #define	SINGLESTEPONLY
 // #define	IPTRACE			(1 << 12)
 
 #if defined(TRACE) && IPTRACE
@@ -634,6 +634,13 @@ void pccore_exec(BOOL draw) {
 #else
 		while(CPU_REMCLOCK > 0) {
 #if 0
+			if (CPU_CS == 0x05a0) {
+				if (CPU_IP == 0xe2) {
+					TRACEOUT(("result: %.2x", CPU_AH));
+				}
+			}
+#endif
+#if 0
 			if (CPU_CS == 0x0000) {
 				if (CPU_IP == 0x1191) {
 					char buf[10];
@@ -690,7 +697,7 @@ void pccore_exec(BOOL draw) {
 				if (CPU_IP == 0x4BF8) {
 					debugsub_memorydump();
 				}
-#if 1
+#if 0
 				if (CPU_IP == 0x4B7A) {
 					TRACEOUT(("datum = %x", CPU_AX));
 				}
@@ -723,7 +730,7 @@ void pccore_exec(BOOL draw) {
 				}
 			}
 #endif
-#if 1
+#if 0
 			if (CPU_CS == 0x60) {
 				if (CPU_IP == 0x8AC2) {
 					UINT pos = CPU_SI + (CPU_AX * 6);

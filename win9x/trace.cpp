@@ -128,7 +128,7 @@ static void View_AddString(const TCHAR *string) {
 	viewbuf[vpos + vlen + 0] = '\r';
 	viewbuf[vpos + vlen + 1] = '\n';
 	viewbuf[vpos + vlen + 2] = '\0';
-	viewleng = vlen + 3;
+	viewleng = vlen + 2;
 	SetWindowText(hView, viewbuf + vpos);
 	View_ScrollToBottom(hView);
 }

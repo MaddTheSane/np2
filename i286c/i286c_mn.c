@@ -2266,6 +2266,14 @@ I286FN _int_data8(void) {					// CD:	int		DATA8
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(vect)
 #if 0
+//	if (vect == 0x2f) {
+//		TRACEOUT(("%.4x:%.4x INT-2F AX=%.4x", CPU_CS, CPU_IP, CPU_AX));
+//	}
+	if (vect == 0x67) {
+		TRACEOUT(("%.4x:%.4x INT-67 AX=%.4x BX=%.4x DX=%.4x", CPU_CS, CPU_IP, CPU_AX, CPU_BX, CPU_DX));
+	}
+#endif
+#if 0
 	if ((vect == 0x42) && (CPU_AL != 6)) {
 		TRACEOUT(("%.4x:%.4x INT-42 AL=%.2x", CPU_CS, CPU_IP, CPU_AL));
 	}
@@ -2275,7 +2283,7 @@ I286FN _int_data8(void) {					// CD:	int		DATA8
 		TRACEOUT(("%.4x:%.4x INT-2f BX=%.4x/DX=%.4x", CPU_CS, CPU_IP, CPU_BX, CPU_DX));
 	}
 #endif
-#if 1
+#if 0
 	if (vect == 0xd2) {
 		TRACEOUT(("%.4x:%.4x INT-d2 AX=%.4x", CPU_CS, CPU_IP, CPU_AX));
 	}
