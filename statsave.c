@@ -72,9 +72,9 @@ typedef struct {
 	int		num;
 } ENUMTBL;
 
-#define	PROCID(a, b, c, d)	(((d) << 24) | ((c) << 16) | ((b) << 8) | (a))
-#define	PROC2NUM(a, b)		proc2num(&(a), b, sizeof(b)/sizeof(PROCTBL))
-#define	NUM2PROC(a, b)		num2proc(&(a), b, sizeof(b)/sizeof(PROCTBL))
+#define	PROCID(a, b, c, d)	(((d) << 24) + ((c) << 16) + ((b) << 8) + (a))
+#define	PROC2NUM(a, b)		proc2num(&(a), (b), sizeof(b)/sizeof(PROCTBL))
+#define	NUM2PROC(a, b)		num2proc(&(a), (b), sizeof(b)/sizeof(PROCTBL))
 
 #include "statsave.tbl"
 

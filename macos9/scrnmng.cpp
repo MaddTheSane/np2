@@ -87,6 +87,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 	scrnsurf.width = 640;
 	scrnsurf.height = 400;
 	scrnsurf.extend = 0;
+	scrnsurf.bpp = 32;
 	return(&scrnsurf);
 }
 
@@ -124,4 +125,5 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 		SetGWorld(gwp, hgd);
 	}
 }
+
 

@@ -10,6 +10,7 @@
 #include	"mackbd.h"
 #include	"ini.h"
 #include	"menu.h"
+#include	"np2open.h"
 #include	"dialog.h"
 #include	"memory.h"
 #include	"pccore.h"
@@ -447,7 +448,12 @@ static void HandleUpdateEvent(EventRecord *pevent) {
 
 	hWnd = (WindowPtr)pevent->message;
 	BeginUpdate(hWnd);
-	scrndraw_redraw();
+	if (np2running) {
+		scrndraw_redraw();
+	}
+	else {
+		np2open();
+	}
 	EndUpdate(hWnd);
 }
 
@@ -458,8 +464,10 @@ static void HandleMouseDown(EventRecord *pevent) {
 
 	switch(FindWindow(pevent->where, &hWnd)) {
 		case inMenuBar:
-			soundmng_stop();
-			HandleMenuChoice(MenuSelect(pevent->where));
+			if (np2running) {
+				soundmng_stop();
+				HandleMenuChoice(MenuSelect(pevent->where));
+			}
 			break;
 
 		case inDrag:
@@ -509,9 +517,11 @@ static void eventproc(EventRecord *event) {
 
 		case keyDown:
 		case autoKey:
-			mackbd_f12down(((event->message) & keyCodeMask) >> 8);
-			if (event->modifiers & cmdKey) {
-				HandleMenuChoice(MenuKey(event->message & charCodeMask));
+			if (np2running) {
+				mackbd_f12down(((event->message) & keyCodeMask) >> 8);
+				if (event->modifiers & cmdKey) {
+					HandleMenuChoice(MenuKey(event->message & charCodeMask));
+				}
 			}
 			break;
 
@@ -598,6 +608,7 @@ int main(int argc, char *argv[]) {
 
 	Rect		wRect;
 	EventRecord	event;
+	UINT		t;
 
 	dosio_init();
 	file_setcd(target);
@@ -647,6 +658,14 @@ int main(int argc, char *argv[]) {
 		return(0);
 	}
 
+	np2open();
+	t = GETTICK();
+	while((GETTICK() - t) < 100) {
+		if (WaitNextEvent(everyEvent, &event, 0, 0)) {
+			eventproc(&event);
+		}
+	}
+
 	sysmng_initialize();
 	mackbd_initialize();
 	pccore_init();
@@ -657,7 +676,7 @@ int main(int argc, char *argv[]) {
 		mouse_running(MOUSE_ON);
 	}
 #endif
-	scrndraw_redraw();
+//	scrndraw_redraw();
 	pccore_reset();
 
 	if (np2oscfg.resume) {

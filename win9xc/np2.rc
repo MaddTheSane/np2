@@ -113,7 +113,7 @@ BEGIN
                     20,24,40,10
     CONTROL         "Use skipline revisions",IDC_SKIPLINE,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,40,81,10
-    LTEXT           "Raito",IDC_STATIC,20,55,16,8
+    LTEXT           "Ratio",IDC_STATIC,20,55,16,8
     CONTROL         "Slider1",IDC_SKIPLIGHT,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,44,55,96,10
     RTEXT           "",IDC_LIGHTSTR,144,54,16,10,SS_SUNKEN
