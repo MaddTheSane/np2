@@ -33,7 +33,7 @@ BOOL dispsync_renewalmode(void) {
 		return(FALSE);
 	}
 	disp = 0;
-	if ((!(np2cfg.LCD_MODE & 1)) && (gdc.display < 3)) {
+	if ((!(np2cfg.LCD_MODE & 1)) && ((gdc.display & 7) < 3)) {
 		disp = 1;
 	}
 	if (dsync.scrnxextend != disp) {

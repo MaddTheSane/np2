@@ -38,11 +38,32 @@ typedef struct {
 	UINT8	cl;
 } CRTDATA;
 
-static const CRTDATA crtdata[4] = {
-						{0x07,	0x00, 0x07, 0x08},
-						{0x09,	0x1f, 0x08, 0x08},
-						{0x0f,	0x00, 0x0f, 0x10},
-						{0x13,	0x1e, 0x11, 0x10}};
+static const UINT8 modenum[4] = {3, 1, 0, 2};
+
+static const CRTDATA crtdata[7] = {
+						{0x07,	0x00, 0x07, 0x08},		// 200-20
+						{0x09,	0x1f, 0x08, 0x08},		// 200-25
+						{0x0f,	0x00, 0x0f, 0x10},		// 400-20
+						{0x13,	0x1e, 0x11, 0x10},		// 400-25
+						{0x17,	0x1c, 0x13, 0x10},		// 480-20
+						{0x12,	0x1f, 0x11, 0x10},		// 480-25
+						{0x0f,	0x00, 0x0f, 0x10}};		// 480-30
+
+static const UINT8 gdcmastersync[6][8] = {
+				{0x10,0x4e,0x07,0x25,0x0d,0x0f,0xc8,0x94},		// 15
+				{0x10,0x4e,0x07,0x25,0x07,0x07,0x90,0x65},		// 24
+				{0x10,0x4e,0x47,0x0c,0x07,0x0d,0x90,0x89},		// 31
+				{0x10,0x4e,0x4b,0x0c,0x03,0x06,0xe0,0x95},		// 31-480:20
+				{0x10,0x4e,0x4b,0x0c,0x03,0x0b,0xdb,0x95},		// 31-480:25
+				{0x10,0x4e,0x4b,0x0c,0x03,0x06,0xe0,0x95}};		// 31-480:30
+
+static const UINT8 gdcslavesync[6][8] = {
+				{0x02,0x26,0x03,0x11,0x86,0x0f,0xc8,0x94},		// 15-L
+				{0x02,0x4e,0x4b,0x0c,0x83,0x06,0xe0,0x95},		// 31-H
+				{0x02,0x26,0x03,0x11,0x83,0x07,0x90,0x65},		// 24-L
+				{0x02,0x4e,0x07,0x25,0x87,0x07,0x90,0x65},		// 24-M
+				{0x02,0x26,0x41,0x0c,0x83,0x0d,0x90,0x89},		// 31-L
+				{0x02,0x4e,0x47,0x0c,0x87,0x0d,0x90,0x89}};		// 31-M
 
 typedef struct {
 	UINT8	lr;
@@ -76,23 +97,8 @@ static UINT16 keyget(void) {
 	return(0xffff);
 }
 
-static void bios0x18_10(REG8 curdel) {
 
-	UINT8	sts;
-	UINT	pos;
-
-	sts = mem[MEMB_CRT_STS_FLAG];
-	mem[MEMB_CRT_STS_FLAG] = sts & (~0x40);
-	pos = sts & 0x01;
-	if (sts & 0x80) {
-		pos += 2;
-	}
-	mem[MEMB_CRT_CNT] = (curdel << 5);
-	gdc.m.para[GDC_CSRFORM + 0] = csrform[pos].lr;
-	gdc.m.para[GDC_CSRFORM + 1] = curdel << 5;
-	gdc.m.para[GDC_CSRFORM + 2] = csrform[pos].cfi;
-	gdcs.textdisp |= GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
-}
+// ---- master
 
 void bios0x18_0a(REG8 mode) {
 
@@ -109,7 +115,7 @@ const CRTDATA	*crt;
 		crt += 2;
 	}
 	if (mode & 0x01) {
-		crt += 1;					// 20行
+		crt += 1;						// 20行
 	}
 	if (mode & 0x02) {
 		gdc.mode1 |= 0x04;				// 40桁
@@ -127,6 +133,69 @@ const CRTDATA	*crt;
 	crtc.reg.ssl = 0;
 	gdc_restorekacmode();
 	bios0x18_10(0);
+}
+
+static void bios0x18_0f(UINT seg, UINT off, REG8 num, REG8 cnt) {
+
+	BYTE	*p;
+	UINT	raster;
+	UINT	t;
+
+	SETBIOSMEM16(0x0053e, (UINT16)off);
+	SETBIOSMEM16(0x00540, (UINT16)seg);
+	mem[0x00547] = num;
+	mem[0x0053D] = cnt;
+	p = gdc.m.para + GDC_SCROLL + (num << 2);
+
+#if defined(SUPPORT_CRT31KHZ)
+	if (mem[MEMB_CRT_BIOS] & 0x80) {
+		raster = (mem[MEMB_CRT_RASTER] + 1) << 4;
+	}
+	else {
+#endif
+		if (!(mem[MEMB_CRT_STS_FLAG] & 0x01)) {		// 25
+			raster = 8 << 4;
+		}
+		else {										// 20
+			raster = 16 << 4;
+			}
+		if (mem[MEMB_CRT_STS_FLAG] & 0x80) {
+			raster <<= 1;
+		}
+#if defined(SUPPORT_CRT31KHZ)
+	}
+#endif
+
+	while((cnt--) && (p < (gdc.m.para + GDC_SCROLL + 0x10))) {
+		t = i286_memword_read(seg, off);
+		t >>= 1;
+		STOREINTELWORD(p, t);
+		t = i286_memword_read(seg, off + 2);
+		t *= raster;
+		STOREINTELWORD(p + 2, t);
+		off += 4;
+		p += 4;
+	}
+	gdcs.textdisp |= GDCSCRN_ALLDRAW2;
+	screenupdate |= 2;
+}
+
+void bios0x18_10(REG8 curdel) {
+
+	UINT8	sts;
+	UINT	pos;
+
+	sts = mem[MEMB_CRT_STS_FLAG];
+	mem[MEMB_CRT_STS_FLAG] = sts & (~0x40);
+	pos = sts & 0x01;
+	if (sts & 0x80) {
+		pos += 2;
+	}
+	mem[MEMB_CRT_CNT] = (curdel << 5);
+	gdc.m.para[GDC_CSRFORM + 0] = csrform[pos].lr;
+	gdc.m.para[GDC_CSRFORM + 1] = curdel << 5;
+	gdc.m.para[GDC_CSRFORM + 2] = csrform[pos].cfi;
+	gdcs.textdisp |= GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
 }
 
 REG16 bios0x18_14(REG16 seg, REG16 off, REG16 code) {
@@ -211,6 +280,140 @@ void bios0x18_16(REG8 chr, REG8 atr) {
 	gdcs.textdisp |= GDCSCRN_ALLDRAW;
 }
 
+
+// ---- 31khz
+
+#if defined(SUPPORT_CRT31KHZ)
+static REG8 bios0x18_30(REG8 mode, REG8 scrn) {
+
+	int			crt;
+	int			master;
+	int			slave;
+const CRTDATA	*p;
+
+	if (((mode & 0xf8) != 0x08) || (scrn & (~0x33)) || ((scrn & 3) == 3)) {
+		return(1);
+	}
+	if ((scrn & 0x30) == 0x30) {				// 640x480
+		return(1);
+	}
+	else {
+		if ((scrn & 3) >= 2) {
+			return(1);
+		}
+		if (mode & 4) {							// 31khz
+			crt = 2;
+			master = 2;
+			slave = 4;
+		}
+		else if (mem[MEMB_PRXCRT] & 0x40) {		// 24khz
+			crt = 2;
+			master = 1;
+			slave = 2;
+		}
+		else {
+			crt = 0;
+			master = 0;
+			slave = 0;
+		}
+		if ((scrn & 0x20) && (mem[MEMB_PRXDUPD] & 0x04)) {
+			slave += 1;
+		}
+	}
+	crt += (scrn & 3);
+	master += (scrn & 3);
+
+	if (mode & 4) {
+		gdc.display |= (1 << GDCDISP_31);
+	}
+	else {
+		gdc.display &= ~(1 << GDCDISP_31);
+	}
+
+	CopyMemory(gdc.m.para + GDC_SYNC, gdcmastersync[master], 8);
+	ZeroMemory(gdc.m.para + GDC_SCROLL, 8);
+	gdc.m.para[GDC_PITCH] = 80;
+
+	p = crtdata + crt;
+	gdc.m.para[GDC_CSRFORM + 0] = p->raster;
+	gdc.m.para[GDC_CSRFORM + 1] = 0;
+	gdc.m.para[GDC_CSRFORM + 2] = (p->raster << 3) + 3;
+	crtc.reg.pl = p->pl;
+	crtc.reg.bl = p->bl;
+	crtc.reg.cl = p->cl;
+	crtc.reg.ssl = 0;
+	crtc.reg.sur = 1;
+	crtc.reg.sdr = 0;
+
+	CopyMemory(gdc.s.para + GDC_SYNC, gdcslavesync[slave], 8);
+	ZeroMemory(gdc.s.para + GDC_SCROLL, 8);
+	if (slave & 1) {
+		gdc.s.para[GDC_PITCH] = 80;
+		gdc.clock |= 3;
+		mem[MEMB_PRXDUPD] |= 0x04;
+	}
+	else {
+		gdc.s.para[GDC_PITCH] = 40;
+		gdc.clock &= ~3;
+		mem[MEMB_PRXDUPD] &= ~0x04;
+	}
+	if ((scrn & 0x30) == 0x10) {
+		gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
+		gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
+	}
+	if ((scrn & 0x20) || (!(mem[MEMB_PRXCRT] & 0x40))) {
+		gdc.mode1 &= ~(0x10);
+		gdc.s.para[GDC_CSRFORM] = 0;
+	}
+	else {
+		gdc.mode1 |= 0x10;
+		gdc.s.para[GDC_CSRFORM] = 1;
+	}
+
+	gdcs.textdisp &= ~GDCSCRN_ENABLE;
+	gdcs.textdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
+	gdcs.grphdisp &= ~GDCSCRN_ENABLE;
+	gdcs.grphdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
+	screenupdate |= 2;
+
+	mem[0x597] &= ~3;
+	mem[0x597] |= (scrn >> 4) & 3;
+	mem[MEMB_CRT_STS_FLAG] &= ~0x11;
+	if (!(scrn & 1)) {
+		mem[MEMB_CRT_STS_FLAG] |= 0x01;
+	}
+	if (scrn & 2) {
+		mem[MEMB_CRT_STS_FLAG] |= 0x10;
+	}
+	return(0);
+}
+
+static REG8 bios0x18_31al(void) {
+
+	UINT8	mode;
+
+	mode = 0x08 + ((gdc.display >> (GDCDISP_31 - 5)) & 4);
+	return(mode);
+}
+
+static REG8 bios0x18_31bh(void) {
+
+	UINT8	scrn;
+
+	scrn = (mem[0x597] & 3) << 4;
+	if (!(mem[MEMB_CRT_STS_FLAG] & 0x01)) {
+		scrn |= 0x01;
+	}
+	if (mem[MEMB_CRT_STS_FLAG] & 0x10) {
+		scrn |= 0x02;
+	}
+	return(scrn);
+}
+#endif
+
+
+// ---- slave
+
 void bios0x18_40(void) {
 
 	gdc_forceready(GDCWORK_SLAVE);
@@ -233,46 +436,62 @@ void bios0x18_41(void) {
 
 void bios0x18_42(REG8 mode) {
 
-	BOOL	b;
+	UINT8	crtmode;
 
+	gdc_forceready(GDCWORK_MASTER);
 	gdc_forceready(GDCWORK_SLAVE);
-	ZeroMemory(&gdc.s.para[GDC_SCROLL], 8);
-	if ((mode & 0xc0) == 0xc0) {		// ALL
-		b = FALSE;
-		if ((mem[MEMB_PRXDUPD] & 0x24) == 0x20) {
-			mem[MEMB_PRXDUPD] ^= 4;
-			gdc.clock |= 3;
-			CopyMemory(gdc.s.para + GDC_SYNC, sync400m, 8);
-			gdc.s.para[GDC_PITCH] = 80;
-			gdcs.grphdisp |= GDCSCRN_EXT;
-			mem[MEMB_PRXDUPD] |= 0x08;
-		}
+
+	crtmode = modenum[mode >> 6];
+#if defined(SUPPORT_CRT31KHZ)
+	if (mem[MEMB_CRT_BIOS] & 0x80) {
+		bios0x18_30(bios0x18_31al(), (crtmode << 4) + (bios0x18_31bh() & 3));
 	}
 	else {
-		b = TRUE;
-		if ((mem[MEMB_PRXDUPD] & 0x24) == 0x24) {
-			mem[MEMB_PRXDUPD] ^= 4;
-			gdc.clock &= ~3;
-			CopyMemory(gdc.s.para + GDC_SYNC,
-						(mem[MEMB_PRXCRT] & 0x40)?sync200m:sync200l, 8);
-			gdc.s.para[GDC_PITCH] = 40;
-			gdcs.grphdisp |= GDCSCRN_EXT;
-			mem[MEMB_PRXDUPD] |= 0x08;
+		mem[MEMB_CRT_BIOS] &= ~3;
+		mem[MEMB_CRT_BIOS] |= crtmode;
+#endif
+		ZeroMemory(gdc.s.para + GDC_SCROLL, 8);
+		if (crtmode == 2) {							// ALL
+			crtmode = 2;
+			if ((mem[MEMB_PRXDUPD] & 0x24) == 0x20) {
+				mem[MEMB_PRXDUPD] ^= 4;
+				gdc.clock |= 3;
+				CopyMemory(gdc.s.para + GDC_SYNC, sync400m, 8);
+				gdc.s.para[GDC_PITCH] = 80;
+				gdcs.grphdisp |= GDCSCRN_EXT;
+				mem[MEMB_PRXDUPD] |= 0x08;
+			}
 		}
-		if (mode & 0x40) {				// UPPER
-			gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
-			gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
+		else {
+			crtmode &= 1;
+			if ((mem[MEMB_PRXDUPD] & 0x24) == 0x24) {
+				mem[MEMB_PRXDUPD] ^= 4;
+				gdc.clock &= ~3;
+				CopyMemory(gdc.s.para + GDC_SYNC,
+							(mem[MEMB_PRXCRT] & 0x40)?sync200m:sync200l, 8);
+				gdc.s.para[GDC_PITCH] = 40;
+				gdcs.grphdisp |= GDCSCRN_EXT;
+				mem[MEMB_PRXDUPD] |= 0x08;
+			}
+			if (crtmode == 1) {				// UPPER
+				gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
+				gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
+			}
 		}
+		if ((crtmode == 2) || (!(mem[MEMB_PRXCRT] & 0x40))) {
+			gdc.mode1 &= ~(0x10);
+			gdc.s.para[GDC_CSRFORM] = 0;
+		}
+		else {
+			gdc.mode1 |= 0x10;
+			gdc.s.para[GDC_CSRFORM] = 1;
+		}
+#if defined(SUPPORT_CRT31KHZ)
 	}
-	if ((!b) || (!(mem[MEMB_PRXCRT] & 0x40))) {
-		gdc.mode1 &= ~(0x10);
-		gdc.s.para[GDC_CSRFORM] = 0;
+#endif
+	if (crtmode != 3) {
+		gdcs.disp = (mode >> 4) & 1;
 	}
-	else {
-		gdc.mode1 |= 0x10;
-		gdc.s.para[GDC_CSRFORM] = 1;
-	}
-	gdcs.disp = (mode >> 4) & 1;
 	if (!(mode & 0x20)) {
 		gdc.mode1 &= ~0x04;
 	}
@@ -482,9 +701,6 @@ void bios0x18(void) {
 		UINT32	d;
 		UINT8	col[4];
 	}		tmp;
-
-	UINT	pos;
-	BYTE	*p;
 	int		i;
 
 #if 0
@@ -573,7 +789,6 @@ void bios0x18(void) {
 
 		case 0x0e:						// 一つの表示領域の設定
 			gdc_forceready(GDCWORK_MASTER);
-
 			ZeroMemory(&gdc.m.para[GDC_SCROLL], 16);
 			tmp.w = CPU_DX >> 1;
 			SETBIOSMEM16(MEMW_CRT_W_VRAMADR, tmp.w);
@@ -585,53 +800,21 @@ void bios0x18(void) {
 			SETBIOSMEM16(MEMW_CRT_W_RASTER, tmp.w);
 			STOREINTELWORD(gdc.m.para + GDC_SCROLL + 2, tmp.w);
 			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-			screenupdate |= 2;
+//			screenupdate |= 2;
  			break;
 
 		case 0x0f:						// 複数の表示領域の設定(15/24khz)
 			gdc_forceready(GDCWORK_MASTER);
-
-			SETBIOSMEM16(0x0053e, CPU_CX);
-			SETBIOSMEM16(0x00540, CPU_BX);
-			mem[0x00547] = CPU_DH;
-			mem[0x0053D] = CPU_DL;
-			// wait sync int
-			if ((i = CPU_DL) > 0) {
-				pos = CPU_CX;
-				p = gdc.m.para + GDC_SCROLL + (CPU_DH << 2);
-				while((i--) && (p < (gdc.m.para + GDC_SCROLL + 0x10))) {
-					REG16 t;
-					t = i286_memword_read(CPU_BX, pos);
-					t >>= 1;
-					STOREINTELWORD(p, t);
-					t = i286_memword_read(CPU_BX, pos + 2);
-					if (!(mem[MEMB_CRT_STS_FLAG] & 0x01)) {		// 25
-						t *= (16 * 16);
-					}
-					else {										// 20
-						t *= (20 * 16);
-					}
-					if (!(mem[MEMB_CRT_STS_FLAG] & 0x80)) {
-						t >>= 1;
-					}
-					STOREINTELWORD(p + 2, t);
-					pos += 4;
-					p += 4;
-				}
-			}
-			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-			screenupdate |= 2;
+			bios0x18_0f(CPU_BX, CPU_CX, CPU_DH, CPU_DL);
 			break;
 
    		case 0x10:						// カーソルタイプの設定(15/24khz)
 			gdc_forceready(GDCWORK_MASTER);
-
 			bios0x18_10((REG8)(CPU_AL & 1));
  			break;
 
    		case 0x11:						// カーソルの表示開始
 			gdc_forceready(GDCWORK_MASTER);
-
 			if (gdc.m.para[GDC_CSRFORM] != (mem[MEMB_CRT_RASTER] | 0x80)) {
 				gdc.m.para[GDC_CSRFORM] = mem[MEMB_CRT_RASTER] | 0x80;
 			}
@@ -640,7 +823,6 @@ void bios0x18(void) {
 
    		case 0x12:						// カーソルの表示停止
 			gdc_forceready(GDCWORK_MASTER);
-
 			if (gdc.m.para[GDC_CSRFORM] != mem[MEMB_CRT_RASTER]) {
 				gdc.m.para[GDC_CSRFORM] = mem[MEMB_CRT_RASTER];
 				gdcs.textdisp |= GDCSCRN_ALLDRAW | GDCSCRN_EXT;
@@ -649,7 +831,6 @@ void bios0x18(void) {
 
    		case 0x13:						// カーソル位置の設定
 			gdc_forceready(GDCWORK_MASTER);
-
 			tmp.w = CPU_DX >> 1;
 			if (LOADINTELWORD(gdc.m.para + GDC_CSRW) != tmp.w) {
 				STOREINTELWORD(gdc.m.para + GDC_CSRW, tmp.w);
@@ -698,7 +879,22 @@ void bios0x18(void) {
 					break;
 			}
 			break;
+#if defined(SUPPORT_CRT31KHZ)
+		case 0x30:
+			if (mem[MEMB_CRT_BIOS] & 0x80) {
+				gdc_forceready(GDCWORK_MASTER);
+				gdc_forceready(GDCWORK_SLAVE);
+				CPU_AL = bios0x18_30(CPU_AL, CPU_BH);
+			}
+			break;
 
+		case 0x31:
+			if (mem[MEMB_CRT_BIOS] & 0x80) {
+				CPU_AL = bios0x18_31al();
+				CPU_BH = bios0x18_31bh();
+			}
+			break;
+#endif
    		case 0x40:						// グラフィック画面の表示開始
 			bios0x18_40();
  			break;

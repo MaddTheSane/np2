@@ -62,7 +62,7 @@ static void bios_reinitbyswitch(void) {
 	if (!(np2cfg.dipsw[0] & 0x01)) {			// dipsw1-1 on
 		prxcrt |= 0x40;
 	}
-	if (gdc.display & 2) {
+	if (gdc.display & (1 << GDCDISP_ANALOG)) {
 		prxcrt |= 0x04;							// color16
 	}
 	if (!(np2cfg.dipsw[0] & 0x80)) {			// dipsw1-8 on
@@ -94,12 +94,6 @@ static void bios_reinitbyswitch(void) {
 	mem[MEMB_EXPMMSZ] = (BYTE)(pccore.extmem << 3);
 	mem[MEMB_CRT_RASTER] = 0x0f;
 
-	gdc.display &= ~4;
-	if (!(np2cfg.dipsw[0] & 0x04)) {			// dipsw1-3 on
-		gdc.display |= 4;
-	}
-	gdcs.textdisp |= GDCSCRN_EXT;
-
 	// FDD initialize
 	SETBIOSMEM32(MEMD_F2DD_POINTER, 0xfd801ad7);
 	SETBIOSMEM32(MEMD_F2HD_POINTER, 0xfd801aaf);
@@ -120,6 +114,13 @@ static void bios_reinitbyswitch(void) {
 		CPU_AX = 0x8300;
 		sasibios_operate();
 	}
+}
+
+static void bios_memclear(void) {
+
+	ZeroMemory(mem, 0xa0000);
+	ZeroMemory(mem + VRAM1_B, 0x18000);
+	ZeroMemory(mem + VRAM1_E, 0x08000);
 }
 
 static void bios_vectorset(void) {
@@ -198,7 +199,7 @@ void bios_initialize(void) {
 	}
 	CopyMemory(mem + BIOS_BASE + BIOSOFST_PRT, printmain, sizeof(printmain));
 
-	bios_vectorset();
+//	bios_vectorset();
 	if (!biosrom) {
 		lio_initialize();
 	}
@@ -225,7 +226,7 @@ void bios_initialize(void) {
 		CopyMemory(mem + 0xf538e, itfrom + pos, 0x27);
 	}
 
-	bios_reinitbyswitch();
+//	bios_reinitbyswitch();
 //	mem[MEMB_CRT_STS_FLAG] = 0x84;		// -> bios_screeninit()
 //	mem[MEMB_BIOS_FLAG0] = 0x03;
 //	mem[MEMB_F2DD_MODE] = 0xff;
@@ -233,7 +234,7 @@ void bios_initialize(void) {
 	mem[0x005ae] |= 0x03;											// ver0.31
 
 	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
-	bios0x09_init();
+//	bios0x09_init();
 
 	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
 	mem[ITF_ADRS + 0x7ff0] = 0xea;
@@ -261,24 +262,31 @@ void bios_initialize(void) {
 
 static void bios_boot(void) {
 
-	if (sysport.c & 0x80) {
-		if (!(sysport.c & 0x20)) {
-			bios_reinitbyswitch();
-		}
-		CPU_CS = 0x0000;
-		CPU_IP = 0x04f8;
-		CPU_DS = 0x0000;
-		CPU_DX = 0x43d;
-		CPU_AL = 0x10;
-		mem[0x004f8] = 0xee;		// out	dx, al
-		mem[0x004f9] = 0xea;		// call	far
-		SETBIOSMEM16(0x004fa, 0x0000);
-		SETBIOSMEM16(0x004fc, 0xffff);
-	}
-	else {
+	if (!(sysport.c & 0x80)) {
 		CPU_SP = GETBIOSMEM16(0x00404);
 		CPU_SS = GETBIOSMEM16(0x00406);
 //		TRACEOUT(("CPU Reset... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
+	}
+	else {
+		bios_memclear();
+		bios_vectorset();
+		bios0x09_init();
+		bios_reinitbyswitch();
+
+		if (sysport.c & 0x20) {
+			CPU_CS = 0x0000;
+			CPU_IP = 0x04f8;
+			CPU_DS = 0x0000;
+			CPU_DX = 0x43d;
+			CPU_AL = 0x10;
+			mem[0x004f8] = 0xee;		// out	dx, al
+			mem[0x004f9] = 0xea;		// call	far
+			SETBIOSMEM16(0x004fa, 0x0000);
+			SETBIOSMEM16(0x004fc, 0xffff);
+		}
+		else {
+			CPU_IP = 0x0002;
+		}
 	}
 }
 
