@@ -121,7 +121,7 @@ static void pccore_set(void) {
 	}
 	else {
 		pccore.baseclock = PCBASECLOCK20;			// 2.0MHz
-		pccore.cpumode = CPUMODE_8MHz;
+		pccore.cpumode = CPUMODE_8MHZ;
 	}
 	multiple = np2cfg.multiple;
 	if (multiple == 0) {
@@ -623,7 +623,7 @@ void pccore_exec(BOOL draw) {
 #endif
 		}
 
-#if 0 // ndef TRACE
+#if 1 // ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();
@@ -650,36 +650,6 @@ void pccore_exec(BOOL draw) {
 			if ((CPU_CS == 0xf800) && (CPU_IP == 0x15FF)) {
 				TRACEOUT(("DX = %.4x / DS:DI = %.4x:%.4x [%.2x]",
 									CPU_DX, CPU_DS, CPU_DI, mem[0xa3fe0]));
-			}
-#endif
-#if 0
-			if ((tr & 2) && (mem[0x0471e] == '\\')) {
-				TRACEOUT(("DTA BREAK %.4x:%.4x", CPU_CS, CPU_IP));
-				TRACEOUT(("0471:000e %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
-	mem[0x0471e+0], mem[0x0471e+1], mem[0x0471e+2], mem[0x0471e+3],
-	mem[0x0471e+4], mem[0x0471e+5], mem[0x0471e+6], mem[0x0471e+7]));
-				tr -= 2;
-			}
-			// DOS6
-			if (CPU_CS == 0xffd0) {
-				if (CPU_IP == 0xc4c2) {
-					TRACEOUT(("DS:DX = %.4x:%.4x / CX = %.4x", CPU_DS, CPU_DX, CPU_CX));
-				}
-				else if (CPU_IP == 0xc21d) {
-					TRACEOUT(("-> DS:BX = %.4x:%.4x", CPU_DS, CPU_BX));
-				}
-			}
-#endif
-#if 0
-			if ((CPU_CS == 0x0620) || (CPU_CS == 0x08a0)) {
-				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
-			}
-#endif
-#if 0		// VX LIO
-			if (CPU_CS == 0xf990) {
-				if (CPU_IP == 0x07BE) {
-					TRACEOUT(("%d,%d - %d,%d", CPU_BP, CPU_DX, CPU_SI, CPU_DI));
-				}
 			}
 #endif
 			i286x_step();

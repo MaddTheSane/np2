@@ -29,7 +29,7 @@ static REG8 IOINPCALL prt_i42(UINT port) {
 	REG8	ret;
 
 	ret = 0x84;
-	if (pccore.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHZ) {
 		ret |= 0x20;
 	}
 	if (np2cfg.dipsw[0] & 4) {

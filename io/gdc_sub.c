@@ -107,11 +107,11 @@ static void calc_gdcslavewait(UINT dots) {
 	SINT32	clk;
 
 	clk = dots;
-	if (pccore.baseclock != PCBASECLOCK20) {
-		clk *= 27648;
+	if (pccore.cpumode & CPUMODE_8MHZ) {
+		clk *= 22464;
 	}
 	else {
-		clk *= 22464;
+		clk *= 27648;
 	}
 	clk *= pccore.multiple;
 	clk /= 15625;

@@ -323,7 +323,7 @@ static const IOINP piti71[4] = {
 void itimer_reset(void) {
 
 	ZeroMemory(&pit, sizeof(pit));
-	if (pccore.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHZ) {
 		pit.value[1] = 998;				// 4MHz
 	}
 	else {

@@ -121,6 +121,17 @@ enum {
 };
 #endif
 
+enum {
+	NKEY_USER1			= 0x76,
+	NKEY_USER2			= 0x77
+};
+
+enum {
+	NKEYREF_USER		= 0xf8,
+	NKEYREF_SOFTKBD		= 0xf9,
+	NKEYREF_NC			= 0xff
+};
+
 
 typedef struct {
 	UINT8	keys;
@@ -145,23 +156,36 @@ extern "C" {
 extern	NKEYTBL		nkeytbl;
 
 
+void keystat_initialize(void);
+
 void keystat_tblreset(void);
 void keystat_tblload(const char *filename);
 
-void keystat_reset(void);
-void keystat_senddata(REG8 data);
+void keystat_keydown(REG8 ref);
+void keystat_keyup(REG8 ref);
 void keystat_allrelease(void);
-void keystat_forcerelease(REG8 value);
+void keystat_releaseref(REG8 ref);
+void keystat_releasekey(REG8 key);
 void keystat_resetjoykey(void);
 
 
 
 // ---- I/O
 
+void keystat_down(const UINT8 *key, REG8 keys, REG8 ref);
+void keystat_up(const UINT8 *key, REG8 keys, REG8 ref);
 void keystat_resendstat(void);
-void keystat_sync(void);
 REG8 keystat_getjoy(void);
 REG8 keystat_getmouse(SINT16 *x, SINT16 *y);
+
+
+
+// ---- îpé~ä÷êî
+
+#define	keystat_reset				keystat_initialize
+#define	keystat_sync()
+#define	keystat_forcerelease(k)		keystat_releasekey(k)
+void keystat_senddata(REG8 data);
 
 #ifdef __cplusplus
 }

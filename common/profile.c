@@ -106,6 +106,46 @@ gden_err0:
 
 // ----
 
+const char *profile_getarg(const char *str, char *buf, UINT leng) {
+
+	UINT8	c;
+
+	if (leng) {
+		leng--;
+	}
+	else {
+		buf = NULL;
+	}
+	if (str) {
+		c = (UINT8)*str;
+		while(((c - 1) & 0xff) < 0x20) {
+			str++;
+			c = (UINT8)*str;
+		}
+		if (c == 0) {
+			str = NULL;
+		}
+	}
+	if (str) {
+		c = (UINT8)*str;
+		while(c > 0x20) {
+			if (leng) {
+				*buf++ = c;
+				leng--;
+			}
+			str++;
+			c = (UINT8)*str;
+		}
+	}
+	if (buf) {
+		buf[0] = '\0';
+	}
+	return(str);
+}
+
+
+// ----
+
 typedef struct {
 	UINT8	num;
 	char	str[7];

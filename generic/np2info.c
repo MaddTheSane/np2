@@ -77,8 +77,8 @@ static void info_clock(char *str, int maxlen, NP2INFOEX *ex) {
 
 static void info_base(char *str, int maxlen, NP2INFOEX *ex) {
 
-	milstr_ncpy(str, (pccore.baseclock == PCBASECLOCK25)?str_5MHz:str_8MHz,
-																	maxlen);
+	milstr_ncpy(str,
+				(pccore.cpumode & CPUMODE_8MHZ)?str_8MHz:str_5MHz, maxlen);
 	(void)ex;
 }
 

@@ -97,11 +97,11 @@ void pcm86_setnextintr(void) {
 //			cnt += 4;								// ÇøÇÂÇ¡Ç∆âÑëÿÇ≥ÇπÇÈ
 			// Ç±Ç±Ç≈ clk = pccore.realclock * cnt / 86pcm_rate
 			// clk = ((pccore.baseclock / 86pcm_rate) * cnt) * pccore.multiple
-			if (pccore.baseclock == PCBASECLOCK25) {
-				clk = clk25_128[pcm86.fifo & 7];
+			if (pccore.cpumode & CPUMODE_8MHZ) {
+				clk = clk20_128[pcm86.fifo & 7];
 			}
 			else {
-				clk = clk20_128[pcm86.fifo & 7];
+				clk = clk25_128[pcm86.fifo & 7];
 			}
 			// cntÇÕç≈ëÂ 8000h Ç≈ 32bitÇ≈é˚Ç‹ÇÈÇÊÇ§Ç…Åc
 			clk *= cnt;

@@ -10,11 +10,11 @@ void artic_callback(void) {
 	SINT32	leng;
 
 	mul = pccore.multiple;
-	if (pccore.baseclock == PCBASECLOCK25) {
-		mul *= 16;
+	if (pccore.cpumode & CPUMODE_8MHZ) {
+		mul *= 13;
 	}
 	else {
-		mul *= 13;
+		mul *= 16;
 	}
 	leng = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
 	leng *= 2;
@@ -32,11 +32,11 @@ static UINT32 artic_getcnt(void) {
 	SINT32	leng;
 
 	mul = pccore.multiple;
-	if (pccore.baseclock != PCBASECLOCK20) {
-		mul *= 16;
+	if (pccore.cpumode & CPUMODE_8MHZ) {
+		mul *= 13;
 	}
 	else {
-		mul *= 13;
+		mul *= 16;
 	}
 	leng = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
 	leng *= 2;

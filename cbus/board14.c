@@ -21,7 +21,7 @@ static UINT pit3_latch(void) {
 	if (clock >= 0) {
 		clock /= pccore.multiple;
 		clock /= 8;
-		if (pccore.baseclock == PCBASECLOCK25) {
+		if (!(pccore.cpumode & CPUMODE_8MHZ)) {
 			clock = clock * 13 / 16;
 		}
 		return(clock);
@@ -109,7 +109,7 @@ static void setmusicgenevent(BOOL absolute) {
 	else {
 		cnt = pccore.multiple << 16;
 	}
-	if (pccore.baseclock == PCBASECLOCK25) {
+	if (!(pccore.cpumode & CPUMODE_8MHZ)) {
 		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
 	}
 	cnt *= 8;

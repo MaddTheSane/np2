@@ -8,7 +8,7 @@ enum {
 };
 
 enum {
-	CPUMODE_8MHz		= 0x20,
+	CPUMODE_8MHZ		= 0x20,
 
 	PCMODEL_VF			= 0,
 	PCMODEL_VM			= 1,

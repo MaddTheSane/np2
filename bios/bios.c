@@ -83,7 +83,7 @@ static void bios_reinitbyswitch(void) {
 	mem[MEMB_PRXDUPD] = prxdupd;
 
 	biosflag = 0x20;
-	if (pccore.cpumode & CPUMODE_8MHz) {
+	if (pccore.cpumode & CPUMODE_8MHZ) {
 		biosflag |= 0x80;
 	}
 	biosflag |= mem[0xa3fea] & 7;

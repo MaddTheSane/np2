@@ -78,6 +78,22 @@ void milank_ncat(char *dst, const char *src, int maxlen) {
 		dst[i] = '\0';
 	}
 }
+
+char *milank_chr(const char *str, int c) {
+
+	int		s;
+
+	if (str) {
+		do {
+			s = *str;
+			if (s == c) {
+				return((char *)str);
+			}
+			str++;
+		} while(s);
+	}
+	return(NULL);
+}
 #endif
 
 
@@ -211,6 +227,26 @@ void milsjis_ncat(char *dst, const char *src, int maxlen) {
 		}
 		dst[i] = '\0';
 	}
+}
+
+char *milsjis_chr(const char *str, int c) {
+
+	int		s;
+
+	if (str) {
+		do {
+			s = *str;
+			if (s == c) {
+				return((char *)str);
+			}
+			if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
+				str++;
+				s = *str;
+			}
+			str++;
+		} while(s);
+	}
+	return(NULL);
 }
 #endif
 
@@ -346,6 +382,26 @@ void mileuc_ncat(char *dst, const char *src, int maxlen) {
 		dst[i] = '\0';
 	}
 }
+
+char *mileuc_chr(const char *str, int c) {
+
+	int		s;
+
+	if (str) {
+		do {
+			s = *str;
+			if (s == c) {
+				return((char *)str);
+			}
+			if (((s - 0xa1) & 0xff) < 0x5d) {
+				str++;
+				s = *str;
+			}
+			str++;
+		} while(s);
+	}
+	return(NULL);
+}
 #endif
 
 
@@ -385,6 +441,16 @@ int milstr_extendcmp(const char *str, const char *cmp) {
 		}
 	} while(s == c);
 	return((s > c)?1:-1);
+}
+
+char *milstr_nextword(const char *str) {
+
+	if (str) {
+		while(!(((*str) - 1) & 0xe0)) {
+			str++;
+		}
+	}
+	return((char *)str);
 }
 
 int milstr_getarg(char *str, char *arg[], int maxarg) {
@@ -477,14 +543,15 @@ long milstr_solveINT(const char *str) {
 	return(ret * s);
 }
 
+char *milstr_list(const char *lststr, UINT pos) {
 
-const char *milstr_list(const char *lststr, UINT pos) {
-
-	while(pos) {
-		pos--;
-		while(*lststr++ != '\0') {
+	if (lststr) {
+		while(pos) {
+			pos--;
+			while(*lststr++ != '\0') {
+			}
 		}
 	}
-	return(lststr);
+	return((char *)lststr);
 }
 

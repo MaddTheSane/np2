@@ -66,7 +66,7 @@ static void set_fmtimeraevent(BOOL absolute) {
 	SINT32	l;
 
 	l = 18 * (1024 - fmtimer.timera);
-	if (pccore.cpumode & CPUMODE_8MHz) {		// 4MHz
+	if (pccore.cpumode & CPUMODE_8MHZ) {		// 4MHz
 		l = (l * 1248 / 625) * pccore.multiple;
 	}
 	else {										// 5MHz
@@ -80,7 +80,7 @@ static void set_fmtimerbevent(BOOL absolute) {
 	SINT32	l;
 
 	l = 288 * (256 - fmtimer.timerb);
-	if (pccore.cpumode & CPUMODE_8MHz) {		// 4MHz
+	if (pccore.cpumode & CPUMODE_8MHZ) {		// 4MHz
 		l = (l * 1248 / 625) * pccore.multiple;
 	}
 	else {										// 5MHz
