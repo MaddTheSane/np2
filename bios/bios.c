@@ -403,6 +403,24 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 		return(0);
 	}
 
+#if defined(CPUCORE_IA32) && defined(TRACE)
+	if (CPU_STAT_PAGING) {
+		UINT32 pde = i286_memoryread_d(CPU_STAT_PDE_BASE);
+		if (!(pde & CPU_PDE_PRESENT)) {
+			TRACEOUT(("page0: PTE not present"));
+		}
+		else {
+			UINT32 pte = i286_memoryread_d(pde & CPU_PDE_BASEADDR_MASK);
+			if (!(pte & CPU_PTE_PRESENT)) {
+				TRACEOUT(("page0: not present"));
+			}
+			else if (pte & CPU_PTE_BASEADDR_MASK) {
+				TRACEOUT(("page0: physical address != 0 (pte = %.8x)", pte));
+			}
+		}
+	}
+#endif
+
 	switch(adrs) {
 		case BIOS_BASE + BIOSOFST_EOIM:
 			CPU_REMCLOCK -= 300;

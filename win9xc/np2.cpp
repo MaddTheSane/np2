@@ -504,7 +504,6 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 		case IDM_I286SAVE:
 			debugsub_status();
-pic.pi[1].imr = 0;
 			break;
 
 		case IDM_HELP:

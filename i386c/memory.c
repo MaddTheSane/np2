@@ -1107,6 +1107,60 @@ retdummy:
 	return(0x01000000);		// ÇƒÇ´Ç∆Å[Ç…ÉÅÉÇÉäÇ™ë∂ç›ÇµÇ»Ç¢èÍèä
 }
 
+
+REG8 MEMCALL meml_read8(UINT seg, UINT off) {
+
+	UINT32	addr;
+
+	addr = (seg << 4) + LOW16(off);
+	if (CPU_STAT_PAGING) {
+		addr = physicaladdr(addr);
+	}
+	return(i286_memoryread(addr));
+}
+
+REG16 MEMCALL meml_read16(UINT seg, UINT off) {
+
+	UINT32	addr;
+
+	addr = (seg << 4) + LOW16(off);
+	if (!CPU_STAT_PAGING) {
+		return(i286_memoryread_w(addr));
+	}
+	else if ((addr + 1) & 0xfff) {
+		return(i286_memoryread_w(physicaladdr(addr)));
+	}
+	return(meml_read8(seg, off) + (meml_read8(seg, off + 1) << 8));
+}
+
+void MEMCALL meml_write8(UINT seg, UINT off, REG8 dat) {
+
+	UINT32	addr;
+
+	addr = (seg << 4) + LOW16(off);
+	if (CPU_STAT_PAGING) {
+		addr = physicaladdr(addr);
+	}
+	i286_memorywrite(addr, dat);
+}
+
+void MEMCALL meml_write16(UINT seg, UINT off, REG16 dat) {
+
+	UINT32	addr;
+
+	addr = (seg << 4) + LOW16(off);
+	if (!CPU_STAT_PAGING) {
+		i286_memorywrite_w(addr, dat);
+	}
+	else if ((addr + 1) & 0xfff) {
+		i286_memorywrite_w(physicaladdr(addr), dat);
+	}
+	else {
+		meml_write8(seg, off, (REG8)dat);
+		meml_write8(seg, off + 1, (REG8)(dat >> 8));
+	}
+}
+
 void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 
 	UINT32	adrs;
@@ -1147,13 +1201,18 @@ void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
 
 	UINT	size;
 
-	while(leng) {
-		size = 0x1000 - (address & 0xfff);
-		size = min(size, leng);
-		memp_read(physicaladdr(address), dat, size);
-		address += size;
-		dat = ((BYTE *)dat) + size;
-		leng -= size;
+	if (!CPU_STAT_PAGING) {
+		memp_read(address, dat, leng);
+	}
+	else {
+		while(leng) {
+			size = 0x1000 - (address & 0xfff);
+			size = min(size, leng);
+			memp_read(physicaladdr(address), dat, size);
+			address += size;
+			dat = ((BYTE *)dat) + size;
+			leng -= size;
+		}
 	}
 }
 
@@ -1161,15 +1220,19 @@ void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
 
 	UINT	size;
 
-	while(leng) {
-		size = 0x1000 - (address & 0xfff);
-		size = min(size, leng);
-		memp_write(physicaladdr(address), dat, size);
-		address += size;
-		dat = ((BYTE *)dat) + size;
-		leng -= size;
+	if (!CPU_STAT_PAGING) {
+		memp_write(address, dat, leng);
+	}
+	else {
+		while(leng) {
+			size = 0x1000 - (address & 0xfff);
+			size = min(size, leng);
+			memp_write(physicaladdr(address), dat, size);
+			address += size;
+			dat = ((BYTE *)dat) + size;
+			leng -= size;
+		}
 	}
 }
-
 #endif
 

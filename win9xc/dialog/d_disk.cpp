@@ -92,7 +92,7 @@ const char	*p;
 		if (dlgs_selectfile(hWnd, &fddui, path, sizeof(path), &readonly)) {
 			file_cpyname(fddfolder, path, sizeof(fddfolder));
 			sysmng_update(SYS_UPDATEOSCFG);
-			diskdrv_setfdd(drv, p, readonly);
+			diskdrv_setfdd(drv, path, readonly);
 		}
 	}
 }

@@ -7,6 +7,9 @@
 
 #ifdef TRACE
 
+#define	FILEBUFSIZE			(1 << 20)
+#define FILELASTBUFONLY
+
 #ifdef STRICT
 #define	SUBCLASSPROC	WNDPROC
 #else
@@ -106,6 +109,70 @@ static void View_AddString(const char *lpszString) {
 	View_ScrollToBottom(hView);
 }
 
+
+// ----
+
+static	char	filebuf[FILEBUFSIZE];
+static	UINT32	filebufpos;
+
+static void trfh_close(void) {
+
+	FILEH	fh;
+	UINT	size;
+
+	fh = tracewin.fh;
+	tracewin.fh = FILEH_INVALID;
+	if (fh != FILEH_INVALID) {
+		size = filebufpos & (FILEBUFSIZE - 1);
+#if defined(FILELASTBUFONLY)
+		if (filebufpos >= FILEBUFSIZE) {
+			file_write(fh, filebuf + size, FILEBUFSIZE - size);
+		}
+#endif
+		if (size) {
+			file_write(fh, filebuf, size);
+		}
+		file_close(fh);
+	}
+}
+
+static void trfh_open(const char *fname) {
+
+	trfh_close();
+	tracewin.fh = file_create(fname);
+	filebufpos = 0;
+}
+
+static void trfh_add(const char *buf) {
+
+	UINT	size;
+	UINT	pos;
+	UINT	rem;
+
+	size = strlen(buf);
+	while(size) {
+		pos = filebufpos & (FILEBUFSIZE - 1);
+		rem = FILEBUFSIZE - pos;
+		if (size >= rem) {
+			CopyMemory(filebuf + pos, buf, rem);
+			filebufpos += rem;
+			buf += rem;
+			size -= rem;
+#if !defined(FILELASTBUFONLY)
+			file_write(tracewin.fh, buf, strlen(buf));
+#endif
+		}
+		else {
+			CopyMemory(filebuf + pos, buf, size);
+			filebufpos += size;
+			break;
+		}
+	}
+}
+
+
+// ----
+
 static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	RECT	rc;
@@ -160,11 +227,10 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 				case IDM_TRACEFH:
 					if (tracewin.fh != FILEH_INVALID) {
-						file_close(tracewin.fh);
-						tracewin.fh = FILEH_INVALID;
+						trfh_close();
 					}
 					else {
-						tracewin.fh = file_create("traceout.txt");
+						trfh_open("traceout.txt");
 					}
 					hmenu = GetSystemMenu(hWnd, FALSE);
 					CheckMenuItem(hmenu, IDM_TRACEFH,
@@ -269,7 +335,7 @@ void trace_init(void) {
 	tracewin.fh = FILEH_INVALID;
 #else
 	tracewin.en = 0;
-	tracewin.fh = file_create_c("traces.txt");
+	tracewin.fh = trfh_open("traces.txt");
 #endif
 
 	tracecfg.posx = CW_USEDEFAULT;
@@ -295,8 +361,7 @@ void trace_init(void) {
 void trace_term(void) {
 
 	if (tracewin.fh != FILEH_INVALID) {
-		file_close(tracewin.fh);
-		tracewin.fh = FILEH_INVALID;
+		trfh_close();
 	}
 	if (tracewin.hwnd) {
 		DestroyWindow(tracewin.hwnd);
@@ -318,8 +383,8 @@ void trace_fmt(const char *fmt, ...) {
 		View_AddString(buf);
 	}
 	if (tracewin.fh != FILEH_INVALID) {
-		file_write(tracewin.fh, buf, strlen(buf));
-		file_write(tracewin.fh, crlf, strlen(crlf));
+		trfh_add(buf);
+		trfh_add(crlf);
 	}
 }
 
@@ -338,12 +403,13 @@ void trace_fmt2(const char *fmt, ...) {
 			View_AddString(buf);
 		}
 		if (tracewin.fh != FILEH_INVALID) {
-			file_write(tracewin.fh, buf, strlen(buf));
-			file_write(tracewin.fh, crlf, strlen(crlf));
+			trfh_add(buf);
+			trfh_add(crlf);
 		}
 	}
 }
 
+#if 0
 void trace_fileout(const char *fname) {
 
 	if (tracewin.fh != FILEH_INVALID) {
@@ -354,6 +420,7 @@ void trace_fileout(const char *fname) {
 		tracewin.fh = file_create_c(fname);
 	}
 }
+#endif
 
 #endif
 

@@ -72,6 +72,10 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 dat);
 void MEMCALL memp_read(UINT32 address, void *dat, UINT leng);
 void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng);
 
+REG8 MEMCALL meml_read8(UINT seg, UINT off);
+REG16 MEMCALL meml_read16(UINT seg, UINT off);
+void MEMCALL meml_write8(UINT seg, UINT off, REG8 dat);
+void MEMCALL meml_write16(UINT seg, UINT off, REG16 dat);
 void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng);
 void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng);
 void MEMCALL meml_read(UINT32 address, void *dat, UINT leng);
@@ -95,13 +99,13 @@ void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng);
 // ---- Logical Space (BIOS)
 
 #define	MEML_READ8(seg, off)				\
-			i286_memoryread(((UINT32)(seg) << 4) + LOW16(off))
+			meml_read8((seg), (off))
 #define	MEML_READ16(seg, off)				\
-			i286_memoryread_w(((UINT32)(seg) << 4) + LOW16(off))
+			meml_read16((seg), (off))
 #define	MEML_WRITE8(seg, off, dat)			\
-			i286_memorywrite(((UINT32)(seg) << 4) + LOW16(off), (dat))
+			meml_write8((seg), (off), (dat))
 #define	MEML_WRITE16(seg, off, dat)			\
-			i286_memorywrite_w(((UINT32)(seg) << 4) + LOW16(off), (dat))
+			meml_write16((seg), (off), (dat))
 #define MEML_READSTR(seg, off, dat, leng)	\
 			meml_readstr((seg), (off), (dat), (leng))
 #define MEML_WRITESTR(seg, off, dat, leng)	\
