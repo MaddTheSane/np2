@@ -1,4 +1,4 @@
-/*	$Id: system_inst.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: system_inst.h,v 1.2 2004/01/14 16:14:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -34,23 +34,15 @@
 extern "C" {
 #endif
 
-/* load gdtr */
-void LGDT16_Ms(DWORD op);
-void LGDT32_Ms(DWORD op);
-void SGDT16_Ms(DWORD op);
-void SGDT32_Ms(DWORD op);
+/* Load/Store system register */
+void LGDT_Ms(DWORD op);
+void SGDT_Ms(DWORD op);
 void LLDT_Ew(DWORD op);
 void SLDT_Ew(DWORD op);
-void SLDT_Ed(DWORD op);
 void LTR_Ew(DWORD op);
 void STR_Ew(DWORD op);
-void STR_Ed(DWORD op);
-
-/* load idtr */
-void LIDT16_Ms(DWORD op);
-void LIDT32_Ms(DWORD op);
-void SIDT16_Ms(DWORD op);
-void SIDT32_Ms(DWORD op);
+void LIDT_Ms(DWORD op);
+void SIDT_Ms(DWORD op);
 
 /* ctrl reg */
 void MOV_CdRd(void);
@@ -59,7 +51,6 @@ void MOV_RdCd(void);
 /* msw */
 void LMSW_Ew(DWORD op);
 void SMSW_Ew(DWORD op);
-void SMSW_Ed(DWORD op);
 
 /* */
 void CLTS(void);

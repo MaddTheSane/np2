@@ -1,4 +1,4 @@
-/*	$Id: logic_arith.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: logic_arith.c,v 1.3 2004/01/14 16:14:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -578,13 +578,13 @@ XOR_EAXId(void)
 }
 
 void
-XOR_EbIb(BYTE *p, DWORD src)
+XOR_EbIb(BYTE *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	BYTE_XOR(dst, src);
-	*p = (BYTE)dst;
+	*regp = (BYTE)dst;
 }
 
 void
@@ -598,13 +598,13 @@ XOR_EbIb_ext(DWORD madr, DWORD src)
 }
 
 void
-XOR_EwIx(WORD *p, DWORD src)
+XOR_EwIx(WORD *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	WORD_XOR(dst, src);
-	*p = (WORD)dst;
+	*regp = (WORD)dst;
 }
 
 void
@@ -618,13 +618,13 @@ XOR_EwIx_ext(DWORD madr, DWORD src)
 }
 
 void
-XOR_EdIx(DWORD *p, DWORD src)
+XOR_EdIx(DWORD *regp, DWORD src)
 {
 	DWORD dst;
 
-	dst = *p;
+	dst = *regp;
 	DWORD_XOR(dst, src);
-	*p = dst;
+	*regp = dst;
 }
 
 void

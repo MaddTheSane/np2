@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.3 2004/01/13 16:38:49 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.4 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -199,6 +199,7 @@ show_profile_ea(void)
 
 #ifdef	IA32_INSTRUCTION_TRACE
 static FILE *fp = NULL;
+BOOL cpu_inst_trace = FALSE;
 
 static const char *opcode_1byte[2][256] = {
 /* 16bit */
@@ -651,10 +652,12 @@ exec_1step(void)
 	int num = 0;
 	int i;
 
-	if (fp == NULL) {
+	if (cpu_inst_trace && (fp == NULL)) {
 		fp = fopen("ia32trace.txt", "a");
 	}
-	fprintf(fp, "%04x:%08x:", CPU_CS, CPU_EIP);
+	if (fp) {
+		fprintf(fp, "%04x:%08x:", CPU_CS, CPU_EIP);
+	}
 #endif
 
 	for (prefix = 0; prefix < MAX_PREFIX; prefix++) {

@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.5 2004/01/13 16:36:48 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.6 2004/01/14 16:14:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -35,7 +35,7 @@
 
 
 void
-LGDT16_Ms(DWORD op)
+LGDT_Ms(DWORD op)
 {
 	DWORD madr;
 	DWORD base;
@@ -47,34 +47,23 @@ LGDT16_Ms(DWORD op)
 			madr = get_ea(op);
 			limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
-			base &= 0x00ffffff;
+			if (!CPU_INST_OP32) {
+				base &= 0x00ffffff;
+			}
 
-			VERBOSE(("LGDT16_Ms: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x", base, limit));
-
-			CPU_GDTR_BASE = base;
-			CPU_GDTR_LIMIT = limit;
-			return;
-		}
-		EXCEPTION(GP_EXCEPTION, 0);
-	}
-	EXCEPTION(UD_EXCEPTION, 0);
-}
-
-void
-LGDT32_Ms(DWORD op)
+#if defined(DEBUG)
 {
-	DWORD madr;
-	DWORD base;
-	WORD limit;
+			DWORD v[2];
+			DWORD i;
 
-	if (op < 0xc0) {
-		if (!CPU_STAT_PM || !CPU_STAT_VM86 || CPU_STAT_CPL == 0) {
-			CPU_WORKCLOCK(11);
-			madr = get_ea(op);
-			limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-			base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
-
-			VERBOSE(("LGDT32_Ms: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x", base, limit));
+			VERBOSE(("LGDT_Ms: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x", base, limit));
+			for (i = 0; i < limit; i += 8) {
+				v[0] = cpu_lmemoryread_d(base + i);
+				v[1] = cpu_lmemoryread_d(base + i + 4);
+				VERBOSE(("LGDT_Ms: %08x: %08x%08x", base + i, v[0], v[1]));
+			}
+}
+#endif
 
 			CPU_GDTR_BASE = base;
 			CPU_GDTR_LIMIT = limit;
@@ -86,7 +75,7 @@ LGDT32_Ms(DWORD op)
 }
 
 void
-SGDT16_Ms(DWORD op)
+SGDT_Ms(DWORD op)
 {
 	DWORD madr;
 	DWORD base;
@@ -94,27 +83,11 @@ SGDT16_Ms(DWORD op)
 
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
-		base = CPU_GDTR_BASE & 0x00ffffff;
 		limit = CPU_GDTR_LIMIT;
-		madr = get_ea(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, limit);
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr + 2, base);
-		return;
-	}
-	EXCEPTION(UD_EXCEPTION, 0);
-}
-
-void
-SGDT32_Ms(DWORD op)
-{
-	DWORD madr;
-	DWORD base;
-	WORD limit;
-
-	if (op < 0xc0) {
-		CPU_WORKCLOCK(11);
 		base = CPU_GDTR_BASE;
-		limit = CPU_GDTR_LIMIT;
+		if (!CPU_INST_OP32) {
+			base &= 0x00ffffff;
+		}
 		madr = get_ea(op);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, limit);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr + 2, base);
@@ -154,26 +127,11 @@ SLDT_Ew(DWORD op)
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(5);
-			*(reg16_b20[op]) = CPU_LDTR;
-		} else {
-			CPU_WORKCLOCK(11);
-			madr = calc_ea_dst(op);
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_LDTR);
-		}
-		return;
-	}
-	EXCEPTION(UD_EXCEPTION, 0);
-}
-
-void
-SLDT_Ed(DWORD op)
-{
-	DWORD madr;
-
-	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		if (op >= 0xc0) {
-			CPU_WORKCLOCK(5);
-			*(reg32_b20[op]) = CPU_LDTR;
+			if (!CPU_INST_OP32) {
+				*(reg16_b20[op]) = CPU_LDTR;
+			} else {
+				*(reg32_b20[op]) = CPU_LDTR;
+			}
 		} else {
 			CPU_WORKCLOCK(11);
 			madr = calc_ea_dst(op);
@@ -212,72 +170,65 @@ STR_Ew(DWORD op)
 {
 	DWORD madr;
 
-	if (op >= 0xc0) {
-		CPU_WORKCLOCK(5);
-		*(reg16_b20[op]) = CPU_TR;
-	} else {
-		CPU_WORKCLOCK(11);
-		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_TR);
-	}
-}
-
-void
-STR_Ed(DWORD op)
-{
-	DWORD madr;
-
-	if (op >= 0xc0) {
-		CPU_WORKCLOCK(5);
-		*(reg32_b20[op]) = CPU_TR;
-	} else {
-		CPU_WORKCLOCK(11);
-		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, CPU_TR);
-	}
-}
-
-void
-LIDT16_Ms(DWORD op)
-{
-	DWORD madr;
-	DWORD base;
-	WORD limit;
-
-	if (op < 0xc0) {
-		CPU_WORKCLOCK(11);
-		madr = get_ea(op);
-		limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
-		base &= 0x00ffffff;
-		CPU_IDTR_BASE = base;
-		CPU_IDTR_LIMIT = limit;
-		return;
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		if (op >= 0xc0) {
+			CPU_WORKCLOCK(5);
+			if (CPU_INST_OP32) {
+				*(reg16_b20[op]) = CPU_TR;
+			} else {
+				*(reg32_b20[op]) = CPU_TR;
+			}
+		} else {
+			CPU_WORKCLOCK(11);
+			madr = calc_ea_dst(op);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_TR);
+		}
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
 void
-LIDT32_Ms(DWORD op)
+LIDT_Ms(DWORD op)
 {
 	DWORD madr;
 	DWORD base;
 	WORD limit;
 
 	if (op < 0xc0) {
-		CPU_WORKCLOCK(11);
-		madr = get_ea(op);
-		limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
-		base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
-		CPU_IDTR_BASE = base;
-		CPU_IDTR_LIMIT = limit;
-		return;
+		if (!CPU_STAT_PM || !CPU_STAT_VM86 || CPU_STAT_CPL == 0) {
+			CPU_WORKCLOCK(11);
+			madr = get_ea(op);
+			limit = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
+			base = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr + 2);
+			if (!CPU_INST_OP32) {
+				base &= 0x00ffffff;
+			}
+
+#if defined(DEBUG)
+{
+			DWORD v[2];
+			DWORD i;
+
+			VERBOSE(("LIDT_Ms: IDTR_BASE = 0x%08x, IDTR_LIMIT = 0x%04x", base, limit));
+			for (i = 0; i < limit; i += 8) {
+				v[0] = cpu_lmemoryread_d(base + i);
+				v[1] = cpu_lmemoryread_d(base + i + 4);
+				VERBOSE(("LGDT_Ms: %08x: %08x%08x", base + i, v[0], v[1]));
+			}
+}
+#endif
+
+			CPU_IDTR_BASE = base;
+			CPU_IDTR_LIMIT = limit;
+			return;
+		}
+		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
 void
-SIDT16_Ms(DWORD op)
+SIDT_Ms(DWORD op)
 {
 	DWORD madr;
 	DWORD base;
@@ -285,27 +236,11 @@ SIDT16_Ms(DWORD op)
 
 	if (op < 0xc0) {
 		CPU_WORKCLOCK(11);
-		base = CPU_IDTR_BASE & 0x00ffffff;
 		limit = CPU_IDTR_LIMIT;
-		madr = get_ea(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, limit);
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr + 2, base);
-		return;
-	}
-	EXCEPTION(UD_EXCEPTION, 0);
-}
-
-void
-SIDT32_Ms(DWORD op)
-{
-	DWORD madr;
-	DWORD base;
-	WORD limit;
-
-	if (op < 0xc0) {
-		CPU_WORKCLOCK(11);
 		base = CPU_IDTR_BASE;
-		limit = CPU_IDTR_LIMIT;
+		if (!CPU_INST_OP32) {
+			base &= 0x00ffffff;
+		}
 		madr = get_ea(op);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, limit);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr + 2, base);
@@ -502,25 +437,25 @@ LMSW_Ew(DWORD op)
 	DWORD src, madr;
 	DWORD cr0;
 
-	if (CPU_STAT_PM && CPU_STAT_CPL != 0) {
-		EXCEPTION(GP_EXCEPTION, 0);
-	}
+	if (!CPU_STAT_PM || CPU_STAT_CPL == 0) {
+		if (op >= 0xc0) {
+			CPU_WORKCLOCK(2);
+			src = *(reg16_b20[op]);
+		} else {
+			CPU_WORKCLOCK(3);
+			madr = calc_ea_dst(op);
+			src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
+		}
 
-	if (op >= 0xc0) {
-		CPU_WORKCLOCK(2);
-		src = *(reg16_b20[op]);
-	} else {
-		CPU_WORKCLOCK(3);
-		madr = calc_ea_dst(op);
-		src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
+		cr0 = CPU_CR0;
+		CPU_CR0 &= ~0xe; /* can't switch back from protected mode */
+		CPU_CR0 |= (src & 0xf);	/* TS, EM, MP, PE */
+		if (!(cr0 & CPU_CR0_PE) && (src & CPU_CR0_PE)) {
+			change_pm(1);	/* switch to protected mode */
+		}
+		return;
 	}
-
-	cr0 = CPU_CR0;
-	CPU_CR0 &= ~0xe;	/* can't switch back from protected mode */
-	CPU_CR0 |= (src & 0xf);	/* TS, EM, MP, PE */
-	if (!(cr0 & CPU_CR0_PE) && (src & CPU_CR0_PE)) {
-		change_pm(1);	/* switch to protected mode */
-	}
+	EXCEPTION(GP_EXCEPTION, 0);
 }
 
 void
@@ -531,21 +466,6 @@ SMSW_Ew(DWORD op)
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
 		*(reg16_b20[op]) = (WORD)CPU_CR0;
-	} else {
-		CPU_WORKCLOCK(3);
-		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)CPU_CR0);
-	}
-}
-
-void
-SMSW_Ed(DWORD op)
-{
-	DWORD madr;
-
-	if (op >= 0xc0) {
-		CPU_WORKCLOCK(2);
-		*(reg32_b20[op]) = (WORD)CPU_CR0;
 	} else {
 		CPU_WORKCLOCK(3);
 		madr = calc_ea_dst(op);
@@ -959,28 +879,37 @@ RSM(void)
 void
 RDMSR(void)
 {
+	int idx;
 
-#if 1
-	EXCEPTION(UD_EXCEPTION, 0);
-#else
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
-#endif
+
+	idx = CPU_ECX;
+	switch (idx) {
+	default:
+		EXCEPTION(GP_EXCEPTION, 0);
+		break;
+	}
 }
 
 void
 WRMSR(void)
 {
+	int idx;
 
-#if 1
-	EXCEPTION(UD_EXCEPTION, 0);
-#else
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
 		EXCEPTION(GP_EXCEPTION, 0);
-		/* MTRR への書き込み時 tlb_flush(FALSE) */
 	}
-#endif
+
+	idx = CPU_ECX;
+	switch (idx) {
+		/* MTRR への書き込み時 tlb_flush(FALSE); */
+
+	default:
+		EXCEPTION(GP_EXCEPTION, 0);
+		break;
+	}
 }
 
 void

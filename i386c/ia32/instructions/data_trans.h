@@ -1,4 +1,4 @@
-/*	$Id: data_trans.h,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: data_trans.h,v 1.2 2004/01/14 16:14:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -272,9 +272,11 @@ void CWDE(void);
  * MOVSx/MOVZx
  */
 void MOVSX_GwEb(void);
+void MOVSX_GwEw(void);
 void MOVSX_GdEb(void);
 void MOVSX_GdEw(void);
 void MOVZX_GwEb(void);
+void MOVZX_GwEw(void);
 void MOVZX_GdEb(void);
 void MOVZX_GdEw(void);
 

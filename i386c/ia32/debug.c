@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.2 2004/01/13 16:32:36 monaka Exp $	*/
+/*	$Id: debug.c,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -49,7 +49,8 @@ char *cpu_reg2str(void)
     "eflag=%08x "
 /* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
       "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d%d %s %s %s TF=%d %s %s %s %s %s ]\n"
-    "gdtr=%08x:%04x idtr=%08x:%04x ldtr=%04x tr=%04x\n"
+    "gdtr=%08x:%04x idtr=%08x:%04x\n"
+    "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
     "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x\n",
     CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX, CPU_ESI, CPU_EDI,
     CPU_EIP, CPU_ESP, CPU_EBP, CPU_PREV_EIP,
@@ -73,7 +74,8 @@ char *cpu_reg2str(void)
       CPU_EFLAG & A_FLAG ? "AC" : "NA",
       CPU_EFLAG & P_FLAG ? "PE" : "PO",
       CPU_EFLAG & C_FLAG ? "CY" : "NC",
-    CPU_GDTR_BASE, CPU_GDTR_LIMIT, CPU_IDTR_BASE, CPU_IDTR_LIMIT, CPU_LDTR, CPU_TR,
+    CPU_GDTR_BASE, CPU_GDTR_LIMIT, CPU_IDTR_BASE, CPU_IDTR_LIMIT,
+    CPU_LDTR, CPU_LDTR_BASE, CPU_LDTR_LIMIT, CPU_TR, CPU_TR_BASE, CPU_TR_LIMIT,
     CPU_CR0, CPU_CR1, CPU_CR2, CPU_CR3, CPU_CR4, CPU_MXCSR);
 
   return buf;

@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: inst_table.c,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -897,8 +897,8 @@ void (*insttable_1byte[2][256])(void) = {
 void (*insttable_2byte[2][256])(void) = {
 	/* 16bit */
 	{
-		Grp6_16,		/* 00 */
-		Grp7_16,
+		Grp6,			/* 00 */
+		Grp7,
 		LAR_GwEw,
 		LSL_GwEw,
 		undef_op,
@@ -1091,7 +1091,7 @@ void (*insttable_2byte[2][256])(void) = {
 		LFS_GwMp,
 		LGS_GwMp,
 		MOVZX_GwEb,
-		MOVZX_GdEw,
+		MOVZX_GwEw,
 		undef_op,		/* B8 */
 		UD2,
 		Grp8_EwIb,
@@ -1099,7 +1099,7 @@ void (*insttable_2byte[2][256])(void) = {
 		BSF_GwEw,
 		BSR_GwEw,
 		MOVSX_GwEb,
-		MOVSX_GdEw,
+		MOVSX_GwEw,
 
 		XADD_EbGb,		/* C0 */
 		XADD_EwGw,
@@ -1172,8 +1172,8 @@ void (*insttable_2byte[2][256])(void) = {
 
 	/* 32bit */
 	{
-		Grp6_32,		/* 00 */
-		Grp7_32,
+		Grp6,			/* 00 */
+		Grp7,
 		LAR_GdEw,
 		LSL_GdEw,
 		undef_op,
@@ -1713,7 +1713,7 @@ void (*insttable_G5Ed[])(DWORD) = {
 };
 
 /* group 6 */
-void (*insttable_G6_16[])(DWORD) = {
+void (*insttable_G6[])(DWORD) = {
 	SLDT_Ew,
 	STR_Ew,
 	LLDT_Ew,
@@ -1724,35 +1724,13 @@ void (*insttable_G6_16[])(DWORD) = {
 	undef_op2,
 };
 
-void (*insttable_G6_32[])(DWORD) = {
-	SLDT_Ed,
-	STR_Ed,
-	LLDT_Ew,
-	LTR_Ew,
-	VERR_Ew,
-	VERW_Ew,
-	undef_op2,
-	undef_op2,
-};
-
 /* group 7 */
-void (*insttable_G7_16[])(DWORD) = {
-	SGDT16_Ms,
-	SIDT16_Ms,
-	LGDT16_Ms,
-	LIDT16_Ms,
+void (*insttable_G7[])(DWORD) = {
+	SGDT_Ms,
+	SIDT_Ms,
+	LGDT_Ms,
+	LIDT_Ms,
 	SMSW_Ew,
-	undef_op2,
-	LMSW_Ew,
-	INVLPG,
-};
-
-void (*insttable_G7_32[])(DWORD) = {
-	SGDT32_Ms,
-	SIDT32_Ms,
-	LGDT32_Ms,
-	LIDT32_Ms,
-	SMSW_Ed,
 	undef_op2,
 	LMSW_Ew,
 	INVLPG,

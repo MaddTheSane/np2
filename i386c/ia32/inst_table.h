@@ -1,4 +1,4 @@
-/*	$Id: inst_table.h,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: inst_table.h,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -81,12 +81,10 @@ extern	void (*insttable_G5Ew[])(DWORD);
 extern	void (*insttable_G5Ed[])(DWORD);
 
 /* group 6 */
-extern	void (*insttable_G6_16[])(DWORD);
-extern	void (*insttable_G6_32[])(DWORD);
+extern	void (*insttable_G6[])(DWORD);
 
 /* group 7 */
-extern	void (*insttable_G7_16[])(DWORD);
-extern	void (*insttable_G7_32[])(DWORD);
+extern	void (*insttable_G7[])(DWORD);
 
 /* group 8 */
 extern	void (*insttable_G8EwIb[])(DWORD);

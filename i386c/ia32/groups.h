@@ -1,4 +1,4 @@
-/*	$Id: groups.h,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: groups.h,v 1.2 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -65,12 +65,10 @@ void Grp5_Ew(void);
 void Grp5_Ed(void);
 
 /* group 6 */
-void Grp6_16(void);
-void Grp6_32(void);
+void Grp6(void);
 
 /* group 7 */
-void Grp7_16(void);
-void Grp7_32(void);
+void Grp7(void);
 
 /* group 8 */
 void Grp8_EwIb(void);

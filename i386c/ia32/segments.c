@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.4 2004/01/13 16:36:00 monaka Exp $	*/
+/*	$Id: segments.c,v 1.5 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -184,6 +184,19 @@ load_ldtr(WORD selector, int exc)
 	if (rv < 0) {
 		EXCEPTION((exc == TS_EXCEPTION) ? TS_EXCEPTION : NP_EXCEPTION, sel.selector);
 	}
+
+#if defined(DEBUG)
+{
+	DWORD v[2];
+	DWORD i;
+
+	for (i = 0; i < sel.desc.u.seg.limit; i += 8) {
+		v[0] = cpu_lmemoryread_d(sel.desc.u.seg.segbase + i);
+		v[1] = cpu_lmemoryread_d(sel.desc.u.seg.segbase + i + 4);
+		VERBOSE(("load_ldtr: %08x: %08x%08x", sel.desc.u.seg.segbase + i, v[0], v[1]));
+	}
+}
+#endif
 
 	CPU_LDTR = sel.selector;
 	CPU_LDTR_DESC = sel.desc;

@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.2 2004/01/13 16:37:42 monaka Exp $	*/
+/*	$Id: task.c,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -67,6 +67,18 @@ load_tr(WORD selector)
 	if (rv < 0) {
 		EXCEPTION(NP_EXCEPTION, task_sel.idx);
 	}
+
+#if defined(DEBUG)
+{
+	DWORD v;
+	DWORD i;
+
+	for (i = 0; i < task_sel.desc.u.seg.limit; i += 4) {
+		v = cpu_lmemoryread_d(task_sel.desc.u.seg.segbase + i);
+		VERBOSE(("task_sel: %08x: %08x", task_sel.desc.u.seg.segbase + i, v));
+	}
+}
+#endif
 
 	CPU_SET_TASK_BUSY(&task_sel.desc);
 	CPU_TR = task_sel.selector;
@@ -217,7 +229,7 @@ task_switch(selector_t* task_sel, int type)
 		t = 0;
 		iobase = 0;
 	}
-#ifdef VERBOSE
+#if defined(DEBUG)
 	VERBOSE(("task_switch: %dbit task", task16 ? 16 : 32));
 	VERBOSE(("task_switch: CR3 = 0x%08x", cr3));
 	VERBOSE(("task_switch: eip = 0x%08x", eip));

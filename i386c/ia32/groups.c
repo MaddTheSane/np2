@@ -1,4 +1,4 @@
-/*	$Id: groups.c,v 1.2 2003/12/11 15:06:50 monaka Exp $	*/
+/*	$Id: groups.c,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -414,41 +414,23 @@ Grp5_Ed(void)
 
 /* group 6 */
 void
-Grp6_16(void)
+Grp6(void)
 {
 	DWORD op;
 
 	GET_PCBYTE(op);
-	(*insttable_G6_16[(op >> 3) & 7])(op);
-}
-
-void
-Grp6_32(void)
-{
-	DWORD op;
-
-	GET_PCBYTE(op);
-	(*insttable_G6_32[(op >> 3) & 7])(op);
+	(*insttable_G6[(op >> 3) & 7])(op);
 }
 
 
 /* group 7 */
 void
-Grp7_16(void)
+Grp7(void)
 {
 	DWORD op;
 
 	GET_PCBYTE(op);
-	(*insttable_G7_16[(op >> 3) & 7])(op);
-}
-
-void
-Grp7_32(void)
-{
-	DWORD op;
-
-	GET_PCBYTE(op);
-	(*insttable_G7_32[(op >> 3) & 7])(op);
+	(*insttable_G7[(op >> 3) & 7])(op);
 }
 
 
