@@ -8,7 +8,7 @@ static const char str_exit[] = "Exit";
 
 static const char str_fdd1[] = "FDD1";
 static const char str_fdd2[] = "FDD2";
-static const char str_sasi[] = "SASI";
+static const char str_harddisk[] = "HDD";
 static const char str_sasi1[] = "SASI1";
 static const char str_sasi2[] = "SASI2";
 static const char str_open[] = "Open...";
@@ -62,6 +62,7 @@ static const char str_pc9801118[] = "PC-9801-118";
 static const char str_spreakboard[] = "Speak board";
 static const char str_sparkboard[] = "Spark board";
 static const char str_amd98[] = "AMD-98";
+static const char str_jastsnd[] = "JAST SOUND";
 static const char str_seeksound[] = "Seek Sound";
 
 static const char str_memory[] = "Memory";
@@ -119,9 +120,45 @@ static const MSYSITEM s_sasi2[] = {
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_remove,		NULL,		MID_SASI2EJECT,		MENU_DELETED}};
 
-static const MSYSITEM s_sasi[] = {
+#if defined(SUPPORT_SCSI)
+static const char str_scsi0[] = "SCSI #0";
+static const char str_scsi1[] = "SCSI #1";
+static const char str_scsi2[] = "SCSI #2";
+static const char str_scsi3[] = "SCSI #3";
+
+static const MSYSITEM s_scsi0[] = {
+		{str_open,			NULL,		MID_SCSI0OPEN,		0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+		{str_remove,		NULL,		MID_SCSI0EJECT,		MENU_DELETED}};
+
+static const MSYSITEM s_scsi1[] = {
+		{str_open,			NULL,		MID_SCSI1OPEN,		0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+		{str_remove,		NULL,		MID_SCSI1EJECT,		MENU_DELETED}};
+
+static const MSYSITEM s_scsi2[] = {
+		{str_open,			NULL,		MID_SCSI2OPEN,		0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+		{str_remove,		NULL,		MID_SCSI2EJECT,		MENU_DELETED}};
+
+static const MSYSITEM s_scsi3[] = {
+		{str_open,			NULL,		MID_SCSI3OPEN,		0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+		{str_remove,		NULL,		MID_SCSI3EJECT,		MENU_DELETED}};
+
+static const MSYSITEM s_hdd[] = {
+		{str_sasi1,			s_sasi1,	MID_STATIC,			0},
+		{str_sasi2,			s_sasi2,	MID_STATIC,			0},
+		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
+		{str_scsi0,			s_scsi0,	MID_STATIC,			0},
+		{str_scsi1,			s_scsi1,	MID_STATIC,			0},
+		{str_scsi2,			s_scsi2,	MID_STATIC,			0},
+		{str_scsi3,			s_scsi3,	MID_STATIC,			MENU_DELETED}};
+#else
+static const MSYSITEM s_hdd[] = {
 		{str_sasi1,			s_sasi1,	MID_STATIC,			0},
 		{str_sasi2,			s_sasi2,	MID_STATIC,			MENU_DELETED}};
+#endif
 
 static const MSYSITEM s_screen[] = {
 		{str_window,		NULL,		MID_WINDOW,			MENU_GRAY},
@@ -175,6 +212,7 @@ static const MSYSITEM s_snd[] = {
 		{str_spreakboard,	NULL,		MID_SPEAKBOARD,		0},
 		{str_sparkboard,	NULL,		MID_SPARKBOARD,		0},
 		{str_amd98,			NULL,		MID_AMD98,			0},
+		{str_jastsnd,		NULL,		MID_JASTSND,		0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_seeksound,		NULL,		MID_SEEKSND,		MENU_DELETED}};
 
@@ -220,7 +258,7 @@ static const MSYSITEM s_main[] = {
 		{str_emulate,		s_emu,		MID_STATIC,			0},
 		{str_fdd1,			s_fdd1,		MID_STATIC,			0},
 		{str_fdd2,			s_fdd2,		MID_STATIC,			0},
-		{str_sasi,			s_sasi,		MID_STATIC,			0},
+		{str_harddisk,		s_hdd,		MID_STATIC,			0},
 		{str_screen,		s_screen,	MID_STATIC,			0},
 		{str_device,		s_device,	MID_STATIC,			0},
 		{str_other,			s_other,	MID_STATIC,			MENU_DELETED}};
