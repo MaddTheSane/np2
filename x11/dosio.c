@@ -1,3 +1,5 @@
+#define	VERBOSE(s)	printf s
+
 #include "compiler.h"
 
 #include <sys/stat.h>
@@ -234,12 +236,15 @@ file_list1st(const char *dir, FLINFO *fli)
 	mileuc_ncpy(eucpath, dir, sizeof(eucpath));
 	file_setseparator(eucpath, sizeof(eucpath));
 	ret = opendir(eucpath);
+	VERBOSE(("file_list1st: opendir(%s)\n", eucpath));
 	if (ret == NULL) {
+		VERBOSE(("file_list1st: opendir failure"));
 		return FLISTH_INVALID;
 	}
 	if (file_listnext((FLISTH)ret, fli) == SUCCESS) {
 		return (FLISTH)ret;
 	}
+	VERBOSE(("file_list1st: file_listnext failure\n"));
 	closedir(ret);
 	return FLISTH_INVALID;
 }
@@ -252,9 +257,11 @@ file_listnext(FLISTH hdl, FLINFO *fli)
 
 	de = readdir((DIR *)hdl);
 	if (de == NULL) {
+		VERBOSE(("file_listnext: readdir failure\n"));
 		return FAILURE;
 	}
 	if (stat(de->d_name, &sb) != 0) {
+		VERBOSE(("file_listnext: stat failure\n"));
 		return FAILURE;
 	}
 
@@ -269,6 +276,7 @@ file_listnext(FLISTH hdl, FLINFO *fli)
 	cnvdatetime(&sb, &fli->date, &fli->time);
 	mileuc_ncpy(fli->path, de->d_name, sizeof(fli->path));
 
+	VERBOSE(("file_listnext: success\n"));
 	return SUCCESS;
 }
 
