@@ -53,10 +53,13 @@ const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 	UINT16	*reg16_b53[256];
 	UINT16	*reg16_b20[256];
 	BYTE	szpcflag[0x200];
-	BYTE	szpflag_w[0x10000];
 	CALCEA	c_calc_ea_dst[256];
 	CALCLEA	c_calc_lea[192];
 	GETLEA	c_get_ea[192];
+
+#if !defined(CPUW2TEST)
+	BYTE	szpflag_w[0x10000];
+#endif
 
 
 static UINT32 ea_nop(void) {
@@ -116,6 +119,8 @@ void i286_initialize(void) {
 	for (; i<0x100; i++) {
 		c_calc_ea_dst[i] = ea_nop;
 	}
+
+#if !defined(CPUW2TEST)
 	for (i=0; i<0x10000; i++) {
 		f = P_FLAG;
 		for (bit=0x80; bit; bit>>=1) {
@@ -131,6 +136,7 @@ void i286_initialize(void) {
 		}
 		szpflag_w[i] = f;
 	}
+#endif
 }
 
 void i286_reset(void) {

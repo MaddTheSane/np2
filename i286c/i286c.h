@@ -1,4 +1,7 @@
 
+#define	CPUW2TEST
+
+
 #define I286FN	static void
 #define I286_P	static void
 #define I286EXT	void
@@ -14,10 +17,14 @@ extern	BYTE	*reg8_b20[256];
 extern	UINT16	*reg16_b53[256];
 extern	UINT16	*reg16_b20[256];
 extern	BYTE	szpcflag[0x200];
-extern	BYTE	szpflag_w[0x10000];
 extern	CALCEA	c_calc_ea_dst[];
 extern	CALCLEA	c_calc_lea[];
 extern	GETLEA	c_get_ea[];
+
+#if !defined(CPUW2TEST)
+extern	BYTE	szpflag_w[0x10000];
+#endif
+
 
 extern void CPUCALL i286_intnum(UINT vect, UINT16 IP);
 

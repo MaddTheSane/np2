@@ -69,6 +69,53 @@ I286EXT i286c_rep_outsw(void) {
 
 // ---------------------------------------------------------------------- movs
 
+#if 1
+I286EXT i286c_rep_movsb(void) {
+
+	I286_CLOCK(5)
+	if (I286_CX) {
+		SINT16 stp = STRING_DIR;
+		while(1) {
+			BYTE dat = i286_memoryread(I286_SI + DS_FIX);
+			i286_memorywrite(I286_DI + ES_BASE, dat);
+			I286_SI += stp;
+			I286_DI += stp;
+			I286_CLOCK(4)
+			I286_CX--;
+			if (!I286_CX) {
+				break;
+			}
+			if (nevent.remainclock <= 0) {
+				I286_IP -= i286reg.prefix + 1;
+				break;
+			}
+		}
+	}
+}
+
+I286EXT i286c_rep_movsw(void) {
+
+	I286_CLOCK(5)
+	if (I286_CX) {
+		SINT16 stp = STRING_DIRx2;
+		while(1) {
+			UINT16 dat = i286_memoryread_w(I286_SI + DS_FIX);
+			i286_memorywrite_w(I286_DI + ES_BASE, dat);
+			I286_SI += stp;
+			I286_DI += stp;
+			I286_CLOCK(4)
+			I286_CX--;
+			if (!I286_CX) {
+				break;
+			}
+			if (nevent.remainclock <= 0) {
+				I286_IP -= i286reg.prefix + 1;
+				break;
+			}
+		}
+	}
+}
+#else
 I286EXT i286c_rep_movsb(void) {
 
 	I286_CLOCK(5)
@@ -98,9 +145,53 @@ I286EXT i286c_rep_movsw(void) {
 		} while(--I286_CX);
 	}
 }
+#endif
 
 // ---------------------------------------------------------------------- lods
 
+#if 1
+I286EXT i286c_rep_lodsb(void) {
+
+	I286_CLOCK(5)
+	if (I286_CX) {
+		SINT16 stp = STRING_DIR;
+		while(1) {
+			I286_AL = i286_memoryread(I286_SI + DS_FIX);
+			I286_SI += stp;
+			I286_CLOCK(4)
+			I286_CX--;
+			if (!I286_CX) {
+				break;
+			}
+			if (nevent.remainclock <= 0) {
+				I286_IP -= i286reg.prefix + 1;
+				break;
+			}
+		}
+	}
+}
+
+I286EXT i286c_rep_lodsw(void) {
+
+	I286_CLOCK(5)
+	if (I286_CX) {
+		SINT16 stp = STRING_DIRx2;
+		while(1) {
+			I286_AX = i286_memoryread_w(I286_SI + DS_FIX);
+			I286_SI += stp;
+			I286_CLOCK(4)
+		 	I286_CX--;
+		 	if (!I286_CX) {
+		 		break;
+		 	}
+			if (nevent.remainclock <= 0) {
+				I286_IP -= i286reg.prefix + 1;
+				break;
+			}
+		}
+	}
+}
+#else
 I286EXT i286c_rep_lodsb(void) {
 
 	I286_CLOCK(5)
@@ -126,9 +217,53 @@ I286EXT i286c_rep_lodsw(void) {
 		} while(--I286_CX);
 	}
 }
+#endif
 
 // ---------------------------------------------------------------------- stos
 
+#if 1
+I286EXT i286c_rep_stosb(void) {
+
+	I286_CLOCK(4)
+	if (I286_CX) {
+		SINT16 stp = STRING_DIR;
+		while(1) {
+			i286_memorywrite(I286_DI + ES_BASE, I286_AL);
+			I286_DI += stp;
+			I286_CLOCK(3)
+			I286_CX--;
+			if (!I286_CX) {
+				break;
+			}
+			if (nevent.remainclock <= 0) {
+				I286_IP -= i286reg.prefix + 1;
+				break;
+			}
+		}
+	}
+}
+
+I286EXT i286c_rep_stosw(void) {
+
+	I286_CLOCK(4)
+	if (I286_CX) {
+		SINT16 stp = STRING_DIRx2;
+		while(1) {
+			i286_memorywrite_w(I286_DI + ES_BASE, I286_AX);
+			I286_DI += stp;
+			I286_CLOCK(3)
+			I286_CX--;
+			if (!I286_CX) {
+				break;
+			}
+			if (nevent.remainclock <= 0) {
+				I286_IP -= i286reg.prefix + 1;
+				break;
+			}
+		}
+	}
+}
+#else
 I286EXT i286c_rep_stosb(void) {
 
 	I286_CLOCK(4)
@@ -154,6 +289,7 @@ I286EXT i286c_rep_stosw(void) {
 		} while(--I286_CX);
 	}
 }
+#endif
 
 // ---------------------------------------------------------------------- cmps
 

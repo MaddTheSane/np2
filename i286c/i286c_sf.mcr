@@ -77,17 +77,17 @@
 #define	WORD_SHL1(d, s)												\
 		(d) = (s) << 1;												\
 		I286_OV = ((s) ^ (d)) & 0x8000;								\
-		I286_FLAGL = (BYTE)(szpflag_w[(d) & 0xffff] | A_FLAG | ((d) >> 16));
+		I286_FLAGL = (BYTE)(WORDSZPF((d) & 0xffff) | A_FLAG | ((d) >> 16));
 
 #define	WORD_SHR1(d, s)												\
 		(d) = (s) >> 1;												\
 		I286_OV = (s) & 0x8000;										\
-		I286_FLAGL = (BYTE)(szpflag_w[(d)] | A_FLAG | ((s) & 1));
+		I286_FLAGL = (BYTE)(WORDSZPF(d) | A_FLAG | ((s) & 1));
 
 #define	WORD_SAR1(d, s)												\
 		(d) = (UINT16)(((SINT16)s) >> 1);							\
 		I286_OV = 0;												\
-		I286_FLAGL = (BYTE)(szpflag_w[(d)] | A_FLAG | ((s) & 1));
+		I286_FLAGL = (BYTE)(WORDSZPF(d) | A_FLAG | ((s) & 1));
 
 
 
@@ -280,7 +280,7 @@
 			}														\
 			(s) <<= (c);											\
 			(s) &= 0x1ffff;											\
-			I286_FLAGL = szpflag_w[(s) & 0xffff];					\
+			I286_FLAGL = WORDSZPF((s) & 0xffff);					\
 			I286_FLAGL |= (BYTE)((s) >> 16);						\
 		}															\
 		(d) = (s);
@@ -298,7 +298,7 @@
 			}														\
 			I286_FLAGL = (BYTE)((s) & 1);							\
 			(s) >>= 1;												\
-			I286_FLAGL |= szpflag_w[(s)];							\
+			I286_FLAGL |= WORDSZPF(s);								\
 		}															\
 		(d) = (s);
 
@@ -309,7 +309,7 @@
 			I286_FLAGL = (BYTE)((s) & 1);							\
 			(s) = (UINT16)(((SINT16)s) >> 1);						\
 			I286_OV = 0;											\
-			I286_FLAGL |= szpflag_w[(s)];							\
+			I286_FLAGL |= WORDSZPF(s);								\
 		}															\
 		(d) = (s);
 

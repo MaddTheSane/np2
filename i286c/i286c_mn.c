@@ -2263,7 +2263,7 @@ I286_P _aam(void) {							// D4:	AAM
 		I286_AH = al / div;
 		I286_AL = al % div;
 		I286_FLAGL &= ~(S_FLAG | Z_FLAG | P_FLAG);
-		I286_FLAGL |= szpflag_w[I286_AX];
+		I286_FLAGL |= WORDSZPF(I286_AX);
 	}
 	else {
 		INT_NUM(0, I286_IP - 2);				// 80286

@@ -13,6 +13,12 @@
 #define	STRING_DIR		((I286_FLAG & D_FLAG)?-1:1)
 #define	STRING_DIRx2	((I286_FLAG & D_FLAG)?-2:2)
 
+#if defined(CPUW2TEST)
+#define	WORDSZPF(a)		((szpcflag[(a) & 0xff] & P_FLAG) | \
+									(((a))?0:Z_FLAG) | (((a) >> 8) & S_FLAG))
+#else
+#define	WORDSZPF(a)		szpflag_w[(a)]
+#endif
 
 #define	SWAPBYTE(p, q) {											\
 		BYTE tmp = (p);												\
@@ -125,7 +131,7 @@
 			(r) &= 0x0000ffff;										\
 			I286_FLAGL |= C_FLAG;									\
 		}															\
-		I286_FLAGL |= szpflag_w[(r)];
+		I286_FLAGL |= WORDSZPF(r);
 
 
 // flag no check
@@ -138,7 +144,7 @@
 #define	ORWORD(d, s)												\
 		(d) |= (s);													\
 		I286_OV = 0;												\
-		I286_FLAGL = szpflag_w[(d)];
+		I286_FLAGL = WORDSZPF(d);
 
 
 #define	ADCBYTE(r, d, s) 											\
@@ -156,7 +162,7 @@
 			(r) &= 0x0000ffff;										\
 			I286_FLAGL |= C_FLAG;									\
 		}															\
-		I286_FLAGL |= szpflag_w[(r)];
+		I286_FLAGL |= WORDSZPF(r);
 
 
 // flag no check
@@ -174,7 +180,7 @@
 			(r) &= 0x0000ffff;										\
 			I286_FLAGL |= C_FLAG;									\
 		}															\
-		I286_FLAGL |= szpflag_w[(r)];
+		I286_FLAGL |= WORDSZPF(r);
 
 
 // flag no check
@@ -187,7 +193,7 @@
 #define	ANDWORD(d, s)												\
 		(d) &= s;													\
 		I286_OV = 0;												\
-		I286_FLAGL = szpflag_w[(d)];
+		I286_FLAGL = WORDSZPF(d);
 
 
 // flag no check
@@ -205,7 +211,7 @@
 			(r) &= 0x0000ffff;										\
 			I286_FLAGL |= C_FLAG;									\
 		}															\
-		I286_FLAGL |= szpflag_w[(r)];
+		I286_FLAGL |= WORDSZPF(r);
 
 
 // flag no check
@@ -218,7 +224,7 @@
 #define	WORD_XOR(d, s)												\
 		(d) ^= (s);													\
 		I286_OV = 0;												\
-		I286_FLAGL = szpflag_w[(d)];
+		I286_FLAGL = WORDSZPF(d);
 
 
 #define	BYTE_NEG(d, s) 												\
@@ -236,7 +242,7 @@
 			(d) &= 0x0000ffff;										\
 			I286_FLAGL |= C_FLAG;									\
 		}															\
-		I286_FLAGL |= szpflag_w[(d)];
+		I286_FLAGL |= WORDSZPF(d);
 
 
 #define	BYTE_MUL(r, d, s)											\
@@ -295,7 +301,7 @@
 		I286_OV = b & (b ^ (s)) & 0x8000;							\
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= szpflag_w[b];									\
+		I286_FLAGL |= WORDSZPF(b);									\
 		(s) = b;													\
 	}
 
@@ -318,7 +324,7 @@
 		I286_OV = (s) & (b ^ (s)) & 0x8000;							\
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= szpflag_w[b];									\
+		I286_FLAGL |= WORDSZPF(b);									\
 		(s) = b;													\
 	}
 
@@ -331,7 +337,7 @@
 		I286_OV = (w) & ((w) ^ bak) & 0x8000;						\
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)(((w) ^ bak) & A_FLAG);					\
-		I286_FLAGL |= szpflag_w[(w)];								\
+		I286_FLAGL |= WORDSZPF(w);									\
 		I286_CLOCK(clock);											\
 	}
 
@@ -343,7 +349,7 @@
 		I286_OV = bak & (w ^ bak) & 0x8000;							\
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)((w ^ bak) & A_FLAG);					\
-		I286_FLAGL |= szpflag_w[w];									\
+		I286_FLAGL |= WORDSZPF(w);									\
 		I286_CLOCK(clock);											\
 	}
 
