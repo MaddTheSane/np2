@@ -1,4 +1,4 @@
-/*	$Id: dosio.c,v 1.11 2004/02/08 07:31:47 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.12 2004/07/08 14:21:50 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -173,56 +173,56 @@ file_setcd(const char *exepath)
 }
 
 char *
-file_getcd(const char *sjis)
+file_getcd(const char *filename)
 {
 
 	*curfilep = '\0';
-	file_catname(curpath, sjis, sizeof(curpath));
+	file_catname(curpath, filename, sizeof(curpath));
 	return curpath;
 }
 
 FILEH
-file_open_c(const char *sjis)
+file_open_c(const char *filename)
 {
 
 	*curfilep = '\0';
-	file_catname(curpath, sjis, sizeof(curpath));
+	file_catname(curpath, filename, sizeof(curpath));
 	return file_open(curpath);
 }
 
 FILEH
-file_open_rb_c(const char *sjis)
+file_open_rb_c(const char *filename)
 {
 
 	*curfilep = '\0';
-	file_catname(curpath, sjis, sizeof(curpath));
+	file_catname(curpath, filename, sizeof(curpath));
 	return file_open_rb(curpath);
 }
 
 FILEH
-file_create_c(const char *sjis)
+file_create_c(const char *filename)
 {
 
 	*curfilep = '\0';
-	file_catname(curpath, sjis, sizeof(curpath));
+	file_catname(curpath, filename, sizeof(curpath));
 	return file_create(curpath);
 }
 
 short
-file_delete_c(const char *sjis)
+file_delete_c(const char *filename)
 {
 
 	*curfilep = '\0';
-	file_catname(curpath, sjis, sizeof(curpath));
+	file_catname(curpath, filename, sizeof(curpath));
 	return file_delete(curpath);
 }
 
 short
-file_attr_c(const char *sjis)
+file_attr_c(const char *filename)
 {
 
 	*curfilep = '\0';
-	file_catname(curpath, sjis, sizeof(curpath));
+	file_catname(curpath, filename, sizeof(curpath));
 	return file_attr_c(curpath);
 }
 
@@ -231,19 +231,19 @@ file_list1st(const char *dir, FLINFO *fli)
 {
 	FLISTH ret;
 
-	ret = (FLISTH)malloc(sizeof(_FLISTH));
+	ret = (FLISTH)_MALLOC(sizeof(_FLISTH), "FLISTH");
 	if (ret == NULL) {
 		VERBOSE(("file_list1st: couldn't alloc memory (size = %d)", sizeof(_FLISTH)));
 		return FLISTH_INVALID;
 	}
 
-	mileuc_ncpy(ret->path, dir, sizeof(ret->path));
+	milstr_ncpy(ret->path, dir, sizeof(ret->path));
 	file_setseparator(ret->path, sizeof(ret->path));
 	ret->hdl = opendir(ret->path);
 	VERBOSE(("file_list1st: opendir(%s)", ret->path));
 	if (ret->hdl == NULL) {
 		VERBOSE(("file_list1st: opendir failure"));
-		free(ret);
+		_MFREE(ret);
 		return FLISTH_INVALID;
 	}
 	if (file_listnext((FLISTH)ret, fli) == SUCCESS) {
@@ -251,7 +251,7 @@ file_list1st(const char *dir, FLINFO *fli)
 	}
 	VERBOSE(("file_list1st: file_listnext failure"));
 	closedir(ret->hdl);
-	free(ret);
+	_MFREE(ret);
 	return FLISTH_INVALID;
 }
 
@@ -269,7 +269,7 @@ file_listnext(FLISTH hdl, FLINFO *fli)
 	}
 
 	milstr_ncpy(buf, hdl->path, sizeof(buf));
-	mileuc_ncat(buf, de->d_name, sizeof(buf));
+	milstr_ncat(buf, de->d_name, sizeof(buf));
 	if (stat(buf, &sb) != 0) {
 		VERBOSE(("file_listnext: stat failure. (path = %s)", buf));
 		return FAILURE;
@@ -285,7 +285,7 @@ file_listnext(FLISTH hdl, FLINFO *fli)
 		fli->attr |= FILEATTR_READONLY;
 	}
 	cnvdatetime(&sb, &fli->date, &fli->time);
-	mileuc_ncpy(fli->path, de->d_name, sizeof(fli->path));
+	milstr_ncpy(fli->path, de->d_name, sizeof(fli->path));
 	VERBOSE(("file_listnext: success"));
 	return SUCCESS;
 }
@@ -296,7 +296,7 @@ file_listclose(FLISTH hdl)
 
 	if (hdl) {
 		closedir(hdl->hdl);
-		free(hdl);
+		_MFREE(hdl);
 	}
 }
 
@@ -304,10 +304,12 @@ static int
 euckanji1st(const char *str, int pos)
 {
 	int ret;
+	int c;
 
-	ret = 0;
-	while ((pos >= 0) && (((str[pos--] - 0xa1) & 0xff) < 0x5d)) {
-		ret ^= 1;
+	for (ret = 0; pos >= 0; ret ^= 1) {
+		c = (UINT8)str[pos--];
+		if (!ISKANJI(c))
+			break;
 	}
 	return ret;
 }
@@ -317,7 +319,7 @@ file_cpyname(char *dst, const char *src, int maxlen)
 {
 	int i;
 
-	if (maxlen--) {
+	if (maxlen-- > 0) {
 		for (i = 0; i < maxlen && src[i] != '\0'; i++) {
 			dst[i] = src[i];
 		}
@@ -331,40 +333,36 @@ file_cpyname(char *dst, const char *src, int maxlen)
 }
 
 void
-file_catname(char *path, const char *sjis, int maxlen)
+file_catname(char *path, const char *filename, int maxlen)
 {
 
-	while (maxlen) {
+	for (; maxlen > 0; path++, maxlen--) {
 		if (*path == '\0') {
 			break;
 		}
-		path++;
-		maxlen--;
 	}
-	if (maxlen) {
-		codecnv_sjis2euc(path, maxlen, sjis, (UINT)-1);
-		for (; path[0] != '\0'; path++) {
-			if (!ISKANJI(path[0])) {
-				if (path[1] == '\0') {
+	if (maxlen > 0) {
+		milstr_ncpy(path, filename, maxlen);
+		for (; *path != '\0'; path++) {
+			if (!ISKANJI(*path)) {
+				path++;
+				if (*path == '\0') {
 					break;
 				}
-				path++;
-			} else if ((((path[0]) - 0x41) & 0xff) < 26) {
-				path[0] |= 0x20;
-			} else if (path[0] == '\\') {
-				path[0] = '/';
+			} else if (((*path - 0x41) & 0xff) < 26) {
+				*path |= 0x20;
+			} else if (*path == '\\') {
+				*path = '/';
 			}
 		}
 	}
 }
 
 BOOL
-file_cmpname(const char *path, const char *sjis)
+file_cmpname(const char *path, const char *path2)
 {
-	char euc[MAX_PATH];
 
-	codecnv_sjis2euc(euc, sizeof(euc), sjis, (UINT)-1);
-	return strcmp(path, euc);
+	return strcmp(path, path2);
 }
 
 char *
@@ -372,13 +370,13 @@ file_getname(char *path)
 {
 	char *ret;
 
-	for (ret = path; path[0] != '\0'; path++) {
-		if (ISKANJI(path[0])) {
-			if (path[1] == '\0') {
+	for (ret = path; *path != '\0'; path++) {
+		if (ISKANJI(*path)) {
+			path++;
+			if (*path == '\0') {
 				break;
 			}
-			path++;
-		} else if (path[0] == '/') {
+		} else if (*path == '/') {
 			ret = path + 1;
 		}
 	}
@@ -397,16 +395,12 @@ file_cutname(char *path)
 char *
 file_getext(char *path)
 {
-	char *p;
-	char *q;
+	char *p, *q;
 
-	p = file_getname(path);
-	q = NULL;
-	while (*p != '\0') {
+	for (p = file_getname(path), q = NULL; *p != '\0'; p++) {
 		if (*p == '.') {
 			q = p + 1;
 		}
-		p++;
 	}
 	if (q == NULL) {
 		q = p;
@@ -417,16 +411,12 @@ file_getext(char *path)
 void
 file_cutext(char *path)
 {
-	char *p;
-	char *q;
+	char *p, *q;
 
-	p = file_getname(path);
-	q = NULL;
-	while (*p != '\0') {
+	for (p = file_getname(path), q = NULL; *p != '\0'; p++) {
 		if (*p == '.') {
 			q = p;
 		}
-		p++;
 	}
 	if (q != NULL) {
 		*q = '\0';
