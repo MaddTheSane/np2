@@ -5,7 +5,7 @@
 #include	"i286.h"
 #include	"pccore.h"
 #include	"fddfile.h"
-#if 1
+#if 0
 #include	"sound.h"
 #include	"fmboard.h"
 #endif
@@ -84,7 +84,7 @@ void sysmng_updatecaption(BYTE flag) {
 				milstr_ncpy(clock, " -", sizeof(clock));
 			}
 			milstr_ncat(clock, work, sizeof(clock));
-#if 1
+#if 0
 			SPRINTF(work, " (debug: OPN %d / PSG %s)", opngen.playing,
 									(psg1.mixer & 0x3f)?"ON":"OFF");
 			milstr_ncat(clock, work, sizeof(clock));

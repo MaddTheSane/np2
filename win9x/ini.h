@@ -40,6 +40,8 @@ void ini_read(const char *path, const char *title,
 void ini_write(const char *path, const char *title,
 											const INITBL *tbl, UINT count);
 
+
+void initgetfile(char *path, UINT size);
 void initload(void);
 void initsave(void);
 

@@ -459,27 +459,27 @@ static const INITBL iniitem[] = {
 	{"I286SAVE", INIRO_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 
-static void getinifile(char *initfile, int max) {
+void initgetfile(char *path, UINT size) {
 
 	char	*p;
 
-	milstr_ncpy(initfile, modulefile, max);
+	file_cpyname(path, modulefile, size);
 	if (np2arg.ini) {
 		if ((np2arg.ini[0] == '/') || (np2arg.ini[0] == '-')) {
-			file_cutname(initfile);
-			milstr_ncat(initfile, file_getname(np2arg.ini + 2), max);
+			file_cutname(path);
+			file_catname(path, file_getname(np2arg.ini + 2), size);
 		}
 		else {
-			milstr_ncpy(initfile, np2arg.ini, max);
+			file_cpyname(path, np2arg.ini, size);
 		}
-		p = file_getext(initfile);
+		p = file_getext(path);
 		if (!(*p)) {
-			milstr_ncat(initfile, ".ini", max);
+			file_catname(path, ".ini", size);
 		}
 	}
 	else {
-		file_cutext(initfile);
-		milstr_ncat(initfile, ".ini", max);
+		file_cutext(path);
+		file_catname(path, ".ini", size);
 	}
 }
 
@@ -487,7 +487,7 @@ void initload(void) {
 
 	char	path[MAX_PATH];
 
-	getinifile(path, sizeof(path));
+	initgetfile(path, sizeof(path));
 	ini_read(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
 }
 
@@ -495,7 +495,7 @@ void initsave(void) {
 
 	char	path[MAX_PATH];
 
-	getinifile(path, sizeof(path));
+	initgetfile(path, sizeof(path));
 	ini_write(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
 }
 

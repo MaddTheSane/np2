@@ -29,12 +29,14 @@ static const SUBITEM defsubitem[IDC_MAXITEMS] = {
 
 static const char skintitle[] = "ToolWindow";
 
-static const INITBL skinini[] = {
+static const INITBL skinini1[] = {
 	{"MAIN",		INITYPE_STR,	toolskin.main,	sizeof(toolskin.main)},
 	{"FONT",		INITYPE_STR,	toolskin.font,	sizeof(toolskin.font)},
 	{"FONTSIZE",	INITYPE_SINT32,	&toolskin.fontsize,					0},
 	{"COLOR1",		INITYPE_HEX32,	&toolskin.color1,					0},
-	{"COLOR2",		INITYPE_HEX32,	&toolskin.color2,					0},
+	{"COLOR2",		INITYPE_HEX32,	&toolskin.color2,					0}};
+
+static const INITBL skinini2[] = {
 	{"HDDACC",		INITYPE_ARGS16,	&subitem[IDC_TOOLHDDACC].posx,		5},
 	{"FD1ACC",		INITYPE_ARGS16,	&subitem[IDC_TOOLFDD1ACC].posx,		5},
 	{"FD1LIST",		INITYPE_ARGS16,	&subitem[IDC_TOOLFDD1LIST].posx,	5},
@@ -54,8 +56,9 @@ static const INITBL skinini[] = {
 
 // ----
 
-static const char str_skindef[] = "&Base Skin";
-static const char str_skinsel[] = "&Load Skin...";
+static const char str_skindef[] = "<&Base Skin>";
+static const char str_skinsel[] = "&Select Skin...";
+static const char str_toolskin[] = "&Skins";
 static const char str_toolclose[] = "&Close";
 
 static const char skinui_title[] = "Select skin file";

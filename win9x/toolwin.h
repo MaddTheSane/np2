@@ -1,5 +1,6 @@
 
 enum {
+	SKINMRU_MAX			= 4,
 	FDDLIST_DRV			= 2,
 	FDDLIST_MAX			= 8
 };
@@ -16,6 +17,7 @@ typedef struct {
 	int		posy;
 	TOOLFDD	fdd[FDDLIST_DRV];
 	char	skin[MAX_PATH];
+	char	skinmru[SKINMRU_MAX][MAX_PATH];
 } NP2TOOL;
 
 extern	NP2TOOL		np2tool;
