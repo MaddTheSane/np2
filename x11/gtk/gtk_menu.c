@@ -77,8 +77,8 @@ static void exit_from_menu(gpointer, guint, GtkWidget *);
 static void reset(gpointer, guint, GtkWidget *);
 static void rotate(gpointer, guint, GtkWidget *);
 
-static void fddopen(gpointer, guint, GtkWidget *);
-static void fddeject(gpointer, guint, GtkWidget *);
+static void fddopen(GtkMenuItem *, gpointer);
+static void fddeject(GtkMenuItem *, gpointer);
 static void sasiopen(gpointer, guint, GtkWidget *);
 static void sasiremove(gpointer, guint, GtkWidget *);
 
@@ -222,14 +222,6 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Emulate/sep2",		NULL, NULL, 0, "<Separator>" },
 { "/Emulate/E_xit",		NULL, f(exit_from_menu), 0, NULL },
 { "/FDD",			NULL, NULL, 0, "<Branch>" },
-{ "/FDD/Drive_1",		NULL, NULL, 0, "<Branch>" },
-{ "/FDD/Drive1/_Open...",	NULL, f(fddopen), 0, NULL },
-{ "/FDD/Drive1/_Eject",		NULL, f(fddeject), 0, NULL },
-{ "/FDD/Drive_2",		NULL, NULL, 0, "<Branch>" },
-{ "/FDD/Drive2/_Open...",	NULL, f(fddopen), 1, NULL },
-{ "/FDD/Drive2/_Eject",		NULL, f(fddeject), 1, NULL },
-{ "/FDD/sep1",			NULL, NULL, 0, "<Separator>" },
-{ "/FDD/_Eject All",		NULL, f(fddeject), ~0, NULL },
 { "/HardDisk",			NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-_1",		NULL, NULL, 0, "<Branch>" },
 { "/HardDisk/SASI-1/_Open...",	NULL, f(sasiopen), 0, NULL },
@@ -365,12 +357,11 @@ static BOOL inited = FALSE;
  * menu initialize
  */
 GtkWidget *
-create_menu(GtkWidget *parent)
+create_menu(void)
 {
 	GtkAccelGroup *accel_group;
 	GtkWidget *menubar;
-
-	(void)parent;
+	int i;
 
 	accel_group = gtk_accel_group_new();
 	menu_hdl.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
@@ -404,6 +395,51 @@ create_menu(GtkWidget *parent)
 	xmenu_select_soundboard(np2cfg.SOUND_SW);
 	xmenu_select_extmem(np2cfg.EXTMEM);
 	xmenu_select_mouse_move_ratio(np2oscfg.mouse_move_ratio);
+
+	if (np2cfg.fddequip) {
+		GtkWidget *fddmenu;
+		GtkWidget *sep;
+		GtkWidget *ejectall;
+
+		fddmenu = gtk_item_factory_get_widget(menu_hdl.item_factory, "/FDD");
+		for (i = 0; i < 4; i++) {
+			if (np2cfg.fddequip & (1 << i)) {
+				char label[32];
+				GtkWidget *menu, *menuitem, *openitem, *ejectitem;
+
+				menu = gtk_menu_new();
+
+				openitem = gtk_menu_item_new_with_label("Open...");
+				gtk_widget_show(openitem);
+				gtk_menu_append(GTK_MENU(menu), openitem);
+				gtk_signal_connect(GTK_OBJECT(openitem),
+				    "activate", GTK_SIGNAL_FUNC(fddopen), (gpointer)i);
+
+				ejectitem = gtk_menu_item_new_with_label("Eject");
+				gtk_widget_show(ejectitem);
+				gtk_menu_append(GTK_MENU(menu), ejectitem);
+				gtk_signal_connect(GTK_OBJECT(ejectitem),
+				    "activate", GTK_SIGNAL_FUNC(fddeject), (gpointer)i);
+
+				g_snprintf(label, sizeof(label), "Drive%d", i+1);
+				menuitem = gtk_menu_item_new_with_label(label);
+				gtk_widget_show(menuitem);
+
+				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+				gtk_menu_append(GTK_MENU(fddmenu), menuitem);
+
+			}
+		}
+		sep = gtk_menu_item_new();
+		gtk_widget_show(sep);
+		gtk_menu_append(GTK_MENU(fddmenu), sep);
+
+		ejectall = gtk_menu_item_new_with_label("Eject All");
+		gtk_widget_show(ejectall);
+		gtk_menu_append(GTK_MENU(fddmenu), ejectall);
+		gtk_signal_connect_object(GTK_OBJECT(ejectall),
+		    "activate", GTK_SIGNAL_FUNC(fddeject), (gpointer)~0);
+	}
 
 	inited = 1;
 
@@ -738,22 +774,21 @@ fddopen_dialog_ok_cb(void *arg, const char *path)
 }
 
 static void
-fddopen(gpointer data, guint action, GtkWidget *w)
+fddopen(GtkMenuItem *w, gpointer data)
 {
 
-	UNUSED(data);
 	UNUSED(w);
 
-	create_file_selection("Open FDD image", fddfolder, (void *)action,
-	    fddopen_dialog_ok_cb, NULL);
+	create_file_selection("Open floppy disk image",
+	    fddfolder, (void *)data, fddopen_dialog_ok_cb, NULL);
 }
 
 static void
-fddeject(gpointer data, guint action, GtkWidget *w)
+fddeject(GtkMenuItem *w, gpointer data)
 {
+	guint action = (guint)data;
 	int i;
 
-	UNUSED(data);
 	UNUSED(w);
 
 	if (action == (guint)~0) {
@@ -1064,6 +1099,7 @@ bmpsave_dialog_ok_cb(void *arg, const char *path)
 		file_close(fh);
 		result = TRUE;
 	}
+	_MFREE(bmp);
 	return result;
 }
 
