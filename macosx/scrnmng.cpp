@@ -176,7 +176,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 		scrnsurf.yalign = 0 - (scrnsurf.bpp >> 3);
     }
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
-		scrnsurf.ptr += (CGDisplayPixelsWide(kCGDirectMainDisplay)-qd->width)/2*(scrnsurf.bpp >> 3);
+		scrnsurf.ptr += ((CGDisplayPixelsWide(kCGDirectMainDisplay)-qd->width)/2+1)*(scrnsurf.bpp >> 3);
 	}
 	scrnsurf.extend = 0;
 	return(&scrnsurf);

@@ -140,7 +140,7 @@ void newdisk(void) {
 	if (targetDisk == 1) {
         if (dialog_filewriteselect('.D88', "Newdisk.d88", &fss, diskWin)) {
             fsspec2path(&fss, fname, sizeof(fname));
-            newdisk_fdd(fname, media, disklabel);
+            newdisk_fdd(fname, media << 4, disklabel);
         }
 	}
     else if (targetDisk == 2) {
