@@ -365,7 +365,12 @@ static int dlgcmd(int msg, MENUID id, long param) {
 					break;
 
 				case DID_FLIST:
-					dlgflist();
+					if (param) {
+						return(dlgcmd(DLGMSG_COMMAND, DID_OK, 0));
+					}
+					else {
+						dlgflist();
+					}
 					break;
 			}
 			break;

@@ -49,11 +49,13 @@ static const OEMCHAR str_mousekey[] = OEMTEXT("Mouse-Key");
 static const OEMCHAR str_mecshift[] = OEMTEXT("mechanical SHIFT");
 static const OEMCHAR str_mecctrl[] = OEMTEXT("mechanical CTRL");
 static const OEMCHAR str_mecgrph[] = OEMTEXT("mechanical GRPH");
+#if 0
 static const OEMCHAR str_f12mouse[] = OEMTEXT("F12 = Mouse");
 static const OEMCHAR str_f12copy[] = OEMTEXT("F12 = Copy");
 static const OEMCHAR str_f12stop[] = OEMTEXT("F12 = Stop");
 static const OEMCHAR str_f12equ[] = OEMTEXT("F12 = tenkey [=]");
 static const OEMCHAR str_f12comma[] = OEMTEXT("F12 = tenkey [ , ]");
+#endif
 
 static const OEMCHAR str_beep[] = OEMTEXT("Beep");
 static const OEMCHAR str_off[] = OEMTEXT("off");
@@ -209,13 +211,18 @@ static const MSYSITEM s_keybd[] = {
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_mecshift,		NULL,		MID_XSHIFT,			0},
 		{str_mecctrl,		NULL,		MID_XCTRL,			0},
+#if 1
+		{str_mecgrph,		NULL,		MID_XGRPH,			MENU_DELETED}
+#else
 		{str_mecgrph,		NULL,		MID_XGRPH,			0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
 		{str_f12mouse,		NULL,		MID_F12MOUSE,		0},
 		{str_f12copy,		NULL,		MID_F12COPY,		0},
 		{str_f12stop,		NULL,		MID_F12STOP,		0},
 		{str_f12equ,		NULL,		MID_F12EQU,			0},
-		{str_f12comma,		NULL,		MID_F12COMMA,		MENU_DELETED}};
+		{str_f12comma,		NULL,		MID_F12COMMA,		MENU_DELETED}
+#endif
+	};
 
 static const MSYSITEM s_beep[] = {
 		{str_off,			NULL,		MID_BEEPOFF,		0},

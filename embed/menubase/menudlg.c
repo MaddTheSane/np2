@@ -39,10 +39,10 @@ typedef struct {
 	short		minval;
 	short		maxval;
 	int			pos;
-	BYTE		type;
-	BYTE		moving;
-	BYTE		sldh;
-	BYTE		sldv;
+	UINT8		type;
+	UINT8		moving;
+	UINT8		sldh;
+	UINT8		sldv;
 } DLGSLD;
 
 typedef struct {
@@ -156,7 +156,6 @@ static DLGPRM ressea(DLGHDL hdl, int pos) {
 	return(NULL);
 }
 
-
 static BOOL dsbyid(void *vpItem, void *vpArg) {
 
 	if (((DLGHDL)vpItem)->id == (MENUID)(unsigned long)vpArg) {
@@ -164,7 +163,6 @@ static BOOL dsbyid(void *vpItem, void *vpArg) {
 	}
 	return(FALSE);
 }
-
 
 static DLGHDL dlghdlsea(MENUDLG dlg, MENUID id) {
 
@@ -381,14 +379,12 @@ static void dlgclose_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 }
 
 
-static void dlgclose_rel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
+static void dlgclose_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
 	if (focus) {
 		dlg->proc(DLGMSG_CLOSE, 0, 0);
 	}
 	(void)hdl;
-	(void)x;
-	(void)y;
 }
 
 
@@ -428,7 +424,6 @@ static void dlgbtn_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 	(void)y;
 }
 
-
 static void dlgbtn_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 
 	if (hdl->val != focus) {
@@ -439,16 +434,15 @@ static void dlgbtn_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 	(void)y;
 }
 
+static void dlgbtn_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
-static void dlgbtn_rel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
-
-	if (focus) {
+	if (hdl->val != 0) {
 		hdl->val = 0;
 		drawctrls(dlg, hdl);
+	}
+	if (focus) {
 		dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
 	}
-	(void)x;
-	(void)y;
 }
 
 
@@ -476,7 +470,6 @@ static void dlglist_reset(MENUDLG dlg, DLGHDL hdl) {
 	DLGPRM	next;
 
 	vram_filldat(hdl->vram, NULL, 0xffffff);
-
 	dp = hdl->prm;
 	while(dp) {
 		next = dp->next;
@@ -488,7 +481,6 @@ static void dlglist_reset(MENUDLG dlg, DLGHDL hdl) {
 	hdl->val = -1;
 	hdl->c.dl.scrollbar = 0;
 	hdl->c.dl.basepos = 0;
-	(void)dlg;
 }
 
 static BOOL dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
@@ -737,32 +729,62 @@ static BOOL dlglist_setex(MENUDLG dlg, DLGHDL hdl, const ITEMEXPRM *arg) {
 	return(dlglist_drawsub(hdl, arg->pos, (arg->pos == hdl->val)));
 }
 
+static int dlglist_getpos(DLGHDL hdl, int y) {
+
+	int		val;
+
+	val = (y / hdl->c.dl.fontsize) + hdl->c.dl.basepos;
+	if ((unsigned int)val < (unsigned int)hdl->prmcnt) {
+		return(val);
+	}
+	else {
+		return(-1);
+	}
+}
+
+enum {
+	DLCUR_OUT		= -1,
+	DLCUR_INLIST	= 0,
+	DLCUR_UP		= 1,
+	DLCUR_INBAR		= 2,
+	DLCUR_DOWN		= 3,
+	DLCUR_PGUP		= 4,
+	DLCUR_PGDN		= 5
+};
+
 static int dlglist_getpc(DLGHDL hdl, int x, int y) {
 
-	x -= (MENU_LINE * 2);
 	if ((unsigned int)x >= (unsigned int)hdl->vram->width) {
 		goto dlgp_out;
 	}
-	y -= (MENU_LINE * 2);
 	if ((unsigned int)y >= (unsigned int)hdl->vram->height) {
 		goto dlgp_out;
 	}
+
 	if ((hdl->prmcnt < hdl->c.dl.dispmax) ||
 		(x < (hdl->vram->width - MENUDLG_CXVSCR))) {
-		return(0);
+		return(DLCUR_INLIST);
 	}
 	else if (y < MENUDLG_CYVSCR) {
-		return(1);
+		return(DLCUR_UP);
 	}
 	else if (y >= (hdl->vram->height - MENUDLG_CYVSCR)) {
-		return(3);
+		return(DLCUR_DOWN);
 	}
-	else if (hdl->c.dl.scrollbar) {
-		return(2);
+	y -= MENUDLG_CYVSCR;
+	y -= dlglist_barpos(hdl);
+	if (y < 0) {
+		return(DLCUR_PGUP);
+	}
+	else if (y < (int)hdl->c.dl.scrollbar) {
+		return(DLCUR_INBAR);
+	}
+	else {
+		return(DLCUR_PGDN);
 	}
 
 dlgp_out:
-	return(-1);
+	return(DLCUR_OUT);
 }
 
 static void dlglist_setval(MENUDLG dlg, DLGHDL hdl, int val) {
@@ -809,15 +831,22 @@ static void dlglist_setbasepos(MENUDLG dlg, DLGHDL hdl, int pos) {
 static void dlglist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
 	int		flg;
+	int		val;
 
-	flg = dlglist_getpc(hdl, x, y);
+	x -= (MENU_LINE * 2);
 	y -= (MENU_LINE * 2);
+	flg = dlglist_getpc(hdl, x, y);
 	dlg->dragflg = flg;
 	switch(flg) {
-		case 0:
-			dlglist_setval(dlg, hdl, (y / hdl->c.dl.fontsize) +
-														hdl->c.dl.basepos);
-			dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
+		case DLCUR_INLIST:
+			val = dlglist_getpos(hdl, y);
+			if ((val == hdl->val) && (val != -1)) {
+				dlg->proc(DLGMSG_COMMAND, hdl->id, 1);
+			}
+			else {
+				dlglist_setval(dlg, hdl, val);
+				dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
+			}
 			break;
 
 		case 1:
@@ -827,7 +856,7 @@ static void dlglist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 			drawctrls(dlg, hdl);
 			break;
 
-		case 2:
+		case DLCUR_INBAR:
 			y -= MENUDLG_CYVSCR;
 			y -= dlglist_barpos(hdl);
 			if ((unsigned int)y < (unsigned int)hdl->c.dl.scrollbar) {
@@ -837,6 +866,18 @@ static void dlglist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 				dlg->lasty = -1;
 			}
 			break;
+
+		case DLCUR_PGUP:
+			dlglist_setbasepos(dlg, hdl, hdl->c.dl.basepos
+														- hdl->c.dl.dispmax);
+			drawctrls(dlg, hdl);
+			break;
+
+		case DLCUR_PGDN:
+			dlglist_setbasepos(dlg, hdl, hdl->c.dl.basepos
+														+ hdl->c.dl.dispmax);
+			drawctrls(dlg, hdl);
+			break;
 	}
 }
 
@@ -845,13 +886,13 @@ static void dlglist_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 	int		flg;
 	int		height;
 
-	flg = dlglist_getpc(hdl, x, y);
+	x -= (MENU_LINE * 2);
 	y -= (MENU_LINE * 2);
+	flg = dlglist_getpc(hdl, x, y);
 	switch(dlg->dragflg) {
-		case 0:
+		case DLCUR_INLIST:
 			if (flg == 0) {
-				dlglist_setval(dlg, hdl, (y / hdl->c.dl.fontsize) +
-														hdl->c.dl.basepos);
+				dlglist_setval(dlg, hdl, dlglist_getpos(hdl, y));
 				dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
 			}
 			break;
@@ -862,7 +903,7 @@ static void dlglist_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 			drawctrls(dlg, hdl);
 			break;
 
-		case 2:
+		case DLCUR_INBAR:
 			if (dlg->lasty >= 0) {
 				y -= MENUDLG_CYVSCR;
 				y -= dlg->lasty;
@@ -884,7 +925,7 @@ static void dlglist_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 	(void)focus;
 }
 
-static void dlglist_rel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
+static void dlglist_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
 	switch(dlg->dragflg) {
 		case 1:
@@ -893,8 +934,6 @@ static void dlglist_rel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 			drawctrls(dlg, hdl);
 			break;
 	}
-	(void)x;
-	(void)y;
 	(void)focus;
 }
 
@@ -1038,7 +1077,6 @@ static void dlgslider_paint(MENUDLG dlg, DLGHDL hdl) {
 	menuvram_res2put(dlg->vram, &src, &pt);
 }
 
-
 static void dlgslider_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 
 	int		pos;
@@ -1049,7 +1087,6 @@ static void dlgslider_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 		drawctrls(dlg, hdl);
 	}
 }
-
 
 static void dlgslider_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
@@ -1089,7 +1126,6 @@ static void dlgslider_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 		dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
 	}
 }
-
 
 static void dlgslider_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 
@@ -1132,14 +1168,12 @@ static void dlgslider_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 }
 
 
-static void dlgslider_rel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
+static void dlgslider_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
 	if (hdl->c.ds.moving) {
 		hdl->c.ds.moving = 0;
 		drawctrls(dlg, hdl);
 	}
-	(void)x;
-	(void)y;
 	(void)focus;
 }
 
@@ -1178,7 +1212,6 @@ static BOOL dlgtablist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 	(void)arg;
 	return(SUCCESS);
 }
-
 
 static void dlgtablist_paint(MENUDLG dlg, DLGHDL hdl) {
 
@@ -1285,7 +1318,6 @@ static void dlgtablist_paint(MENUDLG dlg, DLGHDL hdl) {
 	}
 }
 
-
 static void dlgtablist_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 
 	if (hdl->val != val) {
@@ -1293,7 +1325,6 @@ static void dlgtablist_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 		drawctrls(dlg, hdl);
 	}
 }
-
 
 static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
@@ -1313,7 +1344,6 @@ static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 		hdl->prmcnt++;
 	}
 }
-
 
 static void dlgtablist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
@@ -1404,6 +1434,11 @@ static void dlgframe_paint(MENUDLG dlg, DLGHDL hdl) {
 
 // ---- radio
 
+typedef struct {
+	MENUDLG	dlg;
+	MENUID	group;
+} MDCB1;
+
 static void dlgradio_paint(MENUDLG dlg, DLGHDL hdl) {
 
 	POINT_T		pt;
@@ -1423,12 +1458,6 @@ const MENURES2	*src;
 	pt.x += MENUDLG_SXRADIO;
 	dlg_text(dlg, hdl, &pt, &hdl->rect);
 }
-
-
-typedef struct {
-	MENUDLG	dlg;
-	MENUID	group;
-} MDCB1;
 
 static BOOL drsv_cb(void *vpItem, void *vpArg) {
 
@@ -1457,7 +1486,6 @@ static void dlgradio_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 		drawctrls(dlg, hdl);
 	}
 }
-
 
 static void dlgradio_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
@@ -1504,7 +1532,6 @@ static void dlgcheck_paint(MENUDLG dlg, DLGHDL hdl) {
 	dlg_text(dlg, hdl, &pt, &hdl->rect);
 }
 
-
 static void dlgcheck_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 
 	if (hdl->val != val) {
@@ -1512,7 +1539,6 @@ static void dlgcheck_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 		drawctrls(dlg, hdl);
 	}
 }
-
 
 static void dlgcheck_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
@@ -1698,12 +1724,10 @@ static void _setval(MENUDLG dlg, DLGHDL hdl, int val) {
 	(void)val;
 }
 
-static void _moverel(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
+static void _moverel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
 	(void)dlg;
 	(void)hdl;
-	(void)x;
-	(void)y;
 	(void)focus;
 }
 
@@ -1712,7 +1736,7 @@ typedef void (*DLGPAINT)(MENUDLG dlg, DLGHDL hdl);
 typedef void (*DLGSETVAL)(MENUDLG dlg, DLGHDL hdl, int val);
 typedef void (*DLGCLICK)(MENUDLG dlg, DLGHDL hdl, int x, int y);
 typedef void (*DLGMOV)(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus);
-typedef void (*DLGREL)(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus);
+typedef void (*DLGREL)(MENUDLG dlg, DLGHDL hdl, int focus);
 
 static const DLGCRE dlgcre[] = {
 		dlgbase_create,				// DLGTYPE_BASE
@@ -2024,7 +2048,6 @@ BOOL menudlg_appends(const MENUPRM *res, int count) {
 	return(r);
 }
 
-
 BOOL menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
 								int posx, int posy, int width, int height) {
 
@@ -2156,7 +2179,7 @@ void menudlg_moving(int x, int y, int btn) {
 				dlg->btn = 0;
 				if ((unsigned int)hdl->type <
 										(sizeof(dlgrel)/sizeof(DLGREL))) {
-					dlgrel[hdl->type](dlg, hdl, x, y, focus);
+					dlgrel[hdl->type](dlg, hdl, focus);
 				}
 			}
 		}
@@ -2275,6 +2298,13 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 			break;
 
 		case DMSG_ITEMRESET:
+			if ((dlg->btn) && (dlg->lastid == hdl->id)) {
+				dlg->btn = 0;
+				if ((unsigned int)hdl->type <
+											(sizeof(dlgrel)/sizeof(DLGREL))) {
+					dlgrel[hdl->type](dlg, hdl, FALSE);
+				}
+			}
 			if (hdl->type == DLGTYPE_LIST) {
 				dlglist_reset(dlg, hdl);
 				drawctrls(dlg, hdl);

@@ -43,13 +43,25 @@
         ver0.73でmilstr.hの定義を外し compiler.hで指定した物となります。
 
 
+　CPUCORE_IA32
+　　IA32アーキテクチャを採用
+　　　i386cを使用する場合の注意点
+　　  ・CPU panic や警告表示時に msgbox() という API を使用します。
+　　　　compiler.h あたりで適当に定義してください。
+　　　・sigsetjmp(3), siglongjmp(3) が無いアーキテクチャは以下の define を
+　　　　compiler.h あたりに追加してください。
+　　　　----------------------------------------------------------------------
+        #define sigjmp_buf              jmp_buf
+        #define sigsetjmp(env, mask)    setjmp(env)
+        #define siglongjmp(env, val)    longjmp(env, val)
+　　　　----------------------------------------------------------------------
+
   CPUSTRUC_MEMWAIT
 　　　cpucore構造体にメモリウェイト値を移動する(vramop)
 
   CGWND_FONTPTR
 　　　cgwindowにフォントポインタを持たせる
 　　　現状、あまり意味を持ちません
-
 
 　SUPPORT_CRT15KHZ
 　　　水平走査15.98kHzをサポートする(DIPSW1-1)

@@ -14,6 +14,8 @@ enum {
 	RT_TABLEMAX		= (1 << RT_TABLEBIT)
 };
 
+static	UINT16	gdc_rt[RT_TABLEMAX+1];
+
 typedef struct {
 	SINT16	x;
 	SINT16	y;
@@ -22,8 +24,6 @@ typedef struct {
 } VECTDIR;
 
 const UINT32 gdcplaneseg[4] = {VRAM_E, VRAM_B, VRAM_R, VRAM_G};
-
-static	UINT16	gdc_rt[RT_TABLEMAX+1];
 
 static const VECTDIR vectdir[16] = {
 					{ 0, 1, 1, 0}, { 1, 1, 1,-1},
