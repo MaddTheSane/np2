@@ -484,6 +484,43 @@ int inst_singleload(MIDIMOD mod, UINT bank, UINT num) {
 	return(MIDIOUT_SUCCESS);
 }
 
+int inst_bankload(MIDIMOD mod, UINT bank) {
+
+	INSTRUMENT	*inst;
+	INSTRUMENT	tone;
+	TONECFG		cfg;
+	UINT		num;
+
+	if (bank >= (MIDI_BANKS * 2)) {
+		return(MIDIOUT_FAILURE);
+	}
+	cfg = mod->tonecfg[bank];
+	if (cfg == NULL) {
+		return(MIDIOUT_FAILURE);
+	}
+	inst = mod->tone[bank];
+	for (num = 0; num<0x80; num++) {
+		if ((inst == NULL) || (inst[num] == NULL)) {
+			tone = inst_create(mod, cfg + num);
+			if (tone) {
+//				TRACEOUT(("load %d %d", bank, num));
+				if (inst == NULL) {
+					inst = (INSTRUMENT *)_MALLOC(
+										sizeof(INSTRUMENT) * 128, "INST");
+					if (inst == NULL) {
+						inst_destroy(tone);
+						return(MIDIOUT_FAILURE);
+					}
+					mod->tone[bank] = inst;
+					ZeroMemory(inst, sizeof(INSTRUMENT) * 128);
+				}
+				inst[num] = tone;
+			}
+		}
+	}
+	return(MIDIOUT_SUCCESS);
+}
+
 void inst_bankfree(MIDIMOD mod, UINT bank) {
 
 	INSTRUMENT	*inst;

@@ -490,7 +490,7 @@ InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj -l $(IntDir)\$(InputName).cod
 
 # End Custom Build
 

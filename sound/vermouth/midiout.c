@@ -2,8 +2,8 @@
 #include	"midiout.h"
 
 
-#define	MIDIOUT_VERSION		0x102
-#define	MIDIOUT_VERSTRING	"VERMOUTH 1.02"
+#define	MIDIOUT_VERSION		0x103
+#define	MIDIOUT_VERSTRING	"VERMOUTH 1.03"
 
 
 static const char vermouthver[] = MIDIOUT_VERSTRING;

@@ -30,22 +30,30 @@ typedef struct {
 } WAVE_INFOS;
 
 
-#if 0
-typedef long (*WFSEEK)(void *fh, long pos, int method);
-typedef UINT (*WFREAD)(void *fh, void *buf, UINT size);
+// ---- write
 
 typedef struct {
-	UINT	rate;
-	UINT	channels;
-	UINT	bit;
+	long		fh;
+	UINT		rate;
+	UINT		bits;
+	UINT		ch;
+	UINT		size;
 
-	void	*fh;
-	WFREAD	read;
-	WFSEEK	seek;
-} _WAVHDL, *WAVHDL;
+	BYTE		*ptr;
+	UINT		remain;
+	BYTE		buf[4096];
+} _WAVEWR, *WAVEWR;
 
-WAVHDL wavhdl_create(void *fh, WFSEEK seek, WFREAD read);
-void wavhdl_destroy(WAVHDL hdl);
-UINT wavhdl_getpcm(WAVHDL hdl, void *buf, UINT size);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WAVEWR wavewr_open(const char *filename, UINT rate, UINT bits, UINT ch);
+UINT wavewr_write(WAVEWR hdl, const void *buf, UINT size);
+void wavewr_close(WAVEWR hdl);
+
+#ifdef __cplusplus
+}
 #endif
 

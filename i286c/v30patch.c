@@ -402,13 +402,13 @@ I286FN v30_aad(void) {						// D5:	AAD
 	I286_AL += (BYTE)(I286_AH * 10);
 	I286_AH = 0;
 	I286_FLAGL &= ~(S_FLAG | Z_FLAG | P_FLAG);
-	I286_FLAGL |= szpcflag[I286_AL];
+	I286_FLAGL |= BYTESZPF(I286_AL);
 }
 
 I286FN v30_xlat(void) {						// D6:	xlat
 
 	I286_WORKCLOCK(5);
-	I286_AL = i286_memoryread(((I286_AL + I286_BX) & 0xffff) + DS_FIX);
+	I286_AL = i286_memoryread(LOW16(I286_AL + I286_BX) + DS_FIX);
 }
 
 I286FN v30_repne(void) {					// F2:	repne

@@ -1,15 +1,17 @@
 
+// #define	I286C_TEST
+#if defined(I286C_TEST)
+#undef MEMOPTIMIZE
+#endif
+
 #define I286FN	static void
 #define I286EXT	void
 
 typedef void (*I286OP)(void);
-typedef UINT32 (*CALCEA)(void);
-typedef UINT16 (*CALCLEA)(void);
-typedef UINT16 (*GETLEA)(UINT32 *seg);
 
-extern	BYTE	szpcflag[0x200];
+extern	BYTE	_szpcflag[0x200];
 
-extern void CPUCALL i286_intnum(UINT vect, UINT16 IP);
+extern void CPUCALL i286_intnum(UINT vect, UINT IP);
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 extern void i286cea_initialize(void);

@@ -208,6 +208,7 @@ const SINT32 *sound_pcmlock(void) {
 const SINT32 *ret;
 
 	if (locks) {
+		TRACEOUT(("sound pcm lock: already locked"));
 		return(NULL);
 	}
 	locks++;
@@ -219,6 +220,9 @@ const SINT32 *ret;
 			soundcfg.lastclock = I286_CLOCK + I286_BASECLOCK - I286_REMCLOCK;
 			beep_eventreset();
 		}
+	}
+	else {
+		locks--;
 	}
 	return(ret);
 }

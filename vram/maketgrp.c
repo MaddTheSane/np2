@@ -88,10 +88,9 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 	}
 
 	m_pitch = gdc.m.para[GDC_PITCH] & 0xfe;
-	esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL);
-	esi &= 0xfff;
+	esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL));
 	m_scr = LOADINTELWORD(gdc.m.para + GDC_SCROLL + 2);
-	m_scr = (m_scr >> 4) & 0x3ff;
+	m_scr = LOW14(m_scr) >> 4;
 	m_scrp = 0;
 
 	s_pitch = gdc.s.para[GDC_PITCH];
@@ -100,9 +99,9 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 	}
 	s_pitch &= 0xfe;
 	ebp = LOADINTELWORD(gdc.s.para + GDC_SCROLL);
-	ebp = (ebp << 1) & 0x7ffe;
+	ebp = LOW15(ebp << 1);
 	s_scr = LOADINTELWORD(gdc.s.para + GDC_SCROLL + 2);
-	s_scr = (s_scr >> 4) & 0x3ff;
+	s_scr = LOW14(s_scr) >> 4;
 	s_scrp = 0;
 	s_scrpmask = (np2cfg.uPD72020)?0x4:0xc;
 
@@ -120,13 +119,13 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 				if (!s_scr) {
 					s_scrp = (s_scrp + 4) & s_scrpmask;
 					ebp = LOADINTELWORD(gdc.s.para + GDC_SCROLL + s_scrp);
-					ebp = (ebp << 1) & 0x7ffe;
+					ebp = LOW15(ebp << 1);
 					s_scr = LOADINTELWORD(gdc.s.para + GDC_SCROLL +
 																s_scrp + 2);
-					s_scr = (s_scr >> 4) & 0x3ff;
+					s_scr = LOW14(s_scr) >> 4;
 				}
 				else {
-					ebp = (ebp + s_pitch) & 0x7fff;
+					ebp = LOW15(ebp + s_pitch);
 				}
 			}
 			else {
@@ -164,15 +163,15 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 						new_flag = 1;
 						break;
 					}
-					edi = (edi + 1) & 0xfff;
+					edi = LOW12(edi + 1);
 				}
 			}
 			edi = esi;
 			for (x=0; x<TEXTXMAX; x++) {							// width80
 				color[x] = (mem[0xa2000 + edi*2] & (TEXTATR_RGB)) >> 5;
-				edi = (edi+1) & 0x0fff;								// width80
+				edi = LOW12(edi + 1);								// width80
 			}
-			esi = (esi + m_pitch) & 0x0fff;
+			esi = LOW12(esi + m_pitch);
 		}
 
 		if ((!TEXT_SDR) && (nowline >= topline + crtc.reg.ssl)) {
@@ -193,7 +192,7 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 							grph_new = 1;
 							break;
 						}
-						vc = (vc + 1) & 0x7fff;
+						vc = LOW15(vc + 1);
 					}
 				}
 			}
@@ -231,10 +230,9 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 			m_scr--;
 			if (!m_scr) {
 				m_scrp = (m_scrp + 4) & 0x0c;
-				esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL + m_scrp);
-				esi &= 0xfff;
+				esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL + m_scrp));
 				m_scr = LOADINTELWORD(gdc.m.para + GDC_SCROLL + m_scrp + 2);
-				m_scr = (m_scr >> 4) & 0x3ff;
+				m_scr = LOW14(m_scr) >> 4;
 				reloadline = TRUE;
 			}
 			if (!GRPH_LRcnt) {
@@ -243,13 +241,13 @@ void maketextgrph(int plane, int text_renewal, int grph_renewal) {
 				if (!s_scr) {
 					s_scrp = (s_scrp + 4) & s_scrpmask;
 					ebp = LOADINTELWORD(gdc.s.para + GDC_SCROLL + s_scrp);
-					ebp = (ebp << 1) & 0x7ffe;
+					ebp = LOW15(ebp << 1);
 					s_scr = LOADINTELWORD(gdc.s.para + GDC_SCROLL +
 																s_scrp + 2);
-					s_scr = (s_scr >> 4) & 0x3ff;
+					s_scr = LOW14(s_scr) >> 4;
 				}
 				else {
-					ebp = (ebp + s_pitch) & 0x7fff;
+					ebp = LOW15(ebp + s_pitch);
 				}
 			}
 			else {
@@ -348,10 +346,9 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 	}
 
 	m_pitch = gdc.m.para[GDC_PITCH] & 0xfe;
-	esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL);
-	esi &= 0xfff;
+	esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL));
 	m_scr = LOADINTELWORD(gdc.m.para + GDC_SCROLL + 2);
-	m_scr = (m_scr >> 4) & 0x3ff;
+	m_scr = LOW14(m_scr) >> 4;
 	m_scrp = 0;
 
 	s_pitch = gdc.s.para[GDC_PITCH];
@@ -360,9 +357,9 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 	}
 	s_pitch &= 0xfe;
 	ebp = LOADINTELWORD(gdc.s.para + GDC_SCROLL);
-	ebp = (ebp << 1) & 0x7ffe;
+	ebp = LOW15(ebp << 1);
 	s_scr = LOADINTELWORD(gdc.s.para + GDC_SCROLL + 2);
-	s_scr = (s_scr >> 4) & 0x3ff;
+	s_scr = LOW14(s_scr) >> 4;
 	s_scrp = 0;
 	s_scrpmask = (np2cfg.uPD72020)?0x4:0xc;
 
@@ -380,13 +377,13 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 				if (!s_scr) {
 					s_scrp = (s_scrp + 4) & s_scrpmask;
 					ebp = LOADINTELWORD(gdc.s.para + GDC_SCROLL + s_scrp);
-					ebp = (ebp << 1) & 0x7ffe;
+					ebp = LOW15(ebp << 1);
 					s_scr = LOADINTELWORD(gdc.s.para + GDC_SCROLL +
 																s_scrp + 2);
-					s_scr = (s_scr >> 4) & 0x3ff;
+					s_scr = LOW14(s_scr) >> 4;
 				}
 				else {
-					ebp = (ebp + s_pitch) & 0x7fff;
+					ebp = LOW15(ebp + s_pitch);
 				}
 			}
 			else {
@@ -424,15 +421,15 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 						new_flag = 1;
 						break;
 					}
-					edi = (edi + 1) & 0xfff;
+					edi = LOW12(edi + 1);
 				}
 			}
 			edi = esi;
 			for (x=0; x<TEXTXMAX/2; x++) {							// width40
 				color[x] = (mem[0xa2000 + edi*2] & (TEXTATR_RGB)) >> 5;
-				edi = (edi+2) & 0x0fff;								// width40
+				edi = LOW12(edi + 2);								// width40
 			}
-			esi = (esi + m_pitch) & 0x0fff;
+			esi = LOW12(esi + m_pitch);
 		}
 
 		if ((!TEXT_SDR) && (nowline >= topline + crtc.reg.ssl)) {
@@ -453,7 +450,7 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 							grph_new = 1;
 							break;
 						}
-						vc = (vc + 1) & 0x7fff;
+						vc = LOW15(vc + 1);
 					}
 				}
 			}
@@ -491,10 +488,9 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 			m_scr--;
 			if (!m_scr) {
 				m_scrp = (m_scrp + 4) & 0x0c;
-				esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL + m_scrp);
-				esi &= 0xfff;
+				esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL + m_scrp));
 				m_scr = LOADINTELWORD(gdc.m.para + GDC_SCROLL + m_scrp + 2);
-				m_scr = (m_scr >> 4) & 0x3ff;
+				m_scr = LOW14(m_scr) >> 4;
 				reloadline = TRUE;
 			}
 			if (!GRPH_LRcnt) {
@@ -503,13 +499,13 @@ void maketextgrph40(int plane, int text_renewal, int grph_renewal) {
 				if (!s_scr) {
 					s_scrp = (s_scrp + 4) & s_scrpmask;
 					ebp = LOADINTELWORD(gdc.s.para + GDC_SCROLL + s_scrp);
-					ebp = (ebp << 1) & 0x7ffe;
+					ebp = LOW15(ebp << 1);
 					s_scr = LOADINTELWORD(gdc.s.para + GDC_SCROLL +
 																s_scrp + 2);
-					s_scr = (s_scr >> 4) & 0x3ff;
+					s_scr = LOW14(s_scr) >> 4;
 				}
 				else {
-					ebp = (ebp + s_pitch) & 0x7fff;
+					ebp = LOW15(ebp + s_pitch);
 				}
 			}
 			else {

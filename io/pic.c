@@ -171,6 +171,7 @@ void pic_irq(void) {
 					nevent_reset(NEVENT_PICMASK);
 				}
 				i286_interrupt((BYTE)((p->pi[0].icw[1] & 0xf8) | irq));
+// TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | irq));
 				return;
 			}
 			if ((!p->pi[0].levels) ||
@@ -211,7 +212,7 @@ void pic_irq(void) {
 					p->pi[0].irr &= ~(1 << sirq);
 					p->pi[0].level[p->pi[0].levels++] = sirq;
 				}
-// TRACEOUT(("hardware int %.2x", (p->pi[1].icw[1] & 0xf8) | irq));
+// TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | irq));
 				i286_interrupt((BYTE)((p->pi[1].icw[1] & 0xf8) | irq));
 			}
 		}

@@ -63,7 +63,7 @@ EMBEDS		=	$(EMBED)/vramhdl.h $(EMBED)/vrammix.h \
 
 
 COPT	= -c -Wall -pipe -O3 -Wpointer-arith -fno-exceptions -fno-rtti \
-			-fsigned-char \
+			-fomit-frame-pointer -fsigned-char \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
 			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
 			-I$(GENERIC) -I$(EMBED) -I$(MENU) -I$(MENUBASE) -I$(TARGET) \

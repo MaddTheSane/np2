@@ -32,17 +32,17 @@
 #define	BYTE_SHL1(d, s)												\
 		(d) = (s) << 1;												\
 		I286_OV = ((s) ^ (d)) & 0x80;								\
-		I286_FLAGL = szpcflag[(d)] | A_FLAG;
+		I286_FLAGL = BYTESZPCF(d) | A_FLAG;
 
 #define	BYTE_SHR1(d, s)												\
 		(d) = (s) >> 1;												\
 		I286_OV = (s) & 0x80;										\
-		I286_FLAGL = (BYTE)(szpcflag[(d)] | A_FLAG | ((s) & 1));
+		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
 
 #define	BYTE_SAR1(d, s)												\
 		(d) = (BYTE)(((char)s) >> 1);								\
 		I286_OV = 0;												\
-		I286_FLAGL = (BYTE)(szpcflag[(d)] | A_FLAG | ((s) & 1));
+		I286_FLAGL = (BYTE)(BYTESZPF(d) | A_FLAG | ((s) & 1));
 
 
 
@@ -77,7 +77,7 @@
 #define	WORD_SHL1(d, s)												\
 		(d) = (s) << 1;												\
 		I286_OV = ((s) ^ (d)) & 0x8000;								\
-		I286_FLAGL = (BYTE)(WORDSZPF((d) & 0xffff) | A_FLAG | ((d) >> 16));
+		I286_FLAGL = WORDSZPCF(d) + A_FLAG;
 
 #define	WORD_SHR1(d, s)												\
 		(d) = (s) >> 1;												\
@@ -160,7 +160,7 @@
 			}														\
 			(s) <<= (c);											\
 			(s) &= 0x1ff;											\
-			I286_FLAGL = szpcflag[(s)] | A_FLAG;					\
+			I286_FLAGL = BYTESZPCF(s) + A_FLAG;						\
 			I286_OV = ((s) ^ ((s) >> 1)) & 0x80;					\
 		}															\
 		(d) = (s);
@@ -176,7 +176,7 @@
 			I286_FLAGL = (BYTE)((s) & 1);							\
 			(s) >>= 1;												\
 			I286_OV = ((s) ^ ((s) >> 1)) & 0x40;					\
-			I286_FLAGL |= szpcflag[(s)] | A_FLAG;					\
+			I286_FLAGL |= BYTESZPF(s) + A_FLAG;						\
 		}															\
 		(d) = (s);
 
@@ -187,7 +187,7 @@
 			I286_FLAGL = (BYTE)((s) & 1);							\
 			(s) = (BYTE)(((char)s) >> 1);							\
 			I286_OV = 0;											\
-			I286_FLAGL |= szpcflag[(s)] | A_FLAG;					\
+			I286_FLAGL |= BYTESZPF(s) | A_FLAG;						\
 		}															\
 		(d) = (s);
 
@@ -276,8 +276,7 @@
 			}														\
 			(s) <<= (c);											\
 			(s) &= 0x1ffff;											\
-			I286_FLAGL = WORDSZPF((s) & 0xffff);					\
-			I286_FLAGL |= (BYTE)((s) >> 16);						\
+			I286_FLAGL = WORDSZPCF(s);								\
 		}															\
 		(d) = (s);
 

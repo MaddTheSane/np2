@@ -9,37 +9,53 @@ enum {
 };
 
 
-#ifdef OPNGENX86
+#if defined(OPNGENX86)
 
 enum {
 	FMDIV_BITS		= 8,
 	FMDIV_ENT		= (1 << FMDIV_BITS),
-	FMVOL_SFTBIT	= 4,
-
-	SIN_BITS		= 11,
-	EVC_BITS		= 10,
-	ENV_BITS		= 16,
-	KF_BITS			= 6,
-	FREQ_BITS		= 20,
-	ENVTBL_BIT		= 14,
-	SINTBL_BIT		= 14
+	FMVOL_SFTBIT	= 4
 };
+
+#define SIN_BITS		11
+#define EVC_BITS		10
+#define ENV_BITS		16
+#define KF_BITS			6
+#define FREQ_BITS		20
+#define ENVTBL_BIT		14
+#define SINTBL_BIT		14
+
+#elif defined(OPNGENARM)
+
+enum {
+	FMDIV_BITS		= 8,
+	FMDIV_ENT		= (1 << FMDIV_BITS),
+	FMVOL_SFTBIT	= 4
+};
+
+#define SIN_BITS		8
+#define	EVC_BITS		7
+#define	ENV_BITS		16
+#define	KF_BITS			6
+#define	FREQ_BITS		20
+#define	ENVTBL_BIT		14
+#define	SINTBL_BIT		14							// env+sin 30bit max
 
 #else
 
 enum {
 	FMDIV_BITS		= 8,
 	FMDIV_ENT		= (1 << FMDIV_BITS),
-	FMVOL_SFTBIT	= 4,						// C”Å‚Í–³Ž‹
-
-	SIN_BITS		= 10,
-	EVC_BITS		= 10,
-	ENV_BITS		= 16,
-	KF_BITS			= 6,
-	FREQ_BITS		= 20,
-	ENVTBL_BIT		= 14,
-	SINTBL_BIT		= 15							// env+sin 30bit max
+	FMVOL_SFTBIT	= 4
 };
+
+#define	SIN_BITS		10
+#define	EVC_BITS		10
+#define	ENV_BITS		16
+#define	KF_BITS			6
+#define	FREQ_BITS		20
+#define	ENVTBL_BIT		14
+#define	SINTBL_BIT		15
 
 #endif
 
@@ -134,6 +150,10 @@ typedef struct {
 	UINT	vr_en;
 	SINT32	vr_l;
 	SINT32	vr_r;
+
+	SINT32	sintable[SIN_ENT];
+	SINT32	envtable[EVC_ENT];
+	SINT32	envcurve[EVC_ENT*2 + 1];
 } OPNCFG;
 
 

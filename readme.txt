@@ -1,4 +1,38 @@
 
+// ---- 定義
+
+　最適化の為のメモリ使用量の抑制
+    MEMOPTIMIZE = 0～2
+
+　　CPUにより以下の数値をセットされることを期待している
+　　　MEMOPTIMIZE未定義 … Celeron333A以降のセカンドキャッシュ有効機
+　　　MEMOPTIMIZE = 0   … x86
+　　　MEMOPTIMIZE = 1   … PowerPC等のデスクトップ用RISC
+　　　MEMOPTIMIZE = 2   … StrongARM等の組み込み用RISC
+
+
+　OSの言語の選択
+　　OSLANG_SJIS … Shift-JISの漢字コードを解釈する
+　　OSLANG_EUC  … EUCの漢字コードを解釈する
+
+　　OSLINEBREAK_CR   … MacOS   "\r"
+　　OSLINEBREAK_LF   … Unix    "\n"
+　　OSLINEBREAK_CRLF … Windows "\r\n"
+
+　　(milstr.h選択用)
+　　SUPPORT_ANK      … ANK文字列操作関数をリンクする
+　　SUPPORT_SJIS     … SJIS文字列操作関数をリンクする
+　　SUPPORT_EUC      … EUC文字列操作関数をリンクする
+
+
+
+　現状は以下のソースコード内で個別に設定しています。
+　　(Windowsが APIによって \r\nの場合と\nの場合があるので…)
+　・common/_memory.c
+　・debugsub.c
+　・statsave.c
+
+
 
 // ---- screen
 
@@ -167,17 +201,4 @@ void sysmng_cpureset(void)
 
 void taskmng_exit(void)
 　システムを終了する。
-
-
-
-// ----
-
-　改行コードの扱い
-
-　以下のソースコード内で個別に設定しています。
-　　(Windowsが APIによって \r\nの場合と\nの場合があるので…)
-　・common/_memory.c
-　・debugsub.c
-　・statsave.c
-
 

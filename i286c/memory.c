@@ -22,13 +22,13 @@ static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 	I286_REMCLOCK -= vramop.tramwait;
 	if (address < 0xa2000) {
 		mem[address] = value;
-		tramupdate[(address >> 1) & 0x0fff] = 1;
+		tramupdate[LOW12(address >> 1)] = 1;
 		gdcs.textdisp |= 1;
 	}
 	else if (address < 0xa3fe0) {
 		if (!(address & 1)) {
 			mem[address] = value;
-			tramupdate[(address >> 1) & 0x0fff] = 1;
+			tramupdate[LOW12(address >> 1)] = 1;
 			gdcs.textdisp |= 1;
 		}
 	}
@@ -36,7 +36,7 @@ static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 		if (!(address & 1)) {
 			if ((!(address & 2)) || (gdcs.msw_accessable)) {
 				mem[address] = value;
-				tramupdate[(address >> 1) & 0x0fff] = 1;
+				tramupdate[LOW12(address >> 1)] = 1;
 				gdcs.textdisp |= 1;
 			}
 		}
@@ -53,7 +53,7 @@ static void MEMCALL vram_w0(UINT32 address, BYTE value) {
 
 	I286_REMCLOCK -= vramop.vramwait;
 	mem[address] = value;
-	vramupdate[address & 0x7fff] |= 1;
+	vramupdate[LOW15(address)] |= 1;
 	gdcs.grphdisp |= 1;
 }
 
@@ -61,7 +61,7 @@ static void MEMCALL vram_w1(UINT32 address, BYTE value) {
 
 	I286_REMCLOCK -= vramop.vramwait;
 	mem[address + VRAM_STEP] = value;
-	vramupdate[address & 0x7fff] |= 2;
+	vramupdate[LOW15(address)] |= 2;
 	gdcs.grphdisp |= 2;
 }
 
@@ -72,7 +72,7 @@ static void MEMCALL grcg_rmw0(UINT32 address, BYTE value) {
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	mask = ~value;
-	address &= 0x7fff;
+	address = LOW15(address);
 	vramupdate[address] |= 1;
 	gdcs.grphdisp |= 1;
 	vram = mem + address;
@@ -101,7 +101,7 @@ static void MEMCALL grcg_rmw1(UINT32 address, BYTE value) {
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	mask = ~value;
-	address &= 0x7fff;
+	address = LOW15(address);
 	vramupdate[address] |= 2;
 	gdcs.grphdisp |= 2;
 	vram = mem + address;
@@ -128,7 +128,7 @@ static void MEMCALL grcg_tdw0(UINT32 address, BYTE value) {
 	BYTE	*vram;
 
 	I286_REMCLOCK -= vramop.grcgwait;
-	address &= 0x7fff;
+	address = LOW15(address);
 	vramupdate[address] |= 1;
 	gdcs.grphdisp |= 1;
 	vram = mem + address;
@@ -152,7 +152,7 @@ static void MEMCALL grcg_tdw1(UINT32 address, BYTE value) {
 	BYTE	*vram;
 
 	I286_REMCLOCK -= vramop.grcgwait;
-	address &= 0x7fff;
+	address = LOW15(address);
 	vramupdate[address] |= 2;
 	gdcs.grphdisp |= 2;
 	vram = mem + address;
@@ -178,7 +178,7 @@ static void MEMCALL egc_wt(UINT32 address, BYTE value) {
 
 static void MEMCALL emmc_wt(UINT32 address, BYTE value) {
 
-	extmem.pageptr[(address >> 14) & 3][address & 0x3fff] = value;
+	extmem.pageptr[(address >> 14) & 3][LOW14(address)] = value;
 }
 
 static void MEMCALL i286_wn(UINT32 address, BYTE value) {
@@ -230,7 +230,7 @@ const BYTE	*vram;
 	BYTE	ret;
 
 	I286_REMCLOCK -= vramop.grcgwait;
-	vram = mem + (address & 0x7fff);
+	vram = mem + LOW15(address);
 	ret = 0;
 	if (!(grcg.modereg & 1)) {
 		ret |= vram[VRAM0_B] ^ grcg.tile[0].b[0];
@@ -254,7 +254,7 @@ static BYTE MEMCALL grcg_tcr1(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
-	vram = mem + (address & 0x7fff);
+	vram = mem + LOW15(address);
 	if (!(grcg.modereg & 1)) {
 		ret |= vram[VRAM1_B] ^ grcg.tile[0].b[0];
 	}
@@ -277,13 +277,13 @@ static BYTE MEMCALL egc_rd(UINT32 address) {
 
 static BYTE MEMCALL emmc_rd(UINT32 address) {
 
-	return(extmem.pageptr[(address >> 14) & 3][address & 0x3fff]);
+	return(extmem.pageptr[(address >> 14) & 3][LOW14(address)]);
 }
 
 static BYTE MEMCALL i286_itf(UINT32 address) {
 
 	if (itf.bank) {
-		address = ITF_ADRS + (address & 0x7fff);
+		address = ITF_ADRS + LOW15(address);
 	}
 	return(mem[address]);
 }
@@ -303,8 +303,8 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 
 	if (address < 0xa1fff) {
 		STOREINTELWORD(mem + address, value);
-		tramupdate[(address >> 1) & 0x0fff] = 1;
-		tramupdate[((address + 1) >> 1) & 0x0fff] = 1;
+		tramupdate[LOW12(address >> 1)] = 1;
+		tramupdate[LOW12((address + 1) >> 1)] = 1;
 		gdcs.textdisp |= 1;
 	}
 	else if (address == 0xa1fff) {
@@ -319,7 +319,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 			value >>= 8;
 		}
 		mem[address] = (BYTE)value;
-		tramupdate[(address >> 1) & 0x0fff] = 1;
+		tramupdate[LOW12(address >> 1)] = 1;
 		gdcs.textdisp |= 1;
 	}
 	else if (address < 0xa3fff) {
@@ -329,7 +329,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 		}
 		if ((!(address & 2)) || (gdcs.msw_accessable)) {
 			mem[address] = (BYTE)value;
-			tramupdate[(address >> 1) & 0x0fff] = 1;
+			tramupdate[LOW12(address >> 1)] = 1;
 			gdcs.textdisp |= 1;
 		}
 	}
@@ -348,15 +348,15 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 #define GRCGW_NON(page) {											\
 	I286_REMCLOCK -= vramop.vramwait;								\
 	STOREINTELWORD(mem + address + VRAM_STEP*(page), value);		\
-	vramupdate[address & 0x7fff] |= (1 << page);					\
-	vramupdate[(address + 1) & 0x7fff] |= (1 << page);				\
+	vramupdate[LOW15(address)] |= (1 << page);						\
+	vramupdate[LOW15(address + 1)] |= (1 << page);					\
 	gdcs.grphdisp |= (1 << page);									\
 }
 
 #define GRCGW_RMW(page) {											\
 	BYTE	*vram;													\
 	I286_REMCLOCK -= vramop.grcgwait;								\
-	address &= 0x7fff;												\
+	address = LOW15(address);										\
 	vramupdate[address] |= (1 << page);								\
 	vramupdate[address + 1] |= (1 << page);							\
 	gdcs.grphdisp |= (1 << page);									\
@@ -402,7 +402,7 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 #define GRCGW_TDW(page) {											\
 	BYTE	*vram;													\
 	I286_REMCLOCK -= vramop.grcgwait;								\
-	address &= 0x7fff;												\
+	address = LOW15(address);										\
 	vramupdate[address] |= (1 << page);								\
 	vramupdate[address + 1] |= (1 << page);							\
 	gdcs.grphdisp |= (1 << page);									\
@@ -455,7 +455,7 @@ static void MEMCALL emmcw_wt(UINT32 address, UINT16 value) {
 	BYTE	*ptr;
 
 	if ((address & 0x3fff) != 0x3fff) {
-		ptr = extmem.pageptr[(address >> 14) & 3] + (address & 0x3fff);
+		ptr = extmem.pageptr[(address >> 14) & 3] + LOW14(address);
 		STOREINTELWORD(ptr, value);
 	}
 	else {
@@ -529,7 +529,7 @@ static UINT16 MEMCALL grcgw_tcr0(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
-	vram = mem + (address & 0x7fff);
+	vram = mem + LOW15(address);
 	if (!(grcg.modereg & 1)) {
 		ret |= LOADINTELWORD(vram + VRAM0_B) ^ grcg.tile[0].w;
 	}
@@ -552,7 +552,7 @@ static UINT16 MEMCALL grcgw_tcr1(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
-	vram = mem + (address & 0x7fff);
+	vram = mem + LOW15(address);
 	if (!(grcg.modereg & 1)) {
 		ret |= LOADINTELWORD(vram + VRAM1_B) ^ grcg.tile[0].w;
 	}
@@ -594,14 +594,14 @@ static UINT16 MEMCALL emmcw_rd(UINT32 address) {
 
 	BYTE	*ptr;
 
-	ptr = extmem.pageptr[(address >> 14) & 3] + (address & 0x3fff);
+	ptr = extmem.pageptr[(address >> 14) & 3] + LOW14(address);
 	return(LOADINTELWORD(ptr));
 }
 
 static UINT16 MEMCALL i286w_itf(UINT32 address) {
 
 	if (itf.bank) {
-		address = ITF_ADRS + (address & 0x7fff);
+		address = ITF_ADRS + LOW15(address);
 	}
 	return(LOADINTELWORD(mem + address));
 }
@@ -917,7 +917,7 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 	else {
 		while(leng--) {
 			*out++ = i286_memoryread(adrs + off);
-			off = (off + 1) & 0xffff;
+			off = LOW16(off + 1);
 		}
 	}
 }
@@ -955,7 +955,7 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 	else {
 		while(leng--) {
 			i286_memorywrite(adrs + off, *out++);
-			off = (off + 1) & 0xffff;
+			off = LOW16(off + 1);
 		}
 	}
 }

@@ -55,3 +55,7 @@ typedef	int				SINT32;
 
 #define	SCREEN_BPP		16
 
+#if defined(ARM)
+#define	OPNGENARM
+#endif
+

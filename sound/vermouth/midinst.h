@@ -51,5 +51,6 @@ typedef struct {
 
 
 int inst_singleload(MIDIMOD mod, UINT bank, UINT num);
+int inst_bankload(MIDIMOD mod, UINT bank);
 void inst_bankfree(MIDIMOD mod, UINT bank);
 

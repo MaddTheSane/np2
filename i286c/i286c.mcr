@@ -13,13 +13,44 @@
 #define	STRING_DIR		((I286_FLAG & D_FLAG)?-1:1)
 #define	STRING_DIRx2	((I286_FLAG & D_FLAG)?-2:2)
 
-#if !defined(MEMOPTIMIZE)
-extern	BYTE	szpflag_w[0x10000];
-#define	WORDSZPF(a)		szpflag_w[(a)]
+
+// ---- flags
+
+#if defined(I286C_TEST)
+
+extern BYTE BYTESZPF(UINT r);
+extern BYTE BYTESZPCF(UINT r);
+#define	BYTESZPCF2(a)	BYTESZPCF((a) & 0x1ff)
+extern BYTE WORDSZPF(UINT32 r);
+extern BYTE WORDSZPCF(UINT32 r);
+
+#elif !defined(MEMOPTIMIZE)
+
+extern	BYTE	_szpcflag8[0x200];
+extern	BYTE	_szpflag16[0x10000];
+#define	BYTESZPF(a)		(_szpcflag8[(a)])
+#define	BYTESZPCF(a)	(_szpcflag8[(a)])
+#define	BYTESZPCF2(a)	(_szpcflag8[(a) & 0x1ff])
+#define	WORDSZPF(a)		(_szpflag16[(a)])
+#define	WORDSZPCF(a)	(_szpflag16[LOW16(a)] + (((a) >> 16) & 1))
+
 #else
-#define	WORDSZPF(a)		((szpcflag[(a) & 0xff] & P_FLAG) | \
-									(((a))?0:Z_FLAG) | (((a) >> 8) & S_FLAG))
+
+extern	BYTE	_szpcflag8[0x200];
+
+#define	BYTESZPF(a)		(_szpcflag8[(a)])
+#define	BYTESZPCF(a)	(_szpcflag8[(a)])
+#define	BYTESZPCF2(a)	(_szpcflag8[(a) & 0x1ff])
+#define	WORDSZPF(a)		((_szpcflag8[(a) & 0xff] & P_FLAG) + \
+									(((a))?0:Z_FLAG) + (((a) >> 8) & S_FLAG))
+#define	WORDSZPCF(a)	((_szpcflag8[(a) & 0xff] & P_FLAG) + \
+							((LOW16(a))?0:Z_FLAG) + (((a) >> 8) & S_FLAG) + \
+							(((a) >> 16) & 1))
+
 #endif
+
+
+// ---- reg position
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 extern	BYTE	*_reg8_b53[256];
@@ -50,7 +81,13 @@ extern	UINT16	*_reg16_b20[256];
 #define	REG16_B20(op)		(((UINT16 *)&I286_REG) + ((op) & 7))
 #endif
 
+
+// ---- ea
+
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+typedef UINT32 (*CALCEA)(void);
+typedef UINT16 (*CALCLEA)(void);
+typedef UINT (*GETLEA)(UINT32 *seg);
 extern	CALCEA	_calc_ea_dst[];
 extern	CALCLEA	_calc_lea[];
 extern	GETLEA	_get_ea[];
@@ -60,18 +97,18 @@ extern	GETLEA	_get_ea[];
 #else
 extern UINT32 calc_ea_dst(UINT op);
 extern UINT16 calc_lea(UINT op);
-extern UINT16 calc_a(UINT op, UINT32 *seg);
+extern UINT calc_a(UINT op, UINT32 *seg);
 #define	CALC_EA(o)		(calc_ea_dst(o))
 #define	CALC_LEA(o)		(calc_lea(o))
 #define	GET_EA(o, s)	(calc_a(o, s))
 #endif
+
 
 #define	SWAPBYTE(p, q) {											\
 		BYTE tmp = (p);												\
 		(p) = (q);													\
 		(q) = tmp;													\
 	}
-
 
 #define	SWAPWORD(p, q) {											\
 		UINT16 tmp;													\
@@ -166,25 +203,21 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		(r) = (s) + (d);											\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x80;					\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		I286_FLAGL |= szpcflag[(r)];
+		I286_FLAGL |= BYTESZPCF(r);
 
 
 #define	ADDWORD(r, d, s)											\
 		(r) = (s) + (d);											\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x8000;				\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		if ((r) & 0xffff0000) {										\
-			(r) &= 0x0000ffff;										\
-			I286_FLAGL |= C_FLAG;									\
-		}															\
-		I286_FLAGL |= WORDSZPF(r);
+		I286_FLAGL |= WORDSZPCF(r);
 
 
 // flag no check
 #define	ORBYTE(d, s)												\
 		(d) |= (s);													\
 		I286_OV = 0;												\
-		I286_FLAGL = szpcflag[(d)];
+		I286_FLAGL = BYTESZPF(d);
 
 
 #define	ORWORD(d, s)												\
@@ -197,18 +230,14 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		(r) = (I286_FLAGL & 1) + (s) + (d);							\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x80;					\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		I286_FLAGL |= szpcflag[(r)];
+		I286_FLAGL |= BYTESZPCF(r);
 
 
 #define	ADCWORD(r, d, s) 											\
 		(r) = (I286_FLAGL & 1) + (s) + (d);							\
 		I286_OV = ((r) ^ (s)) & ((r) ^ (d)) & 0x8000;				\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		if ((r) & 0xffff0000) {										\
-			(r) &= 0x0000ffff;										\
-			I286_FLAGL |= C_FLAG;									\
-		}															\
-		I286_FLAGL |= WORDSZPF(r);
+		I286_FLAGL |= WORDSZPCF(r);
 
 
 // flag no check
@@ -216,24 +245,20 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		(r) = (d) - (s) - (I286_FLAGL & 1);							\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x80;					\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		I286_FLAGL |= szpcflag[(r) & 0x1ff];
+		I286_FLAGL |= BYTESZPCF2(r);
 
 #define	SBBWORD(r, d, s) 											\
 		(r) = (d) - (s) - (I286_FLAGL & 1);							\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x8000;				\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		if ((r) & 0xffff0000) {										\
-			(r) &= 0x0000ffff;										\
-			I286_FLAGL |= C_FLAG;									\
-		}															\
-		I286_FLAGL |= WORDSZPF(r);
+		I286_FLAGL |= WORDSZPCF(r);
 
 
 // flag no check
 #define	ANDBYTE(d, s)												\
 		(d) &= (s);													\
 		I286_OV = 0;												\
-		I286_FLAGL = szpcflag[(d)];
+		I286_FLAGL = BYTESZPF(d);
 
 
 #define	ANDWORD(d, s)												\
@@ -247,24 +272,20 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		(r) = (d) - (s);											\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x80;					\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		I286_FLAGL |= szpcflag[(r) & 0x1ff];
+		I286_FLAGL |= BYTESZPCF2(r);
 
 #define	WORD_SUB(r, d, s) 											\
 		(r) = (d) - (s);											\
 		I286_OV = ((d) ^ (r)) & ((d) ^ (s)) & 0x8000;				\
 		I286_FLAGL = (BYTE)(((r) ^ (d) ^ (s)) & A_FLAG);			\
-		if ((r) & 0xffff0000) {										\
-			(r) &= 0x0000ffff;										\
-			I286_FLAGL |= C_FLAG;									\
-		}															\
-		I286_FLAGL |= WORDSZPF(r);
+		I286_FLAGL |= WORDSZPCF(r);
 
 
 // flag no check
 #define	BYTE_XOR(d, s)												\
 		(d) ^= s;													\
 		I286_OV = 0;												\
-		I286_FLAGL = szpcflag[(d)];
+		I286_FLAGL = BYTESZPF(d);
 
 
 #define	WORD_XOR(d, s)												\
@@ -277,18 +298,14 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		(d) = 0 - (s);												\
 		I286_OV = ((d) & (s)) & 0x80;								\
 		I286_FLAGL = (BYTE)(((d) ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= szpcflag[(d) & 0x1ff];
+		I286_FLAGL |= BYTESZPCF2(d);
 
 
 #define	WORD_NEG(d, s) 												\
 		(d) = 0 - (s);												\
 		I286_OV = ((d) & (s)) & 0x8000;								\
 		I286_FLAGL = (BYTE)(((d) ^ (s)) & A_FLAG);					\
-		if ((d) & 0xffff0000) {										\
-			(d) &= 0x0000ffff;										\
-			I286_FLAGL |= C_FLAG;									\
-		}															\
-		I286_FLAGL |= WORDSZPF(d);
+		I286_FLAGL |= WORDSZPCF(d);
 
 
 #define	BYTE_MUL(r, d, s)											\
@@ -335,7 +352,7 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		I286_OV = b & (b ^ (s)) & 0x80;								\
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= szpcflag[b];									\
+		I286_FLAGL |= BYTESZPF(b);									\
 		(s) = b;													\
 	}
 
@@ -359,7 +376,7 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 		I286_OV = (s) & (b ^ (s)) & 0x80;							\
 		I286_FLAGL &= C_FLAG;										\
 		I286_FLAGL |= (BYTE)((b ^ (s)) & A_FLAG);					\
-		I286_FLAGL |= szpcflag[b];									\
+		I286_FLAGL |= BYTESZPF(b);									\
 		(s) = b;													\
 	}
 
@@ -463,5 +480,5 @@ extern UINT16 calc_a(UINT op, UINT32 *seg);
 	}
 
 
-#define	INT_NUM(a, b)		i286_intnum((a), (UINT16)(b))
+#define	INT_NUM(a, b)		i286_intnum(a, b)
 

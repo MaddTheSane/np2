@@ -182,9 +182,12 @@ UINT soundmng_create(UINT rate, UINT ms) {
 			currate = rate;
 			curms = ms;
 			waveopened = TRUE;
+			TRACEOUT(("soundmng success."));
+			mute = 0;
 			return(w_ctrl.samples);
 		}
 		_MFREE(w_ctrl.buffer);
+		TRACEOUT(("soundmng failure."));
 	}
 	return(0);
 }

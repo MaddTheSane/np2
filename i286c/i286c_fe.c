@@ -125,7 +125,7 @@ I286_F6 _call_ea16(UINT op) {
 I286_F6 _call_far_ea16(UINT op) {
 
 	UINT32	seg;
-	UINT16	ad;
+	UINT	ad;
 
 	I286_WORKCLOCK(16);
 	if (op < 0xc0) {
@@ -133,8 +133,7 @@ I286_F6 _call_far_ea16(UINT op) {
 		REGPUSH0(I286_CS)								// ToDo
 		REGPUSH0(I286_IP)
 		I286_IP = i286_memoryread_w(seg + ad);
-		ad += 2;
-		I286_CS = i286_memoryread_w(seg + ad);
+		I286_CS = i286_memoryread_w(seg + LOW16(ad + 2));
 		CS_BASE = I286_CS << 4;
 	}
 	else {
@@ -157,14 +156,13 @@ I286_F6 _jmp_ea16(UINT op) {
 I286_F6 _jmp_far_ea16(UINT op) {
 
 	UINT32	seg;
-	UINT16	ad;
+	UINT	ad;
 
 	I286_WORKCLOCK(11);
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
 		I286_IP = i286_memoryread_w(seg + ad);
-		ad += 2;
-		I286_CS = i286_memoryread_w(seg + ad);
+		I286_CS = i286_memoryread_w(seg + LOW16(ad + 2));
 		CS_BASE = I286_CS << 4;
 	}
 	else {

@@ -191,10 +191,9 @@ void maketext(int text_renewal) {
 
 	pitch = gdc.m.para[GDC_PITCH] & 0xfe;
 	csrw = LOADINTELWORD(gdc.m.para + GDC_CSRW);
-	esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL);
-	esi &= 0xfff;
+	esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL));
 	scroll = LOADINTELWORD(gdc.m.para + GDC_SCROLL + 2);
-	scroll = (scroll >> 4) & 0x3ff;
+	scroll = LOW14(scroll) >> 4;
 	scrp = 0;
 
 	wait1 = 0;
@@ -227,7 +226,7 @@ void maketext(int text_renewal) {
 						new_flag = 1;
 						break;
 					}
-					edi = (edi + 1) & 0xfff;
+					edi = LOW12(edi + 1);
 				}
 			}
 			if (new_flag) {
@@ -312,13 +311,13 @@ void maketext(int text_renewal) {
 							bitmap[x] = 0;
 						}
 					}
-					edi = (edi+1) & 0x0fff;							// width80
+					edi = LOW12(edi + 1);
 				}
 				if (!tramflag.curdisp) {
 					cur_line = -1;
 				}
 			}
-			esi = (esi + pitch) & 0x0fff;							// ver0.26
+			esi = LOW12(esi + pitch);
 		}
 
 		if ((!TEXT_SDR) && (nowline >= topline + crtc.reg.ssl)) {
@@ -410,10 +409,9 @@ void maketext(int text_renewal) {
 			y++;
 			if (!(--scroll)) {
 				scrp = (scrp + 4) & 0x0c;
-				esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL + scrp);
-				esi &= 0xfff;
+				esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL + scrp));
 				scroll = LOADINTELWORD(gdc.m.para + GDC_SCROLL + scrp + 2);
-				scroll = (scroll >> 4) & 0x3ff;
+				scroll = LOW14(scroll) >> 4;
 				reloadline = TRUE;
 			}
 		}
@@ -502,10 +500,9 @@ void maketext40(int text_renewal) {
 
 	pitch = gdc.m.para[GDC_PITCH] & 0xfe;
 	csrw = LOADINTELWORD(gdc.m.para + GDC_CSRW);
-	esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL);
-	esi &= 0xfff;
+	esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL));
 	scroll = LOADINTELWORD(gdc.m.para + GDC_SCROLL + 2);
-	scroll = (scroll >> 4) & 0x3ff;
+	scroll = LOW14(scroll) >> 4;
 	scrp = 0;
 
 	wait1 = 0;
@@ -538,7 +535,7 @@ void maketext40(int text_renewal) {
 						new_flag = 1;
 						break;
 					}
-					edi = (edi + 1) & 0xfff;
+					edi = LOW12(edi + 1);
 				}
 			}
 			if (new_flag) {
@@ -623,13 +620,13 @@ void maketext40(int text_renewal) {
 							bitmap[x] = 0;
 						}
 					}
-					edi = (edi+2) & 0x0fff;							// width40
+					edi = LOW12(edi + 2);							// width40
 				}
 				if (!tramflag.curdisp) {
 					cur_line = -1;
 				}
 			}
-			esi = (esi + pitch) & 0x0fff;							// ver0.26
+			esi = LOW12(esi + pitch);
 		}
 
 		if ((!TEXT_SDR) && (nowline >= topline + crtc.reg.ssl)) {
@@ -735,10 +732,9 @@ void maketext40(int text_renewal) {
 			y++;
 			if (!(--scroll)) {
 				scrp = (scrp + 4) & 0x0c;
-				esi = LOADINTELWORD(gdc.m.para + GDC_SCROLL + scrp);
-				esi &= 0xfff;
+				esi = LOW12(LOADINTELWORD(gdc.m.para + GDC_SCROLL + scrp));
 				scroll = LOADINTELWORD(gdc.m.para + GDC_SCROLL + scrp + 2);
-				scroll = (scroll >> 4) & 0x3ff;
+				scroll = LOW14(scroll) >> 4;
 				reloadline = TRUE;
 			}
 		}

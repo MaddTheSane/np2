@@ -619,7 +619,7 @@ I286FN _daa(void) {								// 27: daa
 		I286_AL += 0x60;
 	}
 	I286_FLAGL &= A_FLAG | C_FLAG;
-	I286_FLAGL |= szpcflag[I286_AL];
+	I286_FLAGL |= BYTESZPF(I286_AL);
 }
 
 I286FN _sub_ea_r8(void) {						// 28: sub EA, REG8
@@ -762,7 +762,7 @@ I286FN _das(void) {								// 2f: das
 		I286_AL -= 6;
 	}
 	I286_FLAGL &= A_FLAG | C_FLAG;
-	I286_FLAGL |= szpcflag[I286_AL];
+	I286_FLAGL |= BYTESZPF(I286_AL);
 }
 
 I286FN _xor_ea_r8(void) {						// 30: xor EA, REG8
@@ -1602,7 +1602,7 @@ I286FN _nop(void) {							// 90: nop / bios func
 #if 1										// call BIOS
 	UINT32	adrs;
 
-	adrs = ((I286_IP - 1) & 0xffff) + CS_BASE;
+	adrs = LOW16(I286_IP - 1) + CS_BASE;
 	if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
 		biosfunc(adrs);
 		ES_BASE = I286_ES << 4;
@@ -1970,15 +1970,14 @@ I286FN _les_r16_ea(void) {					// C4:	les		REG16, EA
 
 	UINT	op;
 	UINT32	seg;
-	UINT16	ad;
+	UINT	ad;
 
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(op)
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
 		*(REG16_B53(op)) = i286_memoryread_w(seg + ad);
-		ad += 2;
-		I286_ES = i286_memoryread_w(seg + ad);
+		I286_ES = i286_memoryread_w(seg + LOW16(ad + 2));
 		ES_BASE = I286_ES << 4;
 	}
 	else {
@@ -1990,15 +1989,14 @@ I286FN _lds_r16_ea(void) {					// C5:	lds		REG16, EA
 
 	UINT	op;
 	UINT32	seg;
-	UINT16	ad;
+	UINT	ad;
 
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(op)
 	if (op < 0xc0) {
 		ad = GET_EA(op, &seg);
 		*(REG16_B53(op)) = i286_memoryread_w(seg + ad);
-		ad += 2;
-		I286_DS = i286_memoryread_w(seg + ad);
+		I286_DS = i286_memoryread_w(seg + LOW16(ad + 2));
 		DS_BASE = I286_DS << 4;
 		DS_FIX = DS_BASE;
 	}
@@ -2016,22 +2014,13 @@ I286FN _mov_ea8_data8(void) {				// C6:	mov		EA8, DATA8
 		I286_WORKCLOCK(2);
 		GET_PCBYTE(*(REG8_B53(op)))
 	}
-	else {
-#if 1					// 03/11/23
+	else {				// 03/11/23
 		UINT32 ad;
 		BYTE val;
 		I286_WORKCLOCK(3);
 		ad = CALC_EA(op);
 		GET_PCBYTE(val)
 		i286_memorywrite(ad, val);
-#else
-		UINT ad;
-		BYTE val;
-		I286_WORKCLOCK(3);
-		ad = c_get_ea[op]();
-		GET_PCBYTE(val)
-		i286_memorywrite(ad + EA_FIX, val);
-#endif
 	}
 }
 
@@ -2044,22 +2033,13 @@ I286FN _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 		I286_WORKCLOCK(2);
 		GET_PCWORD(*(REG16_B53(op)))
 	}
-	else {
-#if 1					// 03/11/23
+	else {				// 03/11/23
 		UINT32	ad;
 		UINT16	val;
 		I286_WORKCLOCK(3);
 		ad = CALC_EA(op);
 		GET_PCWORD(val)
 		i286_memorywrite_w(ad, val);
-#else
-		UINT	ad;
-		UINT16	val;
-		I286_WORKCLOCK(3);
-		ad = c_get_ea[op]();
-		GET_PCWORD(val)
-		i286_memorywrite_w(ad + EA_FIX, val);
-#endif
 	}
 }
 
@@ -2308,7 +2288,7 @@ I286FN _aad(void) {							// D5:	AAD
 	I286_AL += (BYTE)(I286_AH * mul);
 	I286_AH = 0;
 	I286_FLAGL &= ~(S_FLAG | Z_FLAG | P_FLAG);
-	I286_FLAGL |= szpcflag[I286_AL];
+	I286_FLAGL |= BYTESZPF(I286_AL);
 }
 
 I286FN _setalc(void) {						// D6:	setalc (80286)
@@ -2319,7 +2299,7 @@ I286FN _setalc(void) {						// D6:	setalc (80286)
 I286FN _xlat(void) {						// D7:	xlat
 
 	I286_WORKCLOCK(5);
-	I286_AL = i286_memoryread(((I286_AL + I286_BX) & 0xffff) + DS_FIX);
+	I286_AL = i286_memoryread(LOW16(I286_AL + I286_BX) + DS_FIX);
 }
 
 I286FN _esc(void) {							// D8:	esc

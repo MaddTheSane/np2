@@ -139,33 +139,40 @@ static BOOL grphput_indirty0(MKGRPH mkgrph, int gpos) {
 	UINT32	*pterm;
 
 	mg = *mkgrph;
-	vad = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0) & 0x3fff) << 1;
-	remain = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2)) >> 4;
-	remain &= 0x3ff;
-	do {
-		mul = mg.lr;
-		do {
-			if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
-				vc = vad;
-				p = mg.vm;
-				pterm = p + (80 * 2);
-				do {
-					if (vramupdate[vc] & 1) {
-						renewal_line[mg.liney] |= 1;
-						GRPHDATASET(p, vc);
-					}
-					vc = (vc + 1) & 0x7fff;
-					p += 2;
-				} while(p < pterm);
-			}
-			mg.liney++;
-			if (mg.liney >= dsync.grphymax) {
-				return(TRUE);
-			}
-			mg.vm += 80*2;
-		} while(--mul);
-		vad = (vad + mg.pitch) & 0x7fff;
-	} while(--remain);
+	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
+	vad = LOW15(vad << 1);
+	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	remain = LOW14(remain) >> 4;
+	mul = mg.lr;
+	while(1) {
+		if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
+			vc = vad;
+			p = mg.vm;
+			pterm = p + (80 * 2);
+			do {
+				if (vramupdate[vc] & 1) {
+					renewal_line[mg.liney] |= 1;
+					GRPHDATASET(p, vc);
+				}
+				vc = LOW15(vc + 1);
+				p += 2;
+			} while(p < pterm);
+		}
+		mg.liney++;
+		if (mg.liney >= dsync.grphymax) {
+			return(TRUE);
+		}
+		mg.vm += 80*2;
+		remain--;
+		if (!remain) {
+			break;
+		}
+		mul--;
+		if (!mul) {
+			mul = mg.lr;
+			vad = LOW15(vad + mg.pitch);
+		}
+	}
 	mkgrph->vm = mg.vm;
 	mkgrph->liney = mg.liney;
 	return(FALSE);
@@ -182,33 +189,40 @@ static BOOL grphput_indirty1(MKGRPH mkgrph, int gpos) {
 	UINT32	*pterm;
 
 	mg = *mkgrph;
-	vad = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0) & 0x3fff) << 1;
-	remain = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2)) >> 4;
-	remain &= 0x3ff;
-	do {
-		mul = mg.lr;
-		do {
-			if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
-				vc = vad;
-				p = mg.vm;
-				pterm = p + (80 * 2);
-				do {
-					if (vramupdate[vc] & 2) {
-						renewal_line[mg.liney] |= 2;
-						GRPHDATASET(p, vc + VRAM_STEP);
-					}
-					vc = (vc + 1) & 0x7fff;
-					p += 2;
-				} while(p < pterm);
-			}
-			mg.liney++;
-			if (mg.liney >= dsync.grphymax) {
-				return(TRUE);
-			}
-			mg.vm += 80*2;
-		} while(--mul);
-		vad = (vad + mg.pitch) & 0x7fff;
-	} while(--remain);
+	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
+	vad = LOW15(vad << 1);
+	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	remain = LOW14(remain) >> 4;
+	mul = mg.lr;
+	while(1) {
+		if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
+			vc = vad;
+			p = mg.vm;
+			pterm = p + (80 * 2);
+			do {
+				if (vramupdate[vc] & 2) {
+					renewal_line[mg.liney] |= 2;
+					GRPHDATASET(p, vc + VRAM_STEP);
+				}
+				vc = LOW15(vc + 1);
+				p += 2;
+			} while(p < pterm);
+		}
+		mg.liney++;
+		if (mg.liney >= dsync.grphymax) {
+			return(TRUE);
+		}
+		mg.vm += 80*2;
+		remain--;
+		if (!remain) {
+			break;
+		}
+		mul--;
+		if (!mul) {
+			mul = mg.lr;
+			vad = LOW15(vad + mg.pitch);
+		}
+	}
 	mkgrph->vm = mg.vm;
 	mkgrph->liney = mg.liney;
 	return(FALSE);
@@ -225,31 +239,38 @@ static BOOL grphput_all0(MKGRPH mkgrph, int gpos) {
 	UINT32	*pterm;
 
 	mg = *mkgrph;
-	vad = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0) & 0x3fff) << 1;
-	remain = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2)) >> 4;
-	remain &= 0x3ff;
-	do {
-		mul = mg.lr;
-		do {
-			if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
-				vc = vad;
-				p = mg.vm;
-				pterm = p + (80 * 2);
-				do {
-					GRPHDATASET(p, vc);
-					vc = (vc + 1) & 0x7fff;
-					p += 2;
-				} while(p < pterm);
-			}
-			renewal_line[mg.liney] |= 1;
-			mg.liney++;
-			if (mg.liney >= dsync.grphymax) {
-				return(TRUE);
-			}
-			mg.vm += 80*2;
-		} while(--mul);
-		vad = (vad + mg.pitch) & 0x7fff;
-	} while(--remain);
+	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
+	vad = LOW15(vad << 1);
+	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	remain = LOW14(remain) >> 4;
+	mul = mg.lr;
+	while(1) {
+		if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
+			vc = vad;
+			p = mg.vm;
+			pterm = p + (80 * 2);
+			do {
+				GRPHDATASET(p, vc);
+				vc = LOW15(vc + 1);
+				p += 2;
+			} while(p < pterm);
+		}
+		renewal_line[mg.liney] |= 1;
+		mg.liney++;
+		if (mg.liney >= dsync.grphymax) {
+			return(TRUE);
+		}
+		mg.vm += 80*2;
+		remain--;
+		if (!remain) {
+			break;
+		}
+		mul--;
+		if (!mul) {
+			mul = mg.lr;
+			vad = LOW15(vad + mg.pitch);
+		}
+	}
 	mkgrph->vm = mg.vm;
 	mkgrph->liney = mg.liney;
 	return(FALSE);
@@ -266,31 +287,38 @@ static BOOL grphput_all1(MKGRPH mkgrph, int gpos) {
 	UINT32	*pterm;
 
 	mg = *mkgrph;
-	vad = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0) & 0x3fff) << 1;
-	remain = (LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2)) >> 4;
-	remain &= 0x3ff;
-	do {
-		mul = mg.lr;
-		do {
-			if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
-				vc = vad;
-				p = mg.vm;
-				pterm = p + (80 * 2);
-				do {
-					GRPHDATASET(p, vc + VRAM_STEP);
-					vc = (vc + 1) & 0x7fff;
-					p += 2;
-				} while(p < pterm);
-			}
-			renewal_line[mg.liney] |= 2;
-			mg.liney++;
-			if (mg.liney >= dsync.grphymax) {
-				return(TRUE);
-			}
-			mg.vm += 80*2;
-		} while(--mul);
-		vad = (vad + mg.pitch) & 0x7fff;
-	} while(--remain);
+	vad = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 0);
+	vad = LOW15(vad << 1);
+	remain = LOADINTELWORD(gdc.s.para + GDC_SCROLL + gpos + 2);
+	remain = LOW14(remain) >> 4;
+	mul = mg.lr;
+	while(1) {
+		if ((!(mg.liney & 1)) || (!(gdc.mode1 & 0x10))) {
+			vc = vad;
+			p = mg.vm;
+			pterm = p + (80 * 2);
+			do {
+				GRPHDATASET(p, vc + VRAM_STEP);
+				vc = LOW15(vc + 1);
+				p += 2;
+			} while(p < pterm);
+		}
+		renewal_line[mg.liney] |= 2;
+		mg.liney++;
+		if (mg.liney >= dsync.grphymax) {
+			return(TRUE);
+		}
+		mg.vm += 80*2;
+		remain--;
+		if (!remain) {
+			break;
+		}
+		mul--;
+		if (!mul) {
+			mul = mg.lr;
+			vad = LOW15(vad + mg.pitch);
+		}
+	}
 	mkgrph->vm = mg.vm;
 	mkgrph->liney = mg.liney;
 	return(FALSE);

@@ -453,6 +453,7 @@ static void IOOUTCALL gdc_oa0(UINT port, BYTE dat) {
 	if (gdc.s.cnt < GDCCMD_MAX) {
 		gdc.s.fifo[gdc.s.cnt++] = dat;
 	}
+//	TRACEOUT(("GDC-B %.2x", dat));
 	if (gdc.s.paracb) {						// ver0.29
 		gdc_work(GDCWORK_SLAVE);
 	}
@@ -464,6 +465,7 @@ static void IOOUTCALL gdc_oa2(UINT port, BYTE dat) {
 	if (gdc.s.cnt < GDCCMD_MAX) {
 		gdc.s.fifo[gdc.s.cnt++] = 0x100 | dat;
 	}
+//	TRACEOUT(("GDC-A %.2x", dat));
 	gdc_work(GDCWORK_SLAVE);
 	(void)port;
 }

@@ -384,7 +384,6 @@ void cmvermouth_initialize(void) {
 void cmvermouth_load(UINT rate) {
 
 	MIDIMOD	vermouth;
-	UINT	num;
 
 	if (rate == 0) {
 		return;
@@ -394,10 +393,7 @@ void cmvermouth_load(UINT rate) {
 		cmver.rate = rate;
 		vermouth = midimod_create(rate);
 		cmver.vermouth = vermouth;
-		for (num=0; num<128; num++) {
-			midimod_loadprogram(vermouth, num);
-			midimod_loadrhythm(vermouth, num);
-		}
+		midimod_loadall(vermouth);
 	}
 }
 

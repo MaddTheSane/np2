@@ -270,6 +270,7 @@ void trace_init(void) {
 	}
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
+	trace_fmt("start debugging...");
 }
 
 void trace_term(void) {

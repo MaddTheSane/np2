@@ -59,7 +59,7 @@ void egcshift(void) {
 
 	BYTE	src8, dst8;
 
-	egc.remain = (egc.leng & 0xfff) + 1;
+	egc.remain = LOW12(egc.leng) + 1;
 	egc.func = (egc.sft >> 12) & 1;
 	if (!egc.func) {
 		egc.inptr = egc.buf;
@@ -864,7 +864,7 @@ void MEMCALL egc_write(UINT32 addr, BYTE value) {
 	UINT	ext;
 	UINT16	wvalue;
 
-	addr &= 0x7fff;
+	addr = LOW15(addr);
 	ext = EGCADDR(addr & 1);
 	if (!gdcs.access) {
 		gdcs.grphdisp |= 1;
@@ -981,7 +981,7 @@ UINT16 MEMCALL egc_read_w(UINT32 addr) {
 void MEMCALL egc_write_w(UINT32 addr, UINT16 value) {
 
 	if (!(addr & 1)) {											// word access
-		addr &= 0x7ffe;
+		addr = LOW15(addr);
 		if (!gdcs.access) {
 			gdcs.grphdisp |= 1;
 			*(UINT16 *)(vramupdate + addr) |= 0x0101;

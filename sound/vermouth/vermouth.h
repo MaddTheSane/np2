@@ -22,6 +22,8 @@ MIDIMOD midimod_create(UINT samprate);
 void midimod_destroy(MIDIMOD hdl);
 void midimod_loadprogram(MIDIMOD hdl, UINT num);
 void midimod_loadrhythm(MIDIMOD hdl, UINT num);
+void midimod_loadgm(MIDIMOD hdl);
+void midimod_loadall(MIDIMOD hdl);
 
 MIDIHDL midiout_create(MIDIMOD module, UINT worksize);
 void midiout_destroy(MIDIHDL hdl);

@@ -221,7 +221,7 @@ BYTE itimer_getcount(int ch) {
 // system timer
 static void IOOUTCALL pit_o71(UINT port, BYTE dat) {
 
-	TRACEOUT(("pic o71: %x [%.4x %.4x]", dat, I286_CS, I286_IP));
+//	TRACEOUT(("pic o71: %x [%.4x %.4x]", dat, I286_CS, I286_IP));
 	if (itimer_setcount(0, dat)) {
 		return;
 	}

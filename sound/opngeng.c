@@ -5,11 +5,12 @@
 #include	"fmboard.h"
 
 
-extern	OPNCFG	opncfg;
+#if defined(OPNGENX86)
+#error use opngen.x86
+#endif
 
-extern	SINT32	env_curve[];				// ver0.27
-extern	SINT32	envtable[];
-extern	SINT32	sintable[];					// ver0.27
+
+extern	OPNCFG	opncfg;
 
 
 #define	CALCENV(e, c, s)													\
@@ -39,49 +40,14 @@ extern	SINT32	sintable[];					// ver0.27
 				break;														\
 		}																	\
 	}																		\
-	(e) = (c)->slot[(s)].totallevel - env_curve[(c)->slot[(s)].env_cnt 		\
-															>> ENV_BITS];
+	(e) = (c)->slot[(s)].totallevel -										\
+					opncfg.envcurve[(c)->slot[(s)].env_cnt >> ENV_BITS];
 
 #define SLOTOUT(s, e, c)													\
-		((sintable[(((s).freq_cnt + (c)) >> (FREQ_BITS - SIN_BITS)) &		\
-			(SIN_ENT-1)] * envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
+		((opncfg.sintable[(((s).freq_cnt + (c)) >>							\
+							(FREQ_BITS - SIN_BITS)) & (SIN_ENT-1)] *		\
+				opncfg.envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
 
-#if 0
-static SINT32 calcrateenvlope(OPNSLOT *slot) {
-
-	/* calcrate phage generator */
-	slot->freq_cnt += slot->freq_inc;
-	/* calcrate envelope generator */
-	slot->env_cnt += slot->env_inc;
-	if (slot->env_cnt >= slot->env_end) {
-		switch(slot->env_mode) {
-			case EM_ATTACK:						// DECAY1 start
-				slot->env_mode = EM_DECAY1;
-				slot->env_cnt = EC_DECAY;
-				slot->env_end = slot->decaylevel;
-				slot->env_inc = slot->env_inc_decay1;
-				break;
-
-			case EM_DECAY1:						// DECAY2 start
-				slot->env_mode = EM_DECAY2;
-				slot->env_cnt = slot->decaylevel;
-				slot->env_end = EC_OFF;
-				slot->env_inc = slot->env_inc_decay2;
-				break;
-
-			case EM_RELEASE:					// OFF timing
-				slot->env_mode = EM_OFF;
-
-			case EM_DECAY2: 					// DECAY end
-				slot->env_cnt = EC_OFF;
-				slot->env_end = EC_OFF + 1;
-				slot->env_inc = 0;
-				break;
-		}
-	}
-	return(slot->totallevel - env_curve[slot->env_cnt >> ENV_BITS]);
-}
-#endif
 
 static void calcratechannel(OPNCH *ch) {
 
@@ -93,7 +59,6 @@ static void calcratechannel(OPNCH *ch) {
 	opngen.feedback4 = 0;
 
 	/* SLOT 1 */
-//	envout = calcrateenvlope(ch->slot + 0);
 	CALCENV(envout, ch, 0);
 	if (envout > 0) {
 		if (ch->feedback) {
@@ -116,19 +81,16 @@ static void calcratechannel(OPNCH *ch) {
 		}
 	}
 	/* SLOT 2 */
-//	envout = calcrateenvlope(ch->slot + 1);
 	CALCENV(envout, ch, 1);
 	if (envout > 0) {
 		*ch->connect2 += SLOTOUT(ch->slot[1], envout, opngen.feedback2);
 	}
 	/* SLOT 3 */
-//	envout = calcrateenvlope(ch->slot + 2);
 	CALCENV(envout, ch, 2);
 	if (envout > 0) {
 		*ch->connect3 += SLOTOUT(ch->slot[2], envout, opngen.feedback3);
 	}
 	/* SLOT 4 */
-//	envout = calcrateenvlope(ch->slot + 3);
 	CALCENV(envout, ch, 3);
 	if (envout > 0) {
 		*ch->connect4 += SLOTOUT(ch->slot[3], envout, opngen.feedback4);

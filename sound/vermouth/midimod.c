@@ -423,25 +423,35 @@ MIDIMOD midimod_create(UINT samprate) {
 	size += sizeof(INSTRUMENT) * 128 * 2;
 	size += sizeof(_TONECFG) * 128 * 2;
 	ret = (MIDIMOD)_MALLOC(size, "MIDIMOD");
-	if (ret) {
-		ZeroMemory(ret, size);
-		ret->samprate = samprate;
-		ret->tone[0] = (INSTRUMENT *)(ret + 1);
-		ret->tone[1] = ret->tone[0] + 128;
-		ret->tonecfg[0] = (TONECFG)(ret->tone[1] + 128);
-		ret->tonecfg[1] = ret->tonecfg[0] + 128;
-		ret->pathtbl = listarray_new(sizeof(_PATHLIST), 64);
-		pathadd(ret, NULL);
-		pathadd(ret, file_getcd(str_null));
-		ret->namelist = listarray_new(MAX_NAME, 128);
-		r = cfgfile_load(ret, file_timiditycfg, 0);
+	if (ret == NULL) {
+		goto mmcre_err1;
+	}
+	ZeroMemory(ret, size);
+	ret->samprate = samprate;
+	ret->tone[0] = (INSTRUMENT *)(ret + 1);
+	ret->tone[1] = ret->tone[0] + 128;
+	ret->tonecfg[0] = (TONECFG)(ret->tone[1] + 128);
+	ret->tonecfg[1] = ret->tonecfg[0] + 128;
+	ret->pathtbl = listarray_new(sizeof(_PATHLIST), 64);
+	pathadd(ret, NULL);
+	pathadd(ret, file_getcd(str_null));
+	ret->namelist = listarray_new(MAX_NAME, 128);
+	r = cfgfile_load(ret, file_timiditycfg, 0);
 #if defined(TIMIDITY_CFGFILE)
-		if (r != SUCCESS) {
-			r = cfgfile_load(ret, TIMIDITY_CFGFILE, 0);
-		}
+	if (r != SUCCESS) {
+		r = cfgfile_load(ret, TIMIDITY_CFGFILE, 0);
+	}
 #endif
+	if (r != SUCCESS) {
+		goto mmcre_err2;
 	}
 	return(ret);
+
+mmcre_err2:
+	_MFREE(ret);
+
+mmcre_err1:
+	return(NULL);
 }
 
 void midimod_destroy(MIDIMOD hdl) {
@@ -489,6 +499,25 @@ void midimod_loadrhythm(MIDIMOD hdl, UINT num) {
 		num &= 0x7f;
 		if (inst_singleload(hdl, (bank << 1) + 1, num) != MIDIOUT_SUCCESS) {
 			inst_singleload(hdl, 1, num);
+		}
+	}
+}
+
+void midimod_loadgm(MIDIMOD hdl) {
+
+	if (hdl) {
+		inst_bankload(hdl, 0);
+		inst_bankload(hdl, 1);
+	}
+}
+
+void midimod_loadall(MIDIMOD hdl) {
+
+	UINT	b;
+
+	if (hdl) {
+		for (b=0; b<(MIDI_BANKS*2); b++) {
+			inst_bankload(hdl, b);
 		}
 	}
 }

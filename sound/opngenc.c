@@ -18,9 +18,6 @@
 
 
 	OPNCFG	opncfg;
-	SINT32	env_curve[EVC_ENT*2 + 1];
-	SINT32	envtable[EVC_ENT];
-	SINT32	sintable[SIN_ENT];
 #ifdef OPNGENX86
 	char	envshift[EVC_ENT];
 	char	sinshift[SIN_ENT];
@@ -71,16 +68,16 @@ void opngen_initialize(UINT rate) {
 		sft = ENVTBL_BIT;
 		while(sft < (ENVTBL_BIT + 8)) {
 			pom = (double)(1 << sft) / pow(10.0, EG_STEP*(EVC_ENT-i)/20.0);
-			envtable[i] = (long)pom;
+			opncfg.envtable[i] = (long)pom;
 			envshift[i] = sft - TL_BITS;
-			if (envtable[i] >= (1 << (ENVTBL_BIT - 1))) {
+			if (opncfg.envtable[i] >= (1 << (ENVTBL_BIT - 1))) {
 				break;
 			}
 			sft++;
 		}
 #else
 		pom = (double)(1 << ENVTBL_BIT) / pow(10.0, EG_STEP*(EVC_ENT-i)/20.0);
-		envtable[i] = (long)pom;
+		opncfg.envtable[i] = (long)pom;
 #endif
 	}
 	for (i=0; i<SIN_ENT; i++) {
@@ -89,27 +86,27 @@ void opngen_initialize(UINT rate) {
 		sft = SINTBL_BIT;
 		while(sft < (SINTBL_BIT + 8)) {
 			pom = (double)(1 << sft) * sin(2*PI*i/SIN_ENT);
-			sintable[i] = (long)pom;
+			opncfg.sintable[i] = (long)pom;
 			sinshift[i] = sft;
-			if (sintable[i] >= (1 << (SINTBL_BIT - 1))) {
+			if (opncfg.sintable[i] >= (1 << (SINTBL_BIT - 1))) {
 				break;
 			}
-			if (sintable[i] <= -1 * (1 << (SINTBL_BIT - 1))) {
+			if (opncfg.sintable[i] <= -1 * (1 << (SINTBL_BIT - 1))) {
 				break;
 			}
 			sft++;
 		}
 #else
 		pom = (double)((1 << SINTBL_BIT) - 1) * sin(2*PI*i/SIN_ENT);
-		sintable[i] = (long)pom;							// ver0.27
+		opncfg.sintable[i] = (long)pom;
 #endif
 	}
 	for (i=0; i<EVC_ENT; i++) {
 		pom = pow(((double)(EVC_ENT-1-i)/EVC_ENT), 8) * EVC_ENT;
-		env_curve[i] = (long)pom;							// ver0.27
-		env_curve[EVC_ENT + i] = i;
+		opncfg.envcurve[i] = (long)pom;
+		opncfg.envcurve[EVC_ENT + i] = i;
 	}
-	env_curve[EVC_ENT*2] = EVC_ENT;
+	opncfg.envcurve[EVC_ENT*2] = EVC_ENT;
 
 //	opmbaserate = (1L << FREQ_BITS) / (rate * x / 44100) * 55466;
 //	‚Å‚à¡‚Í x == 55466‚¾‚©‚çc
@@ -150,8 +147,19 @@ void opngen_initialize(UINT rate) {
 			freq *= 1.0 + (i & 3) * 0.25;
 		}
 		freq *= (double)(1 << ((i >> 2) - 1));
+#if 0
+		attacktable[i] = (long)((freq + OPM_ARRATE - 1) / OPM_ARRATE);
+		decaytable[i] = (long)((freq + OPM_DRRATE - 1) / OPM_DRRATE);
+#else
 		attacktable[i] = (long)(freq / OPM_ARRATE);
 		decaytable[i] = (long)(freq / OPM_DRRATE);
+#endif
+		if (attacktable[i] >= EC_DECAY) {
+			TRACEOUT(("attacktable %d %d %d", i, attacktable[i], EC_DECAY));
+		}
+		if (decaytable[i] >= EC_DECAY) {
+			TRACEOUT(("decaytable %d %d %d", i, decaytable[i], EC_DECAY));
+		}
 	}
 	attacktable[62] = EC_DECAY - 1;
 	attacktable[63] = EC_DECAY - 1;
@@ -270,7 +278,11 @@ static void set_dt1_mul(OPNSLOT *slot, BYTE value) {
 
 static void set_tl(OPNSLOT *slot, BYTE value) {
 
+#if (EVC_BITS >= 7)
 	slot->totallevel = ((~value) & 0x007f) << (EVC_BITS - 7);
+#else
+	slot->totallevel = ((~value) & 0x007f) >> (7 - EVC_BITS);
+#endif
 }
 
 static void set_ks_ar(OPNSLOT *slot, BYTE value) {
@@ -319,7 +331,7 @@ static void set_d1l_rr(OPNSLOT *slot, BYTE value) {
 		if (value == 0xff) {
 			slot->env_mode = EM_OFF;
 			slot->env_cnt = EC_OFF;
-			slot->env_end = EC_OFF+1;
+			slot->env_end = EC_OFF + 1;
 			slot->env_inc = 0;
 		}
 	}
@@ -587,8 +599,8 @@ void opngen_keyon(UINT chnum, BYTE value) {
 			if (slot->env_mode > EM_RELEASE) {
 				slot->env_mode = EM_RELEASE;
 				if (!(slot->env_cnt & EC_DECAY)) {
-					slot->env_cnt = (env_curve[slot->env_cnt >> ENV_BITS]
-													<< ENV_BITS) + EC_DECAY;
+					slot->env_cnt = (opncfg.envcurve[slot->env_cnt
+										>> ENV_BITS] << ENV_BITS) + EC_DECAY;
 				}
 				slot->env_end = EC_OFF;
 				slot->env_inc = slot->env_inc_release;
