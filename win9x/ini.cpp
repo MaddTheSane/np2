@@ -407,7 +407,7 @@ static const INITBL iniitem[] = {
 
 	{"DIPswtch", INITYPE_ARGH8,		np2cfg.dipsw,			3},
 	{"MEMswtch", INITYPE_ARGH8,		np2cfg.memsw,			8},
-	{"ExMemory", INIMAX_UINT8,		&np2cfg.EXTMEM,			13},
+	{"ExMemory", INIMAX_UINT8,		&np2cfg.EXTMEM,			63},
 	{"ITF_WORK", INIRO_BOOL,		&np2cfg.ITF_WORK,		0},
 
 	{"HDD1FILE", INITYPE_STR,		np2cfg.sasihdd[0],		MAX_PATH},

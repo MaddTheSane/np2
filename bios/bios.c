@@ -85,6 +85,7 @@ static void bios_reinitbyswitch(void) {
 	UINT8	prxcrt;
 	UINT8	prxdupd;
 	UINT8	biosflag;
+	UINT8	extmem;
 	UINT8	boot;
 
 	if (!(np2cfg.dipsw[2] & 0x80)) {
@@ -132,7 +133,12 @@ static void bios_reinitbyswitch(void) {
 		biosflag |= 0x40;
 	}
 	mem[MEMB_BIOS_FLAG1] = biosflag;
-	mem[MEMB_EXPMMSZ] = (UINT8)(pccore.extmem << 3);
+	extmem = pccore.extmem;
+	extmem = min(extmem, 14);
+	mem[MEMB_EXPMMSZ] = (UINT8)(extmem << 3);
+	if (pccore.extmem >= 15) {
+		mem[0x0594] = pccore.extmem - 15;
+	}
 	mem[MEMB_CRT_RASTER] = 0x0f;
 
 	// FDD initialize

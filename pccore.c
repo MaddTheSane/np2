@@ -146,7 +146,12 @@ static void pccore_set(void) {
 	// ägí£ÉÅÉÇÉä
 	extsize = 0;
 	if (!(np2cfg.dipsw[2] & 0x80)) {
-		extsize = min(np2cfg.EXTMEM, 13);
+		extsize = np2cfg.EXTMEM;
+#if defined(CPUCORE_IA32)
+		extsize = min(extsize, 63);
+#else
+		extsize = min(extsize, 13);
+#endif
 	}
 	pccore.extmem = extsize;
 	CopyMemory(pccore.dipsw, np2cfg.dipsw, 3);

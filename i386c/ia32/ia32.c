@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.18 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.19 2005/03/16 06:05:18 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -81,18 +81,30 @@ ia32_setextsize(UINT32 size)
 {
 
 	if (CPU_EXTMEMSIZE != size) {
-		if (CPU_EXTMEM) {
-			_MFREE(CPU_EXTMEM);
+		UINT8 *extmem;
+		extmem = CPU_EXTMEM;
+		if (extmem != NULL) {
+			_MFREE(extmem);
+			extmem = NULL;
+		}
+		if (size != 0) {
+			extmem = (UINT8 *)_MALLOC(size + 16, "EXTMEM");
+		}
+		if (extmem != NULL) {
+			ZeroMemory(extmem, size + 16);
+			CPU_EXTMEM = extmem;
+			CPU_EXTMEMSIZE = size;
+			CPU_EXTMEMBASE = CPU_EXTMEM - 0x100000;
+			CPU_EXTLIMIT16 = min(size + 0x100000, 0xf00000);
+			CPU_EXTLIMIT = size + 0x100000;
+		}
+		else {
 			CPU_EXTMEM = NULL;
+			CPU_EXTMEMSIZE = 0;
+			CPU_EXTMEMBASE = NULL;
+			CPU_EXTLIMIT16 = 0;
+			CPU_EXTLIMIT = 0;
 		}
-		if (size) {
-			CPU_EXTMEM = (BYTE *)_MALLOC(size + 16, "EXTMEM");
-			if (CPU_EXTMEM == NULL) {
-				size = 0;
-			}
-			ZeroMemory(CPU_EXTMEM, size + 16);
-		}
-		CPU_EXTMEMSIZE = size;
 	}
 	CPU_EMSPTR[0] = mem + 0xc0000;
 	CPU_EMSPTR[1] = mem + 0xc4000;

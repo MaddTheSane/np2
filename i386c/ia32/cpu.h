@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.33 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.34 2005/03/16 06:05:18 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -255,10 +255,13 @@ typedef struct {
 } I386STAT;
 
 typedef struct {
-	BYTE		*ext;
+	UINT8		*ext;
 	UINT32		extsize;
+	UINT8		*extbase;	/* = ext - 0x100000 */
+	UINT32		extlimit16mb;	/* = extsize + 0x100000 (MAX:16MB) */
+	UINT32		extlimit4gb;	/* = extsize + 0x100000 */
 	UINT32		inport;
-	BYTE		*ems[4];
+	UINT8		*ems[4];
 } I386EXT;
 
 typedef struct {
@@ -284,6 +287,9 @@ extern I386CORE		i386core;
 
 #define	CPU_EXTMEM	i386core.e.ext
 #define	CPU_EXTMEMSIZE	i386core.e.extsize
+#define	CPU_EXTMEMBASE	i386core.e.extbase
+#define	CPU_EXTLIMIT16	i386core.e.extlimit16mb
+#define	CPU_EXTLIMIT	i386core.e.extlimit4gb
 #define	CPU_INPADRS	i386core.e.inport
 #define	CPU_EMSPTR	i386core.e.ems
 
