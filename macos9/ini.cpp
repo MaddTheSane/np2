@@ -230,39 +230,39 @@ const INITBL	*pterm;
 				break;
 
 			case INITYPE_SINT8:
-				SPRINTF(work, "%d", *((char *)p->value));
+				SPRINTF(work, str_d, *((char *)p->value));
 				break;
 
 			case INITYPE_SINT16:
-				SPRINTF(work, "%d", *((SINT16 *)p->value));
+				SPRINTF(work, str_d, *((SINT16 *)p->value));
 				break;
 
 			case INITYPE_SINT32:
-				SPRINTF(work, "%d", *((SINT32 *)p->value));
+				SPRINTF(work, str_d, *((SINT32 *)p->value));
 				break;
 
 			case INITYPE_UINT8:
-				SPRINTF(work, "%u", *((BYTE *)p->value));
+				SPRINTF(work, str_u, *((BYTE *)p->value));
 				break;
 
 			case INITYPE_UINT16:
-				SPRINTF(work, "%u", *((UINT16 *)p->value));
+				SPRINTF(work, str_u, *((UINT16 *)p->value));
 				break;
 
 			case INITYPE_UINT32:
-				SPRINTF(work, "%u", *((UINT32 *)p->value));
+				SPRINTF(work, str_u, *((UINT32 *)p->value));
 				break;
 
 			case INITYPE_HEX8:
-				SPRINTF(work, "%x", *((BYTE *)p->value));
+				SPRINTF(work, str_x, *((BYTE *)p->value));
 				break;
 
 			case INITYPE_HEX16:
-				SPRINTF(work, "%x", *((UINT16 *)p->value));
+				SPRINTF(work, str_x, *((UINT16 *)p->value));
 				break;
 
 			case INITYPE_HEX32:
-				SPRINTF(work, "%x", *((UINT32 *)p->value));
+				SPRINTF(work, str_x, *((UINT32 *)p->value));
 				break;
 
 			default:

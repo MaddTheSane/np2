@@ -4,21 +4,41 @@
 
 
 typedef struct {
+	int				width;
+	int				height;
 	BOOL			exist;
 	WindowPtr		hWnd;
 	GWorldPtr		gw;
 	PixMapHandle	pm;
 	Rect			rect;
+	GWorldPtr		gwp;
+	GDHandle		hgd;
 } _QDRAW, *QDRAW;
 
 
 static	_QDRAW		qdraw;
 static	SCRNSURF	scrnsurf;
-static	GWorldPtr	gwp;
-static	GDHandle	hgd;
 
+
+static void changeclientsize(int width, int height) {
+
+	QDRAW		qd;
+	WindowPtr	saveport;
+
+	qd = &qdraw;
+	if (!qd->exist) {
+		return;
+	}
+	SizeWindow(qd->hWnd, width, height, TRUE);
+}
 
 void scrnmng_initialize(void) {
+
+	QDRAW	qd;
+
+	qd = &qdraw;
+	qd->width = 640;
+	qd->height = 400;
 }
 
 BOOL scrnmng_create(BYTE scrnmode) {
@@ -52,8 +72,14 @@ void scrnmng_destroy(void) {
 
 void scrnmng_setwidth(int posx, int width) {
 
+	QDRAW	qd;
+
+	qd = &qdraw;
+	if (qd->width != width) {
+		qd->width = width;
+		changeclientsize(width, qd->height);
+	}
 	(void)posx;
-	(void)width;
 }
 
 void scrnmng_setextend(int extend) {
@@ -63,8 +89,14 @@ void scrnmng_setextend(int extend) {
 
 void scrnmng_setheight(int posy, int height) {
 
+	QDRAW	qd;
+
+	qd = &qdraw;
+	if (qd->height != height) {
+		qd->height = height;
+		changeclientsize(qd->width, height);
+	}
 	(void)posy;
-	(void)height;
 }
 
 const SCRNSURF *scrnmng_surflock(void) {
@@ -76,7 +108,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 		return(NULL);
 	}
 
-	GetGWorld(&gwp, &hgd);
+	GetGWorld(&qd->gwp, &qd->hgd);
 	LockPixels(qd->pm);
 	SetGWorld(qd->gw, NULL);
 
@@ -84,8 +116,8 @@ const SCRNSURF *scrnmng_surflock(void) {
 	scrnsurf.xalign = 4;
 	scrnsurf.yalign = ((*qd->pm)->rowBytes) & 0x3fff;
 
-	scrnsurf.width = 640;
-	scrnsurf.height = 400;
+	scrnsurf.width = qd->width;
+	scrnsurf.height = qd->height;
 	scrnsurf.extend = 0;
 	scrnsurf.bpp = 32;
 	return(&scrnsurf);
@@ -106,14 +138,14 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 		if (!EmptyRgn(GetPortVisibleRegion(GetWindowPort(qd->hWnd),
 															theVisibleRgn))) {
 			LockPortBits(GetWindowPort(qd->hWnd));
-			LockPixels(qd->pm);
+//			LockPixels(qd->pm);
 			GetPort(&thePort);
 			SetPortWindowPort(qd->hWnd);
 			CopyBits((BitMap*)(*qd->pm),
 							GetPortBitMapForCopyBits(GetWindowPort(qd->hWnd)),
 							&qd->rect, &qd->rect, srcCopy, theVisibleRgn);
 			SetPort(thePort);
-			UnlockPixels(qd->pm);
+//			UnlockPixels(qd->pm);
 			UnlockPortBits(GetWindowPort(qd->hWnd));
 		}
 		DisposeRgn(theVisibleRgn);
@@ -122,8 +154,7 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 										&qd->rect, srcCopy, qd->hWnd->visRgn);
 #endif
 		UnlockPixels(qd->pm);
-		SetGWorld(gwp, hgd);
+		SetGWorld(qd->gwp, qd->hgd);
 	}
 }
-
 
