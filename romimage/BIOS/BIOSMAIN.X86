@@ -23,6 +23,12 @@ biosmain2:		test	byte [0x0480], 2
 				mov		[0x0486], dx
 				sti
 .cpuided:
+				mov		al, 0x0f
+				out		0x37, al
+				mov		al, 0x0b
+				out		0x37, al
+				mov		al, 0x09
+				out		0x37, al
 
 				CPU		8086
 				mov		word [0x04ac], 0x0c
