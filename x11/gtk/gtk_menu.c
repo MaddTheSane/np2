@@ -110,15 +110,17 @@ enum {
 
 static void sound_board(gpointer, guint, GtkWidget *);
 enum {
-	NOSOUNDBOARD = 0,
-	PC9801_14 = 1,
-	PC9801_26K = 2,
-	PC9801_86 = 4,
-	PC9801_118 = 8,
-	CHIBI_OTO = 0x14,
-	SPEAK_BOARD = 0x20,
-	SPARK_BOARD = 0x40,
-	AMD98_BOARD = 0x80
+	PC9801_14     = 0x01,
+	PC9801_26K    = 0x02,
+	PC9801_86     = 0x04,
+	PC9801_118    = 0x08,
+	CHIBI_OTO     = 0x10,
+	SPEAK_BOARD   = 0x20,
+	SPARK_BOARD   = 0x40,
+	AMD98_BOARD   = 0x80,
+	PC9801_26K_86 = (PC9801_26K|PC9801_86),
+	PC9801_86_CB  = (PC9801_86|CHIBI_OTO),
+	NOSOUNDBOARD  = 0x00
 };
 
 static void memory(gpointer, guint, GtkWidget *);
@@ -266,8 +268,8 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Device/Keyboard/F12 = _Mouse", NULL, f(f12), 0, "<RadioItem>" },
 { "/Device/Keyboard/F12 = Co_py",NULL, f(f12),1,"/Device/Keyboard/F12 = Mouse"},
 { "/Device/Keyboard/F12 = S_top",NULL, f(f12),2,"/Device/Keyboard/F12 = Copy" },
-{ "/Device/Keyboard/F12 = tenkey [=]", NULL, f(f12),3,"/Device/Keyboard/F12 = Stop" },
-{ "/Device/Keyboard/F12 = tenkey [,]", NULL, f(f12),4,"/Device/Keyboard/F12 = tenkey [=]" },
+{ "/Device/Keyboard/F12 = tenkey [=]", NULL, f(f12),4,"/Device/Keyboard/F12 = Stop" },
+{ "/Device/Keyboard/F12 = tenkey [,]", NULL, f(f12),3,"/Device/Keyboard/F12 = tenkey [=]" },
 { "/Device/_Sound",		NULL, NULL, 0, "<Branch>" },
 { "/Device/Sound/Beep _off",	NULL, f(beepvol), BEEP_OFF, "<RadioItem>" },
 { "/Device/Sound/Beep _low",	NULL, f(beepvol), BEEP_LOW, "/Device/Sound/Beep off" },
@@ -278,13 +280,15 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Device/Sound/PC-9801-_14",	NULL, f(sound_board), PC9801_14, "/Device/Sound/Disable board" },
 { "/Device/Sound/PC-9801-_26K",	NULL, f(sound_board), PC9801_26K, "/Device/Sound/PC-9801-14" },
 { "/Device/Sound/PC-9801-8_6",	NULL, f(sound_board), PC9801_86, "/Device/Sound/PC-9801-26K" },
-{ "/Device/Sound/PC-9801-11_8",	NULL, f(sound_board), PC9801_118, "/Device/Sound/PC-9801-86" },
-{ "/Device/Sound/_Chibi-oto",	NULL, f(sound_board), CHIBI_OTO, "/Device/Sound/PC-9801-118" },
-{ "/Device/Sound/S_peak board",	NULL, f(sound_board), SPEAK_BOARD, "/Device/Sound/Chibi-oto" },
+{ "/Device/Sound/PC-9801-26_K+86", NULL, f(sound_board), PC9801_26K_86, "/Device/Sound/PC-9801-86" },
+{ "/Device/Sound/PC-9801-86+_Chibi-oto", NULL, f(sound_board), PC9801_86_CB, "/Device/Sound/PC-9801-26K+86" },
+{ "/Device/Sound/PC-9801-11_8",	NULL, f(sound_board), PC9801_118, "/Device/Sound/PC-9801-86+Chibi-oto" },
+{ "/Device/Sound/S_peak board",	NULL, f(sound_board), SPEAK_BOARD, "/Device/Sound/PC-9801-118" },
 { "/Device/Sound/Sp_ark board",	NULL, f(sound_board), SPARK_BOARD, "/Device/Sound/Speak board" },
-{ "/Device/Sound/_AMD98",	NULL, f(sound_board), SPARK_BOARD, "/Device/Sound/Spark board" },
+{ "/Device/Sound/_AMD98",	NULL, f(sound_board), AMD98_BOARD, "/Device/Sound/Spark board" },
+{ "/Device/Sound/_Jast Sound",	NULL, f(toggle), JAST_SOUND, "<ToggleItem>" },
 { "/Device/Sound/sep2",		NULL, NULL, 0, "<Separator>" },
-{ "/Device/Sound/_Seek Sound",	NULL, NULL, 0, "<ToggleItem>" },
+{ "/Device/Sound/_Seek Sound",	NULL, f(toggle), SEEK_SOUND, "<ToggleItem>" },
 { "/Device/M_emory",		NULL, NULL, 0, "<Branch>" },
 { "/Device/Memory/64_0KB",	NULL, f(memory), 0, "<RadioItem>" },
 { "/Device/Memory/_1.6MB",	NULL, f(memory), 1, "/Device/Memory/640KB" },
@@ -351,6 +355,7 @@ static struct {
 	{ "/Other/Tool Window",			0, SYS_UPDATEOSCFG },
 	{ "/Other/Key Display",			0, SYS_UPDATEOSCFG },
 	{ "/Other/Software Keyboard",		0, SYS_UPDATEOSCFG },
+	{ "/Device/Sound/Jast Sound",		0, SYS_UPDATEOSCFG },
 };
 
 static _MENU_HDL menu_hdl;
@@ -391,6 +396,7 @@ create_menu(GtkWidget *parent)
 	xmenu_toggle_item(TOOL_WINDOW, np2oscfg.toolwin, TRUE);
 	xmenu_toggle_item(KEY_DISPLAY, np2oscfg.keydisp, TRUE);
 	xmenu_toggle_item(SOFT_KBD, np2oscfg.softkbd, TRUE);
+	xmenu_toggle_item(JAST_SOUND, np2oscfg.jastsnd, TRUE);
 
 	xmenu_select_framerate(np2oscfg.DRAW_SKIP);
 	xmenu_select_f12key(np2oscfg.F12KEY);
@@ -467,12 +473,19 @@ disable_unused_items(void)
 		"/Device/Sound/PC-9801-14",
 		"/Device/Sound/PC-9801-26K",
 		"/Device/Sound/PC-9801-86",
+		"/Device/Sound/PC-9801-26K+86",
+		"/Device/Sound/PC-9801-86+Chibi-oto",
 		"/Device/Sound/PC-9801-118",
-		"/Device/Sound/Chibi-oto",
 		"/Device/Sound/Speak board",
 		"/Device/Sound/Spark board",
 		"/Device/Sound/AMD98",
-		"/Device/Sound/Seek Sound"
+		"/Device/Sound/Seek Sound",
+#endif
+#if !defined(SUPPORT_KEYDISP)
+		"/Other/Key Display",
+#endif
+#if !defined(SUPPORT_SOFTKBD)
+		"/Other/Software Keyboard",
 #endif
 	};
 	int i;
@@ -588,8 +601,9 @@ xmenu_select_soundboard(int kind)
 		{ "/Device/Sound/PC-9801-14", PC9801_14 },
 		{ "/Device/Sound/PC-9801-26K", PC9801_26K },
 		{ "/Device/Sound/PC-9801-86", PC9801_86 },
+		{ "/Device/Sound/PC-9801-26K+86", PC9801_26K_86 },
+		{ "/Device/Sound/PC-9801-86+Chibi-oto", PC9801_86_CB },
 		{ "/Device/Sound/PC-9801-118", PC9801_118 },
-		{ "/Device/Sound/Chibi-oto", CHIBI_OTO },
 		{ "/Device/Sound/Speak board", SPEAK_BOARD },
 		{ "/Device/Sound/Spark board", SPARK_BOARD },
 		{ "/Device/Sound/AMD98", AMD98_BOARD },
@@ -606,7 +620,7 @@ xmenu_select_soundboard(int kind)
 #else
 	UNUSED(kind);
 
-	np2cfg.SOUND_SW = 0;
+	np2cfg.SOUND_SW = NOSOUNDBOARD;
 	xmenu_select_item(&menu_hdl, "/Device/Sound/Disable board");
 #endif
 }
@@ -743,9 +757,10 @@ fddeject(gpointer data, guint action, GtkWidget *w)
 	UNUSED(w);
 
 	if (action == (guint)~0) {
-		for (i = 0; i < 4; i++)
+		for (i = 0; i < 4; i++) {
 			diskdrv_setfdd(i, NULL, FALSE);
 			toolwin_setfdd(i, NULL);
+		}
 	} else {
 		diskdrv_setfdd(action, NULL, FALSE);
 		toolwin_setfdd(action, NULL);
@@ -793,8 +808,9 @@ sasiremove(gpointer data, guint action, GtkWidget *w)
 	UNUSED(w);
 
 	if (action == (guint)~0) {
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < 2; i++) {
 			diskdrv_sethdd(i, "");
+		}
 	} else {
 		diskdrv_sethdd(action, "");
 	}
@@ -962,15 +978,15 @@ sound_board(gpointer data, guint action, GtkWidget *w)
 
 	switch (action) {
 	case NOSOUNDBOARD:
-	case PC9801_86:
 	case PC9801_14:
 	case PC9801_26K:
+	case PC9801_86:
+	case PC9801_26K_86:
+	case PC9801_86_CB:
 	case PC9801_118:
-	case CHIBI_OTO:
 	case SPEAK_BOARD:
 	case SPARK_BOARD:
 	case AMD98_BOARD:
-		/* XXX: ÆóËçº¹¤· */
 		if (np2cfg.SOUND_SW != action) {
 			np2cfg.SOUND_SW = action;
 			sysmng_update(SYS_UPDATECFG);
@@ -1170,7 +1186,7 @@ toggle(gpointer data, guint action, GtkWidget *w)
 
 	case SEEK_SOUND:
 		np2cfg.MOTOR = !np2cfg.MOTOR;
-		xmenu_toggle_item(SEEK_SOUND, np2cfg.MOTOR, TRUE);
+		xmenu_toggle_item(SEEK_SOUND, np2cfg.MOTOR, FALSE);
 		break;
 
 	case MOUSE_MODE:
@@ -1274,6 +1290,12 @@ toggle(gpointer data, guint action, GtkWidget *w)
 		} else {
 			skbdwin_destroy();
 		}
+		break;
+
+	case JAST_SOUND:
+		np2oscfg.jastsnd = !np2oscfg.jastsnd;
+		xmenu_toggle_item(JAST_SOUND, np2oscfg.jastsnd, FALSE);
+		break;
 
 	case NUM_TOGGLE_ITEMS:
 	default:
