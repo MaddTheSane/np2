@@ -552,19 +552,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 				case IDM_F12MOUSE:
 					xmenu_setf12copy(0);
-					keystat_resetcopyhelp();
+					winkbd_resetf12();
 					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_F12COPY:
 					xmenu_setf12copy(1);
-					keystat_resetcopyhelp();
+					winkbd_resetf12();
 					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_F12STOP:
 					xmenu_setf12copy(2);
-					keystat_resetcopyhelp();
+					winkbd_resetf12();
+					update |= SYS_UPDATECFG;
+					break;
+
+				case IDM_F12EQU:
+					xmenu_setf12copy(3);
+					winkbd_resetf12();
+					update |= SYS_UPDATECFG;
+					break;
+
+				case IDM_F12COMMA:
+					xmenu_setf12copy(4);
+					winkbd_resetf12();
 					update |= SYS_UPDATECFG;
 					break;
 
@@ -937,7 +949,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				sysmng_update(SYS_UPDATECFG);
 			}
 			else {
-				winkeydown106(wParam, lParam);
+				winkbd_keydown(wParam, lParam);
 			}
 			break;
 
@@ -946,7 +958,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				return(DefWindowProc(hWnd, WM_SYSKEYUP, VK_F10, lParam));
 			}
 			if ((wParam != VK_F12) || (np2oscfg.F12COPY)) {
-				winkeyup106(wParam, lParam);
+				winkbd_keyup(wParam, lParam);
 			}
 			break;
 
@@ -961,11 +973,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 				}
 			}
-			winkeydown106(wParam, lParam);
+			winkbd_keydown(wParam, lParam);
 			break;
 
 		case WM_SYSKEYUP:
-			winkeyup106(wParam, lParam);
+			winkbd_keyup(wParam, lParam);
 			break;
 
 		case WM_MOUSEMOVE:

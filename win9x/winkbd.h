@@ -7,15 +7,7 @@ enum {
 	KEY_UNKNOWN		= 0xff
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void winkeyinit106(void);
-void winkeydown106(WPARAM wParam, LPARAM lParam);
-void winkeyup106(WPARAM wParam, LPARAM lParam);
-
-#ifdef __cplusplus
-}
-#endif
+void winkbd_keydown(WPARAM wParam, LPARAM lParam);
+void winkbd_keyup(WPARAM wParam, LPARAM lParam);
+void winkbd_resetf12(void);
 

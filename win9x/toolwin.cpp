@@ -492,10 +492,8 @@ static void tooldrawbutton(HWND hWnd, HDC hdc, UINT idc) {
 	POINT	pt;
 	HWND	sub;
 	RECT	rect;
-	int		cx;
-	int		cy;
 	HDC		hmdc;
-	HBRUSH	hbrush;
+	RECT	btn;
 
 	idc -= IDC_BASE;
 	if (idc >= IDC_MAXITEMS) {
@@ -506,21 +504,18 @@ static void tooldrawbutton(HWND hWnd, HDC hdc, UINT idc) {
 	ClientToScreen(hWnd, &pt);
 	sub = toolwin.sub[idc];
 	GetWindowRect(sub, &rect);
-	cx = rect.right - rect.left;
-	cy = rect.bottom - rect.top;
+	btn.left = 0;
+	btn.top = 0;
+	btn.right = rect.right - rect.left;
+	btn.bottom = rect.bottom - rect.top;
 	if (toolwin.hbmp) {
 		hmdc = CreateCompatibleDC(hdc);
 		SelectObject(hmdc, toolwin.hbmp);
-		BitBlt(hdc, 0, 0, cx, cy,
+		BitBlt(hdc, 0, 0, btn.right, btn.bottom,
 					hmdc, rect.left - pt.x, rect.top - pt.y, SRCCOPY);
 		DeleteDC(hmdc);
 		if (GetFocus() == sub) {
-			hbrush = (HBRUSH)SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-			PatBlt(hdc, 0, 0, cx, 1, PATINVERT);
-			PatBlt(hdc, 0, 0, 1, cy, PATINVERT);
-			PatBlt(hdc, cx - 1, 0, cx, cy, PATINVERT);
-			PatBlt(hdc, 0, cy - 1, cx, cy, PATINVERT);
-			SelectObject(hdc, hbrush);
+			DrawFocusRect(hdc, &btn);
 		}
 	}
 }
@@ -825,6 +820,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 				case IDC_BASE + IDC_TOOLRESET:
 					SendMessage(hWndMain, WM_COMMAND, IDM_RESET, 0);
+					SetForegroundWindow(hWndMain);
 					break;
 
 				case IDC_BASE + IDC_TOOLPOWER:

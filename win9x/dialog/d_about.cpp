@@ -44,7 +44,7 @@ static void about_init(HWND hWnd) {
 	GetClientRect(GetParent(hWnd), &parent);
 	np2class_move(hWnd,
 					pt.x + ((parent.right - parent.left - aboutsize.cx) / 2),
-					pt.y + ((parent.bottom - parent.top - 84) / 2),
+					pt.y + ((parent.bottom - parent.top - aboutsize.cy) / 2),
 					aboutsize.cx, 84);
 	SetFocus(GetDlgItem(hWnd, IDOK));
 }

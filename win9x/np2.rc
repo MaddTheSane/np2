@@ -787,6 +787,8 @@ BEGIN
             MENUITEM "F12 = &Mouse",                IDM_F12MOUSE
             MENUITEM "F12 = Co&py",                 IDM_F12COPY
             MENUITEM "F12 = S&top",                 IDM_F12STOP
+            MENUITEM "F12 = tenkey [=]",            IDM_F12EQU
+            MENUITEM "F12 = tenkey [ , ]",          IDM_F12COMMA
         END
         POPUP "&Sound"
         BEGIN

@@ -118,10 +118,10 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
 			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
 			$(OBJ)/np2info.o	$(OBJ)/toolwin.o	$(OBJ)/np2res.o		\
-			$(OBJ)/d_about.o	$(OBJ)/d_config.o	$(OBJ)/d_mpu98.o	\
-			$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	$(OBJ)/d_sound.o	\
-			$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		$(OBJ)/d_bmp.o		\
-			$(OBJ)/dialogs.o	$(OBJ)/bit2res.o						\
+			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
+			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
+			$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		\
+			$(OBJ)/d_bmp.o		$(OBJ)/dialogs.o	$(OBJ)/bit2res.o	\
 			$(OBJ)/keydisp.o	$(OBJ)/keydisps.o	$(OBJ)/keydispr.o	\
 			$(OBJ)/dd2.o		$(OBJ)/dd2sub.o							\
 			$(OBJ)/viewer.o		$(OBJ)/viewcmn.o	$(OBJ)/viewmenu.o	\
@@ -922,6 +922,9 @@ $(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h
 	$(RC) -i $< -o $@
 
 
+
+$(OBJ)/np2class.o	:	$(DIALOG)/np2class.cpp $(HEADERS) $(TARGET)/resource.h
+	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/d_about.o	:	$(DIALOG)/d_about.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
