@@ -45,6 +45,14 @@ BOOL scrnmng_mousepos(LPARAM *lp);
 void scrnmng_clear(BOOL logo);
 void scrnmng_keybinds(void);
 
+#if defined(SUPPORT_SOFTKBD)
+BOOL scrnmng_kbdpos(LPARAM *lp);
+BOOL scrnmng_ismenu(LPARAM lp);
+#else
+#define scrnmng_kbdpos(lp)		(FAILURE)
+#define	scrnmng_ismenu(lp)		(TRUE)
+#endif
+
 
 // ---- for menubase
 

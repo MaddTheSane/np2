@@ -198,9 +198,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				if (menuvram) {
 					menubase_moving(LOWORD(lParam), HIWORD(lParam), 1);
 				}
-				else {
+				else if (scrnmng_kbdpos(&lParam) == SUCCESS) {
 #if defined(SUPPORT_SOFTKBD)
-					softkbd_down(LOWORD(lParam), HIWORD(lParam) - 200);
+					softkbd_down(LOWORD(lParam), HIWORD(lParam));
 #endif
 				}
 			}
@@ -208,23 +208,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_LBUTTONUP:
 			if (scrnmng_mousepos(&lParam) == SUCCESS) {
-
 #if defined(SUPPORT_SOFTKBD)
 				softkbd_up();
-				if (menuvram) {
-					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
-				}
-				else if ((LOWORD(lParam) < 32) && (HIWORD(lParam) >= 208)) {
-					sysmenu_menuopen(0, LOWORD(lParam), HIWORD(lParam));
-				}
-#else
-				if (menuvram) {
-					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
-				}
-				else {
-					sysmenu_menuopen(0, LOWORD(lParam), HIWORD(lParam));
-				}
 #endif
+				if (menuvram) {
+					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
+				}
+				else if (scrnmng_ismenu(lParam)) {
+					sysmenu_menuopen(0, LOWORD(lParam), HIWORD(lParam));
+				}
 			}
 			break;
 

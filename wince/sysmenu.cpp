@@ -480,7 +480,7 @@ BOOL sysmenu_create(void) {
 	if (menusys_create(s_main, sys_cmd, MICON_NP2, str_np2)) {
 		goto smcre_err;
 	}
-#if defined(SIZE_QVGA)
+#if defined(SUPPORT_SOFTKBD)
 	menusys_setstyle(MENUSTYLE_BOTTOM);
 #endif
 	return(SUCCESS);

@@ -1,5 +1,5 @@
 
-// QVGA 320x40 (SUPPORT_SOFTKBD == 1)
+// QVGA 320x40 (SUPPORT_SOFTKBD == 1 / QVGA)
 
 static const BYTE np2kbd_bmp[2179] = {
 		0x76,0x19,0x00,

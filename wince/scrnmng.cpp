@@ -26,6 +26,8 @@ typedef struct {
 	long	xalign;
 	long	yalign;
 #if defined(SUPPORT_SOFTKBD)
+	int		kbdposy;
+	int		kbdheight;
 	int		allflash;
 #endif
 } SCRNMNG;
@@ -122,6 +124,9 @@ void scrnmng_initialize(void) {
 BOOL scrnmng_create(HWND hWnd, LONG width, LONG height) {
 
 	TCHAR	msg[32];
+#if defined(SUPPORT_SOFTKBD)
+	int		kbdheight;
+#endif
 
 	if ((width <= 0) || (height <= 0)) {
 		return(FAILURE);
@@ -181,6 +186,12 @@ BOOL scrnmng_create(HWND hWnd, LONG width, LONG height) {
 	scrnmng_clear(TRUE);
 #if defined(SUPPORT_SOFTKBD)
 	softkbd_initialize();
+	if (softkbd_getsize(NULL, &kbdheight) != SUCCESS) {
+		kbdheight = 0;
+	}
+	kbdheight = min(kbdheight, height);
+	scrnmng.kbdposy = height - kbdheight;
+	scrnmng.kbdheight = kbdheight;
 #endif
 	return(SUCCESS);
 }
@@ -318,9 +329,9 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 #if defined(SUPPORT_SOFTKBD)
 			if (scrnmng.allflash) {
 				scrnmng.allflash = 0;
-				vram.ptr = surf->ptr + (surf->yalign * 200);
-				vram.width = 320;
-				vram.height = 40;
+				vram.ptr = surf->ptr + (scrnmng.kbdposy * surf->yalign);
+				vram.width = scrnmng.width;
+				vram.height = scrnmng.kbdheight;
 				vram.xalign = surf->xalign;
 				vram.yalign = surf->yalign;
 				vram.bpp = 16;
@@ -423,27 +434,29 @@ void scrnmng_keybinds(void) {
 
 BOOL scrnmng_entermenu(SCRNMENU *smenu) {
 
+	VRAMHDL	vram;
 #if defined(SUPPORT_SOFTKBD)
-	CMNVRAM	vram;
+	CMNVRAM	kbdvram;
 #endif
 
 	if (smenu == NULL) {
 		goto smem_err;
 	}
 	vram_destroy(scrnmng.vram);
-	scrnmng.vram = vram_create(scrnmng.width, scrnmng.height, FALSE, 16);
-	if (scrnmng.vram == NULL) {
+	vram = vram_create(scrnmng.width, scrnmng.height, FALSE, 16);
+	scrnmng.vram = vram;
+	if (vram == NULL) {
 		goto smem_err;
 	}
 	scrndraw_redraw();
 #if defined(SUPPORT_SOFTKBD)
-	vram.ptr = scrnmng.vram->ptr + (640 * 200);
-	vram.width = 320;
-	vram.height = 40;
-	vram.xalign = 2;
-	vram.yalign = 640;
-	vram.bpp = 16;
-	softkbd_paint(&vram, palcnv, TRUE);
+	kbdvram.ptr = vram->ptr + (vram->yalign * scrnmng.kbdposy);
+	kbdvram.width = vram->width;
+	kbdvram.height = scrnmng.kbdheight;
+	kbdvram.xalign = vram->xalign;
+	kbdvram.yalign = vram->yalign;
+	kbdvram.bpp = vram->bpp;
+	softkbd_paint(&kbdvram, palcnv, TRUE);
 #endif
 	smenu->width = scrnmng.width;
 	smenu->height = scrnmng.height;
@@ -503,4 +516,30 @@ const BYTE		*q;
 	} while(--dr.height);
 	GXEndDraw();
 }
+
+
+// ----
+
+#if defined(SUPPORT_SOFTKBD)
+BOOL scrnmng_kbdpos(LPARAM *lp) {
+
+	UINT	x;
+	UINT	y;
+
+	x = LOWORD(*lp);
+	y = HIWORD(*lp) - scrnmng.kbdposy;
+	*lp = (x & 0xffff) | ((y << 16) & 0xffff0000);
+	return(SUCCESS);
+}
+
+BOOL scrnmng_ismenu(LPARAM lp) {
+
+	if ((LOWORD(lp) < 32) && (HIWORD(lp) >= (scrnmng.height - 32))) {
+		return(TRUE);
+	}
+	else {
+		return(FALSE);
+	}
+}
+#endif
 

@@ -16,10 +16,17 @@ enum {
 };
 #endif
 #else
+#if defined(SUPPORT_SOFTKBD)
+enum {
+	WINDOW_WIDTH	= 640,
+	WINDOW_HEIGHT	= 480
+};
+#else
 enum {
 	WINDOW_WIDTH	= 640,
 	WINDOW_HEIGHT	= 400
 };
+#endif
 #endif
 
 #pragma pack(push, 1)

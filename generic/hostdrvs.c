@@ -303,10 +303,8 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 	char		dosname[16];
 	UINT		i;
 	char		*p;
-#if 0
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
 	OEMCHAR		oemname[64];
-#endif
 #endif
 
 	if ((hostdrvs_getrealdir(path, NELEMENTS(path), fcb, dospath)
@@ -335,9 +333,7 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 			}
 		}
 		*p = '\0';
-#if 1	// ここで SJIS->OEMコードに未変換！
-		file_catname(path, dosname, NELEMENTS(path));
-#else
+		// ここで SJIS->OEMコードに未変換！
 #if defined(OSLANG_EUC)
 		codecnv_sjis2euc(oemname, NELEMENTS(oemname), dosname, (UINT)-1);
 		file_catname(path, oemname, NELEMENTS(path));
@@ -346,7 +342,6 @@ BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 		file_catname(path, oemname, NELEMENTS(path));
 #else
 		file_catname(path, dosname, NELEMENTS(path));
-#endif
 #endif
 		if (hdp) {
 			ZeroMemory(&hdp->di, sizeof(hdp->di));

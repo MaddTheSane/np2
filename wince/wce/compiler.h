@@ -59,7 +59,7 @@ typedef	signed int		SINT32;
 #define	STRLEN		strlen
 #define	__ASSERT(s)
 
-#if defined(WIN32_PLATFORM_PSPC) && defined(SIZE_QVGA)
+#if defined(WIN32_PLATFORM_PSPC)
 #define	MENU_TASKMINIMIZE
 #define SUPPORT_SOFTKBD			1
 #endif

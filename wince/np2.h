@@ -31,10 +31,17 @@ enum {
 };
 #endif
 #else
+#if defined(SUPPORT_SOFTKBD)
+enum {
+	FULLSCREEN_WIDTH	= 640,
+	FULLSCREEN_HEIGHT	= 480
+};
+#else
 enum {
 	FULLSCREEN_WIDTH	= 640,
 	FULLSCREEN_HEIGHT	= 400
 };
+#endif
 #endif
 
 enum {

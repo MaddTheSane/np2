@@ -24,6 +24,9 @@ typedef	unsigned int	UINT32;
 #if !defined(SIZE_VGATEST)
 #define	RGB16			UINT32
 #endif
+#endif
+
+#if defined(ADDON_SOFTKBD)
 #define	SUPPORT_SOFTKBD		1
 #endif
 
