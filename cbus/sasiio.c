@@ -43,7 +43,7 @@ enum {
 	_SASIIO		sasiio;
 
 
-static BOOL sasiseek(void) {
+static BRESULT sasiseek(void) {
 
 	SXSIDEV	sxsi;
 
@@ -59,7 +59,7 @@ static BOOL sasiseek(void) {
 	return(SUCCESS);
 }
 
-static BOOL sasiflash(void) {
+static BRESULT sasiflash(void) {
 
 	SXSIDEV	sxsi;
 

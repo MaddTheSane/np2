@@ -267,7 +267,7 @@ static void FDC_SenseDeviceStatus(void) {				// cmd: 04
 	}
 }
 
-static BOOL writesector(void) {
+static BRESULT writesector(void) {
 
 	fdc.stat[fdc.us] = (fdc.hd << 2) | fdc.us;
 	if (!FDC_DriveCheck(TRUE)) {

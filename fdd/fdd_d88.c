@@ -40,7 +40,7 @@ typedef struct {
 static	_D88TRK		d88trk;
 
 
-static BOOL d88trk_flushdata(D88TRK trk) {
+static BRESULT d88trk_flushdata(D88TRK trk) {
 
 	FDDFILE		fdd;
 	FILEH		fh;
@@ -71,7 +71,7 @@ dtfd_err1:
 	return(FAILURE);
 }
 
-static BOOL d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, UINT type) {
+static BRESULT d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, UINT type) {
 
 	UINT8	rpm;
 	FILEH	fh;
@@ -146,7 +146,7 @@ dtrd_err1:
 }
 
 
-static BOOL rpmcheck(D88SEC sec) {
+static BRESULT rpmcheck(D88SEC sec) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 	UINT8	rpm;
@@ -193,7 +193,7 @@ static void drvflush(FDDFILE fdd) {
 	}
 }
 
-static BOOL trkseek(FDDFILE fdd, UINT track) {
+static BRESULT trkseek(FDDFILE fdd, UINT track) {
 
 	D88TRK	trk;
 	BOOL	r;
@@ -263,7 +263,7 @@ static D88SEC searchsector_d88(BOOL check) {			// ver0.29
 
 // ----
 
-BOOL fddd88_set(FDDFILE fdd, const OEMCHAR *fname, int ro) {
+BRESULT fddd88_set(FDDFILE fdd, const OEMCHAR *fname, int ro) {
 
 	short	attr;
 	FILEH	fh;
@@ -300,7 +300,7 @@ fdst_err:
 	return(FAILURE);
 }
 
-BOOL fddd88_eject(FDDFILE fdd) {
+BRESULT fddd88_eject(FDDFILE fdd) {
 
 	drvflush(fdd);
 	fdd->fname[0] = '\0';
@@ -310,7 +310,7 @@ BOOL fddd88_eject(FDDFILE fdd) {
 }
 
 
-BOOL fdd_diskaccess_d88(void) {										// ver0.31
+BRESULT fdd_diskaccess_d88(void) {									// ver0.31
 
 	FDDFILE	fdd = fddfile + fdc.us;
 	UINT8	rpm;
@@ -340,14 +340,14 @@ BOOL fdd_diskaccess_d88(void) {										// ver0.31
 	return(SUCCESS);
 }
 
-BOOL fdd_seek_d88(void) {
+BRESULT fdd_seek_d88(void) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 
 	return(trkseek(fdd, (fdc.ncn << 1) + fdc.hd));
 }
 
-BOOL fdd_seeksector_d88(void) {
+BRESULT fdd_seeksector_d88(void) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 
@@ -360,7 +360,7 @@ BOOL fdd_seeksector_d88(void) {
 	return(SUCCESS);
 }
 
-BOOL fdd_read_d88(void) {
+BRESULT fdd_read_d88(void) {
 
 	FDDFILE		fdd = fddfile + fdc.us;
 	D88SEC		p;
@@ -396,7 +396,7 @@ BOOL fdd_read_d88(void) {
 	return(SUCCESS);
 }
 
-BOOL fdd_write_d88(void) {
+BRESULT fdd_write_d88(void) {
 
 	FDDFILE		fdd = fddfile + fdc.us;
 	D88SEC		p;
@@ -431,7 +431,7 @@ BOOL fdd_write_d88(void) {
 	return(SUCCESS);
 }
 
-BOOL fdd_readid_d88(void) {
+BRESULT fdd_readid_d88(void) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 	UINT8	*p;
@@ -594,7 +594,7 @@ static void endoftrack(UINT fmtsize, UINT8 sectors) {
 }
 
 
-BOOL fdd_formatinit_d88(void) {
+BRESULT fdd_formatinit_d88(void) {
 
 	if (fdc.treg[fdc.us] < 82) {
 		formating = TRUE;
@@ -608,7 +608,7 @@ BOOL fdd_formatinit_d88(void) {
 }
 
 	// todo アンフォーマットとか ディスク１周した時の切り捨てとか…
-BOOL fdd_formating_d88(const UINT8 *ID) {
+BRESULT fdd_formating_d88(const UINT8 *ID) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 

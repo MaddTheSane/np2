@@ -224,7 +224,7 @@ void scrnsave_trash(SCRNSAVE hdl) {
 
 // ---- BMP
 
-BOOL scrnsave_writebmp(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag) {
+BRESULT scrnsave_writebmp(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag) {
 
 const SCRNDATA	*sd;
 	FILEH		fh;
@@ -431,7 +431,7 @@ sswb_err1:
 	} while(/*CONSTCOND*/ 0)
 
 
-BOOL scrnsave_writegif(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag) {
+BRESULT scrnsave_writegif(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag) {
 
 const SCRNDATA	*sd;
 	UINT		bpp;

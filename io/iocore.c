@@ -243,7 +243,7 @@ void iocore_attachsysinpex(UINT port, UINT mask,
 
 // ----
 
-static BOOL makesndiofunc(UINT port) {
+static BRESULT makesndiofunc(UINT port) {
 
 	IOFUNC	tbl[2];
 	UINT	num;
@@ -273,9 +273,9 @@ static BOOL makesndiofunc(UINT port) {
 	return(SUCCESS);
 }
 
-BOOL iocore_attachsndout(UINT port, IOOUT func) {
+BRESULT iocore_attachsndout(UINT port, IOOUT func) {
 
-	BOOL	r;
+	BRESULT	r;
 	UINT	num;
 
 	r = makesndiofunc(port);
@@ -289,9 +289,9 @@ BOOL iocore_attachsndout(UINT port, IOOUT func) {
 	return(r);
 }
 
-BOOL iocore_attachsndinp(UINT port, IOINP func) {
+BRESULT iocore_attachsndinp(UINT port, IOINP func) {
 
-	BOOL	r;
+	BRESULT	r;
 	UINT	num;
 
 	r = makesndiofunc(port);
@@ -324,7 +324,7 @@ static IOFUNC getextiofunc(UINT port) {
 	return(iof);
 }
 
-BOOL iocore_attachout(UINT port, IOOUT func) {
+BRESULT iocore_attachout(UINT port, IOOUT func) {
 
 	IOFUNC	iof;
 
@@ -338,7 +338,7 @@ BOOL iocore_attachout(UINT port, IOOUT func) {
 	}
 }
 
-BOOL iocore_attachinp(UINT port, IOINP func) {
+BRESULT iocore_attachinp(UINT port, IOINP func) {
 
 	IOFUNC	iof;
 
@@ -381,7 +381,7 @@ void iocore_destroy(void) {
 	ioc->iotbl = NULL;
 }
 
-BOOL iocore_build(void) {
+BRESULT iocore_build(void) {
 
 	IOCORE		ioc;
 	IOFUNC		cmn;

@@ -18,11 +18,11 @@ static char *cutdelimit(char *buf) {
 	return(buf);
 }
 
-static BOOL getvalue(char **buf, int *value) {
+static BRESULT getvalue(char **buf, int *value) {
 
 	char	*p;
 	int		val;
-	BOOL	ret;
+	BRESULT	ret;
 	char	c;
 
 	p = cutdelimit(*buf);

@@ -144,7 +144,7 @@ static REG8 scsicmd_cmd(REG8 id) {
 	return(0xff);
 }
 
-BOOL scsicmd_send(void) {
+BRESULT scsicmd_send(void) {
 
 	switch(scsiio.phase) {
 		case SCSIPH_COMMAND:

@@ -104,7 +104,7 @@ typedef struct {
 // ----
 
 // 関数ポインタを intに変更。
-static BOOL proc2num(void *func, const PROCTBL *tbl, int size) {
+static BRESULT proc2num(void *func, const PROCTBL *tbl, int size) {
 
 	int		i;
 
@@ -118,7 +118,7 @@ static BOOL proc2num(void *func, const PROCTBL *tbl, int size) {
 	return(FAILURE);
 }
 
-static BOOL num2proc(void *func, const PROCTBL *tbl, int size) {
+static BRESULT num2proc(void *func, const PROCTBL *tbl, int size) {
 
 	int		i;
 

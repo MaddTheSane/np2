@@ -57,7 +57,7 @@ BOOL fdd_diskprotect(REG8 drv) {
 
 // --------------------------------------------------------------------------
 
-BOOL fdd_set(REG8 drv, const OEMCHAR *fname, UINT ftype, int ro) {
+BRESULT fdd_set(REG8 drv, const OEMCHAR *fname, UINT ftype, int ro) {
 
 	FDDFILE		fdd;
 const OEMCHAR	*p;
@@ -94,7 +94,7 @@ const OEMCHAR	*p;
 	return(FAILURE);
 }
 
-BOOL fdd_eject(REG8 drv) {
+BRESULT fdd_eject(REG8 drv) {
 
 	FDDFILE		fdd;
 
@@ -115,7 +115,7 @@ BOOL fdd_eject(REG8 drv) {
 
 // ----
 
-BOOL fdd_diskaccess(void) {
+BRESULT fdd_diskaccess(void) {
 
 	FDDFILE		fdd;
 
@@ -130,11 +130,12 @@ BOOL fdd_diskaccess(void) {
 	return(FAILURE);
 }
 
-BOOL fdd_seek(void) {
+BRESULT fdd_seek(void) {
 
+	BRESULT		ret;
 	FDDFILE		fdd;
-	BOOL		ret = FAILURE;
 
+	ret = FAILURE;
 	fdd = fddfile + fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
@@ -149,7 +150,7 @@ BOOL fdd_seek(void) {
 	return(ret);
 }
 
-BOOL fdd_seeksector(void) {
+BRESULT fdd_seeksector(void) {
 
 	FDDFILE		fdd;
 
@@ -165,7 +166,7 @@ BOOL fdd_seeksector(void) {
 }
 
 
-BOOL fdd_read(void) {
+BRESULT fdd_read(void) {
 
 	FDDFILE		fdd;
 
@@ -181,7 +182,7 @@ BOOL fdd_read(void) {
 	return(FAILURE);
 }
 
-BOOL fdd_write(void) {
+BRESULT fdd_write(void) {
 
 	FDDFILE		fdd;
 
@@ -197,7 +198,7 @@ BOOL fdd_write(void) {
 	return(FAILURE);
 }
 
-BOOL fdd_readid(void) {
+BRESULT fdd_readid(void) {
 
 	FDDFILE		fdd;
 
@@ -213,7 +214,7 @@ BOOL fdd_readid(void) {
 	return(FAILURE);
 }
 
-BOOL fdd_formatinit(void) {
+BRESULT fdd_formatinit(void) {
 
 	if (fddfile[fdc.us].type == DISKTYPE_D88) {
 		return(fdd_formatinit_d88());
@@ -221,7 +222,7 @@ BOOL fdd_formatinit(void) {
 	return(FAILURE);
 }
 
-BOOL fdd_formating(const UINT8 *ID) {
+BRESULT fdd_formating(const UINT8 *ID) {
 
 	sysmng_fddaccess(fdc.us);
 	if (fddfile[fdc.us].type == DISKTYPE_D88) {

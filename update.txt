@@ -101,6 +101,8 @@
 　　また、fontmng_getsize, fontmng_getdrawsizeの引き数の文字コードが
 　　SJISからEUCへ変更になっています。
 
+　　codecnvとucscnvを /codecnv へ移動しました。
+
 　　といいつつ EUC→Unicodeの変換関数が無いのでアレ。
 
 

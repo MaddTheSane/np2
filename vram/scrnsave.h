@@ -24,8 +24,8 @@ extern "C" {
 
 SCRNSAVE scrnsave_get(void);
 void scrnsave_trash(SCRNSAVE hdl);
-BOOL scrnsave_writebmp(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag);
-BOOL scrnsave_writegif(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag);
+BRESULT scrnsave_writebmp(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag);
+BRESULT scrnsave_writegif(SCRNSAVE hdl, const OEMCHAR *filename, UINT flag);
 
 #ifdef __cplusplus
 }

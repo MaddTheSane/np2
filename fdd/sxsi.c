@@ -92,7 +92,7 @@ const OEMCHAR *sxsi_getname(REG8 drv) {
 	return(NULL);
 }
 
-BOOL sxsi_hddopen(REG8 drv, const OEMCHAR *file) {
+BRESULT sxsi_hddopen(REG8 drv, const OEMCHAR *file) {
 
 	SXSIDEV		sxsi;
 	FILEH		fh;

@@ -39,9 +39,9 @@ BOOL dispsync_renewalmode(void) {
 	if (dsync.scrnxextend != disp) {
 		dsync.scrnxextend = disp;
 		scrnmng_setextend(disp);
-		return(1);
+		return(TRUE);
 	}
-	return(0);
+	return(FALSE);
 }
 
 BOOL dispsync_renewalhorizontal(void) {

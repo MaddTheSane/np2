@@ -49,7 +49,7 @@ static const char serial[] = "824919341192        ";
 static const char firm[] = "A5U.1200";
 static const char model[] = "QUANTUM FIREBALL CR                     ";
 
-static BOOL setidentify(IDEDRV drv) {
+static BRESULT setidentify(IDEDRV drv) {
 
 	SXSIDEV sxsi;
 	UINT16	tmp[256];
