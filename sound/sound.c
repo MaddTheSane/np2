@@ -110,10 +110,9 @@ scre_err1:
 void sound_destroy(void) {
 
 	if (sndstream.buffer) {
-		SNDCSEC_TERM;
-
 		soundmng_stop();
 		soundmng_destroy();
+		SNDCSEC_TERM;
 		_MFREE(sndstream.buffer);
 		sndstream.buffer = NULL;
 	}
@@ -188,21 +187,27 @@ void sound_sync(void) {
 	}
 	SNDCSEC_ENTER;
 	streamprepare(length);
-	SNDCSEC_LEAVE;
-	soundcfg.writecount += length;
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
 	beep_eventreset();
+	SNDCSEC_LEAVE;
 
+	soundcfg.writecount += length;
 	if (soundcfg.writecount >= 100) {
 		soundcfg.writecount = 0;
 		soundmng_sync();
 	}
 }
 
+static volatile int locks = 0;
+
 const SINT32 *sound_pcmlock(void) {
 
 const SINT32 *ret;
 
+	if (locks) {
+		return(NULL);
+	}
+	locks++;
 	ret = sndstream.buffer;
 	if (ret) {
 		SNDCSEC_ENTER;
@@ -223,12 +228,14 @@ void sound_pcmunlock(const SINT32 *hdl) {
 		leng = sndstream.reserve - sndstream.remain;
 		if (leng > 0) {
 			CopyMemory(sndstream.buffer,
-						sndstream.buffer + sndstream.samples * 2,
+						sndstream.buffer + (sndstream.samples * 2),
 												leng * 2 * sizeof(SINT32));
 		}
 		sndstream.ptr = sndstream.buffer + (leng * 2);
-		sndstream.remain += sndstream.samples;
+		sndstream.remain = sndstream.samples + sndstream.reserve - leng;
+//		sndstream.remain += sndstream.samples;
 		SNDCSEC_LEAVE;
+		locks--;
 	}
 }
 

@@ -47,12 +47,12 @@ const SINT32	*src;
 		src = NULL;
 		if (QSound_Playing) {
 			src = sound_pcmlock();
-			if (src) {
-				satuation_s16((SINT16 *)dst, src, qs->buffersize);
-			}
+		}
+		if (src) {
+			satuation_s16((SINT16 *)dst, src, qs->buffersize);
 			sound_pcmunlock(src);
 		}
-		if (src == NULL) {
+		else {
 			ZeroMemory(dst, qs->buffersize);
 		}
 		SndDoCommand(qs->hdl, &qs->cmd[nextbuf], TRUE);
