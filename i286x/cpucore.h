@@ -292,3 +292,5 @@ void v30x_step(void);
 #define	CPU_SETEXTSIZE(size)		i286x_setextsize((UINT32)(size) << 20)
 #define	CPU_SETEMM(frame, addr)		i286x_setemm(frame, addr)
 
+#define	CPU_STEPEXEC				i286x_step
+

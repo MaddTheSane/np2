@@ -6,7 +6,8 @@
 #include	"cpucore.h"
 
 
-static	char		np2viewclass[] = "NP2-ViewWindow";
+static	const char	np2viewclass[] = "NP2-ViewWindow";
+		const char	np2viewfont[] = "ÇlÇr ÉSÉVÉbÉN";
 		NP2VIEW_T	np2view[NP2VIEW_MAX];
 extern	HINSTANCE	hInst;
 

@@ -12,7 +12,7 @@
 #error : not support CPUCORE_IA32
 #endif
 
-#if !defined(CPUDEBUG)
+#if 1 // !defined(CPUDEBUG)
 enum {
 	I286_MEMREADMAX		= 0xa4000,
 	I286_MEMWRITEMAX	= 0xa0000
@@ -298,4 +298,6 @@ void v30c_step(void);
 #define	CPU_SHUT					i286c_shut
 #define	CPU_SETEXTSIZE(size)		i286c_setextsize((UINT32)(size) << 20)
 #define	CPU_SETEMM(frame, addr)		i286c_setemm(frame, addr)
+
+#define	CPU_STEPEXEC				i286c_step
 

@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.20 2004/08/14 03:09:43 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.21 2005/02/04 05:32:24 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -100,9 +100,11 @@ exec_1step(void)
 	CPU_STATSAVE.cpu_inst = CPU_STATSAVE.cpu_inst_default;
 
 #if defined(TRACE) && IPTRACE
+if (CPU_CS == 0x000c) {
 	trcs[trpos & (IPTRACE - 1)] = CPU_CS;
 	treip[trpos & (IPTRACE - 1)] = CPU_EIP;
 	trpos++;
+}
 #endif
 
 #if defined(IA32_INSTRUCTION_TRACE)

@@ -53,6 +53,7 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 	int			nextupdate;
 	int			y;
 
+	TRACEOUT(("rasterdraw: maxy = %d", maxy));
 	CopyMemory(pal, palevent.pal, sizeof(pal));
 	clock = maxy;
 	clock += 2;
@@ -94,7 +95,7 @@ static BYTE rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 		}
 		clock -= 2 * gdc.rasterclock;
 	}
-	if (y < maxy) {
+	if (nextupdate < maxy) {
 		if (!(np2cfg.LCD_MODE & 1)) {
 			pal_makeanalog(pal, 0xffff);
 		}

@@ -7,7 +7,7 @@ enum {
 #else
 enum {
 	DLGCFG_WIDTH	= 303,
-	DLGCFG_HEIGHT	= 217
+	DLGCFG_HEIGHT	= 214
 };
 #endif
 

@@ -270,10 +270,22 @@ void keystat_down(const UINT8 *key, REG8 keys, REG8 ref) {
 		keydata = *key++;
 		keycode = (keydata & 0x7f);
 		if (keycode < 0x70) {
+#if 1												// 05/02/04
+			if (keystat.ref[keycode] != NKEYREF_NC) {
+				if (!(kbexflag[keycode] & KBEX_NONREP)) {
+					keyboard_send((REG8)(keycode + 0x80));
+					keystat.ref[keycode] = NKEYREF_NC;
+				}
+			}
+			if (keystat.ref[keycode] == NKEYREF_NC) {
+				keyboard_send(keycode);
+			}
+#else
 			if ((keystat.ref[keycode] == NKEYREF_NC) ||
 				(!(kbexflag[keycode] & KBEX_NONREP))) {
 				keyboard_send(keycode);
 			}
+#endif
 			keystat.ref[keycode] = ref;
 		}
 		else {

@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.16 2004/03/22 14:22:26 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.17 2005/02/04 05:32:24 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1238,6 +1238,14 @@ INT_Ib(void)
 	CPU_WORKCLOCK(37);
 	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
 		GET_PCBYTE(vect);
+if (vect == 0x50) {
+	if (CPU_AH == 0) {
+		TRACEOUT(("INT50 AX=%.4x %.4x:%.4x", CPU_AX, CPU_ES, CPU_DI));
+	}
+	else if ((CPU_AH != 0x09) && (CPU_AH != 0x0b) && (CPU_AH != 0x11) && (CPU_AH != 0x14)) {
+		TRACEOUT(("INT50 AX=%.4x", CPU_AX));
+	}
+}
 		INTERRUPT(vect, -1, 0, 0);
 		return;
 	}

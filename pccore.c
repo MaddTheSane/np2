@@ -548,6 +548,7 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
+// #define SINGLESTEPONLY
 // #define	IPTRACE			(1 << 12)
 
 #if defined(TRACE) && IPTRACE
@@ -632,13 +633,116 @@ void pccore_exec(BOOL draw) {
 		}
 #else
 		while(CPU_REMCLOCK > 0) {
+#if 0
+			if (CPU_CS == 0x0000) {
+				if (CPU_IP == 0x1191) {
+					char buf[10];
+					int i;
+					for (i=0; i<6; i++) {
+						buf[i] = MEML_READ8(0x1000, CPU_BX + i);
+					}
+					buf[6] = '\0';
+					TRACEOUT(("load: %s", buf));
+				}
+				if (CPU_IP == 0x1265) {
+					TRACEOUT(("%.4x:%.4x addr=%.4x ret=%.4x",
+											CPU_CS, CPU_IP, CPU_DX,
+												MEML_READ16(CPU_SS, CPU_SP)));
+				}
+			}
+#endif
+#if 0
+			if (CPU_CS == 0x0080) {
+				if (CPU_IP == 0x052A) {
+					UINT i;
+					UINT addr;
+					char fname[9];
+					addr = MEML_READ16(CPU_SS, CPU_BP + 4);
+					for (i=0; i<8; i++) {
+						fname[i] = MEML_READ8(CPU_DS, addr + i);
+					}
+					fname[8] = 0;
+					TRACEOUT(("%.4x:%.4x play... addr:%.4x %s",
+											CPU_CS, CPU_IP, addr, fname));
+				}
+			}
+#endif
+#if 0
+			if (CPU_CS == 0x800) {
+				if (CPU_IP == 0x017A) {
+					TRACEOUT(("%.4x:%.4x solve... DS=%.4x SIZE=%.4x KEY=%.4x",
+								CPU_CS, CPU_IP,
+								MEML_READ16(CPU_SS, CPU_BP - 0x06),
+								CPU_DX,
+								MEML_READ16(CPU_SS, CPU_BP - 0x08)));
+				}
+			}
+#endif
+#if 0
+			if (CPU_CS == 0x3d52) {
+				if (CPU_IP == 0x4A57) {
+					TRACEOUT(("%.4x:%.4x %.4x:%.4x/%.4x/%.4x",
+								CPU_DX, CPU_BX, CPU_DS,
+								MEML_READ16(CPU_SS, CPU_BP + 0x06),
+								MEML_READ16(CPU_SS, CPU_BP + 0x08),
+								MEML_READ16(CPU_SS, CPU_BP + 0x0a)));
+				}
+				if (CPU_IP == 0x4BF8) {
+					debugsub_memorydump();
+				}
+#if 1
+				if (CPU_IP == 0x4B7A) {
+					TRACEOUT(("datum = %x", CPU_AX));
+				}
+				if (CPU_IP == 0x4B87) {
+					TRACEOUT(("leng = %x", CPU_AX));
+				}
+				if (CPU_IP == 0x4BD5) {
+					TRACEOUT(("%.4x:%.4x <- %.2x[%.4x]",
+								CPU_ES, CPU_BX, CPU_AL, CPU_DI));
+				}
+#endif
+			}
+#endif
+#if 0	// DC
+			if (CPU_CS == 0x1000) {
+				if (CPU_IP == 0x5924) {
+					TRACEOUT(("%.4x:%.4x -> %.4x:%.4x", CPU_CS, CPU_IP,
+							MEML_READ16(CPU_DS, 0x6846),
+							MEML_READ16(CPU_DS, 0x6848)));
+				}
+			}
+#endif
+#if 0	// —…j”Õ
+			if (CPU_CS == 0x60) {
+				if (CPU_IP == 0xADF9) {
+					TRACEOUT(("%.4x:%.4x -> %.4x:%.4x:%.4x", CPU_CS, CPU_IP, CPU_BX, CPU_SI, CPU_AX));
+				}
+				else if (CPU_IP == 0xC7E1) {
+					TRACEOUT(("%.4x:%.4x -> %.4x:%.4x", CPU_CS, CPU_IP, CPU_ES, CPU_BX));
+				}
+			}
+#endif
+#if 1
+			if (CPU_CS == 0x60) {
+				if (CPU_IP == 0x8AC2) {
+					UINT pos = CPU_SI + (CPU_AX * 6);
+					TRACEOUT(("%.4x:%.4x -> %.4x:%.4x-%.4x:%.4x [%.2x %.2x %.2x %.2x %.2x %.2x]", CPU_CS, CPU_IP, CPU_SI, CPU_AX, CPU_DX, CPU_DI,
+MEML_READ8(CPU_DS, pos+0),
+MEML_READ8(CPU_DS, pos+1),
+MEML_READ8(CPU_DS, pos+2),
+MEML_READ8(CPU_DS, pos+3),
+MEML_READ8(CPU_DS, pos+4),
+MEML_READ8(CPU_DS, pos+5)));
+				}
+			}
+#endif
 #if IPTRACE
 			treip[trpos & (IPTRACE - 1)] = (CPU_CS << 16) + CPU_IP;
 			trpos++;
 #endif
 //			TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
-			i286x_step();
-//			i286c_step();
+			CPU_STEPEXEC();
 		}
 #endif
 		nevent_progress();

@@ -2,12 +2,21 @@
 // ‚Ë‚±ê—pƒwƒbƒ_
 
 enum {
-	MPU98_MAXTIMEBASE	= (192 / 24),
 	MPU98_EXCVBUFS		= 512,
 	MPU98_RECVBUFS		= (1 << 7)
 };
 
-#define	MPUCHDATAS	4
+#define	MPUTRDATAS	4
+
+typedef struct {
+	UINT8	phase;
+	UINT8	step;
+	UINT8	cmd;
+	UINT8	rstat;
+	UINT	datapos;
+	UINT	datacnt;
+	UINT8	data[MPU98_EXCVBUFS];
+} MPUCMDS;
 
 typedef struct {
 	UINT8	step;
@@ -16,22 +25,13 @@ typedef struct {
 	UINT8	rstat;
 	UINT8	recv;
 	UINT8	padding[2];
-	BYTE	data[MPUCHDATAS];
-} MPUCH;
-
-typedef struct {
-	UINT8	step;
-	UINT8	cmd;
-	UINT8	padding[2];
-	UINT16	remain;
-	UINT16	datas;
-	BYTE	data[MPU98_EXCVBUFS];
-} MPUF9CH;
+	UINT8	data[MPUTRDATAS];
+} MPUTR;
 
 typedef struct {
 	int		cnt;
 	int		pos;
-	BYTE	buf[MPU98_RECVBUFS];
+	UINT8	buf[MPU98_RECVBUFS];
 } MPURECV;
 
 typedef struct {
@@ -42,31 +42,39 @@ typedef struct {
 	UINT32	xferclock;
 	SINT32	stepclock;
 
-	UINT8	intch;
+	UINT8	acttr;
 	UINT8	intreq;
-	UINT8	fd_remain;
-	UINT8	fd_cnt;
-	UINT8	fd_step[4];
+	UINT8	hclk_rem;
+	UINT8	hclk_cnt;
+	UINT8	hclk_step[4];
 
 	UINT8	status;
 	UINT8	mode;
-	UINT8	cmd;
-	UINT8	timebase;
+	UINT8	flag1;
+	UINT8	flag2;
 
 	UINT8	tempo;
-	UINT8	tempos;
+	UINT8	reltempo;
+	UINT8	curtempo;
+	UINT8	inttimebase;
+
 	UINT8	recvevent;
 	UINT8	remainstep;
+	UINT8	syncmode;
+	UINT8	metromode;
 
-	UINT8	timing;
-	UINT8	avail;
-	UINT8	bar;
-	UINT8	flag1;
+	UINT8	midipermetero;
+	UINT8	meteropermeas;
+	UINT8	sendplaycnt;
+	UINT8	padding;
+
+	UINT	accch;
 
 	MPURECV	r;
 
-	MPUCH	ch[8];
-	MPUF9CH	f9;
+	MPUCMDS	cmd;
+	MPUTR	tr[8];
+	MPUCMDS	cond;
 } _MPU98II, *MPU98II;
 
 

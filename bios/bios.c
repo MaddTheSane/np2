@@ -82,9 +82,9 @@ static void bios_memclear(void) {
 
 static void bios_reinitbyswitch(void) {
 
-	BYTE	prxcrt;
-	BYTE	prxdupd;
-	BYTE	biosflag;
+	UINT8	prxcrt;
+	UINT8	prxdupd;
+	UINT8	biosflag;
 	UINT8	boot;
 
 	if (!(np2cfg.dipsw[2] & 0x80)) {
@@ -132,7 +132,7 @@ static void bios_reinitbyswitch(void) {
 		biosflag |= 0x40;
 	}
 	mem[MEMB_BIOS_FLAG1] = biosflag;
-	mem[MEMB_EXPMMSZ] = (BYTE)(pccore.extmem << 3);
+	mem[MEMB_EXPMMSZ] = (UINT8)(pccore.extmem << 3);
 	mem[MEMB_CRT_RASTER] = 0x0f;
 
 	// FDD initialize
@@ -151,9 +151,10 @@ static void bios_reinitbyswitch(void) {
 	mem[MEMB_F2DD_MODE] = 0xff;
 
 #if defined(SUPPORT_CRT31KHZ)
-	mem[MEMB_CRT_BIOS] = 0x80;
+	mem[MEMB_CRT_BIOS] |= 0x80;
 #endif
 #if defined(SUPPORT_PC9821)
+	mem[MEMB_CRT_BIOS] |= 0x04;		// 05/02/03
 	mem[0x45c] = 0x40;
 #endif
 
@@ -258,6 +259,8 @@ void bios_initialize(void) {
 		}
 		file_close(fh);
 	}
+	mem[0xf8e80] = 0x98;
+	mem[0xf8e81] = 0x21;
 #endif
 
 #if defined(BIOS_SIMULATE)

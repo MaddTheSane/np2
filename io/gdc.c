@@ -490,6 +490,8 @@ static void IOOUTCALL gdc_o6a(UINT port, REG8 dat) {
 
 	REG8	bit;
 
+	TRACEOUT(("port:%.4x %.2x", port, dat));
+
 	if (!(dat & 0xf8)) {
 		bit = (dat >> 1) & 3;
 		dat &= 1;
@@ -935,6 +937,7 @@ static REG8 IOINPCALL gdc_iae(UINT port) {
 #if defined(SUPPORT_PC9821)
 static void IOOUTCALL gdc_o9a0(UINT port, REG8 dat) {
 
+	TRACEOUT(("port:%.4x,%.2x", port, dat));
 	gdc.ff2 = dat;
 	(void)port;
 }

@@ -86,6 +86,13 @@
 
 // ----
 
+　ver0.80 → ver0.81
+　・MPU-98II conductor修正
+　・MPU-98II Request PC/Tempo コマンドの追加
+　・一部(というか大部分…)のキーボードのmake/break関係を修正
+　・CRTBIOSフラグ修正 (PC-9821モード)
+
+
 　ver0.79 → ver0.80
 　・BIOS - スクロールコマンド修正
 　・BIOS - システムポートの修正(i286/V30ではほぼ無意味)

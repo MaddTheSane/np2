@@ -62,6 +62,7 @@ static void IOOUTCALL cgrom_oa1(UINT port, REG8 dat) {
 
 	CGROM	cr;
 
+//	TRACEOUT(("%.4x:%.2x [%.4x:%.4x]", port, dat, CPU_CS, CPU_IP));
 	cr = &cgrom;
 	cr->code = (dat << 8) | (cr->code & 0xff);
 	cgwindowset(cr);
@@ -73,6 +74,7 @@ static void IOOUTCALL cgrom_oa3(UINT port, REG8 dat) {
 
 	CGROM	cr;
 
+//	TRACEOUT(("%.4x:%.2x [%.4x:%.4x]", port, dat, CPU_CS, CPU_IP));
 	cr = &cgrom;
 	cr->code = (cr->code & 0xff00) | dat;
 	cgwindowset(cr);

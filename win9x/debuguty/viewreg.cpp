@@ -21,7 +21,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, "ÇlÇr ÉSÉVÉbÉN");
+					DEFAULT_QUALITY, FIXED_PITCH, np2viewfont);
 	SetTextColor(hdc, 0xffffff);
 	SetBkColor(hdc, 0x400000);
 	hfont = (HFONT)SelectObject(hdc, hfont);
@@ -85,7 +85,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, "ÇlÇr ÉSÉVÉbÉN");
+					DEFAULT_QUALITY, FIXED_PITCH, np2viewfont);
 	SetTextColor(hdc, 0xffffff);
 	SetBkColor(hdc, 0x400000);
 	hfont = (HFONT)SelectObject(hdc, hfont);

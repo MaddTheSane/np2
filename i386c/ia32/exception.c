@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.17 2004/03/23 22:39:40 yui Exp $	*/
+/*	$Id: exception.c,v 1.18 2005/02/04 05:32:24 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -71,6 +71,11 @@ exception(int num, int error_code)
 	int errorp = 0;
 
 	__ASSERT((unsigned int)num < EXCEPTION_NUM);
+
+#if 0
+	iptrace_out();
+	debugwriteseg("execption.bin", &CPU_STAT_SREG(CPU_CS_INDEX), CPU_PREV_EIP & 0xffff0000, 0x10000);
+#endif
 
 	VERBOSE(("exception: -------------------------------------------------------------- start"));
 	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
