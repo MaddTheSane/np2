@@ -15,7 +15,7 @@ void MEMCALL mem9821_w(UINT32 addr, REG8 value) {
 	bit = (addr & 0x40000)?2:1;
 	vramupdate[LOW15(addr >> 3)] |= bit;
 	gdcs.grphdisp |= bit;
-	TRACEOUT(("mem9821_w %x %x", addr, value));
+//	TRACEOUT(("mem9821_w %x %x", addr, value));
 }
 
 REG8 MEMCALL mem9821_r(UINT32 addr) {
@@ -33,7 +33,7 @@ void MEMCALL mem9821_ww(UINT32 addr, REG16 value) {
 	vramupdate[LOW15(addr >> 3)] |= bit;
 	vramupdate[LOW15((addr + 1) >> 3)] |= bit;
 	gdcs.grphdisp |= bit;
-	TRACEOUT(("mem9821_ww %x %x", addr, value));
+//	TRACEOUT(("mem9821_ww %x %x", addr, value));
 }
 
 REG16 MEMCALL mem9821_rw(UINT32 addr) {
@@ -88,7 +88,7 @@ void MEMCALL mem9821_b2w(UINT32 address, REG8 value) {
 	address -= 0xe0004;
 	if (address < 4) {
 		vramop.bank2[address] = value;
-		TRACEOUT(("bank2[%d] = %.2x", address, value));
+//		TRACEOUT(("bank2[%d] = %.2x", address, value));
 	}
 }
 

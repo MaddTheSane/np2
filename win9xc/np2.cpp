@@ -18,6 +18,7 @@
 #include	"winkbd.h"
 #include	"ini.h"
 #include	"menu.h"
+#include	"debugwin.h"
 #include	"dialog.h"
 #include	"cpucore.h"
 #include	"pccore.h"
@@ -733,6 +734,7 @@ static void framereset(void) {
 
 	framecnt = 0;
 	sysmng_updatecaption();
+	debugwin_process();
 }
 
 static void processwait(UINT cnt) {
@@ -808,6 +810,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			return(FALSE);
 		}
 	}
+	debugwin_initapp(hInstance);
 
 	mousemng_initialize();
 
@@ -890,6 +893,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	scrndraw_redraw();
 
 	pccore_reset();
+
+	debugwin_create();
 
 	np2opening = 0;
 
@@ -982,6 +987,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	S98_trash();
 
 	pccore_term();
+	debugwin_destroy();
 
 	soundmng_deinitialize();
 	scrnmng_destroy();

@@ -3,6 +3,30 @@
 #include	"cmndraw.h"
 
 
+void cmndraw_getpals(CMNPALFN *fn, CMNPAL *pal, UINT pals) {
+
+	UINT	i;
+
+	if (fn == NULL) {
+		return;
+	}
+	if (fn->get8) {
+		for (i=0; i<pals; i++) {
+			pal[i].pal8 = (*fn->get8)(fn, i);
+		}
+	}
+	if (fn->get32) {
+		for (i=0; i<pals; i++) {
+			pal[i].pal32.d = (*fn->get32)(fn, i);
+		}
+		if (fn->cnv16) {
+			for (i=0; i<pals; i++) {
+				pal[i].pal16 = (*fn->cnv16)(fn, pal[i].pal32);
+			}
+		}
+	}
+}
+
 void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg) {
 
 	int		i;
@@ -395,4 +419,37 @@ const BYTE	*p;
 	} while(--cy);
 }
 #endif
+
+
+
+// ----
+
+void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal) {
+
+	if ((vram == NULL) || (pal == NULL)) {
+		return;
+	}
+	switch(vram->bpp) {
+#if defined(SUPPORT_8BPP)
+		case 8:
+			cmndraw8_fill(vram, x, y, cx, cy, pal->pal8);
+			break;
+#endif
+#if defined(SUPPORT_16BPP)
+		case 16:
+			cmndraw16_fill(vram, x, y, cx, cy, pal->pal16);
+			break;
+#endif
+#if defined(SUPPORT_24BPP)
+		case 24:
+			cmndraw24_fill(vram, x, y, cx, cy, pal->pal32);
+			break;
+#endif
+#if defined(SUPPORT_32BPP)
+		case 32:
+			cmndraw32_fill(vram, x, y, cx, cy, pal->pal32);
+			break;
+#endif
+	}
+}
 

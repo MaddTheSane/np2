@@ -72,7 +72,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "CPUCORE_IA32" /D "SUPPORT_MEMDBG32" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -673,6 +673,10 @@ SOURCE=.\COMMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\DEBUGWIN.CPP
+# End Source File
+# Begin Source File
+
 SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
@@ -953,6 +957,10 @@ SOURCE=..\GENERIC\CMJASTS.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\GENERIC\CMNDRAW.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\GENERIC\CMVER.C
 # End Source File
 # Begin Source File
@@ -966,6 +974,10 @@ SOURCE=..\GENERIC\HOSTDRV.C
 # Begin Source File
 
 SOURCE=..\GENERIC\HOSTDRVS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\MEMDBG32.C
 # End Source File
 # End Group
 # Begin Source File

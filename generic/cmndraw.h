@@ -12,6 +12,13 @@ struct _cmnpalfn {
 typedef struct _cmnpalfn	CMNPALFN;
 
 typedef struct {
+	UINT8	pal8;
+	UINT8	padding;
+	UINT16	pal16;
+	RGB32	pal32;
+} CMNPAL;
+
+typedef struct {
 	BYTE	*ptr;
 	int		width;
 	int		height;
@@ -24,6 +31,7 @@ typedef struct {
 extern "C" {
 #endif
 
+void cmndraw_getpals(CMNPALFN *fn, CMNPAL *pal, UINT pals);
 void cmndraw_makegrad(RGB32 *pal, int pals, RGB32 bg, RGB32 fg);
 
 #if defined(SUPPORT_8BPP)
@@ -61,6 +69,11 @@ void cmndraw32_setfg(const CMNVRAM *vram, const BYTE *src,
 void cmndraw32_setpat(const CMNVRAM *vram, const BYTE *src,
 										int x, int y, RGB32 bg, RGB32 fg);
 #endif
+
+
+// ----
+
+void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal);
 
 #ifdef __cplusplus
 }
