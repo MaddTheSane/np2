@@ -1,6 +1,12 @@
 #ifndef	NP2_X11_COMPILER_H__
 #define	NP2_X11_COMPILER_H__
 
+#ifdef	WORDS_BIGENDIAN
+#define	BYTESEX_BIG
+#else	/* !WORDS_BIGENDIAN */
+#define	BYTESEX_LITTLE
+#endif	/* WORDS_BIGENDIAN */
+
 #if defined(USE_NETBSDAUDIO) && !defined(__NetBSD__)
 #undef	USE_NETBSDAUDIO
 #endif
@@ -12,12 +18,6 @@
 #else	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO || USE_SDLAUDIO || USE_SDLMIXER */
 #undef	NOSOUND
 #endif	/* !USE_NETBSDAUDIO && !USE_OSSAUDIO && !USE_ESDAUDIO && !USE_SDLAUDIO && !USE_SDMIXER */
-
-#ifdef	WORDS_BIGENDIAN
-#define	BYTESEX_BIG
-#else	/* !WORDS_BIGENDIAN */
-#define	BYTESEX_LITTLE
-#endif	/* WORDS_BIGENDIAN */
 
 #if defined(NOSOUND)
 
@@ -132,7 +132,13 @@ UINT32 gettick();
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
 
+#if defined(i386) || defined(__i386__)
+#undef	MEMOPTIMIZE
+#elif defined(arm) || defined (__arm__)
+#define	MEMOPTIMIZE	2
+#else
 #define	MEMOPTIMIZE	1
+#endif
 
 #define	SUPPORT_EUC
 
