@@ -691,17 +691,12 @@ int main(int argc, char *argv[]) {
 					mackbd_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
-					if (timing_getcount() < framecnt) {
+					// ƒeƒXƒg
+					if (framecnt > timing_getcount()) {
 						waitcnt = framecnt;
-						if (framemax > 1) {
-							framemax--;
-						}
 					}
-					else if (framecnt >= framemax) {
+					else if (framecnt >= 12) {
 						waitcnt = framecnt;
-						if (framemax < 12) {
-							framemax++;
-						}
 					}
 				}
 				else {
