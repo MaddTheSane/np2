@@ -12,7 +12,7 @@ struct _dprm	*next;
 	UINT16		width;
 	UINT16		num;
 	VRAMHDL		icon;
-	char		str[96];
+	OEMCHAR		str[96];
 } _DLGPRM, *DLGPRM;
 
 #define	PRMNEXT_EMPTY	((DLGPRM)-1)
@@ -29,15 +29,15 @@ typedef struct {
 
 typedef struct {
 	void		*font;
-	short		fontsize;
-	short		scrollbar;
-	short		dispmax;
-	short		basepos;
+	SINT16		fontsize;
+	SINT16		scrollbar;
+	SINT16		dispmax;
+	SINT16		basepos;
 } DLGLIST;
 
 typedef struct {
-	short		minval;
-	short		maxval;
+	SINT16		minval;
+	SINT16		maxval;
 	int			pos;
 	UINT8		type;
 	UINT8		moving;
@@ -108,7 +108,7 @@ static BOOL seaprmempty(void *vpItem, void *vpArg) {
 	return(FALSE);
 }
 
-static DLGPRM resappend(MENUDLG dlg, const char *str) {
+static DLGPRM resappend(MENUDLG dlg, const OEMCHAR *str) {
 
 	DLGPRM	prm;
 
@@ -123,7 +123,7 @@ static DLGPRM resappend(MENUDLG dlg, const char *str) {
 		prm->icon = NULL;
 		prm->str[0] = '\0';
 		if (str) {
-			milsjis_ncpy(prm->str, str, sizeof(prm->str));
+			milstr_ncpy(prm->str, str, NELEMENTS(prm->str));
 		}
 	}
 	return(prm);
@@ -169,7 +169,7 @@ static DLGHDL dlghdlsea(MENUDLG dlg, MENUID id) {
 	return((DLGHDL)listarray_enum(dlg->dlg, dsbyid, (void *)(long)id));
 }
 
-static BOOL gettextsz(DLGHDL hdl, POINT_T *sz) {
+static BRESULT gettextsz(DLGHDL hdl, POINT_T *sz) {
 
 	DLGPRM	prm;
 
@@ -223,11 +223,11 @@ static void getmid(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 }
 
 
-static BOOL _cre_settext(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT _cre_settext(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
-const char	*str;
+const OEMCHAR	*str;
 
-	str = (char *)arg;
+	str = (OEMCHAR *)arg;
 	if (str == NULL) {
 		str = str_null;
 	}
@@ -240,11 +240,11 @@ const char	*str;
 static void dlg_text(MENUDLG dlg, DLGHDL hdl,
 									const POINT_T *pt, const RECT_T *rect) {
 
-	VRAMHDL	icon;
-const char	*string;
-	int		color;
-	POINT_T	fp;
-	POINT_T	p;
+	VRAMHDL		icon;
+const OEMCHAR	*string;
+	int			color;
+	POINT_T		fp;
+	POINT_T		p;
 
 	if (hdl->prm == NULL) {
 		return;
@@ -285,7 +285,7 @@ const char	*string;
 
 // ---- base
 
-static BOOL dlgbase_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT dlgbase_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	RECT_T		rct;
 
@@ -300,7 +300,7 @@ static BOOL dlgbase_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 	rct.left = 0;
 	rct.top = 0;
 	rct.bottom = MENUDLG_CYCAPTION;
-	menuvram_caption(hdl->vram, &rct, MICON_NULL, (char *)arg);
+	menuvram_caption(hdl->vram, &rct, MICON_NULL, (OEMCHAR *)arg);
 	return(SUCCESS);
 
 dbcre_err:
@@ -311,7 +311,7 @@ dbcre_err:
 
 static void dlgbase_paint(MENUDLG dlg, DLGHDL hdl) {
 
-	char	*title;
+	OEMCHAR	*title;
 
 	title = NULL;
 	if (hdl->prm) {
@@ -459,8 +459,8 @@ static void *dlglist_setfont(DLGHDL hdl, void *font) {
 	if ((pt.y <= 0) || (pt.y >= 65536)) {
 		pt.y = 16;
 	}
-	hdl->c.dl.fontsize = (short)pt.y;
-	hdl->c.dl.dispmax = (short)(hdl->vram->height / pt.y);
+	hdl->c.dl.fontsize = (SINT16)pt.y;
+	hdl->c.dl.dispmax = (SINT16)(hdl->vram->height / pt.y);
 	return(ret);
 }
 
@@ -483,7 +483,7 @@ static void dlglist_reset(MENUDLG dlg, DLGHDL hdl) {
 	hdl->c.dl.basepos = 0;
 }
 
-static BOOL dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	int		width;
 	int		height;
@@ -683,7 +683,7 @@ static BOOL dlglist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 	while(*sto) {
 		sto = &((*sto)->next);
 	}
-	*sto = resappend(dlg, (char *)arg);
+	*sto = resappend(dlg, (OEMCHAR *)arg);
 	if (*sto) {
 		r = dlglist_drawsub(hdl, hdl->prmcnt, FALSE);
 		hdl->prmcnt++;
@@ -725,7 +725,7 @@ static BOOL dlglist_setex(MENUDLG dlg, DLGHDL hdl, const ITEMEXPRM *arg) {
 	}
 	resattachicon(dlg, dp, arg->icon, hdl->c.dl.fontsize,
 											hdl->c.dl.fontsize);
-	milsjis_ncpy(dp->str, arg->str, sizeof(dp->str));
+	milstr_ncpy(dp->str, arg->str, NELEMENTS(dp->str));
 	return(dlglist_drawsub(hdl, arg->pos, (arg->pos == hdl->val)));
 }
 
@@ -749,7 +749,8 @@ enum {
 	DLCUR_INBAR		= 2,
 	DLCUR_DOWN		= 3,
 	DLCUR_PGUP		= 4,
-	DLCUR_PGDN		= 5
+	DLCUR_PGDN		= 5,
+	DLCUR_INCUR		= 6
 };
 
 static int dlglist_getpc(DLGHDL hdl, int x, int y) {
@@ -841,12 +842,10 @@ static void dlglist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 		case DLCUR_INLIST:
 			val = dlglist_getpos(hdl, y);
 			if ((val == hdl->val) && (val != -1)) {
-				dlg->proc(DLGMSG_COMMAND, hdl->id, 1);
+				dlg->dragflg = DLCUR_INCUR;
 			}
-			else {
-				dlglist_setval(dlg, hdl, val);
-				dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
-			}
+			dlglist_setval(dlg, hdl, val);
+			dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
 			break;
 
 		case 1:
@@ -884,6 +883,7 @@ static void dlglist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 static void dlglist_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 
 	int		flg;
+	int		val;
 	int		height;
 
 	x -= (MENU_LINE * 2);
@@ -891,9 +891,14 @@ static void dlglist_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
 	flg = dlglist_getpc(hdl, x, y);
 	switch(dlg->dragflg) {
 		case DLCUR_INLIST:
-			if (flg == 0) {
-				dlglist_setval(dlg, hdl, dlglist_getpos(hdl, y));
-				dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
+		case DLCUR_INCUR:
+			if (flg == DLCUR_INLIST) {
+				val = dlglist_getpos(hdl, y);
+				if (val != hdl->val) {
+					dlg->dragflg = DLCUR_INLIST;
+					dlglist_setval(dlg, hdl, val);
+					dlg->proc(DLGMSG_COMMAND, hdl->id, 0);
+				}
 			}
 			break;
 
@@ -933,6 +938,10 @@ static void dlglist_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 			dlglist_setbtn(hdl, dlg->dragflg - 1);
 			drawctrls(dlg, hdl);
 			break;
+
+		case DLCUR_INCUR:
+			dlg->proc(DLGMSG_COMMAND, hdl->id, 1);
+			break;
 	}
 	(void)focus;
 }
@@ -960,14 +969,14 @@ static void dlgslider_setflag(DLGHDL hdl) {
 	else {
 		type = 2 + (21 << 8) + (11 << 16);
 	}
-	hdl->c.ds.type = (BYTE)type;
+	hdl->c.ds.type = (UINT8)type;
 	if (!(hdl->flag & MSS_VERT)) {
-		hdl->c.ds.sldh = (BYTE)(type >> 16);
-		hdl->c.ds.sldv = (BYTE)(type >> 8);
+		hdl->c.ds.sldh = (UINT8)(type >> 16);
+		hdl->c.ds.sldv = (UINT8)(type >> 8);
 	}
 	else {
-		hdl->c.ds.sldh = (BYTE)(type >> 8);
-		hdl->c.ds.sldv = (BYTE)(type >> 16);
+		hdl->c.ds.sldh = (UINT8)(type >> 8);
+		hdl->c.ds.sldv = (UINT8)(type >> 16);
 	}
 }
 
@@ -1012,10 +1021,10 @@ static int dlgslider_setpos(DLGHDL hdl, int val) {
 	return(val);
 }
 
-static BOOL dlgslider_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT dlgslider_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
-	hdl->c.ds.minval = (short)(long)arg;
-	hdl->c.ds.maxval = (short)((long)arg >> 16);
+	hdl->c.ds.minval = (SINT16)(long)arg;
+	hdl->c.ds.maxval = (SINT16)((long)arg >> 16);
 	hdl->c.ds.moving = 0;
 	dlgslider_setflag(hdl);
 	hdl->c.ds.pos = dlgslider_setpos(hdl, 0);
@@ -1202,7 +1211,7 @@ static void *dlgtablist_setfont(DLGHDL hdl, void *font) {
 	return(ret);
 }
 
-static BOOL dlgtablist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT dlgtablist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	RECT_T	rct;
 
@@ -1336,10 +1345,10 @@ static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 	while(*sto) {
 		sto = &((*sto)->next);
 	}
-	res = resappend(dlg, (char *)arg);
+	res = resappend(dlg, (OEMCHAR *)arg);
 	if (res) {
 		*sto = res;
-		fontmng_getsize(hdl->c.dtl.font, (char *)arg, &pt);
+		fontmng_getsize(hdl->c.dtl.font, (OEMCHAR *)arg, &pt);
 		res->width = pt.x;
 		hdl->prmcnt++;
 	}
@@ -1376,9 +1385,9 @@ static void dlgtablist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 
 static void dlgedit_paint(MENUDLG dlg, DLGHDL hdl) {
 
-	RECT_T	rct;
-	POINT_T	pt;
-const char	*string;
+	RECT_T		rct;
+	POINT_T		pt;
+const OEMCHAR	*string;
 
 	rct = hdl->rect;
 	menuvram_box2(dlg->vram, &rct,
@@ -1581,14 +1590,14 @@ static void dlgtext_paint(MENUDLG dlg, DLGHDL hdl) {
 
 static void dlgtext_itemset(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
-const void	*str;
+const OEMCHAR	*str;
 
 	if (hdl->prm) {
-		str = (char *)arg;
+		str = (OEMCHAR *)arg;
 		if (str == NULL) {
 			str = str_null;
 		}
-		milsjis_ncpy(hdl->prm->str, str, sizeof(hdl->prm->str));
+		milstr_ncpy(hdl->prm->str, str, NELEMENTS(hdl->prm->str));
 		fontmng_getsize(hdl->c.dt.font, str, &hdl->c.dt.pt);
 	}
 	(void)dlg;
@@ -1630,7 +1639,7 @@ static void iconpaint(MENUDLG dlg, DLGHDL hdl, VRAMHDL src) {
 	}
 }
 
-static BOOL dlgicon_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT dlgicon_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	hdl->prm = resappend(dlg, NULL);
 	resattachicon(dlg, hdl->prm, (UINT16)(long)arg,
@@ -1648,7 +1657,7 @@ static void dlgicon_paint(MENUDLG dlg, DLGHDL hdl) {
 	}
 }
 
-static BOOL dlgvram_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT dlgvram_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	hdl->c.dv.vram = (VRAMHDL)arg;
 	(void)dlg;
@@ -1691,12 +1700,12 @@ static void dlgbox_paint(MENUDLG dlg, DLGHDL hdl) {
 
 // ---- procs
 
-static BOOL _cre(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BRESULT _cre(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	(void)dlg;
 	(void)hdl;
 	(void)arg;
-	return(0);
+	return(SUCCESS);
 }
 
 #if 0		// not used
@@ -1731,7 +1740,7 @@ static void _moverel(MENUDLG dlg, DLGHDL hdl, int focus) {
 	(void)focus;
 }
 
-typedef BOOL (*DLGCRE)(MENUDLG dlg, DLGHDL hdl, const void *arg);
+typedef BRESULT (*DLGCRE)(MENUDLG dlg, DLGHDL hdl, const void *arg);
 typedef void (*DLGPAINT)(MENUDLG dlg, DLGHDL hdl);
 typedef void (*DLGSETVAL)(MENUDLG dlg, DLGHDL hdl, int val);
 typedef void (*DLGCLICK)(MENUDLG dlg, DLGHDL hdl, int x, int y);
@@ -1930,7 +1939,7 @@ static int defproc(int msg, MENUID id, long param) {
 }
 
 
-BOOL menudlg_create(int width, int height, const char *str,
+BRESULT menudlg_create(int width, int height, const OEMCHAR *str,
 								int (*proc)(int msg, MENUID id, long param)) {
 
 	MENUBASE	*mb;
@@ -2035,9 +2044,9 @@ void menudlg_destroy(void) {
 
 // ----
 
-BOOL menudlg_appends(const MENUPRM *res, int count) {
+BRESULT menudlg_appends(const MENUPRM *res, int count) {
 
-	BOOL	r;
+	BRESULT	r;
 
 	r = SUCCESS;
 	while(count--) {
@@ -2048,7 +2057,7 @@ BOOL menudlg_appends(const MENUPRM *res, int count) {
 	return(r);
 }
 
-BOOL menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
+BRESULT menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
 								int posx, int posy, int width, int height) {
 
 	MENUDLG		dlg;

@@ -3,9 +3,9 @@
 extern "C" {
 #endif
 
-extern const char mstr_cfg[];
-extern const char mstr_scropt[];
-extern const char mstr_about[];
+extern const OEMCHAR mstr_cfg[];
+extern const OEMCHAR mstr_scropt[];
+extern const OEMCHAR mstr_about[];
 
 extern const MENURES np2icon;
 

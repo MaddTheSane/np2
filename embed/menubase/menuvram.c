@@ -23,7 +23,7 @@ UINT32	menucolor[] = {
 };
 
 
-static const BYTE __pat[64] = {
+static const UINT8 __pat[64] = {
 				0x00, 0x00, 0x00, 0x00,
 				0x11, 0x00, 0x00, 0x00,
 				0x11, 0x00, 0x44, 0x00,
@@ -50,7 +50,7 @@ typedef struct {
 	int		linedel;
 } RESPUT;
 
-static BOOL resputprepare(VRAMHDL vram, const MENURES2 *res,
+static BRESULT resputprepare(VRAMHDL vram, const MENURES2 *res,
 											const POINT_T *pt, RESPUT *rp) {
 
 	int		width;
@@ -128,8 +128,8 @@ static const int __rsft[] = {1, 7, 12};
 static void res2put16(VRAMHDL vram, const MENURES2 *res, RESPUT *rp) {
 
 	int		width;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		cnt;
 	int		step;
 	int		bit;
@@ -189,8 +189,8 @@ static void res3put16(VRAMHDL vram, const MENURES2 *res, RESPUT *rp,
 																UINT mvc) {
 
 	int		width;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		cnt;
 	int		step;
 	int		bit;
@@ -263,12 +263,12 @@ static void captionbar16(VRAMHDL vram, const RECT_T *rect,
 	int		dir[3];
 	int		tmp;
 	int		sft;
-	BYTE	*p;
-	BYTE	*q;
-const BYTE	*r;
+	UINT8	*p;
+	UINT8	*q;
+const UINT8	*r;
 	UINT	pat[4];
 	int		cur;
-	BYTE	mask;
+	UINT8	mask;
 	int		c;
 
 	if (vram_cliprect(&rct, vram, rect) != SUCCESS) {
@@ -328,8 +328,8 @@ const BYTE	*r;
 		} while(++i < 3);
 		y = 0;
 		do {
-			q[0] = (BYTE)pat[y & 3];
-			q[1] = (BYTE)(pat[y & 3] >> 8);
+			q[0] = (UINT8)pat[y & 3];
+			q[1] = (UINT8)(pat[y & 3] >> 8);
 			q += vram->yalign;
 		} while(++y < height);
 	} while(++x < width);
@@ -345,8 +345,8 @@ mvcb_end:
 static void res2put24(VRAMHDL vram, const MENURES2 *res, RESPUT *rp) {
 
 	int		width;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		cnt;
 	int		step;
 	int		bit;
@@ -384,9 +384,9 @@ const BYTE	*p;
 		if (pix) {
 			dat = menucolor[pix - 1];
 			do {
-				*q++ = (BYTE)dat;
-				*q++ = (BYTE)(dat >> 8);
-				*q++ = (BYTE)(dat >> 16);
+				*q++ = (UINT8)dat;
+				*q++ = (UINT8)(dat >> 8);
+				*q++ = (UINT8)(dat >> 16);
 			} while(--c);
 		}
 		else {
@@ -408,8 +408,8 @@ static void res3put24(VRAMHDL vram, const MENURES2 *res, RESPUT *rp,
 																UINT mvc) {
 
 	int		width;
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		cnt;
 	int		step;
 	int		bit;
@@ -449,9 +449,9 @@ const BYTE	*p;
 		width -= c;
 		if (!pix) {
 			do {
-				*q++ = (BYTE)dat;
-				*q++ = (BYTE)(dat >> 8);
-				*q++ = (BYTE)(dat >> 16);
+				*q++ = (UINT8)dat;
+				*q++ = (UINT8)(dat >> 8);
+				*q++ = (UINT8)(dat >> 16);
 			} while(--c);
 		}
 		else {
@@ -483,12 +483,12 @@ static void captionbar24(VRAMHDL vram, const RECT_T *rect,
 	int		dir[3];
 	int		tmp;
 	int		sft;
-	BYTE	*p;
-	BYTE	*q;
-const BYTE	*r;
-	BYTE	pat[3][4];
+	UINT8	*p;
+	UINT8	*q;
+const UINT8	*r;
+	UINT8	pat[3][4];
 	int		cur;
-	BYTE	mask;
+	UINT8	mask;
 	int		c;
 
 	if (vram_cliprect(&rct, vram, rect) != SUCCESS) {
@@ -539,7 +539,7 @@ const BYTE	*r;
 				if (r[y] & mask) {
 					c += dir[i];
 				}
-				pat[i][y] = (BYTE)((c << 4) | c);
+				pat[i][y] = (UINT8)((c << 4) | c);
 			} while(++y < 4);
 		} while(++i < 3);
 		y = 0;
@@ -560,11 +560,11 @@ mvcb_end:
 
 // ----
 
-static void vramlzxsolve(BYTE *ptr, int size, const BYTE *dat) {
+static void vramlzxsolve(UINT8 *ptr, int size, const UINT8 *dat) {
 
 	int		level;
-	BYTE	ctrl;
-	BYTE	bit;
+	UINT8	ctrl;
+	UINT8	bit;
 	UINT	mask;
 	UINT	tmp;
 	int		pos;
@@ -686,7 +686,7 @@ mvr3_end:
 
 void menuvram_linex(VRAMHDL vram, int posx, int posy, int term, UINT mvc) {
 
-	BYTE	*p;
+	UINT8	*p;
 
 	if ((vram == NULL) ||
 		(posy < 0) || (posy >= vram->height)) {
@@ -716,11 +716,11 @@ void menuvram_linex(VRAMHDL vram, int posx, int posy, int term, UINT mvc) {
 #ifdef SUPPORT_24BPP
 	if (vram->bpp == 24) {
 		UINT32 color;
-		BYTE col[3];
+		UINT8 col[3];
 		color = menucolor[mvc];
-		col[0] = (BYTE)color;
-		col[1] = (BYTE)(color >> 8);
-		col[2] = (BYTE)(color >> 16);
+		col[0] = (UINT8)color;
+		col[1] = (UINT8)(color >> 8);
+		col[2] = (UINT8)(color >> 16);
 		while(posx < term) {
 			posx++;
 			p[0] = col[0];
@@ -738,7 +738,7 @@ mvlx_end:
 
 void menuvram_liney(VRAMHDL vram, int posx, int posy, int term, UINT mvc) {
 
-	BYTE	*p;
+	UINT8	*p;
 
 	if ((vram == NULL) ||
 		(posx < 0) || (posx >= vram->width)) {
@@ -768,11 +768,11 @@ void menuvram_liney(VRAMHDL vram, int posx, int posy, int term, UINT mvc) {
 #ifdef SUPPORT_24BPP
 	if (vram->bpp == 24) {
 		UINT32 color;
-		BYTE col[3];
+		UINT8 col[3];
 		color = menucolor[mvc];
-		col[0] = (BYTE)color;
-		col[1] = (BYTE)(color >> 8);
-		col[2] = (BYTE)(color >> 16);
+		col[0] = (UINT8)color;
+		col[1] = (UINT8)(color >> 8);
+		col[2] = (UINT8)(color >> 16);
 		while(posy < term) {
 			posy++;
 			p[0] = col[0];
@@ -873,7 +873,7 @@ mvcre_err:
 }
 
 void menuvram_caption(VRAMHDL vram, const RECT_T *rect,
-										UINT16 icon, const char *caption) {
+										UINT16 icon, const OEMCHAR *caption) {
 
 	POINT_T	pt;
 	VRAMHDL	work;

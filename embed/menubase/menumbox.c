@@ -12,16 +12,16 @@ typedef struct {
 	int		height;
 	int		lines;
 	int		fontsize;
-	char	string[MENUMBOX_MAXLINE][MENUMBOX_MAXTEXT];
+	OEMCHAR	string[MENUMBOX_MAXLINE][MENUMBOX_MAXTEXT];
 } MBOX;
 
 static	MBOX	mbox;
 
-static const char *menumbox_txt[7] = {
+static const OEMCHAR *menumbox_txt[7] = {
 				mstr_ok, 		mstr_cancel,	mstr_abort,		mstr_retry,
 				mstr_ignore,	mstr_yes,		mstr_no};
 
-static const BYTE b_res[6][4] = {
+static const UINT8 b_res[6][4] = {
 				{1, DID_OK,		0,				0},
 				{2, DID_OK,		DID_CANCEL,		0},
 				{3, DID_ABORT,	DID_RETRY,		DID_IGNORE},
@@ -32,14 +32,15 @@ static const BYTE b_res[6][4] = {
 
 // ----
 
-static BOOL setmboxitem(MBOX *mb, const char *str, UINT type) {
+static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 
-	char	*dst;
+	OEMCHAR	*dst;
 	int		rem;
 	int		w;
-	char	work[4];
+	OEMCHAR	work[4];
 	int		width;
 	POINT_T	pt;
+	int		leng;
 
 	if (mb == NULL) {
 		goto smbi_err;
@@ -48,7 +49,6 @@ static BOOL setmboxitem(MBOX *mb, const char *str, UINT type) {
 	if (str == NULL) {
 		goto smbi_set;
 	}
-	work[2] = '\0';
 	if ((type & 0xf) >= 6) {
 		type &= ~0x0f;
 	}
@@ -62,56 +62,46 @@ static BOOL setmboxitem(MBOX *mb, const char *str, UINT type) {
 	rem = 0;
 	w = 0;
 	while(1) {
-		work[0] = *str++;
-		if (work[0] & (~0x1f)) {
-			if ((((work[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-				work[1] = *str++;
-				if (work[1] == 0) {
-					break;
-				}
-				rem--;
-			}
-			else {
-				work[1] = '\0';
-			}
-			rem--;
-
-			fontmng_getsize(menubase.font, work, &pt);
-			if ((rem < 0) || ((w + pt.x) > width)) {
+		leng = milstr_charsize(str);
+		if (leng == 0) {
+			break;
+		}
+		if ((str[0] >= 0) && (str[0] < 0x20)) {
+			if (str[0] == '\n') {
 				dst = mb->string[mb->lines];
 				mb->lines++;
 				if (mb->lines >= MENUMBOX_MAXLINE) {
 					break;
 				}
-				rem += sizeof(mb->string[0]) - 1;
+				rem = NELEMENTS(mb->string[0]) - 1;
+				if (mb->width < w) {
+					mb->width = w;
+				}
+				w = 0;
+			}
+		}
+		else {
+			CopyMemory(work, str, leng * sizeof(OEMCHAR));
+			work[leng] = '\0';
+			fontmng_getsize(menubase.font, work, &pt);
+			if ((rem < leng) || ((w + pt.x) > width)) {
+				dst = mb->string[mb->lines];
+				mb->lines++;
+				if (mb->lines >= MENUMBOX_MAXLINE) {
+					break;
+				}
+				rem = NELEMENTS(mb->string[0]) - 1;
 				if (mb->width < w) {
 					mb->width = w;
 				}
 				w = 0;
 			}
 			w += pt.x;
-			*dst++ = work[0];
-			if (work[1]) {
-				*dst++ = work[1];
-			}
+			CopyMemory(dst, str, leng * sizeof(OEMCHAR));
+			dst += leng;
+			rem -= leng;
 		}
-		else {
-			if (work[0] == '\0') {
-				break;
-			}
-			else if (work[0] == '\n') {
-				dst = mb->string[mb->lines];
-				mb->lines++;
-				if (mb->lines >= MENUMBOX_MAXLINE) {
-					break;
-				}
-				rem = sizeof(mb->string[0]) - 1;
-				if (mb->width < w) {
-					mb->width = w;
-				}
-				w = 0;
-			}
-		}
+		str += leng;
 	}
 	if (mb->width < w) {
 		mb->width = w;
@@ -148,7 +138,7 @@ static void mbox_open(MBOX *mb) {
 
 	int		posy;
 	int		posx;
-const BYTE	*btn;
+const UINT8	*btn;
 	int		cnt;
 	int		btnid;
 
@@ -231,12 +221,12 @@ static int mbox_cmd(int msg, MENUID id, long param) {
 }
 
 
-int menumbox(const char *string, const char *title, UINT type) {
+int menumbox(const OEMCHAR *string, const OEMCHAR *title, UINT type) {
 
 	MBOX	*mb;
 
 	mb = &mbox;
-	if (!setmboxitem(mb, string, type)) {
+	if (setmboxitem(mb, string, type) == SUCCESS) {
 		menudlg_create(mb->width, mb->height, title, mbox_cmd);
 		menubase_modalproc();
 		return(mb->ret);

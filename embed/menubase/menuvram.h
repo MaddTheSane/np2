@@ -19,14 +19,14 @@ enum {
 typedef struct {
 	int		width;
 	int		height;
-const BYTE	*data;
-const BYTE	*alpha;
+const UINT8	*data;
+const UINT8	*alpha;
 } MENURES;
 
 typedef struct {
 	int		width;
 	int		height;
-const BYTE	*pat;
+const UINT8	*pat;
 } MENURES2;
 
 #define	MVC2(a, b)			(a | (b << 4))
@@ -52,7 +52,7 @@ void menuvram_box2(VRAMHDL vram, const RECT_T *rect, UINT mvc4);
 void menuvram_base(VRAMHDL vram);
 VRAMHDL menuvram_create(int width, int height, UINT bpp);
 void menuvram_caption(VRAMHDL vram, const RECT_T *rect,
-										UINT16 icon, const char *caption);
+										UINT16 icon, const OEMCHAR *caption);
 void menuvram_minimizebtn(VRAMHDL vram, const RECT_T *rect, BOOL focus);
 void menuvram_closebtn(VRAMHDL vram, const RECT_T *rect, BOOL focus);
 

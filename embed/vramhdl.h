@@ -50,8 +50,8 @@ typedef struct {
 	int		posy;
 	int		bpp;
 	int		scrnsize;
-	BYTE	*ptr;
-	BYTE	*alpha;
+	UINT8	*ptr;
+	UINT8	*alpha;
 } _VRAMHDL, *VRAMHDL;
 
 
@@ -61,20 +61,20 @@ extern "C" {
 
 VRAMHDL vram_create(int width, int height, BOOL alpha, int bpp);
 void vram_destroy(VRAMHDL hdl);
-BOOL vram_allocalpha(VRAMHDL hdl);
+BRESULT vram_allocalpha(VRAMHDL hdl);
 void vram_zerofill(VRAMHDL hdl, const RECT_T *rect);
-void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha);
+void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, UINT8 alpha);
 void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color);
-void vram_fillalpha(VRAMHDL hdl, const RECT_T *rect, BYTE alpha);
-void vram_fillex(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha);
+void vram_fillalpha(VRAMHDL hdl, const RECT_T *rect, UINT8 alpha);
+void vram_fillex(VRAMHDL hdl, const RECT_T *rect, UINT32 color, UINT8 alpha);
 
 VRAMHDL vram_resize(VRAMHDL base, int width, int height, int bpp);
 
 void vram_getrect(const VRAMHDL hdl, RECT_T *rect);
 
 VRAMHDL vram_dupe(const VRAMHDL hdl);
-BOOL vram_cliprect(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct);
-BOOL vram_cliprectex(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct);
+BRESULT vram_cliprect(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct);
+BRESULT vram_cliprectex(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct);
 
 #ifdef __cplusplus
 }

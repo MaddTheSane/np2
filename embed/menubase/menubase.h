@@ -60,13 +60,13 @@ extern "C" {
 extern	VRAMHDL		menuvram;
 extern	MENUBASE	menubase;
 
-BOOL menubase_create(void);
+BRESULT menubase_create(void);
 void menubase_destroy(void);
 
-BOOL menubase_open(int num);
+BRESULT menubase_open(int num);
 void menubase_close(void);
-BOOL menubase_moving(int x, int y, int btn);
-BOOL menubase_key(UINT key);
+BRESULT menubase_moving(int x, int y, int btn);
+BRESULT menubase_key(UINT key);
 
 void menubase_setrect(VRAMHDL vram, const RECT_T *rect);
 void menubase_clrrect(VRAMHDL vram);

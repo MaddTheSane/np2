@@ -16,7 +16,7 @@
 
 typedef struct {
 	HWAVEOUT	hwave;
-	BYTE		*buffer;
+	UINT8		*buffer;
 	DWORD		samples;
 	DWORD		bufalign;
 	WAVEHDR		wh[2];
@@ -148,7 +148,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 		}
 		w_ctrl.samples = (ms * rate) / 1000;
 		w_ctrl.bufalign = w_ctrl.samples * 2 * 2;
-		w_ctrl.buffer = (BYTE *)_MALLOC(w_ctrl.bufalign * 2, "wave mng");
+		w_ctrl.buffer = (UINT8 *)_MALLOC(w_ctrl.bufalign * 2, "wave mng");
 		if (w_ctrl.buffer == NULL) {
 			return(0);
 		}

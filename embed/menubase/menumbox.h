@@ -16,7 +16,7 @@ enum {
 extern "C" {
 #endif
 
-int menumbox(const char *string, const char *title, UINT type);
+int menumbox(const OEMCHAR *string, const OEMCHAR *title, UINT type);
 
 #ifdef __cplusplus
 }

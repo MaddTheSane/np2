@@ -26,18 +26,35 @@ enum {
 	DID_RESUME
 };
 
+static const OEMCHAR str_cpu[] = OEMTEXT("CPU");
+static const OEMCHAR str_base[] = OEMTEXT("Base");
+static const OEMCHAR str_2mhz[] = OEMTEXT("1.9968MHz");
+static const OEMCHAR str_2halfmhz[] = OEMTEXT("2.4576MHz");
+static const OEMCHAR str_mul[] = OEMTEXT("Multiple");
+static const OEMCHAR str_arch[] = OEMTEXT("Architecture");
+static const OEMCHAR str_vm[] = OEMTEXT("PC-9801VM");
+static const OEMCHAR str_vx[] = OEMTEXT("PC-9801VX");
+static const OEMCHAR str_epson[] = OEMTEXT("EPSON");
+static const OEMCHAR str_sound[] = OEMTEXT("Sound");
+static const OEMCHAR str_rate[] = OEMTEXT("Rate");
+static const OEMCHAR str_11khz[] = OEMTEXT("11KHz");
+static const OEMCHAR str_22khz[] = OEMTEXT("22KHz");
+static const OEMCHAR str_44khz[] = OEMTEXT("44KHz");
+static const OEMCHAR str_buffer[] = OEMTEXT("Buffer");
+
+
 #if defined(SIZE_QVGA)
 static const MENUPRM res_cfg[] = {
 			{DLGTYPE_FRAME,		DID_STATIC,		0,
-				"CPU",									  6,   6, 185,  58},
+				str_cpu,								  6,   6, 185,  58},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Base",									 16,  21,  38,  11},
+				str_base,								 16,  21,  38,  11},
 			{DLGTYPE_RADIO,		DID_CLOCK1,		MENU_TABSTOP,
-				"1.9968MHz",							 54,  21,  64,  11},
+				str_2mhz,								 54,  21,  64,  11},
 			{DLGTYPE_RADIO,		DID_CLOCK2,		0,
-				"2.4576MHz",							119,  21,  64,  11},
+				str_2halfmhz,							119,  21,  64,  11},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Multiple",								 16,  39,  63,  11},
+				str_mul,								 16,  39,  63,  11},
 			{DLGTYPE_SLIDER,	DID_MULTIPLE,	MSS_BOTH | MENU_TABSTOP,
 				(void *)SLIDERPOS(1, 16),				 80,  38,  63,  13},
 			{DLGTYPE_LTEXT,		DID_MULSTR,		0,
@@ -45,25 +62,25 @@ static const MENUPRM res_cfg[] = {
 			{DLGTYPE_RTEXT,		DID_CLOCKSTR,	0,
 				NULL,									105,  51,  80,  11},
 			{DLGTYPE_FRAME,		DID_STATIC,		0,
-				"Architecture",							  6,  70, 244,  30},
+				str_arch,								  6,  70, 244,  30},
 			{DLGTYPE_RADIO,		DID_MODELVM,	MENU_TABSTOP,
-				"PC-9801VM",							 16,  84,  78,  11},
+				str_vm,									 16,  84,  78,  11},
 			{DLGTYPE_RADIO,		DID_MODELVX,	0,
-				"PC-9801VX",							 96,  84,  78,  11},
+				str_vx,									 96,  84,  78,  11},
 			{DLGTYPE_RADIO,		DID_MODELEPSON,	0,
-				"EPSON",								176,  84,  60,  11},
+				str_epson,								176,  84,  60,  11},
 			{DLGTYPE_FRAME,		DID_STATIC,		0,
-				"Sound",								  6, 106, 244,  52},
+				str_sound,								  6, 106, 244,  52},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Rate",									 16, 121,  40,  11},
+				str_rate,								 16, 121,  40,  11},
 			{DLGTYPE_RADIO,		DID_RATE11,		MENU_TABSTOP,
-				"11KHz",								 60, 121,  60,  11},
+				str_11khz,								 60, 121,  60,  11},
 			{DLGTYPE_RADIO,		DID_RATE22,		0,
-				"22KHz",								120, 121,  60,  11},
+				str_22khz,								120, 121,  60,  11},
 			{DLGTYPE_RADIO,		DID_RATE44,		0,
-				"44KHz",								180, 121,  60,  11},
+				str_44khz,								180, 121,  60,  11},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Buffer",								 16, 139,  40,  11},
+				str_buffer,								 16, 139,  40,  11},
 			{DLGTYPE_SLIDER,	DID_BUFFER,		MSS_BOTH | MENU_TABSTOP,
 				(void *)SLIDERPOS(100, 1000),			 60, 138, 140,  13},
 			{DLGTYPE_RTEXT,		DID_BUFSTR,		0,
@@ -77,15 +94,15 @@ static const MENUPRM res_cfg[] = {
 #else
 static const MENUPRM res_cfg[] = {
 			{DLGTYPE_FRAME,		DID_STATIC,		0,
-				"CPU",									  8,   7, 202,  69},
+				str_cpu,								  8,   7, 202,  69},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Base",									 20,  24,  28,  13},
+				str_base,								 20,  24,  28,  13},
 			{DLGTYPE_RADIO,		DID_CLOCK1,		MENU_TABSTOP,
-				"1.9968MHz",							 52,  24,  78,  13},
+				str_2mhz,								 52,  24,  78,  13},
 			{DLGTYPE_RADIO,		DID_CLOCK2,		0,
-				"2.4576MHz",							130,  24,  78,  13},
+				str_2halfmhz,							130,  24,  78,  13},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Multiple",								 20,  45,  64,  13},
+				str_mul,								 20,  45,  64,  13},
 			{DLGTYPE_SLIDER,	DID_MULTIPLE,	MSS_BOTH | MENU_TABSTOP,
 				(void *)SLIDERPOS(1, 16),				 84,  45,  80,  13},
 			{DLGTYPE_LTEXT,		DID_MULSTR,		0,
@@ -93,31 +110,31 @@ static const MENUPRM res_cfg[] = {
 			{DLGTYPE_RTEXT,		DID_CLOCKSTR,	0,
 				NULL,									124,  59,  80,  13},
 			{DLGTYPE_FRAME,		DID_STATIC,		0,
-				"Architecture",							  8,  83, 288,  38},
+				str_arch,								  8,  83, 288,  38},
 			{DLGTYPE_RADIO,		DID_MODELVM,	MENU_TABSTOP,
-				"PC-9801VM",							 20, 100,  98,  13},
+				str_vm,									 20, 100,  98,  13},
 			{DLGTYPE_RADIO,		DID_MODELVX,	0,
-				"PC-9801VX",							120, 100,  98,  13},
+				str_vx,									120, 100,  98,  13},
 			{DLGTYPE_RADIO,		DID_MODELEPSON,	0,
-				"EPSON",								220, 100,  60,  13},
+				str_epson,								220, 100,  60,  13},
 			{DLGTYPE_FRAME,		DID_STATIC,		0,
-				"Sound",								  8, 128, 288,  60},
+				str_sound,								  8, 128, 288,  60},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Rate",									 20, 145,  48,  13},
+				str_rate,								 20, 145,  48,  13},
 			{DLGTYPE_RADIO,		DID_RATE11,		MENU_TABSTOP,
-				"11KHz",								 68, 145,  66,  13},
+				str_11khz,								 68, 145,  66,  13},
 			{DLGTYPE_RADIO,		DID_RATE22,		0,
-				"22KHz",								134, 145,  66,  13},
+				str_22khz,								134, 145,  66,  13},
 			{DLGTYPE_RADIO,		DID_RATE44,		0,
-				"44KHz",								200, 145,  66,  13},
+				str_44khz,								200, 145,  66,  13},
 			{DLGTYPE_LTEXT,		DID_STATIC,		0,
-				"Buffer",								 20, 165,  48,  13},
+				str_buffer,								 20, 165,  48,  13},
 			{DLGTYPE_SLIDER,	DID_BUFFER,		MSS_BOTH | MENU_TABSTOP,
 				(void *)SLIDERPOS(100, 1000),			 68, 165, 160,  13},
 			{DLGTYPE_RTEXT,		DID_BUFSTR,		0,
 				NULL,									228, 165,  48,  13},
 			{DLGTYPE_CHECK,		DID_RESUME,		MENU_TABSTOP,
-				"Resume",								  8, 197, 288,  13},
+				str_resume,								  8, 197, 288,  13},
 			{DLGTYPE_BUTTON,	DID_OK,			MENU_TABSTOP,
 				mstr_ok,								218,  13,  77,  21},
 			{DLGTYPE_BUTTON,	DID_CANCEL,		MENU_TABSTOP,
@@ -127,14 +144,14 @@ static const MENUPRM res_cfg[] = {
 
 // ----
 
-static const char str_mulfmt[] = "x%u";
-static const char str_clockfmt[] = "%2u.%.4uMHz";
-static const char str_buffmt[] = "%ums";
+static const OEMCHAR str_mulfmt[] = OEMTEXT("x%u");
+static const OEMCHAR str_clockfmt[] = OEMTEXT("%2u.%.4uMHz");
+static const OEMCHAR str_buffmt[] = OEMTEXT("%ums");
 
 static void setmulstr(void) {
 
 	UINT	multiple;
-	char	work[32];
+	OEMCHAR	work[32];
 
 	multiple = menudlg_getval(DID_MULTIPLE);
 	if (multiple < 1) {
@@ -143,7 +160,7 @@ static void setmulstr(void) {
 	else if (multiple > 32) {
 		multiple = 32;
 	}
-	SPRINTF(work, str_mulfmt, multiple);
+	OEMSPRINTF(work, str_mulfmt, multiple);
 	menudlg_settext(DID_MULSTR, work);
 }
 
@@ -151,7 +168,7 @@ static void setclockstr(void) {
 
 	UINT32	clock;
 	UINT	multiple;
-	char	work[32];
+	OEMCHAR	work[32];
 
 	if (menudlg_getval(DID_CLOCK1)) {
 		clock = PCBASECLOCK20 / 100;
@@ -167,14 +184,14 @@ static void setclockstr(void) {
 		multiple = 32;
 	}
 	clock *= multiple;
-	SPRINTF(work, str_clockfmt, clock / 10000, clock % 10000);
+	OEMSPRINTF(work, str_clockfmt, clock / 10000, clock % 10000);
 	menudlg_settext(DID_CLOCKSTR, work);
 }
 
 static void setbufstr(void) {
 
 	UINT	val;
-	char	work[32];
+	OEMCHAR	work[32];
 
 	val = menudlg_getval(DID_BUFFER);
 	if (val < 100) {
@@ -183,7 +200,7 @@ static void setbufstr(void) {
 	else if (val > 1000) {
 		val = 1000;
 	}
-	SPRINTF(work, str_buffmt, val);
+	OEMSPRINTF(work, str_buffmt, val);
 	menudlg_settext(DID_BUFSTR, work);
 }
 
@@ -240,9 +257,9 @@ static void dlginit(void) {
 
 static void dlgupdate(void) {
 
-	UINT	update;
-	UINT	val;
-const char	*str;
+	UINT		update;
+	UINT		val;
+const OEMCHAR	*str;
 
 	update = 0;
 	if (menudlg_getval(DID_CLOCK1)) {
@@ -292,7 +309,7 @@ const char	*str;
 		str = str_VX;
 	}
 	if (milstr_cmp(np2cfg.model, str)) {
-		milstr_ncpy(np2cfg.model, str, sizeof(np2cfg.model));
+		milstr_ncpy(np2cfg.model, str, NELEMENTS(np2cfg.model));
 		update |= SYS_UPDATECFG;
 	}
 

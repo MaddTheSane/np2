@@ -14,7 +14,7 @@ void codecnv_sjis2euc(char *euc, UINT ecnt, const char *sjis, UINT scnt) {
 	}
 	ecnt--;
 	while(1) {
-		s = (BYTE)*sjis++;
+		s = (UINT8)*sjis++;
 		if (s < 0x80) {				// ascii
 			if (!s) {
 				break;
@@ -26,7 +26,7 @@ void codecnv_sjis2euc(char *euc, UINT ecnt, const char *sjis, UINT scnt) {
 			*euc++ = (char)s;
 		}
 		else if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x2f) {
-			c = (BYTE)*sjis++;
+			c = (UINT8)*sjis++;
 			if (!c) {
 				break;
 			}
@@ -66,7 +66,7 @@ void codecnv_euc2sjis(char *sjis, UINT scnt, const char *euc, UINT ecnt) {
 	}
 	scnt--;
 	while(scnt) {
-		h = (BYTE)*euc++;
+		h = (UINT8)*euc++;
 		if (h < 0x80) {				// ascii
 			if (!h) {
 				break;
@@ -75,7 +75,7 @@ void codecnv_euc2sjis(char *sjis, UINT scnt, const char *euc, UINT ecnt) {
 			*sjis++ = (char)h;
 		}
 		else if (h == 0x8e) {
-			l = (BYTE)*euc++;
+			l = (UINT8)*euc++;
 			if (!l) {
 				break;
 			}
@@ -83,7 +83,7 @@ void codecnv_euc2sjis(char *sjis, UINT scnt, const char *euc, UINT ecnt) {
 			*sjis++ = (char)h;
 		}
 		else {
-			l = (BYTE)*euc++;
+			l = (UINT8)*euc++;
 			if ((!l) || (scnt < 2)) {
 				break;
 			}
@@ -1260,13 +1260,13 @@ void codecnv_sjis2utf(UINT16 *utf, UINT ucnt, const char *sjis, UINT scnt) {
 	}
 	ucnt--;
 	while(ucnt) {
-		s = (BYTE)*sjis++;
+		s = (UINT8)*sjis++;
 		if (s == 0) {
 			break;
 		}
 		r = utftbl[s];
 		if (r & 0xffff0000) {
-			s = (BYTE)*sjis++;
+			s = (UINT8)*sjis++;
 			if (s == 0) {
 				break;
 			}

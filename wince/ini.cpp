@@ -183,11 +183,11 @@ static void iniwrsetarg8(char *work, int size, const BYTE *ptr, int arg) {
 	char	tmp[8];
 
 	if (arg > 0) {
-		SPRINTF(tmp, "%.2x", ptr[0]);
+		OEMSPRINTF(tmp, "%.2x", ptr[0]);
 		milstr_ncpy(work, tmp, size);
 	}
 	for (i=1; i<arg; i++) {
-		SPRINTF(tmp, " %.2x", ptr[i]);
+		OEMSPRINTF(tmp, " %.2x", ptr[i]);
 		milstr_ncat(work, tmp, size);
 	}
 }
@@ -384,22 +384,19 @@ static const INITBL iniitem[] = {
 };
 
 
-#define	INIITEMS	(sizeof(iniitem) / sizeof(INITBL))
-
-
 void initload(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	milstr_ncpy(path, file_getcd(inifile), sizeof(path));
-	ini_read(path, ini_title, iniitem, INIITEMS);
+	milstr_ncpy(path, file_getcd(inifile), NELEMENTS(path));
+	ini_read(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 
 void initsave(void) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	milstr_ncpy(path, file_getcd(inifile), sizeof(path));
-	ini_write(path, ini_title, iniitem, INIITEMS);
+	milstr_ncpy(path, file_getcd(inifile), NELEMENTS(path));
+	ini_write(path, ini_title, iniitem, NELEMENTS(iniitem));
 }
 

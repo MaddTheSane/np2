@@ -47,11 +47,11 @@ VRAMHDL vram_create(int width, int height, BOOL alpha, int bpp) {
 		ret->bpp = bpp;
 		ret->scrnsize = size;
 		if (alpha) {
-			ret->alpha = (BYTE *)(ret + 1);
+			ret->alpha = (UINT8 *)(ret + 1);
 			ret->ptr = ret->alpha + alphasize;
 		}
 		else {
-			ret->ptr = (BYTE *)(ret + 1);
+			ret->ptr = (UINT8 *)(ret + 1);
 		}
 	}
 	return(ret);
@@ -60,20 +60,20 @@ VRAMHDL vram_create(int width, int height, BOOL alpha, int bpp) {
 void vram_destroy(VRAMHDL hdl) {
 
 	if (hdl) {
-		if ((hdl->alpha) && (hdl->alpha != (BYTE *)(hdl + 1))) {
+		if ((hdl->alpha) && (hdl->alpha != (UINT8 *)(hdl + 1))) {
 			_MFREE(hdl->alpha);
 		}
 		_MFREE(hdl);
 	}
 }
 
-BOOL vram_allocalpha(VRAMHDL hdl) {
+BRESULT vram_allocalpha(VRAMHDL hdl) {
 
 	if (hdl == NULL) {
 		return(FAILURE);
 	}
 	if (hdl->alpha == NULL) {
-		hdl->alpha = (BYTE *)_MALLOC(hdl->scrnsize, "alpha plane");
+		hdl->alpha = (UINT8 *)_MALLOC(hdl->scrnsize, "alpha plane");
 		if (hdl->alpha == NULL) {
 			return(FAILURE);
 		}
@@ -89,7 +89,7 @@ void vram_zerofill(VRAMHDL hdl, const RECT_T *rect) {
 	int		height;
 	int		pos;
 	int		remain;
-	BYTE	*p;
+	UINT8	*p;
 
 	if (hdl) {
 		if (rect == NULL) {
@@ -127,19 +127,19 @@ void vram_zerofill(VRAMHDL hdl, const RECT_T *rect) {
 	}
 }
 
-void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
+void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, UINT8 alpha) {
 
 	int		ptr;
 	int		width;
 	int		height;
 	int		pos;
 	int		remain;
-	BYTE	*p;
+	UINT8	*p;
 #ifdef SUPPORT_16BPP
 	UINT	c16;
 #endif
 #ifdef SUPPORT_24BPP
-	BYTE	c24[3];
+	UINT8	c24[3];
 #endif
 
 	if (hdl == NULL) {
@@ -151,7 +151,7 @@ void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
 		switch(hdl->bpp) {
 			case 8:
 				do {
-					*p++ = (BYTE)color;
+					*p++ = (UINT8)color;
 				} while(--remain);
 				break;
 #ifdef SUPPORT_16BPP
@@ -165,9 +165,9 @@ void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
 #endif
 #ifdef SUPPORT_24BPP
 			case 24:
-				c24[0] = (BYTE)color;
-				c24[1] = (BYTE)(color >> 8);
-				c24[2] = (BYTE)(color >> 16);
+				c24[0] = (UINT8)color;
+				c24[1] = (UINT8)(color >> 8);
+				c24[2] = (UINT8)(color >> 16);
 				do {
 					p[0] = c24[0];
 					p[1] = c24[1];
@@ -200,7 +200,7 @@ void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
 					do {
 						int r = width;
 						do {
-							*p++ = (BYTE)color;
+							*p++ = (UINT8)color;
 						} while(--r);
 						p += hdl->yalign - width;
 					} while(--remain);
@@ -221,9 +221,9 @@ void vram_fill(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
 #endif
 #ifdef SUPPORT_24BPP
 				case 24:
-					c24[0] = (BYTE)color;
-					c24[1] = (BYTE)(color >> 8);
-					c24[2] = (BYTE)(color >> 16);
+					c24[0] = (UINT8)color;
+					c24[1] = (UINT8)(color >> 8);
+					c24[2] = (UINT8)(color >> 16);
 					remain = height;
 					do {
 						int r = width;
@@ -260,12 +260,12 @@ void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color) {
 	int		height;
 	int		pos;
 	int		remain;
-	BYTE	*p;
+	UINT8	*p;
 #ifdef SUPPORT_16BPP
 	UINT	c16;
 #endif
 #ifdef SUPPORT_24BPP
-	BYTE	c24[3];
+	UINT8	c24[3];
 #endif
 
 	if (hdl == NULL) {
@@ -277,7 +277,7 @@ void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color) {
 		switch(hdl->bpp) {
 			case 8:
 				do {
-					*p++ = (BYTE)color;
+					*p++ = (UINT8)color;
 				} while(--remain);
 				break;
 #ifdef SUPPORT_16BPP
@@ -291,9 +291,9 @@ void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color) {
 #endif
 #ifdef SUPPORT_24BPP
 			case 24:
-				c24[0] = (BYTE)color;
-				c24[1] = (BYTE)(color >> 8);
-				c24[2] = (BYTE)(color >> 16);
+				c24[0] = (UINT8)color;
+				c24[1] = (UINT8)(color >> 8);
+				c24[2] = (UINT8)(color >> 16);
 				do {
 					p[0] = c24[0];
 					p[1] = c24[1];
@@ -323,7 +323,7 @@ void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color) {
 					do {
 						int r = width;
 						do {
-							*p++ = (BYTE)color;
+							*p++ = (UINT8)color;
 						} while(--r);
 						p += hdl->yalign - width;
 					} while(--remain);
@@ -344,9 +344,9 @@ void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color) {
 #endif
 #ifdef SUPPORT_24BPP
 				case 24:
-					c24[0] = (BYTE)color;
-					c24[1] = (BYTE)(color >> 8);
-					c24[2] = (BYTE)(color >> 16);
+					c24[0] = (UINT8)color;
+					c24[1] = (UINT8)(color >> 8);
+					c24[2] = (UINT8)(color >> 16);
 					remain = height;
 					do {
 						int r = width;
@@ -368,14 +368,14 @@ void vram_filldat(VRAMHDL hdl, const RECT_T *rect, UINT32 color) {
 	}
 }
 
-void vram_fillalpha(VRAMHDL hdl, const RECT_T *rect, BYTE alpha) {
+void vram_fillalpha(VRAMHDL hdl, const RECT_T *rect, UINT8 alpha) {
 
 	int		ptr;
 	int		width;
 	int		height;
 	int		pos;
 	int		remain;
-	BYTE	*p;
+	UINT8	*p;
 
 	if ((hdl == NULL) || (hdl->alpha == NULL)) {
 		return;
@@ -403,14 +403,14 @@ void vram_fillalpha(VRAMHDL hdl, const RECT_T *rect, BYTE alpha) {
 	}
 }
 
-void vram_fillex(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
+void vram_fillex(VRAMHDL hdl, const RECT_T *rect, UINT32 color, UINT8 alpha) {
 
 	int		ptr;
 	int		width;
 	int		height;
 	int		pos;
 	int		remain;
-	BYTE	*p;
+	UINT8	*p;
 #ifdef SUPPORT_16BPP
 	int		tmp;
 	int		c16[3];
@@ -450,9 +450,9 @@ void vram_fillex(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
 				c24[1] = (color >> 8) & 0xff;
 				c24[2] = (color >> 16) & 0xff;
 				do {
-					p[0] = (BYTE)MAKEALPHA24(p[0], c24[0], alpha, 6);
-					p[1] = (BYTE)MAKEALPHA24(p[1], c24[1], alpha, 6);
-					p[2] = (BYTE)MAKEALPHA24(p[2], c24[2], alpha, 6);
+					p[0] = (UINT8)MAKEALPHA24(p[0], c24[0], alpha, 6);
+					p[1] = (UINT8)MAKEALPHA24(p[1], c24[1], alpha, 6);
+					p[2] = (UINT8)MAKEALPHA24(p[2], c24[2], alpha, 6);
 					p += 3;
 				} while(--remain);
 				break;
@@ -505,9 +505,9 @@ void vram_fillex(VRAMHDL hdl, const RECT_T *rect, UINT32 color, BYTE alpha) {
 					do {
 						int r = width;
 						do {
-							p[0] = (BYTE)MAKEALPHA24(p[0], c24[0], alpha, 6);
-							p[1] = (BYTE)MAKEALPHA24(p[1], c24[1], alpha, 6);
-							p[2] = (BYTE)MAKEALPHA24(p[2], c24[2], alpha, 6);
+							p[0] = (UINT8)MAKEALPHA24(p[0], c24[0], alpha, 6);
+							p[1] = (UINT8)MAKEALPHA24(p[1], c24[1], alpha, 6);
+							p[2] = (UINT8)MAKEALPHA24(p[2], c24[2], alpha, 6);
 							p += 3;
 						} while(--r);
 						p += hdl->yalign - (width * 3);
@@ -589,12 +589,12 @@ VRAMHDL vram_dupe(const VRAMHDL hdl) {
 	}
 	*ret = *hdl;
 	if (hdl->alpha) {
-		ret->alpha = (BYTE *)(ret + 1);
+		ret->alpha = (UINT8 *)(ret + 1);
 		CopyMemory(ret->alpha, hdl->alpha, hdl->scrnsize);
 		ret->ptr = ret->alpha + hdl->scrnsize;
 	}
 	else {
-		ret->ptr = (BYTE *)(ret + 1);
+		ret->ptr = (UINT8 *)(ret + 1);
 	}
 	CopyMemory(ret->ptr, hdl->ptr, datsize);
 
@@ -602,7 +602,7 @@ vd_exit:
 	return(ret);
 }
 
-BOOL vram_cliprect(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct) {
+BRESULT vram_cliprect(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct) {
 
 	if (vram == NULL) {
 		return(FAILURE);
@@ -628,7 +628,7 @@ BOOL vram_cliprect(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct) {
 	return(SUCCESS);
 }
 
-BOOL vram_cliprectex(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct) {
+BRESULT vram_cliprectex(RECT_T *clip, const VRAMHDL vram, const RECT_T *rct) {
 
 	if ((vram == NULL) || (clip == NULL)) {
 		return(FAILURE);

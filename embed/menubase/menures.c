@@ -4,60 +4,60 @@
 
 
 #if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
-const char mstr_fontcheck[] = " ";
-const char mstr_ok[] = "OK";
+const OEMCHAR mstr_fontcheck[] = " ";
+const OEMCHAR mstr_ok[] = "OK";
 			// キャンセル
-const char mstr_cancel[] = "\267\254\335\276\331";
+const OEMCHAR mstr_cancel[] = "\267\254\335\276\331";
 			// 中止
-const char mstr_abort[] = "\222\206\216\176";
+const OEMCHAR mstr_abort[] = "\222\206\216\176";
 			// 再試行
-const char mstr_retry[] = "\215\304\216\216\215\163";
+const OEMCHAR mstr_retry[] = "\215\304\216\216\215\163";
 			// 無視
-const char mstr_ignore[] = "\226\263\216\213";
+const OEMCHAR mstr_ignore[] = "\226\263\216\213";
 			// はい
-const char mstr_yes[] = "\202\315\202\242";
+const OEMCHAR mstr_yes[] = "\202\315\202\242";
 			// いいえ
-const char mstr_no[] = "\202\242\202\242\202\246";
+const OEMCHAR mstr_no[] = "\202\242\202\242\202\246";
 #elif defined(OSLANG_EUC) && !defined(RESOURCE_US)
-const char mstr_fontcheck[] = " ";
-const char mstr_ok[] = "OK";
+const OEMCHAR mstr_fontcheck[] = " ";
+const OEMCHAR mstr_ok[] = "OK";
 			// キャンセル
-const char mstr_cancel[] = "\216\267\216\254\216\335\216\276\216\331";
+const OEMCHAR mstr_cancel[] = "\216\267\216\254\216\335\216\276\216\331";
 			// 中止
-const char mstr_abort[] = "\303\346\273\337";
+const OEMCHAR mstr_abort[] = "\303\346\273\337";
 			// 再試行
-const char mstr_retry[] = "\272\306\273\356\271\324";
+const OEMCHAR mstr_retry[] = "\272\306\273\356\271\324";
 			// 無視
-const char mstr_ignore[] = "\314\265\273\353";
+const OEMCHAR mstr_ignore[] = "\314\265\273\353";
 			// はい
-const char mstr_yes[] = "\244\317\244\244";
+const OEMCHAR mstr_yes[] = "\244\317\244\244";
 			// いいえ
-const char mstr_no[] = "\244\244\244\244\244\250";
+const OEMCHAR mstr_no[] = "\244\244\244\244\244\250";
 #elif defined(OSLANG_UTF8) && !defined(RESOURCE_US)
-const char mstr_fontcheck[] = " ";
-const char mstr_ok[] = "OK";
+const OEMCHAR mstr_fontcheck[] = " ";
+const OEMCHAR mstr_ok[] = "OK";
 			// キャンセル
-const char mstr_cancel[] = "\357\275\267\357\275\254\357\276\235" \
+const OEMCHAR mstr_cancel[] = "\357\275\267\357\275\254\357\276\235" \
 							"\357\275\276\357\276\231";
 			// 中止
-const char mstr_abort[] = "\344\270\255\346\255\242";
+const OEMCHAR mstr_abort[] = "\344\270\255\346\255\242";
 			// 再試行
-const char mstr_retry[] = "\345\206\215\350\251\246\350\241\214";
+const OEMCHAR mstr_retry[] = "\345\206\215\350\251\246\350\241\214";
 			// 無視
-const char mstr_ignore[] = "\347\204\241\350\246\226";
+const OEMCHAR mstr_ignore[] = "\347\204\241\350\246\226";
 			// はい
-const char mstr_yes[] = "\343\201\257\343\201\204";
+const OEMCHAR mstr_yes[] = "\343\201\257\343\201\204";
 			// いいえ
-const char mstr_no[] = "\343\201\204\343\201\204\343\201\210";
+const OEMCHAR mstr_no[] = "\343\201\204\343\201\204\343\201\210";
 #else
-const char mstr_fontcheck[] = " ";
-const char mstr_ok[] = "OK";
-const char mstr_cancel[] = "Cancel";
-const char mstr_abort[] = "Abort";
-const char mstr_retry[] = "Retry";
-const char mstr_ignore[] = "Ignore";
-const char mstr_yes[] = "Yes";
-const char mstr_no[] = "No";
+const OEMCHAR mstr_fontcheck[] = OEMTEXT(" ");
+const OEMCHAR mstr_ok[] = OEMTEXT("OK");
+const OEMCHAR mstr_cancel[] = OEMTEXT("Cancel");
+const OEMCHAR mstr_abort[] = OEMTEXT("Abort");
+const OEMCHAR mstr_retry[] = OEMTEXT("Retry");
+const OEMCHAR mstr_ignore[] = OEMTEXT("Ignore");
+const OEMCHAR mstr_yes[] = OEMTEXT("Yes");
+const OEMCHAR mstr_no[] = OEMTEXT("No");
 #endif
 
 
@@ -65,13 +65,13 @@ const char mstr_no[] = "No";
 
 // ---- minimize, close
 
-static const BYTE minimize1[4] = {		// 12x10
+static const UINT8 minimize1[4] = {		// 12x10
 		0x6d,0x66,0x96,0x00};
 
 const MENURES2 menures_minimize = {12, 10, minimize1};
 
 
-static const BYTE close1[14] = {		// 12x10
+static const UINT8 close1[14] = {		// 12x10
 		0xe8,0x42,0x52,0x22,0x72,0x84,0x29,0x98,0x74,0x22,0x52,0x42,0x92,
 		0x0a};
 
@@ -80,10 +80,10 @@ const MENURES2 menures_close = {12, 10, close1};
 
 // ---- sys
 
-static const BYTE scheck[7] = {			// 8x16
+static const UINT8 scheck[7] = {		// 8x16
 		0xda,0x41,0x11,0x42,0x63,0xb1,0x0c};
 
-static const BYTE snext[9] = {			// 8x16
+static const UINT8 snext[9] = {			// 8x16
 		0xc9,0x71,0x62,0x53,0x44,0x53,0x62,0xb1,0x03};
 
 const MENURES2 menures_sys[2] = {{8, 16, scheck}, {8, 16, snext}};
@@ -91,19 +91,19 @@ const MENURES2 menures_sys[2] = {{8, 16, scheck}, {8, 16, snext}};
 
 // ---- radio
 
-static const BYTE radio[43] = {			// 12x12
+static const UINT8 radio[43] = {		// 12x12
 		0x08,0x48,0x0a,0x44,0x58,0x44,0x07,0x54,0x85,0x51,0x25,0x00,0x54,
 		0x1a,0x23,0x40,0xc5,0x31,0x42,0xc5,0x31,0x42,0xc5,0x31,0x42,0xc5,
 		0x31,0x02,0x54,0x1a,0x23,0x00,0x34,0x83,0x31,0x23,0x07,0x22,0x38,
 		0x22,0x0a,0x28,0x08};
 
-static const BYTE radiog[43] = {		// 12x12
+static const UINT8 radiog[43] = {		// 12x12
 		0x08,0x48,0x0a,0x44,0x58,0x44,0x07,0x54,0x85,0x56,0x25,0x00,0x54,
 		0x6a,0x23,0x40,0xc5,0x36,0x42,0xc5,0x36,0x42,0xc5,0x36,0x42,0xc5,
 		0x36,0x02,0x54,0x6a,0x23,0x00,0x34,0x83,0x36,0x23,0x07,0x22,0x38,
 		0x22,0x0a,0x28,0x08};
 
-static const BYTE radiohit[7] = {		// 12x12
+static const UINT8 radiohit[7] = {		// 12x12
 		0x5b,0x82,0x49,0x88,0x84,0x29,0x5b};
 
 const MENURES2 menures_radio[3] = {{12, 12, radio}, {12, 12, radiog},
@@ -112,7 +112,7 @@ const MENURES2 menures_radio[3] = {{12, 12, radio}, {12, 12, radiog},
 
 // ---- check
 
-static const BYTE checkhit[11] = {		// 9x9
+static const UINT8 checkhit[11] = {		// 9x9
 		0x09,0x71,0x22,0x31,0x23,0x12,0x33,0x55,0x73,0x81,0x0e};
 
 const MENURES2 menures_check = {9, 9, checkhit};
@@ -120,10 +120,10 @@ const MENURES2 menures_check = {9, 9, checkhit};
 
 // ---- btn
 
-static const BYTE btnup[7] = {			// 12x12
+static const UINT8 btnup[7] = {			// 12x12
 		0x5b,0x81,0x3a,0x88,0x65,0xb7,0x03};
 
-static const BYTE btndn[7] = {			// 12x12
+static const UINT8 btndn[7] = {			// 12x12
 		0x2b,0x67,0x85,0x38,0xa8,0xb1,0x06};
 
 const MENURES2 menures_scrbtn[2] = {{12, 12, btnup}, {12, 12, btndn}};
@@ -132,13 +132,13 @@ const MENURES2 menures_scrbtn[2] = {{12, 12, btnup}, {12, 12, btndn}};
 
 // ---- minimize, close
 
-static const BYTE minimize1[3] = {		// 8x8
+static const UINT8 minimize1[3] = {		// 8x8
 		0x1b,0x85,0x0a};
 
 const MENURES2 menures_minimize = {8, 8, minimize1};
 
 
-static const BYTE close1[11] = {		// 8x8
+static const UINT8 close1[11] = {		// 8x8
 		0x98,0x31,0x41,0x11,0x61,0x61,0x11,0x41,0x31,0x91,0x02};
 
 const MENURES2 menures_close = {8, 8, close1};
@@ -146,10 +146,10 @@ const MENURES2 menures_close = {8, 8, close1};
 
 // ---- sys
 
-static const BYTE scheck[7] = {			// 8x12
+static const UINT8 scheck[7] = {		// 8x12
 		0x5a,0x41,0x11,0x42,0x63,0xa1,0x04};
 
-static const BYTE snext[7] = {			// 8x12
+static const UINT8 snext[7] = {			// 8x12
 		0xb9,0x71,0x62,0x53,0x62,0xa1,0x04};
 
 const MENURES2 menures_sys[2] = {{8, 12, scheck}, {8, 12, snext}};
@@ -157,19 +157,19 @@ const MENURES2 menures_sys[2] = {{8, 12, scheck}, {8, 12, snext}};
 
 // ---- radio
 
-static const BYTE radio[40] = {			// 11x11
+static const UINT8 radio[40] = {		// 11x11
 		0x08,0x47,0x0a,0x44,0x57,0x44,0x07,0x54,0x75,0x51,0x25,0x00,0x54,
 		0x19,0x23,0x40,0xb5,0x31,0x42,0xb5,0x31,0x42,0xb5,0x31,0x02,0x54,
 		0x19,0x23,0x00,0x34,0x73,0x31,0x23,0x07,0x22,0x37,0x22,0x0a,0x27,
 		0x08};
 
-static const BYTE radiog[40] = {		// 11x11
+static const UINT8 radiog[40] = {		// 11x11
 		0x08,0x47,0x0a,0x44,0x57,0x44,0x07,0x54,0x75,0x56,0x25,0x00,0x54,
 		0x69,0x23,0x40,0xb5,0x36,0x42,0xb5,0x36,0x42,0xb5,0x36,0x02,0x54,
 		0x69,0x23,0x00,0x34,0x73,0x36,0x23,0x07,0x22,0x37,0x22,0x0a,0x27,
 		0x08};
 
-static const BYTE radiohit[6] = {		// 11x11
+static const UINT8 radiohit[6] = {		// 11x11
 		0x1b,0x81,0x39,0x98,0xb1,0x01};
 
 const MENURES2 menures_radio[3] = {{11, 11, radio}, {11, 11, radiog},
@@ -178,7 +178,7 @@ const MENURES2 menures_radio[3] = {{11, 11, radio}, {11, 11, radiog},
 
 // ---- check
 
-static const BYTE checkhit[8] = {		// 7x7
+static const UINT8 checkhit[8] = {		// 7x7
 		0xc8,0x51,0x22,0x11,0x32,0x53,0x81,0x0b};
 
 const MENURES2 menures_check = {7, 7, checkhit};
@@ -186,11 +186,11 @@ const MENURES2 menures_check = {7, 7, checkhit};
 
 // ---- btn
 
-static const BYTE btnup[5] = {			// 6x6
+static const UINT8 btnup[5] = {			// 6x6
 		0x88,0x41,0x23,0x85,0x0d};
 
 
-static const BYTE btndn[4] = {			// 6x6
+static const UINT8 btndn[4] = {			// 6x6
 		0x56,0x32,0x14,0xf8};
 
 const MENURES2 menures_scrbtn[2] = {{6, 6, btnup}, {6, 6, btndn}};
@@ -200,7 +200,7 @@ const MENURES2 menures_scrbtn[2] = {{6, 6, btnup}, {6, 6, btndn}};
 
 // ---- slider
 
-const BYTE menures_slddat[] = {
+const UINT8 menures_slddat[] = {
 		0x28,0x25,0x33,0x54,0x32,0x43,0x25,0x33,0x54,0x32,0x43,0x25,0x33,
 		0x54,0x32,0x43,0x05,0x42,0x75,0x50,0x00,
 

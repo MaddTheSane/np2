@@ -25,6 +25,11 @@ typedef	unsigned short	UINT16;
 typedef	signed int		SINT32;
 #endif
 
+#define	BRESULT				UINT8
+#define	OEMCHAR				char
+#define	OEMTEXT(string)		(string)
+#define	OEMSPRINTF			sprintf
+#define	OEMSTRLEN			strlen
 
 #if !defined(SIZE_VGA)
 #define	RGB16		UINT32
@@ -41,14 +46,14 @@ typedef	signed int		SINT32;
 #include	"trace.h"
 
 
-#define	GETTICK()	SDL_GetTicks()
-#define	SPRINTF		sprintf
+#define	GETTICK()			SDL_GetTicks()
 #define	__ASSERT(s)
+#define	SPRINTF				sprintf
+#define	STRLEN				strlen
 
 #define	VERMOUTH_LIB
 // #define	SOUND_CRITICAL
 
-#define	SUPPORT_SJIS
 #define	SUPPORT_EUC
 
 #define	SUPPORT_16BPP

@@ -96,6 +96,13 @@
 　　CPUフォルダの DMA EGC等がほぼ同様のコードなので memフォルダへ移動し
 　　共通にしました。
 
+　　embedのShift-JISを ネイティブコードにしました。
+　　文字コードがEUCの環境では SUPPORT_SJISは不要になります。
+　　また、fontmng_getsize, fontmng_getdrawsizeの引き数の文字コードが
+　　SJISからEUCへ変更になっています。
+
+　　といいつつ EUC→Unicodeの変換関数が無いのでアレ。
+
 
 
 　ver0.79 → ver0.80

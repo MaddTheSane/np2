@@ -43,10 +43,10 @@ static	SCRNMNG		scrnmng;
 static	SCRNSTAT	scrnstat;
 static	SCRNSURF	scrnsurf;
 
-static	BYTE		gx_disable = 1;
+static	UINT8		gx_disable = 1;
 extern	GXKeyList	gx_keylist;
 
-static const TCHAR	errmsg[] = STRLITERAL("Error");
+static const TCHAR	errmsg[] = _T("Error");
 
 
 typedef struct {
@@ -161,7 +161,7 @@ static void palcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp) {
 	}
 }
 
-static void bmp16draw(void *bmp, BYTE *dst, int width, int height,
+static void bmp16draw(void *bmp, UINT8 *dst, int width, int height,
 												int xalign, int yalign) {
 
 	CMNVRAM	vram;
@@ -195,18 +195,18 @@ BOOL scrnmng_create(HWND hWnd, LONG width, LONG height) {
 		return(FAILURE);
 	}
 	if (GXOpenDisplay(hWnd, GX_FULLSCREEN) == 0) {
-		MessageBox(hWnd, STRLITERAL("Couldn't GAPI Object"),
+		MessageBox(hWnd, _T("Couldn't GAPI Object"),
 											errmsg, MB_OK | MB_ICONSTOP);
 		return(FAILURE);
 	}
 	gx_dp = GXGETDISPLAYPROPERTIES();
 	if (gx_dp.cBPP != 16) {
-		MessageBox(hWnd, STRLITERAL("Only 16bit color support..."),
+		MessageBox(hWnd, _T("Only 16bit color support..."),
 											errmsg, MB_OK | MB_ICONSTOP);
 		return(FAILURE);
 	}
 	if (!(gx_dp.ffFormat & kfDirect565)) {
-		MessageBox(hWnd, STRLITERAL("Only 16bit(565) support..."),
+		MessageBox(hWnd, _T("Only 16bit(565) support..."),
 											errmsg, MB_OK | MB_ICONSTOP);
 		return(FAILURE);
 	}
@@ -220,7 +220,7 @@ BOOL scrnmng_create(HWND hWnd, LONG width, LONG height) {
 		scrnmng.rotate = TRUE;
 	}
 	else {
-		wsprintf(msg, STRLITERAL("Required %dx%d..."), width, height);
+		wsprintf(msg, _T("Required %dx%d..."), width, height);
 		MessageBox(hWnd, msg, errmsg, MB_OK | MB_ICONSTOP);
 		return(FAILURE);
 	}
@@ -305,7 +305,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 		return(NULL);
 	}
 	if (scrnmng.vram == NULL) {
-		scrnsurf.ptr = (BYTE *)GXBEGINDRAW() + scrnmng.start;
+		scrnsurf.ptr = (UINT8 *)GXBEGINDRAW() + scrnmng.start;
 		scrnsurf.xalign = scrnmng.xalign;
 		scrnsurf.yalign = scrnmng.yalign;
 	}
@@ -330,9 +330,9 @@ static void draw_onmenu(void) {
 
 	RECT_T		rt;
 	DRAWRECT	dr;
-const BYTE		*p;
-	BYTE		*q;
-const BYTE		*a;
+const UINT8		*p;
+	UINT8		*q;
+const UINT8		*a;
 	int			salign;
 	int			dalign;
 	int			r;
@@ -360,7 +360,7 @@ const BYTE		*a;
 		return;
 	}
 	p = scrnmng.vram->ptr + (dr.srcpos * 2);
-	q = (BYTE *)GXBEGINDRAW() + dr.dstpos;
+	q = (UINT8 *)GXBEGINDRAW() + dr.dstpos;
 	a = menuvram->alpha + dr.srcpos;
 	salign = menuvram->width - dr.width;
 	dalign = dr.yalign - (dr.width * dr.xalign);
@@ -447,8 +447,8 @@ BOOL scrnmng_mousepos(LPARAM *lp) {
 void scrnmng_clear(BOOL logo) {
 
 	void	*bmp;
-	BYTE	*p;
-	BYTE	*q;
+	UINT8	*p;
+	UINT8	*q;
 	int		y;
 	int		x;
 	long	yalign;
@@ -460,7 +460,7 @@ void scrnmng_clear(BOOL logo) {
 	if (logo) {
 		bmp = (void *)bmpdata_solvedata(nekop2_bmp);
 	}
-	p = (BYTE *)GXBEGINDRAW();
+	p = (UINT8 *)GXBEGINDRAW();
 	q = p;
 	y = gx_dp.cyHeight;
 	yalign = gx_dp.cbyPitch - (gx_dp.cbxPitch * gx_dp.cxWidth);
@@ -538,10 +538,10 @@ void scrnmng_leavemenu(void) {
 void scrnmng_menudraw(const RECT_T *rct) {
 
 	DRAWRECT	dr;
-const BYTE		*p;
-const BYTE		*q;
-	BYTE		*r;
-	BYTE		*a;
+const UINT8		*p;
+const UINT8		*q;
+	UINT8		*r;
+	UINT8		*a;
 	int			salign;
 	int			dalign;
 	int			x;
@@ -554,7 +554,7 @@ const BYTE		*q;
 	}
 	p = scrnmng.vram->ptr + (dr.srcpos * 2);
 	q = menuvram->ptr + (dr.srcpos * 2);
-	r = (BYTE *)GXBEGINDRAW() + dr.dstpos;
+	r = (UINT8 *)GXBEGINDRAW() + dr.dstpos;
 	a = menuvram->alpha + dr.srcpos;
 	salign = menuvram->width;
 	dalign = dr.yalign - (dr.width * dr.xalign);

@@ -12,7 +12,7 @@
 	MENUBASE	menubase;
 
 
-BOOL menubase_create(void) {
+BRESULT menubase_create(void) {
 
 	MENUBASE	*mb;
 
@@ -34,7 +34,7 @@ void menubase_destroy(void) {
 	ZeroMemory(mb, sizeof(MENUBASE));
 }
 
-BOOL menubase_open(int num) {
+BRESULT menubase_open(int num) {
 
 	MENUBASE	*mb;
 	SCRNMENU	smenu;
@@ -88,7 +88,7 @@ void menubase_close(void) {
 	}
 }
 
-BOOL menubase_moving(int x, int y, int btn) {
+BRESULT menubase_moving(int x, int y, int btn) {
 
 	int		num;
 
@@ -102,7 +102,7 @@ BOOL menubase_moving(int x, int y, int btn) {
 	return(SUCCESS);
 }
 
-BOOL menubase_key(UINT key) {
+BRESULT menubase_key(UINT key) {
 
 	int		num;
 

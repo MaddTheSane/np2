@@ -36,28 +36,28 @@ enum {
 	DID_REALPALSTR
 };
 
-static const char str_video[] = "Video";
-static const char str_lcd[] = "Liquid Crystal Display";
-static const char str_lcdx[] = "Reverse";
-static const char str_skipline[] = "Use skipline revisions";
-static const char str_skiplght[] = "Ratio";
+static const OEMCHAR str_video[] = OEMTEXT("Video");
+static const OEMCHAR str_lcd[] = OEMTEXT("Liquid Crystal Display");
+static const OEMCHAR str_lcdx[] = OEMTEXT("Reverse");
+static const OEMCHAR str_skipline[] = OEMTEXT("Use skipline revisions");
+static const OEMCHAR str_skiplght[] = OEMTEXT("Ratio");
 
-static const char str_chip[] = "Chip";
-static const char str_gdc[] = "GDC";
-static const char str_gdc0[] = "uPD7220";
-static const char str_gdc1[] = "uPD72020";
-static const char str_grcg[] = "Graphic Charger";
-static const char str_grcg0[] = "None";
-static const char str_grcg1[] = "GRCG";
-static const char str_grcg2[] = "GRCG+";
-static const char str_grcg3[] = "EGC";
-static const char str_pc980124[] = "Enable 16color (PC-9801-24)";
+static const OEMCHAR str_chip[] = OEMTEXT("Chip");
+static const OEMCHAR str_gdc[] = OEMTEXT("GDC");
+static const OEMCHAR str_gdc0[] = OEMTEXT("uPD7220");
+static const OEMCHAR str_gdc1[] = OEMTEXT("uPD72020");
+static const OEMCHAR str_grcg[] = OEMTEXT("Graphic Charger");
+static const OEMCHAR str_grcg0[] = OEMTEXT("None");
+static const OEMCHAR str_grcg1[] = OEMTEXT("GRCG");
+static const OEMCHAR str_grcg2[] = OEMTEXT("GRCG+");
+static const OEMCHAR str_grcg3[] = OEMTEXT("EGC");
+static const OEMCHAR str_pc980124[] = OEMTEXT("Enable 16color (PC-9801-24)");
 
-static const char str_timing[] = "Timing";
-static const char str_tram[] = "T-RAM";
-static const char str_vram[] = "V-RAM";
-static const char str_clock[] = "clock";
-static const char str_realpal[] = "RealPalettes Adjust";
+static const OEMCHAR str_timing[] = OEMTEXT("Timing");
+static const OEMCHAR str_tram[] = OEMTEXT("T-RAM");
+static const OEMCHAR str_vram[] = OEMTEXT("V-RAM");
+static const OEMCHAR str_clock[] = OEMTEXT("clock");
+static const OEMCHAR str_realpal[] = OEMTEXT("RealPalettes Adjust");
 
 
 #if defined(SIZE_QVGA)
@@ -212,7 +212,7 @@ static const MENUPRM res_scr3[] = {
 #endif
 
 typedef struct {
-const char		*tab;
+const OEMCHAR	*tab;
 const MENUPRM	*prm;
 	UINT		count;
 } TABLISTS;
@@ -236,9 +236,9 @@ static void setpage(UINT page) {
 
 static void setintstr(MENUID id, int val) {
 
-	char	buf[16];
+	OEMCHAR	buf[16];
 
-	SPRINTF(buf, str_d, val);
+	OEMSPRINTF(buf, str_d, val);
 	menudlg_settext(id, buf);
 }
 
@@ -251,7 +251,7 @@ const TABLISTS	*tl;
 	tl = tablist;
 	for (i=0; i<NELEMENTS(tablist); i++, tl++) {
 		menudlg_setpage((MENUID)(i + 1));
-		menudlg_itemappend(DID_TAB, (char *)tl->tab);
+		menudlg_itemappend(DID_TAB, (OEMCHAR *)tl->tab);
 		menudlg_appends(tl->prm, tl->count);
 	}
 
@@ -289,13 +289,13 @@ static void dlgupdate(void) {
 	UINT	update;
 	BOOL	renewal;
 	UINT	val;
-	BYTE	value[6];
+	UINT8	value[6];
 
 	update = 0;
 	renewal = FALSE;
 	val = menudlg_getval(DID_SKIPLINE);
-	if (np2cfg.skipline != (BYTE)val) {
-		np2cfg.skipline = (BYTE)val;
+	if (np2cfg.skipline != (UINT8)val) {
+		np2cfg.skipline = (UINT8)val;
 		renewal = TRUE;
 	}
 	val = menudlg_getval(DID_SKIPLIGHT);
@@ -310,8 +310,8 @@ static void dlgupdate(void) {
 		pal_makeskiptable();
 	}
 	val = menudlg_getval(DID_LCD) + (menudlg_getval(DID_LCDX) << 1);
-	if (np2cfg.LCD_MODE != (BYTE)val) {
-		np2cfg.LCD_MODE = (BYTE)val;
+	if (np2cfg.LCD_MODE != (UINT8)val) {
+		np2cfg.LCD_MODE = (UINT8)val;
 		pal_makelcdpal();
 		renewal = TRUE;
 	}
@@ -321,34 +321,34 @@ static void dlgupdate(void) {
 	}
 
 	val = menudlg_getval(DID_GDC72020);
-	if (np2cfg.uPD72020 != (BYTE)val) {
-		np2cfg.uPD72020 = (BYTE)val;
+	if (np2cfg.uPD72020 != (UINT8)val) {
+		np2cfg.uPD72020 = (UINT8)val;
 		update |= SYS_UPDATECFG;
 		gdc_restorekacmode();
 		gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 	}
 	for (val=0; (val<3) && (!menudlg_getval(gdcchip[val])); val++) { }
-	if (np2cfg.grcg != (BYTE)val) {
-		np2cfg.grcg = (BYTE)val;
+	if (np2cfg.grcg != (UINT8)val) {
+		np2cfg.grcg = (UINT8)val;
 		update |= SYS_UPDATECFG;
 		gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 	}
 	val = menudlg_getval(DID_PC980124);
-	if (np2cfg.color16 != (BYTE)val) {
-		np2cfg.color16 = (BYTE)val;
+	if (np2cfg.color16 != (UINT8)val) {
+		np2cfg.color16 = (UINT8)val;
 		update |= SYS_UPDATECFG;
 	}
 
 	ZeroMemory(value, sizeof(value));
-	value[0] = (BYTE)menudlg_getval(DID_TRAMWAIT);
+	value[0] = (UINT8)menudlg_getval(DID_TRAMWAIT);
 	if (value[0]) {
 		value[1] = 1;
 	}
-	value[2] = (BYTE)menudlg_getval(DID_VRAMWAIT);
+	value[2] = (UINT8)menudlg_getval(DID_VRAMWAIT);
 	if (value[2]) {
 		value[3] = 1;
 	}
-	value[4] = (BYTE)menudlg_getval(DID_GRCGWAIT);
+	value[4] = (UINT8)menudlg_getval(DID_GRCGWAIT);
 	if (value[4]) {
 		value[5] = 1;
 	}
@@ -359,8 +359,8 @@ static void dlgupdate(void) {
 		}
 	}
 	val = menudlg_getval(DID_REALPAL);
-	if (np2cfg.realpal != (BYTE)val) {
-		np2cfg.realpal = (BYTE)val;
+	if (np2cfg.realpal != (UINT8)val) {
+		np2cfg.realpal = (UINT8)val;
 		update |= SYS_UPDATECFG;
 	}
 	sysmng_update(update);

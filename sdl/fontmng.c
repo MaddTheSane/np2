@@ -175,7 +175,7 @@ static BOOL fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat) {
 		fhdl->cachehead = pos;
 	}
 	if (pfdat) {
-		*pfdat = (FNTDAT)(((BYTE *)(fhdl + 1)) + (pos * fhdl->fontalign));
+		*pfdat = (FNTDAT)(((UINT8 *)(fhdl + 1)) + (pos * fhdl->fontalign));
 	}
 	return(r);
 }
@@ -232,14 +232,14 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 	}
 }
 
-static BYTE getpixeldepth(SDL_Surface *s, int x, int y) {
+static UINT8 getpixeldepth(SDL_Surface *s, int x, int y) {
 
 	int		bpp;
-const BYTE	*ptr;
+const UINT8	*ptr;
 
 	if ((x >= 0) && (x < s->w) && (y >= 0) && (y < s->h)) {
 		bpp = s->format->BytesPerPixel;
-		ptr = (BYTE *)s->pixels + (y * s->pitch) + (x * bpp);
+		ptr = (UINT8 *)s->pixels + (y * s->pitch) + (x * bpp);
 		switch(bpp) {
 			case 1:
 				return((ptr[0] != 0)?FDAT_DEPTH:0);
@@ -257,7 +257,7 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 
 	UINT16		utext[2];
 	SDL_Surface	*text;
-	BYTE		*dst;
+	UINT8		*dst;
 	int			x;
 	int			y;
 	int			depth;
@@ -265,7 +265,7 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 	codecnv_sjis2utf(utext, 2, string, length);
 	text = TTF_RenderUNICODE_Solid(fhdl->ttf_font, utext, white);
 	setfdathead(fhdl, fdat, length, text);
-	dst = (BYTE *)(fdat + 1);
+	dst = (UINT8 *)(fdat + 1);
 	if (text) {
 		if (fhdl->fonttype & FDAT_ALIAS) {
 			for (y=0; y<fdat->height; y++) {
@@ -274,7 +274,7 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 					depth += getpixeldepth(text, x*2+1, y*2+0);
 					depth += getpixeldepth(text, x*2+0, y*2+1);
 					depth += getpixeldepth(text, x*2+1, y*2+1);
-					*dst++ = (BYTE)((depth + 2) / 4);
+					*dst++ = (UINT8)((depth + 2) / 4);
 				}
 			}
 		}
@@ -500,9 +500,9 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 											const char *string, int length) {
 
 	int		c;
-const BYTE	*src;
+const UINT8	*src;
 	int		width;
-	BYTE	*dst;
+	UINT8	*dst;
 	int		x;
 	int		y;
 
@@ -513,7 +513,7 @@ const BYTE	*src;
 	src = ankfont + (c * ANKFONTSIZE);
 	width = *src++;
 	setfdathead(fhdl, fdat, width);
-	dst = (BYTE *)(fdat + 1);
+	dst = (UINT8 *)(fdat + 1);
 	ZeroMemory(dst, fdat->width * fdat->height);
 	dst += ((fdat->height - ANKFONTSIZE) / 2) * fdat->width;
 	dst += (fdat->width - width) / 2;

@@ -1,20 +1,20 @@
 
 typedef struct {
-	BYTE	NOWAIT;
-	BYTE	DRAW_SKIP;
-	BYTE	F12KEY;
-	BYTE	resume;
+	UINT8	NOWAIT;
+	UINT8	DRAW_SKIP;
+	UINT8	F12KEY;
+	UINT8	resume;
 
 #if !defined(GX_DLL)
 	int		winx;
 	int		winy;
 #endif
 #if defined(WIN32_PLATFORM_PSPC)
-	BYTE	bindcur;
-	BYTE	bindbtn;
+	UINT8	bindcur;
+	UINT8	bindbtn;
 #endif
 
-	BYTE	jastsnd;
+	UINT8	jastsnd;
 } NP2OSCFG;
 
 
@@ -66,5 +66,5 @@ extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
-extern	char		modulefile[MAX_PATH];
+extern	OEMCHAR		modulefile[MAX_PATH];
 

@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	"strres.h"
-#include	"codecnv.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"pccore.h"
@@ -21,39 +20,39 @@ enum {
 };
 
 #if !defined(RESOURCE_US) && (!defined(CHARSET_OEM) || defined(OSLANG_SJIS))
-static const char str_dirname[] =				// ファイルの場所
+static const OEMCHAR str_dirname[] =			// ファイルの場所
 			"\203\164\203\100\203\103\203\213\202\314\217\352\217\212";
-static const char str_filename[] =				// ファイル名
+static const OEMCHAR str_filename[] =			// ファイル名
 			"\203\164\203\100\203\103\203\213\226\274";
-static const char str_filetype[] =				// ファイルの種類
+static const OEMCHAR str_filetype[] =			// ファイルの種類
 			"\203\164\203\100\203\103\203\213\202\314\216\355\227\336";
-static const char str_open[] =					// 開く
+static const OEMCHAR str_open[] =				// 開く
 			"\212\112\202\255";
 #elif defined(OSLANG_EUC) && !defined(RESOURCE_US)
-static const char str_dirname[] =				// ファイルの場所
+static const OEMCHAR str_dirname[] =			// ファイルの場所
 			"\245\325\245\241\245\244\245\353\244\316\276\354\275\352";
-static const char str_filename[] =				// ファイル名
+static const OEMCHAR str_filename[] =			// ファイル名
 			"\245\325\245\241\245\244\245\353\314\276";
-static const char str_filetype[] =				// ファイルの種類
+static const OEMCHAR str_filetype[] =			// ファイルの種類
 			"\245\325\245\241\245\244\245\353\244\316\274\357\316\340";
-static const char str_open[] =					// 開く
+static const OEMCHAR str_open[] =				// 開く
 			"\263\253\244\257";
 #elif defined(OSLANG_UTF8) && !defined(RESOURCE_US)
-static const char str_dirname[] =				// ファイルの場所
+static const OEMCHAR str_dirname[] =			// ファイルの場所
 			"\343\203\225\343\202\241\343\202\244\343\203\253\343\201\256" \
 			"\345\240\264\346\211\200";
-static const char str_filename[] =				// ファイル名
+static const OEMCHAR str_filename[] =			// ファイル名
 			"\343\203\225\343\202\241\343\202\244\343\203\253\345\220\215";
-static const char str_filetype[] =				// ファイルの種類
+static const OEMCHAR str_filetype[] =			// ファイルの種類
 			"\343\203\225\343\202\241\343\202\244\343\203\253\343\201\256" \
 			"\347\250\256\351\241\236";
-static const char str_open[] =					// 開く
+static const OEMCHAR str_open[] =				// 開く
 			"\351\226\213\343\201\217";
 #else
-static const char str_dirname[] = "Look in";
-static const char str_filename[] = "File name";
-static const char str_filetype[] = "Files of type";
-static const char str_open[] = "Open";
+static const OEMCHAR str_dirname[] = OEMTEXT("Look in");
+static const OEMCHAR str_filename[] = OEMTEXT("File name");
+static const OEMCHAR str_filetype[] = OEMTEXT("Files of type");
+static const OEMCHAR str_open[] = OEMTEXT("Open");
 #endif
 
 #if defined(SIZE_QVGA)
@@ -117,22 +116,22 @@ typedef struct _flist	 *FLIST;
 struct _flist {
 	FLIST	next;
 	UINT	isdir;
-	char	name[MAX_PATH];
+	OEMCHAR	name[MAX_PATH];
 };
 
 typedef struct {
-const char	*title;
-const char	*filter;
-const char	*ext;
+const OEMCHAR	*title;
+const OEMCHAR	*filter;
+const OEMCHAR	*ext;
 } FSELPRM;
 
 typedef struct {
 	BOOL		result;
 	LISTARRAY	flist;
 	FLIST		fbase;
-const char		*filter;
-const char		*ext;
-	char		path[MAX_PATH];
+const OEMCHAR	*filter;
+const OEMCHAR	*ext;
+	OEMCHAR		path[MAX_PATH];
 } FILESEL;
 
 static	FILESEL		filesel;
@@ -155,7 +154,7 @@ static FLIST getflist(int pos) {
 	return(ret);
 }
 
-static BOOL fappend(LISTARRAY flist, FLINFO *fli) {
+static BRESULT fappend(LISTARRAY flist, FLINFO *fli) {
 
 	FLIST	fl;
 	FLIST	*st;
@@ -166,7 +165,7 @@ static BOOL fappend(LISTARRAY flist, FLINFO *fli) {
 		return(FAILURE);
 	}
 	fl->isdir = (fli->attr & 0x10)?1:0;
-	file_cpyname(fl->name, fli->path, sizeof(fl->name));
+	file_cpyname(fl->name, fli->path, NELEMENTS(fl->name));
 	st = &filesel.fbase;
 	while(1) {
 		cur = *st;
@@ -187,9 +186,9 @@ static BOOL fappend(LISTARRAY flist, FLINFO *fli) {
 	return(SUCCESS);
 }
 
-static BOOL checkext(char *path, const char *ext) {
+static BOOL checkext(OEMCHAR *path, const OEMCHAR *ext) {
 
-const char	*p;
+const OEMCHAR	*p;
 
 	if (ext == NULL) {
 		return(TRUE);
@@ -199,7 +198,7 @@ const char	*p;
 		if (!file_cmpname(p, ext)) {
 			return(TRUE);
 		}
-		ext += strlen(ext) + 1;
+		ext += OEMSTRLEN(ext) + 1;
 	}
 	return(FALSE);
 }
@@ -212,23 +211,9 @@ static void dlgsetlist(void) {
 	BOOL		append;
 	FLIST		fl;
 	ITEMEXPRM	prm;
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
-	char		sjis[MAX_PATH];
-#endif
 
 	menudlg_itemreset(DID_FLIST);
-
-#if defined(OSLANG_EUC)
-	codecnv_euc2sjis(sjis, sizeof(sjis),
-									file_getname(filesel.path), (UINT)-1);
-	menudlg_settext(DID_FOLDER, sjis);
-#elif defined(OSLANG_UTF8)
-	oemtext_oem2sjis(sjis, sizeof(sjis),
-									file_getname(filesel.path), (UINT)-1);
-	menudlg_settext(DID_FOLDER, sjis);
-#else
 	menudlg_settext(DID_FOLDER, file_getname(filesel.path));
-#endif
 	listarray_destroy(filesel.flist);
 	flist = listarray_new(sizeof(_FLIST), 64);
 	filesel.flist = flist;
@@ -256,15 +241,7 @@ static void dlgsetlist(void) {
 	while(fl) {
 		menudlg_itemappend(DID_FLIST, NULL);
 		prm.icon = (fl->isdir)?MICON_FOLDER:MICON_FILE;
-#if defined(OSLANG_EUC)
-		codecnv_euc2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
-		prm.str = sjis;
-#elif defined(OSLANG_UTF8)
-		oemtext_oem2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
-		prm.str = sjis;
-#else
 		prm.str = fl->name;
-#endif
 		menudlg_itemsetex(DID_FLIST, &prm);
 		fl = fl->next;
 		prm.pos++;
@@ -273,23 +250,9 @@ static void dlgsetlist(void) {
 
 static void dlginit(void) {
 
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
-	char	sjis[MAX_PATH];
-#endif
-
 	menudlg_appends(res_fs, NELEMENTS(res_fs));
 	menudlg_seticon(DID_PARENT, MICON_FOLDERPARENT);
-#if defined(OSLANG_EUC)
-	codecnv_euc2sjis(sjis, sizeof(sjis),
-									file_getname(filesel.path), (UINT)-1);
-	menudlg_settext(DID_FILE, sjis);
-#elif defined(OSLANG_UTF8)
-	oemtext_oem2sjis(sjis, sizeof(sjis),
-									file_getname(filesel.path), (UINT)-1);
-	menudlg_settext(DID_FILE, sjis);
-#else
 	menudlg_settext(DID_FILE, file_getname(filesel.path));
-#endif
 	menudlg_settext(DID_FILTER, filesel.filter);
 	file_cutname(filesel.path);
 	file_cutseparator(filesel.path);
@@ -304,8 +267,8 @@ static BOOL dlgupdate(void) {
 	if (fl == NULL) {
 		return(FALSE);
 	}
-	file_setseparator(filesel.path, sizeof(filesel.path));
-	file_catname(filesel.path, fl->name, sizeof(filesel.path));
+	file_setseparator(filesel.path, NELEMENTS(filesel.path));
+	file_catname(filesel.path, fl->name, NELEMENTS(filesel.path));
 	if (fl->isdir) {
 		dlgsetlist();
 		menudlg_settext(DID_FILE, NULL);
@@ -320,21 +283,10 @@ static BOOL dlgupdate(void) {
 static void dlgflist(void) {
 
 	FLIST	fl;
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8)
-	char	sjis[MAX_PATH];
-#endif
 
 	fl = getflist(menudlg_getval(DID_FLIST));
 	if ((fl != NULL) && (!fl->isdir)) {
-#if defined(OSLANG_EUC)
-		codecnv_euc2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
-		menudlg_settext(DID_FILE, sjis);
-#elif defined(OSLANG_UTF8)
-		oemtext_oem2sjis(sjis, sizeof(sjis), fl->name, (UINT)-1);
-		menudlg_settext(DID_FILE, sjis);
-#else
 		menudlg_settext(DID_FILE, fl->name);
-#endif
 	}
 }
 
@@ -388,19 +340,19 @@ static int dlgcmd(int msg, MENUID id, long param) {
 	return(0);
 }
 
-static BOOL selectfile(const FSELPRM *prm, char *path, int size, 
-															const char *def) {
+static BOOL selectfile(const FSELPRM *prm, OEMCHAR *path, int size, 
+														const OEMCHAR *def) {
 
-const char	*title;
+const OEMCHAR	*title;
 
 	soundmng_stop();
 	ZeroMemory(&filesel, sizeof(filesel));
 	if ((def) && (def[0])) {
-		file_cpyname(filesel.path, def, sizeof(filesel.path));
+		file_cpyname(filesel.path, def, NELEMENTS(filesel.path));
 	}
 	else {
 		file_cpyname(filesel.path, file_getcd(str_null),
-														sizeof(filesel.path));
+													NELEMENTS(filesel.path));
 		file_cutname(filesel.path);
 	}
 	title = NULL;
@@ -424,28 +376,27 @@ const char	*title;
 
 // ----
 
-static const char diskfilter[] = "All supported files";
-static const char fddtitle[] = "Select floppy image";
-static const char fddext[] = "d88\088d\0d98\098d\0fdi\0" \
-								"xdf\0hdm\0dup\02hd\0tfd\0";
-static const char hddtitle[] = "Select HDD image";
-static const char sasiext[] = "thd\0nhd\0hdi\0";
+static const OEMCHAR diskfilter[] = OEMTEXT("All supported files");
+static const OEMCHAR fddtitle[] = OEMTEXT("Select floppy image");
+static const OEMCHAR fddext[] = OEMTEXT("d88\00088d\0d98\00098d\0fdi\0xdf\0hdm\0dup\0002hd\0tfd\0");
+static const OEMCHAR hddtitle[] = OEMTEXT("Select HDD image");
+static const OEMCHAR sasiext[] = OEMTEXT("thd\0nhd\0hdi\0");
 
 static const FSELPRM fddprm = {fddtitle, diskfilter, fddext};
 static const FSELPRM sasiprm = {hddtitle, diskfilter, sasiext};
 
 #if defined(SUPPORT_SCSI)
-static const char scsiext[] = "hdd\0";
+static const OEMCHAR scsiext[] = OEMTEXT("hdd\0");
 static const FSELPRM scsiprm = {hddtitle, diskfilter, scsiext};
 #endif
 
 
 void filesel_fdd(REG8 drv) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
 	if (drv < 4) {
-		if (selectfile(&fddprm, path, sizeof(path), fdd_diskname(drv))) {
+		if (selectfile(&fddprm, path, NELEMENTS(path), fdd_diskname(drv))) {
 			diskdrv_setfdd(drv, path, 0);
 		}
 	}
@@ -454,9 +405,9 @@ void filesel_fdd(REG8 drv) {
 void filesel_hdd(REG8 drv) {
 
 	UINT		num;
-	char		*p;
+	OEMCHAR		*p;
 const FSELPRM	*prm;
-	char		path[MAX_PATH];
+	OEMCHAR		path[MAX_PATH];
 
 	num = drv & 0x0f;
 	p = NULL;
@@ -475,7 +426,7 @@ const FSELPRM	*prm;
 		}
 	}
 #endif
-	if ((prm) && (selectfile(prm, path, sizeof(path), p))) {
+	if ((prm) && (selectfile(prm, path, NELEMENTS(path), p))) {
 		diskdrv_sethdd(drv, path);
 	}
 }

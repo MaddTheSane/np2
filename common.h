@@ -90,11 +90,13 @@ enum {
 #endif
 
 
+#if 0
 #ifndef STRLITERAL
 #ifdef UNICODE
 #define	STRLITERAL(string)		_T(string)
 #else
 #define	STRLITERAL(string)		(string)
+#endif
 #endif
 #endif
 

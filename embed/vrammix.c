@@ -10,7 +10,7 @@ enum {
 };
 
 
-static BOOL cpyrect(MIX_RECT *r, const VRAMHDL dst, const POINT_T *pt, 
+static BRESULT cpyrect(MIX_RECT *r, const VRAMHDL dst, const POINT_T *pt, 
 									const VRAMHDL src, const RECT_T *rct) {
 
 	POINT_T	p;
@@ -78,7 +78,7 @@ static BOOL cpyrect(MIX_RECT *r, const VRAMHDL dst, const POINT_T *pt,
 	return(SUCCESS);
 }
 
-static BOOL mixrect(MIX_RECT *r, const VRAMHDL dst, const RECT_T *rct,
+static BRESULT mixrect(MIX_RECT *r, const VRAMHDL dst, const RECT_T *rct,
 									const VRAMHDL src, const POINT_T *pt) {
 
 	int		pos;
@@ -156,7 +156,7 @@ typedef struct {
 	int		height;
 } MIXRECTEX;
 
-static BOOL cpyrectex(MIXRECTEX *r, const VRAMHDL dst, const POINT_T *pt,
+static BRESULT cpyrectex(MIXRECTEX *r, const VRAMHDL dst, const POINT_T *pt,
 					const VRAMHDL org, const VRAMHDL src, const RECT_T *rct) {
 
 	POINT_T	p;
@@ -233,7 +233,7 @@ static BOOL cpyrectex(MIXRECTEX *r, const VRAMHDL dst, const POINT_T *pt,
 	return(SUCCESS);
 }
 
-static BOOL mixrectex(MIXRECTEX *r, const VRAMHDL dst, const VRAMHDL org,
+static BRESULT mixrectex(MIXRECTEX *r, const VRAMHDL dst, const VRAMHDL org,
 					const RECT_T *rct, const VRAMHDL src, const POINT_T *pt) {
 
 	int		pos;
@@ -315,8 +315,8 @@ static BOOL mixrectex(MIXRECTEX *r, const VRAMHDL dst, const VRAMHDL org,
 
 static void vramsub_cpy(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 
 	p = src->ptr + (mr->srcpos * src->xalign);
 	q = dst->ptr + (mr->dstpos * src->xalign);
@@ -329,8 +329,8 @@ const BYTE	*p;
 
 static void vramsub_move(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		align;
 	int		r;
 
@@ -361,8 +361,8 @@ const BYTE	*p;
 }
 static void vramsub_cpyall(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		height;
 
 	p = src->ptr + (mr->srcpos * src->xalign);
@@ -387,9 +387,9 @@ const BYTE	*p;
 static void vramsub_cpy2(VRAMHDL dst, const VRAMHDL src, UINT alpha,
 															MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*r;
 
 	p = src->ptr + (mr->srcpos * src->xalign);
 	q = dst->ptr + (mr->dstpos * src->xalign);
@@ -408,11 +408,11 @@ const BYTE	*p;
 
 #ifdef SUPPORT_16BPP
 
-static void vramsub_cpyp16(VRAMHDL dst, const VRAMHDL src, const BYTE *pat8,
+static void vramsub_cpyp16(VRAMHDL dst, const VRAMHDL src, const UINT8 *pat8,
 													MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posx;
@@ -448,8 +448,8 @@ const BYTE	*p;
 static void vramsub_cpyp16w16(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posx;
@@ -482,8 +482,8 @@ const BYTE	*p;
 static void vramsub_cpyp16h16(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		step;
 	int		posy;
 
@@ -504,8 +504,8 @@ const BYTE	*p;
 
 static void vramsub_cpyex16(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -531,9 +531,9 @@ const BYTE	*p;
 
 static void vramsub_cpyex16a(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -569,9 +569,9 @@ const BYTE	*a;
 static void vramsub_cpyex16a2(VRAMHDL dst, const VRAMHDL src,
 												UINT alpha64, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -606,10 +606,10 @@ const BYTE	*a;
 
 static void vramsub_cpyexa16a(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
-	BYTE	*b;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
+	UINT8	*b;
 	int		x;
 	int		step;
 
@@ -649,8 +649,8 @@ const BYTE	*a;
 static void vramsub_cpya16(VRAMHDL dst, const VRAMHDL src,
 												UINT alpha256, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -679,9 +679,9 @@ const BYTE	*p;
 static void vramsub_cpyexp16w16(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posx;
@@ -728,9 +728,9 @@ const BYTE	*a;
 static void vramsub_cpyexp16h16(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posy;
@@ -777,9 +777,9 @@ const BYTE	*a;
 static void vramsub_mix16(VRAMHDL dst, const VRAMHDL org, const VRAMHDL src,
 											UINT alpha64, MIXRECTEX *mr) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		x;
 	int		ostep;
 	int		sstep;
@@ -815,8 +815,8 @@ const BYTE	*q;
 static void vramsub_mixcol16(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 												UINT alpha64, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		tmp;
@@ -850,8 +850,8 @@ const BYTE	*p;
 static void vramsub_mixalpha16(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 															MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		tmp;
@@ -900,10 +900,10 @@ const BYTE	*p;
 static void vramsub_gray16(VRAMHDL dst, const VRAMHDL org, const VRAMHDL src,
 								const VRAMHDL bmp, int delta, MIXRECTEX *mr) {
 
-const BYTE	*p;
-const BYTE	*q;
-const BYTE	*a;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+const UINT8	*a;
+	UINT8	*r;
 	int		rm;
 	int		x, y;
 	int		ostep;
@@ -964,10 +964,10 @@ const BYTE	*a;
 static void vramsub_zoom16(VRAMHDL dst, const VRAMHDL src, int dot,
 															MIX_RECT *mr) {
 
-const BYTE	*pbase;
-const BYTE	*p;
-	BYTE	*qbase;
-	BYTE	*q;
+const UINT8	*pbase;
+const UINT8	*p;
+	UINT8	*qbase;
+	UINT8	*q;
 	int		x;
 	int		dstep;
 	int		xstep;
@@ -1013,9 +1013,9 @@ const BYTE	*p;
 static void vramsub_mosaic16(VRAMHDL dst, const VRAMHDL src, int dot,
 															MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*r;
 	int		x;
 	int		sstep;
 	int		dstep;
@@ -1062,7 +1062,7 @@ const BYTE	*p;
 static void vramsub_colex16(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 															MIX_RECT *mr) {
 
-	BYTE	*p, *q;
+	UINT8	*p, *q;
 	int		x;
 	int		step;
 	UINT	tmp;
@@ -1105,11 +1105,11 @@ static void vramsub_colex16(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 
 #ifdef SUPPORT_24BPP
 
-static void vramsub_cpyp24(VRAMHDL dst, const VRAMHDL src, const BYTE *pat8,
+static void vramsub_cpyp24(VRAMHDL dst, const VRAMHDL src, const UINT8 *pat8,
 														MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posx;
@@ -1147,8 +1147,8 @@ const BYTE	*p;
 static void vramsub_cpyp16w24(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posx;
@@ -1183,8 +1183,8 @@ const BYTE	*p;
 static void vramsub_cpyp16h24(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		step;
 	int		posy;
 
@@ -1205,8 +1205,8 @@ const BYTE	*p;
 
 static void vramsub_cpyex24(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -1217,7 +1217,7 @@ const BYTE	*p;
 	do {
 		x = mr->width;
 		do {
-			BYTE r, g, b;
+			UINT8 r, g, b;
 			b = p[0];
 			g = p[1];
 			r = p[2];
@@ -1236,9 +1236,9 @@ const BYTE	*p;
 
 static void vramsub_cpyex24a(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -1254,9 +1254,9 @@ const BYTE	*a;
 			alpha = *a++;
 			if (alpha) {
 				alpha += VRAMALPHABASE;
-				q[0] = (BYTE)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
-				q[1] = (BYTE)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
-				q[2] = (BYTE)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
+				q[0] = (UINT8)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
+				q[1] = (UINT8)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
+				q[2] = (UINT8)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
 			}
 			p += 3;
 			q += 3;
@@ -1270,9 +1270,9 @@ const BYTE	*a;
 static void vramsub_cpyex24a2(VRAMHDL dst, const VRAMHDL src,
 											UINT alpha64, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -1288,9 +1288,9 @@ const BYTE	*a;
 			alpha = *a++;
 			if (alpha) {
 				alpha = (alpha + VRAMALPHABASE) * alpha64;
-				q[0] = (BYTE)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT+6);
-				q[1] = (BYTE)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT+6);
-				q[2] = (BYTE)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT+6);
+				q[0] = (UINT8)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT+6);
+				q[1] = (UINT8)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT+6);
+				q[2] = (UINT8)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT+6);
 			}
 			p += 3;
 			q += 3;
@@ -1303,10 +1303,10 @@ const BYTE	*a;
 
 static void vramsub_cpyexa24a(VRAMHDL dst, const VRAMHDL src, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
-	BYTE	*b;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
+	UINT8	*b;
 	int		x;
 	int		step;
 
@@ -1323,9 +1323,9 @@ const BYTE	*a;
 			alpha = *a++;
 			if (alpha) {
 				alpha += VRAMALPHABASE;
-				q[0] = (BYTE)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
-				q[1] = (BYTE)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
-				q[2] = (BYTE)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
+				q[0] = (UINT8)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
+				q[1] = (UINT8)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
+				q[2] = (UINT8)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
 				b[0] = VRAMALPHA;
 			}
 			p += 3;
@@ -1342,8 +1342,8 @@ const BYTE	*a;
 static void vramsub_cpya24(VRAMHDL dst, const VRAMHDL src,
 												UINT alpha256, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 
@@ -1354,9 +1354,9 @@ const BYTE	*p;
 	do {
 		x = mr->width;
 		do {
-			q[0] = (BYTE)MAKEALPHA24(q[0], p[0], alpha256, 8);
-			q[1] = (BYTE)MAKEALPHA24(q[1], p[1], alpha256, 8);
-			q[2] = (BYTE)MAKEALPHA24(q[2], p[2], alpha256, 8);
+			q[0] = (UINT8)MAKEALPHA24(q[0], p[0], alpha256, 8);
+			q[1] = (UINT8)MAKEALPHA24(q[1], p[1], alpha256, 8);
+			q[2] = (UINT8)MAKEALPHA24(q[2], p[2], alpha256, 8);
 			p += 3;
 			q += 3;
 		} while(--x);
@@ -1368,9 +1368,9 @@ const BYTE	*p;
 static void vramsub_cpyexp16w24(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posx;
@@ -1393,9 +1393,9 @@ const BYTE	*a;
 				alpha = *a;
 				if (alpha) {
 					alpha += VRAMALPHABASE;
-					q[0] = (BYTE)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
-					q[1] = (BYTE)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
-					q[2] = (BYTE)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
+					q[0] = (UINT8)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
+					q[1] = (UINT8)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
+					q[2] = (UINT8)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
 				}
 				pat |= 0x10000;
 			}
@@ -1413,9 +1413,9 @@ const BYTE	*a;
 static void vramsub_cpyexp16h24(VRAMHDL dst, const VRAMHDL src,
 												UINT pat16, MIX_RECT *mr) {
 
-const BYTE	*p;
-const BYTE	*a;
-	BYTE	*q;
+const UINT8	*p;
+const UINT8	*a;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		posy;
@@ -1434,9 +1434,9 @@ const BYTE	*a;
 				alpha = *a;
 				if (alpha) {
 					alpha += VRAMALPHABASE;
-					q[0] = (BYTE)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
-					q[1] = (BYTE)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
-					q[2] = (BYTE)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
+					q[0] = (UINT8)MAKEALPHA24(q[0], p[0], alpha, VRAMALPHABIT);
+					q[1] = (UINT8)MAKEALPHA24(q[1], p[1], alpha, VRAMALPHABIT);
+					q[2] = (UINT8)MAKEALPHA24(q[2], p[2], alpha, VRAMALPHABIT);
 				}
 				p += 3;
 				q += 3;
@@ -1458,9 +1458,9 @@ const BYTE	*a;
 static void vramsub_mix24(VRAMHDL dst, const VRAMHDL org, const VRAMHDL src,
 												UINT alpha64, MIXRECTEX *mr) {
 
-const BYTE	*p;
-const BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+	UINT8	*r;
 	int		x;
 	int		ostep;
 	int		sstep;
@@ -1476,9 +1476,9 @@ const BYTE	*q;
 	do {
 		x = mr->width;
 		do {
-			r[0] = (BYTE)MAKEALPHA24(p[0], q[0], alpha64, 6);
-			r[1] = (BYTE)MAKEALPHA24(p[1], q[1], alpha64, 6);
-			r[2] = (BYTE)MAKEALPHA24(p[2], q[2], alpha64, 6);
+			r[0] = (UINT8)MAKEALPHA24(p[0], q[0], alpha64, 6);
+			r[1] = (UINT8)MAKEALPHA24(p[1], q[1], alpha64, 6);
+			r[2] = (UINT8)MAKEALPHA24(p[2], q[2], alpha64, 6);
 			p += 3;
 			q += 3;
 			r += 3;
@@ -1492,8 +1492,8 @@ const BYTE	*q;
 static void vramsub_mixcol24(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 												UINT alpha64, MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		c24[3];
@@ -1508,9 +1508,9 @@ const BYTE	*p;
 	do {
 		x = mr->width;
 		do {
-			q[0] = (BYTE)MAKEALPHA24(c24[0], p[0], alpha64, 6);
-			q[1] = (BYTE)MAKEALPHA24(c24[1], p[1], alpha64, 6);
-			q[2] = (BYTE)MAKEALPHA24(c24[2], p[2], alpha64, 6);
+			q[0] = (UINT8)MAKEALPHA24(c24[0], p[0], alpha64, 6);
+			q[1] = (UINT8)MAKEALPHA24(c24[1], p[1], alpha64, 6);
+			q[2] = (UINT8)MAKEALPHA24(c24[2], p[2], alpha64, 6);
 			p += 3;
 			q += 3;
 		} while(--x);
@@ -1522,8 +1522,8 @@ const BYTE	*p;
 static void vramsub_mixalpha24(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 															MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
+const UINT8	*p;
+	UINT8	*q;
 	int		x;
 	int		step;
 	int		c24[3];
@@ -1543,17 +1543,17 @@ const BYTE	*p;
 			if (a) {
 				a++;
 			}
-			q[0] = (BYTE)MAKEALPHA24(q[0], c24[0], a, 8);
+			q[0] = (UINT8)MAKEALPHA24(q[0], c24[0], a, 8);
 			a = p[1];
 			if (a) {
 				a++;
 			}
-			q[1] = (BYTE)MAKEALPHA24(q[1], c24[1], a, 8);
+			q[1] = (UINT8)MAKEALPHA24(q[1], c24[1], a, 8);
 			a = p[2];
 			if (a) {
 				a++;
 			}
-			q[2] = (BYTE)MAKEALPHA24(q[2], c24[2], a, 8);
+			q[2] = (UINT8)MAKEALPHA24(q[2], c24[2], a, 8);
 			p += 3;
 			q += 3;
 		} while(--x);
@@ -1565,10 +1565,10 @@ const BYTE	*p;
 static void vramsub_gray24(VRAMHDL dst, const VRAMHDL org, const VRAMHDL src,
 								const VRAMHDL bmp, int delta, MIXRECTEX *mr) {
 
-const BYTE	*p;
-const BYTE	*q;
-const BYTE	*a;
-	BYTE	*r;
+const UINT8	*p;
+const UINT8	*q;
+const UINT8	*a;
+	UINT8	*r;
 	int		rm;
 	int		x, y;
 	int		ostep;
@@ -1605,9 +1605,9 @@ const BYTE	*a;
 				r[2] = q[2];
 			}
 			else if (alpha > 0) {
-				r[0] = (BYTE)MAKEALPHA24(p[0], q[0], alpha, 8);
-				r[1] = (BYTE)MAKEALPHA24(p[1], q[1], alpha, 8);
-				r[2] = (BYTE)MAKEALPHA24(p[2], q[2], alpha, 8);
+				r[0] = (UINT8)MAKEALPHA24(p[0], q[0], alpha, 8);
+				r[1] = (UINT8)MAKEALPHA24(p[1], q[1], alpha, 8);
+				r[2] = (UINT8)MAKEALPHA24(p[2], q[2], alpha, 8);
 			}
 			else {
 				r[0] = p[0];
@@ -1629,10 +1629,10 @@ const BYTE	*a;
 static void vramsub_zoom24(VRAMHDL dst, const VRAMHDL src, int dot,
 															MIX_RECT *mr) {
 
-const BYTE	*pbase;
-const BYTE	*p;
-	BYTE	*qbase;
-	BYTE	*q;
+const UINT8	*pbase;
+const UINT8	*p;
+	UINT8	*qbase;
+	UINT8	*q;
 	int		x;
 	int		dstep;
 	int		xstep;
@@ -1678,9 +1678,9 @@ const BYTE	*p;
 static void vramsub_mosaic24(VRAMHDL dst, const VRAMHDL src, int dot,
 															MIX_RECT *mr) {
 
-const BYTE	*p;
-	BYTE	*q;
-	BYTE	*r;
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*r;
 	int		x;
 	int		sstep;
 	int		dstep;
@@ -1727,7 +1727,7 @@ const BYTE	*p;
 static void vramsub_colex24(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 															MIX_RECT *mr) {
 
-	BYTE	*p, *q;
+	UINT8	*p, *q;
 	int		x;
 	int		step;
 	int		c24[3];
@@ -1747,9 +1747,9 @@ static void vramsub_colex24(VRAMHDL dst, const VRAMHDL src, UINT32 color,
 			a = p[0];
 			if (a) {
 				a += VRAMALPHABASE;
-				q[0] = (BYTE)MAKEALPHA24(q[0], c24[0], a, VRAMALPHABIT);
-				q[1] = (BYTE)MAKEALPHA24(q[1], c24[1], a, VRAMALPHABIT);
-				q[2] = (BYTE)MAKEALPHA24(q[2], c24[2], a, VRAMALPHABIT);
+				q[0] = (UINT8)MAKEALPHA24(q[0], c24[0], a, VRAMALPHABIT);
+				q[1] = (UINT8)MAKEALPHA24(q[1], c24[1], a, VRAMALPHABIT);
+				q[2] = (UINT8)MAKEALPHA24(q[2], c24[2], a, VRAMALPHABIT);
 			}
 			p += 1;
 			q += 3;
@@ -1804,7 +1804,7 @@ void vramcpy_cpyall(VRAMHDL dst, const POINT_T *pt,
 
 void vramcpy_cpypat(VRAMHDL dst, const POINT_T *pt,
 							const VRAMHDL src, const RECT_T *rct,
-							const BYTE *pat8) {
+							const UINT8 *pat8) {
 
 	MIX_RECT	mr;
 
@@ -2047,7 +2047,7 @@ void vrammix_cpy2(VRAMHDL dst, const RECT_T *rct,
 
 void vrammix_cpypat(VRAMHDL dst, const RECT_T *rct,
 							const VRAMHDL src, const POINT_T *pt,
-							const BYTE *pat8) {
+							const UINT8 *pat8) {
 
 	MIX_RECT	mr;
 
@@ -2323,10 +2323,10 @@ void vrammix_colex(VRAMHDL dst, const RECT_T *rct,
 static void vramsub_resize16(VRAMHDL dst, MIX_RECT *drct,
 								const VRAMHDL src, const MIX_RECT *srct) {
 
-const BYTE	*p;
-	BYTE	*q;
-const BYTE	*r;
-const BYTE	*s;
+const UINT8	*p;
+	UINT8	*q;
+const UINT8	*r;
+const UINT8	*s;
 	int		dstep;
 	int		xstep;
 	int		ystep;
@@ -2362,10 +2362,10 @@ const BYTE	*s;
 static void vramsub_resize24(VRAMHDL dst, MIX_RECT *drct,
 								const VRAMHDL src, const MIX_RECT *srct) {
 
-const BYTE	*p;
-	BYTE	*q;
-const BYTE	*r;
-const BYTE	*s;
+const UINT8	*p;
+	UINT8	*q;
+const UINT8	*r;
+const UINT8	*s;
 	int		dstep;
 	int		xstep;
 	int		ystep;
@@ -2399,7 +2399,7 @@ const BYTE	*s;
 }
 #endif
 
-static BOOL cliprect(const VRAMHDL hdl, const RECT_T *rct, MIX_RECT *r) {
+static BRESULT cliprect(const VRAMHDL hdl, const RECT_T *rct, MIX_RECT *r) {
 
 	RECT_T	rect;
 
@@ -2441,7 +2441,7 @@ void vrammix_resize(VRAMHDL dst, const RECT_T *drct,
 
 // ---- font
 
-static BOOL txtrect(VRAMHDL dst, const FNTDAT fnt, const POINT_T *pt,
+static BRESULT txtrect(VRAMHDL dst, const FNTDAT fnt, const POINT_T *pt,
 										const RECT_T *rct, MIX_RECT *r) {
 
 	int		pos;
@@ -2479,12 +2479,12 @@ static BOOL txtrect(VRAMHDL dst, const FNTDAT fnt, const POINT_T *pt,
 static void vramsub_txt8p(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	UINT		alpha;
-	int			cnt;
+const UINT8	*p;
+	UINT8	*q;
+	UINT	alpha;
+	int		cnt;
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + mr->dstpos;
 	do {
@@ -2493,7 +2493,7 @@ const BYTE		*p;
 			alpha = *p++;
 			if (alpha) {
 				alpha = alpha * color / FDAT_DEPTH;
-				q[0] = (BYTE)alpha;
+				q[0] = (UINT8)alpha;
 			}
 			q += 1;
 		} while(--cnt);
@@ -2506,19 +2506,19 @@ const BYTE		*p;
 static void vramsub_txt16p(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	UINT		alpha;
-	int			cnt;
-	UINT		col16;
-	int			c16[3];
+const UINT8	*p;
+	UINT8	*q;
+	UINT	alpha;
+	int		cnt;
+	UINT	col16;
+	int		c16[3];
 
 	col16 = MAKE16PAL(color);
 	c16[0] = col16 & B16MASK;
 	c16[1] = col16 & G16MASK;
 	c16[2] = col16 & R16MASK;
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + (mr->dstpos * 2);
 	do {
@@ -2552,20 +2552,20 @@ const BYTE		*p;
 static void vramsub_txt16a(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	BYTE		*a;
-	UINT		alpha;
-	int			cnt;
-	UINT		col16;
-	int			c16[3];
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*a;
+	UINT	alpha;
+	int		cnt;
+	UINT	col16;
+	int		c16[3];
 
 	col16 = MAKE16PAL(color);
 	c16[0] = col16 & B16MASK;
 	c16[1] = col16 & G16MASK;
 	c16[2] = col16 & R16MASK;
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + (mr->dstpos * 2);
 	a = dst->alpha + mr->dstpos;
@@ -2603,20 +2603,20 @@ const BYTE		*p;
 static void vramsub_txt16e(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	BYTE		*a;
-	UINT		alpha;
-	int			cnt;
-	UINT		col16;
-	int			c16[3];
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*a;
+	UINT	alpha;
+	int		cnt;
+	UINT	col16;
+	int		c16[3];
 
 	col16 = MAKE16PAL(color);
 	c16[0] = col16 & B16MASK;
 	c16[1] = col16 & G16MASK;
 	c16[2] = col16 & R16MASK;
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + (mr->dstpos * 2);
 
@@ -2627,7 +2627,7 @@ const BYTE		*p;
 			alpha = (*p++) * VRAMALPHA / FDAT_DEPTH;
 			if (alpha) {
 				*(UINT16 *)q = (UINT16)col16;
-				a[0] = (BYTE)alpha;
+				a[0] = (UINT8)alpha;
 			}
 			q += 2;
 			a += 1;
@@ -2643,13 +2643,13 @@ const BYTE		*p;
 static void vramsub_txt24p(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	UINT		alpha;
-	int			cnt;
-	int			c24[3];
+const UINT8	*p;
+	UINT8	*q;
+	UINT	alpha;
+	int		cnt;
+	int		c24[3];
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + (mr->dstpos * 3);
 	c24[0] = color & 0xff;
@@ -2661,17 +2661,17 @@ const BYTE		*p;
 			alpha = *p++;
 			if (alpha) {
 				if (alpha == FDAT_DEPTH) {
-					q[0] = (BYTE)c24[0];
-					q[1] = (BYTE)c24[1];
-					q[2] = (BYTE)c24[2];
+					q[0] = (UINT8)c24[0];
+					q[1] = (UINT8)c24[1];
+					q[2] = (UINT8)c24[2];
 				}
 				else {
 					alpha += FDATDEPTHBASE;
-					q[0] = (BYTE)MAKEALPHA24(q[0], c24[0],
+					q[0] = (UINT8)MAKEALPHA24(q[0], c24[0],
 														alpha, FDAT_DEPTHBIT);
-					q[1] = (BYTE)MAKEALPHA24(q[1], c24[1],
+					q[1] = (UINT8)MAKEALPHA24(q[1], c24[1],
 														alpha, FDAT_DEPTHBIT);
-					q[2] = (BYTE)MAKEALPHA24(q[2], c24[2],
+					q[2] = (UINT8)MAKEALPHA24(q[2], c24[2],
 														alpha, FDAT_DEPTHBIT);
 				}
 			}
@@ -2685,14 +2685,14 @@ const BYTE		*p;
 static void vramsub_txt24a(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	BYTE		*a;
-	UINT		alpha;
-	int			cnt;
-	int			c24[3];
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*a;
+	UINT	alpha;
+	int		cnt;
+	int		c24[3];
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + (mr->dstpos * 3);
 	a = dst->alpha + mr->dstpos;
@@ -2705,17 +2705,17 @@ const BYTE		*p;
 			alpha = *p++;
 			if (alpha) {
 				if (alpha == FDAT_DEPTH) {
-					q[0] = (BYTE)c24[0];
-					q[1] = (BYTE)c24[1];
-					q[2] = (BYTE)c24[2];
+					q[0] = (UINT8)c24[0];
+					q[1] = (UINT8)c24[1];
+					q[2] = (UINT8)c24[2];
 				}
 				else {
 					alpha += FDATDEPTHBASE;
-					q[0] = (BYTE)MAKEALPHA24(q[0], c24[0],
+					q[0] = (UINT8)MAKEALPHA24(q[0], c24[0],
 														alpha, FDAT_DEPTHBIT);
-					q[1] = (BYTE)MAKEALPHA24(q[1], c24[1],
+					q[1] = (UINT8)MAKEALPHA24(q[1], c24[1],
 														alpha, FDAT_DEPTHBIT);
-					q[2] = (BYTE)MAKEALPHA24(q[2], c24[2],
+					q[2] = (UINT8)MAKEALPHA24(q[2], c24[2],
 														alpha, FDAT_DEPTHBIT);
 				}
 				a[0] = VRAMALPHA;
@@ -2732,14 +2732,14 @@ const BYTE		*p;
 static void vramsub_txt24e(VRAMHDL dst, const FNTDAT fnt,
 												UINT32 color, MIX_RECT *mr) {
 
-const BYTE		*p;
-	BYTE		*q;
-	BYTE		*a;
-	UINT		alpha;
-	int			cnt;
-	int			c24[3];
+const UINT8	*p;
+	UINT8	*q;
+	UINT8	*a;
+	UINT	alpha;
+	int		cnt;
+	int		c24[3];
 
-	p = (BYTE *)(fnt + 1);
+	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;
 	q = dst->ptr + (mr->dstpos * 3);
 	c24[0] = color & 0xff;
@@ -2751,10 +2751,10 @@ const BYTE		*p;
 		do {
 			alpha = (*p++) * VRAMALPHA / FDAT_DEPTH;
 			if (alpha) {
-				q[0] = (BYTE)c24[0];
-				q[1] = (BYTE)c24[1];
-				q[2] = (BYTE)c24[2];
-				a[0] = (BYTE)alpha;
+				q[0] = (UINT8)c24[0];
+				q[1] = (UINT8)c24[1];
+				q[2] = (UINT8)c24[2];
+				a[0] = (UINT8)alpha;
 			}
 			q += 3;
 			a += 1;
@@ -2766,12 +2766,13 @@ const BYTE		*p;
 }
 #endif
 
-static void vramsub_text(VRAMHDL dst, void *fhdl, const char *str,
+static void vramsub_text(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct,
 							void (*func)(VRAMHDL dst, const FNTDAT fnt,
 											UINT32 color, MIX_RECT *mr)) {
 
-	char		buf[4];
+	int			leng;
+	OEMCHAR		buf[4];
 	RECT_T		rect;
 	FNTDAT		fnt;
 	MIX_RECT	mr;
@@ -2781,21 +2782,14 @@ static void vramsub_text(VRAMHDL dst, void *fhdl, const char *str,
 		goto vstxt_end;
 	}
 
-	buf[2] = '\0';
-	while(*str) {
-		buf[0] = *str++;
-		if ((((buf[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			buf[1] = *str++;
-			if (buf[1] == '\0') {
-				break;
-			}
-		}
-		else if (buf[0]) {
-			buf[1] = '\0';
-		}
-		else {
+	while(1) {
+		leng = milstr_charsize(str);
+		if (!leng) {
 			break;
 		}
+		CopyMemory(buf, str, leng * sizeof(OEMCHAR));
+		buf[leng] = '\0';
+		str += leng;
 		fnt = fontmng_get(fhdl, buf);
 		if (fnt) {
 			if (txtrect(dst, fnt, pt, &rect, &mr) == SUCCESS) {
@@ -2809,7 +2803,7 @@ vstxt_end:
 	return;
 }
 
-void vrammix_text(VRAMHDL dst, void *fhdl, const char *str,
+void vrammix_text(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct) {
 
 	void	(*func)(VRAMHDL dst, const FNTDAT fnt,
@@ -2845,7 +2839,7 @@ void vrammix_text(VRAMHDL dst, void *fhdl, const char *str,
 	vramsub_text(dst, fhdl, str, color, pt, rct, func);
 }
 
-void vrammix_textex(VRAMHDL dst, void *fhdl, const char *str,
+void vrammix_textex(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct) {
 
 	void	(*func)(VRAMHDL dst, const FNTDAT fnt,

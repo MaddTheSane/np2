@@ -26,10 +26,10 @@ enum {
 };
 
 typedef struct _smi {
-const		char	*string;
+const OEMCHAR		*string;
 const struct _smi	*child;
-			MENUID	id;
-			MENUFLG	flag;
+	MENUID			id;
+	MENUFLG			flag;
 } MSYSITEM;
 
 
@@ -37,11 +37,11 @@ const struct _smi	*child;
 extern "C" {
 #endif
 
-BOOL menusys_create(const MSYSITEM *item, void (*cmd)(MENUID id),
-											UINT16 icon, const char *title);
+BRESULT menusys_create(const MSYSITEM *item, void (*cmd)(MENUID id),
+										UINT16 icon, const OEMCHAR *title);
 void menusys_destroy(void);
 
-BOOL menusys_open(int x, int y);
+BRESULT menusys_open(int x, int y);
 void menusys_close(void);
 
 void menusys_moving(int x, int y, int btn);

@@ -92,12 +92,12 @@ const char	*str;
 extern "C" {
 #endif
 
-BOOL menudlg_create(int width, int height, const char *str,
+BRESULT menudlg_create(int width, int height, const char *str,
 								int (*proc)(int msg, MENUID id, long param));
 void menudlg_destroy(void);
 
-BOOL menudlg_appends(const MENUPRM *res, int count);
-BOOL menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
+BRESULT menudlg_appends(const MENUPRM *res, int count);
+BRESULT menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
 								int posx, int posy, int width, int height);
 
 void menudlg_moving(int x, int y, int btn);

@@ -48,9 +48,9 @@ enum {
 };
 
 #if defined(_WIN32_WCE)
-static const TCHAR taskbarclass[] = STRLITERAL("HHTaskBar");
+static const TCHAR taskbarclass[] = _T("HHTaskBar");
 #else
-static const TCHAR taskbarclass[] = STRLITERAL("Shell_TrayWnd");
+static const TCHAR taskbarclass[] = _T("Shell_TrayWnd");
 #endif
 
 

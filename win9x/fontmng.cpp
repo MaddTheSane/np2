@@ -117,7 +117,6 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	return(ret);
 }
 
-
 void fontmng_destroy(void *hdl) {
 
 	FNTMNG	fhdl;

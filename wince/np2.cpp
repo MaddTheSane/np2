@@ -36,8 +36,8 @@
 #include	"softkbd.h"
 
 
-static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
-static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
+static const TCHAR szAppCaption[] = _T("Neko Project II");
+static const TCHAR szClassName[] = _T("NP2-MainWindow");
 
 
 		NP2OSCFG	np2oscfg = {0, 0, 0, 0,
@@ -67,7 +67,7 @@ static	UINT		framemax = 1;
 
 // ---- resume
 
-static void getstatfilename(char *path, const char *ext, int size) {
+static void getstatfilename(OEMCHAR *path, const OEMCHAR *ext, int size) {
 
 	file_cpyname(path, modulefile, size);
 	file_cutext(path);
@@ -75,12 +75,12 @@ static void getstatfilename(char *path, const char *ext, int size) {
 	file_catname(path, ext, size);
 }
 
-static int flagsave(const char *ext) {
+static int flagsave(const OEMCHAR *ext) {
 
 	int		ret;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	ret = statsave_save(path);
 	if (ret) {
 		file_delete(path);
@@ -88,31 +88,31 @@ static int flagsave(const char *ext) {
 	return(ret);
 }
 
-static void flagdelete(const char *ext) {
+static void flagdelete(const OEMCHAR *ext) {
 
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	file_delete(path);
 }
 
-static int flagload(const char *ext, const char *title, BOOL force) {
+static int flagload(const OEMCHAR *ext, const OEMCHAR *title, BOOL force) {
 
 	int		ret;
 	int		id;
-	char	path[MAX_PATH];
-	char	buf[1024];
-	char	buf2[1024 + 256];
+	OEMCHAR	path[MAX_PATH];
+	OEMCHAR	buf[1024];
+	OEMCHAR	buf2[1024 + 256];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	id = DID_YES;
-	ret = statsave_check(path, buf, sizeof(buf));
+	ret = statsave_check(path, buf, NELEMENTS(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
 		menumbox("Couldn't restart", title, MBOX_OK | MBOX_ICONSTOP);
 		id = DID_NO;
 	}
 	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
-		SPRINTF(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		OEMSPRINTF(buf2, "Conflict!\n\n%s\nContinue?", buf);
 		id = menumbox(buf2, title, MBOX_YESNOCAN | MBOX_ICONQUESTION);
 	}
 	if (id == DID_YES) {
@@ -368,7 +368,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		return(0);
 	}
 
-	_GetModuleFileName(NULL, modulefile, sizeof(modulefile));
+	_GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
 	initload();
@@ -429,7 +429,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	if (scrnmng_create(hWnd, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)
 																!= SUCCESS) {
-		MessageBox(hWnd, STRLITERAL("Couldn't create DirectDraw Object"),
+		MessageBox(hWnd, _T("Couldn't create DirectDraw Object"),
 									szAppCaption, MB_OK | MB_ICONSTOP);
 		DestroyWindow(hWnd);
 		goto np2main_err2;

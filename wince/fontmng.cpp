@@ -6,8 +6,8 @@
 
 #if defined(FONTMNG_CACHE)
 typedef struct {
-	UINT16		str;
-	UINT16		next;
+	UINT	str;
+	UINT	next;
 } FNTCTBL;
 #endif
 
@@ -21,7 +21,7 @@ typedef struct {
 // ‚ ‚Æ‚ÍŠg’£`
 	HDC			hdcimage;
 	HBITMAP		hBitmap;
-	BYTE		*image;
+	UINT8		*image;
 	HFONT		hfont;
 	RECT		rect;
 	int			bmpwidth;
@@ -36,8 +36,8 @@ typedef struct {
 } _FNTMNG, *FNTMNG;
 
 
-static const TCHAR deffontface[] = STRLITERAL("‚l‚r ƒSƒVƒbƒN");
-static const TCHAR deffontface2[] = STRLITERAL("‚l‚r ‚oƒSƒVƒbƒN");
+static const TCHAR deffontface[] = _T("‚l‚r ƒSƒVƒbƒN");
+static const TCHAR deffontface2[] = _T("‚l‚r ‚oƒSƒVƒbƒN");
 
 #ifndef _WIN32_WCE
 #define	TEXTALPHABASE	(FDAT_DEPTH * 0x60 / 256)
@@ -128,7 +128,7 @@ void *fontmng_create(int size, UINT type, const TCHAR *fontface) {
 	ret->bmpheight = bmpheight;
 	ret->bmpalign = (((bmpwidth + 31) / 8) & (~3));
 
-	bi = (BITMAPINFO *)(((BYTE *)(ret + 1)) + fontwork);
+	bi = (BITMAPINFO *)(((UINT8 *)(ret + 1)) + fontwork);
 	bi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bi->bmiHeader.biWidth = ret->bmpwidth;
 	bi->bmiHeader.biHeight = ret->bmpheight;
@@ -201,12 +201,8 @@ void fontmng_destroy(void *hdl) {
 	}
 }
 
-int fontmng_getpoint(void *hdl) {
 
-	if (hdl) {
-	}
-	return(0);
-}
+// ----
 
 #ifdef UNICODE
 static void getlength1(FNTMNG fhdl, FNTDAT fdat, LPCTSTR string,
@@ -505,13 +501,15 @@ fmgds_exit:
 
 static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 
-	DWORD	remx;
-	DWORD	remy;
-	BYTE	*src;
-	BYTE	*dst;
-	BYTE	*s1, *s2;
-	BYTE	bit;
-	BYTE	b1, b2;
+	UINT	remx;
+	UINT	remy;
+	UINT8	*src;
+	UINT8	*dst;
+	UINT8	*s1;
+	UINT8	*s2;
+	UINT8	bit;
+	UINT	b1;
+	UINT	b2;
 	int		align;
 	int		c;
 
@@ -521,7 +519,7 @@ static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 		goto fmsp_end;
 	}
 
-	dst = (BYTE *)(fdat + 1);
+	dst = (UINT8 *)(fdat + 1);
 	align *= -1;
 
 	if (fhdl->fonttype & FDAT_ALIAS) {
@@ -553,7 +551,7 @@ static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
 					c += (FDAT_DEPTH - TEXTALPHABASE);
 				}
 				if (c) {
-					*dst++ = (BYTE)(TEXTALPHABASE + (c / 4));
+					*dst++ = (UINT8)(TEXTALPHABASE + (c / 4));
 				}
 				else {
 					*dst++ = 0;
@@ -586,7 +584,7 @@ fmsp_end:
 	return;
 }
 
-FNTDAT fontmng_get(void *hdl, const char *string) {
+FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
 
 	FNTMNG	fhdl;
 	FNTDAT	fdat;
@@ -599,13 +597,34 @@ FNTDAT fontmng_get(void *hdl, const char *string) {
 #if defined(FONTMNG_CACHE)
 {
 	FNTCTBL	*fct;
-	DWORD	str;
-	DWORD	pos;
-	DWORD	prev;
-	DWORD	cnt;
+	UINT	str;
+	UINT	pos;
+	UINT	prev;
+	UINT	cnt;
 
-	str = string[0] & 0xff;
-	str |= (string[1] & 0xff) << 8;
+#if defined(OSLANG_SJIS) || defined(OSLANG_SJIS)
+	int len;
+	len = milstr_charsize(string);
+	switch(len) {
+		default:
+			str = (UINT8)string[0];
+			break;
+
+		case 2:
+			str = (UINT8)string[0] + (((UINT8)string[1]) << 8);
+			break;
+
+		case 3:
+			str = (UINT8)string[0] + (((UINT8)string[1]) << 8) + (((UINT8)string[2]) << 16);
+			break;
+
+		case 4:
+			str = (UINT8)string[0] + (((UINT8)string[1]) << 8) + (((UINT8)string[2]) << 16) + (((UINT8)string[2]) << 24);
+			break;
+	}
+#else
+	str = (UINT)string[0];
+#endif
 
 	fct = fhdl->cache;
 	cnt = fhdl->caches;
@@ -619,19 +638,19 @@ FNTDAT fontmng_get(void *hdl, const char *string) {
 		}
 		if (prev < FONTMNG_CACHE) {
 			fct[prev].next = fct[pos].next;
-			fct[pos].next = (UINT16)fhdl->cachehead;
+			fct[pos].next = fhdl->cachehead;
 			fhdl->cachehead = pos;
 		}
-		return((FNTDAT)(((BYTE *)(fhdl + 1)) + (pos * fhdl->fontalign)));
+		return((FNTDAT)(((UINT8 *)(fhdl + 1)) + (pos * fhdl->fontalign)));
 	}
 	if (fhdl->caches < FONTMNG_CACHE) {
 		prev = fhdl->caches;
 		fhdl->caches++;
 	}
-	fct[prev].str = (UINT16)str;
-	fct[prev].next = (UINT16)fhdl->cachehead;
+	fct[prev].str = str;
+	fct[prev].next = fhdl->cachehead;
 	fhdl->cachehead = prev;
-	fdat = (FNTDAT)(((BYTE *)(fhdl + 1)) + (prev * fhdl->fontalign));
+	fdat = (FNTDAT)(((UINT8 *)(fhdl + 1)) + (prev * fhdl->fontalign));
 }
 #else
 	fdat = (FNTDAT)(fhdl + 1);

@@ -36,14 +36,17 @@ static const MENUPRM res_about[] = {
 
 static void dlginit(void) {
 
-	char	work[128];
+	OEMCHAR	work[128];
 
 	menudlg_appends(res_about, NELEMENTS(res_about));
-	milstr_ncpy(work, str_np2, sizeof(work));
-	milstr_ncat(work, str_space, sizeof(work));
-	milstr_ncat(work, np2version, sizeof(work));
+	milstr_ncpy(work, str_np2, NELEMENTS(work));
+	milstr_ncat(work, str_space, NELEMENTS(work));
+	milstr_ncat(work, np2version, NELEMENTS(work));
 #if defined(_WIN32_WCE) && defined(NP2VER_WINCE)
-	milstr_ncat(work, NP2VER_WINCE, sizeof(work));
+	milstr_ncat(work, OEMTEXT(NP2VER_WINCE), NELEMENTS(work));
+#endif
+#if defined(NP2VER_SDL)
+	milstr_ncat(work, OEMTEXT(NP2VER_SDL), NELEMENTS(work));
 #endif
 	menudlg_settext(DID_VER, work);
 }
