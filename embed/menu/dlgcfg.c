@@ -229,6 +229,13 @@ static void dlginit(void) {
 	setmulstr();
 	setclockstr();
 	setbufstr();
+
+#if defined(DISABLE_SOUND)
+	menudlg_setenable(DID_RATE11, FALSE);
+	menudlg_setenable(DID_RATE22, FALSE);
+	menudlg_setenable(DID_RATE44, FALSE);
+	menudlg_setenable(DID_BUFFER, FALSE);
+#endif
 }
 
 static void dlgupdate(void) {

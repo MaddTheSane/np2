@@ -40,7 +40,7 @@ static const char str_video[] = "Video";
 static const char str_lcd[] = "Liquid Crystal Display";
 static const char str_lcdx[] = "Reverse";
 static const char str_skipline[] = "Use skipline revisions";
-static const char str_skiplght[] = "Raito";
+static const char str_skiplght[] = "Ratio";
 
 static const char str_chip[] = "Chip";
 static const char str_gdc[] = "GDC";

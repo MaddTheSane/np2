@@ -14,7 +14,7 @@
 
 
 typedef struct {
-	DWORD	opnum;
+	UINT	opnum;
 	void	(*v30opcode)(void);
 } V30PATCH_T;
 
