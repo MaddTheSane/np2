@@ -75,7 +75,7 @@ static void char2str(char *dst, int size, const UniChar *uni, int unicnt) {
 
 void *file_list1st(const char *dir, FLINFO *fli) {
 
-	void		*ret;
+	FLISTH		ret;
 	Str255		fname;
 	FSSpec		fss;
 	FSRef		fsr;
@@ -104,7 +104,7 @@ ff1_err1:
 	return(NULL);
 }
 
-BOOL file_listnext(void *hdl, FLINFO *fli) {
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	FLHDL		flhdl;
 	ItemCount	count;
@@ -144,7 +144,7 @@ ffn_err:
 	return(FAILURE);
 }
 
-void file_listclose(void *hdl) {
+void file_listclose(FLISTH hdl) {
 
 	if (hdl) {
 		FSCloseIterator(((FLHDL)hdl)->fsi);
@@ -161,7 +161,7 @@ typedef struct {
 	long		tagid;
 } _FLHDL, *FLHDL;
 
-void *file_list1st(const char *dir, FLINFO *fli) {
+FLISTH file_list1st(const char *dir, FLINFO *fli) {
 
 	Str255	fname;
 	FSSpec	fss;
@@ -193,8 +193,8 @@ void *file_list1st(const char *dir, FLINFO *fli) {
 	}
 	ret->eoff = FALSE;
 	ret->index = 1;
-	if (file_listnext((void *)ret, fli) == SUCCESS) {
-		return((void *)ret);
+	if (file_listnext((FLISTH)ret, fli) == SUCCESS) {
+		return((FLISTH)ret);
 	}
 
 ff1_err2:
@@ -204,7 +204,7 @@ ff1_err1:
 	return(NULL);
 }
 
-BOOL file_listnext(void *hdl, FLINFO *fli) {
+BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	FLHDL	flhdl;
 	Str255	fname;
@@ -225,12 +225,13 @@ BOOL file_listnext(void *hdl, FLINFO *fli) {
 	flhdl->index++;
 	if (fli) {
 		mkcstr(fli->path, sizeof(fli->path), fname);
-		fli->size = 0;
 		if (flhdl->pb.hFileInfo.ioFlAttrib & 0x10) {
 			fli->attr = FILEATTR_DIRECTORY;
+			fli->size = 0;
 		}
 		else {
 			fli->attr = FILEATTR_ARCHIVE;
+			fli->size = flhdl->pb.hFileInfo.ioFlLgLen;
 		}
 	}
 	return(SUCCESS);
@@ -239,7 +240,7 @@ ffn_err:
 	return(FAILURE);
 }
 
-void file_listclose(void *hdl) {
+void file_listclose(FLISTH hdl) {
 
 	if (hdl) {
 		_MFREE(hdl);

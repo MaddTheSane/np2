@@ -297,7 +297,7 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size,
 
 	HDRVFILE	hdf;
 	FILEH		fh;
-	BYTE		work[256];
+	BYTE		work[1024];
 	UINT		r;
 
 	hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, num);
