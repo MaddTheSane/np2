@@ -85,10 +85,10 @@ void bios0x09(void) {
 		}
 		else {
 			if (key == 0x60) {
-				CPU_INTERRUPT(6, -1);
+//				CPU_INTERRUPT(6, -1);
 			}
 			else if (key == 0x61) {
-				CPU_INTERRUPT(5, -1);
+//				CPU_INTERRUPT(5, -1);
 			}
 			else if (key < 0x70) {
 				code = mem[base + key - 0x0c] << 8;
@@ -115,12 +115,10 @@ void bios0x09(void) {
 		}
 	}
 	else {
-		if (key < 0xf5) {
-			mem[0x0052a + pos] &= ~bit;
-			if (key >= 0xf0) {
-				mem[MEMB_SHIFT_STS] &= ~bit;
-				updateshiftkey();
-			}
+		mem[0x0052a + pos] &= ~bit;
+		if ((key >= 0xf0) && (key < 0xf5)) {
+			mem[MEMB_SHIFT_STS] &= ~bit;
+			updateshiftkey();
 		}
 	}
 }

@@ -10,8 +10,8 @@ enum {
 typedef struct {
 	UINT32	xferclock;
 	UINT8	data;
-	UINT8	__mode;
 	UINT8	cmd;
+	UINT8	mode;
 	UINT8	status;
 	UINT	ctrls;
 	UINT	ctrpos;

@@ -39,6 +39,9 @@ static void IOOUTCALL keyboard_o41(UINT port, REG8 dat) {
 		TRACEOUT(("send -> %02x", dat));
 		keystat_ctrlsend(dat);
 	}
+	else {
+		keybrd.mode = dat;
+	}
 	(void)port;
 }
 
@@ -85,6 +88,7 @@ void keyboard_reset(void) {
 
 	ZeroMemory(&keybrd, sizeof(keybrd));
 	keybrd.data = 0xff;
+	keybrd.mode = 0x5e;
 }
 
 void keyboard_bind(void) {
