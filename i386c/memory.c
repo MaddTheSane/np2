@@ -969,7 +969,7 @@ void MEMCALL i286_memorywrite_d(UINT32 addr, UINT32 value) {
 	}
 }
 
-#ifdef NP2_MEMORY_ASM
+#if 0
 REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
 
 	UINT32	address;
@@ -1021,9 +1021,9 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 		i286_memorywrite_w(address, value);
 	}
 }
-#endif /* NP2_MEMORY_ASM */
+#endif
 
-void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
+void MEMCALL memp_read(UINT32 address, void *dat, UINT leng) {
 
 	BYTE *out = (BYTE *)dat;
 	UINT pos;
@@ -1054,8 +1054,8 @@ void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
 	}
 }
 
-void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng)
-{
+void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
+
 	const BYTE *out = (BYTE *)dat;
 	UINT pos;
 	UINT diff;
@@ -1084,10 +1084,9 @@ void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng)
 		i286_memorywrite(address++, *out++);
 	}
 }
-#endif
 
 
-// ----
+// ---- Logical Space (BIOS)
 
 static UINT32 realaddr(UINT32 addr) {
 
@@ -1122,14 +1121,16 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 		size = 0x1000 - (adrs & 0xfff);
 		size = min(size, leng);
 		size = min(size, 0x10000 - off);
-		i286_memx_read(realaddr(adrs), dat, size);
+		memp_read(realaddr(adrs), dat, size);
 		off += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
 	}
 }
 
-void MEMCALL i286_memstr_write(UINT seg, UINT off, const void *dat, UINT leng) {
+void MEMCALL i286_memstr_write(UINT seg, UINT off,
+												const void *dat, UINT leng) {
+
 	UINT32	adrs;
 	UINT	size;
 
@@ -1139,27 +1140,40 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off, const void *dat, UINT leng) {
 		size = 0x1000 - (adrs & 0xfff);
 		size = min(size, leng);
 		size = min(size, 0x10000 - off);
-		i286_memx_write(realaddr(adrs), dat, size);
+		memp_write(realaddr(adrs), dat, size);
 		off += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
 	}
 }
 
-
-#if 0		// ƒeƒXƒg
-void MEMCALL cpumem_strread(UINT32 adrs, void *dat, UINT leng) {
+void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
 
 	UINT	size;
 
 	while(leng) {
-		size = 0x1000 - (adrs & 0xfff);
+		size = 0x1000 - (address & 0xfff);
 		size = min(size, leng);
-		i286_memx_read(realaddr(adrs), dat, size);
-		adrs += size;
+		memp_read(realaddr(address), dat, size);
+		address += size;
 		dat = ((BYTE *)dat) + size;
 		leng -= size;
 	}
 }
+
+void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
+
+	UINT	size;
+
+	while(leng) {
+		size = 0x1000 - (address & 0xfff);
+		size = min(size, leng);
+		memp_write(realaddr(address), dat, size);
+		address += size;
+		dat = ((BYTE *)dat) + size;
+		leng -= size;
+	}
+}
+
 #endif
 

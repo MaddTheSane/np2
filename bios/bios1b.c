@@ -491,7 +491,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				else {
 					accesssize = size;
 				}
-				i286_memx_read(addr, fdc.buf, accesssize);
+				MEML_READ(addr, fdc.buf, accesssize);
 				if (fdd_write()) {
 					break;
 				}
@@ -560,7 +560,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				if (fdd_read()) {
 					break;
 				}
-				i286_memx_write(addr, fdc.buf, accesssize);
+				MEML_WRITE(addr, fdc.buf, accesssize);
 				addr += accesssize;
 				size -= accesssize;
 				mtr_r += accesssize;						// ver0.26

@@ -322,8 +322,8 @@ static void bios0x1f(void) {
 		TRACEOUT(("src:%08x dst:%08x leng:%08x", src, dst, leng));
 		do {
 			l = min(leng, 256);
-			i286_memx_read(src, work, l);
-			i286_memx_write(dst, work, l);
+			MEML_READ(src, work, l);
+			MEML_WRITE(dst, work, l);
 			src += l;
 			dst += l;
 			leng -= l;

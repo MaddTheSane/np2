@@ -66,6 +66,34 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng);
 void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);
 
+
+// ---- Physical Space (DMA)
+
+#define	MEMP_READ8(addr)					\
+			i286_memoryread((addr))
+#define	MEMP_WRITE8(addr, dat)				\
+			i286_memorywrite((addr), (dat))
+
+
+// ---- Logical Space (BIOS)
+
+#define	MEML_READ8(seg, off)				\
+			i286_membyte_read((seg), (off))
+#define	MEML_READ16(seg, off)				\
+			i286_memwrite_read((seg), (off))
+#define	MEML_WRITE8(seg, off, dat)			\
+			i286_membyte_write((seg), (off), (dat));
+#define	MEML_WRITE16(seg, off, dat)			\
+			i286_memword_write((seg), (off), (dat));
+#define MEML_READSTR(seg, off, dat, leng)	\
+			i286_memstr_read((seg), (off), (dat), (leng))
+#define MEML_WRITESTR(seg, off, dat, leng)	\
+			i286_memstr_write((seg), (off), (dat), (leng))
+#define MEML_READ(addr, dat, leng)			\
+			i286_memx_read((addr), (dat), (leng))
+#define MEML_WRITE(addr, dat, leng)			\
+			i286_memx_write((addr), (dat), (leng))
+
 #ifdef __cplusplus
 }
 #endif

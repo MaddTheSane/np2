@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.10 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: paging.h,v 1.11 2004/03/04 16:58:58 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -216,8 +216,8 @@ void tlb_flush(BOOL allflush);
 void tlb_flush_page(UINT32 vaddr);
 #else
 #define	tlb_init()
-#define	tlb_flush(allflush)	(void)allflush
-#define	tlb_flush_page(vaddr)	(void)vaddr
+#define	tlb_flush(allflush)	(void)(allflush)
+#define	tlb_flush_page(vaddr)	(void)(vaddr)
 #endif
 
 #ifdef __cplusplus

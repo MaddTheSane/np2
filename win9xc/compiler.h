@@ -74,8 +74,10 @@ typedef signed __int64		SINT64;
 
 #define	SOUNDRESERVE	20
 
+#if defined(CPUCORE_IA32)
 #define	SUPPORT_CRT31KHZ
 #define	SUPPORT_PC9821
+#endif
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SWSEEKSND
 
