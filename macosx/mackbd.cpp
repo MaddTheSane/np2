@@ -6,6 +6,11 @@
 #include	"pccore.h"
 #include	"iocore.h"
 
+#if defined(NP2GCC)
+#include	"mousemng.h"
+#include	"menu.h"
+#include	"sysmng.h"
+#endif
 
 #define		NC		0xff
 
@@ -136,7 +141,14 @@ void mackbd_f12down(int keycode) {
 		}
 		else if (np2oscfg.F12COPY == 2) {
 			keystat_senddata(0x60);
+        }
+#if defined(NP2GCC)
+        else if(!np2oscfg.F12COPY) {
+            mouse_running(MOUSE_XOR);
+            menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+            sysmng_update(SYS_UPDATECFG);
 		}
+#endif
 	}
 }
 

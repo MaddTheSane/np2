@@ -502,19 +502,6 @@ static void eventproc(EventRecord *event) {
 			if (event->modifiers & cmdKey) {
 				HandleMenuChoice(MenuKey(event->message & charCodeMask));
 			}
-			else {
-#if defined(NP2GCC)
-                if ((((event->message & keyCodeMask) >> 8) == 0x6f) &&
-                	(!np2oscfg.F12COPY)) {
-                    mouse_running(MOUSE_XOR);
-                    menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
-                    sysmng_update(SYS_UPDATECFG);
-                }
-                else {
-                    mackbd_down(0, ((event->message) & keyCodeMask) >> 8);
-                }
-#endif
-			}
 			break;
 
 		case keyUp:

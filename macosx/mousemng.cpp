@@ -28,12 +28,12 @@ void mouseonoff(BYTE flg) {
 	if ((lastmouse ^ flg) & 1) {
 		lastmouse = (flg & 1);
 		if (lastmouse & 1) {
-            CGDisplayHideCursor(kCGDirectMainDisplay);
+            HideCursor();
 			getmaincenter(&cp);
             CGWarpMouseCursorPosition(CGPointMake(cp.h, cp.v));
 		}
         else {
-            CGDisplayShowCursor(kCGDirectMainDisplay);
+            ShowCursor();
         }
 	}
 }
