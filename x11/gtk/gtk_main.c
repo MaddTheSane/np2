@@ -43,8 +43,6 @@
 #include "gtk/gtk_keyboard.h"
 #include "gtk/gtk_menu.h"
 
-#include <gdk/gdkkeysyms.h>
-
 #include "resources/np2.xbm"
 
 
