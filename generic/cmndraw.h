@@ -74,6 +74,7 @@ void cmndraw32_setpat(const CMNVRAM *vram, const BYTE *src,
 // ----
 
 void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal);
+void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL *pal);
 
 #ifdef __cplusplus
 }

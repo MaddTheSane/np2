@@ -1,5 +1,7 @@
 #include	"compiler.h"
 #include	"scrnmng.h"
+#include	"cpucore.h"
+#include	"font.h"
 #include	"cmndraw.h"
 
 
@@ -450,6 +452,45 @@ void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPAL *pal) {
 			cmndraw32_fill(vram, x, y, cx, cy, pal->pal32);
 			break;
 #endif
+	}
+}
+
+void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPAL *pal) {
+
+	UINT	s;
+	BYTE	src[10];
+
+	if ((vram == NULL) || (str == NULL) || (pal == NULL)) {
+		return;
+	}
+	src[0] = 8;
+	src[1] = 8;
+	while(*str) {
+		s = (UINT)(*str++);
+		CopyMemory(src + 2, fontrom + 0x82000 + (s * 16), 8);
+		switch(vram->bpp) {
+#if defined(SUPPORT_8BPP)
+			case 8:
+				cmndraw8_setfg(vram, src, x, y, pal->pal8);
+				break;
+#endif
+#if defined(SUPPORT_16BPP)
+			case 16:
+				cmndraw16_setfg(vram, src, x, y, pal->pal16);
+				break;
+#endif
+#if defined(SUPPORT_24BPP)
+			case 24:
+				cmndraw24_setfg(vram, src, x, y, pal->pal32);
+				break;
+#endif
+#if defined(SUPPORT_32BPP)
+			case 32:
+				cmndraw32_setfg(vram, src, x, y, pal->pal32);
+				break;
+#endif
+		}
+		x += 8;
 	}
 }
 

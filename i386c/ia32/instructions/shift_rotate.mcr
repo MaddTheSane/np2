@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.4 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.5 2004/03/10 02:42:51 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -223,18 +223,21 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
+#if 1	// fix ov
 #define	_BYTE_SHLCL(d, s, c) \
 do { \
 	(c) &= 0x1f; \
 	if (c) { \
-		if ((c) >= 0x10) { \
-			(c) &= 7; \
-			(c) |= 8; \
+		if ((c) > 0x10) { \
+			(c) = 10; \
+		} \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = ((s) + 0x40) & 0x80; \
 		} \
 		(s) <<= (c); \
 		(s) &= 0x1ff; \
 		CPU_FLAGL = (UINT8)(szpcflag[(s) & 0x1ff] | A_FLAG); \
-		CPU_OV = ((s) ^ ((s) >> 1)) & 0x80; \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
@@ -281,10 +284,111 @@ do { \
 	} \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
+#else
+#define	_BYTE_SHLCL(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (c) { \
+		if ((c) >= 0x10) { \
+			(c) &= 7; \
+			(c) |= 8; \
+		} \
+		(s) <<= (c); \
+		(s) &= 0x1ff; \
+		CPU_FLAGL = (UINT8)(szpcflag[(s) & 0x1ff] | A_FLAG); \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = ((s) ^ ((s) >> 1)) & 0x80; \
+		} \
+	} \
+	(d) = (s); \
+} while (/*CONSTCOND*/ 0)
+
+#define	_WORD_SHLCL(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (c) { \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = ((s) + 0x4000) & 0x8000; \
+		} \
+		(s) <<= (c); \
+		(s) &= 0x1ffff; \
+		CPU_FLAGL = (UINT8)(szpflag_w[(UINT16)(s)] | A_FLAG); \
+		CPU_FLAGL |= (UINT8)((s) >> 16); /* C_FLAG */ \
+	} \
+	(d) = (s); \
+} while (/*CONSTCOND*/ 0)
+
+#define	_DWORD_SHLCL(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (c) { \
+		(c)--; \
+		if ((c)) { \
+			(s) <<= (c); \
+			CPU_OV = 0; \
+		} else { \
+			CPU_OV = ((s) + 0x40000000) & 0x80000000; \
+		} \
+		CPU_FLAGL = A_FLAG; \
+		if ((s) & 0x80000000) { \
+			CPU_FLAGL |= C_FLAG; \
+		} \
+		(s) <<= 1; \
+		if ((s) == 0) { \
+			CPU_FLAGL |= Z_FLAG; \
+		} \
+		if ((s) & 0x80000000) { \
+			CPU_FLAGL |= S_FLAG; \
+		} \
+		CPU_FLAGL |= (szpcflag[(UINT8)(s)] & P_FLAG); \
+	} \
+	(d) = (s); \
+} while (/*CONSTCOND*/ 0)
+#endif
 
 /*
  * SHRD
  */
+#if 1	// fix ov
+#define	_WORD_SHRD(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (((c)) && ((c) < 16)) { \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = (((d) >> 15) ^ (s)) & 1; \
+		} \
+		CPU_FLAGL = (UINT8)(((d) >> ((c) - 1)) & 1); /*C_FLAG*/ \
+		(d) |= (s) << 16; \
+		(d) >>= (c); \
+		(d) &= 0xffff; \
+		CPU_FLAGL |= szpflag_w[(UINT16)(d)] | A_FLAG; \
+	} \
+} while (/*CONSTCOND*/ 0)
+
+#define	_DWORD_SHRD(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if ((c)) { \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = (((d) >> 31) ^ (s)) & 1; \
+		} \
+		CPU_FLAGL = (UINT8)(((d) >> ((c) - 1)) & 1); /* C_FLAG */ \
+		(d) >>= (c); \
+		(d) |= (s) << (32 - (c)); \
+		if ((d) == 0) { \
+			CPU_FLAGL |= Z_FLAG; \
+		} \
+		if ((d) & 0x80000000) { \
+			CPU_FLAGL |= S_FLAG; \
+		} \
+		CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
+	} \
+} while (/*CONSTCOND*/ 0)
+#else
 #define	_WORD_SHRD(d, s, c) \
 do { \
 	(c) &= 0x1f; \
@@ -317,10 +421,49 @@ do { \
 		CPU_OV = (d) & 0x80000000; \
 	} \
 } while (/*CONSTCOND*/ 0)
+#endif
 
 /*
  * SHLD
  */
+#if 1 // fix ov
+#define	_WORD_SHLD(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if (((c)) && ((c) < 16)) { \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = ((d) ^ ((d) << 1)) & 0x8000; \
+		} \
+		CPU_FLAGL = (UINT8)(((d) >> (16 - (c))) & 1); /*C_FLAG*/\
+		(d) = ((d) << 16) | (s); \
+		(d) <<= (c); \
+		(d) >>= 16; \
+		CPU_FLAGL |= szpflag_w[(d)] | A_FLAG; \
+	} \
+} while (/*CONSTCOND*/ 0)
+
+#define	_DWORD_SHLD(d, s, c) \
+do { \
+	(c) &= 0x1f; \
+	if ((c)) { \
+		CPU_OV = 0; \
+		if ((c) == 1) { \
+			CPU_OV = ((d) ^ ((d) << 1)) & 0x80000000; \
+		} \
+		CPU_FLAGL = (UINT8)(((d) >> (32 - (c))) & 1); /* C_FLAG */ \
+		(d) <<= (c); \
+		(d) |= ((s) >> (32 - (c))); \
+		if ((d) == 0) { \
+			CPU_FLAGL |= Z_FLAG; \
+		} \
+		if ((d) & 0x80000000) { \
+			CPU_FLAGL |= S_FLAG; \
+		} \
+		CPU_FLAGL |= (szpcflag[(UINT8)(d)] & P_FLAG); \
+	} \
+} while (/*CONSTCOND*/ 0)
+#else
 #define	_WORD_SHLD(d, s, c) \
 do { \
 	(c) &= 0x1f; \
@@ -353,6 +496,7 @@ do { \
 		CPU_OV = (d) & 0x80000000; \
 	} \
 } while (/*CONSTCOND*/ 0)
+#endif
 
 /*
  * ROR
@@ -743,6 +887,10 @@ do { \
 #define	BYTE_RCLCL(d, s, c)	XC_BYTE_RCLCL(d, s, c)
 #define	WORD_RCLCL(d, s, c)	XC_WORD_RCLCL(d, s, c)
 #define	DWORD_RCLCL(d, s, c)	XC_DWORD_RCLCL(d, s, c)
+
+#elif defined(IA32_CROSS_CHECK) && defined(_MSC_VER)
+
+#include	"shift_rotatexc_msc.mcr"
 
 #else	/* !(IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__)) */
 

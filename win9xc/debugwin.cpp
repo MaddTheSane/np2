@@ -114,8 +114,8 @@ typedef struct {
 
 static	MEMDBG		memdbg;
 
-static const char memdbgclass[] = "np2-ia32page";
-static const char memdbgtitle[] = "IA32 - paging";
+static const char memdbgclass[] = "np2-memdbg";
+static const char memdbgtitle[] = "IA32 - MEMORY MAP";
 
 static const UINT32 mdwinpal[MEMDBG32_PALS] =
 			{0x00333333, 0x00000000, 

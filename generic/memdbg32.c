@@ -2,6 +2,7 @@
 
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
 
+#include	"strres.h"
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -17,12 +18,16 @@ typedef struct {
 
 static	MEMDBG32	memdbg32;
 
+static const char _mode0[] = "Real Mode";
+static const char _mode1[] = "Protected Mode";
+static const char _mode2[] = "Virutal86";
+static const char *modestr[3] = {_mode0, _mode1, _mode2};
 
 
 void memdbg32_initialize(void) {
 
-	memdbg32.width = MEMDBG32_BLOCKW * 128;
-	memdbg32.height = (MEMDBG32_BLOCKH * 2 * 16) + 0;
+	memdbg32.width = (MEMDBG32_BLOCKW * 128) + 8;
+	memdbg32.height = (MEMDBG32_BLOCKH * 2 * 16) + 8;
 }
 
 void memdbg32_setpal(CMNPALFN *palfn) {
@@ -47,6 +52,7 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 	UINT	i, j;
 	UINT32	pde;
 	UINT32	pte;
+	char	str[4];
 
 	mode = 0;
 	if (CPU_STAT_PM) {
@@ -64,7 +70,7 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 	}
 
 	cmddraw_fill(vram, 0, 0, memdbg32.width, memdbg32.height,
-											memdbg32.pal + MEMDBG32_PALBG);
+											memdbg32.pal + MEMDBG32_PALBDR);
 	ZeroMemory(use, sizeof(use));
 	if (CPU_STAT_PAGING) {
 		for (i=0; i<1024; i++) {
@@ -89,13 +95,19 @@ BOOL memdbg32_paint(CMNVRAM *vram, BOOL redraw) {
 	}
 	for (i=0; i<32; i++) {
 		for (j=0; j<128; j++) {
-			cmddraw_fill(vram, j * MEMDBG32_BLOCKW, i * MEMDBG32_BLOCKH,
+			cmddraw_fill(vram, 8 + j * MEMDBG32_BLOCKW, i * MEMDBG32_BLOCKH,
 									MEMDBG32_BLOCKW - 1, MEMDBG32_BLOCKH - 1,
 									memdbg32.pal + use[(i * 128) + j]);
 		}
 	}
+	for (i=0; i<16; i++) {
+		SPRINTF(str, str_x, i);
+		cmddraw_text8(vram, 0, i * MEMDBG32_BLOCKH * 2, str,
+											memdbg32.pal + MEMDBG32_PALTXT);
+	}
+	cmddraw_text8(vram, 0, memdbg32.height - 8, modestr[mode],
+											memdbg32.pal + MEMDBG32_PALTXT);
 	return(TRUE);
 }
-
 #endif
 
