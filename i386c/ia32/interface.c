@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.5 2004/01/07 06:53:48 yui Exp $	*/
+/*	$Id: interface.c,v 1.6 2004/01/13 16:34:19 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -201,8 +201,10 @@ ia32_interrupt(BYTE vect)
 void
 ia32_panic(const char *str, ...)
 {
+	extern char *cpu_reg2str(void);
 	char buf[1024];
 	va_list ap;
+
 	va_start(ap, str);
 	vsnprintf(buf, sizeof(buf), str, ap);
 	va_end(ap);
@@ -213,6 +215,7 @@ ia32_panic(const char *str, ...)
 #endif
 
 	fprintf(stderr, buf);
+	fprintf(stderr, cpu_reg2str());
 	__ASSERT(0);
 	exit(1);
 }
