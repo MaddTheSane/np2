@@ -14,6 +14,73 @@
 #include	"pccore.h"
 
 
+
+
+// ---- user
+
+static void inirdargs16(const OEMCHAR *src, const PFTBL *ini) {
+
+	SINT16	*dst;
+	int		dsize;
+	int		i;
+	OEMCHAR	c;
+
+	dst = (SINT16 *)ini->value;
+	dsize = ini->arg;
+
+	for (i=0; i<dsize; i++) {
+		while(*src == ' ') {
+			src++;
+		}
+		if (*src == '\0') {
+			break;
+		}
+		dst[i] = (SINT16)milstr_solveINT(src);
+		while(*src != '\0') {
+			c = *src++;
+			if (c == ',') {
+				break;
+			}
+		}
+	}
+}
+
+static void inirdbyte3(const OEMCHAR *src, const PFTBL *ini) {
+
+	UINT	i;
+
+	for (i=0; i<3; i++) {
+		if (src[i] == '\0') {
+			break;
+		}
+		if ((((src[i] - '0') & 0xff) < 9) ||
+			(((src[i] - 'A') & 0xdf) < 26)) {
+			((UINT8 *)ini->value)[i] = (UINT8)src[i];
+		}
+	}
+}
+
+static void inirdkb(const OEMCHAR *src, const PFTBL *ini) {
+
+	if ((!milstr_extendcmp(src, OEMTEXT("PC98"))) ||
+		(!milstr_cmp(src, OEMTEXT("98")))) {
+		*(UINT8 *)ini->value = KEY_PC98;
+	}
+	else if ((!milstr_extendcmp(src, OEMTEXT("DOS"))) ||
+			(!milstr_cmp(src, OEMTEXT("PCAT"))) ||
+			(!milstr_cmp(src, OEMTEXT("AT")))) {
+		*(UINT8 *)ini->value = KEY_KEY106;
+	}
+	else if ((!milstr_extendcmp(src, OEMTEXT("KEY101"))) ||
+			(!milstr_cmp(src, OEMTEXT("101")))) {
+		*(UINT8 *)ini->value = KEY_KEY101;
+	}
+}
+
+
+// ---- Use WinAPI
+
+#if !defined(_UNICODE)
 static void bitmapset(UINT8 *ptr, UINT pos, BOOL set) {
 
 	UINT8	bit;
@@ -87,71 +154,6 @@ static void binget(OEMCHAR *work, int size, const UINT8 *bin, UINT binlen) {
 		milstr_ncat(work, tmp, size);
 	}
 }
-
-
-// ---- user
-
-static void inirdargs16(const OEMCHAR *src, const PFTBL *ini) {
-
-	SINT16	*dst;
-	int		dsize;
-	int		i;
-	OEMCHAR	c;
-
-	dst = (SINT16 *)ini->value;
-	dsize = ini->arg;
-
-	for (i=0; i<dsize; i++) {
-		while(*src == ' ') {
-			src++;
-		}
-		if (*src == '\0') {
-			break;
-		}
-		dst[i] = (SINT16)milstr_solveINT(src);
-		while(*src != '\0') {
-			c = *src++;
-			if (c == ',') {
-				break;
-			}
-		}
-	}
-}
-
-static void inirdbyte3(const OEMCHAR *src, const PFTBL *ini) {
-
-	UINT	i;
-
-	for (i=0; i<3; i++) {
-		if (src[i] == '\0') {
-			break;
-		}
-		if ((((src[i] - '0') & 0xff) < 9) ||
-			(((src[i] - 'A') & 0xdf) < 26)) {
-			((UINT8 *)ini->value)[i] = (UINT8)src[i];
-		}
-	}
-}
-
-static void inirdkb(const OEMCHAR *src, const PFTBL *ini) {
-
-	if ((!milstr_extendcmp(src, OEMTEXT("PC98"))) ||
-		(!milstr_cmp(src, OEMTEXT("98")))) {
-		*(UINT8 *)ini->value = KEY_PC98;
-	}
-	else if ((!milstr_extendcmp(src, OEMTEXT("DOS"))) ||
-			(!milstr_cmp(src, OEMTEXT("PCAT"))) ||
-			(!milstr_cmp(src, OEMTEXT("AT")))) {
-		*(UINT8 *)ini->value = KEY_KEY106;
-	}
-	else if ((!milstr_extendcmp(src, OEMTEXT("KEY101"))) ||
-			(!milstr_cmp(src, OEMTEXT("101")))) {
-		*(UINT8 *)ini->value = KEY_KEY101;
-	}
-}
-
-
-// ----
 
 void ini_read(const OEMCHAR *path, const OEMCHAR *title,
 											const PFTBL *tbl, UINT count) {
@@ -338,6 +340,41 @@ const OEMCHAR	*set;
 	}
 }
 
+#else	// !defined(_UNICODE)
+
+// ---- Use profile.c
+
+static void pfread(const PFTBL *item, const OEMCHAR *string) {
+
+	switch(item->itemtype & PFTYPE_MASK) {
+		case PFTYPE_ARGS16:
+			inirdargs16(string, item);
+			break;
+
+		case PFTYPE_BYTE3:
+			inirdbyte3(string, item);
+			break;
+
+		case PFTYPE_KB:
+			inirdkb(string, item);
+			break;
+	}
+}
+
+void ini_read(const OEMCHAR *path, const OEMCHAR *title,
+											const PFTBL *tbl, UINT count) {
+
+	profile_iniread(path, title, tbl, count, pfread);
+}
+
+void ini_write(const OEMCHAR *path, const OEMCHAR *title,
+											const PFTBL *tbl, UINT count) {
+
+	profile_iniwrite(path, title, tbl, count, NULL);
+}
+
+#endif	// !defined(_UNICODE)
+
 
 // ----
 
@@ -511,6 +548,8 @@ static const PFTBL iniitem[] = {
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)};
 
 
+static const OEMCHAR ext_ini[] = OEMTEXT(".ini");
+
 void initgetfile(OEMCHAR *path, UINT size) {
 
 const OEMCHAR	*ext;
@@ -526,12 +565,12 @@ const OEMCHAR	*ext;
 		}
 		ext = file_getext(path);
 		if (ext[0] != '\0') {
-			file_catname(path, OEMTEXT(".ini"), size);
+			file_catname(path, ext_ini, size);
 		}
 	}
 	else {
 		file_cutext(path);
-		file_catname(path, OEMTEXT(".ini"), size);
+		file_catname(path, ext_ini, size);
 	}
 }
 

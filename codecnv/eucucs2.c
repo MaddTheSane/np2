@@ -1181,30 +1181,38 @@ static const UINT16 euc8e[] = {
 UINT codecnv_euctoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT		orgdcnt;
+	BOOL		stringmode;
 	UINT		h;
 	UINT		l;
 	UINT16		code;
 const UINT16	*t;
 
-	(void)scnt;
 	if (src == NULL) {
 		return(0);
 	}
-
-	orgdcnt = dcnt;
-	if (dst == NULL) {
+	if (dcnt == 0) {
 		dst = NULL;
+		dcnt = (UINT)-1;
 	}
-	dcnt--;
-	while(dcnt) {
+	orgdcnt = dcnt;
+	stringmode = (((SINT)scnt) < 0);
+	if (stringmode) {
+		dcnt--;
+	}
+	while(scnt > 0) {
+		scnt--;
 		h = (UINT8)*src++;
-		if (h == 0) {
+		if ((h == 0) && (stringmode)) {
 			break;
 		}
 		else if (h < 0x80) {
 			code = (UINT16)h;
 		}
 		else if (h >= 0xa0) {
+			if (scnt == 0) {
+				break;
+			}
+			scnt--;
 			l = (UINT8)*src++;
 			if (l == 0) {
 				break;
@@ -1219,6 +1227,10 @@ const UINT16	*t;
 			}
 		}
 		else if (h == 0x8e) {
+			if (scnt == 0) {
+				break;
+			}
+			scnt--;
 			l = (UINT8)*src++;
 			if (l == 0) {
 				break;
@@ -1233,14 +1245,24 @@ const UINT16	*t;
 		else {
 			code = UDCODE;
 		}
+		if (dcnt == 0) {
+			break;
+		}
 		dcnt--;
 		if (dst) {
 			dst[0] = code;
 			dst++;
 		}
 	}
-	if (dst) {
-		dst[0] = 0;
+	if (dst != NULL) {
+		if (stringmode) {
+			*dst = '\0';
+		}
+#if 1	// ˆê‰žŒÝŠ·‚Ìˆ×‚É NULL‚Â‚¯‚é
+		else if (dcnt) {
+			*dst = '\0';
+		}
+#endif
 	}
 	return((UINT)(orgdcnt - dcnt));
 }

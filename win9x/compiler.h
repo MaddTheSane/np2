@@ -56,7 +56,7 @@ typedef	signed __int64		SINT64;
 #define	sigjmp_buf				jmp_buf
 #define	sigsetjmp(env, mask)	setjmp(env)
 #define	siglongjmp(env, val)	longjmp(env, val)
-#define	msgbox(title, msg)		MessageBox(NULL, msg, title, MB_OK)
+#define	msgbox(title, msg)		__msgbox(title, msg)
 
 #define	STRCALL		__stdcall
 
@@ -75,6 +75,7 @@ typedef	signed __int64		SINT64;
 
 
 #include	"common.h"
+#include	"win32sub.h"
 #include	"milstr.h"
 #include	"_memory.h"
 #include	"rect.h"
@@ -150,4 +151,7 @@ typedef	signed __int64		SINT64;
 #define	SUPPORT_ROMEO
 
 #define	SOUNDRESERVE	20
+
+
+#define	SUPPORT_TEXTCNV
 

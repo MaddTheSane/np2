@@ -1,8 +1,11 @@
 #include	"compiler.h"
 #include	"strres.h"
-#include	"dosio.h"
 #include	"textfile.h"
 #include	"profile.h"
+#if defined(SUPPORT_TEXTCNV)
+#include	"textcnv.h"
+#endif
+#include	"dosio.h"
 
 
 static void strdelspace(OEMCHAR **buf, int *size) {
@@ -109,7 +112,7 @@ gden_err0:
 
 const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng) {
 
-	UINT8	c;
+	OEMCHAR	c;
 
 	if (leng) {
 		leng--;
@@ -118,24 +121,24 @@ const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng) {
 		buf = NULL;
 	}
 	if (str) {
-		c = (UINT8)*str;
-		while(((c - 1) & 0xff) < 0x20) {
+		c = *str;
+		while((c > 0) && (c <= 0x20)) {
 			str++;
-			c = (UINT8)*str;
+			c = *str;
 		}
 		if (c == 0) {
 			str = NULL;
 		}
 	}
 	if (str) {
-		c = (UINT8)*str;
-		while(c > 0x20) {
+		c = *str;
+		while((c < 0) || (c > 0x20)) {
 			if (leng) {
 				*buf++ = c;
 				leng--;
 			}
 			str++;
-			c = (UINT8)*str;
+			c = *str;
 		}
 	}
 	if (buf) {
@@ -317,20 +320,37 @@ static BRESULT replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
 
 static PFILEH registfile(FILEH fh) {
 
-	UINT	hdrsize;
-	UINT	srcwidth;
-	BOOL	xendian;
 	UINT	rsize;
+#if defined(SUPPORT_TEXTCNV)
+	TCINF	inf;
+#endif
+	UINT	hdrsize;
+	UINT	width;
 	UINT8	hdr[4];
 	UINT	size;
 	UINT	newsize;
-	OEMCHAR *buf;
+	void	*buf;
+#if defined(SUPPORT_TEXTCNV)
+	void	*buf2;
+#endif
 	PFILEH	ret;
 
-	hdrsize = 0;
-	srcwidth = 1;
-	xendian = FALSE;
 	rsize = file_read(fh, hdr, sizeof(hdr));
+#if defined(SUPPORT_TEXTCNV)
+	if (textcnv_getinfo(&inf, hdr, rsize) == 0) {
+		goto rf_err1;
+	}
+	if (!(inf.caps & TEXTCNV_READ)) {
+		goto rf_err1;
+	}
+	if ((inf.width != 1) && (inf.width != 2)) {
+		goto rf_err1;
+	}
+	hdrsize = inf.hdrsize;
+	width = inf.width;
+#else
+	hdrsize = 0;
+	width = 1;
 	if ((rsize >= 3) &&
 		(hdr[0] == 0xef) && (hdr[1] == 0xbb) && (hdr[2] == 0xbf)) {
 		// UTF-8
@@ -339,23 +359,24 @@ static PFILEH registfile(FILEH fh) {
 	else if ((rsize >= 2) && (hdr[0] == 0xff) && (hdr[1] == 0xfe)) {
 		// UCSLE
 		hdrsize = 2;
-		srcwidth = 2;
+		width = 2;
 #if defined(BYTESEX_BIG)
-		xendian = TRUE;
+		goto rf_err1;
 #endif
 	}
 	else if ((rsize >= 2) && (hdr[0] == 0xfe) && (hdr[1] == 0xff)) {
 		// UCS2BE
 		hdrsize = 2;
-		srcwidth = 2;
+		width = 2;
 #if defined(BYTESEX_LITTLE)
-		xendian = TRUE;
+		goto rf_err1;
 #endif
 	}
-
-	if (srcwidth != sizeof(OEMCHAR)) {
+	if (width != sizeof(OEMCHAR)) {
 		goto rf_err1;
 	}
+#endif
+
 	size = file_getsize(fh);
 	if (size < hdrsize) {
 		goto rf_err1;
@@ -363,13 +384,30 @@ static PFILEH registfile(FILEH fh) {
 	if (file_seek(fh, (long)hdrsize, FSEEK_SET) != (long)hdrsize) {
 		goto rf_err1;
 	}
-	size = (size - hdrsize) / srcwidth;
+	size = (size - hdrsize) / width;
 	newsize = (size & (~(PFBUFSIZE - 1))) + PFBUFSIZE;
-	buf = (OEMCHAR *)_MALLOC(newsize * srcwidth, "profile");
+	buf = _MALLOC(newsize * width, "profile");
 	if (buf == NULL) {
 		goto rf_err1;
 	}
-	rsize = file_read(fh, buf, newsize * srcwidth) / srcwidth;
+	rsize = file_read(fh, buf, newsize * width) / width;
+#if defined(SUPPORT_TEXTCNV)
+	if (inf.xendian) {
+		textcnv_swapendian16(buf, rsize);
+	}
+	if (inf.tooem) {
+		size = (inf.tooem)(NULL, 0, buf, rsize);
+		newsize = (size & (~(PFBUFSIZE - 1))) + PFBUFSIZE;
+		buf2 = _MALLOC(newsize * sizeof(OEMCHAR), "profile tmp");
+		if (buf2 == NULL) {
+			goto rf_err2;
+		}
+		(inf.tooem)(buf2, size, buf, rsize);
+		_MFREE(buf);
+		buf = buf2;
+		rsize = size;
+	}
+#endif	// defined(SUPPORT_TEXTCNV)
 
 	ret = (PFILEH)_MALLOC(sizeof(_PFILEH), "profile");
 	if (ret == NULL) {
@@ -454,19 +492,69 @@ PFILEH profile_open(const OEMCHAR *filename, UINT flag) {
 
 void profile_close(PFILEH hdl) {
 
+	void	*buf;
+	UINT	bufsize;
+#if defined(SUPPORT_TEXTCNV)
+	TCINF	inf;
+	void	*buf2;
+	UINT	buf2size;
+#endif
+	UINT	hdrsize;
+	UINT	width;
 	FILEH	fh;
 
-	if (hdl) {
-		if (hdl->flag & PFILEH_MODIFY) {
-			fh = file_create(hdl->path);
-			if (fh != FILEH_INVALID) {
-				file_write(fh, hdl->hdr, hdl->hdrsize);
-				file_write(fh, hdl->buffer, hdl->size * sizeof(OEMCHAR));
-				file_close(fh);
-			}
-		}
-		_MFREE(hdl);
+	if (hdl == NULL) {
+		return;
 	}
+	buf = hdl->buffer;
+	bufsize = hdl->size;
+	if (hdl->flag & PFILEH_MODIFY) {
+#if defined(SUPPORT_TEXTCNV)
+		if (textcnv_getinfo(&inf, hdl->hdr, hdl->hdrsize) == 0) {
+			goto wf_err1;
+		}
+		if (!(inf.caps & TEXTCNV_WRITE)) {
+			goto wf_err1;
+		}
+		if ((inf.width != 1) && (inf.width != 2)) {
+			goto wf_err1;
+		}
+		if (inf.fromoem) {
+			buf2size = (inf.fromoem)(NULL, 0, buf, bufsize);
+			buf2 = _MALLOC(buf2size * inf.width, "profile tmp");
+			if (buf2 == NULL) {
+				goto wf_err1;
+			}
+			(inf.fromoem)(buf2, buf2size, buf, bufsize);
+			_MFREE(buf);
+			buf = buf2;
+			bufsize = buf2size;
+		}
+		if (inf.xendian) {
+			textcnv_swapendian16(buf, bufsize);
+		}
+		hdrsize = inf.hdrsize;
+		width = inf.width;
+#else	// defined(SUPPORT_TEXTCNV)
+		hdrsize = hdl->hdrsize;
+		width = sizeof(OEMCHAR);
+#endif	// defined(SUPPORT_TEXTCNV)
+		fh = file_create(hdl->path);
+		if (fh == FILEH_INVALID) {
+			goto wf_err1;
+		}
+		if (hdrsize) {
+			file_write(fh, hdl->hdr, hdrsize);
+		}
+		file_write(fh, buf, bufsize * width);
+		file_close(fh);
+	}
+
+wf_err1:
+	if (buf) {
+		_MFREE(buf);
+	}
+	_MFREE(hdl);
 }
 
 BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,

@@ -5,23 +5,30 @@
 UINT codecnv_sjistoeuc(char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	orgdcnt;
+	BOOL	stringmode;
 	int		s;
 	int		c;
 
-	(void)scnt;			// ”»’è‚µ‚Ä‚È‚¢‚Ì‚©‚æ
 	if (src == NULL) {
 		return(0);
 	}
-
-	orgdcnt = dcnt;
 	if (dcnt == 0) {
 		dst = NULL;
+		dcnt = (UINT)-1;
 	}
-	dcnt--;
-	while(dcnt) {
+	orgdcnt = dcnt;
+	stringmode = (((SINT)scnt) < 0);
+	if (stringmode) {
+		dcnt--;
+	}
+	while(scnt > 0) {
+		scnt--;
 		s = (UINT8)*src++;
-		if (s < 0x80) {				// ascii
-			if (!s) {
+		if ((s == '\0') && (stringmode)) {
+			break;
+		}
+		else if (s < 0x80) {			// ascii
+			if (dcnt == 0) {
 				break;
 			}
 			dcnt--;
@@ -31,8 +38,12 @@ UINT codecnv_sjistoeuc(char *dst, UINT dcnt, const char *src, UINT scnt) {
 			}
 		}
 		else if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x2f) {
+			if (scnt == 0) {
+				break;
+			}
+			scnt--;
 			c = (UINT8)*src++;
-			if (!c) {
+			if (c == '\0') {
 				break;
 			}
 			if (dcnt < 2) {
@@ -62,8 +73,15 @@ UINT codecnv_sjistoeuc(char *dst, UINT dcnt, const char *src, UINT scnt) {
 			}
 		}
 	}
-	if (dst) {
-		dst[0] = '\0';
+	if (dst != NULL) {
+		if (stringmode) {
+			*dst = '\0';
+		}
+#if 1	// ˆê‰žŒÝŠ·‚Ìˆ×‚É NULL‚Â‚¯‚é
+		else if (dcnt) {
+			*dst = '\0';
+		}
+#endif
 	}
 	return((UINT)(orgdcnt - dcnt));
 }

@@ -144,7 +144,7 @@ BOOL memdbg32_paint(CMNVRAM *vram, CMNPALCNV cnv, BOOL redraw) {
 		}
 	}
 	for (i=0; i<16; i++) {
-		SPRINTF(str, str_x, i);
+		SPRINTF(str, "%x", i);
 		cmddraw_text8(vram, 0, i * MEMDBG32_BLOCKH * 2, str,
 											memdbg32.pal[MEMDBG32_PALTXT]);
 	}

@@ -1,17 +1,13 @@
 #include	"compiler.h"
 #include	<stdarg.h>
 #include	"strres.h"
-#if defined(UNICODE) && defined(OSLANG_UTF8)
-#include	"codecnv.h"
-#endif
+#include	"textfile.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"ini.h"
 
 
 #ifdef TRACE
-
-#define FILEBUFSIZE			(1 << 20)
-// #define FILELASTBUFONLY
 
 #ifdef STRICT
 #define	SUBCLASSPROC	WNDPROC
@@ -27,9 +23,9 @@
 #define	VIEW_SIZE		12
 
 typedef struct {
-	BYTE	en;
-	FILEH	fh;
-	HWND	hwnd;
+	UINT8		en;
+	TEXTFILEH	tf;
+	HWND		hwnd;
 } TRACEWIN;
 
 typedef struct {
@@ -65,7 +61,9 @@ static	TRACEWIN	tracewin;
 static	HWND		hView = NULL;
 static	HFONT		hfView = NULL;
 static	HBRUSH		hBrush = NULL;
-static	TCHAR		szView[VIEW_BUFFERSIZE];
+static	int			viewpos;
+static	int			viewleng;
+static	TCHAR		viewbuf[VIEW_BUFFERSIZE * 2];
 static	TRACECFG	tracecfg;
 
 static const OEMCHAR np2trace[] = OEMTEXT("np2trace.ini");
@@ -87,126 +85,57 @@ static void View_ScrollToBottom(HWND hWnd) {
 
 static void View_ClrString(void) {
 
-	szView[0] = '\0';
-	SetWindowText(hView, szView);
+	viewpos = 0;
+	viewleng = 0;
+	viewbuf[0] = '\0';
+	SetWindowText(hView, viewbuf);
 }
 
-static void View_AddString(const OEMCHAR *lpszString) {
+static void View_AddString(const OEMCHAR *string) {
 
-	int		len;
+	int		slen;
+	int		vpos;
 	int		vlen;
-	int		overleng;
-	TCHAR	*p;
+	TCHAR	c;
 
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-	len = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1,
-																NULL, 0) - 1;
-#elif defined(UNICODE) && defined(OSLANG_UTF8)
-	len = codecnv_utf8toucs2(NULL, 0, lpszString, (UINT)-1) - 1;
+#if defined(OEMCHAR_SAME_TCHAR)
+	slen = lstrlen(string);
 #else
-	len = lstrlen(lpszString);
+	slen = oemtotchar(NULL, 0, string, (UINT)-1) - 1;
 #endif
-	if ((len <= 0) || ((len + 3) > VIEW_BUFFERSIZE)) {
+	if ((slen == 0) || ((slen + 3) > VIEW_BUFFERSIZE)) {
 		return;
 	}
-	vlen = lstrlen(szView);
-	if ((vlen + len + 3) > VIEW_BUFFERSIZE) {
-		overleng = vlen + len + 3 - VIEW_BUFFERSIZE;
-		p = szView + overleng;
-		vlen -= overleng;
-		while(vlen) {
+	vpos = viewpos;
+	vlen = viewleng;
+	if ((vpos + vlen + slen + 3) > (VIEW_BUFFERSIZE * 2)) {
+		while(vlen > 0) {
 			vlen--;
-			if (*p++ == 0x0a) {
+			c = viewbuf[vpos++];
+			if ((c == 0x0a) && ((vlen + slen + 3) <= VIEW_BUFFERSIZE)) {
 				break;
 			}
 		}
-		if (vlen) {
-			CopyMemory(szView, p, vlen * sizeof(TCHAR));
+		if (vpos >= VIEW_BUFFERSIZE) {
+			if (vlen) {
+				CopyMemory(viewbuf, viewbuf + vpos, vlen * sizeof(TCHAR));
+			}
+			vpos = 0;
+			viewpos = 0;
 		}
 	}
-	p = szView + vlen;
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, lpszString, -1, p, len + 1);
-#elif defined(UNICODE) && defined(OSLANG_UTF8)
-	codecnv_utf8toucs2(p, len + 1, lpszString, (UINT)-1);
+#if defined(OEMCHAR_SAME_TCHAR)
+	CopyMemory(viewbuf + vpos + vlen, string, slen * sizeof(TCHAR));
 #else
-	CopyMemory(p, lpszString, len * sizeof(TCHAR));
+	oemtotchar(viewbuf + vpos + vlen, slen + 1, string, (UINT)-1);
 #endif
-	p += len;
-	p[0] = '\r';
-	p[1] = '\n';
-	p[2] = '\0';
-	SetWindowText(hView, szView);
+	vlen += slen;
+	viewbuf[vpos + vlen + 0] = '\r';
+	viewbuf[vpos + vlen + 1] = '\n';
+	viewbuf[vpos + vlen + 2] = '\0';
+	viewleng = vlen + 2;
+	SetWindowText(hView, viewbuf + vpos);
 	View_ScrollToBottom(hView);
-}
-
-
-// ----
-
-#if defined(FILEBUFSIZE)
-static	char	filebuf[FILEBUFSIZE];
-static	UINT32	filebufpos;
-#endif
-
-static void trfh_close(void) {
-
-	FILEH	fh;
-
-	fh = tracewin.fh;
-	tracewin.fh = FILEH_INVALID;
-	if (fh != FILEH_INVALID) {
-#if defined(FILEBUFSIZE)
-		UINT size = filebufpos & (FILEBUFSIZE - 1);
-#if defined(FILELASTBUFONLY)
-		if (filebufpos >= FILEBUFSIZE) {
-			file_write(fh, filebuf + size, FILEBUFSIZE - size);
-		}
-#endif
-		if (size) {
-			file_write(fh, filebuf, size);
-		}
-#endif
-		file_close(fh);
-	}
-}
-
-static void trfh_open(const OEMCHAR *fname) {
-
-	trfh_close();
-	tracewin.fh = file_create(fname);
-#if defined(FILEBUFSIZE)
-	filebufpos = 0;
-#endif
-}
-
-static void trfh_add(const OEMCHAR *buf) {
-
-	UINT	size;
-
-	size = OEMSTRLEN(buf);
-	size *= sizeof(OEMCHAR);
-#if defined(FILEBUFSIZE)
-	while(size) {
-		UINT pos = filebufpos & (FILEBUFSIZE - 1);
-		UINT rem = FILEBUFSIZE - pos;
-		if (size >= rem) {
-			CopyMemory(filebuf + pos, buf, rem);
-			filebufpos += rem;
-			buf += rem;
-			size -= rem;
-#if !defined(FILELASTBUFONLY)
-			file_write(tracewin.fh, filebuf, FILEBUFSIZE);
-#endif
-		}
-		else {
-			CopyMemory(filebuf + pos, buf, size);
-			filebufpos += size;
-			break;
-		}
-	}
-#else
-	file_write(tracewin.fh, buf, size);
-#endif
 }
 
 
@@ -288,16 +217,17 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDM_TRACEFH:
-					if (tracewin.fh != FILEH_INVALID) {
-						trfh_close();
+					if (tracewin.tf != NULL) {
+						textfile_close(tracewin.tf);
+						tracewin.tf = NULL;
 					}
 					else {
-						trfh_open(OEMTEXT("traceout.txt"));
+						tracewin.tf = textfile_create(OEMTEXT("traceout.txt"),
+																		0x800);
 					}
 					hmenu = GetSystemMenu(hWnd, FALSE);
 					CheckMenuItem(hmenu, IDM_TRACEFH,
-									(tracewin.fh != FILEH_INVALID)?
-													MF_CHECKED:MF_UNCHECKED);
+									(tracewin.tf)?MF_CHECKED:MF_UNCHECKED);
 					break;
 
 				case IDM_TRACECL:
@@ -375,6 +305,7 @@ void trace_init(void) {
 
 	HWND	hwnd;
 
+	ZeroMemory(&tracewin, sizeof(tracewin));
 	if (!hPrev) {
 		WNDCLASS wc;
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -392,20 +323,13 @@ void trace_init(void) {
 		}
 	}
 
-#if 1
-	tracewin.en = 0;
-	tracewin.fh = FILEH_INVALID;
-#else
-	tracewin.en = 0;
-	tracewin.fh = FILEH_INVALID;
-	trfh_open(OEMTEXT("traces.txt"));
-#endif
+	tracewin.en = 4;
 
 	tracecfg.posx = CW_USEDEFAULT;
 	tracecfg.posy = CW_USEDEFAULT;
 	tracecfg.width = CW_USEDEFAULT;
 	tracecfg.height = CW_USEDEFAULT;
-	ini_read(file_getcd(np2trace), inititle, initbl, 4);
+	ini_read(file_getcd(np2trace), inititle, initbl, NELEMENTS(initbl));
 
 	hwnd = CreateWindowEx(WS_EX_CONTROLPARENT,
 							ClassName, ProgTitle,
@@ -423,13 +347,14 @@ void trace_init(void) {
 
 void trace_term(void) {
 
-	if (tracewin.fh != FILEH_INVALID) {
-		trfh_close();
+	if (tracewin.tf != NULL) {
+		textfile_close(tracewin.tf);
+		tracewin.tf = NULL;
 	}
 	if (tracewin.hwnd) {
 		DestroyWindow(tracewin.hwnd);
 		tracewin.hwnd = NULL;
-		ini_write(file_getcd(np2trace), inititle, initbl, 4);
+		ini_write(file_getcd(np2trace), inititle, initbl, NELEMENTS(initbl));
 	}
 }
 
@@ -440,11 +365,11 @@ void trace_fmt(const char *fmt, ...) {
 	OEMCHAR	buf[0x1000];
 
 	en = (tracewin.en & 1) &&
-		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
+		((tracewin.en & 4) || (tracewin.tf != NULL));
 	if (en) {
 		va_start(ap, fmt);
-#if defined(_UNICODE) && defined(OSLANG_UCS2)
-		TCHAR cnvfmt[0x800];
+#if defined(OSLANG_UCS2)
+		OEMCHAR cnvfmt[0x800];
 		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
 												cnvfmt, NELEMENTS(cnvfmt));
 		vswprintf(buf, cnvfmt, ap);
@@ -455,9 +380,9 @@ void trace_fmt(const char *fmt, ...) {
 		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
 		}
-		if (tracewin.fh != FILEH_INVALID) {
-			trfh_add(buf);
-			trfh_add(crlf);
+		if (tracewin.tf != NULL) {
+			textfile_write(tracewin.tf, buf);
+			textfile_write(tracewin.tf, crlf);
 		}
 	}
 }
@@ -469,11 +394,11 @@ void trace_fmt2(const char *fmt, ...) {
 	OEMCHAR	buf[0x1000];
 
 	en = (tracewin.en & 2) &&
-		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
+		((tracewin.en & 4) || (tracewin.tf != NULL));
 	if (en) {
 		va_start(ap, fmt);
-#if defined(_UNICODE) && defined(OSLANG_UCS2)
-		TCHAR cnvfmt[0x800];
+#if defined(OSLANG_UCS2)
+		OEMCHAR cnvfmt[0x800];
 		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
 												cnvfmt, NELEMENTS(cnvfmt));
 		vswprintf(buf, cnvfmt, ap);
@@ -484,9 +409,9 @@ void trace_fmt2(const char *fmt, ...) {
 		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
 		}
-		if (tracewin.fh != FILEH_INVALID) {
-			trfh_add(buf);
-			trfh_add(crlf);
+		if (tracewin.tf != FILEH_INVALID) {
+			textfile_write(tracewin.tf, buf);
+			textfile_write(tracewin.tf, crlf);
 		}
 	}
 }

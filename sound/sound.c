@@ -305,7 +305,7 @@ void sound_sync(void) {
 	}
 	else
 #endif
-	streamprepare(length);
+		streamprepare(length);
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
 	beep_eventreset();
 	SNDCSEC_LEAVE;

@@ -10,6 +10,7 @@
 #endif
 #define	OSLINEBREAK_CRLF
 
+
 typedef	signed int			SINT;
 typedef	signed char			SINT8;
 typedef	unsigned char		UINT8;
@@ -42,17 +43,29 @@ typedef	unsigned int		UINT32;
 
 
 #define	BRESULT				UINT
-#if !defined(OSLANG_UTF8)
-#define	OEMCHAR				TCHAR
-#define	OEMTEXT(string)		_T(string)
+#if defined(OSLANG_UCS2)
+#define	OEMCHAR				wchar_t
+#define	_OEMTEXT(x)			L ## x
+#define	OEMTEXT(string)		_OEMTEXT(string)
+#if defined(_UNICODE)
 #define	OEMSPRINTF			wsprintf
 #define	OEMSTRLEN			lstrlen
 #else
+#define	OEMSPRINTF			swprintf
+#define	OEMSTRLEN			wcslen
+#endif
+#else
 #define	OEMCHAR				char
 #define	OEMTEXT(string)		string
+#if defined(_UNICODE)
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
+#else
+#define	OEMSPRINTF			wsprintf
+#define	OEMSTRLEN			lstrlen
 #endif
+#endif
+
 
 #include	"common.h"
 #include	"milstr.h"

@@ -1,7 +1,5 @@
 #include	"compiler.h"
-#if defined(UNICODE) && defined(OSLANG_UTF8)
-#include	"codecnv.h"
-#endif
+#include	"oemtext.h"
 #include	"fontmng.h"
 
 
@@ -273,17 +271,12 @@ BRESULT fontmng_getsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 		if (!leng) {
 			break;
 		}
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-		UINT16 unistr[2];
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, string, -1,
-												unistr, NELEMENTS(unistr));
-		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
-#elif defined(UNICODE) && defined(OSLANG_UTF8)
-		UINT16 unistr[2];
-		codecnv_utf8toucs2(unistr, NELEMENTS(unistr), string, (UINT)-1);
-		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
-#else
+#if defined(OEMCHAR_SAME_TCHAR)
 		getlength1((FNTMNG)hdl, &fdat, string, leng);
+#else
+		TCHAR tcharstr[4];
+		UINT tlen = oemtotchar(tcharstr, NELEMENTS(tcharstr), string, leng);
+		getlength1((FNTMNG)hdl, &fdat, tcharstr, tlen);
 #endif
 		string += leng;
 		width += fdat.pitch;
@@ -317,17 +310,12 @@ BRESULT fontmng_getdrawsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 		if (!leng) {
 			break;
 		}
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-		UINT16 unistr[2];
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, string, -1,
-												unistr, NELEMENTS(unistr));
-		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
-#elif defined(UNICODE) && defined(OSLANG_UTF8)
-		UINT16 unistr[2];
-		codecnv_utf8toucs2(unistr, NELEMENTS(unistr), string, (UINT)-1);
-		getlength1((FNTMNG)hdl, &fdat, unistr, 1);
-#else
+#if defined(OEMCHAR_SAME_TCHAR)
 		getlength1((FNTMNG)hdl, &fdat, string, leng);
+#else
+		TCHAR tcharstr[4];
+		UINT tlen = oemtotchar(tcharstr, NELEMENTS(tcharstr), string, leng);
+		getlength1((FNTMNG)hdl, &fdat, tcharstr, tlen);
 #endif
 		string += leng;
 		width = posx + max(fdat.width, fdat.pitch);
@@ -432,11 +420,13 @@ FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
 
 	FNTMNG	fhdl;
 	FNTDAT	fdat;
+	UINT	leng;
 
 	if ((hdl == NULL) || (string == NULL)) {
 		goto ftmggt_err;
 	}
 	fhdl = (FNTMNG)hdl;
+	leng = milstr_charsize(string);
 
 #if defined(FONTMNG_CACHE)
 {
@@ -447,16 +437,14 @@ FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
 	UINT	cnt;
 
 #if defined(OSLANG_SJIS) || defined(OSLANG_UTF8)
-	int len;
-	len = milstr_charsize(string);
-	str = (UINT8)string[0];
-	if (len >= 2) {
+	leng = (UINT8)string[0];
+	if (leng >= 2) {
 		str |= ((UINT8)string[1]) << 8;
 	}
-	if (len >= 3) {
+	if (leng >= 3) {
 		str |= ((UINT8)string[2]) << 16;
 	}
-	if (len >= 4) {
+	if (leng >= 4) {
 		str |= ((UINT8)string[3]) << 24;
 	}
 #else
@@ -493,17 +481,14 @@ FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
 	fdat = (FNTDAT)(fhdl + 1);
 #endif
 
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-	UINT16 unistr[2];
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, string, -1,
-												unistr, NELEMENTS(unistr));
-	fontmng_getchar(fhdl, fdat, unistr, 1);
-#elif defined(UNICODE) && defined(OSLANG_UTF8)
-	UINT16 unistr[2];
-	codecnv_utf8toucs2(unistr, NELEMENTS(unistr), string, (UINT)-1);
-	fontmng_getchar(fhdl, fdat, unistr, 1);
+#if defined(OEMCHAR_SAME_TCHAR)
+	fontmng_getchar(fhdl, fdat, string, leng);
 #else
-	fontmng_getchar(fhdl, fdat, string, milstr_charsize(string));
+{
+	TCHAR tcharstr[4];
+	UINT tlen = oemtotchar(tcharstr, NELEMENTS(tcharstr), string, leng);
+	fontmng_getchar(fhdl, fdat, tcharstr, tlen);
+}
 #endif
 	fontmng_setpat(fhdl, fdat);
 	return(fdat);

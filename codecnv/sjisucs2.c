@@ -1145,26 +1145,34 @@ static const UINT32 utftbl[] = {
 UINT codecnv_sjis2utf(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	orgdcnt;
+	BOOL	stringmode;
 	UINT	s;
 	UINT	r;
 
-	(void)scnt;
 	if (src == NULL) {
 		return(0);
 	}
-
-	orgdcnt = dcnt;
-	if (dst == NULL) {
+	if (dcnt == 0) {
 		dst = NULL;
+		dcnt = (UINT)-1;
 	}
-	dcnt--;
-	while(dcnt) {
+	orgdcnt = dcnt;
+	stringmode = (((SINT)scnt) < 0);
+	if (stringmode) {
+		dcnt--;
+	}
+	while(scnt > 0) {
+		scnt--;
 		s = (UINT8)*src++;
-		if (s == 0) {
+		if ((s == 0) && (stringmode)) {
 			break;
 		}
 		r = utftbl[s];
 		if (r & 0xffff0000) {
+			if (scnt == 0) {
+				break;
+			}
+			scnt--;
 			s = (UINT8)*src++;
 			if (s == 0) {
 				break;
@@ -1178,14 +1186,24 @@ UINT codecnv_sjis2utf(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
 				r = UDCODE;
 			}
 		}
+		if (dcnt == 0) {
+			break;
+		}
 		dcnt--;
 		if (dst) {
 			dst[0] = (UINT16)r;
 			dst++;
 		}
 	}
-	if (dst) {
-		dst[0] = 0;
+	if (dst != NULL) {
+		if (stringmode) {
+			*dst = '\0';
+		}
+#if 1	// ˆê‰žŒÝŠ·‚Ìˆ×‚É NULL‚Â‚¯‚é
+		else if (dcnt) {
+			*dst = '\0';
+		}
+#endif
 	}
 	return((UINT)(orgdcnt - dcnt));
 }

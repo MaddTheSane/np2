@@ -5,21 +5,31 @@
 UINT codecnv_ucs2toutf8(char *dst, UINT dcnt, const UINT16 *src, UINT scnt) {
 
 	UINT	orgdcnt;
+	BOOL	stringmode;
 	UINT	c;
 
-	(void)scnt;
-	orgdcnt = dcnt;
+	if (src == NULL) {
+		return(0);
+	}
 	if (dcnt == 0) {
 		dst = NULL;
+		dcnt = (UINT)-1;
 	}
-
-	dcnt--;
-	while(dcnt) {
+	orgdcnt = dcnt;
+	stringmode = (((SINT)scnt) < 0);
+	if (stringmode) {
+		dcnt--;
+	}
+	while(scnt > 0) {
 		c = *src++;
-		if (!c) {
+		scnt--;
+		if ((c == '\0') && (stringmode)) {
 			break;
 		}
 		else if (c < 0x80) {
+			if (dcnt == 0) {
+				break;
+			}
 			dcnt--;
 			if (dst) {
 				dst[0] = (char)c;
@@ -50,8 +60,15 @@ UINT codecnv_ucs2toutf8(char *dst, UINT dcnt, const UINT16 *src, UINT scnt) {
 			}
 		}
 	}
-	if (dst) {
-		dst[0] = '\0';
+	if (dst != NULL) {
+		if (stringmode) {
+			*dst = '\0';
+		}
+#if 1	// ˆê‰žŒÝŠ·‚Ìˆ×‚É NULL‚Â‚¯‚é
+		else if (dcnt) {
+			*dst = '\0';
+		}
+#endif
 	}
 	return((UINT)(orgdcnt - dcnt));
 }

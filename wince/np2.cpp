@@ -5,10 +5,8 @@
 #endif
 #include	"resource.h"
 #include	"strres.h"
-#if defined(UNICODE) && defined(OSLANG_UTF8)
-#include	"codecnv.h"
-#endif
 #include	"np2.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"commng.h"
 #include	"inputmng.h"
@@ -311,38 +309,6 @@ static void processwait(UINT cnt) {
 
 // ----
 
-#if defined(UNICODE) && defined(OSLANG_SJIS)
-static DWORD _GetModuleFileName(HMODULE hModule,
-										OEMCHAR *lpFileName, DWORD nSize) {
-
-	UINT16	ucs2[MAX_PATH];
-
-	GetModuleFileName(hModule, ucs2, NELEMENTS(ucs2));
-	nSize = WideCharToMultiByte(CP_ACP, 0, ucs2, -1,
-										lpFileName, nSize, NULL, NULL);
-	if (nSize) {
-		nSize--;
-	}
-	return(nSize);
-}
-#elif defined(UNICODE) && defined(OSLANG_UTF8)
-static DWORD _GetModuleFileName(HMODULE hModule,
-										OEMCHAR *lpFileName, DWORD nSize) {
-
-	UINT16	ucs2[MAX_PATH];
-
-	GetModuleFileName(hModule, ucs2, NELEMENTS(ucs2));
-	nSize = codecnv_ucs2toutf8(lpFileName, nSize, ucs2, (UINT)-1);
-	if (nSize) {
-		nSize--;
-	}
-	return(nSize);
-}
-#else
-#define	_GetModuleFileName(a, b, c)		GetModuleFileName(a, b, c)
-#endif
-
-
 #if defined(_WIN32_WCE)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										LPWSTR lpszCmdLine, int nCmdShow)
@@ -371,7 +337,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		return(0);
 	}
 
-	_GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
+#if defined(OEMCHAR_SAME_TCHAR)
+	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
+#else
+	TCHAR _modulefile[MAX_PATH];
+	GetModuleFileName(NULL, _modulefile, NELEMENTS(_modulefile));
+	tchartooem(modulefile, NELEMENTS(modulefile), _modulefile, (UINT)-1);
+#endif
 	dosio_init();
 	file_setcd(modulefile);
 	initload();
