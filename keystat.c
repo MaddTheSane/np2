@@ -157,9 +157,14 @@ kstbl_err:
 
 // ----
 
-void keystat_ctrl(REG8 dat) {
+void keystat_ctrlreset(void) {
 
-	return;					// ‚Ü‚¾BIOS‚ª–¢‘Î‰ž
+	ZeroMemory(&keyctrl, sizeof(keyctrl));
+}
+
+void keystat_ctrlsend(REG8 dat) {
+
+//	return;					// ‚Ü‚¾ƒeƒXƒg
 
 	if (!keyctrl.reqparam) {
 		keyctrl.mode = dat;
@@ -199,10 +204,8 @@ void keystat_ctrl(REG8 dat) {
 				keyctrl.kbdtype = dat;
 				break;
 #endif
-			case 0x9d:
-				break;
-
-			case 0x9e:
+			case 0x9c:
+				keyboard_ctrl(0xfa);
 				break;
 		}
 		keyctrl.reqparam = 0;

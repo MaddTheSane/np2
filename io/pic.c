@@ -49,42 +49,19 @@ void pic_irq(void) {
 	}
 	p = &pic;
 
-	// マスター
-	imr = p->pi[0].imr;
-	mir = p->pi[0].irr;
-	mis = p->pi[0].isr;
-	if (!(p->pi[0].ocw3 & PIC_OCW3_SMM)) {
-		mir &= ~imr;
-	}
-	else {
-		mis &= imr;
-	}
-	mir &= ~mis;
-	slave = p->pi[0].icw[2];
-	if (mir) {
-		dat = mir | mis;
-		num = p->pi[0].pry;
-		bit = 1 << num;
-		while(!(dat & bit)) {
-			num = (num + 1) & 7;
-			bit = 1 << num;
-		}
-		if ((mir & bit) && (!(slave & bit))) {
-			p->pi[0].isr |= bit;
-			p->pi[0].irr &= ~bit;
-			if (num == 0) {
-				nevent_reset(NEVENT_PICMASK);
-			}
-//			TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | num));
-			CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | num), 0);
-			return;
-		}
+	mir = p->pi[0].irr & (~p->pi[0].imr);
+	sir = p->pi[1].irr & (~p->pi[1].imr);
+	if ((mir == 0) && (sir == 0)) {
+		return;
 	}
 
-	// スレーヴ許可？
-	dat = slave | mis;
-	if (!dat) {
-		return;
+	slave = 1 << (p->pi[1].icw[2] & 7);
+	dat = mir;
+	if (sir) {
+		dat |= slave;
+	}
+	if (!(p->pi[0].ocw3 & PIC_OCW3_SMM)) {
+		dat |= p->pi[0].isr;
 	}
 	num = p->pi[0].pry;
 	bit = 1 << num;
@@ -92,41 +69,34 @@ void pic_irq(void) {
 		num = (num + 1) & 7;
 		bit = 1 << num;
 	}
-	if (!(slave & bit)) {
-		return;
-	}
-
-	// スレーヴ
-	imr = p->pi[1].imr;
-	sir = p->pi[1].irr;
-	sis = p->pi[1].isr;
-	if (!(p->pi[1].ocw3 & PIC_OCW3_SMM)) {
-		sir &= ~imr;
-	}
-	else {
-		sis &= imr;
-	}
-	sir &= ~sis;
-	if (sir) {
-		dat = sir | sis;
+	if (p->pi[0].icw[2] & bit) {					// スレーヴ
+		dat = sir;
+		if (!(p->pi[1].ocw3 & PIC_OCW3_SMM)) {
+			dat |= p->pi[1].isr;
+		}
 		num = p->pi[1].pry;
 		bit = 1 << num;
 		while(!(dat & bit)) {
 			num = (num + 1) & 7;
 			bit = 1 << num;
 		}
-		if (sir & bit) {
+		if (!(p->pi[1].isr & bit)) {
+			p->pi[0].isr |= slave;
+			p->pi[0].irr &= ~slave;
 			p->pi[1].isr |= bit;
 			p->pi[1].irr &= ~bit;
-			master = 1 << (p->pi[1].icw[2] & 7);
-			if (!(p->pi[0].isr & master)) {
-				p->pi[0].isr |= master;
-				p->pi[0].irr &= ~master;
-			}
 //			TRACEOUT(("hardware-int %.2x", (p->pi[1].icw[1] & 0xf8) | num));
 			CPU_INTERRUPT((REG8)((p->pi[1].icw[1] & 0xf8) | num), 0);
-			return;
 		}
+	}
+	else if (!(p->pi[0].isr & bit)) {				// マスター
+		p->pi[0].isr |= bit;
+		p->pi[0].irr &= ~bit;
+		if (num == 0) {
+			nevent_reset(NEVENT_PICMASK);
+		}
+//		TRACEOUT(("hardware-int %.2x", (p->pi[0].icw[1] & 0xf8) | num));
+		CPU_INTERRUPT((REG8)((p->pi[0].icw[1] & 0xf8) | num), 0);
 	}
 }
 
