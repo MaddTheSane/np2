@@ -118,20 +118,20 @@ int milsjis_cmp(const char *str, const char *cmp) {
 	int		c;
 
 	do {
-		s = (BYTE)*str++;
+		s = (UINT8)*str++;
 		if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			c = (BYTE)*cmp++;
+			c = (UINT8)*cmp++;
 			if (s != c) {
 				goto mscp_err;
 			}
-			s = (BYTE)*str++;
-			c = (BYTE)*cmp++;
+			s = (UINT8)*str++;
+			c = (UINT8)*cmp++;
 		}
 		else {
 			if (((s - 'a') & 0xff) < 26) {
 				s -= 0x20;
 			}
-			c = (BYTE)*cmp++;
+			c = (UINT8)*cmp++;
 			if (((c - 'a') & 0xff) < 26) {
 				c -= 0x20;
 			}
@@ -152,20 +152,20 @@ int milsjis_memcmp(const char *str, const char *cmp) {
 	int		c;
 
 	do {
-		c = (BYTE)*cmp++;
+		c = (UINT8)*cmp++;
 		if ((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			s = (BYTE)*str++;
+			s = (UINT8)*str++;
 			if (c != s) {
 				break;
 			}
-			c = (BYTE)*cmp++;
-			s = (BYTE)*str++;
+			c = (UINT8)*cmp++;
+			s = (UINT8)*str++;
 		}
 		else if (c) {
 			if (((c - 'a') & 0xff) < 26) {
 				c &= ~0x20;
 			}
-			s = (BYTE)*str++;
+			s = (UINT8)*str++;
 			if (((s - 'a') & 0xff) < 26) {
 				s &= ~0x20;
 			}
@@ -191,8 +191,9 @@ int milsjis_kanji1st(const char *str, int pos) {
 
 int milsjis_kanji2nd(const char *str, int pos) {
 
-	int		ret = 0;
+	int		ret;
 
+	ret = 0;
 	while((pos > 0) && ((((str[--pos] ^ 0x20) - 0xa1) & 0xff) < 0x3c)) {
 		ret ^= 1;
 	}
@@ -270,7 +271,7 @@ int mileuc_charsize(const char *str) {
 
 	int		pos;
 
-	pos = (((str[0] - 0xa1) & 0xff) < 0x5d)?1:0;
+	pos = (str[0] & 0x80)?1:0;
 	return((str[pos] != '\0')?(pos+1):0);
 }
 
@@ -280,20 +281,20 @@ int mileuc_cmp(const char *str, const char *cmp) {
 	int		c;
 
 	do {
-		s = (BYTE)*str++;
-		if (((s - 0xa1) & 0xff) < 0x5d) {
-			c = (BYTE)*cmp++;
+		s = (UINT8)*str++;
+		if (s & 0x80) {
+			c = (UINT8)*cmp++;
 			if (s != c) {
 				goto mscp_err;
 			}
-			s = (BYTE)*str++;
-			c = (BYTE)*cmp++;
+			s = (UINT8)*str++;
+			c = (UINT8)*cmp++;
 		}
 		else {
 			if (((s - 'a') & 0xff) < 26) {
 				s -= 0x20;
 			}
-			c = (BYTE)*cmp++;
+			c = (UINT8)*cmp++;
 			if (((c - 'a') & 0xff) < 26) {
 				c -= 0x20;
 			}
@@ -314,14 +315,14 @@ int mileuc_memcmp(const char *str, const char *cmp) {
 	int		c;
 
 	do {
-		c = (BYTE)*cmp++;
-		if (((c - 0xa1) & 0xff) < 0x5d) {
-			s = (BYTE)*str++;
+		c = (UINT8)*cmp++;
+		if (c & 0x80) {
+			s = (UINT8)*str++;
 			if (c != s) {
 				break;
 			}
-			c = (BYTE)*cmp++;
-			s = (BYTE)*str++;
+			c = (UINT8)*cmp++;
+			s = (UINT8)*str++;
 		}
 		else if (c) {
 			if (((c - 'a') & 0xff) < 26) {
@@ -344,8 +345,7 @@ int mileuc_kanji1st(const char *str, int pos) {
 	int		ret;
 
 	ret = 0;
-	while((pos >= 0) &&
-		(((str[pos--] - 0xa1) & 0xff) < 0x5d)) {
+	while((pos >= 0) && (str[pos--] & 0x80)) {
 		ret ^= 1;
 	}
 	return(ret);
@@ -353,9 +353,10 @@ int mileuc_kanji1st(const char *str, int pos) {
 
 int mileuc_kanji2nd(const char *str, int pos) {
 
-	int		ret = 0;
+	int		ret;
 
-	while((pos > 0) && (((str[--pos] - 0xa1) & 0xff) < 0x5d)) {
+	ret = 0;
+	while((pos > 0) && (str[--pos] & 0x80)) {
 		ret ^= 1;
 	}
 	return(ret);
@@ -413,7 +414,7 @@ char *mileuc_chr(const char *str, int c) {
 			if (s == c) {
 				return((char *)str);
 			}
-			if (((s - 0xa1) & 0xff) < 0x5d) {
+			if (s & 0x80) {
 				str++;
 				s = *str;
 			}

@@ -208,7 +208,9 @@ const INITBL	*pterm;
 	if (fh == FILEH_INVALID) {
 		return;
 	}
+#if defined(OSLANG_UTF8)
 	file_write(fh, utf8hdr, sizeof(utf8hdr));
+#endif
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
 	milstr_ncat(work, "]\r\n", sizeof(work));
