@@ -1,3 +1,5 @@
+/*	$Id: gtk_screen.c,v 1.5 2004/07/05 14:36:58 monaka Exp $	*/
+
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
@@ -39,6 +41,7 @@
 
 typedef struct {
 	BYTE		scrnmode;
+	BYTE		drawing;
 	int		width;
 	int		height;
 	int		extend;
@@ -52,8 +55,6 @@ typedef struct {
 	int		lpitch;
 	int		scrw;
 	int		scrh;
-
-	int		shared_pixmap;
 
 	/* toolkit depend */
 	GdkImage	*surface;
@@ -241,6 +242,7 @@ void
 scrnmng_initialize(void)
 {
 
+	drawmng.drawing = FALSE;
 	scrnstat.width = 640;
 	scrnstat.height = 400;
 	scrnstat.extend = 1;
@@ -256,6 +258,10 @@ scrnmng_create(BYTE mode)
 	int bitcolor;
 	UINT lpitch;
 	BYTE bytes_per_pixel;
+
+	while (drawmng.drawing)
+		gtk_main_iteration_do(FALSE);
+	drawmng.drawing = TRUE;
 
 #if notyet
 	if (mode & SCRNMODE_FULLSCREEN) {
@@ -301,18 +307,8 @@ scrnmng_create(BYTE mode)
 			return FAILURE;
 		}
 
-		drawmng.shared_pixmap = use_shared_pixmap;
-		drawmng.backsurf = NULL;
-		if (use_shared_pixmap) {
-			drawmng.backsurf = gdk_pixmap_shpix_new(
-			    drawarea->window, drawmng.surface,
-			    rect.right, rect.bottom, visual->depth);
-		}
-		if (drawmng.backsurf == NULL) {
-			drawmng.shared_pixmap = FALSE;
-			drawmng.backsurf = gdk_pixmap_new(drawarea->window,
-			    rect.right, rect.bottom, visual->depth);
-		}
+		drawmng.backsurf = gdk_pixmap_new(drawarea->window,
+		    rect.right, rect.bottom, visual->depth);
 		if (drawmng.backsurf == NULL) {
 			g_message("can't create pixmap.");
 			return FAILURE;
@@ -329,23 +325,23 @@ scrnmng_create(BYTE mode)
 	drawmng.clipping = 0;
 	renewal_client_size();
 
+	drawmng.drawing = FALSE;
+
 	return SUCCESS;
 }
 
 void
 scrnmng_destroy(void)
 {
-#if 0
-	GdkVisual *visual;
 
-	visual = gtk_widget_get_visual(drawarea);
-	if (visual->class == PseudoColor)
-		XFreeColors(display, cmap, pixel, 24, 0);
-#endif
-	if (drawmng.backsurf)
+	if (drawmng.backsurf) {
 		gdk_pixmap_unref(drawmng.backsurf);
-	if (drawmng.surface)
+		drawmng.backsurf = NULL;
+	}
+	if (drawmng.surface) {
 		gdk_image_destroy(drawmng.surface);
+		drawmng.surface = NULL;
+	}
 }
 
 RGB16
@@ -389,7 +385,9 @@ scrnmng_surflock(void)
 	int lpitch = drawmng.lpitch;
 	int bytes_per_pixel = scrnsurf.ss.bpp >> 3;
 
+#if !defined(USE_SCREEN_INVALIDATE)
 	memcpy(scrnsurf.renewal, renewal_line, sizeof(scrnsurf.renewal));
+#endif
 
 	scrnsurf.ss.ptr = (BYTE *)drawmng.surface->mem;
 	if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
@@ -414,70 +412,76 @@ scrnmng_surfunlock(const SCRNSURF *surf)
 {
 	GdkDrawable *d = drawarea->window;
 	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
+	X11SCRNSURF *ss = (X11SCRNSURF *)surf;
+	BYTE *delta = ss->renewal;
+	RECT_T r;
+	gint h, s;
 
-	if (!drawmng.shared_pixmap) {
-		X11SCRNSURF *ss = (X11SCRNSURF *)surf;
-		BYTE *delta = ss->renewal;
-		RECT_T r;
-		gint h, s;
+	r.left = drawmng.scrn.left;
+	r.top = drawmng.scrn.top;
+	r.right = drawmng.rect.right;
+	r.bottom = drawmng.rect.bottom;
 
-		r.left = drawmng.scrn.left;
-		r.top = drawmng.scrn.top;
-		r.right = drawmng.rect.right;
-		r.bottom = drawmng.rect.bottom;
+#if !defined(USE_SCREEN_INVALIDATE)
+	if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
+		/* normal */
+		for (s = h = 0; h < r.bottom; h++) {
+			if ((renewal_line[h] != delta[h]) || (s == h))
+				continue;
 
-		if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
-			/* normal */
-			for (s = h = 0; h < r.bottom; h++) {
-				if ((renewal_line[h] != delta[h]) || (s == h))
-					continue;
+			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+			    0, s, r.left, r.top + s, r.right, h - s);
+			s = h + 1;
+		}
+		if (s != h) {
+			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+			    0, s, r.left, r.top + s, r.right, h - s);
+		}
+	} else if (!(drawmng.scrnmode & SCRNMODE_ROTATEDIR)) {
+		/* rotate left */
+		for (s = h = 0; h < r.right; h++) {
+			if ((renewal_line[h] != delta[h]) || (s == h))
+				continue;
 
-				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-				    0, s, r.left, r.top + s, r.right, h - s);
-				s = h + 1;
-			}
-			if (s != h) {
-				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-				    0, s, r.left, r.top + s, r.right, h - s);
-			}
-		} else if (!(drawmng.scrnmode & SCRNMODE_ROTATEDIR)) {
-			/* rotate left */
-			for (s = h = 0; h < r.right; h++) {
-				if ((renewal_line[h] != delta[h]) || (s == h))
-					continue;
+			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+			    s, 0, r.left + s, r.top, h - s, r.bottom);
+			s = h + 1;
+		}
+		if (s != h) {
+			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+			    s, 0, r.left + s, r.top, h - s, r.bottom);
+		}
+	} else {
+		/* rotate right */
+		for (s = h = 0; h < r.right; h++) {
+			if ((renewal_line[h] != delta[h]) || (s == h))
+				continue;
 
-				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-				    s, 0, r.left + s, r.top, h - s, r.bottom);
-				s = h + 1;
-			}
-			if (s != h) {
-				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-				    s, 0, r.left + s, r.top, h - s, r.bottom);
-			}
-		} else {
-			/* rotate right */
-			for (s = h = 0; h < r.right; h++) {
-				if ((renewal_line[h] != delta[h]) || (s == h))
-					continue;
-
-				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-				    r.right - h, 0,
-				    drawmng.scrn.right - h, r.top, h - s, r.bottom);
-				s = h + 1;
-			}
-			if (s != h) {
-				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-				    r.right - h, 0,
-				    drawmng.scrn.right - h, r.top, h - s, r.bottom);
-			}
+			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+			    r.right - h, 0,
+			    drawmng.scrn.right - h, r.top, h - s, r.bottom);
+			s = h + 1;
+		}
+		if (s != h) {
+			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+			    r.right - h, 0,
+			    drawmng.scrn.right - h, r.top, h - s, r.bottom);
 		}
 	}
+#else
+	gtk_widget_queue_draw_area(drawarea, r.left, r.top, r.right, r.bottom);
+#endif
 
 	if (scrnmng.palchanged) {
 		scrnmng.palchanged = FALSE;
 		palette_set();
 	}
 
+#if !defined(USE_SCREEN_INVALIDATE)
+	if (drawmng.drawing)
+		return;
+
+	drawmng.drawing = TRUE;
 #if notyet
 	if (drawmng.scrnmode & SCRNMODE_FULLSCREEN) {
 	} else
@@ -494,4 +498,46 @@ scrnmng_surfunlock(const SCRNSURF *surf)
 		    drawmng.scrn.left, drawmng.scrn.top,      /* dest */
 		    drawmng.rect.right, drawmng.rect.bottom); /* w/h  */
 	}
+	drawmng.drawing = FALSE;
+#endif
+}
+
+void
+scrnmng_draw(RECT_T *r)
+{
+	GdkDrawable *d = drawarea->window;
+	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
+
+	if (drawmng.drawing)
+		return;
+
+	drawmng.drawing = TRUE;
+
+	if (r->right > drawmng.rect.right)
+		r->right = drawmng.rect.right;
+	if (r->bottom > drawmng.rect.bottom)
+		r->bottom = drawmng.rect.bottom;
+
+#if notyet
+	if (drawmng.scrnmode & SCRNMODE_FULLSCREEN) {
+	} else
+#endif
+	{
+		if (scrnmng.allflash) {
+			scrnmng.allflash = 0;
+			if (np2oscfg.paddingx || np2oscfg.paddingy) {
+				clear_outscreen();
+			}
+		}
+#if !defined(USE_SCREEN_INVALIDATE)
+		gdk_draw_pixmap(d, gc, drawmng.backsurf,
+		    r->left, r->top,
+		    r->left, r->top, r->right, r->bottom);
+#else
+		gdk_draw_image(d, gc, drawmng.surface,
+		    r->left, r->top,
+		    r->left, r->top, r->right, r->bottom);
+#endif
+	}
+	drawmng.drawing = FALSE;
 }

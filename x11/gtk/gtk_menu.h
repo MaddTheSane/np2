@@ -57,7 +57,7 @@ enum {
 	NUM_TOGGLE_ITEMS
 };
 
-GtkWidget *create_menu(GtkWidget *);
+GtkWidget *create_menu(void);
 
 void xmenu_toggle_item(int, int, int);
 void xmenu_select_item(MENU_HDL, const char *);

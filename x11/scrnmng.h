@@ -67,6 +67,8 @@ void scrnmng_surfunlock(const SCRNSURF *surf);
 
 RGB16 scrnmng_makepal16(RGB32 pal32);
 
+void scrnmng_draw(RECT_T *r);
+
 /*
  * for menubase
  */
