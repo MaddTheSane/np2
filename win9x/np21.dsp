@@ -774,10 +774,6 @@ SOURCE=..\SOUND\FMBOARD.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\FMLOGM.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\SOUND\FMTIMER.C
 # End Source File
 # Begin Source File
@@ -846,6 +842,10 @@ SOURCE=..\SOUND\PSGGENG.C
 # Begin Source File
 
 SOURCE=..\SOUND\RHYTHMC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\S98.C
 # End Source File
 # Begin Source File
 

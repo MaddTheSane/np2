@@ -278,7 +278,7 @@ const OEMCHAR	*q;
 	p = file_getname(path);
 	q = NULL;
 	while((csize = milstr_charsize(p)) != 0) {
-		if ((csize == 1) && (*path == '.')) {
+		if ((csize == 1) && (*p == '.')) {
 			q = p + 1;
 		}
 		p += csize;
@@ -298,7 +298,7 @@ void DOSIOCALL file_cutext(OEMCHAR *path) {
 	p = file_getname(path);
 	q = NULL;
 	while((csize = milstr_charsize(p)) != 0) {
-		if ((csize == 1) && (*path == '.')) {
+		if ((csize == 1) && (*p == '.')) {
 			q = p;
 		}
 		p += csize;

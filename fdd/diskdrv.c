@@ -62,7 +62,8 @@ void diskdrv_setfdd(REG8 drv, const OEMCHAR *fname, int readonly) {
 		if (fname) {
 			diskdrv_delay[drv] = DISK_DELAY;
 			diskdrv_ro[drv] = readonly;
-			file_cpyname(diskdrv_fname[drv], fname, NELEMENTS(diskdrv_fname[0]));
+			file_cpyname(diskdrv_fname[drv], fname,
+												NELEMENTS(diskdrv_fname[0]));
 		}
 		sysmng_update(SYS_UPDATEFDD);
 	}
