@@ -19,7 +19,7 @@ static void IOOUTCALL opn_o08a(UINT port, BYTE dat) {
 
 	if (opn.opn2reg < 0x10) {
 		if (opn.opn2reg != 0x0e) {
-			psggen_setreg(&psg2, opn.opn2reg, dat);
+			psggen_setreg(&psg1, opn.opn2reg, dat);
 		}
 	}
 	else {
@@ -56,7 +56,7 @@ static BYTE IOINPCALL opn_i08a(UINT port) {
 		return(0xff);
 	}
 	if (opn.opn2reg < 0x10) {
-		return(psggen_getreg(&psg2, opn.opn2reg));
+		return(psggen_getreg(&psg1, opn.opn2reg));
 	}
 	(void)port;
 	return(0xff);
@@ -76,7 +76,7 @@ static void IOOUTCALL opna_o18a(UINT port, BYTE dat) {
 	S98_put(NORMAL2608, opn.opnreg, dat);
 	if (opn.opnreg < 0x10) {
 		if (opn.opnreg != 0x0e) {
-			psggen_setreg(&psg1, opn.opnreg, dat);
+			psggen_setreg(&psg2, opn.opnreg, dat);
 		}
 	}
 	else {
@@ -142,10 +142,10 @@ static BYTE IOINPCALL opna_i188(UINT port) {
 static BYTE IOINPCALL opna_i18a(UINT port) {
 
 	if (opn.opnreg == 0x0e) {
-		return(fmboard_getjoy(&psg1));
+		return(fmboard_getjoy(&psg2));
 	}
 	else if (opn.opnreg < 0x10) {
-		return(psggen_getreg(&psg1, opn.opnreg));
+		return(psggen_getreg(&psg2, opn.opnreg));
 	}
 	(void)port;
 	return(opn.reg[opn.opnreg]);

@@ -125,7 +125,6 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 	int		pos;
 	int		step;
 
-	// Netscape•—–¡
 	milstr_ncpy(path, p, leng);
 	hdc = toolwin.hdcfont;
 	GetTextExtentPoint32(hdc, p, strlen(p), &cur);
@@ -139,7 +138,7 @@ static void calctextsize(char *path, int leng, const char *p, int width) {
 	l = strlen(path);
 	if (l > 1) {
 		l -= 1;
-		if (milstr_kanji2nd(p, l)) {
+		if (milstr_kanji2nd(p, l - 1)) {
 			l--;
 		}
 	}
@@ -435,6 +434,14 @@ static void movingproc(RECT *rect) {
 					}
 				}
 			}
+			d = rect->left - workrc.left;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
+			d = rect->right - workrc.right;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
 		} while(0);
 		if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
 			toolwin.winflg |= 1;
@@ -476,6 +483,14 @@ static void movingproc(RECT *rect) {
 						break;
 					}
 				}
+			}
+			d = rect->top - workrc.top;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
+			}
+			d = rect->bottom - workrc.bottom;
+			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
+				break;
 			}
 		} while(0);
 		if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
@@ -591,7 +606,6 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_DESTROY:
 			toolwindestroy();
 			toolwin.hwnd = NULL;
-			TRACEOUT(("WM_DESTROY"));
 			break;
 
 		case WM_LBUTTONDOWN:
@@ -643,9 +657,7 @@ void toolwin_open(void) {
 void toolwin_close(void) {
 
 	if (toolwin.hwnd) {
-		TRACEOUT(("DestroyWindow(toolwin.hwnd)"));
 		DestroyWindow(toolwin.hwnd);
-//		toolwin.hwnd = NULL;
 	}
 }
 

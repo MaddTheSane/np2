@@ -752,14 +752,12 @@ static int flagsave_fm(NP2FFILE f, const STENTRY *t) {
 	return(ret);
 }
 
-static void play_fmreg(BYTE num) {
+static void play_fmreg(BYTE num, UINT reg) {
 
 	UINT	chbase;
-	UINT	reg;
 	UINT	i;
 
 	chbase = num * 3;
-	reg = num * 0x100;
 	for (i=0x30; i<0xa0; i++) {
 		opngen_setreg((BYTE)chbase, (BYTE)i, opn.reg[reg + i]);
 	}
@@ -785,6 +783,10 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 	int		ret;
 	UINT	saveflg;
 	OPNKEY	opnkey;
+	UINT	fmreg1a;
+	UINT	fmreg1b;
+	UINT	fmreg2a;
+	UINT	fmreg2b;
 
 	opngen_reset();
 	psggen_reset(&psg1);
@@ -798,6 +800,10 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 	ret = flagload_load(f, &usesound, sizeof(usesound));
 	fmboard_reset((BYTE)usesound);
 
+	fmreg1a = 0x000;
+	fmreg1b = 0x100;
+	fmreg2a = 0x200;
+	fmreg2b = 0x300;
 	switch(usesound) {
 		case 0x01:
 			saveflg = FLAG_MG;
@@ -815,6 +821,9 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 		case 0x06:
 			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_PSG1 |
 										FLAG_PSG2 | FLAG_RHYTHM | FLAG_PCM86;
+			fmreg1a = 0x200;	// ‹t“]‚µ‚Ä‚é‚Ì‚ñc
+			fmreg1b = 0x000;
+			fmreg2a = 0x100;
 			break;
 
 		case 0x08:
@@ -886,16 +895,16 @@ static int flagload_fm(NP2FFILE f, const STENTRY *t) {
 	}
 
 	if (saveflg & FLAG_FM1A) {
-		play_fmreg(0);
+		play_fmreg(0, fmreg1a);
 	}
 	if (saveflg & FLAG_FM1B) {
-		play_fmreg(1);
+		play_fmreg(1, fmreg1b);
 	}
 	if (saveflg & FLAG_FM2A) {
-		play_fmreg(2);
+		play_fmreg(2, fmreg2a);
 	}
 	if (saveflg & FLAG_FM2B) {
-		play_fmreg(3);
+		play_fmreg(3, fmreg2b);
 	}
 	if (saveflg & FLAG_PSG1) {
 		play_psgreg(&psg1);
