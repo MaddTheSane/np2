@@ -250,7 +250,7 @@ main(int argc, char *argv[])
 
 		result = soundmng_pcmload(SOUND_PCMSEEK1, file_getcd("fddseek1.wav"));
 		if (!result) {
-			soundmng_pcmload(SOUND_PCMSEEK1, SYSRESPATH "/wav/fddseek1.wav");
+			result = soundmng_pcmload(SOUND_PCMSEEK1, SYSRESPATH "/wav/fddseek1.wav");
 		}
 		if (result) {
 			soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
