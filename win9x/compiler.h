@@ -21,8 +21,8 @@ typedef	unsigned int		UINT32;
 typedef signed __int64		SINT64;
 typedef unsigned __int64	UINT64;
 #define	INLINE				__inline
-#define	QWORD_CONST(v)		((DWORDLONG)(v))
-#define	SQWORD_CONST(v)		((LONGLONG)(v))
+#define	QWORD_CONST(v)		((UINT64)(v))
+#define	SQWORD_CONST(v)		((SINT64)(v))
 #define	snprintf			_snprintf
 #define	vsnprintf			_vsnprintf
 #else

@@ -31,7 +31,7 @@ $(OBJ):
 
 $(OBJ)\biosfd80.bin:	bios\biosfd80.asm bios\biosmain.x86 bios\eoi.x86 \
 						bios\vect02.x86 bios\vect08.x86 bios\vect09.x86 \
-						bios\vect1a.x86 bios\vect1f.x86
+						bios\vect13.x86 bios\vect1a.x86 bios\vect1f.x86
 	$(AS) .\bios\$(*B).asm $(AOPT) -i.\bios\ -o $*.bin -l $*.lst
 
 

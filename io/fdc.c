@@ -822,7 +822,11 @@ void fdc_reset(void) {
 
 	ZeroMemory(&fdc, sizeof(fdc));
 	fdc.equip = np2cfg.fddequip;
+#if defined(SUPPORT_PC9821)
+	fdc.support144 = 1;
+#else
 	fdc.support144 = np2cfg.usefd144;
+#endif
 	fdcstatusreset();
 	dmac_attach(DMADEV_2HD, FDC_DMACH2HD);
 	dmac_attach(DMADEV_2DD, FDC_DMACH2DD);

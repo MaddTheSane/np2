@@ -61,7 +61,7 @@ section	.table start=0x040
 		dw		sendeoi		; 10
 		dw		sendeoi		; 11
 		dw		bios12		; 12
-		dw		bios13		; 13
+		dw		vect13		; 13
 		dw		sendeoi		; 14
 		dw		sendeoi		; 15
 		dw		sendeoi		; 16
@@ -141,6 +141,7 @@ biosfdcwait:	nop						; b4
 %include	'vect02.x86'
 %include	'vect08.x86'
 %include	'vect09.x86'
+%include	'vect13.x86'
 %include	'vect1a.x86'
 %include	'vect1f.x86'
 
