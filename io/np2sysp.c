@@ -163,6 +163,9 @@ static void cmd_sxsibios(const void *arg1, long arg2) {
 	CPU_BP = org_bp;
 	CPU_ES = org_es;
 	ES_BASE = org_esbase;
+
+	(void)arg1;
+	(void)arg2;
 }
 
 
@@ -277,6 +280,7 @@ static BOOL np2syspcmp(const char *p) {
 static void IOOUTCALL np2sysp_o7ed(UINT port, REG8 dat) {
 
 	np2sysp.outval = (dat << 24) + (np2sysp.outval >> 8);
+	(void)port;
 }
 
 static void IOOUTCALL np2sysp_o7ef(UINT port, REG8 dat) {
@@ -305,6 +309,7 @@ static REG8 IOINPCALL np2sysp_i7ed(UINT port) {
 
 	ret = (REG8)(np2sysp.inpval & 0xff);
 	np2sysp.inpval = (ret << 24) + (np2sysp.inpval >> 8);
+	(void)port;
 	return(ret);
 }
 

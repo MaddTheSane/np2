@@ -34,7 +34,7 @@
 #define	USE_RESUME
 
 
-		NP2OSCFG	np2oscfg = {100, 100,  0, 0, 0, 0,  0, 0, 0, 0};
+		NP2OSCFG	np2oscfg = {100, 100,  0, 0, 0, 0,  0, 0, 0, 0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -426,6 +426,11 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_JASTSND:
+			menu_setjastsnd(np2oscfg.jastsnd ^ 1);
+			update |= SYS_UPDATEOSCFG;
+			break;
+
 		case IDM_SEEKSND:
 			menu_setmotorflg(np2cfg.MOTOR ^ 1);
 			update |= SYS_UPDATECFG;
@@ -722,6 +727,7 @@ int main(int argc, char *argv[]) {
 	menu_setf12key(np2oscfg.F12KEY);
 	menu_setbeepvol(np2cfg.BEEP_VOL);
 	menu_setsound(np2cfg.SOUND_SW);
+	menu_setjastsnd(np2oscfg.jastsnd);
 	menu_setmotorflg(np2cfg.MOTOR);
 	menu_setextmem(np2cfg.EXTMEM);
 	menu_setdispclk(np2oscfg.DISPCLK);

@@ -11,6 +11,7 @@ typedef struct {
 	BYTE	F11KEY;
 	BYTE	F12KEY;
 	BYTE	resume;
+	BYTE	jastsnd;
 	BYTE	I286SAVE;
 } NP2OSCFG;
 

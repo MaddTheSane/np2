@@ -45,6 +45,7 @@ static void IOOUTCALL epsonio_o043d(UINT port, REG8 dat) {
 			CPU_ITFBANK = 0;
 			break;
 	}
+	(void)port;
 }
 
 static void IOOUTCALL epsonio_o043f(UINT port, REG8 dat) {
@@ -58,6 +59,7 @@ static void IOOUTCALL epsonio_o043f(UINT port, REG8 dat) {
 			epsonio.bankioen |= 0x01;
 			break;
 	}
+	(void)port;
 }
 
 static void IOOUTCALL epsonio_oc07(UINT port, REG8 dat) {
@@ -88,6 +90,7 @@ static void IOOUTCALL epsonio_oc07(UINT port, REG8 dat) {
 			CopyMemory(mem + 0x1f8000, mem + 0x1c0000, 0x08000);
 			break;
 	}
+	(void)port;
 }
 
 static REG8 IOINPCALL epsonio_ic03(UINT port) {

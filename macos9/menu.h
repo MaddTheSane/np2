@@ -10,6 +10,7 @@ void menu_setf11key(BYTE value);
 void menu_setf12key(BYTE value);
 void menu_setbeepvol(BYTE value);
 void menu_setsound(BYTE value);
+void menu_setjastsnd(BYTE value);
 void menu_setmotorflg(BYTE value);
 void menu_setextmem(BYTE value);
 void menu_setmouse(BYTE value);

@@ -29,6 +29,13 @@ static void setclock(Handle hdl, UINT base, UINT multiple) {
 	SetDialogItemText(hdl, clockstr);
 }
 
+static void setmodel(ControlHandle *btn, UINT model) {
+
+	SetControlValue(btn[0], (model == 0));
+	SetControlValue(btn[1], (model == 1));
+	SetControlValue(btn[2], (model == 2));
+}
+
 static void setrate(ControlHandle *btn, UINT rate) {
 
 	SetControlValue(btn[0], (rate == 11025));
@@ -41,18 +48,21 @@ void ConfigDialogProc(void) {
 
 	DialogPtr		hDlg;
 	ControlHandle	basebtn[2];
+	ControlHandle	modelbtn[3];
 	ControlHandle	ratebtn[3];
 	ControlHandle	resumebtn;
 	char			work[32];
 	Str255			workstr;
 	UINT			base;
 	UINT			multiple;
+	UINT			model;
 	UINT			rate;
 	UINT			ms;
 	UINT			resume;
 	int				done;
 	short			item;
 	UINT			update;
+const char			*str;
 
 	hDlg = GetNewDialog(IDD_CONFIGURE, NULL, (WindowPtr)-1);
 	if (!hDlg) {
@@ -60,6 +70,9 @@ void ConfigDialogProc(void) {
 	}
 	basebtn[0] = (ControlHandle)GetDlgItem(hDlg, IDC_BASECLOCK20);
 	basebtn[1] = (ControlHandle)GetDlgItem(hDlg, IDC_BASECLOCK25);
+	modelbtn[0] = (ControlHandle)GetDlgItem(hDlg, IDC_MODELVM);
+	modelbtn[1] = (ControlHandle)GetDlgItem(hDlg, IDC_MODELVX);
+	modelbtn[2] = (ControlHandle)GetDlgItem(hDlg, IDC_MODELEPSON);
 	ratebtn[0] = (ControlHandle)GetDlgItem(hDlg, IDC_RATE11);
 	ratebtn[1] = (ControlHandle)GetDlgItem(hDlg, IDC_RATE22);
 	ratebtn[2] = (ControlHandle)GetDlgItem(hDlg, IDC_RATE44);
@@ -83,6 +96,17 @@ void ConfigDialogProc(void) {
 	mkstr255(workstr, work);
 	SetDialogItemText(GetDlgItem(hDlg, IDC_MULTIPLE), workstr);
 	setclock(GetDlgItem(hDlg, IDC_CLOCKMSG), base, multiple);
+
+	if (!milstr_cmp(np2cfg.model, str_VM)) {
+		model = 0;
+	}
+	else if (!milstr_cmp(np2cfg.model, str_EPSON)) {
+		model = 2;
+	}
+	else {
+		model = 1;
+	}
+	setmodel(modelbtn, model);
 
 	rate = np2cfg.samplingrate;
 	if ((rate != 0) && (rate != 11025) && (rate != 44100)) {
@@ -119,6 +143,19 @@ void ConfigDialogProc(void) {
 				if (np2cfg.multiple != multiple) {
 					np2cfg.multiple = multiple;
 					update |= SYS_UPDATECFG | SYS_UPDATECLOCK;
+				}
+				if (model == 0) {
+					str = str_VM;
+				}
+				else if (model == 2) {
+					str = str_EPSON;
+				}
+				else {
+					str = str_VX;
+				}
+				if (milstr_cmp(np2cfg.model, str)) {
+					milstr_ncpy(np2cfg.model, str, sizeof(np2cfg.model));
+					update |= SYS_UPDATECFG;
 				}
 				if (np2cfg.samplingrate != rate) {
 					np2cfg.samplingrate = rate;
@@ -174,6 +211,21 @@ void ConfigDialogProc(void) {
 					multiple = 32;
 				}
 				setclock(GetDlgItem(hDlg, IDC_CLOCKMSG), base, multiple);
+				break;
+
+			case IDC_MODELVM:
+				model = 0;
+				setmodel(modelbtn, model);
+				break;
+
+			case IDC_MODELVX:
+				model = 1;
+				setmodel(modelbtn, model);
+				break;
+
+			case IDC_MODELEPSON:
+				model = 2;
+				setmodel(modelbtn, model);
 				break;
 
 			case IDC_RATE11:

@@ -21,6 +21,7 @@ static void IOOUTCALL prt_o40(UINT port, REG8 dat) {
 	}
 	prt->write(prt, (UINT8)dat);
 //	TRACEOUT(("prt - %.2x", dat));
+	(void)port;
 }
 
 static REG8 IOINPCALL prt_i42(UINT port) {
