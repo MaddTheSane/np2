@@ -6,7 +6,7 @@
 
 #define		NC		0xff
 
-static const BYTE key106[256] = {
+static const UINT8 key106[256] = {
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 				  NC,  NC,  NC,0x60,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08
@@ -72,7 +72,7 @@ static const BYTE key106[256] = {
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
-static const BYTE key106ext[256] = {
+static const UINT8 key106ext[256] = {
 			//	    ,    ,    ,STOP,    ,    ,    ,    		; 0x00
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	  BS, TAB,    ,    , CLR, ENT,    ,    		; 0x08

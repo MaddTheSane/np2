@@ -349,7 +349,7 @@ static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 		}
 	}
 	else if (address < 0xa5000) {
-		if (address & 1) {
+		if (!(address & 1)) {
 			value >>= 8;
 		}
 		if (cgwindow.writable & 1) {
