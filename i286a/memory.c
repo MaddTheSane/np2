@@ -5,11 +5,11 @@
 
 void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 
-	BYTE	*out;
+	UINT8	*out;
 	UINT32	adrs;
 	UINT	size;
 
-	out = (BYTE *)dat;
+	out = (UINT8 *)dat;
 	adrs = seg << 4;
 	off = LOW16(off);
 	if ((I286_MEMREADMAX >= 0x10000) &&
@@ -44,11 +44,11 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 void MEMCALL i286_memstr_write(UINT seg, UINT off,
 												const void *dat, UINT leng) {
 
-	BYTE	*out;
+	UINT8	*out;
 	UINT32	adrs;
 	UINT	size;
 
-	out = (BYTE *)dat;
+	out = (UINT8 *)dat;
 	adrs = seg << 4;
 	off = LOW16(off);
 	if ((I286_MEMWRITEMAX >= 0x10000) &&
@@ -86,7 +86,7 @@ void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
 		CopyMemory(dat, mem + address, leng);
 	}
 	else {
-		BYTE *out = (BYTE *)dat;
+		UINT8 *out = (UINT8 *)dat;
 		if (address < I286_MEMREADMAX) {
 			CopyMemory(out, mem + address, I286_MEMREADMAX - address);
 			out += I286_MEMREADMAX - address;
@@ -101,13 +101,13 @@ void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
 
 void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng) {
 
-const BYTE	*out;
+const UINT8	*out;
 
 	if ((address + leng) < I286_MEMWRITEMAX) {
 		CopyMemory(mem + address, dat, leng);
 	}
 	else {
-		out = (BYTE *)dat;
+		out = (UINT8 *)dat;
 		if (address < I286_MEMWRITEMAX) {
 			CopyMemory(mem + address, out, I286_MEMWRITEMAX - address);
 			out += I286_MEMWRITEMAX - address;

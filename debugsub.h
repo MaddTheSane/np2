@@ -3,8 +3,8 @@
 extern "C" {
 #endif
 
-const char *debugsub_flags(UINT16 flag);
-const char *debugsub_regs(void);
+const OEMCHAR *debugsub_flags(UINT16 flag);
+const OEMCHAR *debugsub_regs(void);
 void debugsub_status(void);
 void debugsub_memorydump(void);
 void debugsub_memorydumpall(void);

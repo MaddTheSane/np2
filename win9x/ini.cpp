@@ -348,7 +348,7 @@ const OEMCHAR	*set;
 			if (set) {
 #if defined(OSLANG_UCS2)
 				OEMCHAR	item[10];
-				oemtext_sjis2oem(item, NELEMENTS(item), p->item, (UINT)-1);
+				oemtext_sjistooem(item, NELEMENTS(item), p->item, (UINT)-1);
 				WritePrivateProfileString(title, item, set, path);
 #else
 				WritePrivateProfileString(title, p->item, set, path);

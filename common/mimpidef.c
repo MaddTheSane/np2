@@ -4,38 +4,38 @@
 #include	"mimpidef.h"
 
 
-static const char str_la[] = "LA";
-static const char str_pcm[] = "PCM";
-static const char str_gs[] = "GS";
-static const char str_rhythm[] = "RHYTHM";
+static const OEMCHAR str_la[] = OEMTEXT("LA");
+static const OEMCHAR str_pcm[] = OEMTEXT("PCM");
+static const OEMCHAR str_gs[] = OEMTEXT("GS");
+static const OEMCHAR str_rhythm[] = OEMTEXT("RHYTHM");
 
 
-static char *cutdelimit(char *buf) {
+static OEMCHAR *cutdelimit(const OEMCHAR *buf) {
 
 	while((buf[0] > 0) && (buf[0] <= ' ')) {
 		buf++;
 	}
-	return(buf);
+	return((OEMCHAR *)buf);
 }
 
-static BRESULT getvalue(char **buf, int *value) {
+static BRESULT getvalue(OEMCHAR **buf, int *value) {
 
-	char	*p;
+	OEMCHAR	*p;
 	int		val;
 	BRESULT	ret;
-	char	c;
+	OEMCHAR	c;
 
 	p = cutdelimit(*buf);
 	val = 0;
 	ret = FAILURE;
 	while(1) {
-		c = *p++;
-		c -= '0';
-		if ((c & 0xff) >= 10) {
+		c = *p;
+		if ((c < '0') || (c > '9')) {
 			break;
 		}
+		p++;
 		val *= 10;
-		val += c;
+		val += c - '0';
 		ret = SUCCESS;
 	}
 	if (ret == SUCCESS) {
@@ -45,7 +45,7 @@ static BRESULT getvalue(char **buf, int *value) {
 	return(ret);
 }
 
-static void analyze(MIMPIDEF *def, char *buf) {
+static void analyze(MIMPIDEF *def, OEMCHAR *buf) {
 
 	int		num;
 	int		mod;
@@ -105,7 +105,7 @@ BRESULT mimpidef_load(MIMPIDEF *def, const OEMCHAR *filename) {
 
 	UINT8		b;
 	TEXTFILEH	fh;
-	char		buf[256];
+	OEMCHAR		buf[256];
 
 	if (def == NULL) {
 		goto mdld_err;
@@ -124,7 +124,7 @@ BRESULT mimpidef_load(MIMPIDEF *def, const OEMCHAR *filename) {
 	if (fh == NULL) {
 		goto mdld_err;
 	}
-	while(textfile_read(fh, buf, sizeof(buf)) == SUCCESS) {
+	while(textfile_read(fh, buf, NELEMENTS(buf)) == SUCCESS) {
 		analyze(def, buf);
 	}
 	textfile_close(fh);

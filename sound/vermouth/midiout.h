@@ -95,7 +95,7 @@ struct _midictrl {
 extern "C" {
 #endif
 
-AEXTERN UINT AEXPORT midiout_getver(char *string, int leng);
+AEXTERN UINT AEXPORT midiout_getver(OEMCHAR *string, int leng);
 
 AEXTERN _MIDIMOD AEXPORT * midimod_create(UINT samprate);
 AEXTERN void AEXPORT midimod_destroy(MIDIMOD hdl);

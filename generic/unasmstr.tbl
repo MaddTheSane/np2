@@ -27,7 +27,7 @@ enum {
 	RSTR_CBW,		RSTR_CDQ,
 	RSTR_CLC,		RSTR_CLD,		RSTR_CLI,		RSTR_CMC,
 	RSTR_CLTS,		RSTR_CMP,		RSTR_CMPXCHG,
-	RSTR_CMPXCHG8B,					RSTR_CMPXCHG8B2,
+	RSTR_CMPXCHG8B,	RSTR_CMPXCHG8B2,
 	RSTR_CPUID,		RSTR_CWD,		RSTR_CWDE,
 
 	RSTR_DAA,		RSTR_DAS,
@@ -70,8 +70,9 @@ enum {
 	RSTR_SHLD,		RSTR_SHRD,		RSTR_SIDT,		RSTR_SLDT,
 	RSTR_SMINT,		RSTR_SMSW,		RSTR_STC,		RSTR_STD,
 	RSTR_STI,		RSTR_STR,		RSTR_SUB,		RSTR_SVDC,
-	RSTR_SVLDT,		RSTR_SVTS,		RSTR_SYSCALL,	RSTR_SYSENTER,
-	RSTR_SYSENTER2,	RSTR_SYSEXIT,	RSTR_SYSRET,
+	RSTR_SVLDT,		RSTR_SVTS,		RSTR_SYSCALL,
+	RSTR_SYSENTER,	RSTR_SYSENTER2,
+	RSTR_SYSEXIT,	RSTR_SYSRET,
 
 	RSTR_TEST,
 
@@ -93,7 +94,8 @@ enum {
 	RSTR_FABS,		RSTR_FADD,		RSTR_FADDP,
 	RSTR_FBLD,		RSTR_FBSTP,
 	RSTR_FCHS,		RSTR_FCMOVB,	RSTR_FCMOVBE,	RSTR_FCMOVE,
-	RSTR_FCMOVNB,	RSTR_FCMOVNBE,	RSTR_FCMOVNE,	RSTR_FCMOVNU,
+	RSTR_FCMOVNB,	RSTR_FCMOVNBE,	RSTR_FCMOVNBE2,
+	RSTR_FCMOVNE,	RSTR_FCMOVNU,
 	RSTR_FCMOVU,	RSTR_FCOM,		RSTR_FCOMI,		RSTR_FCOMIP,
 	RSTR_FCOMP,		RSTR_FCOMPP,	RSTR_FCOS,
 	RSTR_FDECSTP,	RSTR_FDIV,		RSTR_FDIVP,		RSTR_FDIVR,
@@ -141,17 +143,17 @@ typedef struct {
 } REGSTR;
 
 static const REGSTR rstr = {
-	   {"ax",  "cx",  "dx",  "bx",  "sp",  "bp",  "si",  "di",
-		"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi",
-		"al",  "cl",  "dl",  "bl",  "ah",  "ch",  "dh",  "bh",
-		"rax", "rcx", "rdx", "rbx", "rsp", "rbp", "rsi", "rdi",
-		"al",  "cl",  "dl",  "bl",  "spl", "bpl", "sil", "dil",
-		"r8w", "r9w", "r10w","r11w","r12w","r13w","r14w","r15w",
-		"r8d", "r9d", "r10d","r11d","r12d","r13d","r14d","r15d",
-		"es",  "cs",  "ss",  "ds",  "fs",  "gs",  "hs",  "is",
-		"r8",  "r9",  "r10", "r11", "r12", "r13", "r14", "r15",
-		"r8b", "r9b", "r10b","r11b","r12b","r13b","r14b","r15b",
-		"mm0", "mm1", "mm2", "mm3", "mm4", "mm5", "mm6", "mm7"},
+	   {{"ax",  "cx",  "dx",  "bx",  "sp",  "bp",  "si",  "di"},
+		{"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"},
+		{"al",  "cl",  "dl",  "bl",  "ah",  "ch",  "dh",  "bh"},
+		{"rax", "rcx", "rdx", "rbx", "rsp", "rbp", "rsi", "rdi"},
+		{"al",  "cl",  "dl",  "bl",  "spl", "bpl", "sil", "dil"},
+		{"r8w", "r9w", "r10w","r11w","r12w","r13w","r14w","r15w"},
+		{"r8d", "r9d", "r10d","r11d","r12d","r13d","r14d","r15d"},
+		{"es",  "cs",  "ss",  "ds",  "fs",  "gs",  "hs",  "is"},
+		{"r8",  "r9",  "r10", "r11", "r12", "r13", "r14", "r15"},
+		{"r8b", "r9b", "r10b","r11b","r12b","r13b","r14b","r15b"},
+		{"mm0", "mm1", "mm2", "mm3", "mm4", "mm5", "mm6", "mm7"}},
 
 	   {"bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"},
 
@@ -167,8 +169,7 @@ static const REGSTR rstr = {
 		"call",
 		"cbw",			"cdq",
 		"clc",			"cld",			"cli",			"cmc",
-		"clts",			"cmp",			"cmpxchg",
-		{'c','m','p','x','c','h','g','8'},	"b",
+		"clts",			"cmp",			"cmpxchg",		"cmpxchg8", "b",
 		"cpuid",		"cwd",			"cwde",
 
 		"daa",			"das",
@@ -211,8 +212,9 @@ static const REGSTR rstr = {
 		"shld",			"shrd",			"sidt",			"sldt",
 		"smint",		"smsw",			"stc",			"std",
 		"sti",			"str",			"sub",			"svdc",
-		"svldt",		"svts",			"syscall",		"sysenter",
-		"",				"sysexit",		"sysret",
+		"svldt",		"svts",			"syscall",
+		"sysenter", "",
+		"sysexit",		"sysret",
 
 		"test",
 
@@ -255,7 +257,8 @@ static const REGSTR rstr = {
 		"fabs",			"fadd",			"faddp",
 		"bld",			"fbstp",
 		"fchs",			"fcmovb",		"fcmovbe",		"fcmove",
-		"fcmovnb",		"fcmovnbe",		"fcmovne",		"fcmovnu",
+		"fcmovnb",		"fcmovnbe",		"",
+		"fcmovne",		"fcmovnu",
 		"fcmovu",		"fcom",			"fcomi",		"fcomip",
 		"fcomp",		"fcompp",		"fcos",
 		"fdecstp",		"fdiv",			"fdivp",		"fdivr",

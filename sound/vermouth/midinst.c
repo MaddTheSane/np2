@@ -166,7 +166,7 @@ static void resample(MIDIMOD mod, INSTLAYER inst, int freq) {
 
 // ---- load
 
-static const char ext_pat[] = ".pat";
+static const OEMCHAR ext_pat[] = OEMTEXT(".pat");
 static const char sig_GF1PATCH100[] = "GF1PATCH100";
 static const char sig_GF1PATCH110[] = "GF1PATCH110";
 static const char sig_ID000002[] = "ID#000002";
@@ -174,8 +174,8 @@ static const char str_question6[] = "??????";
 
 static INSTRUMENT inst_create(MIDIMOD mod, TONECFG cfg) {
 
-	char		filename[MAX_PATH];
-	char		path[MAX_PATH];
+	OEMCHAR		filename[MAX_PATH];
+	OEMCHAR		path[MAX_PATH];
 	FILEH		fh;
 	INSTRUMENT	ret;
 	GUSHEAD		head;
@@ -194,10 +194,10 @@ const UINT8		*d;
 	if (cfg->name == NULL) {
 		goto li_err1;
 	}
-	file_cpyname(filename, cfg->name, sizeof(filename));
+	file_cpyname(filename, cfg->name, NELEMENTS(filename));
 	file_cutext(filename);
-	file_catname(filename, ext_pat, sizeof(filename));
-	if (cfgfile_getfile(mod, filename, path, sizeof(path)) != SUCCESS) {
+	file_catname(filename, ext_pat, NELEMENTS(filename));
+	if (cfgfile_getfile(mod, filename, path, NELEMENTS(path)) != SUCCESS) {
 		goto li_err1;
 	}
 	fh = file_open_rb(path);

@@ -16,7 +16,7 @@ typedef struct {
 extern "C" {
 #endif
 
-UINT midiout_getver(char *string, int leng);
+UINT midiout_getver(OEMCHAR *string, int leng);
 
 MIDIMOD midimod_create(UINT samprate);
 void midimod_destroy(MIDIMOD hdl);

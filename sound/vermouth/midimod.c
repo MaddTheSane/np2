@@ -16,29 +16,29 @@ enum {
 	CFG_DRUM
 };
 
-static const char str_dir[] = "dir";
-static const char str_source[] = "source";
-static const char str_default[] = "default";
-static const char str_bank[] = "bank";
-static const char str_drumset[] = "drumset";
-static const char *cfgstr[] = {str_dir, str_source, str_default,
+static const OEMCHAR str_dir[] = OEMTEXT("dir");
+static const OEMCHAR str_source[] = OEMTEXT("source");
+static const OEMCHAR str_default[] = OEMTEXT("default");
+static const OEMCHAR str_bank[] = OEMTEXT("bank");
+static const OEMCHAR str_drumset[] = OEMTEXT("drumset");
+static const OEMCHAR *cfgstr[] = {str_dir, str_source, str_default,
 								str_bank, str_drumset};
 
-static const char str_amp[] = "amp";
-static const char str_keep[] = "keep";
-static const char str_note[] = "note";
-static const char str_pan[] = "pan";
-static const char str_strip[] = "strip";
-static const char str_left[] = "left";
-static const char str_center[] = "center";
-static const char str_right[] = "right";
-static const char str_env[] = "env";
-static const char str_loop[] = "loop";
-static const char str_tail[] = "tail";
-static const char file_timiditycfg[] = "timidity.cfg";
+static const OEMCHAR str_amp[] = OEMTEXT("amp");
+static const OEMCHAR str_keep[] = OEMTEXT("keep");
+static const OEMCHAR str_note[] = OEMTEXT("note");
+static const OEMCHAR str_pan[] = OEMTEXT("pan");
+static const OEMCHAR str_strip[] = OEMTEXT("strip");
+static const OEMCHAR str_left[] = OEMTEXT("left");
+static const OEMCHAR str_center[] = OEMTEXT("center");
+static const OEMCHAR str_right[] = OEMTEXT("right");
+static const OEMCHAR str_env[] = OEMTEXT("env");
+static const OEMCHAR str_loop[] = OEMTEXT("loop");
+static const OEMCHAR str_tail[] = OEMTEXT("tail");
+static const OEMCHAR file_timiditycfg[] = OEMTEXT("timidity.cfg");
 
 
-static void pathadd(MIDIMOD mod, const char *path) {
+static void pathadd(MIDIMOD mod, const OEMCHAR *path) {
 
 	_PATHLIST	pl;
 	PATHLIST	p;
@@ -46,16 +46,17 @@ static void pathadd(MIDIMOD mod, const char *path) {
 	ZeroMemory(&pl, sizeof(pl));
 	if (path) {
 		pl.path[0] = '\0';
-		file_catname(pl.path, path, sizeof(pl.path));	// separator change!
+		// separator change!
+		file_catname(pl.path, path, NELEMENTS(pl.path));
 		if (path[0]) {
-			file_setseparator(pl.path, sizeof(pl.path));
+			file_setseparator(pl.path, NELEMENTS(pl.path));
 		}
 	}
 
 	pl.next = mod->pathlist;
 	p = pl.next;
 	while(p) {
-		if (!strcmp(p->path, pl.path)) {
+		if (!file_cmpname(p->path, pl.path)) {
 			return;
 		}
 		p = p->next;
@@ -66,12 +67,12 @@ static void pathadd(MIDIMOD mod, const char *path) {
 	}
 }
 
-static int cfggetarg(char *str, char *arg[], int maxarg) {
+static int cfggetarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg) {
 
 	int		ret;
 	BOOL	quot;
-	char	*p;
-	UINT8	c;
+	OEMCHAR	*p;
+	OEMCHAR	c;
 
 	ret = 0;
 	while(maxarg--) {
@@ -81,7 +82,7 @@ static int cfggetarg(char *str, char *arg[], int maxarg) {
 			if ((c == 0) || (c == 0x23)) {
 				goto cga_done;
 			}
-			if (c > 0x20) {
+			if ((c < 0) || (c > 0x20)) {
 				break;
 			}
 			str++;
@@ -104,7 +105,7 @@ static int cfggetarg(char *str, char *arg[], int maxarg) {
 				*p = '\0';
 				goto cga_done;
 			}
-			else if (c > 0x20) {
+			else if ((c < 0) || (c > 0x20)) {
 				*p++ = c;
 			}
 			else {
@@ -118,9 +119,9 @@ cga_done:
 	return(ret);
 }
 
-static char *seachr(char *str, char sepa) {
+static OEMCHAR *seachr(const OEMCHAR *str, OEMCHAR sepa) {
 
-	char	c;
+	OEMCHAR	c;
 
 	while(1) {
 		c = *str;
@@ -128,7 +129,7 @@ static char *seachr(char *str, char sepa) {
 			break;
 		}
 		if (c == sepa) {
-			return(str);
+			return((OEMCHAR *)str);
 		}
 		str++;
 	}
@@ -140,7 +141,7 @@ enum {
 	VAL_SIGN	= 2
 };
 
-static BOOL cfggetval(const char *str, int *val) {
+static BRESULT cfggetval(const OEMCHAR *str, int *val) {
 
 	int		ret;
 	int		flag;
@@ -185,14 +186,14 @@ static BOOL cfggetval(const char *str, int *val) {
 
 // ----
 
-static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
+static void settone(MIDIMOD mod, int bank, int argc, OEMCHAR *argv[]) {
 
 	int		val;
 	TONECFG	tone;
-	char	*name;
+	OEMCHAR	*name;
 	int		i;
-	char	*key;
-	char	*data;
+	OEMCHAR	*key;
+	OEMCHAR	*data;
 	UINT8	flag;
 
 	if ((bank < 0) || (bank >= (MIDI_BANKS * 2)) || (argc < 2) ||
@@ -211,7 +212,7 @@ static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
 	tone += val;
 	name = tone->name;
 	if (name == NULL) {
-		name = (char *)listarray_append(mod->namelist, NULL);
+		name = (OEMCHAR *)listarray_append(mod->namelist, NULL);
 		tone->name = name;
 	}
 	if (name) {
@@ -309,8 +310,8 @@ static void settone(MIDIMOD mod, int bank, int argc, char *argv[]) {
 
 // ----
 
-BOOL cfgfile_getfile(MIDIMOD mod, const char *filename,
-													char *path, int size) {
+BRESULT cfgfile_getfile(MIDIMOD mod, const OEMCHAR *filename,
+													OEMCHAR *path, int size) {
 
 	PATHLIST	p;
 	short		attr;
@@ -334,21 +335,21 @@ fpgf_exit:
 	return(FAILURE);
 }
 
-BOOL cfgfile_load(MIDIMOD mod, const char *filename, int depth) {
+BRESULT cfgfile_load(MIDIMOD mod, const OEMCHAR *filename, int depth) {
 
 	TEXTFILEH	tfh;
-	char		buf[1024];
+	OEMCHAR		buf[1024];
 	int			bank;
 	int			i;
 	int			argc;
-	char		*argv[16];
+	OEMCHAR		*argv[16];
 	int			val;
 	UINT		cfg;
 
 	bank = -1;
 
 	if ((depth >= 16) ||
-		(cfgfile_getfile(mod, filename, buf, sizeof(buf)) != SUCCESS)) {
+		(cfgfile_getfile(mod, filename, buf, NELEMENTS(buf)) != SUCCESS)) {
 		goto cfl_err;
 	}
 //	TRACEOUT(("open: %s", buf));
@@ -356,7 +357,7 @@ BOOL cfgfile_load(MIDIMOD mod, const char *filename, int depth) {
 	if (tfh == NULL) {
 		goto cfl_err;
 	}
-	while(textfile_read(tfh, buf, sizeof(buf)) == SUCCESS) {
+	while(textfile_read(tfh, buf, NELEMENTS(buf)) == SUCCESS) {
 		argc = cfggetarg(buf, argv, NELEMENTS(argv));
 		if (argc < 2) {
 			continue;
@@ -417,7 +418,7 @@ MIDIMOD midimod_create(UINT samprate) {
 
 	UINT	size;
 	MIDIMOD	ret;
-	BOOL	r;
+	BRESULT	r;
 
 	size = sizeof(_MIDIMOD);
 	size += sizeof(INSTRUMENT) * 128 * 2;

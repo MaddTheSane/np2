@@ -72,7 +72,7 @@ void textfile_close(TEXTFILEH fh) {
 	}
 }
 
-BRESULT textfile_read(TEXTFILEH fh, char *buffer, UINT size) {
+BRESULT textfile_read(TEXTFILEH fh, OEMCHAR *buffer, UINT size) {
 
 	char	c = '\0';
 	char	*p;

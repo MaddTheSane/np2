@@ -6,7 +6,7 @@
 #define	MIDIOUT_VERSTRING	"VERMOUTH 1.05"
 
 
-static const char vermouthver[] = MIDIOUT_VERSTRING;
+static const OEMCHAR vermouthver[] = OEMTEXT(MIDIOUT_VERSTRING);
 
 static const int gaintbl[24+1] =
 				{ 16,  19,  22,  26,  32,  38,  45,  53,
@@ -637,7 +637,7 @@ static void allresetmidi(MIDIHDL midi) {
 
 // ----
 
-UINT midiout_getver(char *string, int leng) {
+UINT midiout_getver(OEMCHAR *string, int leng) {
 
 	milstr_ncpy(string, vermouthver, leng);
 	return((MIDIOUT_VERSION << 8) | 0x00);

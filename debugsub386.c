@@ -6,7 +6,7 @@
 #include	"iocore.h"
 #include	"debugsub.h"
 
-void debugwriteseg(const char *fname, const descriptor_t *sd,
+void debugwriteseg(const OEMCHAR *fname, const descriptor_t *sd,
 												UINT32 addr, UINT32 size);
 void debugpageptr(UINT32 addr);
 
@@ -23,24 +23,24 @@ void debugpageptr(UINT32 addr);
 #endif
 
 
-static const char s_nv[] = "NV";
-static const char s_ov[] = "OV";
-static const char s_dn[] = "DN";
-static const char s_up[] = "UP";
-static const char s_di[] = "DI";
-static const char s_ei[] = "EI";
-static const char s_pl[] = "PL";
-static const char s_ng[] = "NG";
-static const char s_nz[] = "NZ";
-static const char s_zr[] = "ZR";
-static const char s_na[] = "NA";
-static const char s_ac[] = "AC";
-static const char s_po[] = "PO";
-static const char s_pe[] = "PE";
-static const char s_nc[] = "NC";
-static const char s_cy[] = "CY";
+static const OEMCHAR s_nv[] = OEMTEXT("NV");
+static const OEMCHAR s_ov[] = OEMTEXT("OV");
+static const OEMCHAR s_dn[] = OEMTEXT("DN");
+static const OEMCHAR s_up[] = OEMTEXT("UP");
+static const OEMCHAR s_di[] = OEMTEXT("DI");
+static const OEMCHAR s_ei[] = OEMTEXT("EI");
+static const OEMCHAR s_pl[] = OEMTEXT("PL");
+static const OEMCHAR s_ng[] = OEMTEXT("NG");
+static const OEMCHAR s_nz[] = OEMTEXT("NZ");
+static const OEMCHAR s_zr[] = OEMTEXT("ZR");
+static const OEMCHAR s_na[] = OEMTEXT("NA");
+static const OEMCHAR s_ac[] = OEMTEXT("AC");
+static const OEMCHAR s_po[] = OEMTEXT("PO");
+static const OEMCHAR s_pe[] = OEMTEXT("PE");
+static const OEMCHAR s_nc[] = OEMTEXT("NC");
+static const OEMCHAR s_cy[] = OEMTEXT("CY");
 
-static const char *flagstr[16][2] = {
+static const OEMCHAR *flagstr[16][2] = {
 				{NULL, NULL},		// 0x8000
 				{NULL, NULL},		// 0x4000
 				{NULL, NULL},		// 0x2000
@@ -58,60 +58,66 @@ static const char *flagstr[16][2] = {
 				{NULL, NULL},		// 0x0002
 				{s_nc, s_cy}};		// 0x0001
 
-static const char file_i386reg[] = "i386reg.%.3u";
-static const char file_i386cs[] = "i386_cs.%.3u";
-static const char file_i386ds[] = "i386_ds.%.3u";
-static const char file_i386es[] = "i386_es.%.3u";
-static const char file_i386ss[] = "i386_ss.%.3u";
-static const char file_memorybin[] = "memory.bin";
+static const OEMCHAR file_i386reg[] = OEMTEXT("i386reg.%.3u");
+static const OEMCHAR file_i386cs[] = OEMTEXT("i386_cs.%.3u");
+static const OEMCHAR file_i386ds[] = OEMTEXT("i386_ds.%.3u");
+static const OEMCHAR file_i386es[] = OEMTEXT("i386_es.%.3u");
+static const OEMCHAR file_i386ss[] = OEMTEXT("i386_ss.%.3u");
+static const OEMCHAR file_memorybin[] = OEMTEXT("memory.bin");
 
-static const char str_register[] =										\
-					"EAX=%.8x  EBX=%.8x  ECX=%.8x  EDX=%.8x" CRLITERAL	\
-					"ESP=%.8x  EBP=%.8x  ESI=%.8x  EDI=%.8x" CRLITERAL	\
-					"DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  "				\
-					"EIP=%.8x  " CRLITERAL;
-static const char str_picstat[] = 										\
-					"PIC0=%.2x:%.2x:%.2x" CRLITERAL						\
-					"PIC1=%.2x:%.2x:%.2x" CRLITERAL						\
-					"8255PORTC = %.2x / system-port = %.2x" CRLITERAL;
+static const OEMCHAR str_register[] =									\
+					OEMTEXT("EAX=%.8x  EBX=%.8x  ECX=%.8x  EDX=%.8x")	\
+					OEMTEXT(CRLITERAL)									\
+					OEMTEXT("ESP=%.8x  EBP=%.8x  ESI=%.8x  EDI=%.8x")	\
+					OEMTEXT(CRLITERAL)									\
+					OEMTEXT("DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  ")		\
+					OEMTEXT("EIP=%.8x  ")								\
+					OEMTEXT(CRLITERAL);
+static const OEMCHAR str_picstat[] = 									\
+					OEMTEXT("PIC0=%.2x:%.2x:%.2x")						\
+					OEMTEXT(CRLITERAL)									\
+					OEMTEXT("PIC1=%.2x:%.2x:%.2x")						\
+					OEMTEXT(CRLITERAL)									\
+					OEMTEXT("8255PORTC = %.2x / system-port = %.2x")	\
+					OEMTEXT(CRLITERAL);
 
 
-const char *debugsub_flags(UINT16 flag) {
+const OEMCHAR *debugsub_flags(UINT16 flag) {
 
-static char	work[128];
-	int		i;
-	UINT16	bit;
+static OEMCHAR	work[128];
+	int			i;
+	UINT16		bit;
 
 	work[0] = 0;
 	for (i=0, bit=0x8000; bit; i++, bit>>=1) {
 		if (flagstr[i][0]) {
 			if (flag & bit) {
-				milstr_ncat(work, flagstr[i][1], sizeof(work));
+				milstr_ncat(work, flagstr[i][1], NELEMENTS(work));
 			}
 			else {
-				milstr_ncat(work, flagstr[i][0], sizeof(work));
+				milstr_ncat(work, flagstr[i][0], NELEMENTS(work));
 			}
 			if (bit != 1) {
-				milstr_ncat(work, str_space, sizeof(work));
+				milstr_ncat(work, str_space, NELEMENTS(work));
 			}
 		}
 	}
 	return(work);
 }
 
-const char *debugsub_regs(void) {
+const OEMCHAR *debugsub_regs(void) {
 
-static char work[256];
+static OEMCHAR	work[256];
 
-	SPRINTF(work, str_register, CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
-								CPU_ESP, CPU_EBP, CPU_ESI, CPU_EDI,
-								CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_EIP);
-	milstr_ncat(work, debugsub_flags(CPU_FLAG), sizeof(work));
-	milstr_ncat(work, CRCONST, sizeof(work));
+	OEMSPRINTF(work, str_register,	CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
+									CPU_ESP, CPU_EBP, CPU_ESI, CPU_EDI,
+									CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_EIP);
+	milstr_ncat(work, debugsub_flags(CPU_FLAG), NELEMENTS(work));
+	milstr_ncat(work, CRCONST, NELEMENTS(work));
 	return(work);
 }
 
-void debugwriteseg(const char *fname, const descriptor_t *sd,
+void debugwriteseg(const OEMCHAR *fname, const descriptor_t *sd,
 												UINT32 addr, UINT32 size) {
 
 	FILEH	fh;
@@ -142,35 +148,35 @@ void debugsub_status(void) {
 
 static int		filenum = 0;
 	FILEH		fh;
-	char		work[512];
-const char		*p;
+	OEMCHAR		work[512];
+const OEMCHAR	*p;
 
-	SPRINTF(work, file_i386reg, filenum);
+	OEMSPRINTF(work, file_i386reg, filenum);
 	fh = file_create_c(work);
 	if (fh != FILEH_INVALID) {
 		p = debugsub_regs();
-		file_write(fh, p, strlen(p));
-		SPRINTF(work, str_picstat,
+		file_write(fh, p, OEMSTRLEN(p) * sizeof(OEMCHAR));
+		OEMSPRINTF(work, str_picstat,
 								pic.pi[0].imr, pic.pi[0].irr, pic.pi[0].isr,
 								pic.pi[1].imr, pic.pi[1].irr, pic.pi[1].isr,
 								mouseif.upd8255.portc, sysport.c);
-		file_write(fh, work, strlen(work));
+		file_write(fh, work, OEMSTRLEN(work) * sizeof(OEMCHAR));
 
-		SPRINTF(work, "CS = %.8x:%.8x" CRLITERAL,
+		OEMSPRINTF(work, OEMTEXT("CS = %.8x:%.8x") OEMTEXT(CRLITERAL),
 						CPU_STAT_SREGBASE(CPU_CS_INDEX),
 						CPU_STAT_SREGLIMIT(CPU_CS_INDEX));
-		file_write(fh, work, strlen(work));
+		file_write(fh, work, OEMSTRLEN(work) * sizeof(OEMCHAR));
 
 		file_close(fh);
 	}
 
-	SPRINTF(work, file_i386cs, filenum);
+	OEMSPRINTF(work, file_i386cs, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_CS_INDEX), CPU_EIP & 0xffff0000, 0x10000);
-	SPRINTF(work, file_i386ds, filenum);
+	OEMSPRINTF(work, file_i386ds, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_DS_INDEX), 0, 0x10000);
-	SPRINTF(work, file_i386es, filenum);
+	OEMSPRINTF(work, file_i386es, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_ES_INDEX), 0, 0x10000);
-	SPRINTF(work, file_i386ss, filenum);
+	OEMSPRINTF(work, file_i386ss, filenum);
 	debugwriteseg(work, &CPU_STAT_SREG(CPU_SS_INDEX), CPU_ESP & 0xffff0000, 0x10000);
 	filenum++;
 }
@@ -204,7 +210,7 @@ void debugsub_memorydumpall(void) {
 }
 
 
-#if 1	// 俺用デバグ
+#if 0	// 俺用デバグ
 
 void debugpageptr(UINT32 addr) {
 
@@ -236,3 +242,4 @@ void debugpageptr(UINT32 addr) {
 }
 
 #endif
+

@@ -176,7 +176,7 @@ void keystat_initialize(void);
 
 void keystat_tblreset(void);
 void keystat_tblset(REG8 ref, const UINT8 *key, UINT cnt);
-void keystat_tblload(const char *filename);
+void keystat_tblload(const OEMCHAR *filename);
 
 void keystat_ctrlreset(void);
 void keystat_ctrlsend(REG8 dat);

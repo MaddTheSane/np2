@@ -19,24 +19,24 @@
 #endif
 
 
-static const char s_nv[] = "NV";
-static const char s_ov[] = "OV";
-static const char s_dn[] = "DN";
-static const char s_up[] = "UP";
-static const char s_di[] = "DI";
-static const char s_ei[] = "EI";
-static const char s_pl[] = "PL";
-static const char s_ng[] = "NG";
-static const char s_nz[] = "NZ";
-static const char s_zr[] = "ZR";
-static const char s_na[] = "NA";
-static const char s_ac[] = "AC";
-static const char s_po[] = "PO";
-static const char s_pe[] = "PE";
-static const char s_nc[] = "NC";
-static const char s_cy[] = "CY";
+static const OEMCHAR s_nv[] = OEMTEXT("NV");
+static const OEMCHAR s_ov[] = OEMTEXT("OV");
+static const OEMCHAR s_dn[] = OEMTEXT("DN");
+static const OEMCHAR s_up[] = OEMTEXT("UP");
+static const OEMCHAR s_di[] = OEMTEXT("DI");
+static const OEMCHAR s_ei[] = OEMTEXT("EI");
+static const OEMCHAR s_pl[] = OEMTEXT("PL");
+static const OEMCHAR s_ng[] = OEMTEXT("NG");
+static const OEMCHAR s_nz[] = OEMTEXT("NZ");
+static const OEMCHAR s_zr[] = OEMTEXT("ZR");
+static const OEMCHAR s_na[] = OEMTEXT("NA");
+static const OEMCHAR s_ac[] = OEMTEXT("AC");
+static const OEMCHAR s_po[] = OEMTEXT("PO");
+static const OEMCHAR s_pe[] = OEMTEXT("PE");
+static const OEMCHAR s_nc[] = OEMTEXT("NC");
+static const OEMCHAR s_cy[] = OEMTEXT("CY");
 
-static const char *flagstr[16][2] = {
+static const OEMCHAR *flagstr[16][2] = {
 				{NULL, NULL},		// 0x8000
 				{NULL, NULL},		// 0x4000
 				{NULL, NULL},		// 0x2000
@@ -54,60 +54,64 @@ static const char *flagstr[16][2] = {
 				{NULL, NULL},		// 0x0002
 				{s_nc, s_cy}};		// 0x0001
 
-static const char file_i286reg[] = "i286reg.%.3u";
-static const char file_i286cs[] = "i286_cs.%.3u";
-static const char file_i286ds[] = "i286_ds.%.3u";
-static const char file_i286es[] = "i286_es.%.3u";
-static const char file_i286ss[] = "i286_ss.%.3u";
-static const char file_memorybin[] = "memory.bin";
+static const OEMCHAR file_i286reg[] = OEMTEXT("i286reg.%.3u");
+static const OEMCHAR file_i286cs[] = OEMTEXT("i286_cs.%.3u");
+static const OEMCHAR file_i286ds[] = OEMTEXT("i286_ds.%.3u");
+static const OEMCHAR file_i286es[] = OEMTEXT("i286_es.%.3u");
+static const OEMCHAR file_i286ss[] = OEMTEXT("i286_ss.%.3u");
+static const OEMCHAR file_memorybin[] = OEMTEXT("memory.bin");
 
-static const char str_register[] =										\
-					"AX=%.4x  BX=%.4x  CX=%.4x  DX=%.4x  "				\
-					"SP=%.4x  BP=%.4x  SI=%.4x  DI=%.4x" CRLITERAL		\
-					"DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  "				\
-					"IP=%.4x   ";
-static const char str_picstat[] = 										\
-					CRLITERAL "PIC0=%.2x:%.2x:%.2x"						\
-					CRLITERAL "PIC1=%.2x:%.2x:%.2x"						\
-					CRLITERAL "8255PORTC = %.2x / system-port = %.2x";
+static const OEMCHAR str_register[] =								\
+				OEMTEXT("AX=%.4x  BX=%.4x  CX=%.4x  DX=%.4x  ")		\
+				OEMTEXT("SP=%.4x  BP=%.4x  SI=%.4x  DI=%.4x")		\
+				OEMTEXT(CRLITERAL)									\
+				OEMTEXT("DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  ")		\
+				OEMTEXT("IP=%.4x   ");
+static const OEMCHAR str_picstat[] = 								\
+				OEMTEXT(CRLITERAL)									\
+				OEMTEXT("PIC0=%.2x:%.2x:%.2x")						\
+				OEMTEXT(CRLITERAL)									\
+				OEMTEXT("PIC1=%.2x:%.2x:%.2x")						\
+				OEMTEXT(CRLITERAL)									\
+				OEMTEXT("8255PORTC = %.2x / system-port = %.2x");
 
 
-const char *debugsub_flags(UINT16 flag) {
+const OEMCHAR *debugsub_flags(UINT16 flag) {
 
-static char	work[128];
-	int		i;
-	UINT16	bit;
+static OEMCHAR	work[128];
+	int			i;
+	UINT16		bit;
 
 	work[0] = 0;
 	for (i=0, bit=0x8000; bit; i++, bit>>=1) {
 		if (flagstr[i][0]) {
 			if (flag & bit) {
-				milstr_ncat(work, flagstr[i][1], sizeof(work));
+				milstr_ncat(work, flagstr[i][1], NELEMENTS(work));
 			}
 			else {
-				milstr_ncat(work, flagstr[i][0], sizeof(work));
+				milstr_ncat(work, flagstr[i][0], NELEMENTS(work));
 			}
 			if (bit != 1) {
-				milstr_ncat(work, str_space, sizeof(work));
+				milstr_ncat(work, str_space, NELEMENTS(work));
 			}
 		}
 	}
 	return(work);
 }
 
-const char *debugsub_regs(void) {
+const OEMCHAR *debugsub_regs(void) {
 
-static char work[256];
+static OEMCHAR	work[256];
 
-	SPRINTF(work, str_register, CPU_AX, CPU_BX, CPU_CX, CPU_DX,
-								CPU_SP, CPU_BP, CPU_SI, CPU_DI,
-								CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_IP);
-	milstr_ncat(work, debugsub_flags(CPU_FLAG), sizeof(work));
-	milstr_ncat(work, CRCONST, sizeof(work));
+	OEMSPRINTF(work, str_register,	CPU_AX, CPU_BX, CPU_CX, CPU_DX,
+									CPU_SP, CPU_BP, CPU_SI, CPU_DI,
+									CPU_DS, CPU_ES, CPU_SS, CPU_CS, CPU_IP);
+	milstr_ncat(work, debugsub_flags(CPU_FLAG), NELEMENTS(work));
+	milstr_ncat(work, CRCONST, NELEMENTS(work));
 	return(work);
 }
 
-static void writeseg(const char *fname, UINT32 addr, UINT limit) {
+static void writeseg(const OEMCHAR *fname, UINT32 addr, UINT limit) {
 
 	FILEH	fh;
 	UINT	size;
@@ -131,31 +135,31 @@ static void writeseg(const char *fname, UINT32 addr, UINT limit) {
 
 void debugsub_status(void) {
 
-static int	filenum = 0;
-	FILEH	fh;
-	char	work[512];
-const char	*p;
+static int		filenum = 0;
+	FILEH		fh;
+	OEMCHAR		work[512];
+const OEMCHAR	*p;
 
-	SPRINTF(work, file_i286reg, filenum);
+	OEMSPRINTF(work, file_i286reg, filenum);
 	fh = file_create_c(work);
 	if (fh != FILEH_INVALID) {
 		p = debugsub_regs();
-		file_write(fh, p, strlen(p));
-		SPRINTF(work, str_picstat,
+		file_write(fh, p, OEMSTRLEN(p) * sizeof(OEMCHAR));
+		OEMSPRINTF(work, str_picstat,
 								pic.pi[0].imr, pic.pi[0].irr, pic.pi[0].isr,
 								pic.pi[1].imr, pic.pi[1].irr, pic.pi[1].isr,
 								mouseif.upd8255.portc, sysport.c);
-		file_write(fh, work, strlen(work));
+		file_write(fh, work, OEMSTRLEN(work) * sizeof(OEMCHAR));
 		file_close(fh);
 	}
 
-	SPRINTF(work, file_i286cs, filenum);
+	OEMSPRINTF(work, file_i286cs, filenum);
 	writeseg(work, CS_BASE, 0xffff);
-	SPRINTF(work, file_i286ds, filenum);
+	OEMSPRINTF(work, file_i286ds, filenum);
 	writeseg(work, DS_BASE, 0xffff);
-	SPRINTF(work, file_i286es, filenum);
+	OEMSPRINTF(work, file_i286es, filenum);
 	writeseg(work, ES_BASE, 0xffff);
-	SPRINTF(work, file_i286ss, filenum);
+	OEMSPRINTF(work, file_i286ss, filenum);
 	writeseg(work, SS_BASE, 0xffff);
 	filenum++;
 }

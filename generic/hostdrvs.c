@@ -21,19 +21,19 @@ static const UINT8 dospathchr[] = {
 			0x01, 0x00,		// gfedcba` onmlkjih
 			0x00, 0x40};	// wvutsrqp ~}|{zyx 
 
-static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
+
+static void rcnvfcb(char *dst, UINT dlen, const char *src) {
 
 	REG8	c;
 
-	while((slen) && (dlen)) {
-		slen--;
+	while(dlen) {
 		c = (UINT8)*src++;
 		if (c == 0) {
 			break;
 		}
 #if defined(OSLANG_SJIS) || defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 		if ((((c ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
-			if ((!slen) || (src[0] == '\0')) {
+			if (src[0] == '\0') {
 				break;
 			}
 			if (dlen < 2) {
@@ -75,25 +75,31 @@ static void rcnvfcb(char *dst, UINT dlen, char *src, UINT slen) {
 	}
 }
 
-static BOOL realname2fcb(char *fcbname, FLINFO *fli) {
+static BRESULT realname2fcb(char *fcbname, FLINFO *fli) {
 
+	OEMCHAR	*ext;
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	char	sjis[MAX_PATH];
 #endif
-	char	*realname;
-	char	*ext;
 
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-	oemtext_oemtosjis(sjis, sizeof(sjis), fli->path, NELEMENTS(fli->path));
-	realname = sjis;
-#else
-	realname = fli->path;
-#endif
 	FillMemory(fcbname, 11, ' ');
-	// ToDo: SJIS‚É•ÏŠ·Ï‚Ý‚È‚Ì‚É OEMˆË‘¶‚µ‚Ä‚é
-	ext = file_getext(realname);
-	rcnvfcb(fcbname+0, 8, realname, ext - realname);
-	rcnvfcb(fcbname+8, 3, ext, (UINT)-1);
+
+	ext = file_getext(fli->path);
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+	oemtext_oemtosjis(sjis, sizeof(sjis), ext, (UINT)-1);
+	rcnvfcb(fcbname+8, 3, sjis);
+#else
+	rcnvfcb(fcbname+8, 3, ext);
+#endif
+
+	file_cutext(fli->path);
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+	oemtext_oemtosjis(sjis, sizeof(sjis), fli->path, (UINT)-1);
+	rcnvfcb(fcbname+0, 8, sjis);
+#else
+	rcnvfcb(fcbname+0, 8, fli->path);
+#endif
+
 	return(SUCCESS);
 }
 

@@ -5,7 +5,7 @@ typedef	struct _pathlist	*PATHLIST;
 
 struct _pathlist {
 	PATHLIST	next;
-	char		path[MAX_PATH];
+	OEMCHAR		path[MAX_PATH];
 };
 
 enum {
@@ -20,7 +20,7 @@ enum {
 };
 
 typedef struct {
-	char	*name;
+	OEMCHAR	*name;
 	int		amp;
 	UINT8	flag;
 	UINT8	pan;
@@ -32,9 +32,9 @@ typedef struct {
 extern "C" {
 #endif
 
-BOOL cfgfile_getfile(MIDIMOD mod, const char *filename,
-													char *path, int size);
-BOOL cfgfile_load(MIDIMOD mod, const char *filename, int depth);
+BRESULT cfgfile_getfile(MIDIMOD mod, const OEMCHAR *filename,
+													OEMCHAR *path, int size);
+BRESULT cfgfile_load(MIDIMOD mod, const OEMCHAR *filename, int depth);
 
 #ifdef __cplusplus
 }
