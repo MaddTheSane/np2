@@ -11,7 +11,7 @@
 #include	"i286xea.mcr"
 #include	"v30patch.h"
 #include	"bios.h"
-#include	"dmap.h"
+#include	"dmax86.h"
 
 
 	I286CORE	i286core;
@@ -276,7 +276,7 @@ i286_mnlp:		movzx	eax, bl
 				align	16
 i286_dma_mnlp:	movzx	eax, bl
 				call	i286op[eax*4]
-				call	dmap_i286
+				call	dmax86
 				cmp		I286_REMCLOCK, 0
 				jg		i286_dma_mnlp
 				mov		dword ptr (i286core.s.prefetchque), ebx
@@ -318,7 +318,7 @@ nexts:
 				mov		dword ptr (i286core.s.prefetchque), ebx
 				mov		I286_IP, si
 
-				call	dmap_i286
+				call	dmax86
 				popad
 				ret
 		}

@@ -10,7 +10,7 @@
 #include	"iocore.h"
 #include	"i286x.mcr"
 #include	"i286xea.mcr"
-#include	"dmap.h"
+#include	"dmax86.h"
 
 
 typedef struct {
@@ -1196,7 +1196,7 @@ v30_mnlp:		movzx	eax, bl
 				align	4
 v30_dma_mnlp:	movzx	eax, bl
 				call	v30op[eax*4]
-				call	dmap_i286
+				call	dmax86
 				cmp		I286_REMCLOCK, 0
 				jg		v30_dma_mnlp
 				mov		dword ptr (i286core.s.prefetchque), ebx
@@ -1236,7 +1236,7 @@ nexts:
 				mov		dword ptr (i286core.s.prefetchque), ebx
 				mov		I286_IP, si
 
-				call	dmap_i286
+				call	dmax86
 				popad
 				ret
 		}

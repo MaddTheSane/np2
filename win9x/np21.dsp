@@ -327,10 +327,6 @@ SOURCE=..\I386C\cpucore.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\DMAP.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\I386C\MEM9821.C
 # End Source File
 # Begin Source File
@@ -341,6 +337,10 @@ SOURCE=..\I386C\memory.c
 # Begin Group "mem"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\MEM\DMAX86.C
+# End Source File
 # Begin Source File
 
 SOURCE=..\MEM\MEMEGC.C

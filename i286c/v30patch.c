@@ -5,7 +5,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"bios.h"
-#include	"dmap.h"
+#include	"dmav30.h"
 #include	"i286c.mcr"
 
 
@@ -817,14 +817,14 @@ void v30c(void) {
 			if (I286_TRAP) {
 				i286c_interrupt(1);
 			}
-			dmap_v30();
+			dmav30();
 		} while(I286_REMCLOCK > 0);
 	}
 	else if (dmac.working) {
 		do {
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
-			dmap_v30();
+			dmav30();
 		} while(I286_REMCLOCK > 0);
 	}
 	else {
@@ -849,6 +849,6 @@ void v30c_step(void) {
 	if (I286_OV) {
 		I286_FLAG |= (O_FLAG);
 	}
-	dmap_v30();
+	dmav30();
 }
 

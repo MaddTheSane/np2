@@ -127,10 +127,6 @@ SOURCE=..\COMMON\TEXTFILE.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\I286C\DMAP.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\I286C\I286C.C
 # End Source File
 # Begin Source File
@@ -177,6 +173,14 @@ SOURCE=..\I286C\V30PATCH.C
 # Begin Group "mem"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\MEM\DMAV30.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\DMAX86.C
+# End Source File
 # Begin Source File
 
 SOURCE=..\MEM\MEMEGC.C

@@ -4,7 +4,7 @@
 #include	"v30patch.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"dmap.h"
+#include	"dmax86.h"
 #include	"i286c.mcr"
 
 
@@ -268,14 +268,14 @@ void i286c(void) {
 			if (I286_TRAP) {
 				i286c_interrupt(1);
 			}
-			dmap_i286();
+			dmax86();
 		} while(I286_REMCLOCK > 0);
 	}
 	else if (dmac.working) {
 		do {
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
-			dmap_i286();
+			dmax86();
 		} while(I286_REMCLOCK > 0);
 	}
 	else {
@@ -300,7 +300,7 @@ void i286c_step(void) {
 	if (I286_OV) {
 		I286_FLAG |= (O_FLAG);
 	}
-	dmap_i286();
+	dmax86();
 }
 
 

@@ -1,3 +1,3 @@
 
-#error	move /mem/memegc.c
+#error	move: /mem/memegc.c
 
