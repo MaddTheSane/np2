@@ -13,6 +13,10 @@ static const _XDFINFO supportxdf[] = {
 			// 512
 			{0, 154, 15, 2, DISKTYPE_2HD, 0},
 #endif
+#if 1
+			// 512
+			{0, 160, 15, 2, DISKTYPE_2HD, 0},
+#endif
 			// 1024
 			{0, 154,  8, 3, DISKTYPE_2HD, 0},
 			// 1.44MB

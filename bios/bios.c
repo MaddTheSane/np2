@@ -69,7 +69,11 @@ const IODATA	*pterm;
 
 static void bios_memclear(void) {
 
-//	ZeroMemory(mem, 0xa0000);					// âΩÇ™å¥àˆÇæÅH
+	ZeroMemory(mem, 0xa0000);
+	ZeroMemory(mem + 0x100000, 0x10000);
+	if (CPU_EXTMEM) {
+		ZeroMemory(CPU_EXTMEM, CPU_EXTMEMSIZE);
+	}
 	ZeroMemory(mem + VRAM0_B, 0x18000);
 	ZeroMemory(mem + VRAM0_E, 0x08000);
 	ZeroMemory(mem + VRAM1_B, 0x18000);
@@ -163,6 +167,11 @@ static void bios_reinitbyswitch(void) {
 #if defined(SUPPORT_PC9821)
 	mem[0x45c] = 0x40;
 #endif
+
+	// FDC
+	if (fdc.support144) {
+		mem[MEMB_F144_SUP] |= fdc.equip;
+	}
 
 	// IDE initialize
 	if (pccore.hddif & PCHDD_IDE) {
@@ -280,7 +289,7 @@ void bios_initialize(void) {
 //	mem[MEMB_BIOS_FLAG0] = 0x03;
 //	mem[MEMB_F2DD_MODE] = 0xff;
 // 	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);
-	mem[0x005ae] |= 0x03;											// ver0.31
+//	mem[0x005ae] |= 0x03;
 
 	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
 //	bios0x09_init();
@@ -325,7 +334,13 @@ static void bios_boot(void) {
 		bios0x09_init();
 		bios_reinitbyswitch();
 
-		if (sysport.c & 0x20) {
+		if (!np2cfg.ITF_WORK) {
+			for (i=0; i<8; i++) {
+				mem[MEMB_MSW + (i*4)] = msw_default[i];
+			}
+			CPU_IP = 0x0002;
+		}
+		else if (sysport.c & 0x20) {
 			CPU_CS = 0x0000;
 			CPU_IP = 0x04f8;
 			CPU_DS = 0x0000;
@@ -337,11 +352,6 @@ static void bios_boot(void) {
 			SETBIOSMEM16(0x004fc, 0xffff);
 		}
 		else {
-			if (!np2cfg.ITF_WORK) {
-				for (i=0; i<8; i++) {
-					mem[MEMB_MSW + (i*4)] = msw_default[i];
-				}
-			}
 			CPU_IP = 0x0002;
 		}
 	}
