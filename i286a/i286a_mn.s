@@ -701,7 +701,7 @@ xchg_ea_r16		EAREG16	r6
 				strh	r1, [r6, #CPU_REG]
 				mov		pc, r11
 xchgear16_1		bl		i286a_ea
-				WORDACC	r0, xchgear16_2
+				ACCWORD	r0, xchgear16_2
 				ldrh	r1, [r6, #CPU_REG]
 				ldrh	r4, [r9, r0]
 				CPUWORK	#5

@@ -191,9 +191,8 @@ $label		CPUDBGL
 			mov		pc, r11
 	MEND
 
-
 	MACRO
-$label	WORDACC	$r, $l
+$label	ACCWORD	$r, $l
 $label		tst		$r, #1
 			bne		$l
 			cmp		$r, #I286_MEMWRITEMAX

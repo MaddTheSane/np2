@@ -41,7 +41,7 @@ $label		EAREG16	r12
 			mov		pc, r11
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			WORDACC	r0, $label.2
+			ACCWORD	r0, $label.2
 			ldrh	r4, [r9, r0]
 			$alu	r4, r6
 			strh	r1, [r9, r0]
@@ -129,7 +129,7 @@ $label		EAREG16	r12
 			mov		pc, r11
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			WORDACC	r0, $label.2
+			ACCWORD	r0, $label.2
 			ldrh	r4, [r9, r0]
 			$alu	r4, r6
 			mov		pc, r11
@@ -211,7 +211,7 @@ $label		cmp		r0, #&c0
 			mov		pc, r11
 $label.1	CPUWORK	$memclk
 			bl		i286a_ea
-			WORDACC	r0, $label.2
+			ACCWORD	r0, $label.2
 			ldrh	r4, [r9, r0]
 			$alu	r4
 			strh	r1, [r9, r0]

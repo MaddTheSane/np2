@@ -131,7 +131,7 @@ i286aop81		GETPCF8
 				ldr		pc, [r1, r6 lsr #1]
 ope81m			CPUWORK	#7
 				bl		i286a_ea
-				WORDACC	r0, ope81e
+				ACCWORD	r0, ope81e
 				add		r4, r9, r0
 				GETPC16
 				adr		r1, op8x_reg16
@@ -159,7 +159,7 @@ i286aop83		GETPCF8
 				ldr		pc, [r1, r6 lsr #1]
 ope83m			CPUWORK	#7
 				bl		i286a_ea
-				WORDACC	r0, ope83e
+				ACCWORD	r0, ope83e
 				add		r4, r9, r0
 				GETPC8
 				tst		r0, #(1 << 7)

@@ -125,7 +125,7 @@ i286asft16_1	GETPCF8
 				ldr		pc, [r1, r6 lsr #1]
 sft16m			CPUWORK	#7
 				bl		i286a_ea
-				WORDACC	r0, sft16e
+				ACCWORD	r0, sft16e
 				add		r5, r9, r0
 				adr		r1, sft_reg16
 				ldrh	r4, [r5]
@@ -360,7 +360,7 @@ i286asft16_cl	GETPCF8
 				ldr		pc, [r1, r6 lsr #1]
 sft16clm		CPUWORK	#8
 				bl		i286a_ea
-				WORDACC	r0, sft16cle
+				ACCWORD	r0, sft16cle
 				add		r5, r9, r0
 				ldrb	r0, [r9, #CPU_CL]
 				ands	r0, r0, #&1f
@@ -394,7 +394,7 @@ i286asft16_d8	GETPCF8
 				ldr		pc, [r1, r6 lsr #1]
 sft16d8m		CPUWORK	#8
 				bl		i286a_ea
-				WORDACC	r0, sft16d8e
+				ACCWORD	r0, sft16d8e
 				add		r5, r9, r0
 				GETPC8
 				ands	r0, r0, #&1f

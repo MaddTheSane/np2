@@ -58,6 +58,69 @@ typedef struct {
 	int		dstpos;
 } DRAWRECT;
 
+
+// ---- GX DLL‚Æ‚©
+
+#if !defined(WIN32_PLATFORM_PSPC) || !defined(SIZE_VGA)
+
+#define	GXGETDISPLAYPROPERTIES()	GXGetDisplayProperties()
+#define	GXBEGINDRAW()				GXBeginDraw()
+#define	GXENDDRAW()					GXEndDraw()
+
+#else // PocketPC2003SE VGA
+
+typedef struct {
+	WORD	wFormat;
+	WORD	wBPP;
+	VOID	*pFramePointer;
+	int		cxStride;
+	int		cyStride;
+	int		cxPixels;
+	int		cyPixels;
+} RAWFRAMEBUFFERINFO;
+
+#define	GETRAWFRAMEBUFFER	0x00020001
+
+enum {
+	RFBIFMT_565		= 1,
+	RFBIFMT_555		= 2,
+	RFBIFMT_OTHER	= 3
+};
+
+static	RAWFRAMEBUFFERINFO	rfbi;
+
+static GXDisplayProperties GXGETDISPLAYPROPERTIES(void) {
+
+	HDC					hdc;
+	GXDisplayProperties	ret;
+
+	hdc = GetDC(NULL);
+	ExtEscape(hdc, GETRAWFRAMEBUFFER, 0, NULL, sizeof(rfbi), (char *)&rfbi);
+	ReleaseDC(NULL, hdc);
+	ret.cxWidth = rfbi.cxPixels;
+	ret.cyHeight = rfbi.cyPixels;
+	ret.cbxPitch = rfbi.cxStride;
+	ret.cbyPitch = rfbi.cyStride;
+	ret.cBPP = rfbi.wBPP;
+	ret.ffFormat = 0;
+	switch(rfbi.wBPP) {
+		case RFBIFMT_565:
+			ret.ffFormat |= kfDirect565;
+			break;
+
+		case RFBIFMT_555:
+			ret.ffFormat |= kfDirect555;
+			break;
+	}
+	return(ret);
+}
+#define	GXBEGINDRAW()		(rfbi.pFramePointer)
+#define	GXENDDRAW()
+#endif
+
+
+// ----
+
 static BOOL calcdrawrect(DRAWRECT *dr, VRAMHDL s, const RECT_T *rt) {
 
 	int		pos;
@@ -132,11 +195,11 @@ BOOL scrnmng_create(HWND hWnd, LONG width, LONG height) {
 		return(FAILURE);
 	}
 	if (GXOpenDisplay(hWnd, GX_FULLSCREEN) == 0) {
-		MessageBox(hWnd, STRLITERAL("Couldn't GameX Object"),
+		MessageBox(hWnd, STRLITERAL("Couldn't GAPI Object"),
 											errmsg, MB_OK | MB_ICONSTOP);
 		return(FAILURE);
 	}
-	gx_dp = GXGetDisplayProperties();
+	gx_dp = GXGETDISPLAYPROPERTIES();
 	if (gx_dp.cBPP != 16) {
 		MessageBox(hWnd, STRLITERAL("Only 16bit color support..."),
 											errmsg, MB_OK | MB_ICONSTOP);
@@ -242,7 +305,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 		return(NULL);
 	}
 	if (scrnmng.vram == NULL) {
-		scrnsurf.ptr = (BYTE *)GXBeginDraw() + scrnmng.start;
+		scrnsurf.ptr = (BYTE *)GXBEGINDRAW() + scrnmng.start;
 		scrnsurf.xalign = scrnmng.xalign;
 		scrnsurf.yalign = scrnmng.yalign;
 	}
@@ -297,7 +360,7 @@ const BYTE		*a;
 		return;
 	}
 	p = scrnmng.vram->ptr + (dr.srcpos * 2);
-	q = (BYTE *)GXBeginDraw() + dr.dstpos;
+	q = (BYTE *)GXBEGINDRAW() + dr.dstpos;
 	a = menuvram->alpha + dr.srcpos;
 	salign = menuvram->width - dr.width;
 	dalign = dr.yalign - (dr.width * dr.xalign);
@@ -315,7 +378,7 @@ const BYTE		*a;
 		q += dalign;
 		a += salign;
 	} while(--dr.height);
-	GXEndDraw();
+	GXENDDRAW();
 }
 
 void scrnmng_surfunlock(const SCRNSURF *surf) {
@@ -338,7 +401,7 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 				softkbd_paint(&vram, palcnv, TRUE);
 			}
 #endif
-			GXEndDraw();
+			GXENDDRAW();
 		}
 		else {
 			if (menuvram) {
@@ -397,7 +460,7 @@ void scrnmng_clear(BOOL logo) {
 	if (logo) {
 		bmp = (void *)bmpdata_solvedata(nekop2_bmp);
 	}
-	p = (BYTE *)GXBeginDraw();
+	p = (BYTE *)GXBEGINDRAW();
 	q = p;
 	y = gx_dp.cyHeight;
 	yalign = gx_dp.cbyPitch - (gx_dp.cbxPitch * gx_dp.cxWidth);
@@ -410,7 +473,7 @@ void scrnmng_clear(BOOL logo) {
 		q += yalign;
 	} while(--y);
 	bmp16draw(bmp, p + scrnmng.start, scrnmng.width, scrnmng.height,
-												scrnmng.xalign, scrnmng.yalign);	GXEndDraw();
+												scrnmng.xalign, scrnmng.yalign);	GXENDDRAW();
 	if (bmp) {
 		_MFREE(bmp);
 	}
@@ -491,7 +554,7 @@ const BYTE		*q;
 	}
 	p = scrnmng.vram->ptr + (dr.srcpos * 2);
 	q = menuvram->ptr + (dr.srcpos * 2);
-	r = (BYTE *)GXBeginDraw() + dr.dstpos;
+	r = (BYTE *)GXBEGINDRAW() + dr.dstpos;
 	a = menuvram->alpha + dr.srcpos;
 	salign = menuvram->width;
 	dalign = dr.yalign - (dr.width * dr.xalign);
@@ -514,7 +577,7 @@ const BYTE		*q;
 		r += dalign;
 		a += salign;
 	} while(--dr.height);
-	GXEndDraw();
+	GXENDDRAW();
 }
 
 
