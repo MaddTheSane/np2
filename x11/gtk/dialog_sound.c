@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.5 2004/07/29 14:34:35 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.6 2004/07/29 14:49:25 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -564,6 +564,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 			if (np2oscfg.JOYAXISMAP[0][i] != joypad_axis[i]) {
 				memcpy(np2oscfg.JOYAXISMAP[0], joypad_axis, sizeof(np2oscfg.JOYAXISMAP[0]));
 				renewal = TRUE;
+				break;
 			}
 		}
 
@@ -571,6 +572,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 			if (np2oscfg.JOYBTNMAP[0][i] != joypad_button[i]) {
 				memcpy(np2oscfg.JOYBTNMAP[0], joypad_button, sizeof(np2oscfg.JOYBTNMAP[0]));
 				renewal = TRUE;
+				break;
 			}
 		}
 
