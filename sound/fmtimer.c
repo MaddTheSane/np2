@@ -60,8 +60,9 @@ void fmport_b(NEVENTITEM item) {
 
 static void set_fmtimeraevent(BOOL absolute) {
 
-	long l = 18 * (1024 - fmtimer.timera);
+	SINT32	l;
 
+	l = 18 * (1024 - fmtimer.timera);
 	if (pc.cpumode & CPUMODE_8MHz) {		// 4MHz
 		l = (l * 1248 / 625) * pc.multiple;
 	}
@@ -73,8 +74,9 @@ static void set_fmtimeraevent(BOOL absolute) {
 
 static void set_fmtimerbevent(BOOL absolute) {
 
-	long l = 288 * (256 - fmtimer.timerb);
+	SINT32	l;
 
+	l = 288 * (256 - fmtimer.timerb);
 	if (pc.cpumode & CPUMODE_8MHz) {		// 4MHz
 		l = (l * 1248 / 625) * pc.multiple;
 	}

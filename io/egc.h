@@ -1,43 +1,61 @@
 
 typedef union {
-	BYTE	b[2];
+	BYTE	_b[2];
 	UINT16	w;
-} WORD_P;
+} EGCWORD;
 
 typedef union {
-	BYTE	b[4][2];
+	BYTE	_b[4][2];
 	UINT16	w[4];
 	UINT32	d[2];
-} QWORD_P;
+} EGCQUAD;
+
+#if defined(BYTESEX_LITTLE)
+
+enum {
+	EGCADDR_L		= 0,
+	EGCADDR_H		= 1
+};
+#define	EGCADDR(a)	(a)
+
+#elif defined(BYTESEX_BIG)
+
+enum {
+	EGCADDR_L		= 1,
+	EGCADDR_H		= 0
+};
+#define	EGCADDR(a)	((a) ^ 1)
+
+#endif
 
 typedef struct {
-	UINT16		access;
-	UINT16		fgbg;
-	UINT16		ope;
-	UINT16		fg;
-	WORD_P		mask;
-	UINT16		bg;
-	UINT16		sft;
-	UINT16		leng;
-	QWORD_P		lastvram;
-	QWORD_P		patreg;
-	QWORD_P		fgc;
-	QWORD_P		bgc;
+	UINT16	access;
+	UINT16	fgbg;
+	UINT16	ope;
+	UINT16	fg;
+	EGCWORD	mask;
+	UINT16	bg;
+	UINT16	sft;
+	UINT16	leng;
+	EGCQUAD	lastvram;
+	EGCQUAD	patreg;
+	EGCQUAD	fgc;
+	EGCQUAD	bgc;
 
-	int			func;
-	UINT		remain;
-	UINT		stack;
-	UINT		padding_b[4];
-	BYTE		buf[4096/8 + 4*4];
-	UINT		padding_a[4];
-	BYTE		*inptr;
-	BYTE		*outptr;
-	WORD_P		mask2;
-	WORD_P		srcmask;
-	BYTE		srcbit;
-	BYTE		dstbit;
-	BYTE		sft8bitl;
-	BYTE		sft8bitr;
+	int		func;
+	UINT	remain;
+	UINT	stack;
+	UINT	padding_b[4];
+	BYTE	buf[4096/8 + 4*4];
+	UINT	padding_a[4];
+	BYTE	*inptr;
+	BYTE	*outptr;
+	EGCWORD	mask2;
+	EGCWORD	srcmask;
+	BYTE	srcbit;
+	BYTE	dstbit;
+	BYTE	sft8bitl;
+	BYTE	sft8bitr;
 } _EGC, *EGC;
 
 

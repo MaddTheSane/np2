@@ -4,7 +4,7 @@
 
 #define	BYTESEX_LITTLE
 
-#if 0
+#if 1
 #ifndef __cplusplus
 #define	DWORD	xxx
 #define	WORD	xxx

@@ -67,12 +67,12 @@ static void IOOUTCALL egc_o4a0(UINT port, BYTE value) {
 
 		case 0x08:
 			if (!(egc.fgbg & 0x6000)) {
-				egc.mask.b[0] = value;
+				egc.mask._b[EGCADDR_L] = value;
 			}
 			break;
 		case 0x09:
 			if (!(egc.fgbg & 0x6000)) {
-				egc.mask.b[1] = value;
+				egc.mask._b[EGCADDR_H] = value;
 			}
 			break;
 

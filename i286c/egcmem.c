@@ -12,8 +12,8 @@
 // #define		LOG_EGCROP
 
 
-static	QWORD_P		egc_src;
-static	QWORD_P		data;
+static	EGCQUAD		egc_src;
+static	EGCQUAD		data;
 
 static const UINT planead[4] = {VRAM_B, VRAM_R, VRAM_G, VRAM_E};
 
@@ -108,21 +108,22 @@ void egcshift(void) {
 }
 
 
-static void egcsftb_upn_sub(DWORD ext) {
+static void egcsftb_upn_sub(UINT ext) {
 
 	if (egc.dstbit >= 8) {
 		egc.dstbit -= 8;
-		egc.srcmask.b[ext] = 0;
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	if (egc.dstbit) {
 		if ((egc.dstbit + egc.remain) >= 8) {
-			egc.srcmask.b[ext] = bytemask_u0[egc.dstbit + (7*8)];
+			egc.srcmask._b[ext] = bytemask_u0[egc.dstbit + (7*8)];
 			egc.remain -= (8 - egc.dstbit);
 			egc.dstbit = 0;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_u0[egc.dstbit + (egc.remain - 1)*8];
+			egc.srcmask._b[ext] = bytemask_u0[egc.dstbit +
+														(egc.remain - 1) * 8];
 			egc.remain = 0;
 			egc.dstbit = 0;
 		}
@@ -132,33 +133,33 @@ static void egcsftb_upn_sub(DWORD ext) {
 			egc.remain -= 8;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_u1[egc.remain - 1];
+			egc.srcmask._b[ext] = bytemask_u1[egc.remain - 1];
 			egc.remain = 0;
 		}
 	}
-	egc_src.b[0][ext] = egc.outptr[0];
-	egc_src.b[1][ext] = egc.outptr[4];
-	egc_src.b[2][ext] = egc.outptr[8];
-	egc_src.b[3][ext] = egc.outptr[12];
+	egc_src._b[0][ext] = egc.outptr[0];
+	egc_src._b[1][ext] = egc.outptr[4];
+	egc_src._b[2][ext] = egc.outptr[8];
+	egc_src._b[3][ext] = egc.outptr[12];
 	egc.outptr++;
 }
 
-
-static void egcsftb_dnn_sub(DWORD ext) {
+static void egcsftb_dnn_sub(UINT ext) {
 
 	if (egc.dstbit >= 8) {
 		egc.dstbit -= 8;
-		egc.srcmask.b[ext] = 0;
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	if (egc.dstbit) {
 		if ((egc.dstbit + egc.remain) >= 8) {
-			egc.srcmask.b[ext] = bytemask_d0[egc.dstbit + (7*8)];
+			egc.srcmask._b[ext] = bytemask_d0[egc.dstbit + (7*8)];
 			egc.remain -= (8 - egc.dstbit);
 			egc.dstbit = 0;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_d0[egc.dstbit + (egc.remain - 1)*8];
+			egc.srcmask._b[ext] = bytemask_d0[egc.dstbit +
+														(egc.remain - 1) * 8];
 			egc.remain = 0;
 			egc.dstbit = 0;
 		}
@@ -168,14 +169,14 @@ static void egcsftb_dnn_sub(DWORD ext) {
 			egc.remain -= 8;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_d1[egc.remain - 1];
+			egc.srcmask._b[ext] = bytemask_d1[egc.remain - 1];
 			egc.remain = 0;
 		}
 	}
-	egc_src.b[0][ext] = egc.outptr[0];
-	egc_src.b[1][ext] = egc.outptr[4];
-	egc_src.b[2][ext] = egc.outptr[8];
-	egc_src.b[3][ext] = egc.outptr[12];
+	egc_src._b[0][ext] = egc.outptr[0];
+	egc_src._b[1][ext] = egc.outptr[4];
+	egc_src._b[2][ext] = egc.outptr[8];
+	egc_src._b[3][ext] = egc.outptr[12];
 	egc.outptr--;
 }
 
@@ -185,43 +186,44 @@ static void egcsftb_dnn_sub(DWORD ext) {
 // 1st -> data[0] >> (dst - src)
 // 2nd -> (data[0] << (8 - (dst - src))) | (data[1] >> (dst - src))
 
-static void egcsftb_upr_sub(DWORD ext) {
+static void egcsftb_upr_sub(UINT ext) {
 
 	if (egc.dstbit >= 8) {
 		egc.dstbit -= 8;
-		egc.srcmask.b[ext] = 0;
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	if (egc.dstbit) {
 		if ((egc.dstbit + egc.remain) >= 8) {
-			egc.srcmask.b[ext] = bytemask_u0[egc.dstbit + (7*8)];
+			egc.srcmask._b[ext] = bytemask_u0[egc.dstbit + (7*8)];
 			egc.remain -= (8 - egc.dstbit);
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_u0[egc.dstbit + (egc.remain - 1)*8];
+			egc.srcmask._b[ext] = bytemask_u0[egc.dstbit +
+														(egc.remain - 1) * 8];
 			egc.remain = 0;
 		}
 		egc.dstbit = 0;
-		egc_src.b[0][ext] = (egc.outptr[0] >> egc.sft8bitr);
-		egc_src.b[1][ext] = (egc.outptr[4] >> egc.sft8bitr);
-		egc_src.b[2][ext] = (egc.outptr[8] >> egc.sft8bitr);
-		egc_src.b[3][ext] = (egc.outptr[12] >> egc.sft8bitr);
+		egc_src._b[0][ext] = (egc.outptr[0] >> egc.sft8bitr);
+		egc_src._b[1][ext] = (egc.outptr[4] >> egc.sft8bitr);
+		egc_src._b[2][ext] = (egc.outptr[8] >> egc.sft8bitr);
+		egc_src._b[3][ext] = (egc.outptr[12] >> egc.sft8bitr);
 	}
 	else {
 		if (egc.remain >= 8) {
 			egc.remain -= 8;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_u1[egc.remain - 1];
+			egc.srcmask._b[ext] = bytemask_u1[egc.remain - 1];
 			egc.remain = 0;
 		}
-		egc_src.b[0][ext] = (egc.outptr[0] << egc.sft8bitl) |
+		egc_src._b[0][ext] = (egc.outptr[0] << egc.sft8bitl) |
 							(egc.outptr[1] >> egc.sft8bitr);
-		egc_src.b[1][ext] = (egc.outptr[4] << egc.sft8bitl) |
+		egc_src._b[1][ext] = (egc.outptr[4] << egc.sft8bitl) |
 							(egc.outptr[5] >> egc.sft8bitr);
-		egc_src.b[2][ext] = (egc.outptr[8] << egc.sft8bitl) |
+		egc_src._b[2][ext] = (egc.outptr[8] << egc.sft8bitl) |
 							(egc.outptr[9] >> egc.sft8bitr);
-		egc_src.b[3][ext] = (egc.outptr[12] << egc.sft8bitl) |
+		egc_src._b[3][ext] = (egc.outptr[12] << egc.sft8bitl) |
 							(egc.outptr[13] >> egc.sft8bitr);
 		egc.outptr++;
 	}
@@ -233,44 +235,45 @@ static void egcsftb_upr_sub(DWORD ext) {
 // 1st -> data[0] << (dst - src)
 // 2nd -> (data[0] >> (8 - (dst - src))) | (data[-1] << (dst - src))
 
-static void egcsftb_dnr_sub(DWORD ext) {
+static void egcsftb_dnr_sub(UINT ext) {
 
 	if (egc.dstbit >= 8) {
 		egc.dstbit -= 8;
-		egc.srcmask.b[ext] = 0;
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	if (egc.dstbit) {
 		if ((egc.dstbit + egc.remain) >= 8) {
-			egc.srcmask.b[ext] = bytemask_d0[egc.dstbit + (7*8)];
+			egc.srcmask._b[ext] = bytemask_d0[egc.dstbit + (7*8)];
 			egc.remain -= (8 - egc.dstbit);
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_d0[egc.dstbit + (egc.remain - 1)*8];
+			egc.srcmask._b[ext] = bytemask_d0[egc.dstbit +
+														(egc.remain - 1) * 8];
 			egc.remain = 0;
 		}
 		egc.dstbit = 0;
-		egc_src.b[0][ext] = (egc.outptr[0] << egc.sft8bitr);
-		egc_src.b[1][ext] = (egc.outptr[4] << egc.sft8bitr);
-		egc_src.b[2][ext] = (egc.outptr[8] << egc.sft8bitr);
-		egc_src.b[3][ext] = (egc.outptr[12] << egc.sft8bitr);
+		egc_src._b[0][ext] = (egc.outptr[0] << egc.sft8bitr);
+		egc_src._b[1][ext] = (egc.outptr[4] << egc.sft8bitr);
+		egc_src._b[2][ext] = (egc.outptr[8] << egc.sft8bitr);
+		egc_src._b[3][ext] = (egc.outptr[12] << egc.sft8bitr);
 	}
 	else {
 		if (egc.remain >= 8) {
 			egc.remain -= 8;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_d1[egc.remain - 1];
+			egc.srcmask._b[ext] = bytemask_d1[egc.remain - 1];
 			egc.remain = 0;
 		}
 		egc.outptr--;
-		egc_src.b[0][ext] = (egc.outptr[1] >> egc.sft8bitl) |
+		egc_src._b[0][ext] = (egc.outptr[1] >> egc.sft8bitl) |
 							(egc.outptr[0] << egc.sft8bitr);
-		egc_src.b[1][ext] = (egc.outptr[5] >> egc.sft8bitl) |
+		egc_src._b[1][ext] = (egc.outptr[5] >> egc.sft8bitl) |
 							(egc.outptr[4] << egc.sft8bitr);
-		egc_src.b[2][ext] = (egc.outptr[9] >> egc.sft8bitl) |
+		egc_src._b[2][ext] = (egc.outptr[9] >> egc.sft8bitl) |
 							(egc.outptr[8] << egc.sft8bitr);
-		egc_src.b[3][ext] = (egc.outptr[13] >> egc.sft8bitl) |
+		egc_src._b[3][ext] = (egc.outptr[13] >> egc.sft8bitl) |
 							(egc.outptr[12] << egc.sft8bitr);
 	}
 }
@@ -281,21 +284,22 @@ static void egcsftb_dnr_sub(DWORD ext) {
 // 1st -> (data[0] << (src - dst)) | (data[1] >> (8 - (src - dst))
 // 2nd -> (data[0] << (src - dst)) | (data[1] >> (8 - (src - dst))
 
-static void egcsftb_upl_sub(DWORD ext) {
+static void egcsftb_upl_sub(UINT ext) {
 
 	if (egc.dstbit >= 8) {
 		egc.dstbit -= 8;
-		egc.srcmask.b[ext] = 0;
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	if (egc.dstbit) {
 		if ((egc.dstbit + egc.remain) >= 8) {
-			egc.srcmask.b[ext] = bytemask_u0[egc.dstbit + (7*8)];
+			egc.srcmask._b[ext] = bytemask_u0[egc.dstbit + (7*8)];
 			egc.remain -= (8 - egc.dstbit);
 			egc.dstbit = 0;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_u0[egc.dstbit + (egc.remain - 1)*8];
+			egc.srcmask._b[ext] = bytemask_u0[egc.dstbit +
+														(egc.remain - 1) * 8];
 			egc.remain = 0;
 			egc.dstbit = 0;
 		}
@@ -305,17 +309,17 @@ static void egcsftb_upl_sub(DWORD ext) {
 			egc.remain -= 8;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_u1[egc.remain - 1];
+			egc.srcmask._b[ext] = bytemask_u1[egc.remain - 1];
 			egc.remain = 0;
 		}
 	}
-	egc_src.b[0][ext] = (egc.outptr[0] << egc.sft8bitl) |
+	egc_src._b[0][ext] = (egc.outptr[0] << egc.sft8bitl) |
 						(egc.outptr[1] >> egc.sft8bitr);
-	egc_src.b[1][ext] = (egc.outptr[4] << egc.sft8bitl) |
+	egc_src._b[1][ext] = (egc.outptr[4] << egc.sft8bitl) |
 						(egc.outptr[5] >> egc.sft8bitr);
-	egc_src.b[2][ext] = (egc.outptr[8] << egc.sft8bitl) |
+	egc_src._b[2][ext] = (egc.outptr[8] << egc.sft8bitl) |
 						(egc.outptr[9] >> egc.sft8bitr);
-	egc_src.b[3][ext] = (egc.outptr[12] << egc.sft8bitl) |
+	egc_src._b[3][ext] = (egc.outptr[12] << egc.sft8bitl) |
 						(egc.outptr[13] >> egc.sft8bitr);
 	egc.outptr++;
 }
@@ -326,21 +330,22 @@ static void egcsftb_upl_sub(DWORD ext) {
 // 1st -> (data[0] >> (dst - src)) | (data[-1] << (8 - (src - dst))
 // 2nd -> (data[0] >> (dst - src)) | (data[-1] << (8 - (src - dst))
 
-static void egcsftb_dnl_sub(DWORD ext) {
+static void egcsftb_dnl_sub(UINT ext) {
 
 	if (egc.dstbit >= 8) {
 		egc.dstbit -= 8;
-		egc.srcmask.b[ext] = 0;
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	if (egc.dstbit) {
 		if ((egc.dstbit + egc.remain) >= 8) {
-			egc.srcmask.b[ext] = bytemask_d0[egc.dstbit + (7*8)];
+			egc.srcmask._b[ext] = bytemask_d0[egc.dstbit + (7*8)];
 			egc.remain -= (8 - egc.dstbit);
 			egc.dstbit = 0;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_d0[egc.dstbit + (egc.remain - 1)*8];
+			egc.srcmask._b[ext] = bytemask_d0[egc.dstbit +
+														(egc.remain - 1) * 8];
 			egc.remain = 0;
 			egc.dstbit = 0;
 		}
@@ -350,29 +355,29 @@ static void egcsftb_dnl_sub(DWORD ext) {
 			egc.remain -= 8;
 		}
 		else {
-			egc.srcmask.b[ext] = bytemask_d1[egc.remain - 1];
+			egc.srcmask._b[ext] = bytemask_d1[egc.remain - 1];
 			egc.remain = 0;
 		}
 	}
 	egc.outptr--;
-	egc_src.b[0][ext] = (egc.outptr[1] >> egc.sft8bitl) |
+	egc_src._b[0][ext] = (egc.outptr[1] >> egc.sft8bitl) |
 						(egc.outptr[0] << egc.sft8bitr);
-	egc_src.b[1][ext] = (egc.outptr[5] >> egc.sft8bitl) |
+	egc_src._b[1][ext] = (egc.outptr[5] >> egc.sft8bitl) |
 						(egc.outptr[4] << egc.sft8bitr);
-	egc_src.b[2][ext] = (egc.outptr[9] >> egc.sft8bitl) |
+	egc_src._b[2][ext] = (egc.outptr[9] >> egc.sft8bitl) |
 						(egc.outptr[8] << egc.sft8bitr);
-	egc_src.b[3][ext] = (egc.outptr[13] >> egc.sft8bitl) |
+	egc_src._b[3][ext] = (egc.outptr[13] >> egc.sft8bitl) |
 						(egc.outptr[12] << egc.sft8bitr);
 }
 
 
-static void egcsftb_upn0(DWORD adrs) {
+static void egcsftb_upn0(UINT32 adrs) {
 
-	int		ext;
+	UINT	ext;
 
-	ext = adrs & 1;
-	if (egc.stack < (DWORD)(8 - egc.dstbit)) {
-		egc.srcmask.b[ext] = 0;
+	ext = EGCADDR(adrs & 1);
+	if (egc.stack < (UINT)(8 - egc.dstbit)) {
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	egc.stack -= (8 - egc.dstbit);
@@ -382,35 +387,34 @@ static void egcsftb_upn0(DWORD adrs) {
 	}
 }
 
-static void egcsftw_upn0(DWORD adrs) {
+static void egcsftw_upn0(UINT32 adrs) {
 
-	if (egc.stack < (DWORD)(16 - egc.dstbit)) {
+	if (egc.stack < (UINT)(16 - egc.dstbit)) {
 		egc.srcmask.w = 0;
 		return;
 	}
 	egc.stack -= (16 - egc.dstbit);
-	egcsftb_upn_sub(0);
+	egcsftb_upn_sub(EGCADDR_L);
 	if (egc.remain) {
-		egcsftb_upn_sub(1);
+		egcsftb_upn_sub(EGCADDR_H);
 		if (egc.remain) {
 			return;
 		}
 	}
 	else {
-		egc.srcmask.b[1] = 0;
+		egc.srcmask._b[EGCADDR_H] = 0;
 	}
 	egcshift();
 	(void)adrs;
 }
 
+static void egcsftb_dnn0(UINT32 adrs) {
 
-static void egcsftb_dnn0(DWORD adrs) {
+	UINT	ext;
 
-	int		ext;
-
-	ext = adrs & 1;
-	if (egc.stack < (DWORD)(8 - egc.dstbit)) {
-		egc.srcmask.b[ext] = 0;
+	ext = EGCADDR(adrs & 1);
+	if (egc.stack < (UINT)(8 - egc.dstbit)) {
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	egc.stack -= (8 - egc.dstbit);
@@ -420,35 +424,35 @@ static void egcsftb_dnn0(DWORD adrs) {
 	}
 }
 
-static void egcsftw_dnn0(DWORD adrs) {
+static void egcsftw_dnn0(UINT32 adrs) {
 
-	if (egc.stack < (DWORD)(16 - egc.dstbit)) {
+	if (egc.stack < (UINT)(16 - egc.dstbit)) {
 		egc.srcmask.w = 0;
 		return;
 	}
 	egc.stack -= (16 - egc.dstbit);
-	egcsftb_dnn_sub(1);
+	egcsftb_dnn_sub(EGCADDR_H);
 	if (egc.remain) {
-		egcsftb_dnn_sub(0);
+		egcsftb_dnn_sub(EGCADDR_L);
 		if (egc.remain) {
 			return;
 		}
 	}
 	else {
-		egc.srcmask.b[0] = 0;
+		egc.srcmask._b[EGCADDR_L] = 0;
 	}
 	egcshift();
 	(void)adrs;
 }
 
 
-static void egcsftb_upr0(DWORD adrs) {			// dir:up srcbit < dstbit
+static void egcsftb_upr0(UINT32 adrs) {			// dir:up srcbit < dstbit
 
 	int		ext;
 
-	ext = adrs & 1;
-	if (egc.stack < (DWORD)(8 - egc.dstbit)) {
-		egc.srcmask.b[ext] = 0;
+	ext = EGCADDR(adrs & 1);
+	if (egc.stack < (UINT)(8 - egc.dstbit)) {
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	egc.stack -= (8 - egc.dstbit);
@@ -458,35 +462,34 @@ static void egcsftb_upr0(DWORD adrs) {			// dir:up srcbit < dstbit
 	}
 }
 
-static void egcsftw_upr0(DWORD adrs) {			// dir:up srcbit < dstbit
+static void egcsftw_upr0(UINT32 adrs) {			// dir:up srcbit < dstbit
 
-	if (egc.stack < (DWORD)(16 - egc.dstbit)) {
+	if (egc.stack < (UINT)(16 - egc.dstbit)) {
 		egc.srcmask.w = 0;
 		return;
 	}
 	egc.stack -= (16 - egc.dstbit);
-	egcsftb_upr_sub(0);
+	egcsftb_upr_sub(EGCADDR_L);
 	if (egc.remain) {
-		egcsftb_upr_sub(1);
+		egcsftb_upr_sub(EGCADDR_H);
 		if (egc.remain) {
 			return;
 		}
 	}
 	else {
-		egc.srcmask.b[1] = 0;
+		egc.srcmask._b[EGCADDR_H] = 0;
 	}
 	egcshift();
 	(void)adrs;
 }
 
+static void egcsftb_dnr0(UINT32 adrs) {			// dir:up srcbit < dstbit
 
-static void egcsftb_dnr0(DWORD adrs) {			// dir:up srcbit < dstbit
+	UINT	ext;
 
-	int		ext;
-
-	ext = adrs & 1;
-	if (egc.stack < (DWORD)(8 - egc.dstbit)) {
-		egc.srcmask.b[ext] = 0;
+	ext = EGCADDR(adrs & 1);
+	if (egc.stack < (UINT)(8 - egc.dstbit)) {
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	egc.stack -= (8 - egc.dstbit);
@@ -496,35 +499,35 @@ static void egcsftb_dnr0(DWORD adrs) {			// dir:up srcbit < dstbit
 	}
 }
 
-static void egcsftw_dnr0(DWORD adrs) {			// dir:up srcbit < dstbit
+static void egcsftw_dnr0(UINT32 adrs) {			// dir:up srcbit < dstbit
 
-	if (egc.stack < (DWORD)(16 - egc.dstbit)) {
+	if (egc.stack < (UINT)(16 - egc.dstbit)) {
 		egc.srcmask.w = 0;
 		return;
 	}
 	egc.stack -= (16 - egc.dstbit);
-	egcsftb_dnr_sub(1);
+	egcsftb_dnr_sub(EGCADDR_H);
 	if (egc.remain) {
-		egcsftb_dnr_sub(0);
+		egcsftb_dnr_sub(EGCADDR_L);
 		if (egc.remain) {
 			return;
 		}
 	}
 	else {
-		egc.srcmask.b[0] = 0;
+		egc.srcmask._b[EGCADDR_L] = 0;
 	}
 	egcshift();
 	(void)adrs;
 }
 
 
-static void egcsftb_upl0(DWORD adrs) {			// dir:up srcbit > dstbit
+static void egcsftb_upl0(UINT32 adrs) {			// dir:up srcbit > dstbit
 
-	int		ext;
+	UINT	ext;
 
-	ext = adrs & 1;
-	if (egc.stack < (DWORD)(8 - egc.dstbit)) {
-		egc.srcmask.b[ext] = 0;
+	ext = EGCADDR(adrs & 1);
+	if (egc.stack < (UINT)(8 - egc.dstbit)) {
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	egc.stack -= (8 - egc.dstbit);
@@ -534,35 +537,34 @@ static void egcsftb_upl0(DWORD adrs) {			// dir:up srcbit > dstbit
 	}
 }
 
-static void egcsftw_upl0(DWORD adrs) {			// dir:up srcbit > dstbit
+static void egcsftw_upl0(UINT32 adrs) {			// dir:up srcbit > dstbit
 
-	if (egc.stack < (DWORD)(16 - egc.dstbit)) {
+	if (egc.stack < (UINT)(16 - egc.dstbit)) {
 		egc.srcmask.w = 0;
 		return;
 	}
 	egc.stack -= (16 - egc.dstbit);
-	egcsftb_upl_sub(0);
+	egcsftb_upl_sub(EGCADDR_L);
 	if (egc.remain) {
-		egcsftb_upl_sub(1);
+		egcsftb_upl_sub(EGCADDR_H);
 		if (egc.remain) {
 			return;
 		}
 	}
 	else {
-		egc.srcmask.b[1] = 0;
+		egc.srcmask._b[EGCADDR_H] = 0;
 	}
 	egcshift();
 	(void)adrs;
 }
 
+static void egcsftb_dnl0(UINT32 adrs) {			// dir:up srcbit > dstbit
 
-static void egcsftb_dnl0(DWORD adrs) {			// dir:up srcbit > dstbit
+	UINT	ext;
 
-	int		ext;
-
-	ext = adrs & 1;
-	if (egc.stack < (DWORD)(8 - egc.dstbit)) {
-		egc.srcmask.b[ext] = 0;
+	ext = EGCADDR(adrs & 1);
+	if (egc.stack < (UINT)(8 - egc.dstbit)) {
+		egc.srcmask._b[ext] = 0;
 		return;
 	}
 	egc.stack -= (8 - egc.dstbit);
@@ -572,29 +574,29 @@ static void egcsftb_dnl0(DWORD adrs) {			// dir:up srcbit > dstbit
 	}
 }
 
-static void egcsftw_dnl0(DWORD adrs) {			// dir:up srcbit > dstbit
+static void egcsftw_dnl0(UINT32 adrs) {			// dir:up srcbit > dstbit
 
-	if (egc.stack < (DWORD)(16 - egc.dstbit)) {
+	if (egc.stack < (UINT)(16 - egc.dstbit)) {
 		egc.srcmask.w = 0;
 		return;
 	}
 	egc.stack -= (16 - egc.dstbit);
-	egcsftb_dnl_sub(1);
+	egcsftb_dnl_sub(EGCADDR_H);
 	if (egc.remain) {
-		egcsftb_dnl_sub(0);
+		egcsftb_dnl_sub(EGCADDR_L);
 		if (egc.remain) {
 			return;
 		}
 	}
 	else {
-		egc.srcmask.b[0] = 0;
+		egc.srcmask._b[EGCADDR_L] = 0;
 	}
 	egcshift();
 	(void)adrs;
 }
 
 
-static void (*egcsft_proc[])(DWORD adrs) = {
+static void (*egcsft_proc[])(UINT32 adrs) = {
 		egcsftw_upn0,	egcsftw_dnn0,
 		egcsftw_upr0,	egcsftw_dnr0,
 		egcsftw_upl0,	egcsftw_dnl0,
@@ -603,9 +605,10 @@ static void (*egcsft_proc[])(DWORD adrs) = {
 		egcsftb_upr0,	egcsftb_dnr0,
 		egcsftb_upl0,	egcsftb_dnl0};
 
+
 // ---------------------------------------------------------------------------
 
-static void shiftinput_byte(DWORD ext) {
+static void shiftinput_byte(UINT ext) {
 
 	if (egc.stack <= 16) {
 		if (egc.srcbit >= 8) {
@@ -622,7 +625,7 @@ static void shiftinput_byte(DWORD ext) {
 			egc.inptr--;
 		}
 	}
-	egc.srcmask.b[ext] = 0xff;
+	egc.srcmask._b[ext] = 0xff;
 	egcsft_proc[egc.func + 6](ext);
 }
 
@@ -659,35 +662,43 @@ static void shiftinput_decw(void) {
 	if (egc.ope & 0x400) {											\
 		if (func < 6) {												\
 			if (!(egc.sft & 0x1000)) {								\
-				*(WORD *)(egc.inptr + 0) = value;					\
-				*(WORD *)(egc.inptr + 4) = value;					\
-				*(WORD *)(egc.inptr + 8) = value;					\
-				*(WORD *)(egc.inptr +12) = value;					\
+				egc.inptr[ 0] = (BYTE)value;						\
+				egc.inptr[ 1] = (BYTE)(value >> 8);					\
+				egc.inptr[ 4] = (BYTE)value;						\
+				egc.inptr[ 5] = (BYTE)(value >> 8);					\
+				egc.inptr[ 8] = (BYTE)value;						\
+				egc.inptr[ 9] = (BYTE)(value >> 8);					\
+				egc.inptr[12] = (BYTE)value;						\
+				egc.inptr[13] = (BYTE)(value >> 8);					\
 				shiftinput_incw();									\
 			}														\
 			else {													\
-				*(WORD *)(egc.inptr - 1) = value;					\
-				*(WORD *)(egc.inptr + 3) = value;					\
-				*(WORD *)(egc.inptr + 7) = value;					\
-				*(WORD *)(egc.inptr +11) = value;					\
+				egc.inptr[-1] = (BYTE)value;						\
+				egc.inptr[ 0] = (BYTE)(value >> 8);					\
+				egc.inptr[ 3] = (BYTE)value;						\
+				egc.inptr[ 4] = (BYTE)(value >> 8);					\
+				egc.inptr[ 7] = (BYTE)value;						\
+				egc.inptr[ 8] = (BYTE)(value >> 8);					\
+				egc.inptr[11] = (BYTE)value;						\
+				egc.inptr[12] = (BYTE)(value >> 8);					\
 				shiftinput_decw();									\
 			}														\
 		}															\
 		else {														\
-			*(egc.inptr + 0) = (BYTE)value;							\
-			*(egc.inptr + 4) = (BYTE)value;							\
-			*(egc.inptr + 8) = (BYTE)value;							\
-			*(egc.inptr +12) = (BYTE)value;							\
-			shiftinput_byte(ad & 1);								\
+			egc.inptr[ 0] = (BYTE)value;							\
+			egc.inptr[ 4] = (BYTE)value;							\
+			egc.inptr[ 8] = (BYTE)value;							\
+			egc.inptr[12] = (BYTE)value;							\
+			shiftinput_byte(EGCADDR(ad & 1));						\
 		}															\
 	}																\
 }
 
 
-static void gdc_ope(DWORD ad, WORD value, int func) {
+static void gdc_ope(UINT32 ad, UINT16 value, int func) {
 
-	QWORD_P		pat;
-	QWORD_P		dst;
+	EGCQUAD	pat;
+	EGCQUAD	dst;
 
 	egc.mask2.w = egc.mask.w;
 
@@ -715,10 +726,10 @@ static void gdc_ope(DWORD ad, WORD value, int func) {
 					break;
 			}
 			ad &= ~1;
-			dst.w[0] = *(WORD *)(&mem[ad + VRAM_B]);
-			dst.w[1] = *(WORD *)(&mem[ad + VRAM_R]);
-			dst.w[2] = *(WORD *)(&mem[ad + VRAM_G]);
-			dst.w[3] = *(WORD *)(&mem[ad + VRAM_E]);
+			dst.w[0] = *(UINT16 *)(&mem[ad + VRAM_B]);
+			dst.w[1] = *(UINT16 *)(&mem[ad + VRAM_R]);
+			dst.w[2] = *(UINT16 *)(&mem[ad + VRAM_G]);
+			dst.w[3] = *(UINT16 *)(&mem[ad + VRAM_E]);
 
 #ifdef LOG_EGCROP
 			egcropcnt[egc.ope & 0xff]++;
@@ -793,40 +804,38 @@ static void gdc_ope(DWORD ad, WORD value, int func) {
 
 BYTE MEMCALL egc_read(UINT32 addr) {
 
-	DWORD	ad;
-	DWORD	ext;
-
-//	TRACE_("EGC read_byte", (WORD)(addr & 0x7fff));
+	UINT32	ad;
+	UINT	ext;
 
 	if (gdcs.access) {
 		addr += VRAM_STEP;
 	}
 	ad = VRAM_POS(addr);
-	ext = addr & 1;
-	egc.lastvram.b[0][ext] = mem[ad + VRAM_B];
-	egc.lastvram.b[1][ext] = mem[ad + VRAM_R];
-	egc.lastvram.b[2][ext] = mem[ad + VRAM_G];
-	egc.lastvram.b[3][ext] = mem[ad + VRAM_E];
+	ext = EGCADDR(addr & 1);
+	egc.lastvram._b[0][ext] = mem[ad + VRAM_B];
+	egc.lastvram._b[1][ext] = mem[ad + VRAM_R];
+	egc.lastvram._b[2][ext] = mem[ad + VRAM_G];
+	egc.lastvram._b[3][ext] = mem[ad + VRAM_E];
 
 	// shift input
 	if (!(egc.ope & 0x400)) {
-		egc.inptr[0] = egc.lastvram.b[0][ext];
-		egc.inptr[4] = egc.lastvram.b[1][ext];
-		egc.inptr[8] = egc.lastvram.b[2][ext];
-		egc.inptr[12] = egc.lastvram.b[3][ext];
+		egc.inptr[0] = egc.lastvram._b[0][ext];
+		egc.inptr[4] = egc.lastvram._b[1][ext];
+		egc.inptr[8] = egc.lastvram._b[2][ext];
+		egc.inptr[12] = egc.lastvram._b[3][ext];
 		shiftinput_byte(ext);
 	}
 
 	if ((egc.ope & 0x0300) == 0x0100) {
-		egc.patreg.b[0][ext] = mem[ad + VRAM_B];
-		egc.patreg.b[1][ext] = mem[ad + VRAM_R];
-		egc.patreg.b[2][ext] = mem[ad + VRAM_G];
-		egc.patreg.b[3][ext] = mem[ad + VRAM_E];
+		egc.patreg._b[0][ext] = mem[ad + VRAM_B];
+		egc.patreg._b[1][ext] = mem[ad + VRAM_R];
+		egc.patreg._b[2][ext] = mem[ad + VRAM_G];
+		egc.patreg._b[3][ext] = mem[ad + VRAM_E];
 	}
 	if (!(egc.ope & 0x2000)) {
 		int pl = (egc.fgbg >> 8) & 3;
 		if (!(egc.ope & 0x400)) {
-			return(egc_src.b[pl][ext]);
+			return(egc_src._b[pl][ext]);
 		}
 		else {
 			return(mem[ad + planead[pl]]);
@@ -838,13 +847,11 @@ BYTE MEMCALL egc_read(UINT32 addr) {
 
 void MEMCALL egc_write(UINT32 addr, BYTE value) {
 
-	DWORD	ext;
-	WORD	wvalue;
-
-//	TRACE_("EGC write_byte", (WORD)(addr & 0x7fff));
+	UINT	ext;
+	UINT16	wvalue;
 
 	addr &= 0x7fff;
-	ext = addr & 1;
+	ext = EGCADDR(addr & 1);
 	if (!gdcs.access) {
 		gdcs.grphdisp |= 1;
 		vramupdate[addr] |= 0x01;
@@ -855,10 +862,10 @@ void MEMCALL egc_write(UINT32 addr, BYTE value) {
 		addr += VRAM_STEP;
 	}
 	if ((egc.ope & 0x0300) == 0x0200) {
-		egc.patreg.b[0][ext] = mem[addr + VRAM_B];
-		egc.patreg.b[1][ext] = mem[addr + VRAM_R];
-		egc.patreg.b[2][ext] = mem[addr + VRAM_G];
-		egc.patreg.b[3][ext] = mem[addr + VRAM_E];
+		egc.patreg._b[0][ext] = mem[addr + VRAM_B];
+		egc.patreg._b[1][ext] = mem[addr + VRAM_R];
+		egc.patreg._b[2][ext] = mem[addr + VRAM_G];
+		egc.patreg._b[3][ext] = mem[addr + VRAM_E];
 	}
 
 	wvalue = (value << 8) | (value);							// ver0.28/pr4
@@ -868,56 +875,62 @@ void MEMCALL egc_write(UINT32 addr, BYTE value) {
 	else {
 		gdc_ope(addr, wvalue, egc.func + 6);
 	}
-	if (egc.mask2.b[ext]) {
+	if (egc.mask2._b[ext]) {
 		if (!(egc.access & 1)) {
-			mem[addr + VRAM_B] &= ~egc.mask2.b[ext];
-			mem[addr + VRAM_B] |= data.b[0][ext] & egc.mask2.b[ext];
+			mem[addr + VRAM_B] &= ~egc.mask2._b[ext];
+			mem[addr + VRAM_B] |= data._b[0][ext] & egc.mask2._b[ext];
 		}
 		if (!(egc.access & 2)) {
-			mem[addr + VRAM_R] &= ~egc.mask2.b[ext];
-			mem[addr + VRAM_R] |= data.b[1][ext] & egc.mask2.b[ext];
+			mem[addr + VRAM_R] &= ~egc.mask2._b[ext];
+			mem[addr + VRAM_R] |= data._b[1][ext] & egc.mask2._b[ext];
 		}
 		if (!(egc.access & 4)) {
-			mem[addr + VRAM_G] &= ~egc.mask2.b[ext];
-			mem[addr + VRAM_G] |= data.b[2][ext] & egc.mask2.b[ext];
+			mem[addr + VRAM_G] &= ~egc.mask2._b[ext];
+			mem[addr + VRAM_G] |= data._b[2][ext] & egc.mask2._b[ext];
 		}
 		if (!(egc.access & 8)) {
-			mem[addr + VRAM_E] &= ~egc.mask2.b[ext];
-			mem[addr + VRAM_E] |= data.b[3][ext] & egc.mask2.b[ext];
+			mem[addr + VRAM_E] &= ~egc.mask2._b[ext];
+			mem[addr + VRAM_E] |= data._b[3][ext] & egc.mask2._b[ext];
 		}
 	}
 }
 
 UINT16 MEMCALL egc_read_w(UINT32 addr) {
 
-	DWORD	ad;
-
-//	TRACE_("EGC read_word", (WORD)(addr & 0x7fff));
+	UINT32	ad;
 
 	if (!(addr & 1)) {
 		if (gdcs.access) {
 			addr += VRAM_STEP;
 		}
 		ad = VRAM_POS(addr);
-		egc.lastvram.w[0] = *(WORD *)(&mem[ad + VRAM_B]);
-		egc.lastvram.w[1] = *(WORD *)(&mem[ad + VRAM_R]);
-		egc.lastvram.w[2] = *(WORD *)(&mem[ad + VRAM_G]);
-		egc.lastvram.w[3] = *(WORD *)(&mem[ad + VRAM_E]);
+		egc.lastvram.w[0] = *(UINT16 *)(&mem[ad + VRAM_B]);
+		egc.lastvram.w[1] = *(UINT16 *)(&mem[ad + VRAM_R]);
+		egc.lastvram.w[2] = *(UINT16 *)(&mem[ad + VRAM_G]);
+		egc.lastvram.w[3] = *(UINT16 *)(&mem[ad + VRAM_E]);
 
 		// shift input
 		if (!(egc.ope & 0x400)) {
 			if (!(egc.sft & 0x1000)) {
-				*(WORD *)(egc.inptr + 0) = egc.lastvram.w[0];
-				*(WORD *)(egc.inptr + 4) = egc.lastvram.w[1];
-				*(WORD *)(egc.inptr + 8) = egc.lastvram.w[2];
-				*(WORD *)(egc.inptr +12) = egc.lastvram.w[3];
+				egc.inptr[ 0] = egc.lastvram._b[0][EGCADDR_L];
+				egc.inptr[ 1] = egc.lastvram._b[0][EGCADDR_H];
+				egc.inptr[ 4] = egc.lastvram._b[1][EGCADDR_L];
+				egc.inptr[ 5] = egc.lastvram._b[1][EGCADDR_H];
+				egc.inptr[ 8] = egc.lastvram._b[2][EGCADDR_L];
+				egc.inptr[ 9] = egc.lastvram._b[2][EGCADDR_H];
+				egc.inptr[12] = egc.lastvram._b[3][EGCADDR_L];
+				egc.inptr[13] = egc.lastvram._b[3][EGCADDR_H];
 				shiftinput_incw();
 			}
 			else {
-				*(WORD *)(egc.inptr - 1) = egc.lastvram.w[0];
-				*(WORD *)(egc.inptr + 3) = egc.lastvram.w[1];
-				*(WORD *)(egc.inptr + 7) = egc.lastvram.w[2];
-				*(WORD *)(egc.inptr +11) = egc.lastvram.w[3];
+				egc.inptr[-1] = egc.lastvram._b[0][EGCADDR_L];
+				egc.inptr[ 0] = egc.lastvram._b[0][EGCADDR_H];
+				egc.inptr[ 3] = egc.lastvram._b[1][EGCADDR_L];
+				egc.inptr[ 4] = egc.lastvram._b[1][EGCADDR_H];
+				egc.inptr[ 7] = egc.lastvram._b[2][EGCADDR_L];
+				egc.inptr[ 8] = egc.lastvram._b[2][EGCADDR_H];
+				egc.inptr[11] = egc.lastvram._b[3][EGCADDR_L];
+				egc.inptr[12] = egc.lastvram._b[3][EGCADDR_H];
 				shiftinput_decw();
 			}
 		}
@@ -932,19 +945,19 @@ UINT16 MEMCALL egc_read_w(UINT32 addr) {
 				return(egc_src.w[pl]);
 			}
 			else {
-				return(*(WORD *)(&mem[ad + planead[pl]]));
+				return(LOADINTELWORD(mem + ad + planead[pl]));
 			}
 		}
-		return(*(WORD *)(&mem[addr]));
+		return(LOADINTELWORD(mem + addr));
 	}
 	else if (!(egc.sft & 0x1000)) {
-		WORD	ret;
+		UINT16 ret;
 		ret = egc_read(addr);
 		ret |= egc_read(addr+1) << 8;
 		return(ret);
 	}
 	else {
-		WORD	ret;
+		UINT16 ret;
 		ret = egc_read(addr+1) << 8;
 		ret |= egc_read(addr);
 		return(ret);
@@ -953,42 +966,40 @@ UINT16 MEMCALL egc_read_w(UINT32 addr) {
 
 void MEMCALL egc_write_w(UINT32 addr, UINT16 value) {
 
-//	TRACE_("EGC write_word", (WORD)(addr & 0x7fff));
-
 	if (!(addr & 1)) {											// word access
 		addr &= 0x7ffe;
 		if (!gdcs.access) {
 			gdcs.grphdisp |= 1;
-			*(WORD *)(&vramupdate[addr]) |= 0x0101;
+			*(UINT16 *)(vramupdate + addr) |= 0x0101;
 		}
 		else {
 			gdcs.grphdisp |= 2;
-			*(WORD *)(&vramupdate[addr]) |= 0x0202;
+			*(UINT16 *)(vramupdate + addr) |= 0x0202;
 			addr += VRAM_STEP;
 		}
 		if ((egc.ope & 0x0300) == 0x0200) {
-			egc.patreg.w[0] = *(WORD *)(&mem[addr + VRAM_B]);
-			egc.patreg.w[1] = *(WORD *)(&mem[addr + VRAM_R]);
-			egc.patreg.w[2] = *(WORD *)(&mem[addr + VRAM_G]);
-			egc.patreg.w[3] = *(WORD *)(&mem[addr + VRAM_E]);
+			egc.patreg.w[0] = *(UINT16 *)(&mem[addr + VRAM_B]);
+			egc.patreg.w[1] = *(UINT16 *)(&mem[addr + VRAM_R]);
+			egc.patreg.w[2] = *(UINT16 *)(&mem[addr + VRAM_G]);
+			egc.patreg.w[3] = *(UINT16 *)(&mem[addr + VRAM_E]);
 		}
 		gdc_ope(addr, value, egc.func);
 		if (egc.mask2.w) {
 			if (!(egc.access & 1)) {
-				*(WORD *)(&mem[addr + VRAM_B]) &= ~egc.mask2.w;
-				*(WORD *)(&mem[addr + VRAM_B]) |= data.w[0] & egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_B]) &= ~egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_B]) |= data.w[0] & egc.mask2.w;
 			}
 			if (!(egc.access & 2)) {
-				*(WORD *)(&mem[addr + VRAM_R]) &= ~egc.mask2.w;
-				*(WORD *)(&mem[addr + VRAM_R]) |= data.w[1] & egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_R]) &= ~egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_R]) |= data.w[1] & egc.mask2.w;
 			}
 			if (!(egc.access & 4)) {
-				*(WORD *)(&mem[addr + VRAM_G]) &= ~egc.mask2.w;
-				*(WORD *)(&mem[addr + VRAM_G]) |= data.w[2] & egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_G]) &= ~egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_G]) |= data.w[2] & egc.mask2.w;
 			}
 			if (!(egc.access & 8)) {
-				*(WORD *)(&mem[addr + VRAM_E]) &= ~egc.mask2.w;
-				*(WORD *)(&mem[addr + VRAM_E]) |= data.w[3] & egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_E]) &= ~egc.mask2.w;
+				*(UINT16 *)(&mem[addr + VRAM_E]) |= data.w[3] & egc.mask2.w;
 			}
 		}
 	}

@@ -32,10 +32,11 @@ static void calc_mousexy(void) {
 	clock = nevent.clock + nevent.baseclock - nevent.remainclock;
 	diff = clock - mouseif.lastc;
 	if (diff >= 2000) {
-		short dx, dy;
+		SINT16 dx;
+		SINT16 dy;
 		mouseif.rapid ^= 0xa0;
 		diff /= 1000;
-		dx = (short)((long)mouseif.sx * diff / (long)pc.frame1000);
+		dx = (SINT16)(mouseif.sx * diff / pc.frame1000);
 		if (dx >= 0) {											// ³
 			if (dx > mouseif.rx) {
 				dx = mouseif.rx;
@@ -48,7 +49,7 @@ static void calc_mousexy(void) {
 		}
 		mouseif.x += dx;
 		mouseif.rx -= dx;
-		dy = (short)((long)mouseif.sy * diff / (long)pc.frame1000);
+		dy = (SINT16)(mouseif.sy * diff / pc.frame1000);
 		if (dy >= 0) {											// ³
 			if (dy > mouseif.ry) {
 				dy = mouseif.ry;
