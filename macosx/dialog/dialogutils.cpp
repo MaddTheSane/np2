@@ -90,4 +90,20 @@ void setjmper(BYTE *board, BYTE value, BYTE bit) {
 	}
 }
 
+void getFieldText(ControlRef cRef, char* buffer) {
+    Size	size, outSize;
+    GetControlDataSize(cRef, kControlNoPart, kControlStaticTextTextTag, &size);
+    GetControlData(cRef, kControlNoPart, kControlStaticTextTextTag, size, buffer, &outSize);
+    *(buffer+outSize)=NULL;
+}
+
+
+UINT32 getFieldValue(ControlRef cRef)
+{
+    char	buffer[255];
+    char*	retPtr;
+
+    getFieldText(cRef, buffer);
+    return(strtoul(buffer, &retPtr, 10));
+}
 

@@ -14,6 +14,7 @@ extern "C" {
 void ResumeErrorDialogProc(void);
 int ResumeWarningDialogProc(const char *string);
 bool ResetWarningDialogProc(void);
+bool QuitWarningDialogProc(void);
 
 #ifdef __cplusplus
 }

@@ -4,209 +4,131 @@
 #include	"np2.h"
 #include	"newdisk.h"
 #include	"dialog.h"
+#include	"dialogutils.h"
 #include	"macnewdisk.h"
 
-Boolean saveFile(OSType type, char *title, FSSpec *fsc);
+const int defaultsize[5] = {20, 41, 65, 80, 128};
+static	WindowRef	diskWin;
+static	SInt32	targetDisk, media, hdsize;
+static	char	disklabel[256];
+enum {kTabMasterSig = 'ScrT',kTabMasterID = 1000,kTabPaneSig= 'ScTb'};
+#define	kMaxNumTabs 2
+static UInt16		lastPaneSelected = 1;
+#define	getControlValue(a,b)		GetControl32BitValue(getControlRefByID(a,b,diskWin))
 
-#if 0
-static BYTE hdddiskboot[] = {
-			0xb8,0x00,0x10,0xbb,0x00,0x80,0x8e,0xd0,0x8b,0xe3,0x8c,0xc8,
-			0x8e,0xd8,0xb8,0x00,0xa0,0x8e,0xc0,0xb9,0x00,0x10,0xb8,0x20,
-			0x00,0x33,0xff,0xfc,0xf3,0xab,0xb0,0xe1,0xb9,0xe0,0x1f,0xaa,
-			0x47,0xe2,0xfc,0xbe,0x44,0x00,0x33,0xff,0xe8,0x08,0x00,0xbf,
-			0xa0,0x00,0xe8,0x02,0x00,0xeb,0xfe,0x2e,0xad,0x85,0xc0,0x74,
-			0x06,0xab,0x83,0xc7,0x02,0xeb,0xf4,0xc3,0x04,0x33,0x04,0x4e,
-			0x05,0x4f,0x01,0x3c,0x05,0x49,0x05,0x47,0x05,0x23,0x05,0x39,
-			0x05,0x2f,0x05,0x24,0x05,0x61,0x01,0x3c,0x05,0x38,0x04,0x4f,
-			0x05,0x55,0x05,0x29,0x01,0x3c,0x05,0x5e,0x05,0x43,0x05,0x48,
-			0x04,0x35,0x04,0x6c,0x04,0x46,0x04,0x24,0x04,0x5e,0x04,0x3b,
-			0x04,0x73,0x01,0x25,0x00,0x00,0x05,0x47,0x05,0x23,0x05,0x39,
-			0x05,0x2f,0x05,0x24,0x05,0x61,0x01,0x3c,0x05,0x38,0x04,0x72,
-			0x21,0x5e,0x26,0x7e,0x18,0x65,0x01,0x24,0x05,0x6a,0x05,0x3b,
-			0x05,0x43,0x05,0x48,0x04,0x37,0x04,0x46,0x12,0x3c,0x04,0x35,
-			0x04,0x24,0x01,0x25,0x00,0x00};
-#endif
+static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, void* userData) {
+    OSStatus	err = eventNotHandledErr;
+    HICommand	cmd;
+	SINT32		data;
+    char		outstr[16];
 
-static Handle GetDlgItem(DialogPtr hWnd, short pos) {
+    if (GetEventClass(event)==kEventClassCommand && GetEventKind(event)==kEventCommandProcess ) {
+        GetEventParameter(event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd);
+        switch (cmd.commandID)
+        {
+            case 'hdsz':
+                data = getControlValue(cmd.commandID,1)-1;
+                sprintf(outstr, "%d", defaultsize[data]);
+                SetControlData(getControlRefByID(cmd.commandID,0,diskWin),kControlNoPart,kControlStaticTextTextTag,strlen(outstr),outstr);
+                Draw1Control(getControlRefByID(cmd.commandID,0,diskWin));
+                break;
 
-	Handle	ret;
-	Rect	rct;
-	short	s;
+            case kHICommandOK:
+                targetDisk = getControlValue(kTabMasterSig, kTabMasterID);
+                getFieldText(getControlRefByID('fdlb', 0, diskWin), disklabel);
+                media = getControlValue('fdty', 0);
+                data = getFieldValue(getControlRefByID('hdsz', 0, diskWin));
+                if (data < 0) {
+                    data = 0;
+                }
+                else if (data > 512) {
+                    data = 512;
+                }
+                hdsize = data;
+                QuitAppModalLoopForWindow(diskWin);
+                err=noErr;
+                break;
+                
+            case kHICommandCancel:
+                QuitAppModalLoopForWindow(diskWin);
+                err=noErr;
+                break;
+                
+            default:
+                break;
+        }
+    }
 
-	GetDialogItem(hWnd, pos, &s, &ret, &rct);
-	return(ret);
+	(void)myHandler;
+	(void)userData;
+    return err;
 }
 
-static void macos_setradiobtn(ControlHandle *hRadio, int items, int pos) {
-
-	int		i;
-
-	for (i=0; i<items; i++) {
-		SetControlValue(hRadio[i], ((i==pos)?1:0));
-	}
+static pascal OSStatus PrefsTabEventHandlerProc( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData )
+{
+    WindowRef theWindow = (WindowRef)inUserData;  // get the windowRef, passed around as userData    
+    short ret;
+    ret = changeTab(theWindow, lastPaneSelected);
+    if (ret) {
+        lastPaneSelected = ret;
+    }
+    return( eventNotHandledErr );
 }
 
+static void makeNibWindow (IBNibRef nibRef) {
+    OSStatus	err;
+    EventHandlerRef	ref;
+    
+    err = CreateWindowFromNib(nibRef, CFSTR("NewDiskDialog"), &diskWin);
+    if (err == noErr) {
+    
+        SetInitialTabState(diskWin, lastPaneSelected, kMaxNumTabs);
+        EventTypeSpec	tabControlEvents[] ={ { kEventClassControl, kEventControlHit }};
+        InstallControlEventHandler( getControlRefByID(kTabMasterSig,kTabMasterID,diskWin),  PrefsTabEventHandlerProc , GetEventTypeCount(tabControlEvents), tabControlEvents, diskWin, NULL );
+        EventTypeSpec	list[]={ { kEventClassCommand, kEventCommandProcess },};
+        InstallWindowEventHandler (diskWin, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)diskWin, &ref);
+        ShowWindow(diskWin);
+        RunAppModalLoopForWindow(diskWin);
+
+    }
+    return;
+}
+
+static SInt32 initNewDisk( void ) {
+    OSStatus	err;
+    IBNibRef	nibRef;
+
+    err = CreateNibReference(CFSTR("np2"), &nibRef);
+    if (err ==noErr ) {
+        makeNibWindow (nibRef);
+        DisposeNibReference ( nibRef);
+    }
+    return(err);
+}
 
 // とりあえずモーダルで
 void newdisk(void) {
 
-	DialogPtr			hDlg;
-	int					done;
-	short				item;
-	Str255				disklabel;
-	ControlHandle		hmedia[2];
-	int					media;
-
-    OSType	type='.D88';
     FSSpec	fss;
-    char	fileName[] = "Newdisk.d88";
-    
-	char	fname[MAX_PATH];
-    char	label[255];
-
-	hDlg = GetNewDialog(IDD_NEWDISK, NULL, (WindowPtr)-1);
-	if (!hDlg) {
-		return;
-	}
-
-	// テキスト～
-	SelectDialogItemText(hDlg, IDC_DISKLABEL, 0x0000, 0x7fff);
-
-	// チェックボックスのハンドル
-	hmedia[0] = (ControlHandle)GetDlgItem(hDlg, IDC_MAKE2DD);
-	hmedia[1] = (ControlHandle)GetDlgItem(hDlg, IDC_MAKE2HD);
-	media = 1;
-	macos_setradiobtn(hmedia, 2, 1);
-	SetDialogDefaultItem(hDlg, IDOK);
-	SetDialogCancelItem(hDlg, IDCANCEL);
-
-	done = 0;
-	while(!done) {
-		ModalDialog(NULL, &item);
-		switch(item) {
-			case IDOK:
-				done = 1;
-				break;
-			case IDCANCEL:
-				done = -1;
-				break;
-			case IDC_DISKLABEL:
-				break;
-			case IDC_MAKE2DD:
-				media = 0;
-				macos_setradiobtn(hmedia, 2, 0);
-				break;
-			case IDC_MAKE2HD:
-				media = 1;
-				macos_setradiobtn(hmedia, 2, 1);
-				break;
-		}
-	}
-	if (done > 0) {
-		GetDialogItemText(GetDlgItem(hDlg, IDC_DISKLABEL), disklabel);
-	}
-	DisposeDialog(hDlg);
-
-	if (done > 0) {								// making
-
-        if (saveFile(type, fileName, &fss)) {
-            fsspec2path(&fss, fname, sizeof(fname));
-            mkcstr(label, sizeof(label), disklabel);
-            newdisk_fdd(fname, media, label);
-        }
-	}
-}
-
-#if 0
-static BOOL gethddsize(Str255 str, int *size) {
-
-	int		hddsize;
-	BYTE	*p;
-	BYTE	c;
-	UInt32	remain;
-
-	p = (BYTE *)str;
-	remain = *p++;
-	while((remain) && (*p == ' ')) {
-		remain--;
-		p++;
-	}
-	hddsize = 0;
-	while(remain--) {
-		c = *p++;
-		if ((c < '0') || (c > '9')) {
-			break;
-		}
-		hddsize *= 10;
-		hddsize += (c - '0');
-	}
-	if (hddsize < 5) {
-		*size = 5;
-		return(FAILURE);
-	}
-	else if (hddsize > 256) {
-		*size = 256;
-		return(FAILURE);
-	}
-	*size = hddsize;
-	return(SUCCESS);
-}
-
-
-// とりあえずモーダルで
-void newhdddisk(void) {
-
-	DialogPtr			hDlg;
-	int					done;
-	short				item;
-	Str255				sizestr;
-	int					size;
-
-    OSType	type='.THD';
-    FSSpec	fss;
-    char	fileName[] = "Newdisk.thd";
     char	fname[MAX_PATH];
 
-	hDlg = GetNewDialog(IDD_NEWHDDDISK, NULL, (WindowPtr)-1);
-	if (!hDlg) {
-		return;
-	}
-	SelectDialogItemText(hDlg, IDC_HDDSIZE, 0x0000, 0x7fff);
-
-	SetDialogDefaultItem(hDlg, IDOK);
-	SetDialogCancelItem(hDlg, IDCANCEL);
-
-	done = 0;
-	size = 41;
-	while(!done) {
-		ModalDialog(NULL, &item);
-		switch(item) {
-			case IDOK:
-				GetDialogItemText(GetDlgItem(hDlg, IDC_HDDSIZE), sizestr);
-				if (gethddsize(sizestr, &size)) {
-					ZeroMemory(sizestr, sizeof(sizestr));
-					sprintf(((char *)sizestr) + 1, "%d", size);
-					sizestr[0] = (BYTE)strlen(((char *)sizestr) + 1);
-					SetDialogItemText(GetDlgItem(hDlg, IDC_HDDSIZE), sizestr);
-					break;
-				}
-				done = 1;
-				break;
-			case IDCANCEL:
-				done = -1;
-				break;
-		}
-	}
-	DisposeDialog(hDlg);
-	if (done > 0) {								// making
-
-        if (saveFile(type, fileName, &fss)) {
+    initNewDisk();
+    
+	if (targetDisk == 1) {
+        if (saveFile('.D88', "Newdisk.d88", &fss)) {
             fsspec2path(&fss, fname, sizeof(fname));
-            newdisk_hdd(fname, size);
+            newdisk_fdd(fname, media, disklabel);
         }
 	}
+    else if (targetDisk == 2) {
+        if (saveFile('.THD', "Newdisk.thd", &fss)) {
+            fsspec2path(&fss, fname, sizeof(fname));
+            newdisk_hdd(fname, hdsize);
+        }
+    }
+    HideWindow(diskWin);
+    DisposeWindow(diskWin);
 }
-#endif
 
 static pascal void navEventProc( NavEventCallbackMessage sel,NavCBRecPtr parm,NavCallBackUserData ud )
 {

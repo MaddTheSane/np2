@@ -7,7 +7,7 @@
 	objects = {
 		0249A665FF388DC511CA2CEA = {
 			isa = PBXApplicationReference;
-			path = np2.app;
+			path = "Neko Project IIx.app";
 			refType = 3;
 		};
 		0249A669FF388E3911CA2CEA = {
@@ -55,6 +55,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
 				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
@@ -202,10 +203,12 @@
 		};
 		20286C2CFDCF999611CA2CEA = {
 			children = (
+				969A8347055A60A500000103,
 				96A202640549B26600000102,
 				96E7E2C50556630F00000103,
 				96EFFA58054716B900000102,
 				F50908FE053EDAC2014E43C7,
+				969A7EB20559979000000103,
 				0867D6AAFE840B52C02AAC07,
 			);
 			isa = PBXGroup;
@@ -247,14 +250,14 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "../font ../lio ../fdd ../sound ../vram ../bios ../cbus ../io ../i286c . .. ../common";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "\"$(HOME)/Library/Application Support\" ../";
+				LIBRARY_SEARCH_PATHS = "\"$(HOME)/Library/Application Support\" ./";
 				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = np2gcc.h;
-				PRODUCT_NAME = np2;
+				PRODUCT_NAME = "Neko Project IIx";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -271,17 +274,146 @@
 <plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
+	<string>Japanese</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>d88</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>d88.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>D88 フロッピーディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.D88</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>hdm</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>beta.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>ベタイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>BETA</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>xdf</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>xdf.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>XDF ディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.XDF</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>hdi</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>hdi.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>ANEX86 ハードディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.HDI</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>thd</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>thd.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>T98 ハードディスクイメージ</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>.THD</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>cfg</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>preference.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>初期設定</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ini</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>preference.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>ツールウィンドウスキンファイル</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>a</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>plug-in.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>共有ライブラリ</string>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
-	<string>np2</string>
+	<string>Neko Project IIx</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Neko Project IIx version 0.70</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>np2help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>np2help</string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.retropc.np2</string>
+	<string>net.retropc.Neko Project II</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Neko Project IIx</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.70</string>
 	<key>CFBundleSignature</key>
 	<string>SMil</string>
 	<key>CFBundleVersion</key>
@@ -306,6 +438,15 @@
 				96EFFA5A054716B900000102,
 				96A202650549B26600000102,
 				96E7E2C60556630F00000103,
+				969A7EB30559979000000103,
+				969A8350055A60A500000103,
+				969A8351055A60A500000103,
+				969A8352055A60A500000103,
+				969A8353055A60A500000103,
+				969A8354055A60A500000103,
+				969A8355055A60A500000103,
+				969A8356055A60A500000103,
+				969A8357055A60A500000103,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2862,6 +3003,130 @@
 		};
 		967C947B05591C6800000103 = {
 			fileRef = 967C947A05591C6800000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A7EAE0559973800000103 = {
+			fileEncoding = 10;
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/Localization.strings;
+			refType = 4;
+		};
+		969A7EB20559979000000103 = {
+			children = (
+				969A7EAE0559973800000103,
+			);
+			isa = PBXVariantGroup;
+			name = Localization.strings;
+			refType = 4;
+		};
+		969A7EB30559979000000103 = {
+			fileRef = 969A7EB20559979000000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8347055A60A500000103 = {
+			children = (
+				969A8348055A60A500000103,
+				969A8349055A60A500000103,
+				969A834A055A60A500000103,
+				969A834B055A60A500000103,
+				969A834C055A60A500000103,
+				969A834D055A60A500000103,
+				969A834E055A60A500000103,
+				969A834F055A60A500000103,
+			);
+			isa = PBXGroup;
+			path = Icon;
+			refType = 4;
+		};
+		969A8348055A60A500000103 = {
+			isa = PBXFileReference;
+			path = beta.icns;
+			refType = 4;
+		};
+		969A8349055A60A500000103 = {
+			isa = PBXFileReference;
+			path = d88.icns;
+			refType = 4;
+		};
+		969A834A055A60A500000103 = {
+			isa = PBXFileReference;
+			path = hdi.icns;
+			refType = 4;
+		};
+		969A834B055A60A500000103 = {
+			isa = PBXFileReference;
+			path = "Neko Project IIx.icns";
+			refType = 4;
+		};
+		969A834C055A60A500000103 = {
+			isa = PBXFileReference;
+			path = "plug-in.icns";
+			refType = 4;
+		};
+		969A834D055A60A500000103 = {
+			isa = PBXFileReference;
+			path = preference.icns;
+			refType = 4;
+		};
+		969A834E055A60A500000103 = {
+			isa = PBXFileReference;
+			path = thd.icns;
+			refType = 4;
+		};
+		969A834F055A60A500000103 = {
+			isa = PBXFileReference;
+			path = xdf.icns;
+			refType = 4;
+		};
+		969A8350055A60A500000103 = {
+			fileRef = 969A8348055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8351055A60A500000103 = {
+			fileRef = 969A8349055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8352055A60A500000103 = {
+			fileRef = 969A834A055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8353055A60A500000103 = {
+			fileRef = 969A834B055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8354055A60A500000103 = {
+			fileRef = 969A834C055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8355055A60A500000103 = {
+			fileRef = 969A834D055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8356055A60A500000103 = {
+			fileRef = 969A834E055A60A500000103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A8357055A60A500000103 = {
+			fileRef = 969A834F055A60A500000103;
 			isa = PBXBuildFile;
 			settings = {
 			};

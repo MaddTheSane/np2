@@ -620,7 +620,7 @@ int main(int argc, char *argv[]) {
 #ifdef OPENING_WAIT
 	UINT32		tick;
 #endif
-
+  
 	dosio_init();
 	file_setcd(target);
 
@@ -910,7 +910,7 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                 switch (whatHappened)
                 {
                     case kEventWindowClose:
-                        np2running = FALSE;
+                        taskmng_exit();
                         result = noErr;
                         break;
                     case kEventWindowActivated:
@@ -1013,7 +1013,6 @@ static void setUpCarbonEvent(void) {
 	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(np2windowevent),
 								GetEventTypeCount(windEventList),
 								windEventList, 0, NULL);
-    InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
 }
 
 static bool setupMainWindow(void) {

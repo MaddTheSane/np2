@@ -203,32 +203,18 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                     update |= SYS_UPDATECFG | SYS_UPDATERATE;
                     soundrenewal = 1;
                 }
-                
 
-                {
-                    Size	size, outSize;
-                    ControlRef	cRef;
-                    char	buffer[255];
-                    char*	pt;
-                    char*	retPtr;
-
-                    pt=&buffer[0];
-                    cRef=getControlRefByID('Bufr', 7, configWin);
-                    GetControlDataSize(cRef, kControlNoPart, kControlStaticTextTextTag, &size);
-                    GetControlData(cRef, kControlNoPart, kControlStaticTextTextTag, size, pt, &outSize);
-                    *(pt+outSize)=NULL;
-                    dval=strtoul(pt, &retPtr, 10);
-					if (dval < 100) {
-						dval = 100;
-					}
-					else if (dval > 1000) {
-						dval = 1000;
-					}
-                    if (dval!= np2cfg.delayms) {
-						soundrenewal = 1;
-						np2cfg.delayms = dval;
-						update |= SYS_UPDATECFG | SYS_UPDATESBUF;
-                    }
+                dval=getFieldValue(getControlRefByID('Bufr', 7, configWin));
+                if (dval < 100) {
+                    dval = 100;
+                }
+                else if (dval > 1000) {
+                    dval = 1000;
+                }
+                if (dval!= np2cfg.delayms) {
+                    soundrenewal = 1;
+                    np2cfg.delayms = dval;
+                    update |= SYS_UPDATECFG | SYS_UPDATESBUF;
                 }
                 dval=getSelectedValue('cnfm', 0);
                 if (dval != np2oscfg.comfirm) {

@@ -11,46 +11,40 @@
 #include "np2.h"
 #include "macalert.h"
 
-static AlertStdAlertParamRec makeDefaultParam(void) {
-    AlertStdAlertParamRec	param;
+static SInt16 showCautionAlert(CFStringRef title, CFStringRef string, CFStringRef button) {
+    DialogRef	ret;
+    AlertStdCFStringAlertParamRec	param;
+    DialogItemIndex	hit;
     
+    GetStandardAlertDefaultParams(&param, kStdCFStringAlertVersionOne);
     param.movable = true;
-    param.helpButton = false;
-    param.filterProc = NULL;
-    param.defaultText = (ConstStringPtr)kAlertDefaultOKText;
-    param.cancelText = NULL;
-    param.otherText = NULL;
-    param.defaultButton = kAlertStdAlertOKButton;
-    param.cancelButton = NULL;
-    param.position = kWindowDefaultPosition;
-    
-    return(param);
-}
-
-static SInt16 showCautionAlert(const Str255 title, Str255 string, const Str255 button) {
-    SInt16	ret;
-    AlertStdAlertParamRec	param = makeDefaultParam();
-    
-    param.defaultText = button;
-    param.cancelText = (ConstStringPtr)kAlertDefaultCancelText;
     param.cancelButton = kAlertStdAlertCancelButton;
-    
-    StandardAlert(kAlertCautionAlert, title, string, &param, &ret);
-    return(ret);
+    param.cancelText = param.defaultText;
+    if (button) param.defaultText = button;
+   
+    CreateStandardAlert(kAlertCautionAlert, title, string, &param, &ret);
+    RunStandardAlert(ret, NULL, &hit);
+    return(hit);
 }
 
 void ResumeErrorDialogProc(void) {
-    SInt16	ret;
-    AlertStdAlertParamRec	param = makeDefaultParam();
-    StandardAlert(kAlertStopAlert, "\pCouldn't restart", NULL, &param, &ret);
+    DialogRef	ret;
+    AlertStdCFStringAlertParamRec	param;
+    DialogItemIndex	hit;
+    
+    GetStandardAlertDefaultParams(&param, kStdCFStringAlertVersionOne);   
+    CreateStandardAlert(kAlertStopAlert, CFCopyLocalizedString(CFSTR("Couldn't restart"), "Resume Error Message"), 
+                                         CFCopyLocalizedString(CFSTR("A resume error occured when loading the np2.sav file. So Neko Project II couldn't restart."), "Resume Error Description"),
+                                         &param, &ret);
+    RunStandardAlert(ret, NULL, &hit);
 }
 
 int ResumeWarningDialogProc(const char *string) {
     SInt16	ret;
-    Str255	str;
     
-    mkstr255(str, string);
-    ret = showCautionAlert("\pConflict", str, "\pContinue");
+    ret = showCautionAlert(	CFCopyLocalizedString(CFSTR("Save Data Conflict"), "bad data"), 
+                            CFStringCreateWithCString(NULL, string, CFStringGetSystemEncoding()), 
+                            CFCopyLocalizedString(CFSTR("Continue"), "OK"));
     if (ret = kAlertStdAlertOKButton) {
         return(IDOK);
     }
@@ -61,7 +55,23 @@ bool ResetWarningDialogProc(void) {
     SInt16	ret;
     
     if (np2oscfg.comfirm) {
-        ret = showCautionAlert("\pReset", NULL, "\pReset");
+        ret = showCautionAlert(	CFCopyLocalizedString(CFSTR("Reset"), "Reset title"), 
+                                CFCopyLocalizedString(CFSTR("Are you sure you want to reset?"), "Reset causion string"), 
+                                NULL);
+        if (ret == kAlertStdAlertCancelButton) {
+            return(false);
+        }
+    }
+    return(true);
+}
+
+bool QuitWarningDialogProc(void) {
+    SInt16	ret;
+    
+    if (np2oscfg.comfirm) {
+        ret = showCautionAlert(	CFCopyLocalizedString(CFSTR("Quit"), "Quit title"), 
+                                CFCopyLocalizedString(CFSTR("Are you sure you want to quit?"), "Quit causion string"), 
+                                NULL);
         if (ret == kAlertStdAlertCancelButton) {
             return(false);
         }
