@@ -1,4 +1,4 @@
-/*	$Id: dec_arith.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: dec_arith.c,v 1.2 2004/02/06 16:48:29 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -59,7 +59,7 @@ DAA(void)
 		CPU_AL += 0x60;
 	}
 	CPU_FLAGL &= A_FLAG | C_FLAG;
-	CPU_FLAGL |= szpcflag[CPU_AL] & (S_FLAG | Z_FLAG);
+	CPU_FLAGL |= szpcflag[CPU_AL] & (S_FLAG | Z_FLAG | P_FLAG);
 
 #if defined(IA32_CPU_ENABLE_XC)
 	__R = CPU_AL;
@@ -114,7 +114,7 @@ DAS(void)
 		CPU_AL -= 0x60;
 	}
 	CPU_FLAGL &= A_FLAG | C_FLAG;
-	CPU_FLAGL |= szpcflag[CPU_AL] & (S_FLAG | Z_FLAG);
+	CPU_FLAGL |= szpcflag[CPU_AL] & (S_FLAG | Z_FLAG | P_FLAG);
 
 #if defined(IA32_CPU_ENABLE_XC)
 	__R = CPU_AL;
