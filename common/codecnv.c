@@ -28,7 +28,7 @@ void codecnv_sjis2euc(char *euc, UINT ecnt, const char *sjis, UINT scnt) {
 	}
 	ecnt--;
 	while(1) {
-		s = *sjis++;
+		s = (BYTE)*sjis++;
 		if (s < 0x80) {				// ascii
 			if (!s) {
 				break;
@@ -40,7 +40,7 @@ void codecnv_sjis2euc(char *euc, UINT ecnt, const char *sjis, UINT scnt) {
 			*euc++ = (char)s;
 		}
 		else if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x2f) {
-			c = *sjis++;
+			c = (BYTE)*sjis++;
 			if (!c) {
 				break;
 			}
