@@ -49,6 +49,7 @@
 #include "toolwin.h"
 #include "viewer.h"
 #include "debugwin.h"
+#include "skbdwin.h"
 
 #include "mousemng.h"
 #include "scrnmng.h"
@@ -58,7 +59,6 @@
 #include "gtk/gtk_menu.h"
 #include "gtk/gtk_keyboard.h"
 
-#include <gdk/gdkkeysyms.h>
 #include <gtk/gtkmenu.h>
 
 
@@ -320,6 +320,7 @@ static GtkItemFactoryEntry menu_items[] = {
 { "/Other/sep1",		NULL, NULL, 0, "<Separator>" },
 { "/Other/_Tool Window",	NULL, f(toggle), TOOL_WINDOW, "<ToggleItem>" },
 { "/Other/_Key Display",	NULL, f(toggle), KEY_DISPLAY, "<ToggleItem>" },
+{ "/Other/S_oftware Keyboard",	NULL, f(toggle), SOFT_KBD, "<ToggleItem>" },
 { "/Other/sep2",		NULL, NULL, 0, "<Separator>" },
 { "/Other/_About...",		NULL, f(_create_about_dialog), 0, NULL },
 };
@@ -349,6 +350,7 @@ static struct {
 	{ "/Other/S98 logging...",		0, 0 },
 	{ "/Other/Tool Window",			0, SYS_UPDATEOSCFG },
 	{ "/Other/Key Display",			0, SYS_UPDATEOSCFG },
+	{ "/Other/Software Keyboard",		0, SYS_UPDATEOSCFG },
 };
 
 static _MENU_HDL menu_hdl;
@@ -385,6 +387,7 @@ create_menu(GtkWidget *w)
 	xmenu_toggle_item(MOUSE_RAPID, np2cfg.MOUSERAPID, TRUE);
 	xmenu_toggle_item(TOOL_WINDOW, np2oscfg.toolwin, TRUE);
 	xmenu_toggle_item(KEY_DISPLAY, np2oscfg.keydisp, TRUE);
+	xmenu_toggle_item(SOFT_KBD, np2oscfg.softkbd, TRUE);
 
 	xmenu_select_framerate(np2oscfg.DRAW_SKIP);
 	xmenu_select_f12key(np2oscfg.F12KEY);
@@ -505,8 +508,9 @@ xmenu_toggle_item(int arg, int onoff, int emitp)
 	if (arg < NELEMENTS(toggle_items)) {
 		if (onoff != toggle_items[arg].stat) {
 			toggle_items[arg].stat = onoff;
-			if (emitp)
+			if (emitp) {
 				xmenu_select_item(&menu_hdl, toggle_items[arg].name);
+			}
 			if (inited && arg != MOUSE_MODE) {
 				sysmng_update(toggle_items[arg].flag);
 			}
@@ -1260,6 +1264,15 @@ toggle(gpointer data, guint action, GtkWidget *w)
 			kdispwin_destroy();
 		}
 		break;
+
+	case SOFT_KBD:
+		np2oscfg.softkbd = !np2oscfg.softkbd;
+		xmenu_toggle_item(SOFT_KBD, np2oscfg.softkbd, FALSE);
+		if (np2oscfg.softkbd) {
+			skbdwin_create();
+		} else {
+			skbdwin_destroy();
+		}
 
 	case NUM_TOGGLE_ITEMS:
 	default:

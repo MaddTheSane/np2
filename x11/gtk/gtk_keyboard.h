@@ -28,6 +28,8 @@
 #ifndef	NP2_GTK_GTKKEYBOARD_H__
 #define	NP2_GTK_GTKKEYBOARD_H__
 
+#include <gdk/gdkkeysyms.h>
+
 #include "kbdmng.h"
 
 #include "gtk/xnp2.h"

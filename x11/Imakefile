@@ -114,7 +114,7 @@ FONTOBJS=	../font/font.o ../font/fontdata.o ../font/fontmake.o \
 
 GENERICOBJS=	../generic/cmndraw.o ../generic/keydisp.o ../generic/cmjasts.o \
 		../generic/hostdrv.o ../generic/hostdrvs.o ../generic/unasm.o \
-		../generic/np2info.o ../generic/memdbg32.o
+		../generic/np2info.o ../generic/memdbg32.o ../generic/softkbd.o
 
 IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 		../io/crtc.o ../io/dipsw.o ../io/dmac.o ../io/egc.o \
@@ -154,7 +154,7 @@ VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o \
 		../vram/makegrex.o
 
-X11OBJS=	dosio.o ini.o trace.o toolkit.o kdispwin.o \
+X11OBJS=	dosio.o ini.o trace.o toolkit.o kdispwin.o skbdwin.o \
 		cmmidi.o cmserial.o \
 		drawmng.o kbdmng.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \
@@ -168,6 +168,7 @@ GTKDEPOBJS=	gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
 		gtk/dialog_file_selection.o gtk/dialog_midi.o \
 		gtk/dialog_newdisk.o gtk/dialog_screen.o gtk/dialog_sound.o \
 		gtk/window_debug.o gtk/window_keydisp.o gtk/window_viewer.o \
+		gtk/window_softkbd.o \
 		gtk/gtk_drawmng.o gtk/gtk_screen.o gtk/gtk_font.o \
 		gtk/gtk_keyboard.o gtk/gtk_menu.o gtk/gtk_mouse.o \
 		gtk/gtk_main.o gtk/gtk_wrapper.o

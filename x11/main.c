@@ -48,6 +48,7 @@
 #include "toolwin.h"
 #include "viewer.h"
 #include "debugwin.h"
+#include "skbdwin.h"
 
 #include "commng.h"
 #include "fontmng.h"
@@ -248,6 +249,7 @@ main(int argc, char *argv[])
 	initload();
 	toolwin_readini();
 	kdispwin_readini();
+	skbdwin_readini();
 
 	rand_setseed((SINT32)time(NULL));
 
@@ -265,6 +267,7 @@ main(int argc, char *argv[])
 
 	kdispwin_initialize();
 	viewer_init();
+	skbdwin_initialize();
 
 	toolkit_widget_create();
 	scrnmng_initialize();
@@ -324,6 +327,9 @@ main(int argc, char *argv[])
 		if (np2oscfg.keydisp) {
 			kdispwin_create();
 		}
+		if (np2oscfg.softkbd) {
+			skbdwin_create();
+		}
 	}
 
 	if (np2oscfg.resume) {
@@ -345,6 +351,7 @@ main(int argc, char *argv[])
 
 	kdispwin_destroy();
 	toolwin_destroy();
+	skbdwin_destroy();
 
 	pccore_cfgupdate();
 
@@ -374,7 +381,10 @@ fontmng_failure:
 		initsave();
 		toolwin_writeini();
 		kdispwin_writeini();
+		skbdwin_writeini();
 	}
+
+	skbdwin_deinitialize();
 
 	TRACETERM();
 	dosio_term();

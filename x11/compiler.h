@@ -211,6 +211,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #if USE_GTK > 0
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
+#define	SUPPORT_SOFTKBD	0
 #endif
 
 #if USE_SDL > 0
