@@ -80,12 +80,20 @@ typedef	unsigned char	BYTE;
 #define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
 #endif
 
+
+#if !defined(SIZE_VGA)
+#define	RGB16		UINT32
+#define	SIZE_QVGA
+#endif
+
+
 #include	"common.h"
 #include	"milstr.h"
 #include	"_memory.h"
 #include	"rect.h"
 #include	"lstarray.h"
 #include	"trace.h"
+
 
 #define	GETTICK()	SDL_GetTicks()
 #define	SPRINTF		sprintf
@@ -98,10 +106,6 @@ typedef	unsigned char	BYTE;
 
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
-
-#ifndef SIZE_VGA
-#define	SIZE_QVGA
-#endif
 
 #define	SOUNDRESERVE	100
 
