@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.3 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: segments.c,v 1.4 2004/01/13 16:36:00 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -176,7 +176,7 @@ load_ldtr(WORD selector, int exc)
 
 	/* check limit */
 	if (sel.desc.u.seg.limit < 7) {
-		ia32_panic("load_ldtr: LDTR descriptor limit < 7");
+		ia32_panic("load_ldtr: LDTR descriptor limit < 7 (limit = %d)", sel.desc.u.seg.limit);
 	}
 
 	/* not present */
@@ -232,6 +232,11 @@ load_descriptor(descriptor_t *descp, DWORD addr)
 		switch (descp->type) {
 		case CPU_SYSDESC_TYPE_LDT:		/* LDT */
 			descp->valid = 1;
+			descp->u.seg.segbase  = descp->h & 0xff000000;
+			descp->u.seg.segbase |= (descp->h & 0xff) << 16;
+			descp->u.seg.segbase |= descp->l >> 16;
+			descp->u.seg.limit  = descp->h & 0xf0000;
+			descp->u.seg.limit |= descp->l & 0xffff;
 			VERBOSE(("load_descriptor: LDT descriptor"));
 			break;
 
