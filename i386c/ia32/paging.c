@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.17 2004/03/23 18:34:05 yui Exp $	*/
+/*	$Id: paging.c,v 1.18 2004/03/23 18:38:07 yui Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -291,7 +291,7 @@ cpu_memory_access_la_RMW(UINT32 laddr, UINT length, const int user_mode, UINT32 
 		break;
 
 	case 1:
-		value = cpu_memoryread(paddr[1]);
+		value = cpu_memoryread(paddr[0]);
 		value += (UINT32)cpu_memoryread(paddr[1]) << 8;
 		if (length == 4) {
 			value += (UINT32)cpu_memoryread_w(paddr[1] + 1) << 16;
