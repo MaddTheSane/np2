@@ -329,7 +329,7 @@ const BYTE		*d;
 			if (sizeof(_SAMPLE) != 2) {				// Ara!?
 #endif
 				d = (BYTE *)dat;
-				d += layer->datasize;
+				d += layer->datasize * 2;
 				q = dat + layer->datasize;
 				do {
 					d -= 2;
