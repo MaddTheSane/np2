@@ -51,7 +51,7 @@
 　SUPPORT_PC9821 … PC-9821拡張のサポート(当然ですが 386必須です…
 
 　SUPPORT_PC9861K … PC-9861K(RS-232C拡張I/F)をサポート
-　SUPPORT_SASI … SASI HDDをサポート (定義がなければIDEとして作動)
+　SUPPORT_SASI … SASI HDDをサポート (定義がなければ常時IDEとして作動)
 　SUPPORT_SCSI … SCSI HDDをサポート
 　SUPPORT_S98 … S98ログを取得
 

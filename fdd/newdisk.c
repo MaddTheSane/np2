@@ -119,8 +119,13 @@ void newdisk_nhd(const char *fname, UINT hddsize) {
 	size = hddsize * 16;
 	STOREINTELDWORD(nhd.cylinders, size);
 	STOREINTELWORD(nhd.surfaces, 8);
+#if 0
 	STOREINTELWORD(nhd.sectors, 32);
 	STOREINTELWORD(nhd.sectorsize, 256);
+#else
+	STOREINTELWORD(nhd.sectors, 16);
+	STOREINTELWORD(nhd.sectorsize, 512);
+#endif
 	r = (file_write(fh, &nhd, sizeof(nhd)) != sizeof(nhd));
 	r |= writehddipl(fh, 256, size * 8 * 32 * 256);
 	file_close(fh);

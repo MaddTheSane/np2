@@ -300,7 +300,7 @@ const CRTDATA	*p;
 			gdc_analogext(TRUE);
 			mem[MEMB_PRXDUPD] |= 0x80;
 			crt = 4;
-			master = 3;
+			master = 3 + (scrn & 3);
 			slave = 1;
 			gdc.analog |= (1 << GDCANALOG_256E);
 		}
@@ -339,7 +339,6 @@ const CRTDATA	*p;
 #endif
 	}
 	crt += (scrn & 3);
-	master += (scrn & 3);
 
 	if (rate & 4) {
 		gdc.display |= (1 << GDCDISP_31);

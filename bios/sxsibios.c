@@ -47,28 +47,28 @@ static REG8 sxsi_pos(UINT type, SXSIDEV sxsi, long *ppos) {
 static REG8 sxsibios_write(UINT type, SXSIDEV sxsi) {
 
 	REG8	ret;
-	UINT32	addr;
 	UINT	size;
 	long	pos;
+	UINT	bp;
 	UINT	r;
 	BYTE	work[1024];
 
-	addr = (CPU_ES << 4) + CPU_BP;
 	size = CPU_BX;
 	if (!size) {
 		size = 0x10000;
 	}
 	ret = sxsi_pos(type, sxsi, &pos);
 	if (!ret) {
+		bp = CPU_BP;
 		while(size) {
 			r = min(size, sxsi->size);
-			i286_memx_read(addr, work, r);
+			i286_memstr_read(CPU_ES, bp, work, r);
 			ret = sxsi_write(CPU_AL, pos, work, r);
 			if (ret >= 0x20) {
 				break;
 			}
 			size -= r;
-			addr += r;
+			bp += r;
 			pos++;
 		}
 	}
@@ -78,28 +78,28 @@ static REG8 sxsibios_write(UINT type, SXSIDEV sxsi) {
 static REG8 sxsibios_read(UINT type, SXSIDEV sxsi) {
 
 	REG8	ret;
-	UINT32	addr;
 	UINT	size;
 	long	pos;
+	UINT	bp;
 	UINT	r;
 	BYTE	work[1024];
 
-	addr = (CPU_ES << 4) + CPU_BP;
 	size = CPU_BX;
 	if (!size) {
 		size = 0x10000;
 	}
 	ret = sxsi_pos(type, sxsi, &pos);
 	if (!ret) {
+		bp = CPU_BP;
 		while(size) {
 			r = min(size, sxsi->size);
 			ret = sxsi_read(CPU_AL, pos, work, r);
 			if (ret >= 0x20) {
 				break;
 			}
-			i286_memx_write(addr, work, r);
+			i286_memstr_write(CPU_ES, bp, work, r);
 			size -= r;
-			addr += r;
+			bp += r;
 			pos++;
 		}
 	}

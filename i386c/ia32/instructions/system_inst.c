@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.18 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.19 2004/03/04 15:20:13 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -840,15 +840,21 @@ VERW_Ew(UINT32 op)
 void
 MOV_DdRd(void)
 {
+	UINT	op;
 
-	ia32_panic("MOV_DdRd: not implemented yet!");
+	GET_PCBYTE(op);
+	TRACEOUT(("mov dr, rd - %.4x:%.8x", CPU_CS, CPU_EIP));
+//	ia32_panic("MOV_DdRd: not implemented yet!");
 }
 
 void
 MOV_RdDd(void)
 {
+	UINT	op;
 
-	ia32_panic("MOV_DdRd: not implemented yet!");
+	GET_PCBYTE(op);
+	TRACEOUT(("mov rd, dr - %.4x:%.8x", CPU_CS, CPU_EIP));
+//	ia32_panic("MOV_DdRd: not implemented yet!");
 }
 
 void

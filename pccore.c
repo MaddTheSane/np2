@@ -548,8 +548,8 @@ void screenvsync(NEVENTITEM item) {
 // #define	IPTRACE			(1 << 12)
 
 #if defined(TRACE) && IPTRACE
-static UINT		trpos = 0;
-static UINT32	treip[IPTRACE];
+static	UINT	trpos = 0;
+static	UINT32	treip[IPTRACE];
 
 void iptrace_out(void) {
 

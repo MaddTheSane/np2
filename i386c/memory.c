@@ -1029,82 +1029,6 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 }
 #endif /* NP2_MEMORY_ASM */
 
-void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
-
-	BYTE	*out;
-	UINT32	adrs;
-	UINT	size;
-
-	out = (BYTE *)dat;
-	adrs = seg << 4;
-	off = LOW16(off);
-	if ((I286_MEMREADMAX >= 0x10000) &&
-		(adrs < (I286_MEMREADMAX - 0x10000))) {
-		if (leng) {
-			size = 0x10000 - off;
-			if (size >= leng) {
-				CopyMemory(out, mem + adrs + off, leng);
-				return;
-			}
-			CopyMemory(out, mem + adrs + off, size);
-			out += size;
-			leng -= size;
-		}
-		while(leng >= 0x10000) {
-			CopyMemory(out, mem + adrs, 0x10000);
-			out += 0x10000;
-			leng -= 0x10000;
-		}
-		if (leng) {
-			CopyMemory(out, mem + adrs, leng);
-		}
-	}
-	else {
-		while(leng--) {
-			*out++ = i286_memoryread(adrs + off);
-			off = LOW16(off + 1);
-		}
-	}
-}
-
-void MEMCALL i286_memstr_write(UINT seg, UINT off, const void *dat, UINT leng) {
-
-	BYTE	*out;
-	UINT32	adrs;
-	UINT	size;
-
-	out = (BYTE *)dat;
-	adrs = seg << 4;
-	off = LOW16(off);
-	if ((I286_MEMWRITEMAX >= 0x10000) &&
-		(adrs < (I286_MEMWRITEMAX - 0x10000))) {
-		if (leng) {
-			size = 0x10000 - off;
-			if (size >= leng) {
-				CopyMemory(mem + adrs + off, out, leng);
-				return;
-			}
-			CopyMemory(mem + adrs + off, out, size);
-			out += size;
-			leng -= size;
-		}
-		while(leng >= 0x10000) {
-			CopyMemory(mem + adrs, out, 0x10000);
-			out += 0x10000;
-			leng -= 0x10000;
-		}
-		if (leng) {
-			CopyMemory(mem + adrs, out, leng);
-		}
-	}
-	else {
-		while(leng--) {
-			i286_memorywrite(adrs + off, *out++);
-			off = LOW16(off + 1);
-		}
-	}
-}
-
 void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
 
 	if ((address + leng) < I286_MEMREADMAX) {
@@ -1145,3 +1069,83 @@ const BYTE	*out;
 	}
 }
 #endif
+
+
+// ----
+
+static UINT32 realaddr(UINT32 addr) {
+
+	UINT32	pde;
+	UINT32	pte;
+
+	if (CPU_STAT_PAGING) {
+		pde = i286_memoryread_d(CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc));
+		if (!(pde & CPU_PDE_PRESENT)) {
+			goto retdummy;
+		}
+		// ページサイズ 4KB固定(ぉ
+		pte = cpu_memoryread_d((pde & CPU_PDE_BASEADDR_MASK)
+													+ ((addr >> 10) & 0xffc));
+		if (!(pte & CPU_PTE_PRESENT)) {
+			goto retdummy;
+		}
+		addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
+	}
+	return(addr);
+
+retdummy:
+	return(0x01000000);		// てきとーにメモリが存在しない場所
+}
+
+void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
+
+	UINT32	adrs;
+	UINT	size;
+
+	while(leng) {
+		off = LOW16(off);
+		adrs = (seg << 4) + off;
+		size = 0x1000 - (adrs & 0xfff);
+		size = min(size, leng);
+		size = min(size, 0x10000 - off);
+		i286_memx_read(realaddr(adrs), dat, size);
+		off += size;
+		dat = ((BYTE *)dat) + size;
+		leng -= size;
+	}
+}
+
+void MEMCALL i286_memstr_write(UINT seg, UINT off, const void *dat, UINT leng) {
+	UINT32	adrs;
+	UINT	size;
+
+	while(leng) {
+		off = LOW16(off);
+		adrs = (seg << 4) + off;
+		size = 0x1000 - (adrs & 0xfff);
+		size = min(size, leng);
+		size = min(size, 0x10000 - off);
+		i286_memx_write(realaddr(adrs), dat, size);
+		off += size;
+		dat = ((BYTE *)dat) + size;
+		leng -= size;
+	}
+}
+
+
+#if 0		// テスト
+void MEMCALL cpumem_strread(UINT32 adrs, void *dat, UINT leng) {
+
+	UINT	size;
+
+	while(leng) {
+		size = 0x1000 - (adrs & 0xfff);
+		size = min(size, leng);
+		i286_memx_read(realaddr(adrs), dat, size);
+		adrs += size;
+		dat = ((BYTE *)dat) + size;
+		leng -= size;
+	}
+}
+#endif
+

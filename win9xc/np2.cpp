@@ -503,7 +503,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			break;
 
 		case IDM_I286SAVE:
-			debugsub_status();
+			debugsub_status2();
 			break;
 
 		case IDM_HELP:
