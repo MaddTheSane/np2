@@ -52,8 +52,8 @@ VERMOUTHS	=	$(VERMOUTH)/midiout.h $(VERMOUTH)/midimod.h \
 				$(VERMOUTH)/midtable.h
 
 AOPT	= -f win32
-COPT	= -c -Wall -pipe -O2 -fomit-frame-pointer -mno-cygwin \
-			-march=pentium -DWIN32 -DNDEBUG -D_WINDOWS \
+COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
+			-mno-cygwin -march=pentium -DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
 			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
 			-I$(TARGET) -I$(DIALOG) -I$(KEYDISP) -I$(DEBUGUTY)

@@ -21,6 +21,7 @@ void tms3631_initialize(UINT rate) {
 	UINT	sft;
 
 	ZeroMemory(&tms3631cfg, sizeof(tms3631cfg));
+	sft = 0;
 	if (rate == 11025) {
 		sft = 0;
 	}

@@ -52,9 +52,9 @@ static	_ROMEO		romeo = {NULL};
 
 BOOL juliet_load(void) {
 
-		int			i;
-const	DLLPROCESS	*dp;
-		BOOL		r = SUCCESS;
+	UINT			i;
+const DLLPROCESS	*dp;
+	BOOL			r = SUCCESS;
 
 	juliet_unload();
 

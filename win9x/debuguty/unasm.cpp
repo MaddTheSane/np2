@@ -437,6 +437,7 @@ static void cat_hexs8x(UNASM_T *unasm_t, BYTE value) {
 	strcat(unasm_t->operand, buf);
 }
 
+#if 0
 static void cat_hexs8(UNASM_T *unasm_t, BYTE value) {
 
 	char	buf[16];
@@ -452,6 +453,7 @@ static void cat_hexs8(UNASM_T *unasm_t, BYTE value) {
 		wsprintf(unasm_t->extend, ";'%c'", value);
 	}
 }
+#endif
 
 static void cat_hex16(char *str, WORD value) {
 

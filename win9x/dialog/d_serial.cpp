@@ -430,7 +430,7 @@ static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m) {
 static void pc9861getint(HWND hWnd, const PC9861MODE_T *m) {
 
 	LRESULT	r;
-	int		i;
+	UINT	i;
 
 	r = SendDlgItemMessage(hWnd, m->idc_int, CB_GETCURSEL, 0, 0);
 	if (r != CB_ERR) {
