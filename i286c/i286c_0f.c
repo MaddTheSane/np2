@@ -185,6 +185,9 @@ I286_0F _lmsw(UINT op) {
 		msw = i286_memoryread_w(CALC_EA(op));
 	}
 	I286_MSW = msw | (I286_MSW & MSW_PE);
+	if (msw & MSW_PE) {
+		TRACEOUT(("Protect Enable  MSW=%.4x", I286_MSW));
+	}
 }
 
 static const I286OP_0F cts0_table[] = {

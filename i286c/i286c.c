@@ -272,7 +272,8 @@ UINT32 i286c_selector(UINT sel) {
 	addr = (dtr->base24 << 16) + dtr->base + (sel & (~7));
 	ret = i286_memoryread_w(addr+2);
 	ret += i286_memoryread(addr+4) << 16;
-	TRACEOUT(("PE - select %.4x %.8x", sel, ret));
+	TRACEOUT(("selector idx=%x %s rpl=%d - real addr = %.6x",
+					(sel >> 3), (sel & 4)?"LDT":"GDT", sel & 3, ret));
 	return(ret);
 }
 

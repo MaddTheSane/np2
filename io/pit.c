@@ -3,6 +3,7 @@
 // 
 
 #include	"compiler.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -103,7 +104,7 @@ void beeponeshot(NEVENTITEM item) {
 		if (!(pit.mode[1] & 0x0c)) {								// ver0.30
 			beep_lheventset(0);
 		}
-#ifdef uPD71054
+#if defined(uPD71054)
 		if ((pit.mode[1] & 0x06) == 0x02)
 #else
 		if (pit.mode[1] & 0x02)
@@ -154,7 +155,9 @@ static UINT pit_latch(int ch) {
 
 	if (ch == 1) {
 		switch(pit.mode[1] & 0x06) {
+#ifdef uPD71054				// ?
 			case 0x00:
+#endif
 			case 0x04:
 				return(pit.value[1]);
 #ifdef uPD71054
@@ -172,7 +175,7 @@ static UINT pit_latch(int ch) {
 			clock %= pit.value[1];
 		}
 		else {
-			clock >>= 16;
+			clock = LOW16(clock);
 		}
 		return(clock);
 #endif

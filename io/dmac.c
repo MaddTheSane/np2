@@ -151,7 +151,7 @@ static REG8 IOINPCALL dmac_i01(UINT port) {
 	dmach = dmac.dmach + ((port >> 2) & 3);
 	lh = dmac.lh;
 	dmac.lh = lh ^ 1;
-	return(dmach->leng.b[lh]);
+	return(dmach->adrs.b[lh + DMA32_LOW]);
 }
 
 static REG8 IOINPCALL dmac_i03(UINT port) {
@@ -162,7 +162,7 @@ static REG8 IOINPCALL dmac_i03(UINT port) {
 	dmach = dmac.dmach + ((port >> 2) & 3);
 	lh = dmac.lh;
 	dmac.lh = lh ^ 1;
-	return(dmach->adrs.b[lh + DMA32_LOW]);
+	return(dmach->leng.b[lh]);
 }
 
 static REG8 IOINPCALL dmac_i11(UINT port) {

@@ -16,6 +16,8 @@
 #include	"startup.res"
 
 
+#define	BIOS_SIMULATE
+
 	BOOL	biosrom = FALSE;
 
 static const char file_biosrom[] = "bios.rom";
@@ -140,6 +142,7 @@ void bios_init(void) {
 		CopyMemory(mem + 0x0e8000, nosyscode, sizeof(nosyscode));
 	}
 
+#if defined(BIOS_SIMULATE)
 	// BIOS hookのアドレス変更
 	for (i=0; i<0x20; i++) {
 		STOREINTELWORD(mem + 0xfd868 + i*2, biosoffset[i]);
@@ -172,24 +175,10 @@ void bios_init(void) {
 	mem[0xffff0] = 0xea;
 	STOREINTELDWORD(mem + 0xffff1, 0xfd800000);
 
-#if 1
 	CopyMemory(mem + ITF_ADRS, itfrom, sizeof(itfrom));
 	mem[ITF_ADRS + 0x7ff0] = 0xea;
 	STOREINTELDWORD(mem + ITF_ADRS + 0x7ff1, 0xf8000000);
-#if 0
-fh = file_create("itf.rom");
-if (fh != FILEH_INVALID) {
-	file_write(fh, itfrom, sizeof(itfrom));
-	file_close(fh);
-}
-#endif
-#else
-	fh = file_open_c("itf.rom");
-	if (fh != FILEH_INVALID) {
-		file_read(fh, &mem[ITF_ADRS], 0x8000);
-		file_close(fh);
-	}
-#endif
+
 	if ((!biosrom) && (!(pc.model & PCMODEL_EPSON))) {
 		CopyMemory(mem + 0xe8dd8, neccheck, 0x25);
 		pos = LOADINTELWORD(itfrom + 2);
@@ -207,6 +196,14 @@ if (fh != FILEH_INVALID) {
 
 	CopyMemory(mem + 0x0fde00, keytable[0], 0x300);
 	bios0x09_init();
+#else
+	fh = file_open_c("itf.rom");
+	if (fh != FILEH_INVALID) {
+		file_read(fh, &mem[ITF_ADRS], 0x8000);
+		file_close(fh);
+	}
+	extmem_init(np2cfg.EXTMEM);
+#endif
 }
 
 static void bios_boot(void) {
