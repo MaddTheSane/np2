@@ -27,7 +27,6 @@
 
 I286FN _reserved(void) {
 
-	I286_WORKCLOCK(23);							// ToDo
 	INT_NUM(6, I286_IP - 1);
 }
 
@@ -2245,7 +2244,7 @@ I286FN _ret_far(void) {						// CB:	ret far
 
 I286FN _int_03(void) {						// CC:	int		3
 
-	I286_WORKCLOCK(23);
+	I286_WORKCLOCK(3);
 	INT_NUM(3, I286_IP);
 }
 
@@ -2253,7 +2252,7 @@ I286FN _int_data8(void) {					// CD:	int		DATA8
 
 	UINT	vect;
 
-	I286_WORKCLOCK(23);
+	I286_WORKCLOCK(3);
 	GET_PCBYTE(vect)
 	INT_NUM(vect, I286_IP);
 }
@@ -2262,7 +2261,6 @@ I286FN _into(void) {						// CE:	into
 
 	I286_WORKCLOCK(4);
 	if (I286_OV) {
-		I286_WORKCLOCK(24 - 4);
 		INT_NUM(4, I286_IP);
 	}
 }

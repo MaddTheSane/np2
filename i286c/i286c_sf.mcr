@@ -166,9 +166,8 @@
 #define	BYTE_SHLCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			if ((c) >= 0x10) {										\
-				(c) &= 7;											\
-				(c) |= 8;											\
+			if ((c) > 10) {											\
+				(c) = 10;											\
 			}														\
 			(s) <<= (c);											\
 			(s) &= 0x1ff;											\
@@ -180,9 +179,8 @@
 #define	BYTE_SHRCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
-			if ((c) >= 0x10) {										\
-				(c) &= 7;											\
-				(c) |= 8;											\
+			if ((c) >= 10) {										\
+				(c) = 10;											\
 			}														\
 			(s) >>= ((c) - 1);										\
 			I286_FLAGL = (BYTE)((s) & 1);							\
@@ -192,6 +190,7 @@
 		}															\
 		(d) = (s);
 
+#if !defined(_WIN32_WCE) || (_WIN32_WCE < 300)
 #define	BYTE_SARCL(d, s, c)											\
 		(c) &= 0x1f;												\
 		if (c) {													\
@@ -202,7 +201,20 @@
 			I286_FLAGL |= BYTESZPF(s) | A_FLAG;						\
 		}															\
 		(d) = (s);
-
+#else
+#define	BYTE_SARCL(d, s, c)											\
+		(c) &= 0x1f;												\
+		if (c) {													\
+			SINT32 t;												\
+			t = (s) << 24;											\
+			t = t >> ((c) - 1);										\
+			I286_FLAGL = (UINT8)((t >> 24) & 1);					\
+			(s) = (t >> 25) & 0xff;									\
+			I286_OV = 0;											\
+			I286_FLAGL |= BYTESZPF(s) | A_FLAG;						\
+		}															\
+		(d) = (s);
+#endif
 
 #define	WORD_ROLCL(d, s, c)											\
 		(c) &= 0x1f;												\
