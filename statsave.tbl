@@ -77,11 +77,12 @@ static const PROCTBL dmaproc[] = {
 			{PROCID('d','e','c','s'), cs4231dmafunc}};
 
 static const SFENTRY np2tbl[] = {
+	{"PCCORE",		0,	STATFLAG_BIN,	&pccore,		sizeof(pccore)},
+
 	{"CPU286",		0,	STATFLAG_CLOCK,	&CPU_STATSAVE,	sizeof(CPU_STATSAVE)},
 	{"MEMORY",		0,	STATFLAG_MEM,	NULL,			0x130000},
 	{"EXTMEM",		0,	STATFLAG_EXT,	NULL,			0},
 
-	{"CORE",		0,	STATFLAG_CLOCK,	&pccore,		sizeof(pccore)},
 	{"ARTIC",		0,	STATFLAG_BIN,	&artic,			sizeof(artic)},
 	{"CGROM",		0,	STATFLAG_BIN,	&cgrom,			sizeof(cgrom)},
 #if !defined(CGWND_FONTPTR)
@@ -95,6 +96,9 @@ static const SFENTRY np2tbl[] = {
 	{"EGC",			0,	STATFLAG_EGC,	NULL,			0},
 	{"EPSON",		0,	STATFLAG_EPSON,	NULL,			0},
 	{"FDC",			0,	STATFLAG_BIN,	&fdc,			sizeof(fdc)},
+#if !defined(CPUCORE_IA32)
+	{"EMSIO",		0,	STATFLAG_BIN,	&emsio,			sizeof(emsio)},
+#endif
 	{"GDC1",		0,	STATFLAG_BIN,	&gdc,			sizeof(gdc)},
 	{"GDC2",		0,	STATFLAG_BIN,	&gdcs,			sizeof(gdcs)},
 	{"PIT",			0,	STATFLAG_BIN,	&pit,			sizeof(pit)},

@@ -9,12 +9,10 @@ section .bss
 	global	_mem
 	extern	_i286core
 	extern	_grcg
-	extern	_extmem
 	extern	_gdcs
 	extern	_tramupdate
 	extern	_vramupdate
 	extern	_cgwindow
-;	extern	___font
 	extern	_vramop
 
 _mem	resb	0x200000
@@ -279,7 +277,7 @@ grcgtdw_end:		pop		ecx
 					and		ecx, 3fffh
 					shr		ebx, 12
 					and		ebx, byte (3*4)
-					add		ecx, [_extmem + extmem_t.pageptr + ebx]
+					add		ecx, [_i286core + i286core_t.ems + ebx]
 					mov		[EXTMEMORY + ecx], dl
 					pop		ecx
 					pop		ebx
@@ -402,7 +400,7 @@ grcgtcr_end:		not		al
 					and		ecx, 3fffh
 					shr		ebx, 12
 					and		ebx, byte (3*4)
-					add		ecx, [_extmem + extmem_t.pageptr + ebx]
+					add		ecx, [_i286core + i286core_t.ems + ebx]
 					mov		al, [EXTMEMORY + ecx]
 					pop		ecx
 					pop		ebx
@@ -646,7 +644,7 @@ egcw_wtodd:
 					and		ecx, 3fffh
 					shr		ebx, 12
 					and		ebx, byte (3*4)
-					add		ecx, [_extmem + extmem_t.pageptr + ebx]
+					add		ecx, [_i286core + i286core_t.ems + ebx]
 					mov		[EXTMEMORY + ecx], dx
 					pop		ecx
 					pop		ebx
@@ -815,7 +813,7 @@ egcw_rdodd:
 					and		ecx, 3fffh
 					shr		ebx, 12
 					and		ebx, byte (3*4)
-					add		ecx, [_extmem + extmem_t.pageptr + ebx]
+					add		ecx, [_i286core + i286core_t.ems + ebx]
 					mov		ax, [EXTMEMORY + ecx]
 					pop		ecx
 					pop		ebx
@@ -986,7 +984,7 @@ section .text
 					align	16
 writeextmem_w:
 %if USE_HIMEM
-					cmp		ecx, 10ffefh				; HIMEM
+					cmp		ecx, (USE_HIMEM - 1)
 					jae		near writehimem_w
 %endif
 					push	ebx
@@ -1024,7 +1022,7 @@ writemain_b:		mov		[MAINMEMORY + ecx], dl
 					align	16
 writeextmem_b:
 %if USE_HIMEM
-					cmp		ecx, 10fff0h				; HIMEM
+					cmp		ecx, USE_HIMEM
 					jae		near writehimem
 %endif
 					push	ebx
@@ -1041,7 +1039,7 @@ writeextmem_b:
 					align	16
 readmemory_w:
 %if USE_HIMEM
-					cmp		ecx, 10ffefh				; HIMEM
+					cmp		ecx, (USE_HIMEM - 1)
 					jae		near readhimem_w
 %endif
 					push	ebx
@@ -1076,7 +1074,7 @@ readmain_b:			mov		al, [MAINMEMORY + ecx]
 					align	16
 readmemory_b:
 %if USE_HIMEM
-					cmp		ecx, 10fff0h				; HIMEM
+					cmp		ecx, USE_HIMEM
 					jae		near readhimem
 %endif
 					push	ebx

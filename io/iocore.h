@@ -20,7 +20,7 @@ typedef void (*IOCBFN)(void);
 #include	"dmac.h"
 #include	"egc.h"
 #include	"epsonio.h"
-#include	"extmem.h"
+#include	"emsio.h"
 #include	"fdc.h"
 #include	"fdd320.h"
 #include	"gdc.h"
@@ -49,7 +49,7 @@ extern	_CRTC		crtc;
 extern	_DMAC		dmac;
 extern	_EGC		egc;
 extern	_EPSONIO	epsonio;
-extern	_EXTMEM		extmem;
+extern	_EMSIO		emsio;
 extern	_FDC		fdc;
 extern	_GDC		gdc;
 extern	_GDCS		gdcs;

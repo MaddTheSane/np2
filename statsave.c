@@ -587,54 +587,6 @@ static int flagload_mem(STFLAGH sfh, const SFENTRY *tbl) {
 }
 
 
-// ---- ext memory
-
-static int flagsave_ext(STFLAGH sfh, const SFENTRY *tbl) {
-
-	int		ret;
-
-	ret = statflag_write(sfh, &extmem, sizeof(extmem));
-	if (CPU_EXTMEM) {
-		ret = statflag_write(sfh, CPU_EXTMEM, CPU_EXTMEMSIZE);
-	}
-	(void)tbl;
-	return(ret);
-}
-
-static int flagload_ext(STFLAGH sfh, const SFENTRY *tbl) {
-
-	int		ret;
-	int		i;
-	UINT	pagemax = 0;
-
-	ret = statflag_read(sfh, &extmem, sizeof(extmem));
-	if (extmem.maxmem) {
-		if (extmem.maxmem > (13+1)) {
-			extmem.maxmem = (13+1);
-		}
-		if (!extmemmng_realloc(extmem.maxmem - 1)) {
-			pagemax = (extmem.maxmem - 1) << 8;
-			if (CPU_EXTMEM) {
-				ret |= statflag_read(sfh, CPU_EXTMEM, CPU_EXTMEMSIZE);
-			}
-		}
-		else {
-			extmem.maxmem = 0;
-		}
-	}
-	for (i=0; i<4; i++) {
-		if (extmem.page[i] < pagemax) {
-			extmem.pageptr[i] = CPU_EXTMEM + (extmem.page[i] << 12);
-		}
-		else {
-			extmem.pageptr[i] = mem + 0xc0000 + (i << 14);
-		}
-	}
-	(void)tbl;
-	return(ret);
-}
-
-
 // ---- cg window
 
 #if defined(CGWND_FONTPTR)
@@ -864,6 +816,33 @@ static int flagload_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	}
 	for (i=0; i<nevt.waitevents; i++) {
 		ret |= nevent_read(sfh, nevent.waitevent, &nevent.waitevents);
+	}
+	(void)tbl;
+	return(ret);
+}
+
+
+// ---- extmem
+
+static int flagsave_ext(STFLAGH sfh, const SFENTRY *tbl) {
+
+	int		ret;
+
+	ret = STATFLAG_SUCCESS;
+	if (CPU_EXTMEM) {
+		ret = statflag_write(sfh, CPU_EXTMEM, CPU_EXTMEMSIZE);
+	}
+	(void)tbl;
+	return(ret);
+}
+
+static int flagload_ext(STFLAGH sfh, const SFENTRY *tbl) {
+
+	int		ret;
+
+	ret = STATFLAG_SUCCESS;
+	if (CPU_EXTMEM) {
+		ret = statflag_read(sfh, CPU_EXTMEM, CPU_EXTMEMSIZE);
 	}
 	(void)tbl;
 	return(ret);
@@ -1574,7 +1553,6 @@ const SFENTRY	*tblterm;
 				case STATFLAG_EGC:
 				case STATFLAG_EPSON:
 				case STATFLAG_EVT:
-				case STATFLAG_EXT:
 				case STATFLAG_GIJ:
 				case STATFLAG_FM:
 #if defined(SUPPORT_HOSTDRV)
@@ -1613,22 +1591,42 @@ const SFENTRY	*tblterm;
 		return(STATFLAG_FAILURE);
 	}
 
+	// PCCORE read!
+	ret = statflag_readsection(sffh);
+	if ((ret != STATFLAG_SUCCESS) ||
+		(memcmp(sffh->sfh.hdr.index, np2tbl[0].index, 10))) {
+		statflag_close(sffh);
+		return(STATFLAG_FAILURE);
+	}
+
 	soundmng_stop();
 	rs232c_midipanic();
 	mpu98ii_midipanic();
 	pc9861k_midipanic();
+
+	ret |= flagload_common(&sffh->sfh, np2tbl);
+	nevent_init();
+
+	CPU_RESET();
+	CPU_SETEXTSIZE((UINT32)pccore.extmem);
+
+	sound_changeclock();
+	beep_changeclock();
 	sound_reset();
 #if defined(SUPPORT_WAVEMIX)
 	wavemix_bind();
 #endif
-	fmboard_reset(0);
+
+	iocore_reset();								// サウンドでpicを呼ぶので…
+	cbuscore_reset();
+	fmboard_reset(pccore.sound);
+
 
 	done = FALSE;
-	ret = STATFLAG_SUCCESS;
 	while((!done) && (ret != STATFLAG_FAILURE)) {
 		ret |= statflag_readsection(sffh);
-		tbl = np2tbl;
-		tblterm = tbl + (sizeof(np2tbl)/sizeof(SFENTRY));
+		tbl = np2tbl + 1;
+		tblterm = np2tbl + (sizeof(np2tbl)/sizeof(SFENTRY));
 		while(tbl < tblterm) {
 			if (!memcmp(sffh->sfh.hdr.index, tbl->index, 10)) {
 				break;

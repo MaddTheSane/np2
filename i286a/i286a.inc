@@ -17,7 +17,7 @@ MSW_MP				equ		&0002
 MSW_EM				equ		&0004
 MSW_TS				equ		&0008
 
-CPU_SIZE			equ		120
+CPU_SIZE			equ		(104 + 32)
 CPU_STAT			equ		(0 - CPU_SIZE)
 CPU_EXT				equ		(104 - CPU_SIZE)
 
@@ -74,11 +74,12 @@ CPU_IP				equ		CPU_STAT + 26
 
 CPU_EXTMEM			equ		CPU_EXT + 0
 CPU_EXTMEMSIZE		equ		CPU_EXT + 4
-CPU_INPUT			equ		CPU_EXT + 8
-MEMWAIT_TRAM		equ		CPU_EXT + 12
-MEMWAIT_VRAM		equ		CPU_EXT + 13
-MEMWAIT_GRCG		equ		CPU_EXT + 14
-; cpu_ext_size		equ		16
+CPU_EMS				equ		CPU_EXT + 8
+CPU_INPUT			equ		CPU_EXT + 24
+MEMWAIT_TRAM		equ		CPU_EXT + 28
+MEMWAIT_VRAM		equ		CPU_EXT + 29
+MEMWAIT_GRCG		equ		CPU_EXT + 30
+; cpu_ext_size		equ		32
 
 MAX_PREFIX			equ		8
 

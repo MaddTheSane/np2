@@ -10,9 +10,9 @@ typedef struct {
 	UINT32	speed;
 	SINT32	clk;
 
-	BYTE	dip;
-	BYTE	vect;
-	BYTE	irq;
+	UINT8	dip;
+	UINT8	vect;
+	UINT8	irq;
 } _PC9861CH, *PC9861CH;
 
 

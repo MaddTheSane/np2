@@ -6,12 +6,15 @@
 
 // 000000-0fffff ÉÅÉCÉìÉÅÉÇÉä
 // 100000-10ffef HMA
+// 10fff0-10ffff HIMEM
 // 110000-193fff FONT-ROM/RAM
 // 1a8000-1bffff VRAM1
 // 1c0000-1c7fff ITF-ROM BAK
 // 1c8000-1dffff EPSON RAM
 // 1e0000-1e7fff VRAM1
 // 1f8000-1fffff ITF-ROM
+
+#define	USE_HIMEM		0x110000
 
 enum {
 	VRAM_STEP	= 0x100000,

@@ -180,6 +180,7 @@ typedef struct {
 typedef struct {							// for ver0.73
 	BYTE	*ext;
 	UINT32	extsize;
+	BYTE	*ems[4];
 	UINT32	inport;
 #if defined(CPUSTRUC_MEMWAIT)
 	UINT8	tramwait;
@@ -203,8 +204,12 @@ extern "C" {
 extern	I286CORE	i286acore;
 extern	const UINT8	iflags[];
 
+void i286a_initialize(void);
+void i286a_deinitialize(void);
 void i286a_reset(void);
 void i286a_shut(void);
+void i286a_setextsize(UINT32 size);
+void i286a_setemm(UINT frame, UINT32 addr);
 
 void CPUCALL i286a_interrupt(REG8 vect);
 
@@ -283,11 +288,14 @@ void i286a_step(void);
 #define	CPU_CLI			i286acore.s.r.w.flag &= ~I_FLAG;
 #define	CPU_STI			i286acore.s.r.w.flag |= I_FLAG;
 
-#define	CPU_INITIALIZE()
-#define	CPU_RESET			i286a_reset
-#define	CPU_CLEARPREFETCH()
-#define	CPU_INTERRUPT(v)	i286a_interrupt(v)
-#define	CPU_EXEC			i286a
-#define	CPU_EXECV30			i286a
-#define	CPU_SHUT			i286a_shut
+#define	CPU_INITIALIZE			i286a_initialize
+#define	CPU_DEINITIALIZE		i286a_deinitialize
+#define	CPU_RESET				i286a_reset
+#define	CPU_CLEARPREFETCH()		
+#define	CPU_INTERRUPT(vect)		i286a_interrupt(vect)
+#define	CPU_EXEC				i286a
+#define	CPU_EXECV30				i286a
+#define	CPU_SHUT				i286a_shut
+#define	CPU_SETEXTSIZE(size)	
+#define	CPU_SETEMM(frame, addr)	
 

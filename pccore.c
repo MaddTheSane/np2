@@ -284,8 +284,6 @@ void pccore_term(void) {
 	fdd_eject(2);
 	fdd_eject(3);
 
-	extmemmng_clear();
-
 	iocore_destroy();
 
 	pc9861k_destruct();
@@ -326,32 +324,29 @@ void pccore_reset(void) {
 		sound_init();
 	}
 
-	ZeroMemory(mem, 0x10fff0);									// ver0.28
+	ZeroMemory(mem, 0x110000);									// ver0.28
 	ZeroMemory(mem + VRAM1_B, 0x18000);
 	ZeroMemory(mem + VRAM1_E, 0x08000);
 	ZeroMemory(mem + FONT_ADRS, 0x08000);
-
-	CPU_RESET();
-	CPU_TYPE = 0;
-	if (np2cfg.dipsw[2] & 0x80) {
-		CPU_TYPE = CPUTYPE_V30;
-	}
 
 	//メモリスイッチ
 	for (i=0; i<8; i++) {
 		mem[0xa3fe2 + i*4] = np2cfg.memsw[i];
 	}
 
-	fddfile_reset2dmode();
-	bios0x18_16(0x20, 0xe1);
-
 	pccore_set();
 	nevent_init();
-	CPU_SETEXTMEM(pccore.extmem);
+
+	CPU_RESET();
+	CPU_SETEXTSIZE((UINT32)pccore.extmem);
+
+	CPU_TYPE = 0;
+	if (np2cfg.dipsw[2] & 0x80) {
+		CPU_TYPE = CPUTYPE_V30;
+	}
 	if (pccore.model & PCMODEL_EPSON) {			// RAM ctrl
 		CPU_RAM_D000 = 0xffff;
 	}
-
 
 	sound_changeclock();
 	beep_changeclock();
@@ -360,6 +355,8 @@ void pccore_reset(void) {
 	wavemix_bind();
 #endif
 
+	fddfile_reset2dmode();
+	bios0x18_16(0x20, 0xe1);
 
 	iocore_reset();								// サウンドでpicを呼ぶので…
 	cbuscore_reset();

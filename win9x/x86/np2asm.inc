@@ -1,6 +1,6 @@
 
 USE_EGCASM		equ		1
-USE_HIMEM		equ		1
+USE_HIMEM		equ		0110000h
 
 EARG1			equ		4
 EARG2			equ		(EARG1+4)
@@ -78,6 +78,7 @@ GDCCMD_MAX		equ		32
 
 .ext			resd	1
 .extsize		resd	1
+.ems			resd	4
 .repbak			resd	1
 .inport			resd	1
 				endstruc
@@ -131,13 +132,6 @@ GDCCMD_MAX		equ		32
 .tile_r			resw	1
 .tile_g			resw	1
 .tile_e			resw	1
-				endstruc
-
-				struc	extmem_t
-.maxmem			resd	1
-.pageptr		resd	4
-.target			resd	1
-.page			resd	4
 				endstruc
 
 				struc	cgwin_t

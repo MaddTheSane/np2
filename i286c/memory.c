@@ -10,8 +10,6 @@
 	BYTE	mem[0x200000];
 
 
-#define	USE_HIMEM		0x10fff0
-
 #if defined(TRACE)
 #define	MEMORY_DEBUG
 #endif
@@ -185,7 +183,7 @@ static void MEMCALL egc_wt(UINT32 address, REG8 value) {
 
 static void MEMCALL emmc_wt(UINT32 address, REG8 value) {
 
-	extmem.pageptr[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
+	i286core.e.ems[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
 }
 
 static void MEMCALL i286_wb(UINT32 address, REG8 value) {
@@ -290,7 +288,7 @@ static REG8 MEMCALL egc_rd(UINT32 address) {
 
 static REG8 MEMCALL emmc_rd(UINT32 address) {
 
-	return(extmem.pageptr[(address >> 14) & 3][LOW14(address)]);
+	return(i286core.e.ems[(address >> 14) & 3][LOW14(address)]);
 }
 
 static REG8 MEMCALL i286_rb(UINT32 address) {
@@ -470,12 +468,12 @@ static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
 	BYTE	*ptr;
 
 	if ((address & 0x3fff) != 0x3fff) {
-		ptr = extmem.pageptr[(address >> 14) & 3] + LOW14(address);
+		ptr = i286core.e.ems[(address >> 14) & 3] + LOW14(address);
 		STOREINTELWORD(ptr, value);
 	}
 	else {
-		extmem.pageptr[(address >> 14) & 3][0x3fff] = (BYTE)value;
-		extmem.pageptr[((address + 1) >> 14) & 3][0] = (BYTE)(value >> 8);
+		i286core.e.ems[(address >> 14) & 3][0x3fff] = (BYTE)value;
+		i286core.e.ems[((address + 1) >> 14) & 3][0] = (BYTE)(value >> 8);
 	}
 }
 
@@ -617,12 +615,12 @@ const BYTE	*ptr;
 	REG16	ret;
 
 	if ((address & 0x3fff) != 0x3fff) {
-		ptr = extmem.pageptr[(address >> 14) & 3] + LOW14(address);
+		ptr = i286core.e.ems[(address >> 14) & 3] + LOW14(address);
 		return(LOADINTELWORD(ptr));
 	}
 	else {
-		ret = extmem.pageptr[(address >> 14) & 3][0x3fff];
-		ret += extmem.pageptr[((address + 1) >> 14) & 3][0] << 8;
+		ret = i286core.e.ems[(address >> 14) & 3][0x3fff];
+		ret += i286core.e.ems[((address + 1) >> 14) & 3][0] << 8;
 		return(ret);
 	}
 }

@@ -127,7 +127,7 @@ void fmboard_reset(UINT32 type) {
 	pcm86_reset();
 	cs4231_reset();
 
-	switch(usesound) {
+	switch(type) {
 		case 0x01:
 			board14_reset();
 			break;

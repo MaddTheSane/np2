@@ -109,6 +109,15 @@ static void MenuBarInit(void) {
 	if (hmenu) {
 		AppendResMenu(hmenu, 'DRVR');
 	}
+#if 0 // defined(SUPPORT_SCSI)
+	hmenu = GetMenuHandle(IDM_HARDDISK);
+	if (hmenu) {
+		AppendMenu(hmenu, "\pSCSI #0");
+		AppendMenu(hmenu, "\pSCSI #1");
+		AppendMenu(hmenu, "\pSCSI #2");
+		AppendMenu(hmenu, "\pSCSI #3");
+	}
+#endif
 	InsertMenu(GetMenu(IDM_SASI1), -1);
 	InsertMenu(GetMenu(IDM_SASI2), -1);
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);

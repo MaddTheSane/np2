@@ -51,6 +51,9 @@
 　　　pccore.h の中で statsave.hをインクルード
 　　　　→ #include "statsave.h" をトル
 
+　　　io/extmem を io/emsioに変更
+　　　(IA32は emsioは要らないが、NEC EMSバンク形式で必要になるかも)
+
 　　　np2cfg.hddfile[2] -> np2cfg.sasihdd[2]
 
 　　　void diskdrv_sethdd(REG8 drv, const char *fname);
@@ -63,12 +66,10 @@
 　　　cbus/scsiio.c cbus/scsicmd.c - SUPPORT_SCSIを定義した時にリンク
 
 　　　IA32でハードウェアEMSを禁止しました。
-　　　※コア側のインタフェイスを調整後に…
-　　　　　　　→ init_mem() トル
-　　　　　　　→ cpumem, extmem_size, protectmem_sizeを
+　　　　　→ #define CPU_SETEXTSIZE() init_mem() に変更 (済)
+　　　　　→ memory.cの EMM部分をトル (済)
+　　　　　→ cpumem, extmem_size, protectmem_sizeを
 　　　　　　　　　CPU_EXTMEM, CPU_EXTMEMSIZEに変更
-　　　　　　　→ リアルアドレス C0000-CFFFFのメモリリードライト変更
-　　　　むしろ メモリ確保はそれぞれの CPUルーチンに入れるべきか？
 
 
 // ----

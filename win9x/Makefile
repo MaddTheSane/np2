@@ -42,7 +42,7 @@ PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h $(BASE)/statsave.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
 				$(IO)/crtc.h $(IO)/dipsw.h $(IO)/dmac.h $(IO)/egc.h \
-				$(IO)/epsonio.h $(IO)/extmem.h $(IO)/fdc.h $(IO)/fdd320.h \
+				$(IO)/epsonio.h $(IO)/emsio.h $(IO)/fdc.h $(IO)/fdd320.h \
 				$(IO)/gdc.h $(IO)/gdc_cmd.h $(IO)/gdc_sub.h $(IO)/mouseif.h \
 				$(IO)/necio.h $(IO)/nmiio.h $(IO)/np2sysp.h $(IO)/pic.h \
 				$(IO)/pit.h $(IO)/printif.h $(IO)/serial.h $(IO)/sysport.h \
@@ -78,7 +78,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
 			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
-			$(OBJ)/extmem.o		$(OBJ)/fdc.o		$(OBJ)/fdd320.o		\
+			$(OBJ)/emsio.o		$(OBJ)/fdc.o		$(OBJ)/fdd320.o		\
 			$(OBJ)/gdc.o		$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	\
 			$(OBJ)/mouseif.o	$(OBJ)/necio.o		$(OBJ)/nmiio.o		\
 			$(OBJ)/np2sysp.o	$(OBJ)/pic.o		$(OBJ)/pit.o		\
@@ -307,7 +307,7 @@ $(OBJ)/epsonio.o	:	$(IO)/epsonio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/extmem.o		:	$(IO)/extmem.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+$(OBJ)/emsio.o		:	$(IO)/emsio.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
@@ -346,8 +346,8 @@ $(OBJ)/np2sysp.o	:	$(IO)/np2sysp.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(COMMON)/strres.h $(TARGET)/taskmng.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/pic.o		:	$(IO)/pic.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(I286C)/cpucore.h
+$(OBJ)/pic.o		:	$(IO)/pic.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/pit.o		:	$(IO)/pit.c $(HEADERS) $(CPUCORES) $(PCCORES) \

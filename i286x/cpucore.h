@@ -184,6 +184,7 @@ typedef struct {
 typedef struct {							// for ver0.73
 	BYTE	*ext;
 	UINT32	extsize;
+	BYTE	*ems[4];
 	UINT32	repbak;
 	UINT32	inport;
 } I286EXT;
@@ -202,9 +203,12 @@ extern	I286CORE	i286core;
 extern	const UINT8	iflags[];
 
 void i286x_initialize(void);
+void i286x_deinitialize(void);
 void i286x_reset(void);
 void i286x_shut(void);
 void i286x_resetprefetch(void);
+void i286x_setextsize(UINT32 size);
+void i286x_setemm(UINT frame, UINT32 addr);
 
 void CPUCALL i286x_interrupt(BYTE vect);
 
@@ -276,13 +280,14 @@ void v30x_step(void);
 #define	CPU_STI			i286core.s.r.w.flag |= I_FLAG;						\
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
 
-#define	CPU_INITIALIZE		i286x_initialize
-#define	CPU_DEINITIALIZE()
-#define	CPU_RESET			i286x_reset
-#define	CPU_CLEARPREFETCH	i286x_resetprefetch
-#define	CPU_INTERRUPT(v)	i286x_interrupt(v)
-#define	CPU_EXEC			i286x
-#define	CPU_EXECV30			v30x
-#define	CPU_SHUT			i286x_shut
-#define	CPU_SETEXTMEM(s)
+#define	CPU_INITIALIZE			i286x_initialize
+#define	CPU_DEINITIALIZE		i286x_deinitialize
+#define	CPU_RESET				i286x_reset
+#define	CPU_CLEARPREFETCH		i286x_resetprefetch
+#define	CPU_INTERRUPT(v)		i286x_interrupt(v)
+#define	CPU_EXEC				i286x
+#define	CPU_EXECV30				v30x
+#define	CPU_SHUT				i286x_shut
+#define	CPU_SETEXTSIZE(size)	i286x_setextsize((UINT32)(size) << 20)
+#define	CPU_SETEMM(frame, addr)	i286x_setemm(frame, addr)
 

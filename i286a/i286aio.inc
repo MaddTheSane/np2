@@ -55,16 +55,6 @@ EGC_SFT				equ		12
 ;							and more..
 
 
-; ---- emm
-
-	IMPORT	extmem
-
-; em_maxmem			equ		0
-EM_PAGEPTR			equ		4
-; em_target			equ		20
-; em_page			equ		24
-
-
 ; ---- gdc
 
 	IMPORT	gdcs

@@ -17,6 +17,8 @@
 // 1e0000-1e7fff VRAM1
 // 1f8000-1fffff ITF-ROM
 
+#define	USE_HIMEM	0x110000
+
 enum {
 	VRAM_STEP	= 0x100000,
 	VRAM_B		= 0x0a8000,

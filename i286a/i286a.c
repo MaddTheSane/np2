@@ -73,6 +73,20 @@ const UINT8 iflags[512] = {					// Z_FLAG, S_FLAG, P_FLAG
 
 // ----
 
+void i286a_initialize(void) {
+
+	ZeroMemory(&i286acore, sizeof(i286acore));
+}
+
+void i286a_deinitialize(void) {
+
+	if (CPU_EXTMEM) {
+		_MFREE(CPU_EXTMEM);
+		CPU_EXTMEM = NULL;
+		CPU_EXTMEMSIZE = 0;
+	}
+}
+
 static void i286a_initreg(void) {
 
 	CPU_CS = 0xf000;
@@ -96,6 +110,23 @@ void i286a_shut(void) {
 
 	ZeroMemory(&i286acore.s, offsetof(I286STAT, cpu_type));
 	i286a_initreg();
+}
+
+void i286a_setextsize(UINT32 size) {
+
+	if (CPU_EXTMEMSIZE != size) {
+		_MFREE(CPU_EXTMEM);
+		if (size) {
+			CPU_EXTMEM = (BYTE *)_MALLOC(size + 16, "EXTMEM");
+			if (CPU_EXTMEM == NULL) {
+				size = 0;
+			}
+		}
+		CPU_EXTMEMSIZE = size;
+	}
+}
+
+void i286a_setemm(UINT frame, UINT32 addr) {
 }
 
 

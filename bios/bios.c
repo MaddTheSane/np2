@@ -33,7 +33,6 @@ static void bios_reinitbyswitch(void) {
 	BYTE	prxcrt;
 	BYTE	prxdupd;
 	BYTE	biosflag;
-	BYTE	ext_mem;
 	UINT8	boot;
 
 #if defined(CPUCORE_IA32)
@@ -60,7 +59,6 @@ static void bios_reinitbyswitch(void) {
 	}
 
 	mem[MEMB_BIOS_FLAG0] = 0x01;
-	CPU_TYPE = 0;
 	prxcrt = 0x48;								// ver0.74
 	if (gdc.display & 2) {
 		prxcrt |= 0x04;							// color16
@@ -87,19 +85,11 @@ static void bios_reinitbyswitch(void) {
 		biosflag |= 0x80;
 	}
 	biosflag |= mem[0xa3fea] & 7;
-	if (!(np2cfg.dipsw[2] & 0x80)) {
-		ext_mem = np2cfg.EXTMEM;									// ver0.28
-	}
-	else {
-		CPU_TYPE = CPUTYPE_V30;
-		ext_mem = 0;
+	if (np2cfg.dipsw[2] & 0x80) {
 		biosflag |= 0x40;
 	}
-	if (extmem_init(ext_mem)) {										// ver0.28
-		ext_mem = 0;							// メモリ確保に失敗
-	}
 	mem[MEMB_BIOS_FLAG1] = biosflag;
-	mem[MEMB_EXPMMSZ] = (BYTE)(ext_mem << 3);
+	mem[MEMB_EXPMMSZ] = (BYTE)(pccore.extmem << 3);
 	mem[MEMB_CRT_RASTER] = 0x0f;
 
 	gdc.display &= ~4;
@@ -107,12 +97,6 @@ static void bios_reinitbyswitch(void) {
 		gdc.display |= 4;
 	}
 	gdcs.textdisp |= GDCSCRN_EXT;
-
-	if (((pccore.model & PCMODELMASK) >= PCMODEL_VX) &&
-		(pccore.sound & 0x7e)) {
-		iocore_out8(0x188, 0x27);
-		iocore_out8(0x18a, 0x3f);
-	}
 
 	// FDD initialize
 	SETBIOSMEM32(MEMD_F2DD_POINTER, 0xfd801ad7);
@@ -268,7 +252,6 @@ void bios_init(void) {
 		file_close(fh);
 		TRACEOUT(("load itf.rom"));
 	}
-	extmem_init(np2cfg.EXTMEM);
 #endif
 
 	CopyMemory(mem + 0x1c0000, mem + ITF_ADRS, 0x08000);
@@ -418,6 +401,12 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			bios_reinitbyswitch();
 			bios_vectorset();
 			bios_screeninit();
+			if (((pccore.model & PCMODELMASK) >= PCMODEL_VX) &&
+				(pccore.sound & 0x7e)) {
+				iocore_out8(0x188, 0x27);
+				iocore_out8(0x18a, 0x3f);
+			}
+
 #if 1																// ver0.73
 			CPU_CS = 0xfd80;			// SASI/SCSIリセット
 			CPU_IP = 0x2400;

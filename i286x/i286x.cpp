@@ -57,6 +57,15 @@ void i286x_initialize(void) {
 	v30xinit();
 }
 
+void i286x_deinitialize(void) {
+
+	if (CPU_EXTMEM) {
+		_MFREE(CPU_EXTMEM);
+		CPU_EXTMEM = NULL;
+		CPU_EXTMEMSIZE = 0;
+	}
+}
+
 static void i286x_initreg(void) {
 
 	I286_CS = 0xf000;
@@ -76,6 +85,41 @@ void i286x_shut(void) {
 
 	ZeroMemory(&i286core.s, offsetof(I286STAT, cpu_type));
 	i286x_initreg();
+}
+
+void i286x_setextsize(UINT32 size) {
+
+	if (CPU_EXTMEMSIZE != size) {
+		_MFREE(CPU_EXTMEM);
+		if (size) {
+			CPU_EXTMEM = (BYTE *)_MALLOC(size + 16, "EXTMEM");
+			if (CPU_EXTMEM == NULL) {
+				size = 0;
+			}
+		}
+		CPU_EXTMEMSIZE = size;
+	}
+	i286core.e.ems[0] = mem + 0xc0000;
+	i286core.e.ems[1] = mem + 0xc4000;
+	i286core.e.ems[2] = mem + 0xc8000;
+	i286core.e.ems[3] = mem + 0xcc000;
+}
+
+void i286x_setemm(UINT frame, UINT32 addr) {
+
+	BYTE	*ptr;
+
+	frame &= 3;
+	if (addr < USE_HIMEM) {
+		ptr = mem + addr;
+	}
+	else if ((addr - 0x100000 + 0x4000) <= CPU_EXTMEMSIZE) {
+		ptr = CPU_EXTMEM + (addr - 0x100000);
+	}
+	else {
+		ptr = mem + 0xc0000 + (frame << 14);
+	}
+	i286core.e.ems[frame] = ptr;
 }
 
 

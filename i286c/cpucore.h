@@ -179,6 +179,7 @@ typedef struct {
 typedef struct {							// for ver0.73
 	BYTE	*ext;
 	UINT32	extsize;
+	BYTE	*ems[4];
 	UINT32	inport;
 #if defined(CPUSTRUC_MEMWAIT)
 	UINT8	tramwait;
@@ -202,8 +203,11 @@ extern	I286CORE	i286core;
 extern	const UINT8	iflags[];
 
 void i286c_initialize(void);
+void i286c_deinitialize(void);
 void i286c_reset(void);
 void i286c_shut(void);
+void i286c_setextsize(UINT32 size);
+void i286c_setemm(UINT frame, UINT32 addr);
 
 void CPUCALL i286c_interrupt(REG8 vect);
 
@@ -283,12 +287,13 @@ void v30c_step(void);
 						i286core.s.trap = (i286core.s.r.w.flag >> 8) & 1;
 
 #define	CPU_INITIALIZE			i286c_initialize
-#define	CPU_DEINITIALIZE()
+#define	CPU_DEINITIALIZE		i286c_deinitialize
 #define	CPU_RESET				i286c_reset
-#define	CPU_CLEARPREFETCH()
-#define	CPU_INTERRUPT(v)		i286c_interrupt(v)
+#define	CPU_CLEARPREFETCH()		
+#define	CPU_INTERRUPT(vect)		i286c_interrupt(vect)
 #define	CPU_EXEC				i286c
 #define	CPU_EXECV30				v30c
 #define	CPU_SHUT				i286c_shut
-#define	CPU_SETEXTMEM(s)
+#define	CPU_SETEXTSIZE(size)	i286c_setextsize((UINT32)(size) << 20)
+#define	CPU_SETEMM(frame, addr)	i286c_setemm(frame, addr)
 

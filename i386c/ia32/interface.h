@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.4 2004/01/23 15:05:05 yui Exp $	*/
+/*	$Id: interface.h,v 1.5 2004/01/25 05:41:29 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -44,11 +44,12 @@ typedef	SINT64			SQWORD;
 #define	CPU_DEINITIALIZE()
 #define	CPU_RESET()		ia32reset()
 #define	CPU_CLEARPREFETCH()
-#define	CPU_INTERRUPT(a)	ia32_interrupt(a)
+#define	CPU_INTERRUPT(vect)	ia32_interrupt(vect)
 #define	CPU_EXEC()		ia32()
 #define	CPU_EXECV30()		ia32()
 #define	CPU_SHUT()		ia32shut()
-#define	CPU_SETEXTMEM(s)
+#define	CPU_SETEXTSIZE(size)	init_cpumem(size)
+// #define CPU_SETEMM(frame, addr)
 
 void i386c_initialize(void);
 

@@ -16,7 +16,7 @@
 	_DMAC		dmac;
 	_EGC		egc;
 	_EPSONIO	epsonio;
-	_EXTMEM		extmem;
+	_EMSIO		emsio;
 	_FDC		fdc;
 	_GDC		gdc;
 	_GDCS		gdcs;
@@ -425,8 +425,12 @@ static const IOCBFN resetfn[] = {
 			itimer_reset,		mouseif_reset,
 
 			// extend
-			artic_reset,		egc_reset,			extmem_reset,
-			np2sysp_reset,		necio_reset,		epsonio_reset};
+			artic_reset,		egc_reset,			np2sysp_reset,
+			necio_reset,		epsonio_reset,
+#if !defined(CPUCORE_IA32)
+			emsio_reset,
+#endif
+		};
 
 static const IOCBFN bindfn[] = {
 			// PC-9801 System...
@@ -440,8 +444,12 @@ static const IOCBFN bindfn[] = {
 			itimer_bind,		mouseif_bind,
 
 			// extend
-			artic_bind,			egc_bind,			extmem_bind,
-			np2sysp_bind,		necio_bind,			epsonio_bind};
+			artic_bind,			egc_bind,			np2sysp_bind,
+			necio_bind,			epsonio_bind,
+#if !defined(CPUCORE_IA32)
+			emsio_bind,
+#endif
+		};
 
 
 void iocore_cb(const IOCBFN *cbfn, UINT count) {
