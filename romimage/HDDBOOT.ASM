@@ -1,4 +1,3 @@
-.186
 
 CODE	SEGMENT
 		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing

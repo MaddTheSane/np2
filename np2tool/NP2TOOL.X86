@@ -22,7 +22,13 @@ sendnp2port:	mov		dx, NP2PORT
 				xor		cx, cx
 				lodsb
 				mov		cl, al
-				rep outsb
+	if 1
+@@:				lodsb
+				out		dx, al
+				loop	short @b
+	else
+				rep		outsb
+	endif
 				ret
 
 _msg_pcat		db	'PC/AT$'

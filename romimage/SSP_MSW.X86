@@ -296,14 +296,15 @@ msws_miheader:		mov		si, bx
 msws_mihead:		call	msws_miheader
 					push	ax
 					inc		si
-					shr		ax, 8
+					test	ah, ah
 					je		msws_miheaded
 msws_miheadlp:		mov		dl, cs:[si+1]
 					mov		dh, 0
-					shl		dx, 2
+					add		dx, dx
+					add		dx, dx
 					add		dx, 6
 					add		si, dx
-					dec		ax
+					dec		ah
 					jne		msws_miheadlp
 msws_miheaded:		pop		ax
 					ret
@@ -460,8 +461,11 @@ memswsub_event		db		3ah
 
 msws_curladrs:		push	ax
 					mov		di, bx
-					shl		di, 3
-					shr		ax, 8
+					add		di, di
+					add		di, di
+					add		di, di
+					mov		al, ah
+					mov		ah, 0
 					add		ax, MEMSW_X
 					add		di, ax
 					pop		ax
@@ -469,7 +473,8 @@ msws_curladrs:		push	ax
 
 
 mswm_cursoledip:	mov		ah, 0
-					shl		ax, 2
+					add		ax, ax
+					add		ax, ax
 					push	si
 					add		si, ax
 					mov		dx, cs:[si + 6]
@@ -509,7 +514,8 @@ msws_itemdisp:		push	ax
 					call	msws_mihead
 					push	si
 					mov		ah, 0
-					shl		ax, 2
+					add		ax, ax
+					add		ax, ax
 					add		si, ax
 					mov		dx, cs:[si+6]
 					mov		si, cs:[si+6+2]

@@ -1,7 +1,4 @@
 
-.model small
-.186
-
 CODE	SEGMENT
 		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing
 		ORG 0100H

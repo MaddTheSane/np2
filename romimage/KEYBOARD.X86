@@ -1,5 +1,7 @@
 
-keyint_proc:	pusha
+keyint_proc:	push	ax
+				push	bx
+				push	cx
 				push	ds
 				push	es
 				mov		ax, DATASEG			; dsÉåÉWÉXÉ^ÇÕê›íËÇµÇ»Ç≠ÇƒÇ‡Ç¢Ç¢ÇÒ
@@ -17,7 +19,8 @@ keyint_proc:	pusha
 				shl		ah, cl
 				xor		bx, bx
 				mov		bl, al
-				shr		bl, 3
+				mov		cl, 3
+				shr		bl, cl
 				and		bl, 0fh
 				add		bx, MEM_KB_KY_STS
 				test	al, 80h
@@ -41,14 +44,16 @@ keyint_ed:		mov		al, 20h
 				out		0, al
 				pop		es
 				pop		ds
-				popa
+				pop		cx
+				pop		bx
+				pop		ax
 				iret
 
 
 boot_keycheck:	push	ds
-				push	0
-				pop		ds
-				cmp		byte ptr ds:[0531h], 0
+				xor		cx, cx
+				mov		ds, cx
+				cmp		byte ptr ds:[0531h], cl
 				jns		short bkc_nonhelp
 				mov		al, BOOT_WFLASH
 				mov		cl, ds:[0532h]

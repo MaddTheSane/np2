@@ -315,11 +315,11 @@ static void SCRNCALL SDSYM(n_0)(SDRAW sdraw, int maxy) {
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
+			SDSETPIXEL(p, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
-				SDSETPIXEL(p, NP2PAL_TEXT2);
 				p += sdraw->xalign;
+				SDSETPIXEL(p, NP2PAL_TEXT2);
 			}
-			SDSETPIXEL(p, NP2PAL_TEXT2);
 			p -= sdraw->xbytes;
 		}
 		p += sdraw->yalign;
@@ -342,7 +342,9 @@ const BYTE	*p;
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
-			for (x=0; x<sdraw->width; x++) {
+			SDSETPIXEL(q, p[0] + NP2PAL_TEXT3);
+			q += sdraw->xalign;
+			for (x=1; x<sdraw->width; x++) {
 				SDSETPIXEL(q, p[x] + NP2PAL_GRPH);
 				q += sdraw->xalign;
 			}
@@ -371,7 +373,7 @@ const BYTE	*p;
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
-			SDSETPIXEL(q, NP2PAL_TEXT2);
+			SDSETPIXEL(q, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
 				q += sdraw->xalign;
 				SDSETPIXEL(q, p[x] + NP2PAL_GRPH);
@@ -402,7 +404,7 @@ const BYTE	*q;
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
-			SDSETPIXEL(r, q[0] + NP2PAL_GRPH);			// !!
+			SDSETPIXEL(r, (q[0] >> 4) + NP2PAL_TEXT3);
 			r += sdraw->xalign;
 			for (x=1; x<sdraw->width; x++) {
 				SDSETPIXEL(r, p[x-1] + q[x] + NP2PAL_GRPH);
@@ -480,7 +482,7 @@ const BYTE	*p;
 	y = sdraw->y;
 	do {
 		if (sdraw->dirty[y]) {
-			SDSETPIXEL(q, 0);
+			SDSETPIXEL(q, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
 				q += sdraw->xalign;
 				SDSETPIXEL(q, p[x] + NP2PAL_GRPH);
@@ -491,7 +493,7 @@ const BYTE	*p;
 		q += sdraw->yalign;
 
 		if (sdraw->dirty[y+1]) {
-			SDSETPIXEL(q, NP2PAL_TEXT);
+			SDSETPIXEL(q, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
 				q += sdraw->xalign;
 				SDSETPIXEL(q, NP2PAL_TEXT);
@@ -572,7 +574,7 @@ const BYTE	*p;
 	do {
 		if (sdraw->dirty[y]) {
 			sdraw->dirty[y+1] |= 0xff;
-			SDSETPIXEL(q, 0);
+			SDSETPIXEL(q, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
 				q += sdraw->xalign;
 				SDSETPIXEL(q, p[x] + NP2PAL_GRPH);
@@ -582,7 +584,7 @@ const BYTE	*p;
 		q += sdraw->yalign;
 
 		if (sdraw->dirty[y+1]) {
-			SDSETPIXEL(q, 0);
+			SDSETPIXEL(q, NP2PAL_TEXT3);
 			for (x=0; x<sdraw->width; x++) {
 				SDSETPIXEL(q, p[x] + NP2PAL_SKIP);
 				q += sdraw->xalign;

@@ -106,7 +106,8 @@ mainmemtest_l1:	call	bp
 				push	cx
 				push	dx
 				mov		ax, bx
-				shr		ax, 6
+				mov		cl, 6
+				shr		ax, cl
 				call	STRING_I2A
 				pop		dx
 				pop		cx
@@ -134,7 +135,8 @@ mainmemtest_ed:
 				xor		ax, ax
 				mov		dx, ax
 				push	bx
-				push	I2ABUFFER + 5
+				mov		cx, I2ABUFFER + 5
+				push	cx
 				call	extmemory_chk
 
 				push	ds
@@ -151,9 +153,11 @@ extmomey_o16:
 				mov		ah, 6
 				call	WAITVSYNC
 				pop		ax
-				shl		bx, 3
+				mov		cl, 3
+				shl		bx, cl
 				push	bx
-				push	I2ABUFFER + 3
+				mov		cx, I2ABUFFER + 3
+				push	cx
 				call	extmemory_chk
 
 extmemtest_end:	pop		dx
@@ -181,7 +185,8 @@ epmt_main_lp:	mov		cl, 0
 				push	cx
 				push	dx
 				mov		ax, bx
-				shr		ax, 6
+				mov		cl, 6
+				shr		ax, cl
 				call	STRING_I2A
 				pop		dx
 				pop		cx

@@ -1,4 +1,3 @@
-.186
 
 CODE	SEGMENT
 		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing
@@ -68,7 +67,13 @@ sasi_bios:		cld
 				mov		si, offset sasibiosstr
 				mov		dx, 07efh
 				cli
-				rep outsb
+	if 1
+@@:				lodsb
+				out		dx, al
+				loop	short @b
+	else
+				rep		outsb
+	endif
 				sti
 				pop		ax
 				pop		bx

@@ -2296,9 +2296,6 @@ I286FN _int_data8(void) {					// CD:	int		DATA8
 
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(vect)
-	if (vect == 0x1b) {
-		TRACEOUT(("int 1b - AX:%.4x BX:%.4x CX:%.4x DX:%.4x", CPU_AX, CPU_BX, CPU_CX, CPU_DX));
-	}
 	INT_NUM(vect, I286_IP);
 }
 

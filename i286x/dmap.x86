@@ -4,15 +4,15 @@
 .leng			resw	1		; 04
 .adrsorg		resw	1		; 06
 .lengorg		resw	1		; 08
-.action			resw	1		; 18
+.action			resw	1		; 0a
 .outproc		resd	1		; 0c
 .inproc			resd	1		; 10
 .extproc		resd	1		; 14
-.mode			resb	1		; 1a
-.sreq			resb	1		; 1b
-.ready			resb	1		; 1c
-.mask			resb	1		; 1d
-.size							; 20
+.mode			resb	1		; 18
+.sreq			resb	1		; 19
+.ready			resb	1		; 1a
+.mask			resb	1		; 1b
+.size							; 1c
 				endstruc
 
 				struc	dmac_t

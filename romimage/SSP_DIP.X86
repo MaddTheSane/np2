@@ -1,5 +1,9 @@
 
-dipsw_dispall:	pusha
+dipsw_dispall:	push	ax
+				push	cx
+				push	dx
+				push	si
+				push	di
 				xor		dx, dx
 				mov		si, 19*160+8*2
 dipsw_boxlp:	mov		cx, 20
@@ -22,7 +26,11 @@ dipsw_boxlp:	mov		cx, 20
 				jc		dipsw_boxlp
 				mov		si, offset dipbox_initmsgs
 				call	ssp_rtxtdisp
-				popa
+				pop		di
+				pop		si
+				pop		dx
+				pop		cx
+				pop		ax
 				ret
 
 dipsw_boxs2:	mov		cl, 2
@@ -43,7 +51,8 @@ dipsw_swdisp:	push	bx
 				mov		ax, di
 				add		di, di
 				add		di, ax
-				shl		di, 4
+				mov		cl, 4
+				shl		di, cl
 				add		di, 160*20+20
 				mov		cl, 80h
 dipswput_lp:	mov		bx, 0a1h

@@ -718,6 +718,13 @@ void pccore_exec(BOOL draw) {
 				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 			}
 #endif
+#if 1		// VX LIO
+			if (CPU_CS == 0xf990) {
+				if (CPU_IP == 0x07BE) {
+					TRACEOUT(("%d,%d - %d,%d", CPU_BP, CPU_DX, CPU_SI, CPU_DI));
+				}
+			}
+#endif
 			i286x_step();
 //			i286c_step();
 		}

@@ -27,8 +27,9 @@ ssp_menup:		mov		ah, 0
 				add		ax, ax
 				mov		dx, 0304h
 				add		dh, al
+				add		ax, ax
+				add		ax, ax
 				mov		bx, ax
-				shl		bx, 2
 				add		bx, offset sspmenuitems
 				mov		si, cs:[bx]
 				jmp		TEXTOUT_CS

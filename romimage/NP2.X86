@@ -12,8 +12,15 @@ sendnp2port:	mov		dx, 07efh
 				db		FIXCS
 				lodsb
 				mov		cl, al
+	if 1
+@@:				db		FIXCS
+				lodsb
+				out		dx, al
+				loop	short @b
+	else
 				db		FIXCS
 				rep outsb
+	endif
 				ret
 
 checknp2port:	mov		cl, cs:[si]

@@ -1,17 +1,16 @@
 // palette
-//	 00		text palette
-//	+0A		skipline palette
-//	+10		grph palette
-//	+10		text palette
-//	+09		black + text palette
-//	+80		end...
+//	 00		text palette				(NP2PAL_TEXT: pal0s + text)
+//	+0A		skipline palette			(NP2PAL_SKIP: skiplines)
+//	+10		grph palette				(NP2PAL_GRPH: grph only)
+//	+80		text+grph					(NP2PAL_TEXT2:grph+text)
+//	+09		black + text palette		(NP2PAL_TEXT3: text/grph=black)
 
 enum {
 	NP2PALS_TXT		= 10,
 	NP2PALS_GRPH	= 16,
 
 	NP2PAL_TEXT		= 0,
-	NP2PAL_SKIP		= (NP2PALS_TXT),
+	NP2PAL_SKIP		= (NP2PAL_TEXT + NP2PALS_TXT),
 	NP2PAL_GRPH		= (NP2PAL_SKIP + NP2PALS_GRPH),
 	NP2PAL_TEXT2	= (NP2PAL_GRPH + NP2PALS_GRPH),
 	NP2PAL_TEXT3	= (NP2PAL_TEXT2 + (8 * NP2PALS_GRPH)),

@@ -1,4 +1,3 @@
-.186
 
 CODE	SEGMENT
 			ASSUME CS:CODE
@@ -177,7 +176,8 @@ setdips:		push	bx
 				mov		di, dx
 				mov		ch, [di+DIPSW_1]
 				mov		di, 160*20+20
-				shl		dx, 4
+				mov		cl, 4
+				shl		dx, cl
 				add		di, dx
 				shl		dx, 1
 				add		di, dx

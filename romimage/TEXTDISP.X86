@@ -104,7 +104,8 @@ textoutcsp2:	add		ax, ax
 				push	si
 				mov		si, ax
 				mov		si, cs:KEYTABLE[si]
-				push	offset textoutcspe
+				mov		ax, offset textoutcspe
+				push	ax
 				push	dx
 				jmps	textoutcslp
 textoutcspe:	pop		si
@@ -169,7 +170,8 @@ textoutskp2:	add		ax, ax
 				push	si
 				mov		si, ax
 				mov		si, cs:KEYTABLE[si]
-				push	offset textoutskppe
+				mov		ax, offset textoutskppe
+				push	ax
 				push	dx
 				jmps	textoutskplp
 textoutskppe:	pop		si
@@ -186,13 +188,6 @@ textoutskpk:	sub		al, 80h
 textoutskpka:	inc		si
 				inc		dl
 				jmps	textoutskplp
-
-
-
-
-
-
-
 
 
 

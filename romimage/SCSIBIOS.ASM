@@ -1,4 +1,3 @@
-.186
 
 CODE	SEGMENT
 		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing
@@ -70,7 +69,13 @@ scsi_bios:		cld
 				lea		si, [si + 8]
 scsisend:		mov		dx, 07efh
 				cli
+	if 1
+@@:				lodsb
+				out		dx, al
+				loop	short @b
+	else
 				rep outsb
+	endif
 				sti
 				pop		ax
 				pop		bx

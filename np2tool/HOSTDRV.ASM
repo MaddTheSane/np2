@@ -1,3 +1,4 @@
+
 .186
 
 CODE	SEGMENT
@@ -200,7 +201,8 @@ drvcheck:		and		al, 0dfh
 				int		21h
 				mov		ax, 3100h
 				mov		dx, (offset keep_addr) + 15
-				shr		dx, 4
+				mov		cl, 4
+				shr		dx, cl
 				int		21h
 
 ass_err:		call	getcds
