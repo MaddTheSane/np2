@@ -186,17 +186,17 @@ SCRNBMP scrnbmp(void) {
 		s += SURFACE_WIDTH;
 	}
 
-	if (pals < 2) {
+	if (pals <= 2) {
 		type = SCRNBMP_1BIT;
 		bd.bpp = 1;
 		palsize = 4 << 1;
 	}
-	else if (pals < 16) {
+	else if (pals <= 16) {
 		type = SCRNBMP_4BIT;
 		bd.bpp = 4;
 		palsize = 4 << 4;
 	}
-	else if (pals < 256) {
+	else if (pals <= 256) {
 		type = SCRNBMP_8BIT;
 		bd.bpp = 8;
 		palsize = 4 << 8;
@@ -236,7 +236,7 @@ SCRNBMP scrnbmp(void) {
 		switch(type) {
 			case SCRNBMP_1BIT:
 				for (x=0; x<bd.width; x++) {
-					if (s[x*2+0]) {
+					if (s[x]) {
 						q[x >> 3] |= 0x80 >> (x & 7);
 					}
 				}

@@ -107,8 +107,8 @@ BOOL bmpdata_getinfo(const BMPINFO *bi, BMPDATA *inf) {
 	if (tmp != 0) {
 		goto bdgi_err;
 	}
-	width = LOADINTELDWORD(bi->biWidth);
-	height = LOADINTELDWORD(bi->biHeight);
+	width = (SINT32)LOADINTELDWORD(bi->biWidth);
+	height = (SINT32)LOADINTELDWORD(bi->biHeight);
 	if ((width <= 0) || (height == 0)) {
 		goto bdgi_err;
 	}
