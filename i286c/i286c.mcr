@@ -1,5 +1,7 @@
 
-#if defined(ARM) && defined(BYTESEX_LITTLE)
+#if defined(X11) && (defined(i386) || defined(__i386__))
+#define	INHIBIT_WORDP(m)	((m) >= 0x9ffff)
+#elif (defined(ARM) || defined(X11)) && defined(BYTESEX_LITTLE)
 #define	INHIBIT_WORDP(m)	(((m) & 1) || ((m) >= 0xa0000))
 #else
 #define	INHIBIT_WORDP(m)	(1)
@@ -418,7 +420,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 		reg = i286_memoryread_w(I286_SP + SS_BASE);					\
 		I286_SP += 2;
 
-#if defined(ARM) && defined(BYTESEX_LITTLE)
+#if (defined(ARM) || defined(X11)) && defined(BYTESEX_LITTLE)
 
 #define	REGPUSH(reg, clock)	{										\
 		UINT32 addr;												\

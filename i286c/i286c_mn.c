@@ -1090,7 +1090,7 @@ I286FN _pop_bp(void) REGPOP(I286_BP, 5)		// 5D:	pop		bp
 I286FN _pop_si(void) REGPOP(I286_SI, 5)		// 5E:	pop		si
 I286FN _pop_di(void) REGPOP(I286_DI, 5)		// 5F:	pop		di
 
-#if defined(ARM) && defined(BYTESEX_LITTLE)
+#if (defined(ARM) || defined(X11)) && defined(BYTESEX_LITTLE)
 
 I286FN _pusha(void) {						// 60:	pusha
 
