@@ -67,8 +67,8 @@ typedef unsigned char	BYTE;
 #define	MEMOPTIMIZE		1
 
 #define	SUPPORT_CRT15KHZ
-#define	SUPPORT_WAVEMIX
 #define	SUPPORT_HOSTDRV
+#define	SUPPORT_SWSEEKSND
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 

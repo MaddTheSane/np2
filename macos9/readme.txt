@@ -180,24 +180,39 @@
 
 
 
-・Userkeyについて
-　userkey1, userkey2は、cfgを書換えることによりキーを自由に変更することが
-　出来ます。
-　書式)
-　　userkey1 = [key1] (key2) (key3)...
-　　　フルキー 0～9 A～Z - ^ \ @ [ ] ; : , . / _
-　　　         STOP COPY ESC TAB BS RET SPC XFER NFER
-　　　         INS DEL RLUP RLDN HMCL HELP
-　　　ファンク F1～F10 VF1～VF5
-　　　テンキー [0]～[9] [-] [/] [*] [+] [=] [,] [.]
-　　　シフト   SHIFT CAPS KANA GRPH CTRL
+・キー設定について
+　　bios.romとかと同じフォルダに(機種によって異なるのでこんな書き方…)
+　　key.txtという名前でテキストファイルを作成して、キー設定を記入して下さい。
 
-　　例:
-　　　userkey1 = CTRL XFER   (CTRL+XFER FEP切り替え用)
-　　　userkey2 = D O A Z     (D+O+A+Z 同時押し)
+　　書式)
+　　　[keyname] = [key1] (key2) (key3)
+　　　[keyname] [TAB] [key1] (key2) (key3)
+　　　userkey[1-2] = [key1] (key2) (key3) ... (key15)
+　　　　フルキー 0～9 A～Z - ^ \ @ [ ] ; : , . / _
+　　　　         STOP COPY ESC TAB BS RET SPC XFER NFER
+                 INS DEL RLUP RLDN HMCL HELP
+　　　　ファンク F1～F10 VF1～VF5
+　　　　テンキー [0]～[9] [-] [/] [*] [+] [=] [,] [.]
+　　　　シフト   SHIFT CAPS KANA GRPH CTRL
 
-　本機能は 簡易的な実装であり ver0.75で変更されます。
-　また、ver0.74ではシフト系は不整合が発生する可能性があります。
+　　　通常キーは3個、userkeyは15個の同時押し設定が可能です。
+　　　[=] キーは = で区切られてしまうので TABで区切るか [EQU]として下さい。
+
+　　　例:
+        ----------------------- key.txt
+
+　　　　W = UP                 (ダイアモンドキーをカーソルにしてみたり…)
+　　　　S = LEFT
+　　　　D = RIGHT
+　　　　X = DOWN
+　　　　[7] = [4] [8]          (テンキー斜め同時押しにしてみたり…)
+　　　　[9] = [6] [8]
+　　　　[1] = [4] [2]
+　　　　[3] = [6] [2]
+　　　　userkey1 = CTRL XFER   (CTRL+XFER FEP切り替え)
+　　　　userkey2 = D O A Z     (D+O+A+Z 同時押し)
+
+        -----------------------
 
 
 

@@ -774,6 +774,8 @@ int main(int argc, char *argv[]) {
 
 	TRACEINIT();
 
+	keystat_initialize();
+
 	SetRect(&wRect, np2oscfg.posx, np2oscfg.posy, 100, 100);
 	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
 								noGrowDocProc, (WindowPtr)-1, TRUE, 0);

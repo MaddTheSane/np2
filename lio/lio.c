@@ -286,6 +286,7 @@ void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 }
 
 
+#if 0
 void lio_look(UINT vect) {
 
 	BYTE	work[16];
@@ -309,4 +310,5 @@ void lio_look(UINT vect) {
 			work[6], work[7], work[8], work[9]));
 	}
 }
+#endif
 

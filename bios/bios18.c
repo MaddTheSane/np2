@@ -132,7 +132,7 @@ const CRTDATA	*crt;
 REG16 bios0x18_14(REG16 seg, REG16 off, REG16 code) {
 
 	UINT16	size;
-const char	*p;
+const BYTE	*p;
 	BYTE	buf[32];
 	UINT	i;
 
@@ -180,7 +180,7 @@ const char	*p;
 
 static void bios0x18_1a(REG16 seg, REG16 off, REG16 code) {
 
-	char	*p;
+	BYTE	*p;
 	BYTE	buf[32];
 	UINT	i;
 

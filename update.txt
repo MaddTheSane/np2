@@ -89,6 +89,7 @@
 　　　　ハードウェアで対応してる場合には 一応 SUPPORT_HWSEEKSNDと定義して
 　　　　くれると嬉すぃ
 
+	　・keystat_initialize(keystat_reset)をコールして初期化すること…
 
 
 
