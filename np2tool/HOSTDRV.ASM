@@ -127,10 +127,10 @@ drvcheck:		and		al, 0dfh
 				mov		dx, drverr0_msg
 				jae		short stay_error
 
-				mov		[ds:inf + HDRVIF.drive_no], al
+				mov		[inf + HDRVIF.drive_no], al
 				mov		ah, 30h
 				int		21h
-				mov		[ds:inf + HDRVIF.dosver], ax
+				mov		[inf + HDRVIF.dosver], ax
 				xchg	al, ah
 				cmp		ax, 030ah
 				mov		dx, doserr_msg
@@ -183,8 +183,8 @@ drvcheck:		and		al, 0dfh
 
 				mov		ax, 352fh
 				int		21h
-				mov		[ds:org_int2f + 0], bx
-				mov		[ds:org_int2f + 2], es
+				mov		[org_int2f + 0], bx
+				mov		[org_int2f + 2], es
 				mov		ax, 252fh
 				mov		dx, int2f
 				int		21h
@@ -195,8 +195,8 @@ drvcheck:		and		al, 0dfh
 				int		21h
 
 				sti
-				mov		al, [ds:inf + HDRVIF.drive_no]
-				add		byte [ds:sty_drive], al
+				mov		al, [inf + HDRVIF.drive_no]
+				add		byte [sty_drive], al
 				mov		ah, 9
 				mov		dx, si
 				int		21h
@@ -220,7 +220,7 @@ release:		mov		ax, 252fh
 				pop		ds
 				call	getcds
 				mov		word [es:di + CDS.flag], 0
-				mov		es, [ds:002ch]
+				mov		es, [002ch]
 				mov		ah, 49h
 				int		21h
 				push	ds
@@ -242,12 +242,12 @@ release:		mov		ax, 252fh
 
 getcds:			mov		ax, 5200h	; get lol addr
 				int		21h
-				mov		al, [ds:inf + HDRVIF.drive_no]
+				mov		al, [inf + HDRVIF.drive_no]
 				cmp		al, [es:bx + LOL.lastdrv]
 				jae		short gcds_err
 				les		di, [es:bx + LOL.cds]
 				mov		ah, CDS.size
-				cmp		byte [ds:inf + HDRVIF.dosver], 3
+				cmp		byte [inf + HDRVIF.dosver], 3
 				je		short gcds_calc
 				add		ah, 7
 gcds_calc:		mul		ah

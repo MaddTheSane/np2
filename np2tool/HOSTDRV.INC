@@ -1,5 +1,5 @@
 
-VERSION_ID		equ		<20040122>
+%define	VERSION_ID		"20040122"
 
 
 				struc	HDRVIF
