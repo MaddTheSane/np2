@@ -18,6 +18,8 @@ enum {
 
 enum {
 	COMMSG_MIDIRESET		= 0,
+	COMMSG_SETFLAG,
+	COMMSG_GETFLAG,
 	COMMSG_USER
 };
 
@@ -30,9 +32,16 @@ struct _commng {
 	UINT	(*read)(COMMNG self, BYTE *data);
 	UINT	(*write)(COMMNG self, BYTE data);
 	BYTE	(*getstat)(COMMNG self);
-	UINT	(*msg)(COMMNG self, UINT msg, long param);
+	long	(*msg)(COMMNG self, UINT msg, long param);
 	void	(*release)(COMMNG self);
 };
+
+typedef struct {
+	UINT32	size;
+	UINT32	sig;
+	UINT32	ver;
+	UINT32	param;
+} _COMFLAG, *COMFLAG;
 
 
 #ifdef __cplusplus
@@ -45,4 +54,9 @@ void commng_destroy(COMMNG hdl);
 #ifdef __cplusplus
 }
 #endif
+
+
+// ----
+
+void commng_initialize(void);
 

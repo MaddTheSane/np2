@@ -50,7 +50,7 @@ enum {
 	NP2FLAG_EVT,
 	NP2FLAG_GIJ,
 	NP2FLAG_FM,
-	NP2FLAG_MIDI,
+	NP2FLAG_COM,
 	NP2FLAG_DISK
 };
 
@@ -1047,13 +1047,12 @@ static int flagload_disk(NP2FFILE f, const STENTRY *t) {
 
 // -----
 
-#ifdef _MIDICH
-static int flagsave_midi(NP2FFILE f, const STENTRY *t) {
+static int flagsave_com(NP2FFILE f, const STENTRY *t) {
 
 	UINT	device;
 	COMMNG	cm;
 	int		ret;
-	_MIDICH	mch[16];
+	COMFLAG	flag;
 
 	device = (UINT)t->arg1;
 	switch(device) {
@@ -1070,50 +1069,73 @@ static int flagsave_midi(NP2FFILE f, const STENTRY *t) {
 			break;
 	}
 	ret = NP2FLAG_SUCCESS;
-	if ((cm != NULL) && (cm->msg(cm, COMMSG_MIDISTATGET, (long)mch))) {
-		ret = flagsave_create(f, t);
-		if (ret != NP2FLAG_FAILURE) {
-			ret |= flagsave_save(f, mch, sizeof(mch));
-			ret |= flagsave_close(f);
+	if (cm) {
+		flag = (COMFLAG)cm->msg(cm, COMMSG_GETFLAG, 0);
+		if (flag) {
+			ret = flagsave_create(f, t);
+			if (ret != NP2FLAG_FAILURE) {
+				ret |= flagsave_save(f, flag, flag->size);
+				ret |= flagsave_close(f);
+			}
+			_MFREE(flag);
 		}
 	}
 	return(ret);
 }
 
-static int flagload_midi(NP2FFILE f, const STENTRY *t) {
+static int flagload_com(NP2FFILE f, const STENTRY *t) {
 
-	_MIDICH	mch[16];
-	UINT	device;
-	COMMNG	cm;
-	int		ret;
+	UINT		device;
+	COMMNG		cm;
+	int			ret;
+	_COMFLAG	fhdr;
+	COMFLAG		flag;
 
-	ret = flagload_load(f, mch, sizeof(mch));
-	if (ret != NP2FLAG_FAILURE) {
-		device = (UINT)t->arg1;
-		switch(device) {
-			case 0:
-				commng_destroy(cm_mpu98);
-				cm = commng_create(COMCREATE_MPU98II);
-				cm_mpu98 = cm;
-				break;
-
-			case 1:
-				commng_destroy(cm_rs232c);
-				cm = commng_create(COMCREATE_SERIAL);
-				cm_rs232c = cm;
-				break;
-
-			default:
-				cm = NULL;
-				break;
-		}
-		if (cm) {
-			cm->msg(cm, COMMSG_MIDISTATSET, (long)mch);
-		}
+	ret = flagload_load(f, &fhdr, sizeof(fhdr));
+	if (ret != NP2FLAG_SUCCESS) {
+		goto flcom_err1;
 	}
+	if (fhdr.size < sizeof(fhdr)) {
+		goto flcom_err1;
+	}
+	flag = (COMFLAG)_MALLOC(fhdr.size, "com stat flag");
+	if (flag == NULL) {
+		goto flcom_err1;
+	}
+	CopyMemory(flag, &fhdr, sizeof(fhdr));
+	ret |= flagload_load(f, flag + 1, fhdr.size - sizeof(fhdr));
+	if (ret != NP2FLAG_SUCCESS) {
+		goto flcom_err2;
+	}
+
+	device = (UINT)t->arg1;
+	switch(device) {
+		case 0:
+			commng_destroy(cm_mpu98);
+			cm = commng_create(COMCREATE_MPU98II);
+			cm_mpu98 = cm;
+			break;
+
+		case 1:
+			commng_destroy(cm_rs232c);
+			cm = commng_create(COMCREATE_SERIAL);
+			cm_rs232c = cm;
+			break;
+
+		default:
+			cm = NULL;
+			break;
+	}
+	if (cm) {
+		cm->msg(cm, COMMSG_SETFLAG, (long)flag);
+	}
+
+flcom_err2:
+	_MFREE(flag);
+
+flcom_err1:
 	return(ret);
 }
-#endif
 
 
 // ----
@@ -1194,11 +1216,9 @@ int statsave_save(const char *filename) {
 				ret |= flagsave_disk(&f, &np2tbl[i]);
 				break;
 
-#if defined(MIDICH)
-			case NP2FLAG_MIDI:
-				ret |= flagsave_midi(&f, &np2tbl[i]);
+			case NP2FLAG_COM:
+				ret |= flagsave_com(&f, &np2tbl[i]);
 				break;
-#endif
 		}
 	}
 	flagclose(&f);
@@ -1254,9 +1274,7 @@ int statsave_check(const char *filename, char *buf, int size) {
 					case NP2FLAG_EXT:
 					case NP2FLAG_EVT:
 					case NP2FLAG_GIJ:
-#if defined(MIDICH)
-					case NP2FLAG_MIDI:
-#endif
+					case NP2FLAG_COM:
 						ret |= flagcheck_veronly(&f, &np2tbl[i], &e);
 						break;
 
@@ -1357,11 +1375,9 @@ int statsave_load(const char *filename) {
 					ret |= flagload_disk(&f, &np2tbl[i]);
 					break;
 
-#if defined(MIDICH)
-				case NP2FLAG_MIDI:
-					ret |= flagload_midi(&f, &np2tbl[i]);
+				case NP2FLAG_COM:
+					ret |= flagload_com(&f, &np2tbl[i]);
 					break;
-#endif
 
 				default:
 					ret |= NP2FLAG_WARNING;

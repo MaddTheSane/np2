@@ -1,14 +1,6 @@
 
 // ---- com manager midi for windows
 
-typedef struct {
-	BYTE	prog;
-	BYTE	press;
-	UINT16	bend;
-	BYTE	ctrl[28];
-} _MIDICH, *MIDICH;
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -5,27 +5,27 @@
 
 // ---- non connect
 
-UINT commng_ncread(COMMNG self, BYTE *data) {
+static UINT ncread(COMMNG self, BYTE *data) {
 
 	(void)self;
 	(void)data;
 	return(0);
 }
 
-UINT commng_ncwrite(COMMNG self, BYTE data) {
+static UINT ncwrite(COMMNG self, BYTE data) {
 
 	(void)self;
 	(void)data;
 	return(0);
 }
 
-BYTE commng_ncgetstat(COMMNG self) {
+static BYTE ncgetstat(COMMNG self) {
 
 	(void)self;
 	return(0xf0);
 }
 
-UINT commng_ncmsg(COMMNG self, UINT msg, long param) {
+static long ncmsg(COMMNG self, UINT msg, long param) {
 
 	(void)self;
 	(void)msg;
@@ -37,9 +37,7 @@ static void ncrelease(COMMNG self) {
 }
 
 static const _COMMNG com_nc = {
-		COMCONNECT_OFF,
-		commng_ncread, commng_ncwrite, commng_ncgetstat, commng_ncmsg,
-		ncrelease};
+		COMCONNECT_OFF, ncread, ncwrite, ncgetstat, ncmsg, ncrelease};
 
 
 // ----

@@ -2,8 +2,8 @@
 #include	"midiout.h"
 
 
-#define	MIDIOUT_VERSION		0x101
-#define	MIDIOUT_VERSTRING	"VERMOUTH 1.01"
+#define	MIDIOUT_VERSION		0x102
+#define	MIDIOUT_VERSTRING	"VERMOUTH 1.02"
 
 
 static const char vermouthver[] = MIDIOUT_VERSTRING;
@@ -406,6 +406,11 @@ static void allnotesoff(MIDIHDL midi, CHANNEL ch) {
 	v = midi->voice;
 	vterm = v + VOICE_MAX;
 	do {
+#if 1
+		if ((v->phase & (VOICE_ON | VOICE_SUSTAIN)) && (v->channel == ch)) {
+			voice_off(v);
+		}
+#else
 		if ((v->phase & VOICE_ON) && (v->channel == ch)) {
 			if (ch->flag & CHANNEL_SUSTAIN) {
 				voice_setphase(v, VOICE_SUSTAIN);
@@ -414,6 +419,7 @@ static void allnotesoff(MIDIHDL midi, CHANNEL ch) {
 				voice_off(v);
 			}
 		}
+#endif
 		v++;
 	} while(v < vterm);
 }
@@ -647,7 +653,7 @@ MIDIHDL midiout_create(MIDIMOD module, UINT worksize) {
 	worksize = min(worksize, 512);
 	worksize = max(worksize, 16384);
 	size = sizeof(_MIDIHDL);
-	size += sizeof(SINT32) * worksize;
+	size += sizeof(SINT32) * 2 * worksize;
 	size += sizeof(_SAMPLE) * worksize;
 	ret = (MIDIHDL)_MALLOC(size, "MIDIHDL");
 	if (ret) {
@@ -659,7 +665,7 @@ MIDIHDL midiout_create(MIDIMOD module, UINT worksize) {
 		ret->bank0[0] = module->tone[0];
 		ret->bank0[1] = module->tone[1];
 		ret->sampbuf = (SINT32 *)(ret + 1);
-		ret->resampbuf = (SAMPLE)(ret->sampbuf + worksize);
+		ret->resampbuf = (SAMPLE)(ret->sampbuf + worksize * 2);
 		allresetmidi(ret);
 	}
 	return(ret);

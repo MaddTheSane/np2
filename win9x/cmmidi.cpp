@@ -83,6 +83,13 @@ struct _cmmidi;
 typedef struct _cmmidi	_CMMIDI;
 typedef struct _cmmidi	*CMMIDI;
 
+typedef struct {
+	BYTE	prog;
+	BYTE	press;
+	UINT16	bend;
+	BYTE	ctrl[28];
+} _MIDICH, *MIDICH;
+
 struct _cmmidi {
 	UINT		opened;
 	void		(*outfn)(CMMIDI self, UINT32 msg);
@@ -336,7 +343,7 @@ static void midisetparam(CMMIDI midi) {
 
 // ----
 
-static UINT	midiread(COMMNG self, BYTE *data) {
+static UINT midiread(COMMNG self, BYTE *data) {
 
 	CMMIDI	midi;
 
@@ -350,7 +357,7 @@ static UINT	midiread(COMMNG self, BYTE *data) {
 	return(0);
 }
 
-static UINT	midiwrite(COMMNG self, BYTE data) {
+static UINT midiwrite(COMMNG self, BYTE data) {
 
 	CMMIDI	midi;
 	MIDICH	mch;
@@ -529,14 +536,15 @@ static UINT	midiwrite(COMMNG self, BYTE data) {
 	return(0);
 }
 
-static BYTE	midigetstat(COMMNG self) {
+static BYTE midigetstat(COMMNG self) {
 
 	return(0x00);
 }
 
-static UINT	midimsg(COMMNG self, UINT msg, long param) {
+static long midimsg(COMMNG self, UINT msg, long param) {
 
 	CMMIDI	midi;
+	COMFLAG	flag;
 
 	midi = (CMMIDI)(self + 1);
 	switch(msg) {
@@ -544,21 +552,36 @@ static UINT	midimsg(COMMNG self, UINT msg, long param) {
 			midireset(midi);
 			return(1);
 
+		case COMMSG_SETFLAG:
+			flag = (COMFLAG)param;
+			if ((flag) &&
+				(flag->size == sizeof(_COMFLAG) + sizeof(midi->mch)) &&
+				(flag->sig == COMSIG_MIDI)) {
+				CopyMemory(midi->mch, flag + 1, sizeof(midi->mch));
+				midisetparam(midi);
+				return(1);
+			}
+			break;
+
+		case COMMSG_GETFLAG:
+			flag = (COMFLAG)_MALLOC(sizeof(_COMFLAG) + sizeof(midi->mch),
+																"MIDI FLAG");
+			if (flag) {
+				flag->size = sizeof(_COMFLAG) + sizeof(midi->mch);
+				flag->sig = COMSIG_MIDI;
+				flag->ver = 0;
+				flag->param = 0;
+				CopyMemory(flag + 1, midi->mch, sizeof(midi->mch));
+				return((long)flag);
+			}
+			break;
+
 		case COMMSG_MIMPIDEFFILE:
 			mimpidef_load(&midi->def, (char *)param);
 			return(1);
 
 		case COMMSG_MIMPIDEFEN:
 			midi->def_en = (param)?TRUE:FALSE;
-			return(1);
-
-		case COMMSG_MIDISTATSET:
-			CopyMemory(midi->mch, (void *)param, sizeof(midi->mch));
-			midisetparam(midi);
-			return(1);
-
-		case COMMSG_MIDISTATGET:
-			CopyMemory((void *)param, midi->mch, sizeof(midi->mch));
 			return(1);
 	}
 	return(0);

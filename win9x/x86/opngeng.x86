@@ -275,12 +275,12 @@ og_nextsamp:	neg		ebx
 				imul	eax, [_opngen + opngen_t.outdl]
 				add		eax, [esp + OPN_SAMPL]
 				imul	dword [_opncfg + opncfg_t.fmvol]
-				mov		[ebp], edx
+				add		[ebp], edx
 				mov		eax, [_opngen + opngen_t.outdr]
 				imul	ecx
 				add		eax, [esp + OPN_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
-				mov		[ebp+4], edx
+				add		[ebp+4], edx
 				add		ebp, byte 8
 				dec		dword [esp + OPN_LENG]
 				jne		near og_fmout_st

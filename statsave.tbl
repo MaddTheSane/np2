@@ -98,10 +98,8 @@ static const STENTRY np2tbl[] = {
 	{"PALEVENT",	0,	NP2FLAG_BIN,	&palevent,		sizeof(palevent)},
 	{"FMBOARD",		0,	NP2FLAG_FM,		NULL,			0},
 	{"BEEP",		0,	NP2FLAG_BIN,	&beep,			sizeof(beep)},
-#if defined(MIDICH)
-	{"MIDI_MPU",	0,	NP2FLAG_MIDI,	(void *)0,		0},
-	{"MIDI_RS",		0,	NP2FLAG_MIDI,	(void *)1,		0},
-#endif
+	{"CMMPU98",		0,	NP2FLAG_COM,	(void *)0,		0},
+	{"CMRS232C",	0,	NP2FLAG_COM,	(void *)1,		0},
 	{"DISK",		0,	NP2FLAG_DISK,	NULL,			0},
 	{"TERMINATE",	0,	NP2FLAG_TERM,	NULL,			0}};
 

@@ -53,7 +53,7 @@ static BYTE serialgetstat(COMMNG self) {
 	}
 }
 
-static UINT serialmsg(COMMNG self, UINT msg, long param) {
+static long serialmsg(COMMNG self, UINT msg, long param) {
 
 	(void)self;
 	(void)msg;

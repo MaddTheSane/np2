@@ -25,7 +25,7 @@ static BYTE ncgetstat(COMMNG self) {
 	return(0xf0);
 }
 
-static UINT ncmsg(COMMNG self, UINT msg, long param) {
+static long ncmsg(COMMNG self, UINT msg, long param) {
 
 	(void)self;
 	(void)msg;
@@ -34,8 +34,6 @@ static UINT ncmsg(COMMNG self, UINT msg, long param) {
 }
 
 static void ncrelease(COMMNG self) {
-
-	(void)self;
 }
 
 static const _COMMNG com_nc = {
@@ -43,6 +41,11 @@ static const _COMMNG com_nc = {
 
 
 // ----
+
+void commng_initialize(void) {
+
+	cmmidi_initailize();
+}
 
 COMMNG commng_create(UINT device) {
 

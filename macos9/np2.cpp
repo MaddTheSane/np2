@@ -3,6 +3,7 @@
 #include	"strres.h"
 #include	"np2.h"
 #include	"dosio.h"
+#include	"commng.h"
 #include	"scrnmng.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -670,6 +671,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	commng_initialize();
 	sysmng_initialize();
 	mackbd_initialize();
 	pccore_init();

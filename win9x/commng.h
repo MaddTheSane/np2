@@ -18,6 +18,8 @@ enum {
 
 enum {
 	COMMSG_MIDIRESET		= 0,
+	COMMSG_SETFLAG,
+	COMMSG_GETFLAG,
 	COMMSG_USER
 };
 
@@ -30,19 +32,21 @@ struct _commng {
 	UINT	(*read)(COMMNG self, BYTE *data);
 	UINT	(*write)(COMMNG self, BYTE data);
 	BYTE	(*getstat)(COMMNG self);
-	UINT	(*msg)(COMMNG self, UINT msg, long param);
+	long	(*msg)(COMMNG self, UINT msg, long param);
 	void	(*release)(COMMNG self);
 };
+
+typedef struct {
+	UINT32	size;
+	UINT32	sig;
+	UINT32	ver;
+	UINT32	param;
+} _COMFLAG, *COMFLAG;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-UINT commng_ncread(COMMNG self, BYTE *data);
-UINT commng_ncwrite(COMMNG self, BYTE data);
-BYTE commng_ncgetstat(COMMNG self);
-UINT commng_ncmsg(COMMNG self, UINT msg, long param);
 
 COMMNG commng_create(UINT device);
 void commng_destroy(COMMNG hdl);
@@ -64,10 +68,16 @@ enum {
 };
 
 enum {
+	COMSIG_COM1				= 0x314d4f43,
+	COMSIG_COM2				= 0x324d4f43,
+	COMSIG_COM3				= 0x334d4f43,
+	COMSIG_COM4				= 0x344d4f43,
+	COMSIG_MIDI				= 0x4944494d
+};
+
+enum {
 	COMMSG_MIMPIDEFFILE		= COMMSG_USER,
-	COMMSG_MIMPIDEFEN,
-	COMMSG_MIDISTATSET,
-	COMMSG_MIDISTATGET
+	COMMSG_MIMPIDEFEN
 };
 
 void commng_initialize(void);
