@@ -597,42 +597,49 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 		case IDM_F12MOUSE:
 			xmenu_setf12copy(0);
 			winkbd_resetf12();
+			winkbd_setf12(0);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COPY:
 			xmenu_setf12copy(1);
 			winkbd_resetf12();
+			winkbd_setf12(1);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12STOP:
 			xmenu_setf12copy(2);
 			winkbd_resetf12();
+			winkbd_setf12(2);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12EQU:
 			xmenu_setf12copy(3);
 			winkbd_resetf12();
+			winkbd_setf12(3);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COMMA:
 			xmenu_setf12copy(4);
 			winkbd_resetf12();
+			winkbd_setf12(4);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_USERKEY1:
 			xmenu_setf12copy(5);
 			winkbd_resetf12();
+			winkbd_setf12(5);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_USERKEY2:
 			xmenu_setf12copy(6);
 			winkbd_resetf12();
+			winkbd_setf12(6);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
@@ -1414,6 +1421,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			np2oscfg.KEYBOARD = KEY_KEY106;
 		}
 	}
+	winkbd_roll(np2oscfg.KEYBOARD != KEY_PC98);
+	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 
 	np2class_initialize(hInstance);

@@ -142,29 +142,11 @@ static const UINT8 f12keys[] = {
 			0x61, 0x60, 0x4d, 0x4f, 0x76, 0x77};
 
 
-static BYTE getf12key(void) {
-
-	UINT	key;
-
-	key = np2oscfg.F12COPY - 1;
-	if (key < (sizeof(f12keys)/sizeof(UINT8))) {
-		return(f12keys[key]);
-	}
-	else {
-		return(NC);
-	}
-}
-
 void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
 	BYTE	data;
 
-	if (wParam != VK_F12) {
-		data = key106[wParam & 0xff];
-	}
-	else {
-		data = getf12key();
-	}
+	data = key106[wParam & 0xff];
 	if (data != NC) {
 		if ((data == 0x73) &&
 				(np2oscfg.KEYBOARD == KEY_KEY101) &&
@@ -191,12 +173,7 @@ void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 
 	BYTE	data;
 
-	if (wParam != VK_F12) {
-		data = key106[wParam & 0xff];
-	}
-	else {
-		data = getf12key();
-	}
+	data = key106[wParam & 0xff];
 	if (data != NC) {
 		if ((data == 0x73) &&
 				(np2oscfg.KEYBOARD == KEY_KEY101) &&
