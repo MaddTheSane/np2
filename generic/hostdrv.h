@@ -1,4 +1,6 @@
 
+#if defined(SUPPORT_HOSTDRV)
+
 #define	DIRMAX_DEPTH		8
 
 enum {
@@ -46,5 +48,7 @@ void hostdrv_intr(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 

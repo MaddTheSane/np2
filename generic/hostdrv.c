@@ -1,3 +1,6 @@
+#include	"compiler.h"
+
+#if defined(SUPPORT_HOSTDRV)
 
 /*
 	ゲストOS(DOS)からホストOS(Win)にアクセスするの～
@@ -6,7 +9,6 @@
 	更に、手抜き版だし(マテ
 */
 
-#include	"compiler.h"
 #include	"dosio.h"
 #include	"cpucore.h"
 #include	"pccore.h"
@@ -1117,4 +1119,6 @@ void hostdrv_intr(void) {
 
 	store_intr_regs(&intrst);
 }
+
+#endif
 

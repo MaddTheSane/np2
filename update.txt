@@ -28,15 +28,10 @@
 　・MIDI … STATSAVEの修正
 　・SOUND … JAST SOUNDをサポート
 　・Vermouth … Roland GSコマンドの一部に対応
-　・BIOS … DISK BIOSをサポート(但し 通常のBIOSコールは DISK BIOSを使用せずに BIOSレベルでシミュレートしています)
-　・BIOS … SASI/SCSI BIOS ROMをサポート(BIOSアドレス d000:0000)
 
 　補足
 　　ver0.73では EPSONモードの時 D000～DFFFがRAM化されます。
 　　・SOUND BIOSは D000,D400に配置しないで下さい、もしくはUMB等で破壊されないようにして下さい。
-　　・SASI/SCSI BIOSについては 殆どの場合にはブート時にしか使っていないので RAM内容を破壊しても HDDアクセスは正常に行なわれます。
-　　　※アプリケーションが SASI/SCSI BIOSを直視しない限りは大丈夫。
-　　　　ver0.72までは SASI/SCSI BIOSがサポートされていない(＝つまり使われていない) ver0.72までに動いていたソフトウェアはほぼ大丈夫と言えます。
 
 
 　(X11)
@@ -66,6 +61,12 @@
 　　・i286a/i286c/i286xに簡易プロテクトモードを追加(保護・タスクなし)
 　　・DMACを再配置できるように修正
 　　・CPU/EGCのストラクチャの調整
+　　・BIOS … DISK BIOSをサポート(但し 通常のBIOSコールは DISK BIOSを使用せずに BIOSレベルでシミュレートしています)
+　　・BIOS … SASI/SCSI BIOS ROMをサポート(BIOSアドレス d000:0000)
+　　　補足→ (ver0.74に回す)
+　　　　SASI/SCSI BIOSは 殆どの場合にはブート時にしか使っていないので RAM内容を破壊しても HDDアクセスは正常に行なわれます。
+　　　　※アプリケーションが SASI/SCSI BIOSを直視しない限りは大丈夫。
+　　　　　ver0.72までは SASI/SCSI BIOSがサポートされていない(＝つまり使われていない) ver0.72までに動いていたソフトウェアはほぼ大丈夫と言えます。
 　　・hostdrv...
 
 

@@ -1,4 +1,7 @@
 #include	"compiler.h"
+
+#if defined(SUPPORT_HOSTDRV)
+
 #if defined(OSLANG_EUC)
 #include	"codecnv.h"
 #endif
@@ -382,4 +385,6 @@ HDRVFILE hostdrvs_fhdlsea(LISTARRAY fhdl) {
 	}
 	return(ret);
 }
+
+#endif
 
