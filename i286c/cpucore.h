@@ -260,6 +260,7 @@ void v30c_step(void);
 #define	CPU_MSW			i286core.s.MSW
 #define	CPU_RESETREQ	i286core.s.resetreq
 #define	CPU_ITFBANK		i286core.s.itfbank
+#define	CPU_RAM_D000	i286core.s.ram_d0
 
 #define	CPU_EXTMEM		i286core.e.ext
 #define	CPU_EXTMEMSIZE	i286core.e.extsize

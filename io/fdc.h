@@ -87,16 +87,16 @@ typedef struct {
 	UINT8	cmd;
 	BYTE	cmds[15];
 	BYTE	data[16];
-	BYTE	buf[0x8000];
 
 	UINT8	ctrlfd;
 	UINT8	crcn;
-
 	UINT8	ctrlreg;
 	UINT8	busy;
-
 	UINT8	chgreg;
 	UINT8	rpm;													// 1.44
+	UINT8	padding[2];
+
+	BYTE	buf[0x8000];
 } _FDC, *FDC;
 
 

@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.6 2004/01/05 06:50:15 yui Exp $	*/
+/*	$Id: cpu.h,v 1.7 2004/01/05 14:30:34 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -209,6 +209,7 @@ extern I386CORE		i386core;
 #define	CPU_BASECLOCK	i386core.s.baseclock
 #define	CPU_CLOCK	i386core.s.clock
 #define	CPU_ITFBANK	i386core.s.itfbank
+#define	CPU_RAM_D000	i386core.s.ram_d0
 
 #define CPU_TYPE	i386core.s.cpu_type
 #define CPUTYPE_V30	0x01
