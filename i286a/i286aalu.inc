@@ -306,5 +306,38 @@ $label		sub		r1, $s, #1
 			orr		r8, r8, r2
 	MEND
 
+
+	MACRO
+$label	REGPUSH	$r, $clk
+$label		CPUWORK	$clk
+			ldrh	r0, [r9, #CPU_SP]
+			ldrh	r1, [r9, $r]
+			ldr		r2, [r9, #CPU_SS_BASE]
+			sub		r0, r0, #2
+			mov		r3, r0 lsl #16
+			strh	r0, [r9, #CPU_SP]
+			add		r0, r2, r3 lsr #16
+			mov		lr, r11
+			b		i286_memorywrite_w
+	MEND
+
+	MACRO
+$label	POP		$clk
+$label		CPUWORK	$clk
+			ldrh	r1, [r9, #CPU_SP]
+			ldr		r0, [r9, #CPU_SS_BASE]
+			add		r0, r1, r0
+			add		r1, r1, #2
+			strh	r1, [r9, #CPU_SP]
+			bl		i286_memoryread_w
+	MEND
+
+	MACRO
+$label	REGPOP	$r, $clk
+$label		POP		$clk
+			strh	r0, [r9, $r]
+			mov		pc, r11
+	MEND
+
 	END
 
