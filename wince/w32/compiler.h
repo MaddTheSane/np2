@@ -4,7 +4,11 @@
 #include	<stddef.h>
 
 #define	BYTESEX_LITTLE
+#if defined(UNICODE) && defined(CHARSET_OEM)
+#define	OSLANG_UTF8
+#else
 #define	OSLANG_SJIS
+#endif
 #define	OSLINEBREAK_CRLF
 
 typedef signed char		SINT8;
@@ -53,7 +57,11 @@ typedef	unsigned int	UINT32;
 #define	VERMOUTH_LIB
 #define SOUND_CRITICAL
 
+#if defined(UNICODE) && defined(CHARSET_OEM)
+#define	SUPPORT_UTF8
+#else
 #define	SUPPORT_SJIS
+#endif
 
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
