@@ -29,7 +29,9 @@ static	LPDIRECTSOUND		pDSound;
 static	LPDIRECTSOUNDBUFFER	pDSData3;
 static	UINT				dsstreambytes;
 static	BYTE				dsstreamevent;
-static	BYTE				mute;
+static	UINT				mute;
+static	void				(PARTSCALL *fnmix)(SINT16 *dst,
+												const SINT32 *src, UINT size);
 
 
 // ---- directsound
@@ -77,6 +79,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	samples = (rate * ms) / 2000;
 	samples = (samples + 3) & (~3);
 	dsstreambytes = samples * 2 * sizeof(SINT16);
+	soundmng_setreverse(FALSE);
 
 	ZeroMemory(&pcmwf, sizeof(PCMWAVEFORMAT));
 	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
@@ -191,7 +194,7 @@ const SINT32	*pcm;
 	}
 	if (SUCCEEDED(hr)) {
 		if (pcm) {
-			satuation_s16((SINT16 *)blockptr1, pcm, blocksize1);
+			(*fnmix)((SINT16 *)blockptr1, pcm, blocksize1);
 		}
 		else {
 			ZeroMemory(blockptr1, blocksize1);
@@ -225,6 +228,13 @@ void soundmng_sync(void) {
 }
 
 void soundmng_setreverse(BOOL reverse) {
+
+	if (!reverse) {
+		fnmix = satuation_s16;
+	}
+	else {
+		fnmix = satuation_s16x;
+	}
 }
 
 
@@ -251,20 +261,23 @@ void soundmng_deinitialize(void) {
 
 // ----
 
-void soundmng_enable(void) {
+void soundmng_enable(UINT proc) {
 
-	if (mute) {
-		mute = 0;
+	if (!(mute & (1 << proc))) {
+		return;
+	}
+	mute &= ~(1 << proc);
+	if (!mute) {
 		soundmng_reset();
 		streamenable(TRUE);
 	}
 }
 
-void soundmng_disable(void) {
+void soundmng_disable(UINT proc) {
 
 	if (!mute) {
-		mute = 1;
 		streamenable(FALSE);
 	}
+	mute |= 1 << proc;
 }
 

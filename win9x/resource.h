@@ -317,7 +317,7 @@
 #define IDM_RAPID                       40088
 #define IDM_MSRAPID                     40089
 #define IDM_SSTP                        40090
-#define	IDM_I286SAVE                    40091
+#define IDM_I286SAVE                    40091
 #define IDM_HELP                        40092
 #define IDM_ABOUT                       40093
 #define IDM_SKIN                        40094

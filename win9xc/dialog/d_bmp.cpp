@@ -1,15 +1,15 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
 #include	"sysmng.h"
-#include	"pccore.h"
-#include	"iocore.h"
 #include	"dialog.h"
 #include	"dialogs.h"
-#include	"font.h"
+#include	"pccore.h"
+#include	"iocore.h"
 #include	"scrnbmp.h"
+#include	"font.h"
 
 
 static const char fontui_title[] = "Select font file";
@@ -38,13 +38,14 @@ static const char *bmpui_filter[3] = {
 
 void dialog_font(HWND hWnd) {
 
-const char	*p;
+	char	path[MAX_PATH];
 
-	p = dlgs_selectfile(hWnd, &fontui, np2cfg.fontfile, NULL, 0, NULL);
-	if ((p != NULL) && (font_load(p, FALSE))) {
+	file_cpyname(path, np2cfg.fontfile, sizeof(path));
+	if ((dlgs_selectfile(hWnd, &fontui, path, sizeof(path), NULL)) &&
+		(font_load(path, FALSE))) {
 		gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-		milstr_ncpy(np2cfg.fontfile, p, sizeof(np2cfg.fontfile));
-		sysmng_update(SYS_UPDATEOSCFG);
+		milstr_ncpy(np2cfg.fontfile, path, sizeof(np2cfg.fontfile));
+		sysmng_update(SYS_UPDATECFG);
 	}
 }
 
@@ -52,7 +53,7 @@ void dialog_writebmp(HWND hWnd) {
 
 	SCRNBMP	bmp;
 	FILESEL	bmpui;
-const char	*p;
+	char	path[MAX_PATH];
 	FILEH	fh;
 
 	bmp = scrnbmp();
@@ -61,10 +62,13 @@ const char	*p;
 		bmpui.ext = str_bmp;
 		bmpui.filter = bmpui_filter[bmp->type];
 		bmpui.defindex = 1;
-		p = dlgs_selectwritenum(hWnd, &bmpui, bmpui_file,
-										bmpfilefolder, sizeof(bmpfilefolder));
-		if (p) {
-			fh = file_create(p);
+		file_cpyname(path, bmpfilefolder, sizeof(path));
+		file_cutname(path);
+		file_catname(path, bmpui_file, sizeof(path));
+		if (dlgs_selectwritenum(hWnd, &bmpui, path, sizeof(path))) {
+			file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
+			sysmng_update(SYS_UPDATEOSCFG);
+			fh = file_create(path);
 			if (fh != FILEH_INVALID) {
 				file_write(fh, bmp->ptr, bmp->size);
 				file_close(fh);

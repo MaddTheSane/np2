@@ -106,7 +106,9 @@ typedef struct {
 	UINT8	hdrvacc;
 
 	char	sasihdd[2][MAX_PATH];									// ver0.74
+#if defined(SUPPORT_SCSI)
 	char	scsihdd[4][MAX_PATH];									// ver0.74
+#endif
 	char	fontfile[MAX_PATH];
 	char	biospath[MAX_PATH];
 	char	hdrvroot[MAX_PATH];

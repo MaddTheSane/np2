@@ -28,15 +28,15 @@ typedef struct {
 	LPDIRECTDRAWSURFACE	clocksurf;
 	LPDIRECTDRAWCLIPPER	clipper;
 	LPDIRECTDRAWPALETTE	palette;
-	BYTE				scrnmode;
+	UINT				scrnmode;
 	int					width;
 	int					height;
 	int					extend;
 	int					cliping;
 	RGB32				pal16mask;
-	BYTE				r16b;
-	BYTE				l16r;
-	BYTE				l16g;
+	UINT8				r16b;
+	UINT8				l16r;
+	UINT8				l16g;
 	BYTE				menudisp;
 	int					menusize;
 	RECT				scrn;
@@ -385,13 +385,8 @@ BOOL scrnmng_create(BYTE scrnmode) {
 
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		dclock_init();
-#if 0
 		ddraw2->SetCooperativeLevel(hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
-#else
-		ddraw2->SetCooperativeLevel(hWndMain,
-					DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT);
-#endif
 		height = (np2oscfg.force400)?400:480;
 		bitcolor = (scrnmode & SCRNMODE_HIGHCOLOR)?16:8;
 		if (ddraw2->SetDisplayMode(640, height, bitcolor, 0, 0) != DD_OK) {
@@ -497,7 +492,7 @@ BOOL scrnmng_create(BYTE scrnmode) {
 		}
 		ddraw.extend = 1;
 	}
-	scrnmng.bpp = (BYTE)bitcolor;
+	scrnmng.bpp = (UINT8)bitcolor;
 	scrnsurf.bpp = bitcolor;
 	ddraw.scrnmode = scrnmode;
 	ddraw.width = 640;

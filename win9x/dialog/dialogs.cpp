@@ -8,9 +8,6 @@
 
 static const char str_nc[] = "N/C";
 
-// static	char	pathname[MAX_PATH];
-// static	char	filename[MAX_PATH];
-
 const char str_int0[] = "INT0";
 const char str_int1[] = "INT1";
 const char str_int2[] = "INT2";

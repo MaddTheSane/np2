@@ -23,9 +23,6 @@ typedef struct {
 
 
 enum {
-	SCREEN_WBASE		= 80,
-	SCREEN_HBASE		= 50,
-	SCREEN_DEFMUL		= 8,
 	FULLSCREEN_WIDTH	= 640,
 	FULLSCREEN_HEIGHT	= 480
 };
@@ -34,7 +31,8 @@ enum {
 enum {
 	IDM_MEMORYDUMP		= 20000,
 
-	IDM_I286SAVE		= 20200,
+	IDM_FLAGSAVE		= 20100,
+	IDM_FLAGLOAD		= 20150,
 
 	WM_NP2CMD			= (WM_USER + 200)
 };
@@ -46,11 +44,14 @@ enum {
 	NP2CMD_DUMMY		= 0xffff
 };
 
+// #define	STATSAVEMAX		10
+
 extern	const char	szAppCaption[];
 extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
+
 extern	char		modulefile[MAX_PATH];
 extern	char		fddfolder[MAX_PATH];
 extern	char		hddfolder[MAX_PATH];

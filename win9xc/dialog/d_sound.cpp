@@ -5,6 +5,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"dosio.h"
 #include	"joymng.h"
 #include	"sysmng.h"
 #include	"menu.h"
@@ -981,13 +982,17 @@ static const FILESEL s98ui = {s98ui_title, s98ui_ext, s98ui_filter, 1};
 void dialog_s98(HWND hWnd) {
 
 	BOOL	check;
-const char	*p;
+	char	path[MAX_PATH];
 
 	S98_close();
 	check = FALSE;
-	p = dlgs_selectwritenum(hWnd, &s98ui, s98ui_file,
-									bmpfilefolder, sizeof(bmpfilefolder));
-	if ((p != NULL) && (S98_open(p) == SUCCESS)) {
+	file_cpyname(path, bmpfilefolder, sizeof(path));
+	file_cutname(path);
+	file_catname(path, s98ui_file, sizeof(path));
+	if ((dlgs_selectwritenum(hWnd, &s98ui, path, sizeof(path))) &&
+		(S98_open(path) == SUCCESS)) {
+		file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
+		sysmng_update(SYS_UPDATEOSCFG);
 		check = TRUE;
 	}
 	xmenu_sets98logging(check);

@@ -28,7 +28,7 @@
 #include	"juliet.h"
 #include	"np2class.h"
 #include	"dialog.h"
-#include	"memory.h"
+#include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"pc9861k.h"
@@ -229,6 +229,10 @@ void np2active_renewal(void) {									// ver0.30
 	}
 }
 
+
+// ---- resume and statsave
+
+#if defined(SUPPORT_RESUME) || defined(SUPPORT_STATSAVE)
 static void getstatfilename(char *path, const char *ext, int size) {
 
 	file_cpyname(path, modulefile, size);
@@ -291,6 +295,7 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 	winuileave();
 	return(id);
 }
+#endif
 
 
 // ---- proc
@@ -819,18 +824,20 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			break;
 
 		default:
+#if defined(SUPPORT_STATSAVE)
 			if ((cmd >= IDM_FLAGSAVE) &&
-				(cmd < (IDM_FLAGSAVE + STATSAVEMAX))) {
+				(cmd < (IDM_FLAGSAVE + SUPPORT_STATSAVE))) {
 				char ext[4];
-				wsprintf(ext, np2flagext, cmd - IDM_FLAGSAVE);
+				SPRINTF(ext, np2flagext, cmd - IDM_FLAGSAVE);
 				flagsave(ext);
 			}
-			if ((cmd >= IDM_FLAGLOAD) &&
-				(cmd < (IDM_FLAGLOAD + STATSAVEMAX))) {
+			else if ((cmd >= IDM_FLAGLOAD) &&
+				(cmd < (IDM_FLAGLOAD + SUPPORT_STATSAVE))) {
 				char ext[4];
-				wsprintf(ext, np2flagext, cmd - IDM_FLAGLOAD);
+				SPRINTF(ext, np2flagext, cmd - IDM_FLAGLOAD);
 				flagload(ext, "Status Load", TRUE);
 			}
+#endif
 			break;
 	}
 	sysmng_update(update);
@@ -1009,14 +1016,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_MOVE:
-			if (!scrnmng_isfullscreen()) {
-				if (!(GetWindowLong(hWnd, GWL_STYLE) &
-											(WS_MAXIMIZE | WS_MINIMIZE))) {
-					GetWindowRect(hWnd, &rc);
-					np2oscfg.winx = rc.left;
-					np2oscfg.winy = rc.top;
-					sysmng_update(SYS_UPDATEOSCFG);
-				}
+			if ((!scrnmng_isfullscreen()) &&
+				(!(GetWindowLong(hWnd, GWL_STYLE) &
+									(WS_MAXIMIZE | WS_MINIMIZE)))) {
+				GetWindowRect(hWnd, &rc);
+				np2oscfg.winx = rc.left;
+				np2oscfg.winy = rc.top;
+				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			break;
 
@@ -1364,22 +1370,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	kdispwin_initialize(hPreInst);
 	viewer_init(hPreInst);
 
-#if 1
-	hWndMain = CreateWindowEx(0,
-						szClassName, np2oscfg.titles,
+	mousemng_initialize();
+
+	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_THICKFRAME | WS_MINIMIZEBOX,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
 						NULL, NULL, hInstance, NULL);
-#else	// テスト
-	hWndMain = CreateWindowEx(0,
-						szClassName, np2oscfg.titles,
-						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
-						WS_MINIMIZEBOX,
-						np2oscfg.winx, np2oscfg.winy, 640, 400,
-						NULL, NULL, hInstance, NULL);
-#endif
-	hWnd = hWndMain;
+	hWndMain = hWnd;
 	scrnmng_initialize();
 
 	xmenu_setroltate(0);
@@ -1404,7 +1402,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	xmenu_setbtnrapid(np2cfg.BTN_RAPID);
 	xmenu_setmsrapid(np2cfg.MOUSERAPID);
 	xmenu_setsstp(np2oscfg.sstp);
-	xmenu_seti286save(np2oscfg.I286SAVE);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -1458,17 +1455,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		juliet_initialize();
 	}
 
-	mousemng_initialize();
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
 		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
-//	mousemng_enable(MOUSEPROC_WINUI);
-//	mousemng_enable(MOUSEPROC_BG);
 
 	commng_initialize();
 	sysmng_initialize();
 
-	joy_init();
+	joymng_initialize();
 	pccore_init();
 	S98_init();
 
@@ -1485,6 +1479,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	np2opening = 0;
 
 	// れじうむ
+#if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume) {
 		int		id;
 
@@ -1506,6 +1501,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			return(0);
 		}
 	}
+#endif
 
 //	リセットしてから… コマンドラインのディスク挿入。				// ver0.29
 	for (i=0; i<4; i++) {
@@ -1539,8 +1535,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			}
 			else {
 				if (np2oscfg.NOWAIT) {
-					joy_flash();
-					mousemng_callback();
+					joymng_sync();
+					mousemng_sync();
 					pccore_exec(framecnt == 0);
 					dclock_callback();
 					if (np2oscfg.DRAW_SKIP) {		// nowait frame skip
@@ -1558,8 +1554,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 				}
 				else if (np2oscfg.DRAW_SKIP) {		// frame skip
 					if (framecnt < np2oscfg.DRAW_SKIP) {
-						joy_flash();
-						mousemng_callback();
+						joymng_sync();
+						mousemng_sync();
 						pccore_exec(framecnt == 0);
 						dclock_callback();
 						framecnt++;
@@ -1571,8 +1567,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 				else {								// auto skip
 					if (!waitcnt) {
 						UINT cnt;
-						joy_flash();
-						mousemng_callback();
+						joymng_sync();
+						mousemng_sync();
 						pccore_exec(framecnt == 0);
 						dclock_callback();
 						framecnt++;
@@ -1620,12 +1616,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	mousemng_disable(MOUSEPROC_WINUI);
 	S98_trash();
 
+#if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume) {
 		flagsave(str_sav);
 	}
 	else {
 		flagdelete(str_sav);
 	}
+#endif
 
 	juliet_YMF288Reset();
 	pccore_term();

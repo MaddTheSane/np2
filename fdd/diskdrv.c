@@ -23,27 +23,31 @@ void diskdrv_sethdd(REG8 drv, const char *fname) {
 	int		leng;
 
 	num = drv & 0x0f;
+	p = NULL;
+	leng = 0;
 	if (!(drv & 0x20)) {			// SASI or IDE
-		if (num >= 2) {
-			return;
+		if (num < 2) {
+			p = np2cfg.sasihdd[num];
+			leng = sizeof(np2cfg.sasihdd[0]);
 		}
-		p = np2cfg.sasihdd[num];
-		leng = sizeof(np2cfg.sasihdd[0]);
 	}
+#if defined(SUPPORT_SCSI)
 	else {							// SCSI
-		if (num >= 4) {
-			return;
+		if (num < 4) {
+			p = np2cfg.scsihdd[num];
+			leng = sizeof(np2cfg.scsihdd[0]);
 		}
-		p = np2cfg.scsihdd[num];
-		leng = sizeof(np2cfg.scsihdd[0]);
 	}
-	if (fname) {
-		file_cpyname(p, fname, leng);
+#endif
+	if (p) {
+		if (fname) {
+			file_cpyname(p, fname, leng);
+		}
+		else {
+			p[0] = '\0';
+		}
+		sysmng_update(SYS_UPDATEHDD | SYS_UPDATECFG);
 	}
-	else {
-		p[0] = '\0';
-	}
-	sysmng_update(SYS_UPDATEHDD | SYS_UPDATECFG);
 }
 
 void diskdrv_setfdd(REG8 drv, const char *fname, int readonly) {

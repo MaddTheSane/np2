@@ -21,7 +21,7 @@ typedef struct {
 	LPDIRECTDRAWSURFACE	backsurf;
 	LPDIRECTDRAWCLIPPER	clipper;
 	LPDIRECTDRAWPALETTE	palette;
-	BYTE				scrnmode;
+	UINT8				scrnmode;
 	int					width;
 	int					height;
 	int					extend;
@@ -30,9 +30,10 @@ typedef struct {
 	RECT				rect;
 #if defined(SUPPORT_16BPP)
 	RGB32				pal16mask;
-	BYTE				r16b;
-	BYTE				l16r;
-	BYTE				l16g;
+	UINT8				r16b;
+	UINT8				l16r;
+	UINT8				l16g;
+	UINT8				padding16;
 #endif
 #if defined(SUPPORT_8BPP)
 	PALETTEENTRY		pal[256];
@@ -287,7 +288,7 @@ void scrnmng_initialize(void) {
 	setwindowsize(640, 400);
 }
 
-BOOL scrnmng_create(BYTE scrnmode) {
+BOOL scrnmng_create(UINT8 scrnmode) {
 
 	DWORD			winstyle;
 	DWORD			winstyleex;
@@ -333,6 +334,12 @@ BOOL scrnmng_create(BYTE scrnmode) {
 		if (!(scrnmode & SCRNMODE_HIGHCOLOR)) {
 #if defined(SUPPORT_8BPP)
 			bitcolor = 8;
+#elif defined(SUPPORT_16BPP)
+			bitcolor = 16;
+#elif defined(SUPPORT_32BPP)
+			bitcolor = 32;
+#elif defined(SUPPORT_24BPP)
+			bitcolor = 24;
 #else
 			goto scre_err;
 #endif
@@ -505,7 +512,7 @@ UINT16 scrnmng_makepal16(RGB32 pal32) {
 
 void scrnmng_topwinui(void) {
 
-	mouse_running(MOUSE_STOP);
+	mousemng_disable(MOUSEPROC_WINUI);
 	if (!ddraw.cliping++) {											// ver0.28
 		if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 			ddraw.primsurf->SetClipper(ddraw.clipper);
@@ -529,7 +536,7 @@ void scrnmng_clearwinui(void) {
 	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 		clearoutfullscreen();
 	}
-	mouse_running(MOUSE_CONT);
+	mousemng_enable(MOUSEPROC_WINUI);
 }
 
 void scrnmng_setwidth(int posx, int width) {

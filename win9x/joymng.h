@@ -3,12 +3,15 @@
 extern "C" {
 #endif
 
-BYTE joymng_getstat(void);
+REG8 joymng_getstat(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-void joy_init(void);
-void joy_flash(void);
+
+// ----
+
+void joymng_initialize(void);
+void joymng_sync(void);
 

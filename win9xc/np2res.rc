@@ -83,9 +83,30 @@ BEGIN
     COMBOBOX        IDC_HDDSIZE,48,8,32,46,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "MB",IDC_STATIC,86,10,11,8
-    LTEXT           "(5Å`256MB)",IDC_STATIC,64,30,38,8
-    DEFPUSHBUTTON   "&OK",IDOK,108,7,44,14
+    RTEXT           "",IDC_HDDLIMIT,40,30,60,8
+    DEFPUSHBUTTON   "&OK",IDOK,108,7,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,108,24,44,14
+END
+
+IDD_NEWSASI DIALOG DISCARDABLE  0, 0, 144, 52
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create New SASI image"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "5MB",IDC_NEWSASI5MB,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,8,8,40,10
+    CONTROL         "10MB",IDC_NEWSASI10MB,"Button",BS_AUTORADIOBUTTON,48,8,
+                    40,10
+    CONTROL         "15MB",IDC_NEWSASI15MB,"Button",BS_AUTORADIOBUTTON,8,22,
+                    40,10
+    CONTROL         "20MB",IDC_NEWSASI20MB,"Button",BS_AUTORADIOBUTTON,48,22,
+                    40,10
+    CONTROL         "30MB",IDC_NEWSASI30MB,"Button",BS_AUTORADIOBUTTON,8,36,
+                    40,10
+    CONTROL         "40MB",IDC_NEWSASI40MB,"Button",BS_AUTORADIOBUTTON,48,36,
+                    40,10
+    DEFPUSHBUTTON   "&OK",IDOK,92,7,44,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,92,24,44,14
 END
 
 IDD_SCROPT1 DIALOG DISCARDABLE  0, 0, 172, 96
@@ -461,7 +482,7 @@ BEGIN
             MENUITEM "&AMD-98",                     IDM_AMD98
             MENUITEM "&JastSound",                  IDM_JASTSOUND
             MENUITEM SEPARATOR
-            MENUITEM "&Seek Wait",                  IDM_SEEKWAIT
+            MENUITEM "&Seek Sound",                 IDM_SEEKSND
         END
         POPUP "M&emory"
         BEGIN

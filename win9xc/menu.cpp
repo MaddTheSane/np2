@@ -2,14 +2,77 @@
 #include	"resource.h"
 #include	"np2.h"
 #include	"sysmng.h"
-#include	"pccore.h"
 #include	"menu.h"
+#include	"pccore.h"
 
 
 #define	MFCHECK(a) ((a)?MF_CHECKED:MF_UNCHECKED)
 
-static const char menu_i286save[] = "&i286 save";
 
+// ----
+
+static const char smenu_memdump[] = "&Memory Dump";
+
+void sysmenu_initialize(void) {
+
+	HMENU	hMenu;
+
+	if (np2oscfg.I286SAVE) {
+		hMenu = GetSystemMenu(hWndMain, FALSE);
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDM_MEMORYDUMP,
+							smenu_memdump);
+		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+	}
+}
+
+
+// ----
+
+static const char xmenu_i286save[] = "&i286 save";
+#if defined(SUPPORT_SCSI)
+static const char xmenu_scsi[] = "SCSI #%d";
+static const char xmenu_open[] = "&Open...";
+static const char xmenu_remove[] = "&Remove";
+#endif
+
+#if defined(SUPPORT_SCSI)
+static void addscsimenu(HMENU hMenu, UINT drv, UINT16 open, UINT16 eject) {
+
+	HMENU	hSubMenu;
+	char	buf[16];
+
+	hSubMenu = CreatePopupMenu();
+	AppendMenu(hSubMenu, MF_STRING, open, xmenu_open);
+	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenu(hSubMenu, MF_STRING, eject, xmenu_remove);
+
+	SPRINTF(buf, xmenu_scsi, drv);
+	AppendMenu(hMenu, MF_POPUP, (UINT32)hSubMenu, buf);
+}
+#endif
+
+void xmenu_initialize(void) {
+
+	HMENU	hMenu;
+	HMENU	hSubMenu;
+
+	hMenu = GetMenu(hWndMain);
+
+#if defined(SUPPORT_SCSI)
+	hSubMenu = GetSubMenu(hMenu, 3);
+	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
+	addscsimenu(hSubMenu, 0, IDM_SCSI0OPEN, IDM_SCSI0EJECT);
+	addscsimenu(hSubMenu, 1, IDM_SCSI1OPEN, IDM_SCSI1EJECT);
+	addscsimenu(hSubMenu, 2, IDM_SCSI2OPEN, IDM_SCSI2EJECT);
+	addscsimenu(hSubMenu, 3, IDM_SCSI3OPEN, IDM_SCSI3EJECT);
+#endif
+
+	if (np2oscfg.I286SAVE) {
+		hSubMenu = GetSubMenu(hMenu, 6);
+		InsertMenu(hSubMenu, 10,
+					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, xmenu_i286save);
+	}
+}
 
 void xmenu_disablewindow(void) {
 
@@ -93,7 +156,7 @@ void xmenu_setf12copy(BYTE value) {
 
 	HMENU	hmenu;
 
-	if (value >= 5) {
+	if (value > 4) {
 		value = 0;
 	}
 	np2oscfg.F12COPY = value;
@@ -148,7 +211,7 @@ void xmenu_setmotorflg(BYTE value) {
 
 	value &= 1;
 	np2cfg.MOTOR = value;
-	CheckMenuItem(GetMenu(hWndMain), IDM_SEEKWAIT, MFCHECK(value));
+	CheckMenuItem(GetMenu(hWndMain), IDM_SEEKSND, MFCHECK(value));
 }
 
 void xmenu_setextmem(BYTE value) {
@@ -195,13 +258,5 @@ void xmenu_setmsrapid(BYTE value) {
 	value &= 1;
 	np2cfg.MOUSERAPID = value;
 	CheckMenuItem(GetMenu(hWndMain), IDM_MSRAPID, MFCHECK(value));
-}
-
-void xmenu_seti286save(BYTE value) {
-
-	if (value) {
-		InsertMenu(GetSubMenu(GetMenu(hWndMain), 6), 10,
-					MF_BYPOSITION | MF_STRING, IDM_I286SAVE, menu_i286save);
-	}
 }
 

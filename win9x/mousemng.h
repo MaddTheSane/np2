@@ -33,7 +33,7 @@ enum {
 
 
 void mousemng_initialize(void);
-void mousemng_callback(void);
+void mousemng_sync(void);
 BOOL mousemng_buttonevent(UINT event);
 void mousemng_enable(UINT proc);
 void mousemng_disable(UINT proc);

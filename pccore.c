@@ -55,7 +55,11 @@
 				1, 0x82,
 				0, {0x17, 0x04, 0x1f}, {0x0c, 0x0c, 0x02, 0x10, 0x3f, 0x3f},
 				3, 1, 80, 0, 0,
-				{"", ""}, {"", "", "", ""}, "", "", ""};
+				{"", ""},
+#if defined(SUPPORT_SCSI)
+				{"", "", "", ""},
+#endif
+				"", "", ""};
 
 	PCCORE	pccore = {	PCBASECLOCK25, 4,
 						0, PCMODEL_VX, 0, 0, {0x3e, 0x73, 0x7b}, 0,

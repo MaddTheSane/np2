@@ -3,6 +3,9 @@
 #include	"mousemng.h"
 
 
+#define	MOUSEMNG_RANGE		128
+
+
 typedef struct {
 	SINT16	x;
 	SINT16	y;
@@ -46,10 +49,10 @@ static void mousecapture(BOOL capture) {
 	if (capture) {
 		ShowCursor(FALSE);
 		getmaincenter(&cp);
-		rct.left = cp.x - 200;
-		rct.right = cp.x + 200;
-		rct.top = cp.y - 200;
-		rct.bottom = cp.y + 200;
+		rct.left = cp.x - MOUSEMNG_RANGE;
+		rct.right = cp.x + MOUSEMNG_RANGE;
+		rct.top = cp.y - MOUSEMNG_RANGE;
+		rct.bottom = cp.y + MOUSEMNG_RANGE;
 		SetCursorPos(cp.x, cp.y);
 		ClipCursor(&rct);
 		style &= ~(CS_DBLCLKS);
@@ -66,15 +69,10 @@ void mousemng_initialize(void) {
 
 	ZeroMemory(&mousemng, sizeof(mousemng));
 	mousemng.btn = uPD8255A_LEFTBIT | uPD8255A_RIGHTBIT;
-#if 1
 	mousemng.flag = (1 << MOUSEPROC_SYSTEM);
-#else
-	mousemng.flag = (1 << MOUSEPROC_SYSTEM) + (1 << MOUSEPROC_WINUI) +
-												(1 << MOUSEPROC_BG);
-#endif
 }
 
-void mousemng_callback(void) {
+void mousemng_sync(void) {
 
 	POINT	p;
 	POINT	cp;

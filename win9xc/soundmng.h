@@ -22,16 +22,21 @@ void soundmng_setreverse(BOOL reverse);
 #define	soundmng_pcmplay(a, b)
 #define	soundmng_pcmstop(a)
 
+#ifdef __cplusplus
+}
+#endif
+
 
 // ---- for windows
 
 BOOL soundmng_initialize(void);
 void soundmng_deinitialize(void);
 
-void soundmng_enable(void);
-void soundmng_disable(void);
+enum {
+	SNDPROC_MASTER		= 0,
+	SNDPROC_MAIN
+};
 
-#ifdef __cplusplus
-}
-#endif
+void soundmng_enable(UINT proc);
+void soundmng_disable(UINT proc);
 

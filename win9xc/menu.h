@@ -1,4 +1,7 @@
 
+void sysmenu_initialize(void);
+
+void xmenu_initialize(void);
 void xmenu_disablewindow(void);
 void xmenu_setroltate(BYTE value);
 void xmenu_setdispmode(BYTE value);
@@ -18,5 +21,4 @@ void xmenu_sets98logging(BYTE value);
 void xmenu_setbtnmode(BYTE value);
 void xmenu_setbtnrapid(BYTE value);
 void xmenu_setmsrapid(BYTE value);
-void xmenu_seti286save(BYTE value);
 

@@ -1,8 +1,15 @@
 
+#if defined(SUPPORT_SCSI)
 enum {
 	SASIHDD_MAX		= 2,
 	SCSIHDD_MAX		= 4
 };
+#else
+enum {
+	SASIHDD_MAX		= 2,
+	SCSIHDD_MAX		= 0
+};
+#endif
 
 enum {
 	SXSITYPE_NONE		= 0x0000,

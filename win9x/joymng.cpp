@@ -4,41 +4,41 @@
 #include	"menu.h"
 
 
-// static	int		joyactive = 0;
-static	BYTE	joyflag = 0xff;
+enum {
+	JOY_LEFT_BIT	= 0x04,
+	JOY_RIGHT_BIT	= 0x08,
+	JOY_UP_BIT		= 0x01,
+	JOY_DOWN_BIT	= 0x02,
+	JOY_BTN1_BIT	= 0x10,
+	JOY_BTN2_BIT	= 0x20
+};
 
-#define	JOY_LEFT_BIT	0x04
-#define	JOY_RIGHT_BIT	0x08
-#define	JOY_UP_BIT		0x01
-#define	JOY_DOWN_BIT	0x02
-#define	JOY_BTN1_BIT	0x10
-#define	JOY_BTN2_BIT	0x20
+static	REG8	joyflag = 0xff;
+static	BYTE	joypad1btn[4];
 
-static BYTE	joypad1btn[4];										// ver0.28
 
-void joy_init(void) {
+void joymng_initialize(void) {
 
 	JOYINFO		ji;
 	int			i;
 
 	if ((!joyGetNumDevs()) ||
 		(joyGetPos(JOYSTICKID1, &ji) == JOYERR_UNPLUGGED)) {
-//		xmenu_setjoystick(np2cfg.JOYSTICK | 2);					// ver0.28
 		np2oscfg.JOYPAD1 |= 2;
 	}
-	for (i=0; i<4; i++) {										// ver0.28
+	for (i=0; i<4; i++) {
 		joypad1btn[i] = 0xff ^
 			((np2oscfg.JOY1BTN[i] & 3) << ((np2oscfg.JOY1BTN[i] & 4)?4:6));
 	}
 }
 
-void joy_flash(void) {
+void joymng_sync(void) {
 
 	np2oscfg.JOYPAD1 &= 0x7f;
 	joyflag = 0xff;
 }
 
-BYTE joymng_getstat(void) {
+REG8 joymng_getstat(void) {
 
 	JOYINFO		ji;
 

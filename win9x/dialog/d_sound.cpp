@@ -908,7 +908,7 @@ static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 					renewal |= checkbtnres_store(hWnd, pad1opt + i);
 				}
 				if (renewal) {
-					joy_init();
+					joymng_initialize();
 					sysmng_update(SYS_UPDATECFG);
 				}
 				return(TRUE);

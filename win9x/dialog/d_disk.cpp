@@ -291,6 +291,7 @@ void dialog_newdisk(HWND hWnd) {
 
 	char		path[MAX_PATH];
 	HINSTANCE	hinst;
+const char		*ext;
 
 	file_cpyname(path, fddfolder, sizeof(path));
 	file_cutname(path);
@@ -300,7 +301,8 @@ void dialog_newdisk(HWND hWnd) {
 		return;
 	}
 	hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
-	if (!file_cmpname(file_getext(path), str_thd)) {
+	ext = file_getext(path);
+	if (!file_cmpname(ext, str_thd)) {
 		hddsize = 0;
 		hddminsize = 5;
 		hddmaxsize = 256;
@@ -309,7 +311,7 @@ void dialog_newdisk(HWND hWnd) {
 			newdisk_thd(path, hddsize);
 		}
 	}
-	else if (!file_cmpname(file_getext(path), str_nhd)) {
+	else if (!file_cmpname(ext, str_nhd)) {
 		hddsize = 0;
 		hddminsize = 5;
 		hddmaxsize = 512;
@@ -318,14 +320,14 @@ void dialog_newdisk(HWND hWnd) {
 			newdisk_nhd(path, hddsize);
 		}
 	}
-	else if (!file_cmpname(file_getext(path), str_hdi)) {
+	else if (!file_cmpname(ext, str_hdi)) {
 		hddsize = 7;
 		if (DialogBox(hinst, MAKEINTRESOURCE(IDD_NEWSASI),
 									hWnd, (DLGPROC)NewSASIDlgProc) == IDOK) {
 			newdisk_hdi(path, hddsize);
 		}
 	}
-	else if (!file_cmpname(file_getext(path), str_hdd)) {
+	else if (!file_cmpname(ext, str_hdd)) {
 		hddsize = 0;
 		hddminsize = 2;
 		hddmaxsize = 512;

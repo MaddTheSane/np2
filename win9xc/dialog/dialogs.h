@@ -38,12 +38,12 @@ extern const char str_int6[];
 			dlgs_setlistuint32((a), (b), (c), sizeof((c))/sizeof(UINT32))
 
 
-const char *dlgs_selectfile(HWND hWnd, const FILESEL *item,
-					const char *defname, char *folder, UINT size, int *ro);
-const char *dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
-					const char *defname, char *folder, UINT size);
-const char *dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
-					const char *defname, char *folder, UINT size);
+BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
+											char *path, UINT size, int *ro);
+BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
+													char *path, UINT size);
+BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
+													char *path, UINT size);
 
 void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items);
 void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items);

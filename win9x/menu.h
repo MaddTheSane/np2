@@ -32,5 +32,4 @@ void xmenu_setbtnmode(BYTE value);
 void xmenu_setbtnrapid(BYTE value);
 void xmenu_setmsrapid(BYTE value);
 void xmenu_setsstp(BYTE value);
-void xmenu_seti286save(BYTE value);
 

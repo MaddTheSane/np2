@@ -111,8 +111,6 @@ enum {
 	MMXFLAG_NOTSUPPORT	= 2
 };
 
-#define	STATSAVEMAX		10
-
 
 extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;

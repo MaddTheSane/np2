@@ -6,15 +6,15 @@
 #include	"pccore.h"
 
 
+static const char str_np2title[] = "Neko Project II  ";
+
+
 static void about_init(HWND hWnd) {
 
 	char	work[128];
 
-	strcpy(work, "Neko Project II  ");
-	strcat(work, np2version);
-#ifdef NEW286
-	strcat(work, "+");
-#endif
+	milstr_ncpy(work, str_np2title, sizeof(work));
+	milstr_ncat(work, np2version, sizeof(work));
 	SetDlgItemText(hWnd, IDC_NP2VER, work);
 	SetFocus(GetDlgItem(hWnd, IDOK));
 }

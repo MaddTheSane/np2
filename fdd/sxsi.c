@@ -66,16 +66,18 @@ SXSIDEV sxsi_getptr(REG8 drv) {
 	UINT	num;
 
 	num = drv & 0x0f;
-	if (!(drv & 0x20)) {			// SASI or IDE
-		if (num < 2) {
+	if (!(drv & 0x20)) {					// SASI or IDE
+		if (num < SASIHDD_MAX) {
 			return(sxsi_dev + num);
 		}
 	}
+#if defined(SUPPORT_SCSI)
 	else {
-		if (num < 4) {				// SCSI
+		if (num < SCSIHDD_MAX) {			// SCSI
 			return(sxsi_dev + SASIHDD_MAX + num);
 		}
 	}
+#endif
 	return(NULL);
 }
 
@@ -219,12 +221,14 @@ void sxsi_open(void) {
 			drv++;
 		}
 	}
+#if defined(SUPPORT_SCSI)
 	drv = 0x20;
 	for (i=0; i<4; i++) {
 		if (sxsi_hddopen(drv, np2cfg.scsihdd[i]) == SUCCESS) {
 			drv++;
 		}
 	}
+#endif
 }
 
 void sxsi_flash(void) {
@@ -262,16 +266,10 @@ void sxsi_trash(void) {
 
 static SXSIDEV getdrive(REG8 drv) {
 
-	UINT	num;
 	SXSIDEV	ret;
 
-	num = drv & 0x0f;
-	if (num >= 2) {
-		return(NULL);
-	}
-	num += (drv & 0x20) >> 4;
-	ret = sxsi_dev + num;
-	if (ret->fname[0] == '\0') {
+	ret = sxsi_getptr(drv);
+	if ((ret == NULL) || (ret->fname[0] == '\0')) {
 		return(NULL);
 	}
 	if ((FILEH)ret->fh == FILEH_INVALID) {
