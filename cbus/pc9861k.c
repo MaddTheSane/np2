@@ -1,4 +1,7 @@
 #include	"compiler.h"
+
+#if defined(SUPPORT_PC9861K)
+
 #include	"commng.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -276,13 +279,13 @@ static REG8 IOINPCALL pc9861k_ib9(UINT port) {
 
 // ---- I/F
 
-void pc9861k_construct(void) {
+void pc9861k_initialize(void) {
 
 	cm_pc9861ch1 = NULL;
 	cm_pc9861ch2 = NULL;
 }
 
-void pc9861k_destruct(void) {
+void pc9861k_deinitialize(void) {
 
 	commng_destroy(cm_pc9861ch1);
 	cm_pc9861ch1 = NULL;
@@ -331,4 +334,6 @@ void pc9861k_midipanic(void) {
 		cm_pc9861ch2->msg(cm_pc9861ch1, COMMSG_MIDIRESET, 0);
 	}
 }
+
+#endif
 

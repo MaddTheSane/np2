@@ -65,6 +65,7 @@ typedef Boolean			BOOL;
 // #define SUPPORT_NORMALDISP
 #define	MEMOPTIMIZE		1
 
+#define	SUPPORT_S98
 #define	SUPPORT_WAVEMIX
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI

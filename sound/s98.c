@@ -4,6 +4,9 @@
 //
 
 #include	"compiler.h"
+
+#if defined(SUPPORT_S98)
+
 #include	"dosio.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -186,4 +189,5 @@ void S98_put(REG8 module, REG8 addr, REG8 data) {
 
 void S98_sync(void) {
 }
+#endif
 

@@ -262,9 +262,9 @@ void pccore_init(void) {
 
 	sound_init();
 
-	mpu98ii_construct();
 	rs232c_construct();
-	pc9861k_construct();
+	mpu98ii_construct();
+	pc9861k_initialize();
 
 	iocore_create();
 
@@ -288,9 +288,9 @@ void pccore_term(void) {
 
 	iocore_destroy();
 
-	pc9861k_destruct();
-	rs232c_destruct();
+	pc9861k_deinitialize();
 	mpu98ii_destruct();
+	rs232c_destruct();
 
 	sxsi_trash();
 

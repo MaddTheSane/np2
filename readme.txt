@@ -46,6 +46,11 @@
   CPUSTRUC_MEMWAIT … cpucore構造体にメモリウェイト値を移動する(vramop)
   CGWND_FONTPTR … cgwindowにフォントポインタを持たせる
 
+　SUPPORT_PC9861K … PC-9861K(RS-232C拡張I/F)をサポート
+　SUPPORT_SASI … SASI HDDをサポート (定義がなければIDEとして作動)
+　SUPPORT_SCSI … SCSI HDDをサポート
+　SUPPORT_S98 … S98ログを取得
+
 
 // ---- screen
 

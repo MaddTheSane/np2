@@ -25,8 +25,6 @@ static const PROCTBL evtproc[] = {
 			{PROCID('e','g','s','w'), gdcslavewait},
 			{PROCID('e','f','b','o'), fdbiosout},
 			{PROCID('e','f','i','w'), fdc_intwait},
-			{PROCID('e','p','k','1'), pc9861ch1cb},
-			{PROCID('e','p','k','2'), pc9861ch2cb},
 			{PROCID('e','p','8','6'), pcm86_cb},
 			{PROCID('e','a','m','d'), amd98int},
 #if defined(SUPPORT_SASI)
@@ -34,6 +32,10 @@ static const PROCTBL evtproc[] = {
 #endif
 #if defined(SUPPORT_SCSI)
 			{PROCID('e','s','c','s'), scsiioint},
+#endif
+#if defined(SUPPORT_PC9861K)
+			{PROCID('e','p','k','1'), pc9861ch1cb},
+			{PROCID('e','p','k','2'), pc9861ch2cb},
 #endif
 };
 
@@ -128,6 +130,10 @@ static const SFENTRY np2tbl[] = {
 #endif
 #if defined(SUPPORT_SCSI)
 	{"SCSI",		0,	STATFLAG_BIN,	&scsiio,		sizeof(scsiio)},
+#endif
+#if defined(SUPPORT_PC9861K)
+	{"PC9861K1",	0,	STATFLAG_BIN,	&pc9861ch1,		sizeof(pc9861ch1)},
+	{"PC9861K2",	0,	STATFLAG_BIN,	&pc9861ch2,		sizeof(pc9861ch2)},
 #endif
 #if defined(SUPPORT_HOSTDRV)
 	{"HOSTDRV",		0,	STATFLAG_HDRV,	NULL,			0},

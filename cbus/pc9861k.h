@@ -1,4 +1,12 @@
 
+#if !defined(SUPPORT_PC9861K)
+
+#define pc9861k_initialize()
+#define	pc9861k_deinitialize()
+#define	pc9861k_midipanic()
+
+#else
+
 typedef struct {
 	UINT8	result;
 	UINT8	data;
@@ -28,8 +36,8 @@ extern const UINT32 pc9861k_speed[11];
 void pc9861ch1cb(NEVENTITEM item);
 void pc9861ch2cb(NEVENTITEM item);
 
-void pc9861k_construct(void);
-void pc9861k_destruct(void);
+void pc9861k_initialize(void);
+void pc9861k_deinitialize(void);
 
 void pc9861k_reset(void);
 void pc9861k_bind(void);
@@ -38,5 +46,7 @@ void pc9861k_midipanic(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 

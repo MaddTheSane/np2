@@ -166,6 +166,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define	SUPPORT_HOSTDRV
 
 #if defined(USE_GTK)
+#define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #endif
 

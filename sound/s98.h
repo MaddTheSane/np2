@@ -9,7 +9,7 @@ enum {
 extern "C" {
 #endif
 
-#if defined(DISABLE_S98)		// コールすら面倒だ！
+#if !defined(SUPPORT_S98)		// コールすら面倒だ！
 
 #define	S98_init()
 #define	S98_trash()

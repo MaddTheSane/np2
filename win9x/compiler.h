@@ -67,6 +67,8 @@ typedef	int				SINT32;
 #define	SUPPORT_32BPP
 #define SUPPORT_NORMALDISP
 
+#define	SUPPORT_PC9861K
+#define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
