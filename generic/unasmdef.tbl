@@ -99,5 +99,6 @@ enum {
 #define	OP_F0(o)			_OPCTL(0x00, o, 0, 0, 0)
 #define	OP_F1(o, a)			_OPCTL(0x00, o, a, 0, 0)
 #define	OP_Fb(o, a)			_OPCTL(0x20, o, a, 0, 0)
+#define	OP_Fe(o, a)			_OPCTL(0x10, o, a, 0, 0)
 #define	OP_ER				0
 

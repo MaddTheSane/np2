@@ -487,7 +487,7 @@ opeana_ea:
 			goto opeana_ea;
 
 		case OP1_REx:
-			p = set_reg(p, RSTR_32 + (ope & 7));
+			p = set_reg(p, (RSTR_32 << 3) + (ope & 7));
 			p[0] = ',';
 			p[1] = ' ';
 			p[2] = (char)mnemonic;
@@ -504,7 +504,7 @@ opeana_ea:
 			p[3] = ',';
 			p[4] = ' ';
 			p += 5;
-			p = set_reg(p, RSTR_32 + (ope & 7));
+			p = set_reg(p, (RSTR_32 << 3) + (ope & 7));
 			mnemonic = RSTR_MOV;
 			break;
 
