@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.25 2004/07/28 13:52:27 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.26 2004/07/29 13:06:09 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -89,6 +89,9 @@ typedef	guint8		BYTE;
 typedef	gchar		TCHAR;
 
 typedef	gboolean	BOOL;
+
+#define PTR_TO_UINT32(p)	((UINT32)GPOINTER_TO_UINT(p))
+#define UINT32_TO_PTR(v)	GUINT_TO_POINTER((UINT32)(v))
 
 #else	/* USE_GTK == 0 && USE_GTK2 == 0 */
 

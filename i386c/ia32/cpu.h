@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.30 2004/06/15 13:50:13 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.31 2004/07/29 13:06:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -620,10 +620,14 @@ void dbg_printf(const char *str, ...);
 /*
  * Misc.
  */
+void memory_dump(int idx, UINT32 madr);
 void gdtr_dump(UINT32 base, UINT limit);
 void idtr_dump(UINT32 base, UINT limit);
 void ldtr_dump(UINT32 base, UINT limit);
 void tr_dump(UINT16 selector, UINT32 base, UINT limit);
+UINT32 pde_dump(UINT32 base, int idx);
+UINT32 convert_laddr_to_paddr(UINT32 laddr);
+UINT32 convert_vaddr_to_paddr(unsigned int idx, UINT32 offset);
 
 /*
  * disasm

@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.20 2004/06/15 13:50:13 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.21 2004/07/29 13:06:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -37,8 +37,12 @@
 #define	__CBD(src)	((UINT32)((SINT8)(src)))
 #define	__CWDE(src)	((SINT16)(src))
 
+#ifndef	PTR_TO_UINT32
 #define	PTR_TO_UINT32(p)	((UINT32)((unsigned long)(p)))
-#define	UINT32_TO_PTR(v)	((void *)((unsigned long)(v)))
+#endif
+#ifndef	UINT32_TO_PTR
+#define	UINT32_TO_PTR(v)	((void *)((unsigned long)(UINT32)(v)))
+#endif
 
 #define	SWAP_BYTE(p, q) \
 do { \

@@ -1,4 +1,4 @@
-/*	$Id: disasm.c,v 1.7 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: disasm.c,v 1.8 2004/07/29 13:06:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -332,7 +332,9 @@ static const char *opcode2_g9[8] = {
 	NULL, "cmpxchg8b", NULL, NULL, NULL, NULL, NULL, NULL
 };
 
+#if 0
 static const char *sep[2] = { " ", ", " };
+#endif
 
 
 /*
@@ -383,6 +385,7 @@ disasm_codefetch_1(disasm_context_t *ctx)
 	return 0;
 }
 
+#if 0
 static int
 disasm_codefetch_2(disasm_context_t *ctx)
 {
@@ -632,6 +635,7 @@ ea(disasm_context_t *ctx)
 
 	return 0;
 }
+#endif
 
 /*
  * get opcode

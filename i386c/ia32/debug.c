@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.10 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: debug.c,v 1.11 2004/07/29 13:06:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -242,6 +242,8 @@ tr_dump(UINT16 selector, UINT32 base, UINT limit)
 {
 	UINT32 v;
 	UINT i;
+
+	(void)selector;
 
 	VERBOSE(("TR_DUMP: selector = %04x", selector));
 
