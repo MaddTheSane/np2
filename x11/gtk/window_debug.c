@@ -1,4 +1,4 @@
-/*	$Id: window_debug.c,v 1.2 2004/06/17 14:36:34 monaka Exp $	*/
+/*	$Id: window_debug.c,v 1.3 2004/07/27 17:07:49 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -118,6 +118,7 @@ memdbg_expose(GtkWidget *w, GdkEventExpose *ev)
 	return FALSE;
 }
 
+
 /*
  * memdbg Interface
  */
@@ -139,6 +140,7 @@ memdbg_create(void)
 	gtk_window_set_policy(GTK_WINDOW(memdbg.window), FALSE, FALSE, TRUE);
 	gtk_signal_connect(GTK_OBJECT(memdbg.window), "destroy",
 	    GTK_SIGNAL_FUNC(memdbg_window_destroy), NULL);
+	gtk_widget_realize(memdbg.window);
 
 	main_widget = gtk_vbox_new(FALSE, 2);
 	gtk_widget_show(main_widget);
@@ -151,7 +153,6 @@ memdbg_create(void)
 	gtk_box_pack_start(GTK_BOX(main_widget), memdbg.hdl->drawarea,
 	    FALSE, TRUE, 0);
 	gtk_widget_show(memdbg.hdl->drawarea);
-	gtk_widget_realize(memdbg.window);
 	gtk_signal_connect(GTK_OBJECT(memdbg.hdl->drawarea), "expose_event",
 	    GTK_SIGNAL_FUNC(memdbg_expose), NULL);
 

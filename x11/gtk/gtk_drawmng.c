@@ -1,3 +1,5 @@
+/*	$Id: gtk_drawmng.c,v 1.7 2004/07/27 17:07:49 monaka Exp $	*/
+
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
@@ -43,12 +45,14 @@ drawmng_create(void *parent, int width, int height)
 	GTKDRAWMNG_HDL hdl = NULL;
 	GtkWidget *parent_window;
 	GdkVisual *visual;
-	int bitcolor;
+	pixmap_format_t fmt;
 	int bytes_per_pixel;
+	int padding;
 
 	if (parent == NULL)
 		return NULL;
 	parent_window = GTK_WIDGET(parent);
+	gtk_widget_realize(parent_window);
 
 	hdl = (GTKDRAWMNG_HDL)_MALLOC(sizeof(_GTKDRAWMNG_HDL), "drawmng hdl");
 	if (hdl == NULL)
@@ -63,23 +67,43 @@ drawmng_create(void *parent, int width, int height)
 	gtk_drawing_area_size(GTK_DRAWING_AREA(hdl->drawarea), width, height);
 
 	visual = gtk_widget_get_visual(hdl->drawarea);
-	bitcolor = gtkdrawmng_getbpp(hdl->drawarea, parent_window);
-	if (bitcolor == 0)
+	if (!gtkdrawmng_getformat(hdl->drawarea, parent_window, &fmt))
 		goto destroy;
-	bytes_per_pixel = bitcolor / 8;
 
-	if (bitcolor == 16) {
+	switch (fmt.bits_per_pixel) {
+#if defined(SUPPORT_32BPP)
+	case 32:
+		break;
+#endif
+#if defined(SUPPORT_24BPP)
+	case 24:
+		break;
+#endif
+#if defined(SUPPORT_16BPP)
+	case 16:
+	case 15:
 		drawmng_make16mask(&hdl->d.pal16mask, visual->blue_mask,
 		    visual->red_mask, visual->green_mask);
+		break;
+#endif
+#if defined(SUPPORT_8BPP)
+	case 8:
+		break;
+#endif
+
+	default:
+		goto destroy;
 	}
+	bytes_per_pixel = fmt.bits_per_pixel / 8;
 
 	hdl->d.dest.x = hdl->d.dest.x = 0;
 	hdl->d.src.left = hdl->d.src.top = 0;
 	hdl->d.src.right = width;
 	hdl->d.src.bottom = height;
 	hdl->d.lpitch = hdl->d.src.right * bytes_per_pixel;
-	if (hdl->d.lpitch % 4) {
-		hdl->d.src.right += (hdl->d.lpitch % 4) / bytes_per_pixel;
+	padding = hdl->d.lpitch % (fmt.scanline_pad / 8);
+	if (padding > 0) {
+		hdl->d.src.right += padding / bytes_per_pixel;
 		hdl->d.lpitch = hdl->d.src.right * bytes_per_pixel;
 	}
 
@@ -93,7 +117,7 @@ drawmng_create(void *parent, int width, int height)
 	hdl->d.vram.height = hdl->d.src.bottom;
 	hdl->d.vram.xalign = bytes_per_pixel;
 	hdl->d.vram.yalign = hdl->d.lpitch;
-	hdl->d.vram.bpp = bitcolor;
+	hdl->d.vram.bpp = fmt.bits_per_pixel;
 
 	/* pixmap */
 	hdl->backsurf = gdk_pixmap_new(parent_window->window,
@@ -105,9 +129,10 @@ drawmng_create(void *parent, int width, int height)
 
 destroy:
 	if (hdl) {
+		GtkWidget *da = hdl->drawarea;
 		drawmng_release((DRAWMNG_HDL)hdl);
-		if (hdl->drawarea) {
-			gtk_widget_unref(hdl->drawarea);
+		if (da) {
+			gtk_widget_unref(da);
 		}
 	}
 	return NULL;
@@ -172,7 +197,6 @@ drawmng_blt(DRAWMNG_HDL dhdl, RECT_T *sr, POINT_T *dp)
 	if (hdl) {
 		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
 		if (sr || dp) {
-
 			if (sr) {
 				r = *sr;
 			} else {
@@ -234,45 +258,46 @@ drawmng_get_widget_handle(DRAWMNG_HDL dhdl)
 	return hdl->drawarea;
 }
 
-int
-gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window)
+BOOL
+gtkdrawmng_getformat(GtkWidget *w, GtkWidget *pw, pixmap_format_t *fmtp)
 {
 	GdkVisual *visual;
-	int bitcolor;
 
 	visual = gtk_widget_get_visual(w);
 	switch (visual->type) {
 	case GDK_VISUAL_TRUE_COLOR:
 	case GDK_VISUAL_PSEUDO_COLOR:
 	case GDK_VISUAL_DIRECT_COLOR:
-		if (visual->depth >= 8) {
-			break;
-		}
-		/* FALLTHROUGH */
+		break;
+
 	default:
 		fprintf(stderr, "No support visual class.\n");
-		return 0;
+		return FALSE;
 	}
 
-	if (visual->depth == 32) {
-		bitcolor = 32;
-	} else if (visual->depth == 24) {
-		if (is_32bpp(parent_window->window)) {
-			bitcolor = 32;
-		} else {
-			bitcolor = 24;
+	switch (visual->depth) {
+#if defined(SUPPORT_32BPP)
+	case 32:
+#endif
+#if defined(SUPPORT_24BPP)
+	case 24:
+#endif
+#if defined(SUPPORT_16BPP)
+	case 16:
+	case 15:
+#endif
+#if defined(SUPPORT_8BPP)
+	case 8:
+#endif
+		break;
+
+	default:
+		if (visual->depth < 8) {
+			fprintf(stderr, "Too few allocable color.\n");
 		}
-	} else if (visual->depth == 15 || visual->depth == 16) {
-		bitcolor = 16;
-	} else if (visual->depth == 8) {
-		bitcolor = 8;
-	} else if (visual->depth < 8) {
-		fprintf(stderr, "Too few allocable color.\n");
-		return 0;
-	} else {
 		fprintf(stderr, "No support depth.\n");
-		return 0;
+		return FALSE;
 	}
 
-	return bitcolor;
+	return gdk_window_get_pixmap_format(pw->window, visual, fmtp);
 }

@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.3 2004/07/27 17:07:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -255,9 +255,10 @@ scrnmng_create(UINT8 mode)
 	GdkVisual *visual;
 	RECT_T rect;
 	int height;
-	int bitcolor;
 	UINT lpitch;
 	UINT8 bytes_per_pixel;
+	pixmap_format_t fmt;
+	int padding;
 
 	while (drawmng.drawing)
 		gtk_main_iteration_do(FALSE);
@@ -274,28 +275,32 @@ scrnmng_create(UINT8 mode)
 		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
 
 		visual = gtk_widget_get_visual(drawarea);
-		bitcolor = gtkdrawmng_getbpp(drawarea, main_window);
-		if (bitcolor == 0) {
+		if (!gtkdrawmng_getformat(drawarea, main_window, &fmt))
 			return FAILURE;
-		} else if (bitcolor == 16) {
+
+		switch (fmt.bits_per_pixel) {
+		case 16:
 			drawmng_make16mask(&drawmng.pal16mask, visual->blue_mask, visual->red_mask, visual->green_mask);
-		} else if (bitcolor == 8) {
+			break;
+
+		case 8:
 			palette_init();
+			break;
 		}
 		drawmng.extend = 1;
-		bytes_per_pixel = bitcolor >> 3;
+		bytes_per_pixel = (UINT8)(fmt.bits_per_pixel / 8);
 
 		if (!(mode & SCRNMODE_ROTATE)) {
 			rect.right = 641;
 			rect.bottom = 480;
-			lpitch = rect.right * bytes_per_pixel;
-			if (lpitch % 4) {
-				rect.right += (lpitch % 4) / bytes_per_pixel;
-				lpitch = rect.right * bytes_per_pixel;
-			}
 		} else {
 			rect.right = 480;
 			rect.bottom = 641;
+		}
+		lpitch = rect.right * bytes_per_pixel;
+		padding = lpitch % (fmt.scanline_pad / 8);
+		if (padding > 0) {
+			rect.right += padding / bytes_per_pixel;
 			lpitch = rect.right * bytes_per_pixel;
 		}
 		height = 480;
@@ -316,9 +321,9 @@ scrnmng_create(UINT8 mode)
 		gdk_draw_rectangle(drawmng.backsurf, drawarea->style->black_gc,
 		    TRUE, 0, 0, rect.right, rect.bottom);
 	}
-	scrnmng.bpp = (UINT8)bitcolor;
+	scrnmng.bpp = (UINT8)fmt.bits_per_pixel;
 	drawmng.lpitch = lpitch;
-	scrnsurf.ss.bpp = bitcolor;
+	scrnsurf.ss.bpp = fmt.bits_per_pixel;
 	drawmng.scrnmode = mode;
 	drawmng.width = 640;
 	drawmng.height = height;

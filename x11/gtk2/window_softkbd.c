@@ -1,4 +1,4 @@
-/*	$Id: window_softkbd.c,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: window_softkbd.c,v 1.2 2004/07/27 17:07:50 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -192,6 +192,7 @@ skbdwin_create(void)
 	gtk_widget_add_events(skwin.window, EVENT_MASK);
 	g_signal_connect(GTK_OBJECT(skwin.window), "destroy",
 	    GTK_SIGNAL_FUNC(skbdwin_window_destroy), NULL);
+	gtk_widget_realize(skwin.window);
 
 	main_widget = gtk_vbox_new(FALSE, 2);
 	gtk_widget_show(main_widget);
@@ -205,7 +206,6 @@ skbdwin_create(void)
 	da = GTK_WIDGET(drawmng_get_widget_handle(skwin.hdl));
 	gtk_box_pack_start(GTK_BOX(main_widget), da, FALSE, TRUE, 0);
 	gtk_widget_show(da);
-	gtk_widget_realize(skwin.window);
 
 	g_signal_connect(GTK_OBJECT(skwin.window), "key_press_event",
 	    GTK_SIGNAL_FUNC(skbdwin_key_press), NULL);
@@ -219,7 +219,7 @@ skbdwin_create(void)
 	g_signal_connect(GTK_OBJECT(da), "expose_event",
 	    GTK_SIGNAL_FUNC(skbdwin_expose), NULL);
 
-	gtk_widget_show(skwin.window);
+	gtk_widget_show_all(skwin.window);
 
 	drawmng_set_size(skwin.hdl, width, height);
 	drawmng_invalidate(skwin.hdl, NULL);

@@ -1,3 +1,5 @@
+/*	$Id: gtk_wrapper.c,v 1.5 2004/07/27 17:07:49 monaka Exp $	*/
+
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.
@@ -27,13 +29,7 @@
 
 #include "compiler.h"
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "gtk/xnp2.h"
-
-#include <gtk/gtk.h>
 
 #if (GTK_MAJOR_VERSION == 1)
 #include <gdk/gdkprivate.h>
@@ -48,6 +44,8 @@ void
 gtk_scale_set_default_values(GtkScale *scale)
 {
 
+	g_return_if_fail(scale != NULL);
+
 	gtk_range_set_update_policy(GTK_RANGE(scale), GTK_UPDATE_CONTINUOUS);
 	gtk_scale_set_digits(scale, 1);
 	gtk_scale_set_value_pos(scale, GTK_POS_RIGHT);
@@ -60,30 +58,29 @@ gdk_window_set_pointer(GdkWindow *w, gint x, gint y)
 	Display *xdisplay;
 	Window xwindow;
 
-	if (w) {
+	g_return_if_fail(w != NULL);
+
 #if (GTK_MAJOR_VERSION == 1)
-		GdkWindowPrivate *private = (GdkWindowPrivate *)w;
-		xdisplay = private->xdisplay;
-		xwindow = private->xwindow;
+	xdisplay = ((GdkWindowPrivate *)w)->xdisplay;
+	xwindow = ((GdkWindowPrivate *)w)->xwindow;
 #elif (GTK_MAJOR_VERSION == 2)
-		xdisplay = GDK_WINDOW_XDISPLAY(w);
-		xwindow = GDK_WINDOW_XWINDOW(w);
+	xdisplay = GDK_WINDOW_XDISPLAY(w);
+	xwindow = GDK_WINDOW_XWINDOW(w);
 #endif
-		XWarpPointer(xdisplay, None, xwindow, 0, 0, 0, 0, x, y);
-	}
+	XWarpPointer(xdisplay, None, xwindow, 0, 0, 0, 0, x, y);
 }
 
-int
-is_32bpp(GdkWindow *w)
+BOOL
+gdk_window_get_pixmap_format(GdkWindow *w, GdkVisual *visual, pixmap_format_t *fmtp)
 {
 	Display *xdisplay;
 	XPixmapFormatValues *format;
-	int nbit = 0;
 	int count;
 	int i;
 
-	if (w == NULL)
-		return 0;
+	g_return_val_if_fail(w != NULL, FALSE);
+	g_return_val_if_fail(visual != NULL, FALSE);
+	g_return_val_if_fail(fmtp != NULL, FALSE);
 
 #if (GTK_MAJOR_VERSION == 1)
 	xdisplay = ((GdkWindowPrivate *)w)->xdisplay;
@@ -91,33 +88,22 @@ is_32bpp(GdkWindow *w)
 	xdisplay = GDK_WINDOW_XDISPLAY(w);
 #endif
 	format = XListPixmapFormats(xdisplay, &count);
-	if (format != 0) {
+	if (format) {
 		for (i = 0; i < count; i++) {
-			if (format[i].depth != 24)
-				continue;
-
-			if (format[i].bits_per_pixel == 32) {
-				nbit = 32;
-			} else {
-				nbit = 24;
+			if (visual->depth == format[i].depth) {
+				fmtp->depth = format[i].depth;
+				fmtp->bits_per_pixel = format[i].bits_per_pixel;
+				fmtp->scanline_pad = format[i].scanline_pad;
+				XFree(format);
+				return TRUE;
 			}
-			break;
 		}
 		XFree(format);
-
-		if (i == count) {
-			fprintf(stderr, "24bpp depth not support?\n");
-			return 0;
-		}
-	} else {
-		fprintf(stderr, "Can't get PixmapFormats.\n");
-		return 0;
 	}
-
-	return (nbit == 32) ? 1 : 0;
+	return FALSE;
 }
 
-#if defined(MITSHM) && (GTK_MMAJOR_VERSION == 1)
+#if defined(MITSHM) && (GTK_MAJOR_VERSION == 1)
 
 #include <sys/ipc.h>
 #include <sys/shm.h>

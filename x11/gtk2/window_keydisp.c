@@ -1,4 +1,4 @@
-/*	$Id: window_keydisp.c,v 1.2 2004/07/15 14:24:33 monaka Exp $	*/
+/*	$Id: window_keydisp.c,v 1.3 2004/07/27 17:07:50 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -250,6 +250,7 @@ kdispwin_create(void)
 	gtk_window_set_resizable(GTK_WINDOW(kdwin.window), FALSE);
 	g_signal_connect(GTK_OBJECT(kdwin.window), "destroy",
 	    GTK_SIGNAL_FUNC(kdispwin_window_destroy), NULL);
+	gtk_widget_realize(kdwin.window);
 
 	main_widget = gtk_vbox_new(FALSE, 2);
 	gtk_widget_show(main_widget);
@@ -269,14 +270,13 @@ kdispwin_create(void)
 	da = GTK_WIDGET(drawmng_get_widget_handle(kdwin.hdl));
 	gtk_box_pack_start(GTK_BOX(main_widget), da, FALSE, TRUE, 0);
 	gtk_widget_show(da);
-	gtk_widget_realize(kdwin.window);
 	g_signal_connect(GTK_OBJECT(da), "expose_event",
 	    GTK_SIGNAL_FUNC(kdispwin_expose), NULL);
 
 	mode = kdispwin_getmode(kdispcfg.mode);
 	setkeydispmode(mode);
 	setkdwinsize();
-	gtk_widget_show(kdwin.window);
+	gtk_widget_show_all(kdwin.window);
 
 	palfn.get8 = getpal8;
 	palfn.get32 = getpal32;

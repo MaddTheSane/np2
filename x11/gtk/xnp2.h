@@ -1,3 +1,5 @@
+/*	$Id: xnp2.h,v 1.3 2004/07/27 17:07:49 monaka Exp $	*/
+
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
@@ -31,15 +33,29 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern GtkWidget *window;
 extern GtkWidget *drawarea;
+
+typedef struct {
+	int depth;
+	int bits_per_pixel;
+	int scanline_pad;
+} pixmap_format_t;
 
 void install_idle_process(void);
 void uninstall_idle_process(void);
 
-void gdk_window_set_pointer(GdkWindow *window, gint x, gint y);
+void gdk_window_set_pointer(GdkWindow *w, gint x, gint y);
 void gtk_scale_set_default_values(GtkScale *scale);
-int is_32bpp(GdkWindow *window);
-GdkPixmap *gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height, gint depth);
+int gdk_window_get_pixmap_format(GdkWindow *w, GdkVisual *visual, pixmap_format_t *fmtp);
+GdkPixmap *gdk_pixmap_shpix_new(GdkWindow *w, GdkImage *image, gint width, gint height, gint depth);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NP2_GTK_XNP2_H__ */

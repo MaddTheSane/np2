@@ -595,6 +595,7 @@ viewer_open(void)
 			    GTK_SIGNAL_FUNC(viewer_focus_in), (gpointer)view);
 			gtk_signal_connect(GTK_OBJECT(w), "focus_out_event",
 			    GTK_SIGNAL_FUNC(viewer_focus_out), (gpointer)view);
+			gtk_widget_realize(view->window);
 
 			rw = gtk_vbox_new(FALSE, 0);
 			gtk_widget_show(rw);
@@ -618,7 +619,6 @@ viewer_open(void)
 			view_fontload(view, DEFAULT_FONTSIZE);
 			viewcmn_setmode(view, NULL, VIEWMODE_REG);
 
-			gtk_widget_realize(view->window);
 			gtk_widget_show_all(view->window);
 
 			view->lock = FALSE;

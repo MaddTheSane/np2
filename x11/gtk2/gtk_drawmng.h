@@ -1,4 +1,4 @@
-/*	$Id: gtk_drawmng.h,v 1.1 2004/07/14 16:01:40 monaka Exp $	*/
+/*	$Id: gtk_drawmng.h,v 1.2 2004/07/27 17:07:50 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -45,6 +45,6 @@ typedef struct {
 	GdkPixmap	*backsurf;
 } _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
 
-int gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window);
+BOOL gtkdrawmng_getformat(GtkWidget *w, GtkWidget *pw, pixmap_format_t *fmtp);
 
 #endif	/* NP2_X11_GTK2_GTKDRAWMNG_H__ */

@@ -27,10 +27,6 @@
 
 #include "compiler.h"
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "gtk2/xnp2.h"
 
 #include <gdk/gdkx.h>
@@ -52,48 +48,38 @@ gdk_window_set_pointer(GdkWindow *w, gint x, gint y)
 	Display *xdisplay;
 	Window xwindow;
 
-	if (w) {
-		xdisplay = GDK_WINDOW_XDISPLAY(w);
-		xwindow = GDK_WINDOW_XWINDOW(w);
-		XWarpPointer(xdisplay, None, xwindow, 0, 0, 0, 0, x, y);
-	}
+	g_return_if_fail(w != NULL);
+
+	xdisplay = GDK_WINDOW_XDISPLAY(w);
+	xwindow = GDK_WINDOW_XWINDOW(w);
+	XWarpPointer(xdisplay, None, xwindow, 0, 0, 0, 0, x, y);
 }
 
-int
-is_32bpp(GdkWindow *w)
+BOOL
+gdk_window_get_pixmap_format(GdkWindow *w, GdkVisual *visual, pixmap_format_t *fmtp)
 {
 	Display *xdisplay;
 	XPixmapFormatValues *format;
-	int nbit = 0;
 	int count;
 	int i;
 
-	if (w == NULL)
-		return 0;
+	g_return_val_if_fail(w != NULL, FALSE);
+	g_return_val_if_fail(visual != NULL, FALSE);
+	g_return_val_if_fail(fmtp != NULL, FALSE);
 
 	xdisplay = GDK_WINDOW_XDISPLAY(w);
 	format = XListPixmapFormats(xdisplay, &count);
-	if (format != 0) {
+	if (format) {
 		for (i = 0; i < count; i++) {
-			if (format[i].depth != 24)
-				continue;
-
-			if (format[i].bits_per_pixel == 32) {
-				nbit = 32;
-			} else {
-				nbit = 24;
+			if (visual->depth == format[i].depth) {
+				fmtp->depth = format[i].depth;
+				fmtp->bits_per_pixel = format[i].bits_per_pixel;
+				fmtp->scanline_pad = format[i].scanline_pad;
+				XFree(format);
+				return TRUE;
 			}
-			break;
 		}
 		XFree(format);
-
-		if (i == count) {
-			fprintf(stderr, "24bpp depth not support?\n");
-			return 0;
-		}
-	} else {
-		fprintf(stderr, "Can't get PixmapFormats.\n");
-		return 0;
 	}
-	return (nbit == 32) ? 1 : 0;
+	return FALSE;
 }
