@@ -284,15 +284,15 @@ get_data(guint keysym, BYTE down)
 	BYTE data;
 
 	if (keysym & ~0xff) {
-		if (keysym == GDK_VoidSymbol)
+		if (keysym == GDK_VoidSymbol) {
 			data = NC;
-		else if ((keysym & 0xff00) == 0xff00) {
+		} else if (keysym == GDK_F12) {
+			data = getf12key();
+		} else if ((keysym & 0xff00) == 0xff00) {
 			data = xkeyconv_misc[keysym & 0xff];
 			if (data == 0x70) {
 				shift_stat = down;
 			}
-		} else if (keysym == GDK_F12) {
-			data = getf12key();
 		} else {
 			data = NC;
 		}
