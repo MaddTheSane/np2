@@ -72,8 +72,6 @@ typedef	unsigned char	BYTE;
 #define	BYTESEX_LITTLE
 #endif	/* SDL_BYTEORDER == SDL_BIG_ENDIAN */
 
-#define	__ASSERT(s)	assert(s)
-
 #define	UNUSED(v)	((void)(v))
 
 #ifndef	NELEMENTS

@@ -129,7 +129,7 @@ static FLIST getflist(int pos) {
 	return(ret);
 }
 
-static BOOL fappend(LISTARRAY flist, FILEFINDT *fft) {
+static BOOL fappend(LISTARRAY flist, FLINFO *fli) {
 
 	FLIST	fl;
 	FLIST	*st;
@@ -139,8 +139,8 @@ static BOOL fappend(LISTARRAY flist, FILEFINDT *fft) {
 	if (fl == NULL) {
 		return(FAILURE);
 	}
-	fl->isdir = (fft->attr & 0x10)?1:0;
-	file_cpyname(fl->name, fft->path, sizeof(fl->name));
+	fl->isdir = (fli->attr & 0x10)?1:0;
+	file_cpyname(fl->name, fli->path, sizeof(fl->name));
 	st = &filesel.fbase;
 	while(1) {
 		cur = *st;
@@ -181,8 +181,8 @@ const char	*p;
 static void dlgsetlist(void) {
 
 	LISTARRAY	flist;
-	FILEFINDH	ffh;
-	FILEFINDT	fft;
+	FLISTH		flh;
+	FLINFO		fli;
 	BOOL		append;
 	FLIST		fl;
 	ITEMEXPRM	prm;
@@ -203,30 +203,30 @@ static void dlgsetlist(void) {
 	flist = listarray_new(sizeof(_FLIST), 64);
 	filesel.flist = flist;
 	filesel.fbase = NULL;
-	ffh = file_find1st(filesel.path, &fft);
-	if (ffh != FILEFINDH_INVALID) {
+	flh = file_list1st(filesel.path, &fli);
+	if (flh != FLISTH_INVALID) {
 		do {
 			append = FALSE;
-			if (fft.attr & 0x10) {
+			if (fli.attr & 0x10) {
 #if defined(WIN32) && !defined(_WIN32_WCE)
-				if ((file_cmpname(fft.path, ".")) &&
-					(file_cmpname(fft.path, ".."))) {
+				if ((file_cmpname(fli.path, ".")) &&
+					(file_cmpname(fli.path, ".."))) {
 					append = TRUE;
 				}
 #else
 				append = TRUE;
 #endif
 			}
-			else if (!(fft.attr & 0x08)) {
-				append = checkext(fft.path, filesel.ext);
+			else if (!(fli.attr & 0x08)) {
+				append = checkext(fli.path, filesel.ext);
 			}
 			if (append) {
-				if (fappend(flist, &fft) != SUCCESS) {
+				if (fappend(flist, &fli) != SUCCESS) {
 					break;
 				}
 			}
-		} while(file_findnext(ffh, &fft) == SUCCESS);
-		file_findclose(ffh);
+		} while(file_listnext(flh, &fli) == SUCCESS);
+		file_listclose(flh);
 	}
 	prm.pos = 0;
 	fl = filesel.fbase;

@@ -18,11 +18,13 @@ enum {												// ver0.28
 
 typedef FILE *				FILEH;
 #define	FILEH_INVALID		NULL
-#define	FILEFINDH			long
+
 #if defined(WIN32)
-#define	FILEFINDH_INVALID	-1
+#define	FLISTH				HANDLE
+#define	FLISTH_INVALID		(INVALID_HANDLE_VALUE)
 #else
-#define	FILEFINDH_INVALID	0
+#define	FLISTH				long
+#define	FLISTH_INVALID		0
 #endif
 
 #define	FSEEK_SET	SEEK_SET
@@ -38,23 +40,33 @@ enum {
 	FILEATTR_ARCHIVE	= 0x20
 };
 
+enum {
+	FLICAPS_SIZE		= 0x0001,
+	FLICAPS_ATTR		= 0x0002,
+	FLICAPS_DATE		= 0x0004,
+	FLICAPS_TIME		= 0x0008
+};
+
 typedef struct {
 	UINT16	year;		/* cx */
-	BYTE	month;		/* dh */
-	BYTE	day;		/* dl */
+	UINT8	month;		/* dh */
+	UINT8	day;		/* dl */
 } DOSDATE;
 
 typedef struct {
-	BYTE	hour;		/* ch */
-	BYTE	minute;		/* cl */
-	BYTE	second;		/* dh */
+	UINT8	hour;		/* ch */
+	UINT8	minute;		/* cl */
+	UINT8	second;		/* dh */
 } DOSTIME;
 
 typedef struct {
-	char	path[MAX_PATH];
+	UINT	caps;
 	UINT32	size;
 	UINT32	attr;
-} FILEFINDT;
+	DOSDATE	date;
+	DOSTIME	time;
+	char	path[MAX_PATH];
+} FLINFO;
 
 
 #ifdef __cplusplus
@@ -88,9 +100,9 @@ FILEH file_create_c(const char *path);
 short file_delete_c(const char *path);
 short file_attr_c(const char *path);
 
-FILEFINDH file_find1st(const char *dir, FILEFINDT *fft);
-BOOL file_findnext(FILEFINDH hdl, FILEFINDT *fft);
-void file_findclose(FILEFINDH hdl);
+FLISTH file_list1st(const char *dir, FLINFO *fli);
+BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+void file_listclose(FLISTH hdl);
 
 #define file_cpyname(p, n, m)	milstr_ncpy(p, n, m)
 #if defined(WIN32)

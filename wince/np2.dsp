@@ -824,6 +824,14 @@ SOURCE=..\GENERIC\CMJASTS.C
 
 SOURCE=..\GENERIC\CMVER.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRV.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRVS.C
+# End Source File
 # End Group
 # Begin Group "embed"
 

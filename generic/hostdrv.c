@@ -336,8 +336,7 @@ static BOOL pathishostdrv(INTRST is, SDACDS sc) {
 }
 
 
-static BOOL read_data(UINT num, UINT32 pos, UINT size,
-													UINT16 seg, UINT16 off) {
+static BOOL read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 	HDRVFILE	hdf;
 	FILEH		fh;
@@ -364,8 +363,7 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size,
 	return(SUCCESS);
 }
 
-static BOOL write_data(UINT num, UINT32 pos, UINT size,
-													UINT16 seg, UINT16 off) {
+static BOOL write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 	HDRVFILE	hdf;
 	FILEH		fh;
