@@ -84,149 +84,85 @@ static const BYTE keymac2[128] = {
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
 
-static	BYTE	keymap[16];
-static	UINT32	shiftchktick = 0;
+typedef struct {
+	BYTE	f11[4];
+	BYTE	f12[4];
+} BINDTBL;
 
-void mackbd_initialize(void) {
+static const BINDTBL bindtbl = {
+						//   ÉJÉi  Stop  [ÅÅ]  NFER
+							{0x72, 0x60, 0x4d, 0x51},
+						//         Copy  [ÅC]  XFER
+							{NC,   0x61, 0x4f, 0x35}};
 
-	shiftchktick = GETTICK();
-	ZeroMemory(&keymap, sizeof(keymap));
-}
-
-#if 0
-void mackbd_callback(void) {
-
-	UINT32	tick;
-	BYTE	key[16];
-	UINT	i;
-	BYTE	update;
-	UINT	j;
-	BYTE	keycode;
-
-	tick = GETTICK();
-	if (shiftchktick == tick) {
-		return;
-	}
-	shiftchktick = tick;
-#if TARGET_API_MAC_CARBON
-	GetKeys((long *)key);
-#else
-	GetKeys((unsigned long *)key);
-#endif
-	for (i=0; i<16; i++) {
-		update = keymap[i] ^ key[i];
-		if (update) {
-			keymap[i] = key[i];
-			for (j=0; j<8; j++) {
-				if (update & (1 << j)) {
-					keycode = keymac[i * 8 + j];
-					if (keycode != NC) {
-						if (key[i] & (1 << j)) {
-							keystat_senddata(keycode);
-						}
-						else {
-							keystat_senddata(keycode + 0x80);
-						}
-					}
-				}
-			}
-		}
-	}
-}
-#endif
-
-#define	STOPKEY	0x61
-#define	COPYKEY	0x60
-#define	TENKEYEQUAL	0x4d
-#define	TENKEYCOMMA	0x4f
-#define	XFERKEY	0x35
-#define	NFERKEY	0x51
-
-#define	KANAKEY	0x72
-
-enum {
-	F11PUSHED			= 0,
-	F12PUSHED,
-};
-
-static const BYTE f11f12keys[] = {
-			STOPKEY, COPYKEY, TENKEYEQUAL, TENKEYCOMMA, NFERKEY, XFERKEY};
-            
-static BYTE getf11f12key(int whichkey) {
-
-	UINT	key;
-
-    if (whichkey == F11PUSHED) {
-        key = (np2oscfg.F11KEY - 1) * 2;
-    }
-    else {
-        key = (np2oscfg.F12KEY - 1) * 2 + 1;
-    }
-    if (key < (sizeof(f11f12keys)/sizeof(BYTE))) {
-        return(f11f12keys[key]);
-    }
-    else {
-        return(NC);
-    }
-}
+void mackbd_initialize(void) { };
 
 void mackbd_keydown(int keycode) {
 
-	if (keycode == 0x6f) {
-		if (np2oscfg.F12KEY) {
-			keystat_senddata(getf11f12key(F12PUSHED));
-        }
-#if defined(NP2GCC)
-        else {
-            mousemng_toggle(MOUSEPROC_SYSTEM);
-            menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
-            sysmng_update(SYS_UPDATECFG);
+	BYTE	data;
+
+	data = NC;
+	if (keycode == 0x67) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE))) {
+			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
-#endif
-    }
-	else if (keycode == 0x67) {
-		if (np2oscfg.F11KEY) {
-			keystat_senddata(getf11f12key(F11PUSHED));
-        }
-        else {
-            keystat_senddata(KANAKEY);
+	}
+	else if (keycode == 0x6f) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE))) {
+			data = bindtbl.f12[np2oscfg.F12KEY];
+            if (data == NC) {
+                mousemng_toggle(MOUSEPROC_SYSTEM);
+                menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+                sysmng_update(SYS_UPDATECFG);
+            }
 		}
-    }
+	}
     else {
-        BYTE	data;
         data = keymac[keycode];
-        if (data != NC) {
-            keystat_senddata(data);
-        }
+    }
+	if (data != NC) {
+		keystat_senddata(data);
 	}
 }
 
 void mackbd_keyup(int keycode) {
 
-	if (keycode == 0x6f) {
-		if (np2oscfg.F12KEY) {
-			keystat_senddata(getf11f12key(F12PUSHED) | 0x80);
+	BYTE	data;
+
+	data = NC;
+	if (keycode == 0x67) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE))) {
+			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
-    }
-	else if (keycode == 0x67) {
-		if (np2oscfg.F11KEY) {
-			keystat_senddata(getf11f12key(F11PUSHED) | 0x80);
+	}
+	else if (keycode == 0x6f) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE))) {
+			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
-    }
+	}
     else {
-        BYTE	data;
         data = keymac[keycode];
-        if (data != NC) {
-            keystat_senddata(data | 0x80);
-        }
+    }
+	if (data != NC) {
+		keystat_senddata(data | 0x80);
+		return;
 	}
 }
 
-void mackbd_resetf11f12(void) {
+void mackbd_resetf11(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f11f12keys)/sizeof(BYTE)); i++) {
-		keystat_forcerelease(f11f12keys[i]);
+	for (i=1; i<(sizeof(bindtbl.f11)/sizeof(BYTE)); i++) {
+		keystat_forcerelease(bindtbl.f11[i]);
+	}
+}
+
+void mackbd_resetf12(void) {
+
+	UINT	i;
+
+	for (i=1; i<(sizeof(bindtbl.f12)/sizeof(BYTE)); i++) {
+		keystat_forcerelease(bindtbl.f12[i]);
 	}
 }

@@ -379,49 +379,49 @@ static void HandleMenuChoice(long wParam) {
 
 		case IDM_F11KANA:
 			menu_setf11key(0);
-			mackbd_resetf11f12();
+			mackbd_resetf11();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F11STOP:
 			menu_setf11key(1);
-			mackbd_resetf11f12();
+			mackbd_resetf11();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F11EQU:
 			menu_setf11key(2);
-			mackbd_resetf11f12();
+			mackbd_resetf11();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F11NFER:
 			menu_setf11key(3);
-			mackbd_resetf11f12();
+			mackbd_resetf11();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12MOUSE:
 			menu_setf12key(0);
-			mackbd_resetf11f12();
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COPY:
 			menu_setf12key(1);
-			mackbd_resetf11f12();
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COMMA:
 			menu_setf12key(2);
-			mackbd_resetf11f12();
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12XFER:
 			menu_setf12key(3);
-			mackbd_resetf11f12();
+			mackbd_resetf12();
 			update |= SYS_UPDATEOSCFG;
 			break;
 
