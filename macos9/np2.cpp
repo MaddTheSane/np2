@@ -572,7 +572,7 @@ static void eventproc(EventRecord *event) {
 				break;
 			}
 #if !TARGET_API_MAC_CARBON
-			if ((keycode == 0x6f) && (np2oscfg.F12COPY == 0)) {
+			if ((keycode == 0x6f) && (np2oscfg.F12KEY == 0)) {
 				HandleMenuChoice(IDM_MOUSE);
 				break;
 			}

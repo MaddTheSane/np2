@@ -167,12 +167,12 @@ BOOL mackbd_keydown(int keycode, BOOL cmd) {
 
 	data = NC;
 	if (keycode == 0x67) {
-		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE))) {
 			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
 	}
 	else if (keycode == 0x6f) {
-		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE))) {
 			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
 	}
@@ -190,12 +190,12 @@ BOOL mackbd_keyup(int keycode) {
 
 	data = NC;
 	if (keycode == 0x67) {
-		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE))) {
 			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
 	}
 	else if (keycode == 0x6f) {
-		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE))) {
 			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
 	}
@@ -362,12 +362,12 @@ BOOL mackbd_keydown(int keycode, BOOL cmd) {
 
 	data = NC;
 	if (keycode == 0x67) {
-		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE))) {
 			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
 	}
 	else if (keycode == 0x6f) {
-		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE))) {
 			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
 	}
@@ -396,12 +396,12 @@ BOOL mackbd_keyup(int keycode) {
 	data = NC;
 	ret = FALSE;
 	if (keycode == 0x67) {
-		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE)) {
+		if (np2oscfg.F11KEY < (sizeof(bindtbl.f11)/sizeof(BYTE))) {
 			data = bindtbl.f11[np2oscfg.F11KEY];
 		}
 	}
 	else if (keycode == 0x6f) {
-		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE)) {
+		if (np2oscfg.F12KEY < (sizeof(bindtbl.f12)/sizeof(BYTE))) {
 			data = bindtbl.f12[np2oscfg.F12KEY];
 		}
 	}
