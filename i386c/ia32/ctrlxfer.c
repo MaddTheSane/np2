@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.4 2004/01/26 15:23:21 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.5 2004/01/27 15:55:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -33,8 +33,6 @@
 
 #include "ctrlxfer.h"
 
-
-static void check_segreg(void);
 
 /*------------------------------------------------------------------------------
  * JMPfar_pm
@@ -840,11 +838,12 @@ CALLfar_pm_tss(selector_t *tss_sel)
 void
 RETfar_pm(DWORD nbytes)
 {
-	selector_t ret_sel, ss_sel;
+	selector_t ret_sel, ss_sel, temp_sel;
 	DWORD sp;
 	DWORD new_ip, new_sp;
 	WORD new_cs, new_ss;
 	int rv;
+	int i;
 
 	VERBOSE(("RETfar_pm: old EIP = %04x:%08x, ESP = %04x:%08x, nbytes = %d", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP, nbytes));
 
@@ -984,7 +983,48 @@ RETfar_pm(DWORD nbytes)
 		CPU_ESP = new_sp + nbytes;
 
 		/* check segment register */
-		check_segreg();
+		for (i = 0; i < CPU_SEGREG_NUM; i++) {
+			descriptor_t *dp;
+			BOOL valid;
+
+			dp = &CPU_STAT_SREG(i);
+			if ((!dp->u.seg.c || !dp->u.seg.ec)
+			 && (CPU_STAT_SREG(i).dpl < CPU_STAT_CPL)) {
+				/* segment register is invalid */
+				CPU_REGS_SREG(i) = 0;
+				CPU_STAT_SREG_CLEAR(i);
+				continue;
+			}
+
+			rv = parse_selector(&temp_sel, CPU_REGS_SREG(i));
+			if (rv < 0) {
+				/* segment register is invalid */
+				CPU_REGS_SREG(i) = 0;
+				CPU_STAT_SREG_CLEAR(i);
+				continue;
+			}
+
+			valid = TRUE;
+			if (!temp_sel.desc.s) {
+				/* system segment */
+				valid = FALSE;
+			}
+			if (temp_sel.desc.u.seg.c && !temp_sel.desc.u.seg.wr) {
+				/* execute-only code segment */
+				valid = FALSE;
+			}
+			if (!temp_sel.desc.u.seg.c || !temp_sel.desc.u.seg.ec) {
+				if (CPU_STAT_CPL > temp_sel.desc.dpl) {
+					valid = FALSE;
+				}
+			}
+
+			if (!valid) {
+				/* segment register is invalid */
+				CPU_REGS_SREG(i) = 0;
+				CPU_STAT_SREG(i).valid = 0;
+			}
+		}
 	}
 
 	VERBOSE(("RETfar_pm: new EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
@@ -995,7 +1035,7 @@ RETfar_pm(DWORD nbytes)
  * IRET_pm
  */
 
-#undef	IA32_RETURN_FROM_VM86
+#define	IA32_RETURN_FROM_VM86
 
 static void IRET_pm_nested_task(void);
 static void IRET_pm_return_to_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags);
@@ -1007,6 +1047,7 @@ void
 IRET_pm(void)
 {
 	selector_t iret_sel, ss_sel;
+	descriptor_t *dp;
 	DWORD sp;
 	DWORD stacksize;	/* for RETURN-TO-SAME-PRIVILEGE-LEVEL */
 	DWORD mask = 0;
@@ -1014,10 +1055,11 @@ IRET_pm(void)
 	WORD new_cs, new_ss;
 	int old_cpl;
 	int rv;
+	int i;
 
 	VERBOSE(("IRET_pm: old EIP = %04x:%08x, old ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
 
-	if (CPU_EFLAG & NT_FLAG) {
+	if (!(CPU_EFLAG & VM_FLAG) && (CPU_EFLAG & NT_FLAG)) {
 		/* TASK-RETURN: PE=1, VM=0, NT=1 */
 		IRET_pm_nested_task();
 		VERBOSE(("IRET_pm: new EIP = %04x:%08x, new ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
@@ -1189,11 +1231,23 @@ IRET_pm(void)
 
 	if (iret_sel.rpl > old_cpl) {
 		/* RETURN-OUTER-PRIVILEGE-LEVEL */
+
 		load_ss(ss_sel.selector, &ss_sel.desc, iret_sel.rpl);
 		CPU_ESP = new_sp;
 
 		/* check segment register */
-		check_segreg();
+		for (i = 0; i < CPU_SEGREG_NUM; i++) {
+			if ((i != CPU_CS_INDEX) && (i != CPU_SS_INDEX)) {
+				dp = &CPU_STAT_SREG(i);
+				if ((!dp->u.seg.c || !dp->u.seg.ec)
+				 && (CPU_STAT_SREG(i).dpl < CPU_STAT_CPL)) {
+					/* segment register is invalid */
+					CPU_REGS_SREG(i) = 0;
+					CPU_STAT_SREG_CLEAR(i);
+					continue;
+				}
+			}
+		}
 	} else {
 		/* RETURN-TO-SAME-PRIVILEGE-LEVEL */
 		if (CPU_STAT_SS32) {
@@ -1218,10 +1272,6 @@ IRET_pm_nested_task(void)
 	WORD new_cs;
 
 	VERBOSE(("IRET_pm: TASK-RETURN: PE=1, VM=0, NT=1"));
-
-	if (CPU_STAT_VM86) {
-		ia32_panic("IRET_pm: VM86");
-	}
 
 	new_cs = get_link_selector_from_tss();
 	rv = parse_selector(&iret_sel, new_cs);
@@ -1339,51 +1389,3 @@ IRET_pm_return_from_vm86(DWORD new_ip, DWORD new_cs, DWORD new_flags)
 	EXCEPTION(GP_EXCEPTION, 0);
 }
 #endif	/* IA32_RETURN_FROM_VM86 */
-
-
-/*-----
- * Misc.
- */
-static void
-check_segreg(void)
-{
-	selector_t temp_sel;
-	BOOL valid;
-	int rv;
-	int i;
-
-	/* check segment register */
-	for (i = 0; i < CPU_SEGREG_NUM; i++) {
-		if (i == CPU_CS_INDEX || i == CPU_SS_INDEX)
-			continue;
-
-		rv = parse_selector(&temp_sel, CPU_REGS_SREG(i));
-		if (rv < 0) {
-			/* segment register is invalid */
-			CPU_REGS_SREG(i) = 0;
-			CPU_STAT_SREG(i).valid = 0;
-			continue;
-		}
-
-		valid = TRUE;
-		if (!temp_sel.desc.s) {
-			/* system segment */
-			valid = FALSE;
-		}
-		if (temp_sel.desc.u.seg.c && !temp_sel.desc.u.seg.wr) {
-			/* execute-only code segment */
-			valid = FALSE;
-		}
-		if (!temp_sel.desc.u.seg.c || !temp_sel.desc.u.seg.ec) {
-			if (CPU_STAT_CPL > temp_sel.desc.dpl) {
-				valid = FALSE;
-			}
-		}
-
-		if (!valid) {
-			/* segment register is invalid */
-			CPU_REGS_SREG(i) = 0;
-			CPU_STAT_SREG(i).valid = 0;
-		}
-	}
-}
