@@ -1,13 +1,11 @@
 
-.186
+	ORG		100h
+	USE16
+	CPU		186
 
-CODE	SEGMENT
-		ASSUME CS:CODE,DS:nothing,ES:nothing,SS:nothing
-		ORG 0100H
 
-include	np2tool.inc
-include	hostdrv.inc
-
+%include	'np2tool.inc'
+%include	'hostdrv.inc'
 
 START:			jmp		short keep_addr
 id				db		'host_drv'
@@ -25,7 +23,7 @@ int2f:			cmp		ah, 11h
 				shr		al, 3
 				and		cl, 7
 				inc		cl
-				mov		bx, offset i2f_nochkbmp
+				mov		bx, i2f_nochkbmp
 				db		FIXCS
 				xlat
 				rcr		al, cl
@@ -38,7 +36,7 @@ i2f_callnp2:	pushf
 				int		2fh
 				popf
 				mov		bx, si
-				mov		si, offset intr_hostdrv
+				mov		si, intr_hostdrv
 				mov		dx, NP2PORT
 				mov		cx, 12
 				cld
@@ -58,7 +56,10 @@ i2f_end:		pop		es
 i2f_chain:		db		0eah
 org_int2f		dd		0
 
-inf				HDRVIF	<0, 0, 0, 0>
+inf				db		0
+				dw		0
+				dw		0
+				dw		0
 
 ;						76543210   fedcba98
 i2f_nochkbmp	db		11010101b, 00111111b
@@ -79,7 +80,7 @@ errexit_lv2:	sti
 errexit_lv1:	sti
 				mov		ah, 9
 				int		21h
-				mov		dx, offset crlf
+				mov		dx, str_crlf
 				mov		ah, 9
 				int		21h
 				mov		ax, 4c01h
@@ -89,18 +90,18 @@ main:			cld
 				push	cs
 				pop		ds
 				mov		ah, 9
-				mov		dx, offset title_msg
+				mov		dx, title_msg
 				int		21h
 
 				; 機種チェック
 				cli
 				call	np2_check
-				mov		dx, offset macerr_msg
+				mov		dx, macerr_msg
 				jne		short errexit_lv2
 
 				mov		ax, 352fh
 				int		21h
-				mov		si, offset id
+				mov		si, id
 				mov		di, si
 				mov		cl, 4
 				repe cmpsw
@@ -109,7 +110,7 @@ main:			cld
 
 
 stay:			mov		si, 0080h
-				mov		dx, offset usage_msg
+				mov		dx, usage_msg
 				xor		cx, cx
 				lodsb
 				add		cl, al
@@ -123,103 +124,103 @@ stay_error:		jmp		errexit_lv1
 drvcheck:		and		al, 0dfh
 				sub		al, 'A'
 				cmp		al, 26
-				mov		dx, offset drverr0_msg
+				mov		dx, drverr0_msg
 				jae		short stay_error
 
-				mov		ds:inf.drive_no, al
+				mov		[ds:inf + HDRVIF.drive_no], al
 				mov		ah, 30h
 				int		21h
-				mov		ds:inf.dosver, ax
+				mov		[ds:inf + HDRVIF.dosver], ax
 				xchg	al, ah
 				cmp		ax, 030ah
-				mov		dx, offset doserr_msg
+				mov		dx, doserr_msg
 				jc		short stay_error
 				mov		ax, 1100h					; inst check
 				int		2fh
 				cmp		ax, 1
-				mov		dx, offset cntsty_msg
+				mov		dx, cntsty_msg
 				je		short stay_error
 				mov		ax, 5d06h					; get SDA addr
 				int		21h
-				mov		cs:inf.sda_off, si
-				mov		cs:inf.sda_seg, ds
+				mov		[cs:inf + HDRVIF.sda_off], si
+				mov		[cs:inf + HDRVIF.sda_seg], ds
 				push	cs
 				pop		ds
 
-				mov		si, offset stay_param
+				mov		si, stay_param
 				call	sendnp2port
 				call	checknp2port
-				mov		dx, offset np2err_msg
+				mov		dx, np2err_msg
 				jne		short stay_error
 
 				; assign_cds
 				call	getcds
-				mov		dx, offset drverr1_msg
+				mov		dx, drverr1_msg
 				jc		short stay_error
-				test	byte ptr es:[di + 1].cds_flag, 0c0h
-				mov		dx, offset drverr2_msg
+				test	byte [es:di + CDS.flag + 1], 0c0h
+				mov		dx, drverr2_msg
 				jne		short stay_error
 
 				xor		cx, cx
 				lodsb
 				mov		cl, al
-				or		es:[di].cds_flag, 0c080h
-				mov		es:[di].cds_root, cx
+				or		word [es:di + CDS.flag], 0c080h
+				mov		[es:di + CDS.root], cx
 				rep movsb
 				movsw
 
-				mov		bx, offset inf
+				mov		bx, inf
 				mov		di, cs
 				xor		cx, cx
 				mov		es, cx
-				xchg	bx, es:[0600h]
-				xchg	di, es:[0602h]
+				xchg	bx, [es:0600h]
+				xchg	di, [es:0602h]
 				call	sendnp2port
 				call	checknp2port
-				mov		es:[0600h], bx
-				mov		es:[0602h], di
+				mov		[es:0600h], bx
+				mov		[es:0602h], di
 				jne		short ass_err
 
 				mov		ax, 352fh
 				int		21h
-				mov		word ptr ds:org_int2f, bx
-				mov		word ptr ds:org_int2f + 2, es
+				mov		[ds:org_int2f + 0], bx
+				mov		[ds:org_int2f + 2], es
 				mov		ax, 252fh
-				mov		dx, offset int2f
+				mov		dx, int2f
 				int		21h
 
 				mov		cl, 13
-				mov		dx, offset user
+				mov		dx, str_user
 				mov		ax, 5e01h
 				int		21h
 
 				sti
-				mov		al, ds:inf.drive_no
-				add		byte ptr ds:sty_drive, al
+				mov		al, [ds:inf + HDRVIF.drive_no]
+				add		byte [ds:sty_drive], al
 				mov		ah, 9
 				mov		dx, si
 				int		21h
 				mov		ax, 3100h
-				mov		dx, (offset keep_addr) + 15
+				mov		dx, keep_addr + 15
 				mov		cl, 4
 				shr		dx, cl
 				int		21h
 
 ass_err:		call	getcds
-				mov		es:[di].cds_flag, 0
-				mov		dx, offset styerr_msg
+				mov		word [es:di + CDS.flag], 0
+				mov		dx, styerr_msg
 				jmp		errexit_lv1
 
 
 
 release:		mov		ax, 252fh
-				lds		dx, es:org_int2f
+				lds		dx, [es:org_int2f]
 				int		21h
 				push	es
 				pop		ds
 				call	getcds
-				mov		es:[di].cds_flag, 0
-				mov		es, ds:[2ch]
+				mov		word [es:di + CDS.flag], 0
+				mov		es, [ds:002ch]
 				mov		ah, 49h
 				int		21h
 				push	ds
@@ -228,7 +229,7 @@ release:		mov		ax, 252fh
 				int		21h
 				push	cs
 				pop		ds
-				mov		si, offset rel_param
+				mov		si, rel_param
 				call	sendnp2port
 				sti
 				mov		ah, 9
@@ -241,12 +242,12 @@ release:		mov		ax, 252fh
 
 getcds:			mov		ax, 5200h	; get lol addr
 				int		21h
-				mov		al, ds:inf.drive_no
-				cmp		al, es:[bx].lol_lastdrv
+				mov		al, [ds:inf + HDRVIF.drive_no]
+				cmp		al, [es:bx + LOL.lastdrv]
 				jae		short gcds_err
-				les		di, es:[bx].lol_cds
-				mov		ah, size CDS
-				cmp		byte ptr ds:inf.dosver, 3
+				les		di, [es:bx + LOL.cds]
+				mov		ah, CDS.size
+				cmp		byte [ds:inf + HDRVIF.dosver], 3
 				je		short gcds_calc
 				add		ah, 7
 gcds_calc:		mul		ah
@@ -256,13 +257,13 @@ gcds_err:		stc
 				ret
 
 
-include	np2tool.x86
+%include	'np2tool.x86'
 
 title_msg		db	"host-drive driver for np2+dos ("
 				db	VERSION_ID
 				db	 ")"
-crlf			db	13, 10, "$"
-user			db	"NekoProjectII  "
+str_crlf		db	13, 10, "$"
+str_user		db	"NekoProjectII  "
 
 
 stay_param		db	13, "check_hostdrv"
@@ -289,7 +290,5 @@ drverr1_msg		db	"drive higher than last drive$"
 drverr2_msg		db	"drive already assigned$"
 styerr_msg		db	"cannot assign$"
 
-
-CODE	ENDS
-	END START
+	ends
 

@@ -2,25 +2,25 @@
 VERSION_ID		equ		"20040122"
 
 
-HDRVIF			struc
-drive_no			db		?
-dosver				dw		?
-sda_off				dw		?
-sda_seg				dw		?
-HDRVIF			ends
+				struc	HDRVIF
+.drive_no			resb	1
+.dosver				resw	1
+.sda_off			resw	1
+.sda_seg			resw	1
+				endstruc
 
+				struc	LOL
+					resb	22
+.cds				resd	1
+					resb	7
+.lastdrv			resb	1
+				endstruc
 
-LOL				struc
-lol_pad1			db		22 dup(?)
-lol_cds				dd		?
-lol_pad2			db		7 dup(?)
-lol_lastdrv			db		?
-LOL				ends
-
-CDS				struc
-cds_cur				db		67 dup(?)
-cds_flag			dw		?
-cds_padding			db		10 dup(?)
-cds_root			dw		?
-CDS				ends
+				struc	CDS
+.cur				resb	67
+.flag				resw	1
+					resb	10
+.root				resw	1
+.size
+				endstruc
 
