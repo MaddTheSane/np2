@@ -404,10 +404,10 @@ void opngen_reset(void) {
 		ch++;
 	}
 	for (i=0x30; i<0xc0; i++) {
-		opngen_setreg((BYTE)i, 0xff, 0);
-		opngen_setreg((BYTE)i, 0xff, 3);
-		opngen_setreg((BYTE)i, 0xff, 6);
-		opngen_setreg((BYTE)i, 0xff, 9);
+		opngen_setreg(0, (BYTE)i, 0xff);
+		opngen_setreg(3, (BYTE)i, 0xff);
+		opngen_setreg(6, (BYTE)i, 0xff);
+		opngen_setreg(9, (BYTE)i, 0xff);
 	}
 }
 
