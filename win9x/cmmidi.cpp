@@ -44,15 +44,15 @@ enum {		MIDI_MT32 = 0,	MIDI_CM32L,		MIDI_CM64,
 			MIDI_GM,		MIDI_GS,		MIDI_XG,	MIDI_OTHER};
 
 static const UINT8 EXCV_MTRESET[] = {
-			0xfe, 0xfe, 0xfe};
+			0xf0,0x41,0x10,0x16,0x12,0x7f,0x00,0x00,0x00,0x01,0xf7};
 static const UINT8 EXCV_GMRESET[] = {
-			0xf0, 0x7e, 0x7f, 0x09, 0x01, 0xf7};
+			0xf0,0x7e,0x7f,0x09,0x01,0xf7};
+static const UINT8 EXCV_GM2RESET[] = {
+			0xf0,0x7e,0x7f,0x09,0x03,0xf7};
 static const UINT8 EXCV_GSRESET[] = {
-			0xf0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7f, 0x00, 0x41, 0xf7};
+			0xf0,0x41,0x10,0x42,0x12,0x40,0x00,0x7f,0x00,0x41,0xf7};
 static const UINT8 EXCV_XGRESET[] = {
-			0xf0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xf7};
-static const UINT8 EXCV_GMVOLUME[] = {
-			0xf0, 0x7F, 0x7F, 0x04, 0x01, 0x00, 0x00, 0xF7};
+			0xf0,0x43,0x10,0x4c,0x00,0x00,0x7e,0x00,0xf7};
 
 enum {
 	MIDI_EXCLUSIVE		= 0xf0,
@@ -329,11 +329,24 @@ static void SOUNDCALL mt32_getpcm(MIDIHDL hdl, SINT32 *pcm, UINT count) {
 
 // ----
 
+static void midiallnoteoff(CMMIDI midi) {
+
+	UINT	i;
+	UINT8	msg[4];
+
+	for (i=0; i<0x10; i++) {
+		msg[0] = (UINT8)(0xb0 + i);
+		msg[1] = 0x7b;
+		msg[2] = 0x00;
+		keydisp_midi(msg);
+		midi->shortout(midi, MIDIOUTS3(msg));
+	}
+}
+
 static void midireset(CMMIDI midi) {
 
 const UINT8	*excv;
 	UINT	excvsize;
-	UINT8	work[4];
 
 	switch(midi->midimodule) {
 		case MIDI_GM:
@@ -372,13 +385,7 @@ const UINT8	*excv;
 	if (excv) {
 		midi->longout(midi, excv, excvsize);
 	}
-
-	work[1] = 0x7b;
-	work[2] = 0x00;
-	for (work[0]=0xb0; work[0]<0xc0; work[0]++) {
-		keydisp_midi(work);
-		midi->shortout(midi, MIDIOUTS3(work));
-	}
+	midiallnoteoff(midi);
 }
 
 static void midisetparam(CMMIDI midi) {
@@ -694,6 +701,7 @@ static void midirelease(COMMNG self) {
 	CMMIDI	midi;
 
 	midi = (CMMIDI)(self + 1);
+	midiallnoteoff(midi);
 	if (midi->opened & CMMIDI_MIDIOUT) {
 		waitlastexclusiveout(midi);
 		midiOutReset(midi->out.win32.hmidiout);

@@ -11,6 +11,9 @@
 #include	"i286x.mcr"
 #include	"i286xea.mcr"
 #include	"dmax86.h"
+#if defined(ENABLE_TRAP)
+#include	"steptrap.h"
+#endif
 
 
 typedef struct {
@@ -1184,7 +1187,13 @@ LABEL void v30x(void) {
 				jne		short v30_dma_mnlp
 
 				align	4
-v30_mnlp:		movzx	eax, bl
+v30_mnlp:
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+				movzx	eax, bl
 				call	v30op[eax*4]
 				cmp		I286_REMCLOCK, 0
 				jg		v30_mnlp
@@ -1194,7 +1203,13 @@ v30_mnlp:		movzx	eax, bl
 				ret
 
 				align	4
-v30_dma_mnlp:	movzx	eax, bl
+v30_dma_mnlp:
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+				movzx	eax, bl
 				call	v30op[eax*4]
 				call	dmax86
 				cmp		I286_REMCLOCK, 0
@@ -1205,7 +1220,13 @@ v30_dma_mnlp:	movzx	eax, bl
 				ret
 
 				align	4
-v30_trapping:	movzx	eax, bl
+v30_trapping:
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+				movzx	eax, bl
 				call	v30op[eax*4]
 				cmp		I286_TRAP, 0
 				je		v30notrap

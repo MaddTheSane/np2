@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.18 2005/02/27 15:07:36 yui Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.19 2005/03/03 06:59:41 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -33,6 +33,10 @@
 #include "ctrlxfer.h"
 
 #include "ctrl_trans.h"
+
+#if defined(ENABLE_TRAP)
+#include "inttrap.h"
+#endif
 
 
 /*
@@ -1238,6 +1242,9 @@ INT_Ib(void)
 	CPU_WORKCLOCK(37);
 	if (!CPU_STAT_PM || !CPU_STAT_VM86 || (CPU_STAT_IOPL == CPU_IOPL3)) {
 		GET_PCBYTE(vect);
+#if defined(ENABLE_TRAP)
+		softinttrap(CPU_CS, CPU_EIP - 2, vect);
+#endif
 		INTERRUPT(vect, -1, 0, 0);
 		return;
 	}

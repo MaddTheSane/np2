@@ -12,6 +12,10 @@
 #include	"v30patch.h"
 #include	"bios.h"
 #include	"dmax86.h"
+#if defined(ENABLE_TRAP)
+#include	"steptrap.h"
+#include	"inttrap.h"
+#endif
 
 
 	I286CORE	i286core;
@@ -264,7 +268,13 @@ LABEL void i286x(void) {
 				cmp		dmac.working, 0
 				jne		short i286_dma_mnlp
 
-i286_mnlp:		movzx	eax, bl
+i286_mnlp:
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+				movzx	eax, bl
 				call	i286op[eax*4]
 				cmp		I286_REMCLOCK, 0
 				jg		i286_mnlp
@@ -274,7 +284,13 @@ i286_mnlp:		movzx	eax, bl
 				ret
 
 				align	16
-i286_dma_mnlp:	movzx	eax, bl
+i286_dma_mnlp:
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+				movzx	eax, bl
 				call	i286op[eax*4]
 				call	dmax86
 				cmp		I286_REMCLOCK, 0
@@ -285,7 +301,13 @@ i286_dma_mnlp:	movzx	eax, bl
 				ret
 
 				align	16
-i286_trapping:	movzx	eax, bl
+i286_trapping:
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+				movzx	eax, bl
 				call	i286op[eax*4]
 				cmp		I286_TRAP, 0
 				je		i286notrap
@@ -3635,6 +3657,13 @@ I286 int_data8(void) {							// CD: int DATA8
 				lea		ecx, [edi + ebp]
 				mov		dx, I286_CS
 				call	i286_memorywrite_w
+#if defined(ENABLE_TRAP)
+				movzx	eax, bh
+				push	eax
+				lea		edx, [esi - 1]
+				movzx	ecx, I286_CS
+				call	softinttrap
+#endif
 				movzx	eax, bh
 				sub		bp, 2
 				mov		I286_SP, bp

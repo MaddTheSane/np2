@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.22 2005/02/07 14:46:11 yui Exp $	*/
+/*	$Id: cpu.c,v 1.23 2005/03/03 06:59:41 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -34,6 +34,10 @@
 
 #include "inst_table.h"
 
+#if defined(ENABLE_TRAP)
+#include "steptrap.h"
+#endif
+
 
 sigjmp_buf exec_1step_jmpbuf;
 
@@ -55,41 +59,6 @@ int cpu_inst_trace = 0;
 #endif
 
 
-// #define	IPTRACE			(1 << 14)
-
-#if defined(TRACE) && IPTRACE
-static	UINT	trpos = 0;
-static	UINT32	trcs[IPTRACE];
-static	UINT32	treip[IPTRACE];
-
-void iptrace_out(void) {
-
-	FILEH	fh;
-	UINT	s;
-	UINT32	cs;
-	UINT32	eip;
-	char	buf[32];
-
-	s = trpos;
-	if (s > IPTRACE) {
-		s -= IPTRACE;
-	}
-	else {
-		s = 0;
-	}
-	fh = file_create_c("his.txt");
-	while(s < trpos) {
-		cs = trcs[s & (IPTRACE - 1)];
-		eip = treip[s & (IPTRACE - 1)];
-		s++;
-		SPRINTF(buf, "%.4x:%.8x\r\n", cs, eip);
-		file_write(fh, buf, strlen(buf));
-	}
-	file_close(fh);
-}
-#endif
-
-
 void
 exec_1step(void)
 {
@@ -99,10 +68,8 @@ exec_1step(void)
 	CPU_PREV_EIP = CPU_EIP;
 	CPU_STATSAVE.cpu_inst = CPU_STATSAVE.cpu_inst_default;
 
-#if defined(TRACE) && IPTRACE
-	trcs[trpos & (IPTRACE - 1)] = CPU_CS;
-	treip[trpos & (IPTRACE - 1)] = CPU_EIP;
-	trpos++;
+#if defined(ENABLE_TRAP)
+	steptrap(CPU_CS, CPU_EIP);
 #endif
 
 #if defined(IA32_INSTRUCTION_TRACE)

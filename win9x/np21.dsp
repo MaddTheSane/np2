@@ -19,6 +19,7 @@ CFG=np21 - Win32 Debug
 !MESSAGE 
 !MESSAGE "np21 - Win32 Release" ("Win32 (x86) Application" 用)
 !MESSAGE "np21 - Win32 Trace" ("Win32 (x86) Application" 用)
+!MESSAGE "np21 - Win32 Trap" ("Win32 (x86) Application" 用)
 !MESSAGE "np21 - Win32 Debug" ("Win32 (x86) Application" 用)
 !MESSAGE 
 
@@ -44,7 +45,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /FAcs /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /FAcs /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -71,7 +72,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_WAVEREC" /D "NP2APPDEV" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -82,6 +83,33 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21t.exe"
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Trap"
+# PROP BASE Intermediate_Dir "Trap"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\bin"
+# PROP Intermediate_Dir "..\obj\trap21"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /D "ENABLE_TRAP" /YX /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21trap.exe"
 
 !ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
 
@@ -97,7 +125,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
@@ -115,6 +143,7 @@ LINK32=link.exe
 
 # Name "np21 - Win32 Release"
 # Name "np21 - Win32 Trace"
+# Name "np21 - Win32 Trap"
 # Name "np21 - Win32 Debug"
 # Begin Group "Source Files"
 
@@ -158,6 +187,18 @@ InputName=PARTS
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
+InputPath=.\x86\PARTS.X86
+InputName=PARTS
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
+IntDir=.\..\obj\trap21
 InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
@@ -657,6 +698,18 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
+IntDir=.\..\obj\trap21
+InputPath=.\x86\MAKEGRPH.X86
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
@@ -800,6 +853,18 @@ InputName=OPNGENG
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
+InputPath=.\x86\OPNGENG.X86
+InputName=OPNGENG
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj -l $(IntDir)\$(InputName).cod
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
+IntDir=.\..\obj\trap21
 InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
@@ -980,6 +1045,18 @@ SOURCE=..\GENERIC\SOFTKBD.C
 SOURCE=..\GENERIC\UNASM.C
 # End Source File
 # End Group
+# Begin Group "trap"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\TRAP\INTTRAP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\TRAP\STEPTRAP.C
+# End Source File
+# End Group
 # Begin Group "win9x"
 
 # PROP Default_Filter ""
@@ -1119,6 +1196,18 @@ InputName=CPUTYPE
 
 # End Custom Build
 
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
+IntDir=.\..\obj\trap21
+InputPath=.\x86\CPUTYPE.X86
+InputName=CPUTYPE
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
@@ -1158,6 +1247,18 @@ InputName=DCLOCKD
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
+InputPath=.\DCLOCKD.X86
+InputName=DCLOCKD
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasmw -f win32 $(InputPath) -o $(IntDir)\$(InputName).obj
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
+IntDir=.\..\obj\trap21
 InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
