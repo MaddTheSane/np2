@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.12 2004/03/09 14:14:05 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.13 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -176,25 +176,28 @@ modify_eflags(UINT32 new_flags, UINT32 mask)
 
 	new_flags &= ALL_EFLAG;
 	mask &= ALL_EFLAG;
-	CPU_EFLAG = (REAL_EFLAGREG & ~mask) | (new_flags & mask) | 0x2;
+	CPU_EFLAG = (REAL_EFLAGREG & ~mask) | (new_flags & mask);
 
 	CPU_OV = CPU_FLAG & O_FLAG;
 	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	if ((orig ^ CPU_EFLAG) & VM_FLAG) {
-		if (CPU_EFLAG & VM_FLAG) {
-			change_vm(1);
-		} else {
-			change_vm(0);
+	if (CPU_STAT_PM) {
+		if ((orig ^ CPU_EFLAG) & VM_FLAG) {
+			if (CPU_EFLAG & VM_FLAG) {
+				change_vm(1);
+			} else {
+				change_vm(0);
+			}
 		}
 	}
 }
 
+#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
 void
 set_flags(UINT16 new_flags, UINT16 mask)
 {
 
 	mask &= I_FLAG|IOPL_FLAG;
-	mask |= (SZAPC_FLAG|T_FLAG|D_FLAG|O_FLAG|NT_FLAG);
+	mask |= SZAPC_FLAG|T_FLAG|D_FLAG|O_FLAG|NT_FLAG;
 	modify_eflags(new_flags, mask);
 }
 
@@ -207,3 +210,4 @@ set_eflags(UINT32 new_flags, UINT32 mask)
 	mask |= AC_FLAG|ID_FLAG;
 	modify_eflags(new_flags, mask);
 }
+#endif	/* !IA32_DONT_USE_SET_EFLAGS_FUNCTION */

@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.23 2004/03/09 14:14:05 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.24 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -90,7 +90,8 @@ SGDT_Ms(UINT32 op)
 void
 LLDT_Ew(UINT32 op)
 {
-	UINT32 src, madr;
+	UINT32 madr;
+	UINT16 src;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (CPU_STAT_CPL == 0) {
@@ -102,7 +103,7 @@ LLDT_Ew(UINT32 op)
 				madr = calc_ea_dst(op);
 				src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			}
-			load_ldtr((UINT16)src, GP_EXCEPTION);
+			load_ldtr(src, GP_EXCEPTION);
 			return;
 		}
 		VERBOSE(("LLDT: CPL(%d) != 0", CPU_STAT_CPL));

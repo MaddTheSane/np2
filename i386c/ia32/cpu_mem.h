@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.h,v 1.4 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: cpu_mem.h,v 1.5 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -42,10 +42,10 @@ extern "C" {
  */
 void cpu_memoryread_check(descriptor_t *sd, UINT32 madr, UINT length, int e);
 void cpu_memorywrite_check(descriptor_t *sd, UINT32 madr, UINT length, int e);
-BOOL cpu_stack_push_check(descriptor_t *sd, UINT32 madr, UINT length);
-BOOL cpu_stack_pop_check(descriptor_t *sd, UINT32 madr, UINT length);
-#define	CHECK_STACK_PUSH(sdp, addr, n)	cpu_stack_push_check(sdp, addr, n)
-#define	CHECK_STACK_POP(sdp, addr, n)	cpu_stack_pop_check(sdp, addr, n)
+void cpu_stack_push_check(UINT16 s, descriptor_t *sd, UINT32 madr, UINT length);
+void cpu_stack_pop_check(UINT16 s, descriptor_t *sd, UINT32 madr, UINT length);
+#define	STACK_PUSH_CHECK(s, sd, addr, n) cpu_stack_push_check(s, sd, addr, n)
+#define	STACK_POP_CHECK(s, sd, addr, n) cpu_stack_pop_check(s, sd, addr, n)
 
 /*
  * virtual address function

@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.14 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: exception.c,v 1.15 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -387,26 +387,27 @@ interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_cod
 	old_cs = CPU_CS;
 	old_ip = CPU_EIP;
 	old_sp = CPU_ESP;
-	new_flags = old_flags = REAL_EFLAGREG;
+	old_flags = REAL_EFLAGREG;
+	new_flags = REAL_EFLAGREG & ~(T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG);
+	mask = T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG;
 
 	switch (gd->type) {
 	case CPU_SYSDESC_TYPE_INTR_16:
 	case CPU_SYSDESC_TYPE_INTR_32:
 		VERBOSE(("interrupt: INTERRUPT-GATE"));
 		new_flags &= ~I_FLAG;
-		mask = I_FLAG;
+		mask |= I_FLAG;
 		break;
 
 	case CPU_SYSDESC_TYPE_TRAP_16:
 	case CPU_SYSDESC_TYPE_TRAP_32:
 		VERBOSE(("interrupt: TRAP-GATE"));
+		break;
 
 	default:
-		mask = 0;
+		ia32_panic("interrupt: gate descriptor type is invalid (type = %d)", gd->type);
 		break;
 	}
-	new_flags &= ~(T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG);
-	mask |= T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG;
 
 	rv = parse_selector(&cs_sel, gd->u.gate.selector);
 	if (rv < 0) {
@@ -497,7 +498,7 @@ interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_cod
 		}
 
 		/* check stack room size */
-		CHECK_STACK_PUSH(&ss_sel.desc, new_sp, stacksize);
+		STACK_PUSH_CHECK(ss_sel.idx, &ss_sel.desc, new_sp, stacksize);
 
 		/* out of range */
 		if (new_ip > cs_sel.desc.u.seg.limit) {
@@ -554,8 +555,6 @@ interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_cod
 			}
 			break;
 		}
-
-		set_eflags(new_flags, mask);
 	} else {
 		if (CPU_STAT_VM86) {
 			VERBOSE(("interrupt: VM86"));
@@ -580,7 +579,7 @@ interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_cod
 		} else {
 			sp = CPU_SP;
 		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, stacksize);
+		STACK_PUSH_CHECK(CPU_REGS_SREG(CPU_SS_INDEX), &CPU_STAT_SREG(CPU_SS_INDEX), sp, stacksize);
 
 		/* out of range */
 		if (new_ip > cs_sel.desc.u.seg.limit) {
@@ -612,9 +611,21 @@ interrupt_intr_or_trap(descriptor_t *gd, int softintp, int errorp, int error_cod
 			}
 			break;
 		}
-
-		set_eflags(new_flags, mask);
 	}
+#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+	CPU_EFLAG = new_flags;
+	CPU_OV = CPU_FLAG & O_FLAG;
+	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
+		if (CPU_EFLAG & VM_FLAG) {
+			change_vm(1);
+		} else {
+			change_vm(0);
+		}
+	}
+#else
+	set_eflags(new_flags, mask);
+#endif
 
 	VERBOSE(("interrupt: new EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
 }

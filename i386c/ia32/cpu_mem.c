@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.13 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.14 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -154,19 +154,22 @@ cpu_memorywrite_check(descriptor_t *sd, UINT32 offset, UINT length, int e)
 	sd->flag |= CPU_DESC_FLAG_WRITABLE;
 }
 
-BOOL
-cpu_stack_push_check(descriptor_t *sd, UINT32 esp, UINT length)
+void
+cpu_stack_push_check(UINT16 s, descriptor_t *sd, UINT32 esp, UINT length)
 {
 	UINT32 limit;
 
 	if (CPU_STAT_PM) {
-		if (!sd->valid || !sd->p)
-			return FALSE;
-		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr)
-			return FALSE;
+		if (!sd->valid || !sd->p) {
+			VERBOSE(("cpu_stack_push_check: valid = %d, present = %d", sd->valid, sd->p));
+			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+		}
+		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr) {
+			VERBOSE(("cpu_stack_push_check: s = %d, c = %d, wr", sd->s, sd->u.seg.c, sd->u.seg.wr));
+			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+		}
 
 		if (!sd->d) {
-			esp &= 0xffff;
 			limit = 0xffff;
 		} else {
 			limit = 0xffffffff;
@@ -176,37 +179,51 @@ cpu_stack_push_check(descriptor_t *sd, UINT32 esp, UINT length)
 			if ((esp == 0)
 			 || (esp < length)
 			 || (esp - length <= sd->u.seg.limit)
-			 || (esp > limit))
-				return FALSE;
+			 || (esp > limit)) {
+				VERBOSE(("cpu_stack_push_check: expand-down, esp = %08x, length = %08x", esp, length));
+				VERBOSE(("cpu_stack_push_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
+				VERBOSE(("cpu_stack_push_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
+				EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+			}
 		} else {
 			/* expand-up stack */
 			if (esp == 0) {
 				if ((sd->d && (sd->u.seg.segend != 0xffffffff))
-				 || (!sd->d && (sd->u.seg.segend != 0xffff)))
-					return FALSE;
+				 || (!sd->d && (sd->u.seg.segend != 0xffff))) {
+					VERBOSE(("cpu_stack_push_check: expand-up, esp = %08x, length = %08x", esp, length));
+					VERBOSE(("cpu_stack_push_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
+					VERBOSE(("cpu_stack_push_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
+					EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+				}
 			} else {
 				if ((esp < length)
-				 || (esp - 1 > sd->u.seg.limit))
-					return FALSE;
+				 || (esp - 1 > sd->u.seg.limit)) {
+					VERBOSE(("cpu_stack_push_check: expand-up, esp = %08x, length = %08x", esp, length));
+					VERBOSE(("cpu_stack_push_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
+					VERBOSE(("cpu_stack_push_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
+					EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+				}
 			}
 		}
 	}
-	return TRUE;
 }
 
-BOOL
-cpu_stack_pop_check(descriptor_t *sd, UINT32 esp, UINT length)
+void
+cpu_stack_pop_check(UINT16 s, descriptor_t *sd, UINT32 esp, UINT length)
 {
 	UINT32 limit;
 
 	if (CPU_STAT_PM) {
-		if (!sd->valid || !sd->p)
-			return FALSE;
-		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr)
-			return FALSE;
+		if (!sd->valid || !sd->p) {
+			VERBOSE(("cpu_stack_pop_check: valid = %d, present = %d", sd->valid, sd->p));
+			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+		}
+		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr) {
+			VERBOSE(("cpu_stack_pop_check: s = %d, c = %d, wr", sd->s, sd->u.seg.c, sd->u.seg.wr));
+			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+		}
 
 		if (!sd->d) {
-			esp &= 0xffff;
 			limit = 0xffff;
 		} else {
 			limit = 0xffffffff;
@@ -214,18 +231,25 @@ cpu_stack_pop_check(descriptor_t *sd, UINT32 esp, UINT length)
 		if (sd->u.seg.ec) {
 			/* expand-down stack */
 			if ((esp == limit)
-			 || ((limit - esp) + 1 < length))
-				return FALSE;
+			 || ((limit - esp) + 1 < length)) {
+				VERBOSE(("cpu_stack_pop_check: expand-up, esp = %08x, length = %08x", esp, length));
+				VERBOSE(("cpu_stack_pop_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
+				VERBOSE(("cpu_stack_pop_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
+				EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+			}
 		} else {
 			/* expand-up stack */
 			if ((esp == limit)
 			 || (sd->u.seg.segend == 0)
 			 || (esp > sd->u.seg.limit)
-			 || ((sd->u.seg.limit - esp) + 1 < length))
-				return FALSE;
+			 || ((sd->u.seg.limit - esp) + 1 < length)) {
+				VERBOSE(("cpu_stack_pop_check: expand-up, esp = %08x, length = %08x", esp, length));
+				VERBOSE(("cpu_stack_pop_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
+				VERBOSE(("cpu_stack_pop_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
+				EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+			}
 		}
 	}
-	return TRUE;
 }
 
 
@@ -455,23 +479,13 @@ cpu_vmemoryread(int idx, UINT32 offset)
 	} else {
 		switch (sd->type) {
 		case 4: case 5: case 6: case 7:
-			if (offset <= sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset <= sd->u.seg.limit)
+				goto range_failure;
 			break;
 
 		default:
-			if (offset > sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset > sd->u.seg.limit)
+				goto range_failure;
 			break;
 		}
 	}
@@ -481,6 +495,13 @@ cpu_vmemoryread(int idx, UINT32 offset)
 		return cpu_memoryread(addr);
 	return cpu_lmemoryread(addr, CPU_STAT_USER_MODE);
 
+range_failure:
+	if (idx == CPU_SS_INDEX) {
+		exc = SS_EXCEPTION;
+	} else {
+		exc = GP_EXCEPTION;
+	}
+	VERBOSE(("cpu_vmemoryread: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
 err:
 	EXCEPTION(exc, 0);
 	return 0;	/* compiler happy */
@@ -507,23 +528,13 @@ cpu_vmemoryread_w(int idx, UINT32 offset)
 	} else {
 		switch (sd->type) {
 		case 4: case 5: case 6: case 7:
-			if (offset - 1 <= sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset - 1 <= sd->u.seg.limit)
+				goto range_failure;
 			break;
 
 		default:
-			if (offset > sd->u.seg.limit - 1) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset > sd->u.seg.limit - 1)
+				goto range_failure;
 			break;
 		}
 	} 
@@ -533,6 +544,13 @@ cpu_vmemoryread_w(int idx, UINT32 offset)
 		return cpu_memoryread_w(addr);
 	return cpu_lmemoryread_w(addr, CPU_STAT_USER_MODE);
 
+range_failure:
+	if (idx == CPU_SS_INDEX) {
+		exc = SS_EXCEPTION;
+	} else {
+		exc = GP_EXCEPTION;
+	}
+	VERBOSE(("cpu_vmemoryread_w: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
 err:
 	EXCEPTION(exc, 0);
 	return 0;	/* compiler happy */
@@ -559,23 +577,13 @@ cpu_vmemoryread_d(int idx, UINT32 offset)
 	} else {
 		switch (sd->type) {
 		case 4: case 5: case 6: case 7:
-			if (offset - 3 <= sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset - 3 <= sd->u.seg.limit)
+				goto range_failure;
 			break;
 
 		default:
-			if (offset > sd->u.seg.limit - 3) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset > sd->u.seg.limit - 3)
+				goto range_failure;
 			break;
 		}
 	}
@@ -585,6 +593,13 @@ cpu_vmemoryread_d(int idx, UINT32 offset)
 		return cpu_memoryread_d(addr);
 	return cpu_lmemoryread_d(addr, CPU_STAT_USER_MODE);
 
+range_failure:
+	if (idx == CPU_SS_INDEX) {
+		exc = SS_EXCEPTION;
+	} else {
+		exc = GP_EXCEPTION;
+	}
+	VERBOSE(("cpu_vmemoryread_d: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
 err:
 	EXCEPTION(exc, 0);
 	return 0;	/* compiler happy */
@@ -612,23 +627,13 @@ cpu_vmemorywrite(int idx, UINT32 offset, UINT8 val)
 	} else {
 		switch (sd->type) {
 		case 6: case 7:
-			if (offset <= sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset <= sd->u.seg.limit)
+				goto range_failure;
 			break;
 
 		default:
-			if (offset > sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset > sd->u.seg.limit)
+				goto range_failure;
 			break;
 		}
 	}
@@ -643,6 +648,13 @@ cpu_vmemorywrite(int idx, UINT32 offset, UINT8 val)
 	}
 	return;
 
+range_failure:
+	if (idx == CPU_SS_INDEX) {
+		exc = SS_EXCEPTION;
+	} else {
+		exc = GP_EXCEPTION;
+	}
+	VERBOSE(("cpu_vmemorywrite: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
 err:
 	EXCEPTION(exc, 0);
 }
@@ -668,23 +680,13 @@ cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 val)
 	} else {
 		switch (sd->type) {
 		case 6: case 7:
-			if (offset - 1 <= sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset - 1 <= sd->u.seg.limit)
+				goto range_failure;
 			break;
 
 		default:
-			if (offset > sd->u.seg.limit - 1) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset > sd->u.seg.limit - 1)
+				goto range_failure;
 			break;
 		}
 	}
@@ -699,6 +701,13 @@ cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 val)
 	}
 	return;
 
+range_failure:
+	if (idx == CPU_SS_INDEX) {
+		exc = SS_EXCEPTION;
+	} else {
+		exc = GP_EXCEPTION;
+	}
+	VERBOSE(("cpu_vmemorywrite_w: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
 err:
 	EXCEPTION(exc, 0);
 }
@@ -724,23 +733,13 @@ cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 val)
 	} else {
 		switch (sd->type) {
 		case 6: case 7:
-			if (offset - 3 <= sd->u.seg.limit) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset - 3 <= sd->u.seg.limit)
+				goto range_failure;
 			break;
 
 		default:
-			if (offset > sd->u.seg.limit - 3) {
-				if (idx == CPU_SS_INDEX)
-					exc = SS_EXCEPTION;
-				else
-					exc = GP_EXCEPTION;
-				goto err;
-			}
+			if (offset > sd->u.seg.limit - 3)
+				goto range_failure;
 			break;
 		}
 	}
@@ -755,6 +754,13 @@ cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 val)
 	}
 	return;
 
+range_failure:
+	if (idx == CPU_SS_INDEX) {
+		exc = SS_EXCEPTION;
+	} else {
+		exc = GP_EXCEPTION;
+	}
+	VERBOSE(("cpu_vmemorywrite_d: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
 err:
 	EXCEPTION(exc, 0);
 }

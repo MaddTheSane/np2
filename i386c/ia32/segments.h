@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.7 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: segments.h,v 1.8 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -144,6 +144,7 @@ do { \
 	(dscp)->u.seg.segend = (dscp)->u.seg.segbase + (dscp)->u.seg.limit; \
 	(dscp)->u.seg.c = ((idx) == CPU_CS_INDEX) ? 1 : 0; \
 	(dscp)->u.seg.g = 0; \
+	(dscp)->u.seg.wr = 1; \
 	(dscp)->valid = 1; \
 	(dscp)->p = 1; \
 	(dscp)->type = 0x02; /* writable */ \

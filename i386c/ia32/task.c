@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.16 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: task.c,v 1.17 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -161,14 +161,11 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	UINT32 regs[CPU_REG_NUM];
 	UINT32 eip;
 	UINT32 new_flags;
-	UINT32 mask;
 	UINT32 cr3 = 0;
 	UINT16 sreg[CPU_SEGREG_NUM];
 	UINT16 ldtr;
 	UINT16 iobase;
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	UINT16 t;
-#endif
 
 	selector_t cs_sel;
 	int rv;
@@ -177,7 +174,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	UINT32 task_base;	/* new task state */
 	UINT32 old_flags = REAL_EFLAGREG;
 	BOOL task16;
-	UINT nsreg;
 	UINT i;
 
 	VERBOSE(("task_switch: start"));
@@ -190,7 +186,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = FALSE;
-		nsreg = CPU_SEGREG_NUM;
 		break;
 
 	case CPU_SYSDESC_TYPE_TSS_16:
@@ -199,13 +194,11 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = TRUE;
-		nsreg = CPU_SEGREG286_NUM;
 		break;
 
 	default:
 		ia32_panic("task_switch: descriptor type is invalid.");
 		task16 = FALSE;		/* compiler happy */
-		nsreg = CPU_SEGREG_NUM;	/* compiler happy */
 		break;
 	}
 
@@ -244,16 +237,14 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		for (i = 0; i < CPU_REG_NUM; i++) {
 			regs[i] = cpu_kmemoryread_d(task_base + 40 + i * 4);
 		}
-		for (i = 0; i < nsreg; i++) {
+		for (i = 0; i < CPU_SEGREG_NUM; i++) {
 			sreg[i] = cpu_kmemoryread_w(task_base + 72 + i * 4);
 		}
 		ldtr = cpu_kmemoryread_w(task_base + 96);
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
 		t = cpu_kmemoryread_w(task_base + 100);
 		if (t & 1) {
 			CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_TASK;
 		}
-#endif
 		iobase = cpu_kmemoryread_w(task_base + 102);
 	} else {
 		eip = cpu_kmemoryread_w(task_base + 14);
@@ -261,23 +252,28 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		for (i = 0; i < CPU_REG_NUM; i++) {
 			regs[i] = cpu_kmemoryread_w(task_base + 18 + i * 2);
 		}
-		for (i = 0; i < nsreg; i++) {
+		for (i = 0; i < CPU_SEGREG286_NUM; i++) {
 			sreg[i] = cpu_kmemoryread_w(task_base + 34 + i * 2);
 		}
 		ldtr = cpu_kmemoryread_w(task_base + 42);
 		iobase = 0;
+		t = 0;
 	}
 
 #if defined(DEBUG)
 	VERBOSE(("task_switch: current task"));
+	if (!task16) {
+		VERBOSE(("task_switch: CR3     = 0x%08x", CPU_CR3));
+	}
 	VERBOSE(("task_switch: eip     = 0x%08x", CPU_EIP));
 	VERBOSE(("task_switch: eflags  = 0x%08x", old_flags));
 	for (i = 0; i < CPU_REG_NUM; i++) {
 		VERBOSE(("task_switch: regs[%d] = 0x%08x", i, CPU_REGS_DWORD(i)));
 	}
-	for (i = 0; i < nsreg; i++) {
+	for (i = 0; i < CPU_SEGREG_NUM; i++) {
 		VERBOSE(("task_switch: sreg[%d] = 0x%04x", i, CPU_REGS_SREG(i)));
 	}
+	VERBOSE(("task_switch: ldtr    = 0x%04x", CPU_LDTR));
 
 	VERBOSE(("task_switch: new task"));
 	if (!task16) {
@@ -288,7 +284,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	for (i = 0; i < CPU_REG_NUM; i++) {
 		VERBOSE(("task_switch: regs[%d] = 0x%08x", i, regs[i]));
 	}
-	for (i = 0; i < nsreg; i++) {
+	for (i = 0; i < CPU_SEGREG_NUM; i++) {
 		VERBOSE(("task_switch: sreg[%d] = 0x%04x", i, sreg[i]));
 	}
 	VERBOSE(("task_switch: ldtr    = 0x%04x", ldtr));
@@ -327,7 +323,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		for (i = 0; i < CPU_REG_NUM; i++) {
 			cpu_kmemorywrite_d(cur_base + 40 + i * 4, CPU_REGS_DWORD(i));
 		}
-		for (i = 0; i < nsreg; i++) {
+		for (i = 0; i < CPU_SEGREG_NUM; i++) {
 			cpu_kmemorywrite_w(cur_base + 72 + i * 4, CPU_REGS_SREG(i));
 		}
 	} else {
@@ -336,7 +332,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		for (i = 0; i < CPU_REG_NUM; i++) {
 			cpu_kmemorywrite_w(cur_base + 18 + i * 2, CPU_REGS_WORD(i));
 		}
-		for (i = 0; i < nsreg; i++) {
+		for (i = 0; i < CPU_SEGREG286_NUM; i++) {
 			cpu_kmemorywrite_w(cur_base + 34 + i * 2, CPU_REGS_SREG(i));
 		}
 	}
@@ -427,8 +423,20 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	}
 
 	/* set new EFLAGS */
-	mask = I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG;
-	set_eflags(new_flags, mask);
+#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+	CPU_EFLAG = new_flags;
+	CPU_OV = CPU_FLAG & O_FLAG;
+	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
+		if (CPU_EFLAG & VM_FLAG) {
+			change_vm(1);
+		} else {
+			change_vm(0);
+		}
+	}
+#else
+	set_eflags(new_flags, I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG);
+#endif
 
 	/* I/O deny bitmap */
 	if (!task16) {

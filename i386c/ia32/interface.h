@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.10 2004/03/10 23:01:08 yui Exp $	*/
+/*	$Id: interface.h,v 1.11 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -35,8 +35,8 @@
 #define	SQWORD_CONST(v)	v ## LL
 #endif
 
-#define CPU_isDI		(!(CPU_FLAG & I_FLAG))
 #define CPU_isEI		(CPU_FLAG & I_FLAG)
+#define CPU_isDI		(!CPU_isEI)
 
 #define CPU_INITIALIZE()		i386c_initialize()
 #define	CPU_DEINITIALIZE()

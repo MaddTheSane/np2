@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.14 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.15 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1147,12 +1147,29 @@ IRET(void)
 {
 	UINT32 new_ip;
 	UINT32 new_flags;
-	UINT32 mask;
 	UINT32 new_cs;
+#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+	UINT32 mask;
+#endif
 
 	if (!CPU_STAT_PM) {
 		/* Real mode */
 		CPU_WORKCLOCK(22);
+#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
+		if (!CPU_INST_OP32) {
+			POP0_16(new_ip);
+			POP0_16(new_cs);
+			POP0_16(new_flags);
+			CPU_FLAG = new_flags & ALL_FLAG;
+		} else {
+			POP0_32(new_ip);
+			POP0_32(new_cs);
+			POP0_32(new_flags);
+			CPU_EFLAG = (new_flags & (ALL_FLAG|RF_FLAG|AC_FLAG|ID_FLAG)) | (CPU_EFLAG & (VM_FLAG|VIF_FLAG|VIP_FLAG));
+		}
+		CPU_OV = CPU_FLAG & O_FLAG;
+		CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
+#else
 		mask = I_FLAG|IOPL_FLAG;
 		if (!CPU_INST_OP32) {
 			POP0_16(new_ip);
@@ -1164,7 +1181,9 @@ IRET(void)
 			POP0_32(new_flags);
 			mask |= RF_FLAG;
 		}
+
 		set_eflags(new_flags, mask);
+#endif
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, (UINT16)new_cs);
 		SET_EIP(new_ip);
@@ -1295,7 +1314,7 @@ ENTER16_IwIb(void)
 		} else {
 			sp = CPU_ESP;
 		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, size);
+		STACK_PUSH_CHECK(CPU_REGS_SREG(CPU_SS_INDEX), &CPU_STAT_SREG(CPU_SS_INDEX), sp, size);
 	}
 
 	PUSH0_16(CPU_BP);
@@ -1369,7 +1388,7 @@ ENTER32_IwIb(void)
 		} else {
 			sp = CPU_SP;
 		}
-		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, size);
+		STACK_PUSH_CHECK(CPU_REGS_SREG(CPU_SS_INDEX), &CPU_STAT_SREG(CPU_SS_INDEX), sp, size);
 	}
 
 	PUSH0_32(CPU_EBP);
@@ -1426,10 +1445,16 @@ void
 LEAVE(void)
 {
 	UINT32 sp, bp;
+	UINT s;
 
 	CPU_WORKCLOCK(4);
 
 	if (CPU_STAT_PM) {
+		if (!CPU_INST_OP32) {
+			s = 2;
+		} else {
+			s = 4;
+		}
 		if (!CPU_STAT_SS32) {
 			sp = CPU_SP;
 			bp = CPU_BP;
@@ -1437,7 +1462,7 @@ LEAVE(void)
 			sp = CPU_ESP;
 			bp = CPU_EBP;
 		}
-		CHECK_STACK_POP(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (bp-sp) + 2);
+		STACK_POP_CHECK(CPU_REGS_SREG(CPU_SS_INDEX), &CPU_STAT_SREG(CPU_SS_INDEX), sp, (bp - sp) + s);
 	}
 
 	if (!CPU_STAT_SS32) {

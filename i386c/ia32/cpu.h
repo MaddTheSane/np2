@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.24 2004/03/10 23:01:08 yui Exp $	*/
+/*	$Id: cpu.h,v 1.25 2004/03/12 13:34:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -406,11 +406,13 @@ do { \
 #define	ALL_FLAG	(SZAPC_FLAG|T_FLAG|I_FLAG|D_FLAG|O_FLAG|IOPL_FLAG|NT_FLAG)
 #define	ALL_EFLAG	(ALL_FLAG|RF_FLAG|VM_FLAG|AC_FLAG|VIF_FLAG|VIP_FLAG|ID_FLAG)
 
-#define	REAL_FLAGREG	((CPU_FLAG & 0xf7ff) | (CPU_OV ? O_FLAG : 0))
-#define	REAL_EFLAGREG	((CPU_EFLAG & 0xfffff7ff) | (CPU_OV ? O_FLAG : 0))
+#define	REAL_FLAGREG	((CPU_FLAG & 0xf7ff) | (CPU_OV ? O_FLAG : 0) | 2)
+#define	REAL_EFLAGREG	((CPU_EFLAG & 0xfffff7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 
+#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
 void set_flags(UINT16 new_flags, UINT16 mask);
 void set_eflags(UINT32 new_flags, UINT32 mask);
+#endif
 
 
 #define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32
@@ -479,7 +481,7 @@ do { \
 #define CPU_STI \
 do { \
 	CPU_FLAG |= I_FLAG; \
-	CPU_TRAP = (CPU_FLAG >> 8) & 1; \
+	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG) ; \
 } while (/*CONSTCOND*/0)
 
 #define CPU_GDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.gdtr_limit
