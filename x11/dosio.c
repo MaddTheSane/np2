@@ -31,15 +31,23 @@ dosio_term(void)
 FILEH
 file_open(const char *path)
 {
+	FILEH fh;
 
-	return fopen(path, "rb+");
+	fh = fopen(path, "rb+");
+	if (fh)
+		return fh;
+	return fopen(path, "rb");
 }
 
 FILEH
 file_open_rb(const char *path)
 {
+	FILEH fh;
 
-	return fopen(path, "rb+");
+	fh = fopen(path, "rb+");
+	if (fh)
+		return fh;
+	return fopen(path, "rb");
 }
 
 FILEH
@@ -233,7 +241,7 @@ file_cpyname(char *dst, const char *src, int maxlen)
 		for (i = 0; i < maxlen && src[i] != '\0'; i++) {
 			dst[i] = src[i];
 		}
-		if (i != 0) {
+		if (i > 0) {
 			if (euckanji1st(src, i-1)) {
 				i--;
 			}
