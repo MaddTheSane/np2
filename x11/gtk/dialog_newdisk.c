@@ -134,21 +134,21 @@ newdisk_fd(newdisk_fd_t *datap)
 	gtk_table_set_col_spacings(GTK_TABLE(dialog_table), 5);
 	gtk_widget_show(dialog_table);
 
-	/* "Disk name" label */
-	label = gtk_label_new(" Disk name");
+	/* "Disk Label" label */
+	label = gtk_label_new(" Disk Label");
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), label, 0, 1, 0, 1);
 	gtk_widget_show(label);
 
-	/* "Disk name" text entry */
+	/* "Disk Label" text entry */
 	datap->diskname_entry = entry = gtk_entry_new();
 	gtk_entry_set_max_length(GTK_ENTRY(entry), DISKNAME_LEN);
 	gtk_entry_set_editable(GTK_ENTRY(entry), TRUE);
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), entry, 1, 2, 0, 1);
 	gtk_widget_show(entry);
 
-	/* "Disk type" label */
-	label = gtk_label_new(" Disk type");
+	/* "Disk Type" label */
+	label = gtk_label_new(" Disk Type");
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), label, 0, 1, 1, 2);
 	gtk_widget_show(label);
@@ -271,13 +271,13 @@ newdisk_hd(newdisk_hd_t *datap)
 	gtk_container_add(GTK_CONTAINER(dialog), dialog_table);
 	gtk_widget_show(dialog_table);
 
-	/* "HDD size" label */
-	label = gtk_label_new(" HDD size");
+	/* "HDD Size" label */
+	label = gtk_label_new(" HDD Size");
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), label, 0, 1, 0, 1);
 	gtk_widget_show(label);
 
-	/* HDD size */
+	/* HDD Size */
 	hbox = gtk_hbox_new(FALSE, 2);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 	gtk_table_attach_defaults(GTK_TABLE(dialog_table), hbox, 1, 2, 0, 1);
