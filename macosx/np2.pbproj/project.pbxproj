@@ -247,7 +247,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "../font ../lio ../fdd ../sound ../vram ../bios ../cbus ../io ../i286c . .. ../common";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "\"$(HOME)/Library/Application Support\" ../ \"/Users/tora/Documents/Project Builder/np2/np2/macosx\"";
+				LIBRARY_SEARCH_PATHS = "\"$(HOME)/Library/Application Support\" ../";
 				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";

@@ -12,8 +12,6 @@
 #include	"soundmng.h"
 #include	"fdefine.h"
 
-//for 10.2
-//#define	JAGUAR
 
 enum {
 	IDC_TOOLHDDACC			= 0,
@@ -116,6 +114,16 @@ static void skinchange(void);
 static DragReceiveHandlerUPP	dr;
 
 // ----
+
+static bool isPuma(void) {
+    long	res;
+    Gestalt(gestaltSystemVersion, &res);
+    if (res<0x1020) {
+        return(true);
+    }
+    return(false);
+}
+
 
 static PicHandle skinload(const char *path, Rect* bounds) {
 
@@ -600,13 +608,15 @@ static pascal OSErr DragReceiver( WindowRef theWindow, void *handlerRefCon, Drag
 static WindowRef makeNibWindow (IBNibRef nibRef) {
     OSStatus	err;
     WindowRef	win = NULL;
-#ifndef JAGUAR
-    Rect	bounds;
-    SetRect(&bounds, 0, 0, 100, 100);
-    err = CreateNewWindow(kFloatingWindowClass, kWindowStandardHandlerAttribute, &bounds, &win);
-#else
-    err = CreateWindowFromNib(nibRef, CFSTR("ToolWindow"), &win);
-#endif
+
+    if (isPuma()) {
+        Rect	bounds;
+        SetRect(&bounds, 0, 0, 100, 100);
+        err = CreateNewWindow(kFloatingWindowClass, kWindowStandardHandlerAttribute, &bounds, &win);
+    }
+    else {
+        err = CreateWindowFromNib(nibRef, CFSTR("ToolWindow"), &win);
+    }
     if (err == noErr) {
         InstallStandardEventHandler(GetWindowEventTarget(win));
         EventTypeSpec	list[]={ 
@@ -796,31 +806,31 @@ void toolwin_open(void) {
 		goto twope_err2;
 	}
     
-#ifndef JAGUAR
-    toolwincreate(hWnd);
-#endif
+    if (isPuma()) {
+        toolwincreate(hWnd);
+    }
     SizeWindow(hWnd, bounds.right-bounds.left, bounds.bottom-bounds.top, true);
     ControlButtonContentInfo	info;
     info.contentType = kControlContentPictHandle;
     info.u.picture = hbmp;
     CreatePictureControl(hWnd, &bounds, &info, true, &image);
     InstallControlEventHandler (image, NewEventHandlerUPP(cfControlproc), GetEventTypeCount(list), list, (void *)hWnd, &ref);
+    if (!isPuma()) {
+        toolwincreate(hWnd);
+    }
 
-#ifdef JAGUAR
-    toolwincreate(hWnd);
-#endif
-
-#ifndef JAGUAR
-    if (np2tool.posy < 35) np2tool.posy = 35;
-    if (np2tool.posx < 5 ) np2tool.posx = 5;
-    MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
-    ShowWindow(hWnd);
-#else
-    SetDrawerParent(hWnd, hWndMain);
-    SetDrawerOffsets(hWnd, (640-(bounds.right-bounds.left))/2-11, (640-(bounds.right-bounds.left))/2-11);
-    SetDrawerPreferredEdge(hWnd, kWindowEdgeTop);
-    OpenDrawer(hWnd, kWindowEdgeDefault, 1);
-#endif
+    if (isPuma()) {
+        if (np2tool.posy < 35) np2tool.posy = 35;
+        if (np2tool.posx < 5 ) np2tool.posx = 5;
+        MoveWindow(hWnd, np2tool.posx, np2tool.posy, true);
+        ShowWindow(hWnd);
+    }
+    else{
+        SetDrawerParent(hWnd, hWndMain);
+        SetDrawerOffsets(hWnd, (640-(bounds.right-bounds.left))/2-11, (640-(bounds.right-bounds.left))/2-11);
+        SetDrawerPreferredEdge(hWnd, kWindowEdgeTop);
+        OpenDrawer(hWnd, kWindowEdgeDefault, 1);
+    }
 
 	return;
 
@@ -835,11 +845,12 @@ twope_err1:
 void toolwin_close(void) {
 
     if (toolwin.hwnd) {
-#ifdef JAGUAR
-        CloseDrawer(toolwin.hwnd, 0);
-#else
-        DisposeWindow(toolwin.hwnd);
-#endif
+        if (!isPuma()) {
+            CloseDrawer(toolwin.hwnd, 0);
+        }
+        else{
+            DisposeWindow(toolwin.hwnd);
+        }
         RemoveReceiveHandler(dr, toolwin.hwnd);
         toolwindestroy();
         DisposeWindow(toolwin.hwnd);

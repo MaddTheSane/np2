@@ -920,6 +920,9 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                     case kEventWindowDragCompleted:
                         soundmng_play();
                         break;
+                    case kEventWindowShown:
+                        scrndraw_redraw();
+                        break;
                 }
                 break;
             case kEventClassKeyboard:
@@ -988,6 +991,7 @@ static const EventTypeSpec windEventList[] = {
 				{kEventClassWindow,		kEventWindowToolbarSwitchMode},
 				{kEventClassWindow,		kEventWindowDragStarted},
 				{kEventClassWindow,		kEventWindowDragCompleted},
+				{kEventClassWindow,		kEventWindowShown},
 				{kEventClassKeyboard,	kEventRawKeyDown},
 				{kEventClassKeyboard,	kEventRawKeyUp},
 				{kEventClassKeyboard,	kEventRawKeyRepeat},
