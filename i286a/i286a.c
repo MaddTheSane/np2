@@ -83,6 +83,11 @@ static void i286a_initreg(void) {
 
 void i286a_reset(void) {
 
+#if 0
+	if (offsetof(I286CORE, m) != 120) {
+		exit(1);
+	}
+#endif
 	ZeroMemory(&i286acore.s, sizeof(i286acore.s));
 	i286a_initreg();
 }

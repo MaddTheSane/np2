@@ -17,9 +17,9 @@ MSW_MP				equ		&0002
 MSW_EM				equ		&0004
 MSW_TS				equ		&0008
 
-CPU_SIZE			equ		124
+CPU_SIZE			equ		120
 CPU_STAT			equ		(0 - CPU_SIZE)
-CPU_EXT				equ		(108 - CPU_SIZE)
+CPU_EXT				equ		(104 - CPU_SIZE)
 
 CPU_REG				equ		CPU_STAT + 0
 CPU_SEG				equ		CPU_STAT + 16
@@ -31,22 +31,21 @@ CPU_SS_FIX			equ		CPU_STAT + 44
 CPU_DS_FIX			equ		CPU_STAT + 48
 CPU_ADRSMASK		equ		CPU_STAT + 52
 CPU_PREFIX			equ		CPU_STAT + 56
-; cpu_trap			equ		CPU_STAT + 58
-; cpu_resetreq		equ		CPU_STAT + 59
-CPU_GDTR			equ		CPU_STAT + 60
-CPU_MSW				equ		CPU_STAT + 66
-CPU_IDTR			equ		CPU_STAT + 68
-CPU_LDTR			equ		CPU_STAT + 74
-CPU_LDTRC			equ		CPU_STAT + 76
-CPU_TR				equ		CPU_STAT + 82
-CPU_TRC				equ		CPU_STAT + 84
-; cpu_type			equ		CPU_STAT + 92
-CPU_ITFBANK			equ		CPU_STAT + 93
-; cpu_ram_d0		equ		CPU_STAT + 94
-CPU_REMAINCLOCK		equ		CPU_STAT + 96
-CPU_BASECLOCK		equ		CPU_STAT + 100
-; cpu_clock			equ		CPU_STAT + 104
-; cpu_stat_size		equ		108
+; cpu_resetreq		equ		CPU_STAT + 57
+CPU_GDTR			equ		CPU_STAT + 58
+CPU_MSW				equ		CPU_STAT + 64
+CPU_IDTR			equ		CPU_STAT + 66
+CPU_LDTR			equ		CPU_STAT + 72
+CPU_LDTRC			equ		CPU_STAT + 74
+CPU_TR				equ		CPU_STAT + 80
+CPU_TRC				equ		CPU_STAT + 82
+; cpu_type			equ		CPU_STAT + 88
+CPU_ITFBANK			equ		CPU_STAT + 89
+; cpu_ram_d0		equ		CPU_STAT + 90
+CPU_REMAINCLOCK		equ		CPU_STAT + 92
+CPU_BASECLOCK		equ		CPU_STAT + 96
+; cpu_clock			equ		CPU_STAT + 100
+; cpu_stat_size		equ		104
 
 CPU_AL				equ		CPU_STAT + 0
 CPU_AH				equ		CPU_STAT + 1

@@ -159,8 +159,7 @@ typedef struct {
 	UINT32	ss_fix;
 	UINT32	ds_fix;
 	UINT32	adrsmask;						// ver0.72
-	UINT16	prefix;
-	UINT8	__trap;
+	UINT8	prefix;
 	UINT8	resetreq;						// ver0.72
 	I286DTR	GDTR;
 	UINT16	MSW;
@@ -169,7 +168,6 @@ typedef struct {
 	I286DTR	LDTRC;
 	UINT16	TR;
 	I286DTR	TRC;
-	UINT8	padding[2];
 
 	UINT8	cpu_type;
 	UINT8	itfbank;						// ver0.72

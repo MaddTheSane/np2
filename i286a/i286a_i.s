@@ -6,8 +6,8 @@
 	IMPORT		i286a_memorywrite_w
 	EXPORT		i286a_localint
 	EXPORT		i286a_trapint
-	IMPORT		i286a_trapintr
-	EXPORT		i286c_interrupt
+;;	IMPORT		i286a_trapintr
+;;	EXPORT		i286c_interrupt
 	EXPORT		i286a_interrupt
 
 	AREA	.text, CODE, READONLY
@@ -43,7 +43,8 @@ i286a_localint	ldrh	r4, [r9, #CPU_SP]
 				str		r2, [r9, #CPU_CS_BASE]
 				mov		pc, r11
 
-i286a_trapint	ldrh	r4, [r9, #CPU_SP]
+i286a_trapint	mov		r6, lr
+				ldrh	r4, [r9, #CPU_SP]
 				ldr		r5, [r9, #CPU_SS_BASE]
 				CPUWORK	#20
 				mov		r4, r4 lsl #16
@@ -71,9 +72,9 @@ i286a_trapint	ldrh	r4, [r9, #CPU_SP]
 				mov		r2, r0 lsl #4
 				strh	r0, [r9, #CPU_CS]
 				str		r2, [r9, #CPU_CS_BASE]
-				b		i286a_trapintr
+				mov		pc, r6
 
-i286c_interrupt
+;; i286c_interrupt
 i286a_interrupt	ldr		r1, iai_r9
 				stmdb	sp!, {r4 - r9, lr}
 				mov		r9, r1

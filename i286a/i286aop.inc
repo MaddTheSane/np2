@@ -297,20 +297,26 @@ $label		CPUWORK	$clk
 
 	MACRO
 $label	SEGPOP		$s, $b, $clk
-$label		POP		$clk
-			mov		r1, r0 lsl #4
+$label		ldrh	r6, [r9, #CPU_MSW]
+			POP		$clk
 			strh	r0, [r9, $s]
-			str		r1, [r9, $b]
+			tst		r6, #MSW_PE
+			moveq	r0, r0 lsl #4
+			blne	i286a_selector
+			str		r0, [r9, $b]
 			mov		pc, r11
 	MEND
 
 	MACRO
 $label	SEGPOPFIX	$s, $b, $f, $clk
-$label		POP		$clk
-			mov		r1, r0 lsl #4
+$label		ldrh	r6, [r9, #CPU_MSW]
+			POP		$clk
 			strh	r0, [r9, $s]
-			str		r1, [r9, $b]
-			str		r1, [r9, $f]
+			tst		r6, #MSW_PE
+			moveq	r0, r0 lsl #4
+			blne	i286a_selector
+			str		r0, [r9, $b]
+			str		r0, [r9, $f]
 			mov		pc, r11
 	MEND
 

@@ -12,6 +12,7 @@
 
 　・主にRISC向けの最適化、その２
 　・EPSON PCシリーズのアーキテクチャをサポート
+　・ARM版CPUコアのサポート
 　・CPU(I286C) … シングルステップ割り込みの修正
 　・CPU(I286C) … int3 / int imm8 / into クロック数を修正
 　・CPU(I286C) … shl r/m8,cl / shr r/m8,cl の修正

@@ -9,7 +9,7 @@
 	IMPORT		iflags
 	IMPORT		i286a_localint
 	IMPORT		i286a_trapint
-	EXPORT		i286a_trapintr
+	IMPORT		i286a_selector
 	IMPORT		i286a_ea
 	IMPORT		i286a_lea
 	IMPORT		i286a_a
@@ -781,9 +781,12 @@ leareg			mov		r6, #6
 				sub		r8, r8, #(2 << 16)
 				b		i286a_localint
 
-mov_seg_ea		GETPCF8
+mov_seg_ea		ldrh	r6, [r9, #CPU_MSW]
+				GETPCF8
 				adr		r2, msegea_tbl
 				and		r1, r0, #(3 << 3)
+				tst		r6, #MSW_PE
+				orrne	r1, r1, #(4 << 3)
 				mov		r6, r8
 				ldr		r2, [r2, r1 lsr #1]
 				cmp		r0, #&c0
@@ -801,6 +804,10 @@ msegea_tbl		dcd		msegea_es
 				dcd		msegea_cs
 				dcd		msegea_ss
 				dcd		msegea_ds
+				dcd		msegea_es_p
+				dcd		msegea_cs
+				dcd		msegea_ss_p
+				dcd		msegea_ds_p
 msegea_es		mov		r1, r0 lsl #4
 				strh	r0, [r9, #CPU_ES]
 				str		r1, [r9, #CPU_ES_BASE]
@@ -815,9 +822,26 @@ msegea_ss		mov		r1, r0 lsl #4
 				str		r1, [r9, #CPU_SS_BASE]
 				str		r1, [r9, #CPU_SS_FIX]
 				NEXT_OPCODE
+
+msegea_es_p		strh	r0, [r9, #CPU_ES]
+				bl		i286a_selector
+				str		r0, [r9, #CPU_ES_BASE]
+				mov		pc, r11
+msegea_ds_p		strh	r0, [r9, #CPU_DS]
+				bl		i286a_selector
+				str		r0, [r9, #CPU_DS_BASE]
+				str		r0, [r9, #CPU_DS_FIX]
+				mov		pc, r11
+msegea_ss_p		strh	r0, [r9, #CPU_SS]
+				bl		i286a_selector
+				str		r0, [r9, #CPU_SS_BASE]
+				str		r0, [r9, #CPU_SS_FIX]
+				NEXT_OPCODE
+
 msegea_cs		sub		r8, r6, #(2 << 16)
 				mov		r6, #6
 				b		i286a_localint
+
 
 pop_ea			POP		#5
 				mov		r6, r0
@@ -1754,8 +1778,8 @@ i286awithtrap	adr		r4, optbl1
 				bl		dmap_i286
 				and		r0, r8, #(I_FLAG + T_FLAG)
 				cmp		r0, #(I_FLAG + T_FLAG)
-				beq		i286a_trapint
-i286a_trapintr	CPUSV
+				bleq	i286a_trapint
+				CPUSV
 				ldmia	sp!, {r4 - r11, pc}
 
 optbl1			dcd		add_ea_r8			; 00

@@ -422,12 +422,12 @@ $label		CPUWORK	$clk
 
 	MACRO
 $label	POP		$clk
-$label		CPUWORK	$clk
-			ldrh	r1, [r9, #CPU_SP]
+$label		ldrh	r1, [r9, #CPU_SP]
 			ldr		r0, [r9, #CPU_SS_BASE]
+			CPUWORK	$clk
+			add		r2, r1, #2
 			add		r0, r1, r0
-			add		r1, r1, #2
-			strh	r1, [r9, #CPU_SP]
+			strh	r2, [r9, #CPU_SP]
 			bl		i286a_memoryread_w
 	MEND
 

@@ -111,11 +111,13 @@ static void SOUNDCALL js_getpcm(CMJAST hdl, SINT32 *pcm, UINT count) {
 #else
 	pcmdata = hdl->pcm;
 #endif
-	while(count) {
-		count--;
-		pcm[0] += pcmdata;
-		pcm[1] += pcmdata;
-		pcm += 2;
+	if (pcmdata) {
+		while(count) {
+			count--;
+			pcm[0] += pcmdata;
+			pcm[1] += pcmdata;
+			pcm += 2;
+		}
 	}
 }
 
