@@ -48,7 +48,7 @@ void menu_addmenubar(HMENU popup, HMENU menubar) {
 }
 
 static void insertresmenu(HMENU menu, UINT pos, UINT flag,
-													UINT item, UINT str) {
+													UINT32 item, UINT str) {
 
 	TCHAR	tmp[128];
 
@@ -189,48 +189,67 @@ void sysmenu_setscrnmul(UINT8 value) {
 
 typedef struct {
 	UINT16		title;
+	UINT16		items;
+	MENUITEMS	item[1];
+} SUBMITEMS;
+
+typedef struct {
+	UINT16		title;
+	UINT16		items;
 	MENUITEMS	item[3];
-} DISKMENU;
+} SUBMITEM3;
 
-static const DISKMENU fddmenu[4] = {
-		{IDS_FDD1,	{{IDM_FDD1OPEN,		IDS_OPEN},
-					{0,					0},
-					{IDM_FDD1EJECT,		IDS_EJECT}}},
-		{IDS_FDD2,	{{IDM_FDD2OPEN,		IDS_OPEN},
-					{0,					0},
-					{IDM_FDD2EJECT,		IDS_EJECT}}},
-		{IDS_FDD3,	{{IDM_FDD3OPEN,		IDS_OPEN},
-					{0,					0},
-					{IDM_FDD3EJECT,		IDS_EJECT}}},
-		{IDS_FDD4,	{{IDM_FDD4OPEN,		IDS_OPEN},
-					{0,					0},
-					{IDM_FDD4EJECT,		IDS_EJECT}}}};
+static const SUBMITEM3 fddmenu[4] = {
+		{IDS_FDD1, 3,
+			{{IDM_FDD1OPEN, IDS_OPEN}, {0, 0}, {IDM_FDD1EJECT, IDS_EJECT}}},
+		{IDS_FDD2, 3,
+			{{IDM_FDD2OPEN, IDS_OPEN}, {0, 0}, {IDM_FDD2EJECT, IDS_EJECT}}},
+		{IDS_FDD3, 3,
+			{{IDM_FDD3OPEN, IDS_OPEN}, {0, 0}, {IDM_FDD3EJECT, IDS_EJECT}}},
+		{IDS_FDD4, 3,
+			{{IDM_FDD4OPEN, IDS_OPEN}, {0, 0}, {IDM_FDD4EJECT, IDS_EJECT}}}};
 
-static void insdiskmenu(HMENU hMenu, UINT pos, const DISKMENU *m) {
-
-	HMENU	hSubMenu;
-
-	hSubMenu = CreatePopupMenu();
-	insertresmenus(hSubMenu, 0, m->item, 3);
-	insertresmenu(hMenu, pos, MF_BYPOSITION | MF_POPUP,
-											(UINT)hSubMenu, m->title);
-}
+#if defined(SUPPORT_IDEIO)
+static const SUBMITEM3 side[3] = {
+		{IDS_IDE0, 3,
+			{{IDM_IDE0OPEN, IDS_OPEN}, {0, 0}, {IDM_IDE0EJECT, IDS_REMOVE}}},
+		{IDS_IDE1, 3,
+			{{IDM_IDE1OPEN, IDS_OPEN}, {0, 0}, {IDM_IDE1EJECT, IDS_REMOVE}}},
+		{IDS_IDE2, 3,
+			{{IDM_IDE2OPEN, IDS_OPEN}, {0, 0}, {IDM_IDE2EJECT, IDS_EJECT}}}};
+#else
+static const SUBMITEM3 ssasi[2] = {
+		{IDS_SASI1, 3,
+			{{IDM_IDE0OPEN, IDS_OPEN}, {0, 0}, {IDM_IDE0EJECT, IDS_REMOVE}}},
+		{IDS_SASI2, 3,
+			{{IDM_IDE1OPEN, IDS_OPEN}, {0, 0}, {IDM_IDE1EJECT, IDS_REMOVE}}}};
+#endif
 
 #if defined(SUPPORT_SCSI)
-static const DISKMENU scsimenu[4] = {
-		{IDS_SCSI0,	{{IDM_SCSI0OPEN,	IDS_OPEN},
-					{0,					0},
-					{IDM_SCSI0EJECT,	IDS_REMOVE}}},
-		{IDS_SCSI1,	{{IDM_SCSI1OPEN,	IDS_OPEN},
-					{0,					0},
-					{IDM_SCSI1EJECT,	IDS_REMOVE}}},
-		{IDS_SCSI2,	{{IDM_SCSI2OPEN,	IDS_OPEN},
-					{0,					0},
-					{IDM_SCSI2EJECT,	IDS_REMOVE}}},
-		{IDS_SCSI3,	{{IDM_SCSI3OPEN,	IDS_OPEN},
-					{0,					0},
-					{IDM_SCSI3EJECT,	IDS_REMOVE}}}};
+static const SUBMITEM3 sscsi[4] = {
+	{IDS_SCSI0, 3,
+		{{IDM_SCSI0OPEN, IDS_OPEN}, {0, 0}, {IDM_SCSI0EJECT, IDS_REMOVE}}},
+	{IDS_SCSI1, 3,
+		{{IDM_SCSI1OPEN, IDS_OPEN}, {0, 0}, {IDM_SCSI1EJECT, IDS_REMOVE}}},
+	{IDS_SCSI2, 3,
+		{{IDM_SCSI2OPEN, IDS_OPEN}, {0, 0}, {IDM_SCSI2EJECT, IDS_REMOVE}}},
+	{IDS_SCSI3, 3,
+		{{IDM_SCSI3OPEN, IDS_OPEN}, {0, 0}, {IDM_SCSI3EJECT, IDS_REMOVE}}}};
 #endif
+
+
+static void insdiskmenu(HMENU hMenu, UINT pos, const void *item) {
+
+	HMENU		hSubMenu;
+const SUBMITEMS	*smi;
+
+	hSubMenu = CreatePopupMenu();
+	smi = (SUBMITEMS *)item;
+	insertresmenus(hSubMenu, 0, smi->item, smi->items);
+	insertresmenu(hMenu, pos, MF_BYPOSITION | MF_POPUP,
+											(UINT)hSubMenu, smi->title);
+}
+
 
 #if defined(SUPPORT_STATSAVE)
 static const TCHAR xmenu_stat[] = _T("S&tat");
@@ -262,6 +281,7 @@ void xmenu_initialize(void) {
 
 	HMENU	hMenu;
 	HMENU	hSubMenu;
+	UINT	subpos;
 	UINT	i;
 
 	hMenu = np2class_gethmenu(hWndMain);
@@ -276,15 +296,29 @@ void xmenu_initialize(void) {
 												IDM_WAVEREC, IDS_WAVEREC);
 #endif
 
-#if defined(SUPPORT_SCSI)
-	hSubMenu = GetSubMenu(hMenu, 1);
-	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
-	for (i=0; i<4; i++) {
-		insdiskmenu(hSubMenu, i + 3, scsimenu + i);
+	hSubMenu = CreatePopupMenu();
+	subpos = 0;
+#if defined(SUPPORT_IDEIO)
+	for (i=0; i<NELEMENTS(side); i++) {
+		insdiskmenu(hSubMenu, subpos++, side + i);
+	}
+#else
+	for (i=0; i<NELEMENTS(ssasi); i++) {
+		insdiskmenu(hSubMenu, subpos++, ssasi + i);
 	}
 #endif
+#if defined(SUPPORT_SCSI)
+	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
+	subpos++;
+	for (i=0; i<NELEMENTS(sscsi); i++) {
+		insdiskmenu(hSubMenu, subpos++, sscsi + i);
+	}
+#endif
+	insertresmenu(hMenu, 1, MF_BYPOSITION | MF_POPUP,
+												(UINT32)hSubMenu, IDS_HDD);
 
-	for (i=4; i--;) {
+	for (i=4; i>0;) {
+		i--;
 		if (np2cfg.fddequip & (1 << i)) {
 			insdiskmenu(hMenu, 1, fddmenu + i);
 		}

@@ -141,6 +141,12 @@ static void pccore_set(void) {
 	// HDDの接続 (I/Oの使用状態が変わるので..
 	if (np2cfg.dipsw[1] & 0x20) {
 		pccore.hddif |= PCHDD_IDE;
+#if defined(SUPPORT_IDEIO)
+		sxsi_setdevtype(0x02, SXSIDEV_CDROM);
+#endif
+	}
+	else {
+		sxsi_setdevtype(0x02, SXSIDEV_NC);
 	}
 
 	// 拡張メモリ
@@ -221,11 +227,6 @@ void pccore_init(void) {
 	pal_makeskiptable();
 	dispsync_initialize();
 	sxsi_initialize();
-
-	// CDドライブの接続
-#if defined(SUPPORT_IDEIO)
-	sxsi_setdevtype(0x02, SXSIDEV_CDROM);
-#endif
 
 	font_initialize();
 	font_load(np2cfg.fontfile, TRUE);

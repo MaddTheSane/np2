@@ -443,25 +443,38 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			toolwin_setfdd(3, NULL);
 			break;
 
-		case IDM_SASI1OPEN:
+		case IDM_IDE0OPEN:
 			winuienter();
 			dialog_changehdd(hWnd, 0x00);
 			winuileave();
 			break;
 
-		case IDM_SASI1EJECT:
+		case IDM_IDE0EJECT:
 			diskdrv_sethdd(0x00, NULL);
 			break;
 
-		case IDM_SASI2OPEN:
+		case IDM_IDE1OPEN:
 			winuienter();
 			dialog_changehdd(hWnd, 0x01);
 			winuileave();
 			break;
 
-		case IDM_SASI2EJECT:
+		case IDM_IDE1EJECT:
 			diskdrv_sethdd(0x01, NULL);
 			break;
+
+#if defined(SUPPORT_IDEIO)
+		case IDM_IDE2OPEN:
+			winuienter();
+			dialog_changehdd(hWnd, 0x02);
+			winuileave();
+			break;
+
+		case IDM_IDE2EJECT:
+			diskdrv_sethdd(0x02, NULL);
+			break;
+#endif
+
 #if defined(SUPPORT_SCSI)
 		case IDM_SCSI0OPEN:
 			winuienter();
@@ -503,6 +516,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			diskdrv_sethdd(0x23, NULL);
 			break;
 #endif
+
 		case IDM_WINDOW:
 			changescreen(scrnmode & (~SCRNMODE_FULLSCREEN));
 			break;

@@ -761,21 +761,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       IDM_EXIT
     END
-    POPUP "&HardDisk"
-    BEGIN
-        POPUP "SASI-&1"
-        BEGIN
-            MENUITEM "&Open...",                    IDM_SASI1OPEN
-            MENUITEM SEPARATOR
-            MENUITEM "&Remove",                     IDM_SASI1EJECT
-        END
-        POPUP "SASI-&2"
-        BEGIN
-            MENUITEM "&Open...",                    IDM_SASI2OPEN
-            MENUITEM SEPARATOR
-            MENUITEM "&Remove",                     IDM_SASI2EJECT
-        END
-    END
     POPUP "&Screen"
     BEGIN
         MENUITEM "&Window",                     IDM_WINDOW
@@ -1044,6 +1029,7 @@ BEGIN
     IDS_STATLOAD7           "Load 7"
     IDS_STATLOAD8           "Load 8"
     IDS_STATLOAD9           "Load 9"
+    IDS_HDD                 "&HardDisk"
     IDS_OPEN                "&Open..."
     IDS_EJECT               "&Eject"
     IDS_REMOVE              "&Remove"

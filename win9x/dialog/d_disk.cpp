@@ -42,6 +42,17 @@ static const TCHAR sasiui_filter[] =									\
 								_T("*.thd;*.nhd;*.hdi\0");
 static const FILESEL sasiui = {sasiui_title, tchar_thd, sasiui_filter, 4};
 
+#if defined(SUPPORT_IDEIO)
+static const TCHAR isoui_title[] = _T("Select ISO-9660 image");
+static const TCHAR tchar_iso[] = _T("iso");
+static const TCHAR isoui_filter[] =										\
+				_T("ISO-9660 image files\0")							\
+								_T("*.iso;*.img\0")						\
+				_T("All Files\0")										\
+								_T("*.*\0");
+static const FILESEL isoui = {isoui_title, tchar_iso, isoui_filter, 1};
+#endif
+
 #if defined(SUPPORT_SCSI)
 static const TCHAR scsiui_title[] = _T("Select SCSI HDD image");
 static const TCHAR scsiui_filter[] =									\
@@ -107,19 +118,22 @@ const OEMCHAR	*p;
 const FILESEL	*hddui;
 	OEMCHAR		path[MAX_PATH];
 
+	p = diskdrv_getsxsi(drv);
 	num = drv & 0x0f;
-	p = NULL;
 	hddui = NULL;
 	if (!(drv & 0x20)) {		// SASI/IDE
 		if (num < 2) {
-			p = np2cfg.sasihdd[num];
 			hddui = &sasiui;
 		}
+#if defined(SUPPORT_IDEIO)
+		else if (num == 2) {
+			hddui = &isoui;
+		}
+#endif
 	}
 #if defined(SUPPORT_SCSI)
 	else {						// SCSI
 		if (num < 4) {
-			p = np2cfg.scsihdd[num];
 			hddui = &scsiui;
 		}
 	}
@@ -127,7 +141,7 @@ const FILESEL	*hddui;
 	if (hddui == NULL) {
 		return;
 	}
-	if (p[0] == '\0') {
+	if ((p == NULL) || (p[0] == '\0')) {
 		p = hddfolder;
 	}
 	file_cpyname(path, p, NELEMENTS(path));
