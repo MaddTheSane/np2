@@ -224,24 +224,72 @@ const BYTE		*a;
 	}
 	SDL_LockSurface(surface);
 	if (calcdrawrect(surface, &dr, menuvram, &rt) == SUCCESS) {
-		if (scrnmng.bpp == 16) {
-			p = scrnmng.vram->ptr + (dr.srcpos * 2);
-			q = (BYTE *)surface->pixels + dr.dstpos;
-			a = menuvram->alpha + dr.srcpos;
-			salign = menuvram->width;
-			dalign = dr.yalign - (dr.width * dr.xalign);
-			do {
-				x = 0;
+		switch(scrnmng.bpp) {
+#if defined(SUPPORT_16BPP)
+			case 16:
+				p = scrnmng.vram->ptr + (dr.srcpos * 2);
+				q = (BYTE *)surface->pixels + dr.dstpos;
+				a = menuvram->alpha + dr.srcpos;
+				salign = menuvram->width;
+				dalign = dr.yalign - (dr.width * dr.xalign);
 				do {
-					if (a[x] == 0) {
-						*(UINT16 *)q = *(UINT16 *)(p + (x * 2));
-					}
-					q += dr.xalign;
-				} while(++x < dr.width);
-				p += salign * 2;
-				q += dalign;
-				a += salign;
-			} while(--dr.height);
+					x = 0;
+					do {
+						if (a[x] == 0) {
+							*(UINT16 *)q = *(UINT16 *)(p + (x * 2));
+						}
+						q += dr.xalign;
+					} while(++x < dr.width);
+					p += salign * 2;
+					q += dalign;
+					a += salign;
+				} while(--dr.height);
+				break;
+#endif
+#if defined(SUPPORT_24BPP)
+			case 24:
+				p = scrnmng.vram->ptr + (dr.srcpos * 3);
+				q = (BYTE *)surface->pixels + dr.dstpos;
+				a = menuvram->alpha + dr.srcpos;
+				salign = menuvram->width;
+				dalign = dr.yalign - (dr.width * dr.xalign);
+				do {
+					x = 0;
+					do {
+						if (a[x] == 0) {
+							q[0] = p[x*3+0];
+							q[1] = p[x*3+1];
+							q[2] = p[x*3+2];
+						}
+						q += dr.xalign;
+					} while(++x < dr.width);
+					p += salign * 3;
+					q += dalign;
+					a += salign;
+				} while(--dr.height);
+				break;
+#endif
+#if defined(SUPPORT_32BPP)
+			case 32:
+				p = scrnmng.vram->ptr + (dr.srcpos * 4);
+				q = (BYTE *)surface->pixels + dr.dstpos;
+				a = menuvram->alpha + dr.srcpos;
+				salign = menuvram->width;
+				dalign = dr.yalign - (dr.width * dr.xalign);
+				do {
+					x = 0;
+					do {
+						if (a[x] == 0) {
+							*(UINT32 *)q = *(UINT32 *)(p + (x * 4));
+						}
+						q += dr.xalign;
+					} while(++x < dr.width);
+					p += salign * 4;
+					q += dalign;
+					a += salign;
+				} while(--dr.height);
+				break;
+#endif
 		}
 	}
 	SDL_UnlockSurface(surface);
@@ -274,24 +322,19 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 
 BOOL scrnmng_entermenu(SCRNMENU *smenu) {
 
-	int		bpp;
-
 	if (smenu == NULL) {
 		goto smem_err;
 	}
-	bpp = scrnmng.bpp;
-	if (bpp == 32) {
-		bpp = 24;
-	}
 	vram_destroy(scrnmng.vram);
-	scrnmng.vram = vram_create(scrnmng.width, scrnmng.height, FALSE, bpp);
+	scrnmng.vram = vram_create(scrnmng.width, scrnmng.height, FALSE,
+																scrnmng.bpp);
 	if (scrnmng.vram == NULL) {
 		goto smem_err;
 	}
 	scrndraw_redraw();
 	smenu->width = scrnmng.width;
 	smenu->height = scrnmng.height;
-	smenu->bpp = bpp;
+	smenu->bpp = (scrnmng.bpp == 32)?24:scrnmng.bpp;
 	return(SUCCESS);
 
 smem_err:
@@ -324,32 +367,101 @@ const BYTE		*q;
 	}
 	SDL_LockSurface(surface);
 	if (calcdrawrect(surface, &dr, menuvram, rct) == SUCCESS) {
-		if (scrnmng.bpp == 16) {
-			p = scrnmng.vram->ptr + (dr.srcpos * 2);
-			q = menuvram->ptr + (dr.srcpos * 2);
-			r = (BYTE *)surface->pixels + dr.dstpos;
-			a = menuvram->alpha + dr.srcpos;
-			salign = menuvram->width;
-			dalign = dr.yalign - (dr.width * dr.xalign);
-			do {
-				x = 0;
+		switch(scrnmng.bpp) {
+#if defined(SUPPORT_16BPP)
+			case 16:
+				p = scrnmng.vram->ptr + (dr.srcpos * 2);
+				q = menuvram->ptr + (dr.srcpos * 2);
+				r = (BYTE *)surface->pixels + dr.dstpos;
+				a = menuvram->alpha + dr.srcpos;
+				salign = menuvram->width;
+				dalign = dr.yalign - (dr.width * dr.xalign);
 				do {
-					if (a[x]) {
-						if (a[x] & 2) {
-							*(UINT16 *)r = *(UINT16 *)(q + (x * 2));
+					x = 0;
+					do {
+						if (a[x]) {
+							if (a[x] & 2) {
+								*(UINT16 *)r = *(UINT16 *)(q + (x * 2));
+							}
+							else {
+								a[x] = 0;
+								*(UINT16 *)r = *(UINT16 *)(p + (x * 2));
+							}
 						}
-						else {
-							a[x] = 0;
-							*(UINT16 *)r = *(UINT16 *)(p + (x * 2));
+						r += dr.xalign;
+					} while(++x < dr.width);
+					p += salign * 2;
+					q += salign * 2;
+					r += dalign;
+					a += salign;
+				} while(--dr.height);
+				break;
+#endif
+#if defined(SUPPORT_24BPP)
+			case 24:
+				p = scrnmng.vram->ptr + (dr.srcpos * 3);
+				q = menuvram->ptr + (dr.srcpos * 3);
+				r = (BYTE *)surface->pixels + dr.dstpos;
+				a = menuvram->alpha + dr.srcpos;
+				salign = menuvram->width;
+				dalign = dr.yalign - (dr.width * dr.xalign);
+				do {
+					x = 0;
+					do {
+						if (a[x]) {
+							if (a[x] & 2) {
+								r[RGB24_B] = q[x*3+0];
+								r[RGB24_G] = q[x*3+1];
+								r[RGB24_R] = q[x*3+2];
+							}
+							else {
+								a[x] = 0;
+								r[0] = p[x*3+0];
+								r[1] = p[x*3+1];
+								r[2] = p[x*3+2];
+							}
 						}
-					}
-					r += dr.xalign;
-				} while(++x < dr.width);
-				p += salign * 2;
-				q += salign * 2;
-				r += dalign;
-				a += salign;
-			} while(--dr.height);
+						r += dr.xalign;
+					} while(++x < dr.width);
+					p += salign * 3;
+					q += salign * 3;
+					r += dalign;
+					a += salign;
+				} while(--dr.height);
+				break;
+#endif
+#if defined(SUPPORT_32BPP)
+			case 32:
+				p = scrnmng.vram->ptr + (dr.srcpos * 4);
+				q = menuvram->ptr + (dr.srcpos * 3);
+				r = (BYTE *)surface->pixels + dr.dstpos;
+				a = menuvram->alpha + dr.srcpos;
+				salign = menuvram->width;
+				dalign = dr.yalign - (dr.width * dr.xalign);
+				do {
+					x = 0;
+					do {
+						if (a[x]) {
+							if (a[x] & 2) {
+								((RGB32 *)r)->p.b = q[x*3+0];
+								((RGB32 *)r)->p.g = q[x*3+1];
+								((RGB32 *)r)->p.r = q[x*3+2];
+							//	((RGB32 *)r)->p.e = 0;
+							}
+							else {
+								a[x] = 0;
+								*(UINT32 *)r = *(UINT32 *)(p + (x * 4));
+							}
+						}
+						r += dr.xalign;
+					} while(++x < dr.width);
+					p += salign * 4;
+					q += salign * 3;
+					r += dalign;
+					a += salign;
+				} while(--dr.height);
+				break;
+#endif
 		}
 	}
 	SDL_UnlockSurface(surface);
