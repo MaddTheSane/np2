@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.28 2004/06/15 13:50:13 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.29 2004/06/16 12:49:01 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -352,10 +352,11 @@ MOV_CdRd(void)
 			 * 1 = PVI (protected mode virtual interrupt)
 			 * 0 = VME (VM8086 mode extention)
 			 */
-			reg = 0;	/* allow bit */
-			if (CPU_FEATURES & CPU_FEATURE_PGE) {
-				reg |= CPU_CR4_PGE;
-			}
+			reg = 0		/* allow bit */
+#if (CPU_FEATURES & CPU_FEATURE_PGE) == CPU_FEATURE_PGE
+			    | CPU_CR4_PGE
+#endif
+			;
 			if (src & ~reg) {
 				if (src & 0xfffffc00) {
 					EXCEPTION(GP_EXCEPTION, 0);

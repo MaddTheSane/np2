@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.25 2004/06/15 13:50:13 monaka Exp $	*/
+/*	$Id: paging.c,v 1.26 2004/06/16 12:49:01 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -782,7 +782,11 @@ do { \
 #define	TLB_IS_WRITABLE(ep)	((ep)->tag & CPU_PTE_WRITABLE)
 #define	TLB_IS_USERMODE(ep)	((ep)->tag & CPU_PTE_USER_MODE)
 #define	TLB_IS_DIRTY(ep)	((ep)->tag & TLB_ENTRY_TAG_DIRTY)
+#if (CPU_FEATURES & CPU_FEATURE_PGE) == CPU_FEATURE_PGE
 #define	TLB_IS_GLOBAL(ep)	((ep)->tag & TLB_ENTRY_TAG_GLOBAL)
+#else
+#define	TLB_IS_GLOBAL(ep)	FALSE
+#endif
 
 #define	TLB_SET_TAG_FLAGS(ep, entry, bit) \
 do { \
