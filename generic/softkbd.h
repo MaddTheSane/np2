@@ -1,6 +1,4 @@
 
-// ‚Ü‚¾ƒeƒXƒg
-
 #if defined(SUPPORT_SOFTKBD)
 
 #include	"cmndraw.h"
