@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.15 2004/02/09 16:12:07 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.16 2004/02/13 14:52:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -532,6 +532,8 @@ void exec_1step(void);
 #define	INST_PREFIX	(1 << 0)
 #define	INST_STRING	(1 << 1)
 #define	REP_CHECKZF	(1 << 7)
+
+int disasm(DWORD *eip, char *buf, size_t size);
 
 void ia32_printf(const char *buf, ...);
 void ia32_warning(const char *buf, ...);
