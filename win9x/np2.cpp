@@ -51,7 +51,7 @@
 #define		OPENING_WAIT		1500
 #endif
 
-static	OEMCHAR		szClassName[] = OEMTEXT("NP2-MainWindow");
+static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
@@ -1417,7 +1417,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	rand_setseed((unsigned)time(NULL));
 
-	CopyMemory(szClassName, np2oscfg.winid, 3 * sizeof(OEMCHAR));
+	szClassName[0] = (TCHAR)np2oscfg.winid[0];
+	szClassName[1] = (TCHAR)np2oscfg.winid[1];
+	szClassName[2] = (TCHAR)np2oscfg.winid[2];
 
 	if ((hWnd = FindWindow(szClassName, NULL)) != NULL) {
 		sstpmsg_running();

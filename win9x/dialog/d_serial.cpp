@@ -15,25 +15,25 @@
 #include	"dipswbmp.h"
 
 
-static const OEMCHAR str_none[] = OEMTEXT("NONE");
-static const OEMCHAR str_com1[] = OEMTEXT("COM1");
-static const OEMCHAR str_com2[] = OEMTEXT("COM2");
-static const OEMCHAR str_com3[] = OEMTEXT("COM3");
-static const OEMCHAR str_com4[] = OEMTEXT("COM4");
-static const OEMCHAR str_midi[] = OEMTEXT("MIDI");
-static const OEMCHAR str_odd[] = OEMTEXT("ODD");
-static const OEMCHAR str_even[] = OEMTEXT("EVEN");
-static const OEMCHAR str_one[] = OEMTEXT("1");
-static const OEMCHAR str_onehalf[] = OEMTEXT("1.5");
-static const OEMCHAR str_two[] = OEMTEXT("2");
+static const TCHAR str_none[] = _T("NONE");
+static const TCHAR str_com1[] = _T("COM1");
+static const TCHAR str_com2[] = _T("COM2");
+static const TCHAR str_com3[] = _T("COM3");
+static const TCHAR str_com4[] = _T("COM4");
+static const TCHAR str_midi[] = _T("MIDI");
+static const TCHAR str_odd[] = _T("ODD");
+static const TCHAR str_even[] = _T("EVEN");
+static const TCHAR str_one[] = _T("1");
+static const TCHAR str_onehalf[] = _T("1.5");
+static const TCHAR str_two[] = _T("2");
 
-static const OEMCHAR *rsport[] = {str_none, str_com1, str_com2, str_com3,
+static const TCHAR *rsport[] = {str_none, str_com1, str_com2, str_com3,
 									str_com4, str_midi};
 static const UINT32 rscharsize[] = {5, 6, 7, 8};
-static const OEMCHAR *rsparity[] = {str_none, str_odd, str_even};
-static const OEMCHAR *rsstopbit[] = {str_one, str_onehalf, str_two};
+static const TCHAR *rsparity[] = {str_none, str_odd, str_even};
+static const TCHAR *rsstopbit[] = {str_one, str_onehalf, str_two};
 
-static const OEMCHAR str_seropt[] = OEMTEXT("Serial option");
+static const TCHAR str_seropt[] = _T("Serial option");
 
 
 #ifdef __cplusplus
@@ -289,7 +289,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 					update |= m->update;
 				}
 
-				cfg->def_en = GetDlgItemCheck(hWnd, m->idc[ID_DEFE]);
+				cfg->def_en = (UINT8)GetDlgItemCheck(hWnd, m->idc[ID_DEFE]);
 				cm = *m->cm;
 				if (cm) {
 					cm->msg(cm, COMMSG_MIMPIDEFEN, cfg->def_en);
@@ -370,11 +370,11 @@ enum {
 static const UINT32 pc9861kint1[] = {0, 1, 2, 3};
 static const UINT32 pc9861kint2[] = {0, 4, 5, 6};
 
-static const OEMCHAR sync0[] = OEMTEXT("Start-Stop");
-static const OEMCHAR sync1[] = OEMTEXT("ST1");
-static const OEMCHAR sync2[] = OEMTEXT("ST2");
-static const OEMCHAR sync3[] = OEMTEXT("RD-Sync");
-static const OEMCHAR *pc9861sync[] = {sync0, sync1, sync2, sync3};
+static const TCHAR sync0[] = _T("Start-Stop");
+static const TCHAR sync1[] = _T("ST1");
+static const TCHAR sync2[] = _T("ST2");
+static const TCHAR sync3[] = _T("RD-Sync");
+static const TCHAR *pc9861sync[] = {sync0, sync1, sync2, sync3};
 
 static const UINT pc9861d2sync[] = {1, 2, 3, 0};
 static const UINT pc9861d2int[] = {0, 2, 1, 3};

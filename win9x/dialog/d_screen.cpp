@@ -64,7 +64,7 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 		case WM_NOTIFY:
 			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				renewal = 0;
-				b = GetDlgItemCheck(hWnd, IDC_SKIPLINE);
+				b = (UINT8)GetDlgItemCheck(hWnd, IDC_SKIPLINE);
 				if (np2cfg.skipline != b) {
 					np2cfg.skipline = b;
 					renewal = 1;
@@ -81,8 +81,8 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 				if (renewal) {
 					pal_makeskiptable();
 				}
-				b = GetDlgItemCheck(hWnd, IDC_LCD) |
-					(GetDlgItemCheck(hWnd, IDC_LCDX) << 1);
+				b = (GetDlgItemCheck(hWnd, IDC_LCD)?0x01:0x00) |
+					(GetDlgItemCheck(hWnd, IDC_LCDX)?0x02:0x00);
 				if (np2cfg.LCD_MODE != b) {
 					np2cfg.LCD_MODE = b;
 					pal_makelcdpal();
@@ -130,7 +130,7 @@ static LRESULT CALLBACK Scropt2DlgProc(HWND hWnd, UINT msg,
 		case WM_NOTIFY:
 			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				update = 0;
-				b = GetDlgItemCheck(hWnd, IDC_GDC72020);
+				b = (UINT8)GetDlgItemCheck(hWnd, IDC_GDC72020);
 				if (np2cfg.uPD72020 != b) {
 					np2cfg.uPD72020 = b;
 					update |= SYS_UPDATECFG;
@@ -143,7 +143,7 @@ static LRESULT CALLBACK Scropt2DlgProc(HWND hWnd, UINT msg,
 					update |= SYS_UPDATECFG;
 					gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
 				}
-				b = GetDlgItemCheck(hWnd, IDC_PC980124);
+				b = (UINT8)GetDlgItemCheck(hWnd, IDC_PC980124);
 				if (np2cfg.color16 != b) {
 					np2cfg.color16 = b;
 					update |= SYS_UPDATECFG;

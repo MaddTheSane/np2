@@ -47,7 +47,7 @@ typedef	unsigned char	BYTE;
 
 #define	BRESULT				UINT8
 #define	OEMCHAR				char
-#define	OEMTEXT(string)		(string)
+#define	OEMTEXT(string)		string
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
 

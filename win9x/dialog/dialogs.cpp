@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"bmpdata.h"
+#include	"oemtext.h"
 #include	"dosio.h"
 #include	"commng.h"
 #include	"dialogs.h"
@@ -25,6 +26,9 @@ BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 										OEMCHAR *path, UINT size, int *ro) {
 
 	OPENFILENAME	ofn;
+#if defined(OSLANG_UTF8)
+	TCHAR			_path[MAX_PATH];
+#endif
 
 	if ((item == NULL) || (path == NULL) || (size == 0)) {
 		return(FALSE);
@@ -34,14 +38,23 @@ BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 	ofn.hwndOwner = hWnd;
 	ofn.lpstrFilter = item->filter;
 	ofn.nFilterIndex = item->defindex;
+#if defined(OSLANG_UTF8)
+	oemtotchar(_path, NELEMENTS(_path), path, -1);
+	ofn.lpstrFile = _path;
+	ofn.nMaxFile = NELEMENTS(_path);
+#else
 	ofn.lpstrFile = path;
 	ofn.nMaxFile = size;
+#endif
 	ofn.Flags = OFN_FILEMUSTEXIST;
 	ofn.lpstrDefExt = item->ext;
 	ofn.lpstrTitle = item->title;
 	if (!GetOpenFileName(&ofn)) {
 		return(FALSE);
 	}
+#if defined(OSLANG_UTF8)
+	tchartooem(path, NELEMENTS(path), _path, -1);
+#endif
 	if (ro) {
 		*ro = ofn.Flags & OFN_READONLY;
 	}
@@ -52,6 +65,9 @@ BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 											OEMCHAR *path, UINT size) {
 
 	OPENFILENAME	ofn;
+#if defined(OSLANG_UTF8)
+	TCHAR			_path[MAX_PATH];
+#endif
 
 	if ((item == NULL) || (path == NULL) || (size == 0)) {
 		return(FALSE);
@@ -61,14 +77,23 @@ BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 	ofn.hwndOwner = hWnd;
 	ofn.lpstrFilter = item->filter;
 	ofn.nFilterIndex = item->defindex;
+#if defined(OSLANG_UTF8)
+	oemtotchar(_path, NELEMENTS(_path), path, -1);
+	ofn.lpstrFile = _path;
+	ofn.nMaxFile = NELEMENTS(_path);
+#else
 	ofn.lpstrFile = path;
 	ofn.nMaxFile = size;
+#endif
 	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 	ofn.lpstrDefExt = item->ext;
 	ofn.lpstrTitle = item->title;
 	if (!GetSaveFileName(&ofn)) {
 		return(FALSE);
 	}
+#if defined(OSLANG_UTF8)
+	tchartooem(path, NELEMENTS(path), _path, -1);
+#endif
 	return(TRUE);
 }
 

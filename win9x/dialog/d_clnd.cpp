@@ -108,7 +108,7 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDOK:
-					b = GetDlgItemCheck(hWnd, IDC_CLNDREAL);
+					b = (UINT8)GetDlgItemCheck(hWnd, IDC_CLNDREAL);
 					if (np2cfg.calendar != b) {
 						np2cfg.calendar = b;
 						sysmng_update(SYS_UPDATECFG);

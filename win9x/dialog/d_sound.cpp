@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	<windowsx.h>
 #include	<commctrl.h>
 #include	<prsht.h>
 #include	"strres.h"
@@ -474,7 +473,7 @@ static UINT8 getsnd86int(HWND hWnd) {
 
 	TCHAR	work[8];
 
-	Edit_GetText(hWnd, work, NELEMENTS(work));
+	GetWindowText(hWnd, work, NELEMENTS(work));
 	switch(work[3]) {
 		case '0':
 			return(0x00);
@@ -497,7 +496,7 @@ static UINT8 getsnd86id(HWND hWnd) {
 
 	TCHAR	work[8];
 
-	Edit_GetText(hWnd, work, NELEMENTS(work));
+	GetWindowText(hWnd, work, NELEMENTS(work));
 	return((~work[0] & 7) << 5);
 }
 
@@ -535,7 +534,7 @@ static void snd86cmddipsw(HWND hWnd) {
 			break;
 
 		case 1:
-			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), snd86 & 2);
+			SetDlgItemCheck(hWnd, IDC_SND86ROM, snd86 & 2);
 			break;
 
 		case 2:
@@ -544,7 +543,7 @@ static void snd86cmddipsw(HWND hWnd) {
 			break;
 
 		case 4:
-			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT), snd86 & 0x10);
+			SetDlgItemCheck(hWnd, IDC_SND86INT, snd86 & 0x10);
 			break;
 
 		case 5:
@@ -566,12 +565,12 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 			snd86 = np2cfg.snd86opt;
 			SETnLISTSTR(hWnd, IDC_SND86IO, sndioport+1, 2);
 			setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO), snd86);
-			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT), snd86 & 0x10);
+			SetDlgItemCheck(hWnd, IDC_SND86INT, snd86 & 0x10);
 			SETLISTSTR(hWnd, IDC_SND86INTA, sndinterrupt);
 			setsnd86intpara(GetDlgItem(hWnd, IDC_SND86INTA), snd86);
 			SETLISTSTR(hWnd, IDC_SND86ID, sndid);
 			setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID), snd86);
-			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), snd86 & 2);
+			SetDlgItemCheck(hWnd, IDC_SND86ROM, snd86 & 2);
 
 			sub = GetDlgItem(hWnd, IDC_SND86DIP);
 			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
@@ -585,8 +584,8 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 					break;
 				case IDC_SND86INT:
 					set86jmp(hWnd,
-						((Button_GetCheck(GetDlgItem(hWnd, IDC_SND86INT)))
-														?0x10:0x00), 0x10);
+							(GetDlgItemCheck(hWnd, IDC_SND86INT))?0x10:0x00,
+																		0x10);
 					break;
 				case IDC_SND86INTA:
 					set86jmp(hWnd,
@@ -594,8 +593,8 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 					break;
 				case IDC_SND86ROM:
 					set86jmp(hWnd,
-						((Button_GetCheck(GetDlgItem(hWnd, IDC_SND86ROM)))
-														?0x02:0x00), 0x02);
+							(GetDlgItemCheck(hWnd, IDC_SND86ROM))?0x02:0x00,
+																		0x02);
 					break;
 				case IDC_SND86ID:
 					set86jmp(hWnd,
@@ -605,10 +604,10 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 				case IDC_SND86DEF:
 					snd86 = 0x7f;
 					setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO), snd86);
-					Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT), TRUE);
+					SetDlgItemCheck(hWnd, IDC_SND86INT, TRUE);
 					setsnd86intpara(GetDlgItem(hWnd, IDC_SND86INTA), snd86);
 					setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID), snd86);
-					Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), TRUE);
+					SetDlgItemCheck(hWnd, IDC_SND86ROM, TRUE);
 					InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP), NULL, TRUE);
 					break;
 
@@ -646,8 +645,8 @@ static	UINT8	spbvrc = 0;
 
 static void setspbVRch(HWND hWnd) {
 
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRL), spbvrc & 1);
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRR), spbvrc & 2);
+	SetDlgItemCheck(hWnd, IDC_SPBVRL, spbvrc & 1);
+	SetDlgItemCheck(hWnd, IDC_SPBVRR, spbvrc & 2);
 }
 
 static void spbcreate(HWND hWnd) {
@@ -667,7 +666,7 @@ static void spbcreate(HWND hWnd) {
 															MAKELONG(0, 24));
 	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETPOS, TRUE,
 															np2cfg.spb_vrl);
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE), np2cfg.spb_x);
+	SetDlgItemCheck(hWnd, IDC_SPBREVERSE, np2cfg.spb_x);
 
 	sub = GetDlgItem(hWnd, IDC_SPBJMP);
 	SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
@@ -762,10 +761,10 @@ static UINT8 getspbVRch(HWND hWnd) {
 	UINT8	ret;
 
 	ret = 0;
-	if (Button_GetCheck(GetDlgItem(hWnd, IDC_SPBVRL))) {
-		ret++;
+	if (GetDlgItemCheck(hWnd, IDC_SPBVRL)) {
+		ret += 1;
 	}
-	if (Button_GetCheck(GetDlgItem(hWnd, IDC_SPBVRR))) {
+	if (GetDlgItemCheck(hWnd, IDC_SPBVRR)) {
 		ret += 2;
 	}
 	return(ret);
@@ -839,8 +838,7 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 					update |= SYS_UPDATECFG;
 				}
 				opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
-				b = (UINT8)(Button_GetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE))
-																		?1:0);
+				b = (UINT8)GetDlgItemCheck(hWnd, IDC_SPBREVERSE);
 				if (np2cfg.spb_x != b) {
 					np2cfg.spb_x = b;
 					update |= SYS_UPDATECFG;
@@ -887,8 +885,7 @@ static const CHECKTBL pad1opt[13] = {
 
 static void checkbtnres_load(HWND hWnd, const CHECKTBL *item) {
 
-	Button_SetCheck(GetDlgItem(hWnd, item->res),
-								(*(item->ptr)) & (1 << (item->bit)));
+	SetDlgItemCheck(hWnd, item->res, (*(item->ptr)) & (1 << (item->bit)));
 }
 
 static UINT8 checkbtnres_store(HWND hWnd, const CHECKTBL *item) {
@@ -898,7 +895,7 @@ static UINT8 checkbtnres_store(HWND hWnd, const CHECKTBL *item) {
 	UINT8	ret;
 
 	bit = 1 << (item->bit);
-	value = ((Button_GetCheck(GetDlgItem(hWnd, item->res)))?0xff:0) & bit;
+	value = GetDlgItemCheck(hWnd, item->res)?bit:0;
 	ret = ((*(item->ptr)) ^ value) & bit;
 	if (ret) {
 		(*(item->ptr)) ^= bit;
@@ -918,7 +915,7 @@ static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 				checkbtnres_load(hWnd, pad1opt + i);
 			}
 			if (np2oscfg.JOYPAD1 & 2) {
-				Button_Enable(GetDlgItem(hWnd, IDC_JOYPAD1), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_JOYPAD1), FALSE);
 			}
 			return(TRUE);
 

@@ -100,6 +100,12 @@
 　・16MB以上のメモリをサポート(IA32)
 
 　・内部変更
+　　たぶん
+　　　#define OEMTEXT(string)    (string)
+　　を
+　　　#define OEMTEXT(string)    string
+　　にする必要がある。
+
 　　CPUフォルダの DMA EGC等がほぼ同様のコードなので memフォルダへ移動し
 　　共通にしました。
 

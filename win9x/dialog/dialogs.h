@@ -24,7 +24,7 @@ extern const TCHAR str_int6[];
 			SendDlgItemMessage((a), (b), BM_SETCHECK, (c), 0)
 
 #define	GetDlgItemCheck(a, b)		\
-			(((int)SendDlgItemMessage((a), (b), BM_GETCHECK, 0, 0))?1:0)
+			(((int)SendDlgItemMessage((a), (b), BM_GETCHECK, 0, 0)) != 0)
 
 #define	AVE(a, b)					\
 			(((a) + (b)) / 2)
