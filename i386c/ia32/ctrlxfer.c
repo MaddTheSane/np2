@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.11 2004/02/13 14:50:17 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.12 2004/02/13 15:08:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1065,7 +1065,7 @@ IRET_pm_nested_task(void)
 
 	/* check system segment */
 	if (tss_sel.desc.s) {
-		VERBOSE(("IRET_pm: task segment is %d segment", tss_sel.desc.u.seg.c ? "code" : "data"));
+		VERBOSE(("IRET_pm: task segment is %s segment", tss_sel.desc.u.seg.c ? "code" : "data"));
 		EXCEPTION(GP_EXCEPTION, tss_sel.idx);
 	}
 
