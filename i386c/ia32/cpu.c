@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.8 2004/01/23 16:32:36 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.9 2004/02/04 13:24:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -365,7 +365,7 @@ ea(DWORD eip, DWORD op)
 		int n;
 		int i;
 
-		ZeroMemory(count, sizeof(count));
+		memset(count, 0, sizeof(count));
 
 		if (rm == 5) {
 			DWORD sib;

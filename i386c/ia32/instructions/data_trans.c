@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.4 2004/01/23 14:33:27 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.5 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -814,6 +814,34 @@ void XCHG_EDIEAX(void) { CPU_WORKCLOCK(3); SWAPDWORD(CPU_EDI, CPU_EAX); }
 /*
  * BSWAP
  */
+#if defined(bswap32) && !defined(IA32_USE_ASM_BSWAP)
+#define	BSWAP_DWORD(v)	bswap32(v)
+#else	/* !bswap32 || IA32_USE_ASM_BSWAP */
+INLINE static DWORD
+BSWAP_DWORD(DWORD val)
+{
+#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+	__asm__ __volatile__ (
+#if defined(IA32_USE_ASM_BSWAP)
+		"bswap %0"
+#else	/* !IA32_USE_ASM_BSWAP */
+		"rorw $8, %w1\n\t"
+		"rorl $16, %1\n\t"
+		"rorw $8, %w1\n\t"
+#endif	/* IA32_USE_ASM_BSWAP */
+		: "=r" (val) : "0" (val));
+	return val;
+#else	/* !(__GNUC__ && (i386 || __i386__)) */
+	DWORD v;
+	v  = (val & 0x000000ff) << 24;
+	v |= (val & 0x0000ff00) << 8;
+	v |= (val & 0x00ff0000) >> 8;
+	v |= (val & 0xff000000) >> 24;
+	return v;
+#endif	/* __GNUC__ && (i386 || __i386__) */
+}
+#endif	/* bswap32 && !IA32_USE_ASM_BSWAP */
+
 void BSWAP_EAX(void) { CPU_WORKCLOCK(2); CPU_EAX = BSWAP_DWORD(CPU_EAX); }
 void BSWAP_ECX(void) { CPU_WORKCLOCK(2); CPU_ECX = BSWAP_DWORD(CPU_ECX); }
 void BSWAP_EDX(void) { CPU_WORKCLOCK(2); CPU_EDX = BSWAP_DWORD(CPU_EDX); }
@@ -1016,7 +1044,7 @@ void PUSH_AX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_AX); }
 void PUSH_CX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_CX); }
 void PUSH_DX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_DX); }
 void PUSH_BX(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_BX); }
-void PUSH_SP(void) { CPU_WORKCLOCK(3); SP_PUSH0_16(CPU_SP); }
+void PUSH_SP(void) { WORD sp = CPU_SP; CPU_WORKCLOCK(3); PUSH0_16(sp); }
 void PUSH_BP(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_BP); }
 void PUSH_SI(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_SI); }
 void PUSH_DI(void) { CPU_WORKCLOCK(3); PUSH0_16(CPU_DI); }
@@ -1025,7 +1053,7 @@ void PUSH_EAX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EAX); }
 void PUSH_ECX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_ECX); }
 void PUSH_EDX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EDX); }
 void PUSH_EBX(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EBX); }
-void PUSH_ESP(void) { CPU_WORKCLOCK(3); ESP_PUSH0_32(CPU_ESP); }
+void PUSH_ESP(void) { DWORD sp = CPU_ESP; CPU_WORKCLOCK(3); PUSH0_32(sp); }
 void PUSH_EBP(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EBP); }
 void PUSH_ESI(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_ESI); }
 void PUSH_EDI(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EDI); }
@@ -1115,7 +1143,7 @@ void POP_AX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_AX); }
 void POP_CX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_CX); }
 void POP_DX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_DX); }
 void POP_BX(void) { CPU_WORKCLOCK(5); POP0_16(CPU_BX); }
-void POP_SP(void) { CPU_WORKCLOCK(5); SP_POP0_16(CPU_SP); }
+void POP_SP(void) { WORD sp; CPU_WORKCLOCK(5); POP0_16(sp); CPU_SP = sp; }
 void POP_BP(void) { CPU_WORKCLOCK(5); POP0_16(CPU_BP); }
 void POP_SI(void) { CPU_WORKCLOCK(5); POP0_16(CPU_SI); }
 void POP_DI(void) { CPU_WORKCLOCK(5); POP0_16(CPU_DI); }
@@ -1124,7 +1152,7 @@ void POP_EAX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EAX); }
 void POP_ECX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_ECX); }
 void POP_EDX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EDX); }
 void POP_EBX(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EBX); }
-void POP_ESP(void) { CPU_WORKCLOCK(5); ESP_POP0_32(CPU_ESP); }
+void POP_ESP(void) { DWORD sp; CPU_WORKCLOCK(5); POP0_32(sp); CPU_ESP = sp; }
 void POP_EBP(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EBP); }
 void POP_ESI(void) { CPU_WORKCLOCK(5); POP0_32(CPU_ESI); }
 void POP_EDI(void) { CPU_WORKCLOCK(5); POP0_32(CPU_EDI); }

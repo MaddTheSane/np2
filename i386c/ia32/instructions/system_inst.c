@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.12 2004/01/29 11:42:58 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.13 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -525,13 +525,16 @@ LAR_GwEw(void)
 	selector_t sel;
 	WORD *out;
 	DWORD op;
+	DWORD h;
+	int user_mode;
 	int rv;
 	WORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG16_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector);
+		user_mode = CPU_IS_USER_MODE();
+		rv = parse_selector(&sel, selector, user_mode);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -561,7 +564,8 @@ LAR_GwEw(void)
 			}
 		}
 
-		*out = sel.desc.h & 0xff00;
+		h = cpu_lmemoryread_d(sel.addr + 4, user_mode);
+		*out = h & 0xff00;
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -575,13 +579,16 @@ LAR_GdEw(void)
 	selector_t sel;
 	DWORD *out;
 	DWORD op;
+	DWORD h;
+	int user_mode;
 	int rv;
 	WORD selector;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector);
+		user_mode = CPU_IS_USER_MODE();
+		rv = parse_selector(&sel, selector, user_mode);
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -611,7 +618,8 @@ LAR_GdEw(void)
 			}
 		}
 
-		*out = sel.desc.h & 0x00ffff00;	/* 0x00fxff00, x? */
+		h = cpu_lmemoryread_d(sel.addr + 4, user_mode);
+		*out = h & 0x00ffff00;	/* 0x00fxff00, x? */
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
@@ -631,7 +639,7 @@ LSL_GwEw(void)
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG16_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector);
+		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -678,7 +686,7 @@ LSL_GdEw(void)
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_REG32_EA(op, selector, out, 5, 11);
 
-		rv = parse_selector(&sel, selector);
+		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -731,7 +739,7 @@ VERR_Ew(DWORD op)
 			selector = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		}
 
-		rv = parse_selector(&sel, selector);
+		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;
@@ -778,7 +786,7 @@ VERW_Ew(DWORD op)
 			selector = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 		}
 
-		rv = parse_selector(&sel, selector);
+		rv = parse_selector(&sel, selector, CPU_IS_USER_MODE());
 		if (rv < 0) {
 			CPU_FLAGL &= ~Z_FLAG;
 			return;

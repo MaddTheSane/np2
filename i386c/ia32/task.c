@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.7 2004/01/27 15:56:58 monaka Exp $	*/
+/*	$Id: task.c,v 1.8 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -38,7 +38,7 @@ load_tr(WORD selector)
 	selector_t task_sel;
 	int rv;
 
-	rv = parse_selector(&task_sel, selector);
+	rv = parse_selector_user(&task_sel, selector);
 	if (rv < 0 || task_sel.ldt || task_sel.desc.s) {
 		EXCEPTION(GP_EXCEPTION, task_sel.idx);
 	}
@@ -72,7 +72,7 @@ load_tr(WORD selector)
 	tr_dump(task_sel.selector, task_sel.desc.u.seg.segbase, task_sel.desc.u.seg.limit);
 #endif
 
-	CPU_SET_TASK_BUSY(&task_sel.desc);
+	CPU_SET_TASK_BUSY(task_sel.selector, &task_sel.desc);
 	CPU_TR = task_sel.selector;
 	CPU_TR_DESC = task_sel.desc;
 }
@@ -90,16 +90,16 @@ get_stack_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
 		}
 		tss_stack_addr += CPU_TR_DESC.u.seg.segbase;
-		*new_esp = cpu_lmemoryread_d(tss_stack_addr);
-		*new_ss = cpu_lmemoryread_w(tss_stack_addr + 4);
+		*new_esp = cpu_kmemoryread_d(tss_stack_addr);
+		*new_ss = cpu_kmemoryread_w(tss_stack_addr + 4);
 	} else if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_16) {
 		tss_stack_addr = pl * 4 + 2;
 		if (tss_stack_addr + 3 > CPU_TR_DESC.u.seg.limit) {
 			EXCEPTION(TS_EXCEPTION, CPU_TR & ~3);
 		}
 		tss_stack_addr += CPU_TR_DESC.u.seg.segbase;
-		*new_esp = cpu_lmemoryread_w(tss_stack_addr);
-		*new_ss = cpu_lmemoryread_w(tss_stack_addr + 2);
+		*new_esp = cpu_kmemoryread_w(tss_stack_addr);
+		*new_ss = cpu_kmemoryread_w(tss_stack_addr + 2);
 	} else {
 		ia32_panic("get_stack_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
@@ -124,7 +124,7 @@ get_link_selector_from_tss()
 		ia32_panic("get_link_selector_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
 
-	backlink = cpu_lmemoryread_w(CPU_TR_DESC.u.seg.segbase);
+	backlink = cpu_kmemoryread_w(CPU_TR_DESC.u.seg.segbase);
 	VERBOSE(("get_link_selector_from_tss: backlink selector = 0x%04x", backlink));
 	return backlink;
 }
@@ -190,7 +190,7 @@ task_switch(selector_t* task_sel, int type)
 
 		VERBOSE(("task_switch: new task"));
 		for (i = 0; i < task_sel->desc.u.seg.limit; i += 4) {
-			v = cpu_lmemoryread_d(task_base + i);
+			v = cpu_kmemoryread_d(task_base + i);
 			VERBOSE(("task_switch: 0x%08x: %08x", task_base + i,v));
 		}
 	}
@@ -198,36 +198,38 @@ task_switch(selector_t* task_sel, int type)
 
 	if (CPU_STAT_PAGING) {
 		/* task state paging check */
-		paging_check(cur_base, CPU_TR_DESC.u.seg.limit, CPU_PAGING_PAGE_WRITE);
-		paging_check(task_base, task_sel->desc.u.seg.limit, CPU_PAGING_PAGE_WRITE);
+		paging_check(cur_base, CPU_TR_DESC.u.seg.limit, CPU_PAGE_WRITE_DATA, CPU_MODE_SUPERVISER);
+		paging_check(task_base, task_sel->desc.u.seg.limit, CPU_PAGE_WRITE_DATA, CPU_MODE_SUPERVISER);
 	}
 
 	/* load task state */
 	memset(sreg, 0, sizeof(sreg));
 	if (!task16) {
-		cr3 = cpu_lmemoryread_d(task_base + 28);
-		eip = cpu_lmemoryread_d(task_base + 32);
-		new_flags = cpu_lmemoryread_d(task_base + 36);
+		if (CPU_STAT_PAGING) {
+			cr3 = cpu_kmemoryread_d(task_base + 28);
+		}
+		eip = cpu_kmemoryread_d(task_base + 32);
+		new_flags = cpu_kmemoryread_d(task_base + 36);
 		for (i = 0; i < CPU_REG_NUM; i++) {
-			regs[i] = cpu_lmemoryread_d(task_base + 40 + i * 4);
+			regs[i] = cpu_kmemoryread_d(task_base + 40 + i * 4);
 		}
 		for (i = 0; i < nsreg; i++) {
-			sreg[i] = cpu_lmemoryread_w(task_base + 72 + i * 4);
+			sreg[i] = cpu_kmemoryread_w(task_base + 72 + i * 4);
 		}
-		ldtr = cpu_lmemoryread_w(task_base + 96);
-		t = cpu_lmemoryread_w(task_base + 100);
+		ldtr = cpu_kmemoryread_w(task_base + 96);
+		t = cpu_kmemoryread_w(task_base + 100);
 		t &= 1;
-		iobase = cpu_lmemoryread_w(task_base + 102);
+		iobase = cpu_kmemoryread_w(task_base + 102);
 	} else {
-		eip = cpu_lmemoryread_w(task_base + 14);
-		new_flags = cpu_lmemoryread_w(task_base + 16);
+		eip = cpu_kmemoryread_w(task_base + 14);
+		new_flags = cpu_kmemoryread_w(task_base + 16);
 		for (i = 0; i < CPU_REG_NUM; i++) {
-			regs[i] = cpu_lmemoryread_w(task_base + 18 + i * 2);
+			regs[i] = cpu_kmemoryread_w(task_base + 18 + i * 2);
 		}
 		for (i = 0; i < nsreg; i++) {
-			sreg[i] = cpu_lmemoryread_w(task_base + 34 + i * 2);
+			sreg[i] = cpu_kmemoryread_w(task_base + 34 + i * 2);
 		}
-		ldtr = cpu_lmemoryread_w(task_base + 42);
+		ldtr = cpu_kmemoryread_w(task_base + 42);
 		t = 0;
 		iobase = 0;
 	}
@@ -257,7 +259,7 @@ task_switch(selector_t* task_sel, int type)
 		/*FALLTHROUGH*/
 	case TASK_SWITCH_JMP:
 		/* clear busy flags in current task */
-		CPU_SET_TASK_FREE(&CPU_TR_DESC);
+		CPU_SET_TASK_FREE(CPU_TR, &CPU_TR_DESC);
 		break;
 
 	case TASK_SWITCH_CALL:
@@ -272,26 +274,23 @@ task_switch(selector_t* task_sel, int type)
 
 	/* save this task state in this task state segment */
 	if (!task16) {
-		cpu_lmemorywrite_d(cur_base + 28, CPU_CR3);
-		cpu_lmemorywrite_d(cur_base + 32, CPU_EIP);
-		cpu_lmemorywrite_d(cur_base + 36, old_flags);
+		cpu_kmemorywrite_d(cur_base + 32, CPU_EIP);
+		cpu_kmemorywrite_d(cur_base + 36, old_flags);
 		for (i = 0; i < CPU_REG_NUM; i++) {
-			cpu_lmemorywrite_d(cur_base + 40 + i * 4, CPU_REGS_DWORD(i));
+			cpu_kmemorywrite_d(cur_base + 40 + i * 4, CPU_REGS_DWORD(i));
 		}
 		for (i = 0; i < nsreg; i++) {
-			cpu_lmemorywrite_w(cur_base + 72 + i * 4, CPU_REGS_SREG(i));
+			cpu_kmemorywrite_w(cur_base + 72 + i * 4, CPU_REGS_SREG(i));
 		}
-		cpu_lmemorywrite_w(cur_base + 96, CPU_LDTR);
 	} else {
-		cpu_lmemorywrite_w(cur_base + 14, CPU_IP);
-		cpu_lmemorywrite_w(cur_base + 16, (WORD)old_flags);
+		cpu_kmemorywrite_w(cur_base + 14, CPU_IP);
+		cpu_kmemorywrite_w(cur_base + 16, (WORD)old_flags);
 		for (i = 0; i < CPU_REG_NUM; i++) {
-			cpu_lmemorywrite_w(cur_base + 18 + i * 2, CPU_REGS_WORD(i));
+			cpu_kmemorywrite_w(cur_base + 18 + i * 2, CPU_REGS_WORD(i));
 		}
 		for (i = 0; i < nsreg; i++) {
-			cpu_lmemorywrite_w(cur_base + 34 + i * 2, CPU_REGS_SREG(i));
+			cpu_kmemorywrite_w(cur_base + 34 + i * 2, CPU_REGS_SREG(i));
 		}
-		cpu_lmemorywrite_w(cur_base + 42, CPU_LDTR);
 	}
 
 #if defined(MORE_DEBUG)
@@ -300,7 +299,7 @@ task_switch(selector_t* task_sel, int type)
 
 		VERBOSE(("task_switch: current task"));
 		for (i = 0; i < CPU_TR_DESC.u.seg.limit; i += 4) {
-			v = cpu_lmemoryread_d(cur_base + i);
+			v = cpu_kmemoryread_d(cur_base + i);
 			VERBOSE(("task_switch: 0x%08x: %08x", cur_base + i, v));
 		}
 	}
@@ -310,7 +309,7 @@ task_switch(selector_t* task_sel, int type)
 	case TASK_SWITCH_CALL:
 	case TASK_SWITCH_INTR:
 		/* set back link selector */
-		cpu_lmemorywrite_w(task_base, CPU_TR);
+		cpu_kmemorywrite_w(task_base, CPU_TR);
 		break;
 	
 	case TASK_SWITCH_IRET:
@@ -334,7 +333,7 @@ task_switch(selector_t* task_sel, int type)
 		new_flags |= NT_FLAG;
 		/*FALLTHROUGH*/
 	case TASK_SWITCH_JMP:
-		CPU_SET_TASK_BUSY(&task_sel->desc);
+		CPU_SET_TASK_BUSY(task_sel->selector, &task_sel->desc);
 		break;
 	
 	case TASK_SWITCH_IRET:
@@ -342,7 +341,7 @@ task_switch(selector_t* task_sel, int type)
 		/* check busy flag is active */
 		if (task_sel->desc.valid) {
 			DWORD h;
-			h = cpu_lmemoryread_d(task_sel->desc.addr + 4);
+			h = cpu_kmemoryread_d(task_sel->addr + 4);
 			if ((h & CPU_TSS_H_BUSY) == 0) {
 				VERBOSE(("task_switch: new task is not busy"));
 			}
@@ -365,7 +364,7 @@ task_switch(selector_t* task_sel, int type)
 	/* load task state (CR3, EFLAG, EIP, GPR, segreg, LDTR) */
 
 	/* set new CR3 */
-	if (!task16) {
+	if (!task16 && CPU_STAT_PAGING) {
 		set_CR3(cr3);
 	}
 
@@ -394,7 +393,7 @@ task_switch(selector_t* task_sel, int type)
 		}
 	} else {
 		/* load CS */
-		rv = parse_selector(&cs_sel, sreg[CPU_CS_INDEX]);
+		rv = parse_selector_sv(&cs_sel, sreg[CPU_CS_INDEX]);
 		if (rv < 0) {
 			VERBOSE(("task_switch: load CS failure (sel = 0x%04x, rv = %d)", sreg[CPU_CS_INDEX], rv));
 			EXCEPTION(TS_EXCEPTION, cs_sel.idx);

@@ -1,4 +1,4 @@
-/*	$Id: segments.h,v 1.4 2004/01/27 15:55:26 monaka Exp $	*/
+/*	$Id: segments.h,v 1.5 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -35,14 +35,6 @@ extern "C" {
 #endif
 
 /*
- * segment selector
- */
-#define	CPU_SEGMENT_SELECTOR_INDEX_MASK	~7
-#define	CPU_SEGMENT_SELECTOR_RPL_MASK	3
-#define	CPU_SEGMENT_TABLE_IND		(1 << 2)	/* 0 = GDT, 1 = LDT */
-
-
-/*
  * segment descriptor
  */
 typedef struct {
@@ -68,10 +60,6 @@ typedef struct {
 			BYTE	b_pad[7];
 		} gate;
 	} u;
-
-	DWORD	addr;	/* descriptor addr */
-	DWORD	l;	/* low dword cache */
-	DWORD	h;	/* high dword cache */
 
 	BYTE	valid;	/* descriptor valid flag */
 	BYTE	p;	/* avail flag */
@@ -118,7 +106,7 @@ typedef struct {
 #define	CPU_GATEDESC_H_D	(  1 << 11)
 
 /* for tss descriptor */
-#define	CPU_TSS_H_BUSY		(  1 << 10)
+#define	CPU_TSS_H_BUSY		(  1 <<  9)
 
 /*
  * descriptor type
@@ -166,53 +154,53 @@ do { \
 	(dscp)->flag = 0; \
 } while (/*CONSTCOND*/ 0)
 
-#define	CPU_SET_SEGDESC_POSTPART(dscp) \
+#define	CPU_SET_TASK_BUSY(selector, dscp) \
 do { \
-	if ((dscp)->valid) { \
-		if ((dscp)->s) { \
-			if (!((dscp)->h & CPU_SEGDESC_H_A)) { \
-				(dscp)->h |= CPU_SEGDESC_H_A; \
-				cpu_lmemorywrite_d((dscp)->addr+4, (dscp)->h); \
-			} \
-		} \
+	DWORD addr; \
+	DWORD h; \
+	addr = CPU_GDTR_BASE | ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
+	h = cpu_kmemoryread_d(addr + 4); \
+	if (!(h & CPU_TSS_H_BUSY)) { \
+		(dscp)->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
+		h |= CPU_TSS_H_BUSY; \
+		cpu_kmemorywrite_d(addr + 4, h); \
 	} else { \
-		ia32_panic("CPU_SET_SEGDESC_POSTPART: descriptor is invalid"); \
+		ia32_panic("CPU_SET_TASK_BUSY: already busy (%04x:%08x)", selector, h); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	CPU_SET_TASK_BUSY(dscp) \
+#define	CPU_SET_TASK_FREE(selector, dscp) \
 do { \
-	if ((dscp)->valid) { \
-		DWORD h; \
-		h = cpu_lmemoryread_d((dscp)->addr + 4); \
-		if (!(h & CPU_TSS_H_BUSY)) { \
-			(dscp)->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
-			h |= CPU_TSS_H_BUSY; \
-			cpu_lmemorywrite_d((dscp)->addr + 4, h); \
-		} else { \
-			ia32_panic("CPU_SET_TASK_BUSY: already busy (%x)", h); \
-		} \
+	DWORD addr; \
+	DWORD h; \
+	addr = CPU_GDTR_BASE | ((selector) & CPU_SEGMENT_SELECTOR_INDEX_MASK); \
+	h = cpu_kmemoryread_d(addr + 4); \
+	if (h & CPU_TSS_H_BUSY) { \
+		(dscp)->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
+		h &= ~CPU_TSS_H_BUSY; \
+		cpu_kmemorywrite_d(addr + 4, h); \
 	} else { \
-		ia32_panic("CPU_SET_TASK_BUSY: descriptor is invalid"); \
+		ia32_panic("CPU_SET_TASK_FREE: already free (%04x:%08x)", selector, h); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	CPU_SET_TASK_FREE(dscp) \
-do { \
-	if ((dscp)->valid) { \
-		DWORD h; \
-		h = cpu_lmemoryread_d((dscp)->addr + 4); \
-		if (h & CPU_TSS_H_BUSY) { \
-			(dscp)->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND; \
-			h &= ~CPU_TSS_H_BUSY; \
-			cpu_lmemorywrite_d((dscp)->addr + 4, h); \
-		} else { \
-			ia32_panic("CPU_SET_TASK_FREE: already free (%x)", h); \
-		} \
-	} else { \
-		ia32_panic("CPU_SET_TASK_FREE: descriptor is invalid"); \
-	} \
-} while (/*CONSTCOND*/ 0)
+#define	CPU_SET_SEGDESC(descp, addr, mode)  load_descriptor(descp, addr, mode)
+#define	CPU_SET_GATEDESC(descp, addr, mode) load_descriptor(descp, addr, mode)
+void load_descriptor(descriptor_t* descp, DWORD addr, int user_mode);
+
+#define	CPU_SET_SEGREG(idx, selector)	load_segreg(idx, selector, GP_EXCEPTION)
+void load_segreg(int idx, WORD selector, int exc);
+void load_ss(WORD selector, descriptor_t* sdp, DWORD cpl);
+void load_cs(WORD selector, descriptor_t* sdp, DWORD cpl);
+void load_ldtr(WORD selector, int exc);
+
+
+/*
+ * segment selector
+ */
+#define	CPU_SEGMENT_SELECTOR_INDEX_MASK	~7
+#define	CPU_SEGMENT_SELECTOR_RPL_MASK	3
+#define	CPU_SEGMENT_TABLE_IND		(1 << 2)	/* 0 = GDT, 1 = LDT */
 
 typedef struct {
 	WORD		selector;
@@ -221,21 +209,17 @@ typedef struct {
 	BYTE		ldt;
 	BYTE		pad;
 
+	int		user_mode;	/* superviser/user mode */
+	DWORD		addr;		/* descriptor linear address */
+
 	descriptor_t	desc;
 } selector_t;
 
-int parse_selector(selector_t* ssp, WORD selector);
-int selector_is_not_present(selector_t* ssp);
+int parse_selector(selector_t *ssp, WORD selector, int user_mode);
+int selector_is_not_present(selector_t *ssp);
 
-#define	CPU_SET_SEGDESC(descp, addr)	load_descriptor(descp, addr)
-#define	CPU_SET_GATEDESC(descp, addr)	load_descriptor(descp, addr)
-void load_descriptor(descriptor_t* descp, DWORD addr);
-
-#define	CPU_SET_SEGREG(idx, selector)	load_segreg(idx, selector, GP_EXCEPTION)
-void load_segreg(int idx, WORD selector, int exc);
-void load_ss(WORD selector, descriptor_t* sdp, BYTE cpl);
-void load_cs(WORD selector, descriptor_t* sdp, BYTE cpl);
-void load_ldtr(WORD selector, int exc);
+#define	parse_selector_sv(sp, s) parse_selector(sp, s, CPU_MODE_SUPERVISER)
+#define	parse_selector_user(sp, s) parse_selector(sp, s, CPU_IS_USER_MODE())
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.6 2004/02/03 14:49:39 monaka Exp $	*/
+/*	$Id: paging.h,v 1.7 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -122,63 +122,78 @@ extern "C" {
 #define	CPU_PTE_PRESENT		(1 << 0)
 
 /* paging_check(): rw */
-#define	CPU_PAGING_PAGE_READ	(0 << 0)
-#define	CPU_PAGING_PAGE_WRITE	(1 << 0)
-#define	CPU_PAGING_PAGE_CODE	(1 << 1)
-#define	CPU_PAGING_PAGE_DATA	(1 << 2)
+#define	CPU_PAGE_READ		(0 << 0)
+#define	CPU_PAGE_WRITE		(1 << 0)
+#define	CPU_PAGE_CODE		(1 << 1)
+#define	CPU_PAGE_DATA		(1 << 2)
+#define	CPU_PAGE_READ_CODE	(CPU_PAGE_READ|CPU_PAGE_CODE)
+#define	CPU_PAGE_READ_DATA	(CPU_PAGE_READ|CPU_PAGE_DATA)
+#define	CPU_PAGE_WRITE_DATA	(CPU_PAGE_WRITE|CPU_PAGE_DATA)
 
-
-/* enter/leave paging mode */
-void FASTCALL change_pg(int onoff);
-
-/* paging check */
-void MEMCALL paging_check(DWORD laddr, DWORD length, int rw);
 
 /*
  * linear address function
  */
-DWORD MEMCALL cpu_linear_memory_read(DWORD address, DWORD length, int code);
-void MEMCALL cpu_linear_memory_write(DWORD address, DWORD value, DWORD length);
+DWORD MEMCALL cpu_linear_memory_read(DWORD address, DWORD length, int code, int user_mode);
+void MEMCALL cpu_linear_memory_write(DWORD address, DWORD value, DWORD length, int user_mode);
+void MEMCALL paging_check(DWORD laddr, DWORD length, int crw, int user_mode);
 
-#define	cpu_lmemoryread(a) \
+#define	cpu_lmemoryread(a,pl) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memoryread(a) : \
-		(BYTE)cpu_linear_memory_read(a,1,FALSE)
-#define	cpu_lmemoryread_w(a) \
+	 cpu_memoryread(a) : \
+	 (BYTE)cpu_linear_memory_read(a,1,CPU_PAGE_READ_DATA,pl)
+#define	cpu_lmemoryread_w(a,pl) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memoryread_w(a) : \
-		(WORD)cpu_linear_memory_read(a,2,FALSE)
-#define	cpu_lmemoryread_d(a) \
+	 cpu_memoryread_w(a) : \
+	 (WORD)cpu_linear_memory_read(a,2,CPU_PAGE_READ_DATA,pl)
+#define	cpu_lmemoryread_d(a,pl) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memoryread_d(a) : \
-		cpu_linear_memory_read(a,4,FALSE)
+	 cpu_memoryread_d(a) : \
+	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_DATA,pl)
 
-#define	cpu_lmemorywrite(a,v) \
+#define	cpu_lmemorywrite(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memorywrite(a,v) : \
-		cpu_linear_memory_write(a,v,1)
-#define	cpu_lmemorywrite_w(a,v) \
+	 cpu_memorywrite(a,v) : \
+	 cpu_linear_memory_write(a,v,1,pl)
+#define	cpu_lmemorywrite_w(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memorywrite_w(a,v) : \
-		cpu_linear_memory_write(a,v,2)
-#define	cpu_lmemorywrite_d(a,v) \
+	 cpu_memorywrite_w(a,v) : \
+	 cpu_linear_memory_write(a,v,2,pl)
+#define	cpu_lmemorywrite_d(a,v,pl) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memorywrite_d(a,v) : \
-		cpu_linear_memory_write(a,v,4)
+	 cpu_memorywrite_d(a,v) : \
+	 cpu_linear_memory_write(a,v,4,pl)
 
+/*
+ * access code segment linear memory
+ */
 #define	cpu_lcmemoryread(a) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memoryread(a) : \
-		(BYTE)cpu_linear_memory_read(a,1,TRUE)
+	 cpu_memoryread(a) : \
+	 (BYTE)cpu_linear_memory_read(a,1,CPU_PAGE_READ_CODE,CPU_IS_USER_MODE())
 #define	cpu_lcmemoryread_w(a) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memoryread_w(a) : \
-		(WORD)cpu_linear_memory_read(a,2,TRUE)
+	 cpu_memoryread_w(a) : \
+	 (WORD)cpu_linear_memory_read(a,2,CPU_PAGE_READ_CODE,CPU_IS_USER_MODE())
 #define	cpu_lcmemoryread_d(a) \
 	(!CPU_STAT_PAGING) ? \
-		cpu_memoryread_d(a) : \
-		cpu_linear_memory_read(a,4,TRUE)
+	 cpu_memoryread_d(a) : \
+	 cpu_linear_memory_read(a,4,CPU_PAGE_READ_CODE,CPU_IS_USER_MODE())
 
+/*
+ * access linear memory with superviser mode
+ */
+#define	cpu_kmemoryread(a)	cpu_lmemoryread(a,CPU_MODE_SUPERVISER)
+#define	cpu_kmemoryread_w(a)	cpu_lmemoryread_w(a,CPU_MODE_SUPERVISER)
+#define	cpu_kmemoryread_d(a)	cpu_lmemoryread_d(a,CPU_MODE_SUPERVISER)
+#define	cpu_kmemorywrite(a,v)	cpu_lmemorywrite(a,v,CPU_MODE_SUPERVISER)
+#define	cpu_kmemorywrite_w(a,v)	cpu_lmemorywrite_w(a,v,CPU_MODE_SUPERVISER)
+#define	cpu_kmemorywrite_d(a,v)	cpu_lmemorywrite_d(a,v,CPU_MODE_SUPERVISER)
+
+
+/*
+ * CR3 (Page Directory Entry base physical address)
+ */
 #define	set_CR3(cr3) \
 do { \
 	CPU_CR3 = (cr3) & CPU_CR3_MASK; \
@@ -190,9 +205,15 @@ do { \
 /*
  * TLB function
  */
+#if defined(IA32_SUPPORT_TLB)
 void tlb_init();
 void tlb_flush(BOOL allflush);
 void tlb_flush_page(DWORD vaddr);
+#else
+#define	tlb_init()
+#define	tlb_flush(allflush)	(void)allflush
+#define	tlb_flush_page(vaddr)	(void)vaddr
+#endif
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.9 2004/02/03 14:49:39 monaka Exp $	*/
+/*	$Id: paging.c,v 1.10 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -192,24 +192,18 @@ static void tlb_update(DWORD paddr, DWORD entry, int crw);
 
 
 DWORD MEMCALL
-cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
+cpu_linear_memory_read(DWORD laddr, DWORD length, int crw, int user_mode)
 {
 	DWORD paddr;
 	DWORD remain;	/* page remain */
 	DWORD r;
 	DWORD shift = 0;
 	DWORD value = 0;
-	int crw;
-	int pl;
-
-	crw = CPU_PAGING_PAGE_READ;
-	crw |= code ? CPU_PAGING_PAGE_CODE : CPU_PAGING_PAGE_DATA;
-	pl = (CPU_STAT_CPL == 3);
 
 	/* XXX: 4MB pages... */
 	remain = 0x1000 - (laddr & 0x00000fff);
 	for (;;) {
-		paddr = paging(laddr, crw, pl);
+		paddr = paging(laddr, crw, user_mode);
 
 		r = (remain > length) ? length : remain;
 		switch (r) {
@@ -253,22 +247,17 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 }
 
 void MEMCALL
-cpu_linear_memory_write(DWORD laddr, DWORD value, DWORD length)
+cpu_linear_memory_write(DWORD laddr, DWORD value, DWORD length, int user_mode)
 {
 	DWORD paddr;
 	DWORD remain;	/* page remain */
 	DWORD r;
-	int crw;
-	int pl;
-
-	crw = CPU_PAGING_PAGE_WRITE;
-	crw |= CPU_PAGING_PAGE_DATA;
-	pl = (CPU_STAT_CPL == 3);
+	int crw = (CPU_PAGE_WRITE|CPU_PAGE_DATA);
 
 	/* XXX: 4MB pages... */
 	remain = 0x1000 - (laddr & 0x00000fff);
 	for (;;) {
-		paddr = paging(laddr, crw, pl);
+		paddr = paging(laddr, crw, user_mode);
 
 		r = (remain > length) ? length : remain;
 		switch (r) {
@@ -310,21 +299,16 @@ cpu_linear_memory_write(DWORD laddr, DWORD value, DWORD length)
 }
 
 void MEMCALL
-paging_check(DWORD laddr, DWORD length, int rw)
+paging_check(DWORD laddr, DWORD length, int crw, int user_mode)
 {
 	DWORD paddr;
 	DWORD remain;	/* page remain */
 	DWORD r;
-	int crw;
-	int pl;
-
-	crw = rw;
-	pl = (CPU_STAT_CPL == 3);
 
 	/* XXX: 4MB pages... */
 	remain = 0x1000 - (laddr & 0x00000fff);
 	for (;;) {
-		paddr = paging(laddr, crw, pl);
+		paddr = paging(laddr, crw, user_mode);
 
 		r = (remain > length) ? length : remain;
 
@@ -406,7 +390,7 @@ paging(DWORD laddr, int crw, int user_mode)
 		paddr = (pte & CPU_PTE_BASEADDR_MASK) | (laddr & 0x00000fff);
 	}
 
-	bit  = crw & CPU_PAGING_PAGE_WRITE;
+	bit  = crw & CPU_PAGE_WRITE;
 	bit |= (pde & pte & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE));
 	bit |= (user_mode << 3);
 	bit |= (CPU_CR0 & CPU_CR0_WP) >> 12;
@@ -425,7 +409,7 @@ paging(DWORD laddr, int crw, int user_mode)
 		goto pf_exception;
 	}
 
-	if ((crw & CPU_PAGING_PAGE_WRITE) && !(pte & CPU_PTE_DIRTY)) {
+	if ((crw & CPU_PAGE_WRITE) && !(pte & CPU_PTE_DIRTY)) {
 		pte |= CPU_PTE_DIRTY;
 		cpu_memorywrite_d(pte_addr, pte);
 	}
@@ -438,7 +422,7 @@ paging(DWORD laddr, int crw, int user_mode)
 
 pf_exception:
 	CPU_CR2 = laddr;
-	err |= ((crw & CPU_PAGING_PAGE_WRITE) << 1) | (user_mode << 2);
+	err |= ((crw & CPU_PAGE_WRITE) << 1) | (user_mode << 2);
 	EXCEPTION(PF_EXCEPTION, err);
 	return 0;	/* compiler happy */
 }
@@ -518,17 +502,18 @@ tlb_init()
 	tlb_entry_flushes = 0;
 #endif	/* IA32_PROFILE_TLB */
 
-	/* XXX プロセッサ種別にしたがって TLB 構成を構築する */
-
+#if CPU_FAMILY == 4
 	/* とりあえず i486 形式で… */
 	/* combine (I/D) TLB: 4KB Pages, 4-way set associative 32 entries */
 	ntlb = 1;
 	tlb[0].kind = TLB_KIND_COMBINE | TLB_KIND_SMALL;
 	tlb[0].num = 32;
 	tlb[0].way = 4;
-	tlb[0].idx = tlb[0].num / tlb[0].way;
+#endif
 
 	for (i = 0; i < ntlb; i++) {
+		tlb[i].idx = tlb[i].num / tlb[i].way;
+
 		tlb[i].entry = (TLB_ENTRY_T*)calloc(sizeof(TLB_ENTRY_T), tlb[i].num);
 		if (tlb[i].entry == 0) {
 			ia32_panic("tlb_init(): can't alloc TLB entry\n");
@@ -601,7 +586,7 @@ tlb_lookup(DWORD laddr, int crw, DWORD* paddr)
 
 	PROFILE_INC(tlb_lookups);
 
-	crw &= CPU_PAGING_PAGE_CODE | CPU_PAGING_PAGE_DATA;
+	crw &= CPU_PAGE_CODE | CPU_PAGE_DATA;
 	for (i = 0; i < ntlb; i++) {
 		if (tlb[i].kind & crw) {
 			if (tlb[i].idx == 1) {
@@ -645,7 +630,7 @@ tlb_update(DWORD paddr, DWORD entry, int crw)
 
 	PROFILE_INC(tlb_updates);
 
-	crw &= CPU_PAGING_PAGE_CODE | CPU_PAGING_PAGE_DATA;
+	crw &= CPU_PAGE_CODE | CPU_PAGE_DATA;
 	for (i = 0; i < ntlb; i++) {
 		if (tlb[i].kind & crw) {
 			if (tlb[i].idx == 1) {
@@ -691,26 +676,5 @@ tlb_update(DWORD paddr, DWORD entry, int crw)
 		}
 	}
 	__ASSERT(i != ntlb);
-}
-#else	/* !IA32_SUPPORT_TLB */
-void
-tlb_init()
-{
-
-	/* nothing to do */
-}
-
-void
-tlb_flush(BOOL allflush)
-{
-
-	(void)allflush;
-}
-
-void
-tlb_flush_page(DWORD laddr)
-{
-
-	(void)laddr;
 }
 #endif	/* IA32_SUPPORT_TLB */

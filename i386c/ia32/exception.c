@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.6 2004/01/27 15:56:57 monaka Exp $	*/
+/*	$Id: exception.c,v 1.7 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -103,9 +103,11 @@ exception(int num, int error_code)
 		error_code = 0;
 		break;
 
+#if CPU_FAMILY >= 4
 	case AC_EXCEPTION:	/* (F) アラインメントチェック (errcode: 0) */
 		error_code = 0;
 		/*FALLTHROUGH*/
+#endif
 	case TS_EXCEPTION:	/* (F) 無効 TSS (errcode) */
 	case NP_EXCEPTION:	/* (F) セグメント不在 (errcode) */
 	case SS_EXCEPTION:	/* (F) スタックセグメントフォルト (errcode) */
@@ -120,15 +122,19 @@ exception(int num, int error_code)
 		errorp = 0;
 		break;
 
+#if CPU_FAMILY >= 5
 	case MC_EXCEPTION:	/* (A) マシンチェック */
 		CPU_EIP = CPU_PREV_EIP;
 		errorp = 0;
 		break;
+#endif
 
+#if CPU_FAMILY >= 6
 	case XF_EXCEPTION:	/* (F) ストリーミング SIMD 拡張命令 */
 		CPU_EIP = CPU_PREV_EIP;
 		errorp = 0;
 		break;
+#endif
 
 	default:
 		ia32_panic("exception: unknown exception (%d)", num);
@@ -258,7 +264,7 @@ interrupt(int num, int softintp, int errorp, int error_code)
 		}
 
 		memset(&gd, 0, sizeof(gd));
-		CPU_SET_GATEDESC(&gd, CPU_IDTR_BASE + idt_idx);
+		CPU_SET_GATEDESC(&gd, CPU_IDTR_BASE + idt_idx, CPU_MODE_SUPERVISER);
 		if (!gd.valid || !gd.p) {
 			VERBOSE(("interrupt: gate descripter is invalid."));
 			EXCEPTION(GP_EXCEPTION, num * 8 | 2 | !softintp);
@@ -313,7 +319,7 @@ interrupt_task(descriptor_t *gdp, int softintp, int errorp, int error_code)
 
 	(void)softintp;
 
-	rv = parse_selector(&task_sel, gdp->u.gate.selector);
+	rv = parse_selector_sv(&task_sel, gdp->u.gate.selector);
 	if (rv < 0 || task_sel.ldt) {
 		VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d, %cDT)", gdp->u.gate.selector, rv, task_sel.ldt ? 'L' : 'G'));
 		EXCEPTION(TS_EXCEPTION, task_sel.idx);
@@ -391,7 +397,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 	flags &= ~(T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG);
 	mask |= T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG;
 
-	rv = parse_selector(&intr_sel, gdp->u.gate.selector);
+	rv = parse_selector_sv(&intr_sel, gdp->u.gate.selector);
 	if (rv < 0) {
 		VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d)", gdp->u.gate.selector, rv));
 		EXCEPTION(GP_EXCEPTION, intr_sel.idx | !softintp);
@@ -443,7 +449,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 
 		get_stack_from_tss(intr_sel.desc.dpl, &new_ss, &new_sp);
 
-		rv = parse_selector(&ss_sel, new_ss);
+		rv = parse_selector_sv(&ss_sel, new_ss);
 		if (rv < 0) {
 			VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d)", new_ss, rv));
 			EXCEPTION(TS_EXCEPTION, ss_sel.idx | !softintp);

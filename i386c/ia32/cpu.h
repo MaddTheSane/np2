@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.12 2004/02/03 14:49:39 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.13 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -121,9 +121,10 @@ typedef struct {
 	WORD		sreg[CPU_SEGREG_NUM];
 
 	REG32		eflags;
-
 	REG32		eip;
+
 	REG32		prev_eip;
+	REG32		prev_esp;
 
 	DWORD		tr[CPU_TEST_REG_NUM];
 	DWORD		dr[CPU_DEBUG_REG_NUM];
@@ -137,8 +138,6 @@ typedef struct {
 
 	WORD		ldtr;
 	WORD		tr;
-	descriptor_t	ldtr_desc;
-	descriptor_t	tr_desc;
 
 	DWORD		cr0;
 	DWORD		cr1;
@@ -150,6 +149,8 @@ typedef struct {
 
 typedef struct {
 	descriptor_t	sreg[CPU_SEGREG_NUM];
+	descriptor_t	ldtr_desc;
+	descriptor_t	tr_desc;
 
 	UINT32		adrsmask;
 	DWORD		ovflag;
@@ -242,7 +243,11 @@ extern sigjmp_buf	exec_1step_jmpbuf;
 
 /* version */
 #define	CPU_FAMILY	4
-#define	CPU_MODEL	2
+#if defined(USE_FPU)
+#define	CPU_MODEL	1	/* 486DX */
+#else
+#define	CPU_MODEL	2	/* 486SX */
+#endif
 #define	CPU_STEPPING	3
 
 /* feature */
@@ -339,6 +344,7 @@ do { \
 #define	CPU_EDI		CPU_REGS_DWORD(CPU_EDI_INDEX)
 #define CPU_EIP		CPU_STATSAVE.cpu_regs.eip.d
 #define CPU_PREV_EIP	CPU_STATSAVE.cpu_regs.prev_eip.d
+#define CPU_PREV_ESP	CPU_STATSAVE.cpu_regs.prev_esp.d
 
 #define	CPU_ES		CPU_REGS_SREG(CPU_ES_INDEX)
 #define	CPU_CS		CPU_REGS_SREG(CPU_CS_INDEX)
@@ -359,7 +365,9 @@ do { \
 #define CPU_FLAGL	CPU_STATSAVE.cpu_regs.eflags.b.l
 #define CPU_FLAGH	CPU_STATSAVE.cpu_regs.eflags.b.h
 #define CPU_TRAP	CPU_STATSAVE.cpu_stat.trap
-// #define CPU_INPORT	CPU_STATSAVE.cpu_stat.inport
+#if 0
+#define CPU_INPORT	CPU_STATSAVE.cpu_stat.inport
+#endif
 #define CPU_OV		CPU_STATSAVE.cpu_stat.ovflag
 
 #define C_FLAG		(1 << 0)
@@ -426,6 +434,10 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define	CPU_STAT_NERROR		CPU_STATSAVE.cpu_stat.nerror
 #define	CPU_STAT_PREV_EXCEPTION	CPU_STATSAVE.cpu_stat.prev_exception
 
+#define	CPU_MODE_SUPERVISER	0
+#define	CPU_MODE_USER		1
+#define	CPU_IS_USER_MODE()	((CPU_STAT_CPL == 3) ? CPU_MODE_USER : CPU_MODE_SUPERVISER)
+
 #define CPU_CLI		do { CPU_FLAG &= ~I_FLAG;	\
 					CPU_TRAP = 0; } while (/*CONSTCOND*/ 0)
 #define CPU_STI		do { CPU_FLAG |= I_FLAG;	\
@@ -436,15 +448,15 @@ void set_eflags(DWORD new_flags, DWORD mask);
 #define CPU_IDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.idtr_limit
 #define CPU_IDTR_BASE	CPU_STATSAVE.cpu_sysregs.idtr_base
 #define CPU_LDTR	CPU_STATSAVE.cpu_sysregs.ldtr
-#define CPU_LDTR_DESC	CPU_STATSAVE.cpu_sysregs.ldtr_desc
-#define CPU_LDTR_BASE	CPU_STATSAVE.cpu_sysregs.ldtr_desc.u.seg.segbase
-#define CPU_LDTR_END	CPU_STATSAVE.cpu_sysregs.ldtr_desc.u.seg.segend
-#define CPU_LDTR_LIMIT	CPU_STATSAVE.cpu_sysregs.ldtr_desc.u.seg.limit
+#define CPU_LDTR_DESC	CPU_STATSAVE.cpu_stat.ldtr_desc
+#define CPU_LDTR_BASE	CPU_STATSAVE.cpu_stat.ldtr_desc.u.seg.segbase
+#define CPU_LDTR_END	CPU_STATSAVE.cpu_stat.ldtr_desc.u.seg.segend
+#define CPU_LDTR_LIMIT	CPU_STATSAVE.cpu_stat.ldtr_desc.u.seg.limit
 #define CPU_TR		CPU_STATSAVE.cpu_sysregs.tr
-#define CPU_TR_DESC	CPU_STATSAVE.cpu_sysregs.tr_desc
-#define CPU_TR_BASE	CPU_STATSAVE.cpu_sysregs.tr_desc.u.seg.segbase
-#define CPU_TR_END	CPU_STATSAVE.cpu_sysregs.tr_desc.u.seg.segend
-#define CPU_TR_LIMIT	CPU_STATSAVE.cpu_sysregs.tr_desc.u.seg.limit
+#define CPU_TR_DESC	CPU_STATSAVE.cpu_stat.tr_desc
+#define CPU_TR_BASE	CPU_STATSAVE.cpu_stat.tr_desc.u.seg.segbase
+#define CPU_TR_END	CPU_STATSAVE.cpu_stat.tr_desc.u.seg.segend
+#define CPU_TR_LIMIT	CPU_STATSAVE.cpu_stat.tr_desc.u.seg.limit
 
 /*
  * control register
@@ -505,8 +517,6 @@ void exec_1step(void);
 #define	INST_STRING	(1 << 1)
 #define	REP_CHECKZF	(1 << 7)
 
-void disasm(WORD cs, DWORD maddr);
-
 void ia32_printf(const char *buf, ...);
 void ia32_warning(const char *buf, ...);
 void ia32_panic(const char *buf, ...);
@@ -515,6 +525,7 @@ void ia32_bioscall(void);
 
 void FASTCALL change_pm(BOOL onoff);
 void FASTCALL change_vm(BOOL onoff);
+void FASTCALL change_pg(BOOL onoff);
 
 extern BYTE szpcflag[0x200];
 extern BYTE szpflag_w[0x10000];
@@ -529,6 +540,13 @@ extern DWORD *reg32_b53[0x100];
 extern const char *reg8_str[8];
 extern const char *reg16_str[8];
 extern const char *reg32_str[8];
+
+char *cpu_reg2str(void);
+#if defined(USE_FPU)
+char *fpu_reg2str(void);
+#endif
+void dbg_printf(const char *str, ...);
+
 
 /*
  * Misc.

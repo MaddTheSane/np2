@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: cpu_io.c,v 1.2 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -53,7 +53,7 @@ check_io(WORD port, int len)
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
-		map = cpu_lmemoryread(CPU_STAT_IOADDR + off);
+		map = cpu_kmemoryread(CPU_STAT_IOADDR + off);
 		for (; (len > 0) && (bit != 0x00); bit <<= 1, --len) {
 			if (map & bit) {
 				EXCEPTION(GP_EXCEPTION, 0);

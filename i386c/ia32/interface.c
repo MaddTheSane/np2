@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.9 2004/01/27 15:56:20 monaka Exp $	*/
+/*	$Id: interface.c,v 1.10 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -76,14 +76,16 @@ static void ia32_initreg(void) {
 void
 ia32reset(void)
 {
-	ZeroMemory(&i386core.s, sizeof(i386core.s));
+
+	memset(&i386core.s, 0, sizeof(i386core.s));
 	ia32_initreg();
 }
 
 void
 ia32shut(void)
 {
-	ZeroMemory(&i386core.s, offsetof(I386STAT, cpu_type));
+
+	memset(&i386core.s, 0, offsetof(I386STAT, cpu_type));
 	ia32_initreg();
 }
 

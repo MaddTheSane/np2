@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.8 2004/01/27 15:54:45 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.9 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -38,7 +38,6 @@
 /*
  * initialize 1MB-16MB memory
  */
-
 int
 init_cpumem(UINT8 usemem)
 {
@@ -377,7 +376,7 @@ cpu_vmemoryread(int idx, DWORD offset)
 	addr = CPU_STAT_SREGBASE(idx) + offset;
 	if (!CPU_STAT_PM)
 		return cpu_memoryread(addr);
-	return cpu_lmemoryread(addr);
+	return cpu_lmemoryread(addr, CPU_IS_USER_MODE());
 
 err:
 	EXCEPTION(exc, 0);
@@ -428,7 +427,7 @@ cpu_vmemoryread_w(int idx, DWORD offset)
 	addr = CPU_STAT_SREGBASE(idx) + offset;
 	if (!CPU_STAT_PM)
 		return cpu_memoryread_w(addr);
-	return cpu_lmemoryread_w(addr);
+	return cpu_lmemoryread_w(addr, CPU_IS_USER_MODE());
 
 err:
 	EXCEPTION(exc, 0);
@@ -479,7 +478,7 @@ cpu_vmemoryread_d(int idx, DWORD offset)
 	addr = CPU_STAT_SREGBASE(idx) + offset;
 	if (!CPU_STAT_PM)
 		return cpu_memoryread_d(addr);
-	return cpu_lmemoryread_d(addr);
+	return cpu_lmemoryread_d(addr, CPU_IS_USER_MODE());
 
 err:
 	EXCEPTION(exc, 0);
@@ -534,7 +533,7 @@ cpu_vmemorywrite(int idx, DWORD offset, BYTE val)
 		cpu_memorywrite(addr, val);
 	} else {
 		/* protected mode */
-		cpu_lmemorywrite(addr, val);
+		cpu_lmemorywrite(addr, val, CPU_IS_USER_MODE());
 	}
 	return;
 
@@ -589,7 +588,7 @@ cpu_vmemorywrite_w(int idx, DWORD offset, WORD val)
 		cpu_memorywrite_w(addr, val);
 	} else {
 		/* protected mode */
-		cpu_lmemorywrite_w(addr, val);
+		cpu_lmemorywrite_w(addr, val, CPU_IS_USER_MODE());
 	}
 	return;
 
@@ -644,7 +643,7 @@ cpu_vmemorywrite_d(int idx, DWORD offset, DWORD val)
 		cpu_memorywrite_d(addr, val);
 	} else {
 		/* protected mode */
-		cpu_lmemorywrite_d(addr, val);
+		cpu_lmemorywrite_d(addr, val, CPU_IS_USER_MODE());
 	}
 	return;
 

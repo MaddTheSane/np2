@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.5 2004/01/26 15:23:55 monaka Exp $	*/
+/*	$Id: debug.c,v 1.6 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -36,155 +36,122 @@
 #endif
 
 
-char *cpu_reg2str(void)
+char *
+cpu_reg2str(void)
 {
-  static char buf[512];
+	static char buf[512];
 
-  sprintf(buf,
-    "eax=%08x ebx=%08x ecx=%08x edx=%08x esi=%08x edi=%08x\n"
-    "eip=%08x esp=%08x ebp=%08x prev_eip=%08x\n"
-    "cs=%04x  ss=%04x  ds=%04x  es=%04x  fs=%04x  gs=%04x\n"
-    "eflag=%08x "
-/* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
-      "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d%d %s %s %s TF=%d %s %s %s %s %s ]\n"
-    "gdtr=%08x:%04x idtr=%08x:%04x\n"
-    "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
-    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x",
-    CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX, CPU_ESI, CPU_EDI,
-    CPU_EIP, CPU_ESP, CPU_EBP, CPU_PREV_EIP,
-    CPU_CS, CPU_SS, CPU_DS, CPU_ES, CPU_FS, CPU_GS,
-    CPU_EFLAG,
-      (CPU_EFLAG & ID_FLAG) != 0,
-      (CPU_EFLAG & VIP_FLAG) != 0,
-      (CPU_EFLAG & VIF_FLAG) != 0,
-      (CPU_EFLAG & AC_FLAG) != 0,
-      (CPU_EFLAG & VM_FLAG) != 0,
-      (CPU_EFLAG & RF_FLAG) != 0,
-      (CPU_EFLAG & NT_FLAG) != 0,
-      CPU_EFLAG >> 13 & 1,
-      CPU_EFLAG >> 12 & 1,
-      CPU_EFLAG & O_FLAG ? "OV" : "NV",
-      CPU_EFLAG & D_FLAG ? "UP" : "DN",
-      CPU_EFLAG & I_FLAG ? "DI" : "EI",
-      (CPU_EFLAG & T_FLAG) != 0,
-      CPU_EFLAG & S_FLAG ? "NG" : "PL",
-      CPU_EFLAG & Z_FLAG ? "ZR" : "NZ",
-      CPU_EFLAG & A_FLAG ? "AC" : "NA",
-      CPU_EFLAG & P_FLAG ? "PE" : "PO",
-      CPU_EFLAG & C_FLAG ? "CY" : "NC",
-    CPU_GDTR_BASE, CPU_GDTR_LIMIT, CPU_IDTR_BASE, CPU_IDTR_LIMIT,
-    CPU_LDTR, CPU_LDTR_BASE, CPU_LDTR_LIMIT, CPU_TR, CPU_TR_BASE, CPU_TR_LIMIT,
-    CPU_CR0, CPU_CR1, CPU_CR2, CPU_CR3, CPU_CR4, CPU_MXCSR);
+	sprintf(buf,
+	    "eax=%08x ebx=%08x ecx=%08x edx=%08x\n"
+	    "esp=%08x ebp=%08x esi=%08x edi=%08x\n"
+	    "eip=%08x prev_eip=%08x\n"
+	    "cs=%04x ss=%04x ds=%04x es=%04x fs=%04x gs=%04x\n"
+	    "eflag=%08x "
+	    /* ID VIP VIF AC VM RF NT IOPL OF DF IF TF SF ZF AF PF CF */
+	    "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d %s %s %s TF=%d %s %s %s %s %s ]\n"
+	    "gdtr=%08x:%04x idtr=%08x:%04x\n"
+	    "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
+	    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x",
+	    CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX,
+	    CPU_ESP, CPU_EBP,CPU_ESI, CPU_EDI,
+	    CPU_EIP, CPU_PREV_EIP,
+	    CPU_CS, CPU_SS, CPU_DS, CPU_ES, CPU_FS, CPU_GS,
+	    CPU_EFLAG,
+	    (CPU_EFLAG & ID_FLAG) != 0,
+	    (CPU_EFLAG & VIP_FLAG) != 0,
+	    (CPU_EFLAG & VIF_FLAG) != 0,
+	    (CPU_EFLAG & AC_FLAG) != 0,
+	    (CPU_EFLAG & VM_FLAG) != 0,
+	    (CPU_EFLAG & RF_FLAG) != 0,
+	    (CPU_EFLAG & NT_FLAG) != 0,
+	    (CPU_EFLAG >> 12) & 3,
+	    CPU_OV ? "OV" : "NV",
+	    CPU_EFLAG & D_FLAG ? "UP" : "DN",
+	    CPU_EFLAG & I_FLAG ? "DI" : "EI",
+	    (CPU_EFLAG & T_FLAG) != 0,
+	    CPU_EFLAG & S_FLAG ? "NG" : "PL",
+	    CPU_EFLAG & Z_FLAG ? "ZR" : "NZ",
+	    CPU_EFLAG & A_FLAG ? "AC" : "NA",
+	    CPU_EFLAG & P_FLAG ? "PE" : "PO",
+	    CPU_EFLAG & C_FLAG ? "CY" : "NC",
+	    CPU_GDTR_BASE, CPU_GDTR_LIMIT, CPU_IDTR_BASE, CPU_IDTR_LIMIT,
+	    CPU_LDTR, CPU_LDTR_BASE, CPU_LDTR_LIMIT,
+	      CPU_TR, CPU_TR_BASE, CPU_TR_LIMIT,
+	    CPU_CR0, CPU_CR1, CPU_CR2, CPU_CR3, CPU_CR4, CPU_MXCSR);
 
-  return buf;
+	return buf;
 }
 
 #ifdef USE_FPU
-char *fpu_reg2str(void)
+char *
+fpu_reg2str(void)
 {
-  static char buf[512];
-  char tmp[128];
-  int i;
-  int no;
+	static char buf[512];
+	char tmp[128];
+	int i;
+	int no;
 
-  strcpy(buf, "st=\n");
-  for(no = 0; no < 8; no++)
-  {
-    for(i = 9; i >= 0; i--)
-    {
-      sprintf(tmp, "%02x", FPU_ST[no][i]);
-      strcat(buf, tmp);
-    }
-    strcat(buf, "\n");
-  }
+	strcpy(buf, "st=\n");
+	for (no = 0; no < 8; no++) {
+		for (i = 9; i >= 0; i--) {
+			sprintf(tmp, "%02x", FPU_ST[no][i]);
+			strcat(buf, tmp);
+		}
+		strcat(buf, "\n");
+	}
 
-  sprintf(tmp,
-    "ctrl=%04x  status=%04x  tag=%04x\n"
-    "inst=%08x%04x  data=%08x%04x  op=%03x\n",
-    FPU_CTRLWORD,
-    FPU_STATUSWORD,
-    FPU_TAGWORD,
-    FPU_INSTPTR_OFFSET, FPU_INSTPTR_SEG,
-    FPU_DATAPTR_OFFSET, FPU_DATAPTR_SEG,
-    FPU_LASTINSTOP);
-  strcat(buf, tmp);
+	sprintf(tmp,
+	    "ctrl=%04x  status=%04x  tag=%04x\n"
+	    "inst=%08x%04x  data=%08x%04x  op=%03x\n",
+	    FPU_CTRLWORD,
+	    FPU_STATUSWORD,
+	    FPU_TAGWORD,
+	    FPU_INSTPTR_OFFSET, FPU_INSTPTR_SEG,
+	    FPU_DATAPTR_OFFSET, FPU_DATAPTR_SEG,
+	    FPU_LASTINSTOP);
+	strcat(buf, tmp);
 
-  return buf;
+	return buf;
 }
 #endif
 
-static char *a20str(void)
+static char *
+a20str(void)
 {
-  static char buf[32];
+	static char buf[32];
 
-  sprintf(buf, "a20line=%s\n", CPU_STAT_ADRSMASK == 0xffffffff ? "enable" : "disable");
-  return buf;
+	sprintf(buf, "a20line=%s\n", CPU_STAT_ADRSMASK == 0xffffffff ? "enable" : "disable");
+	return buf;
 }
 
-static char *mem2str(DWORD cs, DWORD ip)
+void
+put_cpuinfo(void)
 {
-  static char buf[128];
-  char tmp[16];
-  int i;
+	char buf[2048];
 
-  strcpy(buf, "mem=... ");
-  for(i = -10; i < 0; i++)
-  {
-    sprintf(tmp, "%02x ", __i286_memoryread((cs << 4) + ip + i));
-    strcat(buf, tmp);
-  }
-  sprintf(tmp, "<%02x> ", __i286_memoryread((cs << 4) + ip));
-  strcat(buf, tmp);
-  for(i = 1; i <= 10; i++)
-  {
-    sprintf(tmp, "%02x ", __i286_memoryread((cs << 4) + ip + i));
-    strcat(buf, tmp);
-  }
-  strcat(buf, "...\n");
-
-  return buf;
-}
-
-void FASTCALL msgbox_str(char *msg)
-{
-
-  printf(msg);
-  fflush(stdout);
-  exit(1);
-}
-
-void FASTCALL msgbox_mem(DWORD no)
-{
-  char buf[2048];
-  char tmp[16];
-
-  strcpy(buf, cpu_reg2str());
-  strcat(buf, "\n");
+	strcpy(buf, cpu_reg2str());
+	strcat(buf, "\n");
 #ifdef USE_FPU
-  strcat(buf, fpu_reg2str());
-  strcat(buf, "\n");
+	strcat(buf, fpu_reg2str());
+	strcat(buf, "\n");
 #endif
-  strcat(buf, mem2str(CPU_CS, CPU_IP));
-  strcat(buf, "\n");
-  sprintf(tmp, "no=%08x\n", no);
-  strcat(buf, tmp);
+	strcat(buf, a20str());
 
-  msgbox_str(buf);
+	printf(buf);
 }
 
-void put_cpuinfo(void)
+void
+dbg_printf(const char *str, ...)
 {
-  char buf[2048];
+	char buf[1024];
+	va_list ap;
 
-  strcpy(buf, cpu_reg2str());
-  strcat(buf, "\n");
-#ifdef USE_FPU
-  strcat(buf, fpu_reg2str());
-  strcat(buf, "\n");
-#endif
-  strcat(buf, a20str());
+	va_start(ap, str);
+	vsnprintf(buf, sizeof(buf), str, ap);
+	va_end(ap);
+	strcat(buf, "\n");
 
-  printf(buf);
+	printf(buf);
 }
 
 void
@@ -233,8 +200,8 @@ gdtr_dump(DWORD base, DWORD limit)
 	VERBOSE(("GDTR_DUMP: GDTR_BASE = 0x%08x, GDTR_LIMIT = 0x%04x",base,limit));
 
 	for (i = 0; i < limit; i += 8) {
-		v[0] = cpu_lmemoryread_d(base + i);
-		v[1] = cpu_lmemoryread_d(base + i + 4);
+		v[0] = cpu_kmemoryread_d(base + i);
+		v[1] = cpu_kmemoryread_d(base + i + 4);
 		VERBOSE(("GDTR_DUMP: %08x: %08x%08x", base + i, v[0], v[1]));
 	}
 }
@@ -248,8 +215,8 @@ ldtr_dump(DWORD base, DWORD limit)
 	VERBOSE(("LDTR_DUMP: LDTR_BASE = 0x%08x, LDTR_LIMIT = 0x%04x",base,limit));
 
 	for (i = 0; i < limit; i += 8) {
-		v[0] = cpu_lmemoryread_d(base + i);
-		v[1] = cpu_lmemoryread_d(base + i + 4);
+		v[0] = cpu_kmemoryread_d(base + i);
+		v[1] = cpu_kmemoryread_d(base + i + 4);
 		VERBOSE(("LDTR_DUMP: %08x: %08x%08x", base + i, v[0], v[1]));
 	}
 }
@@ -263,8 +230,8 @@ idtr_dump(DWORD base, DWORD limit)
 	VERBOSE(("IDTR_DUMP: IDTR_BASE = 0x%08x, IDTR_LIMIT = 0x%04x",base,limit));
 
 	for (i = 0; i < limit; i += 8) {
-		v[0] = cpu_lmemoryread_d(base + i);
-		v[1] = cpu_lmemoryread_d(base + i + 4);
+		v[0] = cpu_kmemoryread_d(base + i);
+		v[1] = cpu_kmemoryread_d(base + i + 4);
 		VERBOSE(("IDTR_DUMP: %08x: %08x%08x", base + i, v[0], v[1]));
 	}
 }
@@ -278,7 +245,7 @@ tr_dump(WORD selector, DWORD base, DWORD limit)
 	VERBOSE(("TR_DUMP: selector = %04x", selector));
 
 	for (i = 0; i < limit; i += 4) {
-		v = cpu_lmemoryread_d(base + i);
+		v = cpu_kmemoryread_d(base + i);
 		VERBOSE(("TR_DUMP: %08x: %08x", base + i, v));
 	}
 }

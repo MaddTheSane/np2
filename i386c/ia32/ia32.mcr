@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.6 2004/01/27 15:52:53 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.7 2004/02/04 13:24:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -58,42 +58,10 @@ do { \
 	(q) = __tmp; \
 } while (/*CONSTCOND*/ 0)
 
-/*
- * bswap
- */
-#if defined(bswap32) && !defined(USE_ASM_BSWAP)
-#define	BSWAP_DWORD(v)	bswap32(v)
-#else	/* !bswap32 || USE_ASM_BSWAP */
-INLINE static DWORD
-BSWAP_DWORD(DWORD val)
-{
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
-	__asm__ __volatile__ (
-#if defined(USE_ASM_BSWAP)
-		"bswap %0"
-#else	/* !USE_ASM_BSWAP */
-		"rorw $8, %w1\n\t"
-		"rorl $16, %1\n\t"
-		"rorw $8, %w1\n\t"
-#endif	/* USE_ASM_BSWAP */
-		: "=r" (val) : "0" (val));
-	return val;
-#else	/* !(__GNUC__ && (i386 || __i386__)) */
-	DWORD v;
-	v  = (val & 0x000000ff) << 24;
-	v |= (val & 0x0000ff00) << 8;
-	v |= (val & 0x00ff0000) >> 8;
-	v |= (val & 0xff000000) >> 24;
-	return v;
-#endif	/* __GNUC__ && (i386 || __i386__) */
-}
-#endif	/* bswap32 && !USE_ASM_BSWAP */
-
 
 /*
  * clock
  */
-#ifndef	DONT_USE_NEVENT
 #define	CPU_WORKCLOCK(clock) \
 do { \
 	CPU_REMCLOCK -= (clock); \
@@ -111,9 +79,11 @@ do { \
 		CPU_REMCLOCK = 0; \
 	} \
 } while (/*CONSTCOND*/ 0)
-#endif
 
 
+/*
+ * instruction pointer
+ */
 #define	SET_EIP(v) \
 do { \
 	DWORD __new_ip = (v); \
@@ -761,50 +731,6 @@ do { \
 	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, reg); \
 } while (/*CONSTCOND*/ 0)
 
-#define	SP_PUSH(reg, clock) \
-do { \
-	WORD sp = CPU_SP; \
-	CPU_SP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, sp); \
-	CPU_WORKCLOCK(clock); \
-} while (/*CONSTCOND*/ 0)
-
-#define	SP_PUSH0(reg) \
-do { \
-	WORD sp = CPU_SP; \
-	CPU_SP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, sp); \
-} while (/*CONSTCOND*/ 0)
-
-#define	SP_PUSH0_16_32(reg) \
-do { \
-	WORD sp = CPU_SP; \
-	CPU_ESP -= 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, sp); \
-} while (/*CONSTCOND*/ 0)
-
-#define	ESP_PUSH(reg, clock) \
-do { \
-	DWORD esp = CPU_ESP; \
-	CPU_ESP -= 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, esp); \
-	CPU_WORKCLOCK(clock); \
-} while (/*CONSTCOND*/ 0)
-
-#define	ESP_PUSH0_32_16(reg) \
-do { \
-	DWORD esp = CPU_ESP; \
-	CPU_SP -= 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, esp); \
-} while (/*CONSTCOND*/ 0)
-
-#define	ESP_PUSH0_32(reg) \
-do { \
-	DWORD esp = CPU_ESP; \
-	CPU_ESP -= 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, esp); \
-} while (/*CONSTCOND*/ 0)
-
 #define	PUSH0_16(reg) \
 do { \
 	if (!CPU_STAT_SS32) { \
@@ -829,30 +755,6 @@ do { \
 		PUSH0_16(reg); \
 	} else { \
 		PUSH0_32(reg); \
-	} \
-} while (/*CONSTCOND*/ 0)
-
-#define	SP_PUSH0_16(reg) \
-do { \
-	WORD sp = CPU_SP; \
-	if (!CPU_STAT_SS32) { \
-		CPU_SP -= 2; \
-		cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_SP, sp); \
-	} else { \
-		CPU_ESP -= 2; \
-		cpu_vmemorywrite_w(CPU_SS_INDEX, CPU_ESP, sp); \
-	} \
-} while (/*CONSTCOND*/ 0)
-
-#define	SP_PUSH0_32(reg) \
-do { \
-	DWORD esp = CPU_ESP; \
-	if (CPU_STAT_SS32) { \
-		CPU_ESP -= 4; \
-		cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_ESP, esp); \
-	} else { \
-		CPU_SP -= 4; \
-		cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, esp); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
@@ -912,23 +814,6 @@ do { \
 	} \
 } while (/*CONSTCOND*/ 0)
 
-#define	SP_POP0_16(reg) \
-do { \
-	if (!CPU_STAT_SS32) { \
-		(reg) = cpu_vmemoryread_w(CPU_SS_INDEX, CPU_SP); \
-	} else { \
-		(reg) = cpu_vmemoryread_w(CPU_SS_INDEX, CPU_ESP); \
-	} \
-} while (/*CONSTCOND*/ 0)
-
-#define	ESP_POP0_32(reg) \
-do { \
-	if (CPU_STAT_SS32) { \
-		(reg) = cpu_vmemoryread_d(CPU_SS_INDEX, CPU_ESP); \
-	} else { \
-		(reg) = cpu_vmemoryread_d(CPU_SS_INDEX, CPU_SP); \
-	} \
-} while (/*CONSTCOND*/ 0)
 
 /*
  * jump
@@ -966,7 +851,10 @@ do { \
 	ADD_EIP((d)); \
 } while (/*CONSTCOND*/ 0)
 
-/* instruction check */
+
+/*
+ * instruction check
+ */
 #include "ia32xc.mcr"
 
 #endif	/* IA32_CPU_IA32_MCR__ */
