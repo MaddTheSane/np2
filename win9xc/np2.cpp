@@ -32,6 +32,7 @@
 #include	"diskdrv.h"
 #include	"fddfile.h"
 #include	"timing.h"
+#include	"keystat.h"
 #include	"debugsub.h"
 
 

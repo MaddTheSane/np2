@@ -138,7 +138,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/d_screen.o	$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		\
 			$(OBJ)/d_disk.o		$(OBJ)/d_bmp.o		$(OBJ)/dialogs.o	\
 			$(OBJ)/pccore.o		$(OBJ)/nevent.o		$(OBJ)/calendar.o	\
-			$(OBJ)/timing.o		$(OBJ)/statsave.o	$(OBJ)/debugsub.o
+			$(OBJ)/timing.o		$(OBJ)/keystat.o	$(OBJ)/statsave.o	\
+			$(OBJ)/debugsub.o
 
 NP2LIB	= -lddraw -ldxguid -ldsound -lwinmm -lcomctl32 -mwindows
 NP2BIN	= $(BIN)/np2.exe
@@ -801,6 +802,15 @@ $(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(PCCORES) \
 						$(GENERIC)/hostdrv.h $(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/unasm.o		:	$(GENERIC)/unasm.c $(HEADER) $(GENERIC)/unasm.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/np2info.o	:	$(GENERIC)/np2info.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(FMBOARDS) $(COMMON)/strres.h \
+						$(TARGET)/scrnmng.h $(BIOS)/bios.h \
+						$(GENERIC)/np2info.h
+	$(CC) $(COPT) -o $@ $<
+
 
 
 $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -979,6 +989,10 @@ $(OBJ)/calendar.o	:	$(BASE)/calendar.c $(HEADERS) $(PCCORES) \
 
 $(OBJ)/timing.o		:	$(BASE)/timing.c $(HEADERS) $(PCCORES) \
 						$(FDD)/diskdrv.h $(FDD)/fdd_mtr.h $(BASE)/timing.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/keystat.o	:	$(BASE)/keystat.c $(HEADERS) $(PCCORES) $(IOCORES) \
+						$(BASE)/keystat.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(CPUCORES) $(PCCORES) \

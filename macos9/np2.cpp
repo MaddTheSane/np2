@@ -20,6 +20,7 @@
 #include	"pc9861k.h"
 #include	"mpu98ii.h"
 #include	"timing.h"
+#include	"keystat.h"
 #include	"debugsub.h"
 #include	"bios.h"
 #include	"scrndraw.h"

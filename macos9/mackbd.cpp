@@ -2,9 +2,7 @@
 #include	"np2.h"
 #include	"dosio.h"
 #include	"mackbd.h"
-#include	"memory.h"
-#include	"pccore.h"
-#include	"iocore.h"
+#include	"keystat.h"
 
 
 #define		NC		0xff

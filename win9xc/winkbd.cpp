@@ -1,8 +1,7 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"winkbd.h"
-#include	"pccore.h"
-#include	"iocore.h"
+#include	"keystat.h"
 
 
 #define		NC		0xff
