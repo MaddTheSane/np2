@@ -1,4 +1,4 @@
-/*	$Id: bin_arith.c,v 1.6 2004/02/12 15:46:14 monaka Exp $	*/
+/*	$Id: bin_arith.c,v 1.7 2004/02/13 15:30:40 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1130,7 +1130,7 @@ IDIV_EAXEd(DWORD op)
 	tmp = (SQWORD)(((QWORD)CPU_EDX << 32) + (SQWORD)CPU_EAX);
 	if (src != 0) {
 		r = tmp / src;
-		if ((r + SQWORD_CONST(0x80000000)) & QWORD_CONST(0xffffffff00000000) == 0) {
+		if (((r + SQWORD_CONST(0x80000000)) & QWORD_CONST(0xffffffff00000000)) == 0) {
 			CPU_EAX = (SDWORD)r;
 			CPU_EDX = tmp % src;
 			return;
