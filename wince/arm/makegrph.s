@@ -150,7 +150,7 @@ $label			add		r2, r8, r9, lsr #17
 
 ; ----
 
-	; r0 = remain:0 (10:22)
+	; r0 = remain:0:pitch (10:7:15)
 	; r1 = mg.vm
 	; r6 = liney:gdc.mode1:mul:mulorg:dsync.grphymax:0 (9:1:5:5:9:3)
 	; r7 = vramupdate
