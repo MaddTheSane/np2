@@ -87,7 +87,7 @@ enum {
 	IDESTAT_DRQ			= 0x08,
 	IDESTAT_CORR		= 0x04,
 	IDESTAT_INDX		= 0x02,
-	IDESTAT_ERR			= 0x01,
+	IDESTAT_ERR			= 0x01
 };
 
 enum {
