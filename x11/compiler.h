@@ -134,9 +134,26 @@ typedef	int			BOOL;
 #endif
 #endif
 
+/* archtecture */
+/* amd64 */
+#if defined(amd64) || defined(__AMD64__) || defined(__amd64__)) ||
+    defined(x86_64) || defined(__x86_64__) || defined(__X86_64__)
+#define	NP2_CPU_ARCH_AMD64
+#endif /* amd64 */
+/* i386 */
+#if defined(i386) || defined(__i386__) || defined(NP2_CPU_ARCH_AMD64)
+#define	NP2_CPU_ARCH_IA32
+#endif /* i386 */
+
 #if defined(__GNUC__)
 #define	GCC_ATTR_PACKED	__attribute__((packed))
+#if defined(NP2_CPU_ARCH_IA32)
+#define	GCC_CPU_ARCH_IA32
 #endif
+#if defined(NP2_CPU_ARCH_AMD64)
+#define	GCC_CPU_ARCH_AMD64
+#endif
+#endif /* __GNUC__ */
 
 #ifndef	NELEMENTS
 #define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
@@ -157,7 +174,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define	SUPPORT_CRT15KHZ
 #endif
 
-#if defined(i386) || defined(__i386__)
+#if defined(NP2_CPU_ARCH_IA32)
 #undef	MEMOPTIMIZE
 #define LOADINTELDWORD(a)	(*((UINT32 *)(a)))
 #define LOADINTELWORD(a)	(*((UINT16 *)(a)))

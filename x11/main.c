@@ -251,7 +251,7 @@ main(int argc, char *argv[])
 
 	rand_setseed((SINT32)time(NULL));
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 	mmxflag = havemmx() ? 0 : MMXFLAG_NOTSUPPORT;
 	mmxflag += np2oscfg.disablemmx ? MMXFLAG_DISABLE : 0;
 #endif

@@ -1,4 +1,4 @@
-/*	$Id: ia32xc.mcr,v 1.5 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: ia32xc.mcr,v 1.6 2004/05/22 16:35:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -30,7 +30,7 @@
 #ifndef	IA32_CPU_IA32XC_MCR__
 #define	IA32_CPU_IA32XC_MCR__
 
-#if defined(IA32_CROSS_CHECK) && defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(IA32_CROSS_CHECK) && defined(GCC_CPU_ARCH_IA32)
 
 #define	IA32_CPU_ENABLE_XC
 
@@ -1709,6 +1709,6 @@ do { \
 
 #define	XC_STORE_FLAGL()
 
-#endif	/* IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__) */
+#endif	/* IA32_CROSS_CHECK && GCC_CPU_ARCH_IA32 */
 
 #endif	/* IA32_CPU_IA32_MCR__ */

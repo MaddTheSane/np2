@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.mcr,v 1.9 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: shift_rotate.mcr,v 1.10 2004/05/22 16:35:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -978,7 +978,7 @@ do { \
 	(d) = (s); \
 } while (/*CONSTCOND*/ 0)
 
-#if defined(IA32_CROSS_CHECK) && defined(__GNUC__) && (defined(i386) || defined(i386))
+#if defined(IA32_CROSS_CHECK) && defined(GCC_CPU_ARCH_IA32)
 
 #include "shift_rotatexc.mcr"
 
@@ -1033,7 +1033,7 @@ do { \
 
 #include	"shift_rotatexc_msc.mcr"
 
-#else	/* !(IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__)) */
+#else	/* !(IA32_CROSS_CHECK && GCC_CPU_ARCH_IA32 */
 
 #define	BYTE_SAR1(d, s)		_BYTE_SAR1(d, s)
 #define	WORD_SAR1(d, s)		_WORD_SAR1(d, s)
@@ -1082,6 +1082,6 @@ do { \
 #define	WORD_RCLCL(d, s, c)	_WORD_RCLCL(d, s, c)
 #define	DWORD_RCLCL(d, s, c)	_DWORD_RCLCL(d, s, c)
 
-#endif	/* IA32_CROSS_CHECK && __GNUC__ && (i386) || __i386__) */
+#endif	/* IA32_CROSS_CHECK && GCC_CPU_ARCH_IA32 */
 
 #endif	/* IA32_CPU_SHIFT_ROTATE_MCR__ */

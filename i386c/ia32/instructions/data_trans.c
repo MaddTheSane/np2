@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.15 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.16 2004/05/22 16:35:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -842,25 +842,25 @@ void XCHG_EDIEAX(void) { CPU_WORKCLOCK(3); SWAP_DWORD(CPU_EDI, CPU_EAX); }
 INLINE static UINT32
 BSWAP_DWORD(UINT32 val)
 {
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 	__asm__ __volatile__ (
-#if defined(IA32_USE_ASM_BSWAP)
+#if defined(IA32_USE_ASM_BSWAP) || defined(GCC_CPU_ARCH_AMD64)
 		"bswap %0"
-#else	/* !IA32_USE_ASM_BSWAP */
+#else	/* !(IA32_USE_ASM_BSWAP || GCC_CPU_ARCH_AMD64) */
 		"rorw $8, %w1\n\t"
 		"rorl $16, %1\n\t"
 		"rorw $8, %w1\n\t"
-#endif	/* IA32_USE_ASM_BSWAP */
+#endif	/* IA32_USE_ASM_BSWAP || GCC_CPU_ARCH_AMD64 */
 		: "=r" (val) : "0" (val));
 	return val;
-#else	/* !(__GNUC__ && (i386 || __i386__)) */
+#else	/* !(__GNUC__ && GCC_CPU_ARCH_IA32) */
 	UINT32 v;
 	v  = (val & 0x000000ff) << 24;
 	v |= (val & 0x0000ff00) << 8;
 	v |= (val & 0x00ff0000) >> 8;
 	v |= (val & 0xff000000) >> 24;
 	return v;
-#endif	/* __GNUC__ && (i386 || __i386__) */
+#endif	/* __GNUC__ && GCC_CPU_ARCH_IA32 */
 }
 #endif	/* bswap32 && !IA32_USE_ASM_BSWAP */
 

@@ -65,7 +65,7 @@ static GtkWidget *baseclock_entry;
 static GtkWidget *clockmult_entry;
 static GtkWidget *buffer_entry;
 static GtkWidget *resume_checkbutton;
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 static GtkWidget *disablemmx_checkbutton;
 #endif
 static const char *arch;
@@ -79,7 +79,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
 	gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
 	gint resume = GTK_TOGGLE_BUTTON(resume_checkbutton)->active;
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 	gint disablemmx = GTK_TOGGLE_BUTTON(disablemmx_checkbutton)->active;
 #endif
 	guint bufsize;
@@ -147,7 +147,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 		soundrenewal = 1;
 	}
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 	if (!(mmxflag & MMXFLAG_NOTSUPPORT)) {
 		disablemmx = disablemmx ? MMXFLAG_DISABLE : 0;
 		if (np2oscfg.disablemmx != disablemmx) {
@@ -487,7 +487,7 @@ create_configure_dialog(void)
 		gtk_signal_emit_by_name(GTK_OBJECT(resume_checkbutton), "clicked");
 	}
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 	/* Disable MMX */
 	disablemmx_checkbutton = gtk_check_button_new_with_label("Disable MMX");
 	gtk_widget_show(disablemmx_checkbutton);

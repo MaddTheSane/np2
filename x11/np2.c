@@ -368,7 +368,7 @@ mainloop(void *p)
 	return TRUE;
 }
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32_COMPAT)
 int mmxflag;
 
 int
@@ -399,4 +399,4 @@ havemmx(void)
 
 	return rv;
 }
-#endif
+#endif /* GCC_CPU_ARCH_IA32_COMPAT */

@@ -94,7 +94,7 @@ static BOOL nosound_setup(void);
 
 static void PARTSCALL (*fnmix)(SINT16* dst, const SINT32* src, UINT size);
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 void PARTSCALL _saturation_s16(SINT16 *dst, const SINT32 *src, UINT size);
 void PARTSCALL _saturation_s16x(SINT16 *dst, const SINT32 *src, UINT size);
 void PARTSCALL saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
@@ -349,7 +349,7 @@ void
 soundmng_setreverse(BOOL reverse)
 {
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 	if (!reverse) {
 		if (mmxflag & (MMXFLAG_NOTSUPPORT|MMXFLAG_DISABLE)) {
 			fnmix = _saturation_s16;
@@ -646,7 +646,7 @@ snddrv_stop(void)
 
 #endif	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO */
 
-#if defined(__GNUC__) && (defined(i386) || defined(__i386__))
+#if defined(GCC_CPU_ARCH_IA32)
 void PARTSCALL
 _saturation_s16(SINT16 *dst, const SINT32 *src, UINT size)
 {
@@ -746,6 +746,6 @@ saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
 		: /* output */
 		: "m" (dst), "m" (src), "m" (size));
 }
-#endif	/* __GNUC__ && (i386 || __i386__) */
+#endif	/* __GNUC__ && GCC_CPU_ARCH_IA32 */
 
 #endif	/* !NOSOUND */
