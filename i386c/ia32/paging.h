@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: paging.h,v 1.5 2004/01/27 15:56:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -121,6 +121,12 @@ extern "C" {
 #define	CPU_PTE_WRITABLE	(1 << 1)
 #define	CPU_PTE_PRESENT		(1 << 0)
 
+/* paging_check(): rw */
+#define	CPU_PAGING_PAGE_READ	(0 << 0)
+#define	CPU_PAGING_PAGE_WRITE	(1 << 0)
+#define	CPU_PAGING_PAGE_CODE	(1 << 1)
+#define	CPU_PAGING_PAGE_DATA	(1 << 2)
+
 
 /* enter/leave paging mode */
 void FASTCALL change_pg(int onoff);
@@ -128,19 +134,11 @@ void FASTCALL change_pg(int onoff);
 /* paging check */
 void MEMCALL paging_check(DWORD laddr, DWORD length, int rw);
 
-/* paging_check(): rw */
-#define	CPU_PAGING_PAGE_READ	(0 << 0)
-#define	CPU_PAGING_PAGE_WRITE	(1 << 0)
-
 /*
  * linear address function
  */
 DWORD MEMCALL cpu_linear_memory_read(DWORD address, DWORD length, int code);
 void MEMCALL cpu_linear_memory_write(DWORD address, DWORD length, DWORD value);
-
-/* cpu_linear_memory_read(): code */
-#define	CPU_PAGING_PAGE_CODE	(1 << 1)
-#define	CPU_PAGING_PAGE_DATA	(1 << 2)
 
 #define	cpu_lmemoryread(a) \
 	(CPU_STAT_PAGING) ? \

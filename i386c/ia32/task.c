@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.6 2004/01/26 15:23:55 monaka Exp $	*/
+/*	$Id: task.c,v 1.7 2004/01/27 15:56:58 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -68,7 +68,7 @@ load_tr(WORD selector)
 		EXCEPTION(NP_EXCEPTION, task_sel.idx);
 	}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 	tr_dump(task_sel.selector, task_sel.desc.u.seg.segbase, task_sel.desc.u.seg.limit);
 #endif
 
@@ -184,7 +184,7 @@ task_switch(selector_t* task_sel, int type)
 		break;
 	}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 	{
 		DWORD v;
 
@@ -232,7 +232,7 @@ task_switch(selector_t* task_sel, int type)
 		iobase = 0;
 	}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 	VERBOSE(("task_switch: %dbit task", task16 ? 16 : 32));
 	VERBOSE(("task_switch: CR3     = 0x%08x", cr3));
 	VERBOSE(("task_switch: eip     = 0x%08x", eip));
@@ -270,7 +270,7 @@ task_switch(selector_t* task_sel, int type)
 		break;
 	}
 
-	/* save this task state in this task state segment ind */
+	/* save this task state in this task state segment */
 	if (!task16) {
 		cpu_lmemorywrite_d(cur_base + 28, CPU_CR3);
 		cpu_lmemorywrite_d(cur_base + 32, CPU_EIP);
@@ -279,7 +279,7 @@ task_switch(selector_t* task_sel, int type)
 			cpu_lmemorywrite_d(cur_base + 40 + i * 4, CPU_REGS_DWORD(i));
 		}
 		for (i = 0; i < nsreg; i++) {
-			cpu_lmemorywrite_d(cur_base + 72 + i * 4, CPU_REGS_SREG(i));
+			cpu_lmemorywrite_w(cur_base + 72 + i * 4, CPU_REGS_SREG(i));
 		}
 		cpu_lmemorywrite_w(cur_base + 96, CPU_LDTR);
 	} else {
@@ -294,7 +294,7 @@ task_switch(selector_t* task_sel, int type)
 		cpu_lmemorywrite_w(cur_base + 42, CPU_LDTR);
 	}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 	{
 		DWORD v;
 
@@ -338,8 +338,16 @@ task_switch(selector_t* task_sel, int type)
 		break;
 	
 	case TASK_SWITCH_IRET:
-		/* Nothing to do */
-		/* XXX: if IRET, check busy flag is active? */
+#if defined(DEBUG)
+		/* check busy flag is active */
+		if (task_sel->desc.valid) {
+			DWORD h;
+			h = cpu_lmemoryread_d(task_sel->desc.addr + 4);
+			if ((h & CPU_TSS_H_BUSY) == 0) {
+				VERBOSE(("task_switch: new task is not busy"));
+			}
+		}
+#endif
 		break;
 
 	default:
@@ -380,12 +388,6 @@ task_switch(selector_t* task_sel, int type)
 	/* set new segment register */
 	if (CPU_STAT_VM86) {
 		/* VM86 */
-		/* clear 32bit */
-		CPU_STATSAVE.cpu_inst_default.op_32 = 
-		    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
-		CPU_STAT_SS32 = 0;
-		CPU_STAT_CPL = task_sel->desc.dpl;
-
 		for (i = 0; i < nsreg; i++) {
 			CPU_STAT_SREG_INIT(i);
 			load_segreg(i, sreg[i], TS_EXCEPTION);

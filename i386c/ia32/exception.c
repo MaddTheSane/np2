@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.5 2004/01/26 15:23:55 monaka Exp $	*/
+/*	$Id: exception.c,v 1.6 2004/01/27 15:56:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -352,6 +352,7 @@ static void
 interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_code)
 {
 	selector_t intr_sel, ss_sel;
+	DWORD old_flags = REAL_EFLAGREG;
 	DWORD flags = REAL_EFLAGREG;
 	DWORD mask = 0;
 	DWORD stacksize;
@@ -360,8 +361,19 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 	WORD old_cs, old_ss, new_ss;
 	int rv; 
 
+	VERBOSE(("interrupt: old EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
+
+	new_ip = gdp->u.gate.offset;
+	old_ss = CPU_SS;
+	old_cs = CPU_CS;
+	old_ip = CPU_EIP;
+	old_sp = CPU_ESP;
+
 	switch (gdp->type) {
 	case CPU_SYSDESC_TYPE_INTR_16:
+		old_ip &= 0xffff;
+		old_sp &= 0xffff;
+		/*FALLTHROUGH*/
 	case CPU_SYSDESC_TYPE_INTR_32:
 		VERBOSE(("interrupt: INTERRUPT-GATE"));
 		flags &= ~I_FLAG;
@@ -369,27 +381,15 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 		break;
 
 	case CPU_SYSDESC_TYPE_TRAP_16:
+		old_ip &= 0xffff;
+		old_sp &= 0xffff;
+		/*FALLTHROUGH*/
 	case CPU_SYSDESC_TYPE_TRAP_32:
 		VERBOSE(("interrupt: TRAP-GATE"));
 		break;
 	}
-
 	flags &= ~(T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG);
 	mask |= T_FLAG|RF_FLAG|NT_FLAG|VM_FLAG;
-
-	new_ip = gdp->u.gate.offset;
-	old_ss = CPU_SS;
-	old_cs = CPU_CS;
-	old_ip = CPU_EIP;
-	old_sp = CPU_ESP;
-	switch (gdp->type) {
-	case CPU_SYSDESC_TYPE_INTR_16:
-	case CPU_SYSDESC_TYPE_TRAP_16:
-		old_ip &= 0xffff;
-		old_sp &= 0xffff;
-		break;
-	}
-	VERBOSE(("interrupt: old EIP = %04x:%08x, ESP = %04x:%08x", old_cs, old_ip, old_ss, old_sp));
 
 	rv = parse_selector(&intr_sel, gdp->u.gate.selector);
 	if (rv < 0) {
@@ -488,7 +488,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
-		load_ss(new_ss, &ss_sel.desc, intr_sel.desc.dpl);
+		load_ss(ss_sel.selector, &ss_sel.desc, intr_sel.desc.dpl);
 		CPU_ESP = new_sp;
 
 		load_cs(intr_sel.selector, &intr_sel.desc, intr_sel.desc.dpl);
@@ -521,7 +521,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 		case CPU_SYSDESC_TYPE_TRAP_32:
 			PUSH0_32(old_ss);
 			PUSH0_32(old_sp);
-			PUSH0_32(REAL_EFLAGREG);
+			PUSH0_32(old_flags);
 			PUSH0_32(old_cs);
 			PUSH0_32(old_ip);
 			if (errorp) {
@@ -533,7 +533,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 		case CPU_SYSDESC_TYPE_TRAP_16:
 			PUSH0_16(old_ss);
 			PUSH0_16(old_sp);
-			PUSH0_16(REAL_FLAGREG);
+			PUSH0_16(old_flags);
 			PUSH0_16(old_cs);
 			PUSH0_16(old_ip);
 			if (errorp) {

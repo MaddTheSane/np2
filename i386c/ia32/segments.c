@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.7 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: segments.c,v 1.8 2004/01/27 15:56:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -193,7 +193,7 @@ load_ldtr(WORD selector, int exc)
 		EXCEPTION((exc == TS_EXCEPTION) ? TS_EXCEPTION : NP_EXCEPTION, sel.selector);
 	}
 
-#if defined(DEBUG)
+#if defined(MORE_DEBUG)
 	ldtr_dump(sel.desc.u.seg.segbase, sel.desc.u.seg.limit);
 #endif
 

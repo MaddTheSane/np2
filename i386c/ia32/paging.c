@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.6 2004/01/26 15:22:16 monaka Exp $	*/
+/*	$Id: paging.c,v 1.7 2004/01/27 15:56:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -239,14 +239,16 @@ cpu_linear_memory_read(DWORD laddr, DWORD length, int code)
 			break;
 		}
 
-		if (length == r)
+		length -= r;
+		if (length == 0)
 			break;
 
 		laddr += r;
-		length -= r;
 		remain -= r;
-		if (remain <= 0)
+		if (remain <= 0) {
+			/* next page */
 			remain += 0x1000;
+		}
 	}
 
 	return value;
@@ -298,14 +300,16 @@ cpu_linear_memory_write(DWORD laddr, DWORD length, DWORD value)
 			break;
 		}
 
-		if (length == r)
+		length -= r;
+		if (length == 0)
 			break;
 
 		laddr += r;
-		length -= r;
 		remain -= r;
-		if (remain <= 0)
+		if (remain <= 0) {
+			/* next page */
 			remain += 0x1000;
+		}
 	}
 }
 
@@ -327,14 +331,17 @@ paging_check(DWORD laddr, DWORD length, int rw)
 		paddr = paging(laddr, crw, pl);
 
 		r = (remain > length) ? length : remain;
-		if (length == r)
+
+		length -= r;
+		if (length == 0)
 			break;
 
 		laddr += r;
-		length -= r;
 		remain -= r;
-		if (remain <= 0)
+		if (remain <= 0) {
+			/* next page */
 			remain += 0x1000;
+		}
 	}
 }
 
