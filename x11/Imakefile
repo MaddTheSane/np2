@@ -63,6 +63,8 @@ PTHREAD_LIB?= -lpthread
 #endif
 
 
+CDEBUGFLAGS+= -fsigned-char
+
 SYSRESPATH?= $(LIBDIR)/xnp2
 
 DEFINES= ShmDefines \
