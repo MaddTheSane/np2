@@ -86,7 +86,7 @@ G_CLOCK				equ		(GD_SIZE + &50)
 	EXPORT	makegrph_init
 	EXPORT	makegrph
 
-	AREA	MAKEGRPHBSS, DATA, READONLY
+	AREA	.rdata, DATA, READONLY
 
 grph_table0		dcd		&00000000
 				dcd		&01000000
@@ -106,7 +106,7 @@ grph_table0		dcd		&00000000
 				dcd		&01010101
 
 
-	AREA	MAKEGRPH, CODE, READONLY
+	AREA	.text, CODE, READONLY
 
 makegrph_init	mov		pc, lr
 

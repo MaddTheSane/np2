@@ -134,7 +134,7 @@ T_envcurve			equ		(24 - T_ORG + SIN_ENT * 4 + EVC_ENT * 4)
 	EXPORT	opngen_getpcm
 	EXPORT	opngen_getpcmvr
 
-	AREA	OPNGENA, CODE, READONLY
+	AREA	.text, CODE, READONLY
 
 ; r0	Temporary Register
 ; r1	Offset

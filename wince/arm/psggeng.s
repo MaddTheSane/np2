@@ -59,7 +59,7 @@ CD_BIT31		equ		&80000000
 
 	EXPORT	psggen_getpcm
 
-	AREA	PSGGEN, CODE, READONLY
+	AREA	.text, CODE, READONLY
 
 
 psggen_getpcm	ldrb	r12, [r0, #P_MIXER]

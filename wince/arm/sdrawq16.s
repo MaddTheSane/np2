@@ -26,7 +26,7 @@ S_DIRTY			equ		32
 
 	EXPORT	sdraw_getproctbl
 
-	AREA	SDRAWQ16, CODE, READONLY
+	AREA	.text, CODE, READONLY
 
 qvga16p_0		stmdb	sp!, {r4 - r8, lr}
 				ldr		r6, [r0, #S_SRC]
