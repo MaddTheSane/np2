@@ -44,20 +44,48 @@ typedef struct {
 
 static MENUSYS	menusys;
 
-#if 1
-			// 元のサイズに戻す
-static const char str_sysr[] = 
-			"\214\263\202\314\203\124\203\103\203\131\202\311\226\337\202\267";
-			// 移動
-static const char str_sysm[] = "\210\332\223\256";
-			// サイズ変更
-static const char str_syss[] = "\203\124\203\103\203\131\225\317\215\130";
-			// 最小化
-static const char str_sysn[] = "\215\305\217\254\211\273";
-			// 最大化
-static const char str_sysx[] = "\215\305\221\345\211\273";
-			// 閉じる
-static const char str_sysc[] = "\225\302\202\266\202\351";
+#if !defined(CHARSET_OEM) || defined(OSLANG_SJIS)
+static const char str_sysr[] = 				// 元のサイズに戻す
+			"\214\263\202\314\203\124\203\103\203\131\202\311" \
+			"\226\337\202\267";
+static const char str_sysm[] =				// 移動
+			"\210\332\223\256";
+static const char str_syss[] =				// サイズ変更
+			"\203\124\203\103\203\131\225\317\215\130";
+static const char str_sysn[] =				// 最小化
+			"\215\305\217\254\211\273";
+static const char str_sysx[] =				// 最大化
+			"\215\305\221\345\211\273";
+static const char str_sysc[] =				// 閉じる
+			"\225\302\202\266\202\351";
+#elif defined(OSLANG_EUC)
+static const char str_sysr[] = 				// 元のサイズに戻す
+			"\270\265\244\316\245\265\245\244\245\272\244\313" \
+			"\314\341\244\271";
+static const char str_sysm[] =				// 移動
+			"\260\334\306\260";
+static const char str_syss[] =				// サイズ変更
+			"\245\265\245\244\245\272\312\321\271\271";
+static const char str_sysn[] =				// 最小化
+			"\272\307\276\256\262\275";
+static const char str_sysx[] =				// 最大化
+			"\272\307\302\347\262\275";
+static const char str_sysc[] =				// 閉じる
+			"\312\304\244\270\244\353";
+#elif defined(OSLANG_UTF8)
+static const char str_sysr[] = 				// 元のサイズに戻す
+			"\345\205\203\343\201\256\343\202\265\343\202\244\343\202\272" \
+			"\343\201\253\346\210\273\343\201\231";
+static const char str_sysm[] =				// 移動
+			"\347\247\273\345\213\225";
+static const char str_syss[] =				// サイズ変更
+			"\343\202\265\343\202\244\343\202\272\345\244\211\346\233\264";
+static const char str_sysn[] =				// 最小化
+			"\346\234\200\345\260\217\345\214\226";
+static const char str_sysx[] =				// 最大化
+			"\346\234\200\345\244\247\345\214\226";
+static const char str_sysc[] =				// 閉じる
+			"\351\226\211\343\201\230\343\202\213";
 #else
 static const char str_sysr[] = "Restore";
 static const char str_sysm[] = "Move";

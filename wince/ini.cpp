@@ -283,7 +283,11 @@ const INITBL	*pterm;
 
 // ----
 
+#if defined(CHARSET_OEM)
 static const char ini_title[] = "NekoProjectII";
+#else
+static const char ini_title[] = "NekoProjectIICE";
+#endif
 static const char inifile[] = "np2.cfg";
 
 static const INITBL iniitem[] = {

@@ -2,7 +2,8 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 
-#if 1
+
+#if !defined(CHARSET_OEM) || defined(OSLANG_SJIS)
 const char mstr_fontcheck[] = " ";
 const char mstr_ok[] = "OK";
 			// キャンセル
@@ -17,6 +18,37 @@ const char mstr_ignore[] = "\226\263\216\213";
 const char mstr_yes[] = "\202\315\202\242";
 			// いいえ
 const char mstr_no[] = "\202\242\202\242\202\246";
+#elif defined(OSLANG_EUC)
+const char mstr_fontcheck[] = " ";
+const char mstr_ok[] = "OK";
+			// キャンセル
+const char mstr_cancel[] = "\216\267\216\254\216\335\216\276\216\331";
+			// 中止
+const char mstr_abort[] = "\303\346\273\337";
+			// 再試行
+const char mstr_retry[] = "\272\306\273\356\271\324";
+			// 無視
+const char mstr_ignore[] = "\314\265\273\353";
+			// はい
+const char mstr_yes[] = "\244\317\244\244";
+			// いいえ
+const char mstr_no[] = "\244\244\244\244\244\250";
+#elif defined(OSLANG_UTF8)
+const char mstr_fontcheck[] = " ";
+const char mstr_ok[] = "OK";
+			// キャンセル
+const char mstr_cancel[] = "\357\275\267\357\275\254\357\276\235" \
+							"\357\275\276\357\276\231";
+			// 中止
+const char mstr_abort[] = "\344\270\255\346\255\242";
+			// 再試行
+const char mstr_retry[] = "\345\206\215\350\251\246\350\241\214";
+			// 無視
+const char mstr_ignore[] = "\347\204\241\350\246\226";
+			// はい
+const char mstr_yes[] = "\343\201\257\343\201\204";
+			// いいえ
+const char mstr_no[] = "\343\201\204\343\201\204\343\201\210";
 #else
 const char mstr_fontcheck[] = " ";
 const char mstr_ok[] = "OK";

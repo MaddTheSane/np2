@@ -7,7 +7,6 @@
 #define	OSLANG_SJIS
 #define	OSLINEBREAK_CRLF
 
-
 typedef signed char		SINT8;
 typedef unsigned char	UINT8;
 typedef	signed short	SINT16;

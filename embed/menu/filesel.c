@@ -20,17 +20,35 @@ enum {
 	DID_FILTER
 };
 
-#if 1
-			// ファイルの場所
-static const char str_dirname[] =
-				"\203\164\203\100\203\103\203\213\202\314\217\352\217\212";
-			// ファイル名
-static const char str_filename[] = "\203\164\203\100\203\103\203\213\226\274";
-			// ファイルの種類
-static const char str_filetype[] =
-				"\203\164\203\100\203\103\203\213\202\314\216\355\227\336";
-			// 開く
-static const char str_open[] = "\212\112\202\255";
+#if !defined(CHARSET_OEM) || defined(OSLANG_SJIS)
+static const char str_dirname[] =				// ファイルの場所
+			"\203\164\203\100\203\103\203\213\202\314\217\352\217\212";
+static const char str_filename[] =				// ファイル名
+			"\203\164\203\100\203\103\203\213\226\274";
+static const char str_filetype[] =				// ファイルの種類
+			"\203\164\203\100\203\103\203\213\202\314\216\355\227\336";
+static const char str_open[] =					// 開く
+			"\212\112\202\255";
+#elif defined(OSLANG_EUC)
+static const char str_dirname[] =				// ファイルの場所
+			"\245\325\245\241\245\244\245\353\244\316\276\354\275\352";
+static const char str_filename[] =				// ファイル名
+			"\245\325\245\241\245\244\245\353\314\276";
+static const char str_filetype[] =				// ファイルの種類
+			"\245\325\245\241\245\244\245\353\244\316\274\357\316\340";
+static const char str_open[] =					// 開く
+			"\263\253\244\257";
+#elif defined(OSLANG_UTF8)
+static const char str_dirname[] =				// ファイルの場所
+			"\343\203\225\343\202\241\343\202\244\343\203\253\343\201\256" \
+			"345\240\264\346\211\200";
+static const char str_filename[] =				// ファイル名
+			"\343\203\225\343\202\241\343\202\244\343\203\253\345\220\215";
+static const char str_filetype[] =				// ファイルの種類
+			"\343\203\225\343\202\241\343\202\244\343\203\253\343\201\256" \
+			"\347\250\256\351\241\236";
+static const char str_open[] =					// 開く
+			"\351\226\213\343\201\217";
 #else
 static const char str_dirname[] = "Look in";
 static const char str_filename[] = "File name";
