@@ -48,10 +48,10 @@ static void IOOUTCALL opn_o18a(UINT port, BYTE dat) {
 static BYTE IOINPCALL opn_i188(UINT port) {
 
 	(void)port;
-#if 1
-	return(fmtimer.status | 0x7c);
-#else
+#if 1							// ドラッケンで未定義フラグ見てる　テスト終了
 	return(fmtimer.status);
+#else
+	return(fmtimer.status | 0x7c);
 #endif
 }
 

@@ -1,13 +1,13 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"commng.h"
 #include	"sysmng.h"
-#include	"pccore.h"
-#include	"bit2res.h"
 #include	"dialog.h"
 #include	"dialogs.h"
+#include	"pccore.h"
+#include	"dipswbmp.h"
 
 
 #ifdef __cplusplus
@@ -22,8 +22,7 @@ extern	COMMNG	cm_mpu98;
 
 static const char *mpuinterrupt[4] = {str_int0, str_int1, str_int2, str_int5};
 
-static	BYTE			mpu = 0;
-static	SUBCLASSPROC	oldidc_mpujmp = NULL;
+static	BYTE	mpu = 0;
 
 
 static void setmpuiopara(HWND hWnd, WORD res, BYTE value) {
@@ -68,75 +67,34 @@ static void setmpujmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static void setmpuiodip(BYTE *image, int px, int py, int align, BYTE v) {
 
-	int		i, j, y;
+// ----
 
-	px *= 9;
-	px++;
-	py *= 9;
-	for (i=0; i<4; i++, px+=9, v<<=1) {
-		y = py + ((v&0x80)?5:9);
-		for (j=0; j<3; j++) {
-			dlgs_linex(image, px, y+j, 7, align, 2);
-		}
+static void mpucreate(HWND hWnd) {
+
+	UINT	i;
+	char	buf[8];
+	HWND	sub;
+
+	mpu = np2cfg.mpuopt;
+	for (i=0; i<16; i++) {
+		wsprintf(buf, str_4X, 0xC0D0 + (i << 10));
+		SendDlgItemMessage(hWnd, IDC_MPUIO,
+									CB_INSERTSTRING, (WPARAM)i, (LPARAM)buf);
 	}
+	setmpuiopara(hWnd, IDC_MPUIO, mpu);
+	SETLISTSTR(hWnd, IDC_MPUINT, mpuinterrupt);
+	setmpuintpara(hWnd, IDC_MPUINT, mpu);
+
+	// SS_OWNERDRAW‚É‚·‚é‚Æ IDE‚Å•s“s‡‚ªo‚é‚Ì‚Åc
+	sub = GetDlgItem(hWnd, IDC_MPUDIP);
+	SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
+
+	SetFocus(GetDlgItem(hWnd, IDC_MPUIO));
 }
 
-static void setmpuintdip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	dlgs_setjumpery(image, px + 3 - (mpu & 3), py, align);
-}
-
-static LRESULT CALLBACK mpujmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
-
-	PAINTSTRUCT	ps;
-	HDC			hdc;
-	HBITMAP		hBitmap;
-	HDC			hMemDC;
-	BYTE		*image;
-	HANDLE		hwork;
-	BITMAPINFO	*work;
-	BYTE		*imgbtm;
-	int			align;
-
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&mpudip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &mpudip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &mpudip);
-			align = ((mpudip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (mpudip.y - 1);
-			setmpuiodip(imgbtm, 2, 1, align, mpu);
-			setmpuintdip(imgbtm, 9, 1, align, mpu);
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, mpudip.x, mpudip.y, hMemDC,
-									0, 0, mpudip.x, mpudip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_mpujmp, hWnd, msg, wp, lp));
-	}
-	return(FALSE);
-}
-
-static void updatempu(HWND hWnd) {
+static void mpuupdate(HWND hWnd) {
 
 	UINT	update;
 
@@ -151,35 +109,19 @@ static void updatempu(HWND hWnd) {
 LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	BYTE	b, bit;
-	int		i;
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
 
 	switch(msg) {
 		case WM_INITDIALOG:
-			mpu = np2cfg.mpuopt;
-			for (i=0; i<16; i++) {
-				char buf[8];
-				wsprintf(buf, str_4X, 0xC0D0 + (i << 10));
-				SendDlgItemMessage(hWnd, IDC_MPUIO,
-									CB_INSERTSTRING, (WPARAM)i, (LPARAM)buf);
-			}
-			setmpuiopara(hWnd, IDC_MPUIO, mpu);
-			SETLISTSTR(hWnd, IDC_MPUINT, mpuinterrupt);
-			setmpuintpara(hWnd, IDC_MPUINT, mpu);
-
-			oldidc_mpujmp = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_MPUDIP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_MPUDIP), GWL_WNDPROC,
-													(LONG)mpujmp);
-			SetFocus(GetDlgItem(hWnd, IDC_MPUIO));					// ver0.30
+			mpucreate(hWnd);
 			return(FALSE);
 
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDOK:
-					updatempu(hWnd);
+					mpuupdate(hWnd);
 					EndDialog(hWnd, IDOK);
 					break;
 
@@ -233,6 +175,13 @@ LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					return(FALSE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_MPUDIP) {
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+													dipswbmp_getmpu(mpu));
+			}
+			return(FALSE);
 
 		case WM_CLOSE:
 			PostMessage(hWnd, WM_COMMAND, IDCANCEL, 0);

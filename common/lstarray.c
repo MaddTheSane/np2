@@ -6,6 +6,7 @@ LISTARRAY listarray_new(size_t listsize, UINT maxitems) {
 	LISTARRAY	laRet = NULL;
 	UINT		dwSize;
 
+	listsize = (listsize + 3) & (~3);
 	dwSize = sizeof(_LISTARRAY);
 	dwSize += listsize * maxitems;
 

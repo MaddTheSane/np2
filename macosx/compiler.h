@@ -8,6 +8,9 @@
 
 #define	MACOS
 #define	BYTESEX_BIG
+#define	OSLANG_SJIS
+#define	OSLINEBREAK_CR
+
 
 typedef char			TCHAR;
 typedef unsigned char	BYTE;
@@ -43,11 +46,12 @@ typedef Boolean			BOOL;
 #include	"trace.h"
 
 #define	GETTICK()			macos_gettick()
-#define	GETRAND()			rand()
 #define	SPRINTF				sprintf
 
 #define	VERMOUTH_LIB
 // #define SOUND_CRITICAL
+
+#define	SUPPORT_SJIS
 
 // #define	SUPPORT_8BPP
 #ifdef NP2GCC

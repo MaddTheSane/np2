@@ -21,7 +21,7 @@ I286_F6 _inc_ea8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -44,7 +44,7 @@ I286_F6 _dec_ea8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -67,7 +67,7 @@ I286_F6 _inc_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -90,7 +90,7 @@ I286_F6 _dec_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -112,7 +112,7 @@ I286_F6 _call_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(7);
-		src = *(reg16_b20[op]);
+		src = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(11);
@@ -143,7 +143,7 @@ I286_F6 _jmp_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(7);
-		I286_IP = *(reg16_b20[op]);
+		I286_IP = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(11);
@@ -172,7 +172,7 @@ I286_F6 _push_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		src = *(reg16_b20[op]);
+		src = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(5);
@@ -188,7 +188,7 @@ I286_F6 _pop_ea16(UINT op) {
 	REGPOP0(src);
 	I286_WORKCLOCK(5);
 	if (op >= 0xc0) {
-		*(reg16_b20[op]) = src;
+		*(REG16_B20(op)) = src;
 	}
 	else {
 		i286_memorywrite_w(c_calc_ea_dst[op](), src);

@@ -180,7 +180,7 @@ BEGIN
     PUSHBUTTON      "DEF",IDC_MPUDEF,92,24,18,12
     LTEXT           "DIP-SW",IDC_STATIC,8,46,24,8
     CONTROL         "",IDC_MPUDIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,42,46,
-                    80,20
+                    80,26
     DEFPUSHBUTTON   "&OK",IDOK,132,7,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,132,24,44,14
 END

@@ -5,7 +5,8 @@
 #include	"soundmng.h"
 #include	"sound.h"
 #if defined(VERMOUTH_LIB)
-#include	"vermouth.h"
+#include	"commng.h"
+#include	"cmver.h"
 #endif
 
 
@@ -29,11 +30,7 @@ static	DWORD		lasttick = 0;
 static	DWORD		retry = 0;
 static	UINT		currate = 22050;
 static	UINT		curms = 500;
-static	BYTE		playing;
-
-#if defined(VERMOUTH_LIB)
-		MIDIMOD		vermouth_module = NULL;
-#endif
+static	UINT		mute;
 
 static const DWORD capsfmt[] = {
 			WAVE_FORMAT_1S16, WAVE_FORMAT_2S16, WAVE_FORMAT_4S16};
@@ -56,7 +53,7 @@ const SINT32	*pcm;
 		if (whd->lpData) {
 			dst = (short *)whd->lpData;
 			pcm = NULL;
-			if (playing) {
+			if (!mute) {
 				pcm = sound_pcmlock();
 			}
 			if (pcm) {
@@ -84,7 +81,7 @@ const SINT32	*pcm;
 		if (((WAVEHDR *)dwParam1)->lpData) {
 			dst = (short *)((WAVEHDR *)dwParam1)->lpData;
 			pcm = NULL;
-			if (playing) {
+			if (!mute) {
 				pcm = sound_pcmlock();
 			}
 			if (pcm) {
@@ -180,11 +177,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 				waveOutWrite(w_ctrl.hwave, w_ctrl.wh + i, sizeof(WAVEHDR));
 			}
 #if defined(VERMOUTH_LIB)
-			vermouth_module = midimod_create(rate);
-			for (num=0; num<128; num++) {
-				midimod_loadprogram(vermouth_module, num);
-				midimod_loadrhythm(vermouth_module, num);
-			}
+			cmvermouth_load(rate);
 #endif
 			currate = rate;
 			curms = ms;
@@ -227,25 +220,25 @@ void soundmng_destroy(void) {
 		} while(--retry);
 		_MFREE(w_ctrl.buffer);
 #if defined(VERMOUTH_LIB)
-		midimod_destroy(vermouth_module);
-		vermouth_module = NULL;
+//		cmvermouth_unload();			// 終了時に unload
 #endif
 		waveopened = FALSE;
 	}
 }
 
-void soundmng_play(void) {
-
-	playing = TRUE;
-}
-
-void soundmng_stop(void) {
-
-	playing = FALSE;
-}
-
 
 // ----
+
+// WinCE版 … vermouthのロードに時間掛かるので
+void soundmng_initialize(void) {
+}
+
+void soundmng_deinitialize(void) {
+
+#if defined(VERMOUTH_LIB)
+	cmvermouth_unload();
+#endif
+}
 
 void soundmng_awake(void) {
 
@@ -263,5 +256,15 @@ void soundmng_awake(void) {
 			}
 		}
 	}
+}
+
+void soundmng_enable(UINT proc) {
+
+	mute &= ~(1 << proc);
+}
+
+void soundmng_disable(UINT proc) {
+
+	mute |= 1 << proc;
 }
 

@@ -53,9 +53,5 @@ void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items);
 void dlgs_setlistmidiout(HWND hWnd, WORD res, const char *defname);
 void dlgs_setlistmidiin(HWND hWnd, WORD res, const char *defname);
 
-void dlgs_linex(BYTE *image, int x, int y, int l, int align, BYTE c);
-void dlgs_liney(BYTE *image, int x, int y, int l, int align, BYTE c);
-
-void dlgs_setjumperx(BYTE *image, int x, int y, int align);
-void dlgs_setjumpery(BYTE *image, int x, int y, int align);
+void dlgs_drawbmp(HDC hdc, BYTE *bmp);
 

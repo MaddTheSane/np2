@@ -79,7 +79,7 @@ I286_0F _smsw(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		*(reg16_b20[op]) = i286reg.MSW;
+		*(REG16_B20(op)) = i286reg.MSW;
 	}
 	else {
 		I286_WORKCLOCK(6);
@@ -91,7 +91,7 @@ I286_0F _lmsw(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		i286reg.MSW = *(reg16_b20[op]);
+		i286reg.MSW = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(3);

@@ -14,7 +14,7 @@ I286_F6 _test_ea8_data8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		dst = *(reg8_b20[op]);
+		dst = *(REG8_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(6);
@@ -30,7 +30,7 @@ I286_F6 _not_ea8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		*(reg8_b20[op]) ^= 0xff;
+		*(REG8_B20(op)) ^= 0xff;
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -54,7 +54,7 @@ I286_F6 _neg_ea8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -79,7 +79,7 @@ I286_F6 _mul_ea8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(13);
-		src = *(reg8_b20[op]);
+		src = *(REG8_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(16);
@@ -96,7 +96,7 @@ I286_F6 _imul_ea8(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(13);
-		src = *(reg8_b20[op]);
+		src = *(REG8_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(16);
@@ -115,7 +115,7 @@ I286_F6 _div_ea8(UINT op) {
 	ip = I286_IP;
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		src = *(reg8_b20[op]);
+		src = *(REG8_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -140,7 +140,7 @@ I286_F6 _idiv_ea8(UINT op) {
 	ip = I286_IP;
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(17);
-		src = *(reg8_b20[op]);
+		src = *(REG8_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(25);
@@ -166,7 +166,7 @@ I286_F6 _test_ea16_data16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		dst = *(reg16_b20[op]);
+		dst = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(6);
@@ -182,7 +182,7 @@ I286_F6 _not_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		*(reg16_b20[op]) ^= 0xffff;
+		*(REG16_B20(op)) ^= 0xffff;
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -207,7 +207,7 @@ I286_F6 _neg_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -232,7 +232,7 @@ I286_F6 _mul_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(21);
-		src = *(reg16_b20[op]);
+		src = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(24);
@@ -250,7 +250,7 @@ I286_F6 _imul_ea16(UINT op) {
 
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(21);
-		src = *(reg16_b20[op]);
+		src = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(24);
@@ -270,7 +270,7 @@ I286_F6 _div_ea16(UINT op) {
 	ip = I286_IP;
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(17);
-		src = *(reg16_b20[op]);
+		src = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(25);
@@ -296,7 +296,7 @@ I286_F6 _idiv_ea16(UINT op) {
 	ip = I286_IP;
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(17);
-		src = *(reg16_b20[op]);
+		src = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(25);

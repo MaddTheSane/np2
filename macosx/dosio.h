@@ -69,8 +69,8 @@ FILEH file_create_c(const char *path);
 short file_delete_c(const char *path);
 short file_attr_c(const char *path);
 
-#define	file_cpyname(a, b, c)	milstr_ncpy(a, b, c)
-#define	file_cmpname(a, b)		milstr_cmp(a, b)
+#define	file_cpyname(a, b, c)	milsjis_ncpy(a, b, c)
+#define	file_cmpname(a, b)		milsjis_cmp(a, b)
 void file_catname(char *path, const char *sjis, int maxlen);
 char *file_getname(char *path);
 void file_cutname(char *path);

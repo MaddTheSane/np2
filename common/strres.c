@@ -9,6 +9,8 @@ const char str_cr[] = "\r";
 const char str_crlf[] = "\r\n";
 
 const char str_ini[] = "ini";
+const char str_cfg[] = "cfg";
+const char str_sav[] = "sav";
 const char str_bmp[] = "bmp";
 const char str_d88[] = "d88";
 const char str_d98[] = "d98";
@@ -30,4 +32,7 @@ const char str_posx[] = "posx";
 const char str_posy[] = "posy";
 const char str_width[] = "width";
 const char str_height[] = "height";
+
+const char str_np2[] = "Neko Project II";
+const char str_resume[] = "Resume";
 

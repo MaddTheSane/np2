@@ -43,7 +43,7 @@ I286FN _add_ea_r8(void) {						// 00: add EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -73,7 +73,7 @@ I286FN _add_ea_r16(void) {						// 01: add EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -163,7 +163,7 @@ I286FN _or_ea_r8(void) {						// 08: or EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -190,7 +190,7 @@ I286FN _or_ea_r16(void) {							// 09: or EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -261,7 +261,7 @@ I286FN _adc_ea_r8(void) {						// 10: adc EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -291,7 +291,7 @@ I286FN _adc_ea_r16(void) {						// 11: adc EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -384,7 +384,7 @@ I286FN _sbb_ea_r8(void) {						// 18: sbb EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -414,7 +414,7 @@ I286FN _sbb_ea_r16(void) {						// 19: sbb EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -505,7 +505,7 @@ I286FN _and_ea_r8(void) {						// 20: and EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -532,7 +532,7 @@ I286FN _and_ea_r16(void) {						// 21: and EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -634,7 +634,7 @@ I286FN _sub_ea_r8(void) {						// 28: sub EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -664,7 +664,7 @@ I286FN _sub_ea_r16(void) {						// 29: sub EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -776,7 +776,7 @@ I286FN _xor_ea_r8(void) {						// 30: xor EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -803,7 +803,7 @@ I286FN _xor_ea_r16(void) {						// 31: xor EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -897,7 +897,7 @@ I286FN _cmp_ea_r8(void) {						// 38: cmp EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		dst = *(reg8_b20[op]);
+		dst = *(REG8_B20(op));
 		BYTE_SUB(res, dst, src);
 	}
 	else {
@@ -917,7 +917,7 @@ I286FN _cmp_ea_r16(void) {						// 39: cmp EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		dst = *(reg16_b20[op]);
+		dst = *(REG16_B20(op));
 		WORD_SUB(res, dst, src);
 	}
 	else {
@@ -1076,7 +1076,7 @@ I286FN _bound(void) {						// 62:	bound
 	I286_WORKCLOCK(13);										// ToDo
 	GET_PCBYTE(op);
 	if (op < 0xc0) {
-		reg = *(reg16_b53[op]);
+		reg = *(REG16_B53(op));
 		madr = c_calc_ea_dst[op]();
 		if (reg >= i286_memoryread_w(madr)) {
 			madr += 2;									// ToDo
@@ -1282,7 +1282,7 @@ I286FN _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -1306,7 +1306,7 @@ I286FN _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -1332,7 +1332,7 @@ I286FN _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -1359,7 +1359,7 @@ I286FN _test_ea_r8(void) {					// 84:	test	EA, REG8
 	PREPART_EA_REG8(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(6);
@@ -1386,7 +1386,7 @@ I286FN _test_ea_r16(void) {					// 85:	test	EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -1412,7 +1412,7 @@ I286FN _xchg_ea_r8(void) {					// 86:	xchg	EA, REG8
 	PREPART_EA_REG8P(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(5);
@@ -1438,7 +1438,7 @@ I286FN _xchg_ea_r16(void) {					// 87:	xchg	EA, REG16
 	PREPART_EA_REG16P(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(3);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(5);
@@ -1463,7 +1463,7 @@ I286FN _mov_ea_r8(void) {					// 88:	mov		EA, REG8
 	PREPART_EA_REG8(op, src)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		*(reg8_b20[op]) = src;
+		*(REG8_B20(op)) = src;
 	}
 	else {
 		I286_WORKCLOCK(3);
@@ -1480,7 +1480,7 @@ I286FN _mov_ea_r16(void) {					// 89:	mov		EA, REG16
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		*(reg16_b20[op]) = src;
+		*(REG16_B20(op)) = src;
 	}
 	else {
 		I286_WORKCLOCK(3);
@@ -1517,7 +1517,7 @@ I286FN _mov_ea_seg(void) {					// 8C:	mov		EA, segreg
 	tmp = *SEGMENTPTR((op >> 3) & 3);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		*(reg16_b20[op]) = tmp;
+		*(REG16_B20(op)) = tmp;
 	}
 	else {
 		I286_WORKCLOCK(3);
@@ -1532,7 +1532,7 @@ I286FN _lea_r16_ea(void) {					// 8D:	lea		REG16, EA
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(op)
 	if (op < 0xc0) {
-		*(reg16_b53[op]) = c_calc_lea[op]();
+		*(REG16_B53(op)) = c_calc_lea[op]();
 	}
 	else {
 		INT_NUM(6, I286_SP - 2);
@@ -1549,7 +1549,7 @@ I286FN _mov_seg_ea(void) {					// 8E:	mov		segrem, EA
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		tmp = *(reg16_b20[op]);
+		tmp = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(5);
@@ -1593,7 +1593,7 @@ I286FN _pop_ea(void) {						// 8F:	pop		EA
 		i286_memorywrite_w(c_calc_ea_dst[op](), tmp);
 	}
 	else {
-		*(reg16_b20[op]) = tmp;
+		*(REG16_B20(op)) = tmp;
 	}
 }
 
@@ -1904,7 +1904,7 @@ I286FN _shift_ea8_data8(void) {				// C0:	shift	EA8, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);
@@ -1932,7 +1932,7 @@ I286FN _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);
@@ -1975,7 +1975,7 @@ I286FN _les_r16_ea(void) {					// C4:	les		REG16, EA
 	GET_PCBYTE(op)
 	if (op < 0xc0) {
 		ad = c_get_ea[op]();
-		*(reg16_b53[op]) = i286_memoryread_w(ad + EA_FIX);
+		*(REG16_B53(op)) = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		I286_ES = i286_memoryread_w(ad + EA_FIX);
 		ES_BASE = I286_ES << 4;
@@ -1994,7 +1994,7 @@ I286FN _lds_r16_ea(void) {					// C5:	lds		REG16, EA
 	GET_PCBYTE(op)
 	if (op < 0xc0) {
 		ad = c_get_ea[op]();
-		*(reg16_b53[op]) = i286_memoryread_w(ad + EA_FIX);
+		*(REG16_B53(op)) = i286_memoryread_w(ad + EA_FIX);
 		ad += 2;
 		I286_DS = i286_memoryread_w(ad + EA_FIX);
 		DS_BASE = I286_DS << 4;
@@ -2012,7 +2012,7 @@ I286FN _mov_ea8_data8(void) {				// C6:	mov		EA8, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		GET_PCBYTE(*(reg8_b53[op]))
+		GET_PCBYTE(*(REG8_B53(op)))
 	}
 	else {
 		UINT ad;
@@ -2031,7 +2031,7 @@ I286FN _mov_ea16_data16(void) {				// C7:	mov		EA16, DATA16
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		GET_PCWORD(*(reg16_b53[op]))
+		GET_PCWORD(*(REG16_B53(op)))
 	}
 	else {
 		UINT	ad;
@@ -2166,7 +2166,7 @@ I286FN _shift_ea8_1(void) {				// D0:	shift EA8, 1
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -2189,7 +2189,7 @@ I286FN _shift_ea16_1(void) {			// D1:	shift EA16, 1
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(7);
@@ -2213,7 +2213,7 @@ I286FN _shift_ea8_cl(void) {			// D2:	shift EA8, cl
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);
@@ -2241,7 +2241,7 @@ I286FN _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);

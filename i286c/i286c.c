@@ -49,19 +49,23 @@ const BYTE iflags[256] = {					// Z_FLAG, S_FLAG, P_FLAG
 // ----
 
 	UINT32	EA_FIX;
-	BYTE	*reg8_b53[256];
-	BYTE	*reg8_b20[256];
-	UINT16	*reg16_b53[256];
-	UINT16	*reg16_b20[256];
 	BYTE	szpcflag[0x200];
 	CALCEA	c_calc_ea_dst[256];
 	CALCLEA	c_calc_lea[192];
 	GETLEA	c_get_ea[192];
 
-#if !defined(CPUW2TEST)
+#if !defined(MEMOPTIMIZE)
 	BYTE	szpflag_w[0x10000];
 #endif
 
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+	BYTE	*_reg8_b53[256];
+	BYTE	*_reg8_b20[256];
+#endif
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+	UINT16	*_reg16_b53[256];
+	UINT16	*_reg16_b20[256];
+#endif
 
 static UINT32 ea_nop(void) {
 
@@ -92,6 +96,7 @@ void i286_initialize(void) {
 		szpcflag[i+0x100] = f | C_FLAG;
 	}
 
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 	for (i=0; i<0x100; i++) {
 #if defined(BYTESEX_LITTLE)
 		pos = ((i & 0x20)?1:0);
@@ -99,18 +104,20 @@ void i286_initialize(void) {
 		pos = ((i & 0x20)?0:1);
 #endif
 		pos += ((i >> 3) & 3) * 2;
-		reg8_b53[i] = ((BYTE *)&I286_REG) + pos;
+		_reg8_b53[i] = ((BYTE *)&I286_REG) + pos;
 #if defined(BYTESEX_LITTLE)
 		pos = ((i & 0x4)?1:0);
 #else
 		pos = ((i & 0x4)?0:1);
 #endif
 		pos += (i & 3) * 2;
-		reg8_b20[i] = ((BYTE *)&I286_REG) + pos;
-		reg16_b53[i] = ((UINT16 *)&I286_REG) + ((i >> 3) & 7);
-		reg16_b20[i] = ((UINT16 *)&I286_REG) + (i & 7);
+		_reg8_b20[i] = ((BYTE *)&I286_REG) + pos;
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+		_reg16_b53[i] = ((UINT16 *)&I286_REG) + ((i >> 3) & 7);
+		_reg16_b20[i] = ((UINT16 *)&I286_REG) + (i & 7);
+#endif
 	}
-
+#endif
 	for (i=0; i<0xc0; i++) {
 		pos = ((i >> 3) & 0x18) + (i & 0x07);
 		c_calc_ea_dst[i] = i286c_ea_dst_tbl[pos];
@@ -121,7 +128,7 @@ void i286_initialize(void) {
 		c_calc_ea_dst[i] = ea_nop;
 	}
 
-#if !defined(CPUW2TEST)
+#if !defined(MEMOPTIMIZE)
 	for (i=0; i<0x10000; i++) {
 		f = P_FLAG;
 		for (bit=0x80; bit; bit>>=1) {

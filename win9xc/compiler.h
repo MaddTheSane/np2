@@ -3,6 +3,8 @@
 #include	<stddef.h>
 
 #define	BYTESEX_LITTLE
+#define	OSLANG_SJIS
+#define	OSLINEBREAK_CRLF
 
 
 typedef	short			SINT16;
@@ -18,7 +20,6 @@ typedef	unsigned int	UINT32;
 #include	"trace.h"
 
 #define	GETTICK()	GetTickCount()
-#define	GETRAND()	rand()
 #define	SPRINTF		wsprintf
 
 #define	LABEL		__declspec(naked)
@@ -34,6 +35,8 @@ typedef	unsigned int	UINT32;
 #define SOUNDCALL	__fastcall
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
+
+#define	SUPPORT_SJIS
 
 // #define	SUPPORT_8BPP
 // #define	SUPPORT_16BPP

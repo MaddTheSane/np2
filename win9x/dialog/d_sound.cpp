@@ -12,12 +12,12 @@
 #include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"
-#include	"bit2res.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
+#include	"dipswbmp.h"
 
 
 static const char *sndioport[4] = {"0088", "0188", "0288", "0388"};
@@ -275,29 +275,6 @@ static BYTE getsnd26rom(HWND hWnd, WORD res) {
 	return(4);
 }
 
-void setsnd26iodip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	if (v & 0x10) {
-		px++;
-	}
-	dlgs_setjumpery(image, px, py, align);
-}
-
-void setsnd26intdip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	dlgs_setjumperx(image, px + ((v & 0x80)?0:1), py, align);
-	dlgs_setjumperx(image, px + ((v & 0x40)?0:1), py + 1, align);
-}
-
-void setsnd26romdip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	v &= 7;
-	if (v >= 4) {
-		v = 4;
-	}
-	dlgs_setjumpery(image, px + v, py, align);
-}
-
 
 // ---- PC-9801-26
 
@@ -378,36 +355,6 @@ static void snd26cmdjmp(HWND hWnd) {
 	}
 }
 
-static void snd26drawjmp(HWND hWnd, HDC hdc) {
-
-	BITMAPINFO	*bmi;
-	HBITMAP		hbmp;
-	BYTE		*image;
-	int			align;
-	BYTE		*imgbtm;
-	HDC			hmdc;
-
-	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&snd26dip), "bitmap");
-	if (bmi == NULL) {
-		return;
-	}
-	bit2res_sethead(bmi, &snd26dip);
-	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-	bit2res_setdata(image, &snd26dip);
-	align = ((snd26dip.x + 7) / 2) & ~3;
-	imgbtm = image + align * (snd26dip.y - 1);
-	setsnd26iodip(imgbtm, 15, 1, align, snd26);
-	setsnd26intdip(imgbtm, 9, 1, align, snd26);
-	setsnd26romdip(imgbtm, 2, 1, align, snd26);
-	hmdc = CreateCompatibleDC(hdc);
-	SelectObject(hmdc, hbmp);
-	BitBlt(hdc, 0, 0, snd26dip.x, snd26dip.y, hmdc, 0, 0, SRCCOPY);
-	DeleteDC(hmdc);
-	DeleteObject(hbmp);
-	_MFREE(bmi);
-}
-
 static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
@@ -467,7 +414,8 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 
 		case WM_DRAWITEM:
 			if (LOWORD(wp) == IDC_SND26JMP) {
-				snd26drawjmp(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+												dipswbmp_getsnd26(snd26));
 			}
 			return(FALSE);
 	}
@@ -480,7 +428,6 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 static	BYTE	snd86 = 0;
 
 static const UINT snd86paranum[4] = {0, 1, 3, 2};
-
 
 
 static void setsnd86iopara(HWND hWnd, BYTE value) {
@@ -588,42 +535,6 @@ static void snd86cmddipsw(HWND hWnd) {
 	InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP), NULL, TRUE);
 }
 
-static void snd86drawdipsw(HWND hWnd, HDC hdc) {
-
-	BITMAPINFO	*bmi;
-	HBITMAP		hbmp;
-	BYTE		*image;
-	int			align;
-	BYTE		*imgbtm;
-	HDC			hmdc;
-	int			i;
-	int			x, y, yl;
-
-	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&snd86dip), "bitmap");
-	if (bmi == NULL) {
-		return;
-	}
-	bit2res_sethead(bmi, &snd86dip);
-	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-	bit2res_setdata(image, &snd86dip);
-	align = ((snd86dip.x + 7) / 2) & ~3;
-	imgbtm = image + align * (snd86dip.y - 1);
-	for (i=0; i<8; i++) {
-		x = i * 8 + 17;
-		y = (snd86 & (1 << i))?16:9;
-		for (yl=0; yl<7; yl++) {
-			dlgs_linex(imgbtm, x, y++, 6, align, 3);
-		}
-	}
-	hmdc = CreateCompatibleDC(hdc);
-	SelectObject(hmdc, hbmp);
-	BitBlt(hdc, 0, 0, snd86dip.x, snd86dip.y, hmdc, 0, 0, SRCCOPY);
-	DeleteDC(hmdc);
-	DeleteObject(hbmp);
-	_MFREE(bmi);
-}
-
 static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
@@ -698,7 +609,8 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 
 		case WM_DRAWITEM:
 			if (LOWORD(wp) == IDC_SND86DIP) {
-				snd86drawdipsw(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+												dipswbmp_getsnd86(snd86));
 			}
 			return(FALSE);
 	}
@@ -816,41 +728,6 @@ static void spbcmdjmp(HWND hWnd) {
 	}
 }
 
-static void spbdrawjumper(HWND hWnd, HDC hdc) {
-
-	BITMAPINFO	*bmi;
-	HBITMAP		hbmp;
-	BYTE		*image;
-	int			align;
-	BYTE		*imgbtm;
-	HDC			hmdc;
-
-	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&spbdip), "bitmap");
-	if (bmi == NULL) {
-		return;
-	}
-	bit2res_sethead(bmi, &spbdip);
-	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-	bit2res_setdata(image, &spbdip);
-	align = ((spbdip.x + 7) / 2) & ~3;
-	imgbtm = image + align * (spbdip.y - 1);
-	setsnd26intdip(imgbtm, 2, 1, align, spb);
-	setsnd26iodip(imgbtm, 10, 1, align, spb);
-	setsnd26romdip(imgbtm, 14, 1, align, spb);
-	if (spb & 0x20) {
-		dlgs_setjumpery(imgbtm, 7, 1, align);
-	}
-	dlgs_setjumperx(imgbtm, ((spbvrc&2)?21:22), 1, align);
-	dlgs_setjumperx(imgbtm, ((spbvrc&1)?21:22), 2, align);
-	hmdc = CreateCompatibleDC(hdc);
-	SelectObject(hmdc, hbmp);
-	BitBlt(hdc, 0, 0, spbdip.x, spbdip.y, hmdc, 0, 0, SRCCOPY);
-	DeleteDC(hmdc);
-	DeleteObject(hbmp);
-	_MFREE(bmi);
-}
-
 static void setspbjmp(HWND hWnd, BYTE value, BYTE bit) {
 
 	if ((spb ^ value) & bit) {
@@ -954,7 +831,8 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 
 		case WM_DRAWITEM:
 			if (LOWORD(wp) == IDC_SPBJMP) {
-				spbdrawjumper(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+											dipswbmp_getsndspb(spb, spbvrc));
 			}
 			return(FALSE);
 	}

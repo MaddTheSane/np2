@@ -21,6 +21,7 @@ typedef struct {
 	char	skinmru[SKINMRU_MAX][MAX_PATH];
 } NP2TOOL;
 
+
 extern	NP2TOOL		np2tool;
 
 BOOL toolwin_initapp(HINSTANCE hInstance);

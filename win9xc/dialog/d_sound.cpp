@@ -2,20 +2,20 @@
 #include	<windowsx.h>
 #include	<commctrl.h>
 #include	<prsht.h>
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"joymng.h"
 #include	"sysmng.h"
 #include	"menu.h"
+#include	"dialog.h"
+#include	"dialogs.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
 #include	"fmboard.h"
-#include	"bit2res.h"
-#include	"dialog.h"
-#include	"dialogs.h"
 #include	"s98.h"
+#include	"dipswbmp.h"
 
 
 static const char *sndioport[4] = {"0088", "0188", "0288", "0388"};
@@ -27,14 +27,14 @@ static const char str_sndopt[] = "Sound board option";
 
 
 typedef struct {
-	int		res;
-	int		resstr;
+	UINT16	res;
+	UINT16	resstr;
 	BYTE	*value;
-	WORD	min;
-	WORD	max;
-} SLIDER_T;
+	UINT16	min;
+	UINT16	max;
+} SLIDERTBL;
 
-static void slidersetvaluestr(HWND hWnd, const SLIDER_T *item, BYTE value) {
+static void slidersetvaluestr(HWND hWnd, const SLIDERTBL *item, BYTE value) {
 
 	char	work[32];
 
@@ -42,7 +42,7 @@ static void slidersetvaluestr(HWND hWnd, const SLIDER_T *item, BYTE value) {
 	SetDlgItemText(hWnd, item->resstr, work);
 }
 
-static void slidersetvalue(HWND hWnd, const SLIDER_T *item, BYTE value) {
+static void slidersetvalue(HWND hWnd, const SLIDERTBL *item, BYTE value) {
 
 	if (value > (BYTE)(item->max)) {
 		value = (BYTE)(item->max);
@@ -54,14 +54,14 @@ static void slidersetvalue(HWND hWnd, const SLIDER_T *item, BYTE value) {
 	slidersetvaluestr(hWnd, item, value);
 }
 
-static void sliderinit(HWND hWnd, const SLIDER_T *item) {
+static void sliderinit(HWND hWnd, const SLIDERTBL *item) {
 
 	SendDlgItemMessage(hWnd, item->res, TBM_SETRANGE, TRUE,
 											MAKELONG(item->min, item->max));
 	slidersetvalue(hWnd, item, *(item->value));
 }
 
-static void sliderresetpos(HWND hWnd, const SLIDER_T *item) {
+static void sliderresetpos(HWND hWnd, const SLIDERTBL *item) {
 
 	BYTE	value;
 
@@ -75,7 +75,7 @@ static void sliderresetpos(HWND hWnd, const SLIDER_T *item) {
 	slidersetvaluestr(hWnd, item, value);
 }
 
-static BYTE sliderrestore(HWND hWnd, const SLIDER_T *item) {
+static BYTE sliderrestore(HWND hWnd, const SLIDERTBL *item) {
 
 	BYTE	value;
 	BYTE	ret;
@@ -94,9 +94,9 @@ static BYTE sliderrestore(HWND hWnd, const SLIDER_T *item) {
 	return(ret);
 }
 
-// -------------------------------------------------------- mixer
+// ---- mixer
 
-static const SLIDER_T sndmixitem[] = {
+static const SLIDERTBL sndmixitem[] = {
 		{IDC_VOLFM,		IDC_VOLFMSTR,		&np2cfg.vol_fm,		0,128},
 		{IDC_VOLPSG,	IDC_VOLPSGSTR,		&np2cfg.vol_ssg,	0,128},
 		{IDC_VOLADPCM,	IDC_VOLADPCMSTR,	&np2cfg.vol_adpcm,	0,128},
@@ -137,7 +137,7 @@ static LRESULT CALLBACK SndmixDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				for (i=0; i<5; i++) {
 					if (sliderrestore(hWnd, &sndmixitem[i])) {
 						sysmng_update(SYS_UPDATECFG);
@@ -159,9 +159,9 @@ static LRESULT CALLBACK SndmixDlgProc(HWND hWnd, UINT msg,
 }
 
 
-// -------------------------------------------------------- PC-9801-14
+// ---- PC-9801-14
 
-const static SLIDER_T snd14item[] = {
+static const SLIDERTBL snd14item[] = {
 		{IDC_VOL14L,	IDC_VOL14LSTR,		np2cfg.vol14+0,		0,15},
 		{IDC_VOL14R,	IDC_VOL14RSTR,		np2cfg.vol14+1,		0,15},
 		{IDC_VOLF2,		IDC_VOLF2STR,		np2cfg.vol14+2,		0,15},
@@ -193,7 +193,7 @@ static LRESULT CALLBACK Snd14optDlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				for (i=0; i<6; i++) {
 					if (sliderrestore(hWnd, &snd14item[i])) {
 						sysmng_update(SYS_UPDATECFG);
@@ -207,7 +207,10 @@ static LRESULT CALLBACK Snd14optDlgProc(HWND hWnd, UINT msg,
 	return(FALSE);
 }
 
-// -------------------------------------------------------- 26K, SPB jumper
+
+// ---- 26K, SPB jumper
+
+static const UINT snd26paranum[4] = {0, 3, 1, 2};
 
 static void setsnd26iopara(HWND hWnd, BYTE value) {
 
@@ -224,9 +227,8 @@ static BYTE getsnd26io(HWND hWnd, WORD res) {
 
 static void setsnd26intpara(HWND hWnd, BYTE value) {
 
-static WPARAM paranum[4] = {(WPARAM)0, (WPARAM)3, (WPARAM)1, (WPARAM)2};
-
-	SendMessage(hWnd, CB_SETCURSEL, paranum[(value >> 6) & 3], (LPARAM)0);
+	SendMessage(hWnd, CB_SETCURSEL,
+						(WPARAM)snd26paranum[(value >> 6) & 3], (LPARAM)0);
 }
 
 static BYTE getsnd26int(HWND hWnd, WORD res) {
@@ -271,82 +273,11 @@ static BYTE getsnd26rom(HWND hWnd, WORD res) {
 	return(4);
 }
 
-void setsnd26iodip(BYTE *image, int px, int py, int align, BYTE v) {
 
-	if (v & 0x10) {
-		px++;
-	}
-	dlgs_setjumpery(image, px, py, align);
-}
+// ---- PC-9801-26
 
-void setsnd26intdip(BYTE *image, int px, int py, int align, BYTE v) {
+static	BYTE	snd26 = 0;
 
-	dlgs_setjumperx(image, px + ((v & 0x80)?0:1), py, align);
-	dlgs_setjumperx(image, px + ((v & 0x40)?0:1), py + 1, align);
-}
-
-void setsnd26romdip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	v &= 7;
-	if (v >= 4) {
-		v = 4;
-	}
-	dlgs_setjumpery(image, px + v, py, align);
-}
-
-// -------------------------------------------------------- PC-9801-26
-
-static	BYTE			snd26 = 0;
-static	SUBCLASSPROC	oldidc_snd26jmp = NULL;
-
-static LRESULT CALLBACK Snd26jmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
-
-	PAINTSTRUCT			ps;
-	HDC					hdc;
-	HBITMAP				hBitmap;
-	HDC					hMemDC;
-	BYTE				*image;
-	HANDLE				hwork;
-	BITMAPINFO			*work;
-	BYTE				*imgbtm;
-	int					align;
-
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&snd26dip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &snd26dip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &snd26dip);
-			align = ((snd26dip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (snd26dip.y - 1);
-			setsnd26iodip(imgbtm, 15, 1, align, snd26);
-			setsnd26intdip(imgbtm, 9, 1, align, snd26);
-			setsnd26romdip(imgbtm, 2, 1, align, snd26);
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, snd26dip.x, snd26dip.y, hMemDC,
-									0, 0, snd26dip.x, snd26dip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_snd26jmp, hWnd, msg, wp, lp));
-	}
-	return(FALSE);
-}
 
 static void set26jmp(HWND hWnd, BYTE value, BYTE bit) {
 
@@ -357,12 +288,75 @@ static void set26jmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
-	BYTE	b, bit;
+static void snd26cmdjmp(HWND hWnd) {
+
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
+	BOOL	redraw;
+	BYTE	b;
+	BYTE	bit;
+
+	GetWindowRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect1);
+	GetClientRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect2);
+	GetCursorPos(&p);
+	redraw = FALSE;
+	p.x += rect2.left - rect1.left;
+	p.y += rect2.top - rect1.top;
+	p.x /= 9;
+	p.y /= 9;
+	if ((p.y < 1) || (p.y >= 3)) {
+		return;
+	}
+	if ((p.x >= 2) && (p.x < 7)) {
+		b = (BYTE)(p.x - 2);
+		if ((snd26 ^ b) & 7) {
+			snd26 &= ~0x07;
+			snd26 |= b;
+			setsnd26rompara(GetDlgItem(hWnd, IDC_SND26ROM), b);
+			redraw = TRUE;
+		}
+	}
+	else if ((p.x >= 9) && (p.x < 12)) {
+		b = snd26;
+		bit = 0x40 << (2 - p.y);
+		switch(p.x) {
+			case 9:
+				b |= bit;
+				break;
+
+			case 10:
+				b ^= bit;
+				break;
+
+			case 11:
+				b &= ~bit;
+				break;
+		}
+		if (snd26 != b) {
+			snd26 = b;
+			setsnd26intpara(GetDlgItem(hWnd, IDC_SND26INT), b);
+			redraw = TRUE;
+		}
+	}
+	else if ((p.x >= 15) && (p.x < 17)) {
+		b = (BYTE)((p.x - 15) << 4);
+		if ((snd26 ^ b) & 0x10) {
+			snd26 &= ~0x10;
+			snd26 |= b;
+			setsnd26iopara(GetDlgItem(hWnd, IDC_SND26IO), b);
+			redraw = TRUE;
+		}
+	}
+	if (redraw) {
+		InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+	}
+}
+
+static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
+													WPARAM wp, LPARAM lp) {
+
+	HWND	sub;
 
 	switch(msg) {
 		case WM_INITDIALOG:
@@ -373,10 +367,9 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 			setsnd26intpara(GetDlgItem(hWnd, IDC_SND26INT), snd26);
 			SETLISTSTR(hWnd, IDC_SND26ROM, sndromaddr);
 			setsnd26rompara(GetDlgItem(hWnd, IDC_SND26ROM), snd26);
-			oldidc_snd26jmp = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_SND26JMP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_SND26JMP), GWL_WNDPROC,
-													(LONG)Snd26jmp);
+			sub = GetDlgItem(hWnd, IDC_SND26JMP);
+			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
 			return(TRUE);
 
 		case WM_COMMAND:
@@ -384,12 +377,15 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 				case IDC_SND26IO:
 					set26jmp(hWnd, getsnd26io(hWnd, IDC_SND26IO), 0x10);
 					break;
+
 				case IDC_SND26INT:
 					set26jmp(hWnd, getsnd26int(hWnd, IDC_SND26INT), 0xc0);
 					break;
+
 				case IDC_SND26ROM:
 					set26jmp(hWnd, getsnd26rom(hWnd, IDC_SND26ROM), 0x07);
 					break;
+
 				case IDC_SND26DEF:
 					snd26 = 0xd1;
 					setsnd26iopara(GetDlgItem(hWnd, IDC_SND26IO), snd26);
@@ -397,66 +393,15 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 					setsnd26rompara(GetDlgItem(hWnd, IDC_SND26ROM), snd26);
 					InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
 					break;
+
 				case IDC_SND26JMP:
-					GetWindowRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect1);
-					GetClientRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect2);
-					GetCursorPos(&p);
-					p.x += rect2.left - rect1.left;
-					p.y += rect2.top - rect1.top;
-					p.x /= 9;
-					p.y /= 9;
-					if ((p.y < 1) || (p.y >= 3)) {
-						break;
-					}
-					if ((p.x >= 2) && (p.x < 7)) {
-						b = (BYTE)(p.x - 2);
-						if ((snd26 ^ b) & 7) {
-							snd26 &= ~0x07;
-							snd26 |= b;
-							setsnd26rompara(GetDlgItem(hWnd, IDC_SND26ROM),
-															b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP),
-															NULL, TRUE);
-						}
-					}
-					else if ((p.x >= 9) && (p.x < 12)) {
-						b = snd26;
-						bit = 0x40 << (2 - p.y);
-						switch(p.x) {
-							case 9:
-								b |= bit;
-								break;
-							case 10:
-								b ^= bit;
-								break;
-							case 11:
-								b &= ~bit;
-								break;
-						}
-						if (snd26 != b) {
-							snd26 = b;
-							setsnd26intpara(GetDlgItem(hWnd, IDC_SND26INT),
-															b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP),
-															NULL, TRUE);
-						}
-					}
-					else if ((p.x >= 15) && (p.x < 17)) {
-						b = (BYTE)((p.x - 15) << 4);
-						if ((snd26 ^ b) & 0x10) {
-							snd26 &= ~0x10;
-							snd26 |= b;
-							setsnd26iopara(GetDlgItem(hWnd, IDC_SND26IO), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP),
-															NULL, TRUE);
-						}
-					}
+					snd26cmdjmp(hWnd);
 					break;
 			}
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				if (np2cfg.snd26opt != snd26) {
 					np2cfg.snd26opt = snd26;
 					sysmng_update(SYS_UPDATECFG);
@@ -464,69 +409,23 @@ static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
 				return(TRUE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_SND26JMP) {
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+												dipswbmp_getsnd26(snd26));
+			}
+			return(FALSE);
 	}
 	return(FALSE);
 }
 
-// ------------------------------------------------------ PC-9801-86
 
-static	BYTE			snd86 = 0;
-static	SUBCLASSPROC	oldidc_snd86dip = NULL;
+// ---- PC-9801-86
 
-static LRESULT CALLBACK snd86jmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+static	BYTE	snd86 = 0;
 
-	PAINTSTRUCT			ps;
-	HDC					hdc;
-	HBITMAP				hBitmap;
-	HDC					hMemDC;
-	BYTE				*image;
-	HANDLE				hwork;
-	BITMAPINFO			*work;
-	BYTE				*imgbtm;
-	int					align;
-	int					i;
-	int					x, y, yl;
-
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&snd86dip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &snd86dip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &snd86dip);
-			align = ((snd86dip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (snd86dip.y - 1);
-			for (i=0; i<8; i++) {
-				x = i * 8 + 17;
-				y = ((snd86&(1<<i))?16:9);
-				for (yl=0; yl<7; yl++) {
-					dlgs_linex(imgbtm, x, y++, 6, align, 3);
-				}
-			}
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, snd86dip.x, snd86dip.y, hMemDC,
-									0, 0, snd86dip.x, snd86dip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_snd86dip, hWnd, msg, wp, lp));
-	}
-	return(FALSE);
-}
+static const UINT snd86paranum[4] = {0, 1, 3, 2};
 
 
 static void setsnd86iopara(HWND hWnd, BYTE value) {
@@ -544,9 +443,8 @@ static BYTE getsnd86io(HWND hWnd, WORD res) {
 
 static void setsnd86intpara(HWND hWnd, BYTE value) {
 
-static WPARAM paranum[4] = {(WPARAM)0, (WPARAM)1, (WPARAM)3, (WPARAM)2};
-
-	SendMessage(hWnd, CB_SETCURSEL, paranum[(value >> 2) & 3], (LPARAM)0);
+	SendMessage(hWnd, CB_SETCURSEL,
+						(WPARAM)snd86paranum[(value >> 2) & 3], (LPARAM)0);
 }
 
 static BYTE getsnd86int(HWND hWnd) {
@@ -557,8 +455,10 @@ static BYTE getsnd86int(HWND hWnd) {
 	switch(work[3]) {
 		case '0':
 			return(0x00);
+
 		case '4':
 			return(0x04);
+
 		case '6':
 			return(0x08);
 	}
@@ -587,12 +487,56 @@ static void set86jmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
+static void snd86cmddipsw(HWND hWnd) {
 
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
+
+	GetWindowRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect1);
+	GetClientRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect2);
+	GetCursorPos(&p);
+	p.x += rect2.left - rect1.left;
+	p.y += rect2.top - rect1.top;
+	p.x /= 8;
+	p.y /= 8;
+	if ((p.x < 2) || (p.x >= 10) ||
+		(p.y < 1) || (p.y >= 3)) {
+		return;
+	}
+	p.x -= 2;
+	snd86 ^= (1 << p.x);
+	switch(p.x) {
+		case 0:
+			setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO), snd86);
+			break;
+
+		case 1:
+			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), snd86 & 2);
+			break;
+
+		case 2:
+		case 3:
+			setsnd86intpara(GetDlgItem(hWnd, IDC_SND86INTA), snd86);
+			break;
+
+		case 4:
+			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT), snd86 & 0x10);
+			break;
+
+		case 5:
+		case 6:
+		case 7:
+			setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID), snd86);
+			break;
+	}
+	InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP), NULL, TRUE);
+}
+
+static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
+													WPARAM wp, LPARAM lp) {
+
+	HWND	sub;
 
 	switch(msg) {
 		case WM_INITDIALOG:
@@ -605,10 +549,10 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 			SETLISTSTR(hWnd, IDC_SND86ID, sndid);
 			setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID), snd86);
 			Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), snd86 & 2);
-			oldidc_snd86dip = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_SND86DIP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_SND86DIP), GWL_WNDPROC,
-													(LONG)snd86jmp);
+
+			sub = GetDlgItem(hWnd, IDC_SND86DIP);
+			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
 			return(TRUE);
 
 		case WM_COMMAND:
@@ -634,6 +578,7 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 					set86jmp(hWnd,
 						getsnd86id(GetDlgItem(hWnd, IDC_SND86ID)), 0xe0);
 					break;
+
 				case IDC_SND86DEF:
 					snd86 = 0x7f;
 					setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO), snd86);
@@ -643,53 +588,15 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 					Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM), TRUE);
 					InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP), NULL, TRUE);
 					break;
+
 				case IDC_SND86DIP:
-					GetWindowRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect1);
-					GetClientRect(GetDlgItem(hWnd, IDC_SND86DIP), &rect2);
-					GetCursorPos(&p);
-					p.x += rect2.left - rect1.left;
-					p.y += rect2.top - rect1.top;
-					p.x /= 8;
-					p.y /= 8;
-					if ((p.x < 2) || (p.x >= 10) ||
-						(p.y < 1) || (p.y >= 3)) {
-						break;
-					}
-					p.x -= 2;
-					snd86 ^= (1 << p.x);
-					switch(p.x) {
-						case 0:
-							setsnd86iopara(GetDlgItem(hWnd, IDC_SND86IO),
-																snd86);
-							break;
-						case 1:
-							Button_SetCheck(GetDlgItem(hWnd, IDC_SND86ROM),
-																snd86 & 2);
-							break;
-						case 2:
-						case 3:
-							setsnd86intpara(GetDlgItem(hWnd, IDC_SND86INTA),
-																snd86);
-							break;
-						case 4:
-							Button_SetCheck(GetDlgItem(hWnd, IDC_SND86INT),
-																snd86 & 0x10);
-							break;
-						case 5:
-						case 6:
-						case 7:
-							setsnd86idpara(GetDlgItem(hWnd, IDC_SND86ID),
-																snd86);
-							break;
-					}
-					InvalidateRect(GetDlgItem(hWnd, IDC_SND86DIP),
-																NULL, TRUE);
+					snd86cmddipsw(hWnd);
 					break;
 			}
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				if (np2cfg.snd86opt != snd86) {
 					np2cfg.snd86opt = snd86;
 					sysmng_update(SYS_UPDATECFG);
@@ -697,69 +604,126 @@ static LRESULT CALLBACK Snd86optDlgProc(HWND hWnd, UINT msg,
 				return(TRUE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_SND86DIP) {
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+												dipswbmp_getsnd86(snd86));
+			}
+			return(FALSE);
 	}
 	return(FALSE);
 }
 
-// ------------------------------------------------------ Speak board
 
-static	BYTE			spb = 0;
-static	BYTE			spbvrc = 0;
-static	SUBCLASSPROC	oldidc_spbjmp = NULL;
+// ---- Speak board
+
+static	BYTE	spb = 0;
+static	BYTE	spbvrc = 0;
 
 
-static LRESULT CALLBACK spbjmp(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+static void setspbVRch(HWND hWnd) {
 
-	PAINTSTRUCT			ps;
-	HDC					hdc;
-	HBITMAP				hBitmap;
-	HDC					hMemDC;
-	BYTE				*image;
-	HANDLE				hwork;
-	BITMAPINFO			*work;
-	BYTE				*imgbtm;
-	int					align;
+	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRL), spbvrc & 1);
+	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRR), spbvrc & 2);
+}
 
-	switch(msg) {
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if ((hwork = GlobalAlloc(GPTR, bit2res_getsize(&spbdip)))
-																== NULL) {
-				break;
-			}
-			if ((work = (BITMAPINFO *)GlobalLock(hwork)) == NULL) {
-				GlobalFree(hwork);
-				break;
-			}
-			bit2res_sethead(work, &spbdip);
-			hBitmap = CreateDIBSection(hdc, work, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-			bit2res_setdata(image, &spbdip);
-			align = ((spbdip.x + 7) / 2) & ~3;
-			imgbtm = image + align * (spbdip.y - 1);
-			setsnd26intdip(imgbtm, 2, 1, align, spb);
-			setsnd26iodip(imgbtm, 10, 1, align, spb);
-			setsnd26romdip(imgbtm, 14, 1, align, spb);
-			if (spb & 0x20) {
-				dlgs_setjumpery(imgbtm, 7, 1, align);
-			}
-			dlgs_setjumperx(imgbtm, ((spbvrc&2)?21:22), 1, align);
-			dlgs_setjumperx(imgbtm, ((spbvrc&1)?21:22), 2, align);
-			if ((hMemDC = CreateCompatibleDC(hdc)) != NULL) {
-				SelectObject(hMemDC, hBitmap);
-				StretchBlt(hdc, 0, 0, spbdip.x, spbdip.y, hMemDC,
-									0, 0, spbdip.x, spbdip.y, SRCCOPY);
-				DeleteDC(hMemDC);
-			}
-			DeleteObject(hBitmap);
-			EndPaint(hWnd, &ps);
-			GlobalUnlock(hwork);
-			GlobalFree(hwork);
-			break;
-		default:
-			return(CallWindowProc(oldidc_spbjmp, hWnd, msg, wp, lp));
+static void spbcreate(HWND hWnd) {
+
+	HWND	sub;
+
+	spb = np2cfg.spbopt;
+	SETnLISTSTR(hWnd, IDC_SPBIO, sndioport, 2);
+	setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), spb);
+	SETLISTSTR(hWnd, IDC_SPBINT, sndinterrupt);
+	setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), spb);
+	SETLISTSTR(hWnd, IDC_SPBROM, sndromaddr);
+	setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), spb);
+	spbvrc = np2cfg.spb_vrc;								// ver0.30
+	setspbVRch(hWnd);
+	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETRANGE, TRUE,
+															MAKELONG(0, 24));
+	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETPOS, TRUE,
+															np2cfg.spb_vrl);
+	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE), np2cfg.spb_x);
+
+	sub = GetDlgItem(hWnd, IDC_SPBJMP);
+	SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
+							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
+}
+
+static void spbcmdjmp(HWND hWnd) {
+
+	RECT	rect1;
+	RECT	rect2;
+	POINT	p;
+	BOOL	redraw;
+	BYTE	b;
+	BYTE	bit;
+
+	GetWindowRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect1);
+	GetClientRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect2);
+	GetCursorPos(&p);
+	redraw = FALSE;
+	p.x += rect2.left - rect1.left;
+	p.y += rect2.top - rect1.top;
+	p.x /= 9;
+	p.y /= 9;
+	if ((p.y < 1) || (p.y >= 3)) {
+		return;
 	}
-	return(FALSE);
+	if ((p.x >= 2) && (p.x < 5)) {
+		b = spb;
+		bit = 0x40 << (2 - p.y);
+		switch(p.x) {
+			case 2:
+				b |= bit;
+				break;
+
+			case 3:
+				b ^= bit;
+				break;
+
+			case 4:
+				b &= ~bit;
+				break;
+		}
+		if (spb != b) {
+			spb = b;
+			setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), b);
+			redraw = TRUE;
+		}
+	}
+	else if (p.x == 7) {
+		spb ^= 0x20;
+		redraw = TRUE;
+	}
+	else if ((p.x >= 10) && (p.x < 12)) {
+		b = (BYTE)((p.x - 10) << 4);
+		if ((spb ^ b) & 0x10) {
+			spb &= ~0x10;
+			spb |= b;
+			setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), b);
+			redraw = TRUE;
+		}
+	}
+	else if ((p.x >= 14) && (p.x < 19)) {
+		b = (BYTE)(p.x - 14);
+		if ((spb ^ b) & 7) {
+			spb &= ~0x07;
+			spb |= b;
+			setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), b);
+			redraw = TRUE;
+		}
+	}
+	else if ((p.x >= 21) && (p.x < 24)) {
+		spbvrc ^= (BYTE)(3 - p.y);
+		setspbVRch(hWnd);
+		redraw = TRUE;
+	}
+	if (redraw) {
+		InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
+	}
 }
 
 static void setspbjmp(HWND hWnd, BYTE value, BYTE bit) {
@@ -771,16 +735,11 @@ static void setspbjmp(HWND hWnd, BYTE value, BYTE bit) {
 	}
 }
 
-static void setspbVRch(HWND hWnd) {
-
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRL), spbvrc & 1);
-	Button_SetCheck(GetDlgItem(hWnd, IDC_SPBVRR), spbvrc & 2);
-}
-
 static BYTE getspbVRch(HWND hWnd) {
 
-	BYTE	ret = 0;
+	BYTE	ret;
 
+	ret = 0;
 	if (Button_GetCheck(GetDlgItem(hWnd, IDC_SPBVRL))) {
 		ret++;
 	}
@@ -790,36 +749,14 @@ static BYTE getspbVRch(HWND hWnd) {
 	return(ret);
 }
 
-
 static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
-	BYTE	b, bit;
-	RECT	rect1;
-	RECT	rect2;
-	POINT	p;
+	BYTE	b;
 	UINT	update;
 
 	switch(msg) {
 		case WM_INITDIALOG:
-			spb = np2cfg.spbopt;
-			SETnLISTSTR(hWnd, IDC_SPBIO, sndioport, 2);
-			setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), spb);
-			SETLISTSTR(hWnd, IDC_SPBINT, sndinterrupt);
-			setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), spb);
-			SETLISTSTR(hWnd, IDC_SPBROM, sndromaddr);
-			setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), spb);
-			spbvrc = np2cfg.spb_vrc;								// ver0.30
-			setspbVRch(hWnd);
-			SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETRANGE, TRUE,
-															MAKELONG(0, 24));
-			SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETPOS, TRUE,
-															np2cfg.spb_vrl);
-			Button_SetCheck(GetDlgItem(hWnd, IDC_SPBREVERSE), np2cfg.spb_x);
-
-			oldidc_spbjmp = (SUBCLASSPROC)GetWindowLong(GetDlgItem(hWnd,
-												IDC_SPBJMP), GWL_WNDPROC);
-			SetWindowLong(GetDlgItem(hWnd, IDC_SPBJMP), GWL_WNDPROC,
-													(LONG)spbjmp);
+			spbcreate(hWnd);
 			return(TRUE);
 
 		case WM_COMMAND:
@@ -827,12 +764,15 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 				case IDC_SPBIO:
 					setspbjmp(hWnd, getsnd26io(hWnd, IDC_SPBIO), 0x10);
 					break;
+
 				case IDC_SPBINT:
 					setspbjmp(hWnd, getsnd26int(hWnd, IDC_SPBINT), 0xc0);
 					break;
+
 				case IDC_SPBROM:
 					setspbjmp(hWnd, getsnd26rom(hWnd, IDC_SPBROM), 0x07);
 					break;
+
 				case IDC_SPBDEF:
 					spb = 0xd1;
 					setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), spb);
@@ -842,6 +782,7 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 					setspbVRch(hWnd);
 					InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
 					break;
+
 				case IDC_SPBVRL:
 				case IDC_SPBVRR:
 					b = getspbVRch(hWnd);
@@ -851,75 +792,15 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 																NULL, TRUE);
 					}
 					break;
+
 				case IDC_SPBJMP:
-					GetWindowRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect1);
-					GetClientRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect2);
-					GetCursorPos(&p);
-					p.x += rect2.left - rect1.left;
-					p.y += rect2.top - rect1.top;
-					p.x /= 9;
-					p.y /= 9;
-					if ((p.y < 1) || (p.y >= 3)) {
-						break;
-					}
-					if ((p.x >= 2) && (p.x < 5)) {
-						b = spb;
-						bit = 0x40 << (2 - p.y);
-						switch(p.x) {
-							case 2:
-								b |= bit;
-								break;
-							case 3:
-								b ^= bit;
-								break;
-							case 4:
-								b &= ~bit;
-								break;
-						}
-						if (spb != b) {
-							spb = b;
-							setsnd26intpara(GetDlgItem(hWnd, IDC_SPBINT), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-						}
-					}
-					else if (p.x == 7) {
-						spb ^= 0x20;
-						InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-					}
-					else if ((p.x >= 10) && (p.x < 12)) {
-						b = (BYTE)((p.x - 10) << 4);
-						if ((spb ^ b) & 0x10) {
-							spb &= ~0x10;
-							spb |= b;
-							setsnd26iopara(GetDlgItem(hWnd, IDC_SPBIO), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-						}
-					}
-					else if ((p.x >= 14) && (p.x < 19)) {
-						b = (BYTE)(p.x - 14);
-						if ((spb ^ b) & 7) {
-							spb &= ~0x07;
-							spb |= b;
-							setsnd26rompara(GetDlgItem(hWnd, IDC_SPBROM), b);
-							InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-						}
-					}
-					else if ((p.x >= 21) && (p.x < 24)) {
-						spbvrc ^= (BYTE)(3 - p.y);
-						setspbVRch(hWnd);
-						InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-															NULL, TRUE);
-					}
+					spbcmdjmp(hWnd);
 					break;
 			}
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				update = 0;
 				if (np2cfg.spbopt != spb) {
 					np2cfg.spbopt = spb;
@@ -945,41 +826,49 @@ static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
 				return(TRUE);
 			}
 			break;
+
+		case WM_DRAWITEM:
+			if (LOWORD(wp) == IDC_SPBJMP) {
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+											dipswbmp_getsndspb(spb, spbvrc));
+			}
+			return(FALSE);
 	}
 	return(FALSE);
 }
 
-// ----------------------------------------------------------- JOYPAD
-																// ver0.28
+
+// ---- JOYPAD
+
 typedef struct {
-	int			res;
-	BYTE		*ptr;
-	DWORD		bit;
-} CHKBTN_RES;
+	UINT16	res;
+	UINT16	bit;
+	BYTE	*ptr;
+} CHECKTBL;
 
-const static CHKBTN_RES pad1opt[13] = {
-	{IDC_JOYPAD1,	&np2oscfg.JOYPAD1,		0},
-	{IDC_PAD1_1A,	np2oscfg.JOY1BTN + 0,	0},
-	{IDC_PAD1_1B,	np2oscfg.JOY1BTN + 1,	0},
-	{IDC_PAD1_1C,	np2oscfg.JOY1BTN + 2,	0},
-	{IDC_PAD1_1D,	np2oscfg.JOY1BTN + 3,	0},
-	{IDC_PAD1_2A,	np2oscfg.JOY1BTN + 0,	1},
-	{IDC_PAD1_2B,	np2oscfg.JOY1BTN + 1,	1},
-	{IDC_PAD1_2C,	np2oscfg.JOY1BTN + 2,	1},
-	{IDC_PAD1_2D,	np2oscfg.JOY1BTN + 3,	1},
-	{IDC_PAD1_RA,	np2oscfg.JOY1BTN + 0,	2},
-	{IDC_PAD1_RB,	np2oscfg.JOY1BTN + 1,	2},
-	{IDC_PAD1_RC,	np2oscfg.JOY1BTN + 2,	2},
-	{IDC_PAD1_RD,	np2oscfg.JOY1BTN + 3,	2}};
+static const CHECKTBL pad1opt[13] = {
+			{IDC_JOYPAD1, 0, &np2oscfg.JOYPAD1},
+			{IDC_PAD1_1A, 0, np2oscfg.JOY1BTN + 0},
+			{IDC_PAD1_1B, 0, np2oscfg.JOY1BTN + 1},
+			{IDC_PAD1_1C, 0, np2oscfg.JOY1BTN + 2},
+			{IDC_PAD1_1D, 0, np2oscfg.JOY1BTN + 3},
+			{IDC_PAD1_2A, 1, np2oscfg.JOY1BTN + 0},
+			{IDC_PAD1_2B, 1, np2oscfg.JOY1BTN + 1},
+			{IDC_PAD1_2C, 1, np2oscfg.JOY1BTN + 2},
+			{IDC_PAD1_2D, 1, np2oscfg.JOY1BTN + 3},
+			{IDC_PAD1_RA, 2, np2oscfg.JOY1BTN + 0},
+			{IDC_PAD1_RB, 2, np2oscfg.JOY1BTN + 1},
+			{IDC_PAD1_RC, 2, np2oscfg.JOY1BTN + 2},
+			{IDC_PAD1_RD, 2, np2oscfg.JOY1BTN + 3}};
 
 
-static void checkbtnres_load(HWND hWnd, const CHKBTN_RES *item) {
+static void checkbtnres_load(HWND hWnd, const CHECKTBL *item) {
 
 	Button_SetCheck(GetDlgItem(hWnd, item->res),
 								(*(item->ptr)) & (1 << (item->bit)));
 }
 
-static BYTE checkbtnres_store(HWND hWnd, const CHKBTN_RES *item) {
+static BYTE checkbtnres_store(HWND hWnd, const CHECKTBL *item) {
 
 	BYTE	value;
 	BYTE	bit;
@@ -993,7 +882,6 @@ static BYTE checkbtnres_store(HWND hWnd, const CHKBTN_RES *item) {
 	}
 	return(ret);
 }
-
 
 static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
@@ -1012,7 +900,7 @@ static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 			return(TRUE);
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				renewal = 0;
 				for (i=0; i<13; i++) {
 					renewal |= checkbtnres_store(hWnd, pad1opt + i);
@@ -1029,7 +917,7 @@ static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 }
 
 
-// --------------------------------------------------------------------------
+// ----
 
 void dialog_sndopt(HWND hWnd) {
 
@@ -1074,11 +962,11 @@ void dialog_sndopt(HWND hWnd) {
 	psh.dwFlags = PSH_NOAPPLYNOW;
 	psh.hwndParent = hWnd;
 	psh.hInstance = hinst;
-	psh.nPages = 6;													// ver0.29
+	psh.nPages = 6;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_sndopt;
 	PropertySheet(&psh);
-	InvalidateRect(hWndMain, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, TRUE);
 }
 
 

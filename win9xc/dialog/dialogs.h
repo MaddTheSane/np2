@@ -48,9 +48,5 @@ const char *dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
 void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items);
 void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items);
 
-void dlgs_linex(BYTE *image, int x, int y, int l, int align, BYTE c);
-void dlgs_liney(BYTE *image, int x, int y, int l, int align, BYTE c);
-
-void dlgs_setjumperx(BYTE *image, int x, int y, int align);
-void dlgs_setjumpery(BYTE *image, int x, int y, int align);
+void dlgs_drawbmp(HDC hdc, BYTE *bmp);
 

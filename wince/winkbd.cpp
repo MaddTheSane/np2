@@ -1,8 +1,6 @@
 #include	"compiler.h"
 #include	"np2.h"
-#include	"dosio.h"
 #include	"winkbd.h"
-#include	"memory.h"
 #include	"pccore.h"
 #include	"iocore.h"
 
@@ -41,7 +39,7 @@ static const BYTE key106[256] = {
 			//	 f.1, f.2, f.3, f.4, f.5, f.6, f.7, f.8		; 0x70
 				0x62,0x63,0x64,0x65,0x66,0x67,0x68,0x69,
 			//	 f.9, f10, f11, f12, f13, f14, f15, f16		; 0x78
-				0x6a,0x6b,  NC,0x7f,  NC,  NC,  NC,  NC,
+				0x6a,0x6b,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0x80
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC,
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0x88
@@ -141,24 +139,35 @@ static const BYTE key106ext[256] = {
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
+static const BYTE f12keys[] = {
+			0x61, 0x60, 0x4d, 0x4f};
 
-void winkeydown106(WPARAM wParam, LPARAM lParam) {			// ver0.28
+
+static BYTE getf12key(void) {
+
+	UINT	key;
+
+	key = np2oscfg.F12KEY - 1;
+	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
+		return(f12keys[key]);
+	}
+	else {
+		return(NC);
+	}
+}
+
+void winkbd_keydown(WPARAM wParam, LPARAM lParam) {
 
 	BYTE	data;
 
-	data = key106[wParam & 0xff];
+	if (wParam != VK_F12) {
+		data = key106[wParam & 0xff];
+	}
+	else {
+		data = getf12key();
+	}
 	if (data != NC) {
-		if (data == 0x7f) {
-#if 0
-			if (np2oscfg.F12COPY == 1) {
-				data = 0x61;
-			}
-			else {
-				data = 0x60;
-			}
-#endif
-		}
-		else if ((!(lParam & 0x01000000)) &&
+		if ((!(lParam & 0x01000000)) &&
 				(key106ext[wParam & 0xff] != NC)) {			// ver0.28
 			keystat_senddata(0x70);							// PC/AT only!
 			data = key106ext[wParam & 0xff];
@@ -173,23 +182,18 @@ void winkeydown106(WPARAM wParam, LPARAM lParam) {			// ver0.28
 	}
 }
 
-void winkeyup106(WPARAM wParam, LPARAM lParam) {
+void winkbd_keyup(WPARAM wParam, LPARAM lParam) {
 
 	BYTE	data;
 
-	data = key106[wParam & 0xff];
+	if (wParam != VK_F12) {
+		data = key106[wParam & 0xff];
+	}
+	else {
+		data = getf12key();
+	}
 	if (data != NC) {
-		if (data == 0x7f) {
-#if 0
-			if (np2oscfg.F12COPY == 1) {
-				data = 0x61;
-			}
-			else {
-				data = 0x60;
-			}
-#endif
-		}
-		else if ((!(lParam & 0x01000000)) &&
+		if ((!(lParam & 0x01000000)) &&
 				(key106ext[wParam & 0xff] != NC)) {		// ver0.28
 			keystat_senddata(0x70 | 0x80);				// PC/AT only
 			data = key106ext[wParam & 0xff];
@@ -201,6 +205,15 @@ void winkeyup106(WPARAM wParam, LPARAM lParam) {
 			keystat_senddata(0x70 | 0x80);				// PC/AT only
 			keystat_senddata(0x47 | 0x80);
 		}
+	}
+}
+
+void winkbd_resetf12(void) {
+
+	UINT	i;
+
+	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
+		keystat_forcerelease(f12keys[i]);
 	}
 }
 

@@ -25,10 +25,10 @@ VRAM		= ../vram
 FDD			= ../fdd
 LIO			= ../lio
 FONT		= ../font
+GENERIC		= ../generic
 TARGET		= .
 X86ASM		= ./x86
 DIALOG		= ./dialog
-KEYDISP		= ./keydisp
 DEBUGUTY	= ./debuguty
 
 HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
@@ -58,7 +58,7 @@ COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
 			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
-			-I$(TARGET) -I$(DIALOG) -I$(KEYDISP) -I$(DEBUGUTY) -I$(X86ASM)
+			-I$(GENERIC) -I$(TARGET) -I$(DIALOG) -I$(DEBUGUTY) -I$(X86ASM)
 LOPT	= -mno-cygwin -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
@@ -108,6 +108,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
+			$(OBJ)/cmndraw.o	$(OBJ)/keydisp.o	$(OBJ)/dipswbmp.o	\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
 			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
 			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
@@ -117,13 +118,12 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/timemng.o	$(OBJ)/juliet.o		$(OBJ)/sstp.o		\
 			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
 			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
-			$(OBJ)/np2info.o	$(OBJ)/toolwin.o	$(OBJ)/np2res.o		\
+			$(OBJ)/np2info.o	$(OBJ)/toolwin.o	$(OBJ)/dd2.o		\
+			$(OBJ)/kdispwin.o	$(OBJ)/np2res.o							\
 			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
 			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
 			$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		\
-			$(OBJ)/d_bmp.o		$(OBJ)/dialogs.o	$(OBJ)/bit2res.o	\
-			$(OBJ)/keydisp.o	$(OBJ)/keydisps.o	$(OBJ)/keydispr.o	\
-			$(OBJ)/dd2.o		$(OBJ)/dd2sub.o							\
+			$(OBJ)/d_bmp.o		$(OBJ)/dialogs.o						\
 			$(OBJ)/viewer.o		$(OBJ)/viewcmn.o	$(OBJ)/viewmenu.o	\
 			$(OBJ)/viewmem.o	$(OBJ)/viewreg.o	$(OBJ)/viewseg.o	\
 			$(OBJ)/view1mb.o	$(OBJ)/viewasm.o	$(OBJ)/viewsnd.o	\
@@ -499,7 +499,7 @@ $(OBJ)/fmboard.o	:	$(SOUND)/fmboard.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(CBUS)/boardx2.h $(CBUS)/board118.h \
 						$(CBUS)/boardspb.h $(CBUS)/amd98.h $(CBUS)/pcm86io.h \
 						$(CBUS)/cs4231io.h $(SOUND)/sound.h $(SOUND)/beep.h \
-						$(KEYDISP)/keydisp.h
+						$(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fmtimer.o	:	$(SOUND)/fmtimer.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -523,7 +523,7 @@ $(OBJ)/tms3631g.o	:	$(SOUND)/tms3631g.c $(HEADERS) $(SOUND)/sound.h \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/opngenc.o	:	$(SOUND)/opngenc.c $(HEADERS) $(PCCORES) $(IOCORES) \
-						$(FMBOARDS) $(SOUND)/sound.h $(KEYDISP)/keydisp.h
+						$(FMBOARDS) $(SOUND)/sound.h $(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/opngeng.o	:	$(SOUND)/opngeng.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -534,7 +534,7 @@ $(OBJ)/opngeng.oa	:	$(X86ASM)/opngeng.x86
 	$(AS) $(AOPT) $< -o $@
 
 $(OBJ)/psggenc.o	:	$(SOUND)/psggenc.c $(HEADERS) $(SOUND)/sound.h \
-						$(SOUND)/psggen.h $(KEYDISP)/keydisp.h
+						$(SOUND)/psggen.h $(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/psggeng.o	:	$(SOUND)/psggeng.c $(HEADERS) $(COMMON)/parts.h \
@@ -771,6 +771,22 @@ $(OBJ)/fontmake.o	:	$(FONT)/fontmake.c $(HEADERS) $(COMMON)/bmpdata.h \
 
 
 
+$(OBJ)/cmndraw.o	:	$(GENERIC)/cmndraw.c $(HEADERS) \
+						$(TARGET)/scrnmng.h $(GENERIC)/cmndraw.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/keydisp.o	:	$(GENERIC)/keydisp.c $(HEADERS) $(PCCORES) \
+						$(IOCORES) $(FMBOARDS) $(SOUND)/sound.h \
+						$(GENERIC)/cmndraw.h $(GENERIC)/keydisp.h \
+						$(GENERIC)/keydisp.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
+						$(GENERIC)/dipswbmp.h $(GENERIC)/dipswbmp.res
+	$(CC) $(COPT) -o $@ $<
+
+
+
 $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/strres.h $(COMMON)/parts.h \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
@@ -788,7 +804,7 @@ $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(SOUND)/sound.h $(SOUND)/beep.h $(SOUND)/s98.h \
 						$(FDD)/diskdrv.h $(FDD)/fddfile.h $(BASE)/timing.h \
 						$(BASE)/statsave.h $(BASE)/debugsub.h \
-						$(KEYDISP)/keydisp.h $(DEBUGUTY)/viewer.h
+						$(GENERIC)/keydisp.h $(DEBUGUTY)/viewer.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2arg.o		:	$(TARGET)/np2arg.cpp $(HEADERS) $(TARGET)/np2arg.h \
@@ -827,7 +843,7 @@ $(OBJ)/cmmidi.o		:	$(TARGET)/cmmidi.cpp $(HEADERS) $(COMMON)/mimpidef.h \
 						$(TARGET)/commng.h $(TARGET)/cmserial.h \
 						$(TARGET)/cmmidi.h $(TARGET)/cmpara.h \
 						$(SOUND)/sound.h $(VERMOUTH)/vermouth.h \
-						$(KEYDISP)/keydisp.h
+						$(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/cmpara.o		:	$(TARGET)/cmpara.cpp
@@ -918,6 +934,17 @@ $(OBJ)/toolwin.o	:	$(TARGET)/toolwin.cpp $(HEADERS) $(PCCORES) \
 						$(DIALOG)/dialog.h $(FDD)/diskdrv.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/dd2.o		:	$(TARGET)/dd2.cpp $(HEADERS) $(TARGET)/dd2.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/kdispwin.o	:	$(TARGET)/kdispwin.cpp $(HEADERS) \
+						$(TARGET)/resource.h $(TARGET)/np2.h \
+						$(TARGET)/winloc.h $(TARGET)/soundmng.h \
+						$(TARGET)/sysmng.h $(TARGET)/menu.h $(TARGET)/ini.h \
+						$(TARGET)/dd2.h $(TARGET)/kdispwin.h \
+						$(DIALOG)/np2class.h $(GENERIC)/keydisp.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h
 	$(RC) -i $< -o $@
 
@@ -942,7 +969,7 @@ $(OBJ)/d_mpu98.o	:	$(DIALOG)/d_mpu98.cpp $(HEADERS) $(PCCORES) \
 						$(COMMON)/strres.h $(TARGET)/resource.h \
 						$(TARGET)/np2.h $(TARGET)/commng.h \
 						$(TARGET)/sysmng.h $(DIALOG)/dialog.h \
-						$(DIALOG)/dialogs.h $(DIALOG)/bit2res.h
+						$(DIALOG)/dialogs.h $(GENERIC)/dipswbmp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/d_screen.o	:	$(DIALOG)/d_screen.cpp $(HEADERS) $(PCCORES) \
@@ -957,8 +984,8 @@ $(OBJ)/d_serial.o	:	$(DIALOG)/d_serial.cpp $(HEADERS) $(PCCORES) \
 						$(IOCORES) $(COMMON)/strres.h $(TARGET)/resource.h \
 						$(TARGET)/np2.h $(TARGET)/dosio.h $(TARGET)/commng.h \
 						$(TARGET)/sysmng.h $(DIALOG)/dialog.h \
-						$(DIALOG)/dialogs.h $(DIALOG)/bit2res.h \
-						$(VRAM)/scrndraw.h $(VRAM)/palettes.h
+						$(DIALOG)/dialogs.h $(VRAM)/scrndraw.h \
+						$(VRAM)/palettes.h $(GENERIC)/dipswbmp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/d_sound.o	:	$(DIALOG)/d_sound.cpp $(HEADERS) $(PCCORES) \
@@ -966,8 +993,8 @@ $(OBJ)/d_sound.o	:	$(DIALOG)/d_sound.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(TARGET)/joymng.h $(TARGET)/sysmng.h \
 						$(TARGET)/menu.h $(DIALOG)/dialog.h \
-						$(DIALOG)/dialogs.h $(DIALOG)/bit2res.h \
-						$(SOUND)/sound.h $(SOUND)/s98.h
+						$(DIALOG)/dialogs.h $(SOUND)/sound.h $(SOUND)/s98.h \
+						$(GENERIC)/dipswbmp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/d_clnd.o		:	$(DIALOG)/d_clnd.cpp $(HEADERS) $(PCCORES) \
@@ -995,38 +1022,6 @@ $(OBJ)/d_bmp.o		:	$(DIALOG)/d_bmp.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 $(OBJ)/dialogs.o	:	$(DIALOG)/dialogs.cpp $(HEADERS) $(COMMON)/strres.h \
 						$(TARGET)/dosio.h $(TARGET)/commng.h \
 						$(TARGET)/sysmng.h $(DIALOG)/dialogs.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/bit2res.o	:	$(DIALOG)/bit2res.cpp $(HEADERS) $(DIALOG)/bit2res.h
-	$(CC) $(COPT) -o $@ $<
-
-
-
-$(OBJ)/keydisp.o	:	$(KEYDISP)/keydisp.cpp $(HEADERS) \
-						$(TARGET)/resource.h $(TARGET)/np2.h \
-						$(TARGET)/soundmng.h $(KEYDISP)/dd2.h \
-						$(KEYDISP)/keydisp.h $(KEYDISP)/keydisps.h \
-						$(KEYDISP)/keydispr.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/keydisps.o	:	$(KEYDISP)/keydisps.cpp $(HEADERS) \
-						$(TARGET)/resource.h $(KEYDISP)/dd2.h \
-						$(KEYDISP)/dd2sub.h $(KEYDISP)/keydisp.h \
-						$(KEYDISP)/keydisps.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/keydispr.o	:	$(KEYDISP)/keydispr.cpp $(HEADERS) $(PCCORES) \
-						$(IOCORES) $(FMBOARDS) $(TARGET)/resource.h \
-						$(KEYDISP)/dd2.h $(KEYDISP)/keydisp.h \
-						$(KEYDISP)/keydisps.h $(KEYDISP)/keydispr.h \
-						$(SOUND)/sound.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/dd2.o		:	$(KEYDISP)/dd2.cpp $(HEADERS) $(KEYDISP)/dd2.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/dd2sub.o		:	$(KEYDISP)/dd2sub.cpp $(HEADERS) $(KEYDISP)/dd2.h \
-						$(KEYDISP)/dd2sub.h
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -1135,7 +1130,7 @@ $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(SOUND)/sound.h $(SOUND)/fmboard.h $(SOUND)/beep.h \
 						$(FONT)/font.h $(FDD)/fddfile.h $(FDD)/fdd_mtr.h \
 						$(FDD)/sxsi.h $(BASE)/calendar.h $(BASE)/statsave.h \
-						$(KEYDISP)/keydisp.h
+						$(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/debugsub.o	:	$(BASE)/debugsub.c $(HEADERS) $(PCCORES) $(IOCORES) \

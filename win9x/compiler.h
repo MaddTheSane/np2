@@ -6,23 +6,21 @@
 #include	<stddef.h>
 
 #define	BYTESEX_LITTLE
+#define	OSLANG_SJIS
+#define	OSLINEBREAK_CRLF
+
 
 #ifndef __GNUC__
-
 typedef	short			SINT16;
 typedef	unsigned short	UINT16;
 typedef	int				SINT32;
 typedef	unsigned int	UINT32;
-
 #else
-
 #include	<stdlib.h>
 typedef	short			SINT16;
 typedef	unsigned short	UINT16;
 typedef	int				SINT32;
-
 #endif
-
 
 #define	LOADINTELDWORD(a)		(*((UINT32 *)(a)))
 #define	LOADINTELWORD(a)		(*((UINT16 *)(a)))
@@ -37,12 +35,12 @@ typedef	int				SINT32;
 #include	"lstarray.h"
 #include	"trace.h"
 
+
 #define	GETTICK()			GetTickCount()
-#define	GETRAND()			rand()
 #define	SPRINTF				wsprintf
 
-#define	LABEL		__declspec(naked)
-#define RELEASE(x) 	if (x) {(x)->Release(); (x) = NULL;}
+#define	LABEL				__declspec(naked)
+#define RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
 
 #define	OPNGENX86
 #define	VERMOUTH_LIB
@@ -56,11 +54,15 @@ typedef	int				SINT32;
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
 
+#define	SUPPORT_SJIS
+
 #define	SUPPORT_8BPP
 #define	SUPPORT_16BPP
 #define	SUPPORT_24BPP
 #define	SUPPORT_32BPP
 #define SUPPORT_NORMALDISP
+
+#define	SUPPORT_KEYDISP
 
 #define	SOUNDRESERVE	20
 

@@ -9,10 +9,10 @@
 #include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"
-#include	"bit2res.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"pc9861k.h"
+#include	"dipswbmp.h"
 
 
 static const char str_none[] = "NONE";
@@ -380,34 +380,6 @@ static const UINT pc9861d2sync[] = {1, 2, 3, 0};
 static const UINT pc9861d2int[] = {0, 2, 1, 3};
 
 
-static void setdip(BYTE *image, int px, int py, int align, BYTE v, BYTE c) {
-
-	int		i, y;
-
-	px *= 9;
-	px++;
-	py *= 9;
-	while(c--) {
-		y = py + ((v&0x01)?5:9);
-		for (i=0; i<3; i++) {
-			dlgs_linex(image, px, y+i, 7, align, 0);
-		}
-		px+=9;
-		v>>=1;
-	}
-}
-
-static void setjmp(BYTE *image, int px, int py, int align, BYTE v, BYTE c) {
-
-	while(c--) {
-		if (v & 0x01) {
-			dlgs_setjumpery(image, px, py, align);
-		}
-		px++;
-		v >>= 1;
-	}
-}
-
 static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m) {
 
 	LRESULT	r;
@@ -558,42 +530,6 @@ static void pc9861cmddipsw(HWND hWnd) {
 	}
 }
 
-static void pc9861drawdipsw(HWND hWnd, HDC hdc) {
-
-	BITMAPINFO	*bmi;
-	HBITMAP		hbmp;
-	BYTE		*image;
-	int			align;
-	BYTE		*imgbtm;
-	HDC			hmdc;
-
-	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&pc9861dip), "bitmap");
-	if (bmi == NULL) {
-		return;
-	}
-	bit2res_sethead(bmi, &pc9861dip);
-	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-	bit2res_setdata(image, &pc9861dip);
-	align = ((pc9861dip.x + 7) / 2) & ~3;
-	imgbtm = image + align * (pc9861dip.y - 1);
-	setdip(imgbtm, PC9861S1_X, PC9861S_Y, align, pc9861_s[0], 6);
-	setdip(imgbtm, PC9861S2_X, PC9861S_Y, align, pc9861_s[1], 4);
-	setdip(imgbtm, PC9861S3_X, PC9861S_Y, align, pc9861_s[2], 6);
-	setjmp(imgbtm, PC9861J1_X, PC9861J1_Y, align, pc9861_j[0], 6);
-	setjmp(imgbtm, PC9861J2_X, PC9861J1_Y, align, pc9861_j[1], 6);
-	setjmp(imgbtm, PC9861J3_X, PC9861J1_Y, align, pc9861_j[2], 2);
-	setjmp(imgbtm, PC9861J4_X, PC9861J4_Y, align, pc9861_j[3], 8);
-	setjmp(imgbtm, PC9861J5_X, PC9861J4_Y, align, pc9861_j[4], 6);
-	setjmp(imgbtm, PC9861J6_X, PC9861J4_Y, align, pc9861_j[5], 6);
-	hmdc = CreateCompatibleDC(hdc);
-	SelectObject(hmdc, hbmp);
-	BitBlt(hdc, 0, 0, pc9861dip.x, pc9861dip.y, hmdc, 0, 0, SRCCOPY);
-	DeleteDC(hmdc);
-	DeleteObject(hbmp);
-	_MFREE(bmi);
-}
-
 static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
@@ -687,7 +623,8 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 
 		case WM_DRAWITEM:
 			if (LOWORD(wp) == IDC_PC9861DIP) {
-				pc9861drawdipsw(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+										dipswbmp_get9861(pc9861_s, pc9861_j));
 			}
 			return(FALSE);
 	}

@@ -116,7 +116,7 @@ static void setvsyncclock(void) {
 	pc.vsyncclock = cnt - pc.dispclock;
 }
 
-static void setpcclock(UINT base, UINT multiple) {			// ver0.28
+static void setpcclock(UINT base, UINT multiple) {
 
 	pc.model = PCMODEL_VX;
 
@@ -530,6 +530,26 @@ void pccore_exec(BOOL draw) {
 		}
 #else
 		while(I286_REMCLOCK > 0) {
+#if 0
+			TRACEOUT(("%.4x:%.4x", I286_CS, I286_IP));
+#elif 1
+			if ((I286_CS == 0x1c29) && (I286_IP == 0x01E9)) {
+				if (I286_BX) {
+					TRACEOUT(("set %.4x", I286_BX));
+				}
+			}
+			if ((I286_CS == 0x4159) && (I286_IP == 0x02d6)) {
+				if (I286_AX) {
+					TRACEOUT(("get %d", (short)I286_AX));
+				}
+			}
+#else
+			if (I286_CS == 0x4159) {
+				if ((I286_IP >= 0x02d1) && (I286_IP < 0x02e3)) {
+					TRACEOUT(("%s", debugsub_regs()));
+				}
+			}
+#endif
 			i286_step();
 		}
 #endif

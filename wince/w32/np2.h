@@ -2,17 +2,22 @@
 typedef struct {
 	BYTE	NOWAIT;
 	BYTE	DRAW_SKIP;
+	BYTE	F12KEY;
+	BYTE	resume;
 } NP2OSCFG;
 
 
+#if defined(SIZE_QVGA)
 enum {
-	SCREEN_WBASE		= 80,
-	SCREEN_HBASE		= 50,
-	SCREEN_DEFMUL		= 8,
-	FULLSCREEN_WIDTH	= 640,
-	FULLSCREEN_HEIGHT	= 480
+	FULLSCREEN_WIDTH	= 320,
+	FULLSCREEN_HEIGHT	= 240
 };
-
+#else
+enum {
+	FULLSCREEN_WIDTH	= 640,
+	FULLSCREEN_HEIGHT	= 400
+};
+#endif
 
 enum {
 	WM_NP2CMD			= (WM_USER + 200)
@@ -25,7 +30,13 @@ enum {
 	NP2CMD_DUMMY		= 0xffff
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern	NP2OSCFG	np2oscfg;
+#ifdef __cplusplus
+}
+#endif
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;

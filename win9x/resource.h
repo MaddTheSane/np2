@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
-// Used by np2.rc
+// Used by NP2.RC
 //
 #define IDI_ICON1                       101
 #define IDI_ICON2                       102

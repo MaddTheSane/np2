@@ -1,7 +1,4 @@
 
-#define	CPUW2TEST
-
-
 #define I286FN	static void
 #define I286EXT	void
 
@@ -11,17 +8,22 @@ typedef UINT16 (*CALCLEA)(void);
 typedef UINT16 (*GETLEA)(void);
 
 extern	UINT32	EA_FIX;
-extern	BYTE	*reg8_b53[256];
-extern	BYTE	*reg8_b20[256];
-extern	UINT16	*reg16_b53[256];
-extern	UINT16	*reg16_b20[256];
 extern	BYTE	szpcflag[0x200];
 extern	CALCEA	c_calc_ea_dst[];
 extern	CALCLEA	c_calc_lea[];
 extern	GETLEA	c_get_ea[];
 
-#if !defined(CPUW2TEST)
+#if !defined(MEMOPTIMIZE)
 extern	BYTE	szpflag_w[0x10000];
+#endif
+
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+extern	BYTE	*_reg8_b53[256];
+extern	BYTE	*_reg8_b20[256];
+#endif
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+extern	UINT16	*_reg16_b53[256];
+extern	UINT16	*_reg16_b20[256];
 #endif
 
 

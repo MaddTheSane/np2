@@ -6,8 +6,8 @@
 #include	"sysmng.h"
 #include	"dialog.h"
 #include	"dialogs.h"
-#include	"bit2res.h"
 #include	"pccore.h"
+#include	"dipswbmp.h"
 
 
 #ifdef __cplusplus
@@ -65,26 +65,6 @@ static void setmpujmp(HWND hWnd, BYTE value, BYTE bit) {
 		mpu |= value;
 		InvalidateRect(GetDlgItem(hWnd, IDC_MPUDIP), NULL, TRUE);
 	}
-}
-
-static void setmpuiodip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	int		i, j, y;
-
-	px *= 9;
-	px++;
-	py *= 9;
-	for (i=0; i<4; i++, px+=9, v<<=1) {
-		y = py + ((v&0x80)?5:9);
-		for (j=0; j<3; j++) {
-			dlgs_linex(image, px, y+j, 7, align, 2);
-		}
-	}
-}
-
-static void setmpuintdip(BYTE *image, int px, int py, int align, BYTE v) {
-
-	dlgs_setjumpery(image, px + 3 - (mpu & 3), py, align);
 }
 
 
@@ -206,35 +186,6 @@ static void mpucmddipsw(HWND hWnd) {
 	}
 }
 
-static void mpudrawdipsw(HWND hWnd, HDC hdc) {
-
-	BITMAPINFO	*bmi;
-	HBITMAP		hbmp;
-	BYTE		*image;
-	int			align;
-	BYTE		*imgbtm;
-	HDC			hmdc;
-
-	bmi = (BITMAPINFO *)_MALLOC(bit2res_getsize(&mpudip), "bitmap");
-	if (bmi == NULL) {
-		return;
-	}
-	bit2res_sethead(bmi, &mpudip);
-	hbmp = CreateDIBSection(hdc, bmi, DIB_RGB_COLORS,
-												(void **)&image, NULL, 0);
-	bit2res_setdata(image, &mpudip);
-	align = ((mpudip.x + 7) / 2) & ~3;
-	imgbtm = image + align * (mpudip.y - 1);
-	setmpuiodip(imgbtm, 2, 1, align, mpu);
-	setmpuintdip(imgbtm, 9, 1, align, mpu);
-	hmdc = CreateCompatibleDC(hdc);
-	SelectObject(hmdc, hbmp);
-	BitBlt(hdc, 0, 0, mpudip.x, mpudip.y, hmdc, 0, 0, SRCCOPY);
-	DeleteDC(hmdc);
-	DeleteObject(hbmp);
-	_MFREE(bmi);
-}
-
 LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	switch(msg) {
@@ -280,7 +231,8 @@ LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_DRAWITEM:
 			if (LOWORD(wp) == IDC_MPUDIP) {
-				mpudrawdipsw(hWnd, ((LPDRAWITEMSTRUCT)lp)->hDC);
+				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
+													dipswbmp_getmpu(mpu));
 			}
 			return(FALSE);
 

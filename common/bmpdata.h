@@ -63,6 +63,9 @@ UINT bmpdata_sethead(BMPFILE *bf, const BMPINFO *bi);
 UINT bmpdata_setinfo(BMPINFO *bi, const BMPDATA *inf);
 BOOL bmpdata_getinfo(const BMPINFO *bi, BMPDATA *inf);
 
+BYTE *bmpdata_lzx(int level, int dstsize, const BYTE *dat);
+BYTE *bmpdata_solvedata(const BYTE *dat);
+
 #ifdef __cplusplus
 }
 #endif

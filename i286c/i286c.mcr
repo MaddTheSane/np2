@@ -13,11 +13,36 @@
 #define	STRING_DIR		((I286_FLAG & D_FLAG)?-1:1)
 #define	STRING_DIRx2	((I286_FLAG & D_FLAG)?-2:2)
 
-#if defined(CPUW2TEST)
+#if !defined(MEMOPTIMIZE)
+#define	WORDSZPF(a)		szpflag_w[(a)]
+#else
 #define	WORDSZPF(a)		((szpcflag[(a) & 0xff] & P_FLAG) | \
 									(((a))?0:Z_FLAG) | (((a) >> 8) & S_FLAG))
+#endif
+
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+#define	REG8_B53(op)		_reg8_b53[(op)]
+#define	REG8_B20(op)		_reg8_b20[(op)]
 #else
-#define	WORDSZPF(a)		szpflag_w[(a)]
+#if defined(BYTESEX_LITTLE)
+#define	REG8_B53(op)		\
+				(((BYTE *)&I286_REG) + (((op) >> 2) & 6) + (((op) >> 5) & 1))
+#define	REG8_B20(op)		\
+				(((BYTE *)&I286_REG) + (((op) & 3) * 2) + (((op) >> 2) & 1))
+#else
+#define	REG8_B53(op)		(((BYTE *)&I286_REG) + (((op) >> 2) & 6) +	\
+													((((op) >> 5) & 1) ^ 1))
+#define	REG8_B20(op)		(((BYTE *)&I286_REG) + (((op) & 3) * 2) +	\
+													((((op) >> 2) & 1) ^ 1))
+#endif
+#endif
+
+#if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
+#define	REG16_B53(op)		_reg16_b53[(op)]
+#define	REG16_B20(op)		_reg16_b20[(op)]
+#else
+#define	REG16_B53(op)		(((UINT16 *)&I286_REG) + (((op) >> 3) & 7))
+#define	REG16_B20(op)		(((UINT16 *)&I286_REG) + ((op) & 7))
 #endif
 
 #define	SWAPBYTE(p, q) {											\
@@ -72,48 +97,48 @@
 
 #define	PREPART_EA_REG8(b, d_s)										\
 		GET_PCBYTE((b))												\
-		(d_s) = *(reg8_b53[(b)]);
+		(d_s) = *(REG8_B53(b));
 
 
 #define	PREPART_EA_REG8P(b, d_s)									\
 		GET_PCBYTE((b))												\
-		(d_s) = reg8_b53[(b)];
+		(d_s) = REG8_B53(b);
 
 
 #define	PREPART_EA_REG16(b, d_s)									\
 		GET_PCBYTE((b))												\
-		(d_s) = *(reg16_b53[(b)]);
+		(d_s) = *(REG16_B53(b));
 
 
 #define	PREPART_EA_REG16P(b, d_s)									\
 		GET_PCBYTE((b))												\
-		(d_s) = reg16_b53[(b)];
+		(d_s) = REG16_B53(b);
 
 
 #define PREPART_REG8_EA(b, s, d, regclk, memclk)					\
 		GET_PCBYTE((b))												\
 		if ((b) >= 0xc0) {											\
 			I286_WORKCLOCK(regclk);									\
-			(s) = *(reg8_b20[b]);									\
+			(s) = *(REG8_B20(b));									\
 		}															\
 		else {														\
 			I286_WORKCLOCK(memclk);									\
 			(s) = i286_memoryread(c_calc_ea_dst[(b)]());			\
 		}															\
-		(d) = reg8_b53[(b)];
+		(d) = REG8_B53(b);
 
 
 #define	PREPART_REG16_EA(b, s, d, regclk, memclk)					\
 		GET_PCBYTE(b)												\
 		if (b >= 0xc0) {											\
 			I286_WORKCLOCK(regclk);									\
-			s = *(reg16_b20[b]);									\
+			s = *(REG16_B20(b));									\
 		}															\
 		else {														\
 			I286_WORKCLOCK(memclk);									\
 			s = i286_memoryread_w(c_calc_ea_dst[b]());				\
 		}															\
-		d = reg16_b53[b];
+		d = REG16_B53(b);
 
 
 #define	ADDBYTE(r, d, s)											\

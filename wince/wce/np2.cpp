@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	<gx.h>
 #include	"resource.h"
 #include	"strres.h"
 #include	"np2.h"
@@ -9,6 +10,7 @@
 #include	"scrnmng.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
+#include	"taskmng.h"
 #include	"winkbd.h"
 #include	"ini.h"
 #include	"memory.h"
@@ -25,22 +27,83 @@
 #include	"fddfile.h"
 #include	"font.h"
 #include	"timing.h"
-#include	"debugsub.h"
+#include	"statsave.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
+#include	"sysmenu.h"
 
 
 static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
 static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 
 
-		NP2OSCFG	np2oscfg = {0, 2};
+		NP2OSCFG	np2oscfg = {0, 2, 0, 0};
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
 		char		modulefile[MAX_PATH];
 
+static	BOOL		sysrunning;
 static	UINT		framecnt;
 static	UINT		waitcnt;
 static	UINT		framemax = 1;
+
+
+// ---- resume
+
+static void getstatfilename(char *path, const char *ext, int size) {
+
+	file_cpyname(path, modulefile, size);
+	file_cutext(path);
+	file_catname(path, str_dot, size);
+	file_catname(path, ext, size);
+}
+
+static int flagsave(const char *ext) {
+
+	int		ret;
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	ret = statsave_save(path);
+	if (ret) {
+		file_delete(path);
+	}
+	return(ret);
+}
+
+static void flagdelete(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	file_delete(path);
+}
+
+static int flagload(const char *ext, const char *title, BOOL force) {
+
+	int		ret;
+	int		id;
+	char	path[MAX_PATH];
+	char	buf[1024];
+	char	buf2[1024 + 256];
+
+	getstatfilename(path, ext, sizeof(path));
+	id = DID_YES;
+	ret = statsave_check(path, buf, sizeof(buf));
+	if (ret & (~NP2FLAG_DISKCHG)) {
+		menumbox("Couldn't restart", title, MBOX_OK | MBOX_ICONSTOP);
+		id = DID_NO;
+	}
+	else if ((!force) && (ret & NP2FLAG_DISKCHG)) {
+		SPRINTF(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		id = menumbox(buf2, title, MBOX_YESNOCAN | MBOX_ICONQUESTION);
+	}
+	if (id == DID_YES) {
+		statsave_load(path);
+	}
+	return(id);
+}
 
 
 // ---- proc
@@ -57,56 +120,84 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
-			scrndraw_redraw();
+			if (!sysrunning) {
+				scrnmng_clear(TRUE);
+			}
+			else {
+				scrndraw_redraw();
+			}
 			EndPaint(hWnd, &ps);
 			break;
 
 		case WM_KEYDOWN:
 			if (wParam == VK_F11) {
-				return(DefWindowProc(hWnd, WM_SYSKEYDOWN, VK_F10, lParam));
+//				return(DefWindowProc(hWnd, WM_SYSKEYDOWN, VK_F10, lParam));
 			}
-			winkeydown106(wParam, lParam);
+			winkbd_keydown(wParam, lParam);
 			break;
 
 		case WM_KEYUP:
-			winkeyup106(wParam, lParam);
+			winkbd_keyup(wParam, lParam);
 			break;
 
 		case WM_SYSKEYDOWN:
-			winkeydown106(wParam, lParam);
+			winkbd_keydown(wParam, lParam);
 			break;
 
 		case WM_SYSKEYUP:
-			winkeyup106(wParam, lParam);
+			winkbd_keyup(wParam, lParam);
+			break;
+
+		case WM_MOUSEMOVE:
+			if (scrnmng_mousepos(&lParam) == SUCCESS) {
+				if (menuvram == NULL) {
+				}
+				else {
+					menubase_moving(LOWORD(lParam), HIWORD(lParam), 0);
+				}
+			}
+			break;
+
+		case WM_LBUTTONDOWN:
+			if (scrnmng_mousepos(&lParam) == SUCCESS) {
+				if (menuvram == NULL) {
+				}
+				else {
+					menubase_moving(LOWORD(lParam), HIWORD(lParam), 1);
+				}
+			}
+			break;
+
+		case WM_LBUTTONUP:
+			if (scrnmng_mousepos(&lParam) == SUCCESS) {
+				if (menuvram == NULL) {
+					sysmenu_menuopen(0, 0, 0);
+				}
+				else {
+					menubase_moving(LOWORD(lParam), HIWORD(lParam), 2);
+				}
+			}
 			break;
 
 		case WM_CLOSE:
 			break;
 
 		case WM_DESTROY:
-			PostQuitMessage(0);
+//			PostQuitMessage(0);
 			break;
 
-#if 0
-		case WM_KILLFOCUS:
-			if (systemrunning) {
-				wavemng_destroy();
-				gdraws_enable(FALSE);
+		case WM_ACTIVATE:
+			if ((LOWORD(wParam) != WA_INACTIVE) &&
+				((BOOL)HIWORD(wParam) == FALSE)) {
+				GXResume();
+				scrnmng_enable(TRUE);
+				scrndraw_redraw();
+			}
+			else {
+				scrnmng_enable(FALSE);
 				GXSuspend();
 			}
 			break;
-
-		case WM_SETFOCUS:
-			if (systemrunning) {
-				GXResume();
-				gdraws_enable(TRUE);
-				scrnmng_draw(NULL);
-				if (wavemng_used) {
-					wavemng_reopen();
-				}
-			}
-			break;
-#endif
 
 #if defined(WAVEMNG_CBMAIN)
 		case MM_WOM_DONE:
@@ -121,11 +212,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 
-static void processwait(UINT waitcnt) {
+#define	framereset(cnt)		framecnt = 0
 
-	if (timing_getcount() >= waitcnt) {
+static void processwait(UINT cnt) {
+
+	if (timing_getcount() >= cnt) {
 		timing_setcount(0);
-		framecnt = 0;
+		framereset(cnt);
 	}
 	else {
 		Sleep(1);
@@ -159,17 +252,18 @@ static DWORD GetModuleFileName_A(HMODULE hModule,
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										LPTSTR lpszCmdLine, int nCmdShow) {
 
-	HWND		hwndorg;
+	HWND		hWnd;
 	WNDCLASS	np2;
+	int			id;
 	MSG			msg;
 
-	hwndorg = FindWindow(szClassName, NULL);
-	if (hwndorg != NULL) {
-		ShowWindow(hwndorg, SW_SHOW);
+	hWnd = FindWindow(szClassName, NULL);
+	if (hWnd != NULL) {
+		ShowWindow(hWnd, SW_SHOW);
 #if defined(WIN32_PLATFORM_PSPC)
-		SetForegroundWindow((HWND)((ULONG)hwndorg | 1));
+		SetForegroundWindow((HWND)((ULONG)hWnd | 1));
 #else
-		SetForegroundWindow(hwndorg);
+		SetForegroundWindow(hWnd);
 #endif
 		return(0);
 	}
@@ -203,32 +297,68 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 //	}
 
-	hWndMain = CreateWindowEx(0, szClassName, szAppCaption,
+#if !defined(WIN32_PLATFORM_PSPC)
+	hWnd = CreateWindow(szClassName, szAppCaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
-						0, 0, 320, 240,
+						0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT,
 						NULL, NULL, hInstance, NULL);
+#else
+	hWnd = CreateWindow(szClassName, szAppCaption,
+						WS_VISIBLE,
+						0, 0, 
+		      			GetSystemMetrics(SM_CXSCREEN),
+		      			GetSystemMetrics(SM_CYSCREEN),
+						NULL, NULL, hInstance, NULL);
+#endif
+	hWndMain = hWnd;
+	if (hWnd == NULL) {
+		goto np2main_err1;
+	}
 
 	scrnmng_initialize();
 
-	ShowWindow(hWndMain, nCmdShow);
-	UpdateWindow(hWndMain);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-	if (scrnmng_create(hWndMain, 320, 240) != SUCCESS) {
-		MessageBox(hWndMain, STRLITERAL("Couldn't create DirectDraw Object"),
+	if (sysmenu_create() != SUCCESS) {
+		DestroyWindow(hWnd);
+		goto np2main_err1;
+	}
+	if (scrnmng_create(hWnd, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)
+																!= SUCCESS) {
+		MessageBox(hWnd, STRLITERAL("Couldn't create DirectDraw Object"),
 									szAppCaption, MB_OK | MB_ICONSTOP);
-		return(FALSE);
+		DestroyWindow(hWnd);
+		goto np2main_err2;
 	}
 
+	if (GXOpenInput() == 0) {
+		DestroyWindow(hWnd);
+		goto np2main_err3;
+	}
+
+	soundmng_initialize();
 	commng_initialize();
 	sysmng_initialize();
+	taskmng_initialize();
 	pccore_init();
 	S98_init();
 
 	scrndraw_redraw();
 	pccore_reset();
 
-	while(1) {
+	if (np2oscfg.resume) {
+		id = flagload(str_sav, str_resume, FALSE);
+		if (id == DID_CANCEL) {
+			DestroyWindow(hWnd);
+			goto np2main_err4;
+		}
+	}
+
+	sysrunning = TRUE;
+
+	while(taskmng_isavail()) {
 		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
 			if (!GetMessage(&msg, NULL, 0, 0)) {
 				break;
@@ -286,7 +416,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						processwait(0);
+						framereset(0);
 					}
 				}
 				else {
@@ -297,11 +427,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 	}
 
+	sysrunning = FALSE;
+
+	DestroyWindow(hWnd);
+
 	pccore_cfgupdate();
+	if (np2oscfg.resume) {
+		flagsave(str_sav);
+	}
+	else {
+		flagdelete(str_sav);
+	}
 	pccore_term();
 	S98_trash();
+	soundmng_deinitialize();
 
+	GXCloseInput();
 	scrnmng_destroy();
+	sysmenu_destroy();
 
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();
@@ -310,5 +453,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	dosio_term();
 
 	return(msg.wParam);
+
+np2main_err4:
+	pccore_cfgupdate();
+	pccore_term();
+	S98_trash();
+	soundmng_deinitialize();
+	GXCloseInput();
+
+np2main_err3:
+	scrnmng_destroy();
+
+np2main_err2:
+	sysmenu_destroy();
+
+np2main_err1:
+	TRACETERM();
+	dosio_term();
+	return(FALSE);
 }
 

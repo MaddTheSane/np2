@@ -4,6 +4,7 @@
 #include	"sdraw.h"
 #include	"palettes.h"
 
+#if !defined(SIZE_QVGA)
 
 #if defined(SUPPORT_8BPP)
 #define	SDSYM(sym)				sdraw8##sym
@@ -101,4 +102,6 @@ const SDRAWFN *sdraw_getproctbl(const SCRNSURF *surf) {
 #endif
 	return(tbl[proc]);
 }
+
+#endif
 

@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"strres.h"
+#include	"bmpdata.h"
 #include	"dosio.h"
 #include	"commng.h"
 #include	"sysmng.h"
@@ -150,70 +151,40 @@ void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items) {
 
 // ---- draw
 
-void dlgs_linex(BYTE *image, int x, int y, int l, int align, BYTE c) {
+void dlgs_drawbmp(HDC hdc, BYTE *bmp) {
 
-	image -= y * align;
-	while(l--) {
-		if (x & 1) {
-			image[x/2] &= 0xf0;
-			image[x/2] |= c;
-		}
-		else {
-			image[x/2] &= 0x0f;
-			image[x/2] |= (c << 4);
-		}
-		x++;
+	BMPFILE		*bf;
+	BMPINFO		*bi;
+	BMPDATA		inf;
+	HBITMAP		hbmp;
+	BYTE		*image;
+	HDC			hmdc;
+
+	if (bmp == NULL) {
+		return;
 	}
-}
-
-void dlgs_liney(BYTE *image, int x, int y, int l, int align, BYTE c) {
-
-	image += (x / 2) - y * align;
-	if (x & 1) {
-		while(l--) {
-			*image &= 0xf0;
-			*image |= c;
-			image -= align;
-		}
+	bf = (BMPFILE *)bmp;
+	bi = (BMPINFO *)(bf + 1);
+	if (bmpdata_getinfo(bi, &inf) != SUCCESS) {
+		goto dsdb_err1;
 	}
-	else {
-		c <<= 4;
-		while(l--) {
-			*image &= 0x0f;
-			*image |= c;
-			image -= align;
-		}
+	hbmp = CreateDIBSection(hdc, (BITMAPINFO *)bi, DIB_RGB_COLORS,
+												(void **)&image, NULL, 0);
+	if (hbmp == NULL) {
+		goto dsdb_err1;
 	}
-}
-
-
-// ---- jumper
-
-void dlgs_setjumperx(BYTE *image, int x, int y, int align) {
-
-	int		i;
-
-	x *= 9;
-	y *= 9;
-	for (i=0; i<2; i++) {
-		dlgs_linex(image, x, y+0+i, 19, align, 0);
-		dlgs_linex(image, x, y+8+i, 19, align, 0);
-		dlgs_liney(image, x+ 0+i, y, 9, align, 0);
-		dlgs_liney(image, x+17+i, y, 9, align, 0);
+	CopyMemory(image, bmp + (LOADINTELDWORD(bf->bfOffBits)),
+													bmpdata_getdatasize(bi));
+	hmdc = CreateCompatibleDC(hdc);
+	SelectObject(hmdc, hbmp);
+	if (inf.height < 0) {
+		inf.height *= -1;
 	}
-}
+	BitBlt(hdc, 0, 0, inf.width, inf.height, hmdc, 0, 0, SRCCOPY);
+	DeleteDC(hmdc);
+	DeleteObject(hbmp);
 
-void dlgs_setjumpery(BYTE *image, int x, int y, int align) {
-
-	int		i;
-
-	x *= 9;
-	y *= 9;
-	for (i=0; i<2; i++) {
-		dlgs_linex(image, x, y+ 0+i, 9, align, 0);
-		dlgs_linex(image, x, y+17+i, 9, align, 0);
-		dlgs_liney(image, x+0+i, y, 19, align, 0);
-		dlgs_liney(image, x+8+i, y, 19, align, 0);
-	}
+dsdb_err1:
+	_MFREE(bmp);
 }
 

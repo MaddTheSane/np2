@@ -12,6 +12,8 @@ extern const char str_crlf[];
 #define	str_lf	(str_crlf + 1)
 
 extern const char str_ini[];
+extern const char str_cfg[];
+extern const char str_sav[];
 extern const char str_bmp[];
 extern const char str_d88[];
 extern const char str_d98[];
@@ -33,6 +35,9 @@ extern const char str_posx[];
 extern const char str_posy[];
 extern const char str_width[];
 extern const char str_height[];
+
+extern const char str_np2[];
+extern const char str_resume[];
 
 #ifdef __cplusplus
 }

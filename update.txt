@@ -2,7 +2,26 @@
 
 　ver0.71 → 
 
+　・CPU … ARMに対しての最適化
+　・PIT … インターバルタイマの割り込みを修正
+　・PC-9801-26K … ステータスを修正
+　・マウス … 負方向の演算の不都合を修正
 　・一部の設定だけを変更しても cfgに保存されないのを修正
+
+
+　でぶねこ補足
+　　・必須
+　　　　compiler.h に 以下のうち必要な定義を入れること
+　　　　　　OSLANG_SJIS, OSLANG_EUC
+　　　　　　OSLINEBREAK_CR, OSLINEBREAK_LF, OSLINEBREAK_CRLF
+　　　　　　SUPPORT_ANK, SUPPORT_SJIS, SUPPORT_EUC
+
+　　・変更
+　　　　(target)/keydisp -> (generic)/keydisp
+　　　　(target)/cmmidi -> (target)/cmver  (vermouthのみ使用の場合)
+
+　　基本的には WinCE版とSDL版用のファイルで追加されたファイルで
+　　リンクエラーが発生しない限りは必要はないと思われ。
 
 
 // ----

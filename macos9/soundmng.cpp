@@ -6,7 +6,8 @@
 #include	"soundmng.h"
 #include	"sound.h"
 #if defined(VERMOUTH_LIB)
-#include	"vermouth.h"
+#include	"commng.h"
+#include	"cmver.h"
 #endif
 
 
@@ -31,10 +32,6 @@ typedef struct {
 static	BOOL		QS_Avail = FALSE;
 static	_QSOUND		QSound;
 static	BOOL		QSound_Playing = FALSE;
-
-#if defined(VERMOUTH_LIB)
-		MIDIMOD		vermouth_module = NULL;
-#endif
 
 
 static pascal void QSoundCallback(SndChannelPtr inCh, SndCommand *inCmd) {
@@ -195,9 +192,6 @@ static void SoundBuffer_Term(void) {
 UINT soundmng_create(UINT rate, UINT ms) {
 
 	UINT	samples;
-#if defined(VERMOUTH_LIB)
-	UINT	num;
-#endif
 
 	QSound_Playing = FALSE;
 
@@ -222,11 +216,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 		goto qsinit_err;
 	}
 #if defined(VERMOUTH_LIB)
-	vermouth_module = midimod_create(rate);
-	for (num=0; num<128; num++) {
-		midimod_loadprogram(vermouth_module, num);
-		midimod_loadrhythm(vermouth_module, num);
-	}
+	cmvermouth_load(rate);
 #endif
 	return(samples);
 
@@ -242,8 +232,7 @@ void soundmng_destroy(void) {
 		SoundBuffer_Term();
 		SoundChannel_Term();
 #if defined(VERMOUTH_LIB)
-		midimod_destroy(vermouth_module);
-		vermouth_module = NULL;
+		cmvermouth_unload();
 #endif
 	}
 }

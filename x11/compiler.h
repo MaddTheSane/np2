@@ -47,6 +47,8 @@
 #include <unistd.h>
 
 #define	X11
+#define	OSLANG_EUC
+#define	OSLINEBREAK_LF
 
 typedef	signed char	CHAR;
 typedef	signed short	SHORT;
@@ -131,6 +133,8 @@ UINT32 gettick();
 #define	SPRINTF		sprintf
 
 #define	MEMOPTIMIZE	1
+
+#define	SUPPORT_EUC
 
 #define	SUPPORT_8BPP
 #define	SUPPORT_24BPP

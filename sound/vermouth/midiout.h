@@ -1,7 +1,7 @@
 
 #define	MIDI_GMONLY
 
-#if !defined(_WIN32_CE) && !defined(SLZAURUS)
+#if !defined(_WIN32_WCE) && !defined(SLZAURUS)
 #define	ENABLE_TREMOLO
 #define	ENABLE_VIRLATE
 #endif

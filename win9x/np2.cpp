@@ -46,6 +46,7 @@
 #include	"statsave.h"
 #include	"debugsub.h"
 #include	"keydisp.h"
+#include	"kdispwin.h"
 #include	"viewer.h"
 
 
@@ -92,8 +93,6 @@ static	WINLOCEX	smwlex;
 
 static const char np2help[] = "np2.chm";
 static const char np2flagext[] = "S%02d";
-static const char np2resumeext[] = "sav";
-
 
 
 static void winuienter(void) {
@@ -117,7 +116,7 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 
 	list[0] = hWndMain;
 	list[1] = toolwin_gethwnd();
-	list[2] = keydisp_gethwnd();
+	list[2] = kdispwin_gethwnd();
 	for (i=0; i<3; i++) {
 		if (list[i] == base) {
 			list[i] = NULL;
@@ -147,7 +146,7 @@ static void changescreen(BYTE newmode) {
 	if (renewal) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			toolwin_destroy();
-			keydisp_destroy();
+			kdispwin_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
 			wlex = np2_winlocexallwin(hWndMain);
@@ -172,7 +171,7 @@ static void changescreen(BYTE newmode) {
 					toolwin_create();
 				}
 				if (np2oscfg.keydisp) {
-					keydisp_create();
+					kdispwin_create();
 				}
 			}
 		}
@@ -357,10 +356,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_KEYDISP:
 					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
 					if (np2oscfg.keydisp) {
-						keydisp_create();
+						kdispwin_create();
 					}
 					else {
-						keydisp_destroy();
+						kdispwin_destroy();
 					}
 					break;
 
@@ -422,7 +421,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if (subwin) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
-					subwin = keydisp_gethwnd();
+					subwin = kdispwin_gethwnd();
 					if (subwin) {
 						ShowWindow(subwin, SW_SHOWNOACTIVATE);
 					}
@@ -1134,7 +1133,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				winuileave();
 			}
 			if (b) {
-				keydisp_destroy();
 				viewer_allclose();
 				DestroyWindow(hWnd);
 			}
@@ -1209,7 +1207,7 @@ static void framereset(UINT cnt) {
 
 	framecnt = 0;
 	scrnmng_dispclock();
-	keydisp_draw((BYTE)cnt);
+	kdispwin_draw((BYTE)cnt);
 	toolwin_draw((BYTE)cnt);
 	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {
@@ -1250,7 +1248,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	np2arg_analize(lpszCmdLine);
 	initload();
 	toolwin_readini();
-	keydisp_readini();
+	kdispwin_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -1301,7 +1299,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 	}
 	toolwin_initapp(hInstance);
-	keydisp_initialize(hPreInst);
+	kdispwin_initialize(hPreInst);
 	viewer_init(hPreInst);										// ver0.30
 
 	hWndMain = CreateWindow(szClassName, np2oscfg.titles,
@@ -1429,7 +1427,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			toolwin_create();
 		}
 		if (np2oscfg.keydisp) {
-			keydisp_create();
+			kdispwin_create();
 		}
 	}
 
@@ -1439,7 +1437,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (np2oscfg.resume) {
 		int		id;
 
-		id = flagload(np2resumeext, "Resume", FALSE);
+		id = flagload(str_sav, str_resume, FALSE);
 		if (id == IDYES) {
 			for (i=0; i<4; i++) np2arg.disk[i] = NULL;
 		}
@@ -1555,6 +1553,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		}
 	}
 	toolwin_destroy();
+	kdispwin_destroy();
 
 	pccore_cfgupdate();
 
@@ -1562,10 +1561,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	S98_trash();
 
 	if (np2oscfg.resume) {
-		flagsave(np2resumeext);
+		flagsave(str_sav);
 	}
 	else {
-		flagdelete(np2resumeext);
+		flagdelete(str_sav);
 	}
 
 #ifdef USE_ROMEO
@@ -1585,7 +1584,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();
 		toolwin_writeini();
-		keydisp_writeini();
+		kdispwin_writeini();
 	}
 
 	TRACETERM();

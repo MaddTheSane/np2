@@ -35,30 +35,39 @@ static void calc_mousexy(void) {
 	clock = I286_CLOCK + I286_BASECLOCK + I286_REMCLOCK;
 	diff = clock - mouseif.lastc;
 	if (diff >= 2000) {
-		SINT16 dx;
-		SINT16 dy;
+		SINT32 dx;
+		SINT32 dy;
 		mouseif.rapid ^= 0xa0;
 		diff /= 1000;
-		dx = (SINT16)(mouseif.sx * diff / pc.frame1000);
-		if (dx >= 0) {											// ³
+		dx = mouseif.sx;
+		if (dx > 0) {
+			dx = dx * diff / pc.frame1000;
 			if (dx > mouseif.rx) {
 				dx = mouseif.rx;
 			}
 		}
-		else {													// •‰
+		else if (dx < 0) {
+			dx *= -1;
+			dx = dx * diff / pc.frame1000;
+			dx *= -1;
 			if (dx < mouseif.rx) {
 				dx = mouseif.rx;
 			}
 		}
 		mouseif.x += dx;
 		mouseif.rx -= dx;
-		dy = (SINT16)(mouseif.sy * diff / pc.frame1000);
-		if (dy >= 0) {											// ³
+
+		dy = mouseif.sy;
+		if (dy > 0) {
+			dy = dy * diff / pc.frame1000;
 			if (dy > mouseif.ry) {
 				dy = mouseif.ry;
 			}
 		}
-		else {													// •‰
+		else if (dy < 0) {
+			dy *= -1;
+			dy = dy * diff / pc.frame1000;
+			dy *= -1;
 			if (dy < mouseif.ry) {
 				dy = mouseif.ry;
 			}
@@ -148,11 +157,12 @@ static BYTE IOINPCALL mouseif_i7fd9(UINT port) {
 	BYTE	portc;
 
 	calc_mousexy();
-	ret = mouseif.b & 0xf0;
+	ret = mouseif.b;
 	if (np2cfg.MOUSERAPID) {
 		ret |= mouseif.rapid;
 	}
-	ret |= 0x40;
+	ret &= 0xf0;
+	ret |= 0x50;
 	portc = mouseif.portc;
 	if (portc & 0x80) {
 		x = mouseif.latch_x;
@@ -171,6 +181,7 @@ static BYTE IOINPCALL mouseif_i7fd9(UINT port) {
 	else {
 		ret |= (x >> 4) & 0x0f;
 	}
+//	TRACEOUT(("%x %x mouse [%x] %d -> %x", I286_CS, I286_IP, portc & 0x20, y, ret));
 	(void)port;
 	return(ret);
 }

@@ -174,7 +174,7 @@ I286FN v30mov_seg_ea(void) {				// 8E:	mov		segrem, EA
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		tmp = *(reg16_b20[op]);
+		tmp = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(5);
@@ -232,7 +232,7 @@ I286FN v30shift_ea8_data8(void) {			// C0:	shift	EA8, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);
@@ -272,7 +272,7 @@ I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);
@@ -312,7 +312,7 @@ I286FN v30shift_ea8_cl(void) {				// D2:	shift EA8, cl
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg8_b20[op];
+		out = REG8_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);
@@ -352,7 +352,7 @@ I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
 	GET_PCBYTE(op)
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(5);
-		out = reg16_b20[op];
+		out = REG16_B20(op);
 	}
 	else {
 		I286_WORKCLOCK(8);

@@ -1,4 +1,7 @@
 
+#ifndef __VERMOUTH_H
+#define	__VERMOUTH_H
+
 typedef struct {
 	UINT	samprate;
 } *MIDIMOD;
@@ -30,5 +33,7 @@ void midiout_setgain(MIDIHDL hdl, int gain);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 

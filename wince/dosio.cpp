@@ -253,11 +253,15 @@ short file_attr_c(const char *path) {
 }
 
 
-FILEFINDH file_find1st(const char *path, FILEFINDT *fft) {
+FILEFINDH file_find1st(const char *dir, FILEFINDT *fft) {
 
+	char			path[MAX_PATH];
 	HANDLE			hdl;
 	WIN32_FIND_DATA	w32fd;
 
+	file_cpyname(path, dir, sizeof(path));
+	file_setseparator(path, sizeof(path));
+	file_catname(path, "*.*", sizeof(path));
 	hdl = FindFirstFile_A(path, &w32fd);
 	if (hdl == INVALID_HANDLE_VALUE) {
 		return(FILEFINDH_INVALID);

@@ -6,7 +6,8 @@
 #include	"soundmng.h"
 #include	"sound.h"
 #if defined(VERMOUTH_LIB)
-#include	"vermouth.h"
+#include	"commng.h"
+#include	"cmver.h"
 #endif
 
 
@@ -29,10 +30,6 @@ static	LPDIRECTSOUNDBUFFER	pDSData3;
 static	UINT				dsstreambytes;
 static	BYTE				dsstreamevent;
 static	BYTE				mute;
-
-#if defined(VERMOUTH_LIB)
-		MIDIMOD		vermouth_module = NULL;
-#endif
 
 
 // ---- directsound
@@ -62,9 +59,6 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	UINT			samples;
 	DSBUFFERDESC	dsbdesc;
 	PCMWAVEFORMAT	pcmwf;
-#if defined(VERMOUTH_LIB)
-	UINT			num;
-#endif
 
 	if ((pDSound == NULL) ||
 		(rate != 11025) && (rate != 22050) && (rate != 44100)) {
@@ -104,11 +98,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	}
 
 #if defined(VERMOUTH_LIB)
-	vermouth_module = midimod_create(rate);
-	for (num=0; num<128; num++) {
-		midimod_loadprogram(vermouth_module, num);
-		midimod_loadrhythm(vermouth_module, num);
-	}
+	cmvermouth_load(rate);
 #endif
 	dsstreamevent = (BYTE)-1;
 	soundmng_reset();
@@ -146,8 +136,7 @@ void soundmng_destroy(void) {
 
 	if (pDSData3) {
 #if defined(VERMOUTH_LIB)
-		midimod_destroy(vermouth_module);
-		vermouth_module = NULL;
+		cmvermouth_unload();
 #endif
 		pDSData3->Stop();
 		pDSData3->Release();

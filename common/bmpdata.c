@@ -121,3 +121,67 @@ bdgi_err:
 	return(FAILURE);
 }
 
+BYTE *bmpdata_lzx(int level, int dstsize, const BYTE *dat) {
+
+	BYTE	*ret;
+	BYTE	*ptr;
+	BYTE	ctrl;
+	BYTE	bit;
+	UINT	mask;
+	UINT	tmp;
+	int		pos;
+	int		leng;
+
+	ret = NULL;
+	if (dat == NULL) {
+		return(NULL);
+	}
+	ret = (BYTE *)_MALLOC(dstsize, "res");
+	if (ret == NULL) {
+		goto lxz_err;
+	}
+	ptr = ret;
+
+	ctrl = 0;
+	bit = 0;
+	mask = (1 << level) - 1;
+	while(dstsize > 0) {
+		if (!bit) {
+			ctrl = *dat++;
+			bit = 0x80;
+		}
+		if (ctrl & bit) {
+			tmp = *dat++;
+			tmp <<= 8;
+			tmp |= *dat++;
+			pos = -1 - (tmp >> level);
+			leng = (tmp & mask) + 1;
+			leng = min(leng, dstsize);
+			dstsize -= leng;
+			while(leng--) {
+				*ptr = *(ptr + pos);
+				ptr++;
+			}
+		}
+		else {
+			*ptr++ = *dat++;
+			dstsize--;
+		}
+		bit >>= 1;
+	}
+
+lxz_err:
+	return(ret);
+}
+
+BYTE *bmpdata_solvedata(const BYTE *dat) {
+
+	int		dstsize;
+
+	if (dat == NULL) {
+		return(NULL);
+	}
+	dstsize = dat[0] + (dat[1] << 8) + (dat[2] << 16);
+	return(bmpdata_lzx(dat[3], dstsize, dat + 4));
+}
+

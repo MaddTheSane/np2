@@ -1,12 +1,95 @@
 #include	"compiler.h"
 
 
-int milstr_cmp(const char *str, const char *cmp) {
+
+// ---- ANK
+
+#if defined(SUPPORT_ANK)
+int milank_cmp(const char *str, const char *cmp) {
 
 	int		s;
 	int		c;
 
-	while(1) {
+	do {
+		s = (BYTE)*str++;
+		if (((s - 'a') & 0xff) < 26) {
+			s -= 0x20;
+		}
+		c = (BYTE)*cmp++;
+		if (((c - 'a') & 0xff) < 26) {
+			c -= 0x20;
+		}
+		if (s != c) {
+			return((s > c)?1:-1);
+		}
+	} while(s);
+	return(0);
+}
+
+int milank_memcmp(const char *str, const char *cmp) {
+
+	int		s;
+	int		c;
+
+	do {
+		c = (BYTE)*cmp++;
+		if (c == 0) {
+			return(0);
+		}
+		if (((c - 'a') & 0xff) < 26) {
+			c -= 0x20;
+		}
+		s = (BYTE)*str++;
+		if (((s - 'a') & 0xff) < 26) {
+			s -= 0x20;
+		}
+	} while(s == c);
+	return((s > c)?1:-1);
+}
+
+void milank_ncpy(char *dst, const char *src, int maxlen) {
+
+	int		i;
+
+	if (maxlen > 0) {
+		maxlen--;
+		for (i=0; i<maxlen && src[i]; i++) {
+			dst[i] = src[i];
+		}
+		dst[i] = '\0';
+	}
+}
+
+void milank_ncat(char *dst, const char *src, int maxlen) {
+
+	int		i;
+	int		j;
+
+	if (maxlen > 0) {
+		maxlen--;
+		for (i=0; i<maxlen; i++) {
+			if (!dst[i]) {
+				break;
+			}
+		}
+		for (j=0; i<maxlen && src[j]; i++, j++) {
+			dst[i] = src[j];
+		}
+		dst[i] = '\0';
+	}
+}
+#endif
+
+
+// ---- Shift-JIS
+
+#if defined(SUPPORT_SJIS)
+int milsjis_cmp(const char *str, const char *cmp) {
+
+	int		s;
+	int		c;
+
+	do {
 		s = (BYTE)*str++;
 		if ((((s ^ 0x20) - 0xa1) & 0xff) < 0x3c) {
 			c = (BYTE)*cmp++;
@@ -28,17 +111,14 @@ int milstr_cmp(const char *str, const char *cmp) {
 		if (s != c) {
 			goto mscp_err;
 		}
-		if (!s) {
-			break;
-		}
-	}
+	} while(s);
 	return(0);
 
 mscp_err:
 	return((s > c)?1:-1);
 }
 
-BOOL milstr_memcmp(const char *str, const char *cmp) {
+int milsjis_memcmp(const char *str, const char *cmp) {
 
 	int		s;
 	int		c;
@@ -66,48 +146,10 @@ BOOL milstr_memcmp(const char *str, const char *cmp) {
 			return(0);
 		}
 	} while(s == c);
-	return(1);
+	return((s > c)?1:-1);
 }
 
-BOOL milstr_extendcmp(const char *str, const char *cmp) {
-
-	char	c, s = '\0';
-
-	while(*cmp) {
-		while(*cmp) {
-			s = *cmp++;
-			if (!s) {
-				return(0);
-			}
-			if ((s >= '0') && (s <= '9')) {
-				break;
-			}
-			s &= 0xdf;
-			if ((s >= 'A') && (s <= 'Z')) {
-				break;
-			}
-		}
-		while(1) {
-			c = *str++;
-			if (!c) {
-				return(1);
-			}
-			if ((c >= '0') && (c <= '9')) {
-				break;
-			}
-			c &= 0xdf;
-			if ((c >= 'A') && (c <= 'Z')) {
-				break;
-			}
-		}
-		if (c != s) {
-			return(1);
-		}
-	}
-	return(0);
-}
-
-int milstr_kanji1st(const char *str, int pos) {
+int milsjis_kanji1st(const char *str, int pos) {
 
 	int		ret;
 
@@ -119,26 +161,27 @@ int milstr_kanji1st(const char *str, int pos) {
 	return(ret);
 }
 
-int milstr_kanji2nd(const char *str, int pos) {
+int milsjis_kanji2nd(const char *str, int pos) {
 
 	int		ret = 0;
 
-	while((pos) && ((((str[--pos] ^ 0x20) - 0xa1) & 0xff) < 0x3c)) {
+	while((pos > 0) && ((((str[--pos] ^ 0x20) - 0xa1) & 0xff) < 0x3c)) {
 		ret ^= 1;
 	}
 	return(ret);
 }
 
-void milstr_ncpy(char *dst, const char *src, int maxlen) {
+void milsjis_ncpy(char *dst, const char *src, int maxlen) {
 
 	int		i;
 
-	if (maxlen--) {
+	if (maxlen > 0) {
+		maxlen--;
 		for (i=0; i<maxlen && src[i]; i++) {
 			dst[i] = src[i];
 		}
 		if (i) {
-			if (milstr_kanji1st(src, i-1)) {
+			if (milsjis_kanji1st(src, i-1)) {
 				i--;
 			}
 		}
@@ -146,25 +189,202 @@ void milstr_ncpy(char *dst, const char *src, int maxlen) {
 	}
 }
 
-void milstr_ncat(char *dst, const char *src, int maxlen) {
+void milsjis_ncat(char *dst, const char *src, int maxlen) {
 
 	int		i;
 	int		j;
 
-	if (maxlen--) {
+	if (maxlen > 0) {
+		maxlen--;
 		for (i=0; i<maxlen; i++) {
-			if (!dst[i]) break;
+			if (!dst[i]) {
+				break;
+			}
 		}
 		for (j=0; i<maxlen && src[j]; i++, j++) {
 			dst[i] = src[j];
 		}
-		if ((i) && (j)) {
-			if (milstr_kanji1st(dst, i-1)) {
+		if ((i > 0) && (j > 0)) {
+			if (milsjis_kanji1st(dst, i-1)) {
 				i--;
 			}
 		}
 		dst[i] = '\0';
 	}
+}
+#endif
+
+
+// ---- EUC
+
+#if defined(SUPPORT_EUC)
+int mileuc_cmp(const char *str, const char *cmp) {
+
+	int		s;
+	int		c;
+
+	do {
+		s = (BYTE)*str++;
+		if (((s - 0xa1) & 0xff) < 0x5d) {
+			c = (BYTE)*cmp++;
+			if (s != c) {
+				goto mscp_err;
+			}
+			s = (BYTE)*str++;
+			c = (BYTE)*cmp++;
+		}
+		else {
+			if (((s - 'a') & 0xff) < 26) {
+				s -= 0x20;
+			}
+			c = (BYTE)*cmp++;
+			if (((c - 'a') & 0xff) < 26) {
+				c -= 0x20;
+			}
+		}
+		if (s != c) {
+			goto mscp_err;
+		}
+	} while(s);
+	return(0);
+
+mscp_err:
+	return((s > c)?1:-1);
+}
+
+int mileuc_memcmp(const char *str, const char *cmp) {
+
+	int		s;
+	int		c;
+
+	do {
+		c = (BYTE)*cmp++;
+		if (((c - 0xa1) & 0xff) < 0x5d) {
+			s = (BYTE)*str++;
+			if (c != s) {
+				break;
+			}
+			c = (BYTE)*cmp++;
+			s = (BYTE)*str++;
+		}
+		else if (c) {
+			if (((c - 'a') & 0xff) < 26) {
+				c -= 0x20;
+			}
+			s = (BYTE)*str++;
+			if (((s - 'a') & 0xff) < 26) {
+				s -= 0x20;
+			}
+		}
+		else {
+			return(0);
+		}
+	} while(s == c);
+	return((s > c)?1:-1);
+}
+
+int mileuc_kanji1st(const char *str, int pos) {
+
+	int		ret;
+
+	ret = 0;
+	while((pos >= 0) &&
+		(((str[pos--] - 0xa1) & 0xff) < 0x5d)) {
+		ret ^= 1;
+	}
+	return(ret);
+}
+
+int mileuc_kanji2nd(const char *str, int pos) {
+
+	int		ret = 0;
+
+	while((pos > 0) && (((str[--pos] - 0xa1) & 0xff) < 0x5d)) {
+		ret ^= 1;
+	}
+	return(ret);
+}
+
+void mileuc_ncpy(char *dst, const char *src, int maxlen) {
+
+	int		i;
+
+	if (maxlen > 0) {
+		maxlen--;
+		for (i=0; i<maxlen && src[i]; i++) {
+			dst[i] = src[i];
+		}
+		if (i) {
+			if (mileuc_kanji1st(src, i-1)) {
+				i--;
+			}
+		}
+		dst[i] = '\0';
+	}
+}
+
+void mileuc_ncat(char *dst, const char *src, int maxlen) {
+
+	int		i;
+	int		j;
+
+	if (maxlen > 0) {
+		maxlen--;
+		for (i=0; i<maxlen; i++) {
+			if (!dst[i]) {
+				break;
+			}
+		}
+		for (j=0; i<maxlen && src[j]; i++, j++) {
+			dst[i] = src[j];
+		}
+		if ((i > 0) && (j > 0)) {
+			if (mileuc_kanji1st(dst, i-1)) {
+				i--;
+			}
+		}
+		dst[i] = '\0';
+	}
+}
+#endif
+
+
+// ---- other
+
+int milstr_extendcmp(const char *str, const char *cmp) {
+
+	int		c;
+	int		s;
+
+	do {
+		while(1) {
+			c = (BYTE)*cmp++;
+			if (!c) {
+				return(0);
+			}
+			if (((c - '0') & 0xff) < 10) {
+				break;
+			}
+			c |= 0x20;
+			if (((c - 'a') & 0xff) < 26) {
+				break;
+			}
+		}
+		while(1) {
+			s = *str++;
+			if (!s) {
+				break;
+			}
+			if (((s - '0') & 0xff) < 10) {
+				break;
+			}
+			s |= 0x20;
+			if (((s - 'a') & 0xff) < 26) {
+				break;
+			}
+		}
+	} while(s == c);
+	return((s > c)?1:-1);
 }
 
 int milstr_getarg(char *str, char *arg[], int maxarg) {

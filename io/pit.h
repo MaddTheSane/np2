@@ -2,7 +2,7 @@
 typedef struct {
 	BYTE	mode[4];
 	BYTE	flag[4];
-	BYTE	high[4];
+	BYTE	intr[4];
 	UINT16	value[4];
 	UINT16	latch[4];
 } _PIT, *PIT;

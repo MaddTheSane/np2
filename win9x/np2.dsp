@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=np2 - Win32 Debug
+CFG=np2 - Win32 Trace
 !MESSAGE これは有効なﾒｲｸﾌｧｲﾙではありません。 このﾌﾟﾛｼﾞｪｸﾄをﾋﾞﾙﾄﾞするためには NMAKE を使用してください。
 !MESSAGE [ﾒｲｸﾌｧｲﾙのｴｸｽﾎﾟｰﾄ] ｺﾏﾝﾄﾞを使用して実行してください
 !MESSAGE 
@@ -13,7 +13,7 @@ CFG=np2 - Win32 Debug
 !MESSAGE NMAKE の実行時に構成を指定できます
 !MESSAGE ｺﾏﾝﾄﾞ ﾗｲﾝ上でﾏｸﾛの設定を定義します。例:
 !MESSAGE 
-!MESSAGE NMAKE /f "np2.mak" CFG="np2 - Win32 Debug"
+!MESSAGE NMAKE /f "np2.mak" CFG="np2 - Win32 Trace"
 !MESSAGE 
 !MESSAGE 選択可能なﾋﾞﾙﾄﾞ ﾓｰﾄﾞ:
 !MESSAGE 
@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\keydisp" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /FAcs /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /FAcs /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -71,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /I ".\\" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\dialog" /I "..\keydisp" /I "..\debuguty" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\keydisp" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /FAcs /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\keydisp" /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /FAcs /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -97,7 +97,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I ".\dialog" /I ".\keydisp" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /D "_DEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\keydisp" /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\i286x" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\fdd" /I "..\lio" /I "..\font" /I "..\generic" /D "_DEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
@@ -674,10 +674,6 @@ SOURCE=..\FONT\FONTX68K.C
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\DIALOG\BIT2RES.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\DIALOG\D_ABOUT.CPP
 # End Source File
 # Begin Source File
@@ -719,30 +715,6 @@ SOURCE=.\DIALOG\DIALOGS.CPP
 # Begin Source File
 
 SOURCE=.\DIALOG\NP2CLASS.CPP
-# End Source File
-# End Group
-# Begin Group "keydisp"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\KEYDISP\DD2.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\KEYDISP\DD2SUB.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\KEYDISP\KEYDISP.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\KEYDISP\KEYDISPR.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\KEYDISP\KEYDISPS.CPP
 # End Source File
 # End Group
 # Begin Group "debuguty"
@@ -897,6 +869,10 @@ InputName=DCLOCKD
 # End Source File
 # Begin Source File
 
+SOURCE=.\DD2.CPP
+# End Source File
+# Begin Source File
+
 SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
@@ -921,6 +897,10 @@ SOURCE=.\JULIET.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\KDISPWIN.CPP
+# End Source File
+# Begin Source File
+
 SOURCE=.\MENU.CPP
 # End Source File
 # Begin Source File
@@ -929,11 +909,11 @@ SOURCE=.\MOUSEMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\Np2.cpp
+SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\np2.rc
+SOURCE=.\NP2.RC
 # End Source File
 # Begin Source File
 
@@ -1217,6 +1197,22 @@ SOURCE=..\VRAM\SDRAW.C
 # Begin Source File
 
 SOURCE=..\VRAM\VRAM.C
+# End Source File
+# End Group
+# Begin Group "generic"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\GENERIC\CMNDRAW.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\DIPSWBMP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\KEYDISP.C
 # End Source File
 # End Group
 # Begin Source File
