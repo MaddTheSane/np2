@@ -153,6 +153,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 	} str;
 	COMCFG	*cfg;
 	UINT	update;
+	COMMNG	cm;
 
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -288,12 +289,18 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 				}
 
 				cfg->def_en = GetDlgItemCheck(hWnd, m->idc[ID_DEFE]);
+				cm = *m->cm;
+				if (cm) {
+					cm->msg(cm, COMMSG_MIMPIDEFEN, cfg->def_en);
+				}
 				GetDlgItemText(hWnd, m->idc[ID_DEFF],
 												str.mdef, sizeof(str.mdef));
 				if (milstr_cmp(cfg->def, str.mdef)) {
 					milstr_ncpy(cfg->def, str.mdef, sizeof(cfg->def));
 					update |= SYS_UPDATEOSCFG;
-//					commsmidi_toneload(m->comm, str.mdef);
+					if (cm) {
+						cm->msg(cm, COMMSG_MIMPIDEFFILE, (long)str.mdef);
+					}
 				}
 				sysmng_update(update);
 				return(TRUE);

@@ -13,7 +13,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 extern	COMMNG	cm_mpu98;
+
 #ifdef __cplusplus
 }
 #endif
@@ -166,10 +168,15 @@ static void updatempu(HWND hWnd) {
 	}
 
 	np2oscfg.mpu.def_en = GetDlgItemCheck(hWnd, IDC_MPU98DEFE);
+	if (cm_mpu98) {
+		cm_mpu98->msg(cm_mpu98, COMMSG_MIMPIDEFEN, np2oscfg.mpu.def_en);
+	}
 	GetDlgItemText(hWnd, IDC_MPU98DEFF, s.mdef, sizeof(s.mdef));
 	if (milstr_cmp(np2oscfg.mpu.def, s.mdef)) {
 		milstr_ncpy(np2oscfg.mpu.def, s.mdef, sizeof(np2oscfg.mpu.def));
-//		commsmidi_toneload(&mpu98_comm, s.mdef);
+		if (cm_mpu98) {
+			cm_mpu98->msg(cm_mpu98, COMMSG_MIMPIDEFFILE, (long)s.mdef);
+		}
 		update |= SYS_UPDATEOSCFG;
 	}
 	sysmng_update(update);
