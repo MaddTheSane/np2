@@ -606,23 +606,19 @@ buffer_play(void *arg)
 	size_t len = opna_frame;
 	size_t s;
 	ssize_t r;
+	int nextbuf;
 
 	UNUSED(arg);
 
-	buf = (char *)_MALLOC(len, "sound playing buf");
-	if (buf == NULL) {
-		fprintf(stderr, "buffer_play: can't alloc memory\n");
-		return NULL;
-	}
-
 	is_proc = TRUE;
 	while (is_proc) {
+		nextbuf = sound_nextbuf;
 		if (sound_event)
 			memset(sound_event, 0, len);
-		memcpy(buf, sound_buffer[sound_nextbuf], len);
 		sound_nextbuf = (sound_nextbuf + 1) % NSOUNDBUFFER;
 		sound_event = sound_buffer[sound_nextbuf];
 
+		buf = sound_buffer[nextbuf];
 		s = 0;
 		for (;;) {
 			r = write(audio_fd, buf + s, len - s);
@@ -633,7 +629,6 @@ buffer_play(void *arg)
 			}
 		}
 	}
-	_MFREE(buf);
 	is_proc = FALSE;
 
 	return NULL;

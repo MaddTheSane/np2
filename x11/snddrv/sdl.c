@@ -39,7 +39,7 @@ static void sdlaudio_callback(void *, unsigned char *, int);
 static BOOL
 sdlaudio_init(UINT rate, UINT samples)
 {
-	SDL_AudioSpec fmt;
+	static SDL_AudioSpec fmt;
 	int rv;
 
 	fmt.freq = rate;
@@ -239,17 +239,17 @@ static void
 sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 {
 	UINT samples = (UINT)userdata;
+	int nextbuf = sound_nextbuf;
 
 	UNUSED(len);
 
 	if (sound_event != NULL)
 		memset(sound_event, 0, samples);
-
-	SDL_MixAudio(stream, sound_buffer[sound_nextbuf], samples,
-	    SDL_MIX_MAXVOLUME);
-
 	sound_nextbuf = (sound_nextbuf + 1) % NSOUNDBUFFER;
 	sound_event = sound_buffer[sound_nextbuf];
+
+	SDL_MixAudio(stream, sound_buffer[nextbuf], samples,
+	    SDL_MIX_MAXVOLUME);
 }
 
 #endif	/* USE_SDLAUDIO || USE_SDLMIXER */
