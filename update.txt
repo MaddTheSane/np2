@@ -33,6 +33,12 @@
 　(WinCE)
 　　・ソフトウェアキーボードのサポート
 
+　(X11)
+　　・Qt の実験的なサポート
+　　・MIT Shared-Memory Extention shared Pixmap サポート
+　　・画面描画時の無駄を減らした
+　　・Key Display のサポート
+
 
 　でぶねこ補足
 　　・必須
