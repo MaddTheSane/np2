@@ -293,10 +293,10 @@ static REG8 IOINPCALL amd_ida(UINT port) {
 
 static REG8 IOINPCALL amd_idb(UINT port) {
 
-	if (opn.opnreg < 0x0e) {
+	if (opn.extreg < 0x0e) {
 		return(psggen_getreg(&psg2, opn.extreg));
 	}
-	else if (opn.opnreg == 0x0f) {
+	else if (opn.extreg == 0x0f) {
 		return(psg2.reg.io2);
 	}
 	(void)port;

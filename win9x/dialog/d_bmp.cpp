@@ -29,9 +29,12 @@ static const FILESEL fontui = {fontui_title, str_bmp, fontui_filter, 3};
 
 static const char bmpui_file[] = "NP2_%04d.BMP";
 static const char bmpui_title[] = "Save as bitmap file";
-static const char bmpui_filter1[] = "1bit-bitmap (*.bmp)\0*.bmp\0";
-static const char bmpui_filter4[] = "4bit-bitmap (*.bmp)\0*.bmp\0";
-static const char bmpui_filter8[] = "8bit-bitmap (*.bmp)\0*.bmp\0";
+static const char bmpui_filter1[] = "1bit-bitmap (*.bmp)\0*.bmp\0" \
+							"Graphics Interchange Format (*.gif)\0*.gif\0";
+static const char bmpui_filter4[] = "4bit-bitmap (*.bmp)\0*.bmp\0" \
+							"Graphics Interchange Format (*.gif)\0*.gif\0";
+static const char bmpui_filter8[] = "8bit-bitmap (*.bmp)\0*.bmp\0" \
+							"Graphics Interchange Format (*.gif)\0*.gif\0";
 static const char bmpui_filter24[] = "24bit-bitmap (*.bmp)\0*.bmp\0";
 static const char *bmpui_filter[4] = {
 				bmpui_filter1, bmpui_filter4, bmpui_filter8, bmpui_filter24};
