@@ -120,7 +120,7 @@ void mackbd_callback(void) {
 	BYTE	mackeymap[16];
 	UINT16	tmp;
 	UINT16	keyxor;
-	int		i;
+	UINT	i;
 
 	tick = GETTICK();
 	if (shiftchktick != tick) {

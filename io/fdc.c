@@ -74,6 +74,7 @@ void fdcbusy_error7(NEVENTITEM item) {
 	}
 }
 
+#if 0		// ↑イベントは残しとく...
 static void fdcderay_error7(SINT16 ms) {							// ver0.27
 
 	fdc.busy = 1;
@@ -81,6 +82,7 @@ static void fdcderay_error7(SINT16 ms) {							// ver0.27
 	fdc.status &= ~FDCSTAT_RQM;
 	nevent_setbyms(NEVENT_FDCBUSY, ms, fdcbusy_error7, NEVENT_ABSOLUTE);
 }
+#endif
 
 
 // ----------------------------------------------------------------------
@@ -463,6 +465,7 @@ static void FDC_SenceintStatus(void) {					// cmd: 08
 	}
 }
 
+#if 0	// for test..
 static void FDC_ReadID(void) {							// cmd: 0a
 
 	switch(fdc.event) {
@@ -471,6 +474,7 @@ static void FDC_ReadID(void) {							// cmd: 0a
 			break;
 	}
 }
+#endif
 
 static void FDC_WriteID(void) {							// cmd: 0d
 

@@ -12,14 +12,17 @@ typedef struct {
 } _QDRAW, *QDRAW;
 
 
-static	_QDRAW		qdraw;
-static	GDHandle	hgd;
-static	GWorldPtr	gwp;
-static	SCRNSURF	scrnsurf;
-
 #ifdef NP2GCC
 #define macosx_only
 #endif
+
+static	_QDRAW		qdraw;
+static	SCRNSURF	scrnsurf;
+#if !defined(macosx_only)
+static	GWorldPtr	gwp;
+static	GDHandle	hgd;
+#endif
+
 
 void scrnmng_initialize(void) {
 }
@@ -89,8 +92,6 @@ void scrnmng_setheight(int posy, int height) {
 const SCRNSURF *scrnmng_surflock(void) {
 
 	QDRAW		qd;
-	GDHandle	hgd;
-	GWorldPtr	gwp;
 
 #if 0 && defined(macosx_only)    
 //色深度が32ビットじゃないときはさようなら(tk800)

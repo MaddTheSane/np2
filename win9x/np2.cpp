@@ -51,9 +51,6 @@
 
 #define	STATSAVEMAX		10
 
-static	char		np2help[] = "np2.hlp";
-static	char		np2resume[] = "sav";
-
 static	char		szClassName[] = "NP2-MainWindow";
 		HWND		hWndMain;
 		HINSTANCE	hInst;
@@ -85,6 +82,9 @@ static	BYTE	np2stopemulate = 0;
 static	int		np2opening = 1;
 static	int		np2quitmsg = 0;
 		HMENU	hStat = NULL;
+
+static const char np2help[] = "np2.hlp";
+static const char np2resume[] = "sav";
 
 
 typedef struct {

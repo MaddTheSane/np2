@@ -28,13 +28,13 @@ static UINT32 nexttrackptr(FDDFILE fdd, UINT32 fptr, UINT32 last) {
 // ----
 
 typedef struct {
-	FDDFILE		fdd;
-	UINT		track;
-	BYTE		type;
-	long		fptr;
-	UINT		size;
-	BOOL		write;
-	BYTE		buf[D88BUFSIZE];
+	FDDFILE	fdd;
+	UINT	track;
+	BYTE	type;
+	long	fptr;
+	UINT	size;
+	BOOL	write;
+	BYTE	buf[D88BUFSIZE];
 } _D88TRK, *D88TRK;
 
 static	_D88TRK		d88trk;
@@ -177,7 +177,7 @@ static BOOL rpmcheck(D88SEC sec) {
 	return(SUCCESS);
 }
 
-
+#if 0
 static D88SEC d88trk_seasector(BOOL check) {
 
 	D88TRK	trk;
@@ -218,6 +218,7 @@ static D88SEC d88trk_seasector(BOOL check) {
 	}
 	return(NULL);
 }
+#endif
 
 
 // ----
@@ -599,7 +600,7 @@ static int fileappend(FILEH hdl, FDDFILE fdd,
 		return(0);
 	}
 	while(length) {
-		if (length >= sizeof(tmp)) {
+		if (length >= (long)(sizeof(tmp))) {
 			size = sizeof(tmp);
 		}
 		else {

@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"resource.h"
+#include	"strres.h"
 #include	"np2.h"
 #include	"dosio.h"
 #include	"scrnmng.h"
@@ -48,6 +49,9 @@ static	BYTE		scrnmode;
 #define	DEFAULTPATH		"::::"
 #endif
 static	char	target[MAX_PATH] = DEFAULTPATH;
+
+
+static const char np2resume[] = "sav";
 
 
 // ---- ‚¨‚Ü‚¶‚È‚¢
@@ -511,6 +515,29 @@ static void processwait(UINT waitcnt) {
 	}
 }
 
+static void getstatfilename(char *path, const char *ext, int size) {
+
+	file_cpyname(path, file_getcd("np2"), size);
+	file_catname(path, str_dot, size);
+	file_catname(path, ext, size);
+}
+
+static void flagsave(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	statsave_save(path);
+}
+
+static void flagload(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	statsave_load(path);
+}
+
 int main(int argc, char *argv[]) {
 
 	Rect		wRect;
@@ -568,7 +595,7 @@ int main(int argc, char *argv[]) {
 	pccore_reset();
 
 #if defined(USE_RESUME)
-	statsave_load(":np2.sav");
+	flagload(np2resume);
 #endif
 
 	SetEventMask(everyEvent);
@@ -635,7 +662,7 @@ int main(int argc, char *argv[]) {
 	pccore_cfgupdate();
 
 #if defined(USE_RESUME)
-	statsave_save(":np2.sav");
+	flagsave(np2resume);
 #endif
 
 	pccore_term();

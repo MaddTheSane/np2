@@ -3,6 +3,8 @@
 #include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
+#include	"sound.h"
+#include	"beep.h"
 
 
 void IOOUTCALL dipsw_w8(UINT port, BYTE value) {
@@ -55,6 +57,7 @@ void IOOUTCALL dipsw_w8(UINT port, BYTE value) {
 				set = (value >> 2) & 0x03;
 				if (np2cfg.BEEP_VOL != set) {
 					np2cfg.BEEP_VOL = set;
+					beep_setvol(set);
 					update |= SYS_UPDATECFG;
 				}
 			}

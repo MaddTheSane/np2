@@ -40,6 +40,10 @@ enum {
 #endif
 #endif
 
+#if !defined(RGB16)
+#define	RGB16		UINT16
+#endif
+
 #if !defined(RGB32)
 #if defined(BYTESEX_LITTLE)
 typedef union {

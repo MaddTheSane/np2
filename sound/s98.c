@@ -110,7 +110,7 @@ void S98_trash(void) {
 
 BOOL S98_open(const char *filename) {
 
-	int			i;
+	UINT	i;
 
 	// ファイルのオープン
 	s98log.fh = file_create(filename);

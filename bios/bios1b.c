@@ -44,6 +44,7 @@ static void biosfd_setchrn(void) {
 	fdc.N = I286_CH;
 }
 
+#if 0
 static void biosfd_resultout(UINT32 result) {
 
 	BYTE	*ptr;
@@ -58,6 +59,7 @@ static void biosfd_resultout(UINT32 result) {
 	ptr[6] = fdc.N;
 	ptr[7] = fdc.ncn;
 }
+#endif
 
 static BOOL biosfd_seek(BYTE track, BOOL ndensity) {
 

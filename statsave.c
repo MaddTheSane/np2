@@ -543,7 +543,7 @@ typedef struct {
 static int nevent_save(NP2FFILE *f, int num) {
 
 	NEVTITEM	nit;
-	int			i;
+	UINT		i;
 
 	ZeroMemory(&nit, sizeof(nit));
 	for (i=0; i<sizeof(evtnum)/sizeof(ENUMTBL); i++) {
@@ -1192,7 +1192,7 @@ int statsave_save(const char *filename) {
 
 	NP2FFILE	f;
 	int			ret;
-	int			i;
+	UINT		i;
 
 	ret = flagcreate(&f, filename);
 	if (ret == NP2FLAG_FAILURE) {
@@ -1257,7 +1257,7 @@ int statsave_check(const char *filename, char *buf, int size) {
 
 	NP2FFILE	f;
 	int			ret;
-	int			i;
+	UINT		i;
 	BOOL		done;
 	ERR_BUF		e;
 
@@ -1339,7 +1339,7 @@ int statsave_load(const char *filename) {
 
 	NP2FFILE	f;
 	int			ret;
-	int			i;
+	UINT		i;
 	BOOL		done;
 
 	ret = flagopen(&f, filename, NULL);

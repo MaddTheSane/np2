@@ -65,11 +65,13 @@ void sysmng_updatecaption(BYTE flag) {
 	if (flag & 2) {
 		clock[0] = '\0';
 		if (np2oscfg.DISPCLK & 2) {
-			SPRINTF(clock, " - %u.%1uFPS",
-								workclock.fps / 10, workclock.fps % 10);
-		}
-		else {
-			milstr_ncpy(clock, " - 0FPS", sizeof(clock));
+			if (workclock.fps) {
+				SPRINTF(clock, " - %u.%1uFPS",
+									workclock.fps / 10, workclock.fps % 10);
+			}
+			else {
+				milstr_ncpy(clock, " - 0FPS", sizeof(clock));
+			}
 		}
 		if (np2oscfg.DISPCLK & 1) {
 			SPRINTF(work, " %2u.%03uMHz",
