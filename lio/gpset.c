@@ -7,27 +7,44 @@ typedef struct {
 	BYTE	x[2];
 	BYTE	y[2];
 	BYTE	pal;
-} LIOGPSET;
+} GPSET;
 
 
-REG8 lio_gpset(void) {
+// ---- CLS
 
-	LIOGPSET	gpset;
-	SINT16		x;
-	SINT16		y;
+REG8 lio_gcls(LIOWORK lio) {
 
-	i286_memstr_read(CPU_DS, CPU_BX, &gpset, sizeof(gpset));
-	if (gpset.pal >= lio.gcolor1.palmax) {
+	SINT16	y;
+
+	lio_updaterange(lio);
+	for (y=lio->range.y1; y<=lio->range.y2; y++) {
+		lio_line(lio, lio->range.x1, lio->range.x2, y, lio->gcolor1.bgcolor);
+	}
+	return(LIO_SUCCESS);
+}
+
+
+// ---- PSET
+
+REG8 lio_gpset(LIOWORK lio) {
+
+	GPSET	dat;
+	SINT16	x;
+	SINT16	y;
+
+	lio_updaterange(lio);
+	i286_memstr_read(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	if (dat.pal >= lio->gcolor1.palmax) {
 		if (CPU_AH == 2) {
-			gpset.pal = lio.gcolor1.bgcolor;
+			dat.pal = lio->gcolor1.bgcolor;
 		}
 		else {
-			gpset.pal = lio.gcolor1.fgcolor;
+			dat.pal = lio->gcolor1.fgcolor;
 		}
 	}
-	x = (SINT16)LOADINTELWORD(gpset.x);
-	y = (SINT16)LOADINTELWORD(gpset.y);
-	lio_pset(x, y, gpset.pal);
+	x = (SINT16)LOADINTELWORD(dat.x);
+	y = (SINT16)LOADINTELWORD(dat.y);
+	lio_pset(lio, x, y, dat.pal);
 	return(LIO_SUCCESS);
 }
 

@@ -132,6 +132,55 @@ const CRTDATA	*crt;
 	bios0x18_10(0);
 }
 
+REG16 bios0x18_14(REG16 seg, REG16 off, REG16 code) {
+
+	UINT16	size;
+const char	*p;
+	BYTE	buf[32];
+	UINT	i;
+
+	switch(code >> 8) {
+		case 0x00:			// 8x8
+			size = 0x0101;
+			i286_memword_write(seg, off, 0x0101);
+			p = fontrom + 0x82000 + ((code & 0xff) << 4);
+			i286_memstr_write(seg, off + 2, p, 8);
+			break;
+
+		case 0x28:			// 8x16 KANJI
+		case 0x29:
+		case 0x2a:
+		case 0x2b:
+			size = 0x0102;
+			i286_memword_write(seg, off, 0x0102);
+			p = fontrom;
+			p += (code & 0x7f) << 12;
+			p += (((code >> 8) - 0x20) & 0x7f) << 4;
+			i286_memstr_write(seg, off + 2, p, 16);
+			break;
+
+		case 0x80:			// 8x16 ANK
+			size = 0x0102;
+			p = fontrom + 0x80000 + ((code & 0xff) << 4);
+			i286_memstr_write(seg, off + 2, p, 16);
+			break;
+
+		default:
+			size = 0x0202;
+			p = fontrom;
+			p += (code & 0x7f) << 12;
+			p += (((code >> 8) - 0x20) & 0x7f) << 4;
+			for (i=0; i<16; i++, p++) {
+				buf[i*2+0] = *p;
+				buf[i*2+1] = *(p+0x800);
+			}
+			i286_memstr_write(seg, off + 2, buf, 32);
+			break;
+	}
+	i286_memword_write(seg, off, size);
+	return(size);
+}
+
 void bios0x18_16(REG8 chr, REG8 atr) {
 
 	UINT32	i;
@@ -164,7 +213,7 @@ static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
 }
 
 
-static void bios18_47(void) {
+static void bios0x18_47(void) {
 
 	UCWTBL		ucw;
 	GDCVECT		vect;
@@ -318,7 +367,7 @@ static void bios18_47(void) {
 	setbiosgdc(csrw, &vect, ope);
 }
 
-static void bios18_49(void) {
+static void bios0x18_49(void) {
 
 	UCWTBL		ucw;
 	UINT		i;
@@ -591,41 +640,7 @@ void bios0x18(void) {
  			break;
 
    		case 0x14:						// フォントパターンの読み出し
-			switch(CPU_DH) {
-				case 0x00:			// 8x8
-					i286_memword_write(CPU_BX, CPU_CX, 0x0101);
-					i286_memstr_write(CPU_BX, CPU_CX + 2,
-								fontrom + 0x82000 + (CPU_DL << 4), 8);
-					break;
-
-				case 0x28:			// 8x16 KANJI
-				case 0x29:
-				case 0x2a:
-				case 0x2b:
-					i286_memword_write(CPU_BX, CPU_CX, 0x0102);
-					i286_memstr_write(CPU_BX, CPU_CX + 2,
-								fontrom + ((CPU_DL & 0x7f) << 12)
-										+ ((CPU_DH - 0x20) << 4), 16);
-					break;
-
-				case 0x80:			// 8x16 ANK
-					i286_memword_write(CPU_BX, CPU_CX, 0x0102);
-					i286_memstr_write(CPU_BX, CPU_CX + 2,
-								fontrom + 0x80000 + (CPU_DL << 4), 16);
-					break;
-
-				default:
-					buf[0] = 0x02;
-					buf[1] = 0x02;
-					p = fontrom + ((CPU_DL & 0x7f) << 12)
-								+ (((CPU_DH - 0x20) & 0x7f) << 4);
-					for (i=1; i<17; i++, p++) {
-						buf[i*2+0] = *p;
-						buf[i*2+1] = *(p+0x800);
-					}
-					i286_memstr_write(CPU_BX, CPU_CX, buf, 34);
-					break;
-			}
+			bios0x18_14(CPU_BX, CPU_CX, CPU_DX);
  			break;
 
  		case 0x15:						// ライトペン位置読みだし
@@ -771,11 +786,11 @@ void bios0x18(void) {
 
 		case 0x47:						// 直線、矩形の描画
 		case 0x48:						// 円の描画
-			bios18_47();
+			bios0x18_47();
 			break;
 
 		case 0x49:						// グラフィック文字の描画
-			bios18_49();
+			bios0x18_49();
 			break;
 
 		case 0x4a:						// 描画モードの設定

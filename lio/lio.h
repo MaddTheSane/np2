@@ -7,10 +7,10 @@ enum {
 
 
 typedef struct {
-	BYTE	mode;
-	BYTE	sw;
-	BYTE	act;
-	BYTE	disp;
+	UINT8	mode;
+	UINT8	sw;
+	UINT8	act;
+	UINT8	disp;
 } LIOGSCREEN;
 
 typedef struct {
@@ -18,8 +18,8 @@ typedef struct {
 	SINT16	y1;
 	SINT16	x2;
 	SINT16	y2;
-	BYTE	vdraw_bg;
-	BYTE	vdraw_ln;
+	UINT8	vdraw_bg;
+	UINT8	vdraw_ln;
 } LIOGVIEW;
 
 typedef struct {
@@ -36,57 +36,62 @@ typedef struct {
 typedef struct {
 	UINT16	top;
 	UINT16	lines;
-	BYTE	bank;
-	BYTE	plane;
-	BYTE	disp;
-	BYTE	dbit;
+	UINT8	bank;
+	UINT8	plane;
+	UINT8	disp;
+	UINT8	dbit;
 } LIO_SCRN;
-
 
 typedef struct {
 	SINT16	x1;
 	SINT16	y1;
 	SINT16	x2;
 	SINT16	y2;
-	BYTE	degcol[8];
+} LIORANGE;
 
+
+typedef struct {
 	LIO_SCRN	scrn;
 	LIOGSCREEN	gscreen;
 	LIOGVIEW	gview;
 	LIOGCOLOR1	gcolor1;
-} LIO_TABLE;
+	UINT8		degcol[8];
+
+	LIORANGE	range;
+
+} _LIOWORK, *LIOWORK;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern LIO_TABLE lio;
+extern const UINT32 lioplaneadrs[4];
 
 void lio_initialize(void);
 void bios_lio(REG8 cmd);
 
-void lio_makeviewmask(void);
-void lio_pset(SINT16 x, SINT16 y, BYTE pal);
-void lio_line(SINT16 x1, SINT16 x2, SINT16 y, BYTE pal);
+void lio_updaterange(LIOWORK lio);
+void lio_pset(const _LIOWORK *lio, SINT16 x, SINT16 y, REG8 pal);
+void lio_line(const _LIOWORK *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal);
 
-BYTE lio_ginit(void);
-BYTE lio_gscreen(void);
-REG8 lio_gview(void);
-REG8 lio_gcolor1(void);
-REG8 lio_gcolor2(void);
-BYTE lio_gcls(void);
-REG8 lio_gpset(void);
-BYTE lio_gline(void);
-BYTE lio_gcircle(void);
-BYTE lio_gpaint1(void);
-BYTE lio_gpaint2(void);
-BYTE lio_gget(void);
-BYTE lio_gput1(void);
-REG8 lio_gput2(void);
-BYTE lio_groll(void);
-BYTE lio_gpoint2(void);
-BYTE lio_gcopy(void);
+REG8 lio_ginit(LIOWORK lio);
+REG8 lio_gscreen(LIOWORK lio);
+REG8 lio_gview(LIOWORK lio);
+REG8 lio_gcolor1(LIOWORK lio);
+REG8 lio_gcolor2(LIOWORK lio);
+REG8 lio_gcls(LIOWORK lio);
+REG8 lio_gpset(LIOWORK lio);
+REG8 lio_gline(LIOWORK lio);
+REG8 lio_gcircle(LIOWORK lio);
+REG8 lio_gpaint1(LIOWORK lio);
+REG8 lio_gpaint2(LIOWORK lio);
+REG8 lio_gget(LIOWORK lio);
+REG8 lio_gput1(LIOWORK lio);
+REG8 lio_gput2(LIOWORK lio);
+REG8 lio_groll(LIOWORK lio);
+REG8 lio_gpoint2(LIOWORK lio);
+REG8 lio_gcopy(LIOWORK lio);
 
 #ifdef __cplusplus
 }

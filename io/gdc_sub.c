@@ -20,6 +20,8 @@ typedef struct {
 	SINT16	y2;
 } VECTDIR;
 
+const UINT32 gdcplaneseg[4] = {VRAM_E, VRAM_B, VRAM_R, VRAM_G};
+
 static	UINT16	gdc_rt[RT_TABLEMAX+1];
 
 static const VECTDIR vectdir[16] = {
@@ -546,7 +548,7 @@ void gdcsub_write(void) {
 	}
 	gdcs.grphdisp |= (BYTE)updatebit;
 
-	ptr += vramplaneseg[(adrs >> 14) & 3];
+	ptr += gdcplaneseg[(adrs >> 14) & 3];
 	adrs = (adrs & 0x3fff) << 1;
 	calc_gdcslavewait(leng);
 

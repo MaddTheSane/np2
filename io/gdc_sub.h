@@ -15,6 +15,8 @@ typedef struct {
 	BYTE	DM[2];
 } GDCVECT;
 
+extern const UINT32 gdcplaneseg[4];
+
 typedef void (*GDCSUBFN)(UINT32 csrw, const GDCVECT *vect,
 														REG16 pat, REG8 ope);
 

@@ -36,8 +36,6 @@ enum {
 extern "C" {
 #endif
 
-extern const UINT32 vramplaneseg[4];
-
 extern	VRAM_T	vramop;
 extern	BYTE	tramupdate[0x1000];
 extern	BYTE	vramupdate[0x8000];
