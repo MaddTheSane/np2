@@ -239,8 +239,6 @@ create_pixmap(GtkWidget *widget, gchar **data)
 /*
  * idle process
  */
-static gint idle_process(gpointer *p);
-
 static int install_count = 0;
 static int idle_id;
 
@@ -249,7 +247,7 @@ install_idle_process(void)
 {
 
 	if (install_count++ == 0) {
-		idle_id = gtk_idle_add((GtkFunction)idle_process, drawarea);
+		idle_id = gtk_idle_add((GtkFunction)mainloop, drawarea);
 		soundmng_play();
 	}
 }
@@ -337,6 +335,13 @@ gui_gtk_widget_create(void)
 	gtk_widget_add_events(window, EVENT_MASK);
 }
 
+static void
+gui_gtk_terminate(void)
+{
+
+	/* Nothing to do */
+}
+
 void
 gui_gtk_widget_show(void)
 {
@@ -371,79 +376,10 @@ gui_gtk_set_window_title(const char* str)
 gui_toolkit_t gtk_toolkit = {
 	gui_gtk_get_toolkit,
 	gui_gtk_arginit,
+	gui_gtk_terminate,
 	gui_gtk_widget_create,
 	gui_gtk_widget_show,
 	gui_gtk_widget_mainloop,
 	gui_gtk_widget_quit,
 	gui_gtk_set_window_title,
 };
-
-
-/*
- * Idle process
- */
-static gint
-idle_process(gpointer *p)
-{
-
-	UNUSED(p);
-
-	if (np2oscfg.NOWAIT) {
-		joy_flash();
-		mousemng_callback();
-		pccore_exec(framecnt == 0);
-		if (np2oscfg.DRAW_SKIP) {
-			/* nowait frame skip */
-			framecnt++;
-			if (framecnt >= np2oscfg.DRAW_SKIP) {
-				processwait(0);
-			}
-		} else {
-			/* nowait auto skip */
-			framecnt = 1;
-			if (timing_getcount()) {
-				processwait(0);
-			}
-		}
-	} else if (np2oscfg.DRAW_SKIP) {
-		/* frame skip */
-		if (framecnt < np2oscfg.DRAW_SKIP) {
-			joy_flash();
-			mousemng_callback();
-			pccore_exec(framecnt == 0);
-			framecnt++;
-		} else {
-			processwait(np2oscfg.DRAW_SKIP);
-		}
-	} else {
-		/* auto skip */
-		if (waitcnt == 0) {
-			UINT cnt;
-			joy_flash();
-			mousemng_callback();
-			pccore_exec(framecnt == 0);
-			framecnt++;
-			cnt = timing_getcount();
-			if (framecnt > cnt) {
-				waitcnt = framecnt;
-				if (framemax > 1) {
-					framemax--;
-				}
-			} else if (framecnt >= framemax) {
-				if (framemax < 12) {
-					framemax++;
-				}
-				if (cnt >= 12) {
-					timing_reset();
-				} else {
-					timing_setcount(cnt - framecnt);
-				}
-				framereset(0);
-			}
-		} else {
-			processwait(waitcnt);
-			waitcnt = framecnt;
-		}
-	}
-	return TRUE;
-}

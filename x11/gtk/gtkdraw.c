@@ -51,15 +51,16 @@ typedef struct {
 	RECT_T	scrn;
 	RECT_T	rect;
 
+	int	lpitch;
 	int	scrw;
 	int	scrh;
 
-	int	lpitch;
-
 	/* toolkit depend */
-	GdkImage*	surface;
-	GdkPixmap*	backsurf;
+	GdkImage	*surface;
+	GdkPixmap	*backsurf;
 	unsigned long	pixel[24];	/* pallete */
+
+	BOOL		shared_pixmap;
 } DRAWMNG;
 
 typedef struct {
@@ -145,6 +146,8 @@ renewal_client_size(void)
 static void
 clear_out_of_rect(const RECT_T* target, const RECT_T* base)
 {
+	GdkDrawable *d = drawarea->window;
+	GdkGC *gc = drawarea->style->black_gc;
 	RECT_T rect;
 
 	rect.left = base->left;
@@ -152,15 +155,13 @@ clear_out_of_rect(const RECT_T* target, const RECT_T* base)
 	rect.top = base->top;
 	rect.bottom = target->top;
 	if (rect.top < rect.bottom) {
-		gdk_draw_rectangle(drawmng.backsurf,
-		    drawarea->style->black_gc, TRUE,
+		gdk_draw_rectangle(d, gc, TRUE,
 		    rect.left, rect.top, rect.right, rect.bottom);
 	}
 	rect.top = target->bottom;
 	rect.bottom = base->bottom;
 	if (rect.top < rect.bottom) {
-		gdk_draw_rectangle(drawmng.backsurf,
-		    drawarea->style->black_gc, TRUE,
+		gdk_draw_rectangle(d, gc, TRUE,
 		    rect.left, rect.top, rect.right, rect.bottom);
 	}
 
@@ -170,15 +171,13 @@ clear_out_of_rect(const RECT_T* target, const RECT_T* base)
 		rect.left = base->left;
 		rect.right = target->left;
 		if (rect.left < rect.right) {
-			gdk_draw_rectangle(drawmng.backsurf,
-			    drawarea->style->black_gc, TRUE,
+			gdk_draw_rectangle(d, gc, TRUE,
 			    rect.left, rect.top, rect.right, rect.bottom);
 		}
 		rect.left = target->right;
 		rect.right = base->right;
 		if (rect.left < rect.right) {
-			gdk_draw_rectangle(drawmng.backsurf,
-			    drawarea->style->black_gc, TRUE,
+			gdk_draw_rectangle(d, gc, TRUE,
 			    rect.left, rect.top, rect.right, rect.bottom);
 		}
 	}
@@ -190,8 +189,10 @@ clear_outscreen(void)
 	RECT_T target;
 	RECT_T base;
 
+	base.left = base.top = 0;
+	base.right = drawmng.scrw;
+	base.bottom = drawmng.scrh;
 	target = drawmng.scrn;
-	memset(&base, 0, sizeof(base));
 	clear_out_of_rect(&target, &base);
 }
 
@@ -340,22 +341,15 @@ scrnmng_create(BYTE mode)
 		bytes_per_pixel = bitcolor >> 3;
 
 		if (!(mode & SCRNMODE_ROTATE)) {
-			rect.right = 640;
+			rect.right = 641;
 			rect.bottom = 480;
-			if (np2oscfg.paddingx) {
-				rect.right++;
-			}
-
 			lpitch = rect.right * bytes_per_pixel;
 			if (lpitch % 4) {
 				rect.right += (lpitch % 4) / bytes_per_pixel;
 			}
 		} else {
 			rect.right = 480;
-			rect.bottom = 640;
-			if (np2oscfg.paddingx) {
-				rect.bottom++;
-			}
+			rect.bottom = 641;
 		}
 		lpitch = rect.right * bytes_per_pixel;
 		height = 480;
@@ -366,6 +360,24 @@ scrnmng_create(BYTE mode)
 			g_message("can't create surface.");
 			return FAILURE;
 		}
+
+		drawmng.backsurf = NULL;
+		if (use_shared_pixmap) {
+			drawmng.backsurf = gdk_pixmap_shpix_new(
+			    drawarea->window, drawmng.surface,
+			    rect.right, rect.bottom, visual->depth);
+		}
+		if (drawmng.backsurf == NULL) {
+			drawmng.shared_pixmap = FALSE;
+			drawmng.backsurf = gdk_pixmap_new(drawarea->window,
+			    rect.right, rect.bottom, visual->depth);
+		}
+		if (drawmng.backsurf == NULL) {
+			g_message("can't create pixmap.");
+			return FAILURE;
+		}
+		gdk_draw_rectangle(drawmng.backsurf, drawarea->style->black_gc,
+		    TRUE, 0, 0, rect.right, rect.bottom);
 	}
 	scrnmng.bpp = (BYTE)bitcolor;
 	drawmng.lpitch = lpitch;
@@ -375,15 +387,6 @@ scrnmng_create(BYTE mode)
 	drawmng.height = height;
 	drawmng.clipping = 0;
 	renewal_client_size();
-
-	drawmng.backsurf = gdk_pixmap_new(drawarea->window,
-	    drawmng.scrw, drawmng.scrh, visual->depth);
-	if (drawmng.backsurf == NULL) {
-		g_message("can't create pixmap.");
-		return FAILURE;
-	}
-	gdk_draw_rectangle(drawmng.backsurf, drawarea->style->black_gc, TRUE,
-	    0, 0, drawmng.scrw, drawmng.scrh);
 
 	return SUCCESS;
 }
@@ -471,8 +474,8 @@ void
 scrnmng_surfunlock(const SCRNSURF* surf)
 {
 	X11SCRNSURF *ss = (X11SCRNSURF *)surf;
-	GtkWidget *w = drawarea;
-	GdkGC *gc = w->style->fg_gc[GTK_WIDGET_STATE(w)];
+	GdkDrawable *d = drawarea->window;
+	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
 	BYTE *delta = ss->renewal;
 	RECT_T r;
 	gint h, s;
@@ -482,61 +485,53 @@ scrnmng_surfunlock(const SCRNSURF* surf)
 	r.right = drawmng.rect.right;
 	r.bottom = drawmng.rect.bottom;
 
-	if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
-		/* normal */
-		for (s = h = 0; h < r.bottom; h++) {
-			if ((renewal_line[h] != delta[h]) || (s == h))
-				continue;
+	if (!drawmng.shared_pixmap) {
+		if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
+			/* normal */
+			for (s = h = 0; h < r.bottom; h++) {
+				if ((renewal_line[h] != delta[h]) || (s == h))
+					continue;
 
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    0, s, r.left, r.top + s, r.right, h - s);
-			s = h + 1;
-		}
-		if (s != h) {
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    0, s, r.left, r.top + s, r.right, h - s);
-		}
-	} else if (!(drawmng.scrnmode & SCRNMODE_ROTATEDIR)) {
-		/* rotate left */
-		for (s = h = 0; h < r.right; h++) {
-			if ((renewal_line[h] != delta[h]) || (s == h))
-				continue;
+				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+				    0, s, r.left, r.top + s, r.right, h - s);
+				s = h + 1;
+			}
+			if (s != h) {
+				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+				    0, s, r.left, r.top + s, r.right, h - s);
+			}
+		} else if (!(drawmng.scrnmode & SCRNMODE_ROTATEDIR)) {
+			/* rotate left */
+			for (s = h = 0; h < r.right; h++) {
+				if ((renewal_line[h] != delta[h]) || (s == h))
+					continue;
 
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    s, 0, r.left + s, r.top, h - s, r.bottom);
-			s = h + 1;
-		}
-		if (s != h) {
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    s, 0, r.left + s, r.top, h - s, r.bottom);
-		}
-	} else {
-		/* rotate right */
-		for (s = h = 0; h < r.right; h++) {
-			if ((renewal_line[h] != delta[h]) || (s == h))
-				continue;
+				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+				    s, 0, r.left + s, r.top, h - s, r.bottom);
+				s = h + 1;
+			}
+			if (s != h) {
+				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+				    s, 0, r.left + s, r.top, h - s, r.bottom);
+			}
+		} else {
+			/* rotate right */
+			for (s = h = 0; h < r.right; h++) {
+				if ((renewal_line[h] != delta[h]) || (s == h))
+					continue;
 
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    r.right - h, 0,
-			    drawmng.scrn.right - h, r.top, h - s, r.bottom);
-			s = h + 1;
-		}
-		if (s != h) {
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    r.right - h, 0,
-			    drawmng.scrn.right - h, r.top, h - s, r.bottom);
+				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+				    r.right - h, 0,
+				    drawmng.scrn.right - h, r.top, h - s, r.bottom);
+				s = h + 1;
+			}
+			if (s != h) {
+				gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
+				    r.right - h, 0,
+				    drawmng.scrn.right - h, r.top, h - s, r.bottom);
+			}
 		}
 	}
-
-	scrnmng_update();
-}
-
-void
-scrnmng_update(void)
-{
-	GdkDrawable *d = (GdkDrawable *)drawarea->window;
-	GtkWidget *w = drawarea;
-	GdkGC *gc = w->style->fg_gc[GTK_WIDGET_STATE(w)];
 
 	if (scrnmng.palchanged) {
 		scrnmng.palchanged = FALSE;
@@ -550,9 +545,13 @@ scrnmng_update(void)
 	{
 		if (scrnmng.allflash) {
 			scrnmng.allflash = 0;
-			clear_outscreen();
+			if (np2oscfg.paddingx || np2oscfg.paddingy) {
+				clear_outscreen();
+			}
 		}
 		gdk_draw_pixmap(d, gc, drawmng.backsurf,
-		    0, 0, 0, 0, drawmng.scrw, drawmng.scrh);
+		    0, 0,					/* src */
+		    drawmng.scrn.left, drawmng.scrn.top,	/* dest */
+		    drawmng.rect.right, drawmng.rect.bottom);	/* w/h */
 	}
 }

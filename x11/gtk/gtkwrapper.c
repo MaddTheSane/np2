@@ -27,16 +27,9 @@
 
 #include "compiler.h"
 
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <X11/Xlib.h>
-#include <X11/extensions/XShm.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
@@ -108,3 +101,91 @@ is_32bpp(GdkWindow *w)
 
 	return (nbit == 32) ? 1 : 0;
 }
+
+#if defined(MITSHM)
+
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+
+#include <X11/Xlib.h>
+#include <X11/extensions/XShm.h>
+
+/* 
+ * Desc: query the server for support for the MIT_SHM extension
+ * Return:  0 = not available
+ *          1 = shared XImage support available
+ *          2 = shared Pixmap support available also
+ */
+static int
+gdk_image_check_xshm(Display *display)
+{
+	int major, minor, ignore;
+	Bool pixmaps;
+
+	if (XQueryExtension(display, "MIT-SHM", &ignore, &ignore, &ignore)) {
+		if (XShmQueryVersion(display, &major, &minor, &pixmaps) == True)
+			return (pixmaps == True) ? 2 : 1;
+	}
+	return 0;
+}
+
+GdkPixmap *
+gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height, gint depth)
+{
+	GdkPixmap *pixmap;
+	GdkImagePrivate *private_image;
+	GdkWindowPrivate *private;
+	GdkWindowPrivate *window_private;
+
+	g_return_val_if_fail((window != NULL) || (depth != -1), NULL);
+	g_return_val_if_fail((width != 0) && (height != 0), NULL);
+
+	if (!window)
+		window = (GdkWindow *)&gdk_root_parent;
+	window_private = (GdkWindowPrivate *)window;
+	if (window_private->destroyed)
+		return NULL;
+
+	if (depth == -1)
+		depth = gdk_window_get_visual(window)->depth;
+
+	if (gdk_image_check_xshm(window_private->xdisplay) != 2)
+		return NULL;
+
+	private = g_new0(GdkWindowPrivate, 1);
+	pixmap = (GdkPixmap *)private;
+
+	private->xdisplay = window_private->xdisplay;
+	private->window_type = GDK_WINDOW_PIXMAP;
+
+	private_image = (GdkImagePrivate *)image;
+	private->xwindow = XShmCreatePixmap(private->xdisplay,
+	    window_private->xwindow, private_image->ximage->data,
+	    private_image->x_shm_info, width, height, depth);
+
+	private->colormap = NULL;
+	private->parent = NULL;
+	private->x = 0;
+	private->y = 0;
+	private->width = width;
+	private->height = height;
+	private->resize_count = 0;
+	private->ref_count = 1;
+	private->destroyed = 0;
+
+	gdk_xid_table_insert(&private->xwindow, pixmap);
+
+	return pixmap;
+}
+
+#else	/* !MITSHM */
+
+GdkPixmap *
+gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height, gint depth)
+{
+
+	return NULL;
+}
+
+#endif	/* MITSHM */

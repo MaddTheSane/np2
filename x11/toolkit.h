@@ -35,6 +35,7 @@
 typedef struct {
 	const char*	(*get_toolkit)(void);
 	BOOL		(*arginit)(int* argc, char*** argv);
+	void		(*terminate)(void);
 	void		(*widget_create)(void);
 	void		(*widget_show)(void);
 	void		(*widget_mainloop)(void);
@@ -47,11 +48,12 @@ typedef struct {
 extern gui_toolkit_t* toolkitp;
 
 void toolkit_initialize(void);
+#define	toolkit_terminate()		(*toolkitp->terminate)()
 #define	toolkit_arginit(argcp, argvp)	(*toolkitp->arginit)(argcp, argvp)
-#define	toolkit_widget_create()		(*widget_create)()
-#define	toolkit_widget_show()		(*widget_show)()
-#define	toolkit_widget_mainloop()	(*widget_mainloop)()
-#define	toolkit_widget_quit()		(*widget_quit)()
+#define	toolkit_widget_create()		(*toolkitp->widget_create)()
+#define	toolkit_widget_show()		(*toolkitp->widget_show)()
+#define	toolkit_widget_mainloop()	(*toolkitp->widget_mainloop)()
+#define	toolkit_widget_quit()		(*toolkitp->widget_quit)()
 #define	toolkit_set_window_title(s)	(*toolkitp->set_window_title)(s)
 
 #elif defined(USE_GTK)
@@ -59,6 +61,7 @@ void toolkit_initialize(void);
 #include "gtk/gtktoolkit.h"
 
 #define	toolkit_initialize()
+#define	toolkit_terminate()
 #define	toolkit_arginit(argcp, argvp)	gui_gtk_arginit(argcp, argvp)
 #define	toolkit_widget_create()		gui_gtk_widget_create()
 #define	toolkit_widget_show()		gui_gtk_widget_show()
@@ -68,13 +71,16 @@ void toolkit_initialize(void);
 
 #elif defined(USE_QT)
 
+#include "qt/qttoolkit.h"
+
 #define	toolkit_initialize()
-#define	toolkit_arginit(argcp, argvp)
-#define	toolkit_widget_create()	
-#define	toolkit_widget_show()	
-#define	toolkit_widget_mainloop()
-#define	toolkit_widget_quit()
-#define	toolkit_set_window_title(s)
+#define	toolkit_terminate()		gui_qt_terminate()
+#define	toolkit_arginit(argcp, argvp)	gui_qt_arginit(argcp, argvp)
+#define	toolkit_widget_create()		gui_qt_widget_create()
+#define	toolkit_widget_show()		gui_qt_widget_show()
+#define	toolkit_widget_mainloop()	gui_qt_widget_mainloop()
+#define	toolkit_widget_quit()		gui_qt_widget_quit()
+#define	toolkit_set_window_title(s)	gui_qt_set_window_title(s)
 
 #endif
 

@@ -56,7 +56,7 @@ void scrnmng_setextend(int extend);
 void scrnmng_setheight(int posy, int height);
 const SCRNSURF* scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
-void scrnmng_update(void);
+#define	scrnmng_update()
 #define	scrnmng_dispclock()
 
 #define	scrnmng_isfullscreen()	(0)

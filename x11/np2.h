@@ -50,6 +50,7 @@ typedef struct {
 	char	toolkit[32];
 
 	BYTE	disablemmx;
+	BYTE	shared_pixmap;
 } NP2OSCFG;
 
 
@@ -82,6 +83,7 @@ extern UINT framemax;
 extern BOOL s98logging;
 extern int s98log_count;
 
+extern BOOL use_shared_pixmap;
 
 extern char hddfolder[MAX_PATH];
 extern char fddfolder[MAX_PATH];
@@ -96,6 +98,7 @@ void flagdelete(const char* ext);
 void changescreen(BYTE newmode);
 void framereset(UINT cnt);
 void processwait(UINT cnt);
+int mainloop(void *);
 
 #if defined(__GNUC__) && (defined(i386) || defined(__i386__))
 extern int mmxflag;

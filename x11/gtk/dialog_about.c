@@ -75,7 +75,7 @@ create_about_dialog(void)
 
 	colormap = gtk_widget_get_colormap(about_dialog);
 	gdkpixmap = gdk_pixmap_colormap_create_from_xpm_d(NULL, colormap,
-	    &mask, NULL, np2_icon);
+	    &mask, NULL, (gchar **)np2_icon);
 	if (gdkpixmap == NULL)
 		g_error("Couldn't create replacement pixmap.");
 	neko_pixmap = gtk_pixmap_new(gdkpixmap, mask);

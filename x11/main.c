@@ -94,6 +94,7 @@ sighandler(int signo)
 static struct option longopts[] = {
 	{ "config",		required_argument,	0,	'c' },
 	{ "timidity-config",	required_argument,	0,	'C' },
+	{ "no-shared-pixmap",	no_argument,		0,	'p' },
 	{ "help",		no_argument,		0,	'h' },
 	{ 0,			0,			0,	0   },
 };
@@ -120,13 +121,14 @@ main(int argc, char *argv[])
 	int rv = 1;
 	int ch;
 	int i, drvmax;
+	BOOL shared_pixmap_flag = TRUE;
 
 	progname = argv[0];
 
 	toolkit_initialize();
 	toolkit_arginit(&argc, &argv);
 
-	while ((ch = getopt_long(argc, argv, "c:C:h", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "c:C:nh", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'c':
 			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
@@ -147,6 +149,10 @@ main(int argc, char *argv[])
 			}
 			milstr_ncpy(timidity_cfgfile_path, optarg,
 			    sizeof(timidity_cfgfile_path));
+			break;
+
+		case 'p':
+			shared_pixmap_flag = FALSE;
 			break;
 
 		case 'h':
@@ -223,6 +229,8 @@ main(int argc, char *argv[])
 	mmxflag = havemmx() ? 0 : MMXFLAG_NOTSUPPORT;
 	mmxflag += np2oscfg.disablemmx ? MMXFLAG_DISABLE : 0;
 #endif
+
+	use_shared_pixmap = np2oscfg.shared_pixmap && shared_pixmap_flag;
 
 	TRACEINIT();
 
@@ -330,6 +338,8 @@ resource_cleanup:
 
 	TRACETERM();
 	dosio_term();
+
+	toolkit_terminate();
 
 	return rv;
 }

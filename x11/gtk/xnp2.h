@@ -39,6 +39,7 @@ void uninstall_idle_process(void);
 
 void gdk_window_set_pointer(GdkWindow *window, gint x, gint y);
 void gtk_scale_set_default_values(GtkScale *scale);
-int is_32bpp(GdkWindow*);
+int is_32bpp(GdkWindow *window);
+GdkPixmap *gdk_pixmap_shpix_new(GdkWindow *window, GdkImage *image, gint width, gint height, gint depth);
 
 #endif /* NP2_GTK_XNP2_H__ */

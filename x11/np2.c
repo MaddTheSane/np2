@@ -28,6 +28,7 @@
 #include "compiler.h"
 
 #include "np2.h"
+#include "pccore.h"
 #include "dosio.h"
 #include "scrndraw.h"
 #include "statsave.h"
@@ -38,6 +39,7 @@
 #include "toolwin.h"
 
 #include "commng.h"
+#include "joymng.h"
 #include "kbdmng.h"
 #include "mousemng.h"
 #include "scrnmng.h"
@@ -52,8 +54,8 @@ NP2OSCFG np2oscfg = {
 	"Neko Project II + IA32",
 #endif
 
-	2, 			/* paddingx */
-	2,			/* paddingy */
+	0, 			/* paddingx */
+	0,			/* paddingy */
 
 	0,			/* NOWAIT */
 	2,			/* DRAW_SKIP */
@@ -94,6 +96,12 @@ NP2OSCFG np2oscfg = {
 #endif
 
 	MMXFLAG_DISABLE,	/* disablemmx */
+
+#if defined(MITSHM)		/* shared_pixmap */
+	TRUE,
+#else
+	FALSE,
+#endif
 };
 
 BOOL np2running = FALSE;
@@ -113,6 +121,8 @@ char modulefile[MAX_PATH];
 char statpath[MAX_PATH];
 
 char timidity_cfgfile_path[MAX_PATH];
+
+BOOL use_shared_pixmap;
 
 
 UINT32
@@ -270,6 +280,73 @@ processwait(UINT cnt)
 	} else {
 		usleep(1);
 	}
+}
+
+int
+mainloop(void *p)
+{
+
+	UNUSED(p);
+
+	if (np2oscfg.NOWAIT) {
+		joy_flash();
+		mousemng_callback();
+		pccore_exec(framecnt == 0);
+		if (np2oscfg.DRAW_SKIP) {
+			/* nowait frame skip */
+			framecnt++;
+			if (framecnt >= np2oscfg.DRAW_SKIP) {
+				processwait(0);
+			}
+		} else {
+			/* nowait auto skip */
+			framecnt = 1;
+			if (timing_getcount()) {
+				processwait(0);
+			}
+		}
+	} else if (np2oscfg.DRAW_SKIP) {
+		/* frame skip */
+		if (framecnt < np2oscfg.DRAW_SKIP) {
+			joy_flash();
+			mousemng_callback();
+			pccore_exec(framecnt == 0);
+			framecnt++;
+		} else {
+			processwait(np2oscfg.DRAW_SKIP);
+		}
+	} else {
+		/* auto skip */
+		if (waitcnt == 0) {
+			UINT cnt;
+			joy_flash();
+			mousemng_callback();
+			pccore_exec(framecnt == 0);
+			framecnt++;
+			cnt = timing_getcount();
+			if (framecnt > cnt) {
+				waitcnt = framecnt;
+				if (framemax > 1) {
+					framemax--;
+				}
+			} else if (framecnt >= framemax) {
+				if (framemax < 12) {
+					framemax++;
+				}
+				if (cnt >= 12) {
+					timing_reset();
+				} else {
+					timing_setcount(cnt - framecnt);
+				}
+				framereset(0);
+			}
+		} else {
+			processwait(waitcnt);
+			waitcnt = framecnt;
+		}
+	}
+
+	return TRUE;
 }
 
 #if defined(__GNUC__) && (defined(i386) || defined(__i386__))
