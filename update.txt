@@ -25,12 +25,13 @@
 　　まだ機能しません。定義しないで下さい。
 
 
-　　つか…X11版のDOSIO file_catname,file_cmpnameの入力が sjisになってる…
-　　(NP2はファイル名は OSLANGに従う…筈…
+　つか…X11版のDOSIO file_catname,file_cmpnameの入力が sjisになってる…
+　(NP2はファイル名は OSLANGに従う…筈…
+　と思ったら hostdrvで SJISのまま食わせてる？(汗
 
-　　EUCの２バイトコード判定が (((c - 0xa1) & 0xff) < 0x5d)で
-　　半角カナ(0x8e)の判定で狂う
-　　(c & 0x80)のほうが良い？
+　EUCの２バイトコード判定が (((c - 0xa1) & 0xff) < 0x5d)で
+　半角カナ(0x8e)の判定で狂う
+　(c & 0x80)のほうが良い？
 
 
 
