@@ -1219,6 +1219,10 @@ SOURCE=.\MOUSEMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\MT32SND.CPP
+# End Source File
+# Begin Source File
+
 SOURCE=.\Np2.cpp
 # End Source File
 # Begin Source File

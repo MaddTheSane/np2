@@ -10,6 +10,10 @@
 #if defined(VERMOUTH_LIB)
 #include	"vermouth.h"
 #endif
+#if defined(MT32SOUND_DLL)
+#include	"mt32snd.h"
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,6 +122,9 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	vermouth_module = midimod_create(rate);
 	midimod_loadall(vermouth_module);
 #endif
+#if defined(MT32SOUND_DLL)
+	mt32sound_setrate(rate);
+#endif
 	dsstreamevent = (UINT8)-1;
 	soundmng_reset();
 	return(samples);
@@ -156,6 +163,9 @@ void soundmng_destroy(void) {
 #if defined(VERMOUTH_LIB)
 		midimod_destroy(vermouth_module);
 		vermouth_module = NULL;
+#endif
+#if defined(MT32SOUND_DLL)
+		mt32sound_setrate(0);
 #endif
 		pDSData3->Stop();
 		pDSData3->Release();
@@ -444,6 +454,9 @@ BRESULT soundmng_initialize(void) {
 		goto smcre_err;
 	}
 	pcmcreate();
+#if defined(MT32SOUND_DLL)
+	mt32sound_initialize();
+#endif
 	return(SUCCESS);
 
 smcre_err:
@@ -453,6 +466,9 @@ smcre_err:
 
 void soundmng_deinitialize(void) {
 
+#if defined(MT32SOUND_DLL)
+	mt32sound_deinitialize();
+#endif
 	pcmdestroy();
 	soundmng_destroy();
 	RELEASE(pDSound);

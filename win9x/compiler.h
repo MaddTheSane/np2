@@ -92,6 +92,7 @@ typedef	signed __int64		SINT64;
 
 #define	OPNGENX86
 #define	VERMOUTH_LIB
+#define	MT32SOUND_DLL
 #define	PARTSCALL	__fastcall
 #define	CPUCALL		__fastcall
 #define	MEMCALL		__fastcall

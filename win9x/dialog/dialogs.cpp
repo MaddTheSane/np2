@@ -4,6 +4,9 @@
 #include	"dosio.h"
 #include	"commng.h"
 #include	"dialogs.h"
+#if defined(MT32SOUND_DLL)
+#include	"mt32snd.h"
+#endif
 
 
 const OEMCHAR str_nc[] = OEMTEXT("N/C");
@@ -183,6 +186,16 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 		defcur = num;
 	}
 	num++;
+#endif
+#if defined(MT32SOUND_DLL)
+	if (mt32sound_isenable()) {
+		SendMessage(wnd, CB_INSERTSTRING, (WPARAM)num,
+													(LPARAM)cmmidi_mt32sound);
+		if (!milstr_cmp(defname, cmmidi_mt32sound)) {
+			defcur = num;
+		}
+		num++;
+	}
 #endif
 	for (i=0; i<devs; i++) {
 		if (midiOutGetDevCaps(i, &moc, sizeof(moc)) == MMSYSERR_NOERROR) {
