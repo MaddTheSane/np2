@@ -1,4 +1,4 @@
-/*	$Id: bit_byte.c,v 1.9 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: bit_byte.c,v 1.10 2004/03/25 15:07:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -938,7 +938,7 @@ TEST_EbGb(void)
 		madr = calc_ea_dst(op);
 		tmp = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	}
-	AND_BYTE(tmp, src);
+	BYTE_AND(tmp, src);
 }
 
 void
@@ -955,7 +955,7 @@ TEST_EwGw(void)
 		madr = calc_ea_dst(op);
 		tmp = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
-	AND_WORD(tmp, src);
+	WORD_AND(tmp, src);
 }
 
 void
@@ -972,7 +972,7 @@ TEST_EdGd(void)
 		madr = calc_ea_dst(op);
 		tmp = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	}
-	AND_DWORD(tmp, src);
+	DWORD_AND(tmp, src);
 }
 
 void
@@ -983,7 +983,7 @@ TEST_ALIb(void)
 	CPU_WORKCLOCK(3);
 	tmp = CPU_AL;
 	GET_PCBYTE(src);
-	AND_BYTE(tmp, src);
+	BYTE_AND(tmp, src);
 }
 
 void
@@ -994,7 +994,7 @@ TEST_AXIw(void)
 	CPU_WORKCLOCK(3);
 	tmp = CPU_AX;
 	GET_PCWORD(src);
-	AND_WORD(tmp, src);
+	WORD_AND(tmp, src);
 }
 
 void
@@ -1005,7 +1005,7 @@ TEST_EAXId(void)
 	CPU_WORKCLOCK(3);
 	tmp = CPU_EAX;
 	GET_PCDWORD(src);
-	AND_DWORD(tmp, src);
+	DWORD_AND(tmp, src);
 }
 
 void
@@ -1022,7 +1022,7 @@ TEST_EbIb(UINT32 op)
 		tmp = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
 	}
 	GET_PCBYTE(src);
-	AND_BYTE(tmp, src);
+	BYTE_AND(tmp, src);
 }
 
 void
@@ -1039,7 +1039,7 @@ TEST_EwIw(UINT32 op)
 		tmp = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
 	GET_PCWORD(src);
-	AND_WORD(tmp, src);
+	WORD_AND(tmp, src);
 }
 
 void
@@ -1056,5 +1056,5 @@ TEST_EdId(UINT32 op)
 		tmp = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	}
 	GET_PCDWORD(src);
-	AND_DWORD(tmp, src);
+	DWORD_AND(tmp, src);
 }
