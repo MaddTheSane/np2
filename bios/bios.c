@@ -275,7 +275,7 @@ static void bios_boot(void) {
 //		TRACEOUT(("CPU Reset... SS:SP = %.4x:%.4x", CPU_SS, CPU_SP));
 	}
 	else {
-		bios_memclear();
+//		bios_memclear();
 		bios_vectorset();
 		bios0x09_init();
 		bios_reinitbyswitch();

@@ -302,7 +302,7 @@ const CRTDATA	*p;
 			crt = 4;
 			master = 3;
 			slave = 1;
-			gdc.display |= 0x10;
+			gdc.analog |= (1 << GDCANALOG_256E);
 		}
 		else
 #endif
@@ -335,6 +335,7 @@ const CRTDATA	*p;
 			gdc_analogext(FALSE);
 			mem[MEMB_PRXDUPD] &= ~0x80;
 		}
+		gdc.analog &= ~(1 << (GDCANALOG_256E));
 #endif
 	}
 	crt += (scrn & 3);
@@ -754,7 +755,7 @@ void bios0x18(void) {
 	}		tmp;
 	int		i;
 
-#if 1
+#if 0
 	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
 							i286_memword_read(CPU_SS, CPU_SP+2),
 							i286_memword_read(CPU_SS, CPU_SP)));

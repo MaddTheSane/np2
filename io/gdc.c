@@ -842,6 +842,9 @@ static void IOOUTCALL gdc_oae(UINT port, REG8 dat) {
 	else
 #endif
 	if (gdc.analog & (1 << GDCANALOG_16)) {
+#if defined(SUPPORT_PC9821)
+		gdc.anareg[(gdc.palnum * 3) + 2] = dat;
+#endif
 		gdc_setanalogpal(gdc.palnum & 15, offsetof(RGB32, p.b), dat);
 	}
 	else {

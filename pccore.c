@@ -652,9 +652,14 @@ void pccore_exec(BOOL draw) {
 									CPU_DX, CPU_DS, CPU_DI, mem[0xa3fe0]));
 			}
 #endif
-//			if ((CPU_CS == 0x2516) && (CPU_IP == 0x97B0)) {
-//				TRACEOUT(("DS = %.4x", CPU_DS));
-//			}
+#if 0
+			if (CPU_IP == 0x2E4F) {
+				TRACEOUT(("CS = %.4x - 0x2e4f", CPU_CS));
+			}
+#endif
+			if (CPU_CS == 0x8b6) {
+				TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
+			}
 //			i286x_step();
 			i286c_step();
 		}

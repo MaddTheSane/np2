@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np2ia32t.exe"
 
 !ELSEIF  "$(CFG)" == "np2ia32 - Win32 Debug"
 
@@ -285,6 +285,10 @@ SOURCE=..\I386C\DMAP.C
 # Begin Source File
 
 SOURCE=..\I386C\egcmem.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\I386C\MEM9821.C
 # End Source File
 # Begin Source File
 
@@ -873,6 +877,10 @@ SOURCE=..\CBUS\SCSIIO.C
 # Begin Source File
 
 SOURCE=..\VRAM\DISPSYNC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\MAKEGREX.C
 # End Source File
 # Begin Source File
 
