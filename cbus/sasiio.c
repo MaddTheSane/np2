@@ -6,8 +6,8 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"sxsi.h"
 #include	"sasiio.h"
+#include	"sxsi.h"
 #include	"sasibios.res"
 
 
@@ -349,6 +349,7 @@ static REG8 IOINPCALL sasiio_i80(UINT port) {
 
 	REG8	ret;
 
+	ret = 0;
 	switch(sasiio.phase) {
 		case SASIPHASE_READ:
 			ret = sasi_dataread();
@@ -430,6 +431,7 @@ void sasiio_reset(void) {
 		dmac_attach(DMADEV_SASI, SASI_DMACH);
 
 		fh = file_open_rb_c("sasi.rom");
+		r = 0;
 		if (fh != FILEH_INVALID) {
 			r = file_read(fh, mem + 0xd0000, 0x1000);
 			file_close(fh);

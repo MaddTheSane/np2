@@ -84,16 +84,19 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/np2sysp.o	$(OBJ)/pic.o		$(OBJ)/pit.o		\
 			$(OBJ)/printif.o	$(OBJ)/serial.o		$(OBJ)/sysport.o	\
 			$(OBJ)/upd4990.o											\
-			$(OBJ)/cbuscore.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
+			$(OBJ)/cbuscore.o	$(OBJ)/sasiio.o		$(OBJ)/scsiio.o		\
+			$(OBJ)/scsicmd.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
 			$(OBJ)/board14.o	$(OBJ)/board26k.o	$(OBJ)/board86.o	\
 			$(OBJ)/boardx2.o	$(OBJ)/board118.o	$(OBJ)/boardspb.o	\
 			$(OBJ)/amd98.o		$(OBJ)/pcm86io.o	$(OBJ)/cs4231io.o	\
 			$(OBJ)/midiout.o	$(OBJ)/midimod.o	$(OBJ)/midinst.o	\
 			$(OBJ)/midvoice.o	$(OBJ)/midtable.o						\
+			$(OBJ)/getsnd.o		$(OBJ)/getwave.o	$(OBJ)/getsmix.o	\
 			$(OBJ)/bios.o		$(OBJ)/bios02.o		$(OBJ)/bios08.o		\
 			$(OBJ)/bios09.o		$(OBJ)/bios0c.o		$(OBJ)/bios12.o		\
 			$(OBJ)/bios13.o		$(OBJ)/bios18.o		$(OBJ)/bios19.o		\
 			$(OBJ)/bios1a.o		$(OBJ)/bios1b.o		$(OBJ)/bios1c.o		\
+			$(OBJ)/sxsibios.o											\
 			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
 			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
 			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
@@ -115,7 +118,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmndraw.o	$(OBJ)/keydisp.o	$(OBJ)/dipswbmp.o	\
-			$(OBJ)/cmjasts.o											\
+			$(OBJ)/cmjasts.o	$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o	\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
 			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
 			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
@@ -375,6 +378,23 @@ $(OBJ)/cbuscore.o	:	$(CBUS)/cbuscore.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(CBUS)/cbuscore.h $(CBUS)/pc9861k.h $(CBUS)/mpu98ii.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/sasiio.o		:	$(CBUS)/sasiio.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/sasiio.h $(FDD)/sxsi.h $(CBUS)/sasibios.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scsiio.o		:	$(CBUS)/scsiio.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/scsiio.h $(CBUS)/scsiio.tbl \
+						$(CBUS)/scsicmd.h $(CBUS)/scsibios.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/scsicmd.o	:	$(CBUS)/scsicmd.c $(HEADERS) $(TARGET)/dosio.h \
+						$(PCCORES) $(IOCORES) $(CBUS)/cbuscore.h \
+						$(CBUS)/scsiio.h $(CBUS)/scsiio.tbl \
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/pc9861k.o	:	$(CBUS)/pc9861k.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/commng.h $(CBUS)/cbuscore.h \
 						$(CBUS)/pc9861k.h
@@ -492,6 +512,11 @@ $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/timemng.h $(I286C)/cpucore.h \
 						$(I286C)/memory.h $(BASE)/calendar.h \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h 
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/sxsibios.o	:	$(BIOS)/sxsibios.c $(HEADERS) $(PCCORES) \
+						$(BIOS)/bios.h $(BIOS)/biosmem.h $(BIOS)/sxsibios.h \
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -612,6 +637,24 @@ $(OBJ)/midvoice.o	:	$(VERMOUTH)/midvoice.c $(HEADERS) $(VERMOUTHS)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/midtable.o	:	$(VERMOUTH)/midtable.c $(HEADERS) $(VERMOUTHS)
+	$(CC) $(COPT) -o $@ $<
+
+
+
+$(OBJ)/getsnd.o		:	$(GETSND)/getsnd.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getwave.o	:	$(GETSND)/getwave.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getmp3.o		:	$(GETSND)/getmp3.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getogg.o		:	$(GETSND)/getogg.c $(HEADERS) $(GETSND)/getsnd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/getsmix.o	:	$(GETSND)/getsmix.c $(HEADERS) $(GETSND)/getsnd.h \
+						$(GETSND)/getsndmn.mcr $(GETSND)/getsndst.mcr
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -801,6 +844,16 @@ $(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
 $(OBJ)/cmjasts.o	:	$(GENERIC)/cmjasts.c $(HEADERS) $(CPUCORES) \
 						$(TARGET)/commng.h $(SOUND)/sound.h \
 						$(GENERIC)/cmjasts.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/hostdrv.o	:	$(GENERIC)/hostdrv.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrv.tbl $(GENERIC)/hostdrvs.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/hostdrvs.o	:	$(GENERIC)/hostdrvs.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(GENERIC)/hostdrv.h \
+						$(GENERIC)/hostdrvs.h
 	$(CC) $(COPT) -o $@ $<
 
 
