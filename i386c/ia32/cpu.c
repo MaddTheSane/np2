@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.7 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.8 2004/01/23 16:32:36 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -458,7 +458,7 @@ close_instruction_trace(void)
 #endif	/* IA32_INSTRUCTION_TRACE */
 
 
-jmp_buf exec_1step_jmpbuf;
+sigjmp_buf exec_1step_jmpbuf;
 
 void
 exec_1step(void)

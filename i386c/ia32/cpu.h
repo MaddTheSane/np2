@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.9 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.10 2004/01/23 16:32:36 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -233,7 +233,7 @@ extern I386CORE		i386core;
 #define	CPU_INPADRS	i386core.e.inport
 
 extern BYTE 		iflags[];
-extern jmp_buf		exec_1step_jmpbuf;
+extern sigjmp_buf	exec_1step_jmpbuf;
 
 
 /*
