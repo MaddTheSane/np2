@@ -141,7 +141,7 @@ const char		*ext;
 			sxsi->size = LOADINTELWORD(v98.sectorsize);
 			sxsi->sectors = v98.sectors;
 			sxsi->surfaces = v98.surfaces;
-			milstr_ncpy(sxsi->fname, file, sizeof(sxsi->fname));
+			file_cpyname(sxsi->fname, file, sizeof(sxsi->fname));
 			sxsi->fh = (void *)fh;
 			return(SUCCESS);
 		}

@@ -85,7 +85,7 @@ const BYTE	*p;
 	BYTE	loading;
 
 	if (filename) {
-		milstr_ncpy(fname, filename, sizeof(fname));
+		file_cpyname(fname, filename, sizeof(fname));
 	}
 	else {
 		fname[0] = '\0';
@@ -145,7 +145,7 @@ const BYTE	*p;
 	loading = fontv98_read(file_getcd(v98fontname), loading);
 	loading = fontpc88_read(file_getcd(pc88ankname), loading);
 	if (loading & FONTLOAD_16) {
-		milstr_ncpy(fname, file_getcd(fonttmpname), sizeof(fname));
+		file_cpyname(fname, file_getcd(fonttmpname), sizeof(fname));
 		if (file_attr_c(fname) == -1) {
 			makepc98bmp(fname);
 		}

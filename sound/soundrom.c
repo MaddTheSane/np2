@@ -19,11 +19,11 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 	FILEH	fh;
 	UINT	rsize;
 
-	milstr_ncpy(romname, file_sound, sizeof(romname));
+	file_cpyname(romname, file_sound, sizeof(romname));
 	if (name) {
-		milstr_ncat(romname, name, sizeof(romname));
+		file_catname(romname, name, sizeof(romname));
 	}
-	milstr_ncat(romname, file_extrom, sizeof(romname));
+	file_catname(romname, file_extrom, sizeof(romname));
 	fh = file_open_c(romname);
 	if (fh == FILEH_INVALID) {
 		goto lsr_err;
@@ -33,7 +33,7 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 	if (rsize != 0x4000) {
 		goto lsr_err;
 	}
-	milstr_ncpy(soundrom.name, romname, sizeof(soundrom.name));
+	file_cpyname(soundrom.name, romname, sizeof(soundrom.name));
 	soundrom.address = address;
 	return(SUCCESS);
 

@@ -325,7 +325,7 @@ BOOL fddd88_set(FDDFILE fdd, const char *fname, int ro) {
 		goto fdst_err;
 	}
 	fdd->type = DISKTYPE_D88;
-	milstr_ncpy(fdd->fname, fname, sizeof(fdd->fname));
+	file_cpyname(fdd->fname, fname, sizeof(fdd->fname));
 	fdd->protect = ((attr & 1) || (fdd->inf.d88.head.protect & 0x10) ||
 															(ro))?TRUE:FALSE;
 	fdd->inf.d88.fdtype_major = fdd->inf.d88.head.fd_type >> 4;

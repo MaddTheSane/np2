@@ -321,8 +321,8 @@ BOOL cfgfile_getfile(MIDIMOD mod, const char *filename,
 	}
 	p = mod->pathlist;
 	while(p) {
-		milstr_ncpy(path, p->path, size);
-		milstr_ncat(path, filename, size);
+		file_cpyname(path, p->path, size);
+		file_catname(path, filename, size);
 		attr = file_attr(path);
 		if (attr != -1) {
 			return(SUCCESS);

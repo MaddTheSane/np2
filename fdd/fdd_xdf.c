@@ -45,7 +45,7 @@ const _XDFINFO	*xdf;
 		size *= xdf->sectors;
 		size <<= (7 + xdf->n);
 		if (size == fdsize) {
-			milstr_ncpy(fdd->fname, fname, sizeof(fdd->fname));
+			file_cpyname(fdd->fname, fname, sizeof(fdd->fname));
 			fdd->type = DISKTYPE_BETA;
 			fdd->protect = ((attr & 1) || (ro))?TRUE:FALSE;
 			fdd->inf.xdf = *xdf;
