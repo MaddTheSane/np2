@@ -7,20 +7,12 @@
 #include	"biosmem.h"
 #include	"vram.h"
 #include	"lio.h"
+#include	"lio.res"
 
 
 void lio_initialize(void) {
 
-	UINT	i;
-
-	mem[0xf9900] = 0x11;
-	for (i=0; i<0x11; i++) {
-		mem[0xf9904 + i*4] = 0xa0 + i;
-		mem[0xf9905 + i*4] = 0x00;
-		SETBIOSMEM16(0xf9906 + i*4, 0x100 + i*4);
-		SETBIOSMEM32(0xf9a00 + i*4, 0xcf90fb90);
-	}
-	mem[0xf9944] = 0xce;
+	CopyMemory(mem + (LIO_SEGMENT << 4), liorom, sizeof(liorom));
 }
 
 void bios_lio(REG8 cmd) {

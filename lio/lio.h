@@ -1,8 +1,13 @@
 
 enum {
-	LIO_SUCCESS			= 0,
-	LIO_ILLEGALFUNC		= 5,
-	LIO_OUTOFMEMORY		= 7
+	LIO_SEGMENT		= 0xf990,
+	LIO_FONT		= 0x00a0
+};
+
+enum {
+	LIO_SUCCESS		= 0,
+	LIO_ILLEGALFUNC	= 5,
+	LIO_OUTOFMEMORY	= 7
 };
 
 enum {

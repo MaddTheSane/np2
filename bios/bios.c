@@ -462,19 +462,16 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 			return(0);
 	}
 
-	if ((adrs >= 0xf9a00) && (adrs < 0x0f9a44)) {
-		if (!(adrs & 3)) {
-			CPU_REMCLOCK -= 500;
-			bios_lio((REG8)((adrs - 0xf9a00) >> 2));
+	if ((adrs >= 0xf9950) && (adrs <= 0x0f9990) && (!(adrs & 3))) {
+		CPU_REMCLOCK -= 500;
+		bios_lio((REG8)((adrs - 0xf9950) >> 2));
+	}
+	else if (adrs == 0xf9994) {
+		if (nevent_iswork(NEVENT_GDCSLAVE)) {
+			CPU_IP--;
+			CPU_REMCLOCK = -1;
+			return(1);
 		}
-		else {
-			if (nevent_iswork(NEVENT_GDCSLAVE)) {
-				CPU_IP--;
-				CPU_REMCLOCK = -1;
-				return(1);
-			}
-		}
-		return(0);
 	}
 	return(0);
 }

@@ -594,26 +594,51 @@ REG8 lio_gput2(GLIO lio) {
 	GPUT2	dat;
 	LIOPUT	lput;
 	UINT16	jis;
+	int		pat;
 	REG16	size;
 
 	lio_updatedraw(lio);
 	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);
+	lput.off = 0x104e;
+	lput.seg = CPU_DS;
 	jis = LOADINTELWORD(dat.chr);
-	if (jis & 0xff00) {
-		lput.off = 0x104e;
-		lput.seg = CPU_DS;
-		if (jis < 0x200) {			// 1/4ANK
+	pat = 0;
+	if (jis < 0x200) {
+		if (jis < 0x80) {
+			if (jis == 0x7c) {
+				pat = 1;
+			}
+			else if (jis == 0x7e) {
+				pat = 2;
+			}
+			else {
+				jis += 0x2900;
+			}
+		}
+		else if (jis < 0x100) {
+			if ((jis - 0x20) & 0x40) {
+				pat = (jis & 0x3f) + 3;
+			}
+			else {
+				jis += 0x2980;
+			}
+		}
+		else {
 			jis &= 0xff;
 		}
+	}
+	if (!pat) {
 		size = bios0x18_14(lput.seg, 0x104c, jis);
-		lput.width = (size & 0xff00) >> (8 - 3);
-		lput.height = (size & 0xff) << 3;
 	}
 	else {
-		return(0);
+		MEML_WRITESTR(lput.seg, lput.off, mem + (LIO_SEGMENT << 4) +
+										LIO_FONT + ((pat - 1) << 4), 0x10);
+		size = 0x0102;
 	}
+	lput.width = (size & 0xff00) >> (8 - 3);
+	lput.height = (size & 0xff) << 3;
 	lput.mode = dat.mode;
 	lput.sw = 0;
 	if (dat.colorsw) {
