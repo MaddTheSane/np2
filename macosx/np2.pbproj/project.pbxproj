@@ -686,8 +686,8 @@
 			);
 			isa = PBXGroup;
 			name = common;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/common";
-			refType = 0;
+			path = ../common;
+			refType = 4;
 		};
 		967C91330557786900000103 = {
 			fileEncoding = "-2147483647";
@@ -850,8 +850,8 @@
 			);
 			isa = PBXGroup;
 			name = bios;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/bios";
-			refType = 0;
+			path = ../bios;
+			refType = 4;
 		};
 		967C9165055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -942,8 +942,8 @@
 			);
 			isa = PBXGroup;
 			name = cbus;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/cbus";
-			refType = 0;
+			path = ../cbus;
+			refType = 4;
 		};
 		967C9178055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -1029,8 +1029,8 @@
 			);
 			isa = PBXGroup;
 			name = fdd;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/fdd";
-			refType = 0;
+			path = ../fdd;
+			refType = 4;
 		};
 		967C9192055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -1088,8 +1088,8 @@
 			);
 			isa = PBXGroup;
 			name = font;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/font";
-			refType = 0;
+			path = ../font;
+			refType = 4;
 		};
 		967C91A1055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -1163,8 +1163,8 @@
 			);
 			isa = PBXGroup;
 			name = i286c;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/i286c";
-			refType = 0;
+			path = ../i286c;
+			refType = 4;
 		};
 		967C91B0055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -1273,8 +1273,8 @@
 			);
 			isa = PBXGroup;
 			name = io;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/io";
-			refType = 0;
+			path = ../io;
+			refType = 4;
 		};
 		967C91C6055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -1434,8 +1434,8 @@
 			);
 			isa = PBXGroup;
 			name = lio;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/lio";
-			refType = 0;
+			path = ../lio;
+			refType = 4;
 		};
 		967C91FA055778CB00000103 = {
 			fileEncoding = "-2147483647";
@@ -1752,8 +1752,8 @@
 			);
 			isa = PBXGroup;
 			name = sound;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/sound";
-			refType = 0;
+			path = ../sound;
+			refType = 4;
 		};
 		967C9277055778CC00000103 = {
 			fileEncoding = "-2147483647";
@@ -1943,8 +1943,8 @@
 			);
 			isa = PBXGroup;
 			name = vram;
-			path = "/Users/tora/Documents/Project Builder/np2/np2/vram";
-			refType = 0;
+			path = ../vram;
+			refType = 4;
 		};
 		967C92A8055778CC00000103 = {
 			fileEncoding = "-2147483647";
