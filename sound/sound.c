@@ -37,7 +37,7 @@ static void streamreset(void) {
 	sndstream.ptr = sndstream.buffer;
 	sndstream.remain = sndstream.samples + sndstream.reserve;
 	sndstream.cbreg = sndstream.cb;
-	SNDCSEC_TERM;
+	SNDCSEC_LEAVE;
 }
 
 static void streamprepare(UINT samples) {
