@@ -366,7 +366,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>preference.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>初期設定</string>
+			<string>Neko Project IIx 初期設定</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -378,7 +378,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>preference.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>ツールウィンドウスキンファイル</string>
+			<string>Neko Project IIx ツールウィンドウ スキンファイル</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>

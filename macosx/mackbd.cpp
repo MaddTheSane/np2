@@ -160,7 +160,7 @@ void mackbd_keydown(int keycode) {
         }
 #if defined(NP2GCC)
         else {
-            mouse_running(MOUSE_XOR);
+            mousemng_toggle(MOUSEPROC_SYSTEM);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
             sysmng_update(SYS_UPDATECFG);
 		}

@@ -169,13 +169,13 @@ static void changescreen(BYTE mode) {
 	}
 	if (renewal) {
 		soundmng_stop();
-		mouse_running(MOUSE_STOP);
+		mousemng_disable(MOUSEPROC_SYSTEM);
 		scrnmng_destroy();
 		if (scrnmng_create(mode) == SUCCESS) {
 			scrnmode = mode;
 		}
 		scrndraw_redraw();
-		mouse_running(MOUSE_CONT);
+		mousemng_enable(MOUSEPROC_SYSTEM);
 		soundmng_play();
 	}
 	else {
@@ -317,7 +317,7 @@ static void HandleMenuChoice(long wParam) {
 			break;
 
         case IDM_MOUSE:
-            mouse_running(MOUSE_XOR);
+			mousemng_toggle(MOUSEPROC_SYSTEM);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
             sysmng_update(SYS_UPDATECFG);
 			break;
@@ -565,14 +565,15 @@ static void HandleMenuChoice(long wParam) {
 static void HandleMouseDown(EventRecord *pevent) {
 
 	WindowPtr	hWnd;
-    BYTE		ret;
 
 	if (FindWindow(pevent->where, &hWnd) == inMenuBar) {
         soundmng_stop();
+        mousemng_disable(MOUSEPROC_MACUI);
         HandleMenuChoice(MenuSelect(pevent->where));
+        mousemng_enable(MOUSEPROC_MACUI);
     }
     else {
-        ret=mouse_btn(MOUSE_LEFTDOWN);
+        mousemng_buttonevent(MOUSEMNG_LEFTDOWN);
     }
 }
 
@@ -716,8 +717,9 @@ int main(int argc, char *argv[]) {
 	}
 
 #if defined(NP2GCC)
+	mousemng_initialize();
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
-		mouse_running(MOUSE_ON);
+		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
 #endif
 #ifdef OPENING_WAIT
@@ -824,7 +826,7 @@ int main(int argc, char *argv[]) {
 
     hid_clear();
 #if defined(NP2GCC)
-	mouse_running(MOUSE_OFF);
+	mousemng_disable(MOUSEPROC_SYSTEM);
 #endif
 
 	soundmng_deinitialize();
@@ -867,8 +869,6 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
     HIPoint		delta;
     EventMouseButton buttonKind;
     GetEventParameter (event, kEventParamMouseButton, typeMouseButton, NULL, sizeof(EventMouseButton), NULL, &buttonKind);
-
-	BYTE ret;
 #endif
         
     switch (eventClass)
@@ -903,12 +903,12 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
             {
                 case kEventMouseMoved:
                     GetEventParameter (event, kEventParamMouseDelta, typeHIPoint, NULL, sizeof(HIPoint), NULL, &delta);
-                    mouse_callback(delta);
+                    mousemng_callback(delta);
                     result = noErr;
                     break;
                 case kEventMouseDown:
                     if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
-                        ret=mouse_btn(MOUSE_RIGHTDOWN);
+                        mousemng_buttonevent(MOUSEMNG_RIGHTDOWN);
                     }
                     else {
                         HandleMouseDown(&eve);
@@ -917,15 +917,15 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                     break;
                 case kEventMouseUp:
                     if (buttonKind == kEventMouseButtonSecondary | modif & controlKey) {
-                        ret=mouse_btn(MOUSE_RIGHTUP);
+                        mousemng_buttonevent(MOUSEMNG_RIGHTUP);
                     }
                     else if (buttonKind == kEventMouseButtonTertiary) {
-                        mouse_running(MOUSE_XOR);
+                        mousemng_toggle(MOUSEPROC_SYSTEM);
                         menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
                         sysmng_update(SYS_UPDATECFG);
                     }
                     else {
-                        ret=mouse_btn(MOUSE_LEFTUP);
+                        mousemng_buttonevent(MOUSEMNG_LEFTUP);
                     }
                     result=noErr;
                     break;    
@@ -979,7 +979,9 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
                     if (modif & cmdKey) {
                         EventRecord	eve;
                         ConvertEventRefToEventRecord( event,&eve );
+                        mousemng_disable(MOUSEPROC_MACUI);
                         HandleMenuChoice(MenuEvent(&eve));
+                        mousemng_enable(MOUSEPROC_MACUI);
                     }
                     else {
                         mackbd_keydown(key);
@@ -1133,7 +1135,7 @@ static void toggleFullscreen(void) {
         setUpCarbonEvent();
         if (!np2oscfg.MOUSE_SW) {
             mouse = np2oscfg.MOUSE_SW;
-            mouse_running(MOUSE_ON);
+            mousemng_enable(MOUSEPROC_SYSTEM);
             menu_setmouse(1);
         }
         changescreen(scrnmode | SCRNMODE_FULLSCREEN);
@@ -1144,7 +1146,7 @@ static void toggleFullscreen(void) {
         setupMainWindow();
         changescreen(scrnmode & (~SCRNMODE_FULLSCREEN));
         if (!mouse) {
-            mouse_running(MOUSE_OFF);
+            mousemng_disable(MOUSEPROC_SYSTEM);
             menu_setmouse(0);
         }
         EnableMenuItem(menu, IDM_ROLNORMAL);
