@@ -1,4 +1,4 @@
-Xnp2 - ねこープロジェクト fot X
+Xnp2 - ねこープロジェクトII for X Window System
 
 
 1. 設定ファイル config.tmpl の編集
@@ -52,15 +52,15 @@ Xnp2 - ねこープロジェクト fot X
 
   以下のコマンドを実行してコンパイルを行います。
 
-    xmkmf -a
-    make
+    $ xmkmf -a
+    $ make
 
 
 3. インストール
 
   以下のコマンドを実行してインストールを行います。
 
-    make install install.man
+    $ make install install.man
 
   インストール後の設定等については README.ja を参照してください。
 

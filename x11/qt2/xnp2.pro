@@ -22,7 +22,7 @@ DEFINES+= USE_QT=1
 INCLUDEPATH+= . .. ../.. ../../common ../../generic
 INCLUDEPATH+= ../../bios ../../cbus ../../fdd ../../font
 INCLUDEPATH+= ../../io ../../lio ../../vram
-INCLUDEPATH+= ../../sound ../../sound/vermouth
+INCLUDEPATH+= ../../sound ../../sound/vermouth ../../sound/getsnd
 INCLUDEPATH+= ../debug
 INCLUDEPATH+= ../../i286c
 
@@ -74,7 +74,7 @@ SOURCES+= ../../lio/lio.c ../../lio/gscreen.c ../../lio/gview.c \
           ../../lio/gpset.c ../../lio/gline.c ../../lio/gput1.c
 
 SOURCES+= ../../pccore.c ../../nevent.c ../../calendar.c ../../timing.c \
-          ../../debugsub.c ../../statsave.c
+          ../../debugsub.c ../../statsave.c ../../keystat.c
 
 SOURCES+= ../../sound/sound.c ../../sound/soundrom.c ../../sound/s98.c \
           ../../sound/adpcmc.c ../../sound/adpcmg.c \

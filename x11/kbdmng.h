@@ -28,6 +28,8 @@
 #ifndef	NP2_X11_KBDMNG_H__
 #define	NP2_X11_KBDMNG_H__
 
+#include "keystat.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -76,7 +76,9 @@ SYS_LIBRARIES= -lm
 
 EXTRA_INCLUDES= -I. -I.. -I./debug -I../common \
 		-I../bios -I../cbus -I../fdd -I../font -I../generic \
-		-I../io -I../lio -I../sound -I../sound/vermouth -I../vram \
+		-I../io -I../lio \
+		-I../sound -I../sound/vermouth -I../sound/getsnd \
+		-I../vram \
 		$(PTHREAD_INCLUDE) $(GTK_INCLUDE) $(SDL_INCLUDE) $(ESD_INCLUDE)
 
 LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
@@ -177,7 +179,7 @@ LIOOBJS=	../lio/lio.o ../lio/gscreen.o ../lio/gview.o ../lio/gcolor1.o \
 		../lio/gput1.o
 
 NP2OBJS=	../pccore.o ../nevent.o ../calendar.o ../timing.o \
-		../debugsub.o ../statsave.o
+		../debugsub.o ../statsave.o ../keystat.o
 
 SOUNDOBJS=	../sound/sound.o ../sound/soundrom.o ../sound/s98.o \
 		../sound/adpcmc.o ../sound/adpcmg.o \
@@ -244,6 +246,11 @@ ComplexProgramTarget(xnp2)
 
 InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
 InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
+
+XCOMM
+XCOMM for Release
+XCOMM
+XCOMM InstallMultipleFlags(../np2tool/np2tool.d88, $(SYSRESPATH)/fd, $(INSTDATFLAGS))
 
 clean::
 	$(RM) $(OBJS)

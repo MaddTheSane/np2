@@ -59,7 +59,8 @@ SYS_LIBRARIES= -lm
 
 EXTRA_INCLUDES= -I. -I.. -I../.. -I../debug -I../../common -I../../generic \
 		-I../../bios -I../../cbus -I../../fdd -I../../font \
-		-I../../io -I../../lio -I../../sound -I../../sound/vermouth \
+		-I../../io -I../../lio \
+		-I../../sound -I../../sound/vermouth -I../../sound/getsnd \
 		-I../../vram \
 		-I../../embed -I../../embed/menu -I../../embed/menubase \
 		$(PTHREAD_INCLUDE) $(SDL_INCLUDE) $(ESD_INCLUDE)
@@ -237,6 +238,7 @@ LIOOBJS=	../../lio/lio.o \
 NP2OBJS=	../../pccore.o \
 		../../nevent.o \
 		../../calendar.o \
+		../../keystat.o \
 		../../statsave.o \
 		../../timing.o \
 		../../debugsub.o
@@ -344,6 +346,7 @@ ComplexProgramTarget(xnp2)
 
 InstallMultipleFlags(../resources/fddseek.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
 InstallMultipleFlags(../resources/fddseek1.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
+InstallMultipleFlags(../../np2tool/np2tool.d88, $(SYSRESPATH)/fd, $(INSTDATFLAGS))
 
 clean::
 	$(RM) $(OBJS)
