@@ -291,6 +291,58 @@ void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
 	calc_gdcslavewait(pset.dots);
 }
 
+void gdcsub_txt(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope) {
+
+	_GDCPSET	pset;
+	BYTE		multiple;
+	UINT		sx;
+const VECTDIR	*dir;
+	BYTE		muly;
+	REG16		cx;
+	REG16		cy;
+	UINT		xrem;
+	BYTE		mulx;
+
+	gdcpset_prepare(&pset, csrw, 0xffff, ope);
+	multiple = (gdc.s.para[GDC_ZOOM] & 15) + 1;
+
+	sx = LOADINTELWORD(vect->D);
+	sx = ((sx - 1) & 0x3fff) + 1;
+	if (sx >= 768) {
+		sx = 768;
+	}
+	dir = vectdir + ((vect->ope) & 7);
+
+	muly = multiple;
+	while(muly--) {
+		cx = pset.x;
+		cy = pset.y;
+		xrem = sx;
+		while(xrem--) {
+			mulx = multiple;
+			if (pat & 1) {
+				pat >>= 1;
+				pat |= 0x8000;
+				while(mulx--) {
+					gdcpset(&pset, cx, cy);
+					cx += dir->x;
+					cy += dir->y;
+				}
+			}
+			else {
+				pat >>= 1;
+				while(mulx--) {
+					cx += dir->x;
+					cy += dir->y;
+				}
+			}
+		}
+		pset.x += dir->x2;
+		pset.y += dir->y2;
+	}
+	calc_gdcslavewait(pset.dots);
+}
+
 void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const BYTE *pat,
 																REG8 ope) {
 

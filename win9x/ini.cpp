@@ -2,6 +2,7 @@
 #include	<windowsx.h>
 #include	<io.h>
 #include	"strres.h"
+#include	"profile.h"
 #include	"np2.h"
 #include	"np2arg.h"
 #include	"dosio.h"
@@ -179,7 +180,7 @@ const INITBL	*pterm;
 			case INITYPE_UINT8:
 				val = (BYTE)GetPrivateProfileInt(title, p->item,
 												*(BYTE *)p->value, path);
-				*(BYTE *)p->value = (BYTE)val;
+				*(UINT8 *)p->value = (UINT8)val;
 				break;
 
 			case INITYPE_SINT16:
@@ -201,7 +202,7 @@ const INITBL	*pterm;
 				GetPrivateProfileString(title, p->item, work,
 												work, sizeof(work), path);
 				val = (BYTE)milstr_solveHEX(work);
-				*(BYTE *)p->value = (BYTE)val;
+				*(UINT8 *)p->value = (UINT8)val;
 				break;
 
 			case INITYPE_HEX16:
@@ -224,6 +225,13 @@ const INITBL	*pterm;
 				GetPrivateProfileString(title, p->item, str_null,
 												work, sizeof(work), path);
 				inirdbyte3(work, p);
+				break;
+
+			case INITYPE_USERKEY:
+				GetPrivateProfileString(title, p->item, str_null,
+												work, sizeof(work), path);
+				((UINT8 *)p->value)[0] = (UINT8)profile_setkeys(work,
+												((UINT8 *)p->value) + 1, 15);
 				break;
 
 			case INITYPE_KB:
@@ -264,7 +272,7 @@ const char		*set;
 					break;
 
 				case INITYPE_SINT8:
-					SPRINTF(work, str_d, *((char *)p->value));
+					SPRINTF(work, str_d, *((SINT8 *)p->value));
 					break;
 
 				case INITYPE_SINT16:
@@ -276,7 +284,7 @@ const char		*set;
 					break;
 
 				case INITYPE_UINT8:
-					SPRINTF(work, str_u, *((BYTE *)p->value));
+					SPRINTF(work, str_u, *((UINT8 *)p->value));
 					break;
 
 				case INITYPE_UINT16:
@@ -288,7 +296,7 @@ const char		*set;
 					break;
 
 				case INITYPE_HEX8:
-					SPRINTF(work, str_x, *((BYTE *)p->value));
+					SPRINTF(work, str_x, *((UINT8 *)p->value));
 					break;
 
 				case INITYPE_HEX16:
@@ -297,6 +305,11 @@ const char		*set;
 
 				case INITYPE_HEX32:
 					SPRINTF(work, str_x, *((UINT32 *)p->value));
+					break;
+
+				case INITYPE_USERKEY:
+					profile_getkeys(work, sizeof(work),
+							((UINT8 *)p->value) + 1, ((UINT8 *)p->value)[0]);
 					break;
 
 				default:
@@ -419,6 +432,9 @@ static const INITBL iniitem[] = {
 
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
+	{"userkey1", INITYPE_USERKEY,	np2cfg.userkey[0],		16},
+	{"userkey2", INITYPE_USERKEY,	np2cfg.userkey[1],		16},
+
 
 	// OSàÀë∂ÅH
 	{"keyboard", INIRO_KB,			&np2oscfg.KEYBOARD,		0},

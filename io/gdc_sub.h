@@ -30,6 +30,8 @@ void gdcsub_null(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_line(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_box(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
 void gdcsub_circle(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
+void gdcsub_txt(UINT32 csrw, const GDCVECT *vect, REG16 pat, REG8 ope);
+
 void gdcsub_text(UINT32 csrw, const GDCVECT *vect, const BYTE *pat, REG8 ope);
 void gdcsub_write(void);
 

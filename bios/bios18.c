@@ -52,7 +52,7 @@ static const CSRFORM csrform[4] = {
 						{0x07, 0x3b}, {0x09, 0x4b},
 						{0x0f, 0x7b}, {0x13, 0x9b}};
 
-static const UINT8 sync200l[8] = {0x02,0x26,0x03,0x11,0x86,0x0f,0xc8,0x84};
+static const UINT8 sync200l[8] = {0x02,0x26,0x03,0x11,0x86,0x0f,0xc8,0x94};
 static const UINT8 sync200m[8] = {0x02,0x26,0x03,0x11,0x83,0x07,0x90,0x65};
 static const UINT8 sync400m[8] = {0x02,0x4e,0x07,0x25,0x87,0x07,0x90,0x65};
 
@@ -120,6 +120,24 @@ static REG8 swapbit(REG8 bit) {
 	}
 	return(ret);
 }
+
+static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT vcnt,
+																UINT8 ope) {
+
+	gdc.s.para[GDC_CSRW + 0] = (BYTE)csrw;
+	gdc.s.para[GDC_CSRW + 1] = (BYTE)(csrw >> 8);
+	gdc.s.para[GDC_CSRW + 2] = (BYTE)(csrw >> 16);
+
+	vcnt = min(vcnt, 11);
+	if (vcnt) {
+		CopyMemory(gdc.s.para + GDC_VECTW, vect, vcnt);
+	}
+
+	gdc.s.para[GDC_WRITE] = ope;
+	mem[MEMB_PRXDUPD] &= ~3;
+	mem[MEMB_PRXDUPD] |= ope;
+}
+
 
 static void bios18_47(void) {
 
@@ -269,10 +287,7 @@ static void bios18_47(void) {
 	// 最後に使った奴を記憶
 	*(UINT16 *)(mem + MEMW_PRXGLS) = *(UINT16 *)(ucw.GBMDOTI);
 	*(UINT16 *)(gdc.s.para + GDC_TEXTW) = *(UINT16 *)(ucw.GBMDOTI);
-
-	gdc.s.para[GDC_WRITE] = ope;
-	mem[MEMB_PRXDUPD] &= ~3;
-	mem[MEMB_PRXDUPD] |= ope;
+	setbiosgdc(csrw, &vect, (ucw.GBDTYP != 0x01)?11:9, ope);
 }
 
 static void bios18_49(void) {
@@ -335,9 +350,7 @@ static void bios18_49(void) {
 	}
 
 	// 最後に使った奴を記憶
-	gdc.s.para[GDC_WRITE] = ope;
-	mem[MEMB_PRXDUPD] &= ~3;
-	mem[MEMB_PRXDUPD] |= ope;
+	setbiosgdc(csrw, &vect, 5, ope);
 }
 
 
@@ -533,6 +546,7 @@ const CRTDATA	*crt;
 				gdc_work(GDCWORK_MASTER);
 			}
 			gdc_forceready(&gdc.m);
+
 			bios0x18_10((REG8)(CPU_AL & 1));
  			break;
 
@@ -542,7 +556,7 @@ const CRTDATA	*crt;
 				gdc_work(GDCWORK_MASTER);
 			}
 			gdc_forceready(&gdc.m);
-													// 00/08/02
+
 			if (gdc.m.para[GDC_CSRFORM] != (mem[MEMB_CRT_RASTER] | 0x80)) {
 				gdc.m.para[GDC_CSRFORM] = mem[MEMB_CRT_RASTER] | 0x80;
 			}
@@ -555,7 +569,7 @@ const CRTDATA	*crt;
 				gdc_work(GDCWORK_MASTER);
 			}
 			gdc_forceready(&gdc.m);
-													// 00/08/02
+
 			if (gdc.m.para[GDC_CSRFORM] != mem[MEMB_CRT_RASTER]) {
 				gdc.m.para[GDC_CSRFORM] = mem[MEMB_CRT_RASTER];
 				gdcs.textdisp |= GDCSCRN_ALLDRAW | GDCSCRN_EXT;
@@ -771,7 +785,6 @@ const CRTDATA	*crt;
 				}
 			}
 			break;
-
 	}
 }
 

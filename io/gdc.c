@@ -30,7 +30,7 @@ static const GDCCLK gdcclk[] = {
 static const UINT8 defdegpal[4] = {0x04,0x15,0x26,0x37};
 
 static const UINT8 defsyncm15[8] = {0x10,0x4e,0x07,0x25,0x0d,0x0f,0xc8,0x94};
-static const UINT8 defsyncs15[8] = {0x06,0x26,0x03,0x11,0x86,0x0f,0xc8,0x84};
+static const UINT8 defsyncs15[8] = {0x06,0x26,0x03,0x11,0x86,0x0f,0xc8,0x94};
 
 static const UINT8 defsyncm24[8] = {0x10,0x4e,0x07,0x25,0x07,0x07,0x90,0x65};
 static const UINT8 defsyncs24[8] = {0x06,0x26,0x03,0x11,0x83,0x07,0x90,0x65};
@@ -115,35 +115,54 @@ void gdc_paletteinit(void) {
 
 static void vectdraw(void) {
 
-	UINT32	csrw;
-	UINT16	textw;
+	UINT32		csrw;
+const GDCVECT	*vect;
+	REG16		textw;
+	REG8		ope;
 
 	csrw = LOADINTELDWORD(gdc.s.para + GDC_CSRW);
+	vect = (GDCVECT *)(gdc.s.para + GDC_VECTW);
 	textw = LOADINTELWORD(gdc.s.para + GDC_TEXTW);
+	ope = gdc.s.para[GDC_WRITE];
 
-	if (gdc.s.para[GDC_VECTW] & 0x08) {
-		gdcsub_line(csrw, (GDCVECT *)(gdc.s.para + GDC_VECTW),
-											textw, gdc.s.para[GDC_WRITE]);
+	if (vect->ope & 0x08) {
+		gdcsub_line(csrw, vect, textw, ope);
 	}
-	if (gdc.s.para[GDC_VECTW] & 0x20) {
-		gdcsub_circle(csrw, (GDCVECT *)(gdc.s.para + GDC_VECTW),
-											textw, gdc.s.para[GDC_WRITE]);
+	if (vect->ope & 0x10) {		// undocumented
+		gdcsub_txt(csrw, vect, textw, ope);
 	}
-	if (gdc.s.para[GDC_VECTW] & 0x40) {
-		gdcsub_box(csrw, (GDCVECT *)(gdc.s.para + GDC_VECTW),
-											textw, gdc.s.para[GDC_WRITE]);
+	if (vect->ope & 0x20) {
+		gdcsub_circle(csrw, vect, textw, ope);
+	}
+	if (vect->ope & 0x40) {
+		gdcsub_box(csrw, vect, textw, ope);
 	}
 }
 
 static void textdraw(void) {
 
-	UINT32	csrw;
+	UINT32		csrw;
+const GDCVECT	*vect;
+	REG16		textw;
+	REG8		ope;
 
-	if (gdc.s.para[GDC_VECTW] & 0x10) {
-		csrw = LOADINTELDWORD(gdc.s.para + GDC_CSRW);
-		gdcsub_text(csrw, (GDCVECT *)(gdc.s.para + GDC_VECTW),
-											gdc.s.para + GDC_TEXTW,
-											gdc.s.para[GDC_WRITE]);
+	csrw = LOADINTELDWORD(gdc.s.para + GDC_CSRW);
+	vect = (GDCVECT *)(gdc.s.para + GDC_VECTW);
+	textw = gdc.s.para[GDC_TEXTW + 7];
+	textw = (textw << 8) + textw;
+	ope = gdc.s.para[GDC_WRITE];
+
+	if (vect->ope & 0x08) {		// undocumented
+		gdcsub_line(csrw, vect, textw, ope);
+	}
+	if (vect->ope & 0x10) {
+		gdcsub_text(csrw, vect, gdc.s.para + GDC_TEXTW, ope);
+	}
+	if (vect->ope & 0x20) {		// undocumented
+		gdcsub_circle(csrw, vect, textw, ope);
+	}
+	if (vect->ope & 0x40) {		// undocumented
+		gdcsub_box(csrw, vect, textw, ope);
 	}
 }
 

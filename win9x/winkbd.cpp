@@ -139,8 +139,8 @@ static const BYTE key106ext[256] = {
 			//	    ,    ,    ,    ,    ,    ,    ,    		; 0xf8
 				  NC,  NC,  NC,  NC,  NC,  NC,  NC,  NC};
 
-static const BYTE f12keys[] = {
-			0x61, 0x60, 0x4d, 0x4f};
+static const UINT8 f12keys[] = {
+			0x61, 0x60, 0x4d, 0x4f, 0x76, 0x77};
 
 
 static BYTE getf12key(void) {
@@ -148,7 +148,7 @@ static BYTE getf12key(void) {
 	UINT	key;
 
 	key = np2oscfg.F12COPY - 1;
-	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
+	if (key < (sizeof(f12keys)/sizeof(UINT8))) {
 		return(f12keys[key]);
 	}
 	else {
@@ -224,7 +224,7 @@ void winkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
+	for (i=0; i<(sizeof(f12keys)/sizeof(UINT8)); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }

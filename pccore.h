@@ -49,6 +49,7 @@ typedef struct {
 	UINT8	usefd144;
 	BYTE	wait[6];
 
+	UINT8	userkey[2][16];
 
 	// リセット時とかあんまり参照されない奴
 	char	model[8];

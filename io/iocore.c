@@ -49,6 +49,7 @@ typedef struct {
 
 typedef struct {
 	IOFUNC		base[256];
+	UINT		busclock;
 	LISTARRAY	iotbl;
 } _IOCORE, *IOCORE;
 
@@ -469,6 +470,7 @@ void iocore_reset(void) {
 
 void iocore_bind(void) {
 
+	iocore.busclock = pccore.multiple;
 	iocore_cb(bindfn, sizeof(bindfn)/sizeof(IOCBFN));
 }
 
@@ -476,6 +478,7 @@ void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 
 	IOFUNC	iof;
 
+	CPU_REMCLOCK -= iocore.busclock;
 	iof = iocore.base[(port >> 8) & 0xff];
 	iof->ioout[port & 0xff](port, dat);
 }
@@ -484,6 +487,7 @@ REG8 IOINPCALL iocore_inp8(UINT port) {
 
 	IOFUNC	iof;
 
+	CPU_REMCLOCK -= iocore.busclock;
 	iof = iocore.base[(port >> 8) & 0xff];
 	return(iof->ioinp[port & 0xff](port));
 }
@@ -492,6 +496,7 @@ void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
 
 	IOFUNC	iof;
 
+	CPU_REMCLOCK -= iocore.busclock;
 	if ((port & 0xfff1) == 0x04a0) {
 		egc_w16(port, dat);
 		return;
@@ -522,6 +527,7 @@ REG16 IOINPCALL iocore_inp16(UINT port) {
 	IOFUNC	iof;
 	REG8	ret;
 
+	CPU_REMCLOCK -= iocore.busclock;
 	if ((port & 0xfffc) == 0x005c) {
 		return(artic_r16(port));
 	}

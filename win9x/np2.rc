@@ -823,6 +823,8 @@ BEGIN
             MENUITEM "F12 = S&top",                 IDM_F12STOP
             MENUITEM "F12 = tenkey [=]",            IDM_F12EQU
             MENUITEM "F12 = tenkey [ , ]",          IDM_F12COMMA
+            MENUITEM "F12 = User1",                 IDM_USERKEY1
+            MENUITEM "F12 = User2",                 IDM_USERKEY2
         END
         POPUP "&Sound"
         BEGIN
@@ -971,12 +973,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "PC-9801series emulator\0"
-            VALUE "FileVersion", "0, 7, 3, 0\0"
+            VALUE "FileVersion", "0, 7, 4, 0\0"
             VALUE "InternalName", "np2\0"
             VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
             VALUE "OriginalFilename", "np2.exe\0"
             VALUE "ProductName", "Neko Project II\0"
-            VALUE "ProductVersion", "0, 7, 3, 0\0"
+            VALUE "ProductVersion", "0, 7, 4, 0\0"
         END
     END
     BLOCK "VarFileInfo"

@@ -309,7 +309,7 @@ void xmenu_setf12copy(BYTE value) {
 
 	HMENU	hmenu;
 
-	if (value >= 5) {
+	if (value > 6) {
 		value = 0;
 	}
 	np2oscfg.F12COPY = value;
@@ -319,6 +319,8 @@ void xmenu_setf12copy(BYTE value) {
 	CheckMenuItem(hmenu, IDM_F12STOP, MFCHECK(value == 2));
 	CheckMenuItem(hmenu, IDM_F12EQU, MFCHECK(value == 3));
 	CheckMenuItem(hmenu, IDM_F12COMMA, MFCHECK(value == 4));
+	CheckMenuItem(hmenu, IDM_USERKEY1, MFCHECK(value == 5));
+	CheckMenuItem(hmenu, IDM_USERKEY2, MFCHECK(value == 6));
 }
 
 void xmenu_setbeepvol(BYTE value) {

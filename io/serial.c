@@ -86,7 +86,7 @@ static void keybrd_out(REG8 data) {
 
 // ----
 
-	UINT8	keystat[0x80];
+static	UINT8	keystat[0x80];
 
 void keystat_reset(void) {
 
@@ -98,6 +98,8 @@ void keystat_senddata(REG8 data) {
 
 	REG8	key;
 	BOOL	keynochange;
+const UINT8	*user;
+	UINT	i;
 
 	key = data & 0x7f;
 	keynochange = FALSE;
@@ -109,6 +111,17 @@ void keystat_senddata(REG8 data) {
 		}
 		data = key | (keystat[key] & 0x80);
 		keystat[key] ^= 0x80;
+	}
+	else if ((key == 0x76) || (key == 0x77)) {		// user key
+		user = np2cfg.userkey[key - 0x76];
+		for (i=0; i<user[0]; i++) {
+			key = user[i+1] & 0x7f;
+			if (!((keystat[key] ^ data) & 0x80)) {
+				keystat[key] ^= 0x80;
+				keybrd_out((REG8)(key | (data & 0x80)));
+			}
+		}
+		return;
 	}
 	else {
 		if ((np2cfg.XSHIFT) &&
@@ -150,6 +163,31 @@ void keystat_senddata(REG8 data) {
 	}
 }
 
+void keystat_forcerelease(REG8 value) {
+
+	REG8	key;
+const UINT8	*user;
+	UINT	i;
+
+	key = value & 0x7f;
+	if ((key != 0x76) && (key != 0x77)) {
+		if (keystat[key] & 0x80) {
+			keystat[key] &= ~0x80;
+			keybrd_out((REG8)(key | 0x80));
+		}
+	}
+	else {
+		user = np2cfg.userkey[key - 0x76];
+		for (i=0; i<user[0]; i++) {
+			key = user[i+1] & 0x7f;
+			if (keystat[key] & 0x80) {
+				keystat[key] &= ~0x80;
+				keybrd_out((REG8)(key | 0x80));
+			}
+		}
+	}
+}
+
 void keystat_resetcopyhelp(void) {
 
 	REG8	i;
@@ -171,14 +209,6 @@ void keystat_allrelease(void) {
 			keystat[i] &= ~0x80;
 			keybrd_out((REG8)(i | 0x80));
 		}
-	}
-}
-
-void keystat_forcerelease(REG8 value) {
-
-	if (keystat[value & 0x7f] & 0x80) {
-		keystat[value & 0x7f] &= ~0x80;
-		keybrd_out((REG8)(value | 0x80));
 	}
 }
 

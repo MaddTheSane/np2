@@ -593,6 +593,18 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			update |= SYS_UPDATEOSCFG;
 			break;
 
+		case IDM_USERKEY1:
+			xmenu_setf12copy(5);
+			winkbd_resetf12();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
+		case IDM_USERKEY2:
+			xmenu_setf12copy(6);
+			winkbd_resetf12();
+			update |= SYS_UPDATEOSCFG;
+			break;
+
 		case IDM_BEEPOFF:
 			xmenu_setbeepvol(0);
 			beep_setvol(0);
