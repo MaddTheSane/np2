@@ -66,8 +66,12 @@ void mousemng_initialize(void) {
 
 	ZeroMemory(&mousemng, sizeof(mousemng));
 	mousemng.btn = uPD8255A_LEFTBIT | uPD8255A_RIGHTBIT;
+#if 1
+	mousemng.flag = (1 << MOUSEPROC_SYSTEM);
+#else
 	mousemng.flag = (1 << MOUSEPROC_SYSTEM) + (1 << MOUSEPROC_WINUI) +
 												(1 << MOUSEPROC_BG);
+#endif
 }
 
 void mousemng_callback(void) {

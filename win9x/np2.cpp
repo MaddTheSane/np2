@@ -1424,6 +1424,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
 		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
+//	mousemng_enable(MOUSEPROC_WINUI);
+//	mousemng_enable(MOUSEPROC_BG);
 
 	commng_initialize();
 	sysmng_initialize();

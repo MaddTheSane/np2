@@ -1,5 +1,5 @@
 
-// #define	TRACE
+#define	TRACE
 
 #ifndef TRACE
 #define	TRACEINIT()

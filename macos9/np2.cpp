@@ -4,6 +4,7 @@
 #include	"np2.h"
 #include	"dosio.h"
 #include	"commng.h"
+#include	"mousemng.h"
 #include	"scrnmng.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -29,14 +30,11 @@
 #include	"fddfile.h"
 #include	"statsave.h"
 
-#if defined(NP2GCC)
-#include	"mousemng.h"
-#endif
 
 #define	USE_RESUME
 
 
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0,  0, 0};
+		NP2OSCFG	np2oscfg = {0, 2, 0, 0,  0, 0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -117,6 +115,16 @@ static void MenuBarInit(void) {
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
+	SetMenuItemModifiers(GetMenuHandle(IDM_FDD2), LoWord(IDM_FDD2OPEN),
+														kMenuOptionModifier);
+	SetMenuItemModifiers(GetMenuHandle(IDM_FDD2), LoWord(IDM_FDD2EJECT),
+														kMenuOptionModifier);
+	SetMenuItemModifiers(GetMenuHandle(IDM_SASI2), LoWord(IDM_SASI2OPEN),
+														kMenuOptionModifier);
+#if TARGET_API_MAC_CARBON
+	DisableMenuItem(GetMenuHandle(IDM_DEVICE), LoWord(IDM_MOUSE));
+	DisableMenuItem(GetMenuHandle(IDM_KEYBOARD), LoWord(IDM_F12MOUSE));
+#endif
 	DrawMenuBar();
 }
 
@@ -250,13 +258,11 @@ static void HandleMenuChoice(long wParam) {
 			dialog_scropt();
 			break;
 
-#if defined(NP2GCC)
         case IDM_MOUSE:
-            mouse_running(MOUSE_XOR);
+			mousemng_toggle(MOUSEPROC_SYSTEM);
             menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
             sysmng_update(SYS_UPDATECFG);
 			break;
-#endif
 
 		case IDM_MIDIPANIC:
 			rs232c_midipanic();
@@ -499,14 +505,8 @@ static void HandleMouseDown(EventRecord *pevent) {
 			break;
 
 		case inContent:
-#if defined(NP2GCC)
-            if (controlKey & GetCurrentKeyModifiers() ) {
-                mouse_btn(MOUSE_RIGHTDOWN);
-            }
-            else {
-                mouse_btn(MOUSE_LEFTDOWN);
-            }
-#endif
+			mousemng_buttonevent((pevent->modifiers & (1 << 12))
+									?MOUSEMNG_RIGHTDOWN:MOUSEMNG_LEFTDOWN);
 			break;
 
 		case inGoAway:
@@ -543,16 +543,10 @@ static void eventproc(EventRecord *event) {
 			mackbd_f12up(((event->message) & keyCodeMask) >> 8);
 			break;
 
-#if defined(NP2GCC)
-        case mouseUp:
-            if (controlKey & GetCurrentKeyModifiers()) {
-                mouse_btn(MOUSE_RIGHTUP);
-            }
-            else {
-                mouse_btn(MOUSE_LEFTUP);
-            }
+		case mouseUp:
+			mousemng_buttonevent(MOUSEMNG_LEFTUP);
+			mousemng_buttonevent(MOUSEMNG_RIGHTUP);
 			break;
-#endif
 	}
 }
 
@@ -691,11 +685,10 @@ int main(int argc, char *argv[]) {
 	pccore_init();
 	S98_init();
 
-#if defined(NP2GCC)
+	mousemng_initialize();
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
-		mouse_running(MOUSE_ON);
+		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
-#endif
 //	scrndraw_redraw();
 	pccore_reset();
 
@@ -712,10 +705,8 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			if (np2oscfg.NOWAIT) {
-#if defined(NP2GCC)
-				mouse_callback();
-#endif
 				mackbd_callback();
+				mousemng_callback();
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
 					framecnt++;
@@ -732,10 +723,8 @@ int main(int argc, char *argv[]) {
 			}
 			else if (np2oscfg.DRAW_SKIP) {			// frame skip
 				if (framecnt < np2oscfg.DRAW_SKIP) {
-#if defined(NP2GCC)
-                    mouse_callback();
-#endif
 					mackbd_callback();
+                    mousemng_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
 				}
@@ -746,10 +735,8 @@ int main(int argc, char *argv[]) {
 			else {								// auto skip
 				if (!waitcnt) {
 					UINT cnt;
-#if defined(NP2GCC)
-                    mouse_callback();
-#endif
 					mackbd_callback();
+                    mousemng_callback();
 					pccore_exec(framecnt == 0);
 					framecnt++;
 					cnt = timing_getcount();
@@ -793,9 +780,7 @@ int main(int argc, char *argv[]) {
 	pccore_term();
 	S98_trash();
 
-#if defined(NP2GCC)
-	mouse_running(MOUSE_OFF);
-#endif
+	mousemng_disable(MOUSEPROC_SYSTEM);
 
 	scrnmng_destroy();
 

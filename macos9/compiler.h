@@ -47,7 +47,7 @@ typedef Boolean			BOOL;
 #define	SPRINTF				sprintf
 
 #define	VERMOUTH_LIB
-#define SOUND_CRITICAL
+// #define SOUND_CRITICAL
 
 // #define	SUPPORT_8BPP
 #ifdef NP2GCC

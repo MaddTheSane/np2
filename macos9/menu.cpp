@@ -187,11 +187,10 @@ void menu_setbtnmode(BYTE value) {
 	_CheckMenuItem(hmenu, IDM_JOYX, MFCHECK(np2cfg.BTN_MODE));
 }
 
-#if defined(NP2GCC)
 void menu_setmouse(BYTE value) {
 
 	value &= 1;
 	np2oscfg.MOUSE_SW = value;
 	_CheckMenuItem(GetMenu(IDM_DEVICE), IDM_MOUSE, MFCHECK(value));
 }
-#endif
+
