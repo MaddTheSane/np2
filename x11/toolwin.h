@@ -29,7 +29,8 @@ extern "C" {
 
 extern NP2TOOL np2tool;
 
-#if 1
+#if !defined(SUPPORT_TOOLWINDOW)
+
 #define	toolwin_create()
 #define	toolwin_destroy()
 #define	toolwin_setfdd(drv, name)
@@ -38,7 +39,9 @@ extern NP2TOOL np2tool;
 #define	toolwin_draw(frame)		(void)frame
 #define	toolwin_readini()
 #define	toolwin_writeini()
-#else
+
+#else	/* !SUPPORT_TOOLWIN */
+
 void toolwin_create(void);
 void toolwin_destroy(void);
 
@@ -51,7 +54,8 @@ void toolwin_draw(BYTE frame);
 
 void toolwin_readini(void);
 void toolwin_writeini(void);
-#endif
+
+#endif	/* SUPPORT_TOOLWIN */
 
 #ifdef __cplusplus
 }
