@@ -26,6 +26,7 @@ FDD			= ../fdd
 LIO			= ../lio
 FONT		= ../font
 TARGET		= .
+X86ASM		= ./x86
 DIALOG		= ./dialog
 KEYDISP		= ./keydisp
 DEBUGUTY	= ./debuguty
@@ -53,7 +54,8 @@ VERMOUTHS	=	$(VERMOUTH)/midiout.h $(VERMOUTH)/midimod.h \
 
 AOPT	= -f win32
 COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
-			-mno-cygwin -march=pentium -DWIN32 -DNDEBUG -D_WINDOWS \
+			-fsigned-char -mno-cygwin -march=pentium \
+			-DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(IO) -I$(CBUS) -I$(BIOS) \
 			-I$(SOUND) -I$(VERMOUTH) -I$(VRAM) -I$(FDD) -I$(LIO) -I$(FONT) \
 			-I$(TARGET) -I$(DIALOG) -I$(KEYDISP) -I$(DEBUGUTY)
@@ -62,7 +64,7 @@ LOPT	= -mno-cygwin -lstdc++
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/textfile.o	$(OBJ)/profile.o	$(OBJ)/rect.o		\
 			$(OBJ)/lstarray.o	$(OBJ)/bmpdata.o	$(OBJ)/mimpidef.o	\
-			$(OBJ)/parts.o												\
+			$(OBJ)/parts.oa												\
 			$(OBJ)/i286c.o		$(OBJ)/i286c_mn.o	$(OBJ)/i286c_ea.o	\
 			$(OBJ)/i286c_0f.o	$(OBJ)/i286c_8x.o	$(OBJ)/i286c_sf.o	\
 			$(OBJ)/i286c_f6.o	$(OBJ)/i286c_fe.o	$(OBJ)/i286c_rp.o	\
@@ -88,14 +90,14 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/sound.o		$(OBJ)/sndcsec.o	$(OBJ)/fmboard.o	\
 			$(OBJ)/fmtimer.o	$(OBJ)/beepc.o		$(OBJ)/beepg.o		\
 			$(OBJ)/tms3631c.o	$(OBJ)/tms3631g.o	$(OBJ)/opngenc.o	\
-			$(OBJ)/opngeng.o	$(OBJ)/psggenc.o	$(OBJ)/psggeng.o	\
+			$(OBJ)/opngeng.oa	$(OBJ)/psggenc.o	$(OBJ)/psggeng.o	\
 			$(OBJ)/rhythmc.o	$(OBJ)/rhythmg.o	$(OBJ)/adpcmc.o		\
 			$(OBJ)/adpcmg.o		$(OBJ)/pcm86c.o		$(OBJ)/pcm86g.o		\
 			$(OBJ)/cs4231c.o	$(OBJ)/cs4231g.o	$(OBJ)/soundrom.o	\
 			$(OBJ)/s98.o												\
 			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
 			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
-			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/scrnbmp.o	\
+			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.oa	$(OBJ)/scrnbmp.o	\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
@@ -189,6 +191,9 @@ $(OBJ)/codecnv.o	:	$(COMMON)/codecnv.c $(HEADERS) $(COMMON)/codecnv.h
 
 $(OBJ)/parts.o		:	$(COMMON)/parts.c $(HEADERS) $(COMMON)/codecnv.h
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/parts.oa		:	$(X86ASM)/parts.x86
+	$(AS) $(AOPT) $< -o $@
 
 
 
@@ -518,6 +523,9 @@ $(OBJ)/opngeng.o	:	$(SOUND)/opngeng.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(FMBOARDS) $(SOUND)/sound.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/opngeng.oa	:	$(X86ASM)/opngeng.x86
+	$(AS) $(AOPT) $< -o $@
+
 $(OBJ)/psggenc.o	:	$(SOUND)/psggenc.c $(HEADERS) $(SOUND)/sound.h \
 						$(SOUND)/psggen.h $(KEYDISP)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
@@ -629,6 +637,9 @@ $(OBJ)/makegrph.o	:	$(VRAM)/makegrph.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(VRAM)/dispsync.h $(VRAM)/makegrph.h \
 						$(VRAM)/makegrph.mcr
 	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/makegrph.oa	:	$(X86ASM)/makegrph.x86
+	$(AS) $(AOPT) $< -o $@
 
 $(OBJ)/scrnbmp.o	:	$(VRAM)/scrnbmp.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/bmpdata.h $(VRAM)/scrndraw.h \

@@ -97,7 +97,7 @@ void extromio_close(EXTROMH erh) {
 			file_close((FILEH)erh->fh);
 		}
 		else if (erh->type == EXTROMIO_RES) {
-			FreeResource((HGLOBAL)erh->fh);
+//			FreeResource((HGLOBAL)erh->fh);		// win9x/NT
 		}
 		_MFREE(erh);
 	}
