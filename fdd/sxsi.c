@@ -35,9 +35,9 @@ typedef struct {
 } HDIHDR;
 
 static const _SXSIHDD defsasi = {615*33*8, 615, 256, 33, 8,
-											HDDTYPE_SASI, 256, {0x00}};
+											HDDTYPE_SASI, 256, 0, {0x00}};
 static const _SXSIHDD defscsi = {40*16*32*8, 40*16, 256, 32, 8,
-											HDDTYPE_SCSI, 220, {0x00}};
+											HDDTYPE_SCSI, 220, 0, {0x00}};
 
 
 	_SXSIHDD	sxsi_hd[4];
@@ -51,7 +51,7 @@ void sxsi_initialize(void) {
 
 	ZeroMemory(sxsi_hd, sizeof(sxsi_hd));
 	for (i=0; i<(sizeof(sxsi_hd)/sizeof(_SXSIHDD)); i++) {
-		sxsi_hd[i].fh = (void *)FILEH_INVALID;
+		sxsi_hd[i].fh = (long)FILEH_INVALID;
 	}
 }
 
@@ -105,7 +105,7 @@ const char		*ext;
 			sxsi->tracks = LOADINTELWORD(thd.tracks);
 			sxsi->totals = sxsi->tracks * sxsi->sectors * sxsi->surfaces;
 			file_cpyname(sxsi->fname, file, sizeof(sxsi->fname));
-			sxsi->fh = (void *)fh;
+			sxsi->fh = (long)fh;
 			return(SUCCESS);
 		}
 		file_close(fh);
@@ -124,7 +124,7 @@ const char		*ext;
 			sxsi->sectors = hdi.sectors[0];
 			sxsi->totals = sxsi->tracks * sxsi->sectors * sxsi->surfaces;
 			file_cpyname(sxsi->fname, file, sizeof(sxsi->fname));
-			sxsi->fh = (void *)fh;
+			sxsi->fh = (long)fh;
 			return(SUCCESS);
 		}
 		file_close(fh);
@@ -144,7 +144,7 @@ const char		*ext;
 			sxsi->sectors = v98.sectors;
 			sxsi->surfaces = v98.surfaces;
 			file_cpyname(sxsi->fname, file, sizeof(sxsi->fname));
-			sxsi->fh = (void *)fh;
+			sxsi->fh = (long)fh;
 			return(SUCCESS);
 		}
 		file_close(fh);
@@ -178,7 +178,7 @@ void sxsi_flash(void) {
 	while(sxsi < sxsiterm) {
 		if ((FILEH)sxsi->fh != FILEH_INVALID) {
 			file_close((FILEH)sxsi->fh);
-			sxsi->fh = (void *)FILEH_INVALID;
+			sxsi->fh = (long)FILEH_INVALID;
 		}
 		sxsi++;
 	}
@@ -194,7 +194,7 @@ void sxsi_trash(void) {
 	while(sxsi < sxsiterm) {
 		if ((FILEH)sxsi->fh != FILEH_INVALID) {
 			file_close((FILEH)sxsi->fh);
-			sxsi->fh = (void *)FILEH_INVALID;
+			sxsi->fh = (long)FILEH_INVALID;
 		}
 		sxsi->fname[0] = '\0';
 		sxsi++;
@@ -216,7 +216,7 @@ static SXSIHDD getdrive(BYTE drv) {
 		return(NULL);
 	}
 	if ((FILEH)ret->fh == FILEH_INVALID) {
-		ret->fh = (void *)file_open(ret->fname);
+		ret->fh = (long)file_open(ret->fname);
 		if ((FILEH)ret->fh == FILEH_INVALID) {
 			ret->fname[0] = '\0';
 			return(NULL);

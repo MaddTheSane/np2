@@ -13,8 +13,8 @@ typedef struct {
 	BYTE	surfaces;
 	UINT16	type;
 	UINT32	headersize;
+	long	fh;
 	char	fname[MAX_PATH];
-	void	*fh;
 } _SXSIHDD, *SXSIHDD;
 
 

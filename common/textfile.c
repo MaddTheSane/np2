@@ -16,7 +16,7 @@ TEXTFILEH textfile_open(const char *filename, UINT buffersize) {
 		ret = (TEXTFILEH)_MALLOC(sizeof(_TEXTFILE) + buffersize, filename);
 		if (ret) {
 			ZeroMemory(ret, sizeof(_TEXTFILE) + buffersize);
-			ret->fh = (void *)fh;
+			ret->fh = (long)fh;
 			ret->buffersize = buffersize;
 			return(ret);
 		}

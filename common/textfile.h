@@ -1,6 +1,6 @@
 
 typedef struct {
-	void	*fh;
+	long	fh;
 	long	fhpos;
 	UINT	buffersize;
 	UINT	flag;
