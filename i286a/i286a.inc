@@ -36,8 +36,8 @@ CPU_IDTR			equ		94 - 112
 CPU_MSW				equ		100 - 112
 ; cpu_resetreq		equ		102 - 112
 ; cpu_itfbank		equ		103 - 112
-; cpu_extmem		equ		104 - 112
-; cpu_extmemsize	equ		108 - 112
+CPU_EXTMEM			equ		104 - 112
+CPU_EXTMEMSIZE		equ		108 - 112
 ; cpu_mainmem		equ		112 - 112
 
 CPU_AL				equ		0 - 112
