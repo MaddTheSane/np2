@@ -114,7 +114,7 @@ void np2class_enablemenu(HWND hWnd, BOOL enable) {
 	}
 }
 
-void np2class_windowtype(HWND hWnd, BYTE type) {
+void np2class_windowtype(HWND hWnd, UINT8 type) {
 
 	RECT	rect;
 	DWORD	style;
@@ -146,7 +146,7 @@ void np2class_windowtype(HWND hWnd, BYTE type) {
 							rect.right - rect.left, rect.bottom - rect.top);
 }
 
-void np2class_frametype(HWND hWnd, BYTE thick) {
+void np2class_frametype(HWND hWnd, UINT8 thick) {
 
 	RECT	rect;
 	DWORD	style;

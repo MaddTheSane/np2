@@ -19,7 +19,7 @@ enum {
 void np2class_wmcreate(HWND hWnd);
 void np2class_wmdestroy(HWND hWnd);
 void np2class_enablemenu(HWND hWnd, BOOL enable);
-void np2class_windowtype(HWND hWnd, BYTE type);
-void np2class_frametype(HWND hWnd, BYTE thick);
+void np2class_windowtype(HWND hWnd, UINT8 type);
+void np2class_frametype(HWND hWnd, UINT8 thick);
 HMENU np2class_gethmenu(HWND hWnd);
 

@@ -45,13 +45,13 @@ BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
 													char *path, UINT size);
 
-void dlgs_browsemimpidef(HWND hWnd, WORD res);
+void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 
-void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items);
-void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items);
+void dlgs_setliststr(HWND hWnd, UINT16 res, const char **item, UINT items);
+void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items);
 
-void dlgs_setlistmidiout(HWND hWnd, WORD res, const char *defname);
-void dlgs_setlistmidiin(HWND hWnd, WORD res, const char *defname);
+void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const char *defname);
+void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const char *defname);
 
-void dlgs_drawbmp(HDC hdc, BYTE *bmp);
+void dlgs_drawbmp(HDC hdc, UINT8 *bmp);
 

@@ -106,8 +106,7 @@ static void viewsnd_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	}
 
 	pos = view->pos;
-	for (y=0; y<rc->bottom && pos<sizeof(fmsndtbl)/sizeof(FMSNDTBL);
-															y+=16, pos++) {
+	for (y=0; (y<rc->bottom) && (pos<NELEMENTS(fmsndtbl)); y+=16, pos++) {
 		if (fmsndtbl[pos].str) {
 			TextOut(hdc, 0, y, fmsndtbl[pos].str, strlen(fmsndtbl[pos].str));
 		}
@@ -176,7 +175,7 @@ LRESULT CALLBACK viewsnd_proc(NP2VIEW_T *view,
 void viewsnd_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 
 	dst->type = VIEWMODE_SND;
-	dst->maxline = sizeof(fmsndtbl)/sizeof(FMSNDTBL);
+	dst->maxline = NELEMENTS(fmsndtbl);
 	dst->mul = 1;
 	dst->pos = 0;
 }

@@ -175,15 +175,15 @@ const char	*str;
 	}
 
 	val = GetDlgItemCheck(hWnd, IDC_ALLOWRESIZE);
-	if (np2oscfg.thickframe != (BYTE)val) {
-		np2oscfg.thickframe = (BYTE)val;
+	if (np2oscfg.thickframe != (UINT8)val) {
+		np2oscfg.thickframe = (UINT8)val;
 		update |= SYS_UPDATEOSCFG;
 	}
 
 	if (!(mmxflag & MMXFLAG_NOTSUPPORT)) {
 		val = GetDlgItemCheck(hWnd, IDC_DISABLEMMX);
-		if (np2oscfg.disablemmx != (BYTE)val) {
-			np2oscfg.disablemmx = (BYTE)val;
+		if (np2oscfg.disablemmx != (UINT8)val) {
+			np2oscfg.disablemmx = (UINT8)val;
 			mmxflag &= ~MMXFLAG_DISABLE;
 			mmxflag |= (val)?MMXFLAG_DISABLE:0;
 			update |= SYS_UPDATEOSCFG;
@@ -191,14 +191,14 @@ const char	*str;
 	}
 
 	val = GetDlgItemCheck(hWnd, IDC_COMFIRM);
-	if (np2oscfg.comfirm != (BYTE)val) {
-		np2oscfg.comfirm = (BYTE)val;
+	if (np2oscfg.comfirm != (UINT8)val) {
+		np2oscfg.comfirm = (UINT8)val;
 		update |= SYS_UPDATEOSCFG;
 	}
 
 	val = GetDlgItemCheck(hWnd, IDC_RESUME);
-	if (np2oscfg.resume != (BYTE)val) {
-		np2oscfg.resume = (BYTE)val;
+	if (np2oscfg.resume != (UINT8)val) {
+		np2oscfg.resume = (UINT8)val;
 		update |= SYS_UPDATEOSCFG;
 	}
 	sysmng_update(update);
@@ -212,7 +212,7 @@ LRESULT CALLBACK CfgDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			return(FALSE);
 
 		case WM_COMMAND:
-			switch (LOWORD(wp)) {
+			switch(LOWORD(wp)) {
 				case IDOK:
 					cfgupdate(hWnd);
 					EndDialog(hWnd, IDOK);
@@ -231,7 +231,7 @@ LRESULT CALLBACK CfgDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 						UINT val;
 						val = (UINT)SendDlgItemMessage(hWnd, IDC_MULTIPLE,
 														CB_GETCURSEL, 0, 0);
-						if (val < sizeof(mulval)/sizeof(UINT32)) {
+						if (val < NELEMENTS(mulval)) {
 							setclock(hWnd, mulval[val]);
 						}
 					}

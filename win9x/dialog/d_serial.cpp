@@ -63,20 +63,20 @@ enum {
 };
 
 typedef struct {
-	WORD	idc[ID_MAX];
-	COMMNG	*cm;
-	COMCFG	*cfg;
-const WORD	*com_item;
-const WORD	*midi_item;
-	UINT	update;
+	UINT16		idc[ID_MAX];
+	COMMNG		*cm;
+	COMCFG		*cfg;
+const UINT16	*com_item;
+const UINT16	*midi_item;
+	UINT		update;
 } DLGCOM_P;
 
 
-static const WORD com1serial[8] = {
+static const UINT16 com1serial[8] = {
 			IDC_COM1STR00, IDC_COM1STR01, IDC_COM1STR02, IDC_COM1STR03,
 			IDC_COM1STR04, IDC_COM1STR05, IDC_COM1STR06, IDC_COM1STR07};
 
-static const WORD com1rsmidi[3] = {
+static const UINT16 com1rsmidi[3] = {
 			IDC_COM1STR10, IDC_COM1STR11, IDC_COM1STR12};
 
 static const DLGCOM_P res_com1 =
@@ -88,11 +88,11 @@ static const DLGCOM_P res_com1 =
 			com1serial, com1rsmidi, SYS_UPDATESERIAL1};
 
 
-static const WORD com2serial[8] = {
+static const UINT16 com2serial[8] = {
 			IDC_COM2STR00, IDC_COM2STR01, IDC_COM2STR02, IDC_COM2STR03,
 			IDC_COM2STR04, IDC_COM2STR05, IDC_COM2STR06, IDC_COM2STR07};
 
-static const WORD com2rsmidi[3] = {
+static const UINT16 com2rsmidi[3] = {
 			IDC_COM2STR10, IDC_COM2STR11, IDC_COM2STR12};
 
 static const DLGCOM_P res_com2 =
@@ -104,11 +104,11 @@ static const DLGCOM_P res_com2 =
 			com2serial, com2rsmidi, SYS_UPDATESERIAL1};
 
 
-static const WORD com3serial[8] = {
+static const UINT16 com3serial[8] = {
 			IDC_COM3STR00, IDC_COM3STR01, IDC_COM3STR02, IDC_COM3STR03,
 			IDC_COM3STR04, IDC_COM3STR05, IDC_COM3STR06, IDC_COM3STR07};
 
-static const WORD com3rsmidi[3] = {
+static const UINT16 com3rsmidi[3] = {
 			IDC_COM3STR10, IDC_COM3STR11, IDC_COM3STR12};
 
 static const DLGCOM_P res_com3 =
@@ -120,7 +120,7 @@ static const DLGCOM_P res_com3 =
 			com3serial, com3rsmidi, SYS_UPDATESERIAL1};
 
 
-static void dlgcom_show(HWND hWnd, int ncmd, const WORD *item, int items) {
+static void dlgcom_show(HWND hWnd, int ncmd, const UINT16 *item, int items) {
 
 	while(items--) {
 		ShowWindow(GetDlgItem(hWnd, *item++), ncmd);
@@ -144,8 +144,8 @@ static void dlgcom_items(HWND hWnd, const DLGCOM_P *m, UINT r) {
 static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 								WPARAM wp, LPARAM lp, const DLGCOM_P *m) {
 
-	DWORD	d;
-	BYTE	b;
+	UINT32	d;
+	UINT8	b;
 	LRESULT	r;
 	union {
 		char	mmap[MAXPNAMELEN];
@@ -164,7 +164,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 			SETLISTUINT32(hWnd, m->idc[ID_CHARS], rscharsize);
 			SETLISTSTR(hWnd, m->idc[ID_PARITY], rsparity);
 			SETLISTSTR(hWnd, m->idc[ID_SBIT], rsstopbit);
-			for (d=0; d<(sizeof(cmserial_speed)/sizeof(UINT32))-1; d++) {
+			for (d=0; d<(NELEMENTS(cmserial_speed) - 1); d++) {
 				if (cmserial_speed[d] >= cfg->speed) {
 					break;
 				}
@@ -198,7 +198,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 			SetDlgItemText(hWnd, m->idc[ID_DEFF], cfg->def);
 
 			d = cfg->port;
-			if (d >= (sizeof(rsport)/sizeof(char *))) {
+			if (d >= NELEMENTS(rsport)) {
 				d = 0;
 			}
 			SendDlgItemMessage(hWnd, m->idc[ID_PORT],
@@ -227,11 +227,11 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 				r = SendDlgItemMessage(hWnd, m->idc[ID_PORT],
 										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 				if (r != CB_ERR) {
-					if ((UINT)r >= (sizeof(rsport)/sizeof(char *))) {
+					if ((UINT)r >= NELEMENTS(rsport)) {
 						r = 0;
 					}
-					if (cfg->port != (BYTE)r) {
-						cfg->port = (BYTE)r;
+					if (cfg->port != (UINT8)r) {
+						cfg->port = (UINT8)r;
 						update |= SYS_UPDATEOSCFG;
 						update |= m->update;
 					}
@@ -239,7 +239,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 				r = SendDlgItemMessage(hWnd, m->idc[ID_SPEED],
 										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 				if (r != CB_ERR) {
-					if ((UINT)r >= (sizeof(cmserial_speed)/sizeof(UINT32))) {
+					if ((UINT)r >= NELEMENTS(cmserial_speed)) {
 						r = 0;
 					}
 					if (cfg->speed != cmserial_speed[r]) {
@@ -253,20 +253,20 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 				r = SendDlgItemMessage(hWnd, m->idc[ID_CHARS],
 										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 				if (r != CB_ERR) {
-					b |= (BYTE)(((UINT)r & 3) << 2);
+					b |= (UINT8)(((UINT)r & 3) << 2);
 				}
 				r = SendDlgItemMessage(hWnd, m->idc[ID_PARITY],
 										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 				if (r != CB_ERR) {
 					if ((UINT)r) {
 						b |= 0x10;
-						b |= (BYTE)((((UINT)r - 1) & 1) << 5);
+						b |= (UINT8)((((UINT)r - 1) & 1) << 5);
 					}
 				}
 				r = SendDlgItemMessage(hWnd, m->idc[ID_SBIT],
 										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 				if (r != CB_ERR) {
-					b |= (BYTE)((((UINT)r + 1) & 3) << 6);
+					b |= (UINT8)((((UINT)r + 1) & 3) << 6);
 				}
 				if (cfg->param != b) {
 					cfg->param = b;
@@ -333,16 +333,16 @@ static LRESULT CALLBACK Com3Proc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 // --------------------------------------------------------------------
 
-static	BYTE	pc9861_s[3];
-static	BYTE	pc9861_j[6];
+static	UINT8	pc9861_s[3];
+static	UINT8	pc9861_j[6];
 
 typedef struct {
 	int		idc_speed;
 	int		idc_int;
 	int		idc_mode;
-	BYTE	*dip_mode;
-	BYTE	*dip_int;
-	BYTE	sft_int;
+	UINT8	*dip_mode;
+	UINT8	*dip_int;
+	UINT8	sft_int;
 } PC9861MODE_T;
 
 static const PC9861MODE_T pc9861mode[2] = {
@@ -383,12 +383,12 @@ static const UINT pc9861d2int[] = {0, 2, 1, 3};
 static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m) {
 
 	LRESULT	r;
-	BYTE	mode;
+	UINT8	mode;
 
 	mode = *(m->dip_mode);
 	r = SendDlgItemMessage(hWnd, m->idc_speed, CB_GETCURSEL, 0, 0);
 	if (r != CB_ERR) {
-		DWORD speed = r;
+		UINT speed = r;
 		if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
 			speed = NELEMENTS(pc9861k_speed) - 1;
 		}
@@ -413,10 +413,10 @@ static void pc9861getint(HWND hWnd, const PC9861MODE_T *m) {
 
 	r = SendDlgItemMessage(hWnd, m->idc_int, CB_GETCURSEL, 0, 0);
 	if (r != CB_ERR) {
-		for (i=0; i<(sizeof(pc9861d2int)/sizeof(UINT)); i++) {
+		for (i=0; i<NELEMENTS(pc9861d2int); i++) {
 			if (pc9861d2int[i] == (UINT)(r & 3)) {
 				*(m->dip_int) &= ~(0x03 << (m->sft_int));
-				*(m->dip_int) |= (BYTE)(i << (m->sft_int));
+				*(m->dip_int) |= (UINT8)(i << (m->sft_int));
 				break;
 			}
 		}
@@ -426,11 +426,11 @@ static void pc9861getint(HWND hWnd, const PC9861MODE_T *m) {
 static void pc9861getmode(HWND hWnd, const PC9861MODE_T *m) {
 
 	LRESULT	r;
-	BYTE	i;
+	UINT8	i;
 
 	r = SendDlgItemMessage(hWnd, m->idc_mode, CB_GETCURSEL, 0, 0);
 	if (r != CB_ERR) {
-		for (i=0; i<(sizeof(pc9861d2sync)/sizeof(UINT)); i++) {
+		for (i=0; i<NELEMENTS(pc9861d2sync); i++) {
 			if (pc9861d2sync[i] == (UINT)(r & 3)) {
 				*(m->dip_mode) &= (~3);
 				*(m->dip_mode) |= i;
@@ -442,10 +442,10 @@ static void pc9861getmode(HWND hWnd, const PC9861MODE_T *m) {
 
 static void pc9861setmode(HWND hWnd, const PC9861MODE_T *m) {
 
-	DWORD	speed;
-	DWORD	mode;
-	DWORD	intnum;
-	BYTE	modedip;
+	UINT	speed;
+	UINT	mode;
+	UINT	intnum;
+	UINT8	modedip;
 
 	modedip = *(m->dip_mode);
 	speed = (((~modedip) >> 2) & 0x0f) + 1;
@@ -478,7 +478,7 @@ static void pc9861cmddipsw(HWND hWnd) {
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
-	BYTE	bit;
+	UINT8	bit;
 
 	GetWindowRect(GetDlgItem(hWnd, IDC_PC9861DIP), &rect1);
 	GetClientRect(GetDlgItem(hWnd, IDC_PC9861DIP), &rect2);
@@ -534,7 +534,7 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
 	HWND	sub;
-	BYTE	r;
+	UINT8	r;
 	UINT	update;
 
 	switch (msg) {

@@ -112,7 +112,7 @@ static const char mimpi_ext[] = "def";
 static const char mimpi_filter[] = "MIMPI define file(*.def)\0*.def\0";
 static const FILESEL mimpi = {mimpi_title, mimpi_ext, mimpi_filter, 1};
 
-void dlgs_browsemimpidef(HWND hWnd, WORD res) {
+void dlgs_browsemimpidef(HWND hWnd, UINT16 res) {
 
 	HWND	subwnd;
 	char	path[MAX_PATH];
@@ -132,7 +132,7 @@ const char	*p;
 
 // ---- list
 
-void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items) {
+void dlgs_setliststr(HWND hWnd, UINT16 res, const char **item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;
@@ -143,7 +143,7 @@ void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items) {
 	}
 }
 
-void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items) {
+void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;
@@ -159,7 +159,7 @@ void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items) {
 
 // ---- MIDIデバイスのリスト
 
-void dlgs_setlistmidiout(HWND hWnd, WORD res, const char *defname) {
+void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const char *defname) {
 
 	HWND		wnd;
 	UINT		defcur;
@@ -197,7 +197,7 @@ void dlgs_setlistmidiout(HWND hWnd, WORD res, const char *defname) {
 	SendMessage(wnd, CB_SETCURSEL, (WPARAM)defcur, (LPARAM)0);
 }
 
-void dlgs_setlistmidiin(HWND hWnd, WORD res, const char *defname) {
+void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const char *defname) {
 
 	HWND		wnd;
 	UINT		defcur;
@@ -224,13 +224,13 @@ void dlgs_setlistmidiin(HWND hWnd, WORD res, const char *defname) {
 
 // ---- draw
 
-void dlgs_drawbmp(HDC hdc, BYTE *bmp) {
+void dlgs_drawbmp(HDC hdc, UINT8 *bmp) {
 
 	BMPFILE		*bf;
 	BMPINFO		*bi;
 	BMPDATA		inf;
 	HBITMAP		hbmp;
-	BYTE		*image;
+	UINT8		*image;
 	HDC			hmdc;
 
 	if (bmp == NULL) {

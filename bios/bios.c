@@ -56,7 +56,7 @@ const IODATA	*pterm;
 	gdc_biosreset();
 
 	p = iodata;
-	pterm = iodata + (sizeof(iodata) / sizeof(IODATA));
+	pterm = iodata + NELEMENTS(iodata);
 	while(p < pterm) {
 		iocore_out8(p->port, p->data);
 		p++;

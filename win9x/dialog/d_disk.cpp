@@ -148,7 +148,7 @@ static const UINT16 sasires[6] = {
 				IDC_NEWSASI15MB, IDC_NEWSASI20MB,
 				IDC_NEWSASI30MB, IDC_NEWSASI40MB};
 
-static	BYTE	makefdtype = DISKTYPE_2HD << 4;
+static	UINT8	makefdtype = DISKTYPE_2HD << 4;
 static	char	disklabel[16+1];
 static	UINT	hddsize;
 static	UINT	hddminsize;
@@ -169,7 +169,7 @@ static LRESULT CALLBACK NewHddDlgProc(HWND hWnd, UINT msg,
 			return(FALSE);
 
 		case WM_COMMAND:
-			switch (LOWORD(wp)) {
+			switch(LOWORD(wp)) {
 				case IDOK:
 					GetWindowText(GetDlgItem(hWnd, IDC_HDDSIZE),
 													work, sizeof(work));
@@ -214,7 +214,7 @@ static LRESULT CALLBACK NewSASIDlgProc(HWND hWnd, UINT msg,
 			return(FALSE);
 
 		case WM_COMMAND:
-			switch (LOWORD(wp)) {
+			switch(LOWORD(wp)) {
 				case IDOK:
 					for (val=0; val<6; val++) {
 						if (GetDlgItemCheck(hWnd, sasires[val])) {
@@ -250,7 +250,7 @@ static LRESULT CALLBACK NewSASIDlgProc(HWND hWnd, UINT msg,
 static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
-	WORD	res;
+	UINT16	res;
 
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -272,7 +272,7 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 			return(FALSE);
 
 		case WM_COMMAND:
-			switch (LOWORD(wp)) {
+			switch(LOWORD(wp)) {
 				case IDOK:
 					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
 											disklabel, sizeof(disklabel));

@@ -22,16 +22,16 @@ extern	COMMNG	cm_mpu98;
 
 static const char *mpuinterrupt[4] = {str_int0, str_int1, str_int2, str_int5};
 
-static	BYTE	mpu = 0;
+static	UINT8	mpu = 0;
 
 
-static void setmpuiopara(HWND hWnd, WORD res, BYTE value) {
+static void setmpuiopara(HWND hWnd, UINT16 res, UINT8 value) {
 
 	SendDlgItemMessage(hWnd, res, CB_SETCURSEL,
 									(WPARAM)((value >> 4) & 15), (LPARAM)0);
 }
 
-static BYTE getmpuio(HWND hWnd, WORD res) {
+static UINT8 getmpuio(HWND hWnd, UINT16 res) {
 
 	char	work[8];
 
@@ -39,16 +39,16 @@ static BYTE getmpuio(HWND hWnd, WORD res) {
 	return((milstr_solveHEX(work) >> 6) & 0xf0);
 }
 
-static void setmpuintpara(HWND hWnd, WORD res, BYTE value) {
+static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {
 
 	SendDlgItemMessage(hWnd, res, CB_SETCURSEL,
 									(WPARAM)(value & 3), (LPARAM)0);
 }
 
-static BYTE getmpuint(HWND hWnd, WORD res) {
+static UINT8 getmpuint(HWND hWnd, UINT16 res) {
 
 	char	work[8];
-	BYTE	ret;
+	UINT8	ret;
 
 	GetDlgItemText(hWnd, res, work, sizeof(work));
 	ret = work[3] - '0';
@@ -58,7 +58,7 @@ static BYTE getmpuint(HWND hWnd, WORD res) {
 	return(ret);
 }
 
-static void setmpujmp(HWND hWnd, BYTE value, BYTE bit) {
+static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
 
 	if ((mpu ^ value) & bit) {
 		mpu &= ~bit;
@@ -153,7 +153,7 @@ static void mpucmddipsw(HWND hWnd) {
 	RECT	rect2;
 	POINT	p;
 	BOOL	redraw;
-	BYTE	bit;
+	UINT8	bit;
 
 	GetWindowRect(GetDlgItem(hWnd, IDC_MPUDIP), &rect1);
 	GetClientRect(GetDlgItem(hWnd, IDC_MPUDIP), &rect2);
@@ -173,7 +173,7 @@ static void mpucmddipsw(HWND hWnd) {
 		redraw = TRUE;
 	}
 	else if ((p.x >= 9) && (p.x < 13)) {
-		bit = (BYTE)(12 - p.x);
+		bit = (UINT8)(12 - p.x);
 		if ((mpu ^ bit) & 3) {
 			mpu &= ~0x3;
 			mpu |= bit;
