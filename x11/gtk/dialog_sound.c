@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.4 2004/07/26 15:53:27 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.5 2004/07/29 14:34:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1369,7 +1369,7 @@ create_joypad_note(void)
 	}
 
 	/* no joystick device */
-	if ((np2oscfg.JOYPAD1 & 2) || (joypad_devlist == NULL)) {
+	if ((np2oscfg.JOYPAD1 & 2) && (joypad_devlist == NULL)) {
 		gtk_widget_set_sensitive(joypad_use_checkbutton[0], FALSE);
 		gtk_widget_set_sensitive(joypad_devlist_combo, FALSE);
 		for (i = 0; i < JOY_NAXIS; ++i) {
