@@ -27,10 +27,6 @@
 	IMPORT		dmap_i286
 	IMPORT		biosfunc
 
-	IMPORT		dmac
-	IMPORT		pic
-	IMPORT		extirq_pop
-
 	IMPORT		i286a_cts
 
 	IMPORT		i286aop80

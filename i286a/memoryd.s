@@ -1,7 +1,6 @@
 
-USE_HIMEM			equ		&110000
-
 	INCLUDE	i286a.inc
+	INCLUDE	i286amem.inc
 
 	IMPORT	memfn
 	IMPORT	i286core

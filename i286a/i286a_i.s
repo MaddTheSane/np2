@@ -3,7 +3,7 @@
 
 	IMPORT		i286core
 	IMPORT		i286a_memoryread
-	IMPORT		i286_memorywrite_w
+	IMPORT		i286a_memorywrite_w
 	EXPORT		i286a_localint
 	EXPORT		i286a_trapint
 	IMPORT		i286a_trapintr
@@ -19,18 +19,18 @@ i286a_localint	ldrh	r4, [r9, #CPU_SP]
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				sub		r4, r4, #(2 << 16)
 				ldrh	r1, [r9, #CPU_CS]
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8 lsr #16
 				mov		r4, r4 lsr #16
 				sub		r8, r8, r1 lsl #16
 				add		r0, r4, r5
 				strh	r4, [r9, #CPU_SP]
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				mov		r0, #0
 				ldr		r1, [r9, r6 lsl #2]
 				strb	r0, [r9, #CPU_TRAP]
@@ -49,18 +49,18 @@ i286a_trapint	ldrh	r4, [r9, #CPU_SP]
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				sub		r4, r4, #(2 << 16)
 				ldrh	r1, [r9, #CPU_CS]
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8 lsr #16
 				mov		r4, r4 lsr #16
 				sub		r8, r8, r1 lsl #16
 				add		r0, r4, r5
 				strh	r4, [r9, #CPU_SP]
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				mov		r0, #0
 				ldr		r1, [r9, #4]
 				strb	r0, [r9, #CPU_TRAP]
@@ -90,18 +90,18 @@ i286a_interrupt	ldr		r1, iai_r9
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				sub		r4, r4, #(2 << 16)
 				ldrh	r1, [r9, #CPU_CS]
 				add		r0, r5, r4 lsr #16
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				sub		r4, r4, #(2 << 16)
 				mov		r1, r8 lsr #16
 				mov		r4, r4 lsr #16
 				sub		r8, r8, r1 lsl #16
 				add		r0, r4, r5
 				strh	r4, [r9, #CPU_SP]
-				bl		i286_memorywrite_w
+				bl		i286a_memorywrite_w
 				mov		r0, #0
 				ldr		r1, [r9, r6 lsl #2]
 				strb	r0, [r9, #CPU_TRAP]

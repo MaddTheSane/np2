@@ -24,6 +24,7 @@ i286aop80		GETPC8
 				add		r5, r5, #CPU_REG
 				GETPC8
 				adr		r1, op8x_reg8
+				ldrb	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 ope80m			CPUWORK	#7
 				bl		i286a_ea
@@ -32,6 +33,7 @@ ope80m			CPUWORK	#7
 				add		r5, r9, r0
 				GETPC8
 				adr		r1, op8x_reg8
+				ldrb	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 ope80e			mov		r5, r0
 				bl		i286a_memoryread
@@ -58,36 +60,28 @@ op8x_ext8		dcd		add_r8_e
 				dcd		xor_r8_e
 				dcd		cmp_r8_e
 
-add_r8_i		ldrb	r6, [r5]
-				ADD8	r6, r0
+add_r8_i		ADD8	r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-or_r8_i			ldrb	r6, [r5]
-				OR8		r6, r0
+or_r8_i			OR8		r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-adc_r8_i		ldrb	r6, [r5]
-				ADC8	r6, r0
+adc_r8_i		ADC8	r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-sbb_r8_i		ldrb	r6, [r5]
-				SBB8	r6, r0
+sbb_r8_i		SBB8	r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-and_r8_i		ldrb	r6, [r5]
-				AND8	r6, r0
+and_r8_i		AND8	r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-sub_r8_i		ldrb	r6, [r5]
-				SUB8	r6, r0
+sub_r8_i		SUB8	r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-xor_r8_i		ldrb	r6, [r5]
-				XOR8	r6, r0
+xor_r8_i		XOR8	r4, r0
 				strb	r1, [r5]
 				mov		pc, r11
-cmp_r8_i		ldrb	r6, [r5]
-				SUB8	r6, r0
+cmp_r8_i		SUB8	r4, r0
 				mov		pc, r11
 
 add_r8_e		ADD8	r4, r0
@@ -133,6 +127,7 @@ i286aop81		GETPC8
 				add		r5, r5, #CPU_REG
 				GETPC16
 				adr		r1, op8x_reg16
+				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 ope81m			CPUWORK	#7
 				bl		i286a_ea
@@ -143,6 +138,7 @@ ope81m			CPUWORK	#7
 				add		r5, r9, r0
 				GETPC16
 				adr		r1, op8x_reg16
+				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 ope81e			mov		r5, r0
 				bl		i286a_memoryread_w
@@ -162,6 +158,7 @@ i286aop83		GETPC8
 				tst		r0, #(1 << 7)
 				orrne	r0, r0, #(&ff << 8)
 				adr		r1, op8x_reg16
+				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 ope83m			CPUWORK	#7
 				bl		i286a_ea
@@ -174,6 +171,7 @@ ope83m			CPUWORK	#7
 				tst		r0, #(1 << 7)
 				orrne	r0, r0, #(&ff << 8)
 				adr		r1, op8x_reg16
+				ldrh	r4, [r5]
 				ldr		pc, [r1, r6 lsr #1]
 ope83e			mov		r5, r0
 				bl		i286a_memoryread_w
@@ -202,36 +200,28 @@ op8x_ext16		dcd		add_r16_e
 				dcd		xor_r16_e
 				dcd		cmp_r16_e
 
-add_r16_i		ldrh	r6, [r5]
-				ADD16	r6, r0
+add_r16_i		ADD16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-or_r16_i		ldrh	r6, [r5]
-				OR16	r6, r0
+or_r16_i		OR16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-adc_r16_i		ldrh	r6, [r5]
-				ADC16	r6, r0
+adc_r16_i		ADC16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-sbb_r16_i		ldrh	r6, [r5]
-				SBB16	r6, r0
+sbb_r16_i		SBB16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-and_r16_i		ldrh	r6, [r5]
-				AND16	r6, r0
+and_r16_i		AND16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-sub_r16_i		ldrh	r6, [r5]
-				SUB16	r6, r0
+sub_r16_i		SUB16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-xor_r16_i		ldrh	r6, [r5]
-				XOR16	r6, r0
+xor_r16_i		XOR16	r4, r0
 				strh	r1, [r5]
 				mov		pc, r11
-cmp_r16_i		ldrh	r6, [r5]
-				SUB16	r6, r0
+cmp_r16_i		SUB16	r4, r0
 				mov		pc, r11
 
 add_r16_e		ADD16	r4, r0

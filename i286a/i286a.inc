@@ -12,9 +12,9 @@ I_FLAG				equ		&0200
 D_FLAG				equ		&0400
 O_FLAG				equ		&0800
 
-CPU_SIZE			equ		112
-CPU_STAT			equ		0 - 112
-CPU_EXT				equ		104 - 112
+CPU_SIZE			equ		124
+CPU_STAT			equ		(0 - CPU_SIZE)
+CPU_EXT				equ		(104 - CPU_SIZE)
 
 CPU_REG				equ		CPU_STAT + 0
 CPU_SEG				equ		CPU_STAT + 16
@@ -39,12 +39,8 @@ CPU_GDTR			equ		CPU_STAT + 88
 CPU_IDTR			equ		CPU_STAT + 94
 CPU_MSW				equ		CPU_STAT + 100
 ; cpu_resetreq		equ		CPU_STAT + 102
-; cpu_itfbank		equ		CPU_STAT + 103
+CPU_ITFBANK			equ		CPU_STAT + 103
 ; cpu_stat_size		equ		104
-CPU_EXTMEM			equ		CPU_STAT + 104
-CPU_EXTMEMSIZE		equ		CPU_STAT + 108
-; cpu_ext_size		equ		8
-; cpu_mainmem		equ		CPU_STAT + 112
 
 CPU_AL				equ		CPU_STAT + 0
 CPU_AH				equ		CPU_STAT + 1
@@ -69,6 +65,16 @@ CPU_SS				equ		CPU_STAT + 20
 CPU_DS				equ		CPU_STAT + 22
 CPU_FLAG			equ		CPU_STAT + 24
 CPU_IP				equ		CPU_STAT + 26
+
+
+CPU_EXTMEM			equ		CPU_EXT + 0
+CPU_EXTMEMSIZE		equ		CPU_EXT + 4
+MEMWAIT_TRAM		equ		CPU_EXT + 8
+MEMWAIT_VRAM		equ		CPU_EXT + 9
+MEMWAIT_GRCG		equ		CPU_EXT + 10
+FONTPTR_LOW			equ		CPU_EXT + 12
+FONTPTR_HIGH		equ		CPU_EXT + 16
+; cpu_ext_size		equ		20
 
 MAX_PREFIX			equ		8
 
