@@ -30,13 +30,16 @@ typedef void (*IOCBFN)(void);
 #include	"necio.h"
 #include	"nmiio.h"
 #include	"np2sysp.h"
-#include	"pcidev.h"
 #include	"pic.h"
 #include	"pit.h"
 #include	"printif.h"
 #include	"serial.h"
 #include	"sysport.h"
 #include	"upd4990.h"
+
+#if defined(SUPPORT_PC9821)
+#include	"pcidev.h"
+#endif
 
 
 #ifdef __cplusplus

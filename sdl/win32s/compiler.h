@@ -25,9 +25,9 @@ typedef	unsigned short	UINT16;
 typedef	signed int		SINT32;
 #endif
 
-#define	BRESULT				UINT8
+#define	BRESULT				UINT
 #define	OEMCHAR				char
-#define	OEMTEXT(string)		(string)
+#define	OEMTEXT(string)		string
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
 

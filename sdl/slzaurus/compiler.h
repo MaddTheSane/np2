@@ -78,6 +78,11 @@ typedef	unsigned char	BYTE;
 #define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
 #endif
 
+#define	BRESULT				UINT
+#define	OEMCHAR				char
+#define	OEMTEXT(string)		string
+#define	OEMSPRINTF			sprintf
+#define	OEMSTRLEN			strlen
 
 #if !defined(SIZE_VGA)
 #define	RGB16		UINT32
@@ -93,9 +98,10 @@ typedef	unsigned char	BYTE;
 #include	"trace.h"
 
 
-#define	GETTICK()	SDL_GetTicks()
-#define	SPRINTF		sprintf
+#define	GETTICK()			SDL_GetTicks()
 #define	__ASSERT(s)
+#define	SPRINTF				sprintf
+#define	STRLEN				strlen
 
 #define	VERMOUTH_LIB
 // #define	SOUND_CRITICAL
