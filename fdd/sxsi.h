@@ -23,7 +23,8 @@ enum {
 	SXSIDEV_MO			= 0x03,
 	SXSIDEV_SCANNER		= 0x04,
 
-	SXSIFLAG_READY		= 0x01
+	SXSIFLAG_READY		= 0x01,
+	SXSIFLAG_FILEOPENED	= 0x02
 };
 
 
@@ -40,11 +41,14 @@ struct _sxsidev {
 	UINT8	flag;
 	UINT8	__caps;
 
-	INTPTR	fh;
+	BRESULT	(*reopen)(SXSIDEV sxsi);
 	REG8	(*read)(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size);
 	REG8	(*write)(SXSIDEV sxsi, long pos, const UINT8 *buf, UINT size);
 	REG8	(*format)(SXSIDEV sxsi, long pos);
+	void	(*close)(SXSIDEV sxsi);
+	void	(*destroy)(SXSIDEV sxsi);
 
+	INTPTR	hdl;
 	long	totals;
 	UINT16	cylinders;
 	UINT16	size;
@@ -73,7 +77,7 @@ SXSIDEV sxsi_getptr(REG8 drv);
 OEMCHAR *sxsi_getfilename(REG8 drv);
 BRESULT sxsi_setdevtype(REG8 drv, UINT8 dev);
 UINT8 sxsi_getdevtype(REG8 drv);
-BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *file);
+BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *fname);
 void sxsi_devclose(REG8 drv);
 REG8 sxsi_read(REG8 drv, long pos, UINT8 *buf, UINT size);
 REG8 sxsi_write(REG8 drv, long pos, const UINT8 *buf, UINT size);

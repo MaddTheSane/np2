@@ -8,7 +8,7 @@ enum {
 	SXSIMEDIA_AUDIO = 0x20
 };
 
-BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *file);
+BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *fname);
 
 #ifdef __cplusplus
 }

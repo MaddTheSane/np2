@@ -15,6 +15,12 @@
 
 // ----
 
+static BRESULT nc_reopen(SXSIDEV sxsi) {
+
+	(void)sxsi;
+	return(FAILURE);
+}
+
 static REG8	nc_read(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size) {
 
 	(void)sxsi;
@@ -40,23 +46,36 @@ static REG8 nc_format(SXSIDEV sxsi, long pos) {
 	return(0x60);
 }
 
-static void sxsi_disconnect(SXSIDEV sxsi) {
+static void nc_close(SXSIDEV sxsi) {
 
-	FILEH	fh;
+	(void)sxsi;
+}
+
+static void nc_destroy(SXSIDEV sxsi) {
+
+	(void)sxsi;
+}
+
+
+static void sxsi_disconnect(SXSIDEV sxsi) {
 
 	if (sxsi) {
 #if defined(SUPPORT_IDEIO)
 		ideio_notify(sxsi->drv, 0);
 #endif
-		fh = (FILEH)sxsi->fh;
+		if (sxsi->flag & SXSIFLAG_FILEOPENED) {
+			(*sxsi->close)(sxsi);
+		}
+		if (sxsi->flag & SXSIFLAG_READY) {
+			(*sxsi->destroy)(sxsi);
+		}
 		sxsi->flag = 0;
-		sxsi->fh = (INTPTR)FILEH_INVALID;
+		sxsi->reopen = nc_reopen;
 		sxsi->read = nc_read;
 		sxsi->write = nc_write;
 		sxsi->format = nc_format;
-		if (fh != FILEH_INVALID) {
-			file_close(fh);
-		}
+		sxsi->close = nc_close;
+		sxsi->destroy = nc_destroy;
 	}
 }
 
@@ -77,7 +96,6 @@ void sxsi_initialize(void) {
 	}
 #endif
 	for (i=0; i<NELEMENTS(sxsi_dev); i++) {
-		sxsi_dev[i].fh = (INTPTR)FILEH_INVALID;
 		sxsi_disconnect(sxsi_dev + i);
 	}
 }
@@ -86,15 +104,13 @@ void sxsi_allflash(void) {
 
 	SXSIDEV	sxsi;
 	SXSIDEV	sxsiterm;
-	FILEH	fh;
 
 	sxsi = sxsi_dev;
 	sxsiterm = sxsi + NELEMENTS(sxsi_dev);
 	while(sxsi < sxsiterm) {
-		fh = (FILEH)sxsi->fh;
-		sxsi->fh = (INTPTR)FILEH_INVALID;
-		if (fh != FILEH_INVALID) {
-			file_close(fh);
+		if (sxsi->flag & SXSIFLAG_FILEOPENED) {
+			sxsi->flag &= ~SXSIFLAG_FILEOPENED;
+			(*sxsi->close)(sxsi);
 		}
 		sxsi++;
 	}
@@ -132,17 +148,14 @@ BOOL sxsi_isconnect(SXSIDEV sxsi) {
 
 BRESULT sxsi_prepare(SXSIDEV sxsi) {
 
-	FILEH	fh;
-
 	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY))) {
 		return(FAILURE);
 	}
-	fh = (FILEH)sxsi->fh;
-	if (fh == FILEH_INVALID) {
-		fh = file_open(sxsi->fname);
-		sxsi->fh = (INTPTR)fh;
-		if (fh == FILEH_INVALID) {
-			sxsi->flag = 0;
+	if (!(sxsi->flag & SXSIFLAG_FILEOPENED)) {
+		if ((*sxsi->reopen)(sxsi) == SUCCESS) {
+			sxsi->flag |= SXSIFLAG_FILEOPENED;
+		}
+		else {
 			return(FAILURE);
 		}
 	}
@@ -243,7 +256,7 @@ BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *fname) {
 		goto sxsiope_err;
 	}
 	file_cpyname(sxsi->fname, fname, NELEMENTS(sxsi->fname));
-	sxsi->flag = SXSIFLAG_READY;
+	sxsi->flag = SXSIFLAG_READY | SXSIFLAG_FILEOPENED;
 #if defined(SUPPORT_IDEIO)
 	ideio_notify(sxsi->drv, 1);
 #endif

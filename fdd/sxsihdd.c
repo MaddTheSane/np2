@@ -21,8 +21,23 @@ const SASIHDD sasihdd[7] = {
 
 // ----
 
+static BRESULT hdd_reopen(SXSIDEV sxsi) {
+
+	FILEH	fh;
+
+	fh = file_open(sxsi->fname);
+	if (fh != FILEH_INVALID) {
+		sxsi->hdl = (INTPTR)fh;
+		return(SUCCESS);
+	}
+	else {
+		return(FAILURE);
+	}
+}
+
 static REG8 hdd_read(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size) {
 
+	FILEH	fh;
 	long	r;
 	UINT	rsize;
 
@@ -33,14 +48,15 @@ static REG8 hdd_read(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size) {
 		return(0x40);
 	}
 	pos = pos * sxsi->size + sxsi->headersize;
-	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
+	fh = (FILEH)sxsi->hdl;
+	r = file_seek(fh, pos, FSEEK_SET);
 	if (pos != r) {
 		return(0xd0);
 	}
 	while(size) {
 		rsize = min(size, sxsi->size);
 		CPU_REMCLOCK -= rsize;
-		if (file_read((FILEH)sxsi->fh, buf, rsize) != rsize) {
+		if (file_read(fh, buf, rsize) != rsize) {
 			return(0xd0);
 		}
 		buf += rsize;
@@ -51,6 +67,7 @@ static REG8 hdd_read(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size) {
 
 static REG8 hdd_write(SXSIDEV sxsi, long pos, const UINT8 *buf, UINT size) {
 
+	FILEH	fh;
 	long	r;
 	UINT	wsize;
 
@@ -61,14 +78,15 @@ static REG8 hdd_write(SXSIDEV sxsi, long pos, const UINT8 *buf, UINT size) {
 		return(0x40);
 	}
 	pos = pos * sxsi->size + sxsi->headersize;
-	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
+	fh = (FILEH)sxsi->hdl;
+	r = file_seek(fh, pos, FSEEK_SET);
 	if (pos != r) {
 		return(0xd0);
 	}
 	while(size) {
 		wsize = min(size, sxsi->size);
 		CPU_REMCLOCK -= wsize;
-		if (file_write((FILEH)sxsi->fh, buf, wsize) != wsize) {
+		if (file_write(fh, buf, wsize) != wsize) {
 			return(0x70);
 		}
 		buf += wsize;
@@ -79,6 +97,7 @@ static REG8 hdd_write(SXSIDEV sxsi, long pos, const UINT8 *buf, UINT size) {
 
 static REG8 hdd_format(SXSIDEV sxsi, long pos) {
 
+	FILEH	fh;
 	long	r;
 	UINT16	i;
 	UINT8	work[256];
@@ -92,7 +111,8 @@ static REG8 hdd_format(SXSIDEV sxsi, long pos) {
 		return(0x40);
 	}
 	pos = pos * sxsi->size + sxsi->headersize;
-	r = file_seek((FILEH)sxsi->fh, pos, FSEEK_SET);
+	fh = (FILEH)sxsi->hdl;
+	r = file_seek(fh, pos, FSEEK_SET);
 	if (pos != r) {
 		return(0xd0);
 	}
@@ -103,12 +123,17 @@ static REG8 hdd_format(SXSIDEV sxsi, long pos) {
 			wsize = min(size, sizeof(work));
 			size -= wsize;
 			CPU_REMCLOCK -= wsize;
-			if (file_write((FILEH)sxsi->fh, work, wsize) != wsize) {
+			if (file_write(fh, work, wsize) != wsize) {
 				return(0x70);
 			}
 		}
 	}
 	return(0x00);
+}
+
+static void hdd_close(SXSIDEV sxsi) {
+
+	file_close((FILEH)sxsi->hdl);
 }
 
 
@@ -133,7 +158,7 @@ const SASIHDD	*sasi;
 	return(SXSIMEDIA_INVSASI + 7);
 }
 
-BRESULT sxsihdd_open(SXSIDEV sxsi, const OEMCHAR *file) {
+BRESULT sxsihdd_open(SXSIDEV sxsi, const OEMCHAR *fname) {
 
 	FILEH		fh;
 const OEMCHAR	*ext;
@@ -145,11 +170,11 @@ const OEMCHAR	*ext;
 	UINT32		sectors;
 	UINT32		size;
 
-	fh = file_open(file);
+	fh = file_open(fname);
 	if (fh == FILEH_INVALID) {
 		goto sxsiope_err1;
 	}
-	ext = file_getext(file);
+	ext = file_getext(fname);
 	iftype = sxsi->drv & SXSIDRV_IFMASK;
 	if ((iftype == SXSIDRV_SASI) && (!file_cmpname(ext, str_thd))) {
 		THDHDR thd;						// T98 HDD (IDE)
@@ -217,11 +242,13 @@ const OEMCHAR	*ext;
 			goto sxsiope_err2;
 		}
 	}
-	sxsi->fh = (INTPTR)fh;
+	sxsi->reopen = hdd_reopen;
 	sxsi->read = hdd_read;
 	sxsi->write = hdd_write;
 	sxsi->format = hdd_format;
+	sxsi->close = hdd_close;
 
+	sxsi->hdl = (INTPTR)fh;
 	sxsi->totals = totals;
 	sxsi->cylinders = (UINT16)cylinders;
 	sxsi->size = (UINT16)size;

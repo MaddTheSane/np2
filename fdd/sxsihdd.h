@@ -60,7 +60,7 @@ extern const char sig_vhd[8];
 extern const char sig_nhd[15];
 extern const SASIHDD sasihdd[7];
 
-BRESULT sxsihdd_open(SXSIDEV sxsi, const OEMCHAR *file);
+BRESULT sxsihdd_open(SXSIDEV sxsi, const OEMCHAR *fname);
 
 #ifdef __cplusplus
 }

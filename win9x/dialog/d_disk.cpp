@@ -46,11 +46,15 @@ static const FILESEL sasiui = {sasiui_title, tchar_thd, sasiui_filter, 4};
 static const TCHAR isoui_title[] = _T("Select ISO-9660 image");
 static const TCHAR tchar_iso[] = _T("iso");
 static const TCHAR isoui_filter[] =										\
+				_T("Cue sheets\0")										\
+								_T("*.cue\0")							\
 				_T("ISO-9660 image files\0")							\
 								_T("*.iso;*.img\0")						\
+				_T("All supported Files\0")								\
+								_T("*.cue;*.iso;*.img\0")				\
 				_T("All Files\0")										\
 								_T("*.*\0");
-static const FILESEL isoui = {isoui_title, tchar_iso, isoui_filter, 1};
+static const FILESEL isoui = {isoui_title, tchar_iso, isoui_filter, 3};
 #endif
 
 #if defined(SUPPORT_SCSI)
