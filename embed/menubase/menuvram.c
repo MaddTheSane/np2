@@ -858,11 +858,11 @@ void menuvram_base(VRAMHDL vram) {
 }
 
 
-VRAMHDL menuvram_create(int width, int height) {
+VRAMHDL menuvram_create(int width, int height, UINT bpp) {
 
 	VRAMHDL	ret;
 
-	ret = vram_create(width, height, FALSE, DEFAULT_BPP);
+	ret = vram_create(width, height, FALSE, bpp);
 	if (ret == NULL) {
 		goto mvcre_err;
 	}

@@ -109,6 +109,7 @@ typedef	unsigned char	BYTE;
 #define	SOUNDRESERVE	100
 
 #define	SUPPORT_CRT15KHZ
+#define	SUPPORT_SWSEEKSND
 
 #define	SCREEN_BPP		16
 

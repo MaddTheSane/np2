@@ -12,20 +12,22 @@ static const PROCTBL evtproc[] = {
 			{PROCID('e','p','i','t'), systimer},
 			{PROCID('e','b','e','p'), beeponeshot},
 			{PROCID('e','r','s','1'), rs232ctimer},
-			{PROCID('e','m','g','n'), musicgenint},
-			{PROCID('e','f','m','a'), fmport_a},
-			{PROCID('e','f','m','b'), fmport_b},
 			{PROCID('e','m','u','s'), mouseint},
 			{PROCID('e','k','e','y'), keyboard_callback},
-			{PROCID('e','m','d','0'), midiwaitout},
-			{PROCID('e','m','d','1'), midiint},
 			{PROCID('e','p','i','c'), picmask},
-			{PROCID('e','c','s','d'), cs4231_dma},
 			{PROCID('e','g','s','w'), gdcslavewait},
 			{PROCID('e','f','b','o'), fdbiosout},
 			{PROCID('e','f','i','w'), fdc_intwait},
+			{PROCID('e','m','d','0'), midiwaitout},
+			{PROCID('e','m','d','1'), midiint},
+#if !defined(DISABLE_SOUND)
+			{PROCID('e','m','g','n'), musicgenint},
+			{PROCID('e','f','m','a'), fmport_a},
+			{PROCID('e','f','m','b'), fmport_b},
+			{PROCID('e','c','s','d'), cs4231_dma},
 			{PROCID('e','p','8','6'), pcm86_cb},
 			{PROCID('e','a','m','d'), amd98int},
+#endif
 #if defined(SUPPORT_SASI)
 			{PROCID('e','s','a','s'), sasiioint},
 #endif
@@ -69,12 +71,15 @@ static const PROCTBL dmaproc[] = {
 			{PROCID('d','o','f','d'), fdc_dataread},
 			{PROCID('d','i','f','d'), fdc_datawrite},
 			{PROCID('d','e','f','d'), fdc_dmafunc},
+#if !defined(DISABLE_SOUND)
+			{PROCID('d','e','c','s'), cs4231dmafunc},
+#endif
 #if defined(SUPPORT_SASI)
 			{PROCID('d','o','s','a'), sasi_dataread},
 			{PROCID('d','i','s','a'), sasi_datawrite},
 			{PROCID('d','e','s','a'), sasi_dmafunc},
 #endif
-			{PROCID('d','e','c','s'), cs4231dmafunc}};
+	};
 
 static const SFENTRY np2tbl[] = {
 	{"PCCORE",		0,	STATFLAG_BIN,	&pccore,		sizeof(pccore)},
@@ -103,7 +108,6 @@ static const SFENTRY np2tbl[] = {
 	{"GDC1",		0,	STATFLAG_BIN,	&gdc,			sizeof(gdc)},
 	{"GDC2",		0,	STATFLAG_BIN,	&gdcs,			sizeof(gdcs)},
 	{"PIT",			0,	STATFLAG_BIN,	&pit,			sizeof(pit)},
-	{"MPU98II",		0,	STATFLAG_BIN,	&mpu98,			sizeof(mpu98)},
 	{"MOUSE",		0,	STATFLAG_BIN,	&mouseif,		sizeof(mouseif)},
 	{"NECIO",		0,	STATFLAG_BIN,	&necio,			sizeof(necio)},
 	{"NMIIO",		0,	STATFLAG_BIN,	&nmiio,			sizeof(nmiio)},
@@ -119,13 +123,16 @@ static const SFENTRY np2tbl[] = {
 	{"CALENDAR",	0,	STATFLAG_BIN,	&cal,			sizeof(cal)},
 	{"KEYSTAT",		0,	STATFLAG_BIN,	&keyctrl,		sizeof(keyctrl)},
 	{"PALEVENT",	0,	STATFLAG_BIN,	&palevent,		sizeof(palevent)},
-	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
-	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
-	{"MUSICGEN",	0,	STATFLAG_BIN,	&musicgen,		sizeof(musicgen)},
-	{"BEEP",		0,	STATFLAG_BIN,	&beep,			sizeof(beep)},
+	{"MPU98II",		0,	STATFLAG_BIN,	&mpu98,			sizeof(mpu98)},
 	{"CMMPU98",		0,	STATFLAG_COM,	(void *)0,		0},
 	{"CMRS232C",	0,	STATFLAG_COM,	(void *)1,		0},
 	{"DISK",		0,	STATFLAG_DISK,	NULL,			0},
+#if !defined(DISABLE_SOUND)
+	{"BEEP",		0,	STATFLAG_BIN,	&beep,			sizeof(beep)},
+	{"MUSICGEN",	0,	STATFLAG_BIN,	&musicgen,		sizeof(musicgen)},
+	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
+	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
+#endif
 #if defined(SUPPORT_IDEIO)
 	{"IDE",			0,	STATFLAG_BIN,	&ideio,			sizeof(ideio)},
 #endif

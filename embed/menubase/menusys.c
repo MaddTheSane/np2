@@ -345,7 +345,7 @@ static BOOL wndopenbase(MENUSYS *sys) {
 		mrect.right -= MENUSYS_BCAPTION;
 		mrect.bottom += MENUSYS_BCAPTION;
 	}
-	vram = menuvram_create(menubase.width, height);
+	vram = menuvram_create(menubase.width, height, menubase.bpp);
 	sys->wnd[0].vram = vram;
 	if (vram == NULL) {
 		goto wopn0_err;
@@ -559,7 +559,7 @@ static BOOL childopn(MENUSYS *sys, int depth, int pos) {
 		width = menubase.width;
 	}
 	height += (MENU_FBORDER + MENU_BORDER);
-	wnd->vram = menuvram_create(width, height);
+	wnd->vram = menuvram_create(width, height, menubase.bpp);
 	if (wnd->vram == NULL) {
 		TRACEOUT(("sub menu vram couldn't create"));
 		goto copn_err;

@@ -49,6 +49,7 @@ typedef struct {
 	UNIRECT		rect;
 	int			width;
 	int			height;
+	UINT		bpp;
 } MENUBASE;
 
 

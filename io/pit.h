@@ -8,9 +8,15 @@ typedef struct {
 	UINT16	latch;
 } _PITCH, *PITCH;
 
+#if !defined(DISABLE_SOUND)
 typedef struct {
 	_PITCH	ch[5];
 } _PIT, *PIT;
+#else
+typedef struct {
+	_PITCH	ch[3];
+} _PIT, *PIT;
+#endif
 
 enum {
 	PIT_CTRL_BCD	= 0x01,

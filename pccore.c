@@ -160,6 +160,7 @@ static void pccore_set(void) {
 
 // --------------------------------------------------------------------------
 
+#if !defined(DISABLE_SOUND)
 static void sound_init(void) {
 
 	UINT	rate;
@@ -196,6 +197,7 @@ static void sound_term(void) {
 	fddmtrsnd_deinitialize();
 	sound_destroy();
 }
+#endif
 
 void pccore_init(void) {
 
@@ -214,7 +216,9 @@ void pccore_init(void) {
 	gdcsub_initialize();
 	fddfile_initialize();
 
+#if !defined(DISABLE_SOUND)
 	sound_init();
+#endif
 
 	rs232c_construct();
 	mpu98ii_construct();
@@ -233,7 +237,9 @@ void pccore_term(void) {
 	hostdrv_deinitialize();
 #endif
 
+#if !defined(DISABLE_SOUND)
 	sound_term();
+#endif
 
 	fdd_eject(0);
 	fdd_eject(1);
@@ -274,12 +280,13 @@ void pccore_reset(void) {
 	int		i;
 
 	soundmng_stop();
+#if !defined(DISABLE_SOUND)
 	if (soundrenewal) {
 		soundrenewal = 0;
 		sound_term();
 		sound_init();
 	}
-
+#endif
 	ZeroMemory(mem, 0x110000);
 	ZeroMemory(mem + VRAM1_B, 0x18000);
 	ZeroMemory(mem + VRAM1_E, 0x08000);

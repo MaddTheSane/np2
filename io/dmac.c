@@ -33,7 +33,11 @@ static const DMAPROC dmaproc[] = {
 		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// SASI
 #endif
 		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// SCSI
+#if !defined(DISABLE_SOUND)
 		{dma_dummyout,		dma_dummyin,		cs4231dmafunc},		// CS4231
+#else
+		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// SASI
+#endif
 };
 
 

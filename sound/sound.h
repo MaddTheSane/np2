@@ -3,6 +3,8 @@
 #define	SOUNDCALL
 #endif
 
+#if !defined(DISABLE_SOUND)
+
 typedef void (SOUNDCALL * SOUNDCB)(void *hdl, SINT32 *pcm, UINT count);
 
 typedef struct {
@@ -87,5 +89,15 @@ void SOUNDCALL pcmmix_getpcm(PCMMIX hdl, SINT32 *pcm, UINT count);
 
 #ifdef __cplusplus
 }
+#endif
+
+#else
+
+#define sound_pcmlock()		(NULL)
+#define sound_pcmunlock(h)
+#define sound_reset()
+#define sound_changeclock()
+#define sound_sync()
+
 #endif
 

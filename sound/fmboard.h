@@ -1,4 +1,6 @@
 
+#if !defined(DISABLE_SOUND)
+
 #include	"soundrom.h"
 #include	"tms3631.h"
 #include	"fmtimer.h"
@@ -75,5 +77,12 @@ void fmboard_rhyrestore(RHYTHM rhy, UINT bank);
 
 #ifdef __cplusplus
 }
+#endif
+
+#else
+
+#define	fmboard_reset(t)
+#define	fmboard_bind()
+
 #endif
 

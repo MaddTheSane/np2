@@ -707,6 +707,8 @@ static int flagload_gij(STFLAGH sfh, const SFENTRY *tbl) {
 
 // ---- FM
 
+#if !defined(DISABLE_SOUND)
+
 enum {
 	FLAG_MG			= 0x0001,
 	FLAG_FM1A		= 0x0002,
@@ -920,6 +922,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	(void)t;
 	return(ret);
 }
+#endif
 
 
 // ---- disk
@@ -1227,9 +1230,11 @@ const SFENTRY	*tblterm;
 				ret |= flagsave_ext(&sffh->sfh, tbl);
 				break;
 
+#if !defined(DISABLE_SOUND)
 			case STATFLAG_FM:
 				ret |= flagsave_fm(&sffh->sfh, tbl);
 				break;
+#endif
 
 			case STATFLAG_GIJ:
 				ret |= flagsave_gij(&sffh->sfh, tbl);
@@ -1297,7 +1302,9 @@ const SFENTRY	*tblterm;
 				case STATFLAG_EVT:
 				case STATFLAG_EXT:
 				case STATFLAG_GIJ:
+#if !defined(DISABLE_SOUND)
 				case STATFLAG_FM:
+#endif
 #if defined(SUPPORT_HOSTDRV)
 				case STATFLAG_HDRV:
 #endif
@@ -1418,9 +1425,11 @@ const SFENTRY	*tblterm;
 					ret |= flagload_ext(&sffh->sfh, tbl);
 					break;
 
+#if !defined(DISABLE_SOUND)
 				case STATFLAG_FM:
 					ret |= flagload_fm(&sffh->sfh, tbl);
 					break;
+#endif
 
 				case STATFLAG_GIJ:
 					ret |= flagload_gij(&sffh->sfh, tbl);

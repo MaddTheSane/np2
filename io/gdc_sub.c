@@ -1,5 +1,7 @@
 #include	"compiler.h"
+#if !defined(DISABLE_MATH_H)
 #include	<math.h>
+#endif
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -90,12 +92,14 @@ REG8 gdcbitreverse(REG8 data) {
 
 void gdcsub_initialize(void) {
 
+#if !defined(DISABLE_MATH_H)
 	int		i;
 
 	for (i=0; i<=RT_TABLEMAX; i++) {
 		gdc_rt[i] = (UINT16)((double)(1 << RT_MULBIT) *
 				(1 - sqrt(1 - pow((0.70710678118654 * i) / RT_TABLEMAX, 2))));
 	}
+#endif
 }
 
 void gdcslavewait(NEVENTITEM item) {

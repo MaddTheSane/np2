@@ -111,7 +111,7 @@ static void writeseg(const char *fname, UINT32 addr, UINT limit) {
 
 	FILEH	fh;
 	UINT	size;
-	BYTE	buf[0x1000];
+	BYTE	buf[0x400];								// Stack 0x1000 -> 0x400
 
 	fh = file_create_c(fname);
 	if (fh == FILEH_INVALID) {

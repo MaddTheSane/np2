@@ -48,6 +48,7 @@ BOOL menubase_open(int num) {
 	}
 	mb->width = smenu.width;
 	mb->height = smenu.height;
+	mb->bpp = smenu.bpp;
 	hdl = vram_create(mb->width, mb->height, TRUE, smenu.bpp);
 	menuvram = hdl;
 	if (hdl == NULL) {

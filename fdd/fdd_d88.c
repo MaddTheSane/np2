@@ -495,7 +495,7 @@ static int fileappend(FILEH hdl, FDDFILE fdd,
 	UINT	size;
 	UINT	rsize;
 	int		t;
-	BYTE	tmp[0x1000];
+	BYTE	tmp[0x400];							// Stack 0x1000->0x400
 	UINT32	cur;
 
 	if ((length = last - ptr) <= 0) {			// ‘‚«Š·‚¦‚é•K—v‚È‚µ

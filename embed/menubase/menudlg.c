@@ -291,7 +291,7 @@ static BOOL dlgbase_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	rct.right = hdl->rect.right - hdl->rect.left -
 										((MENU_FBORDER + MENU_BORDER) * 2);
-	hdl->vram = vram_create(rct.right, MENUDLG_CYCAPTION, FALSE, DEFAULT_BPP);
+	hdl->vram = vram_create(rct.right, MENUDLG_CYCAPTION, FALSE, menubase.bpp);
 	if (hdl->vram == NULL) {
 		goto dbcre_err;
 	}
@@ -490,7 +490,7 @@ static BOOL dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	width = hdl->rect.right - hdl->rect.left - (MENU_LINE * 4);
 	height = hdl->rect.bottom - hdl->rect.top - (MENU_LINE * 4);
-	hdl->vram = vram_create(width, height, FALSE, DEFAULT_BPP);
+	hdl->vram = vram_create(width, height, FALSE, menubase.bpp);
 	if (hdl->vram == NULL) {
 		goto dlcre_err;
 	}
@@ -1949,7 +1949,7 @@ BOOL menudlg_create(int width, int height, const char *str,
 					MENUDLG_CYCAPTION + MENUDLG_BORDER;
 	mb = &menubase;
 	dlg->font = mb->font;
-	dlg->vram = vram_create(width, height, FALSE, DEFAULT_BPP);
+	dlg->vram = vram_create(width, height, FALSE, mb->bpp);
 	if (dlg->vram == NULL) {
 		goto mdcre_err;
 	}

@@ -22,7 +22,8 @@ static const IOCBFN resetfn[] = {
 #if defined(SUPPORT_PC9861K)
 			pc9861k_reset,
 #endif
-			mpu98ii_reset};
+			mpu98ii_reset,
+	};
 
 static const IOCBFN bindfn[] = {
 #if defined(SUPPORT_IDEIO)
@@ -37,7 +38,8 @@ static const IOCBFN bindfn[] = {
 #if defined(SUPPORT_PC9861K)
 			pc9861k_bind,
 #endif
-			mpu98ii_bind};
+			mpu98ii_bind,
+	};
 
 
 void cbuscore_reset(void) {
