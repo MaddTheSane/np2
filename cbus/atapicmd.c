@@ -13,12 +13,19 @@
 #include	"sxsi.h"
 
 
+// INQUIRY
 static const UINT8 cdrom_inquiry[] = {
-				0x05,0x80,0x00,0x21,0x1f,0x00,0x00,0x00,
-				'N', 'E', 'C', 0x20,0x20,0x20,0x20,0x20,
-				'C', 'D', '-', 'R', 'O', 'M', ' ', 'D',
-				'R', 'I', 'V', 'E', 0x20,0x20,0x20,0x20,
-				'1', '.', '0', ' '};
+	0x05,	// CD-ROM
+	0x80,	// bit7: Removable Medium Bit, other: Reserved
+	0x00,	// version [7-6: ISO, ECMA: 5-3, 2-0: ANSI(00)]
+	0x21,	// 7-4: ATAPI version, 3-0: Response Data Format
+	0x1f,	// Additional length
+	0x00,0x00,0x00,	// Reserved
+	'N', 'E', 'C', ' ', ' ', ' ', ' ', ' ',	// Vendor ID
+	'C', 'D', '-', 'R', 'O', 'M', ' ', 'D',	// Product ID
+	'R', 'I', 'V', 'E', ' ', ' ', ' ', ' ',	// Product ID
+	'1', '.', '0', ' '	// Product Revision Level
+};
 
 static void senddata(IDEDRV drv, UINT size, UINT limit) {
 
@@ -37,6 +44,8 @@ static void senddata(IDEDRV drv, UINT size, UINT limit) {
 }
 
 
+// ----- ATAPI packet command
+
 void atapicmd_a0(IDEDRV drv) {
 
 	UINT8	cmd;
@@ -45,15 +54,21 @@ void atapicmd_a0(IDEDRV drv) {
 	cmd = drv->buf[0];
 	switch(cmd) {
 		case 0x12:		// inquiry
+			TRACEOUT(("atapicmd: inquiry"));
 			leng = drv->buf[4];
 			CopyMemory(drv->buf, cdrom_inquiry, sizeof(cdrom_inquiry));
 			senddata(drv, sizeof(cdrom_inquiry), leng);
 			break;
 
-		case 0x5a:		// mode sense(10)
+//		case 0x5a:		// mode sense(10)
+//			break;
+
+		default:
+			TRACEOUT(("atapicmd: unknown command = %.2x", cmd));
+//			sendabort(drv);
 			break;
 	}
 }
 
-#endif
+#endif	/* SUPPORT_IDEIO */
 

@@ -963,16 +963,16 @@ static int flagsave_disk(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 	UINT8	i;
 
-	sxsi_flash();
+	sxsi_allflash();
 	ret = STATFLAG_SUCCESS;
 	for (i=0; i<4; i++) {
 		ret |= disksave(sfh, fdd_diskname(i), fdd_diskprotect(i));
 	}
 	for (i=0x00; i<0x02; i++) {
-		ret |= disksave(sfh, sxsi_getname(i), 0);
+		ret |= disksave(sfh, sxsi_getfilename(i), 0);
 	}
 	for (i=0x20; i<0x24; i++) {
-		ret |= disksave(sfh, sxsi_getname(i), 0);
+		ret |= disksave(sfh, sxsi_getfilename(i), 0);
 	}
 	(void)tbl;
 	return(ret);
@@ -1020,7 +1020,7 @@ static int flagcheck_disk(STFLAGH sfh, const SFENTRY *tbl) {
 		OEMSPRINTF(buf, str_fddx, i+1);
 		ret |= diskcheck(sfh, buf);
 	}
-	sxsi_flash();
+	sxsi_allflash();
 	for (i=0; i<2; i++) {
 		OEMSPRINTF(buf, str_sasix, i+1);
 		ret |= diskcheck(sfh, buf);
@@ -1049,13 +1049,13 @@ static int flagload_disk(STFLAGH sfh, const SFENTRY *tbl) {
 	for (i=0x00; i<0x02; i++) {
 		ret |= statflag_read(sfh, &st, sizeof(st));
 		if (st.path[0]) {
-			sxsi_hddopen(i, st.path);
+			sxsi_devopen(i, st.path);
 		}
 	}
 	for (i=0x20; i<0x24; i++) {
 		ret |= statflag_read(sfh, &st, sizeof(st));
 		if (st.path[0]) {
-			sxsi_hddopen(i, st.path);
+			sxsi_devopen(i, st.path);
 		}
 	}
 	(void)tbl;
@@ -1353,7 +1353,7 @@ const SFENTRY	*tblterm;
 	rs232c_midipanic();
 	mpu98ii_midipanic();
 	pc9861k_midipanic();
-	sxsi_trash();
+	sxsi_alltrash();
 
 	ret |= flagload_common(&sffh->sfh, np2tbl);
 

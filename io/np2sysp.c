@@ -265,6 +265,11 @@ static void IOOUTCALL np2sysp_o0e9(UINT port, REG8 dat) {
 	APPDEVOUT(dat);
 	(void)port;
 }
+
+static REG8 IOINPCALL np2sysp_i0e9(UINT port) {
+
+	return((UINT8)port);
+}
 #endif
 
 
@@ -284,6 +289,7 @@ void np2sysp_bind(void) {
 
 #if defined(NP2APPDEV)
 	iocore_attachout(0x00e9, np2sysp_o0e9);
+	iocore_attachinp(0x00e9, np2sysp_i0e9);
 #endif
 }
 

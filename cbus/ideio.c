@@ -58,7 +58,7 @@ static BRESULT setidentify(IDEDRV drv) {
 	UINT32	size;
 
 	sxsi = sxsi_getptr(drv->sxsidrv);
-	if ((sxsi == NULL) || (sxsi->fname[0] == '\0')) {
+	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY))) {
 		return(FAILURE);
 	}
 
@@ -797,9 +797,10 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 	SXSIDEV	sxsi;
 
 	ZeroMemory(drv, sizeof(_IDEDRV));
+	drv->sxsidrv = sxsidrv;
 	sxsi = sxsi_getptr(sxsidrv);
-	if ((sxsi != NULL) && (sxsi->fname[0] != '\0')) {
-		drv->sxsidrv = sxsidrv;
+	if ((sxsi != NULL) &&
+		(sxsi->devtype == SXSIDEV_HDD) && (sxsi->flag & SXSIFLAG_READY)) {
 		drv->status = IDESTAT_DRDY | IDESTAT_DSC;
 		drv->error = IDEERR_AMNF;
 		drv->device = IDETYPE_HDD;
@@ -836,18 +837,6 @@ void ideio_reset(void) {
 	drv->device = IDETYPE_CDROM;
 #endif
 
-#if 0
-	ideio.dev[0].drv[0].status = IDE_READY | IDE_SEEKCOMPLETE;
-	ideio.dev[0].drv[0].error = 1;
-	ideio.dev[1].drv[0].status = IDE_READY | IDE_SEEKCOMPLETE;
-	ideio.dev[1].drv[0].error = 1;
-
-	ideio.dev[0].drv[0].sxsidrv = 0x00;
-	ideio.dev[0].drv[1].sxsidrv = 0x01;
-	ideio.dev[1].drv[0].sxsidrv = 0x02;
-	ideio.dev[1].drv[1].sxsidrv = 0x03;
-#endif
-
 	CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
 	TRACEOUT(("use simulate ide.rom"));
 }
@@ -879,6 +868,12 @@ void ideio_bind(void) {
 		iocore_attachout(0x074e, ideio_o74e);
 		iocore_attachinp(0x074c, ideio_i74c);
 	}
+}
+
+void ideio_notify(REG8 sxsidrv, UINT action) {
+
+	(void)sxsidrv;
+	(void)action;
 }
 
 #endif	/* SUPPORT_IDEIO */

@@ -419,15 +419,15 @@ static REG8 IOINPCALL sasiio_i82(UINT port) {
 	else {
 		ret = 0;
 		sxsi = sxsi_getptr(0x00);		// SASI-1
-		if ((sxsi) && ((sxsi->type & SXSITYPE_IFMASK) == SXSITYPE_SASI)) {
-			ret |= (sxsi->type >> (8 - 3)) & 0x38;
+		if (sxsi) {
+			ret |= (sxsi->mediatype & 7) << 3;
 		}
 		else {
-			ret |= 0x38;
+			ret |= (7 << 3);
 		}
 		sxsi = sxsi_getptr(0x01);		// SASI-2
-		if ((sxsi) && ((sxsi->type & SXSITYPE_IFMASK) == SXSITYPE_SASI)) {
-			ret |= (sxsi->type >> 8) & 7;
+		if (sxsi) {
+			ret |= (sxsi->mediatype & 7);
 		}
 		else {
 			ret |= 7;

@@ -7,6 +7,9 @@
 #include	"bios.h"
 #include	"dmav30.h"
 #include	"i286c.mcr"
+#if defined(ENABLE_TRAP)
+#include	"steptrap.h"
+#endif
 
 
 // victory30 patch
@@ -812,6 +815,9 @@ void v30c(void) {
 
 	if (I286_TRAP) {
 		do {
+#if defined(ENABLE_TRAP)
+			steptrap(CPU_CS, CPU_IP);
+#endif
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
 			if (I286_TRAP) {
@@ -822,6 +828,9 @@ void v30c(void) {
 	}
 	else if (dmac.working) {
 		do {
+#if defined(ENABLE_TRAP)
+			steptrap(CPU_CS, CPU_IP);
+#endif
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
 			dmav30();
@@ -829,6 +838,9 @@ void v30c(void) {
 	}
 	else {
 		do {
+#if defined(ENABLE_TRAP)
+			steptrap(CPU_CS, CPU_IP);
+#endif
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
 		} while(I286_REMCLOCK > 0);

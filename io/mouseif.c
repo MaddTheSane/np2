@@ -114,6 +114,8 @@ static void setportc(REG8 value) {
 	if ((value ^ mouseif.upd8255.portc) & 0x10) {
 		if (!(value & 0x10)) {
 			if (!nevent_iswork(NEVENT_MOUSE)) {
+				// Š„‚è‚İ‚ğ“ü‚ê‚Æ‚­
+				pic_setirq(0x0d);
 				nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_ABSOLUTE);
 			}

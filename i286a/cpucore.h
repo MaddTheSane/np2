@@ -241,6 +241,16 @@ void i286a_step(void);
 #define	CPU_SS			i286acore.s.r.w.ss
 #define	CPU_IP			i286acore.s.r.w.ip
 
+#define	CPU_EAX			i286core.s.r.w.ax
+#define	CPU_EBX			i286core.s.r.w.bx
+#define	CPU_ECX			i286core.s.r.w.cx
+#define	CPU_EDX			i286core.s.r.w.dx
+#define	CPU_ESI			i286core.s.r.w.si
+#define	CPU_EDI			i286core.s.r.w.di
+#define	CPU_EBP			i286core.s.r.w.bp
+#define	CPU_ESP			i286core.s.r.w.sp
+#define	CPU_EIP			i286core.s.r.w.ip
+
 #define	ES_BASE			i286acore.s.es_base
 #define	CS_BASE			i286acore.s.cs_base
 #define	SS_BASE			i286acore.s.ss_base

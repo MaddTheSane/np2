@@ -156,13 +156,13 @@ const SDRAWFN	*sdrawfn;
 
 	bit = 0;
 	if (gdc.mode1 & 0x80) {						// ver0.28
-#if defined(SUPPORT_PC9821)
-		if ((gdc.analog & 6) == 6) {
-			bit |= 0x01;
-		}
-		else
-#endif
 		if (gdcs.grphdisp & 0x80) {
+#if defined(SUPPORT_PC9821)
+			if ((gdc.analog & 6) == 6) {
+				bit |= 0x01;
+			}
+			else
+#endif
 			bit |= (1 << gdcs.disp);
 		}
 		if (gdcs.textdisp & 0x80) {

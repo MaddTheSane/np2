@@ -262,6 +262,12 @@ void bios_initialize(void) {
 #if defined(BIOS_SIMULATE)
 	mem[0xf8e80] = 0x98;
 	mem[0xf8e81] = 0x21;
+	mem[0xf8e82] = 0x1f;
+	mem[0xf8e83] = 0x20;	// Model Number?
+	mem[0xf8e84] = 0x2c;
+	mem[0xf8e85] = 0xb0;
+
+	// mem[0xf8eaf] = 0x21;		// <- ‚±‚ê‚Á‚Ä‰½‚¾‚Á‚¯H
 #endif
 #endif
 

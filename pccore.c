@@ -260,7 +260,7 @@ void pccore_term(void) {
 	mpu98ii_destruct();
 	rs232c_destruct();
 
-	sxsi_trash();
+	sxsi_alltrash();
 
 	CPU_DEINITIALIZE();
 }
@@ -320,7 +320,7 @@ void pccore_reset(void) {
 	}
 
 	// HDDƒZƒbƒg
-	sxsi_open();
+	sxsihdd_allbind();
 #if defined(SUPPORT_SASI)
 	if (sxsi_issasi()) {
 		pccore.hddif &= ~PCHDD_IDE;

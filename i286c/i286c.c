@@ -6,6 +6,9 @@
 #include	"iocore.h"
 #include	"dmax86.h"
 #include	"i286c.mcr"
+#if defined(ENABLE_TRAP)
+#include	"steptrap.h"
+#endif
 
 
 	I286CORE	i286core;
@@ -263,6 +266,9 @@ void i286c(void) {
 
 	if (I286_TRAP) {
 		do {
+#if defined(ENABLE_TRAP)
+			steptrap(CPU_CS, CPU_IP);
+#endif
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
 			if (I286_TRAP) {
@@ -273,6 +279,9 @@ void i286c(void) {
 	}
 	else if (dmac.working) {
 		do {
+#if defined(ENABLE_TRAP)
+			steptrap(CPU_CS, CPU_IP);
+#endif
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
 			dmax86();
@@ -280,6 +289,9 @@ void i286c(void) {
 	}
 	else {
 		do {
+#if defined(ENABLE_TRAP)
+			steptrap(CPU_CS, CPU_IP);
+#endif
 			GET_PCBYTE(opcode);
 			i286op[opcode]();
 		} while(I286_REMCLOCK > 0);

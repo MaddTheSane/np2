@@ -75,7 +75,7 @@ REG8 scsicmd_select(REG8 id) {
 		return(0x42);
 	}
 	sxsi = sxsi_getptr((REG8)(0x20 + id));
-	if ((sxsi) && (sxsi->type)) {
+	if ((sxsi) && (sxsi->flag & SXSIFLAG_READY)) {
 		scsiio.phase = SCSIPH_COMMAND;
 		return(0x8a);			// Transfer Command—v‹
 	}
@@ -92,7 +92,7 @@ REG8 scsicmd_transfer(REG8 id, UINT8 *cdb) {
 	}
 
 	sxsi = sxsi_getptr((REG8)(0x20 + id));
-	if ((sxsi == NULL) || (sxsi->type == 0)) {
+	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY))) {
 		return(0x42);
 	}
 
@@ -127,7 +127,7 @@ static REG8 scsicmd_cmd(REG8 id) {
 		return(0x42);
 	}
 	sxsi = sxsi_getptr((REG8)(0x20 + id));
-	if ((sxsi == NULL) || (sxsi->type == 0)) {
+	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY))) {
 		return(0x42);
 	}
 	switch(scsiio.cmd[0]) {

@@ -124,6 +124,7 @@ REG16 IOINPCALL ideio_r16(UINT port);
 
 void ideio_reset(void);
 void ideio_bind(void);
+void ideio_notify(REG8 sxsidrv, UINT action);
 
 #ifdef __cplusplus
 }

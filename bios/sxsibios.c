@@ -174,7 +174,7 @@ static REG8 sasibios_init(UINT type, SXSIDEV sxsi) {
 	diskequip &= 0xf0ff;
 	for (i=0x00, bit=0x0100; i<0x02; i++, bit<<=1) {
 		sxsi = sxsi_getptr(i);
-		if ((sxsi) && (sxsi->fname[0])) {
+		if ((sxsi) && (sxsi->flag & SXSIFLAG_READY)) {
 			diskequip |= bit;
 		}
 	}
@@ -187,7 +187,7 @@ static REG8 sasibios_init(UINT type, SXSIDEV sxsi) {
 static REG8 sasibios_sense(UINT type, SXSIDEV sxsi) {
 
 	if (type == SXSIBIOS_SASI) {
-		return((REG8)((sxsi->type >> 8) & 7));
+		return((REG8)(sxsi->mediatype & 7));
 	}
 	else {
 		if (CPU_AH == 0x84) {
@@ -283,7 +283,7 @@ static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 	ZeroMemory(&mem[0x00460], 0x20);
 	for (i=0, bit=1; i<4; i++, bit<<=1) {
 		sxsi = sxsi_getptr((REG8)(0x20 + i));
-		if ((sxsi) && (sxsi->fname[0])) {
+		if ((sxsi) && (sxsi->flag & SXSIFLAG_READY)) {
 			mem[MEMB_DISK_EQUIPS] |= bit;
 			scsibios_set(i, sxsi->sectors, sxsi->surfaces,
 							sxsi->cylinders, sxsi->size, TRUE);
