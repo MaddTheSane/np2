@@ -1,3 +1,5 @@
+#ifndef	NP2_X11_TRACE_H__
+#define	NP2_X11_TRACE_H__
 
 #ifndef TRACE
 
@@ -27,3 +29,4 @@ void trace_fmt(const char *str, ...);
 
 #endif
 
+#endif	/* NP2_X11_TRACE_H__ */

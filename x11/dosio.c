@@ -1,83 +1,104 @@
-#include	"compiler.h"
-#include	<sys/stat.h>
-#include	<time.h>
-#include	"codecnv.h"
-#include	"dosio.h"
+#include "compiler.h"
+
+#include <sys/stat.h>
+#include <time.h>
 #if defined(WIN32)
-#include	<direct.h>
-#endif
-#if 0
-#include <sys/param.h>
-#include <unistd.h>
+#include <direct.h>
 #endif
 
-static	char	curpath[MAX_PATH];
-static	char	*curfilep = curpath;
+#include "codecnv.h"
+#include "dosio.h"
+
+
+static char curpath[MAX_PATH];
+static char *curfilep = curpath;
 
 #define ISKANJI(c)	((((c) - 0xa1) & 0xff) < 0x5c)
 
 
-void dosio_init(void) {
+void
+dosio_init(void)
+{
+
+	/* nothing to do */
 }
 
-void dosio_term(void) {
+void
+dosio_term(void)
+{
+
+	/* nothing to do */
 }
 
-/* ƒtƒ@ƒCƒ‹‘€ì */
-FILEH file_open(const char *path) {
+/* ¥Õ¥¡¥¤¥ëÁàºî */
+FILEH
+file_open(const char *path)
+{
 
-	return(fopen(path, "rb+"));
+	return fopen(path, "rb");
 }
 
-FILEH file_open_rb(const char *path) {
+FILEH
+file_open_rb(const char *path)
+{
 
-	return(fopen(path, "rb+"));
+	return fopen(path, "rb");
 }
 
-FILEH file_create(const char *path) {
+FILEH
+file_create(const char *path)
+{
 
-	return(fopen(path, "wb+"));
+	return fopen(path, "wb+");
 }
 
-long file_seek(FILEH handle, long pointer, int method) {
+long
+file_seek(FILEH handle, long pointer, int method)
+{
 
 	fseek(handle, pointer, method);
-	return(ftell(handle));
+	return ftell(handle);
 }
 
-UINT file_read(FILEH handle, void *data, UINT length) {
+UINT
+file_read(FILEH handle, void *data, UINT length)
+{
 
-	return((UINT)fread(data, 1, length, handle));
+	return (UINT)fread(data, 1, length, handle);
 }
 
-UINT file_write(FILEH handle, const void *data, UINT length) {
+UINT
+file_write(FILEH handle, const void *data, UINT length)
+{
 
-	return((UINT)fwrite(data, 1, length, handle));
+	return (UINT)fwrite(data, 1, length, handle);
 }
 
-short file_close(FILEH handle) {
+short
+file_close(FILEH handle)
+{
 
 	fclose(handle);
-	return(0);
+	return 0;
 }
 
-UINT file_getsize(FILEH handle) {
-
+UINT
+file_getsize(FILEH handle)
+{
 	struct stat sb;
 
-	if (fstat(fileno(handle), &sb) == 0) {
-		return(sb.st_size);
-	}
-	return(0);
+	if (fstat(fileno(handle), &sb) == 0)
+		return sb.st_size;
+	return 0;
 }
 
-short file_attr(const char *path) {
-
-struct stat	sb;
-	short	attr;
+short
+file_attr(const char *path)
+{
+	struct stat sb;
+	short attr;
 
 	if (stat(path, &sb) == 0) {
-#ifndef WIN32
 		if (S_ISDIR(sb.st_mode)) {
 			return(FILEATTR_DIRECTORY);
 		}
@@ -85,26 +106,16 @@ struct stat	sb;
 		if (!(sb.st_mode & S_IWUSR)) {
 			attr |= FILEATTR_READONLY;
 		}
-#else
-		if (sb.st_mode & _S_IFDIR) {
-			attr = FILEATTR_DIRECTORY;
-		}
-		else {
-			attr = 0;
-		}
-		if (!(sb.st_mode & S_IWRITE)) {
-			attr |= FILEATTR_READONLY;
-		}
-#endif
-		return(attr);
+		return attr;
 	}
-	return(-1);
+	return -1;
 }
 
-short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime) {
-
-struct stat sb;
-struct tm	*ftime;
+short
+file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime)
+{
+	struct stat sb;
+	struct tm *ftime;
 
 	if (fstat(fileno(handle), &sb) == 0) {
 		ftime = localtime(&sb.st_mtime);
@@ -119,110 +130,111 @@ struct tm	*ftime;
 				dostime->minute = ftime->tm_min;
 				dostime->second = ftime->tm_sec;
 			}
-			return(0);
+			return 0;
 		}
 	}
-	return(-1);
+	return -1;
 }
 
-short file_delete(const char *path) {
+short
+file_delete(const char *path)
+{
 
-	return(unlink(path));
+	return (short)unlink(path);
 }
 
-short file_dircreate(const char *path) {
+short
+file_dircreate(const char *path)
+{
 
-#ifndef WIN32
-	return((short)mkdir(path, 0777));
-#else
-	return((short)mkdir(path));
-#endif
+	return (short)mkdir(path, 0777);
 }
 
 
-/* ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì */
-void file_setcd(const char *exepath) {
+/* ¥«¥ì¥ó¥È¥Õ¥¡¥¤¥ëÁàºî */
+void
+file_setcd(const char *exepath)
+{
 
 	milstr_ncpy(curpath, exepath, sizeof(curpath));
 	curfilep = file_getname(curpath);
 	*curfilep = '\0';
 }
 
-char *file_getcd(const char *sjis) {
+char *
+file_getcd(const char *sjis)
+{
 
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
-	return(curpath);
+	return curpath;
 }
 
-FILEH file_open_c(const char *sjis) {
+FILEH
+file_open_c(const char *sjis)
+{
 
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
-	return(file_open(curpath));
+	return file_open(curpath);
 }
 
-FILEH file_open_rb_c(const char *sjis) {
+FILEH
+file_open_rb_c(const char *sjis)
+{
 
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
-	return(file_open_rb(curpath));
+	return file_open_rb(curpath);
 }
 
-FILEH file_create_c(const char *sjis) {
+FILEH
+file_create_c(const char *sjis)
+{
 
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
-	return(file_create(curpath));
+	return file_create(curpath);
 }
 
-short file_delete_c(const char *sjis) {
+short
+file_delete_c(const char *sjis)
+{
 
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
-	return(file_delete(curpath));
+	return file_delete(curpath);
 }
 
-short file_attr_c(const char *sjis) {
+short
+file_attr_c(const char *sjis)
+{
 
 	*curfilep = '\0';
 	file_catname(curpath, sjis, sizeof(curpath));
-	return(file_attr_c(curpath));
+	return file_attr_c(curpath);
 }
 
 
-static int euckanji1st(const char *str, int pos) {
-
-	int		ret;
+#if 0
+static int
+euckanji1st(const char *str, int pos)
+{
+	int ret;
 
 	ret = 0;
-	while((pos >= 0) &&
-		(((str[pos--] - 0xa1) & 0xff) < 0x5d)) {
+	while ((pos >= 0) && (((str[pos--] - 0xa1) & 0xff) < 0x5d)) {
 		ret ^= 1;
 	}
-	return(ret);
+	return ret;
 }
+#endif
 
-void file_cpyname(char *dst, const char *src, int maxlen) {
+void
+file_catname(char *path, const char *sjis, int maxlen)
+{
 
-	int		i;
-
-	if (maxlen--) {
-		for (i=0; i<maxlen && src[i]; i++) {
-			dst[i] = src[i];
-		}
-		if (i) {
-			if (euckanji1st(src, i-1)) {
-				i--;
-			}
-		}
-		dst[i] = '\0';
-	}
-}
-
-void file_catname(char *path, const char *sjis, int maxlen) {
-
-	while(maxlen) {
+	while (maxlen) {
 		if (*path == '\0') {
 			break;
 		}
@@ -231,20 +243,17 @@ void file_catname(char *path, const char *sjis, int maxlen) {
 	}
 	if (maxlen) {
 		codecnv_sjis2euc(path, maxlen, sjis, (UINT)-1);
-		while(1) {
+		for (;;) {
 			if (!ISKANJI(*path)) {
 				if (*(path+1) == '\0') {
 					break;
 				}
 				path++;
-			}
-			else if ((((*path) - 0x41) & 0xff) < 26) {
+			} else if ((((*path) - 0x41) & 0xff) < 26) {
 				*path |= 0x20;
-			}
-			else if (*path == '\\') {
+			} else if (*path == '\\') {
 				*path = '/';
-			}
-			else if (*path == '\0') {
+			} else if (*path == '\0') {
 				break;
 			}
 			path++;
@@ -252,53 +261,42 @@ void file_catname(char *path, const char *sjis, int maxlen) {
 	}
 }
 
-BOOL file_cmpname(char *path, const char *sjis) {
+char *
+file_getname(char *path)
+{
+	char *ret;
 
-	char	euc[MAX_PATH];
-
-	codecnv_sjis2euc(euc, sizeof(euc), sjis, (UINT)-1);
-	return(strcmp(path, euc));
-}
-
-char *file_getname(char *path) {
-
-	char	*ret;
-
-	ret = path;
-	while(1) {
-		if (ISKANJI(*path)) {
-			if (*(path+1) == '\0') {
+	for (ret = path; path[0] != '\0'; path++) {
+		if (ISKANJI(path[0])) {
+			if (path[1] == '\0') {
 				break;
 			}
 			path++;
-		}
-		else if (*path == '/') {
+		} else if (path[0] == '/') {
 			ret = path + 1;
 		}
-		else if (*path == '\0') {
-			break;
-		}
-		path++;
 	}
-	return(ret);
+	return ret;
 }
 
-void file_cutname(char *path) {
-
-	char	*p;
+void
+file_cutname(char *path)
+{
+	char *p;
 
 	p = file_getname(path);
 	*p = '\0';
 }
 
-char *file_getext(char *path) {
-
-	char	*p;
-	char	*q;
+char *
+file_getext(char *path)
+{
+	char *p;
+	char *q;
 
 	p = file_getname(path);
 	q = NULL;
-	while(*p != '\0') {
+	while (*p != '\0') {
 		if (*p == '.') {
 			q = p + 1;
 		}
@@ -307,17 +305,18 @@ char *file_getext(char *path) {
 	if (q == NULL) {
 		q = p;
 	}
-	return(q);
+	return q;
 }
 
-void file_cutext(char *path) {
-
-	char	*p;
-	char	*q;
+void
+file_cutext(char *path)
+{
+	char *p;
+	char *q;
 
 	p = file_getname(path);
 	q = NULL;
-	while(*p != '\0') {
+	while (*p != '\0') {
 		if (*p == '.') {
 			q = p;
 		}
@@ -328,9 +327,10 @@ void file_cutext(char *path) {
 	}
 }
 
-void file_cutseparator(char *path) {
-
-	int		pos;
+void
+file_cutseparator(char *path)
+{
+	int pos;
 
 	pos = strlen(path) - 1;
 	if ((pos > 0) && (path[pos] == '/')) {
@@ -338,9 +338,10 @@ void file_cutseparator(char *path) {
 	}
 }
 
-void file_setseparator(char *path, int maxlen) {
-
-	int		pos;
+void
+file_setseparator(char *path, int maxlen)
+{
+	int pos;
 
 	pos = strlen(path);
 	if ((pos) && (path[pos-1] != '/') && ((pos + 2) < maxlen)) {
@@ -348,4 +349,3 @@ void file_setseparator(char *path, int maxlen) {
 		path[pos] = '\0';
 	}
 }
-

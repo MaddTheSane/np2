@@ -1,22 +1,24 @@
+#ifndef	NP2_X11_DOSIO_H__
+#define	NP2_X11_DOSIO_H__
 
-enum {												// ver0.28
-	FTYPE_NONE = 0,		// ©“®”»•Ê or PC
-	FTYPE_SMIL,			// ƒVƒXƒeƒ€—\–ñ
-	FTYPE_TEXT,			// ƒeƒLƒXƒgƒtƒ@ƒCƒ‹
-	FTYPE_BMP,			// Bitmap
-	FTYPE_PICT,			// Picture (—\–ñ)
-	FTYPE_PNG,			// Png (—\–ñ)
-	FTYPE_WAV,			// Wave
-	FTYPE_D88,			// D88
-	FTYPE_BETA,			// ƒxƒ^ƒCƒ[ƒW
-	FTYPE_THD,			// .thd ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW
-	FTYPE_HDI,			// .hdi ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW
-	FTYPE_HDD,			// .hdd ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW (—\–ñ)
-	FTYPE_S98,			// .s98 ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW
-	FTYPE_MIMPI			// mimpi defaultƒtƒ@ƒCƒ‹
+enum {
+	FTYPE_NONE = 0,		// ¼«Æ°È½ÊÌ or PC
+	FTYPE_SMIL,		// ¥·¥¹¥Æ¥àÍ½Ìó
+	FTYPE_TEXT,		// ¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë
+	FTYPE_BMP,		// Bitmap
+	FTYPE_PICT,		// Picture (Í½Ìó)
+	FTYPE_PNG,		// Png (Í½Ìó)
+	FTYPE_WAV,		// Wave
+	FTYPE_D88,		// D88
+	FTYPE_BETA,		// ¥Ù¥¿¥¤¥á¡¼¥¸
+	FTYPE_THD,		// .thd ¥Ï¡¼¥É¥Ç¥£¥¹¥¯¥¤¥á¡¼¥¸
+	FTYPE_HDI,		// .hdi ¥Ï¡¼¥É¥Ç¥£¥¹¥¯¥¤¥á¡¼¥¸
+	FTYPE_HDD,		// .hdd ¥Ï¡¼¥É¥Ç¥£¥¹¥¯¥¤¥á¡¼¥¸ (Í½Ìó)
+	FTYPE_S98,		// .s98 ¥Ï¡¼¥É¥Ç¥£¥¹¥¯¥¤¥á¡¼¥¸
+	FTYPE_MIMPI		// mimpi default¥Õ¥¡¥¤¥ë
 };
 
-typedef FILE *			FILEH;
+typedef FILE*		FILEH;
 #define	FILEH_INVALID	NULL
 
 #define	FSEEK_SET	SEEK_SET
@@ -49,11 +51,11 @@ typedef struct {
 extern "C" {
 #endif
 
-/* DOSIO:ŠÖ”‚Ì€”õ */
+/* DOSIO:´Ø¿ô¤Î½àÈ÷ */
 void dosio_init(void);
 void dosio_term(void);
 
-/* ƒtƒ@ƒCƒ‹‘€ì */
+/* ¥Õ¥¡¥¤¥ëÁàºî */
 FILEH file_open(const char *path);
 FILEH file_open_rb(const char *path);
 FILEH file_create(const char *path);
@@ -67,7 +69,7 @@ short file_delete(const char *path);
 short file_attr(const char *path);
 short file_dircreate(const char *path);
 
-/* ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì */
+/* ¥«¥ì¥ó¥È¥Õ¥¡¥¤¥ëÁàºî */
 void file_setcd(const char *exepath);
 char *file_getcd(const char *sjis);
 FILEH file_open_c(const char *sjis);
@@ -76,9 +78,9 @@ FILEH file_create_c(const char *sjis);
 short file_delete_c(const char *sjis);
 short file_attr_c(const char *sjis);
 
-void file_cpyname(char *dst, const char *src, int maxlen);
+#define	file_cpyname(a, b, c)	milstr_ncpy(a, b, c)
+#define	file_cmpname(a, b)	milstr_cmp(a, b)
 void file_catname(char *path, const char *sjis, int maxlen);
-BOOL file_cmpname(char *path, const char *sjis);
 char *file_getname(char *path);
 void file_cutname(char *path);
 char *file_getext(char *path);
@@ -89,3 +91,5 @@ void file_setseparator(char *path, int maxlen);
 #ifdef	__cplusplus
 };
 #endif
+
+#endif	/* NP2_X11_DOSIO_H__ */

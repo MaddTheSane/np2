@@ -1,12 +1,14 @@
 #include	"compiler.h"
-#include	"timemng.h"
+
 #include	<time.h>
 
+#include	"timemng.h"
 
-BOOL timemng_gettime(_SYSTIME *systime) {
-
-	time_t	long_time;
-struct tm	*now_time;
+BOOL
+timemng_gettime(_SYSTIME *systime)
+{
+	struct tm *now_time;
+	time_t long_time;
 
 	time(&long_time);
 	now_time = localtime(&long_time);
@@ -19,10 +21,8 @@ struct tm	*now_time;
 		systime->minute = now_time->tm_min;
 		systime->second = now_time->tm_sec;
 		systime->milli = 0;
-		return(SUCCESS);
-	}
-	else {
-		return(FAILURE);
-	}
-}
 
+		return SUCCESS;
+	}
+	return FAILURE;
+}

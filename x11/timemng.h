@@ -1,5 +1,7 @@
+#ifndef	NP2_X11_TIMEMNG_H__
+#define	NP2_X11_TIMEMNG_H__
 
-// Win32 SYSTEMTIME ƒXƒgƒ‰ƒNƒ`ƒƒ
+// Win32 SYSTEMTIME ¥¹¥È¥é¥¯¥Á¥ã
 
 typedef struct {
 	UINT16	year;
@@ -23,3 +25,4 @@ BOOL timemng_gettime(_SYSTIME *systime);
 }
 #endif
 
+#endif	/* NP2_X11_TIMEMNG_H__ */
