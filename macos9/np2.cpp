@@ -727,8 +727,6 @@ int main(int argc, char *argv[]) {
 		flagload(np2resume);
 	}
 
-	SetScriptManagerVariable(smKeyDisableState, 1);
-
 	SetEventMask(everyEvent);
 
 	np2running = TRUE;

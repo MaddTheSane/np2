@@ -156,3 +156,10 @@ BYTE psggen_getreg(PSGGEN psg, BYTE reg) {
 	return(((BYTE *)&psg->reg)[reg & 15]);
 }
 
+void psggen_setpan(PSGGEN psg, UINT ch, BYTE pan) {
+
+	if ((psg) && (ch < 3)) {
+		psg->tone[ch].pan = pan;
+	}
+}
+

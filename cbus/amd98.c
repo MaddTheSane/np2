@@ -114,8 +114,18 @@ static void IOOUTCALL amd_ode(UINT port, BYTE dat) {
 
 // ----
 
+static void psgpanset(PSGGEN psg) {
+
+	psggen_setpan(psg, 0, 1);
+	psggen_setpan(psg, 1, 0);
+	psggen_setpan(psg, 2, 2);
+}
+
 void amd98_bind(void) {
 
+	psgpanset(&psg1);
+	psgpanset(&psg2);
+	psgpanset(&psg3);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg3, (SOUNDCB)psggen_getpcm);

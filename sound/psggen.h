@@ -16,7 +16,8 @@ typedef struct {
 	SINT32	count;
 	BYTE	*pvol;
 	UINT16	puchi;
-	UINT16	padding;
+	BYTE	pan;
+	BYTE	padding;
 } PSGTONE;
 
 typedef struct {
@@ -68,6 +69,7 @@ void psggen_setvol(UINT vol);
 void psggen_reset(PSGGEN psg);
 void psggen_setreg(PSGGEN psg, BYTE reg, BYTE val);
 BYTE psggen_getreg(PSGGEN psg, BYTE reg);
+void psggen_setpan(PSGGEN psg, UINT ch, BYTE pan);
 
 void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count);
 

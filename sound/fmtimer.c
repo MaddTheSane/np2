@@ -1,4 +1,5 @@
 #include	"compiler.h"
+#include	"i286.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"sound.h"
@@ -26,6 +27,7 @@ void fmport_a(NEVENTITEM item) {
 		if (intreq) {
 			pcm86.write = 1;
 			pic_setirq(fmtimer.irq);
+//			TRACEOUT(("fm int-A"));
 		}
 //		TRACE_("A: fifo = ", pcm86.fifo);
 //		TRACE_("A: virbuf = ", pcm86.virbuf);
@@ -51,6 +53,7 @@ void fmport_b(NEVENTITEM item) {
 		if (intreq) {
 			pcm86.write = 1;
 			pic_setirq(fmtimer.irq);
+//			TRACEOUT(("fm int-B"));
 		}
 //		TRACE_("B: fifo = ", pcm86.fifo);
 //		TRACE_("B: virbuf = ", pcm86.virbuf);
@@ -102,6 +105,8 @@ void fmtimer_reset(BYTE irq) {
 }
 
 void fmtimer_setreg(BYTE reg, BYTE value) {
+
+//	TRACEOUT(("fm %x %x [%.4x:%.4x]", reg, value, I286_CS, I286_IP));
 
 	switch(reg) {
 		case 0x24:

@@ -68,10 +68,10 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 		}
 		tone = psg->tone;
 		toneterm = tone + 3;
-		samp = 0;
 		do {
 			psgvol = (*(tone->pvol)) & 15;
 			if (psgvol) {
+				samp = 0;
 				vol = psggencfg.volume[psgvol];
 				switch(mixer & 9) {
 					case 0:							// no mix
@@ -110,11 +110,15 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 						}
 						break;
 				}
+				if (!(tone->pan & 1)) {
+					pcm[0] += samp;
+				}
+				if (!(tone->pan & 2)) {
+					pcm[1] += samp;
+				}
 			}
 			mixer >>= 1;
 		} while(++tone < toneterm);
-		pcm[0] += samp;
-		pcm[1] += samp;
 		pcm += 2;
 	} while(--count);
 }
