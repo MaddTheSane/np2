@@ -1,4 +1,4 @@
-/*	$Id: resolve.c,v 1.7 2004/03/23 15:29:34 monaka Exp $	*/
+/*	$Id: resolve.c,v 1.8 2004/03/26 06:33:53 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -39,7 +39,7 @@ UINT32 (*calc_ea32_dst_tbl[0x100])(void);
 /*
  * common
  */
-UINT32
+static UINT32
 ea_nop(void)
 {
 

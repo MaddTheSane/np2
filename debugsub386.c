@@ -6,6 +6,10 @@
 #include	"iocore.h"
 #include	"debugsub.h"
 
+void debugwriteseg(const char *fname, const descriptor_t *sd,
+												UINT32 addr, UINT32 size);
+void debugpageptr(UINT32 addr);
+
 
 #if defined(MACOS)
 #define	CRLITERAL	"\r"
