@@ -104,7 +104,7 @@ void nosound_pcmvolume(void *chanp, UINT num, int volume);
 #define	soundmng_initialize()		np2cfg.SOUND_SW = 0, FAILURE
 #define	soundmng_deinitialize()
 
-#define	soundmng_pcmload(num, filename)
+#define	soundmng_pcmload(num, filename)	FAILURE
 #define	soundmng_pcmvolume(num, volume)
 
 #endif	/* !NOSOUND */
