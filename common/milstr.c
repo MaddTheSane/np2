@@ -5,6 +5,11 @@
 // ---- ANK
 
 #if defined(SUPPORT_ANK)
+int milank_charsize(const char *str) {
+
+	return((str[0] != '\0')?1:0);
+}
+
 int milank_cmp(const char *str, const char *cmp) {
 
 	int		s;
@@ -100,6 +105,14 @@ char *milank_chr(const char *str, int c) {
 // ---- Shift-JIS
 
 #if defined(SUPPORT_SJIS)
+int milsjis_charsize(const char *str) {
+
+	int		pos;
+
+	pos = ((((str[0] ^ 0x20) - 0xa1) & 0xff) < 0x3c)?1:0;
+	return((str[pos] != '\0')?(pos+1):0);
+}
+
 int milsjis_cmp(const char *str, const char *cmp) {
 
 	int		s;
@@ -253,7 +266,15 @@ char *milsjis_chr(const char *str, int c) {
 
 // ---- EUC
 
-#if defined(SUPPORT_EUC)
+#if defined(SUPPORT_EUC)		// ‚ ‚ê ”¼ŠpƒJƒi–Y‚ê‚Ä‚é‚¼H
+int mileuc_charsize(const char *str) {
+
+	int		pos;
+
+	pos = (((str[0] - 0xa1) & 0xff) < 0x5d)?1:0;
+	return((str[pos] != '\0')?(pos+1):0);
+}
+
 int mileuc_cmp(const char *str, const char *cmp) {
 
 	int		s;
