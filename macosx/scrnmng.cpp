@@ -24,7 +24,6 @@ static	SCRNSURF	scrnsurf;
 static void changeclientsize(int width, int height, BYTE mode) {
 
 	QDRAW		qd;
-    int			scrnwidth, scrnheight;
     BYTE		opentoolwin = np2oscfg.toolwin;
 
 	qd = &qdraw;
@@ -36,15 +35,15 @@ static void changeclientsize(int width, int height, BYTE mode) {
             toolwin_close();
         }
         if (!(mode & SCRNMODE_ROTATE)) {
-            scrnwidth = width;
-            scrnheight = height;
+            qd->width = width;
+            qd->height = height;
         }
         else {
-            scrnwidth = height;
-            scrnheight = width;
+            qd->width = height;
+            qd->height = width;
         }
-        SizeWindow(qd->hWnd, scrnwidth, scrnheight, TRUE);
-        SetRect(&qd->rect, 0, 0, scrnwidth, scrnheight);
+        SizeWindow(qd->hWnd, qd->width, qd->height, TRUE);
+        SetRect(&qd->rect, 0, 0, qd->width, qd->height);
         if (opentoolwin) {
             toolwin_open();
         }
@@ -176,6 +175,9 @@ const SCRNSURF *scrnmng_surflock(void) {
 		scrnsurf.xalign = rowbyte;
 		scrnsurf.yalign = 0 - (scrnsurf.bpp >> 3);
     }
+	if (scrnmode & SCRNMODE_FULLSCREEN) {
+		scrnsurf.ptr += (CGDisplayPixelsWide(kCGDirectMainDisplay)-qd->width)/2*(scrnsurf.bpp >> 3);
+	}
 	scrnsurf.extend = 0;
 	return(&scrnsurf);
 }

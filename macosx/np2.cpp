@@ -977,6 +977,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
             switch (whatHappened)
             {
                 case kEventMouseMoved:
+                case kEventMouseDragged:
                     GetEventParameter (event, kEventParamMouseDelta, typeHIPoint, NULL, sizeof(HIPoint), NULL, &delta);
                     mousemng_callback(delta);
                     result = noErr;
@@ -1122,6 +1123,7 @@ static const EventTypeSpec appEventList[] = {
 				{kEventClassMouse,		kEventMouseDown},
 #if defined(NP2GCC)
 				{kEventClassMouse,		kEventMouseMoved},
+				{kEventClassMouse,		kEventMouseDragged},
 				{kEventClassMouse,		kEventMouseUp},
 #endif
 				{kEventClassKeyboard,	kEventRawKeyModifiersChanged},
@@ -1202,7 +1204,7 @@ static void toggleFullscreen(void) {
     static bool toolwin = false;
     MenuRef	menu = GetMenuRef(IDM_SCREEN);
     Rect	bounds;
-    short	w = 640, h = 480;
+    short	w, h;
 
     soundmng_stop();
     if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
@@ -1210,12 +1212,14 @@ static void toggleFullscreen(void) {
         GetWindowBounds(hWndMain, kWindowContentRgn, &bounds);
         backupwidth = bounds.right - bounds.left;
         backupheight = bounds.bottom - bounds.top;
+		w = backupwidth;
+		h = backupheight;
         toolwin = np2oscfg.toolwin;
         toolwin_close();
         np2oscfg.winx = bounds.left;
         np2oscfg.winy = bounds.top;
         DisposeWindow(hWndMain);
-        BeginFullScreen(&bkfullscreen, 0, &w, &h, &hWndMain, NULL, fullScreenAllowEvents | fullScreenCaptureDisplay);	
+        BeginFullScreen(&bkfullscreen, 0, &w, &h, &hWndMain, NULL, fullScreenAllowEvents);	
         DisableMenuItem(menu, IDM_ROLNORMAL);
         DisableMenuItem(menu, IDM_ROLLEFT);
         DisableMenuItem(menu, IDM_ROLRIGHT);
