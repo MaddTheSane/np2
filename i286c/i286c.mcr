@@ -5,7 +5,7 @@
 #define	INHIBIT_WORDP(m)	(1)
 #endif
 
-#define	__CBW(src)		(UINT16)((char)(src))
+#define	__CBW(src)		(UINT16)((SINT8)(src))
 #define	__CBD(src)		((SINT8)(src))
 #define	WORD2LONG(src)	((SINT16)(src))
 
