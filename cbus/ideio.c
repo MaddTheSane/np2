@@ -62,17 +62,14 @@ static BOOL setidentify(IDEDRV drv) {
 
 	ZeroMemory(tmp, sizeof(tmp));
 	// ‚Æ‚è‚ ‚¦‚¸Žg‚Á‚Ä‚é•”•ª‚¾‚¯
-	tmp[0] = 0x045a;
+	tmp[0] = 0x0040;
 	tmp[1] = sxsi->cylinders;
 	tmp[3] = sxsi->surfaces;
 	tmp[4] = sxsi->sectors * 512;
-//	tmp[5] = 0;					// ???
 	tmp[6] = sxsi->sectors;
 	for (i=0; i<10; i++) {
 		tmp[10+i] = (serial[i*2] << 8) + serial[i*2+1];
 	}
-	tmp[20] = 3;
-	tmp[21] = 16;
 	tmp[22] = 4;
 	for (i=0; i<4; i++) {
 		tmp[23+i] = (firm[i*2] << 8) + firm[i*2+1];
@@ -80,12 +77,10 @@ static BOOL setidentify(IDEDRV drv) {
 	for (i=0; i<20; i++) {
 		tmp[27+i] = (model[i*2] << 8) + model[i*2+1];
 	}
-//	tmp[47] = 0;				// multiple
-	tmp[49] = 0x0f00;
-	tmp[50] = 0x4000;
+	tmp[47] = 0x00;				// multiple
+	tmp[49] = 0x0000;			// LBA(1 << 9)
 	tmp[51] = 0x0200;
-	tmp[52] = 0x0200;
-	tmp[53] = 0x0007;
+	tmp[53] = 0x0001;
 	tmp[54] = sxsi->cylinders;
 	tmp[55] = sxsi->surfaces;
 	tmp[56] = sxsi->sectors;
@@ -95,10 +90,10 @@ static BOOL setidentify(IDEDRV drv) {
 //	tmp[59] = 0;
 	tmp[60] = (UINT16)size;
 	tmp[61] = (UINT16)(size >> 16);
-	tmp[63] = 0x0407;
+	tmp[63] = 0;				// multi word DMA
 
-	tmp[80] = 0x001e;
-	tmp[81] = 0x0011;
+	tmp[80] = 0x0006;			// support ATA-1/2
+	tmp[81] = 0;
 
 	p = drv->buf;
 	for (i=0; i<256; i++) {
@@ -114,16 +109,18 @@ static BOOL setidentify(IDEDRV drv) {
 
 static void setintr(IDEDRV drv) {
 
-	ideio.bank[0] = ideio.bank[1] | 0x80;			// ????
-	pic_setirq(IDE_IRQ);
+	if (!(drv->ctrl & IDECTRL_NIEN)) {
+		TRACEOUT(("ideio: setintr()"));
+		ideio.bank[0] = ideio.bank[1] | 0x80;			// ????
+		pic_setirq(IDE_IRQ);
+	}
 }
 
 static void cmdabort(IDEDRV drv) {
 
 	drv->status = IDESTAT_DRDY | IDESTAT_ERR;
 	drv->error = IDEERR_ABRT;
-	ideio.bank[0] = ideio.bank[1] | 0x80;			// ????
-	pic_setirq(IDE_IRQ);
+	setintr(drv);
 }
 
 static void panic(const char *str, ...) {
@@ -443,7 +440,8 @@ static void IOOUTCALL ideio_o74c(UINT port, REG8 dat) {
 			}
 		}
 	}
-	TRACEOUT(("ideio %.4x,%.2x [%.4x:%.8x]", port, dat, CPU_CS, CPU_EIP));
+	TRACEOUT(("ideio interrupt %sable", (dat & IDECTRL_NIEN) ? "di" : "en"));
+	TRACEOUT(("ideio devctrl %.4x,%.2x [%.4x:%.8x]", port, dat, CPU_CS, CPU_EIP));
 }
 
 static void IOOUTCALL ideio_o74e(UINT port, REG8 dat) {
@@ -550,6 +548,10 @@ static REG8 IOINPCALL ideio_i64e(UINT port) {
 	if (drv) {
 		TRACEOUT(("ideio status %.2x [%.4x:%.8x]",
 											drv->status, CPU_CS, CPU_EIP));
+		if (!(drv->ctrl & IDECTRL_NIEN)) {
+			TRACEOUT(("ideio: resetirq"));
+			pic_resetirq(IDE_IRQ);
+		}
 		return(drv->status);
 	}
 	else {
@@ -559,8 +561,17 @@ static REG8 IOINPCALL ideio_i64e(UINT port) {
 
 static REG8 IOINPCALL ideio_i74c(UINT port) {
 
-	TRACEOUT(("ideio %.4x [%.4x:%.8x]", port, CPU_CS, CPU_EIP));
-	return(0xff);
+	IDEDRV	drv;
+
+	drv = getidedrv();
+	if (drv) {
+		TRACEOUT(("ideio alt status %.2x [%.4x:%.8x]",
+											drv->status, CPU_CS, CPU_EIP));
+		return(drv->status);
+	}
+	else {
+		return(0xff);
+	}
 }
 
 
@@ -591,7 +602,7 @@ void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 	}
 }
 
-REG16 IOOUTCALL ideio_r16(UINT port) {
+REG16 IOINPCALL ideio_r16(UINT port) {
 
 	IDEDRV	drv;
 	REG16	ret;
