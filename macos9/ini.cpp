@@ -290,6 +290,9 @@ static const char ini_title[] = "NekoProjectII";
 static const char inifile[] = "np2.cfg";
 
 static const INITBL iniitem[] = {
+	{"windposx", INITYPE_SINT32,	&np2oscfg.posx,			0},
+	{"windposy", INITYPE_SINT32,	&np2oscfg.posy,			0},
+
 	{"clk_base", INITYPE_SINT32,	&np2cfg.baseclock,		0},
 	{"clk_mult", INITYPE_SINT32,	&np2cfg.multiple,		0},
 
@@ -330,6 +333,7 @@ static const INITBL iniitem[] = {
 	{"F12_COPY", INITYPE_UINT8,		&np2oscfg.F12COPY,		0},
 	{"btnRAPID", INITYPE_BOOL,		&np2cfg.BTN_RAPID,		0},
 	{"btn_MODE", INITYPE_BOOL,		&np2cfg.BTN_MODE,		0},
+	{"Mouse_sw", INITYPE_BOOL,		&np2oscfg.MOUSE_SW,		0},
 	{"MS_RAPID", INITYPE_BOOL,		&np2cfg.MOUSERAPID,		0},
 
 	{"VRAMwait", INITYPE_BYTEARG,	np2cfg.wait,			6},

@@ -34,7 +34,7 @@
 #define	USE_RESUME
 
 
-		NP2OSCFG	np2oscfg = {0, 2, 0, 0,  0, 0, 0};
+		NP2OSCFG	np2oscfg = {100, 100, 0, 2, 0, 0,  0, 0, 0};
 
 		WindowPtr	hWndMain;
 		BOOL		np2running;
@@ -262,10 +262,10 @@ static void HandleMenuChoice(long wParam) {
 			dialog_scropt();
 			break;
 
-        case IDM_MOUSE:
+		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
-            menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
-            sysmng_update(SYS_UPDATECFG);
+			menu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_MIDIPANIC:
@@ -642,6 +642,8 @@ int main(int argc, char *argv[]) {
 	Rect		wRect;
 	EventRecord	event;
 	UINT		t;
+	GrafPtr		saveport;
+	Point		pt;
 
 	dosio_init();
 	file_setcd(target);
@@ -654,7 +656,7 @@ int main(int argc, char *argv[]) {
 
 	TRACEINIT();
 
-	SetRect(&wRect, 100, 100, 100, 100);
+	SetRect(&wRect, np2oscfg.posx, np2oscfg.posy, 100, 100);
 	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
 								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
 	if (!hWndMain) {
@@ -786,6 +788,23 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+
+	GetPort(&saveport);
+#if TARGET_API_MAC_CARBON
+	SetPortWindowPort(hWndMain);
+#else
+	SetPort(hWndMain);
+#endif
+	pt.h = 0;
+	pt.v = 0;
+	LocalToGlobal(&pt);
+	SetPort(saveport);
+	if ((np2oscfg.posx != pt.h) || (np2oscfg.posy != pt.v)) {
+		np2oscfg.posx = pt.h;
+		np2oscfg.posy = pt.v;
+		sysmng_update(SYS_UPDATEOSCFG);
+	}
+
 	np2running = FALSE;
 
 	pccore_cfgupdate();

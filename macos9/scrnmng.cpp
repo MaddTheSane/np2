@@ -23,7 +23,6 @@ static	SCRNSURF	scrnsurf;
 static void changeclientsize(int width, int height) {
 
 	QDRAW		qd;
-	WindowPtr	saveport;
 
 	qd = &qdraw;
 	if (!qd->exist) {

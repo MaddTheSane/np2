@@ -49,9 +49,9 @@ static BYTE IOINPCALL opn_i188(UINT port) {
 
 	(void)port;
 #if 1
-		return(fmtimer.status | 0x7c);
+	return(fmtimer.status | 0x7c);
 #else
-		return(fmtimer.status);
+	return(fmtimer.status);
 #endif
 }
 

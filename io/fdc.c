@@ -352,6 +352,7 @@ static void readsector(void) {
 		fdcsend_error7();
 		return;
 	}
+
 	fdc.event = FDCEVENT_BUFSEND2;
 	fdc.bufp = 0;
 #if 1															// ver0.27 ??
@@ -463,16 +464,23 @@ static void FDC_SenceintStatus(void) {					// cmd: 08
 	}
 }
 
-#if 0	// for test..
 static void FDC_ReadID(void) {							// cmd: 0a
 
 	switch(fdc.event) {
 		case FDCEVENT_CMDRECV:
+			fdc.mf = fdc.cmd & 0x40;
 			get_hdus();
+			if (fdd_readid() == SUCCESS) {
+				fdcsend_success7();
+			}
+			else {
+				fdc.stat[fdc.us] = fdc.us | (fdc.hd << 2) |
+													FDCRLT_IC0 | FDCRLT_MA;
+				fdcsend_error7();
+			}
 			break;
 	}
 }
-#endif
 
 static void FDC_WriteID(void) {							// cmd: 0d
 
@@ -588,7 +596,7 @@ static const FDCOPE FDC_Ope[0x20] = {
 				FDC_Recalibrate,
 				FDC_SenceintStatus,
 				FDC_WriteData,
-				FDC_Invalid,			// FDC_ReadID,
+				FDC_ReadID,
 				FDC_Invalid,
 				FDC_ReadData,
 				FDC_WriteID,
@@ -706,6 +714,7 @@ BYTE DMACCALL fdc_DataRegRead(void) {
 
 static void IOOUTCALL fdc_o92(UINT port, BYTE dat) {
 
+//	TRACEOUT(("fdc out %x %x", port, dat));
 	CTRL_FDMEDIA = DISKTYPE_2HD;
 	if ((fdc.status & (FDCSTAT_RQM | FDCSTAT_DIO)) == FDCSTAT_RQM) {
 		fdc_DataRegWrite(dat);
@@ -715,6 +724,7 @@ static void IOOUTCALL fdc_o92(UINT port, BYTE dat) {
 
 static void IOOUTCALL fdc_o94(UINT port, BYTE dat) {
 
+//	TRACEOUT(("fdc out %x %x", port, dat));
 	CTRL_FDMEDIA = DISKTYPE_2HD;
 	if ((fdc.ctrlreg ^ dat) & 0x10) {
 		fdcstatusreset();
@@ -727,6 +737,7 @@ static void IOOUTCALL fdc_o94(UINT port, BYTE dat) {
 
 static BYTE IOINPCALL fdc_i90(UINT port) {
 
+//	TRACEOUT(("fdc in %x %x", port, fdc.status));
 	CTRL_FDMEDIA = DISKTYPE_2HD;
 
 	(void)port;
@@ -746,6 +757,7 @@ static BYTE IOINPCALL fdc_i92(UINT port) {
 		ret = fdc.lastdata;
 	}
 	(void)port;
+//	TRACEOUT(("fdc in %x %x", port, ret));
 	return(ret);
 }
 

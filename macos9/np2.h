@@ -1,5 +1,8 @@
 
 typedef struct {
+	int		posx;
+	int		posy;
+
 	BYTE	NOWAIT;
 	BYTE	DRAW_SKIP;
 	BYTE	DISPCLK;

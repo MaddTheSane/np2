@@ -59,6 +59,7 @@ static BOOL d88trk_flushdata(D88TRK trk) {
 		goto dtfd_err2;
 	}
 	file_close(fh);
+	trk->write = FALSE;
 
 dtfd_exit:
 	return(SUCCESS);
@@ -230,6 +231,7 @@ static void drvflush(FDDFILE fdd) {
 	trk = &d88trk;
 	if (trk->fdd == fdd) {
 		d88trk_flushdata(trk);
+		trk->fdd = NULL;
 	}
 }
 
@@ -629,6 +631,7 @@ static void endoftrack(UINT fmtsize, BYTE sectors) {
 
 	FDDFILE	fdd = fddfile + fdc.us;
 
+	D88SEC		d88sec;
 	FILEH		hdl;
 	int			i;
 	UINT		trk;
@@ -643,8 +646,9 @@ static void endoftrack(UINT fmtsize, BYTE sectors) {
 
 	ptr = 0;
 	for (i=0; i<(int)sectors; i++) {
-		STOREINTELWORD(((D88SEC)(&d88trk.buf[ptr]))->sectors, sectors);
-		ptr += LOADINTELWORD(((D88SEC)(&d88trk.buf[ptr]))->size);
+		d88sec = (D88SEC)(d88trk.buf + ptr);
+		STOREINTELWORD(d88sec->sectors, sectors);
+		ptr += LOADINTELWORD(d88sec->size);
 		ptr += sizeof(_D88SEC);
 	}
 
@@ -652,7 +656,7 @@ static void endoftrack(UINT fmtsize, BYTE sectors) {
 	if (hdl == FILEH_INVALID) {
 		return;
 	}
-	lastpointer = file_seek(hdl, 0, 2);
+	lastpointer = file_seek(hdl, 0, FSEEK_END);
 	fpointer = fdd->inf.d88.ptr[trk];
 	if (fpointer == 0) {
 		for (i=trk; i>=0; i--) {					// 新規トラック
@@ -683,9 +687,10 @@ static void endoftrack(UINT fmtsize, BYTE sectors) {
 	STOREINTELDWORD(fdd->inf.d88.head.trackp[trk], fpointer);
 	file_seek(hdl, fpointer, 0);
 	file_write(hdl, d88trk.buf, fmtsize);
-	file_seek(hdl, 0, 0);
+	file_seek(hdl, 0, FSEEK_SET);
 	file_write(hdl, &fdd->inf.d88.head, sizeof(fdd->inf.d88.head));
 	file_close(hdl);
+//	TRACEOUT(("fmt %d %d", fpointer, fmtsize));
 }
 
 
@@ -696,7 +701,7 @@ BOOL fdd_formatinit_d88(void) {
 		formatsec = 0;
 		formatpos = 0;
 		formatwrt = 0;
-		drvflush(NULL);
+		drvflush(fddfile + fdc.us);
 		return(SUCCESS);
 	}
 	return(FAILURE);

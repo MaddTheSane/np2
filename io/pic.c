@@ -291,6 +291,7 @@ static void IOOUTCALL pic_o00(UINT port, BYTE dat) {
 	PICITEM		picp;
 	BYTE		level;
 
+//	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
 	picp->writeicw = 0;
 	switch(dat & 0x18) {
@@ -340,6 +341,7 @@ static void IOOUTCALL pic_o02(UINT port, BYTE dat) {
 
 	PICITEM		picp;
 
+//	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
 	if (!picp->writeicw) {
 		picp->imr = dat;
