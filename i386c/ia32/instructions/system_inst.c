@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.22 2004/03/08 12:56:22 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.23 2004/03/09 14:14:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -484,7 +484,8 @@ CLTS(void)
 void
 ARPL_EwGw(void)
 {
-	UINT32 op, src, dst, madr;
+	UINT32 op, src, madr;
+	UINT16 dst;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		PREPART_EA_REG16(op, src);
@@ -495,7 +496,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				*(reg16_b20[op]) = (UINT16)dst;
+				*(reg16_b20[op]) = dst;
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -507,7 +508,7 @@ ARPL_EwGw(void)
 				CPU_FLAGL |= Z_FLAG;
 				dst &= ~3;
 				dst |= (src & 3);
-				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)dst);
+				cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, dst);
 			} else {
 				CPU_FLAGL &= ~Z_FLAG;
 			}
@@ -985,7 +986,8 @@ INVD(void)
 		VERBOSE(("INVD: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
-	/* nothing to do */
+
+	tlb_flush(TRUE);
 }
 
 void
@@ -997,7 +999,8 @@ WBINVD(void)
 		VERBOSE(("WBINVD: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
-	/* nothing to do */
+
+	tlb_flush(TRUE);
 }
 
 void
@@ -1045,14 +1048,11 @@ INVLPG(UINT32 op)
 			break;
 		}
 		tlb_flush_page(sd->u.seg.segbase + madr);
+		return;
 	}
-	return;
-
+	exc = UD_EXCEPTION;
 err:
-#if 0	/* XXX */
 	EXCEPTION(exc, 0);
-#endif
-	return;
 }
 
 void

@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.11 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.12 2004/03/09 14:14:05 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -127,6 +127,8 @@ change_pm(BOOL onoff)
 	CPU_STAT_SS32 = 0;
 	CPU_SET_CPL(0);
 	CPU_STAT_PM = onoff;
+
+	tlb_flush(TRUE);
 }
 
 void FASTCALL
@@ -139,6 +141,8 @@ change_pg(BOOL onoff)
 		VERBOSE(("Leaveing from Paging-Mode..."));
 	}
 	CPU_STAT_PAGING = onoff;
+
+	tlb_flush(TRUE);
 }
 
 void FASTCALL
