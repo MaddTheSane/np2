@@ -2,10 +2,8 @@
 	INCLUDE		i286a.inc
 	INCLUDE		i286aalu.inc
 
-	IMPORT		i286core
 	IMPORT		_szpcflag8
 	IMPORT		i286a_ea
-	IMPORT		i286a_lea
 	IMPORT		i286_memoryread
 	IMPORT		i286_memoryread_w
 	IMPORT		i286_memorywrite
@@ -131,7 +129,7 @@ i286a_81		GETPC8
 				cmp		r0, #&c0
 				bcc		ope81m
 				CPUWORK	#3
-				R8SRC	r0, r5
+				R16SRC	r0, r5
 				add		r5, r5, #CPU_REG
 				GETPC16
 				adr		r1, op8x_reg16
@@ -158,7 +156,7 @@ i286a_83		GETPC8
 				cmp		r0, #&c0
 				bcc		ope83m
 				CPUWORK	#3
-				R8SRC	r0, r5
+				R16SRC	r0, r5
 				add		r5, r5, #CPU_REG
 				GETPC8
 				tst		r0, #(1 << 7)

@@ -288,6 +288,10 @@ jmp_short		JMPS	#7
 
 ; ----
 
+reserved		mov		r6, #6
+				sub		r8, r8, #(1 << 16)
+				b		i286a_localint
+
 daa				CPUWORK	#3
 				ldrb	r0, [r9, #CPU_AL]
 				bic		r8, r8, #O_FLAG
