@@ -265,7 +265,7 @@ void trace_init(void) {
 	}
 
 #if 1
-	tracewin.en = 1;
+	tracewin.en = 0;
 	tracewin.fh = FILEH_INVALID;
 #else
 	tracewin.en = 0;

@@ -18,6 +18,9 @@ typedef	unsigned int		UINT32;
 typedef signed __int64		SINT64;
 typedef unsigned __int64	UINT64;
 #define	INLINE				__inline
+#define	QWORD_CONST(v)		((DWORDLONG)(v))
+#define	SQWORD_CONST(v)		((LONGLONG)(v))
+#define	vsnprintf			_vsnprintf
 #else
 #include	<stdlib.h>
 typedef signed char			SINT8;

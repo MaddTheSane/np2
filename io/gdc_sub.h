@@ -16,7 +16,7 @@ typedef struct {
 } GDCVECT;
 
 typedef void (*GDCSUBFN)(UINT32 csrw, const GDCVECT *vect,
-														UINT16 pat, BYTE ope);
+														REG16 pat, REG8 ope);
 
 
 #ifdef __cplusplus
