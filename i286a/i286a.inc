@@ -12,6 +12,11 @@ I_FLAG				equ		&0200
 D_FLAG				equ		&0400
 O_FLAG				equ		&0800
 
+MSW_PE				equ		&0001
+MSW_MP				equ		&0002
+MSW_EM				equ		&0004
+MSW_TS				equ		&0008
+
 CPU_SIZE			equ		124
 CPU_STAT			equ		(0 - CPU_SIZE)
 CPU_EXT				equ		(108 - CPU_SIZE)
@@ -26,7 +31,7 @@ CPU_SS_FIX			equ		CPU_STAT + 44
 CPU_DS_FIX			equ		CPU_STAT + 48
 CPU_ADRSMASK		equ		CPU_STAT + 52
 CPU_PREFIX			equ		CPU_STAT + 56
-CPU_TRAP			equ		CPU_STAT + 58
+; cpu_trap			equ		CPU_STAT + 58
 ; cpu_resetreq		equ		CPU_STAT + 59
 CPU_GDTR			equ		CPU_STAT + 60
 CPU_MSW				equ		CPU_STAT + 66

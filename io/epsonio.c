@@ -62,6 +62,8 @@ static void IOOUTCALL epsonio_o043f(UINT port, REG8 dat) {
 
 static void IOOUTCALL epsonio_oc07(UINT port, REG8 dat) {
 
+	TRACEOUT(("EPSON ROM MODE - %.2x", dat));
+
 	switch(dat) {
 		case 0x2a:	// 0010|1010
 		case 0x2b:

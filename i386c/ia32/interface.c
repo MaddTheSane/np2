@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.4 2003/12/25 20:30:22 yui Exp $	*/
+/*	$Id: interface.c,v 1.5 2004/01/07 06:53:48 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -207,6 +207,10 @@ ia32_panic(const char *str, ...)
 	vsnprintf(buf, sizeof(buf), str, ap);
 	va_end(ap);
 	strcat(buf, "\n");
+
+#if defined(_WIN32)
+	MessageBox(NULL, buf, "ia32_panic", MB_OK);
+#endif
 
 	fprintf(stderr, buf);
 	__ASSERT(0);

@@ -160,7 +160,7 @@ typedef struct {
 	UINT32	ds_fix;
 	UINT32	adrsmask;						// ver0.72
 	UINT16	prefix;
-	UINT8	trap;
+	UINT8	__trap;
 	UINT8	resetreq;						// ver0.72
 	I286DTR	GDTR;
 	UINT16	MSW;
@@ -265,6 +265,7 @@ void i286a_step(void);
 #define	CPU_MSW			i286acore.s.MSW
 #define	CPU_RESETREQ	i286acore.s.resetreq
 #define	CPU_ITFBANK		i286acore.s.itfbank
+#define	CPU_RAM_D000	i286acore.s.ram_d0
 
 #define	CPU_EXTMEM		i286acore.e.ext
 #define	CPU_EXTMEMSIZE	i286acore.e.extsize
@@ -281,10 +282,8 @@ void i286a_step(void);
 
 #define	CPU_isDI		(!(i286acore.s.r.w.flag & I_FLAG))
 #define	CPU_isEI		(i286acore.s.r.w.flag & I_FLAG)
-#define	CPU_CLI			i286acore.s.r.w.flag &= ~I_FLAG;					\
-						i286acore.s.trap = 0;
-#define	CPU_STI			i286acore.s.r.w.flag |= I_FLAG;						\
-						i286acore.s.trap = (i286acore.s.r.w.flag >> 8) & 1;
+#define	CPU_CLI			i286acore.s.r.w.flag &= ~I_FLAG;
+#define	CPU_STI			i286acore.s.r.w.flag |= I_FLAG;
 
 #define	CPU_INITIALIZE()
 #define	CPU_RESET			i286a_reset

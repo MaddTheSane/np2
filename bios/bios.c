@@ -187,7 +187,7 @@ void bios_init(void) {
 
 	bios_reinitbyswitch();
 	mem[MEMB_CRT_STS_FLAG] = 0x84;
-	mem[MEMB_BIOS_FLAG0] = 0x03;						// 00/05/17 beep tone
+	mem[MEMB_BIOS_FLAG0] = 0x03;
 	mem[MEMB_F2DD_MODE] = 0xff;										// ver0.29
  	SETBIOSMEM16(MEMW_DISK_EQUIP, 0x0003);							// ver0.29
 	SETBIOSMEM32(MEMD_F2DD_POINTER, 0xfd801ad7);
@@ -209,15 +209,17 @@ void bios_init(void) {
 #else
 	fh = file_open_c("itf.rom");
 	if (fh != FILEH_INVALID) {
-		file_read(fh, &mem[ITF_ADRS], 0x8000);
+		file_read(fh, mem + ITF_ADRS, 0x8000);
 		file_close(fh);
+		TRACEOUT(("load itf.rom"));
 	}
 	extmem_init(np2cfg.EXTMEM);
 #endif
 
 	CopyMemory(mem + 0xd0000, sxsibios, sizeof(sxsibios));
+	CPU_RAM_D000 &= ~(1 << 0);
 
-	CopyMemory(mem + 0x1c0000, mem + 0x1f8000, 0x08000);
+	CopyMemory(mem + 0x1c0000, mem + ITF_ADRS, 0x08000);
 	CopyMemory(mem + 0x1e8000, mem + 0x0e8000, 0x10000);
 }
 
@@ -250,9 +252,13 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 	UINT16	bootseg;
 
 	if ((CPU_ITFBANK) && (adrs >= 0xf8000) && (adrs < 0x100000)) {
+#if 1					// for epson ITF
+		return(0);
+#else
 		CPU_IP--;
 		CPU_REMCLOCK = -1;
 		return(1);
+#endif
 	}
 
 	switch(adrs) {													// ver0.30

@@ -312,6 +312,10 @@ void pccore_reset(void) {
 
 	sound_reset();
 
+	if (pc.model & PCMODEL_EPSON) {				// RAM ctrl
+		CPU_RAM_D000 = 0xffff;
+	}
+
 	iocore_reset();								// サウンドでpicを呼ぶので…
 	cbuscore_reset();
 	fmboard_reset(np2cfg.SOUND_SW);

@@ -918,6 +918,14 @@ pushf			CPUWORK	#3
 				b		i286a_memorywrite_w
 
 popf			POP		#5
+		if 1
+				mov		r8, r8 lsr #16
+				bic		r1, r0, #&f000					; i286
+				and		r2, r0, #(I_FLAG + T_FLAG)
+				orr		r8, r1, r8 lsl #16
+				cmp		r2, #(I_FLAG + T_FLAG)
+				beq		popf_withirq
+		else
 				mov		r2, #3
 				mov		r8, r8 lsr #16
 				and		r2, r2, r0 lsr #8
@@ -926,6 +934,7 @@ popf			POP		#5
 				orr		r8, r1, r8 lsl #16
 				strb	r2, [r9, #CPU_TRAP]
 				bne		popf_withirq
+		endif
 				ldr		r0, popf_pic
 				NOINTREXIT
 popf_withirq	I286IRQCHECKTERM
@@ -1372,6 +1381,13 @@ iret			bl		extirq_pop
 				add		r4, r4, #2
 				bl		i286a_memoryread_w
 				strh	r4, [r9, #CPU_SP]
+		if 1
+				bic		r1, r0, #&f000
+				and		r2, r0, #(I_FLAG + T_FLAG)
+				orr		r8, r1, r8
+				cmp		r2, #(I_FLAG + T_FLAG)
+				beq		iret_withirq
+		else
 				mov		r2, #3
 				bic		r1, r0, #&f000					; i286
 				and		r2, r2, r0 lsr #8
@@ -1379,6 +1395,7 @@ iret			bl		extirq_pop
 				ands	r2, r2, r2 lsr #1
 				strb	r2, [r9, #CPU_TRAP]
 				bne		iret_withirq
+		endif
 				ldr		r0, iret_pic
 				NOINTREXIT
 iret_withirq	I286IRQCHECKTERM
@@ -1621,20 +1638,30 @@ stc				CPUWORK	#2
 				mov		pc, r11
 
 cli				CPUWORK	#2
+		if 1
+				bic		r8, r8, #I_FLAG
+		else
 				mov		r0, #0
 				bic		r8, r8, #I_FLAG
 				strb	r0, [r9, #CPU_TRAP]
+		endif
 				mov		pc, r11
 
 sti				CPUWORK	#2
 				tst		r8, #I_FLAG
 				bne		sti_noirq
 sti_set			orr		r8, r8, #I_FLAG
+		if 1
+				ldr		r0, sti_pic
+				tst		r8, #T_FLAG
+				bne		sti_withirq
+		else
 				mov		r1, #(T_FLAG >> 8)
 				ands	r1, r1, r8 lsr #8
 				ldr		r0, sti_pic
 				strneb	r1, [r9, #CPU_TRAP]
 				bne		sti_withirq
+		endif
 				PICEXISTINTR	sti_noirq
 				bne		sti_withirq
 sti_noirq		NEXT_OPCODE

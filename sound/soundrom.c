@@ -38,6 +38,12 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 	}
 	file_cpyname(soundrom.name, romname, sizeof(soundrom.name));
 	soundrom.address = address;
+	if (address == 0xd0000) {
+		CPU_RAM_D000 &= ~(0x0f << 0);
+	}
+	else if (address == 0xd4000) {
+		CPU_RAM_D000 &= ~(0x0f << 4);
+	}
 	return(SUCCESS);
 
 lsr_err:

@@ -12,11 +12,32 @@
 	IMPORT	i286a_memoryread_w
 ;;	IMPORT	ea_assert
 
+	EXPORT	i286a_selector
 	EXPORT	i286a_ea
 	EXPORT	i286a_lea
 	EXPORT	i286a_a
 
 	AREA	.text, CODE, READONLY
+
+
+i286a_selector	stmdb	sp!, {r4 - r5, lr}
+				tst		r0, #4
+				moveq	r1, #(CPU_GDTR + 2)
+				movne	r1, #(CPU_LDTRC + 2)
+				add		r2, r1, #2
+				ldrh	r1, [r1, r9]
+				ldrb	r2, [r2, r9]
+				bic		r4, r0, #7
+				add		r4, r4, r1
+				add		r4, r4, r2 lsl #16
+				add		r0, r4, #2
+				bl		i286a_memoryread_w
+				mov		r5, r0
+				add		r0, r4, #4
+				bl		i286a_memoryread
+				add		r0, r5, r0 lsl #16
+				ldmia	sp!, {r4 - r5, pc}
+
 
 ; ---- calc_ea_dst
 

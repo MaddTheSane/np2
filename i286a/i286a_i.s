@@ -32,9 +32,9 @@ i286a_localint	ldrh	r4, [r9, #CPU_SP]
 				add		r0, r4, r5
 				strh	r4, [r9, #CPU_SP]
 				bl		i286a_memorywrite_w
-				mov		r0, #0
+			;;	mov		r0, #0
 				ldr		r1, [r9, r6 lsl #2]
-				strb	r0, [r9, #CPU_TRAP]
+			;;	strb	r0, [r9, #CPU_TRAP]
 				bic		r8, r8, #(T_FLAG + I_FLAG)
 				mov		r0, r1 lsr #16
 				orr		r8, r8, r1 lsl #16
@@ -62,9 +62,9 @@ i286a_trapint	ldrh	r4, [r9, #CPU_SP]
 				add		r0, r4, r5
 				strh	r4, [r9, #CPU_SP]
 				bl		i286a_memorywrite_w
-				mov		r0, #0
+			;;	mov		r0, #0
 				ldr		r1, [r9, #4]
-				strb	r0, [r9, #CPU_TRAP]
+			;;	strb	r0, [r9, #CPU_TRAP]
 				bic		r8, r8, #(T_FLAG + I_FLAG)
 				mov		r0, r1 lsr #16
 				orr		r8, r8, r1 lsl #16
@@ -103,9 +103,9 @@ i286a_interrupt	ldr		r1, iai_r9
 				add		r0, r4, r5
 				strh	r4, [r9, #CPU_SP]
 				bl		i286a_memorywrite_w
-				mov		r0, #0
+			;;	mov		r0, #0
 				ldr		r1, [r9, r6 lsl #2]
-				strb	r0, [r9, #CPU_TRAP]
+			;;	strb	r0, [r9, #CPU_TRAP]
 				bic		r8, r8, #(T_FLAG + I_FLAG)
 				mov		r0, r1 lsr #16
 				orr		r8, r8, r1 lsl #16

@@ -16,13 +16,14 @@
 　・CPU(I286C) … int3 / int imm8 / into クロック数を修正
 　・CPU(I286C) … shl r/m8,cl / shr r/m8,cl の修正
 　・CPU(I286C) … sar r/m (eVC3/eVC4コンパイラバグ回避)
-　・CPU(I286C) … グループ７とか…
+　・CPU(I286C/I286X/I286A) … グループ７とか…
 　・DMAC … インプットでアドレスとカウンタが逆なのを修正
 　・PIT … ビープカウンタを修正
 　・NP2SYSP … ポートを叩いた瞬間 フリーズするバグを修正
 　・ITF … 拡張メモリ使用時にエミュレーション内部のメモリを破壊するのを修正
 　・CS4231 … 再生しなくなっていたのを修正
 　・CS4231 … DMA,IRQを変更出来るようにしました
+　・CS4231 … デフォルトのDMAチャネルを #1に変更
 　・MIDI … STATSAVEの修正
 　・SOUND … JAST SOUNDをサポート
 　・Vermouth … Roland GSコマンドの一部に対応
