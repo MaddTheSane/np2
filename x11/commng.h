@@ -1,3 +1,5 @@
+/*	$Id: commng.h,v 1.2 2004/03/25 15:10:33 monaka Exp $	*/
+
 #ifndef	NP2_X11_COMMNG_H__
 #define	NP2_X11_COMMNG_H__
 
@@ -62,10 +64,18 @@ void commng_destroy(COMMNG hdl);
 
 enum {
 	COMPORT_NONE			= 0,
+	COMPORT_COM1,
+	COMPORT_COM2,
+	COMPORT_COM3,
+	COMPORT_COM4,
 	COMPORT_MIDI
 };
 
 enum {
+	COMSIG_COM1			= 0x314d4f43,
+	COMSIG_COM2			= 0x324d4f43,
+	COMSIG_COM3			= 0x334d4f43,
+	COMSIG_COM4			= 0x344d4f43,
 	COMSIG_MIDI			= 0x4944494d
 };
 
@@ -77,5 +87,7 @@ enum {
 void commng_initialize(void);
 
 #include "cmmidi.h"
+#include "cmserial.h"
+#include "cmpara.h"
 
 #endif	/* NP2_X11_COMMNG_H__ */

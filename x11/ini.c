@@ -7,6 +7,7 @@
 #include "profile.h"
 #include "strres.h"
 
+#include "commng.h"
 #include "kbdmng.h"
 #include "soundmng.h"
 
@@ -529,6 +530,27 @@ static const INITBL iniitem[] = {
 	{"mpu98min", INITYPE_STR,	np2oscfg.mpu.min,	MAX_PATH},
 	{"mpu98mdl", INITYPE_STR,	np2oscfg.mpu.mdl,	64},
 	{"mpu98def", INITYPE_STR,	np2oscfg.mpu.def,	MAX_PATH},
+
+	{"com1port", INIMAX_UINT8,	&np2oscfg.com[0].port,	COMPORT_MIDI},
+	{"com1para", INITYPE_UINT8,	&np2oscfg.com[0].param,	0},
+	{"com1_bps", INITYPE_UINT32,	&np2oscfg.com[0].speed,	0},
+	{"com1mmap", INITYPE_STR,	np2oscfg.com[0].mout,	MAX_PATH},
+	{"com1mmdl", INITYPE_STR,	np2oscfg.com[0].mdl,	64},
+	{"com1mdef", INITYPE_STR,	np2oscfg.com[0].def,	MAX_PATH},
+
+	{"com2port", INIMAX_UINT8,	&np2oscfg.com[1].port,	COMPORT_MIDI},
+	{"com2para", INITYPE_UINT8,	&np2oscfg.com[1].param,	0},
+	{"com2_bps", INITYPE_UINT32,	&np2oscfg.com[1].speed,	0},
+	{"com2mmap", INITYPE_STR,	np2oscfg.com[1].mout,	MAX_PATH},
+	{"com2mmdl", INITYPE_STR,	np2oscfg.com[1].mdl,	64},
+	{"com2mdef", INITYPE_STR,	np2oscfg.com[1].def,	MAX_PATH},
+
+	{"com3port", INIMAX_UINT8,	&np2oscfg.com[2].port,	COMPORT_MIDI},
+	{"com3para", INITYPE_UINT8,	&np2oscfg.com[2].param,	0},
+	{"com3_bps", INITYPE_UINT32,	&np2oscfg.com[2].speed,	0},
+	{"com3mmap", INITYPE_STR,	np2oscfg.com[2].mout,	MAX_PATH},
+	{"com3mmdl", INITYPE_STR,	np2oscfg.com[2].mdl,	64},
+	{"com3mdef", INITYPE_STR,	np2oscfg.com[2].def,	MAX_PATH},
 
 	{"e_resume", INITYPE_BOOL,	&np2oscfg.resume,	0},
 	{"STATSAVE", INIRO_BOOL,	&np2oscfg.statsave,	0},

@@ -154,7 +154,8 @@ VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/maketgrp.o ../vram/makegrph.o ../vram/scrnbmp.o \
 		../vram/makegrex.o
 
-X11OBJS=	dosio.o ini.o trace.o toolkit.o cmmidi.o kdispwin.o \
+X11OBJS=	dosio.o ini.o trace.o toolkit.o kdispwin.o \
+		cmmidi.o cmserial.o \
 		drawmng.o kbdmng.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \
 		main.o np2.o

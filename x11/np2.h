@@ -32,6 +32,7 @@ typedef struct {
 	BYTE	JOY1BTN[4];
 
 	COMCFG	mpu;
+	COMCFG	com[3];
 
 	BYTE	confirm;
 

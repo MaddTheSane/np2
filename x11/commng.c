@@ -77,6 +77,18 @@ commng_create(UINT device)
 	ret = NULL;
 
 	switch (device) {
+	case COMCREATE_SERIAL:
+		cfg = &np2oscfg.com[0];
+		break;
+
+	case COMCREATE_PC9861K1:
+		cfg = &np2oscfg.com[1];
+		break;
+
+	case COMCREATE_PC9861K2:
+		cfg = &np2oscfg.com[2];
+		break;
+
 	case COMCREATE_MPU98II:
 		cfg = &np2oscfg.mpu;
 		break;
@@ -93,7 +105,10 @@ commng_create(UINT device)
 		break;
 	}
 	if (cfg) {
-		if (cfg->port == COMPORT_MIDI) {
+		if ((cfg->port == COMPORT_COM1)
+		 && (cfg->port <= COMPORT_COM4)) {
+			ret = cmserial_create(cfg->port - COMPORT_COM1 + 1, cfg->param, cfg->speed);
+		} else if (cfg->port == COMPORT_MIDI) {
 			ret = cmmidi_create(cfg->mout, cfg->min, cfg->mdl);
 			if (ret) {
 				(*ret->msg)(ret, COMMSG_MIMPIDEFFILE, (long)cfg->def);
