@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.9 2004/01/23 14:33:27 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.10 2004/01/26 15:23:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -59,6 +59,7 @@ LGDT_Ms(DWORD op)
 			CPU_GDTR_LIMIT = limit;
 			return;
 		}
+		VERBOSE(("LGDT: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -104,8 +105,10 @@ LLDT_Ew(DWORD op)
 			load_ldtr(src, GP_EXCEPTION);
 			return;
 		}
+		VERBOSE(("LLDT: CPL(%d) != 0", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
+	VERBOSE(("LLDT: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -131,6 +134,7 @@ SLDT_Ew(DWORD op)
 		}
 		return;
 	}
+	VERBOSE(("SLDT: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -152,8 +156,10 @@ LTR_Ew(DWORD op)
 			load_tr(src);
 			return;
 		}
+		VERBOSE(("LTR: CPL(%d) != 0", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
+	VERBOSE(("LTR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -178,6 +184,7 @@ STR_Ew(DWORD op)
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, tr);
 		}
 	}
+	VERBOSE(("STR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -206,6 +213,7 @@ LIDT_Ms(DWORD op)
 			CPU_IDTR_LIMIT = limit;
 			return;
 		}
+		VERBOSE(("LIDT: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	EXCEPTION(UD_EXCEPTION, 0);
@@ -244,6 +252,7 @@ MOV_CdRd(void)
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+			VERBOSE(("MOV_CdRd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
@@ -377,6 +386,7 @@ MOV_RdCd(void)
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+			VERBOSE(("MOV_CdRd: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, 0);
 		}
 
@@ -437,6 +447,7 @@ LMSW_Ew(DWORD op)
 		}
 		return;
 	}
+	VERBOSE(("LMSW: CPL(%d) != 0", CPU_STAT_CPL));
 	EXCEPTION(GP_EXCEPTION, 0);
 }
 
@@ -461,6 +472,7 @@ CLTS(void)
 
 	CPU_WORKCLOCK(2);
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || (CPU_STAT_CPL != 0))) {
+		VERBOSE(("CLTS: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	CPU_CR0 &= ~CPU_CR0_TS;
@@ -499,6 +511,7 @@ ARPL_EwGw(void)
 		}
 		return;
 	}
+	VERBOSE(("ARPL: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -551,6 +564,7 @@ LAR_GwEw(void)
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
+	VERBOSE(("LAR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -600,6 +614,7 @@ LAR_GdEw(void)
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
+	VERBOSE(("LAR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -646,6 +661,7 @@ LSL_GwEw(void)
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
+	VERBOSE(("LSL: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -692,6 +708,7 @@ LSL_GdEw(void)
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
+	VERBOSE(("LSL: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -738,6 +755,7 @@ VERR_Ew(DWORD op)
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
+	VERBOSE(("VERR: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -783,6 +801,7 @@ VERW_Ew(DWORD op)
 		CPU_FLAGL |= Z_FLAG;
 		return;
 	}
+	VERBOSE(("VERW: VM86"));
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
@@ -806,6 +825,7 @@ INVD(void)
 
 	CPU_WORKCLOCK(11);
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+		VERBOSE(("INVD: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	/* nothing to do */
@@ -817,6 +837,7 @@ WBINVD(void)
 
 	CPU_WORKCLOCK(11);
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+		VERBOSE(("WBINVD: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 	/* nothing to do */
@@ -828,6 +849,7 @@ INVLPG(DWORD op)
 	DWORD madr;
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+		VERBOSE(("INVLPG: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
@@ -852,6 +874,7 @@ HLT(void)
 {
 
 	if (CPU_STAT_PM && CPU_STAT_CPL != 0) {
+		VERBOSE(("HLT: CPL(%d) != 0", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
@@ -872,6 +895,7 @@ RDMSR(void)
 	int idx;
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+		VERBOSE(("RDMSR: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
@@ -889,6 +913,7 @@ WRMSR(void)
 	int idx;
 
 	if (CPU_STAT_PM && (CPU_STAT_VM86 || CPU_STAT_CPL != 0)) {
+		VERBOSE(("WRMSR: VM86(%s) or CPL(%d) != 0", CPU_STAT_VM86 ? "true" : "false", CPU_STAT_CPL));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 

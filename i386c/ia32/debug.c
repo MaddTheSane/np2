@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: debug.c,v 1.5 2004/01/26 15:23:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -49,7 +49,7 @@ char *cpu_reg2str(void)
       "[ ID=%d VIP=%d VIF=%d AC=%d VM=%d RF=%d NT=%d IOPL=%d%d %s %s %s TF=%d %s %s %s %s %s ]\n"
     "gdtr=%08x:%04x idtr=%08x:%04x\n"
     "ldtr=%04x(%08x:%04x) tr=%04x(%08x:%04x)\n"
-    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x\n",
+    "cr0=%08x cr1=%08x cr2=%08x cr3=%08x cr4=%08x mxcsr=%08x",
     CPU_EAX, CPU_EBX, CPU_ECX, CPU_EDX, CPU_ESI, CPU_EDI,
     CPU_EIP, CPU_ESP, CPU_EBP, CPU_PREV_EIP,
     CPU_CS, CPU_SS, CPU_DS, CPU_ES, CPU_FS, CPU_GS,

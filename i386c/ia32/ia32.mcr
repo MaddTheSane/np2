@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.5 2004/01/26 15:23:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -132,10 +132,6 @@ do { \
 	DWORD __tmp_ip = CPU_EIP + (v); \
 	if (!CPU_STATSAVE.cpu_inst_default.op_32) {\
 		__tmp_ip &= 0x0000ffff; \
-	} \
-	if (__tmp_ip > CPU_STAT_CS_LIMIT) { \
-		VERBOSE(("SET_EIP: new_ip = %08x, limit = %08x", __tmp_ip, CPU_STAT_CS_LIMIT)); \
-		EXCEPTION(GP_EXCEPTION, 0); \
 	} \
 	CPU_EIP = __tmp_ip; \
 } while (/*CONSTCOND*/ 0)

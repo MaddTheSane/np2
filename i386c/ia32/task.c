@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.5 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: task.c,v 1.6 2004/01/26 15:23:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -104,7 +104,7 @@ get_stack_from_tss(DWORD pl, WORD *new_ss, DWORD *new_esp)
 		ia32_panic("get_stack_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
 
-	VERBOSE(("get_stack_from_tss: new_esp = 0x%08x, new_ss = 0x%04x", *new_esp, *new_ss));
+	VERBOSE(("get_stack_from_tss: pl = %d, new_esp = 0x%08x, new_ss = 0x%04x", pl, *new_esp, *new_ss));
 }
 
 WORD
@@ -205,9 +205,7 @@ task_switch(selector_t* task_sel, int type)
 	/* load task state */
 	memset(sreg, 0, sizeof(sreg));
 	if (!task16) {
-		if (CPU_STAT_PAGING) {
-			cr3 = cpu_lmemoryread_d(task_base + 28);
-		}
+		cr3 = cpu_lmemoryread_d(task_base + 28);
 		eip = cpu_lmemoryread_d(task_base + 32);
 		new_flags = cpu_lmemoryread_d(task_base + 36);
 		for (i = 0; i < CPU_REG_NUM; i++) {
@@ -357,6 +355,8 @@ task_switch(selector_t* task_sel, int type)
 	CPU_TR_DESC = task_sel->desc;
 
 	/* load task state (CR3, EFLAG, EIP, GPR, segreg, LDTR) */
+
+	/* set new CR3 */
 	if (!task16) {
 		set_CR3(cr3);
 	}

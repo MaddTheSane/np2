@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.4 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: exception.c,v 1.5 2004/01/26 15:23:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -73,6 +73,9 @@ exception(int num, int error_code)
 	__ASSERT((unsigned int)num < EXCEPTION_NUM);
 
 	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
+	VERBOSE(("exception:------------------------------------------------"));
+	VERBOSE(("%s", cpu_reg2str()));
+	VERBOSE(("exception:------------------------------------------------"));
 
 	CPU_STAT_NERROR++;
 	if ((CPU_STAT_NERROR >= 3) 
@@ -132,12 +135,6 @@ exception(int num, int error_code)
 		break;
 	}
 
-#if defined(DEBUG)
-	if (num == PF_EXCEPTION) {
-		VERBOSE(("exception: CPU_CR2 = %08x", CPU_CR2));
-	}
-#endif
-
 	if (CPU_STAT_NERROR >= 2) {
 		if (dftable[exctype[CPU_STAT_PREV_EXCEPTION]][exctype[num]]) {
 			num = DF_EXCEPTION;
@@ -146,7 +143,6 @@ exception(int num, int error_code)
 	CPU_STAT_PREV_EXCEPTION = num;
 
 	INTERRUPT(num, FALSE, errorp, error_code);
-	CPU_STAT_NERROR = 0;
 	siglongjmp(exec_1step_jmpbuf, 1);
 }
 
@@ -393,7 +389,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 		old_sp &= 0xffff;
 		break;
 	}
-	VERBOSE(("interrupt: old EIP = %04x:%08x, old ESP = %04x:%08x", old_cs, old_ip, old_ss, old_sp));
+	VERBOSE(("interrupt: old EIP = %04x:%08x, ESP = %04x:%08x", old_cs, old_ip, old_ss, old_sp));
 
 	rv = parse_selector(&intr_sel, gdp->u.gate.selector);
 	if (rv < 0) {
@@ -493,11 +489,7 @@ interrupt_intr_or_trap(descriptor_t *gdp, int softintp, int errorp, int error_co
 		}
 
 		load_ss(new_ss, &ss_sel.desc, intr_sel.desc.dpl);
-		if (CPU_STAT_SS32) {
-			CPU_ESP = new_sp;
-		} else {
-			CPU_SP = new_sp;
-		}
+		CPU_ESP = new_sp;
 
 		load_cs(intr_sel.selector, &intr_sel.desc, intr_sel.desc.dpl);
 		SET_EIP(new_ip);
