@@ -8,7 +8,7 @@
 #ifdef TRACE
 
 #define	FILEBUFSIZE			(1 << 20)
-#define FILELASTBUFONLY
+// #define FILELASTBUFONLY
 
 #ifdef STRICT
 #define	SUBCLASSPROC	WNDPROC
@@ -40,7 +40,9 @@ extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
 
 enum {
-	IDM_TRACEEN		= 3300,
+	IDM_TRACE1		= 3300,
+	IDM_TRACE2,
+	IDM_TRACEEN,
 	IDM_TRACEFH,
 	IDM_TRACECL
 };
@@ -48,6 +50,8 @@ enum {
 static const char	ProgTitle[] = "console";
 static const char	ClassName[] = "TRACE-console";
 static const char	ClassEdit[] = "EDIT";
+static const char	trace1[] = "TRACE";
+static const char	trace2[] = "VERBOSE";
 static const char	traceen[] = "Enable";
 static const char	tracefh[] = "File out";
 static const char	tracecl[] = "Clear";
@@ -182,12 +186,17 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_CREATE:
 			hmenu = GetSystemMenu(hWnd, FALSE);
 			InsertMenu(hmenu, 0, MF_BYPOSITION | MF_STRING,
-														IDM_TRACEEN, traceen);
+														IDM_TRACE1, trace1);
 			InsertMenu(hmenu, 1, MF_BYPOSITION | MF_STRING,
+														IDM_TRACE2, trace2);
+			InsertMenu(hmenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			InsertMenu(hmenu, 3, MF_BYPOSITION | MF_STRING,
+														IDM_TRACEEN, traceen);
+			InsertMenu(hmenu, 4, MF_BYPOSITION | MF_STRING,
 														IDM_TRACEFH, tracefh);
-			InsertMenu(hmenu, 2, MF_BYPOSITION | MF_STRING,
+			InsertMenu(hmenu, 5, MF_BYPOSITION | MF_STRING,
 														IDM_TRACECL, tracecl);
-			InsertMenu(hmenu, 3, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			InsertMenu(hmenu, 6, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
 			CheckMenuItem(hmenu, IDM_TRACEEN,
 								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
@@ -218,11 +227,25 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_SYSCOMMAND:
 			switch(wp) {
-				case IDM_TRACEEN:
+				case IDM_TRACE1:
 					tracewin.en ^= 1;
 					hmenu = GetSystemMenu(hWnd, FALSE);
-					CheckMenuItem(hmenu, IDM_TRACEEN,
+					CheckMenuItem(hmenu, IDM_TRACE1,
 								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
+					break;
+
+				case IDM_TRACE2:
+					tracewin.en ^= 2;
+					hmenu = GetSystemMenu(hWnd, FALSE);
+					CheckMenuItem(hmenu, IDM_TRACE2,
+								(tracewin.en & 2)?MF_CHECKED:MF_UNCHECKED);
+					break;
+
+				case IDM_TRACEEN:
+					tracewin.en ^= 4;
+					hmenu = GetSystemMenu(hWnd, FALSE);
+					CheckMenuItem(hmenu, IDM_TRACEEN,
+								(tracewin.en & 4)?MF_CHECKED:MF_UNCHECKED);
 					break;
 
 				case IDM_TRACEFH:
@@ -376,15 +399,19 @@ void trace_fmt(const char *fmt, ...) {
 	va_list	ap;
 	char	buf[0x1000];
 
-	va_start(ap, fmt);
-	vsprintf(buf, fmt, ap);
-	va_end(ap);
-	if (hView) {
-		View_AddString(buf);
-	}
-	if (tracewin.fh != FILEH_INVALID) {
-		trfh_add(buf);
-		trfh_add(crlf);
+	en = (tracewin.en & 1) &&
+		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
+	if (en) {
+		va_start(ap, fmt);
+		vsprintf(buf, fmt, ap);
+		va_end(ap);
+		if ((tracewin.en & 4) && (hView)) {
+			View_AddString(buf);
+		}
+		if (tracewin.fh != FILEH_INVALID) {
+			trfh_add(buf);
+			trfh_add(crlf);
+		}
 	}
 }
 
@@ -394,12 +421,13 @@ void trace_fmt2(const char *fmt, ...) {
 	va_list	ap;
 	char	buf[0x1000];
 
-	en = (tracewin.en & 1) || (tracewin.fh != FILEH_INVALID);
+	en = (tracewin.en & 2) &&
+		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
 	if (en) {
 		va_start(ap, fmt);
 		vsprintf(buf, fmt, ap);
 		va_end(ap);
-		if ((tracewin.en & 1) && (hView)) {
+		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
 		}
 		if (tracewin.fh != FILEH_INVALID) {

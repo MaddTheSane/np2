@@ -1,4 +1,4 @@
-/*	$Id: shift_rotate.c,v 1.5 2004/03/12 15:43:36 monaka Exp $	*/
+/*	$Id: shift_rotate.c,v 1.6 2004/03/14 23:45:43 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -524,7 +524,6 @@ SHLD_EwGwIb(void)
 	PREPART_EA_REG16(op, src);
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(3);
-		madr = calc_ea_dst(op);
 		out = reg16_b20[op];
 		GET_PCBYTE(cl);
 		dst = *out;

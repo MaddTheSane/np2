@@ -60,19 +60,30 @@ static const IOINP crtci70[8] = {
 				NULL,		NULL,		NULL,		NULL,
 				NULL,		NULL,		crtc_i7c,	NULL};
 
+
+void crtc_biosreset(void) {
+
+	if (!(np2cfg.dipsw[0] & 0x01)) {
+		crtc.reg.pl = 0;
+		crtc.reg.bl = 0x0f;
+		crtc.reg.cl = 0x10;
+		crtc.reg.ssl = 0;
+	}
+	else {
+		crtc.reg.pl = 0;
+		crtc.reg.bl = 0x07;
+		crtc.reg.cl = 0x08;
+		crtc.reg.ssl = 0;
+	}
+	gdcs.textdisp |= GDCSCRN_ALLDRAW;
+}
+
 void crtc_reset(void) {
 
 	ZeroMemory(&grcg, sizeof(grcg));
 	ZeroMemory(&crtc, sizeof(crtc));
-	if (!(np2cfg.dipsw[0] & 0x01)) {
-		crtc.reg.bl = 0x0f;
-		crtc.reg.cl = 0x10;
-	}
-	else {
-		crtc.reg.bl = 0x07;
-		crtc.reg.cl = 0x08;
-	}
 	grcg.chip = np2cfg.grcg & 3;			// GRCGìÆçÏÇÃÉRÉsÅ[
+	crtc_biosreset();
 }
 
 void crtc_bind(void) {

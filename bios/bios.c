@@ -56,15 +56,15 @@ static void bios_itfprepare(void) {
 const IODATA	*p;
 const IODATA	*pterm;
 
+	crtc_biosreset();
+	gdc_biosreset();
+
 	p = iodata;
 	pterm = iodata + (sizeof(iodata) / sizeof(IODATA));
 	while(p < pterm) {
 		iocore_out8(p->port, p->data);
 		p++;
 	}
-
-	// GDCの初期化。
-	// …
 }
 
 static void bios_memclear(void) {
@@ -74,6 +74,7 @@ static void bios_memclear(void) {
 	if (CPU_EXTMEM) {
 		ZeroMemory(CPU_EXTMEM, CPU_EXTMEMSIZE);
 	}
+	bios0x18_16(0x20, 0xe1);
 	ZeroMemory(mem + VRAM0_B, 0x18000);
 	ZeroMemory(mem + VRAM0_E, 0x08000);
 	ZeroMemory(mem + VRAM1_B, 0x18000);
@@ -246,6 +247,8 @@ void bios_initialize(void) {
 	}
 
 #if defined(BIOS_SIMULATE)
+//	CopyMemory(mem + BIOS_BASE, biosfd80, sizeof(biosfd80));
+
 	// BIOS hookのアドレス変更
 	for (i=0; i<0x20; i++) {
 		STOREINTELWORD(mem + 0xfd868 + i*2, biosoffset[i]);
@@ -333,6 +336,7 @@ static void bios_boot(void) {
 		bios_vectorset();
 		bios0x09_init();
 		bios_reinitbyswitch();
+		bios0x18_0c();
 
 		if (!np2cfg.ITF_WORK) {
 			for (i=0; i<8; i++) {

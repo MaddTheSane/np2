@@ -34,6 +34,8 @@ extern "C" {
 void crtc_reset(void);
 void crtc_bind(void);
 
+void crtc_biosreset(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -99,6 +99,7 @@ void gdc_setdegpalpack(int color, REG8 value);
 void gdc_analogext(BOOL extend);
 #endif
 
+void gdc_biosreset(void);
 void gdc_updateclock(void);
 void gdc_restorekacmode(void);
 

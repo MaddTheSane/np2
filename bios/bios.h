@@ -55,6 +55,7 @@ void bios0x13(void);
 
 void bios0x18(void);
 void bios0x18_0a(REG8 mode);
+void bios0x18_0c(void);
 void bios0x18_10(REG8 curdel);
 REG16 bios0x18_14(REG16 seg, REG16 off, REG16 code);
 void bios0x18_16(REG8 chr, REG8 atr);

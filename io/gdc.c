@@ -9,8 +9,9 @@
 #include	"palettes.h"
 #include	"timing.h"
 
-
+#if !defined(CPUCORE_IA32)
 #define	SEARCH_SYNC
+#endif
 #define	TURE_SYNC
 
 typedef struct {
@@ -595,18 +596,21 @@ static REG8 IOINPCALL gdc_i60(UINT port) {
 	else {
 		gdc_work(GDCWORK_MASTER);
 	}
-#ifdef SEARCH_SYNC
+#ifdef SEARCH_SYNC		// ToDo: フェッチキューを参照するように…
 	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
-		UINT16 jadr = 0xfa74;
+		UINT32 addr;
+		UINT16 jadr;
 		UINT16 memv;
-		memv = i286_memoryread_w(CPU_INPADRS);
+		addr = CPU_INPADRS;
+		jadr = 0xfa74;
+		memv = i286_memoryread_w(addr);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
-			CPU_INPADRS += 2;
-			memv = i286_memoryread_w(CPU_INPADRS);
+			addr += 2;
+			memv = i286_memoryread_w(addr);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(CPU_INPADRS + 2);
+			memv = i286_memoryread_w(addr + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
 					CPU_REMCLOCK = -1;
@@ -722,16 +726,19 @@ static REG8 IOINPCALL gdc_ia0(UINT port) {
 	}
 #ifdef SEARCH_SYNC
 	if ((CPU_INPADRS) && (CPU_REMCLOCK >= 5)) {
-		UINT16 jadr = 0xfa74;
+		UINT32 addr;
+		UINT16 jadr;
 		UINT16 memv;
-		memv = i286_memoryread_w(CPU_INPADRS);
+		addr = CPU_INPADRS;
+		jadr = 0xfa74;
+		memv = i286_memoryread_w(addr);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
-			CPU_INPADRS += 2;
-			memv = i286_memoryread_w(CPU_INPADRS);
+			addr += 2;
+			memv = i286_memoryread_w(addr);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(CPU_INPADRS + 2);
+			memv = i286_memoryread_w(addr + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
 					CPU_REMCLOCK = -1;
@@ -960,10 +967,7 @@ static const IOINP gdcia0[8] = {
 #endif
 
 
-void gdc_reset(void) {
-
-	ZeroMemory(&gdc, sizeof(gdc));
-	ZeroMemory(&gdcs, sizeof(gdcs));
+void gdc_biosreset(void) {
 
 	if (!(np2cfg.dipsw[0] & 0x01)) {
 		gdc.mode1 = 0x98;
@@ -983,6 +987,9 @@ void gdc_reset(void) {
 		CopyMemory(gdc.m.para + GDC_SYNC, defsyncm15, 8);
 		CopyMemory(gdc.s.para + GDC_SYNC, defsyncs15, 8);
 	}
+	if (np2cfg.dipsw[0] & 0x80) {
+		gdc.s.para[GDC_SYNC] = 0x16;
+	}
 	gdc_vectreset(&gdc.m);
 	gdc_vectreset(&gdc.s);
 
@@ -990,20 +997,41 @@ void gdc_reset(void) {
 	gdc.m.para[GDC_PITCH] = 80;
 	gdc.s.para[GDC_PITCH] = 40;
 
-	gdc_paletteinit();
-
-	if (np2cfg.color16 & 1) {
-		gdc.s.para[GDC_SYNC] = 0x16;
-		gdc.display = (1 << GDCDISP_ANALOG);
-	}
 	gdc.bitac = 0xff;
 
+	// vram bank
+	gdcs.disp = 0;
+	gdcs.access = 0;
+	gdc.analog &= ~(1 << GDCANALOG_16);
+	gdcs.palchange = GDCSCRN_REDRAW;
+	vramop.operate &= VOP_ACCESSMASK;
+	vramop.operate &= VOP_EGCMASK;
+	vramop.operate &= VOP_ANALOGMASK;
+#if defined(SUPPORT_PC9821)
+	gdc.analog &= ~(1 << (GDCANALOG_256));
+	vramop.operate &= ~0x20;
+#endif
+	i286_vram_dispatch(vramop.operate);
+
+	gdcs.textdisp = GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
+	gdcs.grphdisp = GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
+	screenupdate |= 2;
+}
+
+void gdc_reset(void) {
+
+	ZeroMemory(&gdc, sizeof(gdc));
+	ZeroMemory(&gdcs, sizeof(gdcs));
+
+	if (np2cfg.color16 & 1) {
+		gdc.display = (1 << GDCDISP_ANALOG);
+	}
 	if (!(np2cfg.dipsw[0] & 0x04)) {			// dipsw1-3 on
 		gdc.display |= (1 << GDCDISP_PLAZMA2);
 	}
 
-	gdcs.textdisp = GDCSCRN_ENABLE | GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
-	gdcs.grphdisp = GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
+	gdc_biosreset();
+	gdc_paletteinit();
 }
 
 void gdc_bind(void) {

@@ -41,10 +41,10 @@ typedef struct {
 static const UINT8 modenum[4] = {3, 1, 0, 2};
 
 static const CRTDATA crtdata[7] = {
-						{0x07,	0x00, 0x07, 0x08},		// 200-20
-						{0x09,	0x1f, 0x08, 0x08},		// 200-25
-						{0x0f,	0x00, 0x0f, 0x10},		// 400-20
-						{0x13,	0x1e, 0x11, 0x10},		// 400-25
+						{0x09,	0x1f, 0x08, 0x08},		// 200-20
+						{0x07,	0x00, 0x07, 0x08},		// 200-25
+						{0x13,	0x1e, 0x11, 0x10},		// 400-20
+						{0x0f,	0x00, 0x0f, 0x10},		// 400-25
 						{0x17,	0x1c, 0x13, 0x10},		// 480-20
 						{0x12,	0x1f, 0x11, 0x10},		// 480-25
 						{0x0f,	0x00, 0x0f, 0x10}};		// 480-30
@@ -114,8 +114,8 @@ const CRTDATA	*crt;
 		gdc.mode1 |= 0x08;
 		crt += 2;
 	}
-	if (mode & 0x01) {
-		crt += 1;						// 20行
+	if (!(mode & 0x01)) {
+		crt += 1;						// 25行
 	}
 	if (mode & 0x02) {
 		gdc.mode1 |= 0x04;				// 40桁
@@ -133,6 +133,14 @@ const CRTDATA	*crt;
 	crtc.reg.ssl = 0;
 	gdc_restorekacmode();
 	bios0x18_10(0);
+}
+
+void bios0x18_0c(void) {
+
+	if (!(gdcs.textdisp & GDCSCRN_ENABLE)) {
+		gdcs.textdisp |= GDCSCRN_ENABLE;
+		screenupdate |= 2;
+ 	}
 }
 
 static void bios0x18_0f(UINT seg, UINT off, REG8 num, REG8 cnt) {
@@ -825,10 +833,7 @@ void bios0x18(void) {
  			break;
 
    		case 0x0c:						// テキスト画面の表示開始
-			if (!(gdcs.textdisp & GDCSCRN_ENABLE)) {
-				gdcs.textdisp |= GDCSCRN_ENABLE;
-				screenupdate |= 2;
- 			}
+			bios0x18_0c();
  			break;
 
    		case 0x0d:						// テキスト画面の表示終了

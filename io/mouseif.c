@@ -143,6 +143,9 @@ static void IOOUTCALL mouseif_o7fdf(UINT port, REG8 dat) {
 	}
 	else if (dat & 0x80) {
 		mouseif.mode = (UINT8)dat;
+		pic_resetirq(0x0d);
+		nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
+												mouseint, NEVENT_ABSOLUTE);
 		setportc(0);
 	}
 	(void)port;
