@@ -115,3 +115,11 @@ enum {
 	FTYPE_USER
 };
 
+
+#if !defined(INLINE)
+#define	INLINE
+#endif
+#if !defined(FASTCALL)
+#define	FASTCALL
+#endif
+

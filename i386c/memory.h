@@ -6,6 +6,10 @@
 #define	MEMCALL	FASTCALL
 #endif
 
+#if !defined(MEMCALL)
+#define	MEMCALL
+#endif
+
 #ifndef GCC_ATTR_REGPARM
 #define	GCC_ATTR_REGPARM
 #endif

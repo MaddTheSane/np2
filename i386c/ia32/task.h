@@ -1,4 +1,4 @@
-/*	$Id: task.h,v 1.5 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: task.h,v 1.6 2004/03/26 05:51:40 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -43,7 +43,7 @@ enum task_switch_type {
 	TASK_SWITCH_JMP,
 	TASK_SWITCH_CALL,
 	TASK_SWITCH_IRET,
-	TASK_SWITCH_INTR,
+	TASK_SWITCH_INTR
 };
 typedef enum task_switch_type task_switch_type_t;
 

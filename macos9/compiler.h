@@ -1,7 +1,11 @@
 #include	<string.h>
 #include	<stdio.h>
 #include	<stdlib.h>
+#include	<stdarg.h>
 #include	<stddef.h>
+#if defined(CPUCORE_IA32)
+#include	<setjmp.h>
+#endif
 #ifndef NP2GCC
 #include	<MultiProcessing.h>
 #endif
@@ -23,6 +27,9 @@ typedef unsigned short	UINT16;
 
 typedef signed int		SINT32;
 typedef unsigned int	UINT32;
+
+typedef SInt64			SINT64;
+typedef UInt64			UINT64;
 
 typedef Boolean			BOOL;
 typedef signed char		TCHAR;
@@ -66,6 +73,11 @@ typedef unsigned char	BYTE;
 // #define SUPPORT_NORMALDISP
 #define	MEMOPTIMIZE		1
 
+#if defined(CPUCORE_IA32)
+#define	SUPPORT_CRT31KHZ
+#define	SUPPORT_PC9821
+#define IA32_PAGING_EACHSIZE
+#endif
 #define	SUPPORT_CRT15KHZ
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SWSEEKSND
@@ -73,4 +85,13 @@ typedef unsigned char	BYTE;
 #define	SUPPORT_SCSI
 
 #define	SOUNDRESERVE	80
+
+
+#if defined(CPUCORE_IA32)
+#define	sigjmp_buf				jmp_buf
+#define	sigsetjmp(env, mask)	setjmp(env)
+#define	siglongjmp(env, val)	longjmp(env, val)
+#define	msgbox(title, msg)		TRACEOUT(("%s", title)); \
+								TRACEOUT(("%s", msg))
+#endif
 

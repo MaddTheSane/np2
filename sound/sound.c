@@ -99,6 +99,7 @@ static void streamfilewrite(UINT samples) {
 	UINT	count;
 	SINT32	buf32[2*512];
 	BYTE	buf[2*2*512];
+	UINT	r;
 	UINT	i;
 	SINT32	samp;
 
@@ -109,6 +110,12 @@ static void streamfilewrite(UINT samples) {
 		while(cb < sndstream.cbreg) {
 			cb->cbfn(cb->hdl, buf32, count);
 			cb++;
+		}
+		r = min(sndstream.remain, count);
+		if (r) {
+			CopyMemory(sndstream.ptr, buf32, r * 2 * sizeof(SINT32));
+			sndstream.ptr += r * 2;
+			sndstream.remain -= r;
 		}
 		for (i=0; i<count*2; i++) {
 			samp = buf32[i];
@@ -124,6 +131,35 @@ static void streamfilewrite(UINT samples) {
 		}
 		wavewr_write(sndstream.rec, buf, count * 4);
 		samples -= count;
+	}
+}
+
+static void filltailsample(UINT count) {
+
+	SINT32	*ptr;
+	UINT	orgsize;
+	SINT32	sampl;
+	SINT32	sampr;
+
+	count = min(sndstream.remain, count);
+	if (count) {
+		ptr = sndstream.ptr;
+		orgsize = (ptr - sndstream.buffer) / 2;
+		if (orgsize == 0) {
+			sampl = 0;
+			sampr = 0;
+		}
+		else {
+			sampl = *(ptr - 2);
+			sampr = *(ptr - 1);
+		}
+		sndstream.ptr += count * 2;
+		sndstream.remain -= count;
+		do {
+			ptr[0] = sampl;
+			ptr[1] = sampr;
+			ptr += 2;
+		} while(--count);
 	}
 }
 #endif
@@ -261,15 +297,13 @@ void sound_sync(void) {
 	if (length == 0) {
 		return;
 	}
+	SNDCSEC_ENTER;
 #if defined(SUPPORT_WAVEREC)
 	if (sndstream.rec) {
 		streamfilewrite(length);
-		soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
-		beep_eventreset();
-		return;
 	}
+	else
 #endif
-	SNDCSEC_ENTER;
 	streamprepare(length);
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
 	beep_eventreset();
@@ -288,11 +322,6 @@ const SINT32 *sound_pcmlock(void) {
 
 const SINT32 *ret;
 
-#if defined(SUPPORT_WAVEREC)
-	if (sndstream.rec) {
-		return(NULL);
-	}
-#endif
 	if (locks) {
 		TRACEOUT(("sound pcm lock: already locked"));
 		return(NULL);
@@ -301,7 +330,14 @@ const SINT32 *ret;
 	ret = sndstream.buffer;
 	if (ret) {
 		SNDCSEC_ENTER;
-		if (sndstream.remain > sndstream.reserve) {
+		if (sndstream.remain > sndstream.reserve)
+#if defined(SUPPORT_WAVEREC)
+			if (sndstream.rec) {
+				filltailsample(sndstream.remain - sndstream.reserve);
+			}
+			else
+#endif
+		{
 			streamprepare(sndstream.remain - sndstream.reserve);
 			soundcfg.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 			beep_eventreset();

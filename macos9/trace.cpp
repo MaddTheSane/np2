@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	<stdarg.h>
 #include	"dosio.h"
 #include	"trace.h"
 
