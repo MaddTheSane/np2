@@ -4,21 +4,21 @@ extern "C" {
 #endif
 
 // ‚P•¶š•ª‚ÌƒTƒCƒY‚ğæ“¾
-int milank_charsize(const char *str);
+int milank_charsize(const OEMCHAR *str);
 int milsjis_charsize(const char *str);
 int mileuc_charsize(const char *str);
 int milutf8_charsize(const char *str);
 
 // ‘å•¶š¬•¶š‚ğ“¯ˆê‹‚µ‚Ä”äŠr
 // ret 0:ˆê’v
-int milank_cmp(const char *str, const char *cmp);
+int milank_cmp(const OEMCHAR *str, const OEMCHAR *cmp);
 int milsjis_cmp(const char *str, const char *cmp);
 int mileuc_cmp(const char *str, const char *cmp);
 int milutf8_cmp(const char *str, const char *cmp);
 
 // ‘å•¶š¬•¶š‚ğ “¯ˆê‹‚µ‚Äcmp‚Ìƒkƒ‹‚Ü‚Å”äŠr
 // ret 0:ˆê’v
-int milank_memcmp(const char *str, const char *cmp);
+int milank_memcmp(const OEMCHAR *str, const OEMCHAR *cmp);
 int milsjis_memcmp(const char *str, const char *cmp);
 int mileuc_memcmp(const char *str, const char *cmp);
 int milutf8_memcmp(const char *str, const char *cmp);
@@ -34,19 +34,19 @@ int mileuc_kanji2nd(const char *str, int pos);
 int milutf8_kanji2nd(const char *str, int pos);
 
 // maxlen•ª‚¾‚¯•¶š—ñ‚ğƒRƒs[
-void milank_ncpy(char *dst, const char *src, int maxlen);
+void milank_ncpy(OEMCHAR *dst, const OEMCHAR *src, int maxlen);
 void milsjis_ncpy(char *dst, const char *src, int maxlen);
 void mileuc_ncpy(char *dst, const char *src, int maxlen);
 void milutf8_ncpy(char *dst, const char *src, int maxlen);
 
 // maxlen•ª‚¾‚¯•¶š—ñ‚ğƒLƒƒƒbƒg
-void milank_ncat(char *dst, const char *src, int maxlen);
+void milank_ncat(OEMCHAR *dst, const OEMCHAR *src, int maxlen);
 void milsjis_ncat(char *dst, const char *src, int maxlen);
 void mileuc_ncat(char *dst, const char *src, int maxlen);
 void milutf8_ncat(char *dst, const char *src, int maxlen);
 
 // •¶š‚ğŒŸõ
-char *milank_chr(const char *str, int c);
+char *milank_chr(const OEMCHAR *str, int c);
 char *milsjis_chr(const char *str, int c);
 char *mileuc_chr(const char *str, int c);
 char *milutf8_chr(const char *str, int c);
@@ -54,22 +54,22 @@ char *milutf8_chr(const char *str, int c);
 
 // 0~9, A~Z ‚Ì‚İ‚ğ‘å•¶š¬•¶š‚ğ“¯ˆê‹‚µ‚Ä”äŠr
 // ret 0:ˆê’v
-int milstr_extendcmp(const char *str, const char *cmp);
+int milstr_extendcmp(const OEMCHAR *str, const OEMCHAR *cmp);
 
 // Ÿ‚ÌŒê‚ğæ“¾
-char *milstr_nextword(const char *str);
+char *milstr_nextword(const OEMCHAR *str);
 
 // •¶š—ñ‚©‚çARG‚Ìæ“¾
-int milstr_getarg(char *str, char *arg[], int maxarg);
+int milstr_getarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg);
 
 // HEX2INT
-long milstr_solveHEX(const char *str);
+long milstr_solveHEX(const OEMCHAR *str);
 
 // STR2INT
-long milstr_solveINT(const char *str);
+long milstr_solveINT(const OEMCHAR *str);
 
 // STRLIST
-char *milstr_list(const char *lststr, UINT pos);
+char *milstr_list(const OEMCHAR *lststr, UINT pos);
 
 #ifdef __cplusplus
 }

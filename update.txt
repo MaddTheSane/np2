@@ -24,6 +24,10 @@
 　　要は毎回Shift-JISに変換せずに OS依存の文字コードで処理しようとする…
 　　まだ機能しません。定義しないで下さい。
 
+　　OEMCHAR (現状char固定、将来として UCS2でUINT16、UCS4でUINT32)
+　　OEMTEXTの追加
+　　コンパイルが通るかご確認下さい。
+
 
 　つか…X11版のDOSIO file_catname,file_cmpnameの入力が sjisになってる…
 　(NP2はファイル名は OSLANGに従う…筈…

@@ -35,7 +35,7 @@ enum {
 // ---- Optimize Macros
 
 #ifndef REG8
-#define	REG8		BYTE
+#define	REG8		UINT8
 #endif
 #ifndef REG16
 #define	REG16		UINT16
@@ -56,6 +56,18 @@ enum {
 #ifndef HIGH16
 #define	HIGH16(a)				(((UINT32)(a)) >> 16)
 #endif
+
+
+#if !defined(OEMCHAR)
+#define	OEMCHAR					char
+#endif
+#if !defined(OEMLITERAL)
+#define	OEMTEXT(string)			(string)
+#endif
+#if !defined(OEMNULL)
+#define	OEMNULLSTR				OEMTEXT("")
+#endif
+
 
 #ifndef STRLITERAL
 #ifdef UNICODE

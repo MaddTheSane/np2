@@ -49,19 +49,19 @@ typedef struct {
 	UINT8	BTN_RAPID;
 	UINT8	BTN_MODE;
 
-	BYTE	dipsw[3];
+	UINT8	dipsw[3];
 	UINT8	MOUSERAPID;
 
 	UINT8	calendar;
 	UINT8	usefd144;
-	BYTE	wait[6];
+	UINT8	wait[6];
 
 	// リセット時とかあんまり参照されない奴
-	char	model[8];
+	OEMCHAR	model[8];
 	UINT	baseclock;
 	UINT	multiple;
 
-	BYTE	memsw[8];
+	UINT8	memsw[8];
 
 	UINT8	ITF_WORK;
 	UINT8	EXTMEM;
@@ -75,7 +75,7 @@ typedef struct {
 	UINT8	SOUND_SW;
 	UINT8	snd_x;
 
-	BYTE	snd14opt[3];
+	UINT8	snd14opt[3];
 	UINT8	snd26opt;
 	UINT8	snd86opt;
 	UINT8	spbopt;
@@ -84,7 +84,7 @@ typedef struct {
 	UINT8	spb_x;													// ver0.30
 
 	UINT8	BEEP_VOL;
-	BYTE	vol14[6];
+	UINT8	vol14[6];
 	UINT8	vol_fm;
 	UINT8	vol_ssg;
 	UINT8	vol_adpcm;
@@ -95,8 +95,8 @@ typedef struct {
 	UINT8	mpuopt;
 
 	UINT8	pc9861enable;
-	BYTE	pc9861sw[3];
-	BYTE	pc9861jmp[6];
+	UINT8	pc9861sw[3];
+	UINT8	pc9861jmp[6];
 
 	UINT8	fddequip;
 	UINT8	MOTOR;
@@ -104,13 +104,13 @@ typedef struct {
 	UINT8	PROTECTMEM;
 	UINT8	hdrvacc;
 
-	char	sasihdd[2][MAX_PATH];									// ver0.74
+	OEMCHAR	sasihdd[2][MAX_PATH];									// ver0.74
 #if defined(SUPPORT_SCSI)
-	char	scsihdd[4][MAX_PATH];									// ver0.74
+	OEMCHAR	scsihdd[4][MAX_PATH];									// ver0.74
 #endif
-	char	fontfile[MAX_PATH];
-	char	biospath[MAX_PATH];
-	char	hdrvroot[MAX_PATH];
+	OEMCHAR	fontfile[MAX_PATH];
+	OEMCHAR	biospath[MAX_PATH];
+	OEMCHAR	hdrvroot[MAX_PATH];
 } NP2CFG;
 
 typedef struct {
@@ -121,7 +121,7 @@ typedef struct {
 	UINT8	model;
 	UINT8	hddif;
 	UINT8	extmem;
-	BYTE	dipsw[3];		// リセット時のDIPSW
+	UINT8	dipsw[3];		// リセット時のDIPSW
 	UINT8	rom;
 
 	UINT32	sound;
@@ -141,17 +141,17 @@ enum {
 extern "C" {
 #endif
 
-extern const char np2version[];
+extern const OEMCHAR np2version[];
 
 extern	NP2CFG	np2cfg;
 extern	PCCORE	pccore;
-extern	BYTE	screenupdate;
+extern	UINT8	screenupdate;
 extern	int		soundrenewal;
 extern	BOOL	drawframe;
 extern	UINT	drawcount;
 extern	BOOL	hardwarereset;
 
-void getbiospath(char *path, const char *fname, int maxlen);
+void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen);
 void screendisp(NEVENTITEM item);
 void screenvsync(NEVENTITEM item);
 
