@@ -15,6 +15,7 @@ typedef struct {
 typedef struct {
 	int		posx;
 	int		posy;
+	BOOL	type;
 	TOOLFDD	fdd[FDDLIST_DRV];
 	char	skin[MAX_PATH];
 	char	skinmru[SKINMRU_MAX][MAX_PATH];
@@ -23,11 +24,10 @@ typedef struct {
 extern	NP2TOOL		np2tool;
 
 BOOL toolwin_initapp(HINSTANCE hInstance);
-void toolwin_open(void);
-void toolwin_close(void);
+void toolwin_create(void);
+void toolwin_destroy(void);
+HWND toolwin_gethwnd(void);
 
-void toolwin_movingstart(void);
-void toolwin_movingend(void);
 void toolwin_setfdd(BYTE drv, const char *name);
 
 #ifdef __cplusplus

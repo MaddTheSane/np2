@@ -456,6 +456,7 @@ static const INITBL iniitem[] = {
 	{"STATSAVE", INIRO_BOOL,		&np2oscfg.statsave,		0},
 	{"nousemmx", INITYPE_BOOL,		&np2oscfg.disablemmx,	0},		// ver0.36
 	{"toolwind", INITYPE_BOOL,		&np2oscfg.toolwin,		0},		// ver0.38
+	{"keydispl", INITYPE_BOOL,		&np2oscfg.keydisp,		0},
 	{"I286SAVE", INIRO_BOOL,		&np2oscfg.I286SAVE,		0}};
 
 

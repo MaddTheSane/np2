@@ -2,16 +2,21 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include	"winloc.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
 #include	"menu.h"
 #include	"toolwin.h"
 #include	"ini.h"
+#include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
 #include	"diskdrv.h"
+
+
+extern WINLOCEX np2_winlocexallwin(HWND base);
 
 
 enum {
@@ -63,6 +68,7 @@ const char	*text;
 
 typedef struct {
 	HWND			hwnd;
+	WINLOCEX		wlex;
 	HBITMAP			hbmp;
 	BYTE			fddaccess[2];
 	BYTE			hddaccess;
@@ -83,8 +89,8 @@ typedef struct {
 } TOOLWIN;
 
 enum {
-	GTWL_FOCUS		= 0,
-	GTWL_SIZE		= 4
+	GTWL_FOCUS		= NP2GWL_SIZE + 0,
+	GTWL_SIZE		= NP2GWL_SIZE + 4
 };
 
 		NP2TOOL		np2tool;
@@ -382,11 +388,6 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	else if (msg == WM_SETFOCUS) {
 		SetWindowLong(GetParent(hWnd), GTWL_FOCUS, idc);
 	}
-	else if (msg == WM_SYSKEYDOWN) {
-		if (((short)wp == VK_SPACE) && (lp & 0x20000000)) {
-			return(SendMessage(GetParent(hWnd), msg, wp, lp));
-		}
-	}
 	return(CallWindowProc(toolwin.subproc[idc], hWnd, msg, wp, lp));
 }
 
@@ -589,10 +590,11 @@ const char	*file[SKINMRU_MAX];
 
 static void skinchange(HWND hWnd) {
 
-const char	*p;
-	UINT	i;
-	HBITMAP	hbmp;
-	BITMAP	bmp;
+const char		*p;
+	UINT		i;
+	HBITMAP		hbmp;
+	BITMAP		bmp;
+	WINLOCEX	wlex;
 
 	p = np2tool.skin;
 	if (p[0]) {
@@ -613,7 +615,7 @@ const char	*p;
 	DrawMenuBar(hWnd);
 	sysmng_update(SYS_UPDATEOSCFG);
 
-	toolwin_movingstart();
+	wlex = np2_winlocexallwin(hWndMain);
 	toolwindestroy();
 	hbmp = skinload(np2tool.skin);
 	if (hbmp == NULL) {
@@ -622,194 +624,10 @@ const char	*p;
 	}
 	GetObject(hbmp, sizeof(BITMAP), &bmp);
 	toolwin.hbmp = hbmp;
-	MoveWindow(hWnd, np2tool.posx, np2tool.posy,
-											bmp.bmWidth, bmp.bmHeight, TRUE);
+	winloc_setclientsize(hWnd, bmp.bmWidth, bmp.bmHeight);
 	toolwincreate(hWnd);
-	toolwin_movingend();
-}
-
-
-// ---- moving
-
-enum {
-	SNAPDOTPULL		= 12,
-	SNAPDOTREL		= 16
-};
-
-static void movingstart(void) {
-
-	toolwin.winflg = 0;
-	toolwin.wingx = 0;
-	toolwin.wingy = 0;
-}
-
-static void movingproc(RECT *rect) {
-
-	RECT	workrc;
-	RECT	mainrc;
-	int		winlx;
-	int		winly;
-	BOOL	changes;
-	BOOL	connectx;
-	BOOL	connecty;
-	int		d;
-
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
-	GetWindowRect(hWndMain, &mainrc);
-	winlx = rect->right - rect->left;
-	winly = rect->bottom - rect->top;
-
-	if ((winlx > (workrc.right - workrc.left)) ||
-		(winly > (workrc.bottom - workrc.top))) {
-		return;
-	}
-
-	if (toolwin.winflg & 0x03) {
-		toolwin.wingx += rect->left - toolwin.wintx;
-		rect->left = toolwin.wintx;
-		if ((toolwin.wingx >= SNAPDOTREL) || (toolwin.wingx <= -SNAPDOTREL)) {
-			toolwin.winflg &= ~0x03;
-			rect->left += toolwin.wingx;
-			toolwin.wingx = 0;
-		}
-		rect->right = rect->left + winlx;
-	}
-	if (toolwin.winflg & 0x0c) {
-		toolwin.wingy += rect->top - toolwin.winty;
-		rect->top = toolwin.winty;
-		if ((toolwin.wingy >= SNAPDOTREL) || (toolwin.wingy <= -SNAPDOTREL)) {
-			toolwin.winflg &= ~0x0c;
-			rect->top += toolwin.wingy;
-			toolwin.wingy = 0;
-		}
-		rect->bottom = rect->top + winly;
-	}
-
-	connectx = ((rect->right >= mainrc.left) && (rect->left <= mainrc.right));
-	connecty = ((rect->bottom >= mainrc.top) && (rect->top <= mainrc.bottom));
-	if ((!connectx) || (!connecty)) {
-		if (toolwin.winflg & 0x01) {
-			toolwin.winflg &= ~0x01;
-			rect->left += toolwin.wingx;
-			rect->right = rect->left + winlx;
-			toolwin.wingx = 0;
-		}
-		if (toolwin.winflg & 0x04) {
-			toolwin.winflg &= ~0x04;
-			rect->top += toolwin.wingy;
-			rect->bottom = rect->top + winly;
-			toolwin.wingy = 0;
-		}
-	}
-
-	do {
-		changes = FALSE;
-		if ((!(toolwin.winflg & 0x01)) &&
-			(rect->bottom >= mainrc.top) && (rect->top <= mainrc.bottom)) {
-			do {
-				d = rect->left - mainrc.right;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-				d = rect->right - mainrc.left;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-				if ((rect->bottom == mainrc.top) ||
-					(rect->top == mainrc.bottom)) {
-					d = rect->left - mainrc.left;
-					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-						break;
-					}
-					d = rect->right - mainrc.right;
-					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-						break;
-					}
-				}
-			} while(0);
-			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-				toolwin.winflg |= 0x01;
-				rect->left -= d;
-				rect->right = rect->left + winlx;
-				toolwin.wingx = d;
-				toolwin.wintx = rect->left;
-				changes = TRUE;
-			}
-		}
-		if (!(toolwin.winflg & 0x03)) {
-			do {
-				d = rect->left - workrc.left;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-				d = rect->right - workrc.right;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-			} while(0);
-			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-				toolwin.winflg |= 0x02;
-				rect->left -= d;
-				rect->right = rect->left + winlx;
-				toolwin.wingx = d;
-				toolwin.wintx = rect->left;
-				changes = TRUE;
-			}
-		}
-
-		if ((!(toolwin.winflg & 0x04)) &&
-			(rect->right >= mainrc.left) && (rect->left <= mainrc.right)) {
-			do {
-				d = rect->top - mainrc.bottom;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-				d = rect->bottom - mainrc.top;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-				if ((rect->right == mainrc.left) ||
-					(rect->left == mainrc.right)) {
-					d = rect->top - mainrc.top;
-					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-						break;
-					}
-					d = rect->bottom - mainrc.bottom;
-					if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-						break;
-					}
-				}
-			} while(0);
-			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-				toolwin.winflg |= 0x04;
-				rect->top -= d;
-				rect->bottom = rect->top + winly;
-				toolwin.wingy = d;
-				toolwin.winty = rect->top;
-				changes = TRUE;
-			}
-		}
-		if (!(toolwin.winflg & 0x0c)) {
-			do {
-				d = rect->top - workrc.top;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-				d = rect->bottom - workrc.bottom;
-				if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-					break;
-				}
-			} while(0);
-			if ((d < SNAPDOTPULL) && (d > -SNAPDOTPULL)) {
-				toolwin.winflg |= 0x08;
-				rect->top -= d;
-				rect->bottom = rect->top + winly;
-				toolwin.wingy = d;
-				toolwin.winty = rect->top;
-				changes = TRUE;
-			}
-		}
-	} while(changes);
+	winlocex_move(wlex);
+	winlocex_destroy(wlex);
 }
 
 
@@ -834,9 +652,10 @@ static void openpopup(HWND hWnd, LPARAM lp) {
 
 static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	HMENU	hMenu;
-	BOOL	r;
-	UINT	idc;
+	HMENU		hMenu;
+	BOOL		r;
+	UINT		idc;
+	WINLOCEX	wlex;
 
 	switch(msg) {
 		case WM_CREATE:
@@ -845,10 +664,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 									(UINT)createskinmenu(), str_toolskin);
 			InsertMenu(hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
-			SetWindowLong(hWnd, GWL_STYLE,
-							GetWindowLong(hWnd, GWL_STYLE) & (~WS_CAPTION));
-			SetWindowPos(hWnd, 0, 0, 0, 0, 0,
-					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+			np2class_windowtype(hWnd, np2tool.type);
 			toolwincreate(hWnd);
 			break;
 
@@ -953,16 +769,6 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			}
 			break;
 
-		case WM_SYSKEYDOWN:			// ALT+SPACE‚ðŽ©‘Oˆ—
-			if (((short)wp == VK_SPACE) && (lp & 0x20000000)) {
-				POINT pt;
-				pt.x = 0;
-				pt.y = 0;
-				ClientToScreen(hWnd, &pt);
-				return(SendMessage(hWnd, 0x313, 0, MAKELPARAM(pt.x, pt.y)));
-			}
-			break;
-
 		case WM_PAINT:
 			toolwinpaint(hWnd);
 			break;
@@ -981,15 +787,18 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_ENTERSIZEMOVE:
 			soundmng_disable(SNDPROC_TOOL);
-			movingstart();
-			break;
-
-		case WM_EXITSIZEMOVE:
-			soundmng_enable(SNDPROC_TOOL);
+			winlocex_destroy(toolwin.wlex);
+			toolwin.wlex = np2_winlocexallwin(hWnd);
 			break;
 
 		case WM_MOVING:
-			movingproc((RECT *)lp);
+			winlocex_moving(toolwin.wlex, (RECT *)lp);
+			break;
+
+		case WM_EXITSIZEMOVE:
+			winlocex_destroy(toolwin.wlex);
+			toolwin.wlex = NULL;
+			soundmng_enable(SNDPROC_TOOL);
 			break;
 
 		case WM_MOVE:
@@ -1004,22 +813,34 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_CLOSE:
-			xmenu_settoolwin(0);
+			sysmenu_settoolwin(0);
 			sysmng_update(SYS_UPDATEOSCFG);
 			DestroyWindow(hWnd);
 			break;
 
 		case WM_DESTROY:
+			np2class_destroymenu(hWnd);
 			toolwindestroy();
 			toolwin.hwnd = NULL;
 			break;
 
 		case WM_LBUTTONDOWN:
-			SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0L);
+			if (np2tool.type & 1) {
+				return(SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0L));
+			}
 			break;
 
 		case WM_RBUTTONDOWN:
 			openpopup(hWnd, lp);
+			break;
+
+		case WM_LBUTTONDBLCLK:
+			np2tool.type ^= 1;
+			wlex = np2_winlocexallwin(hWndMain);
+			np2class_windowtype(hWnd, np2tool.type);
+			winlocex_move(wlex);
+			winlocex_destroy(wlex);
+			sysmng_update(SYS_UPDATEOSCFG);
 			break;
 
 		default:
@@ -1032,7 +853,7 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 
 	WNDCLASS wc;
 
-	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 	wc.lpfnWndProc = twproc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = GTWL_SIZE;
@@ -1045,7 +866,7 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 	return(RegisterClass(&wc));
 }
 
-void toolwin_open(void) {
+void toolwin_create(void) {
 
 	HBITMAP	hbmp;
 	BITMAP	bmp;
@@ -1061,134 +882,39 @@ void toolwin_open(void) {
 	}
 	GetObject(hbmp, sizeof(BITMAP), &bmp);
 	toolwin.hbmp = hbmp;
-	hWnd = CreateWindow(np2toolclass, np2tooltitle, WS_SYSMENU,
+	hWnd = CreateWindow(np2toolclass, np2tooltitle,
+							WS_SYSMENU | WS_MINIMIZEBOX,
 							np2tool.posx, np2tool.posy,
 							bmp.bmWidth, bmp.bmHeight,
 							NULL, NULL, hInst, NULL);
+	winloc_setclientsize(hWnd, bmp.bmWidth, bmp.bmHeight);
 	toolwin.hwnd = hWnd;
 	if (hWnd == NULL) {
 		goto twope_err2;
 	}
 	UpdateWindow(hWnd);
-	ShowWindow(hWnd, SW_SHOW);
-	SetForegroundWindow(hWndMain);
+	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
 	return;
 
 twope_err2:
 	DeleteObject(hbmp);
 
 twope_err1:
-	xmenu_settoolwin(0);
+	sysmenu_settoolwin(0);
 	sysmng_update(SYS_UPDATEOSCFG);
 	return;
 }
 
-void toolwin_close(void) {
+void toolwin_destroy(void) {
 
 	if (toolwin.hwnd) {
 		DestroyWindow(toolwin.hwnd);
 	}
 }
 
-void toolwin_movingstart(void) {
+HWND toolwin_gethwnd(void) {
 
-	RECT	mainrc;
-	RECT	toolrc;
-	UINT	connect;
-
-	if (toolwin.hwnd == NULL) {
-		return;
-	}
-	GetWindowRect(hWndMain, &mainrc);
-	GetWindowRect(toolwin.hwnd, &toolrc);
-	connect = 0;
-	if ((toolrc.bottom >= mainrc.top) && (toolrc.top <= mainrc.bottom)) {
-		if (toolrc.right == mainrc.left) {
-			connect += 0x01;
-		}
-		else if (toolrc.left == mainrc.right) {
-			connect += 0x02;
-		}
-		else if (toolrc.left == mainrc.left) {
-			connect += 0x03;
-		}
-		else if (toolrc.right == mainrc.right) {
-			connect += 0x04;
-		}
-	}
-	if ((toolrc.right >= mainrc.left) && (toolrc.left <= mainrc.right)) {
-		if (toolrc.bottom == mainrc.top) {
-			connect += 1 << 4;
-		}
-		else if (toolrc.top == mainrc.bottom) {
-			connect += 2 << 4;
-		}
-		else if (toolrc.top == mainrc.top) {
-			connect += 3 << 4;
-		}
-		else if (toolrc.bottom == mainrc.bottom) {
-			connect += 4 << 4;
-		}
-	}
-	toolwin.parentcn = connect;
-	toolwin.parentx = mainrc.left;
-	toolwin.parenty = mainrc.top;
-}
-
-void toolwin_movingend(void) {
-
-	UINT	connect;
-	RECT	mainrc;
-	RECT	toolrc;
-	int		cx;
-	int		cy;
-
-	connect = toolwin.parentcn;
-	toolwin.parentcn = 0;
-	if ((toolwin.hwnd == NULL) || (!connect)) {
-		return;
-	}
-	GetWindowRect(hWndMain, &mainrc);
-	GetWindowRect(toolwin.hwnd, &toolrc);
-	cx = toolrc.right - toolrc.left;
-	cy = toolrc.bottom - toolrc.top;
-	toolrc.left += mainrc.left - toolwin.parentx;
-	toolrc.top += mainrc.top - toolwin.parenty;
-	switch(connect & 0x0f) {
-		case 1:
-			toolrc.left = mainrc.left - cx;
-			break;
-
-		case 2:
-			toolrc.left = mainrc.right;
-			break;
-
-		case 3:
-			toolrc.left = mainrc.left;
-			break;
-
-		case 4:
-			toolrc.left = mainrc.right - cx;
-			break;
-	}
-	switch((connect >> 4) & 0x0f) {
-		case 1:
-			toolrc.top = mainrc.top - cy;
-			break;
-
-		case 2:
-			toolrc.top = mainrc.bottom;
-			break;
-
-		case 3:
-			toolrc.top = mainrc.top;
-			break;
-
-		case 4:
-			toolrc.top = mainrc.bottom - cy;
-			break;
-	}
-	MoveWindow(toolwin.hwnd, toolrc.left, toolrc.top, cx, cy, TRUE);
+	return(toolwin.hwnd);
 }
 
 void toolwin_setfdd(BYTE drv, const char *name) {
@@ -1308,6 +1034,7 @@ static const char ini_title[] = "NP2 tool";
 static const INITBL iniitem[] = {
 	{"WindposX", INITYPE_SINT32,	&np2tool.posx,			0},
 	{"WindposY", INITYPE_SINT32,	&np2tool.posy,			0},
+	{"WindType", INITYPE_BOOL,		&np2tool.type,			0},
 	{"SkinFile", INITYPE_STR,		np2tool.skin,			MAX_PATH},
 	{"SkinMRU0", INITYPE_STR,		np2tool.skinmru[0],		MAX_PATH},
 	{"SkinMRU1", INITYPE_STR,		np2tool.skinmru[1],		MAX_PATH},
@@ -1337,6 +1064,7 @@ void toolwin_readini(void) {
 	ZeroMemory(&np2tool, sizeof(np2tool));
 	np2tool.posx = CW_USEDEFAULT;
 	np2tool.posy = CW_USEDEFAULT;
+	np2tool.type = 1;
 	initgetfile(path, sizeof(path));
 	ini_read(path, ini_title, iniitem, sizeof(iniitem)/sizeof(INITBL));
 }

@@ -1,8 +1,11 @@
 #include	"compiler.h"
 #include	"resource.h"
+#include	"winloc.h"
+#include	"np2class.h"
 
 
 const char np2dlgclass[] = "np2dialog";
+
 
 void np2class_initialize(HINSTANCE hinst) {
 
@@ -49,5 +52,61 @@ void np2class_move(HWND hWnd, int posx, int posy, int cx, int cy) {
 		posy = workrc.top;
 	}
 	MoveWindow(hWnd, posx, posy, cx, cy, TRUE);
+}
+
+
+// ----
+
+void np2class_windowtype(HWND hWnd, BYTE type) {
+
+	RECT		rect;
+	DWORD		style;
+	HMENU		hmenu;
+
+	GetClientRect(hWnd, &rect);
+	style = GetWindowLong(hWnd, GWL_STYLE);
+	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	if (!(type & 1)) {
+		style |= WS_CAPTION;
+		if (hmenu) {
+			SetMenu(hWnd, hmenu);
+			hmenu = NULL;
+		}
+	}
+	else {
+		style &= ~WS_CAPTION;
+		if (hmenu == NULL) {
+			hmenu = GetMenu(hWnd);
+			SetMenu(hWnd, NULL);
+		}
+	}
+	SetWindowLong(hWnd, GWL_STYLE, style);
+	SetWindowLong(hWnd, NP2GWL_HMENU, (LONG)hmenu);
+	SetWindowPos(hWnd, 0, 0, 0, 0, 0,
+					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+	winloc_setclientsize(hWnd,
+							rect.right - rect.left, rect.bottom - rect.top);
+}
+
+HMENU np2class_gethmenu(HWND hWnd) {
+
+	HMENU	ret;
+
+	ret = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	if (ret == NULL) {
+		ret = GetMenu(hWnd);
+	}
+	return(ret);
+}
+
+void np2class_destroymenu(HWND hWnd) {
+
+	HMENU	hmenu;
+
+	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	if (hmenu != NULL) {
+		DestroyMenu(hmenu);
+		SetWindowLong(hWnd, NP2GWL_HMENU, 0);
+	}
 }
 

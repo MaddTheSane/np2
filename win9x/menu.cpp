@@ -14,11 +14,11 @@ const char	*str;
 } SMENUITEM;
 
 static const char smenu_toolwin[] = "&Tool Window";
+static const char smenu_keydisp[] = "&Key display";
 static const char smenu_center[] = "&Centering";
 static const char smenu_snap[] = "&Window Snap";
 static const char smenu_bg[] = "&Background";
 static const char smenu_bgsnd[] = "Background &Sound";
-static const char smenu_keydisp[] = "&Key display";
 static const char smenu_320x200[] = " 320x200";
 static const char smenu_480x300[] = " 480x300";
 static const char smenu_640x400[] = " 640x400";
@@ -31,11 +31,12 @@ static const char smenu_dbguty[] = "&Debug Utility";
 
 static const SMENUITEM smenuitem[] = {
 			{smenu_toolwin,		IDM_TOOLWIN},
+			{smenu_keydisp,		IDM_KEYDISP},
+			{NULL,				0},
 			{smenu_center,		IDM_SCREENCENTER},
 			{smenu_snap,		IDM_SNAPENABLE},
 			{smenu_bg,			IDM_BACKGROUND},
 			{smenu_bgsnd,		IDM_BGSOUND},
-			{smenu_keydisp,		IDM_KEYDISP},
 			{NULL,				0},
 			{smenu_320x200,		IDM_SCRNMUL4},
 			{smenu_480x300,		IDM_SCRNMUL6},
@@ -61,14 +62,14 @@ void sysmenu_init(void) {
 		}
 	}
 	if (np2oscfg.I286SAVE) {
-		InsertMenu(hMenu, 6, MF_BYPOSITION | MF_STRING, IDM_MEMORYDUMP,
+		InsertMenu(hMenu, 7, MF_BYPOSITION | MF_STRING, IDM_MEMORYDUMP,
 							smenu_memdump);
-		InsertMenu(hMenu, 7, MF_BYPOSITION | MF_STRING, IDM_DEBUGUTY,
+		InsertMenu(hMenu, 8, MF_BYPOSITION | MF_STRING, IDM_DEBUGUTY,
 							smenu_dbguty);
 	}
 }
 
-void xmenu_settoolwin(BYTE value) {
+void sysmenu_settoolwin(BYTE value) {
 
 	value &= 1;
 	np2oscfg.toolwin = value;
@@ -76,7 +77,15 @@ void xmenu_settoolwin(BYTE value) {
 											IDM_TOOLWIN, MFCHECK(value));
 }
 
-void xmenu_setwinsnap(BYTE value) {
+void sysmenu_setkeydisp(BYTE value) {
+
+	value &= 1;
+	np2oscfg.keydisp = value;
+	CheckMenuItem(GetSystemMenu(hWndMain, FALSE),
+											IDM_KEYDISP, MFCHECK(value));
+}
+
+void sysmenu_setwinsnap(BYTE value) {
 
 	value &= 1;
 	np2oscfg.WINSNAP = value;
@@ -84,7 +93,7 @@ void xmenu_setwinsnap(BYTE value) {
 											IDM_SNAPENABLE, MFCHECK(value));
 }
 
-void xmenu_setbackground(BYTE value) {
+void sysmenu_setbackground(BYTE value) {
 
 	HMENU	hmenu;
 
@@ -101,7 +110,7 @@ void xmenu_setbackground(BYTE value) {
 	}
 }
 
-void xmenu_setbgsound(BYTE value) {
+void sysmenu_setbgsound(BYTE value) {
 
 	np2oscfg.background &= 1;
 	np2oscfg.background |= (value & 2);
@@ -109,7 +118,7 @@ void xmenu_setbgsound(BYTE value) {
 									IDM_BGSOUND, MFCHECK((value & 2) ^ 2));
 }
 
-void xmenu_setscrnmul(BYTE value) {
+void sysmenu_setscrnmul(BYTE value) {
 
 	HMENU	hmenu;
 

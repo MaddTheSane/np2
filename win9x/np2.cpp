@@ -71,7 +71,7 @@ static	char		szClassName[] = "NP2-MainWindow";
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						{0, 0, 0x3e, 19200, "", "", "", ""},		// ver0.34
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0};			// ver0.38
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0};		// ver0.38
 
 		char	fddfolder[MAX_PATH];
 		char	hddfolder[MAX_PATH];
@@ -87,12 +87,12 @@ static	int		np2opening = 1;
 static	int		np2quitmsg = 0;
 		HMENU	hStat = NULL;
 static	BYTE	scrnmode;
-		WINLOC	wl;
+		WINLOC		wl;
+		WINLOCEX	wlex;
 
 static const char np2help[] = "np2.hlp";
-static const char np2resume[] = "sav";
-
-
+static const char np2flagext[] = "S%02d";
+static const char np2resumeext[] = "sav";
 
 
 static void winuienter(void) {
@@ -107,10 +107,29 @@ static void winuileave(void) {
 	soundmng_enable(SNDPROC_MAIN);
 }
 
+WINLOCEX np2_winlocexallwin(HWND base) {
+
+	HWND	list[3];
+	UINT	i;
+
+	list[0] = hWndMain;
+	list[1] = toolwin_gethwnd();
+	list[2] = keydisp_gethwnd();
+	for (i=0; i<3; i++) {
+		if (list[i] == base) {
+			list[i] = NULL;
+		}
+	}
+	if (base != hWndMain) {		// hWndMain‚Ì‚Ý‘S‘ÌˆÚ“®
+		base = NULL;
+	}
+	return(winlocex_create(base, list, 3));
+}
+
 static void changescreen(BYTE newmode) {
 
-	BYTE	change;
-	BYTE	renewal;
+	BYTE		change;
+	BYTE		renewal;
 
 	change = scrnmode ^ newmode;
 	renewal = (change & SCRNMODE_FULLSCREEN);
@@ -122,14 +141,15 @@ static void changescreen(BYTE newmode) {
 	}
 	if (renewal) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
-			toolwin_close();
+			toolwin_destroy();
+			keydisp_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
-			toolwin_movingstart();
+			winlocex_destroy(wlex);
+			wlex = np2_winlocexallwin(hWndMain);
 		}
 		soundmng_stop();
 		mouse_running(MOUSE_STOP);
-		keydisp_destroy();
 		scrnmng_destroy();
 		if (scrnmng_create(newmode) == SUCCESS) {
 			scrnmode = newmode;
@@ -141,12 +161,20 @@ static void changescreen(BYTE newmode) {
 			}
 		}
 		scrndraw_redraw();
-		if ((renewal & SCRNMODE_FULLSCREEN) &&
-			(!scrnmng_isfullscreen()) && (np2oscfg.toolwin)) {
-			toolwin_open();
+		if (renewal & SCRNMODE_FULLSCREEN) {
+			if (!scrnmng_isfullscreen()) {
+				if (np2oscfg.toolwin) {
+					toolwin_create();
+				}
+				if (np2oscfg.keydisp) {
+					keydisp_create();
+				}
+			}
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
-			toolwin_movingend();
+			winlocex_move(wlex);
+			winlocex_destroy(wlex);
+			wlex = NULL;
 		}
 		mouse_running(MOUSE_CONT);
 		soundmng_play();
@@ -276,6 +304,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	HDC			hdc;
 	BOOL		b;
 	UINT		update;
+	HWND		subwin;
 
 	switch (msg) {
 		case WM_CREATE:
@@ -289,43 +318,52 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			update = 0;
 			switch(wParam) {
 				case IDM_TOOLWIN:
-					xmenu_settoolwin(np2oscfg.toolwin ^ 1);
+					sysmenu_settoolwin(np2oscfg.toolwin ^ 1);
 					if (np2oscfg.toolwin) {
-						toolwin_open();
+						toolwin_create();
 					}
 					else {
-						toolwin_close();
+						toolwin_destroy();
 					}
 					update |= SYS_UPDATEOSCFG;
+					break;
+
+				case IDM_KEYDISP:
+					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
+					if (np2oscfg.keydisp) {
+						keydisp_create();
+					}
+					else {
+						keydisp_destroy();
+					}
 					break;
 
 				case IDM_SCREENCENTER:
 					if ((!scrnmng_isfullscreen()) &&
 						(!(GetWindowLong(hWnd, GWL_STYLE) &
 											(WS_MAXIMIZE | WS_MINIMIZE)))) {
-						toolwin_movingstart();
+						winlocex_destroy(wlex);
+						wlex = np2_winlocexallwin(hWnd);
 						wincentering(hWnd);
-						toolwin_movingend();
+						winlocex_move(wlex);
+						winlocex_destroy(wlex);
+						wlex = NULL;
 					}
 					break;
 
 				case IDM_SNAPENABLE:
-					xmenu_setwinsnap(np2oscfg.WINSNAP ^ 1);
+					sysmenu_setwinsnap(np2oscfg.WINSNAP ^ 1);
 					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BACKGROUND:
-					xmenu_setbackground(np2oscfg.background ^ 1);
+					sysmenu_setbackground(np2oscfg.background ^ 1);
 					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BGSOUND:
-					xmenu_setbgsound(np2oscfg.background ^ 2);
+					sysmenu_setbgsound(np2oscfg.background ^ 2);
 					update |= SYS_UPDATEOSCFG;
-					break;
-
-				case IDM_KEYDISP:
-					keydisp_create();
 					break;
 
 				case IDM_MEMORYDUMP:
@@ -344,10 +382,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_SCRNMUL16:
 					if ((!scrnmng_isfullscreen()) &&
 						!(GetWindowLong(hWndMain, GWL_STYLE) & WS_MINIMIZE)) {
-						xmenu_setscrnmul(wParam - IDM_SCRNMUL);
+						sysmenu_setscrnmul(wParam - IDM_SCRNMUL);
 						scrnmng_setmultiple(wParam - IDM_SCRNMUL);
 					}
 					break;
+
+				case SC_MINIMIZE:
+					winlocex_destroy(wlex);
+					wlex = np2_winlocexallwin(hWnd);
+					winlocex_close(wlex);
+					winlocex_destroy(wlex);
+					wlex = NULL;
+					return(DefWindowProc(hWnd, msg, wParam, lParam));
+
+				case SC_RESTORE:
+					subwin = toolwin_gethwnd();
+					if (subwin) {
+						ShowWindow(subwin, SW_SHOWNOACTIVATE);
+					}
+					subwin = keydisp_gethwnd();
+					if (subwin) {
+						ShowWindow(subwin, SW_SHOWNOACTIVATE);
+					}
+					return(DefWindowProc(hWnd, msg, wParam, lParam));
 
 				default:
 					return(DefWindowProc(hWnd, msg, wParam, lParam));
@@ -821,14 +878,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if ((LOWORD(wParam) >= IDM_FLAGSAVE) &&
 						(LOWORD(wParam) < IDM_FLAGSAVE + STATSAVEMAX)) {
 						char ext[4];
-						wsprintf(ext, "S%02d",
+						wsprintf(ext, np2flagext,
 									(LOWORD(wParam) - IDM_FLAGSAVE) % 100);
 						flagsave(ext);
 					}
 					if ((LOWORD(wParam) >= IDM_FLAGLOAD) &&
 						(LOWORD(wParam) < IDM_FLAGLOAD + STATSAVEMAX)) {
 						char ext[4];
-						wsprintf(ext, "S%02d",
+						wsprintf(ext, np2flagext,
 									(LOWORD(wParam) - IDM_FLAGLOAD) % 100);
 						flagload(ext, "Status Load", TRUE);
 					}
@@ -900,12 +957,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					np2oscfg.winy = rc.top;
 					sysmng_update(SYS_UPDATEOSCFG);
 				}
-				if (GetWindowLong(hWnd, GWL_STYLE) & WS_MINIMIZE) {
-					toolwin_close();
-				}
-				else if (np2oscfg.toolwin) {
-					toolwin_open();
-				}
 			}
 			break;
 
@@ -923,20 +974,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_ENTERSIZEMOVE:
 			soundmng_disable(SNDPROC_MAIN);
 			mouse_running(MOUSE_STOP);
-			winloc_movingstart(&wl);
-			toolwin_movingstart();
-			break;
-
-		case WM_EXITSIZEMOVE:
-			toolwin_movingend();
-			mouse_running(MOUSE_CONT);
-			soundmng_enable(SNDPROC_MAIN);
+			winlocex_destroy(wlex);
+			wlex = np2_winlocexallwin(hWnd);
 			break;
 
 		case WM_MOVING:
 			if (np2oscfg.WINSNAP) {
-				winloc_movingproc(&wl, (RECT *)lParam);
+				winlocex_moving(wlex, (RECT *)lParam);
 			}
+			break;
+
+		case WM_EXITSIZEMOVE:
+			winlocex_move(wlex);
+			winlocex_destroy(wlex);
+			wlex = NULL;
+			mouse_running(MOUSE_CONT);
+			soundmng_enable(SNDPROC_MAIN);
 			break;
 
 		case WM_KEYDOWN:
@@ -1159,6 +1212,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	np2arg_analize(lpszCmdLine);
 	initload();
 	toolwin_readini();
+	keydisp_readini();
 
 	rand_setseed((unsigned)time(NULL));
 
@@ -1271,15 +1325,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		EnableMenuItem(GetMenu(hWndMain), IDM_HELP, MF_GRAYED);
 	}
 
-	xmenu_settoolwin(np2oscfg.toolwin);
-	xmenu_setwinsnap(np2oscfg.WINSNAP);
-	xmenu_setbackground(np2oscfg.background);
-	xmenu_setbgsound(np2oscfg.background);
-	xmenu_setscrnmul(8);										// ver0.26
-
-	if (np2oscfg.toolwin) {
-		toolwin_open();
-	}
+	sysmenu_settoolwin(np2oscfg.toolwin);
+	sysmenu_setkeydisp(np2oscfg.keydisp);
+	sysmenu_setwinsnap(np2oscfg.WINSNAP);
+	sysmenu_setbackground(np2oscfg.background);
+	sysmenu_setbgsound(np2oscfg.background);
+	sysmenu_setscrnmul(8);										// ver0.26
 
 	scrnmode = 0;
 	if (np2arg.fullscreen) {
@@ -1296,6 +1347,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										np2oscfg.titles, MB_OK | MB_ICONSTOP);
 			}
 			return(FALSE);
+		}
+	}
+	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
+		if (np2oscfg.toolwin) {
+			toolwin_create();
+		}
+		if (np2oscfg.keydisp) {
+			keydisp_create();
 		}
 	}
 
@@ -1339,7 +1398,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (np2oscfg.resume) {
 		int		id;
 
-		id = flagload(np2resume, "Resume", FALSE);
+		id = flagload(np2resumeext, "Resume", FALSE);
 		if (id == IDYES) {
 			for (i=0; i<4; i++) np2arg.disk[i] = NULL;
 		}
@@ -1372,8 +1431,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 				if (!GetMessage(&msg, NULL, 0, 0)) {
 					break;
 				}
-				if ((msg.message != WM_SYSKEYDOWN) &&
-					(msg.message != WM_SYSKEYUP)) {
+				if ((msg.hwnd != hWndMain) ||
+					((msg.message != WM_SYSKEYDOWN) &&
+					(msg.message != WM_SYSKEYUP))) {
 					TranslateMessage(&msg);
 				}
 				DispatchMessage(&msg);
@@ -1453,7 +1513,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			DispatchMessage(&msg);
 		}
 	}
-	toolwin_close();
+	toolwin_destroy();
 
 	pccore_cfgupdate();
 
@@ -1461,10 +1521,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	S98_trash();
 
 	if (np2oscfg.resume) {
-		flagsave(np2resume);
+		flagsave(np2resumeext);
 	}
 	else {
-		flagdelete(np2resume);
+		flagdelete(np2resumeext);
 	}
 
 #ifdef USE_ROMEO
@@ -1484,6 +1544,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();
 		toolwin_writeini();
+		keydisp_writeini();
 	}
 
 	TRACETERM();

@@ -13,7 +13,7 @@ static const char str_combobox[] = "COMBOBOX";
 static const char str_button[] = "BUTTON";
 
 static const SUBITEM defsubitem[IDC_MAXITEMS] = {
-		{TCTL_STATIC,	NULL,		 47, 44,   8,   3, 0, 0},
+		{TCTL_STATIC,	NULL,		 49, 44,   8,   3, 0, 0},
 		{TCTL_STATIC,	NULL,		 93, 19,   8,   3, 0, 0},
 		{TCTL_DDLIST,	NULL,		104,  6, 248, 160, 0, 0},
 		{TCTL_BUTTON,	str_browse,	352,  7,  18,  17, 0, 0},
