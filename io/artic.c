@@ -16,7 +16,7 @@ void artic_callback(void) {
 	else {
 		mul *= 16;
 	}
-	leng = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
+	leng = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 	leng *= 2;
 	leng -= artic.lastclk2;
 	if (leng > 0) {
@@ -38,7 +38,7 @@ static UINT32 artic_getcnt(void) {
 	else {
 		mul *= 16;
 	}
-	leng = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
+	leng = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 	leng *= 2;
 	leng -= artic.lastclk2;
 	if (leng > 0) {
