@@ -173,6 +173,7 @@ void gdc_work(int id) {
 					screenupdate |= 2;								// ver0.28
 					break;
 
+				case CMD_STOP_:
 				case CMD_STOP:
 				case CMD_SYNC_OFF:
 					(*dispflag) &= (~GDCSCRN_ENABLE);

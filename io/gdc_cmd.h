@@ -8,6 +8,7 @@ enum {
 
 	CMD_START_		= 0x6b,
 	CMD_START		= 0x0d,
+	CMD_STOP_		= 0x05,
 	CMD_STOP		= 0x0c,
 
 	CMD_ZOOM		= 0x06,

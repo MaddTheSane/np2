@@ -1,5 +1,5 @@
 
-#define		NP2STATUS_VERSION		0731
+#define		NP2STATUS_VERSION		0732
 
 static const NP2FHDR np2flagdef = {
 						"Neko Project II",
@@ -132,8 +132,7 @@ static const SFENTRY np2tbl[] = {
 	{"SCSI",		0,	STATFLAG_BIN,	&scsiio,		sizeof(scsiio)},
 #endif
 #if defined(SUPPORT_PC9861K)
-	{"PC9861K1",	0,	STATFLAG_BIN,	&pc9861ch1,		sizeof(pc9861ch1)},
-	{"PC9861K2",	0,	STATFLAG_BIN,	&pc9861ch2,		sizeof(pc9861ch2)},
+	{"PC9861K",		0,	STATFLAG_BIN,	&pc9861k,		sizeof(pc9861k)},
 #endif
 #if defined(SUPPORT_HOSTDRV)
 	{"HOSTDRV",		0,	STATFLAG_HDRV,	NULL,			0},

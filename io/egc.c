@@ -91,22 +91,26 @@ static void IOOUTCALL egc_o4a0(UINT port, REG8 value) {
 			egc.sft &= 0xff00;
 			egc.sft |= value;
 			egcshift();
+			egc.srcmask.w = 0xffff;
 			break;
 		case 0x0d:
 			egc.sft &= 0x00ff;
 			egc.sft |= value << 8;
 			egcshift();
+			egc.srcmask.w = 0xffff;
 			break;
 
 		case 0x0e:
 			egc.leng &= 0xff00;
 			egc.leng |= value;
 			egcshift();
+			egc.srcmask.w = 0xffff;
 			break;
 		case 0x0f:
 			egc.leng &= 0x00ff;
 			egc.leng |= value << 8;
 			egcshift();
+			egc.srcmask.w = 0xffff;
 			break;
 	}
 }
@@ -119,6 +123,7 @@ void egc_reset(void) {
 	egc.mask.w = 0xffff;
 	egc.leng = 0x000f;
 	egcshift();
+	egc.srcmask.w = 0xffff;
 }
 
 void egc_bind(void) {
@@ -171,11 +176,13 @@ void IOOUTCALL egc_w16(UINT port, REG16 value) {
 		case 0x0c:
 			egc.sft = value;
 			egcshift();
+			egc.srcmask.w = 0xffff;
 			break;
 
 		case 0x0e:
 			egc.leng = value;
 			egcshift();
+			egc.srcmask.w = 0xffff;
 			break;
 	}
 }

@@ -9,10 +9,7 @@
 #include	"pc9861k.h"
 
 
-	UINT		pc9861en;
-	_PC9861CH	pc9861ch1;
-	_PC9861CH	pc9861ch2;
-
+	_PC9861K	pc9861k;
 	COMMNG		cm_pc9861ch1;
 	COMMNG		cm_pc9861ch2;
 
@@ -57,19 +54,19 @@ static void pc9861k_callback(COMMNG cm, PC9861CH m) {
 void pc9861ch1cb(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
-		nevent_set(NEVENT_PC9861CH1, pc9861ch1.clk, pc9861ch1cb,
+		nevent_set(NEVENT_PC9861CH1, pc9861k.ch1.clk, pc9861ch1cb,
 														NEVENT_RELATIVE);
 	}
-	pc9861k_callback(cm_pc9861ch1, &pc9861ch1);
+	pc9861k_callback(cm_pc9861ch1, &pc9861k.ch1);
 }
 
 void pc9861ch2cb(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
-		nevent_set(NEVENT_PC9861CH2, pc9861ch2.clk, pc9861ch2cb,
+		nevent_set(NEVENT_PC9861CH2, pc9861k.ch2.clk, pc9861ch2cb,
 														NEVENT_RELATIVE);
 	}
-	pc9861k_callback(cm_pc9861ch2, &pc9861ch2);
+	pc9861k_callback(cm_pc9861ch2, &pc9861k.ch2);
 }
 
 static UINT32 pc9861k_getspeed(REG8 dip) {
@@ -100,26 +97,28 @@ static void pc9861ch1_open(void) {
 
 	cm_pc9861ch1 = commng_create(COMCREATE_PC9861K1);
 
-	pc9861ch1.dip = np2cfg.pc9861sw[0];
-	pc9861ch1.speed = pc9861k_getspeed(pc9861ch1.dip);
-	pc9861ch1.vect = ((np2cfg.pc9861sw[1] >> 1) & 1) |
+	pc9861k.ch1.dip = np2cfg.pc9861sw[0];
+	pc9861k.ch1.speed = pc9861k_getspeed(pc9861k.ch1.dip);
+	pc9861k.ch1.vect = ((np2cfg.pc9861sw[1] >> 1) & 1) |
 						((np2cfg.pc9861sw[1] << 1) & 2);
-	pc9861ch1.irq = ch1_irq[pc9861ch1.vect];
-	pc9861_makeclk(&pc9861ch1, 10*2);
-	nevent_set(NEVENT_PC9861CH1, pc9861ch1.clk, pc9861ch1cb, NEVENT_ABSOLUTE);
+	pc9861k.ch1.irq = ch1_irq[pc9861k.ch1.vect];
+	pc9861_makeclk(&pc9861k.ch1, 10*2);
+	nevent_set(NEVENT_PC9861CH1, pc9861k.ch1.clk,
+											pc9861ch1cb, NEVENT_ABSOLUTE);
 }
 
 static void pc9861ch2_open(void) {
 
 	cm_pc9861ch2 = commng_create(COMCREATE_PC9861K2);
 
-	pc9861ch2.dip = np2cfg.pc9861sw[2];
-	pc9861ch2.speed = pc9861k_getspeed(pc9861ch2.dip);
-	pc9861ch2.vect = ((np2cfg.pc9861sw[1] >> 3) & 1) |
+	pc9861k.ch2.dip = np2cfg.pc9861sw[2];
+	pc9861k.ch2.speed = pc9861k_getspeed(pc9861k.ch2.dip);
+	pc9861k.ch2.vect = ((np2cfg.pc9861sw[1] >> 3) & 1) |
 						((np2cfg.pc9861sw[1] >> 1) & 2);
-	pc9861ch2.irq = ch1_irq[pc9861ch2.vect];
-	pc9861_makeclk(&pc9861ch2, 10*2);
-	nevent_set(NEVENT_PC9861CH2, pc9861ch2.clk, pc9861ch2cb, NEVENT_ABSOLUTE);
+	pc9861k.ch2.irq = ch1_irq[pc9861k.ch2.vect];
+	pc9861_makeclk(&pc9861k.ch2, 10*2);
+	nevent_set(NEVENT_PC9861CH2, pc9861k.ch2.clk,
+											pc9861ch2cb, NEVENT_ABSOLUTE);
 }
 
 
@@ -211,7 +210,7 @@ static void IOOUTCALL pc9861k_ob0(UINT port, REG8 dat) {
 	if (cm_pc9861ch1 == NULL) {
 		pc9861ch1_open();
 	}
-	pc9861ch1.signal = dat;
+	pc9861k.ch1.signal = dat;
 	(void)port;
 }
 
@@ -220,7 +219,7 @@ static void IOOUTCALL pc9861k_ob2(UINT port, REG8 dat) {
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();
 	}
-	pc9861ch2.signal = dat;
+	pc9861k.ch2.signal = dat;
 	(void)port;
 }
 
@@ -230,7 +229,7 @@ static REG8 IOINPCALL pc9861k_ib0(UINT port) {
 		pc9861ch1_open();
 	}
 	(void)port;
-	return(cm_pc9861ch1->getstat(cm_pc9861ch1) | pc9861ch1.vect);
+	return(cm_pc9861ch1->getstat(cm_pc9861ch1) | pc9861k.ch1.vect);
 }
 
 static REG8 IOINPCALL pc9861k_ib2(UINT port) {
@@ -239,7 +238,7 @@ static REG8 IOINPCALL pc9861k_ib2(UINT port) {
 		pc9861ch2_open();
 	}
 	(void)port;
-	return(cm_pc9861ch2->getstat(cm_pc9861ch2) | pc9861ch2.vect);
+	return(cm_pc9861ch2->getstat(cm_pc9861ch2) | pc9861k.ch2.vect);
 }
 
 
@@ -248,7 +247,7 @@ static void IOOUTCALL pc9861k_ob1(UINT port, REG8 dat) {
 	if (cm_pc9861ch1 == NULL) {
 		pc9861ch1_open();
 	}
-	pc9861data_w8(cm_pc9861ch1, &pc9861ch1, port, dat);
+	pc9861data_w8(cm_pc9861ch1, &pc9861k.ch1, port, dat);
 }
 
 static REG8 IOINPCALL pc9861k_ib1(UINT port) {
@@ -256,7 +255,7 @@ static REG8 IOINPCALL pc9861k_ib1(UINT port) {
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch1_open();
 	}
-	return(pc9861data_r8(cm_pc9861ch1, &pc9861ch1, port));
+	return(pc9861data_r8(cm_pc9861ch1, &pc9861k.ch1, port));
 }
 
 
@@ -265,7 +264,7 @@ static void IOOUTCALL pc9861k_ob9(UINT port, REG8 dat) {
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();
 	}
-	pc9861data_w8(cm_pc9861ch2, &pc9861ch2, port, dat);
+	pc9861data_w8(cm_pc9861ch2, &pc9861k.ch2, port, dat);
 }
 
 static REG8 IOINPCALL pc9861k_ib9(UINT port) {
@@ -273,7 +272,7 @@ static REG8 IOINPCALL pc9861k_ib9(UINT port) {
 	if (cm_pc9861ch2 == NULL) {
 		pc9861ch2_open();
 	}
-	return(pc9861data_r8(cm_pc9861ch2, &pc9861ch2, port));
+	return(pc9861data_r8(cm_pc9861ch2, &pc9861k.ch2, port));
 }
 
 
@@ -300,14 +299,15 @@ void pc9861k_reset(void) {
 	commng_destroy(cm_pc9861ch2);
 	cm_pc9861ch2 = NULL;
 
-	pc9861ch1 = pc9861def;
-	pc9861ch2 = pc9861def;
-	pc9861en = np2cfg.pc9861enable & 1;
+	pc9861k.ch1 = pc9861def;
+	pc9861k.ch2 = pc9861def;
+	pc9861k.en = np2cfg.pc9861enable & 1;
 }
 
 void pc9861k_bind(void) {
 
-	if (pc9861en) {
+	pc9861k_deinitialize();
+	if (pc9861k.en) {
 		iocore_attachout(0xb0, pc9861k_ob0);
 		iocore_attachout(0xb2, pc9861k_ob2);
 		iocore_attachinp(0xb0, pc9861k_ib0);

@@ -891,10 +891,12 @@ void bios0x1b(void) {
 		i286_memword_write(CPU_SS, sp - 14, CPU_CX);		// +4
 		i286_memword_write(CPU_SS, sp - 16, CPU_BX);		// +2
 		i286_memword_write(CPU_SS, sp - 18, CPU_AX);		// +0
+#if 0
 		TRACEOUT(("bypass to %.4x:0018", seg << 8));
 		TRACEOUT(("AX=%04x BX=%04x %02x:%02x:%02x:%02x ES=%04x BP=%04x",
 							CPU_AX, CPU_BX, CPU_CL, CPU_DH, CPU_DL, CPU_CH,
 							CPU_ES, CPU_BP));
+#endif
 		sp -= 18;
 		CPU_SP = sp;
 		CPU_BP = sp;

@@ -721,7 +721,7 @@ static void gdc_ope(UINT32 ad, REG16 value, int func) {
 					pat.d[1] = egc.fgc.d[1];
 					break;
 				default:
-					if ((egc.ope & 0x0300) == 0x0100) {	// ver0.29
+					if ((egc.ope & 0x0300) == 0x0100) {
 						pat.d[0] = egc_src.d[0];
 						pat.d[1] = egc_src.d[1];
 					}

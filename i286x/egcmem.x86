@@ -573,7 +573,7 @@ section .text
 				ja		short %%cpusrc2d_end
 				lea		eax, [eax*2 - 1]
 				sub		[_egc + egc_t.inptr], eax
-				cmp		esi, 6
+				cmp		esi, byte 6
 				jae		short %%cpusrc2d_byte
 				cmp		byte [_egc + egc_t.srcbit], 0
 				je		short %%cpusrc2d_w1

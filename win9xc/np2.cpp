@@ -47,7 +47,7 @@
 #define	STATSAVEMAX		10
 
 static	char		np2help[] = "np2.hlp";
-// static char		np2resume[] = "sav";
+static	char		np2resume[] = "sav";
 
 #if defined(CPUCORE_IA32)
 		const char szAppCaption[] = "Neko Project II (IA-32)";
@@ -759,7 +759,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
-	np2arg_analize(lpszCmdLine);				// タイミング修正	// ver0.29
+	np2arg_analize(lpszCmdLine);
 	initload();
 
 	rand_setseed((unsigned)time(NULL));
