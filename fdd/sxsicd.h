@@ -9,6 +9,7 @@ enum {
 };
 
 BRESULT sxsicd_open(SXSIDEV sxsi, const OEMCHAR *fname);
+UINT sxsicd_gettocinfo(SXSIDEV sxsi, UINT8 *buf);
 
 #ifdef __cplusplus
 }

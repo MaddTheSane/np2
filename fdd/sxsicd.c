@@ -18,7 +18,6 @@ typedef struct {
 typedef struct {
 	FILEH	fh;
 	UINT	type;
-	UINT32	lastpos;
 	CDTRK	trk[99];
 	OEMCHAR	path[MAX_PATH];
 } _CDINFO, *CDINFO;
@@ -199,6 +198,8 @@ static BRESULT openimg(SXSIDEV sxsi, const OEMCHAR *path,
 	UINT	type;
 	long	totals;
 	CDINFO	cdinfo;
+	UINT	mediatype;
+	UINT	i;
 
 	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
@@ -220,14 +221,23 @@ static BRESULT openimg(SXSIDEV sxsi, const OEMCHAR *path,
 	ZeroMemory(cdinfo, sizeof(_CDINFO));
 	cdinfo->fh = fh;
 	cdinfo->type = type;
-	cdinfo->lastpos = totals;
 	if ((trk != NULL) && (trks != 0)) {
 		trks = min(trks, NELEMENTS(cdinfo->trk));
+		mediatype = 0;
+		for (i=0; i<trks; i++) {
+			if (trk[i].type == 0x14) {
+				mediatype |= SXSIMEDIA_DATA;
+			}
+			else if (trk[i].type == 0x10) {
+				mediatype |= SXSIMEDIA_AUDIO;
+			}
+		}
 		CopyMemory(cdinfo->trk, trk, trks * sizeof(CDTRK));
 	}
 	else {
 		cdinfo->trk[0].type = 0x14;
 //		cdinfo->trk[0].pos = 0;
+		mediatype = SXSIMEDIA_DATA;
 	}
 	file_cpyname(cdinfo->path, path, NELEMENTS(cdinfo->path));
 
@@ -247,7 +257,7 @@ static BRESULT openimg(SXSIDEV sxsi, const OEMCHAR *path,
 	sxsi->sectors = 1;
 	sxsi->surfaces = 1;
 	sxsi->headersize = 0;
-	sxsi->mediatype = SXSIMEDIA_DATA;
+	sxsi->mediatype = mediatype;
 	return(SUCCESS);
 
 sxsiope_err2:
@@ -307,7 +317,9 @@ static BRESULT opencue(SXSIDEV sxsi, const OEMCHAR *fname) {
 	while(textfile_read(tfh, buf, NELEMENTS(buf)) == SUCCESS) {
 		argc = milstr_getarg(buf, argv, NELEMENTS(argv));
 		if ((argc >= 3) && (!milstr_cmp(argv[0], str_file))) {
-			file_cpyname(path, argv[1], NELEMENTS(path));
+			file_cpyname(path, fname, NELEMENTS(path));
+			file_cutname(path);
+			file_catname(path, argv[1], NELEMENTS(path));
 		}
 		else if ((argc >= 3) && (!milstr_cmp(argv[0], str_track))) {
 			curtrk = milstr_solveINT(argv[1]) - 1;
@@ -329,16 +341,6 @@ static BRESULT opencue(SXSIDEV sxsi, const OEMCHAR *fname) {
 		}
 	}
 	textfile_close(tfh);
-#if 0
-{
-	UINT i;
-	for (i=0; i<NELEMENTS(trk); i++) {
-		if (trk[i].type) {
-			TRACEOUT(("%.2d: %.4x %d", i+1, trk[i].type, trk[i].pos));
-		}
-	}
-}
-#endif
 	return(openimg(sxsi, path, trk, NELEMENTS(trk)));
 }
 
@@ -351,5 +353,54 @@ const OEMCHAR	*ext;
 		return(opencue(sxsi, fname));
 	}
 	return(openimg(sxsi, fname, NULL, 0));
+}
+
+static void storepos(UINT8 *ptr, UINT32 pos) {
+
+	UINT	f;
+	UINT	m;
+
+	pos += 150;
+	f = pos % 75;
+	pos = pos / 75;
+	m = pos % 60;
+	pos = pos / 60;
+	ptr[0] = 0;
+	ptr[1] = (UINT8)pos;
+	ptr[2] = (UINT8)m;
+	ptr[3] = (UINT8)f;
+}
+
+UINT sxsicd_gettocinfo(SXSIDEV sxsi, UINT8 *buf) {
+
+	CDINFO	cdinfo;
+	UINT8	*ptr;
+	UINT	trks;
+	UINT 	i;
+	UINT	type;
+
+	cdinfo = (CDINFO)sxsi->hdl;
+	ptr = buf + 2;
+	trks = 0;
+	for (i=0; i<NELEMENTS(cdinfo->trk); i++) {
+		type = cdinfo->trk[i].type;
+		if (type) {
+			ptr[0] = (UINT8)(type >> 8);
+			ptr[1] = (UINT8)(type >> 0);
+			ptr[2] = (UINT8)(i + 1);
+			ptr[3] = 0;
+			storepos(ptr + 4, cdinfo->trk[i].pos);
+			ptr += 8;
+			trks++;
+		}
+	}
+	buf[0] = 1;
+	buf[1] = (UINT8)trks;
+	ptr[0] = 0x00;
+	ptr[1] = 0x10;
+	ptr[2] = 0xaa;
+	ptr[3] = 0;
+	storepos(ptr + 4, sxsi->totals);
+	return(trks * 8 + 10);
 }
 

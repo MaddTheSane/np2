@@ -35,12 +35,12 @@ void CPUCALL steptrap(UINT cs, UINT32 eip) {
 	if ((cs == 0x1300) && (eip == 0x1E97)) {
 		TRACEOUT(("-------- NECCD: function: %.2x", CPU_AL));
 	}
+	if (cs == 0xdf6) TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 #endif
 #if 1
-	if ((cs == 0x0929) && (eip == 0x1E97)) {
+	if ((cs == 0x0620) && (eip == 0x1E97)) {
 		TRACEOUT(("-------- NECCD: function: %.2x", CPU_AL));
 	}
-	if (cs == 0xdf6) TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 #endif
 
 	return;

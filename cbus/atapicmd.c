@@ -17,7 +17,7 @@
 #include	"atapicmd.h"
 #include	"sxsi.h"
 
-// #define	YUIDEBUG
+#define	YUIDEBUG
 
 
 // INQUIRY
@@ -115,6 +115,7 @@ static void atapi_cmd_read_capacity(IDEDRV drv);
 static void atapi_cmd_read(IDEDRV drv, UINT32 lba, UINT32 leng);
 static void atapi_cmd_mode_select(IDEDRV drv);
 static void atapi_cmd_mode_sense(IDEDRV drv);
+static void atapi_cmd_readsubch(IDEDRV drv);
 static void atapi_cmd_readtoc(IDEDRV drv);
 
 void atapicmd_a0(IDEDRV drv) {
@@ -192,6 +193,11 @@ void atapicmd_a0(IDEDRV drv) {
 	case 0x5a:		// mode sense(10)
 		TRACEOUT(("atapicmd: mode sense(10)"));
 		atapi_cmd_mode_sense(drv);
+		break;
+
+	case 0x42:
+		TRACEOUT(("atapicmd: read sub channel"));
+		atapi_cmd_readsubch(drv);
 		break;
 
 	case 0x43:		// read TOC
@@ -502,82 +508,57 @@ length_exceeded:
 	senddata(drv, cnt, leng);
 }
 
+
+static void atapi_cmd_readsubch(IDEDRV drv) {
+
+	SXSIDEV	sxsi;
+	UINT	leng;
+
+	sxsi = sxsi_getptr(drv->sxsidrv);
+	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
+		(!(sxsi->flag & SXSIFLAG_READY))) {
+		senderror(drv);
+		return;
+	}
+	leng = (drv->buf[7] << 8) + drv->buf[8];
+	switch(drv->buf[3]) {
+		case 0x01:			// CD-ROM current pos
+			ZeroMemory(drv->buf, 16);
+			drv->buf[4] = 0x01;
+			senddata(drv, 16, leng);
+			break;
+
+		default:
+			senderror(drv);
+			break;
+	}
+}
+
 static void atapi_cmd_readtoc(IDEDRV drv) {
 
+	SXSIDEV	sxsi;
 	UINT	leng;
 	UINT	format;
+	UINT	datasize;
+
+	sxsi = sxsi_getptr(drv->sxsidrv);
+	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
+		(!(sxsi->flag & SXSIFLAG_READY))) {
+		senderror(drv);
+		return;
+	}
 
 	leng = (drv->buf[7] << 8) + drv->buf[8];
 	format = (drv->buf[9] >> 6);
 	TRACEOUT(("atapi_cmd_readtoc fmt=%d leng=%d", format, leng));
 
 	switch (format) {
-#ifdef YUIDEBUG
 	case 0: // track info
-		// これ、PN専用。
-		// 後で ccd等からデータを作ろう
-		drv->buf[0x00] = 0x00;	drv->buf[0x01] = 0x3a;
-		drv->buf[0x02] = 0x01;
-		drv->buf[0x03] = 0x06;
-
-		drv->buf[0x04] = 0x00;	drv->buf[0x05] = 0x14;
-		drv->buf[0x06] = 0x01;
-		drv->buf[0x07] = 0x00;
-		drv->buf[0x08] = 0x00;
-		drv->buf[0x09] = 0x00;
-		drv->buf[0x0a] = 0x02;
-		drv->buf[0x0b] = 0x00;
-
-		drv->buf[0x0c] = 0x00;	drv->buf[0x0d] = 0x10;
-		drv->buf[0x0e] = 0x02;
-		drv->buf[0x0f] = 0x00;
-		drv->buf[0x10] = 0x00;
-		drv->buf[0x11] = 0x29;
-		drv->buf[0x12] = 0x1c;
-		drv->buf[0x13] = 0x34;
-
-		drv->buf[0x14] = 0x00;	drv->buf[0x15] = 0x10;
-		drv->buf[0x16] = 0x03;
-		drv->buf[0x17] = 0x00;
-		drv->buf[0x18] = 0x00;
-		drv->buf[0x19] = 0x29;
-		drv->buf[0x1a] = 0x20;
-		drv->buf[0x1b] = 0x43;
-
-		drv->buf[0x1c] = 0x00;	drv->buf[0x1d] = 0x10;
-		drv->buf[0x1e] = 0x04;
-		drv->buf[0x1f] = 0x00;
-		drv->buf[0x20] = 0x00;
-		drv->buf[0x21] = 0x2b;
-		drv->buf[0x22] = 0x07;
-		drv->buf[0x23] = 0x19;
-
-		drv->buf[0x24] = 0x00;	drv->buf[0x25] = 0x10;
-		drv->buf[0x26] = 0x05;
-		drv->buf[0x27] = 0x00;
-		drv->buf[0x28] = 0x00;
-		drv->buf[0x29] = 0x2e;
-		drv->buf[0x2a] = 0x39;
-		drv->buf[0x2b] = 0x1d;
-
-		drv->buf[0x2c] = 0x00;	drv->buf[0x2d] = 0x10;
-		drv->buf[0x2e] = 0x06;
-		drv->buf[0x2f] = 0x00;
-		drv->buf[0x30] = 0x00;
-		drv->buf[0x31] = 0x34;
-		drv->buf[0x32] = 0x0b;
-		drv->buf[0x33] = 0x13;
-
-		drv->buf[0x34] = 0x00;	drv->buf[0x35] = 0x10;
-		drv->buf[0x36] = 0xaa;
-		drv->buf[0x37] = 0x00;
-		drv->buf[0x38] = 0x00;
-		drv->buf[0x39] = 0x3b;
-		drv->buf[0x3a] = 0x1e;
-		drv->buf[0x3b] = 0x0b;
-		senddata(drv, 0x3c, leng);
+		datasize = sxsicd_gettocinfo(sxsi, drv->buf + 2);
+		drv->buf[0] = (UINT8)(datasize >> 8);
+		drv->buf[1] = (UINT8)(datasize >> 0);
+		senddata(drv, datasize + 2, leng);
 		break;
-#endif
 
 	case 1:	// multi session
 		ZeroMemory(drv->buf, 12);
