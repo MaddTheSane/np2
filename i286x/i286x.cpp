@@ -2761,8 +2761,6 @@ I286 _popf(void) {								// 9D: popf
 				je		irqcheck				// fast_intr
 				test	ah, 2
 				je		nextop
-				cmp		pic.ext_irq, 0
-				jne		nextop
 				mov		al, pic.pi[0].imr
 				mov		ah, pic.pi[1].imr
 				not		ax
@@ -3659,7 +3657,6 @@ I286 _into(void) {								// CE: into
 I286 _iret(void) {								// CF: iret
 
 		__asm {
-				call	extirq_pop
 				I286CLOCK(31)
 				mov		edi, SS_BASE
 				movzx	ebx, I286_SP
@@ -3689,8 +3686,6 @@ I286 _iret(void) {								// CF: iret
 				jne		irqcheck
 				test	I286_FLAG, I_FLAG
 				je		nextop
-				cmp		pic.ext_irq, 0
-				jne		nextop
 				mov		al, pic.pi[0].imr
 				mov		ah, pic.pi[1].imr
 				not		ax
@@ -4273,8 +4268,6 @@ I286 _sti(void) {								// FB: sti
 				setne	I286_TRAP
 
 				jne		nextopandexit			// fast_intr
-				cmp		pic.ext_irq, 0
-				jne		jmp_nextop
 				mov		al, pic.pi[0].imr
 				mov		ah, pic.pi[1].imr
 				not		ax

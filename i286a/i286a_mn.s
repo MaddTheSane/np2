@@ -1385,8 +1385,7 @@ into			CPUWORK	#4
 				mov		r6, #4
 				b		i286a_localint
 
-iret			bl		extirq_pop
-				ldrh	r1, [r9, #CPU_SP]
+iret			ldrh	r1, [r9, #CPU_SP]
 				ldr		r5, [r9, #CPU_SS_BASE]
 				CPUWORK	#31
 				add		r4, r1, #2
@@ -1686,7 +1685,7 @@ sti_set			orr		r8, r8, #I_FLAG
 				strneb	r1, [r9, #CPU_TRAP]
 				bne		sti_withirq
 		endif
-				PICEXISTINTR	sti_noirq
+				PICEXISTINTR
 				bne		sti_withirq
 sti_noirq		NEXT_OPCODE
 sti_pic			dcd		pic

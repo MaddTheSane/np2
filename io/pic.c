@@ -6,7 +6,6 @@
 
 static const _PICITEM def_master = {
 							0, {0, 0, 0, 0, 0, 0, 0, 0},
-							0, {0, 0, 0, 0, 0, 0, 0, 0},
 								{7, 6, 5, 4, 3, 2, 1, 0},
 								{0, 0x08, 0x00, 0},
 								0x7d, 0, 0, 0,
@@ -14,61 +13,13 @@ static const _PICITEM def_master = {
 
 static const _PICITEM def_slave = {
 							0, {0, 0, 0, 0, 0, 0, 0, 0},
-							0, {0, 0, 0, 0, 0, 0, 0, 0},
 								{7, 6, 5, 4, 3, 2, 1, 0},
 								{0, 0x10, 0x07, 0},
 								0x70, 0, 0, 0,
 								0, 0, 0, 0};
 
 
-// ------------------------------------------------------------ ext. interrupt
-
-// 外部でISRを待避する割り込み対策
-
-void extirq_push(void) {
-
-	PIC		p;
-
-	p = &pic;
-	if (!p->ext_irq) {
-		p->ext_irq = 1;
-
-		p->pi[0].levelsbak = p->pi[0].levels;
-		*(UINT32 *)(p->pi[0].levelbak+0) = *(UINT32 *)(p->pi[0].level+0);
-		*(UINT32 *)(p->pi[0].levelbak+4) = *(UINT32 *)(p->pi[0].level+4);
-		p->pi[0].isrbak = p->pi[0].isr;
-
-		p->pi[1].levelsbak = p->pi[1].levels;
-		*(UINT32 *)(p->pi[1].levelbak+0) = *(UINT32 *)(p->pi[1].level+0);
-		*(UINT32 *)(p->pi[1].levelbak+4) = *(UINT32 *)(p->pi[1].level+4);
-		p->pi[1].isrbak = p->pi[1].isr;
-	}
-}
-
-
-void extirq_pop(void) {
-
-	PIC		p;
-
-	p = &pic;
-	if (p->ext_irq) {
-		p->ext_irq = 0;
-
-		p->pi[0].levels = p->pi[0].levelsbak;
-		*(UINT32 *)(p->pi[0].level+0) = *(UINT32 *)(p->pi[0].levelbak+0);
-		*(UINT32 *)(p->pi[0].level+4) = *(UINT32 *)(p->pi[0].levelbak+4);
-		p->pi[0].isr = p->pi[0].isrbak;
-
-		p->pi[1].levels = p->pi[1].levelsbak;
-		*(UINT32 *)(p->pi[1].level+0) = *(UINT32 *)(p->pi[1].levelbak+0);
-		*(UINT32 *)(p->pi[1].level+4) = *(UINT32 *)(p->pi[1].levelbak+4);
-		p->pi[1].isr = p->pi[1].isrbak;
-//		TRACEOUT(("iret: extirq_pop"));
-	}
-}
-
-
-// ---------------------------
+// ----
 
 static void pic_rolpry(PICITEM pi) {
 
@@ -122,8 +73,8 @@ void pic_irq(void) {
 	p = &pic;
 
 	// 割込み許可で　要求あり？
-	if ((CPU_isEI) && (!p->ext_irq) &&
-		((p->pi[0].irr & (~p->pi[0].imr)) ||
+	if ((CPU_isEI) &&
+			((p->pi[0].irr & (~p->pi[0].imr)) ||
 			(p->pi[1].irr & (~p->pi[1].imr)))) {
 
 		// マスターの処理
@@ -162,9 +113,6 @@ void pic_irq(void) {
 		// マスタの割込
 		if (irq != sirq) {
 			if (targetbit) {
-				if (p->pi[0].ext & targetbit) {				// ver0.30
-					extirq_push();
-				}
 				p->pi[0].isr |= targetbit;
 				p->pi[0].irr &= ~targetbit;
 				p->pi[0].level[p->pi[0].levels++] = irq;
@@ -201,9 +149,6 @@ void pic_irq(void) {
 		// スレーヴの割込
 		if (targetbit) {
 			if (!(p->pi[0].icw[2] & targetbit)) {
-				if (p->pi[1].ext & targetbit) {				// ver0.30
-					extirq_push();
-				}
 				p->pi[1].isr |= targetbit;
 				p->pi[1].irr &= ~targetbit;
 				p->pi[1].level[p->pi[1].levels++] = irq;
@@ -276,14 +221,6 @@ void pic_resetirq(REG8 irq) {
 	pi->irr &= ~(1 << (irq & 7));
 }
 
-void pic_registext(REG8 irq) {
-
-	PICITEM		pi;
-
-	pi = pic.pi + ((irq >> 3) & 1);
-	pi->ext |= (1 << (irq & 7));
-}
-
 
 // ---- I/O
 
@@ -350,8 +287,7 @@ static void IOOUTCALL pic_o02(UINT port, REG8 dat) {
 	picp = &pic.pi[(port >> 3) & 1];
 	if (!picp->writeicw) {
 #if 1	// マスクのセットだけなら nevent_forceexit()をコールしない
-		if ((CPU_isDI) || (pic.ext_irq) ||
-			((picp->imr & dat) == picp->imr)) {
+		if ((CPU_isDI) || ((picp->imr & dat) == picp->imr)) {
 			picp->imr = dat;
 			return;
 		}
@@ -414,7 +350,6 @@ void pic_reset(void) {
 
 	pic.pi[0] = def_master;
 	pic.pi[1] = def_slave;
-	pic.ext_irq = 0;
 }
 
 void pic_bind(void) {

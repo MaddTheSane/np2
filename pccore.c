@@ -666,7 +666,7 @@ void pccore_exec(BOOL draw) {
 #endif
 		}
 
-#if 0 // ndef TRACE
+#if 1 // ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();

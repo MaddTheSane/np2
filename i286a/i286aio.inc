@@ -83,37 +83,30 @@ GRCG_TILE			equ		8
 ; ---- pic
 
 	IMPORT	pic
-	IMPORT	extirq_pop
 
 ; PI_levels			equ		0
 ; PI_level			equ		4
-; PI_levelsbak		equ		12
-; PI_levelbak		equ		16
-; PI_pry			equ		24
-; PI_icw			equ		32
-PI_IMR				equ		36
-; PI_ocw3			equ		37
-; PI_irr			equ		38
-; PI_ext			equ		39
-; PI_isr			equ		40
-; PI_isrbak			equ		41
-; PI_writeicw		equ		42
-; PI_padding		equ		43
-PI_SIZE				equ		44
+; PI_pry			equ		12
+; PI_icw			equ		20
+PI_IMR				equ		24
+; PI_ocw3			equ		25
+; PI_irr			equ		26
+; PI_ext			equ		27
+; PI_isr			equ		28
+; PI_isrbak			equ		29
+; PI_writeicw		equ		30
+; PI_padding		equ		31
+PI_SIZE				equ		32
 
 PIC_MASTER			equ		0
 PIC_SLAVE			equ		PI_SIZE
-PIC_EXTIRQ			equ		(PI_SIZE * 2)
 
 	MACRO
 $label	NOINTREXIT
 $label		tst		r8, #I_FLAG
 			moveq	pc, r11
-			ldrb	r1, [r0, #PIC_EXTIRQ]
 			ldr		r2, [r0, #(PIC_MASTER + PI_IMR)]
 			mov		r12, #(&ff << 24)
-			cmp		r1, #0
-			movne	pc, r11
 			ldr		r3, [r0, #(PIC_SLAVE + PI_IMR)]
 			eor		r0, r12, r2 lsl #24
 			tst		r0, r2 lsl #8
@@ -123,12 +116,9 @@ $label		tst		r8, #I_FLAG
 	MEND
 
 	MACRO
-$label	PICEXISTINTR	$noirq
-$label		ldrb	r1, [r0, #PIC_EXTIRQ]
-			ldr		r2, [r0, #(PIC_MASTER + PI_IMR)]
+$label	PICEXISTINTR
+$label		ldr		r2, [r0, #(PIC_MASTER + PI_IMR)]
 			mov		r12, #(&ff << 24)
-			cmp		r1, #0
-			bne		$noirq
 			ldr		r3, [r0, #(PIC_SLAVE + PI_IMR)]
 			eor		r0, r12, r2 lsl #24
 			tst		r0, r2 lsl #8

@@ -2311,7 +2311,6 @@ I286FN _iret(void) {						// CF:	iret
 
 	UINT	flag;
 
-	extirq_pop();
 	REGPOP0(I286_IP)
 	REGPOP0(I286_CS)
 	REGPOP0(flag)

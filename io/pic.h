@@ -3,9 +3,6 @@ typedef struct {
 	int		levels;
 	UINT8	level[8];
 
-	int		levelsbak;
-	UINT8	levelbak[8];
-
 	UINT8	pry[8];
 	UINT8	icw[4];
 
@@ -23,7 +20,6 @@ typedef struct {
 
 typedef struct {
 	_PICITEM	pi[2];
-	BYTE		ext_irq;
 } _PIC, *PIC;
 
 enum {
@@ -54,22 +50,17 @@ enum {
 	IRQ_INT6			= 0x0d
 };
 
-#define PICEXISTINTR	((!pic.ext_irq) &&							\
-						((pic.pi[0].irr & (~pic.pi[0].imr)) ||		\
-						(pic.pi[1].irr & (~pic.pi[1].imr))))
+#define PICEXISTINTR	((pic.pi[0].irr & (~pic.pi[0].imr)) ||		\
+						(pic.pi[1].irr & (~pic.pi[1].imr)))
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void extirq_push(void);
-void extirq_pop(void);
-
 void pic_irq(void);
 void pic_setirq(REG8 irq);
 void pic_resetirq(REG8 irq);
-void pic_registext(REG8 irq);
 
 void picmask(NEVENTITEM item);
 
