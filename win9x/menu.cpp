@@ -285,15 +285,16 @@ void xmenu_setsound(BYTE value) {
 	sysmng_update(SYS_UPDATESBOARD);
 	np2cfg.SOUND_SW = value;
 	hmenu = np2class_gethmenu(hWndMain);
-	CheckMenuItem(hmenu, IDM_NOSOUND, MFCHECK(value == 0));
-	CheckMenuItem(hmenu, IDM_PC9801_14, MFCHECK(value & 1));
-	CheckMenuItem(hmenu, IDM_PC9801_26K, MFCHECK(value & 2));
-	CheckMenuItem(hmenu, IDM_PC9801_86, MFCHECK(value & 4));
-	CheckMenuItem(hmenu, IDM_PC9801_118, MFCHECK(value & 8));
-	CheckMenuItem(hmenu, IDM_CHIBIOTO, MFCHECK(value & 0x10));
-	CheckMenuItem(hmenu, IDM_SPEAKBOARD, MFCHECK(value & 0x20));
-	CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(value & 0x40));
-	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value & 0x80));
+	CheckMenuItem(hmenu, IDM_NOSOUND, MFCHECK(value == 0x00));
+	CheckMenuItem(hmenu, IDM_PC9801_14, MFCHECK(value == 0x01));
+	CheckMenuItem(hmenu, IDM_PC9801_26K, MFCHECK(value == 0x02));
+	CheckMenuItem(hmenu, IDM_PC9801_86, MFCHECK(value == 0x04));
+	CheckMenuItem(hmenu, IDM_PC9801_26_86, MFCHECK(value == 0x06));
+	CheckMenuItem(hmenu, IDM_PC9801_86_CB, MFCHECK(value == 0x14));
+	CheckMenuItem(hmenu, IDM_PC9801_118, MFCHECK(value == 0x08));
+	CheckMenuItem(hmenu, IDM_SPEAKBOARD, MFCHECK(value == 0x20));
+	CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(value == 0x40));
+	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
 }
 
 void xmenu_setmotorflg(BYTE value) {

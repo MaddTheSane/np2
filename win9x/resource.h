@@ -263,9 +263,9 @@
 #define IDM_PC9801_14                   40045
 #define IDM_PC9801_26K                  40046
 #define IDM_PC9801_86                   40047
-#define IDM_PC9801_118                  40048
-#define IDM_PC9801_288                  40049
-#define IDM_CHIBIOTO                    40050
+#define IDM_PC9801_26_86                40048
+#define IDM_PC9801_86_CB                40049
+#define IDM_PC9801_118                  40050
 #define IDM_SPEAKBOARD                  40051
 #define IDM_SPARKBOARD                  40052
 #define IDM_AMD98                       40053

@@ -801,8 +801,9 @@ BEGIN
             MENUITEM "PC-9801-&14",                 IDM_PC9801_14
             MENUITEM "PC-9801-&26K",                IDM_PC9801_26K
             MENUITEM "PC-9801-8&6",                 IDM_PC9801_86
+            MENUITEM "PC-9801-26K + 86",            IDM_PC9801_26_86
+            MENUITEM "PC-9801-86 + &Chibi-oto",     IDM_PC9801_86_CB
             MENUITEM "PC-9801-11&8",                IDM_PC9801_118
-            MENUITEM "&Chibi-oto",                  IDM_CHIBIOTO
             MENUITEM "S&peak board",                IDM_SPEAKBOARD
             MENUITEM "Sp&ark board",                IDM_SPARKBOARD
             MENUITEM "&AMD-98",                     IDM_AMD98

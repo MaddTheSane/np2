@@ -85,13 +85,14 @@ void nevent_progress(void) {
 			}
 			item->flag |= NEVENT_SETEVENT;
 			item->flag &= ~(NEVENT_ENABLE);
+//			TRACEOUT(("event = %x", curid));
 		}
 	}
 	nevent.readyevents = eventnum;
 	I286_BASECLOCK = nextbase;
 	I286_REMCLOCK += nextbase;
 	nevent_execute();
-//	TRACEOUT((buf, "nextbase = %d (%d)", nextbase, I286_REMCLOCK));
+//	TRACEOUT(("nextbase = %d (%d)", nextbase, I286_REMCLOCK));
 }
 
 

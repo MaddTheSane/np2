@@ -2073,10 +2073,18 @@ I286FN _enter(void) {						// C8:	enter	DATA16, DATA8
 			bp = I286_BP;
 			I286_BP = I286_SP;
 			while(level--) {
+#if 1											// ‚È‚É‚â‚Á‚Ä‚ñ‚¾ƒ’ƒŒ
+				UINT16 val;
+				bp -= 2;
+				I286_SP -= 2;
+				val = i286_memoryread_w(bp + SS_BASE);
+				i286_memorywrite_w(I286_SP + SS_BASE, val);
+#else
 				UINT16 val = i286_memoryread_w(bp + SS_BASE);
 				i286_memorywrite_w(I286_SP + SS_BASE, val);
 				bp -= 2;
 				I286_SP -= 2;
+#endif
 			}
 			REGPUSH0(I286_BP)
 			I286_SP -= dimsize;
@@ -3075,7 +3083,7 @@ const I286OP i286op_repe[] = {
 			i286c_repe_cmpsw,				// A7:	repe cmpsw
 			_test_al_data8,					// A8:	test	al, DATA8
 			_test_ax_data16,				// A9:	test	ax, DATA16
-			i286c_rep_stosb,				// AA:	rep stosw
+			i286c_rep_stosb,				// AA:	rep stosb
 			i286c_rep_stosw,				// AB:	rep stosw
 			i286c_rep_lodsb,				// AC:	rep lodsb
 			i286c_rep_lodsw,				// AD:	rep lodsw
@@ -3420,7 +3428,7 @@ const I286OP i286op_repne[] = {
 			i286c_repne_cmpsw,				// A7:	repne cmpsw
 			_test_al_data8,					// A8:	test	al, DATA8
 			_test_ax_data16,				// A9:	test	ax, DATA16
-			i286c_rep_stosb,				// AA:	rep stosw
+			i286c_rep_stosb,				// AA:	rep stosb
 			i286c_rep_stosw,				// AB:	rep stosw
 			i286c_rep_lodsb,				// AC:	rep lodsb
 			i286c_rep_lodsw,				// AD:	rep lodsw

@@ -685,66 +685,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_NOSOUND:
-					xmenu_setsound(0);
+					xmenu_setsound(0x00);
 					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_PC9801_14:
-					xmenu_setsound(1);
+					xmenu_setsound(0x01);
 					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_PC9801_26K:
-					{
-						BYTE	sw;
-						sw = np2cfg.SOUND_SW;
-						if (sw & 4) {
-							sw &= 6;
-							sw ^= 2;
-						}
-						else {
-							sw = 2;
-						}
-						xmenu_setsound(sw);
-						update |= SYS_UPDATECFG;
-					}
+					xmenu_setsound(0x02);
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_PC9801_86:
-					{
-						BYTE	sw;
-						sw = np2cfg.SOUND_SW;
-						if (sw & 2) {
-							sw &= 6;
-							sw ^= 4;
-						}
-						else if (!(sw & 4)) {
-							sw = 4;
-						}
-						xmenu_setsound(sw);
-						update |= SYS_UPDATECFG;
-					}
+					xmenu_setsound(0x04);
+					update |= SYS_UPDATECFG;
+					break;
+
+				case IDM_PC9801_26_86:
+					xmenu_setsound(0x06);
+					update |= SYS_UPDATECFG;
+					break;
+
+				case IDM_PC9801_86_CB:
+					xmenu_setsound(0x14);
+					update |= SYS_UPDATECFG;
 					break;
 
 				case IDM_PC9801_118:
 					xmenu_setsound(8);
 					update |= SYS_UPDATECFG;
-					break;
-
-				case IDM_CHIBIOTO:
-					{
-						BYTE	sw;
-						sw = np2cfg.SOUND_SW;
-						if (sw & 4) {
-							sw &= 0x14;
-							sw ^= 0x10;
-						}
-						else {
-							sw = 0x14;
-						}
-						xmenu_setsound(sw);
-						update |= SYS_UPDATECFG;
-					}
 					break;
 
 				case IDM_SPEAKBOARD:

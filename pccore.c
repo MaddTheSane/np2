@@ -516,7 +516,7 @@ void pccore_exec(BOOL draw) {
 			i286_resetprefetch();
 		}
 
-#if 1	// ndef TRACE
+#ifndef TRACE
 		if (I286_REMCLOCK > 0) {
 			if (!(CPUTYPE & CPUTYPE_V30)) {
 				i286();
