@@ -1,3 +1,4 @@
+
 #define	NP2VIEW_MAX	8
 
 typedef struct {
@@ -26,9 +27,9 @@ enum {
 };
 
 typedef struct {
-	DWORD	type;
-	DWORD	arg;
-	DWORD	size;
+	UINT32	type;
+	UINT32	arg;
+	UINT32	size;
 	void	*ptr;
 } VIEWMEMBUF;
 
@@ -36,10 +37,10 @@ typedef struct {
 	HWND		hwnd;
 	VIEWMEMBUF	buf1;
 	VIEWMEMBUF	buf2;
-	DWORD		pos;
-	DWORD		maxline;
-	WORD		step;
-	WORD		mul;
+	UINT32		pos;
+	UINT32		maxline;
+	UINT16		step;
+	UINT16		mul;
 	UINT8		alive;
 	UINT8		type;
 	UINT8		lock;

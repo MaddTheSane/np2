@@ -47,15 +47,15 @@ enum {
 
 // #define	STATSAVEMAX		10
 
-extern	const char	szAppCaption[];
+extern	const TCHAR	szAppCaption[];
 extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
 
-extern	char		modulefile[MAX_PATH];
-extern	char		fddfolder[MAX_PATH];
-extern	char		hddfolder[MAX_PATH];
-extern	char		bmpfilefolder[MAX_PATH];
-extern	char		mimpideffile[MAX_PATH];
+extern	TCHAR		modulefile[MAX_PATH];
+extern	TCHAR		fddfolder[MAX_PATH];
+extern	TCHAR		hddfolder[MAX_PATH];
+extern	TCHAR		bmpfilefolder[MAX_PATH];
+extern	TCHAR		mimpideffile[MAX_PATH];
 

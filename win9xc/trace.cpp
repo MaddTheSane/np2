@@ -47,30 +47,35 @@ enum {
 	IDM_TRACECL
 };
 
-static const char	ProgTitle[] = "console";
-static const char	ClassName[] = "TRACE-console";
-static const char	ClassEdit[] = "EDIT";
-static const char	trace1[] = "TRACE";
-static const char	trace2[] = "VERBOSE";
-static const char	traceen[] = "Enable";
-static const char	tracefh[] = "File out";
-static const char	tracecl[] = "Clear";
-static const char	crlf[] = "\r\n";
+static const TCHAR ProgTitle[] = _T("console");
+static const TCHAR ClassName[] = _T("TRACE-console");
+static const TCHAR ClassEdit[] = _T("EDIT");
+static const TCHAR trace1[] = _T("TRACE");
+static const TCHAR trace2[] = _T("VERBOSE");
+static const TCHAR traceen[] = _T("Enable");
+static const TCHAR tracefh[] = _T("File out");
+static const TCHAR tracecl[] = _T("Clear");
+static const TCHAR fontface[] = _T(VIEW_TEXT);
+static const TCHAR crlf[] = _T("\r\n");
 
 static	TRACEWIN	tracewin;
 static	HWND		hView = NULL;
 static	HFONT		hfView = NULL;
 static	HBRUSH		hBrush = NULL;
-static	char		szView[VIEW_BUFFERSIZE];
+static	int			viewpos;
+static	int			viewleng;
+static	TCHAR		viewbuf[VIEW_BUFFERSIZE * 2];
 static	TRACECFG	tracecfg;
+static	int			devpos;
+static	char		devstr[256];
 
-static const char	np2trace[] = "np2trace.ini";
-static const char	inititle[] = "TRACE";
-static const INITBL	initbl[4] = {
-			{"posx",	INITYPE_SINT32,	&tracecfg.posx,		0},
-			{"posy",	INITYPE_SINT32,	&tracecfg.posy,		0},
-			{"width",	INITYPE_SINT32,	&tracecfg.width,	0},
-			{"height",	INITYPE_SINT32,	&tracecfg.height,	0}};
+static const TCHAR np2trace[] = _T("np2trace.ini");
+static const TCHAR inititle[] = _T("TRACE");
+static const PFTBL initbl[4] = {
+			PFVAL("posx",	PFTYPE_SINT32,	&tracecfg.posx),
+			PFVAL("posy",	PFTYPE_SINT32,	&tracecfg.posy),
+			PFVAL("width",	PFTYPE_SINT32,	&tracecfg.width),
+			PFVAL("height",	PFTYPE_SINT32,	&tracecfg.height)};
 
 static void View_ScrollToBottom(HWND hWnd) {
 
@@ -83,33 +88,48 @@ static void View_ScrollToBottom(HWND hWnd) {
 
 static void View_ClrString(void) {
 
-	szView[0] = '\0';
-	SetWindowText(hView, szView);
+	viewpos = 0;
+	viewleng = 0;
+	viewbuf[0] = '\0';
+	SetWindowText(hView, viewbuf);
 }
 
-static void View_AddString(const char *lpszString) {
+static void View_AddString(const TCHAR *string) {
 
-	int		len, vlen;
-	char	*p;
+	int		slen;
+	int		vpos;
+	int		vlen;
+	TCHAR	c;
 
-	len = strlen(lpszString);
-	if ((!len) || ((len + 3) > VIEW_BUFFERSIZE)) {
+	slen = lstrlen(string);
+	if ((slen == 0) || ((slen + 3) > VIEW_BUFFERSIZE)) {
 		return;
 	}
-	vlen = strlen(szView);
-	if ((vlen + len + 3) > VIEW_BUFFERSIZE) {
-		p = szView;
-		while(*p) {
+	vpos = viewpos;
+	vlen = viewleng;
+	if ((vpos + vlen + slen + 3) > (VIEW_BUFFERSIZE * 2)) {
+		while(vlen > 0) {
 			vlen--;
-			if ((*p++ == 0x0a) && ((vlen + len + 3) <= VIEW_BUFFERSIZE)) {
+			c = viewbuf[vpos++];
+			if ((c == 0x0a) && ((vlen + slen + 3) <= VIEW_BUFFERSIZE)) {
 				break;
 			}
 		}
-		strcpy(szView, p);
+		if (vpos >= VIEW_BUFFERSIZE) {
+			if (vlen) {
+				CopyMemory(viewbuf, viewbuf + vpos, vlen * sizeof(TCHAR));
+			}
+			vpos = 0;
+			viewpos = 0;
+		}
 	}
-	strcat(szView, lpszString);
-	strcat(szView, crlf);
-	SetWindowText(hView, szView);
+	CopyMemory(viewbuf + vpos + vlen, string, slen * sizeof(TCHAR));
+	vlen += slen;
+	viewbuf[vpos + vlen + 0] = '\r';
+	viewbuf[vpos + vlen + 1] = '\n';
+	viewbuf[vpos + vlen + 2] = '\0';
+	viewleng = vlen + 2;
+	SetWindowText(hView, viewbuf + vpos);
 	View_ScrollToBottom(hView);
 }
 
@@ -117,7 +137,7 @@ static void View_AddString(const char *lpszString) {
 // ----
 
 #if defined(FILEBUFSIZE)
-static	char	filebuf[FILEBUFSIZE];
+static	TCHAR	filebuf[FILEBUFSIZE];
 static	UINT32	filebufpos;
 #endif
 
@@ -143,7 +163,7 @@ static void trfh_close(void) {
 	}
 }
 
-static void trfh_open(const char *fname) {
+static void trfh_open(const TCHAR *fname) {
 
 	trfh_close();
 	tracewin.fh = file_create(fname);
@@ -152,11 +172,11 @@ static void trfh_open(const char *fname) {
 #endif
 }
 
-static void trfh_add(const char *buf) {
+static void trfh_add(const TCHAR *buf) {
 
 	UINT	size;
 
-	size = strlen(buf);
+	size = lstrlen(buf);
 #if defined(FILEBUFSIZE)
 	while(size) {
 		UINT pos = filebufpos & (FILEBUFSIZE - 1);
@@ -226,7 +246,7 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 			hfView = CreateFont(VIEW_SIZE, 0, 0, 0, 0, 0, 0, 0, 
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, VIEW_TEXT);
+					DEFAULT_QUALITY, FIXED_PITCH, fontface);
 			if (!hfView) {
 				break;
 			}
@@ -264,7 +284,7 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 						trfh_close();
 					}
 					else {
-						trfh_open("traceout.txt");
+						trfh_open(_T("traceout.txt"));
 					}
 					hmenu = GetSystemMenu(hWnd, FALSE);
 					CheckMenuItem(hmenu, IDM_TRACEFH,
@@ -347,6 +367,7 @@ void trace_init(void) {
 
 	HWND	hwnd;
 
+	ZeroMemory(&tracewin, sizeof(tracewin));
 	if (!hPrev) {
 		WNDCLASS wc;
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -358,20 +379,18 @@ void trace_init(void) {
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		wc.lpszMenuName = NULL;
-		wc.lpszClassName = (LPCSTR)ClassName;
+		wc.lpszClassName = (LPCTSTR)ClassName;
 		if (!RegisterClass(&wc)) {
 			return;
 		}
 	}
 
 #if 1
-	tracewin.en = 0;
-	tracewin.fh = FILEH_INVALID;
+	tracewin.en = 4;
 #else
 	tracewin.en = 0;
-	tracewin.fh = FILEH_INVALID;
-	trfh_open("traces.txt");
 #endif
+	tracewin.fh = FILEH_INVALID;
 
 	tracecfg.posx = CW_USEDEFAULT;
 	tracecfg.posy = CW_USEDEFAULT;
@@ -409,13 +428,20 @@ void trace_fmt(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;
-	char	buf[0x1000];
+	TCHAR	buf[0x1000];
 
 	en = (tracewin.en & 1) &&
 		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
 	if (en) {
 		va_start(ap, fmt);
+#if defined(_UNICODE)
+		TCHAR cnvfmt[0x800];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
+												cnvfmt, NELEMENTS(cnvfmt));
+		vswprintf(buf, cnvfmt, ap);
+#else
 		vsprintf(buf, fmt, ap);
+#endif
 		va_end(ap);
 		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
@@ -431,13 +457,20 @@ void trace_fmt2(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;
-	char	buf[0x1000];
+	TCHAR	buf[0x1000];
 
 	en = (tracewin.en & 2) &&
 		((tracewin.en & 4) || (tracewin.fh != FILEH_INVALID));
 	if (en) {
 		va_start(ap, fmt);
+#if defined(_UNICODE)
+		TCHAR cnvfmt[0x800];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
+												cnvfmt, NELEMENTS(cnvfmt));
+		vswprintf(buf, cnvfmt, ap);
+#else
 		vsprintf(buf, fmt, ap);
+#endif
 		va_end(ap);
 		if ((tracewin.en & 4) && (hView)) {
 			View_AddString(buf);
@@ -448,6 +481,5 @@ void trace_fmt2(const char *fmt, ...) {
 		}
 	}
 }
-
 #endif
 

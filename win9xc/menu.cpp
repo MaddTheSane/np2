@@ -11,7 +11,7 @@
 
 // ----
 
-static const char smenu_memdump[] = "&Memory Dump";
+static const TCHAR smenu_memdump[] = _T("&Memory Dump");
 
 void sysmenu_initialize(void) {
 
@@ -28,28 +28,28 @@ void sysmenu_initialize(void) {
 
 // ----
 
-static const char str_i286save[] = "&i286 save";
+static const TCHAR str_i286save[] = _T("&i286 save");
 #if defined(SUPPORT_WAVEREC)
-static const char str_waverec[] = "&Wave Record";
+static const TCHAR str_waverec[] = _T("&Wave Record");
 #endif
 #if defined(SUPPORT_SCSI)
-static const char xmenu_scsi[] = "SCSI #%d";
-static const char xmenu_open[] = "&Open...";
-static const char xmenu_remove[] = "&Remove";
+static const TCHAR xmenu_scsi[] = _T("SCSI #%d");
+static const TCHAR xmenu_open[] = _T("&Open...");
+static const TCHAR xmenu_remove[] = _T("&Remove");
 #endif
 
 #if defined(SUPPORT_SCSI)
 static void addscsimenu(HMENU hMenu, UINT drv, UINT16 open, UINT16 eject) {
 
 	HMENU	hSubMenu;
-	char	buf[16];
+	TCHAR	buf[16];
 
 	hSubMenu = CreatePopupMenu();
 	AppendMenu(hSubMenu, MF_STRING, open, xmenu_open);
 	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
 	AppendMenu(hSubMenu, MF_STRING, eject, xmenu_remove);
 
-	SPRINTF(buf, xmenu_scsi, drv);
+	wsprintf(buf, xmenu_scsi, drv);
 	AppendMenu(hMenu, MF_POPUP, (UINT32)hSubMenu, buf);
 }
 #endif

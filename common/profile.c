@@ -265,6 +265,7 @@ static BRESULT seakey(PFILEH hdl, PFPOS *pfp, const OEMCHAR *app,
 static BRESULT replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
 
 	UINT	cnt;
+	UINT	size;
 	UINT	newsize;
 	OEMCHAR	*p;
 	OEMCHAR	*q;
@@ -276,21 +277,21 @@ static BRESULT replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
 	}
 	cnt = hdl->size - size1;
 	if (size1 < size2) {
-		newsize = hdl->size + size2 - size1;
-		if (newsize > hdl->buffers) {
-			newsize = (newsize & (PFBUFSIZE - 1)) + PFBUFSIZE;
+		size = hdl->size + size2 - size1;
+		if (size > hdl->buffers) {
+			newsize = (size & (~(PFBUFSIZE - 1))) + PFBUFSIZE;
 			p = (OEMCHAR *)_MALLOC(newsize * sizeof(OEMCHAR), "profile");
 			if (p == NULL) {
 				return(FAILURE);
 			}
-			CopyMemory(p, hdl->buffer, hdl->buffers * sizeof(OEMCHAR));
 			if (hdl->buffer) {
+				CopyMemory(p, hdl->buffer, hdl->buffers * sizeof(OEMCHAR));
 				_MFREE(hdl->buffer);
 			}
 			hdl->buffer = p;
 			hdl->buffers = newsize;
 		}
-		hdl->size = newsize;
+		hdl->size = size;
 		if (cnt) {
 			p = hdl->buffer + size1;
 			q = hdl->buffer + size2;
@@ -363,7 +364,7 @@ static PFILEH registfile(FILEH fh) {
 		goto rf_err1;
 	}
 	size = (size - hdrsize) / srcwidth;
-	newsize = (size & (PFBUFSIZE - 1)) + PFBUFSIZE;
+	newsize = (size & (~(PFBUFSIZE - 1))) + PFBUFSIZE;
 	buf = (OEMCHAR *)_MALLOC(newsize * srcwidth, "profile");
 	if (buf == NULL) {
 		goto rf_err1;
@@ -512,7 +513,7 @@ BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
 		}
 		buf = hdl->buffer + pfp.pos;
 		*buf++ = '[';
-		CopyMemory(buf, app, pfp.applen);
+		CopyMemory(buf, app, pfp.applen * sizeof(OEMCHAR));
 		buf += pfp.applen;
 		*buf++ = ']';
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
@@ -535,10 +536,10 @@ BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
 		return(FAILURE);
 	}
 	buf = hdl->buffer + pfp.pos;
-	CopyMemory(buf, key, pfp.keylen);
+	CopyMemory(buf, key, pfp.keylen * sizeof(OEMCHAR));
 	buf += pfp.keylen;
 	*buf++ = '=';
-	CopyMemory(buf, data, datalen);
+	CopyMemory(buf, data, datalen * sizeof(OEMCHAR));
 	buf += datalen;
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
 	*buf++ = '\r';

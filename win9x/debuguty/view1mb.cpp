@@ -9,11 +9,11 @@
 #include	"cpucore.h"
 
 
-static void set_viewseg(HWND hwnd, NP2VIEW_T *view, WORD seg) {
+static void set_viewseg(HWND hwnd, NP2VIEW_T *view, UINT16 seg) {
 
-	DWORD	pos;
+	UINT32	pos;
 
-	pos = (DWORD)seg;
+	pos = (UINT32)seg;
 	if (view->pos != pos) {
 		view->pos = pos;
 		viewcmn_setvscroll(hwnd, view);
@@ -26,10 +26,10 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	int		x;
 	LONG	y;
-	DWORD	off;
-	BYTE	*p;
-	BYTE	buf[16];
-	OEMCHAR	str[16];
+	UINT32	off;
+	UINT8	*p;
+	UINT8	buf[16];
+	TCHAR	str[16];
 	HFONT	hfont;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
@@ -48,7 +48,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			else {
 				view->buf1.type = ALLOCTYPE_1MB;
 				viewmem_read(&view->dmem, 0,
-										(BYTE *)view->buf1.ptr, 0x10fff0);
+										(UINT8 *)view->buf1.ptr, 0x10fff0);
 			}
 			viewcmn_putcaption(view);
 		}
@@ -56,10 +56,10 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	off = (view->pos) << 4;
 	for (y=0; y<rc->bottom && off<0x10fff0; y+=16, off+=16) {
-		OEMSPRINTF(str, OEMTEXT("%08x"), off);
+		wsprintf(str, _T("%08x"), off);
 		TextOut(hdc, 0, y, str, 8);
 		if (view->lock) {
-			p = (BYTE *)view->buf1.ptr;
+			p = (UINT8 *)view->buf1.ptr;
 			p += off;
 		}
 		else {
@@ -71,7 +71,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			str[1] = viewcmn_hex[*p & 15];
 			str[2] = 0;
 			p++;
-			TextOut(hdc, (10 + x*3)*8, y, str, 2);
+			TextOut(hdc, (10 + x * 3) * 8, y, str, 2);
 		}
 	}
 

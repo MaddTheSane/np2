@@ -9,7 +9,7 @@
 #include	"cpucore.h"
 
 
-static void set_viewseg(HWND hwnd, NP2VIEW_T *view, WORD seg) {
+static void set_viewseg(HWND hwnd, NP2VIEW_T *view, UINT16 seg) {
 
 	if (view->seg != seg) {
 		view->seg = seg;
@@ -22,11 +22,11 @@ static void viewseg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	int		x;
 	LONG	y;
-	DWORD	mad;
-	DWORD	off;
-	BYTE	*p;
-	BYTE	buf[16];
-	OEMCHAR	str[16];
+	UINT32	mad;
+	UINT32	off;
+	UINT8	*p;
+	UINT8	buf[16];
+	TCHAR	str[16];
 	HFONT	hfont;
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
@@ -37,7 +37,7 @@ static void viewseg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	hfont = (HFONT)SelectObject(hdc, hfont);
 
 	off = (view->pos) << 4;
-	mad = (((DWORD)view->seg) << 4) + off;
+	mad = (((UINT32)view->seg) << 4) + off;
 
 	if (view->lock) {
 		if ((view->buf1.type != ALLOCTYPE_SEG) ||
@@ -50,17 +50,17 @@ static void viewseg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 				view->buf1.type = ALLOCTYPE_SEG;
 				view->buf1.arg = view->seg;
 				viewmem_read(&view->dmem, view->buf1.arg << 4,
-											(BYTE *)view->buf1.ptr, 0x10000);
+											(UINT8 *)view->buf1.ptr, 0x10000);
 			}
 			viewcmn_putcaption(view);
 		}
 	}
 
 	for (y=0; y<rc->bottom && off<0x10000; y+=16, off+=16) {
-		OEMSPRINTF(str, OEMTEXT("%04x:%04x"), view->seg, off);
+		wsprintf(str, _T("%04x:%04x"), view->seg, off);
 		TextOut(hdc, 0, y, str, 9);
 		if (view->lock) {
-			p = (BYTE *)view->buf1.ptr;
+			p = (UINT8 *)view->buf1.ptr;
 			p += off;
 		}
 		else {
@@ -136,7 +136,7 @@ void viewseg_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 
 			case VIEWMODE_1MB:
 				if (dst->pos < 0x10000) {
-					dst->seg = (WORD)dst->pos;
+					dst->seg = (UINT16)dst->pos;
 				}
 				else {
 					dst->seg = 0xffff;
@@ -160,3 +160,4 @@ void viewseg_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 	dst->mul = 1;
 	dst->pos = 0;
 }
+

@@ -47,7 +47,7 @@ typedef struct {
 	UINT32	attr;
 	DOSDATE	date;
 	DOSTIME	time;
-	OEMCHAR	path[MAX_PATH];
+	TCHAR	path[MAX_PATH];
 } FLINFO;
 
 
@@ -59,41 +59,41 @@ extern "C" {
 void dosio_init(void);
 void dosio_term(void);
 											// ファイル操作
-FILEH DOSIOCALL file_open(const OEMCHAR *path);
-FILEH DOSIOCALL file_open_rb(const OEMCHAR *path);
-FILEH DOSIOCALL file_create(const OEMCHAR *path);
+FILEH DOSIOCALL file_open(const TCHAR *path);
+FILEH DOSIOCALL file_open_rb(const TCHAR *path);
+FILEH DOSIOCALL file_create(const TCHAR *path);
 long DOSIOCALL file_seek(FILEH handle, long pointer, int method);
 UINT DOSIOCALL file_read(FILEH handle, void *data, UINT length);
 UINT DOSIOCALL file_write(FILEH handle, const void *data, UINT length);
 short DOSIOCALL file_close(FILEH handle);
 UINT DOSIOCALL file_getsize(FILEH handle);
 short DOSIOCALL file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime);
-short DOSIOCALL file_delete(const OEMCHAR *path);
-short DOSIOCALL file_attr(const OEMCHAR *path);
-short DOSIOCALL file_dircreate(const OEMCHAR *path);
+short DOSIOCALL file_delete(const TCHAR *path);
+short DOSIOCALL file_attr(const TCHAR *path);
+short DOSIOCALL file_dircreate(const TCHAR *path);
 
 											// カレントファイル操作
-void DOSIOCALL file_setcd(const OEMCHAR *exepath);
-OEMCHAR * DOSIOCALL file_getcd(const OEMCHAR *path);
-FILEH DOSIOCALL file_open_c(const OEMCHAR *path);
-FILEH DOSIOCALL file_open_rb_c(const OEMCHAR *path);
-FILEH DOSIOCALL file_create_c(const OEMCHAR *path);
-short DOSIOCALL file_delete_c(const OEMCHAR *path);
-short DOSIOCALL file_attr_c(const OEMCHAR *path);
+void DOSIOCALL file_setcd(const TCHAR *exepath);
+TCHAR * DOSIOCALL file_getcd(const TCHAR *path);
+FILEH DOSIOCALL file_open_c(const TCHAR *path);
+FILEH DOSIOCALL file_open_rb_c(const TCHAR *path);
+FILEH DOSIOCALL file_create_c(const TCHAR *path);
+short DOSIOCALL file_delete_c(const TCHAR *path);
+short DOSIOCALL file_attr_c(const TCHAR *path);
 
-FLISTH DOSIOCALL file_list1st(const OEMCHAR *dir, FLINFO *fli);
+FLISTH DOSIOCALL file_list1st(const TCHAR *dir, FLINFO *fli);
 BRESULT DOSIOCALL file_listnext(FLISTH hdl, FLINFO *fli);
 void DOSIOCALL file_listclose(FLISTH hdl);
 
 #define	file_cpyname(a, b, c)	milstr_ncpy(a, b, c)
 #define	file_catname(a, b, c)	milstr_ncat(a, b, c)
 #define	file_cmpname(a, b)		milstr_cmp(a, b)
-OEMCHAR * DOSIOCALL file_getname(const OEMCHAR *path);
-void DOSIOCALL file_cutname(OEMCHAR *path);
-OEMCHAR * DOSIOCALL file_getext(const OEMCHAR *path);
-void DOSIOCALL file_cutext(OEMCHAR *path);
-void DOSIOCALL file_cutseparator(OEMCHAR *path);
-void DOSIOCALL file_setseparator(OEMCHAR *path, int maxlen);
+TCHAR * DOSIOCALL file_getname(const TCHAR *path);
+void DOSIOCALL file_cutname(TCHAR *path);
+TCHAR * DOSIOCALL file_getext(const TCHAR *path);
+void DOSIOCALL file_cutext(TCHAR *path);
+void DOSIOCALL file_cutseparator(TCHAR *path);
+void DOSIOCALL file_setseparator(TCHAR *path, int maxlen);
 
 #ifdef __cplusplus
 }

@@ -52,14 +52,11 @@ static void vircalendar(HWND hWnd, BOOL disp) {
 	EnableWindow(GetDlgItem(hWnd, IDC_SETNOW), disp);
 }
 
-static UINT32 getbcd(const OEMCHAR *str, int len) {
+static UINT8 getbcd(const OEMCHAR *str, int len) {
 
-	UINT32	ret;
-	UINT	c;
+	UINT	ret;
+	OEMCHAR	c;
 
-	if (!(*str)) {
-		return(0xff);
-	}
 	ret = 0;
 	while(len--) {
 		c = *str++;
@@ -70,9 +67,9 @@ static UINT32 getbcd(const OEMCHAR *str, int len) {
 			return(0xff);
 		}
 		ret <<= 4;
-		ret |= (UINT8)(c - '0');
+		ret |= (UINT)(c - '0');
 	}
-	return(ret);
+	return((UINT8)ret);
 }
 
 LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
@@ -110,7 +107,7 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					for (i=0; i<6; i++) {
 						GetDlgItemText(hWnd, vircal[i].res,
 													work, NELEMENTS(work));
-						b = (UINT8)getbcd(work, 2);
+						b = getbcd(work, 2);
 						if ((b >= vircal[i].min) && (b <= vircal[i].max)) {
 							if (i == 1) {
 								b = ((b & 0x10) * 10) + (b << 4);

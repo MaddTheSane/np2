@@ -6,18 +6,18 @@
 #endif
 
 typedef struct {
-const char	*title;
-const char	*ext;
-const char	*filter;
+const TCHAR	*title;
+const TCHAR	*ext;
+const TCHAR	*filter;
 	int		defindex;
 } FILESEL;
 
-extern const char str_int0[];
-extern const char str_int1[];
-extern const char str_int2[];
-extern const char str_int4[];
-extern const char str_int5[];
-extern const char str_int6[];
+extern const TCHAR str_int0[];
+extern const TCHAR str_int1[];
+extern const TCHAR str_int2[];
+extern const TCHAR str_int4[];
+extern const TCHAR str_int5[];
+extern const TCHAR str_int6[];
 
 #define	SetDlgItemCheck(a, b, c)	\
 			SendDlgItemMessage((a), (b), BM_SETCHECK, (c), 0)
@@ -39,14 +39,14 @@ extern const char str_int6[];
 
 
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
-											char *path, UINT size, int *ro);
+											TCHAR *path, UINT size, int *ro);
 BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
-													char *path, UINT size);
+													TCHAR *path, UINT size);
 BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
-													char *path, UINT size);
+													TCHAR *path, UINT size);
 
-void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items);
-void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items);
+void dlgs_setliststr(HWND hWnd, UINT res, const TCHAR **item, UINT items);
+void dlgs_setlistuint32(HWND hWnd, UINT res, const UINT32 *item, UINT items);
 
-void dlgs_drawbmp(HDC hdc, BYTE *bmp);
+void dlgs_drawbmp(HDC hdc, UINT8 *bmp);
 

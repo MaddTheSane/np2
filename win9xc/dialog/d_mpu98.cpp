@@ -20,37 +20,38 @@ extern	COMMNG	cm_mpu98;
 }
 #endif
 
-static const char *mpuinterrupt[4] = {str_int0, str_int1, str_int2, str_int5};
+static const TCHAR *mpuinterrupt[4] =
+									{str_int0, str_int1, str_int2, str_int5};
 
-static	BYTE	mpu = 0;
+static	UINT8	mpu = 0;
 
 
-static void setmpuiopara(HWND hWnd, WORD res, BYTE value) {
+static void setmpuiopara(HWND hWnd, UINT16 res, UINT8 value) {
 
 	SendDlgItemMessage(hWnd, res, CB_SETCURSEL,
 									(WPARAM)((value >> 4) & 15), (LPARAM)0);
 }
 
-static BYTE getmpuio(HWND hWnd, WORD res) {
+static UINT8 getmpuio(HWND hWnd, UINT16 res) {
 
-	char	work[8];
+	TCHAR	work[8];
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	return((milstr_solveHEX(work) >> 6) & 0xf0);
 }
 
-static void setmpuintpara(HWND hWnd, WORD res, BYTE value) {
+static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {
 
 	SendDlgItemMessage(hWnd, res, CB_SETCURSEL,
 									(WPARAM)(value & 3), (LPARAM)0);
 }
 
-static BYTE getmpuint(HWND hWnd, WORD res) {
+static UINT8 getmpuint(HWND hWnd, UINT16 res) {
 
-	char	work[8];
-	BYTE	ret;
+	TCHAR	work[8];
+	UINT8	ret;
 
-	GetDlgItemText(hWnd, res, work, sizeof(work));
+	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
 	ret = work[3] - '0';
 	if (ret >= 3) {
 		ret = 3;
@@ -58,7 +59,7 @@ static BYTE getmpuint(HWND hWnd, WORD res) {
 	return(ret);
 }
 
-static void setmpujmp(HWND hWnd, BYTE value, BYTE bit) {
+static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
 
 	if ((mpu ^ value) & bit) {
 		mpu &= ~bit;
@@ -73,7 +74,7 @@ static void setmpujmp(HWND hWnd, BYTE value, BYTE bit) {
 static void mpucreate(HWND hWnd) {
 
 	UINT	i;
-	char	buf[8];
+	TCHAR	buf[8];
 	HWND	sub;
 
 	mpu = np2cfg.mpuopt;
@@ -108,7 +109,7 @@ static void mpuupdate(HWND hWnd) {
 
 LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	BYTE	b, bit;
+	UINT8	b, bit;
 	RECT	rect1;
 	RECT	rect2;
 	POINT	p;
@@ -163,7 +164,7 @@ LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 															NULL, TRUE);
 					}
 					else if ((p.x >= 9) && (p.x < 13)) {
-						b = (BYTE)(12 - p.x);
+						b = (UINT8)(12 - p.x);
 						if ((mpu ^ b) & 3) {
 							mpu &= ~0x3;
 							mpu |= b;

@@ -43,16 +43,17 @@ static BOOL workclockrenewal(void) {
 
 void sysmng_updatecaption(void) {
 
-	char	title[256];
-	char	work[32];
+	TCHAR	title[256];
+	TCHAR	work[32];
 
 	if (workclockrenewal()) {
-		milstr_ncpy(title, szAppCaption, sizeof(title));
-		SPRINTF(work, " - %u.%1uFPS", workclock.fps / 10, workclock.fps % 10);
+		milstr_ncpy(title, szAppCaption, NELEMENTS(title));
+		wsprintf(work, _T(" - %u.%1uFPS"),
+									workclock.fps / 10, workclock.fps % 10);
 		milstr_ncat(title, work, sizeof(title));
-		SPRINTF(work, " %2u.%03uMHz",
+		wsprintf(work, _T(" %2u.%03uMHz"),
 								workclock.khz / 1000, workclock.khz % 1000);
-		milstr_ncat(title, work, sizeof(title));
+		milstr_ncat(title, work, NELEMENTS(title));
 		SetWindowText(hWndMain, title);
 	}
 }

@@ -18,6 +18,7 @@ CFG=np2c - Win32 Debug
 !MESSAGE 選択可能なﾋﾞﾙﾄﾞ ﾓｰﾄﾞ:
 !MESSAGE 
 !MESSAGE "np2c - Win32 Release" ("Win32 (x86) Application" 用)
+!MESSAGE "np2c - Win32 Unicode" ("Win32 (x86) Application" 用)
 !MESSAGE "np2c - Win32 Trap" ("Win32 (x86) Application" 用)
 !MESSAGE "np2c - Win32 Debug" ("Win32 (x86) Application" 用)
 !MESSAGE 
@@ -55,6 +56,32 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386
+
+!ELSEIF  "$(CFG)" == "np2c - Win32 Unicode"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Unicode"
+# PROP BASE Intermediate_Dir "Unicode"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\bin"
+# PROP Intermediate_Dir "..\obj\np2curel"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I "..\\" /I "..\common" /I "..\i286c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "TRACE" /YX /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dxguid.lib DSOUND.LIB winmm.lib comctl32.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np2cu.exe"
 
 !ELSEIF  "$(CFG)" == "np2c - Win32 Trap"
 
@@ -113,6 +140,7 @@ LINK32=link.exe
 # Begin Target
 
 # Name "np2c - Win32 Release"
+# Name "np2c - Win32 Unicode"
 # Name "np2c - Win32 Trap"
 # Name "np2c - Win32 Debug"
 # Begin Group "Source Files"
@@ -832,6 +860,10 @@ SOURCE=.\NP2.RC
 # Begin Source File
 
 SOURCE=.\NP2ARG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\OEMTEXT.CPP
 # End Source File
 # Begin Source File
 

@@ -201,7 +201,7 @@ const PFTBL	*pterm;
 				inirdargs16(work, p);
 				break;
 
-			case PFTYPE_ARGH8:
+			case PFTYPE_BIN:
 				GetPrivateProfileString(title, p->item, str_null,
 												work, NELEMENTS(work), path);
 				inirdargh8(work, p);
@@ -291,7 +291,7 @@ const OEMCHAR	*set;
 					set = (*((UINT8 *)p->value))?str_true:str_false;
 					break;
 
-				case PFTYPE_ARGH8:
+				case PFTYPE_BIN:
 					iniwrsetargh8(work, NELEMENTS(work), p);
 					break;
 
@@ -377,15 +377,18 @@ static const PFTBL iniitem[] = {
 	PFSTR("bmap_Dir", PFTYPE_STR,		bmpfilefolder),
 	PFSTR("fontfile", PFTYPE_STR,		np2cfg.fontfile),
 	PFSTR("biospath", PFRO_STR,			np2cfg.biospath),
+
+#if defined(SUPPORT_HOSTDRV)
 	PFSTR("hdrvroot", PFRO_STR,			np2cfg.hdrvroot),
 	PFVAL("hdrv_acc", PFRO_UINT8,		&np2cfg.hdrvacc),
+#endif
 
 	PFSTR("pc_model", PFTYPE_STR,		&np2cfg.model),
 	PFVAL("clk_base", PFTYPE_UINT32,	&np2cfg.baseclock),
 	PFVAL("clk_mult", PFTYPE_UINT32,	&np2cfg.multiple),
 
-	PFEXT("DIPswtch", PFTYPE_ARGH8,		np2cfg.dipsw,			3),
-	PFEXT("MEMswtch", PFTYPE_ARGH8,		np2cfg.memsw,			8),
+	PFEXT("DIPswtch", PFTYPE_BIN,		np2cfg.dipsw,			3),
+	PFEXT("MEMswtch", PFTYPE_BIN,		np2cfg.memsw,			8),
 	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			63),
 	PFVAL("ITF_WORK", PFRO_BOOL,		&np2cfg.ITF_WORK),
 
@@ -404,8 +407,8 @@ static const PFTBL iniitem[] = {
 	PFAND("BEEP_vol", PFTYPE_UINT8,		&np2cfg.BEEP_VOL,		3),
 	PFVAL("xspeaker", PFRO_BOOL,		&np2cfg.snd_x),
 
-	PFEXT("SND14vol", PFTYPE_ARGH8,		np2cfg.vol14,			6),
-//	PFEXT("opt14BRD", PFTYPE_ARGH8,		np2cfg.snd14opt,		3),
+	PFEXT("SND14vol", PFTYPE_BIN,		np2cfg.vol14,			6),
+//	PFEXT("opt14BRD", PFTYPE_BIN,		np2cfg.snd14opt,		3),
 	PFVAL("opt26BRD", PFTYPE_HEX8,		&np2cfg.snd26opt),
 	PFVAL("opt86BRD", PFTYPE_HEX8,		&np2cfg.snd86opt),
 	PFVAL("optSPBRD", PFTYPE_HEX8,		&np2cfg.spbopt),
@@ -429,7 +432,7 @@ static const PFTBL iniitem[] = {
 	PFVAL("MS_RAPID", PFTYPE_BOOL,		&np2cfg.MOUSERAPID),
 
 	PFAND("backgrnd", PFTYPE_UINT8,		&np2oscfg.background,	3),
-	PFEXT("VRAMwait", PFTYPE_ARGH8,		np2cfg.wait,			6),
+	PFEXT("VRAMwait", PFTYPE_BIN,		np2cfg.wait,			6),
 	PFAND("DspClock", PFTYPE_UINT8,		&np2oscfg.DISPCLK,		3),
 	PFVAL("DispSync", PFTYPE_BOOL,		&np2cfg.DISPSYNC),
 	PFVAL("Real_Pal", PFTYPE_BOOL,		&np2cfg.RASTER),
@@ -446,8 +449,8 @@ static const PFTBL iniitem[] = {
 	PFAND("FG_COLOR", PFRO_HEX32,		&np2cfg.FG_COLOR,		0xffffff),
 
 	PFVAL("pc9861_e", PFTYPE_BOOL,		&np2cfg.pc9861enable),
-	PFEXT("pc9861_s", PFTYPE_ARGH8,		np2cfg.pc9861sw,		3),
-	PFEXT("pc9861_j", PFTYPE_ARGH8,		np2cfg.pc9861jmp,		6),
+	PFEXT("pc9861_s", PFTYPE_BIN,		np2cfg.pc9861sw,		3),
+	PFEXT("pc9861_j", PFTYPE_BIN,		np2cfg.pc9861jmp,		6),
 
 	PFVAL("calendar", PFTYPE_BOOL,		&np2cfg.calendar),
 	PFVAL("USE144FD", PFTYPE_BOOL,		&np2cfg.usefd144),
@@ -460,7 +463,7 @@ static const PFTBL iniitem[] = {
 	PFVAL("keyboard", PFRO_KB,			&np2oscfg.KEYBOARD),
 	PFVAL("F12_COPY", PFTYPE_UINT8,		&np2oscfg.F12COPY),
 	PFVAL("Joystick", PFTYPE_BOOL,		&np2oscfg.JOYPAD1),
-	PFEXT("Joy1_btn", PFTYPE_ARGH8,		np2oscfg.JOY1BTN,		4),
+	PFEXT("Joy1_btn", PFTYPE_BIN,		np2oscfg.JOY1BTN,		4),
 
 	PFVAL("clocknow", PFTYPE_UINT8,		&np2oscfg.clk_x),
 	PFVAL("clockfnt", PFTYPE_UINT8,		&np2oscfg.clk_fnt),

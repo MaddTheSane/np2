@@ -1,20 +1,21 @@
 #include	"compiler.h"
-#include	"resource.h"
 #include	"strres.h"
+#include	"resource.h"
 #include	"np2.h"
 #include	"sysmng.h"
 #include	"timemng.h"
-#include	"pccore.h"
 #include	"dialog.h"
 #include	"dialogs.h"
+#include	"pccore.h"
 #include	"calendar.h"
 
-static	BYTE	cbuf[8];
+
+static	UINT8	cbuf[8];
 
 typedef struct {
-	WORD	res;
-	BYTE	min;
-	BYTE	max;
+	UINT16	res;
+	UINT8	min;
+	UINT8	max;
 } VIRCAL_T;
 
 static const VIRCAL_T vircal[6] = {	{IDC_VIRYEAR,	0x00, 0x99},
@@ -25,10 +26,10 @@ static const VIRCAL_T vircal[6] = {	{IDC_VIRYEAR,	0x00, 0x99},
 									{IDC_VIRSECOND,	0x00, 0x59}};
 
 
-static void set_cal2dlg(HWND hWnd, const BYTE *cbuf) {
+static void set_cal2dlg(HWND hWnd, const UINT8 *cbuf) {
 
 	int		i;
-	char	work[8];
+	TCHAR	work[8];
 
 	for (i=0; i<6; i++) {
 		if (i != 1) {
@@ -51,14 +52,11 @@ static void vircalendar(HWND hWnd, BOOL disp) {
 	EnableWindow(GetDlgItem(hWnd, IDC_SETNOW), disp);
 }
 
-static DWORD getbcd(char *str, int len) {
+static UINT8 getbcd(const TCHAR *str, int len) {
 
-	DWORD	ret;
-	BYTE	c;
+	UINT	ret;
+	TCHAR	c;
 
-	if (!(*str)) {
-		return(0xff);
-	}
 	ret = 0;
 	while(len--) {
 		c = *str++;
@@ -69,15 +67,15 @@ static DWORD getbcd(char *str, int len) {
 			return(0xff);
 		}
 		ret <<= 4;
-		ret |= (BYTE)(c - '0');
+		ret |= (UINT)(c - '0');
 	}
 	return(ret);
 }
 
 LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	char	work[32];
-	BYTE	b;
+	TCHAR	work[32];
+	UINT8	b;
 	int		i;
 	HWND	subwnd;
 
@@ -108,8 +106,8 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					}
 					for (i=0; i<6; i++) {
 						GetDlgItemText(hWnd, vircal[i].res,
-														work, sizeof(work));
-						b = (BYTE)getbcd(work, 2);
+													work, NELEMENTS(work));
+						b = (UINT8)getbcd(work, 2);
 						if ((b >= vircal[i].min) && (b <= vircal[i].max)) {
 							if (i == 1) {
 								b = ((b & 0x10) * 10) + (b << 4);

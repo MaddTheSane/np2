@@ -7,20 +7,20 @@
 #include	"dialogs.h"
 
 
-static const char str_nc[] = "N/C";
+static const TCHAR str_nc[] = _T("N/C");
 
-const char str_int0[] = "INT0";
-const char str_int1[] = "INT1";
-const char str_int2[] = "INT2";
-const char str_int4[] = "INT4";
-const char str_int5[] = "INT5";
-const char str_int6[] = "INT6";
+const TCHAR str_int0[] = _T("INT0");
+const TCHAR str_int1[] = _T("INT1");
+const TCHAR str_int2[] = _T("INT2");
+const TCHAR str_int4[] = _T("INT4");
+const TCHAR str_int5[] = _T("INT5");
+const TCHAR str_int6[] = _T("INT6");
 
 
 // ---- file select
 
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
-											char *path, UINT size, int *ro) {
+											TCHAR *path, UINT size, int *ro) {
 
 	OPENFILENAME	ofn;
 
@@ -47,7 +47,7 @@ BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 }
 
 BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
-											char *path, UINT size) {
+											TCHAR *path, UINT size) {
 
 	OPENFILENAME	ofn;
 
@@ -71,28 +71,28 @@ BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 }
 
 BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
-											char *path, UINT size) {
+											TCHAR *path, UINT size) {
 
-	char	*file;
-	char	*p;
-	char	*q;
+	TCHAR	*file;
+	TCHAR	*p;
+	TCHAR	*q;
 	UINT	i;
 	BOOL	r;
 
 	if ((item == NULL) || (path == NULL) || (size == 0)) {
 		return(FALSE);
 	}
-	file = (char *)_MALLOC(size + 16, path);
+	file = (TCHAR *)_MALLOC((size + 16) * sizeof(TCHAR), path);
 	if (file == NULL) {
 		return(FALSE);
 	}
 	p = file_getname(path);
 	milstr_ncpy(file, path, size);
 	file_cutname(file);
-	q = file + strlen(file);
+	q = file + lstrlen(file);
 
 	for (i=0; i<10000; i++) {
-		SPRINTF(q, p, i);
+		wsprintf(q, p, i);
 		if (file_attr(file) == (short)-1) {
 			break;
 		}
@@ -108,7 +108,7 @@ BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
 
 // ---- list
 
-void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items) {
+void dlgs_setliststr(HWND hWnd, UINT res, const TCHAR **item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;
@@ -119,11 +119,11 @@ void dlgs_setliststr(HWND hWnd, WORD res, const char **item, UINT items) {
 	}
 }
 
-void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items) {
+void dlgs_setlistuint32(HWND hWnd, UINT res, const UINT32 *item, UINT items) {
 
 	HWND	wnd;
 	UINT	i;
-	char	str[16];
+	TCHAR	str[16];
 
 	wnd = GetDlgItem(hWnd, res);
 	for (i=0; i<items; i++) {
@@ -135,13 +135,13 @@ void dlgs_setlistuint32(HWND hWnd, WORD res, const UINT32 *item, UINT items) {
 
 // ---- draw
 
-void dlgs_drawbmp(HDC hdc, BYTE *bmp) {
+void dlgs_drawbmp(HDC hdc, UINT8 *bmp) {
 
 	BMPFILE		*bf;
 	BMPINFO		*bi;
 	BMPDATA		inf;
 	HBITMAP		hbmp;
-	BYTE		*image;
+	UINT8		*image;
 	HDC			hmdc;
 
 	if (bmp == NULL) {

@@ -2,8 +2,8 @@
 #include	"dosio.h"
 
 
-static	OEMCHAR	curpath[MAX_PATH];
-static	OEMCHAR	*curfilep = curpath;
+static	TCHAR	curpath[MAX_PATH];
+static	TCHAR	*curfilep = curpath;
 
 
 // ----
@@ -12,7 +12,7 @@ void dosio_init(void) { }
 void dosio_term(void) { }
 
 											// ファイル操作
-FILEH DOSIOCALL file_open(const OEMCHAR *path) {
+FILEH DOSIOCALL file_open(const TCHAR *path) {
 
 	FILEH	ret;
 
@@ -28,7 +28,7 @@ FILEH DOSIOCALL file_open(const OEMCHAR *path) {
 	return(ret);
 }
 
-FILEH DOSIOCALL file_open_rb(const OEMCHAR *path) {
+FILEH DOSIOCALL file_open_rb(const TCHAR *path) {
 
 	FILEH	ret;
 
@@ -40,7 +40,7 @@ FILEH DOSIOCALL file_open_rb(const OEMCHAR *path) {
 	return(ret);
 }
 
-FILEH DOSIOCALL file_create(const OEMCHAR *path) {
+FILEH DOSIOCALL file_create(const TCHAR *path) {
 
 	FILEH	ret;
 
@@ -126,63 +126,63 @@ short DOSIOCALL file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostim
 	return(0);
 }
 
-short DOSIOCALL file_delete(const OEMCHAR *path) {
+short DOSIOCALL file_delete(const TCHAR *path) {
 
 	return(DeleteFile(path)?0:-1);
 }
 
-short DOSIOCALL file_attr(const OEMCHAR *path) {
+short DOSIOCALL file_attr(const TCHAR *path) {
 
 	return((short)GetFileAttributes(path));
 }
 
-short DOSIOCALL file_dircreate(const OEMCHAR *path) {
+short DOSIOCALL file_dircreate(const TCHAR *path) {
 
 	return(CreateDirectory(path, NULL)?0:-1);
 }
 
 
 											// カレントファイル操作
-void DOSIOCALL file_setcd(const OEMCHAR *exepath) {
+void DOSIOCALL file_setcd(const TCHAR *exepath) {
 
 	file_cpyname(curpath, exepath, NELEMENTS(curpath));
 	curfilep = file_getname(curpath);
 	*curfilep = '\0';
 }
 
-OEMCHAR * DOSIOCALL file_getcd(const OEMCHAR *path) {
+TCHAR * DOSIOCALL file_getcd(const TCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(curpath);
 }
 
-FILEH DOSIOCALL file_open_c(const OEMCHAR *path) {
+FILEH DOSIOCALL file_open_c(const TCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_open(curpath));
 }
 
-FILEH DOSIOCALL file_open_rb_c(const OEMCHAR *path) {
+FILEH DOSIOCALL file_open_rb_c(const TCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_open_rb(curpath));
 }
 
-FILEH DOSIOCALL file_create_c(const OEMCHAR *path) {
+FILEH DOSIOCALL file_create_c(const TCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_create(curpath));
 }
 
-short DOSIOCALL file_delete_c(const OEMCHAR *path) {
+short DOSIOCALL file_delete_c(const TCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_delete(curpath));
 }
 
-short DOSIOCALL file_attr_c(const OEMCHAR *path) {
+short DOSIOCALL file_attr_c(const TCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_attr(curpath));
 }
 
@@ -191,8 +191,8 @@ static BRESULT DOSIOCALL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
 #if !defined(_WIN32_WCE)
 	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
-		((!file_cmpname(w32fd->cFileName, OEMTEXT("."))) ||
-		(!file_cmpname(w32fd->cFileName, OEMTEXT(".."))))) {
+		((!file_cmpname(w32fd->cFileName, _T("."))) ||
+		(!file_cmpname(w32fd->cFileName, _T(".."))))) {
 		return(FAILURE);
 	}
 #endif
@@ -204,15 +204,15 @@ static BRESULT DOSIOCALL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 	return(SUCCESS);
 }
 
-FLISTH DOSIOCALL file_list1st(const OEMCHAR *dir, FLINFO *fli) {
+FLISTH DOSIOCALL file_list1st(const TCHAR *dir, FLINFO *fli) {
 
-	OEMCHAR			path[MAX_PATH];
+	TCHAR			path[MAX_PATH];
 	HANDLE			hdl;
 	WIN32_FIND_DATA	w32fd;
 
 	milstr_ncpy(path, dir, NELEMENTS(path));
 	file_setseparator(path, NELEMENTS(path));
-	milstr_ncat(path, OEMTEXT("*.*"), NELEMENTS(path));
+	milstr_ncat(path, _T("*.*"), NELEMENTS(path));
 	TRACEOUT(("file_list1st %s", path));
 	hdl = FindFirstFile(path, &w32fd);
 	if (hdl != INVALID_HANDLE_VALUE) {
@@ -244,10 +244,10 @@ void DOSIOCALL file_listclose(FLISTH hdl) {
 }
 
 
-OEMCHAR * DOSIOCALL file_getname(const OEMCHAR *path) {
+TCHAR * DOSIOCALL file_getname(const TCHAR *path) {
 
-const OEMCHAR	*ret;
-	int			csize;
+const TCHAR	*ret;
+	int		csize;
 
 	ret = path;
 	while((csize = milstr_charsize(path)) != 0) {
@@ -258,22 +258,22 @@ const OEMCHAR	*ret;
 		}
 		path += csize;
 	}
-	return((OEMCHAR *)ret);
+	return((TCHAR *)ret);
 }
 
-void DOSIOCALL file_cutname(OEMCHAR *path) {
+void DOSIOCALL file_cutname(TCHAR *path) {
 
-	OEMCHAR	*p;
+	TCHAR	*p;
 
 	p = file_getname(path);
 	p[0] = '\0';
 }
 
-OEMCHAR * DOSIOCALL file_getext(const OEMCHAR *path) {
+TCHAR * DOSIOCALL file_getext(const TCHAR *path) {
 
-const OEMCHAR	*p;
-const OEMCHAR	*q;
-	int			csize;
+const TCHAR	*p;
+const TCHAR	*q;
+	int		csize;
 
 	p = file_getname(path);
 	q = NULL;
@@ -286,13 +286,13 @@ const OEMCHAR	*q;
 	if (q == NULL) {
 		q = p;
 	}
-	return((OEMCHAR *)q);
+	return((TCHAR *)q);
 }
 
-void DOSIOCALL file_cutext(OEMCHAR *path) {
+void DOSIOCALL file_cutext(TCHAR *path) {
 
-	OEMCHAR	*p;
-	OEMCHAR	*q;
+	TCHAR	*p;
+	TCHAR	*q;
 	int		csize;
 
 	p = file_getname(path);
@@ -308,11 +308,11 @@ void DOSIOCALL file_cutext(OEMCHAR *path) {
 	}
 }
 
-void DOSIOCALL file_cutseparator(OEMCHAR *path) {
+void DOSIOCALL file_cutseparator(TCHAR *path) {
 
 	int		pos;
 
-	pos = OEMSTRLEN(path) - 1;
+	pos = lstrlen(path) - 1;
 	if ((pos > 0) &&							// 2文字以上でー
 		(path[pos] == '\\') &&					// ケツが \ でー
 		(!milstr_kanji2nd(path, pos)) &&		// 漢字の2バイト目ぢゃなくてー
@@ -322,11 +322,11 @@ void DOSIOCALL file_cutseparator(OEMCHAR *path) {
 	}
 }
 
-void DOSIOCALL file_setseparator(OEMCHAR *path, int maxlen) {
+void DOSIOCALL file_setseparator(TCHAR *path, int maxlen) {
 
 	int		pos;
 
-	pos = OEMSTRLEN(path) - 1;
+	pos = lstrlen(path) - 1;
 	if ((pos < 0) ||
 		((pos == 1) && (path[1] == ':')) ||
 		((path[pos] == '\\') && (!milstr_kanji2nd(path, pos))) ||

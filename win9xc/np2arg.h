@@ -1,10 +1,11 @@
 
 typedef struct {
-	char	*disk[4];
-	char	*ini;
+	TCHAR	*disk[4];
+	TCHAR	*ini;
 	BOOL	fullscreen;
 } NP2ARG_T;
 
 extern NP2ARG_T	np2arg;
 
-void np2arg_analize(char *argstr);
+void np2arg_analize(void);
+

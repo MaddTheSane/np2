@@ -18,22 +18,21 @@ static void set_viewseg(HWND hwnd, NP2VIEW_T *view, UINT16 seg) {
 	}
 }
 
-
 static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
-	LONG		y;
-	DWORD		seg4;
-	UINT16		off;
-	DWORD		pos;
-	UINT8		*p;
-	UINT8		buf[16];
-	OEMCHAR		str[16];
-	HFONT		hfont;
-	BOOL		opsize;
-	_UNASM		una;
-	int			step;
+	LONG	y;
+	UINT32	seg4;
+	UINT16	off;
+	UINT32	pos;
+	UINT8	*p;
+	UINT8	buf[16];
+	TCHAR	str[16];
+	HFONT	hfont;
+	BOOL	opsize;
+	_UNASM	una;
+	int		step;
 #if defined(UNICODE)
-	TCHAR		cnv[64];
+	TCHAR	cnv[64];
 #endif
 
 	hfont = CreateFont(16, 0, 0, 0, 0, 0, 0, 0, 
@@ -83,7 +82,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 						p = (BYTE *)view->buf1.ptr;
 						p += off;
 						if (off > 0xfff0) {
-							DWORD pos = 0x10000 - off;
+							UINT32 pos = 0x10000 - off;
 							CopyMemory(buf, p, pos);
 							CopyMemory(buf + pos, view->buf1.ptr, 16 - pos);
 							p = buf;
@@ -109,14 +108,14 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	}
 
 	for (y=0; y<rc->bottom; y+=16) {
-		OEMSPRINTF(str, OEMTEXT("%04x:%04x"), view->seg, off);
+		wsprintf(str, _T("%04x:%04x"), view->seg, off);
 		TextOut(hdc, 0, y, str, 9);
 		off &= 0xffff;
 		if (view->lock) {
 			p = (BYTE *)view->buf1.ptr;
 			p += off;
 			if (off > 0xfff0) {
-				DWORD pos = 0x10000 - off;
+				UINT32 pos = 0x10000 - off;
 				CopyMemory(buf, p, pos);
 				CopyMemory(buf + pos, view->buf1.ptr, 16 - pos);
 				p = buf;
@@ -134,7 +133,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		TextOut(hdc, 11 * 8, y, cnv, MultiByteToWideChar(CP_ACP, 
 					MB_PRECOMPOSED, una.mnemonic, -1, cnv, NELEMENTS(cnv)));
 #else
-		TextOut(hdc, 11 * 8, y, una.mnemonic, OEMSTRLEN(una.mnemonic));
+		TextOut(hdc, 11 * 8, y, una.mnemonic, lstrlen(una.mnemonic));
 #endif
 		if (una.operand[0]) {
 #if defined(UNICODE)
@@ -142,7 +141,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 					MB_PRECOMPOSED, una.operand, -1, cnv, NELEMENTS(cnv)));
 #else
 			TextOut(hdc, (11 + 7) * 8, y,
-										una.operand, OEMSTRLEN(una.operand));
+										una.operand, lstrlen(una.operand));
 #endif
 		}
 		off += (UINT16)step;

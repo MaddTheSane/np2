@@ -16,31 +16,31 @@
 #include	"bios.h"
 
 
-char viewcmn_hex[16] = {
+const char viewcmn_hex[16] = {
 				'0', '1', '2', '3', '4', '5', '6', '7',
 				'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
-void viewcmn_caption(NP2VIEW_T *view, OEMCHAR *buf) {
+void viewcmn_caption(NP2VIEW_T *view, TCHAR *buf) {
 
 	int		num;
-	OEMCHAR	*p;
+	TCHAR	*p;
 
 	num = ((int)view - (int)np2view) / sizeof(NP2VIEW_T);
 
 	if (view->lock) {
-		p = OEMTEXT("Locked");
+		p = _T("Locked");
 	}
 	else {
-		p = OEMTEXT("Realtime");
+		p = _T("Realtime");
 	}
-	OEMSPRINTF(buf, OEMTEXT("%d.%s - NP2 Debug Utility"), num + 1, p);
+	wsprintf(buf, _T("%d.%s - NP2 Debug Utility"), num + 1, p);
 }
 
 
 void viewcmn_putcaption(NP2VIEW_T *view) {
 
-	OEMCHAR	buf[256];
+	TCHAR	buf[256];
 
 	viewcmn_caption(view, buf);
 	SetWindowText(view->hwnd, buf);
@@ -50,7 +50,7 @@ void viewcmn_putcaption(NP2VIEW_T *view) {
 
 // ----
 
-BOOL viewcmn_alloc(VIEWMEMBUF *buf, DWORD size) {
+BOOL viewcmn_alloc(VIEWMEMBUF *buf, UINT32 size) {
 
 	if (buf->type == ALLOCTYPE_ERROR) {
 		return(FAILURE);
@@ -97,7 +97,7 @@ NP2VIEW_T *viewcmn_find(HWND hwnd) {
 }
 
 
-void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, BYTE type) {
+void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type) {
 
 	switch(type) {
 		case VIEWMODE_REG:
@@ -156,18 +156,18 @@ void viewcmn_setbank(NP2VIEW_T *view) {
 	dmem = &view->dmem;
 	dmem->vram = gdcs.disp;
 	dmem->itf = CPU_ITFBANK;
-	dmem->A20 = (BYTE)((CPU_ADRSMASK >> 20) & 1);
+	dmem->A20 = (UINT8)((CPU_ADRSMASK >> 20) & 1);
 }
 
 
 // ----
 
-static void modmenu(HMENU hmenu, int pos, WORD id,
-											const OEMCHAR *seg, WORD value) {
+static void modmenu(HMENU hmenu, int pos, UINT16 id,
+											const TCHAR *seg, UINT16 value) {
 
-	OEMCHAR	buf[256];
+	TCHAR	buf[256];
 
-	OEMSPRINTF(buf, OEMTEXT("Seg = &%s [%04x]"), seg, value);
+	wsprintf(buf, _T("Seg = &%s [%04x]"), seg, value);
 	ModifyMenu(hmenu, pos, MF_BYPOSITION | MF_STRING, id, buf);
 }
 
@@ -183,10 +183,10 @@ void viewcmn_setmenuseg(HWND hwnd) {
 	hmenu = GetSubMenu(hparent, 2);
 
 	if (hmenu) {
-		modmenu(hmenu, 2, IDM_SEGCS, OEMTEXT("CS"), CPU_CS);
-		modmenu(hmenu, 3, IDM_SEGDS, OEMTEXT("DS"), CPU_DS);
-		modmenu(hmenu, 4, IDM_SEGES, OEMTEXT("ES"), CPU_ES);
-		modmenu(hmenu, 5, IDM_SEGSS, OEMTEXT("SS"), CPU_SS);
+		modmenu(hmenu, 2, IDM_SEGCS, _T("CS"), CPU_CS);
+		modmenu(hmenu, 3, IDM_SEGDS, _T("DS"), CPU_DS);
+		modmenu(hmenu, 4, IDM_SEGES, _T("ES"), CPU_ES);
+		modmenu(hmenu, 5, IDM_SEGSS, _T("SS"), CPU_SS);
 		DrawMenuBar(hwnd);
 	}
 }
@@ -207,7 +207,7 @@ void viewcmn_setvscroll(HWND hWnd, NP2VIEW_T *view) {
 
 // -----
 
-void viewcmn_paint(NP2VIEW_T *view, DWORD bkgcolor,
+void viewcmn_paint(NP2VIEW_T *view, UINT32 bkgcolor,
 					void (*callback)(NP2VIEW_T *view, RECT *rc, HDC hdc)) {
 
 	HDC			hdc;

@@ -13,13 +13,13 @@
 
 
 typedef struct {
-const OEMCHAR	*str;
-	UINT16		reg;
-	UINT16		mask;
+const TCHAR	*str;
+	UINT16	reg;
+	UINT16	mask;
 } FMSNDTBL;
 
 static const FMSNDTBL fmsndtbl[] = {
-		{OEMTEXT("Sound-Board I"), 0, 0},
+		{_T("Sound-Board I"), 0, 0},
 		{NULL, 0x0000, 0xffff},
 		{NULL, 0x0010, 0x3f07},
 		{NULL, 0x0020, 0x07e6},
@@ -45,7 +45,7 @@ static const FMSNDTBL fmsndtbl[] = {
 		{NULL, 0x01a0, 0x7777},
 		{NULL, 0x01b0, 0x0077},
 		{str_null, 0, 0},
-		{OEMTEXT("Sound-Board II"), 0, 0},
+		{_T("Sound-Board II"), 0, 0},
 		{NULL, 0x0200, 0xffff},
 		{NULL, 0x0220, 0x07e6},
 		{NULL, 0x0230, 0x7777},
@@ -75,7 +75,7 @@ static void viewsnd_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	LONG	y;
 	UINT	pos;
 const UINT8	*p;
-	OEMCHAR	str[16];
+	TCHAR	str[16];
 	HFONT	hfont;
 	UINT	reg;
 	UINT16	mask;
@@ -107,13 +107,13 @@ const UINT8	*p;
 	for (y=0; (y<rc->bottom) && (pos<NELEMENTS(fmsndtbl)); y+=16, pos++) {
 		if (fmsndtbl[pos].str) {
 			TextOut(hdc, 0, y, fmsndtbl[pos].str,
-												OEMSTRLEN(fmsndtbl[pos].str));
+												lstrlen(fmsndtbl[pos].str));
 		}
 		else {
 			reg = fmsndtbl[pos].reg;
 			mask = fmsndtbl[pos].mask;
 
-			OEMSPRINTF(str, OEMTEXT("%04x"), reg & 0x1ff);
+			wsprintf(str, _T("%04x"), reg & 0x1ff);
 			TextOut(hdc, 0, y, str, 4);
 
 			if (view->lock) {

@@ -1,4 +1,8 @@
 
+#include	"profile.h"
+
+
+#if 0
 enum {
 	INITYPE_STR			= 0,
 	INITYPE_BOOL,
@@ -21,16 +25,16 @@ const char	*item;
 	void	*value;
 	UINT	size;
 } INITBL;
-
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void ini_read(const char *path, const char *title,
-											const INITBL *tbl, UINT count);
-void ini_write(const char *path, const char *title,
-											const INITBL *tbl, UINT count);
+void ini_read(const TCHAR *path, const TCHAR *title,
+											const PFTBL *tbl, UINT count);
+void ini_write(const TCHAR *path, const TCHAR *title,
+											const PFTBL *tbl, UINT count);
 
 void initload(void);
 void initsave(void);

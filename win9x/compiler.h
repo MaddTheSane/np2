@@ -11,7 +11,7 @@
 #endif
 
 #define	BYTESEX_LITTLE
-#if !defined(UNICODE)
+#if !defined(_UNICODE)
 #define	OSLANG_SJIS
 #else
 #define	OSLANG_UCS2
@@ -79,7 +79,7 @@ typedef	signed __int64		SINT64;
 #else
 #define	__ASSERT(s)
 #endif
-#if defined(UNICODE)
+#if defined(_UNICODE)
 #define	SPRINTF				sprintf
 #define	STRLEN				strlen
 #else
@@ -103,7 +103,7 @@ typedef	signed __int64		SINT64;
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
 
-#if !defined(UNICODE)
+#if !defined(_UNICODE)
 #define	SUPPORT_SJIS
 #else
 #define	SUPPORT_ANK

@@ -9,19 +9,19 @@
 #include	"pccore.h"
 
 
-static const char str_2halfmhz[] = "2.4576MHz";
-static const char str_2mhz[] = "1.9968MHz";
-static const char *basecstr[2] = {str_2mhz, str_2halfmhz};
+static const TCHAR str_2halfmhz[] = _T("2.4576MHz");
+static const TCHAR str_2mhz[] = _T("1.9968MHz");
+static const TCHAR *basecstr[2] = {str_2mhz, str_2halfmhz};
 static const UINT32 mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
-static const char str_clockfmt[] = "%2u.%.4u";
+static const TCHAR str_clockfmt[] = _T("%2u.%.4u");
 
 
 static void setclock(HWND hWnd, UINT multiple) {
 
 	UINT32	clock;
-	char	work[32];
+	TCHAR	work[32];
 
-	GetDlgItemText(hWnd, IDC_BASECLOCK, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_BASECLOCK, work, NELEMENTS(work));
 	if (work[0] == '1') {
 		clock = PCBASECLOCK20 / 100;
 	}
@@ -29,7 +29,7 @@ static void setclock(HWND hWnd, UINT multiple) {
 		clock = PCBASECLOCK25 / 100;
 	}
 	if (multiple == 0) {
-		GetDlgItemText(hWnd, IDC_MULTIPLE, work, sizeof(work));
+		GetDlgItemText(hWnd, IDC_MULTIPLE, work, NELEMENTS(work));
 		multiple = (UINT)milstr_solveINT(work);
 	}
 	if (multiple < 1) {
@@ -45,7 +45,7 @@ static void setclock(HWND hWnd, UINT multiple) {
 
 static void cfgcreate(HWND hWnd) {
 
-	char	work[32];
+	TCHAR	work[32];
 	UINT	val;
 
 	SETLISTSTR(hWnd, IDC_BASECLOCK, basecstr);
@@ -91,12 +91,12 @@ static void cfgcreate(HWND hWnd) {
 static void cfgupdate(HWND hWnd) {
 
 	UINT	update;
-	char	work[32];
+	TCHAR	work[32];
 	UINT	val;
-const char	*str;
+const TCHAR	*str;
 
 	update = 0;
-	GetDlgItemText(hWnd, IDC_BASECLOCK, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_BASECLOCK, work, NELEMENTS(work));
 	if (work[0] == '1') {
 		val = PCBASECLOCK20;
 	}
@@ -108,7 +108,7 @@ const char	*str;
 		update |= SYS_UPDATECFG | SYS_UPDATECLOCK;
 	}
 
-	GetDlgItemText(hWnd, IDC_MULTIPLE, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_MULTIPLE, work, NELEMENTS(work));
 	val = (UINT)milstr_solveINT(work);
 	if (val < 1) {
 		val = 1;
@@ -131,7 +131,7 @@ const char	*str;
 		str = str_VX;
 	}
 	if (milstr_cmp(np2cfg.model, str)) {
-		milstr_ncpy(np2cfg.model, str, sizeof(np2cfg.model));
+		milstr_ncpy(np2cfg.model, str, NELEMENTS(np2cfg.model));
 		update |= SYS_UPDATECFG;
 	}
 
@@ -150,7 +150,7 @@ const char	*str;
 		soundrenewal = 1;
 	}
 
-	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, sizeof(work));
+	GetDlgItemText(hWnd, IDC_SOUNDBUF, work, NELEMENTS(work));
 	val = (UINT)milstr_solveINT(work);
 	if (val < 40) {
 		val = 40;
@@ -194,7 +194,7 @@ LRESULT CALLBACK CfgDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 						UINT val;
 						val = (UINT)SendDlgItemMessage(hWnd, IDC_MULTIPLE,
 														CB_GETCURSEL, 0, 0);
-						if (val < sizeof(mulval)/sizeof(UINT32)) {
+						if (val < NELEMENTS(mulval)) {
 							setclock(hWnd, mulval[val]);
 						}
 					}

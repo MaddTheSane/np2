@@ -42,13 +42,13 @@
 #endif
 
 #if defined(SUPPORT_PC9821)
-		const char szAppCaption[] = "Neko Project-21";
+		const TCHAR szAppCaption[] = _T("Neko Project-21");
 #elif defined(CPUCORE_IA32)
-		const char szAppCaption[] = "Neko Project II (IA-32)";
+		const TCHAR szAppCaption[] = _T("Neko Project II (IA-32)");
 #else
-		const char szAppCaption[] = "Neko Project II (C Version)";
+		const TCHAR szAppCaption[] = _T("Neko Project II (C Version)");
 #endif
-static	const char	szClassName[] = "NP2-MainWindow";
+static	const TCHAR	szClassName[] = _T("NP2-MainWindow");
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
@@ -59,10 +59,10 @@ static	const char	szClassName[] = "NP2-MainWindow";
 						0, 0, 0, {1, 2, 2, 1},
 						0, 0, 0};
 
-		char		modulefile[MAX_PATH];
-		char		fddfolder[MAX_PATH];
-		char		hddfolder[MAX_PATH];
-		char		bmpfilefolder[MAX_PATH];
+		TCHAR		modulefile[MAX_PATH];
+		TCHAR		fddfolder[MAX_PATH];
+		TCHAR		hddfolder[MAX_PATH];
+		TCHAR		bmpfilefolder[MAX_PATH];
 
 static	UINT		framecnt = 0;
 static	UINT		waitcnt = 0;
@@ -72,8 +72,8 @@ static	int			np2quitmsg = 0;
 static	UINT8	scrnmode;
 
 
-static const char np2help[] = "np2.chm";
-static const char np2flagext[] = "S%02d";
+static const TCHAR np2help[] = _T("np2.chm");
+static const TCHAR np2flagext[] = _T("S%02d");
 
 
 static void winuienter(void) {
@@ -129,7 +129,7 @@ static void changescreen(UINT8 newmode) {
 #define	SUPPORT_RESUME
 
 #if defined(SUPPORT_RESUME) || defined(SUPPORT_STATSAVE)
-static void getstatfilename(char *path, const char *ext, int size) {
+static void getstatfilename(TCHAR *path, const TCHAR *ext, int size) {
 
 	file_cpyname(path, modulefile, size);
 	file_cutext(path);
@@ -137,12 +137,12 @@ static void getstatfilename(char *path, const char *ext, int size) {
 	file_catname(path, ext, size);
 }
 
-static int flagsave(const char *ext) {
+static int flagsave(const TCHAR *ext) {
 
 	int		ret;
-	char	path[MAX_PATH];
+	TCHAR	path[MAX_PATH];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	soundmng_stop();
 	ret = statsave_save(path);
 	if (ret) {
@@ -152,32 +152,33 @@ static int flagsave(const char *ext) {
 	return(ret);
 }
 
-static void flagdelete(const char *ext) {
+static void flagdelete(const TCHAR *ext) {
 
-	char	path[MAX_PATH];
+	TCHAR	path[MAX_PATH];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	file_delete(path);
 }
 
-static int flagload(const char *ext, const char *title, BOOL force) {
+static int flagload(const TCHAR *ext, const TCHAR *title, BOOL force) {
 
 	int		ret;
 	int		id;
-	char	path[MAX_PATH];
-	char	buf[1024];
+	TCHAR	path[MAX_PATH];
+	TCHAR	buf[1024];
 
-	getstatfilename(path, ext, sizeof(path));
+	getstatfilename(path, ext, NELEMENTS(path));
 	winuienter();
 	id = IDYES;
-	ret = statsave_check(path, buf, sizeof(buf));
+	ret = statsave_check(path, buf, NELEMENTS(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
-		MessageBox(hWndMain, "Couldn't restart", title, MB_OK | MB_ICONSTOP);
+		MessageBox(hWndMain, _T("Couldn't restart"), title,
+										MB_OK | MB_ICONSTOP);
 		id = IDNO;
 	}
 	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
-		char buf2[1024 + 256];
-		wsprintf(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		TCHAR buf2[1024 + 256];
+		wsprintf(buf2, _T("Conflict!\n\n%s\nContinue?"), buf);
 		id = MessageBox(hWndMain, buf2, title,
 										MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
@@ -664,7 +665,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-				hbmp = LoadBitmap(hinst, "NP2BMP");
+				hbmp = LoadBitmap(hinst, _T("NP2BMP"));
 				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
@@ -854,10 +855,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	_MEM_INIT();
 
-	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
+	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
-	np2arg_analize(lpszCmdLine);
+	np2arg_analize();
 	initload();
 	memdbg_readini();
 	skbdwin_readini();
@@ -963,7 +964,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	if (scrnmng_create(scrnmode) != SUCCESS) {
 		scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(scrnmode) != SUCCESS) {
-			MessageBox(hWnd, "Couldn't create DirectDraw Object",
+			MessageBox(hWnd, _T("Couldn't create DirectDraw Object"),
 										szAppCaption, MB_OK | MB_ICONSTOP);
 			return(FALSE);
 		}

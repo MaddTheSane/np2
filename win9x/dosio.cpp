@@ -152,37 +152,37 @@ void DOSIOCALL file_setcd(const OEMCHAR *exepath) {
 
 OEMCHAR * DOSIOCALL file_getcd(const OEMCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(curpath);
 }
 
 FILEH DOSIOCALL file_open_c(const OEMCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_open(curpath));
 }
 
 FILEH DOSIOCALL file_open_rb_c(const OEMCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_open_rb(curpath));
 }
 
 FILEH DOSIOCALL file_create_c(const OEMCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_create(curpath));
 }
 
 short DOSIOCALL file_delete_c(const OEMCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_delete(curpath));
 }
 
 short DOSIOCALL file_attr_c(const OEMCHAR *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (curfilep - curpath));
 	return(file_attr(curpath));
 }
 
