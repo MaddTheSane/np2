@@ -12,7 +12,7 @@ enum {
 typedef struct {
 	long	hdl;
 	UINT	mode;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 } _HDRVFILE, *HDRVFILE;
 
 typedef struct {

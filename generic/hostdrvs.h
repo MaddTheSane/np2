@@ -1,7 +1,7 @@
 
 typedef struct {
 	char	fcbname[11];
-	BYTE	exist;
+	UINT8	exist;
 	UINT	caps;
 	UINT32	size;
 	UINT32	attr;
@@ -11,20 +11,20 @@ typedef struct {
 
 typedef struct {
 	HDRVDIR	di;
-	char	realname[MAX_PATH];
+	OEMCHAR	realname[MAX_PATH];
 } _HDRVLST, *HDRVLST;
 
 typedef struct {
 	HDRVDIR	di;
-	char	path[MAX_PATH];
+	OEMCHAR	path[MAX_PATH];
 } HDRVPATH;
 
 
 // 一覧取得
-LISTARRAY hostdrvs_getpathlist(const char *realpath);
+LISTARRAY hostdrvs_getpathlist(const OEMCHAR *realpath);
 
 // ホスト側のフォルダを得る
-BOOL hostdrvs_getrealdir(char *path, int size, char *fcb, char *dospath);
+BOOL hostdrvs_getrealdir(OEMCHAR *path, int size, char *fcb, char *dospath);
 
 // ホスト側のファイル名を得る
 BOOL hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath);

@@ -31,6 +31,10 @@ enum {
 								*((a)+1) = (BYTE)((b)>>8)
 #endif
 
+#ifndef	NELEMENTS
+#define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
+#endif
+
 
 // ---- Optimize Macros
 
@@ -58,13 +62,13 @@ enum {
 #endif
 
 
-#if !defined(OEMCHAR)
+#ifndef OEMCHAR
 #define	OEMCHAR					char
 #endif
-#if !defined(OEMLITERAL)
+#ifndef OEMTEXT
 #define	OEMTEXT(string)			(string)
 #endif
-#if !defined(OEMNULL)
+#ifndef OEMNULLSTR
 #define	OEMNULLSTR				OEMTEXT("")
 #endif
 
