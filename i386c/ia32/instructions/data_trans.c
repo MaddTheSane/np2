@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.10 2004/03/08 18:45:18 yui Exp $	*/
+/*	$Id: data_trans.c,v 1.11 2004/03/08 20:13:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -953,6 +953,97 @@ XADD_EdGd(void)
 /*
  * CMPXCHG
  */
+#if 1
+void
+CMPXCHG_EbGb(void)
+{
+	UINT8 *out;
+	UINT32 op, src, dst, madr, tmp;
+
+	PREPART_EA_REG8(op, src);
+	if (op >= 0xc0) {
+		out = reg8_b20[op];
+		dst = *out;
+		if (CPU_AL == dst) {
+			CPU_FLAGL |= Z_FLAG;
+			*out = (UINT8)src;
+		} else {
+			CPU_FLAGL &= ~Z_FLAG;
+			CPU_AL = (UINT8)dst;
+		}
+	} else {
+		madr = calc_ea_dst(op);
+		dst = cpu_vmemoryread(CPU_INST_SEGREG_INDEX, madr);
+		if (CPU_AL == dst) {
+			CPU_FLAGL |= Z_FLAG;
+			cpu_vmemorywrite(CPU_INST_SEGREG_INDEX, madr, (UINT8)src);
+		} else {
+			CPU_FLAGL &= ~Z_FLAG;
+			CPU_AL = (UINT8)dst;
+		}
+	}
+}
+
+void
+CMPXCHG_EwGw(void)
+{
+	UINT16 *out;
+	UINT32 op, src, dst, madr, tmp;
+
+	PREPART_EA_REG16(op, src);
+	if (op >= 0xc0) {
+		out = reg16_b20[op];
+		dst = *out;
+		if (CPU_AX == dst) {
+			CPU_FLAGL |= Z_FLAG;
+			*out = (UINT16)src;
+		} else {
+			CPU_FLAGL &= ~Z_FLAG;
+			CPU_AX = (UINT16)dst;
+		}
+	} else {
+		madr = calc_ea_dst(op);
+		dst = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
+		if (CPU_AX == dst) {
+			CPU_FLAGL |= Z_FLAG;
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
+		} else {
+			CPU_FLAGL &= ~Z_FLAG;
+			CPU_AX = (UINT16)dst;
+		}
+	}
+}
+
+void
+CMPXCHG_EdGd(void)
+{
+	UINT32 *out;
+	UINT32 op, src, dst, madr, tmp;
+
+	PREPART_EA_REG32(op, src);
+	if (op >= 0xc0) {
+		out = reg32_b20[op];
+		dst = *out;
+		if (CPU_EAX == dst) {
+			CPU_FLAGL |= Z_FLAG;
+			*out = src;
+		} else {
+			CPU_FLAGL &= ~Z_FLAG;
+			CPU_EAX = dst;
+		}
+	} else {
+		madr = calc_ea_dst(op);
+		dst = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
+		if (CPU_EAX == dst) {
+			CPU_FLAGL |= Z_FLAG;
+			cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
+		} else {
+			CPU_FLAGL &= ~Z_FLAG;
+			CPU_EAX = dst;
+		}
+	}
+}
+#else
 void
 CMPXCHG_EbGb(void)
 {
@@ -1036,6 +1127,7 @@ CMPXCHG_EdGd(void)
 		}
 	}
 }
+#endif
 
 void
 CMPXCHG8B(UINT32 op)

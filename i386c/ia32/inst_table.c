@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.8 2004/03/07 23:04:51 yui Exp $	*/
+/*	$Id: inst_table.c,v 1.9 2004/03/08 20:13:37 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -904,7 +904,7 @@ void (*insttable_2byte[2][256])(void) = {
 		undef_op,
 		LOADALL286,			/* undoc(286) */
 		CLTS,
-		undef_op,
+		LOADALL,
 		INVD,			/* 08 */
 		WBINVD,
 		undef_op,
@@ -1177,9 +1177,9 @@ void (*insttable_2byte[2][256])(void) = {
 		LAR_GdEw,
 		LSL_GdEw,
 		undef_op,
-		LOADALL,			/* undoc(286) */
+		LOADALL286,			/* undoc(286) */
 		CLTS,
-		undef_op,
+		LOADALL,
 		INVD,			/* 08 */
 		WBINVD,
 		undef_op,
