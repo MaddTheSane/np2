@@ -1,5 +1,5 @@
 
-VERSION_ID		equ		"20040122"
+VERSION_ID		equ		<20040122>
 
 
 				struc	HDRVIF
