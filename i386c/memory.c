@@ -736,7 +736,7 @@ void MEMCALL i286_vram_dispatch(UINT func) {
 const VACCTBL	*vacc;
 
 	vacc = vacctbl + (func & 0x0f);
-#if defined(SUPPORT_PC9821
+#if defined(SUPPORT_PC9821)
 	if (!(func & 0x20)) {
 #endif
 		memfn.rd8[0xa8000 >> 15] = vacc->rd8;
