@@ -500,18 +500,17 @@ $(OBJ)/bios1a.o		:	$(BIOS)/bios1a.c $(HEADERS) $(CPUCORE) $(PCCORES) \
 $(OBJ)/bios1b.o		:	$(BIOS)/bios1b.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(CBUS)/scsicmd.h $(BIOS)/bios.h \
 						$(BIOS)/biosmem.h $(BIOS)/sxsibios.h \
-						$(FDD)/fddfile.h $(FDD)/fdd_mtr.h $(FDD)/sxsi.h \
-						$(BASE)/timing.h
+						$(FDD)/fddfile.h $(FDD)/fdd_mtr.h $(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/bios1c.o		:	$(BIOS)/bios1c.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(IOCORES) $(TARGET)/timemng.h $(BASE)/calendar.h \
-						$(BIOS)/bios.h $(BIOS)/biosmem.h 
+						$(BIOS)/bios.h $(BIOS)/biosmem.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/sxsibios.o	:	$(BIOS)/sxsibios.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(BIOS)/bios.h $(BIOS)/biosmem.h $(BIOS)/sxsibios.h \
-						$(CBUS)/scsicmd.h $(FDD)/sxsi.h
+						$(CBUS)/scsicmd.h $(FDD)/sxsi.h $(BASE)/timing.h
 	$(CC) $(COPT) -o $@ $<
 
 

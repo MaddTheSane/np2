@@ -9,7 +9,6 @@
 #include	"fddfile.h"
 #include	"fdd_mtr.h"
 #include	"sxsi.h"
-#include	"timing.h"
 
 
 enum {

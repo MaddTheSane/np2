@@ -6,6 +6,7 @@
 #include	"sxsibios.h"
 #include	"scsicmd.h"
 #include	"sxsi.h"
+#include	"timing.h"
 
 
 typedef REG8 (*SXSIFUNC)(UINT type, SXSIDEV sxsi);
@@ -111,7 +112,25 @@ static REG8 sxsibios_format(UINT type, SXSIDEV sxsi) {
 	long	pos;
 
 	if (CPU_AH & 0x80) {
-		ret = 0xd0;
+		if (type == SXSIBIOS_SCSI) {		// ‚Æ‚è‚ ‚¦‚¸SCSI‚Ì‚İ
+			UINT count;
+			long posmax;
+			count = timing_getcount();			// ŠÔ‚ğ~‚ß‚é
+			ret = 0;
+			pos = 0;
+			posmax = sxsi->surfaces * sxsi->cylinders;
+			while(pos < posmax) {
+				ret = sxsi_format(CPU_AL, pos * sxsi->sectors);
+				if (ret) {
+					break;
+				}
+				pos++;
+			}
+			timing_setcount(count);							// ÄŠJ
+		}
+		else {
+			ret = 0xd0;
+		}
 	}
 	else {
 		if (CPU_DL) {

@@ -574,10 +574,10 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-// #define	IPTRACE			(1 << 16)
+// #define	IPTRACE			(1 << 12)
 
-#if IPTRACE
-static UINT		trpos;
+#if defined(TRACE) && IPTRACE
+static UINT		trpos = 0;
 static UINT32	treip[IPTRACE];
 
 void iptrace_out(void) {
@@ -667,11 +667,13 @@ void pccore_exec(BOOL draw) {
 			treip[trpos & (IPTRACE - 1)] = (CPU_CS << 16) + CPU_IP;
 			trpos++;
 #endif
+#if 0
 			if (tr) {
 				if ((CPU_CS == 0xf760) || (CPU_CS == 0xf990)) {
 					TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
 				}
 			}
+#endif
 #if 0
 			if ((tr & 2) && (mem[0x0471e] == '\\')) {
 				TRACEOUT(("DTA BREAK %.4x:%.4x", CPU_CS, CPU_IP));
