@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.1 2003/12/08 00:55:31 yui Exp $	*/
+/*	$Id: cpu_mem.c,v 1.2 2003/12/11 15:03:16 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -56,23 +56,19 @@ init_cpumem(BYTE usemem)
 			free(cpumem);
 			cpumem = 0;
 		}
-
 		if (size <= LOWMEM - 0x100000) {
 			extmem_size = 0;
 			cpumem = 0;
 		} else {
 			extmem_size = size - (LOWMEM - 0x100000);
-			cpumem = (BYTE*)malloc(extmem_size);
+			cpumem = (BYTE *)malloc(extmem_size);
 			if (cpumem == NULL) {
 				protectmem_size = 0;
 				return FAILURE;
 			}
+			memset(cpumem, 0, extmem_size);
 		}
 	}
-
-	if (cpumem)
-		memset(cpumem, 0, extmem_size);
-
 	protectmem_size = usemem;
 	return SUCCESS;
 }
@@ -85,12 +81,7 @@ void
 cpu_memoryread_check(descriptor_t* sd, DWORD madr, DWORD length, int e)
 {
 
-	if (!CPU_STAT_PM) {
-		if ((madr > sd->u.seg.segend - length + 1)
-		    || (length - 1 > sd->u.seg.limit)) {
-			EXCEPTION(e, 0);
-		}
-	} else {
+	if (CPU_STAT_PM) {
 		/* invalid */
 		if (!sd->valid) {
 			EXCEPTION(GP_EXCEPTION, 0);
@@ -129,21 +120,14 @@ cpu_memoryread_check(descriptor_t* sd, DWORD madr, DWORD length, int e)
 			break;
 		}
 	}
-#if 0	/* XXX */
 	sd->flag |= CPU_DESC_READABLE;
-#endif
 }
 
 void
 cpu_memorywrite_check(descriptor_t* sd, DWORD madr, DWORD length, int e)
 {
 
-	if (!CPU_STAT_PM) {
-		if ((madr > sd->u.seg.segend - length + 1)
-		    || (length - 1 > sd->u.seg.limit)) {
-			EXCEPTION(e, 0);
-		}
-	} else {
+	if (CPU_STAT_PM) {
 		/* invalid */
 		if (!sd->valid) {
 			EXCEPTION(GP_EXCEPTION, 0);
@@ -178,9 +162,7 @@ cpu_memorywrite_check(descriptor_t* sd, DWORD madr, DWORD length, int e)
 			break;
 		}
 	}
-#if 0	/* XXX */
 	sd->flag |= CPU_DESC_WRITABLE;
-#endif
 }
 
 BOOL
@@ -287,10 +269,9 @@ cpu_codefetch_w(DWORD madr)
 	DWORD addr;
 
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-
 	if (!CPU_INST_AS32)
 		madr &= 0xffff;
-	if (madr <= sd->u.seg.segend) {
+	if (madr <= sd->u.seg.segend - 1) {
 		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + madr;
 		if (!CPU_STAT_PM)
 			return cpu_memoryread_w(addr);
@@ -309,7 +290,7 @@ cpu_codefetch_d(DWORD madr)
 	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
 	if (!CPU_INST_AS32)
 		madr &= 0xffff;
-	if (madr <= sd->u.seg.segend) {
+	if (madr <= sd->u.seg.segend - 3) {
 		addr = CPU_STAT_SREGBASE(CPU_CS_INDEX) + madr;
 		if (!CPU_STAT_PM)
 			return cpu_memoryread_d(addr);
@@ -528,8 +509,8 @@ cpu_memorywrite_d(DWORD address, DWORD value)
 		cpu_memorywrite_w(adr + 2, (value >> 16) & 0xffff);
 	} else {
 		adr -= LOWMEM;
-		if (adr < extmem_size) {
-			SETDWORD(cpumem + adr, value);
+		if (adr < extmem_size - 3) {
+			STOREINTELDWORD(cpumem + adr, value);
 		} else {
 			ia32_panic("cpu_memorywrite_d: out of universe.");
 		}
@@ -548,8 +529,8 @@ cpu_memorywrite_w(DWORD address, WORD value)
 		cpumem[adr - (LOWMEM - 1)] = (value >> 8) & 0xff;
 	} else {
 		adr -= LOWMEM;
-		if (adr < extmem_size) {
-			SETWORD(cpumem + adr, value);
+		if (adr < extmem_size - 1) {
+			STOREINTELWORD(cpumem + adr, value);
 		} else {
 			ia32_panic("cpu_memorywrite_w: out of universe.");
 		}
@@ -586,11 +567,11 @@ cpu_memoryread_d(DWORD address)
 		val |= (DWORD)cpu_memoryread_w(adr + 2) << 16;
 	} else {
 		adr -= LOWMEM;
-		if (adr < extmem_size) {
-			val = GETDWORD(cpumem + adr);
+		if (adr < extmem_size - 3) {
+			val = LOADINTELDWORD(cpumem + adr);
 		} else {
-			val = (DWORD)-1;
 			ia32_panic("cpu_memoryread_d: out of universe.");
+			val = (DWORD)-1;
 		}
 	}
 	return val;
@@ -609,11 +590,11 @@ cpu_memoryread_w(DWORD address)
 		val |= (WORD)cpumem[adr - (LOWMEM - 1)] << 8;
 	} else {
 		adr -= LOWMEM;
-		if (adr < extmem_size) {
-			val = GETWORD(cpumem + adr);
+		if (adr < extmem_size - 1) {
+			val = LOADINTELWORD(cpumem + adr);
 		} else {
-			val = (WORD)-1;
 			ia32_panic("cpu_memoryread_w: out of universe.");
+			val = (WORD)-1;
 		}
 	}
 	return val;
@@ -632,8 +613,8 @@ cpu_memoryread(DWORD address)
 		if (adr < extmem_size) {
 			val = cpumem[adr];
 		} else {
-			val = (BYTE)-1;
 			ia32_panic("cpu_memoryread: out of universe.");
+			val = (BYTE)-1;
 		}
 	}
 	return val;
