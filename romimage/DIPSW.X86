@@ -31,8 +31,8 @@ check_p1:		shr		bl, 1
 ; ---------------------------------------------------------------------------
 
 INIT_DIPSW:		mov		byte ptr ds:[DIPSW_1], 01111100b
-				mov		byte ptr ds:[DIPSW_2], 11001110b
-				mov		byte ptr ds:[DIPSW_3], 01011110b
+				mov		byte ptr ds:[DIPSW_2], 11000110b
+				mov		byte ptr ds:[DIPSW_3], 11011110b
 				ret
 
 
