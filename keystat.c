@@ -197,8 +197,6 @@ void keystat_ctrlreset(void) {
 
 void keystat_ctrlsend(REG8 dat) {
 
-	return;
-
 	if (!keyctrl.reqparam) {
 		keyctrl.mode = dat;
 		switch(dat) {

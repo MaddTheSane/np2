@@ -88,7 +88,7 @@ typedef signed __int64		SINT64;
 #define	SUPPORT_CRT31KHZ
 #define	SUPPORT_PC9821
 #define	SUPPORT_PC9801_119
-#define	SUPPORT_SOFTKBD			0
+#define	SUPPORT_SOFTKBD			3
 #define IA32_PAGING_EACHSIZE
 #endif
 #define	SUPPORT_HOSTDRV
