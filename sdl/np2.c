@@ -20,6 +20,7 @@
 #include	"s98.h"
 #include	"diskdrv.h"
 #include	"timing.h"
+#include	"keystat.h"
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"sysmenu.h"

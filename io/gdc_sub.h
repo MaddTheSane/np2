@@ -28,7 +28,7 @@ extern const UINT8 gdcbitreverse[0x100];
 #define	GDCPATREVERSE(d)		gdcbitreverse[(d) & 0xff]
 #else
 REG8 gdcbitreverse(REG8 data);
-#define	GDCPATREVERSE(d)		gdcbitreverse(d)
+#define	GDCPATREVERSE(d)		gdcbitreverse((REG8)(d))
 #endif
 
 void gdcslavewait(NEVENTITEM item);

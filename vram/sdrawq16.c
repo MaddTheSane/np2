@@ -208,6 +208,7 @@ const BYTE	*q;
 	sdraw->y = y;
 }
 
+#if defined(SUPPORT_CRT15KHZ)
 // text or grph 1ƒvƒŒ[ƒ“ (15kHz)
 static void SCRNCALL qvga16p_1d(SDRAW sdraw, int maxy) {
 
@@ -279,6 +280,8 @@ const BYTE	*q;
 	sdraw->dst = r;
 	sdraw->y = y;
 }
+#endif
+
 
 static const SDRAWFN qvga16p[] = {
 		qvga16p_0,		qvga16p_1,		qvga16p_1,		qvga16p_2,

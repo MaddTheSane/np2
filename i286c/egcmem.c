@@ -939,7 +939,7 @@ static const EGCQUAD * MEMCALL egc_opeb(UINT32 ad, REG8 value) {
 			EGCOPE_SHIFTB;
 			egc.mask2.w &= egc.srcmask.w;
 			tmp = egc.ope & 0xff;
-			return((*opefn[tmp])(tmp, ad & (~1)));
+			return((*opefn[tmp])((REG8)tmp, ad & (~1)));
 
 		case 0x1000:
 			switch(egc.fgbg & 0x6000) {
@@ -977,7 +977,7 @@ static const EGCQUAD * MEMCALL egc_opew(UINT32 ad, REG16 value) {
 			EGCOPE_SHIFTW;
 			egc.mask2.w &= egc.srcmask.w;
 			tmp = egc.ope & 0xff;
-			return((*opefn[tmp])(tmp, ad));
+			return((*opefn[tmp])((REG8)tmp, ad));
 
 		case 0x1000:
 			switch(egc.fgbg & 0x6000) {

@@ -379,6 +379,18 @@ SOURCE=..\CBUS\PC9861K.C
 
 SOURCE=..\CBUS\PCM86IO.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\SASIIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\SCSICMD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\SCSIIO.C
+# End Source File
 # End Group
 # Begin Group "bios"
 
@@ -815,6 +827,14 @@ SOURCE=..\GENERIC\CMJASTS.C
 
 SOURCE=..\GENERIC\CMVER.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRV.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\HOSTDRVS.C
+# End Source File
 # End Group
 # Begin Group "embed"
 
@@ -891,6 +911,10 @@ SOURCE=..\CALENDAR.C
 # Begin Source File
 
 SOURCE=..\DEBUGSUB.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\KEYSTAT.C
 # End Source File
 # Begin Source File
 

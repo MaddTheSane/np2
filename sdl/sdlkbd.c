@@ -1,8 +1,7 @@
 #include	"compiler.h"
 #include	"np2.h"
 #include	"sdlkbd.h"
-#include	"pccore.h"
-#include	"iocore.h"
+#include	"keystat.h"
 
 
 typedef struct {

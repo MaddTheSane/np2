@@ -221,7 +221,7 @@ const VECTDIR	*dir;
 	BYTE		mulx;
 
 	if (vect->ope & 0x80) {		// SL
-		pat = (GDCPATREVERSE(pat) << 8) + GDCPATREVERSE(pat >> 8);
+		pat = (REG16)((GDCPATREVERSE(pat) << 8) + GDCPATREVERSE(pat >> 8));
 	}
 	gdcpset_prepare(&pset, csrw, 0xffff, ope);
 	multiple = (gdc.s.para[GDC_ZOOM] & 15) + 1;

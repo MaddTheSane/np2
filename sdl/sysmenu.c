@@ -13,6 +13,7 @@
 #include	"sound.h"
 #include	"beep.h"
 #include	"diskdrv.h"
+#include	"keystat.h"
 #include	"vramhdl.h"
 #include	"menubase.h"
 #include	"menustr.h"
