@@ -74,20 +74,18 @@ static REG8 IOINPCALL csctrl_ic2d(UINT port) {
 
 void cs4231io_reset(void) {
 
-	cs4231.enable = 0;
-	cs4231.port = 0xffff;
-}
-
-void cs4231io_bind(void) {
-
 	cs4231.enable = 1;
 	cs4231.port = 0xf40;
 	cs4231.adrs = 0x21;
 	cs4231.dmach = 0;
 	cs4231.dmairq = 0x0c;
 	cs4231.step = 22050;
-	sound_streamregist(&cs4231, (SOUNDCB)cs4231_getpcm);
+	dmac_attach(DMADEV_CS4231, 0);
+}
 
+void cs4231io_bind(void) {
+
+	sound_streamregist(&cs4231, (SOUNDCB)cs4231_getpcm);
 	iocore_attachout(0xc24, csctrl_oc24);
 	iocore_attachout(0xc2b, csctrl_oc2b);
 	iocore_attachout(0xc2d, csctrl_oc2d);

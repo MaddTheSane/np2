@@ -8,6 +8,10 @@
 #include	"iocore.h"
 #include	"fddfile.h"
 
+enum {
+	FDC_DMACH2HD	= 2,
+	FDC_DMACH2DD	= 3
+};
 
 static const UINT8 FDCCMD_TABLE[32] = {
 						0, 0, 8, 2, 1, 8, 8, 1, 0, 8, 1, 0, 8, 5, 0, 2,
@@ -56,10 +60,10 @@ REG8 DMACCALL fdc_dmafunc(REG8 func) {
 static void fdc_dmaready(REG8 enable) {
 
 	if (CTRL_FDMEDIA == DISKTYPE_2HD) {
-		dmac.dmach[DMA_2HD].ready = enable;
+		dmac.dmach[FDC_DMACH2HD].ready = enable;
 	}
 	else {
-		dmac.dmach[DMA_2DD].ready = enable;
+		dmac.dmach[FDC_DMACH2DD].ready = enable;
 	}
 }
 
@@ -843,6 +847,8 @@ void fdc_reset(void) {
 	ZeroMemory(&fdc, sizeof(fdc));
 	fdcstatusreset();
 	CTRL_FDMEDIA = DISKTYPE_2HD;
+	dmac_attach(DMADEV_2HD, FDC_DMACH2HD);
+	dmac_attach(DMADEV_2DD, FDC_DMACH2DD);
 }
 
 void fdc_bind(void) {

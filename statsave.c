@@ -495,9 +495,9 @@ static int flagsave_dma(NP2FFILE f, const STENTRY *t) {
 
 	dmabak = dmac;
 	for (i=0; i<4; i++) {
-		if ((PROC2NUM(dmabak.dmach[i].outproc, dmaproc)) ||
-			(PROC2NUM(dmabak.dmach[i].inproc, dmaproc)) ||
-			(PROC2NUM(dmabak.dmach[i].extproc, dmaproc))) {
+		if ((PROC2NUM(dmabak.dmach[i].proc.outproc, dmaproc)) ||
+			(PROC2NUM(dmabak.dmach[i].proc.inproc, dmaproc)) ||
+			(PROC2NUM(dmabak.dmach[i].proc.extproc, dmaproc))) {
 			return(NP2FLAG_FAILURE);
 		}
 	}
@@ -517,16 +517,16 @@ static int flagload_dma(NP2FFILE f, const STENTRY *t) {
 	ret = flagload_load(f, &dmac, sizeof(dmac));
 
 	for (i=0; i<4; i++) {
-		if (NUM2PROC(dmac.dmach[i].outproc, dmaproc)) {
-			dmac.dmach[i].outproc = dma_dummyout;
+		if (NUM2PROC(dmac.dmach[i].proc.outproc, dmaproc)) {
+			dmac.dmach[i].proc.outproc = dma_dummyout;
 			ret |= NP2FLAG_WARNING;
 		}
-		if (NUM2PROC(dmac.dmach[i].inproc, dmaproc)) {
-			dmac.dmach[i].inproc = dma_dummyin;
+		if (NUM2PROC(dmac.dmach[i].proc.inproc, dmaproc)) {
+			dmac.dmach[i].proc.inproc = dma_dummyin;
 			ret |= NP2FLAG_WARNING;
 		}
-		if (NUM2PROC(dmac.dmach[i].extproc, dmaproc)) {
-			dmac.dmach[i].extproc = dma_dummyproc;
+		if (NUM2PROC(dmac.dmach[i].proc.extproc, dmaproc)) {
+			dmac.dmach[i].proc.extproc = dma_dummyproc;
 			ret |= NP2FLAG_WARNING;
 		}
 	}

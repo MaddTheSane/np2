@@ -21,6 +21,15 @@ REG8 DMACCALL dma_dummyproc(REG8 func) {
 	return(0);
 }
 
+static const DMAPROC dmaproc[] = {
+		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// NONE
+		{fdc_DataRegWrite,	fdc_DataRegRead,	fdc_dmafunc},		// 2HD
+		{fdc_DataRegWrite,	fdc_DataRegRead,	fdc_dmafunc},		// 2DD
+		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// SASI
+		{dma_dummyout,		dma_dummyin,		dma_dummyproc},		// SCSI
+		{dma_dummyout,		dma_dummyin,		cs4231dmafunc},		// CS4231
+};
+
 
 // ----
 
@@ -37,7 +46,7 @@ void dmac_check(void) {
 		if ((!(dmac.mask & bit)) && (ch->ready)) {
 			if (!(dmac.work & bit)) {
 				dmac.work |= bit;
-				if (ch->extproc(DMAEXT_START)) {
+				if (ch->proc.extproc(DMAEXT_START)) {
 					dmac.stat &= ~bit;						// ver0.27
 					dmac.working |= bit;
 					workchg = TRUE;
@@ -48,7 +57,7 @@ void dmac_check(void) {
 			if (dmac.work & bit) {
 				dmac.work &= ~bit;
 				dmac.working &= ~bit;
-				ch->extproc(DMAEXT_BREAK);
+				ch->proc.extproc(DMAEXT_BREAK);
 				workchg = TRUE;
 			}
 		}
@@ -191,24 +200,10 @@ static const IOOUT dmaco21[4] = {
 
 void dmac_reset(void) {
 
-	int		i;
-
 	ZeroMemory(&dmac, sizeof(dmac));
 	dmac.lh = DMA16_LOW;
 	dmac.mask = 0xf;
-	for (i=0; i<4; i++) {
-		dmac.dmach[i].outproc = dma_dummyout;
-		dmac.dmach[i].inproc = dma_dummyin;
-		dmac.dmach[i].extproc = dma_dummyproc;
-	}
-	dmac.dmach[0].extproc = cs4231dmafunc;
-	dmac.dmach[DMA_2HD].inproc = fdc_DataRegRead;
-	dmac.dmach[DMA_2HD].outproc = fdc_DataRegWrite;
-	dmac.dmach[DMA_2HD].extproc = fdc_dmafunc;
-	dmac.dmach[DMA_2DD].inproc = fdc_DataRegRead;
-	dmac.dmach[DMA_2DD].outproc = fdc_DataRegWrite;
-	dmac.dmach[DMA_2DD].extproc = fdc_dmafunc;
-
+	dmac_procset();
 //	TRACEOUT(("sizeof(_DMACH) = %d", sizeof(_DMACH)));
 }
 
@@ -217,5 +212,76 @@ void dmac_bind(void) {
 	iocore_attachsysoutex(0x0001, 0x0ce1, dmaco00, 16);
 	iocore_attachsysinpex(0x0001, 0x0ce1, dmaci00, 16);
 	iocore_attachsysoutex(0x0021, 0x0cf1, dmaco21, 4);
+}
+
+
+// ----
+
+static void dmacset(REG8 channel) {
+
+	DMADEV		*dev;
+	DMADEV		*devterm;
+	UINT		dmadev;
+
+	dev = dmac.device;
+	devterm = dev + dmac.devices;
+	dmadev = DMADEV_NONE;
+	while(dev < devterm) {
+		if (dev->channel == channel) {
+			dmadev = dev->device;
+		}
+		dev++;
+	}
+	if (dmadev >= sizeof(dmaproc) / sizeof(DMAPROC)) {
+		dmadev = 0;
+	}
+	dmac.dmach[channel].proc = dmaproc[dmadev];
+}
+
+void dmac_procset(void) {
+
+	REG8	i;
+
+	for (i=0; i<4; i++) {
+		dmacset(i);
+	}
+}
+
+void dmac_attach(REG8 device, REG8 channel) {
+
+	dmac_detach(device);
+
+	if (dmac.devices < (sizeof(dmac.device) / sizeof(DMADEV))) {
+		dmac.device[dmac.devices].device = device;
+		dmac.device[dmac.devices].channel = channel;
+		dmac.devices++;
+		dmacset(channel);
+	}
+}
+
+void dmac_detach(REG8 device) {
+
+	DMADEV	*dev;
+	DMADEV	*devterm;
+	REG8	ch;
+
+	dev = dmac.device;
+	devterm = dev + dmac.devices;
+	while(dev < devterm) {
+		if (dev->device == device) {
+			break;
+		}
+		dev++;
+	}
+	if (dev < devterm) {
+		ch = dev->channel;
+		dev++;
+		while(dev < devterm) {
+			*(dev - 1) = *dev;
+			dev++;
+		}
+		dmac.devices--;
+		dmacset(ch);
+	}
 }
 

@@ -18,8 +18,8 @@
 				struc	dmac_t
 .dmach			resb	(dmach_t.size * 4)
 .lh				resd	1
-.work			resd	1
-.working		resd	1
+.work			resb	1
+.working		resb	1
 .mask			resb	1
 .stat			resb	1
 				endstruc

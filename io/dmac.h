@@ -5,16 +5,18 @@
 
 
 enum {
-	DMA_CH00			= 0,
-	DMA_CH01			= 1,
-	DMA_2HD				= 2,
-	DMA_2DD				= 3,
-
 	DMAEXT_START		= 0,
 	DMAEXT_END			= 1,
 	DMAEXT_BREAK		= 2,
 
-	DMA_INITSIGNALONLY	= 1
+	DMA_INITSIGNALONLY	= 1,
+
+	DMADEV_NONE			= 0,
+	DMADEV_2HD			= 1,
+	DMADEV_2DD			= 2,
+	DMADEV_SASI			= 3,
+	DMADEV_SCSI			= 4,
+	DMADEV_CS4231		= 5
 };
 
 #if defined(BYTESEX_LITTLE)
@@ -32,6 +34,12 @@ enum {
 	DMA32_HIGH		= 0
 };
 #endif
+
+typedef struct {
+	void	(DMACCALL * outproc)(REG8 data);
+	REG8	(DMACCALL * inproc)(void);
+	REG8	(DMACCALL * extproc)(REG8 action);
+} DMAPROC;
 
 typedef struct {
 	union {
@@ -52,9 +60,7 @@ typedef struct {
 		UINT16	w;
 	} lengorg;
 	UINT16	action;
-	void	(DMACCALL * outproc)(REG8 data);
-	REG8	(DMACCALL * inproc)(void);
-	REG8	(DMACCALL * extproc)(REG8 action);
+	DMAPROC	proc;
 	UINT8	mode;
 	UINT8	sreq;
 	UINT8	ready;
@@ -62,12 +68,19 @@ typedef struct {
 } _DMACH, *DMACH;
 
 typedef struct {
+	UINT8	device;
+	UINT8	channel;
+} DMADEV;
+
+typedef struct {
 	_DMACH	dmach[4];
 	int		lh;
-	UINT	work;
-	UINT	working;
+	UINT8	work;
+	UINT8	working;
 	UINT8	mask;
 	UINT8	stat;
+	UINT	devices;
+	DMADEV	device[8];
 } _DMAC, *DMAC;
 
 
@@ -83,6 +96,10 @@ void dmac_reset(void);
 void dmac_bind(void);
 
 void dmac_check(void);
+
+void dmac_procset(void);
+void dmac_attach(REG8 device, REG8 channel);
+void dmac_detach(REG8 device);
 
 #ifdef __cplusplus
 }

@@ -8,7 +8,7 @@
 void dmap_i286(void) {
 
 	DMACH	ch;
-	int		bit;
+	REG8	bit;
 
 	if (dmac.working) {
 		ch = dmac.dmach;
@@ -19,21 +19,21 @@ void dmap_i286(void) {
 				if (!ch->leng.w) {
 					dmac.stat |= bit;
 					dmac.working &= ~bit;
-					ch->extproc(DMAEXT_END);
+					ch->proc.extproc(DMAEXT_END);
 				}
 				ch->leng.w--;
 
 				switch(ch->mode & 0x0c) {
 					case 0x00:		// verifty
-						ch->inproc();
+						ch->proc.inproc();
 						break;
 
 					case 0x04:		// port->mem
-						i286_memorywrite(ch->adrs.d, ch->inproc());
+						i286_memorywrite(ch->adrs.d, ch->proc.inproc());
 						break;
 
 					default:
-						ch->outproc(i286_memoryread(ch->adrs.d));
+						ch->proc.outproc(i286_memoryread(ch->adrs.d));
 						break;
 				}
 				ch->adrs.d += ((ch->mode & 0x20)?-1:1);
@@ -47,7 +47,7 @@ void dmap_i286(void) {
 void dmap_v30(void) {
 
 	DMACH	ch;
-	int		bit;
+	REG8	bit;
 
 	if (dmac.working) {
 		ch = dmac.dmach;
@@ -58,21 +58,21 @@ void dmap_v30(void) {
 				if (!ch->leng.w) {
 					dmac.stat |= bit;
 					dmac.working &= ~bit;
-					ch->extproc(DMAEXT_END);
+					ch->proc.extproc(DMAEXT_END);
 				}
 				ch->leng.w--;
 
 				switch(ch->mode & 0x0c) {
 					case 0x00:		// verifty
-						ch->inproc();
+						ch->proc.inproc();
 						break;
 
 					case 0x04:		// port->mem
-						i286_memorywrite(ch->adrs.d, ch->inproc());
+						i286_memorywrite(ch->adrs.d, ch->proc.inproc());
 						break;
 
 					default:
-						ch->outproc(i286_memoryread(ch->adrs.d));
+						ch->proc.outproc(i286_memoryread(ch->adrs.d));
 						break;
 				}
 				ch->adrs.w[DMA16_LOW] += ((ch->mode & 0x20)?-1:1);
