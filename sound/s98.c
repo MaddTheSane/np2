@@ -184,3 +184,6 @@ void S98_put(REG8 module, REG8 addr, REG8 data) {
 	}
 }
 
+void S98_sync(void) {
+}
+

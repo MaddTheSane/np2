@@ -53,7 +53,6 @@ void systimer(NEVENTITEM item) {
 			// レートジェネレータ
 			pit.intr[0] = 1;
 			setsystimerevent(NEVENT_RELATIVE);
-			TRACEOUT(("intr-next"));
 		}
 		else {
 			nevent_set(NEVENT_ITIMER, pc.multiple << 16,
