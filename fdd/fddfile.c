@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"dosio.h"
+#include	"sysmng.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"fddfile.h"
@@ -164,6 +165,7 @@ BOOL fdd_read(void) {
 
 	FDDFILE		fdd;
 
+	sysmng_fddaccess(fdc.us);
 	fdd = fddfile + fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
@@ -179,6 +181,7 @@ BOOL fdd_write(void) {
 
 	FDDFILE		fdd;
 
+	sysmng_fddaccess(fdc.us);
 	fdd = fddfile + fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
@@ -194,6 +197,7 @@ BOOL fdd_readid(void) {
 
 	FDDFILE		fdd;
 
+	sysmng_fddaccess(fdc.us);
 	fdd = fddfile + fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
@@ -215,6 +219,7 @@ BOOL fdd_formatinit(void) {
 
 BOOL fdd_formating(const BYTE *ID) {
 
+	sysmng_fddaccess(fdc.us);
 	if (fddfile[fdc.us].type == DISKTYPE_D88) {
 		return(fdd_formating_d88(ID));
 	}

@@ -3,7 +3,9 @@
 #include	"resource.h"
 #include	"np2.h"
 #include	"dosio.h"
+#include	"soundmng.h"
 #include	"sysmng.h"
+#include	"menu.h"
 #include	"toolwin.h"
 #include	"ini.h"
 #include	"dialog.h"
@@ -60,7 +62,7 @@ static const BYTE fddlist[FDDLIST_DRV] = {
 					IDC_TOOLFDD1LIST, IDC_TOOLFDD2LIST};
 
 static const SUBITEM subitem[IDC_MAXITEMS] = {
-		{str_static, NULL, WS_VISIBLE, 0, 47, 44, 8, 3},
+		{str_static, NULL, WS_VISIBLE, 0, 49, 44, 8, 3},
 		{str_static, NULL, WS_VISIBLE, 0, 93, 19, 8, 3},
 		{str_combobox,	NULL,
 			WS_VISIBLE | CBS_DROPDOWNLIST | WS_VSCROLL, 0, 104, 6, 248, 160},
@@ -82,6 +84,9 @@ static const SUBITEM subitem[IDC_MAXITEMS] = {
 
 typedef struct {
 	HWND	hwnd;
+	BYTE	fddaccess[2];
+	BYTE	hddaccess;
+	BYTE	_padding;
 	int		winflg;
 	int		wingx;
 	int		wingy;
@@ -92,18 +97,29 @@ typedef struct {
 	int		parenty;
 	HFONT	hfont;
 	HDC		hdcfont;
+	HBRUSH	access[2];
 	HWND	sub[IDC_MAXITEMS];
 	SCPROC	subproc[IDC_MAXITEMS];
 } TOOLWIN;
 
 static	TOOLWIN		toolwin;
 
+typedef struct {
+	WORD	idc;
+	BYTE	*counter;
+} DISKACC;
+
+static const DISKACC diskacc[3] = {
+			{IDC_TOOLFDD1ACC,	&toolwin.fddaccess[0]},
+			{IDC_TOOLFDD2ACC,	&toolwin.fddaccess[1]},
+			{IDC_TOOLHDDACC,	&toolwin.hddaccess}};
+
+
 static void calctextsize(char *path, int leng, const char *p, int width) {
 
 	HDC		hdc;
 	SIZE	cur;
 	char	work[MAX_PATH];
-const char	*q;
 	int		l;
 	SIZE	tail;
 	int		pos;
@@ -213,6 +229,21 @@ static void sellist(UINT drv) {
 	}
 }
 
+static void accdraw(HWND hWnd, BYTE count) {
+
+	HDC			hdc;
+	PAINTSTRUCT	ps;
+	RECT		rc;
+	HBRUSH		hbrush;
+
+	hdc = BeginPaint(hWnd, &ps);
+	GetClientRect(hWnd, &rc);
+	hbrush = (HBRUSH)SelectObject(hdc, toolwin.access[(count)?1:0]);
+	PatBlt(hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY);
+	SelectObject(hdc, hbrush);
+	EndPaint(hWnd, &ps);
+}
+
 static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	UINT	idc;
@@ -228,7 +259,7 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		return(0);
 	}
 	if (msg == WM_DROPFILES) {
-   	    files = DragQueryFile((HDROP)wp, 0xFFFFFFFF, NULL, 0);
+   	    files = DragQueryFile((HDROP)wp, (UINT)-1, NULL, 0);
 		if (files == 1) {
 			DragQueryFile((HDROP)wp, 0, fname, sizeof(fname));
 			if (idc == IDC_TOOLFDD1LIST) {
@@ -242,6 +273,20 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		}
 		DragFinish((HDROP)wp);
 		return(FALSE);
+	}
+	else if (msg == WM_PAINT) {
+		if (idc == IDC_TOOLHDDACC) {
+			accdraw(hWnd, toolwin.hddaccess);
+			return(FALSE);
+		}
+		else if (idc == IDC_TOOLFDD1ACC) {
+			accdraw(hWnd, toolwin.fddaccess[0]);
+			return(FALSE);
+		}
+		else if (idc == IDC_TOOLFDD2ACC) {
+			accdraw(hWnd, toolwin.fddaccess[1]);
+			return(FALSE);
+		}
 	}
 	return(CallWindowProc(toolwin.subproc[idc], hWnd, msg, wp, lp));
 }
@@ -261,6 +306,9 @@ const SUBITEM	*p;
 	toolwin.hdcfont = CreateCompatibleDC(hdc);
 	ReleaseDC(NULL, hdc);
 	SelectObject(toolwin.hdcfont, toolwin.hfont);
+
+	toolwin.access[0] = CreateSolidBrush(0x000060);
+	toolwin.access[1] = CreateSolidBrush(0x0000ff);
 
 	hinstance = ((LPCREATESTRUCT)lp)->hInstance;
 	p = subitem;
@@ -288,6 +336,8 @@ static void toolwindestroy(void) {
 	for (i=0; i<IDC_MAXITEMS; i++) {
 		DestroyWindow(toolwin.sub[i]);
 	}
+	DeleteObject(toolwin.access[0]);
+	DeleteObject(toolwin.access[1]);
 	DeleteObject(toolwin.hdcfont);
 	DeleteObject(toolwin.hfont);
 }
@@ -452,6 +502,10 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 	switch(msg) {
 		case WM_CREATE:
+			SetWindowLong(hWnd, GWL_STYLE,
+							GetWindowLong(hWnd, GWL_STYLE) & (~WS_CAPTION));
+			SetWindowPos(hWnd, 0, 0, 0, 0, 0,
+					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 			toolwincreate(hWnd, lp);
 			break;
 
@@ -464,7 +518,9 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1BROWSE:
+					soundmng_stop();
 					dialog_changefdd(hWnd, 0);
+					soundmng_play();
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1EJECT:
@@ -479,7 +535,9 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2BROWSE:
+					soundmng_stop();
 					dialog_changefdd(hWnd, 1);
+					soundmng_play();
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2EJECT:
@@ -493,8 +551,21 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			toolwinpaint(hWnd);
 			break;
 
+		case WM_ENTERMENULOOP:
+			soundmng_stop();
+			break;
+
+		case WM_EXITMENULOOP:
+			soundmng_play();
+			break;
+
 		case WM_ENTERSIZEMOVE:
+			soundmng_stop();
 			movingstart();
+			break;
+
+		case WM_EXITSIZEMOVE:
+			soundmng_play();
 			break;
 
 		case WM_MOVING:
@@ -513,12 +584,14 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_CLOSE:
+			xmenu_settoolwin(0);
 			DestroyWindow(hWnd);
 			break;
 
 		case WM_DESTROY:
 			toolwindestroy();
 			toolwin.hwnd = NULL;
+			TRACEOUT(("WM_DESTROY"));
 			break;
 
 		case WM_LBUTTONDOWN:
@@ -555,6 +628,7 @@ void toolwin_open(void) {
 	if (toolwin.hwnd) {
 		return;
 	}
+	ZeroMemory(&toolwin, sizeof(toolwin));
 	hWnd = CreateWindowEx(0, np2toolclass, np2tooltitle, WS_SYSMENU,
 							np2tool.posx, np2tool.posy, 410, 52,
 							NULL, NULL, hInst, NULL);
@@ -564,16 +638,14 @@ void toolwin_open(void) {
 	}
 	UpdateWindow(hWnd);
 	ShowWindow(hWnd, SW_SHOW);
-	SetWindowLong(hWnd, GWL_STYLE,
-					GetWindowLong(hWnd, GWL_STYLE) & (~WS_CAPTION));
-	SetWindowPos(hWnd, 0, 0, 0, 0, 0,
-		SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void toolwin_close(void) {
 
 	if (toolwin.hwnd) {
+		TRACEOUT(("DestroyWindow(toolwin.hwnd)"));
 		DestroyWindow(toolwin.hwnd);
+//		toolwin.hwnd = NULL;
 	}
 }
 
@@ -652,6 +724,66 @@ void toolwin_setfdd(BYTE drv, const char *name) {
 	if (toolwin.hwnd != NULL) {
 		setlist(drv);
 		SetForegroundWindow(hWndMain);
+	}
+}
+
+
+static void setdiskacc(UINT num, BYTE count) {
+
+const DISKACC	*acc;
+	BYTE		counter;
+
+	if (toolwin.hwnd == NULL) {
+		return;
+	}
+	if (num < (sizeof(diskacc)/sizeof(DISKACC))) {
+		acc = diskacc + num;
+		counter = *(acc->counter);
+		*(acc->counter) = count;
+		if (counter) {
+			InvalidateRect(toolwin.sub[acc->idc], NULL, TRUE);
+		}
+	}
+}
+
+void toolwin_fddaccess(BYTE drv) {
+
+	if (drv < 2) {
+		setdiskacc(drv, 20);
+	}
+}
+
+void toolwin_hddaccess(BYTE drv) {
+
+	setdiskacc(2, 10);
+}
+
+void toolwin_draw(BYTE frame) {
+
+const DISKACC	*acc;
+const DISKACC	*accterm;
+	BYTE		counter;
+
+	if (toolwin.hwnd == NULL) {
+		return;
+	}
+	if (!frame) {
+		frame = 1;
+	}
+	acc = diskacc;
+	accterm = acc + (sizeof(diskacc)/sizeof(DISKACC));
+	while(acc < accterm) {
+		counter = *acc->counter;
+		if (counter) {
+			if (counter <= frame) {
+				*(acc->counter) = 0;
+				InvalidateRect(toolwin.sub[acc->idc], NULL, TRUE);
+			}
+			else {
+				*(acc->counter) -= frame;
+			}
+		}
+		acc++;
 	}
 }
 

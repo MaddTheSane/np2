@@ -10,6 +10,7 @@
 #include	"sysmng.h"
 #include	"dclock.h"
 #include	"menu.h"
+#include	"pccore.h"
 #include	"scrndraw.h"
 #include	"palettes.h"
 
@@ -362,8 +363,13 @@ BOOL scrnmng_create(BYTE scrnmode) {
 
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		dclock_init();
+#if 1
+		ddraw2->SetCooperativeLevel(hWndMain,
+										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+#else
 		ddraw2->SetCooperativeLevel(hWndMain,
 					DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT);
+#endif
 		height = (np2oscfg.force400)?400:480;
 		bitcolor = (scrnmode & SCRNMODE_HIGHCOLOR)?16:8;
 		if (ddraw2->SetDisplayMode(640, height, bitcolor, 0, 0) != DD_OK) {
@@ -476,6 +482,7 @@ BOOL scrnmng_create(BYTE scrnmode) {
 	ddraw.height = height;
 	ddraw.cliping = 0;
 	renewalclientsize();
+	screenupdate = 3;					// update!
 	return(SUCCESS);
 
 scre_err:
@@ -485,6 +492,7 @@ scre_err:
 
 void scrnmng_destroy(void) {
 
+	scrnmng_enablemenubar();
 	if (ddraw.clocksurf) {
 		ddraw.clocksurf->Release();
 	}
@@ -509,7 +517,6 @@ void scrnmng_destroy(void) {
 	if (ddraw.ddraw1) {
 		ddraw.ddraw1->Release();
 	}
-	scrnmng_enablemenubar();
 	ZeroMemory(&ddraw, sizeof(ddraw));
 }
 

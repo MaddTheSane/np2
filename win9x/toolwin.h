@@ -25,6 +25,16 @@ void toolwin_movingstart(void);
 void toolwin_movingend(void);
 void toolwin_setfdd(BYTE drv, const char *name);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void toolwin_fddaccess(BYTE drv);
+void toolwin_hddaccess(BYTE drv);
+#ifdef __cplusplus
+}
+#endif
+void toolwin_draw(BYTE frame);
+
 void toolwin_readini(void);
 void toolwin_writeini(void);
 

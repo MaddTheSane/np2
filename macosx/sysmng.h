@@ -22,10 +22,33 @@ extern "C" {
 
 extern	UINT	sys_updates;
 
-#define	sysmng_initialize()	sys_updates = 0
-#define	sysmng_update(a)	sys_updates |= (a);								\
-							if ((a) & SYS_UPDATEFDD) sysmng_updatecaption(1)
-#define	sysmng_cpureset()	sys_updates	&= (SYS_UPDATECFG | SYS_UPDATEOSCFG)
+#if 0
+void sysmng_initialize(void);
+void sysmng_update(UINT bitmap);
+void sysmng_cpureset(void);
+void sysmng_fddaccess(BYTE drv);
+void sysmng_hddaccess(BYTE drv);
+#else
+
+// マクロ(単に関数コールしたくないだけ)
+#define	sysmng_initialize()												\
+			sys_updates = 0
+
+#define	sysmng_update(a)												\
+			sys_updates |= (a);											\
+			if ((a) & SYS_UPDATEFDD) sysmng_updatecaption(1)
+
+#define	sysmng_cpureset()												\
+			sys_updates &= (SYS_UPDATECFG | SYS_UPDATEOSCFG);			\
+			sysmng_workclockreset()
+
+#define	sysmng_fddaccess(a)
+#define	sysmng_hddaccess(a)
+
+#endif
+
+
+// ---- あとはOS依存部
 
 void sysmng_workclockreset(void);
 BOOL sysmng_workclockrenewal(void);

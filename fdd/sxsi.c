@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	"dosio.h"
+#include	"sysmng.h"
 #include	"i286.h"
 #include	"pccore.h"
 #include	"sxsi.h"
@@ -221,6 +222,7 @@ static SXSIHDD getdrive(BYTE drv) {
 			return(NULL);
 		}
 	}
+	sysmng_hddaccess(drv);
 	return(ret);
 }
 

@@ -107,6 +107,9 @@ static void changescreen(BYTE newmode) {
 		renewal |= (change & SCRNMODE_ROTATEMASK);
 	}
 	if (renewal) {
+		if (renewal & SCRNMODE_FULLSCREEN) {
+			toolwin_close();
+		}
 		soundmng_stop();
 		mouse_running(MOUSE_STOP);
 		keydisp_destroy();
@@ -121,6 +124,10 @@ static void changescreen(BYTE newmode) {
 			}
 		}
 		scrndraw_redraw();
+		if ((renewal & SCRNMODE_FULLSCREEN) &&
+			(!scrnmng_isfullscreen()) && (np2oscfg.toolwin)) {
+			toolwin_open();
+		}
 		mouse_running(MOUSE_CONT);
 		soundmng_play();
 	}
@@ -276,30 +283,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			update = 0;
 			switch(wParam) {
 				case IDM_TOOLWIN:
-					toolwin_open();
+					xmenu_settoolwin(np2oscfg.toolwin ^ 1);
+					if (np2oscfg.toolwin) {
+						toolwin_open();
+					}
+					else {
+						toolwin_close();
+					}
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_SCREENCENTER:
 					if ((!scrnmng_isfullscreen()) &&
 						(!(GetWindowLong(hWnd, GWL_STYLE) &
 											(WS_MAXIMIZE | WS_MINIMIZE)))) {
+						toolwin_movingstart();
 						wincentering(hWnd);
+						toolwin_movingend();
 					}
 					break;
 
 				case IDM_SNAPENABLE:
 					xmenu_setwinsnap(np2oscfg.WINSNAP ^ 1);
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BACKGROUND:
 					xmenu_setbackground(np2oscfg.background ^ 1);
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BGSOUND:
 					xmenu_setbgsound(np2oscfg.background ^ 2);
-					update |= SYS_UPDATECFG;
+					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_KEYDISP:
@@ -858,14 +874,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_MOVE:
-			toolwin_movingend();
-			if ((!scrnmng_isfullscreen()) &&
-				(!(GetWindowLong(hWndMain, GWL_STYLE) &
-									(WS_MAXIMIZE | WS_MINIMIZE)))) {
-				GetWindowRect(hWnd, &rc);
-				np2oscfg.winx = rc.left;
-				np2oscfg.winy = rc.top;
-				sysmng_update(SYS_UPDATEOSCFG);
+			if (!scrnmng_isfullscreen()) {
+				if (!(GetWindowLong(hWnd, GWL_STYLE) &
+											(WS_MAXIMIZE | WS_MINIMIZE))) {
+					GetWindowRect(hWnd, &rc);
+					np2oscfg.winx = rc.left;
+					np2oscfg.winy = rc.top;
+					sysmng_update(SYS_UPDATEOSCFG);
+				}
+				if (GetWindowLong(hWnd, GWL_STYLE) & WS_MINIMIZE) {
+					toolwin_close();
+				}
+				else if (np2oscfg.toolwin) {
+					toolwin_open();
+				}
 			}
 			break;
 
@@ -888,6 +910,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_EXITSIZEMOVE:
+			toolwin_movingend();
 			mouse_running(MOUSE_CONT);
 			soundmng_play();
 			break;
@@ -1086,7 +1109,8 @@ static void processwait(UINT cnt) {
 		timing_setcount(0);
 		framecnt = 0;
 		scrnmng_dispclock();
-		keydisp_draw(np2oscfg.DRAW_SKIP);
+		keydisp_draw((BYTE)cnt);
+		toolwin_draw((BYTE)cnt);
 		viewer_allreload(FALSE);
 		if (np2oscfg.DISPCLK & 3) {
 			if (sysmng_workclockrenewal()) {
@@ -1228,10 +1252,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		EnableMenuItem(GetMenu(hWndMain), IDM_HELP, MF_GRAYED);
 	}
 
+	xmenu_settoolwin(np2oscfg.toolwin);
 	xmenu_setwinsnap(np2oscfg.WINSNAP);
 	xmenu_setbackground(np2oscfg.background);
 	xmenu_setbgsound(np2oscfg.background);
 	xmenu_setscrnmul(8);										// ver0.26
+
+	if (np2oscfg.toolwin) {
+		toolwin_open();
+	}
 
 	scrnmode = 0;
 	if (np2arg.fullscreen) {

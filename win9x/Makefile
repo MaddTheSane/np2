@@ -667,7 +667,8 @@ $(OBJ)/newdisk.o	:	$(FDD)/newdisk.c $(HEADERS) $(TARGET)/dosio.h \
 
 $(OBJ)/fddfile.o	:	$(FDD)/fddfile.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/strres.h $(TARGET)/dosio.h \
-						$(FDD)/fddfile.h $(FDD)/fdd_xdf.h $(FDD)/fdd_d88.h
+						$(TARGET)/sysmng.h $(FDD)/fddfile.h \
+						$(FDD)/fdd_xdf.h $(FDD)/fdd_d88.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/fdd_xdf.o	:	$(FDD)/fdd_xdf.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -683,7 +684,7 @@ $(OBJ)/fdd_mtr.o	:	$(FDD)/fdd_mtr.c $(HEADERS) $(PCCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/sxsi.o		:	$(FDD)/sxsi.c $(HEADERS) $(PCCORES) \
-						$(I286C)/i286.h $(FDD)/sxsi.h
+						$(TARGET)/sysmng.h $(I286C)/i286.h $(FDD)/sxsi.h
 	$(CC) $(COPT) -o $@ $<
 
 
