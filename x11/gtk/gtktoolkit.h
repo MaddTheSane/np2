@@ -28,6 +28,10 @@
 #ifndef	NP2_GTK_GTKTOOLKIT_H__
 #define	NP2_GTK_GTKTOOLKIT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern gui_toolkit_t gtk_toolkit;
 
 const char *gui_gtk_get_toolkit(void);
@@ -37,5 +41,9 @@ void gui_gtk_widget_show(void);
 void gui_gtk_widget_mainloop(void);
 void gui_gtk_widget_quit(void);
 void gui_gtk_set_window_title(const char* str);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* NP2_GTK_GTKTOOLKIT_H__ */

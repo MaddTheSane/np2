@@ -28,6 +28,10 @@
 #ifndef	NP2_X11_KBDMNG_H__
 #define	NP2_X11_KBDMNG_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
 	KEY_KEY106,
 	KEY_KEY101,
@@ -35,5 +39,9 @@ enum {
 };
 
 BOOL kbdmng_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* NP2_X11_KBDMNG_H__ */
