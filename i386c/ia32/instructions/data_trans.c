@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.1 2003/12/08 00:55:32 yui Exp $	*/
+/*	$Id: data_trans.c,v 1.2 2003/12/11 15:04:03 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -121,7 +121,7 @@ MOV_EwSw(void)
 	BYTE idx;
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 3;
+	idx = (op >> 3) & 7;
 	if (idx < CPU_SEGREG_NUM) {
 		src = CPU_REGS_SREG(idx);
 		if (op >= 0xc0) {
@@ -144,7 +144,7 @@ MOV_SwEw(void)
 	BYTE idx;
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 3;
+	idx = (op >> 3) & 7;
 	if (idx != CPU_CS_INDEX && idx < CPU_SEGREG_NUM) {
 		if (op >= 0xc0) {
 			CPU_WORKCLOCK(2);
