@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.13 2004/03/05 14:17:35 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.14 2004/03/07 02:08:25 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -28,6 +28,7 @@
  */
 
 #include "compiler.h"
+#include "dosio.h"
 #include "cpu.h"
 #include "ia32.mcr"
 
@@ -54,6 +55,41 @@ int cpu_inst_trace = 0;
 #endif
 
 
+#define	IPTRACE			(1 << 14)
+
+#if defined(TRACE) && IPTRACE
+static	UINT	trpos = 0;
+static	UINT32	trcs[IPTRACE];
+static	UINT32	treip[IPTRACE];
+
+void iptrace_out(void) {
+
+	FILEH	fh;
+	UINT	s;
+	UINT32	cs;
+	UINT32	eip;
+	char	buf[32];
+
+	s = trpos;
+	if (s > IPTRACE) {
+		s -= IPTRACE;
+	}
+	else {
+		s = 0;
+	}
+	fh = file_create_c("his.txt");
+	while(s < trpos) {
+		cs = trcs[s & (IPTRACE - 1)];
+		eip = treip[s & (IPTRACE - 1)];
+		s++;
+		SPRINTF(buf, "%.4x:%.8x\r\n", cs, eip);
+		file_write(fh, buf, strlen(buf));
+	}
+	file_close(fh);
+}
+#endif
+
+
 void
 exec_1step(void)
 {
@@ -62,6 +98,12 @@ exec_1step(void)
 
 	CPU_PREV_EIP = CPU_EIP;
 	CPU_STATSAVE.cpu_inst = CPU_STATSAVE.cpu_inst_default;
+
+#if defined(TRACE) && IPTRACE
+	trcs[trpos & (IPTRACE - 1)] = CPU_CS;
+	treip[trpos & (IPTRACE - 1)] = CPU_EIP;
+	trpos++;
+#endif
 
 #if defined(IA32_INSTRUCTION_TRACE)
 	ctx[ctx_index].regs = CPU_STATSAVE.cpu_regs;

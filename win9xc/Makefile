@@ -74,7 +74,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/cpu.o		$(OBJ)/cpu_io.o		$(OBJ)/cpu_mem.o	\
 			$(OBJ)/ctrlxfer.o	$(OBJ)/exception.o	$(OBJ)/groups.o		\
 			$(OBJ)/cpucore.o	$(OBJ)/memory.o		$(OBJ)/egcmem.o		\
-			$(OBJ)/dmap.o												\
+			$(OBJ)/mem9821.o	$(OBJ)/dmap.o							\
 			$(OBJ)/ia32.o		$(OBJ)/inst_table.o	$(OBJ)/interface.o	\
 			$(OBJ)/paging.o		$(OBJ)/resolve.o	$(OBJ)/segments.o	\
 			$(OBJ)/task.o		$(OBJ)/iadebug.o	$(OBJ)/iadisasm.o	\
@@ -116,7 +116,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/s98.o												\
 			$(OBJ)/vram.o		$(OBJ)/scrndraw.o	$(OBJ)/sdraw.o		\
 			$(OBJ)/dispsync.o	$(OBJ)/palettes.o	$(OBJ)/maketext.o	\
-			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/scrnbmp.o	\
+			$(OBJ)/maketgrp.o	$(OBJ)/makegrph.o	$(OBJ)/makegrex.o	\
+			$(OBJ)/scrnbmp.o											\
 			$(OBJ)/diskdrv.o	$(OBJ)/newdisk.o	$(OBJ)/fddfile.o	\
 			$(OBJ)/fdd_xdf.o	$(OBJ)/fdd_d88.o	$(OBJ)/fdd_mtr.o	\
 			$(OBJ)/sxsi.o												\
@@ -642,6 +643,11 @@ $(OBJ)/makegrph.o	:	$(VRAM)/makegrph.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 $(OBJ)/makegrph.oa	:	$(X86ASM)/makegrph.x86
 	$(AS) $(AOPT) $< -o $@
 
+$(OBJ)/makegrex.o	:	$(VRAM)/makegrex.c $(HEADERS) $(CPUCORES) $(PCCORES) \
+						$(IOCORES) $(VRAM)/vram.h $(VRAM)/scrndraw.h \
+						$(VRAM)/dispsync.h $(VRAM)/makegrex.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/scrnbmp.o	:	$(VRAM)/scrnbmp.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(COMMON)/bmpdata.h $(VRAM)/scrndraw.h \
 						$(VRAM)/dispsync.h $(VRAM)/palettes.h \
@@ -1005,9 +1011,9 @@ $(OBJ)/statsave.o	:	$(BASE)/statsave.c $(HEADERS) $(CPUCORES) $(PCCORES) \
 						$(BASE)/statsave.tbl
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/debugsub.o	:	$(BASE)/debugsub.c $(HEADERS) $(CPUCORES) $(PCCORES) \
-						$(IOCORES) $(COMMON)/strres.h $(TARGET)/dosio.h \
-						$(BASE)/debugsub.h
+$(OBJ)/debugsub.o	:	$(BASE)/debugsub386.c $(HEADERS) $(CPUCORES) \
+						$(PCCORES) $(IOCORES) $(COMMON)/strres.h \
+						$(TARGET)/dosio.h $(BASE)/debugsub.h
 	$(CC) $(COPT) -o $@ $<
 
 
@@ -1019,6 +1025,9 @@ $(OBJ)/memory.o		:	$(I386C)/memory.c
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/egcmem.o		:	$(I386C)/egcmem.c
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/mem9821.o	:	$(I386C)/mem9821.c
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dmap.o		:	$(I386C)/dmap.c
