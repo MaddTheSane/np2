@@ -10,15 +10,19 @@
 
 
 #ifndef __GNUC__
-typedef	short			SINT16;
+typedef	signed char		SINT8;
+typedef	unsigned char	UINT8;
+typedef	signed short	SINT16;
 typedef	unsigned short	UINT16;
-typedef	int				SINT32;
+typedef	signed int		SINT32;
 typedef	unsigned int	UINT32;
 #else
 #include	<stdlib.h>
-typedef	short			SINT16;
+typedef	signed char		SINT8;
+typedef	unsigned char	UINT8;
+typedef	signed short	SINT16;
 typedef	unsigned short	UINT16;
-typedef	int				SINT32;
+typedef	signed int		SINT32;
 #endif
 
 
@@ -38,6 +42,7 @@ typedef	int				SINT32;
 
 #define	GETTICK()	SDL_GetTicks()
 #define	SPRINTF		sprintf
+#define	__ASSERT(s)
 
 #define	VERMOUTH_LIB
 // #define	SOUND_CRITICAL

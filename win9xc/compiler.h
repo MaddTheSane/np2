@@ -7,9 +7,11 @@
 #define	OSLINEBREAK_CRLF
 
 
-typedef	short			SINT16;
+typedef signed char		SINT8;
+typedef unsigned char	UINT8;
+typedef	signed short	SINT16;
 typedef	unsigned short	UINT16;
-typedef	int				SINT32;
+typedef	signed int		SINT32;
 typedef	unsigned int	UINT32;
 
 #include	"common.h"
@@ -21,6 +23,7 @@ typedef	unsigned int	UINT32;
 
 #define	GETTICK()	GetTickCount()
 #define	SPRINTF		wsprintf
+#define	__ASSERT(s)
 
 #define	LABEL		__declspec(naked)
 #define RELEASE(x) 	if (x) {(x)->Release(); (x) = NULL;}

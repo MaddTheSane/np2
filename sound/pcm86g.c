@@ -6,11 +6,11 @@
 
 
 #define	PCM86GET8(a)													\
-		(a) = (char)pcm86.buffer[pcm86.readpos & PCM86_BUFMSK] << 8;	\
+		(a) = (SINT8)pcm86.buffer[pcm86.readpos & PCM86_BUFMSK] << 8;	\
 		pcm86.readpos++;												\
 
 #define	PCM86GET16(a)													\
-		(a) = (char)pcm86.buffer[pcm86.readpos & PCM86_BUFMSK] << 8;	\
+		(a) = (SINT8)pcm86.buffer[pcm86.readpos & PCM86_BUFMSK] << 8;	\
 		pcm86.readpos++;												\
 		(a) += pcm86.buffer[pcm86.readpos & PCM86_BUFMSK];				\
 		pcm86.readpos++;												\

@@ -7,8 +7,9 @@
 #define	OSLINEBREAK_CRLF
 
 
-typedef	short			SINT16;
-typedef	int				SINT32;
+typedef signed char		SINT8;
+typedef	signed short	SINT16;
+typedef	signed int		SINT32;
 
 
 #ifndef	ZeroMemory
@@ -48,6 +49,7 @@ typedef	int				SINT32;
 
 #define	GETTICK()	GetTickCount()
 #define	SPRINTF		sprintf
+#define	__ASSERT(s)
 
 #if defined(WIN32_PLATFORM_PSPC)
 #define	MENU_TASKMINIMIZE

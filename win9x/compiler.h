@@ -11,12 +11,16 @@
 
 
 #ifndef __GNUC__
-typedef	short			SINT16;
+typedef signed char		SINT8;
+typedef unsigned char	UINT8;
+typedef	signed short	SINT16;
 typedef	unsigned short	UINT16;
 typedef	int				SINT32;
 typedef	unsigned int	UINT32;
 #else
 #include	<stdlib.h>
+typedef signed char		SINT8;
+typedef unsigned char	UINT8;
 typedef	short			SINT16;
 typedef	unsigned short	UINT16;
 typedef	int				SINT32;
@@ -38,6 +42,7 @@ typedef	int				SINT32;
 
 #define	GETTICK()			GetTickCount()
 #define	SPRINTF				wsprintf
+#define	__ASSERT(s)
 
 #define	LABEL				__declspec(naked)
 #define RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}

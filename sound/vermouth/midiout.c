@@ -888,7 +888,7 @@ void midiout_setgain(MIDIHDL hdl, int gain) {
 		else if (gain > 8) {
 			gain = 8;
 		}
-		hdl->gain = (char)gain;
+		hdl->gain = (SINT8)gain;
 		allvolupdate(hdl);
 	}
 }

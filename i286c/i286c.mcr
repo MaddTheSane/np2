@@ -6,8 +6,8 @@
 #endif
 
 #define	__CBW(src)		(UINT16)((char)(src))
-#define	__CBD(src)		((char)(src))
-#define	WORD2LONG(src)	((short)(src))
+#define	__CBD(src)		((SINT8)(src))
+#define	WORD2LONG(src)	((SINT16)(src))
 
 
 #define	SEGMENTPTR(s)	(((UINT16 *)&I286_SEGREG) + (s))

@@ -70,7 +70,7 @@ struct _midictrl {
 	UINT		worksize;
 	int			level;
 	BYTE		status;
-	char		gain;
+	SINT8		gain;
 	BYTE		master;
 
 	MIDIMOD		module;
