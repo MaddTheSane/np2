@@ -2677,7 +2677,7 @@ I286 _popf(void) {								// 9D: popf
 				not		ax
 				test	al, pic.pi[0].irr
 				jne		irqcheck
-				test	al, pic.pi[1].irr
+				test	ah, pic.pi[1].irr
 				jne		irqcheck
 nextop:			ret
 
@@ -3607,7 +3607,7 @@ I286 _iret(void) {								// CF: iret
 				not		ax
 				test	al, pic.pi[0].irr
 				jne		irqcheck
-				test	al, pic.pi[1].irr
+				test	ah, pic.pi[1].irr
 				jne		irqcheck
 nextop:			ret
 
@@ -4211,7 +4211,7 @@ I286 _sti(void) {								// FB: sti
 				not		ax
 				test	al, pic.pi[0].irr
 				jne		nextopandexit
-				test	al, pic.pi[1].irr
+				test	ah, pic.pi[1].irr
 				jne		nextopandexit
 jmp_nextop:		jmp		i286op[ebp*4]
 
