@@ -293,6 +293,7 @@ cts_ldall		cmp		r0, #5
 				ldr		r0, [r6, #&28]			; BP:SI
 				ldr		r1, [r6, #&2c]			; BX:SP
 				ldr		r2, [r6, #&30]			; CX:DX
+				ldr		r3, [r6, #&34]			; ES:AX
 				mov		r12, r0 lsr #16
 				strh	r0, [r9, #CPU_SI]
 				strh	r12, [r9, #CPU_BP]
@@ -302,25 +303,24 @@ cts_ldall		cmp		r0, #5
 				mov		r12, r2 lsr #16
 				strh	r2, [r9, #CPU_DX]
 				strh	r12, [r9, #CPU_CX]
+				mov		r0, r3 lsr #16
+				strh	r3, [r9, #CPU_AX]
 
-				ldrh	r0, [r6, #&34]			; AX
-				ldrh	r1, [r6, #&36]			; ES
-				ldrb	r2, [r6, #&38]			; ES
-				ldr		r3, [r6, #&3c]			; CS
-				ldrh	r4, [r6, #&42]			; SS
-				ldrb	r5, [r6, #&44]			; SS
-				ldr		r6, [r6, #&48]			; DS
-				strh	r0, [r9, #CPU_AX]
-				orr		r1, r1, r2 lsl #16
-				bic		r3, r3, #(&ff << 24)
-				orr		r4, r4, r5 lsl #16
-				bic		r6, r6, #(&ff << 24)
-				str		r1, [r9, #CPU_ES_BASE]
-				str		r3, [r9, #CPU_CS_BASE]
-				str		r4, [r9, #CPU_SS_BASE]
-				str		r6, [r9, #CPU_DS_BASE]
-				str		r4, [r9, #CPU_SS_FIX]
-				str		r6, [r9, #CPU_DS_FIX]
+				ldrb	r1, [r6, #&38]			; ES
+				ldr		r2, [r6, #&3c]			; CS
+				ldrh	r3, [r6, #&42]			; SS
+				ldrb	r4, [r6, #&44]			; SS
+				ldr		r5, [r6, #&48]			; DS
+				orr		r0, r0, r1 lsl #16
+				bic		r2, r2, #(&ff << 24)
+				orr		r3, r3, r4 lsl #16
+				bic		r5, r5, #(&ff << 24)
+				str		r0, [r9, #CPU_ES_BASE]
+				str		r2, [r9, #CPU_CS_BASE]
+				str		r3, [r9, #CPU_SS_BASE]
+				str		r5, [r9, #CPU_DS_BASE]
+				str		r3, [r9, #CPU_SS_FIX]
+				str		r5, [r9, #CPU_DS_FIX]
 
 				ldrh	r0, [r6, #&4e]			; GDTR.base
 				ldr		r1, [r6, #&50]			; GDTR.limit:ar:base24
@@ -334,6 +334,7 @@ cts_ldall		cmp		r0, #5
 				strh	r3, [r9, #(CPU_LDTRC + 0)]
 				strh	r2, [r9, #(CPU_LDTRC + 2)]
 				strh	r4, [r9, #(CPU_LDTRC + 4)]
+
 				ldr		r0, [r6, #&5c]			; IDTR.limit:ar:base24
 				ldr		r1, [r6, #&60]			; TRC.ar:base24:base
 				ldrh	r2, [r6, #&64]			; TRC.limit
