@@ -9652,8 +9652,8 @@ DEP_CPP_INI_C=\
 	"..\pccore.h"\
 	".\dosio.h"\
 	".\ini.h"\
+	".\np2.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -9671,6 +9671,8 @@ DEP_CPP_INI_C=\
 	".\dosio.h"\
 	".\ini.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_INI_C=\
 	".\wce\np2.h"\
 	
 
@@ -9752,8 +9754,8 @@ DEP_CPP_MOUSEM=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	".\mousemng.h"\
+	".\np2.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -9766,6 +9768,8 @@ DEP_CPP_MOUSEM=\
 	"..\COMMON\rect.h"\
 	".\mousemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MOUSEM=\
 	".\wce\np2.h"\
 	
 
@@ -9774,7 +9778,7 @@ DEP_CPP_MOUSEM=\
 # End Source File
 # Begin Source File
 
-SOURCE=.\WCE\NP2.CPP
+SOURCE=.\NP2.CPP
 
 !IF  "$(CFG)" == "np2ppc - Win32 (WCE ARM) Release"
 
@@ -9788,7 +9792,6 @@ DEP_CPP_NP2_C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\debugsub.h"\
 	"..\embed\menubase\menubase.h"\
 	"..\embed\menubase\menudlg.h"\
 	"..\embed\menubase\menuicon.h"\
@@ -9836,15 +9839,14 @@ DEP_CPP_NP2_C=\
 	".\commng.h"\
 	".\dosio.h"\
 	".\ini.h"\
-	".\joymng.h"\
-	".\mousemng.h"\
+	".\inputmng.h"\
+	".\np2.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
 	".\sysmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	".\winkbd.h"\
 	{$(INCLUDE)}"gx.h"\
 	
@@ -9861,7 +9863,14 @@ DEP_CPP_NP2_C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\debugsub.h"\
+	"..\embed\menubase\menubase.h"\
+	"..\embed\menubase\menudlg.h"\
+	"..\embed\menubase\menuicon.h"\
+	"..\embed\menubase\menumbox.h"\
+	"..\embed\menubase\menures.h"\
+	"..\embed\menubase\menusys.h"\
+	"..\embed\menubase\menuvram.h"\
+	"..\embed\vramhdl.h"\
 	"..\fdd\d88head.h"\
 	"..\fdd\diskdrv.h"\
 	"..\fdd\fddfile.h"\
@@ -9895,19 +9904,22 @@ DEP_CPP_NP2_C=\
 	"..\sound\beep.h"\
 	"..\sound\s98.h"\
 	"..\sound\sound.h"\
+	"..\statsave.h"\
 	"..\timing.h"\
 	"..\vram\scrndraw.h"\
 	".\commng.h"\
 	".\dosio.h"\
 	".\ini.h"\
-	".\joymng.h"\
-	".\mousemng.h"\
+	".\inputmng.h"\
+	".\np2.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
+	".\sysmenu.h"\
 	".\sysmng.h"\
+	".\taskmng.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	".\winkbd.h"\
+	{$(INCLUDE)}"gx.h"\
 	
 
 !ENDIF 
@@ -9986,9 +9998,9 @@ DEP_CPP_SOUNDM=\
 	"..\GENERIC\cmver.h"\
 	"..\sound\sound.h"\
 	".\commng.h"\
+	".\np2.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10004,6 +10016,8 @@ DEP_CPP_SOUNDM=\
 	"..\sound\vermouth\vermouth.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SOUNDM=\
 	".\wce\np2.h"\
 	
 
@@ -10068,6 +10082,7 @@ DEP_CPP_SYSME=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	".\fontmng.h"\
+	".\np2.h"\
 	".\scrnmng.h"\
 	".\sysmenu.h"\
 	".\sysmenu.res"\
@@ -10075,7 +10090,6 @@ DEP_CPP_SYSME=\
 	".\sysmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	".\winkbd.h"\
 	
 
@@ -10133,11 +10147,11 @@ DEP_CPP_SYSME=\
 	".\sysmng.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	".\winkbd.h"\
 	
 NODEP_CPP_SYSME=\
 	"..\embed\menu\np2icon.res"\
+	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -10274,8 +10288,8 @@ DEP_CPP_WINKB=\
 	"..\io\upd4990.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
+	".\np2.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	".\winkbd.h"\
 	
 
@@ -10315,8 +10329,10 @@ DEP_CPP_WINKB=\
 	"..\pccore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	".\winkbd.h"\
+	
+NODEP_CPP_WINKB=\
+	".\wce\np2.h"\
 	
 
 !ENDIF 
@@ -10454,10 +10470,10 @@ DEP_CPP_DLGCF=\
 	"..\embed\vramhdl.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
+	".\np2.h"\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
-	".\wce\np2.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2ppc - Win32 (WCE MIPS) Release"
@@ -10483,6 +10499,8 @@ DEP_CPP_DLGCF=\
 	".\sysmenu.res"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DLGCF=\
 	".\wce\np2.h"\
 	
 

@@ -191,26 +191,39 @@ UINT soundmng_create(UINT rate, UINT ms) {
 
 void soundmng_destroy(void) {
 
-	int		i;
-	int		retry = 10;
+#if defined(_WIN32_WCE)
+	OSVERSIONINFO	osvi;
+#endif
+	BOOL			hpc4;
+	int				i;
+	int				retry = 10;
 
 	if (waveopened) {
-#if (defined(WIN32_PLATFORM_PSPC)) || (!defined(ARM))
-		for (i=0; i<2; i++) {
-			waveOutUnprepareHeader(w_ctrl.hwave, w_ctrl.wh + i,
-															sizeof(WAVEHDR));
-			w_ctrl.wh[i].lpData = NULL;
-		}
-		waveOutPause(w_ctrl.hwave);
-		waveOutReset(w_ctrl.hwave);
+#if defined(_WIN32_WCE)
+		ZeroMemory(&osvi, sizeof(osvi));
+		osvi.dwOSVersionInfoSize = sizeof(osvi);
+		GetVersionEx(&osvi);
+		hpc4 = (osvi.dwMajorVersion >= 4);
 #else
-		waveOutReset(w_ctrl.hwave);
-		for (i=0; i<2; i++) {
-			waveOutUnprepareHeader(w_ctrl.hwave, w_ctrl.wh + i,
-															sizeof(WAVEHDR));
-			w_ctrl.wh[i].lpData = NULL;
-		}
+		hpc4 = FALSE;
 #endif
+		if (!hpc4) {
+			for (i=0; i<2; i++) {
+				waveOutUnprepareHeader(w_ctrl.hwave, w_ctrl.wh + i,
+															sizeof(WAVEHDR));
+				w_ctrl.wh[i].lpData = NULL;
+			}
+			waveOutPause(w_ctrl.hwave);
+			waveOutReset(w_ctrl.hwave);
+		}
+		else {
+			waveOutReset(w_ctrl.hwave);
+			for (i=0; i<2; i++) {
+				waveOutUnprepareHeader(w_ctrl.hwave, w_ctrl.wh + i,
+															sizeof(WAVEHDR));
+				w_ctrl.wh[i].lpData = NULL;
+			}
+		}
 		do {
 			if (waveOutClose(w_ctrl.hwave) == MMSYSERR_NOERROR) {
 				_HANDLE_REM(w_ctrl.hwave);

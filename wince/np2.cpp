@@ -1,5 +1,8 @@
 #include	"compiler.h"
 #include	<gx.h>
+#if !defined(_WIN32_WCE)
+#include	<winnls32.h>
+#endif
 #include	"resource.h"
 #include	"strres.h"
 #include	"np2.h"
@@ -32,7 +35,7 @@
 #include	"sysmenu.h"
 
 
-static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II (PocketPC)");
+static const TCHAR szAppCaption[] = STRLITERAL("Neko Project II");
 static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 
 
@@ -41,8 +44,8 @@ static const TCHAR szClassName[] = STRLITERAL("NP2-MainWindow");
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
 		char		modulefile[MAX_PATH];
-		BOOL		sysrunning;
 
+static	BOOL		sysrunning;
 static	UINT		framecnt;
 static	UINT		waitcnt;
 static	UINT		framemax = 1;
@@ -95,7 +98,7 @@ static int flagload(const char *ext, const char *title, BOOL force) {
 		id = DID_NO;
 	}
 	else if ((!force) && (ret & NP2FLAG_DISKCHG)) {
-		wsprintf(buf2, "Conflict!\n\n%s\nContinue?", buf);
+		SPRINTF(buf2, "Conflict!\n\n%s\nContinue?", buf);
 		id = menumbox(buf2, title, MBOX_YESNOCAN | MBOX_ICONQUESTION);
 	}
 	if (id == DID_YES) {
@@ -114,7 +117,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	switch (msg) {
 		case WM_CREATE:
-//			WINNLSEnableIME(hWnd, FALSE);
+#if !defined(_WIN32_WCE)
+			WINNLSEnableIME(hWnd, FALSE);
+#else
+			ImmAssociateContext(hWnd, NULL);
+#endif
 			break;
 
 		case WM_PAINT:
@@ -146,6 +153,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			winkbd_keyup(wParam, lParam);
 			break;
 
+#if !defined(_WIN32_WCE)
 		case WM_SYSKEYDOWN:
 			winkbd_keydown(wParam, lParam);
 			break;
@@ -153,6 +161,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_SYSKEYUP:
 			winkbd_keyup(wParam, lParam);
 			break;
+#endif
 
 		case WM_MOUSEMOVE:
 			if (scrnmng_mousepos(&lParam) == SUCCESS) {
@@ -185,6 +194,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			break;
 
+#if !defined(_WIN32_WCE)
 		case WM_ENTERSIZEMOVE:
 			soundmng_stop();
 			break;
@@ -192,26 +202,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_EXITSIZEMOVE:
 			soundmng_play();
 			break;
+#endif
 
 		case WM_CLOSE:
+#if !defined(WIN32_PLATFORM_PSPC)
 			taskmng_exit();
+#endif
 			break;
 
 		case WM_DESTROY:
-//			PostQuitMessage(0);
 			break;
 
 		case WM_ACTIVATE:
-			if (LOWORD(wParam) != WA_INACTIVE) {
-				GXResume();
-				scrnmng_enable(TRUE);
-				scrndraw_redraw();
-				soundmng_enable(SNDPROC_MAIN);
-			}
-			else {
-				soundmng_disable(SNDPROC_MAIN);
-				scrnmng_enable(FALSE);
-				GXSuspend();
+			if (sysrunning) {
+				if (LOWORD(wParam) != WA_INACTIVE) {
+					GXResume();
+					scrnmng_enable(TRUE);
+					scrndraw_redraw();
+					soundmng_enable(SNDPROC_MAIN);
+				}
+				else {
+					soundmng_disable(SNDPROC_MAIN);
+					scrnmng_enable(FALSE);
+					GXSuspend();
+				}
 			}
 			break;
 
@@ -242,6 +256,36 @@ static void processwait(UINT cnt) {
 }
 
 
+// ----
+
+#if !defined(UNICODE)
+#define	GetModuleFileName_A(a, b, c)	GetModuleFileName(a, b, c)
+#else
+static DWORD GetModuleFileName_A(HMODULE hModule,
+								LPSTR lpFileName, DWORD nSize) {
+
+	TCHAR	*FileNameW;
+	DWORD	len;
+
+	if (nSize) {
+		FileNameW = (TCHAR *)_MALLOC(nSize * sizeof(TCHAR), "ModuleFile");
+		if (FileNameW) {
+			len = GetModuleFileName(hModule, FileNameW, nSize);
+			nSize = WideCharToMultiByte(CP_ACP, 0, FileNameW, -1,
+										lpFileName, nSize, NULL, NULL);
+			if (nSize) {
+				nSize--;
+			}
+			_MFREE(FileNameW);
+		}
+		else {
+			nSize = 0;
+		}
+	}
+	return(nSize);
+}
+#endif
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										LPTSTR lpszCmdLine, int nCmdShow) {
 
@@ -252,12 +296,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	hWnd = FindWindow(szClassName, NULL);
 	if (hWnd != NULL) {
+#if !defined(WIN32_PLATFORM_PSPC)
 		ShowWindow(hWnd, SW_RESTORE);
 		SetForegroundWindow(hWnd);
-		return(FALSE);
+#else
+		ShowWindow(hWnd, SW_SHOW);
+		SetForegroundWindow((HWND)((ULONG)hWnd | 1));
+#endif
+		return(0);
 	}
 
-	GetModuleFileName(NULL, modulefile, sizeof(modulefile));
+	GetModuleFileName_A(NULL, modulefile, sizeof(modulefile));
 	dosio_init();
 	file_setcd(modulefile);
 	initload();
@@ -271,8 +320,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	inputmng_init();
 	keystat_reset();
 
-	if (!hPreInst) {
-		np2.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
+//	if (!hPreInst) {
+		np2.style = CS_HREDRAW | CS_VREDRAW;
 		np2.lpfnWndProc = WndProc;
 		np2.cbClsExtra = 0;
 		np2.cbWndExtra = 0;
@@ -285,13 +334,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		if (!RegisterClass(&np2)) {
 			return(FALSE);
 		}
-	}
+//	}
 
+#if !defined(WIN32_PLATFORM_PSPC)
 	hWnd = CreateWindow(szClassName, szAppCaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT,
 						NULL, NULL, hInstance, NULL);
+#else
+	hWnd = CreateWindow(szClassName, szAppCaption,
+						WS_VISIBLE,
+						0, 0, 
+		      			GetSystemMetrics(SM_CXSCREEN),
+		      			GetSystemMetrics(SM_CYSCREEN),
+						NULL, NULL, hInstance, NULL);
+#endif
 	hWndMain = hWnd;
 	if (hWnd == NULL) {
 		goto np2main_err1;
@@ -308,10 +366,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	if (scrnmng_create(hWnd, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)
 																!= SUCCESS) {
-		MessageBox(hWnd, "Couldn't create DirectDraw Object",
+		MessageBox(hWnd, STRLITERAL("Couldn't create DirectDraw Object"),
 									szAppCaption, MB_OK | MB_ICONSTOP);
 		DestroyWindow(hWnd);
 		goto np2main_err2;
+	}
+
+	if (GXOpenInput() == 0) {
+		DestroyWindow(hWnd);
+		goto np2main_err3;
 	}
 
 	soundmng_initialize();
@@ -330,7 +393,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		id = flagload(str_sav, str_resume, FALSE);
 		if (id == DID_CANCEL) {
 			DestroyWindow(hWnd);
-			goto np2main_err3;
+			goto np2main_err4;
 		}
 	}
 
@@ -339,11 +402,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			if (!GetMessage(&msg, NULL, 0, 0)) {
 				break;
 			}
+#if !defined(_WIN32_WCE)
 			if ((msg.hwnd != hWnd) ||
 				((msg.message != WM_SYSKEYDOWN) &&
 				(msg.message != WM_SYSKEYUP))) {
 				TranslateMessage(&msg);
 			}
+#else
+			TranslateMessage(&msg);
+#endif
 			DispatchMessage(&msg);
 		}
 		else {
@@ -419,6 +486,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	pccore_term();
 	S98_trash();
 	soundmng_deinitialize();
+
+	GXCloseInput();
 	scrnmng_destroy();
 	sysmenu_destroy();
 
@@ -430,10 +499,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	return(msg.wParam);
 
-np2main_err3:
+np2main_err4:
 	pccore_term();
 	S98_trash();
 	soundmng_deinitialize();
+	GXCloseInput();
+
+np2main_err3:
 	scrnmng_destroy();
 
 np2main_err2:

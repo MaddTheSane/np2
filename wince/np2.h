@@ -38,7 +38,6 @@ extern	NP2OSCFG	np2oscfg;
 #ifdef __cplusplus
 }
 #endif
-
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;

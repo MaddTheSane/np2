@@ -766,7 +766,7 @@ SOURCE=.\MOUSEMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\W32\NP2.CPP
+SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 
