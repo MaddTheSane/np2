@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.3 2003/12/25 19:21:17 yui Exp $	*/
+/*	$Id: interface.c,v 1.4 2003/12/25 20:30:22 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -55,9 +55,12 @@ ia32reset(void)
 	CPU_LDTR_LIMIT = 0xffff;
 	CPU_TR_LIMIT = 0xffff;
 
-	CPU_SET_SEGREG(CPU_CS_INDEX, 0xffff);
+//	CPU_SET_SEGREG(CPU_ES_INDEX, 0x0000);
+	CPU_SET_SEGREG(CPU_CS_INDEX, 0xf000);
+//	CPU_SET_SEGREG(CPU_SS_INDEX, 0x0000);
+//	CPU_SET_SEGREG(CPU_DS_INDEX, 0x0000);
+	CPU_EIP = 0xfff0;
 	CPU_ADRSMASK = 0xfffff;
-//	CPU_EIP = 0;
 }
 
 void

@@ -75,8 +75,8 @@ I286 _lgdt(void) {
 				mov		word ptr (i286core.s.GDTR+2), ax
 				add		bp, 2
 				lea		ecx, [edi + ebp]
-				call	i286_memoryread_w
-				mov		word ptr (i286core.s.GDTR+4), ax
+				call	i286_memoryread
+				mov		byte ptr (i286core.s.GDTR+4), al
 				ret
 				align	4
 		register_eareg16:
@@ -101,8 +101,8 @@ I286 _lidt(void) {
 				mov		word ptr (i286core.s.IDTR+2), ax
 				add		bp, 2
 				lea		ecx, [edi + ebp]
-				call	i286_memoryread_w
-				mov		word ptr (i286core.s.IDTR+4), ax
+				call	i286_memoryread
+				mov		byte ptr (i286core.s.IDTR+4), al
 				ret
 				align	4
 		register_eareg16:
@@ -133,20 +133,21 @@ I286 _smsw(void) {
 I286 _lmsw(void) {
 
 		__asm {
+				and		word ptr i286core.s.MSW, 1
 				PREPART_EA16(2)
 					mov		ax, word ptr I286_REG[eax*2]
 					and		ax, 0ch
-					mov		i286core.s.MSW, ax
+					or		i286core.s.MSW, ax
 					GET_NEXTPRE2
 					ret
 				MEMORY_EA16(3)
 					mov		ax, word ptr I286_MEM[ecx]
 					and		ax, 0ch
-					mov		i286core.s.MSW, ax
+					or		i286core.s.MSW, ax
 					ret
 				EXTMEM_EA16
 					and		ax, 0ch
-					mov		i286core.s.MSW, ax
+					or		i286core.s.MSW, ax
 					ret
 		}
 }

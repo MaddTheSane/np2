@@ -60,17 +60,29 @@ void i286x_initialize(void) {
 void i286x_reset(void) {
 
 	ZeroMemory(&i286core.s, sizeof(i286core.s));
-	I286_CS = 0xffff;
-	CS_BASE = 0xffff0;
+	I286_CS = 0xf000;
+	CS_BASE = 0xf0000;
+	I286_IP = 0xfff0;
 	i286core.s.adrsmask = 0xfffff;
 }
 
 void i286x_shut(void) {
 
 	I286_MSW = 0;
-	I286_CS = 0xffff;
-	CS_BASE = 0xffff0;
-	I286_IP = 0;
+
+	I286_ES = 0;
+	I286_CS = 0xf000;
+	I286_SS = 0;
+	I286_DS = 0;
+
+	ES_BASE = 0;
+	CS_BASE = 0xf0000;
+	SS_BASE = 0;
+	DS_BASE = 0;
+	SS_FIX = 0;
+	DS_FIX = 0;
+
+	I286_IP = 0xfff0;
 	I286_ADRSMASK = 0xfffff;
 	i286x_resetprefetch();
 }
