@@ -60,7 +60,7 @@ static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				renewal = 0;
 				b = GetDlgItemCheck(hWnd, IDC_SKIPLINE);
 				if (np2cfg.skipline != b) {
@@ -117,7 +117,7 @@ static LRESULT CALLBACK Scropt2DlgProc(HWND hWnd, UINT msg,
 			return(TRUE);
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				update = 0;
 				b = GetDlgItemCheck(hWnd, IDC_GDC72020);
 				if (np2cfg.uPD72020 != b) {
@@ -212,7 +212,7 @@ static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
 				update = 0;
 				ZeroMemory(value, sizeof(value));
 				value[0] = (BYTE)SendDlgItemMessage(hWnd, IDC_TRAMWAIT,

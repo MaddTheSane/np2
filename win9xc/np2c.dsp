@@ -767,6 +767,10 @@ SOURCE=..\VRAM\VRAM.C
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\GENERIC\CMJASTS.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\GENERIC\CMVER.C
 # End Source File
 # Begin Source File

@@ -5,7 +5,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 #define	IDC_STATIC	-1
 
-IDD_CONFIG DIALOG DISCARDABLE  0, 0, 184, 112
+IDD_CONFIG DIALOG DISCARDABLE  0, 0, 184, 142
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configure"
 FONT 8, "MS Sans Serif"
@@ -18,17 +18,24 @@ BEGIN
                     WS_VSCROLL | WS_GROUP | WS_TABSTOP
     RTEXT           "ClockCount",IDC_CLOCKMSG,58,41,38,8
     LTEXT           "MHz",IDC_STATIC,96,41,14,8
-    GROUPBOX        "Sound",IDC_STATIC,8,58,170,46
-    LTEXT           "Sampling Rate",IDC_STATIC,14,71,43,8
+    GROUPBOX        "Architecture",IDC_STATIC,8,56,170,28
+    CONTROL         "PC-9801VM",IDC_MODELVM,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,16,68,51,10
+    CONTROL         "PC-9801VX",IDC_MODELVX,"Button",BS_AUTORADIOBUTTON,72,
+                    68,50,10
+    CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
+                    68,38,10
+    GROUPBOX        "Sound",IDC_STATIC,8,88,170,46
+    LTEXT           "Sampling Rate",IDC_STATIC,14,101,43,8
     CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,66,70,37,10
-    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,104,70,37,
-                    10
-    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,142,70,37,
-                    10
-    LTEXT           "Buffer",IDC_STATIC,14,88,19,8
-    EDITTEXT        IDC_SOUNDBUF,66,86,30,12,WS_GROUP
-    LTEXT           "ms",IDC_STATIC,102,88,10,8
+                    WS_GROUP | WS_TABSTOP,66,100,37,10
+    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,104,100,
+                    37,10
+    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,142,100,
+                    37,10
+    LTEXT           "Buffer",IDC_STATIC,14,118,19,8
+    EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
+    LTEXT           "ms",IDC_STATIC,102,118,10,8
     DEFPUSHBUTTON   "&OK",IDOK,134,7,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,134,24,44,14
 END
@@ -432,6 +439,8 @@ BEGIN
             MENUITEM "F12 = &Mouse",                IDM_F12MOUSE
             MENUITEM "F12 = Co&py",                 IDM_F12COPY
             MENUITEM "F12 = S&top",                 IDM_F12STOP
+            MENUITEM "F12 = tenkey [=]",            IDM_F12EQU
+            MENUITEM "F12 = tenkey [ , ]",          IDM_F12COMMA
         END
         POPUP "&Sound"
         BEGIN
@@ -444,13 +453,15 @@ BEGIN
             MENUITEM "PC-9801-&14",                 IDM_PC9801_14
             MENUITEM "PC-9801-&26K",                IDM_PC9801_26K
             MENUITEM "PC-9801-8&6",                 IDM_PC9801_86
+            MENUITEM "PC-9801-26K + 86",            IDM_PC9801_26_86
+            MENUITEM "PC-9801-86 + &Chibi-oto",     IDM_PC9801_86_CB
             MENUITEM "PC-9801-11&8",                IDM_PC9801_118
-            MENUITEM "&Chibi-oto",                  IDM_CHIBIOTO
             MENUITEM "S&peak board",                IDM_SPEAKBOARD
             MENUITEM "Sp&ark board",                IDM_SPARKBOARD
             MENUITEM "&AMD-98",                     IDM_AMD98
+            MENUITEM "&JastSound",                  IDM_JASTSOUND
             MENUITEM SEPARATOR
-            MENUITEM "&Seek Sound",                 IDM_SEEKSND
+            MENUITEM "&Seek Wait",                  IDM_SEEKWAIT
         END
         POPUP "M&emory"
         BEGIN
@@ -460,8 +471,6 @@ BEGIN
             MENUITEM "&7.6MB",                      IDM_MEM76
         END
         MENUITEM "&Mouse",                      IDM_MOUSE
-        MENUITEM SEPARATOR
-        MENUITEM "Se&rial option...",           IDM_SERIAL1
         MENUITEM SEPARATOR
         MENUITEM "MIDI &option...",             IDM_MPUPC98
         MENUITEM "MIDI &Panic",                 IDM_MIDIPANIC
@@ -473,17 +482,9 @@ BEGIN
         MENUITEM "&BMP Save...",                IDM_BMPSAVE
         MENUITEM "&S98 logging...",             IDM_S98LOGGING
         MENUITEM "Ca&lendar...",                IDM_CALENDAR
-        POPUP "Shortcut &Key"
-        BEGIN
-            MENUITEM "Alt+Enter",                   IDM_ALTENTER
-            MENUITEM "Alt+F4",                      IDM_ALTF4
-        END
-        MENUITEM "&Clock Disp",                 IDM_DISPCLOCK
-        MENUITEM "&Frame Disp",                 IDM_DISPFRAME
         MENUITEM "Joy Re&verse",                IDM_JOYX
         MENUITEM "Joy &Rapid",                  IDM_RAPID
         MENUITEM "&Mouse Rapid",                IDM_MSRAPID
-        MENUITEM "&Use SSTP",                   IDM_SSTP
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
         MENUITEM "&About...",                   IDM_ABOUT

@@ -11,9 +11,9 @@ enum {
 extern "C" {
 #endif
 
-void winkeyinit106(void);
-void winkeydown106(WPARAM wParam, LPARAM lParam);
-void winkeyup106(WPARAM wParam, LPARAM lParam);
+void winkbd_keydown(WPARAM wParam, LPARAM lParam);
+void winkbd_keyup(WPARAM wParam, LPARAM lParam);
+void winkbd_resetf12(void);
 
 #ifdef __cplusplus
 }

@@ -36,6 +36,8 @@ HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
 				$(COMMON)/_memory.h $(COMMON)/rect.h $(COMMON)/lstarray.h \
 				$(TARGET)/trace.h
 
+CPUCORES	=	$(I386C)/cpucore.h $(I386C)/memory.h
+
 PCCORES		=	$(BASE)/pccore.h $(BASE)/nevent.h
 
 IOCORES		=	$(IO)/iocore.h $(IO)/artic.h $(IO)/cgrom.h $(IO)/cpuio.h \
@@ -105,7 +107,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
-			$(OBJ)/cmver.o		$(OBJ)/dipswbmp.o						\
+			$(OBJ)/cmjasts.o	$(OBJ)/cmver.o		$(OBJ)/dipswbmp.o	\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/dosio.o		\
 			$(OBJ)/trace.o		$(OBJ)/commng.o		$(OBJ)/fontmng.o	\
 			$(OBJ)/joymng.o		$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	\
@@ -702,6 +704,11 @@ $(OBJ)/fontmake.o	:	$(FONT)/fontmake.c $(HEADERS) $(COMMON)/bmpdata.h \
 	$(CC) $(COPT) -o $@ $<
 
 
+
+$(OBJ)/cmjasts.o	:	$(GENERIC)/cmjasts.c $(HEADERS) $(CPUCORES) \
+						$(TARGET)/commng.h $(SOUND)/sound.h \
+						$(GENERIC)/cmjasts.h
+	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/cmver.o		:	$(GENERIC)/cmver.c $(HEADERS) $(TARGET)/commng.h \
 						$(SOUND)/sound.h $(VERMOUTH)/vermouth.h \
