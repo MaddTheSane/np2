@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.3 2003/12/25 19:21:17 yui Exp $	*/
+/*	$Id: system_inst.c,v 1.4 2004/01/07 14:50:21 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -151,14 +151,18 @@ SLDT_Ew(DWORD op)
 {
 	DWORD madr;
 
-	if (op >= 0xc0) {
-		CPU_WORKCLOCK(5);
-		*(reg16_b20[op]) = CPU_LDTR;
-	} else {
-		CPU_WORKCLOCK(11);
-		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_LDTR);
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		if (op >= 0xc0) {
+			CPU_WORKCLOCK(5);
+			*(reg16_b20[op]) = CPU_LDTR;
+		} else {
+			CPU_WORKCLOCK(11);
+			madr = calc_ea_dst(op);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_LDTR);
+		}
+		return;
 	}
+	EXCEPTION(UD_EXCEPTION, 0);
 }
 
 void
@@ -166,14 +170,18 @@ SLDT_Ed(DWORD op)
 {
 	DWORD madr;
 
-	if (op >= 0xc0) {
-		CPU_WORKCLOCK(5);
-		*(reg32_b20[op]) = CPU_LDTR;
-	} else {
-		CPU_WORKCLOCK(11);
-		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, CPU_LDTR);
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		if (op >= 0xc0) {
+			CPU_WORKCLOCK(5);
+			*(reg32_b20[op]) = CPU_LDTR;
+		} else {
+			CPU_WORKCLOCK(11);
+			madr = calc_ea_dst(op);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, CPU_LDTR);
+		}
+		return;
 	}
+	EXCEPTION(UD_EXCEPTION, 0);
 }
 
 void
@@ -481,9 +489,7 @@ void
 LMSW_Ew(DWORD op)
 {
 	DWORD src, madr;
-#if 1
-	UINT32	orgcr0;
-#endif
+	DWORD cr0;
 
 	if (CPU_STAT_PM && CPU_STAT_CPL != 0) {
 		EXCEPTION(GP_EXCEPTION, 0);
@@ -498,20 +504,12 @@ LMSW_Ew(DWORD op)
 		src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
 
-#if 0
-	CPU_CR0 &= ~0xfffffffe;	/* can't switch back from protected mode */
+	cr0 = CPU_CR0;
+	CPU_CR0 &= ~0xe;	/* can't switch back from protected mode */
 	CPU_CR0 |= (src & 0xf);	/* TS, EM, MP, PE */
-	if ((src ^ CPU_CR0) & CPU_CR0_PE) {			// ¾ï¤Ëµ¶
+	if (!(cr0 & CPU_CR0_PE) && (src & CPU_CR0_PE)) {
 		change_pm(1);	/* switch to protected mode */
 	}
-#else
-	orgcr0 = CPU_CR0;
-	CPU_CR0 &= CPU_CR0_PE;	/* can't switch back from protected mode */
-	CPU_CR0 |= (src & 0xf);	/* TS, EM, MP, PE */
-	if ((orgcr0 ^ CPU_CR0) & CPU_CR0_PE) {
-		change_pm(1);	/* switch to protected mode */
-	}
-#endif
 }
 
 void
@@ -536,11 +534,11 @@ SMSW_Ed(DWORD op)
 
 	if (op >= 0xc0) {
 		CPU_WORKCLOCK(2);
-		*(reg32_b20[op]) = CPU_CR0;
+		*(reg32_b20[op]) = (WORD)CPU_CR0;
 	} else {
 		CPU_WORKCLOCK(3);
 		madr = calc_ea_dst(op);
-		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, CPU_CR0);
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (WORD)CPU_CR0);
 	}
 }
 
