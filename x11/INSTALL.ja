@@ -1,0 +1,66 @@
+Xnp2 - ねこープロジェクト fot X
+
+
+1. 設定ファイル config.tmpl の編集
+
+  1.1. エンディアン
+  
+     CPU に PowerPC 等を搭載し、ビッグエンディアンで動作するコンピュータで
+     動作させる場合には、以下の行の undef を define に変更してください。
+
+       #undef  BIGENDIAN
+
+  1.2. サウンド機能
+
+    使用するサウンドドライバを選択します。どのサウンドドライバを使用して
+    良いのか判らない場合には SDL_mixer を使用する事をお勧めします。
+    音を鳴らさないのであれば、この項目は飛ばしてください。
+
+    ・NetBSD
+      NetBSD 標準のサウンド機能を使用するドライバです。
+      使用する場合には、以下の行の undef を define に変更してください。
+
+        #undef  USE_NETBSDAUDIO
+
+    ・OSS 互換
+      OSS 互換のサウンド機能を使用するドライバです。
+      使用する場合には、以下の行の undef を define に変更してください。
+
+        #undef  USE_OSSAUDIO
+
+    ・SDL
+      SDL のサウンド機能を使用するドライバです。
+      使用する場合には、以下の行の undef を define に変更してください。
+
+        #undef  USE_SDLAUDIO
+
+    ・SDL_mixer
+      SDL のサウンド機能を使用し、フロッピーのシーク音等の PCM の再生に
+      対応したドライバです。
+      使用する場合には、以下の行の undef を define に変更してください。
+
+        #undef  USE_SDLMIXER
+
+    ・EsounD
+      EsounD を使用するドライバです。
+      使用する場合には、以下の行の undef を define に変更してください。
+
+        #undef  USE_ESDAUDIO
+
+
+2. コンパイル
+
+  以下のコマンドを実行してコンパイルを行います。
+
+    xmkmf -a
+    make
+
+
+3. インストール
+
+  以下のコマンドを実行してインストールを行います。
+
+    make install install.man
+
+  インストール後の設定等については README.ja を参照してください。
+
