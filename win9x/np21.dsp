@@ -379,6 +379,10 @@ SOURCE=..\I386C\ia32\debug.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\I386C\ia32\disasm.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\I386C\ia32\exception.c
 # End Source File
 # Begin Source File

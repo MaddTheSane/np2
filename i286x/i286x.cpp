@@ -329,6 +329,12 @@ LABEL void i286x_step(void) {
 				mov		ebx, dword ptr (i286core.s.prefetchque)
 				movzx	esi, I286_IP
 
+#if defined(ENABLE_TRAP)
+				mov		edx, esi
+				movzx	ecx, I286_CS
+				call	steptrap
+#endif
+
 				movzx	eax, bl
 				call	i286op[eax*4]
 

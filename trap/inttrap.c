@@ -8,7 +8,7 @@ void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 
 
 // ---- ここにトラップ条件コードを書きます
-//	return;
+	return;
 
 #if 0
 //	if (vect == 0x2f) {

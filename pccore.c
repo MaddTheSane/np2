@@ -564,6 +564,8 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
+// #define SINGLESTEPONLY
+
 #if defined(TRACE)
 static int resetcnt = 0;
 static int execcnt = 0;
@@ -602,6 +604,7 @@ void pccore_exec(BOOL draw) {
 			CPU_RESETREQ = 0;
 			CPU_SHUT();
 		}
+#if !defined(SINGLESTEPONLY)
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();
@@ -610,6 +613,11 @@ void pccore_exec(BOOL draw) {
 				CPU_EXECV30();
 			}
 		}
+#else
+		while(CPU_REMCLOCK > 0) {
+			CPU_STEPEXEC();
+		}
+#endif
 		nevent_progress();
 	}
 	artic_callback();
