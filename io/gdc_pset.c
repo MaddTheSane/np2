@@ -98,15 +98,15 @@ static void MEMCALL _rmw(GDCPSET pset, UINT addr, UINT bit) {
 		vramupdate[addr] |= pset->update;
 		ptr = pset->base + addr;
 		data = (0x80 >> bit);
-		mask = ~bit;
+		mask = ~data;
 		ptr[VRAM_B] &= mask;
-		ptr[VRAM_B] |= bit & grcg.tile[0].b[0];
+		ptr[VRAM_B] |= data & grcg.tile[0].b[0];
 		ptr[VRAM_R] &= mask;
-		ptr[VRAM_R] |= bit & grcg.tile[1].b[0];
+		ptr[VRAM_R] |= data & grcg.tile[1].b[0];
 		ptr[VRAM_G] &= mask;
-		ptr[VRAM_G] |= bit & grcg.tile[2].b[0];
+		ptr[VRAM_G] |= data & grcg.tile[2].b[0];
 		ptr[VRAM_E] &= mask;
-		ptr[VRAM_E] |= bit & grcg.tile[3].b[0];
+		ptr[VRAM_E] |= data & grcg.tile[3].b[0];
 	}
 	else {
 		pset->pattern <<= 1;
