@@ -75,6 +75,7 @@ void pcm86_cb(NEVENTITEM item) {
 //		RECALC_NOWCLKP;
 		if (pcm86.virbuf <= pcm86.fifosize) {
 			pcm86.reqirq = 0;
+			pcm86.irqflag = 1;
 			pic_setirq(fmtimer.irq);
 		}
 		else {
@@ -133,6 +134,7 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 		pcm86.virbuf += bufs;
 		if (pcm86.virbuf <= pcm86.fifosize) {
 			pcm86.reqirq = 0;
+			pcm86.irqflag = 1;
 			pic_setirq(fmtimer.irq);
 		}
 		else {
@@ -152,9 +154,14 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 
 BOOL pcm86gen_intrq(void) {
 
+	if (pcm86.irqflag) {
+		return(TRUE);
+	}
 	if (pcm86.fifo & 0x20) {
 		sound_sync();
-		if ((pcm86.write) && (pcm86.virbuf <= pcm86.fifosize)) {
+		if ((pcm86.reqirq) && (pcm86.virbuf <= pcm86.fifosize)) {
+			pcm86.reqirq = 0;
+			pcm86.irqflag = 1;
 			return(TRUE);
 		}
 	}

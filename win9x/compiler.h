@@ -99,6 +99,7 @@ typedef signed __int64		SINT64;
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
+// #define	SUPPORT_IDEIO
 
 #define	SUPPORT_RESUME
 #define	SUPPORT_STATSAVE	10

@@ -19,6 +19,7 @@ static const SINT32 pcm86rescue[] = {PCM86_RESCUE * 32, PCM86_RESCUE * 24,
 
 static void IOOUTCALL pcm86_oa460(UINT port, REG8 val) {
 
+//	TRACEOUT(("86pcm out %.4x %.2x", port, val));
 	pcm86.extfunc = val;
 	fmboard_extenable((REG8)(val & 1));
 	(void)port;
@@ -26,6 +27,7 @@ static void IOOUTCALL pcm86_oa460(UINT port, REG8 val) {
 
 static void IOOUTCALL pcm86_oa466(UINT port, REG8 val) {
 
+//	TRACEOUT(("86pcm out %.4x %.2x", port, val));
 	if ((val & 0xe0) == 0xa0) {
 		sound_sync();
 		pcm86.vol5 = (~val) & 15;
@@ -38,6 +40,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val) {
 
 	REG8	xchgbit;
 
+//	TRACEOUT(("86pcm out %.4x %.2x", port, val));
 	sound_sync();
 	xchgbit = pcm86.fifo ^ val;
 	// バッファリセット判定
@@ -50,15 +53,20 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val) {
 		pcm86.lastclock <<= 6;
 	}
 	if ((xchgbit & 0x10) && (!(val & 0x10))) {
-		pcm86.write = 0;
-		pcm86.reqirq = 0;
+		pcm86.irqflag = 0;
+//		pcm86.write = 0;
+//		pcm86.reqirq = 0;
 	}
 	// サンプリングレート変更
 	if (xchgbit & 7) {
 		pcm86.rescue = pcm86rescue[val & 7] << pcm86.stepbit;
 		pcm86_setpcmrate(val);
 	}
+#if 1	// これ重大なバグ....
+	pcm86.fifo = val;
+#else
 	pcm86.fifo = val & (~0x10);
+#endif
 	if ((xchgbit & 0x80) && (val & 0x80)) {
 		pcm86.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 		pcm86.lastclock <<= 6;
@@ -69,6 +77,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val) {
 
 static void IOOUTCALL pcm86_oa46a(UINT port, REG8 val) {
 
+//	TRACEOUT(("86pcm out %.4x %.2x", port, val));
 	sound_sync();
 	if (pcm86.fifo & 0x20) {
 #if 1
@@ -97,6 +106,7 @@ static void IOOUTCALL pcm86_oa46a(UINT port, REG8 val) {
 
 static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val) {
 
+//	TRACEOUT(("86pcm out %.4x %.2x", port, val));
 	if (pcm86.virbuf < PCM86_LOGICALBUF) {
 		pcm86.virbuf++;
 		pcm86.buffer[pcm86.wrtpos] = val;
@@ -107,7 +117,7 @@ static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val) {
 			pcm86.realbuf &= 3;				// align4決めウチ
 			pcm86.realbuf += PCM86_REALBUFSIZE - 4;
 		}
-		pcm86.write = 1;
+//		pcm86.write = 1;
 		pcm86.reqirq = 1;
 	}
 	(void)port;
@@ -147,6 +157,7 @@ static REG8 IOINPCALL pcm86_ia466(UINT port) {
 		ret |= 0x40;								// ちと変…
 	}
 	(void)port;
+//	TRACEOUT(("86pcm in %.4x %.2x", port, ret));
 	return(ret);
 }
 
@@ -182,12 +193,14 @@ static REG8 IOINPCALL pcm86_ia468(UINT port) {
 	}
 #endif
 	(void)port;
+//	TRACEOUT(("86pcm in %.4x %.2x", port, ret));
 	return(ret);
 }
 
 static REG8 IOINPCALL pcm86_ia46a(UINT port) {
 
 	(void)port;
+//	TRACEOUT(("86pcm in %.4x %.2x", port, pcm86.dactrl));
 	return(pcm86.dactrl);
 }
 

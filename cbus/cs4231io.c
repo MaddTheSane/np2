@@ -111,6 +111,12 @@ void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
 			dmac_detach(DMADEV_CS4231);
 			if (cs4231.dmach != 0xff) {
 				dmac_attach(DMADEV_CS4231, cs4231.dmach);
+#if 0
+				if (cs4231.sdc_enable) {
+					dmac.dmach[cs4231.dmach].ready = 1;
+					dmac_check();
+				}
+#endif
 			}
 			break;
 

@@ -45,13 +45,14 @@ typedef struct {
 	UINT32	stepclock;
 	UINT	stepmask;
 
-	BYTE	fifo;
-	BYTE	extfunc;
-	BYTE	dactrl;
-	BYTE	write;
-	BYTE	stepbit;
-	BYTE	reqirq;
-	BYTE	padding[2];
+	UINT8	fifo;
+	UINT8	extfunc;
+	UINT8	dactrl;
+	UINT8	_write;
+	UINT8	stepbit;
+	UINT8	reqirq;
+	UINT8	irqflag;
+	UINT8	padding[1];
 
 	BYTE	buffer[PCM86_BUFSIZE];
 } _PCM86, *PCM86;

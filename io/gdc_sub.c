@@ -179,7 +179,7 @@ void gdcsub_setvectl(GDCVECT *vect, int x1, int y1, int x2, int y2) {
 			}
 		}
 	}
-	if (ope & 1) {
+	if (!((ope + 1) & 2)) {
 		tmp = dx;
 		dx = dy;
 		dy = tmp;

@@ -69,11 +69,11 @@ static const char str_register[] =										\
 					"EAX=%.8x  EBX=%.8x  ECX=%.8x  EDX=%.8x" CRLITERAL	\
 					"ESP=%.8x  EBP=%.8x  ESI=%.8x  EDI=%.8x" CRLITERAL	\
 					"DS=%.4x  ES=%.4x  SS=%.4x  CS=%.4x  "				\
-					"EIP=%.8x  ";
+					"EIP=%.8x  " CRLITERAL;
 static const char str_picstat[] = 										\
-					CRLITERAL "PIC0=%.2x:%.2x:%.2x"						\
-					CRLITERAL "PIC1=%.2x:%.2x:%.2x"						\
-					CRLITERAL "8255PORTC = %.2x / system-port = %.2x";
+					"PIC0=%.2x:%.2x:%.2x" CRLITERAL						\
+					"PIC1=%.2x:%.2x:%.2x" CRLITERAL						\
+					"8255PORTC = %.2x / system-port = %.2x" CRLITERAL;
 
 
 const char *debugsub_flags(UINT16 flag) {
@@ -140,10 +140,10 @@ void debugwriteseg(const char *fname, const descriptor_t *sd,
 
 void debugsub_status(void) {
 
-static int			filenum = 0;
-	FILEH			fh;
-	char			work[512];
-const char			*p;
+static int		filenum = 0;
+	FILEH		fh;
+	char		work[512];
+const char		*p;
 
 	SPRINTF(work, file_i386reg, filenum);
 	fh = file_create_c(work);
@@ -155,6 +155,12 @@ const char			*p;
 								pic.pi[1].imr, pic.pi[1].irr, pic.pi[1].isr,
 								mouseif.upd8255.portc, sysport.c);
 		file_write(fh, work, strlen(work));
+
+		SPRINTF(work, "CS = %.8x:%.8x" CRLITERAL,
+						CPU_STAT_SREGBASE(CPU_CS_INDEX),
+						CPU_STAT_SREGLIMIT(CPU_CS_INDEX));
+		file_write(fh, work, strlen(work));
+
 		file_close(fh);
 	}
 

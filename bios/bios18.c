@@ -626,7 +626,8 @@ static void bios0x18_47(void) {
 		vect.ope = 0x20 + (ucw.GBDSP & 7);
 		vect.DC[0] = ucw.GBLNG1[0];
 		vect.DC[1] = ucw.GBLNG1[1];
-		data = LOADINTELWORD(ucw.GBLNG2) - 1;
+//		data = LOADINTELWORD(ucw.GBLNG2) - 1;
+		data = LOADINTELWORD(ucw.GBCIR) - 1;
 		STOREINTELWORD(vect.D, data);
 		data >>= 1;
 		STOREINTELWORD(vect.D2, data);
