@@ -4,7 +4,7 @@
 #include	"sysmng.h"
 #include	"menu.h"
 #include	"pccore.h"
-
+#include	"soundrecording.h"
 
 #define	MFCHECK(a)					((a)?1:0)
 #ifdef TARGET_API_MAC_CARBON
@@ -195,4 +195,24 @@ void menu_setmouse(BYTE value) {
 	_CheckMenuItem(GetMenu(IDM_DEVICE), IDM_MOUSE, MFCHECK(value));
 }
 #endif
+
+#if 0
+void menu_sets98logging(BYTE value) {
+
+	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_S98LOGGING, MFCHECK(value));
+}
+#endif
+
+void menu_setrecording(bool end) {
+    int ret;
+    MenuRef	hmenu = GetMenuRef(IDM_OTHER);
+    
+    ret = soundRec(end);
+    if (ret == 1) {
+        CheckMenuItem(hmenu, IDM_RECORDING, true);
+    }
+    else {
+        CheckMenuItem(hmenu, IDM_RECORDING, false);
+    }
+}
 

@@ -9,3 +9,5 @@ BYTE joymng_getstat(void);
 }
 #endif
 
+
+void joy_flash(void);

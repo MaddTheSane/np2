@@ -7,6 +7,7 @@
  */
 
 #include	"compiler.h"
+#include	"dialogutils.h"
 
 enum {kTabMasterSig = 'ScrT',kTabMasterID = 1000,kTabPaneSig= 'ScTb'};
 
@@ -53,3 +54,20 @@ short changeTab(WindowRef window, UInt16 pane) {
     
     return(0);
 }
+
+pascal OSStatus changeSlider(ControlRef theControl, WindowRef theWindow, short base) {
+    ControlRef	conRef;
+    ControlID	conID;
+    Str255		title;
+    SInt32		value;
+    
+    value = GetControl32BitValue(theControl) - base; 
+    NumToString(value, title);
+    if (GetControlID(theControl, &conID) == noErr) {
+        conRef = getControlRefByID(conID.signature, conID.id+1000, theWindow);
+        SetControlData(conRef, kControlNoPart, kControlStaticTextTextTag, *title, title+1);
+        Draw1Control(conRef);
+    }
+    return( eventNotHandledErr );
+}
+

@@ -154,7 +154,6 @@ void mackbd_f12down(int keycode) {
     else {
         BYTE	data;
         data = keymac[keycode];
-        if (data == 0x71) SysBeep(0);
         if (data != NC) {
             keystat_senddata(data);
         }

@@ -9,6 +9,7 @@
 #include	"vermouth.h"
 #endif
 
+#include	"soundrecording.h"
 
 #define	SOUNDBUFFERS	2
 
@@ -31,6 +32,8 @@ static	BOOL		QSound_Playing = FALSE;
 		MIDIMOD		vermouth_module = NULL;
 #endif
 
+static	void				(PARTSCALL *fnmix)(SINT16 *dst,
+												const SINT32 *src, UINT size);
 
 static pascal void QSoundCallback(SndChannelPtr /*inChannel*/,
 												SndCommand *inCommand) {
@@ -49,7 +52,10 @@ const SINT32	*src;
 			src = sound_pcmlock();
 		}
 		if (src) {
-			satuation_s16((SINT16 *)dst, src, qs->buffersize);
+			(*fnmix)((SINT16 *)dst, src, qs->buffersize);
+            if (QSound_Playing) {
+                recOPM((BYTE*)dst, qs->buffersize);
+            }
 			sound_pcmunlock(src);
 		}
 		else {
@@ -216,11 +222,87 @@ void soundmng_destroy(void) {
 
 void soundmng_play(void) {
 
-	QSound_Playing = TRUE;
+    if (!QSound_Playing) QSound_Playing = TRUE;
 }
 
 void soundmng_stop(void) {
 
-	QSound_Playing = FALSE;
+	if (QSound_Playing) QSound_Playing = FALSE;
+}
+
+void soundmng_setreverse(BOOL reverse) {
+
+	if (!reverse) {
+        fnmix = satuation_s16;
+	}
+	else {
+		fnmix = satuation_s16x;
+	}
+}
+
+// --------------------------------------------------------------------------
+#include <QuickTime/Movies.h>
+#include "np2.h"
+#include "dosio.h"
+
+static	Movie	seekWAV[2];
+
+static	Movie	setupWAV(const char* name) {
+    FSSpec	fs;
+    short	movieRefNum;
+    short	resID = 0;
+    Movie	wav = NULL;    
+
+	char	path[MAX_PATH];
+	Str255	fname;
+
+	file_cpyname(path, file_getcd(name), MAX_PATH);
+	mkstr255(fname, path);
+	FSMakeFSSpec(0, 0, fname, &fs);
+    if (OpenMovieFile( &fs, &movieRefNum, fsRdPerm ) == noErr) {
+        if (NewMovieFromFile(&wav,movieRefNum, &resID, NULL, newMovieActive, NULL) != noErr) {
+            return NULL;
+        }
+    }
+    return  wav;
+}
+
+void soundmng_deinitialize(void) {
+    StopMovie(seekWAV[0]);
+    StopMovie(seekWAV[1]);
+    seekWAV[0]  = NULL;
+    seekWAV[1] = NULL;
+    ExitMovies();
+}
+
+BOOL soundmng_initialize(void) {
+    EnterMovies();
+    seekWAV[0] = setupWAV("Fddseek.wav");
+    seekWAV[1] = setupWAV("Fddseek1.wav");
+    if (seekWAV[0] == NULL || seekWAV[1] == NULL) {
+        return  false;
+    }
+    return(true);
+}
+
+void soundmng_pcmvolume(UINT num, int volume) {
+    if (seekWAV[num]) {
+        SetMovieVolume(seekWAV[num], kFullVolume*volume/100);
+    }
+}
+
+BOOL soundmng_pcmplay(UINT num, BOOL loop) {
+    if (seekWAV[num]) {
+        GoToBeginningOfMovie(seekWAV[num]);
+        StartMovie(seekWAV[num]);
+        return SUCCESS;
+    }
+	return(FAILURE);
+}
+
+void soundmng_pcmstop(UINT num) {
+    if (seekWAV[num]) {
+        StopMovie(seekWAV[num]);
+    }
 }
 

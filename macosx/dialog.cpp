@@ -5,13 +5,30 @@
 #include	"pccore.h"
 #include	"fddfile.h"
 #include	"diskdrv.h"
+#if 0
 #include	"newdisk.h"
+#endif
 #include	"font.h"
 #include	"iocore.h"
+#include	"np2.h"
+#include	"macnewdisk.h"
+#include	"scrnbmp.h"
+#include	"dosio.h"
+
+static Handle GetDlgItem(DialogPtr hWnd, short pos) {
+
+	Handle	ret;
+	Rect	rct;
+	short	s;
+
+	GetDialogItem(hWnd, pos, &s, &ret, &rct);
+	return(ret);
+}
 
 void AboutDialogProc(void) {
 
 	DialogPtr	hDlg;
+	Str255		verstr;
 	int			done;
 	short		item;
 
@@ -19,6 +36,8 @@ void AboutDialogProc(void) {
 	if (!hDlg) {
 		return;
 	}
+	mkstr255(verstr, np2version);
+	SetDialogItemText(GetDlgItem(hDlg, IDD_VERSION), verstr);
 	SetDialogDefaultItem(hDlg, IDOK);
 
 	done = 0;
@@ -64,7 +83,7 @@ static void backpalcalcat(char *dst, int leng, const BYTE *src) {
 	CopyMemory(dst, (char *)src + 1, slen);
 }
 
-static void fsspec2path(FSSpec *fs, char *dst, int leng) {
+void fsspec2path(FSSpec *fs, char *dst, int leng) {
 
 	CInfoPBRec	cipbr;
 	Str255		dname;
@@ -89,8 +108,18 @@ static void fsspec2path(FSSpec *fs, char *dst, int leng) {
 }
 
 #if 1
+static NavDialogRef navWin;
 static pascal void dummyproc(NavEventCallbackMessage sel, NavCBRecPtr prm,
 													NavCallBackUserData ud) {
+	switch( sel )
+	{
+        case kNavCBCancel:
+        case kNavCBAccept:
+            QuitAppModalLoopForWindow(NavDialogGetWindow(navWin));
+            break;
+        default:
+            break;
+	}
 
 	(void)sel;
 	(void)prm;
@@ -101,7 +130,7 @@ static BOOL dialog_fileselect(char *name, int size) {
 
 	BOOL				ret;
 	OSErr				err;
-	NavDialogOptions	opt;
+    NavDialogCreationOptions optNav;
 	NavReplyRecord		reply;
 	NavEventUPP			proc;
 	long				count;
@@ -109,15 +138,19 @@ static BOOL dialog_fileselect(char *name, int size) {
 	FSSpec				fss;
 
 	ret = FALSE;
-	err = NavGetDefaultDialogOptions(&opt);
-	if (err != noErr) {
-		goto fsel_exit;
-	}
-	opt.dialogOptionFlags &= ~kNavAllowPreviews;
-	opt.dialogOptionFlags &= ~kNavAllowMultipleFiles;
+    NavGetDefaultDialogCreationOptions(&optNav);
+    optNav.modality=kWindowModalityWindowModal;
+    optNav.parentWindow=hWndMain;
+    optNav.optionFlags+=kNavNoTypePopup;
 	proc = NewNavEventUPP(dummyproc);
-	err = NavGetFile(NULL, &reply, &opt, proc, NULL, NULL, NULL, NULL);
+    ret=NavCreateChooseFileDialog(&optNav,NULL,proc,NULL,NULL,NULL,&navWin);
+    NavDialogRun(navWin);
+    RunAppModalLoopForWindow(NavDialogGetWindow(navWin));
+    NavDialogGetReply(navWin, &reply);
+    NavDialogDispose(navWin);
 	DisposeNavEventUPP(proc);
+    
+    DisableAllMenuItems(GetMenuHandle(IDM_EDIT));
 	if ((!reply.validRecord) && (ret != noErr)) {
 		goto fsel_exit;
 	}
@@ -189,4 +222,25 @@ void dialog_font(void) {
             sysmng_update(SYS_UPDATECFG);
         }
     }
+}
+
+void dialog_writebmp(void) {
+
+	SCRNBMP	bmp;
+	char	path[MAX_PATH];
+	FILEH	fh;
+    FSSpec	fss;
+
+	bmp = scrnbmp();
+	if (bmp) {
+		if (saveFile('BMP ', "np2.bmp", &fss)) {
+            fsspec2path(&fss, path, MAX_PATH);
+			fh = file_create(path);
+			if (fh != FILEH_INVALID) {
+				file_write(fh, bmp->ptr, bmp->size);
+				file_close(fh);
+			}
+		}
+		_MFREE(bmp);
+	}
 }

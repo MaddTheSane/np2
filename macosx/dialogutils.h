@@ -6,8 +6,16 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void endLoop(WindowRef window);
 ControlRef getControlRefByID(OSType sign, int id, WindowRef win);
 void SetInitialTabState(WindowRef theWindow, UInt16 pane, int max);
 short changeTab(WindowRef window, UInt16 pane);
+pascal OSStatus changeSlider(ControlRef theControl, WindowRef theWindow, short base);
+
+#ifdef __cplusplus
+}
+#endif

@@ -5,7 +5,9 @@
 #include	"sysmng.h"
 #include	"pccore.h"
 #include	"fddfile.h"
+#include	"diskdrv.h"
 
+static bool getLongFileName(char* dst, const char* path);
 
 	UINT	sys_updates;
 
@@ -46,20 +48,33 @@ BOOL sysmng_workclockrenewal(void) {
 
 void sysmng_updatecaption(BYTE flag) {
 
+    char	name1[255], name2[255];
 	char	work[256];
+#ifndef NP2GCC
 	Str255	str;
+#endif
 
 	if (flag & 1) {
 		strtitle[0] = '\0';
 		if (fdd_diskready(0)) {
 			milstr_ncat(strtitle, "  FDD1:", sizeof(strtitle));
-			milstr_ncat(strtitle, file_getname((char *)fdd_diskname(0)),
+            if (getLongFileName(name1, fdd_diskname(0))) {
+                milstr_ncat(strtitle, name1, sizeof(strtitle));
+            }
+            else {
+                milstr_ncat(strtitle, file_getname((char *)fdd_diskname(0)),
 															sizeof(strtitle));
+            }
 		}
 		if (fdd_diskready(1)) {
 			milstr_ncat(strtitle, "  FDD2:", sizeof(strtitle));
-			milstr_ncat(strtitle, file_getname((char *)fdd_diskname(1)),
+            if (getLongFileName(name2, fdd_diskname(1))) {
+                milstr_ncat(strtitle, name2, sizeof(strtitle));
+            }
+            else {
+                milstr_ncat(strtitle, file_getname((char *)fdd_diskname(1)),
 															sizeof(strtitle));
+            }
 		}
 	}
 	if (flag & 2) {
@@ -86,11 +101,41 @@ void sysmng_updatecaption(BYTE flag) {
 	milstr_ncat(work, strtitle, sizeof(work));
 	milstr_ncat(work, strclock, sizeof(work));
 
-	mkstr255(str, work);
 #if defined(NP2GCC)
-    SetWindowTitleWithCFString(hWndMain, CFStringCreateWithPascalString(NULL, str, CFStringGetSystemEncoding()));
+    SetWindowTitleWithCFString(hWndMain, CFStringCreateWithCString(NULL, work, kCFStringEncodingUTF8));
 #else
+	mkstr255(str, work);
 	SetWTitle(hWndMain, str);
 #endif
 }
 
+static bool getLongFileName(char* dst, const char* path) {
+	FSSpec	fss;
+	Str255	fname;
+    FSRef	fref;
+    char	buffer[1024];
+	char 	*ret, *val;
+
+    if (*path == '\0') {
+        return(false);
+    }
+	mkstr255(fname, path);
+	if (FSMakeFSSpec(0, 0, fname, &fss) != noErr) {
+        return(false);
+    }
+    if (FSpMakeFSRef(&fss, &fref) != noErr) {
+        return(false);
+    }
+    if (FSRefMakePath(&fref, (UInt8*)buffer, 1024) != noErr) {
+        return(false);
+    }
+	val = buffer;
+    ret = val;
+	while(*val != '\0') {
+ 		if (*val++ == '/') {
+			ret = val;
+		}
+	}
+    strcpy(dst, ret);
+    return(true);
+}

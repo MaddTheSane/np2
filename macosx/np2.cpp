@@ -31,7 +31,9 @@
 #include	"configure.h"
 #include	"screenopt.h"
 #include	"soundopt.h"
-
+#include	"macnewdisk.h"
+#include	"fdefine.h"
+#include	"hid.h"
 
 #define	USE_RESUME
 #define	NP2OPENING
@@ -68,17 +70,12 @@ static const char np2resume[] = "sav";
 
 // ---- ‚¨‚Ü‚¶‚È‚¢
 
-#if TARGET_CARBON
 #define	AEProc(fn)	NewAEEventHandlerUPP((AEEventHandlerProcPtr)(fn))
-#else
-#define	AEProc(fn)	NewAEEventHandlerProc(fn)
-#endif
 
 static void setUpCarbonEvent(void);
 static bool setupMainWindow(void);
 static void toggleFullscreen(void);
 
-#ifdef TARGET_API_MAC_CARBON
 static pascal OSErr handleQuitApp(const AppleEvent *event, AppleEvent *reply,
 															long refcon) {
 
@@ -87,30 +84,51 @@ static pascal OSErr handleQuitApp(const AppleEvent *event, AppleEvent *reply,
 	(void)event, (void)reply, (void)refcon;
 	return(noErr);
 }
-#endif
+
+pascal OSErr OpenAppleEventHandler(const AppleEvent *event, AppleEvent *reply,long print)
+{
+	long		i,ct,len;
+	FSSpec		fsc,*pp;
+	DescType	rtype;
+	AEKeyword	key;
+	AEDescList	dlist;
+        
+	if( ! AEGetParamDesc( event,keyDirectObject,typeAEList,&dlist ) )	{
+		AECountItems( &dlist,&ct );
+		for( i=1;i<=ct;i++ )	{
+            pp=&fsc;
+			if( ! AEGetNthPtr( &dlist,i,typeFSS,&key,&rtype,(Ptr)pp,(long)sizeof(FSSpec),&len ) )	{
+                char		fname[MAX_PATH];
+                int			ftype;
+                fsspec2path(&fsc, fname, MAX_PATH);
+                ftype = file_getftype(fname);
+                if ((ftype != FTYPE_D88) && (ftype != FTYPE_BETA)) {
+                    diskdrv_sethdd(0, fname);
+                }
+                else {
+                    diskdrv_setfdd(i-1, fname, 0);
+                }
+			}
+		}
+		AEDisposeDesc( &dlist );
+	}
+	return( 0 );
+}
+
 
 static void InitToolBox(void) {
 
-#if !TARGET_CARBON
-	MaxApplZone();
-	InitGraf(&qd.thePort);
-	InitFonts();
-	InitWindows();
-	InitMenus();
-	TEInit();
-	InitDialogs(0);
-#endif
 	FlushEvents(everyEvent, 0);
 	InitCursor();
 
-#ifdef TARGET_API_MAC_CARBON
 	AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
 						AEProc(handleQuitApp), 0L, false);
-#endif
+	AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
+						AEProc(OpenAppleEventHandler), 0L, false);
 }
 
 static void MenuBarInit(void) {
-#if 0
+#if 1
 	Handle		hMenu;
 	MenuHandle	happlemenu;
 
@@ -129,19 +147,17 @@ static void MenuBarInit(void) {
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
 	DrawMenuBar();
-#endif
+#else
     OSStatus	err;
     IBNibRef	nibRef;    
     err = CreateNibReference(CFSTR("np2"), &nibRef);
     if (err!=noErr) return;
     err = SetMenuBarFromNib(nibRef, CFSTR("MainMenu"));
     DisposeNibReference(nibRef);
+#endif
 }
 
 static void changescreen(BYTE mode) {
-#if 0
-	(void)mode;
-#endif
 
 	BYTE	change;
 	BYTE	renewal;
@@ -173,8 +189,8 @@ static void changescreen(BYTE mode) {
 static void HandleMenuChoice(long wParam) {
 
 	UINT	update;
-	Str255	applname;
 
+    soundmng_stop();
 	update = 0;
 	switch(wParam) {
 		case IDM_ABOUT:
@@ -190,17 +206,14 @@ static void HandleMenuChoice(long wParam) {
 			initConfig();
 			break;
 
-#if 0
-		case IDM_NEWFDD:
-			newdisk();
+		case IDM_NEWDISK:
+            newdisk();
 			break;
-#endif
 #if 0
 		case IDM_NEWHDD:
 			newhdddisk();
 			break;
 #endif
-
         case IDM_FONT:
             dialog_font();
             break;
@@ -302,7 +315,6 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
-#if defined(NP2GCC)
 		case IDM_SCREENOPT:
 			initScreenOpt();
 			break;
@@ -314,10 +326,15 @@ static void HandleMenuChoice(long wParam) {
             toggleMenubar();
 			break;
             
-        case IDM_SOUNDOPT:
+		case IDM_MIDIPANIC:
+			rs232c_midipanic();
+			mpu98ii_midipanic();
+			pc9861k_midipanic();
+			break;
+
+        case IDM_SNDOPT:
             initSoundOpt();
             break;
-#endif
 
 		case IDM_KEY:
 			menu_setkey(0);
@@ -466,6 +483,16 @@ static void HandleMenuChoice(long wParam) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_BMPSAVE:
+			dialog_writebmp();
+			break;
+
+#if 0
+        case IDM_S98LOGGING:
+            menu_sets98logging(S98_logging());
+            break;
+#endif
+            
 		case IDM_DISPCLOCK:
 			menu_setdispclk(np2oscfg.DISPCLK ^ 1);
 			update |= SYS_UPDATECFG;
@@ -490,117 +517,29 @@ static void HandleMenuChoice(long wParam) {
 			debugsub_status();
 			break;
 
+        case IDM_RECORDING:
+            menu_setrecording(false);
+            break;
+
 		default:
-			if (HiWord(wParam) == IDM_APPLE) {
-				GetMenuItemText(GetMenuHandle(IDM_APPLE), 
-											LoWord(wParam), applname);
-#if !TARGET_API_MAC_CARBON
-				(void)OpenDeskAcc(applname);
-#endif
-			}
 			break;
 	}
 	sysmng_update(update);
 	HiliteMenu(0);
 }
 
-#if 0
-static void HandleUpdateEvent(EventRecord *pevent) {
-
-	WindowPtr	hWnd;
-
-	hWnd = (WindowPtr)pevent->message;
-	BeginUpdate(hWnd);
-	scrndraw_redraw();
-	EndUpdate(hWnd);
-}
-#endif
-
 static void HandleMouseDown(EventRecord *pevent) {
 
 	WindowPtr	hWnd;
-	Rect		rDrag;
 
     soundmng_stop();
 	switch(FindWindow(pevent->where, &hWnd)) {
 		case inMenuBar:
 			HandleMenuChoice(MenuSelect(pevent->where));
 			break;
-
-		case inDrag:
-#if TARGET_API_MAC_CARBON
-		{
-			BitMap	gscreenBits;
-			GetQDGlobalsScreenBits(&gscreenBits);
-			rDrag = gscreenBits.bounds;
-			InsetRect(&rDrag, DRAG_THRESHOLD, DRAG_THRESHOLD);
-			DragWindow(hWnd, pevent->where, &rDrag);
-		}
-#else
-			rDrag = qd.screenBits.bounds;
-			InsetRect(&rDrag, DRAG_THRESHOLD, DRAG_THRESHOLD);
-			DragWindow(hWnd, pevent->where, &rDrag);
-#endif
-			break;
-
-		case inContent:
-#if defined(NP2GCC)
-            if (controlKey & GetCurrentKeyModifiers() ) {
-                mouse_btn(MOUSE_RIGHTDOWN);
-            }
-            else {
-                mouse_btn(MOUSE_LEFTDOWN);
-            }
-#endif
-			break;
-
-#ifndef NP2GCC
-		case inGoAway:
-			if (TrackGoAway(hWnd, pevent->where)) { }
-			np2running = FALSE;
-			break;
-#endif
-	}
-    soundmng_play();
-}
-
-#if 0
-static void eventproc(EventRecord *event) {
-
-	switch(event->what) {
-		case mouseDown:
-			HandleMouseDown(event);
-			break;
-
-		case updateEvt:
-			HandleUpdateEvent(event);
-			break;
-
-		case keyDown:
-		case autoKey:
-			mackbd_f12down(((event->message) & keyCodeMask) >> 8);
-			if (event->modifiers & cmdKey) {
-				HandleMenuChoice(MenuKey(event->message & charCodeMask));
-			}
-			break;
-
-		case keyUp:
-			mackbd_f12up(((event->message) & keyCodeMask) >> 8);
-			break;
-
-#if defined(NP2GCC)
-        case mouseUp:
-            if (controlKey & GetCurrentKeyModifiers()) {
-                mouse_btn(MOUSE_RIGHTUP);
-            }
-            else {
-                mouse_btn(MOUSE_LEFTUP);
-            }
-			break;
-#endif
 	}
 }
-#endif
+
 
 // ----
 
@@ -632,6 +571,14 @@ static void flagsave(const char *ext) {
 	statsave_save(path);
 }
 
+static void flagdelete(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	file_delete(path);
+}
+
 static void flagload(const char *ext) {
 
 	char	path[MAX_PATH];
@@ -650,7 +597,6 @@ static void openingNP2(void) {
     Rect		srt, bounds;
     GrafPtr		port;
     CFURLRef	openingURL;
-    CFStringRef	path;
     char		buffer[1024];
     FSRef		fsr;
     FSSpec		fsc;
@@ -664,30 +610,25 @@ static void openingNP2(void) {
     RGBBackColor(&col);
     EraseRect(&bounds);
     
-    openingURL=CFURLCopyAbsoluteURL(CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle()));
+    openingURL=CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("nekop2"), CFSTR("bmp"), NULL);
     if (openingURL) {
-        path = CFURLCopyFileSystemPath(openingURL, kCFURLPOSIXPathStyle);
-        if (path) {
-            if (CFStringGetCString(path, buffer, 1024, CFStringGetSystemEncoding())) {
-                strcat(buffer, "/nekop2.bmp");
-                FSPathMakeRef((const UInt8*)buffer, &fsr, NULL);
-                FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fsc, NULL);
-                if (!GetGraphicsImporterForFile(&fsc, &gi)) {
-                    if (!GraphicsImportGetNaturalBounds(gi, &srt)) {
-                        OffsetRect( &srt, -srt.left, -srt.top);
-                        GraphicsImportSetBoundsRect(gi, &srt);
-                        GraphicsImportGetAsPicture(gi, &pict);
-                        OffsetRect(&srt, (640-srt.right)/2, (400-srt.bottom)/2);
-                        DrawPicture(pict,&srt);
-                        QDFlushPortBuffer(GetWindowPort(hWndMain), NULL);
-                        KillPicture(pict);
-                    }
-                    CloseComponent(gi);
+        if (CFURLGetFSRef(openingURL, &fsr)) {
+            FSPathMakeRef((const UInt8*)buffer, &fsr, NULL);
+            FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fsc, NULL);
+            if (!GetGraphicsImporterForFile(&fsc, &gi)) {
+                if (!GraphicsImportGetNaturalBounds(gi, &srt)) {
+                    OffsetRect( &srt, -srt.left, -srt.top);
+                    GraphicsImportSetBoundsRect(gi, &srt);
+                    GraphicsImportGetAsPicture(gi, &pict);
+                    OffsetRect(&srt, (640-srt.right)/2, (400-srt.bottom)/2);
+                    DrawPicture(pict,&srt);
+                    QDFlushPortBuffer(GetWindowPort(hWndMain), NULL);
+                    KillPicture(pict);
                 }
+                CloseComponent(gi);
             }
-            if (path) CFRelease(path);
         }
-        if (openingURL) CFRelease(openingURL);
+        CFRelease(openingURL);
     }
     SetPort(port);
 }
@@ -696,10 +637,6 @@ static void openingNP2(void) {
 
 int main(int argc, char *argv[]) {
 
-#if 0
-	Rect		wRect;
-	EventRecord	event;
-#endif
     EventRef		theEvent;
     EventTargetRef	theTarget;
 #ifdef OPENING_WAIT
@@ -717,21 +654,6 @@ int main(int argc, char *argv[]) {
 
 	TRACEINIT();
 
-#if 0
-	SetRect(&wRect, 100, 100, 100, 100);
-	hWndMain = NewWindow(0, &wRect, "\pNeko Project II", FALSE,
-								noGrowDocProc, (WindowPtr)-1, TRUE, 0);
-	if (!hWndMain) {
-		TRACETERM();
-		macossub_term();
-		dosio_term();
-		return(0);
-	}
-	scrnmng_initialize();
-	SizeWindow(hWndMain, 640, 400, TRUE);
-    setUpCarbonEvent();
-	ShowWindow(hWndMain);
-#endif
     if (!(setupMainWindow())) {
         return(0);
     }
@@ -773,6 +695,12 @@ int main(int argc, char *argv[]) {
 	pccore_init();
 	S98_init();
 
+    hid_init();
+	if (soundmng_initialize() == SUCCESS) {
+		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
+		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
+	}
+
 #if defined(NP2GCC)
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
 		mouse_running(MOUSE_ON);
@@ -781,7 +709,6 @@ int main(int argc, char *argv[]) {
 #ifdef OPENING_WAIT
 	while((GETTICK() - tick) < OPENING_WAIT);
 #endif
-	scrndraw_redraw();
 	pccore_reset();
 
 #if defined(USE_RESUME)
@@ -790,9 +717,6 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-#if 0
-	SetEventMask(everyEvent);
-#endif
     theTarget = GetEventDispatcherTarget();
     
 	np2running = TRUE;
@@ -802,16 +726,9 @@ int main(int argc, char *argv[]) {
             SendEventToEventTarget (theEvent, theTarget);
             ReleaseEvent(theEvent);
         }
-#if 0
-		if (WaitNextEvent(everyEvent, &event, 0, 0)) {
-			eventproc(&event);
-		}
-#endif
 		else {
+            soundmng_play();
 			if (np2oscfg.NOWAIT) {
-#if 0
-				mackbd_callback();
-#endif
 				pccore_exec(framecnt == 0);
 				if (np2oscfg.DRAW_SKIP) {			// nowait frame skip
 					framecnt++;
@@ -828,9 +745,6 @@ int main(int argc, char *argv[]) {
 			}
 			else if (np2oscfg.DRAW_SKIP) {			// frame skip
 				if (framecnt < np2oscfg.DRAW_SKIP) {
-#if 0
-                    mackbd_callback();
-#endif
 					pccore_exec(framecnt == 0);
 					framecnt++;
 				}
@@ -841,9 +755,6 @@ int main(int argc, char *argv[]) {
 			else {								// auto skip
 				if (!waitcnt) {
 					UINT cnt;
-#if 0
-                    mackbd_callback();
-#endif
 					pccore_exec(framecnt == 0);
 					framecnt++;
 					cnt = timing_getcount();
@@ -874,6 +785,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	np2running = FALSE;
+    menu_setrecording(true);
 
     if (scrnmode & SCRNMODE_FULLSCREEN) {
         toggleFullscreen();
@@ -885,15 +797,20 @@ int main(int argc, char *argv[]) {
     if (np2oscfg.resume) {
         flagsave(np2resume);
     }
+	else {
+		flagdelete(np2resume);
+	}
 #endif
 
 	pccore_term();
 	S98_trash();
 
+    hid_clear();
 #if defined(NP2GCC)
 	mouse_running(MOUSE_OFF);
 #endif
 
+	soundmng_deinitialize();
 	scrnmng_destroy();
 
 	if (sys_updates & (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
@@ -1008,13 +925,19 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
         
     switch (eventClass)
         {        
-            case kEventClassWindow:            
-                if (whatHappened == kEventWindowClose) {
-                    np2running = FALSE;
-                    result = noErr;
-                }
-                else if (whatHappened == kEventWindowShowing) {
-                    scrndraw_redraw();
+            case kEventClassWindow:
+                switch (whatHappened)
+                {
+                    case kEventWindowClose:
+                        np2running = FALSE;
+                        result = noErr;
+                        break;
+                    case kEventWindowShowing:
+                        scrndraw_redraw();
+                       break;
+                    case kEventWindowActivated:
+                        DisableAllMenuItems(GetMenuHandle(IDM_EDIT));
+                        break;
                 }
                 break;
             case kEventClassKeyboard:
@@ -1080,6 +1003,7 @@ static const EventTypeSpec appEventList[] = {
 static const EventTypeSpec windEventList[] = {
 				{kEventClassWindow,		kEventWindowClose},
 				{kEventClassWindow,		kEventWindowShowing},
+				{kEventClassWindow,		kEventWindowActivated},
 				{kEventClassKeyboard,	kEventRawKeyDown},
 				{kEventClassKeyboard,	kEventRawKeyUp},
 				{kEventClassKeyboard,	kEventRawKeyRepeat},
@@ -1096,6 +1020,7 @@ static void setUpCarbonEvent(void) {
 	InstallWindowEventHandler(hWndMain, NewEventHandlerUPP(np2windowevent),
 								GetEventTypeCount(windEventList),
 								windEventList, 0, NULL);
+    InstallStandardEventHandler(GetWindowEventTarget(hWndMain));
 }
 
 bool setupMainWindow(void) {

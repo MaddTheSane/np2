@@ -6,4 +6,12 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void initSoundOpt(void);
+
+#ifdef __cplusplus
+}
+#endif

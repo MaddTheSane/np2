@@ -4,10 +4,12 @@ typedef struct {
 	BYTE	DRAW_SKIP;
 	BYTE	DISPCLK;
 	BYTE	F12COPY;
+    
 	BYTE	MOUSE_SW;
+	BYTE	JOYPAD1;
     
 	BYTE	comfirm;
-	BYTE	resume;													// ver0.30
+	BYTE	resume;
 	//BYTE	statsave;
     
 	BYTE	I286SAVE;
