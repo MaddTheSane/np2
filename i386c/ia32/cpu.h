@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.10 2004/01/23 16:32:36 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.11 2004/01/27 15:51:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -75,13 +75,7 @@ typedef union {
 }
 #endif
 
-#include "cpu_io.h"
-#include "cpu_mem.h"
-#include "exception.h"
-#include "paging.h"
-#include "resolve.h"
 #include "segments.h"
-#include "task.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -246,7 +240,7 @@ extern sigjmp_buf	exec_1step_jmpbuf;
 
 /* version */
 #define	CPU_FAMILY	4
-#define	CPU_MODEL	1
+#define	CPU_MODEL	2
 #define	CPU_STEPPING	3
 
 /* feature */
@@ -544,5 +538,12 @@ void tr_dump(WORD selector, DWORD base, DWORD limit);
 #ifdef __cplusplus
 }
 #endif
+
+#include "cpu_io.h"
+#include "cpu_mem.h"
+#include "exception.h"
+#include "paging.h"
+#include "resolve.h"
+#include "task.h"
 
 #endif	/* !IA32_CPU_CPU_H__ */
