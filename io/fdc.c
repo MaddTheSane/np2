@@ -20,7 +20,6 @@ static const UINT8 FDCCMD_TABLE[32] = {
 
 
 #define FDC_FORCEREADY (1)
-#define	FDC_MAXDRIVE	2
 #define	FDC_DELAYERROR7
 
 
@@ -239,7 +238,7 @@ static void FDC_SenseDeviceStatus(void) {				// cmd: 04
 			get_hdus();
 			fdc.buf[0] = (fdc.hd << 2) | fdc.us;
 			fdc.stat[fdc.us] = (fdc.hd << 2) | fdc.us;
-			if (fdc.us < FDC_MAXDRIVE) {
+			if (fdc.equip & (1 << fdc.us)) {
 				fdc.buf[0] |= 0x08;
 				if (!fdc.treg[fdc.us]) {
 					fdc.buf[0] |= 0x10;
@@ -403,7 +402,7 @@ static void FDC_Recalibrate(void) {						// cmd: 07
 			fdc.ncn = 0;
 			fdc.stat[fdc.us] = (fdc.hd << 2) | fdc.us;
 			fdc.stat[fdc.us] |= FDCRLT_SE;
-			if (fdc.us >= FDC_MAXDRIVE) {
+			if (!(fdc.equip & (1 << fdc.us))) {
 				fdc.stat[fdc.us] |= FDCRLT_NR | FDCRLT_IC0;
 			}
 			else if (!fddfile[fdc.us].fname[0]) {
@@ -553,7 +552,8 @@ static void FDC_Seek(void) {							// cmd: 0f
 			fdc.ncn = fdc.cmds[1];
 			fdc.stat[fdc.us] = (fdc.hd << 2) | fdc.us;
 			fdc.stat[fdc.us] |= FDCRLT_SE;
-			if ((fdc.us >= FDC_MAXDRIVE) || (!fddfile[fdc.us].fname[0])) {
+			if ((!(fdc.equip & (1 << fdc.us))) ||
+				(!fddfile[fdc.us].fname[0])) {
 				fdc.stat[fdc.us] |= FDCRLT_NR | FDCRLT_IC0;
 			}
 			else {
@@ -793,6 +793,21 @@ static REG8 IOINPCALL fdc_ibe(UINT port) {
 	return((fdc.chgreg & 3) | 8);
 }
 
+static void IOOUTCALL fdc_o4be(UINT port, REG8 dat) {
+
+	fdc.reg144 = dat;
+	if (dat & 0x10) {
+		fdc.rpm[(dat >> 5) & 3] = dat & 1;
+	}
+	(void)port;
+}
+
+static REG8 IOINPCALL fdc_i4be(UINT port) {
+
+	(void)port;
+	return(fdc.rpm[(fdc.reg144 >> 5) & 3] | 0xf0);
+}
+
 
 // ---- I/F
 
@@ -806,6 +821,8 @@ static const IOINP fdcibe[1] = {fdc_ibe};
 void fdc_reset(void) {
 
 	ZeroMemory(&fdc, sizeof(fdc));
+	fdc.equip = np2cfg.fddequip;
+	fdc.support144 = np2cfg.usefd144;
 	fdcstatusreset();
 	dmac_attach(DMADEV_2HD, FDC_DMACH2HD);
 	dmac_attach(DMADEV_2DD, FDC_DMACH2DD);
@@ -817,9 +834,13 @@ void fdc_bind(void) {
 
 	iocore_attachcmnoutex(0x0090, 0x00f9, fdco90, 4);
 	iocore_attachcmninpex(0x0090, 0x00f9, fdci90, 4);
-//	iocore_attachcmnoutex(0x00c8, 0x00f9, fdco90, 4);
-//	iocore_attachcmninpex(0x00c8, 0x00f9, fdci90, 4);
+	iocore_attachcmnoutex(0x00c8, 0x00f9, fdco90, 4);
+	iocore_attachcmninpex(0x00c8, 0x00f9, fdci90, 4);
 
+	if (fdc.support144) {
+		iocore_attachout(0x04be, fdc_o4be);
+		iocore_attachinp(0x04be, fdc_i4be);
+	}
 	iocore_attachsysoutex(0x00be, 0x0cff, fdcobe, 1);
 	iocore_attachsysinpex(0x00be, 0x0cff, fdcibe, 1);
 }

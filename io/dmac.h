@@ -94,6 +94,7 @@ REG8 DMACCALL dma_dummyproc(REG8 func);
 
 void dmac_reset(void);
 void dmac_bind(void);
+void dmac_extbind(void);
 
 void dmac_check(void);
 

@@ -23,18 +23,23 @@ static	UINT	mtr_r = 0;
 
 // ---- FDD
 
-static void setfdcmode(REG8 drv, REG8 type, REG8 rpm) {
+static BOOL setfdcmode(REG8 drv, REG8 type, REG8 rpm) {
 
-	if (drv < 4) {
-		fdc.chgreg = type;
-		fdc.rpm[drv] = rpm;
-		if (type & 2) {
-			CTRL_FDMEDIA = DISKTYPE_2HD;
-		}
-		else {
-			CTRL_FDMEDIA = DISKTYPE_2DD;
-		}
+	if (drv >= 4) {
+		return(FAILURE);
 	}
+	if ((rpm) && (!fdc.support144)) {
+		return(FAILURE);
+	}
+	fdc.chgreg = type;
+	fdc.rpm[drv] = rpm;
+	if (type & 2) {
+		CTRL_FDMEDIA = DISKTYPE_2HD;
+	}
+	else {
+		CTRL_FDMEDIA = DISKTYPE_2DD;
+	}
+	return(SUCCESS);
 }
 
 void fddbios_equip(REG8 type, BOOL clear) {
@@ -47,11 +52,11 @@ void fddbios_equip(REG8 type, BOOL clear) {
 	}
 	if (type & 1) {
 		diskequip &= 0xfff0;
-		diskequip |= 0x0003;
+		diskequip |= (fdc.equip & 0x0f);
 	}
 	else {
-		diskequip &= 0xf0ff;
-		diskequip |= 0x0300;
+		diskequip &= 0x0fff;
+		diskequip |= (fdc.equip & 0x0f) << 12;
 	}
 	SETBIOSMEM16(MEMW_DISK_EQUIP, diskequip);
 }
@@ -302,7 +307,9 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 
 //	TRACE_("int 1Bh", CPU_AH);
 
-	setfdcmode((REG8)(CPU_AL & 3), type, rpm);
+	if (setfdcmode((REG8)(CPU_AL & 3), type, rpm) != SUCCESS) {
+		return(0x40);
+	}
 
 	if ((CPU_AH & 0x0f) != 0x0a) {
 		fdc.crcn = 0;
@@ -333,7 +340,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				return(0x68);			// 新センスは 両用ドライブ情報も
 			}
 			if (CPU_AH == 0xc4) {								// ver0.31
-				if (np2cfg.usefd144) {
+				if (fdc.support144) {
 					return(0x6c);
 				}
 				return(0x68);
@@ -444,8 +451,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 			}
 			if (CPU_AH & 0x80) {				// ver0.30
 				ret_ah |= 8;					// 1MB/640KB両用ドライブ
-				if ((CPU_AH & 0x40) &&
-					(np2cfg.usefd144)) {		// ver0.31
+				if ((CPU_AH & 0x40) && (fdc.support144)) {
 					ret_ah |= 4;				// 1.44対応ドライブ
 				}
 			}
@@ -686,7 +692,9 @@ static UINT16 boot_fd1(REG8 type, REG8 rpm) {
 	UINT32	pos;
 	UINT16	bootseg;
 
-	setfdcmode(fdc.us, type, rpm);
+	if (setfdcmode(fdc.us, type, rpm) != SUCCESS) {
+		return(0);
+	}
 	if (biosfd_seek(0, 0)) {
 		return(0);
 	}

@@ -8,8 +8,9 @@ enum {
 };
 
 enum {
-	PCMODEL_VM			= 0,
-	PCMODEL_VX			= 1,
+	PCMODEL_VF			= 0,
+	PCMODEL_VM			= 1,
+	PCMODEL_VX			= 2,
 	PCMODELMASK			= 0x3f,
 	PCMODEL_PC9821		= 0x40,
 	PCMODEL_EPSON		= 0x80,
@@ -110,11 +111,8 @@ typedef struct {
 
 	UINT8	cpumode;
 	UINT8	model;
-	UINT8	fddif;
 	UINT8	hddif;
-
 	UINT8	extmem;
-	UINT8	padding[3];
 
 	UINT32	sound;
 	UINT32	device;

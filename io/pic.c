@@ -283,7 +283,7 @@ static void IOOUTCALL pic_o02(UINT port, REG8 dat) {
 
 	PICITEM		picp;
 
-	TRACEOUT(("pic %x %x", port, dat));
+//	TRACEOUT(("pic %x %x", port, dat));
 	picp = &pic.pi[(port >> 3) & 1];
 	if (!picp->writeicw) {
 #if 1

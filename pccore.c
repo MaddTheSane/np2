@@ -58,7 +58,6 @@
 
 	PCCORE	pccore = {	PCBASECLOCK25, 4,
 						0, PCMODEL_VX, 0, 0,
-						0, {0, 0, 0},
 						0, 0,
 						4 * PCBASECLOCK25,
 						4 * PCBASECLOCK25 * 50 / 3104,
@@ -177,17 +176,17 @@ static void pccore_set(void) {
 	pccore.keyboardclock = pccore.realclock / 1920;
 	pccore.midiclock = pccore.realclock / 3125;
 
+	// HDDの接続 (I/Oの使用状態が変わるので..
+	if (np2cfg.dipsw[1] & 0x20) {
+		pccore.hddif |= PCHDD_IDE;
+	}
+
 	// 拡張メモリ
 	extsize = 0;
 	if (!(np2cfg.dipsw[2] & 0x80)) {
 		extsize = min(np2cfg.EXTMEM, 13);
 	}
 	pccore.extmem = extsize;
-
-	// HDDの接続 (I/Oの使用状態が変わるので..
-	if (np2cfg.dipsw[1] & 0x20) {
-		pccore.hddif |= PCHDD_IDE;
-	}
 
 	// サウンドボードの接続
 	pccore.sound = np2cfg.SOUND_SW;

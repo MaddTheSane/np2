@@ -61,6 +61,11 @@ enum {
 };
 
 typedef struct {
+	UINT8	equip;
+	UINT8	support144;
+	UINT8	ctrlfd;
+	UINT8	padding;
+
 	UINT8	us, hd;
 	UINT8	mt, mf, sk;
 	UINT8	eot, gpl, dtl;
@@ -73,12 +78,10 @@ typedef struct {
 	UINT8	lastdata;
 	UINT8	tc;
 
-	UINT8	ctrlfd;
 	UINT8	crcn;
 	UINT8	ctrlreg;
 	UINT8	chgreg;
 	UINT8	reg144;
-	UINT8	padding[3];
 
 	UINT32	stat[4];
 	UINT8	treg[4];
@@ -119,9 +122,6 @@ void fdcsend_success7(void);
 
 void fdc_reset(void);
 void fdc_bind(void);
-
-void fdc144_reset(void);
-void fdc144_bind(void);
 
 #ifdef __cplusplus
 }
