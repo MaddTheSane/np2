@@ -217,6 +217,14 @@ static int flagsave(const char *ext) {
 	return(ret);
 }
 
+static void flagdelete(const char *ext) {
+
+	char	path[MAX_PATH];
+
+	getstatfilename(path, ext, sizeof(path));
+	file_delete(path);
+}
+
 static int flagload(const char *ext, const char *title, BOOL force) {
 
 	int		ret;
@@ -1420,7 +1428,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		flagsave(np2resume);
 	}
 	else {
-//		DeleteFile(file_getcd(np2resume));
+		flagdelete(np2resume);
 	}
 
 #ifdef USE_ROMEO
