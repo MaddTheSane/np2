@@ -188,7 +188,8 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	if (SoundChannel_Init()) {
 		goto qsinit_err;
 	}
-	samples = (rate / 3) & (~3);
+	samples = rate * ms / 1000;
+	samples = (samples + 3) & (~3);
 	if (SoundBuffer_Init(rate, samples)) {
 		goto qsinit_err;
 	}
@@ -203,7 +204,6 @@ UINT soundmng_create(UINT rate, UINT ms) {
 
 qsinit_err:
 	soundmng_destroy();
-	(void)ms;
 	return(0);
 }
 

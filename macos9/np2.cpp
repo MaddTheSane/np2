@@ -559,16 +559,21 @@ static void eventproc(EventRecord *event) {
 
 // ----
 
+static void framereset(void) {
+
+	framecnt = 0;
+	if (np2oscfg.DISPCLK & 3) {
+		if (sysmng_workclockrenewal()) {
+			sysmng_updatecaption(3);
+		}
+	}
+}
+
 static void processwait(UINT waitcnt) {
 
 	if (timing_getcount() >= waitcnt) {
-		framecnt = 0;
 		timing_setcount(0);
-		if (np2oscfg.DISPCLK & 3) {
-			if (sysmng_workclockrenewal()) {
-				sysmng_updatecaption(3);
-			}
-		}
+		framereset();
 	}
 }
 
@@ -764,7 +769,7 @@ int main(int argc, char *argv[]) {
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						processwait(0);
+						framereset();
 					}
 				}
 				else {

@@ -1227,20 +1227,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 
+static void framereset(UINT cnt) {
+
+	framecnt = 0;
+	scrnmng_dispclock();
+	keydisp_draw((BYTE)cnt);
+	toolwin_draw((BYTE)cnt);
+	viewer_allreload(FALSE);
+	if (np2oscfg.DISPCLK & 3) {
+		if (sysmng_workclockrenewal()) {
+			sysmng_updatecaption(3);
+		}
+	}
+}
+
 static void processwait(UINT cnt) {
 
 	if (timing_getcount() >= cnt) {
 		timing_setcount(0);
-		framecnt = 0;
-		scrnmng_dispclock();
-		keydisp_draw((BYTE)cnt);
-		toolwin_draw((BYTE)cnt);
-		viewer_allreload(FALSE);
-		if (np2oscfg.DISPCLK & 3) {
-			if (sysmng_workclockrenewal()) {
-				sysmng_updatecaption(3);
-			}
-		}
+		framereset(cnt);
 	}
 	else {
 		Sleep(1);
@@ -1548,7 +1553,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 							else {
 								timing_setcount(cnt - framecnt);
 							}
-							processwait(0);
+							framereset(0);
 						}
 					}
 					else {

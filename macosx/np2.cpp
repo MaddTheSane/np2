@@ -547,17 +547,22 @@ static void HandleMouseDown(EventRecord *pevent) {
 
 // ----
 
+static void framereset(UINT waitcnt) {
+
+	framecnt = 0;
+	toolwin_draw((BYTE)waitcnt);
+	if (np2oscfg.DISPCLK & 3) {
+		if (sysmng_workclockrenewal()) {
+			sysmng_updatecaption(3);
+		}
+	}
+}
+
 static void processwait(UINT waitcnt) {
 
 	if (timing_getcount() >= waitcnt) {
-		framecnt = 0;
 		timing_setcount(0);
-		toolwin_draw((BYTE)waitcnt);
-		if (np2oscfg.DISPCLK & 3) {
-			if (sysmng_workclockrenewal()) {
-				sysmng_updatecaption(3);
-			}
-		}
+		framereset(waitcnt);
 	}
 }
 
@@ -748,7 +753,7 @@ int main(int argc, char *argv[]) {
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						processwait(0);
+						framereset(0);
 					}
 				}
 				else {

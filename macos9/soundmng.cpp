@@ -10,7 +10,7 @@
 #endif
 
 
-#define	SOUNDBUFFERS	2
+#define	SOUNDBUFFERS	3
 
 typedef struct {
 	SndChannelPtr	hdl;
@@ -182,7 +182,8 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	if (SoundChannel_Init()) {
 		goto qsinit_err;
 	}
-	samples = (rate / 3) & (~3);
+	samples = rate * ms / 1000;
+	samples = (samples + 3) & (~3);
 	if (SoundBuffer_Init(rate, samples)) {
 		goto qsinit_err;
 	}
@@ -197,20 +198,19 @@ UINT soundmng_create(UINT rate, UINT ms) {
 
 qsinit_err:
 	soundmng_destroy();
-	(void)ms;
 	return(0);
 }
 
 void soundmng_destroy(void) {
 
 	if (QS_Avail) {
+		QS_Avail = FALSE;
+		SoundBuffer_Term();
+		SoundChannel_Term();
 #if defined(VERMOUTH_LIB)
 		midimod_destroy(vermouth_module);
 		vermouth_module = NULL;
 #endif
-		QS_Avail = FALSE;
-		SoundBuffer_Term();
-		SoundChannel_Term();
 	}
 }
 

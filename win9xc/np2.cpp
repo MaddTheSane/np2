@@ -725,17 +725,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return(0L);
 }
 
+static void framereset(void) {
+
+	framecnt = 0;
+	sysmng_updatecaption();
+}
 
 static void processwait(UINT waitcnt) {
 
 	if (timing_getcount() >= waitcnt) {
 		timing_setcount(0);
-		framecnt = 0;
+		framereset();
 	}
 	else {
 		Sleep(1);
 	}
-	sysmng_updatecaption();
 }
 
 
@@ -952,7 +956,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 						else {
 							timing_setcount(cnt - framecnt);
 						}
-						processwait(0);
+						framereset();
 					}
 				}
 				else {

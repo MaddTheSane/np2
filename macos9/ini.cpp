@@ -207,7 +207,7 @@ const INITBL	*pterm;
 	}
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
-	milstr_ncat(work, "]\r\n", sizeof(work));
+	milstr_ncat(work, "]\r", sizeof(work));
 	file_write(fh, work, strlen(work));
 
 	p = tbl;
@@ -273,7 +273,7 @@ const INITBL	*pterm;
 			file_write(fh, p->item, strlen(p->item));
 			file_write(fh, " = ", 3);
 			file_write(fh, work, strlen(work));
-			file_write(fh, "\r\n", 2);
+			file_write(fh, "\r", 1);
 		}
 		p++;
 	}
@@ -362,7 +362,7 @@ void initload(void) {
 
 	char	path[MAX_PATH];
 
-	milstr_ncpy(path, file_getcd(inifile), sizeof(path));
+	file_cpyname(path, file_getcd(inifile), sizeof(path));
 	ini_read(path, ini_title, iniitem, INIITEMS);
 }
 
@@ -370,7 +370,7 @@ void initsave(void) {
 
 	char	path[MAX_PATH];
 
-	milstr_ncpy(path, file_getcd(inifile), sizeof(path));
+	file_cpyname(path, file_getcd(inifile), sizeof(path));
 	ini_write(path, ini_title, iniitem, INIITEMS);
 }
 
