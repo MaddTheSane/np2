@@ -1,8 +1,4 @@
 
-section .data
-
-randseed	dd		1
-
 section .text
 
 	global	@rand_setseed@4
@@ -15,16 +11,15 @@ section .text
 	global	@satuation_s16x@12
 	global	@satuation_s16mmx@12
 
-
 				align	16
-@rand_get@0:	mov		eax, [randseed]
+@rand_get@0:	mov		eax, dword [_randseed]
 				imul	eax, 343fdh
 				add		eax, 269ec3h
-				mov		[randseed], eax
+				mov		dword [_randseed], eax
 				sar		eax, 16
 				ret
 
-@rand_setseed@4:mov		[randseed], ecx
+@rand_setseed@4:mov		dword [_randseed], ecx
 				ret
 
 				align	16
@@ -136,6 +131,11 @@ ss16m_lp:		movq		mm1, [edx]
 				jne			short ss16m_lp
 				emms
 ss16m_ed:		ret		4
+
+
+section .data
+
+_randseed	dd		1
 
 	ends
 
