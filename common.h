@@ -96,3 +96,7 @@ typedef union {
 #endif
 #endif
 
+#ifndef __ASSERT
+#define	__ASSERT(s)
+#endif
+

@@ -16,7 +16,7 @@ I286_0F _sgdt(UINT op) {
 		i286_memorywrite_w(seg + ad, i286reg.GDTR.limit);
 		i286_memorywrite_w(seg + LOW16(ad + 2), i286reg.GDTR.base);
 		i286_memorywrite_w(seg + LOW16(ad + 4),
-									(UINT16)(0xff00 + i286reg.GDTR.base24));
+									(REG16)(0xff00 + i286reg.GDTR.base24));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -34,7 +34,7 @@ I286_0F _sidt(UINT op) {
 		i286_memorywrite_w(seg + ad, i286reg.IDTR.limit);
 		i286_memorywrite_w(seg + LOW16(ad + 2), i286reg.IDTR.base);
 		i286_memorywrite_w(seg + LOW16(ad + 4),
-									(UINT16)(0xff00 + i286reg.IDTR.base24));
+									(REG16)(0xff00 + i286reg.IDTR.base24));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);

@@ -12,11 +12,11 @@ void bios0x0c(void) {
 
 	UINT16	doff;
 	UINT16	dseg;
-	BYTE	flag;
+	REG8	flag;
 	BYTE	data;
 	BYTE	stat;
-	UINT16	pos;
-	UINT16	cnt;
+	REG16	pos;
+	REG16	cnt;
 
 	doff = GETBIOSMEM16(MEMW_RS_CH0_OFST);
 	dseg = GETBIOSMEM16(MEMW_RS_CH0_SEG);
@@ -66,14 +66,14 @@ void bios0x0c(void) {
 		i286_memword_write(dseg, pos, (UINT16)((data << 8) | stat));
 
 		// 次のポインタをストア
-		pos += 2;
+		pos = (UINT16)(pos + 2);
 		if (pos >= i286_memword_read(dseg, doff + R_TAILP)) {
 			pos = i286_memword_read(dseg, doff + R_HEADP);
 		}
 		i286_memword_write(dseg, doff + R_PUTP, pos);
 
 		// カウンタのインクリメント
-		cnt = i286_memword_read(dseg, doff + R_CNT) + 1;
+		cnt = (UINT16)(i286_memword_read(dseg, doff + R_CNT) + 1);
 		i286_memword_write(dseg, doff + R_CNT, cnt);
 
 		// オーバーフローを見張る
@@ -90,10 +90,10 @@ void bios0x0c(void) {
 	}
 	else {
 		i286_membyte_write(dseg, doff + R_CMD,
-				(BYTE)(i286_membyte_read(dseg, doff + R_CMD) | RFLAG_BOVF));
+				(REG8)(i286_membyte_read(dseg, doff + R_CMD) | RFLAG_BOVF));
 	}
 	i286_membyte_write(dseg, doff + R_INT,
-				(BYTE)(i286_membyte_read(dseg, doff + R_INT) | RINT_INT));
+				(REG8)(i286_membyte_read(dseg, doff + R_INT) | RINT_INT));
 	i286_membyte_write(dseg, doff + R_FLAG, flag);
 	iocore_out8(0x00, 0x20);
 }

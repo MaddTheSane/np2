@@ -17,7 +17,7 @@ static const char msg4[] = " MEMORY";
 static UINT16 textout(UINT16 ptr, const char *str) {
 
 	while(*str) {
-		i286_membyte_write(0xa000, ptr, *str);
+		i286_membyte_write(0xa000, ptr, (BYTE)*str);
 		i286_membyte_write(0xa200, ptr, 0x43);
 		str++;
 		ptr += 2;

@@ -357,20 +357,21 @@ void bios0x18(void) {
 				pos = I286_CX;
 				p = gdc.m.para + GDC_SCROLL + (I286_DH << 2);
 				while((i--) && (p < (gdc.m.para + GDC_SCROLL + 0x10))) {
-					tmp = i286_memword_read(I286_BX, pos);
-					tmp >>= 1;
-					STOREINTELWORD(p, tmp);
-					tmp = i286_memword_read(I286_BX, pos + 2);
+					REG16 t;
+					t = i286_memword_read(I286_BX, pos);
+					t >>= 1;
+					STOREINTELWORD(p, t);
+					t = i286_memword_read(I286_BX, pos + 2);
 					if (!(mem[MEMB_CRT_STS_FLAG] & 1)) {	// 25
-						tmp *= (16 * 16);
+						t *= (16 * 16);
 					}
 					else {									// 20
-						tmp *= (20 * 16);
+						t *= (20 * 16);
 					}
 					if (!(mem[MEMB_CRT_STS_FLAG] & 0x80)) {			// ver0.29
-						tmp >>= 1;
+						t >>= 1;
 					}
-					STOREINTELWORD(p + 2, tmp);
+					STOREINTELWORD(p + 2, t);
 					pos += 4;
 					p += 4;
 				}

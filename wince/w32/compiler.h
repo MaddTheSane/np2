@@ -18,6 +18,16 @@ typedef	unsigned int	UINT32;
 #define	RGB16			UINT32
 #endif
 
+// for RISC test
+#define	REG8		UINT
+#define REG16		UINT
+#define REG32		UINT
+#define	LOW12(a)				((((UINT)(a)) << 20) >> 20)
+#define	LOW14(a)				((((UINT)(a)) << 18) >> 18)
+#define	LOW15(a)				((((UINT)(a)) << 17) >> 17)
+#define	LOW16(a)				((UINT16)(a))
+#define	HIGH16(a)				(((UINT32)(a)) >> 16)
+
 
 #include	"common.h"
 #include	"milstr.h"

@@ -27,7 +27,7 @@ I286_F6 _inc_ea8(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
-			BYTE value = i286_memoryread(madr);
+			REG8 value = i286_memoryread(madr);
 			BYTE_INC(value)
 			i286_memorywrite(madr, value);
 			return;
@@ -50,7 +50,7 @@ I286_F6 _dec_ea8(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
-			BYTE value = i286_memoryread(madr);
+			REG8 value = i286_memoryread(madr);
 			BYTE_DEC(value)
 			i286_memorywrite(madr, value);
 			return;
@@ -73,7 +73,7 @@ I286_F6 _inc_ea16(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
-			UINT16 value = i286_memoryread_w(madr);
+			REG16 value = i286_memoryread_w(madr);
 			WORD_INC(value)
 			i286_memorywrite_w(madr, value);
 			return;
@@ -96,7 +96,7 @@ I286_F6 _dec_ea16(UINT op) {
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
-			UINT16 value = i286_memoryread_w(madr);
+			REG16 value = i286_memoryread_w(madr);
 			WORD_DEC(value)
 			i286_memorywrite_w(madr, value);
 			return;

@@ -38,8 +38,8 @@ static BYTE cs4231_pcm8s(void) {
 					leng = 0;
 					goto p8s_stop;
 				}
-				cs4231.pcmdata[0] = (i286_memoryread(addr+0) ^ 0x80) << 8;
-				cs4231.pcmdata[1] = (i286_memoryread(addr+1) ^ 0x80) << 8;
+				cs4231.pcmdata[0] = (i286_memoryread(addr + 0) ^ 0x80) << 8;
+				cs4231.pcmdata[1] = (i286_memoryread(addr + 1) ^ 0x80) << 8;
 				addr += 2;
 			}
 			ctime -= cs4231.step;

@@ -33,10 +33,10 @@ void dmap_i286(void) {
 						break;
 
 					default:
-						ch->outproc(i286_memoryread(ch->adrs.d));
+						ch->outproc((BYTE)i286_memoryread(ch->adrs.d));
 						break;
 				}
-				ch->adrs.d += (((ch->mode) & 0x20)?-1:1);
+				ch->adrs.d += ((ch->mode & 0x20)?-1:1);
 			}
 			ch++;
 			bit <<= 1;
@@ -72,10 +72,10 @@ void dmap_v30(void) {
 						break;
 
 					default:
-						ch->outproc(i286_memoryread(ch->adrs.d));
+						ch->outproc((BYTE)i286_memoryread(ch->adrs.d));
 						break;
 				}
-				ch->adrs.w[DMA16_LOW] += (((ch->mode) & 0x20)?-1:1);
+				ch->adrs.w[DMA16_LOW] += ((ch->mode & 0x20)?-1:1);
 			}
 			ch++;
 			bit <<= 1;

@@ -51,7 +51,7 @@ I286FN _add_ea_r8(void) {						// 00: add EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			ADDBYTE(res, dst, src);
-			i286_memorywrite(madr, (BYTE)res);
+			i286_memorywrite(madr, (REG8)res);
 			return;
 		}
 		out = mem + madr;
@@ -81,7 +81,7 @@ I286FN _add_ea_r16(void) {						// 01: add EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ADDWORD(res, dst, src);
-			i286_memorywrite_w(madr, (UINT16)res);
+			i286_memorywrite_w(madr, (REG16)res);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -171,7 +171,7 @@ I286FN _or_ea_r8(void) {						// 08: or EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			ORBYTE(dst, src);
-			i286_memorywrite(madr, (BYTE)dst);
+			i286_memorywrite(madr, (REG8)dst);
 			return;
 		}
 		out = mem + madr;
@@ -198,7 +198,7 @@ I286FN _or_ea_r16(void) {							// 09: or EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ORWORD(dst, src);
-			i286_memorywrite_w(madr, (UINT16)dst);
+			i286_memorywrite_w(madr, (REG16)dst);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -269,7 +269,7 @@ I286FN _adc_ea_r8(void) {						// 10: adc EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			ADCBYTE(res, dst, src);
-			i286_memorywrite(madr, (BYTE)res);
+			i286_memorywrite(madr, (REG8)res);
 			return;
 		}
 		out = mem + madr;
@@ -299,7 +299,7 @@ I286FN _adc_ea_r16(void) {						// 11: adc EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ADCWORD(res, dst, src);
-			i286_memorywrite_w(madr, (UINT16)res);
+			i286_memorywrite_w(madr, (REG16)res);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -392,7 +392,7 @@ I286FN _sbb_ea_r8(void) {						// 18: sbb EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			SBBBYTE(res, dst, src);
-			i286_memorywrite(madr, (BYTE)res);
+			i286_memorywrite(madr, (REG8)res);
 			return;
 		}
 		out = mem + madr;
@@ -422,7 +422,7 @@ I286FN _sbb_ea_r16(void) {						// 19: sbb EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			SBBWORD(res, dst, src);
-			i286_memorywrite_w(madr, (UINT16)res);
+			i286_memorywrite_w(madr, (REG16)res);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -513,7 +513,7 @@ I286FN _and_ea_r8(void) {						// 20: and EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			ANDBYTE(dst, src);
-			i286_memorywrite(madr, (BYTE)dst);
+			i286_memorywrite(madr, (REG8)dst);
 			return;
 		}
 		out = mem + madr;
@@ -540,7 +540,7 @@ I286FN _and_ea_r16(void) {						// 21: and EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			ANDWORD(dst, src);
-			i286_memorywrite_w(madr, (UINT16)dst);
+			i286_memorywrite_w(madr, (REG16)dst);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -642,7 +642,7 @@ I286FN _sub_ea_r8(void) {						// 28: sub EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			BYTE_SUB(res, dst, src);
-			i286_memorywrite(madr, (BYTE)res);
+			i286_memorywrite(madr, (REG8)res);
 			return;
 		}
 		out = mem + madr;
@@ -672,7 +672,7 @@ I286FN _sub_ea_r16(void) {						// 29: sub EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			WORD_SUB(res, dst, src);
-			i286_memorywrite_w(madr, (UINT16)res);
+			i286_memorywrite_w(madr, (REG16)res);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -784,7 +784,7 @@ I286FN _xor_ea_r8(void) {						// 30: xor EA, REG8
 		if (madr >= I286_MEMWRITEMAX) {
 			dst = i286_memoryread(madr);
 			BYTE_XOR(dst, src);
-			i286_memorywrite(madr, (BYTE)dst);
+			i286_memorywrite(madr, (REG8)dst);
 			return;
 		}
 		out = mem + madr;
@@ -811,7 +811,7 @@ I286FN _xor_ea_r16(void) {						// 31: xor EA, REG16
 		if (INHIBIT_WORDP(madr)) {
 			dst = i286_memoryread_w(madr);
 			WORD_XOR(dst, src);
-			i286_memorywrite_w(madr, (UINT16)dst);
+			i286_memorywrite_w(madr, (REG16)dst);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -1071,7 +1071,7 @@ I286FN _bound(void) {						// 62:	bound
 	UINT	vect = 0;
 	UINT	op;
 	UINT32	madr;
-	UINT16	reg;
+	REG16	reg;
 
 	I286_WORKCLOCK(13);										// ToDo
 	GET_PCBYTE(op);
@@ -1079,7 +1079,7 @@ I286FN _bound(void) {						// 62:	bound
 		reg = *(REG16_B53(op));
 		madr = CALC_EA(op);
 		if (reg >= i286_memoryread_w(madr)) {
-			madr += 2;									// ToDo
+			madr += 2;										// ToDo
 			if (reg <= i286_memoryread_w(madr)) {
 				return;
 			}
@@ -1150,7 +1150,7 @@ I286FN _imul_reg_ea_data8(void) {		// 6B:	imul	REG, EA, DATA8
 
 I286FN _insb(void) {						// 6C:	insb
 
-	BYTE	dat;
+	REG8	dat;
 
 	I286_WORKCLOCK(5);
 	dat = iocore_inp8(I286_DX);
@@ -1160,7 +1160,7 @@ I286FN _insb(void) {						// 6C:	insb
 
 I286FN _insw(void) {						// 6D:	insw
 
-	UINT16	dat;
+	REG16	dat;
 
 	I286_WORKCLOCK(5);
 	dat = iocore_inp16(I286_DX);
@@ -1170,22 +1170,22 @@ I286FN _insw(void) {						// 6D:	insw
 
 I286FN _outsb(void) {						// 6E:	outsb
 
-	BYTE	dat;
+	REG8	dat;
 
 	I286_WORKCLOCK(3);
 	dat = i286_memoryread(I286_SI + DS_FIX);
 	I286_SI += STRING_DIR;
-	iocore_out8(I286_DX, dat);
+	iocore_out8(I286_DX, (BYTE)dat);
 }
 
 I286FN _outsw(void) {						// 6F:	outsw
 
-	UINT16	dat;
+	REG16	dat;
 
 	I286_WORKCLOCK(3);
 	dat = i286_memoryread_w(I286_SI + DS_FIX);
 	I286_SI += STRING_DIRx2;
-	iocore_out16(I286_DX, dat);
+	iocore_out16(I286_DX, (UINT16)dat);
 }
 
 I286FN _jo_short(void) {					// 70:	jo short
@@ -2074,7 +2074,7 @@ I286FN _enter(void) {						// C8:	enter	DATA16, DATA8
 			I286_BP = I286_SP;
 			while(level--) {
 #if 1											// ‚È‚É‚â‚Á‚Ä‚ñ‚¾ƒ’ƒŒ
-				UINT16 val;
+				REG16 val;
 				bp -= 2;
 				I286_SP -= 2;
 				val = i286_memoryread_w(bp + SS_BASE);

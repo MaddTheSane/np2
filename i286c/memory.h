@@ -41,19 +41,19 @@ extern	BYTE	mem[0x200000];
 
 void MEMCALL i286_vram_dispatch(UINT operate);
 
-BYTE MEMCALL i286_memoryread(UINT32 address);
-UINT16 MEMCALL i286_memoryread_w(UINT32 address);
-void MEMCALL i286_memorywrite(UINT32 address, BYTE value);
-void MEMCALL i286_memorywrite_w(UINT32 address, UINT16 value);
+REG8 MEMCALL i286_memoryread(UINT32 address);
+REG16 MEMCALL i286_memoryread_w(UINT32 address);
+void MEMCALL i286_memorywrite(UINT32 address, REG8 value);
+void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value);
 
-BYTE MEMCALL i286_membyte_read(UINT seg, UINT off);
-UINT16 MEMCALL i286_memword_read(UINT seg, UINT off);
-void MEMCALL i286_membyte_write(UINT seg, UINT off, BYTE value);
-void MEMCALL i286_memword_write(UINT seg, UINT off, UINT16 value);
+REG8 MEMCALL i286_membyte_read(UINT seg, UINT off);
+REG16 MEMCALL i286_memword_read(UINT seg, UINT off);
+void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 value);
+void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value);
 
 void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng);
 void MEMCALL i286_memstr_write(UINT seg, UINT off,
-											const void *dat, UINT leng);
+												const void *dat, UINT leng);
 
 void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng);
 void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);

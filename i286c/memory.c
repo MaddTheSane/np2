@@ -9,25 +9,26 @@
 
 
 #define	USE_HIMEM
+#define	MEMORY_DEBUG
 
 // ---- write byte
 
-static void MEMCALL i286_wt(UINT32 address, BYTE value) {
+static void MEMCALL i286_wt(UINT32 address, REG8 value) {
 
-	mem[address & extmem.adrsmask] = value;
+	mem[address & extmem.adrsmask] = (BYTE)value;
 }
 
-static void MEMCALL tram_wt(UINT32 address, BYTE value) {
+static void MEMCALL tram_wt(UINT32 address, REG8 value) {
 
 	I286_REMCLOCK -= vramop.tramwait;
 	if (address < 0xa2000) {
-		mem[address] = value;
+		mem[address] = (BYTE)value;
 		tramupdate[LOW12(address >> 1)] = 1;
 		gdcs.textdisp |= 1;
 	}
 	else if (address < 0xa3fe0) {
 		if (!(address & 1)) {
-			mem[address] = value;
+			mem[address] = (BYTE)value;
 			tramupdate[LOW12(address >> 1)] = 1;
 			gdcs.textdisp |= 1;
 		}
@@ -35,7 +36,7 @@ static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 	else if (address < 0xa4000) {
 		if (!(address & 1)) {
 			if ((!(address & 2)) || (gdcs.msw_accessable)) {
-				mem[address] = value;
+				mem[address] = (BYTE)value;
 				tramupdate[LOW12(address >> 1)] = 1;
 				gdcs.textdisp |= 1;
 			}
@@ -44,30 +45,30 @@ static void MEMCALL tram_wt(UINT32 address, BYTE value) {
 	else if (address < 0xa5000) {
 		if ((address & 1) && (cgwindow.writable & 1)) {
 			cgwindow.writable |= 0x80;
-			fontrom[cgwindow.high + ((address >> 1) & 0x0f)] = value;
+			fontrom[cgwindow.high + ((address >> 1) & 0x0f)] = (BYTE)value;
 		}
 	}
 }
 
-static void MEMCALL vram_w0(UINT32 address, BYTE value) {
+static void MEMCALL vram_w0(UINT32 address, REG8 value) {
 
 	I286_REMCLOCK -= vramop.vramwait;
-	mem[address] = value;
+	mem[address] = (BYTE)value;
 	vramupdate[LOW15(address)] |= 1;
 	gdcs.grphdisp |= 1;
 }
 
-static void MEMCALL vram_w1(UINT32 address, BYTE value) {
+static void MEMCALL vram_w1(UINT32 address, REG8 value) {
 
 	I286_REMCLOCK -= vramop.vramwait;
-	mem[address + VRAM_STEP] = value;
+	mem[address + VRAM_STEP] = (BYTE)value;
 	vramupdate[LOW15(address)] |= 2;
 	gdcs.grphdisp |= 2;
 }
 
-static void MEMCALL grcg_rmw0(UINT32 address, BYTE value) {
+static void MEMCALL grcg_rmw0(UINT32 address, REG8 value) {
 
-	BYTE	mask;
+	REG8	mask;
 	BYTE	*vram;
 
 	I286_REMCLOCK -= vramop.grcgwait;
@@ -94,9 +95,9 @@ static void MEMCALL grcg_rmw0(UINT32 address, BYTE value) {
 	}
 }
 
-static void MEMCALL grcg_rmw1(UINT32 address, BYTE value) {
+static void MEMCALL grcg_rmw1(UINT32 address, REG8 value) {
 
-	BYTE	mask;
+	REG8	mask;
 	BYTE	*vram;
 
 	I286_REMCLOCK -= vramop.grcgwait;
@@ -123,7 +124,7 @@ static void MEMCALL grcg_rmw1(UINT32 address, BYTE value) {
 	}
 }
 
-static void MEMCALL grcg_tdw0(UINT32 address, BYTE value) {
+static void MEMCALL grcg_tdw0(UINT32 address, REG8 value) {
 
 	BYTE	*vram;
 
@@ -147,7 +148,7 @@ static void MEMCALL grcg_tdw0(UINT32 address, BYTE value) {
 	(void)value;
 }
 
-static void MEMCALL grcg_tdw1(UINT32 address, BYTE value) {
+static void MEMCALL grcg_tdw1(UINT32 address, REG8 value) {
 
 	BYTE	*vram;
 
@@ -171,17 +172,17 @@ static void MEMCALL grcg_tdw1(UINT32 address, BYTE value) {
 	(void)value;
 }
 
-static void MEMCALL egc_wt(UINT32 address, BYTE value) {
+static void MEMCALL egc_wt(UINT32 address, REG8 value) {
 
 	egc_write(address, value);
 }
 
-static void MEMCALL emmc_wt(UINT32 address, BYTE value) {
+static void MEMCALL emmc_wt(UINT32 address, REG8 value) {
 
-	extmem.pageptr[(address >> 14) & 3][LOW14(address)] = value;
+	extmem.pageptr[(address >> 14) & 3][LOW14(address)] = (BYTE)value;
 }
 
-static void MEMCALL i286_wn(UINT32 address, BYTE value) {
+static void MEMCALL i286_wn(UINT32 address, REG8 value) {
 
 	(void)address;
 	(void)value;
@@ -190,12 +191,12 @@ static void MEMCALL i286_wn(UINT32 address, BYTE value) {
 
 // ---- read byte
 
-static BYTE MEMCALL i286_rd(UINT32 address) {
+static REG8 MEMCALL i286_rd(UINT32 address) {
 
 	return(mem[address & extmem.adrsmask]);
 }
 
-static BYTE MEMCALL tram_rd(UINT32 address) {
+static REG8 MEMCALL tram_rd(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.tramwait;
 	if (address < 0xa4000) {
@@ -212,22 +213,22 @@ static BYTE MEMCALL tram_rd(UINT32 address) {
 	return(mem[address]);
 }
 
-static BYTE MEMCALL vram_r0(UINT32 address) {
+static REG8 MEMCALL vram_r0(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.vramwait;
 	return(mem[address]);
 }
 
-static BYTE MEMCALL vram_r1(UINT32 address) {
+static REG8 MEMCALL vram_r1(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.vramwait;
 	return(mem[address + VRAM_STEP]);
 }
 
-static BYTE MEMCALL grcg_tcr0(UINT32 address) {
+static REG8 MEMCALL grcg_tcr0(UINT32 address) {
 
 const BYTE	*vram;
-	BYTE	ret;
+	REG8	ret;
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	vram = mem + LOW15(address);
@@ -244,13 +245,13 @@ const BYTE	*vram;
 	if (!(grcg.modereg & 8)) {
 		ret |= vram[VRAM0_E] ^ grcg.tile[3].b[0];
 	}
-	return(~ret);
+	return(ret ^ 0xff);
 }
 
-static BYTE MEMCALL grcg_tcr1(UINT32 address) {
+static REG8 MEMCALL grcg_tcr1(UINT32 address) {
 
-	BYTE	*vram;
-	BYTE	ret;
+const BYTE	*vram;
+	REG8	ret;
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
@@ -267,20 +268,20 @@ static BYTE MEMCALL grcg_tcr1(UINT32 address) {
 	if (!(grcg.modereg & 8)) {
 		ret |= vram[VRAM1_E] ^ grcg.tile[3].b[0];
 	}
-	return(~ret);
+	return(ret ^ 0xff);
 }
 
-static BYTE MEMCALL egc_rd(UINT32 address) {
+static REG8 MEMCALL egc_rd(UINT32 address) {
 
 	return(egc_read(address));
 }
 
-static BYTE MEMCALL emmc_rd(UINT32 address) {
+static REG8 MEMCALL emmc_rd(UINT32 address) {
 
 	return(extmem.pageptr[(address >> 14) & 3][LOW14(address)]);
 }
 
-static BYTE MEMCALL i286_itf(UINT32 address) {
+static REG8 MEMCALL i286_itf(UINT32 address) {
 
 	if (itf.bank) {
 		address = ITF_ADRS + LOW15(address);
@@ -291,7 +292,7 @@ static BYTE MEMCALL i286_itf(UINT32 address) {
 
 // ---- write word
 
-static void MEMCALL i286w_wt(UINT32 address, UINT16 value) {
+static void MEMCALL i286w_wt(UINT32 address, REG16 value) {
 
 	BYTE	*ptr;
 
@@ -299,7 +300,7 @@ static void MEMCALL i286w_wt(UINT32 address, UINT16 value) {
 	STOREINTELWORD(ptr, value);
 }
 
-static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
+static void MEMCALL tramw_wt(UINT32 address, REG16 value) {
 
 	if (address < 0xa1fff) {
 		STOREINTELWORD(mem + address, value);
@@ -426,31 +427,31 @@ static void MEMCALL tramw_wt(UINT32 address, UINT16 value) {
 	(void)value;													\
 }
 
-static void MEMCALL vramw_w0(UINT32 address, UINT16 value) GRCGW_NON(0)
-static void MEMCALL vramw_w1(UINT32 address, UINT16 value) GRCGW_NON(1)
-static void MEMCALL grcgw_rmw0(UINT32 address, UINT16 value) GRCGW_RMW(0)
-static void MEMCALL grcgw_rmw1(UINT32 address, UINT16 value) GRCGW_RMW(1)
-static void MEMCALL grcgw_tdw0(UINT32 address, UINT16 value) GRCGW_TDW(0)
-static void MEMCALL grcgw_tdw1(UINT32 address, UINT16 value) GRCGW_TDW(1)
+static void MEMCALL vramw_w0(UINT32 address, REG16 value) GRCGW_NON(0)
+static void MEMCALL vramw_w1(UINT32 address, REG16 value) GRCGW_NON(1)
+static void MEMCALL grcgw_rmw0(UINT32 address, REG16 value) GRCGW_RMW(0)
+static void MEMCALL grcgw_rmw1(UINT32 address, REG16 value) GRCGW_RMW(1)
+static void MEMCALL grcgw_tdw0(UINT32 address, REG16 value) GRCGW_TDW(0)
+static void MEMCALL grcgw_tdw1(UINT32 address, REG16 value) GRCGW_TDW(1)
 
-static void MEMCALL egcw_wt(UINT32 address, UINT16 value) {
+static void MEMCALL egcw_wt(UINT32 address, REG16 value) {
 
 	if (!(address & 1)) {
 		egc_write_w(address, value);
 	}
 	else {
 		if (!(egc.sft & 0x1000)) {
-			egc_write(address, (BYTE)value);
-			egc_write(address + 1, (BYTE)(value >> 8));
+			egc_write(address, (REG8)value);
+			egc_write(address + 1, (REG8)(value >> 8));
 		}
 		else {
-			egc_write(address + 1, (BYTE)(value >> 8));
-			egc_write(address, (BYTE)value);
+			egc_write(address + 1, (REG8)(value >> 8));
+			egc_write(address, (REG8)value);
 		}
 	}
 }
 
-static void MEMCALL emmcw_wt(UINT32 address, UINT16 value) {
+static void MEMCALL emmcw_wt(UINT32 address, REG16 value) {
 
 	BYTE	*ptr;
 
@@ -464,7 +465,7 @@ static void MEMCALL emmcw_wt(UINT32 address, UINT16 value) {
 	}
 }
 
-static void MEMCALL i286w_wn(UINT32 address, UINT16 value) {
+static void MEMCALL i286w_wn(UINT32 address, REG16 value) {
 
 	(void)address;
 	(void)value;
@@ -473,7 +474,7 @@ static void MEMCALL i286w_wn(UINT32 address, UINT16 value) {
 
 // ---- read word
 
-static UINT16 MEMCALL i286w_rd(UINT32 address) {
+static REG16 MEMCALL i286w_rd(UINT32 address) {
 
 	BYTE	*ptr;
 
@@ -481,7 +482,7 @@ static UINT16 MEMCALL i286w_rd(UINT32 address) {
 	return(LOADINTELWORD(ptr));
 }
 
-static UINT16 MEMCALL tramw_rd(UINT32 address) {
+static REG16 MEMCALL tramw_rd(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.tramwait;
 	if (address < (0xa4000 - 1)) {
@@ -492,13 +493,13 @@ static UINT16 MEMCALL tramw_rd(UINT32 address) {
 	}
 	else if (address < 0xa4fff) {
 		if (address & 1) {
-			UINT16 ret;
+			REG16 ret;
 			ret = fontrom[cgwindow.high + ((address >> 1) & 0x0f)];
 			ret += fontrom[cgwindow.low + (((address + 1) >> 1) & 0x0f)] << 8;
 			return(ret);
 		}
 		else {
-			UINT16 ret;
+			REG16 ret;
 			ret = fontrom[cgwindow.low + ((address >> 1) & 0x0f)];
 			ret += fontrom[cgwindow.high + ((address >> 1) & 0x0f)] << 8;
 			return(ret);
@@ -510,22 +511,22 @@ static UINT16 MEMCALL tramw_rd(UINT32 address) {
 	return(LOADINTELWORD(mem + address));
 }
 
-static UINT16 MEMCALL vramw_r0(UINT32 address) {
+static REG16 MEMCALL vramw_r0(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.vramwait;
 	return(LOADINTELWORD(mem + address));
 }
 
-static UINT16 MEMCALL vramw_r1(UINT32 address) {
+static REG16 MEMCALL vramw_r1(UINT32 address) {
 
 	I286_REMCLOCK -= vramop.vramwait;
 	return(LOADINTELWORD(mem + address + VRAM_STEP));
 }
 
-static UINT16 MEMCALL grcgw_tcr0(UINT32 address) {
+static REG16 MEMCALL grcgw_tcr0(UINT32 address) {
 
 	BYTE	*vram;
-	UINT16	ret;
+	REG16	ret;
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
@@ -545,10 +546,10 @@ static UINT16 MEMCALL grcgw_tcr0(UINT32 address) {
 	return(~ret);
 }
 
-static UINT16 MEMCALL grcgw_tcr1(UINT32 address) {
+static REG16 MEMCALL grcgw_tcr1(UINT32 address) {
 
 	BYTE	*vram;
-	UINT16	ret;
+	REG16	ret;
 
 	I286_REMCLOCK -= vramop.grcgwait;
 	ret = 0;
@@ -565,12 +566,12 @@ static UINT16 MEMCALL grcgw_tcr1(UINT32 address) {
 	if (!(grcg.modereg & 8)) {
 		ret |= LOADINTELWORD(vram + VRAM1_E) ^ grcg.tile[3].w;
 	}
-	return(~ret);
+	return((UINT16)(~ret));
 }
 
-static UINT16 MEMCALL egcw_rd(UINT32 address) {
+static REG16 MEMCALL egcw_rd(UINT32 address) {
 
-	UINT16 ret;
+	REG16	ret;
 
 	if (!(address & 1)) {
 		return(egc_read_w(address));
@@ -578,19 +579,18 @@ static UINT16 MEMCALL egcw_rd(UINT32 address) {
 	else {
 		if (!(egc.sft & 0x1000)) {
 			ret = egc_read(address);
-			ret += (UINT16)egc_read(address + 1) << 8;
+			ret += egc_read(address + 1) << 8;
 			return(ret);
 		}
 		else {
-			UINT16 ret;
-			ret = (UINT16)egc_read(address + 1) << 8;
+			ret = egc_read(address + 1) << 8;
 			ret += egc_read(address);
 			return(ret);
 		}
 	}
 }
 
-static UINT16 MEMCALL emmcw_rd(UINT32 address) {
+static REG16 MEMCALL emmcw_rd(UINT32 address) {
 
 	BYTE	*ptr;
 
@@ -598,7 +598,7 @@ static UINT16 MEMCALL emmcw_rd(UINT32 address) {
 	return(LOADINTELWORD(ptr));
 }
 
-static UINT16 MEMCALL i286w_itf(UINT32 address) {
+static REG16 MEMCALL i286w_itf(UINT32 address) {
 
 	if (itf.bank) {
 		address = ITF_ADRS + LOW15(address);
@@ -609,10 +609,10 @@ static UINT16 MEMCALL i286w_itf(UINT32 address) {
 
 // ---- table
 
-typedef void (MEMCALL * MEM8WRITE)(UINT32 address, BYTE value);
-typedef BYTE (MEMCALL * MEM8READ)(UINT32 address);
-typedef void (MEMCALL * MEM16WRITE)(UINT32 address, UINT16 value);
-typedef UINT16 (MEMCALL * MEM16READ)(UINT32 address);
+typedef void (MEMCALL * MEM8WRITE)(UINT32 address, REG8 value);
+typedef REG8 (MEMCALL * MEM8READ)(UINT32 address);
+typedef void (MEMCALL * MEM16WRITE)(UINT32 address, REG16 value);
+typedef REG16 (MEMCALL * MEM16READ)(UINT32 address);
 
 static MEM8WRITE memory_write[] = {
 			i286_wt,	i286_wt,	i286_wt,	i286_wt,		// 00
@@ -679,13 +679,13 @@ static const MEM16READ vramw_read[] = {
 			vramw_r0,	vramw_r1,	egcw_rd,	egcw_rd};		// c0 rmw
 
 
-static BYTE MEMCALL i286_nonram_r(UINT32 address) {
+static REG8 MEMCALL i286_nonram_r(UINT32 address) {
 
 	(void)address;
 	return(0xff);
 }
 
-static UINT16 MEMCALL i286_nonram_rw(UINT32 address) {
+static REG16 MEMCALL i286_nonram_rw(UINT32 address) {
 
 	(void)address;
 	return(0xffff);
@@ -724,7 +724,8 @@ void MEMCALL i286_vram_dispatch(UINT func) {
 	}
 }
 
-BYTE MEMCALL i286_memoryread(UINT32 address) {
+#if defined(MEMORY_DEBUG)
+static REG8 MEMCALL _i286_memoryread(UINT32 address) {
 
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);
@@ -745,9 +746,9 @@ BYTE MEMCALL i286_memoryread(UINT32 address) {
 	}
 }
 
-UINT16 MEMCALL i286_memoryread_w(UINT32 address) {
+static REG16 MEMCALL _i286_memoryread_w(UINT32 address) {
 
-	UINT16	ret;
+	REG16	ret;
 
 	if (address < (I286_MEMREADMAX - 1)) {
 		return(LOADINTELWORD(mem + address));
@@ -785,16 +786,99 @@ UINT16 MEMCALL i286_memoryread_w(UINT32 address) {
 	}
 }
 
-void MEMCALL i286_memorywrite(UINT32 address, BYTE value) {
+REG8 MEMCALL i286_memoryread(UINT32 address) {
 
-	if (address < I286_MEMWRITEMAX) {
-		mem[address] = value;
+	REG8	r;
+	r = _i286_memoryread(address);
+	if (r & 0xffffff00) {
+		TRACEOUT(("error i286_memoryread %x", r));
+	}
+	return(r);
+}
+
+REG16 MEMCALL i286_memoryread_w(UINT32 address) {
+
+	REG16	r;
+
+	r = _i286_memoryread_w(address);
+	if (r & 0xffff0000) {
+		TRACEOUT(("error i286_memoryread_w %x", r));
+	}
+	return(r);
+}
+#else
+REG8 MEMCALL i286_memoryread(UINT32 address) {
+
+	if (address < I286_MEMREADMAX) {
+		return(mem[address]);
 	}
 #if defined(USE_HIMEM)
 	else if (address >= 0x10fff0) {
 		address -= 0x100000;
 		if (address < extmemmng_size) {
-			extmemmng_ptr[address] = value;
+			return(extmemmng_ptr[address]);
+		}
+		else {
+			return(0xff);
+		}
+	}
+#endif
+	else {
+		return(memory_read[(address >> 15) & 0x1f](address));
+	}
+}
+
+REG16 MEMCALL i286_memoryread_w(UINT32 address) {
+
+	REG16	ret;
+
+	if (address < (I286_MEMREADMAX - 1)) {
+		return(LOADINTELWORD(mem + address));
+	}
+#if defined(USE_HIMEM)
+	else if (address >= (0x10fff0 - 1)) {
+		address -= 0x100000;
+		if (address == (0x00fff0 - 1)) {
+			ret = mem[0x100000 + address];
+		}
+		else if (address < extmemmng_size) {
+			ret = extmemmng_ptr[address];
+		}
+		else {
+			ret = 0xff;
+		}
+		address++;
+		if (address < extmemmng_size) {
+			ret += extmemmng_ptr[address] << 8;
+		}
+		else {
+			ret += 0xff00;
+		}
+		return(ret);
+	}
+#endif
+	else if ((address & 0x7fff) != 0x7fff) {
+		return(memword_read[(address >> 15) & 0x1f](address));
+	}
+	else {
+		ret = memory_read[(address >> 15) & 0x1f](address);
+		address++;
+		ret += memory_read[(address >> 15) & 0x1f](address) << 8;
+		return(ret);
+	}
+}
+#endif
+
+void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
+
+	if (address < I286_MEMWRITEMAX) {
+		mem[address] = (BYTE)value;
+	}
+#if defined(USE_HIMEM)
+	else if (address >= 0x10fff0) {
+		address -= 0x100000;
+		if (address < extmemmng_size) {
+			extmemmng_ptr[address] = (BYTE)value;
 		}
 	}
 #endif
@@ -803,7 +887,7 @@ void MEMCALL i286_memorywrite(UINT32 address, BYTE value) {
 	}
 }
 
-void MEMCALL i286_memorywrite_w(UINT32 address, UINT16 value) {
+void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
 
 	if (address < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + address, value);
@@ -833,7 +917,7 @@ void MEMCALL i286_memorywrite_w(UINT32 address, UINT16 value) {
 	}
 }
 
-BYTE MEMCALL i286_membyte_read(UINT seg, UINT off) {
+REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
 
 	UINT32	address;
 
@@ -846,7 +930,7 @@ BYTE MEMCALL i286_membyte_read(UINT seg, UINT off) {
 	}
 }
 
-UINT16 MEMCALL i286_memword_read(UINT seg, UINT off) {
+REG16 MEMCALL i286_memword_read(UINT seg, UINT off) {
 
 	UINT32	address;
 
@@ -859,26 +943,26 @@ UINT16 MEMCALL i286_memword_read(UINT seg, UINT off) {
 	}
 }
 
-void MEMCALL i286_membyte_write(UINT seg, UINT off, BYTE value) {
+void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 value) {
 
 	UINT32	address;
 
 	address = (seg << 4) + off;
 	if (address < I286_MEMWRITEMAX) {
-		mem[address] = value;
+		mem[address] = (BYTE)value;
 	}
 	else {
 		i286_memorywrite(address, value);
 	}
 }
 
-void MEMCALL i286_memword_write(UINT seg, UINT off, UINT16 value) {
+void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 
 	UINT32	address;
 
 	address = (seg << 4) + off;
 	if (address < (I286_MEMWRITEMAX - 1)) {
-		STOREINTELWORD(mem + address,  value);
+		STOREINTELWORD(mem + address, value);
 	}
 	else {
 		i286_memorywrite_w(address, value);

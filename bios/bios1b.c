@@ -80,8 +80,8 @@ static BOOL biosfd_seek(BYTE track, BOOL ndensity) {
 
 static UINT16 fdfmt_biospara(BYTE fmt, BYTE rpm) {					// ver0.31
 
-	UINT16	seg;
-	UINT16	off;
+	UINT	seg;
+	UINT	off;
 	UINT16	n;
 
 	n = fdc.N;
@@ -108,7 +108,7 @@ static UINT16 fdfmt_biospara(BYTE fmt, BYTE rpm) {					// ver0.31
 	if (fmt) {
 		off += 2;
 	}
-	return(i286_memword_read(seg, off));
+	return(i286_memword_read(seg, LOW16(off)));
 }
 
 static void change_rpm(BYTE rpm) {									// ver0.31
@@ -208,9 +208,9 @@ static void b0patch(void) {
 			UINT32	addr;
 			UINT	size;
 			UINT	cnt;
-			BYTE	c;
-			BYTE	cl;
-			BYTE	last;
+			REG8	c;
+			REG8	cl;
+			REG8	last;
 			addr = ES_BASE + I286_BP;
 			size = I286_BX;
 			cnt = 0;
@@ -219,7 +219,7 @@ static void b0patch(void) {
 				c = i286_memoryread(addr++);
 				cl = 0;
 				do {
-					BYTE now = c & 0x80;
+					REG8 now = c & 0x80;
 					c <<= 1;
 					b0p.pos++;
 					if (now == last) {
@@ -241,7 +241,7 @@ static void b0patch(void) {
 		}
 		if ((b0p.pos >> 3) < I286_BX) {
 			UINT32 addr;
-			BYTE c;
+			REG8 c;
 			addr = ES_BASE + I286_BP + (b0p.pos >> 3);
 			c = i286_memoryread(addr);
 			c ^= (1 << (b0p.pos & 7));
@@ -994,7 +994,7 @@ UINT16 bootstrapload(void) {										// ver0.27
 void bios0x1b(void) {
 
 	BYTE	ret_ah;
-	BYTE	flag;
+	REG8	flag;
 
 	switch(I286_AL & 0xf0) {
 		case 0x90:
@@ -1055,7 +1055,7 @@ void bios0x1b(void) {
 	I286_AH = ret_ah;
 	flag = i286_membyte_read(I286_SS, I286_SP+4) & 0xfe;
 	if (ret_ah >= 0x20) {
-		flag |= 1;
+		flag += 1;
 	}
 	i286_membyte_write(I286_SS, I286_SP+4, flag);
 }
