@@ -429,6 +429,7 @@ static const char ini_title[] = "NekoProjectII";
 enum {
 	INIRO_STR	= INIFLAG_RO | INITYPE_STR,
 	INIRO_BOOL	= INIFLAG_RO | INITYPE_BOOL,
+	INIRO_UINT8	= INIFLAG_RO | INITYPE_UINT8,
 	INIMAX_UINT8	= INIFLAG_MAX | INITYPE_UINT8,
 	INIAND_UINT8	= INIFLAG_AND | INITYPE_UINT8,
 	INIROMAX_SINT32	= INIFLAG_RO | INIFLAG_MAX | INITYPE_SINT32,
@@ -448,6 +449,8 @@ static const INITBL iniitem[] = {
 	{"bmap_Dir", INITYPE_STR,	bmpfilefolder,		MAX_PATH},
 	{"fontfile", INITYPE_STR,	np2cfg.fontfile,	MAX_PATH},
 	{"biospath", INITYPE_STR,	np2cfg.biospath,	MAX_PATH},
+	{"hdrvroot", INIRO_STR,		np2cfg.hdrvroot,	MAX_PATH},
+	{"hdrv_acc", INIRO_UINT8,	&np2cfg.hdrvacc,	0},
 
 	{"pc_model", INITYPE_STR,	&np2cfg.model,		sizeof(np2cfg.model)},
 
