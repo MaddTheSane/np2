@@ -161,7 +161,7 @@ static pascal OSStatus sliderEventHandlerProc( EventHandlerCallRef inCallRef, Ev
     ControlRef	theControl = (ControlRef)inUserData;
     if (GetControlID(theControl, &conID) == noErr) {
         if (conID.signature == 'sl/f' && conID.id == 4) {
-            base = 31;
+            base = 32;
         }
     }
     return( changeSlider(theControl, screenWin, base) );

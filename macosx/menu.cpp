@@ -98,13 +98,15 @@ void menu_setf12copy(BYTE value) {
 	MenuHandle	hmenu;
 
 	hmenu = _GetMenu(IDM_KEYBOARD);
-	if (value >= 3) {
+	if (value >= 5) {
 		value = 0;
 	}
 	np2oscfg.F12COPY = value;
 	_CheckMenuItem(hmenu, IDM_F12MOUSE, MFCHECK(value == 0));
 	_CheckMenuItem(hmenu, IDM_F12COPY, MFCHECK(value == 1));
 	_CheckMenuItem(hmenu, IDM_F12STOP, MFCHECK(value == 2));
+	_CheckMenuItem(hmenu, IDM_F12EQU, MFCHECK(value == 3));
+	_CheckMenuItem(hmenu, IDM_F12COMMA, MFCHECK(value == 4));
 }
 
 void menu_setbeepvol(BYTE value) {
@@ -134,6 +136,7 @@ void menu_setsound(BYTE value) {
 	_CheckMenuItem(hmenu, IDM_PC9801_118, MFCHECK(np2cfg.SOUND_SW == 0x08));
 	_CheckMenuItem(hmenu, IDM_SPEAKBOARD, MFCHECK(np2cfg.SOUND_SW & 0x20));
 	_CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(np2cfg.SOUND_SW & 0x40));
+	_CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(np2cfg.SOUND_SW & 0x80));
 }
 
 void menu_setmotorflg(BYTE value) {

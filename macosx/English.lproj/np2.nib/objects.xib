@@ -1575,7 +1575,7 @@
     <reference idRef="949"/>
     <object class="IBCarbonWindow" id="950">
       <string name="windowRect">102 202 502 842 </string>
-      <string name="title">Neko Project II</string>
+      <string name="title">Neko Project IIx</string>
       <object name="rootControl" class="IBCarbonRootControl" id="951">
         <string name="bounds">0 0 400 640 </string>
       </object>
@@ -1658,7 +1658,6 @@
                   <object class="IBCarbonEditText" id="1026">
                     <string name="bounds">63 127 80 186 </string>
                     <ostype name="controlSignature">hdsz</ostype>
-                    <int name="controlID">1</int>
                     <string name="title">20</string>
                   </object>
                 </array>

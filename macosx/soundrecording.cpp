@@ -11,7 +11,7 @@
 #include "dialog.h"
 #include "pccore.h"
 #include "menu.h"
-#include "macnewdisk.h"
+#include "np2.h"
 #include "resource.h"
 #include "soundrecording.h"
 
@@ -130,7 +130,7 @@ int soundRec(bool end) {
         ret = 0;
     }
     else if (!end) {
-        if (saveFile('AIFF', "Neko Project IIx Sound.aiff", &soundlog)) {
+        if (dialog_filewriteselect('AIFF', "Neko Project IIx Sound.aiff", &soundlog, hWndMain)) {
             SInt16		ref;
             SInt32		dir;
             Str255		path;

@@ -109,11 +109,11 @@ static const OSType subcommand[11] ={	'----',
 
 static const ControlID popup[2] = { {'pop1', 1}, {'pop2', 2} };
 
+static DragReceiveHandlerUPP	dr;
+static bool	isPUMA;
+
 static void openpopup(HIPoint location);
 static void skinchange(void);
-static DragReceiveHandlerUPP	dr;
-
-static bool	isPUMA;
 
 // ----
 
@@ -523,7 +523,11 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                     }
                 }
                 break;
-
+                
+            case kEventWindowFocusAcquired:
+                SelectWindow(hWndMain);
+                break;
+                
                 
             default:
                 break;
@@ -628,6 +632,7 @@ static WindowRef makeNibWindow (IBNibRef nibRef) {
             { kEventClassWindow, kEventWindowClose }, 
             { kEventClassWindow, kEventWindowShown }, 
             { kEventClassWindow, kEventWindowDrawContent }, 
+            { kEventClassWindow, kEventWindowFocusAcquired }, 
         };
         EventHandlerRef	ref;
         InstallWindowEventHandler (win, NewEventHandlerUPP(cfWinproc), GetEventTypeCount(list), list, (void *)win, &ref);
@@ -660,24 +665,23 @@ const char	*base;
 	UINT	j;
 	UINT	id[SKINMRU_MAX];
 const char	*file[SKINMRU_MAX];
-    Str255	seltext, deftext;
+    char	longname[256];
 
-    mkstr255(seltext, str_skinsel);
-	AppendMenu(ret, seltext);
+	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."),"Slect Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
 	AppendMenu(ret, "\p-");
 
 	base = np2tool.skin;
-    mkstr255(deftext, str_skindef);
-	AppendMenu(ret, deftext);
-	if (base[0] != '\0') {
-        EnableMenuItem(ret, 3);
+	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Base Skin"),"Base Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
+	if (base[0] == '\0') {
+        DisableMenuItem(ret, 3);
     }
 	for (cnt=0; cnt<SKINMRU_MAX; cnt++) {
 		p = np2tool.skinmru[cnt];
 		if (p[0] == '\0') {
 			break;
 		}
-		p = file_getname(p);
+		getLongFileName(longname, p);
+        p = longname;
 		for (i=0; i<cnt; i++) {
 			if (file_cmpname(p, file[id[i]]) < 0) {
 				break;
@@ -691,16 +695,15 @@ const char	*file[SKINMRU_MAX];
 	}
 	for (i=0; i<cnt; i++) {
 		j = id[i];
-        if (file[j][0] == '\0') {
-            AppendMenu(ret, "\pN/A");
-        }
-        else {
-            Str255	initext;
-            mkstr255(initext, file[j]);
-            AppendMenu(ret, initext);
-        }
-        if (!file_cmpname(base, np2tool.skinmru[j])) {
-            EnableMenuItem(ret, 4+i);
+        if (file[j][0] != '\0') {
+            UInt32	attr = kMenuItemAttrIconDisabled;
+            if (!file_cmpname(base, np2tool.skinmru[j])) {
+                attr |= kMenuItemAttrDisabled;
+            }
+            else if (file_attr(np2tool.skinmru[j]) == -1) {
+                attr |= kMenuItemAttrDisabled;
+            }
+            AppendMenuItemTextWithCFString(ret, CFStringCreateWithCString(NULL, file[j], kCFStringEncodingUTF8), attr, NULL, NULL);
         }
 	}
 	return;
@@ -736,16 +739,14 @@ static void openpopup(HIPoint location) {
 
 	MenuRef	hMenu;
 	short	sel;
-    Str255	closetext;
     UInt16	selectclose;
     char	fname[MAX_PATH];
 
-    hMenu = NewMenu(222, "\pskin");
+    hMenu = NewMenu(222, "\pSkin");
     InsertMenu(hMenu, -1);
 	createskinmenu(hMenu);
 	AppendMenu(hMenu, "\p-");
-    mkstr255(closetext, str_toolclose);
-	AppendMenu(hMenu, closetext);
+    AppendMenuItemTextWithCFString(hMenu, CFCopyLocalizedString(CFSTR("Close"),"ToolWin Close"), kMenuItemAttrIconDisabled, NULL, NULL);
 
     DeleteMenu(222);
     selectclose = CountMenuItems(hMenu);
