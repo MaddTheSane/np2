@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.5 2004/01/29 00:27:29 yui Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.6 2004/02/03 14:27:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1286,8 +1286,11 @@ BOUND_GdMa(void)
  * STACK
  */
 void
-ENTER_IwIb(void)
+ENTER16_IwIb(void)
 {
+	DWORD sp, bp;
+	DWORD size;
+	DWORD val;
 	WORD dimsize;
 	BYTE level;
 
@@ -1297,29 +1300,19 @@ ENTER_IwIb(void)
 
 	/* check stack room size */
 	if (CPU_STAT_PM) {
-		DWORD size = dimsize;
-		DWORD sp;
-		if (CPU_INST_OP32) {
-			size = (level + 1) * 4;
-		} else {
-			size = (level + 1) * 2;
-		}
-		if (CPU_STAT_SS32) {
-			sp = CPU_ESP;
-		} else {
+		size = dimsize + (level + 1) * 2;
+		if (!CPU_STAT_SS32) {
 			sp = CPU_SP;
+		} else {
+			sp = CPU_ESP;
 		}
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, size);
 	}
 
-	XPUSH0(CPU_EBP);
+	PUSH0_16(CPU_BP);
 	if (level == 0) {			/* enter level=0 */
 		CPU_WORKCLOCK(11);
-		if (!CPU_INST_OP32) {
-			CPU_BP = CPU_SP;
-		} else {
-			CPU_EBP = CPU_ESP;
-		}
+		CPU_BP = CPU_SP;
 		if (!CPU_STAT_SS32) {
 			CPU_SP -= dimsize;
 		} else {
@@ -1329,33 +1322,20 @@ ENTER_IwIb(void)
 		--level;
 		if (level == 0) {		/* enter level=1 */
 			CPU_WORKCLOCK(15);
-			if (!CPU_INST_OP32) {
-				WORD tmp = CPU_SP;
-				PUSH0_16(tmp);
-				CPU_BP = tmp;
+			sp = CPU_SP;
+			PUSH0_16(sp);
+			CPU_BP = sp;
+			if (!CPU_STAT_SS32) {
 				CPU_SP -= dimsize;
 			} else {
-				DWORD tmp;
-				if (!CPU_STAT_SS32) {
-					tmp = CPU_SP;
-					REGPUSH0_32_16(tmp);
-					CPU_EBP = (WORD)tmp;
-					CPU_ESP -= dimsize;
-				} else {
-					tmp = CPU_ESP;
-					REGPUSH0_32(tmp);
-					CPU_EBP = tmp;
-					CPU_ESP -= dimsize;
-				}
+				CPU_ESP -= dimsize;
 			}
 		} else {			/* enter level=2-31 */
 			CPU_WORKCLOCK(12 + level * 4);
 			if (!CPU_INST_OP32) {
-				WORD bp = CPU_BP;
-				WORD val;
-
-				CPU_BP = CPU_SP;
 				if (!CPU_STAT_SS32) {
+					bp = CPU_BP;
+					CPU_BP = CPU_SP;
 					while (level--) {
 						bp -= 2;
 						CPU_SP -= 2;
@@ -1365,6 +1345,8 @@ ENTER_IwIb(void)
 					REGPUSH0(CPU_BP);
 					CPU_SP -= dimsize;
 				} else {
+					bp = CPU_EBP;
+					CPU_BP = CPU_SP;
 					while (level--) {
 						bp -= 2;
 						CPU_ESP -= 2;
@@ -1374,31 +1356,80 @@ ENTER_IwIb(void)
 					REGPUSH0_16_32(CPU_EBP);
 					CPU_ESP -= dimsize;
 				}
-			} else {
-				DWORD ebp = CPU_EBP;
-				DWORD val;
+			}
+		}
+	}
+}
 
-				if (!CPU_STAT_SS32) {
-					CPU_EBP = CPU_SP;
-					while (level--) {
-						ebp -= 4;
-						CPU_SP -= 4;
-						val = cpu_vmemoryread_d(CPU_SS_INDEX, ebp);
-						cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, val);
-					}
-					REGPUSH0_32_16(CPU_EBP);
-					CPU_SP -= dimsize;
-				} else {
-					CPU_EBP = CPU_ESP;
-					while (level--) {
-						ebp -= 4;
-						CPU_ESP -= 4;
-						val = cpu_vmemoryread_d(CPU_SS_INDEX, ebp);
-						cpu_vmemorywrite(CPU_SS_INDEX, CPU_ESP, val);
-					}
-					REGPUSH0_32(CPU_EBP);
-					CPU_ESP -= dimsize;
+void
+ENTER32_IwIb(void)
+{
+	DWORD sp, bp;
+	DWORD size;
+	DWORD val;
+	WORD dimsize;
+	BYTE level;
+
+	GET_PCWORD(dimsize);
+	GET_PCBYTE(level);
+	level &= 0x1f;
+
+	/* check stack room size */
+	if (CPU_STAT_PM) {
+		size = dimsize + (level + 1) * 4;
+		if (CPU_STAT_SS32) {
+			sp = CPU_ESP;
+		} else {
+			sp = CPU_SP;
+		}
+		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, size);
+	}
+
+	PUSH0_32(CPU_EBP);
+	if (level == 0) {			/* enter level=0 */
+		CPU_WORKCLOCK(11);
+		CPU_EBP = CPU_ESP;
+		if (!CPU_STAT_SS32) {
+			CPU_SP -= dimsize;
+		} else {
+			CPU_ESP -= dimsize;
+		}
+	} else {
+		--level;
+		if (level == 0) {		/* enter level=1 */
+			CPU_WORKCLOCK(15);
+			sp = CPU_ESP;
+			PUSH0_32(sp);
+			CPU_EBP = sp;
+			if (CPU_STAT_SS32) {
+				CPU_ESP -= dimsize;
+			} else {
+				CPU_SP -= dimsize;
+			}
+		} else {			/* enter level=2-31 */
+			CPU_WORKCLOCK(12 + level * 4);
+			if (CPU_STAT_SS32) {
+				bp = CPU_EBP;
+				CPU_EBP = CPU_ESP;
+				while (level--) {
+					bp -= 4;
+					CPU_ESP -= 4;
+					val = cpu_vmemoryread_d(CPU_SS_INDEX, bp);
+					cpu_vmemorywrite(CPU_SS_INDEX, CPU_ESP, val);
 				}
+				REGPUSH0_32(CPU_EBP);
+				CPU_ESP -= dimsize;
+			} else {
+				bp = CPU_BP;
+				CPU_EBP = CPU_ESP;
+				while (level--) {
+					bp -= 4;
+					CPU_SP -= 4;
+					val = cpu_vmemoryread_d(CPU_SS_INDEX, bp);
+					cpu_vmemorywrite_d(CPU_SS_INDEX, CPU_SP, val);
+				}
+				REGPUSH0_32_16(CPU_EBP);
+				CPU_SP -= dimsize;
 			}
 		}
 	}
@@ -1453,11 +1484,6 @@ LEAVE32(void)
 		CHECK_STACK_PUSH(&CPU_STAT_SREG(CPU_SS_INDEX), sp, (bp - sp) + size);
 	}
 
-	if (CPU_STAT_SS32) {
-		CPU_ESP = CPU_EBP;
-		REGPOP0_32(CPU_EBP);
-	} else {
-		CPU_SP = CPU_BP;
-		REGPOP0_32_16(CPU_EBP);
-	}
+	CPU_ESP = CPU_EBP;
+	POP0_32(CPU_EBP);
 }

@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.3 2004/01/14 16:14:49 monaka Exp $	*/
+/*	$Id: inst_table.c,v 1.4 2004/02/03 14:27:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -557,7 +557,7 @@ void (*insttable_1byte[2][256])(void) = {
 		LDS_GwMp,
 		MOV_EbIb,
 		MOV_EwIw,
-		ENTER_IwIb,		/* C8 */
+		ENTER16_IwIb,		/* C8 */
 		LEAVE16,
 		RETfar16_Iw,
 		RETfar16,
@@ -832,7 +832,7 @@ void (*insttable_1byte[2][256])(void) = {
 		LDS_GdMp,
 		MOV_EbIb,
 		MOV_EdId,
-		ENTER_IwIb,		/* C8 */
+		ENTER32_IwIb,		/* C8 */
 		LEAVE32,
 		RETfar32_Iw,
 		RETfar32,
