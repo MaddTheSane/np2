@@ -303,11 +303,13 @@ static REG8 IOINPCALL amd_idb(UINT port) {
 	return(0xff);
 }
 
+#if defined(TRACE)
 static REG8 IOINPCALL amd_inp(UINT port) {
 
 	TRACEOUT(("amd inp - %.4x", port));
 	return(0xff);
 }
+#endif
 
 // ----
 
