@@ -5,7 +5,7 @@
 #include	"dosio.h"
 #include	"ini.h"
 #include	"resource.h"
-#include	"toolmac.h"
+#include	"toolwin.h"
 #include	"np2opening.h"
 #include	"dialogutils.h"
 #include	"dialog.h"
@@ -557,28 +557,23 @@ static pascal OSErr DragReceiver( WindowRef theWindow, void *handlerRefCon, Drag
         }
     }
 
-	// アイテムは１つだけか？
 	UInt16 numItems;
     CountDragItems( theDrag, &numItems );
 	if ( numItems != 1 )
-	{							// 複数ある
-		return( -1 );			// 取り扱わない
-	}
+	{
+		return( -1 );
+    }
 
-	// アイテムリファレンスを取り出す
 	DragItemRef ItemRef;
 	GetDragItemReferenceNumber( theDrag, 1, &ItemRef );
     
-	// フレーバタイプを調べる
 	FlavorType Type;
 	GetFlavorType( theDrag, ItemRef, 1, &Type );
-	// ファイルか？
 	if ( Type != flavorTypeHFS )
-	{							// ファイルではない
-		return( -1 );			// 取り扱わない
-	}
+	{
+        return( -1 );
+    }
 
-	// FSSpecを得る
 	HFSFlavor aHFSFlavor;
 	Size dataSize = sizeof(aHFSFlavor);
 	GetFlavorData( theDrag, ItemRef, flavorTypeHFS, &aHFSFlavor, &dataSize, 0 );
