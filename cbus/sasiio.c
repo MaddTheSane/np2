@@ -432,7 +432,6 @@ static REG8 IOINPCALL sasiio_i82(UINT port) {
 		else {
 			ret |= 7;
 		}
-		TRACEOUT(("sasi type = %.2x", ret));
 	}
 	(void)port;
 	return(ret);

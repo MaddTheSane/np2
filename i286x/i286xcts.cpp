@@ -176,7 +176,6 @@ I286 _sidt(void) {
 				mov		dx, word ptr (I286_IDTR + 2)
 				call	i286_memorywrite_w
 				add		ecx, 2
-				lea		ecx, [edi + ebp]
 				mov		dl, byte ptr (I286_IDTR + 4)
 				mov		dh, -1
 				jmp		i286_memorywrite_w

@@ -246,11 +246,39 @@ REG8 sasibios_operate(void) {
 // ---- scsi
 
 #if defined(SUPPORT_SCSI)
+
+static void scsibios_set(REG8 drv, REG8 sectors, REG8 surfaces,
+									REG16 cylinders, REG16 size, BOOL hwsec) {
+
+	BYTE	*scsiinf;
+	UINT16	inf;
+
+	scsiinf = mem + 0x00460 + ((drv & 7) * 4);
+	inf = 0;
+
+	inf = (UINT16)(cylinders & 0xfff);
+	if (cylinders >= 0x1000) {
+		inf |= 0x4000;
+		surfaces |= (cylinders >> 8) & 0xf0;
+	}
+	if (size == 512) {
+		inf |= 0x1000;
+	}
+	else if (size == 1024) {
+		inf |= 0x2000;
+	}
+	if (hwsec) {
+		inf |= 0x8000;
+	}
+	scsiinf[0] = (UINT8)sectors;
+	scsiinf[1] = (UINT8)surfaces;
+	STOREINTELWORD(scsiinf + 2, inf);
+}
+
 static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 
 	UINT8	i;
 	UINT8	bit;
-	UINT32	dat;
 
 	mem[MEMB_DISK_EQUIPS] = 0;
 	ZeroMemory(&mem[0x00460], 0x20);
@@ -258,25 +286,8 @@ static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 		sxsi = sxsi_getptr((REG8)(0x20 + i));
 		if ((sxsi) && (sxsi->fname[0])) {
 			mem[MEMB_DISK_EQUIPS] |= bit;
-			dat = sxsi->sectors;
-			dat |= (sxsi->surfaces << 8);
-			dat |= sxsi->cylinders & 0xf000;
-			dat |= (sxsi->cylinders & 0xfff) << 16;
-			switch(sxsi->size) {
-				case 256:
-				//	dat |= 0 << (12 + 16);
-					break;
-
-				case 512:
-					dat |= 1 << (12 + 16);
-					break;
-
-				default:
-					dat |= 2 << (12 + 16);
-					break;
-			}
-			dat |= 0xc0000000;
-			SETBIOSMEM32(0x00460+i*4, dat);
+			scsibios_set(i, sxsi->sectors, sxsi->surfaces,
+							sxsi->cylinders, sxsi->size, TRUE);
 		}
 	}
 	(void)type;
@@ -285,14 +296,23 @@ static REG8 scsibios_init(UINT type, SXSIDEV sxsi) {
 
 static REG8 scsibios_sense(UINT type, SXSIDEV sxsi) {
 
-	if (CPU_AH == 0x44) {
-		CPU_BX = 1;
+	BYTE	*scsiinf;
+
+	scsiinf = mem + 0x00460 + ((CPU_AL & 7) * 4);
+	if (CPU_AH == 0x24) {
+		scsibios_set(CPU_AL, CPU_DL, CPU_DH, CPU_CX, CPU_BX, FALSE);
+	}
+	else if (CPU_AH == 0x44) {
+		CPU_BX = (scsiinf[3] & 0x80)?2:1;
 	}
 	else if (CPU_AH == 0x84) {
-		CPU_BX = sxsi->size;
-		CPU_CX = sxsi->cylinders;
-		CPU_DH = sxsi->surfaces;
-		CPU_DL = sxsi->sectors;
+		CPU_DL = scsiinf[0];
+		CPU_DH = scsiinf[1] & 0x0f;
+		CPU_CX = scsiinf[2] + ((scsiinf[3] & 0xf) << 8);
+		if (scsiinf[3] & 0x40) {
+			CPU_CX += (scsiinf[1] & 0xf0) << 8;
+		}
+		CPU_BX = 256 << ((scsiinf[3] >> 4) & 3);
 	}
 	(void)type;
 	return(0x00);

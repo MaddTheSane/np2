@@ -120,6 +120,8 @@ wtram_a:			cmp		ecx, 000a3fe0h
 					jc		short wtram_m
 					cmp		ecx, 000a4000h
 					jnc		wcgwindow_s
+					test	ecx, 2
+					je		short wtram_m
 					cmp		byte [_gdcs + gdcs_t.msw_accessable], 0
 					je		short wtram_e
 wtram_m:			shr		ebx, 1
@@ -452,6 +454,8 @@ wtramw_a:			je		short wword_a1fffh
 					jc		short wtramw_m
 					cmp		ecx, 000a3fffh
 					jnc		wcgwindoww_s
+					test	ecx, 2
+					je		short wtramw_m
 					cmp		byte [_gdcs + gdcs_t.msw_accessable], 0
 					je		short wtramw_e
 wtramw_m:			and		ebx, 1fffh

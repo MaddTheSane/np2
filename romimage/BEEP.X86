@@ -14,6 +14,10 @@ BEEP_TEST:		mov		bx, 3e6h				; 2.0MHz
 				mov		bx, 4cdh				; 2.5MHz
 beephzok:		mov		al, 76h
 				out		77h, al					; BEEP setup mode#0
+
+				cmp		byte ptr ds:[MACTYPE], 0
+				jne		short beep_Hzset
+
 				call	beep_Hzset
 				mov		al, 6
 				out		37h, al					; BEEP ON

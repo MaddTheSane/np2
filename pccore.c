@@ -666,7 +666,7 @@ void pccore_exec(BOOL draw) {
 #endif
 		}
 
-#if 1 // ndef TRACE
+#if 0 // ndef TRACE
 		if (CPU_REMCLOCK > 0) {
 			if (!(CPU_TYPE & CPUTYPE_V30)) {
 				CPU_EXEC();
@@ -681,11 +681,18 @@ void pccore_exec(BOOL draw) {
 			treip[trpos & (IPTRACE - 1)] = (CPU_CS << 16) + CPU_IP;
 			trpos++;
 #endif
-#if 0
-			if (tr) {
-				if ((CPU_CS == 0xf760) || (CPU_CS == 0xf990)) {
-					TRACEOUT(("%.4x:%.4x", CPU_CS, CPU_IP));
-				}
+#if 1
+			if ((CPU_CS == 0xf800) && (CPU_IP == 0x0B5B)) {
+				TRACEOUT(("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
+							mem[0x9000], mem[0x9001],
+							mem[0x9002], mem[0x9003],
+							mem[0x9004], mem[0x9005],
+							mem[0x9006], mem[0x9007],
+							mem[0x9008], mem[0x9009]));
+			}
+			if ((CPU_CS == 0xf800) && (CPU_IP == 0x15FF)) {
+				TRACEOUT(("DX = %.4x / DS:DI = %.4x:%.4x [%.2x]",
+									CPU_DX, CPU_DS, CPU_DI, mem[0xa3fe0]));
 			}
 #endif
 #if 0

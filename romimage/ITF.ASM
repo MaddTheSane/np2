@@ -68,11 +68,9 @@ key1cklp:		call	boot_keycheck
 
 ;				jmp		ssp_start
 
-				cmp		byte ptr ds:[MACTYPE], 0
-				jne		short key2ck
 				call	BEEP_TEST
 
-key2ck:			mov		ah, 32
+				mov		ah, 32
 key2cklp:		call	boot_keycheck
 				cmp		al, BOOT_MENU
 				je		short boot_menujmp

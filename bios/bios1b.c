@@ -645,6 +645,12 @@ static REG8 fdd_operate(REG8 type, BOOL ndensity, REG8 rpm) {		// ver0.31
 				i286_memstr_read(CPU_ES, pos, ID, 4);
 				fdd_formating(ID);
 				pos += 4;
+				if (ID[3] < 8) {
+					mtr_r += 128 << ID[3];
+				}
+				else {
+					mtr_r += 128 << 8;
+				}
 			}
 			ret_ah = 0x00;
 			break;
