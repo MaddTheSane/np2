@@ -125,7 +125,7 @@ IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 		../io/necio.o ../io/epsonio.o ../io/pcidev.o
 
 LIOOBJS=	../lio/lio.o ../lio/gscreen.o ../lio/gpset.o ../lio/gline.o \
-		../lio/gput1.o
+		../lio/gcircle.o ../lio/gput1.o
 
 NP2OBJS=	../pccore.o ../nevent.o ../calendar.o ../timing.o \
 		../statsave.o ../keystat.o
