@@ -67,6 +67,21 @@ static void pathadd(MIDIMOD mod, const OEMCHAR *path) {
 	}
 }
 
+static void pathaddex(MIDIMOD mod, const OEMCHAR *path) {
+
+	OEMCHAR	_path[MAX_PATH];
+
+	if (milstr_memcmp(path, OEMTEXT("${basedir}"))) {
+		pathadd(mod, path);
+	}
+	else {
+		file_cpyname(_path, file_getcd(str_null), NELEMENTS(_path));
+		file_cutseparator(_path);
+		file_catname(_path, path + 10, NELEMENTS(_path));
+		pathadd(mod, _path);
+	}
+}
+
 static int cfggetarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg) {
 
 	int		ret;
@@ -372,7 +387,7 @@ BRESULT cfgfile_load(MIDIMOD mod, const OEMCHAR *filename, int depth) {
 		switch(cfg) {
 			case CFG_DIR:
 				for (i=1; i<argc; i++) {
-					pathadd(mod, argv[i]);
+					pathaddex(mod, argv[i]);
 				}
 				break;
 

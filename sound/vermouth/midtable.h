@@ -42,10 +42,26 @@ enum {
 	CTRL_POLYON		= 127
 };
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern const int freq_table[128];
 extern const SINT16 envsin12q[1 << (SINENT_BIT - 2)];
 extern const SINT16 vibsin12[1 << VIBRATE_SHIFT];
 extern const SINT16 voltbl12[128];
 extern const float bendltbl[64];
 extern const float bendhtbl[48];
+
+#if defined(PANPOT_REVA)
+extern const UINT8 revacurve[];
+#endif
+#if defined(VOLUME_ACURVE)
+extern const UINT8 acurve[];
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 

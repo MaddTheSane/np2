@@ -30,6 +30,29 @@ enum {
 	VOICE_FIXPITCH	= 0x04
 };
 
+#if !defined(MIDI_GMONLY)
+enum {
+	GSRX0_PITCHBEND			= 0x01,
+	GSRX0_CHPRESSURE		= 0x02,
+	GSRX0_PROGRAMCHANGE		= 0x04,
+	GSRX0_CONTROLCHANGE		= 0x08,
+	GSRX0_POLYPRESSURE		= 0x10,
+	GSRX0_NOTEMESSAGE		= 0x20,
+	GSRX0_RPN				= 0x40,
+	GSRX0_NRPN				= 0x80,
+	GSRX1_MODULATION		= 0x01,
+	GSRX1_VOLUE				= 0x02,
+	GSRX1_PANPOT			= 0x04,
+	GSRX1_EXPRESSION		= 0x08,
+	GSRX1_HOLD1				= 0x10,
+	GSRX1_PORTAMENTO		= 0x20,
+	GSRX1_SOSTENUTO			= 0x40,
+	GSRX1_SOFT				= 0x80,
+	GSRX2_BANKSELECT		= 0x01,
+	GSRX2_BANKSELECTLSB		= 0x02
+};
+#endif
+
 typedef struct {
 	UINT		flag;
 	int			level;
@@ -41,13 +64,20 @@ typedef struct {
 	INSTRUMENT	*rhythm;
 #endif
 
+#if !defined(MIDI_GMONLY)
 	UINT8		bank;
+#endif
 	UINT8		program;
 	UINT8		volume;
 	UINT8		expression;
 	UINT8		panpot;
 	UINT8		rpn_l;
 	UINT8		rpn_m;
+#if defined(ENABLE_GSRX)
+	UINT8		keyshift;
+	UINT8		noterange[2];
+	UINT8		gsrx[4];
+#endif
 } _CHANNEL, *CHANNEL;
 
 typedef struct {
@@ -103,11 +133,19 @@ struct _midivoice {
 };
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int envlope_setphase(VOICE v, int phase);
 void envelope_updates(VOICE v);
 
 void voice_setphase(VOICE v, UINT8 phase);
 void voice_setmix(VOICE v);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 // ---- macro

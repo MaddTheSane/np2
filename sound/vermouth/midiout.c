@@ -22,10 +22,31 @@ static void voice_volupdate(VOICE v) {
 	int		vol;
 
 	ch = v->channel;
+#if defined(VOLUME_ACURVE)
+	vol = ch->level * acurve[v->velocity];
+	vol >>= 8;
+#else
 	vol = ch->level * v->velocity;
 	vol >>= 7;
+#endif
 	vol *= v->sample->volume;
 	vol >>= (21 - 16);
+#if defined(PANPOT_REVA)
+	switch(v->flag & VOICE_MIXMASK) {
+		case VOICE_MIXNORMAL:
+			v->volleft = (vol * revacurve[v->panpot ^ 127]) >> 8;
+			v->volright = (vol * revacurve[v->panpot]) >> 8;
+			break;
+
+		case VOICE_MIXCENTRE:
+			v->volleft = (vol * 155) >> 8;
+			break;
+
+		default:
+			v->volleft = vol;
+			break;
+	}
+#else
 	v->volleft = vol;
 	if ((v->flag & VOICE_MIXMASK) == VOICE_MIXNORMAL) {
 		if (v->panpot < 64) {
@@ -40,6 +61,7 @@ static void voice_volupdate(VOICE v) {
 			v->volleft = vol;
 		}
 	}
+#endif
 }
 
 static INSTLAYER selectlayer(VOICE v, INSTRUMENT inst) {
@@ -183,6 +205,21 @@ static void voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key, int vel) {
 	else {
 		panpot = layer->panpot;
 	}
+#if defined(PANPOT_REVA)
+	if (panpot == 64) {
+		v->flag = VOICE_MIXCENTRE;
+	}
+	else if (panpot < 3) {
+		v->flag = VOICE_MIXLEFT;
+	}
+	else if (panpot >= 126) {
+		v->flag = VOICE_MIXRIGHT;
+	}
+	else {
+		v->flag = VOICE_MIXNORMAL;
+		v->panpot = panpot;
+	}
+#else
 	if ((panpot >= 60) && (panpot < 68)) {
 		v->flag = VOICE_MIXCENTRE;
 	}
@@ -196,6 +233,7 @@ static void voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key, int vel) {
 		v->flag = VOICE_MIXNORMAL;
 		v->panpot = panpot;
 	}
+#endif
 	if (!layer->samprate) {
 		v->flag |= VOICE_FIXPITCH;
 	}
@@ -343,7 +381,11 @@ static void volumeupdate(MIDIHDL midi, CHANNEL ch) {
 	VOICE	v;
 	VOICE	vterm;
 
+#if defined(VOLUME_ACURVE)
+	ch->level = (midi->level * acurve[ch->volume] * ch->expression) >> 15;
+#else
 	ch->level = (midi->level * ch->volume * ch->expression) >> 14;
+#endif
 	v = midi->voice;
 	vterm = v + VOICE_MAX;
 	do {
@@ -428,9 +470,16 @@ static void ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl, int val) {
 
 	val &= 0x7f;
 	switch(ctrl & 0x7f) {
+#if !defined(MIDI_GMONLY)
 		case CTRL_PGBANK:
+#if defined(ENABLE_GSRX)
+			if (!(ch->gsrx[2] & GSRX2_BANKSELECT)) {
+				break;
+			}
+#endif
 			ch->bank = val;
 			break;
+#endif
 
 		case CTRL_DATA_M:
 //			TRACEOUT(("data: %x %x %x", c->rpn_l, c->rpn_m, val));
@@ -610,8 +659,13 @@ static void allvolupdate(MIDIHDL midi) {
 	} while(v < vterm);
 }
 
-static void allresetmidi(MIDIHDL midi) {
-
+#if defined(ENABLE_GSRX)
+static void allresetmidi(MIDIHDL midi, BOOL gs)
+#else
+#define allresetmidi(m, g)		_allresetmidi(m)
+static void _allresetmidi(MIDIHDL midi)
+#endif
+{
 	CHANNEL	ch;
 	CHANNEL	chterm;
 	UINT	flag;
@@ -623,11 +677,28 @@ static void allresetmidi(MIDIHDL midi) {
 	flag = 0;
 	do {
 		ch->flag = flag++;
-		ch->panpot = 64;
 		ch->pitchsens = 2;
+#if !defined(MIDI_GMONLY)
 		ch->bank = 0;
+#endif
+		ch->panpot = 64;
 		progchange(midi, ch, 0);
 		resetallcontrollers(ch);
+#if defined(ENABLE_GSRX)
+		ch->keyshift = 0x40;
+		ch->noterange[0] = 0x00;
+		ch->noterange[1] = 0x7f;
+		if (gs) {
+			ch->gsrx[0] = 0xff;
+			ch->gsrx[1] = 0xff;
+			ch->gsrx[2] = 0xff;
+		}
+		else {
+			ch->gsrx[0] = 0x7f;
+			ch->gsrx[1] = 0xff;
+			ch->gsrx[2] = 0x02;
+		}
+#endif
 		ch++;
 	} while(ch < chterm);
 	allresetvoices(midi);
@@ -667,7 +738,7 @@ MIDIHDL midiout_create(MIDIMOD module, UINT worksize) {
 		ret->bank0[1] = module->tone[1];
 		ret->sampbuf = (SINT32 *)(ret + 1);
 		ret->resampbuf = (SAMPLE)(ret->sampbuf + worksize * 2);
-		allresetmidi(ret);
+		allresetmidi(ret, FALSE);
 	}
 	return(ret);
 }
@@ -735,48 +806,142 @@ void midiout_shortmsg(MIDIHDL hdl, UINT32 msg) {
 static void longmsg_gm(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	if ((size > 5) && (msg[2] == 0x7f) && (msg[3] == 0x09)) {
-		allresetmidi(hdl);						// GM reset
+		allresetmidi(hdl, FALSE);					// GM reset
 	}
 }
 
 static void longmsg_roland(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	UINT	addr;
+	UINT8	data;
 	UINT	part;
 	CHANNEL	ch;
+#if defined(ENABLE_GSRX)
+	UINT8	bit;
+#endif
 
-	if ((size > 10) && (msg[2] == 0x10) &&
-		(msg[3] == 0x42) && (msg[4] == 0x12)) {		// GS data set
-		addr = (msg[5] << 16) + (msg[6] << 8) + msg[7];
+	if (size <= 10) {
+		return;
+	}
+	// GS data set
+	if ((msg[2] != 0x10) || (msg[3] != 0x42) || (msg[4] != 0x12)) {
+		return;
+	}
+	addr = (msg[5] << 16) + (msg[6] << 8) + msg[7];
+	msg += 8;
+	size -= 10;
+	while(size) {
+		size--;
+		data = (*msg++) & 0x7f;
 		if ((addr & (~0x400000)) == 0x7f) {			// GS reset
-			allresetmidi(hdl);
+			allresetmidi(hdl, TRUE);
 			TRACEOUT(("GS-Reset"));
 		}
 		else if (addr == 0x400004) {				// Vol
-			hdl->master = msg[8] & 0x7f;
+			hdl->master = data;
 			allvolupdate(hdl);
 		}
-		else if ((addr & (~(0x000f00))) == 0x401015) {	// Tone/Rhythm
+		else if ((addr & (~(0x000fff))) == 0x401000) {	// GS CH
 			part = (addr >> 8) & 0x0f;
-			if (part == 0) {							// part10
+			if (part == 0) {						// part10
 				part = 9;
 			}
-			else if (part < 10) {						// part1-9
+			else if (part < 10) {					// part1-9
 				part--;
 			}
 			ch = hdl->channel + part;
-			if (msg[8] == 0) {
-				ch->flag &= ~CHANNEL_RHYTHM;
-				TRACEOUT(("ch%d - tone", part + 1));
-			}
-			else if ((msg[8] == 1) || (msg[8] == 2)) {
-				ch->flag |= CHANNEL_RHYTHM;
-				TRACEOUT(("ch%d - rhythm", part + 1));
+			switch(addr & 0xff) {
+#if !defined(MIDI_GMONLY)
+				case 0x00:							// TONE NUMBER
+					ch->bank = data;
+					break;
+#endif
+
+				case 0x01:							// PROGRAM NUMBER
+					progchange(hdl, ch, data);
+					break;
+
+#if defined(ENABLE_GSRX)
+				case 0x03:							// Rx.PITCHBEND
+				case 0x04:							// Rx.CH PRESSURE
+				case 0x05:							// Rx.PROGRAM CHANGE
+				case 0x06:							// Rx.CONTROL CHANGE
+				case 0x07:							// Rx.POLY PRESSURE
+				case 0x08:							// Rx.NOTE MESSAGE
+				case 0x09:							// Rx.PRN
+				case 0x0a:							// Rx.NRPN
+					bit = 1 << ((addr - 0x03) & 7);
+					if (data == 0) {
+						ch->gsrx[0] = ch->gsrx[0] & (~bit);
+					}
+					else if (data == 1) {
+						ch->gsrx[0] = ch->gsrx[0] | bit;
+					}
+					break;
+
+				case 0x0b:							// Rx.MODULATION
+				case 0x0c:							// Rx.VOLUME
+				case 0x0d:							// Rx.PANPOT
+				case 0x0e:							// Rx.EXPRESSION
+				case 0x0f:							// Rx.HOLD1
+				case 0x10:							// Rx.PORTAMENTO
+				case 0x11:							// Rx.SOSTENUTO
+				case 0x12:							// Rx.SOFT
+					bit = 1 << ((addr - 0x0b) & 7);
+					if (data == 0) {
+						ch->gsrx[1] = ch->gsrx[1] & (~bit);
+					}
+					else if (data == 1) {
+						ch->gsrx[1] = ch->gsrx[1] | bit;
+					}
+					break;
+#endif
+				case 0x15:							// USE FOR RHYTHM PART
+					if (data == 0) {
+						ch->flag &= ~CHANNEL_RHYTHM;
+						TRACEOUT(("ch%d - tone", part + 1));
+					}
+					else if ((data == 1) || (data == 2)) {
+						ch->flag |= CHANNEL_RHYTHM;
+						TRACEOUT(("ch%d - rhythm", part + 1));
+					}
+					break;
+
+#if defined(ENABLE_GSRX)
+				case 0x16:							// PITCH KEY SHIFT
+					if ((data >= 0x28) && (data <= 0x58)) {
+						ch->keyshift = data;
+					}
+					break;
+
+				case 0x1d:							// KEYBOARD RANGE LOW
+					ch->noterange[0] = data;
+					break;
+
+				case 0x1e:							// KEYBOARD RANGE HIGH
+					ch->noterange[1] = data;
+					break;
+
+				case 0x23:							// Rx.BANK SELECT
+				case 0x24:							// Rx.BANK SELECT LSB
+					bit = 1 << ((addr - 0x23) & 7);
+					if (data == 0) {
+						ch->gsrx[2] = ch->gsrx[2] & (~bit);
+					}
+					else if (data == 1) {
+						ch->gsrx[2] = ch->gsrx[2] | bit;
+					}
+					break;
+#endif
+				default:
+					TRACEOUT(("Roland GS - %.6x", addr));
+					break;
 			}
 		}
 		else {
 			TRACEOUT(("Roland GS - %.6x", addr));
 		}
+		addr++;
 	}
 }
 

@@ -2,6 +2,9 @@
 #if !defined(_WIN32_WCE) && !defined(SLZAURUS)
 #define	ENABLE_TREMOLO
 #define	ENABLE_VIRLATE
+#define	ENABLE_GSRX
+#define	PANPOT_REVA
+// #define	VOLUME_ACURVE
 #else
 #define	MIDI_GMONLY
 #endif
