@@ -43,7 +43,7 @@ contains(SOUND_DRIVER, SDLMIXER) {
 
 DEFINES+= USE_QT
 
-INCLUDEPATH+= . .. ../.. ../../common
+INCLUDEPATH+= . .. ../.. ../../common ../../generic
 INCLUDEPATH+= ../../bios ../../cbus ../../fdd ../../font
 INCLUDEPATH+= ../../io ../../lio ../../vram
 INCLUDEPATH+= ../../sound ../../sound/vermouth
