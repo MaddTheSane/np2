@@ -960,6 +960,14 @@ SOURCE=..\FDD\NEWDISK.C
 
 SOURCE=..\FDD\SXSI.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSICD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\FDD\SXSIHDD.C
+# End Source File
 # End Group
 # Begin Group "font"
 

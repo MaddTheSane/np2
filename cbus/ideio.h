@@ -1,8 +1,16 @@
 
 #define	IDEIO_MULTIPLE_MAX	0
+#define	IDEIO_BUFSIZE_MAX	4096
+
+#define	IDEIO_MEDIA_EJECTABLE	(1 << 7)
+#define	IDEIO_MEDIA_PREVENT		(1 << 6)
+#define	IDEIO_MEDIA_PERSIST		(1 << 5)
+#define	IDEIO_MEDIA_CHANGED		(1 << 1)
+#define	IDEIO_MEDIA_LOADED		(1 << 0)
 
 typedef struct {
 	UINT8	sxsidrv;
+
 	UINT8	wp;
 	UINT8	dr;
 	UINT8	hd;
@@ -19,15 +27,27 @@ typedef struct {
 	UINT8	surfaces;
 	UINT8	sectors;
 	UINT8	bufdir;
+	UINT8	buftc;
 
+	// for ATA multiple mode
 	UINT8	mulcnt;
 	UINT8	multhr;
 	UINT8	mulmode;
-	UINT8	dmy;
 
+	// for ATAPI
+	UINT8	media;
+	UINT8	sk;		// sense key
+	UINT16	asc;	// additional sense code (LSB) & qualifer (MSB)
+
+	UINT32	sector;		// アクセスセクタ (LBA)
+	UINT32	nsectors;	// 総セクタ数
+	UINT16	secsize;	// セクタサイズ
+	UINT16	dmy;
+
+	// buffer management
 	UINT	bufpos;
 	UINT	bufsize;
-	UINT8	buf[512];
+	UINT8	buf[IDEIO_BUFSIZE_MAX];
 } _IDEDRV, *IDEDRV;
 
 typedef struct {
@@ -51,11 +71,14 @@ enum {
 
 	IDEDIR_NONE			= 0,
 	IDEDIR_OUT			= 1,
-	IDEDIR_IN			= 2
+	IDEDIR_IN			= 2,
+
+	IDETC_TRANSFEREND	= 0,
+	IDETC_ATAPIREAD		= 1
 };
 
 // error
-//	bit7: Bad Block detected
+//  bit7: Bad Block detected
 //  bit6: Data ECC error
 //  bit4: ID Not Found
 //  bit2: Aborted command
@@ -71,13 +94,20 @@ enum {
 	IDEERR_AMNF			= 0x01
 };
 
+// interrupt reason (sector count)
+//  bit7-3: tag
+//  bit2: bus release
+//  bit1: input/output
+//  bit0: command/data
+//
 enum {
-	IDEINTR_IO			= 0x02,
-	IDEINTR_CD			= 0x01
+	IDEINTR_REL			= 0x04,
+	IDEINTR_IO			= 0x02,	// 0: host->device, 1: device->host
+	IDEINTR_CD			= 0x01	// 0: data, 1: command
 };
 
 // status
-//	bit7: Busy
+//  bit7: Busy
 //  bit6: Drive Ready
 //  bit5: Drive Write Fault
 //  bit4: Drive Seek Complete
@@ -94,8 +124,17 @@ enum {
 	IDESTAT_DRQ			= 0x08,
 	IDESTAT_CORR		= 0x04,
 	IDESTAT_INDX		= 0x02,
-	IDESTAT_ERR			= 0x01
+	IDESTAT_ERR			= 0x01,
+
+	// for ATAPI PACKET
+	IDESTAT_DMRD		= 0x20,		// DMA Ready
+	IDESTAT_SERV		= 0x10,		// Service
+	IDESTAT_CHK			= 0x01
 };
+
+// device/head
+//  bit6: LBA (for read/write sector(s)/multiple)
+//  bit4: master/slave device select
 
 enum {
 	IDEDEV_LBA			= 0x40,
@@ -103,14 +142,13 @@ enum {
 };
 
 // control
-//	bit2: Software Reset
+//  bit2: Software Reset
 //  bit1: ~Interrupt Enable
 
 enum {
 	IDECTRL_SRST		= 0x04,
 	IDECTRL_NIEN		= 0x02
 };
-
 
 
 #ifdef __cplusplus

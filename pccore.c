@@ -217,6 +217,11 @@ void pccore_init(void) {
 	dispsync_initialize();
 	sxsi_initialize();
 
+	// CDドライブの接続
+#if defined(SUPPORT_IDEIO)
+	sxsi_setdevtype(0x02, SXSIDEV_CDROM);
+#endif
+
 	font_initialize();
 	font_load(np2cfg.fontfile, TRUE);
 	maketext_initialize();
@@ -321,6 +326,7 @@ void pccore_reset(void) {
 
 	// HDDセット
 	sxsihdd_allbind();
+	// SASI/IDEどっち？
 #if defined(SUPPORT_SASI)
 	if (sxsi_issasi()) {
 		pccore.hddif &= ~PCHDD_IDE;
@@ -374,6 +380,10 @@ void pccore_reset(void) {
 
 	timing_reset();
 	soundmng_play();
+
+#if 0 && defined(SUPPORT_IDEIO)	// Test!
+	sxsi_devopen(0x02, OEMTEXT("e:\\pn\\pn.iso"));
+#endif
 }
 
 static void drawscreen(void) {

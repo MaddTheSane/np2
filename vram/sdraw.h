@@ -8,7 +8,7 @@ const UINT8	*src2;
 	int		y;
 	int		xalign;
 	int		yalign;
-	UINT8	dirty[SURFACE_WIDTH];
+	UINT8	dirty[SURFACE_HEIGHT];
 } _SDRAW, *SDRAW;
 
 typedef void (SCRNCALL * SDRAWFN)(SDRAW sdraw, int maxy);

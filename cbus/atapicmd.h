@@ -48,6 +48,8 @@ extern "C" {
 
 void atapicmd_a0(IDEDRV drv);
 
+void atapi_dataread(IDEDRV drv);
+
 #ifdef __cplusplus
 }
 #endif

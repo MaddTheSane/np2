@@ -1,5 +1,10 @@
 #include	"compiler.h"
 
+#ifdef	TRACEOUT
+#undef	TRACEOUT
+#endif
+#define	TRACEOUT(s)	trace_fmt s
+
 // win‚Åidentify‚Ü‚Å‚ÍŽæ“¾‚És‚­‚ñ‚¾‚¯‚Ç‚Èc‚Á‚ÄAnex86‚à“¯‚¶‚©
 
 #if defined(SUPPORT_IDEIO)
@@ -49,6 +54,10 @@ static const char serial[] = "824919341192        ";
 static const char firm[] = "A5U.1200";
 static const char model[] = "QUANTUM FIREBALL CR                     ";
 
+static const char cdrom_serial[] = "1.0                 ";
+static const char cdrom_firm[]   = "        ";
+static const char cdrom_model[]  = "NP2 VIRTUAL CD-ROM DRIVE                ";
+
 static BRESULT setidentify(IDEDRV drv) {
 
 	SXSIDEV sxsi;
@@ -64,43 +73,63 @@ static BRESULT setidentify(IDEDRV drv) {
 
 	ZeroMemory(tmp, sizeof(tmp));
 	// ‚Æ‚è‚ ‚¦‚¸Žg‚Á‚Ä‚é•”•ª‚¾‚¯
-	tmp[0] = 0x0040;
-	tmp[1] = sxsi->cylinders;
-	tmp[3] = sxsi->surfaces;
-	tmp[4] = sxsi->sectors * 512;
-	tmp[6] = sxsi->sectors;
-	for (i=0; i<10; i++) {
-		tmp[10+i] = (serial[i*2] << 8) + serial[i*2+1];
-	}
-	tmp[22] = 4;
-	for (i=0; i<4; i++) {
-		tmp[23+i] = (firm[i*2] << 8) + firm[i*2+1];
-	}
-	for (i=0; i<20; i++) {
-		tmp[27+i] = (model[i*2] << 8) + model[i*2+1];
-	}
+	if (drv->device == IDETYPE_HDD) {
+		tmp[0] = 0x0040;		// non removable device
+		tmp[1] = sxsi->cylinders;
+		tmp[3] = sxsi->surfaces;
+		tmp[4] = sxsi->sectors * 512;
+		tmp[6] = sxsi->sectors;
+		for (i=0; i<10; i++) {
+			tmp[10+i] = (serial[i*2] << 8) + serial[i*2+1];
+		}
+		tmp[22] = 4;
+		for (i=0; i<4; i++) {
+			tmp[23+i] = (firm[i*2] << 8) + firm[i*2+1];
+		}
+		for (i=0; i<20; i++) {
+			tmp[27+i] = (model[i*2] << 8) + model[i*2+1];
+		}
 #if IDEIO_MULTIPLE_MAX > 0
-	tmp[47] = 0x8000 | IDEIO_MULTIPLE_MAX;	// multiple
+		tmp[47] = 0x8000 | IDEIO_MULTIPLE_MAX;	// multiple
 #endif
-	tmp[49] = 0x0000;			// LBA(1 << 9)
-	tmp[51] = 0x0200;
-	tmp[53] = 0x0001;
-	tmp[54] = sxsi->cylinders;
-	tmp[55] = sxsi->surfaces;
-	tmp[56] = sxsi->sectors;
-	size = sxsi->cylinders * sxsi->surfaces * sxsi->sectors;
-	tmp[57] = (UINT16)size;
-	tmp[58] = (UINT16)(size >> 16);
+		tmp[49] = 0x0200;		// support LBA
+		tmp[51] = 0x0200;
+		tmp[53] = 0x0001;
+		tmp[54] = sxsi->cylinders;
+		tmp[55] = sxsi->surfaces;
+		tmp[56] = sxsi->sectors;
+		size = sxsi->cylinders * sxsi->surfaces * sxsi->sectors;
+		tmp[57] = (UINT16)size;
+		tmp[58] = (UINT16)(size >> 16);
 #if IDEIO_MULTIPLE_MAX > 0
-	tmp[59] = 0x0100 | drv->mulmode;	// current multiple mode
+		tmp[59] = 0x0100 | drv->mulmode;	// current multiple mode
 #endif
-	tmp[60] = (UINT16)size;
-	tmp[61] = (UINT16)(size >> 16);
-	tmp[63] = 0x0000;			// no support multiword DMA
+		tmp[60] = (UINT16)size;
+		tmp[61] = (UINT16)(size >> 16);
+		tmp[63] = 0x0000;		// no support multiword DMA
 
-	tmp[80] = 0x0006;			// only support ATA-1/2
-	tmp[81] = 0;
-	tmp[82] = 0x0000;			// DEVICE RESET(1 << 9)
+		tmp[80] = 0x0006;		// only support ATA-1/2
+		tmp[81] = 0;
+		tmp[82] = 0x0200;		// support DEVICE RESET
+	}
+	else if (drv->device == IDETYPE_CDROM) {
+		tmp[0] = 0x8580;		// ATAPI,CD-ROM,removable,12bytes PACKET
+		for (i=0; i<10; i++) {
+			tmp[10+i] = (cdrom_serial[i*2] << 8) + cdrom_serial[i*2+1];
+		}
+		for (i=0; i<4; i++) {
+			tmp[23+i] = (cdrom_firm[i*2] << 8) + cdrom_firm[i*2+1];
+		}
+		for (i=0; i<20; i++) {
+			tmp[27+i] = (cdrom_model[i*2] << 8) + cdrom_model[i*2+1];
+		}
+		tmp[49] = 0x0200;		// support LBA
+		tmp[53] = 0x0001;
+		tmp[63] = 0x0000;		// no support multiword DMA
+		tmp[80] = 0x000e;		// only support ATA-1/2
+		tmp[82] = 0x0210;		// support PACKET/DEVICE RESET
+		tmp[126] = 0x0000;		// ATAPI byte count
+	}
 
 	p = drv->buf;
 	for (i=0; i<256; i++) {
@@ -109,6 +138,7 @@ static BRESULT setidentify(IDEDRV drv) {
 		p += 2;
 	}
 	drv->bufdir = IDEDIR_IN;
+	drv->buftc = IDETC_TRANSFEREND;
 	drv->bufpos = 0;
 	drv->bufsize = 512;
 	return(SUCCESS);
@@ -129,6 +159,24 @@ static void cmdabort(IDEDRV drv) {
 	drv->status = IDESTAT_DRDY | IDESTAT_ERR;
 	drv->error = IDEERR_ABRT;
 	setintr(drv);
+}
+
+static void drvreset(IDEDRV drv) {
+
+	if (drv->device == IDETYPE_CDROM) {
+		drv->hd = 0x10;
+		drv->sc = 0x01;
+		drv->sn = 0x01;
+		drv->cy = 0xeb14;
+		drv->status = 0;
+	}
+	else {
+		drv->hd = 0x00;
+		drv->sc = 0x01;
+		drv->sn = 0x01;
+		drv->cy = 0x0000;
+		drv->status = IDESTAT_DRDY;
+	}
 }
 
 static void panic(const char *str, ...) {
@@ -163,7 +211,6 @@ static void incsec(IDEDRV drv) {
 		drv->cy++;
 	}
 	else {
-		TRACEOUT(("ideio: incsec() LBA mode?"));
 		drv->sn++;
 		if (drv->sn) {
 			return;
@@ -188,7 +235,6 @@ static long getcursec(const IDEDRV drv) {
 		ret += (drv->sn - 1);
 	}
 	else {
-		TRACEOUT(("ideio: getcursec() LBA mode?"));
 		ret = drv->sn;
 		ret |= (drv->cy << 8);
 		ret |= (drv->hd << 24);
@@ -200,7 +246,7 @@ static void readsec(IDEDRV drv) {
 
 	long	sec;
 
-	if (!drv->device) {
+	if (drv->device != IDETYPE_HDD) {
 		goto read_err;
 	}
 	sec = getcursec(drv);
@@ -211,6 +257,7 @@ static void readsec(IDEDRV drv) {
 		goto read_err;
 	}
 	drv->bufdir = IDEDIR_IN;
+	drv->buftc = IDETC_TRANSFEREND;
 	drv->bufpos = 0;
 	drv->bufsize = 512;
 
@@ -223,6 +270,28 @@ static void readsec(IDEDRV drv) {
 	return;
 
 read_err:
+	cmdabort(drv);
+}
+
+static void writesec(IDEDRV drv) {
+
+	if (drv->device == IDETYPE_NONE) {
+		goto write_err;
+	}
+
+	drv->bufdir = IDEDIR_OUT;
+	drv->buftc = IDETC_TRANSFEREND;
+	drv->bufpos = 0;
+	drv->bufsize = 512;
+
+	if ((drv->mulcnt & (drv->multhr - 1)) == 0) {
+		drv->status = IDESTAT_DRDY | IDESTAT_DSC | IDESTAT_DRQ;
+		drv->error = 0;
+		setintr(drv);
+	}
+	return;
+
+write_err:
 	cmdabort(drv);
 }
 
@@ -341,8 +410,9 @@ static void IOOUTCALL ideio_o64c(UINT port, REG8 dat) {
 
 static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 
-	IDEDRV	drv;
+	IDEDRV	drv, d;
 	IDEDEV	dev;
+	int		i;
 
 	// execute device diagnostic
 	if (dat == 0x90) {
@@ -350,28 +420,16 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 		TRACEOUT(("ideio: execute device diagnostic"));
 		dev = getidedev();
 		if (dev) {
-			IDEDRV d;
-			int i;
-
 			for (i = 0; i < 2; i++) {
 				d = dev->drv + i;
-				d->hd = 0x00;
-				d->sc = 0x01;
-				d->sn = 0x01;
-				d->cy = 0x0000;
-				d->status = IDESTAT_DRDY;
+				drvreset(d);
 				d->error = 0x01;
+				if (dev->drv[i].device == IDETYPE_NONE) {
+					d->error = 0x00;
+				}
 				if (i == 0) {
-					if (dev->drv[0].device == IDETYPE_NONE) {
-						d->error = 0x00;
-					}
 					if (dev->drv[1].device == IDETYPE_NONE) {
 						d->error |= 0x80;
-					}
-				}
-				else {
-					if (dev->drv[1].device == IDETYPE_NONE) {
-						d->error = 0x00;
 					}
 				}
 			}
@@ -388,71 +446,76 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 	switch(dat) {
 		case 0x08:		// device reset
 			TRACEOUT(("ideio: device reset"));
-			if (drv->device == IDETYPE_NONE) {
-				cmdabort(drv);
-				break;
-			}
-			else if (drv->device == IDETYPE_HDD) {
-				drv->hd = 0x00;
-				drv->sc = 0x01;
-				drv->sn = 0x01;
-				drv->cy = 0x0000;
-			}
-			else if (drv->device == IDETYPE_CDROM) {
-				drv->hd = 0x10;
-				drv->sc = 0x01;
-				drv->sn = 0x01;
-				drv->cy = 0xeb14;
-			}
-			drv->status = 0x00;
+			drvreset(drv);
 			drv->error = 0x01;
 			dev = getidedev();
 			if (dev) {
+				if (dev->drv[dev->drivesel].device == IDETYPE_NONE) {
+					drv->error = 0x00;
+				}
 				if (dev->drivesel == 0) {
-					if (dev->drv[0].device == IDETYPE_NONE) {
-						drv->error = 0x00;
-					}
 					if (dev->drv[1].device == IDETYPE_NONE) {
 						drv->error |= 0x80;
-					}
-				}
-				else {
-					if (dev->drv[1].device == IDETYPE_NONE) {
-						drv->error = 0x00;
 					}
 				}
 			}
 			setintr(drv);
 			break;
 
-		case 0x10:		// calibrate
-//		case 0x11: case 0x12: case 0x13: case 0x14: case 0x15:
-//		case 0x16: case 0x17: case 0x18: case 0x19: case 0x1a:
-//		case 0x1b: case 0x1c: case 0x1d: case 0x1e: case 0x1f:
-			TRACEOUT(("ideio: calibrate"));
-			if (drv->device) {
+		case 0x10: case 0x11: case 0x12: case 0x13:	// recalibrate
+		case 0x14: case 0x15: case 0x16: case 0x17:
+		case 0x18: case 0x19: case 0x1a: case 0x1b:
+		case 0x1c: case 0x1d: case 0x1e: case 0x1f:
+			TRACEOUT(("ideio: recalibrate"));
+			if (drv->device == IDETYPE_HDD) {
+				drv->hd = 0x00;
+				drv->sc = 0x00;
+				drv->cy = 0x0000;
+				if (!(drv->dr & IDEDEV_LBA)) {
+					drv->sn = 0x01;
+				}
+				else {
+					drv->sn = 0x00;
+				}
 				drv->status = IDESTAT_DRDY | IDESTAT_DSC;
 				drv->error = 0;
+				setintr(drv);
 			}
 			else {
-				drv->status = IDESTAT_DRDY | IDESTAT_ERR;
-				drv->error = IDEERR_TR0;
+				cmdabort(drv);
 			}
-			setintr(drv);
 			break;
 
 		case 0x20:		// read (with retry)
 		case 0x21:		// read
 			TRACEOUT(("ideio: read sector"));
-			drv->mulcnt = 0;
-			drv->multhr = 1;
-			readsec(drv);
+			if (drv->device == IDETYPE_HDD) {
+				drv->mulcnt = 0;
+				drv->multhr = 1;
+				readsec(drv);
+			}
+			else {
+				cmdabort(drv);
+			}
+			break;
+
+		case 0x30:		// write (with retry)
+		case 0x31:		// write
+			TRACEOUT(("ideio: write sector"));
+			if (drv->device == IDETYPE_HDD) {
+				drv->mulcnt = 0;
+				drv->multhr = 1;
+				writesec(drv);
+			}
+			else {
+				cmdabort(drv);
+			}
 			break;
 
 		case 0x91:		// set parameters
 			TRACEOUT(("ideio: set parameters dh=%x sec=%x",
 											drv->dr | drv->hd, drv->sc));
-			if (drv->device != IDETYPE_NONE) {
+			if (drv->device == IDETYPE_HDD) {
 				drv->surfaces = drv->hd + 1;
 				drv->sectors = drv->sc;
 				drv->status &= ~(IDESTAT_BSY | IDESTAT_DRQ | IDESTAT_ERR);
@@ -465,23 +528,25 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 			break;
 
 		case 0xa0:		// send packet
+			TRACEOUT(("ideio: packet"));
 			if (drv->device == IDETYPE_CDROM) {
-				drv->status &= ~(IDESTAT_BSY | IDESTAT_DWF | IDESTAT_ERR);
+				drv->sc &= ~(IDEINTR_REL | IDEINTR_IO);
+				drv->sc |= IDEINTR_CD;
+				drv->status &= ~(IDESTAT_BSY | IDESTAT_DMRD | IDESTAT_SERV | IDESTAT_CHK);
 				drv->status |= IDESTAT_DRQ;
 				drv->error = 0;
 				drv->bufpos = 0;
 				drv->bufsize = 12;
 				drv->bufdir = IDEDIR_OUT;
+				drv->buftc = IDETC_TRANSFEREND;
+				break;
 			}
-			else {
-				cmdabort(drv);
-			}
+			cmdabort(drv);
 			break;
 
-		case 0xa1:		// identify
-		case 0xec:		// identify
-			TRACEOUT(("ideio: identify"));
-			if (setidentify(drv) == SUCCESS) {
+		case 0xa1:		// identify packet device
+			TRACEOUT(("ideio: identify packet device"));
+			if (drv->device == IDETYPE_CDROM && setidentify(drv) == SUCCESS) {
 				drv->status = IDESTAT_DRDY | IDESTAT_DSC | IDESTAT_DRQ;
 				drv->error = 0;
 				setintr(drv);
@@ -490,21 +555,38 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 				cmdabort(drv);
 			}
 			break;
+			break;
 
 		case 0xc4:		// read multiple
-#if IDEIO_MULTIPLE_MAX > 0
 			TRACEOUT(("ideio: read multiple"));
-			drv->mulcnt = 0;
-			drv->multhr = drv->mulmode;
-			readsec(drv);
-#else
-			cmdabort(drv);
+#if IDEIO_MULTIPLE_MAX > 0
+			if (drv->device == IDETYPE_HDD) {
+				drv->mulcnt = 0;
+				drv->multhr = drv->mulmode;
+				readsec(drv);
+				break;
+			}
 #endif
+			cmdabort(drv);
+			break;
+
+		case 0xc5:		// write multiple
+			TRACEOUT(("ideio: write multiple"));
+#if IDEIO_MULTIPLE_MAX > 0
+			if (drv->device == IDETYPE_HDD) {
+				drv->mulcnt = 0;
+				drv->multhr = drv->mulmode;
+				writesec(drv);
+				break;
+			}
+#endif
+			cmdabort(drv);
 			break;
 
 		case 0xc6:		// set multiple mode
 			TRACEOUT(("ideio: set multiple mode"));
-			switch(drv->sc) {
+			if (drv->device == IDETYPE_HDD) {
+				switch(drv->sc) {
 #if IDEIO_MULTIPLE_MAX > 0
 				case 2: case 4: case 8: case 16: case 32: case 64: case 128:
 					if (drv->sc <= IDEIO_MULTIPLE_MAX) {
@@ -517,6 +599,29 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 				default:
 					cmdabort(drv);
 					break;
+				}
+			}
+			else {
+				cmdabort(drv);
+			}
+			break;
+
+		case 0xe7:		// flush cache
+			TRACEOUT(("ideio: flush cache"));
+			drv->status = IDESTAT_DRDY;
+			drv->error = 0;
+			setintr(drv);
+			break;
+
+		case 0xec:		// identify device
+			TRACEOUT(("ideio: identify device"));
+			if (drv->device == IDETYPE_HDD && setidentify(drv) == SUCCESS) {
+				drv->status = IDESTAT_DRDY | IDESTAT_DSC | IDESTAT_DRQ;
+				drv->error = 0;
+				setintr(drv);
+			}
+			else {
+				cmdabort(drv);
 			}
 			break;
 
@@ -552,11 +657,13 @@ static void IOOUTCALL ideio_o74c(UINT port, REG8 dat) {
 			dev->drv[1].error = 0;
 		}
 		else {
-			if (dev->drv[0].device) {
+			drvreset(&dev->drv[0]);
+			if (dev->drv[0].device == IDETYPE_HDD) {
 				dev->drv[0].status = IDESTAT_DRDY | IDESTAT_DSC;
 				dev->drv[0].error = IDEERR_AMNF;
 			}
-			if (dev->drv[1].device) {
+			drvreset(&dev->drv[1]);
+			if (dev->drv[1].device == IDETYPE_HDD) {
 				dev->drv[1].status = IDESTAT_DRDY | IDESTAT_DSC;
 				dev->drv[1].error = IDEERR_AMNF;
 			}
@@ -721,21 +828,42 @@ static REG8 IOINPCALL ideio_i74c(UINT port) {
 void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 
 	IDEDRV	drv;
-	UINT8	*p;
+	BYTE	*p;
+	long	sec;
 
 	drv = getidedrv();
 	if ((drv != NULL) &&
 		(drv->status & IDESTAT_DRQ) && (drv->bufdir == IDEDIR_OUT)) {
 		p = drv->buf + drv->bufpos;
-		p[0] = (UINT8)value;
-		p[1] = (UINT8)(value >> 8);
-		TRACEOUT(("ide-data send %4x (%.4x) [%.4x:%.8x]",
+		p[0] = (BYTE)value;
+		p[1] = (BYTE)(value >> 8);
+		TRACEOUT(("ide-data send %.4x (%.4x) [%.4x:%.8x]",
 										value, drv->bufpos, CPU_CS, CPU_EIP));
 		drv->bufpos += 2;
 		if (drv->bufpos >= drv->bufsize) {
 			drv->status &= ~IDESTAT_DRQ;
 			switch(drv->cmd) {
+				case 0x30:
+				case 0x31:
+				case 0xc5:
+					sec = getcursec(drv);
+					TRACEOUT(("writesec->drv %d sec %x cnt %d thr %d",
+								drv->sxsidrv, sec, drv->mulcnt, drv->multhr));
+					if (sxsi_write(drv->sxsidrv, sec, drv->buf, drv->bufsize)) {
+						TRACEOUT(("write error!"));
+						cmdabort(drv);
+						break;
+					}
+					drv->mulcnt++;
+					incsec(drv);
+					drv->sc--;
+					if (drv->sc) {
+						writesec(drv);
+					}
+					break;
+
 				case 0xa0:
+					TRACEOUT(("ideio: execute atapi packet command"));
 					atapicmd_a0(drv);
 					break;
 			}
@@ -777,8 +905,12 @@ REG16 IOINPCALL ideio_r16(UINT port) {
 					break;
 
 				case 0xa0:
+					if (drv->buftc == IDETC_ATAPIREAD) {
+						atapi_dataread(drv);
+						break;
+					}
 					drv->sc = IDEINTR_IO | IDEINTR_CD;
-					drv->status &= ~(IDESTAT_BSY | IDESTAT_DRQ | IDESTAT_ERR);
+					drv->status &= ~(IDESTAT_BSY | IDESTAT_SERV | IDESTAT_CHK);
 					drv->status |= IDESTAT_DRDY;
 					drv->error = 0;
 					setintr(drv);
@@ -806,7 +938,16 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 		drv->device = IDETYPE_HDD;
 		drv->surfaces = sxsi->surfaces;
 		drv->sectors = sxsi->sectors;
-		drv->mulmode = 1;
+		drv->mulmode = IDEIO_MULTIPLE_MAX;
+	}
+	else if ((sxsi != NULL) && (sxsi->devtype == SXSIDEV_CDROM)) {
+		drv->device = IDETYPE_CDROM;
+		drvreset(drv);
+		drv->error = 0;
+		drv->media = IDEIO_MEDIA_EJECTABLE;
+		if (sxsi->flag & SXSIFLAG_READY) {
+			drv->media |= (IDEIO_MEDIA_CHANGED | IDEIO_MEDIA_LOADED);
+		}
 	}
 	else {
 		drv->status = IDESTAT_ERR;
@@ -825,17 +966,6 @@ void ideio_reset(void) {
 		drv = ideio.dev[i >> 1].drv + (i & 1);
 		devinit(drv, i);
 	}
-
-#if 0		// CD-ROM test
-	drv = ideio.dev[1].drv;
-	drv->hd = 0;
-	drv->sc = 1;
-	drv->sn = 1;
-	drv->cy = 0xeb14;
-	drv->status = 0;
-	drv->error = 0;
-	drv->device = IDETYPE_CDROM;
-#endif
 
 	CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
 	TRACEOUT(("use simulate ide.rom"));
@@ -872,8 +1002,21 @@ void ideio_bind(void) {
 
 void ideio_notify(REG8 sxsidrv, UINT action) {
 
-	(void)sxsidrv;
-	(void)action;
+	IDEDRV	drv;
+
+	if ((sxsidrv >= 0) && (sxsidrv < 4)) {
+		drv = ideio.dev[sxsidrv >> 1].drv + (sxsidrv & 1);
+		switch(action) {
+			case 1:
+				drv->media |= (IDEIO_MEDIA_CHANGED | IDEIO_MEDIA_LOADED);
+				break;
+
+			case 0:
+				drv->media &= ~IDEIO_MEDIA_LOADED;
+				break;
+		}
+	}
 }
 
 #endif	/* SUPPORT_IDEIO */
+
