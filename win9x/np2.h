@@ -93,7 +93,6 @@ enum {
 
 	IDM_FLAGSAVE		= 20100,
 	IDM_FLAGLOAD		= 20150,
-	IDM_I286SAVE		= 20200,
 
 	WM_NP2CMD			= (WM_USER + 200),
 	WM_SSTP				= (WM_USER + 201)
@@ -110,6 +109,8 @@ enum {
 	MMXFLAG_DISABLE		= 1,
 	MMXFLAG_NOTSUPPORT	= 2
 };
+
+#define	STATSAVEMAX		10
 
 
 extern	NP2OSCFG	np2oscfg;

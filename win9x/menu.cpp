@@ -171,6 +171,62 @@ void menu_addmenubar(HMENU popup, HMENU menubar) {
 
 // ----
 
+static const char xmenu_stat[] = "S&tat";
+static const char xmenu_statsave[] = "Save %d";
+static const char xmenu_statload[] = "Load %d";
+static const char xmenu_scsi[] = "SCSI #%d";
+static const char xmenu_open[] = "&Open...";
+static const char xmenu_remove[] = "&Remove";
+
+static void addscsimenu(HMENU hMenu, UINT drv, UINT16 open, UINT16 eject) {
+
+	HMENU	hSubMenu;
+	char	buf[16];
+
+	hSubMenu = CreatePopupMenu();
+	AppendMenu(hSubMenu, MF_STRING, open, xmenu_open);
+	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenu(hSubMenu, MF_STRING, eject, xmenu_remove);
+
+	SPRINTF(buf, xmenu_scsi, drv);
+	AppendMenu(hMenu, MF_POPUP, (UINT32)hSubMenu, buf);
+}
+
+void xmenu_initialize(void) {
+
+	HMENU	hMenu;
+	HMENU	hSubMenu;
+	int		i;
+	char	buf[16];
+
+	hMenu = np2class_gethmenu(hWndMain);
+
+#if defined(SUPPORT_SCSI)
+	hSubMenu = GetSubMenu(hMenu, 3);
+	AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
+	addscsimenu(hSubMenu, 0, IDM_SCSI0OPEN, IDM_SCSI0EJECT);
+	addscsimenu(hSubMenu, 1, IDM_SCSI1OPEN, IDM_SCSI1EJECT);
+	addscsimenu(hSubMenu, 2, IDM_SCSI2OPEN, IDM_SCSI2EJECT);
+	addscsimenu(hSubMenu, 3, IDM_SCSI3OPEN, IDM_SCSI3EJECT);
+#endif
+
+	// ÇﬂÇ…Ç„Å[í«â¡
+	if (np2oscfg.statsave) {
+		hSubMenu = CreatePopupMenu();
+		for (i=0; i<STATSAVEMAX; i++) {
+			SPRINTF(buf, xmenu_statsave, i);
+			AppendMenu(hSubMenu, MF_STRING, IDM_FLAGSAVE + i, buf);
+		}
+		AppendMenu(hSubMenu, MF_MENUBARBREAK, 0, NULL);
+		for (i=0; i<STATSAVEMAX; i++) {
+			SPRINTF(buf, xmenu_statload, i);
+			AppendMenu(hSubMenu, MF_STRING, IDM_FLAGLOAD + i, buf);
+		}
+		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP,
+												(UINT32)hSubMenu, xmenu_stat);
+	}
+}
+
 void xmenu_disablewindow(void) {
 
 	HMENU	hmenu;

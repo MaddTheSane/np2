@@ -50,7 +50,7 @@ static void bios_reinitbyswitch(void) {
 
 	if (!(np2cfg.dipsw[2] & 0x80)) {
 #if defined(CPUCORE_IA32)
-		mem[MEMB_SYS_TYPE] = 0x02;		// 80386Å`
+		mem[MEMB_SYS_TYPE] = 0x03;		// 80386Å`
 #else
 		mem[MEMB_SYS_TYPE] = 0x01;		// 80286
 #endif

@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.7 2004/01/23 14:33:26 monaka Exp $	*/
+/*	$Id: interface.c,v 1.8 2004/01/24 18:20:06 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -35,12 +35,10 @@
 #include "bios.h"
 
 
-void
-ia32reset(void)
-{
+static void ia32_initreg(void) {
+
 	int i;
 
-	memset(&i386core.s, 0, sizeof(i386core.s));
 	CPU_STATSAVE.cpu_inst_default.seg_base = (DWORD)-1;
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
@@ -73,21 +71,17 @@ ia32reset(void)
 }
 
 void
+ia32reset(void)
+{
+	ZeroMemory(&i386core.s, sizeof(i386core.s));
+	ia32_initreg();
+}
+
+void
 ia32shut(void)
 {
-	SINT32	remainclock;			/* 結局ハマるのか漏れ… */
-	SINT32	baseclock;
-	UINT32	clock;
-
-	remainclock = CPU_REMCLOCK;
-	baseclock = CPU_BASECLOCK;
-	clock = CPU_CLOCK;
-
-	ia32reset();
-
-	CPU_REMCLOCK = remainclock;
-	CPU_BASECLOCK = baseclock;
-	CPU_CLOCK = clock;
+	ZeroMemory(&i386core.s, offsetof(I386STAT, cpu_type));
+	ia32_initreg();
 }
 
 void

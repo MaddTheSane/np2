@@ -9,6 +9,7 @@ void sysmenu_setscrnmul(BYTE value);
 
 void menu_addmenubar(HMENU popup, HMENU menubar);
 
+void xmenu_initialize(void);
 void xmenu_disablewindow(void);
 void xmenu_setroltate(BYTE value);
 void xmenu_setdispmode(BYTE value);
