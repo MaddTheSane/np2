@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.7 2004/01/27 15:56:57 monaka Exp $	*/
+/*	$Id: paging.c,v 1.8 2004/02/03 14:27:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -112,7 +112,7 @@
  * +-----+-----------+-----+-----+---+
  */
 #if !defined(USE_PAGE_ACCESS_TABLE)
-static const DWORD page_access = 0xd0cdd0ff;
+#define	page_access	0xd0ddd0ff
 #else	/* USE_PAGE_ACCESS_TABLE */
 static const BYTE page_access_bit[32] = {
 	1,	/* CR0: n, CPL: s, PTE: s, PTE: r, ope: r */
@@ -143,7 +143,7 @@ static const BYTE page_access_bit[32] = {
 	1,	/* CR0: p, CPL: s, PTE: u, PTE: r, ope: r */
 	0,	/* CR0: p, CPL: s, PTE: u, PTE: r, ope: w */
 	1,	/* CR0: p, CPL: s, PTE: u, PTE: w, ope: r */
-	0,	/* CR0: p, CPL: s, PTE: u, PTE: w, ope: w */
+	1,	/* CR0: p, CPL: s, PTE: u, PTE: w, ope: w */
 
 	0,	/* CR0: p, CPL: u, PTE: s, PTE: r, ope: r */
 	0,	/* CR0: p, CPL: u, PTE: s, PTE: r, ope: w */
@@ -375,6 +375,7 @@ paging(DWORD laddr, int crw, int user_mode)
 		cpu_memorywrite_d(pde_addr, pde);
 	}
 
+#if CPU_FAMILY >= 5
 	/* no support PAE */
 	__ASSERT(!(CPU_CR4 & CPU_CR4_PAE));
 
@@ -387,7 +388,9 @@ paging(DWORD laddr, int crw, int user_mode)
 
 		/* make physical address */
 		paddr = (pde & CPU_PDE_4M_BASEADDR_MASK) | (laddr & 0x003fffff);
-	} else {
+	} else
+#endif	/* CPU_FAMILY >= 5 */
+	{
 		/* 4KB page size */
 		pte_addr = (pde & CPU_PDE_BASEADDR_MASK) | ((laddr >> 10) & 0xffc);
 		pte = cpu_memoryread_d(pte_addr);
