@@ -1,39 +1,9 @@
 #include	"compiler.h"
-#include	"resource.h"
-#include	"sysmng.h"
-#include	"dialog.h"
-#include	"pccore.h"
-#include	"fddfile.h"
-#include	"diskdrv.h"
-#include	"newdisk.h"
+#include	"strres.h"
+#include	"dialogs.h"
 
 
-void AboutDialogProc(void) {
-
-	DialogPtr	hDlg;
-	int			done;
-	short		item;
-
-	hDlg = GetNewDialog(IDD_ABOUT, NULL, (WindowPtr)-1);
-	if (!hDlg) {
-		return;
-	}
-	SetDialogDefaultItem(hDlg, IDOK);
-
-	done = 0;
-	while(!done) {
-		ModalDialog(NULL, &item);
-		switch(item) {
-			case IDOK:
-				done = 1;
-				break;
-		}
-	}
-	DisposeDialog(hDlg);
-}
-
-
-// ----
+// ---- file select
 
 static const BYTE pathsep[2] = {0x01, ':'};
 
@@ -96,7 +66,7 @@ static pascal void dummyproc(NavEventCallbackMessage sel, NavCBRecPtr prm,
 	(void)ud;
 }
 
-static BOOL dialog_fileselect(char *name, int size) {
+BOOL dlgs_selectfile(char *name, int size) {
 
 	BOOL				ret;
 	OSErr				err;
@@ -137,8 +107,52 @@ static BOOL dialog_fileselect(char *name, int size) {
 fsel_exit:
 	return(ret);
 }
+
+BOOL dlgs_selectwritefile(char *name, int size, const char *def) {
+
+	BOOL				ret;
+	OSErr				err;
+	NavDialogOptions	opt;
+	NavReplyRecord		reply;
+	NavEventUPP			proc;
+	long				count;
+	long				i;
+	FSSpec				fss;
+
+	ret = FALSE;
+	err = NavGetDefaultDialogOptions(&opt);
+	if (err != noErr) {
+		goto fswf_exit;
+	}
+	opt.dialogOptionFlags |= kNavNoTypePopup;
+	mkstr255(opt.savedFileName, def);
+	proc = NewNavEventUPP(dummyproc);
+	err = NavPutFile(NULL, &reply, &opt, proc, '????', '????', NULL);
+	DisposeNavEventUPP(proc);
+	if ((!reply.validRecord) && (ret != noErr)) {
+		goto fswf_exit;
+	}
+	err = AECountItems(&reply.selection, &count);
+	if (err == noErr) {
+		for (i=1; i<= count; i++) {
+			err = AEGetNthPtr(&reply.selection, i, typeFSS, NULL, NULL,
+													&fss, sizeof(fss), NULL);
+			if (err == noErr) {
+				fsspec2path(&fss, name, size);
+				ret = TRUE;
+				break;
+			}
+		}
+		err = NavDisposeReply(&reply);
+	}
+
+fswf_exit:
+	return(ret);
+}
+
 #else
-BOOL dialog_fileselect(char *name, int size) {
+
+BOOL dlgs_selectfile(char *name, int size) {
 
 	StandardFileReply	sfr;
 
@@ -151,27 +165,22 @@ BOOL dialog_fileselect(char *name, int size) {
 		return(FALSE);
 	}
 }
+
+BOOL dlgs_selectwritefile(char *name, int size, const char *def) {
+
+	Str255				defname;
+	StandardFileReply	sfr;
+
+	mkstr255(defname, def);
+	StandardPutFile(NULL, defname, &sfr);
+	if (sfr.sfGood) {
+		fsspec2path(&sfr.sfFile, name, size);
+		return(TRUE);
+	}
+	else {
+		return(FALSE);
+	}
+}
+
 #endif
-
-void dialog_changefdd(BYTE drv) {
-
-	char	fname[MAX_PATH];
-
-	if (drv < 4) {
-		if (dialog_fileselect(fname, sizeof(fname))) {
-			diskdrv_setfdd(drv, fname, 0);
-		}
-	}
-}
-
-void dialog_changehdd(BYTE drv) {
-
-	char	fname[MAX_PATH];
-
-	if (drv < 2) {
-		if (dialog_fileselect(fname, sizeof(fname))) {
-			diskdrv_sethdd(drv, fname);
-		}
-	}
-}
 

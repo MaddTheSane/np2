@@ -144,15 +144,15 @@ static void HandleMenuChoice(long wParam) {
 			break;
 
 #if 0
-		case IDM_NEWFDD:
+		case IDM_NEWDISK:
 			newdisk();
 			break;
 #endif
-#if 0
-		case IDM_NEWHDD:
-			newhdddisk();
+
+		case IDM_FONT:
+			dialog_font();
 			break;
-#endif
+
 		case IDM_EXIT:
 			np2running = FALSE;
 			break;
@@ -399,6 +399,10 @@ static void HandleMenuChoice(long wParam) {
 		case IDM_MEM76:
 			menu_setextmem(7);
 			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_BMPSAVE:
+			dialog_writebmp();
 			break;
 
 		case IDM_DISPCLOCK:
