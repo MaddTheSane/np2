@@ -113,6 +113,7 @@ static const OSType subcommand[11] ={	'----',
 
 #define	BASENUMBER	4
 static const ControlID popup[2] = { {'pop1', 1}, {'pop2', 2} };
+static const ControlID imageid = {'back', 0};
 
 static DragReceiveHandlerUPP	dr;
 static DragTrackingHandlerUPP	tr;
@@ -358,6 +359,22 @@ static pascal OSStatus cfControlproc(EventHandlerCallRef myHandler, EventRef eve
     return err;
 }
 
+static PixPatHandle	portpat;
+
+static void setDragColor(GrafPtr window) {
+    GrafPtr		port;
+    RGBColor	color;
+    bool		portchanged;
+    
+    portchanged = QDSwapPort(window, &port);
+    GetThemeBrushAsColor(kThemeBrushDragHilite, 32, true, &color);
+    portpat = NewPixPat();
+    MakeRGBPat(portpat, &color);
+    PenPixPat(portpat);
+    PenSize(3, 3);
+    if (portchanged) QDSwapPort(port, NULL);
+}
+
 static void toolwincreate(WindowRef hWnd) {
 
 const SUBITEM	*p;
@@ -365,6 +382,8 @@ const SUBITEM	*p;
 	ControlRef	sub;
 const char		*cls;
 	UInt32		style;
+    
+    setDragColor(GetWindowPort(hWnd));
     
     ControlButtonContentInfo	info;
     info.contentType = kControlContentPictHandle;
@@ -465,6 +484,7 @@ static void toolwindestroy(void) {
 		DisposePixPat(toolwin.access[1]);
         KillPicture(toolwin.hbmp);
         toolwin.hbmp = NULL;
+        DisposePixPat(portpat);
 	}
 }
 
@@ -692,7 +712,7 @@ static OSErr DragTracker (DragTrackingMessage message, WindowRef theWindow, void
     bool		portchanged = false;
     static bool	hilite = false;
     Rect		bounds;
-    Boolean		inframe = TRUE;
+    ControlRef	back;
     
     if (message == kDragTrackingEnterHandler || message == kDragTrackingLeaveHandler) {
         hilite = false;
@@ -700,9 +720,9 @@ static OSErr DragTracker (DragTrackingMessage message, WindowRef theWindow, void
     }
     if (getFSSpecFromDragItem(theDrag, &aHFSFlavor) != noErr) {
         if (hilite) {
-            if (HideDragHilite(theDrag) == noErr) {
-                hilite = false;
-            }
+            GetControlByID(theWindow, &imageid, &back);
+            Draw1Control(back);
+            hilite = false;
         }
         return (-1);
     }
@@ -715,22 +735,16 @@ static OSErr DragTracker (DragTrackingMessage message, WindowRef theWindow, void
                     message = kDragTrackingLeaveWindow;
                 }
                 else {
-                    rgn = NewRgn();
                     GetControlByID(theWindow, &popup[drv], &targetControl);
                     GetControlBounds(targetControl, &bounds);
-                    RectRgn(rgn, &bounds);
-                    inframe = FALSE;
                 }
                 break;
             
             case FTYPE_INI:
             case FTYPE_THD:
             case FTYPE_HDI:
-                rgn = NewRgn();
                 GetWindowBounds(theWindow, kWindowContentRgn, &bounds);
                 OffsetRect(&bounds, -bounds.left, -bounds.top);
-                RectRgn(rgn, &bounds);
-                inframe = TRUE;
                 break;
             
             default:
@@ -740,17 +754,20 @@ static OSErr DragTracker (DragTrackingMessage message, WindowRef theWindow, void
     
     portchanged = QDSwapPort(GetWindowPort(theWindow), &port);
     if (message == kDragTrackingLeaveWindow && hilite) {
-        if (HideDragHilite(theDrag) == noErr) {
-            hilite = false;
-        }
+        GetControlByID(theWindow, &imageid, &back);
+        Draw1Control(back);
+        hilite = false;
     }
     else {
-        if (ShowDragHilite(theDrag, rgn, inframe) == noErr) {
-            hilite = true;
+        rgn = NewRgn();
+        if (rgn) {
+            RectRgn(rgn, &bounds);
+            FrameRgn(rgn);
+            DisposeRgn(rgn);
         }
+        hilite = true;
     }
     if (portchanged) QDSwapPort(port, NULL);
-    if (rgn) DisposeRgn(rgn);
 
     return(noErr);
 }
@@ -759,6 +776,10 @@ static pascal OSErr DragReceiver( WindowRef theWindow, void *handlerRefCon, Drag
 {
     SInt16		drv = -1;
 	HFSFlavor aHFSFlavor;
+    ControlRef	back;
+
+    GetControlByID(theWindow, &imageid, &back);
+    Draw1Control(back);
 
     if (getFSSpecFromDragItem(theDrag, &aHFSFlavor) != noErr) {
         return (-1);
@@ -968,6 +989,7 @@ void toolwin_open(void) {
     info.contentType = kControlContentPictHandle;
     info.u.picture = hbmp;
     CreatePictureControl(hWnd, &bounds, &info, true, &image);
+    SetControlID(image, &imageid);
     InstallControlEventHandler (image, NewEventHandlerUPP(cfControlproc), GetEventTypeCount(list), list, (void *)hWnd, &ref);
     if (!isPUMA) {
         toolwincreate(hWnd);
