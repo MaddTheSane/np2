@@ -119,7 +119,6 @@ BOOL dispsync_renewalvertical(void) {
 		(dsync.textymax == textymax) && (dsync.grphymax == grphymax)) {
 		return(FALSE);
 	}
-
 	dsync.text_vbp = text_vbp;
 	dsync.grph_vbp = grph_vbp;
 	dsync.textymax = textymax;

@@ -284,19 +284,19 @@ void bios0x18_16(REG8 chr, REG8 atr) {
 // ---- 31khz
 
 #if defined(SUPPORT_CRT31KHZ)
-static REG8 bios0x18_30(REG8 mode, REG8 scrn) {
+static REG8 bios0x18_30(REG8 rate, REG8 scrn) {
 
 	int			crt;
 	int			master;
 	int			slave;
 const CRTDATA	*p;
 
-	if (((mode & 0xf8) != 0x08) || (scrn & (~0x33)) || ((scrn & 3) == 3)) {
-		return(1);
+	if (((rate & 0xf8) != 0x08) || (scrn & (~0x33)) || ((scrn & 3) == 3)) {
+		return(0);
 	}
 	if ((scrn & 0x30) == 0x30) {				// 640x480
 #if defined(SUPPORT_PC9821)
-		if (mode & 4) {
+		if (rate & 4) {
 			gdc_analogext(TRUE);
 			mem[MEMB_PRXDUPD] |= 0x80;
 			crt = 4;
@@ -306,13 +306,13 @@ const CRTDATA	*p;
 		}
 		else
 #endif
-		return(1);
+		return(0);
 	}
 	else {
 		if ((scrn & 3) >= 2) {
-			return(1);
+			return(0);
 		}
-		if (mode & 4) {							// 31khz
+		if (rate & 4) {							// 31khz
 			crt = 2;
 			master = 2;
 			slave = 4;
@@ -340,7 +340,7 @@ const CRTDATA	*p;
 	crt += (scrn & 3);
 	master += (scrn & 3);
 
-	if (mode & 4) {
+	if (rate & 4) {
 		gdc.display |= (1 << GDCDISP_31);
 	}
 	else {
@@ -389,7 +389,6 @@ const CRTDATA	*p;
 
 	gdcs.textdisp &= ~GDCSCRN_ENABLE;
 	gdcs.textdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
-	gdcs.grphdisp &= ~GDCSCRN_ENABLE;
 	gdcs.grphdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
 	screenupdate |= 2;
 
@@ -402,15 +401,15 @@ const CRTDATA	*p;
 	if (scrn & 2) {
 		mem[MEMB_CRT_STS_FLAG] |= 0x10;
 	}
-	return(0);
+	return(5);			// 最後にGDCへ送ったデータ…
 }
 
 static REG8 bios0x18_31al(void) {
 
-	UINT8	mode;
+	UINT8	rate;
 
-	mode = 0x08 + ((gdc.display >> (GDCDISP_31 - 5)) & 4);
-	return(mode);
+	rate = 0x08 + ((gdc.display >> (GDCDISP_31 - 5)) & 4);
+	return(rate);
 }
 
 static REG8 bios0x18_31bh(void) {
@@ -454,18 +453,24 @@ void bios0x18_41(void) {
 void bios0x18_42(REG8 mode) {
 
 	UINT8	crtmode;
+#if defined(SUPPORT_CRT31KHZ)
+	UINT8	rate;
+	UINT8	scrn;
+#endif
+	int		slave;
 
 	gdc_forceready(GDCWORK_MASTER);
 	gdc_forceready(GDCWORK_SLAVE);
 
 	crtmode = modenum[mode >> 6];
 #if defined(SUPPORT_CRT31KHZ)
-	if (mem[MEMB_CRT_BIOS] & 0x80) {
-		bios0x18_30(bios0x18_31al(), (crtmode << 4) + (bios0x18_31bh() & 3));
+	rate = bios0x18_31al();
+	scrn = bios0x18_31bh();
+	if ((mem[MEMB_CRT_BIOS] & 0x80) &&
+		(((scrn & 0x30) == 0x30) || (crtmode == 3))) {
+		bios0x18_30(rate, (crtmode << 4) + 1);
 	}
 	else {
-		mem[MEMB_CRT_BIOS] &= ~3;
-		mem[MEMB_CRT_BIOS] |= crtmode;
 #endif
 		ZeroMemory(gdc.s.para + GDC_SCROLL, 8);
 		if (crtmode == 2) {							// ALL
@@ -473,24 +478,27 @@ void bios0x18_42(REG8 mode) {
 			if ((mem[MEMB_PRXDUPD] & 0x24) == 0x20) {
 				mem[MEMB_PRXDUPD] ^= 4;
 				gdc.clock |= 3;
-				CopyMemory(gdc.s.para + GDC_SYNC, sync400m, 8);
+				CopyMemory(gdc.s.para + GDC_SYNC, gdcslavesync[3], 8);
 				gdc.s.para[GDC_PITCH] = 80;
 				gdcs.grphdisp |= GDCSCRN_EXT;
 				mem[MEMB_PRXDUPD] |= 0x08;
 			}
 		}
 		else {
-			crtmode &= 1;
 			if ((mem[MEMB_PRXDUPD] & 0x24) == 0x24) {
 				mem[MEMB_PRXDUPD] ^= 4;
 				gdc.clock &= ~3;
-				CopyMemory(gdc.s.para + GDC_SYNC,
-							(mem[MEMB_PRXCRT] & 0x40)?sync200m:sync200l, 8);
+#if defined(SUPPORT_CRT31KHZ)
+				if (rate & 4) slave = 4;
+				else
+#endif
+				slave = (mem[MEMB_PRXCRT] & 0x40)?2:0;
+				CopyMemory(gdc.s.para + GDC_SYNC, gdcslavesync[slave], 8);
 				gdc.s.para[GDC_PITCH] = 40;
 				gdcs.grphdisp |= GDCSCRN_EXT;
 				mem[MEMB_PRXDUPD] |= 0x08;
 			}
-			if (crtmode == 1) {				// UPPER
+			if (crtmode & 1) {				// UPPER
 				gdc.s.para[GDC_SCROLL+0] = (200*40) & 0xff;
 				gdc.s.para[GDC_SCROLL+1] = (200*40) >> 8;
 			}
@@ -504,6 +512,8 @@ void bios0x18_42(REG8 mode) {
 			gdc.s.para[GDC_CSRFORM] = 1;
 		}
 #if defined(SUPPORT_CRT31KHZ)
+		mem[MEMB_CRT_BIOS] &= ~3;
+		mem[MEMB_CRT_BIOS] |= crtmode;
 	}
 #endif
 	if (crtmode != 3) {
@@ -737,13 +747,14 @@ void bios0x18(void) {
 
 	union {
 		BOOL	b;
+		REG8	r8;
 		UINT16	w;
 		UINT32	d;
 		UINT8	col[4];
 	}		tmp;
 	int		i;
 
-#if 0
+#if 1
 	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
 							i286_memword_read(CPU_SS, CPU_SP+2),
 							i286_memword_read(CPU_SS, CPU_SP)));
@@ -924,7 +935,18 @@ void bios0x18(void) {
 			if (mem[MEMB_CRT_BIOS] & 0x80) {
 				gdc_forceready(GDCWORK_MASTER);
 				gdc_forceready(GDCWORK_SLAVE);
-				CPU_AL = bios0x18_30(CPU_AL, CPU_BH);
+				tmp.r8 = bios0x18_30(CPU_AL, CPU_BH);
+				CPU_AH = tmp.r8;
+				if (tmp.r8 == 0x05) {
+					CPU_AL = 0;
+					CPU_BH = 0;
+					TRACEOUT(("success"));
+				}
+				else {
+					CPU_AL = 1;
+					CPU_BH = 1;
+					TRACEOUT(("failure"));
+				}
 			}
 			break;
 

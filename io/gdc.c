@@ -128,7 +128,6 @@ void gdc_analogext(BOOL extend) {
 	if (extend) {
 		gdc.analog |= (1 << GDCANALOG_256);
 		vramop.operate |= 0x20;
-		i286_vram_dispatch(vramop.operate);
 	}
 	else {
 		gdc.analog &= ~(1 << (GDCANALOG_256));
@@ -900,6 +899,20 @@ static REG8 IOINPCALL gdc_iae(UINT port) {
 
 
 // ---- extend
+
+#if defined(SUPPORT_PC9821)
+static void IOOUTCALL gdc_o9a0(UINT port, REG8 dat) {
+
+	(void)port;
+	(void)dat;
+}
+
+static REG8 IOINPCALL gdc_i9a0(UINT port) {
+
+	(void)port;
+	return(0);
+}
+#endif
 
 #if defined(SUPPORT_CRT31KHZ)
 static void IOOUTCALL gdc_o9a8(UINT port, REG8 dat) {

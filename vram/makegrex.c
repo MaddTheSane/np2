@@ -290,7 +290,7 @@ void VRAMCALL makegrphex(int page, int alldraw) {
 	mg.pitch &= 0xfe;
 	mg.liney = dsync.grph_vbp;
 
-	if (gdc.display & 0x10) {
+	if (gdc.analog & 4) {
 		mg.vm = (UINT32 *)(np2_vram[0] + dsync.grphvad);
 		grphput = (alldraw)?grphput_all:grphput_indirty;
 		mask = ~0x03030303;
