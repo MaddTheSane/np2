@@ -1,4 +1,4 @@
-/*	$Id: x11_main.c,v 1.1 2004/02/06 16:52:48 monaka Exp $	*/
+/*	$Id: x11_main.c,v 1.2 2004/07/15 16:10:03 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -113,7 +113,7 @@ gui_x11_widget_create(void)
 	window = XCreateSimpleWindow(display, root,
 	                             0, 0, 640, 400,
 				     0, black, black);
-	if (window == NULL) {
+	if (window == 0) {
 		fprintf(stderr, "Can't create window.\n");
 		XCloseDisplay(display);
 		display = NULL;
@@ -143,7 +143,7 @@ gui_x11_widget_create(void)
 			wmhints.icon_pixmap = icon_pixmap;
 			wmhints.flags = IconPixmapHint;
 			XSetWMProperties(display, window, NULL, &iconName,
-						0, NULL, 0, &wmhints, NULL);
+						0, 0, 0, &wmhints, NULL);
 		}
 	}
 
@@ -177,7 +177,7 @@ void
 gui_x11_widget_mainloop(void)
 {
 
-	if (display == NULL || window == NULL)
+	if (display == NULL || window == 0)
 		return;
 
 	while (taskmng_isavail()) {
