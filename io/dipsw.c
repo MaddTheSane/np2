@@ -16,9 +16,9 @@ void IOOUTCALL dipsw_w8(UINT port, REG8 value) {
 	switch(port & 0x0f00) {
 		case 0x0400:
 			if (!(iflags[value] & 0x04)) {
-				set = (value ^ 0x04) & 0xbc;
-				if ((np2cfg.dipsw[0] ^ set) & 0xbc) {
-					np2cfg.dipsw[0] &= ~(0xbc);
+				set = value & 0xfc;
+				if ((np2cfg.dipsw[0] ^ set) & 0xfc) {
+					np2cfg.dipsw[0] &= ~(0xfc);
 					np2cfg.dipsw[0] |= set;
 					update |= SYS_UPDATECFG;
 				}
@@ -27,9 +27,9 @@ void IOOUTCALL dipsw_w8(UINT port, REG8 value) {
 
 		case 0x0500:
 			if (!(iflags[value] & 0x04)) {
-				set = value & 0xaf;
-				if ((np2cfg.dipsw[1] ^ set) & 0xaf) {
-					np2cfg.dipsw[1] &= ~(0xaf);
+				set = value & 0xef;
+				if ((np2cfg.dipsw[1] ^ set) & 0xef) {
+					np2cfg.dipsw[1] &= ~(0xef);
 					np2cfg.dipsw[1] |= set;
 					update |= SYS_UPDATECFG;
 				}
@@ -38,9 +38,9 @@ void IOOUTCALL dipsw_w8(UINT port, REG8 value) {
 
 		case 0x0600:
 			if (!(iflags[value] & 0x04)) {
-				set = (value ^ 0x08) & 0x3f;
-				if ((np2cfg.dipsw[2] ^ set) & 0x3f) {
-					np2cfg.dipsw[2] &= ~(0x3f);
+				set = value & 0x7f;
+				if ((np2cfg.dipsw[2] ^ set) & 0x7f) {
+					np2cfg.dipsw[2] &= ~(0x7f);
 					np2cfg.dipsw[2] |= set;
 					update |= SYS_UPDATECFG;
 				}
@@ -83,21 +83,21 @@ REG8 IOINPCALL dipsw_r8(UINT port) {
 	ret = 0xff;
 	switch(port & 0x0f00) {
 		case 0x0400:
-			ret = (np2cfg.dipsw[0] ^ 0x04) & 0xbc;
+			ret = np2cfg.dipsw[0] & 0xfc;
 			if (iflags[ret] & 0x04) {
 				ret |= 0x01;
 			}
 			break;
 
 		case 0x0500:
-			ret = np2cfg.dipsw[1] & 0xaf;
+			ret = np2cfg.dipsw[1] & 0xef;
 			if (iflags[ret] & 0x04) {
 				ret |= 0x10;
 			}
 			break;
 
 		case 0x0600:
-			ret = (np2cfg.dipsw[2] ^ 0x02) & 0x33;
+			ret = np2cfg.dipsw[2] & 0x7f;
 			if (iflags[ret] & 0x04) {
 				ret |= 0x80;
 			}
