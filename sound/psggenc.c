@@ -80,10 +80,10 @@ void psggen_setreg(PSGGEN psg, BYTE reg, BYTE value) {
 	UINT	ch;
 
 	reg &= 15;
-	((BYTE *)&psg->reg)[reg] = value;
 	if (reg < 14) {
 		sound_sync();
 	}
+	((BYTE *)&psg->reg)[reg] = value;
 	switch(reg) {
 		case 0:
 		case 1:

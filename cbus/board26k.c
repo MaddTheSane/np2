@@ -26,7 +26,6 @@ static void IOOUTCALL opn_o18a(UINT port, BYTE dat) {
 		if (opn.opnreg < 0x30) {
 			if (opn.opnreg == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					sound_sync();
 					opngen_keyon(dat & 0x0f, dat);
 				}
 			}

@@ -117,7 +117,7 @@ extern	int		soundrenewal;
 extern	BOOL	drawframe;
 extern	UINT	drawcount;
 
-
+void getbiospath(char *path, const char *fname, int maxlen);
 void screendisp(NEVENTITEM item);
 void screenvsync(NEVENTITEM item);
 

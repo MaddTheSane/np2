@@ -144,8 +144,7 @@ void bios_init(void) {
 
 	// まぁDISK BASIC動くようになるからいいんじゃないですか？
 	// BASIC BIOSは 8086コードのように見えるけど…
-	file_cpyname(path, np2cfg.biospath, sizeof(path));
-	file_catname(path, file_biosrom, sizeof(path));
+	getbiospath(path, file_biosrom, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh != FILEH_INVALID) {
 		if (file_read(fh, mem + 0x0e8000, 0x18000) == 0x18000) {

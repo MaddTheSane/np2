@@ -37,8 +37,7 @@ static BOOL pcmload(RHYTHMPCM *pcm, const char *fname, UINT rate) {
 	UINT		pos;
 	BYTE		work[256];
 
-	file_cpyname(path, np2cfg.biospath, sizeof(path));
-	file_catname(path, fname, sizeof(path));
+	getbiospath(path, fname, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto pld_err1;

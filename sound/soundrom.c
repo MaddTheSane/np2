@@ -26,8 +26,7 @@ static BOOL loadsoundrom(UINT address, const char *name) {
 		file_catname(romname, name, sizeof(romname));
 	}
 	file_catname(romname, file_extrom, sizeof(romname));
-	file_cpyname(path, np2cfg.biospath, sizeof(path));
-	file_catname(path, romname, sizeof(path));
+	getbiospath(path, romname, sizeof(path));
 	fh = file_open_rb(path);
 	if (fh == FILEH_INVALID) {
 		goto lsr_err;

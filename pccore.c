@@ -1,5 +1,4 @@
 #include	"compiler.h"
-#include	"strres.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -80,6 +79,26 @@ static const BYTE msw_default[8] =
 
 
 // ---------------------------------------------------------------------------
+
+void getbiospath(char *path, const char *fname, int maxlen) {
+
+const char	*p;
+
+	p = np2cfg.biospath;
+
+	p = np2cfg.biospath;
+	if (p[0]) {
+		file_cpyname(path, p, maxlen);
+		file_setseparator(path, maxlen);
+		file_catname(path, fname, maxlen);
+	}
+	else {
+		file_cpyname(path, file_getcd(fname), maxlen);
+	}
+}
+
+
+// ----
 
 static void setvsyncclock(void) {
 
@@ -184,16 +203,6 @@ static void sound_term(void) {
 }
 
 void pccore_init(void) {
-
-	char	*p;
-
-	p = np2cfg.biospath;
-	if (p[0]) {
-		file_setseparator(p, sizeof(np2cfg.biospath));
-	}
-	else {
-		file_cpyname(p, file_getcd(str_null), sizeof(np2cfg.biospath));
-	}
 
 	i286_initialize();
 

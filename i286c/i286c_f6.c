@@ -122,7 +122,7 @@ I286_F6 _div_ea8(UINT op) {
 		src = i286_memoryread(CALC_EA(op));
 	}
 	tmp = I286_AX;
-	if (tmp < ((UINT16)src << 8)) {
+	if ((src) && (tmp < ((UINT16)src << 8))) {
 		I286_AL = tmp / src;
 		I286_AH = tmp % src;
 	}
@@ -277,7 +277,7 @@ I286_F6 _div_ea16(UINT op) {
 		src = i286_memoryread_w(CALC_EA(op));
 	}
 	tmp = (I286_DX << 16) + I286_AX;
-	if (tmp < (src << 16)) {
+	if ((src) && (tmp < (src << 16))) {
 		I286_AX = (SINT16)(tmp / src);
 		I286_DX = (SINT16)(tmp % src);
 	}
