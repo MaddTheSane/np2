@@ -150,9 +150,7 @@ static const MSYSITEM s_screen[] = {
 		{str_20fps,			NULL,		MID_20FPS,			0},
 		{str_15fps,			NULL,		MID_15FPS,			0},
 		{NULL,				NULL,		MID_STATIC,			MENU_SEPARATOR},
-		{str_scropt,		NULL,		MID_SCREENOPT,		
-															// MENU_GRAY |
-															MENU_DELETED}};
+		{str_scropt,		NULL,		MID_SCREENOPT,		MENU_DELETED}};
 
 #if defined(WIN32_PLATFORM_PSPC)
 static const MSYSITEM s_bindcur[] = {

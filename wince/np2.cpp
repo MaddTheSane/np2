@@ -269,7 +269,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			if (sysrunning) {
 				if (LOWORD(wParam) != WA_INACTIVE) {
 					GXResume();
-#if defined(WIN32_PLATFORM_PSPC)
+#if defined(GX_DLL)
 					scrnmng_enable(TRUE);
 #endif
 					scrndraw_redraw();
@@ -279,7 +279,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				else {
 					sysrunning &= ~SYSRUNNING_FORE;
 					soundmng_disable(SNDPROC_MAIN);
-#if defined(WIN32_PLATFORM_PSPC)
+#if defined(GX_DLL)
 					scrnmng_enable(FALSE);
 #endif
 					GXSuspend();

@@ -746,7 +746,6 @@ DEP_CPP_I286C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\I286C\dmap.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\v30patch.h"\
@@ -778,18 +777,21 @@ DEP_CPP_I286C=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_I286C=\
+	"..\I286C\i286.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C=\
 	"..\I286C\dmap.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\v30patch.h"\
 	
 NODEP_CPP_I286C=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	"..\I286C\iocore.h"\
 	"..\I286C\pccore.h"\
 	
@@ -803,7 +805,6 @@ DEP_CPP_I286C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\I286C\dmap.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\io\artic.h"\
@@ -833,6 +834,9 @@ DEP_CPP_I286C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -850,21 +854,23 @@ DEP_CPP_I286C_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
@@ -875,10 +881,12 @@ DEP_CPP_I286C_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -896,21 +904,23 @@ DEP_CPP_I286C_8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_8=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_8=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_8=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
@@ -921,10 +931,12 @@ DEP_CPP_I286C_8=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_8=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -942,21 +954,23 @@ DEP_CPP_I286C_E=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_E=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_E=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_E=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
@@ -967,10 +981,12 @@ DEP_CPP_I286C_E=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_E=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -988,21 +1004,23 @@ DEP_CPP_I286C_F=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_F=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_F=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_F=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
@@ -1013,10 +1031,12 @@ DEP_CPP_I286C_F=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_F=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1034,21 +1054,23 @@ DEP_CPP_I286C_FE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_FE=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_FE=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_FE=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
@@ -1059,10 +1081,12 @@ DEP_CPP_I286C_FE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_FE=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1081,7 +1105,6 @@ DEP_CPP_I286C_M=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\io\artic.h"\
@@ -1112,17 +1135,20 @@ DEP_CPP_I286C_M=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_I286C_M=\
+	"..\I286C\i286.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_M=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_M=\
 	"..\I286C\bios.h"\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	"..\I286C\iocore.h"\
 	"..\I286C\pccore.h"\
 	
@@ -1136,7 +1162,6 @@ DEP_CPP_I286C_M=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\io\artic.h"\
@@ -1166,6 +1191,9 @@ DEP_CPP_I286C_M=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_M=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1183,7 +1211,6 @@ DEP_CPP_I286C_R=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\io\artic.h"\
@@ -1214,16 +1241,19 @@ DEP_CPP_I286C_R=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_I286C_R=\
+	"..\I286C\i286.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_R=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	
 NODEP_CPP_I286C_R=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	"..\I286C\iocore.h"\
 	"..\I286C\pccore.h"\
 	
@@ -1236,7 +1266,6 @@ DEP_CPP_I286C_R=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\io\artic.h"\
@@ -1266,6 +1295,9 @@ DEP_CPP_I286C_R=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_R=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1283,23 +1315,25 @@ DEP_CPP_I286C_S=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\i286c_sf.mcr"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_I286C_S=\
+	"..\I286C\i286.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_I286C_S=\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\i286c_sf.mcr"\
 	
 NODEP_CPP_I286C_S=\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
@@ -1310,11 +1344,13 @@ DEP_CPP_I286C_S=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\i286c_sf.mcr"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_I286C_S=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1334,7 +1370,6 @@ DEP_CPP_MEMOR=\
 	"..\COMMON\rect.h"\
 	"..\font\font.h"\
 	"..\I286C\egcmem.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1364,16 +1399,19 @@ DEP_CPP_MEMOR=\
 	"..\vram\vram.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MEMOR=\
+	"..\I286C\i286.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_MEMOR=\
 	"..\I286C\egcmem.h"\
-	"..\I286C\i286.h"\
 	
 NODEP_CPP_MEMOR=\
 	"..\I286C\compiler.h"\
 	"..\I286C\font.h"\
+	"..\I286C\i286.h"\
 	"..\I286C\iocore.h"\
 	"..\I286C\pccore.h"\
 	"..\I286C\vram.h"\
@@ -1389,7 +1427,6 @@ DEP_CPP_MEMOR=\
 	"..\COMMON\rect.h"\
 	"..\font\font.h"\
 	"..\I286C\egcmem.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1418,6 +1455,9 @@ DEP_CPP_MEMOR=\
 	"..\pccore.h"\
 	"..\vram\vram.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MEMOR=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1437,7 +1477,6 @@ DEP_CPP_V30PA=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\I286C\dmap.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\v30patch.h"\
@@ -1469,12 +1508,14 @@ DEP_CPP_V30PA=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_V30PA=\
+	"..\I286C\i286.h"\
+	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
 
 DEP_CPP_V30PA=\
 	"..\I286C\dmap.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\v30patch.h"\
@@ -1482,6 +1523,7 @@ DEP_CPP_V30PA=\
 NODEP_CPP_V30PA=\
 	"..\I286C\bios.h"\
 	"..\I286C\compiler.h"\
+	"..\I286C\i286.h"\
 	"..\I286C\iocore.h"\
 	"..\I286C\pccore.h"\
 	
@@ -1496,7 +1538,6 @@ DEP_CPP_V30PA=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\I286C\dmap.h"\
-	"..\I286C\i286.h"\
 	"..\I286C\i286c.h"\
 	"..\I286C\i286c.mcr"\
 	"..\I286C\v30patch.h"\
@@ -1527,6 +1568,9 @@ DEP_CPP_V30PA=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_V30PA=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1548,7 +1592,6 @@ DEP_CPP_ARTIC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1576,6 +1619,9 @@ DEP_CPP_ARTIC=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_ARTIC=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -1620,7 +1666,6 @@ DEP_CPP_ARTIC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1648,6 +1693,9 @@ DEP_CPP_ARTIC=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_ARTIC=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -1782,7 +1830,6 @@ DEP_CPP_CPUIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1821,6 +1868,9 @@ DEP_CPP_CPUIO=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CPUIO=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -1867,7 +1917,6 @@ DEP_CPP_CPUIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -1906,6 +1955,9 @@ DEP_CPP_CPUIO=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_CPUIO=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -2040,7 +2092,6 @@ DEP_CPP_DIPSW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2071,6 +2122,9 @@ DEP_CPP_DIPSW=\
 	"..\sound\sound.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DIPSW=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -2118,7 +2172,6 @@ DEP_CPP_DIPSW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2149,6 +2202,9 @@ DEP_CPP_DIPSW=\
 	"..\sound\sound.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DIPSW=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -2396,6 +2452,127 @@ DEP_CPP_EGC_C=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\IO\EPSONIO.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_EPSON=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\epsonio.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_EPSON=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\epsonio.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_EPSON=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\io\artic.h"\
+	"..\io\cgrom.h"\
+	"..\io\cpuio.h"\
+	"..\io\crtc.h"\
+	"..\io\dipsw.h"\
+	"..\io\dmac.h"\
+	"..\io\egc.h"\
+	"..\io\epsonio.h"\
+	"..\io\extmem.h"\
+	"..\io\fdc.h"\
+	"..\io\fdd320.h"\
+	"..\io\gdc.h"\
+	"..\io\gdc_cmd.h"\
+	"..\io\gdc_sub.h"\
+	"..\io\iocore.h"\
+	"..\io\itf.h"\
+	"..\io\mouseif.h"\
+	"..\io\nmiio.h"\
+	"..\io\np2sysp.h"\
+	"..\io\pic.h"\
+	"..\io\pit.h"\
+	"..\io\printif.h"\
+	"..\io\serial.h"\
+	"..\io\sysport.h"\
+	"..\io\upd4990.h"\
+	"..\nevent.h"\
+	"..\pccore.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\IO\EXTMEM.C
 
 !IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
@@ -2406,7 +2583,6 @@ DEP_CPP_EXTME=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2434,6 +2610,9 @@ DEP_CPP_EXTME=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_EXTME=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -2478,7 +2657,6 @@ DEP_CPP_EXTME=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2506,6 +2684,9 @@ DEP_CPP_EXTME=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_EXTME=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -2756,7 +2937,6 @@ DEP_CPP_GDC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2788,6 +2968,9 @@ DEP_CPP_GDC_C=\
 	"..\vram\vram.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GDC_C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -2836,7 +3019,6 @@ DEP_CPP_GDC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -2868,6 +3050,9 @@ DEP_CPP_GDC_C=\
 	"..\vram\vram.h"\
 	".\scrnmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GDC_C=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -3127,7 +3312,6 @@ DEP_CPP_IOCOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3167,6 +3351,9 @@ DEP_CPP_IOCOR=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_IOCOR=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -3218,7 +3405,6 @@ DEP_CPP_IOCOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3258,6 +3444,9 @@ DEP_CPP_IOCOR=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_IOCOR=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -3389,7 +3578,6 @@ DEP_CPP_MOUSE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3418,6 +3606,9 @@ DEP_CPP_MOUSE=\
 	"..\pccore.h"\
 	".\mousemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_MOUSE=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -3463,7 +3654,6 @@ DEP_CPP_MOUSE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3493,6 +3683,9 @@ DEP_CPP_MOUSE=\
 	".\mousemng.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_MOUSE=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -3509,7 +3702,6 @@ DEP_CPP_NMIIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3537,6 +3729,9 @@ DEP_CPP_NMIIO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NMIIO=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -3581,7 +3776,6 @@ DEP_CPP_NMIIO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3610,6 +3804,9 @@ DEP_CPP_NMIIO=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_NMIIO=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -3627,7 +3824,6 @@ DEP_CPP_NP2SY=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3656,6 +3852,9 @@ DEP_CPP_NP2SY=\
 	"..\pccore.h"\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NP2SY=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -3703,7 +3902,6 @@ DEP_CPP_NP2SY=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3733,6 +3931,9 @@ DEP_CPP_NP2SY=\
 	".\taskmng.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_NP2SY=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -3749,7 +3950,6 @@ DEP_CPP_PIC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3777,6 +3977,9 @@ DEP_CPP_PIC_C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PIC_C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -3821,7 +4024,6 @@ DEP_CPP_PIC_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3850,6 +4052,9 @@ DEP_CPP_PIC_C=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_PIC_C=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -3866,7 +4071,6 @@ DEP_CPP_PIT_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3896,6 +4100,9 @@ DEP_CPP_PIT_C=\
 	"..\sound\beep.h"\
 	"..\sound\sound.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PIT_C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -3942,7 +4149,6 @@ DEP_CPP_PIT_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -3973,6 +4179,9 @@ DEP_CPP_PIT_C=\
 	"..\sound\sound.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_PIT_C=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -3989,7 +4198,6 @@ DEP_CPP_PRINT=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4017,6 +4225,9 @@ DEP_CPP_PRINT=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PRINT=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -4061,7 +4272,6 @@ DEP_CPP_PRINT=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4089,6 +4299,9 @@ DEP_CPP_PRINT=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PRINT=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -5757,7 +5970,6 @@ DEP_CPP_PCM86=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5796,6 +6008,9 @@ DEP_CPP_PCM86=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -5821,7 +6036,6 @@ DEP_CPP_PCM86=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5860,6 +6074,9 @@ DEP_CPP_PCM86=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -5889,7 +6106,6 @@ DEP_CPP_BIOS_=\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -5930,6 +6146,9 @@ DEP_CPP_BIOS_=\
 	"..\sound\tms3631.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS_=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -5970,7 +6189,6 @@ DEP_CPP_BIOS_=\
 	"..\fdd\d88head.h"\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6001,6 +6219,9 @@ DEP_CPP_BIOS_=\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS_=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6018,7 +6239,6 @@ DEP_CPP_BIOS0=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6046,6 +6266,9 @@ DEP_CPP_BIOS0=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS0=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6069,7 +6292,6 @@ DEP_CPP_BIOS0=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6098,6 +6320,9 @@ DEP_CPP_BIOS0=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS0=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6116,7 +6341,6 @@ DEP_CPP_BIOS08=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6144,6 +6368,9 @@ DEP_CPP_BIOS08=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS08=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6169,7 +6396,6 @@ DEP_CPP_BIOS08=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6198,6 +6424,9 @@ DEP_CPP_BIOS08=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS08=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6216,7 +6445,6 @@ DEP_CPP_BIOS09=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6244,6 +6472,9 @@ DEP_CPP_BIOS09=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS09=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6269,7 +6500,6 @@ DEP_CPP_BIOS09=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6298,6 +6528,9 @@ DEP_CPP_BIOS09=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS09=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6317,7 +6550,6 @@ DEP_CPP_BIOS0C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6345,6 +6577,9 @@ DEP_CPP_BIOS0C=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS0C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6372,7 +6607,6 @@ DEP_CPP_BIOS0C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6401,6 +6635,9 @@ DEP_CPP_BIOS0C=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS0C=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6418,7 +6655,6 @@ DEP_CPP_BIOS1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6446,6 +6682,9 @@ DEP_CPP_BIOS1=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6469,7 +6708,6 @@ DEP_CPP_BIOS1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6498,6 +6736,9 @@ DEP_CPP_BIOS1=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS1=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6515,7 +6756,6 @@ DEP_CPP_BIOS13=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6543,6 +6783,9 @@ DEP_CPP_BIOS13=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS13=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6566,7 +6809,6 @@ DEP_CPP_BIOS13=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6595,6 +6837,9 @@ DEP_CPP_BIOS13=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS13=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6614,7 +6859,6 @@ DEP_CPP_BIOS18=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\font\font.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6642,6 +6886,9 @@ DEP_CPP_BIOS18=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS18=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6669,7 +6916,6 @@ DEP_CPP_BIOS18=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\font\font.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6698,6 +6944,9 @@ DEP_CPP_BIOS18=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS18=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6717,7 +6966,6 @@ DEP_CPP_BIOS19=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6745,6 +6993,9 @@ DEP_CPP_BIOS19=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS19=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6772,7 +7023,6 @@ DEP_CPP_BIOS19=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6801,6 +7051,9 @@ DEP_CPP_BIOS19=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS19=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6818,7 +7071,6 @@ DEP_CPP_BIOS1A=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6846,6 +7098,9 @@ DEP_CPP_BIOS1A=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1A=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6869,7 +7124,6 @@ DEP_CPP_BIOS1A=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6898,6 +7152,9 @@ DEP_CPP_BIOS1A=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS1A=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -6920,7 +7177,6 @@ DEP_CPP_BIOS1B=\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -6948,6 +7204,9 @@ DEP_CPP_BIOS1B=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1B=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -6980,7 +7239,6 @@ DEP_CPP_BIOS1B=\
 	"..\fdd\fdd_mtr.h"\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7009,6 +7267,9 @@ DEP_CPP_BIOS1B=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_BIOS1B=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -7029,7 +7290,6 @@ DEP_CPP_BIOS1C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7058,6 +7318,9 @@ DEP_CPP_BIOS1C=\
 	"..\pccore.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -7088,7 +7351,6 @@ DEP_CPP_BIOS1C=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\parts.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -7117,6 +7379,9 @@ DEP_CPP_BIOS1C=\
 	"..\pccore.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BIOS1C=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -8390,7 +8655,6 @@ DEP_CPP_BEEPC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -8430,6 +8694,9 @@ DEP_CPP_BEEPC=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BEEPC=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -8463,7 +8730,6 @@ DEP_CPP_BEEPC=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -8503,6 +8769,9 @@ DEP_CPP_BEEPC=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_BEEPC=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -8823,7 +9092,6 @@ DEP_CPP_FMBOA=\
 	"..\COMMON\rect.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -8865,6 +9133,9 @@ DEP_CPP_FMBOA=\
 	".\joymng.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FMBOA=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -8921,7 +9192,6 @@ DEP_CPP_FMBOA=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -8965,6 +9235,7 @@ DEP_CPP_FMBOA=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_FMBOA=\
+	"..\I286C\i286.h"\
 	".\keydisp.h"\
 	
 
@@ -8983,7 +9254,6 @@ DEP_CPP_FMTIM=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -9022,6 +9292,9 @@ DEP_CPP_FMTIM=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_FMTIM=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -9363,7 +9636,6 @@ DEP_CPP_PCM86C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -9402,6 +9674,9 @@ DEP_CPP_PCM86C=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -9434,7 +9709,6 @@ DEP_CPP_PCM86C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -9473,6 +9747,9 @@ DEP_CPP_PCM86C=\
 	"..\sound\soundrom.h"\
 	"..\sound\tms3631.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCM86C=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -9973,7 +10250,6 @@ DEP_CPP_SOUND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10005,6 +10281,9 @@ DEP_CPP_SOUND=\
 	"..\sound\sound.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -10030,7 +10309,6 @@ DEP_CPP_SOUND=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10062,6 +10340,9 @@ DEP_CPP_SOUND=\
 	"..\sound\sound.h"\
 	".\soundmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -10733,12 +11014,14 @@ DEP_CPP_SXSI_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\fdd\sxsi.h"\
-	"..\I286C\i286.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\dosio.h"\
 	".\sysmng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SXSI_=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -10763,11 +11046,13 @@ DEP_CPP_SXSI_=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\fdd\sxsi.h"\
-	"..\I286C\i286.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_SXSI_=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -10789,9 +11074,11 @@ DEP_CPP_GCLS_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GCLS_=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -10812,9 +11099,11 @@ DEP_CPP_GCLS_=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GCLS_=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -10832,7 +11121,6 @@ DEP_CPP_GCOLO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10861,6 +11149,9 @@ DEP_CPP_GCOLO=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GCOLO=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -10883,7 +11174,6 @@ DEP_CPP_GCOLO=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10913,6 +11203,9 @@ DEP_CPP_GCOLO=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_GCOLO=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -10929,7 +11222,6 @@ DEP_CPP_GCOLOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -10958,6 +11250,9 @@ DEP_CPP_GCOLOR=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GCOLOR=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -10980,7 +11275,6 @@ DEP_CPP_GCOLOR=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11010,6 +11304,9 @@ DEP_CPP_GCOLOR=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_GCOLOR=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -11026,9 +11323,11 @@ DEP_CPP_GLINE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GLINE=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -11049,9 +11348,11 @@ DEP_CPP_GLINE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GLINE=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -11069,9 +11370,11 @@ DEP_CPP_GPSET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GPSET=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -11092,9 +11395,11 @@ DEP_CPP_GPSET=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GPSET=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -11112,9 +11417,11 @@ DEP_CPP_GPUT1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GPUT1=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -11135,9 +11442,11 @@ DEP_CPP_GPUT1=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\lio\lio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GPUT1=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -11155,7 +11464,6 @@ DEP_CPP_GSCRE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11184,6 +11492,9 @@ DEP_CPP_GSCRE=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GSCRE=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -11206,7 +11517,6 @@ DEP_CPP_GSCRE=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11236,6 +11546,9 @@ DEP_CPP_GSCRE=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_GSCRE=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -11252,7 +11565,6 @@ DEP_CPP_GVIEW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11281,6 +11593,9 @@ DEP_CPP_GVIEW=\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_GVIEW=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -11303,7 +11618,6 @@ DEP_CPP_GVIEW=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11333,6 +11647,9 @@ DEP_CPP_GVIEW=\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_GVIEW=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -11351,7 +11668,6 @@ DEP_CPP_LIO_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11381,6 +11697,9 @@ DEP_CPP_LIO_C=\
 	"..\pccore.h"\
 	"..\vram\vram.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_LIO_C=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -11408,7 +11727,6 @@ DEP_CPP_LIO_C=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -11438,6 +11756,9 @@ DEP_CPP_LIO_C=\
 	"..\pccore.h"\
 	"..\vram\vram.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_LIO_C=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -12977,6 +13298,58 @@ NODEP_CPP_WINKB=\
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\GENERIC\CMJASTS.C
+
+!IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
+
+DEP_CPP_CMJAS=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\GENERIC\cmjasts.h"\
+	"..\i286c\cpucore.h"\
+	"..\sound\sound.h"\
+	".\commng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
+
+DEP_CPP_CMJAS=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\GENERIC\cmjasts.h"\
+	"..\i286c\cpucore.h"\
+	"..\sound\sound.h"\
+	".\commng.h"\
+	".\wce\compiler.h"\
+	
+
+!ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE MIPS) Release"
+
+DEP_CPP_CMJAS=\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	"..\GENERIC\cmjasts.h"\
+	"..\i286c\cpucore.h"\
+	"..\sound\sound.h"\
+	".\commng.h"\
+	".\wce\compiler.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\GENERIC\CMVER.C
 
 !IF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) Release"
@@ -14124,7 +14497,6 @@ DEP_CPP_DEBUG=\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\debugsub.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14153,6 +14525,9 @@ DEP_CPP_DEBUG=\
 	"..\pccore.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_DEBUG=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -14180,7 +14555,6 @@ DEP_CPP_DEBUG=\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\debugsub.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14210,6 +14584,9 @@ DEP_CPP_DEBUG=\
 	".\dosio.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_DEBUG=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -14226,10 +14603,12 @@ DEP_CPP_NEVEN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NEVEN=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -14251,10 +14630,12 @@ DEP_CPP_NEVEN=\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
-	"..\I286C\i286.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_NEVEN=\
+	"..\I286C\i286.h"\
 	
 
 !ENDIF 
@@ -14285,7 +14666,6 @@ DEP_CPP_PCCOR=\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
 	"..\font\font.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14338,6 +14718,9 @@ DEP_CPP_PCCOR=\
 	".\sysmng.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_PCCOR=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -14398,7 +14781,6 @@ DEP_CPP_PCCOR=\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
 	"..\font\font.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14450,6 +14832,9 @@ DEP_CPP_PCCOR=\
 	".\timemng.h"\
 	".\wce\compiler.h"\
 	
+NODEP_CPP_PCCOR=\
+	"..\I286C\i286.h"\
+	
 
 !ENDIF 
 
@@ -14480,7 +14865,6 @@ DEP_CPP_STATS=\
 	"..\font\font.h"\
 	"..\GENERIC\cmndraw.h"\
 	"..\GENERIC\keydisp.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14530,6 +14914,9 @@ DEP_CPP_STATS=\
 	".\soundmng.h"\
 	".\timemng.h"\
 	".\wce\compiler.h"\
+	
+NODEP_CPP_STATS=\
+	"..\I286C\i286.h"\
 	
 
 !ELSEIF  "$(CFG)" == "np2hpc - Win32 (WCE ARM) VGA"
@@ -14588,7 +14975,6 @@ DEP_CPP_STATS=\
 	"..\fdd\fddfile.h"\
 	"..\fdd\sxsi.h"\
 	"..\font\font.h"\
-	"..\I286C\i286.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -14640,6 +15026,7 @@ DEP_CPP_STATS=\
 	".\wce\compiler.h"\
 	
 NODEP_CPP_STATS=\
+	"..\I286C\i286.h"\
 	".\keydisp.h"\
 	
 

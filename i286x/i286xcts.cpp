@@ -49,7 +49,7 @@ I286 _sidt(void) {
 				call	i286_memorywrite_w
 				add		bp, 2
 				lea		ecx, [edi + ebp]
-				mov		dl, byte ptr (i286core.s.IDTR+4)			// ver0.29
+				mov		dl, byte ptr (i286core.s.IDTR+4)
 				mov		dh, -1
 				jmp		i286_memorywrite_w
 				align	4

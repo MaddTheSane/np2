@@ -74,12 +74,13 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/dmap.o												\
 			$(OBJ)/iocore.o		$(OBJ)/artic.o		$(OBJ)/cgrom.o		\
 			$(OBJ)/cpuio.o		$(OBJ)/crtc.o		$(OBJ)/dipsw.o		\
-			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/extmem.o		\
-			$(OBJ)/fdc.o		$(OBJ)/fdd320.o		$(OBJ)/gdc.o		\
-			$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	$(OBJ)/itf.o		\
-			$(OBJ)/mouseif.o	$(OBJ)/nmiio.o		$(OBJ)/np2sysp.o	\
-			$(OBJ)/pic.o		$(OBJ)/pit.o		$(OBJ)/printif.o	\
-			$(OBJ)/serial.o		$(OBJ)/sysport.o	$(OBJ)/upd4990.o	\
+			$(OBJ)/dmac.o		$(OBJ)/egc.o		$(OBJ)/epsonio.o	\
+			$(OBJ)/extmem.o		$(OBJ)/fdc.o		$(OBJ)/fdd320.o		\
+			$(OBJ)/gdc.o		$(OBJ)/gdc_sub.o	$(OBJ)/gdc_pset.o	\
+			$(OBJ)/itf.o		$(OBJ)/mouseif.o	$(OBJ)/nmiio.o		\
+			$(OBJ)/np2sysp.o	$(OBJ)/pic.o		$(OBJ)/pit.o		\
+			$(OBJ)/printif.o	$(OBJ)/serial.o		$(OBJ)/sysport.o	\
+			$(OBJ)/upd4990.o											\
 			$(OBJ)/cbuscore.o	$(OBJ)/pc9861k.o	$(OBJ)/mpu98ii.o	\
 			$(OBJ)/board14.o	$(OBJ)/board26k.o	$(OBJ)/board86.o	\
 			$(OBJ)/boardx2.o	$(OBJ)/board118.o	$(OBJ)/boardspb.o	\
@@ -295,6 +296,9 @@ $(OBJ)/dmac.o		:	$(IO)/dmac.c $(HEADERS) $(PCCORES) $(IOCORES) \
 
 $(OBJ)/egc.o		:	$(IO)/egc.c $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(I286C)/memory.h $(I286C)/egcmem.h $(VRAM)/vram.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/epsonio.o	:	$(IO)/epsonio.c $(HEADERS) $(PCCORES) $(IOCORES)
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/extmem.o		:	$(IO)/extmem.c $(HEADERS) $(PCCORES) $(IOCORES) \
@@ -792,7 +796,8 @@ $(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/cmjasts.o	:	$(GENERIC)/cmjasts.c $(HEADERS) $(CPUCORES) \
-						$(TARGET)/commng.h $(SOUND)/sound.h
+						$(TARGET)/commng.h $(SOUND)/sound.h \
+						$(GENERIC)/cmjasts.h
 	$(CC) $(COPT) -o $@ $<
 
 

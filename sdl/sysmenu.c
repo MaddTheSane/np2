@@ -136,6 +136,12 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case MID_MOUSEKEY:
+			np2cfg.KEY_MODE = 3;
+			keystat_resetjoykey();
+			update |= SYS_UPDATECFG;
+			break;
+
 		case MID_XSHIFT:
 			np2cfg.XSHIFT ^= 1;
 			keystat_forcerelease(0x70);
@@ -429,6 +435,7 @@ BOOL sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_KEY, (b == 0));
 	menusys_setcheck(MID_JOY1, (b == 1));
 	menusys_setcheck(MID_JOY2, (b == 2));
+	menusys_setcheck(MID_MOUSEKEY, (b == 3));
 	b = np2cfg.XSHIFT;
 	menusys_setcheck(MID_XSHIFT, (b & 1));
 	menusys_setcheck(MID_XCTRL, (b & 2));

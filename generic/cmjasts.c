@@ -2,6 +2,7 @@
 #include	"commng.h"
 #include	"cpucore.h"
 #include	"sound.h"
+#include	"cmjasts.h"
 
 
 #define	JSEVENTS	512

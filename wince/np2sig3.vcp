@@ -958,6 +958,10 @@ DEP_CPP_EGC_C=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\IO\EPSONIO.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\IO\EXTMEM.C
 DEP_CPP_EXTME=\
 	"..\common.h"\
@@ -5183,6 +5187,10 @@ DEP_CPP_WINKB=\
 # Begin Group "generic"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\GENERIC\CMJASTS.C
+# End Source File
 # Begin Source File
 
 SOURCE=..\GENERIC\CMNDRAW.C
