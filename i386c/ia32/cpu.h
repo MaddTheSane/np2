@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.31 2004/07/29 13:06:08 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.32 2005/03/05 16:47:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -71,6 +71,10 @@ typedef union {
 	UINT32	d;
 } REG32;
 
+typedef struct {
+	UINT8	b[10];
+} REG80;
+
 #ifdef __cplusplus
 }
 #endif
@@ -133,8 +137,10 @@ typedef struct {
 
 typedef struct {
 	UINT16		gdtr_limit;
+	UINT16		pad0;
 	UINT32		gdtr_base;
 	UINT16		idtr_limit;
+	UINT16		pad1;
 	UINT32		idtr_base;
 
 	UINT16		ldtr;
@@ -189,12 +195,57 @@ typedef struct {
 	UINT32		seg_base;
 } CPU_INST;
 
+/* FPU */
+enum {
+	FPU_REG_NUM = 8
+};
+
+typedef struct {
+	UINT16		seg;
+	UINT16		pad;
+	UINT32		offset;
+} FPU_PTR;
+
+typedef struct {
+	UINT16		control;
+	UINT16		status;
+	UINT16		op;
+
+	FPU_PTR		inst;
+	FPU_PTR		data;
+} FPU_REGS;
+
+typedef struct {
+	UINT8		valid;	/* レジスタ有効 */
+	UINT8		sign;	/* 符号 */
+	UINT8		zero;	/* ゼロ */
+	UINT8		inf;	/* ∞ */
+	UINT8		nan;	/* NaN */
+	UINT8		denorm;	/* 非正規化 */
+	SINT16		exp;	/* 指数部 */
+	UINT64		num;	/* 小数部 */
+} FP_REG;
+
+typedef struct {
+	UINT8		top;	/* スタック位置 */
+	UINT8		pc;	/* 精度 */
+	UINT8		rc;	/* 丸め */
+	UINT8		dmy[1];
+
+	FP_REG		reg[FPU_REG_NUM];
+} FPU_STAT;
+
 typedef struct {
 	CPU_REGS	cpu_regs;
 	CPU_SYSREGS	cpu_sysregs;
 	CPU_STAT	cpu_stat;
 	CPU_INST	cpu_inst;
 	CPU_INST	cpu_inst_default;
+
+#if defined(USE_FPU)
+	FPU_REGS	fpu_regs;
+	FPU_STAT	fpu_stat;
+#endif
 
 	/* protected by cpu shut */
 	UINT8		cpu_type;
@@ -291,7 +342,7 @@ extern sigjmp_buf	exec_1step_jmpbuf;
 /*				(1 << 29) */
 /*				(1 << 30) */
 /*				(1 << 31) */
-#ifdef USE_FPU
+#if defined(USE_FPU)
 #define	CPU_FEATURES		(CPU_FEATURE_CMOV|CPU_FEATURE_FPU)
 #else
 #define	CPU_FEATURES		(CPU_FEATURE_CMOV)
@@ -618,6 +669,71 @@ void dbg_printf(const char *str, ...);
 
 
 /*
+ * FPU
+ */
+#define	FPU_REGS		CPU_STATSAVE.fpu_regs
+#define	FPU_CTRLWORD		FPU_REGS.control
+#define	FPU_STATUSWORD		FPU_REGS.status
+#define	FPU_INSTPTR		FPU_REGS.inst
+#define	FPU_DATAPTR		FPU_REGS.data
+#define	FPU_LASTINSTOP		FPU_REGS.op
+#define	FPU_INSTPTR_OFFSET	FPU_REGS.inst.offset
+#define	FPU_INSTPTR_SEG		FPU_REGS.inst.seg
+#define	FPU_DATAPTR_OFFSET	FPU_REGS.data.offset
+#define	FPU_DATAPTR_SEG		FPU_REGS.data.seg
+
+#define	FPU_STAT		CPU_STATSAVE.fpu_stat
+#define	FPU_STAT_TOP		FPU_STAT.top
+#define	FPU_STAT_PC		FPU_STAT.pc
+#define	FPU_STAT_RC		FPU_STAT.rc
+
+#define	FPU_ST(i)		FPU_STAT.reg[((i) + FPU_STAT_TOP) & 7]
+#define	FPU_REG(i)		FPU_STAT.reg[i]
+
+/* FPU status register */
+#define	FP_IE_FLAG	(1 << 0)	/* 無効な動作 */
+#define	FP_DE_FLAG	(1 << 1)	/* デノーマライズド・オペランド */
+#define	FP_ZE_FLAG	(1 << 2)	/* ゼロによる除算 */
+#define	FP_OE_FLAG	(1 << 3)	/* オーバーフロー */
+#define	FP_UE_FLAG	(1 << 4)	/* アンダーフロー */
+#define	FP_PE_FLAG	(1 << 5)	/* 精度 */
+#define	FP_SF_FLAG	(1 << 6)	/* スタックフォルト */
+#define	FP_ES_FLAG	(1 << 7)	/* エラーサマリステータス */
+#define	FP_C0_FLAG	(1 << 8)	/* 条件コード */
+#define	FP_C1_FLAG	(1 << 9)	/* 条件コード */
+#define	FP_C2_FLAG	(1 << 10)	/* 条件コード */
+#define	FP_TOP_FLAG	(7 << 11)	/* スタックポイントのトップ */
+#define	FP_C3_FLAG	(1 << 14)	/* 条件コード */
+#define	FP_B_FLAG	(1 << 15)	/* FPU ビジー */
+
+#define	FP_TOP_SHIFT	11
+#define	FP_TOP_GET()	((FPU_STATUSWORD & FP_TOP_FLAG) >> FP_TOP_SHIFT)
+#define	FP_TOP_SET(v)	((FPU_STATUSWORD & ~FP_TOP_FLAG) | ((v) << FP_TOP_SHIFT))
+
+#define	FPU_STAT_TOP_INC() \
+do { \
+	FPU_STAT.top = (FPU_STAT.top + 1) & 7; \
+} while (/*CONSTCOND*/0)
+#define	FPU_STAT_TOP_DEC() \
+do { \
+	FPU_STAT.top = (FPU_STAT.top - 1) & 7; \
+} while (/*CONSTCOND*/0)
+
+/* FPU control register */
+#define	FP_CTRL_PC_SHIFT	8	/* 精度制御 */
+#define	FP_CTRL_RC_SHIFT	10	/* 丸め制御 */
+
+#define	FP_CTRL_PC_24		0	/* 単精度 */
+#define	FP_CTRL_PC_53		1	/* 倍精度 */
+#define	FP_CTRL_PC_64		3	/* 拡張精度 */
+
+#define	FP_CTRL_RC_NEAREST_EVEN	0
+#define	FP_CTRL_RC_DOWN		1
+#define	FP_CTRL_RC_UP		2
+#define	FP_CTRL_RC_TO_ZERO	3
+
+
+/*
  * Misc.
  */
 void memory_dump(int idx, UINT32 madr);
@@ -664,7 +780,6 @@ typedef struct {
 } disasm_context_t;
 
 int disasm(UINT32 *eip, disasm_context_t *ctx);
-
 
 #ifdef __cplusplus
 }

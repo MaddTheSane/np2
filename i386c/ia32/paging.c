@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.26 2004/06/16 12:49:01 monaka Exp $	*/
+/*	$Id: paging.c,v 1.27 2005/03/05 16:47:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -189,7 +189,6 @@ static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw) GCC_ATTR_REGPAR
 static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw) GCC_ATTR_REGPARM;
 #endif
 
-#if defined(IA32_PAGING_EACHSIZE)
 UINT8 MEMCALL
 cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
@@ -334,13 +333,106 @@ cpu_linear_memory_read_d(UINT32 laddr, const int ucrw)
 
 		case 1:
 			value = cpu_memoryread(paddr[0]);
-			value += (UINT32)cpu_memoryread(paddr[1]) << 8;
-			value += (UINT32)cpu_memoryread_w(paddr[1] + 1) << 16;
+			value += (UINT32)cpu_memoryread_w(paddr[1]) << 8;
+			value += (UINT32)cpu_memoryread(paddr[1] + 2) << 24;
 			break;
 
 		default:
 			ia32_panic("cpu_linear_memory_read_d(): out of range (remain = %d)\n", remain);
-			return (UINT32)-1;
+			value = (UINT32)-1;
+			break;
+		}
+		return value;
+	}
+}
+
+UINT64 MEMCALL
+cpu_linear_memory_read_q(UINT32 laddr, const int ucrw)
+{
+	UINT32 paddr[2];
+	UINT64 value;
+	UINT remain;
+
+	paddr[0] = paging(laddr, ucrw);
+	remain = 0x1000 - (laddr & 0x00000fff);
+	if (remain >= 8) {
+		return cpu_memoryread_q(paddr[0]);
+	} else {
+		paddr[1] = paging(laddr + remain, ucrw);
+		switch (remain) {
+		case 7:
+			value = cpu_memoryread(paddr[0]);
+			value += (UINT64)cpu_memoryread_w(paddr[0] + 1) << 8;
+			value += (UINT64)cpu_memoryread_d(paddr[0] + 3) << 24;
+			value += (UINT64)cpu_memoryread(paddr[1]) << 56;
+			break;
+
+		case 6:
+			value = cpu_memoryread_w(paddr[0]);
+			value += (UINT64)cpu_memoryread_d(paddr[0] + 2) << 16;
+			value += (UINT64)cpu_memoryread_w(paddr[1]) << 48;
+			break;
+
+		case 5:
+			value = cpu_memoryread(paddr[0]);
+			value += (UINT64)cpu_memoryread_d(paddr[0] + 1) << 8;
+			value += (UINT64)cpu_memoryread_w(paddr[1]) << 40;
+			value += (UINT64)cpu_memoryread(paddr[1] + 1) << 56;
+			break;
+
+		case 4:
+			value = cpu_memoryread_d(paddr[0]);
+			value += (UINT64)cpu_memoryread_d(paddr[1]) << 32;
+			break;
+
+		case 3:
+			value = cpu_memoryread(paddr[0]);
+			value += (UINT64)cpu_memoryread_w(paddr[0] + 1) << 8;
+			value += (UINT64)cpu_memoryread_d(paddr[1]) << 24;
+			value += (UINT64)cpu_memoryread(paddr[1] + 4) << 56;
+			break;
+
+		case 2:
+			value = cpu_memoryread_w(paddr[0]);
+			value += (UINT64)cpu_memoryread_d(paddr[1]) << 16;
+			value += (UINT64)cpu_memoryread_w(paddr[1] + 4) << 48;
+			break;
+
+		case 1:
+			value = cpu_memoryread(paddr[0]);
+			value += (UINT64)cpu_memoryread_d(paddr[1]) << 8;
+			value += (UINT64)cpu_memoryread_w(paddr[1] + 4) << 40;
+			value += (UINT64)cpu_memoryread(paddr[1] + 6) << 56;
+			break;
+
+		default:
+			ia32_panic("cpu_linear_memory_read_q(): out of range (remain = %d)\n", remain);
+			value = (UINT64)-1;
+			break;
+		}
+	}
+	return value;
+}
+
+REG80 MEMCALL
+cpu_linear_memory_read_f(UINT32 laddr, const int ucrw)
+{
+	UINT32 paddr[2];
+	REG80 value;
+	UINT remain;
+	UINT i, j;
+
+	paddr[0] = paging(laddr, ucrw);
+	remain = 0x1000 - (laddr & 0x00000fff);
+	if (remain >= 10) {
+		return cpu_memoryread_f(paddr[0]);
+	} else {
+		paddr[1] = paging(laddr + remain, ucrw);
+		for (i = 0; i < remain; ++i) {
+			value.b[i] = cpu_memoryread(paddr[0] + i);
+		}
+		for (j = 0; i < 10; ++i, ++j) {
+			value.b[i] = cpu_memoryread(paddr[1] + j);
 		}
 		return value;
 	}
@@ -399,157 +491,15 @@ cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode)
 
 		case 1:
 			cpu_memorywrite(paddr[0], (UINT8)value);
-			cpu_memorywrite(paddr[1], (UINT8)(value >> 8));
-			cpu_memorywrite_w(paddr[1] + 1, (UINT16)(value >> 16));
+			cpu_memorywrite_w(paddr[1], (UINT16)(value >> 8));
+			cpu_memorywrite(paddr[1] + 2, (UINT8)(value >> 24));
 			break;
 		}
 	}
-}
-
-#else	/* !IA32_PAGING_EACHSIZE */
-
-UINT32 MEMCALL
-cpu_memory_access_la_RMW(UINT32 laddr, UINT length, UINT32 (*func)(UINT32, void *), void *arg)
-{
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
-	UINT32 result, value;
-	UINT32 paddr[2];
-	UINT remain;
-
-	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
-	if (remain >= length) {
-		/* fast mode */
-		switch (length) {
-		case 4:
-			value = cpu_memoryread_d(paddr[0]);
-			result = (*func)(value, arg);
-			cpu_memorywrite_d(paddr[0], result);
-			break;
-
-		case 2:
-			value = cpu_memoryread_w(paddr[0]);
-			result = (*func)(value, arg);
-			cpu_memorywrite_w(paddr[0], (UINT16)result);
-			break;
-
-		case 1:
-			value = cpu_memoryread(paddr[0]);
-			result = (*func)(value, arg);
-			cpu_memorywrite(paddr[0], (UINT8)result);
-			break;
-
-		default:
-			ia32_panic("cpu_memory_access_la_RMW(): invalid length (length = %d)\n", length);
-			return (UINT32)-1;
-		}
-		return value;
-	}
-
-	/* slow mode */
-	paddr[1] = paging(laddr + remain, ucrw);
-	switch (remain) {
-	case 3:
-		value = cpu_memoryread(paddr[0]);
-		value += (UINT32)cpu_memoryread_w(paddr[0] + 1) << 8;
-		value += (UINT32)cpu_memoryread(paddr[1]) << 24;
-		result = (*func)(value, arg);
-		cpu_memorywrite(paddr[0], (UINT8)result);
-		cpu_memorywrite_w(paddr[0] + 1, (UINT16)(result >> 8));
-		cpu_memorywrite(paddr[1], (UINT8)(result >> 24));
-		break;
-
-	case 2:
-		value = cpu_memoryread_w(paddr[0]);
-		value += (UINT32)cpu_memoryread_w(paddr[1]) << 16;
-		result = (*func)(value, arg);
-		cpu_memorywrite_w(paddr[0], (UINT16)result);
-		cpu_memorywrite_w(paddr[1], (UINT16)(result >> 16));
-		break;
-
-	case 1:
-		value = cpu_memoryread(paddr[0]);
-		value += (UINT32)cpu_memoryread(paddr[1]) << 8;
-		if (length == 4) {
-			value += (UINT32)cpu_memoryread_w(paddr[1] + 1) << 16;
-		}
-		result = (*func)(value, arg);
-		cpu_memorywrite(paddr[0], (UINT8)result);
-		cpu_memorywrite(paddr[1], (UINT8)(result >> 8));
-		if (length == 4) {
-			cpu_memorywrite_w(paddr[1] + 1, (UINT16)(result >> 16));
-		}
-		break;
-
-	default:
-		ia32_panic("cpu_memory_access_la_RMW(): out of range (remain = %d)\n", remain);
-		return (UINT32)-1;
-	}
-	return value;
-}
-
-UINT32 MEMCALL
-cpu_linear_memory_read(UINT32 laddr, UINT length, const int ucrw)
-{
-	UINT32 value;
-	UINT32 paddr[2];
-	UINT remain;
-
-	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
-	if (remain >= length) {
-		/* fast mode */
-		switch (length) {
-		case 4:
-			value = cpu_memoryread_d(paddr[0]);
-			break;
-
-		case 2:
-			value = cpu_memoryread_w(paddr[0]);
-			break;
-
-		case 1:
-			value = cpu_memoryread(paddr[0]);
-			break;
-
-		default:
-			ia32_panic("cpu_linear_memory_read(): invalid length (length = %d)\n", length);
-			return (UINT32)-1;
-		}
-		return value;
-	}
-
-	/* slow mode */
-	paddr[1] = paging(laddr + remain, ucrw);
-	switch (remain) {
-	case 3:
-		value = cpu_memoryread(paddr[0]);
-		value += (UINT32)cpu_memoryread_w(paddr[0] + 1) << 8;
-		value += (UINT32)cpu_memoryread(paddr[1]) << 24;
-		break;
-
-	case 2:
-		value = cpu_memoryread_w(paddr[0]);
-		value += (UINT32)cpu_memoryread_w(paddr[1]) << 16;
-		break;
-
-	case 1:
-		value = cpu_memoryread(paddr[0]);
-		value += (UINT32)cpu_memoryread(paddr[1]) << 8;
-		if (length == 4) {
-			value += (UINT32)cpu_memoryread_w(paddr[1] + 1) << 16;
-		}
-		break;
-
-	default:
-		ia32_panic("cpu_linear_memory_read(): out of range (remain = %d)\n", remain);
-		return (UINT32)-1;
-	}
-	return value;
 }
 
 void MEMCALL
-cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_mode)
+cpu_linear_memory_write_q(UINT32 laddr, UINT64 value, const int user_mode)
 {
 	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
 	UINT32 paddr[2];
@@ -557,56 +507,81 @@ cpu_linear_memory_write(UINT32 laddr, UINT32 value, UINT length, const int user_
 
 	paddr[0] = paging(laddr, ucrw);
 	remain = 0x1000 - (laddr & 0x00000fff);
-	if (remain >= length) {
-		/* fast mode */
-		switch (length) {
+	if (remain >= 8) {
+		cpu_memorywrite_q(paddr[0], value);
+	} else {
+		paddr[1] = paging(laddr + remain, ucrw);
+		switch (remain) {
+		case 7:
+			cpu_memorywrite(paddr[0], (UINT8)value);
+			cpu_memorywrite_w(paddr[0] + 1, (UINT16)(value >> 8));
+			cpu_memorywrite_d(paddr[0] + 3, (UINT32)(value >> 24));
+			cpu_memorywrite(paddr[1], (UINT8)(value >> 56));
+			break;
+
+		case 6:
+			cpu_memorywrite_d(paddr[0] + 2, (UINT32)(value >> 16));
+			cpu_memorywrite_w(paddr[1], (UINT16)(value >> 48));
+			break;
+
+		case 5:
+			cpu_memorywrite(paddr[0], (UINT8)value);
+			cpu_memorywrite_d(paddr[0] + 1, (UINT32)(value >> 8));
+			cpu_memorywrite_w(paddr[1], (UINT16)(value >> 40));
+			cpu_memorywrite(paddr[1] + 2, (UINT8)(value >> 56));
+			break;
+
 		case 4:
-			cpu_memorywrite_d(paddr[0], value);
+			cpu_memorywrite_d(paddr[0], (UINT32)value);
+			cpu_memorywrite_d(paddr[1], (UINT32)(value >> 32));
+			break;
+
+		case 3:
+			cpu_memorywrite(paddr[0], (UINT8)value);
+			cpu_memorywrite_w(paddr[0] + 1, (UINT16)(value >> 8));
+			cpu_memorywrite_d(paddr[1], (UINT32)(value >> 24));
+			cpu_memorywrite(paddr[1] + 4, (UINT8)(value >> 56));
 			break;
 
 		case 2:
 			cpu_memorywrite_w(paddr[0], (UINT16)value);
+			cpu_memorywrite_d(paddr[1], (UINT32)(value >> 16));
+			cpu_memorywrite_w(paddr[1] + 4, (UINT16)(value >> 48));
 			break;
 
 		case 1:
 			cpu_memorywrite(paddr[0], (UINT8)value);
-			break;
-
-		default:
-			ia32_panic("cpu_linear_memory_write(): invalid length (length = %d)\n", length);
+			cpu_memorywrite_d(paddr[1], (UINT32)(value >> 8));
+			cpu_memorywrite_w(paddr[1] + 4, (UINT16)(value >> 40));
+			cpu_memorywrite(paddr[1] + 6, (UINT8)(value >> 56));
 			break;
 		}
-		return;
-	}
-
-	/* slow mode */
-	paddr[1] = paging(laddr + remain, ucrw);
-	switch (remain) {
-	case 3:
-		cpu_memorywrite(paddr[0], (UINT8)value);
-		cpu_memorywrite_w(paddr[0] + 1, (UINT16)(value >> 8));
-		cpu_memorywrite(paddr[1], (UINT8)(value >> 24));
-		break;
-
-	case 2:
-		cpu_memorywrite_w(paddr[0], (UINT16)value);
-		cpu_memorywrite_w(paddr[1], (UINT16)(value >> 16));
-		break;
-
-	case 1:
-		cpu_memorywrite(paddr[0], (UINT8)value);
-		cpu_memorywrite(paddr[1], (UINT8)(value >> 8));
-		if (length == 4) {
-			cpu_memorywrite_w(paddr[1] + 1, (UINT16)(value >> 16));
-		}
-		break;
-
-	default:
-		ia32_panic("cpu_linear_memory_write(): out of range (remain = %d)\n", remain);
-		break;
 	}
 }
-#endif	/* IA32_PAGING_EACHSIZE */
+
+void MEMCALL
+cpu_linear_memory_write_f(UINT32 laddr, const REG80 *value, const int user_mode)
+{
+	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
+	UINT32 paddr[2];
+	UINT remain;
+	UINT i, j;
+
+	paddr[0] = paging(laddr, ucrw);
+	remain = 0x1000 - (laddr & 0x00000fff);
+	if (remain >= 10) {
+		cpu_memorywrite_f(paddr[0], value);
+	} else {
+		paddr[1] = paging(laddr + remain, ucrw);
+		for (i = 0; i < remain; ++i) {
+			cpu_memorywrite(paddr[0] + i, value->b[i]);
+		}
+		for (j = 0; i < 10; ++i, ++j) {
+			cpu_memorywrite(paddr[1] + j, value->b[i]);
+		}
+	}
+}
+
 
 void MEMCALL
 cpu_memory_access_la_region(UINT32 laddr, UINT length, const int ucrw, BYTE *data)

@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.h,v 1.7 2004/03/25 15:08:32 monaka Exp $	*/
+/*	$Id: cpu_mem.h,v 1.8 2005/03/05 16:47:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -53,9 +53,13 @@ void cpu_stack_pop_check(UINT16 s, descriptor_t *sd, UINT32 madr, UINT length);
 void MEMCALL cpu_vmemorywrite_b(int idx, UINT32 offset, UINT8 value) GCC_ATTR_REGPARM;
 void MEMCALL cpu_vmemorywrite_w(int idx, UINT32 offset, UINT16 value) GCC_ATTR_REGPARM;
 void MEMCALL cpu_vmemorywrite_d(int idx, UINT32 offset, UINT32 value) GCC_ATTR_REGPARM;
+void MEMCALL cpu_vmemorywrite_q(int idx, UINT32 offset, UINT64 value) GCC_ATTR_REGPARM;
+void MEMCALL cpu_vmemorywrite_f(int idx, UINT32 offset, const REG80 *value) GCC_ATTR_REGPARM;
 UINT8 MEMCALL cpu_vmemoryread_b(int idx, UINT32 offset) GCC_ATTR_REGPARM;
 UINT16 MEMCALL cpu_vmemoryread_w(int idx, UINT32 offset) GCC_ATTR_REGPARM;
 UINT32 MEMCALL cpu_vmemoryread_d(int idx, UINT32 offset) GCC_ATTR_REGPARM;
+UINT64 MEMCALL cpu_vmemoryread_q(int idx, UINT32 offset) GCC_ATTR_REGPARM;
+REG80 MEMCALL cpu_vmemoryread_f(int idx, UINT32 offset) GCC_ATTR_REGPARM;
 UINT32 MEMCALL cpu_memory_access_va_RMW_b(int idx, UINT32 offset, UINT32 (*func)(UINT32, void *), void *arg) GCC_ATTR_REGPARM;
 UINT32 MEMCALL cpu_memory_access_va_RMW_w(int idx, UINT32 offset, UINT32 (*func)(UINT32, void *), void *arg) GCC_ATTR_REGPARM;
 UINT32 MEMCALL cpu_memory_access_va_RMW_d(int idx, UINT32 offset, UINT32 (*func)(UINT32, void *), void *arg) GCC_ATTR_REGPARM;
@@ -69,6 +73,14 @@ UINT32 MEMCALL cpu_memory_access_va_RMW_d(int idx, UINT32 offset, UINT32 (*func)
 UINT8 MEMCALL cpu_codefetch(UINT32 madr) GCC_ATTR_REGPARM;
 UINT16 MEMCALL cpu_codefetch_w(UINT32 madr) GCC_ATTR_REGPARM;
 UINT32 MEMCALL cpu_codefetch_d(UINT32 madr) GCC_ATTR_REGPARM;
+
+/*
+ * additional physical address function
+ */
+UINT64 MEMCALL cpu_memoryread_q(UINT32 address) GCC_ATTR_REGPARM;
+REG80 MEMCALL cpu_memoryread_f(UINT32 address) GCC_ATTR_REGPARM;
+void MEMCALL cpu_memorywrite_q(UINT32 address, UINT64 value) GCC_ATTR_REGPARM;
+void MEMCALL cpu_memorywrite_f(UINT32 address, const REG80 *value) GCC_ATTR_REGPARM;
 
 #ifdef __cplusplus
 }

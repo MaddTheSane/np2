@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.16 2004/06/15 13:50:13 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.17 2005/03/05 16:47:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -78,9 +78,6 @@ ia32_init(void)
 	}
 
 	resolve_init();
-#ifdef USE_FPU
-	fpu_init();
-#endif
 }
 
 void

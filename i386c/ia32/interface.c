@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.22 2005/02/08 09:57:26 yui Exp $	*/
+/*	$Id: interface.c,v 1.23 2005/03/05 16:47:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -30,6 +30,9 @@
 #include "compiler.h"
 #include "cpu.h"
 #include "ia32.mcr"
+#if defined(USE_FPU)
+#include "instructions/fpu/fp.h"
+#endif
 
 #include "pccore.h"
 #include "iocore.h"
@@ -50,9 +53,11 @@ ia32_initreg(void)
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
 	CPU_EFLAG = 2;
 	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW | CPU_CR0_ET;
-#ifndef USE_FPU
+#if defined(USE_FPU)
 	CPU_CR0 |= CPU_CR0_EM | CPU_CR0_NE;
 	CPU_CR0 &= ~CPU_CR0_MP;
+#else
+	CPU_CR0 |= CPU_CR0_ET;
 #endif
 	CPU_MXCSR = 0x1f80;
 	CPU_GDTR_LIMIT = 0xffff;
@@ -76,6 +81,9 @@ ia32_initreg(void)
 	CPU_ADRSMASK = 0x000fffff;
 
 	tlb_init();
+#if defined(USE_FPU)
+	fpu_init();
+#endif
 }
 
 void
