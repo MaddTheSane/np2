@@ -14,7 +14,7 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 	}
 #endif
 	epsonio.cpumode = (CPU_MSW & 1)?'P':'R';
-	CPU_ADRSMASK = 0x0fffff;
+	CPU_A20EN(FALSE);
 	CPU_RESETREQ = 1;
 	nevent_forceexit();
 	(void)port;
@@ -23,7 +23,7 @@ static void IOOUTCALL cpuio_of0(UINT port, REG8 dat) {
 
 static void IOOUTCALL cpuio_of2(UINT port, REG8 dat) {
 
-	CPU_ADRSMASK = 0xffffffff;
+	CPU_A20EN(TRUE);
 	(void)port;
 	(void)dat;
 }
@@ -58,11 +58,12 @@ static void IOOUTCALL cpuio_of6(UINT port, REG8 dat) {
 
 	switch(dat) {
 		case 0x02:
-			CPU_ADRSMASK = 0xffffffff;
+			CPU_A20EN(TRUE);
 			break;
 
 		case 0x03:
-			CPU_ADRSMASK = 0x0fffff;
+			CPU_A20EN(FALSE);
+			break;
 	}
 	(void)port;
 }

@@ -126,7 +126,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
 			$(OBJ)/cmjasts.o	$(OBJ)/cmver.o		$(OBJ)/dipswbmp.o	\
-			$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o						\
+			$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o	$(OBJ)/np2info.o	\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/dosio.o		\
 			$(OBJ)/trace.o		$(OBJ)/commng.o		$(OBJ)/fontmng.o	\
 			$(OBJ)/joymng.o		$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	\
@@ -755,6 +755,11 @@ $(OBJ)/cmndraw.o	:	$(GENERIC)/cmndraw.c $(HEADERS) \
 $(OBJ)/keydisp.o	:	$(GENERIC)/keydisp.c $(HEADERS) $(PCCORES) \
 						$(IOCORES) $(FMBOARDS) $(SOUND)/sound.h \
 						$(GENERIC)/keydisp.h $(GENERIC)/keydisp.res
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/softkbd.o	:	$(GENERIC)/softkbd.c $(HEADERS) \
+						$(COMMON)/bmpdata.h $(BASE)/keystat.h \
+						$(GENERIC)/softkbd.h $(GENERIC)/softkbd.res
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \

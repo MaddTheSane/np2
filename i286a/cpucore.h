@@ -287,6 +287,7 @@ void i286a_step(void);
 #define	CPU_isEI		(i286acore.s.r.w.flag & I_FLAG)
 #define	CPU_CLI			i286acore.s.r.w.flag &= ~I_FLAG;
 #define	CPU_STI			i286acore.s.r.w.flag |= I_FLAG;
+#define	CPU_A20EN(en)	CPU_ADRSMASK = (en)?0xfffffff:0x000fffff;
 
 #define	CPU_INITIALIZE				i286a_initialize
 #define	CPU_DEINITIALIZE			i286a_deinitialize

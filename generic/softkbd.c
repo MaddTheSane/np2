@@ -53,7 +53,7 @@ void softkbd_paint(CMNVRAM *vram, CMNPALCNV cnv) {
 
 	bmp = bmpdata_solvedata(np2kbd_bmp);
 	if (bmp) {
-		cmddraw_bmp16(vram, bmp, cnv);
+		cmddraw_bmp16(vram, bmp, cnv, CMNBMP_LEFT | CMNBMP_TOP);
 		_MFREE(bmp);
 	}
 }

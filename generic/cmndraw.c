@@ -511,7 +511,7 @@ const BYTE	*ptr;
 
 // ---- bmp
 
-void cmddraw_bmp16(CMNVRAM *vram, const void *bmp, CMNPALCNV cnv) {
+void cmddraw_bmp16(CMNVRAM *vram, const void *bmp, CMNPALCNV cnv, UINT flag) {
 
 const BMPFILE	*bf;
 const BMPINFO	*bi;
@@ -560,12 +560,44 @@ const BYTE		*palptr;
 	}
 	(*cnv)(pal, paltbl, pals, vram->bpp);
 	dst = vram->ptr;
-#if 0
-	dst += ((vram->width - inf.width) / 2) * vram->xalign;
-	dst += ((vram->height - inf.height) / 2) * vram->yalign;
-#endif
+	switch(flag & 0x03) {
+		case CMNBMP_CENTER:
+			dst += ((vram->width - inf.width) / 2) * vram->xalign;
+			break;
+
+		case CMNBMP_RIGHT:
+			dst += (vram->width - inf.width) * vram->xalign;
+			break;
+	}
+	switch(flag & 0x0c) {
+		case CMNBMP_MIDDLE:
+			dst += ((vram->height - inf.height) / 2) * vram->yalign;
+			break;
+
+		case CMNBMP_BOTTOM:
+			dst += (vram->height - inf.height) * vram->yalign;
+			break;
+	}
 	yalign = vram->yalign - (inf.width * vram->xalign);
 	switch(vram->bpp) {
+#if defined(SUPPORT_8BPP)
+		case 8:
+			for (y=0; y<inf.height; y++) {
+				for (x=0; x<inf.width; x++) {
+					if (!(x & 1)) {
+						c = src[x >> 1] >> 4;
+					}
+					else {
+						c = src[x >> 1] & 15;
+					}
+					*dst = pal[c].pal8;
+					dst += vram->xalign;
+				}
+				src += bmpalign;
+				dst += yalign;
+			}
+			break;
+#endif
 #if defined(SUPPORT_16BPP)
 		case 16:
 			for (y=0; y<inf.height; y++) {
@@ -577,6 +609,26 @@ const BYTE		*palptr;
 						c = src[x >> 1] & 15;
 					}
 					*(UINT16 *)dst = pal[c].pal16;
+					dst += vram->xalign;
+				}
+				src += bmpalign;
+				dst += yalign;
+			}
+			break;
+#endif
+#if defined(SUPPORT_24BPP)
+		case 24:
+			for (y=0; y<inf.height; y++) {
+				for (x=0; x<inf.width; x++) {
+					if (!(x & 1)) {
+						c = src[x >> 1] >> 4;
+					}
+					else {
+						c = src[x >> 1] & 15;
+					}
+					dst[RGB24_R] = pal[c].pal32.p.r;
+					dst[RGB24_G] = pal[c].pal32.p.g;
+					dst[RGB24_B] = pal[c].pal32.p.b;
 					dst += vram->xalign;
 				}
 				src += bmpalign;

@@ -114,9 +114,9 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/font.o		$(OBJ)/fontdata.o	$(OBJ)/fontpc88.o	\
 			$(OBJ)/fontpc98.o	$(OBJ)/fontv98.o	$(OBJ)/fontfm7.o	\
 			$(OBJ)/fontx1.o		$(OBJ)/fontx68k.o	$(OBJ)/fontmake.o	\
-			$(OBJ)/cmndraw.o	$(OBJ)/keydisp.o	$(OBJ)/dipswbmp.o	\
-			$(OBJ)/cmjasts.o	$(OBJ)/hostdrv.o	$(OBJ)/hostdrvs.o	\
-			$(OBJ)/unasm.o		$(OBJ)/np2info.o						\
+			$(OBJ)/cmndraw.o	$(OBJ)/keydisp.o	$(OBJ)/softkbd.o	\
+			$(OBJ)/dipswbmp.o	$(OBJ)/cmjasts.o	$(OBJ)/hostdrv.o	\
+			$(OBJ)/hostdrvs.o	$(OBJ)/unasm.o		$(OBJ)/np2info.o	\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
 			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
 			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
@@ -126,7 +126,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/timemng.o	$(OBJ)/juliet.o		$(OBJ)/sstp.o		\
 			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
 			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
-			$(OBJ)/toolwin.o	$(OBJ)/dd2.o		$(OBJ)/kdispwin.o	\
+			$(OBJ)/dd2.o		$(OBJ)/toolwin.o	$(OBJ)/subwind.o	\
 			$(OBJ)/np2res.o												\
 			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
 			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
@@ -809,6 +809,11 @@ $(OBJ)/keydisp.o	:	$(GENERIC)/keydisp.c $(HEADERS) $(PCCORES) \
 						$(GENERIC)/keydisp.h $(GENERIC)/keydisp.res
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/softkbd.o	:	$(GENERIC)/softkbd.c $(HEADERS) \
+						$(COMMON)/bmpdata.h $(BASE)/keystat.h \
+						$(GENERIC)/softkbd.h $(GENERIC)/softkbd.res
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/dipswbmp.o	:	$(GENERIC)/dipswbmp.c $(HEADERS) $(COMMON)/bmpdata.h \
 						$(GENERIC)/dipswbmp.h $(GENERIC)/dipswbmp.res
 	$(CC) $(COPT) -o $@ $<
@@ -855,13 +860,13 @@ $(OBJ)/np2.o		:	$(TARGET)/np2.cpp $(HEADERS) $(PCCORES) $(IOCORES) \
 						$(TARGET)/winkbd.h $(TARGET)/ini.h $(TARGET)/menu.h \
 						$(TARGET)/winloc.h $(TARGET)/sstp.h \
 						$(TARGET)/sstpmsg.h $(TARGET)/dclock.h \
+						$(TARGET)/subwind.h \
 						$(TARGET)/juliet.h $(DIALOG)/dialog.h \
 						$(I286C)/memory.h $(CBUS)/pc9861k.h \
 						$(CBUS)/mpu98ii.h $(BIOS)/bios.h $(VRAM)/scrndraw.h \
 						$(SOUND)/sound.h $(SOUND)/beep.h $(SOUND)/s98.h \
 						$(FDD)/diskdrv.h $(FDD)/fddfile.h $(BASE)/timing.h \
-						$(BASE)/debugsub.h \
-						$(GENERIC)/keydisp.h $(DEBUGUTY)/viewer.h
+						$(BASE)/debugsub.h $(DEBUGUTY)/viewer.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2arg.o		:	$(TARGET)/np2arg.cpp $(HEADERS) $(TARGET)/np2arg.h \
@@ -977,6 +982,9 @@ $(OBJ)/ini.o		:	$(TARGET)/ini.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/ini.h $(TARGET)/winkbd.h
 	$(CC) $(COPT) -o $@ $<
 
+$(OBJ)/dd2.o		:	$(TARGET)/dd2.cpp $(HEADERS) $(TARGET)/dd2.h
+	$(CC) $(COPT) -o $@ $<
+
 $(OBJ)/toolwin.o	:	$(TARGET)/toolwin.cpp $(HEADERS) $(PCCORES) \
 						$(COMMON)/strres.h $(TARGET)/resource.h \
 						$(TARGET)/np2.h $(TARGET)/dosio.h $(TARGET)/sysmng.h \
@@ -984,14 +992,11 @@ $(OBJ)/toolwin.o	:	$(TARGET)/toolwin.cpp $(HEADERS) $(PCCORES) \
 						$(DIALOG)/dialog.h $(FDD)/diskdrv.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/dd2.o		:	$(TARGET)/dd2.cpp $(HEADERS) $(TARGET)/dd2.h
-	$(CC) $(COPT) -o $@ $<
-
-$(OBJ)/kdispwin.o	:	$(TARGET)/kdispwin.cpp $(HEADERS) \
+$(OBJ)/subwind.o	:	$(TARGET)/subwind.cpp $(HEADERS) \
 						$(TARGET)/resource.h $(TARGET)/np2.h \
 						$(TARGET)/winloc.h $(TARGET)/soundmng.h \
 						$(TARGET)/sysmng.h $(TARGET)/menu.h $(TARGET)/ini.h \
-						$(TARGET)/dd2.h $(TARGET)/kdispwin.h \
+						$(TARGET)/dd2.h $(TARGET)/subwind.h \
 						$(DIALOG)/np2class.h $(GENERIC)/keydisp.h
 	$(CC) $(COPT) -o $@ $<
 

@@ -781,6 +781,10 @@ SOURCE=..\GENERIC\HOSTDRV.C
 
 SOURCE=..\GENERIC\HOSTDRVS.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\GENERIC\NP2INFO.C
+# End Source File
 # End Group
 # Begin Source File
 

@@ -440,6 +440,12 @@ static void skpalcnv(CMNPAL *dst, RGB32 *src, UINT pals, UINT bpp) {
 	UINT	i;
 
 	switch(bpp) {
+		case 16:
+			for (i=0; i<pals; i++) {
+				dst[i].pal16 = dd2_get16pal(skbdwin.dd2hdl, src[i]);
+			}
+			break;
+
 		case 32:
 			for (i=0; i<pals; i++) {
 				dst[i].pal32.d = src[i].d;

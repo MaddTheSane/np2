@@ -83,7 +83,20 @@ void cmndraw32_setpat(const CMNVRAM *vram, const BYTE *src,
 
 void cmddraw_fill(CMNVRAM *vram, int x, int y, int cx, int cy, CMNPALS *pal);
 void cmddraw_text8(CMNVRAM *vram, int x, int y, const char *str, CMNPALS *pal);
-void cmddraw_bmp16(CMNVRAM *vram, const void *bmp, CMNPALCNV cnv);
+
+
+// ----
+
+enum {
+	CMNBMP_LEFT		= 0x00,
+	CMNBMP_CENTER	= 0x01,
+	CMNBMP_RIGHT	= 0x02,
+	CMNBMP_TOP		= 0x00,
+	CMNBMP_MIDDLE	= 0x04,
+	CMNBMP_BOTTOM	= 0x08
+};
+
+void cmddraw_bmp16(CMNVRAM *vram, const void *bmp, CMNPALCNV cnv, UINT flag);
 
 #ifdef __cplusplus
 }
