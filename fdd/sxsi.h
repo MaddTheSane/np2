@@ -102,6 +102,10 @@ void sxsi_open(void);
 void sxsi_flash(void);
 void sxsi_trash(void);
 
+BOOL sxsi_issasi(void);
+BOOL sxsi_isscsi(void);
+BOOL sxsi_iside(void);
+
 REG8 sxsi_read(REG8 drv, long pos, BYTE *buf, UINT size);
 REG8 sxsi_write(REG8 drv, long pos, const BYTE *buf, UINT size);
 REG8 sxsi_format(REG8 drv, long pos);

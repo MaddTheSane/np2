@@ -186,6 +186,7 @@ static REG8 sasibios_init(UINT type, SXSIDEV sxsi) {
 
 static REG8 sasibios_sense(UINT type, SXSIDEV sxsi) {
 
+	TRACEOUT(("sasibios_sense type=%d", type));
 	if (type == SXSIBIOS_SASI) {
 		return((REG8)((sxsi->type >> 8) & 7));
 	}

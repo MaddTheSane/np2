@@ -388,6 +388,7 @@ static REG8 IOINPCALL sasiio_i80(UINT port) {
 static REG8 IOINPCALL sasiio_i82(UINT port) {
 
 	REG8	ret;
+	SXSIDEV	sxsi;
 
 	if (sasiio.ocr & SASIOCR_NRDSW) {
 		ret = sasiio.isrint;
@@ -414,12 +415,27 @@ static REG8 IOINPCALL sasiio_i82(UINT port) {
 					break;
 			}
 		}
-		return(ret);
 	}
 	else {
-		return((6 << 3) + 6);			// 256/256/40MB/40MB
+		ret = 0;
+		sxsi = sxsi_getptr(0x00);		// SASI-1
+		if ((sxsi) && ((sxsi->type & SXSITYPE_IFMASK) == SXSITYPE_SASI)) {
+			ret |= (sxsi->type >> (8 - 3)) & 0x38;
+		}
+		else {
+			ret |= 0x38;
+		}
+		sxsi = sxsi_getptr(0x01);		// SASI-2
+		if ((sxsi) && ((sxsi->type & SXSITYPE_IFMASK) == SXSITYPE_SASI)) {
+			ret |= (sxsi->type >> 8) & 7;
+		}
+		else {
+			ret |= 7;
+		}
+		TRACEOUT(("sasi type = %.2x", ret));
 	}
 	(void)port;
+	return(ret);
 }
 
 
@@ -459,6 +475,5 @@ void sasiio_bind(void) {
 		iocore_attachinp(0x0082, sasiio_i82);
 	}
 }
-
 #endif
 

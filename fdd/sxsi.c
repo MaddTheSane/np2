@@ -19,10 +19,12 @@ const SASIHDD sasihdd[7] = {
 				{33, 6, 615},			// 30MB
 				{33, 8, 615}};			// 40MB
 
+#if 0
 static const _SXSIDEV defide = {615*33*8, 615, 256, 33, 8,
 								SXSITYPE_IDE | SXSITYPE_HDD, 256, 0, {0x00}};
 static const _SXSIDEV defscsi = {40*16*32*8, 40*16, 256, 32, 8,
 								SXSITYPE_SCSI | SXSITYPE_HDD, 220, 0, {0x00}};
+#endif
 
 
 	_SXSIDEV	sxsi_dev[SASIHDD_MAX + SCSIHDD_MAX];
@@ -35,7 +37,7 @@ const SASIHDD	*sasi;
 	UINT		i;
 
 	sasi = sasihdd;
-	for (i=0; i<sizeof(sasihdd)/sizeof(SASIHDD); i++) {
+	for (i=0; i<sizeof(sasihdd)/sizeof(SASIHDD); i++, sasi++) {
 		if ((sxsi->size == 256) &&
 			(sxsi->sectors == sasi->sectors) &&
 			(sxsi->surfaces == sasi->surfaces) &&
@@ -45,6 +47,7 @@ const SASIHDD	*sasi;
 		}
 	}
 }
+
 
 // ----
 
@@ -280,6 +283,58 @@ static SXSIDEV getdrive(REG8 drv) {
 	}
 	sysmng_hddaccess(drv);
 	return(ret);
+}
+
+BOOL sxsi_issasi(void) {
+
+	REG8	drv;
+	SXSIDEV	sxsi;
+	BOOL	ret;
+	UINT	sxsiif;
+
+	ret = FALSE;
+	for (drv=0x00; drv<0x04; drv++) {
+		sxsi = sxsi_getptr(drv);
+		if (sxsi) {
+			sxsiif = sxsi->type & SXSITYPE_IFMASK;
+			if (sxsiif == SXSITYPE_SASI) {
+				ret = TRUE;
+			}
+			else if (sxsiif == SXSITYPE_IDE) {
+				ret = FALSE;
+				break;
+			}
+		}
+	}
+	return(ret);
+}
+
+BOOL sxsi_isscsi(void) {
+
+	REG8	drv;
+	SXSIDEV	sxsi;
+
+	for (drv=0x20; drv<0x28; drv++) {
+		sxsi = sxsi_getptr(drv);
+		if ((sxsi) && (sxsi->type)) {
+			return(TRUE);
+		}
+	}
+	return(FALSE);
+}
+
+BOOL sxsi_iside(void) {
+
+	REG8	drv;
+	SXSIDEV	sxsi;
+
+	for (drv=0x00; drv<0x04; drv++) {
+		sxsi = sxsi_getptr(drv);
+		if ((sxsi) && (sxsi->type)) {
+			return(TRUE);
+		}
+	}
+	return(FALSE);
 }
 
 REG8 sxsi_read(REG8 drv, long pos, BYTE *buf, UINT size) {

@@ -1284,7 +1284,6 @@ static int flagload_disk(STFLAGH sfh, const SFENTRY *tbl) {
 			fdd_set(i, st.path, FTYPE_NONE, st.readonly);
 		}
 	}
-	sxsi_trash();
 	for (i=0x00; i<0x02; i++) {
 		ret |= statflag_read(sfh, &st, sizeof(st));
 		if (st.path[0]) {
@@ -1588,6 +1587,7 @@ const SFENTRY	*tblterm;
 	rs232c_midipanic();
 	mpu98ii_midipanic();
 	pc9861k_midipanic();
+	sxsi_trash();
 
 	ret |= flagload_common(&sffh->sfh, np2tbl);
 	nevent_init();
@@ -1605,7 +1605,6 @@ const SFENTRY	*tblterm;
 	iocore_reset();								// サウンドでpicを呼ぶので…
 	cbuscore_reset();
 	fmboard_reset(pccore.sound);
-
 
 	done = FALSE;
 	while((!done) && (ret != STATFLAG_FAILURE)) {

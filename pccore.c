@@ -187,9 +187,6 @@ static void pccore_set(void) {
 	if (np2cfg.dipsw[1] & 0x20) {
 		pccore.hddif |= PCHDD_IDE;
 	}
-#if defined(SUPPORT_SCSI)
-	pccore.hddif |= PCHDD_SCSI;
-#endif
 
 	// サウンドボードの接続
 	pccore.sound = np2cfg.SOUND_SW;
@@ -353,6 +350,22 @@ void pccore_reset(void) {
 		CPU_RAM_D000 = 0xffff;
 	}
 
+	// HDDセット
+	sxsi_open();
+#if defined(SUPPORT_SASI)
+	if (sxsi_issasi()) {
+		pccore.hddif &= ~PCHDD_IDE;
+		pccore.hddif |= PCHDD_SASI;
+		TRACEOUT(("supported SASI"));
+	}
+#endif
+#if defined(SUPPORT_SCSI)
+	if (sxsi_isscsi()) {
+		pccore.hddif |= PCHDD_SCSI;
+		TRACEOUT(("supported SCSI"));
+	}
+#endif
+
 	sound_changeclock();
 	beep_changeclock();
 	sound_reset();
@@ -380,7 +393,6 @@ void pccore_reset(void) {
 	pal_change(1);
 
 	bios_init();
-	sxsi_open();
 
 	if (np2cfg.ITF_WORK) {
 		CS_BASE = 0xf0000;
