@@ -98,32 +98,36 @@ static void InitToolBox(void) {
 
 static void MenuBarInit(void) {
 
-	Handle		hMenu;
-	MenuHandle	happlemenu;
+	Handle		hdl;
+	MenuHandle	hmenu;
 
-	hMenu = GetNewMBar(IDM_MAINMENU);
-	if (!hMenu) {
+	hdl = GetNewMBar(IDM_MAINMENU);
+	if (hdl == NULL) {
 		ExitToShell();
 	}
-	SetMenuBar(hMenu);
-	happlemenu = GetMenuHandle(IDM_APPLE);
-	if (happlemenu) {
-		AppendResMenu(happlemenu, 'DRVR');
+	SetMenuBar(hdl);
+	hmenu = GetMenuHandle(IDM_APPLE);
+	if (hmenu) {
+		AppendResMenu(hmenu, 'DRVR');
 	}
 	InsertMenu(GetMenu(IDM_SASI1), -1);
 	InsertMenu(GetMenu(IDM_SASI2), -1);
 	InsertMenu(GetMenu(IDM_KEYBOARD), -1);
 	InsertMenu(GetMenu(IDM_SOUND), -1);
 	InsertMenu(GetMenu(IDM_MEMORY), -1);
-	SetMenuItemModifiers(GetMenuHandle(IDM_FDD2), LoWord(IDM_FDD2OPEN),
-														kMenuOptionModifier);
-	SetMenuItemModifiers(GetMenuHandle(IDM_FDD2), LoWord(IDM_FDD2EJECT),
-														kMenuOptionModifier);
-	SetMenuItemModifiers(GetMenuHandle(IDM_SASI2), LoWord(IDM_SASI2OPEN),
-														kMenuOptionModifier);
+
 #if TARGET_API_MAC_CARBON
-	DisableMenuItem(GetMenuHandle(IDM_DEVICE), LoWord(IDM_MOUSE));
-	DisableMenuItem(GetMenuHandle(IDM_KEYBOARD), LoWord(IDM_F12MOUSE));
+	hmenu = GetMenuHandle(IDM_FDD2);
+	SetItemCmd(hmenu, LoWord(IDM_FDD2OPEN), 'D');
+	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2OPEN), kMenuOptionModifier);
+	SetItemCmd(hmenu, LoWord(IDM_FDD2EJECT), 'E');
+	SetMenuItemModifiers(hmenu, LoWord(IDM_FDD2EJECT), kMenuOptionModifier);
+	hmenu = GetMenuHandle(IDM_SASI2);
+	SetItemCmd(hmenu, LoWord(IDM_FDD2OPEN), 'O');
+	SetMenuItemModifiers(hmenu, LoWord(IDM_SASI2OPEN), kMenuOptionModifier);
+#else
+	EnableItem(GetMenuHandle(IDM_DEVICE), LoWord(IDM_MOUSE));
+	EnableItem(GetMenuHandle(IDM_KEYBOARD), LoWord(IDM_F12MOUSE));
 #endif
 	DrawMenuBar();
 }
@@ -483,7 +487,9 @@ static void HandleMouseDown(EventRecord *pevent) {
 		case inMenuBar:
 			if (np2running) {
 				soundmng_stop();
+				mousemng_disable(MOUSEPROC_MACUI);
 				HandleMenuChoice(MenuSelect(pevent->where));
+				mousemng_enable(MOUSEPROC_MACUI);
 				soundmng_play();
 			}
 			break;
@@ -518,6 +524,9 @@ static void HandleMouseDown(EventRecord *pevent) {
 
 static void eventproc(EventRecord *event) {
 
+	int		keycode;
+
+	keycode = (event->message & keyCodeMask) >> 8;
 	switch(event->what) {
 		case mouseDown:
 			HandleMouseDown(event);
@@ -529,18 +538,29 @@ static void eventproc(EventRecord *event) {
 
 		case keyDown:
 		case autoKey:
-			if (np2running) {
-				mackbd_f12down(((event->message) & keyCodeMask) >> 8);
-				if (event->modifiers & cmdKey) {
-					soundmng_stop();
-					HandleMenuChoice(MenuKey(event->message & charCodeMask));
-					soundmng_play();
-				}
+			if (!np2running) {
+				break;
+			}
+#if !TARGET_API_MAC_CARBON
+			if ((keycode == 0x6f) && (np2oscfg.F12COPY == 0)) {
+				HandleMenuChoice(IDM_MOUSE);
+				break;
+			}
+#endif
+			if (event->modifiers & cmdKey) {
+				soundmng_stop();
+				mousemng_disable(MOUSEPROC_MACUI);
+				HandleMenuChoice(MenuKey(event->message & charCodeMask));
+				mousemng_enable(MOUSEPROC_MACUI);
+				soundmng_play();
+			}
+			else {
+				mackbd_keydown(keycode);
 			}
 			break;
 
 		case keyUp:
-			mackbd_f12up(((event->message) & keyCodeMask) >> 8);
+			mackbd_keyup(keycode);
 			break;
 
 		case mouseUp:

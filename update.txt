@@ -2,9 +2,15 @@
 　ver0.70 → ver0.71
 
 　・np2sysp … ポート指定ミスを修正
-　・AMD-98  … クロックを修正
+　・AMD-98  … クロックを修正、レジュームの対応
 
 
-  (Win)
-　　keydisp PSG修正
+  (Win9x)
+　　・keydisp PSG修正
+　　・マウス修正
+
+　(MacOS9)
+　　・マウス対応(Classicのみ)
+　　・キーボード修正(Classicのみ)
+　　・メニュー修正
 
