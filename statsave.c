@@ -63,6 +63,7 @@ enum {
 	NP2FLAG_DISK,
 	NP2FLAG_DMA,
 	NP2FLAG_EGC,
+	NP2FLAG_EPSON,
 	NP2FLAG_EVT,
 	NP2FLAG_EXT,
 	NP2FLAG_FM,
@@ -560,6 +561,37 @@ static int flagload_egc(NP2FFILE f, const STENTRY *t) {
 	ret = flagload_load(f, &egc, sizeof(egc));
 	egc.inptr += (long)egc.buf;
 	egc.outptr += (long)egc.buf;
+	(void)t;
+	return(ret);
+}
+
+
+// ---- epson
+
+static int flagsave_epson(NP2FFILE f, const STENTRY *t) {
+
+	int		ret;
+
+	if (!(pc.model & PCMODEL_EPSON)) {
+		return(NP2FLAG_SUCCESS);
+	}
+	ret = flagsave_create(f, t);
+	if (ret != NP2FLAG_FAILURE) {
+		ret |= flagsave_save(f, &epsonio, sizeof(epsonio));
+		ret |= flagsave_save(f, mem + 0x1c0000, 0x8000);
+		ret |= flagsave_save(f, mem + 0x1e8000, 0x18000);
+		ret |= flagsave_close(f);
+	}
+	return(ret);
+}
+
+static int flagload_epson(NP2FFILE f, const STENTRY *t) {
+
+	int		ret;
+
+	ret = flagload_load(f, &epsonio, sizeof(epsonio));
+	ret |= flagload_load(f, mem + 0x1c0000, 0x8000);
+	ret |= flagload_load(f, mem + 0x1e8000, 0x18000);
 	(void)t;
 	return(ret);
 }
@@ -1323,6 +1355,10 @@ const STENTRY	*tblterm;
 				ret |= flagsave_egc(&f, tbl);
 				break;
 
+			case NP2FLAG_EPSON:
+				ret |= flagsave_epson(&f, tbl);
+				break;
+
 			case NP2FLAG_EVT:
 				ret |= flagsave_evt(&f, tbl);
 				break;
@@ -1404,6 +1440,7 @@ const STENTRY	*tblterm;
 					case NP2FLAG_COM:
 					case NP2FLAG_DMA:
 					case NP2FLAG_EGC:
+					case NP2FLAG_EPSON:
 					case NP2FLAG_EVT:
 					case NP2FLAG_EXT:
 					case NP2FLAG_GIJ:
@@ -1501,6 +1538,10 @@ const STENTRY	*tblterm;
 
 				case NP2FLAG_EGC:
 					ret |= flagload_egc(&f, tbl);
+					break;
+
+				case NP2FLAG_EPSON:
+					ret |= flagload_epson(&f, tbl);
 					break;
 
 				case NP2FLAG_EVT:

@@ -1,5 +1,5 @@
 
-#define		NP2STATUS_VERSION		0720
+#define		NP2STATUS_VERSION		0721
 
 static const NP2FHDR np2flagdef = {
 						"Neko Project II",
@@ -85,6 +85,7 @@ static const STENTRY np2tbl[] = {
 	{"CRTC2",		0,	NP2FLAG_BIN,	&crtc,			sizeof(crtc)},
 	{"DMAC",		0,	NP2FLAG_DMA,	&dmac,			sizeof(dmac)},
 	{"EGC",			0,	NP2FLAG_EGC,	NULL,			0},
+	{"EPSON",		0,	NP2FLAG_EPSON,	NULL,			0},
 	{"FDC",			0,	NP2FLAG_BIN,	&fdc,			sizeof(fdc)},
 	{"GDC1",		0,	NP2FLAG_BIN,	&gdc,			sizeof(gdc)},
 	{"GDC2",		0,	NP2FLAG_BIN,	&gdcs,			sizeof(gdcs)},

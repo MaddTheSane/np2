@@ -170,9 +170,6 @@ GDCCMD_MAX		equ		32
 .func			resd	1
 .remain			resd	1
 .stack			resd	1
-				resd	4
-.buf			resb	(4096/8 + 4*4)
-				resd	4
 .inptr			resd	1
 .outptr			resd	1
 .mask2			resw	1
@@ -181,6 +178,10 @@ GDCCMD_MAX		equ		32
 .dstbit			resb	1
 .sft8bitl		resb	1
 .sft8bitr		resb	1
+
+				resd	4
+.buf			resb	(4096/8 + 4*4)
+				resd	4
 				endstruc
 
 				struc	dsync_t
