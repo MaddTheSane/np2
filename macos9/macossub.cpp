@@ -20,7 +20,7 @@ UINT32 macos_gettick(void) {
 	UnsignedWide current;
 
 	Microseconds(&current);
-	return((UINT32)(current.lo / 1000));
+	return((UINT32)((current.hi * 4294967) + (current.lo / 1000)));
 }
 
 
