@@ -833,6 +833,14 @@ void MEMCALL __i286_memorywrite_w(UINT32 address, REG16 value) {
 
 	if (address < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + address, value);
+#if defined(TRACE)
+		if (address == 0x00404) {
+			TRACEOUT(("CPU_SP = %.4x [%.4x:%.4x]", value, CPU_CS, CPU_IP));
+		}
+		if (address == 0x00406) {
+			TRACEOUT(("CPU_SS = %.4x [%.4x:%.4x]", value, CPU_CS, CPU_IP));
+		}
+#endif
 	}
 #if defined(USE_HIMEM)
 	else if (address >= (0x10fff0 - 1)) {

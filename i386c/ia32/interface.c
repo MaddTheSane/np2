@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.2 2003/12/08 02:09:17 yui Exp $	*/
+/*	$Id: interface.c,v 1.3 2003/12/25 19:21:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -37,13 +37,45 @@
 void
 ia32reset(void)
 {
-//	cpu_init();
-#ifdef USE_FPU		// ->ia32_init
-//	fpu_init();
-#endif
+	int i;
 
-	CPU_SET_SEGREG(CPU_CS_INDEX, 0x1fc0);
+	memset(&i386core.s, 0, sizeof(i386core.s));			// yui
+	CPU_STATSAVE.cpu_inst_default.seg_base = (DWORD)-1;
+
+	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
+	CPU_EFLAG = 2;
+	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW | CPU_CR0_ET;
+	CPU_MXCSR = 0x1f80;
+	CPU_GDTR_LIMIT = 0xffff;
+	CPU_IDTR_LIMIT = 0xffff;
+
+	for (i = 0; i < CPU_SEGREG_NUM; ++i) {
+		CPU_STAT_SREG_INIT(i);
+	}
+	CPU_LDTR_LIMIT = 0xffff;
+	CPU_TR_LIMIT = 0xffff;
+
+	CPU_SET_SEGREG(CPU_CS_INDEX, 0xffff);
 	CPU_ADRSMASK = 0xfffff;
+//	CPU_EIP = 0;
+}
+
+void
+ia32shut(void)
+{
+	SINT32	remainclock;					// 結局ハマるのか漏れ…
+	SINT32	baseclock;
+	UINT32	clock;
+
+	remainclock = CPU_REMCLOCK;
+	baseclock = CPU_BASECLOCK;
+	clock = CPU_CLOCK;
+
+	ia32reset();
+
+	CPU_REMCLOCK = remainclock;
+	CPU_BASECLOCK = baseclock;
+	CPU_CLOCK = clock;
 }
 
 void

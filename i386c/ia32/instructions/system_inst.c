@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.2 2003/12/11 15:01:00 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.3 2003/12/25 19:21:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -481,6 +481,9 @@ void
 LMSW_Ew(DWORD op)
 {
 	DWORD src, madr;
+#if 1
+	UINT32	orgcr0;
+#endif
 
 	if (CPU_STAT_PM && CPU_STAT_CPL != 0) {
 		EXCEPTION(GP_EXCEPTION, 0);
@@ -495,11 +498,20 @@ LMSW_Ew(DWORD op)
 		src = cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 	}
 
+#if 0
 	CPU_CR0 &= ~0xfffffffe;	/* can't switch back from protected mode */
 	CPU_CR0 |= (src & 0xf);	/* TS, EM, MP, PE */
-	if ((src ^ CPU_CR0) & CPU_CR0_PE) {
+	if ((src ^ CPU_CR0) & CPU_CR0_PE) {			// ¾ï¤Ëµ¶
 		change_pm(1);	/* switch to protected mode */
 	}
+#else
+	orgcr0 = CPU_CR0;
+	CPU_CR0 &= CPU_CR0_PE;	/* can't switch back from protected mode */
+	CPU_CR0 |= (src & 0xf);	/* TS, EM, MP, PE */
+	if ((orgcr0 ^ CPU_CR0) & CPU_CR0_PE) {
+		change_pm(1);	/* switch to protected mode */
+	}
+#endif
 }
 
 void

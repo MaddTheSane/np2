@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.3 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.4 2003/12/25 19:21:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -82,7 +82,7 @@ ia32_init(void)
 {
 	int i;
 
-	memset(&i386core, 0, sizeof(i386core));
+	memset(&i386core.s, 0, sizeof(i386core.s));
 	CPU_STATSAVE.cpu_inst_default.seg_base = (DWORD)-1;
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;

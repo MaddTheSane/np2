@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.2 2003/12/11 14:58:45 monaka Exp $	*/
+/*	$Id: interface.h,v 1.3 2003/12/25 19:21:17 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -46,6 +46,7 @@ typedef	SINT64			SQWORD;
 #define	CPU_INTERRUPT(a)	ia32_interrupt(a)
 #define	CPU_EXEC()		ia32()
 #define	CPU_EXECV30()		ia32()
+#define	CPU_SHUT()		ia32shut()
 
 void i386c_initialize(void);
 
