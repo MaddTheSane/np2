@@ -70,7 +70,6 @@ I286_0F _lidt(UINT op) {
 		I286_IDTR.base = i286_memoryread_w(seg + LOW16(ad + 2));
 		I286_IDTR.base24 = i286_memoryread(seg + LOW16(ad + 4));
 //		I286_IDTR.reserved = i286_memoryread(seg + LOW16(ad + 5));
-		TRACEOUT(("IDT:%.2x%.4x", I286_IDTR.base24, I286_IDTR.base));
 	}
 	else {
 		INT_NUM(6, I286_IP - 2);
@@ -91,17 +90,17 @@ I286_0F _smsw(UINT op) {
 
 I286_0F _lmsw(UINT op) {
 
+	REG16	msw;
+
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);
-		I286_MSW = *(REG16_B20(op));
+		msw = *(REG16_B20(op));
 	}
 	else {
 		I286_WORKCLOCK(3);
-		I286_MSW = i286_memoryread_w(CALC_EA(op));
+		msw = i286_memoryread_w(CALC_EA(op));
 	}
-	if (I286_MSW & 1) {
-		TRACEOUT(("enable PE %.4x:%.4x", I286_CS, I286_IP));
-	}
+	I286_MSW = msw | (I286_MSW & 1);
 }
 
 static const I286OP_0F cts1_table[] = {

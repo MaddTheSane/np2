@@ -413,6 +413,7 @@ void pic_reset(void) {
 
 	pic.pi[0] = def_master;
 	pic.pi[1] = def_slave;
+	pic.ext_irq = 0;
 }
 
 void pic_bind(void) {

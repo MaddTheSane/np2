@@ -83,6 +83,7 @@ void i286a_reset(void) {
 
 void i286a_shut(void) {
 
+	CPU_MSW = 0;
 	CPU_CS = 0xffff;
 	CS_BASE = 0xffff0;
 	CPU_IP = 0;

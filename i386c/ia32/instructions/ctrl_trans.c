@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.2 2003/12/22 18:00:31 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.3 2003/12/25 19:58:24 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -33,6 +33,9 @@
 #include "ctrlxfer.h"
 
 #include "ctrl_trans.h"
+
+#include "pccore.h"
+#include "iocore.h"
 
 
 /*
@@ -1126,6 +1129,7 @@ IRET(void)
 	WORD flag;
 	WORD new_cs;
 
+	extirq_pop();
 	CPU_WORKCLOCK(31);
 	if (!CPU_STAT_PM) {
 		/* Real mode */
@@ -1153,6 +1157,7 @@ IRETD(void)
 	DWORD flag;
 	WORD new_cs;
 
+	extirq_pop();
 	CPU_WORKCLOCK(31);
 	if (!CPU_STAT_PM) {
 		/* Real mode */

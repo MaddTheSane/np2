@@ -67,10 +67,11 @@ void i286x_reset(void) {
 
 void i286x_shut(void) {
 
-	CPU_CS = 0xffff;
+	I286_MSW = 0;
+	I286_CS = 0xffff;
 	CS_BASE = 0xffff0;
-	CPU_IP = 0;
-	CPU_ADRSMASK = 0xfffff;
+	I286_IP = 0;
+	I286_ADRSMASK = 0xfffff;
 	i286x_resetprefetch();
 }
 
