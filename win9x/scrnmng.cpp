@@ -614,6 +614,12 @@ void scrnmng_clearwinui(void) {
 		clearoutfullscreen();
 		ddraw.menudisp = 0;
 	}
+	else {
+		if (np2oscfg.wintype) {
+			np2class_enablemenu(hWndMain, FALSE);
+			scrnmng_update();						// ˆê‰c
+		}
+	}
 	mousemng_enable(MOUSEPROC_WINUI);
 }
 

@@ -4,6 +4,7 @@
 #include	"timemng.h"
 #include	"i286.h"
 #include	"memory.h"
+#include	"np2ver.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"cbuscore.h"
@@ -30,7 +31,7 @@
 //#include	"hostdrv.h"
 
 
-	const char	np2version[] = "ver.0.70";
+	const char	np2version[] = NP2VER_CORE;
 
 	NP2CFG		np2cfg = {
 				PCBASECLOCK25, 4, 0,

@@ -5,6 +5,7 @@
 #include	"np2info.h"
 #include	"dialog.h"
 #include	"dialogs.h"
+#include	"np2ver.h"
 #include	"pccore.h"
 
 
@@ -34,6 +35,9 @@ static void about_init(HWND hWnd) {
 
 	milstr_ncpy(work, str_np2title, sizeof(work));
 	milstr_ncat(work, np2version, sizeof(work));
+#if defined(NP2VER_WIN9X)
+	milstr_ncat(work, NP2VER_WIN9X, sizeof(work));
+#endif
 	SetDlgItemText(hWnd, IDC_NP2VER, work);
 	GetWindowRect(hWnd, &rect);
 	aboutsize.cx = rect.right - rect.left;
