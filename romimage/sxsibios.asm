@@ -67,6 +67,8 @@ sxsi_init:		push	ds
 				push	ax
 				mov		ax, 0300h
 				int		1bh
+				mov		ax, 0320h
+				int		1bh
 				pop		ax
 				pop		ds
 				retf
