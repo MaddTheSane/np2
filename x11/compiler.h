@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.30 2005/03/23 13:43:23 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.31 2005/03/23 13:54:48 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -211,7 +211,6 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
-#define	SUPPORT_IDEIO
 #else
 #define	SUPPORT_CRT15KHZ
 #endif
@@ -251,6 +250,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
+#undef	SUPPORT_IDEIO
 
 #if USE_GTK > 0 || USE_GTK2 > 0
 #define	SUPPORT_S98
