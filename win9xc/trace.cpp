@@ -269,7 +269,7 @@ void trace_init(void) {
 	tracewin.fh = FILEH_INVALID;
 #else
 	tracewin.en = 0;
-	tracewin.fh = file_create_c("out.txt");
+	tracewin.fh = file_create_c("traces.txt");
 #endif
 
 	tracecfg.posx = CW_USEDEFAULT;
@@ -306,6 +306,24 @@ void trace_term(void) {
 }
 
 void trace_fmt(const char *fmt, ...) {
+
+	BOOL	en;
+	va_list	ap;
+	char	buf[0x1000];
+
+	va_start(ap, fmt);
+	vsprintf(buf, fmt, ap);
+	va_end(ap);
+	if (hView) {
+		View_AddString(buf);
+	}
+	if (tracewin.fh != FILEH_INVALID) {
+		file_write(tracewin.fh, buf, strlen(buf));
+		file_write(tracewin.fh, crlf, strlen(crlf));
+	}
+}
+
+void trace_fmt2(const char *fmt, ...) {
 
 	BOOL	en;
 	va_list	ap;

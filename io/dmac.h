@@ -59,7 +59,8 @@ typedef struct {
 		BYTE	b[2];
 		UINT16	w;
 	} lengorg;
-	UINT16	action;
+	UINT8	bound;
+	UINT8	action;
 	DMAPROC	proc;
 	UINT8	mode;
 	UINT8	sreq;

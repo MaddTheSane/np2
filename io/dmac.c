@@ -84,7 +84,7 @@ static void IOOUTCALL dmac_o01(UINT port, REG8 dat) {
 
 	dmach = dmac.dmach + ((port >> 2) & 3);
 	lh = dmac.lh;
-	dmac.lh = lh ^ 1;
+	dmac.lh = (UINT8)(lh ^ 1);
 	dmach->adrs.b[lh + DMA32_LOW] = dat;
 	dmach->adrsorg.b[lh] = dat;
 }
@@ -154,7 +154,21 @@ static void IOOUTCALL dmac_o21(UINT port, REG8 dat) {
 	DMACH	dmach;
 
 	dmach = dmac.dmach + (((port >> 1) + 1) & 3);
+#if defined(CPUCORE_IA32)
+	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat;
+#else
+	// IA16‚Å‚Í ver0.75‚Å–³ŒøAver0.76‚ÅC³
 	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat & 0x0f;
+#endif
+}
+
+static void IOOUTCALL dmac_o29(UINT port, REG8 dat) {
+
+	DMACH	dmach;
+
+	dmach = dmac.dmach + (dat & 3);
+	dmach->bound = dat;
+	(void)port;
 }
 
 static REG8 IOINPCALL dmac_i01(UINT port) {
@@ -200,8 +214,9 @@ static const IOINP dmaci00[16] = {
 					dmac_i11,	NULL,		NULL,		NULL,
 					NULL,		NULL,		NULL,		NULL};
 
-static const IOOUT dmaco21[4] = {
-					dmac_o21,	dmac_o21,	dmac_o21,	dmac_o21};
+static const IOOUT dmaco21[8] = {
+					dmac_o21,	dmac_o21,	dmac_o21,	dmac_o21,
+					dmac_o29,	NULL,		NULL,		NULL};
 
 void dmac_reset(void) {
 
@@ -216,7 +231,7 @@ void dmac_bind(void) {
 
 	iocore_attachsysoutex(0x0001, 0x0ce1, dmaco00, 16);
 	iocore_attachsysinpex(0x0001, 0x0ce1, dmaci00, 16);
-	iocore_attachsysoutex(0x0021, 0x0cf1, dmaco21, 4);
+	iocore_attachsysoutex(0x0021, 0x0cf1, dmaco21, 8);
 }
 
 
@@ -240,7 +255,7 @@ static void dmacset(REG8 channel) {
 	if (dmadev >= sizeof(dmaproc) / sizeof(DMAPROC)) {
 		dmadev = 0;
 	}
-	TRACEOUT(("dmac set %d - %d", channel, dmadev));
+//	TRACEOUT(("dmac set %d - %d", channel, dmadev));
 	dmac.dmach[channel].proc = dmaproc[dmadev];
 }
 

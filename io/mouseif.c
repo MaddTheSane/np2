@@ -84,7 +84,6 @@ void mouseint(NEVENTITEM item) {
 	if (item->flag & NEVENT_SETEVENT) {
 		if (!(mouseif.portc & 0x10)) {
 			pic_setirq(0x0d);
-			TRACEOUT(("mouse int"));
 			nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
 												mouseint, NEVENT_RELATIVE);
 		}
@@ -182,7 +181,6 @@ static REG8 IOINPCALL mouseif_i7fd9(UINT port) {
 		ret |= (x >> 4) & 0x0f;
 	}
 	(void)port;
-	TRACEOUT(("mouse read %x", ret));
 	return(ret);
 }
 

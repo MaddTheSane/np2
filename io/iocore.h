@@ -55,6 +55,7 @@ extern	_GDCS		gdcs;
 extern	_GRCG		grcg;
 extern	_KEYBRD		keybrd;
 extern	_MOUSEIF	mouseif;
+extern	_NECIO		necio;
 extern	_NMIIO		nmiio;
 extern	_NP2SYSP	np2sysp;
 extern	_PIC		pic;

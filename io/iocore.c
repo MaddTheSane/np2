@@ -23,6 +23,7 @@
 	_GRCG		grcg;
 	_KEYBRD		keybrd;
 	_MOUSEIF	mouseif;
+	_NECIO		necio;
 	_NMIIO		nmiio;
 	_NP2SYSP	np2sysp;
 	_PIC		pic;

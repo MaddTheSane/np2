@@ -1009,6 +1009,10 @@ void gdc_reset(void) {
 void gdc_bind(void) {
 
 	gdc_updateclock();
+#if defined(SUPPORT_PC9821)				// ‚Æ‚è‚ ‚¦‚¸ƒtƒbƒN‚¾‚¯
+	iocore_attachout(0x09a0, gdc_o9a0);
+	iocore_attachinp(0x09a0, gdc_i9a0);
+#endif
 #if defined(SUPPORT_CRT31KHZ)
 	iocore_attachout(0x09a8, gdc_o9a8);
 	iocore_attachinp(0x09a8, gdc_i9a8);

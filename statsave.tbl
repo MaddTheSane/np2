@@ -104,6 +104,7 @@ static const SFENTRY np2tbl[] = {
 	{"PIT",			0,	STATFLAG_BIN,	&pit,			sizeof(pit)},
 	{"MPU98II",		0,	STATFLAG_BIN,	&mpu98,			sizeof(mpu98)},
 	{"MOUSE",		0,	STATFLAG_BIN,	&mouseif,		sizeof(mouseif)},
+	{"NECIO",		0,	STATFLAG_BIN,	&necio,			sizeof(necio)},
 	{"NMIIO",		0,	STATFLAG_BIN,	&nmiio,			sizeof(nmiio)},
 	{"NP2SYSPORT",	0,	STATFLAG_BIN,	&np2sysp,		sizeof(np2sysp)},
 	{"PIC",			0,	STATFLAG_BIN,	&pic,			sizeof(pic)},

@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.15 2004/03/06 18:07:37 monaka Exp $	*/
+/*	$Id: interface.c,v 1.16 2004/03/06 18:25:36 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -123,12 +123,12 @@ ia32(void)
 			if (CPU_TRAP) {
 				ia32_interrupt(1);
 			}
-			dmap_i286();
+			dmap();
 		} while (CPU_REMCLOCK > 0);
 	} else if (dmac.working) {
 		do {
 			exec_1step();
-			dmap_i286();
+			dmap();
 		} while (CPU_REMCLOCK > 0);
 	} else {
 		do {
@@ -165,7 +165,7 @@ ia32_step(void)
 		if (CPU_TRAP) {
 			ia32_interrupt(1);
 		}
-		dmap_i286();
+		dmap();
 	} while (CPU_REMCLOCK > 0);
 }
 

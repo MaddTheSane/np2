@@ -1,4 +1,8 @@
 
+typedef struct {
+	UINT8	port0439;
+} _NECIO, *NECIO;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
