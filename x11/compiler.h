@@ -31,7 +31,7 @@
 
 #define	VERMOUTH_LIB
 #undef	SOUND_CRITICAL
-#define	SOUNDRESERVE	100
+#undef	SOUNDRESERVE
 
 #endif  /* NOSOUND */
 
@@ -149,6 +149,8 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
+#else
+#define	SUPPORT_CRT15KHZ
 #endif
 
 #if defined(i386) || defined(__i386__)
@@ -178,6 +180,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
+#undef	SUPPORT_IDE
 
 #if USE_GTK > 0
 #define	SUPPORT_S98

@@ -47,6 +47,7 @@
 #include "sysmenu.h"
 #include "toolwin.h"
 #include "viewer.h"
+#include "debugwin.h"
 
 #include "commng.h"
 #include "fontmng.h"
@@ -357,6 +358,7 @@ main(int argc, char *argv[])
 	}
 
 	pccore_term();
+	debugwin_destroy();
 
 	soundmng_deinitialize();
 	scrnmng_destroy();

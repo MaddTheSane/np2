@@ -91,17 +91,18 @@ COMMONOBJS=	../common/strres.o ../common/milstr.o ../common/_memory.o \
 		../common/lstarray.o ../common/bmpdata.o ../common/mimpidef.o \
 		../common/codecnv.o ../common/parts.o ../common/wavefile.o
 
-BIOSOBJS=	../bios/bios.o ../bios/bios02.o ../bios/bios08.o \
-		../bios/bios09.o ../bios/bios0c.o ../bios/bios12.o \
-		../bios/bios13.o ../bios/bios18.o ../bios/bios19.o \
-		../bios/bios1a.o ../bios/bios1b.o ../bios/bios1c.o \
+BIOSOBJS=	../bios/bios.o ../bios/bios09.o ../bios/bios0c.o \
+		../bios/bios12.o ../bios/bios13.o ../bios/bios18.o \
+		../bios/bios19.o ../bios/bios1a.o ../bios/bios1b.o \
+		../bios/bios1c.o ../bios/bios1f.o \
 		../bios/sxsibios.o
 
 CBUSOBJS=	../cbus/cbuscore.o ../cbus/pc9861k.o ../cbus/mpu98ii.o \
 		../cbus/amd98.o ../cbus/board118.o ../cbus/board14.o \
 		../cbus/board26k.o ../cbus/board86.o ../cbus/boardspb.o \
 		../cbus/boardx2.o ../cbus/cs4231io.o ../cbus/pcm86io.o \
-		../cbus/sasiio.o ../cbus/scsiio.o ../cbus/scsicmd.o
+		../cbus/sasiio.o ../cbus/scsiio.o ../cbus/scsicmd.o \
+		../cbus/ideio.o ../cbus/atapicmd.o
 
 FDDOBJS=	../fdd/diskdrv.o ../fdd/newdisk.o ../fdd/fddfile.o \
 		../fdd/fdd_xdf.o ../fdd/fdd_d88.o ../fdd/fdd_mtr.o \
@@ -113,7 +114,7 @@ FONTOBJS=	../font/font.o ../font/fontdata.o ../font/fontmake.o \
 
 GENERICOBJS=	../generic/cmndraw.o ../generic/keydisp.o ../generic/cmjasts.o \
 		../generic/hostdrv.o ../generic/hostdrvs.o ../generic/unasm.o \
-		../generic/np2info.o
+		../generic/np2info.o ../generic/memdbg32.o
 
 IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 		../io/crtc.o ../io/dipsw.o ../io/dmac.o ../io/egc.o \
@@ -121,10 +122,9 @@ IOOBJS=		../io/iocore.o ../io/artic.o ../io/cgrom.o ../io/cpuio.o \
 		../io/gdc_sub.o ../io/gdc_pset.o ../io/mouseif.o \
 		../io/nmiio.o ../io/np2sysp.o ../io/pic.o ../io/pit.o \
 		../io/printif.o ../io/serial.o ../io/sysport.o ../io/upd4990.o \
-		../io/necio.o ../io/epsonio.o
+		../io/necio.o ../io/epsonio.o ../io/pcidev.o
 
-LIOOBJS=	../lio/lio.o ../lio/gscreen.o ../lio/gview.o ../lio/gcolor1.o \
-		../lio/gcolor2.o ../lio/gcls.o ../lio/gpset.o ../lio/gline.o \
+LIOOBJS=	../lio/lio.o ../lio/gscreen.o ../lio/gpset.o ../lio/gline.o \
 		../lio/gput1.o
 
 NP2OBJS=	../pccore.o ../nevent.o ../calendar.o ../timing.o \
@@ -138,10 +138,8 @@ SOUNDOBJS=	../sound/sound.o ../sound/soundrom.o ../sound/s98.o \
 		../sound/opngenc.o ../sound/opngeng.o \
 		../sound/pcm86c.o ../sound/pcm86g.o \
 		../sound/psggenc.o ../sound/psggeng.o \
-		../sound/rhythmc.o ../sound/rhythmg.o \
-		../sound/sndcsec.o \
-		../sound/tms3631c.o ../sound/tms3631g.o \
-		../sound/wavemix.o
+		../sound/rhythmc.o ../sound/sndcsec.o \
+		../sound/tms3631c.o ../sound/tms3631g.o
 
 GETSNDOBJS=	../sound/getsnd/getsnd.o ../sound/getsnd/getsmix.o \
 		../sound/getsnd/getmp3.o ../sound/getsnd/getogg.o \
@@ -168,7 +166,7 @@ SNDDRVOBJS=	snddrv/esd.o snddrv/netbsd.o snddrv/oss.o snddrv/sdl.o
 GTKDEPOBJS=	gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
 		gtk/dialog_file_selection.o gtk/dialog_midi.o \
 		gtk/dialog_newdisk.o gtk/dialog_screen.o gtk/dialog_sound.o \
-		gtk/window_keydisp.o gtk/window_viewer.o \
+		gtk/window_debug.o gtk/window_keydisp.o gtk/window_viewer.o \
 		gtk/gtk_drawmng.o gtk/gtk_screen.o gtk/gtk_font.o \
 		gtk/gtk_keyboard.o gtk/gtk_menu.o gtk/gtk_mouse.o \
 		gtk/gtk_main.o gtk/gtk_wrapper.o

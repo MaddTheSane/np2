@@ -48,6 +48,7 @@
 #include "kdispwin.h"
 #include "toolwin.h"
 #include "viewer.h"
+#include "debugwin.h"
 
 #include "mousemng.h"
 #include "scrnmng.h"
@@ -131,6 +132,9 @@ static void i286_save(GtkWidget *w, GdkEvent *e);
 static void memory_dump(GtkWidget *w, GdkEvent *e);
 #if defined(SUPPORT_VIEWER)
 static void debug_utility(GtkWidget *w, GdkEvent *e);
+#endif
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+static void memory_debug(GtkWidget *w, GdkEvent *e);
 #endif
 
 static void toggle(gpointer, guint, GtkWidget *);
@@ -401,6 +405,9 @@ create_menu(GtkWidget *w)
 #if defined(SUPPORT_VIEWER)
 		GtkWidget *dbgutil_item;
 #endif
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+		GtkWidget *memdbg_item;
+#endif
 
 		debug_menu = gtk_menu_new();
 
@@ -422,6 +429,14 @@ create_menu(GtkWidget *w)
 		gtk_menu_append(GTK_MENU(debug_menu), dbgutil_item);
 		gtk_signal_connect_object(GTK_OBJECT(dbgutil_item), "activate",
 		    GTK_SIGNAL_FUNC(debug_utility), (gpointer)0);
+#endif
+
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+		memdbg_item = gtk_menu_item_new_with_label("Memory Map");
+		gtk_widget_show(memdbg_item);
+		gtk_menu_append(GTK_MENU(debug_menu), memdbg_item);
+		gtk_signal_connect_object(GTK_OBJECT(memdbg_item), "activate",
+		    GTK_SIGNAL_FUNC(memory_debug), (gpointer)0);
 #endif
 
 		debug_item = gtk_menu_item_new_with_label("Debug");
@@ -1104,6 +1119,18 @@ debug_utility(GtkWidget *w, GdkEvent *e)
 	UNUSED(e);
 
 	viewer_open();
+}
+#endif
+
+#if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+static void
+memory_debug(GtkWidget *w, GdkEvent *e)
+{
+
+	UNUSED(w);
+	UNUSED(e);
+
+	debugwin_create();
 }
 #endif
 

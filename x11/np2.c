@@ -37,6 +37,7 @@
 #include "kdispwin.h"
 #include "toolwin.h"
 #include "viewer.h"
+#include "debugwin.h"
 
 #include "commng.h"
 #include "joymng.h"
@@ -275,6 +276,7 @@ framereset(UINT cnt)
 	kdispwin_draw((BYTE)cnt);
 	toolwin_draw((BYTE)cnt);
 	viewer_allreload(FALSE);
+	debugwin_process();
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {
 			sysmng_updatecaption(3);
