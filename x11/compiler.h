@@ -175,12 +175,12 @@ void toolkit_msgbox(const char *title, const char *msg);
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
 
-#if defined(USE_GTK)
+#if USE_GTK > 0
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #endif
 
-#if defined(USE_SDL)
+#if USE_SDL > 0
 #define	USE_SYSMENU
 #define	SCREEN_BPP	16
 #undef	SUPPORT_24BPP

@@ -126,7 +126,7 @@ emulationScreen::mouseReleaseEvent(QMouseEvent *ev)
 //
 // mousemng
 //
-int
+BOOL
 mousemng_initialize(void)
 {
 

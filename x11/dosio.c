@@ -1,4 +1,4 @@
-/*	$Id: dosio.c,v 1.9 2004/02/05 13:45:06 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.10 2004/02/06 16:51:21 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -268,7 +268,7 @@ file_listnext(FLISTH hdl, FLINFO *fli)
 	}
 
 	milstr_ncpy(buf, hdl->path, sizeof(buf));
-	milstr_ncat(buf, de->d_name, sizeof(buf));
+	mileuc_ncat(buf, de->d_name, sizeof(buf));
 	if (stat(buf, &sb) != 0) {
 		VERBOSE(("file_listnext: stat failure. (path = %s)", buf));
 		return FAILURE;

@@ -199,7 +199,7 @@ gtkdrawmng_getbpp(GtkWidget *w, GtkWidget *parent_window)
 	case GDK_VISUAL_TRUE_COLOR:
 	case GDK_VISUAL_PSEUDO_COLOR:
 	case GDK_VISUAL_DIRECT_COLOR:
-		if (visual->depth > 8) {
+		if (visual->depth >= 8) {
 			break;
 		}
 		/* FALLTHROUGH */

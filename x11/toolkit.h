@@ -41,7 +41,7 @@ typedef struct {
 	void		(*messagebox)(const char *title, const char *msg);
 } gui_toolkit_t;
 
-#if (USE_GTK + USE_QT + USE_SDL) > 1
+#if (USE_GTK + USE_QT + USE_SDL + USE_X11) > 1
 
 extern gui_toolkit_t* toolkitp;
 
@@ -101,9 +101,24 @@ void toolkit_initialize(void);
 #define	toolkit_set_window_title(s)	gui_sdl_set_window_title(s)
 #define	toolkit_messagebox(t,m)		gui_sdl_messagebox(t,m)
 
+#elif USE_X11 > 0
+
+#include "x11/x11_toolkit.h"
+
+#define	toolkit_initialize()
+#define	toolkit_terminate()
+#define	toolkit_arginit(argcp, argvp)	gui_x11_arginit(argcp, argvp)
+#define	toolkit_widget_create()		gui_x11_widget_create()
+#define	toolkit_widget_show()		gui_x11_widget_show()
+#define	toolkit_widget_mainloop()	gui_x11_widget_mainloop()
+#define	toolkit_widget_quit()		gui_x11_widget_quit()
+#define	toolkit_event_process()		gui_x11_event_process()
+#define	toolkit_set_window_title(s)	gui_x11_set_window_title(s)
+#define	toolkit_messagebox(t,m)		gui_x11_messagebox(t,m)
+
 #else
 
-#error undefined USE_GTK and USE_QT and USE_SDL!!!
+#error undefined USE_GTK and USE_QT and USE_SDL and USE_X11!!!
 
 #endif
 

@@ -159,7 +159,7 @@ FDDOBJS=	../fdd/diskdrv.o ../fdd/newdisk.o ../fdd/fddfile.o \
 
 FONTOBJS=	../font/font.o ../font/fontdata.o ../font/fontmake.o \
 		../font/fontpc88.o ../font/fontpc98.o ../font/fontv98.o \
-		../font/fontfm7.o ../font/fontx1.o ../font/fontx68k.o \
+		../font/fontfm7.o ../font/fontx1.o ../font/fontx68k.o
 
 GENERICOBJS=	../generic/cmndraw.o ../generic/keydisp.o ../generic/cmjasts.o \
 		../generic/hostdrv.o ../generic/hostdrvs.o

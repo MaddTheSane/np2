@@ -53,10 +53,11 @@ typedef struct {
 	int		scrw;
 	int		scrh;
 
+	int		shared_pixmap;
+
 	/* toolkit depend */
 	GdkImage	*surface;
 	GdkPixmap	*backsurf;
-	BOOL		shared_pixmap;
 
 	unsigned long	pixel[24];	/* pallete */
 } DRAWMNG;

@@ -87,12 +87,12 @@ is_32bpp(GdkWindow *w)
 			}
 			break;
 		}
+		XFree(format);
+
 		if (i == count) {
-			XFree(format);
 			fprintf(stderr, "24bpp depth not support?\n");
 			return 0;
 		}
-		XFree(format);
 	} else {
 		fprintf(stderr, "Can't get PixmapFormats.\n");
 		return 0;
