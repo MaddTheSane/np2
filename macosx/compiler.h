@@ -73,6 +73,7 @@ typedef unsigned char	BYTE;
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 #define SUPPORT_KEYDISP
+#define SUPPORT_SOFTKBD
 
 #define	USE_RESUME
 #define	SOUNDRESERVE	80

@@ -767,9 +767,10 @@
 				968D8D8D05F532C900CFB890,
 				963ACEF105FA2C6900B4736B,
 				963AD38D05FA6B8900B4736B,
-				964983E405FD0FD0003A4126,
 				962EA92C060C86B500BD925D,
 				962EA934060C86D500BD925D,
+				969A21A0063041AE007FE890,
+				96F4749F0632E583006DDB7A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1120,20 +1121,6 @@
 		};
 		9645C2E005BFA3B90090B4FD = {
 			fileRef = 9645C2D805BFA3B90090B4FD;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		964983E305FD0FD0003A4126 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = kdispwin.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		964983E405FD0FD0003A4126 = {
-			fileRef = 964983E305FD0FD0003A4126;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2015,7 +2002,6 @@
 				967C9241055778CB00000103,
 				967C9244055778CB00000103,
 				967C9246055778CB00000103,
-				964983E305FD0FD0003A4126,
 				967C924B055778CB00000103,
 				967C924D055778CB00000103,
 				967C924F055778CB00000103,
@@ -2025,6 +2011,7 @@
 				967C9263055778CC00000103,
 				967C9265055778CC00000103,
 				967C9267055778CC00000103,
+				96F4749E0632E583006DDB7A,
 				967C9269055778CC00000103,
 				967C926B055778CC00000103,
 				967C926D055778CC00000103,
@@ -3549,6 +3536,20 @@
 			settings = {
 			};
 		};
+		969A219F063041AE007FE890 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = softkbd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		969A21A0063041AE007FE890 = {
+			fileRef = 969A219F063041AE007FE890;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		969A7EAE0559973800000103 = {
 			fileEncoding = 10;
 			isa = PBXFileReference;
@@ -4306,6 +4307,7 @@
 				96E2F92105AF0FFB00E73373,
 				96EDBDB00577A00600000133,
 				965751CD05E66FBF002889CD,
+				969A219F063041AE007FE890,
 			);
 			isa = PBXGroup;
 			name = generic;
@@ -4389,6 +4391,20 @@
 		};
 		96EFFA5A054716B900000102 = {
 			fileRef = 96EFFA58054716B900000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F4749E0632E583006DDB7A = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = subwind.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F4749F0632E583006DDB7A = {
+			fileRef = 96F4749E0632E583006DDB7A;
 			isa = PBXBuildFile;
 			settings = {
 			};

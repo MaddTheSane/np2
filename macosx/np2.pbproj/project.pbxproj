@@ -511,7 +511,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Neko Project IIx</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Neko Project IIx version 0.74</string>
+	<string>Neko Project IIx version 0.76</string>
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -523,11 +523,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.74</string>
+	<string>0.76</string>
 	<key>CFBundleSignature</key>
 	<string>SMil</string>
 	<key>CFBundleVersion</key>
-	<string>0.74</string>
+	<string>0.76</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 </dict>
@@ -582,8 +582,6 @@
 				967C91600557786900000103,
 				967C91620557786900000103,
 				967C92BC055778CC00000103,
-				967C92BE055778CC00000103,
-				967C92BF055778CC00000103,
 				967C92C0055778CC00000103,
 				967C92C1055778CC00000103,
 				967C92C2055778CC00000103,
@@ -656,14 +654,10 @@
 				967C9345055778CC00000103,
 				967C9347055778CC00000103,
 				967C9349055778CC00000103,
-				967C934B055778CC00000103,
-				967C934C055778CC00000103,
-				967C934D055778CC00000103,
 				967C934E055778CC00000103,
 				967C934F055778CC00000103,
 				967C9350055778CC00000103,
 				967C9351055778CC00000103,
-				967C9352055778CC00000103,
 				967C9353055778CC00000103,
 				967C9369055778CC00000103,
 				967C936D055778CC00000103,
@@ -709,7 +703,6 @@
 				967C93CE055778CC00000103,
 				967C93CF055778CC00000103,
 				967C93D1055778CC00000103,
-				967C93D2055778CC00000103,
 				967C93D3055778CC00000103,
 				967C93D5055778CC00000103,
 				967C93D7055778CC00000103,
@@ -750,7 +743,6 @@
 				9645C29E05BF64F10090B4FD,
 				9645C2A005BF64F60090B4FD,
 				9645C2A205BF64FB0090B4FD,
-				9645C2B705BFA3930090B4FD,
 				9645C2D905BFA3B90090B4FD,
 				9645C2DA05BFA3B90090B4FD,
 				9645C2DB05BFA3B90090B4FD,
@@ -760,7 +752,12 @@
 				966AF3F605ED13B6000E305F,
 				966AF3FF05ED13DD000E305F,
 				9668899705F0892600C9A4EE,
-				96497FA705FC4846003A4126,
+				969A20F306302FA2007FE890,
+				969A20FC06302FC5007FE890,
+				969A20FD06302FC5007FE890,
+				969A210B06302FF3007FE890,
+				969A233506305D42007FE890,
+				96F474DB0632E5D8006DDB7A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -976,20 +973,6 @@
 			settings = {
 			};
 		};
-		9645C2B605BFA3930090B4FD = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = wavemix.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		9645C2B705BFA3930090B4FD = {
-			fileRef = 9645C2B605BFA3930090B4FD;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		9645C2D005BFA3B90090B4FD = {
 			children = (
 				9645C2D105BFA3B90090B4FD,
@@ -1069,20 +1052,6 @@
 		};
 		9645C2E005BFA3B90090B4FD = {
 			fileRef = 9645C2D805BFA3B90090B4FD;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		96497FA505FC4846003A4126 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = kdispwin.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		96497FA705FC4846003A4126 = {
-			fileRef = 96497FA505FC4846003A4126;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1336,8 +1305,6 @@
 		967C9164055778CB00000103 = {
 			children = (
 				967C9165055778CB00000103,
-				967C9167055778CB00000103,
-				967C9168055778CB00000103,
 				967C9169055778CB00000103,
 				967C916A055778CB00000103,
 				967C916B055778CB00000103,
@@ -1347,6 +1314,7 @@
 				967C916F055778CB00000103,
 				967C9170055778CB00000103,
 				967C9171055778CB00000103,
+				969A20F206302FA2007FE890,
 				9645C29B05BF64CE0090B4FD,
 			);
 			isa = PBXGroup;
@@ -1360,22 +1328,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			path = bios.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C9167055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = bios02.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C9168055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = bios08.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1454,6 +1406,7 @@
 		967C9177055778CB00000103 = {
 			children = (
 				967C9178055778CB00000103,
+				969A20FA06302FC5007FE890,
 				967C917A055778CB00000103,
 				967C917C055778CB00000103,
 				967C917E055778CB00000103,
@@ -1462,6 +1415,7 @@
 				967C9184055778CB00000103,
 				967C9186055778CB00000103,
 				967C9188055778CB00000103,
+				969A20FB06302FC5007FE890,
 				967C918A055778CB00000103,
 				967C918C055778CB00000103,
 				967C918E055778CB00000103,
@@ -1880,6 +1834,7 @@
 				96083FEF05A936740005CD33,
 				967C91E9055778CB00000103,
 				967C91EB055778CB00000103,
+				969A210A06302FF3007FE890,
 				967C91ED055778CB00000103,
 				967C91EF055778CB00000103,
 				967C91F1055778CB00000103,
@@ -2071,43 +2026,15 @@
 		};
 		967C91F9055778CB00000103 = {
 			children = (
-				967C91FA055778CB00000103,
-				967C91FB055778CB00000103,
-				967C91FC055778CB00000103,
 				967C91FD055778CB00000103,
 				967C91FE055778CB00000103,
 				967C91FF055778CB00000103,
 				967C9200055778CB00000103,
-				967C9201055778CB00000103,
 				967C9202055778CB00000103,
 			);
 			isa = PBXGroup;
 			name = lio;
 			path = ../lio;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91FA055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = gcls.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91FB055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = gcolor1.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91FC055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = gcolor2.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -2143,14 +2070,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		967C9201055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = gview.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		967C9202055778CB00000103 = {
 			fileEncoding = "-2147483647";
 			isa = PBXFileReference;
@@ -2170,7 +2089,6 @@
 				967C9241055778CB00000103,
 				967C9244055778CB00000103,
 				967C9246055778CB00000103,
-				96497FA505FC4846003A4126,
 				967C924B055778CB00000103,
 				967C924D055778CB00000103,
 				967C924F055778CB00000103,
@@ -2180,6 +2098,7 @@
 				967C9263055778CC00000103,
 				967C9265055778CC00000103,
 				967C9267055778CC00000103,
+				96F474DA0632E5D8006DDB7A,
 				967C9269055778CC00000103,
 				967C926B055778CC00000103,
 				967C926D055778CC00000103,
@@ -2460,14 +2379,12 @@
 				967C928A055778CC00000103,
 				967C928B055778CC00000103,
 				967C928D055778CC00000103,
-				967C928E055778CC00000103,
 				967C928F055778CC00000103,
 				967C9291055778CC00000103,
 				967C9293055778CC00000103,
 				967C9295055778CC00000103,
 				967C9298055778CC00000103,
 				967C9299055778CC00000103,
-				9645C2B605BFA3930090B4FD,
 			);
 			isa = PBXGroup;
 			name = sound;
@@ -2592,14 +2509,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			path = rhythmc.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C928E055778CC00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = rhythmg.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -2796,18 +2705,6 @@
 		};
 		967C92BC055778CC00000103 = {
 			fileRef = 967C9165055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C92BE055778CC00000103 = {
-			fileRef = 967C9167055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C92BF055778CC00000103 = {
-			fileRef = 967C9168055778CB00000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3244,24 +3141,6 @@
 			settings = {
 			};
 		};
-		967C934B055778CC00000103 = {
-			fileRef = 967C91FA055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C934C055778CC00000103 = {
-			fileRef = 967C91FB055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C934D055778CC00000103 = {
-			fileRef = 967C91FC055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		967C934E055778CC00000103 = {
 			fileRef = 967C91FD055778CB00000103;
 			isa = PBXBuildFile;
@@ -3282,12 +3161,6 @@
 		};
 		967C9351055778CC00000103 = {
 			fileRef = 967C9200055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C9352055778CC00000103 = {
-			fileRef = 967C9201055778CB00000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3562,12 +3435,6 @@
 			settings = {
 			};
 		};
-		967C93D2055778CC00000103 = {
-			fileRef = 967C928E055778CC00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		967C93D3055778CC00000103 = {
 			fileRef = 967C928F055778CC00000103;
 			isa = PBXBuildFile;
@@ -3801,6 +3668,76 @@
 		};
 		969790EA059DE00F009015EE = {
 			fileRef = 969790E9059DE00F009015EE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A20F206302FA2007FE890 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = bios1f.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		969A20F306302FA2007FE890 = {
+			fileRef = 969A20F206302FA2007FE890;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A20FA06302FC5007FE890 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = atapicmd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		969A20FB06302FC5007FE890 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = ideio.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		969A20FC06302FC5007FE890 = {
+			fileRef = 969A20FA06302FC5007FE890;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A20FD06302FC5007FE890 = {
+			fileRef = 969A20FB06302FC5007FE890;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A210A06302FF3007FE890 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = pcidev.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		969A210B06302FF3007FE890 = {
+			fileRef = 969A210A06302FF3007FE890;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		969A233406305D42007FE890 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = softkbd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		969A233506305D42007FE890 = {
+			fileRef = 969A233406305D42007FE890;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4045,6 +3982,7 @@
 				96E2F92105AF0FFB00E73373,
 				96EDBDB00577A00600000133,
 				966AF3FE05ED13DD000E305F,
+				969A233406305D42007FE890,
 			);
 			isa = PBXGroup;
 			name = generic;
@@ -4128,6 +4066,20 @@
 		};
 		96EFFA5A054716B900000102 = {
 			fileRef = 96EFFA58054716B900000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F474DA0632E5D8006DDB7A = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = subwind.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F474DB0632E5D8006DDB7A = {
+			fileRef = 96F474DA0632E5D8006DDB7A;
 			isa = PBXBuildFile;
 			settings = {
 			};

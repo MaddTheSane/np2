@@ -176,6 +176,9 @@ static void MenuBarInit(void) {
 #ifndef SUPPORT_KEYDISP
 	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_KEYDISP);
 #endif
+#ifndef SUPPORT_SOFTKBD
+	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_SOFTKBD);
+#endif
     if (np2oscfg.I286SAVE) {
         AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
     }
@@ -675,6 +678,17 @@ void HandleMenuChoice(long wParam) {
 			}
 			break;
 #endif
+#if defined(SUPPORT_SOFTKBD)
+		case IDM_SOFTKBD:
+			menu_setsoftwarekeyboard(np2oscfg.softkey ^ 1);
+			if (np2oscfg.softkey) {
+				skbdwin_create();
+			}
+			else {
+				skbdwin_destroy();
+			}
+			break;
+#endif
 
 		case IDM_I286SAVE:
 			debugsub_status();
@@ -724,6 +738,7 @@ static void framereset(UINT waitcnt) {
 	framecnt = 0;
 	kdispwin_draw((BYTE)waitcnt);
 	toolwin_draw((BYTE)waitcnt);
+	skbdwin_process();
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {
 			sysmng_updatecaption(3);
@@ -809,12 +824,14 @@ int main(int argc, char *argv[]) {
     
 	keystat_initialize();
 	kdispwin_initialize();
+	skbdwin_readini();
 
 	toolwin_readini();
 	kdispwin_readini();
     if (!(setupMainWindow())) {
         return(0);
     }
+	skbdwin_initialize();
 
 #ifdef    NP2OPENING
     openingNP2();
@@ -841,6 +858,9 @@ int main(int argc, char *argv[]) {
 	menu_setbtnmode(np2cfg.BTN_MODE);
 #if defined(SUPPORT_KEYDISP)
 	menu_setkeydisp(np2oscfg.keydisp);
+#endif
+#if defined(SUPPORT_SOFTKBD)
+	menu_setsoftwarekeyboard(np2oscfg.softkey);
 #endif
 
 	scrnmng_initialize();
@@ -886,6 +906,11 @@ int main(int argc, char *argv[]) {
 #if defined(SUPPORT_KEYDISP)
 	if (np2oscfg.keydisp) {
 		kdispwin_create();
+	}
+#endif
+#if defined(SUPPORT_SOFTKBD)
+	if (np2oscfg.softkey) {
+		skbdwin_create();
 	}
 #endif
 
@@ -995,11 +1020,14 @@ int main(int argc, char *argv[]) {
 	scrnmng_destroy();
 
 	kdispwin_destroy();
+	skbdwin_destroy();
 	if (sys_updates & (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();						// np2.cfg create
 	    toolwin_writeini();				// np2.cfg append
 		kdispwin_writeini();
+		skbdwin_writeini();
 	}
+	skbdwin_deinitialize();
 	TRACETERM();
 	macossub_term();
 	dosio_term();

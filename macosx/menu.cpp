@@ -264,3 +264,12 @@ void menu_setkeydisp(BYTE value) {
 	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_KEYDISP, MFCHECK(value));
 #endif
 }
+
+void menu_setsoftwarekeyboard(BYTE value) {
+
+#if defined(SUPPORT_SOFTKBD)
+	value &= 1;
+	np2oscfg.softkey = value;
+	CheckMenuItem(GetMenuRef(IDM_OTHER), IDM_SOFTKBD, MFCHECK(value));
+#endif
+}

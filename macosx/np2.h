@@ -33,6 +33,9 @@ typedef struct {
 #if defined(SUPPORT_KEYDISP)
 	BYTE	keydisp;
 #endif
+#if defined(SUPPORT_SOFTKBD)
+	BYTE	softkey;
+#endif
 	BYTE	jastsnd;
 	BYTE	I286SAVE;
 	

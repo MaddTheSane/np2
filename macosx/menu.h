@@ -23,3 +23,4 @@ void menu_sets98logging(BYTE value);
 void menu_setrecording(bool end);
 void menu_setmsrapid(BYTE value);
 void menu_setkeydisp(BYTE value);
+void menu_setsoftwarekeyboard(BYTE value);

@@ -424,6 +424,9 @@ static const INITBL iniitem[] = {
 #ifdef SUPPORT_KEYDISP
 	{"keydispl", INITYPE_BOOL,		&np2oscfg.keydisp,		0},
 #endif
+#ifdef SUPPORT_SOFTKBD
+	{"softkybd", INITYPE_BOOL,		&np2oscfg.softkey,		0},
+#endif
 	{"jast_snd", INITYPE_BOOL,		&np2oscfg.jastsnd,		0},		// ver0.73
 	{"I286SAVE", INITYPE_BOOL,		&np2oscfg.I286SAVE,		0}};
 
