@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.7 2004/01/15 15:50:33 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.8 2004/01/16 15:18:04 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -213,7 +213,7 @@ LIDT_Ms(DWORD op)
 			for (i = 0; i < limit; i += 8) {
 				v[0] = cpu_lmemoryread_d(base + i);
 				v[1] = cpu_lmemoryread_d(base + i + 4);
-				VERBOSE(("LGDT_Ms: %08x: %08x%08x", base + i, v[0], v[1]));
+				VERBOSE(("LIDT_Ms: %08x: %08x%08x", base + i, v[0], v[1]));
 			}
 }
 #endif
