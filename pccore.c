@@ -68,7 +68,7 @@
 							4 * PCBASECLOCK25 / 100,
 							4 * PCBASECLOCK25 / 1920,
 							4 * PCBASECLOCK25 / 3125,
-							(4 * PCBASECLOCK25 / 22050) + 1,
+//							(4 * PCBASECLOCK25 / 22050) + 1,
 							(4 * PCBASECLOCK25 / 56400),
 							100, 20,
 							0};
@@ -153,6 +153,7 @@ static void setpcclock(UINT base, UINT multiple) {			// ver0.28
 	pc.keyboardclock = pc.realclock / 1920;
 	pc.midiclock = pc.realclock / 3125;
 	pc.frame1000 = pc.realclock / 56400;
+#if 0
 	if (opna_rate) {
 //		pc.sampleclock = (pc.realclock / opna_rate) + 1;
 		pc.sampleclock = (pc.realclock / opna_rate);
@@ -160,6 +161,7 @@ static void setpcclock(UINT base, UINT multiple) {			// ver0.28
 	else {
 		pc.sampleclock = 0;
 	}
+#endif
 }
 
 

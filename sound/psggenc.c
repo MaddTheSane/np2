@@ -125,6 +125,7 @@ void psggen_setreg(PSGGEN psg, BYTE reg, BYTE value) {
 				psg->tone[ch].pvol = ((BYTE *)&psg->reg) + reg;
 			}
 			psg->tone[ch].puchi = psggencfg.puchidec;
+//			TRACEOUT(("%d", value));
 			break;
 
 		case 11:

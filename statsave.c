@@ -354,12 +354,14 @@ static int flagload_core(NP2FFILE *f, const STENTRY *t) {
 	int		ret;
 
 	ret = flagload_common(f, t);
+#if 0
 	if (opna_rate) {
-		pc.sampleclock = (pc.realclock / opna_rate) + 1;
+		pc.sampleclock = pc.realclock / opna_rate;
 	}
 	else {
 		pc.sampleclock = 0;
 	}
+#endif
 	return(ret);
 }
 

@@ -25,9 +25,17 @@ void beep_setvol(UINT vol) {
 
 void beep_reset(void) {
 
+	if (beepcfg.rate) {
+		beepcfg.sampleclock = (pc.realclock / beepcfg.rate);
+//		TRACEOUT(("%d %d", pc.realclock, beepcfg.rate));
+	}
+	else {
+		beepcfg.sampleclock = 0;
+	}
 	ZeroMemory(&beep, sizeof(beep));
 	beep.mode = 1;
 }
+
 
 void beep_hzset(UINT16 cnt) {
 
@@ -64,7 +72,7 @@ static void beep_eventset(void) {
 
 	BPEVENT	*evt;
 	int		enable;
-	int		clock;
+	SINT32	clock;
 
 	enable = beep.low & beep.buz;
 	if (beep.enable != enable) {
@@ -76,6 +84,7 @@ static void beep_eventset(void) {
 			evt->clock = clock - beep.clock;
 			evt->enable = enable;
 			beep.clock = clock;
+//			TRACEOUT(("%d %d", evt->clock, evt->enable));
 		}
 	}
 }
@@ -103,9 +112,9 @@ void beep_lheventset(int low) {
 	if (beep.low != low) {
 		beep.low = low;
 		if (!beep.mode) {
-//			if ((low) && (beep.events >= (BEEPEVENT_MAX / 2))) {
+			if (beep.events >= (BEEPEVENT_MAX / 2)) {
 				sound_sync();
-//			}
+			}
 			beep_eventset();
 		}
 	}

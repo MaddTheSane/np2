@@ -68,7 +68,7 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 					case 0:							// no mix
 						if (tone->puchi) {
 							tone->puchi--;
-							samp += vol;
+							samp += vol << PSGADDEDBIT;
 						}
 						break;
 

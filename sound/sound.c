@@ -101,7 +101,7 @@ BOOL sound_create(UINT rate, UINT ms) {
 	}
 	sndstream.samples = samples;
 	streamreset();
-	ratebase200 = (opna_rate + 199) / 200;
+	ratebase200 = (rate + 199) / 200;
 
 	SNDCSEC_INIT;
 	return(SUCCESS);

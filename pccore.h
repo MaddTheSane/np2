@@ -79,7 +79,7 @@ typedef struct {
 	UINT32	dsoundclock2;
 	UINT32	keyboardclock;
 	UINT32	midiclock;
-	UINT32	sampleclock;
+//	UINT32	sampleclock;
 	UINT32	frame1000;
 	UINT32	raster;
 	UINT32	hsync;

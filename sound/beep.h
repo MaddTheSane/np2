@@ -29,6 +29,7 @@ typedef struct {
 	UINT	rate;
 	UINT	vol;
 	UINT	puchibase;
+	UINT	sampleclock;
 } BEEPCFG;
 
 
