@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.14 2004/03/02 16:29:16 monaka Exp $	*/
+/*	$Id: task.c,v 1.15 2004/03/02 16:30:43 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -62,6 +62,7 @@ load_tr(UINT16 selector)
 
 	default:
 		EXCEPTION(GP_EXCEPTION, task_sel.idx);
+		iobase = 0;	/* compiler happy */
 		break;
 	}
 
