@@ -968,7 +968,7 @@ void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
 	}
 }
 
-REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
+REG8 MEMCALL meml_read8(UINT seg, UINT off) {
 
 	UINT32	address;
 
@@ -981,7 +981,7 @@ REG8 MEMCALL i286_membyte_read(UINT seg, UINT off) {
 	}
 }
 
-REG16 MEMCALL i286_memword_read(UINT seg, UINT off) {
+REG16 MEMCALL meml_read16(UINT seg, UINT off) {
 
 	UINT32	address;
 
@@ -994,7 +994,7 @@ REG16 MEMCALL i286_memword_read(UINT seg, UINT off) {
 	}
 }
 
-void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 value) {
+void MEMCALL meml_write8(UINT seg, UINT off, REG8 value) {
 
 	UINT32	address;
 
@@ -1007,7 +1007,7 @@ void MEMCALL i286_membyte_write(UINT seg, UINT off, REG8 value) {
 	}
 }
 
-void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
+void MEMCALL meml_write16(UINT seg, UINT off, REG16 value) {
 
 	UINT32	address;
 
@@ -1020,7 +1020,7 @@ void MEMCALL i286_memword_write(UINT seg, UINT off, REG16 value) {
 	}
 }
 
-void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
+void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 
 	BYTE	*out;
 	UINT32	adrs;
@@ -1058,8 +1058,7 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 	}
 }
 
-void MEMCALL i286_memstr_write(UINT seg, UINT off,
-												const void *dat, UINT leng) {
+void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
 
 	BYTE	*out;
 	UINT32	adrs;
@@ -1097,7 +1096,7 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 	}
 }
 
-void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
+void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
 
 	if ((address + leng) < I286_MEMREADMAX) {
 		CopyMemory(dat, mem + address, leng);
@@ -1116,7 +1115,7 @@ void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
 	}
 }
 
-void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng) {
+void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
 
 const BYTE	*out;
 

@@ -242,6 +242,8 @@ static void IOOUTCALL rs232c_o32(UINT port, REG8 dat) {
 			break;
 
 		case 0x02:			// cmd
+			sysport.c &= ~7;
+			sysport.c |= (dat & 7);
 			rs232c.pos++;
 			break;
 	}

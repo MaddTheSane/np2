@@ -1,4 +1,4 @@
-/*	$Id: inst_table.c,v 1.7 2004/02/20 16:09:04 monaka Exp $	*/
+/*	$Id: inst_table.c,v 1.8 2004/03/07 23:04:51 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -768,7 +768,7 @@ void (*insttable_1byte[2][256])(void) = {
 		MOV_EdGd,
 		MOV_GbEb,
 		MOV_GdEd,
-		MOV_EwSw,
+		MOV_EdSw,
 		LEA_GdM,
 		MOV_SwEw,
 		POP_Ed,

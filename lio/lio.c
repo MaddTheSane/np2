@@ -30,7 +30,7 @@ void bios_lio(REG8 cmd) {
 
 //	TRACEOUT(("lio command %.2x", cmd));
 	MEML_READSTR(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
-	lio.palmode = i286_membyte_read(CPU_DS, 0x0a08);
+	lio.palmode = MEML_READ8(CPU_DS, 0x0a08);
 	lio.wait = 0;
 	switch(cmd) {
 		case 0x00:			// a0: GINIT

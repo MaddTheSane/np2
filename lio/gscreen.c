@@ -67,7 +67,7 @@ REG8 lio_ginit(GLIO lio) {
 	STOREINTELWORD(lio->work.viewy2, 399);
 	lio->palmode = 0;
 	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
-	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
+	MEML_WRITE8(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 }
 
@@ -271,7 +271,7 @@ REG8 lio_gcolor1(GLIO lio) {
 		lio->palmode = dat.palmode;
 	}
 	MEML_WRITESTR(CPU_DS, 0x0620, &lio->work, sizeof(lio->work));
-	i286_membyte_write(CPU_DS, 0x0a08, lio->palmode);
+	MEML_WRITE8(CPU_DS, 0x0a08, lio->palmode);
 	return(LIO_SUCCESS);
 
 gcolor1_err5:

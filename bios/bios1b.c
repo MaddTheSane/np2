@@ -121,7 +121,7 @@ static UINT16 fdfmt_biospara(REG8 type, REG8 rpm, REG8 fmt) {
 		off = 0x2361;									// see bios.cpp
 	}
 	off += fdc.us * 2;
-	off = i286_memword_read(seg, off);
+	off = MEML_READ16(seg, off);
 	off += n * 8;
 	if (!(CPU_AH & 0x40)) {
 		off += 4;
@@ -129,7 +129,7 @@ static UINT16 fdfmt_biospara(REG8 type, REG8 rpm, REG8 fmt) {
 	if (fmt) {
 		off += 2;
 	}
-	return(i286_memword_read(seg, off));
+	return(MEML_READ16(seg, off));
 }
 
 
@@ -862,8 +862,8 @@ void bios0x1b(void) {
 #if defined(SUPPORT_SCSI)
 	if ((CPU_AL & 0xf0) == 0xc0) {
 		TRACEOUT(("%.4x:%.4x AX=%.4x BX=%.4x CX=%.4x DX=%.4 ES=%.4x BP=%.4x",
-							i286_memword_read(CPU_SS, CPU_SP+2),
-							i286_memword_read(CPU_SS, CPU_SP),
+							MEML_READ16(CPU_SS, CPU_SP+2),
+							MEML_READ16(CPU_SS, CPU_SP),
 							CPU_AX, CPU_BX, CPU_CX, CPU_DX, CPU_ES, CPU_BP));
 		scsicmd_bios();
 		return;
@@ -878,18 +878,18 @@ void bios0x1b(void) {
 	seg = mem[0x004b0 + (CPU_AL >> 4)];
 	if (seg) {
 		TRACEOUT(("call by %.4x:%.4x",
-							i286_memword_read(CPU_SS, CPU_SP+2),
-							i286_memword_read(CPU_SS, CPU_SP)));
+							MEML_READ16(CPU_SS, CPU_SP+2),
+							MEML_READ16(CPU_SS, CPU_SP)));
 		sp = CPU_SP;
-		i286_memword_write(CPU_SS, sp - 2, CPU_DS);
-		i286_memword_write(CPU_SS, sp - 4, CPU_SI);
-		i286_memword_write(CPU_SS, sp - 6, CPU_DI);
-		i286_memword_write(CPU_SS, sp - 8, CPU_ES);			// +a
-		i286_memword_write(CPU_SS, sp - 10, CPU_BP);		// +8
-		i286_memword_write(CPU_SS, sp - 12, CPU_DX);		// +6
-		i286_memword_write(CPU_SS, sp - 14, CPU_CX);		// +4
-		i286_memword_write(CPU_SS, sp - 16, CPU_BX);		// +2
-		i286_memword_write(CPU_SS, sp - 18, CPU_AX);		// +0
+		MEML_WRITE16(CPU_SS, sp - 2, CPU_DS);
+		MEML_WRITE16(CPU_SS, sp - 4, CPU_SI);
+		MEML_WRITE16(CPU_SS, sp - 6, CPU_DI);
+		MEML_WRITE16(CPU_SS, sp - 8, CPU_ES);		// +a
+		MEML_WRITE16(CPU_SS, sp - 10, CPU_BP);		// +8
+		MEML_WRITE16(CPU_SS, sp - 12, CPU_DX);		// +6
+		MEML_WRITE16(CPU_SS, sp - 14, CPU_CX);		// +4
+		MEML_WRITE16(CPU_SS, sp - 16, CPU_BX);		// +2
+		MEML_WRITE16(CPU_SS, sp - 18, CPU_AX);		// +0
 #if 0
 		TRACEOUT(("bypass to %.4x:0018", seg << 8));
 		TRACEOUT(("AX=%04x BX=%04x %02x:%02x:%02x:%02x ES=%04x BP=%04x",
@@ -951,16 +951,16 @@ void bios0x1b(void) {
 #if 0
 	TRACEOUT(("%04x:%04x AX=%04x BX=%04x %02x:%02x:%02x:%02x\n"	\
 						"ES=%04x BP=%04x \nret=%02x",
-							i286_memword_read(CPU_SS, CPU_SP+2),
-							i286_memword_read(CPU_SS, CPU_SP),
+							MEML_READ16(CPU_SS, CPU_SP+2),
+							MEML_READ16(CPU_SS, CPU_SP),
 							CPU_AX, CPU_BX, CPU_CL, CPU_DH, CPU_DL, CPU_CH,
 							CPU_ES, CPU_BP, ret_ah));
 #endif
 	CPU_AH = ret_ah;
-	flag = i286_membyte_read(CPU_SS, CPU_SP+4) & 0xfe;
+	flag = MEML_READ8(CPU_SS, CPU_SP+4) & 0xfe;
 	if (ret_ah >= 0x20) {
 		flag += 1;
 	}
-	i286_membyte_write(CPU_SS, CPU_SP + 4, flag);
+	MEML_WRITE8(CPU_SS, CPU_SP + 4, flag);
 }
 

@@ -509,8 +509,8 @@ REG8 lio_gget(GLIO lio) {
 	if (leng < (size + 4)) {
 		return(LIO_ILLEGALFUNC);
 	}
-	i286_memword_write(seg, off, (REG16)x2);
-	i286_memword_write(seg, off+2, (REG16)y2);
+	MEML_WRITE16(seg, off, (REG16)x2);
+	MEML_WRITE16(seg, off+2, (REG16)y2);
 	off += 4;
 	gt.addr = (x >> 3) + (y * 80);
 	if (lio->draw.flag & LIODRAW_UPPER) {
@@ -554,8 +554,8 @@ REG8 lio_gput1(GLIO lio) {
 	lput.seg = LOADINTELWORD(dat.seg);
 	lput.mode = dat.mode;
 	leng = LOADINTELWORD(dat.leng);
-	lput.width = i286_memword_read(lput.seg, lput.off - 4);
-	lput.height = i286_memword_read(lput.seg, lput.off - 2);
+	lput.width = MEML_READ16(lput.seg, lput.off - 4);
+	lput.height = MEML_READ16(lput.seg, lput.off - 2);
 	size = ((lput.width + 7) >> 3) * lput.height;
 	if (leng < (size + 4)) {
 		return(LIO_ILLEGALFUNC);

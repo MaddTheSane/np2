@@ -167,10 +167,10 @@ static void bios0x18_0f(UINT seg, UINT off, REG8 num, REG8 cnt) {
 #endif
 
 	while((cnt--) && (p < (gdc.m.para + GDC_SCROLL + 0x10))) {
-		t = i286_memword_read(seg, off);
+		t = MEML_READ16(seg, off);
 		t >>= 1;
 		STOREINTELWORD(p, t);
-		t = i286_memword_read(seg, off + 2);
+		t = MEML_READ16(seg, off + 2);
 		t *= raster;
 		STOREINTELWORD(p + 2, t);
 		off += 4;
@@ -208,7 +208,7 @@ const BYTE	*p;
 	switch(code >> 8) {
 		case 0x00:			// 8x8
 			size = 0x0101;
-			i286_memword_write(seg, off, 0x0101);
+			MEML_WRITE16(seg, off, 0x0101);
 			p = fontrom + 0x82000 + ((code & 0xff) << 4);
 			MEML_WRITESTR(seg, off + 2, p, 8);
 			break;
@@ -218,7 +218,7 @@ const BYTE	*p;
 		case 0x2a:
 		case 0x2b:
 			size = 0x0102;
-			i286_memword_write(seg, off, 0x0102);
+			MEML_WRITE16(seg, off, 0x0102);
 			p = fontrom;
 			p += (code & 0x7f) << 12;
 			p += (((code >> 8) - 0x20) & 0x7f) << 4;
@@ -243,7 +243,7 @@ const BYTE	*p;
 			MEML_WRITESTR(seg, off + 2, buf, 32);
 			break;
 	}
-	i286_memword_write(seg, off, size);
+	MEML_WRITE16(seg, off, size);
 	return(size);
 }
 
@@ -756,8 +756,8 @@ void bios0x18(void) {
 
 #if 0
 	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
-							i286_memword_read(CPU_SS, CPU_SP+2),
-							i286_memword_read(CPU_SS, CPU_SP)));
+							MEML_READ16(CPU_SS, CPU_SP+2),
+							MEML_READ16(CPU_SS, CPU_SP)));
 #endif
 
 	sti_waiting ^= 1;
@@ -980,7 +980,7 @@ void bios0x18(void) {
 
 		case 0x44:						// ボーダカラーの設定
 //			if (!(mem[MEMB_PRXCRT] & 0x40)) {
-//				color = i286_membyte_read(CPU_DS, CPU_BX + 1);
+//				color = MEML_READ8(CPU_DS, CPU_BX + 1);
 //			}
 			break;
 

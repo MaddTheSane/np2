@@ -83,7 +83,7 @@ void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);
 #define	MEML_READ8(seg, off)				\
 			i286_membyte_read((seg), (off))
 #define	MEML_READ16(seg, off)				\
-			i286_memwrite_read((seg), (off))
+			i286_memword_read((seg), (off))
 #define	MEML_WRITE8(seg, off, dat)			\
 			i286_membyte_write((seg), (off), (dat));
 #define	MEML_WRITE16(seg, off, dat)			\

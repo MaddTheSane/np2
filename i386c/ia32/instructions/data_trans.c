@@ -1,4 +1,4 @@
-/*	$Id: data_trans.c,v 1.8 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: data_trans.c,v 1.9 2004/03/07 23:04:51 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -130,6 +130,30 @@ MOV_EwSw(void)
 		} else {
 			CPU_WORKCLOCK(3);
 			madr = calc_ea_dst(op);
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
+		}
+		return;
+	}
+	EXCEPTION(UD_EXCEPTION, 0);
+}
+
+void
+MOV_EdSw(void)
+{
+	UINT32 op, src, madr;
+	UINT8 idx;
+
+	GET_PCBYTE(op);
+	idx = (UINT8)((op >> 3) & 7);
+	if (idx < CPU_SEGREG_NUM) {
+		src = CPU_REGS_SREG(idx);
+		if (op >= 0xc0) {
+			CPU_WORKCLOCK(2);
+			*(reg32_b20[op]) = src;
+		} else {
+			CPU_WORKCLOCK(3);
+			madr = calc_ea_dst(op);
+			// LSB only...
 			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, (UINT16)src);
 		}
 		return;

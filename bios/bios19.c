@@ -106,14 +106,14 @@ void bios0x19(void) {
 			CPU_AH = 1;
 			return;
 		}
-		flag = i286_membyte_read(dseg, doff + R_FLAG);
+		flag = MEML_READ8(dseg, doff + R_FLAG);
 		if (!(flag & RFLAG_INIT)) {
 			CPU_AH = 1;
 			return;
 		}
 		switch(CPU_AH) {
 			case 0x02:
-				CPU_CX = i286_memword_read(dseg, doff + R_CNT);
+				CPU_CX = MEML_READ16(dseg, doff + R_CNT);
 				break;
 
 			case 0x03:
@@ -121,34 +121,34 @@ void bios0x19(void) {
 				break;
 
 			case 0x04:
-				cnt = i286_memword_read(dseg, doff + R_CNT);
+				cnt = MEML_READ16(dseg, doff + R_CNT);
 				if (cnt) {
 					UINT16	pos;
 
 					// データ引き取り
-					pos = i286_memword_read(dseg, doff + R_GETP);
-					CPU_CX = i286_memword_read(dseg, pos);
+					pos = MEML_READ16(dseg, doff + R_GETP);
+					CPU_CX = MEML_READ16(dseg, pos);
 
 					// 次のポインタをストア
 					pos += 2;
-					if (pos >= i286_memword_read(dseg, doff + R_TAILP)) {
-						pos = i286_memword_read(dseg, doff + R_HEADP);
+					if (pos >= MEML_READ16(dseg, doff + R_TAILP)) {
+						pos = MEML_READ16(dseg, doff + R_HEADP);
 					}
-					i286_memword_write(dseg, doff + R_GETP, pos);
+					MEML_WRITE16(dseg, doff + R_GETP, pos);
 
 					// カウンタをデクリメント
 					cnt--;
-					i286_memword_write(dseg, doff + R_CNT, cnt);
+					MEML_WRITE16(dseg, doff + R_CNT, cnt);
 
 					// XONを送信？
 					if ((flag & RFLAG_XOFF) && 
-						(cnt < i286_memword_read(dseg, doff + R_XOFF))) {
+						(cnt < MEML_READ16(dseg, doff + R_XOFF))) {
 						iocore_out8(0x30, RSCODE_XON);
 						flag &= ~RFLAG_XOFF;
 					}
 					flag &= ~RFLAG_BOVF;
 					CPU_AH = 0;
-					i286_membyte_write(dseg, doff + R_FLAG, flag);
+					MEML_WRITE8(dseg, doff + R_FLAG, flag);
 					return;
 				}
 				else {
@@ -160,7 +160,7 @@ void bios0x19(void) {
 				iocore_out8(0x32, CPU_AL);
 				if (CPU_AL & RCMD_IR) {
 					flag &= ~RFLAG_INIT;
-					i286_membyte_write(dseg, doff + R_FLAG, flag);
+					MEML_WRITE8(dseg, doff + R_FLAG, flag);
 					sysport.c &= ~1;
 					pic.pi[0].imr |= PIC_RS232C;
 				}
@@ -172,7 +172,7 @@ void bios0x19(void) {
 					sysport.c |= 1;
 					pic.pi[0].imr &= ~PIC_RS232C;
 				}
-				i286_membyte_write(dseg, doff + R_CMD, CPU_AL);
+				MEML_WRITE8(dseg, doff + R_CMD, CPU_AL);
 				break;
 			case 0x06:
 				CPU_CH = iocore_inp8(0x32);
@@ -181,8 +181,7 @@ void bios0x19(void) {
 		}
 		CPU_AH = 0;
 		if (flag & RFLAG_BOVF) {
-			i286_membyte_write(dseg, doff + R_FLAG,
-											(BYTE)(flag & (~RFLAG_BOVF)));
+			MEML_WRITE8(dseg, doff + R_FLAG, (UINT8)(flag & (~RFLAG_BOVF)));
 			CPU_AH = 2;
 		}
 	}

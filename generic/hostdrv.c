@@ -697,7 +697,7 @@ static void set_fileattr(INTRST intrst) {
 		fail(intrst, ERR_ACCESSDENIED);
 		return;
 	}
-	attr = i286_memword_read(CPU_SS, CPU_BP + sizeof(IF4INTR)) & 0x37;
+	attr = MEML_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR)) & 0x37;
 
 	// ê¨å˜ÇµÇΩÇ±Ç∆Ç…Ç∑ÇÈ...
 	succeed(intrst);
@@ -970,7 +970,7 @@ static void do_redir(INTRST intrst) {
 	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
 	}
-	mode = i286_memword_read(CPU_SS, CPU_BP + sizeof(IF4INTR));
+	mode = MEML_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR));
 	TRACEOUT(("do_redir: %.4x", mode));
 	switch(mode) {
 		case 0x5f02:
@@ -979,8 +979,8 @@ static void do_redir(INTRST intrst) {
 				fail(intrst, 0x12);
 				return;
 			}
-			i286_memword_write(CPU_DS, CPU_BX + 2, 4);
-			i286_memword_write(CPU_DS, CPU_BX + 4, 1);
+			MEML_WRITE16(CPU_DS, CPU_BX + 2, 4);
+			MEML_WRITE16(CPU_DS, CPU_BX + 4, 1);
 			tmp[0] = (char)('A' + hostdrv.stat.drive_no);
 			tmp[1] = ':';
 			tmp[2] = '\0';

@@ -1,4 +1,4 @@
-/*	$Id: data_trans.h,v 1.3 2004/02/20 16:09:05 monaka Exp $	*/
+/*	$Id: data_trans.h,v 1.4 2004/03/07 23:04:51 yui Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -44,6 +44,7 @@ void MOV_GbEb(void);
 void MOV_GwEw(void);
 void MOV_GdEd(void);
 void MOV_EwSw(void);
+void MOV_EdSw(void);
 void MOV_SwEw(void);
 void MOV_ALOb(void);
 void MOV_AXOw(void);
