@@ -110,8 +110,11 @@ typedef struct {
 
 	UINT8	cpumode;
 	UINT8	model;
-	UINT8	extmem;
+	UINT8	fddif;
 	UINT8	hddif;
+
+	UINT8	extmem;
+	UINT8	padding[3];
 
 	UINT32	sound;
 	UINT32	device;
