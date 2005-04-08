@@ -148,9 +148,9 @@ void cs4231_reset(void) {
 	ZeroMemory(&cs4231, sizeof(cs4231));
 	cs4231.bufsize = CS4231_BUFFERS;
 //	cs4231.proc = cs4231_nodecode;
-	cs4231.port = 0xffff;
 	cs4231.dmach = 0xff;
 	cs4231.dmairq = 0xff;
+	FillMemory(cs4231.port, sizeof(cs4231.port), 0xff);
 }
 
 void cs4231_update(void) {

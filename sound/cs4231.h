@@ -40,23 +40,20 @@ typedef struct {
 	UINT		bufsize;
 	UINT		bufdatas;
 	UINT		bufpos;
-//	UINT32		curtime;
-//	UINT32		step;
-//	SINT32		pcmdata[2];
 	UINT32		pos12;
 	UINT32		step12;
 
 	UINT8		enable;
 	UINT8		portctrl;
-	UINT16		port;
 	UINT8		dmairq;
 	UINT8		dmach;
+	UINT16		port[8];
 	UINT8		adrs;
 	UINT8		index;
 	UINT8		intflag;
 	UINT8		outenable;
 	UINT8		extfunc;
-	UINT8		padding;
+	UINT8		extindex;
 
 	CS4231REG	reg;
 	UINT8		buffer[CS4231_BUFFERS];

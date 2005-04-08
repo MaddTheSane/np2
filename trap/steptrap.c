@@ -5,7 +5,10 @@
 
 #if defined(ENABLE_TRAP)
 #include	"dosio.h"
+#include	"pccore.h"
 #include	"cpucore.h"
+#include	"sound.h"
+#include	"fmboard.h"
 #include	"steptrap.h"
 
 
@@ -29,7 +32,13 @@ void CPUCALL steptrap(UINT cs, UINT32 eip) {
 // ---- ここにトラップ条件コードを書きます
 //	return;
 
-#if 1
+// if (cs4231.intflag) TRACEOUT(("%.4x:%.4x", cs, eip));
+	if (cs == 0x1311) TRACEOUT(("%.4x:%.4x", cs, eip));
+	if (cs == 0x0d77) TRACEOUT(("%.4x:%.4x", cs, eip));
+	if (cs == 0x0f5d) TRACEOUT(("%.4x:%.4x", cs, eip));
+	if (cs == 0x0e91) TRACEOUT(("%.4x:%.4x", cs, eip));
+
+#if 0
 {
 	static UINT tmp = 0;
 	if (tmp != *(UINT16 *)(mem + 0xa0000 + 18 * 2)) {

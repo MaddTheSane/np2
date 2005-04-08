@@ -19,18 +19,28 @@ static void IOOUTCALL csctrl_oc24(UINT port, REG8 dat) {
 
 static void IOOUTCALL csctrl_oc2b(UINT port, REG8 dat) {
 
-	if ((cs4231.portctrl & 0x2f) == 0x20) {
-		cs4231.port &= 0xff00;
-		cs4231.port |= (dat & 0xf0);
+	UINT	num;
+
+	if ((cs4231.portctrl & 0x28) == 0x20) {
+		num = cs4231.portctrl & 7;
+		if ((num == 0) || (num == 5)) {
+			cs4231.port[num] &= 0xff00;
+			cs4231.port[num] |= dat;
+		}
 	}
 	(void)port;
 }
 
 static void IOOUTCALL csctrl_oc2d(UINT port, REG8 dat) {
 
+	UINT	num;
+
 	if ((cs4231.portctrl & 0x2f) == 0x20) {
-		cs4231.port &= 0x00ff;
-		cs4231.port |= (dat << 8);
+		num = cs4231.portctrl & 7;
+		if ((num == 0) || (num == 5)) {
+			cs4231.port[num] &= 0x00ff;
+			cs4231.port[num] |= (dat << 8);
+		}
 	}
 	(void)port;
 }
@@ -43,34 +53,20 @@ static REG8 IOINPCALL csctrl_ic24(UINT port) {
 
 static REG8 IOINPCALL csctrl_ic2b(UINT port) {
 
-	switch(cs4231.portctrl & 0x0f) {
-		case 0x00:
-			return(cs4231.port & 0xff);
+	UINT	num;
 
-		case 0x01:
-			return(0x60);
-
-		case 0x04:
-			return(0x88);
-	}
 	(void)port;
-	return(0xff);
+	num = cs4231.portctrl & 0x07;
+	return((REG8)(cs4231.port[num] & 0xff));
 }
 
 static REG8 IOINPCALL csctrl_ic2d(UINT port) {
 
-	switch(cs4231.portctrl & 0x0f) {
-		case 0x00:
-			return(cs4231.port >> 8);
+	UINT	num;
 
-		case 0x01:
-			return(0xa4);
-
-		case 0x04:
-			return(0x01);
-	}
 	(void)port;
-	return(0xff);
+	num = cs4231.portctrl & 0x07;
+	return((REG8)(cs4231.port[num] >> 8));
 }
 
 
@@ -79,13 +75,18 @@ static REG8 IOINPCALL csctrl_ic2d(UINT port) {
 void cs4231io_reset(void) {
 
 	cs4231.enable = 1;
-	cs4231.port = 0xf40;
 	cs4231.adrs = 0x22;
 	cs4231.dmairq = cs4231irq[(cs4231.adrs >> 3) & 7];
 	cs4231.dmach = cs4231dma[cs4231.adrs & 7];
 	if (cs4231.dmach != 0xff) {
 		dmac_attach(DMADEV_CS4231, cs4231.dmach);
 	}
+	cs4231.port[0] = 0x0f40;
+	cs4231.port[1] = 0xa460;
+	cs4231.port[2] = 0x0f48;
+	cs4231.port[4] = 0x0188;
+	cs4231.port[5] = 0x0f4a;
+
 	TRACEOUT(("CS4231 - IRQ = %d", cs4231.dmairq));
 	TRACEOUT(("CS4231 - DMA channel = %d", cs4231.dmach));
 }
@@ -101,10 +102,10 @@ void cs4231io_bind(void) {
 	iocore_attachinp(0xc2d, csctrl_ic2d);
 }
 
-void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
+void IOOUTCALL cs4231io0_w8(UINT port, REG8 value) {
 
-	switch(port & 0x0f) {
-		case 0:
+	switch(port - cs4231.port[0]) {
+		case 0x00:
 			cs4231.adrs = value;
 			cs4231.dmairq = cs4231irq[(value >> 3) & 7];
 			cs4231.dmach = cs4231dma[value & 7];
@@ -120,43 +121,67 @@ void IOOUTCALL cs4231io_w8(UINT port, REG8 value) {
 			}
 			break;
 
-		case 4:
+		case 0x04:
 			cs4231.index = value;
 			break;
 
-		case 5:
+		case 0x05:
 			cs4231_control(cs4231.index & 0x1f, value);
 			break;
 
-		case 6:
+		case 0x06:
 			cs4231.intflag = 0;
 			break;
 
-		case 7:
+		case 0x07:
 			cs4231_datasend(value);
 			break;
 	}
 }
 
-REG8 IOINPCALL cs4231io_r8(UINT port) {
+REG8 IOINPCALL cs4231io0_r8(UINT port) {
 
-	switch(port & 0x0f) {
-		case 0:
+	switch(port - cs4231.port[0]) {
+		case 0x00:
 			return(cs4231.adrs);
 
-		case 3:
+		case 0x03:
 			return(0x04);
 
-		case 4:
+		case 0x04:
 			return(cs4231.index & 0x7f);
 
-		case 5:
+		case 0x05:
 			return(*(((UINT8 *)(&cs4231.reg)) + (cs4231.index & 0x1f)));
 
-		case 6:
+		case 0x06:
 			return(cs4231.intflag);
 
 	}
 	return(0);
+}
+
+void IOOUTCALL cs4231io5_w8(UINT port, REG8 value) {
+
+	switch(port - cs4231.port[5]) {
+		case 0x00:
+			cs4231.extindex = value;
+			break;
+	}
+}
+
+REG8 IOINPCALL cs4231io5_r8(UINT port) {
+
+	switch(port - cs4231.port[5]) {
+		case 0x00:
+			return(cs4231.extindex);
+
+		case 0x01:
+			if (cs4231.extindex == 1) {
+				return(0);				// means opna int5
+			}
+			break;
+	}
+	return(0xff);
 }
 
