@@ -3181,7 +3181,7 @@ const I286OP i286op_repe[] = {
 			i286c_rep_insb,					// 6C:	rep insb
 			i286c_rep_insw,					// 6D:	rep insw
 			i286c_rep_outsb,				// 6E:	rep outsb
-			i286c_rep_outsb,				// 6F:	rep outsw
+			i286c_rep_outsw,				// 6F:	rep outsw
 
 			_jo_short,						// 70:	jo short
 			_jno_short,						// 71:	jno short
@@ -3526,7 +3526,7 @@ const I286OP i286op_repne[] = {
 			i286c_rep_insb,					// 6C:	rep insb
 			i286c_rep_insw,					// 6D:	rep insw
 			i286c_rep_outsb,				// 6E:	rep outsb
-			i286c_rep_outsb,				// 6F:	rep outsw
+			i286c_rep_outsw,				// 6F:	rep outsw
 
 			_jo_short,						// 70:	jo short
 			_jno_short,						// 71:	jno short
