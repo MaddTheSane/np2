@@ -63,7 +63,11 @@ static REG8 IOINPCALL opn_i18a(UINT port) {
 		return(psggen_getreg(&psg1, opn.opnreg));
 	}
 	(void)port;
+#if 1
+	return(opn.opnreg);
+#else
 	return(0xff);
+#endif
 }
 
 

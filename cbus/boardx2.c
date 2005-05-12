@@ -59,7 +59,11 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 		return(psggen_getreg(&psg1, opn.opn2reg));
 	}
 	(void)port;
+#if 1
+	return(opn.opn2reg);
+#else
 	return(0xff);
+#endif
 }
 
 
@@ -141,14 +145,21 @@ static REG8 IOINPCALL opna_i188(UINT port) {
 
 static REG8 IOINPCALL opna_i18a(UINT port) {
 
+	(void)port;
 	if (opn.opnreg == 0x0e) {
 		return(fmboard_getjoy(&psg2));
 	}
 	else if (opn.opnreg < 0x10) {
 		return(psggen_getreg(&psg2, opn.opnreg));
 	}
-	(void)port;
+#if 1
+	else if (opn.opnreg == 0xff) {
+		return(1);
+	}
+	return(opn.opnreg);
+#else
 	return(opn.reg[opn.opnreg]);
+#endif
 }
 
 static REG8 IOINPCALL opna_i18c(UINT port) {
