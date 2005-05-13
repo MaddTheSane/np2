@@ -29,11 +29,11 @@ void dmav30(void) {
 						break;
 
 					case 0x04:		// port->mem
-						i286_memorywrite(ch->adrs.d, ch->proc.inproc());
+						MEMP_WRITE8(ch->adrs.d, ch->proc.inproc());
 						break;
 
 					default:
-						ch->proc.outproc(i286_memoryread(ch->adrs.d));
+						ch->proc.outproc(MEMP_READ8(ch->adrs.d));
 						break;
 				}
 				ch->adrs.w[DMA16_LOW] += ((ch->mode & 0x20)?-1:1);
