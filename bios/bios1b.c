@@ -334,16 +334,14 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 		}
 		if (!fdd_diskready(fdc.us)) {
 			fdd_int(FDCBIOS_NONREADY);
-			if (CPU_AH == 0x84) {
-				return(0x68);			// 新センスは 両用ドライブ情報も
-			}
-			if (CPU_AH == 0xc4) {									// ver0.31
-				if (fdc.support144) {
-					return(0x6c);
+			ret_ah = 0x60;
+			if ((CPU_AX & 0x8f40) == 0x8400) {
+				ret_ah |= 8;					// 1MB/640KB両用ドライブ
+				if ((CPU_AH & 0x40) && (fdc.support144)) {
+					ret_ah |= 4;				// 1.44対応ドライブ
 				}
-				return(0x68);
 			}
-			return(0x60);
+			return(ret_ah);
 		}
 	}
 
@@ -444,11 +442,11 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 				if (mem[fmode] & (0x01 << fdc.us)) {
 					ret_ah |= 0x01;
 				}
-				if (mem[fmode] & (0x10 << fdc.us)) {				// ver0.30
+				if (mem[fmode] & (0x10 << fdc.us)) {
 					ret_ah |= 0x04;
 				}
 			}
-			if (CPU_AH & 0x80) {									// ver0.30
+			if ((CPU_AX & 0x8f40) == 0x8400) {
 				ret_ah |= 8;					// 1MB/640KB両用ドライブ
 				if ((CPU_AH & 0x40) && (fdc.support144)) {
 					ret_ah |= 4;				// 1.44対応ドライブ
