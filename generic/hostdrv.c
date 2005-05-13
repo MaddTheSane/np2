@@ -66,8 +66,8 @@ static void fetch_if4dos(void) {
 	REG16	seg;
 	IF4DOS	if4dos;
 
-	off = i286_memoryread_w(IF4DOSPTR_ADDR);
-	seg = i286_memoryread_w(IF4DOSPTR_ADDR + 2);
+	off = MEML_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 0);
+	seg = MEML_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 2);
 	MEML_READSTR(seg, off, &if4dos, sizeof(if4dos));
 	hostdrv.stat.drive_no = if4dos.drive_no;
 	hostdrv.stat.dosver_major = if4dos.dosver_major;

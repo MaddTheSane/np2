@@ -1,7 +1,8 @@
 
 // ---- DOSとの受け渡し用
 
-#define IF4DOSPTR_ADDR	0x0000600
+#define IF4DOSPTR_OFF	0x0600
+#define IF4DOSPTR_SEG	0x0000
 		// IF4DOSのアドレスが入っているアドレス
 		// (割り込みを止めて、一時的に使用しているだけなので、
 		//  仮にここを使用するBIOS/OS/アプリがあっても大丈夫)
