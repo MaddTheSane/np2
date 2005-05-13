@@ -235,12 +235,12 @@ static void b0patch(void) {
 			REG8	c;
 			REG8	cl;
 			REG8	last;
-			addr = ES_BASE + CPU_BP;
+			addr = CPU_BP;
 			size = CPU_BX;
 			cnt = 0;
 			last = 0;
 			while(size--) {
-				c = i286_memoryread(addr++);
+				c = MEML_READ8(ES_BASE, addr++);
 				cl = 0;
 				do {
 					REG8 now = c & 0x80;
@@ -264,13 +264,13 @@ static void b0patch(void) {
 			}
 		}
 		if ((b0p.pos >> 3) < CPU_BX) {
-			UINT32 addr;
+			UINT addr;
 			REG8 c;
-			addr = ES_BASE + CPU_BP + (b0p.pos >> 3);
-			c = i286_memoryread(addr);
+			addr = CPU_BP + (b0p.pos >> 3);
+			c = MEML_READ8(CPU_ES, addr);
 			c ^= (1 << (b0p.pos & 7));
 			b0p.pos++;
-			i286_memorywrite(addr, c);
+			MEML_WRITE8(CPU_ES, addr, c);
 		}
 	}
 }
