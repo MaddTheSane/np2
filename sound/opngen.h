@@ -168,7 +168,7 @@ void opngen_setVR(REG8 channel, REG8 value);
 void opngen_reset(void);
 void opngen_setcfg(REG8 maxch, UINT flag);
 void opngen_setextch(UINT chnum, REG8 data);
-void opngen_setreg(REG8 chbase, REG8 reg, REG8 value);
+void opngen_setreg(REG8 chbase, UINT reg, REG8 value);
 void opngen_keyon(UINT chnum, REG8 value);
 
 void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *buf, UINT count);

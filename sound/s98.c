@@ -176,12 +176,12 @@ void S98_close(void) {
 	}
 }
 
-void S98_put(REG8 module, REG8 addr, REG8 data) {
+void S98_put(REG8 module, UINT addr, REG8 data) {
 
 	if (s98log.fh != FILEH_INVALID) {
 		S98_putint();
 		S98_putc(module);
-		S98_putc(addr);
+		S98_putc((UINT8)addr);
 		S98_putc(data);
 	}
 }

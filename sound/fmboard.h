@@ -13,16 +13,16 @@
 
 
 typedef struct {
-	UINT8	reg[0x400];
-	UINT8	opnreg;
-	UINT8	extreg;
-	UINT8	opn2reg;
-	UINT8	ext2reg;
+	UINT	addr;
+	UINT	addr2;
+	UINT8	data;
+	UINT8	data2;
+	UINT16	base;
 	UINT8	adpcmmask;
 	UINT8	channels;
 	UINT8	extend;
-	UINT8	padding;
-	UINT16	base;
+	UINT8	_padding;
+	UINT8	reg[0x400];
 } OPN_T;
 
 typedef struct {
@@ -55,13 +55,15 @@ extern	_TMS3631	tms3631;
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
 extern	OPNCH		opnch[OPNCH_MAX];
-extern	_PSGGEN		psg1;
-extern	_PSGGEN		psg2;
-extern	_PSGGEN		psg3;
+extern	_PSGGEN		__psg[3];
 extern	_RHYTHM		rhythm;
 extern	_ADPCM		adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
+
+#define	psg1	__psg[0]
+#define	psg2	__psg[1]
+#define	psg3	__psg[2]
 
 
 REG8 fmboard_getjoy(PSGGEN psg);

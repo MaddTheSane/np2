@@ -30,7 +30,27 @@ void CPUCALL steptrap(UINT cs, UINT32 eip) {
 
 
 // ---- ここにトラップ条件コードを書きます
-//	return;
+{
+	static UINT32 x;
+	UINT32 tmp;
+	tmp = *(UINT32 *)(mem + 0x7ade1);
+	if (x != tmp) {
+		TRACEOUT(("%.4x:%.4x: %.8x -> %.8x", cs, eip, x, tmp));
+		x = tmp;
+	}
+}
+
+	return;
+
+	if ((cs == 0x1ea) && (eip == 0x0617)) {
+		TRACEOUT(("ES:BP+1 = %.2x", CPU_AL));
+	}
+	return;
+
+	if ((cs == 0x0601) && (eip == 0x025c)) {
+		TRACEOUT(("INT-D2 AX=%.4x BX=%.4x DX=%.4x", CPU_AX, CPU_BX, CPU_DX));
+	}
+	return;
 
 // if (cs4231.intflag) TRACEOUT(("%.4x:%.4x", cs, eip));
 	if (cs == 0x1311) TRACEOUT(("%.4x:%.4x", cs, eip));

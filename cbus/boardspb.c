@@ -10,24 +10,32 @@
 
 static void IOOUTCALL spb_o188(UINT port, REG8 dat) {
 
-	opn.opnreg = dat;
+	opn.addr = dat;
+	opn.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 
-	S98_put(NORMAL2608, opn.opnreg, dat);
-	if (opn.opnreg < 0x10) {
-		if (opn.opnreg != 0x0e) {
-			psggen_setreg(&psg1, opn.opnreg, dat);
+	UINT	addr;
+
+	opn.data = dat;
+	addr = opn.addr;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(NORMAL2608, addr, dat);
+	if (addr < 0x10) {
+		if (addr != 0x0e) {
+			psggen_setreg(&psg1, addr, dat);
 		}
 	}
 	else {
-		if (opn.opnreg < 0x20) {
-			rhythm_setreg(&rhythm, opn.opnreg, dat);
+		if (addr < 0x20) {
+			rhythm_setreg(&rhythm, addr, dat);
 		}
-		else if (opn.opnreg < 0x30) {
-			if (opn.opnreg == 0x28) {
+		else if (addr < 0x30) {
+			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
 				}
@@ -37,35 +45,43 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 				}
 			}
 			else {
-				fmtimer_setreg(opn.opnreg, dat);
-				if (opn.opnreg == 0x27) {
+				fmtimer_setreg(addr, dat);
+				if (addr == 0x27) {
 					opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
-		else if (opn.opnreg < 0xc0) {
-			opngen_setreg(0, opn.opnreg, dat);
+		else if (addr < 0xc0) {
+			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[opn.opnreg] = dat;
+		opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
 
-	opn.extreg = dat;
+	opn.addr = dat + 0x100;
+	opn.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 
-	S98_put(EXTEND2608, opn.extreg, dat);
-	opn.reg[opn.extreg + 0x100] = dat;
-	if (opn.extreg >= 0x30) {
-		opngen_setreg(3, opn.extreg, dat);
+	UINT	addr;
+
+	opn.data = dat;
+	addr = opn.addr - 0x100;
+	if (addr >= 0x100) {
+		return;
 	}
-	else if (opn.extreg < 0x12) {
-		adpcm_setreg(&adpcm, opn.extreg, dat);
+	S98_put(EXTEND2608, addr, dat);
+	opn.reg[addr + 0x100] = dat;
+	if (addr >= 0x30) {
+		opngen_setreg(3, addr, dat);
+	}
+	else if (addr < 0x12) {
+		adpcm_setreg(&adpcm, addr, dat);
 	}
 	(void)port;
 }
@@ -78,23 +94,39 @@ static REG8 IOINPCALL spb_i188(UINT port) {
 
 static REG8 IOINPCALL spb_i18a(UINT port) {
 
-	if (opn.opnreg == 0x0e) {
+	UINT	addr;
+
+	addr = opn.addr;
+	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg1));
 	}
-	else if (opn.opnreg < 0x10) {
-		return(psggen_getreg(&psg1, opn.opnreg));
+	else if (addr < 0x10) {
+		return(psggen_getreg(&psg1, addr));
 	}
-	(void)port;
-	return(opn.reg[opn.opnreg]);
+	else if (addr == 0xff) {
+		return(1);
+	}
+	else {
+		(void)port;
+		return(opn.data);
+	}
 }
 
 static REG8 IOINPCALL spb_i18e(UINT port) {
 
-	if (opn.extreg == 0x08) {
+	UINT	addr;
+
+	addr = opn.addr - 0x100;
+	if (addr == 0x08) {
 		return(adpcm_readsample(&adpcm));
 	}
-	(void)port;
-	return(opn.reg[opn.opnreg]);
+	else if (addr == 0x0f) {
+		return(opn.reg[addr + 0x100]);
+	}
+	else {
+		(void)port;
+		return(opn.data);
+	}
 }
 
 
@@ -102,14 +134,22 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 
 static void IOOUTCALL spr_o588(UINT port, REG8 dat) {
 
-	opn.opn2reg = dat;
+	opn.addr2 = dat;
+//	opn.data2 = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spr_o58a(UINT port, REG8 dat) {
 
-	if (opn.opn2reg < 0x30) {
-		if (opn.opn2reg == 0x28) {
+	UINT	addr;
+
+//	opn.data2 = dat;
+	addr = opn.addr2;
+	if (addr >= 0x100) {
+		return;
+	}
+	if (addr < 0x30) {
+		if (addr == 0x28) {
 			if ((dat & 0x0f) < 3) {
 				opngen_keyon((dat & 0x0f) + 6, dat);
 			}
@@ -119,29 +159,37 @@ static void IOOUTCALL spr_o58a(UINT port, REG8 dat) {
 			}
 		}
 		else {
-			if (opn.opn2reg == 0x27) {
+			if (addr == 0x27) {
 				opnch[8].extop = dat & 0xc0;
 			}
 		}
 	}
-	else if (opn.opn2reg < 0xc0) {
-		opngen_setreg(6, opn.opn2reg, dat);
+	else if (addr < 0xc0) {
+		opngen_setreg(6, addr, dat);
 	}
-	opn.reg[opn.opn2reg + 0x200] = dat;
+	opn.reg[addr + 0x200] = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spr_o58c(UINT port, REG8 dat) {
 
-	opn.ext2reg = dat;
+	opn.addr2 = dat + 0x100;
+//	opn.data2 = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spr_o58e(UINT port, REG8 dat) {
 
-	opn.reg[opn.ext2reg + 0x300] = dat;
-	if (opn.ext2reg >= 0x30) {
-		opngen_setreg(9, opn.ext2reg, dat);
+	UINT	addr;
+
+//	opn.data2 = dat;
+	addr = opn.addr2 - 0x100;
+	if (addr >= 0x100) {
+		return;
+	}
+	opn.reg[addr + 0x300] = dat;
+	if (addr >= 0x30) {
+		opngen_setreg(9, addr, dat);
 	}
 	(void)port;
 }
@@ -154,11 +202,20 @@ static REG8 IOINPCALL spr_i588(UINT port) {
 
 static REG8 IOINPCALL spr_i58a(UINT port) {
 
-	if (opn.opn2reg >= 0x20) {
-		return(opn.reg[opn.opn2reg + 0x200]);
+	UINT	addr;
+
+	addr = opn.addr2;
+	if ((addr >= 0x20) && (addr < 0xff)) {
+		return(opn.reg[addr + 0x200]);
 	}
-	(void)port;
-	return(0xff);
+	else if (addr == 0xff) {
+		return(0);
+	}
+	else {
+		(void)port;
+//		return(opn.data2);
+		return(0xff);
+	}
 }
 
 static REG8 IOINPCALL spr_i58c(UINT port) {
@@ -169,8 +226,17 @@ static REG8 IOINPCALL spr_i58c(UINT port) {
 
 static REG8 IOINPCALL spr_i58e(UINT port) {
 
-	(void)port;
-	return(opn.reg[opn.opn2reg + 0x200]);
+	UINT	addr;
+
+	addr = opn.addr2;
+	if (addr < 0x100) {
+		return(opn.reg[addr + 0x200]);
+	}
+	else {
+		(void)port;
+//		return(opn.data2);
+		return(0xff);
+	}
 }
 
 

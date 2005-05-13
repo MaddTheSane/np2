@@ -221,29 +221,29 @@ BOOL juliet_YMF288IsBusy(void) {
 			((romeo.in8(romeo.addr + ROMEO_YMF288ADDR1) & 0x80) != 0));
 }
 
-void juliet_YMF288A(UINT8 addr, UINT8 data) {
+void juliet_YMF288A(UINT addr, UINT8 data) {
 
 	if (romeo.avail & ROMEO_YMF288) {
 		if (addr == 0x07) {							// psg mix
 			romeo.psgmix = data;
 		}
-		else if ((addr & 0xf0) == 0x40) {			// ttl
-			romeo.ttl[addr & 0x0f] = data;
+		else if ((addr & (~15)) == 0x40) {			// ttl
+			romeo.ttl[addr & 15] = data;
 		}
-		else if ((addr & 0xfc) == 0xb0) {			// algorithm
+		else if ((addr & (~3)) == 0xb0) {			// algorithm
 			romeo.algo[addr & 3] = data;
 		}
 		YMF288A(addr, data);
 	}
 }
 
-void juliet_YMF288B(UINT8 addr, UINT8 data) {
+void juliet_YMF288B(UINT addr, UINT8 data) {
 
 	if (romeo.avail & ROMEO_YMF288) {
-		if ((addr & 0xf0) == 0x40) {				// ttl
-			romeo.ttl[0x10 + (addr & 0x0f)] = data;
+		if ((addr & (~15)) == 0x40) {				// ttl
+			romeo.ttl[0x10 + (addr & 15)] = data;
 		}
-		else if ((addr & 0xfc) == 0xb0) {			// algorithm
+		else if ((addr & (~3)) == 0xb0) {			// algorithm
 			romeo.algo[4 + (addr & 3)] = data;
 		}
 		YMF288B(addr, data);

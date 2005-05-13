@@ -64,7 +64,7 @@ void adpcm_setvol(UINT vol);
 
 void adpcm_reset(ADPCM ad);
 void adpcm_update(ADPCM ad);
-void adpcm_setreg(ADPCM ad, REG8 reg, REG8 value);
+void adpcm_setreg(ADPCM ad, UINT reg, REG8 value);
 REG8 adpcm_status(ADPCM ad);
 
 REG8 SOUNDCALL adpcm_readsample(ADPCM ad);

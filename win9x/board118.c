@@ -54,24 +54,32 @@ static void romeo_restore(BOOL opna) {
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
-	opn.opnreg = dat;
+	opn.addr = dat;
+	opn.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
-	S98_put(NORMAL2608, opn.opnreg, dat);
-	if (opn.opnreg < 0x10) {
-		if (opn.opnreg != 0x0e) {
-			psggen_setreg(&psg1, opn.opnreg, dat);
+	UINT	addr;
+
+	opn.data = dat;
+	addr = opn.addr;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(NORMAL2608, addr, dat);
+	if (addr < 0x10) {
+		if (addr != 0x0e) {
+			psggen_setreg(&psg1, addr, dat);
 		}
 	}
 	else {
-		if (opn.opnreg < 0x20) {
-			rhythm_setreg(&rhythm, opn.opnreg, dat);
+		if (addr < 0x20) {
+			rhythm_setreg(&rhythm, addr, dat);
 		}
-		else if (opn.opnreg < 0x30) {
-			if (opn.opnreg == 0x28) {
+		else if (addr < 0x30) {
+			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
 				}
@@ -81,32 +89,45 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 				}
 			}
 			else {
-				fmtimer_setreg(opn.opnreg, dat);
+				fmtimer_setreg(addr, dat);
 			}
 		}
-		else if (opn.opnreg < 0xc0) {
-			opngen_setreg(0, opn.opnreg, dat);
+		else if (addr < 0xc0) {
+			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[opn.opnreg] = dat;
+		opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18c(UINT port, REG8 dat) {
 
-	opn.extreg = dat;
+	if (opn.extend) {
+		opn.addr = dat + 0x100;
+		opn.data = dat;
+	}
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 
-	S98_put(EXTEND2608, opn.extreg, dat);
-	opn.reg[opn.extreg + 0x100] = dat;
-	if (opn.extreg >= 0x30) {
-		opngen_setreg(3, opn.extreg, dat);
+	UINT	addr;
+
+	if (!opn.extend) {
+		return;
+	}
+	opn.data = dat;
+	addr = opn.addr - 0x100;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(EXTEND2608, addr, dat);
+	opn.reg[addr + 0x100] = dat;
+	if (addr >= 0x30) {
+		opngen_setreg(3, addr, dat);
 	}
 	else {
-		if (opn.extreg == 0x10) {
+		if (addr == 0x10) {
 			if (!(dat & 0x80)) {
 				opn.adpcmmask = ~(dat & 0x1c);
 			}
@@ -123,36 +144,26 @@ static REG8 IOINPCALL ymf_i188(UINT port) {
 
 static REG8 IOINPCALL ymf_i18a(UINT port) {
 
-	(void)port;
-	if (opn.opnreg == 0x0e) {
+	UINT	addr;
+
+	addr = opn.addr;
+	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg1));
 	}
-	else if (opn.opnreg < 0x10) {
-		return(psggen_getreg(&psg1, opn.opnreg));
+	else if (addr < 0x10) {
+		return(psggen_getreg(&psg1, addr));
 	}
-#if 1
-	else if (opn.opnreg == 0xff) {
+	else if (addr == 0xff) {
 		return(1);
 	}
-	return(opn.opnreg);
-#else
-	return(opn.reg[opn.opnreg]);
-#endif
+	(void)port;
+	return(opn.data);
 }
 
 static REG8 IOINPCALL ymf_i18c(UINT port) {
 
 	if (opn.extend) {
 		return(fmtimer.status & 3);
-	}
-	(void)port;
-	return(0xff);
-}
-
-static REG8 IOINPCALL ymf_i18e(UINT port) {
-
-	if (opn.extend) {
-		return(opn.reg[opn.opnreg]);
 	}
 	(void)port;
 	return(0xff);
@@ -190,27 +201,33 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat) {
 
-	S98_put(NORMAL2608, opn.opnreg, dat);
-	if (opn.opnreg < 0x10) {
-		if (opn.opnreg != 0x0e) {
-			*((UINT8 *)(&psg1.reg) + opn.opnreg) = dat;
-			juliet_YMF288A(opn.opnreg, dat);
-			if (opn.opnreg == 0x07) {
+	UINT	addr;
+
+	opn.data = dat;
+	addr = opn.addr;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(NORMAL2608, addr, dat);
+	if (addr < 0x10) {
+		if (addr != 0x0e) {
+			*((UINT8 *)(&psg1.reg) + addr) = dat;
+			juliet_YMF288A(addr, dat);
+			if (addr == 0x07) {
 				keydisp_psgmix(&psg1);
 			}
-			else if ((opn.opnreg == 0x08) || (opn.opnreg == 0x09) ||
-					(opn.opnreg == 0x0a)) {
-				keydisp_psgvol(&psg1, (UINT8)(opn.opnreg - 8));
+			else if ((addr == 0x08) || (addr == 0x09) || (addr == 0x0a)) {
+				keydisp_psgvol(&psg1, (UINT8)(addr - 8));
 			}
 		}
 	}
 	else {
-		if (opn.opnreg < 0x20) {
-			juliet_YMF288A(opn.opnreg, dat);
+		if (addr < 0x20) {
+			juliet_YMF288A(addr, dat);
 		}
-		else if (opn.opnreg < 0x30) {
-			if (opn.opnreg == 0x28) {
-				juliet_YMF288A(opn.opnreg, dat);
+		else if (addr < 0x30) {
+			if (addr == 0x28) {
+				juliet_YMF288A(addr, dat);
 				if ((dat & 0x0f) < 3) {
 					keydisp_fmkeyon((UINT8)(dat & 0x0f), dat);
 				}
@@ -219,26 +236,36 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat) {
 				}
 			}
 			else {
-				fmtimer_setreg(opn.opnreg, dat);
+				fmtimer_setreg(addr, dat);
 			}
 		}
-		else if (opn.opnreg < 0xc0) {
-			juliet_YMF288A(opn.opnreg, dat);
+		else if (addr < 0xc0) {
+			juliet_YMF288A(addr, dat);
 		}
-		opn.reg[opn.opnreg] = dat;
+		opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat) {
 
-	S98_put(EXTEND2608, opn.extreg, dat);
-	opn.reg[opn.extreg + 0x100] = dat;
-	if (opn.extreg >= 0x30) {
-		juliet_YMF288B(opn.extreg, dat);
+	UINT	addr;
+
+	if (!opn.extend) {
+		return;
+	}
+	opn.data = dat;
+	addr = opn.addr - 0x100;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(EXTEND2608, addr, dat);
+	opn.reg[addr + 0x100] = dat;
+	if (addr >= 0x30) {
+		juliet_YMF288B(addr, dat);
 	}
 	else {
-		if (opn.extreg == 0x10) {
+		if (addr == 0x10) {
 			if (!(dat & 0x80)) {
 				opn.adpcmmask = ~(dat & 0x1c);
 			}
@@ -254,7 +281,7 @@ static const IOOUT ymf_o[4] = {
 			ymf_o188,	ymf_o18a,	ymf_o18c,	ymf_o18e};
 
 static const IOINP ymf_i[4] = {
-			ymf_i188,	ymf_i18a,	ymf_i18c,	ymf_i18e};
+			ymf_i188,	ymf_i18a,	ymf_i18c,	NULL};
 
 static const IOOUT ymfr_o[4] = {
 			ymf_o188,	ymfr_o18a,	ymf_o18c,	ymfr_o18e};

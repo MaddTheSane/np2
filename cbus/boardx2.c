@@ -11,35 +11,40 @@
 
 static void IOOUTCALL opn_o088(UINT port, REG8 dat) {
 
-	opn.opn2reg = dat;
+	opn.addr2 = dat;
+	opn.data2 = dat;
 	(void)port;
 }
 
 static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 
-	if (opn.opn2reg < 0x10) {
-		if (opn.opn2reg != 0x0e) {
-			psggen_setreg(&psg1, opn.opn2reg, dat);
+	UINT	addr;
+
+	opn.data2 = dat;
+	addr = opn.addr2;
+	if (addr < 0x10) {
+		if (addr != 0x0e) {
+			psggen_setreg(&psg1, addr, dat);
 		}
 	}
 	else {
-		if (opn.opn2reg < 0x30) {
-			if (opn.opn2reg == 0x28) {
+		if (addr < 0x30) {
+			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
 				}
 			}
 			else {
-				fmtimer_setreg(opn.opn2reg, dat);
-				if (opn.opn2reg == 0x27) {
+				fmtimer_setreg(addr, dat);
+				if (addr == 0x27) {
 					opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
-		else if (opn.opn2reg < 0xc0) {
-			opngen_setreg(0, opn.opn2reg, dat);
+		else if (addr < 0xc0) {
+			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[opn.opn2reg + 0x200] = dat;
+		opn.reg[addr + 0x200] = dat;
 	}
 	(void)port;
 }
@@ -52,18 +57,19 @@ static REG8 IOINPCALL opn_i088(UINT port) {
 
 static REG8 IOINPCALL opn_i08a(UINT port) {
 
-	if (opn.opn2reg == 0x0e) {
+	UINT	addr;
+
+	addr = opn.addr2;
+	if (addr == 0x0e) {
 		return(0xff);
 	}
-	if (opn.opn2reg < 0x10) {
-		return(psggen_getreg(&psg1, opn.opn2reg));
+	if (addr < 0x10) {
+		return(psggen_getreg(&psg1, addr));
 	}
-	(void)port;
-#if 1
-	return(opn.opn2reg);
-#else
-	return(0xff);
-#endif
+	else {
+		(void)port;
+		return(opn.data2);
+	}
 }
 
 
@@ -71,26 +77,34 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 
 static void IOOUTCALL opna_o188(UINT port, REG8 dat) {
 
-	opn.opnreg = dat;
+	opn.addr = dat;
+	opn.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 
-	S98_put(NORMAL2608, opn.opnreg, dat);
-	if (opn.opnreg < 0x10) {
-		if (opn.opnreg != 0x0e) {
-			psggen_setreg(&psg2, opn.opnreg, dat);
+	UINT	addr;
+
+	opn.data = dat;
+	addr = opn.addr;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(NORMAL2608, addr, dat);
+	if (addr < 0x10) {
+		if (addr != 0x0e) {
+			psggen_setreg(&psg2, addr, dat);
 		}
 	}
 	else {
-		if (opn.opnreg < 0x20) {
+		if (addr < 0x20) {
 			if (opn.extend) {
-				rhythm_setreg(&rhythm, opn.opnreg, dat);
+				rhythm_setreg(&rhythm, addr, dat);
 			}
 		}
-		else if (opn.opnreg < 0x30) {
-			if (opn.opnreg == 0x28) {
+		else if (addr < 0x30) {
+			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon((dat & 0x0f) + 3, dat);
 				}
@@ -100,35 +114,47 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 				}
 			}
 			else {
-				fmtimer_setreg(opn.opnreg, dat);
-				if (opn.opnreg == 0x27) {
+				fmtimer_setreg(addr, dat);
+				if (addr == 0x27) {
 					opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
-		else if (opn.opnreg < 0xc0) {
-			opngen_setreg(3, opn.opnreg, dat);
+		else if (addr < 0xc0) {
+			opngen_setreg(3, addr, dat);
 		}
-		opn.reg[opn.opnreg] = dat;
+		opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL opna_o18c(UINT port, REG8 dat) {
 
-	opn.extreg = dat;
+	if (opn.extend) {
+		opn.addr = dat + 0x100;
+		opn.data = dat;
+	}
 	(void)port;
 }
 
 static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 
-	S98_put(EXTEND2608, opn.extreg, dat);
-	opn.reg[opn.extreg + 0x100] = dat;
-	if (opn.extreg >= 0x30) {
-		opngen_setreg(6, opn.extreg, dat);
+	UINT	addr;
+
+	if (!opn.extend) {
+		return;
+	}
+	addr = opn.addr - 0x100;
+	if (addr >= 0x100) {
+		return;
+	}
+	S98_put(EXTEND2608, addr, dat);
+	opn.reg[addr + 0x100] = dat;
+	if (addr >= 0x30) {
+		opngen_setreg(6, addr, dat);
 	}
 	else {
-		if (opn.extreg == 0x10) {
+		if (addr == 0x10) {
 			if (!(dat & 0x80)) {
 				opn.adpcmmask = ~(dat & 0x1c);
 			}
@@ -145,21 +171,22 @@ static REG8 IOINPCALL opna_i188(UINT port) {
 
 static REG8 IOINPCALL opna_i18a(UINT port) {
 
-	(void)port;
-	if (opn.opnreg == 0x0e) {
+	UINT	addr;
+
+	addr = opn.addr;
+	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg2));
 	}
-	else if (opn.opnreg < 0x10) {
-		return(psggen_getreg(&psg2, opn.opnreg));
+	else if (addr < 0x10) {
+		return(psggen_getreg(&psg2, addr));
 	}
-#if 1
-	else if (opn.opnreg == 0xff) {
+	else if (addr == 0xff) {
 		return(1);
 	}
-	return(opn.opnreg);
-#else
-	return(opn.reg[opn.opnreg]);
-#endif
+	else {
+		(void)port;
+		return(opn.data);
+	}
 }
 
 static REG8 IOINPCALL opna_i18c(UINT port) {
@@ -174,7 +201,11 @@ static REG8 IOINPCALL opna_i18c(UINT port) {
 static REG8 IOINPCALL opna_i18e(UINT port) {
 
 	if (opn.extend) {
-		return(opn.reg[opn.opnreg]);
+		UINT addr = opn.addr - 0x100;
+		if ((addr == 0x08) || (addr == 0x0f)) {
+			return(opn.reg[addr + 0x100]);
+		}
+		return(opn.data);
 	}
 	(void)port;
 	return(0xff);

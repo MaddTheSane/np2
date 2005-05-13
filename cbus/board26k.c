@@ -10,36 +10,41 @@
 
 static void IOOUTCALL opn_o188(UINT port, REG8 dat) {
 
-	opn.opnreg = dat;
+	opn.addr = dat;
+	opn.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 
-	S98_put(NORMAL2608, opn.opnreg, dat);
-	if (opn.opnreg < 0x10) {
-		if (opn.opnreg != 0x0e) {
-			psggen_setreg(&psg1, opn.opnreg, dat);
+	UINT	addr;
+
+	opn.data = dat;
+	addr = opn.addr;
+	S98_put(NORMAL2608, addr, dat);
+	if (addr < 0x10) {
+		if (addr != 0x0e) {
+			psggen_setreg(&psg1, addr, dat);
 		}
 	}
-	else {
-		if (opn.opnreg < 0x30) {
-			if (opn.opnreg == 0x28) {
+	else if (addr < 0x100) {
+		if (addr < 0x30) {
+			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
 				}
 			}
 			else {
-				fmtimer_setreg(opn.opnreg, dat);
-				if (opn.opnreg == 0x27) {
+				fmtimer_setreg(addr, dat);
+				if (addr == 0x27) {
 					opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
-		else if (opn.opnreg < 0xc0) {
-			opngen_setreg(0, opn.opnreg, dat);
+		else if (addr < 0xc0) {
+			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[opn.opnreg] = dat;
+		opn.reg[addr] = dat;
 	}
 	(void)port;
 }
@@ -47,27 +52,22 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 static REG8 IOINPCALL opn_i188(UINT port) {
 
 	(void)port;
-#if 1							// ドラッケンで未定義フラグ見てる　テスト終了
 	return(fmtimer.status);
-#else
-	return(fmtimer.status | 0x7c);
-#endif
 }
 
 static REG8 IOINPCALL opn_i18a(UINT port) {
 
-	if (opn.opnreg == 0x0e) {
+	UINT	addr;
+
+	addr = opn.addr;
+	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg1));
 	}
-	if (opn.opnreg < 0x10) {
-		return(psggen_getreg(&psg1, opn.opnreg));
+	else if (addr < 0x10) {
+		return(psggen_getreg(&psg1, addr));
 	}
 	(void)port;
-#if 1
-	return(opn.opnreg);
-#else
-	return(0xff);
-#endif
+	return(opn.data);
 }
 
 

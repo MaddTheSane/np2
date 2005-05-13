@@ -29,9 +29,7 @@
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
 	OPNCH		opnch[OPNCH_MAX];
-	_PSGGEN		psg1;
-	_PSGGEN		psg2;
-	_PSGGEN		psg3;
+	_PSGGEN		__psg[3];
 	_RHYTHM		rhythm;
 	_ADPCM		adpcm;
 	_PCM86		pcm86;

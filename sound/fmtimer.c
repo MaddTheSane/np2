@@ -96,7 +96,7 @@ void fmtimer_reset(UINT irq) {
 //	pic_registext(fmtimer.irq);
 }
 
-void fmtimer_setreg(REG8 reg, REG8 value) {
+void fmtimer_setreg(UINT reg, REG8 value) {
 
 //	TRACEOUT(("fm %x %x [%.4x:%.4x]", reg, value, CPU_CS, CPU_IP));
 

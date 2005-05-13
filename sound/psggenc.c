@@ -70,25 +70,25 @@ void psggen_reset(PSGGEN psg) {
 		psg->tone[i].pvol = psggencfg.volume + 0;
 	}
 	for (i=0; i<sizeof(psggen_deftbl); i++) {
-		psggen_setreg(psg, (REG8)i, psggen_deftbl[i]);
+		psggen_setreg(psg, i, psggen_deftbl[i]);
 	}
 }
 
 void psggen_restore(PSGGEN psg) {
 
-	REG8	i;
+	UINT	i;
 
 	for (i=0; i<0x0e; i++) {
 		psggen_setreg(psg, i, ((UINT8 *)&psg->reg)[i]);
 	}
 }
 
-void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
+void psggen_setreg(PSGGEN psg, UINT reg, REG8 value) {
 
-	UINT	freq;
 	UINT	ch;
+	UINT	freq;
 
-	reg &= 15;
+	reg = reg & 15;
 	if (reg < 14) {
 		sound_sync();
 	}
@@ -160,7 +160,7 @@ void psggen_setreg(PSGGEN psg, REG8 reg, REG8 value) {
 	}
 }
 
-REG8 psggen_getreg(PSGGEN psg, REG8 reg) {
+REG8 psggen_getreg(PSGGEN psg, UINT reg) {
 
 	return(((UINT8 *)&psg->reg)[reg & 15]);
 }

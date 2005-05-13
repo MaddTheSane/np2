@@ -6,8 +6,16 @@
 
 void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 
-
 // ---- ここにトラップ条件コードを書きます
+//	return;
+
+	if (vect == 0x50) {
+		if (CPU_AX != 9)
+		TRACEOUT(("%.4x:%.4x INT-50 AX=%.4x BX=%.4x DX=%.4x", cs, eip, CPU_AX, CPU_BX, CPU_DX));
+	}
+	if (vect == 0x51) {
+		TRACEOUT(("%.4x:%.4x INT-51 AX=%.4x BX=%.4x DX=%.4x", cs, eip, CPU_AX, CPU_BX, CPU_DX));
+	}
 	return;
 
 #if 0

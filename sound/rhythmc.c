@@ -114,7 +114,7 @@ void rhythm_update(RHYTHM rhy) {
 	}
 }
 
-void rhythm_setreg(RHYTHM rhy, REG8 reg, REG8 value) {
+void rhythm_setreg(RHYTHM rhy, UINT reg, REG8 value) {
 
 	PMIXTRK	*trk;
 	REG8	bit;

@@ -1018,8 +1018,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 //	リセットしてから… コマンドラインのディスク挿入。				// ver0.29
 	for (i=0; i<4; i++) {
 		if (np2arg.disk[i]) {
-			milstr_ncpy(diskdrv_fname[i], np2arg.disk[i], MAX_PATH);
-			diskdrv_delay[i] = 1;
+			diskdrv_readyfdd((REG8)i, np2arg.disk[i], 0);
 		}
 	}
 

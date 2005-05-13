@@ -435,10 +435,10 @@ void opngen_reset(void) {
 		ch++;
 	}
 	for (i=0x30; i<0xc0; i++) {
-		opngen_setreg(0, (REG8)i, 0xff);
-		opngen_setreg(3, (REG8)i, 0xff);
-		opngen_setreg(6, (REG8)i, 0xff);
-		opngen_setreg(9, (REG8)i, 0xff);
+		opngen_setreg(0, i, 0xff);
+		opngen_setreg(3, i, 0xff);
+		opngen_setreg(6, i, 0xff);
+		opngen_setreg(9, i, 0xff);
 	}
 }
 
@@ -477,7 +477,7 @@ void opngen_setextch(UINT chnum, REG8 data) {
 	ch[chnum].extop = data;
 }
 
-void opngen_setreg(REG8 chbase, REG8 reg, REG8 value) {
+void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 
 	UINT	chpos;
 	OPNCH	*ch;
