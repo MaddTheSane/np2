@@ -428,6 +428,7 @@ void itimer_reset(void) {
 	setsystimerevent(0, NEVENT_ABSOLUTE);
 	beep_lheventset(1);												// ver0.79
 	beep_hzset(beepcnt);
+	setrs232cevent(0, NEVENT_ABSOLUTE);
 }
 
 void itimer_bind(void) {

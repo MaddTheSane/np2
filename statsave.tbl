@@ -1,5 +1,5 @@
 
-#define		NP2STATUS_VERSION		800
+#define		NP2STATUS_VERSION		810
 
 static const NP2FHDR np2flagdef = {
 						"Neko Project II",
