@@ -90,6 +90,9 @@ void diskdrv_hddbind(void) {
 		if (sxsi_devopen(drv, np2cfg.sasihdd[i]) == SUCCESS) {
 			drv++;
 		}
+		else {
+			sxsi_setdevtype(drv, SXSIDEV_NC);
+		}
 	}
 #if defined(SUPPORT_SCSI)
 	drv = 0x20;
@@ -98,6 +101,9 @@ void diskdrv_hddbind(void) {
 		sxsi_setdevtype(drv, SXSIDEV_HDD);
 		if (sxsi_devopen(drv, np2cfg.scsihdd[i]) == SUCCESS) {
 			drv++;
+		}
+		else {
+			sxsi_setdevtype(drv, SXSIDEV_NC);
 		}
 	}
 #endif
