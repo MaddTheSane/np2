@@ -49,6 +49,7 @@ void dclock_cntdown(UINT8 value);
 void dclock_make(void);
 void dclock_out8(void *ptr, UINT yalign);
 void dclock_out16(void *ptr, UINT yalign);
+void dclock_out24(void *ptr, UINT yalign);
 void dclock_out32(void *ptr, UINT yalign);
 
 #ifdef __cplusplus

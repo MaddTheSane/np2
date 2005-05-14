@@ -436,7 +436,6 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 			make16mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
 		}
 		else if (bitcolor == 24) {
-			goto scre_err;
 		}
 		else if (bitcolor == 32) {
 		}
@@ -775,6 +774,9 @@ void scrnmng_dispclock(void) {
 			}
 			else if (scrnmng.bpp == 16) {
 				dclock_out16(dest.lpSurface, dest.lPitch);
+			}
+			else if (scrnmng.bpp == 24) {
+				dclock_out24(dest.lpSurface, dest.lPitch);
 			}
 			else if (scrnmng.bpp == 32) {
 				dclock_out32(dest.lpSurface, dest.lPitch);

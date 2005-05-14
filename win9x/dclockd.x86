@@ -36,6 +36,7 @@ section .text
 	global	_dclock_make
 	global	_dclock_out8
 	global	_dclock_out16
+	global	_dclock_out24
 	global	_dclock_out32
 	extern	_dclock
 	extern	_dclockpal
@@ -230,6 +231,45 @@ _dclock_out16:	push	ebx
 				dec		dl
 				jne		short .lp2
 				add		edi, byte 2
+				dec		dh
+				jne		short .lp1
+				pop		ebp
+				pop		edi
+				pop		esi
+				pop		ebx
+				ret
+
+				align	16
+_dclock_out24:	push	ebx
+				push	esi
+				push	edi
+				push	ebp
+				mov		esi, _dclock + dclock_t.dat
+				mov		edi, _dclockpal + dclockpal_t.pal32
+				mov		ecx, [esp+16+4]
+				sub		dword [esp+16+8], (DCLOCK_WIDTH * 3)
+				mov		dh, 4
+.lp1:			mov		dl, 3
+.lp2:			mov		ebp, DCLOCK_YALIGN
+.lp3:			mov		bl, [esi]
+				mov		bh, 8
+.lp4:			rcl		bl, 1
+				sbb		eax, eax
+				and		eax, [edi]
+				mov		[ecx+0], al
+				shr		eax, 8
+				mov		[ecx+1], al
+				mov		[ecx+2], ah
+				add		ecx, byte 3
+				dec		bh
+				jne		short .lp4
+				inc		esi
+				dec		ebp
+				jne		short .lp3
+				add		ecx, [esp+16+8]
+				dec		dl
+				jne		short .lp2
+				add		edi, byte 4
 				dec		dh
 				jne		short .lp1
 				pop		ebp
