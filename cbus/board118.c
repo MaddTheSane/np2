@@ -114,6 +114,7 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 		return(1);
 	}
 	else {
+		(void)port;
 		return(opn.data);
 	}
 }

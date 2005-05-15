@@ -253,7 +253,7 @@ const UINT8	*p;
 	UINT	wsize;
 
 	ret = SUCCESS;
-	p = (char *)buffer;
+	p = (UINT8 *)buffer;
 	while(size) {
 		wsize = min(size, tf->bufrem);
 		if (wsize) {
