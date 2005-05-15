@@ -187,3 +187,9 @@ void fddmtr_seek(REG8 drv, REG8 c, UINT size) {
 	(void)drv;
 }
 
+void fddmtr_reset(void) {
+
+	fddmtr.busy = 0;
+	nevent_reset(NEVENT_FDBIOSBUSY);
+}
+

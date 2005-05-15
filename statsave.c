@@ -1569,6 +1569,7 @@ const SFENTRY	*tblterm;
 	FONTPTR_HIGH = fontrom + cgwindow.high;
 #endif
 	i286_vram_dispatch(vramop.operate);
+	fddmtr_reset();
 	soundmng_play();
 
 	return(ret);

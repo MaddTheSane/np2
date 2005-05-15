@@ -18,6 +18,7 @@ void fdbiosout(NEVENTITEM item);
 void fddmtr_initialize(void);
 void fddmtr_callback(UINT time);
 void fddmtr_seek(REG8 drv, REG8 c, UINT size);
+void fddmtr_reset(void);
 
 
 #if defined(SUPPORT_SWSEEKSND)

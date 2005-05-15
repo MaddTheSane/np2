@@ -980,7 +980,6 @@ UINT bios0x1b_wait(void) {
 	REG8	bit;
 
 	if (fddmtr.busy) {
-		CPU_IP--;
 		CPU_REMCLOCK = -1;
 	}
 	else {
