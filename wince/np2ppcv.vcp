@@ -232,6 +232,7 @@ InputName=PARTS
 
 SOURCE=..\COMMON\PROFILE.C
 DEP_CPP_PROFI=\
+	"..\codecnv\textcnv.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
@@ -286,11 +287,13 @@ DEP_CPP_STRRE=\
 
 SOURCE=..\COMMON\TEXTFILE.C
 DEP_CPP_TEXTF=\
+	"..\codecnv\textcnv.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
+	"..\COMMON\strres.h"\
 	"..\COMMON\textfile.h"\
 	".\dosio.h"\
 	".\wce\compiler.h"\
@@ -303,16 +306,21 @@ DEP_CPP_TEXTF=\
 # Begin Source File
 
 SOURCE=..\CODECNV\UCS2UTF8.C
+DEP_CPP_UCS2U=\
+	"..\CODECNV\codecnv.h"\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Release JP"
-
-# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Release World"
 
 !ELSEIF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Debug"
-
-# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -320,16 +328,21 @@ SOURCE=..\CODECNV\UCS2UTF8.C
 # Begin Source File
 
 SOURCE=..\CODECNV\UTF8UCS2.C
+DEP_CPP_UTF8U=\
+	"..\CODECNV\codecnv.h"\
+	"..\common.h"\
+	"..\COMMON\_memory.h"\
+	"..\COMMON\lstarray.h"\
+	"..\COMMON\milstr.h"\
+	"..\COMMON\rect.h"\
+	".\wce\compiler.h"\
+	
 
 !IF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Release JP"
-
-# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Release World"
 
 !ELSEIF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Debug"
-
-# PROP Exclude_From_Build 1
 
 !ENDIF 
 
@@ -1732,6 +1745,7 @@ DEP_CPP_NMIIO=\
 SOURCE=..\IO\NP2SYSP.C
 DEP_CPP_NP2SY=\
 	"..\bios\sxsibios.h"\
+	"..\CODECNV\codecnv.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
@@ -4625,6 +4639,9 @@ DEP_CPP_DISKD=\
 	"..\fdd\d88head.h"\
 	"..\FDD\diskdrv.h"\
 	"..\fdd\fddfile.h"\
+	"..\fdd\sxsi.h"\
+	"..\fdd\sxsicd.h"\
+	"..\fdd\sxsihdd.h"\
 	"..\io\artic.h"\
 	"..\io\cgrom.h"\
 	"..\io\cpuio.h"\
@@ -4820,6 +4837,7 @@ DEP_CPP_FDDFI=\
 
 SOURCE=..\FDD\NEWDISK.C
 DEP_CPP_NEWDI=\
+	"..\CODECNV\codecnv.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
@@ -4896,6 +4914,7 @@ DEP_CPP_SXSIC=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\COMMON\textfile.h"\
 	"..\fdd\sxsi.h"\
 	"..\fdd\sxsicd.h"\
 	"..\fdd\sxsihdd.h"\
@@ -4988,6 +5007,7 @@ DEP_CPP_FONTF=\
 
 SOURCE=..\FONT\FONTMAKE.C
 DEP_CPP_FONTM=\
+	"..\CODECNV\codecnv.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\bmpdata.h"\
@@ -5554,6 +5574,7 @@ DEP_CPP_DOSIO=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	".\dosio.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5568,6 +5589,7 @@ DEP_CPP_FONTMN=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	".\fontmng.h"\
+	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
 # End Source File
@@ -5582,6 +5604,7 @@ DEP_CPP_INI_C=\
 	"..\COMMON\profile.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\COMMON\textfile.h"\
 	"..\nevent.h"\
 	"..\pccore.h"\
 	"..\statsave.h"\
@@ -5643,6 +5666,7 @@ DEP_CPP_NP2_C=\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
 	"..\COMMON\milstr.h"\
+	"..\COMMON\profile.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
 	"..\embed\menubase\menubase.h"\
@@ -5700,6 +5724,7 @@ DEP_CPP_NP2_C=\
 	".\ini.h"\
 	".\inputmng.h"\
 	".\np2.h"\
+	".\oemtext.h"\
 	".\scrnmng.h"\
 	".\soundmng.h"\
 	".\sysmenu.h"\
@@ -5717,6 +5742,7 @@ SOURCE=.\WCE\NP2PPCV.RC
 
 SOURCE=.\OEMTEXT.CPP
 DEP_CPP_OEMTE=\
+	"..\CODECNV\codecnv.h"\
 	"..\common.h"\
 	"..\COMMON\_memory.h"\
 	"..\COMMON\lstarray.h"\
@@ -5725,13 +5751,8 @@ DEP_CPP_OEMTE=\
 	".\oemtext.h"\
 	".\wce\compiler.h"\
 	
-NODEP_CPP_OEMTE=\
-	"..\COMMON\ucscnv.h"\
-	
 
 !IF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Release JP"
-
-# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "np2ppcv - Win32 (WCE ARMV4) Release World"
 
@@ -5939,6 +5960,7 @@ DEP_CPP_DEBUG=\
 	"..\COMMON\milstr.h"\
 	"..\COMMON\rect.h"\
 	"..\COMMON\strres.h"\
+	"..\COMMON\textfile.h"\
 	"..\debugsub.h"\
 	"..\I286A\cpucore.h"\
 	"..\io\artic.h"\

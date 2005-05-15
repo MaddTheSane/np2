@@ -10,9 +10,10 @@
 #define	OSLINEBREAK_CRLF
 
 
-typedef signed char		SINT8;
-typedef	signed short	SINT16;
-typedef	signed int		SINT32;
+typedef	signed int			SINT;
+typedef signed char			SINT8;
+typedef	signed short		SINT16;
+typedef	signed int			SINT32;
 
 
 #ifndef	ZeroMemory
