@@ -37,6 +37,7 @@ typedef	unsigned __int64	UINT64;
 #define	vsnprintf			_vsnprintf
 #else
 #include	<stdlib.h>
+typedef	signed int			SINT;
 typedef	signed char			SINT8;
 typedef	unsigned char		UINT8;
 typedef	signed short		SINT16;

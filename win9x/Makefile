@@ -15,6 +15,7 @@ BIN		= $(BINBASE)/cygwin
 
 BASE		= ..
 COMMON		= ../common
+CODECNV		= ../codecnv
 I286C		= ../i286c
 MEM			= ../mem
 IO			= ../io
@@ -61,8 +62,8 @@ AOPT	= -f win32
 COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
 			-fsigned-char -mno-cygwin -march=pentium \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
-			-I$(BASE) -I$(COMMON) -I$(I286C) -I$(MEM) -I$(IO) -I$(CBUS) \
-			-I$(BIOS) -I$(LIO) -I$(VRAM) -I$(SOUND) -I$(VERMOUTH) \
+			-I$(BASE) -I$(COMMON) -I$(CODECNV) -I$(I286C) -I$(MEM) -I$(IO) \
+			-I$(CBUS) -I$(BIOS) -I$(LIO) -I$(VRAM) -I$(SOUND) -I$(VERMOUTH) \
 			-I$(GETSND) -I$(FDD) -I$(FONT) -I$(GENERIC) -I$(TARGET) \
 			-I$(DIALOG) -I$(DEBUGUTY) -I$(X86ASM)
 LOPT	= -mno-cygwin -lstdc++
@@ -71,6 +72,7 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/textfile.o	$(OBJ)/profile.o	$(OBJ)/rect.o		\
 			$(OBJ)/lstarray.o	$(OBJ)/bmpdata.o	$(OBJ)/mimpidef.o	\
 			$(OBJ)/parts.oa												\
+			$(OBJ)/utf8ucs2.o	$(OBJ)/ucs2utf8.o	$(OBJ)/tcswap16.o	\
 			$(OBJ)/i286c.o		$(OBJ)/i286c_mn.o	$(OBJ)/i286c_ea.o	\
 			$(OBJ)/i286c_0f.o	$(OBJ)/i286c_8x.o	$(OBJ)/i286c_sf.o	\
 			$(OBJ)/i286c_f6.o	$(OBJ)/i286c_fe.o	$(OBJ)/i286c_rp.o	\
@@ -121,16 +123,16 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/dipswbmp.o	$(OBJ)/cmjasts.o	$(OBJ)/hostdrv.o	\
 			$(OBJ)/hostdrvs.o	$(OBJ)/unasm.o		$(OBJ)/np2info.o	\
 			$(OBJ)/np2.o		$(OBJ)/np2arg.o		$(OBJ)/cputype.oa	\
-			$(OBJ)/dosio.o		$(OBJ)/extromio.o	$(OBJ)/trace.o		\
-			$(OBJ)/winloc.o		$(OBJ)/commng.o		$(OBJ)/cmserial.o	\
-			$(OBJ)/cmmidi.o		$(OBJ)/cmpara.o		$(OBJ)/fontmng.o	\
-			$(OBJ)/joymng.o		$(OBJ)/mousemng.o	$(OBJ)/scrnmng.o	\
-			$(OBJ)/soundmng.o	$(OBJ)/sysmng.o		$(OBJ)/taskmng.o	\
-			$(OBJ)/timemng.o	$(OBJ)/juliet.o		$(OBJ)/sstp.o		\
-			$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		$(OBJ)/dclock.o		\
-			$(OBJ)/dclockd.o	$(OBJ)/menu.o		$(OBJ)/ini.o		\
-			$(OBJ)/dd2.o		$(OBJ)/toolwin.o	$(OBJ)/subwind.o	\
-			$(OBJ)/mt32snd.o	$(OBJ)/np2res.o							\
+			$(OBJ)/oemtext.o	$(OBJ)/dosio.o		$(OBJ)/extromio.o	\
+			$(OBJ)/trace.o		$(OBJ)/winloc.o		$(OBJ)/commng.o		\
+			$(OBJ)/cmserial.o	$(OBJ)/cmmidi.o		$(OBJ)/cmpara.o		\
+			$(OBJ)/fontmng.o	$(OBJ)/joymng.o		$(OBJ)/mousemng.o	\
+			$(OBJ)/scrnmng.o	$(OBJ)/soundmng.o	$(OBJ)/sysmng.o		\
+			$(OBJ)/taskmng.o	$(OBJ)/timemng.o	$(OBJ)/juliet.o		\
+			$(OBJ)/sstp.o		$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		\
+			$(OBJ)/dclock.o		$(OBJ)/dclockd.o	$(OBJ)/menu.o		\
+			$(OBJ)/ini.o		$(OBJ)/dd2.o		$(OBJ)/toolwin.o	\
+			$(OBJ)/subwind.o	$(OBJ)/mt32snd.o	$(OBJ)/np2res.o		\
 			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
 			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
 			$(OBJ)/d_sound.o	$(OBJ)/d_clnd.o		$(OBJ)/d_disk.o		\
@@ -203,6 +205,17 @@ $(OBJ)/parts.o		:	$(COMMON)/parts.c $(HEADERS)
 
 $(OBJ)/parts.oa		:	$(X86ASM)/parts.x86
 	$(AS) $(AOPT) $< -o $@
+
+
+
+$(OBJ)/utf8ucs2.o	:	$(CODECNV)/utf8ucs2.c $(HEADERS) $(CODECNV)/textcnv.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/ucs2utf8.o	:	$(CODECNV)/ucs2utf8.c $(HEADERS) $(CODECNV)/textcnv.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/tcswap16.o	:	$(CODECNV)/tcswap16.c $(HEADERS) $(CODECNV)/textcnv.h
+	$(CC) $(COPT) -o $@ $<
 
 
 
@@ -911,6 +924,9 @@ $(OBJ)/np2arg.o		:	$(TARGET)/np2arg.cpp $(HEADERS) $(TARGET)/np2arg.h \
 
 $(OBJ)/cputype.oa	:	$(X86ASM)/cputype.x86
 	$(AS) $(AOPT) $< -o $@
+
+$(OBJ)/oemtext.o	:	$(TARGET)/oemtext.cpp $(HEADERS) $(TARGET)/oemtext.h
+	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dosio.o		:	$(TARGET)/dosio.cpp $(HEADERS) $(TARGET)/dosio.h
 	$(CC) $(COPT) -o $@ $<

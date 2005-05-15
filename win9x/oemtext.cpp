@@ -33,7 +33,7 @@ UINT oemtext_sjistoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
 	else {
 		dstcnt = 0;
 	}
-	r = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, srccnt, dst, dstcnt);
+	r = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, srccnt, (WCHAR *)dst, dstcnt);
 	if ((r == 0) && (dstcnt != 0)) {
 		r = dstcnt;
 		if (srccnt < 0) {
@@ -73,7 +73,7 @@ UINT oemtext_ucs2tosjis(char *dst, UINT dcnt, const UINT16 *src, UINT scnt) {
 	else {
 		dstcnt = 0;
 	}
-	r = WideCharToMultiByte(CP_ACP, 0, src, srccnt, dst, dstcnt, NULL, NULL);
+	r = WideCharToMultiByte(CP_ACP, 0, (WCHAR *)src, srccnt, dst, dstcnt, NULL, NULL);
 	if ((r == 0) && (dstcnt != 0)) {
 		r = dstcnt;
 		if (srccnt < 0) {
@@ -102,7 +102,7 @@ UINT oemtext_sjistoutf8(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	if (ucs2 == NULL) {
 		return(0);
 	}
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, scnt, ucs2, leng);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, scnt, (WCHAR *)ucs2, leng);
 	if (((SINT)scnt) < 0) {
 		leng = (UINT)-1;
 	}
@@ -131,7 +131,7 @@ UINT oemtext_utf8tosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	if (((SINT)scnt) < 0) {
 		leng = (UINT)-1;
 	}
-	ret = WideCharToMultiByte(CP_ACP, 0, ucs2, leng, dst, dcnt, NULL, NULL);
+	ret = WideCharToMultiByte(CP_ACP, 0, (WCHAR *)ucs2, leng, dst, dcnt, NULL, NULL);
 	_MFREE(ucs2);
 	return(ret);
 }
