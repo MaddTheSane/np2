@@ -287,7 +287,7 @@ static const char ini_title[] = "NekoProjectII";
 static const char inifile[] = "np2.cfg";
 
 static const INITBL iniitem[] = {
-	{"pc_model", INITYPE_STR,		&np2cfg.model,
+	{"pc_model", INITYPE_STR,		np2cfg.model,
 													sizeof(np2cfg.model)},
 	{"clk_base", INITYPE_SINT32,	&np2cfg.baseclock,		0},
 	{"clk_mult", INITYPE_SINT32,	&np2cfg.multiple,		0},

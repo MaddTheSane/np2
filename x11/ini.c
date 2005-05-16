@@ -484,7 +484,7 @@ static const INITBL iniitem[] = {
 	{"hdrvroot", INIRO_STR,		np2cfg.hdrvroot,	MAX_PATH},
 	{"hdrv_acc", INIRO_UINT8,	&np2cfg.hdrvacc,	0},
 
-	{"pc_model", INITYPE_STR,	&np2cfg.model,		sizeof(np2cfg.model)},
+	{"pc_model", INITYPE_STR,	np2cfg.model,		sizeof(np2cfg.model)},
 
 	{"clk_base", INITYPE_UINT32,	&np2cfg.baseclock,	0},
 	{"clk_mult", INITYPE_UINT32,	&np2cfg.multiple,	0},

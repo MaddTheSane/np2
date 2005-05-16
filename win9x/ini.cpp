@@ -415,7 +415,7 @@ static const PFTBL iniitem[] = {
 	PFVAL("hdrv_acc", PFRO_UINT8,		&np2cfg.hdrvacc),
 #endif
 
-	PFSTR("pc_model", PFTYPE_STR,		&np2cfg.model),
+	PFSTR("pc_model", PFTYPE_STR,		np2cfg.model),
 	PFVAL("clk_base", PFTYPE_UINT32,	&np2cfg.baseclock),
 	PFVAL("clk_mult", PFTYPE_UINT32,	&np2cfg.multiple),
 

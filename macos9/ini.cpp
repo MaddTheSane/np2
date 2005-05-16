@@ -326,7 +326,7 @@ static const INITBL iniitem[] = {
 	{"windposx", INITYPE_SINT32,	&np2oscfg.posx,			0},
 	{"windposy", INITYPE_SINT32,	&np2oscfg.posy,			0},
 
-	{"pc_model", INITYPE_STR,		&np2cfg.model,
+	{"pc_model", INITYPE_STR,		np2cfg.model,
 													sizeof(np2cfg.model)},
 	{"clk_base", INITYPE_SINT32,	&np2cfg.baseclock,		0},
 	{"clk_mult", INITYPE_SINT32,	&np2cfg.multiple,		0},

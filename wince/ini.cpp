@@ -300,7 +300,7 @@ enum {
 };
 
 static const PFTBL iniitem[] = {
-	PFSTR("pc_model", PFTYPE_STR,		&np2cfg.model),
+	PFSTR("pc_model", PFTYPE_STR,		np2cfg.model),
 	PFVAL("clk_base", PFTYPE_UINT32,	&np2cfg.baseclock),
 	PFVAL("clk_mult", PFTYPE_UINT32,	&np2cfg.multiple),
 
