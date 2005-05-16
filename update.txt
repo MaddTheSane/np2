@@ -90,6 +90,7 @@
 　・80286 (x86版) - rep ins, ２バイトmov8命令の不都合修正
 　・80286 (x86版) - クロック修正 (enter)
 　・80286 (C版) - クロック修正 (cmp, jcc, test, enter)
+　・80286 (ARM版) - pop ss命令の修正
 　・80286 (ARM版) - クロック修正 (cmp, jcc, test, enter)
 　・80286 (C版) - rep outsw命令を修正
 　・MPU-PC98II - conductor修正
