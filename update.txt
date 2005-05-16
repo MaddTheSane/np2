@@ -95,7 +95,7 @@
 　・80286 (C版) - rep outsw命令を修正
 　・MPU-PC98II - conductor修正
 　・MPU-PC98II - Request PC/Tempo コマンドの追加
-　・DMA - セルフインシャライズを追加
+　・DMA - セルフイニシャライズを追加
 　・GDC - ソフトリセット時のフラグ修正
 　・GRCG - ソフトリセット時のフラグ修正
 　・PIT - シリアルカウンタの修正
