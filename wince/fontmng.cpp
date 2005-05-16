@@ -437,7 +437,7 @@ FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
 	UINT	cnt;
 
 #if defined(OSLANG_SJIS) || defined(OSLANG_UTF8)
-	leng = (UINT8)string[0];
+	str = (UINT8)string[0];
 	if (leng >= 2) {
 		str |= ((UINT8)string[1]) << 8;
 	}
