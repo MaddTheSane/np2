@@ -342,7 +342,7 @@ reserved		mov		r6, #6
 				b		i286a_localint
 
 pop_ss			SEGPOPFIX	#CPU_SS, #CPU_SS_BASE, #CPU_SS_FIX, #5
-				mov		pc, r11
+				NEXT_OPCODE
 
 pop_ds			SEGPOPFIX	#CPU_DS, #CPU_DS_BASE, #CPU_DS_FIX, #5
 				mov		pc, r11
