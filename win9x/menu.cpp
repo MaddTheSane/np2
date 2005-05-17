@@ -286,12 +286,12 @@ void xmenu_initialize(void) {
 
 	hMenu = np2class_gethmenu(hWndMain);
 	if (np2oscfg.I286SAVE) {
-		hSubMenu = GetSubMenu(hMenu, 4);
+		hSubMenu = GetSubMenu(hMenu, 3);
 		insertresmenu(hSubMenu, 10, MF_BYPOSITION | MF_STRING,
 												IDM_CPUSAVE, IDS_CPUSAVE);
 	}
 #if defined(SUPPORT_WAVEREC)
-	hSubMenu = GetSubMenu(hMenu, 4);
+	hSubMenu = GetSubMenu(hMenu, 3);
 	insertresmenu(hSubMenu, 2, MF_BYPOSITION | MF_STRING,
 												IDM_WAVEREC, IDS_WAVEREC);
 #endif
