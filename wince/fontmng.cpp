@@ -217,7 +217,7 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 			fdat->pitch = fntsize.cx >> 1;
 		}
 		else {
-#if !defined(_WIN32_WCE)	// PocketPCのみ戻り値が変らしい？
+#if !defined(WIN32_PLATFORM_PSPC)	// PocketPCのみ戻り値が変らしい？
 			fdat->width = min(fntsize.cx, fhdl->bmpwidth);
 #else
 			fdat->width = min(fntsize.cx + 1, fhdl->bmpwidth);
@@ -245,8 +245,12 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat,
 											const TCHAR *string, int length) {
 
+#if 1	// sig3は バグあるらすー
+	ZeroMemory(fhdl->image, fhdl->bmpalign * fhdl->bmpheight);
+#else
 	FillRect(fhdl->hdcimage, &fhdl->rect,
 										(HBRUSH)GetStockObject(BLACK_BRUSH));
+#endif
 #if !defined(_WIN32_WCE)
 	TextOut(fhdl->hdcimage, 0, 0, string, length);
 #else
