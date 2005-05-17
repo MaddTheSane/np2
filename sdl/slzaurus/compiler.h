@@ -15,6 +15,8 @@
 
 typedef	signed int		INT;
 
+typedef	unsigned int	SINT;
+
 typedef	unsigned char	UCHAR;
 typedef	unsigned short	USHORT;
 typedef	unsigned int	UINT;
