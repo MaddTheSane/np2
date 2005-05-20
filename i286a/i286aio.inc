@@ -84,19 +84,15 @@ GRCG_TILE			equ		8
 
 	IMPORT	pic
 
-; PI_levels			equ		0
-; PI_level			equ		4
-; PI_pry			equ		12
-; PI_icw			equ		20
-PI_IMR				equ		24
-; PI_ocw3			equ		25
-; PI_irr			equ		26
-; PI_ext			equ		27
-; PI_isr			equ		28
-; PI_isrbak			equ		29
-; PI_writeicw		equ		30
-; PI_padding		equ		31
-PI_SIZE				equ		32
+; PI_icw			equ		0
+PI_IMR				equ		4
+; PI_isr			equ		5
+; PI_irr			equ		6
+; PI_ocw3			equ		7
+; PI_pry			equ		8
+; PI_writeicw		equ		9
+; PI_padding		equ		10
+PI_SIZE				equ		12
 
 PIC_MASTER			equ		0
 PIC_SLAVE			equ		PI_SIZE
