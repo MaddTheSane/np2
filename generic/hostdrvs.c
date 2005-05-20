@@ -75,12 +75,13 @@ static void rcnvfcb(char *dst, UINT dlen, const char *src) {
 	}
 }
 
-static BRESULT realname2fcb(char *fcbname, FLINFO *fli) {
+static BRESULT realname2fcb(char *fcbname, const FLINFO *fli) {
 
 	OEMCHAR	*ext;
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	char	sjis[MAX_PATH];
 #endif
+	OEMCHAR	filename[MAX_PATH];
 
 	FillMemory(fcbname, 11, ' ');
 
@@ -92,14 +93,14 @@ static BRESULT realname2fcb(char *fcbname, FLINFO *fli) {
 	rcnvfcb(fcbname+8, 3, ext);
 #endif
 
-	file_cutext(fli->path);
+	file_cpyname(filename, fli->path, NELEMENTS(filename));
+	file_cutext(filename);
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-	oemtext_oemtosjis(sjis, sizeof(sjis), fli->path, (UINT)-1);
+	oemtext_oemtosjis(sjis, sizeof(sjis), filename, (UINT)-1);
 	rcnvfcb(fcbname+0, 8, sjis);
 #else
-	rcnvfcb(fcbname+0, 8, fli->path);
+	rcnvfcb(fcbname+0, 8, filename);
 #endif
-
 	return(SUCCESS);
 }
 
