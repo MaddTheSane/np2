@@ -7,7 +7,30 @@
 void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 
 // ---- ここにトラップ条件コードを書きます
-//	return;
+	if (vect == 0x7f) {
+		switch(CPU_AH) {
+			case 0:
+				TRACEOUT(("INT-7F AH=00 Load data DS:DX = %.4x:%.4x", CPU_DS, CPU_DX));
+				break;
+
+			case 1:
+				TRACEOUT(("INT-7F AH=01 Play data AL=%.2x", CPU_AL));
+				break;
+
+			case 2:
+				TRACEOUT(("INT-7F AH=02 Stop Data"));
+				break;
+
+//			case 3:
+//				TRACEOUT(("INT-7F AH=03 Get Status"));
+//				break;
+
+			case 4:
+				TRACEOUT(("INT-7F AH=04 Set Parameter AL=%.2x", CPU_AL));
+				break;
+		}
+	}
+	return;
 
 	if (vect == 0x50) {
 		if (CPU_AX != 9)
@@ -128,9 +151,9 @@ void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 	if (vect == 0x40) {
 		TRACEOUT(("%.4x:%.4x INT-40 SI=%.4x %.4x:%.4x:%.4x",
 									cs, eip, CPU_SI,
-									MEML_READ16(CPU_DS, CPU_SI + 0),
-									MEML_READ16(CPU_DS, CPU_SI + 2),
-									MEML_READ16(CPU_DS, CPU_SI + 4)));
+									MEMR_READ16(CPU_DS, CPU_SI + 0),
+									MEMR_READ16(CPU_DS, CPU_SI + 2),
+									MEMR_READ16(CPU_DS, CPU_SI + 4)));
 	}
 	if (vect == 0xd2) {
 		TRACEOUT(("%.4x:%.4x INT-D2 AX=%.4x", cs, eip, CPU_AX));
@@ -149,7 +172,7 @@ void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 		switch(CPU_AH) {
 			case 0x3d:
 				for (i=0; i<127; i++) {
-					c = MEML_READ8(CPU_DS, CPU_DX + i);
+					c = MEMR_READ8(CPU_DS, CPU_DX + i);
 					if (c == '\0') break;
 					f[i] = c;
 				}
@@ -170,7 +193,7 @@ void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 #if 0
 	if (vect == 0xf5) {
 		TRACEOUT(("%.4x:%.4x INT-F5 AH=%.2x STACK=%.4x", cs, eip,
-								CPU_AH, MEML_READ16(CPU_SS, CPU_SP + 2)));
+								CPU_AH, MEMR_READ16(CPU_SS, CPU_SP + 2)));
 	}
 #endif
 #if 0
@@ -218,7 +241,7 @@ void CPUCALL softinttrap(UINT cs, UINT32 eip, UINT vect) {
 					char buf[256];
 					for (j=0; j<4; j++) {
 						sprintf(buf + (j * 6), "0x%.2x, ",
-										MEML_READ8(CPU_DS, CPU_DX + i + j));
+										MEMR_READ8(CPU_DS, CPU_DX + i + j));
 					}
 					TRACEOUT(("%s", buf));
 				}

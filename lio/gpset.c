@@ -24,7 +24,7 @@ REG8 lio_gpset(GLIO lio) {
 	SINT16	y;
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x = (SINT16)LOADINTELWORD(dat.x);
 	y = (SINT16)LOADINTELWORD(dat.y);
 	if (dat.pal == 0xff) {
@@ -54,7 +54,7 @@ REG8 lio_gpoint2(GLIO lio) {
 const UINT8	*ptr;
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x = (SINT16)LOADINTELWORD(dat.x);
 	y = (SINT16)LOADINTELWORD(dat.y);
 	if ((lio->draw.x1 > x) || (lio->draw.x2 < x) ||

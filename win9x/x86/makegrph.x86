@@ -1,6 +1,8 @@
 
-%include 'x86/np2asm.inc'
-%include '../io/x86/iocore.inc'
+%include 'pccore.inc'
+%include 'cpucore.inc'
+%include 'iocore.inc'
+%include 'vram.inc'
 
 section .bss
 

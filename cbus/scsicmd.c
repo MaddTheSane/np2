@@ -168,14 +168,14 @@ static REG8 bios1bc_seltrans(REG8 id) {
 	UINT8	cdb[16];
 	REG8	ret;
 
-	MEML_READSTR(CPU_DS, CPU_DX, cdb, 16);
+	MEMR_READS(CPU_DS, CPU_DX, cdb, 16);
 	scsiio.reg[SCSICTR_TARGETLUN] = cdb[0];
 	if ((cdb[1] & 0x0c) == 0x08) {			// OUT
-		MEML_READSTR(CPU_ES, CPU_BX, scsiio.data, CPU_CX);
+		MEMR_READS(CPU_ES, CPU_BX, scsiio.data, CPU_CX);
 	}
 	ret = scsicmd_transfer(id, cdb + 4);
 	if ((cdb[1] & 0x0c) == 0x04) {			// IN
-		MEML_WRITESTR(CPU_ES, CPU_BX, scsiio.data, CPU_CX);
+		MEMR_WRITES(CPU_ES, CPU_BX, scsiio.data, CPU_CX);
 	}
 	return(ret);
 }
@@ -194,7 +194,7 @@ void scsicmd_bios(void) {
 		return;
 	}
 
-	flag = MEML_READ8(CPU_SS, CPU_SP+4) & 0xbe;
+	flag = MEMR_READ8(CPU_SS, CPU_SP+4) & 0xbe;
 	ret = mem[0x0483];
 	cmd = CPU_AH & 0x1f;
 	dstid = CPU_AL & 7;
@@ -236,13 +236,13 @@ void scsicmd_bios(void) {
 		else {
 			switch(cmd) {
 				case 0x19:		// Data In
-					MEML_WRITESTR(CPU_ES, CPU_BX, scsiio.data, CPU_CX);
+					MEMR_WRITES(CPU_ES, CPU_BX, scsiio.data, CPU_CX);
 					scsiio.phase = SCSIPH_STATUS;
 					stat = 0x8b;
 					break;
 
 				case 0x1a:		// Transfer command
-					MEML_READSTR(CPU_ES, CPU_BX, scsiio.cmd, 12);
+					MEMR_READS(CPU_ES, CPU_BX, scsiio.cmd, 12);
 					stat = scsicmd_cmd(dstid);
 					break;
 
@@ -273,7 +273,7 @@ void scsicmd_bios(void) {
 		ret &= 0x7f;
 	}
 	CPU_AH = ret;
-	MEML_WRITE8(CPU_SS, CPU_SP + 4, flag);
+	MEMR_WRITE8(CPU_SS, CPU_SP + 4, flag);
 }
 #endif
 

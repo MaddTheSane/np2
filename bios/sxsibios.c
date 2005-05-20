@@ -62,7 +62,7 @@ static REG8 sxsibios_write(UINT type, SXSIDEV sxsi) {
 		addr = (CPU_ES << 4) + CPU_BP;
 		while(size) {
 			r = min(size, sxsi->size);
-			MEML_READ(addr, work, r);
+			MEML_READS(addr, work, r);
 			ret = sxsi_write(CPU_AL, pos, work, r);
 			if (ret >= 0x20) {
 				break;
@@ -97,7 +97,7 @@ static REG8 sxsibios_read(UINT type, SXSIDEV sxsi) {
 			if (ret >= 0x20) {
 				break;
 			}
-			MEML_WRITE(addr, work, r);
+			MEML_WRITES(addr, work, r);
 			addr += r;
 			size -= r;
 			pos++;
@@ -432,8 +432,8 @@ static void reg_load(UINT seg, UINT off) {
 
 	B1BREG	r;
 
-	MEML_READSTR(seg, off, &r, sizeof(r));
-	CPU_FLAGL = MEML_READ8(seg, off + 0x16);
+	MEMR_READS(seg, off, &r, sizeof(r));
+	CPU_FLAGL = MEMR_READ8(seg, off + 0x16);
 	CPU_AX = LOADINTELWORD(r.r_ax);
 	CPU_BX = LOADINTELWORD(r.r_bx);
 	CPU_CX = LOADINTELWORD(r.r_cx);
@@ -458,8 +458,8 @@ static void reg_store(UINT seg, UINT off) {
 	STOREINTELWORD(r.r_di, CPU_DI);
 	STOREINTELWORD(r.r_si, CPU_SI);
 	STOREINTELWORD(r.r_ds, CPU_DS);
-	MEML_WRITESTR(seg, off, &r, sizeof(r));
-	MEML_WRITE8(seg, off + 0x16, CPU_FLAGL);
+	MEMR_WRITES(seg, off, &r, sizeof(r));
+	MEMR_WRITE8(seg, off + 0x16, CPU_FLAGL);
 }
 #endif
 

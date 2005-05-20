@@ -3,7 +3,49 @@
 
 #define	USE_HIMEM		0x110000
 
-void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
+
+void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng) {
+
+	if ((address + leng) < I286_MEMREADMAX) {
+		CopyMemory(dat, mem + address, leng);
+	}
+	else {
+		UINT8 *out = (UINT8 *)dat;
+		if (address < I286_MEMREADMAX) {
+			CopyMemory(out, mem + address, I286_MEMREADMAX - address);
+			out += I286_MEMREADMAX - address;
+			leng -= I286_MEMREADMAX - address;
+			address = I286_MEMREADMAX;
+		}
+		while(leng--) {
+			*out++ = memp_read8(address++);
+		}
+	}
+}
+
+void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) {
+
+const UINT8	*out;
+
+	if ((address + leng) < I286_MEMWRITEMAX) {
+		CopyMemory(mem + address, dat, leng);
+	}
+	else {
+		out = (UINT8 *)dat;
+		if (address < I286_MEMWRITEMAX) {
+			CopyMemory(mem + address, out, I286_MEMWRITEMAX - address);
+			out += I286_MEMWRITEMAX - address;
+			leng -= I286_MEMWRITEMAX - address;
+			address = I286_MEMWRITEMAX;
+		}
+		while(leng--) {
+			memp_write8(address++, *out++);
+		}
+	}
+}
+
+
+void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 
 	UINT8	*out;
 	UINT32	adrs;
@@ -35,14 +77,13 @@ void MEMCALL i286_memstr_read(UINT seg, UINT off, void *dat, UINT leng) {
 	}
 	else {
 		while(leng--) {
-			*out++ = i286_memoryread(adrs + off);
+			*out++ = memp_read8(adrs + off);
 			off = LOW16(off + 1);
 		}
 	}
 }
 
-void MEMCALL i286_memstr_write(UINT seg, UINT off,
-												const void *dat, UINT leng) {
+void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 
 	UINT8	*out;
 	UINT32	adrs;
@@ -74,48 +115,8 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 	}
 	else {
 		while(leng--) {
-			i286_memorywrite(adrs + off, *out++);
+			memp_write8(adrs + off, *out++);
 			off = LOW16(off + 1);
-		}
-	}
-}
-
-void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng) {
-
-	if ((address + leng) < I286_MEMREADMAX) {
-		CopyMemory(dat, mem + address, leng);
-	}
-	else {
-		UINT8 *out = (UINT8 *)dat;
-		if (address < I286_MEMREADMAX) {
-			CopyMemory(out, mem + address, I286_MEMREADMAX - address);
-			out += I286_MEMREADMAX - address;
-			leng -= I286_MEMREADMAX - address;
-			address = I286_MEMREADMAX;
-		}
-		while(leng--) {
-			*out++ = i286_memoryread(address++);
-		}
-	}
-}
-
-void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng) {
-
-const UINT8	*out;
-
-	if ((address + leng) < I286_MEMWRITEMAX) {
-		CopyMemory(mem + address, dat, leng);
-	}
-	else {
-		out = (UINT8 *)dat;
-		if (address < I286_MEMWRITEMAX) {
-			CopyMemory(mem + address, out, I286_MEMWRITEMAX - address);
-			out += I286_MEMWRITEMAX - address;
-			leng -= I286_MEMWRITEMAX - address;
-			address = I286_MEMWRITEMAX;
-		}
-		while(leng--) {
-			i286_memorywrite(address++, *out++);
 		}
 	}
 }

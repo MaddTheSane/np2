@@ -27,7 +27,7 @@ static void IOOUTCALL crtc_o7c(UINT port, REG8 dat) {
 		if (grcg.chip >= 2) {
 			grcg.gdcwithgrcg = (dat >> 4) & 0x0c;
 		}
-		i286_vram_dispatch(vramop.operate);
+		MEMM_VRAM(vramop.operate);
 	}
 	(void)port;
 }
@@ -82,7 +82,7 @@ void crtc_biosreset(void) {
 	vramop.operate &= ~(3 << VOPBIT_GRCG);
 	grcg.gdcwithgrcg = 0;
 	ZeroMemory(grcg.tile, sizeof(grcg.tile));
-	i286_vram_dispatch(vramop.operate);
+	MEMM_VRAM(vramop.operate);
 }
 
 void crtc_reset(void) {

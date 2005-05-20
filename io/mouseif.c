@@ -183,7 +183,11 @@ static REG8 IOINPCALL mouseif_i7fd9(UINT port) {
 			ret |= mouseif.rapid;
 		}
 		ret &= 0xf0;
+#if 1
+		ret |= 0x40;		// for shizuku
+#else
 		ret |= 0x50;
+#endif
 		portc = mouseif.upd8255.portc;
 		if (portc & 0x80) {
 			x = mouseif.latch_x;
@@ -255,10 +259,12 @@ void mouseif_reset(void) {
 	ZeroMemory(&mouseif, sizeof(mouseif));
 	mouseif.upd8255.porta = 0x00;
 	mouseif.upd8255.portb = 0x00;
-	mouseif.upd8255.portc = 0x10;
+	mouseif.upd8255.portc = 0xf0;									// ver0.82
 	mouseif.upd8255.mode = 0x93;
 	mouseif.intrclock = pccore.realclock / 120;
 	mouseif.moveclock = pccore.realclock / 56400;
+	mouseif.latch_x = -1;
+	mouseif.latch_y = -1;
 }
 
 void mouseif_bind(void) {

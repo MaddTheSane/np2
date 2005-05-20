@@ -18,7 +18,7 @@ static REG8 bios0x1f_90(void) {
 	UINT	leng;
 	UINT	l;
 
-	MEML_READSTR(CPU_ES, CPU_BX + 0x10, work, 0x10);
+	MEMR_READS(CPU_ES, CPU_BX + 0x10, work, 0x10);
 	srclimit = work[0] + (work[1] << 8) + 1;
 	srcaddr = CPU_SI;
 	if (srclimit <= srcaddr) {
@@ -42,8 +42,8 @@ static REG8 bios0x1f_90(void) {
 		if (!l) {
 			goto p90_err2;
 		}
-		MEML_READ(srcbase + srcaddr, work, l);
-		MEML_WRITE(dstbase + dstaddr, work, l);
+		MEML_READS(srcbase + srcaddr, work, l);
+		MEML_WRITES(dstbase + dstaddr, work, l);
 		srcaddr = LOW16(srcaddr + l);
 		dstaddr = LOW16(dstaddr + l);
 		leng -= l;
@@ -80,8 +80,8 @@ void bios0x1f(void) {
 	else {
 		return;
 	}
-	flag = (REG8)(MEML_READ8(CPU_SS, CPU_SP + 4) & (~C_FLAG));
+	flag = (REG8)(MEMR_READ8(CPU_SS, CPU_SP + 4) & (~C_FLAG));
 	flag |= cflag;
-	MEML_WRITE8(CPU_SS, CPU_SP + 4, flag);
+	MEMR_WRITE8(CPU_SS, CPU_SP + 4, flag);
 }
 

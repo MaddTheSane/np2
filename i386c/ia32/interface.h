@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.17 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: interface.h,v 1.18 2005/05/20 13:59:47 yui Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -52,17 +52,17 @@
 #define	CPU_SETEXTSIZE(size)		ia32_setextsize((UINT32)(size) << 20)
 #define CPU_SETEMM(frame, addr)		ia32_setemm(frame, addr)
 
-#define	cpu_memorywrite(a,v)	i286_memorywrite(a,v)
-#define	cpu_memorywrite_b(a,v)	i286_memorywrite(a,v)
-#define	cpu_memorywrite_w(a,v)	i286_memorywrite_w(a,v)
-#define	cpu_memorywrite_d(a,v)	i286_memorywrite_d(a,v)
-#define	cpu_memoryread(a)	i286_memoryread(a)
-#define	cpu_memoryread_b(a)	i286_memoryread(a)
-#define	cpu_memoryread_w(a)	i286_memoryread_w(a)
-#define	cpu_memoryread_d(a)	i286_memoryread_d(a)
+#define	cpu_memorywrite(a,v)	memp_write8(a,v)
+#define	cpu_memorywrite_b(a,v)	memp_write8(a,v)
+#define	cpu_memorywrite_w(a,v)	memp_write16(a,v)
+#define	cpu_memorywrite_d(a,v)	memp_write32(a,v)
+#define	cpu_memoryread(a)	memp_read8(a)
+#define	cpu_memoryread_b(a)	memp_read8(a)
+#define	cpu_memoryread_w(a)	memp_read16(a)
+#define	cpu_memoryread_d(a)	memp_read32(a)
 
-#define	cpu_memoryread_region(a,p,l)	memp_read(a,p,l)
-#define	cpu_memorywrite_region(a,p,l)	memp_write(a,p,l)
+#define	cpu_memoryread_region(a,p,l)	memp_reads(a,p,l)
+#define	cpu_memorywrite_region(a,p,l)	memp_writes(a,p,l)
 
 void i386c_initialize(void);
 

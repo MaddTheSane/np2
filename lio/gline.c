@@ -303,7 +303,7 @@ REG8 lio_gline(GLIO lio) {
 	UINT8	tile[256];
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lp.x1 = (SINT16)LOADINTELWORD(dat.x1);
 	lp.y1 = (SINT16)LOADINTELWORD(dat.y1);
 	lp.x2 = (SINT16)LOADINTELWORD(dat.x2);
@@ -338,7 +338,7 @@ REG8 lio_gline(GLIO lio) {
 			if (leng == 0) {
 				goto gline_err;
 			}
-			MEML_READSTR(LOADINTELWORD(dat.seg), LOADINTELWORD(dat.off),
+			MEMR_READS(LOADINTELWORD(dat.seg), LOADINTELWORD(dat.off),
 																tile, leng);
 		}
 		if (dat.sw != 1) {

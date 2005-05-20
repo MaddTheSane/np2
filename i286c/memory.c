@@ -173,7 +173,7 @@ static const VACCTBL vacctbl[0x10] = {
 		{memegc_rd8,	memegc_wr8,		memegc_rd16,	memegc_wr16}};
 
 
-void MEMCALL i286_memorymap(UINT type) {
+void MEMCALL memm_arch(UINT type) {
 
 const MMAPTBL	*mm;
 
@@ -194,7 +194,7 @@ const MMAPTBL	*mm;
 	memfn0.wr16[0xf8000 >> 15] = mm->bwr16;
 }
 
-void MEMCALL i286_vram_dispatch(UINT func) {
+void MEMCALL memm_vram(UINT func) {
 
 const VACCTBL	*vacc;
 
@@ -317,7 +317,7 @@ static const MEMFNF memfnf = {
 
 // ----
 
-REG8 MEMCALL i286_memoryread(UINT32 address) {
+REG8 MEMCALL memp_read8(UINT32 address) {
 
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);
@@ -353,7 +353,7 @@ REG8 MEMCALL i286_memoryread(UINT32 address) {
 	}
 }
 
-REG16 MEMCALL i286_memoryread_w(UINT32 address) {
+REG16 MEMCALL memp_read16(UINT32 address) {
 
 	REG16	ret;
 
@@ -390,13 +390,13 @@ REG16 MEMCALL i286_memoryread_w(UINT32 address) {
 		}
 	}
 	else {
-		ret = i286_memoryread(address + 0);
-		ret += (REG16)(i286_memoryread(address + 1) << 8);
+		ret = memp_read8(address + 0);
+		ret += (REG16)(memp_read8(address + 1) << 8);
 		return(ret);
 	}
 }
 
-UINT32 MEMCALL i286_memoryread_d(UINT32 address) {
+UINT32 MEMCALL memp_read32(UINT32 address) {
 
 	UINT32	pos;
 	UINT32	ret;
@@ -411,18 +411,18 @@ UINT32 MEMCALL i286_memoryread_d(UINT32 address) {
 		}
 	}
 	if (!(address & 1)) {
-		ret = i286_memoryread_w(address + 0);
-		ret += (UINT32)i286_memoryread_w(address + 2) << 16;
+		ret = memp_read16(address + 0);
+		ret += (UINT32)memp_read16(address + 2) << 16;
 	}
 	else {
-		ret = i286_memoryread(address + 0);
-		ret += (UINT32)i286_memoryread_w(address + 1) << 8;
-		ret += (UINT32)i286_memoryread(address + 3) << 24;
+		ret = memp_read8(address + 0);
+		ret += (UINT32)memp_read16(address + 1) << 8;
+		ret += (UINT32)memp_read8(address + 3) << 24;
 	}
 	return(ret);
 }
 
-void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
+void MEMCALL memp_write8(UINT32 address, REG8 value) {
 
 	if (address < I286_MEMWRITEMAX) {
 		mem[address] = (UINT8)value;
@@ -456,7 +456,7 @@ void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
 	}
 }
 
-void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
+void MEMCALL memp_write16(UINT32 address, REG16 value) {
 
 	if (address < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + address, value);
@@ -489,12 +489,12 @@ void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
 		}
 	}
 	else {
-		i286_memorywrite(address + 0, (UINT8)value);
-		i286_memorywrite(address + 1, (UINT8)(value >> 8));
+		memp_write8(address + 0, (UINT8)value);
+		memp_write8(address + 1, (UINT8)(value >> 8));
 	}
 }
 
-void MEMCALL i286_memorywrite_d(UINT32 address, UINT32 value) {
+void MEMCALL memp_write32(UINT32 address, UINT32 value) {
 
 	UINT32	pos;
 
@@ -510,20 +510,61 @@ void MEMCALL i286_memorywrite_d(UINT32 address, UINT32 value) {
 		}
 	}
 	if (!(address & 1)) {
-		i286_memorywrite_w(address + 0, (UINT16)value);
-		i286_memorywrite_w(address + 2, (UINT16)(value >> 16));
+		memp_write16(address + 0, (UINT16)value);
+		memp_write16(address + 2, (UINT16)(value >> 16));
 	}
 	else {
-		i286_memorywrite(address + 0, (UINT8)value);
-		i286_memorywrite_w(address + 1, (UINT16)(value >> 8));
-		i286_memorywrite(address + 3, (UINT8)(value >> 24));
+		memp_write8(address + 0, (UINT8)value);
+		memp_write16(address + 1, (UINT16)(value >> 8));
+		memp_write8(address + 3, (UINT8)(value >> 24));
+	}
+}
+
+
+void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng) {
+
+	if ((address + leng) < I286_MEMREADMAX) {
+		CopyMemory(dat, mem + address, leng);
+	}
+	else {
+		UINT8 *out = (UINT8 *)dat;
+		if (address < I286_MEMREADMAX) {
+			CopyMemory(out, mem + address, I286_MEMREADMAX - address);
+			out += I286_MEMREADMAX - address;
+			leng -= I286_MEMREADMAX - address;
+			address = I286_MEMREADMAX;
+		}
+		while(leng--) {
+			*out++ = memp_read8(address++);
+		}
+	}
+}
+
+void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) {
+
+const UINT8	*out;
+
+	if ((address + leng) < I286_MEMWRITEMAX) {
+		CopyMemory(mem + address, dat, leng);
+	}
+	else {
+		out = (UINT8 *)dat;
+		if (address < I286_MEMWRITEMAX) {
+			CopyMemory(mem + address, out, I286_MEMWRITEMAX - address);
+			out += I286_MEMWRITEMAX - address;
+			leng -= I286_MEMWRITEMAX - address;
+			address = I286_MEMWRITEMAX;
+		}
+		while(leng--) {
+			memp_write8(address++, *out++);
+		}
 	}
 }
 
 
 // ---- Logical Space (BIOS)
 
-REG8 MEMCALL meml_read8(UINT seg, UINT off) {
+REG8 MEMCALL memr_read8(UINT seg, UINT off) {
 
 	UINT32	address;
 
@@ -532,11 +573,11 @@ REG8 MEMCALL meml_read8(UINT seg, UINT off) {
 		return(mem[address]);
 	}
 	else {
-		return(i286_memoryread(address));
+		return(memp_read8(address));
 	}
 }
 
-REG16 MEMCALL meml_read16(UINT seg, UINT off) {
+REG16 MEMCALL memr_read16(UINT seg, UINT off) {
 
 	UINT32	address;
 
@@ -545,11 +586,11 @@ REG16 MEMCALL meml_read16(UINT seg, UINT off) {
 		return(LOADINTELWORD(mem + address));
 	}
 	else {
-		return(i286_memoryread_w(address));
+		return(memp_read16(address));
 	}
 }
 
-void MEMCALL meml_write8(UINT seg, UINT off, REG8 value) {
+void MEMCALL memr_write8(UINT seg, UINT off, REG8 value) {
 
 	UINT32	address;
 
@@ -558,11 +599,11 @@ void MEMCALL meml_write8(UINT seg, UINT off, REG8 value) {
 		mem[address] = (UINT8)value;
 	}
 	else {
-		i286_memorywrite(address, value);
+		memp_write8(address, value);
 	}
 }
 
-void MEMCALL meml_write16(UINT seg, UINT off, REG16 value) {
+void MEMCALL memr_write16(UINT seg, UINT off, REG16 value) {
 
 	UINT32	address;
 
@@ -571,11 +612,11 @@ void MEMCALL meml_write16(UINT seg, UINT off, REG16 value) {
 		STOREINTELWORD(mem + address, value);
 	}
 	else {
-		i286_memorywrite_w(address, value);
+		memp_write16(address, value);
 	}
 }
 
-void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
+void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 
 	UINT8	*out;
 	UINT32	adrs;
@@ -607,13 +648,13 @@ void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 	}
 	else {
 		while(leng--) {
-			*out++ = i286_memoryread(adrs + off);
+			*out++ = memp_read8(adrs + off);
 			off = LOW16(off + 1);
 		}
 	}
 }
 
-void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
+void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 
 	UINT8	*out;
 	UINT32	adrs;
@@ -645,48 +686,8 @@ void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
 	}
 	else {
 		while(leng--) {
-			i286_memorywrite(adrs + off, *out++);
+			memp_write8(adrs + off, *out++);
 			off = LOW16(off + 1);
-		}
-	}
-}
-
-void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
-
-	if ((address + leng) < I286_MEMREADMAX) {
-		CopyMemory(dat, mem + address, leng);
-	}
-	else {
-		UINT8 *out = (UINT8 *)dat;
-		if (address < I286_MEMREADMAX) {
-			CopyMemory(out, mem + address, I286_MEMREADMAX - address);
-			out += I286_MEMREADMAX - address;
-			leng -= I286_MEMREADMAX - address;
-			address = I286_MEMREADMAX;
-		}
-		while(leng--) {
-			*out++ = i286_memoryread(address++);
-		}
-	}
-}
-
-void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
-
-const UINT8	*out;
-
-	if ((address + leng) < I286_MEMWRITEMAX) {
-		CopyMemory(mem + address, dat, leng);
-	}
-	else {
-		out = (UINT8 *)dat;
-		if (address < I286_MEMWRITEMAX) {
-			CopyMemory(mem + address, out, I286_MEMWRITEMAX - address);
-			out += I286_MEMWRITEMAX - address;
-			leng -= I286_MEMWRITEMAX - address;
-			address = I286_MEMWRITEMAX;
-		}
-		while(leng--) {
-			i286_memorywrite(address++, *out++);
 		}
 	}
 }

@@ -156,7 +156,7 @@ void gdc_analogext(BOOL extend) {
 	}
 	gdcs.palchange = GDCSCRN_REDRAW;
 	gdcs.grphdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
-	i286_vram_dispatch(vramop.operate);
+	MEMM_VRAM(vramop.operate);
 }
 #endif
 
@@ -505,7 +505,7 @@ static void IOOUTCALL gdc_o6a(UINT port, REG8 dat) {
 					gdcs.palchange = GDCSCRN_REDRAW;
 					vramop.operate &= ~(1 << VOPBIT_ANALOG);
 					vramop.operate |= dat << VOPBIT_ANALOG;
-					i286_vram_dispatch(vramop.operate);
+					MEMM_VRAM(vramop.operate);
 				}
 				break;
 
@@ -513,7 +513,7 @@ static void IOOUTCALL gdc_o6a(UINT port, REG8 dat) {
 				if ((gdc.mode2 & 0x08) && (grcg.chip == 3)) {
 					vramop.operate &= ~(1 << VOPBIT_EGC);
 					vramop.operate |= dat << VOPBIT_EGC;
-					i286_vram_dispatch(vramop.operate);
+					MEMM_VRAM(vramop.operate);
 				}
 				break;
 		}
@@ -625,14 +625,14 @@ static REG8 IOINPCALL gdc_i60(UINT port) {
 		UINT16 memv;
 		addr = CPU_INPADRS;
 		jadr = 0xfa74;
-		memv = i286_memoryread_w(addr);
+		memv = MEML_READ16(addr);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
 			addr += 2;
-			memv = i286_memoryread_w(addr);
+			memv = MEML_READ16(addr);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(addr + 2);
+			memv = MEML_READ16(addr + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
 					CPU_REMCLOCK = -1;
@@ -718,7 +718,7 @@ static void IOOUTCALL gdc_oa6(UINT port, REG8 dat) {
 		gdcs.access = (UINT8)dat;
 		vramop.operate &= ~(1 << VOPBIT_ACCESS);
 		vramop.operate |= dat << VOPBIT_ACCESS;
-		i286_vram_dispatch(vramop.operate);
+		MEMM_VRAM(vramop.operate);
 	}
 	(void)port;
 }
@@ -754,14 +754,14 @@ static REG8 IOINPCALL gdc_ia0(UINT port) {
 		UINT16 memv;
 		addr = CPU_INPADRS;
 		jadr = 0xfa74;
-		memv = i286_memoryread_w(addr);
+		memv = MEML_READ16(addr);
 		while((memv == 0x00eb) || (memv == 0x5fe6)) {
 			jadr -= 0x200;
 			addr += 2;
-			memv = i286_memoryread_w(addr);
+			memv = MEML_READ16(addr);
 		}
 		if ((memv == 0x20a8) || (memv == 0x2024)) {
-			memv = i286_memoryread_w(addr + 2);
+			memv = MEML_READ16(addr + 2);
 			if (memv == jadr) {					// je
 				if (!gdc.vsync) {
 					CPU_REMCLOCK = -1;
@@ -1100,7 +1100,7 @@ void gdc_biosreset(void) {
 	gdc.analog &= ~(1 << (GDCANALOG_256));
 	vramop.operate &= ~(1 << VOPBIT_VGA);
 #endif
-	i286_vram_dispatch(vramop.operate);
+	MEMM_VRAM(vramop.operate);
 
 	// palette
 	CopyMemory(gdc.degpal, defdegpal, 4);

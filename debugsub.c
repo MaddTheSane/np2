@@ -126,7 +126,7 @@ static void writeseg(const OEMCHAR *fname, UINT32 addr, UINT limit) {
 	limit++;
 	while(limit) {
 		size = min(limit, sizeof(buf));
-		MEML_READ(addr, buf, size);
+		MEML_READS(addr, buf, size);
 		file_write(fh, buf, size);
 		addr += size;
 		limit -= size;

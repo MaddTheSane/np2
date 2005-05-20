@@ -1551,7 +1551,7 @@ const SFENTRY	*tblterm;
 	statflag_close(sffh);
 
 	// I/OçÏÇËíºÇµ
-	i286_memorymap((pccore.model & PCMODEL_EPSON)?1:0);
+	MEMM_ARCH((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();
@@ -1568,7 +1568,7 @@ const SFENTRY	*tblterm;
 	FONTPTR_LOW = fontrom + cgwindow.low;
 	FONTPTR_HIGH = fontrom + cgwindow.high;
 #endif
-	i286_vram_dispatch(vramop.operate);
+	MEMM_VRAM(vramop.operate);
 	fddmtr_reset();
 	soundmng_play();
 

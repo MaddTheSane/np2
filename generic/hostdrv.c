@@ -66,9 +66,9 @@ static void fetch_if4dos(void) {
 	REG16	seg;
 	IF4DOS	if4dos;
 
-	off = MEML_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 0);
-	seg = MEML_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 2);
-	MEML_READSTR(seg, off, &if4dos, sizeof(if4dos));
+	off = MEMR_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 0);
+	seg = MEMR_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 2);
+	MEMR_READS(seg, off, &if4dos, sizeof(if4dos));
 	hostdrv.stat.drive_no = if4dos.drive_no;
 	hostdrv.stat.dosver_major = if4dos.dosver_major;
 	hostdrv.stat.dosver_minor = if4dos.dosver_minor;
@@ -83,12 +83,12 @@ static void fetch_if4dos(void) {
 
 static void fetch_intr_regs(INTRST is) {
 
-	MEML_READSTR(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
+	MEMR_READS(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
 }
 
 static void store_intr_regs(INTRST is) {
 
-	MEML_WRITESTR(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
+	MEMR_WRITES(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
 }
 
 
@@ -98,18 +98,18 @@ static void fetch_sda_currcds(SDACDS sc) {
 	REG16	seg;
 
 	if (hostdrv.stat.dosver_major == 3) {
-		MEML_READSTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEMR_READS(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver3.sda, sizeof(sc->ver3.sda));
 		off = LOADINTELWORD(sc->ver3.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver3.sda.cdsptr.seg);
-		MEML_READSTR(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
+		MEMR_READS(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
 	}
 	else {
-		MEML_READSTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEMR_READS(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver4.sda, sizeof(sc->ver4.sda));
 		off = LOADINTELWORD(sc->ver4.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver4.sda.cdsptr.seg);
-		MEML_READSTR(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
+		MEMR_READS(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
 	}
 }
 
@@ -119,18 +119,18 @@ static void store_sda_currcds(SDACDS sc) {
 	REG16	seg;
 
 	if (hostdrv.stat.dosver_major == 3) {
-		MEML_WRITESTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEMR_WRITES(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver3.sda, sizeof(sc->ver3.sda));
 		off = LOADINTELWORD(sc->ver3.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver3.sda.cdsptr.seg);
-		MEML_WRITESTR(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
+		MEMR_WRITES(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
 	}
 	else {
-		MEML_WRITESTR(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
+		MEMR_WRITES(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
 										&sc->ver4.sda, sizeof(sc->ver4.sda));
 		off = LOADINTELWORD(sc->ver4.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver4.sda.cdsptr.seg);
-		MEML_WRITESTR(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
+		MEMR_WRITES(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
 	}
 }
 
@@ -142,7 +142,7 @@ static void fetch_sft(INTRST is, SFTREC sft) {
 
 	off = LOADINTELWORD(is->r.w.di);
 	seg = LOADINTELWORD(is->r.w.es);
-	MEML_READSTR(seg, off, sft, sizeof(_SFTREC));
+	MEMR_READS(seg, off, sft, sizeof(_SFTREC));
 }
 
 static void store_sft(INTRST is, SFTREC sft) {
@@ -152,7 +152,7 @@ static void store_sft(INTRST is, SFTREC sft) {
 
 	off = LOADINTELWORD(is->r.w.di);
 	seg = LOADINTELWORD(is->r.w.es);
-	MEML_WRITESTR(seg, off, sft, sizeof(_SFTREC));
+	MEMR_WRITES(seg, off, sft, sizeof(_SFTREC));
 }
 
 
@@ -359,7 +359,7 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 		if (file_read(fh, work, r) != r) {
 			return(FAILURE);
 		}
-		MEML_WRITESTR(seg, off, work, r);
+		MEMR_WRITES(seg, off, work, r);
 		off += r;
 		size -= r;
 	}
@@ -387,7 +387,7 @@ static BOOL write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 	else {
 		do {
 			r = min(size, sizeof(work));
-			MEML_READSTR(seg, off, work, r);
+			MEMR_READS(seg, off, work, r);
 			if (file_write(fh, work, r) != r) {
 				return(FAILURE);
 			}
@@ -697,7 +697,7 @@ static void set_fileattr(INTRST intrst) {
 		fail(intrst, ERR_ACCESSDENIED);
 		return;
 	}
-	attr = MEML_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR)) & 0x37;
+	attr = MEMR_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR)) & 0x37;
 
 	// ¬Œ÷‚µ‚½‚±‚Æ‚É‚·‚é...
 	succeed(intrst);
@@ -970,7 +970,7 @@ static void do_redir(INTRST intrst) {
 	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
 	}
-	mode = MEML_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR));
+	mode = MEMR_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR));
 	TRACEOUT(("do_redir: %.4x", mode));
 	switch(mode) {
 		case 0x5f02:
@@ -979,14 +979,14 @@ static void do_redir(INTRST intrst) {
 				fail(intrst, 0x12);
 				return;
 			}
-			MEML_WRITE16(CPU_DS, CPU_BX + 2, 4);
-			MEML_WRITE16(CPU_DS, CPU_BX + 4, 1);
+			MEMR_WRITE16(CPU_DS, CPU_BX + 2, 4);
+			MEMR_WRITE16(CPU_DS, CPU_BX + 4, 1);
 			tmp[0] = (char)('A' + hostdrv.stat.drive_no);
 			tmp[1] = ':';
 			tmp[2] = '\0';
-			MEML_WRITESTR(LOADINTELWORD(intrst->r.w.ds),
+			MEMR_WRITES(LOADINTELWORD(intrst->r.w.ds),
 							LOADINTELWORD(intrst->r.w.si), tmp, 3);
-			MEML_WRITESTR(LOADINTELWORD(intrst->r.w.es),
+			MEMR_WRITES(LOADINTELWORD(intrst->r.w.es),
 							LOADINTELWORD(intrst->r.w.di),
 							ROOTPATH, ROOTPATH_SIZE + 1);
 			break;

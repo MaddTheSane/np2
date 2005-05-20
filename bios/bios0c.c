@@ -20,7 +20,7 @@ void bios0x0c(void) {
 	doff = GETBIOSMEM16(MEMW_RS_CH0_OFST);
 	dseg = GETBIOSMEM16(MEMW_RS_CH0_SEG);
 
-	flag = MEML_READ8(dseg, doff + R_FLAG);
+	flag = MEMR_READ8(dseg, doff + R_FLAG);
 	data = iocore_inp8(0x30);							// データ引き取り
 	stat = iocore_inp8(0x32) & 0xfc;					// ステータス
 	stat |= (iocore_inp8(0x33) & 3);
@@ -61,39 +61,39 @@ void bios0x0c(void) {
 			}
 		}
 		// データ投棄
-		pos = MEML_READ16(dseg, doff + R_PUTP);
-		MEML_WRITE16(dseg, pos, (UINT16)((data << 8) | stat));
+		pos = MEMR_READ16(dseg, doff + R_PUTP);
+		MEMR_WRITE16(dseg, pos, (UINT16)((data << 8) | stat));
 
 		// 次のポインタをストア
 		pos = (UINT16)(pos + 2);
-		if (pos >= MEML_READ16(dseg, doff + R_TAILP)) {
-			pos = MEML_READ16(dseg, doff + R_HEADP);
+		if (pos >= MEMR_READ16(dseg, doff + R_TAILP)) {
+			pos = MEMR_READ16(dseg, doff + R_HEADP);
 		}
-		MEML_WRITE16(dseg, doff + R_PUTP, pos);
+		MEMR_WRITE16(dseg, doff + R_PUTP, pos);
 
 		// カウンタのインクリメント
-		cnt = (UINT16)(MEML_READ16(dseg, doff + R_CNT) + 1);
-		MEML_WRITE16(dseg, doff + R_CNT, cnt);
+		cnt = (UINT16)(MEMR_READ16(dseg, doff + R_CNT) + 1);
+		MEMR_WRITE16(dseg, doff + R_CNT, cnt);
 
 		// オーバーフローを見張る
-		if (pos == MEML_READ16(dseg, doff + R_GETP)) {
+		if (pos == MEMR_READ16(dseg, doff + R_GETP)) {
 			flag |= RFLAG_BFULL;
 		}
 
 		// XOFFを送信？
 		if (((flag & (RFLAG_XON | RFLAG_XOFF)) == RFLAG_XON) &&
-			(cnt >= MEML_READ16(dseg, doff + R_XON))) {
+			(cnt >= MEMR_READ16(dseg, doff + R_XON))) {
 			iocore_out8(0x30, RSCODE_XOFF);
 			flag |= RFLAG_XOFF;
 		}
 	}
 	else {
-		MEML_WRITE8(dseg, doff + R_CMD,
-						(REG8)(MEML_READ8(dseg, doff + R_CMD) | RFLAG_BOVF));
+		MEMR_WRITE8(dseg, doff + R_CMD,
+						(REG8)(MEMR_READ8(dseg, doff + R_CMD) | RFLAG_BOVF));
 	}
-	MEML_WRITE8(dseg, doff + R_INT,
-						(REG8)(MEML_READ8(dseg, doff + R_INT) | RINT_INT));
-	MEML_WRITE8(dseg, doff + R_FLAG, flag);
+	MEMR_WRITE8(dseg, doff + R_INT,
+						(REG8)(MEMR_READ8(dseg, doff + R_INT) | RINT_INT));
+	MEMR_WRITE8(dseg, doff + R_FLAG, flag);
 	iocore_out8(0x00, 0x20);
 }
 

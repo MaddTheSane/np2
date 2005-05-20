@@ -359,7 +359,7 @@ void pccore_reset(void) {
 	cbuscore_reset();
 	fmboard_reset(pccore.sound);
 
-	i286_memorymap((pccore.model & PCMODEL_EPSON)?1:0);
+	MEMM_ARCH((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();

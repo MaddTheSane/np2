@@ -173,7 +173,7 @@ static const VACCTBL vacctbl[0x10] = {
 		{memegc_rd8,	memegc_wr8,		memegc_rd16,	memegc_wr16}};
 
 
-void MEMCALL i286_memorymap(UINT type) {
+void MEMCALL memm_arch(UINT type) {
 
 const MMAPTBL	*mm;
 
@@ -194,7 +194,7 @@ const MMAPTBL	*mm;
 	memfn0.wr16[0xf8000 >> 15] = mm->bwr16;
 }
 
-void MEMCALL i286_vram_dispatch(UINT func) {
+void MEMCALL memm_vram(UINT func) {
 
 const VACCTBL	*vacc;
 
@@ -317,7 +317,7 @@ static const MEMFNF memfnf = {
 
 // ----
 
-REG8 MEMCALL i286_memoryread(UINT32 address) {
+REG8 MEMCALL memp_read8(UINT32 address) {
 
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);
@@ -353,7 +353,7 @@ REG8 MEMCALL i286_memoryread(UINT32 address) {
 	}
 }
 
-REG16 MEMCALL i286_memoryread_w(UINT32 address) {
+REG16 MEMCALL memp_read16(UINT32 address) {
 
 	REG16	ret;
 
@@ -390,13 +390,13 @@ REG16 MEMCALL i286_memoryread_w(UINT32 address) {
 		}
 	}
 	else {
-		ret = i286_memoryread(address + 0);
-		ret += (REG16)(i286_memoryread(address + 1) << 8);
+		ret = memp_read8(address + 0);
+		ret += (REG16)(memp_read8(address + 1) << 8);
 		return(ret);
 	}
 }
 
-UINT32 MEMCALL i286_memoryread_d(UINT32 address) {
+UINT32 MEMCALL memp_read32(UINT32 address) {
 
 	UINT32	pos;
 	UINT32	ret;
@@ -411,18 +411,18 @@ UINT32 MEMCALL i286_memoryread_d(UINT32 address) {
 		}
 	}
 	if (!(address & 1)) {
-		ret = i286_memoryread_w(address + 0);
-		ret += (UINT32)i286_memoryread_w(address + 2) << 16;
+		ret = memp_read16(address + 0);
+		ret += (UINT32)memp_read16(address + 2) << 16;
 	}
 	else {
-		ret = i286_memoryread(address + 0);
-		ret += (UINT32)i286_memoryread_w(address + 1) << 8;
-		ret += (UINT32)i286_memoryread(address + 3) << 24;
+		ret = memp_read8(address + 0);
+		ret += (UINT32)memp_read16(address + 1) << 8;
+		ret += (UINT32)memp_read8(address + 3) << 24;
 	}
 	return(ret);
 }
 
-void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
+void MEMCALL memp_write8(UINT32 address, REG8 value) {
 
 	if (address < I286_MEMWRITEMAX) {
 		mem[address] = (UINT8)value;
@@ -456,7 +456,7 @@ void MEMCALL i286_memorywrite(UINT32 address, REG8 value) {
 	}
 }
 
-void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
+void MEMCALL memp_write16(UINT32 address, REG16 value) {
 
 	if (address < (I286_MEMWRITEMAX - 1)) {
 		STOREINTELWORD(mem + address, value);
@@ -489,12 +489,12 @@ void MEMCALL i286_memorywrite_w(UINT32 address, REG16 value) {
 		}
 	}
 	else {
-		i286_memorywrite(address + 0, (UINT8)value);
-		i286_memorywrite(address + 1, (UINT8)(value >> 8));
+		memp_write8(address + 0, (UINT8)value);
+		memp_write8(address + 1, (UINT8)(value >> 8));
 	}
 }
 
-void MEMCALL i286_memorywrite_d(UINT32 address, UINT32 value) {
+void MEMCALL memp_write32(UINT32 address, UINT32 value) {
 
 	UINT32	pos;
 
@@ -510,18 +510,18 @@ void MEMCALL i286_memorywrite_d(UINT32 address, UINT32 value) {
 		}
 	}
 	if (!(address & 1)) {
-		i286_memorywrite_w(address + 0, (UINT16)value);
-		i286_memorywrite_w(address + 2, (UINT16)(value >> 16));
+		memp_write16(address + 0, (UINT16)value);
+		memp_write16(address + 2, (UINT16)(value >> 16));
 	}
 	else {
-		i286_memorywrite(address + 0, (UINT8)value);
-		i286_memorywrite_w(address + 1, (UINT16)(value >> 8));
-		i286_memorywrite(address + 3, (UINT8)(value >> 24));
+		memp_write8(address + 0, (UINT8)value);
+		memp_write16(address + 1, (UINT16)(value >> 8));
+		memp_write8(address + 3, (UINT8)(value >> 24));
 	}
 }
 
 
-void MEMCALL memp_read(UINT32 address, void *dat, UINT leng) {
+void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng) {
 
 	UINT8 *out = (UINT8 *)dat;
 	UINT diff;
@@ -546,11 +546,11 @@ void MEMCALL memp_read(UINT32 address, void *dat, UINT leng) {
 
 	/* slow memory access */
 	while (leng-- > 0) {
-		*out++ = i286_memoryread(address++);
+		*out++ = memp_read8(address++);
 	}
 }
 
-void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
+void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) {
 
 	const UINT8 *out = (UINT8 *)dat;
 	UINT diff;
@@ -575,7 +575,7 @@ void MEMCALL memp_write(UINT32 address, const void *dat, UINT leng) {
 
 	/* slow memory access */
 	while (leng-- > 0) {
-		i286_memorywrite(address++, *out++);
+		memp_write8(address++, *out++);
 	}
 }
 
@@ -589,12 +589,12 @@ static UINT32 physicaladdr(UINT32 addr, BOOL wr) {
 	UINT32	pte;
 
 	a = CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc);
-	pde = i286_memoryread_d(a);
+	pde = memp_read32(a);
 	if (!(pde & CPU_PDE_PRESENT)) {
 		goto retdummy;
 	}
 	if (!(pde & CPU_PDE_ACCESS)) {
-		i286_memorywrite(a, (UINT8)(pde | CPU_PDE_ACCESS));
+		memp_write8(a, (UINT8)(pde | CPU_PDE_ACCESS));
 	}
 	a = (pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc);
 	pte = cpu_memoryread_d(a);
@@ -602,10 +602,10 @@ static UINT32 physicaladdr(UINT32 addr, BOOL wr) {
 		goto retdummy;
 	}
 	if (!(pte & CPU_PTE_ACCESS)) {
-		i286_memorywrite(a, (UINT8)(pte | CPU_PTE_ACCESS));
+		memp_write8(a, (UINT8)(pte | CPU_PTE_ACCESS));
 	}
 	if ((wr) && (!(pte & CPU_PTE_DIRTY))) {
-		i286_memorywrite(a, (UINT8)(pte | CPU_PTE_DIRTY));
+		memp_write8(a, (UINT8)(pte | CPU_PTE_DIRTY));
 	}
 	addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
 	return(addr);
@@ -615,7 +615,46 @@ retdummy:
 }
 
 
-REG8 MEMCALL meml_read8(UINT seg, UINT off) {
+void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) {
+
+	UINT	size;
+
+	if (!CPU_STAT_PAGING) {
+		memp_reads(address, dat, leng);
+	}
+	else {
+		while(leng) {
+			size = 0x1000 - (address & 0xfff);
+			size = min(size, leng);
+			memp_reads(physicaladdr(address, FALSE), dat, size);
+			address += size;
+			dat = ((UINT8 *)dat) + size;
+			leng -= size;
+		}
+	}
+}
+
+void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) {
+
+	UINT	size;
+
+	if (!CPU_STAT_PAGING) {
+		memp_writes(address, dat, leng);
+	}
+	else {
+		while(leng) {
+			size = 0x1000 - (address & 0xfff);
+			size = min(size, leng);
+			memp_writes(physicaladdr(address, TRUE), dat, size);
+			address += size;
+			dat = ((UINT8 *)dat) + size;
+			leng -= size;
+		}
+	}
+}
+
+
+REG8 MEMCALL memr_read8(UINT seg, UINT off) {
 
 	UINT32	addr;
 
@@ -623,24 +662,24 @@ REG8 MEMCALL meml_read8(UINT seg, UINT off) {
 	if (CPU_STAT_PAGING) {
 		addr = physicaladdr(addr, FALSE);
 	}
-	return(i286_memoryread(addr));
+	return(memp_read8(addr));
 }
 
-REG16 MEMCALL meml_read16(UINT seg, UINT off) {
+REG16 MEMCALL memr_read16(UINT seg, UINT off) {
 
 	UINT32	addr;
 
 	addr = (seg << 4) + LOW16(off);
 	if (!CPU_STAT_PAGING) {
-		return(i286_memoryread_w(addr));
+		return(memp_read16(addr));
 	}
 	else if ((addr + 1) & 0xfff) {
-		return(i286_memoryread_w(physicaladdr(addr, FALSE)));
+		return(memp_read16(physicaladdr(addr, FALSE)));
 	}
-	return(meml_read8(seg, off) + (meml_read8(seg, off + 1) << 8));
+	return(memr_read8(seg, off) + (memr_read8(seg, off + 1) << 8));
 }
 
-void MEMCALL meml_write8(UINT seg, UINT off, REG8 dat) {
+void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
 
 	UINT32	addr;
 
@@ -648,27 +687,27 @@ void MEMCALL meml_write8(UINT seg, UINT off, REG8 dat) {
 	if (CPU_STAT_PAGING) {
 		addr = physicaladdr(addr, TRUE);
 	}
-	i286_memorywrite(addr, dat);
+	memp_write8(addr, dat);
 }
 
-void MEMCALL meml_write16(UINT seg, UINT off, REG16 dat) {
+void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
 
 	UINT32	addr;
 
 	addr = (seg << 4) + LOW16(off);
 	if (!CPU_STAT_PAGING) {
-		i286_memorywrite_w(addr, dat);
+		memp_write16(addr, dat);
 	}
 	else if ((addr + 1) & 0xfff) {
-		i286_memorywrite_w(physicaladdr(addr, TRUE), dat);
+		memp_write16(physicaladdr(addr, TRUE), dat);
 	}
 	else {
-		meml_write8(seg, off, (REG8)dat);
-		meml_write8(seg, off + 1, (REG8)(dat >> 8));
+		memr_write8(seg, off, (REG8)dat);
+		memr_write8(seg, off + 1, (REG8)(dat >> 8));
 	}
 }
 
-void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
+void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 
 	UINT32	addr;
 	UINT	rem;
@@ -684,14 +723,14 @@ void MEMCALL meml_readstr(UINT seg, UINT off, void *dat, UINT leng) {
 			size = min(size, rem);
 			addr = physicaladdr(addr, FALSE);
 		}
-		memp_read(addr, dat, size);
+		memp_reads(addr, dat, size);
 		off += size;
 		dat = ((UINT8 *)dat) + size;
 		leng -= size;
 	}
 }
 
-void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
+void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 
 	UINT32	addr;
 	UINT	rem;
@@ -707,48 +746,10 @@ void MEMCALL meml_writestr(UINT seg, UINT off, const void *dat, UINT leng) {
 			size = min(size, rem);
 			addr = physicaladdr(addr, TRUE);
 		}
-		memp_write(addr, dat, size);
+		memp_writes(addr, dat, size);
 		off += size;
 		dat = ((UINT8 *)dat) + size;
 		leng -= size;
-	}
-}
-
-void MEMCALL meml_read(UINT32 address, void *dat, UINT leng) {
-
-	UINT	size;
-
-	if (!CPU_STAT_PAGING) {
-		memp_read(address, dat, leng);
-	}
-	else {
-		while(leng) {
-			size = 0x1000 - (address & 0xfff);
-			size = min(size, leng);
-			memp_read(physicaladdr(address, FALSE), dat, size);
-			address += size;
-			dat = ((UINT8 *)dat) + size;
-			leng -= size;
-		}
-	}
-}
-
-void MEMCALL meml_write(UINT32 address, const void *dat, UINT leng) {
-
-	UINT	size;
-
-	if (!CPU_STAT_PAGING) {
-		memp_write(address, dat, leng);
-	}
-	else {
-		while(leng) {
-			size = 0x1000 - (address & 0xfff);
-			size = min(size, leng);
-			memp_write(physicaladdr(address, TRUE), dat, size);
-			address += size;
-			dat = ((UINT8 *)dat) + size;
-			leng -= size;
-		}
 	}
 }
 

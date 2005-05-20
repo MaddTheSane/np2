@@ -16,11 +16,11 @@ void bios0x1c(void) {
 	switch(CPU_AH) {
 		case 0x00:					// get system timer
 			calendar_get(buf);
-			MEML_WRITESTR(CPU_ES, CPU_BX, buf, 6);
+			MEMR_WRITES(CPU_ES, CPU_BX, buf, 6);
 			break;
 
 		case 0x01:					// put system timer
-			MEML_READSTR(CPU_ES, CPU_BX, buf, 6);
+			MEMR_READS(CPU_ES, CPU_BX, buf, 6);
 			mem[MEMB_MSW8] = buf[0];
 			calendar_set(buf);
 			break;

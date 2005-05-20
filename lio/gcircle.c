@@ -52,7 +52,7 @@ REG8 lio_gcircle(GLIO lio) {
 	SINT16	d3;
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 
 	// チェック
 	if (dat.flag & 0x7f) {

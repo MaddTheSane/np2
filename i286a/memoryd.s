@@ -7,15 +7,15 @@
 	IMPORT	i286_nonram_r
 	IMPORT	i286_nonram_rw
 
-	EXPORT	i286_memoryread
-	EXPORT	i286_memoryread_w
-	EXPORT	i286_memorywrite
-	EXPORT	i286_memorywrite_w
+	EXPORT	memp_read8
+	EXPORT	memp_read16
+	EXPORT	memp_write8
+	EXPORT	memp_write16
 
-	EXPORT	i286_membyte_read
-	EXPORT	i286_memword_read
-	EXPORT	i286_membyte_write
-	EXPORT	i286_memword_write
+	EXPORT	memr_read8
+	EXPORT	memr_read16
+	EXPORT	memr_write8
+	EXPORT	memr_write16
 
 	EXPORT	i286a_memoryread
 	EXPORT	i286a_memoryread_w
@@ -24,13 +24,10 @@
 
 	AREA	.text, CODE, READONLY
 
-i286_membyte_read
-				mov		r1, r1 lsl #16
+memr_read8		mov		r1, r1 lsl #16
 				mov		r0, r0 lsl #4
 				add		r0, r0, r1 lsr #16
-i286_memoryread
-;;i286a_memoryread
-				ldr		r3, i2mr_cpu
+memp_read8		ldr		r3, i2mr_cpu
 				cmp		r0, #I286_MEMREADMAX
 				bcs		i2mr_ext
 				ldrb	r0, [r3, r0]
@@ -58,13 +55,10 @@ i2mr_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
 				mov		pc, lr
 
 
-i286_memword_read
-				mov		r1, r1 lsl #16
+memr_read16		mov		r1, r1 lsl #16
 				mov		r0, r0 lsl #4
 				add		r0, r0, r1 lsr #16
-i286_memoryread_w
-;;i286a_memoryread_w
-				ldr		r3, i2mrw_cpu
+memp_read16		ldr		r3, i2mrw_cpu
 				tst		r0, #1
 				bne		i2mro_main
 				cmp		r0, #I286_MEMREADMAX
@@ -146,14 +140,11 @@ i2mro_himemh	orr		r0, r0, #&ff00
 				mov		pc, lr
 
 
-i286_membyte_write
-				mov		r1, r1 lsl #16
+memr_write8		mov		r1, r1 lsl #16
 				mov		r0, r0 lsl #4
 				add		r0, r0, r1 lsr #16
 				mov		r1, r2
-i286_memorywrite
-;;i286a_memorywrite
-				ldr		r3, i2mw_cpu
+memp_write8		ldr		r3, i2mw_cpu
 				cmp		r0, #I286_MEMWRITEMAX
 				bcs		i2mw_ext
 				strb	r1, [r3, r0]
@@ -180,14 +171,11 @@ i2mw_himem		ldr		r12, [r3, #CPU_EXTMEMSIZE]
 				mov		pc, lr
 
 
-i286_memword_write
-				mov		r1, r1 lsl #16
+memr_write16	mov		r1, r1 lsl #16
 				mov		r0, r0 lsl #4
 				add		r0, r0, r1 lsr #16
 				mov		r1, r2
-i286_memorywrite_w
-;;i286a_memorywrite_w
-				ldr		r3, i2mww_cpu
+memp_write16	ldr		r3, i2mww_cpu
 				tst		r0, #1
 				bne		i2mwo_main
 				cmp		r0, #I286_MEMWRITEMAX

@@ -371,7 +371,7 @@ static REG8 putsub(GLIO lio, const LIOPUT *lput) {
 			flag >>= 1;
 			if (flag & 8) {
 				pt.baseptr = mem + lio->draw.base + lioplaneadrs[pl];
-				MEML_READSTR(lput->seg, off, pt.pat, datacnt);
+				MEMR_READS(lput->seg, off, pt.pat, datacnt);
 				if (lput->sw) {
 					off += datacnt;
 				}
@@ -473,7 +473,7 @@ REG8 lio_gget(GLIO lio) {
 	UINT	pl;
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	x = (SINT16)LOADINTELWORD(dat.x1);
 	y = (SINT16)LOADINTELWORD(dat.y1);
 	x2 = (SINT16)LOADINTELWORD(dat.x2);
@@ -509,8 +509,8 @@ REG8 lio_gget(GLIO lio) {
 	if (leng < (size + 4)) {
 		return(LIO_ILLEGALFUNC);
 	}
-	MEML_WRITE16(seg, off, (REG16)x2);
-	MEML_WRITE16(seg, off+2, (REG16)y2);
+	MEMR_WRITE16(seg, off, (REG16)x2);
+	MEMR_WRITE16(seg, off+2, (REG16)y2);
 	off += 4;
 	gt.addr = (x >> 3) + (y * 80);
 	if (lio->draw.flag & LIODRAW_UPPER) {
@@ -526,7 +526,7 @@ REG8 lio_gget(GLIO lio) {
 			if (mask & 8) {
 				gt.baseptr = mem + lio->draw.base + lioplaneadrs[pl];
 				getvram(&gt, pat);
-				MEML_WRITESTR(seg, off, pat, datacnt);
+				MEMR_WRITES(seg, off, pat, datacnt);
 				off += datacnt;
 			}
 		}
@@ -547,15 +547,15 @@ REG8 lio_gput1(GLIO lio) {
 	UINT	size;
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);
 	lput.off = (UINT16)(LOADINTELWORD(dat.off) + 4);
 	lput.seg = LOADINTELWORD(dat.seg);
 	lput.mode = dat.mode;
 	leng = LOADINTELWORD(dat.leng);
-	lput.width = MEML_READ16(lput.seg, lput.off - 4);
-	lput.height = MEML_READ16(lput.seg, lput.off - 2);
+	lput.width = MEMR_READ16(lput.seg, lput.off - 4);
+	lput.height = MEMR_READ16(lput.seg, lput.off - 2);
 	size = ((lput.width + 7) >> 3) * lput.height;
 	if (leng < (size + 4)) {
 		return(LIO_ILLEGALFUNC);
@@ -598,7 +598,7 @@ REG8 lio_gput2(GLIO lio) {
 	REG16	size;
 
 	lio_updatedraw(lio);
-	MEML_READSTR(CPU_DS, CPU_BX, &dat, sizeof(dat));
+	MEMR_READS(CPU_DS, CPU_BX, &dat, sizeof(dat));
 	lput.x = (SINT16)LOADINTELWORD(dat.x);
 	lput.y = (SINT16)LOADINTELWORD(dat.y);
 	lput.off = 0x104e;
@@ -633,7 +633,7 @@ REG8 lio_gput2(GLIO lio) {
 		size = bios0x18_14(lput.seg, 0x104c, jis);
 	}
 	else {
-		MEML_WRITESTR(lput.seg, lput.off, mem + (LIO_SEGMENT << 4) +
+		MEMR_WRITES(lput.seg, lput.off, mem + (LIO_SEGMENT << 4) +
 										LIO_FONT + ((pat - 1) << 4), 0x10);
 		size = 0x0102;
 	}

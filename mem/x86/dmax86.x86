@@ -1,5 +1,5 @@
 
-%include	'../io/x86/iocore.inc'
+%include	'iocore.inc'
 
 section .text
 

@@ -14,6 +14,6 @@
 void vram_initialize(void) {
 
 	ZeroMemory(&vramop, sizeof(vramop));
-	i286_vram_dispatch(0);
+	MEMM_VRAM(0);
 }
 

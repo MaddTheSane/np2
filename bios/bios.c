@@ -364,12 +364,12 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 //	TRACEOUT(("biosfunc(%x)", adrs));
 #if defined(CPUCORE_IA32) && defined(TRACE)
 	if (CPU_STAT_PAGING) {
-		UINT32 pde = i286_memoryread_d(CPU_STAT_PDE_BASE);
+		UINT32 pde = MEMP_READ32(CPU_STAT_PDE_BASE);
 		if (!(pde & CPU_PDE_PRESENT)) {
 			TRACEOUT(("page0: PTE not present"));
 		}
 		else {
-			UINT32 pte = i286_memoryread_d(pde & CPU_PDE_BASEADDR_MASK);
+			UINT32 pte = MEMP_READ32(pde & CPU_PDE_BASEADDR_MASK);
 			if (!(pte & CPU_PTE_PRESENT)) {
 				TRACEOUT(("page0: not present"));
 			}
@@ -461,29 +461,7 @@ UINT MEMCALL biosfunc(UINT32 adrs) {
 
 		case BIOS_BASE + BIOSOFST_WAIT:
 			CPU_STI;
-#if 1
 			return(bios0x1b_wait());								// ver0.78
-#else
-			if (fddmtr.busy) {
-				CPU_IP--;
-				CPU_REMCLOCK = -1;
-			}
-			else {
-				if (fdc.chgreg & 1) {
-					if (!(mem[MEMB_DISK_INTL] & (0x01 << fdc.us))) {
-						CPU_IP--;
-						CPU_REMCLOCK -= 1000;
-					}
-				}
-				else {
-					if (!(mem[MEMB_DISK_INTH] & (0x10 << fdc.us))) {
-						CPU_IP--;
-						CPU_REMCLOCK -= 1000;
-					}
-				}
-			}
-			return(1);
-#endif
 
 		case 0xfffe8:					// ブートストラップロード
 			CPU_REMCLOCK -= 2000;

@@ -42,7 +42,7 @@ void bios0x1a_prt(void) {
 			if (CPU_AH == 0x30) {
 				if (CPU_CX) {
 					do {
-						CPU_AL = MEML_READ8(CPU_ES, CPU_BX);
+						CPU_AL = MEMR_READ8(CPU_ES, CPU_BX);
 						printerbios_11();
 						if (CPU_AH & 0x02) {
 							CPU_AH = 0x02;

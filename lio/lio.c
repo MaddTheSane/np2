@@ -21,8 +21,8 @@ void bios_lio(REG8 cmd) {
 	UINT8	ret;
 
 //	TRACEOUT(("lio command %.2x", cmd));
-	MEML_READSTR(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
-	lio.palmode = MEML_READ8(CPU_DS, 0x0a08);
+	MEMR_READS(CPU_DS, 0x0620, &lio.work, sizeof(lio.work));
+	lio.palmode = MEMR_READ8(CPU_DS, 0x0a08);
 	lio.wait = 0;
 	switch(cmd) {
 		case 0x00:			// a0: GINIT
@@ -278,33 +278,6 @@ void lio_line(const _GLIO *lio, SINT16 x1, SINT16 x2, SINT16 y, REG8 pal) {
 	}
 	if (dbit) {
 		pixed8(lio, addr, dbit, pal);
-	}
-}
-#endif
-
-
-#if 0
-void lio_look(UINT vect) {
-
-	UINT8	work[16];
-
-	TRACEOUT(("lio command %.2x [%.4x:%.4x]", vect, CPU_CS, CPU_IP));
-	if (vect == 0xa7) {
-		i286_memstr_read(CPU_DS, CPU_BX, work, 16);
-		TRACEOUT(("LINE %d %d %d %d - %d %d / %d : %.2x %.2x",
-					LOADINTELWORD(work),
-					LOADINTELWORD(work+2),
-					LOADINTELWORD(work+4),
-					LOADINTELWORD(work+6),
-					work[8], work[9], work[10], work[11], work[12]));
-	}
-	else if (vect == 0xad) {
-		i286_memstr_read(CPU_DS, CPU_BX, work, 16);
-		TRACEOUT(("GPUT2 x=%d / y=%d / chr=%.4x / %d / %d %d %d",
-			LOADINTELWORD(work),
-			LOADINTELWORD(work+2),
-			LOADINTELWORD(work+4),
-			work[6], work[7], work[8], work[9]));
 	}
 }
 #endif

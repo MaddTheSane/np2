@@ -126,12 +126,18 @@ void rs232ctimer(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
 		pitch = pit.ch + 2;
+		if (pitch->flag & PIT_FLAG_I) {
+			pitch->flag &= ~PIT_FLAG_I;
+			rs232c_callback();
+		}
 		if ((pitch->ctrl & 0x0c) == 0x04) {
 			// レートジェネレータ
 			setrs232cevent(pitch->value, NEVENT_RELATIVE);
 		}
+		else {
+			setrs232cevent(0, NEVENT_RELATIVE);
+		}
 	}
-	rs232c_callback();
 }
 
 
@@ -353,6 +359,7 @@ static void IOOUTCALL pit_o75(UINT port, REG8 dat) {
 	if (pit_setcount(pitch, dat)) {
 		return;
 	}
+	pitch->flag |= PIT_FLAG_I;
 	rs232c_open();
 	setrs232cevent(pitch->value, NEVENT_ABSOLUTE);
 	(void)port;
@@ -428,7 +435,7 @@ void itimer_reset(void) {
 	setsystimerevent(0, NEVENT_ABSOLUTE);
 	beep_lheventset(1);												// ver0.79
 	beep_hzset(beepcnt);
-	setrs232cevent(0, NEVENT_ABSOLUTE);
+//	setrs232cevent(0, NEVENT_ABSOLUTE);
 }
 
 void itimer_bind(void) {

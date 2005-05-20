@@ -49,7 +49,6 @@ extern "C" {
 extern	UINT8	mem[0x200000];
 
 void MEMCALL i286_memorymap(UINT type);
-void MEMCALL i286_romareamap(UINT16 map);
 void MEMCALL i286_vram_dispatch(UINT operate);
 
 UINT8 MEMCALL i286_memoryread(UINT32 address);
@@ -69,6 +68,16 @@ void MEMCALL i286_memstr_write(UINT seg, UINT off,
 void MEMCALL i286_memx_read(UINT32 address, void *dat, UINT leng);
 void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);
 
+#ifdef __cplusplus
+}
+#endif
+
+
+// ---- Memory map
+
+#define	MEMM_ARCH(t)		i286_memorymap(t)
+#define	MEMM_VRAM(o)		i286_vram_dispatch(o)
+
 
 // ---- Physical Space (DMA)
 
@@ -80,24 +89,29 @@ void MEMCALL i286_memx_write(UINT32 address, const void *dat, UINT leng);
 
 // ---- Logical Space (BIOS)
 
-#define	MEML_READ8(seg, off)				\
-			i286_membyte_read((seg), (off))
-#define	MEML_READ16(seg, off)				\
-			i286_memword_read((seg), (off))
-#define	MEML_WRITE8(seg, off, dat)			\
-			i286_membyte_write((seg), (off), (dat));
-#define	MEML_WRITE16(seg, off, dat)			\
-			i286_memword_write((seg), (off), (dat));
-#define MEML_READSTR(seg, off, dat, leng)	\
-			i286_memstr_read((seg), (off), (dat), (leng))
-#define MEML_WRITESTR(seg, off, dat, leng)	\
-			i286_memstr_write((seg), (off), (dat), (leng))
-#define MEML_READ(addr, dat, leng)			\
+#define	MEML_READ8(addr)					\
+			i286_memoryread((addr))
+#define	MEML_READ16(addr)					\
+			i286_memoryread_w((addr))
+#define	MEML_WRITE8(addr, dat)				\
+			i286_memorywrite((addr), (dat))
+#define	MEML_WRITE16(addr, dat)				\
+			i286_memorywrite_w((addr), (dat))
+#define MEML_READS(addr, dat, leng)			\
 			i286_memx_read((addr), (dat), (leng))
-#define MEML_WRITE(addr, dat, leng)			\
+#define MEML_WRITES(addr, dat, leng)		\
 			i286_memx_write((addr), (dat), (leng))
 
-#ifdef __cplusplus
-}
-#endif
+#define	MEMR_READ8(seg, off)				\
+			i286_membyte_read((seg), (off))
+#define	MEMR_READ16(seg, off)				\
+			i286_memword_read((seg), (off))
+#define	MEMR_WRITE8(seg, off, dat)			\
+			i286_membyte_write((seg), (off), (dat))
+#define	MEMR_WRITE16(seg, off, dat)			\
+			i286_memword_write((seg), (off), (dat))
+#define MEMR_READS(seg, off, dat, leng)		\
+			i286_memstr_read((seg), (off), (dat), (leng))
+#define MEMR_WRITES(seg, off, dat, leng)	\
+			i286_memstr_write((seg), (off), (dat), (leng))
 

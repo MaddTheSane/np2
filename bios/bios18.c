@@ -173,10 +173,10 @@ static void bios0x18_0f(UINT seg, UINT off, REG8 num, REG8 cnt) {
 #endif
 
 	while((cnt--) && (p < (gdc.m.para + GDC_SCROLL + 0x10))) {
-		t = MEML_READ16(seg, off);
+		t = MEMR_READ16(seg, off);
 		t >>= 1;
 		STOREINTELWORD(p, t);
-		t = MEML_READ16(seg, off + 2);
+		t = MEMR_READ16(seg, off + 2);
 		t *= raster;
 		STOREINTELWORD(p + 2, t);
 		off += 4;
@@ -214,9 +214,9 @@ const UINT8	*p;
 	switch(code >> 8) {
 		case 0x00:			// 8x8
 			size = 0x0101;
-			MEML_WRITE16(seg, off, 0x0101);
+			MEMR_WRITE16(seg, off, 0x0101);
 			p = fontrom + 0x82000 + ((code & 0xff) << 4);
-			MEML_WRITESTR(seg, off + 2, p, 8);
+			MEMR_WRITES(seg, off + 2, p, 8);
 			break;
 
 //		case 0x28:
@@ -224,17 +224,17 @@ const UINT8	*p;
 		case 0x2a:
 		case 0x2b:
 			size = 0x0102;
-			MEML_WRITE16(seg, off, 0x0102);
+			MEMR_WRITE16(seg, off, 0x0102);
 			p = fontrom;
 			p += (code & 0x7f) << 12;
 			p += (((code >> 8) - 0x20) & 0x7f) << 4;
-			MEML_WRITESTR(seg, off + 2, p, 16);
+			MEMR_WRITES(seg, off + 2, p, 16);
 			break;
 
 		case 0x80:			// 8x16 ANK
 			size = 0x0102;
 			p = fontrom + 0x80000 + ((code & 0xff) << 4);
-			MEML_WRITESTR(seg, off + 2, p, 16);
+			MEMR_WRITES(seg, off + 2, p, 16);
 			break;
 
 		default:
@@ -246,10 +246,10 @@ const UINT8	*p;
 				buf[i*2+0] = *p;
 				buf[i*2+1] = *(p+0x800);
 			}
-			MEML_WRITESTR(seg, off + 2, buf, 32);
+			MEMR_WRITES(seg, off + 2, buf, 32);
 			break;
 	}
-	MEML_WRITE16(seg, off, size);
+	MEMR_WRITE16(seg, off, size);
 	return(size);
 }
 
@@ -260,7 +260,7 @@ static void bios0x18_1a(REG16 seg, REG16 off, REG16 code) {
 	UINT	i;
 
 	if (((code >> 8) & 0x7e) == 0x76) {
-		MEML_READSTR(seg, off + 2, buf, 32);
+		MEMR_READS(seg, off + 2, buf, 32);
 		p = fontrom;
 		p += (code & 0x7f) << 12;
 		p += (((code >> 8) - 0x20) & 0x7f) << 4;
@@ -572,7 +572,7 @@ static void bios0x18_47(void) {
 	SINT16		dy;
 
 	gdc_forceready(GDCWORK_SLAVE);
-	MEML_READSTR(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
+	MEMR_READS(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	GBSX1 = LOADINTELWORD(ucw.GBSX1);
 	GBSY1 = LOADINTELWORD(ucw.GBSY1);
 	GBSX2 = LOADINTELWORD(ucw.GBSX2);
@@ -684,7 +684,7 @@ static void bios0x18_49(void) {
 
 	gdc_forceready(GDCWORK_SLAVE);
 
-	MEML_READSTR(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
+	MEMR_READS(CPU_DS, CPU_BX, &ucw, sizeof(ucw));
 	for (i=0; i<8; i++) {
 		mem[MEMW_PRXGLS + i] = ucw.GBMDOTI[i];
 		pat[i] = GDCPATREVERSE(ucw.GBMDOTI[i]);
@@ -768,8 +768,8 @@ void bios0x18(void) {
 
 #if 0
 	TRACEOUT(("int18 AX=%.4x %.4x:%.4x", CPU_AX,
-							MEML_READ16(CPU_SS, CPU_SP+2),
-							MEML_READ16(CPU_SS, CPU_SP)));
+							MEMR_READ16(CPU_SS, CPU_SP+2),
+							MEMR_READ16(CPU_SS, CPU_SP)));
 #endif
 
 	switch(CPU_AH) {
@@ -966,8 +966,7 @@ void bios0x18(void) {
  			break;
 
 		case 0x43:						// パレットの設定
-			MEML_READSTR(CPU_DS, CPU_BX + offsetof(UCWTBL, GBCPC),
-																tmp.col, 4);
+			MEMR_READS(CPU_DS, CPU_BX + offsetof(UCWTBL, GBCPC), tmp.col, 4);
 			for (i=0; i<4; i++) {
 				gdc_setdegitalpal(6 - (i*2), (REG8)(tmp.col[i] >> 4));
 				gdc_setdegitalpal(7 - (i*2), (REG8)(tmp.col[i] & 15));
@@ -976,7 +975,7 @@ void bios0x18(void) {
 
 		case 0x44:						// ボーダカラーの設定
 //			if (!(mem[MEMB_PRXCRT] & 0x40)) {
-//				color = MEML_READ8(CPU_DS, CPU_BX + 1);
+//				color = MEMR_READ8(CPU_DS, CPU_BX + 1);
 //			}
 			break;
 

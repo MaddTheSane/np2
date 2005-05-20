@@ -151,3 +151,11 @@ extern I286EXT i286c_repne_scasb(void);
 extern I286EXT i286c_repe_scasw(void);
 extern I286EXT i286c_repne_scasw(void);
 
+
+#define i286_memoryread(a)			memp_read8(a)
+#define i286_memoryread_w(a)		memp_read16(a)
+#define i286_memoryread_d(a)		memp_read32(a)
+#define i286_memorywrite(a, v)		memp_write8(a, v)
+#define i286_memorywrite_w(a, v)	memp_write16(a, v)
+#define i286_memorywrite_d(a, v)	memp_write32(a, v)
+
