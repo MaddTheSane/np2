@@ -48,7 +48,7 @@ static void rawtoAIFF(void) {
     
     FSpCreate(&soundlog, 'hook', 'AIFF', smSystemScript);
     fsspec2path(&soundlog, filename, 1024);
-    if ((dst = file_create(filename)) == NULL) {
+    if ((dst = file_create(filename)) == FILEH_INVALID) {
         SysBeep(0);
         return;
     }
@@ -105,7 +105,7 @@ void recOPM(BYTE* work, int len) {
             memcpy(sndbuffer + sndposition, work, len - remain);
             max = maxbuffer;
             err = FSWrite(logref, &max, (char *)sndbuffer);
-            memset(sndbuffer, NULL, maxbuffer);
+            memset(sndbuffer, 0, maxbuffer);
             memcpy(sndbuffer, work + (len - remain), remain);
             sndposition = remain;
             if (err != noErr) {
@@ -139,16 +139,16 @@ int soundRec(bool end) {
             err = FindFolder(kOnAppropriateDisk, kTemporaryFolderType, kCreateFolder, &ref, &dir);
             if (err != noErr) return ret;
             mkstr255(path, "np2x Sound Log.aiff");
-            if (HGetFInfo(NULL, dir, path, &info)==noErr) {
-                HDelete(NULL, dir, path);
+            if (HGetFInfo(0, dir, path, &info)==noErr) {
+                HDelete(0, dir, path);
             }
-            err = HCreate(NULL, dir, path, 'SMil', 'slog');
+            err = HCreate(0, dir, path, 'SMil', 'slog');
             if (err != noErr) return ret;
-            err=FSMakeFSSpec(NULL, dir, path, &fs);
+            err=FSMakeFSSpec(0, dir, path, &fs);
             if (err != noErr) return ret;
             if (FSpOpenDF(&fs, fsRdPerm | fsWrPerm, &logref) == noErr) {
                 SetFPos(logref, fsFromStart, 0);
-                memset(sndbuffer, NULL, maxbuffer);
+                memset(sndbuffer, 0, maxbuffer);
                 rec = true;
                 ret = 1;
             }

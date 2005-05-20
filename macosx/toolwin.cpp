@@ -223,7 +223,7 @@ const char		*p;
 				if (file_attr(p) != FILEATTR_ARCHIVE) {
 					attr |= kMenuItemAttrDisabled;
 				}
-				AppendMenuItemTextWithCFString(menu, str, attr, NULL, NULL);
+				AppendMenuItemTextWithCFString(menu, str, attr, 0, 0);
 			}
             CFRelease(str);
         }
@@ -458,7 +458,7 @@ const char		*cls;
                     style = 1;
                     CreateBevelButtonControl(hWnd, &bounds,	CFSTRj(p->text), 
                                                         kControlBevelButtonSmallBevel,
-                                                        0 ,NULL, NULL, NULL, NULL, &sub);
+                                                        0 ,NULL, 0, 0, 0, &sub);
                     SetControlCommandID(sub, subcommand[i]);
                     SetControlFontStyle(sub, &fontstyle);
                     break;
@@ -857,11 +857,11 @@ const char	*base;
 	UINT	i;
     char	longname[256];
 
-	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."),"Slect Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
+	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."),"Slect Skin"), kMenuItemAttrIconDisabled, 0, 0);
 	AppendMenu(ret, "\p-");
 
 	base = np2tool.skin;
-	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("<Base Skin>"),"Base Skin"), kMenuItemAttrIconDisabled, NULL,NULL);
+	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("<Base Skin>"),"Base Skin"), kMenuItemAttrIconDisabled, 0, 0);
 	if (base[0] == '\0') {
         CheckMenuItem(ret, BASENUMBER-1, true);
     }
@@ -878,7 +878,7 @@ const char	*base;
 		if (!getLongFileName(longname, p)) {
             strcpy(longname, file_getname(p));
         }
-        AppendMenuItemTextWithCFString(ret, CFStringCreateWithCString(NULL, longname, kCFStringEncodingUTF8), attr, NULL, NULL);
+        AppendMenuItemTextWithCFString(ret, CFStringCreateWithCString(NULL, longname, kCFStringEncodingUTF8), attr, 0, 0);
 	}
 	for (i=0; i<cnt; i++) {
         if (!file_cmpname(base, np2tool.skinmru[i])) {
@@ -926,7 +926,7 @@ static void openpopup(Point location) {
     InsertMenu(hMenu, -1);
 	createskinmenu(hMenu);
 	AppendMenu(hMenu, "\p-");
-    AppendMenuItemTextWithCFString(hMenu, CFCopyLocalizedString(CFSTR("Close"),"ToolWin Close"), kMenuItemAttrIconDisabled, NULL, NULL);
+    AppendMenuItemTextWithCFString(hMenu, CFCopyLocalizedString(CFSTR("Close"),"ToolWin Close"), kMenuItemAttrIconDisabled, 0, 0);
     DeleteMenu(222);
     selectclose = CountMenuItems(hMenu);
     sel = LoWord(PopUpMenuSelect(hMenu, location.v, location.h, 0));

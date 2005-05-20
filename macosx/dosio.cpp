@@ -438,9 +438,9 @@ void file_catname(char *path, const char *sjis, int maxlen) {
 	}
 }
 
-char *file_getname(char *path) {
+char *file_getname(const char *path) {
 
-	char 	*ret;
+	const char 	*ret;
 
 	ret = path;
 	while(*path != '\0') {
@@ -448,7 +448,7 @@ char *file_getname(char *path) {
 			ret = path;
 		}
 	}
-	return(ret);
+	return((char *)ret);
 }
 
 void file_cutname(char *path) {
@@ -459,7 +459,7 @@ void file_cutname(char *path) {
 	p[0] = '\0';
 }
 
-char *file_getext(char *path) {
+char *file_getext(const char *path) {
 
 	char	*p;
 	char	*q;

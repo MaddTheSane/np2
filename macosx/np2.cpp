@@ -190,12 +190,12 @@ static void MenuBarInit(void) {
 	DisableMenuItem(GetMenuRef(IDM_OTHER), IDM_SOFTKBD);
 #endif
     if (np2oscfg.I286SAVE) {
-        AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, NULL,NULL);
+        AppendMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), CFCopyLocalizedString(CFSTR("i286 save"),"i286"), kMenuItemAttrIconDisabled, 0, 0);
     }
 	
 #if defined(SUPPORT_PC9821)
-	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("11.6MB"), kMenuItemAttrIconDisabled, NULL, NULL);
-	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("13.6MB"), kMenuItemAttrIconDisabled, NULL, NULL);
+	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("11.6MB"), kMenuItemAttrIconDisabled, 0, NULL);
+	AppendMenuItemTextWithCFString(GetMenuRef(IDM_MEMORY), CFSTR("13.6MB"), kMenuItemAttrIconDisabled, 0, NULL);
 	SetMenuItemTextWithCFString(GetMenuRef(IDM_HELP), IDM_NP2HELP, CFCopyLocalizedString(CFSTR("Help"), "Help"));
 	SetMenuItemTextWithCFString(GetMenuRef(IDM_APPLE), IDM_ABOUT, CFCopyLocalizedString(CFSTR("About"), "About"));
 	SetMenuItemTextWithCFString(GetMenuRef(IDM_OTHER), IDM_I286SAVE, CFCopyLocalizedString(CFSTR("i386 save"), "save"));

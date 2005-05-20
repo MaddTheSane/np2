@@ -41,7 +41,7 @@ void hid_init(void) {
     initSetting(&button1);
     initSetting(&button2);
     
-    HIDBuildDeviceList (NULL, NULL);
+    HIDBuildDeviceList (0, 0);
     pHIDDevice = HIDGetFirstDevice ();
     if (pHIDDevice==NULL) {
         np2oscfg.JOYPAD1 = 0;

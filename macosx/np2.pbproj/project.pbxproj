@@ -12,20 +12,6 @@
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		0249A669FF388E3911CA2CEA = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = "libstdc++.a";
-			path = "/usr/lib/libstdc++.a";
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		0249A66AFF388E3911CA2CEA = {
-			fileRef = 0249A669FF388E3911CA2CEA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 //020
 //021
 //022
@@ -197,7 +183,9 @@
 				967C91AF055778CB00000103,
 				967C91C5055778CB00000103,
 				967C91F9055778CB00000103,
+				96F970F6083B47620036D494,
 				967C9275055778CC00000103,
+				96F9711C083B47890036D494,
 				967C92A7055778CC00000103,
 				967C9204055778CB00000103,
 				967C93FE05577A1F00000103,
@@ -236,7 +224,6 @@
 				9668883E05EFDE2500C9A4EE,
 				967C947A05591C6800000103,
 				20286C33FDCF999611CA2CEA,
-				0249A669FF388E3911CA2CEA,
 				0640BAA4FFF0323A11CA0E50,
 				0640BAA5FFF0323A11CA0E50,
 				96A2026D0549B38300000102,
@@ -267,7 +254,7 @@
 			buildSettings = {
 				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
-				HEADER_SEARCH_PATHS = "../font ../lio ../fdd ../sound ../vram ../bios ../cbus ../io ../i286c . .. ../common";
+				HEADER_SEARCH_PATHS = "../font ../lio ../fdd ../mem ../sound ../vram ../bios ../cbus ../io ../i286c . .. ../common";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = ./;
 				OPTIMIZATION_CFLAGS = "-O3";
@@ -494,7 +481,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Neko Project IIx</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Neko Project IIx version 0.80 by NP2 developer team, 1999-2001,2003,2004</string>
+	<string>Neko Project IIx version 0.81 by NP2 developer team, 1999-2001,2003-2005</string>
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -506,11 +493,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>version 0.80</string>
+	<string>version 0.81</string>
 	<key>CFBundleSignature</key>
 	<string>SMil</string>
 	<key>CFBundleVersion</key>
-	<string>0.80</string>
+	<string>0.81</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 	<key>LSHasLocalizedDisplayName</key>
@@ -556,7 +543,6 @@
 			files = (
 				967C914C0557786900000103,
 				967C914E0557786900000103,
-				967C91500557786900000103,
 				967C91520557786900000103,
 				967C91540557786900000103,
 				967C91560557786900000103,
@@ -604,8 +590,6 @@
 				967C92FF055778CC00000103,
 				967C9300055778CC00000103,
 				967C9301055778CC00000103,
-				967C9303055778CC00000103,
-				967C9305055778CC00000103,
 				967C9308055778CC00000103,
 				967C930B055778CC00000103,
 				967C930C055778CC00000103,
@@ -745,6 +729,18 @@
 				96F474DB0632E5D8006DDB7A,
 				9668EEF2069F4E0C00E35005,
 				9668F094069F722E00E35005,
+				96F9710A083B47620036D494,
+				96F9710C083B47620036D494,
+				96F9710E083B47620036D494,
+				96F97110083B47620036D494,
+				96F97112083B47620036D494,
+				96F97114083B47620036D494,
+				96F97116083B47620036D494,
+				96F97118083B47620036D494,
+				96F97121083B47890036D494,
+				96F97123083B47890036D494,
+				96F97131083B4BE40036D494,
+				96F97132083B4BE40036D494,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -753,7 +749,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				20286C3CFDCF999611CA2CEA,
-				0249A66AFF388E3911CA2CEA,
 				96A2026E0549B38300000102,
 				9608400D054ED1E900000103,
 				967C947B05591C6800000103,
@@ -1206,7 +1201,6 @@
 			children = (
 				967C91330557786900000103,
 				967C91350557786900000103,
-				967C91370557786900000103,
 				967C91390557786900000103,
 				967C913B0557786900000103,
 				967C913D0557786900000103,
@@ -1236,14 +1230,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			path = bmpdata.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91370557786900000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = codecnv.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1327,12 +1313,6 @@
 		};
 		967C914E0557786900000103 = {
 			fileRef = 967C91350557786900000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C91500557786900000103 = {
-			fileRef = 967C91370557786900000103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1623,6 +1603,8 @@
 				967C919A055778CB00000103,
 				967C919C055778CB00000103,
 				967C919E055778CB00000103,
+				96F9712F083B4BE40036D494,
+				96F97130083B4BE40036D494,
 			);
 			isa = PBXGroup;
 			name = fdd;
@@ -1778,8 +1760,6 @@
 		};
 		967C91AF055778CB00000103 = {
 			children = (
-				967C91B0055778CB00000103,
-				967C91B2055778CB00000103,
 				967C91B5055778CB00000103,
 				967C91B8055778CB00000103,
 				967C91B9055778CB00000103,
@@ -1795,22 +1775,6 @@
 			isa = PBXGroup;
 			name = i286c;
 			path = ../i286c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91B0055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = dmap.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		967C91B2055778CB00000103 = {
-			fileEncoding = "-2147483647";
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = egcmem.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3022,18 +2986,6 @@
 			settings = {
 			};
 		};
-		967C9303055778CC00000103 = {
-			fileRef = 967C91B0055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		967C9305055778CC00000103 = {
-			fileRef = 967C91B2055778CB00000103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		967C9308055778CC00000103 = {
 			fileRef = 967C91B5055778CB00000103;
 			isa = PBXBuildFile;
@@ -4147,6 +4099,202 @@
 		};
 		96F474DB0632E5D8006DDB7A = {
 			fileRef = 96F474DA0632E5D8006DDB7A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F970F6083B47620036D494 = {
+			children = (
+				96F970F7083B47620036D494,
+				96F970F9083B47620036D494,
+				96F970FB083B47620036D494,
+				96F970FD083B47620036D494,
+				96F970FF083B47620036D494,
+				96F97101083B47620036D494,
+				96F97103083B47620036D494,
+				96F97105083B47620036D494,
+			);
+			isa = PBXGroup;
+			name = mem;
+			path = ../mem;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		96F970F7083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dmav30.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F970F9083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dmax86.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F970FB083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = memegc.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F970FD083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = memems.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F970FF083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = memepp.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F97101083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = memtram.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F97103083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = memvga.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F97105083B47620036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = memvram.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F9710A083B47620036D494 = {
+			fileRef = 96F970F7083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F9710C083B47620036D494 = {
+			fileRef = 96F970F9083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F9710E083B47620036D494 = {
+			fileRef = 96F970FB083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97110083B47620036D494 = {
+			fileRef = 96F970FD083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97112083B47620036D494 = {
+			fileRef = 96F970FF083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97114083B47620036D494 = {
+			fileRef = 96F97101083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97116083B47620036D494 = {
+			fileRef = 96F97103083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97118083B47620036D494 = {
+			fileRef = 96F97105083B47620036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F9711C083B47890036D494 = {
+			children = (
+				96F9711D083B47890036D494,
+				96F9711F083B47890036D494,
+			);
+			isa = PBXGroup;
+			name = trap;
+			path = ../trap;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		96F9711D083B47890036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = inttrap.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F9711F083B47890036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = steptrap.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F97121083B47890036D494 = {
+			fileRef = 96F9711D083B47890036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97123083B47890036D494 = {
+			fileRef = 96F9711F083B47890036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F9712F083B4BE40036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sxsicd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F97130083B4BE40036D494 = {
+			fileEncoding = "-2147483647";
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sxsihdd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		96F97131083B4BE40036D494 = {
+			fileRef = 96F9712F083B4BE40036D494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		96F97132083B4BE40036D494 = {
+			fileRef = 96F97130083B4BE40036D494;
 			isa = PBXBuildFile;
 			settings = {
 			};

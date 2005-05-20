@@ -1,6 +1,6 @@
 
 enum {
-	FTYPE_INI		= FTYPE_USER		// Tool Window iniファイル
+	FTYPE_INI		= -1		// Tool Window iniファイル
 };
 
 #define	FILEH			SInt16
@@ -91,9 +91,9 @@ BOOL getLongFileName(char *dst, const char *path);
 #define	file_cpyname(a, b, c)	milsjis_ncpy(a, b, c)
 #define	file_cmpname(a, b)		milsjis_cmp(a, b)
 void file_catname(char *path, const char *sjis, int maxlen);
-char *file_getname(char *path);
+char *file_getname(const char *path);
 void file_cutname(char *path);
-char *file_getext(char *path);
+char *file_getext(const char *path);
 void file_cutext(char *path);
 void file_cutseparator(char *path);
 void file_setseparator(char *path, int maxlen);

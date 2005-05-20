@@ -96,7 +96,7 @@ static pascal Boolean NavLaunchServicesFilterProc( AEDesc* theItem, void* info, 
     FSSpec		fsSpec;
     int			ret;
     char		name[MAX_PATH];
-	AEDesc 		coerceDesc	= { NULL, NULL };
+	AEDesc 		coerceDesc	= { 0, 0 };
 		
 	if ( filterMode == kNavFilteringBrowserList ) {
 		if ( theItem->descriptorType != typeFSS ) {

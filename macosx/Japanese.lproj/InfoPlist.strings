@@ -1,5 +1,5 @@
 /* Localized versions of Info.plist keys */
 
-CFBundleShortVersionString = "バージョン 0.80";
-CFBundleGetInfoString = "ねこープロジェクトIIx バージョン 0.80 by ねこさん開発チーム, 1999-2001,2003,2004";
+CFBundleShortVersionString = "バージョン 0.81";
+CFBundleGetInfoString = "ねこープロジェクトIIx バージョン 0.81 by ねこさん開発チーム, 1999-2001,2003-2005";
 CFBundleName = "ねこープロジェクトIIx";

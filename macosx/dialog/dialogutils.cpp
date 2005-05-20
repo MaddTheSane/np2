@@ -95,7 +95,7 @@ void getFieldText(ControlRef cRef, char* buffer) {
     Size	size, outSize;
     GetControlDataSize(cRef, kControlNoPart, kControlStaticTextTextTag, &size);
     GetControlData(cRef, kControlNoPart, kControlStaticTextTextTag, size, buffer, &outSize);
-    *(buffer+outSize)=NULL;
+    *(buffer+outSize) = 0;
 }
 
 
