@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.31 2005/03/23 13:54:48 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.32 2005/05/21 19:48:15 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -73,6 +73,7 @@
 
 #include "glib.h"
 
+typedef	gint32		SINT;
 typedef	guint32		UINT;
 
 typedef	gint8		SINT8;
@@ -95,6 +96,7 @@ typedef	gboolean	BOOL;
 
 #else	/* USE_GTK == 0 && USE_GTK2 == 0 */
 
+typedef	signed int		SINT;
 typedef	unsigned int		UINT;
 
 typedef	signed char		SINT8;
@@ -211,6 +213,7 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
+#define	SUPPORT_IDEIO
 #else
 #define	SUPPORT_CRT15KHZ
 #endif
@@ -234,7 +237,6 @@ void toolkit_msgbox(const char *title, const char *msg);
 #endif
 
 #define	SUPPORT_EUC
-#define	SUPPORT_SJIS
 
 #undef	SUPPORT_8BPP
 #define	SUPPORT_16BPP
@@ -250,7 +252,6 @@ void toolkit_msgbox(const char *title, const char *msg);
 
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
-#undef	SUPPORT_IDEIO
 
 #if USE_GTK > 0 || USE_GTK2 > 0
 #define	SUPPORT_S98
