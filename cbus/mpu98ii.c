@@ -161,6 +161,7 @@ static void setrecvdata(REG8 data) {
 static void sendmpushortmsg(const UINT8 *dat, UINT count) {
 
 	UINT	i;
+	COMMNG	cm;
 
 #if 0
 	if (!(mpu98.flag1 & MPUFLAG1_BENDERTOHOST)) {
@@ -178,17 +179,33 @@ static void sendmpushortmsg(const UINT8 *dat, UINT count) {
 		}
 	}
 #endif
+	cm = cm_mpu98;
 	for (i=0; i<count; i++) {
-		cm_mpu98->write(cm_mpu98, dat[i]);
+		cm->write(cm, dat[i]);
 	}
 }
 
 static void sendmpulongmsg(const UINT8 *dat, UINT count) {
 
 	UINT	i;
+	COMMNG	cm;
 
+	cm = cm_mpu98;
 	for (i=0; i<count; i++) {
-		cm_mpu98->write(cm_mpu98, dat[i]);
+		cm->write(cm, dat[i]);
+	}
+}
+
+static void sendmpureset(void) {
+
+	UINT	i;
+	UINT8	sMessage[3];
+
+	for (i=0; i<0x10; i++) {
+		sMessage[0] = (UINT8)(0xb0 + i);
+		sMessage[1] = 0x7b;
+		sMessage[2] = 0x00;
+		sendmpushortmsg(sMessage, 3);
 	}
 }
 
@@ -375,7 +392,7 @@ static REG8 mpucmd_md(REG8 cmd) {			// 00-2F: Mode
 static REG8 mpucmd_3f(REG8 cmd) {			// 3F: UART
 
 	mpu98.mode = 1;
-	cm_mpu98->msg(cm_mpu98, COMMSG_MIDIRESET, 0);
+	sendmpureset();
 	(void)cmd;
 	return(MPUCMDP_IDLE);
 }
@@ -530,7 +547,7 @@ static REG8 mpucmd_fo(REG8 cmd) {			// E0-EF: Following Byte
 
 static REG8 mpucmd_ff(REG8 cmd) {			// FF: Reset
 
-	cm_mpu98->msg(cm_mpu98, COMMSG_MIDIRESET, 0);
+	sendmpureset();
 	nevent_reset(NEVENT_MIDIINT);
 	setdefaultcondition();
 	(void)cmd;
