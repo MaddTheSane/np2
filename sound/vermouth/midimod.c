@@ -3,6 +3,9 @@
 #include	"dosio.h"
 #include	"textfile.h"
 #include	"midiout.h"
+#if defined(SUPPORT_ARC)
+#include	"arc.h"
+#endif
 
 
 #define	CFG_MAXAMP		400
@@ -36,6 +39,7 @@ static const OEMCHAR str_env[] = OEMTEXT("env");
 static const OEMCHAR str_loop[] = OEMTEXT("loop");
 static const OEMCHAR str_tail[] = OEMTEXT("tail");
 static const OEMCHAR file_timiditycfg[] = OEMTEXT("timidity.cfg");
+static const OEMCHAR str_basedir[] = OEMTEXT("${basedir}");
 
 
 static void pathadd(MIDIMOD mod, const OEMCHAR *path) {
@@ -49,7 +53,10 @@ static void pathadd(MIDIMOD mod, const OEMCHAR *path) {
 		// separator change!
 		file_catname(pl.path, path, NELEMENTS(pl.path));
 		if (path[0]) {
-			file_setseparator(pl.path, NELEMENTS(pl.path));
+#if defined(SUPPORT_ARC)
+			if (milstr_chr(pl.path, '#') == NULL)
+#endif
+				file_setseparator(pl.path, NELEMENTS(pl.path));
 		}
 	}
 
@@ -71,7 +78,7 @@ static void pathaddex(MIDIMOD mod, const OEMCHAR *path) {
 
 	OEMCHAR	_path[MAX_PATH];
 
-	if (milstr_memcmp(path, OEMTEXT("${basedir}"))) {
+	if (milstr_memcmp(path, str_basedir)) {
 		pathadd(mod, path);
 	}
 	else {
@@ -339,7 +346,11 @@ BRESULT cfgfile_getfile(MIDIMOD mod, const OEMCHAR *filename,
 	while(p) {
 		file_cpyname(path, p->path, size);
 		file_catname(path, filename, size);
+#if defined(SUPPORT_ARC)
+		attr = arcex_attr(path);
+#else
 		attr = file_attr(path);
+#endif
 		if (attr != -1) {
 			return(SUCCESS);
 		}
@@ -429,7 +440,7 @@ cfl_err:
 
 // ----
 
-MIDIMOD midimod_create(UINT samprate) {
+VEXTERN MIDIMOD VEXPORT midimod_create(UINT samprate) {
 
 	UINT	size;
 	MIDIMOD	ret;
@@ -472,7 +483,7 @@ mmcre_err1:
 	return(NULL);
 }
 
-void midimod_destroy(MIDIMOD hdl) {
+VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl) {
 
 	UINT	r;
 	TONECFG	bank;
@@ -495,7 +506,7 @@ void midimod_destroy(MIDIMOD hdl) {
 	}
 }
 
-void midimod_loadprogram(MIDIMOD hdl, UINT num) {
+VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD hdl, UINT num) {
 
 	UINT	bank;
 
@@ -508,7 +519,7 @@ void midimod_loadprogram(MIDIMOD hdl, UINT num) {
 	}
 }
 
-void midimod_loadrhythm(MIDIMOD hdl, UINT num) {
+VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD hdl, UINT num) {
 
 	UINT	bank;
 
@@ -521,7 +532,7 @@ void midimod_loadrhythm(MIDIMOD hdl, UINT num) {
 	}
 }
 
-void midimod_loadgm(MIDIMOD hdl) {
+VEXTERN void VEXPORT midimod_loadgm(MIDIMOD hdl) {
 
 	if (hdl) {
 		inst_bankload(hdl, 0);
@@ -529,13 +540,32 @@ void midimod_loadgm(MIDIMOD hdl) {
 	}
 }
 
-void midimod_loadall(MIDIMOD hdl) {
+VEXTERN void VEXPORT midimod_loadall(MIDIMOD hdl) {
 
 	UINT	b;
 
 	if (hdl) {
 		for (b=0; b<(MIDI_BANKS*2); b++) {
 			inst_bankload(hdl, b);
+		}
+	}
+}
+
+
+VEXTERN void VEXPORT midimod_loadallex(MIDIMOD hdl, FNMIDIOUTLAEXCB cb, void *userdata) {
+
+	MIDIOUTLAEXPARAM param;
+	UINT	b;
+
+	if (hdl) {
+		ZeroMemory(&param, sizeof(param));
+		param.userdata = userdata;
+		for (b=0; b<(MIDI_BANKS*2); b++) {
+			param.totaltones += inst_gettones(hdl, b);
+		}
+		for (b=0; b<(MIDI_BANKS*2); b++) {
+			param.bank = b;
+			inst_bankloadex(hdl, b, cb, &param);
 		}
 	}
 }

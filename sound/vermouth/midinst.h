@@ -49,6 +49,7 @@ typedef struct {
 	int			freq;
 } _INSTRUMENT, *INSTRUMENT;
 
+struct _miditoneloadparam;
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +57,9 @@ extern "C" {
 
 int inst_singleload(MIDIMOD mod, UINT bank, UINT num);
 int inst_bankload(MIDIMOD mod, UINT bank);
+int inst_bankloadex(MIDIMOD mod, UINT bank, int (*cb)(struct _miditoneloadparam *param), struct _miditoneloadparam *param);
 void inst_bankfree(MIDIMOD mod, UINT bank);
+UINT inst_gettones(MIDIMOD mod, UINT bank);
 
 #ifdef __cplusplus
 }

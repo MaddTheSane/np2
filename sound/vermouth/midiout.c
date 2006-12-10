@@ -2,11 +2,10 @@
 #include	"midiout.h"
 
 
-#define	MIDIOUT_VERSION		0x105
-#define	MIDIOUT_VERSTRING	"VERMOUTH 1.05"
+#define	MIDIOUT_VERSION		0x115
+#define	MIDIOUT_VERSTRING	"VERMOUTH 1.15"
 
-
-static const OEMCHAR vermouthver[] = OEMTEXT(MIDIOUT_VERSTRING);
+static const char vermouthver[] = MIDIOUT_VERSTRING;
 
 static const int gaintbl[24+1] =
 				{ 16,  19,  22,  26,  32,  38,  45,  53,
@@ -708,13 +707,14 @@ static void _allresetmidi(MIDIHDL midi)
 
 // ----
 
-UINT midiout_getver(OEMCHAR *string, int leng) {
+VEXTERN UINT VEXPORT midiout_getver(char *string, int leng) {
 
-	milstr_ncpy(string, vermouthver, leng);
+	leng = min(leng, sizeof(vermouthver));
+	CopyMemory(string, vermouthver, leng);
 	return((MIDIOUT_VERSION << 8) | 0x00);
 }
 
-MIDIHDL midiout_create(MIDIMOD module, UINT worksize) {
+VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize) {
 
 	UINT	size;
 	MIDIHDL	ret;
@@ -743,14 +743,14 @@ MIDIHDL midiout_create(MIDIMOD module, UINT worksize) {
 	return(ret);
 }
 
-void midiout_destroy(MIDIHDL hdl) {
+VEXTERN void VEXPORT midiout_destroy(MIDIHDL hdl) {
 
 	if (hdl) {
 		_MFREE(hdl);
 	}
 }
 
-void midiout_shortmsg(MIDIHDL hdl, UINT32 msg) {
+VEXTERN void VEXPORT midiout_shortmsg(MIDIHDL hdl, UINT32 msg) {
 
 	UINT	cmd;
 	CHANNEL	ch;
@@ -803,10 +803,193 @@ void midiout_shortmsg(MIDIHDL hdl, UINT32 msg) {
 	}
 }
 
+static void longmsg_uni(MIDIHDL hdl, const UINT8 *msg, UINT size) {
+
+	if ((size >= 6) && (msg[2] == 0x7f)) {
+		switch(msg[3]) {
+			case 0x04:
+				if ((msg[4] == 0x01) && (size >= 8)) {
+					hdl->master = msg[6] & 0x7f;
+					allvolupdate(hdl);
+				}
+				break;
+		}
+	}
+}
+
 static void longmsg_gm(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
-	if ((size > 5) && (msg[2] == 0x7f) && (msg[3] == 0x09)) {
-		allresetmidi(hdl, FALSE);					// GM reset
+	if ((size >= 6) && (msg[2] == 0x7f)) {
+		switch(msg[3]) {
+			case 0x09:
+				if (msg[4] == 0x01) {
+					allresetmidi(hdl, FALSE);					// GM reset
+					break;
+				}
+#if !defined(MIDI_GMONLY)
+				else if ((msg[4] == 0x02) || (msg[4] == 0x03)) {
+					allresetmidi(hdl, TRUE);					// GM reset
+					break;
+				}
+#endif
+				break;
+		}
+	}
+}
+
+static void rolandcmd4(MIDIHDL hdl, UINT addr, UINT8 data) {
+
+	UINT	part;
+	CHANNEL	ch;
+#if defined(ENABLE_GSRX)
+	UINT8	bit;
+#endif
+
+	addr = addr & 0x000fffff;
+	if (addr == 0x00004) {				// Vol
+		hdl->master = data;
+		allvolupdate(hdl);
+	}
+	else if ((addr & (~0xff)) == 0x00100) {
+		const UINT pos = addr & 0xff;
+		if (pos < 0x30) {		// Patch Name
+		}
+		else {
+			switch(addr & 0xff) {
+				case 0x30:		// Reverb Macro
+				case 0x31:		// Reverb Charactor
+				case 0x32:		// Reverb Pre-LPF
+				case 0x33:		// Reverb Level
+				case 0x34:		// Reverb Time
+				case 0x35:		// Reverb Delay FeedBack
+				case 0x37:		// Reverb Predelay Time
+				case 0x38:		// Chorus Macro
+				case 0x39:		// Chorus Pre-LPF
+				case 0x3a:		// Chorus Level
+				case 0x3b:		// Chorus FeedBack
+				case 0x3c:		// Chorus Delay
+				case 0x3d:		// Chorus Rate
+				case 0x3e:		// Chorus Depth
+				case 0x3f:		// Chorus send level to reverb
+				case 0x40:		// Chorus send level to delay
+				case 0x50:		// Delay Macro
+				case 0x51:		// Delay Time Pre-LPF
+				case 0x52:		// Delay Time Center
+				case 0x53:		// Delay Time Ratio Left
+				case 0x54:		// Delay Time Ratio Right
+				case 0x55:		// Delay Level Center
+				case 0x56:		// Delay Level Left
+				case 0x57:		// Delay Level Right
+				case 0x58:		// Delay Level
+				case 0x59:		// Delay Freeback
+				case 0x5a:		// Delay sendlevel to Reverb
+					break;
+			}
+		}
+	}
+	else if ((addr & (~(0x0fff))) == 0x01000) {	// GS CH
+		part = (addr >> 8) & 0x0f;
+		if (part == 0) {						// part10
+			part = 9;
+		}
+		else if (part < 10) {					// part1-9
+			part--;
+		}
+		ch = hdl->channel + part;
+		switch(addr & 0xff) {
+#if !defined(MIDI_GMONLY)
+			case 0x00:							// TONE NUMBER
+				ch->bank = data;
+				break;
+#endif
+
+			case 0x01:							// PROGRAM NUMBER
+				progchange(hdl, ch, data);
+				break;
+
+			case 0x02:							// Rx.CHANNEL
+				TRACEOUT(("RxCHANNEL: %d", data));
+				break;
+
+#if defined(ENABLE_GSRX)
+			case 0x03:							// Rx.PITCHBEND
+			case 0x04:							// Rx.CH PRESSURE
+			case 0x05:							// Rx.PROGRAM CHANGE
+			case 0x06:							// Rx.CONTROL CHANGE
+			case 0x07:							// Rx.POLY PRESSURE
+			case 0x08:							// Rx.NOTE MESSAGE
+			case 0x09:							// Rx.PRN
+			case 0x0a:							// Rx.NRPN
+				bit = 1 << ((addr - 0x03) & 7);
+				if (data == 0) {
+					ch->gsrx[0] = ch->gsrx[0] & (~bit);
+				}
+				else if (data == 1) {
+					ch->gsrx[0] = ch->gsrx[0] | bit;
+				}
+				break;
+
+			case 0x0b:							// Rx.MODULATION
+			case 0x0c:							// Rx.VOLUME
+			case 0x0d:							// Rx.PANPOT
+			case 0x0e:							// Rx.EXPRESSION
+			case 0x0f:							// Rx.HOLD1
+			case 0x10:							// Rx.PORTAMENTO
+			case 0x11:							// Rx.SOSTENUTO
+			case 0x12:							// Rx.SOFT
+				bit = 1 << ((addr - 0x0b) & 7);
+				if (data == 0) {
+					ch->gsrx[1] = ch->gsrx[1] & (~bit);
+				}
+				else if (data == 1) {
+					ch->gsrx[1] = ch->gsrx[1] | bit;
+				}
+				break;
+#endif
+			case 0x15:							// USE FOR RHYTHM PART
+				if (data == 0) {
+					ch->flag &= ~CHANNEL_RHYTHM;
+					TRACEOUT(("ch%d - tone", part + 1));
+				}
+				else if ((data == 1) || (data == 2)) {
+					ch->flag |= CHANNEL_RHYTHM;
+					TRACEOUT(("ch%d - rhythm", part + 1));
+				}
+				break;
+
+#if defined(ENABLE_GSRX)
+			case 0x16:							// PITCH KEY SHIFT
+				if ((data >= 0x28) && (data <= 0x58)) {
+					ch->keyshift = data;
+				}
+				break;
+
+			case 0x1d:							// KEYBOARD RANGE LOW
+				ch->noterange[0] = data;
+				break;
+
+			case 0x1e:							// KEYBOARD RANGE HIGH
+				ch->noterange[1] = data;
+				break;
+
+			case 0x23:							// Rx.BANK SELECT
+			case 0x24:							// Rx.BANK SELECT LSB
+				bit = 1 << ((addr - 0x23) & 7);
+				if (data == 0) {
+					ch->gsrx[2] = ch->gsrx[2] & (~bit);
+				}
+				else if (data == 1) {
+					ch->gsrx[2] = ch->gsrx[2] | bit;
+				}
+				break;
+#endif
+			default:
+				TRACEOUT(("Roland GS - %.6x %.2x", addr, data));
+				break;
+		}
+	}
+	else {
+		TRACEOUT(("Roland GS - %.6x %.2x", addr, data));
 	}
 }
 
@@ -814,11 +997,6 @@ static void longmsg_roland(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	UINT	addr;
 	UINT8	data;
-	UINT	part;
-	CHANNEL	ch;
-#if defined(ENABLE_GSRX)
-	UINT8	bit;
-#endif
 
 	if (size <= 10) {
 		return;
@@ -837,115 +1015,21 @@ static void longmsg_roland(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 			allresetmidi(hdl, TRUE);
 			TRACEOUT(("GS-Reset"));
 		}
-		else if (addr == 0x400004) {				// Vol
-			hdl->master = data;
-			allvolupdate(hdl);
+		else if ((addr & 0xfff00000) == 0x00400000) {
+			rolandcmd4(hdl, addr, data);
 		}
-		else if ((addr & (~(0x000fff))) == 0x401000) {	// GS CH
-			part = (addr >> 8) & 0x0f;
-			if (part == 0) {						// part10
-				part = 9;
-			}
-			else if (part < 10) {					// part1-9
-				part--;
-			}
-			ch = hdl->channel + part;
-			switch(addr & 0xff) {
-#if !defined(MIDI_GMONLY)
-				case 0x00:							// TONE NUMBER
-					ch->bank = data;
-					break;
-#endif
-
-				case 0x01:							// PROGRAM NUMBER
-					progchange(hdl, ch, data);
-					break;
-
-#if defined(ENABLE_GSRX)
-				case 0x03:							// Rx.PITCHBEND
-				case 0x04:							// Rx.CH PRESSURE
-				case 0x05:							// Rx.PROGRAM CHANGE
-				case 0x06:							// Rx.CONTROL CHANGE
-				case 0x07:							// Rx.POLY PRESSURE
-				case 0x08:							// Rx.NOTE MESSAGE
-				case 0x09:							// Rx.PRN
-				case 0x0a:							// Rx.NRPN
-					bit = 1 << ((addr - 0x03) & 7);
-					if (data == 0) {
-						ch->gsrx[0] = ch->gsrx[0] & (~bit);
-					}
-					else if (data == 1) {
-						ch->gsrx[0] = ch->gsrx[0] | bit;
-					}
-					break;
-
-				case 0x0b:							// Rx.MODULATION
-				case 0x0c:							// Rx.VOLUME
-				case 0x0d:							// Rx.PANPOT
-				case 0x0e:							// Rx.EXPRESSION
-				case 0x0f:							// Rx.HOLD1
-				case 0x10:							// Rx.PORTAMENTO
-				case 0x11:							// Rx.SOSTENUTO
-				case 0x12:							// Rx.SOFT
-					bit = 1 << ((addr - 0x0b) & 7);
-					if (data == 0) {
-						ch->gsrx[1] = ch->gsrx[1] & (~bit);
-					}
-					else if (data == 1) {
-						ch->gsrx[1] = ch->gsrx[1] | bit;
-					}
-					break;
-#endif
-				case 0x15:							// USE FOR RHYTHM PART
-					if (data == 0) {
-						ch->flag &= ~CHANNEL_RHYTHM;
-						TRACEOUT(("ch%d - tone", part + 1));
-					}
-					else if ((data == 1) || (data == 2)) {
-						ch->flag |= CHANNEL_RHYTHM;
-						TRACEOUT(("ch%d - rhythm", part + 1));
-					}
-					break;
-
-#if defined(ENABLE_GSRX)
-				case 0x16:							// PITCH KEY SHIFT
-					if ((data >= 0x28) && (data <= 0x58)) {
-						ch->keyshift = data;
-					}
-					break;
-
-				case 0x1d:							// KEYBOARD RANGE LOW
-					ch->noterange[0] = data;
-					break;
-
-				case 0x1e:							// KEYBOARD RANGE HIGH
-					ch->noterange[1] = data;
-					break;
-
-				case 0x23:							// Rx.BANK SELECT
-				case 0x24:							// Rx.BANK SELECT LSB
-					bit = 1 << ((addr - 0x23) & 7);
-					if (data == 0) {
-						ch->gsrx[2] = ch->gsrx[2] & (~bit);
-					}
-					else if (data == 1) {
-						ch->gsrx[2] = ch->gsrx[2] | bit;
-					}
-					break;
-#endif
-				default:
-					TRACEOUT(("Roland GS - %.6x", addr));
-					break;
+#if defined(ENABLE_PORTB)
+		else if ((addr & 0xfff00000) == 0x00500000) {
+			if (hdl->portb) {
+				rolandcmd4(hdl->portb, addr, data);
 			}
 		}
-		else {
-			TRACEOUT(("Roland GS - %.6x", addr));
-		}
+#endif	// defined(ENABLE_PORTB)
 		addr++;
 	}
 }
 
-void midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size) {
+VEXTERN void VEXPORT midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	UINT	id;
 
@@ -954,16 +1038,22 @@ void midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 	}
 	if (size > 3) {							// (msg[size - 1] == 0xf7)
 		id = msg[1];
-		if (id == 0x7e) {					// GM
+		if (id == 0x7f) {					// Universal realtime
+			longmsg_uni(hdl, msg, size);
+		}
+		else if (id == 0x7e) {				// GM
 			longmsg_gm(hdl, msg, size);
 		}
 		else if (id == 0x41) {				// Roland
 			longmsg_roland(hdl, msg, size);
 		}
+		else {
+			TRACEOUT(("long msg unknown id:%02x", id));
+		}
 	}
 }
 
-const SINT32 *midiout_get(MIDIHDL hdl, UINT *samples) {
+VEXTERN const SINT32 * VEXPORT midiout_get(MIDIHDL hdl, UINT *samples) {
 
 	UINT	size;
 	VOICE	v;
@@ -1036,7 +1126,87 @@ moget_err:
 	return(NULL);
 }
 
-UINT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size) {
+VEXTERN UINT VEXPORT midiout_get16(MIDIHDL hdl, SINT16 *pcm, UINT size) {
+
+	UINT	step;
+	VOICE	v;
+	VOICE	vterm;
+	SINT32	*buf;
+	SAMPLE	src;
+	SAMPLE	srcterm;
+	UINT	cnt;
+	UINT	pos;
+	UINT	rem;
+	SINT32	l;
+	SINT32	r;
+
+	if ((hdl != NULL) && (size)) {
+		do {
+			step = min(size, hdl->worksize);
+			size -= step;
+			buf = hdl->sampbuf;
+			ZeroMemory(buf, step * 2 * sizeof(SINT32));
+			v = hdl->voice;
+			vterm = v + VOICE_MAX;
+			do {
+				if (v->phase != VOICE_FREE) {
+					cnt = step;
+					if (v->phase & VOICE_REL) {
+						voice_setfree(v);
+						if (cnt > REL_COUNT) {
+							cnt = REL_COUNT;
+						}
+					}
+					if (v->flag & VOICE_FIXPITCH) {
+						pos = v->samppos >> FREQ_SHIFT;
+						src = v->sample->data + pos;
+						rem = (v->sample->datasize >> FREQ_SHIFT) - pos;
+						if (cnt < rem) {
+							v->samppos += cnt << FREQ_SHIFT;
+							srcterm = src + cnt;
+						}
+						else {
+							voice_setfree(v);
+							srcterm = src + rem;
+						}
+					}
+					else {
+						src = hdl->resampbuf;
+						srcterm = v->resamp(v, src, src + cnt);
+					}
+					if (src != srcterm) {
+						v->mix(v, buf, src, srcterm);
+					}
+				}
+				v++;
+			} while(v < vterm);
+			do {
+				l = pcm[0];
+				r = pcm[1];
+				l += buf[0] >> (SAMP_SHIFT + 1);
+				r += buf[1] >> (SAMP_SHIFT + 1);
+				if (l < -32768) {
+					l = -32768;
+				}
+				else if (l > 32767) {
+					l = 32767;
+				}
+				if (r < -32768) {
+					r = -32768;
+				}
+				else if (r > 32767) {
+					r = 32767;
+				}
+				pcm[0] = l;
+				pcm[1] = r;
+				buf += 2;
+				pcm += 2;
+			} while(--step);
+		} while(size);
+	}
+	return(0);}
+
+VEXTERN UINT VEXPORT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size) {
 
 	UINT	step;
 	VOICE	v;
@@ -1099,7 +1269,7 @@ UINT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size) {
 	return(0);
 }
 
-void midiout_setgain(MIDIHDL hdl, int gain) {
+VEXTERN void VEXPORT midiout_setgain(MIDIHDL hdl, int gain) {
 
 	if (hdl) {
 		if (gain < -16) {
@@ -1111,5 +1281,21 @@ void midiout_setgain(MIDIHDL hdl, int gain) {
 		hdl->gain = (SINT8)gain;
 		allvolupdate(hdl);
 	}
+}
+
+VEXTERN void VEXPORT midiout_setmoduleid(MIDIHDL hdl, UINT8 moduleid) {
+
+	if (hdl) {
+		hdl->moduleid = moduleid;
+	}
+}
+
+VEXTERN void VEXPORT midiout_setportb(MIDIHDL hdl, MIDIHDL portb) {
+
+#if defined(ENABLE_PORTB)
+	if (hdl) {
+		hdl->portb = portb;
+	}
+#endif	// defined(ENABLE_PORTB)
 }
 
