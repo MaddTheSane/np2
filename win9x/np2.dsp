@@ -47,7 +47,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -73,7 +73,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -100,7 +100,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "NP2APPDEV" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "NP2APPDEV" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -127,7 +127,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_WAVEREC" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_WAVEREC" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -154,7 +154,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "ENABLE_TRAP" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "ENABLE_TRAP" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -180,7 +180,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I ".\dialog" /I ".\debuguty" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
@@ -211,6 +211,14 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\COMMON\_MEMORY.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\ARC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\ARCUNZIP.C
 # End Source File
 # Begin Source File
 
@@ -375,7 +383,7 @@ InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj   -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj    -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -387,7 +395,7 @@ InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj   -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj    -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -399,7 +407,7 @@ InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj   -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj    -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -411,7 +419,7 @@ InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj   -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj    -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -423,7 +431,7 @@ InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj   -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj    -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -435,7 +443,7 @@ InputPath=..\I286X\MEMORY.X86
 InputName=MEMORY
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj   -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj    -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -462,7 +470,7 @@ InputPath=..\MEM\x86\DMAX86.X86
 InputName=DMAX86
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -474,7 +482,7 @@ InputPath=..\MEM\x86\DMAX86.X86
 InputName=DMAX86
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -486,7 +494,7 @@ InputPath=..\MEM\x86\DMAX86.X86
 InputName=DMAX86
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -498,7 +506,7 @@ InputPath=..\MEM\x86\DMAX86.X86
 InputName=DMAX86
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -510,7 +518,7 @@ InputPath=..\MEM\x86\DMAX86.X86
 InputName=DMAX86
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -522,7 +530,7 @@ InputPath=..\MEM\x86\DMAX86.X86
 InputName=DMAX86
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -541,7 +549,7 @@ InputPath=..\MEM\x86\MEMEGC.X86
 InputName=MEMEGC
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -553,7 +561,7 @@ InputPath=..\MEM\x86\MEMEGC.X86
 InputName=MEMEGC
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -565,7 +573,7 @@ InputPath=..\MEM\x86\MEMEGC.X86
 InputName=MEMEGC
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -577,7 +585,7 @@ InputPath=..\MEM\x86\MEMEGC.X86
 InputName=MEMEGC
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -589,7 +597,7 @@ InputPath=..\MEM\x86\MEMEGC.X86
 InputName=MEMEGC
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -601,7 +609,7 @@ InputPath=..\MEM\x86\MEMEGC.X86
 InputName=MEMEGC
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -884,7 +892,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -896,7 +904,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -908,7 +916,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -920,7 +928,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -932,7 +940,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -944,7 +952,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw  -f  win32  $(InputPath)  -o  $(IntDir)\$(InputName).obj  -i.\x86\  -i..\i286x\  -i..\io\x86\ 
+	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i286x\   -i..\io\x86\ 
 
 # End Custom Build
 
@@ -1687,6 +1695,34 @@ SOURCE=.\WINKBD.CPP
 # Begin Source File
 
 SOURCE=.\WINLOC.CPP
+# End Source File
+# End Group
+# Begin Group "zlib"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\zlib\adler32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\zlib\crc32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\zlib\inffast.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\zlib\inflate.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\zlib\inftrees.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\zlib\zutil.c
 # End Source File
 # End Group
 # Begin Source File

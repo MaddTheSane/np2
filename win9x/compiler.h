@@ -146,6 +146,8 @@ typedef	signed __int64		SINT64;
 #if defined(TRACE)
 	#define	SUPPORT_IDEIO
 #endif
+#define SUPPORT_ARC
+#define SUPPORT_ZLIB
 
 #define	SUPPORT_RESUME
 #define	SUPPORT_STATSAVE	10

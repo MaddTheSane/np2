@@ -4,8 +4,36 @@
 #if defined(SUPPORT_TEXTCNV)
 #include	"textcnv.h"
 #endif
+#if defined(SUPPORT_ARC)
+#include	"arc.h"
+#else
 #include	"dosio.h"
+#endif
 
+
+// ---- arc support?
+
+#if defined(SUPPORT_ARC)
+#define	_FILEH				ARCFH
+#define	_FILEH_INVALID		NULL
+#define	_FSEEK_SET			ARCSEEK_SET
+#define _file_open_rb		arcex_fileopen
+#define _file_create		arcex_filecreate
+#define	_file_read			arc_fileread
+#define	_file_write			arc_filewrite
+#define	_file_seek			arc_fileseek
+#define	_file_close			arc_fileclose
+#else
+#define	_FILEH				FILEH
+#define	_FILEH_INVALID		FILEH_INVALID
+#define	_FSEEK_SET			FSEEK_SET
+#define _file_open_rb		file_open_rb
+#define _file_create		file_create
+#define	_file_read			file_read
+#define	_file_write			file_write
+#define	_file_seek			file_seek
+#define	_file_close			file_close
+#endif
 
 enum {
 	TFMODE_READ		= 0x01,
@@ -25,7 +53,7 @@ struct _textfile {
 	UINT8	access;
 	UINT8	xendian;
 #endif
-	FILEH	fh;
+	_FILEH	fh;
 	long	fpos;
 	UINT8	*buf;
 	UINT	bufsize;
@@ -48,7 +76,7 @@ static UINT readbufferA(TEXTFILE tf) {
 	UINT	rsize;
 
 	if (tf->bufrem == 0) {
-		rsize = file_read(tf->fh, tf->buf, tf->bufsize);
+		rsize = _file_read(tf->fh, tf->buf, tf->bufsize);
 		rsize = rsize / sizeof(char);
 		tf->fpos += rsize * sizeof(char);
 		tf->bufpos = 0;
@@ -127,7 +155,7 @@ static UINT readbufferW(TEXTFILE tf) {
 
 	if (tf->bufrem == 0) {
 		buf = tf->buf;
-		rsize = file_read(tf->fh, buf, tf->bufsize);
+		rsize = _file_read(tf->fh, buf, tf->bufsize);
 		rsize = rsize / sizeof(UINT16);
 		tf->fpos += rsize * sizeof(UINT16);
 		tf->bufpos = 0;
@@ -237,7 +265,7 @@ static BRESULT flushwritebuffer(TEXTFILE tf) {
 
 	if (tf->bufpos) {
 		size = tf->bufpos * tf->width;
-		wsize = file_write(tf->fh, tf->buf, size);
+		wsize = _file_write(tf->fh, tf->buf, size);
 		tf->fpos += wsize;
 		if (wsize != size) {
 			return(FAILURE);
@@ -308,7 +336,7 @@ const UINT8	*p;
 
 // ----
 
-static TEXTFILEH registfile(FILEH fh, UINT buffersize,
+static TEXTFILEH registfile(_FILEH fh, UINT buffersize,
 											const UINT8 *hdr, UINT hdrsize) {
 
 	UINT		cnvbufsize;
@@ -409,7 +437,7 @@ static BRESULT flushfile(TEXTFILE tf) {
 	ret = SUCCESS;
 	if (tf->mode & TFMODE_READ) {
 		fpos = tf->fpos - (tf->bufrem * tf->width);
-		tf->fpos = file_seek(tf->fh, fpos, FSEEK_SET);
+		tf->fpos = _file_seek(tf->fh, fpos, _FSEEK_SET);
 		if (tf->fpos != fpos) {
 			ret = FAILURE;
 		}
@@ -417,7 +445,7 @@ static BRESULT flushfile(TEXTFILE tf) {
 	else if (tf->mode & TFMODE_WRITE) {
 		if (tf->bufpos) {
 			size = tf->bufpos * tf->width;
-			wsize = file_write(tf->fh, tf->buf, size);
+			wsize = _file_write(tf->fh, tf->buf, size);
 			if (wsize != size) {
 				ret = FAILURE;
 			}
@@ -425,7 +453,7 @@ static BRESULT flushfile(TEXTFILE tf) {
 		}
 	}
 	else {
-		fpos = file_seek(tf->fh, tf->fpos, FSEEK_SET);
+		fpos = _file_seek(tf->fh, tf->fpos, _FSEEK_SET);
 		if (tf->fpos != fpos) {
 			ret = FAILURE;
 		}
@@ -442,21 +470,21 @@ static BRESULT flushfile(TEXTFILE tf) {
 
 TEXTFILEH textfile_open(const OEMCHAR *filename, UINT buffersize) {
 
-	FILEH		fh;
+	_FILEH		fh;
 	UINT8		hdr[4];
 	UINT		hdrsize;
 	TEXTFILEH	ret;
 
-	fh = file_open_rb(filename);
-	if (fh == FILEH_INVALID) {
+	fh = _file_open_rb(filename);
+	if (fh == _FILEH_INVALID) {
 		goto tfo_err;
 	}
-	hdrsize = file_read(fh, hdr, sizeof(hdr));
+	hdrsize = _file_read(fh, hdr, sizeof(hdr));
 	ret = registfile(fh, buffersize, hdr, hdrsize);
 	if (ret) {
 		return(ret);
 	}
-	file_close(fh);
+	_file_close(fh);
 
 tfo_err:
 	return(NULL);
@@ -464,13 +492,13 @@ tfo_err:
 
 TEXTFILEH textfile_create(const OEMCHAR *filename, UINT buffersize) {
 
-	FILEH		fh;
+	_FILEH		fh;
 const UINT8		*hdr;
 	UINT		hdrsize;
 	TEXTFILEH	ret;
 
-	fh = file_create(filename);
-	if (fh == FILEH_INVALID) {
+	fh = _file_create(filename);
+	if (fh == _FILEH_INVALID) {
 		goto tfc_err1;
 	}
 #if defined(OSLANG_UTF8)
@@ -483,7 +511,7 @@ const UINT8		*hdr;
 	hdr = NULL;
 	hdrsize = 0;
 #endif
-	if ((hdrsize) && (file_write(fh, hdr, hdrsize) != hdrsize)) {
+	if ((hdrsize) && (_file_write(fh, hdr, hdrsize) != hdrsize)) {
 		goto tfc_err2;
 	}
 	ret = registfile(fh, buffersize, hdr, hdrsize);
@@ -492,7 +520,7 @@ const UINT8		*hdr;
 	}
 
 tfc_err2:
-	file_close(fh);
+	_file_close(fh);
 
 tfc_err1:
 	return(NULL);
@@ -570,7 +598,7 @@ void textfile_close(TEXTFILEH tfh) {
 		if (tf->mode & TFMODE_WRITE) {
 			flushfile(tf);
 		}
-		file_close(tf->fh);
+		_file_close(tf->fh);
 		_MFREE(tf);
 	}
 }
