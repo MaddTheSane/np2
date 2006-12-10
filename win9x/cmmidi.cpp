@@ -208,7 +208,7 @@ static UINT module2number(const OEMCHAR *module) {
 	UINT	i;
 
 	for (i=0; i<NELEMENTS(cmmidi_mdlname); i++) {
-		if (milstr_extendcmp(module, cmmidi_mdlname[i])) {
+		if (!milstr_extendcmp(module, cmmidi_mdlname[i])) {
 			break;
 		}
 	}
