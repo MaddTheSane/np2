@@ -528,7 +528,7 @@ static void ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl, int val) {
 
 		case CTRL_RESETCTRL:
 			resetallcontrollers(ch);
-			break;
+			/*FALLTHROUGH*/
 
 		case CTRL_NOTEOFF:
 			allnotesoff(midi, ch);
