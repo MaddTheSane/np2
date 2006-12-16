@@ -36,6 +36,9 @@ BRESULT cfgfile_getfile(MIDIMOD mod, const OEMCHAR *filename,
 													OEMCHAR *path, int size);
 BRESULT cfgfile_load(MIDIMOD mod, const OEMCHAR *filename, int depth);
 
+void midimod_lock(MIDIMOD hdl);
+void midimod_unlock(MIDIMOD hdl);
+
 #ifdef __cplusplus
 }
 #endif

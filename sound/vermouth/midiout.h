@@ -61,6 +61,7 @@ enum {
 
 struct _midimodule {
 	UINT		samprate;
+	UINT		lockcount;
 	INSTRUMENT	*tone[MIDI_BANKS * 2];
 	TONECFG		tonecfg[MIDI_BANKS * 2];
 

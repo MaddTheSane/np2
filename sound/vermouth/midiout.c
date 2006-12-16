@@ -729,6 +729,7 @@ VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize) {
 	size += sizeof(_SAMPLE) * worksize;
 	ret = (MIDIHDL)_MALLOC(size, "MIDIHDL");
 	if (ret) {
+		midimod_lock(module);
 		ZeroMemory(ret, size);
 		ret->samprate = module->samprate;
 		ret->worksize = worksize;
@@ -745,8 +746,12 @@ VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize) {
 
 VEXTERN void VEXPORT midiout_destroy(MIDIHDL hdl) {
 
+	MIDIMOD module;
+
 	if (hdl) {
+		module = hdl->module;
 		_MFREE(hdl);
+		midimod_lock(module);
 	}
 }
 

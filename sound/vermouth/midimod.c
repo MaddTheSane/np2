@@ -459,7 +459,7 @@ VEXTERN MIDIMOD VEXPORT midimod_create(UINT samprate) {
 	ret->tone[1] = ret->tone[0] + 128;
 	ret->tonecfg[0] = (TONECFG)(ret->tone[1] + 128);
 	ret->tonecfg[1] = ret->tonecfg[0] + 128;
-	ret->pathtbl = listarray_new(sizeof(_PATHLIST), 64);
+	ret->pathtbl = listarray_new(sizeof(_PATHLIST), 16);
 	pathadd(ret, NULL);
 	pathadd(ret, file_getcd(str_null));
 	ret->namelist = listarray_new(MAX_NAME, 128);
@@ -472,6 +472,7 @@ VEXTERN MIDIMOD VEXPORT midimod_create(UINT samprate) {
 	if (r != SUCCESS) {
 		goto mmcre_err2;
 	}
+	midimod_lock(ret);
 	return(ret);
 
 mmcre_err2:
@@ -483,26 +484,44 @@ mmcre_err1:
 	return(NULL);
 }
 
-VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl) {
+void midimod_lock(MIDIMOD hdl) {
+
+	hdl->lockcount++;
+}
+
+void midimod_unlock(MIDIMOD hdl) {
 
 	UINT	r;
 	TONECFG	bank;
 
-	if (hdl) {
-		r = 128;
-		do {
-			r--;
-			inst_bankfree(hdl, r);
-		} while(r > 0);
-		for (r=2; r<(MIDI_BANKS*2); r++) {
-			bank = hdl->tonecfg[r];
-			if (bank) {
-				_MFREE(bank);
-			}
+	if (!hdl->lockcount) {
+		return;
+	}
+	hdl->lockcount--;
+	if (hdl->lockcount) {
+		return;
+	}
+
+	r = 128;
+	do {
+		r--;
+		inst_bankfree(hdl, r);
+	} while(r > 0);
+	for (r=2; r<(MIDI_BANKS*2); r++) {
+		bank = hdl->tonecfg[r];
+		if (bank) {
+			_MFREE(bank);
 		}
-		listarray_destroy(hdl->namelist);
-		listarray_destroy(hdl->pathtbl);
-		_MFREE(hdl);
+	}
+	listarray_destroy(hdl->namelist);
+	listarray_destroy(hdl->pathtbl);
+	_MFREE(hdl);
+}
+
+VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl) {
+
+	if (hdl) {
+		midimod_unlock(hdl);
 	}
 }
 
