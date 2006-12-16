@@ -30,7 +30,7 @@ void bios0x1c(void) {
 			SETBIOSMEM16(0x0001e, CPU_ES);
 			SETBIOSMEM16(0x0058a, CPU_CX);
 			iocore_out8(0x77, 0x36);
-			/* through */
+			/*FALLTHROUGH*/
 
 		case 0x03:					// continue interval timer
 			iocore_out8(0x71, 0x00);
