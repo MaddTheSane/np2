@@ -15,6 +15,9 @@ static const int gaintbl[24+1] =
 
 // ---- voice
 
+#define	VOICEHDLPTR(hdl)	((hdl)->voice)
+#define	VOICEHDLEND(hdl)	(VOICE)((hdl) + 1)
+
 static void VERMOUTHCL voice_volupdate(VOICE v) {
 
 	CHANNEL	ch;
@@ -134,7 +137,7 @@ static void VERMOUTHCL freq_update(VOICE v) {
 	v->sampstep = (int)step;
 }
 
-static void VERMOUTHCL voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key,
+static void VERMOUTHCL voice_on(MIDIHDL hdl, CHANNEL ch, VOICE v, int key,
 																	int vel) {
 
 	INSTRUMENT	inst;
@@ -159,10 +162,10 @@ static void VERMOUTHCL voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key,
 #if !defined(MIDI_GMONLY)
 		inst = ch->rhythm[key];
 		if (inst == NULL) {
-			inst = midi->bank0[1][key];
+			inst = hdl->bank0[1][key];
 		}
 #else
-		inst = midi->bank0[1][key];
+		inst = hdl->bank0[1][key];
 #endif
 		if (inst == NULL) {
 			return;
@@ -238,7 +241,7 @@ static void VERMOUTHCL voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key,
 		v->flag |= VOICE_FIXPITCH;
 	}
 	else {
-		v->freq = (float)layer->samprate / (float)midi->samprate *
+		v->freq = (float)layer->samprate / (float)hdl->samprate *
 					(float)v->frequency / (float)layer->freqroot;
 	}
 	voice_setphase(v, VOICE_ON);
@@ -266,13 +269,13 @@ static void VERMOUTHCL voice_off(VOICE v) {
 	}
 }
 
-static void VERMOUTHCL allresetvoices(MIDIHDL midi) {
+static void VERMOUTHCL allresetvoices(MIDIHDL hdl) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		voice_setfree(v);
 		v++;
@@ -282,7 +285,7 @@ static void VERMOUTHCL allresetvoices(MIDIHDL midi) {
 
 // ---- key
 
-static void VERMOUTHCL key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
+static void VERMOUTHCL key_on(MIDIHDL hdl, CHANNEL ch, int key, int vel) {
 
 	VOICE	v;
 	VOICE	v1;
@@ -291,8 +294,8 @@ static void VERMOUTHCL key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
 	int		volmin;
 
 	v = NULL;
-	v1 = midi->voice;
-	v2 = v1 + VOICE_MAX;
+	v1 = VOICEHDLPTR(hdl);
+	v2 = VOICEHDLEND(hdl);
 	do {
 		v2--;
 		if (v2->phase == VOICE_FREE) {
@@ -306,12 +309,12 @@ static void VERMOUTHCL key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
 	} while(v1 < v2);
 
 	if (v != NULL) {
-		voice_on(midi, ch, v, key, vel);
+		voice_on(hdl, ch, v, key, vel);
 		return;
 	}
 
 	volmin = 0x7fffffff;
-	v2 = v1 + VOICE_MAX;
+	v2 = VOICEHDLEND(hdl);
 	do {
 		v2--;
 		if (!(v2->phase & (VOICE_ON | VOICE_REL))) {
@@ -328,17 +331,17 @@ static void VERMOUTHCL key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
 
 	if (v != NULL) {
 		voice_setfree(v);
-		voice_on(midi, ch, v, key, vel);
+		voice_on(hdl, ch, v, key, vel);
 	}
 }
 
-static void VERMOUTHCL key_off(MIDIHDL midi, CHANNEL ch, int key) {
+static void VERMOUTHCL key_off(MIDIHDL hdl, CHANNEL ch, int key) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if ((v->phase & VOICE_ON) &&
 			(v->channel == ch) && (v->note == key)) {
@@ -354,14 +357,14 @@ static void VERMOUTHCL key_off(MIDIHDL midi, CHANNEL ch, int key) {
 	} while(v < vterm);
 }
 
-static void VERMOUTHCL key_pressure(MIDIHDL midi, CHANNEL ch, int key,
+static void VERMOUTHCL key_pressure(MIDIHDL hdl, CHANNEL ch, int key,
 																	int vel) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if ((v->phase & VOICE_ON) &&
 			(v->channel == ch) && (v->note == key)) {
@@ -377,18 +380,18 @@ static void VERMOUTHCL key_pressure(MIDIHDL midi, CHANNEL ch, int key,
 
 // ---- control
 
-static void VERMOUTHCL volumeupdate(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL volumeupdate(MIDIHDL hdl, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
 
 #if defined(VOLUME_ACURVE)
-	ch->level = (midi->level * acurve[ch->volume] * ch->expression) >> 15;
+	ch->level = (hdl->level * acurve[ch->volume] * ch->expression) >> 15;
 #else
-	ch->level = (midi->level * ch->volume * ch->expression) >> 14;
+	ch->level = (hdl->level * ch->volume * ch->expression) >> 14;
 #endif
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if ((v->phase & (VOICE_ON | VOICE_SUSTAIN)) && (v->channel == ch)) {
 			voice_volupdate(v);
@@ -398,13 +401,13 @@ static void VERMOUTHCL volumeupdate(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void VERMOUTHCL pedaloff(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL pedaloff(MIDIHDL hdl, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if ((v->phase & VOICE_SUSTAIN) && (v->channel == ch)) {
 			voice_off(v);
@@ -413,13 +416,13 @@ static void VERMOUTHCL pedaloff(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void VERMOUTHCL allsoundsoff(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL allsoundsoff(MIDIHDL hdl, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if ((v->phase != VOICE_FREE) && (v->channel == ch)) {
 			voice_setphase(v, VOICE_REL);
@@ -441,13 +444,13 @@ static void VERMOUTHCL resetallcontrollers(CHANNEL ch) {
 	ch->pitchfactor = 1.0;
 }
 
-static void VERMOUTHCL allnotesoff(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL allnotesoff(MIDIHDL hdl, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 #if 1
 		if ((v->phase & (VOICE_ON | VOICE_SUSTAIN)) && (v->channel == ch)) {
@@ -467,7 +470,7 @@ static void VERMOUTHCL allnotesoff(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
+static void VERMOUTHCL ctrlchange(MIDIHDL hdl, CHANNEL ch, int ctrl,
 																	int val) {
 
 	val &= 0x7f;
@@ -495,7 +498,7 @@ static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
 
 		case CTRL_VOLUME:
 			ch->volume = val;
-			volumeupdate(midi, ch);
+			volumeupdate(hdl, ch);
 			break;
 
 		case CTRL_PANPOT:
@@ -504,13 +507,13 @@ static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
 
 		case CTRL_EXPRESS:
 			ch->expression = val;
-			volumeupdate(midi, ch);
+			volumeupdate(hdl, ch);
 			break;
 
 		case CTRL_PEDAL:
 			if (val == 0) {
 				ch->flag &= ~CHANNEL_SUSTAIN;
-				pedaloff(midi, ch);
+				pedaloff(hdl, ch);
 			}
 			else {
 				ch->flag |= CHANNEL_SUSTAIN;
@@ -526,7 +529,7 @@ static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
 			break;
 
 		case CTRL_SOUNDOFF:
-			allsoundsoff(midi, ch);
+			allsoundsoff(hdl, ch);
 			break;
 
 		case CTRL_RESETCTRL:
@@ -534,7 +537,7 @@ static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
 			/*FALLTHROUGH*/
 
 		case CTRL_NOTEOFF:
-			allnotesoff(midi, ch);
+			allnotesoff(hdl, ch);
 			break;
 
 		case CTRL_MONOON:
@@ -551,48 +554,48 @@ static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
 	}
 }
 
-static void VERMOUTHCL progchange(MIDIHDL midi, CHANNEL ch, int val) {
+static void VERMOUTHCL progchange(MIDIHDL hdl, CHANNEL ch, int val) {
 
 #if !defined(MIDI_GMONLY)
-	MIDIMOD		module;
+	MIDIMOD		mod;
 	INSTRUMENT	*bank;
 	INSTRUMENT	inst;
 
-	module = midi->module;
+	mod = hdl->module;
 	inst = NULL;
 	if (ch->bank < MIDI_BANKS) {
-		bank = module->tone[ch->bank * 2];
+		bank = mod->tone[ch->bank * 2];
 		if (bank) {
 			inst = bank[val];
 		}
 	}
 	if (inst == NULL) {
-		bank = midi->bank0[0];
+		bank = hdl->bank0[0];
 		inst = bank[val];
 	}
 	ch->inst = inst;
 
 	bank = NULL;
 	if (ch->bank < MIDI_BANKS) {
-		bank = module->tone[ch->bank * 2 + 1];
+		bank = mod->tone[ch->bank * 2 + 1];
 	}
 	if (bank == NULL) {
-		bank = midi->bank0[1];
+		bank = hdl->bank0[1];
 	}
 	ch->rhythm = bank;
 #else
-	ch->inst = midi->bank0[0][val];
+	ch->inst = hdl->bank0[0][val];
 #endif
 	ch->program = val;
 }
 
-static void VERMOUTHCL chpressure(MIDIHDL midi, CHANNEL ch, int vel) {
+static void VERMOUTHCL chpressure(MIDIHDL hdl, CHANNEL ch, int vel) {
 
 	VOICE	v;
 	VOICE	vterm;
 
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if ((v->phase & VOICE_ON) && (v->channel == ch)) {
 			v->velocity = vel;
@@ -604,7 +607,7 @@ static void VERMOUTHCL chpressure(MIDIHDL midi, CHANNEL ch, int vel) {
 	} while(v < vterm);
 }
 
-static void VERMOUTHCL pitchbendor(MIDIHDL midi, CHANNEL ch, int val1,
+static void VERMOUTHCL pitchbendor(MIDIHDL hdl, CHANNEL ch, int val1,
 																int val2) {
 
 	VOICE	v;
@@ -623,8 +626,8 @@ static void VERMOUTHCL pitchbendor(MIDIHDL midi, CHANNEL ch, int val1,
 			ch->pitchfactor = bendhtbl[(val1 >> (6 + 7)) + 24] *
 												bendltbl[(val1 >> 7) & 0x3f];
 		}
-		v = midi->voice;
-		vterm = v + VOICE_MAX;
+		v = VOICEHDLPTR(hdl);
+		vterm = VOICEHDLEND(hdl);
 		do {
 			if ((v->phase != VOICE_FREE) && (v->channel == ch)) {
 				freq_update(v);
@@ -634,7 +637,7 @@ static void VERMOUTHCL pitchbendor(MIDIHDL midi, CHANNEL ch, int val1,
 	}
 }
 
-static void VERMOUTHCL allvolupdate(MIDIHDL midi) {
+static void VERMOUTHCL allvolupdate(MIDIHDL hdl) {
 
 	int		level;
 	CHANNEL	ch;
@@ -642,17 +645,17 @@ static void VERMOUTHCL allvolupdate(MIDIHDL midi) {
 	VOICE	v;
 	VOICE	vterm;
 
-	level = gaintbl[midi->gain + 16] >> 1;
-	level *= midi->master;
-	midi->level = level;
-	ch = midi->channel;
-	chterm = ch + 16;
+	level = gaintbl[hdl->gain + 16] >> 1;
+	level *= hdl->master;
+	hdl->level = level;
+	ch = hdl->channel;
+	chterm = ch + CHANNEL_MAX;
 	do {
 		ch->level = (level * ch->volume * ch->expression) >> 14;
 		ch++;
 	} while(ch < chterm);
-	v = midi->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	do {
 		if (v->phase & (VOICE_ON | VOICE_SUSTAIN)) {
 			voice_volupdate(v);
@@ -663,20 +666,20 @@ static void VERMOUTHCL allvolupdate(MIDIHDL midi) {
 }
 
 #if defined(ENABLE_GSRX)
-static void VERMOUTHCL allresetmidi(MIDIHDL midi, BOOL gs)
+static void VERMOUTHCL allresetmidi(MIDIHDL hdl, BOOL gs)
 #else
 #define allresetmidi(m, g)		_allresetmidi(m)
-static void VERMOUTHCL _allresetmidi(MIDIHDL midi)
+static void VERMOUTHCL _allresetmidi(MIDIHDL hdl)
 #endif
 {
 	CHANNEL	ch;
 	CHANNEL	chterm;
 	UINT	flag;
 
-	midi->master = 127;
-	ch = midi->channel;
-	chterm = ch + 16;
-	ZeroMemory(ch, sizeof(_CHANNEL) * 16);
+	hdl->master = 127;
+	ch = hdl->channel;
+	chterm = ch + CHANNEL_MAX;
+	ZeroMemory(ch, sizeof(_CHANNEL) * CHANNEL_MAX);
 	flag = 0;
 	do {
 		ch->flag = flag++;
@@ -685,7 +688,7 @@ static void VERMOUTHCL _allresetmidi(MIDIHDL midi)
 		ch->bank = 0;
 #endif
 		ch->panpot = 64;
-		progchange(midi, ch, 0);
+		progchange(hdl, ch, 0);
 		resetallcontrollers(ch);
 #if defined(ENABLE_GSRX)
 		ch->keyshift = 0x40;
@@ -704,8 +707,8 @@ static void VERMOUTHCL _allresetmidi(MIDIHDL midi)
 #endif
 		ch++;
 	} while(ch < chterm);
-	allresetvoices(midi);
-	allvolupdate(midi);
+	allresetvoices(hdl);
+	allvolupdate(hdl);
 }
 
 
@@ -718,12 +721,12 @@ VEXTERN UINT VEXPORT midiout_getver(char *string, int leng) {
 	return((MIDIOUT_VERSION << 8) | 0x00);
 }
 
-VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize) {
+VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD mod, UINT worksize) {
 
 	UINT	size;
 	MIDIHDL	ret;
 
-	if (module == NULL) {
+	if (mod == NULL) {
 		return(NULL);
 	}
 	worksize = min(worksize, 512);
@@ -733,14 +736,14 @@ VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize) {
 	size += sizeof(_SAMPLE) * worksize;
 	ret = (MIDIHDL)_MALLOC(size, "MIDIHDL");
 	if (ret) {
-		midimod_lock(module);
+		midimod_lock(mod);
 		ZeroMemory(ret, size);
-		ret->samprate = module->samprate;
+		ret->samprate = mod->samprate;
 		ret->worksize = worksize;
-		ret->module = module;
+		ret->module = mod;
 	//	ret->master = 127;
-		ret->bank0[0] = module->tone[0];
-		ret->bank0[1] = module->tone[1];
+		ret->bank0[0] = mod->tone[0];
+		ret->bank0[1] = mod->tone[1];
 		ret->sampbuf = (SINT32 *)(ret + 1);
 		ret->resampbuf = (SAMPLE)(ret->sampbuf + worksize * 2);
 		allresetmidi(ret, FALSE);
@@ -750,12 +753,12 @@ VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize) {
 
 VEXTERN void VEXPORT midiout_destroy(MIDIHDL hdl) {
 
-	MIDIMOD module;
+	MIDIMOD mod;
 
 	if (hdl) {
-		module = hdl->module;
+		mod = hdl->module;
 		_MFREE(hdl);
-		midimod_lock(module);
+		midimod_lock(mod);
 	}
 }
 
@@ -1085,8 +1088,8 @@ VEXTERN const SINT32 * VEXPORT midiout_get(MIDIHDL hdl, UINT *samples) {
 	}
 	buf = hdl->sampbuf;
 	ZeroMemory(buf, size * 2 * sizeof(SINT32));
-	v = hdl->voice;
-	vterm = v + VOICE_MAX;
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
 	playing = FALSE;
 	do {
 		if (v->phase != VOICE_FREE) {
@@ -1136,6 +1139,58 @@ moget_err:
 	return(NULL);
 }
 
+static UINT	VERMOUTHCL preparepcm(MIDIHDL hdl, UINT size)
+{
+	UINT	step;
+	VOICE	v;
+	VOICE	vterm;
+	SINT32	*buf;
+	SAMPLE	src;
+	SAMPLE	srcterm;
+	UINT	cnt;
+	UINT	pos;
+	UINT	rem;
+
+	step = min(size, hdl->worksize);
+	buf = hdl->sampbuf;
+	ZeroMemory(buf, step * 2 * sizeof(SINT32));
+	v = VOICEHDLPTR(hdl);
+	vterm = VOICEHDLEND(hdl);
+	do {
+		if (v->phase != VOICE_FREE) {
+			cnt = step;
+			if (v->phase & VOICE_REL) {
+				voice_setfree(v);
+				if (cnt > REL_COUNT) {
+					cnt = REL_COUNT;
+				}
+			}
+			if (v->flag & VOICE_FIXPITCH) {
+				pos = v->samppos >> FREQ_SHIFT;
+				src = v->sample->data + pos;
+				rem = (v->sample->datasize >> FREQ_SHIFT) - pos;
+				if (cnt < rem) {
+					v->samppos += cnt << FREQ_SHIFT;
+					srcterm = src + cnt;
+				}
+				else {
+					voice_setfree(v);
+					srcterm = src + rem;
+				}
+			}
+			else {
+				src = hdl->resampbuf;
+				srcterm = v->resamp(v, src, src + cnt);
+			}
+			if (src != srcterm) {
+				v->mix(v, buf, src, srcterm);
+			}
+		}
+		v++;
+	} while(v < vterm);
+	return(step);
+}
+
 VEXTERN UINT VEXPORT midiout_get16(MIDIHDL hdl, SINT16 *pcm, UINT size) {
 
 	UINT	step;
@@ -1156,8 +1211,8 @@ VEXTERN UINT VEXPORT midiout_get16(MIDIHDL hdl, SINT16 *pcm, UINT size) {
 			size -= step;
 			buf = hdl->sampbuf;
 			ZeroMemory(buf, step * 2 * sizeof(SINT32));
-			v = hdl->voice;
-			vterm = v + VOICE_MAX;
+			v = VOICEHDLPTR(hdl);
+			vterm = VOICEHDLEND(hdl);
 			do {
 				if (v->phase != VOICE_FREE) {
 					cnt = step;
@@ -1230,12 +1285,13 @@ VEXTERN UINT VEXPORT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size) {
 
 	if ((hdl != NULL) && (size)) {
 		do {
+
 			step = min(size, hdl->worksize);
 			size -= step;
 			buf = hdl->sampbuf;
 			ZeroMemory(buf, step * 2 * sizeof(SINT32));
-			v = hdl->voice;
-			vterm = v + VOICE_MAX;
+			v = VOICEHDLPTR(hdl);
+			vterm = VOICEHDLEND(hdl);
 			do {
 				if (v->phase != VOICE_FREE) {
 					cnt = step;
@@ -1268,6 +1324,7 @@ VEXTERN UINT VEXPORT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size) {
 				}
 				v++;
 			} while(v < vterm);
+
 			do {
 				pcm[0] += buf[0] >> (SAMP_SHIFT + 1);
 				pcm[1] += buf[1] >> (SAMP_SHIFT + 1);

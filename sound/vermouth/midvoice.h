@@ -151,5 +151,8 @@ void VERMOUTHCL voice_setmix(VOICE v);
 
 // ---- macro
 
-#define voice_setfree(v)		(v)->phase = VOICE_FREE
+#define voice_setfree(v)			\
+	do {							\
+		(v)->phase = VOICE_FREE;	\
+	} while(0 /*CONSTCOND*/)
 

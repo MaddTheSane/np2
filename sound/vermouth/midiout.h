@@ -28,6 +28,7 @@ enum {
 	MIDIOUT_ABORT		= -2
 };
 
+#define	CHANNEL_MAX		16
 #define	VOICE_MAX		24
 
 #define	SAMP_SHIFT		12
@@ -95,7 +96,7 @@ struct _midictrl {
 	MIDIHDL		portb;
 #endif	// defined(ENABLE_PORTB);
 
-	_CHANNEL	channel[16];
+	_CHANNEL	channel[CHANNEL_MAX];
 	_VOICE		voice[VOICE_MAX];
 };
 
@@ -121,7 +122,7 @@ extern "C" {
 #endif
 
 VEXTERN UINT VEXPORT midiout_getver(char *string, int leng);
-VEXTERN _MIDIHDL * VEXPORT midiout_create(MIDIMOD module, UINT worksize);
+VEXTERN _MIDIHDL * VEXPORT midiout_create(MIDIMOD mod, UINT worksize);
 VEXTERN void VEXPORT midiout_destroy(MIDIHDL hdl);
 VEXTERN void VEXPORT midiout_shortmsg(MIDIHDL hdl, UINT32 msg);
 VEXTERN void VEXPORT midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size);
@@ -133,13 +134,14 @@ VEXTERN void VEXPORT midiout_setmoduleid(MIDIHDL hdl, UINT8 moduleid);
 VEXTERN void VEXPORT midiout_setportb(MIDIHDL hdl, MIDIHDL portb);
 
 VEXTERN _MIDIMOD * VEXPORT midimod_create(UINT samprate);
-VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl);
-VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD hdl, const OEMCHAR *filename);
-VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD hdl, UINT num);
-VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD hdl, UINT num);
-VEXTERN void VEXPORT midimod_loadgm(MIDIMOD hdl);
-VEXTERN void VEXPORT midimod_loadall(MIDIMOD hdl);
-VEXTERN void VEXPORT midimod_loadallex(MIDIMOD hdl, FNMIDIOUTLAEXCB cb, void *userdata);
+VEXTERN void VEXPORT midimod_destroy(MIDIMOD mod);
+VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD mod, const OEMCHAR *filename);
+VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD mod, UINT num);
+VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD mod, UINT num);
+VEXTERN void VEXPORT midimod_loadgm(MIDIMOD mod);
+VEXTERN void VEXPORT midimod_loadall(MIDIMOD mod);
+VEXTERN void VEXPORT midimod_loadallex(MIDIMOD mod, FNMIDIOUTLAEXCB cb,
+															void *userdata);
 
 #ifdef __cplusplus
 }

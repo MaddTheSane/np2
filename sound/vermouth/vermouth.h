@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 VEXTERN UINT VEXPORT midiout_getver(char *string, int leng);
-VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD module, UINT worksize);
+VEXTERN MIDIHDL VEXPORT midiout_create(MIDIMOD mod, UINT worksize);
 VEXTERN void VEXPORT midiout_destroy(MIDIHDL hdl);
 VEXTERN void VEXPORT midiout_shortmsg(MIDIHDL hdl, UINT32 msg);
 VEXTERN void VEXPORT midiout_longmsg(MIDIHDL hdl, const void *msg, UINT size);

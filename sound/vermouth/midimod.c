@@ -486,113 +486,114 @@ mmcre_err1:
 	return(NULL);
 }
 
-void VERMOUTHCL midimod_lock(MIDIMOD hdl) {
+void VERMOUTHCL midimod_lock(MIDIMOD mod) {
 
-	hdl->lockcount++;
+	mod->lockcount++;
 }
 
-void VERMOUTHCL midimod_unlock(MIDIMOD hdl) {
+void VERMOUTHCL midimod_unlock(MIDIMOD mod) {
 
 	UINT	r;
 	TONECFG	bank;
 
-	if (!hdl->lockcount) {
+	if (!mod->lockcount) {
 		return;
 	}
-	hdl->lockcount--;
-	if (hdl->lockcount) {
+	mod->lockcount--;
+	if (mod->lockcount) {
 		return;
 	}
 
 	r = 128;
 	do {
 		r--;
-		inst_bankfree(hdl, r);
+		inst_bankfree(mod, r);
 	} while(r > 0);
 	for (r=2; r<(MIDI_BANKS*2); r++) {
-		bank = hdl->tonecfg[r];
+		bank = mod->tonecfg[r];
 		if (bank) {
 			_MFREE(bank);
 		}
 	}
-	listarray_destroy(hdl->namelist);
-	listarray_destroy(hdl->pathtbl);
-	_MFREE(hdl);
+	listarray_destroy(mod->namelist);
+	listarray_destroy(mod->pathtbl);
+	_MFREE(mod);
 }
 
-VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl) {
+VEXTERN void VEXPORT midimod_destroy(MIDIMOD mod) {
 
-	if (hdl) {
-		midimod_unlock(hdl);
+	if (mod) {
+		midimod_unlock(mod);
 	}
 }
 
-VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD hdl,
+VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD mod,
 												const OEMCHAR *filename) {
 
-	return(cfgfile_load(hdl, filename, 0));
+	return(cfgfile_load(mod, filename, 0));
 }
 
-VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD hdl, UINT num) {
+VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD mod, UINT num) {
 
 	UINT	bank;
 
-	if (hdl != NULL) {
+	if (mod != NULL) {
 		bank = (num >> 8) & 0x7f;
 		num &= 0x7f;
-		if (inst_singleload(hdl, bank << 1, num) != MIDIOUT_SUCCESS) {
-			inst_singleload(hdl, 0, num);
+		if (inst_singleload(mod, bank << 1, num) != MIDIOUT_SUCCESS) {
+			inst_singleload(mod, 0, num);
 		}
 	}
 }
 
-VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD hdl, UINT num) {
+VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD mod, UINT num) {
 
 	UINT	bank;
 
-	if (hdl != NULL) {
+	if (mod != NULL) {
 		bank = (num >> 8) & 0x7f;
 		num &= 0x7f;
-		if (inst_singleload(hdl, (bank << 1) + 1, num) != MIDIOUT_SUCCESS) {
-			inst_singleload(hdl, 1, num);
+		if (inst_singleload(mod, (bank << 1) + 1, num) != MIDIOUT_SUCCESS) {
+			inst_singleload(mod, 1, num);
 		}
 	}
 }
 
-VEXTERN void VEXPORT midimod_loadgm(MIDIMOD hdl) {
+VEXTERN void VEXPORT midimod_loadgm(MIDIMOD mod) {
 
-	if (hdl) {
-		inst_bankload(hdl, 0);
-		inst_bankload(hdl, 1);
+	if (mod) {
+		inst_bankload(mod, 0);
+		inst_bankload(mod, 1);
 	}
 }
 
-VEXTERN void VEXPORT midimod_loadall(MIDIMOD hdl) {
+VEXTERN void VEXPORT midimod_loadall(MIDIMOD mod) {
 
 	UINT	b;
 
-	if (hdl) {
+	if (mod) {
 		for (b=0; b<(MIDI_BANKS*2); b++) {
-			inst_bankload(hdl, b);
+			inst_bankload(mod, b);
 		}
 	}
 }
 
 
-VEXTERN void VEXPORT midimod_loadallex(MIDIMOD hdl, FNMIDIOUTLAEXCB cb, void *userdata) {
+VEXTERN void VEXPORT midimod_loadallex(MIDIMOD mod, FNMIDIOUTLAEXCB cb,
+															void *userdata) {
 
 	MIDIOUTLAEXPARAM param;
 	UINT	b;
 
-	if (hdl) {
+	if (mod) {
 		ZeroMemory(&param, sizeof(param));
 		param.userdata = userdata;
 		for (b=0; b<(MIDI_BANKS*2); b++) {
-			param.totaltones += inst_gettones(hdl, b);
+			param.totaltones += inst_gettones(mod, b);
 		}
 		for (b=0; b<(MIDI_BANKS*2); b++) {
 			param.bank = b;
-			inst_bankloadex(hdl, b, cb, &param);
+			inst_bankloadex(mod, b, cb, &param);
 		}
 	}
 }
