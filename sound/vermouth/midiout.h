@@ -10,6 +10,10 @@
 // #define	VOLUME_ACURVE
 #define ENABLE_PORTB
 
+#ifndef VERMOUTHCL
+#define	VERMOUTHCL
+#endif
+
 struct _midimodule;
 typedef	struct _midimodule	_MIDIMOD;
 typedef	struct _midimodule	*MIDIMOD;
@@ -54,10 +58,12 @@ enum {
 #define	MIDI_BANKS	128
 #endif
 
+
 #include	"midimod.h"
 #include	"midinst.h"
 #include	"midvoice.h"
 #include	"midtable.h"
+
 
 struct _midimodule {
 	UINT		samprate;
@@ -69,7 +75,6 @@ struct _midimodule {
 	LISTARRAY	pathtbl;
 	LISTARRAY	namelist;
 };
-
 
 struct _midictrl {
 	UINT		samprate;
@@ -101,12 +106,11 @@ struct _miditoneloadparam {
 	UINT	bank;
 	UINT	num;
 };
-typedef struct _miditoneloadparam	MIDIOUTLAEXPARAM;
-typedef int (*FNMIDIOUTLAEXCB)(MIDIOUTLAEXPARAM *param);
+
 
 #ifndef VERMOUTH_EXPORTS
 #define	VEXTERN
-#define	VEXPORT
+#define	VEXPORT		VERMOUTHCL
 #else
 #define	VEXTERN		__declspec(dllexport)
 #define	VEXPORT		WINAPI
@@ -130,6 +134,7 @@ VEXTERN void VEXPORT midiout_setportb(MIDIHDL hdl, MIDIHDL portb);
 
 VEXTERN _MIDIMOD * VEXPORT midimod_create(UINT samprate);
 VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl);
+VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD hdl, const OEMCHAR *filename);
 VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD hdl, UINT num);
 VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD hdl, UINT num);
 VEXTERN void VEXPORT midimod_loadgm(MIDIMOD hdl);

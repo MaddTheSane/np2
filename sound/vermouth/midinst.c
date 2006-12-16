@@ -74,7 +74,7 @@ typedef struct {
 } GUSWAVE;
 
 
-static void inst_destroy(INSTRUMENT inst);
+static void VERMOUTHCL inst_destroy(INSTRUMENT inst);
 
 
 // ---- resample
@@ -82,7 +82,8 @@ static void inst_destroy(INSTRUMENT inst);
 #define	BASEBITS	9
 #define	MIXBASE		(1 << BASEBITS)
 
-static SAMPLE downsamp(SAMPLE dst, SAMPLE src, int count, int mrate) {
+static SAMPLE VERMOUTHCL downsamp(SAMPLE dst, SAMPLE src, int count,
+																int mrate) {
 
 	int		rem;
 	SINT32	pcm;
@@ -109,7 +110,8 @@ static SAMPLE downsamp(SAMPLE dst, SAMPLE src, int count, int mrate) {
 	return(dst);
 }
 
-static SAMPLE upsamp(SAMPLE dst, SAMPLE src, int count, int mrate) {
+static SAMPLE VERMOUTHCL upsamp(SAMPLE dst, SAMPLE src, int count,
+																int mrate) {
 
 	int		rem;
 	SINT32	tmp;
@@ -140,7 +142,7 @@ static SAMPLE upsamp(SAMPLE dst, SAMPLE src, int count, int mrate) {
 	return(dst);
 }
 
-static void resample(MIDIMOD mod, INSTLAYER inst, int freq) {
+static void VERMOUTHCL resample(MIDIMOD mod, INSTLAYER inst, int freq) {
 
 	int		mrate;
 	int		orgcnt;
@@ -188,7 +190,7 @@ static const char sig_GF1PATCH110[] = "GF1PATCH110";
 static const char sig_ID000002[] = "ID#000002";
 static const char str_question6[] = "??????";
 
-static INSTRUMENT inst_create(MIDIMOD mod, const _TONECFG *cfg) {
+static INSTRUMENT VERMOUTHCL inst_create(MIDIMOD mod, const _TONECFG *cfg) {
 
 	OEMCHAR		filename[MAX_PATH];
 	OEMCHAR		path[MAX_PATH];
@@ -213,7 +215,7 @@ const UINT8		*d;
 	file_cpyname(filename, cfg->name, NELEMENTS(filename));
 	file_cutext(filename);
 	file_catname(filename, ext_pat, NELEMENTS(filename));
-	if (cfgfile_getfile(mod, filename, path, NELEMENTS(path)) != SUCCESS) {
+	if (midimod_getfile(mod, filename, path, NELEMENTS(path)) != SUCCESS) {
 		goto li_err1;
 	}
 	fh = _file_open(path);
@@ -449,7 +451,7 @@ li_err1:
 	return(NULL);
 }
 
-static void inst_destroy(INSTRUMENT inst) {
+static void VERMOUTHCL inst_destroy(INSTRUMENT inst) {
 
 	int			layers;
 	INSTLAYER	layer;
@@ -467,7 +469,7 @@ static void inst_destroy(INSTRUMENT inst) {
 	}
 }
 
-int inst_singleload(MIDIMOD mod, UINT bank, UINT num) {
+int VERMOUTHCL inst_singleload(MIDIMOD mod, UINT bank, UINT num) {
 
 	INSTRUMENT	*inst;
 	INSTRUMENT	tone;
@@ -501,12 +503,13 @@ const _TONECFG	*cfg;
 	return(MIDIOUT_SUCCESS);
 }
 
-int inst_bankload(MIDIMOD mod, UINT bank) {
+int VERMOUTHCL inst_bankload(MIDIMOD mod, UINT bank) {
 
 	return(inst_bankloadex(mod, bank, NULL, NULL));
 }
 
-int inst_bankloadex(MIDIMOD mod, UINT bank, int (*cb)(struct _miditoneloadparam *param), struct _miditoneloadparam *param) {
+int VERMOUTHCL inst_bankloadex(MIDIMOD mod, UINT bank,
+							FNMIDIOUTLAEXCB cb, MIDIOUTLAEXPARAM *param) {
 
 	INSTRUMENT	*inst;
 	INSTRUMENT	tone;
@@ -552,7 +555,7 @@ const _TONECFG	*cfg;
 	return(MIDIOUT_SUCCESS);
 }
 
-void inst_bankfree(MIDIMOD mod, UINT bank) {
+void VERMOUTHCL inst_bankfree(MIDIMOD mod, UINT bank) {
 
 	INSTRUMENT	*inst;
 	INSTRUMENT	*i;
@@ -578,7 +581,7 @@ void inst_bankfree(MIDIMOD mod, UINT bank) {
 	}
 }
 
-UINT inst_gettones(MIDIMOD mod, UINT bank) {
+UINT VERMOUTHCL inst_gettones(MIDIMOD mod, UINT bank) {
 
 	INSTRUMENT	*inst;
 const _TONECFG	*cfg;

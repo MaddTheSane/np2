@@ -2,8 +2,8 @@
 #include	"midiout.h"
 
 
-#define	MIDIOUT_VERSION		0x115
-#define	MIDIOUT_VERSTRING	"VERMOUTH 1.15"
+#define	MIDIOUT_VERSION		0x116
+#define	MIDIOUT_VERSTRING	"VERMOUTH 1.16"
 
 static const char vermouthver[] = MIDIOUT_VERSTRING;
 
@@ -15,7 +15,7 @@ static const int gaintbl[24+1] =
 
 // ---- voice
 
-static void voice_volupdate(VOICE v) {
+static void VERMOUTHCL voice_volupdate(VOICE v) {
 
 	CHANNEL	ch;
 	int		vol;
@@ -63,7 +63,7 @@ static void voice_volupdate(VOICE v) {
 #endif
 }
 
-static INSTLAYER selectlayer(VOICE v, INSTRUMENT inst) {
+static INSTLAYER VERMOUTHCL selectlayer(VOICE v, INSTRUMENT inst) {
 
 	int			layers;
 	INSTLAYER	layer;
@@ -110,7 +110,7 @@ static INSTLAYER selectlayer(VOICE v, INSTRUMENT inst) {
 	return(layersel);
 }
 
-static void freq_update(VOICE v) {
+static void VERMOUTHCL freq_update(VOICE v) {
 
 	CHANNEL	ch;
 	float	step;
@@ -134,7 +134,8 @@ static void freq_update(VOICE v) {
 	v->sampstep = (int)step;
 }
 
-static void voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key, int vel) {
+static void VERMOUTHCL voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key,
+																	int vel) {
 
 	INSTRUMENT	inst;
 	INSTLAYER	layer;
@@ -255,7 +256,7 @@ static void voice_on(MIDIHDL midi, CHANNEL ch, VOICE v, int key, int vel) {
 	envelope_updates(v);
 }
 
-static void voice_off(VOICE v) {
+static void VERMOUTHCL voice_off(VOICE v) {
 
 	voice_setphase(v, VOICE_OFF);
 	if (v->sample->mode & MODE_ENVELOPE) {
@@ -265,7 +266,7 @@ static void voice_off(VOICE v) {
 	}
 }
 
-static void allresetvoices(MIDIHDL midi) {
+static void VERMOUTHCL allresetvoices(MIDIHDL midi) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -281,7 +282,7 @@ static void allresetvoices(MIDIHDL midi) {
 
 // ---- key
 
-static void key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
+static void VERMOUTHCL key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
 
 	VOICE	v;
 	VOICE	v1;
@@ -331,7 +332,7 @@ static void key_on(MIDIHDL midi, CHANNEL ch, int key, int vel) {
 	}
 }
 
-static void key_off(MIDIHDL midi, CHANNEL ch, int key) {
+static void VERMOUTHCL key_off(MIDIHDL midi, CHANNEL ch, int key) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -353,7 +354,8 @@ static void key_off(MIDIHDL midi, CHANNEL ch, int key) {
 	} while(v < vterm);
 }
 
-static void key_pressure(MIDIHDL midi, CHANNEL ch, int key, int vel) {
+static void VERMOUTHCL key_pressure(MIDIHDL midi, CHANNEL ch, int key,
+																	int vel) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -375,7 +377,7 @@ static void key_pressure(MIDIHDL midi, CHANNEL ch, int key, int vel) {
 
 // ---- control
 
-static void volumeupdate(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL volumeupdate(MIDIHDL midi, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -396,7 +398,7 @@ static void volumeupdate(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void pedaloff(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL pedaloff(MIDIHDL midi, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -411,7 +413,7 @@ static void pedaloff(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void allsoundsoff(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL allsoundsoff(MIDIHDL midi, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -427,7 +429,7 @@ static void allsoundsoff(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void resetallcontrollers(CHANNEL ch) {
+static void VERMOUTHCL resetallcontrollers(CHANNEL ch) {
 
 	ch->flag &= CHANNEL_MASK;
 	if (ch->flag == 9) {
@@ -439,7 +441,7 @@ static void resetallcontrollers(CHANNEL ch) {
 	ch->pitchfactor = 1.0;
 }
 
-static void allnotesoff(MIDIHDL midi, CHANNEL ch) {
+static void VERMOUTHCL allnotesoff(MIDIHDL midi, CHANNEL ch) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -465,7 +467,8 @@ static void allnotesoff(MIDIHDL midi, CHANNEL ch) {
 	} while(v < vterm);
 }
 
-static void ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl, int val) {
+static void VERMOUTHCL ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl,
+																	int val) {
 
 	val &= 0x7f;
 	switch(ctrl & 0x7f) {
@@ -548,7 +551,7 @@ static void ctrlchange(MIDIHDL midi, CHANNEL ch, int ctrl, int val) {
 	}
 }
 
-static void progchange(MIDIHDL midi, CHANNEL ch, int val) {
+static void VERMOUTHCL progchange(MIDIHDL midi, CHANNEL ch, int val) {
 
 #if !defined(MIDI_GMONLY)
 	MIDIMOD		module;
@@ -583,7 +586,7 @@ static void progchange(MIDIHDL midi, CHANNEL ch, int val) {
 	ch->program = val;
 }
 
-static void chpressure(MIDIHDL midi, CHANNEL ch, int vel) {
+static void VERMOUTHCL chpressure(MIDIHDL midi, CHANNEL ch, int vel) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -601,7 +604,8 @@ static void chpressure(MIDIHDL midi, CHANNEL ch, int vel) {
 	} while(v < vterm);
 }
 
-static void pitchbendor(MIDIHDL midi, CHANNEL ch, int val1, int val2) {
+static void VERMOUTHCL pitchbendor(MIDIHDL midi, CHANNEL ch, int val1,
+																int val2) {
 
 	VOICE	v;
 	VOICE	vterm;
@@ -630,7 +634,7 @@ static void pitchbendor(MIDIHDL midi, CHANNEL ch, int val1, int val2) {
 	}
 }
 
-static void allvolupdate(MIDIHDL midi) {
+static void VERMOUTHCL allvolupdate(MIDIHDL midi) {
 
 	int		level;
 	CHANNEL	ch;
@@ -659,10 +663,10 @@ static void allvolupdate(MIDIHDL midi) {
 }
 
 #if defined(ENABLE_GSRX)
-static void allresetmidi(MIDIHDL midi, BOOL gs)
+static void VERMOUTHCL allresetmidi(MIDIHDL midi, BOOL gs)
 #else
 #define allresetmidi(m, g)		_allresetmidi(m)
-static void _allresetmidi(MIDIHDL midi)
+static void VERMOUTHCL _allresetmidi(MIDIHDL midi)
 #endif
 {
 	CHANNEL	ch;
@@ -808,7 +812,7 @@ VEXTERN void VEXPORT midiout_shortmsg(MIDIHDL hdl, UINT32 msg) {
 	}
 }
 
-static void longmsg_uni(MIDIHDL hdl, const UINT8 *msg, UINT size) {
+static void VERMOUTHCL longmsg_uni(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	if ((size >= 6) && (msg[2] == 0x7f)) {
 		switch(msg[3]) {
@@ -822,7 +826,7 @@ static void longmsg_uni(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 	}
 }
 
-static void longmsg_gm(MIDIHDL hdl, const UINT8 *msg, UINT size) {
+static void VERMOUTHCL longmsg_gm(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 
 	if ((size >= 6) && (msg[2] == 0x7f)) {
 		switch(msg[3]) {
@@ -842,7 +846,7 @@ static void longmsg_gm(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 	}
 }
 
-static void rolandcmd4(MIDIHDL hdl, UINT addr, UINT8 data) {
+static void VERMOUTHCL rolandcmd4(MIDIHDL hdl, UINT addr, UINT8 data) {
 
 	UINT	part;
 	CHANNEL	ch;
@@ -998,7 +1002,8 @@ static void rolandcmd4(MIDIHDL hdl, UINT addr, UINT8 data) {
 	}
 }
 
-static void longmsg_roland(MIDIHDL hdl, const UINT8 *msg, UINT size) {
+static void VERMOUTHCL longmsg_roland(MIDIHDL hdl, const UINT8 *msg,
+																UINT size) {
 
 	UINT	addr;
 	UINT8	data;

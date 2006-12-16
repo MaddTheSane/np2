@@ -3,8 +3,9 @@ struct _midivoice;
 typedef	struct _midivoice	_VOICE;
 typedef	struct _midivoice	*VOICE;
 
-typedef void (*MIXPROC)(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm);
-typedef SAMPLE (*RESPROC)(VOICE v, SAMPLE dst, SAMPLE dstterm);
+typedef void (VERMOUTHCL *MIXPROC)(VOICE v, SINT32 *dst, SAMPLE src,
+														SAMPLE srcterm);
+typedef SAMPLE (VERMOUTHCL *RESPROC)(VOICE v, SAMPLE dst, SAMPLE dstterm);
 
 enum {
 	CHANNEL_MASK	= 0x0f,
@@ -137,11 +138,11 @@ struct _midivoice {
 extern "C" {
 #endif
 
-int envlope_setphase(VOICE v, int phase);
-void envelope_updates(VOICE v);
+int VERMOUTHCL envlope_setphase(VOICE v, int phase);
+void VERMOUTHCL envelope_updates(VOICE v);
 
-void voice_setphase(VOICE v, UINT8 phase);
-void voice_setmix(VOICE v);
+void VERMOUTHCL voice_setphase(VOICE v, UINT8 phase);
+void VERMOUTHCL voice_setmix(VOICE v);
 
 #ifdef __cplusplus
 }

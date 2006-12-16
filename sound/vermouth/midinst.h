@@ -50,16 +50,20 @@ typedef struct {
 } _INSTRUMENT, *INSTRUMENT;
 
 struct _miditoneloadparam;
+typedef struct _miditoneloadparam	MIDIOUTLAEXPARAM;
+typedef int (VERMOUTHCL *FNMIDIOUTLAEXCB)(MIDIOUTLAEXPARAM *param);
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int inst_singleload(MIDIMOD mod, UINT bank, UINT num);
-int inst_bankload(MIDIMOD mod, UINT bank);
-int inst_bankloadex(MIDIMOD mod, UINT bank, int (*cb)(struct _miditoneloadparam *param), struct _miditoneloadparam *param);
-void inst_bankfree(MIDIMOD mod, UINT bank);
-UINT inst_gettones(MIDIMOD mod, UINT bank);
+int VERMOUTHCL inst_singleload(MIDIMOD mod, UINT bank, UINT num);
+int VERMOUTHCL inst_bankload(MIDIMOD mod, UINT bank);
+int VERMOUTHCL inst_bankloadex(MIDIMOD mod, UINT bank,
+								FNMIDIOUTLAEXCB cb, MIDIOUTLAEXPARAM *param);
+void VERMOUTHCL inst_bankfree(MIDIMOD mod, UINT bank);
+UINT VERMOUTHCL inst_gettones(MIDIMOD mod, UINT bank);
 
 #ifdef __cplusplus
 }

@@ -2,9 +2,13 @@
 #ifndef __VERMOUTH_H
 #define	__VERMOUTH_H
 
+#ifndef VERMOUTHCL
+#define	VERMOUTHCL
+#endif
+
 #ifndef VERMOUTH_EXPORTS
 #define	VEXTERN
-#define	VEXPORT
+#define	VEXPORT		VERMOUTHCL
 #else
 #define	VEXTERN		__declspec(dllexport)
 #define	VEXPORT		WINAPI
@@ -47,6 +51,8 @@ VEXTERN void VEXPORT midiout_setportb(MIDIHDL hdl, MIDIHDL portb);
 
 VEXTERN MIDIMOD VEXPORT midimod_create(UINT samprate);
 VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl);
+VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl);
+VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD mod, const OEMCHAR *filename);
 VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD hdl, UINT num);
 VEXTERN void VEXPORT midimod_loadrhythm(MIDIMOD hdl, UINT num);
 VEXTERN void VEXPORT midimod_loadgm(MIDIMOD hdl);

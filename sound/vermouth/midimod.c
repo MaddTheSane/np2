@@ -42,7 +42,7 @@ static const OEMCHAR file_timiditycfg[] = OEMTEXT("timidity.cfg");
 static const OEMCHAR str_basedir[] = OEMTEXT("${basedir}");
 
 
-static void pathadd(MIDIMOD mod, const OEMCHAR *path) {
+static void VERMOUTHCL pathadd(MIDIMOD mod, const OEMCHAR *path) {
 
 	_PATHLIST	pl;
 	PATHLIST	p;
@@ -74,7 +74,7 @@ static void pathadd(MIDIMOD mod, const OEMCHAR *path) {
 	}
 }
 
-static void pathaddex(MIDIMOD mod, const OEMCHAR *path) {
+static void VERMOUTHCL pathaddex(MIDIMOD mod, const OEMCHAR *path) {
 
 	OEMCHAR	_path[MAX_PATH];
 
@@ -89,7 +89,7 @@ static void pathaddex(MIDIMOD mod, const OEMCHAR *path) {
 	}
 }
 
-static int cfggetarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg) {
+static int VERMOUTHCL cfggetarg(OEMCHAR *str, OEMCHAR *arg[], int maxarg) {
 
 	int		ret;
 	BOOL	quot;
@@ -141,7 +141,7 @@ cga_done:
 	return(ret);
 }
 
-static OEMCHAR *seachr(const OEMCHAR *str, OEMCHAR sepa) {
+static OEMCHAR *VERMOUTHCL seachr(const OEMCHAR *str, OEMCHAR sepa) {
 
 	OEMCHAR	c;
 
@@ -163,7 +163,7 @@ enum {
 	VAL_SIGN	= 2
 };
 
-static BRESULT cfggetval(const OEMCHAR *str, int *val) {
+static BRESULT VERMOUTHCL cfggetval(const OEMCHAR *str, int *val) {
 
 	int		ret;
 	int		flag;
@@ -208,7 +208,8 @@ static BRESULT cfggetval(const OEMCHAR *str, int *val) {
 
 // ----
 
-static void settone(MIDIMOD mod, int bank, int argc, OEMCHAR *argv[]) {
+static void VERMOUTHCL settone(MIDIMOD mod, int bank, int argc,
+															OEMCHAR *argv[]) {
 
 	int		val;
 	TONECFG	tone;
@@ -332,7 +333,7 @@ static void settone(MIDIMOD mod, int bank, int argc, OEMCHAR *argv[]) {
 
 // ----
 
-BRESULT cfgfile_getfile(MIDIMOD mod, const OEMCHAR *filename,
+BRESULT VERMOUTHCL midimod_getfile(MIDIMOD mod, const OEMCHAR *filename,
 													OEMCHAR *path, int size) {
 
 	PATHLIST	p;
@@ -361,7 +362,8 @@ fpgf_exit:
 	return(FAILURE);
 }
 
-BRESULT cfgfile_load(MIDIMOD mod, const OEMCHAR *filename, int depth) {
+static BRESULT VERMOUTHCL cfgfile_load(MIDIMOD mod, const OEMCHAR *filename,
+																int depth) {
 
 	TEXTFILEH	tfh;
 	OEMCHAR		buf[1024];
@@ -375,7 +377,7 @@ BRESULT cfgfile_load(MIDIMOD mod, const OEMCHAR *filename, int depth) {
 	bank = -1;
 
 	if ((depth >= 16) ||
-		(cfgfile_getfile(mod, filename, buf, NELEMENTS(buf)) != SUCCESS)) {
+		(midimod_getfile(mod, filename, buf, NELEMENTS(buf)) != SUCCESS)) {
 		goto cfl_err;
 	}
 //	TRACEOUT(("open: %s", buf));
@@ -484,12 +486,12 @@ mmcre_err1:
 	return(NULL);
 }
 
-void midimod_lock(MIDIMOD hdl) {
+void VERMOUTHCL midimod_lock(MIDIMOD hdl) {
 
 	hdl->lockcount++;
 }
 
-void midimod_unlock(MIDIMOD hdl) {
+void VERMOUTHCL midimod_unlock(MIDIMOD hdl) {
 
 	UINT	r;
 	TONECFG	bank;
@@ -523,6 +525,12 @@ VEXTERN void VEXPORT midimod_destroy(MIDIMOD hdl) {
 	if (hdl) {
 		midimod_unlock(hdl);
 	}
+}
+
+VEXTERN BRESULT VEXPORT midimod_cfgload(MIDIMOD hdl,
+												const OEMCHAR *filename) {
+
+	return(cfgfile_load(hdl, filename, 0));
 }
 
 VEXTERN void VEXPORT midimod_loadprogram(MIDIMOD hdl, UINT num) {

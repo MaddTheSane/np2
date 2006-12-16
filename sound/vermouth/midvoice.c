@@ -25,7 +25,7 @@
 
 // ---- vibrate
 
-static int vibrate_update(VOICE v) {
+static int VERMOUTHCL vibrate_update(VOICE v) {
 
 	int		depth;
 	int		phase;
@@ -52,7 +52,8 @@ static int vibrate_update(VOICE v) {
 	return((int)(step * (float)(1 << FREQ_SHIFT)));
 }
 
-static SAMPLE resample_vibrate(VOICE v, SAMPLE dst, SAMPLE dstterm) {
+static SAMPLE VERMOUTHCL resample_vibrate(VOICE v, SAMPLE dst,
+															SAMPLE dstterm) {
 
 	SAMPLE	src;
 	SAMPLE	dstbreak;
@@ -109,7 +110,8 @@ static SAMPLE resample_vibrate(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 	return(dst);
 }
 
-static SAMPLE resample_vibloop(VOICE v, SAMPLE dst, SAMPLE dstterm) {
+static SAMPLE VERMOUTHCL resample_vibloop(VOICE v, SAMPLE dst,
+															SAMPLE dstterm) {
 
 	SAMPLE	src;
 	SAMPLE	dstbreak;
@@ -161,7 +163,8 @@ static SAMPLE resample_vibloop(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 	return(dst);
 }
 
-static SAMPLE resample_vibround(VOICE v, SAMPLE dst, SAMPLE dstterm) {
+static SAMPLE VERMOUTHCL resample_vibround(VOICE v, SAMPLE dst,
+															SAMPLE dstterm) {
 
 	SAMPLE	src;
 	SAMPLE	dstbreak;
@@ -269,7 +272,7 @@ rr_done:
 
 // ---- normal
 
-static SAMPLE resample_normal(VOICE v, SAMPLE dst, SAMPLE dstterm) {
+static SAMPLE VERMOUTHCL resample_normal(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 
 	SAMPLE	src;
 	int		pos;
@@ -298,7 +301,7 @@ static SAMPLE resample_normal(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 	return(dst);
 }
 
-static SAMPLE resample_loop(VOICE v, SAMPLE dst, SAMPLE dstterm) {
+static SAMPLE VERMOUTHCL resample_loop(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 
 	SAMPLE	src;
 	int		pos;
@@ -321,7 +324,7 @@ static SAMPLE resample_loop(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 	return(dst);
 }
 
-static SAMPLE resample_round(VOICE v, SAMPLE dst, SAMPLE dstterm) {
+static SAMPLE VERMOUTHCL resample_round(VOICE v, SAMPLE dst, SAMPLE dstterm) {
 
 	SAMPLE	src;
 	int		pos;
@@ -376,7 +379,7 @@ rr_done:
 
 // ----
 
-int envlope_setphase(VOICE v, int phase) {
+int VERMOUTHCL envlope_setphase(VOICE v, int phase) {
 
 	do {
 		if (phase >= 6) {
@@ -402,7 +405,7 @@ int envlope_setphase(VOICE v, int phase) {
 	return(0);
 }
 
-void envelope_updates(VOICE v) {
+void VERMOUTHCL envelope_updates(VOICE v) {
 
 	int		envl;
 	int		envr;
@@ -457,7 +460,7 @@ void envelope_updates(VOICE v) {
 }
 
 #if defined(ENABLE_TREMOLO)
-static void tremolo_update(VOICE v) {
+static void VERMOUTHCL tremolo_update(VOICE v) {
 
 	int		depth;
 	int		cnt;
@@ -516,7 +519,8 @@ static int envelope_update(VOICE v) {
 
 // ---- release
 
-static void mixrel_normal(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixrel_normal(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	int		samples;
 	SINT32	voll;
@@ -550,7 +554,8 @@ static void mixrel_normal(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixrel_left(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixrel_left(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	SINT32	vol;
 	SINT32	rel;
@@ -572,12 +577,14 @@ static void mixrel_left(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixrel_right(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixrel_right(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	mixrel_left(v, dst + 1, src, srcterm);
 }
 
-static void mixrel_centre(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixrel_centre(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	SINT32	vol;
 	SINT32	rel;
@@ -605,7 +612,8 @@ static void mixrel_centre(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 
 // ---- normal
 
-static void mixnor_normal(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixnor_normal(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	SINT32	voll;
 	SINT32	volr;
@@ -621,7 +629,8 @@ static void mixnor_normal(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixnor_left(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixnor_left(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	SINT32	vol;
 	_SAMPLE	s;
@@ -634,7 +643,8 @@ static void mixnor_left(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixnor_right(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixnor_right(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	SINT32	vol;
 	_SAMPLE	s;
@@ -647,7 +657,8 @@ static void mixnor_right(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixnor_centre(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixnor_centre(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	SINT32	vol;
 	_SAMPLE	s;
@@ -666,7 +677,8 @@ static void mixnor_centre(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 
 // ---- env
 
-static void mixenv_normal(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixenv_normal(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	int		cnt;
 	SINT32	voll;
@@ -712,7 +724,8 @@ static void mixenv_normal(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixenv_left(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixenv_left(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	int		cnt;
 	SINT32	vol;
@@ -753,12 +766,14 @@ static void mixenv_left(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
 	} while(src < srcterm);
 }
 
-static void mixenv_right(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixenv_right(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	mixenv_left(v, dst + 1, src, srcterm);
 }
 
-static void mixenv_centre(VOICE v, SINT32 *dst, SAMPLE src, SAMPLE srcterm) {
+static void VERMOUTHCL mixenv_centre(VOICE v, SINT32 *dst, SAMPLE src,
+															SAMPLE srcterm) {
 
 	int		cnt;
 	SINT32	vol;
@@ -814,7 +829,7 @@ static const RESPROC resproc[] = {
 #endif
 };
 
-void voice_setphase(VOICE v, UINT8 phase) {
+void VERMOUTHCL voice_setphase(VOICE v, UINT8 phase) {
 
 	int		proc;
 	int		mode;
@@ -845,7 +860,7 @@ static const MIXPROC mixproc[] = {
 			mixenv_normal,	mixenv_left,	mixenv_right,	mixenv_centre,
 			mixrel_normal,	mixrel_left,	mixrel_right,	mixrel_centre};
 
-void voice_setmix(VOICE v) {
+void VERMOUTHCL voice_setmix(VOICE v) {
 
 	int		proc;
 
