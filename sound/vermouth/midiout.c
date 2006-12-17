@@ -1066,33 +1066,27 @@ VEXTERN void VEXPORT midiout_longmsg(MIDIHDL hdl, const UINT8 *msg, UINT size) {
 	}
 }
 
-VEXTERN const SINT32 * VEXPORT midiout_get(MIDIHDL hdl, UINT *samples) {
+static UINT	VERMOUTHCL preparepcm(MIDIHDL hdl, UINT size) {
 
-	UINT	size;
+	UINT	ret;
+	SINT32	*buf;
 	VOICE	v;
 	VOICE	vterm;
-	BOOL	playing;
-	SINT32	*buf;
 	SAMPLE	src;
 	SAMPLE	srcterm;
 	UINT	cnt;
 	UINT	pos;
 	UINT	rem;
 
-	if ((hdl == NULL) || (samples == NULL)) {
-		goto moget_err;
-	}
-	size = min(*samples, hdl->worksize);
-	if (size == 0) {
-		goto moget_err;
-	}
+	ret = 0;
+	size = min(size, hdl->worksize);
 	buf = hdl->sampbuf;
 	ZeroMemory(buf, size * 2 * sizeof(SINT32));
 	v = VOICEHDLPTR(hdl);
 	vterm = VOICEHDLEND(hdl);
-	playing = FALSE;
 	do {
 		if (v->phase != VOICE_FREE) {
+			ret = size;
 			cnt = size;
 			if (v->phase & VOICE_REL) {
 				voice_setfree(v);
@@ -1120,131 +1114,59 @@ VEXTERN const SINT32 * VEXPORT midiout_get(MIDIHDL hdl, UINT *samples) {
 			if (src != srcterm) {
 				v->mix(v, buf, src, srcterm);
 			}
-			playing = TRUE;
 		}
 		v++;
 	} while(v < vterm);
+	return(ret);
+}
 
-	if (playing) {
-		*samples = size;
-		pos = 0;
-		do {
-			buf[pos*2+0] >>= (SAMP_SHIFT + 1);
-			buf[pos*2+1] >>= (SAMP_SHIFT + 1);
-		} while(++pos < size);
-		return(buf);
+VEXTERN const SINT32 * VEXPORT midiout_get(MIDIHDL hdl, UINT *samples) {
+
+	UINT	size;
+	SINT32	*buf;
+	SINT32	*bufterm;
+
+	if ((hdl == NULL) || (samples == NULL)) {
+		goto moget_err;
 	}
+	size = *samples;
+	if (size == 0) {
+		goto moget_err;
+	}
+	size = preparepcm(hdl, size);
+	if (size == 0) {
+		goto moget_err;
+	}
+
+	*samples = size;
+	buf = hdl->sampbuf;
+	bufterm = buf + (size * 2);
+	do {
+		buf[0] >>= (SAMP_SHIFT + 1);
+		buf[1] >>= (SAMP_SHIFT + 1);
+		buf += 2;
+	} while(buf < bufterm);
+	return(hdl->sampbuf);
 
 moget_err:
 	return(NULL);
 }
 
-static UINT	VERMOUTHCL preparepcm(MIDIHDL hdl, UINT size)
-{
-	UINT	step;
-	VOICE	v;
-	VOICE	vterm;
-	SINT32	*buf;
-	SAMPLE	src;
-	SAMPLE	srcterm;
-	UINT	cnt;
-	UINT	pos;
-	UINT	rem;
-
-	step = min(size, hdl->worksize);
-	buf = hdl->sampbuf;
-	ZeroMemory(buf, step * 2 * sizeof(SINT32));
-	v = VOICEHDLPTR(hdl);
-	vterm = VOICEHDLEND(hdl);
-	do {
-		if (v->phase != VOICE_FREE) {
-			cnt = step;
-			if (v->phase & VOICE_REL) {
-				voice_setfree(v);
-				if (cnt > REL_COUNT) {
-					cnt = REL_COUNT;
-				}
-			}
-			if (v->flag & VOICE_FIXPITCH) {
-				pos = v->samppos >> FREQ_SHIFT;
-				src = v->sample->data + pos;
-				rem = (v->sample->datasize >> FREQ_SHIFT) - pos;
-				if (cnt < rem) {
-					v->samppos += cnt << FREQ_SHIFT;
-					srcterm = src + cnt;
-				}
-				else {
-					voice_setfree(v);
-					srcterm = src + rem;
-				}
-			}
-			else {
-				src = hdl->resampbuf;
-				srcterm = v->resamp(v, src, src + cnt);
-			}
-			if (src != srcterm) {
-				v->mix(v, buf, src, srcterm);
-			}
-		}
-		v++;
-	} while(v < vterm);
-	return(step);
-}
-
 VEXTERN UINT VEXPORT midiout_get16(MIDIHDL hdl, SINT16 *pcm, UINT size) {
 
 	UINT	step;
-	VOICE	v;
-	VOICE	vterm;
 	SINT32	*buf;
-	SAMPLE	src;
-	SAMPLE	srcterm;
-	UINT	cnt;
-	UINT	pos;
-	UINT	rem;
 	SINT32	l;
 	SINT32	r;
 
-	if ((hdl != NULL) && (size)) {
-		do {
-			step = min(size, hdl->worksize);
+	if (hdl != NULL) {
+		while(size) {
+			step = preparepcm(hdl, size);
+			if (step == 0) {
+				break;
+			}
 			size -= step;
 			buf = hdl->sampbuf;
-			ZeroMemory(buf, step * 2 * sizeof(SINT32));
-			v = VOICEHDLPTR(hdl);
-			vterm = VOICEHDLEND(hdl);
-			do {
-				if (v->phase != VOICE_FREE) {
-					cnt = step;
-					if (v->phase & VOICE_REL) {
-						voice_setfree(v);
-						if (cnt > REL_COUNT) {
-							cnt = REL_COUNT;
-						}
-					}
-					if (v->flag & VOICE_FIXPITCH) {
-						pos = v->samppos >> FREQ_SHIFT;
-						src = v->sample->data + pos;
-						rem = (v->sample->datasize >> FREQ_SHIFT) - pos;
-						if (cnt < rem) {
-							v->samppos += cnt << FREQ_SHIFT;
-							srcterm = src + cnt;
-						}
-						else {
-							voice_setfree(v);
-							srcterm = src + rem;
-						}
-					}
-					else {
-						src = hdl->resampbuf;
-						srcterm = v->resamp(v, src, src + cnt);
-					}
-					if (src != srcterm) {
-						v->mix(v, buf, src, srcterm);
-					}
-				}
-				v++;
-			} while(v < vterm);
 			do {
 				l = pcm[0];
 				r = pcm[1];
@@ -1267,71 +1189,31 @@ VEXTERN UINT VEXPORT midiout_get16(MIDIHDL hdl, SINT16 *pcm, UINT size) {
 				buf += 2;
 				pcm += 2;
 			} while(--step);
-		} while(size);
+		}
 	}
-	return(0);}
+	return(0);
+}
 
 VEXTERN UINT VEXPORT midiout_get32(MIDIHDL hdl, SINT32 *pcm, UINT size) {
 
 	UINT	step;
-	VOICE	v;
-	VOICE	vterm;
 	SINT32	*buf;
-	SAMPLE	src;
-	SAMPLE	srcterm;
-	UINT	cnt;
-	UINT	pos;
-	UINT	rem;
 
-	if ((hdl != NULL) && (size)) {
-		do {
-
-			step = min(size, hdl->worksize);
+	if (hdl != NULL) {
+		while(size) {
+			step = preparepcm(hdl, size);
+			if (step == 0) {
+				break;
+			}
 			size -= step;
 			buf = hdl->sampbuf;
-			ZeroMemory(buf, step * 2 * sizeof(SINT32));
-			v = VOICEHDLPTR(hdl);
-			vterm = VOICEHDLEND(hdl);
-			do {
-				if (v->phase != VOICE_FREE) {
-					cnt = step;
-					if (v->phase & VOICE_REL) {
-						voice_setfree(v);
-						if (cnt > REL_COUNT) {
-							cnt = REL_COUNT;
-						}
-					}
-					if (v->flag & VOICE_FIXPITCH) {
-						pos = v->samppos >> FREQ_SHIFT;
-						src = v->sample->data + pos;
-						rem = (v->sample->datasize >> FREQ_SHIFT) - pos;
-						if (cnt < rem) {
-							v->samppos += cnt << FREQ_SHIFT;
-							srcterm = src + cnt;
-						}
-						else {
-							voice_setfree(v);
-							srcterm = src + rem;
-						}
-					}
-					else {
-						src = hdl->resampbuf;
-						srcterm = v->resamp(v, src, src + cnt);
-					}
-					if (src != srcterm) {
-						v->mix(v, buf, src, srcterm);
-					}
-				}
-				v++;
-			} while(v < vterm);
-
 			do {
 				pcm[0] += buf[0] >> (SAMP_SHIFT + 1);
 				pcm[1] += buf[1] >> (SAMP_SHIFT + 1);
 				buf += 2;
 				pcm += 2;
 			} while(--step);
-		} while(size);
+		}
 	}
 	return(0);
 }
