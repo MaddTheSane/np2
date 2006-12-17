@@ -606,7 +606,7 @@ void keydisp_midi(const UINT8 *cmd) {
 			break;
 
 		case 0xb0:
-			if ((cmd[1] == 0x7b) || (cmd[1] == 0x78)) {
+			if ((cmd[1] == 0x78) || (cmd[1] == 0x79) || (cmd[1] == 0x7b)) {
 				chkeyoff(cmd[0] & 0x0f);
 			}
 			break;
