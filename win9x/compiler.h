@@ -113,6 +113,7 @@ typedef	signed __int64		SINT64;
 #define	SOUNDCALL	__fastcall
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
+#define	VERMOUTHCL	__fastcall
 
 #if defined(OSLANG_SJIS)
 #define	SUPPORT_SJIS

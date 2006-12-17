@@ -337,9 +337,11 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 
 static void np2cmd(HWND hWnd, UINT16 cmd) {
 
-	UINT	update;
-	BOOL	b;
+	HINSTANCE	hInst;
+	UINT		update;
+	BOOL		b;
 
+	hInst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
 	update = 0;
 	switch(cmd) {
 		case IDM_RESET:
