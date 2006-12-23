@@ -1,25 +1,31 @@
 
 #include	"codecnv.h"
+#include	<snanls.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-UINT oemtext_sjistoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt);
-UINT oemtext_ucs2tosjis(char *dst, UINT dcnt, const UINT16 *src, UINT scnt);
-UINT oemtext_sjistoutf8(char *dst, UINT dcnt, const char *src, UINT scnt);
-UINT oemtext_utf8tosjis(char *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_mbtoucs2(UINT cp, WCHAR *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const WCHAR *src, UINT scnt);
+UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_utf8tomb(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt);
+
+UINT oemtext_chartoucs2(WCHAR *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_ucs2tochar(char *dst, UINT dcnt, const WCHAR *src, UINT scnt);
+UINT oemtext_chartoutf8(char *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_utf8tochar(char *dst, UINT dcnt, const char *src, UINT scnt);
 
 #ifdef __cplusplus
 }
 #endif
 
 #if defined(OSLANG_UTF8)
-#define oemtext_sjistooem		oemtext_sjistoutf8
-#define	oemtext_oemtosjis		oemtext_utf8tosjis
+#define oemtext_sjistooem(a, b, c, d)	oemtext_mbtoutf8(CP_932, a, b, c, d)
+#define	oemtext_oemtosjis(a, b, c, d)	oemtext_utf8tomb(CP_932, a, b, c, d)
 #elif defined(OSLANG_UCS2)
-#define oemtext_sjistooem		oemtext_sjistoucs2
-#define	oemtext_oemtosjis		oemtext_ucs2tosjis
+#define oemtext_sjistooem(a, b, c, d)	oemtext_mbtoucs2(CP_932, a, b, c, d)
+#define	oemtext_oemtosjis(a, b, c, d)	oemtext_ucs2tomb(CP_932, a, b, c, d)
 #endif
 
 
@@ -28,14 +34,14 @@ UINT oemtext_utf8tosjis(char *dst, UINT dcnt, const char *src, UINT scnt);
 #undef OEMCHAR_SAME_TCHAR
 
 #if !defined(_UNICODE) && defined(OSLANG_UCS2)
-#define	tchartooem		oemtext_sjistoucs2
-#define	oemtotchar		oemtext_ucs2tosjis
+#define	tchartooem		oemtext_chartoucs2
+#define	oemtotchar		oemtext_ucs2tochar
 #elif !defined(_UNICODE) && defined(OSLANG_UTF8)
-#define	tchartooem		oemtext_sjistoutf8
-#define	oemtotchar		oemtext_utf8tosjis
+#define	tchartooem		oemtext_chartoutf8
+#define	oemtotchar		oemtext_utf8tochar
 #elif defined(_UNICODE) && (defined(OSLANG_ANK) || defined(OSLANG_SJIS))
-#define tchartooem		oemtext_ucs2tosjis
-#define oemtotchar		oemtext_sjistoucs2
+#define tchartooem		oemtext_ucs2tochar
+#define oemtotchar		oemtext_chartoucs2
 #elif defined(_UNICODE) && defined(OSLANG_UTF8)
 #define	tchartooem		codecnv_ucs2toutf8
 #define	oemtotchar		codecnv_utf8toucs2

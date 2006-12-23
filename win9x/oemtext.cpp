@@ -5,48 +5,7 @@
 
 // Use WinAPI version
 
-
-UINT oemtext_sjistoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
-
-	int		srccnt;
-	int		dstcnt;
-	int		r;
-
-	if (((SINT)scnt) > 0) {
-		srccnt = scnt;
-	}
-	else {
-		srccnt = -1;
-	}
-	if (((SINT)dcnt) > 0) {
-		dstcnt = dcnt;
-		if (srccnt < 0) {
-			dstcnt = dstcnt - 1;
-			if (dstcnt == 0) {
-				if (dst) {
-					dst[0] = '\0';
-				}
-				return(1);
-			}
-		}
-	}
-	else {
-		dstcnt = 0;
-	}
-	r = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, srccnt, (WCHAR *)dst, dstcnt);
-	if ((r == 0) && (dstcnt != 0)) {
-		r = dstcnt;
-		if (srccnt < 0) {
-			if (dst) {
-				dst[r] = '\0';
-			}
-			r++;
-		}
-	}
-	return(r);
-}
-
-UINT oemtext_ucs2tosjis(char *dst, UINT dcnt, const UINT16 *src, UINT scnt) {
+UINT oemtext_mbtoucs2(UINT cp, WCHAR *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	int		srccnt;
 	int		dstcnt;
@@ -73,7 +32,7 @@ UINT oemtext_ucs2tosjis(char *dst, UINT dcnt, const UINT16 *src, UINT scnt) {
 	else {
 		dstcnt = 0;
 	}
-	r = WideCharToMultiByte(CP_ACP, 0, (WCHAR *)src, srccnt, dst, dstcnt, NULL, NULL);
+	r = MultiByteToWideChar(cp, MB_PRECOMPOSED, src, srccnt, dst, dstcnt);
 	if ((r == 0) && (dstcnt != 0)) {
 		r = dstcnt;
 		if (srccnt < 0) {
@@ -86,23 +45,63 @@ UINT oemtext_ucs2tosjis(char *dst, UINT dcnt, const UINT16 *src, UINT scnt) {
 	return(r);
 }
 
-UINT oemtext_sjistoutf8(char *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const WCHAR *src, UINT scnt) {
+
+	int		srccnt;
+	int		dstcnt;
+	int		r;
+
+	if (((SINT)scnt) > 0) {
+		srccnt = scnt;
+	}
+	else {
+		srccnt = -1;
+	}
+	if (((SINT)dcnt) > 0) {
+		dstcnt = dcnt;
+		if (srccnt < 0) {
+			dstcnt = dstcnt - 1;
+			if (dstcnt == 0) {
+				if (dst) {
+					dst[0] = '\0';
+				}
+				return(1);
+			}
+		}
+	}
+	else {
+		dstcnt = 0;
+	}
+	r = WideCharToMultiByte(cp, 0, src, srccnt, dst, dstcnt, NULL, NULL);
+	if ((r == 0) && (dstcnt != 0)) {
+		r = dstcnt;
+		if (srccnt < 0) {
+			if (dst) {
+				dst[r] = '\0';
+			}
+			r++;
+		}
+	}
+	return(r);
+}
+
+UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
-	UINT16	*ucs2;
+	WCHAR	*ucs2;
 	UINT	ret;
 
 	(void)scnt;
 
-	leng = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, scnt, NULL, 0);
+	leng = MultiByteToWideChar(cp, MB_PRECOMPOSED, src, scnt, NULL, 0);
 	if (leng == 0) {
 		return(0);
 	}
-	ucs2 = (UINT16 *)_MALLOC(leng * sizeof(UINT16), "");
+	ucs2 = (WCHAR *)_MALLOC(leng * sizeof(WCHAR), "");
 	if (ucs2 == NULL) {
 		return(0);
 	}
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, src, scnt, (WCHAR *)ucs2, leng);
+	MultiByteToWideChar(cp, MB_PRECOMPOSED, src, scnt, ucs2, leng);
 	if (((SINT)scnt) < 0) {
 		leng = (UINT)-1;
 	}
@@ -111,10 +110,10 @@ UINT oemtext_sjistoutf8(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	return(ret);
 }
 
-UINT oemtext_utf8tosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_utf8tomb(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
-	UINT16	*ucs2;
+	WCHAR	*ucs2;
 	UINT	ret;
 
 	(void)scnt;
@@ -123,7 +122,7 @@ UINT oemtext_utf8tosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	if (leng == 0) {
 		return(0);
 	}
-	ucs2 = (UINT16 *)_MALLOC(leng * sizeof(UINT16), "");
+	ucs2 = (WCHAR *)_MALLOC(leng * sizeof(WCHAR), "");
 	if (ucs2 == NULL) {
 		return(0);
 	}
@@ -131,9 +130,32 @@ UINT oemtext_utf8tosjis(char *dst, UINT dcnt, const char *src, UINT scnt) {
 	if (((SINT)scnt) < 0) {
 		leng = (UINT)-1;
 	}
-	ret = WideCharToMultiByte(CP_ACP, 0, (WCHAR *)ucs2, leng, dst, dcnt, NULL, NULL);
+	ret = WideCharToMultiByte(cp, 0, ucs2, leng, dst, dcnt, NULL, NULL);
 	_MFREE(ucs2);
 	return(ret);
+}
+
+
+// ----
+
+UINT oemtext_chartoucs2(WCHAR *dst, UINT dcnt, const char *src, UINT scnt) {
+
+	return(oemtext_mbtoucs2(CP_ACP, dst, dcnt, src, scnt));
+}
+
+UINT oemtext_ucs2tochar(char *dst, UINT dcnt, const WCHAR *src, UINT scnt) {
+
+	return(oemtext_ucs2tomb(CP_ACP, dst, dcnt, src, scnt));
+}
+
+UINT oemtext_chartoutf8(char *dst, UINT dcnt, const char *src, UINT scnt) {
+
+	return(oemtext_mbtoutf8(CP_ACP, dst, dcnt, src, scnt));
+}
+
+UINT oemtext_utf8tochar(char *dst, UINT dcnt, const char *src, UINT scnt) {
+
+	return(oemtext_utf8tomb(CP_ACP, dst, dcnt, src, scnt));
 }
 
 
@@ -185,14 +207,14 @@ UINT textcnv_getinfo(TCINF *inf, const UINT8 *hdr, UINT hdrsize) {
 
 		case TEXTCNV_UTF8:
 			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			info.tooem = (TCTOOEM)oemtext_utf8tosjis;
-			info.fromoem = (TCFROMOEM)oemtext_sjistoutf8;
+			info.tooem = (TCTOOEM)oemtext_utf8tochar;
+			info.fromoem = (TCFROMOEM)oemtext_chartoutf8;
 			break;
 
 		case TEXTCNV_UCS2:
 			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			info.tooem = (TCTOOEM)oemtext_ucs2tosjis;
-			info.fromoem = (TCFROMOEM)oemtext_sjistoucs2;
+			info.tooem = (TCTOOEM)oemtext_ucs2tochar;
+			info.fromoem = (TCFROMOEM)oemtext_chartoucs2;
 			break;
 	}
 #elif defined(OSLANG_EUC)
@@ -207,8 +229,8 @@ UINT textcnv_getinfo(TCINF *inf, const UINT8 *hdr, UINT hdrsize) {
 		case TEXTCNV_DEFAULT:
 		case TEXTCNV_SJIS:
 			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			info.tooem = (TCTOOEM)oemtext_sjistoutf8;
-			info.fromoem = (TCFROMOEM)oemtext_utf8tosjis;
+			info.tooem = (TCTOOEM)oemtext_chartoutf8;
+			info.fromoem = (TCFROMOEM)oemtext_utf8tochar;
 			break;
 
 		case TEXTCNV_UTF8:
@@ -226,8 +248,8 @@ UINT textcnv_getinfo(TCINF *inf, const UINT8 *hdr, UINT hdrsize) {
 		case TEXTCNV_DEFAULT:
 		case TEXTCNV_SJIS:
 			info.caps = TEXTCNV_READ | TEXTCNV_WRITE;
-			info.tooem = (TCTOOEM)oemtext_sjistoucs2;
-			info.fromoem = (TCFROMOEM)oemtext_ucs2tosjis;
+			info.tooem = (TCTOOEM)oemtext_chartoucs2;
+			info.fromoem = (TCFROMOEM)oemtext_ucs2tochar;
 			break;
 
 		case TEXTCNV_UTF8:

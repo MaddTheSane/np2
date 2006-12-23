@@ -3,7 +3,8 @@ enum {
 	FDAT_BOLD			= 0x01,
 	FDAT_PROPORTIONAL	= 0x02,
 	FDAT_ALIAS			= 0x04,
-	FDAT_ANSI			= 0x08
+	FDAT_ANSI			= 0x08,
+	FDAT_SHIFTJIS		= 0x10
 };
 
 enum {

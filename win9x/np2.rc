@@ -923,6 +923,15 @@ END
 NP2BMP                  BITMAP  DISCARDABLE     "ICONS\\NEKOP2.BMP"
 NP2TOOL                 BITMAP  DISCARDABLE     "ICONS\\NP2TOOL.BMP"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Manifest
+//
+
+IDR_MANIFEST RT_MANIFEST "np2.mnf"
+
+
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //

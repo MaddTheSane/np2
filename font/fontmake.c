@@ -292,7 +292,11 @@ void makepc98bmp(const OEMCHAR *filename) {
 	FILEH	fh;
 	BOOL	r;
 
+#if defined(FDAT_SHIFTJIS)
+	fnt = fontmng_create(16, FDAT_SHIFTJIS, NULL);
+#else
 	fnt = fontmng_create(16, 0, NULL);
+#endif
 	if (fnt == NULL) {
 		goto mfnt_err1;
 	}

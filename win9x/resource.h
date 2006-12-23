@@ -2,6 +2,8 @@
 // Microsoft Developer Studio generated include file.
 // Used by np2.RC
 //
+#define IDR_MANIFEST                    1
+#define RT_MANIFEST                     24
 #define IDI_ICON1                       101
 #define IDI_ICON2                       102
 #define IDR_MAIN                        103

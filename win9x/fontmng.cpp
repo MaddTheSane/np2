@@ -35,7 +35,8 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	int			fontwidth;
 	int			fontheight;
 	int			weight;
-	UINT		pitch;
+	DWORD		pitch;
+	DWORD		charset;
 
 	if (size < 0) {
 		size *= -1;
@@ -105,9 +106,10 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	if (fontface == NULL) {
 		fontface = (type & FDAT_PROPORTIONAL)?deffontface2:deffontface;
 	}
+	charset = (type & FDAT_SHIFTJIS)?SHIFTJIS_CHARSET:DEFAULT_CHARSET;
 	ret->hfont = CreateFont(size, 0,
 						FW_DONTCARE, FW_DONTCARE, weight,
-						FALSE, FALSE, FALSE, SHIFTJIS_CHARSET,
+						FALSE, FALSE, FALSE, charset,
 						OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 						NONANTIALIASED_QUALITY, pitch, fontface);
 	ret->hfont = (HFONT)SelectObject(ret->hdcimage, ret->hfont);
