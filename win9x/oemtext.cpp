@@ -5,7 +5,7 @@
 
 // Use WinAPI version
 
-UINT oemtext_mbtoucs2(UINT cp, WCHAR *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_mbtoucs2(UINT cp, wchar_t *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	int		srccnt;
 	int		dstcnt;
@@ -45,7 +45,7 @@ UINT oemtext_mbtoucs2(UINT cp, WCHAR *dst, UINT dcnt, const char *src, UINT scnt
 	return(r);
 }
 
-UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const WCHAR *src, UINT scnt) {
+UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const wchar_t *src, UINT scnt) {
 
 	int		srccnt;
 	int		dstcnt;
@@ -88,7 +88,7 @@ UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const WCHAR *src, UINT scnt
 UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
-	WCHAR	*ucs2;
+	wchar_t	*ucs2;
 	UINT	ret;
 
 	(void)scnt;
@@ -97,7 +97,7 @@ UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt)
 	if (leng == 0) {
 		return(0);
 	}
-	ucs2 = (WCHAR *)_MALLOC(leng * sizeof(WCHAR), "");
+	ucs2 = (wchar_t *)_MALLOC(leng * sizeof(wchar_t), "");
 	if (ucs2 == NULL) {
 		return(0);
 	}
@@ -105,7 +105,7 @@ UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt)
 	if (((SINT)scnt) < 0) {
 		leng = (UINT)-1;
 	}
-	ret = codecnv_ucs2toutf8(dst, dcnt, ucs2, leng);
+	ret = codecnv_ucs2toutf8(dst, dcnt, (UINT16 *)ucs2, leng);
 	_MFREE(ucs2);
 	return(ret);
 }
@@ -113,7 +113,7 @@ UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt)
 UINT oemtext_utf8tomb(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	leng;
-	WCHAR	*ucs2;
+	wchar_t	*ucs2;
 	UINT	ret;
 
 	(void)scnt;
@@ -122,11 +122,11 @@ UINT oemtext_utf8tomb(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt)
 	if (leng == 0) {
 		return(0);
 	}
-	ucs2 = (WCHAR *)_MALLOC(leng * sizeof(WCHAR), "");
+	ucs2 = (wchar_t *)_MALLOC(leng * sizeof(wchar_t), "");
 	if (ucs2 == NULL) {
 		return(0);
 	}
-	codecnv_utf8toucs2(ucs2, leng, src, scnt);
+	codecnv_utf8toucs2((UINT16 *)ucs2, leng, src, scnt);
 	if (((SINT)scnt) < 0) {
 		leng = (UINT)-1;
 	}
@@ -138,12 +138,12 @@ UINT oemtext_utf8tomb(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt)
 
 // ----
 
-UINT oemtext_chartoucs2(WCHAR *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT oemtext_chartoucs2(wchar_t *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	return(oemtext_mbtoucs2(CP_ACP, dst, dcnt, src, scnt));
 }
 
-UINT oemtext_ucs2tochar(char *dst, UINT dcnt, const WCHAR *src, UINT scnt) {
+UINT oemtext_ucs2tochar(char *dst, UINT dcnt, const wchar_t *src, UINT scnt) {
 
 	return(oemtext_ucs2tomb(CP_ACP, dst, dcnt, src, scnt));
 }

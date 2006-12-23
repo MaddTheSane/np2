@@ -94,10 +94,46 @@ static	int			np2quitmsg = 0;
 static	HMENU		hStat = NULL;
 static	UINT8		scrnmode;
 static	WINLOCEX	smwlex;
+static	HMODULE		resmod;
 
 static const OEMCHAR np2help[] = OEMTEXT("np2.chm");
 static const OEMCHAR np2flagext[] = OEMTEXT("S%02d");
+static const OEMCHAR np2resext[] = OEMTEXT(".%u");
 
+
+// ----
+
+static HINSTANCE loadextinst(HINSTANCE hInstance) {
+
+	OEMCHAR	path[MAX_PATH];
+	OEMCHAR	cpstr[16];
+	HMODULE dll;
+
+	file_cpyname(path, modulefile, NELEMENTS(path));
+	file_cutext(path);
+	OEMSPRINTF(cpstr, np2resext, GetOEMCP());
+	file_catname(path, cpstr, NELEMENTS(path));
+	dll = LoadLibrary(path);
+	resmod = dll;
+	if (dll != NULL) {
+		hInstance = (HINSTANCE)dll;
+	}
+	return(hInstance);
+}
+
+static void unloadextinst(void) {
+
+	HMODULE dll;
+
+	dll = resmod;
+	if (dll) {
+		resmod = 0;
+		FreeLibrary(dll);
+	}
+}
+
+
+// ----
 
 static void winuienter(void) {
 
@@ -1406,7 +1442,6 @@ static void processwait(UINT cnt) {
 	soundmng_sync();
 }
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 										LPSTR lpszCmdLine, int nCmdShow) {
 	WNDCLASS	wc;
@@ -1445,7 +1480,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		return(FALSE);
 	}
 
-	hInst = hInstance;
+	hInst = loadextinst(hInstance);
 	hPrev = hPreInst;
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
@@ -1469,23 +1504,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 
-	np2class_initialize(hInstance);
+	np2class_initialize(hInst);
 	if (!hPreInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = NP2GWL_SIZE;
-		wc.hInstance = hInstance;
-		wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hInstance = hInst;
+		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
 		wc.lpszClassName = szClassName;
 		if (!RegisterClass(&wc)) {
+			unloadextinst();
+			TRACETERM();
+			dosio_term();
 			return(FALSE);
 		}
 	}
-	toolwin_initapp(hInstance);
+	toolwin_initapp(hInst);
 	kdispwin_initialize(hPreInst);
 	skbdwin_initialize(hPreInst);
 	mdbgwin_initialize(hPreInst);
@@ -1499,7 +1537,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
-						NULL, NULL, hInstance, NULL);
+						NULL, NULL, hInst, NULL);
 	hWndMain = hWnd;
 	scrnmng_initialize();
 
@@ -1562,6 +1600,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 				MessageBox(hWnd, _T("Couldn't create DirectDraw Object"),
 										np2oscfg.titles, MB_OK | MB_ICONSTOP);
 			}
+			unloadextinst();
+			TRACETERM();
+			dosio_term();
 			return(FALSE);
 		}
 	}
@@ -1619,10 +1660,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			sstp_destruct();
 			soundmng_deinitialize();
 			scrnmng_destroy();
+			unloadextinst();
 			TRACETERM();
 			dosio_term();
 			viewer_term();
-			return(0);
+			return(FALSE);
 		}
 	}
 #endif
@@ -1768,6 +1810,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		mdbgwin_writeini();
 	}
 	skbdwin_deinitialize();
+
+	unloadextinst();
 
 	TRACETERM();
 	_MEM_USED("report.txt");

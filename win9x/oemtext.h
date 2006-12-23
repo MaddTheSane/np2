@@ -1,18 +1,21 @@
 
-#include	"codecnv.h"
+#ifndef __GNUC__
 #include	<snanls.h>
+#endif
+
+#include	"codecnv.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-UINT oemtext_mbtoucs2(UINT cp, WCHAR *dst, UINT dcnt, const char *src, UINT scnt);
-UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const WCHAR *src, UINT scnt);
+UINT oemtext_mbtoucs2(UINT cp, wchar_t *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_ucs2tomb(UINT cp, char *dst, UINT dcnt, const wchar_t *src, UINT scnt);
 UINT oemtext_mbtoutf8(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt);
 UINT oemtext_utf8tomb(UINT cp, char *dst, UINT dcnt, const char *src, UINT scnt);
 
-UINT oemtext_chartoucs2(WCHAR *dst, UINT dcnt, const char *src, UINT scnt);
-UINT oemtext_ucs2tochar(char *dst, UINT dcnt, const WCHAR *src, UINT scnt);
+UINT oemtext_chartoucs2(wchar_t *dst, UINT dcnt, const char *src, UINT scnt);
+UINT oemtext_ucs2tochar(char *dst, UINT dcnt, const wchar_t *src, UINT scnt);
 UINT oemtext_chartoutf8(char *dst, UINT dcnt, const char *src, UINT scnt);
 UINT oemtext_utf8tochar(char *dst, UINT dcnt, const char *src, UINT scnt);
 

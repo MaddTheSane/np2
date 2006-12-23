@@ -1,4 +1,7 @@
 #include	"compiler.h"
+#ifndef __GNUC__
+#include	<snanls.h>
+#endif
 #include	"fontmng.h"
 
 
@@ -22,7 +25,12 @@ typedef struct {
 
 static const OEMCHAR deffontface[] = OEMTEXT("‚l‚r ƒSƒVƒbƒN");
 static const OEMCHAR deffontface2[] = OEMTEXT("‚l‚r ‚oƒSƒVƒbƒN");
+static const OEMCHAR edeffontface[] = OEMTEXT("MS Gothic");
+static const OEMCHAR edeffontface2[] = OEMTEXT("MS PGothic");
 
+static const OEMCHAR *deffont[4] = {
+	deffontface,	deffontface2,
+	edeffontface,	edeffontface2};
 
 void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 
@@ -35,6 +43,7 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	int			fontwidth;
 	int			fontheight;
 	int			weight;
+	int			deffontnum;
 	DWORD		pitch;
 	DWORD		charset;
 
@@ -104,7 +113,16 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	weight = (type & FDAT_BOLD)?FW_BOLD:FW_REGULAR;
 	pitch = (type & FDAT_PROPORTIONAL)?VARIABLE_PITCH:FIXED_PITCH;
 	if (fontface == NULL) {
-		fontface = (type & FDAT_PROPORTIONAL)?deffontface2:deffontface;
+		deffontnum = (type & FDAT_PROPORTIONAL)?1:0;
+#ifndef __GNUC__
+		if (GetOEMCP() != CP_932)
+#else
+		if (GetOEMCP() != 932)
+#endif
+		{
+			deffontnum += 2;
+		}
+		fontface = deffont[deffontnum];
 	}
 	charset = (type & FDAT_SHIFTJIS)?SHIFTJIS_CHARSET:DEFAULT_CHARSET;
 	ret->hfont = CreateFont(size, 0,
