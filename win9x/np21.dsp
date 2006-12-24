@@ -388,6 +388,21 @@ SOURCE=..\I386C\ia32\debug.c
 # Begin Source File
 
 SOURCE=..\I386C\ia32\disasm.c
+
+!IF  "$(CFG)" == "np21 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -746,7 +761,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i386c\x86\   -i..\io\x86\ 
+	nasmw    -f    win32    $(InputPath)    -o    $(IntDir)\$(InputName).obj    -i.\x86\    -i..\i386c\x86\    -i..\io\x86\ 
 
 # End Custom Build
 
@@ -758,7 +773,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i386c\x86\   -i..\io\x86\ 
+	nasmw    -f    win32    $(InputPath)    -o    $(IntDir)\$(InputName).obj    -i.\x86\    -i..\i386c\x86\    -i..\io\x86\ 
 
 # End Custom Build
 
@@ -770,7 +785,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i386c\x86\   -i..\io\x86\ 
+	nasmw    -f    win32    $(InputPath)    -o    $(IntDir)\$(InputName).obj    -i.\x86\    -i..\i386c\x86\    -i..\io\x86\ 
 
 # End Custom Build
 
@@ -782,7 +797,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i386c\x86\   -i..\io\x86\ 
+	nasmw    -f    win32    $(InputPath)    -o    $(IntDir)\$(InputName).obj    -i.\x86\    -i..\i386c\x86\    -i..\io\x86\ 
 
 # End Custom Build
 
@@ -794,7 +809,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw   -f   win32   $(InputPath)   -o   $(IntDir)\$(InputName).obj   -i.\x86\   -i..\i386c\x86\   -i..\io\x86\ 
+	nasmw    -f    win32    $(InputPath)    -o    $(IntDir)\$(InputName).obj    -i.\x86\    -i..\i386c\x86\    -i..\io\x86\ 
 
 # End Custom Build
 
