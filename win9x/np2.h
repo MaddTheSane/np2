@@ -51,7 +51,9 @@ typedef struct {
 
 	UINT8	resume;													// ver0.30
 	UINT8	statsave;
+#if !defined(_WIN64)
 	UINT8	disablemmx;
+#endif
 	UINT8	wintype;
 	UINT8	toolwin;
 	UINT8	keydisp;

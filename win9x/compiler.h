@@ -1,4 +1,6 @@
 
+#pragma warning (disable: 4819)
+
 #define	_WIN32_IE	0x0200
 
 #include	<windows.h>

@@ -94,9 +94,6 @@ static void cfgcreate(HWND hWnd) {
 	else {
 		SetDlgItemCheck(hWnd, IDC_DISABLEMMX, np2oscfg.disablemmx);
 	}
-#else
-	EnableWindow(GetDlgItem(hWnd, IDC_DISABLEMMX), FALSE);
-	SetDlgItemCheck(hWnd, IDC_DISABLEMMX, FALSE);
 #endif
 	SetDlgItemCheck(hWnd, IDC_COMFIRM, np2oscfg.comfirm);
 	SetDlgItemCheck(hWnd, IDC_RESUME, np2oscfg.resume);
