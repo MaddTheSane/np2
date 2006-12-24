@@ -931,7 +931,6 @@ NP2TOOL                 BITMAP  DISCARDABLE     "ICONS\\NP2TOOL.BMP"
 
 IDR_MANIFEST IRT_MANIFEST "np2.mnf"
 
-
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
