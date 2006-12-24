@@ -20,7 +20,7 @@
 #endif
 #define	OSLINEBREAK_CRLF
 
-#ifndef __GNUC__
+#if !defined(__GNUC__)
 typedef	signed int			SINT;
 typedef	signed char			SINT8;
 typedef	unsigned char		UINT8;
@@ -101,7 +101,10 @@ typedef	signed __int64		SINT64;
 #define	LABEL				__declspec(naked)
 #define	RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
 
+#if !defined(_WIN64)
 #define	OPNGENX86
+#endif
+
 #define	VERMOUTH_LIB
 #define	MT32SOUND_DLL
 #define	PARTSCALL	__fastcall

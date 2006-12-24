@@ -1,10 +1,4 @@
 
-#ifdef STRICT
-#define	SUBCLASSPROC	WNDPROC
-#else
-#define	SUBCLASSPROC	FARPROC
-#endif
-
 typedef struct {
 const TCHAR	*title;
 const TCHAR	*ext;

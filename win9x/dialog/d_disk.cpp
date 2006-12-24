@@ -351,7 +351,7 @@ const OEMCHAR	*ext;
 	if (!dlgs_selectwritefile(hWnd, &newdiskui, path, NELEMENTS(path))) {
 		return;
 	}
-	hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
+	hinst = GetWindowInst(hWnd);
 	ext = file_getext(path);
 	if (!file_cmpname(ext, str_thd)) {
 		hddsize = 0;

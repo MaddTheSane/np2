@@ -641,7 +641,7 @@ void dialog_serial(HWND hWnd) {
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
 
-	hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
+	hinst = GetWindowInst(hWnd);
 
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);

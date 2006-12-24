@@ -8,7 +8,6 @@
 #include	"parts.h"
 #include	"np2.h"
 #include	"np2arg.h"
-#include	"cputype.h"
 #include	"dosio.h"
 #include	"extromio.h"
 #include	"commng.h"
@@ -23,7 +22,6 @@
 #include	"winloc.h"
 #include	"sstp.h"
 #include	"sstpmsg.h"
-#include	"dclock.h"
 #include	"toolwin.h"
 #include	"juliet.h"
 #include	"np2class.h"
@@ -45,6 +43,12 @@
 #include	"debugsub.h"
 #include	"subwind.h"
 #include	"viewer.h"
+#if !defined(_WIN64)
+#include	"cputype.h"
+#endif
+#if defined(SUPPORT_DCLOCK)
+#include	"dclock.h"
+#endif
 
 
 #ifdef BETA_RELEASE
@@ -55,7 +59,9 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		HWND		hWndMain;
 		HINSTANCE	hInst;
 		HINSTANCE	hPrev;
+#if !defined(_WIN64)
 		int			mmxflag;
+#endif
 		UINT8		np2break = 0;									// ver0.30
 		BOOL		winui_en;
 
@@ -377,7 +383,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 	UINT		update;
 	BOOL		b;
 
-	hInst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
+	hInst = GetWindowInst(hWnd);
 	update = 0;
 	switch(cmd) {
 		case IDM_RESET:
@@ -1129,7 +1135,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				BITMAP		bmp;
 				HDC			hmdc;
 				HBRUSH		hbrush;
-				hinst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
+				hinst = GetWindowInst(hWnd);
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
@@ -1266,6 +1272,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 															HTCAPTION, 0L));
 					}
 				}
+#if defined(SUPPORT_DCLOCK)
 				else {
 					POINT p;
 					if ((GetCursorPos(&p)) && (p.y >= 466)) {
@@ -1274,6 +1281,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						dclock_reset();
 					}
 				}
+#endif
 				return(DefWindowProc(hWnd, msg, wParam, lParam));
 			}
 			break;
@@ -1295,6 +1303,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				if (!scrnmng_isfullscreen()) {
 					np2popup(hWnd, lParam);
 				}
+#if defined(SUPPORT_DCLOCK)
 				else {
 					POINT p;
 					if ((GetCursorPos(&p)) && (p.y >= 466) &&
@@ -1304,6 +1313,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						dclock_reset();
 					}
 				}
+#endif
 				return(DefWindowProc(hWnd, msg, wParam, lParam));
 			}
 			break;
@@ -1417,7 +1427,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 static void framereset(UINT cnt) {
 
 	framecnt = 0;
+#if defined(SUPPORT_DCLOCK)
 	scrnmng_dispclock();
+#endif
 	kdispwin_draw((UINT8)cnt);
 	skbdwin_process();
 	mdbgwin_process();
@@ -1482,8 +1494,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	hInst = loadextinst(hInstance);
 	hPrev = hPreInst;
+#if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
+#endif
 	TRACEINIT();
 
 	xrollkey = (np2oscfg.xrollkey == 0);
@@ -1703,7 +1717,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 					joymng_sync();
 					mousemng_sync();
 					pccore_exec(framecnt == 0);
+#if defined(SUPPORT_DCLOCK)
 					dclock_callback();
+#endif
 					if (np2oscfg.DRAW_SKIP) {		// nowait frame skip
 						framecnt++;
 						if (framecnt >= np2oscfg.DRAW_SKIP) {
@@ -1722,7 +1738,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 						joymng_sync();
 						mousemng_sync();
 						pccore_exec(framecnt == 0);
+#if defined(SUPPORT_DCLOCK)
 						dclock_callback();
+#endif
 						framecnt++;
 					}
 					else {
@@ -1735,7 +1753,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 						joymng_sync();
 						mousemng_sync();
 						pccore_exec(framecnt == 0);
+#if defined(SUPPORT_DCLOCK)
 						dclock_callback();
+#endif
 						framecnt++;
 						cnt = timing_getcount();
 						if (framecnt > cnt) {

@@ -1,7 +1,4 @@
 #include	"compiler.h"
-#ifndef __GNUC__
-#include	<snanls.h>
-#endif
 #include	"fontmng.h"
 
 
@@ -114,12 +111,7 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	pitch = (type & FDAT_PROPORTIONAL)?VARIABLE_PITCH:FIXED_PITCH;
 	if (fontface == NULL) {
 		deffontnum = (type & FDAT_PROPORTIONAL)?1:0;
-#ifndef __GNUC__
-		if (GetOEMCP() != CP_932)
-#else
-		if (GetOEMCP() != 932)
-#endif
-		{
+		if (GetOEMCP() != 932) {			// !Japanese
 			deffontnum += 2;
 		}
 		fontface = deffont[deffontnum];

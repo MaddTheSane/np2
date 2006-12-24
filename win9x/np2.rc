@@ -939,8 +939,8 @@ IDR_MANIFEST IRT_MANIFEST "np2.mnf"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 0,8,2,0
+ PRODUCTVERSION 0,8,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -957,12 +957,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "PC-9801series emulator\0"
-            VALUE "FileVersion", "0, 7, 6, 0\0"
+            VALUE "FileVersion", "0, 8, 2, 0\0"
             VALUE "InternalName", "np2\0"
             VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
             VALUE "OriginalFilename", "np2.exe\0"
             VALUE "ProductName", "Neko Project II\0"
-            VALUE "ProductVersion", "0, 7, 6, 0\0"
+            VALUE "ProductVersion", "0, 8, 2, 0\0"
         END
     END
     BLOCK "VarFileInfo"

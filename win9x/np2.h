@@ -121,9 +121,11 @@ extern	NP2OSCFG	np2oscfg;
 extern	HWND		hWndMain;
 extern	HINSTANCE	hInst;
 extern	HINSTANCE	hPrev;
-extern	int			mmxflag;
 extern	UINT8		np2break;
 extern	BOOL		winui_en;
+#if !defined(_WIN64)
+extern	int			mmxflag;
+#endif
 
 extern	OEMCHAR		modulefile[MAX_PATH];
 extern	OEMCHAR		fddfolder[MAX_PATH];

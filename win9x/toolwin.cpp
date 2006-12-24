@@ -464,8 +464,8 @@ static void toolwincreate(HWND hWnd) {
 		toolwin.sub[i] = sub;
 		toolwin.subproc[i] = NULL;
 		if (sub) {
-			toolwin.subproc[i] = (SUBCLASSPROC)GetWindowLong(sub, GWL_WNDPROC);
-			SetWindowLong(sub, GWL_WNDPROC, (LONG)twsub);
+			toolwin.subproc[i] = GetWindowProc(sub);
+			SetWindowProc(sub, twsub);
 			SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.hfont,
 														MAKELPARAM(TRUE, 0));
 		}

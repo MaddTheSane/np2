@@ -56,7 +56,6 @@ void scrnmng_setheight(int posy, int height);
 const SCRNSURF *scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
 void scrnmng_update(void);
-void scrnmng_dispclock(void);
 
 #define	scrnmng_isfullscreen()	(scrnmng.flag & SCRNFLAG_FULLSCREEN)
 #define	scrnmng_haveextend()	(scrnmng.flag & SCRNFLAG_HAVEEXTEND)
@@ -81,6 +80,10 @@ void scrnmng_clearwinui(void);
 void scrnmng_entersizing(void);
 void scrnmng_sizing(UINT side, RECT *rect);
 void scrnmng_exitsizing(void);
+
+#if defined(SUPPORT_DCLOCK)
+void scrnmng_dispclock(void);
+#endif
 
 #ifdef __cplusplus
 }

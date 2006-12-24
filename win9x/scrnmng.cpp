@@ -9,13 +9,15 @@
 #include	"mousemng.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
-#include	"dclock.h"
 #include	"menu.h"
 #include	"np2class.h"
 #include	"pccore.h"
 #include	"scrndraw.h"
 #include	"palettes.h"
 
+#if defined(SUPPORT_DCLOCK)
+#include	"dclock.h"
+#endif
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
@@ -25,7 +27,9 @@ typedef struct {
 	LPDIRECTDRAW2		ddraw2;
 	LPDIRECTDRAWSURFACE	primsurf;
 	LPDIRECTDRAWSURFACE	backsurf;
+#if defined(SUPPORT_DCLOCK)
 	LPDIRECTDRAWSURFACE	clocksurf;
+#endif
 	LPDIRECTDRAWCLIPPER	clipper;
 	LPDIRECTDRAWPALETTE	palette;
 	UINT				scrnmode;
@@ -256,7 +260,9 @@ static void clearoutfullscreen(void) {
 	base.right = ddraw.width;			// (+ ddraw.extend)
 	base.bottom = ddraw.height;
 	clearoutofrect(&ddraw.scrn, &base);
+#if defined(SUPPORT_DCLOCK)
 	dclock_redraw();
+#endif
 }
 
 static void paletteinit(void) {
@@ -267,12 +273,14 @@ static void paletteinit(void) {
 	hdc = GetDC(hWndMain);
 	GetSystemPaletteEntries(hdc, 0, 256, ddraw.pal);
 	ReleaseDC(hWndMain, hdc);
+#if defined(SUPPORT_DCLOCK)
 	for (i=0; i<4; i++) {
 		ddraw.pal[i+START_PALORG].peBlue = dclockpal.pal32[i].p.b;
 		ddraw.pal[i+START_PALORG].peRed = dclockpal.pal32[i].p.r;
 		ddraw.pal[i+START_PALORG].peGreen = dclockpal.pal32[i].p.g;
 		ddraw.pal[i+START_PALORG].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
+#endif
 	for (i=0; i<NP2PAL_TOTAL; i++) {
 		ddraw.pal[i+START_PAL].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
@@ -387,7 +395,9 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 	ddraw.ddraw2 = ddraw2;
 
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
+#if defined(SUPPORT_DCLOCK)
 		dclock_init();
+#endif
 		ddraw2->SetCooperativeLevel(hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 		height = (np2oscfg.force400)?400:480;
@@ -442,8 +452,8 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		else {
 			goto scre_err;
 		}
+#if defined(SUPPORT_DCLOCK)
 		dclock_palset(bitcolor);
-
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
@@ -452,6 +462,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		ddsd.dwHeight = DCLOCK_HEIGHT;
 		ddraw2->CreateSurface(&ddsd, &ddraw.clocksurf, NULL);
 		dclock_reset();
+#endif
 	}
 	else {
 		ddraw2->SetCooperativeLevel(hWndMain, DDSCL_NORMAL);
@@ -527,10 +538,12 @@ void scrnmng_destroy(void) {
 	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 		np2class_enablemenu(hWndMain, (!np2oscfg.wintype));
 	}
+#if defined(SUPPORT_DCLOCK)
 	if (ddraw.clocksurf) {
 		ddraw.clocksurf->Release();
 		ddraw.clocksurf = NULL;
 	}
+#endif
 	if (ddraw.backsurf) {
 		ddraw.backsurf->Release();
 		ddraw.backsurf = NULL;
@@ -757,6 +770,10 @@ void scrnmng_setmultiple(int multiple) {
 	}
 }
 
+
+// ----
+
+#if defined(SUPPORT_DCLOCK)
 static const RECT rectclk = {0, 0, DCLOCK_WIDTH, DCLOCK_HEIGHT};
 
 void scrnmng_dispclock(void) {
@@ -793,6 +810,7 @@ void scrnmng_dispclock(void) {
 		dclock_cntdown(np2oscfg.DRAW_SKIP);
 	}
 }
+#endif
 
 
 // ----

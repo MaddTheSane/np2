@@ -14,13 +14,14 @@
 #include	"mt32snd.h"
 #endif
 
-
+#if !defined(_WIN64)
 #ifdef __cplusplus
 extern "C" {
 #endif
 void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 
@@ -79,6 +80,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	UINT			samples;
 	DSBUFFERDESC	dsbdesc;
 	PCMWAVEFORMAT	pcmwf;
+	int				i;
 
 	if ((pDSound == NULL) ||
 		(rate != 11025) && (rate != 22050) && (rate != 44100)) {
@@ -107,14 +109,19 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	pcmwf.wf.nBlockAlign = 2 * sizeof(SINT16);
 	pcmwf.wf.nAvgBytesPerSec = rate * 2 * sizeof(SINT16);
 
-	ZeroMemory(&dsbdesc, sizeof(DSBUFFERDESC));
-	dsbdesc.dwSize = DSBUFFERDESC_SIZE;
-	dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME |
+	for (i=0; i<2; i++) {
+		ZeroMemory(&dsbdesc, sizeof(DSBUFFERDESC));
+		dsbdesc.dwSize = i ? sizeof(dsbdesc) : DSBUFFERDESC_SIZE;
+		dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME |
 						DSBCAPS_CTRLFREQUENCY |
 						DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
-	dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
-	dsbdesc.dwBufferBytes = dsstreambytes * 2;
-	if (FAILED(pDSound->CreateSoundBuffer(&dsbdesc, &pDSData3, NULL))) {
+		dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
+		dsbdesc.dwBufferBytes = dsstreambytes * 2;
+		if (SUCCEEDED(pDSound->CreateSoundBuffer(&dsbdesc, &pDSData3, NULL))) {
+			break;
+		}
+	}
+	if (i >= 2) {
 		goto stcre_err2;
 	}
 
@@ -126,7 +133,6 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	mt32sound_setrate(rate);
 #endif
 	dsstreamevent = (UINT8)-1;
-	soundmng_reset();
 	return(samples);
 
 stcre_err2:
@@ -257,12 +263,16 @@ void soundmng_sync(void) {
 void soundmng_setreverse(BOOL reverse) {
 
 	if (!reverse) {
+#if !defined(_WIN64)
 		if (mmxflag) {
 			fnmix = satuation_s16;
 		}
 		else {
 			fnmix = satuation_s16mmx;
 		}
+#else
+		fnmix = satuation_s16;
+#endif
 	}
 	else {
 		fnmix = satuation_s16x;

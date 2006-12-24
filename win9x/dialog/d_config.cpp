@@ -86,6 +86,7 @@ static void cfgcreate(HWND hWnd) {
 	SetDlgItemText(hWnd, IDC_SOUNDBUF, work);
 
 	SetDlgItemCheck(hWnd, IDC_ALLOWRESIZE, np2oscfg.thickframe);
+#if !defined(_WIN64)
 	if (mmxflag & MMXFLAG_NOTSUPPORT) {
 		EnableWindow(GetDlgItem(hWnd, IDC_DISABLEMMX), FALSE);
 		SetDlgItemCheck(hWnd, IDC_DISABLEMMX, TRUE);
@@ -93,6 +94,10 @@ static void cfgcreate(HWND hWnd) {
 	else {
 		SetDlgItemCheck(hWnd, IDC_DISABLEMMX, np2oscfg.disablemmx);
 	}
+#else
+	EnableWindow(GetDlgItem(hWnd, IDC_DISABLEMMX), FALSE);
+	SetDlgItemCheck(hWnd, IDC_DISABLEMMX, FALSE);
+#endif
 	SetDlgItemCheck(hWnd, IDC_COMFIRM, np2oscfg.comfirm);
 	SetDlgItemCheck(hWnd, IDC_RESUME, np2oscfg.resume);
 	setclock(hWnd, 0);
@@ -181,6 +186,7 @@ const OEMCHAR	*str;
 		update |= SYS_UPDATEOSCFG;
 	}
 
+#if !defined(_WIN64)
 	if (!(mmxflag & MMXFLAG_NOTSUPPORT)) {
 		val = GetDlgItemCheck(hWnd, IDC_DISABLEMMX);
 		if (np2oscfg.disablemmx != (UINT8)val) {
@@ -190,6 +196,7 @@ const OEMCHAR	*str;
 			update |= SYS_UPDATEOSCFG;
 		}
 	}
+#endif
 
 	val = GetDlgItemCheck(hWnd, IDC_COMFIRM);
 	if (np2oscfg.comfirm != (UINT8)val) {
