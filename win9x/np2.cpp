@@ -66,11 +66,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		BOOL		winui_en;
 
 		NP2OSCFG	np2oscfg = {
-#if !defined(SUPPORT_PC9821)
-						OEMTEXT("Neko Project II"),
-#else
-						OEMTEXT("Neko Project 21"),
-#endif
+						OEMTEXT(PROJECTNAME) OEMTEXT(PROJECTSUBNAME),
 						OEMTEXT("NP2"),
 						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 1, 0, 0,
 						0, 0, KEY_UNKNOWN, 0,

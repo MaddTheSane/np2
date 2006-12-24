@@ -12,11 +12,9 @@
 
 static	SIZE	aboutsize;
 
-#if !defined(SUPPORT_PC9821)
-static const OEMCHAR str_np2title[] = OEMTEXT("Neko Project II  ");
-#else
-static const OEMCHAR str_np2title[] = OEMTEXT("Neko Project 21  ");
-#endif
+static const OEMCHAR str_np2title[] = OEMTEXT(PROJECTNAME) \
+										OEMTEXT(PROJECTSUBNAME) \
+										OEMTEXT("  ");
 static const OEMCHAR np2infostr[] = OEMTEXT("CPU: %CPU% %CLOCK%\nMEM: %MEM1%\nGDC: %GDC%\n     %GDC2%\nTEXT: %TEXT%\nGRPH: %GRPH%\nSOUND: %EXSND%\n\nBIOS: %BIOS%\nRHYTHM: %RHYTHM%\n\nSCREEN: %DISP%");
 
 
