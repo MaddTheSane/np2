@@ -14,6 +14,12 @@
 #include	"mt32snd.h"
 #endif
 
+#if defined(_M_IA64) || defined(_M_AMD64)
+#define	SOUNDBUFFERALIGN	(1 << 2)
+#else
+#define	SOUNDBUFFERALIGN	(1 << 3)
+#endif
+
 #if !defined(_WIN64)
 #ifdef __cplusplus
 extern "C" {
@@ -97,7 +103,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 //	keydispr_delayinit((UINT8)((ms * 10 + 563) / 564));
 
 	samples = (rate * ms) / 2000;
-	samples = (samples + 3) & (~3);
+	samples = (samples + SOUNDBUFFERALIGN - 1) & (~(SOUNDBUFFERALIGN - 1));
 	dsstreambytes = samples * 2 * sizeof(SINT16);
 	soundmng_setreverse(FALSE);
 

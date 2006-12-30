@@ -71,29 +71,30 @@ jis2sjis:		mov		eax, ecx
 				ret
 
 				align		16
-satuation_s16:	shr			r8d, 3
+satuation_s16:	shr			r8d, 4
 				je			short .ed
-				xorpd		xmm0, xmm0
-.lp:			movdqa		xmm1, [rdx]
-				lea			rcx, [rcx+8]
-				packssdw	xmm1, xmm0
-				lea			rdx, [rdx+16]
-				movq		[rcx-8], xmm1
+.lp:			lea			rcx, [rcx+16]
+				movdqa		xmm0, [rdx]
+				movdqa		xmm1, [rdx+16]
+				lea			rdx, [rdx+32]
+				packssdw	xmm0, xmm1
 				dec			r8d
+				movdqa		[rcx-16], xmm0
 				jne			short .lp
 .ed:			ret
 
 				align	16
-satuation_s16x:	shr			r8d, 3
+satuation_s16x:	shr			r8d, 4
 				je			short .ed
-				xorpd		xmm0, xmm0
-.lp:			movdqa		xmm1, [rdx]
-				lea			rcx, [rcx+8]
-				packssdw	xmm1, xmm0
-				lea			rdx, [rdx+16]
-				pshuflw		xmm2, xmm1, 2*64+3*16+0*4+1*1
+.lp:			lea			rcx, [rcx+16]
+				movdqa		xmm0, [rdx]
+				movdqa		xmm1, [rdx+16]
+				pshufd		xmm0, xmm0, 2*64+3*16+0*4+1*1
+				pshufd		xmm1, xmm1, 2*64+3*16+0*4+1*1
+				lea			rdx, [rdx+32]
+				packssdw	xmm0, xmm1
 				dec			r8d
-				movq		[rcx-8], xmm2
+				movdqa		[rcx-16], xmm0
 				jne			short .lp
 .ed:			ret
 

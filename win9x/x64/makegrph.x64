@@ -112,12 +112,12 @@ makegrph:		sub			rsp, byte 40
 
 				lea			rbx, [vramupdate]
 				mov			ecx, 8000h/32
-.dirtyfilllp:	movapd		xmm2, [rbx]
-				movapd		xmm3, [rbx+16]
+.dirtyfilllp:	movdqa		xmm2, [rbx]
+				movdqa		xmm3, [rbx+16]
 				por			xmm2, xmm1
 				por			xmm3, xmm1
-				movapd		[rbx], xmm2
-				movapd		[rbx+16], xmm3
+				movdqa		[rbx], xmm2
+				movdqa		[rbx+16], xmm3
 				add			rbx, byte 32
 				loop		.dirtyfilllp
 
@@ -167,7 +167,7 @@ makegrph:		sub			rsp, byte 40
 
 					cmp			dh, 0						; ALL_DRAWFLAG
 					je			short .putlineskip
-					jmp			near .linedirtyon
+					jmp			short .linedirtyon
 
 .putline:			push		rsi
 .linelp:			test		[vramupdate + rsi], dl
@@ -216,8 +216,8 @@ makegrph:		sub			rsp, byte 40
 				jae			short .deldirty
 .bottomfill0:	or			[renewal_line + rbx], dl
 				mov			ecx, 640/32
-.bottomfill1:	movapd		[rdi], xmm0
-				movapd		[rdi+16], xmm0
+.bottomfill1:	movdqa		[rdi], xmm0
+				movdqa		[rdi+16], xmm0
 				add			rdi, byte 32
 				loop		.bottomfill1
 				inc			ebx
@@ -228,12 +228,12 @@ makegrph:		sub			rsp, byte 40
 				lea			rbx, [vramupdate]
 				pandn		xmm1, xmm2
 				mov			ecx, 8000h/32
-.deldirtylp:	movapd		xmm2, [rbx]
-				movapd		xmm3, [rbx+16]
+.deldirtylp:	movdqa		xmm2, [rbx]
+				movdqa		xmm3, [rbx+16]
 				pand		xmm2, xmm1
 				pand		xmm3, xmm1
-				movapd		[rbx], xmm2
-				movapd		[rbx+16], xmm3
+				movdqa		[rbx], xmm2
+				movdqa		[rbx+16], xmm3
 				add			rbx, byte 32
 				loop		.deldirtylp
 
