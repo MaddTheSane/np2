@@ -13,6 +13,9 @@
 		/>
 	</Platforms>
 	<ToolFiles>
+		<ToolFile
+			RelativePath=".\x64\x64.rules"
+		/>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
@@ -20,12 +23,17 @@
 			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="..\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="YASM"
+				IncludePaths=".\x64,..\i386c\x64,..\io\x64"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -86,12 +94,18 @@
 			OutputDirectory="..\bin"
 			IntermediateDirectory="..\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			CharacterSet="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="YASM"
+				IncludePaths=".\x64,..\i386c\x64,..\io\x64"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -104,10 +118,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".\,.\dialog,.\debuguty,..\,..\common,..\codecnv,..\i386c,..\i386c\ia32,..\i386c\ia32\instructions,..\i386c\ia32\instructions\fpu,..\mem,..\io,..\cbus,..\bios,..\lio,..\vram,..\sound,..\sound\vermouth,..\sound\getsnd,..\fdd,..\font,..\generic,..\trap,..\zlib"
 				PreprocessorDefinitions="SUPPORT_PC9821"
+				StringPooling="true"
+				BufferSecurityCheck="false"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -122,6 +139,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib "
+				GenerateDebugInformation="true"
+				GenerateMapFile="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -220,6 +239,22 @@
 				<File
 					RelativePath="..\common\PARTS.C"
 					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\common\PROFILE.C"
@@ -708,6 +743,22 @@
 				<File
 					RelativePath="..\vram\MAKEGRPH.C"
 					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\vram\MAKETEXT.C"
@@ -959,6 +1010,74 @@
 				>
 			</Filter>
 			<Filter
+				Name="zlib"
+				>
+				<File
+					RelativePath="..\zlib\ADLER32.C"
+					>
+				</File>
+				<File
+					RelativePath="..\zlib\CRC32.C"
+					>
+				</File>
+				<File
+					RelativePath="..\zlib\INFFAST.C"
+					>
+				</File>
+				<File
+					RelativePath="..\zlib\INFLATE.C"
+					>
+				</File>
+				<File
+					RelativePath="..\zlib\INFTREES.C"
+					>
+				</File>
+				<File
+					RelativePath="..\zlib\ZUTIL.C"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="font"
+				>
+				<File
+					RelativePath="..\font\FONT.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTDATA.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTFM7.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTMAKE.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTPC88.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTPC98.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTV98.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTX1.C"
+					>
+				</File>
+				<File
+					RelativePath="..\font\FONTX68K.C"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="win9x"
 				>
 				<File
@@ -1169,74 +1288,39 @@
 						>
 					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="zlib"
-				>
-				<File
-					RelativePath="..\zlib\ADLER32.C"
+				<Filter
+					Name="x64"
 					>
-				</File>
-				<File
-					RelativePath="..\zlib\CRC32.C"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\INFFAST.C"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\INFLATE.C"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\INFTREES.C"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\ZUTIL.C"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="font"
-				>
-				<File
-					RelativePath="..\font\FONT.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTDATA.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTFM7.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTMAKE.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTPC88.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTPC98.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTV98.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTX1.C"
-					>
-				</File>
-				<File
-					RelativePath="..\font\FONTX68K.C"
-					>
-				</File>
+					<File
+						RelativePath=".\x64\makegrph.x64"
+						>
+						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\x64\parts.x64"
+						>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
