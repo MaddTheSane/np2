@@ -79,7 +79,7 @@ satuation_s16:	shr			r8d, 4
 				lea			rdx, [rdx+32]
 				packssdw	xmm0, xmm1
 				dec			r8d
-				movdqa		[rcx-16], xmm0
+				movdqu		[rcx-16], xmm0
 				jne			short .lp
 .ed:			ret
 
@@ -94,7 +94,7 @@ satuation_s16x:	shr			r8d, 4
 				lea			rdx, [rdx+32]
 				packssdw	xmm0, xmm1
 				dec			r8d
-				movdqa		[rcx-16], xmm0
+				movdqu		[rcx-16], xmm0
 				jne			short .lp
 .ed:			ret
 
