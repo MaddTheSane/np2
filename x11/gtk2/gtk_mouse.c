@@ -70,12 +70,12 @@ mousemng_initialize(void)
 
 	ms = ms_default;
 
-	ms.cursor_pixmap = gdk_pixmap_create_from_data(drawarea->window,
+	ms.cursor_pixmap = gdk_pixmap_create_from_data(main_window->window,
 	    hide_cursor, 16, 16, 1,
-	    &drawarea->style->black, &drawarea->style->black);
+	    &main_window->style->black, &main_window->style->black);
 	ms.cursor = gdk_cursor_new_from_pixmap(ms.cursor_pixmap,
-	    ms.cursor_pixmap, &drawarea->style->black, &drawarea->style->black,
-	    0, 0);
+	    ms.cursor_pixmap, &main_window->style->black,
+	    &main_window->style->black, 0, 0);
 
 	return SUCCESS;
 }
@@ -106,10 +106,10 @@ mouseonoff(int flag)
 	if ((ms.lastmouse ^ flag) & 1) {
 		ms.lastmouse = flag & 1;
 		if (ms.lastmouse) {
-			gdk_pointer_grab(drawarea->window, TRUE, 0,
-			    drawarea->window, ms.cursor, 0);
-			getmaincenter(drawarea, &curx, &cury);
-			gdk_window_set_pointer(drawarea->window, curx, cury);
+			gdk_pointer_grab(main_window->window, TRUE, 0,
+			    main_window->window, ms.cursor, 0);
+			getmaincenter(main_window, &curx, &cury);
+			gdk_window_set_pointer(main_window->window, curx, cury);
 		} else {
 			gdk_pointer_ungrab(0);
 		}
@@ -155,11 +155,11 @@ mousemng_callback(void)
 	int cx, cy;
 
 	if (ms.lastmouse & 1) {
-		gdk_window_get_pointer(drawarea->window, &wx, &wy, NULL);
-		getmaincenter(drawarea, &cx, &cy);
+		gdk_window_get_pointer(main_window->window, &wx, &wy, NULL);
+		getmaincenter(main_window, &cx, &cy);
 		ms.mousex += (short)((wx - cx) / 2);
 		ms.mousey += (short)((wy - cy) / 2);
-		gdk_window_set_pointer(drawarea->window, cx, cy);
+		gdk_window_set_pointer(main_window->window, cx, cy);
 	}
 }
 
