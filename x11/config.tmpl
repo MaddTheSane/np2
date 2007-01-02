@@ -1,4 +1,4 @@
-XCOMM $Id: config.tmpl,v 1.6 2004/06/17 14:36:33 monaka Exp $
+XCOMM $Id: config.tmpl,v 1.7 2007/01/02 14:25:42 monaka Exp $
 
 XCOMM
 XCOMM Sound
@@ -30,9 +30,8 @@ XCOMM
 
 XCOMM GTK+
 XCOMM
-XCOMM GTK_CONFIG= gtk-config		# for GTK+ 1.x
 XCOMM GTK_CONFIG= pkg-config gtk+-2.0	# for GTK+ 2.x
-#undef	USE_GTK2
+#define	USE_GTK2
 
 
 XCOMM
