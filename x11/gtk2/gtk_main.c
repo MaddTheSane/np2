@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.2 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.3 2007/01/02 14:37:29 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -194,6 +194,23 @@ button_release_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 	return TRUE;
 }
 
+/*
+ - Signal: gboolean GtkWidget::window_state_event (GtkWidget *widget,
+          GdkEventWindowState *event, gpointer user_data)
+*/
+static gboolean
+window_state_evhandler(GtkWidget *w, GdkEventWindowState *ev, gpointer p)
+{
+
+	UNUSED(w);
+	UNUSED(p);
+
+	if (ev->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) {
+		/* Nothing to do. */
+	}
+	return TRUE;
+}
+
 
 /*
  * misc
@@ -317,6 +334,8 @@ gui_gtk_widget_create(void)
 	    GTK_SIGNAL_FUNC(button_press_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "button_release_event",
 	    GTK_SIGNAL_FUNC(button_release_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(main_window), "window_state_event",
+	    GTK_SIGNAL_FUNC(window_state_evhandler), NULL);
 
 	g_signal_connect(GTK_OBJECT(drawarea), "configure_event",
 	    GTK_SIGNAL_FUNC(configure_evhandler), NULL);
