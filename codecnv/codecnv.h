@@ -8,6 +8,7 @@ extern "C" {
 
 UINT codecnv_sjistoeuc(char *dst, UINT dcnt, const char *src, UINT scnt);
 UINT codecnv_sjistoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt);
+UINT codecnv_sjis2utf(UINT16 *dst, UINT dcnt, const char *src, UINT scnt);
 
 UINT codecnv_euctosjis(char *dst, UINT dcnt, const char *src, UINT scnt);
 UINT codecnv_euctoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt);
