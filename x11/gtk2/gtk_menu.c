@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.4 2005/03/05 15:01:03 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.5 2007/01/02 13:11:01 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -1064,7 +1064,7 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 		for (i = 0; i < NELEMENTS(filter); i++) {
 			if (f == filter[i]) {
 				kind = i;
-				tmp = g_strjoin(".", path, extname[i]);
+				tmp = g_strjoin(".", path, extname[i], NULL);
 				if (tmp) {
 					g_free(path);
 					path = tmp;
