@@ -1,5 +1,6 @@
 #include	"compiler.h"
 #include	<SDL_ttf.h>
+#include	"np2.h"
 #include	"fontmng.h"
 #include	"codecnv.h"
 
@@ -7,13 +8,6 @@
 #if !defined(RESOURCE_US)		// use TTF
 
 #define	FONTMNG_CACHE		64
-
-
-#ifndef	FONTNAME_DEFAULT
-#define	FONTNAME_DEFAULT	"./default.ttf"
-#endif
-
-static	char	fontname[MAX_PATH] = FONTNAME_DEFAULT;
 
 static	const SDL_Color white = {0xff, 0xff, 0xff, 0};
 
@@ -60,7 +54,7 @@ fontmng_terminate(void)
 
 void fontmng_setdeffontname(const char *name) {
 
-	milstr_ncpy(fontname, name, sizeof(fontname));
+	UNUSED(name);
 }
 
 void *fontmng_create(int size, UINT type, const char *fontface) {
@@ -111,7 +105,7 @@ void *fontmng_create(int size, UINT type, const char *fontface) {
 	ret->fonttype = type;
 	ret->ptsize = ptsize;
 	ret->fontalign = fontalign;
-	ret->ttf_font = TTF_OpenFont(fontname, ptsize);
+	ret->ttf_font = TTF_OpenFont(fontfilename, ptsize);
 	if (ret->ttf_font == NULL) {
 		fprintf(stderr, "Couldn't load %d points font from %s: %s\n",
 										ptsize, fontname, SDL_GetError());
