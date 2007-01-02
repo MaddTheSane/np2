@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.3 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.4 2007/01/02 13:41:21 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -379,8 +379,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	for (i = 0; i < NELEMENTS(snd26_ioport_str); i++) {
 		if (strcmp(snd26_ioport, snd26_ioport_str[i]) == 0) {
 			if (SND26_GET_IOPORT() != i) {
-				snd86opt |= SND26_SET_IOPORT(i);
-				snd86opt_mask |= SND26_MASK_IOPORT;
+				snd26opt |= SND26_SET_IOPORT(i);
+				snd26opt_mask |= SND26_MASK_IOPORT;
 				renewal = TRUE;
 			}
 			break;
