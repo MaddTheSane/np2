@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.3 2007/01/02 14:37:29 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.4 2007/01/02 16:43:48 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -118,7 +118,9 @@ key_press_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 	UNUSED(w);
 	UNUSED(p);
 
-	if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
+	if (ev->keyval == GDK_F11)
+		xmenu_select_screen(scrnmode ^ SCRNMODE_FULLSCREEN);
+	else if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
 		xmenu_toggle_item(NULL, "mousemode", !np2oscfg.MOUSE_SW);
 	else
 		gtkkbd_keydown(ev->keyval);
@@ -360,7 +362,6 @@ gui_gtk_widget_show(void)
 void
 gui_gtk_widget_mainloop(void)
 {
-
 
 	install_idle_process();
 	gtk_main();

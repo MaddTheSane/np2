@@ -29,6 +29,8 @@
 #include "gtk2/xnp2.h"
 
 GtkWidget *create_menu(void);
+void xmenu_hide(void);
+void xmenu_show(void);
 
 void create_about_dialog(void);
 void create_calendar_dialog(void);
@@ -45,5 +47,6 @@ typedef struct {
 } _MENU_HDL, *MENU_HDL;
 
 void xmenu_toggle_item(MENU_HDL, const char *, BOOL);
+void xmenu_select_screen(UINT8 mode);
 
 #endif	/* NP2_GTK2_GTKMENU_H__ */
