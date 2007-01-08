@@ -319,7 +319,7 @@ static UINT method8read(METHOD8 *m8, void *buffer, UINT size) {
 //		TRACEOUT(("inflate ret = %d", m8->err));
 //		TRACEOUT(("avail_out = %d", m8->stream.avail_out));
 	}
-	return(ptr - ((UINT8 *)buffer));
+	return((UINT)(ptr - ((UINT8 *)buffer)));
 }
 
 static UINT method8_read(ARCFH arcfh, void *buffer, UINT size) {
@@ -518,7 +518,7 @@ const ZIPCAT	*cat;
 		return(NULL);
 	}
 //	TRACEOUT(("zipopen: %s", name));
-	nameleng = STRLEN(name);
+	nameleng = (UINT)STRLEN(name);
 	initializecat((ZIPHDL *)arch, &zch);
 	while(1) {
 		cat = getcatnext(&zch);
@@ -545,7 +545,7 @@ const ZIPCAT	*cat;
 	if (name == NULL) {
 		return(-1);
 	}
-	nameleng = STRLEN(name);
+	nameleng = (UINT)STRLEN(name);
 	initializecat((ZIPHDL *)arch, &zch);
 	while(1) {
 		cat = getcatnext(&zch);

@@ -122,10 +122,11 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".\,.\dialog,.\debuguty,..\,..\common,..\codecnv,..\i386c,..\i386c\ia32,..\i386c\ia32\instructions,..\i386c\ia32\instructions\fpu,..\mem,..\io,..\cbus,..\bios,..\lio,..\vram,..\sound,..\sound\vermouth,..\sound\getsnd,..\fdd,..\font,..\generic,..\trap,..\zlib"
-				PreprocessorDefinitions="SUPPORT_PC9821"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE,SUPPORT_PC9821"
 				StringPooling="true"
 				BufferSecurityCheck="false"
 				WarningLevel="3"
+				DisableSpecificWarnings="4819"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -237,24 +238,8 @@
 					>
 				</File>
 				<File
-					RelativePath="..\common\PARTS.C"
+					RelativePath=".\x64\PARTS.X64"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\common\PROFILE.C"
@@ -334,6 +319,14 @@
 					<File
 						RelativePath="..\i386c\ia32\disasm.c"
 						>
+						<FileConfiguration
+							Name="Release|x64"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\i386c\ia32\exception.c"
@@ -741,24 +734,8 @@
 					>
 				</File>
 				<File
-					RelativePath="..\vram\MAKEGRPH.C"
+					RelativePath=".\x64\MAKEGRPH.X64"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\vram\MAKETEXT.C"
@@ -1286,39 +1263,6 @@
 					<File
 						RelativePath=".\debuguty\VIEWSND.CPP"
 						>
-					</File>
-				</Filter>
-				<Filter
-					Name="x64"
-					>
-					<File
-						RelativePath=".\x64\makegrph.x64"
-						>
-						<FileConfiguration
-							Name="Debug|x64"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\x64\parts.x64"
-						>
-						<FileConfiguration
-							Name="Release|x64"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>

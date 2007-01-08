@@ -106,7 +106,7 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			if (view) {
 				RECT	rc;
 				GetClientRect(hWnd, &rc);
-				view->step = rc.bottom / 16;
+				view->step = (UINT16)(rc.bottom / 16);
 				viewcmn_setvscroll(hWnd, view);
 			}
 			break;

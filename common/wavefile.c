@@ -51,7 +51,7 @@ static void dataflash(WAVEWR hdl) {
 
 	UINT	size;
 
-	size = hdl->ptr - hdl->buf;
+	size = (UINT)(hdl->ptr - hdl->buf);
 	if (size) {
 		hdl->size += file_write((FILEH)hdl->fh, hdl->buf, size);
 	}

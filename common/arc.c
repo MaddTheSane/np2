@@ -228,7 +228,7 @@ const OEMCHAR	*p;
 	if (p == NULL) {
 		return(plainfile_regist(file_open(fname)));
 	}
-	len = p - fname;
+	len = (UINT)(p - fname);
 	if (len >= NELEMENTS(path)) {
 		return(NULL);
 	}
@@ -263,7 +263,7 @@ const OEMCHAR	*p;
 	if (p == NULL) {
 		return(file_attr(fname));
 	}
-	len = p - fname;
+	len = (UINT)(p - fname);
 	if (len >= NELEMENTS(path)) {
 		return(-1);
 	}

@@ -93,7 +93,7 @@ void gdc_setanalogpal(int color, int rgb, REG8 value) {
 				event = palevent.event + palevent.events;
 				event->clock = nevent.item[NEVENT_FLAMES].clock -
 											(CPU_BASECLOCK - CPU_REMCLOCK);
-				event->color = (color * sizeof(RGB32)) + rgb;
+				event->color = (UINT16)((color * sizeof(RGB32)) + rgb);
 				event->value = (UINT8)value;
 				palevent.events++;
 			}

@@ -1066,8 +1066,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_SCRNMUL16:
 					if ((!scrnmng_isfullscreen()) &&
 						!(GetWindowLong(hWndMain, GWL_STYLE) & WS_MINIMIZE)) {
-						sysmenu_setscrnmul(wParam - IDM_SCRNMUL);
-						scrnmng_setmultiple(wParam - IDM_SCRNMUL);
+						sysmenu_setscrnmul((UINT8)(wParam - IDM_SCRNMUL));
+						scrnmng_setmultiple((int)(wParam - IDM_SCRNMUL));
 					}
 					break;
 
@@ -1837,6 +1837,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	viewer_term();													// ver0.30
 
-	return(msg.wParam);
+	return((int)msg.wParam);
 }
 

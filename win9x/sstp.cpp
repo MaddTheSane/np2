@@ -105,7 +105,7 @@ sstp_senderror:;
 void sstp_connect(void) {
 
 	if (hSocket != INVALID_SOCKET) {
-		send(hSocket, sstpstr, strlen(sstpstr), 0);
+		send(hSocket, sstpstr, (int)strlen(sstpstr), 0);
 	}
 }
 
@@ -208,7 +208,7 @@ BOOL sstp_sendonly(const OEMCHAR *msg) {
 #else
 				OEMSPRINTF(msgstr, sendermes, msg);
 #endif
-				send(lSocket, msgstr, strlen(msgstr), 0);
+				send(lSocket, msgstr, (int)strlen(msgstr), 0);
 				ret = SUCCESS;
 			}
 			closesocket(lSocket);

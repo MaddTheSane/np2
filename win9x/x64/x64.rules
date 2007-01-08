@@ -9,7 +9,7 @@
 			DisplayName="Yasm Assembler"
 			CommandLine="yasm -Xvc -f $(PlatformName) [ListFileName] [Defines] [IncludePaths] [ObjectFileName] [inputs]"
 			Outputs="[$ObjectFileName]"
-			FileExtensions="*.x86"
+			FileExtensions="*.x64"
 			ExecutionDescription="Assembling $(InputFileName)"
 			ShowOnlyRuleProperties="false"
 			>

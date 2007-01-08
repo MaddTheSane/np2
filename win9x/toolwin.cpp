@@ -805,7 +805,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_KEYDOWN:						// TAB‚ð‰Ÿ‚µ‚½Žž‚É•œ‹A
 			if ((short)wp == VK_TAB) {
-				idc = GetWindowLongPtr(hWnd, GTWLP_FOCUS);
+				idc = (UINT)GetWindowLongPtr(hWnd, GTWLP_FOCUS);
 				if (idc < IDC_MAXITEMS) {
 					SetFocus(toolwin.sub[idc]);
 				}
@@ -824,7 +824,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_DRAWITEM:
-			tooldrawbutton(hWnd, wp, (LPDRAWITEMSTRUCT)lp);
+			tooldrawbutton(hWnd, (UINT)wp, (LPDRAWITEMSTRUCT)lp);
 			break;
 
 		case WM_ENTERMENULOOP:

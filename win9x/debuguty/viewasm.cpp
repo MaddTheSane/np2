@@ -28,7 +28,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	UINT8	buf[16];
 	TCHAR	str[16];
 	HFONT	hfont;
-	BOOL	opsize;
+//	BOOL	opsize;
 	_UNASM	una;
 	int		step;
 #if defined(UNICODE)

@@ -8,7 +8,7 @@ LISTARRAY listarray_new(size_t listsize, UINT maxitems) {
 
 	listsize = (listsize + 3) & (~3);
 	dwSize = sizeof(_LISTARRAY);
-	dwSize += listsize * maxitems;
+	dwSize += (UINT)(listsize * maxitems);
 
 #ifdef TRACE
 	{

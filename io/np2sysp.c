@@ -195,7 +195,7 @@ static BRESULT np2syspcmp(const char *p) {
 	int		len;
 	int		pos;
 
-	len = STRLEN(p);
+	len = (int)STRLEN(p);
 	if (!len) {
 		return(FAILURE);
 	}

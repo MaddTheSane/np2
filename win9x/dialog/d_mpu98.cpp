@@ -38,7 +38,7 @@ static UINT8 getmpuio(HWND hWnd, UINT16 res) {
 	TCHAR	work[8];
 
 	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
-	return((miltchar_solveHEX(work) >> 6) & 0xf0);
+	return((UINT8)((miltchar_solveHEX(work) >> 6) & 0xf0));
 }
 
 static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {

@@ -388,7 +388,7 @@ static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m) {
 	mode = *(m->dip_mode);
 	r = SendDlgItemMessage(hWnd, m->idc_speed, CB_GETCURSEL, 0, 0);
 	if (r != CB_ERR) {
-		UINT speed = r;
+		UINT speed = (UINT)r;
 		if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
 			speed = NELEMENTS(pc9861k_speed) - 1;
 		}
