@@ -31,6 +31,16 @@ enum {
 	SCRNFLAG_ENABLE			= 0x80
 };
 
+enum {
+	FSCRNMOD_NORESIZE		= 0x00,
+	FSCRNMOD_ASPECTFIX8		= 0x01,
+	FSCRNMOD_ASPECTFIX		= 0x02,
+	FSCRNMOD_LARGE			= 0x03,
+	FSCRNMOD_ASPECTMASK		= 0x03,
+	FSCRNMOD_SAMERES		= 0x04,
+	FSCRNMOD_SAMEBPP		= 0x08
+};
+
 typedef struct {
 	UINT8	flag;
 	UINT8	bpp;
@@ -82,6 +92,7 @@ void scrnmng_sizing(UINT side, RECT *rect);
 void scrnmng_exitsizing(void);
 
 #if defined(SUPPORT_DCLOCK)
+BOOL scrnmng_isdispclockclick(const POINT *pt);
 void scrnmng_dispclock(void);
 #endif
 

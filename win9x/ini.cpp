@@ -390,6 +390,7 @@ enum {
 	PFRO_BITMAP		= PFFLAG_RO + PFTYPE_BITMAP,
 	PFRO_UINT8		= PFFLAG_RO + PFTYPE_UINT8,
 	PFRO_SINT32		= PFFLAG_RO + PFTYPE_SINT32,
+	PFRO_HEX8		= PFFLAG_RO + PFTYPE_HEX8,
 	PFRO_HEX32		= PFFLAG_RO + PFTYPE_HEX32,
 	PFRO_BYTE3		= PFFLAG_RO + PFTYPE_BYTE3,
 	PFRO_KB			= PFFLAG_RO + PFTYPE_KB
@@ -546,7 +547,10 @@ static const PFTBL iniitem[] = {
 	PFVAL("useromeo", PFTYPE_BOOL,		&np2oscfg.useromeo),
 	PFVAL("thickfrm", PFTYPE_BOOL,		&np2oscfg.thickframe),
 	PFVAL("xrollkey", PFRO_BOOL,		&np2oscfg.xrollkey),
+	PFVAL("fscrn_cx", PFRO_SINT32,		&np2oscfg.fscrn_cx),
+	PFVAL("fscrn_cy", PFRO_SINT32,		&np2oscfg.fscrn_cy),
 	PFVAL("fscrnbpp", PFRO_UINT8,		&np2oscfg.fscrnbpp),
+	PFVAL("fscrnmod", PFRO_HEX8,		&np2oscfg.fscrnmod),
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)};
 
 

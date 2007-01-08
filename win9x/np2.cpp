@@ -68,7 +68,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		NP2OSCFG	np2oscfg = {
 						OEMTEXT(PROJECTNAME) OEMTEXT(PROJECTSUBNAME),
 						OEMTEXT("NP2"),
-						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 1, 0, 0,
+						CW_USEDEFAULT, CW_USEDEFAULT, 1, 1, 0, 0, 0, 1, 0, 0,
 						0, 0, KEY_UNKNOWN, 0,
 						0, 0, 0, {1, 2, 2, 1},
 						{5, 0, 0x3e, 19200,
@@ -80,7 +80,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						{0, 0, 0x3e, 19200,
 						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];
@@ -1271,7 +1271,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #if defined(SUPPORT_DCLOCK)
 				else {
 					POINT p;
-					if ((GetCursorPos(&p)) && (p.y >= 466)) {
+					if ((GetCursorPos(&p)) &&
+						(scrnmng_isdispclockclick(&p))) {
 						np2oscfg.clk_x++;
 						sysmng_update(SYS_UPDATEOSCFG);
 						dclock_reset();
@@ -1302,8 +1303,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #if defined(SUPPORT_DCLOCK)
 				else {
 					POINT p;
-					if ((GetCursorPos(&p)) && (p.y >= 466) &&
-												(np2oscfg.clk_x)) {
+					if ((GetCursorPos(&p)) &&
+						(scrnmng_isdispclockclick(&p)) &&
+						(np2oscfg.clk_x)) {
 						np2oscfg.clk_fnt++;
 						sysmng_update(SYS_UPDATEOSCFG);
 						dclock_reset();
