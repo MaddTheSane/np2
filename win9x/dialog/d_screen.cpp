@@ -271,7 +271,7 @@ void dialog_scropt(HWND hWnd) {
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[3];
 
-	hinst = GetWindowInst(hWnd);
+	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);

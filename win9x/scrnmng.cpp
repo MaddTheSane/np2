@@ -321,7 +321,7 @@ const RECT	*scrn;
 	base.top = 0;
 	base.right = ddraw.width;
 	base.bottom = ddraw.height;
-	if (GetWindowLong(hWndMain, NP2GWL_HMENU)) {
+	if (GetWindowLongPtr(hWndMain, NP2GWLP_HMENU)) {
 		scrn = &ddraw.scrn;
 		base.top = 0;
 	}
@@ -818,7 +818,7 @@ void scrnmng_update(void) {
 				scrnmng.allflash = 0;
 				clearoutfullscreen();
 			}
-			if (GetWindowLong(hWndMain, NP2GWL_HMENU)) {
+			if (GetWindowLongPtr(hWndMain, NP2GWLP_HMENU)) {
 				rect = &ddraw.rect;
 				scrn = &ddraw.scrn;
 			}
@@ -897,7 +897,7 @@ const RECT			*scrn;
 	if (!dclock_disp()) {
 		return;
 	}
-	if (GetWindowLong(hWndMain, NP2GWL_HMENU)) {
+	if (GetWindowLongPtr(hWndMain, NP2GWLP_HMENU)) {
 		scrn = &ddraw.scrn;
 	}
 	else {

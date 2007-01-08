@@ -292,7 +292,7 @@ BOOL kdispwin_initialize(HINSTANCE hPreInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = kdproc;
 		wc.cbClsExtra = 0;
-		wc.cbWndExtra = NP2GWL_SIZE;
+		wc.cbWndExtra = NP2GWLP_SIZE;
 		wc.hInstance = hInst;
 		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -522,6 +522,18 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			mdpaintmsg(hWnd);
 			break;
 
+		case WM_LBUTTONDOWN:
+			if (mdbgcfg.type & 1) {
+				return(SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0L));
+			}
+			break;
+
+		case WM_LBUTTONDBLCLK:
+			mdbgcfg.type ^= 1;
+			wintypechange(hWnd, (mdbgcfg.type & 1) + 1);
+			sysmng_update(SYS_UPDATEOSCFG);
+			break;
+
 		case WM_KEYDOWN:
 		case WM_KEYUP:
 			SendMessage(hWndMain, msg, wp, lp);
@@ -578,22 +590,24 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0);
 }
 
-BOOL mdbgwin_initialize(HINSTANCE hInstance) {
+BOOL mdbgwin_initialize(HINSTANCE hPreInst) {
 
 	WNDCLASS	wc;
 
-	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = mdproc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
-	wc.hIcon = NULL;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = mdbgclass;
-	if (!RegisterClass(&wc)) {
-		return(FAILURE);
+	if (!hPreInst) {
+		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+		wc.lpfnWndProc = mdproc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = hInst;
+		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+		wc.lpszMenuName = NULL;
+		wc.lpszClassName = mdbgclass;
+		if (!RegisterClass(&wc)) {
+			return(FAILURE);
+		}
 	}
 	memdbg32_initialize();
 	return(SUCCESS);
@@ -860,7 +874,7 @@ BOOL skbdwin_initialize(HINSTANCE hPreInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = skproc;
 		wc.cbClsExtra = 0;
-		wc.cbWndExtra = NP2GWL_SIZE;
+		wc.cbWndExtra = NP2GWLP_SIZE;
 		wc.hInstance = hInst;
 		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);

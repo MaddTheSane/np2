@@ -18,7 +18,7 @@ void kdispwin_writeini(void);
 #endif
 
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
-BOOL mdbgwin_initialize(HINSTANCE hInstance);
+BOOL mdbgwin_initialize(HINSTANCE hPreInst);
 void mdbgwin_create(void);
 void mdbgwin_destroy(void);
 void mdbgwin_process(void);

@@ -71,17 +71,17 @@ int CALLBACK np2class_propetysheet(HWND hWndDlg, UINT uMsg, LPARAM lParam) {
 
 void np2class_wmcreate(HWND hWnd) {
 
-	SetWindowLong(hWnd, NP2GWL_HMENU, 0);
+	SetWindowLongPtr(hWnd, NP2GWLP_HMENU, 0);
 }
 
 void np2class_wmdestroy(HWND hWnd) {
 
 	HMENU	hmenu;
 
-	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	hmenu = (HMENU)GetWindowLongPtr(hWnd, NP2GWLP_HMENU);
 	if (hmenu != NULL) {
 		DestroyMenu(hmenu);
-		SetWindowLong(hWnd, NP2GWL_HMENU, 0);
+		SetWindowLongPtr(hWnd, NP2GWLP_HMENU, 0);
 	}
 }
 
@@ -90,7 +90,7 @@ void np2class_enablemenu(HWND hWnd, BOOL enable) {
 	HMENU	hmenu;
 	BOOL	draw;
 
-	hmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	hmenu = (HMENU)GetWindowLongPtr(hWnd, NP2GWLP_HMENU);
 	draw = FALSE;
 	if (enable) {
 		if (hmenu) {
@@ -108,7 +108,7 @@ void np2class_enablemenu(HWND hWnd, BOOL enable) {
 			}
 		}
 	}
-	SetWindowLong(hWnd, NP2GWL_HMENU, (LONG)hmenu);
+	SetWindowLongPtr(hWnd, NP2GWLP_HMENU, (LONG_PTR)hmenu);
 	if (draw) {
 		DrawMenuBar(hWnd);
 	}
@@ -173,7 +173,7 @@ HMENU np2class_gethmenu(HWND hWnd) {
 
 	HMENU	ret;
 
-	ret = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	ret = (HMENU)GetWindowLongPtr(hWnd, NP2GWLP_HMENU);
 	if (ret == NULL) {
 		ret = GetMenu(hWnd);
 	}

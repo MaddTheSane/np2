@@ -360,7 +360,7 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 	HMENU	hMenu;
 	POINT	pt;
 
-	mainmenu = (HMENU)GetWindowLong(hWnd, NP2GWL_HMENU);
+	mainmenu = (HMENU)GetWindowLongPtr(hWnd, NP2GWLP_HMENU);
 	if (mainmenu == NULL) {
 		return;
 	}
@@ -375,11 +375,11 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 
 static void np2cmd(HWND hWnd, UINT16 cmd) {
 
-	HINSTANCE	hInst;
+	HINSTANCE	hinst;
 	UINT		update;
 	BOOL		b;
 
-	hInst = GetWindowInst(hWnd);
+	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 	update = 0;
 	switch(cmd) {
 		case IDM_RESET:
@@ -406,7 +406,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 		case IDM_CONFIG:
 			winuienter();
 			sstpmsg_config();
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_CONFIG),
+			DialogBox(hinst, MAKEINTRESOURCE(IDD_CONFIG),
 									hWnd, (DLGPROC)CfgDialogProc);
 			if (!scrnmng_isfullscreen()) {
 				UINT8 thick;
@@ -847,7 +847,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 		case IDM_MPUPC98:
 			winuienter();
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_MPUPC98),
+			DialogBox(hinst, MAKEINTRESOURCE(IDD_MPUPC98),
 											hWnd, (DLGPROC)MidiDialogProc);
 			winuileave();
 			break;
@@ -895,7 +895,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 		case IDM_CALENDAR:
 			winuienter();
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_CALENDAR),
+			DialogBox(hinst, MAKEINTRESOURCE(IDD_CALENDAR),
 											hWnd, (DLGPROC)ClndDialogProc);
 			winuileave();
 			break;
@@ -943,7 +943,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			sstpmsg_about();
 			if (sstp_result() != SSTP_SENDING) {
 				winuienter();
-				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUT),
+				DialogBox(hinst, MAKEINTRESOURCE(IDD_ABOUT),
 								hWnd, (DLGPROC)AboutDialogProc);
 				winuileave();
 			}
@@ -1131,7 +1131,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				BITMAP		bmp;
 				HDC			hmdc;
 				HBRUSH		hbrush;
-				hinst = GetWindowInst(hWnd);
+				hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
@@ -1521,7 +1521,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
-		wc.cbWndExtra = NP2GWL_SIZE;
+		wc.cbWndExtra = NP2GWLP_SIZE;
 		wc.hInstance = hInst;
 		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);

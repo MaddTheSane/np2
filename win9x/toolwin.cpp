@@ -89,10 +89,8 @@ typedef struct {
 	SUBCLASSPROC	subproc[IDC_MAXITEMS];
 } TOOLWIN;
 
-enum {
-	GTWL_FOCUS		= NP2GWL_SIZE + 0,
-	GTWL_SIZE		= NP2GWL_SIZE + 4
-};
+#define	GTWLP_FOCUS		(NP2GWLP_SIZE + (0 * sizeof(LONG_PTR)))
+#define	GTWLP_SIZE		(NP2GWLP_SIZE + (1 * sizeof(LONG_PTR)))
 
 		NP2TOOL		np2tool;
 static	TOOLSKIN	toolskin;
@@ -398,7 +396,7 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		}
 	}
 	else if (msg == WM_SETFOCUS) {
-		SetWindowLong(GetParent(hWnd), GTWL_FOCUS, idc);
+		SetWindowLongPtr(GetParent(hWnd), GTWLP_FOCUS, idc);
 	}
 	return(CallWindowProc(toolwin.subproc[idc], hWnd, msg, wp, lp));
 }
@@ -464,8 +462,9 @@ static void toolwincreate(HWND hWnd) {
 		toolwin.sub[i] = sub;
 		toolwin.subproc[i] = NULL;
 		if (sub) {
-			toolwin.subproc[i] = GetWindowProc(sub);
-			SetWindowProc(sub, twsub);
+			toolwin.subproc[i] = (SUBCLASSPROC)GetWindowLongPtr(sub,
+															GWLP_WNDPROC);
+			SetWindowLongPtr(sub, GWLP_WNDPROC, (LONG_PTR)twsub);
 			SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.hfont,
 														MAKELPARAM(TRUE, 0));
 		}
@@ -483,7 +482,7 @@ static void toolwincreate(HWND hWnd) {
 			break;
 		}
 	}
-	SetWindowLong(hWnd, GTWL_FOCUS, i);
+	SetWindowLongPtr(hWnd, GTWLP_FOCUS, i);
 }
 
 static void toolwindestroy(void) {
@@ -806,7 +805,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_KEYDOWN:						// TAB‚ð‰Ÿ‚µ‚½Žž‚É•œ‹A
 			if ((short)wp == VK_TAB) {
-				idc = GetWindowLong(hWnd, GTWL_FOCUS);
+				idc = GetWindowLongPtr(hWnd, GTWLP_FOCUS);
 				if (idc < IDC_MAXITEMS) {
 					SetFocus(toolwin.sub[idc]);
 				}
@@ -908,7 +907,7 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 	wc.lpfnWndProc = twproc;
 	wc.cbClsExtra = 0;
-	wc.cbWndExtra = GTWL_SIZE;
+	wc.cbWndExtra = GTWLP_SIZE;
 	wc.hInstance = hInstance;
 	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);

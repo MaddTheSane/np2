@@ -5,16 +5,33 @@
 #define	SUBCLASSPROC	FARPROC
 #endif
 
-#if defined(_WIN64)
-#define GetWindowInst(h)	(HINSTANCE)GetWindowLongPtr((h), GWLP_HINSTANCE)
-#define GetWindowProc(h)	(SUBCLASSPROC)GetWindowLongPtr((h), GWLP_WNDPROC)
-#define SetWindowProc(h, f)	SetWindowLongPtr((h), GWLP_WNDPROC, (LONG)(f))
-#else
-#define GetWindowInst(h)	(HINSTANCE)GetWindowLong((h), GWL_HINSTANCE)
-#define GetWindowProc(h)	(SUBCLASSPROC)GetWindowLong((h), GWL_WNDPROC)
-#define SetWindowProc(h, f)	SetWindowLong((h), GWL_WNDPROC, (LONG)(f))
+// for VC6SDK
+#if !defined(_WIN64)
+#ifndef LONG_PTR
+#define	LONG_PTR			LONG
 #endif
-
+#ifndef GetWindowLongPtr
+#define GetWindowLongPtr	GetWindowLong
+#endif
+#ifndef SetWindowLongPtr
+#define SetWindowLongPtr	SetWindowLong
+#endif
+#ifndef GWLP_WNDPROC
+#define GWLP_WNDPROC		GWL_WNDPROC
+#endif
+#ifndef GWLP_HINSTANCE
+#define GWLP_HINSTANCE		GWL_HINSTANCE
+#endif
+#ifndef GWLP_HWNDPARENT
+#define GWLP_HWNDPARENT		GWL_HWNDPARENT
+#endif
+#ifndef GWLP_USERDATA
+#define GWLP_USERDATA		GWL_USERDATA
+#endif
+#ifndef GWLP_ID
+#define GWLP_ID				GWL_ID
+#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {
