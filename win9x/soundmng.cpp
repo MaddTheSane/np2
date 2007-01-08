@@ -14,10 +14,10 @@
 #include	"mt32snd.h"
 #endif
 
-#if !defined(_WIN64)
-#define	SOUNDBUFFERALIGN	(1 << 2)
-#else
+#if defined(_M_IA64) || defined(_M_AMD64)
 #define	SOUNDBUFFERALIGN	(1 << 3)
+#else
+#define	SOUNDBUFFERALIGN	(1 << 2)
 #endif
 
 #if !defined(_WIN64)
