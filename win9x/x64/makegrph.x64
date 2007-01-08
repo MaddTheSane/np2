@@ -126,36 +126,32 @@ makegrph:		sub			rsp, byte 40
 				mov			[GRP_LR], eax
 
 				mov			ebx, [dsync + dsync_t.grph_vbp]
-.drawlp:		movzx		esi, word [GDC_S_SCROLL+ 0+0]
-				movzx		ecx, word [GDC_S_SCROLL+ 0+2]
+.drawlp:		mov			esi, [GDC_S_SCROLL+ 0]
 				call		.grphputlines
-				movzx		esi, word [GDC_S_SCROLL+ 4+0]
-				movzx		ecx, word [GDC_S_SCROLL+ 4+2]
+				mov			esi, [GDC_S_SCROLL+ 4]
 				call		.grphputlines
 				cmp			byte [np2cfg + np2cfg_t.uPD72020], 0
 				jne			short .drawlp
-				movzx		esi, word [GDC_S_SCROLL+ 8+0]
-				movzx		ecx, word [GDC_S_SCROLL+ 8+2]
+				mov			esi, [GDC_S_SCROLL+ 8]
 				call		.grphputlines
-				movzx		esi, word [GDC_S_SCROLL+12+0]
-				movzx		ecx, word [GDC_S_SCROLL+12+2]
+				mov			esi, [GDC_S_SCROLL+12]
 				call		.grphputlines
 				jmp			short .drawlp
 
 .grphputlines:		movzx		eax, byte [GDC_S_PITCH]
-					test		ecx, 4000h
+					test		esi, 40000000h
 					jne			short .storewidth
 					add			eax, eax
-.storewidth:		and			eax, 0000feh				; uPD72020で確認…
-					mov			[LINE_WIDTH+8], eax
-
+.storewidth:		mov			ecx, esi
+					and			eax, 0000feh				; uPD72020で確認…
+					shr			ecx, 4+16
 					and			esi, 3fffh
-					add			esi, esi
-					shr			ecx, 4
+					mov			[LINE_WIDTH+8], eax
 					and			ecx, 03ffh
 					jne			short .grphlineputst
 					mov			ecx, 0400h
-.grphlineputst:		push		rcx
+.grphlineputst:		add			esi, esi
+					push		rcx
 
 .grphlineput_lp:	mov			ecx, [GRP_LR+16]
 .grphline1_lp:		mov			ebp, 79*2
@@ -173,15 +169,15 @@ makegrph:		sub			rsp, byte 40
 .linelp:			test		[vramupdate + rsi], dl
 					je			short .nodirty
 					movzx		eax, byte [r8 + rsi + VRAM0_B]
-					movq		mm0, [grph_table + rax*8 + 0*0x800]
-					movzx		eax, byte [r8 + rsi + VRAM0_R]
-					por			mm0, [grph_table + rax*8 + 1*0x800]
+					movzx		r9d, byte [r8 + rsi + VRAM0_R]
+					mov			r10, [grph_table + rax*8 + 0*0x800]
 					movzx		eax, byte [r8 + rsi + VRAM0_G]
-					por			mm0, [grph_table + rax*8 + 2*0x800]
-					movzx		eax, byte [r8 + rsi + VRAM0_E]
-					por			mm0, [grph_table + rax*8 + 3*0x800]
+					or			r10, [grph_table + r9*8 + 1*0x800]
+					movzx		r9d, byte [r8 + rsi + VRAM0_E]
+					or			r10, [grph_table + rax*8 + 2*0x800]
+					or			r10, [grph_table + r9*8 + 3*0x800]
 					or			ebp, byte 1
-					movq		[rdi], mm0
+					mov			[rdi], r10
 .nodirty:			inc			esi
 					and			esi, 07fffh
 					add			rdi, byte 8
@@ -189,7 +185,7 @@ makegrph:		sub			rsp, byte 40
 					jns			short .linelp
 					pop			rsi
 
-					test		ebp, 1
+					test		bpl, 1
 					je			short .putlineskip
 .linedirtyon:		or			[renewal_line + rbx], dl
 
@@ -242,7 +238,6 @@ makegrph:		sub			rsp, byte 40
 				mov			rdi, [rsp+24]
 				mov			rbp, [rsp+32]
 				add			rsp, byte 40
-				emms
 				ret
 
 	ends
