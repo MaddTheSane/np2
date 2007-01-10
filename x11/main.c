@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 	toolkit_initialize();
 	toolkit_arginit(&argc, &argv);
 
-	while ((ch = getopt_long(argc, argv, "c:C:t:ph", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "c:C:t:vh", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'c':
 			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
@@ -171,6 +171,10 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 			milstr_ncpy(fontfilename, optarg, sizeof(fontfilename));
+			break;
+
+		case 'v':
+			verbose = 1;
 			break;
 
 		case 'h':

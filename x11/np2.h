@@ -1,6 +1,8 @@
 #ifndef	NP2_X11_NP2_H__
 #define	NP2_X11_NP2_H__
 
+#include <signal.h>
+
 #include "joymng.h"
 
 typedef struct {
@@ -83,7 +85,7 @@ extern "C" {
 #endif
 
 /* np2.c */
-extern volatile BOOL np2running;
+extern volatile sig_atomic_t np2running;
 extern NP2OSCFG np2oscfg;
 extern BYTE scrnmode;
 
@@ -95,6 +97,7 @@ extern BOOL s98logging;
 extern int s98log_count;
 
 extern BOOL use_shared_pixmap;
+extern int verbose;
 
 extern char hddfolder[MAX_PATH];
 extern char fddfolder[MAX_PATH];

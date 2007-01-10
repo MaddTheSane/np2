@@ -121,7 +121,7 @@ NP2OSCFG np2oscfg = {
 	FALSE,			/* shared_pixmap */
 };
 
-volatile BOOL np2running = FALSE;
+volatile sig_atomic_t np2running = 0;
 BYTE scrnmode = 0;
 
 UINT framecnt = 0;
@@ -150,6 +150,7 @@ char fontfilename[MAX_PATH] = FONTNAME_DEFAULT;
 char timidity_cfgfile_path[MAX_PATH];
 
 BOOL use_shared_pixmap = FALSE;
+int verbose = 0;
 
 
 UINT32

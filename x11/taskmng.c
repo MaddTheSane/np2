@@ -10,7 +10,7 @@ void
 taskmng_initialize(void)
 {
 
-	np2running = TRUE;
+	np2running = 1;
 }
 
 BOOL
@@ -30,5 +30,5 @@ void
 taskmng_exit(void)
 {
 
-	np2running = FALSE;
+	np2running = 0;
 }
