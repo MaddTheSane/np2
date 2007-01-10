@@ -105,7 +105,7 @@ commng_create(UINT device)
 		break;
 	}
 	if (cfg) {
-		if ((cfg->port == COMPORT_COM1)
+		if ((cfg->port >= COMPORT_COM1)
 		 && (cfg->port <= COMPORT_COM4)) {
 			ret = cmserial_create(cfg->port - COMPORT_COM1 + 1, cfg->param, cfg->speed);
 		} else if (cfg->port == COMPORT_MIDI) {
