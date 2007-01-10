@@ -1,3 +1,5 @@
+/*	$Id: toolkit.c,v 1.7 2007/01/10 18:02:21 monaka Exp $	*/
+
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
@@ -31,14 +33,14 @@
 
 #include "sysmng.h"
 
-#if (USE_GTK + USE_GTK2 + USE_SDL) > 1
+#if (USE_GTK2 + USE_SDL) > 1
 
 gui_toolkit_t* toolkitp;
 
 static struct {
 	gui_toolkit_t*	toolkit;
 } toolkit[] = {
-#if USE_GTK > 0 || USE_GTK2 > 0
+#if USE_GTK2 > 0
 	{ &gtk_toolkit, },
 #endif
 #if USE_SDL > 0
@@ -67,7 +69,7 @@ toolkit_initialize(void)
 	toolkitp = &gtk_toolkit;
 }
 
-#endif	/* USE_GTK + USE_SDL > 1 */
+#endif	/* USE_GTK2 + USE_SDL > 1 */
 
 void
 toolkit_msgbox(const char *title, const char *msg)

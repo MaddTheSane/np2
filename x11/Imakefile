@@ -1,5 +1,7 @@
+XCOMM	$Id: Imakefile,v 1.31 2007/01/10 18:02:21 monaka Exp $
+
 XCOMM
-XCOMM read config
+XCOMM user config
 XCOMM
 
 #include "config.tmpl"
@@ -18,9 +20,9 @@ XCOMM
 XCOMM GUI Toolkit
 XCOMM
 
-#if defined(USE_GTK2) && !defined(USE_GTK2_GTK1)
 GTK_CONFIG?= pkg-config gtk+-2.0
-CFLAGS+= -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED
+GTK_INCLUDE= `$(GTK_CONFIG) --cflags`
+GTK_LIB= `$(GTK_CONFIG) --libs`
 GTK_DEFINE= -DUSE_GTK2=1
 
 GTKDEPOBJS=	gtk2/dialog_about.o gtk2/dialog_calendar.o \
@@ -30,25 +32,6 @@ GTKDEPOBJS=	gtk2/dialog_about.o gtk2/dialog_calendar.o \
 		gtk2/gtk_drawmng.o gtk2/gtk_screen.o gtk2/gtk_font.o \
 		gtk2/gtk_keyboard.o gtk2/gtk_menu.o gtk2/gtk_mouse.o \
 		gtk2/gtk_main.o gtk2/gtk_wrapper.o
-#else	/* !(USE_GTK2 && !USE_GTK2_GTK1) */
-#if defined(USE_GTK2_GTK1)
-GTK_CONFIG?= pkg-config gtk+-2.0
-#else
-GTK_CONFIG?= gtk-config
-#endif
-GTK_DEFINE= -DUSE_GTK=1
-
-GTKDEPOBJS=	gtk/dialog_about.o gtk/dialog_calendar.o gtk/dialog_config.o \
-		gtk/dialog_file_selection.o gtk/dialog_midi.o \
-		gtk/dialog_newdisk.o gtk/dialog_screen.o gtk/dialog_sound.o \
-		gtk/window_debug.o gtk/window_keydisp.o gtk/window_viewer.o \
-		gtk/window_softkbd.o \
-		gtk/gtk_drawmng.o gtk/gtk_screen.o gtk/gtk_font.o \
-		gtk/gtk_keyboard.o gtk/gtk_menu.o gtk/gtk_mouse.o \
-		gtk/gtk_main.o gtk/gtk_wrapper.o
-#endif	/* USE_GTK2 && !USE_GTK2_GTK1 */
-GTK_INCLUDE= `$(GTK_CONFIG) --cflags`
-GTK_LIB= `$(GTK_CONFIG) --libs`
 
 
 XCOMM

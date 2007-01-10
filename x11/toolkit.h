@@ -1,4 +1,4 @@
-/*	$Id: toolkit.h,v 1.10 2007/01/10 15:55:27 monaka Exp $	*/
+/*	$Id: toolkit.h,v 1.11 2007/01/10 18:02:21 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -43,7 +43,7 @@ typedef struct {
 
 void toolkit_msgbox(const char *title, const char *msg);
 
-#if (USE_GTK + USE_GTK2 + USE_SDL) > 1
+#if (USE_GTK2 + USE_SDL) > 1
 
 extern gui_toolkit_t* toolkitp;
 
@@ -58,13 +58,9 @@ void toolkit_initialize(void);
 #define	toolkit_set_window_title(s)	(*toolkitp->set_window_title)(s)
 #define	toolkit_messagebox(t,m)		(*toolkitp->messagebox)(t,m)
 
-#elif USE_GTK > 0 || USE_GTK2 > 0
+#elif USE_GTK2 > 0
 
-#if USE_GTK2 > 0
 #include "gtk2/gtk_toolkit.h"
-#elif USE_GTK > 0
-#include "gtk/gtk_toolkit.h"
-#endif
 
 #define	toolkit_initialize()
 #define	toolkit_terminate()
@@ -94,7 +90,7 @@ void toolkit_initialize(void);
 
 #else
 
-#error need to defined USE_GTK or USE_SDL !!!
+#error need to defined USE_GTK2 or USE_SDL !!!
 
 #endif
 
