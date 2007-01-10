@@ -1,4 +1,4 @@
-/*	$Id: dialog_about.c,v 1.3 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: dialog_about.c,v 1.4 2007/01/10 15:58:43 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -80,8 +80,8 @@ create_about_dialog(void)
 	if (neko_pixmap == NULL)
 		g_error("Couldn't create replacement pixmap.");
 	neko_image = gtk_image_new_from_pixmap(neko_pixmap, mask);
-	gdk_pixmap_unref(neko_pixmap);
-	gdk_bitmap_unref(mask);
+	g_object_unref(neko_pixmap);
+	g_object_unref(mask);
 	gtk_widget_show(neko_image);
 	gtk_box_pack_start(GTK_BOX(main_widget), neko_image, FALSE, FALSE, 10);
 
