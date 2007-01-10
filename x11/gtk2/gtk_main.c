@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.4 2007/01/02 16:43:48 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.5 2007/01/10 17:53:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -74,15 +74,15 @@ destroy_evhandler(GtkWidget *w)
 }
 
 /*
- - Signal: gboolean GtkWidget::configure_event(GtkWidget *widget,
+ - Signal: gboolean GtkWidget::configure_event (GtkWidget *widget,
           GdkEventConfigure *event, gpointer user_data)
 */
 static gboolean
-configure_evhandler(GtkWidget *w, GdkEventConfigure *ev, gpointer user_data)
+configure_evhandler(GtkWidget *w, GdkEventConfigure *ev, gpointer p)
 {
 
 	UNUSED(ev);
-	UNUSED(user_data);
+	UNUSED(p);
 
 	gdk_draw_rectangle(w->window, w->style->black_gc, TRUE,
 	    0, 0, w->allocation.width, w->allocation.height);
@@ -91,7 +91,7 @@ configure_evhandler(GtkWidget *w, GdkEventConfigure *ev, gpointer user_data)
 }
 
 /*
- - Signal: gboolean GtkWidget::expose_event(GtkWidget *widget,
+ - Signal: gboolean GtkWidget::expose_event (GtkWidget *widget,
           GdkEventExpose *event, gpointer user_data)
 */
 static gboolean
@@ -196,23 +196,6 @@ button_release_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 	return TRUE;
 }
 
-/*
- - Signal: gboolean GtkWidget::window_state_event (GtkWidget *widget,
-          GdkEventWindowState *event, gpointer user_data)
-*/
-static gboolean
-window_state_evhandler(GtkWidget *w, GdkEventWindowState *ev, gpointer p)
-{
-
-	UNUSED(w);
-	UNUSED(p);
-
-	if (ev->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) {
-		/* Nothing to do. */
-	}
-	return TRUE;
-}
-
 
 /*
  * misc
@@ -294,9 +277,9 @@ gui_gtk_widget_create(void)
 	GtkWidget *main_vbox;
 	GtkWidget *menubar;
 	gchar *accel = NULL;
+	gint root_x, root_y;
 
 	main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_widget_set_double_buffered(GTK_WIDGET(main_window), FALSE);
 	gtk_window_set_resizable(GTK_WINDOW(main_window), FALSE);
 	gtk_window_set_title(GTK_WINDOW(main_window), np2oscfg.titles);
 	gtk_widget_add_events(main_window, EVENT_MASK);
@@ -310,7 +293,6 @@ gui_gtk_widget_create(void)
 	gtk_widget_show(menubar);
 
 	drawarea = gtk_drawing_area_new();
-	gtk_widget_set_double_buffered(GTK_WIDGET(drawarea), FALSE);
 	gtk_widget_set_size_request(GTK_WIDGET(drawarea), 640, 400);
 	gtk_box_pack_end(GTK_BOX(main_vbox), drawarea, FALSE, TRUE, 0);
 	gtk_widget_show(drawarea);
@@ -324,6 +306,8 @@ gui_gtk_widget_create(void)
 	}
 
 	gtk_widget_realize(main_window);
+	gdk_window_get_origin(main_window->window, &root_x, &root_y);
+	gdk_window_reparent(main_window->window, NULL, root_x, root_y);
 	set_icon_bitmap(main_window);
 
 	g_signal_connect(GTK_OBJECT(main_window), "destroy", 
@@ -336,8 +320,6 @@ gui_gtk_widget_create(void)
 	    GTK_SIGNAL_FUNC(button_press_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "button_release_event",
 	    GTK_SIGNAL_FUNC(button_release_evhandler), NULL);
-	g_signal_connect(GTK_OBJECT(main_window), "window_state_event",
-	    GTK_SIGNAL_FUNC(window_state_evhandler), NULL);
 
 	g_signal_connect(GTK_OBJECT(drawarea), "configure_event",
 	    GTK_SIGNAL_FUNC(configure_evhandler), NULL);
