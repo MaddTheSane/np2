@@ -85,7 +85,7 @@ mousemng_term(void)
 {
 
 	if (ms.cursor_pixmap) {
-		gdk_pixmap_unref(ms.cursor_pixmap);
+		g_object_unref(ms.cursor_pixmap);
 		ms.cursor_pixmap = NULL;
 	}
 }
