@@ -20,7 +20,7 @@ XCOMM
 
 #if defined(USE_GTK2) && !defined(USE_GTK2_GTK1)
 GTK_CONFIG?= pkg-config gtk+-2.0
-CFLAGS+= -DGTK_DISABLE_DEPRECATED
+CFLAGS+= -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED
 GTK_DEFINE= -DUSE_GTK2=1
 
 GTKDEPOBJS=	gtk2/dialog_about.o gtk2/dialog_calendar.o \
@@ -112,6 +112,11 @@ LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
 
 #define PassCDebugFlags
 
+#if defined(USE_XF86VIDMODE)
+DEPLIBS+= $(DEPXXF86VMLIB)
+DEFINES+= -DHAVE_XF86VIDMODE
+LOCAL_LIBRARIES+= $(XXF86VMLIB)
+#endif
 
 COMMONOBJS=	../common/strres.o ../common/milstr.o ../common/_memory.o \
 		../common/textfile.o ../common/profile.o ../common/rect.o \
