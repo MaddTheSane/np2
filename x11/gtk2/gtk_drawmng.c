@@ -1,4 +1,4 @@
-/*	$Id: gtk_drawmng.c,v 1.4 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: gtk_drawmng.c,v 1.5 2007/01/10 15:58:58 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -145,10 +145,10 @@ drawmng_release(DRAWMNG_HDL dhdl)
 		while (hdl->d.drawing)
 			usleep(1);
 		if (hdl->backsurf) {
-			gdk_pixmap_unref(hdl->backsurf);
+			g_object_unref(hdl->backsurf);
 		}
 		if (hdl->surface) {
-			gdk_image_destroy(hdl->surface);
+			g_object_unref(hdl->surface);
 		}
 		_MFREE(hdl);
 	}
@@ -211,11 +211,11 @@ drawmng_blt(DRAWMNG_HDL dhdl, RECT_T *sr, POINT_T *dp)
 			width = r.right - p.x;
 			height = r.bottom - p.y;
 
-			gdk_draw_pixmap(hdl->drawarea->window, gc,
+			gdk_draw_drawable(hdl->drawarea->window, gc,
 			    hdl->backsurf,
 			    r.left, r.top, p.x, p.y, width, height);
 		} else {
-			gdk_draw_pixmap(hdl->drawarea->window, gc,
+			gdk_draw_drawable(hdl->drawarea->window, gc,
 			    hdl->backsurf,
 			    0, 0, 0, 0, hdl->d.width, hdl->d.height);
 		}
