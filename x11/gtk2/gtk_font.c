@@ -1,4 +1,4 @@
-/*	$Id: gtk_font.c,v 1.5 2005/04/01 15:11:45 monaka Exp $	*/
+/*	$Id: gtk_font.c,v 1.6 2007/01/10 15:58:21 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -79,8 +79,9 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 	gchar *fontname_utf8;
 	int fontalign;
 	int allocsize;
-	GdkColormap *colormap;
+	GdkColormap *cmap;
 	GdkColor color;
+	gboolean rv;
 
 	if (size < 0) {
 		size = -size;
@@ -106,12 +107,13 @@ fontmng_create(int size, UINT type, const TCHAR *fontface)
 		return NULL;
 	}
 
-	colormap = gtk_widget_get_colormap(GTK_WIDGET(main_window));
-	color.red = color.green = color.blue = 0;
-	if (gdk_color_alloc(colormap, &color) == 0) {
-		fnt.black_pixel = 0;
-	} else {
+	cmap = gtk_widget_get_colormap(GTK_WIDGET(main_window));
+	memset(&color, 0, sizeof(color));
+	rv = gdk_colormap_alloc_color(cmap, &color, FALSE, FALSE);
+	if (rv) {
 		fnt.black_pixel = color.pixel;
+	} else {
+		fnt.black_pixel = 0;
 	}
 
 	fnt.layout = gtk_widget_create_pango_layout(main_window, NULL);
@@ -150,7 +152,7 @@ fontmng_destroy(void *hdl)
 
 	if (fnt) {
 		if (fnt->backsurf)
-			gdk_pixmap_unref(fnt->backsurf);
+			g_object_unref(fnt->backsurf);
 		if (fnt->layout)
 			g_object_unref(fnt->layout);
 		if (fnt->desc)
@@ -160,7 +162,7 @@ fontmng_destroy(void *hdl)
 }
 
 static void
-setfdathead(FNTMNG fhdl, FNTDAT fdat, const gchar *str, int len)
+setfdathead(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 {
 
 	UNUSED(str);
@@ -174,14 +176,14 @@ setfdathead(FNTMNG fhdl, FNTDAT fdat, const gchar *str, int len)
 }
 
 static void
-getlength1(FNTMNG fhdl, FNTDAT fdat, const gchar *str, int len)
+getlength1(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 {
 
 	setfdathead(fhdl, fdat, str, len);
 }
 
 static void
-getfont1(FNTMNG fhdl, FNTDAT fdat, const gchar *str, int len)
+getfont1(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 {
 	GdkImage *img;
 
@@ -210,7 +212,7 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const gchar *str, int len)
 				p++;
 			}
 		}
-		gdk_image_destroy(img);
+		g_object_unref(img);
 	} else {
 		memset(fdat + 1, 0, fdat->width * fdat->height);
 	}
@@ -221,7 +223,7 @@ fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
 	_FNTDAT fdat;
-	UINT8 buf[4];
+	char buf[4];
 	int width;
 	int len;
 
@@ -250,7 +252,7 @@ fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
 	_FNTDAT fdat;
-	UINT8 buf[4];
+	char buf[4];
 	int width;
 	int len;
 	int posx;
@@ -282,7 +284,7 @@ fontmng_get(void *hdl, const char *str)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
 	FNTDAT fdat = (FNTDAT)(fhdl + 1);
-	UINT8 buf[4];
+	char buf[4];
 	gchar *utf8;
 	int len;
 
