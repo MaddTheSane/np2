@@ -181,11 +181,11 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\common\ARC.C
+SOURCE=..\COMMON\ARC.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\ARCUNZIP.C
+SOURCE=..\COMMON\ARCUNZIP.C
 # End Source File
 # Begin Source File
 
@@ -1590,22 +1590,6 @@ SOURCE=..\TIMING.C
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-# Begin Source File
-
-SOURCE=..\ICONS\Np2.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\ICONS\NP2.ICO
-# End Source File
-# Begin Source File
-
-SOURCE=..\ICONS\NP2DEBUG.ICO
-# End Source File
-# Begin Source File
-
-SOURCE=.\ICONS\NP2DEBUG.ICO
-# End Source File
 # End Group
 # End Target
 # End Project

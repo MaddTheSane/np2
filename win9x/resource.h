@@ -2,6 +2,7 @@
 // Microsoft Developer Studio generated include file.
 // Used by np2.rc
 //
+#define RESOURCE_VERSION                820
 #define IDR_MANIFEST                    1
 #define IRT_MANIFEST                    24
 #define IDI_ICON1                       101
@@ -292,6 +293,41 @@
 #define IDS_SCSI5                       30456
 #define IDS_SCSI6                       30457
 #define IDS_SCSI7                       30458
+#define IDS_FONTTITLE                   30601
+#define IDS_FONTEXT                     30602
+#define IDS_FONTFILTER                  30603
+#define IDS_BMPTITLE                    30611
+#define IDS_BMPEXT                      30612
+#define IDS_BMPFILTER1                  30613
+#define IDS_BMPFILTER4                  30614
+#define IDS_BMPFILTER8                  30615
+#define IDS_BMPFILTER24                 30616
+#define IDS_MIMPITITLE                  30621
+#define IDS_MIMPIEXT                    30622
+#define IDS_MIMPIFILTER                 30623
+#define IDS_FDDTITLE                    30631
+#define IDS_FDDEXT                      30632
+#define IDS_FDDFILTER                   30633
+#define IDS_HDDTITLE                    30641
+#define IDS_HDDEXT                      30642
+#define IDS_HDDFILTER                   30643
+#define IDS_SASITITLE                   30644
+#define IDS_ISOTITLE                    30651
+#define IDS_ISOEXT                      30652
+#define IDS_ISOFILTER                   30653
+#define IDS_SCSITITLE                   30661
+#define IDS_SCSIEXT                     30662
+#define IDS_SCSIFILTER                  30663
+#define IDS_NEWDISKTITLE                30671
+#define IDS_NEWDISKEXT                  30672
+#define IDS_NEWDISKFILTER               30673
+#define IDS_NEWDISKFILTER2              30674
+#define IDS_S98TITLE                    30681
+#define IDS_S98EXT                      30682
+#define IDS_S98FILTER                   30683
+#define IDS_WAVETITLE                   30691
+#define IDS_WAVEEXT                     30692
+#define IDS_WAVEFILTER                  30693
 #define IDM_RESET                       40001
 #define IDM_CONFIG                      40002
 #define IDM_NEWDISK                     40003

@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="..\bin"
 			IntermediateDirectory="..\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -33,7 +33,7 @@
 			/>
 			<Tool
 				Name="YASM"
-				IncludePaths=".\x64,..\i386c\x64,..\io\x64"
+				IncludePaths=".\x64,..\i286c\x64,..\io\x64"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -47,7 +47,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=".\,.\dialog,.\debuguty,..\,..\common,..\codecnv,..\i286c,..\mem,..\io,..\cbus,..\bios,..\lio,..\vram,..\sound,..\sound\vermouth,..\sound\getsnd,..\fdd,..\font,..\generic,..\trap,..\zlib"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE"
 				WarningLevel="3"
+				DisableSpecificWarnings="4819"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -60,7 +62,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib"
+				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib"
+				OutputFile="$(OutDir)/np2x64d.exe"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -103,7 +106,7 @@
 			/>
 			<Tool
 				Name="YASM"
-				IncludePaths=".\x64,..\i386c\x64,..\io\x64"
+				IncludePaths=".\x64,..\i286c\x64,..\io\x64"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -123,6 +126,7 @@
 				StringPooling="true"
 				BufferSecurityCheck="false"
 				WarningLevel="3"
+				DisableSpecificWarnings="4819"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -135,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib "
+				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -879,6 +883,12 @@
 			<Filter
 				Name="trap"
 				>
+				<File
+					RelativePath="..\trap\INTTRAP.C">
+				</File>
+				<File
+					RelativePath="..\trap\STEPTRAP.C">
+				</File>
 			</Filter>
 			<Filter
 				Name="win9x"

@@ -33,11 +33,15 @@
 #endif
 #endif
 
+#define	LOADSTRING			LoadString
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void __msgbox(const char *title, const char *msg);
+int loadstring2(HINSTANCE hInstance, UINT uID,
+										LPTSTR lpBuffer, int nBufferMax);
 
 #ifdef __cplusplus
 }

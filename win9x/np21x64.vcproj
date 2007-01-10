@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="..\bin"
 			IntermediateDirectory="..\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -47,8 +47,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=".\,.\dialog,.\debuguty,..\,..\common,..\codecnv,..\i386c,..\i386c\ia32,..\i386c\ia32\instructions,..\i386c\ia32\instructions\fpu,..\mem,..\io,..\cbus,..\bios,..\lio,..\vram,..\sound,..\sound\vermouth,..\sound\getsnd,..\fdd,..\font,..\generic,..\trap,..\zlib"
-				PreprocessorDefinitions="SUPPORT_PC9821"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE,SUPPORT_PC9821"
 				WarningLevel="3"
+				DisableSpecificWarnings="4819"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,7 +62,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib"
+				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib"
+				OutputFile="$(OutDir)/np21x64d.exe"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -139,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib "
+				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 			/>
@@ -985,6 +987,14 @@
 			<Filter
 				Name="trap"
 				>
+				<File
+					RelativePath="..\trap\INTTRAP.C"
+					>
+				</File>
+				<File
+					RelativePath="..\trap\STEPTRAP.C"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="zlib"
