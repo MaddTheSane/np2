@@ -60,10 +60,7 @@ typedef struct {
 
 	BYTE	mouse_move_ratio;
 
-	char	toolkit[32];
-
 	BYTE	disablemmx;
-	BYTE	shared_pixmap;
 } NP2OSCFG;
 
 
@@ -96,7 +93,6 @@ extern UINT framemax;
 extern BOOL s98logging;
 extern int s98log_count;
 
-extern BOOL use_shared_pixmap;
 extern int verbose;
 
 extern char hddfolder[MAX_PATH];

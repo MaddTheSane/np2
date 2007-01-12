@@ -606,10 +606,6 @@ static const INITBL iniitem[] = {
 	{"MIDIIN_d", INITYPE_STR,	&np2oscfg.MIDIDEV[1],	MAX_PATH},
 	{"MIDIWAIT", INITYPE_UINT32,	&np2oscfg.MIDIWAIT,	0},
 
-	{"sharepix", INIRO_BOOL,	&np2oscfg.shared_pixmap,0},
-
-	{"toolkit_", INIRO_STR,		&np2oscfg.toolkit,	sizeof(np2oscfg.toolkit)},
-
 	{"I286SAVE", INIRO_BOOL,	&np2oscfg.I286SAVE,	0}
 };
 #define	INIITEMS	(sizeof(iniitem) / sizeof(iniitem[0]))

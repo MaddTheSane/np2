@@ -107,18 +107,7 @@ NP2OSCFG np2oscfg = {
 
 	MOUSE_RATIO_100,	/* mouse_move_ratio */
 
-#if defined(USE_GTK)		/* toolkit */
-	"gtk",
-#elif defined(USE_QT)
-	"qt",
-#elif defined(USE_SDL)
-	"sdl",
-#else
-	"unknown",
-#endif
-
 	MMXFLAG_DISABLE,	/* disablemmx */
-	FALSE,			/* shared_pixmap */
 };
 
 volatile sig_atomic_t np2running = 0;
@@ -149,7 +138,6 @@ char fontfilename[MAX_PATH] = FONTNAME_DEFAULT;
 
 char timidity_cfgfile_path[MAX_PATH];
 
-BOOL use_shared_pixmap = FALSE;
 int verbose = 0;
 
 

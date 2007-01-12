@@ -253,8 +253,6 @@ main(int argc, char *argv[])
 	mmxflag += np2oscfg.disablemmx ? MMXFLAG_DISABLE : 0;
 #endif
 
-	use_shared_pixmap = np2oscfg.shared_pixmap;
-
 	TRACEINIT();
 
 	if (fontmng_init() != SUCCESS)
