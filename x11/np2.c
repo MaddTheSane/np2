@@ -108,6 +108,8 @@ NP2OSCFG np2oscfg = {
 	MOUSE_RATIO_100,	/* mouse_move_ratio */
 
 	MMXFLAG_DISABLE,	/* disablemmx */
+	INTERP_NEAREST,		/* drawinterp */
+	0,			/* F11KEY */
 };
 
 volatile sig_atomic_t np2running = 0;

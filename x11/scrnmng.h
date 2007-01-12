@@ -2,9 +2,9 @@
 #define	NP2_X11_SCRNMNG_H__
 
 enum {
-	RGB24_B	= 0,
+	RGB24_B	= 2,
 	RGB24_G	= 1,
-	RGB24_R	= 2
+	RGB24_R	= 0
 };
 
 typedef struct {
@@ -56,10 +56,10 @@ void scrnmng_setextend(int extend);
 void scrnmng_setheight(int posy, int height);
 const SCRNSURF* scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
-#define	scrnmng_update()
+void scrnmng_update(void);
 #define	scrnmng_dispclock()
 
-#define	scrnmng_isfullscreen()	(0)
+#define	scrnmng_isfullscreen()	(scrnmngp->flag & SCRNFLAG_FULLSCREEN)
 #define	scrnmng_haveextend()	(scrnmngp->flag & SCRNFLAG_HAVEEXTEND)
 #define	scrnmng_getbpp()	(scrnmngp->bpp)
 #define	scrnmng_allflash()	do { scrnmngp->allflash = TRUE; } while (0)
@@ -67,7 +67,9 @@ void scrnmng_surfunlock(const SCRNSURF *surf);
 
 RGB16 scrnmng_makepal16(RGB32 pal32);
 
-void scrnmng_draw(RECT_T *r);
+/* -- for X11 */
+
+void scrnmng_setmultiple(int multiple);
 
 /*
  * for menubase

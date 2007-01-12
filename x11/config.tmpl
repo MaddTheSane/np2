@@ -1,4 +1,4 @@
-XCOMM $Id: config.tmpl,v 1.7 2007/01/02 14:25:42 monaka Exp $
+XCOMM $Id: config.tmpl,v 1.8 2007/01/12 19:09:58 monaka Exp $
 
 XCOMM
 XCOMM Sound
@@ -25,16 +25,6 @@ XCOMM ESD_CONFIG= esd-config
 
 
 XCOMM
-XCOMM GUI Toolkit
-XCOMM
-
-XCOMM GTK+
-XCOMM
-XCOMM GTK_CONFIG= pkg-config gtk+-2.0	# for GTK+ 2.x
-#define	USE_GTK2
-
-
-XCOMM
 XCOMM Misc.
 XCOMM
 
@@ -45,3 +35,7 @@ XCOMM
 XCOMM IA-32 CPU core
 XCOMM
 #undef	CPUCORE_IA32
+
+XCOMM XF86VidMode Extension (for full-screen mode)
+XCOMM
+#define USE_XF86VIDMODE

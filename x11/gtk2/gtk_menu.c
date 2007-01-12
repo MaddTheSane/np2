@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.6 2007/01/02 16:43:48 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.7 2007/01/12 19:09:58 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -1692,6 +1692,71 @@ cb_radio(GtkRadioAction *action, GtkRadioAction *current, gpointer user_data)
  * create menubar
  */
 static GtkWidget *menubar;
+static guint menubar_timerid;
+
+#define	EVENT_MASK	(GDK_LEAVE_NOTIFY_MASK|GDK_LEAVE_NOTIFY_MASK)
+
+static gboolean
+menubar_timeout(gpointer p)
+{
+
+	UNUSED(p);
+
+	if (menubar_timerid) {
+		g_source_remove(menubar_timerid);
+		menubar_timerid = 0;
+	}
+
+	if (scrnmode & SCRNMODE_FULLSCREEN) {
+		xmenu_hide();
+	}
+
+	return TRUE;
+}
+
+/*
+ - Signal: gboolean GtkWidget::enter_notify_event (GtkWidget *widget,
+          GdkEventCrossing *event, gpointer user_data)
+*/
+static gboolean
+enter_notify_evhandler(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
+{
+
+	UNUSED(w);
+	UNUSED(ev);
+	UNUSED(p);
+
+	if (menubar_timerid) {
+		g_source_remove(menubar_timerid);
+		menubar_timerid = 0;
+	}
+
+	return TRUE;
+}
+
+/*
+ - Signal: gboolean GtkWidget::leave_notify_event (GtkWidget *widget,
+          GdkEventCrossing *event, gpointer user_data)
+*/
+static gboolean
+leave_notify_evhandler(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
+{
+
+	UNUSED(w);
+	UNUSED(ev);
+	UNUSED(p);
+
+	if (menubar_timerid) {
+		g_source_remove(menubar_timerid);
+		menubar_timerid = 0;
+	}
+
+	if (scrnmode & SCRNMODE_FULLSCREEN) {
+		menubar_timerid = g_timeout_add(1000, menubar_timeout, NULL);
+	}
+
+	return TRUE;
+}
 
 static void
 equip_fddrive(GtkUIManager *ui_manager, guint no)
@@ -1793,6 +1858,13 @@ create_menu(void)
 	}
 
 	menubar = gtk_ui_manager_get_widget(menu_hdl.ui_manager, "/MainMenu");
+
+	gtk_widget_add_events(menubar, EVENT_MASK);
+	g_signal_connect(GTK_OBJECT(menubar), "enter_notify_event",
+	            GTK_SIGNAL_FUNC(enter_notify_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(menubar), "leave_notify_event",
+	            GTK_SIGNAL_FUNC(leave_notify_evhandler), NULL);
+
 	return menubar;
 }
 
@@ -1808,6 +1880,16 @@ xmenu_show(void)
 {
 
 	gtk_widget_show(menubar);
+}
+
+void
+xmenu_toggle_menu(void)
+{
+
+	if (GTK_WIDGET_VISIBLE(menubar))
+		xmenu_hide();
+	else
+		xmenu_show();
 }
 
 void

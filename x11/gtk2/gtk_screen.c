@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.4 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.5 2007/01/12 19:09:58 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -27,6 +27,8 @@
 
 #include "compiler.h"
 
+#include <math.h>
+
 #include "np2.h"
 #include "palettes.h"
 #include "scrndraw.h"
@@ -35,63 +37,82 @@
 
 #include "gtk2/xnp2.h"
 #include "gtk2/gtk_drawmng.h"
+#include "gtk2/gtk_menu.h"
 
 
 typedef struct {
 	UINT8		scrnmode;
-	UINT8		drawing;
-	int		width;
-	int		height;
+	volatile int	drawing;
+	int		width;		/* drawarea の width */
+	int		height;		/* drawarea の height */
 	int		extend;
 	int		clipping;
 
 	PAL16MASK	pal16mask;
 
-	RECT_T		scrn;
-	RECT_T		rect;
-
-	int		lpitch;
-	int		scrw;
-	int		scrh;
+	RECT_T		scrn;		/* drawarea 内の描画領域位置 */
+	RECT_T		rect;		/* drawarea に描画するサイズ */
 
 	/* toolkit depend */
-	GdkImage	*surface;
-	GdkPixmap	*backsurf;
+	GdkPixbuf	*backsurf;
+	GdkPixbuf	*surface;
+	double		ratio_w, ratio_h;
+	int		interp;
 
-	unsigned long	pixel[24];	/* pallete */
+	GdkColor	pal[24];
 } DRAWMNG;
 
 typedef struct {
 	int	width;
 	int	height;
 	int	extend;
+	int	multiple;
 } SCRNSTAT;
-
-typedef struct {
-	SCRNSURF	ss;
-
-	UINT8		renewal[SURFACE_HEIGHT];
-} X11SCRNSURF;
 
 static SCRNMNG scrnmng;
 static DRAWMNG drawmng;
 static SCRNSTAT scrnstat;
-static X11SCRNSURF scrnsurf;
+static SCRNSURF scrnsurf;
+static int real_fullscreen;
 
 SCRNMNG *scrnmngp = &scrnmng;
 
 GtkWidget *main_window;
 GtkWidget *drawarea;
 
+#define	BITS_PER_PIXEL	24
+#define	BYTES_PER_PIXEL	3
+
+/*
+ * drawarea のアスペクト比を 4:3 (640x480) にする。
+ */
+static void
+adapt_aspect(int width, int height, int scrnwidth, int scrnheight)
+{
+	double ratio;
+	int w, h;
+
+	ratio = (double)scrnwidth / width;
+	h = floor((height * ratio) + 0.5);
+	if (h < scrnheight) {
+		drawmng.rect.right = scrnwidth;
+		drawmng.rect.bottom = h;
+	} else {
+		ratio = (double)scrnheight / height;
+		w = floor((width * ratio) + 0.5);
+		if (w < scrnwidth) {
+			drawmng.rect.right = w;
+			drawmng.rect.bottom = scrnheight;
+		}
+	}
+}
 
 static void
 set_window_size(int width, int height)
 {
 
-	drawmng.scrw = width + np2oscfg.paddingx * 2;
-	drawmng.scrh = height + np2oscfg.paddingy * 2;
-
-	gtk_widget_set_size_request(drawarea, drawmng.scrw, drawmng.scrh);
+	gtk_widget_set_size_request(drawarea,
+	    width + np2oscfg.paddingx * 2, height + np2oscfg.paddingy * 2);
 }
 
 static void
@@ -102,44 +123,73 @@ renewal_client_size(void)
 	int extend;
 	int scrnwidth;
 	int scrnheight;
+	int multiple;
 
 	width = min(scrnstat.width, drawmng.width);
 	height = min(scrnstat.height, drawmng.height);
 	extend = 0;
 
-#if notyet
 	if (drawmng.scrnmode & SCRNMODE_FULLSCREEN) {
-	} else
-#endif
-	{
+		scrnwidth = drawmng.width;
+		scrnheight = drawmng.height;
+
+		drawmng.rect.right = width;
+		drawmng.rect.bottom = height;
+		if (!real_fullscreen) {
+			adapt_aspect(width, height, scrnwidth, scrnheight);
+		}
+
+		drawmng.ratio_w = (double)drawmng.rect.right / width;
+		drawmng.ratio_h = (double)drawmng.rect.bottom / height;
+
+		drawmng.scrn.left = (scrnwidth - drawmng.rect.right) / 2;
+		drawmng.scrn.top = (scrnheight - drawmng.rect.bottom) / 2;
+		drawmng.scrn.right = drawmng.scrn.left + drawmng.rect.right;
+		drawmng.scrn.bottom = drawmng.scrn.top + drawmng.rect.bottom;
+
+		gtk_widget_set_size_request(drawarea, scrnwidth, scrnheight);
+	} else {
+		multiple = scrnstat.multiple;
 		if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
-			if (np2oscfg.paddingx > 0) {
+			if ((np2oscfg.paddingx > 0) && (multiple == SCREEN_DEFMUL)) {
 				extend = min(scrnstat.extend, drawmng.extend);
 			}
-			scrnwidth = width;
-			scrnheight = height;
-			drawmng.rect.right = width + extend;
-			drawmng.rect.bottom = height;
+			scrnwidth = (width * multiple) / SCREEN_DEFMUL;
+			scrnheight = (height * multiple) / SCREEN_DEFMUL;
+
+			drawmng.rect.right = scrnwidth + extend;
+			drawmng.rect.bottom = scrnheight;
+
+			drawmng.ratio_w = (double)drawmng.rect.right / width;
+			drawmng.ratio_h = (double)drawmng.rect.bottom / height;
+
 			drawmng.scrn.left = np2oscfg.paddingx - extend;
 			drawmng.scrn.top = np2oscfg.paddingy;
 		} else {
-			if (np2oscfg.paddingy > 0) {
+			if ((np2oscfg.paddingy > 0) && (multiple == SCREEN_DEFMUL)) {
 				extend = min(scrnstat.extend, drawmng.extend);
 			}
-			scrnwidth = height;
-			scrnheight = width;
-			drawmng.rect.right = height;
-			drawmng.rect.bottom = width + extend;
+			scrnwidth = (height * multiple) / SCREEN_DEFMUL;
+			scrnheight = (width * multiple) / SCREEN_DEFMUL;
+
+			drawmng.rect.right = scrnwidth;
+			drawmng.rect.bottom = scrnheight + extend;
+
+			drawmng.ratio_w = (double)drawmng.rect.right / height;
+			drawmng.ratio_h = (double)drawmng.rect.bottom / width;
+
 			drawmng.scrn.left = np2oscfg.paddingx;
 			drawmng.scrn.top = np2oscfg.paddingy - extend;
 		}
 		drawmng.scrn.right = np2oscfg.paddingx + scrnwidth;
 		drawmng.scrn.bottom = np2oscfg.paddingy + scrnheight;
+
 		set_window_size(scrnwidth, scrnheight);
 	}
-	scrnsurf.ss.width = width;
-	scrnsurf.ss.height = height;
-	scrnsurf.ss.extend = extend;
+
+	scrnsurf.width = width;
+	scrnsurf.height = height;
+	scrnsurf.extend = extend;
 }
 
 static void
@@ -185,55 +235,68 @@ clear_out_of_rect(const RECT_T *target, const RECT_T *base)
 static void
 clear_outscreen(void)
 {
-	RECT_T target;
 	RECT_T base;
 
 	base.left = base.top = 0;
-	base.right = drawmng.scrw;
-	base.bottom = drawmng.scrh;
-	target = drawmng.scrn;
-	clear_out_of_rect(&target, &base);
+	base.right = drawarea->allocation.width;
+	base.bottom = drawarea->allocation.height;
+	clear_out_of_rect(&drawmng.scrn, &base);
 }
 
 static void
 palette_init(void)
 {
-	GdkColor color;
 	GdkColormap *cmap;
-	int rv;
+	gboolean success;
 	int i;
 
 	cmap = gdk_colormap_get_system();
-	rv = gdk_colors_alloc(cmap, TRUE, NULL, 0, drawmng.pixel, 24);
-	if (rv == 0) {
-		g_error("Can't allocate enough color.\n");
-		return;
-	}
-
 	for (i = 0; i < 8; i++) {
-		color.pixel = drawmng.pixel[NP2PAL_TEXT + i + 1];
-		color.red = np2_pal32[NP2PAL_TEXT + i + 1].p.r << 8;
-		color.green = np2_pal32[NP2PAL_TEXT + i + 1].p.g << 8;
-		color.blue = np2_pal32[NP2PAL_TEXT + i + 1].p.b << 8;
-		gdk_colormap_alloc_color(cmap, &color, TRUE, FALSE);
+		drawmng.pal[NP2PAL_TEXT + i + 1].pixel =
+		    (np2_pal32[NP2PAL_TEXT + i + 1].p.r << 0) |
+		    (np2_pal32[NP2PAL_TEXT + i + 1].p.g << 8) |
+		    (np2_pal32[NP2PAL_TEXT + i + 1].p.b << 16);
+		drawmng.pal[NP2PAL_TEXT + i + 1].red =
+		    np2_pal32[NP2PAL_TEXT + i + 1].p.r << 8;
+		drawmng.pal[NP2PAL_TEXT + i + 1].green =
+		    np2_pal32[NP2PAL_TEXT + i + 1].p.g << 8;
+		drawmng.pal[NP2PAL_TEXT + i + 1].blue =
+		    np2_pal32[NP2PAL_TEXT + i + 1].p.b << 8;
 	}
+	gdk_colormap_alloc_colors(cmap, &drawmng.pal[NP2PAL_TEXT + 1], 8,
+	    TRUE, FALSE, &success);
 }
 
 static void
 palette_set(void)
 {
-	GdkColor color;
+	static int first = 1;
 	GdkColormap *cmap;
+	gboolean success;
 	int i;
 
 	cmap = gdk_colormap_get_system();
-	for (i = 0; i < NP2PALS_GRPH; i++) {
-		color.pixel = drawmng.pixel[NP2PAL_GRPH + i];
-		color.red = np2_pal32[NP2PAL_GRPH + i].p.r << 8;
-		color.green = np2_pal32[NP2PAL_GRPH + i].p.g << 8;
-		color.blue = np2_pal32[NP2PAL_GRPH + i].p.b << 8;
-		gdk_colormap_alloc_color(cmap, &color, TRUE, FALSE);
+
+	if (!first) {
+		gdk_colormap_free_colors(cmap, &drawmng.pal[NP2PAL_GRPH],
+		    NP2PALS_GRPH);
 	}
+	first = 0;
+
+	for (i = 0; i < NP2PALS_GRPH; i++) {
+		drawmng.pal[NP2PAL_GRPH + i].pixel =
+		    (np2_pal32[NP2PAL_GRPH + i].p.r << 0) |
+		    (np2_pal32[NP2PAL_GRPH + i].p.g << 8) |
+		    (np2_pal32[NP2PAL_GRPH + i].p.b << 16);
+		drawmng.pal[NP2PAL_GRPH + i].red =
+		    np2_pal32[NP2PAL_GRPH + i].p.r << 8;
+		drawmng.pal[NP2PAL_GRPH + i].green =
+		    np2_pal32[NP2PAL_GRPH + i].p.g << 8;
+		drawmng.pal[NP2PAL_GRPH + i].blue =
+		    np2_pal32[NP2PAL_GRPH + i].p.b << 8;
+	}
+	gdk_colormap_alloc_colors(cmap, &drawmng.pal[NP2PAL_GRPH], NP2PALS_GRPH,
+	    TRUE, FALSE, &success);
 }
 
 void
@@ -244,89 +307,124 @@ scrnmng_initialize(void)
 	scrnstat.width = 640;
 	scrnstat.height = 400;
 	scrnstat.extend = 1;
+	scrnstat.multiple = SCREEN_DEFMUL;
 	set_window_size(scrnstat.width, scrnstat.height);
+
+	real_fullscreen = gtk_window_init_fullscreen(main_window);
+
+	switch (np2oscfg.drawinterp) {
+	case INTERP_NEAREST:
+		drawmng.interp = GDK_INTERP_NEAREST;
+		break;
+
+	case INTERP_TILES:
+		drawmng.interp = GDK_INTERP_TILES;
+		break;
+
+	case INTERP_HYPER:
+		drawmng.interp = GDK_INTERP_HYPER;
+		break;
+
+	case INTERP_BILINEAR:
+	default:
+		drawmng.interp = GDK_INTERP_BILINEAR;
+		break;
+	}
 }
 
 BOOL
 scrnmng_create(UINT8 mode)
 {
+	GdkScreen *screen;
 	GdkVisual *visual;
 	RECT_T rect;
-	int height;
-	UINT lpitch;
-	UINT8 bytes_per_pixel;
 	pixmap_format_t fmt;
-	int padding;
 
 	while (drawmng.drawing)
 		gtk_main_iteration_do(FALSE);
 	drawmng.drawing = TRUE;
 
-#if notyet
+	visual = gtk_widget_get_visual(drawarea);
+	if (!gtkdrawmng_getformat(drawarea, main_window, &fmt))
+		return FAILURE;
+
+	switch (fmt.bits_per_pixel) {
+	case 16:
+		drawmng_make16mask(&drawmng.pal16mask, visual->blue_mask,
+		    visual->red_mask, visual->green_mask);
+		break;
+
+	case 8:
+		palette_init();
+		break;
+	}
+
 	if (mode & SCRNMODE_FULLSCREEN) {
 		mode &= ~SCRNMODE_ROTATEMASK;
+		scrnmng.flag = 0;
 		drawmng.extend = 0;
-		return FAILURE;
-	} else
-#endif
-	{
-		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
-
-		visual = gtk_widget_get_visual(drawarea);
-		if (!gtkdrawmng_getformat(drawarea, main_window, &fmt))
-			return FAILURE;
-
-		switch (fmt.bits_per_pixel) {
-		case 16:
-			drawmng_make16mask(&drawmng.pal16mask, visual->blue_mask, visual->red_mask, visual->green_mask);
-			break;
-
-		case 8:
-			palette_init();
-			break;
-		}
-		drawmng.extend = 1;
-		bytes_per_pixel = (UINT8)(fmt.bits_per_pixel / 8);
-
-		if (!(mode & SCRNMODE_ROTATE)) {
-			rect.right = 641;
-			rect.bottom = 480;
+		if (real_fullscreen) {
+			drawmng.width = FULLSCREEN_WIDTH;
+			drawmng.height = FULLSCREEN_HEIGHT;
 		} else {
-			rect.right = 480;
-			rect.bottom = 641;
+			screen = gdk_screen_get_default();
+			drawmng.width = gdk_screen_get_width(screen);
+			drawmng.height = gdk_screen_get_height(screen);
 		}
-		lpitch = rect.right * bytes_per_pixel;
-		padding = lpitch % (fmt.scanline_pad / 8);
-		if (padding > 0) {
-			rect.right += padding / bytes_per_pixel;
-			lpitch = rect.right * bytes_per_pixel;
-		}
-		height = 480;
-
-		drawmng.surface = gdk_image_new(GDK_IMAGE_FASTEST, visual,
-		    rect.right, rect.bottom);
-		if (drawmng.surface == NULL) {
-			g_message("can't create surface.");
-			return FAILURE;
-		}
-
-		drawmng.backsurf = gdk_pixmap_new(drawarea->window,
-		    rect.right, rect.bottom, visual->depth);
-		if (drawmng.backsurf == NULL) {
-			g_message("can't create pixmap.");
-			return FAILURE;
-		}
-		gdk_draw_rectangle(drawmng.backsurf, drawarea->style->black_gc,
-		    TRUE, 0, 0, rect.right, rect.bottom);
+	} else {
+		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
+		drawmng.extend = 1;
+		drawmng.width = 640;
+		drawmng.height = 480;
 	}
-	scrnmng.bpp = (UINT8)fmt.bits_per_pixel;
-	drawmng.lpitch = lpitch;
-	scrnsurf.ss.bpp = fmt.bits_per_pixel;
+
+	if (!(mode & SCRNMODE_ROTATE)) {
+		rect.right = 640 + drawmng.extend;
+		rect.bottom = 480;
+	} else {
+		rect.right = 480;
+		rect.bottom = 640 + drawmng.extend;
+	}
+
+	scrnmng.bpp = BITS_PER_PIXEL;
+	scrnsurf.bpp = BITS_PER_PIXEL;
 	drawmng.scrnmode = mode;
-	drawmng.width = 640;
-	drawmng.height = height;
 	drawmng.clipping = 0;
 	renewal_client_size();
+
+	drawmng.backsurf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+	    rect.right, rect.bottom);
+	if (drawmng.backsurf == NULL) {
+		drawmng.drawing = FALSE;
+		g_message("can't create backsurf.");
+		return FAILURE;
+	}
+	gdk_pixbuf_fill(drawmng.backsurf, 0);
+
+	drawmng.surface = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+	    drawmng.rect.right, drawmng.rect.bottom);
+	if (drawmng.surface == NULL) {
+		drawmng.drawing = FALSE;
+		g_message("can't create surface.");
+		return FAILURE;
+	}
+	gdk_pixbuf_fill(drawmng.surface, 0);
+
+	if (mode & SCRNMODE_FULLSCREEN) {
+		xmenu_hide();
+		if (real_fullscreen) {
+			gtk_window_fullscreen_mode(main_window);
+		} else {
+			gtk_window_fullscreen(GTK_WINDOW(main_window));
+		}
+	} else {
+		if (real_fullscreen) {
+			gtk_window_restore_mode(main_window);
+		} else {
+			gtk_window_unfullscreen(GTK_WINDOW(main_window));
+		}
+		xmenu_show();
+	}
 
 	drawmng.drawing = FALSE;
 
@@ -338,11 +436,11 @@ scrnmng_destroy(void)
 {
 
 	if (drawmng.backsurf) {
-		gdk_pixmap_unref(drawmng.backsurf);
+		g_object_unref(drawmng.backsurf);
 		drawmng.backsurf = NULL;
 	}
 	if (drawmng.surface) {
-		gdk_image_destroy(drawmng.surface);
+		g_object_unref(drawmng.surface);
 		drawmng.surface = NULL;
 	}
 }
@@ -379,168 +477,106 @@ scrnmng_setextend(int extend)
 {
 
 	scrnstat.extend = extend;
+	scrnmng.allflash = TRUE;
 	renewal_client_size();
+}
+
+void
+scrnmng_setmultiple(int multiple)
+{
+
+	if (scrnstat.multiple != multiple) {
+		scrnstat.multiple = multiple;
+		renewal_client_size();
+	}
 }
 
 const SCRNSURF *
 scrnmng_surflock(void)
 {
-	int lpitch = drawmng.lpitch;
-	int bytes_per_pixel = scrnsurf.ss.bpp >> 3;
+	const int lpitch = gdk_pixbuf_get_rowstride(drawmng.backsurf);
 
-#if !defined(USE_SCREEN_INVALIDATE)
-	memcpy(scrnsurf.renewal, renewal_line, sizeof(scrnsurf.renewal));
-#endif
-
-	scrnsurf.ss.ptr = (UINT8 *)drawmng.surface->mem;
+	scrnsurf.ptr = (UINT8 *)gdk_pixbuf_get_pixels(drawmng.backsurf);
 	if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
-		scrnsurf.ss.xalign = bytes_per_pixel;
-		scrnsurf.ss.yalign = lpitch;
+		scrnsurf.xalign = BYTES_PER_PIXEL;
+		scrnsurf.yalign = lpitch;
 	} else if (!(drawmng.scrnmode & SCRNMODE_ROTATEDIR)) {
 		/* rotate left */
-		scrnsurf.ss.ptr += (scrnsurf.ss.width + scrnsurf.ss.extend - 1) * lpitch;
-		scrnsurf.ss.xalign = -lpitch;
-		scrnsurf.ss.yalign = bytes_per_pixel;
+		scrnsurf.ptr += (scrnsurf.width + scrnsurf.extend - 1) * lpitch;
+		scrnsurf.xalign = -lpitch;
+		scrnsurf.yalign = BYTES_PER_PIXEL;
 	} else {
 		/* rotate right */
-		scrnsurf.ss.ptr += (drawmng.rect.right - 1) * bytes_per_pixel;
-		scrnsurf.ss.xalign = lpitch;
-		scrnsurf.ss.yalign = -bytes_per_pixel;
+		scrnsurf.ptr += (scrnsurf.height - 1) * BYTES_PER_PIXEL;
+		scrnsurf.xalign = lpitch;
+		scrnsurf.yalign = -BYTES_PER_PIXEL;
 	}
-	return &scrnsurf.ss;
+	return &scrnsurf;
 }
 
 void
 scrnmng_surfunlock(const SCRNSURF *surf)
 {
+
+	UNUSED(surf);
+
+	if (((drawmng.scrnmode & SCRNMODE_FULLSCREEN) && real_fullscreen)
+	 && !(drawmng.scrnmode & SCRNMODE_FULLSCREEN) && (scrnstat.multiple == SCREEN_DEFMUL)) {
+		/* Nothing to do */
+	} else {
+		gdk_pixbuf_scale(drawmng.backsurf, drawmng.surface,
+		    0, 0, drawmng.rect.right, drawmng.rect.bottom,
+		    0, 0, drawmng.ratio_w, drawmng.ratio_h,
+		    drawmng.interp);
+	}
+
+	scrnmng_update();
+}
+
+void
+scrnmng_update(void)
+{
 	GdkDrawable *d = drawarea->window;
 	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
-	X11SCRNSURF *ss = (X11SCRNSURF *)surf;
-	UINT8 *delta = ss->renewal;
-	RECT_T r;
-	gint h, s;
-
-	r.left = drawmng.scrn.left;
-	r.top = drawmng.scrn.top;
-	r.right = drawmng.rect.right;
-	r.bottom = drawmng.rect.bottom;
-
-#if !defined(USE_SCREEN_INVALIDATE)
-	if (!(drawmng.scrnmode & SCRNMODE_ROTATE)) {
-		/* normal */
-		for (s = h = 0; h < r.bottom; h++) {
-			if ((renewal_line[h] != delta[h]) || (s == h))
-				continue;
-
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    0, s, r.left, r.top + s, r.right, h - s);
-			s = h + 1;
-		}
-		if (s != h) {
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    0, s, r.left, r.top + s, r.right, h - s);
-		}
-	} else if (!(drawmng.scrnmode & SCRNMODE_ROTATEDIR)) {
-		/* rotate left */
-		for (s = h = 0; h < r.right; h++) {
-			if ((renewal_line[h] != delta[h]) || (s == h))
-				continue;
-
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    s, 0, r.left + s, r.top, h - s, r.bottom);
-			s = h + 1;
-		}
-		if (s != h) {
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    s, 0, r.left + s, r.top, h - s, r.bottom);
-		}
-	} else {
-		/* rotate right */
-		for (s = h = 0; h < r.right; h++) {
-			if ((renewal_line[h] != delta[h]) || (s == h))
-				continue;
-
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    r.right - h, 0,
-			    drawmng.scrn.right - h, r.top, h - s, r.bottom);
-			s = h + 1;
-		}
-		if (s != h) {
-			gdk_draw_image(drawmng.backsurf, gc, drawmng.surface,
-			    r.right - h, 0,
-			    drawmng.scrn.right - h, r.top, h - s, r.bottom);
-		}
-	}
-#else
-	gtk_widget_queue_draw_area(drawarea, r.left, r.top, r.right, r.bottom);
-#endif
 
 	if (scrnmng.palchanged) {
 		scrnmng.palchanged = FALSE;
 		palette_set();
 	}
 
-#if !defined(USE_SCREEN_INVALIDATE)
 	if (drawmng.drawing)
 		return;
 
 	drawmng.drawing = TRUE;
-#if notyet
+
 	if (drawmng.scrnmode & SCRNMODE_FULLSCREEN) {
-	} else
-#endif
-	{
+		if (scrnmng.allflash) {
+			scrnmng.allflash = 0;
+			clear_outscreen();
+		}
+	} else {
 		if (scrnmng.allflash) {
 			scrnmng.allflash = 0;
 			if (np2oscfg.paddingx || np2oscfg.paddingy) {
 				clear_outscreen();
 			}
 		}
-		gdk_draw_pixmap(d, gc, drawmng.backsurf,
-		    0, 0,                                     /* src  */
-		    drawmng.scrn.left, drawmng.scrn.top,      /* dest */
-		    drawmng.rect.right, drawmng.rect.bottom); /* w/h  */
 	}
-	drawmng.drawing = FALSE;
-#endif
-}
 
-void
-scrnmng_draw(RECT_T *r)
-{
-	GdkDrawable *d = drawarea->window;
-	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
-
-	if (drawmng.drawing)
-		return;
-
-	drawmng.drawing = TRUE;
-
-	if (r->right > drawmng.rect.right)
-		r->right = drawmng.rect.right;
-	if (r->bottom > drawmng.rect.bottom)
-		r->bottom = drawmng.rect.bottom;
-
-#if notyet
-	if (drawmng.scrnmode & SCRNMODE_FULLSCREEN) {
-	} else
-#endif
-	{
-		if (scrnmng.allflash) {
-			scrnmng.allflash = 0;
-			if (np2oscfg.paddingx || np2oscfg.paddingy) {
-				clear_outscreen();
-			}
-		}
-#if !defined(USE_SCREEN_INVALIDATE)
-		gdk_draw_pixmap(d, gc, drawmng.backsurf,
-		    r->left, r->top,
-		    r->left, r->top, r->right, r->bottom);
-#else
-		gdk_draw_image(d, gc, drawmng.surface,
-		    r->left, r->top,
-		    r->left, r->top, r->right, r->bottom);
-#endif
+	if (((drawmng.scrnmode & SCRNMODE_FULLSCREEN) && real_fullscreen)
+	 && !(drawmng.scrnmode & SCRNMODE_FULLSCREEN) && (scrnstat.multiple == SCREEN_DEFMUL)) {
+		gdk_draw_pixbuf(d, gc, drawmng.backsurf,
+		    0, 0,
+		    drawmng.scrn.left, drawmng.scrn.top,
+		    drawmng.rect.right, drawmng.rect.bottom,
+		    GDK_RGB_DITHER_NORMAL, 0, 0);
+	} else {
+		gdk_draw_pixbuf(d, gc, drawmng.surface,
+		    0, 0,
+		    drawmng.scrn.left, drawmng.scrn.top,
+		    drawmng.rect.right, drawmng.rect.bottom,
+		    GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
+
 	drawmng.drawing = FALSE;
 }

@@ -61,6 +61,8 @@ typedef struct {
 	BYTE	mouse_move_ratio;
 
 	BYTE	disablemmx;
+	BYTE	drawinterp;
+	BYTE	F11KEY;
 } NP2OSCFG;
 
 
@@ -75,6 +77,13 @@ enum {
 enum {
 	MMXFLAG_DISABLE		= 1,
 	MMXFLAG_NOTSUPPORT	= 2
+};
+
+enum {
+	INTERP_NEAREST		= 0,
+	INTERP_TILES		= 1,
+	INTERP_BILINEAR		= 2,
+	INTERP_HYPER		= 3
 };
 
 #ifdef __cplusplus

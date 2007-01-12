@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.5 2007/01/10 17:53:27 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.6 2007/01/12 19:09:58 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -118,9 +118,12 @@ key_press_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 	UNUSED(w);
 	UNUSED(p);
 
-	if (ev->keyval == GDK_F11)
-		xmenu_select_screen(scrnmode ^ SCRNMODE_FULLSCREEN);
-	else if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
+	if (ev->keyval == GDK_F11) {
+		if ((np2oscfg.F11KEY == 1) && (scrnmode & SCRNMODE_FULLSCREEN))
+			xmenu_toggle_menu();
+		else if (np2oscfg.F11KEY == 2)
+			xmenu_select_screen(scrnmode ^ SCRNMODE_FULLSCREEN);
+	} else if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
 		xmenu_toggle_item(NULL, "mousemode", !np2oscfg.MOUSE_SW);
 	else
 		gtkkbd_keydown(ev->keyval);
@@ -196,6 +199,23 @@ button_release_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 	return TRUE;
 }
 
+/*
+ - Signal: gboolean GtkWidget::motion_notify_event (GtkWidget *widget,
+          GdkEventMotion *event, gpointer user_data)
+*/
+static gboolean
+motion_notify_evhandler(GtkWidget *w, GdkEventMotion *ev, gpointer p)
+{
+
+	UNUSED(w);
+	UNUSED(p);
+
+	if ((scrnmode & SCRNMODE_FULLSCREEN) && (ev->y < 8.0))
+		xmenu_show();
+
+	return TRUE;
+}
+
 
 /*
  * misc
@@ -215,7 +235,7 @@ set_icon_bitmap(GtkWidget *w)
 /*
  * idle process
  */
-static int install_count = 0;
+static volatile int install_count = 0;
 static guint idle_id;
 
 void
@@ -320,6 +340,8 @@ gui_gtk_widget_create(void)
 	    GTK_SIGNAL_FUNC(button_press_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "button_release_event",
 	    GTK_SIGNAL_FUNC(button_release_evhandler), NULL);
+	g_signal_connect(GTK_OBJECT(main_window), "motion_notify_event",
+	    GTK_SIGNAL_FUNC(motion_notify_evhandler), NULL);
 
 	g_signal_connect(GTK_OBJECT(drawarea), "configure_event",
 	    GTK_SIGNAL_FUNC(configure_evhandler), NULL);
