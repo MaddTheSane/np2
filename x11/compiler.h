@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.32 2005/05/21 19:48:15 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.33 2007/01/20 22:33:06 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -28,6 +28,10 @@
 
 #ifndef	NP2_X11_COMPILER_H__
 #define	NP2_X11_COMPILER_H__
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #ifdef	WORDS_BIGENDIAN
 #define	BYTESEX_BIG

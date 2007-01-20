@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.4 2007/01/12 19:09:58 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.5 2007/01/20 22:33:06 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -25,15 +25,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <string.h>
 
 #include "gtk2/xnp2.h"
 
 #include <gdk/gdkx.h>
-
-#ifdef HAVE_XF86VIDMODE
-#include <X11/extensions/xf86vmode.h>
-#endif
 
 extern int verbose;
 
@@ -90,6 +90,8 @@ gdk_window_get_pixmap_format(GdkWindow *w, GdkVisual *visual, pixmap_format_t *f
 }
 
 #ifdef HAVE_XF86VIDMODE
+#include <X11/extensions/xf86vmode.h>
+
 static XF86VidModeModeInfo **modes = NULL;
 static int modeidx = -1;
 static XF86VidModeModeInfo *saved_modes;
