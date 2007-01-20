@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(USE_ESDAUDIO)
-
 #include "compiler.h"
+
+#if defined(USE_ESDAUDIO)
 
 #include "soundmng.h"
 

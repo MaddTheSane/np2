@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(USE_NETBSDAUDIO)
-
 #include "compiler.h"
+
+#if defined(USE_NETBSDAUDIO)
 
 #include "np2.h"
 

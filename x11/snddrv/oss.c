@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(USE_OSSAUDIO)
-
 #include "compiler.h"
+
+#if defined(USE_OSSAUDIO)
 
 #include "np2.h"
 
