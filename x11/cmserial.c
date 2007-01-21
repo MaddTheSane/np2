@@ -1,4 +1,4 @@
-/*	$Id: cmserial.c,v 1.3 2005/03/12 12:36:13 monaka Exp $	*/
+/*	$Id: cmserial.c,v 1.4 2007/01/21 00:03:02 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -332,9 +332,8 @@ cmserial_create(UINT port, BYTE param, UINT32 speed)
 
 	/* set misc flag */
 	cfmakeraw(&options);
-	options.c_cflag |= CLOCAL | CREAD;	/* enable recv and local mode */
-	options.c_cflag |= CRTSCTS;		/* hard flow */
-	options.c_iflag |= ~(IXON | IXOFF);
+	options.c_cflag |= CLOCAL | CREAD;
+	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 
 #if defined(SERIAL_DEBUG)
 	print_status(&options);
