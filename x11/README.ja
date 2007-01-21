@@ -24,7 +24,7 @@ Xnp2 - ねこープロジェクトII for X Window System
 3. 必要なソフトウェア
 
   ・gcc
-  ・GTK+ 1.2.x もしくは 2.4.x
+  ・GTK+ 2.6 以降
 
   以下は動作には必須ではありませんが、音を鳴らす場合等に必要になります。
 
@@ -241,3 +241,7 @@ Xnp2 - ねこープロジェクトII for X Window System
   本ソフトウェアに関する問い合わせは
    NONAKA Kimihiro (埜中公博) / aw9k-nnk@asahi-net.or.jp
   まで電子メールにてお願いします。
+
+
+-- 
+	$Id: README.ja,v 1.10 2007/01/21 00:07:20 monaka Exp $
