@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.7 2007/01/12 19:09:58 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.8 2007/01/21 00:24:24 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -1036,11 +1036,8 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 	}
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter[0]);
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK) {
-		gtk_widget_destroy(dialog);
-		install_idle_process();
-		return;
-	}
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
+		goto end;
 
 	utf8 = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 	if (utf8 == NULL)
