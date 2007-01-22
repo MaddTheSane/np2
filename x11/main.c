@@ -366,6 +366,7 @@ main(int argc, char *argv[])
 
 	soundmng_deinitialize();
 	scrnmng_destroy();
+	scrnmng_terminate();
 
 scrnmng_failure:
 	sysmenu_destroy();

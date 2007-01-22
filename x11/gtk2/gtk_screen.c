@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.5 2007/01/12 19:09:58 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.6 2007/01/22 16:37:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -329,6 +329,15 @@ scrnmng_initialize(void)
 	default:
 		drawmng.interp = GDK_INTERP_BILINEAR;
 		break;
+	}
+}
+
+void
+scrnmng_terminate(void)
+{
+
+	if (real_fullscreen) {
+		gtk_window_restore_mode(main_window);
 	}
 }
 
