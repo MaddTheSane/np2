@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.5 2007/01/20 22:33:06 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.6 2007/01/22 15:14:24 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -193,7 +193,8 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 			}
 		}
 	}
-	XFree(modes);
+	if (!ret)
+		XFree(modes);
 
 out:
 	XUnlockDisplay(xdisplay);
