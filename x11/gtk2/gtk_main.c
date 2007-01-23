@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.7 2007/01/23 15:48:20 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.8 2007/01/23 16:24:36 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -264,7 +264,7 @@ install_idle_process(void)
 {
 
 	if (install_count++ == 0) {
-		idle_id = g_idle_add((GSourceFunc)mainloop, 0);
+		idle_id = g_idle_add((GSourceFunc)mainloop, NULL);
 		soundmng_play();
 	}
 }
@@ -321,6 +321,7 @@ gui_gtk_widget_create(void)
 	gint root_x, root_y;
 
 	main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+//	gtk_widget_set_double_buffered(GTK_WIDGET(main_window), FALSE);
 	gtk_window_set_resizable(GTK_WINDOW(main_window), FALSE);
 	gtk_window_set_title(GTK_WINDOW(main_window), np2oscfg.titles);
 	gtk_widget_add_events(main_window, EVENT_MASK);
@@ -334,6 +335,7 @@ gui_gtk_widget_create(void)
 	gtk_widget_show(menubar);
 
 	drawarea = gtk_drawing_area_new();
+//	gtk_widget_set_double_buffered(GTK_WIDGET(drawarea), FALSE);
 	gtk_widget_set_size_request(GTK_WIDGET(drawarea), 640, 400);
 	gtk_box_pack_end(GTK_BOX(main_vbox), drawarea, FALSE, TRUE, 0);
 	gtk_widget_show(drawarea);
