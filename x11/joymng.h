@@ -1,4 +1,4 @@
-/*	$Id: joymng.h,v 1.2 2004/07/26 15:53:26 monaka Exp $	*/
+/*	$Id: joymng.h,v 1.3 2007/01/23 15:48:20 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>,
@@ -44,7 +44,7 @@ extern "C" {
 #define	JOY_NAXIS_MAX		(JOY_AXIS_INVALID-1)
 #define	JOY_NBUTTON_MAX		(JOY_BUTTON_INVALID-1)
 
-enum JOYINFO_JOYFLAG {
+enum {
 	JOY_UP_BIT		= (1 << 0),
 	JOY_DOWN_BIT		= (1 << 1),
 	JOY_LEFT_BIT		= (1 << 2),
@@ -56,37 +56,35 @@ enum JOYINFO_JOYFLAG {
 };
 
 typedef struct {
-	int axis[JOY_NAXIS];
-	int button[JOY_NBUTTON];
-
-	int naxis;
-	int nbutton;
-
 	int devindex;
 	char *devname;
-} joydrv_handle_common, *joydrv_handle_t;
 
+	int naxis;
+	int axis[JOY_NAXIS];
+
+	int nbutton;
+	int button[JOY_NBUTTON];
+} joymng_devinfo_t;
 
 #if defined(SUPPORT_JOYSTICK)
 
+REG8 joymng_getstat(void);
+
+// -- X11
 void joymng_initialize(void);
 void joymng_deinitialize(void);
-const joydrv_handle_t *joymng_get_devinfo_list(void);
+const joymng_devinfo_t **joymng_get_devinfo_list(void);
 void joymng_sync(void);
-REG8 joymng_getstat(void);
-void joymng_update(void);
-
-REG8 joymng_getstat_with_map(UINT8 *axismap, UINT8 *btnmap);
-int joymng_update_task(void *p);
 
 #else	/* !SUPPORT_JOYSTICK */
 
+#define	joymng_getstat()		(REG8)0xff
+
+// -- X11
 #define	joymng_initialize()		(np2oscfg.JOYPAD1 |= 2)
 #define	joymng_deinitialize()		(np2oscfg.JOYPAD1 &= 1)
 #define	joymng_get_devinfo_list()	NULL
 #define	joymng_sync()
-#define	joymng_getstat()		(REG8)0xff
-#define	joymng_update()
 
 #endif	/* SUPPORT_JOYSTICK */
 

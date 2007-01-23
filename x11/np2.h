@@ -54,7 +54,6 @@ typedef struct {
 	BYTE	I286SAVE;
 
 	BYTE	snddrv;
-	char	audiodev[MAX_PATH];
 	char	MIDIDEV[2][MAX_PATH];
 	UINT32	MIDIWAIT;
 

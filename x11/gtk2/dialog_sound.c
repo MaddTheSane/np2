@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.4 2007/01/02 13:41:21 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.5 2007/01/23 15:48:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -269,7 +269,7 @@ static const char *joypad_num_str[256] = {
 	"248", "249", "250", "251", "252", "253", "254", "255", 
 };
 
-static const joydrv_handle_t *joypad_devlist;
+static const joymng_devinfo_t **joypad_devlist;
 static GtkWidget *joypad_use_checkbutton[1];
 static GtkWidget *joypad_devlist_combo;
 static GtkWidget *joypad_axis_combo[JOY_NAXIS];
@@ -277,22 +277,6 @@ static GtkWidget *joypad_button_combo[JOY_NBUTTON];
 static char joypad_devname[MAX_PATH];
 static UINT8 joypad_axis[JOY_NAXIS];
 static UINT8 joypad_button[JOY_NBUTTON];
-
-
-/*
- * Driver
- */
-
-static const char *driver_name[SNDDRV_DRVMAX] = {
-	"None",
-	"NetBSD",
-	"OSS",
-	"EsounD",
-	"SDL",
-};
-
-static GtkWidget *driver_audio_device_entry;
-static int driver_snddrv;
 
 
 static void
@@ -330,9 +314,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	/* JoyPad */
 	UINT8 joypad[1];
 	gint joypad_device_index;
-
-	/* Driver */
-	const gchar *driver_audiodevp;
 
 	/* common */
 	char buf[32];
@@ -579,24 +560,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 		}
 	}
 
-	/* Driver */
-	driver_audiodevp = gtk_entry_get_text(GTK_ENTRY(driver_audio_device_entry));
-
-	renewal = FALSE;
-	if (np2oscfg.snddrv != driver_snddrv) {
-		np2oscfg.snddrv = driver_snddrv;
-		renewal = TRUE;
-	}
-	if (strcmp(np2oscfg.audiodev, driver_audiodevp) != 0) {
-		milstr_ncpy(np2oscfg.audiodev, driver_audiodevp, sizeof(np2oscfg.audiodev));
-		renewal = TRUE;
-	}
-
-	if (renewal) {
-		sysmng_update(SYS_UPDATEOSCFG);
-		soundrenewal = 1;
-	}
-
 	gtk_widget_destroy((GtkWidget *)d);
 }
 
@@ -682,15 +645,6 @@ spb_default_button_clicked(GtkButton *b, gpointer d)
 		if (GTK_TOGGLE_BUTTON(spb_vr_channel_checkbutton[i])->active)
 			g_signal_emit_by_name(GTK_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
 	}
-}
-
-static void
-driver_radiobutton_clicked(GtkButton *b, gpointer d)
-{
-
-	UNUSED(b);
-
-	driver_snddrv = (int)d;
 }
 
 static GtkWidget *
@@ -1343,103 +1297,6 @@ create_joypad_note(void)
 	return root_widget;
 }
 
-static GtkWidget *
-create_driver_note(void)
-{
-	GtkWidget *root_widget;
-	GtkWidget *driver_frame;
-	GtkWidget *driver_vbox;
-	GtkWidget *driver_radiobutton[SNDDRV_DRVMAX];
-	GtkWidget *audio_device_label;
-	GtkWidget *snddrv_hbox;
-	int i;
-
-	root_widget = gtk_vbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(root_widget), 5);
-	gtk_widget_show(root_widget);
-
-	driver_frame = gtk_frame_new("Sound driver");
-	gtk_widget_show(driver_frame);
-	gtk_box_pack_start(GTK_BOX(root_widget), driver_frame, TRUE, TRUE, 0);
-
-	driver_vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(driver_vbox), 5);
-	gtk_widget_show(driver_vbox);
-	gtk_container_add(GTK_CONTAINER(driver_frame), driver_vbox);
-
-	for (i = 0; i < SNDDRV_DRVMAX; i++) {
-		driver_radiobutton[i] = gtk_radio_button_new_with_label_from_widget((i > 0) ? GTK_RADIO_BUTTON(driver_radiobutton[i-1]) : NULL, driver_name[i]);
-		gtk_widget_show(driver_radiobutton[i]);
-		gtk_box_pack_start(GTK_BOX(driver_vbox), driver_radiobutton[i], TRUE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(driver_radiobutton[i]), "clicked",
-		    GTK_SIGNAL_FUNC(driver_radiobutton_clicked), (gpointer)i);
-	}
-#if !defined(USE_NETBSDAUDIO)
-	gtk_widget_set_sensitive(driver_radiobutton[SNDDRV_NETBSD], FALSE);
-#endif
-#if !defined(USE_OSSAUDIO)
-	gtk_widget_set_sensitive(driver_radiobutton[SNDDRV_OSS], FALSE);
-#endif
-#if !defined(USE_ESDAUDIO)
-	gtk_widget_set_sensitive(driver_radiobutton[SNDDRV_ESD], FALSE);
-#endif
-#if !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
-	gtk_widget_set_sensitive(driver_radiobutton[SNDDRV_SDL], FALSE);
-#endif
-
-	switch (np2oscfg.snddrv) {
-	case SNDDRV_NODRV:
-#if defined(USE_NETBSDAUDIO)
-	case SNDDRV_NETBSD:
-#endif
-#if defined(USE_OSSAUDIO)
-	case SNDDRV_OSS:
-#endif
-#if defined(USE_ESDAUDIO)
-	case SNDDRV_ESD:
-#endif
-#if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
-	case SNDDRV_SDL:
-#endif
-		g_signal_emit_by_name(GTK_OBJECT(driver_radiobutton[np2oscfg.snddrv]), "clicked");
-		break;
-
-#if !defined(USE_NETBSDAUDIO)
-	case SNDDRV_NETBSD:
-#endif
-#if !defined(USE_OSSAUDIO)
-	case SNDDRV_OSS:
-#endif
-#if !defined(USE_ESDAUDIO)
-	case SNDDRV_ESD:
-#endif
-#if !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
-	case SNDDRV_SDL:
-#endif
-	case SNDDRV_DRVMAX:
-	default:
-		np2oscfg.snddrv = SNDDRV_NODRV;
-		sysmng_update(SYS_UPDATEOSCFG);
-		break;
-	}
-
-	snddrv_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(snddrv_hbox), 5);
-	gtk_widget_show(snddrv_hbox);
-	gtk_box_pack_start(GTK_BOX(root_widget), snddrv_hbox, FALSE, FALSE, 0);
-
-	audio_device_label = gtk_label_new("Sound device");
-	gtk_widget_show(audio_device_label);
-	gtk_box_pack_start(GTK_BOX(snddrv_hbox), audio_device_label, FALSE, FALSE, 3);
-
-	driver_audio_device_entry = gtk_entry_new();
-	gtk_widget_show(driver_audio_device_entry);
-	gtk_entry_set_text(GTK_ENTRY(driver_audio_device_entry), np2oscfg.audiodev);
-	gtk_box_pack_start(GTK_BOX(snddrv_hbox), driver_audio_device_entry, TRUE, TRUE, 3);
-
-	return root_widget;
-}
-
 void
 create_sound_dialog(void)
 {
@@ -1452,7 +1309,6 @@ create_sound_dialog(void)
 	GtkWidget *pc9801_86_note;
 	GtkWidget *spb_note;
 	GtkWidget *joypad_note;
-	GtkWidget *driver_note;
 	GtkWidget *confirm_widget;
 	GtkWidget *ok_button;
 	GtkWidget *cancel_button;
@@ -1499,10 +1355,6 @@ create_sound_dialog(void)
 	/* "JoyPad" note */
 	joypad_note = create_joypad_note();
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), joypad_note, gtk_label_new("JoyPad"));
-
-	/* "Driver" note */
-	driver_note = create_driver_note();
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), driver_note, gtk_label_new("Driver"));
 
 	/*
 	 * OK, Cancel button

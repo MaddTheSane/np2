@@ -1,4 +1,4 @@
-/*	$Id: joymng.c,v 1.2 2004/07/26 15:53:26 monaka Exp $	*/
+/*	$Id: joymng.c,v 1.3 2007/01/23 15:48:20 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>,
@@ -33,25 +33,35 @@
 #include "np2.h"
 
 #include "joymng.h"
-#include "joydrv/joydrv.h"
 
 static struct {
-	joydrv_handle_t	hdl;
+	void *hdl;
+	BOOL inited;
 
-	BYTE		pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
-	REG8		flag;
+	const joymng_devinfo_t **devlist;
 
-	joydrv_handle_t	*devlist;
-	BOOL		inited;
+	BYTE pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
+	REG8 flag;
 } joyinfo = {
+	NULL,
+	FALSE,
+
 	NULL,
 
 	{ 0, },
 	0xff,
-
-	NULL,
-	FALSE,
 };
+
+typedef struct {
+	SINT16	axis[JOY_NAXIS];
+	BYTE	button[JOY_NBUTTON];
+} JOYINFO_T;
+
+static const joymng_devinfo_t **joydrv_initialize(void);
+static void joydrv_terminate(void);
+static void *joydrv_open(const char *dev);
+static void joydrv_close(void *hdl);
+static BOOL joydrv_getstat(void *hdl, JOYINFO_T *ji);
 
 void
 joymng_initialize(void)
@@ -99,11 +109,11 @@ joymng_deinitialize(void)
 	np2oscfg.JOYPAD1 &= 1;
 }
 
-const joydrv_handle_t *
+const joymng_devinfo_t **
 joymng_get_devinfo_list(void)
 {
 
-	return (const joydrv_handle_t *)joyinfo.devlist;
+	return joyinfo.devlist;
 }
 
 void
@@ -147,65 +157,218 @@ joymng_getstat(void)
 			}
 		}
 	}
+
 	return joyinfo.flag;
 }
 
-REG8
-joymng_getstat_with_map(UINT8 *axismap, UINT8 *btnmap)
+#if defined(USE_SDL_JOYSTICK)
+
+#include <SDL.h>
+#include <SDL_joystick.h>
+
+typedef struct {
+	joymng_devinfo_t	dev;
+	SDL_Joystick		*joyhdl;
+} joydrv_sdl_hdl_t;
+
+const joymng_devinfo_t **
+joydrv_initialize(void)
 {
-	JOYINFO_T ji;
-	int i;
-	REG8 joyflag;
+	char str[32];
+	joydrv_sdl_hdl_t *shdl;
+	joymng_devinfo_t **devlist = NULL;
+	size_t allocsize;
+	int ndrv = 0;
+	int rv;
+	int i, n;
 
-	if (joyinfo.hdl) {
-		if (joydrv_getstat_with_map(joyinfo.hdl, &ji, axismap, btnmap) == SUCCESS) {
-			joyflag = 0xff;
-
-			/* X */
-			if (ji.axis[0] > 0x4000) {
-				joyflag &= ~JOY_RIGHT_BIT;
-			} else if (ji.axis[0] < -0x4000) {
-				joyflag &= ~JOY_LEFT_BIT;
-			}
-
-			/* Y */
-			if (ji.axis[1] > 0x4000) {
-				joyflag &= ~JOY_DOWN_BIT;
-			} else if (ji.axis[1] < -0x4000) {
-				joyflag &= ~JOY_UP_BIT;
-			}
-
-			/* button */
-			for (i = 0; i < JOY_NBUTTON; ++i) {
-				if (ji.button[i]) {
-					joyflag &= joyinfo.pad1btn[i];
-				}
-			}
-			return joyflag;
-		}
+	rv = SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+	if (rv < 0) {
+		return NULL;
 	}
-	return 0xff;
+
+	ndrv = SDL_NumJoysticks();
+	if (ndrv <= 0) {
+		goto sdl_err;
+	}
+
+	allocsize = sizeof(joymng_devinfo_t *) * (ndrv + 1);
+	devlist = _MALLOC(allocsize, "joy device list");
+	if (devlist == NULL) {
+		goto sdl_err;
+	}
+	memset(devlist, 0, allocsize);
+
+	for (n = 0, i = 0; i < ndrv; ++i) {
+		sprintf(str, "%d", i);
+		devlist[n] = joydrv_open(str);
+		if (devlist[n] == NULL) {
+			continue;
+		}
+		shdl = (joydrv_sdl_hdl_t *)devlist[n];
+		SDL_JoystickClose(shdl->joyhdl);
+		shdl->joyhdl = NULL;
+		n++;
+	}
+
+	return (const joymng_devinfo_t **)devlist;
+
+sdl_err:
+	if (devlist) {
+		for (i = 0; i < ndrv; ++i) {
+			if (devlist[i]) {
+				joydrv_sdl_close(devlist[i]);
+			}
+		}
+		_MFREE(devlist);
+	}
+
+	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+
+	return NULL;
 }
 
 void
-joymng_update(void)
+joydrv_terminate(void)
 {
 
-	if (joyinfo.hdl) {
-		joydrv_update(joyinfo.hdl);
-	}
+	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-int
-joymng_update_task(void *p)
+void *
+joydrv_open(const char *devname)
 {
+	joydrv_sdl_hdl_t *shdl = NULL;
+	joymng_devinfo_t *dev;
+	SDL_Joystick *joy = NULL;
+	char *endptr;
+	size_t allocsize;
+	long lval;
+	int drv;
+	int ndrv;
+	int naxis;
+	int nbutton;
+	int i;
 
-	UNUSED(p);
-
-	if (joyinfo.hdl) {
-		joydrv_update(joyinfo.hdl);
+	if (devname == NULL) {
+		goto sdl_err;
 	}
 
-	return TRUE;
+	errno = 0;
+	lval = strtol(devname, &endptr, 10);
+	if (devname[0] == '\0' || *endptr != '\0') {
+		goto sdl_err;
+	}
+	if (errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) {
+		goto sdl_err;
+	}
+	if (lval < 0 || lval > INT_MAX) {
+		goto sdl_err;
+	}
+	drv = (int)lval;
+
+	ndrv = SDL_NumJoysticks();
+	if (ndrv <= 0 || drv >= ndrv) {
+		goto sdl_err;
+	}
+
+	joy = SDL_JoystickOpen(drv);
+	if (joy == NULL) {
+		goto sdl_err;
+	}
+
+	naxis = SDL_JoystickNumAxes(joy);
+	if (naxis < 2 || naxis >= 255) {
+		goto sdl_err;
+	}
+	nbutton = SDL_JoystickNumButtons(joy);
+	if (nbutton < 2 || nbutton >= 255) {
+		goto sdl_err;
+	}
+
+	allocsize = sizeof(joydrv_sdl_hdl_t);
+	shdl = _MALLOC(allocsize, "SDL joystick handle");
+	if (shdl == NULL) {
+		goto sdl_err;
+	}
+	memset(shdl, 0, allocsize);
+
+	shdl->joyhdl = joy;
+
+	dev = &shdl->dev;
+	dev->devindex = drv;
+	dev->devname = strdup(SDL_JoystickName(drv));
+	dev->naxis = naxis;
+	for (i = 0; i < JOY_NAXIS; ++i) {
+		if (np2oscfg.JOYAXISMAP[0][i] < naxis) {
+			dev->axis[i] = np2oscfg.JOYAXISMAP[0][i];
+		} else {
+			dev->axis[i] = JOY_AXIS_INVALID;
+		}
+	}
+	dev->nbutton = nbutton;
+	for (i = 0; i < JOY_NBUTTON; ++i) {
+		if (np2oscfg.JOYBTNMAP[0][i] < nbutton) {
+			dev->button[i] = np2oscfg.JOYBTNMAP[0][i];
+		} else {
+			dev->button[i] = JOY_BUTTON_INVALID;
+		}
+	}
+
+	return shdl;
+
+sdl_err:
+	if (shdl) {
+		if (shdl->dev.devname) {
+			free(shdl->dev.devname);
+			shdl->dev.devname = NULL;
+		}
+		_MFREE(shdl);
+	}
+	if (joy) {
+		SDL_JoystickClose(joy);
+	}
+	return NULL;
 }
+
+void
+joydrv_close(void *hdl)
+{
+	joydrv_sdl_hdl_t *shdl = (joydrv_sdl_hdl_t *)hdl;
+	joymng_devinfo_t *dev = &shdl->dev;
+	SDL_Joystick *joy = shdl->joyhdl;
+
+	if (joy) {
+		SDL_JoystickClose(joy);
+	}
+	if (dev->devname) {
+		free(dev->devname);
+		dev->devname = NULL;
+	}
+	_MFREE(shdl);
+}
+
+BOOL
+joydrv_getstat(void *hdl, JOYINFO_T *ji)
+{
+	joydrv_sdl_hdl_t *shdl = (joydrv_sdl_hdl_t *)hdl;
+	joymng_devinfo_t *dev = &shdl->dev;
+	SDL_Joystick *joy = shdl->joyhdl;
+	int i;
+
+	SDL_JoystickUpdate();
+
+	for (i = 0; i < JOY_NAXIS; ++i) {
+		ji->axis[i] = (dev->axis[i] == JOY_AXIS_INVALID) ? 0 :
+		    SDL_JoystickGetAxis(joy, dev->axis[i]);
+	}
+	for (i = 0; i < JOY_NBUTTON; ++i) {
+		ji->button[i] = (dev->button[i] == JOY_BUTTON_INVALID) ? 0 :
+		    SDL_JoystickGetButton(joy, dev->button[i]);
+	}
+
+	return SUCCESS;
+}
+#endif	/* USE_SDL_JOYSTICK */
+
 #endif	/* SUPPORT_JOYSTICK */

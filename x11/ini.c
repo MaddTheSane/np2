@@ -639,7 +639,6 @@ static const INITBL iniitem[] = {
 	{"jast_snd", INITYPE_BOOL,	&np2oscfg.jastsnd,	0},
 
 	{"sounddrv", INITYPE_SNDDRV,	&np2oscfg.snddrv,	0},
-	{"audiodev", INITYPE_STR,	&np2oscfg.audiodev,	MAX_PATH},
 	{"MIDIOUTd", INITYPE_STR,	&np2oscfg.MIDIDEV[0],	MAX_PATH},
 	{"MIDIIN_d", INITYPE_STR,	&np2oscfg.MIDIDEV[1],	MAX_PATH},
 	{"MIDIWAIT", INITYPE_UINT32,	&np2oscfg.MIDIWAIT,	0},

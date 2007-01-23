@@ -1,4 +1,4 @@
-XCOMM	$Id: Imakefile,v 1.31 2007/01/10 18:02:21 monaka Exp $
+XCOMM	$Id: Imakefile,v 1.32 2007/01/23 15:48:20 monaka Exp $
 
 XCOMM
 XCOMM user config
@@ -38,17 +38,6 @@ XCOMM
 XCOMM Audio
 XCOMM
 
-#if defined(USE_NETBSDAUDIO) && defined(NetBSDArchitecture)
-SOUND_DEFINE+= -DUSE_NETBSDAUDIO
-#endif
-
-#if defined(USE_OSSAUDIO)
-SOUND_DEFINE+= -DUSE_OSSAUDIO
-#if defined(NetBSDArchitecture)
-SYS_LIBRARIES+= -lossaudio
-#endif /* NetBSDArchitecture */
-#endif
-
 #if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 SOUND_DEFINE+= -DUSE_SDLAUDIO
 SDL_CONFIG?= sdl-config
@@ -58,18 +47,6 @@ SDL_LIB= `$(SDL_CONFIG) --libs`
 CFLAGS+= -DUSE_SDLMIXER
 SDL_LIB+= -lSDL_mixer
 #endif
-#endif
-
-#if defined(USE_ESDAUDIO)
-SOUND_DEFINE+= -DUSE_ESDAUDIO
-ESD_CONFIG?= esd-config
-ESD_INCLUDE= `$(ESD_CONFIG) --cflags`
-ESD_LIB= `$(ESD_CONFIG) --libs`
-#endif
-
-#if (defined(USE_NETBSDAUDIO) && defined(NetBSDArchitecture)) || defined(USE_OSSAUDIO) || defined(USE_ESDAUDIO)
-PTHREAD_INCLUDE?=
-PTHREAD_LIB?= -lpthread
 #endif
 
 
@@ -89,9 +66,9 @@ EXTRA_INCLUDES= -I. -I.. -I./debug -I../common -I../codecnv \
 		-I../io -I../lio -I../mem \
 		-I../sound -I../sound/vermouth -I../sound/getsnd \
 		-I../vram \
-		$(PTHREAD_INCLUDE) $(GTK_INCLUDE) $(SDL_INCLUDE) $(ESD_INCLUDE)
+		$(GTK_INCLUDE) $(SDL_INCLUDE)
 
-LOCAL_LIBRARIES= $(XLIB) $(PTHREAD_LIB) $(GTK_LIB) $(SDL_LIB) $(ESD_LIB)
+LOCAL_LIBRARIES= $(XLIB) $(GTK_LIB) $(SDL_LIB)
 
 #define PassCDebugFlags
 
@@ -186,10 +163,6 @@ X11OBJS=	dosio.o ini.o trace.o \
 
 DEBUGOBJS=	debug/viewmem.o
 
-SNDDRVOBJS=	snddrv/esd.o snddrv/netbsd.o snddrv/oss.o snddrv/sdl.o
-
-JOYDRVOBJS=	joydrv/sdl.o
-
 #if defined(CPUCORE_IA32)
 
 CPUOBJS= \
@@ -249,7 +222,7 @@ OBJS=		$(COMMONOBJS) $(CODECNVOBJS) \
 		$(IOOBJS) $(LIOOBJS) $(NP2OBJS) $(SOUNDOBJS) $(GETSNDOBJS) \
 		$(VERMOUTHOBJS) $(VRAMOBJS) $(GENERICOBJS) \
 		$(CPUOBJS) $(MEMOBJS) \
-		$(X11OBJS) $(DEBUGOBJS) $(SNDDRVOBJS) $(JOYDRVOBJS) \
+		$(X11OBJS) $(DEBUGOBJS) \
 		$(GTKDEPOBJS)
 
 CSRCS=		$(COMMONOBJS:.o=.c) $(CODECNVOBJS:.o=.c) \
@@ -259,7 +232,7 @@ CSRCS=		$(COMMONOBJS:.o=.c) $(CODECNVOBJS:.o=.c) \
 		$(SOUNDOBJS:.o=.c) $(GETSNDOBJS:.o=.c) $(VERMOUTHOBJS:.o=.c) \
 		$(VRAMOBJS:.o=.c) $(GENERICOBJS:.o=.c) \
 		$(CPUOBJS:.o=.c) $(MEMOBJS:.o=.c) \
-		$(DEBUGOBJS:.o=.c) $(SNDDRVOBJS:.o=.c) $(JOYDRVOBJS:.o=.c) \
+		$(DEBUGOBJS:.o=.c) \
 		$(X11OBJS:.o=.c) $(GTKDEPOBJS:.o=.c)
 SRCS=		$(CSRCS)
 ALLSRCS=	$(ASRCS) $(CSRCS)
@@ -269,13 +242,13 @@ ALLSRCS=	$(ASRCS) $(CSRCS)
 
 ComplexProgramTarget(xnp2)
 
-InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
-InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH)/wav, $(INSTDATFLAGS))
+InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH), $(INSTDATFLAGS))
+InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH), $(INSTDATFLAGS))
 
 XCOMM
 XCOMM for Release
 XCOMM
-XCOMM InstallMultipleFlags(../np2tool/np2tool.d88, $(SYSRESPATH)/fd, $(INSTDATFLAGS))
+XCOMM InstallMultipleFlags(../np2tool/np2tool.d88, $(SYSRESPATH), $(INSTDATFLAGS))
 
 clean::
 	$(RM) $(OBJS)

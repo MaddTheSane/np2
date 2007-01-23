@@ -100,8 +100,7 @@ NP2OSCFG np2oscfg = {
 	0,			/* jastsnd */
 	0,			/* I286SAVE */
 
-	SNDDRV_NODRV,		/* snddrv */
-	"",			/* audiodev */
+	SNDDRV_SDL,		/* snddrv */
 	{ "", "" }, 		/* MIDIDEV */
 	0,			/* MIDIWAIT */
 

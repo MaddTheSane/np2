@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.6 2007/01/12 19:09:58 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.7 2007/01/23 15:48:20 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -62,14 +62,21 @@
 			 | GDK_LEAVE_NOTIFY_MASK	\
 			 | GDK_EXPOSURE_MASK)
 
-
+/*
+ - Signal: gboolean GtkWidget::destroy_event (GtkWidget *widget,
+          GdkEventAny *event, gpointer user_data)
+*/
 static gboolean
-destroy_evhandler(GtkWidget *w)
+destroy_evhandler(GtkWidget *w, GdkEventAny *ev, gpointer p)
 {
 
 	UNUSED(w);
+	UNUSED(ev);
+	UNUSED(p);
 
+	taskmng_exit();
 	toolkit_widget_quit();
+
 	return TRUE;
 }
 
@@ -86,7 +93,6 @@ configure_evhandler(GtkWidget *w, GdkEventConfigure *ev, gpointer p)
 
 	gdk_draw_rectangle(w->window, w->style->black_gc, TRUE,
 	    0, 0, w->allocation.width, w->allocation.height);
-
 	return TRUE;
 }
 
@@ -220,6 +226,21 @@ motion_notify_evhandler(GtkWidget *w, GdkEventMotion *ev, gpointer p)
 /*
  * misc
  */
+static gint
+main_widget_quit(gpointer p)
+{
+	BYTE orig_scrnmode;
+
+	UNUSED(p);
+
+	/* change to window mode */
+	orig_scrnmode = scrnmode;
+	xmenu_select_screen(scrnmode & ~SCRNMODE_FULLSCREEN);
+	scrnmode = orig_scrnmode;
+
+	return 0;
+}
+
 static void
 set_icon_bitmap(GtkWidget *w)
 {
@@ -368,6 +389,7 @@ gui_gtk_widget_mainloop(void)
 {
 
 	install_idle_process();
+	gtk_quit_add(1, main_widget_quit, NULL);
 	gtk_main();
 	uninstall_idle_process();
 }

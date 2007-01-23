@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.33 2007/01/20 22:33:06 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.34 2007/01/23 15:48:20 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -39,22 +39,15 @@
 #define	BYTESEX_LITTLE
 #endif	/* WORDS_BIGENDIAN */
 
-#if defined(USE_NETBSDAUDIO) && !defined(__NetBSD__)
-#undef	USE_NETBSDAUDIO
-#endif
-
-#if !defined(USE_NETBSDAUDIO) && !defined(USE_OSSAUDIO) && !defined(USE_ESDAUDIO) && !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
+#if !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
 #ifndef	NOSOUND
 #define	NOSOUND
 #undef	VERMOUTH_LIB
 #endif	/* !NOSOUND */
-#else	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO || USE_SDLAUDIO || USE_SDLMIXER */
+#else	/* USE_SDLAUDIO || USE_SDLMIXER */
 #undef	NOSOUND
 #define	VERMOUTH_LIB
-#if defined(USE_NETBSDAUDIO) || defined(USE_OSSAUDIO) || defined(USE_ESDAUDIO)
-#include <pthread.h>
-#endif	/* USE_NETBSDAUDIO || USE_OSSAUDIO || USE_ESDAUDIO */
-#endif	/* !USE_NETBSDAUDIO && !USE_OSSAUDIO && !USE_ESDAUDIO && !USE_SDLAUDIO && !USE_SDMIXER */
+#endif	/* !USE_SDLAUDIO && !USE_SDLMIXER */
 
 #include <sys/param.h>
 #include <sys/time.h>
@@ -73,9 +66,9 @@
 #define	OSLANG_EUC
 #define	OSLINEBREAK_LF
 
-#if USE_GTK > 0 || USE_GTK2 > 0
+#if (USE_GTK2 > 0)
 
-#include "glib.h"
+#include <glib.h>
 
 typedef	gint32		SINT;
 typedef	guint32		UINT;
@@ -98,7 +91,7 @@ typedef	gboolean	BOOL;
 #define PTR_TO_UINT32(p)	((UINT32)GPOINTER_TO_UINT(p))
 #define UINT32_TO_PTR(v)	GUINT_TO_POINTER((UINT32)(v))
 
-#else	/* USE_GTK == 0 && USE_GTK2 == 0 */
+#else	/* USE_GTK2 <= 0 */
 
 typedef	signed int		SINT;
 typedef	unsigned int		UINT;
@@ -118,7 +111,7 @@ typedef	char			TCHAR;
 
 typedef	int			BOOL;
 
-#endif	/* USE_GTK > 0 || USE_GTK2 > 0 */
+#endif	/* USE_GTK2 > 0 */
 
 #ifndef	TRUE
 #define	TRUE	1
@@ -170,7 +163,7 @@ typedef	int			BOOL;
 #define	__ASSERT(s)
 #endif
 #ifndef	INLINE
-#define	INLINE		__inline
+#define	INLINE		inline
 #endif
 #endif
 
@@ -257,13 +250,13 @@ void toolkit_msgbox(const char *title, const char *msg);
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
 
-#if USE_GTK > 0 || USE_GTK2 > 0
+#if (USE_GTK2 > 0)
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_SOFTKBD	0
 #endif
 
-#if USE_SDL > 0
+#if (USE_SDL > 0)
 #define	USE_SYSMENU
 #define	SCREEN_BPP	16
 #undef	SUPPORT_8BPP
@@ -271,16 +264,10 @@ void toolkit_msgbox(const char *title, const char *msg);
 #undef	SUPPORT_32BPP
 #endif
 
-#if ((USE_SDL > 0) && !defined(NOSOUND)) || defined(USE_SDLAUDIO)
+#if (USE_SDL > 0) || defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 #define	SUPPORT_JOYSTICK
-
-#if ((USE_SDL > 0) && !defined(NOSOUND)) || defined(USE_SDLAUDIO)
 #define	USE_SDL_JOYSTICK
-#else
-#error	unknown joystick driver!!!
-#endif
-
-#endif
+#endif	/* USE_SDL > 0 || USE_SDLAUDIO || USE_SDLMIXER */
 
 /*
  * You could specify a complete path, e.g. "/etc/timidity.cfg", and
