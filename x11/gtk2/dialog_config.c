@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.4 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.5 2007/01/23 14:17:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -216,7 +216,7 @@ clock_changed(GtkEditable *e, gpointer d)
 	} else {
 		clock = PCBASECLOCK25 * mult;
 	}
-	g_snprintf(buf, sizeof(buf), "%2d.%04dMHz",
+	g_snprintf(buf, sizeof(buf), "%2d.%03dMHz",
 	    clock / 1000000U, (clock / 1000) % 1000);
 	gtk_label_set_text(GTK_LABEL((GtkWidget*)d), buf);
 }
@@ -455,8 +455,8 @@ create_configure_dialog(void)
 		g_snprintf(buf, sizeof(buf), "%d", np2cfg.delayms);
 		gtk_entry_set_text(GTK_ENTRY(buffer_entry), buf);
 	} else {
-		gtk_entry_set_text(GTK_ENTRY(buffer_entry), "800");
-		np2cfg.delayms = 800;
+		gtk_entry_set_text(GTK_ENTRY(buffer_entry), "500");
+		np2cfg.delayms = 500;
 		sysmng_update(SYS_UPDATECFG|SYS_UPDATESBUF);
 		soundrenewal = 1;
 	}
