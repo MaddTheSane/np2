@@ -16,12 +16,13 @@ taskmng_initialize(void)
 BOOL
 taskmng_sleep(UINT32 tick)
 {
-	UINT32	base;
+	UINT32 base;
+	UINT32 now;
 
 	base = GETTICK();
-	while (taskmng_isavail() && ((GETTICK() - base) < tick)) {
+	while (taskmng_isavail() && (((now = GETTICK()) - base) < tick)) {
 		toolkit_event_process();
-		usleep(960);
+		usleep(tick - (now - base) / 2);
 	}
 	return taskmng_isavail();
 }
