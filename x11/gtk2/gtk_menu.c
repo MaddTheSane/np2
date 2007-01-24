@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.8 2007/01/21 00:24:24 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.9 2007/01/24 14:09:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -108,6 +108,7 @@ static GtkActionEntry menu_entries[] = {
 { "SASI1Menu",    NULL, "SASI-_1",   NULL, NULL, NULL },
 { "SASI2Menu",    NULL, "SASI-_2",   NULL, NULL, NULL },
 #endif
+{ "ScrnSizeMenu", NULL, "Size",      NULL, NULL, NULL },
 { "SoundMenu",    NULL, "_Sound",    NULL, NULL, NULL },
 
 /* MenuItem */
@@ -263,6 +264,16 @@ static GtkRadioActionEntry rotate_entries[] = {
 };
 static const guint n_rotate_entries = G_N_ELEMENTS(rotate_entries);
 
+static GtkRadioActionEntry screensize_entries[] = {
+{ "320x200",  NULL, "320x200",  NULL, NULL, 4 },
+{ "480x300",  NULL, "480x300",  NULL, NULL, 6 },
+{ "640x400",  NULL, "640x400",  NULL, NULL, 8 },
+{ "800x500",  NULL, "800x500",  NULL, NULL, 10 },
+{ "960x600",  NULL, "960x600",  NULL, NULL, 12 },
+{ "1280x800", NULL, "1280x800", NULL, NULL, 16 },
+};
+static const guint n_screensize_entries = G_N_ELEMENTS(screensize_entries);
+
 static void cb_beepvol(gint idx);
 static void cb_f12key(gint idx);
 static void cb_framerate(gint idx);
@@ -270,6 +281,7 @@ static void cb_joykey(gint idx);
 static void cb_memory(gint idx);
 static void cb_rotate(gint idx);
 static void cb_screenmode(gint idx);
+static void cb_screensize(gint idx);
 static void cb_soundboard(gint idx);
 
 static const struct {
@@ -284,6 +296,7 @@ static const struct {
 	{ memory_entries, G_N_ELEMENTS(memory_entries), cb_memory },
 	{ rotate_entries, G_N_ELEMENTS(rotate_entries), cb_rotate },
 	{ screenmode_entries, G_N_ELEMENTS(screenmode_entries), cb_screenmode },
+	{ screensize_entries, G_N_ELEMENTS(screensize_entries), cb_screensize },
 	{ soundboard_entries, G_N_ELEMENTS(soundboard_entries), cb_soundboard },
 };
 static const guint n_radiomenu_entries = G_N_ELEMENTS(radiomenu_entries);
@@ -298,7 +311,6 @@ static const gchar *ui_info =
 "   <menuitem action='configure'/>\n"
 "   <menuitem action='newdisk'/>\n"
 "   <menuitem action='font'/>\n"
-"   <menuitem action='configure'/>\n"
 "   <separator/>\n"
 "   <menuitem action='exit'/>\n"
 "  </menu>\n"
@@ -340,11 +352,20 @@ static const gchar *ui_info =
 "   <menuitem action='dispvsync'/>\n"
 "   <menuitem action='realpalettes'/>\n"
 "   <menuitem action='nowait'/>\n"
-"   <menuitem name='framerate' action='autoframe'/>\n"
+"   <menuitem action='autoframe'/>\n"
 "   <menuitem action='fullframe'/>\n"
 "   <menuitem action='1/2 frame'/>\n"
 "   <menuitem action='1/3 frame'/>\n"
 "   <menuitem action='1/4 frame'/>\n"
+"   <separator/>\n"
+"   <menu name='Size' action='ScrnSizeMenu'>\n"
+"    <menuitem action='320x200'/>\n"
+"    <menuitem action='480x300'/>\n"
+"    <menuitem action='640x400'/>\n"
+"    <menuitem action='800x500'/>\n"
+"    <menuitem action='960x600'/>\n"
+"    <menuitem action='1280x800'/>\n"
+"   </menu>\n"
 "   <separator/>\n"
 "   <menuitem action='screenopt'/>\n"
 "  </menu>\n"
@@ -486,6 +507,8 @@ xmenu_select_item_by_index(MENU_HDL hdl, GtkRadioActionEntry *entry, guint nentr
 	xmenu_select_item_by_index(NULL, rotate_entries, n_rotate_entries, v);
 #define	xmenu_select_screenmode(v) \
 	xmenu_select_item_by_index(NULL, screenmode_entries, n_screenmode_entries, v);
+#define	xmenu_select_screensize(v) \
+	xmenu_select_item_by_index(NULL, screensize_entries, n_screensize_entries, v);
 #define	xmenu_select_soundboard(v) \
 	xmenu_select_item_by_index(NULL, soundboard_entries, n_soundboard_entries, v);
 
@@ -1646,6 +1669,19 @@ cb_screenmode(gint idx)
 }
 
 static void
+cb_screensize(gint idx)
+{
+	guint value;
+
+	if (idx >= 0) {
+		value = screensize_entries[idx].value;
+	} else {
+		value = 0;
+	}
+	scrnmng_setmultiple(value);
+}
+
+static void
 cb_soundboard(gint idx)
 {
 	guint value;
@@ -1691,7 +1727,7 @@ cb_radio(GtkRadioAction *action, GtkRadioAction *current, gpointer user_data)
 static GtkWidget *menubar;
 static guint menubar_timerid;
 
-#define	EVENT_MASK	(GDK_LEAVE_NOTIFY_MASK|GDK_LEAVE_NOTIFY_MASK)
+#define	EVENT_MASK	(GDK_ENTER_NOTIFY_MASK|GDK_LEAVE_NOTIFY_MASK)
 
 static gboolean
 menubar_timeout(gpointer p)
@@ -1844,6 +1880,7 @@ create_menu(void)
 	xmenu_select_memory(np2cfg.EXTMEM);
 	xmenu_select_rotate(scrnmode & SCRNMODE_ROTATEMASK);
 	xmenu_select_screenmode(scrnmode & SCRNMODE_FULLSCREEN);
+	xmenu_select_screensize(SCREEN_DEFMUL);
 	xmenu_select_soundboard(np2cfg.SOUND_SW);
 
 	if (np2cfg.fddequip) {

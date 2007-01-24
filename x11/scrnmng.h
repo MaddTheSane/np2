@@ -70,6 +70,7 @@ RGB16 scrnmng_makepal16(RGB32 pal32);
 /* -- for X11 */
 
 void scrnmng_setmultiple(int multiple);
+void scrnmng_fullscreen(int onoff);
 
 /*
  * for menubase

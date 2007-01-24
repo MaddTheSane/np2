@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.7 2007/01/22 16:37:05 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.8 2007/01/24 14:09:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -96,6 +96,8 @@ static XF86VidModeModeInfo **modes = NULL;
 static int modeidx = -1;
 static XF86VidModeModeInfo *saved_modes;
 static XF86VidModeModeInfo orig_mode;
+static Display *fs_xdisplay;
+static int fs_xscreen;
 static int view_x, view_y;
 static gint orig_x, orig_y;
 
@@ -119,8 +121,8 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 	GtkWindow *window;
 	GdkWindow *w;
 	Display *xdisplay;
-	XF86VidModeModeInfo mode;
 	int xscreen;
+	XF86VidModeModeInfo mode;
 	int event_base, error_base;
 	int major_ver, minor_ver;
 	int nmodes;
@@ -176,24 +178,25 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 			    modes[i]->hdisplay, modes[i]->vdisplay);
 		}
 
-		rv = XF86VidModeValidateModeLine(xdisplay, xscreen, modes[i]);
-		if (rv) {
-			if ((modes[i]->hdisplay == 640)
-			 && (modes[i]->vdisplay == 480)) {
-				rv = XF86VidModeGetModeInfo(xdisplay, xscreen,
-				    &orig_mode);
-				if (rv) {
-					if (verbose) {
-						printf("found\n");
-					}
-					modeidx = i;
-					ret = TRUE;
-					break;
+		if ((modes[i]->hdisplay == 640)
+		 && (modes[i]->vdisplay == 480)) {
+			rv = XF86VidModeGetModeInfo(xdisplay, xscreen,
+			    &orig_mode);
+			if (rv) {
+				if (verbose) {
+					printf("found\n");
 				}
+				modeidx = i;
+				ret = TRUE;
+				break;
 			}
 		}
 	}
-	if (!ret) {
+
+	if (ret) {
+		fs_xdisplay = xdisplay;
+		fs_xscreen = xscreen;
+	} else {
 		XFree(modes);
 		modes = NULL;
 	}
@@ -210,29 +213,25 @@ gtk_window_fullscreen_mode(GtkWidget *widget)
 {
 #ifdef HAVE_XF86VIDMODE
 	GtkWindow *window;
-	GdkWindow *w;
-	Display *xdisplay;
-	int xscreen;
 
 	g_return_if_fail(widget != NULL);
+	g_return_if_fail(widget->window != NULL);
 
-	if (modeidx < 0)
+	if (modes == NULL || modeidx < 0)
 		return;
 
 	window = GTK_WINDOW(widget);
-	w = widget->window;
-	xdisplay = GDK_WINDOW_XDISPLAY(w);
-	xscreen = XDefaultScreen(xdisplay);
+	g_return_if_fail(window != NULL);
 
-	XLockDisplay(xdisplay);
+	XLockDisplay(fs_xdisplay);
 
-	XF86VidModeLockModeSwitch(xdisplay, xscreen, True);
-	XF86VidModeGetViewPort(xdisplay, xscreen, &view_x, &view_y);
-	gdk_window_get_origin(w, &orig_x, &orig_y);
+	XF86VidModeLockModeSwitch(fs_xdisplay, fs_xscreen, True);
+	XF86VidModeGetViewPort(fs_xdisplay, fs_xscreen, &view_x, &view_y);
+	gdk_window_get_origin(widget->window, &orig_x, &orig_y);
 	gtk_window_move(window, 0, 0);
-	XF86VidModeSwitchToMode(xdisplay, xscreen, modes[modeidx]);
+	XF86VidModeSwitchToMode(fs_xdisplay, fs_xscreen, modes[modeidx]);
 
-	XUnlockDisplay(xdisplay);
+	XUnlockDisplay(fs_xdisplay);
 #endif	/* HAVE_XF86VIDMODE */
 }
 
@@ -241,9 +240,6 @@ gtk_window_restore_mode(GtkWidget *widget)
 {
 #ifdef HAVE_XF86VIDMODE
 	GtkWindow *window;
-	GdkWindow *w;
-	Display *xdisplay;
-	int xscreen;
 	XF86VidModeModeInfo mode;
 	int rv;
 
@@ -253,26 +249,28 @@ gtk_window_restore_mode(GtkWidget *widget)
 		return;
 
 	window = GTK_WINDOW(widget);
-	w = widget->window;
-	xdisplay = GDK_WINDOW_XDISPLAY(w);
-	xscreen = XDefaultScreen(xdisplay);
 
-	XLockDisplay(xdisplay);
+	XLockDisplay(fs_xdisplay);
 
-	rv = XF86VidModeGetModeInfo(xdisplay, xscreen, &mode);
+	rv = XF86VidModeGetModeInfo(fs_xdisplay, fs_xscreen, &mode);
 	if (rv) {
 		if ((orig_mode.hdisplay != mode.hdisplay)
 		 || (orig_mode.vdisplay != mode.vdisplay)) {
-			XF86VidModeSwitchToMode(xdisplay, xscreen, &orig_mode);
-			XF86VidModeLockModeSwitch(xdisplay, xscreen, False);
+			XF86VidModeSwitchToMode(fs_xdisplay, fs_xscreen,
+			    &orig_mode);
+			XF86VidModeLockModeSwitch(fs_xdisplay, fs_xscreen,
+			    False);
 		}
 		if ((view_x != 0) || (view_y != 0)) {
-			XF86VidModeSetViewPort(xdisplay,xscreen,view_x,view_y);
+			XF86VidModeSetViewPort(fs_xdisplay, fs_xscreen,
+			    view_x, view_y);
 		}
 	}
 
-	gtk_window_move(window, orig_x, orig_y);
+	if (window != NULL) {
+		gtk_window_move(window, orig_x, orig_y);
+	}
 
-	XUnlockDisplay(xdisplay);
+	XUnlockDisplay(fs_xdisplay);
 #endif	/* HAVE_XF86VIDMODE */
 }

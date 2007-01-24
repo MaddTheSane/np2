@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.8 2007/01/23 16:24:36 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.9 2007/01/24 14:09:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -74,7 +74,6 @@ destroy_evhandler(GtkWidget *w, GdkEventAny *ev, gpointer p)
 	UNUSED(ev);
 	UNUSED(p);
 
-	taskmng_exit();
 	toolkit_widget_quit();
 
 	return TRUE;
@@ -227,16 +226,12 @@ motion_notify_evhandler(GtkWidget *w, GdkEventMotion *ev, gpointer p)
  * misc
  */
 static gint
-main_widget_quit(gpointer p)
+main_loop_quit(gpointer p)
 {
-	BYTE orig_scrnmode;
 
 	UNUSED(p);
 
-	/* change to window mode */
-	orig_scrnmode = scrnmode;
-	xmenu_select_screen(scrnmode & ~SCRNMODE_FULLSCREEN);
-	scrnmode = orig_scrnmode;
+	scrnmng_fullscreen(0);
 
 	return 0;
 }
@@ -391,7 +386,7 @@ gui_gtk_widget_mainloop(void)
 {
 
 	install_idle_process();
-	gtk_quit_add(1, main_widget_quit, NULL);
+	gtk_quit_add(1, main_loop_quit, NULL);
 	gtk_main();
 	uninstall_idle_process();
 }

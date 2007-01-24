@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.7 2007/01/23 15:48:20 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.8 2007/01/24 14:09:32 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -33,7 +33,11 @@
 #include "palettes.h"
 #include "scrndraw.h"
 
+#include "toolkit.h"
+
 #include "scrnmng.h"
+#include "mousemng.h"
+#include "soundmng.h"
 
 #include "gtk2/xnp2.h"
 #include "gtk2/gtk_drawmng.h"
@@ -71,7 +75,7 @@ typedef struct {
 
 static SCRNMNG scrnmng;
 static DRAWMNG drawmng;
-static SCRNSTAT scrnstat;
+static SCRNSTAT scrnstat = { 640, 400, 1, SCREEN_DEFMUL };
 static SCRNSURF scrnsurf;
 static int real_fullscreen;
 
@@ -445,6 +449,25 @@ scrnmng_destroy(void)
 	}
 }
 
+void
+scrnmng_fullscreen(int onoff)
+{
+
+	if (onoff) {
+		if (real_fullscreen) {
+			gtk_window_fullscreen_mode(main_window);
+		} else {
+			gtk_window_fullscreen(GTK_WINDOW(main_window));
+		}
+	} else {
+		if (real_fullscreen) {
+			gtk_window_restore_mode(main_window);
+		} else {
+			gtk_window_unfullscreen(GTK_WINDOW(main_window));
+		}
+	}
+}
+
 RGB16
 scrnmng_makepal16(RGB32 pal32)
 {
@@ -487,7 +510,17 @@ scrnmng_setmultiple(int multiple)
 
 	if (scrnstat.multiple != multiple) {
 		scrnstat.multiple = multiple;
+		soundmng_stop();
+		mouse_running(MOUSE_STOP);
+		scrnmng_destroy();
+		if (scrnmng_create(scrnmode) != SUCCESS) {
+			toolkit_widget_quit();
+			return;
+		}
 		renewal_client_size();
+		scrndraw_redraw();
+		mouse_running(MOUSE_CONT);
+		soundmng_play();
 	}
 }
 
