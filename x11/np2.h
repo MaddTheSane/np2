@@ -93,6 +93,7 @@ extern "C" {
 extern volatile sig_atomic_t np2running;
 extern NP2OSCFG np2oscfg;
 extern BYTE scrnmode;
+extern int ignore_fullscreen_mode;
 
 extern UINT framecnt;
 extern UINT waitcnt;

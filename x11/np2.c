@@ -113,6 +113,7 @@ NP2OSCFG np2oscfg = {
 
 volatile sig_atomic_t np2running = 0;
 BYTE scrnmode = 0;
+int ignore_fullscreen_mode = 0;
 
 UINT framecnt = 0;
 UINT waitcnt = 0;

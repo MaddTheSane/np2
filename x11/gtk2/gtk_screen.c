@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.8 2007/01/24 14:09:32 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.9 2007/02/04 11:51:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -58,6 +58,7 @@ typedef struct {
 	RECT_T		rect;		/* drawarea に描画するサイズ */
 
 	/* toolkit depend */
+	GdkPixbuf	*drawsurf;
 	GdkPixbuf	*backsurf;
 	GdkPixbuf	*surface;
 	double		ratio_w, ratio_h;
@@ -415,18 +416,14 @@ scrnmng_create(UINT8 mode)
 	gdk_pixbuf_fill(drawmng.surface, 0);
 
 	if (mode & SCRNMODE_FULLSCREEN) {
+		drawmng.drawsurf =
+		    real_fullscreen ? drawmng.backsurf : drawmng.surface;
 		xmenu_hide();
-		if (real_fullscreen) {
-			gtk_window_fullscreen_mode(main_window);
-		} else {
-			gtk_window_fullscreen(GTK_WINDOW(main_window));
-		}
+		gtk_window_fullscreen_mode(main_window);
 	} else {
-		if (real_fullscreen) {
-			gtk_window_restore_mode(main_window);
-		} else {
-			gtk_window_unfullscreen(GTK_WINDOW(main_window));
-		}
+		drawmng.drawsurf = (scrnstat.multiple == SCREEN_DEFMUL)
+		    ? drawmng.backsurf : drawmng.surface;
+		gtk_window_restore_mode(main_window);
 		xmenu_show();
 	}
 
@@ -454,17 +451,9 @@ scrnmng_fullscreen(int onoff)
 {
 
 	if (onoff) {
-		if (real_fullscreen) {
-			gtk_window_fullscreen_mode(main_window);
-		} else {
-			gtk_window_fullscreen(GTK_WINDOW(main_window));
-		}
+		gtk_window_fullscreen_mode(main_window);
 	} else {
-		if (real_fullscreen) {
-			gtk_window_restore_mode(main_window);
-		} else {
-			gtk_window_unfullscreen(GTK_WINDOW(main_window));
-		}
+		gtk_window_restore_mode(main_window);
 	}
 }
 
@@ -510,17 +499,19 @@ scrnmng_setmultiple(int multiple)
 
 	if (scrnstat.multiple != multiple) {
 		scrnstat.multiple = multiple;
-		soundmng_stop();
-		mouse_running(MOUSE_STOP);
-		scrnmng_destroy();
-		if (scrnmng_create(scrnmode) != SUCCESS) {
-			toolkit_widget_quit();
-			return;
+		if (!(drawmng.scrnmode & SCRNMODE_FULLSCREEN)) {
+			soundmng_stop();
+			mouse_running(MOUSE_STOP);
+			scrnmng_destroy();
+			if (scrnmng_create(scrnmode) != SUCCESS) {
+				toolkit_widget_quit();
+				return;
+			}
+			renewal_client_size();
+			scrndraw_redraw();
+			mouse_running(MOUSE_CONT);
+			soundmng_play();
 		}
-		renewal_client_size();
-		scrndraw_redraw();
-		mouse_running(MOUSE_CONT);
-		soundmng_play();
 	}
 }
 
@@ -553,10 +544,7 @@ scrnmng_surfunlock(const SCRNSURF *surf)
 
 	UNUSED(surf);
 
-	if (((drawmng.scrnmode & SCRNMODE_FULLSCREEN) && real_fullscreen)
-	 && !(drawmng.scrnmode & SCRNMODE_FULLSCREEN) && (scrnstat.multiple == SCREEN_DEFMUL)) {
-		/* Nothing to do */
-	} else {
+	if (drawmng.drawsurf == drawmng.surface) {
 		gdk_pixbuf_scale(drawmng.backsurf, drawmng.surface,
 		    0, 0, drawmng.rect.right, drawmng.rect.bottom,
 		    0, 0, drawmng.ratio_w, drawmng.ratio_h,
@@ -596,20 +584,11 @@ scrnmng_update(void)
 		}
 	}
 
-	if (((drawmng.scrnmode & SCRNMODE_FULLSCREEN) && real_fullscreen)
-	 && !(drawmng.scrnmode & SCRNMODE_FULLSCREEN) && (scrnstat.multiple == SCREEN_DEFMUL)) {
-		gdk_draw_pixbuf(d, gc, drawmng.backsurf,
-		    0, 0,
-		    drawmng.scrn.left, drawmng.scrn.top,
-		    drawmng.rect.right, drawmng.rect.bottom,
-		    GDK_RGB_DITHER_NORMAL, 0, 0);
-	} else {
-		gdk_draw_pixbuf(d, gc, drawmng.surface,
-		    0, 0,
-		    drawmng.scrn.left, drawmng.scrn.top,
-		    drawmng.rect.right, drawmng.rect.bottom,
-		    GDK_RGB_DITHER_NORMAL, 0, 0);
-	}
+	gdk_draw_pixbuf(d, gc, drawmng.drawsurf,
+	    0, 0,
+	    drawmng.scrn.left, drawmng.scrn.top,
+	    drawmng.rect.right, drawmng.rect.bottom,
+	    GDK_RGB_DITHER_NORMAL, 0, 0);
 
 	drawmng.drawing = FALSE;
 }

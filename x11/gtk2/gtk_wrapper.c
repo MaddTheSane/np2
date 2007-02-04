@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.8 2007/01/24 14:09:32 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.9 2007/02/04 11:51:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -29,13 +29,23 @@
 #include "config.h"
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #include "gtk2/xnp2.h"
 
 #include <gdk/gdkx.h>
 
 extern int verbose;
+
+#ifndef	VERBOSE
+#define	VERBOSE(s)	if (verbose) printf s
+#endif
 
 void
 gtk_scale_set_default_values(GtkScale *scale)
@@ -89,6 +99,13 @@ gdk_window_get_pixmap_format(GdkWindow *w, GdkVisual *visual, pixmap_format_t *f
 	return FALSE;
 }
 
+/*
+ * Full screen support.
+ */
+extern int ignore_fullscreen_mode;
+static int use_xvid;
+static int use_netwm;
+
 #ifdef HAVE_XF86VIDMODE
 #include <X11/extensions/xf86vmode.h>
 
@@ -111,13 +128,11 @@ XF86VidModeGetModeInfo(Display *d, int s, XF86VidModeModeInfo *info)
 
 	return XF86VidModeGetModeLine(d, s, (int *)&info->dotclock, line);
 }
-#endif
 
-gboolean
-gtk_window_init_fullscreen(GtkWidget *widget)
+static int
+check_xvid(GtkWidget *widget)
 {
 	gboolean ret = FALSE;
-#ifdef HAVE_XF86VIDMODE
 	GtkWindow *window;
 	GdkWindow *w;
 	Display *xdisplay;
@@ -147,10 +162,8 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 	if (!rv) {
 		goto out;
 	}
-	if (verbose) {
-		printf("XF86VidMode Extension: ver.%d.%d detected\n",
-		    major_ver, minor_ver);
-	}
+	VERBOSE(("XF86VidMode Extension: ver.%d.%d detected\n",
+	    major_ver, minor_ver));
 
 	rv = XF86VidModeGetModeInfo(xdisplay, xscreen, &mode);
 	if (rv) {
@@ -168,24 +181,18 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 	if (!rv) {
 		goto out;
 	}
-	if (verbose) {
-		printf("XF86VidMode Extension: %d modess\n", nmodes);
-	}
+	VERBOSE(("XF86VidMode Extension: %d modes\n", nmodes));
 
 	for (i = 0; i < nmodes; i++) {
-		if (verbose) {
-			printf("XF86VidMode Extension: %d: %dx%d\n", i,
-			    modes[i]->hdisplay, modes[i]->vdisplay);
-		}
+		VERBOSE(("XF86VidMode Extension: %d: %dx%d\n", i,
+		    modes[i]->hdisplay, modes[i]->vdisplay));
 
 		if ((modes[i]->hdisplay == 640)
 		 && (modes[i]->vdisplay == 480)) {
 			rv = XF86VidModeGetModeInfo(xdisplay, xscreen,
 			    &orig_mode);
 			if (rv) {
-				if (verbose) {
-					printf("found\n");
-				}
+				VERBOSE(("found\n"));
 				modeidx = i;
 				ret = TRUE;
 				break;
@@ -203,74 +210,164 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 
 out:
 	XUnlockDisplay(xdisplay);
-#endif	/* HAVE_XF86VIDMODE */
 
 	return ret;
+}
+#endif	/* HAVE_XF86VIDMODE */
+
+static int
+check_netwm(GtkWidget *widget)
+{
+	Display *xdisplay;
+	Window root_window;
+	Atom _NET_SUPPORTED;
+	Atom _NET_WM_STATE_FULLSCREEN;
+	Atom type;
+	int format;
+	unsigned long nitems;
+	unsigned long remain;
+	unsigned char *prop;
+	guint32 *data;
+	int rv;
+	long i;
+
+	g_return_val_if_fail(widget != NULL, 0);
+
+	xdisplay = GDK_WINDOW_XDISPLAY(widget->window);
+	root_window = DefaultRootWindow(xdisplay);
+
+	_NET_SUPPORTED = XInternAtom(xdisplay, "_NET_SUPPORTED", False);
+	_NET_WM_STATE_FULLSCREEN = XInternAtom(xdisplay,
+	    "_NET_WM_STATE_FULLSCREEN", False);
+
+	rv = XGetWindowProperty(xdisplay, root_window, _NET_SUPPORTED,
+	    0, 65536 / sizeof(guint32), False, AnyPropertyType,
+	    &type, &format, &nitems, &remain, &prop);
+	if (rv != Success) {
+		return 0;
+	}
+	if (type != XA_ATOM) {
+		return 0;
+	}
+	if (format != 32) {
+		return 0;
+	}
+
+	rv = 0;
+	data = (guint32 *)prop;
+	for (i = 0; i < nitems; i++) {
+		if (data[i] == _NET_WM_STATE_FULLSCREEN) {
+			VERBOSE(("Support _NET_WM_STATE_FULLSCREEN\n"));
+			rv = 1;
+			break;
+		}
+	}
+	XFree(prop);
+
+	return rv;
+}
+
+int
+gtk_window_init_fullscreen(GtkWidget *widget)
+{
+
+#ifdef HAVE_XF86VIDMODE
+	use_xvid = check_xvid(widget);
+#endif
+	use_netwm = check_netwm(widget);
+
+	if (use_xvid && (ignore_fullscreen_mode & 1)) {
+		VERBOSE(("Support XF86VidMode extension, but disabled\n"));
+		use_xvid = 0;
+	}
+	if (use_netwm && (ignore_fullscreen_mode & 2)) {
+		VERBOSE(("Support _NET_WM_STATE_FULLSCREEN, but disabled\n"));
+		use_netwm = 0;
+	}
+
+	if (verbose) {
+		if (use_xvid) {
+			printf("Using XF86VidMode extension\n");
+		} else if (use_netwm) {
+			printf("Using _NET_WM_STATE_FULLSCREEN\n");
+		} else {
+			printf("not supported\n");
+		}
+	}
+
+	return use_xvid;
 }
 
 void
 gtk_window_fullscreen_mode(GtkWidget *widget)
 {
-#ifdef HAVE_XF86VIDMODE
-	GtkWindow *window;
 
 	g_return_if_fail(widget != NULL);
 	g_return_if_fail(widget->window != NULL);
 
-	if (modes == NULL || modeidx < 0)
-		return;
+#ifdef HAVE_XF86VIDMODE
+	if (use_xvid && modes != NULL && modeidx >= 0) {
+		GtkWindow *window = GTK_WINDOW(widget);
 
-	window = GTK_WINDOW(widget);
-	g_return_if_fail(window != NULL);
+		XLockDisplay(fs_xdisplay);
 
-	XLockDisplay(fs_xdisplay);
+		XF86VidModeLockModeSwitch(fs_xdisplay, fs_xscreen, True);
+		XF86VidModeGetViewPort(fs_xdisplay,fs_xscreen,&view_x,&view_y);
+		gdk_window_get_origin(widget->window, &orig_x, &orig_y);
+		if (window)
+			gtk_window_move(window, 0, 0);
+		XF86VidModeSwitchToMode(fs_xdisplay,fs_xscreen,modes[modeidx]);
 
-	XF86VidModeLockModeSwitch(fs_xdisplay, fs_xscreen, True);
-	XF86VidModeGetViewPort(fs_xdisplay, fs_xscreen, &view_x, &view_y);
-	gdk_window_get_origin(widget->window, &orig_x, &orig_y);
-	gtk_window_move(window, 0, 0);
-	XF86VidModeSwitchToMode(fs_xdisplay, fs_xscreen, modes[modeidx]);
-
-	XUnlockDisplay(fs_xdisplay);
+		XUnlockDisplay(fs_xdisplay);
+	} else
 #endif	/* HAVE_XF86VIDMODE */
+	if (use_netwm) {
+		gtk_window_fullscreen(GTK_WINDOW(widget));
+	}
 }
 
 void
 gtk_window_restore_mode(GtkWidget *widget)
 {
-#ifdef HAVE_XF86VIDMODE
-	GtkWindow *window;
-	XF86VidModeModeInfo mode;
-	int rv;
 
 	g_return_if_fail(widget != NULL);
 
-	if ((orig_mode.hdisplay == 0) || (orig_mode.vdisplay == 0))
-		return;
+#ifdef HAVE_XF86VIDMODE
+	if (use_xvid) {
+		GtkWindow *window;
+		XF86VidModeModeInfo mode;
+		int rv;
 
-	window = GTK_WINDOW(widget);
+		if ((orig_mode.hdisplay == 0) || (orig_mode.vdisplay == 0))
+			return;
 
-	XLockDisplay(fs_xdisplay);
+		window = GTK_WINDOW(widget);
 
-	rv = XF86VidModeGetModeInfo(fs_xdisplay, fs_xscreen, &mode);
-	if (rv) {
-		if ((orig_mode.hdisplay != mode.hdisplay)
-		 || (orig_mode.vdisplay != mode.vdisplay)) {
-			XF86VidModeSwitchToMode(fs_xdisplay, fs_xscreen,
-			    &orig_mode);
-			XF86VidModeLockModeSwitch(fs_xdisplay, fs_xscreen,
-			    False);
+		XLockDisplay(fs_xdisplay);
+
+		rv = XF86VidModeGetModeInfo(fs_xdisplay, fs_xscreen, &mode);
+		if (rv) {
+			if ((orig_mode.hdisplay != mode.hdisplay)
+			 || (orig_mode.vdisplay != mode.vdisplay)) {
+				XF86VidModeSwitchToMode(fs_xdisplay, fs_xscreen,
+				    &orig_mode);
+				XF86VidModeLockModeSwitch(fs_xdisplay,
+				    fs_xscreen, False);
+			}
+			if ((view_x != 0) || (view_y != 0)) {
+				XF86VidModeSetViewPort(fs_xdisplay, fs_xscreen,
+				    view_x, view_y);
+			}
 		}
-		if ((view_x != 0) || (view_y != 0)) {
-			XF86VidModeSetViewPort(fs_xdisplay, fs_xscreen,
-			    view_x, view_y);
+
+		if (window != NULL) {
+			gtk_window_move(window, orig_x, orig_y);
 		}
-	}
 
-	if (window != NULL) {
-		gtk_window_move(window, orig_x, orig_y);
-	}
-
-	XUnlockDisplay(fs_xdisplay);
+		XUnlockDisplay(fs_xdisplay);
+	} else
 #endif	/* HAVE_XF86VIDMODE */
+	if (use_netwm) {
+		gtk_window_unfullscreen(GTK_WINDOW(widget));
+	}
 }

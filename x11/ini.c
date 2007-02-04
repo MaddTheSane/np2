@@ -644,6 +644,7 @@ static const INITBL iniitem[] = {
 	{"MIDIWAIT", INITYPE_UINT32,	&np2oscfg.MIDIWAIT,	0},
 
 	{"dinterp_", INITYPE_INTERP,	&np2oscfg.drawinterp,	0},
+	{"fullscrn", INITYPE_UINT32,	&ignore_fullscreen_mode,0},
 	{"F11_KEY_", INITYPE_UINT8,	&np2oscfg.F11KEY,	0},
 
 	{"I286SAVE", INIRO_BOOL,	&np2oscfg.I286SAVE,	0},

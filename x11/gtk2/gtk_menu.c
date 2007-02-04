@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.9 2007/01/24 14:09:32 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.10 2007/02/04 11:51:14 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -357,6 +357,7 @@ static const gchar *ui_info =
 "   <menuitem action='1/2 frame'/>\n"
 "   <menuitem action='1/3 frame'/>\n"
 "   <menuitem action='1/4 frame'/>\n"
+#if defined(SUPPORT_SCREENSIZE)
 "   <separator/>\n"
 "   <menu name='Size' action='ScrnSizeMenu'>\n"
 "    <menuitem action='320x200'/>\n"
@@ -366,6 +367,7 @@ static const gchar *ui_info =
 "    <menuitem action='960x600'/>\n"
 "    <menuitem action='1280x800'/>\n"
 "   </menu>\n"
+#endif
 "   <separator/>\n"
 "   <menuitem action='screenopt'/>\n"
 "  </menu>\n"
@@ -547,9 +549,13 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 
 	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	if (strlen(bmpfilefolder) == 0) {
+		g_strlcpy(bmpfilefolder, modulefile, sizeof(bmpfilefolder));
+		file_cutname(bmpfilefolder);
+	}
 	utf8 = g_filename_to_utf8(bmpfilefolder, -1, NULL, NULL, NULL);
 	if (utf8) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), utf8);
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), utf8);
 		g_free(utf8);
 	}
 
@@ -1019,6 +1025,10 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 
 	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	if (strlen(fddfolder) == 0) {
+		g_strlcpy(fddfolder, modulefile, sizeof(fddfolder));
+		file_cutname(fddfolder);
+	}
 	utf8 = g_filename_to_utf8(fddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), utf8);
