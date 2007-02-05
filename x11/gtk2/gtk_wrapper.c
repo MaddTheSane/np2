@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.11 2007/02/05 14:35:55 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.12 2007/02/05 14:58:59 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -322,7 +322,7 @@ gtk_window_fullscreen_mode(GtkWidget *widget)
 		XF86VidModeSwitchToMode(fs_xdisplay,fs_xscreen,modes[modeidx]);
 
 		XUnlockDisplay(fs_xdisplay);
-	} else
+	}
 #endif	/* HAVE_XF86VIDMODE */
 	if (use_netwm) {
 		gtk_window_fullscreen(GTK_WINDOW(widget));
@@ -369,7 +369,7 @@ gtk_window_restore_mode(GtkWidget *widget)
 		}
 
 		XUnlockDisplay(fs_xdisplay);
-	} else
+	}
 #endif	/* HAVE_XF86VIDMODE */
 	if (use_netwm) {
 		gtk_window_unfullscreen(GTK_WINDOW(widget));
