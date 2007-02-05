@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.10 2007/02/05 14:08:19 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.11 2007/02/05 14:35:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -42,6 +43,7 @@
 #include <gdk/gdkx.h>
 
 extern int verbose;
+extern volatile sig_atomic_t np2running;
 
 #ifndef	VERBOSE
 #define	VERBOSE(s)	if (verbose) printf s
@@ -339,14 +341,11 @@ gtk_window_restore_mode(GtkWidget *widget)
 
 #ifdef HAVE_XF86VIDMODE
 	if (use_xvid) {
-		GtkWindow *window;
 		XF86VidModeModeInfo mode;
 		int rv;
 
 		if ((orig_mode.hdisplay == 0) || (orig_mode.vdisplay == 0))
 			return;
-
-		window = GTK_WINDOW(widget);
 
 		XLockDisplay(fs_xdisplay);
 
@@ -365,8 +364,8 @@ gtk_window_restore_mode(GtkWidget *widget)
 			}
 		}
 
-		if (window != NULL) {
-			gtk_window_move(window, orig_x, orig_y);
+		if (np2running) {
+			gtk_window_move(GTK_WINDOW(widget), orig_x, orig_y);
 		}
 
 		XUnlockDisplay(fs_xdisplay);
