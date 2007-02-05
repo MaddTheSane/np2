@@ -10,10 +10,6 @@
 #define	MEMCALL
 #endif
 
-#ifndef GCC_ATTR_REGPARM
-#define	GCC_ATTR_REGPARM
-#endif
-
 // 000000-0fffff ÉÅÉCÉìÉÅÉÇÉä
 // 100000-10ffef HMA
 // 110000-193fff FONT-ROM/RAM
@@ -57,32 +53,32 @@ extern	UINT8	mem[0x200000];
 void MEMCALL memm_arch(UINT type);
 void MEMCALL memm_vram(UINT operate);
 
-REG8 MEMCALL memp_read8(UINT32 address) GCC_ATTR_REGPARM;
-REG16 MEMCALL memp_read16(UINT32 address) GCC_ATTR_REGPARM;
-UINT32 MEMCALL memp_read32(UINT32 address) GCC_ATTR_REGPARM;
-void MEMCALL memp_write8(UINT32 address, REG8 value) GCC_ATTR_REGPARM;
-void MEMCALL memp_write16(UINT32 address, REG16 value) GCC_ATTR_REGPARM;
-void MEMCALL memp_write32(UINT32 address, UINT32 value) GCC_ATTR_REGPARM;
-void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng) GCC_ATTR_REGPARM;
-void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) GCC_ATTR_REGPARM;
+REG8 MEMCALL memp_read8(UINT32 address);
+REG16 MEMCALL memp_read16(UINT32 address);
+UINT32 MEMCALL memp_read32(UINT32 address);
+void MEMCALL memp_write8(UINT32 address, REG8 value);
+void MEMCALL memp_write16(UINT32 address, REG16 value);
+void MEMCALL memp_write32(UINT32 address, UINT32 value);
+void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng);
+void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng);
 
-REG8 MEMCALL meml_read8(UINT32 address) GCC_ATTR_REGPARM;
-REG16 MEMCALL meml_read16(UINT32 address) GCC_ATTR_REGPARM;
-UINT32 MEMCALL meml_read32(UINT32 address) GCC_ATTR_REGPARM;
-void MEMCALL meml_write8(UINT32 address, REG8 dat) GCC_ATTR_REGPARM;
-void MEMCALL meml_write16(UINT32 address, REG16 dat) GCC_ATTR_REGPARM;
-void MEMCALL meml_write32(UINT32 address, UINT32 dat) GCC_ATTR_REGPARM;
-void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) GCC_ATTR_REGPARM;
-void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) GCC_ATTR_REGPARM;
+REG8 MEMCALL meml_read8(UINT32 address);
+REG16 MEMCALL meml_read16(UINT32 address);
+UINT32 MEMCALL meml_read32(UINT32 address);
+void MEMCALL meml_write8(UINT32 address, REG8 dat);
+void MEMCALL meml_write16(UINT32 address, REG16 dat);
+void MEMCALL meml_write32(UINT32 address, UINT32 dat);
+void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng);
+void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng);
 
-REG8 MEMCALL memr_read8(UINT seg, UINT off) GCC_ATTR_REGPARM;
-REG16 MEMCALL memr_read16(UINT seg, UINT off) GCC_ATTR_REGPARM;
-UINT32 MEMCALL memr_read32(UINT seg, UINT off) GCC_ATTR_REGPARM;
-void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) GCC_ATTR_REGPARM;
-void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) GCC_ATTR_REGPARM;
-void MEMCALL memr_write32(UINT seg, UINT off, UINT32 dat) GCC_ATTR_REGPARM;
-void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) GCC_ATTR_REGPARM;
-void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) GCC_ATTR_REGPARM;
+REG8 MEMCALL memr_read8(UINT seg, UINT off);
+REG16 MEMCALL memr_read16(UINT seg, UINT off);
+UINT32 MEMCALL memr_read32(UINT seg, UINT off);
+void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat);
+void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat);
+void MEMCALL memr_write32(UINT seg, UINT off, UINT32 dat);
+void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng);
+void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng);
 
 #ifdef __cplusplus
 }
