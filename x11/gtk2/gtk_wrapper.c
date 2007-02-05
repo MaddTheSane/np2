@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.9 2007/02/04 11:51:14 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.10 2007/02/05 14:08:19 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -105,6 +105,7 @@ gdk_window_get_pixmap_format(GdkWindow *w, GdkVisual *visual, pixmap_format_t *f
 extern int ignore_fullscreen_mode;
 static int use_xvid;
 static int use_netwm;
+static int is_fullscreen;
 
 #ifdef HAVE_XF86VIDMODE
 #include <X11/extensions/xf86vmode.h>
@@ -324,6 +325,7 @@ gtk_window_fullscreen_mode(GtkWidget *widget)
 	if (use_netwm) {
 		gtk_window_fullscreen(GTK_WINDOW(widget));
 	}
+	is_fullscreen = 1;
 }
 
 void
@@ -331,6 +333,9 @@ gtk_window_restore_mode(GtkWidget *widget)
 {
 
 	g_return_if_fail(widget != NULL);
+
+	if (!is_fullscreen)
+		return;
 
 #ifdef HAVE_XF86VIDMODE
 	if (use_xvid) {
