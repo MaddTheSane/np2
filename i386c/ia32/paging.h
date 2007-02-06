@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.20 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: paging.h,v 1.21 2007/02/06 14:20:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -138,19 +138,19 @@ void MEMCALL paging_check(UINT32 laddr, UINT length, const int ucrw);
 #define	CPU_PAGE_READ_DATA	(CPU_PAGE_DATA)
 #define	CPU_PAGE_WRITE_DATA	(CPU_PAGE_WRITE|CPU_PAGE_DATA)
 
-UINT8 MEMCALL cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg) GCC_ATTR_REGPARM;
-UINT16 MEMCALL cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg) GCC_ATTR_REGPARM;
-UINT32 MEMCALL cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg) GCC_ATTR_REGPARM;
-UINT8 MEMCALL cpu_linear_memory_read_b(UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
-UINT16 MEMCALL cpu_linear_memory_read_w(UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
-UINT32 MEMCALL cpu_linear_memory_read_d(UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
-UINT64 MEMCALL cpu_linear_memory_read_q(UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
-REG80 MEMCALL cpu_linear_memory_read_f(UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
-void MEMCALL cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode) GCC_ATTR_REGPARM;
-void MEMCALL cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode) GCC_ATTR_REGPARM;
-void MEMCALL cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode) GCC_ATTR_REGPARM;
-void MEMCALL cpu_linear_memory_write_q(UINT32 laddr, UINT64 value, const int user_mode) GCC_ATTR_REGPARM;
-void MEMCALL cpu_linear_memory_write_f(UINT32 laddr, const REG80 *value, const int user_mode) GCC_ATTR_REGPARM;
+UINT8 MEMCALL cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT16 MEMCALL cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT32 MEMCALL cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT8 MEMCALL cpu_linear_memory_read_b(UINT32 laddr, const int ucrw);
+UINT16 MEMCALL cpu_linear_memory_read_w(UINT32 laddr, const int ucrw);
+UINT32 MEMCALL cpu_linear_memory_read_d(UINT32 laddr, const int ucrw);
+UINT64 MEMCALL cpu_linear_memory_read_q(UINT32 laddr, const int ucrw);
+REG80 MEMCALL cpu_linear_memory_read_f(UINT32 laddr, const int ucrw);
+void MEMCALL cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode);
+void MEMCALL cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode);
+void MEMCALL cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode);
+void MEMCALL cpu_linear_memory_write_q(UINT32 laddr, UINT64 value, const int user_mode);
+void MEMCALL cpu_linear_memory_write_f(UINT32 laddr, const REG80 *value, const int user_mode);
 
 #define	cpu_lmemoryread(a,pl) \
 	(!CPU_STAT_PAGING) ? \
@@ -227,9 +227,9 @@ typedef struct {
 
 #if defined(IA32_SUPPORT_TLB)
 void tlb_init(void);
-void MEMCALL tlb_flush(BOOL allflush) GCC_ATTR_REGPARM;
-void MEMCALL tlb_flush_page(UINT32 laddr) GCC_ATTR_REGPARM;
-TLB_ENTRY_T* MEMCALL tlb_lookup(const UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
+void MEMCALL tlb_flush(BOOL allflush);
+void MEMCALL tlb_flush_page(UINT32 laddr);
+TLB_ENTRY_T* MEMCALL tlb_lookup(const UINT32 laddr, const int ucrw);
 #else
 #define	tlb_init()
 #define	tlb_flush(allflush)	(void)(allflush)

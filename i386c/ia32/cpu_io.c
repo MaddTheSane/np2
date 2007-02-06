@@ -1,4 +1,4 @@
-/*	$Id: cpu_io.c,v 1.7 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: cpu_io.c,v 1.8 2007/02/06 14:20:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -32,7 +32,7 @@
 #include "iocore.h"
 #include "memory.h"
 
-static void IOOUTCALL check_io(UINT port, UINT len) GCC_ATTR_REGPARM;
+static void IOOUTCALL check_io(UINT port, UINT len);
 
 static void IOOUTCALL
 check_io(UINT port, UINT len) 

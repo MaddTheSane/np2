@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.28 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: paging.c,v 1.29 2007/02/06 14:20:57 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -182,9 +182,9 @@ static const UINT8 page_access_bit[32] = {
  * +- CR3(物理アドレス)
  */
 
-static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw) GCC_ATTR_REGPARM;
+static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw);
 #if defined(IA32_SUPPORT_TLB)
-static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw) GCC_ATTR_REGPARM;
+static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw);
 #endif
 
 UINT8 MEMCALL
