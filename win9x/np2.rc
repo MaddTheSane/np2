@@ -861,8 +861,6 @@ BEGIN
             MENUITEM "PC-9801-11&8",                IDM_PC9801_118
             MENUITEM "S&peak board",                IDM_SPEAKBOARD
             MENUITEM "Sp&ark board",                IDM_SPARKBOARD
-            MENUITEM "PX1",                         IDM_PX1
-            MENUITEM "PX2",                         IDM_PX2
             MENUITEM "&AMD-98",                     IDM_AMD98
             MENUITEM "&JastSound",                  IDM_JASTSOUND
             MENUITEM SEPARATOR
@@ -1069,6 +1067,8 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_WAVEREC             "&Wave Record"
     IDS_CPUSAVE             "&i286 save"
+    IDS_PX1                 "PX1"
+    IDS_PX2                 "PX2"
 END
 
 STRINGTABLE DISCARDABLE 

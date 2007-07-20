@@ -290,6 +290,16 @@ void xmenu_initialize(void) {
 		insertresmenu(hSubMenu, 10, MF_BYPOSITION | MF_STRING,
 												IDM_CPUSAVE, IDS_CPUSAVE);
 	}
+
+#if defined(SUPPORT_PX)
+	hSubMenu = GetSubMenu(hMenu, 2);
+	hSubMenu = GetSubMenu(hSubMenu, 1);
+	insertresmenu(hSubMenu, 14, MF_BYPOSITION | MF_STRING,
+												IDM_PX1, IDS_PX1);
+	insertresmenu(hSubMenu, 15, MF_BYPOSITION | MF_STRING,
+												IDM_PX2, IDS_PX2);
+#endif
+
 #if defined(SUPPORT_WAVEREC)
 	hSubMenu = GetSubMenu(hMenu, 3);
 	insertresmenu(hSubMenu, 2, MF_BYPOSITION | MF_STRING,
@@ -457,8 +467,10 @@ void xmenu_setsound(UINT8 value) {
 	CheckMenuItem(hmenu, IDM_SPEAKBOARD, MFCHECK(value == 0x20));
 	CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(value == 0x40));
 	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
+#if defined(SUPPORT_PX)
 	CheckMenuItem(hmenu, IDM_PX1, MFCHECK(value == 0x30));
 	CheckMenuItem(hmenu, IDM_PX2, MFCHECK(value == 0x50));
+#endif	// defined(SUPPORT_PX)
 }
 
 void xmenu_setjastsound(UINT8 value) {

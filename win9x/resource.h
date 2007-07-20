@@ -250,6 +250,8 @@
 #define IDS_DEBUGUTY                    30103
 #define IDS_WAVEREC                     30201
 #define IDS_CPUSAVE                     30202
+#define IDS_PX1                         30203
+#define IDS_PX2                         30204
 #define IDS_STAT                        30301
 #define IDS_STATSAVE0                   30311
 #define IDS_STATSAVE1                   30312
