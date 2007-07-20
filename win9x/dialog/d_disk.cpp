@@ -14,7 +14,7 @@
 #include	"newdisk.h"
 
 
-static const TCHAR fddui_title[] = _T("Select floppy image");
+//static const TCHAR fddui_title[] = _T("Select floppy image");
 static const TCHAR fddui_filter[] =										\
 				_T("D88 image files (*.D88;*.D98)\0")					\
 								_T("*.d88;*.88d;*.d98;*.98d\0")			\
@@ -24,13 +24,13 @@ static const TCHAR fddui_filter[] =										\
 								_T("*.d88;*.88d;*.d98;*.98d;*.fdi;")	\
 								_T("*.xdf;*.hdm;*.dup;*.2hd;*.tfd\0")	\
 				_T("All files (*.*)\0*.*\0");
-static const FILESEL fddui = {fddui_title, tchar_d88, fddui_filter, 3};
+static const FILESEL fddui = {MAKEINTRESOURCE(IDS_FDDTITLE), tchar_d88, fddui_filter, 3};
 
-#if defined(SUPPORT_SASI)
-static const TCHAR sasiui_title[] = _T("Select SASI/IDE HDD image");
-#else
-static const TCHAR sasiui_title[] = _T("Select HDD image");
-#endif
+//#if defined(SUPPORT_SASI)
+//static const TCHAR sasiui_title[] = _T("Select SASI/IDE HDD image");
+//#else
+//static const TCHAR sasiui_title[] = _T("Select HDD image");
+//#endif
 static const TCHAR sasiui_filter[] =									\
 				_T("Anex86 harddisk image files (*.HDI)\0")				\
 								_T("*.hdi\0")							\
@@ -40,7 +40,11 @@ static const TCHAR sasiui_filter[] =									\
 								_T("*.nhd\0")							\
 				_T("All supported Files\0")								\
 								_T("*.thd;*.nhd;*.hdi\0");
-static const FILESEL sasiui = {sasiui_title, tchar_thd, sasiui_filter, 4};
+#if defined(SUPPORT_SASI)
+static const FILESEL sasiui = {MAKEINTRESOURCE(IDS_HDDTITLE), tchar_thd, sasiui_filter, 4};
+#else	// defined(SUPPORT_SASI)
+static const FILESEL sasiui = {MAKEINTRESOURCE(IDS_SCSITITLE), tchar_thd, sasiui_filter, 4};
+#endif	// defined(SUPPORT_SASI)
 
 #if defined(SUPPORT_IDEIO)
 static const TCHAR isoui_title[] = _T("Select ISO-9660 image");

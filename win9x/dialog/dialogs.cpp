@@ -9,6 +9,8 @@
 #include	"mt32snd.h"
 #endif
 
+extern HINSTANCE hInst;
+
 
 const TCHAR str_nc[] = _T("N/C");
 
@@ -25,14 +27,18 @@ const TCHAR str_int6[] = _T("INT6");
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 										OEMCHAR *path, UINT size, int *ro) {
 
+	TCHAR			*pszTitle;
 	OPENFILENAME	ofn;
 #if defined(OSLANG_UTF8)
 	TCHAR			_path[MAX_PATH];
 #endif
+	BOOL			bResult;
 
 	if ((item == NULL) || (path == NULL) || (size == 0)) {
 		return(FALSE);
 	}
+	pszTitle = lockstringresource(hInst, item->title);
+
 	ZeroMemory(&ofn, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.hwndOwner = hWnd;
@@ -48,30 +54,38 @@ BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 #endif
 	ofn.Flags = OFN_FILEMUSTEXIST;
 	ofn.lpstrDefExt = item->ext;
-	ofn.lpstrTitle = item->title;
-	if (!GetOpenFileName(&ofn)) {
-		return(FALSE);
-	}
+	ofn.lpstrTitle = pszTitle;
+
+	bResult = GetOpenFileName(&ofn);
+	unlockstringresource(pszTitle);
+
+	if (bResult) {
 #if defined(OSLANG_UTF8)
-	tchartooem(path, NELEMENTS(path), _path, -1);
+		tchartooem(path, NELEMENTS(path), _path, -1);
 #endif
-	if (ro) {
-		*ro = ofn.Flags & OFN_READONLY;
+		if (ro) {
+			*ro = ofn.Flags & OFN_READONLY;
+		}
 	}
-	return(TRUE);
+	return(bResult);
 }
 
 BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 											OEMCHAR *path, UINT size) {
 
 	OPENFILENAME	ofn;
+	TCHAR			*pszTitle;
 #if defined(OSLANG_UTF8)
 	TCHAR			_path[MAX_PATH];
 #endif
+	BOOL			bResult;
 
 	if ((item == NULL) || (path == NULL) || (size == 0)) {
 		return(FALSE);
 	}
+
+	pszTitle = lockstringresource(hInst, item->title);
+
 	ZeroMemory(&ofn, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.hwndOwner = hWnd;
@@ -87,14 +101,18 @@ BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
 #endif
 	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 	ofn.lpstrDefExt = item->ext;
-	ofn.lpstrTitle = item->title;
-	if (!GetSaveFileName(&ofn)) {
-		return(FALSE);
-	}
+	ofn.lpstrTitle = pszTitle;
+
+	bResult = GetSaveFileName(&ofn);
+
+	unlockstringresource(pszTitle);
+
 #if defined(OSLANG_UTF8)
-	tchartooem(path, NELEMENTS(path), _path, -1);
+	if (bResult) {
+		tchartooem(path, NELEMENTS(path), _path, -1);
+	}
 #endif
-	return(TRUE);
+	return(bResult);
 }
 
 BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,

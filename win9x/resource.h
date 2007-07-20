@@ -460,6 +460,8 @@
 #define IDM_BIOS                        40130
 #define IDM_ITF                         40131
 #define IDM_A20LINE                     40132
+#define IDM_PX1                         40133
+#define IDM_PX2                         40134
 
 // Next default values for new objects
 // 

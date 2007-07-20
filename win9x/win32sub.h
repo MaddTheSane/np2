@@ -40,8 +40,8 @@ extern "C" {
 #endif
 
 void __msgbox(const char *title, const char *msg);
-int loadstring2(HINSTANCE hInstance, UINT uID,
-										LPTSTR lpBuffer, int nBufferMax);
+TCHAR *lockstringresource(HINSTANCE hInstance, LPCTSTR pszString);
+void unlockstringresource(TCHAR *pszString);
 
 #ifdef __cplusplus
 }

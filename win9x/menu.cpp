@@ -457,6 +457,8 @@ void xmenu_setsound(UINT8 value) {
 	CheckMenuItem(hmenu, IDM_SPEAKBOARD, MFCHECK(value == 0x20));
 	CheckMenuItem(hmenu, IDM_SPARKBOARD, MFCHECK(value == 0x40));
 	CheckMenuItem(hmenu, IDM_AMD98, MFCHECK(value == 0x80));
+	CheckMenuItem(hmenu, IDM_PX1, MFCHECK(value == 0x30));
+	CheckMenuItem(hmenu, IDM_PX2, MFCHECK(value == 0x50));
 }
 
 void xmenu_setjastsound(UINT8 value) {

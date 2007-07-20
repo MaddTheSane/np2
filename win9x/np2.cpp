@@ -793,6 +793,16 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_PX1:
+			xmenu_setsound(0x30);
+			update |= SYS_UPDATECFG;
+			break;
+
+		case IDM_PX2:
+			xmenu_setsound(0x50);
+			update |= SYS_UPDATECFG;
+			break;
+
 		case IDM_JASTSOUND:
 			xmenu_setjastsound(np2oscfg.jastsnd ^ 1);
 			update |= SYS_UPDATEOSCFG;

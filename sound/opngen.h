@@ -1,6 +1,10 @@
 
 enum {
+#if defined(SUPPORT_PX)
+	OPNCH_MAX		= 30,
+#else	// defined(SUPPORT_PX)
 	OPNCH_MAX		= 12,
+#endif	// defined(SUPPORT_PX)
 	OPNA_CLOCK		= 55466 * 72,
 
 	OPN_CHMASK		= 0x8000,

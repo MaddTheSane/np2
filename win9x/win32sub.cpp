@@ -19,7 +19,7 @@ void __msgbox(const char *title, const char *msg) {
 
 
 // WinAPIだと Win95でバグあるの
-int loadstring2(HINSTANCE hInstance, UINT uID,
+static int loadstringresource(HINSTANCE hInstance, UINT uID,
 										LPTSTR lpBuffer, int nBufferMax) {
 
 	HMODULE	hModule;
@@ -40,7 +40,7 @@ int loadstring2(HINSTANCE hInstance, UINT uID,
 	if (hGlobal == NULL) {
 		return(0);
 	}
-	pRes = (UINT16 *)LockResource(hRsrc);
+	pRes = (UINT16 *)LockResource(hGlobal);
 	dwPos = 0;
 	uID = uID & 15;
 	while((uID) && (dwPos < dwResSize)) {
@@ -81,5 +81,39 @@ int loadstring2(HINSTANCE hInstance, UINT uID,
 	}
 #endif
 	return(nLength);
+}
+
+// WinAPIだと Win95でバグあるの
+TCHAR *lockstringresource(HINSTANCE hInstance, LPCTSTR pszString) {
+
+	TCHAR	*pszRet;
+	int		nSize;
+
+	pszRet = NULL;
+	if (HIWORD(pszString)) {
+		nSize = (lstrlen(pszString) + 1) * sizeof(TCHAR);
+		pszRet = (TCHAR *)_MALLOC(nSize, "");
+		if (pszRet) {
+			CopyMemory(pszRet, pszString, nSize);
+		}
+	}
+	else if (LOWORD(pszString)) {
+		nSize = loadstringresource(hInstance, (UINT)pszString, NULL, 0);
+		if (nSize) {
+			pszRet = (TCHAR *)_MALLOC((nSize + 1) * sizeof(TCHAR), "");
+			if (pszRet) {
+				loadstringresource(hInstance, (UINT)pszString,
+														pszRet, nSize + 1);
+			}
+		}
+	}
+	return(pszRet);
+}
+
+void unlockstringresource(TCHAR *pszString) {
+
+	if (pszString) {
+		_MFREE(pszString);
+	}
 }
 
