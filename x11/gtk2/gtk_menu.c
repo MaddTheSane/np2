@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.10 2007/02/04 11:51:14 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.11 2007/08/22 15:20:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -840,6 +840,8 @@ cb_ataopen(GtkAction *action, gpointer user_data)
 	filter = gtk_file_filter_new();
 	if (filter) {
 		gtk_file_filter_set_name(filter, "IDE disk image files");
+		gtk_file_filter_add_pattern(filter, "*.[tT][hH][dD]");
+		gtk_file_filter_add_pattern(filter, "*.[hH][dD][iI]");
 		gtk_file_filter_add_pattern(filter, "*.[nN][hH][dD]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	}
