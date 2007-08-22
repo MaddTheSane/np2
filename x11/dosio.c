@@ -1,4 +1,4 @@
-/*	$Id: dosio.c,v 1.14 2005/03/09 16:13:24 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.15 2007/08/22 15:11:55 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -362,7 +362,7 @@ BOOL
 file_cmpname(const OEMCHAR *path, const OEMCHAR *path2)
 {
 
-	return strcmp(path, path2);
+	return strcasecmp(path, path2);
 }
 
 OEMCHAR *
