@@ -70,6 +70,48 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,130,26,44,14
 END
 
+IDD_CONFIGNOMMX DIALOG DISCARDABLE  0, 0, 182, 186
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configure"
+CLASS "np2dialog"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
+BEGIN
+    GROUPBOX        "CPU",IDC_STATIC,8,8,110,44
+    COMBOBOX        IDC_BASECLOCK,14,22,54,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_GROUP | WS_TABSTOP
+    LTEXT           "x",IDC_STATIC,72,26,8,8
+    COMBOBOX        IDC_MULTIPLE,80,22,32,80,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    RTEXT           "",IDC_CLOCKMSG,14,41,80,8
+    LTEXT           "MHz",IDC_STATIC,96,41,16,8
+    GROUPBOX        "Architecture",IDC_STATIC,8,56,166,28
+    CONTROL         "PC-9801VM",IDC_MODELVM,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,16,68,54,10
+    CONTROL         "PC-9801VX",IDC_MODELVX,"Button",BS_AUTORADIOBUTTON,72,
+                    68,54,10
+    CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
+                    68,44,10
+    GROUPBOX        "Sound",IDC_STATIC,8,88,166,46
+    LTEXT           "Sampling Rate",IDC_STATIC,14,101,50,8
+    CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,66,100,34,10
+    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,102,100,
+                    34,10
+    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,100,
+                    34,10
+    LTEXT           "Buffer",IDC_STATIC,14,118,50,8
+    EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
+    LTEXT           "ms",IDC_STATIC,102,118,16,8
+    CONTROL         "Allow Resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,142,162,10
+    CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,156,162,10
+    CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,170,162,10
+    DEFPUSHBUTTON   "&OK",IDOK,130,8,44,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,130,26,44,14
+END
+
 IDD_NEWDISK DIALOG DISCARDABLE  0, 0, 180, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create New FD image"
@@ -160,6 +202,21 @@ BEGIN
     RTEXT           "",IDC_LIGHTSTR,144,54,20,10,SS_SUNKEN
 END
 
+IDD_SCROPT_FULLSCREEN DIALOG DISCARDABLE  0, 0, 172, 96
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FullScreen"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
+BEGIN
+    CONTROL         "No change screen colors",IDC_FULLSCREEN_SAMEBPP,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,8,156,10
+    CONTROL         "No change screen resolution",IDC_FULLSCREEN_SAMERES,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,24,
+                    156,10
+    LTEXT           "Zoom",IDC_STATIC,8,45,22,8
+    COMBOBOX        IDC_FULLSCREEN_ZOOM,40,42,96,80,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+END
+
 IDD_SCROPT2 DIALOG DISCARDABLE  0, 0, 172, 96
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Chip"
@@ -244,7 +301,7 @@ BEGIN
     PUSHBUTTON      "...",IDC_COM1DEFB,156,94,10,10
 END
 
-IDD_PC9861A DIALOG 0, 0, 224, 140
+IDD_PC9861A DIALOG DISCARDABLE  0, 0, 224, 140
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "PC-9861K"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
@@ -599,6 +656,14 @@ BEGIN
         BOTTOMMARGIN, 192
     END
 
+    IDD_CONFIGNOMMX, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 174
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 178
+    END
+
     IDD_NEWDISK, DIALOG
     BEGIN
         LEFTMARGIN, 8
@@ -632,6 +697,14 @@ BEGIN
     END
 
     IDD_SCROPT1, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 164
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_SCROPT_FULLSCREEN, DIALOG
     BEGIN
         LEFTMARGIN, 8
         RIGHTMARGIN, 164
@@ -793,6 +866,25 @@ END
 // Menu
 //
 
+IDR_SYS MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Skin",                       IDM_SKIN
+    MENUITEM "&Tool Window",                IDM_TOOLWIN
+    MENUITEM SEPARATOR
+    MENUITEM "&Centering",                  IDM_SCREENCENTER
+    MENUITEM "&Window Snap",                IDM_SNAPENABLE
+    MENUITEM "&Background",                 IDM_BACKGROUND
+    MENUITEM "Back&ground Sound",           IDM_BGSOUND
+    MENUITEM SEPARATOR
+    MENUITEM " 320x200",                    IDM_SCRNMUL4
+    MENUITEM " 480x300",                    IDM_SCRNMUL6
+    MENUITEM " 640x400",                    IDM_SCRNMUL8
+    MENUITEM " 800x500",                    IDM_SCRNMUL10
+    MENUITEM " 960x600",                    IDM_SCRNMUL12
+    MENUITEM "1280x800",                    IDM_SCRNMUL16
+    MENUITEM SEPARATOR
+END
+
 IDR_MAIN MENU DISCARDABLE 
 BEGIN
     POPUP "&Emulate"
@@ -943,7 +1035,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Seg = &CS",                   IDM_SEGCS
         MENUITEM "Seg = &DS",                   IDM_SEGDS
-        MENUITEM "Seg = ES",                    IDM_SEGES
+        MENUITEM "Seg = &ES",                   IDM_SEGES
         MENUITEM "Seg = &SS",                   IDM_SEGSS
         MENUITEM "Seg = &TEXT",                 IDM_SEGTEXT
         MENUITEM SEPARATOR
@@ -958,6 +1050,139 @@ BEGIN
     END
 END
 
+IDR_STAT MENU DISCARDABLE 
+BEGIN
+    POPUP "S&tat"
+    BEGIN
+        MENUITEM "Save 0",                      IDM_FLAGSAVE0
+        MENUITEM "Save 1",                      IDM_FLAGSAVE1
+        MENUITEM "Save 2",                      IDM_FLAGSAVE2
+        MENUITEM "Save 3",                      IDM_FLAGSAVE3
+        MENUITEM "Save 4",                      IDM_FLAGSAVE4
+        MENUITEM "Save 5",                      IDM_FLAGSAVE5
+        MENUITEM "Save 6",                      IDM_FLAGSAVE6
+        MENUITEM "Save 7",                      IDM_FLAGSAVE7
+        MENUITEM "Save 8",                      IDM_FLAGSAVE8
+        MENUITEM "Save 9",                      IDM_FLAGSAVE9
+        MENUITEM SEPARATOR
+        MENUITEM "Load 0",                      IDM_FLAGLOAD0
+        MENUITEM "Load 1",                      IDM_FLAGLOAD1
+        MENUITEM "Load 2",                      IDM_FLAGLOAD2
+        MENUITEM "Load 3",                      IDM_FLAGLOAD3
+        MENUITEM "Load 4",                      IDM_FLAGLOAD4
+        MENUITEM "Load 5",                      IDM_FLAGLOAD5
+        MENUITEM "Load 6",                      IDM_FLAGLOAD6
+        MENUITEM "Load 7",                      IDM_FLAGLOAD7
+        MENUITEM "Load 8",                      IDM_FLAGLOAD8
+        MENUITEM "Load 9",                      IDM_FLAGLOAD9
+    END
+END
+
+IDR_FDD1MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD1EJECT
+    END
+END
+
+IDR_FDD2MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&2"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD2OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD2EJECT
+    END
+END
+
+IDR_FDD3MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&3"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD3OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD3EJECT
+    END
+END
+
+IDR_FDD4MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&4"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD4OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD4EJECT
+    END
+END
+
+IDR_IDEMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "IDE #0"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE0OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE0EJECT
+    END
+    POPUP "IDE #1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE1EJECT
+    END
+    POPUP "IDE #2"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE2OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_IDE2EJECT
+    END
+END
+
+IDR_SASIMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "SASI #0"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE0OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE0EJECT
+    END
+    POPUP "SASI #1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE1EJECT
+    END
+END
+
+IDR_SCSIMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "SCSI #0"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI0OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI0EJECT
+    END
+    POPUP "SCSI #1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI1EJECT
+    END
+    POPUP "SCSI #2"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI2OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI2EJECT
+    END
+    POPUP "SCSI #3"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI3OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI3EJECT
+    END
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1207,6 +1432,14 @@ BEGIN
     IDS_WAVETITLE           "Save as Sound"
     IDS_WAVEEXT             "wav"
     IDS_WAVEFILTER          "Wave files (*.wav)|*.wav|"
+    IDS_ZOOM_NONE           "None"
+    IDS_ZOOM_FIXEDASPECT    "Fixed Aspect"
+    IDS_ZOOM_ADJUSTASPECT   "Adjust Aspect"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ZOOM_FULL           "Full"
 END
 
 #endif    // “ú–{Œê resources

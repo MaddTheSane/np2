@@ -22,6 +22,22 @@ const TCHAR str_int5[] = _T("INT5");
 const TCHAR str_int6[] = _T("INT6");
 
 
+// ---- enable
+
+void dlgs_enablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID)
+{
+	EnableWindow(GetDlgItem(hWnd, uID),
+			(SendDlgItemMessage(hWnd, uCheckID, BM_GETCHECK, 0, 0) != 0));
+}
+
+void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID)
+{
+	EnableWindow(GetDlgItem(hWnd, uID),
+			(SendDlgItemMessage(hWnd, uCheckID, BM_GETCHECK, 0, 0) == 0));
+
+}
+
+
 // ---- file select
 
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
@@ -190,7 +206,6 @@ void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items) {
 }
 
 void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
-
 	HWND	wnd;
 	UINT	i;
 	OEMCHAR	str[16];
@@ -200,6 +215,66 @@ void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 		OEMSPRINTF(str, str_u, item[i]);
 		SendMessage(wnd, CB_INSERTSTRING, (WPARAM)i, (LPARAM)str);
 	}
+}
+
+
+void dlgs_setdroplistitem(HWND hWnd, UINT uID,
+										const TCHAR **ppszItem, UINT uItems)
+{
+	HWND	hItem;
+	UINT	uPos;
+	UINT	i;
+	TCHAR	szString[128];
+
+	hItem = GetDlgItem(hWnd, uID);
+	uPos = 0;
+	for (i=0; i<uItems; i++) {
+		LPCTSTR lpcszStr = ppszItem[i];
+		if (!HIWORD(lpcszStr))
+		{
+			if (!loadstringresource(hInst, LOWORD(lpcszStr),
+											szString, NELEMENTS(szString)))
+			{
+				continue;
+			}
+			lpcszStr = szString;
+		}
+		SendMessage(hItem, CB_INSERTSTRING, (WPARAM)uPos, (LPARAM)lpcszStr);
+		SendMessage(hItem, CB_SETITEMDATA, (WPARAM)uPos, (LPARAM)i);
+		uPos++;
+	}
+}
+
+void dlgs_setdroplistnumber(HWND hWnd, UINT uID, int nNumber)
+{
+	HWND	hItem;
+	int		nItems;
+	int		i;
+
+	hItem = GetDlgItem(hWnd, uID);
+	nItems = SendMessage(hItem, CB_GETCOUNT, 0, 0);
+	for (i=0; i<nItems; i++)
+	{
+		if (SendMessage(hItem, CB_GETITEMDATA, (WPARAM)i, 0) == nNumber)
+		{
+			SendMessage(hItem, CB_SETCURSEL, (WPARAM)i, 0);
+			break;
+		}
+	}
+}
+
+int dlgs_getdroplistnumber(HWND hWnd, UINT uID)
+{
+	HWND	hItem;
+	int		nPos;
+
+	hItem = GetDlgItem(hWnd, uID);
+	nPos = SendMessage(hItem, CB_GETCURSEL, 0, 0);
+	if (nPos >= 0)
+	{
+		return SendMessage(hItem, CB_GETITEMDATA, (WPARAM)nPos, 0);
+	}
+	return -1;
 }
 
 
@@ -278,6 +353,7 @@ void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 }
 
 
+
 // ---- draw
 
 void dlgs_drawbmp(HDC hdc, UINT8 *bmp) {
@@ -315,5 +391,34 @@ void dlgs_drawbmp(HDC hdc, UINT8 *bmp) {
 
 dsdb_err1:
 	_MFREE(bmp);
+}
+
+
+// ----
+
+BOOL dlgs_getitemrect(HWND hWnd, UINT uID, RECT *pRect)
+{
+	HWND	hItem;
+	POINT	pt;
+
+	if (pRect == NULL)
+	{
+		return FALSE;
+	}
+	hItem = GetDlgItem(hWnd, uID);
+	if (!GetWindowRect(hItem, pRect))
+	{
+		return FALSE;
+	}
+	ZeroMemory(&pt, sizeof(pt));
+	if (!ClientToScreen(hWnd, &pt))
+	{
+		return FALSE;
+	}
+	pRect->left -= pt.x;
+	pRect->top -= pt.y;
+	pRect->right -= pt.x;
+	pRect->bottom -= pt.y;
+	return TRUE;
 }
 

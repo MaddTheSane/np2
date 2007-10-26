@@ -9,56 +9,6 @@
 static const UINT8 irqtable[4] = {0x03, 0x0d, 0x0a, 0x0c};
 
 
-void fmport_a(NEVENTITEM item) {
-
-	BOOL	intreq = FALSE;
-
-	if (item->flag & NEVENT_SETEVENT) {
-		intreq = pcm86gen_intrq();
-		if (fmtimer.reg & 0x04) {
-			fmtimer.status |= 0x01;
-			intreq = TRUE;
-		}
-		if (intreq) {
-//			pcm86.write = 1;
-			pic_setirq(fmtimer.irq);
-//			TRACEOUT(("fm int-A"));
-		}
-//		TRACE_("A: fifo = ", pcm86.fifo);
-//		TRACE_("A: virbuf = ", pcm86.virbuf);
-//		TRACE_("A: fifosize = ", pcm86.fifosize);
-	}
-}
-
-void fmport_b(NEVENTITEM item) {
-
-	BOOL	intreq = FALSE;
-
-	if (item->flag & NEVENT_SETEVENT) {
-		intreq = pcm86gen_intrq();
-		if (fmtimer.reg & 0x08) {
-			fmtimer.status |= 0x02;
-			intreq = TRUE;
-		}
-#if 0
-		if (pcm86.fifo & 0x20) {
-			sound_sync();
-			if (pcm86.virbuf <= pcm86.fifosize) {
-				intreq = TRUE;
-			}
-		}
-#endif
-		if (intreq) {
-//			pcm86.write = 1;
-			pic_setirq(fmtimer.irq);
-//			TRACEOUT(("fm int-B"));
-		}
-//		TRACE_("B: fifo = ", pcm86.fifo);
-//		TRACE_("B: virbuf = ", pcm86.virbuf);
-//		TRACE_("B: fifosize = ", pcm86.fifosize);
-	}
-}
-
 static void set_fmtimeraevent(BOOL absolute) {
 
 	SINT32	l;
@@ -70,6 +20,7 @@ static void set_fmtimeraevent(BOOL absolute) {
 	else {										// 5MHz
 		l = (l * 1536 / 625) * pccore.multiple;
 	}
+//	TRACEOUT(("FMTIMER-A: %08x-%d", l, absolute));
 	nevent_set(NEVENT_FMTIMERA, l, fmport_a, absolute);
 }
 
@@ -84,7 +35,47 @@ static void set_fmtimerbevent(BOOL absolute) {
 	else {										// 5MHz
 		l = (l * 1536 / 625) * pccore.multiple;
 	}
+//	TRACEOUT(("FMTIMER-B: %08x-%d", l, absolute));
 	nevent_set(NEVENT_FMTIMERB, l, fmport_b, absolute);
+}
+
+
+void fmport_a(NEVENTITEM item) {
+
+	BOOL	intreq = FALSE;
+
+	if (item->flag & NEVENT_SETEVENT) {
+		intreq = pcm86gen_intrq();
+		if (fmtimer.reg & 0x04) {
+			fmtimer.status |= 0x01;
+			intreq = TRUE;
+		}
+		if (intreq) {
+			pic_setirq(fmtimer.irq);
+//			TRACEOUT(("fm int-A"));
+		}
+
+		set_fmtimeraevent(FALSE);
+	}
+}
+
+void fmport_b(NEVENTITEM item) {
+
+	BOOL	intreq = FALSE;
+
+	if (item->flag & NEVENT_SETEVENT) {
+		intreq = pcm86gen_intrq();
+		if (fmtimer.reg & 0x08) {
+			fmtimer.status |= 0x02;
+			intreq = TRUE;
+		}
+		if (intreq) {
+			pic_setirq(fmtimer.irq);
+//			TRACEOUT(("fm int-B"));
+		}
+
+		set_fmtimerbevent(FALSE);
+	}
 }
 
 void fmtimer_reset(UINT irq) {
@@ -124,6 +115,7 @@ void fmtimer_setreg(UINT reg, REG8 value) {
 			else {
 				nevent_reset(NEVENT_FMTIMERA);
 			}
+
 			if (value & 0x02) {
 				if (!nevent_iswork(NEVENT_FMTIMERB)) {
 					set_fmtimerbevent(NEVENT_ABSOLUTE);
@@ -132,6 +124,7 @@ void fmtimer_setreg(UINT reg, REG8 value) {
 			else {
 				nevent_reset(NEVENT_FMTIMERB);
 			}
+
 			if (!(value & 0x03)) {
 				pic_resetirq(fmtimer.irq);
 			}

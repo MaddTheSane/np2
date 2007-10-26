@@ -1774,5 +1774,17 @@ SOURCE=.\icons\np2.ico
 SOURCE=.\icons\np2debug.ico
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\icons\fddseek.wav
+# End Source File
+# Begin Source File
+
+SOURCE=.\icons\fddseek1.wav
+# End Source File
+# Begin Source File
+
+SOURCE=.\np2.mnf
+# End Source File
 # End Target
 # End Project

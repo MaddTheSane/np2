@@ -40,6 +40,8 @@ extern "C" {
 #endif
 
 void __msgbox(const char *title, const char *msg);
+int loadstringresource(HINSTANCE hInstance, UINT uID,
+										LPTSTR lpBuffer, int nBufferMax);
 TCHAR *lockstringresource(HINSTANCE hInstance, LPCTSTR pszString);
 void unlockstringresource(TCHAR *pszString);
 

@@ -158,7 +158,8 @@ NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/sstp.o		$(OBJ)/sstpmsg.o	$(OBJ)/winkbd.o		\
 			$(OBJ)/dclock.o		$(OBJ)/dclockd.o	$(OBJ)/menu.o		\
 			$(OBJ)/ini.o		$(OBJ)/dd2.o		$(OBJ)/toolwin.o	\
-			$(OBJ)/subwind.o	$(OBJ)/mt32snd.o	$(OBJ)/np2res.o		\
+			$(OBJ)/subwind.o	$(OBJ)/mt32snd.o	$(OBJ)/win32sub.o	\
+			$(OBJ)/np2res.o		\
 			\
 			$(OBJ)/np2class.o	$(OBJ)/d_about.o	$(OBJ)/d_config.o	\
 			$(OBJ)/d_mpu98.o	$(OBJ)/d_screen.o	$(OBJ)/d_serial.o	\
@@ -1113,6 +1114,10 @@ $(OBJ)/subwind.o	:	$(TARGET)/subwind.cpp $(HEADERS) \
 
 $(OBJ)/mt32snd.o	:	$(TARGET)/mt32snd.cpp $(HEADERS) \
 						$(TARGET)/mt32snd.h
+	$(CC) $(COPT) -o $@ $<
+
+$(OBJ)/win32sub.o	:	$(TARGET)/win32sub.cpp $(HEADERS) \
+						$(TARGET)/win32sub.h
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h

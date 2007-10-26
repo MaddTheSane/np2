@@ -76,6 +76,76 @@ const MENUITEMS *iterm;
 	}
 }
 
+static BOOL searchchildmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, UINT *puPos)
+{
+	UINT			nCount;
+	UINT			i;
+	MENUITEMINFO	mii;
+
+	nCount = GetMenuItemCount(hMenu);
+	for (i=0; i<nCount; i++)
+	{
+		ZeroMemory(&mii, sizeof(mii));
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_ID | MIIM_SUBMENU;
+		if (GetMenuItemInfo(hMenu, i, TRUE, &mii))
+		{
+			if (mii.wID == uID)
+			{
+				if (phmenuRet)
+				{
+					*phmenuRet = hMenu;
+				}
+				if (puPos)
+				{
+					*puPos = i;
+				}
+				return TRUE;
+			}
+			else if ((mii.hSubMenu) && (searchchildmenu(mii.hSubMenu, uID, phmenuRet, puPos)))
+			{
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
+static BOOL searchsubmenu(HMENU hMenu, HMENU hmenuTarget, HMENU *phmenuRet, UINT *puPos)
+{
+	UINT			nCount;
+	UINT			i;
+	MENUITEMINFO	mii;
+
+	nCount = GetMenuItemCount(hMenu);
+	for (i=0; i<nCount; i++)
+	{
+		ZeroMemory(&mii, sizeof(mii));
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_SUBMENU;
+		if ((GetMenuItemInfo(hMenu, i, TRUE, &mii)) && (mii.hSubMenu))
+		{
+			if (mii.hSubMenu == hmenuTarget)
+			{
+				if (phmenuRet)
+				{
+					*phmenuRet = hMenu;
+				}
+				if (puPos)
+				{
+					*puPos = i;
+				}
+				return TRUE;
+			}
+			if (searchsubmenu(mii.hSubMenu, hmenuTarget, phmenuRet, puPos))
+			{
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
 
 // ----
 

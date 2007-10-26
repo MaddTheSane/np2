@@ -32,6 +32,8 @@ extern const TCHAR str_int6[];
 #define	SETLISTUINT32(a, b, c)		\
 			dlgs_setlistuint32((a), (b), (c), NELEMENTS((c)))
 
+void dlgs_enablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
+void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
 
 BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
 											OEMCHAR *path, UINT size, int *ro);
@@ -45,8 +47,15 @@ void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items);
 void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items);
 
+void dlgs_setdroplistitem(HWND hWnd, UINT uID,
+										const TCHAR **ppszItem, UINT uItems);
+void dlgs_setdroplistnumber(HWND hWnd, UINT uID, int nPos);
+int dlgs_getdroplistnumber(HWND hWnd, UINT uID);
+
 void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname);
 void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname);
 
 void dlgs_drawbmp(HDC hdc, UINT8 *bmp);
+
+BOOL dlgs_getitemrect(HWND hWnd, UINT uID, RECT *pRect);
 

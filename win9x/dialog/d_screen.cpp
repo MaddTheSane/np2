@@ -264,12 +264,75 @@ static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 	return(FALSE);
 }
 
+static const TCHAR *pszZoom[] = {
+	MAKEINTRESOURCE(IDS_ZOOM_NONE),
+	MAKEINTRESOURCE(IDS_ZOOM_FIXEDASPECT),
+	MAKEINTRESOURCE(IDS_ZOOM_ADJUSTASPECT),
+	MAKEINTRESOURCE(IDS_ZOOM_FULL)};
+
+static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
+												WPARAM wParam, LPARAM lParam)
+{
+	UINT8	c;
+	UINT	uUpdate;
+
+	switch(uMsg)
+	{
+		case WM_INITDIALOG:
+			c = np2oscfg.fscrnmod;
+			SetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMEBPP,
+													(c & FSCRNMOD_SAMEBPP));
+			SetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMERES,
+													(c & FSCRNMOD_SAMERES));
+			dlgs_setdroplistitem(hWnd, IDC_FULLSCREEN_ZOOM,
+												pszZoom, NELEMENTS(pszZoom));
+			dlgs_setdroplistnumber(hWnd, IDC_FULLSCREEN_ZOOM, (c & 3));
+			EnableWindow(GetDlgItem(hWnd, IDC_FULLSCREEN_ZOOM),
+												(c & FSCRNMOD_SAMERES) != 0);
+			return(TRUE);
+
+		case WM_COMMAND:
+			switch(LOWORD(wParam))
+			{
+				case IDC_FULLSCREEN_SAMERES:
+					dlgs_enablebyautocheck(hWnd, IDC_FULLSCREEN_ZOOM,
+													IDC_FULLSCREEN_SAMERES);
+					break;
+			}
+			break;
+
+		case WM_NOTIFY:
+			if ((((NMHDR *)lParam)->code) == (UINT)PSN_APPLY)
+			{
+				c = 0;
+				if (GetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMEBPP))
+				{
+					c |= FSCRNMOD_SAMEBPP;
+				}
+				if (GetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMERES))
+				{
+					c |= FSCRNMOD_SAMERES;
+				}
+				c |= (dlgs_getdroplistnumber(hWnd, IDC_FULLSCREEN_ZOOM) & 3);
+				if (np2oscfg.fscrnmod != c)
+				{
+					np2oscfg.fscrnmod = c;
+					uUpdate |= SYS_UPDATEOSCFG;
+				}
+				sysmng_update(uUpdate);
+				return(TRUE);
+			}
+			break;
+	}
+	return(FALSE);
+}
+
 void dialog_scropt(HWND hWnd) {
 
 	HINSTANCE		hinst;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
-	HPROPSHEETPAGE	hpsp[3];
+	HPROPSHEETPAGE	hpsp[4];
 
 	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
@@ -290,13 +353,17 @@ void dialog_scropt(HWND hWnd) {
 	psp.pfnDlgProc = (DLGPROC)Scropt3DlgProc;
 	hpsp[2] = CreatePropertySheetPage(&psp);
 
+	psp.pszTemplate = MAKEINTRESOURCE(IDD_SCROPT_FULLSCREEN);
+	psp.pfnDlgProc = (DLGPROC)ScroptFullScreenDlgProc;
+	hpsp[3] = CreatePropertySheetPage(&psp);
+
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	psh.hwndParent = hWnd;
 	psh.hInstance = hinst;
 	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
-	psh.nPages = 3;
+	psh.nPages = 4;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_scropt;
 	psh.pfnCallback = np2class_propetysheet;

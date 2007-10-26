@@ -19,7 +19,7 @@ void __msgbox(const char *title, const char *msg) {
 
 
 // WinAPI‚¾‚Æ Win95‚ÅƒoƒO‚ ‚é‚Ì
-static int loadstringresource(HINSTANCE hInstance, UINT uID,
+int loadstringresource(HINSTANCE hInstance, UINT uID,
 										LPTSTR lpBuffer, int nBufferMax) {
 
 	HMODULE	hModule;
@@ -74,7 +74,7 @@ static int loadstringresource(HINSTANCE hInstance, UINT uID,
 		lpBuffer = NULL;
 		nBufferMax = 0;
 	}
-	nLength = WideCharToMultiByte(CP_ACP, 0, pRes + dwPos, nLength,
+	nLength = WideCharToMultiByte(CP_ACP, 0, (WCHAR *)(pRes + dwPos), nLength,
 											lpBuffer, nBufferMax, NULL, NULL);
 	if (lpBuffer) {
 		lpBuffer[nLength] = '\0';
