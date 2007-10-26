@@ -1463,7 +1463,7 @@ SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\NP21.RC
+SOURCE=.\NP2.RC
 # End Source File
 # Begin Source File
 

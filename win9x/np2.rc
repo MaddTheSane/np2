@@ -854,7 +854,7 @@ END
 
 3 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "\r\n"
+    "#include ""np2.rc2""\r\n"
     "\0"
 END
 
@@ -1194,55 +1194,6 @@ NP2TOOL                 BITMAP  DISCARDABLE     "ICONS\\NP2TOOL.BMP"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 24
-//
-
-IDR_MANIFEST            24      MOVEABLE PURE   "np2.mnf"
-
-#ifndef _MAC
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,8,2,0
- PRODUCTVERSION 0,8,2,0
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "041104b0"
-        BEGIN
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "PC-9801series emulator\0"
-            VALUE "FileVersion", "0, 8, 2, 0\0"
-            VALUE "InternalName", "np2\0"
-            VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
-            VALUE "OriginalFilename", "np2.exe\0"
-            VALUE "ProductName", "Neko Project II\0"
-            VALUE "ProductVersion", "0, 8, 2, 0\0"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x411, 1200
-    END
-END
-
-#endif    // !_MAC
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Icon
 //
 
@@ -1291,7 +1242,6 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_WAVEREC             "&Wave Record"
-    IDS_CPUSAVE             "&i286 save"
     IDS_PX1                 "PX1"
     IDS_PX2                 "PX2"
 END
@@ -1452,7 +1402,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
+#include "np2.rc2"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
