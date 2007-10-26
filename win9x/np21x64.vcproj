@@ -56,6 +56,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -135,6 +136,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -1289,7 +1291,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\np21x64.rc"
+				RelativePath=".\np2.RC"
 				>
 			</File>
 		</Filter>

@@ -2,24 +2,32 @@
 //
 // Manifest
 //
+
+#ifdef _WIN64
+#ifdef SUPPORT_PC9821
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "np21x64.mnf"
+#else
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "np2x64.mnf"
+#endif
+#else
 #ifdef SUPPORT_PC9821
 IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "np21.mnf"
 #else
 IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "np2.mnf"
 #endif
-
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// String Table
+// Menu
 //
 
-STRINGTABLE DISCARDABLE 
+IDR_CPUSAVE MENU DISCARDABLE 
 BEGIN
 #ifdef SUPPORT_PC9821
-    IDS_CPUSAVE             "&i386 save"
+    MENUITEM "&i386 save",                  IDM_CPUSAVE
 #else
-    IDS_CPUSAVE             "&i286 save"
+    MENUITEM "&i286 save",                  IDM_CPUSAVE
 #endif
 END
 
@@ -52,14 +60,27 @@ BEGIN
             VALUE "ProductVersion", "0, 8, 2, 0\0"
 #ifdef SUPPORT_PC9821
             VALUE "FileDescription", "PC-9821series emulator\0"
-            VALUE "InternalName", "np21\0"
-            VALUE "OriginalFilename", "np21.exe\0"
             VALUE "ProductName", "Neko Project 21\0"
 #else
             VALUE "FileDescription", "PC-9801series emulator\0"
+            VALUE "ProductName", "Neko Project II\0"
+#endif
+#ifdef _WIN64
+#ifdef SUPPORT_PC9821
+            VALUE "InternalName", "np21x64\0"
+            VALUE "OriginalFilename", "np21x64.exe\0"
+#else
+            VALUE "InternalName", "np2x64\0"
+            VALUE "OriginalFilename", "np2x64.exe\0"
+#endif
+#else
+#ifdef SUPPORT_PC9821
+            VALUE "InternalName", "np21\0"
+            VALUE "OriginalFilename", "np21.exe\0"
+#else
             VALUE "InternalName", "np2\0"
             VALUE "OriginalFilename", "np2.exe\0"
-            VALUE "ProductName", "Neko Project II\0"
+#endif
 #endif
         END
     END
@@ -68,3 +89,4 @@ BEGIN
         VALUE "Translation", 0x411, 1200
     END
 END
+

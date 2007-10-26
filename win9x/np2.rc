@@ -868,7 +868,6 @@ END
 
 IDR_SYS MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Skin",                       IDM_SKIN
     MENUITEM "&Tool Window",                IDM_TOOLWIN
     MENUITEM SEPARATOR
     MENUITEM "&Centering",                  IDM_SCREENCENTER
@@ -882,6 +881,28 @@ BEGIN
     MENUITEM " 800x500",                    IDM_SCRNMUL10
     MENUITEM " 960x600",                    IDM_SCRNMUL12
     MENUITEM "1280x800",                    IDM_SCRNMUL16
+    MENUITEM SEPARATOR
+END
+
+IDR_SYSKEYDISP MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Key display"                 IDM_KEYDISP
+END
+
+IDR_SYSSOFTKBD MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Soft keyboard"               IDM_SOFTKBD
+END
+
+IDR_SYSDEBUG32 MENU DISCARDABLE 
+BEGIN
+    MENUITEM "Memory debug"                 IDM_MEMDBG32
+END
+
+IDR_SYSDEBUG MENU DISCARDABLE 
+BEGIN
+    MENUITEM "Memory dump"                  IDM_MEMORYDUMP
+    MENUITEM "Debug utility"                IDM_DEBUGUTY
     MENUITEM SEPARATOR
 END
 
@@ -993,60 +1014,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
         MENUITEM "&About...",                   IDM_ABOUT
-    END
-END
-
-IDR_TOOLWIN MENU DISCARDABLE 
-BEGIN
-    MENUITEM "&Skin",                       IDM_SKIN
-END
-
-IDR_KEYDISP MENU DISCARDABLE 
-BEGIN
-    POPUP "&Module"
-    BEGIN
-        MENUITEM "&FM",                         IDM_KDISPFM
-        MENUITEM "&MIDI",                       IDM_KDISPMIDI
-    END
-END
-
-IDR_VIEW MENU DISCARDABLE 
-BEGIN
-    POPUP "&System"
-    BEGIN
-        MENUITEM "&New window",                 IDM_VIEWWINNEW
-        MENUITEM SEPARATOR
-        MENUITEM "&Close",                      IDM_VIEWWINCLOSE
-        MENUITEM "&All close",                  IDM_VIEWWINALLCLOSE
-    END
-    POPUP "&Mode"
-    BEGIN
-        MENUITEM "&Register",                   IDM_VIEWMODEREG
-        MENUITEM "&Dump segment",               IDM_VIEWMODESEG
-        MENUITEM "&Main Memory Dump",           IDM_VIEWMODE1MB
-        MENUITEM "&Unassemble",                 IDM_VIEWMODEASM
-        MENUITEM "&Sound Register",             IDM_VIEWMODESND
-        MENUITEM SEPARATOR
-        MENUITEM "&Lock",                       IDM_VIEWMODELOCK
-    END
-    POPUP "&Edit"
-    BEGIN
-        MENUITEM "Enter &Address...",           IDM_SETSEG, GRAYED
-        MENUITEM SEPARATOR
-        MENUITEM "Seg = &CS",                   IDM_SEGCS
-        MENUITEM "Seg = &DS",                   IDM_SEGDS
-        MENUITEM "Seg = &ES",                   IDM_SEGES
-        MENUITEM "Seg = &SS",                   IDM_SEGSS
-        MENUITEM "Seg = &TEXT",                 IDM_SEGTEXT
-        MENUITEM SEPARATOR
-        MENUITEM "Reload",                      IDM_RELOAD, GRAYED
-    END
-    POPUP "&Memory", GRAYED
-    BEGIN
-        MENUITEM "VRAM page&0",                 IDM_VRAM0
-        MENUITEM "VRAM page&1",                 IDM_VRAM1
-        MENUITEM SEPARATOR
-        MENUITEM "&A20 line",                   IDM_A20LINE
     END
 END
 
@@ -1184,6 +1151,71 @@ BEGIN
     END
 END
 
+IDR_PXMENU MENU DISCARDABLE 
+BEGIN
+    MENUITEM "PX1",                         IDM_PX1
+    MENUITEM "PX2",                         IDM_PX2
+END
+
+IDR_WAVEREC MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Wave record",                IDM_WAVEREC
+END
+
+IDR_TOOLWIN MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Skin",                       IDM_SKIN
+END
+
+IDR_KEYDISP MENU DISCARDABLE 
+BEGIN
+    POPUP "&Module"
+    BEGIN
+        MENUITEM "&FM",                         IDM_KDISPFM
+        MENUITEM "&MIDI",                       IDM_KDISPMIDI
+    END
+END
+
+IDR_VIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&System"
+    BEGIN
+        MENUITEM "&New window",                 IDM_VIEWWINNEW
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      IDM_VIEWWINCLOSE
+        MENUITEM "&All close",                  IDM_VIEWWINALLCLOSE
+    END
+    POPUP "&Mode"
+    BEGIN
+        MENUITEM "&Register",                   IDM_VIEWMODEREG
+        MENUITEM "&Dump segment",               IDM_VIEWMODESEG
+        MENUITEM "&Main Memory Dump",           IDM_VIEWMODE1MB
+        MENUITEM "&Unassemble",                 IDM_VIEWMODEASM
+        MENUITEM "&Sound Register",             IDM_VIEWMODESND
+        MENUITEM SEPARATOR
+        MENUITEM "&Lock",                       IDM_VIEWMODELOCK
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "Enter &Address...",           IDM_SETSEG, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "Seg = &CS",                   IDM_SEGCS
+        MENUITEM "Seg = &DS",                   IDM_SEGDS
+        MENUITEM "Seg = &ES",                   IDM_SEGES
+        MENUITEM "Seg = &SS",                   IDM_SEGSS
+        MENUITEM "Seg = &TEXT",                 IDM_SEGTEXT
+        MENUITEM SEPARATOR
+        MENUITEM "Reload",                      IDM_RELOAD, GRAYED
+    END
+    POPUP "&Memory", GRAYED
+    BEGIN
+        MENUITEM "VRAM page&0",                 IDM_VRAM0
+        MENUITEM "VRAM page&1",                 IDM_VRAM1
+        MENUITEM SEPARATOR
+        MENUITEM "&A20 line",                   IDM_A20LINE
+    END
+END
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
@@ -1217,108 +1249,7 @@ SEEK1WAV                EXTROM  DISCARDABLE     "ICONS\\FDDSEEK1.WAV"
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_TOOLWIN             "&Tool Window"
-    IDS_KEYDISP             "&Key display"
-    IDS_SOFTKBD             "&Soft keyboard"
-    IDS_SCREENCENTER        "&Centering"
-    IDS_SNAPENABLE          "&Window Snap"
-    IDS_BACKGROUND          "&Background"
-    IDS_BGSOUND             "Back&ground Sound"
-    IDS_SCRNMUL4            " 320x200"
-    IDS_SCRNMUL6            " 480x300"
-    IDS_SCRNMUL8            " 640x400"
-    IDS_SCRNMUL10           " 800x500"
-    IDS_SCRNMUL12           " 960x600"
-    IDS_SCRNMUL16           "1280x800"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_MEMDBG32            "Memory Debug"
-    IDS_MEMORYDUMP          "Memory Dump"
-    IDS_DEBUGUTY            "Debug Utility"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_WAVEREC             "&Wave Record"
-    IDS_PX1                 "PX1"
-    IDS_PX2                 "PX2"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STAT                "S&tat"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATSAVE0           "Save 0"
-    IDS_STATSAVE1           "Save 1"
-    IDS_STATSAVE2           "Save 2"
-    IDS_STATSAVE3           "Save 3"
-    IDS_STATSAVE4           "Save 4"
-    IDS_STATSAVE5           "Save 5"
-    IDS_STATSAVE6           "Save 6"
-    IDS_STATSAVE7           "Save 7"
-    IDS_STATSAVE8           "Save 8"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATSAVE9           "Save 9"
-    IDS_STATLOAD0           "Load 0"
-    IDS_STATLOAD1           "Load 1"
-    IDS_STATLOAD2           "Load 2"
-    IDS_STATLOAD3           "Load 3"
-    IDS_STATLOAD4           "Load 4"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATLOAD5           "Load 5"
-    IDS_STATLOAD6           "Load 6"
-    IDS_STATLOAD7           "Load 7"
-    IDS_STATLOAD8           "Load 8"
-    IDS_STATLOAD9           "Load 9"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
     IDS_HDD                 "&HardDisk"
-    IDS_OPEN                "&Open..."
-    IDS_EJECT               "&Eject"
-    IDS_REMOVE              "&Remove"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_FDD1                "FDD&1"
-    IDS_FDD2                "FDD&2"
-    IDS_FDD3                "FDD&3"
-    IDS_FDD4                "FDD&4"
-    IDS_SASI1               "SASI #1"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SASI2               "SASI #2"
-    IDS_IDE0                "IDE #0"
-    IDS_IDE1                "IDE #1"
-    IDS_IDE2                "IDE #2"
-    IDS_IDE3                "IDE #3"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SCSI0               "SCSI #0"
-    IDS_SCSI1               "SCSI #1"
-    IDS_SCSI2               "SCSI #2"
-    IDS_SCSI3               "SCSI #3"
-    IDS_SCSI4               "SCSI #4"
-    IDS_SCSI5               "SCSI #5"
-    IDS_SCSI6               "SCSI #6"
-    IDS_SCSI7               "SCSI #7"
 END
 
 STRINGTABLE DISCARDABLE 

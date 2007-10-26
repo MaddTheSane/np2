@@ -49,6 +49,7 @@
 				AdditionalIncludeDirectories=".\,.\dialog,.\debuguty,..\,..\common,..\codecnv,..\i286c,..\mem,..\io,..\cbus,..\bios,..\lio,..\vram,..\sound,..\sound\vermouth,..\sound\getsnd,..\fdd,..\font,..\generic,..\trap,..\zlib"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4819"
 			/>
 			<Tool
@@ -56,6 +57,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -64,6 +66,8 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ddraw.lib dxguid.lib dsound.lib winmm.lib comdlg32.lib comctl32.lib wsock32.lib"
 				OutputFile="$(OutDir)/np2x64d.exe"
+				GenerateDebugInformation="true"
+				GenerateMapFile="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -133,6 +137,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WIN64;_UNICODE;UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -884,10 +889,12 @@
 				Name="trap"
 				>
 				<File
-					RelativePath="..\trap\INTTRAP.C">
+					RelativePath="..\trap\INTTRAP.C"
+					>
 				</File>
 				<File
-					RelativePath="..\trap\STEPTRAP.C">
+					RelativePath="..\trap\STEPTRAP.C"
+					>
 				</File>
 			</Filter>
 			<Filter
@@ -1183,7 +1190,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\np2x64.rc"
+				RelativePath=".\np2.RC"
 				>
 			</File>
 		</Filter>
