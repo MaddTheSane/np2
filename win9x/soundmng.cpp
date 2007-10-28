@@ -92,6 +92,7 @@ UINT soundmng_create(UINT rate, UINT ms) {
 		(rate != 11025) && (rate != 22050) && (rate != 44100)) {
 		goto stcre_err1;
 	}
+
 	if (ms < 40) {
 		ms = 40;
 	}
@@ -135,9 +136,11 @@ UINT soundmng_create(UINT rate, UINT ms) {
 	vermouth_module = midimod_create(rate);
 	midimod_loadall(vermouth_module);
 #endif
+
 #if defined(MT32SOUND_DLL)
 	mt32sound_setrate(rate);
 #endif
+
 	dsstreamevent = (UINT8)-1;
 	return(samples);
 

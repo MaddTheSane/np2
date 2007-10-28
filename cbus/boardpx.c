@@ -622,7 +622,7 @@ void boardpx1_reset(void) {
 	fmtimer_reset(np2cfg.spbopt & 0xc0);
 	opn.channels = 6;
 	opngen_setcfg(6, OPN_STEREO | 0x03f);
-	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
+	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
 	opn.base = ((np2cfg.spbopt & 0x10)?0x000:0x100);
 }
 
@@ -653,7 +653,6 @@ static const IOOUT spr_o2[4] = {
 static const IOINP spr_i2[4] = {
 			spr_i488,	spr_i48a,	spr_i48c,	spr_i48e};
 
-
 void boardpx1_reset(void) {
 
 	fmtimer_reset(np2cfg.spbopt & 0xc0);
@@ -661,8 +660,8 @@ void boardpx1_reset(void) {
 	opn.channels = 12;
 	opn2.reg[0x2ff] = 0;
 	opn2.channels = 12;
-	opngen_setcfg(24, OPN_STEREO | 0x0fff);
-	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
+	opngen_setcfg(24, OPN_STEREO | 0x00ffffff);
+	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
 	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
 }
 
@@ -692,9 +691,22 @@ void boardpx1_bind(void) {
 	cbuscore_attachsndex(0x588, spr_o, spr_i);
 	cbuscore_attachsndex(0x088, spb_o2, spb_i2);
 	cbuscore_attachsndex(0x488, spr_o2, spr_i2);
-
 }
 
+
+static void extendchannelx2(REG8 enable) {
+
+	opn3.extend = enable;
+	if (enable) {
+		opn3.channels = 6;
+		opngen_setcfg(30, OPN_STEREO | 0x07000000);
+	}
+	else {
+		opn3.channels = 3;
+		opngen_setcfg(27, OPN_MONORAL | 0x07000000);
+		rhythm_setreg(&rhythm2, 0x10, 0xff);
+	}
+}
 
 void boardpx2_reset(void) {
 
@@ -703,11 +715,11 @@ void boardpx2_reset(void) {
 	opn.channels = 12;
 	opn2.reg[0x2ff] = 0;
 	opn2.channels = 12;
-	opn3.channels = 6;
-	opngen_setcfg(30, OPN_STEREO | 0x07fff);
-	soundrom_loadex(np2cfg.spbopt & 7, "SPB");
+	opn3.channels = 3;
+	opngen_setcfg(27, OPN_STEREO | 0x38ffffff);
+	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
 	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
-
+	fmboard_extreg(extendchannelx2);
 }
 
 void boardpx2_bind(void) {
@@ -742,11 +754,10 @@ void boardpx2_bind(void) {
 	pcm86io_bind();
 
 	cbuscore_attachsndex(0x188, spb_o, spb_i);
-	cbuscore_attachsndex(0x688, spr_o, spr_i);
+	cbuscore_attachsndex(0x588, spr_o, spr_i);
 	cbuscore_attachsndex(0x088, spb_o2, spb_i2);
 	cbuscore_attachsndex(0x488, spr_o2, spr_i2);
 	cbuscore_attachsndex(0x288, p86_o3, p86_i3);
-
 }
 
 #endif	// defined(SUPPORT_PX)

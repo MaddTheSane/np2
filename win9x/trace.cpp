@@ -325,7 +325,12 @@ void trace_init(void) {
 		}
 	}
 
+#if 1
 	tracewin.en = 4;
+#else
+	tracewin.en = 1;
+	tracewin.tf = textfile_create(OEMTEXT("traceout.txt"), 0x800);
+#endif
 
 	tracecfg.posx = CW_USEDEFAULT;
 	tracecfg.posy = CW_USEDEFAULT;

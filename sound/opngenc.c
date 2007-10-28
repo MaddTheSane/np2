@@ -442,7 +442,7 @@ void opngen_reset(void) {
 	}
 }
 
-void opngen_setcfg(REG8 maxch, UINT flag) {
+void opngen_setcfg(REG8 maxch, UINT32 flag) {
 
 	OPNCH	*ch;
 	UINT	i;

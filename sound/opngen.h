@@ -7,9 +7,9 @@ enum {
 #endif	// defined(SUPPORT_PX)
 	OPNA_CLOCK		= 55466 * 72,
 
-	OPN_CHMASK		= 0x8000,
-	OPN_STEREO		= 0x8000,
-	OPN_MONORAL		= 0x0000
+	OPN_CHMASK		= 0x80000000,
+	OPN_STEREO		= 0x80000000,
+	OPN_MONORAL		= 0x00000000
 };
 
 
@@ -170,7 +170,7 @@ void opngen_setvol(UINT vol);
 void opngen_setVR(REG8 channel, REG8 value);
 
 void opngen_reset(void);
-void opngen_setcfg(REG8 maxch, UINT flag);
+void opngen_setcfg(REG8 maxch, UINT32 flag);
 void opngen_setextch(UINT chnum, REG8 data);
 void opngen_setreg(REG8 chbase, UINT reg, REG8 value);
 void opngen_keyon(UINT chnum, REG8 value);

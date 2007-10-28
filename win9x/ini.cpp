@@ -550,7 +550,7 @@ static const PFTBL iniitem[] = {
 	PFVAL("fscrn_cx", PFRO_SINT32,		&np2oscfg.fscrn_cx),
 	PFVAL("fscrn_cy", PFRO_SINT32,		&np2oscfg.fscrn_cy),
 	PFVAL("fscrnbpp", PFRO_UINT8,		&np2oscfg.fscrnbpp),
-	PFVAL("fscrnmod", PFRO_HEX8,		&np2oscfg.fscrnmod),
+	PFVAL("fscrnmod", PFTYPE_HEX8,		&np2oscfg.fscrnmod),
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)};
 
 

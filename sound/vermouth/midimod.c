@@ -380,7 +380,7 @@ static BRESULT VERMOUTHCL cfgfile_load(MIDIMOD mod, const OEMCHAR *filename,
 		(midimod_getfile(mod, filename, buf, NELEMENTS(buf)) != SUCCESS)) {
 		goto cfl_err;
 	}
-//	TRACEOUT(("open: %s", buf));
+// TRACEOUT(("open: %s", buf));
 	tfh = textfile_open(buf, 0x1000);
 	if (tfh == NULL) {
 		goto cfl_err;

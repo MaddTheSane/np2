@@ -56,12 +56,12 @@ typedef struct {
 	UINT8		keymax;
 	UINT8		fmmax;
 	UINT8		psgmax;
-	UINT8		fmpos[KEYDISP_FMMAX];
+	UINT8		fmpos[KEYDISP_FMCHMAX];
 	UINT8		psgpos[KEYDISP_PSGMAX];
-	UINT		fmreg[KEYDISP_FMMAX];
+	const UINT8	*pfmreg[KEYDISP_FMCHMAX];
 	KDDELAY		delay;
 	KDCHANNEL	ch[KEYDISP_CHMAX];
-	KDFMCTRL	fmctl[KEYDISP_FMMAX];
+	KDFMCTRL	fmctl[KEYDISP_FMCHMAX];
 	KDPSGCTRL	psgctl[KEYDISP_PSGMAX];
 	UINT8		pal8[KEYDISP_PALS];
 	UINT16		pal16[KEYDISP_LEVEL*2];
@@ -295,13 +295,17 @@ static void fmkeyoff(UINT8 ch, KDFMCTRL *k) {
 
 static void fmkeyon(UINT8 ch, KDFMCTRL *k) {
 
-	UINT	reg;
+	const UINT8 *pReg;
 
 	fmkeyoff(ch, k);
-	reg = keydisp.fmreg[ch] + 0xa0;
-	k->fnum[0] = ((opn.reg[reg + 4] & 0x3f) << 8) + opn.reg[reg];
-	k->lastnote[0] = getfmnote(k->fnum[0]);
-	delaysetevent(keydisp.fmpos[ch], (UINT8)(k->lastnote[0] | 0x80));
+	pReg = keydisp.pfmreg[ch];
+	if (pReg)
+	{
+		pReg = pReg + 0xa0;
+		k->fnum[0] = ((pReg[4] & 0x3f) << 8) + pReg[0];
+		k->lastnote[0] = getfmnote(k->fnum[0]);
+		delaysetevent(keydisp.fmpos[ch], (UINT8)(k->lastnote[0] | 0x80));
+	}
 }
 
 static void fmkeyreset(void) {
@@ -335,23 +339,27 @@ static void fmkeysync(void) {
 
 	UINT8		ch;
 	KDFMCTRL	*k;
-	UINT16		reg;
+	const UINT8 *pReg;
 	UINT16		fnum;
 
 	for (ch=0, k=keydisp.fmctl; ch<keydisp.fmmax; ch++, k++) {
 		if (k->flag) {
-			reg = keydisp.fmreg[ch] + 0xa0;
-			fnum = ((opn.reg[reg + 4] & 0x3f) << 8) + opn.reg[reg];
-			if (k->fnum[0] != fnum) {
-				UINT8 n;
-				k->fnum[0] = fnum;
-				n = getfmnote(fnum);
-				if (k->lastnote[0] != n) {
-					fmkeyoff(ch, k);
-				}
-				k->lastnote[0] = n;
-				delaysetevent(keydisp.fmpos[ch],
+			pReg = keydisp.pfmreg[ch];
+			if (pReg)
+			{
+				pReg = pReg + 0xa0;
+				fnum = ((pReg[4] & 0x3f) << 8) + pReg[0];
+				if (k->fnum[0] != fnum) {
+					UINT8 n;
+					k->fnum[0] = fnum;
+					n = getfmnote(fnum);
+					if (k->lastnote[0] != n) {
+						fmkeyoff(ch, k);
+					}
+					k->lastnote[0] = n;
+					delaysetevent(keydisp.fmpos[ch],
 											(UINT8)(k->lastnote[0] | 0x80));
+				}
 			}
 		}
 	}
@@ -517,13 +525,29 @@ static void setfmhdl(UINT8 items, UINT base) {
 
 	while(items--) {
 		if ((keydisp.keymax < KEYDISP_CHMAX) &&
-			(keydisp.fmmax < KEYDISP_FMMAX)) {
+			(keydisp.fmmax < KEYDISP_FMCHMAX)) {
 			keydisp.fmpos[keydisp.fmmax] = keydisp.keymax++;
-			keydisp.fmreg[keydisp.fmmax] = base;
+			keydisp.pfmreg[keydisp.fmmax] = opn.reg + base;
 			keydisp.fmmax++;
 			base++;
 			if ((base & 3) == 3) {
 				base += 0x100 - 3;
+			}
+		}
+	}
+}
+
+static void setfmhdlex(const OPN_T *pOpn, UINT nItems, UINT nBase) {
+
+	while(nItems--) {
+		if ((keydisp.keymax < KEYDISP_CHMAX) &&
+			(keydisp.fmmax < KEYDISP_FMCHMAX)) {
+			keydisp.fmpos[keydisp.fmmax] = keydisp.keymax++;
+			keydisp.pfmreg[keydisp.fmmax] = pOpn->reg + nBase;
+			keydisp.fmmax++;
+			nBase++;
+			if ((nBase & 3) == 3) {
+				nBase += 0x100 - 3;
 			}
 		}
 	}
@@ -545,6 +569,25 @@ void keydisp_setfmboard(UINT b) {
 	keydisp.keymax = 0;
 	keydisp.fmmax = 0;
 	keydisp.psgmax = 0;
+
+#if defined(SUPPORT_PX)
+	if (b == 0x30)
+	{
+		setfmhdlex(&opn, 12, 0);
+		setfmhdlex(&opn2, 12, 0);
+		setpsghdl(2);
+		b = 0;
+	}
+	if (b == 0x50)
+	{
+		setfmhdlex(&opn, 12, 0);
+		setfmhdlex(&opn2, 12, 0);
+		setfmhdlex(&opn3, 6, 0);
+		setpsghdl(3);
+		b = 0;
+	}
+
+#endif	// defined(SUPPORT_PX)
 
 	if (b & 0x02) {
 		if (!(b & 0x04)) {

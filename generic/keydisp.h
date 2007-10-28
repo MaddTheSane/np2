@@ -25,9 +25,22 @@ enum {
 	KEYDISP_MODEMIDI
 };
 
+#if defined(SUPPORT_PX)
+enum {
+	KEYDISP_CHMAX		= 39,
+	KEYDISP_FMCHMAX		= 30,
+	KEYDISP_PSGMAX		= 3
+};
+#else	// defined(SUPPORT_PX)
+enum {
+	KEYDISP_CHMAX		= 16,
+	KEYDISP_FMCHMAX		= 12,
+	KEYDISP_PSGMAX		= 3
+};
+#endif	// defined(SUPPORT_PX)
+
 enum {
 	KEYDISP_NOTEMAX		= 16,
-	KEYDISP_CHMAX		= 16,
 
 	KEYDISP_KEYCX		= 28,
 	KEYDISP_KEYCY		= 14,
@@ -38,8 +51,6 @@ enum {
 	KEYDISP_HEIGHT		= (KEYDISP_KEYCY * KEYDISP_CHMAX) + 1,
 
 	KEYDISP_DELAYEVENTS	= 2048,
-	KEYDISP_FMMAX		= 12,
-	KEYDISP_PSGMAX		= 3
 };
 
 enum {
