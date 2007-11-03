@@ -886,23 +886,23 @@ END
 
 IDR_SYSKEYDISP MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Key display"                 IDM_KEYDISP
+    MENUITEM "&Key display",                IDM_KEYDISP
 END
 
 IDR_SYSSOFTKBD MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Soft keyboard"               IDM_SOFTKBD
+    MENUITEM "&Soft keyboard",              IDM_SOFTKBD
 END
 
 IDR_SYSDEBUG32 MENU DISCARDABLE 
 BEGIN
-    MENUITEM "Memory debug"                 IDM_MEMDBG32
+    MENUITEM "Memory debug",                IDM_MEMDBG32
 END
 
 IDR_SYSDEBUG MENU DISCARDABLE 
 BEGIN
-    MENUITEM "Memory dump"                  IDM_MEMORYDUMP
-    MENUITEM "Debug utility"                IDM_DEBUGUTY
+    MENUITEM "Memory dump",                 IDM_MEMORYDUMP
+    MENUITEM "Debug utility",               IDM_DEBUGUTY
     MENUITEM SEPARATOR
 END
 

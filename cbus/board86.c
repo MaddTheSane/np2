@@ -168,16 +168,16 @@ static const IOINP opna_i[4] = {
 			opna_i188,	opna_i18a,	opna_i18c,	opna_i18e};
 
 
-void board86_reset(void) {
+void board86_reset(const NP2CFG *pConfig) {
 
-	fmtimer_reset((np2cfg.snd86opt & 0x10) |
-					((np2cfg.snd86opt & 0x4) << 5) |
-					((np2cfg.snd86opt & 0x8) << 3));
+	fmtimer_reset((pConfig->snd86opt & 0x10) |
+					((pConfig->snd86opt & 0x4) << 5) |
+					((pConfig->snd86opt & 0x8) << 3));
 	opngen_setcfg(3, OPN_STEREO | 0x038);
-	if (np2cfg.snd86opt & 2) {
+	if (pConfig->snd86opt & 2) {
 		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
-	opn.base = (np2cfg.snd86opt & 0x01)?0x000:0x100;
+	opn.base = (pConfig->snd86opt & 0x01)?0x000:0x100;
 	fmboard_extreg(extendchannel);
 }
 

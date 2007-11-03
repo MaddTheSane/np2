@@ -11,7 +11,7 @@ extern "C" {
 
 void artic_callback(void);
 
-void artic_reset(void);
+void artic_reset(const NP2CFG *pConfig);
 void artic_bind(void);
 REG16 IOINPCALL artic_r16(UINT port);
 

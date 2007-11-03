@@ -90,7 +90,7 @@ void midiwaitout(NEVENTITEM item);
 void mpu98ii_construct(void);
 void mpu98ii_destruct(void);
 
-void mpu98ii_reset(void);
+void mpu98ii_reset(const NP2CFG *pConfig);
 void mpu98ii_bind(void);
 
 void mpu98ii_callback(void);

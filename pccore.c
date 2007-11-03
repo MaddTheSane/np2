@@ -104,54 +104,61 @@ const OEMCHAR	*p;
 
 // ----
 
-static void pccore_set(void) {
-
+static void pccore_set(const NP2CFG *pConfig)
+{
 	UINT8	model;
 	UINT32	multiple;
 	UINT8	extsize;
 
 	ZeroMemory(&pccore, sizeof(pccore));
 	model = PCMODEL_VX;
-	if (!milstr_cmp(np2cfg.model, str_VM)) {
+	if (!milstr_cmp(pConfig->model, str_VM)) {
 		model = PCMODEL_VM;
 	}
-	else if (!milstr_cmp(np2cfg.model, str_EPSON)) {
+	else if (!milstr_cmp(pConfig->model, str_EPSON)) {
 		model = PCMODEL_EPSON | PCMODEL_VM;
 	}
 	pccore.model = model;
 
-	if (np2cfg.baseclock >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2)) {
+	if (np2cfg.baseclock >= ((PCBASECLOCK25 + PCBASECLOCK20) / 2))
+	{
 		pccore.baseclock = PCBASECLOCK25;			// 2.5MHz
 		pccore.cpumode = 0;
 	}
-	else {
+	else
+	{
 		pccore.baseclock = PCBASECLOCK20;			// 2.0MHz
 		pccore.cpumode = CPUMODE_8MHZ;
 	}
-	multiple = np2cfg.multiple;
-	if (multiple == 0) {
+	multiple = pConfig->multiple;
+	if (multiple == 0)
+	{
 		multiple = 1;
 	}
-	else if (multiple > 32) {
+	else if (multiple > 32)
+	{
 		multiple = 32;
 	}
 	pccore.multiple = multiple;
 	pccore.realclock = pccore.baseclock * multiple;
 
 	// HDDの接続 (I/Oの使用状態が変わるので..
-	if (np2cfg.dipsw[1] & 0x20) {
+	if (pConfig->dipsw[1] & 0x20)
+	{
 		pccore.hddif |= PCHDD_IDE;
 #if defined(SUPPORT_IDEIO)
 		sxsi_setdevtype(0x02, SXSIDEV_CDROM);
 #endif
 	}
-	else {
+	else
+	{
 		sxsi_setdevtype(0x02, SXSIDEV_NC);
 	}
 
 	// 拡張メモリ
 	extsize = 0;
-	if (!(np2cfg.dipsw[2] & 0x80)) {
+	if (!(pConfig->dipsw[2] & 0x80))
+	{
 		extsize = np2cfg.EXTMEM;
 #if defined(CPUCORE_IA32)
 		extsize = min(extsize, 63);
@@ -160,17 +167,19 @@ static void pccore_set(void) {
 #endif
 	}
 	pccore.extmem = extsize;
-	CopyMemory(pccore.dipsw, np2cfg.dipsw, 3);
+	CopyMemory(pccore.dipsw, pConfig->dipsw, 3);
 
 	// サウンドボードの接続
-	pccore.sound = np2cfg.SOUND_SW;
+	pccore.sound = pConfig->SOUND_SW;
 
 	// その他CBUSの接続
 	pccore.device = 0;
-	if (np2cfg.pc9861enable) {
+	if (pConfig->pc9861enable)
+	{
 		pccore.device |= PCCBUS_PC9861K;
 	}
-	if (np2cfg.mpuenable) {
+	if (pConfig->mpuenable)
+	{
 		pccore.device |= PCCBUS_MPU98;
 	}
 }
@@ -179,12 +188,13 @@ static void pccore_set(void) {
 // --------------------------------------------------------------------------
 
 #if !defined(DISABLE_SOUND)
-static void sound_init(void) {
-
+static void sound_init()
+{
 	UINT	rate;
 
 	rate = np2cfg.samplingrate;
-	if ((rate != 11025) && (rate != 22050) && (rate != 44100)) {
+	if ((rate != 11025) && (rate != 22050) && (rate != 44100))
+	{
 		rate = 0;
 	}
 	sound_create(rate, np2cfg.delayms);
@@ -236,7 +246,7 @@ void pccore_init(void) {
 	fddfile_initialize();
 
 #if !defined(DISABLE_SOUND)
-	sound_init();
+	sound_init(&np2cfg);
 #endif
 
 	rs232c_construct();
@@ -303,7 +313,7 @@ void pccore_reset(void) {
 	if (soundrenewal) {
 		soundrenewal = 0;
 		sound_term();
-		sound_init();
+		sound_init(&np2cfg);
 	}
 #endif
 	ZeroMemory(mem, 0x110000);
@@ -312,11 +322,12 @@ void pccore_reset(void) {
 	ZeroMemory(mem + FONT_ADRS, 0x08000);
 
 	//メモリスイッチ
-	for (i=0; i<8; i++) {
+	for (i=0; i<8; i++)
+	{
 		mem[0xa3fe2 + i*4] = np2cfg.memsw[i];
 	}
 
-	pccore_set();
+	pccore_set(&np2cfg);
 	nevent_allreset();
 
 	CPU_RESET();
@@ -355,9 +366,9 @@ void pccore_reset(void) {
 	fddfile_reset2dmode();
 	bios0x18_16(0x20, 0xe1);
 
-	iocore_reset();								// サウンドでpicを呼ぶので…
-	cbuscore_reset();
-	fmboard_reset(pccore.sound);
+	iocore_reset(&np2cfg);								// サウンドでpicを呼ぶので…
+	cbuscore_reset(&np2cfg);
+	fmboard_reset(&np2cfg, pccore.sound);
 
 	MEMM_ARCH((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();

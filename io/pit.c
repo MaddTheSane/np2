@@ -412,7 +412,7 @@ static const IOOUT pito71[4] = {
 static const IOINP piti71[4] = {
 					pit_i71,	pit_i71,	pit_i71,	NULL};
 
-void itimer_reset(void) {
+void itimer_reset(const NP2CFG *pConfig) {
 
 	UINT16	beepcnt;
 
@@ -436,6 +436,8 @@ void itimer_reset(void) {
 	beep_lheventset(1);												// ver0.79
 	beep_hzset(beepcnt);
 //	setrs232cevent(0, NEVENT_ABSOLUTE);
+
+	(void)pConfig;
 }
 
 void itimer_bind(void) {

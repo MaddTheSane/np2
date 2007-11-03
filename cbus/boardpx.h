@@ -5,10 +5,10 @@
 extern "C" {
 #endif
 
-void boardpx1_reset(void);
+void boardpx1_reset(const NP2CFG *pConfig);
 void boardpx1_bind(void);
 
-void boardpx2_reset(void);
+void boardpx2_reset(const NP2CFG *pConfig);
 void boardpx2_bind(void);
 
 #ifdef __cplusplus

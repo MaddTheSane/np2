@@ -43,7 +43,7 @@ void pc9861ch2cb(NEVENTITEM item);
 void pc9861k_initialize(void);
 void pc9861k_deinitialize(void);
 
-void pc9861k_reset(void);
+void pc9861k_reset(const NP2CFG *pConfig);
 void pc9861k_bind(void);
 
 void pc9861k_midipanic(void);

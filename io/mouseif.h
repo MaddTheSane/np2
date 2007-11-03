@@ -22,7 +22,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void mouseif_reset(void);
+void mouseif_reset(const NP2CFG *pConfig);
 void mouseif_bind(void);
 void mouseif_sync(void);
 void mouseint(NEVENTITEM item);

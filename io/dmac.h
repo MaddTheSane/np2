@@ -93,7 +93,7 @@ void DMACCALL dma_dummyout(REG8 data);
 REG8 DMACCALL dma_dummyin(void);
 REG8 DMACCALL dma_dummyproc(REG8 func);
 
-void dmac_reset(void);
+void dmac_reset(const NP2CFG *pConfig);
 void dmac_bind(void);
 void dmac_extbind(void);
 

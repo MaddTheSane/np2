@@ -5,6 +5,11 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 #define	IDC_STATIC	-1
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
 IDD_CONFIG DIALOG DISCARDABLE  0, 0, 182, 200
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configure"
@@ -45,6 +50,48 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,170,162,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,184,162,10
+    DEFPUSHBUTTON   "&OK",IDOK,130,8,44,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,130,26,44,14
+END
+
+IDD_CONFIGNOMMX DIALOG DISCARDABLE  0, 0, 182, 186
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configure"
+CLASS "np2dialog"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
+BEGIN
+    GROUPBOX        "CPU",IDC_STATIC,8,8,110,44
+    COMBOBOX        IDC_BASECLOCK,14,22,54,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_GROUP | WS_TABSTOP
+    LTEXT           "x",IDC_STATIC,72,26,8,8
+    COMBOBOX        IDC_MULTIPLE,80,22,32,80,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    RTEXT           "",IDC_CLOCKMSG,14,41,80,8
+    LTEXT           "MHz",IDC_STATIC,96,41,16,8
+    GROUPBOX        "Architecture",IDC_STATIC,8,56,166,28
+    CONTROL         "PC-9801VM",IDC_MODELVM,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,16,68,54,10
+    CONTROL         "PC-9801VX",IDC_MODELVX,"Button",BS_AUTORADIOBUTTON,72,
+                    68,54,10
+    CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
+                    68,44,10
+    GROUPBOX        "Sound",IDC_STATIC,8,88,166,46
+    LTEXT           "Sampling Rate",IDC_STATIC,14,101,50,8
+    CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,66,100,34,10
+    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,102,100,
+                    34,10
+    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,100,
+                    34,10
+    LTEXT           "Buffer",IDC_STATIC,14,118,50,8
+    EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
+    LTEXT           "ms",IDC_STATIC,102,118,16,8
+    CONTROL         "Allow Resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,142,162,10
+    CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,156,162,10
+    CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,170,162,10
     DEFPUSHBUTTON   "&OK",IDOK,130,8,44,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,130,26,44,14
 END
@@ -576,6 +623,50 @@ BEGIN
                     ES_WANTRETURN | WS_VSCROLL
 END
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_SYS MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Tool Window",                IDM_TOOLWIN
+    MENUITEM SEPARATOR
+    MENUITEM "&Centering",                  IDM_SCREENCENTER
+    MENUITEM "&Window Snap",                IDM_SNAPENABLE
+    MENUITEM "&Background",                 IDM_BACKGROUND
+    MENUITEM "Back&ground Sound",           IDM_BGSOUND
+    MENUITEM SEPARATOR
+    MENUITEM " 320x200",                    IDM_SCRNMUL4
+    MENUITEM " 480x300",                    IDM_SCRNMUL6
+    MENUITEM " 640x400",                    IDM_SCRNMUL8
+    MENUITEM " 800x500",                    IDM_SCRNMUL10
+    MENUITEM " 960x600",                    IDM_SCRNMUL12
+    MENUITEM "1280x800",                    IDM_SCRNMUL16
+    MENUITEM SEPARATOR
+END
+
+IDR_SYSKEYDISP MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Key display",                IDM_KEYDISP
+END
+
+IDR_SYSSOFTKBD MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Soft keyboard",              IDM_SOFTKBD
+END
+
+IDR_SYSDEBUG32 MENU DISCARDABLE 
+BEGIN
+    MENUITEM "Memory debug",                IDM_MEMDBG32
+END
+
+IDR_SYSDEBUG MENU DISCARDABLE 
+BEGIN
+    MENUITEM "Memory dump",                 IDM_MEMORYDUMP
+    MENUITEM "Debug utility",               IDM_DEBUGUTY
+    MENUITEM SEPARATOR
+END
 
 IDR_MAIN MENU DISCARDABLE 
 BEGIN
@@ -688,6 +779,151 @@ BEGIN
     END
 END
 
+IDR_STAT MENU DISCARDABLE 
+BEGIN
+    POPUP "S&tat"
+    BEGIN
+        MENUITEM "Save 0",                      IDM_FLAGSAVE0
+        MENUITEM "Save 1",                      IDM_FLAGSAVE1
+        MENUITEM "Save 2",                      IDM_FLAGSAVE2
+        MENUITEM "Save 3",                      IDM_FLAGSAVE3
+        MENUITEM "Save 4",                      IDM_FLAGSAVE4
+        MENUITEM "Save 5",                      IDM_FLAGSAVE5
+        MENUITEM "Save 6",                      IDM_FLAGSAVE6
+        MENUITEM "Save 7",                      IDM_FLAGSAVE7
+        MENUITEM "Save 8",                      IDM_FLAGSAVE8
+        MENUITEM "Save 9",                      IDM_FLAGSAVE9
+        MENUITEM SEPARATOR
+        MENUITEM "Load 0",                      IDM_FLAGLOAD0
+        MENUITEM "Load 1",                      IDM_FLAGLOAD1
+        MENUITEM "Load 2",                      IDM_FLAGLOAD2
+        MENUITEM "Load 3",                      IDM_FLAGLOAD3
+        MENUITEM "Load 4",                      IDM_FLAGLOAD4
+        MENUITEM "Load 5",                      IDM_FLAGLOAD5
+        MENUITEM "Load 6",                      IDM_FLAGLOAD6
+        MENUITEM "Load 7",                      IDM_FLAGLOAD7
+        MENUITEM "Load 8",                      IDM_FLAGLOAD8
+        MENUITEM "Load 9",                      IDM_FLAGLOAD9
+    END
+END
+
+IDR_FDD1MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD1EJECT
+    END
+END
+
+IDR_FDD2MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&2"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD2OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD2EJECT
+    END
+END
+
+IDR_FDD3MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&3"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD3OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD3EJECT
+    END
+END
+
+IDR_FDD4MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "FDD&4"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_FDD4OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_FDD4EJECT
+    END
+END
+
+IDR_IDEMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "IDE #0"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE0OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE0EJECT
+    END
+    POPUP "IDE #1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE1EJECT
+    END
+    POPUP "IDE #2"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE2OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_IDE2EJECT
+    END
+END
+
+IDR_SASIMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "SASI #0"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE0OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE0EJECT
+    END
+    POPUP "SASI #1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_IDE1EJECT
+    END
+END
+
+IDR_SCSIMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "SCSI #0"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI0OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI0EJECT
+    END
+    POPUP "SCSI #1"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI1OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI1EJECT
+    END
+    POPUP "SCSI #2"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI2OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI2EJECT
+    END
+    POPUP "SCSI #3"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_SCSI3OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDM_SCSI3EJECT
+    END
+END
+
+IDR_PXMENU MENU DISCARDABLE 
+BEGIN
+    MENUITEM "Otomi x2",                    IDM_PX1
+    MENUITEM "Otomi x2 + 86",               IDM_PX2
+END
+
+IDR_WAVEREC MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Wave record",                IDM_WAVEREC
+END
+
 IDR_TOOLWIN MENU DISCARDABLE 
 BEGIN
     MENUITEM "&Skin",                       IDM_SKIN
@@ -727,7 +963,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Seg = &CS",                   IDM_SEGCS
         MENUITEM "Seg = &DS",                   IDM_SEGDS
-        MENUITEM "Seg = ES",                    IDM_SEGES
+        MENUITEM "Seg = &ES",                   IDM_SEGES
         MENUITEM "Seg = &SS",                   IDM_SEGSS
         MENUITEM "Seg = &TEXT",                 IDM_SEGTEXT
         MENUITEM SEPARATOR
@@ -742,123 +978,45 @@ BEGIN
     END
 END
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
 
 NP2BMP                  BITMAP  DISCARDABLE     "ICONS\\nekop2.bmp"
 NP2TOOL                 BITMAP  DISCARDABLE     "ICONS\\np2tool.bmp"
 
-IDR_MANIFEST            24      MOVEABLE PURE   "np2.mnf"
+/////////////////////////////////////////////////////////////////////////////
+//
+// Manifest
+//
+
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "np2.mnf"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
 
 IDI_ICON1               ICON    DISCARDABLE     "ICONS\\Np2.ico"
 IDI_ICON2               ICON    DISCARDABLE     "ICONS\\NP2DEBUG.ICO"
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// EXTROM
+//
+
 SEEKWAV                 EXTROM  DISCARDABLE     "ICONS\\Fddseek.wav"
 SEEK1WAV                EXTROM  DISCARDABLE     "ICONS\\Fddseek1.wav"
 
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_TOOLWIN             "&Tool Window"
-    IDS_KEYDISP             "&Key display"
-    IDS_SOFTKBD             "&Soft keyboard"
-    IDS_SCREENCENTER        "&Centering"
-    IDS_SNAPENABLE          "&Window Snap"
-    IDS_BACKGROUND          "&Background"
-    IDS_BGSOUND             "Back&ground Sound"
-    IDS_SCRNMUL4            " 320x200"
-    IDS_SCRNMUL6            " 480x300"
-    IDS_SCRNMUL8            " 640x400"
-    IDS_SCRNMUL10           " 800x500"
-    IDS_SCRNMUL12           " 960x600"
-    IDS_SCRNMUL16           "1280x800"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_MEMDBG32            "Memory Debug"
-    IDS_MEMORYDUMP          "Memory Dump"
-    IDS_DEBUGUTY            "Debug Utility"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_WAVEREC             "&Wave Record"
-    IDS_CPUSAVE             "&i286 save"
-    IDS_PX1                 "PX1"
-    IDS_PX2                 "PX2"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STAT                "S&tat"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATSAVE0           "Save 0"
-    IDS_STATSAVE1           "Save 1"
-    IDS_STATSAVE2           "Save 2"
-    IDS_STATSAVE3           "Save 3"
-    IDS_STATSAVE4           "Save 4"
-    IDS_STATSAVE5           "Save 5"
-    IDS_STATSAVE6           "Save 6"
-    IDS_STATSAVE7           "Save 7"
-    IDS_STATSAVE8           "Save 8"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATSAVE9           "Save 9"
-    IDS_STATLOAD0           "Load 0"
-    IDS_STATLOAD1           "Load 1"
-    IDS_STATLOAD2           "Load 2"
-    IDS_STATLOAD3           "Load 3"
-    IDS_STATLOAD4           "Load 4"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATLOAD5           "Load 5"
-    IDS_STATLOAD6           "Load 6"
-    IDS_STATLOAD7           "Load 7"
-    IDS_STATLOAD8           "Load 8"
-    IDS_STATLOAD9           "Load 9"
-END
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_HDD                 "&HardDisk"
-    IDS_OPEN                "&Open..."
-    IDS_EJECT               "&Eject"
-    IDS_REMOVE              "&Remove"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_FDD1                "FDD&1"
-    IDS_FDD2                "FDD&2"
-    IDS_FDD3                "FDD&3"
-    IDS_FDD4                "FDD&4"
-    IDS_SASI1               "SASI #1"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SASI2               "SASI #2"
-    IDS_IDE0                "IDE #0"
-    IDS_IDE1                "IDE #1"
-    IDS_IDE2                "IDE #2"
-    IDS_IDE3                "IDE #3"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SCSI0               "SCSI #0"
-    IDS_SCSI1               "SCSI #1"
-    IDS_SCSI2               "SCSI #2"
-    IDS_SCSI3               "SCSI #3"
-    IDS_SCSI4               "SCSI #4"
-    IDS_SCSI5               "SCSI #5"
-    IDS_SCSI6               "SCSI #6"
-    IDS_SCSI7               "SCSI #7"
 END
 
 STRINGTABLE DISCARDABLE 

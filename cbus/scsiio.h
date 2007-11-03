@@ -28,7 +28,7 @@ extern	_SCSIIO		scsiio;
 
 void scsiioint(NEVENTITEM item);
 
-void scsiio_reset(void);
+void scsiio_reset(const NP2CFG *pConfig);
 void scsiio_bind(void);
 
 #ifdef __cplusplus

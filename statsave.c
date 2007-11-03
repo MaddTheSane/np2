@@ -892,7 +892,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	OPNKEY	opnkey;
 
 	ret = statflag_read(sfh, &usesound, sizeof(usesound));
-	fmboard_reset(usesound);
+	fmboard_reset(&np2cfg, usesound);
 
 	switch(usesound) {
 		case 0x01:
@@ -1456,9 +1456,9 @@ const SFENTRY	*tblterm;
 	sound_reset();
 	fddmtrsnd_bind();
 
-	iocore_reset();								// サウンドでpicを呼ぶので…
-	cbuscore_reset();
-	fmboard_reset(pccore.sound);
+	iocore_reset(&np2cfg);							// サウンドでpicを呼ぶので…
+	cbuscore_reset(&np2cfg);
+	fmboard_reset(&np2cfg, pccore.sound);
 
 	done = FALSE;
 	while((!done) && (ret != STATFLAG_FAILURE)) {

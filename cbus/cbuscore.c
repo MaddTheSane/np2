@@ -9,7 +9,7 @@
 #include	"mpu98ii.h"
 
 
-static const IOCBFN resetfn[] = {
+static const FNIORESET resetfn[] = {
 #if defined(SUPPORT_IDEIO)
 			ideio_reset,
 #endif
@@ -25,7 +25,7 @@ static const IOCBFN resetfn[] = {
 			mpu98ii_reset,
 	};
 
-static const IOCBFN bindfn[] = {
+static const FNIOBIND bindfn[] = {
 #if defined(SUPPORT_IDEIO)
 			ideio_bind,
 #endif
@@ -42,14 +42,14 @@ static const IOCBFN bindfn[] = {
 	};
 
 
-void cbuscore_reset(void) {
+void cbuscore_reset(const NP2CFG *pConfig) {
 
-	iocore_cb(resetfn, NELEMENTS(resetfn));
+	iocore_cbreset(resetfn, NELEMENTS(resetfn), pConfig);
 }
 
 void cbuscore_bind(void) {
 
-	iocore_cb(bindfn, NELEMENTS(bindfn));
+	iocore_cbbind(bindfn, NELEMENTS(bindfn));
 }
 
 

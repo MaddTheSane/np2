@@ -19,7 +19,7 @@ extern "C" {
 
 void np2sysp_outstr(const void *arg1, long arg2);
 
-void np2sysp_reset(void);
+void np2sysp_reset(const NP2CFG *pConfig);
 void np2sysp_bind(void);
 
 #ifdef __cplusplus

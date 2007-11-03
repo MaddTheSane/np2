@@ -7,7 +7,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void necio_reset(void);
+void necio_reset(const NP2CFG *pConfig);
 void necio_bind(void);
 
 #ifdef __cplusplus

@@ -107,9 +107,11 @@ UINT32 IOOUTCALL pcidev_r32(UINT port) {
 	return(ret);
 }
 
-void pcidev_reset(void) {
+void pcidev_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&pcidev, sizeof(pcidev));
+
+	(void)pConfig;
 }
 
 void pcidev_bind(void) {

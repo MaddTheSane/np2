@@ -79,9 +79,11 @@ static REG8 IOINPCALL artic_i5f(UINT port) {
 
 // ---- I/F
 
-void artic_reset(void) {
+void artic_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&artic, sizeof(artic));
+
+	(void)pConfig;
 }
 
 void artic_bind(void) {

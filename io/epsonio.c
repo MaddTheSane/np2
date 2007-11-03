@@ -108,9 +108,11 @@ static REG8 IOINPCALL epsonio_ic13(UINT port) {
 
 // ---- I/F
 
-void epsonio_reset(void) {
+void epsonio_reset(const NP2CFG *pConfig) {
 
 	epsonio.cpumode = 'R';
+
+	(void)pConfig;
 }
 
 void epsonio_bind(void) {

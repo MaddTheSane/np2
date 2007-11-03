@@ -1022,7 +1022,7 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 	}
 }
 
-void ideio_reset(void) {
+void ideio_reset(const NP2CFG *pConfig) {
 
 	REG8	i;
 	IDEDRV	drv;
@@ -1035,6 +1035,8 @@ void ideio_reset(void) {
 
 	CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
 	TRACEOUT(("use simulate ide.rom"));
+
+	(void)pConfig;
 }
 
 void ideio_bind(void) {

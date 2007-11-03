@@ -27,7 +27,7 @@ static REG8 IOINPCALL fdd320_i55(UINT port) {
 static const IOINP fdd320i51[4] = {
 					fdd320_i51,	NULL,		fdd320_i55,	NULL};
 
-void fdd320_reset(void) {
+void fdd320_reset(const NP2CFG *pConfig) {
 
 	fdd320_stat = 0xff;
 }

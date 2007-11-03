@@ -440,7 +440,7 @@ static REG8 IOINPCALL sasiio_i82(UINT port) {
 
 // ----
 
-void sasiio_reset(void) {
+void sasiio_reset(const NP2CFG *pConfig) {
 
 	FILEH	fh;
 	UINT	r;
@@ -464,6 +464,8 @@ void sasiio_reset(void) {
 			TRACEOUT(("use simulate sasi.rom"));
 		}
 	}
+
+	(void)pConfig;
 }
 
 void sasiio_bind(void) {

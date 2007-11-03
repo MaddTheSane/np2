@@ -1061,17 +1061,19 @@ void mpu98ii_destruct(void) {
 	cm_mpu98 = NULL;
 }
 
-void mpu98ii_reset(void) {
+void mpu98ii_reset(const NP2CFG *pConfig) {
 
 	commng_destroy(cm_mpu98);
 	cm_mpu98 = NULL;
 
 	ZeroMemory(&mpu98, sizeof(mpu98));
 	mpu98.data = MPUMSG_ACK;
-	mpu98.port = 0xc0d0 | ((np2cfg.mpuopt & 0xf0) << 6);
-	mpu98.irqnum = mpuirqnum[np2cfg.mpuopt & 3];
+	mpu98.port = 0xc0d0 | ((pConfig->mpuopt & 0xf0) << 6);
+	mpu98.irqnum = mpuirqnum[pConfig->mpuopt & 3];
 	setdefaultcondition();
 //	pic_registext(mpu98.irqnum);
+
+	(void)pConfig;
 }
 
 void mpu98ii_bind(void) {

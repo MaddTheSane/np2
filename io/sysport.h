@@ -8,7 +8,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void systemport_reset(void);
+void systemport_reset(const NP2CFG *pConfig);
 void systemport_bind(void);
 
 #ifdef __cplusplus

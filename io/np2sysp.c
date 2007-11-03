@@ -275,9 +275,11 @@ static REG8 IOINPCALL np2sysp_i0e9(UINT port) {
 
 // ---- I/F
 
-void np2sysp_reset(void) {
+void np2sysp_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&np2sysp, sizeof(np2sysp));
+
+	(void)pConfig;
 }
 
 void np2sysp_bind(void) {

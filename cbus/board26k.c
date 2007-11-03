@@ -80,12 +80,12 @@ static const IOINP opn_i[4] = {
 			opn_i188,	opn_i18a,	NULL,		NULL};
 
 
-void board26k_reset(void) {
+void board26k_reset(const NP2CFG *pConfig) {
 
 	opngen_setcfg(3, 0);
-	fmtimer_reset(np2cfg.snd26opt & 0xc0);
-	soundrom_loadex(np2cfg.snd26opt & 7, OEMTEXT("26"));
-	opn.base = (np2cfg.snd26opt & 0x10)?0x000:0x100;
+	fmtimer_reset(pConfig->snd26opt & 0xc0);
+	soundrom_loadex(pConfig->snd26opt & 7, OEMTEXT("26"));
+	opn.base = (pConfig->snd26opt & 0x10)?0x000:0x100;
 }
 
 void board26k_bind(void) {

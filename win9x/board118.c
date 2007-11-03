@@ -287,7 +287,7 @@ static const IOOUT ymfr_o[4] = {
 			ymf_o188,	ymfr_o18a,	ymf_o18c,	ymfr_o18e};
 
 
-void board118_reset(void) {
+void board118_reset(const NP2CFG *pConfig) {
 
 	fmtimer_reset(0xc0);
 	opngen_setcfg(3, OPN_STEREO | 0x038);

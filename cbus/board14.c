@@ -186,10 +186,12 @@ static const IOINP musicgen_i1[4] = {
 		musicgen_i188,	musicgen_i188,	musicgen_i18c,	musicgen_i18e};
 
 
-void board14_reset(void) {
+void board14_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&musicgen, sizeof(musicgen));
 	soundrom_load(0xcc000, OEMTEXT("14"));
+
+	(void)pConfig;
 }
 
 void board14_bind(void) {

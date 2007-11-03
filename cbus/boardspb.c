@@ -249,13 +249,13 @@ static const IOINP spb_i[4] = {
 			spb_i188,	spb_i18a,	spb_i188,	spb_i18e};
 
 
-void boardspb_reset(void) {
+void boardspb_reset(const NP2CFG *pConfig) {
 
-	fmtimer_reset(np2cfg.spbopt & 0xc0);
+	fmtimer_reset(pConfig->spbopt & 0xc0);
 	opn.channels = 6;
 	opngen_setcfg(6, OPN_STEREO | 0x03f);
-	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
-	opn.base = ((np2cfg.spbopt & 0x10)?0x000:0x100);
+	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
+	opn.base = ((pConfig->spbopt & 0x10)?0x000:0x100);
 }
 
 void boardspb_bind(void) {
@@ -281,14 +281,14 @@ static const IOINP spr_i[4] = {
 			spr_i588,	spr_i58a,	spr_i58c,	spr_i58e};
 
 
-void boardspr_reset(void) {
+void boardspr_reset(const NP2CFG *pConfig) {
 
-	fmtimer_reset(np2cfg.spbopt & 0xc0);
+	fmtimer_reset(pConfig->spbopt & 0xc0);
 	opn.reg[0x2ff] = 0;
 	opn.channels = 12;
 	opngen_setcfg(12, OPN_STEREO | 0x03f);
-	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
-	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
+	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
+	opn.base = (pConfig->spbopt & 0x10)?0x000:0x100;
 }
 
 void boardspr_bind(void) {

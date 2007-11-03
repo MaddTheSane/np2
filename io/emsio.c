@@ -44,7 +44,7 @@ static REG8 IOINPCALL emsio_i08e9(UINT port) {
 
 // ---- I/F
 
-void emsio_reset(void) {
+void emsio_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&emsio, sizeof(emsio));
 #if 1 || !defined(CPUCORE_IA32)
@@ -54,6 +54,8 @@ void emsio_reset(void) {
 	emsio.addr[1] = 0xc4000;
 	emsio.addr[2] = 0xc8000;
 	emsio.addr[3] = 0xcc000;
+
+	(void)pConfig;
 }
 
 void emsio_bind(void) {

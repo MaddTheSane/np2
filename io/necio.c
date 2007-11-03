@@ -29,9 +29,11 @@ static void IOOUTCALL necio_o043d(UINT port, REG8 dat) {
 
 // ---- I/F
 
-void necio_reset(void) {
+void necio_reset(const NP2CFG *pConfig) {
 
 	necio.port0439 = 0xff;
+
+	(void)pConfig;
 }
 
 void necio_bind(void) {

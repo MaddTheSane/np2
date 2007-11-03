@@ -616,29 +616,6 @@ static const IOOUT p86_o3[4] = {
 static const IOINP p86_i3[4] = {
 			p86_i288,	p86_i28a,	p86_i288,	p86_i28e};
 
-/*
-void boardpx1_reset(void) {
-
-	fmtimer_reset(np2cfg.spbopt & 0xc0);
-	opn.channels = 6;
-	opngen_setcfg(6, OPN_STEREO | 0x03f);
-	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
-	opn.base = ((np2cfg.spbopt & 0x10)?0x000:0x100);
-}
-
-void boardpx1_bind(void) {
-
-	fmboard_fmrestore(0, 0);
-	fmboard_fmrestore(3, 1);
-	psggen_restore(&psg1);
-	fmboard_rhyrestore(&rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
-	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&rhythm);
-	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
-	cbuscore_attachsndex(0x188 - opn.base, spb_o, spb_i);
-}
-*/
 // ----
 
 static const IOOUT spr_o[4] = {
@@ -653,16 +630,16 @@ static const IOOUT spr_o2[4] = {
 static const IOINP spr_i2[4] = {
 			spr_i488,	spr_i48a,	spr_i48c,	spr_i48e};
 
-void boardpx1_reset(void) {
+void boardpx1_reset(const NP2CFG *pConfig) {
 
-	fmtimer_reset(np2cfg.spbopt & 0xc0);
+	fmtimer_reset(pConfig->spbopt & 0xc0);
 	opn.reg[0x2ff] = 0;
 	opn.channels = 12;
 	opn2.reg[0x2ff] = 0;
 	opn2.channels = 12;
 	opngen_setcfg(24, OPN_STEREO | 0x00ffffff);
-	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
-	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
+	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
+	opn.base = (pConfig->spbopt & 0x10)?0x000:0x100;
 }
 
 void boardpx1_bind(void) {
@@ -708,17 +685,17 @@ static void extendchannelx2(REG8 enable) {
 	}
 }
 
-void boardpx2_reset(void) {
+void boardpx2_reset(const NP2CFG *pConfig) {
 
-	fmtimer_reset(np2cfg.spbopt & 0xc0);
+	fmtimer_reset(pConfig->spbopt & 0xc0);
 	opn.reg[0x2ff] = 0;
 	opn.channels = 12;
 	opn2.reg[0x2ff] = 0;
 	opn2.channels = 12;
 	opn3.channels = 3;
 	opngen_setcfg(27, OPN_STEREO | 0x38ffffff);
-	soundrom_loadex(np2cfg.spbopt & 7, OEMTEXT("SPB"));
-	opn.base = (np2cfg.spbopt & 0x10)?0x000:0x100;
+	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
+	opn.base = (pConfig->spbopt & 0x10)?0x000:0x100;
 	fmboard_extreg(extendchannelx2);
 }
 

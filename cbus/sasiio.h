@@ -32,7 +32,7 @@ REG8 DMACCALL sasi_dmafunc(REG8 func);
 REG8 DMACCALL sasi_dataread(void);
 void DMACCALL sasi_datawrite(REG8 data);
 
-void sasiio_reset(void);
+void sasiio_reset(const NP2CFG *pConfig);
 void sasiio_bind(void);
 
 #ifdef __cplusplus

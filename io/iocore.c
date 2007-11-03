@@ -441,7 +441,8 @@ icbld_err:
 
 // ----
 
-static const IOCBFN resetfn[] = {
+static const FNIORESET resetfn[] =
+{
 			// PC-9801 System...
 			cgrom_reset,							crtc_reset,
 			dmac_reset,			gdc_reset,			fdc_reset,
@@ -458,9 +459,10 @@ static const IOCBFN resetfn[] = {
 #if defined(SUPPORT_PC9821)
 			pcidev_reset,
 #endif
-		};
+};
 
-static const IOCBFN bindfn[] = {
+static const FNIOBIND bindfn[] =
+{
 			// PC-9801 System...
 			cgrom_bind,			cpuio_bind,			crtc_bind,
 			dmac_bind,			gdc_bind,			fdc_bind,
@@ -477,26 +479,36 @@ static const IOCBFN bindfn[] = {
 #if defined(SUPPORT_PC9821)
 			pcidev_bind,
 #endif
-		};
+};
 
 
-void iocore_cb(const IOCBFN *cbfn, UINT count) {
-
-	while(count--) {
-		(*cbfn)();
-		cbfn++;
+void iocore_cbreset(const FNIORESET *pfn, UINT uCount, const NP2CFG *pConfig)
+{
+	while(uCount--)
+	{
+		(*pfn)(pConfig);
+		pfn++;
 	}
 }
 
-void iocore_reset(void) {
-
-	iocore_cb(resetfn, NELEMENTS(resetfn));
+void iocore_cbbind(const FNIOBIND *pfn, UINT uCount)
+{
+	while(uCount--)
+	{
+		(*pfn)();
+		pfn++;
+	}
 }
 
-void iocore_bind(void) {
+void iocore_reset(const NP2CFG *pConfig)
+{
+	iocore_cbreset(resetfn, NELEMENTS(resetfn), pConfig);
+}
 
+void iocore_bind(void)
+{
 	iocore.busclock = pccore.multiple;
-	iocore_cb(bindfn, NELEMENTS(bindfn));
+	iocore_cbbind(bindfn, NELEMENTS(bindfn));
 }
 
 void IOOUTCALL iocore_out8(UINT port, REG8 dat) {

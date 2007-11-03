@@ -61,10 +61,12 @@ static const IOOUT prto40[4] = {
 static const IOINP prti40[4] = {
 					NULL,		prt_i42,	NULL,		NULL};
 
-void printif_reset(void) {
+void printif_reset(const NP2CFG *pConfig) {
 
 	commng_destroy(cm_prt);
 	cm_prt = NULL;
+
+	(void)pConfig;
 }
 
 void printif_bind(void) {

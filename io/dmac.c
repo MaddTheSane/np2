@@ -252,13 +252,15 @@ static const IOOUT dmaco21[8] = {
 					dmac_o21,	dmac_o21,	dmac_o21,	dmac_o21,
 					dmac_o29,	NULL,		NULL,		NULL};
 
-void dmac_reset(void) {
+void dmac_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&dmac, sizeof(dmac));
 	dmac.lh = DMA16_LOW;
 	dmac.mask = 0xf;
 	dmac_procset();
 //	TRACEOUT(("sizeof(_DMACH) = %d", sizeof(_DMACH)));
+
+	(void)pConfig;
 }
 
 void dmac_bind(void) {

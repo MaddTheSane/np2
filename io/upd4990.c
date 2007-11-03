@@ -95,9 +95,11 @@ static void IOOUTCALL upd4990_o20(UINT port, REG8 dat) {
 
 static const IOOUT updo20[1] = {upd4990_o20};
 
-void uPD4990_reset(void) {
+void uPD4990_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&uPD4990, sizeof(uPD4990));
+
+	(void)pConfig;
 }
 
 void uPD4990_bind(void) {

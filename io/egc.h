@@ -46,7 +46,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void egc_reset(void);
+void egc_reset(const NP2CFG *pConfig);
 void egc_bind(void);
 void IOOUTCALL egc_w16(UINT port, REG16 value);
 

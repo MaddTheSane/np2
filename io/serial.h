@@ -39,7 +39,7 @@ extern "C" {
 
 void keyboard_callback(NEVENTITEM item);
 
-void keyboard_reset(void);
+void keyboard_reset(const NP2CFG *pConfig);
 void keyboard_bind(void);
 void keyboard_resetsignal(void);
 void keyboard_ctrl(REG8 data);
@@ -50,7 +50,7 @@ void keyboard_send(REG8 data);
 void rs232c_construct(void);
 void rs232c_destruct(void);
 
-void rs232c_reset(void);
+void rs232c_reset(const NP2CFG *pConfig);
 void rs232c_bind(void);
 void rs232c_open(void);
 void rs232c_callback(void);

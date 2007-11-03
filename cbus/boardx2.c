@@ -241,13 +241,15 @@ static const IOINP opna_i[4] = {
 			opna_i188,	opna_i18a,	opna_i18c,	opna_i18e};
 
 
-void boardx2_reset(void) {
+void boardx2_reset(const NP2CFG *pConfig) {
 
 	fmtimer_reset(0xc0);
 	opn.channels = 6;
 	opngen_setcfg(6, OPN_STEREO | 0x1c0);
 	soundrom_load(0xcc000, OEMTEXT("86"));
 	fmboard_extreg(extendchannel);
+
+	(void)pConfig;
 }
 
 void boardx2_bind(void) {

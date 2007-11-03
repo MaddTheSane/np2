@@ -6,10 +6,10 @@
 #define	IOINPCALL
 #endif
 
+typedef void (*FNIORESET)(const NP2CFG *pConfig);
+typedef void (*FNIOBIND)(void);
 typedef	void (IOOUTCALL *IOOUT)(UINT port, REG8 val);
 typedef	REG8 (IOINPCALL *IOINP)(UINT port);
-
-typedef void (*IOCBFN)(void);
 
 #include	"lsidef.h"
 
@@ -102,8 +102,9 @@ void iocore_create(void);
 void iocore_destroy(void);
 BRESULT iocore_build(void);
 
-void iocore_cb(const IOCBFN *cbfn, UINT count);
-void iocore_reset(void);
+void iocore_cbreset(const FNIORESET *pfn, UINT uCount, const NP2CFG *pConfig);
+void iocore_cbbind(const FNIOBIND *pfn, UINT uCount);
+void iocore_reset(const NP2CFG *pConfig);
 void iocore_bind(void);
 
 void IOOUTCALL iocore_out8(UINT port, REG8 dat);

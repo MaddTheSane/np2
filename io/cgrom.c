@@ -147,7 +147,7 @@ static const IOINP cgromia1[8] = {
 					NULL,		NULL,		NULL,		NULL,
 					cgrom_ia9,	NULL,		NULL,		NULL};
 
-void cgrom_reset(void) {
+void cgrom_reset(const NP2CFG *pConfig) {
 
 	CGWINDOW	cgw;
 
@@ -161,6 +161,8 @@ void cgrom_reset(void) {
 	cgw->fonthigh = fontrom + 0x7fff0;
 #endif
 	cgw->writable = 0;
+
+	(void)pConfig;
 }
 
 void cgrom_bind(void) {

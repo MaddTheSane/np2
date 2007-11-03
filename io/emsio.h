@@ -11,7 +11,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void emsio_reset(void);
+void emsio_reset(const NP2CFG *pConfig);
 void emsio_bind(void);
 
 #ifdef __cplusplus

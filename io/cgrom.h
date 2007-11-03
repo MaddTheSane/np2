@@ -21,7 +21,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void cgrom_reset(void);
+void cgrom_reset(const NP2CFG *pConfig);
 void cgrom_bind(void);
 
 #ifdef __cplusplus

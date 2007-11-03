@@ -71,10 +71,12 @@ static const IOOUT syspo31[4] = {
 static const IOINP syspi31[4] = {
 					sysp_i31,	sysp_i33,	sysp_i35,	NULL};
 
-void systemport_reset(void) {
+void systemport_reset(const NP2CFG *pConfig) {
 
 	sysport.c = 0xf9;
 	beep_oneventset();
+
+	(void)pConfig;
 }
 
 void systemport_bind(void) {

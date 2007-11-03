@@ -123,7 +123,7 @@ REG8 DMACCALL fdc_dmafunc(REG8 func);
 void fdcsend_error7(void);
 void fdcsend_success7(void);
 
-void fdc_reset(void);
+void fdc_reset(const NP2CFG *pConfig);
 void fdc_bind(void);
 
 #ifdef __cplusplus

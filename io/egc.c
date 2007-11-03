@@ -115,7 +115,7 @@ static void IOOUTCALL egc_o4a0(UINT port, REG8 value) {
 	}
 }
 
-void egc_reset(void) {
+void egc_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&egc, sizeof(egc));
 	egc.access = 0xfff0;
@@ -124,6 +124,8 @@ void egc_reset(void) {
 	egc.leng = 0x000f;
 	egcshift();
 	egc.srcmask.w = 0xffff;
+
+	(void)pConfig;
 }
 
 void egc_bind(void) {

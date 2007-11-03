@@ -350,10 +350,12 @@ static const IOINP pici00[4] = {
 					pic_i00,	pic_i02,	NULL,	NULL};
 #endif
 
-void pic_reset(void) {
+void pic_reset(const NP2CFG *pConfig) {
 
 	pic.pi[0] = def_master;
 	pic.pi[1] = def_slave;
+
+	(void)pConfig;
 }
 
 void pic_bind(void) {

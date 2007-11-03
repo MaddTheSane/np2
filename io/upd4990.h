@@ -17,7 +17,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void uPD4990_reset(void);
+void uPD4990_reset(const NP2CFG *pConfig);
 void uPD4990_bind(void);
 
 #ifdef __cplusplus

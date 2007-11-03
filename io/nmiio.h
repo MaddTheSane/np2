@@ -8,7 +8,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void nmiio_reset(void);
+void nmiio_reset(const NP2CFG *pConfig);
 void nmiio_bind(void);
 
 #ifdef __cplusplus

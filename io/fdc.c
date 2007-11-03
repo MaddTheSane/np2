@@ -823,14 +823,14 @@ static const IOINP fdci90[4] = {
 static const IOOUT fdcobe[1] = {fdc_obe};
 static const IOINP fdcibe[1] = {fdc_ibe};
 
-void fdc_reset(void) {
+void fdc_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&fdc, sizeof(fdc));
-	fdc.equip = np2cfg.fddequip;
+	fdc.equip = pConfig->fddequip;
 #if defined(SUPPORT_PC9821)
 	fdc.support144 = 1;
 #else
-	fdc.support144 = np2cfg.usefd144;
+	fdc.support144 = pConfig->usefd144;
 #endif
 	fdcstatusreset();
 	dmac_attach(DMADEV_2HD, FDC_DMACH2HD);

@@ -1129,7 +1129,7 @@ void gdc_biosreset(void) {
 	screenupdate |= 2;
 }
 
-void gdc_reset(void) {
+void gdc_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&gdc, sizeof(gdc));
 	ZeroMemory(&gdcs, sizeof(gdcs));
@@ -1145,6 +1145,8 @@ void gdc_reset(void) {
 		gdc.display |= (1 << GDCDISP_PLAZMA2);
 	}
 	gdc_biosreset();
+
+	(void)pConfig;
 }
 
 void gdc_bind(void) {

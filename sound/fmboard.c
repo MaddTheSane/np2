@@ -118,7 +118,7 @@ static void setfmregs(UINT8 *reg) {
 	FillMemory(reg + 0xb4, 0x04, 0xc0);
 }
 
-void fmboard_reset(UINT32 type) {
+void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	UINT8	cross;
 
@@ -179,50 +179,50 @@ void fmboard_reset(UINT32 type) {
 
 	switch(type) {
 		case 0x01:
-			board14_reset();
+			board14_reset(pConfig);
 			break;
 
 		case 0x02:
-			board26k_reset();
+			board26k_reset(pConfig);
 			break;
 
 		case 0x04:
-			board86_reset();
+			board86_reset(pConfig);
 			break;
 
 		case 0x06:
-			boardx2_reset();
+			boardx2_reset(pConfig);
 			break;
 
 		case 0x08:
-			board118_reset();
+			board118_reset(pConfig);
 			break;
 
 		case 0x14:
-			board86_reset();
+			board86_reset(pConfig);
 			break;
 
 		case 0x20:
-			boardspb_reset();
-			cross ^= np2cfg.spb_x;
+			boardspb_reset(pConfig);
+			cross ^= pConfig->spb_x;
 			break;
 
 		case 0x40:
-			boardspr_reset();
-			cross ^= np2cfg.spb_x;
+			boardspr_reset(pConfig);
+			cross ^= pConfig->spb_x;
 			break;
 
 		case 0x80:
-//			amd98_reset();
+//			amd98_reset(pConfig);
 			break;
 
 #if	defined(SUPPORT_PX)
 		case 0x30:
-			boardpx1_reset();
+			boardpx1_reset(pConfig);
 			break;
 
 		case 0x50:
-			boardpx2_reset();
+			boardpx2_reset(pConfig);
 			break;
 #endif	// defined(SUPPORT_PX)
 
@@ -233,7 +233,7 @@ void fmboard_reset(UINT32 type) {
 	usesound = type;
 	soundmng_setreverse(cross);
 	keydisp_setfmboard(type);
-	opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
+	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
 
 void fmboard_bind(void) {

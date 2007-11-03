@@ -254,7 +254,7 @@ static void IOOUTCALL mouseif_obfdb(UINT port, REG8 dat) {
 
 // ---- I/F
 
-void mouseif_reset(void) {
+void mouseif_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&mouseif, sizeof(mouseif));
 	mouseif.upd8255.porta = 0x00;
@@ -265,6 +265,8 @@ void mouseif_reset(void) {
 	mouseif.moveclock = pccore.realclock / 56400;
 	mouseif.latch_x = -1;
 	mouseif.latch_y = -1;
+
+	(void)pConfig;
 }
 
 void mouseif_bind(void) {

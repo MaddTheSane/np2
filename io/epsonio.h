@@ -9,7 +9,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void epsonio_reset(void);
+void epsonio_reset(const NP2CFG *pConfig);
 void epsonio_bind(void);
 
 #ifdef __cplusplus

@@ -205,7 +205,7 @@ static REG8 IOINPCALL scsiio_icc6(UINT port) {
 
 // ----
 
-void scsiio_reset(void) {
+void scsiio_reset(const NP2CFG *pConfig) {
 
 	FILEH	fh;
 	UINT	r;
@@ -232,6 +232,8 @@ void scsiio_reset(void) {
 		}
 		CopyMemory(mem + 0xd2000, scsiio.bios[0], 0x2000);
 	}
+
+	(void)pConfig;
 }
 
 void scsiio_bind(void) {

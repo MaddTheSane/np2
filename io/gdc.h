@@ -87,7 +87,7 @@ enum {
 extern "C" {
 #endif
 
-void gdc_reset(void);
+void gdc_reset(const NP2CFG *pConfig);
 void gdc_bind(void);
 
 void gdc_vectreset(GDCDATA item);

@@ -292,7 +292,7 @@ void pc9861k_deinitialize(void) {
 	cm_pc9861ch2 = NULL;
 }
 
-void pc9861k_reset(void) {
+void pc9861k_reset(const NP2CFG *pConfig) {
 
 	commng_destroy(cm_pc9861ch1);
 	cm_pc9861ch1 = NULL;
@@ -301,7 +301,7 @@ void pc9861k_reset(void) {
 
 	pc9861k.ch1 = pc9861def;
 	pc9861k.ch2 = pc9861def;
-	pc9861k.en = np2cfg.pc9861enable & 1;
+	pc9861k.en = pConfig->pc9861enable & 1;
 }
 
 void pc9861k_bind(void) {

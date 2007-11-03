@@ -25,9 +25,11 @@ static void IOOUTCALL nmiio_o52(UINT port, REG8 dat) {
 static const IOOUT nmiioo50[2] = {
 					nmiio_o50,	nmiio_o52};
 
-void nmiio_reset(void) {
+void nmiio_reset(const NP2CFG *pConfig) {
 
 	ZeroMemory(&nmiio, sizeof(nmiio));
+
+	(void)pConfig;
 }
 
 void nmiio_bind(void) {

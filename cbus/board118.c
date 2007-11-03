@@ -165,13 +165,15 @@ static const IOINP ymf_i[4] = {
 			ymf_i188,	ymf_i18a,	ymf_i18c,	NULL};
 
 
-void board118_reset(void) {
+void board118_reset(const NP2CFG *pConfig) {
 
 	fmtimer_reset(0xc0);
 	opngen_setcfg(3, OPN_STEREO | 0x038);
 	cs4231io_reset();
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
+
+	(void)pConfig;
 }
 
 void board118_bind(void) {

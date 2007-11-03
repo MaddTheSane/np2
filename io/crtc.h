@@ -31,7 +31,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void crtc_reset(void);
+void crtc_reset(const NP2CFG *pConfig);
 void crtc_bind(void);
 
 void crtc_biosreset(void);
