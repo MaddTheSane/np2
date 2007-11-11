@@ -75,13 +75,14 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 						0, PCMODEL_VX, 0, 0, {0x3e, 0x73, 0x7b}, 0,
 						0, 0,
 						PCBASECLOCK25 * PCBASEMULTIPLE};
+	PCSTAT	pcstat = {3, TRUE, FALSE, FALSE};
 
-	UINT8	screenupdate = 3;
-	int		screendispflag = 1;
-	int		soundrenewal = 0;
-	BOOL	drawframe;
+//	UINT8	screenupdate = 3;
+//	int		screendispflag = 1;
+	UINT8	soundrenewal = 0;
+//	BOOL	drawframe;
 	UINT	drawcount = 0;
-	BOOL	hardwarereset = FALSE;
+//	BOOL	hardwarereset = FALSE;
 
 
 // ---------------------------------------------------------------------------
@@ -425,7 +426,7 @@ static void drawscreen(void) {
 		gdc_updateclock();
 	}
 
-	if (!drawframe) {
+	if (!pcstat.drawframe) {
 		return;
 	}
 	if ((gdcs.textdisp & GDCSCRN_EXT) || (gdcs.grphdisp & GDCSCRN_EXT)) {
@@ -439,13 +440,13 @@ static void drawscreen(void) {
 		dispsync_renewalhorizontal();
 		tramflag.renewal |= 1;
 		if (dispsync_renewalmode()) {
-			screenupdate |= 2;
+			pcstat.screenupdate |= 2;
 		}
 	}
 	if (gdcs.palchange) {
 		gdcs.palchange = 0;
 		pal_change(0);
-		screenupdate |= 1;
+		pcstat.screenupdate |= 1;
 	}
 	if (gdcs.grphdisp & GDCSCRN_EXT) {
 		gdcs.grphdisp &= ~GDCSCRN_EXT;
@@ -473,7 +474,7 @@ static void drawscreen(void) {
 			if (gdcs.grphdisp & bit) {
 				(*grphfn)(gdcs.disp, gdcs.grphdisp & bit & GDCSCRN_ALLDRAW2);
 				gdcs.grphdisp &= ~bit;
-				screenupdate |= 1;
+				pcstat.screenupdate |= 1;
 			}
 		}
 		else if (gdcs.textdisp & GDCSCRN_ENABLE) {
@@ -489,7 +490,7 @@ static void drawscreen(void) {
 								gdcs.grphdisp & GDCSCRN_ALLDRAW);
 					}
 					gdcs.grphdisp &= ~GDCSCRN_MAKE;
-					screenupdate |= 1;
+					pcstat.screenupdate |= 1;
 				}
 			}
 			else {
@@ -504,7 +505,7 @@ static void drawscreen(void) {
 								gdcs.grphdisp & (GDCSCRN_ALLDRAW << 1));
 					}
 					gdcs.grphdisp &= ~(GDCSCRN_MAKE << 1);
-					screenupdate |= 1;
+					pcstat.screenupdate |= 1;
 				}
 			}
 		}
@@ -525,11 +526,11 @@ static void drawscreen(void) {
 				maketext40(gdcs.textdisp & GDCSCRN_ALLDRAW);
 			}
 			gdcs.textdisp &= ~GDCSCRN_MAKE;
-			screenupdate |= 1;
+			pcstat.screenupdate |= 1;
 		}
 	}
-	if (screenupdate) {
-		screenupdate = scrndraw_draw((UINT8)(screenupdate & 2));
+	if (pcstat.screenupdate) {
+		pcstat.screenupdate = scrndraw_draw((UINT8)(pcstat.screenupdate & 2));
 		drawcount++;
 	}
 }
@@ -540,7 +541,7 @@ void screendisp(NEVENTITEM item) {
 
 	gdc_work(GDCWORK_SLAVE);
 	gdc.vsync = 0;
-	screendispflag = 0;
+	pcstat.screendispflag = 0;
 	if (!np2cfg.DISPSYNC) {
 		drawscreen();
 	}
@@ -591,14 +592,14 @@ void pccore_postevent(UINT32 event) {	// yet!
 
 void pccore_exec(BOOL draw) {
 
-	drawframe = draw;
+	pcstat.drawframe = (UINT8)draw;
 //	keystat_sync();
 	soundmng_sync();
 	mouseif_sync();
 	pal_eventclear();
 
 	gdc.vsync = 0;
-	screendispflag = 1;
+	pcstat.screendispflag = 1;
 	MEMWAIT_TRAM = np2cfg.wait[0];
 	MEMWAIT_VRAM = np2cfg.wait[2];
 	MEMWAIT_GRCG = np2cfg.wait[4];
@@ -606,7 +607,7 @@ void pccore_exec(BOOL draw) {
 
 //	nevent_get1stevent();
 
-	while(screendispflag) {
+	while(pcstat.screendispflag) {
 #if defined(TRACE)
 		resetcnt++;
 #endif
@@ -636,10 +637,10 @@ void pccore_exec(BOOL draw) {
 	diskdrv_callback();
 	calendar_inc();
 	S98_sync();
-	sound_sync();													// happy!
+	sound_sync();
 
-	if (hardwarereset) {
-		hardwarereset = FALSE;
+	if (pcstat.hardwarereset) {
+		pcstat.hardwarereset = FALSE;
 		pccore_cfgupdate();
 		pccore_reset();
 	}

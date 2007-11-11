@@ -136,6 +136,14 @@ enum {
 	COREEVENT_EXIT		= 2
 };
 
+typedef struct
+{
+	UINT8	screenupdate;
+	UINT8	screendispflag;
+	UINT8	drawframe;
+	UINT8	hardwarereset;
+} PCSTAT;
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -145,11 +153,9 @@ extern const OEMCHAR np2version[];
 
 extern	NP2CFG	np2cfg;
 extern	PCCORE	pccore;
-extern	UINT8	screenupdate;
-extern	int		soundrenewal;
-extern	BOOL	drawframe;
+extern	PCSTAT	pcstat;
+extern	UINT8	soundrenewal;
 extern	UINT	drawcount;
-extern	BOOL	hardwarereset;
 
 void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen);
 void screendisp(NEVENTITEM item);

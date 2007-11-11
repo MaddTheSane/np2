@@ -615,7 +615,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 	ddraw.height = height;
 	ddraw.cliping = 0;
 	renewalclientsize(FALSE);
-	screenupdate = 3;					// update!
+//	screenupdate = 3;					// update!
 	return(SUCCESS);
 
 scre_err:

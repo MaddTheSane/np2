@@ -110,7 +110,7 @@ static void np2sysp_multiple(const void *arg1, long arg2) {
 
 static void np2sysp_hwreset(const void *arg1, long arg2) {
 
-	hardwarereset = TRUE;
+	pcstat.hardwarereset = TRUE;
 	(void)arg1;
 	(void)arg2;
 }

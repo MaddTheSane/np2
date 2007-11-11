@@ -274,7 +274,7 @@ void gdc_work(int id) {
 				case CMD_START:
 				case CMD_SYNC_ON:
 					(*dispflag) |= GDCSCRN_ENABLE | GDCSCRN_ALLDRAW2;
-					screenupdate |= 2;
+					pcstat.screenupdate |= 2;
 					break;
 
 				case CMD_STOP_:
@@ -282,7 +282,7 @@ void gdc_work(int id) {
 				case CMD_SYNC_OFF:
 					(*dispflag) &= (~GDCSCRN_ENABLE);
 //					(*dispflag) |= GDCSCRN_ALLDRAW2;
-					screenupdate |= 2;
+					pcstat.screenupdate |= 2;
 					break;
 
 				case CMD_VECTE:
@@ -479,7 +479,7 @@ static void IOOUTCALL gdc_o68(UINT port, REG8 dat) {
 			gdc_restorekacmode();
 		}
 		else if (bit == 0x80) {
-			screenupdate |= 2;
+			pcstat.screenupdate |= 2;
 		}
 		gdcs.msw_accessable = gdc.mode1 & 0x40;
 	}
@@ -706,7 +706,7 @@ static void IOOUTCALL gdc_oa4(UINT port, REG8 dat) {
 
 	if ((gdcs.disp ^ dat) & 1) {
 		gdcs.disp = dat & 1;
-		screenupdate |= 2;
+		pcstat.screenupdate |= 2;
 	}
 	(void)port;
 }
@@ -1126,7 +1126,7 @@ void gdc_biosreset(void) {
 	gdcs.textdisp = GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
 	gdcs.grphdisp = GDCSCRN_ALLDRAW2 | GDCSCRN_EXT;
 	gdcs.palchange = GDCSCRN_REDRAW;
-	screenupdate |= 2;
+	pcstat.screenupdate |= 2;
 }
 
 void gdc_reset(const NP2CFG *pConfig) {

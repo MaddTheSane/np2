@@ -137,7 +137,7 @@ void bios0x18_0c(void) {
 
 	if (!(gdcs.textdisp & GDCSCRN_ENABLE)) {
 		gdcs.textdisp |= GDCSCRN_ENABLE;
-		screenupdate |= 2;
+		pcstat.screenupdate |= 2;
  	}
 }
 
@@ -183,7 +183,7 @@ static void bios0x18_0f(UINT seg, UINT off, REG8 num, REG8 cnt) {
 		p += 4;
 	}
 	gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-	screenupdate |= 2;
+	pcstat.screenupdate |= 2;
 }
 
 void bios0x18_10(REG8 curdel) {
@@ -397,7 +397,7 @@ const CRTDATA	*p;
 	gdcs.textdisp &= ~GDCSCRN_ENABLE;
 	gdcs.textdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
 	gdcs.grphdisp |= GDCSCRN_EXT | GDCSCRN_ALLDRAW2;
-	screenupdate |= 2;
+	pcstat.screenupdate |= 2;
 
 	mem[0x597] &= ~3;
 	mem[0x597] |= (scrn >> 4) & 3;
@@ -442,7 +442,7 @@ void bios0x18_40(void) {
 	gdc_forceready(GDCWORK_SLAVE);
 	if (!(gdcs.grphdisp & GDCSCRN_ENABLE)) {
 		gdcs.grphdisp |= GDCSCRN_ENABLE;
-		screenupdate |= 2;
+		pcstat.screenupdate |= 2;
 	}
 	mem[MEMB_PRXCRT] |= 0x80;
 }
@@ -452,7 +452,7 @@ void bios0x18_41(void) {
 	gdc_forceready(GDCWORK_SLAVE);
 	if (gdcs.grphdisp & GDCSCRN_ENABLE) {
 		gdcs.grphdisp &= ~(GDCSCRN_ENABLE);
-		screenupdate |= 2;
+		pcstat.screenupdate |= 2;
 	}
 	mem[MEMB_PRXCRT] &= 0x7f;
 }
@@ -537,7 +537,7 @@ void bios0x18_42(REG8 mode) {
 	}
 	gdcs.mode2 = gdc.mode2;
 	gdcs.grphdisp |= GDCSCRN_ALLDRAW2;
-	screenupdate |= 2;
+	pcstat.screenupdate |= 2;
 }
 
 static void setbiosgdc(UINT32 csrw, const GDCVECT *vect, UINT8 ope) {
@@ -832,7 +832,7 @@ void bios0x18(void) {
    		case 0x0d:						// テキスト画面の表示終了
 			if (gdcs.textdisp & GDCSCRN_ENABLE) {
 				gdcs.textdisp &= ~(GDCSCRN_ENABLE);
-				screenupdate |= 2;
+				pcstat.screenupdate |= 2;
 			}
  			break;
 
@@ -849,7 +849,7 @@ void bios0x18(void) {
 			SETBIOSMEM16(MEMW_CRT_W_RASTER, tmp.w);
 			STOREINTELWORD(gdc.m.para + GDC_SCROLL + 2, tmp.w);
 			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-//			screenupdate |= 2;
+//			pcstat.screenupdate |= 2;
  			break;
 
 		case 0x0f:						// 複数の表示領域の設定
