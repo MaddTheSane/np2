@@ -1052,7 +1052,7 @@ void gdc_biosreset(void) {
 	UINT8	*pal;
 #endif
 
-	if (!(np2cfg.dipsw[0] & 0x01)) {
+	if (!(pccore.dipsw[0] & 0x01)) {
 		gdc.mode1 = 0x98;
 		gdc.m.para[GDC_CSRFORM + 0] = 0x0f;
 		gdc.m.para[GDC_CSRFORM + 1] = 0xc0;
@@ -1070,7 +1070,7 @@ void gdc_biosreset(void) {
 		CopyMemory(gdc.m.para + GDC_SYNC, defsyncm15, 8);
 		CopyMemory(gdc.s.para + GDC_SYNC, defsyncs15, 8);
 	}
-	if (np2cfg.dipsw[0] & 0x80) {
+	if (pccore.dipsw[0] & 0x80) {
 		gdc.s.para[GDC_SYNC] = 0x16;
 	}
 	gdc_vectreset(&gdc.m);
@@ -1141,7 +1141,7 @@ void gdc_reset(const NP2CFG *pConfig) {
 		gdc.display |= (1 << GDCDISP_ANALOG);
 	}
 #endif
-	if (!(np2cfg.dipsw[0] & 0x04)) {			// dipsw1-3 on
+	if (!(pccore.dipsw[0] & 0x04)) {			// dipsw1-3 on
 		gdc.display |= (1 << GDCDISP_PLAZMA2);
 	}
 	gdc_biosreset();

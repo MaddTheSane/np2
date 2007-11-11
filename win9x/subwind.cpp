@@ -630,7 +630,7 @@ void mdbgwin_create(HINSTANCE hInstance) {
 	}
 	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
 	UpdateWindow(hWnd);
-	mdbgwin.dd2hdl = dd2_create(hwnd, mdbgwin.width, mdbgwin.height);
+	mdbgwin.dd2hdl = dd2_create(hWnd, mdbgwin.width, mdbgwin.height);
 	if (mdbgwin.dd2hdl == NULL) {
 		goto mdcre_err2;
 	}
@@ -639,7 +639,7 @@ void mdbgwin_create(HINSTANCE hInstance) {
 	return;
 
 mdcre_err2:
-	DestroyWindow(hwnd);
+	DestroyWindow(hWnd);
 
 mdcre_err1:
 	return;

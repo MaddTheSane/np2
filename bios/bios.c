@@ -88,7 +88,7 @@ static void bios_reinitbyswitch(void) {
 	UINT8	extmem;
 	UINT8	boot;
 
-	if (!(np2cfg.dipsw[2] & 0x80)) {
+	if (!(pccore.dipsw[2] & 0x80)) {
 #if defined(CPUCORE_IA32)
 		mem[MEMB_SYS_TYPE] = 0x03;		// 80386Å`
 #else
@@ -101,13 +101,13 @@ static void bios_reinitbyswitch(void) {
 
 	mem[MEMB_BIOS_FLAG0] = 0x01;
 	prxcrt = 0x08;
-	if (!(np2cfg.dipsw[0] & 0x01)) {			// dipsw1-1 on
+	if (!(pccore.dipsw[0] & 0x01)) {			// dipsw1-1 on
 		prxcrt |= 0x40;
 	}
 	if (gdc.display & (1 << GDCDISP_ANALOG)) {
 		prxcrt |= 0x04;							// color16
 	}
-	if (!(np2cfg.dipsw[0] & 0x80)) {			// dipsw1-8 on
+	if (!(pccore.dipsw[0] & 0x80)) {			// dipsw1-8 on
 		prxcrt |= 0x01;
 	}
 	if (grcg.chip) {
@@ -119,7 +119,7 @@ static void bios_reinitbyswitch(void) {
 	if (grcg.chip >= 3) {
 		prxdupd |= 0x40;
 	}
-	if (!(np2cfg.dipsw[1] & 0x80)) {			// dipsw2-8 on
+	if (!(pccore.dipsw[1] & 0x80)) {			// dipsw2-8 on
 		prxdupd |= 0x20;
 	}
 	mem[MEMB_PRXDUPD] = prxdupd;
@@ -129,7 +129,7 @@ static void bios_reinitbyswitch(void) {
 		biosflag |= 0x80;
 	}
 	biosflag |= mem[0xa3fea] & 7;
-	if (np2cfg.dipsw[2] & 0x80) {
+	if (pccore.dipsw[2] & 0x80) {
 		biosflag |= 0x40;
 	}
 	mem[MEMB_BIOS_FLAG1] = biosflag;
@@ -193,8 +193,8 @@ static void bios_screeninit(void) {
 	REG8	al;
 
 	al = 4;
-	al += (np2cfg.dipsw[1] & 0x04) >> 1;
-	al += (np2cfg.dipsw[1] & 0x08) >> 3;
+	al += (pccore.dipsw[1] & 0x04) >> 1;
+	al += (pccore.dipsw[1] & 0x08) >> 3;
 	bios0x18_0a(al);
 }
 

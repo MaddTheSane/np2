@@ -238,8 +238,8 @@ static REG8 IOINPCALL mouseif_i7fdd(UINT port) {
 	if (mode & uPD8255_PORTCL) {
 		ret &= 0xf0;
 		ret |= 0x08;
-		ret |= (np2cfg.dipsw[2] >> 5) & 0x04;
-		ret |= ((~np2cfg.dipsw[0]) >> 4) & 0x03;
+		ret |= (pccore.dipsw[2] >> 5) & 0x04;
+		ret |= ((~pccore.dipsw[0]) >> 4) & 0x03;
 	}
 	(void)port;
 	return(ret);

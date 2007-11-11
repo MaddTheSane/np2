@@ -294,9 +294,19 @@ void pccore_cfgupdate(void) {
 	int		i;
 
 	renewal = FALSE;
-	for (i=0; i<8; i++) {
-		if (np2cfg.memsw[i] != mem[MEMX_MSW + i*4]) {
+	for (i=0; i<8; i++)
+	{
+		if (np2cfg.memsw[i] != mem[MEMX_MSW + i*4])
+		{
 			np2cfg.memsw[i] = mem[MEMX_MSW + i*4];
+			renewal = TRUE;
+		}
+	}
+	for (i=0; i<3; i++)
+	{
+		if (np2cfg.dipsw[i] != pccore.dipsw[i])
+		{
+			np2cfg.dipsw[i] = pccore.dipsw[i];
 			renewal = TRUE;
 		}
 	}
@@ -335,7 +345,7 @@ void pccore_reset(void) {
 	CPU_SETEXTSIZE((UINT32)pccore.extmem);
 
 	CPU_TYPE = 0;
-	if (np2cfg.dipsw[2] & 0x80) {
+	if (pccore.dipsw[2] & 0x80) {
 		CPU_TYPE = CPUTYPE_V30;
 	}
 	if (pccore.model & PCMODEL_EPSON) {			// RAM ctrl

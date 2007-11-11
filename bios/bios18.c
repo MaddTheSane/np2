@@ -107,7 +107,7 @@ const CRTDATA	*crt;
 	gdc.mode1 &= ~(0x2d);
 	mem[MEMB_CRT_STS_FLAG] = mode;
 	crt = crtdata;
-	if (!(np2cfg.dipsw[0] & 1)) {
+	if (!(pccore.dipsw[0] & 1)) {
 		mem[MEMB_CRT_STS_FLAG] |= 0x80;
 		gdc.mode1 |= 0x08;
 		crt += 2;
