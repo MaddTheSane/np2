@@ -48,9 +48,6 @@ static const CBPARAM cpInt86[] =
 	{MAKEINTRESOURCE(IDS_INT6),		0x04},
 };
 
-static const TCHAR *sndinterrupt[4] =
-						{str_int0, str_int4, str_int5, str_int6};
-
 static const CBPARAM cpAddr[] =
 {
 	{MAKEINTRESOURCE(IDS_C8000),		0x00},

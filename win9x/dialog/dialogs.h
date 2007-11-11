@@ -27,12 +27,6 @@ typedef struct tagCBParam		*PCBPARAM;
 typedef const struct tagCBParam	*PCCBPARAM;
 
 extern const TCHAR str_nc[];
-extern const TCHAR str_int0[];
-extern const TCHAR str_int1[];
-extern const TCHAR str_int2[];
-extern const TCHAR str_int4[];
-extern const TCHAR str_int5[];
-extern const TCHAR str_int6[];
 
 #define	SetDlgItemCheck(a, b, c)	\
 			SendDlgItemMessage((a), (b), BM_SETCHECK, (c), 0)

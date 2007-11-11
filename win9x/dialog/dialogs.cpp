@@ -14,13 +14,6 @@
 
 const TCHAR str_nc[] = _T("N/C");
 
-const TCHAR str_int0[] = _T("INT0");
-const TCHAR str_int1[] = _T("INT1");
-const TCHAR str_int2[] = _T("INT2");
-const TCHAR str_int4[] = _T("INT4");
-const TCHAR str_int5[] = _T("INT5");
-const TCHAR str_int6[] = _T("INT6");
-
 
 // ---- enable
 
@@ -208,7 +201,7 @@ BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam,
 	uCount = 0;
 	while(1)
 	{
-		pszFile = milsjis_chr(pszPath, '#');
+		pszFile = milstr_chr(pszPath, '#');
 		if (!pszFile)
 		{
 			break;
