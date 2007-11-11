@@ -15,6 +15,30 @@
 #include	"dipswbmp.h"
 
 
+static const CBPARAM cpPort[] =
+{
+	{MAKEINTRESOURCE(IDS_NONCONNECT),	COMPORT_NONE},
+	{MAKEINTRESOURCE(IDS_COM1),			COMPORT_COM1},
+	{MAKEINTRESOURCE(IDS_COM2),			COMPORT_COM2},
+	{MAKEINTRESOURCE(IDS_COM3),			COMPORT_COM3},
+	{MAKEINTRESOURCE(IDS_COM4),			COMPORT_COM4},
+	{MAKEINTRESOURCE(IDS_MIDI),			COMPORT_MIDI},
+};
+
+static const CBPARAM cpParity[] =
+{
+    {MAKEINTRESOURCE(IDS_PARITY_NONE),	0x00},
+    {MAKEINTRESOURCE(IDS_PARITY_ODD),	0x20},
+	{MAKEINTRESOURCE(IDS_PARITY_EVEN),	0x30},
+};
+
+static const CBPARAM cpBits[] =
+{
+    {MAKEINTRESOURCE(IDS_1),			0x40},
+    {MAKEINTRESOURCE(IDS_1HALF),		0x80},
+	{MAKEINTRESOURCE(IDS_2),			0xc0},
+};
+
 static const TCHAR str_none[] = _T("NONE");
 static const TCHAR str_com1[] = _T("COM1");
 static const TCHAR str_com2[] = _T("COM2");
@@ -49,10 +73,12 @@ extern	COMMNG	cm_pc9861ch2;
 
 enum {
 	ID_PORT		= 0,
+
 	ID_SPEED,
 	ID_CHARS,
 	ID_PARITY,
 	ID_SBIT,
+
 	ID_MMAP,
 	ID_MMDL,
 	ID_DEFE,
@@ -159,7 +185,7 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 	switch (msg) {
 		case WM_INITDIALOG:
 			cfg = m->cfg;
-			SETLISTSTR(hWnd, m->idc[ID_PORT], rsport);
+			dlgs_setcbitem(hWnd, m->idc[ID_PORT], cpPort, NELEMENTS(cpPort));
 			SETLISTUINT32(hWnd, m->idc[ID_SPEED], cmserial_speed);
 			SETLISTUINT32(hWnd, m->idc[ID_CHARS], rscharsize);
 			SETLISTSTR(hWnd, m->idc[ID_PARITY], rsparity);
@@ -198,43 +224,37 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 			SetDlgItemText(hWnd, m->idc[ID_DEFF], cfg->def);
 
 			d = cfg->port;
-			if (d >= NELEMENTS(rsport)) {
+			if (d >= NELEMENTS(cpPort))
+			{
 				d = 0;
 			}
-			SendDlgItemMessage(hWnd, m->idc[ID_PORT],
-								CB_SETCURSEL, (WPARAM)d, (LPARAM)0);
-
+			dlgs_setcbcur(hWnd, m->idc[ID_PORT], d);
 			dlgcom_items(hWnd, m, d);
 			return(TRUE);
 
 		case WM_COMMAND:
-			if (LOWORD(wp) == m->idc[ID_PORT]) {
-				r = SendDlgItemMessage(hWnd, m->idc[ID_PORT],
-										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-				if (r != CB_ERR) {
-					dlgcom_items(hWnd, m, (UINT)r);
-				}
+			if (LOWORD(wp) == m->idc[ID_PORT])
+			{
+				dlgcom_items(hWnd, m,
+						dlgs_getcbcur(hWnd, m->idc[ID_PORT], COMPORT_NONE));
 			}
-			else if (LOWORD(wp) == m->idc[ID_DEFB]) {
+			else if (LOWORD(wp) == m->idc[ID_DEFB])
+			{
 				dlgs_browsemimpidef(hWnd, m->idc[ID_DEFF]);
 			}
 			break;
 
 		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
+			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY)
+			{
 				cfg = m->cfg;
 				update = 0;
-				r = SendDlgItemMessage(hWnd, m->idc[ID_PORT],
-										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-				if (r != CB_ERR) {
-					if ((UINT)r >= NELEMENTS(rsport)) {
-						r = 0;
-					}
-					if (cfg->port != (UINT8)r) {
-						cfg->port = (UINT8)r;
-						update |= SYS_UPDATEOSCFG;
-						update |= m->update;
-					}
+				r = dlgs_getcbcur(hWnd, m->idc[ID_PORT], COMPORT_NONE);
+				if (cfg->port != (UINT8)r)
+				{
+					cfg->port = (UINT8)r;
+					update |= SYS_UPDATEOSCFG;
+					update |= m->update;
 				}
 				r = SendDlgItemMessage(hWnd, m->idc[ID_SPEED],
 										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
@@ -636,17 +656,17 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 
 void dialog_serial(HWND hWnd) {
 
-	HINSTANCE		hinst;
+	HINSTANCE		hInstance;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
 
-	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);
 	psp.dwFlags = PSP_DEFAULT;
-	psp.hInstance = hinst;
+	psp.hInstance = hInstance;
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SERIAL1);
 	psp.pfnDlgProc = (DLGPROC)Com1Proc;
@@ -668,8 +688,8 @@ void dialog_serial(HWND hWnd) {
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	psh.hwndParent = hWnd;
-	psh.hInstance = hinst;
-	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
+	psh.hInstance = hInstance;
+	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_seropt;

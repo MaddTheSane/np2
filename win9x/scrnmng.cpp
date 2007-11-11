@@ -236,10 +236,10 @@ static void renewalclientsize(BOOL winloc) {
 
 		wlex = NULL;
 		if (winloc) {
-			wlex = np2_winlocexallwin(hWndMain);
+			wlex = np2_winlocexallwin(g_hWndMain);
 		}
-		winlocex_setholdwnd(wlex, hWndMain);
-		setwindowsize(hWndMain, scrnwidth, scrnheight);
+		winlocex_setholdwnd(wlex, g_hWndMain);
+		setwindowsize(g_hWndMain, scrnwidth, scrnheight);
 		winlocex_move(wlex);
 		winlocex_destroy(wlex);
 	}
@@ -297,10 +297,10 @@ static void clearoutscreen(void) {
 	POINT	clipt;
 	RECT	target;
 
-	GetClientRect(hWndMain, &base);
+	GetClientRect(g_hWndMain, &base);
 	clipt.x = 0;
 	clipt.y = 0;
-	ClientToScreen(hWndMain, &clipt);
+	ClientToScreen(g_hWndMain, &clipt);
 	base.left += clipt.x;
 	base.top += clipt.y;
 	base.right += clipt.x;
@@ -321,7 +321,7 @@ const RECT	*scrn;
 	base.top = 0;
 	base.right = ddraw.width;
 	base.bottom = ddraw.height;
-	if (GetWindowLongPtr(hWndMain, NP2GWLP_HMENU)) {
+	if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU)) {
 		scrn = &ddraw.scrn;
 		base.top = 0;
 	}
@@ -340,9 +340,9 @@ static void paletteinit(void) {
 	HDC 	hdc;
 	UINT	i;
 
-	hdc = GetDC(hWndMain);
+	hdc = GetDC(g_hWndMain);
 	GetSystemPaletteEntries(hdc, 0, 256, ddraw.pal);
-	ReleaseDC(hWndMain, hdc);
+	ReleaseDC(g_hWndMain, hdc);
 #if defined(SUPPORT_DCLOCK)
 	for (i=0; i<4; i++) {
 		ddraw.pal[i+START_PALORG].peBlue = dclockpal.pal32[i].p.b;
@@ -411,7 +411,7 @@ void scrnmng_initialize(void) {
 	scrnstat.height = 400;
 	scrnstat.extend = 1;
 	scrnstat.multiple = 8;
-	setwindowsize(hWndMain, 640, 400);
+	setwindowsize(g_hWndMain, 640, 400);
 }
 
 BRESULT scrnmng_create(UINT8 scrnmode) {
@@ -429,9 +429,9 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 	DEVMODE			devmode;
 
 	ZeroMemory(&scrnmng, sizeof(scrnmng));
-	winstyle = GetWindowLong(hWndMain, GWL_STYLE);
-	winstyleex = GetWindowLong(hWndMain, GWL_EXSTYLE);
-	hmenu = GetMenu(hWndMain);
+	winstyle = GetWindowLong(g_hWndMain, GWL_STYLE);
+	winstyleex = GetWindowLong(g_hWndMain, GWL_EXSTYLE);
+	hmenu = GetMenu(g_hWndMain);
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		scrnmode &= ~SCRNMODE_ROTATEMASK;
 		scrnmng.flag = SCRNFLAG_FULLSCREEN;
@@ -442,7 +442,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_CHECKED);
 		ddraw.menudisp = 0;
 		ddraw.menusize = GetSystemMetrics(SM_CYMENU);
-		np2class_enablemenu(hWndMain, FALSE);
+		np2class_enablemenu(g_hWndMain, FALSE);
 	}
 	else {
 		scrnmng.flag = SCRNFLAG_HAVEEXTEND;
@@ -458,8 +458,8 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		CheckMenuItem(hmenu, IDM_WINDOW, MF_CHECKED);
 		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_UNCHECKED);
 	}
-	SetWindowLong(hWndMain, GWL_STYLE, winstyle);
-	SetWindowLong(hWndMain, GWL_EXSTYLE, winstyleex);
+	SetWindowLong(g_hWndMain, GWL_STYLE, winstyle);
+	SetWindowLong(g_hWndMain, GWL_EXSTYLE, winstyleex);
 
 	if (DirectDrawCreate(NULL, &ddraw.ddraw1, NULL) != DD_OK) {
 		goto scre_err;
@@ -471,7 +471,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 #if defined(SUPPORT_DCLOCK)
 		dclock_init();
 #endif
-		ddraw2->SetCooperativeLevel(hWndMain,
+		ddraw2->SetCooperativeLevel(g_hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 		width = np2oscfg.fscrn_cx;
 		height = np2oscfg.fscrn_cy;
@@ -502,7 +502,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 			goto scre_err;
 		}
 		ddraw2->CreateClipper(0, &ddraw.clipper, NULL);
-		ddraw.clipper->SetHWnd(0, hWndMain);
+		ddraw.clipper->SetHWnd(0, g_hWndMain);
 
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
@@ -554,7 +554,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 #endif
 	}
 	else {
-		ddraw2->SetCooperativeLevel(hWndMain, DDSCL_NORMAL);
+		ddraw2->SetCooperativeLevel(g_hWndMain, DDSCL_NORMAL);
 
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
@@ -565,7 +565,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		}
 
 		ddraw2->CreateClipper(0, &ddraw.clipper, NULL);
-		ddraw.clipper->SetHWnd(0, hWndMain);
+		ddraw.clipper->SetHWnd(0, g_hWndMain);
 		ddraw.primsurf->SetClipper(ddraw.clipper);
 
 		ZeroMemory(&ddpf, sizeof(ddpf));
@@ -626,7 +626,7 @@ scre_err:
 void scrnmng_destroy(void) {
 
 	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
-		np2class_enablemenu(hWndMain, (!np2oscfg.wintype));
+		np2class_enablemenu(g_hWndMain, (!np2oscfg.wintype));
 	}
 #if defined(SUPPORT_DCLOCK)
 	if (ddraw.clocksurf) {
@@ -652,7 +652,7 @@ void scrnmng_destroy(void) {
 	}
 	if (ddraw.ddraw2) {
 		if (ddraw.scrnmode & SCRNMODE_FULLSCREEN) {
-			ddraw.ddraw2->SetCooperativeLevel(hWndMain, DDSCL_NORMAL);
+			ddraw.ddraw2->SetCooperativeLevel(g_hWndMain, DDSCL_NORMAL);
 		}
 		ddraw.ddraw2->Release();
 		ddraw.ddraw2 = NULL;
@@ -689,10 +689,10 @@ void scrnmng_fullscrnmenu(int y) {
 		if (ddraw.menudisp != menudisp) {
 			ddraw.menudisp = menudisp;
 			if (menudisp == 1) {
-				np2class_enablemenu(hWndMain, TRUE);
+				np2class_enablemenu(g_hWndMain, TRUE);
 			}
 			else {
-				np2class_enablemenu(hWndMain, FALSE);
+				np2class_enablemenu(g_hWndMain, FALSE);
 				clearoutfullscreen();
 			}
 		}
@@ -707,7 +707,7 @@ void scrnmng_topwinui(void) {
 			ddraw.primsurf->SetClipper(ddraw.clipper);
 		}
 #ifndef __GNUC__
-		WINNLSEnableIME(hWndMain, TRUE);
+		WINNLSEnableIME(g_hWndMain, TRUE);
 #endif
 	}
 }
@@ -716,21 +716,21 @@ void scrnmng_clearwinui(void) {
 
 	if ((ddraw.cliping > 0) && (!(--ddraw.cliping))) {
 #ifndef __GNUC__
-		WINNLSEnableIME(hWndMain, FALSE);
+		WINNLSEnableIME(g_hWndMain, FALSE);
 #endif
 		if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
 			ddraw.primsurf->SetClipper(0);
 		}
 	}
 	if (scrnmng.flag & SCRNFLAG_FULLSCREEN) {
-		np2class_enablemenu(hWndMain, FALSE);
+		np2class_enablemenu(g_hWndMain, FALSE);
 		clearoutfullscreen();
 		ddraw.menudisp = 0;
 	}
 	else {
 		if (np2oscfg.wintype) {
-			np2class_enablemenu(hWndMain, FALSE);
-			InvalidateRect(hWndMain, NULL, TRUE);
+			np2class_enablemenu(g_hWndMain, FALSE);
+			InvalidateRect(g_hWndMain, NULL, TRUE);
 		}
 	}
 	mousemng_enable(MOUSEPROC_WINUI);
@@ -818,7 +818,7 @@ void scrnmng_update(void) {
 				scrnmng.allflash = 0;
 				clearoutfullscreen();
 			}
-			if (GetWindowLongPtr(hWndMain, NP2GWLP_HMENU)) {
+			if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU)) {
 				rect = &ddraw.rect;
 				scrn = &ddraw.scrn;
 			}
@@ -842,7 +842,7 @@ void scrnmng_update(void) {
 			}
 			clip.x = 0;
 			clip.y = 0;
-			ClientToScreen(hWndMain, &clip);
+			ClientToScreen(g_hWndMain, &clip);
 			dst.left = clip.x + ddraw.scrn.left;
 			dst.top = clip.y + ddraw.scrn.top;
 			dst.right = clip.x + ddraw.scrn.right;
@@ -897,7 +897,7 @@ const RECT			*scrn;
 	if (!dclock_disp()) {
 		return;
 	}
-	if (GetWindowLongPtr(hWndMain, NP2GWLP_HMENU)) {
+	if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU)) {
 		scrn = &ddraw.scrn;
 	}
 	else {
@@ -959,8 +959,8 @@ void scrnmng_entersizing(void) {
 	int		cx;
 	int		cy;
 
-	GetWindowRect(hWndMain, &rectwindow);
-	GetClientRect(hWndMain, &rectclient);
+	GetWindowRect(g_hWndMain, &rectwindow);
+	GetClientRect(g_hWndMain, &rectclient);
 	scrnsizing.bx = (np2oscfg.paddingx * 2) +
 					(rectwindow.right - rectwindow.left) -
 					(rectclient.right - rectclient.left);
@@ -1051,6 +1051,6 @@ void scrnmng_exitsizing(void) {
 
 	sysmenu_setscrnmul(scrnsizing.mul);
 	scrnmng_setmultiple(scrnsizing.mul);
-	InvalidateRect(hWndMain, NULL, TRUE);		// ugh
+	InvalidateRect(g_hWndMain, NULL, TRUE);		// ugh
 }
 

@@ -55,10 +55,10 @@ extern	const TCHAR		np2viewfont[];
 extern	NP2VIEW_T		np2view[NP2VIEW_MAX];
 
 
-BOOL viewer_init(HINSTANCE hPreInst);
+BOOL viewer_init(HINSTANCE hInstance);
 void viewer_term(void);
 
-void viewer_open(void);
+void viewer_open(HINSTANCE hInstance);
 void viewer_allclose(void);
 
 void viewer_allreload(BOOL force);

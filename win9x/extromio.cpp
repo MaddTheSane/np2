@@ -29,15 +29,15 @@ EXTROMH extromio_open(const OEMCHAR *filename, UINT type) {
 #if defined(OSLANG_UTF8)
 		TCHAR tchr[MAX_PATH];
 		oemtotchar(tchr, NELEMENTS(tchr), filename, -1);
-		hrsrc = FindResource(hInst, tchr, str_extrom);
+		hrsrc = FindResource(g_hInstance, tchr, str_extrom);
 #else
-		hrsrc = FindResource(hInst, filename, str_extrom);
+		hrsrc = FindResource(g_hInstance, filename, str_extrom);
 #endif
 		if (hrsrc) {
-			hg = LoadResource(hInst, hrsrc);
+			hg = LoadResource(g_hInstance, hrsrc);
 			ret->fh = (void *)LockResource(hg);
 			ret->pos = 0;
-			ret->size = SizeofResource(hInst, hrsrc);
+			ret->size = SizeofResource(g_hInstance, hrsrc);
 			return(ret);
 		}
 	}

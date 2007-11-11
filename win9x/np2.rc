@@ -214,7 +214,7 @@ BEGIN
                     156,10
     LTEXT           "Zoom",IDC_STATIC,8,45,22,8
     COMBOBOX        IDC_FULLSCREEN_ZOOM,40,42,96,80,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
 END
 
 IDD_SCROPT2 DIALOG DISCARDABLE  0, 0, 172, 96
@@ -270,8 +270,8 @@ CAPTION "COM1"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_COM1PORT,40,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COM1PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     GROUPBOX        "Assign",IDC_COM1STR00,8,28,128,88
     LTEXT           "Speed",IDC_COM1STR01,16,45,38,8
     COMBOBOX        IDC_COM1SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
@@ -282,8 +282,8 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "bits",IDC_COM1STR04,108,61,26,8
     LTEXT           "Parity",IDC_COM1STR05,16,77,38,8
-    COMBOBOX        IDC_COM1PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COM1PARITY,56,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "Stop bit",IDC_COM1STR06,16,93,38,8
     COMBOBOX        IDC_COM1STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
@@ -316,8 +316,8 @@ BEGIN
     COMBOBOX        IDC_CH1INT,106,24,28,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     RTEXT           "Mode",IDC_STATIC,137,27,18,8
-    COMBOBOX        IDC_CH1MODE,156,24,60,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CH1MODE,156,24,60,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "CH.2",IDC_STATIC,8,45,18,8
     RTEXT           "Speed",IDC_STATIC,28,45,20,8
     COMBOBOX        IDC_CH2SPEED,49,42,40,128,CBS_DROPDOWNLIST | CBS_SORT | 
@@ -326,8 +326,8 @@ BEGIN
     COMBOBOX        IDC_CH2INT,106,42,28,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     RTEXT           "Mode",IDC_STATIC,137,45,18,8
-    COMBOBOX        IDC_CH2MODE,156,42,60,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CH2MODE,156,42,60,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "DIP-SW",IDC_STATIC,8,64,34,8
     CONTROL         "",IDC_PC9861DIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,44,
                     64,172,68
@@ -339,8 +339,8 @@ CAPTION "CH.1"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_COM2PORT,40,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COM2PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     GROUPBOX        "Assign",IDC_COM2STR00,8,28,128,84
     LTEXT           "Speed",IDC_COM2STR01,16,45,38,8
     COMBOBOX        IDC_COM2SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
@@ -351,8 +351,8 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "bits",IDC_COM2STR04,108,61,26,8
     LTEXT           "Parity",IDC_COM2STR05,16,77,38,8
-    COMBOBOX        IDC_COM2PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COM2PARITY,56,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "Stop bit",IDC_COM2STR06,16,93,38,8
     COMBOBOX        IDC_COM2STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
@@ -376,8 +376,8 @@ CAPTION "CH.2"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_COM3PORT,40,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COM3PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     GROUPBOX        "Assign",IDC_COM3STR00,8,28,128,84
     LTEXT           "Speed",IDC_COM3STR01,16,45,38,8
     COMBOBOX        IDC_COM3SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
@@ -388,8 +388,8 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "bits",IDC_COM3STR04,108,61,26,8
     LTEXT           "Parity",IDC_COM3STR05,16,77,38,8
-    COMBOBOX        IDC_COM3PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COM3PARITY,56,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "Stop bit",IDC_COM3STR06,16,93,26,8
     COMBOBOX        IDC_COM3STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
@@ -1216,6 +1216,7 @@ BEGIN
     END
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
@@ -1250,6 +1251,102 @@ SEEK1WAV                EXTROM  DISCARDABLE     "ICONS\\FDDSEEK1.WAV"
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_HDD                 "&HardDisk"
+    IDS_SCREENOPTION        "Screen option"
+    IDS_SOUNDOPTION         "Sound board option"
+    IDS_SERIALOPTION        "Serial option"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NONCONNECT          "N/C"
+    IDS_1                   "1"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_1HALF               "1.5"
+    IDS_2                   "2"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_INT0                "INT0"
+    IDS_INT1                "INT1"
+    IDS_INT2                "INT2"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_INT41               "INT41"
+    IDS_INT42               "INT42"
+    IDS_INT5                "INT5"
+    IDS_INT6                "INT6"
+    IDS_C8000               "C8000"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CC000               "CC000"
+    IDS_D0000               "D0000"
+    IDS_D4000               "D4000"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_COM1                "COM1"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_COM2                "COM2"
+    IDS_COM3                "COM3"
+    IDS_COM4                "COM4"
+    IDS_MIDI                "MIDI"
+    IDS_2_0MHZ              "1.9968MHz"
+    IDS_2_5MHZ              "2.4576MHz"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ZOOM_NONE           "None"
+    IDS_ZOOM_FIXEDASPECT    "Fixed Aspect"
+    IDS_ZOOM_ADJUSTASPECT   "Adjust Aspect"
+    IDS_ZOOM_FULL           "Full"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_0088                "0088"
+    IDS_0188                "0188"
+    IDS_0288                "0288"
+    IDS_0388                "0388"
+    IDS_0X                  "0x"
+    IDS_1X                  "1x"
+    IDS_2X                  "2x"
+    IDS_3X                  "3x"
+    IDS_4X                  "4x"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_5X                  "5x"
+    IDS_6X                  "6x"
+    IDS_7X                  "7x"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PARITY_NONE         "NONE"
+    IDS_PARITY_ODD          "ODD"
+    IDS_PARITY_EVEN         "EVEN"
+    IDS_SYNC                "Sync"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ASYNC               "Async"
+    IDS_ASYNC16X            "Async 16x"
+    IDS_ASYNC64X            "Async 64x"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1276,7 +1373,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_FDDTITLE            "Select floppy image"
     IDS_FDDEXT              "d88"
-    IDS_FDDFILTER           "D88 image files (*.D88;*.D98)|*.d88;*.88d;*.d98;*.98d|Floppy disk images (*.XDF;*.HDM;*.DUP;*.2HD)|*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All supported Files|*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All files (*.*)|*.*|"
+    IDS_FDDFILTER           "D88 image files (*.D88;*.D98)|*.d88;*.88d;*.d98;*.98d|Floppy disk images (*.XDF;*.HDM;*.DUP;*.2HD)|*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All supported files|*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All files (*.*)|*.*|"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1285,14 +1382,15 @@ BEGIN
     IDS_HDDEXT              "thd"
     IDS_HDDFILTER           "Anex86 harddisk image files (*.HDI)|*.hdi|T98 harddisk image files (*.THD)|*.thd|T98-Next harddisk image files (*.NHD)|*.nhd|All supported Files|*.thd;*.nhd;*.hdi|"
     IDS_SASITITLE           "Select SASI/IDE HDD image"
+    IDS_IDETITLE            "Select IDE HDD image"
     IDS_ISOTITLE            "Select ISO-9660 image"
     IDS_ISOEXT              "iso"
-    IDS_ISOFILTER           "Cue sheets|*.cue|ISO-9660 image files|*.iso;*.img|All supported Files|*.cue;*.iso;*.img|All Files|*.*|"
+    IDS_ISOFILTER           "Cue sheets|*.cue|ISO-9660 image files|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files|*.*|"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_SCSITITLE           "Select SCSI HDD image"
+    IDS_SCSITITLE           "Select SCSI image"
     IDS_SCSIEXT             "hdd"
     IDS_SCSIFILTER          "Virtual98 harddisk image files (*.HDD)|*.hdd|"
     IDS_NEWDISKTITLE        "Create disk image"
@@ -1310,17 +1408,16 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_WAVETITLE           "Save as Sound"
+    IDS_WAVETITLE           "Save as sound"
     IDS_WAVEEXT             "wav"
     IDS_WAVEFILTER          "Wave files (*.wav)|*.wav|"
-    IDS_ZOOM_NONE           "None"
-    IDS_ZOOM_FIXEDASPECT    "Fixed Aspect"
-    IDS_ZOOM_ADJUSTASPECT   "Adjust Aspect"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_ZOOM_FULL           "Full"
+    IDS_SKINTITLE           "Select skin file"
+    IDS_SKINEXT             "ini"
+    IDS_SKINFILTER          "ini files (*.ini)|*.ini|text files (*.txt)|*.txt|All files (*.*)|*.*|"
 END
 
 #endif    // “ú–{Œê resources

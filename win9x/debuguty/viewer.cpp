@@ -9,7 +9,6 @@
 static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
 		const TCHAR		np2viewfont[] = _T("‚l‚r ƒSƒVƒbƒN");
 		NP2VIEW_T		np2view[NP2VIEW_MAX];
-extern	HINSTANCE		hInst;
 
 
 static void viewer_segmode(HWND hwnd, UINT8 type) {
@@ -62,7 +61,7 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_COMMAND:
 			switch(LOWORD(wParam)) {
 				case IDM_VIEWWINNEW:
-					viewer_open();
+					viewer_open(g_hInstance);
 					break;
 
 				case IDM_VIEWWINCLOSE:
@@ -188,26 +187,24 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 // -----------------------------------------------------------------------
 
-BOOL viewer_init(HINSTANCE hPreInst) {
+BOOL viewer_init(HINSTANCE hInstance) {
 
 	WNDCLASS	np2vc;
 
 	ZeroMemory(np2view, sizeof(np2view));
 
-	if (!hPreInst) {
-		np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
-		np2vc.lpfnWndProc = ViewProc;
-		np2vc.cbClsExtra = 0;
-		np2vc.cbWndExtra = 0;
-		np2vc.hInstance = hInst;
-		np2vc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
-		np2vc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		np2vc.hbrBackground = (HBRUSH)0;
-		np2vc.lpszMenuName = MAKEINTRESOURCE(IDR_VIEW);
-		np2vc.lpszClassName = np2viewclass;
-		if (!RegisterClass(&np2vc)) {
-			return(FAILURE);
-		}
+	np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
+	np2vc.lpfnWndProc = ViewProc;
+	np2vc.cbClsExtra = 0;
+	np2vc.cbWndExtra = 0;
+	np2vc.hInstance = hInstance;
+	np2vc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	np2vc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	np2vc.hbrBackground = (HBRUSH)0;
+	np2vc.lpszMenuName = MAKEINTRESOURCE(IDR_VIEW);
+	np2vc.lpszClassName = np2viewclass;
+	if (!RegisterClass(&np2vc)) {
+		return(FAILURE);
 	}
 	return(SUCCESS);
 }
@@ -218,7 +215,7 @@ void viewer_term(void) {
 }
 
 
-void viewer_open(void) {
+void viewer_open(HINSTANCE hInstance) {
 
 	int			i;
 	NP2VIEW_T	*view;
@@ -235,7 +232,7 @@ void viewer_open(void) {
 							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 							CW_USEDEFAULT, CW_USEDEFAULT,
 							CW_USEDEFAULT, CW_USEDEFAULT,
-							NULL, NULL, hInst, NULL);
+							NULL, NULL, hInstance, NULL);
 			viewcmn_setmode(view, NULL, VIEWMODE_REG);
 			ShowWindow(view->hwnd, SW_SHOWNORMAL);
 			UpdateWindow(view->hwnd);

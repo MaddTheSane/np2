@@ -61,14 +61,16 @@ static	void				(PARTSCALL *fnmix)(SINT16 *dst,
 
 // ---- directsound
 
-static BRESULT dsoundcreate(void) {
-
+static BRESULT dsoundcreate(HWND hWnd)
+{
 	// DirectSound‚Ì‰Šú‰»
 	if (FAILED(DirectSoundCreate(0, &pDSound, 0))) {
 		goto dscre_err;
 	}
-	if (FAILED(pDSound->SetCooperativeLevel(hWndMain, DSSCL_PRIORITY))) {
-		if (FAILED(pDSound->SetCooperativeLevel(hWndMain, DSSCL_NORMAL))) {
+	if (FAILED(pDSound->SetCooperativeLevel(hWnd, DSSCL_PRIORITY)))
+	{
+		if (FAILED(pDSound->SetCooperativeLevel(hWnd, DSSCL_NORMAL)))
+		{
 			goto dscre_err;
 		}
 	}
@@ -469,7 +471,7 @@ void soundmng_pcmstop(UINT num) {
 
 BRESULT soundmng_initialize(void) {
 
-	if (dsoundcreate() != SUCCESS) {
+	if (dsoundcreate(g_hWndMain) != SUCCESS) {
 		goto smcre_err;
 	}
 	pcmcreate();

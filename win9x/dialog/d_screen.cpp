@@ -264,11 +264,13 @@ static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 	return(FALSE);
 }
 
-static const TCHAR *pszZoom[] = {
-	MAKEINTRESOURCE(IDS_ZOOM_NONE),
-	MAKEINTRESOURCE(IDS_ZOOM_FIXEDASPECT),
-	MAKEINTRESOURCE(IDS_ZOOM_ADJUSTASPECT),
-	MAKEINTRESOURCE(IDS_ZOOM_FULL)};
+static const CBPARAM cpZoom[] =
+{
+	{MAKEINTRESOURCE(IDS_ZOOM_NONE),			0},
+	{MAKEINTRESOURCE(IDS_ZOOM_FIXEDASPECT),		1},
+	{MAKEINTRESOURCE(IDS_ZOOM_ADJUSTASPECT),	2},
+	{MAKEINTRESOURCE(IDS_ZOOM_FULL),			3},
+};
 
 static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 												WPARAM wParam, LPARAM lParam)
@@ -284,9 +286,9 @@ static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 													(c & FSCRNMOD_SAMEBPP));
 			SetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMERES,
 													(c & FSCRNMOD_SAMERES));
-			dlgs_setdroplistitem(hWnd, IDC_FULLSCREEN_ZOOM,
-												pszZoom, NELEMENTS(pszZoom));
-			dlgs_setdroplistnumber(hWnd, IDC_FULLSCREEN_ZOOM, (c & 3));
+			dlgs_setcbitem(hWnd, IDC_FULLSCREEN_ZOOM,
+												cpZoom, NELEMENTS(cpZoom));
+			dlgs_setcbcur(hWnd, IDC_FULLSCREEN_ZOOM, (c & 3));
 			EnableWindow(GetDlgItem(hWnd, IDC_FULLSCREEN_ZOOM),
 												(c & FSCRNMOD_SAMERES) != 0);
 			return(TRUE);
@@ -313,7 +315,7 @@ static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 				{
 					c |= FSCRNMOD_SAMERES;
 				}
-				c |= (dlgs_getdroplistnumber(hWnd, IDC_FULLSCREEN_ZOOM) & 3);
+				c |= dlgs_getcbcur(hWnd, IDC_FULLSCREEN_ZOOM, 0);
 				if (np2oscfg.fscrnmod != c)
 				{
 					np2oscfg.fscrnmod = c;
@@ -329,17 +331,17 @@ static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 
 void dialog_scropt(HWND hWnd) {
 
-	HINSTANCE		hinst;
+	HINSTANCE		hInstance;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
 
-	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);
 	psp.dwFlags = PSP_DEFAULT;
-	psp.hInstance = hinst;
+	psp.hInstance = hInstance;
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SCROPT1);
 	psp.pfnDlgProc = (DLGPROC)Scropt1DlgProc;
@@ -361,13 +363,13 @@ void dialog_scropt(HWND hWnd) {
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	psh.hwndParent = hWnd;
-	psh.hInstance = hinst;
-	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
+	psh.hInstance = hInstance;
+	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
 	psh.pszCaption = str_scropt;
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
-	InvalidateRect(hWndMain, NULL, TRUE);
+	InvalidateRect(hWnd, NULL, TRUE);
 }
 

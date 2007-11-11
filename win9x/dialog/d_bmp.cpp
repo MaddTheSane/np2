@@ -13,47 +13,33 @@
 #include	"font.h"
 
 
-static const TCHAR fontui_title[] = _T("Select font file");
-static const TCHAR fontui_filter[] =									\
-					_T("PC-98 BMP font (*.bmp)\0")						\
-						_T("*.bmp\0")									\
-					_T("Virtual98 font\0")								\
-						_T("font.rom\0")								\
-					_T("All supported files\0")							\
-						_T("*.bmp;")									\
-						_T("pc88.fnt;kanji1.rom;kanji2.rom;")			\
-						_T("font.rom;")									\
-						_T("subsys_c.rom;kanji.rom;")					\
-						_T("fnt0808.x1;fnt0816.x1;fnt1616.x1;")			\
-						_T("cgrom.dat\0");
-static const FILESEL fontui = {fontui_title, tchar_bmp, fontui_filter, 3};
+static const FSPARAM fpFont =
+{
+	MAKEINTRESOURCE(IDS_FONTTITLE),
+	MAKEINTRESOURCE(IDS_FONTEXT),
+	MAKEINTRESOURCE(IDS_FONTFILTER),
+	3
+};
 
-static const OEMCHAR bmpui_file[] = OEMTEXT("NP2_%04d.BMP");
+static const LPTSTR lpszBmpFilter[] =
+{
+	MAKEINTRESOURCE(IDS_BMPFILTER1),
+	MAKEINTRESOURCE(IDS_BMPFILTER4),
+	MAKEINTRESOURCE(IDS_BMPFILTER8),
+	MAKEINTRESOURCE(IDS_BMPFILTER24)
+};
+static const OEMCHAR szBmpFile[] = OEMTEXT("NP2_####.BMP");
 
-static const TCHAR bmpui_title[] = _T("Save as bitmap file");
-static const TCHAR bmpui_filter1[] =									\
-					_T("1bit-bitmap (*.bmp)\0*.bmp\0")					\
-					_T("Graphics Interchange Format (*.gif)\0*.gif\0");
-static const TCHAR bmpui_filter4[] =									\
-					_T("4bit-bitmap (*.bmp)\0*.bmp\0")					\
-					_T("Graphics Interchange Format (*.gif)\0*.gif\0");
-static const TCHAR bmpui_filter8[] =									\
-					_T("8bit-bitmap (*.bmp)\0*.bmp\0")
-					_T("Graphics Interchange Format (*.gif)\0*.gif\0");
-static const TCHAR bmpui_filter24[] = _T("24bit-bitmap (*.bmp)\0*.bmp\0");
-static const TCHAR *bmpui_filter[4] = {
-				bmpui_filter1, bmpui_filter4, bmpui_filter8, bmpui_filter24};
+void dialog_font(HWND hWnd)
+{
+	OEMCHAR	szPath[MAX_PATH];
 
-
-void dialog_font(HWND hWnd) {
-
-	OEMCHAR	path[MAX_PATH];
-
-	file_cpyname(path, np2cfg.fontfile, NELEMENTS(path));
-	if ((dlgs_selectfile(hWnd, &fontui, path, NELEMENTS(path), NULL)) &&
-		(font_load(path, FALSE))) {
+	file_cpyname(szPath, np2cfg.fontfile, NELEMENTS(szPath));
+	if ((dlgs_openfile(hWnd, &fpFont, szPath, NELEMENTS(szPath), NULL)) &&
+		(font_load(szPath, FALSE)))
+	{
 		gdcs.textdisp |= GDCSCRN_ALLDRAW2;
-		milstr_ncpy(np2cfg.fontfile, path, NELEMENTS(np2cfg.fontfile));
+		milstr_ncpy(np2cfg.fontfile, szPath, NELEMENTS(np2cfg.fontfile));
 		sysmng_update(SYS_UPDATECFG);
 	}
 }
@@ -61,31 +47,35 @@ void dialog_font(HWND hWnd) {
 void dialog_writebmp(HWND hWnd) {
 
 	SCRNSAVE	ss;
-	FILESEL		bmpui;
-	OEMCHAR		path[MAX_PATH];
-const OEMCHAR	*ext;
+	FSPARAM		fp;
+	OEMCHAR		szPath[MAX_PATH];
+const OEMCHAR	*pszExt;
 
 	ss = scrnsave_get();
-	if (ss == NULL) {
+	if (ss == NULL)
+	{
 		return;
 	}
-	bmpui.title = bmpui_title;
-	bmpui.ext = tchar_bmp;
-	bmpui.filter = bmpui_filter[ss->type];
-	bmpui.defindex = 1;
-	file_cpyname(path, bmpfilefolder, NELEMENTS(path));
-	file_cutname(path);
-	file_catname(path, bmpui_file, NELEMENTS(path));
-	if (dlgs_selectwritenum(hWnd, &bmpui, path, NELEMENTS(path))) {
-		file_cpyname(bmpfilefolder, path, NELEMENTS(bmpfilefolder));
+	fp.lpszTitle = MAKEINTRESOURCE(IDS_BMPTITLE);
+	fp.lpszDefExt = MAKEINTRESOURCE(IDS_BMPEXT);
+	fp.lpszFilter = lpszBmpFilter[ss->type];
+	fp.nFilterIndex = 1;
+	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
+	file_cutname(szPath);
+	file_catname(szPath, szBmpFile, NELEMENTS(szPath));
+	if (dlgs_createfilenum(hWnd, &fp, szPath, NELEMENTS(szPath)))
+	{
+		file_cpyname(bmpfilefolder, szPath, NELEMENTS(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
-		ext = file_getext(path);
+		pszExt = file_getext(szPath);
 		if ((ss->type <= SCRNSAVE_8BIT) &&
-			(!file_cmpname(ext, OEMTEXT("gif")))) {
-			scrnsave_writegif(ss, path, SCRNSAVE_AUTO);
+			(!file_cmpname(pszExt, OEMTEXT("gif"))))
+		{
+			scrnsave_writegif(ss, szPath, SCRNSAVE_AUTO);
 		}
-		else if (!file_cmpname(ext, str_bmp)) {
-			scrnsave_writebmp(ss, path, SCRNSAVE_AUTO);
+		else if (!file_cmpname(pszExt, str_bmp))
+		{
+			scrnsave_writebmp(ss, szPath, SCRNSAVE_AUTO);
 		}
 	}
 	scrnsave_trash(ss);

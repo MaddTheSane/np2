@@ -20,7 +20,7 @@ static void wintypechange(HWND hWnd, UINT8 type) {
 
 	WINLOCEX	wlex;
 
-	wlex = np2_winlocexallwin(hWndMain);
+	wlex = np2_winlocexallwin(g_hWndMain);
 	winlocex_setholdwnd(wlex, hWnd);
 	np2class_windowtype(hWnd, type);
 	winlocex_move(wlex);
@@ -124,7 +124,7 @@ static void kdsetwinsize(void) {
 	int			height;
 	WINLOCEX	wlex;
 
-	wlex = np2_winlocexallwin(hWndMain);
+	wlex = np2_winlocexallwin(g_hWndMain);
 	winlocex_setholdwnd(wlex, kdispwin.hwnd);
 	keydisp_getsize(&width, &height);
 	winloc_setclientsize(kdispwin.hwnd, width, height);
@@ -226,7 +226,7 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_KEYDOWN:
 		case WM_KEYUP:
-			SendMessage(hWndMain, msg, wp, lp);
+			SendMessage(g_hWndMain, msg, wp, lp);
 			break;
 
 		case WM_ENTERMENULOOP:
@@ -283,31 +283,29 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0L);
 }
 
-BOOL kdispwin_initialize(HINSTANCE hPreInst) {
+BOOL kdispwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
-	if (!hPreInst) {
-		ZeroMemory(&wc, sizeof(wc));
-		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-		wc.lpfnWndProc = kdproc;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = NP2GWLP_SIZE;
-		wc.hInstance = hInst;
-		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-		wc.lpszMenuName = MAKEINTRESOURCE(IDR_KEYDISP);
-		wc.lpszClassName = kdispclass;
-		if (!RegisterClass(&wc)) {
-			return(FAILURE);
-		}
+	ZeroMemory(&wc, sizeof(wc));
+	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	wc.lpfnWndProc = kdproc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = NP2GWLP_SIZE;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+	wc.lpszMenuName = MAKEINTRESOURCE(IDR_KEYDISP);
+	wc.lpszClassName = kdispclass;
+	if (!RegisterClass(&wc)) {
+		return(FAILURE);
 	}
 	keydisp_initialize();
 	return(SUCCESS);
 }
 
-void kdispwin_create(void) {
+void kdispwin_create(HINSTANCE hInstance) {
 
 	HWND		hwnd;
 	UINT8		mode;
@@ -322,7 +320,7 @@ void kdispwin_create(void) {
 						WS_MINIMIZEBOX,
 						kdispcfg.posx, kdispcfg.posy,
 						KEYDISP_WIDTH, KEYDISP_HEIGHT,
-						NULL, NULL, hInst, NULL);
+						NULL, NULL, hInstance, NULL);
 	kdispwin.hwnd = hwnd;
 	if (hwnd == NULL) {
 		goto kdcre_err1;
@@ -350,7 +348,7 @@ void kdispwin_create(void) {
 	palfn.userdata = (long)kdispwin.dd2hdl;
 	keydisp_setpal(&palfn);
 	kdispwin_draw(0);
-	SetForegroundWindow(hWndMain);
+	SetForegroundWindow(g_hWndMain);
 	return;
 
 kdcre_err2:
@@ -536,7 +534,7 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_KEYDOWN:
 		case WM_KEYUP:
-			SendMessage(hWndMain, msg, wp, lp);
+			SendMessage(g_hWndMain, msg, wp, lp);
 			break;
 
 		case WM_ENTERMENULOOP:
@@ -590,56 +588,54 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0);
 }
 
-BOOL mdbgwin_initialize(HINSTANCE hPreInst) {
+BOOL mdbgwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
-	if (!hPreInst) {
-		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-		wc.lpfnWndProc = mdproc;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hInstance = hInst;
-		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-		wc.lpszMenuName = NULL;
-		wc.lpszClassName = mdbgclass;
-		if (!RegisterClass(&wc)) {
-			return(FAILURE);
-		}
+	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	wc.lpfnWndProc = mdproc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = mdbgclass;
+	if (!RegisterClass(&wc)) {
+		return(FAILURE);
 	}
 	memdbg32_initialize();
 	return(SUCCESS);
 }
 
-void mdbgwin_create(void) {
+void mdbgwin_create(HINSTANCE hInstance) {
 
-	HWND	hwnd;
+	HWND	hWnd;
 
 	if (mdbgwin.hwnd != NULL) {
 		return;
 	}
 	ZeroMemory(&mdbgwin, sizeof(mdbgwin));
 	memdbg32_getsize(&mdbgwin.width, &mdbgwin.height);
-	hwnd = CreateWindow(mdbgclass, mdbgtitle,
+	hWnd = CreateWindow(mdbgclass, mdbgtitle,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						mdbgcfg.posx, mdbgcfg.posy,
 						mdbgwin.width, mdbgwin.height,
-						NULL, NULL, hInst, NULL);
-	mdbgwin.hwnd = hwnd;
-	if (hwnd == NULL) {
+						NULL, NULL, hInstance, NULL);
+	mdbgwin.hwnd = hWnd;
+	if (hWnd == NULL) {
 		goto mdcre_err1;
 	}
-	ShowWindow(hwnd, SW_SHOWNOACTIVATE);
-	UpdateWindow(hwnd);
+	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+	UpdateWindow(hWnd);
 	mdbgwin.dd2hdl = dd2_create(hwnd, mdbgwin.width, mdbgwin.height);
 	if (mdbgwin.dd2hdl == NULL) {
 		goto mdcre_err2;
 	}
-	InvalidateRect(hwnd, NULL, TRUE);
-	SetForegroundWindow(hWndMain);
+	InvalidateRect(hWnd, NULL, TRUE);
+	SetForegroundWindow(g_hWndMain);
 	return;
 
 mdcre_err2:
@@ -811,7 +807,7 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_KEYDOWN:
 		case WM_KEYUP:
-			SendMessage(hWndMain, msg, wp, lp);
+			SendMessage(g_hWndMain, msg, wp, lp);
 			break;
 
 		case WM_ENTERMENULOOP:
@@ -865,25 +861,23 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0L);
 }
 
-BOOL skbdwin_initialize(HINSTANCE hPreInst) {
+BOOL skbdwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
-	if (!hPreInst) {
-		ZeroMemory(&wc, sizeof(wc));
-		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-		wc.lpfnWndProc = skproc;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = NP2GWLP_SIZE;
-		wc.hInstance = hInst;
-		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON2));
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-		wc.lpszMenuName = NULL;
-		wc.lpszClassName = skbdclass;
-		if (!RegisterClass(&wc)) {
-			return(FAILURE);
-		}
+	ZeroMemory(&wc, sizeof(wc));
+	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	wc.lpfnWndProc = skproc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = NP2GWLP_SIZE;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = skbdclass;
+	if (!RegisterClass(&wc)) {
+		return(FAILURE);
 	}
 	softkbd_initialize();
 	return(SUCCESS);
@@ -894,7 +888,7 @@ void skbdwin_deinitialize(void) {
 	softkbd_deinitialize();
 }
 
-void skbdwin_create(void) {
+void skbdwin_create(HINSTANCE hInstance) {
 
 	HWND	hwnd;
 
@@ -910,7 +904,7 @@ void skbdwin_create(void) {
 						WS_MINIMIZEBOX,
 						skbdcfg.posx, skbdcfg.posy,
 						skbdwin.width, skbdwin.height,
-						NULL, NULL, hInst, NULL);
+						NULL, NULL, hInstance, NULL);
 	skbdwin.hwnd = hwnd;
 	if (hwnd == NULL) {
 		goto skcre_err1;
@@ -922,7 +916,7 @@ void skbdwin_create(void) {
 		goto skcre_err2;
 	}
 	InvalidateRect(hwnd, NULL, TRUE);
-	SetForegroundWindow(hWndMain);
+	SetForegroundWindow(g_hWndMain);
 	return;
 
 skcre_err2:

@@ -21,53 +21,42 @@ extern	COMMNG	cm_mpu98;
 }
 #endif
 
-static const TCHAR *mpuinterrupt[4] = {
-									str_int0, str_int1, str_int2, str_int5};
+static const CBPARAM cpInt[] =
+{
+	{MAKEINTRESOURCE(IDS_INT0),		0},
+	{MAKEINTRESOURCE(IDS_INT1),		1},
+	{MAKEINTRESOURCE(IDS_INT2),		2},
+	{MAKEINTRESOURCE(IDS_INT5),		3},
+};
 
 static	UINT8	mpu = 0;
 
-
-static void setmpuiopara(HWND hWnd, UINT16 res, UINT8 value) {
-
-	SendDlgItemMessage(hWnd, res, CB_SETCURSEL,
-									(WPARAM)((value >> 4) & 15), (LPARAM)0);
+static void setmpuio(HWND hWnd, UINT8 cValue)
+{
+	dlgs_setcbcur(hWnd, IDC_MPUIO, (cValue & 0xf0));
 }
 
-static UINT8 getmpuio(HWND hWnd, UINT16 res) {
-
-	TCHAR	work[8];
-
-	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
-	return((UINT8)((miltchar_solveHEX(work) >> 6) & 0xf0));
+static UINT8 getmpuio(HWND hWnd)
+{
+	return dlgs_getcbcur(hWnd, IDC_MPUIO, 0x00);
 }
 
-static void setmpuintpara(HWND hWnd, UINT16 res, UINT8 value) {
-
-	SendDlgItemMessage(hWnd, res, CB_SETCURSEL,
-									(WPARAM)(value & 3), (LPARAM)0);
+static void setmpuint(HWND hWnd, UINT8 cValue)
+{
+	dlgs_setcbcur(hWnd, IDC_MPUINT, (cValue & 0x03));
 }
 
-static UINT8 getmpuint(HWND hWnd, UINT16 res) {
-
-	TCHAR	work[8];
-	TCHAR	ret;
-
-	GetDlgItemText(hWnd, res, work, NELEMENTS(work));
-	ret = work[3] - '0';
-	if (ret < 0) {
-		ret = 0;
-	}
-	else if (ret >= 3) {
-		ret = 3;
-	}
-	return((UINT8)ret);
+static UINT8 getmpuint(HWND hWnd)
+{
+	return dlgs_getcbcur(hWnd, IDC_MPUINT, 0x00);
 }
 
-static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
-
-	if ((mpu ^ value) & bit) {
-		mpu &= ~bit;
-		mpu |= value;
+static void setmpujmp(HWND hWnd, UINT8 cValue, UINT8 cBit)
+{
+	if ((mpu ^ cValue) & cBit)
+	{
+		mpu &= ~cBit;
+		mpu |= cValue;
 		InvalidateRect(GetDlgItem(hWnd, IDC_MPUDIP), NULL, TRUE);
 	}
 }
@@ -75,21 +64,29 @@ static void setmpujmp(HWND hWnd, UINT8 value, UINT8 bit) {
 
 // ----
 
-static void mpucreate(HWND hWnd) {
-
+static void mpucreate(HWND hWnd)
+{
 	UINT	i;
-	TCHAR	buf[8];
+	TCHAR	szBuf[8];
+	int		nIndex;
 	HWND	sub;
 
 	mpu = np2cfg.mpuopt;
-	for (i=0; i<16; i++) {
-		wsprintf(buf, tchar_4X, 0xC0D0 + (i << 10));
-		SendDlgItemMessage(hWnd, IDC_MPUIO,
-									CB_INSERTSTRING, (WPARAM)i, (LPARAM)buf);
+	for (i=0; i<16; i++)
+	{
+		wsprintf(szBuf, tchar_4X, 0xC0D0 + (i << 10));
+		nIndex = SendDlgItemMessage(hWnd, IDC_MPUIO, CB_ADDSTRING,
+														0, (LPARAM)szBuf);
+		if (nIndex >= 0)
+		{
+			SendDlgItemMessage(hWnd, IDC_MPUIO, CB_SETITEMDATA,
+											(WPARAM)nIndex, (LPARAM)(i << 4));
+		}
 	}
-	setmpuiopara(hWnd, IDC_MPUIO, mpu);
-	SETLISTSTR(hWnd, IDC_MPUINT, mpuinterrupt);
-	setmpuintpara(hWnd, IDC_MPUINT, mpu);
+	setmpuio(hWnd, mpu);
+
+	dlgs_setcbitem(hWnd, IDC_MPUINT, cpInt, NELEMENTS(cpInt));
+	setmpuint(hWnd, mpu);
 
 	dlgs_setlistmidiout(hWnd, IDC_MPU98MMAP, np2oscfg.mpu.mout);
 	dlgs_setlistmidiin(hWnd, IDC_MPU98MDIN, np2oscfg.mpu.min);
@@ -174,7 +171,7 @@ static void mpucmddipsw(HWND hWnd) {
 	if ((p.x >= 2) && (p.x < 6)) {
 		bit = 0x80 >> (p.x - 2);
 		mpu ^= bit;
-		setmpuiopara(hWnd, IDC_MPUIO, mpu);
+		setmpuio(hWnd, mpu);
 		redraw = TRUE;
 	}
 	else if ((p.x >= 9) && (p.x < 13)) {
@@ -182,7 +179,7 @@ static void mpucmddipsw(HWND hWnd) {
 		if ((mpu ^ bit) & 3) {
 			mpu &= ~0x3;
 			mpu |= bit;
-			setmpuintpara(hWnd, IDC_MPUINT, mpu);
+			setmpuint(hWnd, mpu);
 			redraw = TRUE;
 		}
 	}
@@ -210,17 +207,17 @@ LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_MPUIO:
-					setmpujmp(hWnd, getmpuio(hWnd, IDC_MPUIO), 0xf0);
+					setmpujmp(hWnd, getmpuio(hWnd), 0xf0);
 					return(FALSE);
 
 				case IDC_MPUINT:
-					setmpujmp(hWnd, getmpuint(hWnd, IDC_MPUINT), 0x03);
+					setmpujmp(hWnd, getmpuint(hWnd), 0x03);
 					return(FALSE);
 
 				case IDC_MPUDEF:
 					mpu = 0x82;
-					setmpuiopara(hWnd, IDC_MPUIO, mpu);
-					setmpuintpara(hWnd, IDC_MPUINT, mpu);
+					setmpuio(hWnd, mpu);
+					setmpuint(hWnd, mpu);
 					InvalidateRect(GetDlgItem(hWnd, IDC_MPUDIP), NULL, TRUE);
 					return(FALSE);
 

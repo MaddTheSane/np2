@@ -34,7 +34,7 @@ static void getmaincenter(POINT *cp) {
 
 	RECT	rct;
 
-	GetWindowRect(hWndMain, &rct);
+	GetWindowRect(g_hWndMain, &rct);
 	cp->x = (rct.right + rct.left) / 2;
 	cp->y = (rct.bottom + rct.top) / 2;
 }
@@ -45,7 +45,7 @@ static void mousecapture(BOOL capture) {
 	POINT	cp;
 	RECT	rct;
 
-	style = GetClassLong(hWndMain, GCL_STYLE);
+	style = GetClassLong(g_hWndMain, GCL_STYLE);
 	if (capture) {
 		ShowCursor(FALSE);
 		getmaincenter(&cp);
@@ -62,7 +62,7 @@ static void mousecapture(BOOL capture) {
 		ClipCursor(NULL);
 		style |= CS_DBLCLKS;
 	}
-	SetClassLong(hWndMain, GCL_STYLE, style);
+	SetClassLong(g_hWndMain, GCL_STYLE, style);
 }
 
 void mousemng_initialize(void) {

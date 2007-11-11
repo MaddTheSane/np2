@@ -1,15 +1,15 @@
 #include	"compiler.h"
+#include	"resource.h"
 #include	"strres.h"
 #include	"bmpdata.h"
 #include	"oemtext.h"
 #include	"dosio.h"
 #include	"commng.h"
 #include	"dialogs.h"
+#include	"np2.h"
 #if defined(MT32SOUND_DLL)
 #include	"mt32snd.h"
 #endif
-
-extern HINSTANCE hInst;
 
 
 const TCHAR str_nc[] = _T("N/C");
@@ -40,139 +40,217 @@ void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID)
 
 // ---- file select
 
-BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
-										OEMCHAR *path, UINT size, int *ro) {
-
-	TCHAR			*pszTitle;
-	OPENFILENAME	ofn;
+static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
+							OEMCHAR *pszPath, UINT uSize,
+							BOOL (WINAPI * fnAPI)(LPOPENFILENAME lpofn))
+{
+	HINSTANCE	hInstance;
+	LPTSTR		lpszTitle;
+	LPTSTR		lpszFilter;
+	LPTSTR		lpszDefExt;
+	LPTSTR		p;
 #if defined(OSLANG_UTF8)
-	TCHAR			_path[MAX_PATH];
-#endif
-	BOOL			bResult;
+	TCHAR		szPath[MAX_PATH];
+#endif	// defined(OSLANG_UTF8)
+	BOOL		bResult;
 
-	if ((item == NULL) || (path == NULL) || (size == 0)) {
-		return(FALSE);
+	if ((lpOFN == NULL) || (pcParam == NULL) ||
+		(pszPath == NULL) || (uSize == 0) || (fnAPI == NULL))
+	{
+		return FALSE;
 	}
-	pszTitle = lockstringresource(hInst, item->title);
 
-	ZeroMemory(&ofn, sizeof(OPENFILENAME));
-	ofn.lStructSize = sizeof(OPENFILENAME);
-	ofn.hwndOwner = hWnd;
-	ofn.lpstrFilter = item->filter;
-	ofn.nFilterIndex = item->defindex;
-#if defined(OSLANG_UTF8)
-	oemtotchar(_path, NELEMENTS(_path), path, -1);
-	ofn.lpstrFile = _path;
-	ofn.nMaxFile = NELEMENTS(_path);
-#else
-	ofn.lpstrFile = path;
-	ofn.nMaxFile = size;
-#endif
-	ofn.Flags = OFN_FILEMUSTEXIST;
-	ofn.lpstrDefExt = item->ext;
-	ofn.lpstrTitle = pszTitle;
+	hInstance = g_hInstance;
 
-	bResult = GetOpenFileName(&ofn);
-	unlockstringresource(pszTitle);
+	if (!HIWORD(pcParam->lpszTitle))
+	{
+		lpszTitle = lockstringresource(hInstance, pcParam->lpszTitle);
+		lpOFN->lpstrTitle = lpszTitle;
+	}
+	else
+	{
+		lpszTitle = NULL;
+		lpOFN->lpstrTitle = pcParam->lpszTitle;
+	}
 
-	if (bResult) {
-#if defined(OSLANG_UTF8)
-		tchartooem(path, NELEMENTS(path), _path, -1);
-#endif
-		if (ro) {
-			*ro = ofn.Flags & OFN_READONLY;
+	if (!HIWORD(pcParam->lpszFilter))
+	{
+		lpszFilter = lockstringresource(hInstance, pcParam->lpszFilter);
+		lpOFN->lpstrFilter = lpszFilter;
+	}
+	else
+	{
+		lpszFilter = NULL;
+		lpOFN->lpstrFilter = pcParam->lpszFilter;
+	}
+
+	if (!HIWORD(pcParam->lpszDefExt))
+	{
+		lpszDefExt = lockstringresource(hInstance, pcParam->lpszDefExt);
+		lpOFN->lpstrDefExt = lpszDefExt;
+	}
+	else
+	{
+		lpszDefExt = NULL;
+		lpOFN->lpstrDefExt = pcParam->lpszDefExt;
+	}
+
+	lpOFN->nFilterIndex = pcParam->nFilterIndex;
+
+
+	p = lpszFilter;
+	if (p)
+	{
+		while(*p != '\0')
+		{
+#if !defined(_UNICODE)
+			if (IsDBCSLeadByte((BYTE)*p))
+			{
+				p += 2;
+				continue;
+			}
+#endif	// !defined(_UNICODE)
+			if (*p == '|')
+			{
+				*p = '\0';
+			}
+			p++;
 		}
 	}
-	return(bResult);
+
+#if defined(OSLANG_UTF8)
+	oemtotchar(szPath, NELEMENTS(szPath), pszPath, -1);
+	lpOFN->lpstrFile = szPath;
+	lpOFN->nMaxFile = NELEMENTS(szPath);
+#else	// defined(OSLANG_UTF8)
+	lpOFN->lpstrFile = pszPath;
+	lpOFN->nMaxFile = uSize;
+#endif	// defined(OSLANG_UTF8)
+
+	bResult = (*fnAPI)(lpOFN);
+
+#if defined(OSLANG_UTF8)
+	if (bResult)
+	{
+		tchartooem(pszPath, uSize, szPath, -1);
+	}
+#endif	// defined(OSLANG_UTF8)
+
+	if (lpszTitle)
+	{
+		unlockstringresource(lpszTitle);
+	}
+	if (lpszFilter)
+	{
+		unlockstringresource(lpszFilter);
+	}
+	if (lpszDefExt)
+	{
+		unlockstringresource(lpszDefExt);
+	}
+
+	return bResult;
 }
 
-BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
-											OEMCHAR *path, UINT size) {
-
+BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam,
+									OEMCHAR *pszPath, UINT uSize, int *pnRO)
+{
 	OPENFILENAME	ofn;
-	TCHAR			*pszTitle;
-#if defined(OSLANG_UTF8)
-	TCHAR			_path[MAX_PATH];
-#endif
 	BOOL			bResult;
 
-	if ((item == NULL) || (path == NULL) || (size == 0)) {
-		return(FALSE);
-	}
-
-	pszTitle = lockstringresource(hInst, item->title);
-
-	ZeroMemory(&ofn, sizeof(OPENFILENAME));
-	ofn.lStructSize = sizeof(OPENFILENAME);
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWnd;
-	ofn.lpstrFilter = item->filter;
-	ofn.nFilterIndex = item->defindex;
-#if defined(OSLANG_UTF8)
-	oemtotchar(_path, NELEMENTS(_path), path, -1);
-	ofn.lpstrFile = _path;
-	ofn.nMaxFile = NELEMENTS(_path);
-#else
-	ofn.lpstrFile = path;
-	ofn.nMaxFile = size;
-#endif
-	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
-	ofn.lpstrDefExt = item->ext;
-	ofn.lpstrTitle = pszTitle;
+	ofn.Flags = OFN_FILEMUSTEXIST;
 
-	bResult = GetSaveFileName(&ofn);
-
-	unlockstringresource(pszTitle);
-
-#if defined(OSLANG_UTF8)
-	if (bResult) {
-		tchartooem(path, NELEMENTS(path), _path, -1);
+	if (pnRO == NULL)
+	{
+		ofn.Flags |= OFN_HIDEREADONLY;
 	}
-#endif
-	return(bResult);
+
+	bResult = openFileParam(&ofn, pcParam, pszPath, uSize, GetOpenFileName);
+
+	if ((bResult) && (pnRO != NULL))
+	{
+		*pnRO = ofn.Flags & OFN_READONLY;
+	}
+
+	return bResult;
 }
 
-BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
-											OEMCHAR *path, UINT size) {
+BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam,
+												OEMCHAR *pszPath, UINT uSize)
+{
+	OPENFILENAME	ofn;
 
-	OEMCHAR	*file;
-	OEMCHAR	*p;
-	OEMCHAR	*q;
-	UINT	i;
-	BOOL	r;
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+	return openFileParam(&ofn, pcParam, pszPath, uSize, GetSaveFileName);
+}
 
-	if ((item == NULL) || (path == NULL) || (size == 0)) {
-		return(FALSE);
+BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam,
+												OEMCHAR *pszPath, UINT uSize)
+{
+	OEMCHAR *pszNum[4];
+	OEMCHAR *pszFile;
+	UINT uCount;
+	UINT uPos;
+
+	if (!pszPath)
+	{
+		return FALSE;
 	}
-	file = (OEMCHAR *)_MALLOC((size + 16) * sizeof(OEMCHAR), path);
-	if (file == NULL) {
-		return(FALSE);
-	}
-	p = file_getname(path);
-	milstr_ncpy(file, path, size);
-	file_cutname(file);
-	q = file + OEMSTRLEN(file);
 
-	for (i=0; i<10000; i++) {
-		OEMSPRINTF(q, p, i);
-		if (file_attr(file) == (short)-1) {
+	ZeroMemory(pszNum, sizeof(pszNum));
+	pszFile = file_getname(pszPath);
+	uCount = 0;
+	while(1)
+	{
+		pszFile = milsjis_chr(pszPath, '#');
+		if (!pszFile)
+		{
+			break;
+		}
+		*pszFile = '0';
+		pszNum[uCount] = pszFile;
+		uCount = (uCount + 1) % NELEMENTS(pszNum);
+		pszFile++;
+	}
+
+	while(file_attr(pszPath) != (short)-1)
+	{
+		uPos = max(uCount, NELEMENTS(pszNum));
+		while(uPos)
+		{
+			pszFile = pszNum[(uPos - 1) % NELEMENTS(pszNum)];
+			*pszFile = *pszFile + 1;
+			if (*pszFile < ('0' + 10))
+			{
+				break;
+			}
+			*pszFile = '0';
+			uPos--;
+		}
+		if (!uPos)
+		{
 			break;
 		}
 	}
-	r = dlgs_selectwritefile(hWnd, item, file, size);
-	if (r) {
-		milstr_ncpy(path, file, size);
-	}
-	_MFREE(file);
-	return(r);
+	return dlgs_createfile(hWnd, pcParam, pszPath, uSize);
 }
 
 
 // ---- mimpi def file
 
-static const TCHAR mimpi_title[] = _T("Open MIMPI define file");
-static const TCHAR mimpi_ext[] = _T("def");
-static const TCHAR mimpi_filter[] = _T("MIMPI define file(*.def)\0*.def\0");
-static const FILESEL mimpi = {mimpi_title, mimpi_ext, mimpi_filter, 1};
+static const FSPARAM fpMIMPI =
+{
+	MAKEINTRESOURCE(IDS_MIMPITITLE),
+	MAKEINTRESOURCE(IDS_MIMPIEXT),
+	MAKEINTRESOURCE(IDS_MIMPIFILTER),
+	1
+};
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res) {
 
@@ -182,7 +260,7 @@ const OEMCHAR	*p;
 
 	subwnd = GetDlgItem(hWnd, res);
 	GetWindowText(subwnd, path, NELEMENTS(path));
-	if (dlgs_selectfile(hWnd, &mimpi, path, NELEMENTS(path), NULL)) {
+	if (dlgs_openfile(hWnd, &fpMIMPI, path, NELEMENTS(path), NULL)) {
 		p = path;
 	}
 	else {
@@ -217,35 +295,37 @@ void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 	}
 }
 
-
-void dlgs_setdroplistitem(HWND hWnd, UINT uID,
-										const TCHAR **ppszItem, UINT uItems)
+void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pItem, UINT uItems)
 {
 	HWND	hItem;
-	UINT	uPos;
 	UINT	i;
+	LPCTSTR lpcszStr;
 	TCHAR	szString[128];
+	int		nIndex;
 
 	hItem = GetDlgItem(hWnd, uID);
-	uPos = 0;
-	for (i=0; i<uItems; i++) {
-		LPCTSTR lpcszStr = ppszItem[i];
+	for (i=0; i<uItems; i++)
+	{
+		lpcszStr = pItem[i].lpcszString;
 		if (!HIWORD(lpcszStr))
 		{
-			if (!loadstringresource(hInst, LOWORD(lpcszStr),
+			if (!loadstringresource(g_hInstance, LOWORD(lpcszStr),
 											szString, NELEMENTS(szString)))
 			{
 				continue;
 			}
 			lpcszStr = szString;
 		}
-		SendMessage(hItem, CB_INSERTSTRING, (WPARAM)uPos, (LPARAM)lpcszStr);
-		SendMessage(hItem, CB_SETITEMDATA, (WPARAM)uPos, (LPARAM)i);
-		uPos++;
+		nIndex = SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)lpcszStr);
+		if (nIndex >= 0)
+		{
+			SendMessage(hItem, CB_SETITEMDATA,
+								(WPARAM)nIndex, (LPARAM)pItem[i].nItemData);
+		}
 	}
 }
 
-void dlgs_setdroplistnumber(HWND hWnd, UINT uID, int nNumber)
+void dlgs_setcbcur(HWND hWnd, UINT uID, int nItemData)
 {
 	HWND	hItem;
 	int		nItems;
@@ -255,7 +335,7 @@ void dlgs_setdroplistnumber(HWND hWnd, UINT uID, int nNumber)
 	nItems = SendMessage(hItem, CB_GETCOUNT, 0, 0);
 	for (i=0; i<nItems; i++)
 	{
-		if (SendMessage(hItem, CB_GETITEMDATA, (WPARAM)i, 0) == nNumber)
+		if (SendMessage(hItem, CB_GETITEMDATA, (WPARAM)i, 0) == nItemData)
 		{
 			SendMessage(hItem, CB_SETCURSEL, (WPARAM)i, 0);
 			break;
@@ -263,7 +343,7 @@ void dlgs_setdroplistnumber(HWND hWnd, UINT uID, int nNumber)
 	}
 }
 
-int dlgs_getdroplistnumber(HWND hWnd, UINT uID)
+int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault)
 {
 	HWND	hItem;
 	int		nPos;
@@ -274,7 +354,7 @@ int dlgs_getdroplistnumber(HWND hWnd, UINT uID)
 	{
 		return SendMessage(hItem, CB_GETITEMDATA, (WPARAM)nPos, 0);
 	}
-	return -1;
+	return nDefault;
 }
 
 

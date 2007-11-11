@@ -153,13 +153,13 @@ static HBITMAP skinload(const OEMCHAR *path) {
 #else
 		const TCHAR *tchr = fname;
 #endif
-		ret = (HBITMAP)LoadImage(hInst, tchr, IMAGE_BITMAP,
+		ret = (HBITMAP)LoadImage(g_hInstance, tchr, IMAGE_BITMAP,
 													0, 0, LR_LOADFROMFILE);
 		if (ret != NULL) {
 			return(ret);
 		}
 	}
-	return(LoadBitmap(hInst, _T("NP2TOOL")));
+	return(LoadBitmap(g_hInstance, _T("NP2TOOL")));
 }
 
 
@@ -457,7 +457,7 @@ static void toolwincreate(HWND hWnd) {
 #endif
 			sub = CreateWindow(cls, ptext, WS_CHILD | WS_VISIBLE | style,
 							p->posx, p->posy, p->width, p->height,
-							hWnd, (HMENU)(i + IDC_BASE), hInst, NULL);
+							hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
 		}
 		toolwin.sub[i] = sub;
 		toolwin.subproc[i] = NULL;
@@ -641,7 +641,7 @@ const OEMCHAR	*p;
 	DrawMenuBar(hWnd);
 	sysmng_update(SYS_UPDATEOSCFG);
 
-	wlex = np2_winlocexallwin(hWndMain);
+	wlex = np2_winlocexallwin(g_hWndMain);
 	winlocex_setholdwnd(wlex, hWnd);
 	toolwindestroy();
 	hbmp = skinload(np2tool.skin);
@@ -668,7 +668,7 @@ static void openpopup(HWND hWnd, LPARAM lp) {
 
 	hMenu = CreatePopupMenu();
 	if (!winui_en) {
-		mainmenu = np2class_gethmenu(hWndMain);
+		mainmenu = np2class_gethmenu(g_hWndMain);
 		menu_addmenubar(hMenu, mainmenu);
 	}
 	AppendMenu(hMenu, MF_POPUP, (UINT)createskinmenu(), str_toolskin);
@@ -727,7 +727,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 				case IDC_BASE + IDC_TOOLFDD1BROWSE:
 					if (!winui_en) {
-						SendMessage(hWndMain, WM_COMMAND, IDM_FDD1OPEN, 0);
+						SendMessage(g_hWndMain, WM_COMMAND, IDM_FDD1OPEN, 0);
 					}
 					break;
 
@@ -744,7 +744,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 				case IDC_BASE + IDC_TOOLFDD2BROWSE:
 					if (!winui_en) {
-						SendMessage(hWndMain, WM_COMMAND, IDM_FDD2OPEN, 0);
+						SendMessage(g_hWndMain, WM_COMMAND, IDM_FDD2OPEN, 0);
 					}
 					break;
 
@@ -755,20 +755,20 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 				case IDC_BASE + IDC_TOOLRESET:
 					if (!winui_en) {
-						SendMessage(hWndMain, WM_COMMAND, IDM_RESET, 0);
-						SetForegroundWindow(hWndMain);
+						SendMessage(g_hWndMain, WM_COMMAND, IDM_RESET, 0);
+						SetForegroundWindow(g_hWndMain);
 					}
 					break;
 
 				case IDC_BASE + IDC_TOOLPOWER:
 					if (!winui_en) {
-						SendMessage(hWndMain, WM_CLOSE, 0, 0L);
+						SendMessage(g_hWndMain, WM_CLOSE, 0, 0L);
 					}
 					break;
 
 				case IDM_SKINSEL:
 					soundmng_disable(SNDPROC_TOOL);
-					r = dlgs_selectfile(hWnd, &skinui, np2tool.skin,
+					r = dlgs_openfile(hWnd, &fpSkin, np2tool.skin,
 											NELEMENTS(np2tool.skin), NULL);
 					soundmng_enable(SNDPROC_TOOL);
 					if (r) {
@@ -797,7 +797,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 				default:
 					if (!winui_en) {
-						return(SendMessage(hWndMain, msg, wp, lp));
+						return(SendMessage(g_hWndMain, msg, wp, lp));
 					}
 					break;
 			}
@@ -811,13 +811,13 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				}
 				return(0);
 			}
-			return(SendMessage(hWndMain, msg, wp, lp));
+			return(SendMessage(g_hWndMain, msg, wp, lp));
 
 		case WM_KEYUP:
 			if ((short)wp == VK_TAB) {
 				return(0);
 			}
-			return(SendMessage(hWndMain, msg, wp, lp));
+			return(SendMessage(g_hWndMain, msg, wp, lp));
 
 		case WM_PAINT:
 			toolwinpaint(hWnd);
@@ -886,7 +886,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 		case WM_LBUTTONDBLCLK:
 			np2tool.type ^= 1;
-			wlex = np2_winlocexallwin(hWndMain);
+			wlex = np2_winlocexallwin(g_hWndMain);
 			winlocex_setholdwnd(wlex, hWnd);
 			np2class_windowtype(hWnd, (np2tool.type & 1) << 1);
 			winlocex_move(wlex);
@@ -917,7 +917,7 @@ BOOL toolwin_initapp(HINSTANCE hInstance) {
 	return(RegisterClass(&wc));
 }
 
-void toolwin_create(void) {
+void toolwin_create(HINSTANCE hInstance) {
 
 	HBITMAP	hbmp;
 	BITMAP	bmp;
@@ -937,7 +937,7 @@ void toolwin_create(void) {
 							WS_SYSMENU | WS_MINIMIZEBOX,
 							np2tool.posx, np2tool.posy,
 							bmp.bmWidth, bmp.bmHeight,
-							NULL, NULL, hInst, NULL);
+							NULL, NULL, hInstance, NULL);
 	winloc_setclientsize(hWnd, bmp.bmWidth, bmp.bmHeight);
 	toolwin.hwnd = hWnd;
 	if (hWnd == NULL) {
@@ -945,7 +945,7 @@ void toolwin_create(void) {
 	}
 	UpdateWindow(hWnd);
 	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
-	SetForegroundWindow(hWndMain);
+	SetForegroundWindow(g_hWndMain);
 	return;
 
 twope_err2:
@@ -1007,7 +1007,7 @@ void toolwin_setfdd(UINT8 drv, const OEMCHAR *name) {
 		sub = toolwin.sub[fddlist[drv]];
 		if (sub) {
 			remakefddlist(sub, fdd);
-			SetForegroundWindow(hWndMain);
+			SetForegroundWindow(g_hWndMain);
 		}
 	}
 }

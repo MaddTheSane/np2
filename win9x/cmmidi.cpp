@@ -772,7 +772,7 @@ COMMNG cmmidi_create(const OEMCHAR *midiout, const OEMCHAR *midiin,
 		}
 	}
 	if (getmidiinid(midiin, &id) == SUCCESS) {
-		if (midiInOpen(&hmidiin, id, (DWORD)hWndMain, 0, CALLBACK_WINDOW)
+		if (midiInOpen(&hmidiin, id, (DWORD)g_hWndMain, 0, CALLBACK_WINDOW)
 														== MMSYSERR_NOERROR) {
 			midiInReset(hmidiin);
 			opened |= CMMIDI_MIDIIN;

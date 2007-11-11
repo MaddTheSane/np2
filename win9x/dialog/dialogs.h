@@ -6,6 +6,26 @@ const TCHAR	*filter;
 	int		defindex;
 } FILESEL;
 
+struct tagFileSelectParam
+{
+	LPTSTR	lpszTitle;
+	LPTSTR	lpszDefExt;
+	LPTSTR	lpszFilter;
+	int		nFilterIndex;
+};
+typedef struct tagFileSelectParam		FSPARAM;
+typedef struct tagFileSelectParam		*PFSPARAM;
+typedef const struct tagFileSelectParam	*PCFSPARAM;
+
+struct tagCBParam
+{
+	LPCTSTR	lpcszString;
+	int		nItemData;
+};
+typedef struct tagCBParam		CBPARAM;
+typedef struct tagCBParam		*PCBPARAM;
+typedef const struct tagCBParam	*PCCBPARAM;
+
 extern const TCHAR str_nc[];
 extern const TCHAR str_int0[];
 extern const TCHAR str_int1[];
@@ -35,22 +55,21 @@ extern const TCHAR str_int6[];
 void dlgs_enablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
 void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
 
-BOOL dlgs_selectfile(HWND hWnd, const FILESEL *item,
-											OEMCHAR *path, UINT size, int *ro);
-BOOL dlgs_selectwritefile(HWND hWnd, const FILESEL *item,
-													OEMCHAR *path, UINT size);
-BOOL dlgs_selectwritenum(HWND hWnd, const FILESEL *item,
-													OEMCHAR *path, UINT size);
+BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam,
+									OEMCHAR *pszPath, UINT uSize, int *puRO);
+BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam,
+												OEMCHAR *pszPath, UINT uSize);
+BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam,
+												OEMCHAR *pszPath, UINT uSize);
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 
 void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items);
 void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items);
 
-void dlgs_setdroplistitem(HWND hWnd, UINT uID,
-										const TCHAR **ppszItem, UINT uItems);
-void dlgs_setdroplistnumber(HWND hWnd, UINT uID, int nPos);
-int dlgs_getdroplistnumber(HWND hWnd, UINT uID);
+void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pItem, UINT uItems);
+void dlgs_setcbcur(HWND hWnd, UINT uID, int nItemData);
+int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault);
 
 void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname);
 void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname);

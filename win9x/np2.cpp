@@ -56,9 +56,9 @@
 #endif
 
 static	TCHAR		szClassName[] = _T("NP2-MainWindow");
-		HWND		hWndMain;
-		HINSTANCE	hInst;
-		HINSTANCE	hPrev;
+		HWND		g_hWndMain;
+		HINSTANCE	g_hInstance;
+		HINSTANCE	g_hPrevInst;
 #if !defined(_WIN64)
 		int			mmxflag;
 #endif
@@ -158,7 +158,7 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 	HWND	list[5];
 
 	cnt = 0;
-	list[cnt++] = hWndMain;
+	list[cnt++] = g_hWndMain;
 	list[cnt++] = toolwin_gethwnd();
 	list[cnt++] = kdispwin_gethwnd();
 	list[cnt++] = skbdwin_gethwnd();
@@ -168,7 +168,7 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 			list[i] = NULL;
 		}
 	}
-	if (base != hWndMain) {		// hWndMain‚Ì‚Ý‘S‘ÌˆÚ“®
+	if (base != g_hWndMain) {		// hWndMain‚Ì‚Ý‘S‘ÌˆÚ“®
 		base = NULL;
 	}
 	return(winlocex_create(base, list, cnt));
@@ -197,8 +197,8 @@ static void changescreen(UINT8 newmode) {
 			mdbgwin_destroy();
 		}
 		else if (renewal & SCRNMODE_ROTATEMASK) {
-			wlex = np2_winlocexallwin(hWndMain);
-			winlocex_setholdwnd(wlex, hWndMain);
+			wlex = np2_winlocexallwin(g_hWndMain);
+			winlocex_setholdwnd(wlex, g_hWndMain);
 		}
 		soundmng_stop();
 		mousemng_disable(MOUSEPROC_WINUI);
@@ -216,10 +216,10 @@ static void changescreen(UINT8 newmode) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			if (!scrnmng_isfullscreen()) {
 				if (np2oscfg.toolwin) {
-					toolwin_create();
+					toolwin_create(g_hInstance);
 				}
 				if (np2oscfg.keydisp) {
-					kdispwin_create();
+					kdispwin_create(g_hInstance);
 				}
 			}
 		}
@@ -253,7 +253,7 @@ static void wincentering(HWND hWnd) {
 		np2oscfg.winy = 0;
 	}
 	sysmng_update(SYS_UPDATEOSCFG);
-	MoveWindow(hWndMain, np2oscfg.winx, np2oscfg.winy, width, height, TRUE);
+	MoveWindow(g_hWndMain, np2oscfg.winx, np2oscfg.winy, width, height, TRUE);
 }
 
 void np2active_renewal(void) {										// ver0.30
@@ -329,14 +329,14 @@ static int flagload(const OEMCHAR *ext, const OEMCHAR *title, BOOL force) {
 	id = IDYES;
 	ret = statsave_check(path, buf, NELEMENTS(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
-		MessageBox(hWndMain, _T("Couldn't restart"), title,
+		MessageBox(g_hWndMain, _T("Couldn't restart"), title,
 										MB_OK | MB_ICONSTOP);
 		id = IDNO;
 	}
 	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
 		OEMCHAR buf2[1024 + 256];
 		OEMSPRINTF(buf2, OEMTEXT("Conflict!\n\n%s\nContinue?"), buf);
-		id = MessageBox(hWndMain, buf2, title,
+		id = MessageBox(g_hWndMain, buf2, title,
 										MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
 	if (id == IDYES) {
@@ -373,15 +373,18 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 	DestroyMenu(hMenu);
 }
 
-static void np2cmd(HWND hWnd, UINT16 cmd) {
-
-	HINSTANCE	hinst;
+static void OnCommand(HWND hWnd, WPARAM wParam)
+{
+	HINSTANCE	hInstance;
 	UINT		update;
+	UINT		uID;
 	BOOL		b;
 
-	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 	update = 0;
-	switch(cmd) {
+	uID = LOWORD(wParam);
+	switch(uID)
+	{
 		case IDM_RESET:
 			b = FALSE;
 			if (!np2oscfg.comfirm) {
@@ -406,7 +409,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 		case IDM_CONFIG:
 			winuienter();
 			sstpmsg_config();
-			DialogBox(hinst, MAKEINTRESOURCE(IDD_CONFIG),
+			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG),
 									hWnd, (DLGPROC)CfgDialogProc);
 			if (!scrnmng_isfullscreen()) {
 				UINT8 thick;
@@ -859,7 +862,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 		case IDM_MPUPC98:
 			winuienter();
-			DialogBox(hinst, MAKEINTRESOURCE(IDD_MPUPC98),
+			DialogBox(hInstance, MAKEINTRESOURCE(IDD_MPUPC98),
 											hWnd, (DLGPROC)MidiDialogProc);
 			winuileave();
 			break;
@@ -907,7 +910,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 		case IDM_CALENDAR:
 			winuienter();
-			DialogBox(hinst, MAKEINTRESOURCE(IDD_CALENDAR),
+			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CALENDAR),
 											hWnd, (DLGPROC)ClndDialogProc);
 			winuileave();
 			break;
@@ -955,7 +958,7 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 			sstpmsg_about();
 			if (sstp_result() != SSTP_SENDING) {
 				winuienter();
-				DialogBox(hinst, MAKEINTRESOURCE(IDD_ABOUT),
+				DialogBox(hInstance, MAKEINTRESOURCE(IDD_ABOUT),
 								hWnd, (DLGPROC)AboutDialogProc);
 				winuileave();
 			}
@@ -963,16 +966,16 @@ static void np2cmd(HWND hWnd, UINT16 cmd) {
 
 		default:
 #if defined(SUPPORT_STATSAVE)
-			if ((cmd >= IDM_FLAGSAVE) &&
-				(cmd < (IDM_FLAGSAVE + SUPPORT_STATSAVE))) {
+			if ((uID >= IDM_FLAGSAVE) &&
+				(uID < (IDM_FLAGSAVE + SUPPORT_STATSAVE))) {
 				OEMCHAR ext[4];
-				OEMSPRINTF(ext, np2flagext, cmd - IDM_FLAGSAVE);
+				OEMSPRINTF(ext, np2flagext, uID - IDM_FLAGSAVE);
 				flagsave(ext);
 			}
-			else if ((cmd >= IDM_FLAGLOAD) &&
-				(cmd < (IDM_FLAGLOAD + SUPPORT_STATSAVE))) {
+			else if ((uID >= IDM_FLAGLOAD) &&
+				(uID < (IDM_FLAGLOAD + SUPPORT_STATSAVE))) {
 				OEMCHAR ext[4];
-				OEMSPRINTF(ext, np2flagext, cmd - IDM_FLAGLOAD);
+				OEMSPRINTF(ext, np2flagext, uID - IDM_FLAGLOAD);
 				flagload(ext, OEMTEXT("Status Load"), TRUE);
 			}
 #endif
@@ -1007,7 +1010,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_TOOLWIN:
 					sysmenu_settoolwin(np2oscfg.toolwin ^ 1);
 					if (np2oscfg.toolwin) {
-						toolwin_create();
+						toolwin_create(g_hInstance);
 					}
 					else {
 						toolwin_destroy();
@@ -1019,7 +1022,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_KEYDISP:
 					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
 					if (np2oscfg.keydisp) {
-						kdispwin_create();
+						kdispwin_create(g_hInstance);
 					}
 					else {
 						kdispwin_destroy();
@@ -1028,12 +1031,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #endif
 #if defined(SUPPORT_SOFTKBD)
 				case IDM_SOFTKBD:
-					skbdwin_create();
+					skbdwin_create(g_hInstance);
 					break;
 #endif
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
 				case IDM_MEMDBG32:
-					mdbgwin_create();
+					mdbgwin_create(g_hInstance);
 					break;
 #endif
 				case IDM_SCREENCENTER:
@@ -1067,7 +1070,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_DEBUGUTY:
-					viewer_open();
+					viewer_open(g_hInstance);
 					break;
 
 				case IDM_SCRNMUL4:
@@ -1077,7 +1080,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_SCRNMUL12:
 				case IDM_SCRNMUL16:
 					if ((!scrnmng_isfullscreen()) &&
-						!(GetWindowLong(hWndMain, GWL_STYLE) & WS_MINIMIZE)) {
+						!(GetWindowLong(g_hWndMain, GWL_STYLE) & WS_MINIMIZE))
+					{
 						sysmenu_setscrnmul((UINT8)(wParam - IDM_SCRNMUL));
 						scrnmng_setmultiple((int)(wParam - IDM_SCRNMUL));
 					}
@@ -1115,7 +1119,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_COMMAND:
-			np2cmd(hWnd, LOWORD(wParam));
+			OnCommand(hWnd, wParam);
 			break;
 
 		case WM_ACTIVATE:
@@ -1135,7 +1139,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
 			if (np2opening) {
-				HINSTANCE	hinst;
+				HINSTANCE	hInstance;
 				RECT		rect;
 				int			width;
 				int			height;
@@ -1143,11 +1147,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				BITMAP		bmp;
 				HDC			hmdc;
 				HBRUSH		hbrush;
-				hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+				hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-				hbmp = LoadBitmap(hinst, _T("NP2BMP"));
+				hbmp = LoadBitmap(hInstance, _T("NP2BMP"));
 				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
@@ -1223,7 +1227,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_KEYDOWN:
 			if (wParam == VK_F11) {
-				np2class_enablemenu(hWndMain, TRUE);
+				np2class_enablemenu(g_hWndMain, TRUE);
 				return(DefWindowProc(hWnd, WM_SYSKEYDOWN, VK_F10, lParam));
 			}
 			if ((wParam == VK_F12) && (!np2oscfg.F12COPY)) {
@@ -1464,7 +1468,7 @@ static void processwait(UINT cnt) {
 	soundmng_sync();
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 										LPSTR lpszCmdLine, int nCmdShow) {
 	WNDCLASS	wc;
 	MSG			msg;
@@ -1502,8 +1506,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 		return(FALSE);
 	}
 
-	hInst = loadextinst(hInstance);
-	hPrev = hPreInst;
+	g_hInstance = loadextinst(hInstance);
+	g_hPrevInst = hPrevInst;
 #if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
@@ -1528,14 +1532,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 
-	np2class_initialize(hInst);
-	if (!hPreInst) {
+	np2class_initialize(hInstance);
+	if (!hPrevInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = NP2GWLP_SIZE;
-		wc.hInstance = hInst;
-		wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
@@ -1546,12 +1550,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 			dosio_term();
 			return(FALSE);
 		}
+
+		toolwin_initapp(hInstance);
+		kdispwin_initialize(hInstance);
+		skbdwin_initialize(hInstance);
+		mdbgwin_initialize(hInstance);
+		viewer_init(hInstance);
 	}
-	toolwin_initapp(hInst);
-	kdispwin_initialize(hPreInst);
-	skbdwin_initialize(hPreInst);
-	mdbgwin_initialize(hPreInst);
-	viewer_init(hPreInst);
 
 	mousemng_initialize();
 
@@ -1561,8 +1566,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	}
 	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
-						NULL, NULL, hInst, NULL);
-	hWndMain = hWnd;
+						NULL, NULL, hInstance, NULL);
+	g_hWndMain = hWnd;
 	scrnmng_initialize();
 
 	xmenu_setroltate(0);
@@ -1702,10 +1707,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 
 	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
 		if (np2oscfg.toolwin) {
-			toolwin_create();
+			toolwin_create(hInstance);
 		}
 		if (np2oscfg.keydisp) {
-			kdispwin_create();
+			kdispwin_create(hInstance);
 		}
 	}
 

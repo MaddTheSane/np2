@@ -95,9 +95,9 @@ void sysmng_updatecaption(UINT8 flag) {
 #if defined(OSLANG_UTF8)
 	TCHAR tchr[512];
 	oemtotchar(tchr, NELEMENTS(tchr), work, -1);
-	SetWindowText(hWndMain, tchr);
+	SetWindowText(g_hWndMain, tchr);
 #else
-	SetWindowText(hWndMain, work);
+	SetWindowText(g_hWndMain, work);
 #endif
 }
 
