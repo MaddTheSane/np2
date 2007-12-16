@@ -25,6 +25,14 @@ static const CBPARAM cpPort[] =
 	{MAKEINTRESOURCE(IDS_MIDI),			COMPORT_MIDI},
 };
 
+static const CBNPARAM cpChars[] =
+{
+	{5,	0x00},
+	{6,	0x04},
+	{7,	0x08},
+	{8,	0x0c},
+};
+
 static const CBPARAM cpParity[] =
 {
     {MAKEINTRESOURCE(IDS_PARITY_NONE),	0x00},
@@ -32,30 +40,12 @@ static const CBPARAM cpParity[] =
 	{MAKEINTRESOURCE(IDS_PARITY_EVEN),	0x30},
 };
 
-static const CBPARAM cpBits[] =
+static const CBPARAM cpSBit[] =
 {
     {MAKEINTRESOURCE(IDS_1),			0x40},
     {MAKEINTRESOURCE(IDS_1HALF),		0x80},
 	{MAKEINTRESOURCE(IDS_2),			0xc0},
 };
-
-static const TCHAR str_none[] = _T("NONE");
-static const TCHAR str_com1[] = _T("COM1");
-static const TCHAR str_com2[] = _T("COM2");
-static const TCHAR str_com3[] = _T("COM3");
-static const TCHAR str_com4[] = _T("COM4");
-static const TCHAR str_midi[] = _T("MIDI");
-static const TCHAR str_odd[] = _T("ODD");
-static const TCHAR str_even[] = _T("EVEN");
-static const TCHAR str_one[] = _T("1");
-static const TCHAR str_onehalf[] = _T("1.5");
-static const TCHAR str_two[] = _T("2");
-
-static const TCHAR *rsport[] = {str_none, str_com1, str_com2, str_com3,
-									str_com4, str_midi};
-static const UINT32 rscharsize[] = {5, 6, 7, 8};
-static const TCHAR *rsparity[] = {str_none, str_odd, str_even};
-static const TCHAR *rsstopbit[] = {str_one, str_onehalf, str_two};
 
 static const TCHAR str_seropt[] = _T("Serial option");
 
@@ -167,6 +157,53 @@ static void dlgcom_items(HWND hWnd, const DLGCOM_P *m, UINT r) {
 }
 
 
+static void setChars(HWND hWnd, UINT uID, UINT8 cValue)
+{
+	dlgs_setcbcur(hWnd, uID, cValue & 0x0c);
+}
+
+static UINT8 getChars(HWND hWnd, UINT uID, UINT8 cDefault)
+{
+	return dlgs_getcbcur(hWnd, uID, cDefault & 0x0c);
+}
+
+
+static void setParity(HWND hWnd, UINT uID, UINT8 cValue)
+{
+	cValue = cValue & 0x30;
+	if (!(cValue & 0x20))
+	{
+		cValue = 0;
+	}
+	dlgs_setcbcur(hWnd, uID, cValue);
+}
+
+static UINT8 getParity(HWND hWnd, UINT uID, UINT8 cDefault)
+{
+	return dlgs_getcbcur(hWnd, uID, cDefault & 0x30);
+}
+
+
+static void setStopBit(HWND hWnd, UINT uID, UINT8 cValue)
+{
+	cValue = cValue & 0xc0;
+	if (!cValue)
+	{
+		cValue = 0x40;
+	}
+	dlgs_setcbcur(hWnd, uID, cValue);
+}
+
+static UINT8 getStopBit(HWND hWnd, UINT uID, UINT8 cDefault)
+{
+	return dlgs_getcbcur(hWnd, uID, cDefault & 0xc0);
+}
+
+
+
+
+
+
 static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 								WPARAM wp, LPARAM lp, const DLGCOM_P *m) {
 
@@ -187,9 +224,11 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 			cfg = m->cfg;
 			dlgs_setcbitem(hWnd, m->idc[ID_PORT], cpPort, NELEMENTS(cpPort));
 			SETLISTUINT32(hWnd, m->idc[ID_SPEED], cmserial_speed);
-			SETLISTUINT32(hWnd, m->idc[ID_CHARS], rscharsize);
-			SETLISTSTR(hWnd, m->idc[ID_PARITY], rsparity);
-			SETLISTSTR(hWnd, m->idc[ID_SBIT], rsstopbit);
+			dlgs_setcbnumber(hWnd, m->idc[ID_CHARS],
+											cpChars, NELEMENTS(cpChars));
+			dlgs_setcbitem(hWnd, m->idc[ID_PARITY],
+											cpParity, NELEMENTS(cpParity));
+			dlgs_setcbitem(hWnd, m->idc[ID_SBIT], cpSBit, NELEMENTS(cpSBit));
 			for (d=0; d<(NELEMENTS(cmserial_speed) - 1); d++) {
 				if (cmserial_speed[d] >= cfg->speed) {
 					break;
@@ -200,22 +239,10 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 
 			b = cfg->param;
 			d = (b >> 2) & 3;
-			SendDlgItemMessage(hWnd, m->idc[ID_CHARS],
-										CB_SETCURSEL, (WPARAM)d, (LPARAM)0);
-			if (b & 0x10) {
-				d = ((b >> 5) & 1) + 1;
-			}
-			else {
-				d = 0;
-			}
-			SendDlgItemMessage(hWnd, m->idc[ID_PARITY],
-										CB_SETCURSEL, (WPARAM)d, (LPARAM)0);
-			d = (b >> 6) & 3;
-			if (d) {
-				d--;
-			}
-			SendDlgItemMessage(hWnd, m->idc[ID_SBIT],
-										CB_SETCURSEL, (WPARAM)d, (LPARAM)0);
+
+			setChars(hWnd, m->idc[ID_CHARS], b);
+			setParity(hWnd, m->idc[ID_PARITY], b);
+			setStopBit(hWnd, m->idc[ID_SBIT], b);
 
 			dlgs_setlistmidiout(hWnd, m->idc[ID_MMAP], cfg->mout);
 			SETLISTSTR(hWnd, m->idc[ID_MMDL], cmmidi_mdlname);
@@ -270,24 +297,10 @@ static LRESULT CALLBACK dlgitem_proc(HWND hWnd, UINT msg,
 				}
 
 				b = 0;
-				r = SendDlgItemMessage(hWnd, m->idc[ID_CHARS],
-										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-				if (r != CB_ERR) {
-					b |= (UINT8)(((UINT)r & 3) << 2);
-				}
-				r = SendDlgItemMessage(hWnd, m->idc[ID_PARITY],
-										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-				if (r != CB_ERR) {
-					if ((UINT)r) {
-						b |= 0x10;
-						b |= (UINT8)((((UINT)r - 1) & 1) << 5);
-					}
-				}
-				r = SendDlgItemMessage(hWnd, m->idc[ID_SBIT],
-										CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-				if (r != CB_ERR) {
-					b |= (UINT8)((((UINT)r + 1) & 3) << 6);
-				}
+				b |= getChars(hWnd, m->idc[ID_CHARS], cfg->param);
+				b |= getParity(hWnd, m->idc[ID_PARITY], cfg->param);
+				b |= getStopBit(hWnd, m->idc[ID_SBIT], cfg->param);
+
 				if (cfg->param != b) {
 					cfg->param = b;
 					update |= SYS_UPDATEOSCFG;
@@ -385,6 +398,30 @@ enum {
 	PC9861J6_X		= 19,
 	PC9861J1_Y		= 4,
 	PC9861J4_Y		= 7
+};
+
+static const CBNPARAM cpInt1[] =
+{
+	{0,	0x00},
+	{1,	0x02},
+	{2,	0x01},
+	{3,	0x03},
+};
+
+static const CBNPARAM cpInt2[] =
+{
+	{0,	0x00},
+	{4,	0x08},
+	{5,	0x04},
+	{6,	0x0c},
+};
+
+static const CBPARAM cpSync[] =
+{
+	{MAKEINTRESOURCE(IDS_SYNC),		0x00},
+	{MAKEINTRESOURCE(IDS_ASYNC),	0x01},
+	{MAKEINTRESOURCE(IDS_ASYNC16X),	0x02},
+	{MAKEINTRESOURCE(IDS_ASYNC64X),	0x03},
 };
 
 static const UINT32 pc9861kint1[] = {0, 1, 2, 3};

@@ -58,11 +58,11 @@ BEGIN
     LTEXT           "Buffer",IDC_STATIC,14,118,50,8
     EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
     LTEXT           "ms",IDC_STATIC,102,118,16,8
-    CONTROL         "Allow Resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Allow resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,142,162,10
     CONTROL         "Disable MMX",IDC_DISABLEMMX,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,156,162,10
-    CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
+    CONTROL         "Confirm dialog (on reset/exit)",IDC_COMFIRM,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,170,162,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,184,162,10
@@ -102,9 +102,9 @@ BEGIN
     LTEXT           "Buffer",IDC_STATIC,14,118,50,8
     EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
     LTEXT           "ms",IDC_STATIC,102,118,16,8
-    CONTROL         "Allow Resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Allow resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,142,162,10
-    CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
+    CONTROL         "Confirm dialog (on reset/exit)",IDC_COMFIRM,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,156,162,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,170,162,10
@@ -114,7 +114,7 @@ END
 
 IDD_NEWDISK DIALOG DISCARDABLE  0, 0, 180, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New FD image"
+CAPTION "Create new FD image"
 CLASS "np2dialog"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
@@ -131,7 +131,7 @@ END
 
 IDD_NEWDISK2 DIALOG DISCARDABLE  0, 0, 196, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New FD image"
+CAPTION "Create new FD image"
 CLASS "np2dialog"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
@@ -150,7 +150,7 @@ END
 
 IDD_NEWHDDDISK DIALOG DISCARDABLE  0, 0, 160, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New HD image"
+CAPTION "Create new HD image"
 CLASS "np2dialog"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
@@ -165,7 +165,7 @@ END
 
 IDD_NEWSASI DIALOG DISCARDABLE  0, 0, 144, 54
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New SASI image"
+CAPTION "Create new SASI image"
 CLASS "np2dialog"
 FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
@@ -234,7 +234,7 @@ BEGIN
     CONTROL         "GRCG+",IDC_GRCG2,"Button",BS_AUTORADIOBUTTON,88,54,40,
                     10
     CONTROL         "EGC",IDC_EGC,"Button",BS_AUTORADIOBUTTON,128,54,34,10
-    CONTROL         "&Enable 16color (PC-9801-24)",IDC_PC980124,"Button",
+    CONTROL         "&Enable 16color-board (PC-9801-24)",IDC_PC980124,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,16,80,148,10
 END
 
@@ -258,7 +258,7 @@ BEGIN
     LTEXT           "clock",IDC_STATIC,148,9,22,8
     LTEXT           "clock",IDC_STATIC,148,25,22,8
     LTEXT           "clock",IDC_STATIC,148,41,22,8
-    LTEXT           "RealPalettes Adjust",IDC_STATIC,8,60,156,8
+    LTEXT           "Real palettes adjust",IDC_STATIC,8,60,156,8
     CONTROL         "Slider3",IDC_REALPAL,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,73,80,10
     RTEXT           "",IDC_REALPALSTR,124,72,20,10,SS_SUNKEN
@@ -390,10 +390,10 @@ BEGIN
     LTEXT           "Parity",IDC_COM3STR05,16,77,38,8
     COMBOBOX        IDC_COM3PARITY,56,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP
-    LTEXT           "Stop bit",IDC_COM3STR06,16,93,26,8
+    LTEXT           "Stop bit",IDC_COM3STR06,16,93,38,8
     COMBOBOX        IDC_COM3STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bit(s)",IDC_COM3STR07,108,93,38,8
+    LTEXT           "bit(s)",IDC_COM3STR07,108,93,26,8
     GROUPBOX        "Assign",IDC_COM3STR10,8,28,166,84
     LTEXT           "Device",IDC_COM3STR11,16,45,36,8
     COMBOBOX        IDC_COM3MMAP,54,42,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
@@ -608,7 +608,7 @@ FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "Real (localtime)",IDC_CLNDREAL,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,8,96,10
-    CONTROL         "Virtual Calendar",IDC_CLNDVIR,"Button",
+    CONTROL         "Virtual calendar",IDC_CLNDVIR,"Button",
                     BS_AUTORADIOBUTTON,8,24,96,10
     EDITTEXT        IDC_VIRYEAR,20,40,14,12,WS_GROUP
     CTEXT           "/",IDC_STATIC,34,42,8,8
@@ -868,12 +868,12 @@ END
 
 IDR_SYS MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Tool Window",                IDM_TOOLWIN
+    MENUITEM "&Tool window",                IDM_TOOLWIN
     MENUITEM SEPARATOR
     MENUITEM "&Centering",                  IDM_SCREENCENTER
-    MENUITEM "&Window Snap",                IDM_SNAPENABLE
+    MENUITEM "&Window snap",                IDM_SNAPENABLE
     MENUITEM "&Background",                 IDM_BACKGROUND
-    MENUITEM "Back&ground Sound",           IDM_BGSOUND
+    MENUITEM "Back&ground sound",           IDM_BGSOUND
     MENUITEM SEPARATOR
     MENUITEM " 320x200",                    IDM_SCRNMUL4
     MENUITEM " 480x300",                    IDM_SCRNMUL6
@@ -921,15 +921,15 @@ BEGIN
     POPUP "&Screen"
     BEGIN
         MENUITEM "&Window",                     IDM_WINDOW
-        MENUITEM "&FullScreen",                 IDM_FULLSCREEN
+        MENUITEM "&Fullscreen",                 IDM_FULLSCREEN
         MENUITEM SEPARATOR
         MENUITEM "Nor&mal",                     IDM_ROLNORMAL
-        MENUITEM "&Left Rotated",               IDM_ROLLEFT
-        MENUITEM "&Right Rotated",              IDM_ROLRIGHT
+        MENUITEM "&Left rotated",               IDM_ROLLEFT
+        MENUITEM "&Right rotated",              IDM_ROLRIGHT
         MENUITEM SEPARATOR
-        MENUITEM "&Disp Vsync",                 IDM_DISPSYNC
-        MENUITEM "Real &Palettes",              IDM_RASTER
-        MENUITEM "&No Wait",                    IDM_NOWAIT
+        MENUITEM "&Disp vsync",                 IDM_DISPSYNC
+        MENUITEM "Real &palettes",              IDM_RASTER
+        MENUITEM "&No wait",                    IDM_NOWAIT
         MENUITEM "&Auto frame",                 IDM_AUTOFPS
         MENUITEM "F&ull frame",                 IDM_60FPS
         MENUITEM "1/&2 frame",                  IDM_30FPS
@@ -977,7 +977,7 @@ BEGIN
             MENUITEM "&AMD-98",                     IDM_AMD98
             MENUITEM "&JastSound",                  IDM_JASTSOUND
             MENUITEM SEPARATOR
-            MENUITEM "&Seek Sound",                 IDM_SEEKSND
+            MENUITEM "&Seek sound",                 IDM_SEEKSND
         END
         POPUP "M&emory"
         BEGIN
@@ -991,25 +991,25 @@ BEGIN
         MENUITEM "Se&rial option...",           IDM_SERIAL1
         MENUITEM SEPARATOR
         MENUITEM "MIDI &option...",             IDM_MPUPC98
-        MENUITEM "MIDI &Panic",                 IDM_MIDIPANIC
+        MENUITEM "MIDI &panic",                 IDM_MIDIPANIC
         MENUITEM SEPARATOR
         MENUITEM "So&und option...",            IDM_SNDOPT
     END
     POPUP "&Other"
     BEGIN
-        MENUITEM "&BMP Save...",                IDM_BMPSAVE
+        MENUITEM "&BMP save...",                IDM_BMPSAVE
         MENUITEM "&S98 logging...",             IDM_S98LOGGING
         MENUITEM "Ca&lendar...",                IDM_CALENDAR
-        POPUP "Shortcut &Key"
+        POPUP "Shortcut &key"
         BEGIN
             MENUITEM "Alt+Enter",                   IDM_ALTENTER
             MENUITEM "Alt+F4",                      IDM_ALTF4
         END
-        MENUITEM "&Clock Disp",                 IDM_DISPCLOCK
-        MENUITEM "&Frame Disp",                 IDM_DISPFRAME
-        MENUITEM "Joy Re&verse",                IDM_JOYX
-        MENUITEM "Joy &Rapid",                  IDM_RAPID
-        MENUITEM "&Mouse Rapid",                IDM_MSRAPID
+        MENUITEM "&Clock disp",                 IDM_DISPCLOCK
+        MENUITEM "&Frame disp",                 IDM_DISPFRAME
+        MENUITEM "Joy re&verse",                IDM_JOYX
+        MENUITEM "Joy &rapid",                  IDM_RAPID
+        MENUITEM "&Mouse rapid",                IDM_MSRAPID
         MENUITEM "&Use SSTP",                   IDM_SSTP
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
@@ -1189,15 +1189,15 @@ BEGIN
     BEGIN
         MENUITEM "&Register",                   IDM_VIEWMODEREG
         MENUITEM "&Dump segment",               IDM_VIEWMODESEG
-        MENUITEM "&Main Memory Dump",           IDM_VIEWMODE1MB
+        MENUITEM "&Main memory dump",           IDM_VIEWMODE1MB
         MENUITEM "&Unassemble",                 IDM_VIEWMODEASM
-        MENUITEM "&Sound Register",             IDM_VIEWMODESND
+        MENUITEM "&Sound register",             IDM_VIEWMODESND
         MENUITEM SEPARATOR
         MENUITEM "&Lock",                       IDM_VIEWMODELOCK
     END
     POPUP "&Edit"
     BEGIN
-        MENUITEM "Enter &Address...",           IDM_SETSEG, GRAYED
+        MENUITEM "Enter &address...",           IDM_SETSEG, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "Seg = &CS",                   IDM_SEGCS
         MENUITEM "Seg = &DS",                   IDM_SEGDS
@@ -1250,7 +1250,7 @@ SEEK1WAV                EXTROM  DISCARDABLE     "ICONS\\FDDSEEK1.WAV"
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_HDD                 "&HardDisk"
+    IDS_HDD                 "&Harddisk"
     IDS_SCREENOPTION        "Screen option"
     IDS_SOUNDOPTION         "Sound board option"
     IDS_SERIALOPTION        "Serial option"
@@ -1309,8 +1309,8 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_ZOOM_NONE           "None"
-    IDS_ZOOM_FIXEDASPECT    "Fixed Aspect"
-    IDS_ZOOM_ADJUSTASPECT   "Adjust Aspect"
+    IDS_ZOOM_FIXEDASPECT    "Fixed aspect"
+    IDS_ZOOM_ADJUSTASPECT   "Adjust aspect"
     IDS_ZOOM_FULL           "Full"
 END
 
@@ -1353,17 +1353,17 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_FONTTITLE           "Select font file"
     IDS_FONTEXT             "bmp"
-    IDS_FONTFILTER          "PC-98 BMP font (*.bmp)|*.bmp|Virtual98 font|font.rom|All supported files|*.bmp;pc88.fnt;kanji1.rom;kanji2.rom;font.rom;subsys_c.rom;kanji.rom;fnt0808.x1;fnt0816.x1;fnt1616.x1;cgrom.dat|"
+    IDS_FONTFILTER          "PC-98 BMP font (*.BMP)|*.bmp|Virtual98 font|font.rom|All supported files|*.bmp;pc88.fnt;kanji1.rom;kanji2.rom;font.rom;subsys_c.rom;kanji.rom;fnt0808.x1;fnt0816.x1;fnt1616.x1;cgrom.dat|"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_BMPTITLE            "Save as bitmap file"
     IDS_BMPEXT              "bmp"
-    IDS_BMPFILTER1          "1bit-bitmap (*.bmp)|*.bmp|Graphics Interchange Format (*.gif)|*.gif|"
-    IDS_BMPFILTER4          "4bit-bitmap (*.bmp)|*.bmp|Graphics Interchange Format (*.gif)|*.gif|"
-    IDS_BMPFILTER8          "8bit-bitmap (*.bmp)|*.bmp|Graphics Interchange Format (*.gif)|*.gif|"
-    IDS_BMPFILTER24         "24bit-bitmap (*.bmp)|*.bmp|"
+    IDS_BMPFILTER1          "1bit-bitmap (*.BMP)|*.bmp|Graphics Interchange Format (*.GIF)|*.gif|"
+    IDS_BMPFILTER4          "4bit-bitmap (*.BMP)|*.bmp|Graphics Interchange Format (*.GIF)|*.gif|"
+    IDS_BMPFILTER8          "8bit-bitmap (*.BMP)|*.bmp|Graphics Interchange Format (*.GIF)|*.gif|"
+    IDS_BMPFILTER24         "24bit-bitmap (*.BMP)|*.bmp|"
     IDS_MIMPITITLE          "Open MIMPI define file"
     IDS_MIMPIEXT            "def"
     IDS_MIMPIFILTER         "MIMPI define file(*.def)|*.def|"
@@ -1378,14 +1378,14 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_HDDTITLE            "Select HDD image"
+    IDS_HDDTITLE            "Select HD image"
     IDS_HDDEXT              "thd"
-    IDS_HDDFILTER           "Anex86 harddisk image files (*.HDI)|*.hdi|T98 harddisk image files (*.THD)|*.thd|T98-Next harddisk image files (*.NHD)|*.nhd|All supported Files|*.thd;*.nhd;*.hdi|"
+    IDS_HDDFILTER           "Anex86 harddisk image files (*.HDI)|*.hdi|T98 harddisk image files (*.THD)|*.thd|T98-Next harddisk image files (*.NHD)|*.nhd|All supported files|*.thd;*.nhd;*.hdi|"
     IDS_SASITITLE           "Select SASI/IDE HDD image"
     IDS_IDETITLE            "Select IDE HDD image"
     IDS_ISOTITLE            "Select ISO-9660 image"
     IDS_ISOEXT              "iso"
-    IDS_ISOFILTER           "Cue sheets|*.cue|ISO-9660 image files|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files|*.*|"
+    IDS_ISOFILTER           "Cue sheets (*.CUE)|*.cue|ISO-9660 image files (*.ISO)|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files (*.*)|*.*|"
 END
 
 STRINGTABLE DISCARDABLE 

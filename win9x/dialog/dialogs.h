@@ -1,11 +1,4 @@
 
-typedef struct {
-const TCHAR	*title;
-const TCHAR	*ext;
-const TCHAR	*filter;
-	int		defindex;
-} FILESEL;
-
 struct tagFileSelectParam
 {
 	LPTSTR	lpszTitle;
@@ -25,6 +18,15 @@ struct tagCBParam
 typedef struct tagCBParam		CBPARAM;
 typedef struct tagCBParam		*PCBPARAM;
 typedef const struct tagCBParam	*PCCBPARAM;
+
+struct tagCBNParam
+{
+	UINT	uValue;
+	int		nItemData;
+};
+typedef struct tagCBNParam			CBNPARAM;
+typedef struct tagCBNParam			*PCBNPARAM;
+typedef const struct tagCBNParam	*PCCBNPARAM;
 
 extern const TCHAR str_nc[];
 
@@ -61,7 +63,8 @@ void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items);
 void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items);
 
-void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pItem, UINT uItems);
+void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pcItem, UINT uItems);
+void dlgs_setcbnumber(HWND hWnd, UINT uID, PCCBNPARAM pcItem, UINT uItems);
 void dlgs_setcbcur(HWND hWnd, UINT uID, int nItemData);
 int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault);
 

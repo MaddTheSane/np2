@@ -288,7 +288,7 @@ void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 	}
 }
 
-void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pItem, UINT uItems)
+void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pcItem, UINT uItems)
 {
 	HWND	hItem;
 	UINT	i;
@@ -299,7 +299,7 @@ void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pItem, UINT uItems)
 	hItem = GetDlgItem(hWnd, uID);
 	for (i=0; i<uItems; i++)
 	{
-		lpcszStr = pItem[i].lpcszString;
+		lpcszStr = pcItem[i].lpcszString;
 		if (!HIWORD(lpcszStr))
 		{
 			if (!loadstringresource(g_hInstance, LOWORD(lpcszStr),
@@ -313,7 +313,27 @@ void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pItem, UINT uItems)
 		if (nIndex >= 0)
 		{
 			SendMessage(hItem, CB_SETITEMDATA,
-								(WPARAM)nIndex, (LPARAM)pItem[i].nItemData);
+								(WPARAM)nIndex, (LPARAM)pcItem[i].nItemData);
+		}
+	}
+}
+
+void dlgs_setcbnumber(HWND hWnd, UINT uID, PCCBNPARAM pcItem, UINT uItems)
+{
+	HWND	hItem;
+	UINT	i;
+	TCHAR	szValue[16];
+	int		nIndex;
+
+	hItem = GetDlgItem(hWnd, uID);
+	for (i=0; i<uItems; i++)
+	{
+		wsprintf(szValue, str_u, pcItem[i].uValue);
+		nIndex = SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)szValue);
+		if (nIndex >= 0)
+		{
+			SendMessage(hItem, CB_SETITEMDATA,
+								(WPARAM)nIndex, (LPARAM)pcItem[i].nItemData);
 		}
 	}
 }

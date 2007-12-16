@@ -35,8 +35,7 @@ typedef struct {
 	int		height;
 } TRACECFG;
 
-extern	HINSTANCE	hInst;
-extern	HINSTANCE	hPrev;
+extern	HINSTANCE	g_hInstance;
 
 enum {
 	IDM_TRACE1		= 3300,
@@ -177,7 +176,7 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 							WS_CHILD | WS_VISIBLE | ES_READONLY | ES_LEFT |
 							ES_MULTILINE | WS_VSCROLL | ES_AUTOVSCROLL,
 							0, 0, rc.right, rc.bottom,
-							hWnd, (HMENU)IDC_VIEW, hInst, NULL);
+							hWnd, (HMENU)IDC_VIEW, g_hInstance, NULL);
 			if (!hView) {
 				break;
 			}
@@ -308,21 +307,19 @@ void trace_init(void) {
 	HWND	hwnd;
 
 	ZeroMemory(&tracewin, sizeof(tracewin));
-	if (!hPrev) {
-		WNDCLASS wc;
-		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc = traceproc;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hInstance = hInst;
-		wc.hIcon = NULL;
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-		wc.lpszMenuName = NULL;
-		wc.lpszClassName = ClassName;
-		if (!RegisterClass(&wc)) {
-			return;
-		}
+	WNDCLASS wc;
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = traceproc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = g_hInstance;
+	wc.hIcon = NULL;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = ClassName;
+	if (!RegisterClass(&wc)) {
+		return;
 	}
 
 #if 1
@@ -343,7 +340,7 @@ void trace_init(void) {
 							WS_OVERLAPPEDWINDOW,
 							tracecfg.posx, tracecfg.posy,
 							tracecfg.width, tracecfg.height,
-							NULL, NULL, hInst, NULL);
+							NULL, NULL, g_hInstance, NULL);
 	tracewin.hwnd = hwnd;
 	if (hwnd == NULL) {
 		return;
