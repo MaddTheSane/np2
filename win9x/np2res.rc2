@@ -37,11 +37,11 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "041103a4"
+        BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileVersion", "0, 8, 2, 0\0"
-            VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
+            VALUE "LegalCopyright", "Nekosan development team\0"
 
             VALUE "ProductVersion", "0, 8, 2, 0\0"
 #ifdef SUPPORT_PC9821
@@ -72,7 +72,7 @@ BEGIN
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x411, 932
+        VALUE "Translation", 0x409, 1252
     END
 END
 

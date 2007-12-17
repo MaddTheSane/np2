@@ -47,8 +47,6 @@ static const CBPARAM cpSBit[] =
 	{MAKEINTRESOURCE(IDS_2),			0xc0},
 };
 
-static const TCHAR str_seropt[] = _T("Serial option");
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -418,116 +416,116 @@ static const CBNPARAM cpInt2[] =
 
 static const CBPARAM cpSync[] =
 {
-	{MAKEINTRESOURCE(IDS_SYNC),		0x00},
-	{MAKEINTRESOURCE(IDS_ASYNC),	0x01},
-	{MAKEINTRESOURCE(IDS_ASYNC16X),	0x02},
-	{MAKEINTRESOURCE(IDS_ASYNC64X),	0x03},
+	{MAKEINTRESOURCE(IDS_SYNC),		0x03},
+	{MAKEINTRESOURCE(IDS_ASYNC),	0x00},
+	{MAKEINTRESOURCE(IDS_ASYNC16X),	0x01},
+	{MAKEINTRESOURCE(IDS_ASYNC64X),	0x02},
 };
 
-static const UINT32 pc9861kint1[] = {0, 1, 2, 3};
-static const UINT32 pc9861kint2[] = {0, 4, 5, 6};
+static void pc9861setspeed(HWND hWnd, const PC9861MODE_T *m)
+{
+	UINT8	cMode;
+	UINT	uSpeed;
 
-static const TCHAR sync0[] = _T("Start-Stop");
-static const TCHAR sync1[] = _T("ST1");
-static const TCHAR sync2[] = _T("ST2");
-static const TCHAR sync3[] = _T("RD-Sync");
-static const TCHAR *pc9861sync[] = {sync0, sync1, sync2, sync3};
-
-static const UINT pc9861d2sync[] = {1, 2, 3, 0};
-static const UINT pc9861d2int[] = {0, 2, 1, 3};
-
-
-static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m) {
-
-	LRESULT	r;
-	UINT8	mode;
-
-	mode = *(m->dip_mode);
-	r = SendDlgItemMessage(hWnd, m->idc_speed, CB_GETCURSEL, 0, 0);
-	if (r != CB_ERR) {
-		UINT speed = (UINT)r;
-		if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
-			speed = NELEMENTS(pc9861k_speed) - 1;
+	cMode = *(m->dip_mode);
+	uSpeed = (((~cMode) >> 2) & 0x0f) + 1;
+	if (cMode)
+	{
+		if (uSpeed > 4)
+		{
+			uSpeed -= 4;
 		}
-		if (mode & 2) {
-			speed += 3;
-		}
-		else {
-			if (speed) {
-				speed--;
-			}
-		}
-		mode &= 3;
-		mode |= ((~speed) & 0x0f) << 2;
-		*(m->dip_mode) = mode;
-	}
-}
-
-static void pc9861getint(HWND hWnd, const PC9861MODE_T *m) {
-
-	LRESULT	r;
-	UINT	i;
-
-	r = SendDlgItemMessage(hWnd, m->idc_int, CB_GETCURSEL, 0, 0);
-	if (r != CB_ERR) {
-		for (i=0; i<NELEMENTS(pc9861d2int); i++) {
-			if (pc9861d2int[i] == (UINT)(r & 3)) {
-				*(m->dip_int) &= ~(0x03 << (m->sft_int));
-				*(m->dip_int) |= (UINT8)(i << (m->sft_int));
-				break;
-			}
+		else
+		{
+			uSpeed = 0;
 		}
 	}
-}
-
-static void pc9861getmode(HWND hWnd, const PC9861MODE_T *m) {
-
-	LRESULT	r;
-	UINT8	i;
-
-	r = SendDlgItemMessage(hWnd, m->idc_mode, CB_GETCURSEL, 0, 0);
-	if (r != CB_ERR) {
-		for (i=0; i<NELEMENTS(pc9861d2sync); i++) {
-			if (pc9861d2sync[i] == (UINT)(r & 3)) {
-				*(m->dip_mode) &= (~3);
-				*(m->dip_mode) |= i;
-				break;
-			}
-		}
-	}
-}
-
-static void pc9861setmode(HWND hWnd, const PC9861MODE_T *m) {
-
-	UINT	speed;
-	UINT	mode;
-	UINT	intnum;
-	UINT8	modedip;
-
-	modedip = *(m->dip_mode);
-	speed = (((~modedip) >> 2) & 0x0f) + 1;
-	if (modedip & 0x02) {
-		if (speed > 4) {
-			speed -= 4;
-		}
-		else {
-			speed = 0;
-		}
-	}
-	if (speed > (NELEMENTS(pc9861k_speed) - 1)) {
-		speed = NELEMENTS(pc9861k_speed) - 1;
+	if (uSpeed > (NELEMENTS(pc9861k_speed) - 1))
+	{
+		uSpeed = NELEMENTS(pc9861k_speed) - 1;
 	}
 
 	SendDlgItemMessage(hWnd, m->idc_speed,
-								CB_SETCURSEL, (WPARAM)speed, (LPARAM)0);
+								CB_SETCURSEL, (WPARAM)uSpeed, (LPARAM)0);
+}
 
-	mode = pc9861d2sync[modedip & 3];
-	SendDlgItemMessage(hWnd, m->idc_mode,
-								CB_SETCURSEL, (WPARAM)mode, (LPARAM)0);
+static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m)
+{
+	UINT8	cMode;
+	LRESULT	r;
+	UINT	uSpeed;
 
-	intnum = pc9861d2int[((*(m->dip_int)) >> (m->sft_int)) & 3];
-	SendDlgItemMessage(hWnd, m->idc_int,
-								CB_SETCURSEL, (WPARAM)intnum, (LPARAM)0);
+	cMode = *(m->dip_mode);
+	r = SendDlgItemMessage(hWnd, m->idc_speed, CB_GETCURSEL, 0, 0);
+	if (r != CB_ERR)
+	{
+		uSpeed = (UINT)r;
+		if (uSpeed > (NELEMENTS(pc9861k_speed) - 1))
+		{
+			uSpeed = NELEMENTS(pc9861k_speed) - 1;
+		}
+		if (cMode & 2)
+		{
+			uSpeed += 3;
+		}
+		else
+		{
+			if (uSpeed)
+			{
+				uSpeed--;
+			}
+		}
+		cMode &= 3;
+		cMode |= ((~uSpeed) & 0x0f) << 2;
+		*(m->dip_mode) = cMode;
+	}
+}
+
+static void pc9861setsync(HWND hWnd, const PC9861MODE_T *m)
+{
+	UINT8	cMode;
+
+	cMode = *(m->dip_mode);
+	dlgs_setcbcur(hWnd, m->idc_mode, cMode & 0x03);
+}
+
+static void pc9861getsync(HWND hWnd, const PC9861MODE_T *m)
+{
+	UINT8	cMode;
+	UINT8	cNewMode;
+
+	cMode = *(m->dip_mode);
+	cNewMode = (UINT8)dlgs_getcbcur(hWnd, m->idc_mode, cMode & 0x03);
+	*(m->dip_mode) = (UINT8)((cMode & (~3)) | cNewMode);
+}
+
+static void pc9861setint(HWND hWnd, const PC9861MODE_T *m)
+{
+	UINT8	cMask;
+	UINT8	cMode;
+
+	cMask = 3 << (m->sft_int);
+	cMode = *(m->dip_int);
+	dlgs_setcbcur(hWnd, m->idc_int, cMode & cMask);
+}
+
+static void pc9861getint(HWND hWnd, const PC9861MODE_T *m)
+{
+	UINT8	cMask;
+	UINT8	cMode;
+	UINT8	cNewMode;
+
+	cMask = 3 << (m->sft_int);
+	cMode = *(m->dip_int);
+	cNewMode = (UINT8)dlgs_getcbcur(hWnd, m->idc_int, cMode & cMask);
+	*(m->dip_int) = (cMode & (~cMask)) | cNewMode;
+}
+
+static void pc9861setmode(HWND hWnd, const PC9861MODE_T *m)
+{
+	pc9861setspeed(hWnd, m);
+	pc9861setint(hWnd, m);
+	pc9861setsync(hWnd, m);
 }
 
 static void pc9861cmddipsw(HWND hWnd) {
@@ -551,8 +549,8 @@ static void pc9861cmddipsw(HWND hWnd) {
 		}
 		else if ((p.x >= 10) && (p.x < 14)) {		// S2
 			pc9861_s[1] ^= (1 << (p.x - 10));
-			pc9861setmode(hWnd, pc9861mode);
-			pc9861setmode(hWnd, pc9861mode+1);
+			pc9861setint(hWnd, pc9861mode);
+			pc9861setint(hWnd, pc9861mode+1);
 		}
 		else if ((p.x >= 17) && (p.x < 23)) {		// S3
 			pc9861_s[2] ^= (1 << (p.x - 17));
@@ -600,10 +598,10 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 			CopyMemory(pc9861_j, np2cfg.pc9861jmp, 6);
 			SETLISTUINT32(hWnd, IDC_CH1SPEED, pc9861k_speed);
 			SETLISTUINT32(hWnd, IDC_CH2SPEED, pc9861k_speed);
-			SETLISTUINT32(hWnd, IDC_CH1INT, pc9861kint1);
-			SETLISTUINT32(hWnd, IDC_CH2INT, pc9861kint2);
-			SETLISTSTR(hWnd, IDC_CH1MODE, pc9861sync);
-			SETLISTSTR(hWnd, IDC_CH2MODE, pc9861sync);
+			dlgs_setcbnumber(hWnd, IDC_CH1INT, cpInt1, NELEMENTS(cpInt1));
+			dlgs_setcbnumber(hWnd, IDC_CH2INT, cpInt2, NELEMENTS(cpInt2));
+			dlgs_setcbitem(hWnd, IDC_CH1MODE, cpSync, NELEMENTS(cpSync));
+			dlgs_setcbitem(hWnd, IDC_CH2MODE, cpSync, NELEMENTS(cpSync));
 
 			SendDlgItemMessage(hWnd, IDC_PC9861E, BM_GETCHECK,
 												np2cfg.pc9861enable & 1, 0);
@@ -619,32 +617,32 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 			switch (LOWORD(wp)) {
 				case IDC_CH1SPEED:
 					pc9861getspeed(hWnd, pc9861mode);
-					pc9861setmode(hWnd, pc9861mode);
+					pc9861setspeed(hWnd, pc9861mode);
 					break;
 
 				case IDC_CH1INT:
 					pc9861getint(hWnd, pc9861mode);
-					pc9861setmode(hWnd, pc9861mode);
+					pc9861setint(hWnd, pc9861mode);
 					break;
 
 				case IDC_CH1MODE:
-					pc9861getmode(hWnd, pc9861mode);
-					pc9861setmode(hWnd, pc9861mode);
+					pc9861getsync(hWnd, pc9861mode);
+					pc9861setsync(hWnd, pc9861mode);
 					break;
 
 				case IDC_CH2SPEED:
 					pc9861getspeed(hWnd, pc9861mode+1);
-					pc9861setmode(hWnd, pc9861mode+1);
+					pc9861setspeed(hWnd, pc9861mode+1);
 					break;
 
 				case IDC_CH2INT:
 					pc9861getint(hWnd, pc9861mode+1);
-					pc9861setmode(hWnd, pc9861mode+1);
+					pc9861setint(hWnd, pc9861mode+1);
 					break;
 
 				case IDC_CH2MODE:
-					pc9861getmode(hWnd, pc9861mode+1);
-					pc9861setmode(hWnd, pc9861mode+1);
+					pc9861getsync(hWnd, pc9861mode+1);
+					pc9861setsync(hWnd, pc9861mode+1);
 					break;
 
 				case IDC_PC9861DIP:
@@ -691,12 +689,13 @@ static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
 
 // --------------------------------------------------------------------------
 
-void dialog_serial(HWND hWnd) {
-
+void dialog_serial(HWND hWnd)
+{
 	HINSTANCE		hInstance;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
+	TCHAR			szTitle[128];
 
 	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
@@ -721,6 +720,8 @@ void dialog_serial(HWND hWnd) {
 	psp.pfnDlgProc = (DLGPROC)Com3Proc;
 	hpsp[3] = CreatePropertySheetPage(&psp);
 
+	loadstringresource(hInstance, IDS_SERIALOPTION, szTitle, NELEMENTS(szTitle));
+
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
@@ -729,7 +730,7 @@ void dialog_serial(HWND hWnd) {
 	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
-	psh.pszCaption = str_seropt;
+	psh.pszCaption = szTitle;
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);

@@ -16,9 +16,6 @@
 #include	"palettes.h"
 
 
-static const TCHAR str_scropt[] = _T("Screen option");
-
-
 static LRESULT CALLBACK Scropt1DlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 	TCHAR	work[32];
@@ -276,7 +273,6 @@ static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 												WPARAM wParam, LPARAM lParam)
 {
 	UINT8	c;
-	UINT	uUpdate;
 
 	switch(uMsg)
 	{
@@ -319,9 +315,8 @@ static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 				if (np2oscfg.fscrnmod != c)
 				{
 					np2oscfg.fscrnmod = c;
-					uUpdate |= SYS_UPDATEOSCFG;
+					sysmng_update(SYS_UPDATEOSCFG);
 				}
-				sysmng_update(uUpdate);
 				return(TRUE);
 			}
 			break;
@@ -329,12 +324,13 @@ static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
 	return(FALSE);
 }
 
-void dialog_scropt(HWND hWnd) {
-
+void dialog_scropt(HWND hWnd)
+{
 	HINSTANCE		hInstance;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
+	TCHAR			szTitle[128];
 
 	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
@@ -359,6 +355,8 @@ void dialog_scropt(HWND hWnd) {
 	psp.pfnDlgProc = (DLGPROC)ScroptFullScreenDlgProc;
 	hpsp[3] = CreatePropertySheetPage(&psp);
 
+	loadstringresource(hInstance, IDS_SCREENOPTION, szTitle, NELEMENTS(szTitle));
+
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
@@ -367,7 +365,7 @@ void dialog_scropt(HWND hWnd) {
 	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
-	psh.pszCaption = str_scropt;
+	psh.pszCaption = szTitle;
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);

@@ -46,7 +46,8 @@
 #define IDR_SCSIMENU                    233
 #define IDR_PXMENU                      241
 #define IDR_WAVEREC                     251
-#define IDR_CPUSAVE                     252
+#define IDR_CPUSAVE16                   252
+#define IDR_CPUSAVE32                   253
 #define IDR_TOOLWIN                     301
 #define IDR_KEYDISP                     302
 #define IDR_VIEW                        303

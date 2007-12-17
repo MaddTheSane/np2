@@ -316,7 +316,11 @@ void xmenu_initialize(void)
 
 	if (np2oscfg.I286SAVE)
 	{
-		(void)addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE);
+#if defined(SUPPORT_PC9821)
+		(void)addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE32);
+#else	//	defined(SUPPORT_PC9821)
+		(void)addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE16);
+#endif	//	defined(SUPPORT_PC9821)
 	}
 }
 

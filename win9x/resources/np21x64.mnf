@@ -2,18 +2,18 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
 <assemblyIdentity
     version="0.8.2.0"
-	processorArchitecture="X86"
-	name="np2"
+	processorArchitecture="amd64"
+	name="np21x64"
 	type="win32"
 />
-<description>ねこープロジェクトII</description>
+<description>Neko Project 21 x64</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity
             type="win32"
             name="Microsoft.Windows.Common-Controls"
             version="6.0.0.0"
-            processorArchitecture="X86"
+            processorArchitecture="amd64"
             publicKeyToken="6595b64144ccf1df"
             language="*"
         />

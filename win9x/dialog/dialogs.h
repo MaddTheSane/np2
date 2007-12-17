@@ -28,7 +28,6 @@ typedef struct tagCBNParam			CBNPARAM;
 typedef struct tagCBNParam			*PCBNPARAM;
 typedef const struct tagCBNParam	*PCCBNPARAM;
 
-extern const TCHAR str_nc[];
 
 #define	SetDlgItemCheck(a, b, c)	\
 			SendDlgItemMessage((a), (b), BM_SETCHECK, (c), 0)

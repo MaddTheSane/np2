@@ -12,8 +12,6 @@
 #endif
 
 
-const TCHAR str_nc[] = _T("N/C");
-
 
 // ---- enable
 
@@ -373,6 +371,15 @@ int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault)
 
 // ---- MIDIデバイスのリスト
 
+static void insertnc(HWND hWnd, int nPos)
+{
+	TCHAR	szNC[128];
+
+	loadstringresource(g_hInstance, LOWORD(IDS_NONCONNECT),
+													szNC, NELEMENTS(szNC));
+	SendMessage(hWnd, CB_INSERTSTRING, (WPARAM)nPos, (LPARAM)szNC);
+}
+
 void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 
 	HWND		wnd;
@@ -385,7 +392,7 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 	wnd = GetDlgItem(hWnd, res);
 	defcur = 0;
 	devs = midiOutGetNumDevs();
-	SendMessage(wnd, CB_INSERTSTRING, (WPARAM)0, (LPARAM)str_nc);
+	insertnc(wnd, 0);
 	SendMessage(wnd, CB_INSERTSTRING, (WPARAM)1, (LPARAM)cmmidi_midimapper);
 	if (!milstr_cmp(defname, cmmidi_midimapper)) {
 		defcur = 1;
@@ -432,7 +439,7 @@ void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 	wnd = GetDlgItem(hWnd, res);
 	defcur = 0;
 	num = midiInGetNumDevs();
-	SendMessage(wnd, CB_INSERTSTRING, (WPARAM)0, (LPARAM)str_nc);
+	insertnc(wnd, 0);
 	for (i=0; i<num; i++) {
 		if (midiInGetDevCaps(i, &mic, sizeof(mic)) == MMSYSERR_NOERROR) {
 			SendMessage(wnd, CB_INSERTSTRING,

@@ -1162,6 +1162,16 @@ BEGIN
     MENUITEM "&Wave record",                IDM_WAVEREC
 END
 
+IDR_CPUSAVE16 MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&i286 save",                  IDM_CPUSAVE
+END
+
+IDR_CPUSAVE32 MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&i386 save",                  IDM_CPUSAVE
+END
+
 IDR_TOOLWIN MENU DISCARDABLE 
 BEGIN
     MENUITEM "&Skin",                       IDM_SKIN
@@ -1222,26 +1232,24 @@ END
 // Bitmap
 //
 
-NP2BMP                  BITMAP  DISCARDABLE     "ICONS\\NEKOP2.BMP"
-NP2TOOL                 BITMAP  DISCARDABLE     "ICONS\\NP2TOOL.BMP"
+NP2BMP                  BITMAP  DISCARDABLE     "resources\\nekop2.bmp"
+NP2TOOL                 BITMAP  DISCARDABLE     "resources\\np2tool.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Icon
 //
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "ICONS\\NP2.ICO"
-IDI_ICON2               ICON    DISCARDABLE     "ICONS\\NP2DEBUG.ICO"
+IDI_ICON1               ICON    DISCARDABLE     "resources\\np2.ico"
+IDI_ICON2               ICON    DISCARDABLE     "resources\\np2debug.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // EXTROM
 //
 
-SEEKWAV                 EXTROM  DISCARDABLE     "ICONS\\FDDSEEK.WAV"
-SEEK1WAV                EXTROM  DISCARDABLE     "ICONS\\FDDSEEK1.WAV"
+SEEKWAV                 EXTROM  DISCARDABLE     "resources\\fddseek.wav"
+SEEK1WAV                EXTROM  DISCARDABLE     "resources\\fddseek1.wav"
 
 /////////////////////////////////////////////////////////////////////////////
 //

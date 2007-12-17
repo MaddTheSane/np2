@@ -69,8 +69,6 @@ static const CBPARAM cpID[] =
 	{MAKEINTRESOURCE(IDS_7X),	0x00},
 };
 
-static const TCHAR str_sndopt[] = _T("Sound board option");
-
 
 typedef struct {
 	UINT16	res;
@@ -916,19 +914,20 @@ static LRESULT CALLBACK PAD1optDlgProc(HWND hWnd, UINT msg,
 
 // ----
 
-void dialog_sndopt(HWND hWnd) {
-
-	HINSTANCE		hinst;
+void dialog_sndopt(HWND hWnd)
+{
+	HINSTANCE		hInstance;
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[6];
+	TCHAR			szTitle[128];
 
-	hinst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);
 	psp.dwFlags = PSP_DEFAULT;
-	psp.hInstance = hinst;
+	psp.hInstance = hInstance;
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SNDMIX);
 	psp.pfnDlgProc = (DLGPROC)SndmixDlgProc;
@@ -954,15 +953,17 @@ void dialog_sndopt(HWND hWnd) {
 	psp.pfnDlgProc = (DLGPROC)PAD1optDlgProc;
 	hpsp[5] = CreatePropertySheetPage(&psp);
 
+	loadstringresource(hInstance, IDS_SOUNDOPTION, szTitle, NELEMENTS(szTitle));
+
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	psh.hwndParent = hWnd;
-	psh.hInstance = hinst;
-	psh.hIcon = LoadIcon(hinst, MAKEINTRESOURCE(IDI_ICON2));
+	psh.hInstance = hInstance;
+	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 6;
 	psh.phpage = hpsp;
-	psh.pszCaption = str_sndopt;
+	psh.pszCaption = szTitle;
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);

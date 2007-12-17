@@ -6,7 +6,7 @@
 	name="np21"
 	type="win32"
 />
-<description>ねこープロジェクト21</description>
+<description>Neko Project 21</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity

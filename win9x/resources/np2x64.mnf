@@ -6,7 +6,7 @@
 	name="np2x64"
 	type="win32"
 />
-<description>ねこープロジェクトII x64</description>
+<description>Neko Project II x64</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity
