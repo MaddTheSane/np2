@@ -1463,10 +1463,6 @@ SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\NP2.RC
-# End Source File
-# Begin Source File
-
 SOURCE=.\NP2ARG.CPP
 # End Source File
 # Begin Source File
@@ -1590,6 +1586,10 @@ SOURCE=..\TIMING.C
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\resources\1252\np2.rc
+# End Source File
 # End Group
 # End Target
 # End Project

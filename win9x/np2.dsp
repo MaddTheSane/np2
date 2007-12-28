@@ -1763,7 +1763,7 @@ SOURCE=..\TIMING.C
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\NP2.RC
+SOURCE=.\resources\1252\np2.rc
 # End Source File
 # End Group
 # End Target

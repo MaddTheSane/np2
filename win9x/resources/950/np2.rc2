@@ -3,17 +3,19 @@
 // Manifest
 //
 
+#ifndef _USRDLL
 #ifdef _WIN64
 #ifdef SUPPORT_PC9821
-IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "resources\\np21x64.mnf"
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "..\\np21x64.mnf"
 #else
-IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "resources\\np2x64.mnf"
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "..\\np2x64.mnf"
 #endif
 #else
 #ifdef SUPPORT_PC9821
-IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "resources\\np21.mnf"
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "..\\np21.mnf"
 #else
-IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "resources\\np2.mnf"
+IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "..\\np2.mnf"
+#endif
 #endif
 #endif
 
@@ -37,24 +39,24 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "041103a4"
+        BLOCK "040403b6"
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileVersion", "0, 8, 3, 0\0"
-            VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
+            VALUE "LegalCopyright", "øﬂ§k§h∂}µo∂§\0"
 
             VALUE "ProductVersion", "0, 8, 3, 0\0"
 #ifdef _USRDLL
-            VALUE "FileDescription", "PC-98x1series emulator resource file\0"
-            VALUE "ProductName", "Neko Project II resource file\0"
-            VALUE "InternalName", "np2_932\0"
-            VALUE "OriginalFilename", "np2_932.dll\0"
+            VALUE "FileDescription", "PC-98x1 ®t¶Cº“¿¿æπ∏Í∑Ω¿…\0"
+            VALUE "ProductName", "Neko Project II ∏Í∑Ω¿…\0"
+            VALUE "InternalName", "np2_950\0"
+            VALUE "OriginalFilename", "np2_950.dll\0"
 #else
 #ifdef SUPPORT_PC9821
-            VALUE "FileDescription", "PC-9821series emulator\0"
+            VALUE "FileDescription", "PC-9821 ®t¶Cº“¿¿æπ\0"
             VALUE "ProductName", "Neko Project 21\0"
 #else
-            VALUE "FileDescription", "PC-9801series emulator\0"
+            VALUE "FileDescription", "PC-9801 ®t¶Cº“¿¿æπ\0"
             VALUE "ProductName", "Neko Project II\0"
 #endif
 #ifdef _WIN64
@@ -79,7 +81,7 @@ BEGIN
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x411, 932
+        VALUE "Translation", 0x404, 950
     END
 END
 

@@ -1,6 +1,6 @@
 //Microsoft Developer Studio generated resource script.
 //
-#include "resource.h"
+#include "..\..\resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// “ú–{Œê resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 #ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
 #endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ IDD_CONFIG DIALOG DISCARDABLE  0, 0, 182, 200
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configure"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     GROUPBOX        "CPU",IDC_STATIC,8,8,110,44
     COMBOBOX        IDC_BASECLOCK,14,22,54,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -74,7 +74,7 @@ IDD_CONFIGNOMMX DIALOG DISCARDABLE  0, 0, 182, 186
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configure"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     GROUPBOX        "CPU",IDC_STATIC,8,8,110,44
     COMBOBOX        IDC_BASECLOCK,14,22,54,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -116,7 +116,7 @@ IDD_NEWDISK DIALOG DISCARDABLE  0, 0, 180, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create new FD image"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Disk label",IDC_STATIC,8,10,38,8
     EDITTEXT        IDC_DISKLABEL,48,8,64,12,ES_AUTOHSCROLL | WS_GROUP
@@ -133,7 +133,7 @@ IDD_NEWDISK2 DIALOG DISCARDABLE  0, 0, 196, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create new FD image"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Disk label",IDC_STATIC,8,10,38,8
     EDITTEXT        IDC_DISKLABEL,48,8,64,12,ES_AUTOHSCROLL | WS_GROUP
@@ -152,7 +152,7 @@ IDD_NEWHDDDISK DIALOG DISCARDABLE  0, 0, 160, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create new HD image"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "HDD size",IDC_STATIC,8,10,38,8
     COMBOBOX        IDC_HDDSIZE,48,8,32,46,CBS_DROPDOWN | CBS_SORT | 
@@ -167,7 +167,7 @@ IDD_NEWSASI DIALOG DISCARDABLE  0, 0, 144, 54
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create new SASI image"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "5MB",IDC_NEWSASI5MB,"Button",BS_AUTORADIOBUTTON | 
                     WS_TABSTOP,8,8,38,10
@@ -188,7 +188,7 @@ END
 IDD_SCROPT1 DIALOG DISCARDABLE  0, 0, 172, 96
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Video"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "Liquid Crystal Display",IDC_LCD,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,8,156,10
@@ -205,7 +205,7 @@ END
 IDD_SCROPT_FULLSCREEN DIALOG DISCARDABLE  0, 0, 172, 96
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "FullScreen"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "No change screen colors",IDC_FULLSCREEN_SAMEBPP,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,8,156,10
@@ -220,7 +220,7 @@ END
 IDD_SCROPT2 DIALOG DISCARDABLE  0, 0, 172, 96
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Chip"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     GROUPBOX        "Graphic Display Controller",IDC_STATIC,8,8,120,28
     CONTROL         "uPD7220",IDC_GDC7220,"Button",BS_AUTORADIOBUTTON | 
@@ -241,7 +241,7 @@ END
 IDD_SCROPT3 DIALOG DISCARDABLE  0, 0, 172, 96
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Timing"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "T-RAM",IDC_STATIC,8,9,30,8
     CONTROL         "Slider1",IDC_TRAMWAIT,"msctls_trackbar32",TBS_BOTH | 
@@ -267,7 +267,7 @@ END
 IDD_SERIAL1 DIALOG DISCARDABLE  0, 0, 224, 140
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "COM1"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
     COMBOBOX        IDC_COM1PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -304,7 +304,7 @@ END
 IDD_PC9861A DIALOG DISCARDABLE  0, 0, 224, 140
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "PC-9861K"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "Enable",IDC_PC9861E,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,8,208,10
@@ -336,7 +336,7 @@ END
 IDD_PC9861B DIALOG DISCARDABLE  0, 0, 224, 140
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "CH.1"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
     COMBOBOX        IDC_COM2PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -373,7 +373,7 @@ END
 IDD_PC9861C DIALOG DISCARDABLE  0, 0, 224, 140
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "CH.2"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
     COMBOBOX        IDC_COM3PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -411,7 +411,7 @@ IDD_MPUPC98 DIALOG DISCARDABLE  0, 0, 192, 178
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "MPU-PC98II"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     LTEXT           "I/O port",IDC_STATIC,8,10,32,8
     COMBOBOX        IDC_MPUIO,44,8,48,52,CBS_DROPDOWNLIST | CBS_SORT | 
@@ -441,10 +441,10 @@ BEGIN
     PUSHBUTTON      "Defaults",IDC_MPUDEF,140,58,44,14
 END
 
-IDD_SNDMIX DIALOGEX 0, 0, 200, 124
+IDD_SNDMIX DIALOGEX 0, 0, 184, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Mixer"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN", 0, 0, 0x1
 BEGIN
     LTEXT           "FM",IDC_STATIC,8,9,30,8
     CONTROL         "Slider1",IDC_VOLFM,"msctls_trackbar32",TBS_BOTH | 
@@ -466,13 +466,13 @@ BEGIN
     CONTROL         "Slider8",IDC_VOLRHYTHM,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,65,88,10
     LTEXT           "",IDC_VOLRHYTHMSTR,134,64,16,10,SS_SUNKEN,WS_EX_RIGHT
-    PUSHBUTTON      "Defaults",IDC_SNDMIXDEF,152,102,40,14
+    PUSHBUTTON      "Defaults",IDC_SNDMIXDEF,136,102,40,14
 END
 
-IDD_SND14 DIALOGEX 0, 0, 200, 124
+IDD_SND14 DIALOGEX 0, 0, 184, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "PC-9801-14"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN", 0, 0, 0x1
 BEGIN
     LTEXT           "Left",IDC_STATIC,8,9,30,8
     CONTROL         "Slider1",IDC_VOL14L,"msctls_trackbar32",TBS_BOTH | 
@@ -500,83 +500,83 @@ BEGIN
     LTEXT           "",IDC_VOLF16STR,94,78,16,10,SS_SUNKEN,WS_EX_RIGHT
 END
 
-IDD_SND26 DIALOG DISCARDABLE  0, 0, 200, 124
+IDD_SND26 DIALOG DISCARDABLE  0, 0, 184, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "26"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,32,8
-    COMBOBOX        IDC_SND26IO,42,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "I/O port",IDC_STATIC,8,10,30,8
+    COMBOBOX        IDC_SND26IO,40,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,114,10,32,8
-    COMBOBOX        IDC_SND26INT,148,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "Interrupt",IDC_STATIC,104,10,30,8
+    COMBOBOX        IDC_SND26INT,136,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ROM",IDC_STATIC,8,28,32,8
-    COMBOBOX        IDC_SND26ROM,42,26,44,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "ROM",IDC_STATIC,8,28,30,8
+    COMBOBOX        IDC_SND26ROM,40,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "Jumper",IDC_STATIC,8,66,30,8
     CONTROL         "",IDC_SND26JMP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,
                     66,136,34
-    PUSHBUTTON      "Defaults",IDC_SND26DEF,152,102,40,12
+    PUSHBUTTON      "Defaults",IDC_SND26DEF,136,102,40,14
 END
 
-IDD_SND86 DIALOG DISCARDABLE  0, 0, 200, 124
+IDD_SND86 DIALOG DISCARDABLE  0, 0, 184, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "86"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,32,8
-    COMBOBOX        IDC_SND86IO,42,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "I/O port",IDC_STATIC,8,10,30,8
+    COMBOBOX        IDC_SND86IO,40,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Interrupt",IDC_SND86INT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,106,9,40,10
-    COMBOBOX        IDC_SND86INTA,148,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_TABSTOP,94,9,40,10
+    COMBOBOX        IDC_SND86INTA,136,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Sound ID",IDC_STATIC,8,28,32,8
-    COMBOBOX        IDC_SND86ID,42,26,44,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "Sound ID",IDC_STATIC,8,28,30,8
+    COMBOBOX        IDC_SND86ID,40,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "ROM",IDC_SND86ROM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    106,27,40,10
+                    94,27,40,10
     LTEXT           "DIP-SW",IDC_STATIC,8,66,30,8
     CONTROL         "",IDC_SND86DIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,
-                    66,152,34
-    PUSHBUTTON      "Defaults",IDC_SND86DEF,152,102,40,12
+                    66,136,34
+    PUSHBUTTON      "Defaults",IDC_SND86DEF,136,102,40,14
 END
 
-IDD_SNDSPB DIALOG DISCARDABLE  0, 0, 200, 124
+IDD_SNDSPB DIALOG DISCARDABLE  0, 0, 184, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "SPB"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,32,8
-    COMBOBOX        IDC_SPBIO,42,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "I/O port",IDC_STATIC,8,10,30,8
+    COMBOBOX        IDC_SPBIO,40,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,114,10,32,8
-    COMBOBOX        IDC_SPBINT,148,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "Interrupt",IDC_STATIC,104,10,30,8
+    COMBOBOX        IDC_SPBINT,136,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ROM",IDC_STATIC,8,28,32,8
-    COMBOBOX        IDC_SPBROM,42,26,44,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "ROM",IDC_STATIC,8,28,30,8
+    COMBOBOX        IDC_SPBROM,40,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Reversed channel",IDC_SPBREVERSE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,104,27,88,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,94,27,82,10
     LTEXT           "VR",IDC_STATIC,8,46,30,8
     CONTROL         "L",IDC_SPBVRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,40,
-                    45,24,10
-    CONTROL         "R",IDC_SPBVRR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,66,
-                    45,24,10
-    RTEXT           "Level",IDC_STATIC,98,46,24,8
+                    45,22,10
+    CONTROL         "R",IDC_SPBVRR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,
+                    45,22,10
+    RTEXT           "Level",IDC_STATIC,88,46,22,8
     CONTROL         "Slider16",IDC_SPBVRLEVEL,"msctls_trackbar32",TBS_BOTH | 
-                    TBS_NOTICKS | WS_TABSTOP,124,46,64,10
+                    TBS_NOTICKS | WS_TABSTOP,112,46,64,10
     LTEXT           "Jumper",IDC_STATIC,8,66,30,8
     CONTROL         "",IDC_SPBJMP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,66,
-                    152,34
-    PUSHBUTTON      "Defaults",IDC_SPBDEF,152,102,40,12
+                    136,34
+    PUSHBUTTON      "Defaults",IDC_SPBDEF,136,102,40,14
 END
 
-IDD_SNDPAD1 DIALOG DISCARDABLE  0, 0, 200, 124
+IDD_SNDPAD1 DIALOG DISCARDABLE  0, 0, 184, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "JoyPad"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "Use JoyPad-1",IDC_JOYPAD1,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,8,58,10
@@ -604,7 +604,7 @@ IDD_CALENDAR DIALOG DISCARDABLE  0, 0, 164, 80
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Calendar"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     CONTROL         "Real (localtime)",IDC_CLNDREAL,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,8,96,10
@@ -629,7 +629,7 @@ IDD_ABOUT DIALOG DISCARDABLE  0, 0, 196, 108
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About"
 CLASS "np2dialog"
-FONT 8, "MS Sans Serif"
+FONT 9, "‚l‚r ‚oƒSƒVƒbƒN"
 BEGIN
     ICON            IDI_ICON1,IDC_NP2ICON,8,8,20,20
     LTEXT           "",IDC_NP2VER,36,16,102,8
@@ -843,7 +843,7 @@ END
 
 1 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "resource.h\0"
+    "..\\..\\resource.h\0"
 END
 
 2 TEXTINCLUDE DISCARDABLE 
@@ -854,7 +854,7 @@ END
 
 3 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#include ""np2res.rc2""\r\n"
+    "#include ""np2.rc2""\r\n"
     "\0"
 END
 
@@ -1252,24 +1252,24 @@ END
 // Bitmap
 //
 
-NP2BMP                  BITMAP  DISCARDABLE     "resources\\nekop2.bmp"
-NP2TOOL                 BITMAP  DISCARDABLE     "resources\\np2tool.bmp"
+NP2BMP                  BITMAP  DISCARDABLE     "..\\nekop2.bmp"
+NP2TOOL                 BITMAP  DISCARDABLE     "..\\np2tool.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Icon
 //
 
-IDI_ICON1               ICON    DISCARDABLE     "resources\\np2.ico"
-IDI_ICON2               ICON    DISCARDABLE     "resources\\np2debug.ico"
+IDI_ICON1               ICON    DISCARDABLE     "..\\np2.ico"
+IDI_ICON2               ICON    DISCARDABLE     "..\\np2debug.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // EXTROM
 //
 
-SEEKWAV                 EXTROM  DISCARDABLE     "resources\\fddseek.wav"
-SEEK1WAV                EXTROM  DISCARDABLE     "resources\\fddseek1.wav"
+SEEKWAV                 EXTROM  DISCARDABLE     "..\\fddseek.wav"
+SEEK1WAV                EXTROM  DISCARDABLE     "..\\fddseek1.wav"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1502,7 +1502,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-#include "np2res.rc2"
+#include "np2.rc2"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

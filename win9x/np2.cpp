@@ -103,7 +103,7 @@ static const OEMCHAR np2flagext[] = OEMTEXT("S%02d");
 static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2x64_%u.dll");
 #else	// defined(_WIN64)
 static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2_%u.dll");
-#endi	// defined(_WIN64)
+#endif	// defined(_WIN64)
 
 
 // ----

@@ -39,6 +39,8 @@ I286CASM	= $(I286C)/x86
 IOASM		= $(IO)/x86
 VRAMASM		= $(VRAM)/x86
 
+RESDIR		= ./resources/1252
+
 HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
 				$(COMMON)/_memory.h $(COMMON)/rect.h $(COMMON)/lstarray.h \
 				$(TARGET)/trace.h
@@ -1120,8 +1122,8 @@ $(OBJ)/win32sub.o	:	$(TARGET)/win32sub.cpp $(HEADERS) \
 						$(TARGET)/win32sub.h
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJ)/np2res.o		:	$(TARGET)/np2res.rc $(TARGET)/resource.h
-	$(RC) -i $< -o $@
+$(OBJ)/np2res.o		:	$(RESDIR)/np2.rc $(TARGET)/resource.h
+	$(RC) -I$(RESDIR) -i $< -o $@
 
 
 
