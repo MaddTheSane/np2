@@ -93,44 +93,77 @@ static	UINT		framemax = 1;
 static	UINT8		np2stopemulate = 0;
 static	int			np2opening = 1;
 static	int			np2quitmsg = 0;
-static	HMENU		hStat = NULL;
 static	UINT8		scrnmode;
 static	WINLOCEX	smwlex;
-static	HMODULE		resmod;
+static	HMODULE		s_hModResource;
 
 static const OEMCHAR np2help[] = OEMTEXT("np2.chm");
 static const OEMCHAR np2flagext[] = OEMTEXT("S%02d");
-static const OEMCHAR np2resext[] = OEMTEXT(".%u");
+#if defined(_WIN64)
+static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2x64_%u.dll");
+#else	// defined(_WIN64)
+static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2_%u.dll");
+#endi	// defined(_WIN64)
 
 
 // ----
 
-static HINSTANCE loadextinst(HINSTANCE hInstance) {
+static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
+{
+	int		nRet;
+	LPTSTR	lpszText;
 
-	OEMCHAR	path[MAX_PATH];
-	OEMCHAR	cpstr[16];
-	HMODULE dll;
+#if defined(OSLANG_UTF8)
+	TCHAR szCation[128];
+	oemtotchar(szCaption, NELEMENTS(szCaption), np2oscfg.titles, -1);
+#else	// defined(OSLANG_UTF8)
+	LPCTSTR szCaption = np2oscfg.titles;
+#endif	// defined(OSLANG_UTF8)
 
-	file_cpyname(path, modulefile, NELEMENTS(path));
-	file_cutext(path);
-	OEMSPRINTF(cpstr, np2resext, GetOEMCP());
-	file_catname(path, cpstr, NELEMENTS(path));
-	dll = LoadLibrary(path);
-	resmod = dll;
-	if (dll != NULL) {
-		hInstance = (HINSTANCE)dll;
+	nRet = 0;
+	if (HIWORD(lpcszText))
+	{
+		nRet = MessageBox(hWnd, lpcszText, szCaption, uType);
+	}
+	else
+	{
+		lpszText = lockstringresource(lpcszText);
+		nRet = MessageBox(hWnd, lpszText, szCaption, uType);
+		unlockstringresource(lpszText);
+	}
+	return nRet;
+}
+
+// ----
+
+static HINSTANCE loadextinst(HINSTANCE hInstance)
+{
+	OEMCHAR	szPath[MAX_PATH];
+	OEMCHAR	szDllName[32];
+	HMODULE hMod;
+
+	file_cpyname(szPath, modulefile, NELEMENTS(szPath));
+	file_cutname(szPath);
+	OEMSPRINTF(szDllName, szNp2ResDll, GetOEMCP());
+	file_catname(szPath, szDllName, NELEMENTS(szPath));
+	hMod = LoadLibrary(szPath);
+	s_hModResource = hMod;
+	if (hMod != NULL)
+	{
+		hInstance = (HINSTANCE)hMod;
 	}
 	return(hInstance);
 }
 
-static void unloadextinst(void) {
+static void unloadextinst(void)
+{
+	HMODULE hMod;
 
-	HMODULE dll;
-
-	dll = resmod;
-	if (dll) {
-		resmod = 0;
-		FreeLibrary(dll);
+	hMod = s_hModResource;
+	s_hModResource = 0;
+	if (hMod)
+	{
+		FreeLibrary(hMod);
 	}
 }
 
@@ -317,37 +350,47 @@ static void flagdelete(const OEMCHAR *ext) {
 	file_delete(path);
 }
 
-static int flagload(const OEMCHAR *ext, const OEMCHAR *title, BOOL force) {
+static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
+{
+	int		nRet;
+	int		nID;
+	OEMCHAR	szPath[MAX_PATH];
+	OEMCHAR	szStat[1024];
+	TCHAR	szFormat[256];
+	TCHAR	szMessage[1024 + 256];
 
-	int		ret;
-	int		id;
-	OEMCHAR	path[MAX_PATH];
-	OEMCHAR	buf[1024];
-
-	getstatfilename(path, ext, NELEMENTS(path));
+	getstatfilename(szPath, ext, NELEMENTS(szPath));
 	winuienter();
-	id = IDYES;
-	ret = statsave_check(path, buf, NELEMENTS(buf));
-	if (ret & (~STATFLAG_DISKCHG)) {
-		MessageBox(g_hWndMain, _T("Couldn't restart"), title,
-										MB_OK | MB_ICONSTOP);
-		id = IDNO;
+	nID = IDYES;
+	nRet = statsave_check(szPath, szStat, NELEMENTS(szStat));
+	if (nRet & (~STATFLAG_DISKCHG))
+	{
+		messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_RESUME),
+													MB_OK | MB_ICONSTOP);
+		nID = IDNO;
 	}
-	else if ((!force) && (ret & STATFLAG_DISKCHG)) {
-		OEMCHAR buf2[1024 + 256];
-		OEMSPRINTF(buf2, OEMTEXT("Conflict!\n\n%s\nContinue?"), buf);
-		id = MessageBox(g_hWndMain, buf2, title,
-										MB_YESNOCANCEL | MB_ICONQUESTION);
+	else if ((!force) && (nRet & STATFLAG_DISKCHG))
+	{
+#if defined(OSLANG_UTF8)
+		TCHAR szStat2[128];
+		oemtotchar(szStat2, NELEMENTS(szStat2), szStat, -1);
+#else	// defined(OSLANG_UTF8)
+		LPCTSTR szStat2 = szStat;
+#endif	// defined(OSLANG_UTF8)
+		loadstringresource(IDS_CONFIRM_RESUME, szFormat, NELEMENTS(szFormat));
+		wsprintf(szMessage, szFormat, szStat2);
+		nID = messagebox(hWnd, szMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
-	if (id == IDYES) {
-		statsave_load(path);
+	if (nID == IDYES)
+	{
+		statsave_load(szPath);
 		toolwin_setfdd(0, fdd_diskname(0));
 		toolwin_setfdd(1, fdd_diskname(1));
 	}
 	sysmng_workclockreset();
 	sysmng_updatecaption(1);
 	winuileave();
-	return(id);
+	return nID;
 }
 #endif
 
@@ -380,25 +423,29 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 	UINT		uID;
 	BOOL		b;
 
-	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);;
 	update = 0;
 	uID = LOWORD(wParam);
 	switch(uID)
 	{
 		case IDM_RESET:
 			b = FALSE;
-			if (!np2oscfg.comfirm) {
+			if (!np2oscfg.comfirm)
+			{
 				b = TRUE;
 			}
-			else if (sstpconfirm_reset()) {
+			else if (sstpconfirm_reset())
+			{
 				winuienter();
-				if (MessageBox(hWnd, OEMTEXT("Sure?"), OEMTEXT("Reset"),
-									MB_ICONQUESTION | MB_YESNO) == IDYES) {
+				if (messagebox(hWnd, MAKEINTRESOURCE(IDS_CONFIRM_RESET),
+									MB_ICONQUESTION | MB_YESNO) == IDYES)
+				{
 					b = TRUE;
 				}
 				winuileave();
 			}
-			if (b) {
+			if (b)
+			{
 				sstpmsg_reset();
 				juliet_YMF288Reset();
 				pccore_cfgupdate();
@@ -976,7 +1023,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 				(uID < (IDM_FLAGLOAD + SUPPORT_STATSAVE))) {
 				OEMCHAR ext[4];
 				OEMSPRINTF(ext, np2flagext, uID - IDM_FLAGLOAD);
-				flagload(ext, OEMTEXT("Status Load"), TRUE);
+				flagload(hWnd, ext, _T("Status Load"), TRUE);
 			}
 #endif
 			break;
@@ -1360,8 +1407,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			else if (sstpconfirm_exit()) {
 				winuienter();
-				if (MessageBox(hWnd, _T("Sure?"), _T("Exit"),
-									MB_ICONQUESTION | MB_YESNO) == IDYES) {
+				if (messagebox(hWnd, MAKEINTRESOURCE(IDS_CONFIRM_EXIT),
+									MB_ICONQUESTION | MB_YESNO) == IDYES)
+				{
 					b = TRUE;
 				}
 				winuileave();
@@ -1373,7 +1421,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_DESTROY:
-			DestroyMenu(hStat);
 			np2class_wmdestroy(hWnd);
 			PostQuitMessage(0);
 			break;
@@ -1532,14 +1579,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 
-	np2class_initialize(hInstance);
+	np2class_initialize(g_hInstance);
 	if (!hPrevInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = NP2GWLP_SIZE;
-		wc.hInstance = hInstance;
-		wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hInstance = g_hInstance;
+		wc.hIcon = LoadIcon(g_hInstance, MAKEINTRESOURCE(IDI_ICON1));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
@@ -1551,11 +1598,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			return(FALSE);
 		}
 
-		toolwin_initapp(hInstance);
-		kdispwin_initialize(hInstance);
-		skbdwin_initialize(hInstance);
-		mdbgwin_initialize(hInstance);
-		viewer_init(hInstance);
+		toolwin_initapp(g_hInstance);
+		kdispwin_initialize(g_hInstance);
+		skbdwin_initialize(g_hInstance);
+		mdbgwin_initialize(g_hInstance);
+		viewer_init(g_hInstance);
 	}
 
 	mousemng_initialize();
@@ -1566,7 +1613,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
-						NULL, NULL, hInstance, NULL);
+						NULL, NULL, g_hInstance, NULL);
 	g_hWndMain = hWnd;
 	scrnmng_initialize();
 
@@ -1625,9 +1672,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	if (scrnmng_create(scrnmode) != SUCCESS) {
 		scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(scrnmode) != SUCCESS) {
-			if (sstpmsg_dxerror()) {
-				MessageBox(hWnd, _T("Couldn't create DirectDraw Object"),
-										np2oscfg.titles, MB_OK | MB_ICONSTOP);
+			if (sstpmsg_dxerror())
+			{
+				messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW),
+														MB_OK | MB_ICONSTOP);
 			}
 			unloadextinst();
 			TRACETERM();
@@ -1675,7 +1723,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	if (np2oscfg.resume) {
 		int		id;
 
-		id = flagload(str_sav, str_resume, FALSE);
+		id = flagload(hWnd, str_sav, _T("Resume"), FALSE);
 		if (id == IDYES) {
 			for (i=0; i<4; i++) {
 				np2arg.disk[i] = NULL;
@@ -1707,10 +1755,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
 		if (np2oscfg.toolwin) {
-			toolwin_create(hInstance);
+			toolwin_create(g_hInstance);
 		}
 		if (np2oscfg.keydisp) {
-			kdispwin_create(hInstance);
+			kdispwin_create(g_hInstance);
 		}
 	}
 

@@ -7,14 +7,10 @@
 #include	"pccore.h"
 
 
-
-#define	MFCHECK(a) ((a)?MF_CHECKED:MF_UNCHECKED)
-
-static BOOL searchchildmenu(HMENU hMenu, UINT uID,
-												HMENU *phmenuRet, UINT *puPos)
+BOOL menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
 {
-	UINT			nCount;
-	UINT			i;
+	int				nCount;
+	int				i;
 	MENUITEMINFO	mii;
 
 	nCount = GetMenuItemCount(hMenu);
@@ -31,14 +27,14 @@ static BOOL searchchildmenu(HMENU hMenu, UINT uID,
 				{
 					*phmenuRet = hMenu;
 				}
-				if (puPos)
+				if (pnPos)
 				{
-					*puPos = i;
+					*pnPos = i;
 				}
 				return TRUE;
 			}
 			else if ((mii.hSubMenu) &&
-					(searchchildmenu(mii.hSubMenu, uID, phmenuRet, puPos)))
+					(menu_searchmenu(mii.hSubMenu, uID, phmenuRet, pnPos)))
 			{
 				return TRUE;
 			}
@@ -47,11 +43,12 @@ static BOOL searchchildmenu(HMENU hMenu, UINT uID,
 	return FALSE;
 }
 
+#if 0
 static BOOL searchsubmenu(HMENU hMenu, HMENU hmenuTarget,
-												HMENU *phmenuRet, UINT *puPos)
+												HMENU *phmenuRet, int *pnPos)
 {
-	UINT			nCount;
-	UINT			i;
+	int				nCount;
+	int				i;
 	MENUITEMINFO	mii;
 
 	nCount = GetMenuItemCount(hMenu);
@@ -68,13 +65,13 @@ static BOOL searchsubmenu(HMENU hMenu, HMENU hmenuTarget,
 				{
 					*phmenuRet = hMenu;
 				}
-				if (puPos)
+				if (pnPos)
 				{
-					*puPos = i;
+					*pnPos = i;
 				}
 				return TRUE;
 			}
-			if (searchsubmenu(mii.hSubMenu, hmenuTarget, phmenuRet, puPos))
+			if (searchsubmenu(mii.hSubMenu, hmenuTarget, phmenuRet, pnPos))
 			{
 				return TRUE;
 			}
@@ -82,20 +79,25 @@ static BOOL searchsubmenu(HMENU hMenu, HMENU hmenuTarget,
 	}
 	return FALSE;
 }
+#endif	// 0
 
 // Ç±ÇÍÇ¡ÇƒAPIÇ†ÇÈÇÃÇ©ÅH
-static UINT addmenu(HMENU hMenu, UINT uPos, HMENU hmenuAdd, BOOL bSeparator)
+int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator)
 {
-	UINT			uCount;
-	UINT			uAdded;
-	UINT			i;
+	int				nCount;
+	int				nAdded;
+	int				i;
 	MENUITEMINFO	mii;
 	TCHAR			szString[128];
 	HMENU			hmenuSub;
 
-	uCount = GetMenuItemCount(hmenuAdd);
-	uAdded = 0;
-	for (i=0; i<uCount; i++)
+	if (nPos < 0)
+	{
+		nPos = GetMenuItemCount(hMenu);
+	}
+	nCount = GetMenuItemCount(hmenuAdd);
+	nAdded = 0;
+	for (i=0; i<nCount; i++)
 	{
 		ZeroMemory(&mii, sizeof(mii));
 		mii.cbSize = sizeof(mii);
@@ -108,66 +110,69 @@ static UINT addmenu(HMENU hMenu, UINT uPos, HMENU hmenuAdd, BOOL bSeparator)
 			if (mii.hSubMenu)
 			{
 				hmenuSub = CreatePopupMenu();
-				(void)addmenu(hmenuSub, 0, mii.hSubMenu, FALSE);
+				(void)menu_addmenu(hmenuSub, 0, mii.hSubMenu, FALSE);
 				mii.hSubMenu = hmenuSub;
 			}
 			if (bSeparator)
 			{
 				bSeparator = FALSE;
-				InsertMenu(hMenu, uPos + uAdded, MF_SEPARATOR, 0, NULL);
-				uAdded++;
+				InsertMenu(hMenu, nPos + nAdded, MF_BYPOSITION | MF_SEPARATOR,
+																	0, NULL);
+				nAdded++;
 			}
-			InsertMenuItem(hMenu, uPos + uAdded, TRUE, &mii);
-			uAdded++;
+			InsertMenuItem(hMenu, nPos + nAdded, TRUE, &mii);
+			nAdded++;
 		}
 	}
-	return uAdded;
+	return nAdded;
 }
 
-static UINT addmenures(HMENU hMenu, UINT uPos, UINT uID, BOOL bSeparator)
+int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator)
 {
-	UINT	uCount;
+	int		nCount;
 	HMENU	hmenuAdd;
 
-	uCount = 0;
+	nCount = 0;
 	hmenuAdd = LoadMenu(g_hInstance, MAKEINTRESOURCE(uID));
 	if (hmenuAdd)
 	{
-		uCount = addmenu(hMenu, uPos, hmenuAdd, bSeparator);
+		nCount = menu_addmenu(hMenu, nPos, hmenuAdd, bSeparator);
 		DestroyMenu(hmenuAdd);
 	}
-	return uCount;
+	return nCount;
 }
 
-static UINT addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
+int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
 {
-	UINT	uCount;
+	int		nCount;
 	HMENU	hmenuSub;
-	UINT	uSubPos;
+	int		nSubPos;
 
-	uCount = 0;
-	if (searchchildmenu(hMenu, uByID, &hmenuSub, &uSubPos))
+	nCount = 0;
+	if (menu_searchmenu(hMenu, uByID, &hmenuSub, &nSubPos))
 	{
-		uCount = addmenures(hmenuSub, uSubPos + 1, uID, FALSE);
+		nCount = menu_addmenures(hmenuSub, nSubPos + 1, uID, FALSE);
 	}
-	return uCount;
+	return nCount;
 }
 
-
-static void insertresmenu(HMENU hMenu, UINT uPosition, UINT uFlags,
-												UINT_PTR uIDNewItem, UINT uID)
+BOOL menu_insertmenures(HMENU hMenu, int nPosition, UINT uFlags,
+											UINT_PTR uIDNewItem, UINT uID)
 {
+	BOOL	bResult;
 	TCHAR	szString[128];
 
-	if (LoadString(g_hInstance, uID, szString, NELEMENTS(szString))) 
+	bResult = FALSE;
+	if (loadstringresource(uID, szString, NELEMENTS(szString)))
 	{
-		InsertMenu(hMenu, uPosition, uFlags, uIDNewItem, szString);
+		bResult = InsertMenu(hMenu, nPosition, uFlags, uIDNewItem, szString);
 	}
+	return bResult;
 }
 
 void menu_addmenubar(HMENU popup, HMENU menubar)
 {
-	(void)addmenu(popup, 0, menubar, FALSE);
+	(void)menu_addmenu(popup, 0, menubar, FALSE);
 }
 
 
@@ -182,19 +187,19 @@ void sysmenu_initialize(void)
 	uPos = 0;
 
 #if defined(SUPPORT_KEYDISP)
-	uPos += addmenures(hMenu, uPos, IDR_SYSKEYDISP, FALSE);
+	uPos += menu_addmenures(hMenu, uPos, IDR_SYSKEYDISP, FALSE);
 #endif
 #if defined(SUPPORT_SOFTKBD)
-	uPos += addmenures(hMenu, uPos, IDR_SYSSOFTKBD, FALSE);
+	uPos += menu_addmenures(hMenu, uPos, IDR_SYSSOFTKBD, FALSE);
 #endif
 
-	uPos += addmenures(hMenu, uPos, IDR_SYS, FALSE);
+	uPos += menu_addmenures(hMenu, uPos, IDR_SYS, FALSE);
 	if (np2oscfg.I286SAVE)
 	{
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
-		uPos += addmenures(hMenu, uPos, IDR_SYSDEBUG32, FALSE);
+		uPos += menu_addmenures(hMenu, uPos, IDR_SYSDEBUG32, FALSE);
 #endif
-		uPos += addmenures(hMenu, uPos, IDR_SYSDEBUG, FALSE);
+		uPos += menu_addmenures(hMenu, uPos, IDR_SYSDEBUG, FALSE);
 	}
 }
 
@@ -267,18 +272,18 @@ void sysmenu_setscrnmul(UINT8 value) {
 void xmenu_initialize(void)
 {
 	HMENU	hMenu;
-	UINT	uPos;
+	int		nPos;
 	HMENU	hmenuSub;
 	UINT	i;
-	UINT	uSubPos;
+	int		nSubPos;
 
 	hMenu = np2class_gethmenu(g_hWndMain);
 
-	uPos = 1;
+	nPos = 1;
 #if defined(SUPPORT_STATSAVE)
 	if (np2oscfg.statsave)
 	{
-		uPos += addmenures(hMenu, uPos, IDR_STAT, FALSE);
+		nPos += menu_addmenures(hMenu, nPos, IDR_STAT, FALSE);
 	}
 #endif
 
@@ -286,40 +291,40 @@ void xmenu_initialize(void)
 	{
 		if (np2cfg.fddequip & (1 << i))
 		{
-			uPos += addmenures(hMenu, uPos, IDR_FDD1MENU + i, FALSE);
+			nPos += menu_addmenures(hMenu, nPos, IDR_FDD1MENU + i, FALSE);
 		}
 	}
 
 	hmenuSub = CreatePopupMenu();
 	if (hmenuSub)
 	{
-		uSubPos = 0;
+		nSubPos = 0;
 #if defined(SUPPORT_IDEIO)
-		uSubPos += addmenures(hmenuSub, uSubPos, IDR_IDEMENU, FALSE);
+		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_IDEMENU, FALSE);
 #else
-		uSubPos += addmenures(hmenuSub, uSubPos, IDR_SASIMENU, FALSE);
+		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_SASIMENU, FALSE);
 #endif
 #if defined(SUPPORT_SCSI)
-		uSubPos += addmenures(hmenuSub, uSubPos, IDR_SCSIMENU, TRUE);
+		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_SCSIMENU, TRUE);
 #endif
-		insertresmenu(hMenu, uPos, MF_BYPOSITION | MF_POPUP,
+		menu_insertmenures(hMenu, nPos, MF_BYPOSITION | MF_POPUP,
 												(UINT_PTR)hmenuSub, IDS_HDD);
 	}
 
 #if defined(SUPPORT_PX)
-	(void)addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
+	(void)menu_addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
 #endif
 
 #if defined(SUPPORT_WAVEREC)
-	(void)addmenubyid(hMenu, IDM_S98LOGGING, IDR_WAVEREC);
+	(void)menu_addmenubyid(hMenu, IDM_S98LOGGING, IDR_WAVEREC);
 #endif
 
 	if (np2oscfg.I286SAVE)
 	{
 #if defined(SUPPORT_PC9821)
-		(void)addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE32);
+		(void)menu_addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE32);
 #else	//	defined(SUPPORT_PC9821)
-		(void)addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE16);
+		(void)menu_addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE16);
 #endif	//	defined(SUPPORT_PC9821)
 	}
 }

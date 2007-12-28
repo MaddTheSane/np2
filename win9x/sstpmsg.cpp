@@ -243,8 +243,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 #if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 				sjis[0] = c2;
 				sjis[1] = '\0';
-				oemtext_sjistooem(buf, 4, sjis, 1);
-				buf += OEMSTRLEN(buf);
+				buf += oemtext_sjistooem(buf, 4, sjis, 1);
 #else
 				*buf++ = c2;
 #endif
@@ -276,8 +275,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 			sjis[0] = (UINT8)0x82;
 			sjis[1] = prs2[c-0xa0];
 			sjis[2] = '\0';
-			oemtext_sjistooem(buf, 4, sjis, 2);
-			buf += OEMSTRLEN(buf);
+			buf += oemtext_sjistooem(buf, 4, sjis, 2);
 #else
 			buf[0] = (UINT8)0x82;
 			buf[1] = prs2[c-0xa0];
@@ -292,8 +290,7 @@ static OEMCHAR *sstpsolve(OEMCHAR *buf, const UINT8 *dat) {
 				sjis[0] = c;
 				sjis[1] = c2;
 				sjis[2] = '\0';
-				oemtext_sjistooem(buf, 4, sjis, 2);
-				buf += OEMSTRLEN(buf);
+				buf += oemtext_sjistooem(buf, 4, sjis, 2);
 #else
 				buf[0] = c;
 				buf[1] = c2;

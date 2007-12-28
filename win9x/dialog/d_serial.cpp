@@ -720,7 +720,7 @@ void dialog_serial(HWND hWnd)
 	psp.pfnDlgProc = (DLGPROC)Com3Proc;
 	hpsp[3] = CreatePropertySheetPage(&psp);
 
-	loadstringresource(hInstance, IDS_SERIALOPTION, szTitle, NELEMENTS(szTitle));
+	loadstringresource(IDS_SERIALOPTION, szTitle, NELEMENTS(szTitle));
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);

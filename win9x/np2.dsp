@@ -750,7 +750,7 @@ SOURCE=..\CBUS\BOARD86.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\cbus\boardpx.c
+SOURCE=..\cbus\BOARDPX.C
 # End Source File
 # Begin Source File
 
@@ -1638,10 +1638,6 @@ SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\NP2.RC
-# End Source File
-# Begin Source File
-
 SOURCE=.\NP2ARG.CPP
 # End Source File
 # Begin Source File
@@ -1767,24 +1763,8 @@ SOURCE=..\TIMING.C
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\icons\np2.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\icons\np2debug.ico
+SOURCE=.\NP2.RC
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\icons\fddseek.wav
-# End Source File
-# Begin Source File
-
-SOURCE=.\icons\fddseek1.wav
-# End Source File
-# Begin Source File
-
-SOURCE=.\np2.mnf
-# End Source File
 # End Target
 # End Project

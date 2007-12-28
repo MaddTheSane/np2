@@ -355,7 +355,7 @@ void dialog_scropt(HWND hWnd)
 	psp.pfnDlgProc = (DLGPROC)ScroptFullScreenDlgProc;
 	hpsp[3] = CreatePropertySheetPage(&psp);
 
-	loadstringresource(hInstance, IDS_SCREENOPTION, szTitle, NELEMENTS(szTitle));
+	loadstringresource(IDS_SCREENOPTION, szTitle, NELEMENTS(szTitle));
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);

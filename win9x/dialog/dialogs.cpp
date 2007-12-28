@@ -35,7 +35,6 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 							OEMCHAR *pszPath, UINT uSize,
 							BOOL (WINAPI * fnAPI)(LPOPENFILENAME lpofn))
 {
-	HINSTANCE	hInstance;
 	LPTSTR		lpszTitle;
 	LPTSTR		lpszFilter;
 	LPTSTR		lpszDefExt;
@@ -51,11 +50,9 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 		return FALSE;
 	}
 
-	hInstance = g_hInstance;
-
 	if (!HIWORD(pcParam->lpszTitle))
 	{
-		lpszTitle = lockstringresource(hInstance, pcParam->lpszTitle);
+		lpszTitle = lockstringresource(pcParam->lpszTitle);
 		lpOFN->lpstrTitle = lpszTitle;
 	}
 	else
@@ -66,7 +63,7 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 
 	if (!HIWORD(pcParam->lpszFilter))
 	{
-		lpszFilter = lockstringresource(hInstance, pcParam->lpszFilter);
+		lpszFilter = lockstringresource(pcParam->lpszFilter);
 		lpOFN->lpstrFilter = lpszFilter;
 	}
 	else
@@ -77,7 +74,7 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 
 	if (!HIWORD(pcParam->lpszDefExt))
 	{
-		lpszDefExt = lockstringresource(hInstance, pcParam->lpszDefExt);
+		lpszDefExt = lockstringresource(pcParam->lpszDefExt);
 		lpOFN->lpstrDefExt = lpszDefExt;
 	}
 	else
@@ -300,7 +297,7 @@ void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pcItem, UINT uItems)
 		lpcszStr = pcItem[i].lpcszString;
 		if (!HIWORD(lpcszStr))
 		{
-			if (!loadstringresource(g_hInstance, LOWORD(lpcszStr),
+			if (!loadstringresource(LOWORD(lpcszStr),
 											szString, NELEMENTS(szString)))
 			{
 				continue;
@@ -375,8 +372,7 @@ static void insertnc(HWND hWnd, int nPos)
 {
 	TCHAR	szNC[128];
 
-	loadstringresource(g_hInstance, LOWORD(IDS_NONCONNECT),
-													szNC, NELEMENTS(szNC));
+	loadstringresource(LOWORD(IDS_NONCONNECT), szNC, NELEMENTS(szNC));
 	SendMessage(hWnd, CB_INSERTSTRING, (WPARAM)nPos, (LPARAM)szNC);
 }
 

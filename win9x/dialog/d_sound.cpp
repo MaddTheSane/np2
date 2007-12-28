@@ -953,7 +953,7 @@ void dialog_sndopt(HWND hWnd)
 	psp.pfnDlgProc = (DLGPROC)PAD1optDlgProc;
 	hpsp[5] = CreatePropertySheetPage(&psp);
 
-	loadstringresource(hInstance, IDS_SOUNDOPTION, szTitle, NELEMENTS(szTitle));
+	loadstringresource(IDS_SOUNDOPTION, szTitle, NELEMENTS(szTitle));
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);

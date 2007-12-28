@@ -1,5 +1,5 @@
 #include	"compiler.h"
-
+#include	"np2.h"
 
 void __msgbox(const char *title, const char *msg) {
 
@@ -19,9 +19,9 @@ void __msgbox(const char *title, const char *msg) {
 
 
 // WinAPIだと Win95でバグあるの
-int loadstringresource(HINSTANCE hInstance, UINT uID,
-										LPTSTR lpBuffer, int nBufferMax) {
-
+int _loadstringresource(HINSTANCE hInstance, UINT uID,
+										LPTSTR lpszBuffer, int nBufferMax)
+{
 	HMODULE	hModule;
 	HRSRC	hRsrc;
 	DWORD	dwResSize;
@@ -32,88 +32,116 @@ int loadstringresource(HINSTANCE hInstance, UINT uID,
 
 	hModule = (HMODULE)hInstance;
 	hRsrc = FindResource(hModule, MAKEINTRESOURCE((uID >> 4) + 1), RT_STRING);
-	if (hRsrc == NULL) {
-		return(0);
+	if (hRsrc == NULL)
+	{
+		return 0;
 	}
 	dwResSize = SizeofResource(hModule, hRsrc);
 	hGlobal = LoadResource(hModule, hRsrc);
-	if (hGlobal == NULL) {
-		return(0);
+	if (hGlobal == NULL)
+	{
+		return 0;
 	}
 	pRes = (UINT16 *)LockResource(hGlobal);
 	dwPos = 0;
 	uID = uID & 15;
-	while((uID) && (dwPos < dwResSize)) {
+	while((uID) && (dwPos < dwResSize))
+	{
 		dwPos += pRes[dwPos] + 1;
 		uID--;
 	}
-	if (dwPos >= dwResSize) {
-		return(0);
+	if (dwPos >= dwResSize)
+	{
+		return 0;
 	}
 
 	nLength = pRes[dwPos];
 	dwPos++;
 	nLength = min(nLength, (int)(dwResSize - dwPos));
 #if defined(_UNICODE)
-	if ((lpBuffer != NULL) && (nBufferMax > 0)) {
+	if ((lpszBuffer != NULL) && (nBufferMax > 0))
+	{
 		nBufferMax--;
 		nLength = min(nLength, nBufferMax);
-		if (nLength) {
-			CopyMemory(lpBuffer, pRes + dwPos, nLength * sizeof(UINT16));
+		if (nLength)
+		{
+			CopyMemory(lpszBuffer, pRes + dwPos, nLength * sizeof(UINT16));
 		}
-		lpBuffer[nLength] = '\0';
+		lpszBuffer[nLength] = '\0';
 	}
 #else
-	if ((lpBuffer != NULL) && (nBufferMax > 0)) {
+	if ((lpszBuffer != NULL) && (nBufferMax > 0))
+	{
 		nBufferMax--;
-		if (nBufferMax == 0) {
+		if (nBufferMax == 0)
+		{
 			nLength = 0;
 		}
 	}
-	else {
-		lpBuffer = NULL;
+	else
+	{
+		lpszBuffer = NULL;
 		nBufferMax = 0;
 	}
 	nLength = WideCharToMultiByte(CP_ACP, 0, (WCHAR *)(pRes + dwPos), nLength,
-											lpBuffer, nBufferMax, NULL, NULL);
-	if (lpBuffer) {
-		lpBuffer[nLength] = '\0';
+										lpszBuffer, nBufferMax, NULL, NULL);
+	if (lpszBuffer)
+	{
+		lpszBuffer[nLength] = '\0';
 	}
 #endif
 	return(nLength);
 }
 
 // WinAPIだと Win95でバグあるの
-TCHAR *lockstringresource(HINSTANCE hInstance, LPCTSTR pszString) {
-
-	TCHAR	*pszRet;
+LPTSTR _lockstringresource(HINSTANCE hInstance, LPCTSTR lpcszString)
+{
+	LPTSTR	lpszRet;
 	int		nSize;
 
-	pszRet = NULL;
-	if (HIWORD(pszString)) {
-		nSize = (lstrlen(pszString) + 1) * sizeof(TCHAR);
-		pszRet = (TCHAR *)_MALLOC(nSize, "");
-		if (pszRet) {
-			CopyMemory(pszRet, pszString, nSize);
+	lpszRet = NULL;
+	if (HIWORD(lpcszString))
+	{
+		nSize = (lstrlen(lpcszString) + 1) * sizeof(TCHAR);
+		lpszRet = (LPTSTR)_MALLOC(nSize, "");
+		if (lpszRet)
+		{
+			CopyMemory(lpszRet, lpcszString, nSize);
 		}
 	}
-	else if (LOWORD(pszString)) {
-		nSize = loadstringresource(hInstance, (UINT)pszString, NULL, 0);
-		if (nSize) {
-			pszRet = (TCHAR *)_MALLOC((nSize + 1) * sizeof(TCHAR), "");
-			if (pszRet) {
-				loadstringresource(hInstance, (UINT)pszString,
-														pszRet, nSize + 1);
+	else if (LOWORD(lpcszString))
+	{
+		nSize = loadstringresource((UINT)lpcszString, NULL, 0);
+		if (nSize)
+		{
+			lpszRet = (LPTSTR)_MALLOC((nSize + 1) * sizeof(TCHAR), "");
+			if (lpszRet)
+			{
+				loadstringresource((UINT)lpcszString, lpszRet, nSize + 1);
 			}
 		}
 	}
-	return(pszRet);
+	return lpszRet;
 }
 
-void unlockstringresource(TCHAR *pszString) {
 
-	if (pszString) {
-		_MFREE(pszString);
+// ----
+
+int loadstringresource(UINT uID, LPTSTR lpszBuffer, int nBufferMax)
+{
+	return _loadstringresource(g_hInstance, uID, lpszBuffer, nBufferMax);
+}
+
+LPTSTR lockstringresource(LPCTSTR lpcszString)
+{
+	return  _lockstringresource(g_hInstance, lpcszString);
+}
+
+void unlockstringresource(LPTSTR lpszString)
+{
+	if (lpszString)
+	{
+		_MFREE(lpszString);
 	}
 }
 

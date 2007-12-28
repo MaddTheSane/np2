@@ -36,10 +36,6 @@ enum {
 	KDISPCFG_MIDI	= 0x80
 };
 
-enum {
-	IDM_KDCLOSE		= 3000
-};
-
 typedef struct {
 	HWND		hwnd;
 	WINLOCEX	wlex;
@@ -56,18 +52,12 @@ typedef struct {
 static	KDISPWIN	kdispwin;
 static	KDISPCFG	kdispcfg;
 
-static const TCHAR kdisptitle[] = _T("Key Display");
 static const TCHAR kdispclass[] = _T("NP2-KeyDispWin");
-static const TCHAR str_kdclose[] = _T("&Close");
 
 static const UINT32 kdisppal[KEYDISP_PALS] =
 									{0x00000000, 0xffffffff, 0xf9ff0000};
 
-#if defined(OSLANG_UTF8)
 static const OEMCHAR kdispapp[] = OEMTEXT("Key Display");
-#else
-#define	kdispapp	kdisptitle
-#endif
 static const PFTBL kdispini[] = {
 				PFVAL("WindposX", PFTYPE_SINT32,	&kdispcfg.posx),
 				PFVAL("WindposY", PFTYPE_SINT32,	&kdispcfg.posy),
@@ -160,9 +150,8 @@ static void kdopenpopup(HWND hWnd, LPARAM lp) {
 	POINT	pt;
 
 	hMenu = CreatePopupMenu();
-	menu_addmenubar(hMenu, np2class_gethmenu(hWnd));
-	AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-	AppendMenu(hMenu, MF_STRING, IDM_KDCLOSE, str_kdclose);
+	menu_addmenu(hMenu, 0, np2class_gethmenu(hWnd), FALSE);
+	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);
@@ -192,7 +181,7 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					kdsetdispmode(KEYDISP_MODEMIDI);
 					break;
 
-				case IDM_KDCLOSE:
+				case IDM_CLOSE:
 					return(SendMessage(hWnd, WM_CLOSE, 0, 0));
 			}
 			break;
@@ -307,6 +296,7 @@ BOOL kdispwin_initialize(HINSTANCE hInstance) {
 
 void kdispwin_create(HINSTANCE hInstance) {
 
+	TCHAR		szCaption[128];
 	HWND		hwnd;
 	UINT8		mode;
 	CMNPALFN	palfn;
@@ -315,7 +305,10 @@ void kdispwin_create(HINSTANCE hInstance) {
 		return;
 	}
 	ZeroMemory(&kdispwin, sizeof(kdispwin));
-	hwnd = CreateWindow(kdispclass, kdisptitle,
+
+	loadstringresource(LOWORD(IDS_CAPTION_KEYDISP),
+										szCaption, NELEMENTS(szCaption));
+	hwnd = CreateWindow(kdispclass, szCaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						kdispcfg.posx, kdispcfg.posy,
@@ -704,14 +697,9 @@ typedef struct {
 static	SKBDWIN		skbdwin;
 static	SKBDCFG		skbdcfg;
 
-static const TCHAR skbdtitle[] = _T("Soft Keyboard");
 static const TCHAR skbdclass[] = _T("NP2-SoftKBDWin");
 
-#if defined(OSLANG_UTF8)
 static const OEMCHAR skbdapp[] = OEMTEXT("Soft Keyboard");
-#else
-#define	skbdapp		skbdtitle
-#endif
 static const PFTBL skbdini[] = {
 				PFVAL("WindposX", PFTYPE_SINT32,	&skbdcfg.posx),
 				PFVAL("WindposY", PFTYPE_SINT32,	&skbdcfg.posy),
@@ -890,6 +878,7 @@ void skbdwin_deinitialize(void) {
 
 void skbdwin_create(HINSTANCE hInstance) {
 
+	TCHAR	szCaption[128];
 	HWND	hwnd;
 
 	if (skbdwin.hwnd != NULL) {
@@ -899,7 +888,10 @@ void skbdwin_create(HINSTANCE hInstance) {
 	if (softkbd_getsize(&skbdwin.width, &skbdwin.height) != SUCCESS) {
 		return;
 	}
-	hwnd = CreateWindow(skbdclass, skbdtitle,
+
+	loadstringresource(LOWORD(IDS_CAPTION_SOFTKEY),
+										szCaption, NELEMENTS(szCaption));
+	hwnd = CreateWindow(skbdclass, szCaption,
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						skbdcfg.posx, skbdcfg.posy,

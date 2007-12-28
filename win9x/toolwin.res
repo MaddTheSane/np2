@@ -1,5 +1,4 @@
 
-static const TCHAR np2tooltitle[] = _T("NP2 tool");
 static const TCHAR np2toolclass[] = _T("np2-toolwin");
 
 static const OEMCHAR str_deffont[] = OEMTEXT("‚l‚r ‚oƒSƒVƒbƒN");
@@ -56,11 +55,6 @@ static const PFTBL skinini2[] = {
 
 
 // ----
-
-static const TCHAR str_skindef[] = _T("<&Base Skin>");
-static const TCHAR str_skinsel[] = _T("&Select Skin...");
-static const TCHAR str_toolskin[] = _T("&Skins");
-static const TCHAR str_toolclose[] = _T("&Close");
 
 static const FSPARAM fpSkin = 
 {

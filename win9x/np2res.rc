@@ -7,8 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include	<windows.h>
-#define	IDC_STATIC	-1
+#include "afxres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -49,7 +48,7 @@ BEGIN
     CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
                     68,44,10
     GROUPBOX        "Sound",IDC_STATIC,8,88,166,46
-    LTEXT           "Sampling Rate",IDC_STATIC,14,101,50,8
+    LTEXT           "Sampling rate",IDC_STATIC,14,101,50,8
     CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP | WS_TABSTOP,66,100,34,10
     CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,102,100,
@@ -59,11 +58,11 @@ BEGIN
     LTEXT           "Buffer",IDC_STATIC,14,118,50,8
     EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
     LTEXT           "ms",IDC_STATIC,102,118,16,8
-    CONTROL         "Allow Resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Allow resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,142,162,10
     CONTROL         "Disable MMX",IDC_DISABLEMMX,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,156,162,10
-    CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
+    CONTROL         "Confirm dialog (on reset/exit)",IDC_COMFIRM,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,170,162,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,184,162,10
@@ -93,7 +92,7 @@ BEGIN
     CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
                     68,44,10
     GROUPBOX        "Sound",IDC_STATIC,8,88,166,46
-    LTEXT           "Sampling Rate",IDC_STATIC,14,101,50,8
+    LTEXT           "Sampling rate",IDC_STATIC,14,101,50,8
     CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP | WS_TABSTOP,66,100,34,10
     CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,102,100,
@@ -103,9 +102,9 @@ BEGIN
     LTEXT           "Buffer",IDC_STATIC,14,118,50,8
     EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
     LTEXT           "ms",IDC_STATIC,102,118,16,8
-    CONTROL         "Allow Resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Allow resize",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,142,162,10
-    CONTROL         "Comfirm Dialog (on Reset/Exit)",IDC_COMFIRM,"Button",
+    CONTROL         "Confirm dialog (on reset/exit)",IDC_COMFIRM,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,156,162,10
     CONTROL         "Resume",IDC_RESUME,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,170,162,10
@@ -115,7 +114,7 @@ END
 
 IDD_NEWDISK DIALOG DISCARDABLE  0, 0, 180, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New FD image"
+CAPTION "Create new FD image"
 CLASS "np2dialog"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -132,7 +131,7 @@ END
 
 IDD_NEWDISK2 DIALOG DISCARDABLE  0, 0, 196, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New FD image"
+CAPTION "Create new FD image"
 CLASS "np2dialog"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -151,7 +150,7 @@ END
 
 IDD_NEWHDDDISK DIALOG DISCARDABLE  0, 0, 160, 48
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New HD image"
+CAPTION "Create new HD image"
 CLASS "np2dialog"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -166,7 +165,7 @@ END
 
 IDD_NEWSASI DIALOG DISCARDABLE  0, 0, 144, 54
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Create New SASI image"
+CAPTION "Create new SASI image"
 CLASS "np2dialog"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -215,7 +214,7 @@ BEGIN
                     156,10
     LTEXT           "Zoom",IDC_STATIC,8,45,22,8
     COMBOBOX        IDC_FULLSCREEN_ZOOM,40,42,96,80,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
 END
 
 IDD_SCROPT2 DIALOG DISCARDABLE  0, 0, 172, 96
@@ -235,7 +234,7 @@ BEGIN
     CONTROL         "GRCG+",IDC_GRCG2,"Button",BS_AUTORADIOBUTTON,88,54,40,
                     10
     CONTROL         "EGC",IDC_EGC,"Button",BS_AUTORADIOBUTTON,128,54,34,10
-    CONTROL         "&Enable 16color (PC-9801-24)",IDC_PC980124,"Button",
+    CONTROL         "&Enable 16color-board (PC-9801-24)",IDC_PC980124,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,16,80,148,10
 END
 
@@ -259,7 +258,7 @@ BEGIN
     LTEXT           "clock",IDC_STATIC,148,9,22,8
     LTEXT           "clock",IDC_STATIC,148,25,22,8
     LTEXT           "clock",IDC_STATIC,148,41,22,8
-    LTEXT           "RealPalettes Adjust",IDC_STATIC,8,60,156,8
+    LTEXT           "Real palettes adjust",IDC_STATIC,8,60,156,8
     CONTROL         "Slider3",IDC_REALPAL,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,73,80,10
     RTEXT           "",IDC_REALPALSTR,124,72,20,10,SS_SUNKEN
@@ -271,35 +270,35 @@ CAPTION "COM1"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_COM1PORT,40,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_COM1PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    GROUPBOX        "Assign",IDC_COM1STR00,8,28,132,84
+    LTEXT           "Speed",IDC_COM1STR01,16,45,40,8
+    COMBOBOX        IDC_COM1SPEED,60,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Assign",IDC_COM1STR00,8,28,128,88
-    LTEXT           "Speed",IDC_COM1STR01,16,45,38,8
-    COMBOBOX        IDC_COM1SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bps",IDC_COM1STR02,112,45,26,8
+    LTEXT           "Data bits",IDC_COM1STR03,16,61,40,8
+    COMBOBOX        IDC_COM1CHARSIZE,60,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bps",IDC_COM1STR02,108,45,26,8
-    LTEXT           "Char size",IDC_COM1STR03,16,61,38,8
-    COMBOBOX        IDC_COM1CHARSIZE,56,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bits",IDC_COM1STR04,112,61,26,8
+    LTEXT           "Parity",IDC_COM1STR05,16,77,40,8
+    COMBOBOX        IDC_COM1PARITY,60,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Stop bits",IDC_COM1STR06,16,93,40,8
+    COMBOBOX        IDC_COM1STOPBIT,60,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bits",IDC_COM1STR04,108,61,26,8
-    LTEXT           "Parity",IDC_COM1STR05,16,77,38,8
-    COMBOBOX        IDC_COM1PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bit(s)",IDC_COM1STR07,112,93,26,8
+    GROUPBOX        "Assign",IDC_COM1STR10,8,28,186,84
+    LTEXT           "Device",IDC_COM1STR11,16,45,30,8
+    COMBOBOX        IDC_COM1MMAP,50,42,136,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Stop bit",IDC_COM1STR06,16,93,38,8
-    COMBOBOX        IDC_COM1STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bit(s)",IDC_COM1STR07,108,93,26,8
-    GROUPBOX        "Assign",IDC_COM1STR10,8,28,166,84
-    LTEXT           "Device",IDC_COM1STR11,16,45,36,8
-    COMBOBOX        IDC_COM1MMAP,54,42,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Module",IDC_COM1STR12,16,61,36,8
-    COMBOBOX        IDC_COM1MMDL,54,58,112,96,CBS_DROPDOWN | CBS_SORT | 
+    LTEXT           "Module",IDC_COM1STR12,16,61,30,8
+    COMBOBOX        IDC_COM1MMDL,50,58,136,96,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Use program define file (MIMPI define)",IDC_COM1DEFE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,150,10
-    LTEXT           "",IDC_COM1DEFF,26,94,128,10,SS_SUNKEN
-    PUSHBUTTON      "...",IDC_COM1DEFB,156,94,10,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,170,10
+    LTEXT           "",IDC_COM1DEFF,26,94,148,10,SS_SUNKEN
+    PUSHBUTTON      "...",IDC_COM1DEFB,176,94,10,10
 END
 
 IDD_PC9861A DIALOG DISCARDABLE  0, 0, 224, 140
@@ -309,26 +308,26 @@ FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Enable",IDC_PC9861E,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,8,208,10
-    LTEXT           "CH.1",IDC_STATIC,8,27,18,8
-    RTEXT           "Speed",IDC_STATIC,28,27,20,8
-    COMBOBOX        IDC_CH1SPEED,49,24,40,128,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "CH.1",IDC_STATIC,8,27,20,8
+    RTEXT           "Speed",IDC_STATIC,30,27,22,8
+    COMBOBOX        IDC_CH1SPEED,54,24,40,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "INT",IDC_STATIC,91,27,14,8
-    COMBOBOX        IDC_CH1INT,106,24,28,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    RTEXT           "INT",IDC_STATIC,100,27,12,8
+    COMBOBOX        IDC_CH1INT,114,24,24,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Mode",IDC_STATIC,137,27,18,8
-    COMBOBOX        IDC_CH1MODE,156,24,60,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Mode",IDC_STATIC,144,27,20,8
+    COMBOBOX        IDC_CH1MODE,166,24,52,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "CH.2",IDC_STATIC,8,45,18,8
-    RTEXT           "Speed",IDC_STATIC,28,45,20,8
-    COMBOBOX        IDC_CH2SPEED,49,42,40,128,CBS_DROPDOWNLIST | CBS_SORT | 
+    RTEXT           "Speed",IDC_STATIC,30,45,22,8
+    COMBOBOX        IDC_CH2SPEED,54,42,40,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "INT",IDC_STATIC,91,45,14,8
-    COMBOBOX        IDC_CH2INT,106,42,28,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    RTEXT           "INT",IDC_STATIC,100,45,12,8
+    COMBOBOX        IDC_CH2INT,114,42,24,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Mode",IDC_STATIC,137,45,18,8
-    COMBOBOX        IDC_CH2MODE,156,42,60,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Mode",IDC_STATIC,144,45,20,8
+    COMBOBOX        IDC_CH2MODE,166,42,52,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
     LTEXT           "DIP-SW",IDC_STATIC,8,64,34,8
     CONTROL         "",IDC_PC9861DIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,44,
                     64,172,68
@@ -340,35 +339,35 @@ CAPTION "CH.1"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_COM2PORT,40,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_COM2PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    GROUPBOX        "Assign",IDC_COM2STR00,8,28,132,84
+    LTEXT           "Speed",IDC_COM2STR01,16,45,40,8
+    COMBOBOX        IDC_COM2SPEED,60,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Assign",IDC_COM2STR00,8,28,128,84
-    LTEXT           "Speed",IDC_COM2STR01,16,45,38,8
-    COMBOBOX        IDC_COM2SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bps",IDC_COM2STR02,112,45,26,8
+    LTEXT           "Data bits",IDC_COM2STR03,16,61,38,8
+    COMBOBOX        IDC_COM2CHARSIZE,60,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bps",IDC_COM2STR02,108,45,26,8
-    LTEXT           "Char size",IDC_COM2STR03,16,61,38,8
-    COMBOBOX        IDC_COM2CHARSIZE,56,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bits",IDC_COM2STR04,112,61,26,8
+    LTEXT           "Parity",IDC_COM2STR05,16,77,40,8
+    COMBOBOX        IDC_COM2PARITY,60,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Stop bits",IDC_COM2STR06,16,93,40,8
+    COMBOBOX        IDC_COM2STOPBIT,60,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bits",IDC_COM2STR04,108,61,26,8
-    LTEXT           "Parity",IDC_COM2STR05,16,77,38,8
-    COMBOBOX        IDC_COM2PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bit(s)",IDC_COM2STR07,112,93,26,8
+    GROUPBOX        "Assign",IDC_COM2STR10,8,28,186,84
+    LTEXT           "Device",IDC_COM2STR11,16,45,30,8
+    COMBOBOX        IDC_COM2MMAP,50,42,136,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Stop bit",IDC_COM2STR06,16,93,38,8
-    COMBOBOX        IDC_COM2STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bit(s)",IDC_COM2STR07,108,93,26,8
-    GROUPBOX        "Assign",IDC_COM2STR10,8,28,166,84
-    LTEXT           "Device",IDC_COM2STR11,16,45,36,8
-    COMBOBOX        IDC_COM2MMAP,54,42,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Module",IDC_COM2STR12,16,61,36,8
-    COMBOBOX        IDC_COM2MMDL,54,58,112,96,CBS_DROPDOWN | CBS_SORT | 
+    LTEXT           "Module",IDC_COM2STR12,16,61,30,8
+    COMBOBOX        IDC_COM2MMDL,50,58,136,96,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Use program define file (MIMPI define)",IDC_COM2DEFE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,150,10
-    LTEXT           "",IDC_COM2DEFF,26,94,128,10,SS_SUNKEN
-    PUSHBUTTON      "...",IDC_COM2DEFB,156,94,10,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,170,10
+    LTEXT           "",IDC_COM2DEFF,26,94,148,10,SS_SUNKEN
+    PUSHBUTTON      "...",IDC_COM2DEFB,176,94,10,10
 END
 
 IDD_PC9861C DIALOG DISCARDABLE  0, 0, 224, 140
@@ -377,38 +376,38 @@ CAPTION "CH.2"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_COM3PORT,40,8,48,96,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_COM3PORT,40,8,48,96,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    GROUPBOX        "Assign",IDC_COM3STR00,8,28,132,84
+    LTEXT           "Speed",IDC_COM3STR01,16,45,40,8
+    COMBOBOX        IDC_COM3SPEED,60,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Assign",IDC_COM3STR00,8,28,128,84
-    LTEXT           "Speed",IDC_COM3STR01,16,45,38,8
-    COMBOBOX        IDC_COM3SPEED,56,42,48,128,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bps",IDC_COM3STR02,112,45,26,8
+    LTEXT           "Data bits",IDC_COM3STR03,16,61,40,8
+    COMBOBOX        IDC_COM3CHARSIZE,60,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bps",IDC_COM3STR02,108,45,26,8
-    LTEXT           "Char size",IDC_COM3STR03,16,61,38,8
-    COMBOBOX        IDC_COM3CHARSIZE,56,58,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bits",IDC_COM3STR04,108,61,26,8
+    LTEXT           "bits",IDC_COM3STR04,112,61,26,8
     LTEXT           "Parity",IDC_COM3STR05,16,77,38,8
-    COMBOBOX        IDC_COM3PARITY,56,74,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_COM3PARITY,60,74,48,64,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Stop bits",IDC_COM3STR06,16,93,40,8
+    COMBOBOX        IDC_COM3STOPBIT,60,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Stop bit",IDC_COM3STR06,16,93,26,8
-    COMBOBOX        IDC_COM3STOPBIT,56,90,48,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "bit(s)",IDC_COM3STR07,112,93,26,8
+    GROUPBOX        "Assign",IDC_COM3STR10,8,28,186,84
+    LTEXT           "Device",IDC_COM3STR11,16,45,30,8
+    COMBOBOX        IDC_COM3MMAP,50,42,132,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "bit(s)",IDC_COM3STR07,108,93,38,8
-    GROUPBOX        "Assign",IDC_COM3STR10,8,28,166,84
-    LTEXT           "Device",IDC_COM3STR11,16,45,36,8
-    COMBOBOX        IDC_COM3MMAP,54,42,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Module",IDC_COM3STR12,16,61,36,8
-    COMBOBOX        IDC_COM3MMDL,54,58,112,96,CBS_DROPDOWN | CBS_SORT | 
+    LTEXT           "Module",IDC_COM3STR12,16,61,30,8
+    COMBOBOX        IDC_COM3MMDL,50,58,132,96,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Use program define file (MIMPI define)",IDC_COM3DEFE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,150,10
-    LTEXT           "",IDC_COM3DEFF,26,94,128,10,SS_SUNKEN
-    PUSHBUTTON      "...",IDC_COM3DEFB,156,94,10,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,170,10
+    LTEXT           "",IDC_COM3DEFF,26,94,148,10,SS_SUNKEN
+    PUSHBUTTON      "...",IDC_COM3DEFB,176,94,10,10
 END
 
-IDD_MPUPC98 DIALOG DISCARDABLE  0, 0, 182, 176
+IDD_MPUPC98 DIALOG DISCARDABLE  0, 0, 192, 178
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "MPU-PC98II"
 CLASS "np2dialog"
@@ -420,32 +419,32 @@ BEGIN
     LTEXT           "Interrupt",IDC_STATIC,8,26,32,8
     COMBOBOX        IDC_MPUINT,44,24,48,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "DEF",IDC_MPUDEF,96,24,22,12
     LTEXT           "DIP-SW",IDC_STATIC,8,46,32,8
     CONTROL         "",IDC_MPUDIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,44,46,
-                    130,26
-    GROUPBOX        "Assign",IDC_STATIC,8,72,166,98
-    LTEXT           "MIDI-OUT",IDC_STATIC,16,87,36,8
-    COMBOBOX        IDC_MPU98MMAP,54,84,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
+                    94,26
+    GROUPBOX        "Assign",IDC_STATIC,8,72,176,98
+    LTEXT           "MIDI-OUT",IDC_STATIC,16,87,40,8
+    COMBOBOX        IDC_MPU98MMAP,60,84,116,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "MIDI-IN",IDC_STATIC,16,103,36,8
-    COMBOBOX        IDC_MPU98MDIN,54,100,112,96,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "MIDI-IN",IDC_STATIC,16,103,40,8
+    COMBOBOX        IDC_MPU98MDIN,60,100,116,96,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Module",IDC_STATIC,16,119,36,8
-    COMBOBOX        IDC_MPU98MMDL,54,116,112,96,CBS_DROPDOWN | CBS_SORT | 
+    LTEXT           "Module",IDC_STATIC,16,119,40,8
+    COMBOBOX        IDC_MPU98MMDL,60,116,116,96,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Use program define file (MIMPI define)",IDC_MPU98DEFE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,140,150,10
-    LTEXT           "",IDC_MPU98DEFF,26,152,128,10,SS_SUNKEN
-    PUSHBUTTON      "...",IDC_MPU98DEFB,156,152,10,10
-    DEFPUSHBUTTON   "&OK",IDOK,130,8,44,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,130,26,44,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,140,160,10
+    LTEXT           "",IDC_MPU98DEFF,26,152,138,10,SS_SUNKEN
+    PUSHBUTTON      "...",IDC_MPU98DEFB,166,152,10,10
+    DEFPUSHBUTTON   "&OK",IDOK,140,8,44,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,140,26,44,14
+    PUSHBUTTON      "Defaults",IDC_MPUDEF,140,58,44,14
 END
 
-IDD_SNDMIX DIALOGEX 0, 0, 184, 120
+IDD_SNDMIX DIALOGEX 0, 0, 200, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Mixer"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "FM",IDC_STATIC,8,9,30,8
     CONTROL         "Slider1",IDC_VOLFM,"msctls_trackbar32",TBS_BOTH | 
@@ -467,13 +466,13 @@ BEGIN
     CONTROL         "Slider8",IDC_VOLRHYTHM,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,40,65,88,10
     LTEXT           "",IDC_VOLRHYTHMSTR,134,64,16,10,SS_SUNKEN,WS_EX_RIGHT
-    PUSHBUTTON      "DEF",IDC_SNDMIXDEF,158,76,18,12
+    PUSHBUTTON      "Defaults",IDC_SNDMIXDEF,152,102,40,14
 END
 
-IDD_SND14 DIALOGEX 0, 0, 184, 120
+IDD_SND14 DIALOGEX 0, 0, 200, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "PC-9801-14"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Left",IDC_STATIC,8,9,30,8
     CONTROL         "Slider1",IDC_VOL14L,"msctls_trackbar32",TBS_BOTH | 
@@ -501,80 +500,80 @@ BEGIN
     LTEXT           "",IDC_VOLF16STR,94,78,16,10,SS_SUNKEN,WS_EX_RIGHT
 END
 
-IDD_SND26 DIALOG DISCARDABLE  0, 0, 184, 120
+IDD_SND26 DIALOG DISCARDABLE  0, 0, 200, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "26"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_SND26IO,40,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "I/O port",IDC_STATIC,8,10,32,8
+    COMBOBOX        IDC_SND26IO,42,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,104,10,30,8
-    COMBOBOX        IDC_SND26INT,136,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "Interrupt",IDC_STATIC,114,10,32,8
+    COMBOBOX        IDC_SND26INT,148,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ROM",IDC_STATIC,8,28,30,8
-    COMBOBOX        IDC_SND26ROM,40,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "ROM",IDC_STATIC,8,28,32,8
+    COMBOBOX        IDC_SND26ROM,42,26,44,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "Jumper",IDC_STATIC,8,66,30,8
     CONTROL         "",IDC_SND26JMP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,
-                    66,136,46
-    PUSHBUTTON      "DEF",IDC_SND26DEF,158,28,18,12
+                    66,136,34
+    PUSHBUTTON      "Defaults",IDC_SND26DEF,152,102,40,12
 END
 
-IDD_SND86 DIALOG DISCARDABLE  0, 0, 184, 120
+IDD_SND86 DIALOG DISCARDABLE  0, 0, 200, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "86"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_SND86IO,40,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "I/O port",IDC_STATIC,8,10,32,8
+    COMBOBOX        IDC_SND86IO,42,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Interrupt",IDC_SND86INT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,94,9,40,10
-    COMBOBOX        IDC_SND86INTA,136,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_TABSTOP,106,9,40,10
+    COMBOBOX        IDC_SND86INTA,148,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Sound ID",IDC_STATIC,8,28,30,8
-    COMBOBOX        IDC_SND86ID,40,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "Sound ID",IDC_STATIC,8,28,32,8
+    COMBOBOX        IDC_SND86ID,42,26,44,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "ROM",IDC_SND86ROM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    94,27,40,10
+                    106,27,40,10
     LTEXT           "DIP-SW",IDC_STATIC,8,66,30,8
     CONTROL         "",IDC_SND86DIP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,
-                    66,136,46
-    PUSHBUTTON      "DEF",IDC_SND86DEF,158,28,18,12
+                    66,152,34
+    PUSHBUTTON      "Defaults",IDC_SND86DEF,152,102,40,12
 END
 
-IDD_SNDSPB DIALOG DISCARDABLE  0, 0, 184, 120
+IDD_SNDSPB DIALOG DISCARDABLE  0, 0, 200, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "SPB"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "I/O port",IDC_STATIC,8,10,30,8
-    COMBOBOX        IDC_SPBIO,40,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "I/O port",IDC_STATIC,8,10,32,8
+    COMBOBOX        IDC_SPBIO,42,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Interrupt",IDC_STATIC,104,10,30,8
-    COMBOBOX        IDC_SPBINT,136,8,40,52,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "Interrupt",IDC_STATIC,114,10,32,8
+    COMBOBOX        IDC_SPBINT,148,8,44,52,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ROM",IDC_STATIC,8,28,30,8
-    COMBOBOX        IDC_SPBROM,40,26,40,64,CBS_DROPDOWNLIST | CBS_SORT | 
+    LTEXT           "ROM",IDC_STATIC,8,28,32,8
+    COMBOBOX        IDC_SPBROM,42,26,44,64,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Reversed channel",IDC_SPBREVERSE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,104,27,88,10
     LTEXT           "VR",IDC_STATIC,8,46,30,8
     CONTROL         "L",IDC_SPBVRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,40,
-                    45,22,10
-    CONTROL         "R",IDC_SPBVRR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,64,
-                    45,22,10
-    RTEXT           "Level",IDC_STATIC,88,46,22,8
+                    45,24,10
+    CONTROL         "R",IDC_SPBVRR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,66,
+                    45,24,10
+    RTEXT           "Level",IDC_STATIC,98,46,24,8
     CONTROL         "Slider16",IDC_SPBVRLEVEL,"msctls_trackbar32",TBS_BOTH | 
-                    TBS_NOTICKS | WS_TABSTOP,112,46,64,10
+                    TBS_NOTICKS | WS_TABSTOP,124,46,64,10
     LTEXT           "Jumper",IDC_STATIC,8,66,30,8
     CONTROL         "",IDC_SPBJMP,"Static",SS_ENHMETAFILE | SS_NOTIFY,40,66,
-                    136,34
-    CONTROL         "Reversed channel (SPB default)",IDC_SPBREVERSE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,102,110,10
-    PUSHBUTTON      "DEF",IDC_SPBDEF,158,28,18,12
+                    152,34
+    PUSHBUTTON      "Defaults",IDC_SPBDEF,152,102,40,12
 END
 
-IDD_SNDPAD1 DIALOG DISCARDABLE  0, 0, 184, 120
+IDD_SNDPAD1 DIALOG DISCARDABLE  0, 0, 200, 124
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "JoyPad"
 FONT 8, "MS Sans Serif"
@@ -609,7 +608,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Real (localtime)",IDC_CLNDREAL,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,8,96,10
-    CONTROL         "Virtual Calendar",IDC_CLNDVIR,"Button",
+    CONTROL         "Virtual calendar",IDC_CLNDVIR,"Button",
                     BS_AUTORADIOBUTTON,8,24,96,10
     EDITTEXT        IDC_VIRYEAR,20,40,14,12,WS_GROUP
     CTEXT           "/",IDC_STATIC,34,42,8,8
@@ -628,7 +627,7 @@ END
 
 IDD_ABOUT DIALOG DISCARDABLE  0, 0, 196, 108
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About..."
+CAPTION "About"
 CLASS "np2dialog"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -640,6 +639,228 @@ BEGIN
                     ES_WANTRETURN | WS_VSCROLL
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 174
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 192
+    END
+
+    IDD_CONFIGNOMMX, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 174
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 178
+    END
+
+    IDD_NEWDISK, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 172
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_NEWDISK2, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 188
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_NEWHDDDISK, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 152
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_NEWSASI, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 136
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 46
+    END
+
+    IDD_SCROPT1, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 164
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_SCROPT_FULLSCREEN, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 164
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_SCROPT2, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 164
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_SCROPT3, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 164
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_SERIAL1, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 216
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_PC9861A, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 216
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_PC9861B, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 216
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_PC9861C, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 216
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_MPUPC98, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 174
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 170
+    END
+
+    IDD_SNDMIX, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_SND14, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_SND26, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_SND86, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_SNDSPB, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_SNDPAD1, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_CALENDAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 156
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 72
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 188
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 100
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""np2res.rc2""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
@@ -647,12 +868,12 @@ END
 
 IDR_SYS MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Tool Window",                IDM_TOOLWIN
+    MENUITEM "&Tool window",                IDM_TOOLWIN
     MENUITEM SEPARATOR
     MENUITEM "&Centering",                  IDM_SCREENCENTER
-    MENUITEM "&Window Snap",                IDM_SNAPENABLE
+    MENUITEM "&Window snap",                IDM_SNAPENABLE
     MENUITEM "&Background",                 IDM_BACKGROUND
-    MENUITEM "Back&ground Sound",           IDM_BGSOUND
+    MENUITEM "Back&ground sound",           IDM_BGSOUND
     MENUITEM SEPARATOR
     MENUITEM " 320x200",                    IDM_SCRNMUL4
     MENUITEM " 480x300",                    IDM_SCRNMUL6
@@ -700,15 +921,15 @@ BEGIN
     POPUP "&Screen"
     BEGIN
         MENUITEM "&Window",                     IDM_WINDOW
-        MENUITEM "&FullScreen",                 IDM_FULLSCREEN
+        MENUITEM "&Fullscreen",                 IDM_FULLSCREEN
         MENUITEM SEPARATOR
         MENUITEM "Nor&mal",                     IDM_ROLNORMAL
-        MENUITEM "&Left Rotated",               IDM_ROLLEFT
-        MENUITEM "&Right Rotated",              IDM_ROLRIGHT
+        MENUITEM "&Left rotated",               IDM_ROLLEFT
+        MENUITEM "&Right rotated",              IDM_ROLRIGHT
         MENUITEM SEPARATOR
-        MENUITEM "&Disp Vsync",                 IDM_DISPSYNC
-        MENUITEM "Real &Palettes",              IDM_RASTER
-        MENUITEM "&No Wait",                    IDM_NOWAIT
+        MENUITEM "&Disp vsync",                 IDM_DISPSYNC
+        MENUITEM "Real &palettes",              IDM_RASTER
+        MENUITEM "&No wait",                    IDM_NOWAIT
         MENUITEM "&Auto frame",                 IDM_AUTOFPS
         MENUITEM "F&ull frame",                 IDM_60FPS
         MENUITEM "1/&2 frame",                  IDM_30FPS
@@ -756,7 +977,7 @@ BEGIN
             MENUITEM "&AMD-98",                     IDM_AMD98
             MENUITEM "&JastSound",                  IDM_JASTSOUND
             MENUITEM SEPARATOR
-            MENUITEM "&Seek Sound",                 IDM_SEEKSND
+            MENUITEM "&Seek sound",                 IDM_SEEKSND
         END
         POPUP "M&emory"
         BEGIN
@@ -770,25 +991,25 @@ BEGIN
         MENUITEM "Se&rial option...",           IDM_SERIAL1
         MENUITEM SEPARATOR
         MENUITEM "MIDI &option...",             IDM_MPUPC98
-        MENUITEM "MIDI &Panic",                 IDM_MIDIPANIC
+        MENUITEM "MIDI &panic",                 IDM_MIDIPANIC
         MENUITEM SEPARATOR
         MENUITEM "So&und option...",            IDM_SNDOPT
     END
     POPUP "&Other"
     BEGIN
-        MENUITEM "&BMP Save...",                IDM_BMPSAVE
+        MENUITEM "&BMP save...",                IDM_BMPSAVE
         MENUITEM "&S98 logging...",             IDM_S98LOGGING
         MENUITEM "Ca&lendar...",                IDM_CALENDAR
-        POPUP "Shortcut &Key"
+        POPUP "Shortcut &key"
         BEGIN
             MENUITEM "Alt+Enter",                   IDM_ALTENTER
             MENUITEM "Alt+F4",                      IDM_ALTF4
         END
-        MENUITEM "&Clock Disp",                 IDM_DISPCLOCK
-        MENUITEM "&Frame Disp",                 IDM_DISPFRAME
-        MENUITEM "Joy Re&verse",                IDM_JOYX
-        MENUITEM "Joy &Rapid",                  IDM_RAPID
-        MENUITEM "&Mouse Rapid",                IDM_MSRAPID
+        MENUITEM "&Clock disp",                 IDM_DISPCLOCK
+        MENUITEM "&Frame disp",                 IDM_DISPFRAME
+        MENUITEM "Joy re&verse",                IDM_JOYX
+        MENUITEM "Joy &rapid",                  IDM_RAPID
+        MENUITEM "&Mouse rapid",                IDM_MSRAPID
         MENUITEM "&Use SSTP",                   IDM_SSTP
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
@@ -951,9 +1172,19 @@ BEGIN
     MENUITEM "&i386 save",                  IDM_CPUSAVE
 END
 
+IDR_CLOSE MENU DISCARDABLE 
+BEGIN
+    MENUITEM "&Close",                      IDM_CLOSE
+END
+
 IDR_TOOLWIN MENU DISCARDABLE 
 BEGIN
-    MENUITEM "&Skin",                       IDM_SKIN
+    POPUP "&Skins"
+    BEGIN
+        MENUITEM "&Select Skin...",             IDM_TOOL_SKINSEL
+        MENUITEM SEPARATOR
+        MENUITEM "<&Base Skin>",                IDM_TOOL_SKINDEF
+    END
 END
 
 IDR_KEYDISP MENU DISCARDABLE 
@@ -978,15 +1209,15 @@ BEGIN
     BEGIN
         MENUITEM "&Register",                   IDM_VIEWMODEREG
         MENUITEM "&Dump segment",               IDM_VIEWMODESEG
-        MENUITEM "&Main Memory Dump",           IDM_VIEWMODE1MB
+        MENUITEM "&Main memory dump",           IDM_VIEWMODE1MB
         MENUITEM "&Unassemble",                 IDM_VIEWMODEASM
-        MENUITEM "&Sound Register",             IDM_VIEWMODESND
+        MENUITEM "&Sound register",             IDM_VIEWMODESND
         MENUITEM SEPARATOR
         MENUITEM "&Lock",                       IDM_VIEWMODELOCK
     END
     POPUP "&Edit"
     BEGIN
-        MENUITEM "Enter &Address...",           IDM_SETSEG, GRAYED
+        MENUITEM "Enter &address...",           IDM_SETSEG, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "Seg = &CS",                   IDM_SEGCS
         MENUITEM "Seg = &DS",                   IDM_SEGDS
@@ -1003,6 +1234,17 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&A20 line",                   IDM_A20LINE
     END
+END
+
+IDR_TRACE MENU DISCARDABLE 
+BEGIN
+    MENUITEM "TRACE",                       IDM_TRACE_TRACE
+    MENUITEM "VERBOSE",                     IDM_TRACE_VERBOSE
+    MENUITEM SEPARATOR
+    MENUITEM "Enable",                      IDM_TRACE_ENABLE
+    MENUITEM "File out",                    IDM_TRACE_FILEOUT
+    MENUITEM "Clear",                       IDM_TRACE_CLEAR
+    MENUITEM SEPARATOR
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1036,10 +1278,54 @@ SEEK1WAV                EXTROM  DISCARDABLE     "resources\\fddseek1.wav"
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_HDD                 "&HardDisk"
+    IDS_APP_NAME2           "Neko Project II"
+    IDS_APP_NAME21          "Neko Project 21"
+    IDS_FILENAME_HELP       "np2.chm"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_FONTFACE            "‚l‚r ƒSƒVƒbƒN"
+    IDS_PFONTFACE           "‚l‚r ‚oƒSƒVƒbƒN"
+    IDS_FONTFACE_PRIMARY    "‚l‚r ƒSƒVƒbƒN"
+    IDS_PFONTFACE_PRIMARY   "‚l‚r ‚oƒSƒVƒbƒN"
+    IDS_FONTFACE_SECONDARY  "MS Gothic"
+    IDS_PFONTFACE_SECONDARY "MS PGothic"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CAPTION_TOOL        "NP2 tool"
+    IDS_CAPTION_KEYDISP     "Key display"
+    IDS_CAPTION_SOFTKEY     "Soft keyboard"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_HDD                 "&Harddisk"
     IDS_SCREENOPTION        "Screen option"
     IDS_SOUNDOPTION         "Sound board option"
     IDS_SERIALOPTION        "Serial option"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CAPTION_FDD1        " FDD1:%s"
+    IDS_CAPTION_FDD2        " FDD2:%s"
+    IDS_CAPTION_FDD3        " FDD3:%s"
+    IDS_CAPTION_FDD4        " FDD4:%s"
+    IDS_CAPTION_SEPALATOR   " - "
+    IDS_CAPTION_FRAME       "%sFPS"
+    IDS_CAPTION_CLOCK       "%sMHz"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ERROR_DIRECTDRAW    "Couldn't create DirectDraw objects"
+    IDS_CONFIRM_RESET       "Reset?"
+    IDS_CONFIRM_EXIT        "Exit?"
+    IDS_CONFIRM_RESUME      "Conflict!\n\n%s\nContinue?"
+    IDS_ERROR_RESUME        "Couldn't restart"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1095,8 +1381,8 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_ZOOM_NONE           "None"
-    IDS_ZOOM_FIXEDASPECT    "Fixed Aspect"
-    IDS_ZOOM_ADJUSTASPECT   "Adjust Aspect"
+    IDS_ZOOM_FIXEDASPECT    "Fixed aspect"
+    IDS_ZOOM_ADJUSTASPECT   "Adjust aspect"
     IDS_ZOOM_FULL           "Full"
 END
 
@@ -1122,9 +1408,9 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_PARITY_NONE         "NONE"
-    IDS_PARITY_ODD          "ODD"
-    IDS_PARITY_EVEN         "EVEN"
+    IDS_PARITY_NONE         "None"
+    IDS_PARITY_ODD          "Odd"
+    IDS_PARITY_EVEN         "Even"
     IDS_SYNC                "Sync"
 END
 
@@ -1159,34 +1445,34 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_FDDTITLE            "Select floppy image"
     IDS_FDDEXT              "d88"
-    IDS_FDDFILTER           "D88 image files (*.D88;*.D98)|*.d88;*.88d;*.d98;*.98d|Floppy disk images (*.XDF;*.HDM;*.DUP;*.2HD)|*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All supported files|*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All files (*.*)|*.*|"
+    IDS_FDDFILTER           "D88 image files (*.d88;*.d98)|*.d88;*.88d;*.d98;*.98d|Floppy disk images (*.xdf;*.hdm;*.dup;*.2hd)|*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All supported files|*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.dup;*.2hd;*.tfd|All files (*.*)|*.*|"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_HDDTITLE            "Select HDD image"
+    IDS_HDDTITLE            "Select HD image"
     IDS_HDDEXT              "thd"
-    IDS_HDDFILTER           "Anex86 harddisk image files (*.HDI)|*.hdi|T98 harddisk image files (*.THD)|*.thd|T98-Next harddisk image files (*.NHD)|*.nhd|All supported Files|*.thd;*.nhd;*.hdi|"
+    IDS_HDDFILTER           "Anex86 harddisk image files (*.hdi)|*.hdi|T98 harddisk image files (*.thd)|*.thd|T98-Next harddisk image files (*.nhd)|*.nhd|All supported files|*.thd;*.nhd;*.hdi|"
     IDS_SASITITLE           "Select SASI/IDE HDD image"
     IDS_IDETITLE            "Select IDE HDD image"
     IDS_ISOTITLE            "Select ISO-9660 image"
     IDS_ISOEXT              "iso"
-    IDS_ISOFILTER           "Cue sheets|*.cue|ISO-9660 image files|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files|*.*|"
+    IDS_ISOFILTER           "Cue sheets (*.cue)|*.cue|ISO-9660 image files (*.iso)|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files (*.*)|*.*|"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_SCSITITLE           "Select SCSI image"
     IDS_SCSIEXT             "hdd"
-    IDS_SCSIFILTER          "Virtual98 harddisk image files (*.HDD)|*.hdd|"
+    IDS_SCSIFILTER          "Virtual98 harddisk image files (*.hdd)|*.hdd|"
     IDS_NEWDISKTITLE        "Create disk image"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_NEWDISKEXT          "d88"
-    IDS_NEWDISKFILTER       "D88 image files (*.D88;*.88D)|*.d88;*.88d;*.d98;*.98d|Anex86 harddisk image files (*.HDI)|*.hdi|T98 harddisk image files (*.THD)|*.thd|T98-Next harddisk image files (*.NHD)|*.nhd|Virtual98 harddisk image files (*.HDD)|*.hdd|"
-    IDS_NEWDISKFILTER2      "D88 image files (*.D88;*.88D)|*.d88;*.88d;*.d98;*.98d|Anex86 harddisk image files (*.HDI)|*.hdi|T98 harddisk image files (*.THD)|*.thd|T98-Next harddisk image files (*.NHD)|*.nhd|"
+    IDS_NEWDISKFILTER       "D88 image files (*.d88;*.d98)|*.d88;*.88d;*.d98;*.98d|Anex86 harddisk image files (*.hdi)|*.hdi|T98 harddisk image files (*.thd)|*.thd|T98-Next harddisk image files (*.nhd)|*.nhd|Virtual98 harddisk image files (*.HDD)|*.hdd|"
+    IDS_NEWDISKFILTER2      "D88 image files (*.d88;*.d98)|*.d88;*.88d;*.d98;*.98d|Anex86 harddisk image files (*.hdi)|*.hdi|T98 harddisk image files (*.thd)|*.thd|T98-Next harddisk image files (*.nhd)|*.nhd|"
     IDS_S98TITLE            "Save as S98 log"
     IDS_S98EXT              "s98"
     IDS_S98FILTER           "S98 log (*.s98)|*.s98|"
@@ -1206,7 +1492,7 @@ BEGIN
     IDS_SKINFILTER          "ini files (*.ini)|*.ini|text files (*.txt)|*.txt|All files (*.*)|*.*|"
 END
 
-#endif    // English (U.S.) resources
+#endif    // “ú–{Œê resources
 /////////////////////////////////////////////////////////////////////////////
 
 
