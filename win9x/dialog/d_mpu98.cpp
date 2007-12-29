@@ -75,7 +75,7 @@ static void mpucreate(HWND hWnd)
 	for (i=0; i<16; i++)
 	{
 		wsprintf(szBuf, tchar_4X, 0xC0D0 + (i << 10));
-		nIndex = SendDlgItemMessage(hWnd, IDC_MPUIO, CB_ADDSTRING,
+		nIndex = (int)SendDlgItemMessage(hWnd, IDC_MPUIO, CB_ADDSTRING,
 														0, (LPARAM)szBuf);
 		if (nIndex >= 0)
 		{

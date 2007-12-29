@@ -96,7 +96,7 @@ static SAMPLE VERMOUTHCL resample_vibrate(VOICE v, SAMPLE dst,
 		} while(dstbreak < dstterm);
 		v->sampstep = step;
 	}
-	v->vibrate.count = cnt - (dstterm - dst);
+	v->vibrate.count = cnt - (int)(dstterm - dst);
 	do {
 		RESAMPLING(dst, src, pos);
 		dst++;
@@ -149,7 +149,7 @@ static SAMPLE VERMOUTHCL resample_vibloop(VOICE v, SAMPLE dst,
 		} while(dstbreak < dstterm);
 		v->sampstep = step;
 	}
-	v->vibrate.count = cnt - (dstterm - dst);
+	v->vibrate.count = cnt - (int)(dstterm - dst);
 	do {
 		RESAMPLING(dst, src, pos);
 		dst++;
@@ -215,7 +215,7 @@ rr_forward1:;
 			dstbreak += cnt;
 		} while(dstbreak < dstterm);
 	}
-	v->vibrate.count = cnt - (dstterm - dst);
+	v->vibrate.count = cnt - (int)(dstterm - dst);
 	do {
 		RESAMPLING(dst, src, pos);
 		dst++;
@@ -248,7 +248,7 @@ rr_backward1:;
 			dstbreak += cnt;
 		} while(dstbreak < dstterm);
 	}
-	v->vibrate.count = cnt - (dstterm - dst);
+	v->vibrate.count = cnt - (int)(dstterm - dst);
 	do {
 		RESAMPLING(dst, src, pos);
 		dst++;
@@ -529,7 +529,7 @@ static void VERMOUTHCL mixrel_normal(VOICE v, SINT32 *dst, SAMPLE src,
 	SINT32	relr;
 	_SAMPLE	s;
 
-	samples = srcterm - src;
+	samples = (int)(srcterm - src);
 	voll = v->envleft << RELBIT;
 	rell = -(voll / samples);
 	if (!rell) {
@@ -562,7 +562,7 @@ static void VERMOUTHCL mixrel_left(VOICE v, SINT32 *dst, SAMPLE src,
 	_SAMPLE	s;
 
 	vol = v->envleft << RELBIT;
-	rel = - (vol / (srcterm - src));
+	rel = - (vol / (int)(srcterm - src));
 	if (!rel) {
 		rel = -1;
 	}
@@ -592,7 +592,7 @@ static void VERMOUTHCL mixrel_centre(VOICE v, SINT32 *dst, SAMPLE src,
 	SINT32	d;
 
 	vol = v->envleft << RELBIT;
-	rel = - (vol / (srcterm - src));
+	rel = - (vol / (int)(srcterm - src));
 	if (!rel) {
 		rel = -1;
 	}
@@ -715,7 +715,7 @@ static void VERMOUTHCL mixenv_normal(VOICE v, SINT32 *dst, SAMPLE src,
 		} while(srcbreak < srcterm);
 	}
 
-	v->envcount = cnt - (srcterm - src);
+	v->envcount = cnt - (int)(srcterm - src);
 	do {
 		s = *src++;
 		dst[0] += SAMPMULVOL(s, voll);
@@ -758,7 +758,7 @@ static void VERMOUTHCL mixenv_left(VOICE v, SINT32 *dst, SAMPLE src,
 		} while(srcbreak < srcterm);
 	}
 
-	v->envcount = cnt - (srcterm - src);
+	v->envcount = cnt - (int)(srcterm - src);
 	do {
 		s = *src++;
 		dst[0] += SAMPMULVOL(s, vol);
@@ -809,7 +809,7 @@ static void VERMOUTHCL mixenv_centre(VOICE v, SINT32 *dst, SAMPLE src,
 		} while(srcbreak < srcterm);
 	}
 
-	v->envcount = cnt - (srcterm - src);
+	v->envcount = cnt - (int)(srcterm - src);
 	do {
 		s = *src++;
 		d = SAMPMULVOL(s, vol);

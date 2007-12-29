@@ -304,7 +304,7 @@ void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pcItem, UINT uItems)
 			}
 			lpcszStr = szString;
 		}
-		nIndex = SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)lpcszStr);
+		nIndex = (int)SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)lpcszStr);
 		if (nIndex >= 0)
 		{
 			SendMessage(hItem, CB_SETITEMDATA,
@@ -324,7 +324,7 @@ void dlgs_setcbnumber(HWND hWnd, UINT uID, PCCBNPARAM pcItem, UINT uItems)
 	for (i=0; i<uItems; i++)
 	{
 		wsprintf(szValue, str_u, pcItem[i].uValue);
-		nIndex = SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)szValue);
+		nIndex = (int)SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)szValue);
 		if (nIndex >= 0)
 		{
 			SendMessage(hItem, CB_SETITEMDATA,
@@ -340,7 +340,7 @@ void dlgs_setcbcur(HWND hWnd, UINT uID, int nItemData)
 	int		i;
 
 	hItem = GetDlgItem(hWnd, uID);
-	nItems = SendMessage(hItem, CB_GETCOUNT, 0, 0);
+	nItems = (int)SendMessage(hItem, CB_GETCOUNT, 0, 0);
 	for (i=0; i<nItems; i++)
 	{
 		if (SendMessage(hItem, CB_GETITEMDATA, (WPARAM)i, 0) == nItemData)
@@ -357,10 +357,10 @@ int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault)
 	int		nPos;
 
 	hItem = GetDlgItem(hWnd, uID);
-	nPos = SendMessage(hItem, CB_GETCURSEL, 0, 0);
+	nPos = (int)SendMessage(hItem, CB_GETCURSEL, 0, 0);
 	if (nPos >= 0)
 	{
-		return SendMessage(hItem, CB_GETITEMDATA, (WPARAM)nPos, 0);
+		return (int)SendMessage(hItem, CB_GETITEMDATA, (WPARAM)nPos, 0);
 	}
 	return nDefault;
 }
