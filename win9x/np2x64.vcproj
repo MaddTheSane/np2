@@ -1193,10 +1193,6 @@
 				RelativePath=".\resources\1252\np2.rc"
 				>
 			</File>
-			<File
-				RelativePath=".\resources\1252\np2_1252.dsp"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
