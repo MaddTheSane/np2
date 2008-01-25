@@ -1,4 +1,4 @@
-/*	$Id: interface.h,v 1.18 2005/05/20 13:59:47 yui Exp $	*/
+/*	$Id: interface.h,v 1.19 2008/01/25 18:02:18 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -44,7 +44,7 @@
 #define CPU_INITIALIZE()		i386c_initialize()
 #define	CPU_DEINITIALIZE()
 #define	CPU_RESET()			ia32reset()
-#define	CPU_CLEARPREFETCH()		CPU_PREFETCH_CLEAR()
+#define	CPU_CLEARPREFETCH()
 #define	CPU_INTERRUPT(vect, soft)	ia32_interrupt(vect, soft)
 #define	CPU_EXEC()			ia32()
 #define	CPU_EXECV30()			ia32()

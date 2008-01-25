@@ -1,4 +1,4 @@
-/*	$Id: system_inst.c,v 1.31 2005/03/12 12:33:47 monaka Exp $	*/
+/*	$Id: system_inst.c,v 1.32 2008/01/25 18:02:18 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1072,7 +1072,6 @@ HLT(void)
 
 	CPU_HALT();
 	CPU_EIP--;
-	CPU_PREFETCHQ_REMAIN_ADD(1);
 	CPU_STAT_HLT = 1;
 }
 

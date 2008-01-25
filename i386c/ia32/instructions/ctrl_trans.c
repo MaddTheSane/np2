@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.22 2008/01/25 17:55:55 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.23 2008/01/25 18:02:18 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -48,7 +48,6 @@ JMP_Jb(void)
 	CPU_WORKCLOCK(7);
 	GET_PCBYTESD(ip);
 	ADD_EIP(ip);
-	CPU_PREFETCH_CLEAR();
 }
 
 void
@@ -59,7 +58,6 @@ JMP_Jw(void)
 	CPU_WORKCLOCK(7);
 	GET_PCWORDS(ip);
 	ADD_EIP(ip);
-	CPU_PREFETCH_CLEAR();
 }
 
 void
@@ -70,7 +68,6 @@ JMP_Jd(void)
 	CPU_WORKCLOCK(7);
 	GET_PCDWORD(ip);
 	ADD_EIP(ip);
-	CPU_PREFETCH_CLEAR();
 }
 
 void
@@ -840,7 +837,6 @@ CALL_Aw(void)
 	GET_PCWORDS(ip);
 	PUSH0_16(CPU_IP);
 	ADD_EIP(ip);
-	CPU_PREFETCH_CLEAR();
 }
 
 void
@@ -852,7 +848,6 @@ CALL_Ad(void)
 	GET_PCDWORD(ip);
 	PUSH0_32(CPU_EIP);
 	ADD_EIP(ip);
-	CPU_PREFETCH_CLEAR();
 }
 
 void

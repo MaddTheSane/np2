@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.35 2008/01/25 17:49:46 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.36 2008/01/25 18:02:18 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -500,10 +500,6 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 #define	CPU_STAT_EXCEPTION_COUNTER		CPU_STATSAVE.cpu_stat.nerror
 #define	CPU_STAT_EXCEPTION_COUNTER_INC()	CPU_STATSAVE.cpu_stat.nerror++
 #define	CPU_STAT_EXCEPTION_COUNTER_CLEAR()	CPU_STATSAVE.cpu_stat.nerror = 0
-
-#define	CPU_PREFETCH_CLEAR()
-#define	CPU_PREFETCHQ_REMAIN_ADD(d)
-#define	CPU_PREFETCHQ_REMAIN_SUB(d)
 
 #define	CPU_MODE_SUPERVISER	0
 #define	CPU_MODE_USER		(1 << 3)
