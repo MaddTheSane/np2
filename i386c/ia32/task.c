@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.20 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: task.c,v 1.21 2008/01/25 17:49:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -424,20 +424,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	}
 
 	/* set new EFLAGS */
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	CPU_EFLAG = new_flags;
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
-		if (CPU_EFLAG & VM_FLAG) {
-			change_vm(1);
-		} else {
-			change_vm(0);
-		}
-	}
-#else
 	set_eflags(new_flags, I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG);
-#endif
 
 	/* I/O deny bitmap */
 	if (!task16) {

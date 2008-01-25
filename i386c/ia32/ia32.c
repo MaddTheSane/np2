@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.19 2005/03/16 06:05:18 yui Exp $	*/
+/*	$Id: ia32.c,v 1.20 2008/01/25 17:49:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -191,7 +191,6 @@ change_vm(BOOL onoff)
 	}
 }
 
-#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
 /*
  * flags
  */
@@ -235,4 +234,3 @@ set_eflags(UINT32 new_flags, UINT32 mask)
 	mask |= AC_FLAG|ID_FLAG;
 	modify_eflags(new_flags, mask);
 }
-#endif	/* !IA32_DONT_USE_SET_EFLAGS_FUNCTION */

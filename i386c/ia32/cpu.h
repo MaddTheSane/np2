@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.34 2005/03/16 06:05:18 yui Exp $	*/
+/*	$Id: cpu.h,v 1.35 2008/01/25 17:49:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -458,10 +458,8 @@ do { \
 #define	REAL_FLAGREG	((CPU_FLAG & 0xf7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 #define	REAL_EFLAGREG	((CPU_EFLAG & 0xfffff7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 
-#if !defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
 void set_flags(UINT16 new_flags, UINT16 mask);
 void set_eflags(UINT32 new_flags, UINT32 mask);
-#endif
 
 
 #define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32

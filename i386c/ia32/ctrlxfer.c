@@ -1,4 +1,4 @@
-/*	$Id: ctrlxfer.c,v 1.18 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: ctrlxfer.c,v 1.19 2008/01/25 17:49:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -1149,9 +1149,6 @@ IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 ne
 {
 	UINT32 mask;
 	UINT stacksize;
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	UINT32 old_flags = CPU_EFLAG;
-#endif
 
 	VERBOSE(("IRET_pm: RETURN-TO-SAME-PRIVILEGE-LEVEL"));
 
@@ -1161,17 +1158,6 @@ IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 ne
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	mask = ALL_EFLAG;
-	if (CPU_STAT_CPL > CPU_STAT_IOPL)
-		mask &= ~I_FLAG;
-	if (CPU_STAT_CPL > 0) {
-		mask &= ~IOPL_FLAG;
-		if (CPU_INST_OP32) {
-			mask &= ~(VM_FLAG|VIF_FLAG|VIP_FLAG);
-		}
-	}
-#else
 	mask = 0;
 	if (CPU_INST_OP32)
 		mask |= RF_FLAG;
@@ -1183,7 +1169,6 @@ IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 ne
 			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
 		}
 	}
-#endif
 
 	if (CPU_INST_OP32) {
 		stacksize = 12;
@@ -1195,20 +1180,7 @@ IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 ne
 	load_cs(cs_sel->selector, &cs_sel->desc, CPU_STAT_CPL);
 	SET_EIP(new_ip);
 
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	CPU_EFLAG = (new_flags & mask) | (CPU_EFLAG & ~mask);
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
-		if (CPU_EFLAG & VM_FLAG) {
-			change_vm(1);
-		} else {
-			change_vm(0);
-		}
-	}
-#else
 	set_eflags(new_flags, mask);
-#endif
 
 	if (CPU_STAT_SS32) {
 		CPU_ESP += stacksize;
@@ -1231,9 +1203,6 @@ IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 n
 	UINT16 new_ss;
 	int rv;
 	int i;
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	UINT32 old_flags = CPU_EFLAG;
-#endif
 
 	VERBOSE(("IRET_pm: RETURN-OUTER-PRIVILEGE-LEVEL"));
 
@@ -1295,17 +1264,6 @@ IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 n
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	mask = ALL_EFLAG;
-	if (CPU_STAT_CPL > CPU_STAT_IOPL)
-		mask &= ~I_FLAG;
-	if (CPU_STAT_CPL > 0) {
-		mask &= ~IOPL_FLAG;
-		if (CPU_INST_OP32) {
-			mask &= ~(VM_FLAG|VIF_FLAG|VIP_FLAG);
-		}
-	}
-#else
 	mask = 0;
 	if (CPU_INST_OP32)
 		mask |= RF_FLAG;
@@ -1317,26 +1275,12 @@ IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 n
 			mask |= VM_FLAG|VIF_FLAG|VIP_FLAG;
 		}
 	}
-#endif
 
 	/* set new register */
 	load_cs(cs_sel->selector, &cs_sel->desc, cs_sel->rpl);
 	SET_EIP(new_ip);
 
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	CPU_EFLAG = (new_flags & mask) | (CPU_EFLAG & ~mask);
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
-		if (CPU_EFLAG & VM_FLAG) {
-			change_vm(1);
-		} else {
-			change_vm(0);
-		}
-	}
-#else
 	set_eflags(new_flags, mask);
-#endif
 
 	load_ss(ss_sel.selector, &ss_sel.desc, cs_sel->rpl);
 	if (CPU_STAT_SS32) {
@@ -1369,9 +1313,6 @@ IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 	UINT32 sp;
 	UINT32 new_sp;
 	int i;
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	UINT32 old_flags = CPU_EFLAG;
-#endif
 
 	VERBOSE(("IRET_pm: Interrupt procedure was in virtual-8086 mode: PE=1, VM=1 in flags image"));
 
@@ -1403,20 +1344,7 @@ IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 	}
 
 	/* to VM86 mode */
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	CPU_EFLAG = new_flags;
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
-		if (CPU_EFLAG & VM_FLAG) {
-			change_vm(1);
-		} else {
-			change_vm(0);
-		}
-	}
-#else
 	set_eflags(new_flags, IOPL_FLAG|I_FLAG|VM_FLAG|RF_FLAG);
-#endif
 
 	new_sp &= 0xffff;
 	new_ip &= 0xffff;
@@ -1448,13 +1376,7 @@ IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 			CPU_SP += (UINT16)stacksize;
 		}
 
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	CPU_EFLAG = (new_flags & ~(IOPL_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG)) | (CPU_EFLAG & (IOPL_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG));
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-#else
 		set_eflags(new_flags, I_FLAG|RF_FLAG);
-#endif
 
 		CPU_SET_SEGREG(CPU_CS_INDEX, new_cs);
 		SET_EIP(new_ip);

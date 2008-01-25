@@ -1,4 +1,4 @@
-/*	$Id: flag_ctrl.c,v 1.10 2005/03/12 12:33:47 monaka Exp $	*/
+/*	$Id: flag_ctrl.c,v 1.11 2008/01/25 17:49:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -130,37 +130,6 @@ POPF_Fw(void)
 	UINT16 flags, mask;
 
 	CPU_WORKCLOCK(3);
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	mask = ALL_FLAG;
-	if (!CPU_STAT_PM) {
-		/* Real Mode */
-		POP0_16(flags);
-	} else if (!CPU_STAT_VM86) {
-		/* Protected Mode */
-		POP0_16(flags);
-		if (CPU_STAT_CPL > 0) {
-			mask &= ~IOPL_FLAG;
-			if (CPU_STAT_CPL > CPU_STAT_IOPL) {
-				mask &= ~I_FLAG;
-			}
-		}
-	} else {
-		/* Virtual-8086 Mode */
-		if (CPU_STAT_IOPL == CPU_IOPL3) {
-			POP0_16(flags);
-			mask &= ~IOPL_FLAG;
-		} else {
-			/* IOPL < 3 */
-			EXCEPTION(GP_EXCEPTION, 0);
-			flags = 0;
-			mask = 0;
-			/* compiler happy */
-		}
-	}
-	CPU_FLAG = (flags & mask) | (CPU_FLAG & ~mask);
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-#else
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_16(flags);
@@ -186,7 +155,6 @@ POPF_Fw(void)
 		/* compiler happy */
 	}
 	set_eflags(flags, mask);
-#endif	/* IA32_DONT_USE_SET_EFLAGS_FUNCTION */
 	IRQCHECKTERM();
 }
 
@@ -196,39 +164,6 @@ POPFD_Fd(void)
 	UINT32 flags, mask;
 
 	CPU_WORKCLOCK(3);
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	mask = (ALL_EFLAG & ~VM_FLAG);
-	if (!CPU_STAT_PM) {
-		/* Real Mode */
-		POP0_32(flags);
-		flags &= ~(VIF_FLAG|VIP_FLAG);
-	} else if (!CPU_STAT_VM86) {
-		/* Protected Mode */
-		POP0_32(flags);
-		flags &= ~(VIF_FLAG|VIP_FLAG);
-		if (CPU_STAT_CPL > 0) {
-			mask &= ~IOPL_FLAG;
-			if (CPU_STAT_CPL > CPU_STAT_IOPL) {
-				mask &= ~I_FLAG;
-			}
-		}
-	} else {
-		/* Virtual-8086 Mode */
-		if (CPU_STAT_IOPL == CPU_IOPL3) {
-			POP0_32(flags);
-			mask &= ~(IOPL_FLAG|RF_FLAG|VIF_FLAG|VIP_FLAG);
-		} else {
-			/* IOPL < 3 */
-			EXCEPTION(GP_EXCEPTION, 0);
-			flags = 0;
-			mask = 0;
-			/* compiler happy */
-		}
-	}
-	CPU_EFLAG = (flags & mask) | (CPU_EFLAG & ~mask);
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-#else
 	if (!CPU_STAT_PM) {
 		/* Real Mode */
 		POP0_32(flags);
@@ -258,7 +193,6 @@ POPFD_Fd(void)
 		/* compiler happy */
 	}
 	set_eflags(flags, mask);
-#endif	/* IA32_DONT_USE_SET_EFLAGS_FUNCTION */
 	IRQCHECKTERM();
 }
 

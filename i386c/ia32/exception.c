@@ -1,4 +1,4 @@
-/*	$Id: exception.c,v 1.19 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: exception.c,v 1.20 2008/01/25 17:49:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -146,11 +146,7 @@ exception(int num, int error_code)
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	if (num != BP_EXCEPTION) {
 		if (CPU_INST_OP32) {
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-			CPU_EFLAG |= RF_FLAG;
-#else
 			set_eflags(REAL_EFLAGREG|RF_FLAG, RF_FLAG);
-#endif
 		}
 	}
 #endif
@@ -619,20 +615,7 @@ interrupt_intr_or_trap(const descriptor_t *gd, int softintp, int errorp, int err
 			break;
 		}
 	}
-#if defined(IA32_DONT_USE_SET_EFLAGS_FUNCTION)
-	CPU_EFLAG = new_flags;
-	CPU_OV = CPU_FLAG & O_FLAG;
-	CPU_TRAP = (CPU_FLAG & (I_FLAG|T_FLAG)) == (I_FLAG|T_FLAG);
-	if ((old_flags ^ CPU_EFLAG) & VM_FLAG) {
-		if (CPU_EFLAG & VM_FLAG) {
-			change_vm(1);
-		} else {
-			change_vm(0);
-		}
-	}
-#else
 	set_eflags(new_flags, mask);
-#endif
 
 	VERBOSE(("interrupt: new EIP = %04x:%08x, ESP = %04x:%08x", CPU_CS, CPU_EIP, CPU_SS, CPU_ESP));
 }
