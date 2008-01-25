@@ -1,4 +1,4 @@
-/*	$Id: task.c,v 1.21 2008/01/25 17:49:46 monaka Exp $	*/
+/*	$Id: task.c,v 1.22 2008/01/25 18:12:13 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -414,7 +414,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	/* set new EIP, GPR */
 	CPU_PREV_EIP = CPU_EIP = eip;
-	CPU_PREFETCH_CLEAR();
 	for (i = 0; i < CPU_REG_NUM; i++) {
 		CPU_REGS_DWORD(i) = regs[i];
 	}
