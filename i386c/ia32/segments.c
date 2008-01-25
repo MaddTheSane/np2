@@ -1,4 +1,4 @@
-/*	$Id: segments.c,v 1.17 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: segments.c,v 1.18 2008/01/25 17:53:27 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -177,10 +177,18 @@ load_ldtr(UINT16 selector, int exc)
 		EXCEPTION(exc, sel.selector);
 	}
 
+#if 0
+	/*
+	 * LEMM の挙動より LDT セグメントのリミットチェック処理を無効化
+	 *
+	 * 症状１:リミット 0 の LDT セレクタを LLDT は駄目っぽい。
+	 * 対策１:リミット 0 の LDT セレクタの代わりにヌルセレクタを LLDT。
+	 */
 	/* check limit */
 	if (sel.desc.u.seg.limit < 7) {
 		ia32_panic("load_ldtr: LDTR descriptor limit < 7 (limit = %d)", sel.desc.u.seg.limit);
 	}
+#endif
 
 	/* not present */
 	rv = selector_is_not_present(&sel);
