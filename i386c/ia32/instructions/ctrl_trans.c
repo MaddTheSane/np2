@@ -1,4 +1,4 @@
-/*	$Id: ctrl_trans.c,v 1.21 2008/01/25 17:49:46 monaka Exp $	*/
+/*	$Id: ctrl_trans.c,v 1.22 2008/01/25 17:55:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -1294,7 +1294,7 @@ ENTER16_IwIb(void)
 	level &= 0x1f;
 
 	/* check stack room size */
-	if (CPU_STAT_PM) {
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		size = dimsize + (level + 1) * 2;
 		if (!CPU_STAT_SS32) {
 			sp = CPU_SP;
@@ -1368,7 +1368,7 @@ ENTER32_IwIb(void)
 	level &= 0x1f;
 
 	/* check stack room size */
-	if (CPU_STAT_PM) {
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		size = dimsize + (level + 1) * 4;
 		if (CPU_STAT_SS32) {
 			sp = CPU_ESP;
@@ -1436,7 +1436,7 @@ LEAVE(void)
 
 	CPU_WORKCLOCK(4);
 
-	if (CPU_STAT_PM) {
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		if (!CPU_INST_OP32) {
 			s = 2;
 		} else {
