@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.23 2008/01/25 18:02:18 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.24 2008/01/25 18:07:30 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -105,44 +105,52 @@ do { \
 	if (!CPU_STATSAVE.cpu_inst_default.op_32) { \
 		__tmp_ip &= 0xffff; \
 	} \
-	CPU_EIP = __tmp_ip; \
+	SET_EIP(__tmp_ip); \
 } while (/*CONSTCOND*/ 0)
 
+#define	_ADD_EIP(v) \
+do { \
+	UINT32 __tmp_ip = CPU_EIP + (v); \
+	if (!CPU_STATSAVE.cpu_inst_default.op_32) { \
+		__tmp_ip &= 0xffff; \
+	} \
+	CPU_EIP = __tmp_ip; \
+} while (/*CONSTCOND*/ 0)
 
 #define	GET_PCBYTE(v) \
 do { \
 	(v) = cpu_codefetch(CPU_EIP); \
-	ADD_EIP(1); \
+	_ADD_EIP(1); \
 } while (/*CONSTCOND*/ 0)
 
 #define	GET_PCBYTES(v) \
 do { \
 	(v) = __CBW(cpu_codefetch(CPU_EIP)); \
-	ADD_EIP(1); \
+	_ADD_EIP(1); \
 } while (/*CONSTCOND*/ 0)
 
 #define	GET_PCBYTESD(v) \
 do { \
 	(v) = __CBD(cpu_codefetch(CPU_EIP)); \
-	ADD_EIP(1); \
+	_ADD_EIP(1); \
 } while (/*CONSTCOND*/ 0)
 
 #define	GET_PCWORD(v) \
 do { \
 	(v) = cpu_codefetch_w(CPU_EIP); \
-	ADD_EIP(2); \
+	_ADD_EIP(2); \
 } while (/*CONSTCOND*/ 0)
 
 #define	GET_PCWORDS(v) \
 do { \
 	(v) = __CWDE(cpu_codefetch_w(CPU_EIP)); \
-	ADD_EIP(2); \
+	_ADD_EIP(2); \
 } while (/*CONSTCOND*/ 0)
 
 #define	GET_PCDWORD(v) \
 do { \
 	(v) = cpu_codefetch_d(CPU_EIP); \
-	ADD_EIP(4); \
+	_ADD_EIP(4); \
 } while (/*CONSTCOND*/ 0)
 
 #define	PREPART_EA_REG8(b, d_s) \
@@ -887,8 +895,7 @@ do { \
 do { \
 	UINT32 __ip; \
 	CPU_WORKCLOCK(clock); \
-	__ip = __CBD(cpu_codefetch(CPU_EIP)); \
-	__ip++; \
+	GET_PCBYTESD(__ip); \
 	ADD_EIP(__ip); \
 } while (/*CONSTCOND*/ 0)
 
@@ -896,8 +903,7 @@ do { \
 do { \
 	UINT32 __ip; \
 	CPU_WORKCLOCK(clock); \
-	__ip = __CWDE(cpu_codefetch_w(CPU_EIP)); \
-	__ip += 2; \
+	GET_PCWORDS(__ip); \
 	ADD_EIP(__ip); \
 } while (/*CONSTCOND*/ 0)
 
@@ -905,24 +911,15 @@ do { \
 do { \
 	UINT32 __ip; \
 	CPU_WORKCLOCK(clock); \
-	__ip = cpu_codefetch_d(CPU_EIP); \
-	__ip += 4; \
+	GET_PCDWORD(__ip); \
 	ADD_EIP(__ip); \
 } while (/*CONSTCOND*/ 0)
 
-#if !defined(IA32_SUPPORT_PREFETCH_QUEUE)
 #define	JMPNOP(clock, d) \
 do { \
 	CPU_WORKCLOCK(clock); \
 	ADD_EIP((d)); \
 } while (/*CONSTCOND*/ 0)
-#else
-#define	JMPNOP(clock, d) \
-do { \
-	CPU_WORKCLOCK(clock); \
-	ADD_EIP((d)); \
-} while (/*CONSTCOND*/ 0)
-#endif
 
 
 /*
