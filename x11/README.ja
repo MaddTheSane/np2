@@ -209,7 +209,7 @@ Xnp2 - ねこープロジェクトII for X Window System
   ・このマニュアルに書かれている以上の情報が欲しい場合は以下の URL にある
     ヘルプを参照すると、見つかるかもしれません。
 
-      Xnp2 help URL: http://retropc.net/monaka/np2/html/help/ja/
+      Xnp2 help URL: http://www.asahi-net.or.jp/~aw9k-nnk/np2/html/help/ja/
 
 
 9. 問題点
@@ -237,7 +237,7 @@ Xnp2 - ねこープロジェクトII for X Window System
 
 11. 連絡先
 
-  本ソフトウェアの配布元は http://retropc.net/monaka/np2/ です。
+  本ソフトウェアの配布元は http://www.asahi-net.or.jp/~aw9k-nnk/np2/ です。
   また anoncvs を使用して最新のソースを取得できます。
     cvs -d :pserver:anonymous@retropc.net:/cvs get np2
 
@@ -247,4 +247,4 @@ Xnp2 - ねこープロジェクトII for X Window System
 
 
 -- 
-	$Id: README.ja,v 1.13 2007/02/06 14:19:14 monaka Exp $
+	$Id: README.ja,v 1.14 2008/01/27 11:42:44 monaka Exp $
