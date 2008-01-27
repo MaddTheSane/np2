@@ -1,4 +1,4 @@
-/*	$Id: interface.c,v 1.25 2008/01/25 18:02:18 monaka Exp $	*/
+/*	$Id: interface.c,v 1.26 2008/01/27 12:11:31 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -287,6 +287,9 @@ ia32_bioscall(void)
 		adrs = (CPU_EIP - 1) + CPU_STAT_CS_BASE;
 #endif
 		if ((adrs >= 0xf8000) && (adrs < 0x100000)) {
+			if (biosfunc(adrs)) {
+				/* Nothing to do */
+			}
 			if (!CPU_STAT_PM || CPU_STAT_VM86) {
 				CPU_SET_SEGREG(CPU_ES_INDEX, CPU_ES);
 				CPU_SET_SEGREG(CPU_CS_INDEX, CPU_CS);
