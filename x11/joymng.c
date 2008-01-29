@@ -1,4 +1,4 @@
-/*	$Id: joymng.c,v 1.3 2007/01/23 15:48:20 monaka Exp $	*/
+/*	$Id: joymng.c,v 1.4 2008/01/29 13:32:51 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>,
@@ -217,7 +217,7 @@ sdl_err:
 	if (devlist) {
 		for (i = 0; i < ndrv; ++i) {
 			if (devlist[i]) {
-				joydrv_sdl_close(devlist[i]);
+				joydrv_close(devlist[i]);
 			}
 		}
 		_MFREE(devlist);
