@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.34 2007/01/23 15:48:20 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.35 2008/02/07 14:37:30 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -179,7 +179,6 @@ typedef	int			BOOL;
 #endif /* i386 */
 
 #if defined(__GNUC__)
-#define	GCC_ATTR_PACKED	__attribute__((packed))
 #if defined(NP2_CPU_ARCH_IA32)
 #define	GCC_CPU_ARCH_IA32
 #endif
@@ -221,9 +220,6 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define LOADINTELWORD(a)	(*((UINT16 *)(a)))
 #define STOREINTELDWORD(a, b)	*(UINT32 *)(a) = (b)
 #define STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
-#if defined(__GNUC__) && defined(IA32_USE_GCC_ATTR_REGPARM)
-#define	GCC_ATTR_REGPARM	__attribute__((regparm(2)))
-#endif
 #elif defined(arm) || defined (__arm__)
 #define	MEMOPTIMIZE	2
 #define	REG8		UINT
