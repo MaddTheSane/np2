@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.5 2007/01/23 14:17:39 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.6 2008/03/13 16:27:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -65,7 +65,9 @@ static const struct {
 static GtkWidget *baseclock_entry;
 static GtkWidget *clockmult_entry;
 static GtkWidget *buffer_entry;
+#if defined(SUPPORT_RESUME)
 static GtkWidget *resume_checkbutton;
+#endif
 #if defined(GCC_CPU_ARCH_IA32)
 static GtkWidget *disablemmx_checkbutton;
 #endif
@@ -79,7 +81,9 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	const gchar *bufp = gtk_entry_get_text(GTK_ENTRY(buffer_entry));
 	const gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
 	const gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
+#if defined(SUPPORT_RESUME)
 	gint resume = GTK_TOGGLE_BUTTON(resume_checkbutton)->active;
+#endif
 #if defined(GCC_CPU_ARCH_IA32)
 	gint disablemmx = GTK_TOGGLE_BUTTON(disablemmx_checkbutton)->active;
 #endif
@@ -160,10 +164,12 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	}
 #endif
 
+#if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume != resume) {
 		np2oscfg.resume = resume;
 		renewal |= SYS_UPDATEOSCFG;
 	}
+#endif
 
 	if (renewal) {
 		sysmng_update(renewal);
@@ -465,6 +471,7 @@ create_configure_dialog(void)
 	gtk_widget_show(ms_label);
 	gtk_box_pack_start(GTK_BOX(soundbuffer_hbox),ms_label, FALSE, FALSE, 0);
 
+#if defined(SUPPORT_RESUME)
 	/* resume */
 	resume_checkbutton = gtk_check_button_new_with_label("Resume");
 	gtk_widget_show(resume_checkbutton);
@@ -472,8 +479,6 @@ create_configure_dialog(void)
 	if (np2oscfg.resume) {
 		g_signal_emit_by_name(GTK_OBJECT(resume_checkbutton), "clicked");
 	}
-#if defined(CPUCORE_IA32)
-	gtk_widget_set_sensitive(resume_checkbutton, FALSE);
 #endif
 
 #if defined(GCC_CPU_ARCH_IA32)

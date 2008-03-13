@@ -628,8 +628,12 @@ static const INITBL iniitem[] = {
 	{"com3mmdl", INITYPE_STR,	np2oscfg.com[2].mdl,	64},
 	{"com3mdef", INITYPE_STR,	np2oscfg.com[2].def,	MAX_PATH},
 
+#if defined(SUPPORT_RESUME)
 	{"e_resume", INITYPE_BOOL,	&np2oscfg.resume,	0},
+#endif
+#if defined(SUPPORT_STATSAVE)
 	{"STATSAVE", INIRO_BOOL,	&np2oscfg.statsave,	0},
+#endif
 #if defined(GCC_CPU_ARCH_IA32)
 	{"nousemmx", INITYPE_BOOL,	&np2oscfg.disablemmx,	0},
 #endif

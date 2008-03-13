@@ -128,6 +128,9 @@ char bmpfilefolder[MAX_PATH];
 char modulefile[MAX_PATH];
 char statpath[MAX_PATH];
 
+const char np2flagext[] = "s%02d";
+const char np2resumeext[] = "sav";
+
 #ifndef FONTFACE
 #define FONTFACE "-misc-fixed-%s-r-normal--%d-*-*-*-*-*-*-*"
 #endif
@@ -204,16 +207,18 @@ flagload(const char* ext, const char* title, BOOL force)
 	int ret;
 	int rv = 0;
 
-	UNUSED(title);
-
 	getstatfilename(path, ext, sizeof(path));
 	ret = statsave_check(path, buf, sizeof(buf));
 	if (ret & (~STATFLAG_DISKCHG)) {
-		fprintf(stderr, "Couldn't restart\n");
+		toolkit_msgbox(title, "Couldn't restart",
+		    TK_MB_OK|TK_MB_ICON_ERROR);
 		rv = 1;
 	} else if ((!force) && (ret & STATFLAG_DISKCHG)) {
-		fprintf(stderr, "Conflict\n");
-		rv = 1;
+		ret = toolkit_msgbox(title, "Conflict!\nContinue?",
+		    TK_MB_YESNOCANCEL|TK_MB_ICON_QUESTION);
+		if (ret != TK_MB_YES) {
+			rv = 1;
+		}
 	}
 	if (rv == 0) {
 		statsave_load(path);
@@ -370,12 +375,14 @@ mainloop(void *p)
 	return TRUE;
 }
 
-#if defined(GCC_CPU_ARCH_IA32)
 int mmxflag;
 
 int
 havemmx(void)
 {
+#if !defined(GCC_CPU_ARCH_IA32)
+	return 0;
+#else	/* GCC_CPU_ARCH_IA32 */
 	int rv;
 
 #if defined(GCC_CPU_ARCH_AMD64)
@@ -403,6 +410,5 @@ havemmx(void)
 		: "=a" (rv));
 #endif /* GCC_CPU_ARCH_AMD64 */
 	return rv;
-}
-
 #endif /* GCC_CPU_ARCH_IA32 */
+}

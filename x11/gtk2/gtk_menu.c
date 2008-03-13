@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.11 2007/08/22 15:20:31 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.12 2008/03/13 16:27:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -79,6 +79,10 @@ static void cb_reset(GtkAction *action, gpointer user_data);
 static void cb_sasiopen(GtkAction *action, gpointer user_data);
 static void cb_sasiremove(GtkAction *action, gpointer user_data);
 #endif
+#if defined(SUPPORT_STATSAVE)
+static void cb_statsave(GtkAction *action, gpointer user_data);
+static void cb_statload(GtkAction *action, gpointer user_data);
+#endif
 
 static void cb_dialog(GtkAction *action, gpointer user_data);
 static void cb_radio(GtkRadioAction *action, GtkRadioAction *current, gpointer user_data);
@@ -91,6 +95,7 @@ static GtkActionEntry menu_entries[] = {
 { "ScreenMenu",   NULL, "Screen",   NULL, NULL, NULL },
 { "DeviceMenu",   NULL, "Device",   NULL, NULL, NULL },
 { "OtherMenu",    NULL, "Other",    NULL, NULL, NULL },
+{ "StatMenu",     NULL, "Stat",     NULL, NULL, NULL },
 
 /* Submenu */
 { "Drive1Menu",   NULL, "Drive_1",   NULL, NULL, NULL },
@@ -147,6 +152,28 @@ static GtkActionEntry menu_entries[] = {
 { "serialopt",   NULL, "Se_rial option...", NULL, NULL, G_CALLBACK(cb_dialog) },
 { "soundopt",    NULL, "So_und option...",  NULL, NULL, G_CALLBACK(cb_dialog) },
 { "reset",       NULL, "_Reset",            NULL, NULL, G_CALLBACK(cb_reset) },
+#if defined(SUPPORT_STATSAVE)
+{ "stat00save",  NULL, "Save 0",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat01save",  NULL, "Save 1",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat02save",  NULL, "Save 2",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat03save",  NULL, "Save 3",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat04save",  NULL, "Save 4",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat05save",  NULL, "Save 5",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat06save",  NULL, "Save 6",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat07save",  NULL, "Save 7",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat08save",  NULL, "Save 8",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat09save",  NULL, "Save 9",            NULL, NULL, G_CALLBACK(cb_statsave), },
+{ "stat00load",  NULL, "Load 0",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat01load",  NULL, "Load 1",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat02load",  NULL, "Load 2",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat03load",  NULL, "Load 3",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat04load",  NULL, "Load 4",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat05load",  NULL, "Load 5",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat06load",  NULL, "Load 6",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat07load",  NULL, "Load 7",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat08load",  NULL, "Load 8",            NULL, NULL, G_CALLBACK(cb_statload), },
+{ "stat09load",  NULL, "Load 9",            NULL, NULL, G_CALLBACK(cb_statload), },
+#endif
 };
 static const guint n_menu_entries = G_N_ELEMENTS(menu_entries);
 
@@ -441,6 +468,31 @@ static const gchar *ui_info =
 "   <separator/>\n"
 "   <menuitem action='about'/>\n"
 "  </menu>\n"
+#if defined(SUPPORT_STATSAVE)
+"  <menu name='Stat' action='StatMenu'>\n"
+"   <menuitem action='stat00save'/>\n"
+"   <menuitem action='stat01save'/>\n"
+"   <menuitem action='stat02save'/>\n"
+"   <menuitem action='stat03save'/>\n"
+"   <menuitem action='stat04save'/>\n"
+"   <menuitem action='stat05save'/>\n"
+"   <menuitem action='stat06save'/>\n"
+"   <menuitem action='stat07save'/>\n"
+"   <menuitem action='stat08save'/>\n"
+"   <menuitem action='stat09save'/>\n"
+"   <separator/>\n"
+"   <menuitem action='stat00load'/>\n"
+"   <menuitem action='stat01load'/>\n"
+"   <menuitem action='stat02load'/>\n"
+"   <menuitem action='stat03load'/>\n"
+"   <menuitem action='stat04load'/>\n"
+"   <menuitem action='stat05load'/>\n"
+"   <menuitem action='stat06load'/>\n"
+"   <menuitem action='stat07load'/>\n"
+"   <menuitem action='stat08load'/>\n"
+"   <menuitem action='stat09load'/>\n"
+"  </menu>\n"
+#endif
 " </menubar>\n"
 "</ui>\n";
 
@@ -1236,6 +1288,48 @@ cb_sasiremove(GtkAction *action, gpointer user_data)
 	}
 }
 #endif	/* !SUPPORT_IDEIO */
+
+#if defined(SUPPORT_STATSAVE)
+static void
+cb_statsave(GtkAction *action, gpointer user_data)
+{
+	const gchar *name = gtk_action_get_name(GTK_ACTION(action));
+	char ext[4];
+	guint n;
+
+	UNUSED(user_data);
+
+	/* name = "stat??save" */
+	if ((strlen(name) >= 6)
+	 && (g_ascii_isdigit(name[4]))
+	 && (g_ascii_isdigit(name[5]))) {
+		n = g_ascii_digit_value(name[4]) * 10;
+		n += g_ascii_digit_value(name[5]);
+		g_snprintf(ext, sizeof(ext), np2flagext, n);
+		flagsave(ext);
+	}
+}
+
+static void
+cb_statload(GtkAction *action, gpointer user_data)
+{
+	const gchar *name = gtk_action_get_name(GTK_ACTION(action));
+	char ext[4];
+	guint n;
+
+	UNUSED(user_data);
+
+	/* name = "stat??load" */
+	if ((strlen(name) >= 6)
+	 && (g_ascii_isdigit(name[4]))
+	 && (g_ascii_isdigit(name[5]))) {
+		n = g_ascii_digit_value(name[4]) * 10;
+		n += g_ascii_digit_value(name[5]);
+		g_snprintf(ext, sizeof(ext), np2flagext, n);
+		flagload(ext, "Status Load", TRUE);
+	}
+}
+#endif
 
 static void
 cb_dialog(GtkAction *action, gpointer user_data)

@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.35 2008/02/07 14:37:30 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.36 2008/03/13 16:27:39 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -66,8 +66,6 @@
 #define	OSLANG_EUC
 #define	OSLINEBREAK_LF
 
-#if (USE_GTK2 > 0)
-
 #include <glib.h>
 
 typedef	gint32		SINT;
@@ -90,28 +88,6 @@ typedef	gboolean	BOOL;
 
 #define PTR_TO_UINT32(p)	((UINT32)GPOINTER_TO_UINT(p))
 #define UINT32_TO_PTR(v)	GUINT_TO_POINTER((UINT32)(v))
-
-#else	/* USE_GTK2 <= 0 */
-
-typedef	signed int		SINT;
-typedef	unsigned int		UINT;
-
-typedef	signed char		SINT8;
-typedef	signed short		SINT16;
-typedef	signed int		SINT32;
-typedef	signed long long	SINT64;
-
-typedef	unsigned char		UINT8;
-typedef	unsigned short		UINT16;
-typedef	unsigned int		UINT32;
-typedef	unsigned long long	UINT64;
-
-typedef	unsigned char		BYTE;
-typedef	char			TCHAR;
-
-typedef	int			BOOL;
-
-#endif	/* USE_GTK2 > 0 */
 
 #ifndef	TRUE
 #define	TRUE	1
@@ -204,8 +180,7 @@ UINT32 gettick(void);
 #define	OEMSTRLEN	strlen
 
 #if defined(CPUCORE_IA32)
-void toolkit_msgbox(const char *title, const char *msg);
-#define	msgbox(title, msg)	toolkit_msgbox(title, msg);
+#define	msgbox(title, msg)	toolkit_messagebox(title, msg);
 
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
@@ -243,27 +218,20 @@ void toolkit_msgbox(const char *title, const char *msg);
 #define	SUPPORT_PC9861K
 #define	SUPPORT_HOSTDRV
 
+#define	SUPPORT_RESUME
+#define	SUPPORT_STATSAVE
+
 #undef	SUPPORT_SASI
 #undef	SUPPORT_SCSI
 
-#if (USE_GTK2 > 0)
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_SOFTKBD	0
-#endif
 
-#if (USE_SDL > 0)
-#define	USE_SYSMENU
-#define	SCREEN_BPP	16
-#undef	SUPPORT_8BPP
-#undef	SUPPORT_24BPP
-#undef	SUPPORT_32BPP
-#endif
-
-#if (USE_SDL > 0) || defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
+#if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 #define	SUPPORT_JOYSTICK
 #define	USE_SDL_JOYSTICK
-#endif	/* USE_SDL > 0 || USE_SDLAUDIO || USE_SDLMIXER */
+#endif	/* USE_SDLAUDIO || USE_SDLMIXER */
 
 /*
  * You could specify a complete path, e.g. "/etc/timidity.cfg", and

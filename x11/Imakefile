@@ -1,4 +1,4 @@
-XCOMM	$Id: Imakefile,v 1.32 2007/01/23 15:48:20 monaka Exp $
+XCOMM	$Id: Imakefile,v 1.33 2008/03/13 16:27:39 monaka Exp $
 
 XCOMM
 XCOMM user config
@@ -23,7 +23,7 @@ XCOMM
 GTK_CONFIG?= pkg-config gtk+-2.0
 GTK_INCLUDE= `$(GTK_CONFIG) --cflags`
 GTK_LIB= `$(GTK_CONFIG) --libs`
-GTK_DEFINE= -DUSE_GTK2=1
+GTK_DEFINE=
 
 GTKDEPOBJS=	gtk2/dialog_about.o gtk2/dialog_calendar.o \
 		gtk2/dialog_config.o gtk2/dialog_midi.o gtk2/dialog_newdisk.o \
@@ -155,7 +155,7 @@ VRAMOBJS=	../vram/vram.o ../vram/scrndraw.o ../vram/sdraw.o \
 		../vram/makegrex.o
 
 X11OBJS=	dosio.o ini.o trace.o \
-		toolkit.o kdispwin.o skbdwin.o \
+		kdispwin.o skbdwin.o \
 		cmmidi.o cmserial.o \
 		drawmng.o kbdmng.o \
 		commng.o joymng.o soundmng.o sysmng.o taskmng.o timemng.o \

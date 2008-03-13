@@ -42,7 +42,6 @@
 #include "toolkit.h"
 
 #include "kdispwin.h"
-#include "sysmenu.h"
 #include "toolwin.h"
 #include "viewer.h"
 #include "debugwin.h"
@@ -50,7 +49,6 @@
 
 #include "commng.h"
 #include "fontmng.h"
-#include "inputmng.h"
 #include "joymng.h"
 #include "kbdmng.h"
 #include "mousemng.h"
@@ -58,12 +56,6 @@
 #include "soundmng.h"
 #include "sysmng.h"
 #include "taskmng.h"
-
-
-/*
- * resume
- */
-static const char np2resumeext[] = "sav";
 
 
 /*
@@ -100,9 +92,6 @@ sighandler(int signo)
 static struct option longopts[] = {
 	{ "config",		required_argument,	0,	'c' },
 	{ "timidity-config",	required_argument,	0,	'C' },
-#if defined(USE_SDL) || defined(USE_SYSMENU)
-	{ "ttfont",		required_argument,	0,	't' },
-#endif
 	{ "help",		no_argument,		0,	'h' },
 	{ 0,			0,			0,	0   },
 };
@@ -118,9 +107,6 @@ usage(void)
 	printf("\t--help            [-h]        : print this message\n");
 	printf("\t--config          [-c] <file> : specify config file\n");
 	printf("\t--timidity-config [-C] <file> : specify timidity config file\n");
-#if defined(USE_SDL) || defined(USE_SYSMENU)
-	printf("\t--ttfont          [-t] <file> : specify TrueType font\n");
-#endif
 	exit(1);
 }
 
@@ -248,10 +234,8 @@ main(int argc, char *argv[])
 
 	rand_setseed((SINT32)time(NULL));
 
-#if defined(GCC_CPU_ARCH_IA32)
 	mmxflag = havemmx() ? 0 : MMXFLAG_NOTSUPPORT;
 	mmxflag += np2oscfg.disablemmx ? MMXFLAG_DISABLE : 0;
-#endif
 
 	TRACEINIT();
 
@@ -265,15 +249,12 @@ main(int argc, char *argv[])
 	toolkit_widget_create();
 	scrnmng_initialize();
 	kbdmng_init();
-	inputmng_init();
 	keystat_initialize();
 
 	scrnmode = 0;
 	if (np2cfg.RASTER) {
 		scrnmode |= SCRNMODE_HIGHCOLOR;
 	}
-	if (sysmenu_create() != SUCCESS)
-		goto sysmenu_failure;
 	if (scrnmng_create(scrnmode) != SUCCESS)
 		goto scrnmng_failure;
 
@@ -325,7 +306,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-#if !defined(CPUCORE_IA32)
+#if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume) {
 		flagload(np2resumeext, "Resume", FALSE);
 	}
@@ -368,9 +349,6 @@ main(int argc, char *argv[])
 	scrnmng_destroy();
 
 scrnmng_failure:
-	sysmenu_destroy();
-
-sysmenu_failure:
 	fontmng_terminate();
 
 fontmng_failure:

@@ -1,4 +1,4 @@
-/*	$Id: gtk_drawmng.c,v 1.5 2007/01/10 15:58:58 monaka Exp $	*/
+/*	$Id: gtk_drawmng.c,v 1.6 2008/03/13 16:27:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -130,7 +130,7 @@ destroy:
 		GtkWidget *da = hdl->drawarea;
 		drawmng_release((DRAWMNG_HDL)hdl);
 		if (da) {
-			gtk_widget_unref(da);
+			g_object_unref(da);
 		}
 	}
 	return NULL;

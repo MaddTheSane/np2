@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.9 2007/01/24 14:09:32 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.10 2008/03/13 16:27:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -278,13 +278,6 @@ uninstall_idle_process(void)
 /*
  * toolkit
  */
-const char *
-gui_gtk_get_toolkit(void)
-{
-
-	return "gtk";
-}
-
 BOOL
 gui_gtk_arginit(int *argcp, char ***argvp)
 {
@@ -367,13 +360,6 @@ gui_gtk_widget_create(void)
 	    GTK_SIGNAL_FUNC(expose_evhandler), NULL);
 }
 
-static void
-gui_gtk_terminate(void)
-{
-
-	/* Nothing to do */
-}
-
 void
 gui_gtk_widget_show(void)
 {
@@ -415,23 +401,83 @@ gui_gtk_set_window_title(const char* str)
 	gtk_window_set_title(GTK_WINDOW(main_window), str);
 }
 
-void
-gui_gtk_messagebox(const char *title, const char *msg)
+int
+gui_gtk_msgbox(const char *title, const char *msg, UINT flags)
 {
+	GtkWidget *dialog;
+	GtkMessageType msgtype;
+	GtkButtonsType btntype;
+	int retval;
+	int rv;
 
-	g_message("%s:\n%s", title, msg);
+	uninstall_idle_process();
+
+	switch (flags & TK_MB_BTN_MASK) {
+	default:
+		btntype = GTK_BUTTONS_OK;
+		break;
+
+	case TK_MB_OK:
+		btntype = GTK_BUTTONS_OK;
+		break;
+
+	case TK_MB_CANCEL:
+		btntype = GTK_BUTTONS_CANCEL;
+		break;
+
+	case TK_MB_OKCANCEL:
+		btntype = GTK_BUTTONS_OK_CANCEL;
+		break;
+
+	case TK_MB_YESNO:
+		btntype = GTK_BUTTONS_YES_NO;
+		break;
+	}
+
+	if (flags & TK_MB_ICON_INFO) {
+		msgtype = GTK_MESSAGE_INFO;
+	} else if (flags & TK_MB_ICON_WARNING) {
+		msgtype = GTK_MESSAGE_WARNING;
+	} else if (flags & TK_MB_ICON_ERROR) {
+		msgtype = GTK_MESSAGE_ERROR;
+	} else if (flags & TK_MB_ICON_QUESTION) {
+		msgtype = GTK_MESSAGE_QUESTION;
+	} else {
+		msgtype = GTK_MESSAGE_OTHER;
+	}
+
+	dialog = gtk_message_dialog_new(GTK_WINDOW(main_window),
+	    GTK_DIALOG_DESTROY_WITH_PARENT|GTK_DIALOG_MODAL,
+	    msgtype, btntype, msg);
+	gtk_window_set_title(GTK_WINDOW(dialog), title);
+
+	gtk_widget_show_all(dialog);
+
+	rv = gtk_dialog_run(GTK_DIALOG(dialog));
+	switch (rv) {
+	case GTK_RESPONSE_OK:
+		retval = TK_MB_OK;
+		break;
+
+	case GTK_RESPONSE_CANCEL:
+		retval = TK_MB_CANCEL;
+		break;
+
+	case GTK_RESPONSE_YES:
+		retval = TK_MB_YES;
+		break;
+
+	case GTK_RESPONSE_NO:
+		retval = TK_MB_NO;
+		break;
+
+	default:
+		retval = 0;	/* XXX */
+		break;
+	}
+
+	gtk_widget_destroy(dialog);
+	install_idle_process();
+
+	return retval;
 }
-
-/* toolkit data */
-gui_toolkit_t gtk_toolkit = {
-	gui_gtk_get_toolkit,
-	gui_gtk_arginit,
-	gui_gtk_terminate,
-	gui_gtk_widget_create,
-	gui_gtk_widget_show,
-	gui_gtk_widget_mainloop,
-	gui_gtk_widget_quit,
-	gui_gtk_event_process,
-	gui_gtk_set_window_title,
-	gui_gtk_messagebox,
-};

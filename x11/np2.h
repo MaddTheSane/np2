@@ -112,6 +112,9 @@ extern char statpath[MAX_PATH];
 extern char fontname[1024];
 extern char fontfilename[MAX_PATH];
 
+extern const char np2flagext[];
+extern const char np2resumeext[];
+
 int flagload(const char* ext, const char* title, BOOL force);
 int flagsave(const char* ext);
 void flagdelete(const char* ext);
@@ -121,10 +124,8 @@ void framereset(UINT cnt);
 void processwait(UINT cnt);
 int mainloop(void *);
 
-#if defined(GCC_CPU_ARCH_IA32)
 extern int mmxflag;
 int havemmx(void);
-#endif
 
 #ifdef __cplusplus
 }
