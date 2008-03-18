@@ -215,7 +215,7 @@ flagload(const char* ext, const char* title, BOOL force)
 		rv = 1;
 	} else if ((!force) && (ret & STATFLAG_DISKCHG)) {
 		ret = toolkit_msgbox(title, "Conflict!\nContinue?",
-		    TK_MB_YESNOCANCEL|TK_MB_ICON_QUESTION);
+		    TK_MB_YESNO|TK_MB_ICON_QUESTION);
 		if (ret != TK_MB_YES) {
 			rv = 1;
 		}
