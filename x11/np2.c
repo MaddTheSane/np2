@@ -1,3 +1,5 @@
+/*	$Id: np2.c,v 1.31 2008/03/18 15:33:14 monaka Exp $	*/
+
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
@@ -109,6 +111,8 @@ NP2OSCFG np2oscfg = {
 	MMXFLAG_DISABLE,	/* disablemmx */
 	INTERP_NEAREST,		/* drawinterp */
 	0,			/* F11KEY */
+
+	FALSE,			/* cfgreadonly */
 };
 
 volatile sig_atomic_t np2running = 0;
@@ -128,6 +132,7 @@ char bmpfilefolder[MAX_PATH];
 char modulefile[MAX_PATH];
 char statpath[MAX_PATH];
 
+char np2appname[MAX_PATH] = "np2";
 const char np2flagext[] = "s%02d";
 const char np2resumeext[] = "sav";
 
@@ -161,15 +166,17 @@ getstatfilename(char* path, const char* ext, int size)
 
 	/*
 	 * default:
-	 * e.g. resume:   "/home/user_name/.np2/sav/sav"
-	 *      statpath: "/home/user_name/.np2/sav/s00"
+	 * e.g. resume:   "/home/user_name/.np2/sav/np2.sav"
+	 *      statpath: "/home/user_name/.np2/sav/np2.s00"
+	 *      config:   "/home/user_name/.np2/np2rc"
 	 *
 	 * --config option:
-	 * e.g. resume:   "/config_file_path/sav"
-	 *      statpath: "/config_file_path/s00"
+	 * e.g. resume:   "/config_file_path/sav/np2.sav"
+	 *      statpath: "/config_file_path/sav/np2.s00"
 	 *      config:   "/config_file_path/config_file_name"
 	 */
 	file_cpyname(path, statpath, size);
+	file_catname(path, ".", size);
 	file_catname(path, ext, size);
 }
 

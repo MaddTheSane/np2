@@ -1,3 +1,5 @@
+/*	$Id: np2.h,v 1.19 2008/03/18 15:33:14 monaka Exp $	*/
+
 #ifndef	NP2_X11_NP2_H__
 #define	NP2_X11_NP2_H__
 
@@ -62,6 +64,8 @@ typedef struct {
 	BYTE	disablemmx;
 	BYTE	drawinterp;
 	BYTE	F11KEY;
+
+	BYTE	cfgreadonly;
 } NP2OSCFG;
 
 
@@ -112,6 +116,7 @@ extern char statpath[MAX_PATH];
 extern char fontname[1024];
 extern char fontfilename[MAX_PATH];
 
+extern char np2appname[MAX_PATH];
 extern const char np2flagext[];
 extern const char np2resumeext[];
 

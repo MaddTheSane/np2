@@ -1,3 +1,5 @@
+/*	$Id: main.c,v 1.29 2008/03/18 15:33:14 monaka Exp $	*/
+
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
@@ -136,10 +138,6 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 			milstr_ncpy(modulefile, optarg, sizeof(modulefile));
-
-			/* resume/statsave dir */
-			file_cpyname(statpath, modulefile, sizeof(statpath));
-			file_cutname(statpath);
 			break;
 
 		case 'C':
@@ -149,14 +147,6 @@ main(int argc, char *argv[])
 			}
 			milstr_ncpy(timidity_cfgfile_path, optarg,
 			    sizeof(timidity_cfgfile_path));
-			break;
-
-		case 't':
-			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
-				fprintf(stderr, "Can't access %s.\n", optarg);
-				exit(1);
-			}
-			milstr_ncpy(fontfilename, optarg, sizeof(fontfilename));
 			break;
 
 		case 'v':
@@ -178,7 +168,7 @@ main(int argc, char *argv[])
 		if (env) {
 			/* base dir */
 			snprintf(modulefile, sizeof(modulefile),
-			    "%s/.np2", env);
+			    "%s/.%s", env, np2appname);
 			if (stat(modulefile, &sb) < 0) {
 				if (mkdir(modulefile, 0700) < 0) {
 					perror(modulefile);
@@ -190,24 +180,6 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 
-			/* font file */
-			snprintf(np2cfg.fontfile, sizeof(np2cfg.fontfile),
-			    "%s/font.bmp", modulefile);
-
-			/* resume/statsave dir */
-			file_cpyname(statpath, modulefile, sizeof(statpath));
-			file_catname(statpath, "/sav/", sizeof(statpath));
-			if (stat(statpath, &sb) < 0) {
-				if (mkdir(statpath, 0700) < 0) {
-					perror(statpath);
-					exit(1);
-				}
-			} else if (!S_ISDIR(sb.st_mode)) {
-				fprintf(stderr, "%s isn't directory.\n",
-				    statpath);
-				exit(1);
-			}
-
 			/* config file */
 			milstr_ncat(modulefile, "/np2rc", sizeof(modulefile));
 			if ((stat(modulefile, &sb) >= 0)
@@ -216,6 +188,27 @@ main(int argc, char *argv[])
 				    modulefile);
 			}
 		}
+	}
+	if (modulefile[0] != '\0') {
+		/* font file */
+		snprintf(np2cfg.fontfile, sizeof(np2cfg.fontfile),
+		    "%s/font.bmp", modulefile);
+
+		/* resume/statsave dir */
+		file_cpyname(statpath, modulefile, sizeof(statpath));
+		file_cutname(statpath);
+		file_catname(statpath, "/sav/", sizeof(statpath));
+		if (stat(statpath, &sb) < 0) {
+			if (mkdir(statpath, 0700) < 0) {
+				perror(statpath);
+				exit(1);
+			}
+		} else if (!S_ISDIR(sb.st_mode)) {
+			fprintf(stderr, "%s isn't directory.\n",
+			    statpath);
+			exit(1);
+		}
+		file_catname(statpath, np2appname, sizeof(statpath));
 	}
 	if (timidity_cfgfile_path[0] == '\0') {
 		file_cpyname(timidity_cfgfile_path, modulefile,
@@ -352,7 +345,8 @@ scrnmng_failure:
 	fontmng_terminate();
 
 fontmng_failure:
-	if (sys_updates & (SYS_UPDATECFG|SYS_UPDATEOSCFG)) {
+	if (!np2oscfg.cfgreadonly
+	 && (sys_updates & (SYS_UPDATECFG|SYS_UPDATEOSCFG))) {
 		initsave();
 		toolwin_writeini();
 		kdispwin_writeini();
