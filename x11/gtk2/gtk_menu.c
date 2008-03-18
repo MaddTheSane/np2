@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.12 2008/03/13 16:27:39 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.13 2008/03/18 15:03:48 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -60,6 +60,9 @@
 #include "gtk2/gtk_menu.h"
 #include "gtk2/gtk_keyboard.h"
 
+#ifndef	NSTATSAVE
+#define	NSTATSAVE	10
+#endif
 
 /* normal */
 static void cb_bmpsave(GtkAction *action, gpointer user_data);
@@ -341,6 +344,10 @@ static const gchar *ui_info =
 "   <separator/>\n"
 "   <menuitem action='exit'/>\n"
 "  </menu>\n"
+#if defined(SUPPORT_STATSAVE)
+"  <menu name='Stat' action='StatMenu'>\n"
+"  </menu>\n"
+#endif
 "  <menu name='FDD' action='FDDMenu'>\n"
 "  </menu>\n"
 "  <menu name='HardDisk' action='HardDiskMenu'>\n"
@@ -468,31 +475,6 @@ static const gchar *ui_info =
 "   <separator/>\n"
 "   <menuitem action='about'/>\n"
 "  </menu>\n"
-#if defined(SUPPORT_STATSAVE)
-"  <menu name='Stat' action='StatMenu'>\n"
-"   <menuitem action='stat00save'/>\n"
-"   <menuitem action='stat01save'/>\n"
-"   <menuitem action='stat02save'/>\n"
-"   <menuitem action='stat03save'/>\n"
-"   <menuitem action='stat04save'/>\n"
-"   <menuitem action='stat05save'/>\n"
-"   <menuitem action='stat06save'/>\n"
-"   <menuitem action='stat07save'/>\n"
-"   <menuitem action='stat08save'/>\n"
-"   <menuitem action='stat09save'/>\n"
-"   <separator/>\n"
-"   <menuitem action='stat00load'/>\n"
-"   <menuitem action='stat01load'/>\n"
-"   <menuitem action='stat02load'/>\n"
-"   <menuitem action='stat03load'/>\n"
-"   <menuitem action='stat04load'/>\n"
-"   <menuitem action='stat05load'/>\n"
-"   <menuitem action='stat06load'/>\n"
-"   <menuitem action='stat07load'/>\n"
-"   <menuitem action='stat08load'/>\n"
-"   <menuitem action='stat09load'/>\n"
-"  </menu>\n"
-#endif
 " </menubar>\n"
 "</ui>\n";
 
@@ -1897,10 +1879,50 @@ leave_notify_evhandler(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
 	return TRUE;
 }
 
+#if defined(SUPPORT_STATSAVE)
+static void
+create_menu_statsave(GtkUIManager *ui_manager, int num)
+{
+	char *name, *action;
+	guint id;
+	int i;
+
+	if (num <= 0)
+		return;
+
+	/* Save %d */
+	for (i = 0; i < num; i++) {
+		id = gtk_ui_manager_new_merge_id(ui_manager);
+		name = g_strdup_printf("Save %d", i);
+		action = g_strdup_printf("stat%02dsave", i);
+		gtk_ui_manager_add_ui(ui_manager, id, "/MainMenu/Stat",
+		    name, action, GTK_UI_MANAGER_MENUITEM, FALSE);
+		g_free(action);
+		g_free(name);
+	}
+
+	/* separator */
+	id = gtk_ui_manager_new_merge_id(ui_manager);
+	gtk_ui_manager_add_ui(ui_manager, id, "/MainMenu/Stat",
+	    "", "", GTK_UI_MANAGER_SEPARATOR, FALSE);
+
+	/* Load %d */
+	for (i = 0; i < num; i++) {
+		id = gtk_ui_manager_new_merge_id(ui_manager);
+		name = g_strdup_printf("Load %d", i);
+		action = g_strdup_printf("stat%02dload", i);
+		gtk_ui_manager_add_ui(ui_manager, id, "/MainMenu/Stat",
+		    name, action, GTK_UI_MANAGER_MENUITEM, FALSE);
+		g_free(action);
+		g_free(name);
+	}
+}
+#endif
+
 static void
 equip_fddrive(GtkUIManager *ui_manager, guint no)
 {
-	char path[32], name[32], action[32];
+	char *path, *name, *action;
 	guint id;
 
 	if (no >= 4)
@@ -1908,23 +1930,32 @@ equip_fddrive(GtkUIManager *ui_manager, guint no)
 	no++;
 
 	id = gtk_ui_manager_new_merge_id(ui_manager);
-	g_snprintf(name, sizeof(name), "Drive%d", no);
-	g_snprintf(action, sizeof(action), "Drive%dMenu", no);
+	name = g_strdup_printf("Drive%d", no);
+	action = g_strdup_printf("Drive%dMenu", no);
 	gtk_ui_manager_add_ui(ui_manager, id,
 	    "/MainMenu/FDD", name, action, GTK_UI_MANAGER_MENU, FALSE);
+	g_free(action);
+	g_free(name);
 
-	g_snprintf(path, sizeof(path), "/MainMenu/FDD/Drive%d", no);
-	id = gtk_ui_manager_new_merge_id(ui_manager);
-	g_snprintf(name, sizeof(name), "Drive%dOpen", no);
-	g_snprintf(action, sizeof(action), "disk%dopen", no);
-	gtk_ui_manager_add_ui(ui_manager, id,
-	    path, name, action, GTK_UI_MANAGER_MENUITEM, FALSE);
+	path = g_strdup_printf("/MainMenu/FDD/Drive%d", no);
 
 	id = gtk_ui_manager_new_merge_id(ui_manager);
-	g_snprintf(name, sizeof(name), "Drive%dEject", no);
-	g_snprintf(action, sizeof(action), "disk%deject", no);
+	name = g_strdup_printf("Drive%dOpen", no);
+	action = g_strdup_printf("disk%dopen", no);
 	gtk_ui_manager_add_ui(ui_manager, id,
 	    path, name, action, GTK_UI_MANAGER_MENUITEM, FALSE);
+	g_free(action);
+	g_free(name);
+
+	id = gtk_ui_manager_new_merge_id(ui_manager);
+	name = g_strdup_printf("Drive%dEject", no);
+	action = g_strdup_printf("disk%deject", no);
+	gtk_ui_manager_add_ui(ui_manager, id,
+	    path, name, action, GTK_UI_MANAGER_MENUITEM, FALSE);
+	g_free(action);
+	g_free(name);
+
+	g_free(path);
 }
 
 GtkWidget *
@@ -1960,6 +1991,19 @@ create_menu(void)
 		return NULL;
 	}
 
+#if defined(SUPPORT_STATSAVE)
+	if (np2oscfg.statsave) {
+		create_menu_statsave(menu_hdl.ui_manager, NSTATSAVE);
+	}
+#endif
+	if (np2cfg.fddequip) {
+		for (i = 0; i < 4; i++) {
+			if (np2cfg.fddequip & (1 << i)) {
+				equip_fddrive(menu_hdl.ui_manager, i);
+			}
+		}
+	}
+
 	xmenu_toggle_item(NULL, "dispvsync", np2cfg.DISPSYNC);
 	xmenu_toggle_item(NULL, "joyrapid", np2cfg.BTN_RAPID);
 	xmenu_toggle_item(NULL, "joyreverse", np2cfg.BTN_MODE);
@@ -1988,14 +2032,6 @@ create_menu(void)
 	xmenu_select_screenmode(scrnmode & SCRNMODE_FULLSCREEN);
 	xmenu_select_screensize(SCREEN_DEFMUL);
 	xmenu_select_soundboard(np2cfg.SOUND_SW);
-
-	if (np2cfg.fddequip) {
-		for (i = 0; i < 4; i++) {
-			if (np2cfg.fddequip & (1 << i)) {
-				equip_fddrive(menu_hdl.ui_manager, i);
-			}
-		}
-	}
 
 	menubar = gtk_ui_manager_get_widget(menu_hdl.ui_manager, "/MainMenu");
 
