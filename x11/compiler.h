@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.36 2008/03/13 16:27:39 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.37 2008/03/18 15:45:05 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -246,5 +246,6 @@ extern char timidity_cfgfile_path[MAX_PATH];
 #include "rect.h"
 #include "lstarray.h"
 #include "trace.h"
+#include "toolkit.h"
 
 #endif	/* NP2_X11_COMPILER_H__ */
