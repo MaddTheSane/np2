@@ -1,4 +1,4 @@
-/*	$Id: gtk_toolkit.h,v 1.3 2008/03/13 16:27:39 monaka Exp $	*/
+/*	$Id: gtk_toolkit.h,v 1.4 2008/03/18 14:47:03 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -40,7 +40,6 @@ void gui_gtk_widget_mainloop(void);
 void gui_gtk_widget_quit(void);
 void gui_gtk_event_process(void);
 void gui_gtk_set_window_title(const char* str);
-void gui_gtk_messagebox(const char* title, const char *msg);
 int gui_gtk_msgbox(const char* title, const char *msg, UINT flags);
 
 #ifdef __cplusplus
