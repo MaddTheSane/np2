@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.c,v 1.21 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: cpu_mem.c,v 1.22 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -33,225 +33,341 @@
 /*
  * memory access check
  */
-void
-cpu_memoryread_check(descriptor_t *sd, UINT32 offset, UINT length, int e)
-{
-	UINT32 uplimit;
+static int MEMCALL check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len);
+static void MEMCALL cpu_memoryread_check(descriptor_t *sdp, UINT32 offset, UINT len, int e);
+static void MEMCALL cpu_memorywrite_check(descriptor_t *sdp, UINT32 offset, UINT len, int e);
 
-	if (CPU_STAT_PM) {
-		/* invalid */
-		if (!sd->valid) {
-			VERBOSE(("cpu_memoryread_check: invalid"));
-			EXCEPTION(GP_EXCEPTION, 0);
-		}
-
-		/* not present */
-		if (!sd->p) {
-			VERBOSE(("cpu_memoryread_check: not present"));
-			EXCEPTION(e, 0);
-		}
-	}
-
-	switch (sd->type) {
-	case 0:	 case 1:	/* ro */
-	case 2:  case 3:	/* rw */
-	case 10: case 11:	/* rx */
-	case 14: case 15:	/* rxc */
-		if (offset > sd->u.seg.limit - length + 1) {
-			VERBOSE(("cpu_memoryread_check: offset(%08x) > sd->u.seg.limit(%08x) - length(%08x) + 1", offset, sd->u.seg.limit, length));
-			EXCEPTION(e, 0);
-		}
-		if (length - 1 > sd->u.seg.limit) {
-			VERBOSE(("cpu_memoryread_check: length(%08x) - 1 > sd->u.seg.limit(%08x)", length, sd->u.seg.limit));
-			EXCEPTION(e, 0);
-		}
-		break;
-
-	case 4:  case 5:	/* ro (expand down) */
-	case 6:  case 7:	/* rw (expand down) */
-		uplimit = sd->d ? 0xffffffff : 0x0000ffff;
-		if (offset <= sd->u.seg.limit) {
-			VERBOSE(("cpu_memoryread_check: offset(%08x) <= sd->u.seg.limit(%08x)", offset, sd->u.seg.limit));
-			EXCEPTION(e, 0);
-		}
-		if (offset > uplimit) {
-			VERBOSE(("cpu_memoryread_check: offset(%08x) > uplimit(%08x)", offset, uplimit));
-			EXCEPTION(e, 0);
-		}
-		if (uplimit - offset < length - 1) {
-			VERBOSE(("cpu_memoryread_check: uplimit(%08x) - offset(%08x) < length(%08x) - 1", uplimit, offset, length));
-			EXCEPTION(e, 0);
-		}
-		break;
-
-	default:
-		VERBOSE(("cpu_memoryread_check: invalid type (type = %d)", sd->type));
-		EXCEPTION(e, 0);
-		break;
-	}
-	sd->flag |= CPU_DESC_FLAG_READABLE;
-}
-
-void
-cpu_memorywrite_check(descriptor_t *sd, UINT32 offset, UINT length, int e)
-{
-	UINT32 uplimit;
-
-	if (CPU_STAT_PM) {
-		/* invalid */
-		if (!sd->valid) {
-			VERBOSE(("cpu_memorywrite_check: invalid"));
-			EXCEPTION(GP_EXCEPTION, 0);
-		}
-
-		/* not present */
-		if (!sd->p) {
-			VERBOSE(("cpu_memorywrite_check: not present"));
-			EXCEPTION(e, 0);
-		}
-
-		if (!sd->s) {
-			VERBOSE(("cpu_memorywrite_check: system segment"));
-			EXCEPTION(e, 0);
-		}
-	}
-
-	switch (sd->type) {
-	case 2: case 3:	/* rw */
-		if (offset > sd->u.seg.limit - length + 1) {
-			VERBOSE(("cpu_memorywrite_check: offset(%08x) > sd->u.seg.limit(%08x) - length(%08x) + 1", offset, sd->u.seg.limit, length));
-			EXCEPTION(e, 0);
-		}
-		if (length - 1 > sd->u.seg.limit) {
-			VERBOSE(("cpu_memorywrite_check: length(%08x) - 1 > sd->u.seg.limit(%08x)", length, sd->u.seg.limit));
-			EXCEPTION(e, 0);
-		}
-		break;
-
-	case 6: case 7:	/* rw (expand down) */
-		uplimit = sd->d ? 0xffffffff : 0x0000ffff;
-		if (offset <= sd->u.seg.limit) {
-			VERBOSE(("cpu_memorywrite_check: offset(%08x) <= sd->u.seg.limit(%08x)", offset, sd->u.seg.limit));
-			EXCEPTION(e, 0);
-		}
-		if (offset > uplimit) {
-			VERBOSE(("cpu_memorywrite_check: offset(%08x) > uplimit(%08x)", offset, uplimit));
-			EXCEPTION(e, 0);
-		}
-		if (uplimit - offset < length - 1) {
-			VERBOSE(("cpu_memorywrite_check: uplimit(%08x) - offset(%08x) < length(%08x) - 1", uplimit, offset, length));
-			EXCEPTION(e, 0);
-		}
-		break;
-
-	default:
-		VERBOSE(("cpu_memorywrite_check: invalid type (type = %d)", sd->type));
-		EXCEPTION(e, 0);
-		break;
-	}
-	sd->flag |= CPU_DESC_FLAG_WRITABLE;
-}
-
-void
-cpu_stack_push_check(UINT16 s, descriptor_t *sd, UINT32 esp, UINT length)
+static int MEMCALL
+check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 {
 	UINT32 limit;
+	UINT32 end;
 
-	if (CPU_STAT_PM) {
-		if (!sd->valid || !sd->p) {
-			VERBOSE(("cpu_stack_push_check: valid = %d, present = %d", sd->valid, sd->p));
-			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
-		}
-		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr) {
-			VERBOSE(("cpu_stack_push_check: s = %d, c = %d, wr", sd->s, sd->u.seg.c, sd->u.seg.wr));
-			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
-		}
+	__ASSERT(sdp != NULL);
+	__ASSERT(len > 0);
 
-		if (!sd->d) {
-			limit = 0xffff;
-		} else {
-			limit = 0xffffffff;
-		}
-		if (sd->u.seg.ec) {
-			/* expand-down stack */
-			if ((esp == 0)
-			 || (esp < length)
-			 || (esp - length <= sd->u.seg.limit)
-			 || (esp > limit)) {
-				VERBOSE(("cpu_stack_push_check: expand-down, esp = %08x, length = %08x", esp, length));
-				VERBOSE(("cpu_stack_push_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
-				VERBOSE(("cpu_stack_push_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
-				EXCEPTION(SS_EXCEPTION, s & 0xfffc);
-			}
-		} else {
-			/* expand-up stack */
-			if (esp == 0) {
-				if ((sd->d && (sd->u.seg.segend != 0xffffffff))
-				 || (!sd->d && (sd->u.seg.segend != 0xffff))) {
-					VERBOSE(("cpu_stack_push_check: expand-up, esp = %08x, length = %08x", esp, length));
-					VERBOSE(("cpu_stack_push_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
-					VERBOSE(("cpu_stack_push_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
-					EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+	len--;
+	end = offset + len;
+	limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
+
+	if (SEG_IS_DATA(sdp) && SEG_IS_EXPANDDOWN_DATA(sdp)) {
+		/* expand-down data segment */
+		if (sdp->u.seg.limit == 0) {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |       |
+			 * |       |   +  [1]  + 0000FFFFh
+			 * | valid |   |       |
+			 * |       |   +-------+ 0000FFFFh - len -1
+			 * |       |   | valid |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if (!SEG_IS_32BIT(sdp)) {
+				if ((len > limit)		/* len check */
+				 || (end > limit)) {		/* [1] */
+					return 0;
 				}
 			} else {
-				if ((esp < length)
-				 || (esp - 1 > sd->u.seg.limit)) {
-					VERBOSE(("cpu_stack_push_check: expand-up, esp = %08x, length = %08x", esp, length));
-					VERBOSE(("cpu_stack_push_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
-					VERBOSE(("cpu_stack_push_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
-					EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
+			}
+		} else {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |  [2]  |   |       |
+			 * +-------+   +.......+ FFFFFFFFh - len - 1
+			 * |       |   |  [2]  |
+			 * |       |   +.......+ 0000FFFFh
+			 * | valid |   |       |
+			 * |       |   +-------+ 0000FFFFh - len - 1
+			 * |       |   | valid |
+			 * +-------+   +-------+ seg.limit
+			 * |  [1]  |   |  [1]  |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if ((len > limit - sdp->u.seg.limit)	/* len check */
+			 || (end < offset)			/* wrap check */
+			 || (offset < sdp->u.seg.limit) 	/* [1] */
+			 || (end > limit)) {			/* [2] */
+				return 0;
+			}
+		}
+	} else {
+		/* expand-up data or code segment */
+		if (sdp->u.seg.limit == limit) {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |       |
+			 * |       |   +  [1]  + 0000FFFFh
+			 * | valid |   |       |
+			 * |       |   +-------+ 0000FFFFh - len - 1
+			 * |       |   | valid |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if (!SEG_IS_32BIT(sdp)) {
+				if ((len > limit)		/* len check */
+				 || (offset + len > limit)) {	/* [1] */
+					return 0;
 				}
+			} else {
+				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
+			}
+		} else {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |       |
+			 * |       |   +.......+ 0000FFFFh
+			 * |  [1]  |   |  [1]  |
+			 * +.......+   +.......+ seg.limit
+			 * |       |   |       |
+			 * +-------+   +-------+ seg.limit - len - 1
+			 * | valid |   | valid |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if ((len > sdp->u.seg.limit)		/* len check */
+			 || (end < offset)			/* wrap check */
+			 || (end > sdp->u.seg.limit)) {		/* [1] */
+				return 0;
 			}
 		}
 	}
+	return 1;	/* Ok! */
+}
+
+static void MEMCALL
+cpu_memoryread_check(descriptor_t *sdp, UINT32 offset, UINT len, int e)
+{
+
+	__ASSERT(sdp != NULL);
+	__ASSERT(len > 0);
+
+	if (!SEG_IS_VALID(sdp)) {
+		e = GP_EXCEPTION;
+		goto exc;
+	}
+	if (!SEG_IS_PRESENT(sdp)
+	 || SEG_IS_SYSTEM(sdp)
+	 || (SEG_IS_CODE(sdp) && !SEG_IS_READABLE_CODE(sdp))) {
+		goto exc;
+	}
+
+	switch (sdp->type) {
+	case 0:	 case 1:	/* ro */
+	case 2:  case 3:	/* rw */
+	case 4:  case 5:	/* ro (expand down) */
+	case 6:  case 7:	/* rw (expand down) */
+	case 10: case 11:	/* rx */
+	case 14: case 15:	/* rxc */
+		if (!check_limit_upstairs(sdp, offset, len))
+			goto exc;
+		break;
+
+	default:
+		goto exc;
+	}
+	sdp->flag |= CPU_DESC_FLAG_READABLE;
+	return;
+
+exc:
+	VERBOSE(("cpu_memoryread_check: check failure."));
+	VERBOSE(("offset = 0x%08x, len = %d", offset, len));
+#if defined(DEBUG)
+	segdesc_dump(sdp);
+#endif
+	EXCEPTION(e, 0);
+}
+
+static void MEMCALL
+cpu_memorywrite_check(descriptor_t *sdp, UINT32 offset, UINT len, int e)
+{
+
+	__ASSERT(sdp != NULL);
+	__ASSERT(len > 0);
+
+	if (!SEG_IS_VALID(sdp)) {
+		e = GP_EXCEPTION;
+		goto exc;
+	}
+	if (!SEG_IS_PRESENT(sdp)
+	 || SEG_IS_SYSTEM(sdp)
+	 || SEG_IS_CODE(sdp)
+	 || (SEG_IS_DATA(sdp) && !SEG_IS_WRITABLE_DATA(sdp))) {
+		goto exc;
+	}
+
+	switch (sdp->type) {
+	case 2: case 3:	/* rw */
+	case 6: case 7:	/* rw (expand down) */
+		if (!check_limit_upstairs(sdp, offset, len))
+			goto exc;
+		break;
+
+	default:
+		goto exc;
+	}
+	sdp->flag |= CPU_DESC_FLAG_WRITABLE | CPU_DESC_FLAG_READABLE;
+	return;
+
+exc:
+	VERBOSE(("cpu_memorywrite_check: check failure."));
+	VERBOSE(("offset = 0x%08x, len = %d", offset, len));
+#if defined(DEBUG)
+	segdesc_dump(sdp);
+#endif
+	EXCEPTION(e, 0);
 }
 
 void
-cpu_stack_pop_check(UINT16 s, descriptor_t *sd, UINT32 esp, UINT length)
+cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 {
 	UINT32 limit;
+	UINT32 start;
 
-	if (CPU_STAT_PM) {
-		if (!sd->valid || !sd->p) {
-			VERBOSE(("cpu_stack_pop_check: valid = %d, present = %d", sd->valid, sd->p));
-			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
-		}
-		if (!sd->s || sd->u.seg.c || !sd->u.seg.wr) {
-			VERBOSE(("cpu_stack_pop_check: s = %d, c = %d, wr", sd->s, sd->u.seg.c, sd->u.seg.wr));
-			EXCEPTION(SS_EXCEPTION, s & 0xfffc);
-		}
+	__ASSERT(sdp != NULL);
+	__ASSERT(len > 0);
 
-		if (!sd->d) {
-			limit = 0xffff;
-		} else {
-			limit = 0xffffffff;
+	if (!SEG_IS_VALID(sdp)
+	 || !SEG_IS_PRESENT(sdp)
+	 || SEG_IS_SYSTEM(sdp)
+	 || SEG_IS_CODE(sdp)
+	 || !SEG_IS_WRITABLE_DATA(sdp)) {
+		goto exc;
+	}
+
+	len--;
+	start = sp - len;
+	limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
+
+	if (SEG_IS_EXPANDDOWN_DATA(sdp)) {
+		/* expand-down stack */
+		if (!SEG_IS_32BIT(sdp)) {
+			if (sp > limit) {			/* [*] */
+				goto exc;
+			}
 		}
-		if (sd->u.seg.ec) {
-			/* expand-down stack */
-			if ((esp == limit)
-			 || ((limit - esp) + 1 < length)) {
-				VERBOSE(("cpu_stack_pop_check: expand-up, esp = %08x, length = %08x", esp, length));
-				VERBOSE(("cpu_stack_pop_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
-				VERBOSE(("cpu_stack_pop_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
-				EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+		if (sdp->u.seg.limit == 0) {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |  [*]  |
+			 * |       |   +-------+ 0000FFFFh
+			 * | valid |   |       |
+			 * |       |   | valid |
+			 * |       |   |       |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if (!SEG_IS_32BIT(sdp)) {
+				if (sp > limit) {		/* [1] */
+					goto exc;
+				}
+			} else {
+				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
 			}
 		} else {
-			/* expand-up stack */
-			if ((esp == limit)
-			 || (sd->u.seg.segend == 0)
-			 || (esp > sd->u.seg.limit)
-			 || ((sd->u.seg.limit - esp) + 1 < length)) {
-				VERBOSE(("cpu_stack_pop_check: expand-up, esp = %08x, length = %08x", esp, length));
-				VERBOSE(("cpu_stack_pop_check: limit = %08x, seglimit = %08x", limit, sd->u.seg.limit));
-				VERBOSE(("cpu_stack_pop_check: segbase = %08x, segend = %08x", sd->u.seg.segbase, sd->u.seg.segend));
-				EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |  [*]  |
+			 * | valid |   +-------+ 0000FFFFh
+			 * |       |   | valid |
+			 * +-------+   +-------+ seg.limit + len - 1
+			 * |       |   |       |
+			 * +..[1]..+   +..[1]..+ seg.limit
+			 * |       |   |       |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if ((len > limit - sdp->u.seg.limit)	/* len check */
+			 || (start > sp)			/* wrap check */
+			 || (start < sdp->u.seg.limit)) {	/* [1] */
+				goto exc;
+			}
+		}
+	} else {
+		/* expand-up stack */
+		if (sdp->u.seg.limit == limit) {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |  [1]  |
+			 * |       |   +-------+ 0000FFFFh
+			 * | valid |   |       |
+			 * |       |   | valid |
+			 * |       |   |       |
+			 * +-------+   +-------+ 00000000h
+			 */
+			if (!SEG_IS_32BIT(sdp)) {
+				if (sp > limit) {		/* [1] */
+					goto exc;
+				}
+			} else {
+				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
+			}
+		} else {
+			/*
+			 *   32bit       16bit
+			 * +-------+   +-------+ FFFFFFFFh
+			 * |       |   |       |
+			 * |  [1]  |   +  [1]  + 0000FFFFh
+			 * |       |   |       |
+			 * +-------+   +-------+ seg.limit
+			 * | valid |   | valid |
+			 * +.......+   +.......+ len - 1
+			 * |  [+]  |   |  [+]  |
+			 * +-------+   +-------+ 00000000h
+			 *
+			 * [+]: wrap check
+			 */
+			if ((len > sdp->u.seg.limit)		/* len check */
+			 || (start > sp)			/* wrap check */
+			 || (sp > sdp->u.seg.limit)) {		/* [1] */
+				goto exc;
 			}
 		}
 	}
+	return;
+
+exc:
+	VERBOSE(("cpu_stack_push_check: check failure."));
+	VERBOSE(("s = 0x%04x, sp = 0x%08x, len = %d", s, sp, len));
+#if defined(DEBUG)
+	segdesc_dump(sdp);
+#endif
+	EXCEPTION(SS_EXCEPTION, s & 0xfffc);
+}
+
+void
+cpu_stack_pop_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
+{
+
+	__ASSERT(sdp != NULL);
+	__ASSERT(len > 0);
+
+	if (!SEG_IS_VALID(sdp)
+	 || !SEG_IS_PRESENT(sdp)
+	 || SEG_IS_SYSTEM(sdp)
+	 || SEG_IS_CODE(sdp)
+	 || !SEG_IS_WRITABLE_DATA(sdp)) {
+		goto exc;
+	}
+
+	if (!check_limit_upstairs(sdp, sp, len))
+		goto exc;
+	return;
+
+exc:
+	VERBOSE(("cpu_stack_pop_check: check failure."));
+	VERBOSE(("s = 0x%04x, sp = 0x%08x, len = %d", s, sp, len));
+#if defined(DEBUG)
+	segdesc_dump(sdp);
+#endif
+	EXCEPTION(SS_EXCEPTION, s & 0xfffc);
 }
 
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
-INLINE static void
+static INLINE void
 check_memory_break_point(UINT32 address, UINT length, UINT rw)
 {
 	int i;
@@ -281,15 +397,15 @@ check_memory_break_point(UINT32 address, UINT length, UINT rw)
 UINT8 MEMCALL
 cpu_codefetch(UINT32 offset)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 #if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep;
 #endif
 
-	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-	if (offset <= sd->u.seg.limit) {
-		addr = sd->u.seg.segbase + offset;
+	sdp = &CPU_CS_DESC;
+	if (offset <= sdp->u.seg.limit) {
+		addr = sdp->u.seg.segbase + offset;
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread(addr);
 #if defined(IA32_SUPPORT_TLB)
@@ -307,16 +423,16 @@ cpu_codefetch(UINT32 offset)
 UINT16 MEMCALL
 cpu_codefetch_w(UINT32 offset)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 #if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep;
 	UINT16 value;
 #endif
 
-	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-	if (offset <= sd->u.seg.limit - 1) {
-		addr = sd->u.seg.segbase + offset;
+	sdp = &CPU_CS_DESC;
+	if (offset <= sdp->u.seg.limit - 1) {
+		addr = sdp->u.seg.segbase + offset;
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_w(addr);
 #if defined(IA32_SUPPORT_TLB)
@@ -342,7 +458,7 @@ cpu_codefetch_w(UINT32 offset)
 UINT32 MEMCALL
 cpu_codefetch_d(UINT32 offset)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 #if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep[2];
@@ -350,9 +466,9 @@ cpu_codefetch_d(UINT32 offset)
 	UINT remain;
 #endif
 
-	sd = &CPU_STAT_SREG(CPU_CS_INDEX);
-	if (offset <= sd->u.seg.limit - 3) {
-		addr = sd->u.seg.segbase + offset;
+	sdp = &CPU_CS_DESC;
+	if (offset <= sdp->u.seg.limit - 3) {
+		addr = sdp->u.seg.segbase + offset;
 		if (!CPU_STAT_PAGING)
 			return cpu_memoryread_d(addr);
 #if defined(IA32_SUPPORT_TLB)
@@ -396,47 +512,49 @@ cpu_codefetch_d(UINT32 offset)
 	return 0;	/* compiler happy */
 }
 
+#undef	ucrw
+
 /*
  * additional physical address memory access functions
  */
 UINT64 MEMCALL
-cpu_memoryread_q(UINT32 address)
+cpu_memoryread_q(UINT32 paddr)
 {
 	UINT64 value;
 
-	value = cpu_memoryread_d(address);
-	value += (UINT64)cpu_memoryread_d(address + 4) << 32;
+	value = cpu_memoryread_d(paddr);
+	value += (UINT64)cpu_memoryread_d(paddr + 4) << 32;
 
 	return value;
 }
 
+void MEMCALL
+cpu_memorywrite_q(UINT32 paddr, UINT64 value)
+{
+
+	cpu_memorywrite_d(paddr, (UINT32)value);
+	cpu_memorywrite_d(paddr + 4, (UINT32)(value >> 32));
+}
+
 REG80 MEMCALL
-cpu_memoryread_f(UINT32 address)
+cpu_memoryread_f(UINT32 paddr)
 {
 	REG80 value;
-	UINT i;
+	int i;
 
-	for (i = 0; i < sizeof(REG80); ++i) {
-		value.b[i] = cpu_memoryread(address + i);
+	for (i = 0; i < (int)sizeof(REG80); ++i) {
+		value.b[i] = cpu_memoryread(paddr + i);
 	}
 	return value;
 }
 
 void MEMCALL
-cpu_memorywrite_q(UINT32 address, UINT64 value)
+cpu_memorywrite_f(UINT32 paddr, const REG80 *value)
 {
+	int i;
 
-	cpu_memorywrite_d(address, (UINT32)value);
-	cpu_memorywrite_d(address + 4, (UINT32)(value >> 32));
-}
-
-void MEMCALL
-cpu_memorywrite_f(UINT32 address, const REG80 *value)
-{
-	UINT i;
-
-	for (i = 0; i < sizeof(REG80); ++i) {
-		cpu_memorywrite(address + i, value->b[i]);
+	for (i = 0; i < (int)sizeof(REG80); ++i) {
+		cpu_memorywrite(paddr + i, value->b[i]);
 	}
 }
 
@@ -452,47 +570,34 @@ VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(d, UINT32, 4)
 UINT64 MEMCALL
 cpu_vmemoryread_q(int idx, UINT32 offset)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
 
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
+	sdp = &CPU_STAT_SREG(idx);
+	if (!SEG_IS_VALID(sdp)) {
 		exc = GP_EXCEPTION;
 		goto err;
 	}
 
-	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
-		cpu_memoryread_check(sd, offset, 8,
+	if (!(sdp->flag & CPU_DESC_FLAG_READABLE)) {
+		cpu_memoryread_check(sdp, offset, 8,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 4: case 5: case 6: case 7:
-			if (offset - (8 - 1) <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - (8 - 1))
-				goto range_failure;
-			break;
-		}
+	} else if (!(sdp->flag & CPU_DESC_FLAG_WHOLEADR)) {
+		if (!check_limit_upstairs(sdp, offset, 8))
+			goto range_failure;
 	} 
-	addr = sd->u.seg.segbase + offset;
+	addr = sdp->u.seg.segbase + offset;
 	check_memory_break_point(addr, 8, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PAGING)
 		return cpu_memoryread_q(addr);
 	return cpu_linear_memory_read_q(addr, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
 
 range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemoryread_q: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
+	VERBOSE(("cpu_vmemoryread_q: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
+	exc = (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION;
 err:
 	EXCEPTION(exc, 0);
 	return 0;	/* compiler happy */
@@ -501,50 +606,37 @@ err:
 void MEMCALL
 cpu_vmemorywrite_q(int idx, UINT32 offset, UINT64 value)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
 
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
+	sdp = &CPU_STAT_SREG(idx);
+	if (!SEG_IS_VALID(sdp)) {
 		exc = GP_EXCEPTION;
 		goto err;
 	}
 
-	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
-		cpu_memorywrite_check(sd, offset, 8,
+	if (!(sdp->flag & CPU_DESC_FLAG_WRITABLE)) {
+		cpu_memorywrite_check(sdp, offset, 8,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 6: case 7:
-			if (offset - (8 - 1) <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - (8 - 1))
-				goto range_failure;
-			break;
-		}
+	} else if (!(sdp->flag & CPU_DESC_FLAG_WHOLEADR)) {
+		if (!check_limit_upstairs(sdp, offset, 8))
+			goto range_failure;
 	}
-	addr = sd->u.seg.segbase + offset;
+	addr = sdp->u.seg.segbase + offset;
 	check_memory_break_point(addr, 8, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PAGING) {
 		cpu_memorywrite_q(addr, value);
 	} else {
-		cpu_linear_memory_write_q(addr, value, CPU_PAGE_WRITE_DATA | CPU_STAT_USER_MODE);
+		cpu_linear_memory_write_q(addr, value, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
 	}
 	return;
 
 range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemorywrite_q: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
+	VERBOSE(("cpu_vmemorywrite_q: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
+	exc = (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION;
 err:
 	EXCEPTION(exc, 0);
 }
@@ -552,47 +644,34 @@ err:
 REG80 MEMCALL
 cpu_vmemoryread_f(int idx, UINT32 offset)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
 
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
+	sdp = &CPU_STAT_SREG(idx);
+	if (!SEG_IS_VALID(sdp)) {
 		exc = GP_EXCEPTION;
 		goto err;
 	}
 
-	if (!(sd->flag & CPU_DESC_FLAG_READABLE)) {
-		cpu_memoryread_check(sd, offset, 10,
+	if (!(sdp->flag & CPU_DESC_FLAG_READABLE)) {
+		cpu_memoryread_check(sdp, offset, 10,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 4: case 5: case 6: case 7:
-			if (offset - (10 - 1) <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - (10 - 1))
-				goto range_failure;
-			break;
-		}
+	} else if (!(sdp->flag & CPU_DESC_FLAG_WHOLEADR)) {
+		if (!check_limit_upstairs(sdp, offset, 10))
+			goto range_failure;
 	} 
-	addr = sd->u.seg.segbase + offset;
+	addr = sdp->u.seg.segbase + offset;
 	check_memory_break_point(addr, 10, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PAGING)
 		return cpu_memoryread_f(addr);
-	return cpu_linear_memory_read_f(addr, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
+	return cpu_linear_memory_read_f(addr, CPU_PAGE_READ_DATA | CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
 
 range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemoryread_f: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
+	VERBOSE(("cpu_vmemoryread_f: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
+	exc = (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION;
 err:
 	EXCEPTION(exc, 0);
 	{
@@ -605,35 +684,26 @@ err:
 void MEMCALL
 cpu_vmemorywrite_f(int idx, UINT32 offset, const REG80 *value)
 {
-	descriptor_t *sd;
+	descriptor_t *sdp;
 	UINT32 addr;
 	int exc;
 
 	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
 
-	sd = &CPU_STAT_SREG(idx);
-	if (!sd->valid) {
+	sdp = &CPU_STAT_SREG(idx);
+	if (!SEG_IS_VALID(sdp)) {
 		exc = GP_EXCEPTION;
 		goto err;
 	}
 
-	if (!(sd->flag & CPU_DESC_FLAG_WRITABLE)) {
-		cpu_memorywrite_check(sd, offset, 10,
+	if (!(sdp->flag & CPU_DESC_FLAG_WRITABLE)) {
+		cpu_memorywrite_check(sdp, offset, 10,
 		    (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION);
-	} else {
-		switch (sd->type) {
-		case 6: case 7:
-			if (offset - (10 - 1) <= sd->u.seg.limit)
-				goto range_failure;
-			break;
-
-		default:
-			if (offset > sd->u.seg.limit - (10 - 1))
-				goto range_failure;
-			break;
-		}
+	} else if (!(sdp->flag & CPU_DESC_FLAG_WHOLEADR)) {
+		if (!check_limit_upstairs(sdp, offset, 10))
+			goto range_failure;
 	}
-	addr = sd->u.seg.segbase + offset;
+	addr = sdp->u.seg.segbase + offset;
 	check_memory_break_point(addr, 10, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PAGING) {
 		cpu_memorywrite_f(addr, value);
@@ -643,12 +713,8 @@ cpu_vmemorywrite_f(int idx, UINT32 offset, const REG80 *value)
 	return;
 
 range_failure:
-	if (idx == CPU_SS_INDEX) {
-		exc = SS_EXCEPTION;
-	} else {
-		exc = GP_EXCEPTION;
-	}
-	VERBOSE(("cpu_vmemorywrite_f: type = %d, offset = %08x, limit = %08x", sd->type, offset, sd->u.seg.limit));
+	VERBOSE(("cpu_vmemorywrite_f: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
+	exc = (idx == CPU_SS_INDEX) ? SS_EXCEPTION : GP_EXCEPTION;
 err:
 	EXCEPTION(exc, 0);
 }

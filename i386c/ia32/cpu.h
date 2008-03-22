@@ -1,4 +1,4 @@
-/*	$Id: cpu.h,v 1.36 2008/01/25 18:02:18 monaka Exp $	*/
+/*	$Id: cpu.h,v 1.37 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -174,7 +174,8 @@ typedef struct {
 	UINT8		hlt;
 	UINT8		bp;	/* break point bitmap */
 	UINT8		bp_ev;	/* break point event */
-	UINT8		pad;
+
+	UINT8		backout_sp;	/* backout ESP, when exception */
 
 	UINT32		pde_base;
 
@@ -360,22 +361,8 @@ extern sigjmp_buf	exec_1step_jmpbuf;
 #define	CPU_REGS_SREG(n)	CPU_STATSAVE.cpu_regs.sreg[(n)]
 
 #define	CPU_STAT_SREG(n)	CPU_STATSAVE.cpu_stat.sreg[(n)]
-#define	CPU_STAT_SREGBASE(n)	CPU_STATSAVE.cpu_stat.sreg[(n)].u.seg.segbase
-#define	CPU_STAT_SREGEND(n)	CPU_STATSAVE.cpu_stat.sreg[(n)].u.seg.segend
-#define	CPU_STAT_SREGLIMIT(n)	CPU_STATSAVE.cpu_stat.sreg[(n)].u.seg.limit
-#define	CPU_STAT_SREG_CLEAR(n) \
-do { \
-	memset(&CPU_STAT_SREG(n), 0, sizeof(descriptor_t)); \
-} while (/*CONSTCOND*/ 0)
-#define	CPU_STAT_SREG_INIT(n) \
-do { \
-	descriptor_t sd; \
-\
-	memset(&sd, 0, sizeof(sd)); \
-	sd.u.seg.limit = 0xffff; \
-	CPU_SET_SEGDESC_DEFAULT(&sd, (n), 0); \
-	CPU_STAT_SREG(n) = sd; \
-} while (/*CONSTCOND*/ 0)
+#define	CPU_STAT_SREGBASE(n)	CPU_STAT_SREG((n)).u.seg.segbase
+#define	CPU_STAT_SREGLIMIT(n)	CPU_STAT_SREG((n)).u.seg.limit
 
 
 #define CPU_AL		CPU_REGS_BYTEL(CPU_EAX_INDEX)
@@ -415,6 +402,13 @@ do { \
 #define	CPU_DS		CPU_REGS_SREG(CPU_DS_INDEX)
 #define	CPU_FS		CPU_REGS_SREG(CPU_FS_INDEX)
 #define	CPU_GS		CPU_REGS_SREG(CPU_GS_INDEX)
+
+#define	CPU_ES_DESC	CPU_STAT_SREG(CPU_ES_INDEX)
+#define	CPU_CS_DESC	CPU_STAT_SREG(CPU_CS_INDEX)
+#define	CPU_SS_DESC	CPU_STAT_SREG(CPU_SS_INDEX)
+#define	CPU_DS_DESC	CPU_STAT_SREG(CPU_DS_INDEX)
+#define	CPU_FS_DESC	CPU_STAT_SREG(CPU_FS_INDEX)
+#define	CPU_GS_DESC	CPU_STAT_SREG(CPU_GS_INDEX)
 
 #define ES_BASE		CPU_STAT_SREGBASE(CPU_ES_INDEX)
 #define CS_BASE		CPU_STAT_SREGBASE(CPU_CS_INDEX)
@@ -458,8 +452,8 @@ do { \
 #define	REAL_FLAGREG	((CPU_FLAG & 0xf7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 #define	REAL_EFLAGREG	((CPU_EFLAG & 0xfffff7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 
-void set_flags(UINT16 new_flags, UINT16 mask);
-void set_eflags(UINT32 new_flags, UINT32 mask);
+void FASTCALL set_flags(UINT16 new_flags, UINT16 mask);
+void FASTCALL set_eflags(UINT32 new_flags, UINT32 mask);
 
 
 #define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32
@@ -472,7 +466,6 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 
 #define	CPU_STAT_CS_BASE	CPU_STAT_SREGBASE(CPU_CS_INDEX)
 #define	CPU_STAT_CS_LIMIT	CPU_STAT_SREGLIMIT(CPU_CS_INDEX)
-#define	CPU_STAT_CS_END		CPU_STAT_SREGEND(CPU_CS_INDEX)
 
 #define	CPU_STAT_ADRSMASK	CPU_STATSAVE.cpu_stat.adrsmask
 #define	CPU_STAT_SS32		CPU_STATSAVE.cpu_stat.ss_32
@@ -481,9 +474,19 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 #define	CPU_STAT_PAGING		CPU_STATSAVE.cpu_stat.paging
 #define	CPU_STAT_VM86		CPU_STATSAVE.cpu_stat.vm86
 #define	CPU_STAT_WP		CPU_STATSAVE.cpu_stat.page_wp
-#define	CPU_STAT_CPL		CPU_STAT_SREG(CPU_CS_INDEX).rpl
+#define	CPU_STAT_CPL		CPU_CS_DESC.rpl
 #define	CPU_STAT_USER_MODE	CPU_STATSAVE.cpu_stat.user_mode
 #define	CPU_STAT_PDE_BASE	CPU_STATSAVE.cpu_stat.pde_base
+#define	CPU_SET_PREV_ESP1(esp) \
+do { \
+	CPU_STATSAVE.cpu_stat.backout_sp = 1; \
+	CPU_PREV_ESP = (esp); \
+} while (/*CONSTCOND*/0)
+#define	CPU_SET_PREV_ESP()	CPU_SET_PREV_ESP1(CPU_ESP)
+#define	CPU_CLEAR_PREV_ESP(esp) \
+do { \
+	CPU_STATSAVE.cpu_stat.backout_sp = 0; \
+} while (/*CONSTCOND*/0)
 
 #define	CPU_STAT_HLT		CPU_STATSAVE.cpu_stat.hlt
 
@@ -503,12 +506,6 @@ void set_eflags(UINT32 new_flags, UINT32 mask);
 
 #define	CPU_MODE_SUPERVISER	0
 #define	CPU_MODE_USER		(1 << 3)
-#define	CPU_SET_CPL(cpl) \
-do { \
-	UINT8 __t = (UINT8)((cpl) & 3); \
-	CPU_STAT_CPL = __t; \
-	CPU_STAT_USER_MODE = (__t == 3) ? CPU_MODE_USER : CPU_MODE_SUPERVISER; \
-} while (/*CONSTCOND*/ 0)
 
 #define CPU_CLI \
 do { \
@@ -528,14 +525,12 @@ do { \
 #define CPU_IDTR_BASE	CPU_STATSAVE.cpu_sysregs.idtr_base
 #define CPU_LDTR	CPU_STATSAVE.cpu_sysregs.ldtr
 #define CPU_LDTR_DESC	CPU_STATSAVE.cpu_stat.ldtr
-#define CPU_LDTR_BASE	CPU_STATSAVE.cpu_stat.ldtr.u.seg.segbase
-#define CPU_LDTR_END	CPU_STATSAVE.cpu_stat.ldtr.u.seg.segend
-#define CPU_LDTR_LIMIT	CPU_STATSAVE.cpu_stat.ldtr.u.seg.limit
+#define CPU_LDTR_BASE	CPU_LDTR_DESC.u.seg.segbase
+#define CPU_LDTR_LIMIT	CPU_LDTR_DESC.u.seg.limit
 #define CPU_TR		CPU_STATSAVE.cpu_sysregs.tr
 #define CPU_TR_DESC	CPU_STATSAVE.cpu_stat.tr
-#define CPU_TR_BASE	CPU_STATSAVE.cpu_stat.tr.u.seg.segbase
-#define CPU_TR_END	CPU_STATSAVE.cpu_stat.tr.u.seg.segend
-#define CPU_TR_LIMIT	CPU_STATSAVE.cpu_stat.tr.u.seg.limit
+#define CPU_TR_BASE	CPU_TR_DESC.u.seg.segbase
+#define CPU_TR_LIMIT	CPU_TR_DESC.u.seg.limit
 
 /*
  * control register
@@ -643,6 +638,9 @@ void FASTCALL change_pm(BOOL onoff);
 void FASTCALL change_vm(BOOL onoff);
 void FASTCALL change_pg(BOOL onoff);
 
+void FASTCALL set_cr3(UINT32 new_cr3);
+void FASTCALL set_cpl(int new_cpl);
+
 extern const UINT8 iflags[];
 #define	szpcflag	iflags
 extern UINT8 szpflag_w[0x10000];
@@ -740,6 +738,7 @@ void idtr_dump(UINT32 base, UINT limit);
 void ldtr_dump(UINT32 base, UINT limit);
 void tr_dump(UINT16 selector, UINT32 base, UINT limit);
 UINT32 pde_dump(UINT32 base, int idx);
+void segdesc_dump(descriptor_t *sdp);
 UINT32 convert_laddr_to_paddr(UINT32 laddr);
 UINT32 convert_vaddr_to_paddr(unsigned int idx, UINT32 offset);
 

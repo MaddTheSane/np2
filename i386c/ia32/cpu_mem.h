@@ -1,4 +1,4 @@
-/*	$Id: cpu_mem.h,v 1.10 2007/02/06 14:20:57 monaka Exp $	*/
+/*	$Id: cpu_mem.h,v 1.11 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -38,12 +38,12 @@ extern "C" {
 /*
  * memory access check
  */
-void cpu_memoryread_check(descriptor_t *sd, UINT32 madr, UINT length, int e);
-void cpu_memorywrite_check(descriptor_t *sd, UINT32 madr, UINT length, int e);
-void cpu_stack_push_check(UINT16 s, descriptor_t *sd, UINT32 madr, UINT length);
-void cpu_stack_pop_check(UINT16 s, descriptor_t *sd, UINT32 madr, UINT length);
-#define	STACK_PUSH_CHECK(s, sd, addr, n) cpu_stack_push_check(s, sd, addr, n)
-#define	STACK_POP_CHECK(s, sd, addr, n) cpu_stack_pop_check(s, sd, addr, n)
+void cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len);
+void cpu_stack_pop_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len);
+#define	SS_PUSH_CHECK(sp, len) \
+	cpu_stack_push_check(CPU_SS_INDEX, &CPU_SS_DESC, (sp), (len))
+#define	SS_POP_CHECK(sp, len) \
+	cpu_stack_pop_check(CPU_SS_INDEX, &CPU_SS_DESC, (sp), (len))
 
 /*
  * virtual address function
@@ -68,17 +68,17 @@ UINT32 MEMCALL cpu_memory_access_va_RMW_d(int idx, UINT32 offset, UINT32 (*func)
 /*
  * code fetch
  */
-UINT8 MEMCALL cpu_codefetch(UINT32 madr);
-UINT16 MEMCALL cpu_codefetch_w(UINT32 madr);
-UINT32 MEMCALL cpu_codefetch_d(UINT32 madr);
+UINT8 MEMCALL cpu_codefetch(UINT32 offset);
+UINT16 MEMCALL cpu_codefetch_w(UINT32 offset);
+UINT32 MEMCALL cpu_codefetch_d(UINT32 offset);
 
 /*
  * additional physical address function
  */
-UINT64 MEMCALL cpu_memoryread_q(UINT32 address);
-REG80 MEMCALL cpu_memoryread_f(UINT32 address);
-void MEMCALL cpu_memorywrite_q(UINT32 address, UINT64 value);
-void MEMCALL cpu_memorywrite_f(UINT32 address, const REG80 *value);
+UINT64 MEMCALL cpu_memoryread_q(UINT32 paddr);
+REG80 MEMCALL cpu_memoryread_f(UINT32 paddr);
+void MEMCALL cpu_memorywrite_q(UINT32 paddr, UINT64 value);
+void MEMCALL cpu_memorywrite_f(UINT32 paddr, const REG80 *value);
 
 #ifdef __cplusplus
 }

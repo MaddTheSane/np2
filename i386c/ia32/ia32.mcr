@@ -1,4 +1,4 @@
-/*	$Id: ia32.mcr,v 1.24 2008/01/25 18:07:30 monaka Exp $	*/
+/*	$Id: ia32.mcr,v 1.25 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -89,25 +89,7 @@ do { \
 /*
  * instruction pointer
  */
-#define	SET_EIP(v) \
-do { \
-	UINT32 __new_ip = (v); \
-	if (__new_ip > CPU_STAT_CS_LIMIT) { \
-		VERBOSE(("SET_EIP: new_ip = %08x, limit = %08x", __new_ip, CPU_STAT_CS_LIMIT)); \
-		EXCEPTION(GP_EXCEPTION, 0); \
-	} \
-	CPU_EIP = __new_ip; \
-} while (/*CONSTCOND*/ 0)
-
-#define	ADD_EIP(v) \
-do { \
-	UINT32 __tmp_ip = CPU_EIP + (v); \
-	if (!CPU_STATSAVE.cpu_inst_default.op_32) { \
-		__tmp_ip &= 0xffff; \
-	} \
-	SET_EIP(__tmp_ip); \
-} while (/*CONSTCOND*/ 0)
-
+/* コードフェッチに使用するので、OpSize の影響を受けてはいけない */
 #define	_ADD_EIP(v) \
 do { \
 	UINT32 __tmp_ip = CPU_EIP + (v); \
@@ -716,17 +698,17 @@ do { \
 #define	REGPUSH(reg, clock) \
 do { \
 	UINT16 new_sp = CPU_SP - 2; \
+	CPU_WORKCLOCK(clock); \
 	cpu_vmemorywrite_w(CPU_SS_INDEX, new_sp, reg); \
 	CPU_SP = new_sp; \
-	CPU_WORKCLOCK(clock); \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH_32(reg, clock) \
 do { \
 	UINT32 new_esp = CPU_ESP - 4; \
+	CPU_WORKCLOCK(clock); \
 	cpu_vmemorywrite_d(CPU_SS_INDEX, new_esp, reg); \
 	CPU_ESP = new_esp; \
-	CPU_WORKCLOCK(clock); \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH0(reg) \
@@ -788,16 +770,16 @@ do { \
 
 #define	REGPOP(reg, clock) \
 do { \
+	CPU_WORKCLOCK(clock); \
 	(reg) = cpu_vmemoryread_w(CPU_SS_INDEX, CPU_SP); \
 	CPU_SP += 2; \
-	CPU_WORKCLOCK(clock); \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPOP_32(reg, clock) \
 do { \
+	CPU_WORKCLOCK(clock); \
 	(reg) = cpu_vmemoryread_d(CPU_SS_INDEX, CPU_ESP); \
 	CPU_ESP += 4; \
-	CPU_WORKCLOCK(clock); \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPOP0(reg) \
@@ -893,32 +875,50 @@ do { \
  */
 #define	JMPSHORT(clock) \
 do { \
-	UINT32 __ip; \
+	UINT32 __new_ip; \
+	UINT32 __dest; \
 	CPU_WORKCLOCK(clock); \
-	GET_PCBYTESD(__ip); \
-	ADD_EIP(__ip); \
+	GET_PCBYTESD(__dest); \
+	__new_ip = CPU_EIP + __dest; \
+	if (!CPU_INST_OP32) { \
+		__new_ip &= 0xffff; \
+	} \
+	if (__new_ip > CPU_STAT_CS_LIMIT) { \
+		EXCEPTION(GP_EXCEPTION, 0); \
+	} \
+	CPU_EIP = __new_ip; \
 } while (/*CONSTCOND*/ 0)
 
 #define	JMPNEAR(clock) \
 do { \
-	UINT32 __ip; \
+	UINT16 __new_ip; \
+	SINT16 __dest; \
 	CPU_WORKCLOCK(clock); \
-	GET_PCWORDS(__ip); \
-	ADD_EIP(__ip); \
+	GET_PCWORDS(__dest); \
+	__new_ip = CPU_IP + __dest; \
+	if (__new_ip > CPU_STAT_CS_LIMIT) { \
+		EXCEPTION(GP_EXCEPTION, 0); \
+	} \
+	CPU_EIP = __new_ip; \
 } while (/*CONSTCOND*/ 0)
 
-#define	JMPNEAR_4(clock) \
+#define	JMPNEAR32(clock) \
 do { \
-	UINT32 __ip; \
+	UINT32 __new_ip; \
+	UINT32 __dest; \
 	CPU_WORKCLOCK(clock); \
-	GET_PCDWORD(__ip); \
-	ADD_EIP(__ip); \
+	GET_PCDWORD(__dest); \
+	__new_ip = CPU_EIP + __dest; \
+	if (__new_ip > CPU_STAT_CS_LIMIT) { \
+		EXCEPTION(GP_EXCEPTION, 0); \
+	} \
+	CPU_EIP = __new_ip; \
 } while (/*CONSTCOND*/ 0)
 
 #define	JMPNOP(clock, d) \
 do { \
 	CPU_WORKCLOCK(clock); \
-	ADD_EIP((d)); \
+	_ADD_EIP((d)); \
 } while (/*CONSTCOND*/ 0)
 
 

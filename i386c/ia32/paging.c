@@ -1,4 +1,4 @@
-/*	$Id: paging.c,v 1.29 2007/02/06 14:20:57 monaka Exp $	*/
+/*	$Id: paging.c,v 1.30 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
@@ -187,10 +187,13 @@ static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw);
 static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw);
 #endif
 
+#define	PAGE_SIZE	0x1000
+#define	PAGE_MASK	(PAGE_SIZE - 1)
+
 UINT8 MEMCALL
 cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr;
 
@@ -205,12 +208,12 @@ cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 UINT16 MEMCALL
 cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr[2];
 
 	paddr[0] = paging(laddr, ucrw);
-	if ((laddr + 1) & 0x00000fff) {
+	if ((laddr + 1) & PAGE_MASK) {
 		value = cpu_memoryread_w(paddr[0]);
 		result = (*func)(value, arg);
 		cpu_memorywrite_w(paddr[0], (UINT16)result);
@@ -228,13 +231,13 @@ cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 UINT32 MEMCALL
 cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|CPU_STAT_USER_MODE;
+	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
 	UINT32 paddr[2];
 	UINT remain;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 4) {
 		value = cpu_memoryread_d(paddr[0]);
 		result = (*func)(value, arg);
@@ -294,7 +297,7 @@ cpu_linear_memory_read_w(UINT32 laddr, const int ucrw)
 	UINT16 value;
 
 	paddr[0] = paging(laddr, ucrw);
-	if ((laddr + 1) & 0x00000fff) {
+	if ((laddr + 1) & PAGE_MASK) {
 		return cpu_memoryread_w(paddr[0]);
 	} else {
 		paddr[1] = paging(laddr + 1, ucrw);
@@ -312,7 +315,7 @@ cpu_linear_memory_read_d(UINT32 laddr, const int ucrw)
 	UINT remain;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 4) {
 		return cpu_memoryread_d(paddr[0]);
 	} else {
@@ -352,7 +355,7 @@ cpu_linear_memory_read_q(UINT32 laddr, const int ucrw)
 	UINT remain;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 8) {
 		return cpu_memoryread_q(paddr[0]);
 	} else {
@@ -375,7 +378,7 @@ cpu_linear_memory_read_q(UINT32 laddr, const int ucrw)
 			value = cpu_memoryread(paddr[0]);
 			value += (UINT64)cpu_memoryread_d(paddr[0] + 1) << 8;
 			value += (UINT64)cpu_memoryread_w(paddr[1]) << 40;
-			value += (UINT64)cpu_memoryread(paddr[1] + 1) << 56;
+			value += (UINT64)cpu_memoryread(paddr[1] + 2) << 56;
 			break;
 
 		case 4:
@@ -421,7 +424,7 @@ cpu_linear_memory_read_f(UINT32 laddr, const int ucrw)
 	UINT i, j;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 10) {
 		return cpu_memoryread_f(paddr[0]);
 	} else {
@@ -439,7 +442,7 @@ cpu_linear_memory_read_f(UINT32 laddr, const int ucrw)
 void MEMCALL
 cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
+	const int ucrw = CPU_PAGE_WRITE_DATA|user_mode;
 	UINT32 paddr;
 
 	paddr = paging(laddr, ucrw);
@@ -449,11 +452,11 @@ cpu_linear_memory_write_b(UINT32 laddr, UINT8 value, const int user_mode)
 void MEMCALL
 cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
+	const int ucrw = CPU_PAGE_WRITE_DATA|user_mode;
 	UINT32 paddr[2];
 
 	paddr[0] = paging(laddr, ucrw);
-	if ((laddr + 1) & 0x00000fff) {
+	if ((laddr + 1) & PAGE_MASK) {
 		cpu_memorywrite_w(paddr[0], value);
 	} else {
 		paddr[1] = paging(laddr + 1, ucrw);
@@ -465,12 +468,12 @@ cpu_linear_memory_write_w(UINT32 laddr, UINT16 value, const int user_mode)
 void MEMCALL
 cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
+	const int ucrw = CPU_PAGE_WRITE_DATA|user_mode;
 	UINT32 paddr[2];
 	UINT remain;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 4) {
 		cpu_memorywrite_d(paddr[0], value);
 	} else {
@@ -499,12 +502,12 @@ cpu_linear_memory_write_d(UINT32 laddr, UINT32 value, const int user_mode)
 void MEMCALL
 cpu_linear_memory_write_q(UINT32 laddr, UINT64 value, const int user_mode)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
+	const int ucrw = CPU_PAGE_WRITE_DATA|user_mode;
 	UINT32 paddr[2];
 	UINT remain;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 8) {
 		cpu_memorywrite_q(paddr[0], value);
 	} else {
@@ -518,6 +521,7 @@ cpu_linear_memory_write_q(UINT32 laddr, UINT64 value, const int user_mode)
 			break;
 
 		case 6:
+			cpu_memorywrite_w(paddr[0], (UINT16)value);
 			cpu_memorywrite_d(paddr[0] + 2, (UINT32)(value >> 16));
 			cpu_memorywrite_w(paddr[1], (UINT16)(value >> 48));
 			break;
@@ -560,13 +564,13 @@ cpu_linear_memory_write_q(UINT32 laddr, UINT64 value, const int user_mode)
 void MEMCALL
 cpu_linear_memory_write_f(UINT32 laddr, const REG80 *value, const int user_mode)
 {
-	const int ucrw = CPU_PAGE_WRITE|CPU_PAGE_DATA|user_mode;
+	const int ucrw = CPU_PAGE_WRITE_DATA|user_mode;
 	UINT32 paddr[2];
 	UINT remain;
 	UINT i, j;
 
 	paddr[0] = paging(laddr, ucrw);
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	if (remain >= 10) {
 		cpu_memorywrite_f(paddr[0], value);
 	} else {
@@ -582,7 +586,7 @@ cpu_linear_memory_write_f(UINT32 laddr, const REG80 *value, const int user_mode)
 
 
 void MEMCALL
-cpu_memory_access_la_region(UINT32 laddr, UINT length, const int ucrw, BYTE *data)
+cpu_memory_access_la_region(UINT32 laddr, UINT length, const int ucrw, UINT8 *data)
 {
 	UINT32 paddr;
 	UINT remain;	/* page remain */
@@ -591,7 +595,7 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, const int ucrw, BYTE *dat
 	if (length == 0)
 		return;
 
-	remain = 0x1000 - (laddr & 0x00000fff);
+	remain = PAGE_SIZE - (laddr & PAGE_MASK);
 	for (;;) {
 		if (!CPU_STAT_PAGING) {
 			paddr = laddr;
@@ -615,35 +619,16 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, const int ucrw, BYTE *dat
 		remain -= r;
 		if (remain <= 0) {
 			/* next page */
-			remain += 0x1000;
+			remain += PAGE_SIZE;
 		}
 	}
 }
 
-void MEMCALL
-paging_check(UINT32 laddr, UINT length, const int ucrw)
+UINT32 MEMCALL
+laddr2paddr(const UINT32 laddr, const int ucrw)
 {
-	UINT32 paddr;
-	UINT remain;	/* page remain */
-	UINT r;
 
-	remain = 0x1000 - (laddr & 0x00000fff);
-	for (;;) {
-		paddr = paging(laddr, ucrw);
-
-		r = (remain > length) ? length : remain;
-
-		length -= r;
-		if (length == 0)
-			break;
-
-		laddr += r;
-		remain -= r;
-		if (remain <= 0) {
-			/* next page */
-			remain += 0x1000;
-		}
-	}
+	return paging(laddr, ucrw);
 }
 
 static UINT32 MEMCALL
@@ -661,7 +646,7 @@ paging(const UINT32 laddr, const int ucrw)
 
 	ep = tlb_lookup(laddr, ucrw);
 	if (ep != NULL)
-		return ep->paddr + (laddr & 0xfff);
+		return ep->paddr + (laddr & PAGE_MASK);
 #endif
 
 	pde_addr = CPU_STAT_PDE_BASE + ((laddr >> 20) & 0xffc);
@@ -693,7 +678,7 @@ paging(const UINT32 laddr, const int ucrw)
 	}
 
 	/* make physical address */
-	paddr = (pte & CPU_PTE_BASEADDR_MASK) + (laddr & 0x00000fff);
+	paddr = (pte & CPU_PTE_BASEADDR_MASK) + (laddr & PAGE_MASK);
 
 	bit  = ucrw & (CPU_PAGE_WRITE|CPU_PAGE_USER_MODE);
 	bit |= (pde & pte & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE));
@@ -758,7 +743,7 @@ do { \
 #if (CPU_FEATURES & CPU_FEATURE_PGE) == CPU_FEATURE_PGE
 #define	TLB_IS_GLOBAL(ep)	((ep)->tag & TLB_ENTRY_TAG_GLOBAL)
 #else
-#define	TLB_IS_GLOBAL(ep)	FALSE
+#define	TLB_IS_GLOBAL(ep)	0
 #endif
 
 #define	TLB_SET_TAG_FLAGS(ep, entry, bit) \

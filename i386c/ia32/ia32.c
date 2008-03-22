@@ -1,4 +1,4 @@
-/*	$Id: ia32.c,v 1.20 2008/01/25 17:49:46 monaka Exp $	*/
+/*	$Id: ia32.c,v 1.21 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -137,13 +137,17 @@ ia32_setemm(UINT frame, UINT32 addr) {
 void FASTCALL
 change_pm(BOOL onoff)
 {
+#if 0
 	int i;
+#endif
 
 	if (onoff) {
+#if 0
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
 			CPU_STAT_SREG(i).valid = 1;
 			CPU_STAT_SREG(i).dpl = 0;
 		}
+#endif
 		VERBOSE(("Entering to Protected-Mode..."));
 	} else {
 		VERBOSE(("Leaveing from Protected-Mode..."));
@@ -153,7 +157,7 @@ change_pm(BOOL onoff)
 	    CPU_STATSAVE.cpu_inst_default.op_32 = 
 	    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
 	CPU_STAT_SS32 = 0;
-	CPU_SET_CPL(0);
+	set_cpl(0);
 	CPU_STAT_PM = onoff;
 }
 
@@ -166,6 +170,7 @@ change_pg(BOOL onoff)
 	} else {
 		VERBOSE(("Leaveing from Paging-Mode..."));
 	}
+
 	CPU_STAT_PAGING = onoff;
 }
 
@@ -176,16 +181,16 @@ change_vm(BOOL onoff)
 
 	CPU_STAT_VM86 = onoff;
 	if (onoff) {
+		VERBOSE(("Entering to Virtual-8086-Mode..."));
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
 			CPU_STAT_SREGLIMIT(i) = 0xffff;
-			CPU_SET_SEGREG(i, CPU_REGS_SREG(i));
+			LOAD_SEGREG(i, CPU_REGS_SREG(i));
 		}
 		CPU_INST_OP32 = CPU_INST_AS32 =
 		    CPU_STATSAVE.cpu_inst_default.op_32 =
 		    CPU_STATSAVE.cpu_inst_default.as_32 = 0;
 		CPU_STAT_SS32 = 0;
-		CPU_SET_CPL(3);
-		VERBOSE(("Entering to Virtual-8086-Mode..."));
+		set_cpl(3);
 	} else {
 		VERBOSE(("Leaveing from Virtual-8086-Mode..."));
 	}
@@ -194,7 +199,7 @@ change_vm(BOOL onoff)
 /*
  * flags
  */
-static void
+static void FASTCALL
 modify_eflags(UINT32 new_flags, UINT32 mask)
 {
 	UINT32 orig = CPU_EFLAG;
@@ -216,7 +221,7 @@ modify_eflags(UINT32 new_flags, UINT32 mask)
 	}
 }
 
-void
+void FASTCALL
 set_flags(UINT16 new_flags, UINT16 mask)
 {
 
@@ -225,7 +230,7 @@ set_flags(UINT16 new_flags, UINT16 mask)
 	modify_eflags(new_flags, mask);
 }
 
-void
+void FASTCALL
 set_eflags(UINT32 new_flags, UINT32 mask)
 {
 
@@ -233,4 +238,30 @@ set_eflags(UINT32 new_flags, UINT32 mask)
 	mask |= SZAPC_FLAG|T_FLAG|D_FLAG|O_FLAG|NT_FLAG;
 	mask |= AC_FLAG|ID_FLAG;
 	modify_eflags(new_flags, mask);
+}
+
+/*
+ * CR3 (Page Directory Entry base physical address)
+ */
+void FASTCALL
+set_cr3(UINT32 new_cr3)
+{
+
+	VERBOSE(("set_CR3: old = %08x, new = 0x%08x", CPU_CR3, new_cr3));
+
+	CPU_CR3 = new_cr3 & CPU_CR3_MASK;
+	CPU_STAT_PDE_BASE = CPU_CR3 & CPU_CR3_PD_MASK;
+	tlb_flush(0);
+}
+
+/*
+ * CPL (Current Privilege Level)
+ */
+void FASTCALL
+set_cpl(int new_cpl)
+{
+	int cpl = new_cpl & 3;
+
+	CPU_STAT_CPL = (UINT8)cpl;
+	CPU_STAT_USER_MODE = (cpl == 3) ? CPU_MODE_USER : CPU_MODE_SUPERVISER;
 }

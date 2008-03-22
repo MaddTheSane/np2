@@ -1,4 +1,4 @@
-/*	$Id: cpu.c,v 1.24 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: cpu.c,v 1.25 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -256,7 +256,7 @@ check_break_point:
 		if (CPU_TRAP) {
 			CPU_DR6 |= CPU_DR6_BS;
 		}
-		INTERRUPT(DB_EXCEPTION, TRUE, FALSE, 0);
+		INTERRUPT(DB_EXCEPTION, INTR_TYPE_EXCEPTION);
 	}
 	if (CPU_EFLAG & RF_FLAG) {
 		if (CPU_STAT_BP_EVENT & CPU_STAT_BP_EVENT_RF) {

@@ -1,4 +1,4 @@
-/*	$Id: exception.h,v 1.2 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: exception.h,v 1.3 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -56,13 +56,19 @@ enum {
 	EXCEPTION_NUM
 };
 
+enum {
+	INTR_TYPE_SOFTINTR = -1,	/* software interrupt (INTn) */
+	INTR_TYPE_EXTINTR = 0,		/* external interrupt */
+	INTR_TYPE_EXCEPTION = 1,	/* exception */
+};
+
 #define	EXCEPTION(num, vec) \
 	exception(num, vec);
-#define	INTERRUPT(num, softintp, errorp, error_code) \
-	interrupt(num, softintp, errorp, error_code)
+#define	INTERRUPT(num, softintp) \
+	interrupt(num, softintp, 0, 0)
 
 void exception(int num, int vec);
-void interrupt(int num, int softintp, int errorp, int error_code);
+void interrupt(int num, int intrtype, int errorp, int error_code);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/*	$Id: task.h,v 1.7 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: task.h,v 1.8 2008/03/22 04:03:08 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -37,13 +37,12 @@ void get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp);
 UINT16 get_backlink_selector_from_tss(void);
 
 /* task_switch type */
-enum task_switch_type {
+typedef enum {
 	TASK_SWITCH_JMP,
 	TASK_SWITCH_CALL,
 	TASK_SWITCH_IRET,
 	TASK_SWITCH_INTR
-};
-typedef enum task_switch_type task_switch_type_t;
+} task_switch_type_t;
 
 void task_switch(selector_t *selector, task_switch_type_t type);
 

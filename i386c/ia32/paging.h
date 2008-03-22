@@ -1,4 +1,4 @@
-/*	$Id: paging.h,v 1.21 2007/02/06 14:20:57 monaka Exp $	*/
+/*	$Id: paging.h,v 1.22 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -126,8 +126,11 @@ extern "C" {
 /*
  * linear address memory access function
  */
-void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, const int ucrw, BYTE *data);
-void MEMCALL paging_check(UINT32 laddr, UINT length, const int ucrw);
+void MEMCALL cpu_memory_access_la_region(UINT32 address, UINT length, const int ucrw, UINT8 *data);
+UINT32 MEMCALL laddr2paddr(const UINT32 laddr, const int ucrw);
+#define	laddr_to_paddr(laddr, ucrw) \
+	(!CPU_STAT_PAGING) ? (laddr) : (laddr2paddr((laddr), (ucrw)))
+
 
 /* ucrw */
 #define	CPU_PAGE_WRITE		(1 << 0)
@@ -193,18 +196,6 @@ void MEMCALL cpu_linear_memory_write_f(UINT32 laddr, const REG80 *value, const i
 #define	cpu_kmemorywrite(a,v)	cpu_lmemorywrite(a,v,CPU_MODE_SUPERVISER)
 #define	cpu_kmemorywrite_w(a,v)	cpu_lmemorywrite_w(a,v,CPU_MODE_SUPERVISER)
 #define	cpu_kmemorywrite_d(a,v)	cpu_lmemorywrite_d(a,v,CPU_MODE_SUPERVISER)
-
-
-/*
- * CR3 (Page Directory Entry base physical address)
- */
-#define	set_CR3(cr3) \
-do { \
-	VERBOSE(("set_CR3: old = %08x, new = 0x%08x", CPU_CR3, (cr3) & CPU_CR3_MASK)); \
-	CPU_CR3 = (cr3) & CPU_CR3_MASK; \
-	CPU_STAT_PDE_BASE = CPU_CR3 & CPU_CR3_PD_MASK; \
-	tlb_flush(FALSE); \
-} while (/*CONSTCOND*/ 0)
 
 
 /*

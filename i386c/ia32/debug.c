@@ -1,4 +1,4 @@
-/*	$Id: debug.c,v 1.13 2005/03/12 12:32:54 monaka Exp $	*/
+/*	$Id: debug.c,v 1.14 2008/03/22 04:03:07 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -240,10 +240,109 @@ pde_dump(UINT32 base, int idx)
 		v = cpu_memoryread_d(paddr);
 		VERBOSE(("PDE_DUMP: 0x%08x: %08x", paddr, v));
 	} else {
+		VERBOSE(("PDE_DUMP: invalid idx (%d)", idx));
 		paddr = 0;
 	}
 
 	return paddr;
+}
+
+void
+segdesc_dump(descriptor_t *sdp)
+{
+#if defined(DEBUG)
+	const char *s;
+
+	__ASSERT(sdp != NULL);
+
+	VERBOSE(("\ndump descriptor", sdp));
+
+	VERBOSE(("valid    : %s", SEG_IS_VALID(sdp) ? "true" : "false"));
+	VERBOSE(("present  : %s", SEG_IS_PRESENT(sdp) ? "true" : "false"));
+	VERBOSE(("DPL      : %d", sdp->dpl));
+	VERBOSE(("kind     : %s", SEG_IS_SYSTEM(sdp) ? "system" : "code/data"));
+	if (!SEG_IS_SYSTEM(sdp)) {
+		if (SEG_IS_CODE(sdp)) {
+			VERBOSE(("type     : %sconforming code",
+			    SEG_IS_CONFORMING_CODE(sdp) ? "" : "non-"));
+			VERBOSE(("access   : execute%s",
+			    SEG_IS_READABLE_CODE(sdp) ? "/read" : ""));
+		} else {
+			VERBOSE(("type     : expand-%s data",
+			    SEG_IS_EXPANDDOWN_DATA(sdp) ? "down" : "up"));
+			VERBOSE(("access   : read%s",
+			    SEG_IS_WRITABLE_DATA(sdp) ? "/write" : ""));
+		}
+		VERBOSE(("4k scale : %s", sdp->u.seg.g ? "true" : "false"));
+		VERBOSE(("baseadr  : 0x%08x", sdp->u.seg.segbase));
+		VERBOSE(("limit    : 0x%08x", sdp->u.seg.limit));
+	} else {
+		switch (sdp->type) {
+		case CPU_SYSDESC_TYPE_LDT:		/* LDT */
+			VERBOSE(("type     : LDT"));
+			VERBOSE(("4k scale : %s", sdp->u.seg.g ? "true" : "false"));
+			VERBOSE(("baseadr  : 0x%08x", sdp->u.seg.segbase));
+			VERBOSE(("limit    : 0x%08x", sdp->u.seg.limit));
+			break;
+
+		case CPU_SYSDESC_TYPE_TASK:		/* task gate */
+			VERBOSE(("type     : task gate"));
+			VERBOSE(("selector : 0x%04x", sdp->u.gate.selector));
+			break;
+
+		case CPU_SYSDESC_TYPE_TSS_16:		/* 286 TSS */
+		case CPU_SYSDESC_TYPE_TSS_BUSY_16:	/* 286 Busy TSS */
+		case CPU_SYSDESC_TYPE_TSS_32:		/* 386 TSS */
+		case CPU_SYSDESC_TYPE_TSS_BUSY_32:	/* 386 Busy TSS */
+			VERBOSE(("type     : %dbit %sTSS",
+			    (sdp->type & CPU_SYSDESC_TYPE_32BIT) ? 32 : 16,
+			    (sdp->type & CPU_SYSDESC_TYPE_TSS_BUSY_IND) ?
+			      "Busy " : ""));
+			VERBOSE(("4k scale : %s", sdp->u.seg.g ? "true" : "false"));
+			VERBOSE(("baseadr  : 0x%08x", sdp->u.seg.segbase));
+			VERBOSE(("limit    : 0x%08x", sdp->u.seg.limit));
+			break;
+
+		case CPU_SYSDESC_TYPE_CALL_16:		/* 286 call gate */
+		case CPU_SYSDESC_TYPE_INTR_16:		/* 286 interrupt gate */
+		case CPU_SYSDESC_TYPE_TRAP_16:		/* 286 trap gate */
+		case CPU_SYSDESC_TYPE_CALL_32:		/* 386 call gate */
+		case CPU_SYSDESC_TYPE_INTR_32:		/* 386 interrupt gate */
+		case CPU_SYSDESC_TYPE_TRAP_32:		/* 386 trap gate */
+			switch (sdp->type & CPU_SYSDESC_TYPE_MASKBIT) {
+			case CPU_SYSDESC_TYPE_CALL:
+				s = "call";
+				break;
+
+			case CPU_SYSDESC_TYPE_INTR:
+				s = "interrupt";
+				break;
+
+			case CPU_SYSDESC_TYPE_TRAP:
+				s = "trap";
+				break;
+
+			default:
+				s = "unknown";
+				break;
+			}
+			VERBOSE(("type     : %c86 %s gate",
+			    (sdp->type & CPU_SYSDESC_TYPE_32BIT) ? '3':'2', s));
+			VERBOSE(("selector : 0x%04x", sdp->u.gate.selector));
+			VERBOSE(("offset   : 0x%08x", sdp->u.gate.offset));
+			VERBOSE(("count    : %d", sdp->u.gate.count));
+			break;
+
+		case 0: case 8: case 10: case 13: /* reserved */
+		default:
+			VERBOSE(("type     : unknown descriptor"));
+			break;
+		}
+	}
+	VERBOSE(("\n"));
+#else
+	(void)sdp;
+#endif
 }
 
 UINT32
@@ -278,7 +377,7 @@ convert_vaddr_to_paddr(unsigned int idx, UINT32 offset)
 
 	if (idx < CPU_SEGREG_NUM) {
 		sdp = &CPU_STAT_SREG(idx);
-		if (sdp->valid) {
+		if (SEG_IS_VALID(sdp)) {
 			laddr = CPU_STAT_SREGBASE(idx) + offset;
 			return convert_laddr_to_paddr(laddr);
 		}
