@@ -89,6 +89,9 @@
 
 　(X11)
 　　・STATSAVE 用のメニューを作成
+　　・レジューム/STATSAVE のファイル名を変更
+      - レジューム: ${HOME}/.np2/sav/sav → ${HOME}/.np2/sav/np2.sav
+      - STATSAVE  : ${HOME}/.np2/sav/s00 → ${HOME}/.np2/sav/np2.s00
 
 
 // ----
