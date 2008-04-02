@@ -1,4 +1,4 @@
-/*	$Id: soundmng.c,v 1.11 2008/03/18 15:40:20 monaka Exp $	*/
+/*	$Id: soundmng.c,v 1.12 2008/04/02 13:03:34 monaka Exp $	*/
 
 /*
  * Copyright (c) 2001-2003 NONAKA Kimihiro
@@ -69,14 +69,27 @@ MIDIMOD vermouth_module = NULL;
 /*
  * driver
  */
-int audio_fd = -1;
-snddrv_t snddrv;
+static struct {
+        BOOL (*drvinit)(UINT rate, UINT samples);
+        BOOL (*drvterm)(void);
+	void (*drvlock)(void);
+	void (*drvunlock)(void);
 
+        void (*sndplay)(void);
+        void (*sndstop)(void);
+
+	void *(*pcmload)(UINT num, const char *path);
+	void (*pcmdestroy)(void *chanp, UINT num);
+	void (*pcmplay)(void *chanp, UINT num, BOOL loop);
+	void (*pcmstop)(void *chanp, UINT num);
+	void (*pcmvolume)(void *chanp, UINT num, int volume);
+} snddrv;
+static int audio_fd = -1;
 static BOOL opened = FALSE;
-static UINT mute = 0;
 static UINT opna_frame;
 
 static BOOL nosound_setup(void);
+static BOOL sdlaudio_setup(void);
 
 static void PARTSCALL (*fnmix)(SINT16* dst, const SINT32* src, UINT size);
 
@@ -97,16 +110,19 @@ static void soundmng_pcmdestroy(void);
 /*
  * buffer
  */
-int sound_nextbuf;
-char *sound_event;
-char *sound_buffer[NSOUNDBUFFER];
+#ifndef	NSOUNDBUFFER
+#define	NSOUNDBUFFER	2
+#endif
+static char *sound_buffer[NSOUNDBUFFER];
+static int sound_nextbuf;
+static char *sound_event;
 
 static BOOL buffer_init(void);
 static void buffer_destroy(void);
 static void buffer_clear(void);
 
 
-UINT
+static UINT
 calc_blocksize(UINT size)
 {
 	UINT s = size;
@@ -117,16 +133,6 @@ calc_blocksize(UINT size)
 	return s;
 }
 
-UINT
-calc_fragment(UINT size)
-{
-	UINT f;
-
-	for (f = 0; size > (UINT)(1 << f); f++)
-		continue;
-	return f;
-}
-
 static void
 snddrv_setup(void)
 {
@@ -135,23 +141,12 @@ snddrv_setup(void)
 		switch (np2oscfg.snddrv) {
 #if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 		case SNDDRV_SDL:
-#if defined(USE_SDLMIXER)
-			sdlmixer_setup();
-#else
 			sdlaudio_setup();
-#endif
 			return;
 #endif
 		}
 	} else {
-#if defined(USE_SDLMIXER)
-		if (sdlmixer_setup() == SUCCESS) {
-			np2oscfg.snddrv = SNDDRV_SDL;
-			sysmng_update(SYS_UPDATEOSCFG);
-			return;
-		} else
-#endif
-#if defined(USE_SDLAUDIO)
+#if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 		if (sdlaudio_setup() == SUCCESS) {
 			np2oscfg.snddrv = SNDDRV_SDL;
 			sysmng_update(SYS_UPDATEOSCFG);
@@ -168,6 +163,20 @@ snddrv_setup(void)
 	nosound_setup();
 	np2oscfg.snddrv = SNDDRV_NODRV;
 	sysmng_update(SYS_UPDATEOSCFG);
+}
+
+static void
+sounddrv_lock(void)
+{
+
+	(*snddrv.drvlock)();
+}
+
+static void
+sounddrv_unlock(void)
+{
+
+	(*snddrv.drvunlock)();
 }
 
 UINT
@@ -192,6 +201,7 @@ soundmng_create(UINT rate, UINT bufmsec)
 
 	if ((*snddrv.drvinit)(rate, samples) != SUCCESS) {
 		audio_fd = -1;
+		nosound_setup();
 		np2oscfg.snddrv = SNDDRV_NODRV;
 		sysmng_update(SYS_UPDATEOSCFG);
 		return 0;
@@ -215,8 +225,10 @@ void
 soundmng_reset(void)
 {
 
+	sounddrv_lock();
 	sound_nextbuf = 0;
 	sound_event = NULL;
+	sounddrv_unlock();
 	buffer_clear();
 }
 
@@ -235,8 +247,6 @@ soundmng_destroy(void)
 		}
 		(*snddrv.sndstop)();
 		(*snddrv.drvterm)();
-		buffer_destroy();
-		nosound_setup();
 		audio_fd = -1;
 		opened = FALSE;
 	}
@@ -246,18 +256,14 @@ void
 soundmng_play(void)
 {
 
-	if (!mute) {
-		(*snddrv.sndplay)();
-	}
+	(*snddrv.sndplay)();
 }
 
 void
 soundmng_stop(void)
 {
 
-	if (!mute) {
-		(*snddrv.sndstop)();
-	}
+	(*snddrv.sndstop)();
 }
 
 BOOL
@@ -276,6 +282,7 @@ soundmng_deinitialize(void)
 
 	soundmng_pcmdestroy();
 	soundmng_destroy();
+	buffer_destroy();
 }
 
 void
@@ -285,6 +292,7 @@ soundmng_sync(void)
 	SINT16 *q;
 
 	if (opened) {
+		sounddrv_lock();
 		if (sound_event) {
 			pcm = sound_pcmlock();
 			q = (SINT16 *)sound_event;
@@ -292,6 +300,7 @@ soundmng_sync(void)
 			(*fnmix)(q, pcm, opna_frame);
 			sound_pcmunlock(pcm);
 		}
+		sounddrv_unlock();
 	}
 }
 
@@ -405,6 +414,7 @@ buffer_init(void)
 {
 	int i;
 
+	sounddrv_lock();
 	for (i = 0; i < NSOUNDBUFFER; i++) {
 		if (sound_buffer[i]) {
 			_MFREE(sound_buffer[i]);
@@ -412,9 +422,11 @@ buffer_init(void)
 		sound_buffer[i] = (char *)_MALLOC(opna_frame, "sound buffer");
 		if (sound_buffer[i] == NULL) {
 			fprintf(stderr, "buffer_init: can't alloc memory\n");
+			sounddrv_unlock();
 			return FAILURE;
 		}
 	}
+	sounddrv_unlock();
 	return SUCCESS;
 }
 
@@ -423,11 +435,13 @@ buffer_clear(void)
 {
 	int i;
 
+	sounddrv_lock();
 	for (i = 0; i < NSOUNDBUFFER; i++) {
 		if (sound_buffer[i]) {
 			memset(sound_buffer[i], 0, opna_frame);
 		}
 	}
+	sounddrv_unlock();
 }
 
 static void
@@ -435,12 +449,14 @@ buffer_destroy(void)
 {
 	int i;
 
+	sounddrv_lock();
 	for (i = 0; i < NSOUNDBUFFER; i++) {
 		if (sound_buffer[i]) {
 			_MFREE(sound_buffer[i]);
 			sound_buffer[i] = NULL;
 		}
 	}
+	sounddrv_unlock();
 }
 
 /*
@@ -464,6 +480,20 @@ nosound_drvterm(void)
 }
 
 static void
+nosound_drvlock(void)
+{
+
+	/* Nothing to do */
+}
+
+static void
+nosound_drvunlock(void)
+{
+
+	/* Nothing to do */
+}
+
+static void
 nosound_sndplay(void)
 {
 
@@ -477,7 +507,7 @@ nosound_sndstop(void)
 	/* Nothing to do */
 }
 
-void *
+static void *
 nosound_pcmload(UINT num, const char *path)
 {
 
@@ -487,7 +517,7 @@ nosound_pcmload(UINT num, const char *path)
 	return NULL;
 }
 
-void
+static void
 nosound_pcmdestroy(void *chanp, UINT num)
 {
 
@@ -497,7 +527,7 @@ nosound_pcmdestroy(void *chanp, UINT num)
 	/* Nothing to do */
 }
 
-void
+static void
 nosound_pcmplay(void *chanp, UINT num, BOOL loop)
 {
 
@@ -508,7 +538,7 @@ nosound_pcmplay(void *chanp, UINT num, BOOL loop)
 	/* Nothing to do */
 }
 
-void
+static void
 nosound_pcmstop(void *chanp, UINT num)
 {
 
@@ -518,7 +548,7 @@ nosound_pcmstop(void *chanp, UINT num)
 	/* Nothing to do */
 }
 
-void
+static void
 nosound_pcmvolume(void *chanp, UINT num, int volume)
 {
 
@@ -535,6 +565,8 @@ nosound_setup(void)
 
 	snddrv.drvinit = nosound_drvinit;
 	snddrv.drvterm = nosound_drvterm;
+	snddrv.drvlock = nosound_drvlock;
+	snddrv.drvunlock = nosound_drvunlock;
 	snddrv.sndplay = nosound_sndplay;
 	snddrv.sndstop = nosound_sndstop;
 	snddrv.pcmload = nosound_pcmload;
@@ -752,9 +784,13 @@ saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
 
 #include <SDL.h>
 
+static void sdlaudio_lock(void);
+static void sdlaudio_unlock(void);
+static void sdlaudio_play(void);
+static void sdlaudio_stop(void);
 static void sdlaudio_callback(void *, unsigned char *, int);
 
-#if defined(USE_SDLAUDIO)
+#if !defined(USE_SDLMIXER)
 
 static BOOL
 sdlaudio_init(UINT rate, UINT samples)
@@ -769,16 +805,16 @@ sdlaudio_init(UINT rate, UINT samples)
 	fmt.callback = sdlaudio_callback;
 	fmt.userdata = (void *)(samples * 2 * sizeof(SINT16));
 
-	rv = SDL_Init(SDL_INIT_AUDIO);
+	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
-		fprintf(stderr, "sdlaudio_init: SDL_Init\n");
+		fprintf(stderr, "sdlaudio_init: SDL_InitSubSystem\n");
 		return FAILURE;
 	}
 
 	audio_fd = SDL_OpenAudio(&fmt, NULL);
 	if (audio_fd < 0) {
 		fprintf(stderr, "sdlaudio_init: SDL_OpenAudio\n");
-		SDL_Quit();
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return FAILURE;
 	}
 
@@ -789,32 +825,20 @@ static BOOL
 sdlaudio_term(void)
 {
 
+	SDL_PauseAudio(1);
 	SDL_CloseAudio();
-	SDL_Quit();
 
 	return SUCCESS;
 }
 
-static void
-sdlaudio_play(void)
-{
-
-	SDL_PauseAudio(0);
-}
-
-static void
-sdlaudio_stop(void)
-{
-
-	SDL_PauseAudio(1);
-}
-
-BOOL
+static BOOL
 sdlaudio_setup(void)
 {
 
 	snddrv.drvinit = sdlaudio_init;
 	snddrv.drvterm = sdlaudio_term;
+	snddrv.drvlock = sdlaudio_lock;
+	snddrv.drvunlock = sdlaudio_unlock;
 	snddrv.sndplay = sdlaudio_play;
 	snddrv.sndstop = sdlaudio_stop;
 	snddrv.pcmload = nosound_pcmload;
@@ -826,9 +850,7 @@ sdlaudio_setup(void)
 	return SUCCESS;
 }
 
-#endif	/* USE_SDLAUDIO */
-
-#if defined(USE_SDLMIXER)
+#else	/* USE_SDLMIXER */
 
 #include <SDL_mixer.h>
 
@@ -837,33 +859,33 @@ sdlmixer_init(UINT rate, UINT samples)
 {
 	int rv;
 
-	rv = SDL_Init(SDL_INIT_AUDIO);
+	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
-		fprintf(stderr, "SDL_Init(): %s\n", SDL_GetError());
+		fprintf(stderr, "sdlmixer_init: SDL_InitSubSystem(): %s\n",
+		    SDL_GetError());
 		goto failure;
 	}
 
 	rv = Mix_OpenAudio(rate, AUDIO_S16SYS, 2, samples);
 	if (rv < 0) {
-		fprintf(stderr, "Mix_OpenAudio(): %s\n", Mix_GetError());
+		fprintf(stderr, "sdlmixer_init: Mix_OpenAudio(): %s\n",
+		    Mix_GetError());
 		goto failure1;
 	}
-	SDL_PauseAudio(1);
 
 	rv = Mix_AllocateChannels(SOUND_MAXPCM);
 	if (rv < 0) {
-		fprintf(stderr, "Mix_AllocateChannels(): %s\n", Mix_GetError());
-		goto failure2;
+		fprintf(stderr, "sdlmixer_init: Mix_AllocateChannels(): %s\n",
+		    Mix_GetError());
+		goto failure1;
 	}
 
 	Mix_HookMusic(sdlaudio_callback, (void*)(samples * 2 * sizeof(SINT16)));
 
 	return SUCCESS;
 
-failure2:
-	Mix_CloseAudio();
 failure1:
-	SDL_Quit();
+	Mix_CloseAudio();
 failure:
 	return FAILURE;
 }
@@ -872,24 +894,10 @@ static BOOL
 sdlmixer_term(void)
 {
 
+	SDL_PauseAudio(1);
 	Mix_CloseAudio();
-	SDL_Quit();
 
 	return SUCCESS;
-}
-
-static void
-sdlmixer_play(void)
-{
-
-	SDL_PauseAudio(0);
-}
-
-static void
-sdlmixer_stop(void)
-{
-
-	SDL_PauseAudio(1);
 }
 
 static void *
@@ -938,14 +946,16 @@ sdlmixer_pcmvolume(void *chanp, UINT num, int volume)
 	Mix_Volume(num, (MIX_MAX_VOLUME * volume) / 100);
 }
 
-BOOL
-sdlmixer_setup(void)
+static BOOL
+sdlaudio_setup(void)
 {
 
 	snddrv.drvinit = sdlmixer_init;
 	snddrv.drvterm = sdlmixer_term;
-	snddrv.sndplay = sdlmixer_play;
-	snddrv.sndstop = sdlmixer_stop;
+	snddrv.drvlock = sdlaudio_lock;
+	snddrv.drvunlock = sdlaudio_unlock;
+	snddrv.sndplay = sdlaudio_play;
+	snddrv.sndstop = sdlaudio_stop;
 	snddrv.pcmload = sdlmixer_pcmload;
 	snddrv.pcmdestroy = sdlmixer_pcmdestroy;
 	snddrv.pcmplay = sdlmixer_pcmplay;
@@ -955,7 +965,35 @@ sdlmixer_setup(void)
 	return SUCCESS;
 }
 
-#endif	/* USE_SDLMIXER */
+#endif	/* !USE_SDLMIXER */
+
+static void
+sdlaudio_lock(void)
+{
+
+	SDL_LockAudio();
+}
+
+static void
+sdlaudio_unlock(void)
+{
+
+	SDL_UnlockAudio();
+}
+
+static void
+sdlaudio_play(void)
+{
+
+	SDL_PauseAudio(0);
+}
+
+static void
+sdlaudio_stop(void)
+{
+
+	SDL_PauseAudio(1);
+}
 
 static void
 sdlaudio_callback(void *userdata, unsigned char *stream, int len)

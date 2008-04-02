@@ -1,4 +1,4 @@
-/*	$Id: main.c,v 1.29 2008/03/18 15:33:14 monaka Exp $	*/
+/*	$Id: main.c,v 1.30 2008/04/02 13:03:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -30,6 +30,10 @@
 #include <sys/stat.h>
 #include <getopt.h>
 #include <signal.h>
+
+#if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
+#include <SDL.h>
+#endif
 
 #include "np2.h"
 #include "diskdrv.h"
@@ -232,6 +236,10 @@ main(int argc, char *argv[])
 
 	TRACEINIT();
 
+#if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
+	SDL_Init(0);
+#endif
+
 	if (fontmng_init() != SUCCESS)
 		goto fontmng_failure;
 
@@ -354,6 +362,10 @@ fontmng_failure:
 	}
 
 	skbdwin_deinitialize();
+
+#if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
+	SDL_Quit();
+#endif
 
 	TRACETERM();
 	dosio_term();
