@@ -1,4 +1,4 @@
-/*	$Id: main.c,v 1.30 2008/04/02 13:03:35 monaka Exp $	*/
+/*	$Id: main.c,v 1.31 2008/04/03 13:52:49 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -195,8 +195,12 @@ main(int argc, char *argv[])
 	}
 	if (modulefile[0] != '\0') {
 		/* font file */
-		snprintf(np2cfg.fontfile, sizeof(np2cfg.fontfile),
-		    "%s/font.bmp", modulefile);
+		file_cpyname(np2cfg.fontfile, modulefile,
+		    sizeof(np2cfg.fontfile));
+		file_cutname(np2cfg.fontfile);
+		file_setseparator(np2cfg.fontfile, sizeof(np2cfg.fontfile));
+		file_catname(np2cfg.fontfile, "font.bmp",
+		    sizeof(np2cfg.fontfile));
 
 		/* resume/statsave dir */
 		file_cpyname(statpath, modulefile, sizeof(statpath));
