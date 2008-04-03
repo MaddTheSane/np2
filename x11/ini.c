@@ -1,4 +1,4 @@
-/*	$Id: ini.c,v 1.21 2008/03/18 15:33:14 monaka Exp $	*/
+/*	$Id: ini.c,v 1.22 2008/04/03 13:52:20 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -520,7 +520,7 @@ static const INITBL iniitem[] = {
 	{"HDfolder", INITYPE_STR,	hddfolder,		MAX_PATH},
 	{"bmap_Dir", INITYPE_STR,	bmpfilefolder,		MAX_PATH},
 	{"fontfile", INITYPE_STR,	np2cfg.fontfile,	MAX_PATH},
-	{"biospath", INITYPE_STR,	np2cfg.biospath,	MAX_PATH},
+	{"biospath", INIRO_STR,		np2cfg.biospath,	MAX_PATH},
 	{"hdrvroot", INIRO_STR,		np2cfg.hdrvroot,	MAX_PATH},
 	{"hdrv_acc", INIRO_UINT8,	&np2cfg.hdrvacc,	0},
 
