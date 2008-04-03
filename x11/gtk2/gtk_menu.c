@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.13 2008/03/18 15:03:48 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.14 2008/04/03 13:53:25 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -1078,7 +1078,7 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 
 	filter[0] = gtk_file_filter_new();
 	if (filter[0]) {
-		gtk_file_filter_set_name(filter[0], "D88 floppy disk image");
+		gtk_file_filter_set_name(filter[0], "D88 floppy disk image (*.d88,*.d98,*.88d,*.98d)");
 		gtk_file_filter_add_pattern(filter[0], "*.[dD]88");
 		gtk_file_filter_add_pattern(filter[0], "*.88[dD]");
 		gtk_file_filter_add_pattern(filter[0], "*.[dD]98");
@@ -1087,19 +1087,19 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 	}
 	filter[1] = gtk_file_filter_new();
 	if (filter[1]) {
-		gtk_file_filter_set_name(filter[1], "Anex86 hard disk image files");
+		gtk_file_filter_set_name(filter[1], "Anex86 hard disk image (*.hdi)");
 		gtk_file_filter_add_pattern(filter[1], "*.[hH][dD][iI]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter[1]);
 	}
 	filter[2] = gtk_file_filter_new();
 	if (filter[2]) {
-		gtk_file_filter_set_name(filter[2], "T98 hard disk image files");
+		gtk_file_filter_set_name(filter[2], "T98 hard disk image (*.thd)");
 		gtk_file_filter_add_pattern(filter[2], "*.[tT][hH][dD]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter[2]);
 	}
 	filter[3] = gtk_file_filter_new();
 	if (filter[3]) {
-		gtk_file_filter_set_name(filter[3], "T98-Next hard disk image files");
+		gtk_file_filter_set_name(filter[3], "T98-Next hard disk image (*.nhd)");
 		gtk_file_filter_add_pattern(filter[3], "*.[nN][hH][dD]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter[3]);
 	}
