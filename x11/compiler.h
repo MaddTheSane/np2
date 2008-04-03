@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.37 2008/03/18 15:45:05 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.38 2008/04/03 13:51:20 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -227,6 +227,8 @@ UINT32 gettick(void);
 #define	SUPPORT_S98
 #define	SUPPORT_KEYDISP
 #define	SUPPORT_SOFTKBD	0
+
+#define	SUPPORT_SCREENSIZE
 
 #if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 #define	SUPPORT_JOYSTICK
