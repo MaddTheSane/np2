@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.6 2008/03/13 16:27:39 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.7 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -267,7 +267,7 @@ create_configure_dialog(void)
 	gtk_container_set_border_width(GTK_CONTAINER(config_dialog), 5);
 
 	g_signal_connect(GTK_OBJECT(config_dialog), "destroy",
-	    GTK_SIGNAL_FUNC(dialog_destroy), NULL);
+	    G_CALLBACK(dialog_destroy), NULL);
 
 	main_widget = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(main_widget);
@@ -355,9 +355,9 @@ create_configure_dialog(void)
 	gtk_misc_set_alignment(GTK_MISC(realclock_label), 1.0, 0.5);
 
 	g_signal_connect(GTK_OBJECT(baseclock_entry), "changed",
-	  GTK_SIGNAL_FUNC(clock_changed), (gpointer)realclock_label);
+	  G_CALLBACK(clock_changed), (gpointer)realclock_label);
 	g_signal_connect(GTK_OBJECT(clockmult_entry), "changed",
-	  GTK_SIGNAL_FUNC(clock_changed), (gpointer)realclock_label);
+	  G_CALLBACK(clock_changed), (gpointer)realclock_label);
 	clock_changed(NULL, realclock_label);
 
 	/* OK, Cancel button base widget */
@@ -385,7 +385,7 @@ create_configure_dialog(void)
 		gtk_box_pack_start(GTK_BOX(arch_hbox), arch_radiobutton[i], FALSE, FALSE, 0);
 		GTK_WIDGET_UNSET_FLAGS(arch_radiobutton[i], GTK_CAN_FOCUS);
 		g_signal_connect(GTK_OBJECT(arch_radiobutton[i]), "clicked",
-		    GTK_SIGNAL_FUNC(arch_radiobutton_clicked), (gpointer)architecture[i].arch);
+		    G_CALLBACK(arch_radiobutton_clicked), (gpointer)architecture[i].arch);
 	}
 	for (i = 0; i < NELEMENTS(architecture); i++) {
 		if (strcmp(np2cfg.model, architecture[i].arch) == 0) {
@@ -427,7 +427,7 @@ create_configure_dialog(void)
 		gtk_box_pack_start(GTK_BOX(soundrate_hbox), rate_radiobutton[i], FALSE, FALSE, 0);
 		GTK_WIDGET_UNSET_FLAGS(rate_radiobutton[i], GTK_CAN_FOCUS);
 		g_signal_connect(GTK_OBJECT(rate_radiobutton[i]), "clicked",
-		    GTK_SIGNAL_FUNC(rate_radiobutton_clicked), GINT_TO_POINTER(samplingrate[i].rate));
+		    G_CALLBACK(rate_radiobutton_clicked), GINT_TO_POINTER(samplingrate[i].rate));
 	}
 	if (np2cfg.samplingrate == 11025) {
 		i = 0;
@@ -502,7 +502,7 @@ create_configure_dialog(void)
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
-	    GTK_SIGNAL_FUNC(ok_button_clicked), (gpointer)config_dialog);
+	    G_CALLBACK(ok_button_clicked), (gpointer)config_dialog);
 	gtk_widget_grab_default(ok_button);
 
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -510,7 +510,7 @@ create_configure_dialog(void)
 	gtk_container_add(GTK_CONTAINER(confirm_widget), cancel_button);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
-	    GTK_SIGNAL_FUNC(gtk_widget_destroy), GTK_OBJECT(config_dialog));
+	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(config_dialog));
 
 	gtk_widget_show_all(config_dialog);
 }

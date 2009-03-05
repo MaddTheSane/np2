@@ -1,4 +1,4 @@
-/*	$Id: dialog_midi.c,v 1.3 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: dialog_midi.c,v 1.4 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -342,7 +342,7 @@ create_midi_dialog(void)
 	gtk_window_set_resizable(GTK_WINDOW(midi_dialog), FALSE);
 
 	g_signal_connect(GTK_OBJECT(midi_dialog), "destroy",
-	    GTK_SIGNAL_FUNC(dialog_destroy), NULL);
+	    G_CALLBACK(dialog_destroy), NULL);
 
 	main_widget = gtk_table_new(10, 6, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(main_widget), 5);
@@ -368,7 +368,7 @@ create_midi_dialog(void)
 	mpu98_ioport_entry = GTK_BIN(ioport_combo)->child;
 	gtk_widget_show(mpu98_ioport_entry);
 	g_signal_connect(GTK_OBJECT(mpu98_ioport_entry), "changed",
-	    GTK_SIGNAL_FUNC(mpu98_ioport_entry_changed), NULL);
+	    G_CALLBACK(mpu98_ioport_entry_changed), NULL);
 	gtk_editable_set_editable(GTK_EDITABLE(mpu98_ioport_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(mpu98_ioport_entry),
 	    mpu98_ioport_str[(np2cfg.mpuopt >> 4) & 0x0f]);
@@ -392,7 +392,7 @@ create_midi_dialog(void)
 	mpu98_intr_entry = GTK_BIN(intr_combo)->child;
 	gtk_widget_show(mpu98_intr_entry);
 	g_signal_connect(GTK_OBJECT(mpu98_intr_entry), "changed",
-	    GTK_SIGNAL_FUNC(mpu98_intr_entry_changed), NULL);
+	    G_CALLBACK(mpu98_intr_entry_changed), NULL);
 	gtk_editable_set_editable(GTK_EDITABLE(mpu98_intr_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(mpu98_intr_entry),
 	    mpu98_intr_str[np2cfg.mpuopt & 0x03]);
@@ -569,7 +569,7 @@ create_midi_dialog(void)
 	gtk_table_attach(GTK_TABLE(assignframe_widget), mimpi_button,
 	    5, 6, 4, 5, GTK_FILL, GTK_FILL, 3, 3);
 	g_signal_connect(GTK_OBJECT(mimpi_button), "clicked",
-	    GTK_SIGNAL_FUNC(mpu98_mimpi_def_button_clicked), midi_dialog);
+	    G_CALLBACK(mpu98_mimpi_def_button_clicked), midi_dialog);
 
 	/*
 	 * "Default" button
@@ -579,7 +579,7 @@ create_midi_dialog(void)
 	gtk_table_attach(GTK_TABLE(main_widget), mpu98_default_button,
 	    2, 3, 1, 2, GTK_SHRINK, GTK_SHRINK, 5, 5);
 	g_signal_connect_swapped(GTK_OBJECT(mpu98_default_button), "clicked",
-	    GTK_SIGNAL_FUNC(mpu98_default_button_clicked), NULL);
+	    G_CALLBACK(mpu98_default_button_clicked), NULL);
 
 	/*
 	 * OK, Cancel button
@@ -597,7 +597,7 @@ create_midi_dialog(void)
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
-	    GTK_SIGNAL_FUNC(ok_button_clicked), (gpointer)midi_dialog);
+	    G_CALLBACK(ok_button_clicked), (gpointer)midi_dialog);
 	gtk_widget_grab_default(ok_button);
 
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -605,7 +605,7 @@ create_midi_dialog(void)
 	gtk_container_add(GTK_CONTAINER(confirm_widget), cancel_button);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
-	    GTK_SIGNAL_FUNC(gtk_widget_destroy), GTK_OBJECT(midi_dialog));
+	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(midi_dialog));
 
 	gtk_widget_show_all(midi_dialog);
 }

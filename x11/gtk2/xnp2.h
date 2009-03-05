@@ -1,4 +1,4 @@
-/*	$Id: xnp2.h,v 1.5 2007/02/04 11:51:14 monaka Exp $	*/
+/*	$Id: xnp2.h,v 1.6 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -27,6 +27,10 @@
 
 #ifndef	NP2_GTK2_XNP2_H__
 #define	NP2_GTK2_XNP2_H__
+
+#ifndef	G_DISABLE_DEPRECATED
+#define	G_DISABLE_DEPRECATED
+#endif
 
 #ifndef	GLIB_DISABLE_DEPRECATED
 #define	GLIB_DISABLE_DEPRECATED

@@ -1,4 +1,4 @@
-/*	$Id: window_softkbd.c,v 1.2 2004/07/27 17:07:50 monaka Exp $	*/
+/*	$Id: window_softkbd.c,v 1.3 2009/03/05 11:50:39 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -191,7 +191,7 @@ skbdwin_create(void)
 	gtk_window_set_resizable(GTK_WINDOW(skwin.window), FALSE);
 	gtk_widget_add_events(skwin.window, EVENT_MASK);
 	g_signal_connect(GTK_OBJECT(skwin.window), "destroy",
-	    GTK_SIGNAL_FUNC(skbdwin_window_destroy), NULL);
+	    G_CALLBACK(skbdwin_window_destroy), NULL);
 	gtk_widget_realize(skwin.window);
 
 	main_widget = gtk_vbox_new(FALSE, 2);
@@ -208,16 +208,16 @@ skbdwin_create(void)
 	gtk_widget_show(da);
 
 	g_signal_connect(GTK_OBJECT(skwin.window), "key_press_event",
-	    GTK_SIGNAL_FUNC(skbdwin_key_press), NULL);
+	    G_CALLBACK(skbdwin_key_press), NULL);
 	g_signal_connect(GTK_OBJECT(skwin.window), "key_release_event",
-	    GTK_SIGNAL_FUNC(skbdwin_key_release), NULL);
+	    G_CALLBACK(skbdwin_key_release), NULL);
 	g_signal_connect(GTK_OBJECT(skwin.window), "button_press_event",
-	    GTK_SIGNAL_FUNC(skbdwin_button_press), NULL);
+	    G_CALLBACK(skbdwin_button_press), NULL);
 	g_signal_connect(GTK_OBJECT(skwin.window), "button_release_event",
-	    GTK_SIGNAL_FUNC(skbdwin_button_release), NULL);
+	    G_CALLBACK(skbdwin_button_release), NULL);
 
 	g_signal_connect(GTK_OBJECT(da), "expose_event",
-	    GTK_SIGNAL_FUNC(skbdwin_expose), NULL);
+	    G_CALLBACK(skbdwin_expose), NULL);
 
 	gtk_widget_show_all(skwin.window);
 

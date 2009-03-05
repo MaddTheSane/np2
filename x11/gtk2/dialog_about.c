@@ -1,4 +1,4 @@
-/*	$Id: dialog_about.c,v 1.4 2007/01/10 15:58:43 monaka Exp $	*/
+/*	$Id: dialog_about.c,v 1.5 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -68,7 +68,7 @@ create_about_dialog(void)
 	gtk_window_set_resizable(GTK_WINDOW(about_dialog), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(about_dialog), 10);
 	g_signal_connect(GTK_OBJECT(about_dialog), "destroy",
-	    GTK_SIGNAL_FUNC(about_destroy), NULL);
+	    G_CALLBACK(about_destroy), NULL);
 
 	main_widget = gtk_hbox_new(FALSE, 3);
 	gtk_widget_show(main_widget);
@@ -98,7 +98,7 @@ create_about_dialog(void)
 	gtk_widget_show(ok_button);
 	gtk_box_pack_end(GTK_BOX(main_widget), ok_button, FALSE, TRUE, 0);
 	g_signal_connect_swapped(GTK_OBJECT(ok_button), "clicked",
-	    GTK_SIGNAL_FUNC(gtk_widget_destroy), GTK_OBJECT(about_dialog));
+	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(about_dialog));
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 	gtk_widget_grab_default(ok_button);

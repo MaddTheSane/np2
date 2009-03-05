@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.14 2008/04/03 13:53:25 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.15 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -2037,9 +2037,9 @@ create_menu(void)
 
 	gtk_widget_add_events(menubar, EVENT_MASK);
 	g_signal_connect(GTK_OBJECT(menubar), "enter_notify_event",
-	            GTK_SIGNAL_FUNC(enter_notify_evhandler), NULL);
+	            G_CALLBACK(enter_notify_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(menubar), "leave_notify_event",
-	            GTK_SIGNAL_FUNC(leave_notify_evhandler), NULL);
+	            G_CALLBACK(leave_notify_evhandler), NULL);
 
 	return menubar;
 }

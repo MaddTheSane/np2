@@ -1,4 +1,4 @@
-/*	$Id: dialog_screen.c,v 1.2 2005/03/12 12:36:57 monaka Exp $	*/
+/*	$Id: dialog_screen.c,v 1.3 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -242,7 +242,7 @@ create_video_note(void)
 		gtk_widget_set_sensitive(video_lcd_reverse_checkbutton, FALSE);
 	}
 	g_signal_connect(GTK_OBJECT(video_lcd_checkbutton), "clicked",
-	    GTK_SIGNAL_FUNC(lcd_checkbutton_clicked),
+	    G_CALLBACK(lcd_checkbutton_clicked),
 	    (gpointer)video_lcd_reverse_checkbutton);
 
 	video_skipline_checkbutton =
@@ -309,7 +309,7 @@ create_chip_note(void)
 		gtk_widget_show(upd72020_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(gdc_hbox), upd72020_radiobutton[i], TRUE, FALSE, 0);
 		g_signal_connect(GTK_OBJECT(upd72020_radiobutton[i]), "clicked",
-		    GTK_SIGNAL_FUNC(uPD72020_radiobutton_clicked), (gpointer)i);
+		    G_CALLBACK(uPD72020_radiobutton_clicked), (gpointer)i);
 	}
 	g_signal_emit_by_name(GTK_OBJECT(upd72020_radiobutton[np2cfg.uPD72020 ? 1 : 0]), "clicked");
 
@@ -330,7 +330,7 @@ create_chip_note(void)
 		gtk_widget_show(gc_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(gc_hbox), gc_radiobutton[i], TRUE, FALSE, 0);
 		g_signal_connect(GTK_OBJECT(gc_radiobutton[i]), "clicked",
-		GTK_SIGNAL_FUNC(gc_radiobutton_clicked), (gpointer)i);
+		G_CALLBACK(gc_radiobutton_clicked), (gpointer)i);
 	}
 	g_signal_emit_by_name(GTK_OBJECT(gc_radiobutton[np2cfg.grcg & 3]), "clicked");
 
@@ -427,7 +427,7 @@ create_screen_dialog(void)
 	gtk_container_set_border_width(GTK_CONTAINER(screen_dialog), 5);
 
 	g_signal_connect(GTK_OBJECT(screen_dialog), "destroy",
-	    GTK_SIGNAL_FUNC(dialog_destroy), NULL);
+	    G_CALLBACK(dialog_destroy), NULL);
 
 	main_widget = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(main_widget);
@@ -462,13 +462,13 @@ create_screen_dialog(void)
 	gtk_box_pack_end(GTK_BOX(confirm_widget),cancel_button,FALSE, FALSE, 0);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
-	    GTK_SIGNAL_FUNC(gtk_widget_destroy), GTK_OBJECT(screen_dialog));
+	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(screen_dialog));
 
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_widget_show(ok_button);
 	gtk_box_pack_end(GTK_BOX(confirm_widget), ok_button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
-	    GTK_SIGNAL_FUNC(ok_button_clicked), (gpointer)screen_dialog);
+	    G_CALLBACK(ok_button_clicked), (gpointer)screen_dialog);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 	gtk_widget_grab_default(ok_button);

@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.10 2008/03/13 16:27:39 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.11 2009/03/05 11:50:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -342,22 +342,22 @@ gui_gtk_widget_create(void)
 	set_icon_bitmap(main_window);
 
 	g_signal_connect(GTK_OBJECT(main_window), "destroy", 
-	    GTK_SIGNAL_FUNC(destroy_evhandler), "WM destroy");
+	    G_CALLBACK(destroy_evhandler), "WM destroy");
 	g_signal_connect(GTK_OBJECT(main_window), "key_press_event",
-	    GTK_SIGNAL_FUNC(key_press_evhandler), NULL);
+	    G_CALLBACK(key_press_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "key_release_event",
-	    GTK_SIGNAL_FUNC(key_release_evhandler), NULL);
+	    G_CALLBACK(key_release_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "button_press_event",
-	    GTK_SIGNAL_FUNC(button_press_evhandler), NULL);
+	    G_CALLBACK(button_press_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "button_release_event",
-	    GTK_SIGNAL_FUNC(button_release_evhandler), NULL);
+	    G_CALLBACK(button_release_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "motion_notify_event",
-	    GTK_SIGNAL_FUNC(motion_notify_evhandler), NULL);
+	    G_CALLBACK(motion_notify_evhandler), NULL);
 
 	g_signal_connect(GTK_OBJECT(drawarea), "configure_event",
-	    GTK_SIGNAL_FUNC(configure_evhandler), NULL);
+	    G_CALLBACK(configure_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(drawarea), "expose_event",
-	    GTK_SIGNAL_FUNC(expose_evhandler), NULL);
+	    G_CALLBACK(expose_evhandler), NULL);
 }
 
 void
