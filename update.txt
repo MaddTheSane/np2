@@ -92,6 +92,10 @@
 　　・レジューム/STATSAVE のファイル名を変更
       - レジューム: ${HOME}/.np2/sav/sav → ${HOME}/.np2/sav/np2.sav
       - STATSAVE  : ${HOME}/.np2/sav/s00 → ${HOME}/.np2/sav/np2.s00
+    ・フォントパスに設定ファイル名が含まれてしまう不具合を修正
+    ・エミュレーションウィンドウサイズ変更用のメニューを作成
+    ・glib, gtk+ の deprecated なインタフェースを使用しない様に修正
+    ・CPU 使用率を軽減する様に修正
 
 
 // ----
