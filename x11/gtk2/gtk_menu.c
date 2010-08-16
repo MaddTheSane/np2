@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.15 2009/03/05 11:50:39 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.16 2010/08/16 14:26:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -2062,7 +2062,7 @@ void
 xmenu_toggle_menu(void)
 {
 
-	if (GTK_WIDGET_VISIBLE(menubar))
+	if (gtk_widget_get_visible(menubar))
 		xmenu_hide();
 	else
 		xmenu_show();

@@ -1,4 +1,4 @@
-/*	$Id: gtk_drawmng.c,v 1.6 2008/03/13 16:27:39 monaka Exp $	*/
+/*	$Id: gtk_drawmng.c,v 1.7 2010/08/16 14:26:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -176,7 +176,7 @@ drawmng_surfunlock(DRAWMNG_HDL dhdl)
 	GdkGC *gc;
 
 	if (hdl) {
-		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+		gc = hdl->drawarea->style->fg_gc[gtk_widget_get_state(hdl->drawarea)];
 		gdk_draw_image(hdl->backsurf, gc, hdl->surface,
 		    0, 0, 0, 0, hdl->d.width, hdl->d.height);
 		hdl->d.drawing = FALSE;
@@ -193,7 +193,7 @@ drawmng_blt(DRAWMNG_HDL dhdl, RECT_T *sr, POINT_T *dp)
 	int width, height;
 
 	if (hdl) {
-		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+		gc = hdl->drawarea->style->fg_gc[gtk_widget_get_state(hdl->drawarea)];
 		if (sr || dp) {
 
 			if (sr) {

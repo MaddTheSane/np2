@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.9 2007/02/04 11:51:14 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.10 2010/08/16 14:26:55 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -558,7 +558,7 @@ void
 scrnmng_update(void)
 {
 	GdkDrawable *d = drawarea->window;
-	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
+	GdkGC *gc = drawarea->style->fg_gc[gtk_widget_get_state(drawarea)];
 
 	if (scrnmng.palchanged) {
 		scrnmng.palchanged = FALSE;
