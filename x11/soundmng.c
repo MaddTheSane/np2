@@ -1,4 +1,4 @@
-/*	$Id: soundmng.c,v 1.12 2008/04/02 13:03:34 monaka Exp $	*/
+/*	$Id: soundmng.c,v 1.13 2010/11/07 14:01:54 monaka Exp $	*/
 
 /*
  * Copyright (c) 2001-2003 NONAKA Kimihiro
@@ -1001,14 +1001,12 @@ sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 	UINT samples = (UINT)userdata;
 	int nextbuf = sound_nextbuf;
 
-	UNUSED(len);
-
 	if (sound_event != NULL)
 		memset(sound_event, 0, samples);
 	sound_nextbuf = (sound_nextbuf + 1) % NSOUNDBUFFER;
 	sound_event = sound_buffer[sound_nextbuf];
 
-	SDL_MixAudio(stream, (const void *)sound_buffer[nextbuf], samples,
+	SDL_MixAudio(stream, (const void *)sound_buffer[nextbuf], len,
 	    SDL_MIX_MAXVOLUME);
 }
 
