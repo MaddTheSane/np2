@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.7 2009/09/28 13:47:12 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.8 2010/12/23 06:32:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -1464,15 +1464,15 @@ create_sound_dialog(void)
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_widget_show(cancel_button);
 	gtk_box_pack_end(GTK_BOX(confirm_widget), cancel_button, FALSE, FALSE, 0);
-	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(cancel_button, TRUE);
 	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
 	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(sound_dialog));
 
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_widget_show(ok_button);
 	gtk_box_pack_end(GTK_BOX(confirm_widget), ok_button, FALSE, FALSE, 0);
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
+	gtk_widget_set_can_default(ok_button, TRUE);
+	gtk_widget_has_default(ok_button);
 	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(ok_button_clicked), (gpointer)sound_dialog);
 	gtk_widget_grab_default(ok_button);

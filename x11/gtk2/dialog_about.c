@@ -1,4 +1,4 @@
-/*	$Id: dialog_about.c,v 1.5 2009/03/05 11:50:39 monaka Exp $	*/
+/*	$Id: dialog_about.c,v 1.6 2010/12/23 06:32:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -99,8 +99,8 @@ create_about_dialog(void)
 	gtk_box_pack_end(GTK_BOX(main_widget), ok_button, FALSE, TRUE, 0);
 	g_signal_connect_swapped(GTK_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(about_dialog));
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
+	gtk_widget_set_can_default(ok_button, TRUE);
+	gtk_widget_has_default(ok_button);
 	gtk_widget_grab_default(ok_button);
 
 	gtk_widget_show_all(about_dialog);

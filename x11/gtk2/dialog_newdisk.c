@@ -1,4 +1,4 @@
-/*	$Id: dialog_newdisk.c,v 1.4 2008/04/03 13:53:25 monaka Exp $	*/
+/*	$Id: dialog_newdisk.c,v 1.5 2010/12/23 06:32:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -80,7 +80,7 @@ anex_newdisk_dialog(GtkWidget *dialog)
 		gtk_widget_show(button[i]);
 		gtk_table_attach_defaults(GTK_TABLE(dialog_table),
 		    button[i], i % 2, (i % 2) + 1, (i / 2) + 1, (i / 2) + 2);
-		GTK_WIDGET_UNSET_FLAGS(button[i], GTK_CAN_FOCUS);
+		gtk_widget_set_can_focus(button[i], FALSE);
 	}
 	if (last >= NELEMENTS(hddsize)) {
 		last = 0;
@@ -322,7 +322,7 @@ create_newdisk_fd_dialog(const char *filename)
 		    disktype[i].str);
 		gtk_widget_show(button[i]);
 		gtk_box_pack_start(GTK_BOX(hbox), button[i], FALSE, FALSE, 1);
-		GTK_WIDGET_UNSET_FLAGS(button[i], GTK_CAN_FOCUS);
+		gtk_widget_set_can_focus(button[i], FALSE);
 	}
 	for (i = 0; i < ndisktype; ++i) {
 		if (disktype[i].fdtype == makefdtype)

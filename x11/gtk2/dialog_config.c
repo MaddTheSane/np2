@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.7 2009/03/05 11:50:39 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.8 2010/12/23 06:32:35 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -383,7 +383,7 @@ create_configure_dialog(void)
 		arch_radiobutton[i] = gtk_radio_button_new_with_label_from_widget(i > 0 ? GTK_RADIO_BUTTON(arch_radiobutton[i-1]) : NULL, architecture[i].label);
 		gtk_widget_show(arch_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(arch_hbox), arch_radiobutton[i], FALSE, FALSE, 0);
-		GTK_WIDGET_UNSET_FLAGS(arch_radiobutton[i], GTK_CAN_FOCUS);
+		gtk_widget_set_can_focus(arch_radiobutton[i], FALSE);
 		g_signal_connect(GTK_OBJECT(arch_radiobutton[i]), "clicked",
 		    G_CALLBACK(arch_radiobutton_clicked), (gpointer)architecture[i].arch);
 	}
@@ -425,7 +425,7 @@ create_configure_dialog(void)
 		rate_radiobutton[i] = gtk_radio_button_new_with_label_from_widget((i > 0) ? GTK_RADIO_BUTTON(rate_radiobutton[i-1]) : NULL, samplingrate[i].label);
 		gtk_widget_show(rate_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(soundrate_hbox), rate_radiobutton[i], FALSE, FALSE, 0);
-		GTK_WIDGET_UNSET_FLAGS(rate_radiobutton[i], GTK_CAN_FOCUS);
+		gtk_widget_set_can_focus(rate_radiobutton[i], FALSE);
 		g_signal_connect(GTK_OBJECT(rate_radiobutton[i]), "clicked",
 		    G_CALLBACK(rate_radiobutton_clicked), GINT_TO_POINTER(samplingrate[i].rate));
 	}
@@ -499,8 +499,8 @@ create_configure_dialog(void)
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_widget_show(ok_button);
 	gtk_container_add(GTK_CONTAINER(confirm_widget), ok_button);
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
-	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
+	gtk_widget_set_can_default(ok_button, TRUE);
+	gtk_widget_has_default(ok_button);
 	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(ok_button_clicked), (gpointer)config_dialog);
 	gtk_widget_grab_default(ok_button);
@@ -508,7 +508,7 @@ create_configure_dialog(void)
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_widget_show(cancel_button);
 	gtk_container_add(GTK_CONTAINER(confirm_widget), cancel_button);
-	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(cancel_button, TRUE);
 	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
 	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(config_dialog));
 
