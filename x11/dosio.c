@@ -1,4 +1,4 @@
-/*	$Id: dosio.c,v 1.15 2007/08/22 15:11:55 monaka Exp $	*/
+/*	$Id: dosio.c,v 1.16 2011/01/03 11:49:25 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -223,7 +223,7 @@ file_attr_c(const OEMCHAR *filename)
 
 	*curfilep = '\0';
 	file_catname(curpath, filename, sizeof(curpath));
-	return file_attr_c(curpath);
+	return file_attr(curpath);
 }
 
 FLISTH
