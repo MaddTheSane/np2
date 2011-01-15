@@ -1,4 +1,4 @@
-/*	$Id: dialog_about.c,v 1.7 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: dialog_about.c,v 1.8 2011/01/15 16:14:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -54,8 +54,7 @@ create_about_dialog(void)
 	GtkWidget *ok_button;
 	GtkWidget *neko_image;
 	GdkColormap *colormap;
-	GdkPixmap *neko_pixmap;
-	GdkBitmap *mask;
+	GdkPixbuf *neko_pixbuf;
 
 	uninstall_idle_process();
 
@@ -73,13 +72,9 @@ create_about_dialog(void)
 	gtk_container_add(GTK_CONTAINER(about_dialog), main_widget);
 
 	colormap = gtk_widget_get_colormap(about_dialog);
-	neko_pixmap = gdk_pixmap_colormap_create_from_xpm_d(NULL, colormap,
-	    &mask, NULL, (gchar **)np2_icon);
-	if (neko_pixmap == NULL)
-		g_error("Couldn't create replacement pixmap.");
-	neko_image = gtk_image_new_from_pixmap(neko_pixmap, mask);
-	g_object_unref(neko_pixmap);
-	g_object_unref(mask);
+	neko_pixbuf = gdk_pixbuf_new_from_xpm_data(np2_icon);
+	neko_image = gtk_image_new_from_pixbuf(neko_pixbuf);
+	g_object_unref(neko_pixbuf);
 	gtk_widget_show(neko_image);
 	gtk_box_pack_start(GTK_BOX(main_widget), neko_image, FALSE, FALSE, 10);
 
