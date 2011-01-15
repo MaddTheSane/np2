@@ -695,48 +695,48 @@ do { \
  */
 #define	REGPUSH(reg, clock) \
 do { \
-	UINT16 new_sp = CPU_SP - 2; \
+	UINT16 __new_sp = CPU_SP - 2; \
 	CPU_WORKCLOCK(clock); \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, new_sp, reg); \
-	CPU_SP = new_sp; \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, __new_sp, reg); \
+	CPU_SP = __new_sp; \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH_32(reg, clock) \
 do { \
-	UINT32 new_esp = CPU_ESP - 4; \
+	UINT32 __new_esp = CPU_ESP - 4; \
 	CPU_WORKCLOCK(clock); \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, new_esp, reg); \
-	CPU_ESP = new_esp; \
+	cpu_vmemorywrite_d(CPU_SS_INDEX, __new_esp, reg); \
+	CPU_ESP = __new_esp; \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH0(reg) \
 do { \
-	UINT16 new_sp = CPU_SP - 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, new_sp, (UINT16)reg); \
-	CPU_SP = new_sp; \
+	UINT16 __new_sp = CPU_SP - 2; \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, __new_sp, (UINT16)reg); \
+	CPU_SP = __new_sp; \
 } while (/*CONSTCOND*/ 0)
 
 /* Operand Size == 16 && Stack Size == 32 */
 #define	REGPUSH0_16_32(reg) \
 do { \
-	UINT32 new_esp = CPU_ESP - 2; \
-	cpu_vmemorywrite_w(CPU_SS_INDEX, new_esp, (UINT16)reg); \
-	CPU_ESP = new_esp; \
+	UINT32 __new_esp = CPU_ESP - 2; \
+	cpu_vmemorywrite_w(CPU_SS_INDEX, __new_esp, (UINT16)reg); \
+	CPU_ESP = __new_esp; \
 } while (/*CONSTCOND*/ 0)
 
 /* Operand Size == 32 && Stack Size == 16 */
 #define	REGPUSH0_32_16(reg) \
 do { \
-	UINT16 new_sp = CPU_SP - 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, new_sp, reg); \
-	CPU_SP = new_sp; \
+	UINT16 __new_sp = CPU_SP - 4; \
+	cpu_vmemorywrite_d(CPU_SS_INDEX, __new_sp, reg); \
+	CPU_SP = __new_sp; \
 } while (/*CONSTCOND*/ 0)
 
 #define	REGPUSH0_32(reg) \
 do { \
-	UINT32 new_esp = CPU_ESP - 4; \
-	cpu_vmemorywrite_d(CPU_SS_INDEX, new_esp, reg); \
-	CPU_ESP = new_esp; \
+	UINT32 __new_esp = CPU_ESP - 4; \
+	cpu_vmemorywrite_d(CPU_SS_INDEX, __new_esp, reg); \
+	CPU_ESP = __new_esp; \
 } while (/*CONSTCOND*/ 0)
 
 #define	PUSH0_16(reg) \
@@ -827,44 +827,44 @@ do { \
  */
 #define	SP_PUSH_16(reg) \
 do { \
-	UINT16 sp = CPU_SP; \
+	UINT16 __sp = CPU_SP; \
 	if (!CPU_STAT_SS32) { \
-		REGPUSH0(sp); \
+		REGPUSH0(__sp); \
 	} else { \
-		REGPUSH0_16_32(sp); \
+		REGPUSH0_16_32(__sp); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
 #define	ESP_PUSH_32(reg) \
 do { \
-	UINT32 sp = CPU_ESP; \
+	UINT32 __esp = CPU_ESP; \
 	if (!CPU_STAT_SS32) { \
-		REGPUSH0_32_16(sp); \
+		REGPUSH0_32_16(__esp); \
 	} else { \
-		REGPUSH0_32(sp); \
+		REGPUSH0_32(__esp); \
 	} \
 } while (/*CONSTCOND*/ 0)
 
 #define	SP_POP_16(reg) \
 do { \
-	UINT32 sp; \
+	UINT32 __sp; \
 	if (!CPU_STAT_SS32) { \
-		sp = CPU_SP; \
+		__sp = CPU_SP; \
 	} else { \
-		sp = CPU_ESP; \
+		__sp = CPU_ESP; \
 	} \
-	CPU_SP = cpu_vmemoryread_w(CPU_SS_INDEX, sp); \
+	CPU_SP = cpu_vmemoryread_w(CPU_SS_INDEX, __sp); \
 } while (/*CONSTCOND*/ 0)
 
 #define	ESP_POP_32(reg) \
 do { \
-	UINT32 sp; \
+	UINT32 __esp; \
 	if (!CPU_STAT_SS32) { \
-		sp = CPU_SP; \
+		__esp = CPU_SP; \
 	} else { \
-		sp = CPU_ESP; \
+		__esp = CPU_ESP; \
 	} \
-	CPU_ESP = cpu_vmemoryread_d(CPU_SS_INDEX, sp); \
+	CPU_ESP = cpu_vmemoryread_d(CPU_SS_INDEX, __esp); \
 } while (/*CONSTCOND*/ 0)
 
 

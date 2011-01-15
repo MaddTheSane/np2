@@ -637,7 +637,7 @@ ea(disasm_context_t *ctx)
  * get opcode
  */
 static int
-op(disasm_context_t *ctx)
+get_opcode(disasm_context_t *ctx)
 {
 	const char *opcode;
 	UINT8 op[3];
@@ -800,7 +800,7 @@ disasm(UINT32 *eip, disasm_context_t *ctx)
 	ctx->baseaddr = ctx->eip;
 	ctx->pad = ' ';
 
-	rv = op(ctx);
+	rv = get_opcode(ctx);
 	if (rv) {
 		memset(ctx, 0, sizeof(disasm_context_t));
 		return rv;
