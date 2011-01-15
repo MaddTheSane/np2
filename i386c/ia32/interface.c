@@ -34,9 +34,6 @@
 #include "iocore.h"
 #include "dmax86.h"
 #include "bios.h"
-#if defined(IA32_REBOOT_ON_PANIC)
-#include "pccore.h"
-#endif
 
 
 void

@@ -34,7 +34,6 @@ static UINT32 \
 inst##1(UINT32 src, void *arg) \
 { \
 	UINT32 dst; \
-	(void)arg; \
 	BYTE_##inst##1(dst, src); \
 	return dst; \
 } \
@@ -42,7 +41,6 @@ static UINT32 \
 inst##2(UINT32 src, void *arg) \
 { \
 	UINT32 dst; \
-	(void)arg; \
 	WORD_##inst##1(dst, src); \
 	return dst; \
 } \
@@ -50,7 +48,6 @@ static UINT32 \
 inst##4(UINT32 src, void *arg) \
 { \
 	UINT32 dst; \
-	(void)arg; \
 	DWORD_##inst##1(dst, src); \
 	return dst; \
 } \

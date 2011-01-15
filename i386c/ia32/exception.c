@@ -345,8 +345,6 @@ interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int erro
 
 	VERBOSE(("interrupt: TASK-GATE"));
 
-	(void)intrtype;
-
 	rv = parse_selector(&task_sel, gsdp->u.gate.selector);
 	if (rv < 0 || task_sel.ldt || !SEG_IS_SYSTEM(&task_sel.desc)) {
 		VERBOSE(("interrupt: parse_selector (selector = %04x, rv = %d, %cDT, type = %s)", gsdp->u.gate.selector, rv, task_sel.ldt ? 'L' : 'G', task_sel.desc.s ? "code/data" : "system"));

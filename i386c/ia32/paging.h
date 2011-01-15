@@ -221,8 +221,8 @@ void MEMCALL tlb_flush_page(UINT32 laddr);
 TLB_ENTRY_T* MEMCALL tlb_lookup(const UINT32 laddr, const int ucrw);
 #else
 #define	tlb_init()
-#define	tlb_flush(allflush)	(void)(allflush)
-#define	tlb_flush_page(la)	(void)(la)
+#define	tlb_flush(allflush)
+#define	tlb_flush_page(la)
 #define	tlb_lookup(la, ucrw)	NULL
 #endif
 

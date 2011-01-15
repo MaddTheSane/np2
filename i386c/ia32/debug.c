@@ -206,8 +206,6 @@ tr_dump(UINT16 selector, UINT32 base, UINT limit)
 	UINT32 v;
 	UINT i;
 
-	(void)selector;
-
 	VERBOSE(("TR_DUMP: selector = %04x", selector));
 
 	for (i = 0; i < limit; i += 4) {
@@ -338,8 +336,6 @@ segdesc_dump(descriptor_t *sdp)
 		}
 	}
 	VERBOSE(("\n"));
-#else
-	(void)sdp;
 #endif
 }
 

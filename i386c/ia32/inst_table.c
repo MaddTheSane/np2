@@ -59,7 +59,6 @@ static void
 undef_op2(UINT32 v)
 {
 
-	(void)v;
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 

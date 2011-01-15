@@ -494,7 +494,6 @@ static UINT32
 NEG1(UINT32 src, void *arg)
 {
 	UINT32 dst;
-	(void)arg;
 	BYTE_NEG(dst, src);
 	return dst;
 }
@@ -503,7 +502,6 @@ static UINT32
 NEG2(UINT32 src, void *arg)
 {
 	UINT32 dst;
-	(void)arg;
 	WORD_NEG(dst, src);
 	return dst;
 }
@@ -512,7 +510,6 @@ static UINT32
 NEG4(UINT32 src, void *arg)
 {
 	UINT32 dst;
-	(void)arg;
 	DWORD_NEG(dst, src);
 	return dst;
 }

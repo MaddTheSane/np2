@@ -787,7 +787,7 @@ tlb_init(void)
 
 	memset(tlb, 0, sizeof(tlb));
 #if defined(IA32_PROFILE_TLB)
-	memset(tlb_profile, 0, sizeof(tlb_profile));
+	memset(&tlb_profile, 0, sizeof(tlb_profile));
 #endif	/* IA32_PROFILE_TLB */
 }
 

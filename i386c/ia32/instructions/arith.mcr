@@ -31,21 +31,18 @@
 static UINT32 \
 inst##1(UINT32 dst, void *arg) \
 { \
-	(void)arg; \
 	BYTE_##inst(dst); \
 	return dst; \
 } \
 static UINT32 \
 inst##2(UINT32 dst, void *arg) \
 { \
-	(void)arg; \
 	WORD_##inst(dst); \
 	return dst; \
 } \
 static UINT32 \
 inst##4(UINT32 dst, void *arg) \
 { \
-	(void)arg; \
 	DWORD_##inst(dst); \
 	return dst; \
 } \
