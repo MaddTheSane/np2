@@ -1,5 +1,3 @@
-/*	$Id: main.c,v 1.35 2011/01/15 16:48:39 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

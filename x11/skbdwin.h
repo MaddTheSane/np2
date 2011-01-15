@@ -1,5 +1,3 @@
-/*	$Id: skbdwin.h,v 1.2 2004/06/18 12:32:51 monaka Exp $	*/
-
 #ifndef	NP2_X11_SKBDWIN_H__
 #define	NP2_X11_SKBDWIN_H__
 

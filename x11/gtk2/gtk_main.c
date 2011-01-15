@@ -1,5 +1,3 @@
-/*	$Id: gtk_main.c,v 1.13 2011/01/15 17:08:46 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
  * All rights reserved.

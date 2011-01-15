@@ -1,5 +1,3 @@
-/*	$Id: toolkit.h,v 1.12 2008/03/13 16:27:39 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

@@ -1,5 +1,3 @@
-/*	$Id: gtk_font.c,v 1.7 2011/01/15 16:01:53 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
  * All rights reserved.

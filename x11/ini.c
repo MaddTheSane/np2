@@ -1,5 +1,3 @@
-/*	$Id: ini.c,v 1.24 2011/01/15 16:08:26 monaka Exp $	*/
-
 #include "compiler.h"
 
 #include "np2.h"

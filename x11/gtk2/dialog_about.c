@@ -1,5 +1,3 @@
-/*	$Id: dialog_about.c,v 1.8 2011/01/15 16:14:52 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.

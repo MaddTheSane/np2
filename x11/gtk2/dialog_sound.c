@@ -1,5 +1,3 @@
-/*	$Id: dialog_sound.c,v 1.10 2011/01/15 16:55:37 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.

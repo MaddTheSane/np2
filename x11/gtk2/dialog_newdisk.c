@@ -1,5 +1,3 @@
-/*	$Id: dialog_newdisk.c,v 1.5 2010/12/23 06:32:35 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
  * All rights reserved.

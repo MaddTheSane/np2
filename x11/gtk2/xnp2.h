@@ -1,5 +1,3 @@
-/*	$Id: xnp2.h,v 1.6 2009/03/05 11:50:39 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

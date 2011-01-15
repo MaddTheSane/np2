@@ -1,5 +1,3 @@
-/*	$Id: cmserial.c,v 1.5 2011/01/15 16:48:39 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
  * All rights reserved.

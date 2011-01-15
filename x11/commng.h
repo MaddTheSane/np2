@@ -1,5 +1,3 @@
-/*	$Id: commng.h,v 1.2 2004/03/25 15:10:33 monaka Exp $	*/
-
 #ifndef	NP2_X11_COMMNG_H__
 #define	NP2_X11_COMMNG_H__
 

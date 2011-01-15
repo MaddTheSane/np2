@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	<stdarg.h>
-#include	"codecnv.h"
 
 
 int trace_flag = 0;

@@ -1,5 +1,3 @@
-/*	$Id: dosio.c,v 1.17 2011/01/15 14:56:55 monaka Exp $	*/
-
 #include "compiler.h"
 
 #include <sys/stat.h>

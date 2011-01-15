@@ -1,5 +1,3 @@
-/*	$Id: window_softkbd.c,v 1.4 2011/01/15 16:01:53 monaka Exp $	*/
-
 #include "compiler.h"
 
 #if defined(SUPPORT_SOFTKBD)

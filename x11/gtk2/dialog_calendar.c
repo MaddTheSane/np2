@@ -1,5 +1,3 @@
-/*	$Id: dialog_calendar.c,v 1.5 2011/01/15 16:01:52 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

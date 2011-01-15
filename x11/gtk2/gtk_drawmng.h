@@ -1,5 +1,3 @@
-/*	$Id: gtk_drawmng.h,v 1.3 2005/03/12 12:36:57 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
  * All rights reserved.

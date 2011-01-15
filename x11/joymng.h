@@ -1,5 +1,3 @@
-/*	$Id: joymng.h,v 1.3 2007/01/23 15:48:20 monaka Exp $	*/
-
 /*-
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>,
  * All rights reserved.

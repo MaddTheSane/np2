@@ -1,5 +1,3 @@
-/*	$Id: gtk_wrapper.c,v 1.13 2011/01/15 16:48:39 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.

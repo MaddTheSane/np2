@@ -1,5 +1,3 @@
-/*	$Id: np2.h,v 1.20 2011/01/15 16:14:24 monaka Exp $	*/
-
 #ifndef	NP2_X11_NP2_H__
 #define	NP2_X11_NP2_H__
 

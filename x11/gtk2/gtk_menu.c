@@ -1,5 +1,3 @@
-/*	$Id: gtk_menu.c,v 1.17 2011/01/15 16:01:53 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
  * All rights reserved.

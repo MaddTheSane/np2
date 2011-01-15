@@ -1,5 +1,3 @@
-/*	$Id: gtk_toolkit.h,v 1.4 2008/03/18 14:47:03 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

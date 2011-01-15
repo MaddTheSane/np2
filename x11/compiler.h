@@ -1,5 +1,3 @@
-/*	$Id: compiler.h,v 1.41 2011/01/15 16:01:52 monaka Exp $	*/
-
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
  * All rights reserved.

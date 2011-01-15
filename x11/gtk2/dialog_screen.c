@@ -1,5 +1,3 @@
-/*	$Id: dialog_screen.c,v 1.6 2011/01/15 17:08:46 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.

@@ -1,5 +1,3 @@
-/*	$Id: soundmng.h,v 1.5 2008/04/02 13:04:00 monaka Exp $	*/
-
 #ifndef	NP2_X11_SOUNGMNG_H__
 #define	NP2_X11_SOUNGMNG_H__
 

@@ -1,5 +1,3 @@
-/*	$Id: np2.c,v 1.33 2011/01/15 16:14:23 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.
