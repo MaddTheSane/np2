@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.39 2011/01/15 14:25:22 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.40 2011/01/15 14:37:09 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -32,6 +32,25 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#ifdef ENABLE_NLS
+#include <libintl.h>
+#define _(s)				gettext(s)
+#ifdef gettext_noop
+#define N_(s)				gettext_noop(s)
+#else
+#define N_(s)				(s)
+#endif
+#else /* !ENABLE_NLS */
+#define _(s)				(s)
+#define N_(s) (s)
+#define textdomain(s)			(s)
+#define gettext(s)			(s)
+#define dgettext(d,s)			(s)
+#define dcgettext(d,s,t)		(s)
+#define bindtextdomain(d,dir)		(d)
+#define bind_textdomain_codeset(d,c)	(c)
+#endif /* ENABLE_NLS */
 
 #ifdef	WORDS_BIGENDIAN
 #define	BYTESEX_BIG

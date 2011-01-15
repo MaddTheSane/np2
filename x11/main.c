@@ -1,4 +1,4 @@
-/*	$Id: main.c,v 1.31 2008/04/03 13:52:49 monaka Exp $	*/
+/*	$Id: main.c,v 1.32 2011/01/15 14:37:09 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -29,6 +29,7 @@
 
 #include <sys/stat.h>
 #include <getopt.h>
+#include <locale.h>
 #include <signal.h>
 
 #if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
@@ -130,6 +131,11 @@ main(int argc, char *argv[])
 	int i, drvmax;
 
 	progname = argv[0];
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(np2appname, NP2LOCALEDIR);
+	bind_textdomain_codeset(np2appname, "UTF-8");
+	textdomain(np2appname);
 
 	toolkit_initialize();
 	toolkit_arginit(&argc, &argv);
