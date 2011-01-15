@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.9 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.10 2011/01/15 16:55:37 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -205,15 +205,15 @@ clock_changed(GtkEditable *e, gpointer d)
 	const gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
 	guint mult = milstr_solveINT(multp);
 	gchar buf[80];
-	gint clock;
+	gint clk;
 
 	if (base[0] == '1') {
-		clock = PCBASECLOCK20 * mult;
+		clk = PCBASECLOCK20 * mult;
 	} else {
-		clock = PCBASECLOCK25 * mult;
+		clk = PCBASECLOCK25 * mult;
 	}
 	g_snprintf(buf, sizeof(buf), "%2d.%03dMHz",
-	    clock / 1000000U, (clock / 1000) % 1000);
+	    clk / 1000000U, (clk / 1000) % 1000);
 	gtk_label_set_text(GTK_LABEL((GtkWidget*)d), buf);
 }
 

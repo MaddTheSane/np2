@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.9 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.10 2011/01/15 16:55:37 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -1087,20 +1087,20 @@ joypad_device_changed(GtkEditable *e, gpointer d)
 {
 	GtkWidget *axis_entry[JOY_NAXIS];
 	GtkWidget *button_entry[JOY_NBUTTON];
-	const gchar *devname;
+	const gchar *dvname;
 	int drv;
 	int i, j;
 
-	devname = gtk_entry_get_text(GTK_ENTRY(e));
+	dvname = gtk_entry_get_text(GTK_ENTRY(e));
 	if ((joypad_devlist == NULL)
-	 || (devname == NULL)
-	 || (strcmp(devname, joypad_nodevice_str) == 0)) {
+	 || (dvname == NULL)
+	 || (strcmp(dvname, joypad_nodevice_str) == 0)) {
 		milstr_ncpy(joypad_devname, joypad_nodevice_str, sizeof(joypad_devname));
 		return;
 	}
 
 	for (drv = 0; joypad_devlist[drv] != NULL; ++drv) {
-		if (strcmp(devname, joypad_devlist[drv]->devname) == 0) {
+		if (strcmp(dvname, joypad_devlist[drv]->devname) == 0) {
 			break;
 		}
 	}

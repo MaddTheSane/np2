@@ -1,4 +1,4 @@
-/*	$Id: joymng.c,v 1.5 2011/01/15 16:45:18 monaka Exp $	*/
+/*	$Id: joymng.c,v 1.6 2011/01/15 16:55:37 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>,
@@ -236,7 +236,7 @@ joydrv_terminate(void)
 }
 
 void *
-joydrv_open(const char *devname)
+joydrv_open(const char *dvname)
 {
 	joydrv_sdl_hdl_t *shdl = NULL;
 	joymng_devinfo_t *dev;
@@ -250,13 +250,13 @@ joydrv_open(const char *devname)
 	int nbutton;
 	int i;
 
-	if (devname == NULL) {
+	if (dvname == NULL) {
 		goto sdl_err;
 	}
 
 	errno = 0;
-	lval = strtol(devname, &endptr, 10);
-	if (devname[0] == '\0' || *endptr != '\0') {
+	lval = strtol(dvname, &endptr, 10);
+	if (dvname[0] == '\0' || *endptr != '\0') {
 		goto sdl_err;
 	}
 	if (errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) {
