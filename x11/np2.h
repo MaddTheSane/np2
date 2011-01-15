@@ -5,6 +5,8 @@
 
 #include "joymng.h"
 
+G_BEGIN_DECLS
+
 typedef struct {
 	BYTE	port;
 	BYTE	def_en;
@@ -87,10 +89,6 @@ enum {
 	INTERP_HYPER		= 3
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* np2.c */
 extern volatile sig_atomic_t np2running;
 extern NP2OSCFG np2oscfg;
@@ -129,8 +127,6 @@ int mainloop(void *);
 extern int mmxflag;
 int havemmx(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_NP2_H__ */

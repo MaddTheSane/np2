@@ -32,6 +32,7 @@
 
 #include "gtk2/xnp2.h"
 
+G_BEGIN_DECLS
 
 typedef struct {
 	_DRAWMNG_HDL	d;
@@ -42,5 +43,7 @@ typedef struct {
 } _GTKDRAWMNG_HDL, *GTKDRAWMNG_HDL;
 
 BOOL gtkdrawmng_getformat(GtkWidget *w, GtkWidget *pw, pixmap_format_t *fmtp);
+
+G_END_DECLS
 
 #endif	/* NP2_X11_GTK2_GTKDRAWMNG_H__ */

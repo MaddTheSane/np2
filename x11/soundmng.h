@@ -1,9 +1,7 @@
 #ifndef	NP2_X11_SOUNGMNG_H__
 #define	NP2_X11_SOUNGMNG_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 enum {
 	SOUND_PCMSEEK,
@@ -42,7 +40,7 @@ void soundmng_pcmvolume(UINT num, int volume);
 
 #else	/* NOSOUND */
 
-#define soundmng_create(rate, ms)	0, (void)rate, (void)ms
+#define soundmng_create(rate, ms)	0
 #define	soundmng_destroy()
 #define	soundmng_reset()
 #define	soundmng_play()
@@ -63,8 +61,6 @@ void soundmng_pcmvolume(UINT num, int volume);
 
 #endif	/* !NOSOUND */
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_SOUNGMNG_H__ */

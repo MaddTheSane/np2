@@ -1,6 +1,8 @@
 #ifndef	NP2_X11_INI_H__
 #define	NP2_X11_INI_H__
 
+G_BEGIN_DECLS
+
 enum {
 	INITYPE_STR		= 0,
 	INITYPE_BOOL,
@@ -35,18 +37,12 @@ typedef struct {
 	const UINT32	arg;
 } INITBL;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void ini_read(const char *path, const char *title, const INITBL *tbl, UINT count);
 void ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BOOL create);
 
 void initload(void);
 void initsave(void);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_INI_H__ */

@@ -26,9 +26,7 @@
 #ifndef	NP2_GTK2_GTKTOOLKIT_H__
 #define	NP2_GTK2_GTKTOOLKIT_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 const char *gui_gtk_get_toolkit(void);
 BOOL gui_gtk_arginit(int *argcp, char ***argvp);
@@ -40,8 +38,6 @@ void gui_gtk_event_process(void);
 void gui_gtk_set_window_title(const char* str);
 int gui_gtk_msgbox(const char* title, const char *msg, UINT flags);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_GTK2_GTKTOOLKIT_H__ */

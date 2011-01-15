@@ -5,6 +5,8 @@
 
 #include "softkbd.h"
 
+G_BEGIN_DECLS
+
 typedef struct {
 	int	posx;
 	int	posy;
@@ -20,6 +22,8 @@ void skbdwin_destroy(void);
 void skbdwin_process(void);
 void skbdwin_readini(void);
 void skbdwin_writeini(void);
+
+G_END_DECLS
 
 #else	/* !SUPPORT_SOFTKBD */
 

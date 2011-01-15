@@ -3,6 +3,8 @@
 
 // ---- com manager interface
 
+G_BEGIN_DECLS
+
 enum {
 	COMCREATE_SERIAL		= 0,
 	COMCREATE_PC9861K1,
@@ -46,16 +48,8 @@ typedef struct {
 } _COMFLAG, *COMFLAG;
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 COMMNG commng_create(UINT device);
 void commng_destroy(COMMNG hdl);
-
-#ifdef __cplusplus
-}
-#endif
 
 
 // ---- com manager for unix
@@ -83,6 +77,8 @@ enum {
 };
 
 void commng_initialize(void);
+
+G_END_DECLS
 
 #include "cmmidi.h"
 #include "cmserial.h"

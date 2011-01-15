@@ -5,6 +5,8 @@
 
 // どーでもいい通知系
 
+G_BEGIN_DECLS
+
 enum {
 	SYS_UPDATECFG		= 0x0001,
 	SYS_UPDATEOSCFG		= 0x0002,
@@ -18,11 +20,6 @@ enum {
 	SYS_UPDATEMEMORY	= 0x0200,
 	SYS_UPDATESERIAL1	= 0x0400
 };
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 extern	UINT	sys_updates;
 
@@ -51,8 +48,6 @@ void sysmng_workclockreset(void);
 BOOL sysmng_workclockrenewal(void);
 void sysmng_updatecaption(BYTE flag);
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_SYSMNG_H__ */

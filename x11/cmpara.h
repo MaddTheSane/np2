@@ -3,12 +3,8 @@
 
 // ---- com manager parallel for unix
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_CMPARA_H__ */

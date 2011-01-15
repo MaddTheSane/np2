@@ -31,9 +31,7 @@
  * joystick manager
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 #define	JOY_NAXIS		2
 #define	JOY_NBUTTON		4
@@ -86,8 +84,6 @@ void joymng_sync(void);
 
 #endif	/* SUPPORT_JOYSTICK */
 
-#ifdef __cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_JOYMNG_H__ */

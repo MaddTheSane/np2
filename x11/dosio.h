@@ -3,6 +3,8 @@
 
 #include <dirent.h>
 
+G_BEGIN_DECLS
+
 typedef FILE *			FILEH;
 #define	FILEH_INVALID		NULL
 
@@ -54,10 +56,6 @@ typedef struct {
 } FLINFO;
 
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /* DOSIO:関数の準備 */
 void dosio_init(void);
 void dosio_term(void);
@@ -99,8 +97,6 @@ void file_cutext(OEMCHAR *path);
 void file_cutseparator(OEMCHAR *path);
 void file_setseparator(OEMCHAR *path, int maxlen);
 
-#ifdef	__cplusplus
-};
-#endif
+G_END_DECLS
 
 #endif	/* NP2_X11_DOSIO_H__ */
