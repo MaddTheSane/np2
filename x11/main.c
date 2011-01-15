@@ -1,4 +1,4 @@
-/*	$Id: main.c,v 1.33 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: main.c,v 1.34 2011/01/15 16:10:12 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -175,7 +175,7 @@ main(int argc, char *argv[])
 		char *env = getenv("HOME");
 		if (env) {
 			/* base dir */
-			snprintf(modulefile, sizeof(modulefile),
+			g_snprintf(modulefile, sizeof(modulefile),
 			    "%s/.%s", env, np2appname);
 			if (stat(modulefile, &sb) < 0) {
 				if (mkdir(modulefile, 0700) < 0) {
