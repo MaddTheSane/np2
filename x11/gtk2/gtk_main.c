@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.12 2011/01/15 16:01:53 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.13 2011/01/15 17:08:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -315,7 +315,7 @@ gui_gtk_widget_create(void)
 	set_icon_bitmap(main_window);
 
 	g_signal_connect(GTK_OBJECT(main_window), "destroy", 
-	    G_CALLBACK(destroy_evhandler), "WM destroy");
+	    G_CALLBACK(destroy_evhandler), (gpointer)"WM destroy");
 	g_signal_connect(GTK_OBJECT(main_window), "key_press_event",
 	    G_CALLBACK(key_press_evhandler), NULL);
 	g_signal_connect(GTK_OBJECT(main_window), "key_release_event",

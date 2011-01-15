@@ -1,4 +1,4 @@
-/*	$Id: dialog_screen.c,v 1.5 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: dialog_screen.c,v 1.6 2011/01/15 17:08:46 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -269,8 +269,8 @@ create_video_note(void)
 static GtkWidget*
 create_chip_note(void)
 {
-	static char *gdc_str[] = { "uPD7220", "uPD72020" };
-	static char *gc_str[] = { "None", "GRCG", "GRCG+", "EGC" };
+	static const char *gdc_str[] = { "uPD7220", "uPD72020" };
+	static const char *gc_str[] = { "None", "GRCG", "GRCG+", "EGC" };
 	GtkWidget *main_widget;
 	GtkWidget *gdc_frame;
 	GtkWidget *gdc_hbox;
