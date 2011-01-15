@@ -9,7 +9,7 @@ extern int trace_flag;
 
 void trace_init(void);
 void trace_term(void);
-void trace_fmt(const char *str, ...);
+void trace_fmt(const char *str, ...) G_GNUC_PRINTF(1, 2);
 
 #ifndef TRACE
 
