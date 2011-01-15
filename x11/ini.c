@@ -1,4 +1,4 @@
-/*	$Id: ini.c,v 1.22 2008/04/03 13:52:20 monaka Exp $	*/
+/*	$Id: ini.c,v 1.23 2011/01/15 14:05:47 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -129,11 +129,11 @@ iniwrsetargh8(char *work, int size, const INITBL *ini)
 	ptr = (BYTE *)(ini->value);
 	arg = ini->arg;
 	if (arg > 0) {
-		SPRINTF(tmp, "%.2x ", ptr[0]);
+		g_snprintf(tmp, sizeof(tmp), "%.2x ", ptr[0]);
 		milstr_ncpy(work, tmp, size);
 	}
 	for (i = 1; i < arg; i++) {
-		SPRINTF(tmp, "%.2x ", ptr[i]);
+		g_snprintf(tmp, sizeof(tmp), "%.2x ", ptr[i]);
 		milstr_ncat(work, tmp, size);
 	}
 }
@@ -427,39 +427,39 @@ ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BO
 				break;
 
 			case INITYPE_SINT8:
-				SPRINTF(work, "%d", *((char *)p->value));
+				g_snprintf(work, sizeof(work), "%d", *((char *)p->value));
 				break;
 
 			case INITYPE_SINT16:
-				SPRINTF(work, "%d", *((SINT16 *)p->value));
+				g_snprintf(work, sizeof(work), "%d", *((SINT16 *)p->value));
 				break;
 
 			case INITYPE_SINT32:
-				SPRINTF(work, "%d", *((SINT32 *)p->value));
+				g_snprintf(work, sizeof(work), "%d", *((SINT32 *)p->value));
 				break;
 
 			case INITYPE_UINT8:
-				SPRINTF(work, "%u", *((BYTE *)p->value));
+				g_snprintf(work, sizeof(work), "%u", *((BYTE *)p->value));
 				break;
 
 			case INITYPE_UINT16:
-				SPRINTF(work, "%u", *((UINT16 *)p->value));
+				g_snprintf(work, sizeof(work), "%u", *((UINT16 *)p->value));
 				break;
 
 			case INITYPE_UINT32:
-				SPRINTF(work, "%u", *((UINT32 *)p->value));
+				g_snprintf(work, sizeof(work), "%u", *((UINT32 *)p->value));
 				break;
 
 			case INITYPE_HEX8:
-				SPRINTF(work, "%x", *((BYTE *)p->value));
+				g_snprintf(work, sizeof(work), "%x", *((BYTE *)p->value));
 				break;
 
 			case INITYPE_HEX16:
-				SPRINTF(work, "%x", *((UINT16 *)p->value));
+				g_snprintf(work, sizeof(work), "%x", *((UINT16 *)p->value));
 				break;
 
 			case INITYPE_HEX32:
-				SPRINTF(work, "%x", *((UINT32 *)p->value));
+				g_snprintf(work, sizeof(work), "%x", *((UINT32 *)p->value));
 				break;
 
 			case INITYPE_KB:
@@ -470,11 +470,11 @@ ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BO
 				break;
 
 			case INITYPE_SNDDRV:
-				SPRINTF(work, "%s", snddrv_num2drv(*(UINT8 *)p->value));
+				g_snprintf(work, sizeof(work), "%s", snddrv_num2drv(*(UINT8 *)p->value));
 				break;
 
 			case INITYPE_INTERP:
-				SPRINTF(work, "%s", iniwrinterp(*(UINT8 *)p->value));
+				g_snprintf(work, sizeof(work), "%s", iniwrinterp(*(UINT8 *)p->value));
 				break;
 
 			default:
