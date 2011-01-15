@@ -472,7 +472,7 @@ midiwrite(COMMNG self, BYTE data)
 				}
 				break;
 			}
-		} else { /* Key-on¤Î¤ß¤Êµ¤¤¬¤·¤¿¤ó¤À¤±¤ÉËº¤ì¤¿¡Ä */
+		} else { /* Key-onã®ã¿ãªæ°—ãŒã—ãŸã‚“ã ã‘ã©å¿˜ã‚ŒãŸâ€¦ */
 			/* running status */
 			midi->buffer[0] = midi->midilast;
 			midi->mpos = 1;
@@ -554,7 +554,7 @@ midiwrite(COMMNG self, BYTE data)
 #endif
 			midi->midictrl = MIDICTRL_READY;
 			return midi->mpos;
-		} else if (midi->mpos >= MIDI_BUFFER) {	// ¤ª¡¼¤Ð¡¼¤Õ¤í¡¼
+		} else if (midi->mpos >= MIDI_BUFFER) {	// ãŠãƒ¼ã°ãƒ¼ãµã‚ãƒ¼
 			midi->midictrl = MIDICTRL_READY;
 		}
 		break;
@@ -562,7 +562,7 @@ midiwrite(COMMNG self, BYTE data)
 	case MIDICTRL_TIMECODE:
 		if (midi->mpos >= 2) {
 			if ((data == 0x7e) || (data == 0x7f)) {
-				// exclusive¤ÈÆ±¤¸¤Ç¤¤¤¤È¦¡Ä
+				// exclusiveã¨åŒã˜ã§ã„ã„ç­ˆâ€¦
 				midi->midictrl = MIDICTRL_EXCLUSIVE;
 			} else {
 				midi->midictrl = MIDICTRL_READY;

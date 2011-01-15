@@ -45,15 +45,15 @@
 typedef struct {
 	UINT8		scrnmode;
 	volatile int	drawing;
-	int		width;		/* drawarea ¤Î width */
-	int		height;		/* drawarea ¤Î height */
+	int		width;		/* drawarea ã® width */
+	int		height;		/* drawarea ã® height */
 	int		extend;
 	int		clipping;
 
 	PAL16MASK	pal16mask;
 
-	RECT_T		scrn;		/* drawarea Æâ¤ÎÉÁ²èÎÎ°è°ÌÃÖ */
-	RECT_T		rect;		/* drawarea ¤ËÉÁ²è¤¹¤ë¥µ¥¤¥º */
+	RECT_T		scrn;		/* drawarea å†…ã®æç”»é ˜åŸŸä½ç½® */
+	RECT_T		rect;		/* drawarea ã«æç”»ã™ã‚‹ã‚µã‚¤ã‚º */
 
 	/* toolkit depend */
 	GdkPixbuf	*drawsurf;
@@ -87,7 +87,7 @@ GtkWidget *drawarea;
 #define	BYTES_PER_PIXEL	3
 
 /*
- * drawarea ¤Î¥¢¥¹¥Ú¥¯¥ÈÈæ¤ò 4:3 (640x480) ¤Ë¤¹¤ë¡£
+ * drawarea ã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’ 4:3 (640x480) ã«ã™ã‚‹ã€‚
  */
 static void
 adapt_aspect(int width, int height, int scrnwidth, int scrnheight)

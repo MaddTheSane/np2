@@ -3,7 +3,7 @@
 
 #include "toolwin.h"
 
-// �ɡ��Ǥ⤤�����η�
+// どーでもいい通知系
 
 enum {
 	SYS_UPDATECFG		= 0x0001,
