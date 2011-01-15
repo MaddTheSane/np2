@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.38 2008/04/03 13:51:20 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.39 2011/01/15 14:25:22 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -89,12 +89,12 @@ typedef	gboolean	BOOL;
 #define PTR_TO_UINT32(p)	((UINT32)GPOINTER_TO_UINT(p))
 #define UINT32_TO_PTR(v)	GUINT_TO_POINTER((UINT32)(v))
 
-#ifndef	TRUE
-#define	TRUE	1
-#endif
-
 #ifndef	FALSE
 #define	FALSE	0
+#endif
+
+#ifndef	TRUE
+#define	TRUE	(!FALSE)
 #endif
 
 #ifndef	MAX_PATH
@@ -173,7 +173,7 @@ UINT32 gettick(void);
 #define	SPRINTF		sprintf
 #define	STRLEN		strlen
 
-#define	OEMCHAR		char
+#define	OEMCHAR		gchar
 #define OEMTEXT(s)	s
 #define OEMNULLSTR	OEMTEXT("")
 #define	OEMSPRINTF	sprintf
