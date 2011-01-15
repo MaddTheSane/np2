@@ -1,5 +1,3 @@
-/*	$Id: ctrlxfer.c,v 1.20 2008/03/22 04:03:07 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

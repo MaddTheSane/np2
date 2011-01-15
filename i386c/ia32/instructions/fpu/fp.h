@@ -1,5 +1,3 @@
-/*	$Id: fp.h,v 1.4 2005/03/12 12:34:05 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

@@ -1,5 +1,3 @@
-/*	$Id: bin_arith.c,v 1.12 2005/03/12 12:33:47 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.

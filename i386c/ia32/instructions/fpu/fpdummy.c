@@ -1,5 +1,3 @@
-/*	$Id: fpdummy.c,v 1.7 2004/03/26 06:33:53 yui Exp $	*/
-
 #include "compiler.h"
 #include "cpu.h"
 #include "ia32.mcr"

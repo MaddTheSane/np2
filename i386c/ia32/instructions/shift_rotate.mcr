@@ -1,5 +1,3 @@
-/*	$Id: shift_rotate.mcr,v 1.11 2005/03/12 12:33:48 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

@@ -1,5 +1,3 @@
-/*	$Id: debug.c,v 1.14 2008/03/22 04:03:07 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.

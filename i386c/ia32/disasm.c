@@ -1,5 +1,3 @@
-/*	$Id: disasm.c,v 1.9 2005/03/12 12:32:54 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
  * All rights reserved.

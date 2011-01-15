@@ -1,5 +1,3 @@
-/*	$Id: cpu_mem.mcr,v 1.5 2008/03/22 04:03:07 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
  * All rights reserved.

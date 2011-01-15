@@ -1,5 +1,3 @@
-/*	$Id: ctrl_trans.c,v 1.24 2008/03/22 04:03:08 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.

@@ -1,5 +1,3 @@
-/*	$Id: cpu_io.c,v 1.9 2008/03/22 04:03:07 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

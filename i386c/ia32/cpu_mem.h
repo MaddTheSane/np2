@@ -1,5 +1,3 @@
-/*	$Id: cpu_mem.h,v 1.11 2008/03/22 04:03:07 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
  * All rights reserved.

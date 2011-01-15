@@ -1,5 +1,3 @@
-/*	$Id: paging.c,v 1.30 2008/03/22 04:03:07 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003-2004 NONAKA Kimihiro
  * All rights reserved.

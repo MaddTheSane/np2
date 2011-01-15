@@ -1,5 +1,3 @@
-/*	$Id: seg_reg.c,v 1.6 2008/03/22 04:03:08 monaka Exp $	*/
-
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
  * All rights reserved.

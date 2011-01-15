@@ -1,5 +1,3 @@
-/*	$Id: arith.mcr,v 1.2 2005/03/12 12:33:48 monaka Exp $	*/
-
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
  * All rights reserved.

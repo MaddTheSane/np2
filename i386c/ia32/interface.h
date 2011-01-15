@@ -1,5 +1,3 @@
-/*	$Id: interface.h,v 1.19 2008/01/25 18:02:18 monaka Exp $	*/
-
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
  * All rights reserved.
