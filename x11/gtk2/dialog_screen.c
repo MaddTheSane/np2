@@ -1,4 +1,4 @@
-/*	$Id: dialog_screen.c,v 1.4 2010/12/23 06:32:35 monaka Exp $	*/
+/*	$Id: dialog_screen.c,v 1.5 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -87,8 +87,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	BOOL renewal;
 	int i;
 
-	UNUSED(b);
-
 	/* Video tab */
 	video_lcd = GTK_TOGGLE_BUTTON(video_lcd_checkbutton)->active;
 	video_lcdrev = GTK_TOGGLE_BUTTON(video_lcd_reverse_checkbutton)->active;
@@ -173,8 +171,6 @@ static void
 dialog_destroy(GtkWidget *w, GtkWidget **wp)
 {
 
-	UNUSED(wp);
-
 	install_idle_process();
 	gtk_widget_destroy(w);
 }
@@ -190,16 +186,12 @@ static void
 uPD72020_radiobutton_clicked(GtkButton *b, gpointer d)
 {
 
-	UNUSED(b);
-
 	chip_uPD72020 = (gint)d;
 }
 
 static void
 gc_radiobutton_clicked(GtkButton *b, gpointer d)
 {
-
-	UNUSED(b);
 
 	chip_gc_kind = (gint)d;
 }

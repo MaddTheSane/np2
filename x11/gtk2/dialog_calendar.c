@@ -1,4 +1,4 @@
-/*	$Id: dialog_calendar.c,v 1.4 2010/12/23 06:32:35 monaka Exp $	*/
+/*	$Id: dialog_calendar.c,v 1.5 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -95,8 +95,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	BYTE val;
 	int i;
 
-	UNUSED(b);
-
 	renewal = FALSE;
 	if (np2cfg.calendar != calendar_kind) {
 		renewal = TRUE;
@@ -134,8 +132,6 @@ static void
 dialog_destroy(GtkWidget *w, GtkWidget **wp)
 {
 
-	UNUSED(wp);
-
 	install_idle_process();
 	gtk_widget_destroy(w);
 }
@@ -165,9 +161,6 @@ static void
 now_button_clicked(GtkButton *b, gpointer d)
 {
 
-	UNUSED(b);
-	UNUSED(d);
-
 	set_virtual_calendar(FALSE);
 }
 
@@ -176,8 +169,6 @@ calendar_radiobutton_clicked(GtkButton *b, gpointer d)
 {
 	gint virtual = (gint)d;
 	int i;
-
-	UNUSED(b);
 
 	calendar_kind = virtual ? 0 : 1;
 

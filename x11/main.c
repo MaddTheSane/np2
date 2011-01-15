@@ -1,4 +1,4 @@
-/*	$Id: main.c,v 1.32 2011/01/15 14:37:09 monaka Exp $	*/
+/*	$Id: main.c,v 1.33 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -86,8 +86,6 @@ setup_signal(int signo, sigfunc *func)
 static void
 sighandler(int signo)
 {
-
-	UNUSED(signo);
 
 	toolkit_widget_quit();
 }

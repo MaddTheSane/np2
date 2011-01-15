@@ -1,4 +1,4 @@
-/*	$Id: dialog_config.c,v 1.8 2010/12/23 06:32:35 monaka Exp $	*/
+/*	$Id: dialog_config.c,v 1.9 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -92,8 +92,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	UINT renewal = 0;
 	int i;
 
-	UNUSED(b);
-
 	if (strcmp(base, "1.9968MHz") == 0) {
 		if (np2cfg.baseclock != PCBASECLOCK20) {
 			np2cfg.baseclock = PCBASECLOCK20;
@@ -182,8 +180,6 @@ static void
 dialog_destroy(GtkWidget *w, GtkWidget **wp)
 {
 
-	UNUSED(wp);
-
 	install_idle_process();
 	gtk_widget_destroy(w);
 }
@@ -192,16 +188,12 @@ static void
 arch_radiobutton_clicked(GtkButton *b, gpointer d)
 {
 
-	UNUSED(b);
-
 	arch = (char *)d;
 }
 
 static void
 rate_radiobutton_clicked(GtkButton *b, gpointer d)
 {
-
-	UNUSED(b);
 
 	rate = GPOINTER_TO_INT(d);
 }
@@ -214,8 +206,6 @@ clock_changed(GtkEditable *e, gpointer d)
 	guint mult = milstr_solveINT(multp);
 	gchar buf[80];
 	gint clock;
-
-	UNUSED(e);
 
 	if (base[0] == '1') {
 		clock = PCBASECLOCK20 * mult;

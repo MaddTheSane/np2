@@ -1,4 +1,4 @@
-/*	$Id: window_softkbd.c,v 1.3 2009/03/05 11:50:39 monaka Exp $	*/
+/*	$Id: window_softkbd.c,v 1.4 2011/01/15 16:01:53 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -74,9 +74,6 @@ static void
 skbdwin_window_destroy(GtkWidget *w, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	if (skwin.window)
 		skwin.window = NULL;
 	drawmng_release(skwin.hdl);
@@ -86,8 +83,6 @@ skbdwin_window_destroy(GtkWidget *w, gpointer p)
 static gboolean
 skbdwin_expose(GtkWidget *w, GdkEventExpose *ev)
 {
-
-	UNUSED(w);
 
 	if (ev->type == GDK_EXPOSE) {
 		if (ev->count == 0) {
@@ -102,9 +97,6 @@ static gboolean
 skbdwin_key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	if (ev->type == GDK_KEY_PRESS) {
 		if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
 			gtkkbd_keydown(ev->keyval);
@@ -115,9 +107,6 @@ skbdwin_key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
 static gboolean
 skbdwin_key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
-
-	UNUSED(w);
-	UNUSED(p);
 
 	if (ev->type == GDK_KEY_RELEASE) {
 		if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
@@ -130,9 +119,6 @@ skbdwin_key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
 static gboolean
 skbdwin_button_press(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
-
-	UNUSED(w);
-	UNUSED(p);
 
 	if (ev->type == GDK_BUTTON_PRESS) {
 		switch (ev->button) {
@@ -148,9 +134,6 @@ skbdwin_button_press(GtkWidget *w, GdkEventButton *ev, gpointer p)
 static gboolean
 skbdwin_button_release(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
-
-	UNUSED(w);
-	UNUSED(p);
 
 	if (ev->type == GDK_BUTTON_RELEASE) {
 		switch (ev->button) {

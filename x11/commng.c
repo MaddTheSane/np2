@@ -11,18 +11,12 @@ static UINT
 ncread(COMMNG self, BYTE *data)
 {
 
-	UNUSED(self);
-	UNUSED(data);
-
 	return 0;
 }
 
 static UINT
 ncwrite(COMMNG self, BYTE data)
 {
-
-	UNUSED(self);
-	UNUSED(data);
 
 	return 0;
 }
@@ -31,18 +25,12 @@ static BYTE
 ncgetstat(COMMNG self)
 {
 
-	UNUSED(self);
-
 	return 0xf0;
 }
 
 static long
 ncmsg(COMMNG self, UINT msg, long param)
 {
-
-	UNUSED(self);
-	UNUSED(msg);
-	UNUSED(param);
 
 	return 0;
 }
@@ -51,7 +39,7 @@ static void
 ncrelease(COMMNG self)
 {
 
-	UNUSED(self);
+	/* Nothing to do */
 }
 
 static const _COMMNG com_nc = {

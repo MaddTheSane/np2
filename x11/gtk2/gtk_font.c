@@ -1,4 +1,4 @@
-/*	$Id: gtk_font.c,v 1.6 2007/01/10 15:58:21 monaka Exp $	*/
+/*	$Id: gtk_font.c,v 1.7 2011/01/15 16:01:53 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro
@@ -164,8 +164,6 @@ fontmng_destroy(void *hdl)
 static void
 setfdathead(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 {
-
-	UNUSED(str);
 
 	fdat->width = fhdl->rect.width;
 	fdat->height = fhdl->rect.height;

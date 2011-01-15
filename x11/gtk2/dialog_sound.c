@@ -1,4 +1,4 @@
-/*	$Id: dialog_sound.c,v 1.8 2010/12/23 06:32:35 monaka Exp $	*/
+/*	$Id: dialog_sound.c,v 1.9 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -332,8 +332,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	int i;
 	BOOL renewal;
 
-	UNUSED(b);
-
 	/* Mixer */
 	renewal = FALSE;
 	for (i = 0; i < NELEMENTS(mixer_vol_tbl); i++) {
@@ -591,8 +589,6 @@ static void
 dialog_destroy(GtkWidget *w, GtkWidget **wp)
 {
 
-	UNUSED(wp);
-
 	install_idle_process();
 	gtk_widget_destroy(w);
 }
@@ -601,9 +597,6 @@ static void
 mixer_default_button_clicked(GtkButton *b, gpointer d)
 {
 	int i;
-
-	UNUSED(b);
-	UNUSED(d);
 
 	for (i = 0; i < NELEMENTS(mixer_vol_tbl); i++) {
 		gtk_adjustment_set_value(GTK_ADJUSTMENT(mixer_adj[i]), 64.0);
@@ -618,9 +611,6 @@ snd14_default_button_clicked(GtkButton *b, gpointer d)
 	};
 	int i;
 
-	UNUSED(b);
-	UNUSED(d);
-
 	for (i = 0; i < NELEMENTS(snd14_adj); i++) {
 		gtk_adjustment_set_value(GTK_ADJUSTMENT(snd14_adj[i]), defval[i]);
 	}
@@ -630,9 +620,6 @@ static void
 snd26_default_button_clicked(GtkButton *b, gpointer d)
 {
 
-	UNUSED(b);
-	UNUSED(d);
-
 	gtk_entry_set_text(GTK_ENTRY(snd26_ioport_entry), "0188");
 	gtk_entry_set_text(GTK_ENTRY(snd26_int_entry), "INT5");
 	gtk_entry_set_text(GTK_ENTRY(snd26_romaddr_entry), "CC000");
@@ -641,9 +628,6 @@ snd26_default_button_clicked(GtkButton *b, gpointer d)
 static void
 snd86_default_button_clicked(GtkButton *b, gpointer d)
 {
-
-	UNUSED(b);
-	UNUSED(d);
 
 	gtk_entry_set_text(GTK_ENTRY(snd86_ioport_entry), "0188");
 	gtk_entry_set_text(GTK_ENTRY(snd86_int_entry), "INT5");
@@ -659,9 +643,6 @@ spb_default_button_clicked(GtkButton *b, gpointer d)
 {
 	int i;
 
-	UNUSED(b);
-	UNUSED(d);
-
 	gtk_entry_set_text(GTK_ENTRY(spb_ioport_entry), "0188");
 	gtk_entry_set_text(GTK_ENTRY(spb_int_entry), "INT5");
 	gtk_entry_set_text(GTK_ENTRY(spb_romaddr_entry), "CC000");
@@ -674,8 +655,6 @@ spb_default_button_clicked(GtkButton *b, gpointer d)
 static void
 driver_radiobutton_clicked(GtkButton *b, gpointer d)
 {
-
-	UNUSED(b);
 
 	driver_snddrv = (int)d;
 }
@@ -1111,8 +1090,6 @@ joypad_device_changed(GtkEditable *e, gpointer d)
 	const gchar *devname;
 	int drv;
 	int i, j;
-
-	UNUSED(d);
 
 	devname = gtk_entry_get_text(GTK_ENTRY(e));
 	if ((joypad_devlist == NULL)

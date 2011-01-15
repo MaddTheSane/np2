@@ -1,4 +1,4 @@
-/*	$Id: soundmng.c,v 1.13 2010/11/07 14:01:54 monaka Exp $	*/
+/*	$Id: soundmng.c,v 1.14 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2001-2003 NONAKA Kimihiro
@@ -466,9 +466,6 @@ static BOOL
 nosound_drvinit(UINT rate, UINT bufmsec)
 {
 
-	UNUSED(rate);
-	UNUSED(bufmsec);
-
 	return SUCCESS;
 }
 
@@ -511,18 +508,12 @@ static void *
 nosound_pcmload(UINT num, const char *path)
 {
 
-	UNUSED(num);
-	UNUSED(path);
-
 	return NULL;
 }
 
 static void
 nosound_pcmdestroy(void *chanp, UINT num)
 {
-
-	UNUSED(chanp);
-	UNUSED(num);
 
 	/* Nothing to do */
 }
@@ -531,10 +522,6 @@ static void
 nosound_pcmplay(void *chanp, UINT num, BOOL loop)
 {
 
-	UNUSED(chanp);
-	UNUSED(num);
-	UNUSED(loop);
-
 	/* Nothing to do */
 }
 
@@ -542,19 +529,12 @@ static void
 nosound_pcmstop(void *chanp, UINT num)
 {
 
-	UNUSED(chanp);
-	UNUSED(num);
-
 	/* Nothing to do */
 }
 
 static void
 nosound_pcmvolume(void *chanp, UINT num, int volume)
 {
-
-	UNUSED(chanp);
-	UNUSED(num);
-	UNUSED(volume);
 
 	/* Nothing to do */
 }
@@ -905,8 +885,6 @@ sdlmixer_pcmload(UINT num, const char *path)
 {
 	Mix_Chunk *chunk;
 
-	UNUSED(num);
-
 	chunk = Mix_LoadWAV(path);
 	return (void *)chunk;
 }
@@ -932,16 +910,12 @@ static void
 sdlmixer_pcmstop(void *chanp, UINT num)
 {
 
-	UNUSED(chanp);
-
 	Mix_HaltChannel(num);
 }
 
 static void
 sdlmixer_pcmvolume(void *chanp, UINT num, int volume)
 {
-
-	UNUSED(chanp);
 
 	Mix_Volume(num, (MIX_MAX_VOLUME * volume) / 100);
 }

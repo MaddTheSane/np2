@@ -1,4 +1,4 @@
-/*	$Id: gtk_screen.c,v 1.10 2010/08/16 14:26:55 monaka Exp $	*/
+/*	$Id: gtk_screen.c,v 1.11 2011/01/15 16:01:53 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -468,8 +468,6 @@ void
 scrnmng_setwidth(int posx, int width)
 {
 
-	UNUSED(posx);
-
 	scrnstat.width = width;
 	renewal_client_size();
 }
@@ -477,8 +475,6 @@ scrnmng_setwidth(int posx, int width)
 void
 scrnmng_setheight(int posy, int height)
 {
-
-	UNUSED(posy);
 
 	scrnstat.height = height;
 	renewal_client_size();
@@ -541,8 +537,6 @@ scrnmng_surflock(void)
 void
 scrnmng_surfunlock(const SCRNSURF *surf)
 {
-
-	UNUSED(surf);
 
 	if (drawmng.drawsurf == drawmng.surface) {
 		gdk_pixbuf_scale(drawmng.backsurf, drawmng.surface,

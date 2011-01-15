@@ -1,4 +1,4 @@
-/*	$Id: np2.c,v 1.31 2008/03/18 15:33:14 monaka Exp $	*/
+/*	$Id: np2.c,v 1.32 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -318,8 +318,6 @@ processwait(UINT cnt)
 int
 mainloop(void *p)
 {
-
-	UNUSED(p);
 
 	if (np2oscfg.NOWAIT) {
 		joymng_sync();

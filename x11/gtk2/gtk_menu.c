@@ -1,4 +1,4 @@
-/*	$Id: gtk_menu.c,v 1.16 2010/08/16 14:26:55 monaka Exp $	*/
+/*	$Id: gtk_menu.c,v 1.17 2011/01/15 16:01:53 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
@@ -564,9 +564,6 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 	SCRNBMP bmp = NULL;
 	FILEH fh;
 
-	UNUSED(action);
-	UNUSED(user_data);
-
 	uninstall_idle_process();
 
 	bmp = scrnbmp();
@@ -642,9 +639,6 @@ cb_change_font(GtkAction *action, gpointer user_data)
 	gchar *utf8, *path;
 	struct stat sb;
 
-	UNUSED(action);
-	UNUSED(user_data);
-
 	uninstall_idle_process();
 
 	dialog = gtk_file_chooser_dialog_new("Open a font file",
@@ -708,8 +702,6 @@ cb_diskeject(GtkAction *action, gpointer user_data)
 	const gchar *name = gtk_action_get_name(action);
 	guint drive;
 
-	UNUSED(user_data);
-
 	/* name = "disk?eject" */
 	if ((strlen(name) >= 5) && (g_ascii_isdigit(name[4]))) {
 		drive = g_ascii_digit_value(name[4]) - 1;
@@ -729,8 +721,6 @@ cb_diskopen(GtkAction *action, gpointer user_data)
 	struct stat sb;
 	const gchar *name = gtk_action_get_name(action);
 	guint drive;
-
-	UNUSED(user_data);
 
 	if ((strlen(name) < 5) || (!g_ascii_isdigit(name[4])))
 		return;
@@ -833,8 +823,6 @@ cb_ataopen(GtkAction *action, gpointer user_data)
 	const gchar *name = gtk_action_get_name(action);
 	guint channel, drive;
 
-	UNUSED(user_data);
-
 	/* "ata??open" */
 	if ((strlen(name) < 5)
 	 || (!g_ascii_isdigit(name[3]))
@@ -910,8 +898,6 @@ cb_ataremove(GtkAction *action, gpointer user_data)
 	const gchar *name = gtk_action_get_name(GTK_ACTION(action));
 	guint channel, drive;
 
-	UNUSED(user_data);
-
 	/* "ata??open" */
 	if ((strlen(name) < 5)
 	 || (!g_ascii_isdigit(name[3]))
@@ -935,9 +921,6 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 	GtkFileFilter *filter;
 	gchar *utf8, *path;
 	struct stat sb;
-
-	UNUSED(action);
-	UNUSED(user_data);
 
 	uninstall_idle_process();
 
@@ -1004,9 +987,6 @@ static void
 cb_atapiremove(GtkAction *action, gpointer user_data)
 {
 
-	UNUSED(action);
-	UNUSED(user_data);
-
 	sxsi_devclose(0x02);
 }
 #endif	/* SUPPORT_IDEIO */
@@ -1014,9 +994,6 @@ cb_atapiremove(GtkAction *action, gpointer user_data)
 static void
 cb_midipanic(GtkAction *action, gpointer user_data)
 {
-
-	UNUSED(action);
-	UNUSED(user_data);
 
 	rs232c_midipanic();
 	mpu98ii_midipanic();
@@ -1045,9 +1022,6 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 	const char *ext;
 	int kind;
 	int i;
-
-	UNUSED(action);
-	UNUSED(user_data);
 
 	uninstall_idle_process();
 
@@ -1172,9 +1146,6 @@ static void
 cb_reset(GtkAction *action, gpointer user_data)
 {
 
-	UNUSED(action);
-	UNUSED(user_data);
-
 	pccore_cfgupdate();
 	pccore_reset();
 }
@@ -1189,8 +1160,6 @@ cb_sasiopen(GtkAction *action, gpointer user_data)
 	struct stat sb;
 	const gchar *name = gtk_action_get_name(action);
 	guint drive;
-
-	UNUSED(user_data);
 
 	if ((strlen(name) < 5) || (!g_ascii_isdigit(name[4])))
 		return;
@@ -1259,8 +1228,6 @@ cb_sasiremove(GtkAction *action, gpointer user_data)
 	const gchar *name = gtk_action_get_name(GTK_ACTION(action));
 	guint drive;
 
-	UNUSED(user_data);
-
 	/* name = "sasi?eject" */
 	if ((strlen(name) >= 5) && (g_ascii_isdigit(name[4]))) {
 		drive = g_ascii_digit_value(name[4]) - 1;
@@ -1278,8 +1245,6 @@ cb_statsave(GtkAction *action, gpointer user_data)
 	const gchar *name = gtk_action_get_name(GTK_ACTION(action));
 	char ext[4];
 	guint n;
-
-	UNUSED(user_data);
 
 	/* name = "stat??save" */
 	if ((strlen(name) >= 6)
@@ -1299,8 +1264,6 @@ cb_statload(GtkAction *action, gpointer user_data)
 	char ext[4];
 	guint n;
 
-	UNUSED(user_data);
-
 	/* name = "stat??load" */
 	if ((strlen(name) >= 6)
 	 && (g_ascii_isdigit(name[4]))
@@ -1317,8 +1280,6 @@ static void
 cb_dialog(GtkAction *action, gpointer user_data)
 {
 	const gchar *name = gtk_action_get_name(action);
-
-	UNUSED(user_data);
 
 	if (g_ascii_strcasecmp(name, "configure") == 0) {
 		create_configure_dialog();
@@ -1346,8 +1307,6 @@ cb_clockdisp(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2oscfg.DISPCLK & 1) ^ (b ? 1 : 0);
 	if (f) {
 		np2oscfg.DISPCLK ^= 1;
@@ -1363,8 +1322,6 @@ cb_dispvsync(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2cfg.DISPSYNC ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2cfg.DISPSYNC = !np2cfg.DISPSYNC;
@@ -1377,8 +1334,6 @@ cb_framedisp(GtkToggleAction *action, gpointer user_data)
 {
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (np2oscfg.DISPCLK & 2) ^ (b ? 2 : 0);
 	if (f) {
@@ -1395,8 +1350,6 @@ cb_jastsound(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2oscfg.jastsnd ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2oscfg.jastsnd = !np2oscfg.jastsnd;
@@ -1409,8 +1362,6 @@ cb_joyrapid(GtkToggleAction *action, gpointer user_data)
 {
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (np2cfg.BTN_RAPID ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
@@ -1425,8 +1376,6 @@ cb_joyreverse(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2cfg.BTN_MODE ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2cfg.BTN_MODE = !np2cfg.BTN_MODE;
@@ -1439,8 +1388,6 @@ cb_keydisplay(GtkToggleAction *action, gpointer user_data)
 {
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (np2oscfg.keydisp ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
@@ -1460,8 +1407,6 @@ cb_mousemode(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2oscfg.MOUSE_SW ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		mouse_running(MOUSE_XOR);
@@ -1476,8 +1421,6 @@ cb_mouserapid(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2cfg.MOUSERAPID ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2cfg.MOUSERAPID = !np2cfg.MOUSERAPID;
@@ -1491,8 +1434,6 @@ cb_nowait(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2oscfg.NOWAIT ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2oscfg.NOWAIT = !np2oscfg.NOWAIT;
@@ -1505,8 +1446,6 @@ cb_realpalettes(GtkToggleAction *action, gpointer user_data)
 {
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (np2cfg.RASTER ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
@@ -1522,8 +1461,6 @@ cb_s98logging(GtkToggleAction *action, gpointer user_data)
 	char work2[64];
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (s98logging ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
@@ -1546,8 +1483,6 @@ cb_seeksound(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2cfg.MOTOR ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2cfg.MOTOR = !np2cfg.MOTOR;
@@ -1560,8 +1495,6 @@ cb_softkeyboard(GtkToggleAction *action, gpointer user_data)
 {
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (np2oscfg.softkbd ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
@@ -1581,8 +1514,6 @@ cb_toolwindow(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2oscfg.toolwin ? 1 : 0) ^ (b ? 1 : 0);
 	if (f) {
 		np2oscfg.toolwin = !np2oscfg.toolwin;
@@ -1601,8 +1532,6 @@ cb_xctrlkey(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2cfg.XSHIFT & 2) ^ (b ? 2 : 0);
 	if (f) {
 		np2cfg.XSHIFT ^= 2;
@@ -1617,8 +1546,6 @@ cb_xgrphkey(GtkToggleAction *action, gpointer user_data)
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
 
-	UNUSED(user_data);
-
 	f = (np2cfg.XSHIFT & 4) ^ (b ? 4 : 0);
 	if (f) {
 		np2cfg.XSHIFT ^= 4;
@@ -1632,8 +1559,6 @@ cb_xshiftkey(GtkToggleAction *action, gpointer user_data)
 {
 	gboolean b = gtk_toggle_action_get_active(action);
 	gboolean f;
-
-	UNUSED(user_data);
 
 	f = (np2cfg.XSHIFT & 1) ^ (b ? 1 : 0);
 	if (f) {
@@ -1792,8 +1717,6 @@ cb_radio(GtkRadioAction *action, GtkRadioAction *current, gpointer user_data)
 	guint menu_idx = (guint)GPOINTER_TO_INT(user_data);
 	gint i;
 
-	UNUSED(current);	/* emitted item */
-
 	if (menu_idx < n_radiomenu_entries) {
 		for (i = 0; i < radiomenu_entries[menu_idx].count; i++) {
 			if (radiomenu_entries[menu_idx].entry[i].value == value)
@@ -1821,8 +1744,6 @@ static gboolean
 menubar_timeout(gpointer p)
 {
 
-	UNUSED(p);
-
 	if (menubar_timerid) {
 		g_source_remove(menubar_timerid);
 		menubar_timerid = 0;
@@ -1843,10 +1764,6 @@ static gboolean
 enter_notify_evhandler(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(ev);
-	UNUSED(p);
-
 	if (menubar_timerid) {
 		g_source_remove(menubar_timerid);
 		menubar_timerid = 0;
@@ -1862,10 +1779,6 @@ enter_notify_evhandler(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
 static gboolean
 leave_notify_evhandler(GtkWidget *w, GdkEventCrossing *ev, gpointer p)
 {
-
-	UNUSED(w);
-	UNUSED(ev);
-	UNUSED(p);
 
 	if (menubar_timerid) {
 		g_source_remove(menubar_timerid);

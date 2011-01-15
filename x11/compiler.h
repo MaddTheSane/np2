@@ -1,4 +1,4 @@
-/*	$Id: compiler.h,v 1.40 2011/01/15 14:37:09 monaka Exp $	*/
+/*	$Id: compiler.h,v 1.41 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2003, 2004 NONAKA Kimihiro
@@ -139,10 +139,6 @@ typedef	gboolean	BOOL;
 
 #ifndef	roundup
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
-#endif
-
-#ifndef	UNUSED
-#define	UNUSED(v)	((void)(v))
 #endif
 
 #define	FASTCALL

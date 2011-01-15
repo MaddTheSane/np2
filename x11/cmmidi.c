@@ -252,9 +252,7 @@ static void
 midiout_none(CMMIDI midi, UINT32 msg, UINT cnt)
 {
 
-	UNUSED(midi);
-	UNUSED(msg);
-	UNUSED(cnt);
+	/* Nothing to do */
 }
 
 static void
@@ -274,8 +272,6 @@ midiout_device(CMMIDI midi, UINT32 msg, UINT cnt)
 static void
 midiout_vermouth(CMMIDI midi, UINT32 msg, UINT cnt)
 {
-
-	UNUSED(cnt);
 
 	sound_sync();
 	midiout_shortmsg(midi->vermouth, msg);
@@ -588,8 +584,6 @@ midiwrite(COMMNG self, BYTE data)
 static BYTE
 midigetstat(COMMNG self)
 {
-
-	UNUSED(self);
 
 	return 0x00;
 }

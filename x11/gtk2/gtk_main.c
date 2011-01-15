@@ -1,4 +1,4 @@
-/*	$Id: gtk_main.c,v 1.11 2009/03/05 11:50:39 monaka Exp $	*/
+/*	$Id: gtk_main.c,v 1.12 2011/01/15 16:01:53 monaka Exp $	*/
 
 /*
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>
@@ -70,10 +70,6 @@ static gboolean
 destroy_evhandler(GtkWidget *w, GdkEventAny *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(ev);
-	UNUSED(p);
-
 	toolkit_widget_quit();
 
 	return TRUE;
@@ -86,9 +82,6 @@ destroy_evhandler(GtkWidget *w, GdkEventAny *ev, gpointer p)
 static gboolean
 configure_evhandler(GtkWidget *w, GdkEventConfigure *ev, gpointer p)
 {
-
-	UNUSED(ev);
-	UNUSED(p);
 
 	gdk_draw_rectangle(w->window, w->style->black_gc, TRUE,
 	    0, 0, w->allocation.width, w->allocation.height);
@@ -103,9 +96,6 @@ static gboolean
 expose_evhandler(GtkWidget *w, GdkEventExpose *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	if (ev->count == 0) {
 		scrndraw_redraw();
 	}
@@ -119,9 +109,6 @@ expose_evhandler(GtkWidget *w, GdkEventExpose *ev, gpointer p)
 static gboolean
 key_press_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
-
-	UNUSED(w);
-	UNUSED(p);
 
 	if (ev->keyval == GDK_F11) {
 		if ((np2oscfg.F11KEY == 1) && (scrnmode & SCRNMODE_FULLSCREEN))
@@ -143,9 +130,6 @@ static gboolean
 key_release_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
 		gtkkbd_keyup(ev->keyval);
 	return TRUE;
@@ -158,9 +142,6 @@ key_release_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 static gboolean
 button_press_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
-
-	UNUSED(w);
-	UNUSED(p);
 
 	switch (ev->button) {
 	case 1:
@@ -186,9 +167,6 @@ static gboolean
 button_release_evhandler(GtkWidget *w, GdkEventButton *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	switch (ev->button) {
 	case 1:
 		mouse_btn(MOUSE_LEFTUP);
@@ -212,9 +190,6 @@ static gboolean
 motion_notify_evhandler(GtkWidget *w, GdkEventMotion *ev, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	if ((scrnmode & SCRNMODE_FULLSCREEN) && (ev->y < 8.0))
 		xmenu_show();
 
@@ -228,8 +203,6 @@ motion_notify_evhandler(GtkWidget *w, GdkEventMotion *ev, gpointer p)
 static gint
 main_loop_quit(gpointer p)
 {
-
-	UNUSED(p);
 
 	scrnmng_fullscreen(0);
 

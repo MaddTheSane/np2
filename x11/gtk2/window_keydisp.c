@@ -1,4 +1,4 @@
-/*	$Id: window_keydisp.c,v 1.4 2009/03/05 11:50:39 monaka Exp $	*/
+/*	$Id: window_keydisp.c,v 1.5 2011/01/15 16:01:53 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -42,9 +42,6 @@ static void
 kdispwin_window_destroy(GtkWidget *w, gpointer p)
 {
 
-	UNUSED(w);
-	UNUSED(p);
-
 	if (kdwin.window)
 		kdwin.window = NULL;
 	drawmng_release(kdwin.hdl);
@@ -59,19 +56,12 @@ static void
 close_window(gpointer data, guint action, GtkWidget *w)
 {
 
-	UNUSED(data);
-	UNUSED(action);
-	UNUSED(w);
-
 	xmenu_toggle_item(kdwin.menuhdl, "keydisp", FALSE);
 }
 
 static void
 change_module(gpointer data, guint action, GtkWidget *w)
 {
-
-	UNUSED(data);
-	UNUSED(w);
 
 	if (kdispcfg.mode != action) {
 		kdispcfg.mode = action;
@@ -135,8 +125,6 @@ static gint
 kdispwin_expose(GtkWidget *w, GdkEventExpose *ev)
 {
 
-	UNUSED(w);
-
 	if (ev->type == GDK_EXPOSE) {
 		if (ev->count == 0) {
 			drawkeys();
@@ -154,8 +142,6 @@ static UINT8
 getpal8(CMNPALFN *self, UINT num)
 {
 
-	UNUSED(self);
-
 	if (num < KEYDISP_PALS) {
 		return kdwinpal[num] >> 24;
 	}
@@ -166,8 +152,6 @@ static UINT32
 getpal32(CMNPALFN *self, UINT num)
 {
 
-	UNUSED(self);
-
 	if (num < KEYDISP_PALS) {
 		return kdwinpal[num] & 0xffffff;
 	}
@@ -177,8 +161,6 @@ getpal32(CMNPALFN *self, UINT num)
 static UINT16
 cnvpal16(CMNPALFN *self, RGB32 pal32)
 {
-
-	UNUSED(self);
 
 	return (UINT16)drawmng_makepal16(&kdwin.hdl->pal16mask, pal32);
 }

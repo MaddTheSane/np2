@@ -1,4 +1,4 @@
-/*	$Id: dialog_about.c,v 1.6 2010/12/23 06:32:35 monaka Exp $	*/
+/*	$Id: dialog_about.c,v 1.7 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2003 NONAKA Kimihiro
@@ -39,8 +39,6 @@
 static void
 about_destroy(GtkWidget *w, GtkWidget **wp)
 {
-
-	UNUSED(wp);
 
 	install_idle_process();
 	gtk_widget_destroy(w);

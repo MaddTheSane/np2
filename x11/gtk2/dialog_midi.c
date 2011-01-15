@@ -1,4 +1,4 @@
-/*	$Id: dialog_midi.c,v 1.5 2010/12/23 06:32:35 monaka Exp $	*/
+/*	$Id: dialog_midi.c,v 1.6 2011/01/15 16:01:52 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -86,8 +86,6 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	BOOL enable;
 	UINT update;
 	int i;
-
-	UNUSED(b);
 
 	update = 0;
 	if (np2cfg.mpuopt != mpuopt) {
@@ -177,8 +175,6 @@ static void
 dialog_destroy(GtkWidget *w, GtkWidget **wp)
 {
 
-	UNUSED(wp);
-
 	install_idle_process();
 	gtk_widget_destroy(w);
 }
@@ -189,8 +185,6 @@ mpu98_ioport_entry_changed(GtkEditable *e, gpointer d)
 	const gchar *utf8;
 	gchar *p;
 	BYTE val;
-
-	UNUSED(d);
 
 	utf8 = gtk_entry_get_text(GTK_ENTRY(e));
 	if (utf8 != NULL) {
@@ -213,8 +207,6 @@ mpu98_intr_entry_changed(GtkEditable *e, gpointer d)
 	gchar *p;
 	BYTE val;
 
-	UNUSED(d);
-
 	utf8 = gtk_entry_get_text(GTK_ENTRY(e));
 	if (utf8 != NULL) {
 		p = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
@@ -235,9 +227,6 @@ static void
 mpu98_default_button_clicked(GtkButton *b, gpointer d)
 {
 
-	UNUSED(b);
-	UNUSED(d);
-
 	gtk_entry_set_text(GTK_ENTRY(mpu98_ioport_entry), "E0D0");
 	gtk_entry_set_text(GTK_ENTRY(mpu98_intr_entry), "INT2");
 }
@@ -249,9 +238,6 @@ mpu98_mimpi_def_button_clicked(GtkButton *b, gpointer d)
 	GtkFileFilter *filter;
 	gchar *utf8, *path;
 	struct stat sb;
-
-	UNUSED(b);
-	UNUSED(d);
 
 	dialog = gtk_file_chooser_dialog_new("Open MIMPI define file",
 	    GTK_WINDOW(main_window), GTK_FILE_CHOOSER_ACTION_OPEN, 
