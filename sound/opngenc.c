@@ -164,10 +164,10 @@ void opngen_initialize(UINT rate) {
 		decaytable[i] = (long)(freq / OPM_DRRATE);
 #endif
 		if (attacktable[i] >= EC_DECAY) {
-			TRACEOUT(("attacktable %d %d %d", i, attacktable[i], EC_DECAY));
+			TRACEOUT(("attacktable %d %d %ld", i, attacktable[i], EC_DECAY));
 		}
 		if (decaytable[i] >= EC_DECAY) {
-			TRACEOUT(("decaytable %d %d %d", i, decaytable[i], EC_DECAY));
+			TRACEOUT(("decaytable %d %d %ld", i, decaytable[i], EC_DECAY));
 		}
 	}
 	attacktable[62] = EC_DECAY - 1;
