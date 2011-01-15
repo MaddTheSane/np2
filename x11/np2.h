@@ -1,4 +1,4 @@
-/*	$Id: np2.h,v 1.19 2008/03/18 15:33:14 monaka Exp $	*/
+/*	$Id: np2.h,v 1.20 2011/01/15 16:14:24 monaka Exp $	*/
 
 #ifndef	NP2_X11_NP2_H__
 #define	NP2_X11_NP2_H__
@@ -114,7 +114,6 @@ extern char bmpfilefolder[MAX_PATH];
 extern char modulefile[MAX_PATH];
 extern char statpath[MAX_PATH];
 extern char fontname[1024];
-extern char fontfilename[MAX_PATH];
 
 extern char np2appname[MAX_PATH];
 extern const char np2flagext[];

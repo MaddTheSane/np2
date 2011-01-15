@@ -1,4 +1,4 @@
-/*	$Id: np2.c,v 1.32 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: np2.c,v 1.33 2011/01/15 16:14:23 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -140,11 +140,6 @@ const char np2resumeext[] = "sav";
 #define FONTFACE "-misc-fixed-%s-r-normal--%d-*-*-*-*-*-*-*"
 #endif
 char fontname[1024] = FONTFACE;
-
-#ifndef	FONTNAME_DEFAULT
-#define	FONTNAME_DEFAULT	"./default.ttf"
-#endif
-char fontfilename[MAX_PATH] = FONTNAME_DEFAULT;
 
 char timidity_cfgfile_path[MAX_PATH];
 
