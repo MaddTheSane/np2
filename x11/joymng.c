@@ -1,4 +1,4 @@
-/*	$Id: joymng.c,v 1.4 2008/01/29 13:32:51 monaka Exp $	*/
+/*	$Id: joymng.c,v 1.5 2011/01/15 16:45:18 monaka Exp $	*/
 
 /*-
  * Copyright (c) 2004 NONAKA Kimihiro <aw9k-nnk@asahi-net.or.jp>,
@@ -200,7 +200,7 @@ joydrv_initialize(void)
 	memset(devlist, 0, allocsize);
 
 	for (n = 0, i = 0; i < ndrv; ++i) {
-		sprintf(str, "%d", i);
+		g_snprintf(str, sizeof(str), "%d", i);
 		devlist[n] = joydrv_open(str);
 		if (devlist[n] == NULL) {
 			continue;
