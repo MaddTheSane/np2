@@ -1,4 +1,4 @@
-/*	$Id: ini.c,v 1.23 2011/01/15 14:05:47 monaka Exp $	*/
+/*	$Id: ini.c,v 1.24 2011/01/15 16:08:26 monaka Exp $	*/
 
 #include "compiler.h"
 
@@ -493,9 +493,12 @@ ini_write(const char *path, const char *title, const INITBL *tbl, UINT count, BO
 	file_close(fh);
 }
 
-extern char modulefile[];
-
-static const char ini_title[] = "NekoProjectII";
+static const char ini_title[] =
+#if !defined(CPUCORE_IA32)
+	"NekoProjectII";
+#else
+	"NekoProjectII_IA32";
+#endif
 
 enum {
 	INIRO_STR	= INIFLAG_RO | INITYPE_STR,
