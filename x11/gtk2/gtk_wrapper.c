@@ -1,4 +1,4 @@
-/*	$Id: gtk_wrapper.c,v 1.12 2007/02/05 14:58:59 monaka Exp $	*/
+/*	$Id: gtk_wrapper.c,v 1.13 2011/01/15 16:48:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2002-2004 NONAKA Kimihiro
@@ -45,9 +45,13 @@
 extern int verbose;
 extern volatile sig_atomic_t np2running;
 
+#ifdef DEBUG
 #ifndef	VERBOSE
-#define	VERBOSE(s)	if (verbose) printf s
-#endif
+#define	VERBOSE(s)	if (verbose) g_printerr s
+#endif	/* !VERBOSE */
+#else	/* !DEBUG */
+#define	VERBOSE(s)
+#endif	/* DEBUG */
 
 void
 gtk_scale_set_default_values(GtkScale *scale)
@@ -290,11 +294,11 @@ gtk_window_init_fullscreen(GtkWidget *widget)
 
 	if (verbose) {
 		if (use_xvid) {
-			printf("Using XF86VidMode extension\n");
+			VERBOSE(("Using XF86VidMode extension\n"));
 		} else if (use_netwm) {
-			printf("Using _NET_WM_STATE_FULLSCREEN\n");
+			VERBOSE(("Using _NET_WM_STATE_FULLSCREEN\n"));
 		} else {
-			printf("not supported\n");
+			VERBOSE(("not supported\n"));
 		}
 	}
 

@@ -1,4 +1,4 @@
-/*	$Id: soundmng.c,v 1.14 2011/01/15 16:01:52 monaka Exp $	*/
+/*	$Id: soundmng.c,v 1.15 2011/01/15 16:48:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2001-2003 NONAKA Kimihiro
@@ -421,7 +421,7 @@ buffer_init(void)
 		}
 		sound_buffer[i] = (char *)_MALLOC(opna_frame, "sound buffer");
 		if (sound_buffer[i] == NULL) {
-			fprintf(stderr, "buffer_init: can't alloc memory\n");
+			g_printerr("buffer_init: can't alloc memory\n");
 			sounddrv_unlock();
 			return FAILURE;
 		}
@@ -787,13 +787,15 @@ sdlaudio_init(UINT rate, UINT samples)
 
 	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
-		fprintf(stderr, "sdlaudio_init: SDL_InitSubSystem\n");
+		g_printerr("sdlmixer_init: SDL_InitSubSystem(): %s\n",
+		    SDL_GetError());
 		return FAILURE;
 	}
 
 	audio_fd = SDL_OpenAudio(&fmt, NULL);
 	if (audio_fd < 0) {
-		fprintf(stderr, "sdlaudio_init: SDL_OpenAudio\n");
+		g_printerr("sdlaudio_init: SDL_OpenAudio(): %s\n",
+		    SDL_GetError());
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return FAILURE;
 	}
@@ -841,21 +843,21 @@ sdlmixer_init(UINT rate, UINT samples)
 
 	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
-		fprintf(stderr, "sdlmixer_init: SDL_InitSubSystem(): %s\n",
+		g_printerr("sdlmixer_init: SDL_InitSubSystem(): %s\n",
 		    SDL_GetError());
 		goto failure;
 	}
 
 	rv = Mix_OpenAudio(rate, AUDIO_S16SYS, 2, samples);
 	if (rv < 0) {
-		fprintf(stderr, "sdlmixer_init: Mix_OpenAudio(): %s\n",
+		g_printerr("sdlmixer_init: Mix_OpenAudio(): %s\n",
 		    Mix_GetError());
 		goto failure1;
 	}
 
 	rv = Mix_AllocateChannels(SOUND_MAXPCM);
 	if (rv < 0) {
-		fprintf(stderr, "sdlmixer_init: Mix_AllocateChannels(): %s\n",
+		g_printerr("sdlmixer_init: Mix_AllocateChannels(): %s\n",
 		    Mix_GetError());
 		goto failure1;
 	}

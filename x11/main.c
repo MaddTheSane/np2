@@ -1,4 +1,4 @@
-/*	$Id: main.c,v 1.34 2011/01/15 16:10:12 monaka Exp $	*/
+/*	$Id: main.c,v 1.35 2011/01/15 16:48:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -107,11 +107,11 @@ static void
 usage(void)
 {
 
-	printf("Usage: %s [options] [[FD1 image] [[FD2 image] [[FD3 image] [FD4 image]]]]\n\n", progname);
-	printf("options:\n");
-	printf("\t--help            [-h]        : print this message\n");
-	printf("\t--config          [-c] <file> : specify config file\n");
-	printf("\t--timidity-config [-C] <file> : specify timidity config file\n");
+	g_printerr("Usage: %s [options] [[FD1 image] [[FD2 image] [[FD3 image] [FD4 image]]]]\n\n", progname);
+	g_printerr("options:\n");
+	g_printerr("\t--help            [-h]        : print this message\n");
+	g_printerr("\t--config          [-c] <file> : specify config file\n");
+	g_printerr("\t--timidity-config [-C] <file> : specify timidity config file\n");
 	exit(1);
 }
 
@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 		switch (ch) {
 		case 'c':
 			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
-				fprintf(stderr, "Can't access %s.\n", optarg);
+				g_printerr("Can't access %s.\n", optarg);
 				exit(1);
 			}
 			milstr_ncpy(modulefile, optarg, sizeof(modulefile));
@@ -150,7 +150,7 @@ main(int argc, char *argv[])
 
 		case 'C':
 			if (stat(optarg, &sb) < 0 || !S_ISREG(sb.st_mode)) {
-				fprintf(stderr, "Can't access %s.\n", optarg);
+				g_printerr("Can't access %s.\n", optarg);
 				exit(1);
 			}
 			milstr_ncpy(timidity_cfgfile_path, optarg,
@@ -183,7 +183,7 @@ main(int argc, char *argv[])
 					exit(1);
 				}
 			} else if (!S_ISDIR(sb.st_mode)) {
-				fprintf(stderr, "%s isn't directory.\n",
+				g_printerr("%s isn't directory.\n",
 				    modulefile);
 				exit(1);
 			}
@@ -192,7 +192,7 @@ main(int argc, char *argv[])
 			milstr_ncat(modulefile, "/np2rc", sizeof(modulefile));
 			if ((stat(modulefile, &sb) >= 0)
 			 && !S_ISREG(sb.st_mode)) {
-				fprintf(stderr, "%s isn't regular file.\n",
+				g_printerr("%s isn't regular file.\n",
 				    modulefile);
 			}
 		}
@@ -216,7 +216,7 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 		} else if (!S_ISDIR(sb.st_mode)) {
-			fprintf(stderr, "%s isn't directory.\n",
+			g_printerr("%s isn't directory.\n",
 			    statpath);
 			exit(1);
 		}

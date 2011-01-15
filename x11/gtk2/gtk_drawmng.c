@@ -1,4 +1,4 @@
-/*	$Id: gtk_drawmng.c,v 1.7 2010/08/16 14:26:55 monaka Exp $	*/
+/*	$Id: gtk_drawmng.c,v 1.8 2011/01/15 16:48:39 monaka Exp $	*/
 
 /*
  * Copyright (c) 2003 NONAKA Kimihiro
@@ -270,7 +270,7 @@ gtkdrawmng_getformat(GtkWidget *w, GtkWidget *pw, pixmap_format_t *fmtp)
 		break;
 
 	default:
-		fprintf(stderr, "No support visual class.\n");
+		g_printerr("No support visual class.\n");
 		return FALSE;
 	}
 
@@ -292,9 +292,9 @@ gtkdrawmng_getformat(GtkWidget *w, GtkWidget *pw, pixmap_format_t *fmtp)
 
 	default:
 		if (visual->depth < 8) {
-			fprintf(stderr, "Too few allocable color.\n");
+			g_printerr("Too few allocable color.\n");
 		}
-		fprintf(stderr, "No support depth.\n");
+		g_printerr("No support depth.\n");
 		return FALSE;
 	}
 
