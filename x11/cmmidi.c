@@ -6,9 +6,9 @@
 #include "mimpidef.h"
 #include "sound.h"
 
-#if defined(VERMOUTH_LIB)
 #include "vermouth.h"
 
+#if defined(VERMOUTH_LIB)
 extern MIDIMOD vermouth_module;
 
 const char cmmidi_vermouth[] = "VERMOUTH";
@@ -68,9 +68,7 @@ enum {
 	CMMIDI_MIDIOUT		= 0x01,
 	CMMIDI_MIDIIN		= 0x02,
 	CMMIDI_MIDIINSTART	= 0x04,
-#if defined(VERMOUTH_LIB)
 	CMMIDI_VERMOUTH		= 0x08,
-#endif
 
 	MIDICTRL_READY		= 0,
 	MIDICTRL_2BYTES,
@@ -97,9 +95,7 @@ struct _cmmidi {
 	int		hmidiin;
 	int		hmidiout;
 	struct timeval	hmidiout_nextstart;
-#if defined(VERMOUTH_LIB)
 	MIDIHDL		vermouth;
-#endif
 
 	UINT		midictrl;
 	UINT		midisyscnt;
