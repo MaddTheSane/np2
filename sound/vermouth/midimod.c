@@ -579,14 +579,12 @@ VEXTERN void VEXPORT midimod_loadall(MIDIMOD mod) {
 }
 
 
-VEXTERN int VEXPORT midimod_loadallex(MIDIMOD mod, FNMIDIOUTLAEXCB cb,
+VEXTERN void VEXPORT midimod_loadallex(MIDIMOD mod, FNMIDIOUTLAEXCB cb,
 															void *userdata) {
 
-	int					result;
-	MIDIOUTLAEXPARAM	param;
-	UINT				b;
+	MIDIOUTLAEXPARAM param;
+	UINT	b;
 
-	result = MIDIOUT_SUCCESS;
 	if (mod) {
 		ZeroMemory(&param, sizeof(param));
 		param.userdata = userdata;
@@ -595,13 +593,8 @@ VEXTERN int VEXPORT midimod_loadallex(MIDIMOD mod, FNMIDIOUTLAEXCB cb,
 		}
 		for (b=0; b<(MIDI_BANKS*2); b++) {
 			param.bank = b;
-			result = inst_bankloadex(mod, b, cb, &param);
-			if (result != MIDIOUT_SUCCESS)
-			{
-				break;
-			}
+			inst_bankloadex(mod, b, cb, &param);
 		}
 	}
-	return result;
 }
 
