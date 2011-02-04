@@ -7,7 +7,7 @@ SIN_BITS		equ		11
 EVC_BITS		equ		10
 ENV_BITS		equ		16
 KF_BITS			equ		6
-FREQ_BITS		equ		20
+FREQ_BITS		equ		21
 ENVTBL_BIT		equ		14
 SINTBL_BIT		equ		14
 
