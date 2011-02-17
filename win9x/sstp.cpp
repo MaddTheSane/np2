@@ -1,10 +1,11 @@
-#include	"compiler.h"
-#include	<commctrl.h>
-#include	"np2.h"
-#include	"scrnmng.h"
-#include	"sstp.h"
+#include "compiler.h"
+#include <winsock.h>
+#include <commctrl.h>
+#include "np2.h"
+#include "scrnmng.h"
+#include "sstp.h"
 #if defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-#include	"oemtext.h"
+#include "oemtext.h"
 #endif
 
 

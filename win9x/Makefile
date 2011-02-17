@@ -1,8 +1,7 @@
 # makefile for cygwin
-#   gcc version 3.3.3
+#   gcc version 4.3.4
 
-
-AS		= nasmw
+AS		= nasm
 CC		= gcc
 RC		= windres
 RM		= rm -f
@@ -72,13 +71,13 @@ ZLIBS		=	$(ZLIB)/crc32.h $(ZLIB)/inffast.h $(ZLIB)/inffixed.h \
 
 AOPT	= -f win32
 COPT	= -c -Wall -pipe -O6 -fomit-frame-pointer -fkeep-inline-functions \
-			-fsigned-char -mno-cygwin -march=pentium \
+			-fsigned-char -mwindows -march=pentium \
 			-DWIN32 -DNDEBUG -D_WINDOWS \
 			-I$(BASE) -I$(COMMON) -I$(CODECNV) -I$(I286C) -I$(MEM) -I$(IO) \
 			-I$(CBUS) -I$(BIOS) -I$(LIO) -I$(VRAM) -I$(SOUND) -I$(VERMOUTH) \
 			-I$(GETSND) -I$(FDD) -I$(FONT) -I$(GENERIC) -I$(TARGET) \
 			-I$(DIALOG) -I$(DEBUGUTY) -I$(X86ASM) -I$(ZLIB)
-LOPT	= -mno-cygwin -lstdc++
+LOPT	= -mwindows -lstdc++
 
 NP2OBJ	=	$(OBJ)/strres.o		$(OBJ)/milstr.o		$(OBJ)/_memory.o	\
 			$(OBJ)/textfile.o	$(OBJ)/profile.o	$(OBJ)/rect.o		\
