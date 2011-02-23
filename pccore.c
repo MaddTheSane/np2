@@ -1,3 +1,11 @@
+/**
+ * @file	pccore.c
+ * @brief	emluration core
+ *
+ * @author	$Author: yui $
+ * @date	$Date: 2011/02/23 10:11:44 $
+ */
+
 #include	"compiler.h"
 #include	"strres.h"
 #include	"dosio.h"
@@ -315,9 +323,13 @@ void pccore_cfgupdate(void) {
 	}
 }
 
+/**
+ * Reset the virtual machine
+ */
 void pccore_reset(void) {
 
 	int		i;
+	BOOL	epson;
 
 	soundmng_stop();
 #if !defined(DISABLE_SOUND)
@@ -348,9 +360,13 @@ void pccore_reset(void) {
 	if (pccore.dipsw[2] & 0x80) {
 		CPU_TYPE = CPUTYPE_V30;
 	}
-	if (pccore.model & PCMODEL_EPSON) {			// RAM ctrl
+
+	epson = (pccore.model & PCMODEL_EPSON) ? TRUE : FALSE;
+	if (epson) {
+		/* enable RAM (D0000-DFFFF) */
 		CPU_RAM_D000 = 0xffff;
 	}
+	font_setchargraph(epson);
 
 	// HDDƒZƒbƒg
 	diskdrv_hddbind();
@@ -381,7 +397,7 @@ void pccore_reset(void) {
 	cbuscore_reset(&np2cfg);
 	fmboard_reset(&np2cfg, pccore.sound);
 
-	MEMM_ARCH((pccore.model & PCMODEL_EPSON)?1:0);
+	MEMM_ARCH((epson) ? 1 : 0);
 	iocore_build();
 	iocore_bind();
 	cbuscore_bind();
