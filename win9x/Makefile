@@ -38,6 +38,8 @@ I286CASM	= $(I286C)/x86
 IOASM		= $(IO)/x86
 VRAMASM		= $(VRAM)/x86
 
+DXSDKINC	= "$(DXSDK_DIR)include"
+
 RESDIR		= ./resources/1252
 
 HEADERS		=	$(TARGET)/compiler.h $(BASE)/common.h $(COMMON)/milstr.h \
@@ -1040,13 +1042,13 @@ $(OBJ)/scrnmng.o	:	$(TARGET)/scrnmng.cpp $(HEADERS) \
 						$(TARGET)/mousemng.h $(TARGET)/scrnmng.h \
 						$(TARGET)/sysmng.h $(TARGET)/dclock.h \
 						$(TARGET)/menu.h $(VRAM)/scrndraw.h $(VRAM)/palettes.h
-	$(CC) $(COPT) -o $@ $<
+	$(CC) $(COPT) -I$(DXSDKINC) -o $@ $<
 
 $(OBJ)/soundmng.o	:	$(TARGET)/soundmng.cpp $(HEADERS) $(COMMON)/parts.h \
 						$(COMMON)/wavefile.h $(TARGET)/np2.h \
 						$(TARGET)/soundmng.h $(TARGET)/extromio.h \
 						$(SOUND)/sound.h $(VERMOUTH)/vermouth.h
-	$(CC) $(COPT) -o $@ $<
+	$(CC) $(COPT) -I$(DXSDKINC) -o $@ $<
 
 $(OBJ)/sysmng.o		:	$(TARGET)/sysmng.cpp $(HEADERS) $(PCCORES) \
 						$(TARGET)/np2.h $(TARGET)/dosio.h $(TARGET)/sysmng.h \
@@ -1096,7 +1098,7 @@ $(OBJ)/ini.o		:	$(TARGET)/ini.cpp $(HEADERS) $(PCCORES) \
 	$(CC) $(COPT) -o $@ $<
 
 $(OBJ)/dd2.o		:	$(TARGET)/dd2.cpp $(HEADERS) $(TARGET)/dd2.h
-	$(CC) $(COPT) -o $@ $<
+	$(CC) $(COPT) -I$(DXSDKINC) -o $@ $<
 
 $(OBJ)/toolwin.o	:	$(TARGET)/toolwin.cpp $(HEADERS) $(PCCORES) \
 						$(COMMON)/strres.h $(TARGET)/resource.h \
