@@ -5,11 +5,10 @@
  *			but are changed infrequently
  *
  * @author	$Author: yui $
- * @date	$Date: 2011/02/17 10:36:05 $
+ * @date	$Date: 2011/03/09 00:22:18 $
  */
 
-#define	_WIN32_IE	0x0200
-
+#include "targetver.h"
 #include <windows.h>
 #if !defined(__GNUC__)
 #include <tchar.h>
