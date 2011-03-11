@@ -27,8 +27,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
-			IntermediateDirectory="..\obj\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
+			OutputDirectory="..\bin\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="..\obj\$(SolutionName)\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -105,8 +105,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
-			IntermediateDirectory="..\obj\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
+			OutputDirectory="..\bin\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="..\obj\$(SolutionName)\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -185,8 +185,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
-			IntermediateDirectory="..\obj\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
+			OutputDirectory="..\bin\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="..\obj\$(SolutionName)\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -266,8 +266,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="..\bin\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
-			IntermediateDirectory="..\obj\$(PlatformName)\$(ConfigurationName)\$(RootNamespace)"
+			OutputDirectory="..\bin\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="..\obj\$(SolutionName)\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -385,6 +385,150 @@
 				>
 			</File>
 			<Filter
+				Name="bios"
+				>
+				<File
+					RelativePath="..\bios\bios.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios09.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios0c.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios12.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios13.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios18.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios19.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios1a.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios1b.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios1c.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\bios1f.c"
+					>
+				</File>
+				<File
+					RelativePath="..\bios\sxsibios.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="cbus"
+				>
+				<File
+					RelativePath="..\cbus\amd98.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\atapicmd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\board118.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\board14.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\board26k.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\board86.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardpx.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardspb.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardx2.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\cbuscore.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\cs4231io.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\ideio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\mpu98ii.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\pc9861k.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\pcm86io.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\sasiio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\scsicmd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\scsiio.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="codecnv"
+				>
+				<File
+					RelativePath="..\codecnv\tcswap16.c"
+					>
+				</File>
+				<File
+					RelativePath="..\codecnv\ucs2utf8.c"
+					>
+				</File>
+				<File
+					RelativePath="..\codecnv\utf8ucs2.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="common"
 				>
 				<File
@@ -477,179 +621,123 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="codecnv"
+				Name="fdd"
 				>
 				<File
-					RelativePath="..\codecnv\tcswap16.c"
+					RelativePath="..\fdd\diskdrv.c"
 					>
 				</File>
 				<File
-					RelativePath="..\codecnv\ucs2utf8.c"
+					RelativePath="..\fdd\fdd_d88.c"
 					>
 				</File>
 				<File
-					RelativePath="..\codecnv\utf8ucs2.c"
+					RelativePath="..\fdd\fdd_mtr.c"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\fdd_xdf.c"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\fddfile.c"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\newdisk.c"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\sxsi.c"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\sxsicd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\sxsihdd.c"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="i286x"
+				Name="font"
 				>
 				<File
-					RelativePath="..\i286x\i286x.cpp"
+					RelativePath="..\font\font.c"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286x\i286xadr.cpp"
+					RelativePath="..\font\fontdata.c"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286x\i286xcts.cpp"
+					RelativePath="..\font\fontfm7.c"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286x\i286xrep.cpp"
+					RelativePath="..\font\fontmake.c"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286x\i286xs.cpp"
+					RelativePath="..\font\fontpc88.c"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286x\memory.x86"
+					RelativePath="..\font\fontpc98.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="NASM"
-							IncludePaths=".\x86\;..\i286x\;..\io\x86\"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="NASM"
-							IncludePaths=".\x86\;..\i286x\;..\io\x86\"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286x\v30patch.cpp"
+					RelativePath="..\font\fontv98.c"
 					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\font\fontx1.c"
+					>
+				</File>
+				<File
+					RelativePath="..\font\fontx68k.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="generic"
+				>
+				<File
+					RelativePath="..\generic\cmjasts.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\cmndraw.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\dipswbmp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\hostdrv.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\hostdrvs.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\keydisp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\np2info.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\softkbd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\generic\unasm.c"
+					>
 				</File>
 			</Filter>
 			<Filter
@@ -877,6 +965,302 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="i286x"
+				>
+				<File
+					RelativePath="..\i286x\i286x.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\i286x\i286xadr.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\i286x\i286xcts.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\i286x\i286xrep.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\i286x\i286xs.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\i286x\memory.x86"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="NASM"
+							IncludePaths=".\x86\;..\i286x\;..\io\x86\"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="NASM"
+							IncludePaths=".\x86\;..\i286x\;..\io\x86\"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\i286x\v30patch.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="io"
+				>
+				<File
+					RelativePath="..\io\artic.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\cgrom.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\cpuio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\crtc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\dipsw.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\dmac.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\egc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\emsio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\epsonio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\fdc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\fdd320.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\gdc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\gdc_pset.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\gdc_sub.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\iocore.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\mouseif.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\necio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\nmiio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\np2sysp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\pcidev.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\pic.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\pit.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\printif.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\serial.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\sysport.c"
+					>
+				</File>
+				<File
+					RelativePath="..\io\upd4990.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="lio"
+				>
+				<File
+					RelativePath="..\lio\gcircle.c"
+					>
+				</File>
+				<File
+					RelativePath="..\lio\gline.c"
+					>
+				</File>
+				<File
+					RelativePath="..\lio\gpset.c"
+					>
+				</File>
+				<File
+					RelativePath="..\lio\gput1.c"
+					>
+				</File>
+				<File
+					RelativePath="..\lio\gscreen.c"
+					>
+				</File>
+				<File
+					RelativePath="..\lio\lio.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="mem"
 				>
 				<File
@@ -1041,214 +1425,242 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="io"
+				Name="sound"
 				>
 				<File
-					RelativePath="..\io\artic.c"
+					RelativePath="..\sound\adpcmc.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\cgrom.c"
+					RelativePath="..\sound\adpcmg.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\cpuio.c"
+					RelativePath="..\sound\beepc.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\crtc.c"
+					RelativePath="..\sound\beepg.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\dipsw.c"
+					RelativePath="..\sound\cs4231c.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\dmac.c"
+					RelativePath="..\sound\cs4231g.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\egc.c"
+					RelativePath="..\sound\fmboard.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\emsio.c"
+					RelativePath="..\sound\fmtimer.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\epsonio.c"
+					RelativePath="..\sound\opngenc.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\fdc.c"
+					RelativePath="..\sound\opngeng.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\sound\pcm86c.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\fdd320.c"
+					RelativePath="..\sound\pcm86g.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\gdc.c"
+					RelativePath="..\sound\psggenc.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\gdc_pset.c"
+					RelativePath="..\sound\psggeng.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\gdc_sub.c"
+					RelativePath="..\sound\rhythmc.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\iocore.c"
+					RelativePath="..\sound\s98.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\mouseif.c"
+					RelativePath="..\sound\sndcsec.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\necio.c"
+					RelativePath="..\sound\sound.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\nmiio.c"
+					RelativePath="..\sound\soundrom.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\np2sysp.c"
+					RelativePath="..\sound\tms3631c.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\pcidev.c"
+					RelativePath="..\sound\tms3631g.c"
+					>
+				</File>
+				<Filter
+					Name="getsnd"
+					>
+					<File
+						RelativePath="..\sound\getsnd\getsmix.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\getsnd\getsnd.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\getsnd\getwave.c"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="vermouth"
+					>
+					<File
+						RelativePath="..\sound\vermouth\midimod.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\vermouth\midinst.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\vermouth\midiout.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\vermouth\midtable.c"
+						>
+					</File>
+					<File
+						RelativePath="..\sound\vermouth\midvoice.c"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="trap"
+				>
+				<File
+					RelativePath="..\trap\inttrap.c"
 					>
 				</File>
 				<File
-					RelativePath="..\io\pic.c"
-					>
-				</File>
-				<File
-					RelativePath="..\io\pit.c"
-					>
-				</File>
-				<File
-					RelativePath="..\io\printif.c"
-					>
-				</File>
-				<File
-					RelativePath="..\io\serial.c"
-					>
-				</File>
-				<File
-					RelativePath="..\io\sysport.c"
-					>
-				</File>
-				<File
-					RelativePath="..\io\upd4990.c"
+					RelativePath="..\trap\steptrap.c"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="cbus"
+				Name="vram"
 				>
 				<File
-					RelativePath="..\cbus\amd98.c"
+					RelativePath="..\vram\dispsync.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\atapicmd.c"
+					RelativePath="..\vram\makegrex.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board118.c"
+					RelativePath="..\vram\makegrph.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\vram\maketext.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board14.c"
+					RelativePath="..\vram\maketgrp.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board26k.c"
+					RelativePath="..\vram\palettes.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board86.c"
+					RelativePath="..\vram\scrnbmp.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\boardpx.c"
+					RelativePath="..\vram\scrndraw.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\boardspb.c"
+					RelativePath="..\vram\scrnsave.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\boardx2.c"
+					RelativePath="..\vram\sdraw.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\cbuscore.c"
+					RelativePath="..\vram\sdrawq16.c"
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\cs4231io.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\ideio.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\mpu98ii.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\pc9861k.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\pcm86io.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\sasiio.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\scsicmd.c"
-					>
-				</File>
-				<File
-					RelativePath="..\cbus\scsiio.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="zlib"
-				>
-				<File
-					RelativePath="..\zlib\adler32.c"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\crc32.c"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inffast.c"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inflate.c"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inftrees.c"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\zutil.c"
+					RelativePath="..\vram\vram.c"
 					>
 				</File>
 			</Filter>
@@ -1384,6 +1796,46 @@
 					>
 				</File>
 				<Filter
+					Name="debuguty"
+					>
+					<File
+						RelativePath=".\debuguty\view1mb.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewasm.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewcmn.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewer.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewmem.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewmenu.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewreg.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewseg.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\debuguty\viewsnd.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
 					Name="dialog"
 					>
 					<File
@@ -1432,43 +1884,63 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="debuguty"
+					Name="x64"
 					>
 					<File
-						RelativePath=".\debuguty\view1mb.cpp"
+						RelativePath=".\x64\makegrph.x64"
 						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="YASM"
+								IncludePaths=".\x64;..\i286c\x64;..\io\x64"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="YASM"
+								IncludePaths=".\x64;..\i286c\x64;..\io\x64"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewasm.cpp"
+						RelativePath=".\x64\parts.x64"
 						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewcmn.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewer.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewmem.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewmenu.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewreg.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewseg.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\debuguty\viewsnd.cpp"
-						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="YASM"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter
@@ -1663,504 +2135,32 @@
 						</FileConfiguration>
 					</File>
 				</Filter>
-				<Filter
-					Name="x64"
-					>
-					<File
-						RelativePath=".\x64\makegrph.x64"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|x64"
-							>
-							<Tool
-								Name="YASM"
-								IncludePaths=".\x64;..\i286c\x64;..\io\x64"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							>
-							<Tool
-								Name="YASM"
-								IncludePaths=".\x64;..\i286c\x64;..\io\x64"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\x64\parts.x64"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="YASM"
-							/>
-						</FileConfiguration>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
-				Name="trap"
+				Name="zlib"
 				>
 				<File
-					RelativePath="..\trap\inttrap.c"
+					RelativePath="..\zlib\adler32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\trap\steptrap.c"
+					RelativePath="..\zlib\crc32.c"
 					>
 				</File>
-			</Filter>
-			<Filter
-				Name="generic"
-				>
 				<File
-					RelativePath="..\generic\cmjasts.c"
+					RelativePath="..\zlib\inffast.c"
 					>
 				</File>
 				<File
-					RelativePath="..\generic\cmndraw.c"
+					RelativePath="..\zlib\inflate.c"
 					>
 				</File>
 				<File
-					RelativePath="..\generic\dipswbmp.c"
+					RelativePath="..\zlib\inftrees.c"
 					>
 				</File>
 				<File
-					RelativePath="..\generic\hostdrv.c"
-					>
-				</File>
-				<File
-					RelativePath="..\generic\hostdrvs.c"
-					>
-				</File>
-				<File
-					RelativePath="..\generic\keydisp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\generic\np2info.c"
-					>
-				</File>
-				<File
-					RelativePath="..\generic\softkbd.c"
-					>
-				</File>
-				<File
-					RelativePath="..\generic\unasm.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="font"
-				>
-				<File
-					RelativePath="..\font\font.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontdata.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontfm7.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontmake.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontpc88.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontpc98.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontv98.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontx1.c"
-					>
-				</File>
-				<File
-					RelativePath="..\font\fontx68k.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="fdd"
-				>
-				<File
-					RelativePath="..\fdd\diskdrv.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\fdd_d88.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\fdd_mtr.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\fdd_xdf.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\fddfile.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\newdisk.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\sxsi.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\sxsicd.c"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\sxsihdd.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="sound"
-				>
-				<File
-					RelativePath="..\sound\adpcmc.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\adpcmg.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\beepc.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\beepg.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\cs4231c.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\cs4231g.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\fmboard.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\fmtimer.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\opngenc.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\opngeng.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\sound\pcm86c.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\pcm86g.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\psggenc.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\psggeng.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\rhythmc.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\s98.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\sndcsec.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\sound.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\soundrom.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\tms3631c.c"
-					>
-				</File>
-				<File
-					RelativePath="..\sound\tms3631g.c"
-					>
-				</File>
-				<Filter
-					Name="getsnd"
-					>
-					<File
-						RelativePath="..\sound\getsnd\getsmix.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\getsnd\getsnd.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\getsnd\getwave.c"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="vermouth"
-					>
-					<File
-						RelativePath="..\sound\vermouth\midimod.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\vermouth\midinst.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\vermouth\midiout.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\vermouth\midtable.c"
-						>
-					</File>
-					<File
-						RelativePath="..\sound\vermouth\midvoice.c"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="vram"
-				>
-				<File
-					RelativePath="..\vram\dispsync.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\makegrex.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\makegrph.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\vram\maketext.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\maketgrp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\palettes.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnbmp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrndraw.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnsave.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\sdraw.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\sdrawq16.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\vram.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="lio"
-				>
-				<File
-					RelativePath="..\lio\gcircle.c"
-					>
-				</File>
-				<File
-					RelativePath="..\lio\gline.c"
-					>
-				</File>
-				<File
-					RelativePath="..\lio\gpset.c"
-					>
-				</File>
-				<File
-					RelativePath="..\lio\gput1.c"
-					>
-				</File>
-				<File
-					RelativePath="..\lio\gscreen.c"
-					>
-				</File>
-				<File
-					RelativePath="..\lio\lio.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="bios"
-				>
-				<File
-					RelativePath="..\bios\bios.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios09.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios0c.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios12.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios13.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios18.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios19.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios1a.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios1b.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios1c.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\bios1f.c"
-					>
-				</File>
-				<File
-					RelativePath="..\bios\sxsibios.c"
+					RelativePath="..\zlib\zutil.c"
 					>
 				</File>
 			</Filter>
@@ -2207,106 +2207,26 @@
 				>
 			</File>
 			<Filter
-				Name="common"
+				Name="bios"
 				>
 				<File
-					RelativePath="..\common\_memory.h"
+					RelativePath="..\bios\bios.h"
 					>
 				</File>
 				<File
-					RelativePath="..\common\arc.h"
+					RelativePath="..\bios\biosmem.h"
 					>
 				</File>
 				<File
-					RelativePath="..\common\arcunzip.h"
+					RelativePath="..\bios\fdfmt.h"
 					>
 				</File>
 				<File
-					RelativePath="..\common\bmpdata.h"
+					RelativePath="..\bios\rsbios.h"
 					>
 				</File>
 				<File
-					RelativePath="..\common\lstarray.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\milstr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\mimpidef.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\parts.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\profile.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\rect.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\resize.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\strres.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\textfile.h"
-					>
-				</File>
-				<File
-					RelativePath="..\common\wavefile.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="codecnv"
-				>
-				<File
-					RelativePath="..\codecnv\codecnv.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="zlib"
-				>
-				<File
-					RelativePath="..\zlib\crc32.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inffast.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inffixed.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inflate.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\inftrees.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\zconf.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\zlib.h"
-					>
-				</File>
-				<File
-					RelativePath="..\zlib\zutil.h"
+					RelativePath="..\bios\sxsibios.h"
 					>
 				</File>
 			</Filter>
@@ -2387,14 +2307,130 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="trap"
+				Name="codecnv"
 				>
 				<File
-					RelativePath="..\trap\inttrap.h"
+					RelativePath="..\codecnv\codecnv.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="common"
+				>
+				<File
+					RelativePath="..\common\_memory.h"
 					>
 				</File>
 				<File
-					RelativePath="..\trap\steptrap.h"
+					RelativePath="..\common\arc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\arcunzip.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\bmpdata.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\lstarray.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\milstr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\mimpidef.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\parts.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\profile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\rect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\resize.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\strres.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\textfile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\wavefile.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="fdd"
+				>
+				<File
+					RelativePath="..\fdd\d88head.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\diskdrv.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\fdd_d88.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\fdd_mtr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\fdd_xdf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\fddfile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\newdisk.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\sxsi.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\sxsicd.h"
+					>
+				</File>
+				<File
+					RelativePath="..\fdd\sxsihdd.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="font"
+				>
+				<File
+					RelativePath="..\font\font.h"
+					>
+				</File>
+				<File
+					RelativePath="..\font\fontdata.h"
+					>
+				</File>
+				<File
+					RelativePath="..\font\fontmake.h"
 					>
 				</File>
 			</Filter>
@@ -2439,42 +2475,58 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="font"
+				Name="i286c"
 				>
 				<File
-					RelativePath="..\font\font.h"
+					RelativePath="..\i286c\cpucore.h"
 					>
 				</File>
 				<File
-					RelativePath="..\font\fontdata.h"
+					RelativePath="..\i286c\i286c.h"
 					>
 				</File>
 				<File
-					RelativePath="..\font\fontmake.h"
+					RelativePath="..\i286c\memory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\i286c\v30patch.h"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="bios"
+				Name="i286x"
 				>
 				<File
-					RelativePath="..\bios\bios.h"
+					RelativePath="..\i286x\cpucore.h"
 					>
 				</File>
 				<File
-					RelativePath="..\bios\biosmem.h"
+					RelativePath="..\i286x\i286x.h"
 					>
 				</File>
 				<File
-					RelativePath="..\bios\fdfmt.h"
+					RelativePath="..\i286x\i286xadr.h"
 					>
 				</File>
 				<File
-					RelativePath="..\bios\rsbios.h"
+					RelativePath="..\i286x\i286xcts.h"
 					>
 				</File>
 				<File
-					RelativePath="..\bios\sxsibios.h"
+					RelativePath="..\i286x\i286xrep.h"
+					>
+				</File>
+				<File
+					RelativePath="..\i286x\i286xs.h"
+					>
+				</File>
+				<File
+					RelativePath="..\i286x\memory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\i286x\v30patch.h"
 					>
 				</File>
 			</Filter>
@@ -2595,6 +2647,50 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="lio"
+				>
+				<File
+					RelativePath="..\lio\lio.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mem"
+				>
+				<File
+					RelativePath="..\mem\dmav30.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\dmax86.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\memegc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\memems.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\memepp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\memtram.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\memvga.h"
+					>
+				</File>
+				<File
+					RelativePath="..\mem\memvram.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="sound"
 				>
 				<File
@@ -2654,6 +2750,14 @@
 					>
 				</File>
 				<Filter
+					Name="getsnd"
+					>
+					<File
+						RelativePath="..\sound\getsnd\getsnd.h"
+						>
+					</File>
+				</Filter>
+				<Filter
 					Name="vermouth"
 					>
 					<File
@@ -2681,14 +2785,66 @@
 						>
 					</File>
 				</Filter>
-				<Filter
-					Name="getsnd"
+			</Filter>
+			<Filter
+				Name="trap"
+				>
+				<File
+					RelativePath="..\trap\inttrap.h"
 					>
-					<File
-						RelativePath="..\sound\getsnd\getsnd.h"
-						>
-					</File>
-				</Filter>
+				</File>
+				<File
+					RelativePath="..\trap\steptrap.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="vram"
+				>
+				<File
+					RelativePath="..\vram\dispsync.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\makegrex.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\makegrph.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\maketext.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\maketgrp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\palettes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\scrnbmp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\scrndraw.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\scrnsave.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\sdraw.h"
+					>
+				</File>
+				<File
+					RelativePath="..\vram\vram.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="win9x"
@@ -2838,6 +2994,22 @@
 					>
 				</File>
 				<Filter
+					Name="dialog"
+					>
+					<File
+						RelativePath=".\dialog\dialog.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\dialogs.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\np2class.h"
+						>
+					</File>
+				</Filter>
+				<Filter
 					Name="debuguty"
 					>
 					<File
@@ -2878,211 +3050,47 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="dialog"
+					Name="x86"
 					>
 					<File
-						RelativePath=".\dialog\dialog.h"
-						>
-					</File>
-					<File
-						RelativePath=".\dialog\dialogs.h"
-						>
-					</File>
-					<File
-						RelativePath=".\dialog\np2class.h"
+						RelativePath=".\x86\cputype.h"
 						>
 					</File>
 				</Filter>
 			</Filter>
 			<Filter
-				Name="lio"
+				Name="zlib"
 				>
 				<File
-					RelativePath="..\lio\lio.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="fdd"
-				>
-				<File
-					RelativePath="..\fdd\d88head.h"
+					RelativePath="..\zlib\crc32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\diskdrv.h"
+					RelativePath="..\zlib\inffast.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\fdd_d88.h"
+					RelativePath="..\zlib\inffixed.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\fdd_mtr.h"
+					RelativePath="..\zlib\inflate.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\fdd_xdf.h"
+					RelativePath="..\zlib\inftrees.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\fddfile.h"
+					RelativePath="..\zlib\zconf.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\newdisk.h"
+					RelativePath="..\zlib\zlib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\fdd\sxsi.h"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\sxsicd.h"
-					>
-				</File>
-				<File
-					RelativePath="..\fdd\sxsihdd.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="i286x"
-				>
-				<File
-					RelativePath="..\i286x\cpucore.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286x.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xadr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xcts.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xrep.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\i286xs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\memory.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286x\v30patch.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="vram"
-				>
-				<File
-					RelativePath="..\vram\dispsync.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\makegrex.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\makegrph.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\maketext.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\maketgrp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\palettes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnbmp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrndraw.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnsave.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\sdraw.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\vram.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="i286c"
-				>
-				<File
-					RelativePath="..\i286c\cpucore.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286c\i286c.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286c\memory.h"
-					>
-				</File>
-				<File
-					RelativePath="..\i286c\v30patch.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="mem"
-				>
-				<File
-					RelativePath="..\mem\dmav30.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\dmax86.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\memegc.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\memems.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\memepp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\memtram.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\memvga.h"
-					>
-				</File>
-				<File
-					RelativePath="..\mem\memvram.h"
+					RelativePath="..\zlib\zutil.h"
 					>
 				</File>
 			</Filter>
