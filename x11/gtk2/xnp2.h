@@ -26,21 +26,6 @@
 #ifndef	NP2_GTK2_XNP2_H__
 #define	NP2_GTK2_XNP2_H__
 
-#ifndef	G_DISABLE_DEPRECATED
-#define	G_DISABLE_DEPRECATED
-#endif
-
-#ifndef	GLIB_DISABLE_DEPRECATED
-#define	GLIB_DISABLE_DEPRECATED
-#endif
-
-#ifndef	GDK_DISABLE_DEPRECATED
-#define	GDK_DISABLE_DEPRECATED
-#endif
-#ifndef	GTK_DISABLE_DEPRECATED
-#define	GTK_DISABLE_DEPRECATED
-#endif
-
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
