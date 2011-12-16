@@ -1,4 +1,4 @@
-#	$Id: Makefile.am,v 1.1 2011/12/16 10:32:08 monaka Exp $
+#	$Id: Makefile.am,v 1.2 2011/12/16 10:42:23 monaka Exp $
 
 real_topsrcdir=	$(top_srcdir)/..
 
@@ -7,7 +7,7 @@ bin_PROGRAMS=	xnp2
 nodist_man1_MANS=	xnp2.1
 dist_pkgdata_DATA=	$(real_topsrcdir)/x11/resources/fddseek.wav \
 			$(real_topsrcdir)/x11/resources/fddseek1.wav
-#dist_pkgdata_DATA+=	$(real_topsrcdir)/np2tool/np2tool.d88
+dist_pkgdata_DATA+=	$(real_topsrcdir)/np2tool/np2tool.d88
 
 xnp2_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/x11/np2.c \

@@ -245,11 +245,7 @@ ComplexProgramTarget(xnp2)
 
 InstallMultipleFlags(resources/fddseek.wav, $(SYSRESPATH), $(INSTDATFLAGS))
 InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH), $(INSTDATFLAGS))
-
-XCOMM
-XCOMM for Release
-XCOMM
-XCOMM InstallMultipleFlags(../np2tool/np2tool.d88, $(SYSRESPATH), $(INSTDATFLAGS))
+InstallMultipleFlags(../np2tool/np2tool.d88, $(SYSRESPATH), $(INSTDATFLAGS))
 
 clean::
 	$(RM) $(OBJS)
