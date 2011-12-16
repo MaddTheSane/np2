@@ -213,18 +213,10 @@ typedef struct {
 	UINT8	*memp;	/* shortcut for pre-fetch queue */
 } TLB_ENTRY_T;
 
-
-#if defined(IA32_SUPPORT_TLB)
 void tlb_init(void);
 void MEMCALL tlb_flush(BOOL allflush);
 void MEMCALL tlb_flush_page(UINT32 laddr);
 TLB_ENTRY_T* MEMCALL tlb_lookup(const UINT32 laddr, const int ucrw);
-#else
-#define	tlb_init()
-#define	tlb_flush(allflush)
-#define	tlb_flush_page(la)
-#define	tlb_lookup(la, ucrw)	NULL
-#endif
 
 #ifdef __cplusplus
 }

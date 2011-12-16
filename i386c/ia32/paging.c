@@ -181,9 +181,7 @@ static const UINT8 page_access_bit[32] = {
  */
 
 static UINT32 MEMCALL paging(const UINT32 laddr, const int ucrw);
-#if defined(IA32_SUPPORT_TLB)
 static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int ucrw);
-#endif
 
 #define	PAGE_SIZE	0x1000
 #define	PAGE_MASK	(PAGE_SIZE - 1)
@@ -639,13 +637,11 @@ paging(const UINT32 laddr, const int ucrw)
 	UINT32 pte;		/* page table entry */
 	UINT bit;
 	UINT err;
-#if defined(IA32_SUPPORT_TLB)
 	TLB_ENTRY_T *ep;
 
 	ep = tlb_lookup(laddr, ucrw);
 	if (ep != NULL)
 		return ep->paddr + (laddr & PAGE_MASK);
-#endif
 
 	pde_addr = CPU_STAT_PDE_BASE + ((laddr >> 20) & 0xffc);
 	pde = cpu_memoryread_d(pde_addr);
@@ -701,9 +697,8 @@ paging(const UINT32 laddr, const int ucrw)
 		cpu_memorywrite_d(pte_addr, pte);
 	}
 
-#if defined(IA32_SUPPORT_TLB)
 	tlb_update(laddr, pte, (bit & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE)) + ((ucrw & CPU_PAGE_CODE) >> 1));
-#endif
+
 	return paddr;
 
 pf_exception:
@@ -714,8 +709,6 @@ pf_exception:
 	return 0;	/* compiler happy */
 }
 
-
-#if defined(IA32_SUPPORT_TLB)
 /* 
  * TLB
  */
@@ -904,4 +897,3 @@ tlb_update(const UINT32 laddr, const UINT entry, const int bit)
 	}
 	ep->memp = NULL;
 }
-#endif	/* IA32_SUPPORT_TLB */
