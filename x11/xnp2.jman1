@@ -94,13 +94,13 @@ OPNA に搭載されているリズム音源 (タム)
 .B $(HOME)/.np2/2608_rim.wav
 OPNA に搭載されているリズム音源 (リムショット)
 .TP
-.B /usr/X11R6/lib/X11/xnp2/np2tool.d88
+.B @PKGDATADIR@/np2tool.d88
 hostdrv 機能を使用するために必要なドライバとドキュメントが入っている D88 形式ディスクイメージ
 .TP
-.B /usr/X11R6/lib/X11/xnp2/fddseek.wav
+.B @PKGDATADIR@/fddseek.wav
 フロッピーシーク時に再生される PCM ファイル
 .TP
-.B /usr/X11R6/lib/X11/xnp2/fddseek1.wav
+.B @PKGDATADIR@/fddseek1.wav
 フロッピーシーク時に再生される PCM ファイル
 .SH AUTHOR
 Yui <np2@yui.ne.jp>, Windows 上で動作するオリジナルの

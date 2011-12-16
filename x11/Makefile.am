@@ -1,4 +1,4 @@
-#	$Id: Makefile.am,v 1.3 2011/12/16 11:55:26 monaka Exp $
+#	$Id: Makefile.am,v 1.4 2011/12/16 14:02:05 monaka Exp $
 
 real_topsrcdir=	$(top_srcdir)/..
 
@@ -311,6 +311,5 @@ xnp2_SOURCES+=	$(real_topsrcdir)/i286c/i286c.c \
 AM_CPPFLAGS+=	-I$(real_topsrcdir)/i286c
 endif
 
-.man.1 .jman.1j:
-	sed -e 's;/usr/X11R6/lib/X11/xnp2;${DESTDIR}${pkgdatadir};' \
-	    < $< > $@
+.man1.1 .jman1.1j:
+	sed -e 's;@PKGDATADIR@;${DESTDIR}${pkgdatadir};' < $> > $@
