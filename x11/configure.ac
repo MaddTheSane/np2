@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.1 $)
+AC_REVISION($Revision: 1.2 $)
 
 AC_INIT(Xnp2, 0.83, aw9k-nnk@asahi-net.or.jp, xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -139,9 +139,5 @@ fi
 dnl
 dnl Output Makefiles
 dnl
-AC_CONFIG_FILES([
-	Makefile
-	xnp2.1
-	xnp2.1j
-])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
