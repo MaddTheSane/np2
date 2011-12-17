@@ -25,6 +25,7 @@ Xnp2 - ねこープロジェクトII for X Window System
 
     ・SDL (サウンド・ジョイスティックを使用する場合に必要です。)
     ・SDL_mixer (フロッピーのシーク音等の PCM を再生する場合に必要です。)
+    ・XFree86-VidModeExtension (画面解像度を変更するフルスクリーン機能を使用>>する場合に必要)
 
   3.2. 実行時に必要なソフトウェア
 
@@ -93,7 +94,7 @@ Xnp2 - ねこープロジェクトII for X Window System
       |         PC-9801         |            106             |
       +-------------------------+----------------------------+
       | GRPH                    | ALT                        |
-      | HELP                    | END                        |
+      | HELP                    | END ,F12(*)                |
       | CAPS                    | ScrollLock                 |
       | NFER                    | 無変換                     |
       | XFER                    | 変換/前候補/全候補         |
@@ -242,5 +243,5 @@ Xnp2 - ねこープロジェクトII for X Window System
     cvs -d :pserver:anonymous@retropc.net:/cvs get np2
 
   本ソフトウェアに関する問い合わせは
-   NONAKA Kimihiro (埜中公博) / aw9k-nnk@asahi-net.or.jp
+   NONAKA Kimihiro (埜中公博) / nonakap@gmail.com
   まで電子メールにてお願いします。
