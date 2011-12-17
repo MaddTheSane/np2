@@ -241,7 +241,7 @@ static GtkRadioActionEntry f12key_entries[] = {
 { "f12mouse", NULL, "F12 = _Mouse",     NULL, NULL, 0 },
 { "f12copy",  NULL, "F12 = Co_py",      NULL, NULL, 1 },
 { "f12stop",  NULL, "F12 = S_top",      NULL, NULL, 2 },
-{ "f12end",   NULL, "F12 = _End",       NULL, NULL, 7 },
+{ "f12help",  NULL, "F12 = _Help",      NULL, NULL, 7 },
 { "f12equal", NULL, "F12 = tenkey [=]", NULL, NULL, 4 },
 { "f12comma", NULL, "F12 = tenkey [,]", NULL, NULL, 3 },
 };
@@ -417,7 +417,7 @@ static const gchar *ui_info =
 "    <menuitem action='f12mouse'/>\n"
 "    <menuitem action='f12copy'/>\n"
 "    <menuitem action='f12stop'/>\n"
-"    <menuitem action='f12end'/>\n"
+"    <menuitem action='f12help'/>\n"
 "    <menuitem action='f12equal'/>\n"
 "    <menuitem action='f12comma'/>\n"
 "   </menu>\n"

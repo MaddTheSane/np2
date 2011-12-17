@@ -38,7 +38,7 @@ static const BYTE kbdmng_f12keys[] = {
 	0x4d,	/* tenkey [=] */
 	0x76,	/* User1 */
 	0x77,	/* User2 */
-	0x3f,	/* End */
+	0x3f,	/* Help */
 };
 
 BYTE
