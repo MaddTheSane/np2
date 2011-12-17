@@ -578,6 +578,8 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 
 	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+	    TRUE);
 	if (strlen(bmpfilefolder) == 0) {
 		g_strlcpy(bmpfilefolder, modulefile, sizeof(bmpfilefolder));
 		file_cutname(bmpfilefolder);
@@ -1033,6 +1035,8 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 
 	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+	    TRUE);
 	if (strlen(fddfolder) == 0) {
 		g_strlcpy(fddfolder, modulefile, sizeof(fddfolder));
 		file_cutname(fddfolder);
