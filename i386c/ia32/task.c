@@ -27,8 +27,10 @@
 #include "cpu.h"
 #include "ia32.mcr"
 
-#define	TSS_SIZE_16	44
-#define	TSS_SIZE_32	108
+#define	TSS_16_SIZE	44
+#define	TSS_16_LIMIT	(TSS_16_SIZE - 1)
+#define	TSS_32_SIZE	104
+#define	TSS_32_LIMIT	(TSS_32_SIZE - 1)
 
 static void
 set_task_busy(UINT16 selector, descriptor_t *sdp)
@@ -82,14 +84,14 @@ load_tr(UINT16 selector)
 	/* check descriptor type & stack room size */
 	switch (task_sel.desc.type) {
 	case CPU_SYSDESC_TYPE_TSS_16:
-		if (task_sel.desc.u.seg.limit < TSS_SIZE_16) {
+		if (task_sel.desc.u.seg.limit < TSS_16_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel.idx);
 		}
 		iobase = 0;
 		break;
 
 	case CPU_SYSDESC_TYPE_TSS_32:
-		if (task_sel.desc.u.seg.limit < TSS_SIZE_32) {
+		if (task_sel.desc.u.seg.limit < TSS_32_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel.idx);
 		}
 		iobase = cpu_kmemoryread_w(task_sel.desc.u.seg.segbase + 102);
@@ -215,7 +217,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	switch (task_sel->desc.type) {
 	case CPU_SYSDESC_TYPE_TSS_32:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_32:
-		if (task_sel->desc.u.seg.limit < TSS_SIZE_32) {
+		if (task_sel->desc.u.seg.limit < TSS_32_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = 0;
@@ -223,7 +225,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	case CPU_SYSDESC_TYPE_TSS_16:
 	case CPU_SYSDESC_TYPE_TSS_BUSY_16:
-		if (task_sel->desc.u.seg.limit < TSS_SIZE_16) {
+		if (task_sel->desc.u.seg.limit < TSS_16_LIMIT) {
 			EXCEPTION(TS_EXCEPTION, task_sel->idx);
 		}
 		task16 = 1;
