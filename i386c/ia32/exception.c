@@ -124,8 +124,8 @@ exception(int num, int error_code)
 	if (CPU_STATSAVE.cpu_stat.backout_sp) {
 		VERBOSE(("exception: restore stack pointer."));
 		CPU_ESP = CPU_PREV_ESP;
+		CPU_STATSAVE.cpu_stat.backout_sp = 0;
 	}
-	CPU_STATSAVE.cpu_stat.backout_sp = 0;
 
 	if (CPU_STAT_EXCEPTION_COUNTER >= 2) {
 		if (dftable[exctype[CPU_STAT_PREV_EXCEPTION]][exctype[num]]) {
@@ -256,7 +256,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 #if defined(DEBUG)
 		if (num == 0x80) {
 			/* Linux, FreeBSD, NetBSD, OpenBSD system call */
-			VERBOSE(("interrupt: syscall no = %d\n%s", CPU_EAX, cpu_reg2str()));
+			VERBOSE(("interrupt: syscall# = %d\n%s", CPU_EAX, cpu_reg2str()));
 		}
 #endif
 
@@ -298,7 +298,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 
 		/* 5.10.1.1. 例外／割り込みハンドラ・プロシージャの保護 */
 		if ((intrtype != INTR_TYPE_EXTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
-			VERBOSE(("interrupt: intrtype && DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
+			VERBOSE(("interrupt: intrtype(%d) && DPL(%d) < CPL(%d)", intrtype, gsd.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 
@@ -307,7 +307,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 			EXCEPTION(NP_EXCEPTION, exc_errcode);
 		}
 
-		if (!intrtype && CPU_STAT_HLT) {
+		if ((intrtype == INTR_TYPE_EXTINTR) && CPU_STAT_HLT) {
 			CPU_EIP++;
 			CPU_STAT_HLT = 0;
 		}
