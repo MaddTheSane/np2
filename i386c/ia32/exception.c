@@ -277,10 +277,6 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 			VERBOSE(("interrupt: gate descripter is invalid."));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
-		if (!SEG_IS_PRESENT(&gsd)) {
-			VERBOSE(("interrupt: gate descriptor is not present."));
-			EXCEPTION(GP_EXCEPTION, exc_errcode);
-		}
 		if (!SEG_IS_SYSTEM(&gsd)) {
 			VERBOSE(("interrupt: gate descriptor is not system segment."));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
@@ -300,15 +296,15 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 			break;
 		}
 
-		if (gsd.dpl < CPU_STAT_CPL) {
-			VERBOSE(("interrupt: gate DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
-			EXCEPTION(GP_EXCEPTION, exc_errcode);
-		}
-
 		/* 5.10.1.1. 例外／割り込みハンドラ・プロシージャの保護 */
 		if ((intrtype != INTR_TYPE_EXTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
 			VERBOSE(("interrupt: intrtype && DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
+		}
+
+		if (!SEG_IS_PRESENT(&gsd)) {
+			VERBOSE(("interrupt: gate descriptor is not present."));
+			EXCEPTION(NP_EXCEPTION, exc_errcode);
 		}
 
 		if (!intrtype && CPU_STAT_HLT) {
