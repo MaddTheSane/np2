@@ -72,7 +72,7 @@ do { \
 
 #define	CPU_HALT() \
 do { \
-        CPU_REMCLOCK = -1; \
+	CPU_REMCLOCK = -1; \
 } while (/*CONSTCOND*/ 0)
 
 #define	IRQCHECKTERM() \
