@@ -254,7 +254,7 @@ InstallMultipleFlags(resources/fddseek1.wav, $(SYSRESPATH), $(INSTDATFLAGS))
 InstallMultipleFlags(../np2tool/np2tool.d88, $(SYSRESPATH), $(INSTDATFLAGS))
 
 clean::
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) xnp2.man xnp2.jman
 
 cpuclean:
 	$(RM) $(CPUOBJS)
