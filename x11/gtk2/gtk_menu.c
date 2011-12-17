@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 NONAKA Kimihiro (aw9k-nnk@asahi-net.or.jp)
+ * Copyright (c) 2004-2011 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -579,7 +579,7 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 		goto end;
 
 	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
-#if iGTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 8
+#if GTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 8
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
 	    TRUE);
 #endif
@@ -1039,7 +1039,7 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 		goto end;
 
 	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
-#if iGTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 8
+#if GTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 8
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
 	    TRUE);
 #endif
