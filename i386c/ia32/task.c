@@ -33,7 +33,7 @@
 #define	TSS_32_LIMIT	(TSS_32_SIZE - 1)
 
 static void
-set_task_busy(UINT16 selector, descriptor_t *sdp)
+set_task_busy(UINT16 selector)
 {
 	UINT32 addr;
 	UINT32 h;
@@ -41,7 +41,6 @@ set_task_busy(UINT16 selector, descriptor_t *sdp)
 	addr = CPU_GDTR_BASE + (selector & CPU_SEGMENT_SELECTOR_INDEX_MASK);
 	h = cpu_kmemoryread_d(addr + 4);
 	if (!(h & CPU_TSS_H_BUSY)) {
-		sdp->type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 		h |= CPU_TSS_H_BUSY;
 		cpu_kmemorywrite_d(addr + 4, h);
 	} else {
@@ -50,7 +49,7 @@ set_task_busy(UINT16 selector, descriptor_t *sdp)
 }
 
 static void
-set_task_free(UINT16 selector, descriptor_t *sdp)
+set_task_free(UINT16 selector)
 {
 	UINT32 addr;
 	UINT32 h;
@@ -58,7 +57,6 @@ set_task_free(UINT16 selector, descriptor_t *sdp)
 	addr = CPU_GDTR_BASE + (selector & CPU_SEGMENT_SELECTOR_INDEX_MASK);
 	h = cpu_kmemoryread_d(addr + 4);
 	if (h & CPU_TSS_H_BUSY) {
-		sdp->type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 		h &= ~CPU_TSS_H_BUSY;
 		cpu_kmemorywrite_d(addr + 4, h);
 	} else {
@@ -112,16 +110,17 @@ load_tr(UINT16 selector)
 	tr_dump(task_sel.selector, task_sel.desc.u.seg.segbase, task_sel.desc.u.seg.limit);
 #endif
 
-	set_task_busy(task_sel.selector, &task_sel.desc);
+	set_task_busy(task_sel.selector);
 	CPU_TR = task_sel.selector;
 	CPU_TR_DESC = task_sel.desc;
+	CPU_TR_DESC.type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 
 	/* I/O deny bitmap */
 	CPU_STAT_IOLIMIT = 0;
-	if (task_sel.desc.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
-		if (iobase != 0 && iobase < task_sel.desc.u.seg.limit) {
-			CPU_STAT_IOLIMIT = (UINT16)(task_sel.desc.u.seg.limit - iobase);
-			CPU_STAT_IOADDR = task_sel.desc.u.seg.segbase + iobase;
+	if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
+		if (iobase != 0 && iobase < CPU_TR_DESC.u.seg.limit) {
+			CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_DESC.u.seg.limit - iobase);
+			CPU_STAT_IOADDR = CPU_TR_DESC.u.seg.segbase + iobase;
 		}
 	}
 
@@ -334,7 +333,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		/*FALLTHROUGH*/
 	case TASK_SWITCH_JMP:
 		/* clear busy flags in current task */
-		set_task_free(CPU_TR, &CPU_TR_DESC);
+		set_task_free(CPU_TR);
 		break;
 
 	case TASK_SWITCH_CALL:
@@ -409,9 +408,9 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		new_flags |= NT_FLAG;
 		/*FALLTHROUGH*/
 	case TASK_SWITCH_JMP:
-		set_task_busy(task_sel->selector, &task_sel->desc);
+		set_task_busy(task_sel->selector);
 		break;
-	
+
 	case TASK_SWITCH_IRET:
 		/* check busy flag is active */
 		if (SEG_IS_VALID(&task_sel->desc)) {
@@ -431,9 +430,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	/* load task selector to CPU_TR */
 	CPU_TR = task_sel->selector;
 	CPU_TR_DESC = task_sel->desc;
-
-	/* clear BUSY flag in descriptor cache */
-	CPU_TR_DESC.type &= ~CPU_SYSDESC_TYPE_TSS_BUSY_IND;
+	CPU_TR_DESC.type |= CPU_SYSDESC_TYPE_TSS_BUSY_IND;
 
 	/* set CR0 image CPU_CR0_TS */
 	CPU_CR0 |= CPU_CR0_TS;
@@ -461,8 +458,8 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	/* I/O deny bitmap */
 	CPU_STAT_IOLIMIT = 0;
-	if (!task16 && iobase != 0 && iobase < task_sel->desc.u.seg.limit) {
-		CPU_STAT_IOLIMIT = (UINT16)(task_sel->desc.u.seg.limit - iobase);
+	if (!task16 && iobase != 0 && iobase < CPU_TR_DESC.u.seg.limit) {
+		CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_DESC.u.seg.limit - iobase);
 		CPU_STAT_IOADDR = task_base + iobase;
 	}
 	VERBOSE(("task_switch: ioaddr = %08x, limit = %08x", CPU_STAT_IOADDR, CPU_STAT_IOLIMIT));
