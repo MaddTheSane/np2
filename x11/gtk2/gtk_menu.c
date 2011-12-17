@@ -576,7 +576,7 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
 	    TRUE);
@@ -611,6 +611,12 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 	if (utf8) {
 		path = g_filename_from_utf8(utf8, -1, NULL, NULL, NULL);
 		if (path) {
+			gchar *ext = file_getext(path);
+			if (strlen(ext) != 3 || file_cmpname(ext, "bmp")) {
+				gchar *tmp = g_strjoin(".", path, "bmp", NULL);
+				g_free(path);
+				path = tmp;
+			}
 			file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
 			sysmng_update(SYS_UPDATEOSCFG);
 			fh = file_create(path);
@@ -649,7 +655,7 @@ cb_change_font(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	utf8 = g_filename_to_utf8(np2cfg.fontfile, -1, NULL, NULL, NULL);
 	if (utf8) {
@@ -736,7 +742,7 @@ cb_diskopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	utf8 = g_filename_to_utf8(fddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
@@ -845,7 +851,7 @@ cb_ataopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
@@ -932,7 +938,7 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
@@ -1033,7 +1039,7 @@ cb_newdisk(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
 	    TRUE);
@@ -1177,7 +1183,7 @@ cb_sasiopen(GtkAction *action, gpointer user_data)
 	if (dialog == NULL)
 		goto end;
 
-	g_object_set(G_OBJECT(dialog), "show-hidden", TRUE, NULL);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), FALSE);
 	utf8 = g_filename_to_utf8(hddfolder, -1, NULL, NULL, NULL);
 	if (utf8) {
