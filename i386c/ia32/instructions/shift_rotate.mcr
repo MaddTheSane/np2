@@ -881,8 +881,9 @@ do { \
 			CPU_OV = ((s) >> 31) ^ tmp; \
 		} \
 		while ((c)--) { \
-			tmp = (s) & 1; \
+			UINT32 tmp2 = (s) & 1; \
 			(s) = (tmp << 31) | ((s) >> 1); \
+			tmp = tmp2; \
 		} \
 		CPU_FLAGL |= tmp; \
 	} \
@@ -962,9 +963,9 @@ do { \
 			CPU_OV = ((s) + 0x40000000) & 0x80000000; \
 		} \
 		while ((c)--) { \
-			tmp = (s) & 0x80000000; \
+			UINT32 tmp2 = (s) & 0x80000000; \
 			(s) = ((s) << 1) | (tmp & 1); \
-			tmp >>= 31; \
+			tmp = tmp2 >> 31; \
 		} \
 		CPU_FLAGL |= tmp; \
 	} \
