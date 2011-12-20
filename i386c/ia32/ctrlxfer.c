@@ -280,6 +280,12 @@ JMPfar_pm_task_gate(selector_t *taskgate_sel)
 	}
 
 	task_switch(&tss_sel, TASK_SWITCH_JMP);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 /*---
@@ -308,6 +314,12 @@ JMPfar_pm_tss(selector_t *tss_sel)
 	}
 
 	task_switch(tss_sel, TASK_SWITCH_JMP);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 
@@ -752,6 +764,12 @@ CALLfar_pm_task_gate(selector_t *taskgate_sel)
 	}
 
 	task_switch(&tss_sel, TASK_SWITCH_CALL);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 /*---
@@ -780,6 +798,12 @@ CALLfar_pm_tss(selector_t *tss_sel)
 	}
 
 	task_switch(tss_sel, TASK_SWITCH_CALL);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 
@@ -817,7 +841,7 @@ RETfar_pm(UINT nbytes)
 
 	rv = parse_selector(&cs_sel, new_cs);
 	if (rv < 0) {
-		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d, %s)", cs_sel.selector, rv));
+		VERBOSE(("RETfar_pm: parse_selector (selector = %04x, rv = %d)", cs_sel.selector, rv));
 		EXCEPTION(GP_EXCEPTION, cs_sel.idx);
 	}
 
@@ -1089,6 +1113,12 @@ IRET_pm_nested_task(void)
 	}
 
 	task_switch(&tss_sel, TASK_SWITCH_IRET);
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("JMPfar_pm: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 /*---

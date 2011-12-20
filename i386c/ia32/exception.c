@@ -380,6 +380,12 @@ interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int erro
 	if (errorp) {
 		XPUSH0(error_code);
 	}
+
+	/* out of range */
+	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
+		VERBOSE(("interrupt: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 }
 
 static void

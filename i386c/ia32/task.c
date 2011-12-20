@@ -201,8 +201,10 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	UINT16 ldtr;
 	UINT16 iobase;
 	UINT16 t;
+	int new_cpl;
 
-	selector_t cs_sel, ss_sel;
+	selector_t sreg_sel[CPU_SEGREG_NUM];
+	selector_t ldtr_sel;
 	int rv;
 
 	UINT32 cur_base, cur_paddr;	/* current task state */
@@ -436,21 +438,37 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	CPU_CR0 |= CPU_CR0_TS;
 
 	/*
-	 * load task state (CR3, EFLAG, EIP, GPR, segreg, LDTR)
+	 * load task state (EIP, GPR, EFLAG, segreg, CR3, LDTR)
 	 */
-
-	/* set new CR3 */
-	if (!task16 && CPU_STAT_PAGING) {
-		set_cr3(cr3);
-	}
 
 	/* set new EIP, GPR */
 	CPU_EIP = eip;
 	for (i = 0; i < CPU_REG_NUM; i++) {
 		CPU_REGS_DWORD(i) = regs[i];
 	}
+
+	CPU_CLEAR_PREV_ESP();
+
+	/* set new EFLAGS */
+	set_eflags(new_flags, I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG);
+
+	/* check new segregs, ldtr */
 	for (i = 0; i < CPU_SEGREG_NUM; i++) {
-		segdesc_init(i, sreg[i], &CPU_STAT_SREG(i));
+		rv = parse_selector(&sreg_sel[i], sreg[i]);
+		if (rv < 0) {
+			VERBOSE(("task_switch: selector parse failure: index=%d (sel = 0x%04x, rv = %d)", i, sreg[i], rv));
+			EXCEPTION(TS_EXCEPTION, sreg_sel[i].idx);
+		}
+	}
+	rv = parse_selector(&ldtr_sel, ldtr);
+	if (rv < 0) {
+		VERBOSE(("task_switch: LDTR selector parse failure (sel = 0x%04x, rv = %d)", ldtr, rv));
+		EXCEPTION(TS_EXCEPTION, ldtr_sel.idx);
+	}
+
+	/* set new CR3 */
+	if (!task16 && CPU_STAT_PAGING) {
+		set_cr3(cr3);
 	}
 
 	/* load new LDTR */
@@ -480,89 +498,87 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	}
 #endif
 
-	/* set new EFLAGS */
-	set_eflags(new_flags, I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG);
-
 	/* set new segment register */
-	if (!CPU_STAT_VM86) {
-		/* clear segment descriptor cache */
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			segdesc_clear(&CPU_STAT_SREG(i));
-		}
+	new_cpl = sreg_sel[CPU_CS_INDEX].rpl;
+	if (CPU_STAT_VM86) {
+		load_ss(sreg_sel[CPU_SS_INDEX].selector,
+		    &sreg_sel[CPU_SS_INDEX].desc, new_cpl);
+		LOAD_SEGREG1(CPU_ES_INDEX, sreg_sel[CPU_ES_INDEX].selector,
+		    TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_DS_INDEX, sreg_sel[CPU_DS_INDEX].selector,
+		    TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_FS_INDEX, sreg_sel[CPU_FS_INDEX].selector,
+		    TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_GS_INDEX, sreg_sel[CPU_GS_INDEX].selector,
+		    TS_EXCEPTION);
+		load_cs(sreg_sel[CPU_CS_INDEX].selector,
+		    &sreg_sel[CPU_CS_INDEX].desc, new_cpl);
+	} else {
+		/* load SS */
 
-		/* load CS */
-		rv = parse_selector(&cs_sel, sreg[CPU_CS_INDEX]);
-		if (rv < 0) {
-			VERBOSE(("task_switch: load CS failure (sel = 0x%04x, rv = %d)", sreg[CPU_CS_INDEX], rv));
-			EXCEPTION(TS_EXCEPTION, cs_sel.idx);
-		}
-
-		/* CS must be code segment */
-		if (SEG_IS_SYSTEM(&cs_sel.desc) || SEG_IS_DATA(&cs_sel.desc)) {
-			EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+		/* SS must be writable data segment */
+		if (SEG_IS_SYSTEM(&sreg_sel[CPU_SS_INDEX].desc)
+		 || SEG_IS_CODE(&sreg_sel[CPU_SS_INDEX].desc)
+		 || !SEG_IS_WRITABLE_DATA(&sreg_sel[CPU_SS_INDEX].desc)) {
+			EXCEPTION(TS_EXCEPTION, sreg_sel[CPU_SS_INDEX].idx);
 		}
 
 		/* check privilege level */
-		if (!SEG_IS_CONFORMING_CODE(&cs_sel.desc)) {
+		if ((sreg_sel[CPU_SS_INDEX].desc.dpl != new_cpl)
+		 || (sreg_sel[CPU_SS_INDEX].desc.dpl != new_cpl)) {
+			EXCEPTION(TS_EXCEPTION, sreg_sel[CPU_SS_INDEX].idx);
+		}
+
+		/* stack segment is not present */
+		rv = selector_is_not_present(&sreg_sel[CPU_SS_INDEX]);
+		if (rv < 0) {
+			EXCEPTION(SS_EXCEPTION, sreg_sel[CPU_SS_INDEX].idx);
+		}
+
+		/* Now loading SS register */
+		load_ss(sreg_sel[CPU_SS_INDEX].selector,
+		    &sreg_sel[CPU_SS_INDEX].desc, new_cpl);
+
+		/* load ES, DS, FS, GS segment register */
+		LOAD_SEGREG1(CPU_ES_INDEX, sreg_sel[CPU_ES_INDEX].selector,
+		    TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_DS_INDEX, sreg_sel[CPU_DS_INDEX].selector,
+		    TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_FS_INDEX, sreg_sel[CPU_FS_INDEX].selector,
+		    TS_EXCEPTION);
+		LOAD_SEGREG1(CPU_GS_INDEX, sreg_sel[CPU_GS_INDEX].selector,
+		    TS_EXCEPTION);
+
+		/* load CS */
+
+		/* CS must be code segment */
+		if (SEG_IS_SYSTEM(&sreg_sel[CPU_CS_INDEX].desc)
+		 || SEG_IS_DATA(&sreg_sel[CPU_CS_INDEX].desc)) {
+			EXCEPTION(TS_EXCEPTION, sreg_sel[CPU_CS_INDEX].idx);
+		}
+
+		/* check privilege level */
+		if (!SEG_IS_CONFORMING_CODE(&sreg_sel[CPU_CS_INDEX].desc)) {
 			/* non-confirming code segment */
-			if (cs_sel.desc.dpl != cs_sel.rpl) {
-				EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+			if (sreg_sel[CPU_CS_INDEX].desc.dpl != new_cpl) {
+				EXCEPTION(TS_EXCEPTION, sreg_sel[CPU_CS_INDEX].idx);
 			}
 		} else {
 			/* conforming code segment */
-			if (cs_sel.desc.dpl > cs_sel.rpl) {
-				EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+			if (sreg_sel[CPU_CS_INDEX].desc.dpl > new_cpl) {
+				EXCEPTION(TS_EXCEPTION, sreg_sel[CPU_CS_INDEX].idx);
 			}
 		}
 
 		/* code segment is not present */
-		rv = selector_is_not_present(&cs_sel);
+		rv = selector_is_not_present(&sreg_sel[CPU_CS_INDEX]);
 		if (rv < 0) {
-			EXCEPTION(NP_EXCEPTION, cs_sel.idx);
+			EXCEPTION(NP_EXCEPTION, sreg_sel[CPU_CS_INDEX].idx);
 		}
 
-		/* load SS */
-		rv = parse_selector(&ss_sel, sreg[CPU_SS_INDEX]);
-		if (rv < 0) {
-			VERBOSE(("task_switch: load SS failure (sel = 0x%04x, rv = %d)", sreg[CPU_SS_INDEX], rv));
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx);
-		}
-
-		/* SS must be writable data segment */
-		if (SEG_IS_SYSTEM(&ss_sel.desc)
-		 || SEG_IS_CODE(&ss_sel.desc)
-		 || !SEG_IS_WRITABLE_DATA(&ss_sel.desc)) {
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx);
-		}
-
-		/* check privilege level */
-		if ((ss_sel.desc.dpl != cs_sel.rpl)
-		 || (ss_sel.desc.dpl != ss_sel.rpl)) {
-			EXCEPTION(TS_EXCEPTION, ss_sel.idx);
-		}
-
-		/* stack segment is not present */
-		rv = selector_is_not_present(&ss_sel);
-		if (rv < 0) {
-			EXCEPTION(SS_EXCEPTION, ss_sel.idx);
-		}
-
-		/* Now loading CS/SS register */
-		load_cs(cs_sel.selector, &cs_sel.desc, cs_sel.rpl);
-		load_ss(ss_sel.selector, &ss_sel.desc, cs_sel.rpl);
-
-		/* load ES, DS, FS, GS segment register */
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			if (i != CPU_CS_INDEX || i != CPU_SS_INDEX) {
-				LOAD_SEGREG1(i, sreg[i], TS_EXCEPTION);
-			}
-		}
-	}
-
-	/* out of range */
-	if (CPU_EIP > CPU_STAT_CS_LIMIT) {
-		VERBOSE(("task_switch: new_ip is out of range. new_ip = %08x, limit = %08x", CPU_EIP, CPU_STAT_CS_LIMIT));
-		EXCEPTION(GP_EXCEPTION, 0);
+		/* Now loading CS register */
+		load_cs(sreg_sel[CPU_CS_INDEX].selector,
+		    &sreg_sel[CPU_CS_INDEX].desc, new_cpl);
 	}
 
 	VERBOSE(("task_switch: done."));
