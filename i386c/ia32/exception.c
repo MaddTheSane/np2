@@ -92,6 +92,8 @@ exception(int num, int error_code)
 	case NM_EXCEPTION:	/* (F) デバイス使用不可 (FPU が無い) */
 	case MF_EXCEPTION:	/* (F) 浮動小数点エラー */
 		CPU_EIP = CPU_PREV_EIP;
+		if (CPU_STATSAVE.cpu_stat.backout_sp)
+			CPU_ESP = CPU_PREV_ESP;
 		/*FALLTHROUGH*/
 	case NMI_EXCEPTION:	/* (I) NMI 割り込み */
 	case BP_EXCEPTION:	/* (T) ブレークポイント */
@@ -113,18 +115,14 @@ exception(int num, int error_code)
 	case GP_EXCEPTION:	/* (F) 一般保護例外 (errcode) */
 	case PF_EXCEPTION:	/* (F) ページフォルト (errcode) */
 		CPU_EIP = CPU_PREV_EIP;
+		if (CPU_STATSAVE.cpu_stat.backout_sp)
+			CPU_ESP = CPU_PREV_ESP;
 		errorp = 1;
 		break;
 
 	default:
 		ia32_panic("exception: unknown exception (%d)", num);
 		break;
-	}
-
-	if (CPU_STATSAVE.cpu_stat.backout_sp) {
-		VERBOSE(("exception: restore stack pointer."));
-		CPU_ESP = CPU_PREV_ESP;
-		CPU_STATSAVE.cpu_stat.backout_sp = 0;
 	}
 
 	if (CPU_STAT_EXCEPTION_COUNTER >= 2) {
@@ -138,7 +136,7 @@ exception(int num, int error_code)
 
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
-	interrupt(num, 0, errorp, error_code);
+	interrupt(num, INTR_TYPE_EXTINTR, errorp, error_code);
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
 	if (num != BP_EXCEPTION) {
 		if (CPU_INST_OP32) {
@@ -220,6 +218,8 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 
 	VERBOSE(("interrupt: num = 0x%02x, intrtype = %s, errorp = %s, error_code = %08x", num, intrtype ? "on" : "off", errorp ? "on" : "off", error_code));
 
+	CPU_SET_PREV_ESP();
+
 	if (!CPU_STAT_PM) {
 		/* real mode */
 		CPU_WORKCLOCK(20);
@@ -231,6 +231,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 		}
 
 		if ((intrtype == INTR_TYPE_EXTINTR) && CPU_STAT_HLT) {
+			VERBOSE(("interrupt: reset HTL in real mode"));
 			CPU_EIP++;
 			CPU_STAT_HLT = 0;
 		}
@@ -308,6 +309,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 		}
 
 		if ((intrtype == INTR_TYPE_EXTINTR) && CPU_STAT_HLT) {
+			VERBOSE(("interrupt: reset HTL in protected mode"));
 			CPU_EIP++;
 			CPU_STAT_HLT = 0;
 		}
@@ -331,6 +333,8 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 
 		VERBOSE(("interrupt: ---------------------------------------------------------------- end"));
 	}
+
+	CPU_CLEAR_PREV_ESP();
 }
 
 static void
@@ -370,6 +374,8 @@ interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int erro
 	}
 
 	task_switch(&task_sel, TASK_SWITCH_INTR);
+
+	CPU_SET_PREV_ESP();
 
 	if (errorp) {
 		XPUSH0(error_code);

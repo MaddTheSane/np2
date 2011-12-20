@@ -1179,6 +1179,7 @@ POP_Ew(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -1187,6 +1188,7 @@ POP_Ew(void)
 		madr = calc_ea_dst(op);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, src);
 	}
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1197,6 +1199,7 @@ POP_Ew_G5(UINT32 op)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	if (op >= 0xc0) {
 		*(reg16_b20[op]) = src;
@@ -1204,6 +1207,7 @@ POP_Ew_G5(UINT32 op)
 		madr = calc_ea_dst(op);
 		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, src);
 	}
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1214,6 +1218,7 @@ POP_Ed(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
@@ -1222,6 +1227,7 @@ POP_Ed(void)
 		madr = calc_ea_dst(op);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
 	}
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1231,6 +1237,7 @@ POP_Ed_G5(UINT32 op)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	if (op >= 0xc0) {
 		*(reg32_b20[op]) = src;
@@ -1238,6 +1245,7 @@ POP_Ed_G5(UINT32 op)
 		madr = calc_ea_dst(op);
 		cpu_vmemorywrite_d(CPU_INST_SEGREG_INDEX, madr, src);
 	}
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1247,8 +1255,10 @@ POP16_ES(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	LOAD_SEGREG(CPU_ES_INDEX, src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1258,8 +1268,10 @@ POP32_ES(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	LOAD_SEGREG(CPU_ES_INDEX, (UINT16)src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1269,8 +1281,10 @@ POP16_SS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	LOAD_SEGREG(CPU_SS_INDEX, src);
+	CPU_CLEAR_PREV_ESP();
 	exec_1step();
 }
 
@@ -1281,8 +1295,10 @@ POP32_SS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	LOAD_SEGREG(CPU_SS_INDEX, (UINT16)src);
+	CPU_CLEAR_PREV_ESP();
 	exec_1step();
 }
 
@@ -1293,8 +1309,10 @@ POP16_DS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	LOAD_SEGREG(CPU_DS_INDEX, src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1304,8 +1322,10 @@ POP32_DS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	LOAD_SEGREG(CPU_DS_INDEX, (UINT16)src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1315,8 +1335,10 @@ POP16_FS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	LOAD_SEGREG(CPU_FS_INDEX, src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1326,8 +1348,10 @@ POP32_FS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	LOAD_SEGREG(CPU_FS_INDEX, (UINT16)src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1337,8 +1361,10 @@ POP16_GS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_16(src);
 	LOAD_SEGREG(CPU_GS_INDEX, src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 void
@@ -1348,8 +1374,10 @@ POP32_GS(void)
 
 	CPU_WORKCLOCK(5);
 
+	CPU_SET_PREV_ESP();
 	POP0_32(src);
 	LOAD_SEGREG(CPU_GS_INDEX, (UINT16)src);
+	CPU_CLEAR_PREV_ESP();
 }
 
 /*
