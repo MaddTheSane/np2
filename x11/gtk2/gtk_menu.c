@@ -787,6 +787,7 @@ cb_diskopen(GtkAction *action, gpointer user_data)
 		gtk_file_filter_add_pattern(filter, "*.2[hH][dD]");
 		gtk_file_filter_add_pattern(filter, "*.[fF][dD][iI]");
 		gtk_file_filter_add_pattern(filter, "*.[fF][sS]");
+		gtk_file_filter_add_pattern(filter, "*.[fF][lL][pP]");
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	}
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
