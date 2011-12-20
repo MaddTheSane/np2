@@ -466,6 +466,12 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		EXCEPTION(TS_EXCEPTION, ldtr_sel.idx);
 	}
 
+	/* invalidate segreg, ldtr descriptor */
+	for (i = 0; i < CPU_SEGREG_NUM; i++) {
+		CPU_STAT_SREG(i).valid = 0;
+	}
+	CPU_LDTR_DESC.valid = 0;
+
 	/* set new CR3 */
 	if (!task16 && CPU_STAT_PAGING) {
 		set_cr3(cr3);
