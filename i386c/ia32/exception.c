@@ -584,7 +584,7 @@ interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int e
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 		if (!SEG_IS_CONFORMING_CODE(&cs_sel.desc) && (cs_sel.desc.dpl != CPU_STAT_CPL)) {
-			VERBOSE(("interrupt: %sCONFORMING-CODE-SEGMENT(%s) && DPL[CS](%d) != CPL", SEG_IS_CONFORMING_CODE(&cs_sel.desc) ? "" : "NON-", cs_sel.desc.dpl, CPU_STAT_CPL));
+			VERBOSE(("interrupt: %sCONFORMING-CODE-SEGMENT(%d) && DPL[CS](%d) != CPL", SEG_IS_CONFORMING_CODE(&cs_sel.desc) ? "" : "NON-", cs_sel.desc.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 
