@@ -177,6 +177,7 @@ ESC7(void)
 		TRACEOUT(("FSTSW AX"));
 		CPU_AX = 0;
 	} else {
+		madr = calc_ea_dst(op);
 		EXCEPTION(NM_EXCEPTION, 0);
 	}
 #else
