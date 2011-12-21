@@ -274,7 +274,7 @@ MOV_CdRd(void)
 			 * 31 = PG (pageing)
 			 */
 
-			/* ���� p.182 ������ 13 - �����ݸ��㳰 */
+			/* 下巻 p.182 割り込み 13 - 一般保護例外 */
 			if ((src & (CPU_CR0_PE|CPU_CR0_PG)) == (UINT32)CPU_CR0_PG) {
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
@@ -1084,7 +1084,7 @@ WRMSR(void)
 
 	idx = CPU_ECX;
 	switch (idx) {
-		/* MTRR �ؤν񤭹��߻� tlb_flush(1); */
+		/* MTRR への書き込み時 tlb_flush(1); */
 
 	default:
 		EXCEPTION(GP_EXCEPTION, 0);

@@ -213,20 +213,20 @@ typedef struct {
 } FPU_REGS;
 
 typedef struct {
-	UINT8		valid;	/* •Ï•∏•π•øÕ≠∏˙ */
-	UINT8		sign;	/* …‰πÊ */
-	UINT8		zero;	/* •º•Ì */
-	UINT8		inf;	/* °Á */
+	UINT8		valid;	/* „É¨„Ç∏„Çπ„ÇøÊúâÂäπ */
+	UINT8		sign;	/* Á¨¶Âè∑ */
+	UINT8		zero;	/* „Çº„É≠ */
+	UINT8		inf;	/* ‚àû */
 	UINT8		nan;	/* NaN */
-	UINT8		denorm;	/* »Û¿µµ¨≤Ω */
-	SINT16		exp;	/* ªÿøÙ…Ù */
-	UINT64		num;	/* æÆøÙ…Ù */
+	UINT8		denorm;	/* ÈùûÊ≠£Ë¶èÂåñ */
+	SINT16		exp;	/* ÊåáÊï∞ÈÉ® */
+	UINT64		num;	/* Â∞èÊï∞ÈÉ® */
 } FP_REG;
 
 typedef struct {
-	UINT8		top;	/* •π•ø•√•Ø∞Ã√÷ */
-	UINT8		pc;	/* ¿∫≈Ÿ */
-	UINT8		rc;	/* ¥›§· */
+	UINT8		top;	/* „Çπ„Çø„ÉÉ„ÇØ‰ΩçÁΩÆ */
+	UINT8		pc;	/* Á≤æÂ∫¶ */
+	UINT8		rc;	/* ‰∏∏„ÇÅ */
 	UINT8		dmy[1];
 
 	FP_REG		reg[FPU_REG_NUM];
@@ -264,7 +264,7 @@ typedef struct {
 } I386EXT;
 
 typedef struct {
-	I386STAT	s;				/* STATsave§µ§Ï§Î≈€ */
+	I386STAT	s;				/* STATsave„Åï„Çå„ÇãÂ•¥ */
 	I386EXT		e;
 } I386CORE;
 
@@ -684,20 +684,20 @@ void dbg_printf(const char *str, ...);
 #define	FPU_REG(i)		FPU_STAT.reg[i]
 
 /* FPU status register */
-#define	FP_IE_FLAG	(1 << 0)	/* Ãµ∏˙§ ∆∞∫Ó */
-#define	FP_DE_FLAG	(1 << 1)	/* •«•Œ°º•ﬁ•È•§•∫•…°¶•™•⁄•È•Û•… */
-#define	FP_ZE_FLAG	(1 << 2)	/* •º•Ì§À§Ë§ÎΩ¸ªª */
-#define	FP_OE_FLAG	(1 << 3)	/* •™°º•–°º•’•Ì°º */
-#define	FP_UE_FLAG	(1 << 4)	/* •¢•Û•¿°º•’•Ì°º */
-#define	FP_PE_FLAG	(1 << 5)	/* ¿∫≈Ÿ */
-#define	FP_SF_FLAG	(1 << 6)	/* •π•ø•√•Ø•’•©•Î•» */
-#define	FP_ES_FLAG	(1 << 7)	/* •®•È°º•µ•ﬁ•Í•π•∆°º•ø•π */
-#define	FP_C0_FLAG	(1 << 8)	/* æÚ∑Ô•≥°º•… */
-#define	FP_C1_FLAG	(1 << 9)	/* æÚ∑Ô•≥°º•… */
-#define	FP_C2_FLAG	(1 << 10)	/* æÚ∑Ô•≥°º•… */
-#define	FP_TOP_FLAG	(7 << 11)	/* •π•ø•√•Ø•›•§•Û•»§Œ•»•√•◊ */
-#define	FP_C3_FLAG	(1 << 14)	/* æÚ∑Ô•≥°º•… */
-#define	FP_B_FLAG	(1 << 15)	/* FPU •”•∏°º */
+#define	FP_IE_FLAG	(1 << 0)	/* ÁÑ°Âäπ„Å™Âãï‰Ωú */
+#define	FP_DE_FLAG	(1 << 1)	/* „Éá„Éé„Éº„Éû„É©„Ç§„Ç∫„Éâ„Éª„Ç™„Éö„É©„É≥„Éâ */
+#define	FP_ZE_FLAG	(1 << 2)	/* „Çº„É≠„Å´„Çà„ÇãÈô§ÁÆó */
+#define	FP_OE_FLAG	(1 << 3)	/* „Ç™„Éº„Éê„Éº„Éï„É≠„Éº */
+#define	FP_UE_FLAG	(1 << 4)	/* „Ç¢„É≥„ÉÄ„Éº„Éï„É≠„Éº */
+#define	FP_PE_FLAG	(1 << 5)	/* Á≤æÂ∫¶ */
+#define	FP_SF_FLAG	(1 << 6)	/* „Çπ„Çø„ÉÉ„ÇØ„Éï„Ç©„É´„Éà */
+#define	FP_ES_FLAG	(1 << 7)	/* „Ç®„É©„Éº„Çµ„Éû„É™„Çπ„ÉÜ„Éº„Çø„Çπ */
+#define	FP_C0_FLAG	(1 << 8)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_C1_FLAG	(1 << 9)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_C2_FLAG	(1 << 10)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_TOP_FLAG	(7 << 11)	/* „Çπ„Çø„ÉÉ„ÇØ„Éù„Ç§„É≥„Éà„ÅÆ„Éà„ÉÉ„Éó */
+#define	FP_C3_FLAG	(1 << 14)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_B_FLAG	(1 << 15)	/* FPU „Éì„Ç∏„Éº */
 
 #define	FP_TOP_SHIFT	11
 #define	FP_TOP_GET()	((FPU_STATUSWORD & FP_TOP_FLAG) >> FP_TOP_SHIFT)
@@ -713,12 +713,12 @@ do { \
 } while (/*CONSTCOND*/0)
 
 /* FPU control register */
-#define	FP_CTRL_PC_SHIFT	8	/* ¿∫≈Ÿ¿©∏Ê */
-#define	FP_CTRL_RC_SHIFT	10	/* ¥›§·¿©∏Ê */
+#define	FP_CTRL_PC_SHIFT	8	/* Á≤æÂ∫¶Âà∂Âæ° */
+#define	FP_CTRL_RC_SHIFT	10	/* ‰∏∏„ÇÅÂà∂Âæ° */
 
-#define	FP_CTRL_PC_24		0	/* √±¿∫≈Ÿ */
-#define	FP_CTRL_PC_53		1	/* «‹¿∫≈Ÿ */
-#define	FP_CTRL_PC_64		3	/* ≥»ƒ•¿∫≈Ÿ */
+#define	FP_CTRL_PC_24		0	/* ÂçòÁ≤æÂ∫¶ */
+#define	FP_CTRL_PC_53		1	/* ÂÄçÁ≤æÂ∫¶ */
+#define	FP_CTRL_PC_64		3	/* Êã°ÂºµÁ≤æÂ∫¶ */
 
 #define	FP_CTRL_RC_NEAREST_EVEN	0
 #define	FP_CTRL_RC_DOWN		1
