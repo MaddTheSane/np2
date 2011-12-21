@@ -450,8 +450,8 @@ extern sigjmp_buf	exec_1step_jmpbuf;
 #define	REAL_FLAGREG	((CPU_FLAG & 0xf7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 #define	REAL_EFLAGREG	((CPU_EFLAG & 0xfffff7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 
-void FASTCALL set_flags(UINT16 new_flags, UINT16 mask);
-void FASTCALL set_eflags(UINT32 new_flags, UINT32 mask);
+void CPUCALL set_flags(UINT16 new_flags, UINT16 mask);
+void CPUCALL set_eflags(UINT32 new_flags, UINT32 mask);
 
 
 #define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32
@@ -619,7 +619,6 @@ void ia32a20enable(BOOL enable);
 void ia32(void);
 void ia32_step(void);
 void CPUCALL ia32_interrupt(int vect, int soft);
-void CPUCALL ia32_exception(int vect, int p1, int p2);
 
 void exec_1step(void);
 #define	INST_PREFIX	(1 << 0)
@@ -632,12 +631,12 @@ void ia32_panic(const char *buf, ...);
 
 void ia32_bioscall(void);
 
-void FASTCALL change_pm(BOOL onoff);
-void FASTCALL change_vm(BOOL onoff);
-void FASTCALL change_pg(BOOL onoff);
+void CPUCALL change_pm(BOOL onoff);
+void CPUCALL change_vm(BOOL onoff);
+void CPUCALL change_pg(BOOL onoff);
 
-void FASTCALL set_cr3(UINT32 new_cr3);
-void FASTCALL set_cpl(int new_cpl);
+void CPUCALL set_cr3(UINT32 new_cr3);
+void CPUCALL set_cpl(int new_cpl);
 
 extern const UINT8 iflags[];
 #define	szpcflag	iflags
