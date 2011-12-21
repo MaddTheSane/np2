@@ -481,7 +481,7 @@ do { \
 	CPU_PREV_ESP = (esp); \
 } while (/*CONSTCOND*/0)
 #define	CPU_SET_PREV_ESP()	CPU_SET_PREV_ESP1(CPU_ESP)
-#define	CPU_CLEAR_PREV_ESP(esp) \
+#define	CPU_CLEAR_PREV_ESP() \
 do { \
 	CPU_STATSAVE.cpu_stat.backout_sp = 0; \
 } while (/*CONSTCOND*/0)
