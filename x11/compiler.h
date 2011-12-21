@@ -195,8 +195,10 @@ UINT32 gettick(void);
 #if defined(CPUCORE_IA32)
 #define	msgbox(title, msg)	toolkit_messagebox(title, msg);
 
+#if !defined(DISABLE_PC9821)
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
+#endif
 #define	SUPPORT_IDEIO
 #else
 #define	SUPPORT_CRT15KHZ
