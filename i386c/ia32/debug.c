@@ -251,7 +251,7 @@ segdesc_dump(descriptor_t *sdp)
 
 	__ASSERT(sdp != NULL);
 
-	VERBOSE(("\ndump descriptor", sdp));
+	VERBOSE(("\ndump descriptor: %p", sdp));
 
 	VERBOSE(("valid    : %s", SEG_IS_VALID(sdp) ? "true" : "false"));
 	VERBOSE(("present  : %s", SEG_IS_PRESENT(sdp) ? "true" : "false"));
