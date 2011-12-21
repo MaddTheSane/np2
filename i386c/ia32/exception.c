@@ -430,7 +430,7 @@ interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int e
 		break;
 	}
 
-	exc_errcode = cs_sel.idx;
+	exc_errcode = gsdp->u.gate.selector & ~3;
 	if (intrtype == INTR_TYPE_EXTINTR)
 		exc_errcode++;
 
