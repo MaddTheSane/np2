@@ -149,7 +149,7 @@ typedef struct {
 #define	CPU_SYSDESC_TYPE_TSS_BUSY_IND	0x02
 
 
-static INLINE void
+STATIC_INLINE void CPUCALL
 segdesc_clear(descriptor_t *sdp)
 {
 
