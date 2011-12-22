@@ -1,4 +1,4 @@
-#	$Id: Makefile.am,v 1.6 2011/12/22 15:06:58 monaka Exp $
+#	$Id: Makefile.am,v 1.7 2011/12/22 15:17:47 monaka Exp $
 
 real_topsrcdir=	$(top_srcdir)/..
 
@@ -307,4 +307,4 @@ endif
 cleandir:: distclean
 
 .man1.1 .jman1.1j:
-	sed -e 's;@PKGDATADIR@;${DESTDIR}${pkgdatadir};' < $> > $@
+	@sed -e 's;@PKGDATADIR@;${DESTDIR}${pkgdatadir};' < $> > $@
