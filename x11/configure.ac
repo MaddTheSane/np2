@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.3 $)
+AC_REVISION($Revision: 1.4 $)
 
 AC_INIT(Xnp2, 0.83, nonakap@gmail.com, xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -86,6 +86,9 @@ AC_ARG_ENABLE(sdl,
 AC_ARG_ENABLE(sdlmixer,
 	AC_HELP_STRING([--enable-sdlmixer],[Use SDL_mixer library [[default=yes]]]),,
 	[enable_sdlmixer="yes"])
+AC_ARG_ENABLE(debug,
+	AC_HELP_STRING([--enable-debug],[Enable debugging [[default=no]]]),,
+	[enable_debug="no"])
 
 dnl
 dnl Checks for IA-32 CPU emulation
@@ -135,6 +138,20 @@ if test x"$enable_sdlmixer" = "xyes"; then
 			$SDL_CFLAGS, $SDL_LIBS)
 	fi
 fi
+
+dnl
+dnl Checks for debug mode
+dnl
+AC_MSG_CHECKING([whether to enable debugging])
+if test x"$enable_debug" = "xyes"; then
+	CFLAGS="$CFLAGS -DDEBUG -g -O0"
+	CFLAGS="$CFLAGS -Wall -Wcast-align"
+	CFLAGS="$CFLAGS -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
+	CFLAGS="$CFLAGS -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-missing-field-initializers"
+else
+	CFLAGS="$CFLAGS -DNDEBUG"
+fi
+AC_MSG_RESULT($enable_debug)
 
 dnl
 dnl Output Makefiles
