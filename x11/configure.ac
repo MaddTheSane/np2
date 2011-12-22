@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.4 $)
+AC_REVISION($Revision: 1.5 $)
 
 AC_INIT(Xnp2, 0.83, nonakap@gmail.com, xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -148,6 +148,7 @@ if test x"$enable_debug" = "xyes"; then
 	CFLAGS="$CFLAGS -Wall -Wcast-align"
 	CFLAGS="$CFLAGS -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
 	CFLAGS="$CFLAGS -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-missing-field-initializers"
+	CFLAGS="$CFLAGS -Wstack-protector -fstack-protector --param ssp-buffer-size=1"
 else
 	CFLAGS="$CFLAGS -DNDEBUG"
 fi
