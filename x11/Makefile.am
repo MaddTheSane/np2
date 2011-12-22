@@ -1,4 +1,4 @@
-#	$Id: Makefile.am,v 1.5 2011/12/16 14:04:16 monaka Exp $
+#	$Id: Makefile.am,v 1.6 2011/12/22 15:06:58 monaka Exp $
 
 real_topsrcdir=	$(top_srcdir)/..
 
@@ -241,7 +241,7 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/vram \
 		$(GTK_CFLAGS) $(SDL_CFLAGS)
 
-AM_CFLAGS=	-fsigned-char -fno-strict-aliasing
+AM_CFLAGS=	-fsigned-char
 
 xnp2_LDADD=	$(GTK_LIBS) $(SDL_LIBS) \
 		$(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS)
@@ -287,13 +287,6 @@ AM_CPPFLAGS+=	-I$(real_topsrcdir)/i386c \
 		-I$(real_topsrcdir)/i386c/ia32/instructions/fpu
 
 DEFS+=		-DCPUCORE_IA32
-##DEFS+=	-DUSE_FPU
-##DEFS+=	-DSUPPORT_MEMDBG32
-##DEFS+=	-DIA32_PROFILE_TLB
-##DEFS+=	-DIA32_INSTRUCTION_TRACE
-##DEFS+=	-DIA32_CROSS_CHECK
-##DEFS+=	-DIA32_REBOOT_ON_PANIC
-##DEFS+=	-DMORE_DEBUG
 else
 xnp2_SOURCES+=	$(real_topsrcdir)/i286c/i286c.c \
 		$(real_topsrcdir)/i286c/i286c_mn.c \
