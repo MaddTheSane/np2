@@ -337,7 +337,7 @@ parse_selector(selector_t *ssp, UINT16 selector)
 		limit = CPU_GDTR_LIMIT;
 	}
 	if (idx + 7 > limit) {
-		VERBOSE(("parse_selector: segment limit check failed"));
+		VERBOSE(("parse_selector: segment limit check failed: 0x%08x > 0x%08x", idx + 7, limit));
 		return -3;
 	}
 
