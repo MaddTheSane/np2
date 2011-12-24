@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.9 $)
+AC_REVISION($Revision: 1.10 $)
 
 AC_INIT(Xnp2, 0.83-20111223, nonakap@gmail.com, xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -69,6 +69,7 @@ AC_CHECK_FUNCS(sqrt,,AC_CHECK_LIB(m,sqrt))
 dnl
 dnl Checks for X
 dnl
+AC_PATH_X
 AC_PATH_XTRA
 if test x"$no_x" != x"yes"; then
 	X_LIBS="$X_LIBS -lX11"
