@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.8 $)
+AC_REVISION($Revision: 1.9 $)
 
 AC_INIT(Xnp2, 0.83-20111223, nonakap@gmail.com, xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -19,14 +19,6 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_RANLIB
 AC_PROG_INSTALL
-
-dnl
-dnl Checks for libraries.
-dnl
-AC_PATH_XTRA
-if test x"$no_x" != x"yes"; then
-	X_LIBS="$X_LIBS -lX11"
-fi
 
 dnl
 dnl Checks for header files.
@@ -75,39 +67,31 @@ AC_CHECK_FUNCS(pow,,AC_CHECK_LIB(m,pow))
 AC_CHECK_FUNCS(sqrt,,AC_CHECK_LIB(m,sqrt))
 
 dnl
+dnl Checks for X
+dnl
+AC_PATH_XTRA
+if test x"$no_x" != x"yes"; then
+	X_LIBS="$X_LIBS -lX11"
+fi
+
+dnl
 dnl Xnp2 configure options.
 dnl
-AC_ARG_ENABLE(ia32,
-	AC_HELP_STRING([--enable-ia32],[Use IA-32 emulation [[default=no]]]),,
-	[enable_ia32="no"])
-AC_ARG_ENABLE(xf86vidmode,
-	AC_HELP_STRING([--enable-xf86vidmode],[Use XF86VidMode extension [[default=yes]]]),,
-	[enable_xf86vidmode="yes"])
 AC_ARG_ENABLE(sdl,
 	AC_HELP_STRING([--enable-sdl],[Use SDL library [[default=yes]]]),,
 	[enable_sdl="yes"])
 AC_ARG_ENABLE(sdlmixer,
 	AC_HELP_STRING([--enable-sdlmixer],[Use SDL_mixer library [[default=yes]]]),,
 	[enable_sdlmixer="yes"])
+AC_ARG_ENABLE(xf86vidmode,
+	AC_HELP_STRING([--enable-xf86vidmode],[Use XF86VidMode extension [[default=yes]]]),,
+	[enable_xf86vidmode="yes"])
+AC_ARG_ENABLE(ia32,
+	AC_HELP_STRING([--enable-ia32],[Use IA-32 emulation [[default=no]]]),,
+	[enable_ia32="no"])
 AC_ARG_ENABLE(debug,
 	AC_HELP_STRING([--enable-debug],[Enable debugging [[default=no]]]),,
 	[enable_debug="no"])
-
-dnl
-dnl Checks for IA-32 CPU emulation
-dnl
-AM_CONDITIONAL(CPUCORE_IA32, test x"$enable_ia32" = "xyes")
-
-dnl
-dnl Checks for XF86VidMode extension
-dnl
-if test x"$enable_xf86vidmode" = "xyes"; then
-	AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension,
-		X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
-		AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.]),
-		,
-		$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS)
-fi
 
 dnl
 dnl Checks for GTK+
@@ -141,6 +125,22 @@ if test x"$enable_sdlmixer" = "xyes"; then
 			$SDL_CFLAGS, $SDL_LIBS)
 	fi
 fi
+
+dnl
+dnl Checks for XF86VidMode extension
+dnl
+if test x"$enable_xf86vidmode" = "xyes"; then
+	AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension,
+		X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
+		AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.]),
+		,
+		$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS)
+fi
+
+dnl
+dnl Checks for IA-32 CPU emulation
+dnl
+AM_CONDITIONAL(CPUCORE_IA32, test x"$enable_ia32" = "xyes")
 
 dnl
 dnl Checks for debug mode
