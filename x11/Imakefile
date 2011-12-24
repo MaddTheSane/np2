@@ -242,10 +242,10 @@ ALLSRCS=	$(ASRCS) $(CSRCS)
 	$(CC) -o $@ $(CFLAGS) $(_NOOP_) -c $<
 
 xnp2.man: xnp2.man1
-	@sed -e 's;@PKGDATADIR@;$(LIBDIR)/xnp2;' < $> > $@
+	@sed -e 's;@PKGDATADIR@;$(LIBDIR)/xnp2;' < $< > $@
 
 xnp2.jman: xnp2.jman1
-	@sed -e 's;@PKGDATADIR@;$(LIBDIR)/xnp2;' < $> > $@
+	@sed -e 's;@PKGDATADIR@;$(LIBDIR)/xnp2;' < $< > $@
 
 ComplexProgramTarget(xnp2)
 
