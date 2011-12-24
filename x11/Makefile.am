@@ -1,4 +1,4 @@
-#	$Id: Makefile.am,v 1.8 2011/12/24 01:28:19 monaka Exp $
+#	$Id: Makefile.am,v 1.9 2011/12/24 03:49:04 monaka Exp $
 
 real_topsrcdir=	$(top_srcdir)/..
 
@@ -244,7 +244,7 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 AM_CFLAGS=	-fsigned-char
 
 xnp2_LDADD=	$(GTK_LIBS) $(SDL_LIBS) \
-		$(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS)
+		$(X_LIBS) $(X_PRE_LIBS) $(XLIB) $(X_EXTRA_LIBS)
 
 DEFS=		@DEFS@ -DSYSRESPATH=\""$(pkgdatadir)"\"
 
@@ -285,8 +285,6 @@ AM_CPPFLAGS+=	-I$(real_topsrcdir)/i386c \
 		-I$(real_topsrcdir)/i386c/ia32 \
 		-I$(real_topsrcdir)/i386c/ia32/instructions \
 		-I$(real_topsrcdir)/i386c/ia32/instructions/fpu
-
-DEFS+=		-DCPUCORE_IA32
 else
 xnp2_SOURCES+=	$(real_topsrcdir)/i286c/i286c.c \
 		$(real_topsrcdir)/i286c/i286c_mn.c \

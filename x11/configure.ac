@@ -4,9 +4,9 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.10 $)
+AC_REVISION($Revision: 1.11 $)
 
-AC_INIT(Xnp2, 0.83-20111223, nonakap@gmail.com, xnp2)
+AC_INIT(Xnp2,0.83-20111223,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
 AC_CONFIG_SRCDIR([../np2ver.h])
 AC_CONFIG_HEADERS(config.h)
@@ -17,6 +17,7 @@ dnl Checks for programs.
 dnl
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 
@@ -40,6 +41,7 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_C_VOLATILE
 AC_CHECK_TYPES([ptrdiff_t])
+AC_SYS_LARGEFILE
 
 dnl
 dnl Check GCC
@@ -52,7 +54,6 @@ dnl
 dnl Checks for library functions.
 dnl
 AC_FUNC_CLOSEDIR_VOID
-AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MALLOC
 AC_FUNC_MEMCMP
 AC_FUNC_STAT
@@ -71,8 +72,11 @@ dnl Checks for X
 dnl
 AC_PATH_X
 AC_PATH_XTRA
+AC_SUBST(XLIB,"")
 if test x"$no_x" != x"yes"; then
-	X_LIBS="$X_LIBS -lX11"
+	XLIB="-lX11"
+elif test x"$have_x" = x"no"; then
+	PKG_CHECK_MODULES([X],[x11 xext],[have_x=yes;no_x=no],[have_x=no;no_x=yes])
 fi
 
 dnl
@@ -98,12 +102,10 @@ dnl
 dnl Checks for GTK+
 dnl
 AM_PATH_GTK_2_0(2.6.0,,
-    AC_MSG_ERROR(Test for GTK failed. See the file 'x11/INSTALL.ja' for help))
+	AC_MSG_ERROR(Test for GTK failed. See the file 'x11/INSTALL.ja' for help))
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
-if test x"$no_gtk" != "xyes"; then
-	AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2.6 (or later) library.])
-fi
+AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2.6 (or later) library.])
 
 dnl
 dnl Checks for SDL
@@ -122,8 +124,7 @@ if test x"$enable_sdlmixer" = "xyes"; then
 	if test x"$no_sdl" != "xyes"; then
 		AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
 			AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])
-			SDL_LIBS="$SDL_LIBS -lSDL_mixer",
-			$SDL_CFLAGS, $SDL_LIBS)
+			SDL_LIBS="$SDL_LIBS -lSDL_mixer",,$SDL_LIBS)
 	fi
 fi
 
@@ -131,17 +132,29 @@ dnl
 dnl Checks for XF86VidMode extension
 dnl
 if test x"$enable_xf86vidmode" = "xyes"; then
-	AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension,
-		X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
-		AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.]),
+	ac_cv_save_cflags=$CFLAGS
+	CFLAGS="$CFLAGS $X_CFLAGS"
+	AC_CHECK_LIB(Xext,XextCreateExtension,
+		[XLIB="-lXext $XLIB"],,[$X_LIBS $X_PRE_LIBS $XLIB $X_EXTRA_LIBS])
+	AC_CHECK_HEADERS(X11/extensions/xf86vmode.h,
+		[AC_CHECK_LIB(Xxf86vm,XF86VidModeQueryExtension,
+			[X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
+			AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.])],,
+			$X_LIBS $X_PRE_LIBS $XLIB $X_EXTRA_LIBS)],
 		,
-		$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS)
+		[#include <X11/Xlib.h>])
+	CFLAGS=$ac_cv_save_cflags
 fi
 
 dnl
 dnl Checks for IA-32 CPU emulation
 dnl
-AM_CONDITIONAL(CPUCORE_IA32, test x"$enable_ia32" = "xyes")
+AC_MSG_CHECKING([whether to enable IA-32 emulation])
+AM_CONDITIONAL(CPUCORE_IA32,test x"$enable_ia32" = "xyes")
+if test x"$enable_ia32" = "xyes"; then
+	AC_DEFINE(CPUCORE_IA32,,[Define if use IA-32 emulation])
+fi
+AC_MSG_RESULT($enable_ia32)
 
 dnl
 dnl Checks for debug mode
