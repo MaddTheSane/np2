@@ -37,9 +37,17 @@ Xnp2 - ねこープロジェクトII for X Window System
       http://freedesktop.org/wiki/Standards/wm-spec
 
 
-4. インストール方法
+4. インストール
 
-  INSTALL.ja を参照してください。
+  Xnp2 のインストールはコマンドラインから以下の様に行います。
+
+    $ ./configure
+    $ make
+    $ su
+    # make install
+
+  configure で指定できるオプションについては ./configure --help を実行して
+  表示されるヘルプを参照してください。
 
 
 5. 実行
