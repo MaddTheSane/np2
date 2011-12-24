@@ -108,8 +108,8 @@
     ・F12 キー機能割り当てに Help キーを追加
 　　・ファイルダイアログの floppy disk image Files にて拡張子が flp のファイル
       を表示する様に修正
-　　・Screen Option の PC-9801LT 互換の白黒 15 階調表示設定が解除できない
-      不具合を修正
+　　・Screen Option の PC-98LT 互換の白黒 15 階調表示設定が解除できない不具合を
+      修正
 
 // ----
 
