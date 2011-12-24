@@ -68,13 +68,13 @@ MIDIMOD vermouth_module = NULL;
  * driver
  */
 static struct {
-        BOOL (*drvinit)(UINT rate, UINT samples);
-        BOOL (*drvterm)(void);
+	BOOL (*drvinit)(UINT rate, UINT samples);
+	BOOL (*drvterm)(void);
 	void (*drvlock)(void);
 	void (*drvunlock)(void);
 
-        void (*sndplay)(void);
-        void (*sndstop)(void);
+	void (*sndplay)(void);
+	void (*sndstop)(void);
 
 	void *(*pcmload)(UINT num, const char *path);
 	void (*pcmdestroy)(void *chanp, UINT num);
@@ -338,7 +338,7 @@ soundmng_setreverse(BOOL reverse)
 /*
  * PCM function
  */
-void
+static void
 soundmng_pcminit(void)
 {
 	int i;
@@ -348,7 +348,7 @@ soundmng_pcminit(void)
 	}
 }
 
-void
+static void
 soundmng_pcmdestroy(void)
 {
 	int i;
