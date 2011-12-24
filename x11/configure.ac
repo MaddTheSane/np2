@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.13 $)
+AC_REVISION($Revision: 1.14 $)
 
 AC_INIT(Xnp2,0.83-20111224,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -135,11 +135,11 @@ if test x"$enable_xf86vidmode" = "xyes"; then
   ac_cv_save_cflags=$CFLAGS
   CFLAGS="$CFLAGS $X_CFLAGS"
   AC_CHECK_LIB(Xext,XextCreateExtension,
-    [XLIB="-lXext $XLIB"],,[$X_LIBS $X_PRE_LIBS $XLIB $X_EXTRA_LIBS])
+    XLIB="-lXext $XLIB",,[$X_LIBS $X_PRE_LIBS $XLIB $X_EXTRA_LIBS])
   AC_CHECK_HEADERS(X11/extensions/xf86vmode.h,
     [AC_CHECK_LIB(Xxf86vm,XF86VidModeQueryExtension,
-      [X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
-      AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.])],,
+      X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
+      AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.]),,
       $X_LIBS $X_PRE_LIBS $XLIB $X_EXTRA_LIBS)],
     ,
     [#include <X11/Xlib.h>])
@@ -170,6 +170,15 @@ else
   CFLAGS="$CFLAGS -DNDEBUG"
 fi
 AC_MSG_RESULT($enable_debug)
+
+dnl
+dnl Checks for Xnp2 version
+dnl
+NP2VER_X11=`echo $PACKAGE_VERSION | $AWK 'BEGIN {FS="-"} NF==2 {print $2}'`
+if test x"$NP2VER_X11" != "x"; then
+  NP2VER_X11="\"-$NP2VER_X11\""
+  AC_DEFINE_UNQUOTED(NP2VER_X11,$NP2VER_X11,[Define if Xnp2 version is available])
+fi
 
 dnl
 dnl Output Makefiles
