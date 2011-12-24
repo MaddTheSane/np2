@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.7 $)
+AC_REVISION($Revision: 1.8 $)
 
 AC_INIT(Xnp2, 0.83-20111223, nonakap@gmail.com, xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -24,6 +24,9 @@ dnl
 dnl Checks for libraries.
 dnl
 AC_PATH_XTRA
+if test x"$no_x" != x"yes"; then
+	X_LIBS="$X_LIBS -lX11"
+fi
 
 dnl
 dnl Checks for header files.
@@ -103,7 +106,7 @@ if test x"$enable_xf86vidmode" = "xyes"; then
 		X_PRE_LIBS="$X_PRE_LIBS -lXxf86vm"
 		AC_DEFINE(HAVE_XF86VIDMODE,1,[Define to 1 if you have the libXxf86vm library.]),
 		,
-		$X_LIBS $X_PRE_LIBS -lXext $X_EXTRA_LIBS)
+		$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS)
 fi
 
 dnl
