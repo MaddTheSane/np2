@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.14 $)
+AC_REVISION($Revision: 1.15 $)
 
 AC_INIT(Xnp2,0.83-20111224,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -97,6 +97,9 @@ AC_ARG_ENABLE(ia32,
 AC_ARG_ENABLE(debug,
   AC_HELP_STRING([--enable-debug],[Enable debugging [[default=no]]]),,
   [enable_debug="no"])
+AC_ARG_ENABLE(warning,
+  AC_HELP_STRING([--enable-warning],[Enable warning [[default=no]]]),,
+  [enable_warning="no"])
 
 dnl
 dnl Checks for GTK+
@@ -162,14 +165,23 @@ dnl
 AC_MSG_CHECKING([whether to enable debugging])
 if test x"$enable_debug" = "xyes"; then
   CFLAGS="$CFLAGS -DDEBUG -g -O0"
-  CFLAGS="$CFLAGS -Wall -Wcast-align"
-  CFLAGS="$CFLAGS -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
-  CFLAGS="$CFLAGS -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-missing-field-initializers"
   CFLAGS="$CFLAGS -Wstack-protector -fstack-protector --param ssp-buffer-size=1"
+  enable_warning=yes
 else
   CFLAGS="$CFLAGS -DNDEBUG"
 fi
 AC_MSG_RESULT($enable_debug)
+
+dnl
+dnl Checks for warning
+dnl
+AC_MSG_CHECKING([whether to enable warning])
+if test x"$enable_warning" = "xyes"; then
+  CFLAGS="$CFLAGS -Wall -Wcast-align"
+  CFLAGS="$CFLAGS -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
+  CFLAGS="$CFLAGS -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-missing-field-initializers"
+fi
+AC_MSG_RESULT($enable_warning)
 
 dnl
 dnl Checks for Xnp2 version
