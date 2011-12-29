@@ -490,6 +490,37 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 
 	/* set new segment register */
 	if (!CPU_STAT_VM86) {
+		/* load CS */
+		rv = parse_selector(&cs_sel, sreg[CPU_CS_INDEX]);
+		if (rv < 0) {
+			VERBOSE(("task_switch: load CS failure (sel = 0x%04x, rv = %d)", sreg[CPU_CS_INDEX], rv));
+			EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+		}
+
+		/* CS must be code segment */
+		if (SEG_IS_SYSTEM(&cs_sel.desc) || SEG_IS_DATA(&cs_sel.desc)) {
+			EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+		}
+
+		/* check privilege level */
+		if (!SEG_IS_CONFORMING_CODE(&cs_sel.desc)) {
+			/* non-confirming code segment */
+			if (cs_sel.desc.dpl != cs_sel.rpl) {
+				EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+			}
+		} else {
+			/* conforming code segment */
+			if (cs_sel.desc.dpl > cs_sel.rpl) {
+				EXCEPTION(TS_EXCEPTION, cs_sel.idx);
+			}
+		}
+
+		/* code segment is not present */
+		rv = selector_is_not_present(&cs_sel);
+		if (rv < 0) {
+			EXCEPTION(NP_EXCEPTION, cs_sel.idx);
+		}
+
 		/* load SS */
 		rv = parse_selector(&ss_sel, sreg[CPU_SS_INDEX]);
 		if (rv < 0) {
@@ -524,37 +555,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		LOAD_SEGREG1(CPU_DS_INDEX, sreg[CPU_DS_INDEX], TS_EXCEPTION);
 		LOAD_SEGREG1(CPU_FS_INDEX, sreg[CPU_FS_INDEX], TS_EXCEPTION);
 		LOAD_SEGREG1(CPU_GS_INDEX, sreg[CPU_GS_INDEX], TS_EXCEPTION);
-
-		/* load CS */
-		rv = parse_selector(&cs_sel, sreg[CPU_CS_INDEX]);
-		if (rv < 0) {
-			VERBOSE(("task_switch: load CS failure (sel = 0x%04x, rv = %d)", sreg[CPU_CS_INDEX], rv));
-			EXCEPTION(TS_EXCEPTION, cs_sel.idx);
-		}
-
-		/* CS must be code segment */
-		if (SEG_IS_SYSTEM(&cs_sel.desc) || SEG_IS_DATA(&cs_sel.desc)) {
-			EXCEPTION(TS_EXCEPTION, cs_sel.idx);
-		}
-
-		/* check privilege level */
-		if (!SEG_IS_CONFORMING_CODE(&cs_sel.desc)) {
-			/* non-confirming code segment */
-			if (cs_sel.desc.dpl != cs_sel.rpl) {
-				EXCEPTION(TS_EXCEPTION, cs_sel.idx);
-			}
-		} else {
-			/* conforming code segment */
-			if (cs_sel.desc.dpl > cs_sel.rpl) {
-				EXCEPTION(TS_EXCEPTION, cs_sel.idx);
-			}
-		}
-
-		/* code segment is not present */
-		rv = selector_is_not_present(&cs_sel);
-		if (rv < 0) {
-			EXCEPTION(NP_EXCEPTION, cs_sel.idx);
-		}
 
 		/* Now loading CS register */
 		load_cs(cs_sel.selector, &cs_sel.desc, cs_sel.rpl);
