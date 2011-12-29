@@ -1,5 +1,3 @@
-#	$Id: Makefile.am,v 1.10 2011/12/29 13:35:32 monaka Exp $
-
 real_topsrcdir=	$(top_srcdir)/..
 
 bin_PROGRAMS=	xnp2
@@ -302,6 +300,8 @@ xnp2_SOURCES+=	$(real_topsrcdir)/i286c/i286c.c \
 
 AM_CPPFLAGS+=	-I$(real_topsrcdir)/i286c
 endif
+
+CLEANFILES+=	make.log
 
 cleandir:: distclean
 
