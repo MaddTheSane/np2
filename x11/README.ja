@@ -46,8 +46,8 @@ Xnp2 - ねこープロジェクトII for X Window System
     $ su
     # make install
 
-  configure で指定できるオプションについては ./configure --help を実行して
-  表示されるヘルプを参照してください。
+  ※configure で指定できるオプションについては ./configure --help を実行して
+    表示されるヘルプを参照してください。
 
 
 5. 実行
