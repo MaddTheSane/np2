@@ -1,4 +1,4 @@
-#	$Id: Makefile.am,v 1.9 2011/12/24 03:49:04 monaka Exp $
+#	$Id: Makefile.am,v 1.10 2011/12/29 13:35:32 monaka Exp $
 
 real_topsrcdir=	$(top_srcdir)/..
 
@@ -242,6 +242,7 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		$(GTK_CFLAGS) $(SDL_CFLAGS)
 
 AM_CFLAGS=	-fsigned-char
+CFLAGS+=	-fno-strict-aliasing
 
 xnp2_LDADD=	$(GTK_LIBS) $(SDL_LIBS) \
 		$(X_LIBS) $(X_PRE_LIBS) $(XLIB) $(X_EXTRA_LIBS)
