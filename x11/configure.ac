@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.16 $)
+AC_REVISION($Revision: 1.17 $)
 
 AC_INIT(Xnp2,0.83-20111229,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -177,9 +177,11 @@ dnl Checks for warning
 dnl
 AC_MSG_CHECKING([whether to enable warning])
 if test x"$enable_warning" = "xyes"; then
-  CFLAGS="$CFLAGS -Wall -Wcast-align"
-  CFLAGS="$CFLAGS -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
-  CFLAGS="$CFLAGS -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-missing-field-initializers"
+  CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith"
+  CFLAGS="$CFLAGS -Wreturn-type -Wswitch -Wshadow"
+  CFLAGS="$CFLAGS -Wcast-qual -Wwrite-strings"
+  CFLAGS="$CFLAGS -Wextra -Wno-unused-parameter"
+  CFLAGS="$CFLAGS -Wformat=2"
 fi
 AC_MSG_RESULT($enable_warning)
 
