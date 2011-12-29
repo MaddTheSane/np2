@@ -139,9 +139,9 @@ UINT32 MEMCALL laddr2paddr(const UINT32 laddr, const int ucrw);
 #define	CPU_PAGE_READ_DATA	(CPU_PAGE_DATA)
 #define	CPU_PAGE_WRITE_DATA	(CPU_PAGE_WRITE|CPU_PAGE_DATA)
 
-UINT8 MEMCALL cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
-UINT16 MEMCALL cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
-UINT32 MEMCALL cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg);
+UINT8 MEMCALL cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg);
+UINT16 MEMCALL cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg);
+UINT32 MEMCALL cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg);
 UINT8 MEMCALL cpu_linear_memory_read_b(UINT32 laddr, const int ucrw);
 UINT16 MEMCALL cpu_linear_memory_read_w(UINT32 laddr, const int ucrw);
 UINT32 MEMCALL cpu_linear_memory_read_d(UINT32 laddr, const int ucrw);

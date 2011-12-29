@@ -187,7 +187,7 @@ static void MEMCALL tlb_update(const UINT32 laddr, const UINT entry, const int u
 #define	PAGE_MASK	(PAGE_SIZE - 1)
 
 UINT8 MEMCALL
-cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
+cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg)
 {
 	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
@@ -202,7 +202,7 @@ cpu_memory_access_la_RMW_b(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 }
 
 UINT16 MEMCALL
-cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
+cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg)
 {
 	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;
@@ -225,7 +225,7 @@ cpu_memory_access_la_RMW_w(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *a
 }
 
 UINT32 MEMCALL
-cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (*func)(UINT32, void *), void *arg)
+cpu_memory_access_la_RMW_d(UINT32 laddr, UINT32 (CPUCALL *func)(UINT32, void *), void *arg)
 {
 	const int ucrw = CPU_PAGE_WRITE_DATA|CPU_STAT_USER_MODE;
 	UINT32 result, value;

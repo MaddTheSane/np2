@@ -743,7 +743,7 @@ CMOVNLE_GdEd(void)
 /*
  * XCHG
  */
-static UINT32
+static UINT32 CPUCALL
 XCHG(UINT32 dst, void *arg)
 {
 	UINT32 src = PTR_TO_UINT32(arg);
@@ -826,7 +826,7 @@ void XCHG_EDIEAX(void) { CPU_WORKCLOCK(3); SWAP_DWORD(CPU_EDI, CPU_EAX); }
 /*
  * BSWAP
  */
-static INLINE UINT32
+static INLINE UINT32 CPUCALL
 BSWAP_DWORD(UINT32 val)
 {
 	UINT32 v;
@@ -849,7 +849,7 @@ void BSWAP_EDI(void) { CPU_WORKCLOCK(2); CPU_EDI = BSWAP_DWORD(CPU_EDI); }
 /*
  * XADD
  */
-static UINT32
+static UINT32 CPUCALL
 XADD1(UINT32 dst, void *arg)
 {
 	UINT32 src = PTR_TO_UINT32(arg);
@@ -858,7 +858,7 @@ XADD1(UINT32 dst, void *arg)
 	return res;
 }
 
-static UINT32
+static UINT32 CPUCALL
 XADD2(UINT32 dst, void *arg)
 {
 	UINT32 src = PTR_TO_UINT32(arg);
@@ -867,7 +867,7 @@ XADD2(UINT32 dst, void *arg)
 	return res;
 }
 
-static UINT32
+static UINT32 CPUCALL
 XADD4(UINT32 dst, void *arg)
 {
 	UINT32 src = PTR_TO_UINT32(arg);
@@ -1029,7 +1029,7 @@ CMPXCHG_EdGd(void)
 	DWORD_SUB(tmp, eax, dst);
 }
 
-void
+void CPUCALL
 CMPXCHG8B(UINT32 op)
 {
 	UINT32 madr, dst_l, dst_h;
@@ -1074,7 +1074,7 @@ void PUSH_EBP(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EBP); }
 void PUSH_ESI(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_ESI); }
 void PUSH_EDI(void) { CPU_WORKCLOCK(3); PUSH0_32(CPU_EDI); }
 
-void
+void CPUCALL
 PUSH_Ew(UINT32 op)
 {
 	UINT32 dst, madr;
@@ -1090,7 +1090,7 @@ PUSH_Ew(UINT32 op)
 	PUSH0_16(dst);
 }
 
-void
+void CPUCALL
 PUSH_Ed(UINT32 op)
 {
 	UINT32 dst, madr;
@@ -1191,7 +1191,7 @@ POP_Ew(void)
 	CPU_CLEAR_PREV_ESP();
 }
 
-void
+void CPUCALL
 POP_Ew_G5(UINT32 op)
 {
 	UINT32 madr;
@@ -1230,7 +1230,7 @@ POP_Ed(void)
 	CPU_CLEAR_PREV_ESP();
 }
 
-void
+void CPUCALL
 POP_Ed_G5(UINT32 op)
 {
 	UINT32 src, madr;

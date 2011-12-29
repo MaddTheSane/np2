@@ -61,7 +61,7 @@ static const int dftable[4][4] = {
 	{ 1, 1, 1, 1, },
 };
 
-void
+void CPUCALL
 exception(int num, int error_code)
 {
 	int errorp = 0;
@@ -204,10 +204,10 @@ exception(int num, int error_code)
  * D          : ゲートのサイズ．0 = 16 bit, 1 = 32 bit
  */
 
-static void interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
-static void interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
+static void CPUCALL interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
+static void CPUCALL interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int error_code);
 
-void
+void CPUCALL
 interrupt(int num, int intrtype, int errorp, int error_code)
 {
 	descriptor_t gsd;
@@ -337,7 +337,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 	CPU_CLEAR_PREV_ESP();
 }
 
-static void
+static void CPUCALL
 interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int error_code)
 {
 	selector_t task_sel;
@@ -388,7 +388,7 @@ interrupt_task_gate(const descriptor_t *gsdp, int intrtype, int errorp, int erro
 	}
 }
 
-static void
+static void CPUCALL
 interrupt_intr_or_trap(const descriptor_t *gsdp, int intrtype, int errorp, int error_code)
 {
 	selector_t cs_sel, ss_sel;

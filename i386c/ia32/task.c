@@ -32,7 +32,7 @@
 #define	TSS_32_SIZE	104
 #define	TSS_32_LIMIT	(TSS_32_SIZE - 1)
 
-static void
+static void CPUCALL
 set_task_busy(UINT16 selector)
 {
 	UINT32 addr;
@@ -48,7 +48,7 @@ set_task_busy(UINT16 selector)
 	}
 }
 
-static void
+static void CPUCALL
 set_task_free(UINT16 selector)
 {
 	UINT32 addr;
@@ -64,7 +64,7 @@ set_task_free(UINT16 selector)
 	}
 }
 
-void
+void CPUCALL
 load_tr(UINT16 selector)
 {
 	selector_t task_sel;
@@ -136,7 +136,7 @@ load_tr(UINT16 selector)
 #endif
 }
 
-void
+void CPUCALL
 get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 {
 	UINT32 tss_stack_addr;
@@ -190,7 +190,7 @@ get_backlink_selector_from_tss(void)
 	return backlink;
 }
 
-void
+void CPUCALL
 task_switch(selector_t *task_sel, task_switch_type_t type)
 {
 	UINT32 regs[CPU_REG_NUM];
@@ -201,7 +201,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	UINT16 ldtr;
 	UINT16 iobase;
 	UINT16 t;
-	int new_cpl;
 
 	selector_t cs_sel, ss_sel;
 	int rv;

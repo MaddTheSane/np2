@@ -59,7 +59,7 @@ JMP_Jd(void)
 	JMPNEAR32(7);
 }
 
-void
+void CPUCALL
 JMP_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -79,7 +79,7 @@ JMP_Ew(UINT32 op)
 	CPU_EIP = new_ip;
 }
 
-void
+void CPUCALL
 JMP_Ed(UINT32 op)
 {
 	UINT32 madr;
@@ -151,7 +151,7 @@ JMP32_Ap(void)
 	}
 }
 
-void
+void CPUCALL
 JMP16_Ep(UINT32 op)
 {
 	descriptor_t sd;
@@ -183,7 +183,7 @@ JMP16_Ep(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 JMP32_Ep(UINT32 op)
 {
 	descriptor_t sd;
@@ -894,7 +894,7 @@ CALL_Ad(void)
 	CPU_CLEAR_PREV_ESP();
 }
 
-void
+void CPUCALL
 CALL_Ew(UINT32 op)
 {
 	UINT32 madr;
@@ -917,7 +917,7 @@ CALL_Ew(UINT32 op)
 	CPU_CLEAR_PREV_ESP();
 }
 
-void
+void CPUCALL
 CALL_Ed(UINT32 op)
 {
 	UINT32 madr;
@@ -1004,7 +1004,7 @@ CALL32_Ap(void)
 	}
 }
 
-void
+void CPUCALL
 CALL16_Ep(UINT32 op)
 {
 	descriptor_t sd;
@@ -1042,7 +1042,7 @@ CALL16_Ep(UINT32 op)
 	EXCEPTION(UD_EXCEPTION, 0);
 }
 
-void
+void CPUCALL
 CALL32_Ep(UINT32 op)
 {
 	descriptor_t sd;

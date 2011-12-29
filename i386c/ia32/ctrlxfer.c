@@ -33,12 +33,12 @@
 /*------------------------------------------------------------------------------
  * JMPfar_pm
  */
-static void JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
-static void JMPfar_pm_call_gate(const selector_t *callgate_sel);
-static void JMPfar_pm_task_gate(selector_t *taskgate_sel);
-static void JMPfar_pm_tss(selector_t *tss_sel);
+static void CPUCALL JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
+static void CPUCALL JMPfar_pm_call_gate(const selector_t *callgate_sel);
+static void CPUCALL JMPfar_pm_task_gate(selector_t *taskgate_sel);
+static void CPUCALL JMPfar_pm_tss(selector_t *tss_sel);
 
-void
+void CPUCALL
 JMPfar_pm(UINT16 selector, UINT32 new_ip)
 {
 	selector_t jmp_sel;
@@ -101,7 +101,7 @@ JMPfar_pm(UINT16 selector, UINT32 new_ip)
 /*---
  * JMPfar: code segment
  */
-static void
+static void CPUCALL
 JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 {
 
@@ -147,7 +147,7 @@ JMPfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 /*---
  * JMPfar: call gate
  */
-static void
+static void CPUCALL
 JMPfar_pm_call_gate(const selector_t *callgate_sel)
 {
 	selector_t cs_sel;
@@ -226,7 +226,7 @@ JMPfar_pm_call_gate(const selector_t *callgate_sel)
 /*---
  * JMPfar: task gate
  */
-static void
+static void CPUCALL
 JMPfar_pm_task_gate(selector_t *taskgate_sel)
 {
 	selector_t tss_sel;
@@ -291,7 +291,7 @@ JMPfar_pm_task_gate(selector_t *taskgate_sel)
 /*---
  * JMPfar: TSS
  */
-static void
+static void CPUCALL
 JMPfar_pm_tss(selector_t *tss_sel)
 {
 
@@ -326,12 +326,12 @@ JMPfar_pm_tss(selector_t *tss_sel)
 /*------------------------------------------------------------------------------
  * CALLfar_pm
  */
-static void CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
-static void CALLfar_pm_call_gate(const selector_t *callgate_sel);
-static void CALLfar_pm_task_gate(selector_t *taskgate_sel);
-static void CALLfar_pm_tss(selector_t *tss_sel);
+static void CPUCALL CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip);
+static void CPUCALL CALLfar_pm_call_gate(const selector_t *callgate_sel);
+static void CPUCALL CALLfar_pm_task_gate(selector_t *taskgate_sel);
+static void CPUCALL CALLfar_pm_tss(selector_t *tss_sel);
 
-void
+void CPUCALL
 CALLfar_pm(UINT16 selector, UINT32 new_ip)
 {
 	selector_t call_sel;
@@ -394,7 +394,7 @@ CALLfar_pm(UINT16 selector, UINT32 new_ip)
 /*---
  * CALLfar_pm: code segment
  */
-static void
+static void CPUCALL
 CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 {
 	UINT32 sp;
@@ -464,10 +464,10 @@ CALLfar_pm_code_segment(const selector_t *cs_sel, UINT32 new_ip)
 /*---
  * CALLfar_pm: call gate
  */
-static void CALLfar_pm_call_gate_same_privilege(const selector_t *call_sel, selector_t *cs_sel);
-static void CALLfar_pm_call_gate_more_privilege(const selector_t *call_sel, selector_t *cs_sel);
+static void CPUCALL CALLfar_pm_call_gate_same_privilege(const selector_t *call_sel, selector_t *cs_sel);
+static void CPUCALL CALLfar_pm_call_gate_more_privilege(const selector_t *call_sel, selector_t *cs_sel);
 
-static void
+static void CPUCALL
 CALLfar_pm_call_gate(const selector_t *callgate_sel)
 {
 	selector_t cs_sel;
@@ -536,7 +536,7 @@ CALLfar_pm_call_gate(const selector_t *callgate_sel)
 /*---
  * CALLfar_pm: call gate (SAME-PRIVILEGE)
  */
-static void
+static void CPUCALL
 CALLfar_pm_call_gate_same_privilege(const selector_t *callgate_sel, selector_t *cs_sel)
 {
 	UINT32 sp;
@@ -567,7 +567,7 @@ CALLfar_pm_call_gate_same_privilege(const selector_t *callgate_sel, selector_t *
 /*---
  * CALLfar_pm: call gate (MORE-PRIVILEGE)
  */
-static void
+static void CPUCALL
 CALLfar_pm_call_gate_more_privilege(const selector_t *callgate_sel, selector_t *cs_sel)
 {
 	UINT32 param[32];	/* copy param */
@@ -710,7 +710,7 @@ CALLfar_pm_call_gate_more_privilege(const selector_t *callgate_sel, selector_t *
 /*---
  * CALLfar_pm: task gate
  */
-static void
+static void CPUCALL
 CALLfar_pm_task_gate(selector_t *taskgate_sel)
 {
 	selector_t tss_sel;
@@ -775,7 +775,7 @@ CALLfar_pm_task_gate(selector_t *taskgate_sel)
 /*---
  * CALLfar_pm: TSS
  */
-static void
+static void CPUCALL
 CALLfar_pm_tss(selector_t *tss_sel)
 {
 
@@ -811,7 +811,7 @@ CALLfar_pm_tss(selector_t *tss_sel)
  * RETfar_pm
  */
 
-void
+void CPUCALL
 RETfar_pm(UINT nbytes)
 {
 	selector_t cs_sel, ss_sel, temp_sel;
@@ -1012,11 +1012,11 @@ RETfar_pm(UINT nbytes)
  * IRET_pm
  */
 static void IRET_pm_nested_task(void);
-static void IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
-static void IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
+static void CPUCALL IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags);
 
 void
 IRET_pm(void)
@@ -1124,7 +1124,7 @@ IRET_pm_nested_task(void)
 /*---
  * IRET_pm: PROTECTED-MODE-RETURN
  */
-static void
+static void CPUCALL
 IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 {
 	selector_t cs_sel;
@@ -1175,7 +1175,7 @@ IRET_pm_protected_mode_return(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 /*---
  * IRET_pm: SAME-PRIVILEGE
  */
-static void
+static void CPUCALL
 IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT32 mask;
@@ -1223,7 +1223,7 @@ IRET_pm_protected_mode_return_same_privilege(const selector_t *cs_sel, UINT32 ne
 /*---
  * IRET_pm: OUTER-PRIVILEGE
  */
-static void
+static void CPUCALL
 IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 new_ip, UINT32 new_flags)
 {
 	descriptor_t *sdp;
@@ -1343,7 +1343,7 @@ IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 n
 /*---
  * IRET_pm: new_flags & VM_FLAG
  */
-static void
+static void CPUCALL
 IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT16 segsel[CPU_SEGREG_NUM];
@@ -1390,7 +1390,7 @@ IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 /*---
  * IRET_pm: VM_FLAG
  */
-static void
+static void CPUCALL
 IRET_pm_return_from_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 {
 	UINT stacksize;
