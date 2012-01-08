@@ -765,7 +765,7 @@ XCHG_EbGb(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		*src = (UINT8)cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
+		*src = (UINT8)cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -783,7 +783,7 @@ XCHG_EwGw(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		*src = (UINT16)cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
+		*src = (UINT16)cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -801,7 +801,7 @@ XCHG_EdGd(void)
 	} else {
 		CPU_WORKCLOCK(5);
 		madr = calc_ea_dst(op);
-		*src = cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
+		*src = cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, XCHG, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -893,7 +893,7 @@ XADD_EbGb(void)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		*src = (UINT8)cpu_memory_access_va_RMW(CPU_INST_SEGREG_INDEX, madr, XADD1, UINT32_TO_PTR(*src));
+		*src = (UINT8)cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, XADD1, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -914,7 +914,7 @@ XADD_EwGw(void)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		*src = (UINT16)cpu_memory_access_va_RMW_w(CPU_INST_SEGREG_INDEX, madr, XADD2, UINT32_TO_PTR(*src));
+		*src = (UINT16)cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, XADD2, UINT32_TO_PTR(*src));
 	}
 }
 
@@ -935,7 +935,7 @@ XADD_EdGd(void)
 	} else {
 		CPU_WORKCLOCK(7);
 		madr = calc_ea_dst(op);
-		*src = cpu_memory_access_va_RMW_d(CPU_INST_SEGREG_INDEX, madr, XADD4, UINT32_TO_PTR(*src));
+		*src = cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, XADD4, UINT32_TO_PTR(*src));
 	}
 }
 

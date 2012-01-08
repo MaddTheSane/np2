@@ -482,81 +482,13 @@ cpu_memorywrite_f(UINT32 paddr, const REG80 *value)
 
 #include "cpu_mem.mcr"
 
-VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(b, UINT8, 1)
-VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(w, UINT16, 2)
-VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(d, UINT32, 4)
-
-UINT64 MEMCALL
-cpu_vmemoryread_q(int idx, UINT32 offset)
-{
-	descriptor_t *sdp;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sdp = &CPU_STAT_SREG(idx);
-	addr = sdp->u.seg.segbase + offset;
-
-	if (!CPU_STAT_PM)
-		return cpu_memoryread_q(addr);
-
-	if (!SEG_IS_VALID(sdp)) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-	if (!(sdp->flag & CPU_DESC_FLAG_READABLE)) {
-		cpu_memoryread_check(sdp, offset, 8, CHOOSE_EXCEPTION(idx));
-	} else if (!(sdp->flag & CPU_DESC_FLAG_WHOLEADR)) {
-		if (!check_limit_upstairs(sdp, offset, 8))
-			goto range_failure;
-	} 
-	return cpu_lmemoryread_q(addr, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
-
-range_failure:
-	VERBOSE(("cpu_vmemoryread_q: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
-	exc = CHOOSE_EXCEPTION(idx);
-err:
-	EXCEPTION(exc, 0);
-	return 0;	/* compiler happy */
-}
-
-void MEMCALL
-cpu_vmemorywrite_q(int idx, UINT32 offset, UINT64 value)
-{
-	descriptor_t *sdp;
-	UINT32 addr;
-	int exc;
-
-	__ASSERT((unsigned int)idx < CPU_SEGREG_NUM);
-
-	sdp = &CPU_STAT_SREG(idx);
-	addr = sdp->u.seg.segbase + offset;
-
-	if (!CPU_STAT_PM) {
-		cpu_memorywrite_q(addr, value);
-		return;
-	}
-
-	if (!SEG_IS_VALID(sdp)) {
-		exc = GP_EXCEPTION;
-		goto err;
-	}
-	if (!(sdp->flag & CPU_DESC_FLAG_WRITABLE)) {
-		cpu_memorywrite_check(sdp, offset, 8, CHOOSE_EXCEPTION(idx));
-	} else if (!(sdp->flag & CPU_DESC_FLAG_WHOLEADR)) {
-		if (!check_limit_upstairs(sdp, offset, 8))
-			goto range_failure;
-	}
-	cpu_lmemorywrite_q(addr, value, CPU_PAGE_WRITE_DATA | CPU_STAT_USER_MODE);
-	return;
-
-range_failure:
-	VERBOSE(("cpu_vmemorywrite_q: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
-	exc = CHOOSE_EXCEPTION(idx);
-err:
-	EXCEPTION(exc, 0);
-}
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RW_FUNCTIONS(b, UINT8, 1)
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RMW_FUNCTIONS(b, UINT8, 1)
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RW_FUNCTIONS(w, UINT16, 2)
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RMW_FUNCTIONS(w, UINT16, 2)
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RW_FUNCTIONS(d, UINT32, 4)
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RMW_FUNCTIONS(d, UINT32, 4)
+DECLARE_VIRTUAL_ADDRESS_MEMORY_RW_FUNCTIONS(q, UINT64, 8)
 
 REG80 MEMCALL
 cpu_vmemoryread_f(int idx, UINT32 offset)

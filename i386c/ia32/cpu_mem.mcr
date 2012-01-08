@@ -23,7 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define	VIRTUAL_ADDRESS_MEMORY_ACCESS_FUNCTION(width, valtype, length) \
+#define	DECLARE_VIRTUAL_ADDRESS_MEMORY_RW_FUNCTIONS(width, valtype, length) \
 valtype MEMCALL \
 cpu_vmemoryread_##width(int idx, UINT32 offset) \
 { \
@@ -96,10 +96,11 @@ range_failure: \
 	exc = CHOOSE_EXCEPTION(idx); \
 err: \
 	EXCEPTION(exc, 0); \
-} \
-\
+}
+
+#define	DECLARE_VIRTUAL_ADDRESS_MEMORY_RMW_FUNCTIONS(width, valtype, length) \
 UINT32 MEMCALL \
-cpu_memory_access_va_RMW_##width(int idx, UINT32 offset, UINT32 (CPUCALL *func)(UINT32, void *), void *arg) \
+cpu_vmemory_RMW_##width(int idx, UINT32 offset, UINT32 (CPUCALL *func)(UINT32, void *), void *arg) \
 { \
 	descriptor_t *sdp; \
 	UINT32 addr; \
@@ -133,7 +134,7 @@ cpu_memory_access_va_RMW_##width(int idx, UINT32 offset, UINT32 (CPUCALL *func)(
 	return cpu_lmemory_RMW_##width(addr, func, arg); \
 \
 range_failure: \
-	VERBOSE(("cpu_memory_access_va_RMW_" #width ": type = %d, offset = %08x, length = %d, limit = %08x", sdp->type, offset, length, sdp->u.seg.limit)); \
+	VERBOSE(("cpu_vmemory_RMW_" #width ": type = %d, offset = %08x, length = %d, limit = %08x", sdp->type, offset, length, sdp->u.seg.limit)); \
 	exc = CHOOSE_EXCEPTION(idx); \
 err: \
 	EXCEPTION(exc, 0); \
