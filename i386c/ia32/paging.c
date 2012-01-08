@@ -863,7 +863,7 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, int ucrw, UINT8 *data)
 }
 
 UINT32 MEMCALL
-laddr2paddr(const UINT32 laddr, int ucrw)
+laddr2paddr(UINT32 laddr, int ucrw)
 {
 
 	return paging(laddr, ucrw);
