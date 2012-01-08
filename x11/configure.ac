@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.17 $)
+AC_REVISION($Revision: 1.18 $)
 
 AC_INIT(Xnp2,0.83-20111229,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -83,22 +83,22 @@ dnl
 dnl Xnp2 configure options.
 dnl
 AC_ARG_ENABLE(sdl,
-  AC_HELP_STRING([--enable-sdl],[Use SDL library [[default=yes]]]),,
+  AC_HELP_STRING([--enable-sdl],[Use SDL library [default=yes]]),,
   [enable_sdl="yes"])
 AC_ARG_ENABLE(sdlmixer,
-  AC_HELP_STRING([--enable-sdlmixer],[Use SDL_mixer library [[default=yes]]]),,
+  AC_HELP_STRING([--enable-sdlmixer],[Use SDL_mixer library [default=yes]]),,
   [enable_sdlmixer="yes"])
 AC_ARG_ENABLE(xf86vidmode,
-  AC_HELP_STRING([--enable-xf86vidmode],[Use XF86VidMode extension [[default=yes]]]),,
+  AC_HELP_STRING([--enable-xf86vidmode],[Use XF86VidMode extension [default=yes]]),,
   [enable_xf86vidmode="yes"])
 AC_ARG_ENABLE(ia32,
-  AC_HELP_STRING([--enable-ia32],[Use IA-32 emulation [[default=no]]]),,
+  AC_HELP_STRING([--enable-ia32],[Use IA-32 emulation [default=no]]),,
   [enable_ia32="no"])
 AC_ARG_ENABLE(debug,
-  AC_HELP_STRING([--enable-debug],[Enable debugging [[default=no]]]),,
+  AC_HELP_STRING([--enable-debug],[Enable debugging [default=no]]),,
   [enable_debug="no"])
 AC_ARG_ENABLE(warning,
-  AC_HELP_STRING([--enable-warning],[Enable warning [[default=no]]]),,
+  AC_HELP_STRING([--enable-warning],[Enable warning [default=no]]),,
   [enable_warning="no"])
 
 dnl
@@ -164,7 +164,7 @@ dnl Checks for debug mode
 dnl
 AC_MSG_CHECKING([whether to enable debugging])
 if test x"$enable_debug" = "xyes"; then
-  CFLAGS="$CFLAGS -DDEBUG -g -O0"
+  CFLAGS="$CFLAGS -g -DDEBUG -DTRACE"
   CFLAGS="$CFLAGS -Wstack-protector -fstack-protector --param ssp-buffer-size=1"
   enable_warning=yes
 else
