@@ -147,7 +147,7 @@ exception(int num, int error_code)
 
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
-	interrupt(num, INTR_TYPE_EXTINTR, errorp, error_code);
+	interrupt(num, INTR_TYPE_EXCEPTION, errorp, error_code);
 	CPU_STAT_EXCEPTION_COUNTER_CLEAR();
 	siglongjmp(exec_1step_jmpbuf, 1);
 }
@@ -220,7 +220,7 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 	UINT16 new_cs;
 	int exc_errcode;
 
-	VERBOSE(("interrupt: num = 0x%02x, intrtype = %s, errorp = %s, error_code = %08x", num, intrtype ? "on" : "off", errorp ? "on" : "off", error_code));
+	VERBOSE(("interrupt: num = 0x%02x, intrtype = %s, errorp = %s, error_code = %08x", num, (intrtype == INTR_TYPE_EXTINTR) ? "external" : (intrtype == INTR_TYPE_EXCEPTION ? "exception" : "softint"), errorp ? "on" : "off", error_code));
 
 	CPU_SET_PREV_ESP();
 
@@ -302,8 +302,8 @@ interrupt(int num, int intrtype, int errorp, int error_code)
 		}
 
 		/* 5.10.1.1. 例外／割り込みハンドラ・プロシージャの保護 */
-		if ((intrtype != INTR_TYPE_EXTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
-			VERBOSE(("interrupt: intrtype(%d) && DPL(%d) < CPL(%d)", intrtype, gsd.dpl, CPU_STAT_CPL));
+		if ((intrtype == INTR_TYPE_SOFTINTR) && (gsd.dpl < CPU_STAT_CPL)) {
+			VERBOSE(("interrupt: intrtype(softint) && DPL(%d) < CPL(%d)", gsd.dpl, CPU_STAT_CPL));
 			EXCEPTION(GP_EXCEPTION, exc_errcode);
 		}
 
