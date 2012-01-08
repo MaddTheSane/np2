@@ -101,7 +101,7 @@ put_cpuinfo(void)
 #endif
 	strcat(buf, a20str());
 
-	printf(buf);
+	printf("%s", buf);
 }
 
 void
@@ -115,7 +115,7 @@ dbg_printf(const char *str, ...)
 	va_end(ap);
 	strcat(buf, "\n");
 
-	printf(buf);
+	printf("%s", buf);
 }
 
 void
