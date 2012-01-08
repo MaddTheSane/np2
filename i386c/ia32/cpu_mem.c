@@ -548,11 +548,7 @@ cpu_vmemorywrite_q(int idx, UINT32 offset, UINT64 value)
 		if (!check_limit_upstairs(sdp, offset, 8))
 			goto range_failure;
 	}
-	if (!CPU_STAT_PAGING) {
-		cpu_memorywrite_q(addr, value);
-	} else {
-		cpu_linear_memory_write_q(addr, value, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
-	}
+	cpu_lmemorywrite_q(addr, value, CPU_PAGE_WRITE_DATA | CPU_STAT_USER_MODE);
 	return;
 
 range_failure:
@@ -587,9 +583,7 @@ cpu_vmemoryread_f(int idx, UINT32 offset)
 		if (!check_limit_upstairs(sdp, offset, 10))
 			goto range_failure;
 	} 
-	if (!CPU_STAT_PAGING)
-		return cpu_memoryread_f(addr);
-	return cpu_linear_memory_read_f(addr, CPU_PAGE_READ_DATA | CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
+	return cpu_lmemoryread_f(addr, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
 
 range_failure:
 	VERBOSE(("cpu_vmemoryread_f: type = %d, offset = %08x, limit = %08x", sdp->type, offset, sdp->u.seg.limit));
@@ -630,11 +624,7 @@ cpu_vmemorywrite_f(int idx, UINT32 offset, const REG80 *value)
 		if (!check_limit_upstairs(sdp, offset, 10))
 			goto range_failure;
 	}
-	if (!CPU_STAT_PAGING) {
-		cpu_memorywrite_f(addr, value);
-	} else {
-		cpu_linear_memory_write_f(addr, value, CPU_PAGE_WRITE_DATA | CPU_STAT_USER_MODE);
-	}
+	cpu_lmemorywrite_f(addr, value, CPU_PAGE_WRITE_DATA | CPU_STAT_USER_MODE);
 	return;
 
 range_failure:
