@@ -115,10 +115,14 @@ load_tr(UINT16 selector)
 	/* I/O deny bitmap */
 	CPU_STAT_IOLIMIT = 0;
 	if (CPU_TR_DESC.type == CPU_SYSDESC_TYPE_TSS_BUSY_32) {
-		if (iobase != 0 && iobase < CPU_TR_DESC.u.seg.limit) {
-			CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_DESC.u.seg.limit - iobase);
-			CPU_STAT_IOADDR = CPU_TR_DESC.u.seg.segbase + iobase;
+		if (iobase < CPU_TR_LIMIT) {
+			CPU_STAT_IOLIMIT = (UINT16)(CPU_TR_LIMIT - iobase);
+			CPU_STAT_IOADDR = CPU_TR_BASE + iobase;
+			VERBOSE(("load_tr: enable ioport control: iobase=0x%04x, base=0x%08x, limit=0x%08x", iobase, CPU_STAT_IOADDR, CPU_STAT_IOLIMIT));
 		}
+	}
+	if (CPU_STAT_IOLIMIT == 0) {
+		VERBOSE(("load_tr: disable ioport control."));
 	}
 }
 

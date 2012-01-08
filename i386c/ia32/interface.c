@@ -213,6 +213,7 @@ ia32_panic(const char *str, ...)
 	va_end(ap);
 	strcat(buf, "\n");
 	strcat(buf, cpu_reg2str());
+	VERBOSE(("%s", buf));
 
 	msgbox("ia32_panic", buf);
 
