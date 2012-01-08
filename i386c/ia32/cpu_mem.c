@@ -558,7 +558,6 @@ cpu_vmemoryread_q(int idx, UINT32 offset)
 			goto range_failure;
 	} 
 	addr = sdp->u.seg.segbase + offset;
-	check_memory_break_point(addr, 8, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PAGING)
 		return cpu_memoryread_q(addr);
 	return cpu_linear_memory_read_q(addr, CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
@@ -594,7 +593,6 @@ cpu_vmemorywrite_q(int idx, UINT32 offset, UINT64 value)
 			goto range_failure;
 	}
 	addr = sdp->u.seg.segbase + offset;
-	check_memory_break_point(addr, 8, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PAGING) {
 		cpu_memorywrite_q(addr, value);
 	} else {
@@ -632,7 +630,6 @@ cpu_vmemoryread_f(int idx, UINT32 offset)
 			goto range_failure;
 	} 
 	addr = sdp->u.seg.segbase + offset;
-	check_memory_break_point(addr, 10, CPU_DR7_RW_RO);
 	if (!CPU_STAT_PAGING)
 		return cpu_memoryread_f(addr);
 	return cpu_linear_memory_read_f(addr, CPU_PAGE_READ_DATA | CPU_PAGE_READ_DATA | CPU_STAT_USER_MODE);
@@ -672,7 +669,6 @@ cpu_vmemorywrite_f(int idx, UINT32 offset, const REG80 *value)
 			goto range_failure;
 	}
 	addr = sdp->u.seg.segbase + offset;
-	check_memory_break_point(addr, 10, CPU_DR7_RW_RW);
 	if (!CPU_STAT_PAGING) {
 		cpu_memorywrite_f(addr, value);
 	} else {
