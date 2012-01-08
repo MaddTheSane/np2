@@ -238,11 +238,9 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 	len--;
 	start = sp - len;
 	limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
-	VERBOSE(("cpu_stack_push_check: start=0x%08x, limit=0x%08x", start, limit));
 
 	if (SEG_IS_EXPANDDOWN_DATA(sdp)) {
 		/* expand-down stack */
-		VERBOSE(("cpu_stack_push_check: expand-down stack"));
 		if (!SEG_IS_32BIT(sdp)) {
 			if (sp > limit) {			/* [*] */
 				goto exc;
@@ -287,7 +285,6 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 		}
 	} else {
 		/* expand-up stack */
-		VERBOSE(("cpu_stack_push_check: expand-up stack"));
 		if (sdp->u.seg.limit == limit) {
 			/*
 			 *   32bit       16bit
@@ -323,7 +320,7 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 			 */
 			if ((len > sdp->u.seg.limit)		/* len check */
 			 || (start > sp)			/* wrap check */
-			 || (sp > sdp->u.seg.limit)) {		/* [1] */
+			 || (sp > sdp->u.seg.limit + 1)) {	/* [1] */
 				goto exc;
 			}
 		}
