@@ -218,7 +218,7 @@ exc:
 	EXCEPTION(e, 0);
 }
 
-void
+void MEMCALL
 cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 {
 	UINT32 limit;
@@ -339,7 +339,7 @@ exc:
 	EXCEPTION(SS_EXCEPTION, s & 0xfffc);
 }
 
-void
+void MEMCALL
 cpu_stack_pop_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 {
 

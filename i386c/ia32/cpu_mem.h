@@ -36,8 +36,8 @@ extern "C" {
 /*
  * memory access check
  */
-void cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len);
-void cpu_stack_pop_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len);
+void MEMCALL cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len);
+void MEMCALL cpu_stack_pop_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len);
 #define	SS_PUSH_CHECK(sp, len) \
 	cpu_stack_push_check(CPU_SS_INDEX, &CPU_SS_DESC, (sp), (len))
 #define	SS_POP_CHECK(sp, len) \
