@@ -114,21 +114,6 @@ exec_1step(void)
 	ctx[ctx_index].opbytes = 0;
 #endif
 
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	if (CPU_STAT_BP && !(CPU_EFLAG & RF_FLAG)) {
-		int i;
-		for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-			if ((CPU_STAT_BP & (1 << i))
-			 && (CPU_DR7_GET_RW(i) == CPU_DR7_RW_CODE)
-			 && (CPU_DR(i) == CPU_EIP)
-			 && (CPU_DR7_GET_LEN(i) == 0)) {
-				CPU_DR6 |= CPU_DR6_B(i);
-				EXCEPTION(DB_EXCEPTION, 0);
-			}
-		}
-	}
-#endif	/* IA32_SUPPORT_DEBUG_REGISTER */
-
 	for (prefix = 0; prefix < MAX_PREFIX; prefix++) {
 		GET_PCBYTE(op);
 #if defined(IA32_INSTRUCTION_TRACE)
@@ -163,11 +148,7 @@ exec_1step(void)
 		cpu_debug_rep_cont = 0;
 #endif
 		(*insttable_1byte[CPU_INST_OP32][op])();
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-		goto check_break_point;
-#else
 		return;
-#endif
 	}
 
 	/* rep */
@@ -277,30 +258,4 @@ exec_1step(void)
 			}
 		}
 	}
-
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-check_break_point:
-	if (CPU_TRAP || (CPU_STAT_BP_EVENT & ~CPU_STAT_BP_EVENT_RF)) {
-		UINT8 orig = CPU_STAT_BP_EVENT & ~CPU_STAT_BP_EVENT_RF;
-
-		CPU_STAT_BP_EVENT &= CPU_STAT_BP_EVENT_RF;
-
-		CPU_DR6 |= (orig & 0xf);
-		if (orig & CPU_STAT_BP_EVENT_TASK) {
-			CPU_DR6 |= CPU_DR6_BT;
-		}
-		if (CPU_TRAP) {
-			CPU_DR6 |= CPU_DR6_BS;
-		}
-		INTERRUPT(DB_EXCEPTION, INTR_TYPE_EXCEPTION);
-	}
-	if (CPU_EFLAG & RF_FLAG) {
-		if (CPU_STAT_BP_EVENT & CPU_STAT_BP_EVENT_RF) {
-			/* after IRETD or task switch */
-			CPU_STAT_BP_EVENT &= ~CPU_STAT_BP_EVENT_RF;
-		} else {
-			CPU_EFLAG &= ~RF_FLAG;
-		}
-	}
-#endif	/* IA32_SUPPORT_DEBUG_REGISTER */
 }

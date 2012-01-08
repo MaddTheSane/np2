@@ -148,13 +148,6 @@ exception(int num, int error_code)
 	VERBOSE(("exception: ---------------------------------------------------------------- end"));
 
 	interrupt(num, INTR_TYPE_EXTINTR, errorp, error_code);
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	if (num != BP_EXCEPTION) {
-		if (CPU_INST_OP32) {
-			set_eflags(REAL_EFLAGREG|RF_FLAG, RF_FLAG);
-		}
-	}
-#endif
 	CPU_STAT_EXCEPTION_COUNTER_CLEAR();
 	siglongjmp(exec_1step_jmpbuf, 1);
 }

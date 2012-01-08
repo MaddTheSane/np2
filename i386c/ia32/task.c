@@ -69,9 +69,6 @@ load_tr(UINT16 selector)
 {
 	selector_t task_sel;
 	int rv;
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	int i;
-#endif
 	UINT16 iobase;
 
 	rv = parse_selector(&task_sel, selector);
@@ -123,17 +120,6 @@ load_tr(UINT16 selector)
 			CPU_STAT_IOADDR = CPU_TR_DESC.u.seg.segbase + iobase;
 		}
 	}
-
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	/* clear local break point flags */
-	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3)|CPU_DR7_LE);
-	CPU_STAT_BP = 0;
-	for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-		if (CPU_DR7 & CPU_DR7_G(i)) {
-			CPU_STAT_BP |= (1 << i);
-		}
-	}
-#endif
 }
 
 void CPUCALL
@@ -468,22 +454,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		CPU_STAT_IOADDR = task_base + iobase;
 	}
 	VERBOSE(("task_switch: ioaddr = %08x, limit = %08x", CPU_STAT_IOADDR, CPU_STAT_IOLIMIT));
-
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	/* check resume flag */
-	if (CPU_EFLAG & RF_FLAG) {
-		CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_RF;
-	}
-
-	/* clear local break point flags */
-	CPU_DR7 &= ~(CPU_DR7_L(0)|CPU_DR7_L(1)|CPU_DR7_L(2)|CPU_DR7_L(3)|CPU_DR7_LE);
-	CPU_STAT_BP = 0;
-	for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-		if (CPU_DR7 & CPU_DR7_G(i)) {
-			CPU_STAT_BP |= (1 << i);
-		}
-	}
-#endif
 
 	/* set new EFLAGS */
 	set_eflags(new_flags, I_FLAG|IOPL_FLAG|RF_FLAG|VM_FLAG|VIF_FLAG|VIP_FLAG);

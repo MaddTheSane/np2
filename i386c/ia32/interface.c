@@ -125,14 +125,6 @@ ia32(void)
 		break;
 	}
 
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	do {
-		exec_1step();
-		if (dmac.working) {
-			dmax86();
-		}
-	} while (CPU_REMCLOCK > 0);
-#else
 	if (CPU_TRAP) {
 		do {
 			exec_1step();
@@ -152,7 +144,6 @@ ia32(void)
 			exec_1step();
 		} while (CPU_REMCLOCK > 0);
 	}
-#endif
 }
 
 void
@@ -180,12 +171,10 @@ ia32_step(void)
 
 	do {
 		exec_1step();
-#if !defined(IA32_SUPPORT_DEBUG_REGISTER)
 		if (CPU_TRAP) {
 			CPU_DR6 |= CPU_DR6_BS;
 			INTERRUPT(1, INTR_TYPE_EXCEPTION);
 		}
-#endif
 		if (dmac.working) {
 			dmax86();
 		}

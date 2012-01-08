@@ -853,9 +853,6 @@ MOV_DdRd(void)
 	UINT32 src;
 	UINT op;
 	int idx;
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	int i;
-#endif
 
 	CPU_WORKCLOCK(11);
 	GET_PCBYTE(op);
@@ -890,13 +887,6 @@ MOV_DdRd(void)
 		case 7:
 			CPU_DR7 = src;
 			CPU_STAT_BP = 0;
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-			for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-				if (CPU_DR7 & (CPU_DR7_L(i)|CPU_DR7_G(i))) {
-					CPU_STAT_BP |= (1 << i);
-				}
-			}
-#endif	/* IA32_SUPPORT_DEBUG_REGISTER */
 			break;
 
 		default:

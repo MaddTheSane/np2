@@ -1332,11 +1332,6 @@ IRET(void)
 		/* Protected mode */
 		IRET_pm();
 	}
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-	if (CPU_EFLAG & RF_FLAG) {
-		CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_RF;
-	}
-#endif
 	IRQCHECKTERM();
 }
 

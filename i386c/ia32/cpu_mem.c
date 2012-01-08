@@ -368,28 +368,6 @@ exc:
 	EXCEPTION(SS_EXCEPTION, s & 0xfffc);
 }
 
-#if defined(IA32_SUPPORT_DEBUG_REGISTER)
-static INLINE void
-check_memory_break_point(UINT32 address, UINT length, UINT rw)
-{
-	int i;
-
-	if (CPU_STAT_BP && !(CPU_EFLAG & RF_FLAG)) {
-		for (i = 0; i < CPU_DEBUG_REG_INDEX_NUM; i++) {
-			if ((CPU_STAT_BP & (1 << i))
-			 && (CPU_DR7_GET_RW(i) & rw)
-
-			 && ((address <= CPU_DR(i) && address + length > CPU_DR(i))
-			  || (address > CPU_DR(i) && address < CPU_DR(i) + CPU_DR7_GET_LEN(i)))) {
-				CPU_STAT_BP_EVENT |= CPU_STAT_BP_EVENT_B(i);
-			}
-		}
-	}
-}
-#else
-#define	check_memory_break_point(address, length, rw)
-#endif
-
 
 /*
  * code fetch
