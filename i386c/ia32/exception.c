@@ -74,7 +74,7 @@ exception(int num, int error_code)
 #endif
 
 	VERBOSE(("exception: -------------------------------------------------------------- start"));
-	VERBOSE(("exception: %s, error_code = %x at %04x:%08x, %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP, CPU_SS, CPU_ESP));
+	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
 	VERBOSE(("%s", cpu_reg2str()));
 
 	CPU_STAT_EXCEPTION_COUNTER_INC();
