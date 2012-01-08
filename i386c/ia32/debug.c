@@ -259,12 +259,14 @@ segdesc_dump(descriptor_t *sdp)
 	VERBOSE(("kind     : %s", SEG_IS_SYSTEM(sdp) ? "system" : "code/data"));
 	if (!SEG_IS_SYSTEM(sdp)) {
 		if (SEG_IS_CODE(sdp)) {
-			VERBOSE(("type     : %sconforming code",
+			VERBOSE(("type     : %dbit %sconforming code",
+			    SEG_IS_32BIT(sdp) ? 32 : 16,
 			    SEG_IS_CONFORMING_CODE(sdp) ? "" : "non-"));
 			VERBOSE(("access   : execute%s",
 			    SEG_IS_READABLE_CODE(sdp) ? "/read" : ""));
 		} else {
-			VERBOSE(("type     : expand-%s data",
+			VERBOSE(("type     : %dbit expand-%s data",
+			    SEG_IS_32BIT(sdp) ? 32 : 16,
 			    SEG_IS_EXPANDDOWN_DATA(sdp) ? "down" : "up"));
 			VERBOSE(("access   : read%s",
 			    SEG_IS_WRITABLE_DATA(sdp) ? "/write" : ""));
