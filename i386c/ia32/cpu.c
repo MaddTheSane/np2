@@ -54,6 +54,11 @@ int ctx_index = 0;
 int cpu_inst_trace = 0;
 #endif
 
+#if defined(DEBUG)
+int cpu_debug_rep_cont = 0;
+CPU_REGS cpu_debug_rep_regs;
+#endif
+
 
 void
 exec_1step(void)
@@ -84,7 +89,7 @@ exec_1step(void)
 
 			buf[0] = '\0';
 			for (i = 0; i < len; i++) {
-				snprintf(tmp, sizeof(tmp), "%02x ", d->opcode[i]);
+				snprintf(tmp, sizeof(tmp), "%02x ", d->opbyte[i]);
 				milstr_ncat(buf, tmp, sizeof(buf));
 			}
 			for (; i < 8; i++) {
@@ -94,7 +99,7 @@ exec_1step(void)
 
 			buf[0] = '\0';
 			for (; i < d->nopbytes; i++) {
-				snprintf(tmp, sizeof(tmp), "%02x ", d->opcode[i]);
+				snprintf(tmp, sizeof(tmp), "%02x ", d->opbyte[i]);
 				milstr_ncat(buf, tmp, sizeof(buf));
 				if ((i % 8) == 7) {
 					VERBOSE(("             : %s", buf));
@@ -154,6 +159,9 @@ exec_1step(void)
 
 	/* normal / rep, but not use */
 	if (!(insttable_info[op] & INST_STRING) || !CPU_INST_REPUSE) {
+#if defined(DEBUG)
+		cpu_debug_rep_cont = 0;
+#endif
 		(*insttable_1byte[CPU_INST_OP32][op])();
 #if defined(IA32_SUPPORT_DEBUG_REGISTER)
 		goto check_break_point;
@@ -164,14 +172,24 @@ exec_1step(void)
 
 	/* rep */
 	CPU_WORKCLOCK(5);
+#if defined(DEBUG)
+	if (!cpu_debug_rep_cont) {
+		cpu_debug_rep_cont = 1;
+		cpu_debug_rep_regs = CPU_STATSAVE.cpu_regs;
+	}
+#endif
 	if (!CPU_INST_AS32) {
 		if (CPU_CX != 0) {
 			if (!(insttable_info[op] & REP_CHECKZF)) {
 				/* rep */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_CX == 0)
+					if (--CPU_CX == 0) {
+#if defined(DEBUG)
+						cpu_debug_rep_cont = 0;
+#endif
 						break;
+					}
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
 						break;
@@ -181,8 +199,12 @@ exec_1step(void)
 				/* repe */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_CX == 0 || CC_NZ)
+					if (--CPU_CX == 0 || CC_NZ) {
+#if defined(DEBUG)
+						cpu_debug_rep_cont = 0;
+#endif
 						break;
+					}
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
 						break;
@@ -192,8 +214,12 @@ exec_1step(void)
 				/* repne */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_CX == 0 || CC_Z)
+					if (--CPU_CX == 0 || CC_Z) {
+#if defined(DEBUG)
+						cpu_debug_rep_cont = 0;
+#endif
 						break;
+					}
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
 						break;
@@ -207,8 +233,12 @@ exec_1step(void)
 				/* rep */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_ECX == 0)
+					if (--CPU_ECX == 0) {
+#if defined(DEBUG)
+						cpu_debug_rep_cont = 0;
+#endif
 						break;
+					}
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
 						break;
@@ -218,8 +248,12 @@ exec_1step(void)
 				/* repe */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_ECX == 0 || CC_NZ)
+					if (--CPU_ECX == 0 || CC_NZ) {
+#if defined(DEBUG)
+						cpu_debug_rep_cont = 0;
+#endif
 						break;
+					}
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
 						break;
@@ -229,8 +263,12 @@ exec_1step(void)
 				/* repne */
 				for (;;) {
 					(*insttable_1byte[CPU_INST_OP32][op])();
-					if (--CPU_ECX == 0 || CC_Z)
+					if (--CPU_ECX == 0 || CC_Z) {
+#if defined(DEBUG)
+						cpu_debug_rep_cont = 0;
+#endif
 						break;
+					}
 					if (CPU_REMCLOCK <= 0) {
 						CPU_EIP = CPU_PREV_EIP;
 						break;

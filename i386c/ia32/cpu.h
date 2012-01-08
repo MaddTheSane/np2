@@ -774,6 +774,7 @@ typedef struct {
 } disasm_context_t;
 
 int disasm(UINT32 *eip, disasm_context_t *ctx);
+char *cpu_disasm2str(UINT32 eip);
 
 #ifdef __cplusplus
 }

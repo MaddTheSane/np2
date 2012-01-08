@@ -64,6 +64,10 @@ static const int dftable[4][4] = {
 void CPUCALL
 exception(int num, int error_code)
 {
+#if defined(DEBUG)
+	extern int cpu_debug_rep_cont;
+	extern CPU_REGS cpu_debug_rep_regs;
+#endif
 	int errorp = 0;
 
 	__ASSERT((unsigned int)num < EXCEPTION_NUM);
@@ -76,6 +80,13 @@ exception(int num, int error_code)
 	VERBOSE(("exception: -------------------------------------------------------------- start"));
 	VERBOSE(("exception: %s, error_code = %x at %04x:%08x", exception_str[num], error_code, CPU_CS, CPU_PREV_EIP));
 	VERBOSE(("%s", cpu_reg2str()));
+	VERBOSE(("code: %dbit(%dbit), address: %dbit(%dbit)", CPU_INST_OP32 ? 32 : 16, CPU_STATSAVE.cpu_inst_default.op_32 ? 32 : 16, CPU_INST_AS32 ? 32 : 16, CPU_STATSAVE.cpu_inst_default.as_32 ? 32 : 16));
+#if defined(DEBUG)
+	if (cpu_debug_rep_cont) {
+		VERBOSE(("rep: original regs: ecx=%08x, esi=%08x, edi=%08x", cpu_debug_rep_regs.reg[CPU_ECX_INDEX].d, cpu_debug_rep_regs.reg[CPU_ESI_INDEX].d, cpu_debug_rep_regs.reg[CPU_EDI_INDEX].d));
+	}
+	VERBOSE(("%s", cpu_disasm2str(CPU_PREV_EIP)));
+#endif
 
 	CPU_STAT_EXCEPTION_COUNTER_INC();
 	if ((CPU_STAT_EXCEPTION_COUNTER >= 3) 

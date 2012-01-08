@@ -64,7 +64,7 @@ check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 			if (!SEG_IS_32BIT(sdp)) {
 				if ((len > limit)		/* len check */
 				 || (end > limit)) {		/* [1] */
-					return 0;
+					goto exc;
 				}
 			} else {
 				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
@@ -88,7 +88,7 @@ check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 			 || (end < offset)			/* wrap check */
 			 || (offset < sdp->u.seg.limit) 	/* [1] */
 			 || (end > limit)) {			/* [2] */
-				return 0;
+				goto exc;
 			}
 		}
 	} else {
@@ -107,7 +107,7 @@ check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 			if (!SEG_IS_32BIT(sdp)) {
 				if ((len > limit)		/* len check */
 				 || (offset + len > limit)) {	/* [1] */
-					return 0;
+					goto exc;
 				}
 			} else {
 				sdp->flag |= CPU_DESC_FLAG_WHOLEADR;
@@ -127,12 +127,19 @@ check_limit_upstairs(descriptor_t *sdp, UINT32 offset, UINT len)
 			 */
 			if ((len > sdp->u.seg.limit)		/* len check */
 			 || (end < offset)			/* wrap check */
-			 || (end > sdp->u.seg.limit)) {		/* [1] */
-				return 0;
+			 || (end > sdp->u.seg.limit + 1)) {	/* [1] */
+				goto exc;
 			}
 		}
 	}
 	return 1;	/* Ok! */
+
+exc:
+	VERBOSE(("check_limit_upstairs: check failure: offset = 0x%08x, len = %d", offset, len + 1));
+#if defined(DEBUG)
+	segdesc_dump(sdp);
+#endif
+	return 0;
 }
 
 static void MEMCALL
@@ -170,8 +177,7 @@ cpu_memoryread_check(descriptor_t *sdp, UINT32 offset, UINT len, int e)
 	return;
 
 exc:
-	VERBOSE(("cpu_memoryread_check: check failure."));
-	VERBOSE(("offset = 0x%08x, len = %d", offset, len));
+	VERBOSE(("cpu_memoryread_check: check failure: offset = 0x%08x, len = %d", offset, len));
 #if defined(DEBUG)
 	segdesc_dump(sdp);
 #endif
@@ -210,8 +216,7 @@ cpu_memorywrite_check(descriptor_t *sdp, UINT32 offset, UINT len, int e)
 	return;
 
 exc:
-	VERBOSE(("cpu_memorywrite_check: check failure."));
-	VERBOSE(("offset = 0x%08x, len = %d", offset, len));
+	VERBOSE(("cpu_memorywrite_check: check failure: offset = 0x%08x, len = %d", offset, len));
 #if defined(DEBUG)
 	segdesc_dump(sdp);
 #endif
@@ -227,6 +232,8 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 	__ASSERT(sdp != NULL);
 	__ASSERT(len > 0);
 
+	len--;
+
 	if (!SEG_IS_VALID(sdp)
 	 || !SEG_IS_PRESENT(sdp)
 	 || SEG_IS_SYSTEM(sdp)
@@ -235,7 +242,6 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 		goto exc;
 	}
 
-	len--;
 	start = sp - len;
 	limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
 
@@ -328,8 +334,7 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 	return;
 
 exc:
-	VERBOSE(("cpu_stack_push_check: check failure."));
-	VERBOSE(("cpu_stack_push_check: selector = %04x, sp = 0x%08x, len = %d", s, sp, len + 1));
+	VERBOSE(("cpu_stack_push_check: check failure: selector = %04x, sp = 0x%08x, len = %d", s, sp, len));
 #if defined(DEBUG)
 	segdesc_dump(sdp);
 #endif
@@ -356,8 +361,7 @@ cpu_stack_pop_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 	return;
 
 exc:
-	VERBOSE(("cpu_stack_pop_check: check failure."));
-	VERBOSE(("s = 0x%04x, sp = 0x%08x, len = %d", s, sp, len));
+	VERBOSE(("cpu_stack_pop_check: check failure: selector = %04x, sp = 0x%08x, len = %d", s, sp, len));
 #if defined(DEBUG)
 	segdesc_dump(sdp);
 #endif
