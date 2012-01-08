@@ -238,9 +238,11 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 	len--;
 	start = sp - len;
 	limit = SEG_IS_32BIT(sdp) ? 0xffffffff : 0x0000ffff;
+	VERBOSE(("cpu_stack_push_check: start=0x%08x, limit=0x%08x", start, limit));
 
 	if (SEG_IS_EXPANDDOWN_DATA(sdp)) {
 		/* expand-down stack */
+		VERBOSE(("cpu_stack_push_check: expand-down stack"));
 		if (!SEG_IS_32BIT(sdp)) {
 			if (sp > limit) {			/* [*] */
 				goto exc;
@@ -285,6 +287,7 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 		}
 	} else {
 		/* expand-up stack */
+		VERBOSE(("cpu_stack_push_check: expand-up stack"));
 		if (sdp->u.seg.limit == limit) {
 			/*
 			 *   32bit       16bit
@@ -329,7 +332,7 @@ cpu_stack_push_check(UINT16 s, descriptor_t *sdp, UINT32 sp, UINT len)
 
 exc:
 	VERBOSE(("cpu_stack_push_check: check failure."));
-	VERBOSE(("s = 0x%04x, sp = 0x%08x, len = %d", s, sp, len));
+	VERBOSE(("cpu_stack_push_check: selector = %04x, sp = 0x%08x, len = %d", s, sp, len + 1));
 #if defined(DEBUG)
 	segdesc_dump(sdp);
 #endif
