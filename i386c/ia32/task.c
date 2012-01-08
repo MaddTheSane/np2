@@ -142,7 +142,7 @@ get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 	UINT32 tss_stack_addr;
 
 	VERBOSE(("get_stack_pointer_from_tss: pl = %d", pl));
-	VERBOSE(("CPU_TR type = %d, base = 0x%08x, limit = 0x%08x", CPU_TR_DESC.type, CPU_TR_BASE, CPU_TR_LIMIT));
+	VERBOSE(("get_stack_pointer_from_tss: CPU_TR type = %d, base = 0x%08x, limit = 0x%08x", CPU_TR_DESC.type, CPU_TR_BASE, CPU_TR_LIMIT));
 
 	__ASSERT(pl < 3);
 
@@ -165,7 +165,7 @@ get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 	} else {
 		ia32_panic("get_stack_pointer_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
-	VERBOSE(("new stack pointer = %04x:%08x", *new_ss, *new_esp));
+	VERBOSE(("get_stack_pointer_from_tss: new stack pointer = %04x:%08x", *new_ss, *new_esp));
 }
 
 UINT16
