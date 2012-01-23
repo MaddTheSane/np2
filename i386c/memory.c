@@ -582,75 +582,31 @@ void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) {
 
 // ---- Logical Space (BIOS)
 
-static UINT32 physicaladdr(UINT32 addr, BOOL wr) {
-
-	UINT32	a;
-	UINT32	pde;
-	UINT32	pte;
-
-	a = CPU_STAT_PDE_BASE + ((addr >> 20) & 0xffc);
-	pde = memp_read32(a);
-	if (!(pde & CPU_PDE_PRESENT)) {
-		goto retdummy;
-	}
-	if (!(pde & CPU_PDE_ACCESS)) {
-		memp_write8(a, (UINT8)(pde | CPU_PDE_ACCESS));
-	}
-	a = (pde & CPU_PDE_BASEADDR_MASK) + ((addr >> 10) & 0xffc);
-	pte = cpu_memoryread_d(a);
-	if (!(pte & CPU_PTE_PRESENT)) {
-		goto retdummy;
-	}
-	if (!(pte & CPU_PTE_ACCESS)) {
-		memp_write8(a, (UINT8)(pte | CPU_PTE_ACCESS));
-	}
-	if ((wr) && (!(pte & CPU_PTE_DIRTY))) {
-		memp_write8(a, (UINT8)(pte | CPU_PTE_DIRTY));
-	}
-	addr = (pte & CPU_PTE_BASEADDR_MASK) + (addr & 0x00000fff);
-	return(addr);
-
-retdummy:
-	return(0x01000000);		// ÇƒÇ´Ç∆Å[Ç…ÉÅÉÇÉäÇ™ë∂ç›ÇµÇ»Ç¢èÍèä
-}
-
-
 void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) {
 
-	UINT	size;
-
-	if (!CPU_STAT_PAGING) {
+	if (!CPU_STAT_PM) {
 		memp_reads(address, dat, leng);
 	}
+	else if (CPU_STAT_VM86) {
+		cpu_memory_access_la_region(address, leng,
+		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE, dat);
+	}
 	else {
-		while(leng) {
-			size = 0x1000 - (address & 0xfff);
-			size = min(size, leng);
-			memp_reads(physicaladdr(address, FALSE), dat, size);
-			address += size;
-			dat = ((UINT8 *)dat) + size;
-			leng -= size;
-		}
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
 	}
 }
 
 void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) {
 
-	const UINT8	*out = dat;
-	UINT		size;
-
-	if (!CPU_STAT_PAGING) {
-		memp_writes(address, out, leng);
+	if (!CPU_STAT_PM) {
+		memp_writes(address, dat, leng);
+	}
+	else if (CPU_STAT_VM86) {
+		cpu_memory_access_la_region(address, leng,
+		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE, (UINT8 *)dat);
 	}
 	else {
-		while(leng) {
-			size = 0x1000 - (address & 0xfff);
-			size = min(size, leng);
-			memp_writes(physicaladdr(address, TRUE), out, size);
-			address += size;
-			out += size;
-			leng -= size;
-		}
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
 	}
 }
 
@@ -660,10 +616,17 @@ REG8 MEMCALL memr_read8(UINT seg, UINT off) {
 	UINT32	addr;
 
 	addr = (seg << 4) + LOW16(off);
-	if (CPU_STAT_PAGING) {
-		addr = physicaladdr(addr, FALSE);
+	if (!CPU_STAT_PM) {
+		return(memp_read8(addr));
 	}
-	return(memp_read8(addr));
+	else if (CPU_STAT_VM86) {
+		return(cpu_linear_memory_read_b(addr,
+		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE));
+	}
+	else {
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		return(0xff);
+	}
 }
 
 REG16 MEMCALL memr_read16(UINT seg, UINT off) {
@@ -671,13 +634,17 @@ REG16 MEMCALL memr_read16(UINT seg, UINT off) {
 	UINT32	addr;
 
 	addr = (seg << 4) + LOW16(off);
-	if (!CPU_STAT_PAGING) {
+	if (!CPU_STAT_PM) {
 		return(memp_read16(addr));
 	}
-	else if ((addr + 1) & 0xfff) {
-		return(memp_read16(physicaladdr(addr, FALSE)));
+	else if (CPU_STAT_VM86) {
+		return(cpu_linear_memory_read_w(addr,
+		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE));
 	}
-	return(memr_read8(seg, off) + (memr_read8(seg, off + 1) << 8));
+	else {
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		return(0xffff);
+	}
 }
 
 void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
@@ -685,10 +652,16 @@ void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
 	UINT32	addr;
 
 	addr = (seg << 4) + LOW16(off);
-	if (CPU_STAT_PAGING) {
-		addr = physicaladdr(addr, TRUE);
+	if (!CPU_STAT_PM) {
+		memp_write8(addr, dat);
 	}
-	memp_write8(addr, dat);
+	else if (CPU_STAT_VM86) {
+		cpu_linear_memory_write_b(addr, dat,
+		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE);
+	}
+	else {
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+	}
 }
 
 void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
@@ -696,37 +669,47 @@ void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
 	UINT32	addr;
 
 	addr = (seg << 4) + LOW16(off);
-	if (!CPU_STAT_PAGING) {
+	if (!CPU_STAT_PM) {
 		memp_write16(addr, dat);
 	}
-	else if ((addr + 1) & 0xfff) {
-		memp_write16(physicaladdr(addr, TRUE), dat);
+	else if (CPU_STAT_VM86) {
+		cpu_linear_memory_write_w(addr, dat,
+		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE);
 	}
 	else {
-		memr_write8(seg, off, (REG8)dat);
-		memr_write8(seg, off + 1, (REG8)(dat >> 8));
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
 	}
 }
 
 void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 
+	UINT8	*in = dat;
 	UINT32	addr;
 	UINT	rem;
 	UINT	size;
+
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		return;
+	}
 
 	while(leng) {
 		off = LOW16(off);
 		addr = (seg << 4) + off;
 		rem = 0x10000 - off;
 		size = min(leng, rem);
-		if (CPU_STAT_PAGING) {
-			rem = 0x1000 - (addr & 0xfff);
-			size = min(size, rem);
-			addr = physicaladdr(addr, FALSE);
+		if (!CPU_STAT_PM) {
+			memp_reads(addr, in, size);
 		}
-		memp_reads(addr, dat, size);
+		else {
+			/* VM86 */
+			rem = CPU_PAGE_SIZE - (addr & CPU_PAGE_MASK);
+			size = min(size, rem);
+			cpu_memory_access_la_region(addr, size,
+			  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE, in);
+		}
 		off += size;
-		dat = ((UINT8 *)dat) + size;
+		in += size;
 		leng -= size;
 	}
 }
@@ -738,17 +721,26 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 	UINT		rem;
 	UINT		size;
 
+	if (CPU_STAT_PM && !CPU_STAT_VM86) {
+		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		return;
+	}
+
 	while(leng) {
 		off = LOW16(off);
 		addr = (seg << 4) + off;
 		rem = 0x10000 - off;
 		size = min(leng, rem);
-		if (CPU_STAT_PAGING) {
+		if (!CPU_STAT_PM) {
+			memp_writes(addr, out, size);
+		}
+		else {
+			/* VM86 */
 			rem = 0x1000 - (addr & 0xfff);
 			size = min(size, rem);
-			addr = physicaladdr(addr, TRUE);
+			cpu_memory_access_la_region(addr, size,
+			  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE, (UINT8 *)out);
 		}
-		memp_writes(addr, out, size);
 		off += size;
 		out += size;
 		leng -= size;
@@ -756,4 +748,3 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 }
 
 #endif
-
