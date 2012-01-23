@@ -189,8 +189,8 @@ UINT32 gettick(void);
 
 #if defined(NP2_CPU_ARCH_IA32)
 #undef	MEMOPTIMIZE
-#define LOADINTELDWORD(a)	(*((UINT32 *)(a)))
-#define LOADINTELWORD(a)	(*((UINT16 *)(a)))
+#define LOADINTELDWORD(a)	(*((const UINT32 *)(a)))
+#define LOADINTELWORD(a)	(*((const UINT16 *)(a)))
 #define STOREINTELDWORD(a, b)	*(UINT32 *)(a) = (b)
 #define STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
 #if !defined(DEBUG) && !defined(NP2_CPU_ARCH_AMD64)
