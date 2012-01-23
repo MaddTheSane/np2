@@ -654,7 +654,7 @@ static void
 driver_radiobutton_clicked(GtkButton *b, gpointer d)
 {
 
-	driver_snddrv = (int)d;
+	driver_snddrv = GPOINTER_TO_UINT(d);
 }
 
 static GtkWidget *
