@@ -552,7 +552,7 @@ void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng) {
 
 void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) {
 
-	const UINT8 *out = (UINT8 *)dat;
+	const UINT8 *out = dat;
 	UINT diff;
 
 	/* fast memory access */
@@ -636,18 +636,19 @@ void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) {
 
 void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) {
 
-	UINT	size;
+	const UINT8	*out = dat;
+	UINT		size;
 
 	if (!CPU_STAT_PAGING) {
-		memp_writes(address, dat, leng);
+		memp_writes(address, out, leng);
 	}
 	else {
 		while(leng) {
 			size = 0x1000 - (address & 0xfff);
 			size = min(size, leng);
-			memp_writes(physicaladdr(address, TRUE), dat, size);
+			memp_writes(physicaladdr(address, TRUE), out, size);
 			address += size;
-			dat = ((UINT8 *)dat) + size;
+			out += size;
 			leng -= size;
 		}
 	}
@@ -732,9 +733,10 @@ void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 
 void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 
-	UINT32	addr;
-	UINT	rem;
-	UINT	size;
+	const UINT8	*out = dat;
+	UINT32		addr;
+	UINT		rem;
+	UINT		size;
 
 	while(leng) {
 		off = LOW16(off);
@@ -746,9 +748,9 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 			size = min(size, rem);
 			addr = physicaladdr(addr, TRUE);
 		}
-		memp_writes(addr, dat, size);
+		memp_writes(addr, out, size);
 		off += size;
-		dat = ((UINT8 *)dat) + size;
+		out += size;
 		leng -= size;
 	}
 }
