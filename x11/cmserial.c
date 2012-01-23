@@ -89,7 +89,6 @@ serialgetstat(COMMNG self)
 {
 	CMSER serial = (CMSER)(self + 1);
 	int status;
-	int rv;
 
 	rv = ioctl(serial->hdl, TIOCMGET, &status);
 	if (!(status & TIOCM_DSR)) {
