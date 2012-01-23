@@ -120,8 +120,8 @@ extern "C" {
 #define	CPU_PTE_WRITABLE	(1 << 1)
 #define	CPU_PTE_PRESENT		(1 << 0)
 
-#define PAGE_SIZE       0x1000
-#define PAGE_MASK       (PAGE_SIZE - 1)
+#define CPU_PAGE_SIZE      	 0x1000
+#define CPU_PAGE_MASK       	(CPU_PAGE_SIZE - 1)
 
 /* ucrw */
 #define	CPU_PAGE_WRITE		(1 << 0)
