@@ -142,7 +142,7 @@ void CPUCALL \
 inst##_EbCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
-	cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##CL1, (void *)cl); \
+	cpu_vmemory_RMW_b(CPU_INST_SEGREG_INDEX, madr, inst##CL1, UINT32_TO_PTR(cl)); \
 } \
 \
 void CPUCALL \
@@ -159,7 +159,7 @@ void CPUCALL \
 inst##_EwCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
-	cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##CL2, (void *)cl); \
+	cpu_vmemory_RMW_w(CPU_INST_SEGREG_INDEX, madr, inst##CL2, UINT32_TO_PTR(cl)); \
 } \
 \
 void CPUCALL \
@@ -176,7 +176,7 @@ void CPUCALL \
 inst##_EdCL_ext(UINT32 madr, UINT32 cl) \
 { \
 \
-	cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##CL4, (void *)cl); \
+	cpu_vmemory_RMW_d(CPU_INST_SEGREG_INDEX, madr, inst##CL4, UINT32_TO_PTR(cl)); \
 }
 
 /*
