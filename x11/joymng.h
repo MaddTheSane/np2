@@ -68,7 +68,7 @@ REG8 joymng_getstat(void);
 // -- X11
 void joymng_initialize(void);
 void joymng_deinitialize(void);
-const joymng_devinfo_t **joymng_get_devinfo_list(void);
+joymng_devinfo_t **joymng_get_devinfo_list(void);
 void joymng_sync(void);
 
 #else	/* !SUPPORT_JOYSTICK */

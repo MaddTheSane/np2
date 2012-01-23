@@ -35,7 +35,7 @@ static struct {
 	void *hdl;
 	BOOL inited;
 
-	const joymng_devinfo_t **devlist;
+	joymng_devinfo_t **devlist;
 
 	BYTE pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
 	REG8 flag;
@@ -54,7 +54,7 @@ typedef struct {
 	BYTE	button[JOY_NBUTTON];
 } JOYINFO_T;
 
-static const joymng_devinfo_t **joydrv_initialize(void);
+static joymng_devinfo_t **joydrv_initialize(void);
 static void joydrv_terminate(void);
 static void *joydrv_open(const char *dev);
 static void joydrv_close(void *hdl);
@@ -106,7 +106,7 @@ joymng_deinitialize(void)
 	np2oscfg.JOYPAD1 &= 1;
 }
 
-const joymng_devinfo_t **
+joymng_devinfo_t **
 joymng_get_devinfo_list(void)
 {
 
@@ -168,7 +168,7 @@ typedef struct {
 	SDL_Joystick		*joyhdl;
 } joydrv_sdl_hdl_t;
 
-const joymng_devinfo_t **
+static joymng_devinfo_t **
 joydrv_initialize(void)
 {
 	char str[32];
@@ -207,8 +207,9 @@ joydrv_initialize(void)
 		shdl->joyhdl = NULL;
 		n++;
 	}
+	devlist[n] = NULL;
 
-	return (const joymng_devinfo_t **)devlist;
+	return devlist;
 
 sdl_err:
 	if (devlist) {
@@ -225,14 +226,14 @@ sdl_err:
 	return NULL;
 }
 
-void
+static void
 joydrv_terminate(void)
 {
 
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-void *
+static void *
 joydrv_open(const char *dvname)
 {
 	joydrv_sdl_hdl_t *shdl = NULL;
@@ -328,7 +329,7 @@ sdl_err:
 	return NULL;
 }
 
-void
+static void
 joydrv_close(void *hdl)
 {
 	joydrv_sdl_hdl_t *shdl = (joydrv_sdl_hdl_t *)hdl;
@@ -345,7 +346,7 @@ joydrv_close(void *hdl)
 	_MFREE(shdl);
 }
 
-BOOL
+static BOOL
 joydrv_getstat(void *hdl, JOYINFO_T *ji)
 {
 	joydrv_sdl_hdl_t *shdl = (joydrv_sdl_hdl_t *)hdl;
