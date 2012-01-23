@@ -592,7 +592,7 @@ void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) {
 		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE, dat);
 	}
 	else {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("meml_reads: call from BIOS, but protected mode");
 	}
 }
 
@@ -606,7 +606,7 @@ void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) {
 		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE, (UINT8 *)dat);
 	}
 	else {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("meml_writes: call from BIOS, but protected mode");
 	}
 }
 
@@ -624,7 +624,7 @@ REG8 MEMCALL memr_read8(UINT seg, UINT off) {
 		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE));
 	}
 	else {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("memr_read8: call from BIOS, but protected mode");
 		return(0xff);
 	}
 }
@@ -642,7 +642,7 @@ REG16 MEMCALL memr_read16(UINT seg, UINT off) {
 		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE));
 	}
 	else {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("memr_read16: call from BIOS, but protected mode");
 		return(0xffff);
 	}
 }
@@ -660,7 +660,7 @@ void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
 		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE);
 	}
 	else {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("memr_write8: call from BIOS, but protected mode");
 	}
 }
 
@@ -677,7 +677,7 @@ void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
 		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE);
 	}
 	else {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("memr_write16: call from BIOS, but protected mode");
 	}
 }
 
@@ -689,7 +689,7 @@ void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 	UINT	size;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("memr_reads: call from BIOS, but protected mode");
 		return;
 	}
 
@@ -722,7 +722,7 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 	UINT		size;
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
-		ia32_panic("%s: call from BIOS, but protected mode", __func__);
+		ia32_panic("memr_writes: call from BIOS, but protected mode");
 		return;
 	}
 
@@ -736,7 +736,7 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
 		}
 		else {
 			/* VM86 */
-			rem = 0x1000 - (addr & 0xfff);
+			rem = CPU_PAGE_SIZE - (addr & CPU_PAGE_MASK);
 			size = min(size, rem);
 			cpu_memory_access_la_region(addr, size,
 			  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE, (UINT8 *)out);
