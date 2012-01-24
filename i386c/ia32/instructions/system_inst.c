@@ -286,6 +286,7 @@ MOV_CdRd(void)
 			src &= CPU_CR0_ALL;
 #if defined(USE_FPU)
 			src |= CPU_CR0_ET;	/* FPU present */
+			src &= ~CPU_CR0_EM;
 #else
 			src |= CPU_CR0_EM | CPU_CR0_NE;
 			src &= ~(CPU_CR0_MP | CPU_CR0_ET);

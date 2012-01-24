@@ -45,8 +45,9 @@ ia32_initreg(void)
 
 	CPU_EDX = (CPU_FAMILY << 8) | (CPU_MODEL << 4) | CPU_STEPPING;
 	CPU_EFLAG = 2;
-	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW | CPU_CR0_ET;
+	CPU_CR0 = CPU_CR0_CD | CPU_CR0_NW;
 #if defined(USE_FPU)
+	CPU_CR0 &= ~CPU_CR0_EM;
 	CPU_CR0 |= CPU_CR0_ET;
 #else
 	CPU_CR0 |= CPU_CR0_EM | CPU_CR0_NE;
