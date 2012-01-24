@@ -239,8 +239,10 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/vram \
 		$(GTK_CFLAGS) $(SDL_CFLAGS)
 
+if HAVE_GCC
 AM_CFLAGS=	-fsigned-char
 CFLAGS+=	-fno-strict-aliasing
+endif
 
 xnp2_LDADD=	$(GTK_LIBS) $(SDL_LIBS) \
 		$(X_LIBS) $(X_PRE_LIBS) $(XLIB) $(X_EXTRA_LIBS)

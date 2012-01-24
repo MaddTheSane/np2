@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.20 $)
+AC_REVISION($Revision: 1.21 $)
 
 AC_INIT(Xnp2,0.83-20120123,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -46,9 +46,7 @@ AC_SYS_LARGEFILE
 dnl
 dnl Check GCC
 dnl
-if test x"$GCC" != "xyes"; then
-    AC_MSG_ERROR(This package required GCC.)
-fi
+AM_CONDITIONAL(HAVE_GCC,test x"$GCC" = "xyes")
 
 dnl
 dnl Checks for library functions.
