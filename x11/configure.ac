@@ -4,9 +4,9 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.21 $)
+AC_REVISION($Revision: 1.22 $)
 
-AC_INIT(Xnp2,0.83-20120123,nonakap@gmail.com,xnp2)
+AC_INIT(Xnp2,0.83-20120124,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
 AC_CONFIG_SRCDIR([../np2ver.h])
 AC_CONFIG_HEADERS(config.h)
@@ -145,6 +145,15 @@ if test x"$enable_xf86vidmode" = "xyes"; then
     ,
     [#include <X11/Xlib.h>])
   CFLAGS=$ac_cv_save_cflags
+fi
+
+dnl
+dnl Checks for nasm
+dnl
+AC_CHECK_PROGS(nasm,[nasm nasmw],no)
+AM_CONDITIONAL(HAVE_NASM,test x$"nasm" != "xno")
+if test x"$nasm" != "xno"; then
+  AC_DEFINE(HAVE_NASM,,[Define if have nasm])
 fi
 
 dnl
