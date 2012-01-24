@@ -582,12 +582,31 @@ void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng) {
 
 // ---- Logical Space (BIOS)
 
+#if !defined(DEBUG)
 void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) {
+#else
+void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng, const char *fname, int line) {
+#endif
 
 	if (!CPU_STAT_PM) {
 		memp_reads(address, dat, leng);
 	}
 	else if (CPU_STAT_VM86) {
+#if defined(DEBUG)
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("meml_reads: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return;
+		default:
+			ia32_panic("meml_reads: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return;
+		}
+#endif
 		cpu_memory_access_la_region(address, leng,
 		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE, dat);
 	}
@@ -596,12 +615,31 @@ void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng) {
 	}
 }
 
+#if !defined(DEBUG)
 void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) {
+#else
+void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng, const char *fname, int line) {
+#endif
 
 	if (!CPU_STAT_PM) {
 		memp_writes(address, dat, leng);
 	}
 	else if (CPU_STAT_VM86) {
+#if defined(DEBUG)
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("meml_writes: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return;
+		default:
+			ia32_panic("meml_writes: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return;
+		}
+#endif
 		cpu_memory_access_la_region(address, leng,
 		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE, (UINT8 *)dat);
 	}
@@ -611,7 +649,11 @@ void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng) {
 }
 
 
+#if !defined(DEBUG)
 REG8 MEMCALL memr_read8(UINT seg, UINT off) {
+#else
+REG8 MEMCALL memr_read8(UINT seg, UINT off, const char *fname, int line) {
+#endif
 
 	UINT32	addr;
 
@@ -620,6 +662,21 @@ REG8 MEMCALL memr_read8(UINT seg, UINT off) {
 		return(memp_read8(addr));
 	}
 	else if (CPU_STAT_VM86) {
+#if defined(DEBUG)
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("memr_read8: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return(0xff);
+		default:
+			ia32_panic("memr_read8: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return(0xff);
+		}
+#endif
 		return(cpu_linear_memory_read_b(addr,
 		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE));
 	}
@@ -629,7 +686,11 @@ REG8 MEMCALL memr_read8(UINT seg, UINT off) {
 	}
 }
 
+#if !defined(DEBUG)
 REG16 MEMCALL memr_read16(UINT seg, UINT off) {
+#else
+REG16 MEMCALL memr_read16(UINT seg, UINT off, const char *fname, int line) {
+#endif
 
 	UINT32	addr;
 
@@ -638,6 +699,21 @@ REG16 MEMCALL memr_read16(UINT seg, UINT off) {
 		return(memp_read16(addr));
 	}
 	else if (CPU_STAT_VM86) {
+#if defined(DEBUG)
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("memr_read16: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return(0xffff);
+		default:
+			ia32_panic("memr_read16: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return(0xffff);
+		}
+#endif
 		return(cpu_linear_memory_read_w(addr,
 		  CPU_PAGE_READ_DATA | CPU_PAGE_USER_MODE));
 	}
@@ -647,7 +723,11 @@ REG16 MEMCALL memr_read16(UINT seg, UINT off) {
 	}
 }
 
+#if !defined(DEBUG)
 void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
+#else
+void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat, const char *fname, int line) {
+#endif
 
 	UINT32	addr;
 
@@ -656,6 +736,21 @@ void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
 		memp_write8(addr, dat);
 	}
 	else if (CPU_STAT_VM86) {
+#if defined(DEBUG)
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("memr_write8: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return;
+		default:
+			ia32_panic("memr_write8: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return;
+		}
+#endif
 		cpu_linear_memory_write_b(addr, dat,
 		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE);
 	}
@@ -664,7 +759,11 @@ void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat) {
 	}
 }
 
+#if !defined(DEBUG)
 void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
+#else
+void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat, const char *fname, int line) {
+#endif
 
 	UINT32	addr;
 
@@ -673,6 +772,21 @@ void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
 		memp_write16(addr, dat);
 	}
 	else if (CPU_STAT_VM86) {
+#if defined(DEBUG)
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("memr_write16: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return;
+		default:
+			ia32_panic("memr_write16: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return;
+		}
+#endif
 		cpu_linear_memory_write_w(addr, dat,
 		  CPU_PAGE_WRITE_DATA | CPU_PAGE_USER_MODE);
 	}
@@ -681,17 +795,41 @@ void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat) {
 	}
 }
 
+#if !defined(DEBUG)
 void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
+#else
+void MEMCALL memr_reads(UINT seg, UINT ooff, void *dat, UINT oleng, const char *fname, int line) {
+#endif
 
 	UINT8	*in = dat;
 	UINT32	addr;
 	UINT	rem;
 	UINT	size;
+#if defined(DEBUG)
+	UINT	off = ooff, leng = oleng;
+#endif
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		ia32_panic("memr_reads: call from BIOS, but protected mode");
 		return;
 	}
+#if defined(DEBUG)
+	else if (CPU_STAT_PM && CPU_STAT_VM86) {
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("memr_reads: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return;
+		default:
+			ia32_panic("memr_reads: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return;
+		}
+	}
+#endif
 
 	while(leng) {
 		off = LOW16(off);
@@ -714,17 +852,41 @@ void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng) {
 	}
 }
 
+#if !defined(DEBUG)
 void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng) {
+#else
+void MEMCALL memr_writes(UINT seg, UINT ooff, const void *dat, UINT oleng, const char *fname, int line) {
+#endif
 
 	const UINT8	*out = dat;
 	UINT32		addr;
 	UINT		rem;
 	UINT		size;
+#if defined(DEBUG)
+	UINT		off = ooff, leng = oleng;
+#endif
 
 	if (CPU_STAT_PM && !CPU_STAT_VM86) {
 		ia32_panic("memr_writes: call from BIOS, but protected mode");
 		return;
 	}
+#if defined(DEBUG)
+	else if (CPU_STAT_PM && CPU_STAT_VM86) {
+		int rv = sigsetjmp(exec_1step_jmpbuf, 1);
+		switch (rv) {
+		case 0:
+			break;
+		case 1:
+			ia32_panic("memr_writes: call from BIOS(%s:%d), PF_EXCEPTION",
+			    fname, line);
+			return;
+		default:
+			ia32_panic("memr_writes: call from BIOS(%s:%d), unknown",
+			    fname, line);
+			return;
+		}
+	}
+#endif
 
 	while(leng) {
 		off = LOW16(off);
