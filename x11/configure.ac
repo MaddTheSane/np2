@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.22 $)
+AC_REVISION($Revision: 1.23 $)
 
 AC_INIT(Xnp2,0.83-20120124,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -151,10 +151,6 @@ dnl
 dnl Checks for nasm
 dnl
 AC_CHECK_PROGS(nasm,[nasm nasmw],no)
-AM_CONDITIONAL(HAVE_NASM,test x$"nasm" != "xno")
-if test x"$nasm" != "xno"; then
-  AC_DEFINE(HAVE_NASM,,[Define if have nasm])
-fi
 
 dnl
 dnl Checks for IA-32 CPU emulation
