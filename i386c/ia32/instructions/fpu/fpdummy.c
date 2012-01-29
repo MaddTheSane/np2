@@ -30,10 +30,11 @@ ESC1(void)
 		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		if ((op & 0x38) == 0x38) {
-			TRACEOUT(("FSTCW"));
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, 0xffff);
+		if ((op & 0x38) != 0x38) {
+			EXCEPTION(NM_EXCEPTION, 0);
 		}
+		TRACEOUT(("FSTCW"));
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, 0xffff);
 	}
 }
 
