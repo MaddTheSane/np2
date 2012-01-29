@@ -610,11 +610,8 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, int ucrw, UINT8 *data)
 	UINT remain;	/* page remain */
 	UINT r;
 
-	if (length == 0)
-		return;
-
-	remain = CPU_PAGE_SIZE - (laddr & CPU_PAGE_MASK);
-	for (;;) {
+	while (length > 0) {
+		remain = CPU_PAGE_SIZE - (laddr & CPU_PAGE_MASK);
 		if (!CPU_STAT_PAGING) {
 			paddr = laddr;
 		} else {
@@ -628,17 +625,9 @@ cpu_memory_access_la_region(UINT32 laddr, UINT length, int ucrw, UINT8 *data)
 			cpu_memorywrite_region(paddr, data, r);
 		}
 
-		length -= r;
-		if (length == 0)
-			break;
-
-		data += r;
 		laddr += r;
-		remain -= r;
-		if (remain <= 0) {
-			/* next page */
-			remain += CPU_PAGE_SIZE;
-		}
+		data += r;
+		length -= r;
 	}
 }
 
@@ -655,6 +644,7 @@ laddr2paddr(UINT32 laddr, int ucrw)
 static UINT32 MEMCALL
 paging(UINT32 laddr, int ucrw)
 {
+	struct tlb_entry *ep;
 	UINT32 paddr;		/* physical address */
 	UINT32 pde_addr;	/* page directory entry address */
 	UINT32 pde;		/* page directory entry */
@@ -662,7 +652,6 @@ paging(UINT32 laddr, int ucrw)
 	UINT32 pte;		/* page table entry */
 	UINT bit;
 	UINT err;
-	struct tlb_entry *ep;
 
 	ep = tlb_lookup(laddr, ucrw);
 	if (ep != NULL)
