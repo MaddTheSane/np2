@@ -62,8 +62,6 @@ void MEMCALL memp_write32(UINT32 address, UINT32 value);
 void MEMCALL memp_reads(UINT32 address, void *dat, UINT leng);
 void MEMCALL memp_writes(UINT32 address, const void *dat, UINT leng);
 
-#if !defined(DEBUG)
-
 REG8 MEMCALL meml_read8(UINT32 address);
 REG16 MEMCALL meml_read16(UINT32 address);
 UINT32 MEMCALL meml_read32(UINT32 address);
@@ -81,32 +79,6 @@ void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat);
 void MEMCALL memr_write32(UINT seg, UINT off, UINT32 dat);
 void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng);
 void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng);
-
-#else	/* DEBUG */
-
-REG8 MEMCALL meml_read8(UINT32 address, const char *, int);
-REG16 MEMCALL meml_read16(UINT32 address, const char *, int);
-UINT32 MEMCALL meml_read32(UINT32 address, const char *, int);
-void MEMCALL meml_write8(UINT32 address, REG8 dat, const char *, int);
-void MEMCALL meml_write16(UINT32 address, REG16 dat, const char *, int);
-void MEMCALL meml_write32(UINT32 address, UINT32 dat, const char *, int);
-void MEMCALL meml_reads(UINT32 address, void *dat, UINT leng,
-    const char *, int);
-void MEMCALL meml_writes(UINT32 address, const void *dat, UINT leng,
-    const char *, int);
-
-REG8 MEMCALL memr_read8(UINT seg, UINT off, const char *, int);
-REG16 MEMCALL memr_read16(UINT seg, UINT off, const char *, int);
-UINT32 MEMCALL memr_read32(UINT seg, UINT off, const char *, int);
-void MEMCALL memr_write8(UINT seg, UINT off, REG8 dat, const char *, int);
-void MEMCALL memr_write16(UINT seg, UINT off, REG16 dat, const char *, int);
-void MEMCALL memr_write32(UINT seg, UINT off, UINT32 dat, const char *, int);
-void MEMCALL memr_reads(UINT seg, UINT off, void *dat, UINT leng,
-    const char *, int);
-void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng,
-    const char *, int);
-
-#endif	/* !DEBUG */
 
 #ifdef __cplusplus
 }
@@ -141,8 +113,6 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng,
 
 // ---- Logical Space (BIOS)
 
-#if !defined(DEBUG)
-
 #define MEML_READ8(addr)					\
 			meml_read8((addr))
 #define MEML_READ16(addr)					\
@@ -172,39 +142,5 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng,
 			memr_reads((seg), (off), (dat), (leng))
 #define MEMR_WRITES(seg, off, dat, leng)	\
 			memr_writes((seg), (off), (dat), (leng))
-
-#else	/* DEBUG */
-
-#define MEML_READ8(addr)					\
-			meml_read8((addr),__FILE__,__LINE__)
-#define MEML_READ16(addr)					\
-			meml_read16((addr),__FILE__,__LINE__)
-#define MEML_READ32(addr)					\
-			meml_read32((addr),__FILE__,__LINE__)
-#define MEML_WRITE8(addr, dat)				\
-			meml_write8((addr), (dat),__FILE__,__LINE__)
-#define MEML_WRITE16(addr, dat)				\
-			meml_write16((addr), (dat),__FILE__,__LINE__)
-#define MEML_WRITE32(addr, dat)				\
-			meml_write32((addr), (dat),__FILE__,__LINE__)
-#define MEML_READS(addr, dat, leng)			\
-			meml_reads((addr), (dat), (leng),__FILE__,__LINE__)
-#define MEML_WRITES(addr, dat, leng)		\
-			meml_writes((addr), (dat), (leng),__FILE__,__LINE__)
-
-#define	MEMR_READ8(seg, off)				\
-			memr_read8((seg), (off),__FILE__,__LINE__)
-#define	MEMR_READ16(seg, off)				\
-			memr_read16((seg), (off),__FILE__,__LINE__)
-#define	MEMR_WRITE8(seg, off, dat)			\
-			memr_write8((seg), (off), (dat),__FILE__,__LINE__)
-#define	MEMR_WRITE16(seg, off, dat)			\
-			memr_write16((seg), (off), (dat),__FILE__,__LINE__)
-#define MEMR_READS(seg, off, dat, leng)		\
-			memr_reads((seg), (off), (dat), (leng),__FILE__,__LINE__)
-#define MEMR_WRITES(seg, off, dat, leng)	\
-			memr_writes((seg), (off), (dat), (leng),__FILE__,__LINE__)
-
-#endif	/* !DEBUG */
 
 #endif	/* !NP2_I386C_MEMORY_H__ */
