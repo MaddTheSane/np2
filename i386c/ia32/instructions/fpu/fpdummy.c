@@ -5,13 +5,6 @@
 
 
 void
-FWAIT(void)
-{
-
-	TRACEOUT(("use FPU - FWAIT"));
-}
-
-void
 ESC0(void)
 {
 	UINT32 op, madr;

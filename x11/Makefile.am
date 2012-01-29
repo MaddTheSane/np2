@@ -273,6 +273,7 @@ xnp2_SOURCES+=	$(real_topsrcdir)/i386c/cpucore.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/data_trans.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/dec_arith.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/flag_ctrl.c \
+		$(real_topsrcdir)/i386c/ia32/instructions/fpu.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/logic_arith.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/misc_inst.c \
 		$(real_topsrcdir)/i386c/ia32/instructions/seg_reg.c \

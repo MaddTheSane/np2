@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003 NONAKA Kimihiro
+ * Copyright (c) 2012 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,28 +23,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	IA32_CPU_INSTRUCTION_FPU_FP_H__
-#define	IA32_CPU_INSTRUCTION_FPU_FP_H__
+#include "compiler.h"
+#include "cpu.h"
+#include "ia32.mcr"
 
-#ifdef __cplusplus
-extern "C" {
+#include "instructions/fpu/fp.h"
+
+
+void
+FWAIT(void)
+{
+#if defined(USE_FPU)
+	if (CPU_CR0 & (CPU_CR0_MP|CPU_CR0_TS)) {
+		EXCEPTION(NM_EXCEPTION, 0);
+	}
+
+	fpu_fwait();
 #endif
-
-void fpu_init(void);
-void fpu_fwait(void);
-
-void FWAIT(void);
-void ESC0(void);
-void ESC1(void);
-void ESC2(void);
-void ESC3(void);
-void ESC4(void);
-void ESC5(void);
-void ESC6(void);
-void ESC7(void);
-
-#ifdef __cplusplus
 }
-#endif
-
-#endif	/* IA32_CPU_INSTRUCTION_FPU_FP_H__ */
