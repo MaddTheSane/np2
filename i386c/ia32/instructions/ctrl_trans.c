@@ -1582,26 +1582,17 @@ ENTER32_IwIb(void)
 void
 LEAVE(void)
 {
-	UINT s;
 
 	CPU_WORKCLOCK(4);
 
 	CPU_SET_PREV_ESP();
-	/* check stack room size */
-	if (!CPU_INST_OP32) {
-		s = 2;
-	} else {
-		s = 4;
-	}
 	if (!CPU_STAT_SS32) {
-		SS_POP_CHECK(CPU_SP, (CPU_BP - CPU_SP) + s);
 		CPU_SP = CPU_BP;
 	} else {
-		SS_POP_CHECK(CPU_ESP, (CPU_EBP - CPU_ESP) + s);
 		CPU_ESP = CPU_EBP;
 	}
 	if (!CPU_INST_OP32) {
-		REGPOP0(CPU_BP);
+		POP0_16(CPU_BP);
 	} else {
 		POP0_32(CPU_EBP);
 	}
