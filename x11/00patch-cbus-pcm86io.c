@@ -1,6 +1,7 @@
-http://kohada.2ch.net/test/read.cgi/gameurawaza/1322351485/793
-http://kohada.2ch.net/test/read.cgi/gameurawaza/1322351485/800
+http://kohada.2ch.net/test/read.cgi/gameurawaza/1322351485/
+PC98エミュ総合 パート4
 
+http://kohada.2ch.net/test/read.cgi/gameurawaza/1322351485/793
 793 名前：名無しさん＠お腹いっぱい。[sage] 投稿日：2012/02/03(金) 12:57:16.33 ID:2GNrjSvL [1/3]
 >>783
 おつ
@@ -10,6 +11,7 @@ http://kohada.2ch.net/test/read.cgi/gameurawaza/1322351485/800
 他のゲームが動くようになるみたいだからトレードオフですね
 Xnp2では動くから使い分けします
 
+http://kohada.2ch.net/test/read.cgi/gameurawaza/1322351485/800
 800 名前：名無しさん＠お腹いっぱい。[sage] 投稿日：2012/02/03(金) 22:52:05.32 ID:Pb/w9HuR
 TRACEかましてログ見たところPCMのFIFOに出力がされていないのに
 FIFO割り込み要求フラグが要求ありに設定されるのが原因…かな？
