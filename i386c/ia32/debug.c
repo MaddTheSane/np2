@@ -256,6 +256,7 @@ segdesc_dump(descriptor_t *sdp)
 	VERBOSE(("valid    : %s", SEG_IS_VALID(sdp) ? "true" : "false"));
 	VERBOSE(("present  : %s", SEG_IS_PRESENT(sdp) ? "true" : "false"));
 	VERBOSE(("DPL      : %d", sdp->dpl));
+	VERBOSE(("type     : %d", sdp->type));
 	VERBOSE(("kind     : %s", SEG_IS_SYSTEM(sdp) ? "system" : "code/data"));
 	if (!SEG_IS_SYSTEM(sdp)) {
 		if (SEG_IS_CODE(sdp)) {
