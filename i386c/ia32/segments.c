@@ -27,6 +27,7 @@
 #include "cpu.h"
 #include "ia32.mcr"
 
+static void CPUCALL segdesc_set_default(int, UINT16, descriptor_t *);
 
 void CPUCALL
 load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
@@ -387,7 +388,7 @@ segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp)
 	segdesc_set_default(idx, sreg, sdp);
 }
 
-void CPUCALL
+static void CPUCALL
 segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp)
 {
 

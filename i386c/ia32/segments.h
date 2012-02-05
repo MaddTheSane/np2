@@ -157,7 +157,6 @@ segdesc_clear(descriptor_t *sdp)
 }
 
 void CPUCALL segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp);
-void CPUCALL segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp);
 void CPUCALL load_descriptor(descriptor_t *sdp, UINT32 addr);
 
 void CPUCALL load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc);
