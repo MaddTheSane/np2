@@ -42,7 +42,7 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 		/* real-mode or vm86 mode */
 		*sregp = selector;
 		segdesc_clear(&sel.desc);
-		sel.desc.u.seg.limit = CPU_STAT_SREGLIMIT(idx);
+		sel.desc.u.seg.limit = 0xffff;
 		segdesc_set_default(idx, selector, &sel.desc);
 		*sdp = sel.desc;
 		return;
