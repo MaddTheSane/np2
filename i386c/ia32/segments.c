@@ -42,7 +42,6 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 		/* real-mode or vm86 mode */
 		*sregp = selector;
 		segdesc_clear(&sel.desc);
-		sel.desc.u.seg.limit = 0xffff;
 		segdesc_set_default(idx, selector, &sel.desc);
 		*sdp = sel.desc;
 		return;
@@ -385,7 +384,6 @@ segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp)
 
 	CPU_REGS_SREG(idx) = sreg;
 	segdesc_clear(sdp);
-	sdp->u.seg.limit = 0xffff;
 	segdesc_set_default(idx, sreg, sdp);
 }
 
@@ -397,7 +395,7 @@ segdesc_set_default(int idx, UINT16 selector, descriptor_t *sdp)
 	__ASSERT((sdp != NULL));
 
 	sdp->u.seg.segbase = (UINT32)selector << 4;
-	/* sdp->u.seg.limit */
+	sdp->u.seg.limit = 0xffff;
 	sdp->u.seg.c = (idx == CPU_CS_INDEX) ? 1 : 0;	/* code or data */
 	sdp->u.seg.g = 0;	/* non 4k factor scale */
 	sdp->u.seg.wr = 1;	/* execute/read(CS) or read/write(others) */
