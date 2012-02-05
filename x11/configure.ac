@@ -4,7 +4,7 @@ dnl
 
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 1.30 $)
+AC_REVISION($Revision: 1.31 $)
 
 AC_INIT(Xnp2,0.83-20120204,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -110,25 +110,20 @@ AC_SUBST(GTK_LIBS)
 AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])
 
 dnl
-dnl Checks for SDL
+dnl Checks for SDL and SDL_mixer
 dnl
 if test x"$enable_sdl" = "xyes"; then
   AM_PATH_SDL(1.2.0)
   if test x"$no_sdl" != "xyes"; then
     AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL library.])
+    if test x"$enable_sdlmixer" = "xyes"; then
+      AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+        AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])
+        SDL_LIBS="$SDL_LIBS -lSDL_mixer",,$SDL_LIBS)
+    fi
   fi
 fi
 
-dnl
-dnl Checks for SDL_mixer
-dnl
-if test x"$enable_sdlmixer" = "xyes"; then
-  if test x"$no_sdl" != "xyes"; then
-    AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
-      AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])
-      SDL_LIBS="$SDL_LIBS -lSDL_mixer",,$SDL_LIBS)
-  fi
-fi
 
 dnl
 dnl Checks for XF86VidMode extension
