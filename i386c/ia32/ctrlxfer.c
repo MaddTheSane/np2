@@ -973,7 +973,7 @@ RETfar_pm(UINT nbytes)
 			 && (CPU_STAT_CPL > sdp->dpl)) {
 				/* current segment descriptor is invalid */
 				CPU_REGS_SREG(i) = 0;
-				segdesc_clear(sdp);
+				memset(sdp, 0, sizeof(*sdp));
 				continue;
 			}
 
@@ -982,7 +982,7 @@ RETfar_pm(UINT nbytes)
 			if (rv < 0) {
 				/* segment register is invalid */
 				CPU_REGS_SREG(i) = 0;
-				segdesc_clear(sdp);
+				memset(sdp, 0, sizeof(*sdp));
 				continue;
 			}
 
@@ -999,7 +999,7 @@ RETfar_pm(UINT nbytes)
 			     && (CPU_STAT_CPL > temp_sel.desc.dpl))) {
 				/* segment descriptor is invalid */
 				CPU_REGS_SREG(i) = 0;
-				segdesc_clear(sdp);
+				memset(sdp, 0, sizeof(*sdp));
 			}
 		}
 	}
@@ -1334,7 +1334,7 @@ IRET_pm_protected_mode_return_outer_privilege(const selector_t *cs_sel, UINT32 n
 			 && (sdp->dpl < CPU_STAT_CPL)) {
 				/* segment register is invalid */
 				CPU_REGS_SREG(i) = 0;
-				segdesc_clear(sdp);
+				memset(sdp, 0, sizeof(*sdp));
 			}
 		}
 	}

@@ -42,7 +42,6 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 	if (!CPU_STAT_PM || CPU_STAT_VM86) {
 		/* real-mode or vm86 mode */
 		*sregp = selector;
-		segdesc_clear(&sel.desc);
 		segdesc_set_default(idx, selector, &sel.desc);
 		*sdp = sel.desc;
 		return;
@@ -62,8 +61,9 @@ load_segreg(int idx, UINT16 selector, UINT16 *sregp, descriptor_t *sdp, int exc)
 		if ((rv != -2) || (idx == CPU_SS_INDEX)) {
 			EXCEPTION(exc, sel.idx);
 		}
+		/* null selector */
 		*sregp = sel.selector;
-		segdesc_clear(sdp);
+		memset(sdp, 0, sizeof(*sdp));
 		return;
 	}
 
@@ -203,7 +203,7 @@ load_descriptor(descriptor_t *sdp, UINT32 addr)
 	h = cpu_kmemoryread_d(addr + 4);
 	VERBOSE(("descriptor value = 0x%08x%08x", h, l));
 
-	segdesc_clear(sdp);
+	memset(sdp, 0, sizeof(*sdp));
 	sdp->flag = 0;
 
 	sdp->p = (h & CPU_DESC_H_P) ? 1 : 0;
@@ -384,7 +384,6 @@ segdesc_init(int idx, UINT16 sreg, descriptor_t *sdp)
 	__ASSERT((sdp != NULL));
 
 	CPU_REGS_SREG(idx) = sreg;
-	segdesc_clear(sdp);
 	segdesc_set_default(idx, sreg, sdp);
 }
 
