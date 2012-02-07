@@ -44,7 +44,8 @@ set_task_busy(UINT16 selector)
 		h |= CPU_TSS_H_BUSY;
 		cpu_kmemorywrite_d(addr + 4, h);
 	} else {
-		ia32_panic("set_task_busy: already busy(%04x:%08x)",selector,h);
+		ia32_panic("set_task_busy: already busy(%04x:%08x)",
+		    selector, h);
 	}
 }
 
@@ -60,7 +61,8 @@ set_task_free(UINT16 selector)
 		h &= ~CPU_TSS_H_BUSY;
 		cpu_kmemorywrite_d(addr + 4, h);
 	} else {
-		ia32_panic("set_task_free: already free(%04x:%08x)",selector,h);
+		ia32_panic("set_task_free: already free(%04x:%08x)",
+		    selector, h);
 	}
 }
 
@@ -155,7 +157,8 @@ get_stack_pointer_from_tss(UINT pl, UINT16 *new_ss, UINT32 *new_esp)
 	} else {
 		ia32_panic("get_stack_pointer_from_tss: task register is invalid (%d)\n", CPU_TR_DESC.type);
 	}
-	VERBOSE(("get_stack_pointer_from_tss: new stack pointer = %04x:%08x", *new_ss, *new_esp));
+	VERBOSE(("get_stack_pointer_from_tss: new stack pointer = %04x:%08x",
+	    *new_ss, *new_esp));
 }
 
 UINT16
@@ -176,7 +179,8 @@ get_backlink_selector_from_tss(void)
 	}
 
 	backlink = cpu_kmemoryread_w(CPU_TR_BASE);
-	VERBOSE(("get_backlink_selector_from_tss: backlink selector = 0x%04x", backlink));
+	VERBOSE(("get_backlink_selector_from_tss: backlink selector = 0x%04x",
+	    backlink));
 	return backlink;
 }
 
@@ -230,8 +234,11 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	cur_paddr = laddr_to_paddr(cur_base, CPU_PAGE_WRITE_DATA|CPU_MODE_SUPERVISER);
 	task_base = task_sel->desc.u.seg.segbase;
 	task_paddr = laddr_to_paddr(task_base, CPU_PAGE_WRITE_DATA|CPU_MODE_SUPERVISER);
-	VERBOSE(("task_switch: current task (%04x) = 0x%08x:%08x", CPU_TR, cur_base, CPU_TR_LIMIT));
-	VERBOSE(("task_switch: new task (%04x) = 0x%08x:%08x", task_sel->selector, task_base, task_sel->desc.u.seg.limit));
+	VERBOSE(("task_switch: current task (%04x) = 0x%08x:%08x (p0x%08x)",
+	    CPU_TR, cur_base, CPU_TR_LIMIT, cur_paddr));
+	VERBOSE(("task_switch: new task (%04x) = 0x%08x:%08x (p0x%08x)",
+	    task_sel->selector, task_base, task_sel->desc.u.seg.limit,
+	    task_paddr));
 	VERBOSE(("task_switch: %dbit task switch", task16 ? 16 : 32));
 
 #if defined(MORE_DEBUG)
