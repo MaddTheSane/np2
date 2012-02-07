@@ -378,7 +378,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 #if defined(MORE_DEBUG)
 	VERBOSE(("task_switch: current task"));
 	for (i = 0; i < CPU_TR_LIMIT; i += 4) {
-		v = cpu_memoryread_d(cur_paddr + i);
 		VERBOSE(("task_switch: 0x%08x: %08x", cur_base + i,
 		    cpu_memoryread_d(cur_paddr + i)));
 	}
