@@ -32,6 +32,26 @@
 #endif
 
 
+/*
+ * register strings
+ */
+const char *reg8_str[CPU_REG_NUM] = {
+	"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"
+};
+
+const char *reg16_str[CPU_REG_NUM] = { 
+	"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"
+};
+
+const char *reg32_str[CPU_REG_NUM] = { 
+	"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
+};
+
+const char *sreg_str[CPU_SEGREG_NUM] = {
+	"es", "cs", "ss", "ds", "fs", "gs"
+};
+
+
 char *
 cpu_reg2str(void)
 {

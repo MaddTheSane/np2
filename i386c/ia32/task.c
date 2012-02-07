@@ -250,7 +250,6 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 #endif
 
 	/* load task state */
-	memset(sreg, 0, sizeof(sreg));
 	if (!task16) {
 		if (CPU_STAT_PAGING) {
 			cr3 = cpu_memoryread_d(task_paddr + 28);
@@ -278,6 +277,9 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		for (i = 0; i < CPU_SEGREG286_NUM; i++) {
 			sreg[i] = cpu_memoryread_w(task_paddr + 34 + i * 2);
 		}
+		for (; i < CPU_SEGREG_NUM; i++) {
+			sreg[i] = 0;
+		}
 		ldtr = cpu_memoryread_w(task_paddr + 42);
 		iobase = 0;
 		t = 0;
@@ -291,10 +293,12 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	VERBOSE(("task_switch: eip     = 0x%08x", CPU_EIP));
 	VERBOSE(("task_switch: eflags  = 0x%08x", old_flags));
 	for (i = 0; i < CPU_REG_NUM; i++) {
-		VERBOSE(("task_switch: regs[%d] = 0x%08x", i, CPU_REGS_DWORD(i)));
+		VERBOSE(("task_switch: %s = 0x%08x", reg32_str[i],
+		    CPU_REGS_DWORD(i)));
 	}
 	for (i = 0; i < CPU_SEGREG_NUM; i++) {
-		VERBOSE(("task_switch: sreg[%d] = 0x%04x", i, CPU_REGS_SREG(i)));
+		VERBOSE(("task_switch: %s = 0x%04x", sreg_str[i],
+		    CPU_REGS_SREG(i)));
 	}
 	VERBOSE(("task_switch: ldtr    = 0x%04x", CPU_LDTR));
 
@@ -305,10 +309,10 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 	VERBOSE(("task_switch: eip     = 0x%08x", eip));
 	VERBOSE(("task_switch: eflags  = 0x%08x", new_flags));
 	for (i = 0; i < CPU_REG_NUM; i++) {
-		VERBOSE(("task_switch: regs[%d] = 0x%08x", i, regs[i]));
+		VERBOSE(("task_switch: %s = 0x%08x", reg32_str[i], regs[i]));
 	}
 	for (i = 0; i < CPU_SEGREG_NUM; i++) {
-		VERBOSE(("task_switch: sreg[%d] = 0x%04x", i, sreg[i]));
+		VERBOSE(("task_switch: %s = 0x%04x", sreg_str[i], sreg[i]));
 	}
 	VERBOSE(("task_switch: ldtr    = 0x%04x", ldtr));
 	if (!task16) {
@@ -371,7 +375,7 @@ task_switch(selector_t *task_sel, task_switch_type_t type)
 		/* set back link selector */
 		cpu_memorywrite_w(task_paddr, CPU_TR);
 		break;
-	
+
 	case TASK_SWITCH_IRET:
 	case TASK_SWITCH_JMP:
 		/* Nothing to do */
