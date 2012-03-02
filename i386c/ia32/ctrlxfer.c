@@ -1364,10 +1364,6 @@ IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 	}
 	SS_POP_CHECK(sp, 36);
 
-	if (new_ip > 0xffff) {
-		EXCEPTION(GP_EXCEPTION, 0);
-	}
-
 	new_sp = cpu_vmemoryread_d(CPU_SS_INDEX, sp + 12);
 	segsel[CPU_SS_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 16);
 	segsel[CPU_ES_INDEX] = cpu_vmemoryread_w(CPU_SS_INDEX, sp + 20);
@@ -1381,7 +1377,7 @@ IRET_pm_return_to_vm86(UINT16 new_cs, UINT32 new_ip, UINT32 new_flags)
 	}
 
 	CPU_ESP = new_sp;
-	CPU_EIP = new_ip;
+	CPU_EIP = new_ip & 0xffff;
 
 	/* to VM86 mode */
 	set_eflags(new_flags, IOPL_FLAG|I_FLAG|VM_FLAG|RF_FLAG);
