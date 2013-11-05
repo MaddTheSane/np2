@@ -1,5 +1,12 @@
+/*!
+ * @file	revcideo.cpp
+ * @brief	録画クラスの宣言およびインターフェイスの定義をします
+ */
+
 #include "compiler.h"
-#include <vfw.h>
+
+#if defined(SUPPORT_RECVIDEO)
+
 #include "recvideo.h"
 #include "pccore.h"
 #include "iocore.h"
@@ -10,250 +17,267 @@
 
 #pragma comment(lib, "vfw32.lib")
 
-#define	LENG			10
 #define	VIDEO_WIDTH		640
 #define	VIDEO_HEIGHT	400
 #define	VIDEO_FPS		30
 
-struct tagRecVideo
-{
-	COMPVARS cv;
-	BOOL bDirty;
-	int nStep;
-	int nNumber;
-	UINT8 *pWork8;
-	UINT8 *pWork24;
-	struct
-	{
-		PAVIFILE pAvi;
-		PAVISTREAM pStm;
-		PAVISTREAM pStmTmp;
-		UINT uFrame;
-		DWORD dwSize;
-	} f;
-	BITMAPINFOHEADER bmih;
-	TCHAR szPath[MAX_PATH];
-};
+RecodeVideo RecodeVideo::sm_instance;
 
-typedef struct tagRecVideo		RECVIDEO;
-typedef struct tagRecVideo		*PRECVIDEO;
-
-
-static BOOL s_bEnable;
-static RECVIDEO s_rec;
-
+/**
+ * ヘッダー定義
+ */
 static const BITMAPINFOHEADER s_bmih =
-		{
-			sizeof(BITMAPINFOHEADER),
-			VIDEO_WIDTH, VIDEO_HEIGHT, 1, 24, BI_RGB,
-			VIDEO_WIDTH * VIDEO_HEIGHT * 3, 0, 0, 0, 0
-		};
-
+{
+	sizeof(BITMAPINFOHEADER),
+	VIDEO_WIDTH, VIDEO_HEIGHT, 1, 24, BI_RGB,
+	VIDEO_WIDTH * VIDEO_HEIGHT * 3, 0, 0, 0, 0
+};
 
 // ----
 
-static BRESULT openFile(PRECVIDEO pRec)
+/**
+ * コンストラクタ
+ */
+RecodeVideo::RecodeVideo()
+	: m_bEnable(false)
+	, m_bDirty(false)
+	, m_nNumber(0)
+	, m_nStep(0)
+	, m_pWork8(NULL)
+	, m_pWork24(NULL)
+	, m_pAvi(NULL)
+	, m_pStm(NULL)
+	, m_pStmTmp(NULL)
+	, m_nFrame(0)
+	, m_dwSize(0)
 {
-	AVICOMPRESSOPTIONS opt;
-	AVISTREAMINFO si =
-		{
-			streamtypeVIDEO,
-			comptypeDIB,
-			0,0,0,0,
-			1, VIDEO_FPS,
-			0, (DWORD)-1, 0, 0, (DWORD)-1, 0,
-			{0, 0, VIDEO_WIDTH, VIDEO_HEIGHT}, 0, 0, _T("Video #1")};
+	::AVIFileInit();
 
-	si.fccHandler = pRec->cv.fccHandler;
-	opt.fccType = streamtypeVIDEO;
-	opt.fccHandler = pRec->cv.fccHandler;
-	opt.dwKeyFrameEvery = pRec->cv.lKey;
-	opt.dwQuality = pRec->cv.lQ;
-	opt.dwBytesPerSecond = pRec->cv.lDataRate;
-	opt.dwFlags = (pRec->cv.lDataRate > 0) ? AVICOMPRESSF_DATARATE : 0;
-	opt.dwFlags |= (pRec->cv.lKey > 0) ? AVICOMPRESSF_KEYFRAMES : 0;
-	opt.lpFormat = NULL;
-	opt.cbFormat = 0;
-	opt.lpParms = pRec->cv.lpState;
-	opt.cbParms = pRec->cv.cbState;
-	opt.dwInterleaveEvery = 0;
+	ZeroMemory(m_szPath, sizeof(m_szPath));
+	ZeroMemory(&m_bmih, sizeof(m_bmih));
+	ZeroMemory(&m_cv, sizeof(m_cv));
+}
+
+/**
+ * デストラクタ
+ */
+RecodeVideo::~RecodeVideo()
+{
+	Close();
+	::AVIFileExit();
+}
+
+/**
+ * ファイル オープン
+ * @retval true 成功
+ * @retval false 失敗
+ */
+bool RecodeVideo::OpenFile()
+{
+	TCHAR szExt[16];
+	::wsprintf(szExt, _T("_%04d.avi"), m_nNumber);
 
 	TCHAR szPath[MAX_PATH];
-	file_cpyname(szPath, pRec->szPath, NELEMENTS(szPath));
+	::file_cpyname(szPath, m_szPath, NELEMENTS(szPath));
+	::file_catname(szPath, szExt, NELEMENTS(szPath));
 
-	TCHAR szExt[16];
-	wsprintf(szExt, _T("_%04d.avi"), pRec->nNumber);
-	file_catname(szPath, szExt, NELEMENTS(szPath));
-
-	if (AVIFileOpen(&pRec->f.pAvi, szPath,
-					OF_CREATE | OF_WRITE | OF_SHARE_DENY_NONE,NULL) != 0)
+	if (::AVIFileOpen(&m_pAvi, szPath, OF_CREATE | OF_WRITE | OF_SHARE_DENY_NONE, NULL) != 0)
 	{
-		return FAILURE;
-	}
-	if (AVIFileCreateStream(pRec->f.pAvi, &pRec->f.pStm, &si) != 0)
-	{
-		return FAILURE;
-	}
-	if (AVIMakeCompressedStream(&pRec->f.pStmTmp, pRec->f.pStm, &opt, NULL)
-															!= AVIERR_OK)
-	{
-		return FAILURE;
-	}
-	if (AVIStreamSetFormat(pRec->f.pStmTmp, 0,
-							&pRec->bmih, sizeof(pRec->bmih)) != 0)
-	{
-		return FAILURE;
+		return false;
 	}
 
-	s_bEnable = TRUE;
+	AVISTREAMINFO si =
+	{
+		streamtypeVIDEO,
+		comptypeDIB,
+		0, 0, 0, 0,
+		1, VIDEO_FPS,
+		0, (DWORD)-1, 0, 0, (DWORD)-1, 0,
+		{0, 0, VIDEO_WIDTH, VIDEO_HEIGHT}, 0, 0, _T("Video #1")
+	};
+	si.fccHandler = m_cv.fccHandler;
 
-	pRec->bDirty = TRUE;
-	pRec->nNumber++;
+	if (::AVIFileCreateStream(m_pAvi, &m_pStm, &si) != 0)
+	{
+		return false;
+	}
 
-	return SUCCESS;
+	AVICOMPRESSOPTIONS opt;
+	opt.fccType = streamtypeVIDEO;
+	opt.fccHandler = m_cv.fccHandler;
+	opt.dwKeyFrameEvery = m_cv.lKey;
+	opt.dwQuality = m_cv.lQ;
+	opt.dwBytesPerSecond = m_cv.lDataRate;
+	opt.dwFlags = (m_cv.lDataRate > 0) ? AVICOMPRESSF_DATARATE : 0;
+	opt.dwFlags |= (m_cv.lKey > 0) ? AVICOMPRESSF_KEYFRAMES : 0;
+	opt.lpFormat = NULL;
+	opt.cbFormat = 0;
+	opt.lpParms = m_cv.lpState;
+	opt.cbParms = m_cv.cbState;
+	opt.dwInterleaveEvery = 0;
+	if (::AVIMakeCompressedStream(&m_pStmTmp, m_pStm, &opt, NULL) != AVIERR_OK)
+	{
+		return false;
+	}
+	if (::AVIStreamSetFormat(m_pStmTmp, 0, &m_bmih, sizeof(m_bmih)) != 0)
+	{
+		return false;
+	}
+
+	m_bEnable = true;
+
+	m_bDirty = true;
+	m_nNumber++;
+
+	m_nFrame = 0;
+	m_dwSize = 0;
+
+	return true;
 }
 
-static void closeFile(PRECVIDEO pRec)
+/**
+ * ファイル クローズ
+ */
+void RecodeVideo::CloseFile()
 {
-	s_bEnable = FALSE;
+	m_bEnable = false;
 
-	if (pRec->f.pStmTmp)
+	if (m_pStmTmp)
 	{
-		AVIStreamRelease(pRec->f.pStmTmp);
+		::AVIStreamRelease(m_pStmTmp);
+		m_pStmTmp = NULL;
 	}
-	if (pRec->f.pStm)
+	if (m_pStm)
 	{
-		AVIStreamRelease(pRec->f.pStm);
+		::AVIStreamRelease(m_pStm);
+		m_pStm = NULL;
 	}
-	if (pRec->f.pAvi)
+	if (m_pAvi)
 	{
-		AVIFileRelease(pRec->f.pAvi);
+		::AVIFileRelease(m_pAvi);
+		m_pAvi = NULL;
 	}
-	ZeroMemory(&pRec->f, sizeof(pRec->f));
 }
 
-static BRESULT open(PRECVIDEO pRec, LPCTSTR lpcszFilename)
+/**
+ * 開く
+ * @param[in] lpFilename ファイル名
+ * @param[in] hWnd ウィンドウ
+ * @retval true 成功
+ * @retval false 失敗
+ */
+bool RecodeVideo::Open(LPCTSTR lpFilename, HWND hWnd)
 {
-	ZeroMemory(pRec, sizeof(*pRec));
+	ZeroMemory(&m_cv, sizeof(m_cv));
+	m_cv.cbSize = sizeof(m_cv);
+	m_cv.dwFlags = ICMF_COMPVARS_VALID;
+	m_cv.fccHandler = comptypeDIB;
+	m_cv.lQ = ICQUALITY_DEFAULT;
 
-	pRec->bmih = s_bmih;
-
-	pRec->cv.cbSize = sizeof(pRec->cv);
-	pRec->cv.dwFlags = ICMF_COMPVARS_VALID;
-	pRec->cv.fccHandler = comptypeDIB;
-	pRec->cv.lQ = ICQUALITY_DEFAULT;
-	if (!ICCompressorChoose(NULL,
-							ICMF_CHOOSE_DATARATE | ICMF_CHOOSE_KEYFRAME,
-							&pRec->bmih, NULL, &pRec->cv, NULL))
+	m_bmih = s_bmih;
+	if (!::ICCompressorChoose(hWnd, ICMF_CHOOSE_DATARATE | ICMF_CHOOSE_KEYFRAME, &m_bmih, NULL, &m_cv, NULL))
 	{
-		return FAILURE;
+		return false;
 	}
 
-	pRec->pWork8 = (UINT8 *)(malloc(SURFACE_WIDTH * SURFACE_HEIGHT));
-	if (!pRec->pWork8)
-	{
-		return FAILURE;
-	}
-	ZeroMemory(pRec->pWork8, SURFACE_WIDTH * SURFACE_HEIGHT);
+	m_pWork8 = new UINT8 [SURFACE_WIDTH * SURFACE_HEIGHT];
+	ZeroMemory(m_pWork8, SURFACE_WIDTH * SURFACE_HEIGHT);
 
-	pRec->pWork24 = (UINT8 *)(malloc(VIDEO_WIDTH * VIDEO_HEIGHT * 3));
-	if (!pRec->pWork24)
-	{
-		return FAILURE;
-	}
-	ZeroMemory(pRec->pWork24, VIDEO_WIDTH * VIDEO_HEIGHT * 3);
+	m_pWork24 = new UINT8 [VIDEO_WIDTH * VIDEO_HEIGHT * 3];
+	ZeroMemory(m_pWork24, VIDEO_WIDTH * VIDEO_HEIGHT * 3);
 
-	file_cpyname(pRec->szPath, lpcszFilename, NELEMENTS(pRec->szPath));
-	file_cutext(pRec->szPath);
+	::file_cpyname(m_szPath, lpFilename, NELEMENTS(m_szPath));
+	::file_cutext(m_szPath);
 
-	return openFile(pRec);
+	m_nStep = 0;
+
+	return OpenFile();
 }
 
-static void close(PRECVIDEO pRec)
+/**
+ * 閉じる
+ */
+void RecodeVideo::Close()
 {
-	closeFile(pRec);
+	CloseFile();
 
-	ICCompressorFree(&pRec->cv);
+	::ICCompressorFree(&m_cv);
+	ZeroMemory(&m_cv, sizeof(m_cv));
 
-	if (pRec->pWork8)
+	if (m_pWork8)
 	{
-		free(pRec->pWork8);
+		delete[] m_pWork8;
+		m_pWork8 = NULL;
 	}
-	if (pRec->pWork24)
+	if (m_pWork24)
 	{
-		free(pRec->pWork24);
+		delete[] m_pWork24;
+		m_pWork24 = NULL;
 	}
-
-	ZeroMemory(pRec, sizeof(*pRec));
 }
 
-static void write(PRECVIDEO pRec)
+/**
+ * フレームを書き込む
+ */
+void RecodeVideo::Write()
 {
-	UINT8	*pBuffer;
-	UINT	uBufferSize;
-	DWORD	dwFlags;
-
-	while(pRec->nStep >= 0)
+	if (!m_bEnable)
 	{
-		pBuffer = pRec->pWork24;
-		uBufferSize = 0;
-		dwFlags = 0;
-		if (pRec->bDirty)
+		return;
+	}
+
+	while (m_nStep >= 0)
+	{
+		UINT8* pBuffer = m_pWork24;
+		UINT nBufferSize = 0;
+		DWORD dwFlags = 0;
+		if (m_bDirty)
 		{
-			uBufferSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3;
+			nBufferSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3;
 			dwFlags = AVIIF_KEYFRAME;
 		}
 		LONG lSize = 0;
-		if (AVIStreamWrite(pRec->f.pStmTmp, pRec->f.uFrame, 1,
-								pBuffer, uBufferSize, dwFlags,
-								NULL, &lSize) != 0)
+		if (::AVIStreamWrite(m_pStmTmp, m_nFrame, 1, pBuffer, nBufferSize, dwFlags, NULL, &lSize) != 0)
 		{
 			break;
 		}
-		pRec->bDirty = FALSE;
-		pRec->nStep -= 21052600 / (8 * VIDEO_FPS);
-		pRec->f.uFrame++;
-		pRec->f.dwSize += lSize;
-
-		if (pRec->f.dwSize >= 1024 * 1024 * 1024)
+		m_bDirty = false;
+		m_nStep -= 21052600 / (8 * VIDEO_FPS);
+		m_nFrame++;
+		m_dwSize += lSize;
+		if (m_dwSize >= 1024 * 1024 * 1024)
 		{
-			closeFile(pRec);
-			openFile(pRec);
+			CloseFile();
+			OpenFile();
 		}
 	}
-	pRec->nStep += 106 * 440;
+	m_nStep += 106 * 440;
 }
-
-
 
 // ----
 
-static void screenmix1(UINT8 *dest, const UINT8 *src1, const UINT8 *src2)
+static void screenmix1(UINT8* dest, const UINT8* src1, const UINT8* src2)
 {
-	int		i;
-
-	for (i=0; i<(SURFACE_WIDTH * SURFACE_HEIGHT); i++)
+	for (int i = 0; i < (SURFACE_WIDTH * SURFACE_HEIGHT); i++)
 	{
 		dest[i] = src1[i] + src2[i] + NP2PAL_GRPH;
 	}
 }
 
-static void screenmix2(UINT8 *dest, const UINT8 *src1, const UINT8 *src2)
+static void screenmix2(UINT8* dest, const UINT8* src1, const UINT8* src2)
 {
-	int		x, y;
-
-	for (y=0; y<(SURFACE_HEIGHT/2); y++)
+	for (int y = 0; y < (SURFACE_HEIGHT / 2); y++)
 	{
-		for (x=0; x<SURFACE_WIDTH; x++)
+		for (int x1 = 0; x1 < SURFACE_WIDTH; x1++)
 		{
-			dest[x] = src1[x] + src2[x] + NP2PAL_GRPH;
+			dest[x1] = src1[x1] + src2[x1] + NP2PAL_GRPH;
 		}
 		dest += SURFACE_WIDTH;
 		src1 += SURFACE_WIDTH;
 		src2 += SURFACE_WIDTH;
-		for (x=0; x<SURFACE_WIDTH; x++)
+		for (int x2 = 0; x2 < SURFACE_WIDTH; x2++)
 		{
-			dest[x] = (src1[x] >> 4) + NP2PAL_TEXT;
+			dest[x2] = (src1[x2] >> 4) + NP2PAL_TEXT;
 		}
 		dest += SURFACE_WIDTH;
 		src1 += SURFACE_WIDTH;
@@ -261,18 +285,15 @@ static void screenmix2(UINT8 *dest, const UINT8 *src1, const UINT8 *src2)
 	}
 }
 
-static void screenmix3(UINT8 *dest, const UINT8 *src1, const UINT8 *src2)
+static void screenmix3(UINT8* dest, const UINT8* src1, const UINT8* src2)
 {
-	UINT8	c;
-	int		x, y;
-
-	for (y=0; y<(SURFACE_HEIGHT/2); y++)
+	for (int y = 0; y < (SURFACE_HEIGHT / 2); y++)
 	{
 		// dest == src1, dest == src2 の時があるので…
-		for (x=0; x<SURFACE_WIDTH; x++)
+		for (int x = 0; x < SURFACE_WIDTH; x++)
 		{
-			c = (src1[x + SURFACE_WIDTH]) >> 4;
-			if (!c)
+			UINT8 c = (src1[x + SURFACE_WIDTH]) >> 4;
+			if (c == 0)
 			{
 				c = src2[x] + NP2PAL_SKIP;
 			}
@@ -285,21 +306,17 @@ static void screenmix3(UINT8 *dest, const UINT8 *src1, const UINT8 *src2)
 	}
 }
 
-static void screenmix(PRECVIDEO pRec)
+/**
+ * フレームを更新
+ */
+void RecodeVideo::Update()
 {
-	void	(*fnMix)(UINT8 *dest, const UINT8 *src1, const UINT8 *src2);
-	UINT8	*p;
-	UINT8	*q;
-	int		nWidth;
-	int		nHeight;
-	int		y;
-	UINT8	*r;
-	int		x;
-	RGB32	*pPal;
+	if (!m_bEnable)
+	{
+		return;
+	}
 
-	ZeroMemory(pRec->pWork8, SURFACE_WIDTH * SURFACE_HEIGHT);
-	fnMix = NULL;
-
+	void (*fnMix)(UINT8 *dest, const UINT8* src1, const UINT8* src2) = NULL;
 	if (!(gdc.mode1 & 0x10))
 	{
 		fnMix = screenmix1;
@@ -312,8 +329,10 @@ static void screenmix(PRECVIDEO pRec)
 	{
 		fnMix = screenmix3;
 	}
-	p = pRec->pWork8;
-	q = pRec->pWork8;
+
+	ZeroMemory(m_pWork8, SURFACE_WIDTH * SURFACE_HEIGHT);
+	UINT8* p = m_pWork8;
+	UINT8* q = m_pWork8;
 	if (gdc.mode1 & 0x80)
 	{
 		if (gdcs.textdisp & 0x80)
@@ -325,22 +344,19 @@ static void screenmix(PRECVIDEO pRec)
 			q = np2_vram[gdcs.disp];
 		}
 	}
-	(*fnMix)(pRec->pWork8, p, q);
+	(*fnMix)(m_pWork8, p, q);
 
-	nWidth = dsync.scrnxmax;
-	nHeight = dsync.scrnymax;
-
-	nWidth = min(nWidth, VIDEO_WIDTH);
-	nHeight = min(nHeight, VIDEO_HEIGHT);
-	p = pRec->pWork8;
-	q = pRec->pWork24 + (VIDEO_WIDTH * nHeight * 3);
-	for (y=0; y<nHeight; y++)
+	const int nWidth = min(dsync.scrnxmax, VIDEO_WIDTH);
+	const int nHeight = min(dsync.scrnymax, VIDEO_HEIGHT);
+	p = m_pWork8;
+	q = m_pWork24 + (VIDEO_WIDTH * nHeight * 3);
+	for (int y = 0; y < nHeight; y++)
 	{
 		q -= VIDEO_WIDTH * 3;
-		r = q;
-		for (x=0; x<nWidth; x++)
+		UINT8* r = q;
+		for (int x = 0; x < nWidth; x++)
 		{
-			pPal = np2_pal32 + p[x];
+			const RGB32* pPal = np2_pal32 + p[x];
 			r[0] = pPal->p.b;
 			r[1] = pPal->p.g;
 			r[2] = pPal->p.r;
@@ -348,47 +364,7 @@ static void screenmix(PRECVIDEO pRec)
 		}
 		p += SURFACE_WIDTH;
 	}
-	pRec->bDirty = TRUE;
+	m_bDirty = true;
 }
 
-
-
-// ----
-
-void recvideo_initialize(void)
-{
-	AVIFileInit();
-}
-
-void recvideo_deinitialize(void)
-{
-	close(&s_rec);
-	AVIFileExit();
-}
-
-void recvideo_open(LPCTSTR lpcszFilename)
-{
-	open(&s_rec, lpcszFilename);
-}
-
-void recvideo_close(void)
-{
-	close(&s_rec);
-}
-
-void recvideo_write(void)
-{
-	if (s_bEnable)
-	{
-		write(&s_rec);
-	}
-}
-
-void recvideo_update(void)
-{
-	if (s_bEnable)
-	{
-		screenmix(&s_rec);
-	}
-}
-
+#endif	// defined(SUPPORT_RECVIDEO)

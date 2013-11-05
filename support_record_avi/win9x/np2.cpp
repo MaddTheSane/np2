@@ -58,9 +58,7 @@
 #if defined(SUPPORT_DCLOCK)
 #include "dclock.h"
 #endif
-#if defined(SUPPORT_RECVIDEO)
 #include "recvideo.h"
-#endif defined(SUPPORT_RECVIDEO)
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -1626,9 +1624,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
 						NULL, NULL, g_hInstance, NULL);
 	g_hWndMain = hWnd;
-#if defined(SUPPORT_RECVIDEO)
-	recvideo_initialize();
-#endif	// defined(SUPPORT_RECVIDEO)
 	scrnmng_initialize();
 
 	xmenu_setroltate(0);
@@ -1776,9 +1771,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		}
 	}
 
-#if defined(SUPPORT_RECVIDEO)
 	recvideo_open(_T("np2.avi"));
-#endif	// defined(SUPPORT_RECVIDEO)
 
 	while(1) {
 		if (!np2stopemulate) {
@@ -1798,9 +1791,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 					joymng_sync();
 					mousemng_sync();
 					pccore_exec(framecnt == 0);
-#if defined(SUPPORT_RECVIDEO)
 					recvideo_write();
-#endif	// defined(SUPPORT_RECVIDEO)
 #if defined(SUPPORT_DCLOCK)
 					dclock_callback();
 #endif
@@ -1822,9 +1813,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 						joymng_sync();
 						mousemng_sync();
 						pccore_exec(framecnt == 0);
-#if defined(SUPPORT_RECVIDEO)
 						recvideo_write();
-#endif	// defined(SUPPORT_RECVIDEO)
 #if defined(SUPPORT_DCLOCK)
 						dclock_callback();
 #endif
@@ -1840,9 +1829,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 						joymng_sync();
 						mousemng_sync();
 						pccore_exec(framecnt == 0);
-#if defined(SUPPORT_RECVIDEO)
 						recvideo_write();
-#endif	// defined(SUPPORT_RECVIDEO)
 #if defined(SUPPORT_DCLOCK)
 						dclock_callback();
 #endif
@@ -1911,9 +1898,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	soundmng_deinitialize();
 	scrnmng_destroy();
-#if defined(SUPPORT_RECVIDEO)
-	recvideo_deinitialize();
-#endif	// defined(SUPPORT_RECVIDEO)
+	recvideo_close();
 
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
 		initsave();

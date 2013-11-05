@@ -26,9 +26,7 @@
 #if defined(SUPPORT_DCLOCK)
 #include "dclock.h"
 #endif
-#if defined(SUPPORT_RECVIDEO)
 #include "recvideo.h"
-#endif defined(SUPPORT_RECVIDEO)
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "ddraw.lib")
@@ -814,10 +812,7 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 
 	ddraw.backsurf->Unlock(NULL);
 	scrnmng_update();
-#if defined(SUPPORT_RECVIDEO)
 	recvideo_update();
-#endif defined(SUPPORT_RECVIDEO)
-
 }
 
 void scrnmng_update(void) {
