@@ -707,7 +707,7 @@
 					RelativePath="..\CBUS\ATAPICMD.C">
 				</File>
 				<File
-					RelativePath="BOARD118.C">
+					RelativePath="BOARD118.CPP">
 				</File>
 				<File
 					RelativePath="..\CBUS\BOARD14.C">
