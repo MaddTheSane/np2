@@ -1433,33 +1433,7 @@ SOURCE=.\COMMNG.CPP
 # Begin Source File
 
 SOURCE=.\COMPILER.CPP
-
-!IF  "$(CFG)" == "np2 - Win32 Release"
-
 # ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Release NT"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 WaveRec"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trap"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
-
-# ADD CPP /Yc"compiler.h"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -1702,6 +1676,10 @@ SOURCE=.\SYSMNG.CPP
 # Begin Source File
 
 SOURCE=.\TASKMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\tickcounter.cpp
 # End Source File
 # Begin Source File
 
