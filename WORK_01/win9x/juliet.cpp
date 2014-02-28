@@ -1,70 +1,14 @@
 /**
  * @file	juliet.cpp
- * @brief	ROMEO アクセス クラス
+ * @brief	ROMEO アクセス クラスの動作の定義を行います
  */
 
 #include	"compiler.h"
-
-#if defined(SUPPORT_ROMEO)
-
 #include	"romeo.h"
 #include	"juliet.h"
 
-/**
- * @brief ROMEO アクセス クラス
- */
-class CJuliet
-{
-public:
-	static CJuliet* GetInstance();
-	CJuliet();
-	bool Initialize();
-	void Deinitialize();
-	bool IsEnabled() const;
-	bool IsBusy() const;
-	void Reset() const;
-	void WriteRegister(UINT nAddr, UINT8 cData);
-	void Mute(bool bMute) const;
-
-private:
-	//! @brief ロード関数
-	struct ProcItem
-	{
-		LPCSTR lpSymbol;		//!< 関数名
-		size_t nOffset;			//!< オフセット
-	};
-
-	static CJuliet sm_instance;												//!< 唯一のインスタンスです
-
-	HMODULE m_hModule;														//!< モジュール
-	ULONG (WINAPI * m_fnRead32)(ULONG ulPciAddress, ULONG ulRegAddress);	//!< コンフィグレーション読み取り関数
-	VOID (WINAPI * m_fnOut8)(ULONG ulAddress, UCHAR ucParam);				//!< outp 関数
-	VOID (WINAPI * m_fnOut32)(ULONG ulAddress, ULONG ulParam);				//!< outpd 関数
-	UCHAR (WINAPI * m_fnIn8)(ULONG ulAddress);								//!< inp 関数
-	bool m_bOpna;															//!< OPNA 有効フラグ
-	UCHAR m_ucIrq;															//!< ROMEO IRQ
-	UINT8 m_cPsgMix;														//!< PSG ミキサー
-	ULONG m_ulAddress;														//!< ROMEO ベース アドレス
-	UINT8 m_cAlgorithm[8];													//!< アルゴリズム テーブル
-	UINT8 m_cTtl[8 * 4];													//!< TTL テーブル
-
-	void Clear();
-	ULONG SearchRomeo() const;
-	void WriteRegisterInner(UINT nAddr, UINT8 cData) const;
-	void SetVolume(UINT nChannel, int nVolume) const;
-};
-
 //! 唯一のインスタンスです
 CJuliet CJuliet::sm_instance;
-
-/**
- * インスタンスを得る
- * @return インスタンス
- */
-inline CJuliet* CJuliet::GetInstance()
-{
-	return &sm_instance;
-}
 
 /**
  * コンストラクタ
@@ -178,16 +122,6 @@ ULONG CJuliet::SearchRomeo() const
 		}
 	}
 	return static_cast<ULONG>(-1);
-}
-
-/**
- * ROMEO は有効?
- * @retval true 有効
- * @retval false 無効
- */
-bool CJuliet::IsEnabled() const
-{
-	return (m_hModule != NULL);
 }
 
 /**
@@ -318,47 +252,49 @@ void CJuliet::SetVolume(UINT nChannel, int nVolume) const
 	} while (cMask != 0);
 }
 
-
-// ----
-
-BOOL juliet_initialize(void)
+/**
+ * レジスタをリストアする
+ * @param[in] data データ
+ * @param[in] bOpna OPNA レジスタもリストアする
+ */
+void CJuliet::Restore(const UINT8* data, bool bOpna)
 {
-	return CJuliet::GetInstance()->Initialize() ? SUCCESS : FAILURE;
-}
+	for (UINT i = 0x30; i < 0xa0; i++)
+	{
+		WriteRegister(i, data[i]);
+	}
+	for (UINT ch = 0; ch < 3; ch++)
+	{
+		WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
+		WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
+		WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
+		WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
+	}
 
-void juliet_deinitialize(void)
-{
-	CJuliet::GetInstance()->Deinitialize();
-}
+	if (bOpna)
+	{
+		for (UINT i = 0x130; i < 0x1a0; i++)
+		{
+			WriteRegister(i, data[i]);
+		}
+		for (UINT ch = 0; ch < 3; ch++)
+		{
+			WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
+			WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
+			WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
+			WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
+		}
+		WriteRegister(0x11, data[0x11]);
+		WriteRegister(0x18, data[0x18]);
+		WriteRegister(0x19, data[0x19]);
+		WriteRegister(0x1a, data[0x1a]);
+		WriteRegister(0x1b, data[0x1b]);
+		WriteRegister(0x1c, data[0x1c]);
+		WriteRegister(0x1d, data[0x1d]);
+	}
 
-void juliet_YMF288Reset(void)
-{
-	CJuliet::GetInstance()->Reset();
+	for (UINT i = 0; i < 0x0e; i++)
+	{
+		WriteRegister(i, data[i]);
+	}
 }
-
-BOOL juliet_YMF288IsEnable(void)
-{
-	return CJuliet::GetInstance()->IsEnabled();
-}
-
-BOOL juliet_YMF288IsBusy(void)
-{
-	return CJuliet::GetInstance()->IsBusy();
-}
-
-void juliet_YMF288A(UINT addr, UINT8 data)
-{
-	CJuliet::GetInstance()->WriteRegister(addr, data);
-}
-
-void juliet_YMF288B(UINT addr, UINT8 data)
-{
-	CJuliet::GetInstance()->WriteRegister(addr + 0x100, data);
-}
-
-void juliet_YMF288Enable(BOOL enable)
-{
-	CJuliet::GetInstance()->Mute(!enable);
-}
-
-#endif
