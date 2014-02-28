@@ -16,6 +16,7 @@
 class CJuliet
 {
 public:
+	static CJuliet* GetInstance();
 	CJuliet();
 	bool Initialize();
 	void Deinitialize();
@@ -25,7 +26,16 @@ public:
 	void WriteRegister(UINT nAddr, UINT8 cData);
 	void Mute(bool bMute) const;
 
-public:
+private:
+	//! @brief ロード関数
+	struct ProcItem
+	{
+		LPCSTR lpSymbol;		//!< 関数名
+		size_t nOffset;			//!< オフセット
+	};
+
+	static CJuliet sm_instance;												//!< 唯一のインスタンスです
+
 	HMODULE m_hModule;														//!< モジュール
 	ULONG (WINAPI * m_fnRead32)(ULONG ulPciAddress, ULONG ulRegAddress);	//!< コンフィグレーション読み取り関数
 	VOID (WINAPI * m_fnOut8)(ULONG ulAddress, UCHAR ucParam);				//!< outp 関数
@@ -44,24 +54,17 @@ public:
 	void SetVolume(UINT nChannel, int nVolume) const;
 };
 
-//! アルゴリズム スロット マスク
-static const UINT8 s_opmask[] = {0x08, 0x08, 0x08, 0x08, 0x0c, 0x0e, 0x0e, 0x0f};
+//! 唯一のインスタンスです
+CJuliet CJuliet::sm_instance;
 
-//! @brief ロード関数
-struct ProcItem
+/**
+ * インスタンスを得る
+ * @return インスタンス
+ */
+inline CJuliet* CJuliet::GetInstance()
 {
-	LPCSTR lpSymbol;		//!< 関数名
-	size_t nOffset;			//!< オフセット
-};
-
-//! ロード関数リスト
-static const ProcItem s_dllProc[] =
-{
-	{FN_PCICFGREAD32,	offsetof(CJuliet, m_fnRead32)},
-	{FN_PCIMEMWR8,		offsetof(CJuliet, m_fnOut8)},
-	{FN_PCIMEMWR32,		offsetof(CJuliet, m_fnOut32)},
-	{FN_PCIMEMRD8,		offsetof(CJuliet, m_fnIn8)},
-};
+	return &sm_instance;
+}
 
 /**
  * コンストラクタ
@@ -95,6 +98,15 @@ bool CJuliet::Initialize()
 	{
 		return false;
 	}
+
+	//! ロード関数リスト
+	static const ProcItem s_dllProc[] =
+	{
+		{FN_PCICFGREAD32,	offsetof(CJuliet, m_fnRead32)},
+		{FN_PCIMEMWR8,		offsetof(CJuliet, m_fnOut8)},
+		{FN_PCIMEMWR32,		offsetof(CJuliet, m_fnOut32)},
+		{FN_PCIMEMRD8,		offsetof(CJuliet, m_fnIn8)},
+	};
 
 	for (size_t i = 0; i < NELEMENTS(s_dllProc); i++)
 	{
@@ -279,6 +291,9 @@ void CJuliet::WriteRegisterInner(UINT nAddr, UINT8 cData) const
 void CJuliet::SetVolume(UINT nChannel, int nVolume) const
 {
 	const UINT nBaseReg = (nChannel & 4) ? 0x140 : 0x40;
+
+	//! アルゴリズム スロット マスク
+	static const UINT8 s_opmask[] = {0x08, 0x08, 0x08, 0x08, 0x0c, 0x0e, 0x0e, 0x0f};
 	UINT8 cMask = s_opmask[m_cAlgorithm[nChannel & 7] & 7];
 	const UINT8* pTtl = m_cTtl + ((nChannel & 4) << 2);
 
@@ -306,46 +321,44 @@ void CJuliet::SetVolume(UINT nChannel, int nVolume) const
 
 // ----
 
-static CJuliet romeo;
-
 BOOL juliet_initialize(void)
 {
-	return romeo.Initialize() ? SUCCESS : FAILURE;
+	return CJuliet::GetInstance()->Initialize() ? SUCCESS : FAILURE;
 }
 
 void juliet_deinitialize(void)
 {
-	romeo.Deinitialize();
+	CJuliet::GetInstance()->Deinitialize();
 }
 
 void juliet_YMF288Reset(void)
 {
-	romeo.Reset();
+	CJuliet::GetInstance()->Reset();
 }
 
 BOOL juliet_YMF288IsEnable(void)
 {
-	return romeo.IsEnabled();
+	return CJuliet::GetInstance()->IsEnabled();
 }
 
 BOOL juliet_YMF288IsBusy(void)
 {
-	return romeo.IsBusy();
+	return CJuliet::GetInstance()->IsBusy();
 }
 
 void juliet_YMF288A(UINT addr, UINT8 data)
 {
-	romeo.WriteRegister(addr, data);
+	CJuliet::GetInstance()->WriteRegister(addr, data);
 }
 
 void juliet_YMF288B(UINT addr, UINT8 data)
 {
-	romeo.WriteRegister(addr + 0x100, data);
+	CJuliet::GetInstance()->WriteRegister(addr + 0x100, data);
 }
 
 void juliet_YMF288Enable(BOOL enable)
 {
-	romeo.Mute(!enable);
+	CJuliet::GetInstance()->Mute(!enable);
 }
 
 #endif
