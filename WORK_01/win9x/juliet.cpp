@@ -23,7 +23,6 @@ public:
 	bool IsBusy() const;
 	void Reset() const;
 	void WriteRegister(UINT nAddr, UINT8 cData);
-	void WriteExtendRegister(UINT nAddr, UINT8 cData);
 	void Mute(bool bMute) const;
 
 public:
@@ -41,8 +40,7 @@ public:
 
 	void Clear();
 	ULONG SearchRomeo() const;
-	void WriteRegisterInner(UINT8 cAddr, UINT8 cData) const;
-	void WriteExtendRegisterInner(UINT8 cAddr, UINT8 cData) const;
+	void WriteRegisterInner(UINT nAddr, UINT8 cData) const;
 	void SetVolume(UINT nChannel, int nVolume) const;
 };
 
@@ -220,40 +218,17 @@ void CJuliet::WriteRegister(UINT nAddr, UINT8 cData)
 			// psg mix
 			m_cPsgMix = cData;
 		}
-		else if ((nAddr & (~15)) == 0x40)
+		else if ((nAddr & 0xf0) == 0x40)
 		{
 			// ttl
-			m_cTtl[nAddr & 15] = cData;
+			m_cTtl[((nAddr & 0x100) >> 4) + (nAddr & 15)] = cData;
 		}
-		else if ((nAddr & (~3)) == 0xb0)
+		else if ((nAddr & 0xfc) == 0xb0)
 		{
 			// algorithm
-			m_cAlgorithm[nAddr & 3] = cData;
+			m_cAlgorithm[((nAddr & 0x100) >> 6) + (nAddr & 3)] = cData;
 		}
 		WriteRegisterInner(nAddr, cData);
-	}
-}
-
-/**
- * 拡張レジスタ書き込み
- * @param[in] nAddr アドレス
- * @param[in] cData データ
- */
-void CJuliet::WriteExtendRegister(UINT nAddr, UINT8 cData)
-{
-	if (m_bOpna)
-	{
-		if ((nAddr & (~15)) == 0x40)
-		{
-			// ttl
-			m_cTtl[0x10 + (nAddr & 15)] = cData;
-		}
-		else if ((nAddr & (~3)) == 0xb0)
-		{
-			// algorithm
-			m_cAlgorithm[4 + (nAddr & 3)] = cData;
-		}
-		WriteExtendRegisterInner(nAddr, cData);
 	}
 }
 
@@ -278,42 +253,22 @@ void CJuliet::Mute(bool bMute) const
 
 /**
  * レジスタ書き込み(内部)
- * @param[in] cAddr アドレス
+ * @param[in] nAddr アドレス
  * @param[in] cData データ
  */
-void CJuliet::WriteRegisterInner(UINT8 cAddr, UINT8 cData) const
+void CJuliet::WriteRegisterInner(UINT nAddr, UINT8 cData) const
 {
 	while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
 	{
 		::Sleep(0);
 	}
-	(*m_fnOut8)(m_ulAddress + ROMEO_YMF288ADDR1, cAddr);
+	(*m_fnOut8)(m_ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288ADDR2 : ROMEO_YMF288ADDR1), nAddr);
 
 	while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
 	{
 		::Sleep(0);
 	}
-	(*m_fnOut8)(m_ulAddress + ROMEO_YMF288DATA1, cData);
-}
-
-/**
- * 拡張レジスタ書き込み(内部)
- * @param[in] cAddr アドレス
- * @param[in] cData データ
- */
-void CJuliet::WriteExtendRegisterInner(UINT8 cAddr, UINT8 cData) const
-{
-	while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
-	{
-		::Sleep(0);
-	}
-	(*m_fnOut8)(m_ulAddress + ROMEO_YMF288ADDR2, cAddr);
-
-	while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
-	{
-		::Sleep(0);
-	}
-	(*m_fnOut8)(m_ulAddress + ROMEO_YMF288DATA2, cData);
+	(*m_fnOut8)(m_ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288DATA2 : ROMEO_YMF288DATA1), cData);
 }
 
 /**
@@ -323,9 +278,7 @@ void CJuliet::WriteExtendRegisterInner(UINT8 cAddr, UINT8 cData) const
  */
 void CJuliet::SetVolume(UINT nChannel, int nVolume) const
 {
-	// 書き込み関数
-	void (CJuliet::*fnSetReg)(UINT8 cAddr, UINT8 cData) const = (nChannel & 4) ? &CJuliet::WriteExtendRegisterInner : &CJuliet::WriteRegisterInner;
-
+	const UINT nBaseReg = (nChannel & 4) ? 0x140 : 0x40;
 	UINT8 cMask = s_opmask[m_cAlgorithm[nChannel & 7] & 7];
 	const UINT8* pTtl = m_cTtl + ((nChannel & 4) << 2);
 
@@ -343,7 +296,7 @@ void CJuliet::SetVolume(UINT nChannel, int nVolume) const
 			{
 				nTtl = 0x7f;
 			}
-			(this->*fnSetReg)(0x40 + nOffset, static_cast<UINT8>(nTtl));
+			WriteRegisterInner(nBaseReg + nOffset, static_cast<UINT8>(nTtl));
 		}
 		nOffset += 4;
 		cMask >>= 1;
@@ -387,7 +340,7 @@ void juliet_YMF288A(UINT addr, UINT8 data)
 
 void juliet_YMF288B(UINT addr, UINT8 data)
 {
-	romeo.WriteExtendRegister(addr, data);
+	romeo.WriteRegister(addr + 0x100, data);
 }
 
 void juliet_YMF288Enable(BOOL enable)
