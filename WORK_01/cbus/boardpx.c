@@ -13,7 +13,7 @@
 static void IOOUTCALL spb_o188(UINT port, REG8 dat) {
 
 	opn.addr1l = dat;
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	(void)port;
 }
 
@@ -21,7 +21,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	addr = opn.addr1l;
 //	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
@@ -61,7 +61,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
 
 	opn.addr1h = dat;
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	(void)port;
 }
 
@@ -69,7 +69,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	addr = opn.addr1h;
 //	S98_put(EXTEND2608, addr, dat);
 	opn.reg[addr + 0x100] = dat;
@@ -104,7 +104,7 @@ static REG8 IOINPCALL spb_i18a(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn.data1);
+		return(opn.reg[addr]);
 	}
 }
 
@@ -121,7 +121,7 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn.data1);
+		return(opn.reg[opn.addr1l]);
 	}
 }
 
@@ -129,7 +129,7 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 static void IOOUTCALL spb_o088(UINT port, REG8 dat) {
 
 	opn2.addr1l = dat;
-	opn2.data1 = dat;
+//	opn2.data1 = dat;
 	(void)port;
 }
 
@@ -137,7 +137,7 @@ static void IOOUTCALL spb_o08a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn2.data1 = dat;
+//	opn2.data1 = dat;
 	addr = opn2.addr1l;
 //	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
@@ -177,7 +177,7 @@ static void IOOUTCALL spb_o08a(UINT port, REG8 dat) {
 static void IOOUTCALL spb_o08c(UINT port, REG8 dat) {
 
 	opn2.addr1h = dat;
-	opn2.data1 = dat;
+//	opn2.data1 = dat;
 	(void)port;
 }
 
@@ -185,7 +185,7 @@ static void IOOUTCALL spb_o08e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
+//	opn2.data1 = dat;
 	addr = opn2.addr1h;
 //	S98_put(EXTEND2608, addr, dat);
 	opn2.reg[addr + 0x100] = dat;
@@ -220,7 +220,7 @@ static REG8 IOINPCALL spb_i08a(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn2.data1);
+		return(opn2.reg[addr]);
 	}
 }
 
@@ -238,7 +238,7 @@ static REG8 IOINPCALL spb_i08e(UINT port) {
 	else
 	{
 		(void)port;
-		return(opn2.data1);
+		return(opn2.reg[opn2.addr1l]);
 	}
 }
 
@@ -247,7 +247,7 @@ static REG8 IOINPCALL spb_i08e(UINT port) {
 static void IOOUTCALL p86_o288(UINT port, REG8 dat) {
 
 	opn3.addr1l = dat;
-	opn3.data1 = dat;
+//	opn3.data1 = dat;
 	(void)port;
 }
 
@@ -255,7 +255,7 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
+//	opn3.data1 = dat;
 	addr = opn.addr1l;
 //	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
@@ -295,7 +295,7 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 static void IOOUTCALL p86_o28c(UINT port, REG8 dat) {
 
 	opn3.addr1h = dat;
-	opn3.data1 = dat;
+//	opn3.data1 = dat;
 	(void)port;
 }
 
@@ -303,7 +303,7 @@ static void IOOUTCALL p86_o28e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn3.data1 = dat;
+//	opn3.data1 = dat;
 	addr = opn3.addr1h;
 	if (addr >= 0x100) {
 		return;
@@ -329,7 +329,7 @@ static REG8 IOINPCALL p86_i28a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr1l;
+	addr = opn3.addr1l;
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg3));
 	}
@@ -341,7 +341,7 @@ static REG8 IOINPCALL p86_i28a(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn3.data1);
+		return(opn3.reg[addr]);
 	}
 }
 
@@ -358,7 +358,7 @@ static REG8 IOINPCALL p86_i28e(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn3.data1);
+		return(opn3.reg[opn3.addr1l]);
 	}
 }
 

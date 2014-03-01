@@ -11,7 +11,7 @@
 static void IOOUTCALL spb_o188(UINT port, REG8 dat) {
 
 	opn.addr1l = dat;
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	(void)port;
 }
 
@@ -19,7 +19,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	addr = opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
@@ -59,7 +59,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
 
 	opn.addr1h = dat;
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	(void)port;
 }
 
@@ -67,7 +67,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
+//	opn.data1 = dat;
 	addr = opn.addr1h;
 	S98_put(EXTEND2608, addr, dat);
 	opn.reg[addr + 0x100] = dat;
@@ -102,7 +102,7 @@ static REG8 IOINPCALL spb_i18a(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn.data1);
+		return(opn.reg[addr]);
 	}
 }
 
@@ -119,7 +119,7 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn.data1);
+		return(opn.reg[opn.addr1l]);
 	}
 }
 

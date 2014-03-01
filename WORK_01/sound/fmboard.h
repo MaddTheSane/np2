@@ -13,7 +13,7 @@
 
 
 typedef struct {
-	UINT16	addr1l;
+	UINT8	addr1l;
 	UINT8	addr1h;
 	UINT8	data1;
 	UINT8	addr1ext;
