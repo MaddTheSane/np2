@@ -213,13 +213,13 @@ void amd98int(NEVENTITEM item) {
 
 static void IOOUTCALL amd_od8(UINT port, REG8 dat) {
 
-	opn.addr = dat;
+	opn.addr1l = dat;
 	(void)port;
 }
 
 static void IOOUTCALL amd_od9(UINT port, REG8 dat) {
 
-	opn.addr2 = dat;
+	opn.addr1h = dat;
 	(void)port;
 }
 
@@ -227,7 +227,7 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	addr = opn.addr;
+	addr = opn.addr1l;
 	if (addr < 0x0e) {
 		psggen_setreg(&psg1, addr, dat);
 	}
@@ -241,7 +241,7 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	addr = opn.addr2;
+	addr = opn.addr1h;
 	if (addr < 0x0e) {
 		psggen_setreg(&psg2, addr, dat);
 	}
@@ -289,7 +289,7 @@ static REG8 IOINPCALL amd_ida(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr;
+	addr = opn.addr1l;
 	if (addr < 0x0e) {
 		return(psggen_getreg(&psg1, addr));
 	}
@@ -304,7 +304,7 @@ static REG8 IOINPCALL amd_idb(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr2;
+	addr = opn.addr1h;
 	if (addr < 0x0e) {
 		return(psggen_getreg(&psg2, addr));
 	}

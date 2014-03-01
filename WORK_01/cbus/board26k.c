@@ -10,8 +10,8 @@
 
 static void IOOUTCALL opn_o188(UINT port, REG8 dat) {
 
-	opn.addr = dat;
-	opn.data = dat;
+	opn.addr1l = dat;
+	opn.data1 = dat;
 	(void)port;
 }
 
@@ -19,8 +19,8 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data = dat;
-	addr = opn.addr;
+	opn.data1 = dat;
+	addr = opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
@@ -59,7 +59,7 @@ static REG8 IOINPCALL opn_i18a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr;
+	addr = opn.addr1l;
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg1));
 	}
@@ -67,7 +67,7 @@ static REG8 IOINPCALL opn_i18a(UINT port) {
 		return(psggen_getreg(&psg1, addr));
 	}
 	(void)port;
-	return(opn.data);
+	return(opn.data1);
 }
 
 
