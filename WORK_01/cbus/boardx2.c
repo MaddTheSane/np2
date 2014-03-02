@@ -11,7 +11,7 @@
 
 static void IOOUTCALL opn_o088(UINT port, REG8 dat) {
 
-	opn.addr2 = dat;
+	opn.addr2l = dat;
 	opn.data2 = dat;
 	(void)port;
 }
@@ -21,7 +21,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 	UINT	addr;
 
 	opn.data2 = dat;
-	addr = opn.addr2;
+	addr = opn.addr2l;
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
 			psggen_setreg(&psg1, addr, dat);
@@ -59,7 +59,7 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr2;
+	addr = opn.addr2l;
 	if (addr == 0x0e) {
 		return(0xff);
 	}

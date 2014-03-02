@@ -15,9 +15,9 @@
 typedef struct {
 	UINT8	addr1l;
 	UINT8	addr1h;
+	UINT8	addr2l;
+	UINT8	addr2h;
 	UINT8	data1;
-	UINT8	addr1ext;
-	UINT	addr2;
 	UINT8	data2;
 	UINT16	base;
 	UINT8	adpcmmask;
