@@ -1,4 +1,6 @@
 
+#pragma once
+
 #define	_WIN32_IE	0x0200
 
 #include	<windows.h>
@@ -110,7 +112,7 @@ typedef	signed __int64		SINT64;
 #define	DMACCALL	__fastcall
 #define	IOOUTCALL	__fastcall
 #define	IOINPCALL	__fastcall
-#define	SOUNDCALL	__fastcall
+#define	SOUNDCALL	__stdcall	//こっちにして、コンパイラに任せた方が早い。
 #define	VRAMCALL	__fastcall
 #define	SCRNCALL	__fastcall
 

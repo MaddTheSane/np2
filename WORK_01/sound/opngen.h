@@ -63,11 +63,11 @@ enum {
 #define	OPM_OUTSB		(TL_BITS + 2 - 16)			// OPM output 16bit
 
 #define	SIN_ENT			(1L << SIN_BITS)
-#define	EVC_ENT			(1L << EVC_BITS)
+#define	EVC_ENT			(1L << EVC_BITS)		// 1 << 10 [bit] = 0x0200
 
-#define	EC_ATTACK		0								// ATTACK start
-#define	EC_DECAY		(EVC_ENT << ENV_BITS)			// DECAY start
-#define	EC_OFF			((2 * EVC_ENT) << ENV_BITS)		// OFF
+#define	EC_ATTACK		0								// ATTACK start = 0x0000-0000
+#define	EC_DECAY		(EVC_ENT << ENV_BITS)			// DECAY start  = 0x0200-0000
+#define	EC_OFF			((2 * EVC_ENT) << ENV_BITS)		// OFF          = 0x0400-0000
 
 #define	TL_MAX			(EVC_ENT * 2)
 
@@ -107,6 +107,7 @@ const SINT32	*release;			// release ratio
 	SINT32		env_inc_decay1;		// envelope decay1 step
 	SINT32		env_inc_decay2;		// envelope decay2 step
 	SINT32		env_inc_release;	// envelope release step
+	UINT		amon;				// AMON
 } OPNSLOT;
 
 typedef struct {
@@ -127,7 +128,9 @@ typedef struct {
 	UINT8	pan;				// pan
 	UINT8	extop;				// extendopelator-enable
 	UINT8	stereo;				// stereo-enable
-	UINT8	padding2;
+	UINT8	padding2;			//
+	UINT32	pms;				//PMS
+	UINT32	ams;				//AMS
 } OPNCH;
 
 typedef struct {
@@ -140,6 +143,9 @@ typedef struct {
 	SINT32	outdc;
 	SINT32	outdr;
 	SINT32	calcremain;
+	SINT32	lfo_freq_cnt;			// frequency count
+	SINT32	lfo_freq_inc;			// frequency step
+	UINT	lfo_enable;
 	UINT8	keyreg[OPNCH_MAX];
 } _OPNGEN, *OPNGEN;
 
@@ -151,9 +157,13 @@ typedef struct {
 	SINT32	vr_l;
 	SINT32	vr_r;
 
+	SINT32	envcurve[EVC_ENT*2 + 1];
 	SINT32	sintable[SIN_ENT];
 	SINT32	envtable[EVC_ENT];
-	SINT32	envcurve[EVC_ENT*2 + 1];
+#ifdef OPNGENX86
+	char	sinshift[SIN_ENT];
+	char	envshift[EVC_ENT];
+#endif
 } OPNCFG;
 
 

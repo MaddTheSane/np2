@@ -105,8 +105,8 @@ EM_OFF			equ		0
 section .text
 
 	extern	_opngen
-	extern	_opnch
-	extern	_opncfg
+	extern	_opnch			;FM音源の構造体
+	extern	_opncfg			
 
 	extern	_sinshift
 	extern	_envshift
@@ -119,6 +119,9 @@ ENVTABLE	equ		(_opncfg + opncfg_t.envtable)
 	global	@opngen_getpcm@12
 	global	@opngen_getpcmvr@12
 
+;===============================================================
+;		マクロ定義
+;---------------------------------------------------------------
 %macro	op_out		0
 				add		eax, [edi + slot_t.freq_cnt]
 				shr		eax, (FREQ_BITS - SIN_BITS)
@@ -138,43 +141,52 @@ ENVTABLE	equ		(_opncfg + opncfg_t.envtable)
 				cmp		eax, [edi + slot_t.env_end]
 				jae		near %1
 %2:				mov		[edi + slot_t.env_cnt], eax
-				shr		eax, ENV_BITS
+				shr		eax, ENV_BITS		; eax >> ENV_BITS
 				mov		edx, [edi + slot_t.totallevel]
 				sub		edx, [ENVCURVE + eax*4]
 %endmacro
 
 %macro	setenv		3
 %1:				mov		dl, [edi + slot_t.env_mode]
-				dec		dl
-				je		short %%setrr
-				dec		dl
-				je		short %%setd2
-				dec		dl
-				je		short %%setd1
-				dec		dl
-				jne		short %%envret
-				mov		byte [edi + slot_t.env_mode], EM_DECAY1
+				dec		dl				;
+				je		short %%setrr	;RR
+				dec		dl				;
+				je		short %%setd2	;SR
+				dec		dl				;
+				je		short %%setd1	;DR
+				dec		dl				;
+				jne		short %%envret	;
+				mov		byte [edi + slot_t.env_mode], EM_DECAY1		;AR(4)
 				mov		eax, [edi + slot_t.decaylevel]
 				mov		[edi + slot_t.env_end], eax
 				mov		eax, [edi + slot_t.env_inc_decay1]
 				mov		[edi + slot_t.env_inc], eax
 				mov		eax, EC_DECAY
 %%envret:		jmp		near %2
-%%setd1:		mov		byte [edi + slot_t.env_mode], EM_DECAY2
+%%setd1:		mov		byte [edi + slot_t.env_mode], EM_DECAY2		;DR(3)
 				mov		dword [edi + slot_t.env_end], EC_OFF
 				mov		eax, [edi + slot_t.env_inc_decay2]
 				mov		[edi + slot_t.env_inc], eax
 				mov		eax, [edi + slot_t.decaylevel]
 				jmp		near %2
-%%setrr:		mov		byte [edi + slot_t.env_mode], EM_OFF
-%%setd2:		mov		dword [edi + slot_t.env_end], EC_OFF + 1
+%%setrr:		mov		byte [edi + slot_t.env_mode], EM_OFF		;SR(2)
+%%setd2:		mov		dword [edi + slot_t.env_end], EC_DECAY		;RR(1)
 				and		dword [edi + slot_t.env_inc], byte 0
 				and		byte [esi + ch_t.playing], ~(%3)
-				mov		eax, EC_OFF
+				mov		eax, EC_ATTACK
 				jmp		near %2
 %endmacro
 
 
+;===============================================================
+;		
+;---------------------------------------------------------------
+;	引数
+;		Sint32	leng	
+;				edx		
+;	返り値
+;
+;===============================================================
 				align	16
 @opngen_getpcm@12:
 				cmp		dword [esp+4], byte 0
@@ -188,12 +200,14 @@ ENVTABLE	equ		(_opncfg + opncfg_t.envtable)
 				push	ebp
 				sub		esp, byte 8
 
-OPN_SAMPL		equ		0
-OPN_SAMPR		equ		4
-OPN_LENG		equ		16 + 8 + 4
+OPN_SAMPL		equ		0				;Local
+OPN_SAMPR		equ		4				;Local
+OPN_LENG		equ		16 + 8 + 4		;引数
 
 				mov		ebp, edx
 				mov		ebx, [_opngen + opngen_t.calcremain]
+
+				;.while	(OPN_LENG > 0)
 og_fmout_st:	mov		eax, ebx
 				imul	ebx, [_opngen + opngen_t.outdl]
 				mov		[esp + OPN_SAMPL], ebx
@@ -201,6 +215,8 @@ og_fmout_st:	mov		eax, ebx
 				sub		ebx, eax
 				imul	eax, [_opngen + opngen_t.outdr]
 				mov		[esp + OPN_SAMPR], eax
+
+				;.repeat
 og_fmout_lp:	mov		[_opngen + opngen_t.calcremain], ebx
 				and		dword [_opngen + opngen_t.playing], byte 0
 				and		dword [_opngen + opngen_t.outdl], byte 0
@@ -208,6 +224,7 @@ og_fmout_lp:	mov		[_opngen + opngen_t.calcremain], ebx
 				and		dword [_opngen + opngen_t.outdr], byte 0
 				mov		ch, [_opngen + opngen_t.playchannels]
 				mov		esi, _opnch
+				;.while	(ch>0)
 og_calcch_lp:	mov		cl, [esi + ch_t.outslot]
 				test	cl, [esi + ch_t.playing]
 				je		near og_calcch_nt
@@ -263,6 +280,7 @@ og_calcsloted:	inc		dword [_opngen + opngen_t.playing]
 og_calcch_nt:	add		esi, ch_t.size
 				dec		ch
 				jne		near og_calcch_lp
+				;.endw
 				mov		eax, [_opngen + opngen_t.outdc]
 				add		[_opngen + opngen_t.outdl], eax
 				add		[_opngen + opngen_t.outdr], eax
@@ -273,6 +291,7 @@ og_calcch_nt:	add		esi, ch_t.size
 				mov		eax, ebx
 				sub		ebx, edx
 				jbe		short og_nextsamp
+				;.break	.if ( [_opngen.calcremain] =< [_opncfg.calc1024] )
 				mov		[_opngen + opngen_t.calcremain], ebx
 				mov		eax, edx
 				imul	eax, [_opngen + opngen_t.outdl]
@@ -280,6 +299,8 @@ og_calcch_nt:	add		esi, ch_t.size
 				imul	edx, [_opngen + opngen_t.outdr]
 				add		[esp + OPN_SAMPR], edx
 				jmp		near og_fmout_lp
+				;.until	0
+
 og_nextsamp:	neg		ebx
 				mov		[_opngen + opngen_t.calcremain], ebx
 				mov		ecx, eax
@@ -295,6 +316,7 @@ og_nextsamp:	neg		ebx
 				add		ebp, byte 8
 				dec		dword [esp + OPN_LENG]
 				jne		near og_fmout_st
+				;.endw
 				add		esp, byte 8
 				pop		ebp
 				pop		edi
@@ -308,6 +330,14 @@ og_noupdate:	ret		4
 				setenv	envcalc4, envret4, 8
 
 
+;===============================================================
+;		
+;---------------------------------------------------------------
+;	引数
+;
+;	返り値
+;
+;===============================================================
 				align	16
 @opngen_getpcmvr@12:
 				cmp		dword [_opncfg + opncfg_t.vr_en], byte 0

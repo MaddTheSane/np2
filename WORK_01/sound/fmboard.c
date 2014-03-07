@@ -28,8 +28,8 @@
 	_TMS3631	tms3631;
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
-	OPNCH		opnch[OPNCH_MAX];
-	_PSGGEN		__psg[3];
+	OPNCH		opnch[OPNCH_MAX];	//FMâπåπÇÃç\ë¢ëÃ
+	_PSGGEN		__psg[3];			//SSGâπåπÇÃç\ë¢ëÃ
 	_RHYTHM		rhythm;
 	_ADPCM		adpcm;
 	_PCM86		pcm86;

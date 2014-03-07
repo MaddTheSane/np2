@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "np2", "np2.vcproj", "{612EFC85-A288-49D0-962B-F9ED9C93A9CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release NT|Win32 = Release NT|Win32
+		Release|Win32 = Release|Win32
+		Trace|Win32 = Trace|Win32
+		Trap|Win32 = Trap|Win32
+		WaveRec|Win32 = WaveRec|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Debug|Win32.Build.0 = Debug|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Release NT|Win32.ActiveCfg = Release NT|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Release NT|Win32.Build.0 = Release NT|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Release|Win32.ActiveCfg = Release|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Release|Win32.Build.0 = Release|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Trace|Win32.ActiveCfg = Trace|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Trace|Win32.Build.0 = Trace|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Trap|Win32.ActiveCfg = Trap|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.Trap|Win32.Build.0 = Trap|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.WaveRec|Win32.ActiveCfg = WaveRec|Win32
+		{612EFC85-A288-49D0-962B-F9ED9C93A9CB}.WaveRec|Win32.Build.0 = WaveRec|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

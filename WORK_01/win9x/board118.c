@@ -78,7 +78,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 		if (addr < 0x20) {
 			rhythm_setreg(&rhythm, addr, dat);
 		}
-		else if (addr < 0x30) {
+		else if ((addr < 0x30) && (addr > 0x22)) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
 					opngen_keyon(dat & 0x0f, dat);
@@ -92,7 +92,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 				fmtimer_setreg(addr, dat);
 			}
 		}
-		else if (addr < 0xc0) {
+		else if ((addr < 0xc0) || (addr == 0x22)) {
 			opngen_setreg(0, addr, dat);
 		}
 		opn.reg[addr] = dat;
