@@ -1,4 +1,6 @@
 #include	"compiler.h"
+#include	"joymng.h"
+#include	"keystat.h"
 #include	<math.h>
 #include	"pccore.h"
 #include	"iocore.h"
@@ -16,6 +18,40 @@ static struct {
 	UINT	enable;
 } amd98r;
 
+static	REG8	rapids = 0;
+
+REG8 amd98_getjoy(UINT no) {
+
+	REG8	ret;
+
+	rapids ^= 0xf0;
+	ret = 0xff;
+	if (no == 1) {
+		ret &= (joymng_getstat() | (rapids & 0x30));
+		if (np2cfg.KEY_MODE == 1) {
+			ret &= keystat_getjoy();
+		}
+	}
+	else {
+		if (np2cfg.KEY_MODE == 2) {
+			ret &= keystat_getjoy();
+		}
+	}
+	if (np2cfg.BTN_RAPID) {
+		ret |= rapids;
+	}
+
+	// rapid‚Æ”ñrapid‚ð‡¬
+	ret &= ((ret >> 2) | (~0x30));
+
+	if (np2cfg.BTN_MODE) {
+		UINT8 bit1 = (ret & 0x20) >> 1;
+		UINT8 bit2 = (ret & 0x10) << 1;
+		ret = (ret & (~0x30)) | bit1 | bit2;
+	}
+
+	return(ret);
+}
 
 static void pcmmake1(PMIXDAT *dat, UINT rate,
 											int vol, double hz, double env) {
@@ -231,6 +267,9 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat) {
 	if (addr < 0x0e) {
 		psggen_setreg(&psg1, addr, dat);
 	}
+	else if (addr == 0x0e) {
+		psg1.reg.io1 = dat;
+	}
 	else if (addr == 0x0f) {
 		psg1.reg.io2 = dat;
 	}
@@ -293,6 +332,9 @@ static REG8 IOINPCALL amd_ida(UINT port) {
 	if (addr < 0x0e) {
 		return(psggen_getreg(&psg1, addr));
 	}
+	else if (addr == 0x0e) {
+		return(amd98_getjoy(1));
+	}
 	else if (addr == 0x0f) {
 		return(psg1.reg.io2);
 	}
@@ -307,6 +349,9 @@ static REG8 IOINPCALL amd_idb(UINT port) {
 	addr = opn.addr2;
 	if (addr < 0x0e) {
 		return(psggen_getreg(&psg2, addr));
+	}
+	else if (addr == 0x0e) {
+		return(amd98_getjoy(2));
 	}
 	else if (addr == 0x0f) {
 		return(psg2.reg.io2);
