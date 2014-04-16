@@ -188,7 +188,7 @@ static void setamd98event(UINT32 cnt, BOOL absolute) {
 		cnt = pccore.multiple << 16;
 	}
 	if (!(pccore.cpumode & CPUMODE_8MHZ)) {
-		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
+		cnt = cnt * 2457600 / 2000000;
 	}
 	nevent_set(NEVENT_MUSICGEN, cnt, amd98int, absolute);
 }
