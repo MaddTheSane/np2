@@ -36,6 +36,7 @@ const SINT32	*src;
 	else {
 		ZeroMemory(dst, length);
 	}
+	SDL_memset(stream, 0, len);
 	SDL_MixAudio(stream, (BYTE *)dst, length, SDL_MIX_MAXVOLUME);
 	soundmng.nsndbuf = (soundmng.nsndbuf + 1) % NSNDBUF;
 	(void)userdata;
