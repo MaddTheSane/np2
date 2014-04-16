@@ -5,8 +5,8 @@
 
 
 typedef struct {
-	SINT16	sdlkey;
-	UINT16	keycode;
+	SDL_Keycode sdlkey;
+	UINT8 keycode;
 } SDLKCNV;
 
 #define		NC		0xff
@@ -52,18 +52,18 @@ static const SDLKCNV sdlcnv101[] = {
 			{SDLK_HOME,			0x3e},	{SDLK_END,			0x3f},
 
 			{SDLK_KP_MINUS,		0x40},	{SDLK_KP_DIVIDE,	0x41},
-			{SDLK_KP7,			0x42},	{SDLK_KP8,			0x43},
-			{SDLK_KP9,			0x44},	{SDLK_KP_MULTIPLY,	0x45},
-			{SDLK_KP4,			0x46},	{SDLK_KP5,			0x47},
+			{SDLK_KP_7,			0x42},	{SDLK_KP_8,			0x43},
+			{SDLK_KP_9,			0x44},	{SDLK_KP_MULTIPLY,	0x45},
+			{SDLK_KP_4,			0x46},	{SDLK_KP_5,			0x47},
 
-			{SDLK_KP6,			0x48},	{SDLK_KP_PLUS,		0x49},
-			{SDLK_KP1,			0x4a},	{SDLK_KP2,			0x4b},
-			{SDLK_KP3,			0x4c},
-			{SDLK_KP0,			0x4e},
+			{SDLK_KP_6,			0x48},	{SDLK_KP_PLUS,		0x49},
+			{SDLK_KP_1,			0x4a},	{SDLK_KP_2,			0x4b},
+			{SDLK_KP_3,			0x4c},
+			{SDLK_KP_0,			0x4e},
 
 			{SDLK_KP_PERIOD,	0x50},
 
-			{SDLK_BREAK,		0x60},	{SDLK_PRINT,		0x61},
+			{SDLK_PAUSE,		0x60},	{SDLK_PRINTSCREEN,	0x61},
 			{SDLK_F1,			0x62},	{SDLK_F2,			0x63},
 			{SDLK_F3,			0x64},	{SDLK_F4,			0x65},
 			{SDLK_F5,			0x66},	{SDLK_F6,			0x67},
@@ -79,27 +79,24 @@ static const SDLKCNV sdlcnv101[] = {
 //			{SDLK_KP_EQUALS,	0x4d},
 
 
-static	BYTE	keytbl[SDLK_LAST];
-
 static const BYTE f12keys[] = {
 			0x61, 0x60, 0x4d, 0x4f};
 
 
 void sdlkbd_initialize(void) {
+}
 
-	int			i;
-const SDLKCNV	*key;
-const SDLKCNV	*keyterm;
-
-	for (i=0; i<SDLK_LAST; i++) {
-		keytbl[i] = NC;
+static BYTE getKey(SDL_Keycode key)
+{
+	size_t i;
+	for (i = 0; i < _countof(sdlcnv101); i++)
+	{
+		if (sdlcnv101[i].sdlkey == key)
+		{
+			return sdlcnv101[i].keycode;
+		}
 	}
-	key = sdlcnv101;
-	keyterm = key + (sizeof(sdlcnv101)/sizeof(SDLKCNV));
-	while(key < keyterm) {
-		keytbl[key->sdlkey] = (BYTE)key->keycode;
-		key++;
-	}
+	return NC;
 }
 
 static BYTE getf12key(void) {
@@ -122,11 +119,8 @@ void sdlkbd_keydown(UINT key) {
 	if (key == SDLK_F12) {
 		data = getf12key();
 	}
-	else if (key < SDLK_LAST) {
-	 	data = keytbl[key];
-	}
 	else {
-		data = NC;
+		data = getKey(key);
 	}
 	if (data != NC) {
 		keystat_senddata(data);
@@ -140,11 +134,8 @@ void sdlkbd_keyup(UINT key) {
 	if (key == SDLK_F12) {
 		data = getf12key();
 	}
-	else if (key < SDLK_LAST) {
-	 	data = keytbl[key];
-	}
 	else {
-		data = NC;
+		data = getKey(key);
 	}
 	if (data != NC) {
 		keystat_senddata((BYTE)(data | 0x80));
@@ -159,61 +150,3 @@ void sdlkbd_resetf12(void) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }
-
-
-
-
-
-
-
-
-#if 0
-	SDLK_NUMLOCK		= 300,
-	SDLK_SCROLLOCK		= 302,
-	SDLK_CLEAR			= 12,
-	SDLK_PAUSE			= 19,
-//	SDLK_EXCLAIM		= 33,
-//	SDLK_QUOTEDBL		= 34,
-//	SDLK_HASH			= 35,
-//	SDLK_DOLLAR			= 36,
-//	SDLK_AMPERSAND		= 38,
-	SDLK_QUOTE			= 39,
-//	SDLK_LEFTPAREN		= 40,
-//	SDLK_RIGHTPAREN		= 41,
-//	SDLK_ASTERISK		= 42,
-//	SDLK_PLUS			= 43,
-//	SDLK_COLON			= 58,
-	SDLK_SEMICOLON		= 59,
-//	SDLK_LESS			= 60,
-//	SDLK_GREATER		= 62,
-//	SDLK_QUESTION		= 63,
-//	SDLK_AT				= 64,
-	// Skip uppercase letters
-	SDLK_LEFTBRACKET	= 91,
-	SDLK_RIGHTBRACKET	= 93,
-//	SDLK_CARET			= 94,
-//	SDLK_UNDERSCORE		= 95,
-	SDLK_BACKQUOTE		= 96,
-
-	// Function keys
-	SDLK_F11			= 292,
-	SDLK_F12			= 293,
-
-	// Key state modifier keys
-//	SDLK_RMETA			= 309,
-//	SDLK_LMETA			= 310,
-	SDLK_LSUPER			= 311,
-	SDLK_RSUPER			= 312,
-//	SDLK_MODE			= 313,
-//	SDLK_COMPOSE		= 314,
-
-	// Miscellaneous function keys
-	SDLK_HELP			= 315,
-//	SDLK_SYSREQ			= 317,
-	SDLK_MENU			= 319,
-//	SDLK_POWER			= 320,
-//	SDLK_EURO			= 321,
-//	SDLK_UNDO			= 322,
-#endif
-
-

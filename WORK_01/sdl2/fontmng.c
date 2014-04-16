@@ -1,5 +1,7 @@
 #include	"compiler.h"
+#if !defined(RESOURCE_US)
 #include	<SDL_ttf.h>
+#endif
 #include	"fontmng.h"
 #include	"codecnv.h"
 

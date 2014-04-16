@@ -7,6 +7,10 @@
 #include	"vramhdl.h"
 #include	"menubase.h"
 
+static SDL_Window *s_sdlWindow;
+static SDL_Renderer *s_renderer;
+static SDL_Texture *s_texture;
+static SDL_Surface *s_surface;
 
 typedef struct {
 	BOOL		enable;
@@ -74,8 +78,6 @@ void scrnmng_initialize(void) {
 
 BOOL scrnmng_create(int width, int height) {
 
-	char			s[256];
-const SDL_VideoInfo	*vinfo;
 	SDL_Surface		*surface;
 	SDL_PixelFormat	*fmt;
 	BOOL			r;
@@ -84,21 +86,12 @@ const SDL_VideoInfo	*vinfo;
 		fprintf(stderr, "Error: SDL_Init: %s\n", SDL_GetError());
 		return(FAILURE);
 	}
-	SDL_WM_SetCaption(app_name, app_name);
-	vinfo = SDL_GetVideoInfo();
-	if (vinfo == NULL) {
-		fprintf(stderr, "Error: SDL_GetVideoInfo: %s\n", SDL_GetError());
-		return(FAILURE);
-	}
-	SDL_VideoDriverName(s, sizeof(s));
+	s_sdlWindow = SDL_CreateWindow(app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
+	s_renderer = SDL_CreateRenderer(s_sdlWindow, -1, 0);
+	s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, width, height);
+	s_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16, 0xf800, 0x07e0, 0x001f, 0);
 
-	surface = SDL_SetVideoMode(width, height, vinfo->vfmt->BitsPerPixel,
-		    SDL_HWSURFACE | SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_FULLSCREEN);
-	if (surface == NULL) {
-		fprintf(stderr, "Error: SDL_SetVideoMode: %s\n", SDL_GetError());
-		return(FAILURE);
-	}
-
+	surface = s_surface;
 	r = FALSE;
 	fmt = surface->format;
 #if defined(SUPPORT_8BPP)
@@ -174,7 +167,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 	SDL_Surface	*surface;
 
 	if (scrnmng.vram == NULL) {
-		surface = SDL_GetVideoSurface();
+		surface = s_surface;
 		if (surface == NULL) {
 			return(NULL);
 		}
@@ -218,7 +211,7 @@ const BYTE		*a;
 	rt.bottom >>= 1;
 #endif
 
-	surface = SDL_GetVideoSurface();
+	surface = s_surface;
 	if (surface == NULL) {
 		return;
 	}
@@ -293,7 +286,11 @@ const BYTE		*a;
 		}
 	}
 	SDL_UnlockSurface(surface);
-	SDL_Flip(surface);
+
+	SDL_UpdateTexture(s_texture, NULL, surface->pixels, surface->pitch);
+	SDL_RenderClear(s_renderer);
+	SDL_RenderCopy(s_renderer, s_texture, NULL, NULL);
+	SDL_RenderPresent(s_renderer);
 }
 
 void scrnmng_surfunlock(const SCRNSURF *surf) {
@@ -306,7 +303,11 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 				surface = scrnmng.surface;
 				scrnmng.surface = NULL;
 				SDL_UnlockSurface(surface);
-				SDL_Flip(surface);
+
+				SDL_UpdateTexture(s_texture, NULL, surface->pixels, surface->pitch);
+				SDL_RenderClear(s_renderer);
+				SDL_RenderCopy(s_renderer, s_texture, NULL, NULL);
+				SDL_RenderPresent(s_renderer);
 			}
 		}
 		else {
@@ -361,7 +362,7 @@ const BYTE		*q;
 	if ((!scrnmng.enable) && (menuvram == NULL)) {
 		return;
 	}
-	surface = SDL_GetVideoSurface();
+	surface = s_surface;
 	if (surface == NULL) {
 		return;
 	}
@@ -465,6 +466,10 @@ const BYTE		*q;
 		}
 	}
 	SDL_UnlockSurface(surface);
-	SDL_Flip(surface);
+
+	SDL_UpdateTexture(s_texture, NULL, surface->pixels, surface->pitch);
+	SDL_RenderClear(s_renderer);
+	SDL_RenderCopy(s_renderer, s_texture, NULL, NULL);
+	SDL_RenderPresent(s_renderer);
 }
 

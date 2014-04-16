@@ -1,12 +1,12 @@
 #include	<windows.h>
 #include	<stdio.h>
 #include	<stddef.h>
-#include	<SDL.h>
+#include	<SDL2\SDL.h>
 
-#define	SLZAURUS
 #define	BYTESEX_LITTLE
-#define	OSLANG_EUC
+#define	OSLANG_UTF8
 #define	OSLINEBREAK_CRLF
+#define RESOURCE_US
 
 
 #ifndef __GNUC__
@@ -32,6 +32,7 @@ typedef	signed int			SINT32;
 #define	OEMSPRINTF			sprintf
 #define	OEMSTRLEN			strlen
 
+#define SIZE_VGA
 #if !defined(SIZE_VGA)
 #define	RGB16		UINT32
 #define	SIZE_QVGA
@@ -54,7 +55,7 @@ typedef	signed int			SINT32;
 #define	VERMOUTH_LIB
 // #define	SOUND_CRITICAL
 
-#define	SUPPORT_EUC
+#define	SUPPORT_UTF8
 
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
@@ -69,3 +70,5 @@ typedef	signed int			SINT32;
 
 #define	SCREEN_BPP		16
 
+#pragma comment(lib, "SDL2.lib")
+#pragma comment(lib, "SDL2main.lib")
