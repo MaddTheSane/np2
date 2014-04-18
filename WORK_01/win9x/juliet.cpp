@@ -3,12 +3,21 @@
  * @brief	ROMEO アクセス クラスの動作の定義を行います
  */
 
-#include	"compiler.h"
-#include	"romeo.h"
-#include	"juliet.h"
+#include "compiler.h"
+#include "juliet.h"
+#include "romeo.h"
 
 //! 唯一のインスタンスです
 CJuliet CJuliet::sm_instance;
+
+//! DLL 名
+#define	PCIDEBUG_DLL			_T("pcidebug.dll")
+
+//! PCI デバイス アドレスを作成
+#define PCIBUSDEVFUNC(b, d, f)	(((b) << 8) | ((d) << 3) | (f))
+
+//! ベンダ/デバイスを作成
+#define	DEVVEND(v, d)			((ULONG)((v) | ((d) << 16)))
 
 /**
  * コンストラクタ
@@ -46,10 +55,10 @@ bool CJuliet::Initialize()
 	//! ロード関数リスト
 	static const ProcItem s_dllProc[] =
 	{
-		{FN_PCICFGREAD32,	offsetof(CJuliet, m_fnRead32)},
-		{FN_PCIMEMWR8,		offsetof(CJuliet, m_fnOut8)},
-		{FN_PCIMEMWR32,		offsetof(CJuliet, m_fnOut32)},
-		{FN_PCIMEMRD8,		offsetof(CJuliet, m_fnIn8)},
+		{"_pciConfigReadLong",	offsetof(CJuliet, m_fnRead32)},
+		{"_MemWriteChar",		offsetof(CJuliet, m_fnOut8)},
+		{"_MemWriteLong",		offsetof(CJuliet, m_fnOut32)},
+		{"_MemReadChar",		offsetof(CJuliet, m_fnIn8)},
 	};
 
 	for (size_t i = 0; i < NELEMENTS(s_dllProc); i++)
@@ -103,9 +112,6 @@ void CJuliet::Deinitialize()
  */
 ULONG CJuliet::SearchRomeo() const
 {
-	#define PCIBUSDEVFUNC(b, d, f)	(((b) << 8) | ((d) << 3) | (f))
-	#define	DEVVEND(v, d)			((ULONG)((v) | ((d) << 16)))
-
 	for (UINT bus = 0; bus < 0x100; bus++)
 	{
 		for (UINT dev = 0; dev < 0x20; dev++)

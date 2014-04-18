@@ -2539,10 +2539,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\pcifunc.h"
-					>
-				</File>
-				<File
 					RelativePath=".\resource.h"
 					>
 				</File>
