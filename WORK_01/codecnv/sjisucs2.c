@@ -1142,7 +1142,7 @@ static const UINT32 utftbl[] = {
 	0x21dcbd40,0x2299bd40,0x2356bd40,0x2413bd40,0x24d0bd40,0x258dbd40,
 	0x264a0c40,0x0000f8f1,0x0000f8f2,0x0000f8f3};
 
-UINT codecnv_sjis2utf(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
+UINT codecnv_sjistoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt) {
 
 	UINT	orgdcnt;
 	BOOL	stringmode;
