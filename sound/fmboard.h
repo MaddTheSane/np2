@@ -13,15 +13,17 @@
 
 
 typedef struct {
-	UINT	addr;
-	UINT	addr2;
-	UINT8	data;
+	UINT8	addr1l;
+	UINT8	addr1h;
+	UINT8	addr2l;
+	UINT8	addr2h;
+	UINT8	data1;
 	UINT8	data2;
 	UINT16	base;
 	UINT8	adpcmmask;
 	UINT8	channels;
 	UINT8	extend;
-	UINT8	_padding;
+	UINT8	_padding2;
 	UINT8	reg[0x400];
 } OPN_T;
 

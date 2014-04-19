@@ -18,8 +18,9 @@
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
-	opn.addr = dat;
-	opn.data = dat;
+	opn.addr1l = dat;
+	opn.addr1h = 0;
+	opn.data1 = dat;
 	(void)port;
 }
 
@@ -27,11 +28,12 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data = dat;
-	addr = opn.addr;
-	if (addr >= 0x100) {
+	opn.data1 = dat;
+	if (opn.addr1h != 0) {
 		return;
 	}
+
+	addr = opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
@@ -67,8 +69,9 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL ymf_o18c(UINT port, REG8 dat) {
 
 	if (opn.extend) {
-		opn.addr = dat + 0x100;
-		opn.data = dat;
+		opn.addr1l = dat;
+		opn.addr1h = 1;
+		opn.data1 = dat;
 	}
 	(void)port;
 }
@@ -80,11 +83,12 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 	if (!opn.extend) {
 		return;
 	}
-	opn.data = dat;
-	addr = opn.addr - 0x100;
-	if (addr >= 0x100) {
+	opn.data1 = dat;
+
+	if (opn.addr1h != 1) {
 		return;
 	}
+	addr = opn.addr1l;
 	S98_put(EXTEND2608, addr, dat);
 	opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
@@ -110,18 +114,20 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr;
-	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg1));
-	}
-	else if (addr < 0x10) {
-		return(psggen_getreg(&psg1, addr));
-	}
-	else if (addr == 0xff) {
-		return(1);
+	if (opn.addr1h == 0) {
+		addr = opn.addr1l;
+		if (addr == 0x0e) {
+			return(fmboard_getjoy(&psg1));
+		}
+		else if (addr < 0x10) {
+			return(psggen_getreg(&psg1, addr));
+		}
+		else if (addr == 0xff) {
+			return(1);
+		}
 	}
 	(void)port;
-	return(opn.data);
+	return(opn.data1);
 }
 
 static REG8 IOINPCALL ymf_i18c(UINT port) {
@@ -173,13 +179,13 @@ static void RestoreRomeo()
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 {
-	opn.data = dat;
-
-	const UINT nAddr = opn.addr;
-	if (nAddr & 0x100)
+	opn.data1 = dat;
+	if (opn.addr1h != 0)
 	{
 		return;
 	}
+
+	const UINT nAddr = opn.addr1l;
 	S98_put(NORMAL2608, nAddr, dat);
 
 	if (nAddr < 0x10)
@@ -236,20 +242,19 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 	{
 		return;
 	}
-	opn.data = dat;
-
-	const UINT nAddr = opn.addr;
-	if ((nAddr & 0x100) == 0)
-	{
+	opn.data1 = dat;
+	if (opn.addr1h != 1) {
 		return;
 	}
+
+	const UINT nAddr = opn.addr1l;
 	S98_put(EXTEND2608, nAddr, dat);
 	opn.reg[nAddr] = dat;
-	if (nAddr >= 0x130)
+	if (nAddr >= 0x30)
 	{
-		CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+		CJuliet::GetInstance()->WriteRegister(0x100 + nAddr, dat);
 	}
-	else if (nAddr == 0x110)
+	else if (nAddr == 0x10)
 	{
 		if (!(dat & 0x80))
 		{

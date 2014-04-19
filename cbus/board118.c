@@ -11,8 +11,9 @@
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
-	opn.addr = dat;
-	opn.data = dat;
+	opn.addr1l = dat;
+	opn.addr1h = 0;
+	opn.data1 = dat;
 	(void)port;
 }
 
@@ -20,11 +21,12 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data = dat;
-	addr = opn.addr;
-	if (addr >= 0x100) {
+	opn.data1 = dat;
+	if (opn.addr1h != 0) {
 		return;
 	}
+
+	addr = opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
@@ -60,8 +62,9 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL ymf_o18c(UINT port, REG8 dat) {
 
 	if (opn.extend) {
-		opn.addr = dat + 0x100;
-		opn.data = dat;
+		opn.addr1l = dat;
+		opn.addr1h = 1;
+		opn.data1 = dat;
 	}
 	(void)port;
 }
@@ -73,11 +76,12 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 	if (!opn.extend) {
 		return;
 	}
-	opn.data = dat;
-	addr = opn.addr - 0x100;
-	if (addr >= 0x100) {
+	opn.data1 = dat;
+
+	if (opn.addr1h != 1) {
 		return;
 	}
+	addr = opn.addr1l;
 	S98_put(EXTEND2608, addr, dat);
 	opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
@@ -103,20 +107,20 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr;
-	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg1));
+	if (opn.addr1h == 0) {
+		addr = opn.addr1l;
+		if (addr == 0x0e) {
+			return(fmboard_getjoy(&psg1));
+		}
+		else if (addr < 0x10) {
+			return(psggen_getreg(&psg1, addr));
+		}
+		else if (addr == 0xff) {
+			return(1);
+		}
 	}
-	else if (addr < 0x10) {
-		return(psggen_getreg(&psg1, addr));
-	}
-	else if (addr == 0xff) {
-		return(1);
-	}
-	else {
-		(void)port;
-		return(opn.data);
-	}
+	(void)port;
+	return(opn.data1);
 }
 
 static REG8 IOINPCALL ymf_i18c(UINT port) {
