@@ -115,6 +115,11 @@ typedef	signed __int64		SINT64;
 #define	LABEL				__declspec(naked)
 #define	RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
 
+#if (_MSC_VER < 1300)
+//! for scope
+#define for					if (0 /*NEVER*/) { /* no process */ } else for
+#endif	// (_MSC_VER < 1300)
+
 #if !defined(_WIN64)
 #define	OPNGENX86
 #endif

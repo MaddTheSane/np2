@@ -1265,7 +1265,7 @@ SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Group
 # Begin Source File
 
-SOURCE=.\BOARD118.C
+SOURCE=.\BOARD118.CPP
 # End Source File
 # Begin Source File
 

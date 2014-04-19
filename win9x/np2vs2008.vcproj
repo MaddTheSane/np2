@@ -454,7 +454,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\cbus\board118.c"
+					RelativePath=".\board118.cpp"
 					>
 				</File>
 				<File
@@ -2849,10 +2849,6 @@
 				</File>
 				<File
 					RelativePath=".\oemtext.h"
-					>
-				</File>
-				<File
-					RelativePath=".\pcifunc.h"
 					>
 				</File>
 				<File
