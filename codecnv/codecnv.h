@@ -15,7 +15,7 @@ UINT codecnv_sjistoeuc(char *lpOutput, UINT cchOutput, const char *lpInput, UINT
 UINT codecnv_sjistoucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, UINT cchInput);
 
 UINT codecnv_euctosjis(char *lpOutput, UINT cchOutput, const char *lpInput, UINT cchInput);
-UINT codecnv_euctoucs2(UINT16 *dst, UINT dcnt, const char *src, UINT scnt);
+UINT codecnv_euctoucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, UINT cchInput);
 
 UINT codecnv_utf8toucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, UINT cchInput);
 
