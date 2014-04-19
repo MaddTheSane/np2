@@ -69,6 +69,3 @@ typedef	signed int			SINT32;
 #define	SUPPORT_SCSI
 
 #define	SCREEN_BPP		16
-
-#pragma comment(lib, "SDL2.lib")
-#pragma comment(lib, "SDL2main.lib")

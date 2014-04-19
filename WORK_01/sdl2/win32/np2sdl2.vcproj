@@ -332,18 +332,6 @@
 				Name="codecnv"
 				>
 				<File
-					RelativePath="..\..\codecnv\eucsjis.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\codecnv\eucucs2.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\codecnv\sjiseuc.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\codecnv\sjisucs2.c"
 					>
 				</File>
@@ -357,6 +345,10 @@
 				</File>
 				<File
 					RelativePath="..\..\codecnv\textcnv.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\codecnv\ucs2sjis.c"
 					>
 				</File>
 				<File
@@ -863,6 +855,14 @@
 					RelativePath="..\trace.c"
 					>
 				</File>
+				<Filter
+					Name="win32"
+					>
+					<File
+						RelativePath=".\linker.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="sound"
@@ -1089,10 +1089,6 @@
 				</File>
 				<File
 					RelativePath="..\..\generic\keydisp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\memdbg32.c"
 					>
 				</File>
 				<File
@@ -1479,10 +1475,6 @@
 				</File>
 				<File
 					RelativePath="..\..\generic\keydisp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\memdbg32.h"
 					>
 				</File>
 				<File

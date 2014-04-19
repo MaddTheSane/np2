@@ -1,6 +1,11 @@
+/**
+ * @file	oemtext.h
+ * @breif	defines converter
+ */
 
-#include	"codecnv.h"
+#pragma once
 
-#define	oemtext_oemtosjis(a, b, c, d)	codecnv_euctosjis(a, b, c, d)
-#define	oemtext_sjistooem(a, b, c, d)	codecnv_sjistoeuc(a, b, c, d)
+#include "codecnv.h"
 
+#define	oemtext_oemtosjis(a, b, c, d)	codecnv_utf8tosjis(a, b, c, d)
+#define	oemtext_sjistooem(a, b, c, d)	codecnv_sjistoutf8(a, b, c, d)
