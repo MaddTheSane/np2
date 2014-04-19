@@ -183,3 +183,6 @@ typedef	signed __int64		SINT64;
 
 #define	SUPPORT_TEXTCNV
 
+#if defined(CPUCORE_IA32)
+#pragma warning(disable: 4819)
+#endif
