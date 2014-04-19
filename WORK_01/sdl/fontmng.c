@@ -256,13 +256,15 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 											const char *string, int length) {
 
 	UINT16		utext[2];
+	int			r;
 	SDL_Surface	*text;
 	UINT8		*dst;
 	int			x;
 	int			y;
 	int			depth;
 
-	codecnv_euctoucs2(utext, NELEMENTS(utext), string, length);
+	r = codecnv_euctoucs2(utext, 1, string, length);
+	utext[r] = 0;
 	text = TTF_RenderUNICODE_Solid(fhdl->ttf_font, utext, white);
 	setfdathead(fhdl, fdat, length, text);
 	dst = (UINT8 *)(fdat + 1);
