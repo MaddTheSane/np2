@@ -75,7 +75,7 @@ static UINT euctosjis(char *lpOutput, UINT cchOutput, const char *lpInput, UINT 
 				*lpOutput++ = h;
 			}
 		}
-		else if (h == 0x8e)
+		else if (h == (char)0x8e)
 		{
 			if (cchInput == 0)
 			{
