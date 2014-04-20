@@ -6,8 +6,6 @@
 #define	BYTESEX_LITTLE
 #define	OSLANG_UTF8
 #define	OSLINEBREAK_CRLF
-#define RESOURCE_US
-
 
 #ifndef __GNUC__
 typedef	signed int			SINT;

@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #if !defined(RESOURCE_US)
-#include	<SDL_ttf.h>
+#include	<SDL2/SDL_ttf.h>
 #endif
 #include	"fontmng.h"
 #include	"codecnv.h"
@@ -145,7 +145,14 @@ static BOOL fdatgetcache(FNTMNG fhdl, const char *string, FNTDAT *pfdat) {
 
 	r = FALSE;
 	str = string[0] & 0xff;
-	str |= (string[1] & 0xff) << 8;
+	if (string[0] & 0x80)
+	{
+		str |= (string[1] & 0xff) << 8;
+		if (string[1] & 0x80)
+		{
+			str |= (string[2] & 0xff) << 16;
+		}
+	}
 	fct = fhdl->cache;
 	cnt = fhdl->caches;
 	pos = fhdl->cachehead;
@@ -219,10 +226,12 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 											const char *string, int length) {
 
 	UINT16		utext[2];
+	int			r;
 	SDL_Surface	*text;
 
 	if (fhdl->fonttype & FDAT_PROPORTIONAL) {
-		codecnv_euctoucs2(utext, NELEMENTS(utext), string, length);
+		r = codecnv_utf8toucs2(utext, NELEMENTS(utext), string, length);
+		utext[r] = 0;
 		text = TTF_RenderUNICODE_Solid(fhdl->ttf_font, utext, white);
 		setfdathead(fhdl, fdat, length, text);
 		if (text) {
@@ -258,13 +267,15 @@ static void getfont1(FNTMNG fhdl, FNTDAT fdat,
 											const char *string, int length) {
 
 	UINT16		utext[2];
+	int			r;
 	SDL_Surface	*text;
 	UINT8		*dst;
 	int			x;
 	int			y;
 	int			depth;
 
-	codecnv_euctoucs2(utext, NELEMENTS(utext), string, length);
+	r = codecnv_utf8toucs2(utext, 1, string, length);
+	utext[r] = 0;
 	text = TTF_RenderUNICODE_Solid(fhdl->ttf_font, utext, white);
 	setfdathead(fhdl, fdat, length, text);
 	dst = (UINT8 *)(fdat + 1);
