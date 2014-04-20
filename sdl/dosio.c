@@ -96,7 +96,14 @@ short file_attr(const char *path) {
 struct stat	sb;
 	short	attr;
 
-	if (stat(path, &sb) == 0) {
+#if defined(WIN32) && defined(OSLANG_EUC)
+	char	sjis[MAX_PATH];
+	codecnv_euctosjis(sjis, sizeof(sjis), path, (UINT)-1);
+	if (stat(sjis, &sb) == 0)
+#else
+	if (stat(path, &sb) == 0)
+#endif
+	{
 #if defined(WIN32)
 		if (sb.st_mode & _S_IFDIR) {
 			attr = FILEATTR_DIRECTORY;
