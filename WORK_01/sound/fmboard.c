@@ -285,7 +285,7 @@ void fmboard_bind(void) {
 			break;
 #endif	// defined(SUPPORT_PX)
 	}
-	sound_streamregist(&beep, (SOUNDCB)beep_getpcm);
+	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
 }
 
 
