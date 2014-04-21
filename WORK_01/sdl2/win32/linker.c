@@ -1,5 +1,5 @@
 /**
- * @file	linker.cpp
+ * @file	linker.c
  * @brief	リンカー オプション定義
  */
 
