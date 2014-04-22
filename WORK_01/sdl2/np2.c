@@ -1,5 +1,4 @@
 #include "compiler.h"
-#include <SDL2/SDL_main.h>
 #include	"strres.h"
 #include	"np2.h"
 #include	"dosio.h"
