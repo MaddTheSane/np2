@@ -239,27 +239,28 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BA03CCFF1905FB8F008BC3E0 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		BA03CD001905FDD8008BC3E0 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		BA12549E190506EE00884257 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		BA69059C19049CC9004DD5B6 /* np2sdl2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = np2sdl2; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA6905A119049CC9004DD5B6 /* np2sdl2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = np2sdl2.1; sourceTree = "<group>"; };
-		BA6905AA1904A0E9004DD5B6 /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios.c; path = ../../../bios/bios.c; sourceTree = "<group>"; };
-		BA6905AB1904A0E9004DD5B6 /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bios.h; path = ../../../bios/bios.h; sourceTree = "<group>"; };
-		BA6905AC1904A0E9004DD5B6 /* bios0c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios0c.c; path = ../../../bios/bios0c.c; sourceTree = "<group>"; };
-		BA6905AD1904A0E9004DD5B6 /* bios1a.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios1a.c; path = ../../../bios/bios1a.c; sourceTree = "<group>"; };
-		BA6905AE1904A0E9004DD5B6 /* bios1b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios1b.c; path = ../../../bios/bios1b.c; sourceTree = "<group>"; };
-		BA6905AF1904A0E9004DD5B6 /* bios1c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios1c.c; path = ../../../bios/bios1c.c; sourceTree = "<group>"; };
-		BA6905B01904A0E9004DD5B6 /* bios1f.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios1f.c; path = ../../../bios/bios1f.c; sourceTree = "<group>"; };
-		BA6905B11904A0E9004DD5B6 /* bios09.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios09.c; path = ../../../bios/bios09.c; sourceTree = "<group>"; };
-		BA6905B21904A0E9004DD5B6 /* bios12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios12.c; path = ../../../bios/bios12.c; sourceTree = "<group>"; };
-		BA6905B31904A0E9004DD5B6 /* bios13.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios13.c; path = ../../../bios/bios13.c; sourceTree = "<group>"; };
-		BA6905B41904A0E9004DD5B6 /* bios18.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios18.c; path = ../../../bios/bios18.c; sourceTree = "<group>"; };
-		BA6905B51904A0E9004DD5B6 /* bios19.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bios19.c; path = ../../../bios/bios19.c; sourceTree = "<group>"; };
-		BA6905B71904A0E9004DD5B6 /* biosmem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = biosmem.h; path = ../../../bios/biosmem.h; sourceTree = "<group>"; };
-		BA6905B81904A0E9004DD5B6 /* fdfmt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fdfmt.h; path = ../../../bios/fdfmt.h; sourceTree = "<group>"; };
-		BA6905BB1904A0E9004DD5B6 /* rsbios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rsbios.h; path = ../../../bios/rsbios.h; sourceTree = "<group>"; };
-		BA6905BD1904A0E9004DD5B6 /* sxsibios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sxsibios.c; path = ../../../bios/sxsibios.c; sourceTree = "<group>"; };
-		BA6905BE1904A0E9004DD5B6 /* sxsibios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sxsibios.h; path = ../../../bios/sxsibios.h; sourceTree = "<group>"; };
-		BA6905CD1904A1BD004DD5B6 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = SOURCE_ROOT; };
+		BA6905AA1904A0E9004DD5B6 /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
+		BA6905AB1904A0E9004DD5B6 /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
+		BA6905AC1904A0E9004DD5B6 /* bios0c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios0c.c; sourceTree = "<group>"; };
+		BA6905AD1904A0E9004DD5B6 /* bios1a.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios1a.c; sourceTree = "<group>"; };
+		BA6905AE1904A0E9004DD5B6 /* bios1b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios1b.c; sourceTree = "<group>"; };
+		BA6905AF1904A0E9004DD5B6 /* bios1c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios1c.c; sourceTree = "<group>"; };
+		BA6905B01904A0E9004DD5B6 /* bios1f.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios1f.c; sourceTree = "<group>"; };
+		BA6905B11904A0E9004DD5B6 /* bios09.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios09.c; sourceTree = "<group>"; };
+		BA6905B21904A0E9004DD5B6 /* bios12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios12.c; sourceTree = "<group>"; };
+		BA6905B31904A0E9004DD5B6 /* bios13.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios13.c; sourceTree = "<group>"; };
+		BA6905B41904A0E9004DD5B6 /* bios18.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios18.c; sourceTree = "<group>"; };
+		BA6905B51904A0E9004DD5B6 /* bios19.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios19.c; sourceTree = "<group>"; };
+		BA6905B71904A0E9004DD5B6 /* biosmem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = biosmem.h; sourceTree = "<group>"; };
+		BA6905B81904A0E9004DD5B6 /* fdfmt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fdfmt.h; sourceTree = "<group>"; };
+		BA6905BB1904A0E9004DD5B6 /* rsbios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rsbios.h; sourceTree = "<group>"; };
+		BA6905BD1904A0E9004DD5B6 /* sxsibios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sxsibios.c; sourceTree = "<group>"; };
+		BA6905BE1904A0E9004DD5B6 /* sxsibios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sxsibios.h; sourceTree = "<group>"; };
 		BA6905D01904A1D3004DD5B6 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = SOURCE_ROOT; };
 		BA6905F31904A693004DD5B6 /* codecnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codecnv.h; sourceTree = "<group>"; };
 		BA6905F71904A693004DD5B6 /* sjisucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjisucs2.c; sourceTree = "<group>"; };
@@ -594,55 +595,55 @@
 		BA69080B1904A975004DD5B6 /* midvoice.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = midvoice.c; sourceTree = "<group>"; };
 		BA69080C1904A975004DD5B6 /* midvoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midvoice.h; sourceTree = "<group>"; };
 		BA69080D1904A975004DD5B6 /* vermouth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vermouth.h; sourceTree = "<group>"; };
-		BA69082D1904AA21004DD5B6 /* calendar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = calendar.c; path = ../../../calendar.c; sourceTree = "<group>"; };
-		BA69082E1904AA21004DD5B6 /* calendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = calendar.h; path = ../../../calendar.h; sourceTree = "<group>"; };
-		BA69082F1904AA21004DD5B6 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../../../common.h; sourceTree = "<group>"; };
-		BA6908301904AA21004DD5B6 /* debugsub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = debugsub.c; path = ../../../debugsub.c; sourceTree = "<group>"; };
-		BA6908311904AA21004DD5B6 /* debugsub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debugsub.h; path = ../../../debugsub.h; sourceTree = "<group>"; };
-		BA6908321904AA21004DD5B6 /* keystat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = keystat.c; path = ../../../keystat.c; sourceTree = "<group>"; };
-		BA6908331904AA21004DD5B6 /* keystat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keystat.h; path = ../../../keystat.h; sourceTree = "<group>"; };
-		BA6908341904AA21004DD5B6 /* nevent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nevent.c; path = ../../../nevent.c; sourceTree = "<group>"; };
-		BA6908351904AA21004DD5B6 /* nevent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nevent.h; path = ../../../nevent.h; sourceTree = "<group>"; };
-		BA6908361904AA21004DD5B6 /* np2ver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = np2ver.h; path = ../../../np2ver.h; sourceTree = "<group>"; };
-		BA6908371904AA21004DD5B6 /* pccore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pccore.c; path = ../../../pccore.c; sourceTree = "<group>"; };
-		BA6908381904AA21004DD5B6 /* pccore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pccore.h; path = ../../../pccore.h; sourceTree = "<group>"; };
-		BA6908391904AA21004DD5B6 /* statsave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = statsave.c; path = ../../../statsave.c; sourceTree = "<group>"; };
-		BA69083A1904AA21004DD5B6 /* statsave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = statsave.h; path = ../../../statsave.h; sourceTree = "<group>"; };
-		BA69083B1904AA21004DD5B6 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timing.c; path = ../../../timing.c; sourceTree = "<group>"; };
-		BA69083C1904AA21004DD5B6 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timing.h; path = ../../../timing.h; sourceTree = "<group>"; };
-		BA6908441904AAB0004DD5B6 /* commng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = commng.c; path = ../../commng.c; sourceTree = "<group>"; };
-		BA6908451904AAB0004DD5B6 /* commng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = commng.h; path = ../../commng.h; sourceTree = "<group>"; };
-		BA6908461904AAB0004DD5B6 /* dosio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dosio.c; path = ../../dosio.c; sourceTree = "<group>"; };
-		BA6908471904AAB0004DD5B6 /* dosio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dosio.h; path = ../../dosio.h; sourceTree = "<group>"; };
-		BA6908481904AAB0004DD5B6 /* fontmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fontmng.c; path = ../../fontmng.c; sourceTree = "<group>"; };
-		BA6908491904AAB0004DD5B6 /* fontmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fontmng.h; path = ../../fontmng.h; sourceTree = "<group>"; };
-		BA69084A1904AAB0004DD5B6 /* ini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ini.c; path = ../../ini.c; sourceTree = "<group>"; };
-		BA69084B1904AAB0004DD5B6 /* ini.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ini.h; path = ../../ini.h; sourceTree = "<group>"; };
-		BA69084C1904AAB0004DD5B6 /* inputmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inputmng.c; path = ../../inputmng.c; sourceTree = "<group>"; };
-		BA69084D1904AAB0004DD5B6 /* inputmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inputmng.h; path = ../../inputmng.h; sourceTree = "<group>"; };
-		BA69084E1904AAB0004DD5B6 /* joymng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = joymng.c; path = ../../joymng.c; sourceTree = "<group>"; };
-		BA69084F1904AAB0004DD5B6 /* joymng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = joymng.h; path = ../../joymng.h; sourceTree = "<group>"; };
-		BA6908501904AAB0004DD5B6 /* mousemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mousemng.c; path = ../../mousemng.c; sourceTree = "<group>"; };
-		BA6908511904AAB0004DD5B6 /* mousemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mousemng.h; path = ../../mousemng.h; sourceTree = "<group>"; };
-		BA6908521904AAB0004DD5B6 /* np2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = np2.c; path = ../../np2.c; sourceTree = "<group>"; };
-		BA6908531904AAB0004DD5B6 /* np2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = np2.h; path = ../../np2.h; sourceTree = "<group>"; };
-		BA6908541904AAB0004DD5B6 /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oemtext.h; path = ../../oemtext.h; sourceTree = "<group>"; };
-		BA6908551904AAB0004DD5B6 /* scrnmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = scrnmng.c; path = ../../scrnmng.c; sourceTree = "<group>"; };
-		BA6908561904AAB0004DD5B6 /* scrnmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scrnmng.h; path = ../../scrnmng.h; sourceTree = "<group>"; };
-		BA6908571904AAB0004DD5B6 /* sdlkbd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sdlkbd.c; path = ../../sdlkbd.c; sourceTree = "<group>"; };
-		BA6908581904AAB0004DD5B6 /* sdlkbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sdlkbd.h; path = ../../sdlkbd.h; sourceTree = "<group>"; };
-		BA6908591904AAB0004DD5B6 /* soundmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soundmng.c; path = ../../soundmng.c; sourceTree = "<group>"; };
-		BA69085A1904AAB0004DD5B6 /* soundmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soundmng.h; path = ../../soundmng.h; sourceTree = "<group>"; };
-		BA69085B1904AAB0004DD5B6 /* sysmenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sysmenu.c; path = ../../sysmenu.c; sourceTree = "<group>"; };
-		BA69085C1904AAB0004DD5B6 /* sysmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sysmenu.h; path = ../../sysmenu.h; sourceTree = "<group>"; };
-		BA69085D1904AAB0004DD5B6 /* sysmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sysmng.c; path = ../../sysmng.c; sourceTree = "<group>"; };
-		BA69085E1904AAB0004DD5B6 /* sysmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sysmng.h; path = ../../sysmng.h; sourceTree = "<group>"; };
-		BA69085F1904AAB0004DD5B6 /* taskmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = taskmng.c; path = ../../taskmng.c; sourceTree = "<group>"; };
-		BA6908601904AAB0004DD5B6 /* taskmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = taskmng.h; path = ../../taskmng.h; sourceTree = "<group>"; };
-		BA6908611904AAB0004DD5B6 /* timemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timemng.c; path = ../../timemng.c; sourceTree = "<group>"; };
-		BA6908621904AAB0004DD5B6 /* timemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timemng.h; path = ../../timemng.h; sourceTree = "<group>"; };
-		BA6908631904AAB0004DD5B6 /* trace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = trace.c; path = ../../trace.c; sourceTree = "<group>"; };
-		BA6908641904AAB0004DD5B6 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trace.h; path = ../../trace.h; sourceTree = "<group>"; };
+		BA69082D1904AA21004DD5B6 /* calendar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = calendar.c; sourceTree = "<group>"; };
+		BA69082E1904AA21004DD5B6 /* calendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = calendar.h; sourceTree = "<group>"; };
+		BA69082F1904AA21004DD5B6 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		BA6908301904AA21004DD5B6 /* debugsub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debugsub.c; sourceTree = "<group>"; };
+		BA6908311904AA21004DD5B6 /* debugsub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugsub.h; sourceTree = "<group>"; };
+		BA6908321904AA21004DD5B6 /* keystat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keystat.c; sourceTree = "<group>"; };
+		BA6908331904AA21004DD5B6 /* keystat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keystat.h; sourceTree = "<group>"; };
+		BA6908341904AA21004DD5B6 /* nevent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nevent.c; sourceTree = "<group>"; };
+		BA6908351904AA21004DD5B6 /* nevent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nevent.h; sourceTree = "<group>"; };
+		BA6908361904AA21004DD5B6 /* np2ver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2ver.h; sourceTree = "<group>"; };
+		BA6908371904AA21004DD5B6 /* pccore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pccore.c; sourceTree = "<group>"; };
+		BA6908381904AA21004DD5B6 /* pccore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pccore.h; sourceTree = "<group>"; };
+		BA6908391904AA21004DD5B6 /* statsave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statsave.c; sourceTree = "<group>"; };
+		BA69083A1904AA21004DD5B6 /* statsave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statsave.h; sourceTree = "<group>"; };
+		BA69083B1904AA21004DD5B6 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
+		BA69083C1904AA21004DD5B6 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timing.h; sourceTree = "<group>"; };
+		BA6908441904AAB0004DD5B6 /* commng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = commng.c; sourceTree = "<group>"; };
+		BA6908451904AAB0004DD5B6 /* commng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commng.h; sourceTree = "<group>"; };
+		BA6908461904AAB0004DD5B6 /* dosio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dosio.c; sourceTree = "<group>"; };
+		BA6908471904AAB0004DD5B6 /* dosio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosio.h; sourceTree = "<group>"; };
+		BA6908481904AAB0004DD5B6 /* fontmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fontmng.c; sourceTree = "<group>"; };
+		BA6908491904AAB0004DD5B6 /* fontmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontmng.h; sourceTree = "<group>"; };
+		BA69084A1904AAB0004DD5B6 /* ini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ini.c; sourceTree = "<group>"; };
+		BA69084B1904AAB0004DD5B6 /* ini.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ini.h; sourceTree = "<group>"; };
+		BA69084C1904AAB0004DD5B6 /* inputmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inputmng.c; sourceTree = "<group>"; };
+		BA69084D1904AAB0004DD5B6 /* inputmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inputmng.h; sourceTree = "<group>"; };
+		BA69084E1904AAB0004DD5B6 /* joymng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = joymng.c; sourceTree = "<group>"; };
+		BA69084F1904AAB0004DD5B6 /* joymng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = joymng.h; sourceTree = "<group>"; };
+		BA6908501904AAB0004DD5B6 /* mousemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mousemng.c; sourceTree = "<group>"; };
+		BA6908511904AAB0004DD5B6 /* mousemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mousemng.h; sourceTree = "<group>"; };
+		BA6908521904AAB0004DD5B6 /* np2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = np2.c; sourceTree = "<group>"; };
+		BA6908531904AAB0004DD5B6 /* np2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2.h; sourceTree = "<group>"; };
+		BA6908541904AAB0004DD5B6 /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oemtext.h; sourceTree = "<group>"; };
+		BA6908551904AAB0004DD5B6 /* scrnmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnmng.c; sourceTree = "<group>"; };
+		BA6908561904AAB0004DD5B6 /* scrnmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnmng.h; sourceTree = "<group>"; };
+		BA6908571904AAB0004DD5B6 /* sdlkbd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sdlkbd.c; sourceTree = "<group>"; };
+		BA6908581904AAB0004DD5B6 /* sdlkbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sdlkbd.h; sourceTree = "<group>"; };
+		BA6908591904AAB0004DD5B6 /* soundmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = soundmng.c; sourceTree = "<group>"; };
+		BA69085A1904AAB0004DD5B6 /* soundmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundmng.h; sourceTree = "<group>"; };
+		BA69085B1904AAB0004DD5B6 /* sysmenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sysmenu.c; sourceTree = "<group>"; };
+		BA69085C1904AAB0004DD5B6 /* sysmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysmenu.h; sourceTree = "<group>"; };
+		BA69085D1904AAB0004DD5B6 /* sysmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sysmng.c; sourceTree = "<group>"; };
+		BA69085E1904AAB0004DD5B6 /* sysmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysmng.h; sourceTree = "<group>"; };
+		BA69085F1904AAB0004DD5B6 /* taskmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = taskmng.c; sourceTree = "<group>"; };
+		BA6908601904AAB0004DD5B6 /* taskmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = taskmng.h; sourceTree = "<group>"; };
+		BA6908611904AAB0004DD5B6 /* timemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timemng.c; sourceTree = "<group>"; };
+		BA6908621904AAB0004DD5B6 /* timemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timemng.h; sourceTree = "<group>"; };
+		BA6908631904AAB0004DD5B6 /* trace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trace.c; sourceTree = "<group>"; };
+		BA6908641904AAB0004DD5B6 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -657,10 +658,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BA03CCFE1905FAC2008BC3E0 /* np2sdl2 */ = {
+			isa = PBXGroup;
+			children = (
+				BA03CD001905FDD8008BC3E0 /* compiler.pch */,
+				BA03CCFF1905FB8F008BC3E0 /* compiler.h */,
+				BA12549E190506EE00884257 /* main.cpp */,
+				BA6905A119049CC9004DD5B6 /* np2sdl2.1 */,
+			);
+			path = np2sdl2;
+			sourceTree = "<group>";
+		};
 		BA69059319049CC9004DD5B6 = {
 			isa = PBXGroup;
 			children = (
-				BA69059E19049CC9004DD5B6 /* np2sdl2 */,
+				BA69059E19049CC9004DD5B6 /* np2 */,
 				BA69059D19049CC9004DD5B6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -673,7 +685,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BA69059E19049CC9004DD5B6 /* np2sdl2 */ = {
+		BA69059E19049CC9004DD5B6 /* np2 */ = {
 			isa = PBXGroup;
 			children = (
 				BA69082D1904AA21004DD5B6 /* calendar.c */,
@@ -708,7 +720,8 @@
 				BA6907D51904A975004DD5B6 /* sound */,
 				BA6906F81904A693004DD5B6 /* vram */,
 			);
-			path = np2sdl2;
+			name = np2;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 		BA6905A81904A0BE004DD5B6 /* bios */ = {
@@ -732,7 +745,7 @@
 				BA6905BD1904A0E9004DD5B6 /* sxsibios.c */,
 				BA6905BE1904A0E9004DD5B6 /* sxsibios.h */,
 			);
-			name = bios;
+			path = bios;
 			sourceTree = "<group>";
 		};
 		BA6905CB1904A170004DD5B6 /* sdl2 */ = {
@@ -773,18 +786,16 @@
 				BA6908641904AAB0004DD5B6 /* trace.h */,
 				BA6905CC1904A17D004DD5B6 /* MacOSX */,
 			);
-			name = sdl2;
+			path = sdl2;
 			sourceTree = "<group>";
 		};
 		BA6905CC1904A17D004DD5B6 /* MacOSX */ = {
 			isa = PBXGroup;
 			children = (
+				BA03CCFE1905FAC2008BC3E0 /* np2sdl2 */,
 				BA6905D01904A1D3004DD5B6 /* SDL2.framework */,
-				BA6905CD1904A1BD004DD5B6 /* compiler.h */,
-				BA12549E190506EE00884257 /* main.cpp */,
-				BA6905A119049CC9004DD5B6 /* np2sdl2.1 */,
 			);
-			name = MacOSX;
+			path = MacOSX;
 			sourceTree = "<group>";
 		};
 		BA6905F21904A693004DD5B6 /* codecnv */ = {
@@ -800,8 +811,7 @@
 				BA6905FD1904A693004DD5B6 /* ucs2utf8.c */,
 				BA6905FE1904A693004DD5B6 /* utf8ucs2.c */,
 			);
-			name = codecnv;
-			path = ../../../codecnv;
+			path = codecnv;
 			sourceTree = "<group>";
 		};
 		BA6905FF1904A693004DD5B6 /* common */ = {
@@ -836,8 +846,7 @@
 				BA69061A1904A693004DD5B6 /* wavefile.c */,
 				BA69061B1904A693004DD5B6 /* wavefile.h */,
 			);
-			name = common;
-			path = ../../../common;
+			path = common;
 			sourceTree = "<group>";
 		};
 		BA69061C1904A693004DD5B6 /* embed */ = {
@@ -850,8 +859,7 @@
 				BA69063B1904A693004DD5B6 /* vrammix.c */,
 				BA69063C1904A693004DD5B6 /* vrammix.h */,
 			);
-			name = embed;
-			path = ../../../embed;
+			path = embed;
 			sourceTree = "<group>";
 		};
 		BA69061D1904A693004DD5B6 /* menu */ = {
@@ -915,8 +923,7 @@
 				BA6906511904A693004DD5B6 /* sxsihdd.c */,
 				BA6906521904A693004DD5B6 /* sxsihdd.h */,
 			);
-			name = fdd;
-			path = ../../../fdd;
+			path = fdd;
 			sourceTree = "<group>";
 		};
 		BA6906531904A693004DD5B6 /* font */ = {
@@ -935,8 +942,7 @@
 				BA69065F1904A693004DD5B6 /* fontx1.c */,
 				BA6906601904A693004DD5B6 /* fontx68k.c */,
 			);
-			name = font;
-			path = ../../../font;
+			path = font;
 			sourceTree = "<group>";
 		};
 		BA6906621904A693004DD5B6 /* generic */ = {
@@ -965,8 +971,7 @@
 				BA6906801904A693004DD5B6 /* unasm.c */,
 				BA6906811904A693004DD5B6 /* unasm.h */,
 			);
-			name = generic;
-			path = ../../../generic;
+			path = generic;
 			sourceTree = "<group>";
 		};
 		BA6906881904A693004DD5B6 /* i286c */ = {
@@ -988,8 +993,7 @@
 				BA6906981904A693004DD5B6 /* v30patch.c */,
 				BA6906991904A693004DD5B6 /* v30patch.h */,
 			);
-			name = i286c;
-			path = ../../../i286c;
+			path = i286c;
 			sourceTree = "<group>";
 		};
 		BA69069E1904A693004DD5B6 /* io */ = {
@@ -1054,8 +1058,7 @@
 				BA6906D71904A693004DD5B6 /* x64 */,
 				BA6906D91904A693004DD5B6 /* x86 */,
 			);
-			name = io;
-			path = ../../../io;
+			path = io;
 			sourceTree = "<group>";
 		};
 		BA6906D71904A693004DD5B6 /* x64 */ = {
@@ -1086,8 +1089,7 @@
 				BA6906E21904A693004DD5B6 /* lio.h */,
 				BA6906E31904A693004DD5B6 /* lio.res */,
 			);
-			name = lio;
-			path = ../../../lio;
+			path = lio;
 			sourceTree = "<group>";
 		};
 		BA6906E41904A693004DD5B6 /* mem */ = {
@@ -1111,8 +1113,7 @@
 				BA6906F41904A693004DD5B6 /* memvram.h */,
 				BA6906F51904A693004DD5B6 /* x86 */,
 			);
-			name = mem;
-			path = ../../../mem;
+			path = mem;
 			sourceTree = "<group>";
 		};
 		BA6906F51904A693004DD5B6 /* x86 */ = {
@@ -1154,8 +1155,7 @@
 				BA6907111904A693004DD5B6 /* vram.c */,
 				BA6907121904A693004DD5B6 /* vram.h */,
 			);
-			name = vram;
-			path = ../../../vram;
+			path = vram;
 			sourceTree = "<group>";
 		};
 		BA69079A1904A6C2004DD5B6 /* cbus */ = {
@@ -1198,8 +1198,7 @@
 				BA6907C01904A6C2004DD5B6 /* scsiio.c */,
 				BA6907C11904A6C2004DD5B6 /* scsiio.h */,
 			);
-			name = cbus;
-			path = ../../../cbus;
+			path = cbus;
 			sourceTree = "<group>";
 		};
 		BA6907D51904A975004DD5B6 /* sound */ = {
@@ -1243,8 +1242,7 @@
 				BA6908011904A975004DD5B6 /* tms3631g.c */,
 				BA6908021904A975004DD5B6 /* vermouth */,
 			);
-			name = sound;
-			path = ../../../sound;
+			path = sound;
 			sourceTree = "<group>";
 		};
 		BA6907E31904A975004DD5B6 /* getsnd */ = {
@@ -1628,10 +1626,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = np2sdl2/compiler.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					.,
+					./np2sdl2,
 					..,
 					../..,
 					../../bios,
@@ -1665,10 +1665,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = np2sdl2/compiler.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					.,
+					./np2sdl2,
 					..,
 					../..,
 					../../bios,
