@@ -1,9 +1,10 @@
 /**
- * @file	main.cpp
+ * @file	main.c
  * @brief	メイン
  */
 
-#include <SDL2/SDL_main.h>
+#include "compiler.h"
+#include "np2.h"
 
 /**
  * メイン
@@ -13,5 +14,5 @@
  */
 int main(int argc, const char * argv[])
 {
-	return SDL_main(argc, const_cast<char**>(argv));
+	return np2_main(argc, const_cast<char**>(argv));
 }

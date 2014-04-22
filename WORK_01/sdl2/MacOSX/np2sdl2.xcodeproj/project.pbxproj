@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BA12549F190506EE00884257 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA12549E190506EE00884257 /* main.cpp */; };
+		BA12549F190506EE00884257 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = BA12549E190506EE00884257 /* main.c */; };
 		BA6905A219049CC9004DD5B6 /* np2sdl2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = BA6905A119049CC9004DD5B6 /* np2sdl2.1 */; };
 		BA6905BF1904A0E9004DD5B6 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6905AA1904A0E9004DD5B6 /* bios.c */; };
 		BA6905C01904A0E9004DD5B6 /* bios0c.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6905AC1904A0E9004DD5B6 /* bios0c.c */; };
@@ -241,7 +241,7 @@
 /* Begin PBXFileReference section */
 		BA03CCFF1905FB8F008BC3E0 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		BA03CD001905FDD8008BC3E0 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
-		BA12549E190506EE00884257 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		BA12549E190506EE00884257 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		BA69059C19049CC9004DD5B6 /* np2sdl2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = np2sdl2; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA6905A119049CC9004DD5B6 /* np2sdl2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = np2sdl2.1; sourceTree = "<group>"; };
 		BA6905AA1904A0E9004DD5B6 /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
@@ -663,7 +663,7 @@
 			children = (
 				BA03CD001905FDD8008BC3E0 /* compiler.pch */,
 				BA03CCFF1905FB8F008BC3E0 /* compiler.h */,
-				BA12549E190506EE00884257 /* main.cpp */,
+				BA12549E190506EE00884257 /* main.c */,
 				BA6905A119049CC9004DD5B6 /* np2sdl2.1 */,
 			);
 			path = np2sdl2;
@@ -1449,7 +1449,7 @@
 				BA6907951904A693004DD5B6 /* scrndraw.c in Sources */,
 				BA6907C91904A6C2004DD5B6 /* boardpx.c in Sources */,
 				BA6908191904A975004DD5B6 /* getsnd.c in Sources */,
-				BA12549F190506EE00884257 /* main.cpp in Sources */,
+				BA12549F190506EE00884257 /* main.c in Sources */,
 				BA6907191904A693004DD5B6 /* textcnv.c in Sources */,
 				BA6907641904A693004DD5B6 /* artic.c in Sources */,
 				BA69083E1904AA21004DD5B6 /* debugsub.c in Sources */,
