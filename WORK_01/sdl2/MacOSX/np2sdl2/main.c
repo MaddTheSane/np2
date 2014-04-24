@@ -14,5 +14,5 @@
  */
 int main(int argc, const char * argv[])
 {
-	return np2_main(argc, const_cast<char**>(argv));
+	return np2_main(argc, argv);
 }

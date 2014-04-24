@@ -91,6 +91,7 @@ typedef	unsigned char	BYTE;
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
 
+#define SOUND_CRITICAL
 #define	SOUNDRESERVE	100
 
 #define	SUPPORT_CRT15KHZ

@@ -123,8 +123,6 @@
 		BA69077B1904A693004DD5B6 /* serial.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6906D11904A693004DD5B6 /* serial.c */; };
 		BA69077C1904A693004DD5B6 /* sysport.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6906D31904A693004DD5B6 /* sysport.c */; };
 		BA69077D1904A693004DD5B6 /* upd4990.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6906D51904A693004DD5B6 /* upd4990.c */; };
-		BA69077E1904A693004DD5B6 /* iocore.inc in Sources */ = {isa = PBXBuildFile; fileRef = BA6906D81904A693004DD5B6 /* iocore.inc */; };
-		BA69077F1904A693004DD5B6 /* iocore.inc in Sources */ = {isa = PBXBuildFile; fileRef = BA6906DA1904A693004DD5B6 /* iocore.inc */; };
 		BA6907801904A693004DD5B6 /* gcircle.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6906DC1904A693004DD5B6 /* gcircle.c */; };
 		BA6907811904A693004DD5B6 /* gline.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6906DD1904A693004DD5B6 /* gline.c */; };
 		BA6907821904A693004DD5B6 /* gpset.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6906DE1904A693004DD5B6 /* gpset.c */; };
@@ -451,8 +449,6 @@
 		BA6906D41904A693004DD5B6 /* sysport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysport.h; sourceTree = "<group>"; };
 		BA6906D51904A693004DD5B6 /* upd4990.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = upd4990.c; sourceTree = "<group>"; };
 		BA6906D61904A693004DD5B6 /* upd4990.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = upd4990.h; sourceTree = "<group>"; };
-		BA6906D81904A693004DD5B6 /* iocore.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = iocore.inc; sourceTree = "<group>"; };
-		BA6906DA1904A693004DD5B6 /* iocore.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = iocore.inc; sourceTree = "<group>"; };
 		BA6906DC1904A693004DD5B6 /* gcircle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcircle.c; sourceTree = "<group>"; };
 		BA6906DD1904A693004DD5B6 /* gline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gline.c; sourceTree = "<group>"; };
 		BA6906DE1904A693004DD5B6 /* gpset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpset.c; sourceTree = "<group>"; };
@@ -460,7 +456,6 @@
 		BA6906E01904A693004DD5B6 /* gscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gscreen.c; sourceTree = "<group>"; };
 		BA6906E11904A693004DD5B6 /* lio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lio.c; sourceTree = "<group>"; };
 		BA6906E21904A693004DD5B6 /* lio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lio.h; sourceTree = "<group>"; };
-		BA6906E31904A693004DD5B6 /* lio.res */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lio.res; sourceTree = "<group>"; };
 		BA6906E51904A693004DD5B6 /* dmav30.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dmav30.c; sourceTree = "<group>"; };
 		BA6906E61904A693004DD5B6 /* dmav30.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmav30.h; sourceTree = "<group>"; };
 		BA6906E71904A693004DD5B6 /* dmax86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dmax86.c; sourceTree = "<group>"; };
@@ -477,15 +472,12 @@
 		BA6906F21904A693004DD5B6 /* memvga.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memvga.h; sourceTree = "<group>"; };
 		BA6906F31904A693004DD5B6 /* memvram.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memvram.c; sourceTree = "<group>"; };
 		BA6906F41904A693004DD5B6 /* memvram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memvram.h; sourceTree = "<group>"; };
-		BA6906F61904A693004DD5B6 /* dmax86.x86 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dmax86.x86; sourceTree = "<group>"; };
-		BA6906F71904A693004DD5B6 /* memegc.x86 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = memegc.x86; sourceTree = "<group>"; };
 		BA6906F91904A693004DD5B6 /* dispsync.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dispsync.c; sourceTree = "<group>"; };
 		BA6906FA1904A693004DD5B6 /* dispsync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dispsync.h; sourceTree = "<group>"; };
 		BA6906FB1904A693004DD5B6 /* makegrex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = makegrex.c; sourceTree = "<group>"; };
 		BA6906FC1904A693004DD5B6 /* makegrex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = makegrex.h; sourceTree = "<group>"; };
 		BA6906FD1904A693004DD5B6 /* makegrph.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = makegrph.c; sourceTree = "<group>"; };
 		BA6906FE1904A693004DD5B6 /* makegrph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = makegrph.h; sourceTree = "<group>"; };
-		BA6906FF1904A693004DD5B6 /* makegrph.mcr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makegrph.mcr; sourceTree = "<group>"; };
 		BA6907001904A693004DD5B6 /* maketext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = maketext.c; sourceTree = "<group>"; };
 		BA6907011904A693004DD5B6 /* maketext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maketext.h; sourceTree = "<group>"; };
 		BA6907021904A693004DD5B6 /* maketgrp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = maketgrp.c; sourceTree = "<group>"; };
@@ -500,8 +492,6 @@
 		BA69070B1904A693004DD5B6 /* scrnsave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnsave.h; sourceTree = "<group>"; };
 		BA69070C1904A693004DD5B6 /* sdraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sdraw.c; sourceTree = "<group>"; };
 		BA69070D1904A693004DD5B6 /* sdraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sdraw.h; sourceTree = "<group>"; };
-		BA69070E1904A693004DD5B6 /* sdraw.mcr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sdraw.mcr; sourceTree = "<group>"; };
-		BA69070F1904A693004DD5B6 /* sdrawex.mcr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sdrawex.mcr; sourceTree = "<group>"; };
 		BA6907101904A693004DD5B6 /* sdrawq16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sdrawq16.c; sourceTree = "<group>"; };
 		BA6907111904A693004DD5B6 /* vram.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vram.c; sourceTree = "<group>"; };
 		BA6907121904A693004DD5B6 /* vram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vram.h; sourceTree = "<group>"; };
@@ -1055,26 +1045,8 @@
 				BA6906D41904A693004DD5B6 /* sysport.h */,
 				BA6906D51904A693004DD5B6 /* upd4990.c */,
 				BA6906D61904A693004DD5B6 /* upd4990.h */,
-				BA6906D71904A693004DD5B6 /* x64 */,
-				BA6906D91904A693004DD5B6 /* x86 */,
 			);
 			path = io;
-			sourceTree = "<group>";
-		};
-		BA6906D71904A693004DD5B6 /* x64 */ = {
-			isa = PBXGroup;
-			children = (
-				BA6906D81904A693004DD5B6 /* iocore.inc */,
-			);
-			path = x64;
-			sourceTree = "<group>";
-		};
-		BA6906D91904A693004DD5B6 /* x86 */ = {
-			isa = PBXGroup;
-			children = (
-				BA6906DA1904A693004DD5B6 /* iocore.inc */,
-			);
-			path = x86;
 			sourceTree = "<group>";
 		};
 		BA6906DB1904A693004DD5B6 /* lio */ = {
@@ -1087,7 +1059,6 @@
 				BA6906E01904A693004DD5B6 /* gscreen.c */,
 				BA6906E11904A693004DD5B6 /* lio.c */,
 				BA6906E21904A693004DD5B6 /* lio.h */,
-				BA6906E31904A693004DD5B6 /* lio.res */,
 			);
 			path = lio;
 			sourceTree = "<group>";
@@ -1111,18 +1082,8 @@
 				BA6906F21904A693004DD5B6 /* memvga.h */,
 				BA6906F31904A693004DD5B6 /* memvram.c */,
 				BA6906F41904A693004DD5B6 /* memvram.h */,
-				BA6906F51904A693004DD5B6 /* x86 */,
 			);
 			path = mem;
-			sourceTree = "<group>";
-		};
-		BA6906F51904A693004DD5B6 /* x86 */ = {
-			isa = PBXGroup;
-			children = (
-				BA6906F61904A693004DD5B6 /* dmax86.x86 */,
-				BA6906F71904A693004DD5B6 /* memegc.x86 */,
-			);
-			path = x86;
 			sourceTree = "<group>";
 		};
 		BA6906F81904A693004DD5B6 /* vram */ = {
@@ -1134,7 +1095,6 @@
 				BA6906FC1904A693004DD5B6 /* makegrex.h */,
 				BA6906FD1904A693004DD5B6 /* makegrph.c */,
 				BA6906FE1904A693004DD5B6 /* makegrph.h */,
-				BA6906FF1904A693004DD5B6 /* makegrph.mcr */,
 				BA6907001904A693004DD5B6 /* maketext.c */,
 				BA6907011904A693004DD5B6 /* maketext.h */,
 				BA6907021904A693004DD5B6 /* maketgrp.c */,
@@ -1149,9 +1109,7 @@
 				BA69070B1904A693004DD5B6 /* scrnsave.h */,
 				BA69070C1904A693004DD5B6 /* sdraw.c */,
 				BA69070D1904A693004DD5B6 /* sdraw.h */,
-				BA69070E1904A693004DD5B6 /* sdraw.mcr */,
-				BA69070F1904A693004DD5B6 /* sdrawex.mcr */,
-				BA6907101904A693004DD5B6 /* sdrawq16.c */,
+				BA69070D1904A693004DD5B6 /* sdrawq16.c */,
 				BA6907111904A693004DD5B6 /* vram.c */,
 				BA6907121904A693004DD5B6 /* vram.h */,
 			);
@@ -1352,10 +1310,8 @@
 				BA6907491904A693004DD5B6 /* fontv98.c in Sources */,
 				BA6907421904A693004DD5B6 /* sxsihdd.c in Sources */,
 				BA6908701904AAB0004DD5B6 /* sysmenu.c in Sources */,
-				BA69077E1904A693004DD5B6 /* iocore.inc in Sources */,
 				BA69074E1904A693004DD5B6 /* cmver.c in Sources */,
 				BA6907731904A693004DD5B6 /* mouseif.c in Sources */,
-				BA69077F1904A693004DD5B6 /* iocore.inc in Sources */,
 				BA6907351904A693004DD5B6 /* menures.c in Sources */,
 				BA6907861904A693004DD5B6 /* dmav30.c in Sources */,
 				BA69074A1904A693004DD5B6 /* fontx1.c in Sources */,
