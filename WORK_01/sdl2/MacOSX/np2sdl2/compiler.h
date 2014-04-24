@@ -101,6 +101,6 @@ typedef	unsigned char	BYTE;
 #define	SUPPORT_SCSI
 
 #define SUPPORT_ARC
-// #define SUPPORT_ZLIB
+#define SUPPORT_ZLIB
 
 #define	SCREEN_BPP		16

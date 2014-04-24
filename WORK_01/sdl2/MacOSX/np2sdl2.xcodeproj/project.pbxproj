@@ -221,6 +221,7 @@
 		BA6908721904AAB0004DD5B6 /* taskmng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA69085F1904AAB0004DD5B6 /* taskmng.c */; };
 		BA6908731904AAB0004DD5B6 /* timemng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6908611904AAB0004DD5B6 /* timemng.c */; };
 		BA6908741904AAB0004DD5B6 /* trace.c in Sources */ = {isa = PBXBuildFile; fileRef = BA6908631904AAB0004DD5B6 /* trace.c */; };
+		BAAEC4B019091EA200EB9804 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAAEC4AF19091EA200EB9804 /* libz.1.2.5.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -418,14 +419,12 @@
 		BA6906B51904A693004DD5B6 /* gdc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gdc.c; sourceTree = "<group>"; };
 		BA6906B61904A693004DD5B6 /* gdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc.h; sourceTree = "<group>"; };
 		BA6906B71904A693004DD5B6 /* gdc_cmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc_cmd.h; sourceTree = "<group>"; };
-		BA6906B81904A693004DD5B6 /* gdc_cmd.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gdc_cmd.tbl; sourceTree = "<group>"; };
 		BA6906B91904A693004DD5B6 /* gdc_pset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gdc_pset.c; sourceTree = "<group>"; };
 		BA6906BA1904A693004DD5B6 /* gdc_pset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc_pset.h; sourceTree = "<group>"; };
 		BA6906BB1904A693004DD5B6 /* gdc_sub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gdc_sub.c; sourceTree = "<group>"; };
 		BA6906BC1904A693004DD5B6 /* gdc_sub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc_sub.h; sourceTree = "<group>"; };
 		BA6906BD1904A693004DD5B6 /* iocore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iocore.c; sourceTree = "<group>"; };
 		BA6906BE1904A693004DD5B6 /* iocore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iocore.h; sourceTree = "<group>"; };
-		BA6906BF1904A693004DD5B6 /* iocore16.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iocore16.tbl; sourceTree = "<group>"; };
 		BA6906C01904A693004DD5B6 /* lsidef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lsidef.h; sourceTree = "<group>"; };
 		BA6906C11904A693004DD5B6 /* mouseif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mouseif.c; sourceTree = "<group>"; };
 		BA6906C21904A693004DD5B6 /* mouseif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mouseif.h; sourceTree = "<group>"; };
@@ -634,6 +633,7 @@
 		BA6908621904AAB0004DD5B6 /* timemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timemng.h; sourceTree = "<group>"; };
 		BA6908631904AAB0004DD5B6 /* trace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trace.c; sourceTree = "<group>"; };
 		BA6908641904AAB0004DD5B6 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace.h; sourceTree = "<group>"; };
+		BAAEC4AF19091EA200EB9804 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -641,6 +641,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAAEC4B019091EA200EB9804 /* libz.1.2.5.dylib in Frameworks */,
 				BA6905D11904A1D3004DD5B6 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -662,6 +663,7 @@
 		BA69059319049CC9004DD5B6 = {
 			isa = PBXGroup;
 			children = (
+				BAAEC4AF19091EA200EB9804 /* libz.1.2.5.dylib */,
 				BA69059E19049CC9004DD5B6 /* np2 */,
 				BA69059D19049CC9004DD5B6 /* Products */,
 			);
@@ -1014,14 +1016,12 @@
 				BA6906B51904A693004DD5B6 /* gdc.c */,
 				BA6906B61904A693004DD5B6 /* gdc.h */,
 				BA6906B71904A693004DD5B6 /* gdc_cmd.h */,
-				BA6906B81904A693004DD5B6 /* gdc_cmd.tbl */,
 				BA6906B91904A693004DD5B6 /* gdc_pset.c */,
 				BA6906BA1904A693004DD5B6 /* gdc_pset.h */,
 				BA6906BB1904A693004DD5B6 /* gdc_sub.c */,
 				BA6906BC1904A693004DD5B6 /* gdc_sub.h */,
 				BA6906BD1904A693004DD5B6 /* iocore.c */,
 				BA6906BE1904A693004DD5B6 /* iocore.h */,
-				BA6906BF1904A693004DD5B6 /* iocore16.tbl */,
 				BA6906C01904A693004DD5B6 /* lsidef.h */,
 				BA6906C11904A693004DD5B6 /* mouseif.c */,
 				BA6906C21904A693004DD5B6 /* mouseif.h */,
@@ -1109,7 +1109,7 @@
 				BA69070B1904A693004DD5B6 /* scrnsave.h */,
 				BA69070C1904A693004DD5B6 /* sdraw.c */,
 				BA69070D1904A693004DD5B6 /* sdraw.h */,
-				BA69070D1904A693004DD5B6 /* sdrawq16.c */,
+				BA6907101904A693004DD5B6 /* sdrawq16.c */,
 				BA6907111904A693004DD5B6 /* vram.c */,
 				BA6907121904A693004DD5B6 /* vram.h */,
 			);
