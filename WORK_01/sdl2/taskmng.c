@@ -47,12 +47,26 @@ void taskmng_rol(void) {
 		case SDL_MOUSEBUTTONUP:
 			switch(e.button.button) {
 				case SDL_BUTTON_LEFT:
-					if (menuvram == NULL) {
-						sysmenu_menuopen(0, e.button.x, e.button.y);
-					}
-					else {
+					if (menuvram != NULL)
+					{
 						menubase_moving(e.button.x, e.button.y, 2);
 					}
+#if defined(__IPHONEOS__)
+					else if (!SDL_IsTextInputActive())
+					{
+						SDL_StartTextInput();
+					}
+					else
+					{
+						SDL_StopTextInput();
+						sysmenu_menuopen(0, e.button.x, e.button.y);
+					}
+#else
+					else
+					{
+						sysmenu_menuopen(0, e.button.x, e.button.y);
+					}
+#endif
 					break;
 
 				case SDL_BUTTON_RIGHT:
@@ -63,9 +77,8 @@ void taskmng_rol(void) {
 		case SDL_MOUSEBUTTONDOWN:
 			switch(e.button.button) {
 				case SDL_BUTTON_LEFT:
-					if (menuvram == NULL) {
-					}
-					else {
+					if (menuvram != NULL)
+					{
 						menubase_moving(e.button.x, e.button.y, 1);
 					}
 					break;

@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 
 #define	BYTESEX_LITTLE
 #define	OSLANG_UTF8
@@ -91,6 +91,7 @@ typedef	unsigned char	BYTE;
 #define	SUPPORT_16BPP
 #define	MEMOPTIMIZE		2
 
+#define SOUND_CRITICAL
 #define	SOUNDRESERVE	100
 
 #define	SUPPORT_CRT15KHZ
