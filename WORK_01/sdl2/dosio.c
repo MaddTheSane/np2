@@ -15,15 +15,8 @@
 #include <unistd.h>
 #endif
 
-static	char	curpath[MAX_PATH];
-static	char	*curfilep = curpath;
-
-
-void dosio_init(void) {
-}
-
-void dosio_term(void) {
-}
+static	char	curpath[MAX_PATH] = "./";
+static	char	*curfilep = curpath + 2;
 
 /* ƒtƒ@ƒCƒ‹‘€ì */
 FILEH file_open(const char *path) {

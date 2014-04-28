@@ -27,7 +27,6 @@
 static	UINT		framecnt;
 static	UINT		waitcnt;
 static	UINT		framemax = 1;
-static	char		datadir[MAX_PATH] = "./";
 
 static void usage(const char *progname) {
 
@@ -38,12 +37,12 @@ static void usage(const char *progname) {
 
 // ---- resume
 
-static void getstatfilename(char *path, const char *ext, int size) {
+static void getstatfilename(char *path, const char *ext, int size)
+{
+	char filename[32];
+	sprintf(filename, "np2sdl2.%s", ext);
 
-	file_cpyname(path, datadir, size);
-	file_cutext(path);
-	file_catname(path, "np2sdl.", size);
-	file_catname(path, ext, size);
+	file_cpyname(path, file_getcd(filename), size);
 }
 
 static int flagsave(const char *ext) {
@@ -127,7 +126,6 @@ int np2_main(int argc, char *argv[]) {
 		}
 	}
 
-	dosio_init();
 	initload();
 
 	TRACEINIT();
@@ -242,7 +240,6 @@ int np2_main(int argc, char *argv[]) {
 	sysmenu_destroy();
 	TRACETERM();
 	SDL_Quit();
-	dosio_term();
 	return(SUCCESS);
 
 np2main_err5:
@@ -259,7 +256,6 @@ np2main_err3:
 np2main_err2:
 	TRACETERM();
 	SDL_Quit();
-	dosio_term();
 
 np2main_err1:
 	return(FAILURE);
