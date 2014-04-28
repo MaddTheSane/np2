@@ -124,7 +124,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
-	cross = np2cfg.snd_x;										// ver0.30
+	cross = pConfig->snd_x;										// ver0.30
 
 	extfn = NULL;
 	ZeroMemory(&opn, sizeof(opn));
