@@ -6,7 +6,7 @@ Xnp2 - ねこープロジェクトII for X Window System
   ねこープロジェクトII はぷにゅ氏により作成された Windows 上で動作する
   i286 CPU を塔載した PC-9801 シリーズのエミュレータです。
 
-  Xnp2 はねこープロジェクトIIを UNIX 系 OS で動作する様に移植したものです。
+  Xnp2 はねこープロジェクトII を UNIX 系 OS で動作する様に移植したものです。
 
 
 2. 動作環境
@@ -25,6 +25,7 @@ Xnp2 - ねこープロジェクトII for X Window System
 
     ・SDL (サウンド・ジョイスティックを使用する場合に必要です。)
     ・SDL_mixer (フロッピーのシーク音等の PCM を再生する場合に必要です。)
+    ・XFree86-VidModeExtension (画面解像度を変更するフルスクリーン機能を使用する場合に必要)
 
   3.2. 実行時に必要なソフトウェア
 
@@ -36,9 +37,17 @@ Xnp2 - ねこープロジェクトII for X Window System
       http://freedesktop.org/wiki/Standards/wm-spec
 
 
-4. インストール方法
+4. インストール
 
-  INSTALL.ja を参照してください。
+  Xnp2 のインストールはコマンドラインから以下の様に行います。
+
+    $ ./configure
+    $ make
+    $ su
+    # make install
+
+  ※configure で指定できるオプションについては ./configure --help を実行して
+    表示されるヘルプを参照してください。
 
 
 5. 実行
@@ -92,8 +101,8 @@ Xnp2 - ねこープロジェクトII for X Window System
       +-------------------------+----------------------------+
       |         PC-9801         |            106             |
       +-------------------------+----------------------------+
-      | GRPH                    | ALT                        |
-      | HELP                    | END                        |
+      | GRPH                    | Alt                        |
+      | HELP                    | End, F12(*)                |
       | CAPS                    | ScrollLock                 |
       | NFER                    | 無変換                     |
       | XFER                    | 変換/前候補/全候補         |
@@ -206,10 +215,12 @@ Xnp2 - ねこープロジェクトII for X Window System
 
 8. 備考
 
-  ・このマニュアルに書かれている以上の情報が欲しい場合は以下の URL にある
-    ヘルプを参照すると、見つかるかもしれません。
+  ・man page がインストールされていれば man xnp2 でマニュアルが表示されます。
 
-      Xnp2 help URL: http://www.asahi-net.or.jp/~aw9k-nnk/np2/html/help/ja/
+  ・このマニュアルや man page に書かれている以上の情報が欲しい場合は、
+    以下の URL にあるヘルプを参照すると見つかるかもしれません。
+
+      Xnp2 help URL: http://www.nonakap.org/np2/html/help/ja/
 
 
 9. 問題点
@@ -237,10 +248,8 @@ Xnp2 - ねこープロジェクトII for X Window System
 
 11. 連絡先
 
-  本ソフトウェアの配布元は http://www.asahi-net.or.jp/~aw9k-nnk/np2/ です。
-  また anoncvs を使用して最新のソースを取得できます。
-    cvs -d :pserver:anonymous@retropc.net:/cvs get np2
+  本ソフトウェアの配布元は http://www.nonakap.org/np2/ です。
 
   本ソフトウェアに関する問い合わせは
-   NONAKA Kimihiro (埜中公博) / aw9k-nnk@asahi-net.or.jp
+   NONAKA Kimihiro (埜中公博) / nonakap@gmail.com
   まで電子メールにてお願いします。

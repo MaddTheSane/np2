@@ -62,7 +62,7 @@ typedef struct {
 	double		ratio_w, ratio_h;
 	int		interp;
 
-	GdkColor	pal[24];
+	GdkColor	pal[NP2PAL_EXTEND];
 } DRAWMNG;
 
 typedef struct {
@@ -550,7 +550,11 @@ void
 scrnmng_update(void)
 {
 	GdkDrawable *d = drawarea->window;
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 	GdkGC *gc = drawarea->style->fg_gc[gtk_widget_get_state(drawarea)];
+#else
+	GdkGC *gc = drawarea->style->fg_gc[GTK_WIDGET_STATE(drawarea)];
+#endif
 
 	if (scrnmng.palchanged) {
 		scrnmng.palchanged = FALSE;

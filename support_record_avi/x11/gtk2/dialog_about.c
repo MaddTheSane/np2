@@ -51,7 +51,6 @@ create_about_dialog(void)
 	GtkWidget *ver_label;
 	GtkWidget *ok_button;
 	GtkWidget *neko_image;
-	GdkColormap *colormap;
 	GdkPixbuf *neko_pixbuf;
 
 	uninstall_idle_process();
@@ -69,7 +68,6 @@ create_about_dialog(void)
 	gtk_widget_show(main_widget);
 	gtk_container_add(GTK_CONTAINER(about_dialog), main_widget);
 
-	colormap = gtk_widget_get_colormap(about_dialog);
 	neko_pixbuf = gdk_pixbuf_new_from_xpm_data(np2_icon);
 	neko_image = gtk_image_new_from_pixbuf(neko_pixbuf);
 	g_object_unref(neko_pixbuf);
@@ -90,8 +88,13 @@ create_about_dialog(void)
 	gtk_box_pack_end(GTK_BOX(main_widget), ok_button, FALSE, TRUE, 0);
 	g_signal_connect_swapped(GTK_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(about_dialog));
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 	gtk_widget_set_can_default(ok_button, TRUE);
 	gtk_widget_has_default(ok_button);
+#else
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
+#endif
 	gtk_widget_grab_default(ok_button);
 
 	gtk_widget_show_all(about_dialog);

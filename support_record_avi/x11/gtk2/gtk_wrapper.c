@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004 NONAKA Kimihiro
+ * Copyright (c) 2002-2013 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -138,7 +138,6 @@ static int
 check_xvid(GtkWidget *widget)
 {
 	gboolean ret = FALSE;
-	GtkWindow *window;
 	GdkWindow *w;
 	Display *xdisplay;
 	int xscreen;
@@ -151,7 +150,6 @@ check_xvid(GtkWidget *widget)
 
 	g_return_val_if_fail(widget != NULL, FALSE);
 
-	window = GTK_WINDOW(widget);
 	w = widget->window;
 	xdisplay = GDK_WINDOW_XDISPLAY(w);
 	xscreen = XDefaultScreen(xdisplay);
@@ -234,7 +232,7 @@ check_netwm(GtkWidget *widget)
 	unsigned char *prop;
 	guint32 *data;
 	int rv;
-	long i;
+	unsigned long i;
 
 	g_return_val_if_fail(widget != NULL, 0);
 
@@ -340,6 +338,7 @@ gtk_window_restore_mode(GtkWidget *widget)
 
 	if (!is_fullscreen)
 		return;
+	is_fullscreen = 0;
 
 #ifdef HAVE_XF86VIDMODE
 	if (use_xvid) {
@@ -366,14 +365,14 @@ gtk_window_restore_mode(GtkWidget *widget)
 			}
 		}
 
-		if (np2running) {
+		if (np2running && GTK_IS_WINDOW(widget)) {
 			gtk_window_move(GTK_WINDOW(widget), orig_x, orig_y);
 		}
 
 		XUnlockDisplay(fs_xdisplay);
 	}
 #endif	/* HAVE_XF86VIDMODE */
-	if (use_netwm) {
+	if (use_netwm && GTK_IS_WINDOW(widget)) {
 		gtk_window_unfullscreen(GTK_WINDOW(widget));
 	}
 }

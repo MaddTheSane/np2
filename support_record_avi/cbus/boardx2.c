@@ -11,7 +11,7 @@
 
 static void IOOUTCALL opn_o088(UINT port, REG8 dat) {
 
-	opn.addr2 = dat;
+	opn.addr2l = dat;
 	opn.data2 = dat;
 	(void)port;
 }
@@ -21,7 +21,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 	UINT	addr;
 
 	opn.data2 = dat;
-	addr = opn.addr2;
+	addr = opn.addr2l;
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
 			psggen_setreg(&psg1, addr, dat);
@@ -59,7 +59,7 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr2;
+	addr = opn.addr2l;
 	if (addr == 0x0e) {
 		return(0xff);
 	}
@@ -77,8 +77,8 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 
 static void IOOUTCALL opna_o188(UINT port, REG8 dat) {
 
-	opn.addr = dat;
-	opn.data = dat;
+	opn.addr1l = dat;
+	opn.data1 = dat;
 	(void)port;
 }
 
@@ -86,11 +86,8 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data = dat;
-	addr = opn.addr;
-	if (addr >= 0x100) {
-		return;
-	}
+	opn.data1 = dat;
+	addr = opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
@@ -131,8 +128,8 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 static void IOOUTCALL opna_o18c(UINT port, REG8 dat) {
 
 	if (opn.extend) {
-		opn.addr = dat + 0x100;
-		opn.data = dat;
+		opn.addr1h = dat;
+		opn.data1 = dat;
 	}
 	(void)port;
 }
@@ -144,10 +141,7 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 	if (!opn.extend) {
 		return;
 	}
-	addr = opn.addr - 0x100;
-	if (addr >= 0x100) {
-		return;
-	}
+	addr = opn.addr1h;
 	S98_put(EXTEND2608, addr, dat);
 	opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
@@ -173,7 +167,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr;
+	addr = opn.addr1l;
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&psg2));
 	}
@@ -185,7 +179,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 	}
 	else {
 		(void)port;
-		return(opn.data);
+		return(opn.data1);
 	}
 }
 
@@ -201,11 +195,11 @@ static REG8 IOINPCALL opna_i18c(UINT port) {
 static REG8 IOINPCALL opna_i18e(UINT port) {
 
 	if (opn.extend) {
-		UINT addr = opn.addr - 0x100;
+		UINT addr = opn.addr1h;
 		if ((addr == 0x08) || (addr == 0x0f)) {
 			return(opn.reg[addr + 0x100]);
 		}
-		return(opn.data);
+		return(opn.data1);
 	}
 	(void)port;
 	return(0xff);

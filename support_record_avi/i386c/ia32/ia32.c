@@ -130,25 +130,16 @@ ia32_setemm(UINT frame, UINT32 addr) {
 
 
 /*
- * •‚°º•…¡´∞‹
+ * „É¢„Éº„ÉâÈÅ∑Áßª
  */
-void FASTCALL
+void CPUCALL
 change_pm(BOOL onoff)
 {
-#if 0
-	int i;
-#endif
 
 	if (onoff) {
-#if 0
-		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			CPU_STAT_SREG(i).valid = 1;
-			CPU_STAT_SREG(i).dpl = 0;
-		}
-#endif
-		VERBOSE(("Entering to Protected-Mode..."));
+		VERBOSE(("change_pm: Entering to Protected-Mode..."));
 	} else {
-		VERBOSE(("Leaveing from Protected-Mode..."));
+		VERBOSE(("change_pm: Leaveing from Protected-Mode..."));
 	}
 
 	CPU_INST_OP32 = CPU_INST_AS32 =
@@ -159,29 +150,28 @@ change_pm(BOOL onoff)
 	CPU_STAT_PM = onoff;
 }
 
-void FASTCALL
+void CPUCALL
 change_pg(BOOL onoff)
 {
 
 	if (onoff) {
-		VERBOSE(("Entering to Paging-Mode..."));
+		VERBOSE(("change_pg: Entering to Paging-Mode..."));
 	} else {
-		VERBOSE(("Leaveing from Paging-Mode..."));
+		VERBOSE(("change_pg: Leaveing from Paging-Mode..."));
 	}
 
 	CPU_STAT_PAGING = onoff;
 }
 
-void FASTCALL
+void CPUCALL
 change_vm(BOOL onoff)
 {
 	int i;
 
 	CPU_STAT_VM86 = onoff;
 	if (onoff) {
-		VERBOSE(("Entering to Virtual-8086-Mode..."));
+		VERBOSE(("change_vm: Entering to Virtual-8086-Mode..."));
 		for (i = 0; i < CPU_SEGREG_NUM; i++) {
-			CPU_STAT_SREGLIMIT(i) = 0xffff;
 			LOAD_SEGREG(i, CPU_REGS_SREG(i));
 		}
 		CPU_INST_OP32 = CPU_INST_AS32 =
@@ -190,14 +180,14 @@ change_vm(BOOL onoff)
 		CPU_STAT_SS32 = 0;
 		set_cpl(3);
 	} else {
-		VERBOSE(("Leaveing from Virtual-8086-Mode..."));
+		VERBOSE(("change_vm: Leaveing from Virtual-8086-Mode..."));
 	}
 }
 
 /*
  * flags
  */
-static void FASTCALL
+static void CPUCALL
 modify_eflags(UINT32 new_flags, UINT32 mask)
 {
 	UINT32 orig = CPU_EFLAG;
@@ -219,7 +209,7 @@ modify_eflags(UINT32 new_flags, UINT32 mask)
 	}
 }
 
-void FASTCALL
+void CPUCALL
 set_flags(UINT16 new_flags, UINT16 mask)
 {
 
@@ -228,7 +218,7 @@ set_flags(UINT16 new_flags, UINT16 mask)
 	modify_eflags(new_flags, mask);
 }
 
-void FASTCALL
+void CPUCALL
 set_eflags(UINT32 new_flags, UINT32 mask)
 {
 
@@ -241,7 +231,7 @@ set_eflags(UINT32 new_flags, UINT32 mask)
 /*
  * CR3 (Page Directory Entry base physical address)
  */
-void FASTCALL
+void CPUCALL
 set_cr3(UINT32 new_cr3)
 {
 
@@ -255,7 +245,7 @@ set_cr3(UINT32 new_cr3)
 /*
  * CPL (Current Privilege Level)
  */
-void FASTCALL
+void CPUCALL
 set_cpl(int new_cpl)
 {
 	int cpl = new_cpl & 3;

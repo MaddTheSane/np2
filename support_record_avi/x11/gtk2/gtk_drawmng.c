@@ -92,7 +92,7 @@ drawmng_create(void *parent, int width, int height)
 	}
 	bytes_per_pixel = fmt.bits_per_pixel / 8;
 
-	hdl->d.dest.x = hdl->d.dest.x = 0;
+	hdl->d.dest.x = hdl->d.dest.y = 0;
 	hdl->d.src.left = hdl->d.src.top = 0;
 	hdl->d.src.right = width;
 	hdl->d.src.bottom = height;
@@ -174,7 +174,11 @@ drawmng_surfunlock(DRAWMNG_HDL dhdl)
 	GdkGC *gc;
 
 	if (hdl) {
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 		gc = hdl->drawarea->style->fg_gc[gtk_widget_get_state(hdl->drawarea)];
+#else
+		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+#endif
 		gdk_draw_image(hdl->backsurf, gc, hdl->surface,
 		    0, 0, 0, 0, hdl->d.width, hdl->d.height);
 		hdl->d.drawing = FALSE;
@@ -191,7 +195,11 @@ drawmng_blt(DRAWMNG_HDL dhdl, RECT_T *sr, POINT_T *dp)
 	int width, height;
 
 	if (hdl) {
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 		gc = hdl->drawarea->style->fg_gc[gtk_widget_get_state(hdl->drawarea)];
+#else
+		gc = hdl->drawarea->style->fg_gc[GTK_WIDGET_STATE(hdl->drawarea)];
+#endif
 		if (sr || dp) {
 
 			if (sr) {

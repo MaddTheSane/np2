@@ -30,39 +30,35 @@
 #include "iocore.h"
 #include "memory.h"
 
-static void IOOUTCALL check_io(UINT port, UINT len);
+static void CPUCALL check_io(UINT port, UINT len);
 
-static void IOOUTCALL
+static void CPUCALL
 check_io(UINT port, UINT len) 
 {
 	UINT off;
-	UINT8 bit;
-	UINT8 map;
+	UINT16 map;
+	UINT16 mask;
 
 	if (CPU_STAT_IOLIMIT == 0) {
 		VERBOSE(("check_io: CPU_STAT_IOLIMIT == 0 (port = %04x, len = %d)", port, len));
 		EXCEPTION(GP_EXCEPTION, 0);
 	}
 
-	off = port / 8;
-	bit = 1 << (port % 8);
-	for (; len > 0; ++off, bit = 0x01) {
-		if (off >= CPU_STAT_IOLIMIT) {
-			VERBOSE(("check_io: off(%08x) >= CPU_STAT_IOLIMIT(%08x) (port = %04x, len = %d)", off, CPU_STAT_IOLIMIT, port, len));
-			EXCEPTION(GP_EXCEPTION, 0);
-		}
+	if ((port + len) / 8 >= CPU_STAT_IOLIMIT) {
+		VERBOSE(("check_io: out of range: CPU_STAT_IOLIMIT(%08x) (port = %04x, len = %d)", CPU_STAT_IOLIMIT, port, len));
+		EXCEPTION(GP_EXCEPTION, 0);
+	}
 
-		map = cpu_kmemoryread(CPU_STAT_IOADDR + off);
-		for (; (len > 0) && (bit != 0x00); bit <<= 1, --len) {
-			if (map & bit) {
-				VERBOSE(("check_io: (bitmap(0x%02x) & bit(0x%02x)) != 0 (port = %04x, len = %d)", map, bit, port, len));
-				EXCEPTION(GP_EXCEPTION, 0);
-			}
-		}
+	off = port / 8;
+	mask = ((1 << len) - 1) << (port % 8);
+	map = cpu_kmemoryread_w(CPU_STAT_IOADDR + off);
+	if (map & mask) {
+		VERBOSE(("check_io: (bitmap(0x%04x) & bit(0x%04x)) != 0 (CPU_STAT_IOADDR=0x%08x, offset=0x%04x, port = 0x%04x, len = %d)", map, mask, CPU_STAT_IOADDR, off, port, len));
+		EXCEPTION(GP_EXCEPTION, 0);
 	}
 }
 
-UINT8
+UINT8 IOINPCALL
 cpu_in(UINT port)
 {
 
@@ -72,7 +68,7 @@ cpu_in(UINT port)
 	return iocore_inp8(port);
 }
 
-UINT16
+UINT16 IOINPCALL
 cpu_in_w(UINT port)
 {
 
@@ -82,7 +78,7 @@ cpu_in_w(UINT port)
 	return iocore_inp16(port);
 }
 
-UINT32
+UINT32 IOINPCALL
 cpu_in_d(UINT port)
 {
 
@@ -92,7 +88,7 @@ cpu_in_d(UINT port)
 	return iocore_inp32(port);
 }
 
-void
+void IOOUTCALL
 cpu_out(UINT port, UINT8 data)
 {
 
@@ -102,7 +98,7 @@ cpu_out(UINT port, UINT8 data)
 	iocore_out8(port, data);
 }
 
-void
+void IOOUTCALL
 cpu_out_w(UINT port, UINT16 data)
 {
 
@@ -112,7 +108,7 @@ cpu_out_w(UINT port, UINT16 data)
 	iocore_out16(port, data);
 }
 
-void
+void IOOUTCALL
 cpu_out_d(UINT port, UINT32 data)
 {
 

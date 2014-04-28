@@ -170,8 +170,8 @@ typedef struct {
 	UINT8		user_mode;
 
 	UINT8		hlt;
-	UINT8		bp;	/* break point bitmap */
-	UINT8		bp_ev;	/* break point event */
+	UINT8		bp;		/* break point bitmap */
+	UINT8		bp_ev;		/* break point event */
 
 	UINT8		backout_sp;	/* backout ESP, when exception */
 
@@ -213,20 +213,20 @@ typedef struct {
 } FPU_REGS;
 
 typedef struct {
-	UINT8		valid;	/* •Ï•∏•π•øÕ≠∏˙ */
-	UINT8		sign;	/* …‰πÊ */
-	UINT8		zero;	/* •º•Ì */
-	UINT8		inf;	/* °Á */
-	UINT8		nan;	/* NaN */
-	UINT8		denorm;	/* »Û¿µµ¨≤Ω */
-	SINT16		exp;	/* ªÿøÙ…Ù */
-	UINT64		num;	/* æÆøÙ…Ù */
+	UINT8		valid;
+	UINT8		sign;
+	UINT8		zero;
+	UINT8		inf;
+	UINT8		nan;
+	UINT8		denorm;
+	SINT16		exp;
+	UINT64		num;
 } FP_REG;
 
 typedef struct {
-	UINT8		top;	/* •π•ø•√•Ø∞Ã√÷ */
-	UINT8		pc;	/* ¿∫≈Ÿ */
-	UINT8		rc;	/* ¥›§· */
+	UINT8		top;
+	UINT8		pc;
+	UINT8		rc;
 	UINT8		dmy[1];
 
 	FP_REG		reg[FPU_REG_NUM];
@@ -264,7 +264,7 @@ typedef struct {
 } I386EXT;
 
 typedef struct {
-	I386STAT	s;				/* STATsave§µ§Ï§Î≈€ */
+	I386STAT	s;		/* STATsave'ed */
 	I386EXT		e;
 } I386CORE;
 
@@ -450,8 +450,8 @@ extern sigjmp_buf	exec_1step_jmpbuf;
 #define	REAL_FLAGREG	((CPU_FLAG & 0xf7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 #define	REAL_EFLAGREG	((CPU_EFLAG & 0xfffff7ff) | (CPU_OV ? O_FLAG : 0) | 2)
 
-void FASTCALL set_flags(UINT16 new_flags, UINT16 mask);
-void FASTCALL set_eflags(UINT32 new_flags, UINT32 mask);
+void CPUCALL set_flags(UINT16 new_flags, UINT16 mask);
+void CPUCALL set_eflags(UINT32 new_flags, UINT32 mask);
 
 
 #define	CPU_INST_OP32		CPU_STATSAVE.cpu_inst.op_32
@@ -481,7 +481,7 @@ do { \
 	CPU_PREV_ESP = (esp); \
 } while (/*CONSTCOND*/0)
 #define	CPU_SET_PREV_ESP()	CPU_SET_PREV_ESP1(CPU_ESP)
-#define	CPU_CLEAR_PREV_ESP(esp) \
+#define	CPU_CLEAR_PREV_ESP() \
 do { \
 	CPU_STATSAVE.cpu_stat.backout_sp = 0; \
 } while (/*CONSTCOND*/0)
@@ -619,7 +619,6 @@ void ia32a20enable(BOOL enable);
 void ia32(void);
 void ia32_step(void);
 void CPUCALL ia32_interrupt(int vect, int soft);
-void CPUCALL ia32_exception(int vect, int p1, int p2);
 
 void exec_1step(void);
 #define	INST_PREFIX	(1 << 0)
@@ -632,12 +631,12 @@ void ia32_panic(const char *buf, ...);
 
 void ia32_bioscall(void);
 
-void FASTCALL change_pm(BOOL onoff);
-void FASTCALL change_vm(BOOL onoff);
-void FASTCALL change_pg(BOOL onoff);
+void CPUCALL change_pm(BOOL onoff);
+void CPUCALL change_vm(BOOL onoff);
+void CPUCALL change_pg(BOOL onoff);
 
-void FASTCALL set_cr3(UINT32 new_cr3);
-void FASTCALL set_cpl(int new_cpl);
+void CPUCALL set_cr3(UINT32 new_cr3);
+void CPUCALL set_cpl(int new_cpl);
 
 extern const UINT8 iflags[];
 #define	szpcflag	iflags
@@ -650,9 +649,10 @@ extern UINT16 *reg16_b53[0x100];
 extern UINT32 *reg32_b20[0x100];
 extern UINT32 *reg32_b53[0x100];
 
-extern const char *reg8_str[8];
-extern const char *reg16_str[8];
-extern const char *reg32_str[8];
+extern const char *reg8_str[CPU_REG_NUM];
+extern const char *reg16_str[CPU_REG_NUM];
+extern const char *reg32_str[CPU_REG_NUM];
+extern const char *sreg_str[CPU_SEGREG_NUM];
 
 char *cpu_reg2str(void);
 #if defined(USE_FPU)
@@ -685,20 +685,20 @@ void dbg_printf(const char *str, ...);
 #define	FPU_REG(i)		FPU_STAT.reg[i]
 
 /* FPU status register */
-#define	FP_IE_FLAG	(1 << 0)	/* Ãµ∏˙§ ∆∞∫Ó */
-#define	FP_DE_FLAG	(1 << 1)	/* •«•Œ°º•ﬁ•È•§•∫•…°¶•™•⁄•È•Û•… */
-#define	FP_ZE_FLAG	(1 << 2)	/* •º•Ì§À§Ë§ÎΩ¸ªª */
-#define	FP_OE_FLAG	(1 << 3)	/* •™°º•–°º•’•Ì°º */
-#define	FP_UE_FLAG	(1 << 4)	/* •¢•Û•¿°º•’•Ì°º */
-#define	FP_PE_FLAG	(1 << 5)	/* ¿∫≈Ÿ */
-#define	FP_SF_FLAG	(1 << 6)	/* •π•ø•√•Ø•’•©•Î•» */
-#define	FP_ES_FLAG	(1 << 7)	/* •®•È°º•µ•ﬁ•Í•π•∆°º•ø•π */
-#define	FP_C0_FLAG	(1 << 8)	/* æÚ∑Ô•≥°º•… */
-#define	FP_C1_FLAG	(1 << 9)	/* æÚ∑Ô•≥°º•… */
-#define	FP_C2_FLAG	(1 << 10)	/* æÚ∑Ô•≥°º•… */
-#define	FP_TOP_FLAG	(7 << 11)	/* •π•ø•√•Ø•›•§•Û•»§Œ•»•√•◊ */
-#define	FP_C3_FLAG	(1 << 14)	/* æÚ∑Ô•≥°º•… */
-#define	FP_B_FLAG	(1 << 15)	/* FPU •”•∏°º */
+#define	FP_IE_FLAG	(1 << 0)	/* ÁÑ°Âäπ„Å™Âãï‰Ωú */
+#define	FP_DE_FLAG	(1 << 1)	/* „Éá„Éé„Éº„Éû„É©„Ç§„Ç∫„Éâ„Éª„Ç™„Éö„É©„É≥„Éâ */
+#define	FP_ZE_FLAG	(1 << 2)	/* „Çº„É≠„Å´„Çà„ÇãÈô§ÁÆó */
+#define	FP_OE_FLAG	(1 << 3)	/* „Ç™„Éº„Éê„Éº„Éï„É≠„Éº */
+#define	FP_UE_FLAG	(1 << 4)	/* „Ç¢„É≥„ÉÄ„Éº„Éï„É≠„Éº */
+#define	FP_PE_FLAG	(1 << 5)	/* Á≤æÂ∫¶ */
+#define	FP_SF_FLAG	(1 << 6)	/* „Çπ„Çø„ÉÉ„ÇØ„Éï„Ç©„É´„Éà */
+#define	FP_ES_FLAG	(1 << 7)	/* „Ç®„É©„Éº„Çµ„Éû„É™„Çπ„ÉÜ„Éº„Çø„Çπ */
+#define	FP_C0_FLAG	(1 << 8)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_C1_FLAG	(1 << 9)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_C2_FLAG	(1 << 10)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_TOP_FLAG	(7 << 11)	/* „Çπ„Çø„ÉÉ„ÇØ„Éù„Ç§„É≥„Éà„ÅÆ„Éà„ÉÉ„Éó */
+#define	FP_C3_FLAG	(1 << 14)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
+#define	FP_B_FLAG	(1 << 15)	/* FPU „Éì„Ç∏„Éº */
 
 #define	FP_TOP_SHIFT	11
 #define	FP_TOP_GET()	((FPU_STATUSWORD & FP_TOP_FLAG) >> FP_TOP_SHIFT)
@@ -714,12 +714,12 @@ do { \
 } while (/*CONSTCOND*/0)
 
 /* FPU control register */
-#define	FP_CTRL_PC_SHIFT	8	/* ¿∫≈Ÿ¿©∏Ê */
-#define	FP_CTRL_RC_SHIFT	10	/* ¥›§·¿©∏Ê */
+#define	FP_CTRL_PC_SHIFT	8	/* Á≤æÂ∫¶Âà∂Âæ° */
+#define	FP_CTRL_RC_SHIFT	10	/* ‰∏∏„ÇÅÂà∂Âæ° */
 
-#define	FP_CTRL_PC_24		0	/* √±¿∫≈Ÿ */
-#define	FP_CTRL_PC_53		1	/* «‹¿∫≈Ÿ */
-#define	FP_CTRL_PC_64		3	/* ≥»ƒ•¿∫≈Ÿ */
+#define	FP_CTRL_PC_24		0	/* ÂçòÁ≤æÂ∫¶ */
+#define	FP_CTRL_PC_53		1	/* ÂÄçÁ≤æÂ∫¶ */
+#define	FP_CTRL_PC_64		3	/* Êã°ÂºµÁ≤æÂ∫¶ */
 
 #define	FP_CTRL_RC_NEAREST_EVEN	0
 #define	FP_CTRL_RC_DOWN		1
@@ -775,6 +775,7 @@ typedef struct {
 } disasm_context_t;
 
 int disasm(UINT32 *eip, disasm_context_t *ctx);
+char *cpu_disasm2str(UINT32 eip);
 
 #ifdef __cplusplus
 }

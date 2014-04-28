@@ -165,7 +165,7 @@ now_button_clicked(GtkButton *b, gpointer d)
 static void
 calendar_radiobutton_clicked(GtkButton *b, gpointer d)
 {
-	gint virtual = (gint)d;
+	gint virtual = GPOINTER_TO_UINT(d);
 	int i;
 
 	calendar_kind = virtual ? 0 : 1;
@@ -208,14 +208,21 @@ create_calendar_dialog(void)
 	 * calendar kind radiobutton
 	 */
 	for (i = 0; i < NELEMENTS(calendar_kind_str); i++) {
-		calendar_radiobutton[i] = gtk_radio_button_new_with_label_from_widget(i > 0 ? GTK_RADIO_BUTTON(calendar_radiobutton[i-1]) : NULL, calendar_kind_str[i]);
+		calendar_radiobutton[i] =
+		    gtk_radio_button_new_with_label_from_widget(
+		      (i > 0) ? GTK_RADIO_BUTTON(calendar_radiobutton[i-1])
+		        : NULL, calendar_kind_str[i]);
 		gtk_widget_show(calendar_radiobutton[i]);
 		gtk_table_attach_defaults(GTK_TABLE(main_widget),
 		    calendar_radiobutton[i], 0, 3, i, i+1);
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 		gtk_widget_set_can_focus(calendar_radiobutton[i], FALSE);
+#else
+		GTK_WIDGET_UNSET_FLAGS(calendar_radiobutton[i], GTK_CAN_FOCUS);
+#endif
 		g_signal_connect(GTK_OBJECT(calendar_radiobutton[i]),
 		    "clicked", G_CALLBACK(calendar_radiobutton_clicked),
-		    (gpointer)i);
+		    GUINT_TO_POINTER(i));
 	}
 
 	/*
@@ -271,8 +278,13 @@ create_calendar_dialog(void)
 	gtk_widget_show(ok_button);
 	gtk_container_set_border_width(GTK_CONTAINER(ok_button), 2);
 	gtk_table_attach_defaults(GTK_TABLE(main_widget),ok_button, 4, 6, 0, 1);
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 	gtk_widget_set_can_default(ok_button, TRUE);
 	gtk_widget_has_default(ok_button);
+#else
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
+	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
+#endif
 	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(ok_button_clicked), (gpointer)calendar_dialog);
 	gtk_widget_grab_default(ok_button);

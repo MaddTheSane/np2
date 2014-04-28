@@ -215,7 +215,7 @@ InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -227,7 +227,7 @@ InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -239,7 +239,7 @@ InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -251,7 +251,7 @@ InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -263,7 +263,7 @@ InputPath=.\x86\PARTS.X86
 InputName=PARTS
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -335,6 +335,10 @@ SOURCE=..\I386C\ia32\instructions\dec_arith.c
 # Begin Source File
 
 SOURCE=..\I386C\ia32\instructions\flag_ctrl.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\I386C\ia32\instructions\fpu.c
 # End Source File
 # Begin Source File
 
@@ -761,7 +765,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
 
 # End Custom Build
 
@@ -773,7 +777,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
 
 # End Custom Build
 
@@ -785,7 +789,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
 
 # End Custom Build
 
@@ -797,7 +801,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
 
 # End Custom Build
 
@@ -809,7 +813,7 @@ InputPath=.\x86\MAKEGRPH.X86
 InputName=MAKEGRPH
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
 
 # End Custom Build
 
@@ -936,7 +940,7 @@ InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -948,7 +952,7 @@ InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -960,7 +964,7 @@ InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -972,7 +976,7 @@ InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -984,7 +988,7 @@ InputPath=.\x86\OPNGENG.X86
 InputName=OPNGENG
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1261,7 +1265,7 @@ SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Group
 # Begin Source File
 
-SOURCE=.\BOARD118.C
+SOURCE=.\BOARD118.CPP
 # End Source File
 # Begin Source File
 
@@ -1291,7 +1295,7 @@ InputPath=.\x86\CPUTYPE.X86
 InputName=CPUTYPE
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1303,7 +1307,7 @@ InputPath=.\x86\CPUTYPE.X86
 InputName=CPUTYPE
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1315,7 +1319,7 @@ InputPath=.\x86\CPUTYPE.X86
 InputName=CPUTYPE
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1327,7 +1331,7 @@ InputPath=.\x86\CPUTYPE.X86
 InputName=CPUTYPE
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1339,7 +1343,7 @@ InputPath=.\x86\CPUTYPE.X86
 InputName=CPUTYPE
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1362,7 +1366,7 @@ InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1374,7 +1378,7 @@ InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1386,7 +1390,7 @@ InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1398,7 +1402,7 @@ InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 
@@ -1410,7 +1414,7 @@ InputPath=.\DCLOCKD.X86
 InputName=DCLOCKD
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasmw -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
 
 # End Custom Build
 

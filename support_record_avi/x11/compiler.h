@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2003, 2004 NONAKA Kimihiro
+ * Copyright (C) 2003, 2004 NONAKA Kimihiro <nonakap@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,17 +11,16 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef	NP2_X11_COMPILER_H__
@@ -68,6 +67,7 @@
 
 #include <sys/param.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -139,21 +139,8 @@ typedef	gboolean	BOOL;
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 #endif
 
-#define	FASTCALL
-#define	SOUNDCALL
-#define	MEMCALL
-#define	CPUCALL
-
-#ifdef	DEBUG
-#define	INLINE
-#define	__ASSERT(s)	assert(s)
-#else
-#ifndef	__ASSERT
-#define	__ASSERT(s)
-#endif
-#ifndef	INLINE
-#define	INLINE		inline
-#endif
+#ifndef	NELEMENTS
+#define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
 #endif
 
 /* archtecture */
@@ -176,10 +163,6 @@ typedef	gboolean	BOOL;
 #endif
 #endif /* __GNUC__ */
 
-#ifndef	NELEMENTS
-#define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
-#endif
-
 UINT32 gettick(void);
 #define	GETTICK()	gettick()
 #define	GETRAND()	random()
@@ -195,8 +178,10 @@ UINT32 gettick(void);
 #if defined(CPUCORE_IA32)
 #define	msgbox(title, msg)	toolkit_messagebox(title, msg);
 
+#if !defined(DISABLE_PC9821)
 #define	SUPPORT_PC9821
 #define	SUPPORT_CRT31KHZ
+#endif
 #define	SUPPORT_IDEIO
 #else
 #define	SUPPORT_CRT15KHZ
@@ -204,10 +189,13 @@ UINT32 gettick(void);
 
 #if defined(NP2_CPU_ARCH_IA32)
 #undef	MEMOPTIMIZE
-#define LOADINTELDWORD(a)	(*((UINT32 *)(a)))
-#define LOADINTELWORD(a)	(*((UINT16 *)(a)))
+#define LOADINTELDWORD(a)	(*((const UINT32 *)(a)))
+#define LOADINTELWORD(a)	(*((const UINT16 *)(a)))
 #define STOREINTELDWORD(a, b)	*(UINT32 *)(a) = (b)
 #define STOREINTELWORD(a, b)	*(UINT16 *)(a) = (b)
+#if !defined(DEBUG) && !defined(NP2_CPU_ARCH_AMD64)
+#define	FASTCALL	__attribute__((regparm(2)))
+#endif	/* !DEBUG && !NP2_CPU_ARCH_AMD64 */
 #elif defined(arm) || defined (__arm__)
 #define	MEMOPTIMIZE	2
 #define	REG8		UINT
@@ -215,6 +203,31 @@ UINT32 gettick(void);
 #define	OPNGENARM
 #else
 #define	MEMOPTIMIZE	1
+#endif
+
+#ifndef	FASTCALL
+#define	FASTCALL
+#endif
+#define	CPUCALL		FASTCALL
+#define	MEMCALL		FASTCALL
+#define	DMACCALL	FASTCALL
+#define	IOOUTCALL	FASTCALL
+#define	IOINPCALL	FASTCALL
+#define	SOUNDCALL	FASTCALL
+#define	VRAMCALL	FASTCALL
+#define	SCRNCALL	FASTCALL
+#define	VERMOUTHCL	FASTCALL
+
+#ifdef	DEBUG
+#define	INLINE
+#define	__ASSERT(s)	assert(s)
+#else
+#ifndef	__ASSERT
+#define	__ASSERT(s)
+#endif
+#ifndef	INLINE
+#define	INLINE		inline
+#endif
 #endif
 
 #define	SUPPORT_EUC
