@@ -89,7 +89,7 @@ void sdlkbd_initialize(void) {
 static BYTE getKey(SDL_Keycode key)
 {
 	size_t i;
-	for (i = 0; i < _countof(sdlcnv101); i++)
+	for (i = 0; i < SDL_arraysize(sdlcnv101); i++)
 	{
 		if (sdlcnv101[i].sdlkey == key)
 		{
@@ -104,7 +104,7 @@ static BYTE getf12key(void) {
 	UINT	key;
 
 	key = np2oscfg.F12KEY - 1;
-	if (key < (sizeof(f12keys)/sizeof(BYTE))) {
+	if (key < SDL_arraysize(f12keys)) {
 		return(f12keys[key]);
 	}
 	else {
@@ -146,7 +146,7 @@ void sdlkbd_resetf12(void) {
 
 	UINT	i;
 
-	for (i=0; i<(sizeof(f12keys)/sizeof(BYTE)); i++) {
+	for (i = 0; i < SDL_arraysize(f12keys); i++) {
 		keystat_forcerelease(f12keys[i]);
 	}
 }
