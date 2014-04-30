@@ -98,6 +98,11 @@ typedef	signed __int64		SINT64;
 #include "lstarray.h"
 #include "trace.h"
 
+#ifdef __cplusplus
+#include "vc6macros.h"
+#endif	// __cplusplus
+
+
 #define	GETTICK()			GetTickCount()
 #if defined(TRACE)
 #define	__ASSERT(s)			assert(s)
@@ -114,11 +119,6 @@ typedef	signed __int64		SINT64;
 
 #define	LABEL				__declspec(naked)
 #define	RELEASE(x) 			if (x) {(x)->Release(); (x) = NULL;}
-
-#if (_MSC_VER < 1300)
-//! for scope
-#define for					if (0 /*NEVER*/) { /* no process */ } else for
-#endif	// (_MSC_VER < 1300)
 
 #if !defined(_WIN64)
 #define	OPNGENX86

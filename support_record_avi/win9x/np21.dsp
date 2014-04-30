@@ -338,11 +338,11 @@ SOURCE=..\I386C\ia32\instructions\flag_ctrl.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\ia32\instructions\fpu.c
+SOURCE=..\I386C\ia32\instructions\fpu\fpdummy.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\ia32\instructions\fpu\fpdummy.c
+SOURCE=..\I386C\ia32\instructions\fpu.c
 # End Source File
 # Begin Source File
 
@@ -1586,6 +1586,10 @@ SOURCE=..\TIMING.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\vc6macros.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
