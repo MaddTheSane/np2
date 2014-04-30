@@ -48,7 +48,7 @@ const OEMCHAR	*p;
 				case 'I':
 				case 'i':
 					if (!np2arg.ini) {
-						np2arg.ini = np2argv[i];
+						np2arg.ini = &np2argv[i][2];
 					}
 					break;
 			}
