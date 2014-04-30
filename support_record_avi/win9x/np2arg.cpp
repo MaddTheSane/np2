@@ -57,6 +57,14 @@ void Np2Arg::Parse()
 				case 'i':
 					m_lpIniFile = &lpArg[2];
 					break;
+
+				case 'p':
+					m_statPlay = &lpArg[2];
+					break;
+
+				case 'r':
+					m_statRec = true;
+					break;
 			}
 		}
 		else

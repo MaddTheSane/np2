@@ -25,6 +25,7 @@ extern "C" {
 void mouseif_reset(const NP2CFG *pConfig);
 void mouseif_bind(void);
 void mouseif_sync(void);
+void mouseif_set(SINT16 sx, SINT16 sy, REG8 btn);
 void mouseint(NEVENTITEM item);
 
 #ifdef __cplusplus

@@ -4,26 +4,52 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"keystat.h"
+#include "recstat.h"
 
+/* マウス ver0.28
+ * 一部のゲームでマウスデータを切り捨てるので正常な動かなくなる事がある
+ * それを救う為に 均等に移動データが伝わるようにしなければならない */
 
-// マウス ver0.28
-// 一部のゲームでマウスデータを切り捨てるので正常な動かなくなる事がある
-// それを救う為に 均等に移動データが伝わるようにしなければならない
+/**
+ * Synchronizes the status of the mouse
+ */
+void mouseif_sync(void)
+{
+	SINT16 sx;
+	SINT16 sy;
+	REG8 btn;
 
+	/* retrieves the status of the mouse */
+	btn = mousemng_getstat(&sx, &sy, 1);
+	if (np2cfg.KEY_MODE == 3)
+	{
+		btn &= keystat_getmouse(&sx, &sy);
+	}
+	mouseif_set(sx, sy, btn);
+}
 
-void mouseif_sync(void) {
-
-	// 前回の分を補正
+/**
+ * Sets a behavior of the mouse
+ * @param[in] sx The x-movement
+ * @param[in] sy The y-movement
+ * @param[in] btn The status of the buttons
+ */
+void mouseif_set(SINT16 sx, SINT16 sy, REG8 btn)
+{
+	/* adds remaining movement */
 	mouseif.x += mouseif.rx;
 	mouseif.y += mouseif.ry;
 
-	// 今回の移動量を取得
-	mouseif.b = mousemng_getstat(&mouseif.sx, &mouseif.sy, 1);
-	if (np2cfg.KEY_MODE == 3) {
-		mouseif.b &= keystat_getmouse(&mouseif.sx, &mouseif.sy);
+	if (recstat_mouse(sx, sy, btn))
+	{
+		sx = 0;
+		sy = 0;
+		btn = 0xa0;
 	}
-	mouseif.rx = mouseif.sx;
-	mouseif.ry = mouseif.sy;
+
+	mouseif.rx = mouseif.sx = sx;
+	mouseif.ry = mouseif.sy = sy;
+	mouseif.b = btn;
 
 	mouseif.lastc = CPU_CLOCK + CPU_BASECLOCK + CPU_REMCLOCK;
 }

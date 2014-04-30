@@ -8,7 +8,7 @@
 #include	"diskdrv.h"
 #include	"fddfile.h"
 #include	"sxsi.h"
-
+#include "recstat.h"
 
 #define	DISK_DELAY	20			// (0.4sec)
 
@@ -126,6 +126,11 @@ void diskdrv_readyfddex(REG8 drv, const OEMCHAR *fname,
 
 void diskdrv_setfddex(REG8 drv, const OEMCHAR *fname,
 												UINT ftype, int readonly) {
+
+	if (recstat_fdd(drv, fname, ftype, readonly))
+	{
+		return;
+	}
 
 	if ((drv < 4) && (fdc.equip & (1 << drv))) {
 		fdd_eject(drv);

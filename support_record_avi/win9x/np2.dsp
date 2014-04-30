@@ -1760,6 +1760,10 @@ SOURCE=..\PCCORE.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\recstat.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\STATSAVE.C
 # End Source File
 # Begin Source File
@@ -1770,6 +1774,10 @@ SOURCE=..\TIMING.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\recstat.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\vc6macros.h

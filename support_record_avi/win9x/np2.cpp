@@ -61,6 +61,7 @@
 #include "juliet.h"
 #endif
 #include "recvideo.h"
+#include "recstat.h"
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -116,6 +117,8 @@ static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2x64_%u.dll");
 static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2_%u.dll");
 #endif	// defined(_WIN64)
 
+static TCHAR s_szRecWork[MAX_PATH] = _T("rec.tmp");
+static const TCHAR s_szRecStat[] = _T(".rec");
 
 // ----
 
@@ -338,65 +341,79 @@ static void getstatfilename(OEMCHAR *path, const OEMCHAR *ext, int size) {
 	file_catname(path, ext, size);
 }
 
-static int flagsave(const OEMCHAR *ext) {
+static int flagsave(const OEMCHAR* ext)
+{
+	recstat_close();
 
-	int		ret;
-	OEMCHAR	path[MAX_PATH];
+	OEMCHAR szPath[MAX_PATH];
+	getstatfilename(szPath, ext, NELEMENTS(szPath));
 
-	getstatfilename(path, ext, NELEMENTS(path));
 	soundmng_stop();
-	ret = statsave_save(path);
-	if (ret) {
-		file_delete(path);
+	const int ret = statsave_save(szPath);
+	if (ret == 0)
+	{
+		file_catname(szPath, s_szRecStat, NELEMENTS(szPath));
+		file_delete(szPath);
+		::CopyFile(s_szRecWork, szPath, FALSE);
+	}
+	else
+	{
+		file_delete(szPath);
 	}
 	soundmng_play();
+
+	recstat_continue(s_szRecWork);
 	return(ret);
 }
 
-static void flagdelete(const OEMCHAR *ext) {
+static void flagdelete(const OEMCHAR* ext)
+{
+	OEMCHAR szPath[MAX_PATH];
+	getstatfilename(szPath, ext, NELEMENTS(szPath));
 
-	OEMCHAR	path[MAX_PATH];
+	file_delete(szPath);
 
-	getstatfilename(path, ext, NELEMENTS(path));
-	file_delete(path);
+	file_catname(szPath, s_szRecStat, NELEMENTS(szPath));
+	file_delete(szPath);
 }
 
 static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 {
-	int		nRet;
-	int		nID;
 	OEMCHAR	szPath[MAX_PATH];
+	getstatfilename(szPath, ext, NELEMENTS(szPath));
+
 	OEMCHAR	szStat[1024];
 	TCHAR	szFormat[256];
 	TCHAR	szMessage[1024 + 256];
 
-	getstatfilename(szPath, ext, NELEMENTS(szPath));
 	winuienter();
-	nID = IDYES;
-	nRet = statsave_check(szPath, szStat, NELEMENTS(szStat));
+	int nID = IDYES;
+	int nRet = statsave_check(szPath, szStat, NELEMENTS(szStat));
 	if (nRet & (~STATFLAG_DISKCHG))
 	{
-		messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_RESUME),
-													MB_OK | MB_ICONSTOP);
+		messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_RESUME), MB_OK | MB_ICONSTOP);
 		nID = IDNO;
 	}
 	else if ((!force) && (nRet & STATFLAG_DISKCHG))
 	{
-#if defined(OSLANG_UTF8)
-		TCHAR szStat2[128];
-		oemtotchar(szStat2, NELEMENTS(szStat2), szStat, -1);
-#else	// defined(OSLANG_UTF8)
-		LPCTSTR szStat2 = szStat;
-#endif	// defined(OSLANG_UTF8)
 		loadstringresource(IDS_CONFIRM_RESUME, szFormat, NELEMENTS(szFormat));
-		wsprintf(szMessage, szFormat, szStat2);
+		wsprintf(szMessage, szFormat, szStat);
 		nID = messagebox(hWnd, szMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
 	if (nID == IDYES)
 	{
+		recstat_close();
+		file_delete(s_szRecWork);
+
 		statsave_load(szPath);
 		toolwin_setfdd(0, fdd_diskname(0));
 		toolwin_setfdd(1, fdd_diskname(1));
+
+		file_catname(szPath, s_szRecStat, NELEMENTS(szPath));
+		if (::CopyFile(szPath, s_szRecWork, FALSE))
+		{
+			recstat_continue(s_szRecWork);
+		}
 	}
 	sysmng_workclockreset();
 	sysmng_updatecaption(1);
@@ -1727,9 +1744,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	scrndraw_redraw();
 
+	recstat_init();
+	file_cpyname(s_szRecWork, file_getcd(_T("rec.tmp")), NELEMENTS(s_szRecWork));
+	file_delete(s_szRecWork);
+
 	pccore_reset();
 
 	np2opening = 0;
+
+	LPCTSTR statPlay = Np2Arg::GetInstance()->statPlaying();
+	if (statPlay)
+	{
+		recstat_play(statPlay);
+		goto main_loop;
+	}
+	if (Np2Arg::GetInstance()->statRecording())
+	{
+		recstat_record(s_szRecWork);
+		goto main_loop;
+	}
 
 	// ‚ê‚¶‚¤‚Þ
 #if defined(SUPPORT_RESUME)
@@ -1768,6 +1801,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		}
 	}
 
+main_loop:
 	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
 		if (np2oscfg.toolwin) {
 			toolwin_create(g_hInstance);
@@ -1900,6 +1934,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	CJuliet::GetInstance()->Deinitialize();
 #endif
 	pccore_term();
+
+	recstat_close();
+	file_delete(s_szRecWork);
 
 	sstp_destruct();
 

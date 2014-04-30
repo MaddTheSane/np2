@@ -4,7 +4,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"keystat.h"
-
+#include "recstat.h"
 
 // ---- Keyboard
 
@@ -128,6 +128,11 @@ void keyboard_ctrl(REG8 data) {
 }
 
 void keyboard_send(REG8 data) {
+
+	if (recstat_keyboard(data))
+	{
+		return;
+	}
 
 	if (keybrd.buffers < KB_BUF) {
 		keybrd.buf[(keybrd.bufpos + keybrd.buffers) & KB_BUFMASK] = data;

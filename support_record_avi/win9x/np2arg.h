@@ -20,6 +20,8 @@ public:
 	LPCTSTR disk(int nDrive) const;
 	LPCTSTR iniFilename() const;
 	bool fullscreen() const;
+	bool statRecording() const;
+	LPCTSTR statPlaying() const;
 
 private:
 	static Np2Arg sm_instance;		//!< 唯一のインスタンスです
@@ -27,6 +29,8 @@ private:
 	LPCTSTR m_lpDisk[4];	//!< ディスク
 	LPCTSTR m_lpIniFile;	//!< 設定ファイル
 	bool m_fFullscreen;		//!< フルスクリーン モード
+	bool m_statRec;			//!< state レコーディングを開始する
+	LPCTSTR m_statPlay;		//!< state を再生する
 	LPTSTR m_lpArg;			//!< ワーク
 };
 
@@ -66,4 +70,23 @@ inline LPCTSTR Np2Arg::iniFilename() const
 inline bool Np2Arg::fullscreen() const
 {
 	return m_fFullscreen;
+}
+
+/**
+ * 記録開始?
+ * @retval true 開始
+ * @retval false ウィンドウ モード
+ */
+inline bool Np2Arg::statRecording() const
+{
+	return m_statRec;
+}
+
+/**
+ * 再生開始?
+ * @return ファイル名
+ */
+inline LPCTSTR Np2Arg::statPlaying() const
+{
+	return m_statPlay;
 }

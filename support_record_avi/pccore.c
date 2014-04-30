@@ -47,6 +47,7 @@
 #include	"timing.h"
 #include	"keystat.h"
 #include	"debugsub.h"
+#include "recstat.h"
 
 
 const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
@@ -623,6 +624,8 @@ void pccore_exec(BOOL draw) {
 	soundmng_sync();
 	mouseif_sync();
 	pal_eventclear();
+
+	recstat_sync();
 
 	gdc.vsync = 0;
 	pcstat.screendispflag = 1;
