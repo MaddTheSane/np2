@@ -94,6 +94,7 @@ enum {
 #if defined(MT32SOUND_DLL)
 	CMMIDI_MT32SOUND	= 0x10,
 #endif
+	CMMIDI_NULL			= 0x20,		//!< ダミー モジュール
 
 	MIDICTRL_READY		= 0,
 	MIDICTRL_2BYTES,
@@ -275,6 +276,33 @@ static void midi_win32long(CMMIDI midi, const UINT8 *msg, UINT leng) {
 	midiOutLongMsg(midi->out.win32.hmidiout, &midi->out.win32.midihdr,
 											sizeof(midi->out.win32.midihdr));
 	midi->midiexcvwait = 1;
+}
+
+
+// ---- ダミー モジュール
+
+/**
+ * ショート メッセージ
+ * @param[in] _this インスタンス
+ * @param[in] nMessage メッセージ
+ */
+static void midi_nullShort(CMMIDI _this, UINT32 nMessage)
+{
+	UNREFERENCED_PARAMETER(_this);
+	UNREFERENCED_PARAMETER(nMessage);
+}
+
+/**
+ * ロング メッセージ
+ * @param[in] _this インスタンス
+ * @param[in] lpMessage メッセージ
+ * @param[in] cbMessage メッセージ長
+ */
+static void midi_nullLong(CMMIDI _this, const UINT8* lpMessage, UINT cbMessage)
+{
+	UNREFERENCED_PARAMETER(_this);
+	UNREFERENCED_PARAMETER(lpMessage);
+	UNREFERENCED_PARAMETER(cbMessage);
 }
 
 
@@ -788,6 +816,12 @@ COMMNG cmmidi_create(const OEMCHAR *midiout, const OEMCHAR *midiin,
 			midiInReset(hmidiin);
 			opened |= CMMIDI_MIDIIN;
 		}
+	}
+	else if (!milstr_cmp(midiout, _T("NULL")))
+	{
+		shortout = midi_nullShort;
+		longout = midi_nullLong;
+		opened |= CMMIDI_NULL;
 	}
 #if defined(VERMOUTH_LIB)
 	else if (!milstr_cmp(midiout, cmmidi_vermouth)) {
