@@ -242,7 +242,7 @@ void RecodeVideo::Write()
 			break;
 		}
 		m_bDirty = false;
-		m_nStep -= 21052600 / (8 * VIDEO_FPS);
+		m_nStep -= 21052600 / 8;
 		m_nFrame++;
 		m_dwSize += lSize;
 		if (m_dwSize >= 1024 * 1024 * 1024)
@@ -251,7 +251,7 @@ void RecodeVideo::Write()
 			OpenFile();
 		}
 	}
-	m_nStep += 106 * 440;
+	m_nStep += 106 * 440 * VIDEO_FPS;
 }
 
 // ----
