@@ -21,6 +21,7 @@ public:
 	LPCTSTR iniFilename() const;
 	bool fullscreen() const;
 
+private:
 	static Np2Arg sm_instance;		//!< 唯一のインスタンスです
 
 	LPCTSTR m_lpDisk[4];	//!< ディスク
