@@ -1417,10 +1417,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\tickcounter.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\timemng.cpp"
 					>
 				</File>
@@ -2576,10 +2572,6 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\tickcounter.h"
 					>
 				</File>
 				<File
