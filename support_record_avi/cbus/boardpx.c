@@ -94,7 +94,7 @@ static REG8 IOINPCALL spb_i18a(UINT port) {
 
 	addr = opn.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg1));
+		return(fmboard_getjoyreg(&psg1));
 	}
 	else if (addr < 0x10) {
 		return(psggen_getreg(&psg1, addr));
@@ -210,7 +210,7 @@ static REG8 IOINPCALL spb_i08a(UINT port) {
 
 	addr = opn2.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg2));
+		return(fmboard_getjoyreg(&psg2));
 	}
 	else if (addr < 0x10) {
 		return(psggen_getreg(&psg2, addr));
@@ -331,7 +331,7 @@ static REG8 IOINPCALL p86_i28a(UINT port) {
 
 	addr = opn3.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg3));
+		return(fmboard_getjoyreg(&psg3));
 	}
 	else if (addr < 0x10) {
 		return(psggen_getreg(&psg3, addr));

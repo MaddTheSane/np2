@@ -76,7 +76,8 @@ extern	_ADPCM		adpcm2;
 extern	_ADPCM		adpcm3;
 #endif	// defined(SUPPORT_PX)
 
-REG8 fmboard_getjoy(PSGGEN psg);
+REG8 fmboard_getjoypad(int nPort);
+REG8 fmboard_getjoyreg(PSGGEN psg);
 
 void fmboard_extreg(void (*ext)(REG8 enable));
 void fmboard_extenable(REG8 enable);

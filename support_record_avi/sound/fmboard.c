@@ -55,40 +55,63 @@ static void	(*extfn)(REG8 enable);
 
 static	REG8	rapids = 0;
 
-REG8 fmboard_getjoy(PSGGEN psg) {
-
-	REG8	ret;
+/**
+ * Retrieves the status of the specified virtual pad
+ * @param[in] nPort The port of the input
+ * @return The return value specifies the status of the specified virtual pad
+ */
+REG8 fmboard_getjoypad(int nPort)
+{
+	REG8 ret = 0xff;
 
 	rapids ^= 0xf0;											// ver0.28
-	ret = 0xff;
-	if (!(psg->reg.io2 & 0x40)) {
+	if (nPort == 0)
+	{
 		ret &= (joymng_getstat() | (rapids & 0x30));
-		if (np2cfg.KEY_MODE == 1) {
+		if (np2cfg.KEY_MODE == 1)
+		{
 			ret &= keystat_getjoy();
 		}
 	}
-	else {
-		if (np2cfg.KEY_MODE == 2) {
+	else
+	{
+		if (np2cfg.KEY_MODE == 2)
+		{
 			ret &= keystat_getjoy();
 		}
 	}
-	if (np2cfg.BTN_RAPID) {
+	if (np2cfg.BTN_RAPID)
+	{
 		ret |= rapids;
 	}
 
-	// rapid‚Æ”ñrapid‚ğ‡¬								// ver0.28
+	/* merge rapid */
 	ret &= ((ret >> 2) | (~0x30));
 
-	if (np2cfg.BTN_MODE) {
+	if (np2cfg.BTN_MODE)
+	{
 		UINT8 bit1 = (ret & 0x20) >> 1;					// ver0.28
 		UINT8 bit2 = (ret & 0x10) << 1;
 		ret = (ret & (~0x30)) | bit1 | bit2;
 	}
 
-	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
+	return ret;
+}
+
+/**
+ * Retrieves the pad of the specified psg
+ * @param[in] psg The instance of the psg
+ * @return The return value specifies the pad of the specified psg
+ */
+REG8 fmboard_getjoyreg(PSGGEN psg)
+{
+	const int nPort = (psg->reg.io2 & 0x40) ? 1 : 0;
+	REG8 ret = fmboard_getjoypad(nPort);
+
+	/* merge interrupts */
 	ret &= 0x3f;
 	ret |= fmtimer.intr;
-	return(ret);
+	return ret;
 }
 
 

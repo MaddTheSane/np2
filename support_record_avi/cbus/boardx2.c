@@ -169,7 +169,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 
 	addr = opn.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg2));
+		return(fmboard_getjoyreg(&psg2));
 	}
 	else if (addr < 0x10) {
 		return(psggen_getreg(&psg2, addr));
