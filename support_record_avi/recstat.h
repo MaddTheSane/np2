@@ -13,6 +13,7 @@ extern "C"
 BOOL recstat_keyboard(REG8 data);
 BOOL recstat_mouse(SINT16 sx, SINT16 sy, REG8 btn);
 BOOL recstat_fdd(REG8 drv, const OEMCHAR *lpFilename, UINT ftype, int readonly);
+BOOL recstat_joypad(int nPort, REG8* data);
 BOOL recstat_sync(void);
 
 void recstat_init(void);

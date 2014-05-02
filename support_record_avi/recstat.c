@@ -13,6 +13,8 @@
 #include "io/lsidef.h"
 #include "io/mouseif.h"
 #include "io/serial.h"
+#include "sound/sound.h"
+#include "sound/fmboard.h"
 
 /**
  * Modes
@@ -33,6 +35,7 @@ struct _recstat
 	FILEH hFile;				/*!< file handle */
 	UINT ptr;					/*!< buffer pointer */
 	UINT size;					/*!< buffer size */
+	UINT8 joypad[2];			/*!< pad registers */
 	UINT8 buffer[8192];			/*!< buffer */
 };
 typedef struct _recstat		*RECSTAT;		/*!< defines recstat pointer */
@@ -51,6 +54,8 @@ enum
 	kStatKeyboard,
 	kStatMouse,
 	kStatFdd,
+	kStatJoypad1,
+	kStatJoypad2,
 
 	kStatDelimiter		= 255
 };
@@ -286,6 +291,25 @@ BOOL recstat_fdd(REG8 drv, const OEMCHAR *lpFilename, UINT ftype, int readonly)
 }
 
 /**
+ * Hooks a behavior of the jpypad
+ * @param[in] nPort The number of the joypad
+ * @param[in,out] data The status of the joypad
+ * @retval TRUE Hooked
+ * @retval FALSE Unhooked
+ */
+BOOL recstat_joypad(int nPort, REG8 *data)
+{
+	RECSTAT _this = &s_recstat;
+
+	if ((_this->mode == kRecStatRecording) || (_this->mode == kRecStatPlaying))
+	{
+		*data = _this->joypad[nPort];
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * Synchronizes
  * @retval TRUE Break
  * @retval FALSE Non-break
@@ -296,6 +320,22 @@ BOOL recstat_sync(void)
 
 	if (_this->mode == kRecStatRecording)
 	{
+		_this->mode = kRecStatNone;
+		_this->joypad[0] = fmboard_getjoypad(0);
+		_this->joypad[1] = fmboard_getjoypad(1);
+		_this->mode = kRecStatRecording;
+
+		if (_this->joypad[0] != 0xff)
+		{
+			writeByte(_this, kStatJoypad1);
+			writeByte(_this, _this->joypad[0]);
+		}
+		if (_this->joypad[1] != 0xff)
+		{
+			writeByte(_this, kStatJoypad2);
+			writeByte(_this, _this->joypad[1]);
+		}
+
 		writeByte(_this, kStatDelimiter);
 		np2cfg.calendar = 0;
 		np2cfg.MOTOR = 0;
@@ -303,6 +343,8 @@ BOOL recstat_sync(void)
 	else if (_this->mode == kRecStatPlaying)
 	{
 		_this->mode = kRecStatNone;
+		_this->joypad[0] = 0xff;
+		_this->joypad[1] = 0xff;
 		while (1 /*EVER*/)
 		{
 			REG8 mode = readByte(_this);
@@ -339,6 +381,14 @@ BOOL recstat_sync(void)
 					lpFilename = read(_this, fdd.cbFilename);
 				}
 				diskdrv_setfddex(fdd.drv, lpFilename, fdd.ftype, fdd.readonly);
+			}
+			else if (mode == kStatJoypad1)
+			{
+				_this->joypad[0] = readByte(_this);
+			}
+			else if (mode == kStatJoypad2)
+			{
+				_this->joypad[1] = readByte(_this);
 			}
 			else
 			{

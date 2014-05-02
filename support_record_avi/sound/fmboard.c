@@ -21,7 +21,7 @@
 #include	"beep.h"
 #include	"keydisp.h"
 #include	"keystat.h"
-
+#include "recstat.h"
 
 	UINT32		usesound;
 	OPN_T		opn;
@@ -53,7 +53,7 @@ static void	(*extfn)(REG8 enable);
 
 // ----
 
-static	REG8	rapids = 0;
+static REG8 s_rapids[2] = {0, 0};
 
 /**
  * Retrieves the status of the specified virtual pad
@@ -63,8 +63,16 @@ static	REG8	rapids = 0;
 REG8 fmboard_getjoypad(int nPort)
 {
 	REG8 ret = 0xff;
+	REG8 rapids;
 
-	rapids ^= 0xf0;											// ver0.28
+	if (recstat_joypad(nPort, &ret))
+	{
+		return ret;
+	}
+
+	rapids = s_rapids[nPort] ^ 0xf0;
+	s_rapids[nPort] = rapids;
+
 	if (nPort == 0)
 	{
 		ret &= (joymng_getstat() | (rapids & 0x30));
