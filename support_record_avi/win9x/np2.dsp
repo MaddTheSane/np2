@@ -1414,6 +1414,18 @@ SOURCE=.\DEBUGUTY\VIEWSEG.CPP
 SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Source File
 # End Group
+# Begin Group "misc"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\WndBase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\WndBase.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP

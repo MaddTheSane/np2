@@ -62,6 +62,8 @@
 #endif
 #include "recvideo.h"
 #include "recstat.h"
+#include "misc\wndbase.h"
+#include "tawnd.h"
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -1554,6 +1556,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	BOOL		xrollkey;
 
 	_MEM_INIT();
+	CWndBase::Initialize(hInstance);
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
@@ -1738,6 +1741,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	sstpmsg_welcome();
 
+//	CTAWnd::GetInstance()->Create();
+
 #ifdef OPENING_WAIT
 	while((GetTickCount() - tick) < OPENING_WAIT);
 #endif
@@ -1814,6 +1819,17 @@ main_loop:
 	recvideo_open(_T("np2.avi"));
 
 	while(1) {
+		if (CTAWnd::GetInstance()->execute())
+		{
+			if (!::GetMessage(&msg, NULL, 0, 0))
+			{
+				break;
+			}
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+			continue;
+		}
+
 		if (!np2stopemulate) {
 			if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
 				if (!GetMessage(&msg, NULL, 0, 0)) {
