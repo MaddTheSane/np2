@@ -128,6 +128,7 @@ typedef struct {
 	UINT32	device;
 
 	UINT32	realclock;
+	UINT	frames;
 } PCCORE;
 
 enum {
