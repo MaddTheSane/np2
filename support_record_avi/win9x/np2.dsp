@@ -1699,6 +1699,14 @@ SOURCE=.\TASKMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\tawnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\tawnd.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TIMEMNG.CPP
 # End Source File
 # Begin Source File
