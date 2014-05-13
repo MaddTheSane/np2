@@ -1,10 +1,5 @@
 #include	"compiler.h"
 
-#ifdef	TRACEOUT
-#undef	TRACEOUT
-#endif
-#define	TRACEOUT(s)	trace_fmt s
-
 // ‚±‚êAscsicmd‚Æ‚Ç‚¤“‡‚·‚é‚Ì‚æH
 
 #if defined(SUPPORT_IDEIO)
