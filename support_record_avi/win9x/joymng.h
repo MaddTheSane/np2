@@ -1,9 +1,16 @@
+/**
+ *	@file	joymng.h
+ *	@brief	ジョイパッド入力の宣言およびインターフェイスの定義をします
+ */
+
+#pragma once
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-REG8 joymng_getstat(void);
+REG8 joymng_getstat();
 
 #ifdef __cplusplus
 }
@@ -12,6 +19,5 @@ REG8 joymng_getstat(void);
 
 // ----
 
-void joymng_initialize(void);
-void joymng_sync(void);
-
+void joymng_initialize();
+void joymng_sync();
