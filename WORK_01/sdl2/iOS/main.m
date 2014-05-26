@@ -2,7 +2,7 @@
  *	@file	main.m
  */
 
-#import <UIKit/UIKit.h>
+#import "compiler.h"
 #include "../np2.h"
 #include "../dosio.h"
 

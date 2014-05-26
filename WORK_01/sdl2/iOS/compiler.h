@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#endif
+
 #include <stdio.h>
 #include <stddef.h>
 #include "SDL.h"
@@ -37,9 +41,12 @@ typedef	unsigned int		UINT32;
 #define	SIZE_QVGA
 #endif
 
-typedef	signed char		BOOL;
 typedef	signed char		CHAR;
 typedef	unsigned char	BYTE;
+
+#if !defined(OBJC_BOOL_DEFINED)
+typedef signed char BOOL;
+#endif
 
 #ifndef	TRUE
 #define	TRUE	1

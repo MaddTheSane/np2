@@ -1,5 +1,4 @@
 #include	"compiler.h"
-// #include	<signal.h>
 #include	"inputmng.h"
 #include	"taskmng.h"
 #include	"sdlkbd.h"
@@ -119,11 +118,7 @@ BOOL taskmng_sleep(UINT32 tick) {
 	base = GETTICK();
 	while((task_avail) && ((GETTICK() - base) < tick)) {
 		taskmng_rol();
-#ifndef WIN32
-		usleep(960);
-#else
-		Sleep(1);
-#endif
+		SDL_Delay(1);
 	}
 	return(task_avail);
 }

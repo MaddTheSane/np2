@@ -156,7 +156,7 @@ struct stat sb;
 
 short file_delete(const char *path) {
 
-	return(unlink(path));
+	return(remove(path));
 }
 
 short file_dircreate(const char *path) {
