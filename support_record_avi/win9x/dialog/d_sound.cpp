@@ -26,6 +26,7 @@
 #include "fmboard.h"
 #include "s98.h"
 #include "dipswbmp.h"
+#include "recvideo.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "comctl32.lib")
@@ -1031,14 +1032,19 @@ static const OEMCHAR szWaveFile[] = OEMTEXT("NP2_####.WAV");
 
 void dialog_waverec(HWND hWnd)
 {
-	UINT8	bCheck;
-	OEMCHAR	szPath[MAX_PATH];
+#if defined(SUPPORT_RECVIDEO)
+	const bool bShiftDown = (::GetKeyState(VK_SHIFT) < 0);
+	recvideo_close();
+#endif	// defined(SUPPORT_RECVIDEO)
 
-	bCheck = FALSE;
 	sound_recstop();
+
+	OEMCHAR szPath[MAX_PATH];
 	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
 	file_cutname(szPath);
 	file_catname(szPath, szWaveFile, NELEMENTS(szPath));
+
+	UINT8 bCheck = FALSE;
 	if ((dlgs_createfilenum(hWnd, &fpWave, szPath, NELEMENTS(szPath))) &&
 		(sound_recstart(szPath) == SUCCESS))
 	{
@@ -1046,6 +1052,16 @@ void dialog_waverec(HWND hWnd)
 		sysmng_update(SYS_UPDATEOSCFG);
 		bCheck = TRUE;
 	}
+
+#if defined(SUPPORT_RECVIDEO)
+	if (bShiftDown)
+	{
+		file_cutext(szPath);
+		file_catname(szPath, _T(".avi"), NELEMENTS(szPath));
+		recvideo_open(hWnd, szPath);
+	}
+#endif	// defined(SUPPORT_RECVIDEO)
+
 	xmenu_setwaverec(bCheck);
 }
 #endif	// defined(SUPPORT_WAVEREC)

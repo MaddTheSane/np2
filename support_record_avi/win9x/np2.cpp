@@ -1816,8 +1816,6 @@ main_loop:
 		}
 	}
 
-	recvideo_open(_T("np2.avi"));
-
 	while(1) {
 		if (CTAWnd::GetInstance()->execute())
 		{

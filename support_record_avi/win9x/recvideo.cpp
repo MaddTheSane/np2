@@ -41,7 +41,6 @@ static const BITMAPINFOHEADER s_bmih =
 RecodeVideo::RecodeVideo()
 	: m_bEnable(false)
 	, m_bDirty(false)
-	, m_nNumber(0)
 	, m_nStep(0)
 	, m_pWork8(NULL)
 	, m_pWork24(NULL)
@@ -49,13 +48,19 @@ RecodeVideo::RecodeVideo()
 	, m_pStm(NULL)
 	, m_pStmTmp(NULL)
 	, m_nFrame(0)
+#if defined(AVI_SPLIT_SIZE)
+	, m_nNumber(0)
 	, m_dwSize(0)
+#endif	// defined(AVI_SPLIT_SIZE)
 {
 	::AVIFileInit();
 
-	ZeroMemory(m_szPath, sizeof(m_szPath));
 	ZeroMemory(&m_bmih, sizeof(m_bmih));
 	ZeroMemory(&m_cv, sizeof(m_cv));
+
+#if defined(AVI_SPLIT_SIZE)
+	ZeroMemory(m_szPath, sizeof(m_szPath));
+#endif	// defined(AVI_SPLIT_SIZE)
 }
 
 /**
@@ -69,19 +74,31 @@ RecodeVideo::~RecodeVideo()
 
 /**
  * ファイル オープン
+ * @param[in] lpFilename ファイル名
  * @retval true 成功
  * @retval false 失敗
  */
-bool RecodeVideo::OpenFile()
+bool RecodeVideo::OpenFile(LPCTSTR lpFilename)
 {
+#if defined(AVI_SPLIT_SIZE)
+	if (lpFilename)
+	{
+		m_nNumber = 0;
+		::file_cpyname(m_szPath, lpFilename, NELEMENTS(m_szPath));
+	}
+
 	TCHAR szExt[16];
 	::wsprintf(szExt, _T("_%04d.avi"), m_nNumber);
 
 	TCHAR szPath[MAX_PATH];
 	::file_cpyname(szPath, m_szPath, NELEMENTS(szPath));
+	::file_cutext(szPath);
 	::file_catname(szPath, szExt, NELEMENTS(szPath));
 
-	if (::AVIFileOpen(&m_pAvi, szPath, OF_CREATE | OF_WRITE | OF_SHARE_DENY_NONE, NULL) != 0)
+	lpFilename = szPath;
+#endif	// defined(AVI_SPLIT_SIZE)
+
+	if (::AVIFileOpen(&m_pAvi, lpFilename, OF_CREATE | OF_WRITE | OF_SHARE_DENY_NONE, NULL) != 0)
 	{
 		return false;
 	}
@@ -127,10 +144,13 @@ bool RecodeVideo::OpenFile()
 	m_bEnable = true;
 
 	m_bDirty = true;
-	m_nNumber++;
 
 	m_nFrame = 0;
+
+#if defined(AVI_SPLIT_SIZE)
+	m_nNumber++;
 	m_dwSize = 0;
+#endif	// defined(AVI_SPLIT_SIZE)
 
 	return true;
 }
@@ -161,12 +181,12 @@ void RecodeVideo::CloseFile()
 
 /**
  * 開く
+ * @param[in] hWnd ウィンドウ ハンドル
  * @param[in] lpFilename ファイル名
- * @param[in] hWnd ウィンドウ
  * @retval true 成功
  * @retval false 失敗
  */
-bool RecodeVideo::Open(LPCTSTR lpFilename, HWND hWnd)
+bool RecodeVideo::Open(HWND hWnd, LPCTSTR lpFilename)
 {
 	ZeroMemory(&m_cv, sizeof(m_cv));
 	m_cv.cbSize = sizeof(m_cv);
@@ -186,12 +206,9 @@ bool RecodeVideo::Open(LPCTSTR lpFilename, HWND hWnd)
 	m_pWork24 = new UINT8 [VIDEO_WIDTH * VIDEO_HEIGHT * 3];
 	ZeroMemory(m_pWork24, VIDEO_WIDTH * VIDEO_HEIGHT * 3);
 
-	::file_cpyname(m_szPath, lpFilename, NELEMENTS(m_szPath));
-	::file_cutext(m_szPath);
-
 	m_nStep = 0;
 
-	return OpenFile();
+	return OpenFile(lpFilename);
 }
 
 /**
@@ -244,12 +261,15 @@ void RecodeVideo::Write()
 		m_bDirty = false;
 		m_nStep -= 21052600 / 8;
 		m_nFrame++;
+
+#if defined(AVI_SPLIT_SIZE)
 		m_dwSize += lSize;
-		if (m_dwSize >= 1024 * 1024 * 1024)
+		if (m_dwSize >= AVI_SPLIT_SIZE)
 		{
 			CloseFile();
-			OpenFile();
+			OpenFile(NULL);
 		}
+#endif	// defined(AVI_SPLIT_SIZE)
 	}
 	m_nStep += 106 * 440 * VIDEO_FPS;
 }

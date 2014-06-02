@@ -9,6 +9,8 @@
 
 #include <vfw.h>
 
+// #define AVI_SPLIT_SIZE		(1024 * 1024 * 1024)		/**< 分割サイズ */
+
 /**
  * @brief 録画クラス
  */
@@ -19,7 +21,7 @@ public:
 
 	RecodeVideo();
 	~RecodeVideo();
-	bool Open(LPCTSTR lpFilename, HWND hWnd = NULL);
+	bool Open(HWND hWnd, LPCTSTR lpFilename);
 	void Close();
 	void Write();
 	void Update();
@@ -30,7 +32,6 @@ private:
 	bool m_bEnable;						/**< 有効フラグ */
 	bool m_bDirty;						/**< ダーティ フラグ */
 
-	int m_nNumber;						/**< ファイル番号 */
 	int m_nStep;						/**< クロック */
 	UINT8* m_pWork8;					/**< ワーク */
 	UINT8* m_pWork24;					/**< ワーク */
@@ -39,13 +40,17 @@ private:
 	PAVISTREAM m_pStm;					/**< AVISTREAM */
 	PAVISTREAM m_pStmTmp;				/**< AVISTREAM */
 	UINT m_nFrame;						/**< フレーム数 */
-	DWORD m_dwSize;						/**< サイズ */
 
-	TCHAR m_szPath[MAX_PATH];			/**< ベース パス */
 	BITMAPINFOHEADER m_bmih;			/**< BITMAPINFOHEADER */
 	COMPVARS m_cv;						/**< COMPVARS */
 
-	bool OpenFile();
+#if defined(AVI_SPLIT_SIZE)
+	int m_nNumber;						/**< ファイル番号 */
+	DWORD m_dwSize;						/**< サイズ */
+	TCHAR m_szPath[MAX_PATH];			/**< ベース パス */
+#endif	// defined(AVI_SPLIT_SIZE)
+
+	bool OpenFile(LPCTSTR lpFilename);
 	void CloseFile();
 };
 
@@ -65,7 +70,7 @@ inline RecodeVideo& RecodeVideo::GetInstance()
 
 #else	// defined(SUPPORT_RECVIDEO)
 
-static inline bool recvideo_open(LPCTSTR f) { return false; }
+static inline bool recvideo_open(HWND hWnd, LPCTSTR f) { return false; }
 static inline void recvideo_close() { }
 static inline void recvideo_write() { }
 static inline void recvideo_update() { }
