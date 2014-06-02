@@ -139,7 +139,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 			if (milstr_cmp(np2oscfg.mpu.def, p)) {
 				milstr_ncpy(np2oscfg.mpu.def, p, sizeof(np2oscfg.mpu.def));
 				if (cm_mpu98) {
-					(*cm_mpu98->msg)(cm_mpu98, COMMSG_MIMPIDEFFILE, (long)p);
+					(*cm_mpu98->msg)(cm_mpu98, COMMSG_MIMPIDEFFILE, (INTPTR)p);
 				}
 				update |= SYS_UPDATEOSCFG;
 			}

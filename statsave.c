@@ -1223,7 +1223,7 @@ static int flagload_com(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 	}
 	if (cm) {
-		cm->msg(cm, COMMSG_SETFLAG, (long)flag);
+		cm->msg(cm, COMMSG_SETFLAG, (INTPTR)flag);
 	}
 
 flcom_err2:
