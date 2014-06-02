@@ -88,6 +88,7 @@ BOOL scrnmng_create(int width, int height) {
 	}
 	s_sdlWindow = SDL_CreateWindow(app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
 	s_renderer = SDL_CreateRenderer(s_sdlWindow, -1, 0);
+	SDL_RenderSetLogicalSize(s_renderer, width, height);
 	s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, width, height);
 	s_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16, 0xf800, 0x07e0, 0x001f, 0);
 
