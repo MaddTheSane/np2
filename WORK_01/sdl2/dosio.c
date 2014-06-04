@@ -1,18 +1,14 @@
-#include	"compiler.h"
-#include	<sys/stat.h>
-#include	<time.h>
+#include "compiler.h"
+#include <sys/stat.h>
+#include <time.h>
 #if defined(WIN32) && defined(OSLANG_UTF8)
-#include	"codecnv.h"
+#include "codecnv.h"
 #endif
-#include	"dosio.h"
+#include "dosio.h"
 #if defined(WIN32)
-#include	<direct.h>
+#include <direct.h>
 #else
-#include	<dirent.h>
-#endif
-#if 0
-#include <sys/param.h>
-#include <unistd.h>
+#include <dirent.h>
 #endif
 
 static	char	curpath[MAX_PATH] = "./";
@@ -324,15 +320,12 @@ struct stat		sb;
 		return(FAILURE);
 	}
 	if (fli) {
-		fli->caps = 0;
-		fli->size = 0;
-		fli->attr = 0;
-		fli->date = 0;
-		fli->time = 0;
+		memset(fli, 0, sizeof(*fli));
 
 #if defined(__IPHONEOS__)
 
 		fli->caps = FLICAPS_ATTR;
+		fli->size = 0;
 		fli->attr = (de->d_type & DT_DIR) ? FILEATTR_DIRECTORY : 0;
 
 #endif	/* defined(__IPHONEOS__) */
@@ -346,7 +339,6 @@ struct stat		sb;
 			else if (!(sb.st_mode & S_IWUSR)) {
 				fli->attr |= FILEATTR_READONLY;
 			}
-			fli->attr = attr;
 			if (cnv_sttime(&sb.st_mtime, &fli->date, &fli->time) == SUCCESS) {
 				fli->caps |= FLICAPS_DATE | FLICAPS_TIME;
 			}
