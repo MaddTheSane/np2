@@ -318,32 +318,38 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 struct dirent	*de;
 struct stat		sb;
-	UINT32		attr;
 
 	de = readdir((DIR *)hdl);
 	if (de == NULL) {
 		return(FAILURE);
 	}
 	if (fli) {
+		fli->caps = 0;
+		fli->size = 0;
+		fli->attr = 0;
+		fli->date = 0;
+		fli->time = 0;
+
+#if defined(__IPHONEOS__)
+
+		fli->caps = FLICAPS_ATTR;
+		fli->attr = (de->d_type & DT_DIR) ? FILEATTR_DIRECTORY : 0;
+
+#endif	/* defined(__IPHONEOS__) */
+
 		if (stat(de->d_name, &sb) == 0) {
-			fli->caps = FLICAPS_SIZE | FLICAPS_ATTR;
+			fli->caps |= FLICAPS_SIZE | FLICAPS_ATTR;
 			fli->size = sb.st_size;
-			attr = 0;
 			if (S_ISDIR(sb.st_mode)) {
-				attr = FILEATTR_DIRECTORY;
+				fli->attr |= FILEATTR_DIRECTORY;
 			}
 			else if (!(sb.st_mode & S_IWUSR)) {
-				attr = FILEATTR_READONLY;
+				fli->attr |= FILEATTR_READONLY;
 			}
 			fli->attr = attr;
 			if (cnv_sttime(&sb.st_mtime, &fli->date, &fli->time) == SUCCESS) {
 				fli->caps |= FLICAPS_DATE | FLICAPS_TIME;
 			}
-		}
-		else {
-			fli->caps = 0;
-			fli->size = 0;
-			fli->attr = 0;
 		}
 		milstr_ncpy(fli->path, de->d_name, sizeof(fli->path));
 	}
