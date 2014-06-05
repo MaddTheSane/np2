@@ -321,22 +321,13 @@ struct stat		sb;
 	}
 	if (fli) {
 		memset(fli, 0, sizeof(*fli));
-
-#if defined(__IPHONEOS__)
-
 		fli->caps = FLICAPS_ATTR;
-		fli->size = 0;
 		fli->attr = (de->d_type & DT_DIR) ? FILEATTR_DIRECTORY : 0;
 
-#endif	/* defined(__IPHONEOS__) */
-
 		if (stat(de->d_name, &sb) == 0) {
-			fli->caps |= FLICAPS_SIZE | FLICAPS_ATTR;
+			fli->caps |= FLICAPS_SIZE;
 			fli->size = sb.st_size;
-			if (S_ISDIR(sb.st_mode)) {
-				fli->attr |= FILEATTR_DIRECTORY;
-			}
-			else if (!(sb.st_mode & S_IWUSR)) {
+			if (!(sb.st_mode & S_IWUSR)) {
 				fli->attr |= FILEATTR_READONLY;
 			}
 			if (cnv_sttime(&sb.st_mtime, &fli->date, &fli->time) == SUCCESS) {
