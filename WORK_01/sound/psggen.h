@@ -21,8 +21,8 @@ typedef struct {
 } PSGTONE;
 
 typedef struct {
-	SINT32	freq;
-	SINT32	count;
+	UINT32	freq;			/*!< frequency */
+	UINT32	count;			/*!< counter */
 	UINT	base;
 } PSGNOISE;
 
