@@ -1,18 +1,14 @@
-#include	"compiler.h"
-#include	<sys/stat.h>
-#include	<time.h>
+#include "compiler.h"
+#include <sys/stat.h>
+#include <time.h>
 #if defined(WIN32) && defined(OSLANG_UTF8)
-#include	"codecnv.h"
+#include "codecnv.h"
 #endif
-#include	"dosio.h"
+#include "dosio.h"
 #if defined(WIN32)
-#include	<direct.h>
+#include <direct.h>
 #else
-#include	<dirent.h>
-#endif
-#if 0
-#include <sys/param.h>
-#include <unistd.h>
+#include <dirent.h>
 #endif
 
 static	char	curpath[MAX_PATH] = "./";
@@ -318,32 +314,25 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
 
 struct dirent	*de;
 struct stat		sb;
-	UINT32		attr;
 
 	de = readdir((DIR *)hdl);
 	if (de == NULL) {
 		return(FAILURE);
 	}
 	if (fli) {
+		memset(fli, 0, sizeof(*fli));
+		fli->caps = FLICAPS_ATTR;
+		fli->attr = (de->d_type & DT_DIR) ? FILEATTR_DIRECTORY : 0;
+
 		if (stat(de->d_name, &sb) == 0) {
-			fli->caps = FLICAPS_SIZE | FLICAPS_ATTR;
+			fli->caps |= FLICAPS_SIZE;
 			fli->size = sb.st_size;
-			attr = 0;
-			if (S_ISDIR(sb.st_mode)) {
-				attr = FILEATTR_DIRECTORY;
+			if (!(sb.st_mode & S_IWUSR)) {
+				fli->attr |= FILEATTR_READONLY;
 			}
-			else if (!(sb.st_mode & S_IWUSR)) {
-				attr = FILEATTR_READONLY;
-			}
-			fli->attr = attr;
 			if (cnv_sttime(&sb.st_mtime, &fli->date, &fli->time) == SUCCESS) {
 				fli->caps |= FLICAPS_DATE | FLICAPS_TIME;
 			}
-		}
-		else {
-			fli->caps = 0;
-			fli->size = 0;
-			fli->attr = 0;
 		}
 		milstr_ncpy(fli->path, de->d_name, sizeof(fli->path));
 	}
