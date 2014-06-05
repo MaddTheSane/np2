@@ -115,8 +115,7 @@ void psggen_setreg(PSGGEN psg, UINT reg, REG8 value) {
 			if (freq == 0) {
 				freq = 1;
 			}
-			psg->noise.freq = psggencfg.base / freq;
-			psg->noise.freq <<= PSGFREQPADBIT;
+			psg->noise.freq = (psggencfg.base / freq) << PSGFREQPADBIT;
 			break;
 
 		case 7:

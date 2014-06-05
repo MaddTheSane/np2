@@ -56,13 +56,10 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count) {
 		mixer = psg->mixer;
 		if (mixer & 0x38) {
 			for (i=0; i<(1 << PSGADDEDBIT); i++) {
-				SINT32 countbak;
-				countbak = psg->noise.count;
-				psg->noise.count -= psg->noise.freq;
-				if (psg->noise.count > countbak) {
-//					psg->noise.base = GETRAND() & (1 << (1 << PSGADDEDBIT));
+				if (psg->noise.count > psg->noise.freq) {
 					psg->noise.base = rand_get() & (1 << (1 << PSGADDEDBIT));
 				}
+				psg->noise.count -= psg->noise.freq;
 				noisetbl += psg->noise.base;
 				noisetbl >>= 1;
 			}
