@@ -1512,6 +1512,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return(0L);
 }
 
+/**
+ * 1フレーム実行
+ * @param[in] bDraw 描画フラグ
+ */
+static void ExecuteOneFrame(BOOL bDraw)
+{
+	joymng_sync();
+	mousemng_sync();
+	pccore_exec(bDraw);
+	recvideo_write();
+#if defined(SUPPORT_DCLOCK)
+	dclock_callback();
+#endif
+}
 
 static void framereset(UINT cnt) {
 
@@ -1842,13 +1856,7 @@ main_loop:
 			}
 			else {
 				if (np2oscfg.NOWAIT) {
-					joymng_sync();
-					mousemng_sync();
-					pccore_exec(framecnt == 0);
-					recvideo_write();
-#if defined(SUPPORT_DCLOCK)
-					dclock_callback();
-#endif
+					ExecuteOneFrame(framecnt == 0);
 					if (np2oscfg.DRAW_SKIP) {		// nowait frame skip
 						framecnt++;
 						if (framecnt >= np2oscfg.DRAW_SKIP) {
@@ -1864,13 +1872,7 @@ main_loop:
 				}
 				else if (np2oscfg.DRAW_SKIP) {		// frame skip
 					if (framecnt < np2oscfg.DRAW_SKIP) {
-						joymng_sync();
-						mousemng_sync();
-						pccore_exec(framecnt == 0);
-						recvideo_write();
-#if defined(SUPPORT_DCLOCK)
-						dclock_callback();
-#endif
+						ExecuteOneFrame(framecnt == 0);
 						framecnt++;
 					}
 					else {
@@ -1880,13 +1882,7 @@ main_loop:
 				else {								// auto skip
 					if (!waitcnt) {
 						UINT cnt;
-						joymng_sync();
-						mousemng_sync();
-						pccore_exec(framecnt == 0);
-						recvideo_write();
-#if defined(SUPPORT_DCLOCK)
-						dclock_callback();
-#endif
+						ExecuteOneFrame(framecnt == 0);
 						framecnt++;
 						cnt = timing_getcount();
 						if (framecnt > cnt) {
