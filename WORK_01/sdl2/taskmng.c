@@ -51,21 +51,19 @@ void taskmng_rol(void) {
 						menubase_moving(e.button.x, e.button.y, 2);
 					}
 #if defined(__IPHONEOS__)
-					else if (!SDL_IsTextInputActive())
+					else if (SDL_IsTextInputActive())
+					{
+						SDL_StopTextInput();
+					}
+					else if (e.button.y >= 320)
 					{
 						SDL_StartTextInput();
 					}
-					else
-					{
-						SDL_StopTextInput();
-						sysmenu_menuopen(0, e.button.x, e.button.y);
-					}
-#else
-					else
-					{
-						sysmenu_menuopen(0, e.button.x, e.button.y);
-					}
 #endif
+					else
+					{
+						sysmenu_menuopen(0, e.button.x, e.button.y);
+					}
 					break;
 
 				case SDL_BUTTON_RIGHT:
