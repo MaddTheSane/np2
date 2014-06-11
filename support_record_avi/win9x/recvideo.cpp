@@ -39,7 +39,7 @@ static const BITMAPINFOHEADER s_bmih =
  * コンストラクタ
  */
 RecodeVideo::RecodeVideo()
-	: m_bEnable(false)
+	: m_bEnabled(false)
 	, m_bDirty(false)
 	, m_nStep(0)
 	, m_pWork8(NULL)
@@ -141,7 +141,7 @@ bool RecodeVideo::OpenFile(LPCTSTR lpFilename)
 		return false;
 	}
 
-	m_bEnable = true;
+	m_bEnabled = true;
 
 	m_bDirty = true;
 
@@ -160,7 +160,7 @@ bool RecodeVideo::OpenFile(LPCTSTR lpFilename)
  */
 void RecodeVideo::CloseFile()
 {
-	m_bEnable = false;
+	m_bEnabled = false;
 
 	if (m_pStmTmp)
 	{
@@ -238,7 +238,7 @@ void RecodeVideo::Close()
  */
 void RecodeVideo::Write()
 {
-	if (!m_bEnable)
+	if (!m_bEnabled)
 	{
 		return;
 	}
@@ -331,7 +331,7 @@ static void screenmix3(UINT8* dest, const UINT8* src1, const UINT8* src2)
  */
 void RecodeVideo::Update()
 {
-	if (!m_bEnable)
+	if (!m_bEnabled)
 	{
 		return;
 	}

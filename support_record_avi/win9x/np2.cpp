@@ -1518,6 +1518,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
  */
 static void ExecuteOneFrame(BOOL bDraw)
 {
+	if (recvideo_isEnabled())
+	{
+		bDraw = TRUE;
+	}
+
 	joymng_sync();
 	mousemng_sync();
 	pccore_exec(bDraw);

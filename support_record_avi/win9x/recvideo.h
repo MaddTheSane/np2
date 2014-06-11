@@ -25,11 +25,12 @@ public:
 	void Close();
 	void Write();
 	void Update();
+	bool IsEnabled() const;
 
 private:
 	static RecodeVideo sm_instance;		/**< 唯一のインスタンスです */
 
-	bool m_bEnable;						/**< 有効フラグ */
+	bool m_bEnabled;					/**< 有効フラグ */
 	bool m_bDirty;						/**< ダーティ フラグ */
 
 	int m_nStep;						/**< クロック */
@@ -63,10 +64,21 @@ inline RecodeVideo& RecodeVideo::GetInstance()
 	return sm_instance;
 }
 
+/**
+ * 有効?
+ * @retval true 有効
+ * @retval false 無効
+ */
+inline bool RecodeVideo::IsEnabled() const
+{
+	return m_bEnabled;
+}
+
 #define recvideo_open			RecodeVideo::GetInstance().Open
 #define recvideo_close			RecodeVideo::GetInstance().Close
 #define recvideo_write			RecodeVideo::GetInstance().Write
 #define recvideo_update			RecodeVideo::GetInstance().Update
+#define recvideo_isEnabled		RecodeVideo::GetInstance().IsEnabled
 
 #else	// defined(SUPPORT_RECVIDEO)
 
@@ -74,5 +86,6 @@ static inline bool recvideo_open(HWND hWnd, LPCTSTR f) { return false; }
 static inline void recvideo_close() { }
 static inline void recvideo_write() { }
 static inline void recvideo_update() { }
+static inline bool recvideo_isEnabled() { return false; }
 
 #endif	// defined(SUPPORT_RECVIDEO)
