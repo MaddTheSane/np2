@@ -31,9 +31,9 @@ FILEH file_open_rb(const char *path) {
 #if defined(WIN32) && defined(OSLANG_UTF8)
 	char	sjis[MAX_PATH];
 	codecnv_utf8tosjis(sjis, sizeof(sjis), path, (UINT)-1);
-	return(fopen(sjis, "rb+"));
+	return(fopen(sjis, "rb"));
 #else
-	return(fopen(path, "rb+"));
+	return(fopen(path, "rb"));
 #endif
 }
 
