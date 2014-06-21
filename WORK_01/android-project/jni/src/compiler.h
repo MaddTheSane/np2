@@ -87,7 +87,7 @@ typedef signed char BOOL;
 #define	STRLEN				strlen
 
 #define	VERMOUTH_LIB
-// #define	SOUND_CRITICAL
+#define	SOUND_CRITICAL
 
 #define	SUPPORT_UTF8
 
