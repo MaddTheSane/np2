@@ -232,9 +232,7 @@ int np2_main(int argc, char *argv[]) {
 	S98_trash();
 	soundmng_deinitialize();
 
-	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {
-		initsave();
-	}
+	sysmng_deinitialize();
 
 	scrnmng_destroy();
 	sysmenu_destroy();
