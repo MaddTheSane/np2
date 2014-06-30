@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __OBJC__
+#import <Cocoa/Cocoa.h>
+#endif
+
 #include <stdio.h>
 #include <stddef.h>
 #include <SDL2/SDL.h>
@@ -37,7 +41,10 @@ typedef	unsigned int		UINT32;
 #define	SIZE_QVGA
 #endif
 
-typedef	int				BOOL;
+#if !defined(OBJC_BOOL_DEFINED)
+typedef	unsigned char	BOOL;
+#endif
+
 typedef	signed char		CHAR;
 typedef	unsigned char	BYTE;
 
