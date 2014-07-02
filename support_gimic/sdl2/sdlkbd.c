@@ -1,8 +1,12 @@
-#include	"compiler.h"
-#include	"np2.h"
-#include	"sdlkbd.h"
-#include	"keystat.h"
+/**
+ * @file	sdlkey.c
+ * @brief	Implementation of the keyboard
+ */
 
+#include "compiler.h"
+#include "np2.h"
+#include "sdlkbd.h"
+#include "keystat.h"
 
 typedef struct {
 	SDL_Keycode sdlkey;
@@ -11,8 +15,9 @@ typedef struct {
 
 #define		NC		0xff
 
-// 101キーボード
-static const SDLKCNV sdlcnv101[] = {
+/*! 101 keyboard key table */
+static const SDLKCNV sdlcnv101[] =
+{
 			{SDLK_ESCAPE,		0x00},	{SDLK_1,			0x01},
 			{SDLK_2,			0x02},	{SDLK_3,			0x03},
 			{SDLK_4,			0x04},	{SDLK_5,			0x05},
@@ -20,7 +25,7 @@ static const SDLKCNV sdlcnv101[] = {
 
 			{SDLK_8,			0x08},	{SDLK_9,			0x09},
 			{SDLK_0,			0x0a},	{SDLK_MINUS,		0x0b},
-			{SDLK_EQUALS,		0x0c},	{SDLK_BACKSLASH,	0x0d},
+			{SDLK_CARET,		0x0c},	{SDLK_BACKSLASH,	0x0d},
 			{SDLK_BACKSPACE,	0x0e},	{SDLK_TAB,			0x0f},
 
 			{SDLK_q,			0x10},	{SDLK_w,			0x11},
@@ -29,20 +34,22 @@ static const SDLKCNV sdlcnv101[] = {
 			{SDLK_u,			0x16},	{SDLK_i,			0x17},
 
 			{SDLK_o,			0x18},	{SDLK_p,			0x19},
+			{SDLK_AT,			0x1a},	{SDLK_LEFTBRACKET,	0x1b},
 			{SDLK_RETURN,		0x1c},	{SDLK_a,			0x1d},
 			{SDLK_s,			0x1e},	{SDLK_d,			0x1f},
 
 			{SDLK_f,			0x20},	{SDLK_g,			0x21},
 			{SDLK_h,			0x22},	{SDLK_j,			0x23},
 			{SDLK_k,			0x24},	{SDLK_l,			0x25},
+			{SDLK_SEMICOLON,	0x26},	{SDLK_COLON,		0x27},
 
-										{SDLK_z,			0x29},
+			{SDLK_RIGHTBRACKET,	0x28},	{SDLK_z,			0x29},
 			{SDLK_x,			0x2a},	{SDLK_c,			0x2b},
 			{SDLK_v,			0x2c},	{SDLK_b,			0x2d},
 			{SDLK_n,			0x2e},	{SDLK_m,			0x2f},
 
 			{SDLK_COMMA,		0x30},	{SDLK_PERIOD,		0x31},
-			{SDLK_SLASH,		0x32},
+			{SDLK_SLASH,		0x32},	{SDLK_UNDERSCORE,	0x33},
 			{SDLK_SPACE,		0x34},
 			{SDLK_PAGEUP,		0x36},	{SDLK_PAGEDOWN,		0x37},
 
@@ -58,7 +65,7 @@ static const SDLKCNV sdlcnv101[] = {
 
 			{SDLK_KP_6,			0x48},	{SDLK_KP_PLUS,		0x49},
 			{SDLK_KP_1,			0x4a},	{SDLK_KP_2,			0x4b},
-			{SDLK_KP_3,			0x4c},
+			{SDLK_KP_3,			0x4c},	{SDLK_KP_EQUALS,	0x4d},
 			{SDLK_KP_0,			0x4e},
 
 			{SDLK_KP_PERIOD,	0x50},
@@ -74,21 +81,34 @@ static const SDLKCNV sdlcnv101[] = {
 			{SDLK_RSHIFT,		0x70},	{SDLK_LSHIFT,		0x70},
 			{SDLK_CAPSLOCK,		0x71},
 			{SDLK_RALT,			0x73},	{SDLK_LALT,			0x73},
-			{SDLK_RCTRL,		0x74},	{SDLK_LCTRL,		0x74}};
+			{SDLK_RCTRL,		0x74},	{SDLK_LCTRL,		0x74},
 
-//			{SDLK_KP_EQUALS,	0x4d},
+			/* = */
+			{SDLK_EQUALS,		0x0c},
 
+			/* MacOS Yen */
+			{0xa5,				0x0d},
+};
 
-static const BYTE f12keys[] = {
-			0x61, 0x60, 0x4d, 0x4f};
+/*! extend key */
+static const BYTE f12keys[] = {0x61, 0x60, 0x4d, 0x4f};
 
-
-void sdlkbd_initialize(void) {
+/**
+ * Initialize
+ */
+void sdlkbd_initialize(void)
+{
 }
 
+/**
+ * Serializes
+ * @param[in] key Key code
+ * @return PC-98 data
+ */
 static BYTE getKey(SDL_Keycode key)
 {
 	size_t i;
+
 	for (i = 0; i < SDL_arraysize(sdlcnv101); i++)
 	{
 		if (sdlcnv101[i].sdlkey == key)
@@ -99,54 +119,78 @@ static BYTE getKey(SDL_Keycode key)
 	return NC;
 }
 
-static BYTE getf12key(void) {
-
+/**
+ * Get F12 settings
+ * @return PC-98 data
+ */
+static BYTE getf12key(void)
+{
 	UINT	key;
 
 	key = np2oscfg.F12KEY - 1;
-	if (key < SDL_arraysize(f12keys)) {
-		return(f12keys[key]);
+	if (key < SDL_arraysize(f12keys))
+	{
+		return f12keys[key];
 	}
-	else {
-		return(NC);
+	else
+	{
+		return NC;
 	}
 }
 
-void sdlkbd_keydown(UINT key) {
-
+/**
+ * Key down
+ * @param[in] key Key code
+ */
+void sdlkbd_keydown(UINT key)
+{
 	BYTE	data;
 
-	if (key == SDLK_F12) {
+	if (key == SDLK_F12)
+	{
 		data = getf12key();
 	}
-	else {
+	else
+	{
 		data = getKey(key);
 	}
-	if (data != NC) {
+	if (data != NC)
+	{
 		keystat_senddata(data);
 	}
 }
 
-void sdlkbd_keyup(UINT key) {
-
+/**
+ * Key up
+ * @param[in] key Key code
+ */
+void sdlkbd_keyup(UINT key)
+{
 	BYTE	data;
 
-	if (key == SDLK_F12) {
+	if (key == SDLK_F12)
+	{
 		data = getf12key();
 	}
-	else {
+	else
+	{
 		data = getKey(key);
 	}
-	if (data != NC) {
+	if (data != NC)
+	{
 		keystat_senddata((BYTE)(data | 0x80));
 	}
 }
 
-void sdlkbd_resetf12(void) {
+/**
+ * Reset F12
+ */
+void sdlkbd_resetf12(void)
+{
+	size_t i;
 
-	UINT	i;
-
-	for (i = 0; i < SDL_arraysize(f12keys); i++) {
+	for (i = 0; i < SDL_arraysize(f12keys); i++)
+	{
 		keystat_forcerelease(f12keys[i]);
 	}
 }
