@@ -303,7 +303,7 @@ void board118_bind(void)
 	if (gimic == NULL)
 	{
 		gimic = new CGimicUSB();
-		if (gimic->Open())
+		if (gimic->Initialize())
 		{
 			gimic->Reset();
 		}
@@ -342,3 +342,18 @@ void board118_bind(void)
 	iocore_attachinp(0xa460, ymf_ia460);
 }
 
+/**
+ * Deinitialize
+ */
+extern "C" void board118_deinitialize(void)
+{
+	CGimicUSB* gimic = s_gimic;
+	s_gimic = NULL;
+
+	if (gimic)
+	{
+		gimic->Reset();
+		gimic->Deinitialize();
+		delete gimic;
+	}
+}
