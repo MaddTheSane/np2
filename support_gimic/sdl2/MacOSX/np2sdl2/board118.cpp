@@ -225,6 +225,10 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		else if (nAddr < 0x30)
 		{
 			fmtimer_setreg(nAddr, dat);
+			if ((nAddr == 0x22) || (nAddr == 0x27))
+			{
+				s_gimic->Out(nAddr, dat);
+			}
 		}
 		else if (nAddr < 0xc0)
 		{
