@@ -81,9 +81,9 @@ static const FSPARAM fpNewDisk =
 
 void dialog_changefdd(HWND hWnd, REG8 drv) {
 
-const OEMCHAR	*p;
-	OEMCHAR		path[MAX_PATH];
-	int			readonly;
+	LPCTSTR	p;
+	TCHAR	path[MAX_PATH];
+	int		readonly;
 
 	if (drv < 4) {
 		p = fdd_diskname(drv);
@@ -104,9 +104,9 @@ const OEMCHAR	*p;
 void dialog_changehdd(HWND hWnd, REG8 drv) {
 
 	UINT		num;
-const OEMCHAR	*p;
+	LPCTSTR		p;
 	PCFSPARAM	pfp;
-	OEMCHAR		path[MAX_PATH];
+	TCHAR		path[MAX_PATH];
 
 	p = diskdrv_getsxsi(drv);
 	num = drv & 0x0f;
@@ -153,7 +153,7 @@ const OEMCHAR	*p;
 
 // ---- newdisk
 
-static const OEMCHAR str_newdisk[] = OEMTEXT("newdisk");
+static const TCHAR str_newdisk[] = TEXT("newdisk");
 static const UINT32 hddsizetbl[5] = {20, 41, 65, 80, 128};
 
 static const UINT16 sasires[6] = {
@@ -162,7 +162,7 @@ static const UINT16 sasires[6] = {
 				IDC_NEWSASI30MB, IDC_NEWSASI40MB};
 
 static	UINT8	makefdtype = DISKTYPE_2HD << 4;
-static	OEMCHAR	disklabel[16+1];
+static	TCHAR	disklabel[16+1];
 static	UINT	hddsize;
 static	UINT	hddminsize;
 static	UINT	hddmaxsize;
@@ -325,9 +325,9 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 
 void dialog_newdisk(HWND hWnd) {
 
-	OEMCHAR		path[MAX_PATH];
+	TCHAR		path[MAX_PATH];
 	HINSTANCE	hinst;
-const OEMCHAR	*ext;
+	LPCTSTR ext;
 
 	file_cpyname(path, fddfolder, NELEMENTS(path));
 	file_cutname(path);

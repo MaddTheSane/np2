@@ -108,10 +108,10 @@ static void cfgcreate(HWND hWnd) {
 
 static void cfgupdate(HWND hWnd)
 {
-	UINT		update;
-	TCHAR		work[32];
-	UINT		val;
-const OEMCHAR	*str;
+	UINT	update;
+	TCHAR	work[32];
+	UINT	val;
+	LPCTSTR	str;
 
 	update = 0;
 

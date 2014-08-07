@@ -11,15 +11,15 @@
 
 static	SIZE	s_szAbout;
 
-static const OEMCHAR str_np2title[] = OEMTEXT(PROJECTNAME) \
-										OEMTEXT(PROJECTSUBNAME) \
-										OEMTEXT("  ");
-static const OEMCHAR np2infostr[] = OEMTEXT("CPU: %CPU% %CLOCK%\nMEM: %MEM1%\nGDC: %GDC%\n     %GDC2%\nTEXT: %TEXT%\nGRPH: %GRPH%\nSOUND: %EXSND%\n\nBIOS: %BIOS%\nRHYTHM: %RHYTHM%\n\nSCREEN: %DISP%");
+static const TCHAR str_np2title[] = TEXT(PROJECTNAME) \
+									TEXT(PROJECTSUBNAME) \
+									TEXT("  ");
+static const TCHAR np2infostr[] = TEXT("CPU: %CPU% %CLOCK%\nMEM: %MEM1%\nGDC: %GDC%\n     %GDC2%\nTEXT: %TEXT%\nGRPH: %GRPH%\nSOUND: %EXSND%\n\nBIOS: %BIOS%\nRHYTHM: %RHYTHM%\n\nSCREEN: %DISP%");
 
 
 static void onInitDialog(HWND hWnd)
 {
-	OEMCHAR	szWork[128];
+	TCHAR	szWork[128];
 	RECT	rect;
 	RECT	rectMore;
 	RECT	rectInfo;
@@ -53,7 +53,7 @@ static void onInitDialog(HWND hWnd)
 
 static void onMore(HWND hWnd)
 {
-	OEMCHAR	szInfo[1024];
+	TCHAR	szInfo[1024];
 	RECT	rect;
 
 	np2info(szInfo, np2infostr, NELEMENTS(szInfo), NULL);

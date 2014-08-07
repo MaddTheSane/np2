@@ -105,10 +105,10 @@ static void mpucreate(HWND hWnd)
 static void mpuupdate(HWND hWnd) {
 
 	union {
-		OEMCHAR	mmap[MAXPNAMELEN];
-		OEMCHAR	mmdl[64];
-		OEMCHAR	mdef[MAX_PATH];
-		OEMCHAR	mdin[MAXPNAMELEN];
+		TCHAR	mmap[MAXPNAMELEN];
+		TCHAR	mmdl[64];
+		TCHAR	mdef[MAX_PATH];
+		TCHAR	mdin[MAXPNAMELEN];
 	} s;
 	UINT	update;
 

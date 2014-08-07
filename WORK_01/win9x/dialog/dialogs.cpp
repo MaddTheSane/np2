@@ -41,7 +41,7 @@ void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID)
 // ---- file select
 
 static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
-							OEMCHAR *pszPath, UINT uSize,
+							LPTSTR pszPath, UINT uSize,
 							BOOL (WINAPI * fnAPI)(LPOPENFILENAME lpofn))
 {
 	LPTSTR		lpszTitle;
@@ -133,8 +133,7 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 	return bResult;
 }
 
-BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam,
-									OEMCHAR *pszPath, UINT uSize, int *pnRO)
+BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int *pnRO)
 {
 	OPENFILENAME	ofn;
 	BOOL			bResult;
@@ -159,8 +158,7 @@ BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam,
 	return bResult;
 }
 
-BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam,
-												OEMCHAR *pszPath, UINT uSize)
+BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize)
 {
 	OPENFILENAME	ofn;
 
@@ -171,11 +169,10 @@ BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam,
 	return openFileParam(&ofn, pcParam, pszPath, uSize, GetSaveFileName);
 }
 
-BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam,
-												OEMCHAR *pszPath, UINT uSize)
+BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize)
 {
-	OEMCHAR *pszNum[4];
-	OEMCHAR *pszFile;
+	LPTSTR pszNum[4];
+	LPTSTR pszFile;
 	UINT uCount;
 	UINT uPos;
 
@@ -235,9 +232,9 @@ static const FSPARAM fpMIMPI =
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res) {
 
-	HWND		subwnd;
-	OEMCHAR		path[MAX_PATH];
-const OEMCHAR	*p;
+	HWND	subwnd;
+	TCHAR	path[MAX_PATH];
+	LPCTSTR	p;
 
 	subwnd = GetDlgItem(hWnd, res);
 	GetWindowText(subwnd, path, NELEMENTS(path));
@@ -267,11 +264,11 @@ void dlgs_setliststr(HWND hWnd, UINT16 res, const TCHAR **item, UINT items) {
 void dlgs_setlistuint32(HWND hWnd, UINT16 res, const UINT32 *item, UINT items) {
 	HWND	wnd;
 	UINT	i;
-	OEMCHAR	str[16];
+	TCHAR	str[16];
 
 	wnd = GetDlgItem(hWnd, res);
 	for (i=0; i<items; i++) {
-		OEMSPRINTF(str, str_u, item[i]);
+		wsprintf(str, str_u, item[i]);
 		SendMessage(wnd, CB_INSERTSTRING, (WPARAM)i, (LPARAM)str);
 	}
 }
@@ -369,7 +366,7 @@ static void insertnc(HWND hWnd, int nPos)
 	SendMessage(hWnd, CB_INSERTSTRING, (WPARAM)nPos, (LPARAM)szNC);
 }
 
-void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
+void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname) {
 
 	HWND		wnd;
 	UINT		defcur;
@@ -417,7 +414,7 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
 	SendMessage(wnd, CB_SETCURSEL, (WPARAM)defcur, (LPARAM)0);
 }
 
-void dlgs_setlistmidiin(HWND hWnd, UINT16 res, const OEMCHAR *defname) {
+void dlgs_setlistmidiin(HWND hWnd, UINT16 res, LPCTSTR defname) {
 
 	HWND		wnd;
 	UINT		defcur;

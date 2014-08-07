@@ -27,11 +27,11 @@ static const LPTSTR lpszBmpFilter[] =
 	MAKEINTRESOURCE(IDS_BMPFILTER8),
 	MAKEINTRESOURCE(IDS_BMPFILTER24)
 };
-static const OEMCHAR szBmpFile[] = OEMTEXT("NP2_####.BMP");
+static const TCHAR szBmpFile[] = TEXT("NP2_####.BMP");
 
 void dialog_font(HWND hWnd)
 {
-	OEMCHAR	szPath[MAX_PATH];
+	TCHAR	szPath[MAX_PATH];
 
 	file_cpyname(szPath, np2cfg.fontfile, NELEMENTS(szPath));
 	if ((dlgs_openfile(hWnd, &fpFont, szPath, NELEMENTS(szPath), NULL)) &&
@@ -47,8 +47,8 @@ void dialog_writebmp(HWND hWnd) {
 
 	SCRNSAVE	ss;
 	FSPARAM		fp;
-	OEMCHAR		szPath[MAX_PATH];
-const OEMCHAR	*pszExt;
+	TCHAR		szPath[MAX_PATH];
+	LPCTSTR		pszExt;
 
 	ss = scrnsave_get();
 	if (ss == NULL)
@@ -68,7 +68,7 @@ const OEMCHAR	*pszExt;
 		sysmng_update(SYS_UPDATEOSCFG);
 		pszExt = file_getext(szPath);
 		if ((ss->type <= SCRNSAVE_8BIT) &&
-			(!file_cmpname(pszExt, OEMTEXT("gif"))))
+			(!file_cmpname(pszExt, TEXT("gif"))))
 		{
 			scrnsave_writegif(ss, szPath, SCRNSAVE_AUTO);
 		}
