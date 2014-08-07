@@ -1,6 +1,5 @@
 #include	"compiler.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"cpucore.h"

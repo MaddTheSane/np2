@@ -4,7 +4,6 @@
  */
 
 #include "compiler.h"
-#include "oemtext.h"
 #include "dosio.h"
 
 //! カレント パス バッファ

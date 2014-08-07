@@ -10,7 +10,6 @@
 #include "resource.h"
 #include "strres.h"
 #include "bmpdata.h"
-#include "oemtext.h"
 #include "dosio.h"
 #include "commng.h"
 #include "dialogs.h"

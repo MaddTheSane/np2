@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"dialog.h"

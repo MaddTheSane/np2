@@ -12,7 +12,6 @@
 #include "strres.h"
 #include "resource.h"
 #include "np2.h"
-#include "oemtext.h"
 #include "dosio.h"
 #include "joymng.h"
 #include "sysmng.h"
@@ -94,7 +93,7 @@ static void slidersetvaluestr(HWND hWnd, const SLIDERTBL *item, UINT8 value) {
 
 	TCHAR	work[32];
 
-	wsprintf(work, tchar_d, value);
+	wsprintf(work, str_d, value);
 	SetDlgItemText(hWnd, item->resstr, work);
 }
 

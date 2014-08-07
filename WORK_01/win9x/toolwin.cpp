@@ -3,7 +3,6 @@
 #include	"resource.h"
 #include	"np2.h"
 #include	"winloc.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"soundmng.h"
 #include	"sysmng.h"

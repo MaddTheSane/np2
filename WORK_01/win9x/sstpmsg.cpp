@@ -1,7 +1,6 @@
 #include	"compiler.h"
 #include	"strres.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"scrnmng.h"
 #include	"sysmng.h"
 #include	"sstp.h"
@@ -11,6 +10,9 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"np2info.h"
+#if defined(OSLANG_UCS2)
+#include	"oemtext.h"
+#endif	// defined(OSLANG_UCS2)
 
 
 static const OEMCHAR cr[] = OEMTEXT("\\n");

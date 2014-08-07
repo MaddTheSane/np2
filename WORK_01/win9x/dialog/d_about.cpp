@@ -1,7 +1,6 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"np2class.h"
 #include	"dialog.h"
 #include	"dialogs.h"

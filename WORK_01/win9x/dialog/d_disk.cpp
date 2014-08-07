@@ -2,7 +2,6 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"oemtext.h"
 #include	"dosio.h"
 #include	"sysmng.h"
 #include	"toolwin.h"
@@ -187,7 +186,7 @@ static LRESULT CALLBACK NewHddDlgProc(HWND hWnd, UINT msg,
 				case IDOK:
 					GetWindowText(GetDlgItem(hWnd, IDC_HDDSIZE),
 													work, NELEMENTS(work));
-					val = (UINT)miltchar_solveINT(work);
+					val = (UINT)milstr_solveINT(work);
 					if (val < hddminsize) {
 						val = hddminsize;
 					}
