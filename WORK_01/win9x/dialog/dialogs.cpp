@@ -49,9 +49,6 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 	LPTSTR		lpszFilter;
 	LPTSTR		lpszDefExt;
 	LPTSTR		p;
-#if defined(OSLANG_UTF8)
-	TCHAR		szPath[MAX_PATH];
-#endif	// defined(OSLANG_UTF8)
 	BOOL		bResult;
 
 	if ((lpOFN == NULL) || (pcParam == NULL) ||
@@ -116,23 +113,10 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 		}
 	}
 
-#if defined(OSLANG_UTF8)
-	oemtotchar(szPath, NELEMENTS(szPath), pszPath, -1);
-	lpOFN->lpstrFile = szPath;
-	lpOFN->nMaxFile = NELEMENTS(szPath);
-#else	// defined(OSLANG_UTF8)
 	lpOFN->lpstrFile = pszPath;
 	lpOFN->nMaxFile = uSize;
-#endif	// defined(OSLANG_UTF8)
 
 	bResult = (*fnAPI)(lpOFN);
-
-#if defined(OSLANG_UTF8)
-	if (bResult)
-	{
-		tchartooem(pszPath, uSize, szPath, -1);
-	}
-#endif	// defined(OSLANG_UTF8)
 
 	if (lpszTitle)
 	{

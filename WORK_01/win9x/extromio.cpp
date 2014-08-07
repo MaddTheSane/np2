@@ -26,13 +26,7 @@ EXTROMH extromio_open(const OEMCHAR *filename, UINT type) {
 		}
 	}
 	else if (type == EXTROMIO_RES) {
-#if defined(OSLANG_UTF8)
-		TCHAR tchr[MAX_PATH];
-		oemtotchar(tchr, NELEMENTS(tchr), filename, -1);
-		hrsrc = FindResource(g_hInstance, tchr, str_extrom);
-#else
 		hrsrc = FindResource(g_hInstance, filename, str_extrom);
-#endif
 		if (hrsrc) {
 			hg = LoadResource(g_hInstance, hrsrc);
 			ret->fh = (void *)LockResource(hg);

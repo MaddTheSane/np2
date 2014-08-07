@@ -265,9 +265,6 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 													WPARAM wp, LPARAM lp) {
 
 	UINT16	res;
-#if defined(OSLANG_UTF8)
-	TCHAR	buf[17];
-#endif
 
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -291,17 +288,11 @@ static LRESULT CALLBACK NewdiskDlgProc(HWND hWnd, UINT msg,
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDOK:
-#if defined(OSLANG_UTF8)
-					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
-														buf, NELEMENTS(buf));
-					tchartooem(disklabel, NELEMENTS(disklabel), buf, -1);
-#else
 					GetWindowText(GetDlgItem(hWnd, IDC_DISKLABEL),
 											disklabel, NELEMENTS(disklabel));
 					if (milstr_kanji1st(disklabel, NELEMENTS(disklabel) - 1)) {
 						disklabel[NELEMENTS(disklabel) - 1] = '\0';
 					}
-#endif
 					if (GetDlgItemCheck(hWnd, IDC_MAKE2DD)) {
 						makefdtype = (DISKTYPE_2DD << 4);
 					}
