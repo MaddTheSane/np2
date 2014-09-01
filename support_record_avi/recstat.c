@@ -57,6 +57,7 @@ enum
 	kStatJoypad1,
 	kStatJoypad2,
 
+	kStatRerecording	= 254,
 	kStatDelimiter		= 255
 };
 
@@ -390,6 +391,9 @@ BOOL recstat_sync(void)
 			{
 				_this->joypad[1] = readByte(_this);
 			}
+			else if (mode == kStatRerecording)
+			{
+			}
 			else
 			{
 				break;
@@ -461,6 +465,7 @@ void recstat_continue(const OEMCHAR *lpFilename)
 	{
 		file_seek(_this->hFile, 0, FSEEK_END);
 		_this->mode = kRecStatRecording;
+		writeByte(_this, kStatRerecording);
 	}
 }
 
