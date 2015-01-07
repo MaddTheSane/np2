@@ -1671,6 +1671,18 @@
 						</FileConfiguration>
 					</File>
 				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\WndBase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndBase.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="zlib"

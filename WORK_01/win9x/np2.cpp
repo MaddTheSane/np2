@@ -61,6 +61,7 @@
 #include "juliet.h"
 #endif
 #include "recvideo.h"
+#include "misc\wndbase.h"
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -1542,6 +1543,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	BOOL		xrollkey;
 
 	_MEM_INIT();
+	CWndBase::Initialize(hInstance);
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
