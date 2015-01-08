@@ -1,6 +1,6 @@
 /**
  * @file	viewer.cpp
- * @brief	DebugUty 用ビューワ クラスの宣言およびインターフェイスの定義をします
+ * @brief	DebugUty 用ビューワ クラスの動作の定義を行います
  */
 
 #include "compiler.h"
