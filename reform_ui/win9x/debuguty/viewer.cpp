@@ -13,15 +13,52 @@
 
 static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
 		const TCHAR		np2viewfont[] = _T("ＭＳ ゴシック");
-		NP2VIEW_T		np2view[NP2VIEW_MAX];
+		CDebugUtyView*	g_np2view[NP2VIEW_MAX];
 
+/**
+ * コンストラクタ
+ */
+CDebugUtyView::CDebugUtyView()
+	: hwnd(NULL)
+	, pos(0)
+	, maxline(0)
+	, step(0)
+	, mul(0)
+	, type(0)
+	, lock(0)
+	, active(0)
+	, seg(0)
+	, off(0)
+{
+	ZeroMemory(&this->buf1, sizeof(this->buf1));
+	ZeroMemory(&this->buf2, sizeof(this->buf2));
+	ZeroMemory(&this->dmem, sizeof(this->dmem));
+}
+
+/**
+ * デストラクタ
+ */
+CDebugUtyView::~CDebugUtyView()
+{
+	viewcmn_free(&this->buf1);
+	viewcmn_free(&this->buf2);
+
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		if (g_np2view[i] == this)
+		{
+			g_np2view[i] = NULL;
+		}
+	}
+}
+
+// ----
 
 static void viewer_segmode(HWND hwnd, UINT8 type) {
 
-	NP2VIEW_T	*view;
-
-	view = viewcmn_find(hwnd);
-	if ((view) && (view->type != type)) {
+	NP2VIEW_T* view = viewcmn_find(hwnd);
+	if ((view) && (view->type != type))
+	{
 		viewcmn_setmode(view, view, type);
 		view->dmem.Update();
 		viewcmn_setvscroll(hwnd, view);
@@ -29,31 +66,21 @@ static void viewer_segmode(HWND hwnd, UINT8 type) {
 	}
 }
 
-
-static void vieweractive_renewal(void) {
-
-	int			i;
-	NP2VIEW_T	*view;
-
-	view = np2view;
+static void vieweractive_renewal(void)
+{
 	np2break &= ~NP2BREAK_DEBUG;
-	for (i=0; i<NP2VIEW_MAX; i++, view++) {
-		if ((view->alive) && (view->active)) {
+
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		const NP2VIEW_T* view = g_np2view[i];
+		if ((view != NULL) && (view->active))
+		{
 			np2break |= NP2BREAK_DEBUG;
 			break;
 		}
 	}
 	np2active_renewal();
 }
-
-
-static void viewer_close(NP2VIEW_T *view) {
-
-	view->alive = FALSE;
-	viewcmn_free(&view->buf1);
-	viewcmn_free(&view->buf2);
-}
-
 
 LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -178,7 +205,7 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			view = viewcmn_find(hWnd);
 			DestroyWindow(hWnd);
 			if (view) {
-				viewer_close(view);
+				delete view;
 				vieweractive_renewal();
 			}
 			break;
@@ -196,7 +223,7 @@ BOOL viewer_init(HINSTANCE hInstance) {
 
 	WNDCLASS	np2vc;
 
-	ZeroMemory(np2view, sizeof(np2view));
+	ZeroMemory(g_np2view, sizeof(g_np2view));
 
 	np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
 	np2vc.lpfnWndProc = ViewProc;
@@ -220,18 +247,18 @@ void viewer_term(void) {
 }
 
 
-void viewer_open(HINSTANCE hInstance) {
+void viewer_open(HINSTANCE hInstance)
+{
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		NP2VIEW_T* view = g_np2view[i];
+		if (view == NULL)
+		{
+			view = new CDebugUtyView;
+			g_np2view[i] = view;
 
-	int			i;
-	NP2VIEW_T	*view;
-
-	view = np2view;
-	for (i=0; i<NP2VIEW_MAX; i++, view++) {
-		if (!view->alive) {
 			TCHAR buf[256];
 			viewcmn_caption(view, buf);
-			ZeroMemory(view, sizeof(NP2VIEW_T));
-			view->alive = TRUE;
 			view->hwnd = CreateWindowEx(0,
 							np2viewclass, buf,
 							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
@@ -246,17 +273,15 @@ void viewer_open(HINSTANCE hInstance) {
 	}
 }
 
-
-void viewer_allclose(void) {
-
-	int			i;
-	NP2VIEW_T	*view;
-
-	view = np2view;
-	for (i=0; i<NP2VIEW_MAX; i++, view++) {
-		if (view->alive) {
+void viewer_allclose(void)
+{
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		NP2VIEW_T* view = g_np2view[i];
+		if (view != NULL)
+		{
 			DestroyWindow(view->hwnd);
-			viewer_close(view);
+			delete view;
 		}
 	}
 	vieweractive_renewal();
@@ -266,18 +291,19 @@ void viewer_allclose(void) {
 void viewer_allreload(BOOL force) {
 
 static UINT32	last = 0;
-	UINT32		now;
 
-	now = GetTickCount();
-	if ((force) || ((now - last) >= 200)) {
-		int			i;
-		NP2VIEW_T	*view;
-
+	UINT32 now = GetTickCount();
+	if ((force) || ((now - last) >= 200))
+	{
 		last = now;
-		view = np2view;
-		for (i=0; i<NP2VIEW_MAX; i++, view++) {
-			if ((view->alive) && (!view->lock)) {
-				if (view->type == VIEWMODE_ASM) {
+
+		for (size_t i = 0; i < _countof(g_np2view); i++)
+		{
+			NP2VIEW_T* view = g_np2view[i];
+			if ((view != NULL) && (!view->lock))
+			{
+				if (view->type == VIEWMODE_ASM)
+				{
 					view->seg = CPU_CS;
 					view->off = CPU_IP;
 					view->pos = 0;
@@ -289,4 +315,3 @@ static UINT32	last = 0;
 		}
 	}
 }
-

@@ -22,20 +22,19 @@ const char viewcmn_hex[16] = {
 				'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
-void viewcmn_caption(NP2VIEW_T *view, TCHAR *buf) {
-
-	int		num;
-	TCHAR	*p;
-
-	num = ((int)view - (int)np2view) / sizeof(NP2VIEW_T);
-
-	if (view->lock) {
-		p = _T("Locked");
+void viewcmn_caption(NP2VIEW_T *view, TCHAR *buf)
+{
+	int nIndex = -1;
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		if (g_np2view[i] == view)
+		{
+			nIndex = i;
+			break;
+		}
 	}
-	else {
-		p = _T("Realtime");
-	}
-	wsprintf(buf, _T("%d.%s - NP2 Debug Utility"), num + 1, p);
+	LPCTSTR lpMode = (view->lock) ? TEXT("Locked") : TEXT("Realtime");
+	wsprintf(buf, _T("%d.%s - NP2 Debug Utility"), nIndex + 1, lpMode);
 }
 
 
@@ -83,18 +82,17 @@ void viewcmn_free(VIEWMEMBUF *buf) {
 
 // ----
 
-NP2VIEW_T *viewcmn_find(HWND hwnd) {
-
-	int			i;
-	NP2VIEW_T	*view;
-
-	view = np2view;
-	for (i=0; i<NP2VIEW_MAX; i++, view++) {
-		if ((view->alive) && (view->hwnd == hwnd)) {
-			return(view);
+NP2VIEW_T* viewcmn_find(HWND hwnd)
+{
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		NP2VIEW_T* view = g_np2view[i];
+		if ((view != NULL) && (view->hwnd == hwnd))
+		{
+			return view;
 		}
 	}
-	return(NULL);
+	return NULL;
 }
 
 
@@ -184,16 +182,17 @@ void viewcmn_setmenuseg(HWND hwnd) {
 
 // -----
 
-void viewcmn_setvscroll(HWND hWnd, NP2VIEW_T *view) {
-
-	ZeroMemory(&(view->si), sizeof(SCROLLINFO));
-	view->si.cbSize = sizeof(SCROLLINFO);
-	view->si.fMask = SIF_ALL;
-	view->si.nMin = 0;
-	view->si.nMax = ((view->maxline + view->mul - 1) / view->mul) - 1;
-	view->si.nPos = view->pos / view->mul;
-	view->si.nPage = view->step / view->mul;
-	SetScrollInfo(hWnd, SB_VERT, &(view->si), TRUE);
+void viewcmn_setvscroll(HWND hWnd, NP2VIEW_T *view)
+{
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(si);
+	si.fMask = SIF_ALL;
+	si.nMin = 0;
+	si.nMax = ((view->maxline + view->mul - 1) / view->mul) - 1;
+	si.nPos = view->pos / view->mul;
+	si.nPage = view->step / view->mul;
+	SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
 }
 
 // -----

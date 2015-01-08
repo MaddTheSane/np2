@@ -35,7 +35,16 @@ typedef struct {
 	void	*ptr;
 } VIEWMEMBUF;
 
-typedef struct {
+/**
+ * @brief ビュー クラス
+ */
+class CDebugUtyView
+{
+public:
+	CDebugUtyView();
+	~CDebugUtyView();
+
+public:
 	HWND		hwnd;
 	VIEWMEMBUF	buf1;
 	VIEWMEMBUF	buf2;
@@ -43,18 +52,18 @@ typedef struct {
 	UINT32		maxline;
 	UINT16		step;
 	UINT16		mul;
-	UINT8		alive;
 	UINT8		type;
 	UINT8		lock;
 	UINT8		active;
 	UINT16		seg;
 	UINT16		off;
 	DebugUtyViewMemory dmem;
-	SCROLLINFO	si;
-} NP2VIEW_T;
+};
+
+typedef CDebugUtyView NP2VIEW_T;
 
 extern	const TCHAR		np2viewfont[];
-extern	NP2VIEW_T		np2view[NP2VIEW_MAX];
+extern	NP2VIEW_T*		g_np2view[NP2VIEW_MAX];
 
 
 BOOL viewer_init(HINSTANCE hInstance);
