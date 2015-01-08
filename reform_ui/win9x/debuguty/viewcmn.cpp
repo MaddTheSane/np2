@@ -1,20 +1,21 @@
-#include	"compiler.h"
-#include	"resource.h"
-#include	"np2.h"
-#include	"viewer.h"
-#include	"viewcmn.h"
-#include	"viewmenu.h"
-#include	"viewmem.h"
-#include	"viewreg.h"
-#include	"viewseg.h"
-#include	"view1mb.h"
-#include	"viewasm.h"
-#include	"viewsnd.h"
-#include	"cpucore.h"
-// #include	"pccore.h"
-// #include	"iocore.h"
-// #include	"bios.h"
+/**
+ * @file	viewcmn.cpp
+ * @brief	DebugUty 用ビューワ共通クラスの動作の定義を行います
+ */
 
+#include "compiler.h"
+#include "resource.h"
+#include "np2.h"
+#include "viewer.h"
+#include "viewcmn.h"
+#include "viewmenu.h"
+#include "viewmem.h"
+#include "viewreg.h"
+#include "viewseg.h"
+#include "view1mb.h"
+#include "viewasm.h"
+#include "viewsnd.h"
+#include "cpucore.h"
 
 const char viewcmn_hex[16] = {
 				'0', '1', '2', '3', '4', '5', '6', '7',
