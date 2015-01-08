@@ -1,9 +1,14 @@
-#include	"compiler.h"
-#include	"resource.h"
-#include	"np2.h"
-#include	"viewer.h"
-#include	"viewcmn.h"
-#include	"cpucore.h"
+/**
+ * @file	viewer.cpp
+ * @brief	DebugUty 用ビューワ クラスの宣言およびインターフェイスの定義をします
+ */
+
+#include "compiler.h"
+#include "resource.h"
+#include "np2.h"
+#include "viewer.h"
+#include "viewcmn.h"
+#include "cpucore.h"
 
 
 static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
@@ -18,7 +23,7 @@ static void viewer_segmode(HWND hwnd, UINT8 type) {
 	view = viewcmn_find(hwnd);
 	if ((view) && (view->type != type)) {
 		viewcmn_setmode(view, view, type);
-		viewcmn_setbank(view);
+		view->dmem.Update();
 		viewcmn_setvscroll(hwnd, view);
 		InvalidateRect(hwnd, NULL, TRUE);
 	}
@@ -278,7 +283,7 @@ static UINT32	last = 0;
 					view->pos = 0;
 					viewcmn_setvscroll(view->hwnd, view);
 				}
-				viewcmn_setbank(view);
+				view->dmem.Update();
 				InvalidateRect(view->hwnd, NULL, TRUE);
 			}
 		}

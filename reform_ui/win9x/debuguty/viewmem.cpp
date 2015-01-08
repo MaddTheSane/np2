@@ -1,12 +1,41 @@
-#include	"compiler.h"
-#include	"resource.h"
-#include	"np2.h"
-#include	"viewer.h"
-#include	"viewmem.h"
-#include	"cpucore.h"
+/**
+ * @file	viewmem.cpp
+ * @brief	DebugUty 用メモリ読み込みクラスの動作の定義を行います
+ */
+
+#include "compiler.h"
+#include "resource.h"
+#include "np2.h"
+#include "viewmem.h"
+#include "cpucore.h"
+#include "pccore.h"
+#include "iocore.h"
+
+static void viewmem_read(const DebugUtyViewMemory* cfg, UINT32 adrs, UINT8 *buf, UINT32 size);
+
+/**
+ * 状態を更新する
+ */
+void DebugUtyViewMemory::Update()
+{
+	this->vram = gdcs.disp;
+	this->itf = CPU_ITFBANK;
+	this->A20 = static_cast<UINT8>((CPU_ADRSMASK >> 20) & 1);
+}
+
+/**
+ * メモリ リード
+ * @param[in] nAddress アドレス
+ * @param[in] lpBuffer バッファ
+ * @param[in] cbBuffer バッファ長
+ */
+void DebugUtyViewMemory::Read(UINT32 nAddress, LPVOID lpBuffer, UINT32 cbBuffer)
+{
+	viewmem_read(this, nAddress, static_cast<UINT8*>(lpBuffer), cbBuffer);
+}
 
 
-void viewmem_read(VIEWMEM_T *cfg, UINT32 adrs, UINT8 *buf, UINT32 size) {
+static void viewmem_read(const DebugUtyViewMemory* cfg, UINT32 adrs, UINT8 *buf, UINT32 size) {
 
 	if (!size) {
 		return;
@@ -165,4 +194,3 @@ void viewmem_read(VIEWMEM_T *cfg, UINT32 adrs, UINT8 *buf, UINT32 size) {
 		}
 	}
 }
-

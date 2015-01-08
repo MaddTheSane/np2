@@ -1,11 +1,13 @@
+/**
+ * @file	viewer.h
+ * @brief	DebugUty 用ビューワ クラスの宣言およびインターフェイスの定義をします
+ */
+
+#pragma once
+
+#include "viewmem.h"
 
 #define	NP2VIEW_MAX	8
-
-typedef struct {
-	UINT8	vram;
-	UINT8	itf;
-	UINT8	A20;
-} VIEWMEM_T;
 
 enum {
 	VIEWMODE_REG = 0,
@@ -47,7 +49,7 @@ typedef struct {
 	UINT8		active;
 	UINT16		seg;
 	UINT16		off;
-	VIEWMEM_T	dmem;
+	DebugUtyViewMemory dmem;
 	SCROLLINFO	si;
 } NP2VIEW_T;
 

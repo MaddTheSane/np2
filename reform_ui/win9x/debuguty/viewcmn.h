@@ -11,7 +11,6 @@ void viewcmn_free(VIEWMEMBUF *buf);
 NP2VIEW_T *viewcmn_find(HWND hwnd);
 void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type);
 LRESULT CALLBACK viewcmn_dispat(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-void viewcmn_setbank(NP2VIEW_T *view);
 
 void viewcmn_setmenuseg(HWND hwnd);
 

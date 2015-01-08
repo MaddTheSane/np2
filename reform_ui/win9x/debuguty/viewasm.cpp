@@ -52,8 +52,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			else {
 				view->buf1.type = ALLOCTYPE_SEG;
 				view->buf1.arg = view->seg;
-				viewmem_read(&view->dmem, view->buf1.arg << 4,
-											(BYTE *)view->buf1.ptr, 0x10000);
+				view->dmem.Read(view->buf1.arg << 4, view->buf1.ptr, 0x10000);
 				view->buf2.type = ALLOCTYPE_NONE;
 			}
 			viewcmn_putcaption(view);
@@ -90,7 +89,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 					}
 					else {
 						p = buf;
-						viewmem_read(&(view->dmem), seg4 + off, buf, 16);
+						view->dmem.Read(seg4 + off, buf, 16);
 					}
 					step = unasm(NULL, p, 16, FALSE, off);
 					off += (UINT16)step;
@@ -123,7 +122,7 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 		else {
 			p = buf;
-			viewmem_read(&(view->dmem), seg4 + off, buf, 16);
+			view->dmem.Read(seg4 + off, buf, 16);
 		}
 		step = unasm(&una, p, 16, FALSE, off);
 		if (!step) {

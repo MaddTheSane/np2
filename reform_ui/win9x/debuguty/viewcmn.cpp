@@ -11,9 +11,9 @@
 #include	"viewasm.h"
 #include	"viewsnd.h"
 #include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"bios.h"
+// #include	"pccore.h"
+// #include	"iocore.h"
+// #include	"bios.h"
 
 
 const char viewcmn_hex[16] = {
@@ -147,16 +147,6 @@ LRESULT CALLBACK viewcmn_dispat(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 		}
 	}
 	return(0L);
-}
-
-void viewcmn_setbank(NP2VIEW_T *view) {
-
-	VIEWMEM_T	*dmem;
-
-	dmem = &view->dmem;
-	dmem->vram = gdcs.disp;
-	dmem->itf = CPU_ITFBANK;
-	dmem->A20 = (UINT8)((CPU_ADRSMASK >> 20) & 1);
 }
 
 

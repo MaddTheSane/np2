@@ -49,8 +49,7 @@ static void viewseg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			else {
 				view->buf1.type = ALLOCTYPE_SEG;
 				view->buf1.arg = view->seg;
-				viewmem_read(&view->dmem, view->buf1.arg << 4,
-											(UINT8 *)view->buf1.ptr, 0x10000);
+				view->dmem.Read(view->buf1.arg << 4, view->buf1.ptr, 0x10000);
 			}
 			viewcmn_putcaption(view);
 		}
@@ -65,7 +64,7 @@ static void viewseg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 		else {
 			p = buf;
-			viewmem_read(&view->dmem, mad, buf, 16);
+			view->dmem.Read(mad, buf, 16);
 			mad += 16;
 		}
 		for (x=0; x<16; x++) {

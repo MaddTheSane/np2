@@ -47,8 +47,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_1MB;
-				viewmem_read(&view->dmem, 0,
-										(UINT8 *)view->buf1.ptr, 0x10fff0);
+				view->dmem.Read(0, view->buf1.ptr, 0x10fff0);
 			}
 			viewcmn_putcaption(view);
 		}
@@ -64,7 +63,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 		else {
 			p = buf;
-			viewmem_read(&view->dmem, off, buf, 16);
+			view->dmem.Read(off, buf, 16);
 		}
 		for (x=0; x<16; x++) {
 			str[0] = viewcmn_hex[*p >> 4];
