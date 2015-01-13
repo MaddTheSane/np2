@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "..\misc\WndBase.h"
 #include "viewmem.h"
 
 #define	NP2VIEW_MAX	8
@@ -38,11 +39,14 @@ typedef struct {
 /**
  * @brief ビュー クラス
  */
-class CDebugUtyView
+class CDebugUtyView : public CWndBase
 {
 public:
 	CDebugUtyView();
-	~CDebugUtyView();
+	virtual ~CDebugUtyView();
+
+protected:
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 public:
 	HWND		hwnd;

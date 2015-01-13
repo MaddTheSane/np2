@@ -10,8 +10,7 @@
 #include "viewcmn.h"
 #include "cpucore.h"
 
-
-static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
+// static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
 		const TCHAR		np2viewfont[] = _T("‚l‚r ƒSƒVƒbƒN");
 		CDebugUtyView*	g_np2view[NP2VIEW_MAX];
 
@@ -82,9 +81,14 @@ static void vieweractive_renewal(void)
 	np2active_renewal();
 }
 
-LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-	NP2VIEW_T *view;
+/**
+ * 
+ */
+LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	NP2VIEW_T* view = this;
+	UINT msg = message;
+	HWND hWnd = *this;
 
 	switch (msg) {
 		case WM_CREATE:
@@ -97,8 +101,7 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_VIEWWINCLOSE:
-					return(ViewProc(hWnd, WM_CLOSE, 0, 0));
-					break;
+					return WindowProc(WM_CLOSE, 0, 0);
 
 				case IDM_VIEWWINALLCLOSE:
 					viewer_allclose();
@@ -133,9 +136,8 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			return(viewcmn_dispat(hWnd, msg, wParam, lParam));
 
 		case WM_SIZE:
-			view = viewcmn_find(hWnd);
-			if (view) {
-				RECT	rc;
+			{
+				RECT rc;
 				GetClientRect(hWnd, &rc);
 				view->step = (UINT16)(rc.bottom / 16);
 				viewcmn_setvscroll(hWnd, view);
@@ -143,8 +145,7 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_VSCROLL:
-			view = viewcmn_find(hWnd);
-			if (view) {
+			{
 				UINT32 newpos = view->pos;
 				switch(LOWORD(wParam)) {
 					case SB_LINEUP:
@@ -188,8 +189,7 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_ACTIVATE:
-			view = viewcmn_find(hWnd);
-			if (view) {
+			{
 				if (LOWORD(wParam) != WA_INACTIVE) {
 					view->active = 1;
 					InvalidateRect(hWnd, NULL, TRUE);
@@ -202,16 +202,15 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_CLOSE:
-			view = viewcmn_find(hWnd);
-			DestroyWindow(hWnd);
-			if (view) {
+			DestroyWindow();
+			{
 				delete view;
 				vieweractive_renewal();
 			}
 			break;
 
 		default:
-			return(DefWindowProc(hWnd, msg, wParam, lParam));
+			return DefWindowProc(msg, wParam, lParam);
 	}
 	return(0L);
 }
@@ -219,12 +218,12 @@ LRESULT CALLBACK ViewProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 // -----------------------------------------------------------------------
 
-BOOL viewer_init(HINSTANCE hInstance) {
-
-	WNDCLASS	np2vc;
-
+BOOL viewer_init(HINSTANCE hInstance)
+{
 	ZeroMemory(g_np2view, sizeof(g_np2view));
 
+#if 0
+	WNDCLASS np2vc;
 	np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
 	np2vc.lpfnWndProc = ViewProc;
 	np2vc.cbClsExtra = 0;
@@ -238,6 +237,7 @@ BOOL viewer_init(HINSTANCE hInstance) {
 	if (!RegisterClass(&np2vc)) {
 		return(FAILURE);
 	}
+#endif
 	return(SUCCESS);
 }
 
@@ -259,15 +259,15 @@ void viewer_open(HINSTANCE hInstance)
 
 			TCHAR buf[256];
 			viewcmn_caption(view, buf);
-			view->hwnd = CreateWindowEx(0,
-							np2viewclass, buf,
+			view->Create(buf,
 							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 							CW_USEDEFAULT, CW_USEDEFAULT,
 							CW_USEDEFAULT, CW_USEDEFAULT,
-							NULL, NULL, hInstance, NULL);
+							NULL, ::LoadMenu(CWndBase::GetResourceHandle(), MAKEINTRESOURCE(IDR_VIEW)));
+			view->hwnd = *view;
 			viewcmn_setmode(view, NULL, VIEWMODE_REG);
-			ShowWindow(view->hwnd, SW_SHOWNORMAL);
-			UpdateWindow(view->hwnd);
+			::ShowWindow(*view, SW_SHOWNORMAL);
+			::UpdateWindow(*view);
 			break;
 		}
 	}

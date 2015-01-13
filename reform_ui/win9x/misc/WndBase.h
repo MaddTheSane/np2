@@ -15,6 +15,8 @@ public:
 
 public:
 	static void Initialize(HINSTANCE hInstance);
+	static void SetResourceHandle(HINSTANCE hInstance);
+	static HINSTANCE GetResourceHandle();
 
 	CWndBase();
 	virtual ~CWndBase();
@@ -29,8 +31,27 @@ protected:
 
 protected:
 	static HINSTANCE sm_hInstance;		//!< インスタンス ハンドル
+	static HINSTANCE sm_hResource;		//!< リソース ハンドル
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
+
+/**
+ * リソース ハンドルを設定
+ * @param[in] hInstance リソース ハンドル
+ */
+inline void CWndBase::SetResourceHandle(HINSTANCE hInstance)
+{
+	sm_hResource = hInstance;
+}
+
+/**
+ * リソース ハンドルを取得
+ * @return リソース ハンドル
+ */
+inline HINSTANCE CWndBase::GetResourceHandle()
+{
+	return sm_hResource;
+}
 
 /**
  * HWND オペレータ

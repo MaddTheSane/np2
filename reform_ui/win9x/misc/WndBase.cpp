@@ -9,6 +9,8 @@
 
 //! インスタンス
 HINSTANCE CWndBase::sm_hInstance;
+//! リソース
+HINSTANCE CWndBase::sm_hResource;
 
 //! クラス名
 static const TCHAR s_szClassName[] = TEXT("WndBase");
@@ -20,6 +22,7 @@ static const TCHAR s_szClassName[] = TEXT("WndBase");
 void CWndBase::Initialize(HINSTANCE hInstance)
 {
 	sm_hInstance = hInstance;
+	sm_hResource = hInstance;
 
 	WNDCLASS wc;
 	ZeroMemory(&wc, sizeof(wc));
