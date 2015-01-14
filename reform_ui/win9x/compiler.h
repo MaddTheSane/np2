@@ -91,7 +91,7 @@ typedef	signed __int64		SINT64;
 #include "trace.h"
 
 #ifdef __cplusplus
-#include "vc6macros.h"
+#include "misc\vc6macros.h"
 #endif	// __cplusplus
 
 
