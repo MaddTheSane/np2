@@ -61,7 +61,7 @@ static void viewer_segmode(HWND hwnd, UINT8 type) {
 		viewcmn_setmode(view, view, type);
 		view->dmem.Update();
 		viewcmn_setvscroll(hwnd, view);
-		InvalidateRect(hwnd, NULL, TRUE);
+		view->Invalidate();
 	}
 }
 
@@ -179,7 +179,7 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				if (view->pos != newpos) {
 					view->pos = newpos;
 					viewcmn_setvscroll(hWnd, view);
-					InvalidateRect(hWnd, NULL, TRUE);
+					Invalidate();
 				}
 			}
 			break;
@@ -192,7 +192,7 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				if (LOWORD(wParam) != WA_INACTIVE) {
 					view->active = 1;
-					InvalidateRect(hWnd, NULL, TRUE);
+					Invalidate();
 				}
 				else {
 					view->active = 0;
@@ -263,11 +263,11 @@ void viewer_open(HINSTANCE hInstance)
 							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 							CW_USEDEFAULT, CW_USEDEFAULT,
 							CW_USEDEFAULT, CW_USEDEFAULT,
-							NULL, ::LoadMenu(CWndBase::GetResourceHandle(), MAKEINTRESOURCE(IDR_VIEW)));
+							NULL, ::LoadMenu(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDR_VIEW)));
 			view->hwnd = *view;
 			viewcmn_setmode(view, NULL, VIEWMODE_REG);
-			::ShowWindow(*view, SW_SHOWNORMAL);
-			::UpdateWindow(*view);
+			view->ShowWindow(SW_SHOWNORMAL);
+			view->UpdateWindow();
 			break;
 		}
 	}
@@ -310,7 +310,7 @@ static UINT32	last = 0;
 					viewcmn_setvscroll(view->hwnd, view);
 				}
 				view->dmem.Update();
-				InvalidateRect(view->hwnd, NULL, TRUE);
+				view->Invalidate();
 			}
 		}
 	}

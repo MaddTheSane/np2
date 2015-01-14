@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "..\misc\WndBase.h"
+#include "..\misc\WndProc.h"
 #include "viewmem.h"
 
 #define	NP2VIEW_MAX	8
@@ -39,7 +39,7 @@ typedef struct {
 /**
  * @brief ビュー クラス
  */
-class CDebugUtyView : public CWndBase
+class CDebugUtyView : public CWndProc
 {
 public:
 	CDebugUtyView();

@@ -1431,11 +1431,15 @@ SOURCE=.\misc\vc6macros.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\misc\WndBase.cpp
+SOURCE=.\misc\WndBase.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\misc\WndBase.h
+SOURCE=.\misc\WndProc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
 # Begin Source File

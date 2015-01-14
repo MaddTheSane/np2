@@ -2078,7 +2078,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\misc\WndBase.cpp"
+						RelativePath=".\misc\WndProc.cpp"
 						>
 					</File>
 				</Filter>
@@ -3013,6 +3013,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndBase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndProc.h"
 						>
 					</File>
 				</Filter>
