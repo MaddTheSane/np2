@@ -87,7 +87,7 @@ typedef	signed __int64		SINT64;
 #include "_memory.h"
 #include "rect.h"
 #include "lstarray.h"
-#include "tickcounter.h"
+#include "misc\TickCounter.h"
 #include "trace.h"
 
 #ifdef __cplusplus

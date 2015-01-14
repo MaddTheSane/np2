@@ -1762,10 +1762,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\tickcounter.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\timemng.cpp"
 					>
 				</File>
@@ -2068,6 +2064,10 @@
 				<Filter
 					Name="misc"
 					>
+					<File
+						RelativePath=".\misc\TickCounter.cpp"
+						>
+					</File>
 					<File
 						RelativePath=".\misc\WndBase.cpp"
 						>
@@ -2904,10 +2904,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\tickcounter.h"
-					>
-				</File>
-				<File
 					RelativePath=".\timemng.h"
 					>
 				</File>
@@ -2998,6 +2994,10 @@
 				<Filter
 					Name="misc"
 					>
+					<File
+						RelativePath=".\misc\TickCounter.h"
+						>
+					</File>
 					<File
 						RelativePath=".\misc\vc6macros.h"
 						>

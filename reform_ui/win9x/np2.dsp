@@ -1323,7 +1323,7 @@ SOURCE=..\TRAP\INTTRAP.C
 SOURCE=..\TRAP\STEPTRAP.C
 # End Source File
 # End Group
-# Begin Group "Win9x"
+# Begin Group "win9x"
 
 # PROP Default_Filter ""
 # Begin Group "dialog"
@@ -1417,6 +1417,14 @@ SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # Begin Group "misc"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\TickCounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\TickCounter.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\misc\vc6macros.h
@@ -1700,10 +1708,6 @@ SOURCE=.\SYSMNG.CPP
 # Begin Source File
 
 SOURCE=.\TASKMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\tickcounter.cpp
 # End Source File
 # Begin Source File
 

@@ -1,5 +1,5 @@
 /**
- * @file	tickcounter.h
+ * @file	TickCounter.h
  * @brief	TICK カウンタの宣言およびインターフェイスの定義をします
  */
 
