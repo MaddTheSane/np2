@@ -15,24 +15,6 @@
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];
 
 /**
- * ウィンドウを検索
- * @param[in] hWnd ウィンドウ ハンドル
- * @return インスタンス
- */
-CDebugUtyView* CDebugUtyView::FromWnd(HWND hWnd)
-{
-	for (size_t i = 0; i < _countof(g_np2view); i++)
-	{
-		CDebugUtyView* lpView = g_np2view[i];
-		if ((lpView != NULL) && (lpView->m_hWnd == hWnd))
-		{
-			return lpView;
-		}
-	}
-	return NULL;
-}
-
-/**
  * コンストラクタ
  */
 CDebugUtyView::CDebugUtyView()
@@ -90,6 +72,36 @@ void CDebugUtyView::UpdateCaption()
 	wsprintf(szTitle, TEXT("%d.%s - NP2 Debug Utility"), nIndex + 1, lpMode);
 
 	SetWindowText(szTitle);
+}
+
+/**
+ * V スクロール位置の設定
+ * @param[in] nPos 新しい位置
+ */
+void CDebugUtyView::SetVScrollPos(UINT32 nPos)
+{
+	if (this->pos != nPos)
+	{
+		this->pos = nPos;
+		UpdateVScroll();
+		Invalidate();
+	}
+}
+
+/**
+ * V スクロールバーの更新
+ */
+void CDebugUtyView::UpdateVScroll()
+{
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(si);
+	si.fMask = SIF_ALL;
+	si.nMin = 0;
+	si.nMax = ((this->maxline + this->mul - 1) / this->mul) - 1;
+	si.nPos = this->pos / this->mul;
+	si.nPage = this->step / this->mul;
+	::SetScrollInfo(m_hWnd, SB_VERT, &si, TRUE);
 }
 
 // ----
@@ -161,19 +173,19 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 
 				default:
-					return(viewcmn_dispat(hWnd, msg, wParam, lParam));
+					return viewcmn_dispat(this, msg, wParam, lParam);
 			}
 			break;
 
 		case WM_PAINT:
-			return(viewcmn_dispat(hWnd, msg, wParam, lParam));
+			return viewcmn_dispat(this, msg, wParam, lParam);
 
 		case WM_SIZE:
 			{
 				RECT rc;
 				GetClientRect(hWnd, &rc);
 				view->step = (UINT16)(rc.bottom / 16);
-				viewcmn_setvscroll(hWnd, view);
+				UpdateVScroll();
 			}
 			break;
 
@@ -211,14 +223,14 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				if (view->pos != newpos) {
 					view->pos = newpos;
-					viewcmn_setvscroll(hWnd, view);
+					UpdateVScroll();
 					Invalidate();
 				}
 			}
 			break;
 
 		case WM_ENTERMENULOOP:
-			viewcmn_setmenuseg(hWnd);
+			OnEnterMenuLoop(wParam);
 			break;
 
 		case WM_ACTIVATE:
@@ -249,6 +261,29 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 /**
+ * The framework calls this member function when a menu modal loop has been entered
+ * @param[in] bIsTrackPopupMenu Specifies whether the menu involved is a popup menu
+ */
+void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
+{
+	HMENU hMenu = ::GetMenu(m_hWnd);
+	if (hMenu == NULL)
+	{
+		return;
+	}
+	HMENU hSubMenu = ::GetSubMenu(hMenu, 2);
+
+	if (hSubMenu)
+	{
+		SetSegmentItem(hSubMenu, IDM_SEGCS, TEXT("CS"), CPU_CS);
+		SetSegmentItem(hSubMenu, IDM_SEGDS, TEXT("DS"), CPU_DS);
+		SetSegmentItem(hSubMenu, IDM_SEGES, TEXT("ES"), CPU_ES);
+		SetSegmentItem(hSubMenu, IDM_SEGSS, TEXT("SS"), CPU_SS);
+		::DrawMenuBar(m_hWnd);
+	}
+}
+
+/**
  * モード 変更
  * @param[in] type タイプ
  */
@@ -258,11 +293,24 @@ void CDebugUtyView::SetMode(UINT8 type)
 	{
 		viewcmn_setmode(this, this, type);
 		this->dmem.Update();
-		viewcmn_setvscroll(hwnd, this);
+		UpdateVScroll();
 		Invalidate();
 	}
 }
 
+/**
+ * メニュー アイテムを更新
+ * @param[in] hMenu メニュー ハンドル
+ * @param[in] hId メニュー ID
+ * @param[in] lpSegment セグメント名
+ * @param[in] nSegment セグメント値
+ */
+void CDebugUtyView::SetSegmentItem(HMENU hMenu, int nId, LPCTSTR lpSegment, UINT nSegment)
+{
+	TCHAR szString[32];
+	wsprintf(szString, _T("Seg = &%s [%04x]"), lpSegment, nSegment);
+	::ModifyMenu(hMenu, nId, MF_BYCOMMAND | MF_STRING, 0, szString);
+}
 
 // -----------------------------------------------------------------------
 
@@ -354,7 +402,7 @@ static UINT32	last = 0;
 					view->seg = CPU_CS;
 					view->off = CPU_IP;
 					view->pos = 0;
-					viewcmn_setvscroll(view->hwnd, view);
+					view->UpdateVScroll();
 				}
 				view->dmem.Update();
 				view->Invalidate();

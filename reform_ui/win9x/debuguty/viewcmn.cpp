@@ -86,10 +86,9 @@ void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type) {
 	viewmenu_mode(dst);
 }
 
-LRESULT CALLBACK viewcmn_dispat(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
+LRESULT viewcmn_dispat(NP2VIEW_T* dbg, UINT msg, WPARAM wp, LPARAM lp) {
 
-	NP2VIEW_T* dbg = CDebugUtyView::FromWnd(hwnd);
-	if (dbg)
+	HWND hwnd = dbg->m_hWnd;
 	{
 		switch(dbg->type) {
 			case VIEWMODE_REG:
@@ -109,53 +108,6 @@ LRESULT CALLBACK viewcmn_dispat(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 		}
 	}
 	return(0L);
-}
-
-
-// ----
-
-static void modmenu(HMENU hmenu, int pos, UINT16 id,
-											const TCHAR *seg, UINT16 value) {
-
-	TCHAR	buf[256];
-
-	wsprintf(buf, _T("Seg = &%s [%04x]"), seg, value);
-	ModifyMenu(hmenu, pos, MF_BYPOSITION | MF_STRING, id, buf);
-}
-
-void viewcmn_setmenuseg(HWND hwnd) {
-
-	HMENU	hparent;
-	HMENU	hmenu;
-
-	hparent = GetMenu(hwnd);
-	if (hparent == NULL) {
-		return;
-	}
-	hmenu = GetSubMenu(hparent, 2);
-
-	if (hmenu) {
-		modmenu(hmenu, 2, IDM_SEGCS, _T("CS"), CPU_CS);
-		modmenu(hmenu, 3, IDM_SEGDS, _T("DS"), CPU_DS);
-		modmenu(hmenu, 4, IDM_SEGES, _T("ES"), CPU_ES);
-		modmenu(hmenu, 5, IDM_SEGSS, _T("SS"), CPU_SS);
-		DrawMenuBar(hwnd);
-	}
-}
-
-// -----
-
-void viewcmn_setvscroll(HWND hWnd, NP2VIEW_T *view)
-{
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(si);
-	si.fMask = SIF_ALL;
-	si.nMin = 0;
-	si.nMax = ((view->maxline + view->mul - 1) / view->mul) - 1;
-	si.nPos = view->pos / view->mul;
-	si.nPage = view->step / view->mul;
-	SetScrollInfo(hWnd, SB_VERT, &si, TRUE);
 }
 
 // -----

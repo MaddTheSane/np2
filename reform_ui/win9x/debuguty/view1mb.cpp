@@ -8,20 +8,6 @@
 #include	"view1mb.h"
 #include	"cpucore.h"
 
-
-static void set_viewseg(HWND hwnd, NP2VIEW_T *view, UINT16 seg) {
-
-	UINT32	pos;
-
-	pos = (UINT32)seg;
-	if (view->pos != pos) {
-		view->pos = pos;
-		viewcmn_setvscroll(hwnd, view);
-		InvalidateRect(hwnd, NULL, TRUE);
-	}
-}
-
-
 static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	int		x;
@@ -85,23 +71,23 @@ LRESULT CALLBACK view1mb_proc(NP2VIEW_T *view,
 		case WM_COMMAND:
 			switch(LOWORD(wp)) {
 				case IDM_SEGCS:
-					set_viewseg(hwnd, view, CPU_CS);
+					view->SetVScrollPos(CPU_CS);
 					break;
 
 				case IDM_SEGDS:
-					set_viewseg(hwnd, view, CPU_DS);
+					view->SetVScrollPos(CPU_DS);
 					break;
 
 				case IDM_SEGES:
-					set_viewseg(hwnd, view, CPU_ES);
+					view->SetVScrollPos(CPU_ES);
 					break;
 
 				case IDM_SEGSS:
-					set_viewseg(hwnd, view, CPU_SS);
+					view->SetVScrollPos(CPU_SS);
 					break;
 
 				case IDM_SEGTEXT:
-					set_viewseg(hwnd, view, 0xa000);
+					view->SetVScrollPos(0xa000);
 					break;
 
 				case IDM_VIEWMODELOCK:

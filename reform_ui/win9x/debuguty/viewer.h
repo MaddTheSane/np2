@@ -6,11 +6,13 @@
 #pragma once
 
 #include "..\misc\WndProc.h"
+#include "viewcmn.h"
 #include "viewmem.h"
 
 #define	NP2VIEW_MAX	8
 
-enum {
+enum
+{
 	VIEWMODE_REG = 0,
 	VIEWMODE_SEG,
 	VIEWMODE_1MB,
@@ -18,38 +20,21 @@ enum {
 	VIEWMODE_SND
 };
 
-enum {
-	ALLOCTYPE_NONE = 0,
-	ALLOCTYPE_REG,
-	ALLOCTYPE_SEG,
-	ALLOCTYPE_1MB,
-	ALLOCTYPE_ASM,
-	ALLOCTYPE_SND,
-
-	ALLOCTYPE_ERROR = 0xffffffff
-};
-
-typedef struct {
-	UINT32	type;
-	UINT32	arg;
-	UINT32	size;
-	void	*ptr;
-} VIEWMEMBUF;
-
 /**
  * @brief ビュー クラス
  */
 class CDebugUtyView : public CWndProc
 {
 public:
-	static CDebugUtyView* FromWnd(HWND hWnd);
-
 	CDebugUtyView();
 	virtual ~CDebugUtyView();
 	void UpdateCaption();
+	void SetVScrollPos(UINT32 nPos);
+	void UpdateVScroll();
 
 protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	void OnEnterMenuLoop(BOOL bIsTrackPopupMenu);
 
 public:
 	HWND		hwnd;
@@ -68,9 +53,8 @@ public:
 
 private:
 	void SetMode(UINT8 type);
+	void SetSegmentItem(HMENU hMenu, int nId, LPCTSTR lpSegment, UINT nSegment);
 };
-
-typedef CDebugUtyView NP2VIEW_T;
 
 extern	const TCHAR		np2viewfont[];
 
