@@ -3,7 +3,6 @@
 #include	"np2.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
-#include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"view1mb.h"
 #include	"cpucore.h"
@@ -29,7 +28,6 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		if (view->buf1.type != ALLOCTYPE_1MB) {
 			if (viewcmn_alloc(&view->buf1, 0x10fff0)) {
 				view->lock = FALSE;
-				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_1MB;
@@ -92,7 +90,6 @@ LRESULT CALLBACK view1mb_proc(NP2VIEW_T *view,
 
 				case IDM_VIEWMODELOCK:
 					view->lock ^= 1;
-					viewmenu_lock(view);
 					viewcmn_putcaption(view);
 					InvalidateRect(hwnd, NULL, TRUE);
 					break;

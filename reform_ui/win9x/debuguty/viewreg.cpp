@@ -4,7 +4,6 @@
 #include	"debugsub.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
-#include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"viewreg.h"
 #include	"cpucore.h"
@@ -30,7 +29,6 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		if (view->buf1.type != ALLOCTYPE_REG) {
 			if (viewcmn_alloc(&view->buf1, sizeof(i386core.s))) {
 				view->lock = FALSE;
-				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_REG;
@@ -106,7 +104,6 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		if (view->buf1.type != ALLOCTYPE_REG) {
 			if (viewcmn_alloc(&view->buf1, sizeof(v30core.s))) {
 				view->lock = FALSE;
-				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_REG;
@@ -170,7 +167,6 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		if (view->buf1.type != ALLOCTYPE_REG) {
 			if (viewcmn_alloc(&view->buf1, sizeof(i286core.s))) {
 				view->lock = FALSE;
-				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_REG;
@@ -225,7 +221,6 @@ LRESULT CALLBACK viewreg_proc(NP2VIEW_T *view,
 			switch(LOWORD(wp)) {
 				case IDM_VIEWMODELOCK:
 					view->lock ^= 1;
-					viewmenu_lock(view);
 					viewcmn_putcaption(view);
 					InvalidateRect(hwnd, NULL, TRUE);
 					break;

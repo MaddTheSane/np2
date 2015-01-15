@@ -8,7 +8,6 @@
 #include "np2.h"
 #include "viewer.h"
 #include "viewcmn.h"
-#include "viewmenu.h"
 #include "viewmem.h"
 #include "viewreg.h"
 #include "viewseg.h"
@@ -83,7 +82,6 @@ void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type) {
 			viewsnd_init(dst, src);
 			break;
 	}
-	viewmenu_mode(dst);
 }
 
 LRESULT viewcmn_dispat(NP2VIEW_T* dbg, UINT msg, WPARAM wp, LPARAM lp) {

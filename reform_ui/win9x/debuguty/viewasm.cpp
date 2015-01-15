@@ -3,7 +3,6 @@
 #include	"np2.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
-#include	"viewmenu.h"
 #include	"viewmem.h"
 #include	"viewasm.h"
 #include	"unasm.h"
@@ -47,7 +46,6 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 			(view->buf1.arg != view->seg)) {
 			if (viewcmn_alloc(&view->buf1, 0x10000)) {
 				view->lock = FALSE;
-				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_SEG;
@@ -178,7 +176,6 @@ LRESULT CALLBACK viewasm_proc(NP2VIEW_T *view,
 
 				case IDM_VIEWMODELOCK:
 					view->lock ^= 1;
-					viewmenu_lock(view);
 					viewcmn_putcaption(view);
 					InvalidateRect(hwnd, NULL, TRUE);
 					break;

@@ -4,7 +4,6 @@
 #include	"np2.h"
 #include	"viewer.h"
 #include	"viewcmn.h"
-#include	"viewmenu.h"
 #include	"viewsnd.h"
 #include	"pccore.h"
 #include	"iocore.h"
@@ -91,7 +90,6 @@ const UINT8	*p;
 		if (view->buf1.type != ALLOCTYPE_SND) {
 			if (viewcmn_alloc(&view->buf1, 0x400)) {
 				view->lock = FALSE;
-				viewmenu_lock(view);
 			}
 			else {
 				view->buf1.type = ALLOCTYPE_SND;
@@ -153,7 +151,6 @@ LRESULT CALLBACK viewsnd_proc(NP2VIEW_T *view,
 			switch(LOWORD(wp)) {
 				case IDM_VIEWMODELOCK:
 					view->lock ^= 1;
-					viewmenu_lock(view);
 					viewcmn_putcaption(view);
 					InvalidateRect(hwnd, NULL, TRUE);
 					break;

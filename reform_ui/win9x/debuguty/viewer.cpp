@@ -14,6 +14,9 @@
 		const TCHAR		np2viewfont[] = _T("ＭＳ ゴシック");
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];
 
+//! チェック マクロ
+#define MFCHECK(bChecked) ((bChecked) ? MF_CHECKED : MF_UNCHECKED)
+
 /**
  * コンストラクタ
  */
@@ -271,8 +274,14 @@ void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
 	{
 		return;
 	}
-	HMENU hSubMenu = ::GetSubMenu(hMenu, 2);
+	::CheckMenuItem(hMenu, IDM_VIEWMODELOCK, MF_BYCOMMAND | MFCHECK(this->lock));
+	::CheckMenuItem(hMenu, IDM_VIEWMODEREG, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_REG));
+	::CheckMenuItem(hMenu, IDM_VIEWMODESEG, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_SEG));
+	::CheckMenuItem(hMenu, IDM_VIEWMODE1MB, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_1MB));
+	::CheckMenuItem(hMenu, IDM_VIEWMODEASM, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_ASM));
+	::CheckMenuItem(hMenu, IDM_VIEWMODESND, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_SND));
 
+	HMENU hSubMenu = ::GetSubMenu(hMenu, 2);
 	if (hSubMenu)
 	{
 		SetSegmentItem(hSubMenu, IDM_SEGCS, TEXT("CS"), CPU_CS);
