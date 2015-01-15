@@ -12,7 +12,25 @@
 
 // static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
 		const TCHAR		np2viewfont[] = _T("ＭＳ ゴシック");
-		CDebugUtyView*	g_np2view[NP2VIEW_MAX];
+static CDebugUtyView* g_np2view[NP2VIEW_MAX];
+
+/**
+ * ウィンドウを検索
+ * @param[in] hWnd ウィンドウ ハンドル
+ * @return インスタンス
+ */
+CDebugUtyView* CDebugUtyView::FromWnd(HWND hWnd)
+{
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		CDebugUtyView* lpView = g_np2view[i];
+		if ((lpView != NULL) && (lpView->m_hWnd == hWnd))
+		{
+			return lpView;
+		}
+	}
+	return NULL;
+}
 
 /**
  * コンストラクタ
@@ -51,19 +69,30 @@ CDebugUtyView::~CDebugUtyView()
 	}
 }
 
-// ----
-
-static void viewer_segmode(HWND hwnd, UINT8 type) {
-
-	NP2VIEW_T* view = viewcmn_find(hwnd);
-	if ((view) && (view->type != type))
+/**
+ * キャプションの更新
+ */
+void CDebugUtyView::UpdateCaption()
+{
+	int nIndex = -1;
+	for (size_t i = 0; i < _countof(g_np2view); i++)
 	{
-		viewcmn_setmode(view, view, type);
-		view->dmem.Update();
-		viewcmn_setvscroll(hwnd, view);
-		view->Invalidate();
+		if (g_np2view[i] == this)
+		{
+			nIndex = i;
+			break;
+		}
 	}
+	LPCTSTR lpMode = (this->lock) ? TEXT("Locked") : TEXT("Realtime");
+
+
+	TCHAR szTitle[256];
+	wsprintf(szTitle, TEXT("%d.%s - NP2 Debug Utility"), nIndex + 1, lpMode);
+
+	SetWindowText(szTitle);
 }
+
+// ----
 
 static void vieweractive_renewal(void)
 {
@@ -82,7 +111,11 @@ static void vieweractive_renewal(void)
 }
 
 /**
- * 
+ * ウィンドウ プロシージャ
+ * @param[in] message メッセージ
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @return リザルト コード
  */
 LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -108,23 +141,23 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 
 				case IDM_VIEWMODEREG:
-					viewer_segmode(hWnd, VIEWMODE_REG);
+					SetMode(VIEWMODE_REG);
 					break;
 
 				case IDM_VIEWMODESEG:
-					viewer_segmode(hWnd, VIEWMODE_SEG);
+					SetMode(VIEWMODE_SEG);
 					break;
 
 				case IDM_VIEWMODE1MB:
-					viewer_segmode(hWnd, VIEWMODE_1MB);
+					SetMode(VIEWMODE_1MB);
 					break;
 
 				case IDM_VIEWMODEASM:
-					viewer_segmode(hWnd, VIEWMODE_ASM);
+					SetMode(VIEWMODE_ASM);
 					break;
 
 				case IDM_VIEWMODESND:
-					viewer_segmode(hWnd, VIEWMODE_SND);
+					SetMode(VIEWMODE_SND);
 					break;
 
 				default:
@@ -215,6 +248,21 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 	return(0L);
 }
 
+/**
+ * モード 変更
+ * @param[in] type タイプ
+ */
+void CDebugUtyView::SetMode(UINT8 type)
+{
+	if (this->type != type)
+	{
+		viewcmn_setmode(this, this, type);
+		this->dmem.Update();
+		viewcmn_setvscroll(hwnd, this);
+		Invalidate();
+	}
+}
+
 
 // -----------------------------------------------------------------------
 
@@ -257,15 +305,14 @@ void viewer_open(HINSTANCE hInstance)
 			view = new CDebugUtyView;
 			g_np2view[i] = view;
 
-			TCHAR buf[256];
-			viewcmn_caption(view, buf);
-			view->Create(buf,
+			view->Create(NULL,
 							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 							CW_USEDEFAULT, CW_USEDEFAULT,
 							CW_USEDEFAULT, CW_USEDEFAULT,
 							NULL, ::LoadMenu(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDR_VIEW)));
 			view->hwnd = *view;
 			viewcmn_setmode(view, NULL, VIEWMODE_REG);
+			view->UpdateCaption();
 			view->ShowWindow(SW_SHOWNORMAL);
 			view->UpdateWindow();
 			break;

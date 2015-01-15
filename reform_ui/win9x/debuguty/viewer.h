@@ -42,8 +42,11 @@ typedef struct {
 class CDebugUtyView : public CWndProc
 {
 public:
+	static CDebugUtyView* FromWnd(HWND hWnd);
+
 	CDebugUtyView();
 	virtual ~CDebugUtyView();
+	void UpdateCaption();
 
 protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
@@ -62,12 +65,14 @@ public:
 	UINT16		seg;
 	UINT16		off;
 	DebugUtyViewMemory dmem;
+
+private:
+	void SetMode(UINT8 type);
 };
 
 typedef CDebugUtyView NP2VIEW_T;
 
 extern	const TCHAR		np2viewfont[];
-extern	NP2VIEW_T*		g_np2view[NP2VIEW_MAX];
 
 
 BOOL viewer_init(HINSTANCE hInstance);

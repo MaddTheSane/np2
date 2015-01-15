@@ -21,32 +21,10 @@ const char viewcmn_hex[16] = {
 				'0', '1', '2', '3', '4', '5', '6', '7',
 				'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-
-void viewcmn_caption(NP2VIEW_T *view, TCHAR *buf)
+void viewcmn_putcaption(NP2VIEW_T *view)
 {
-	int nIndex = -1;
-	for (size_t i = 0; i < _countof(g_np2view); i++)
-	{
-		if (g_np2view[i] == view)
-		{
-			nIndex = i;
-			break;
-		}
-	}
-	LPCTSTR lpMode = (view->lock) ? TEXT("Locked") : TEXT("Realtime");
-	wsprintf(buf, _T("%d.%s - NP2 Debug Utility"), nIndex + 1, lpMode);
+	view->UpdateCaption();
 }
-
-
-void viewcmn_putcaption(NP2VIEW_T *view) {
-
-	TCHAR	buf[256];
-
-	viewcmn_caption(view, buf);
-	SetWindowText(view->hwnd, buf);
-}
-
-
 
 // ----
 
@@ -82,20 +60,6 @@ void viewcmn_free(VIEWMEMBUF *buf) {
 
 // ----
 
-NP2VIEW_T* viewcmn_find(HWND hwnd)
-{
-	for (size_t i = 0; i < _countof(g_np2view); i++)
-	{
-		NP2VIEW_T* view = g_np2view[i];
-		if ((view != NULL) && (view->hwnd == hwnd))
-		{
-			return view;
-		}
-	}
-	return NULL;
-}
-
-
 void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type) {
 
 	switch(type) {
@@ -124,10 +88,9 @@ void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type) {
 
 LRESULT CALLBACK viewcmn_dispat(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	NP2VIEW_T *dbg;
-
-	dbg = viewcmn_find(hwnd);
-	if (dbg) {
+	NP2VIEW_T* dbg = CDebugUtyView::FromWnd(hwnd);
+	if (dbg)
+	{
 		switch(dbg->type) {
 			case VIEWMODE_REG:
 				return(viewreg_proc(dbg, hwnd, msg, wp, lp));
