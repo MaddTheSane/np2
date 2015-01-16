@@ -23,10 +23,12 @@ public:
 	// Attributes
 	operator HWND() const;
 
-	// Message Functions
-
 	// Window Text Functions
 	BOOL SetWindowText(LPCTSTR lpString);
+
+	// Menu Functions (non-child windows only)
+	HMENU GetMenu() const;
+	BOOL DrawMenuBar();
 
 	// Window Size and Position Functions
 	BOOL GetWindowRect(LPRECT lpRect) const;
@@ -37,9 +39,8 @@ public:
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
 	BOOL ShowWindow(int nCmdShow);
 
-	// Timer Functions
-//	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse, void (CALLBACK* lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = NULL);
-//	BOOL KillTimer(UINT_PTR nIDEvent);
+	// Misc. Operations
+	int SetScrollInfo(int nBar, LPSCROLLINFO lpScrollInfo, BOOL bRedraw = TRUE);
 };
 
 /**
@@ -102,6 +103,26 @@ inline BOOL CWndBase::SetWindowText(LPCTSTR lpString)
 	return ::SetWindowText(m_hWnd, lpString);
 }
 
+
+/**
+ * 指定されたウィンドウに割り当てられているメニューのハンドルを取得します
+ * @return メニューのハンドルが返ります
+ */
+inline HMENU CWndBase::GetMenu() const
+{
+	return ::GetMenu(m_hWnd);
+}
+
+/**
+ * 指定されたウィンドウのメニューバーを再描画します
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+inline BOOL CWndBase::DrawMenuBar()
+{
+	return ::DrawMenuBar(m_hWnd);
+}
+
 /**
  * 指定されたウィンドウの左上端と右下端の座標をスクリーン座標で取得します
  * @param[out] lpRect 構造体へのポインタを指定します
@@ -155,4 +176,16 @@ inline BOOL CWndBase::InvalidateRect(LPCRECT lpRect, BOOL bErase)
 inline BOOL CWndBase::ShowWindow(int nCmdShow)
 {
 	return ::ShowWindow(m_hWnd, nCmdShow);
+}
+
+/**
+ * スクロールバーのさまざまなパラメータを設定します
+ * @param[in] nBar パラメータを設定するべきスクロールバーのタイプを指定します
+ * @param[in] lpScrollInfo 設定するべき情報を保持している、1個の構造体へのポインタを指定します
+ * @param[in] bRedraw スクロールバーを再描画するかどうかを指定します
+ * @return スクロールバーの現在のスクロール位置が返ります
+ */
+inline int CWndBase::SetScrollInfo(int nBar, LPSCROLLINFO lpScrollInfo, BOOL bRedraw)
+{
+	return ::SetScrollInfo(m_hWnd, nBar, lpScrollInfo, bRedraw);
 }

@@ -104,7 +104,7 @@ void CDebugUtyView::UpdateVScroll()
 	si.nMax = ((this->maxline + this->mul - 1) / this->mul) - 1;
 	si.nPos = this->pos / this->mul;
 	si.nPage = this->step / this->mul;
-	::SetScrollInfo(m_hWnd, SB_VERT, &si, TRUE);
+	SetScrollInfo(SB_VERT, &si, TRUE);
 }
 
 // ----
@@ -269,7 +269,7 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
  */
 void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
 {
-	HMENU hMenu = ::GetMenu(m_hWnd);
+	HMENU hMenu = GetMenu();
 	if (hMenu == NULL)
 	{
 		return;
@@ -288,7 +288,7 @@ void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
 		SetSegmentItem(hSubMenu, IDM_SEGDS, TEXT("DS"), CPU_DS);
 		SetSegmentItem(hSubMenu, IDM_SEGES, TEXT("ES"), CPU_ES);
 		SetSegmentItem(hSubMenu, IDM_SEGSS, TEXT("SS"), CPU_SS);
-		::DrawMenuBar(m_hWnd);
+		DrawMenuBar();
 	}
 }
 
@@ -318,7 +318,7 @@ void CDebugUtyView::SetSegmentItem(HMENU hMenu, int nId, LPCTSTR lpSegment, UINT
 {
 	TCHAR szString[32];
 	wsprintf(szString, _T("Seg = &%s [%04x]"), lpSegment, nSegment);
-	::ModifyMenu(hMenu, nId, MF_BYCOMMAND | MF_STRING, 0, szString);
+	::ModifyMenu(hMenu, nId, MF_BYCOMMAND | MF_STRING, nId, szString);
 }
 
 // -----------------------------------------------------------------------
