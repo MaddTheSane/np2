@@ -141,6 +141,61 @@ void CWndProc::PreSubclassWindow()
 }
 
 /**
+ * ウィンドウを動的サブクラス化し、CWnd オブジェクトに結び付けるためにこのメンバー関数を呼び出します
+ * @param[in] hWnd ウィンドウ ハンドル
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+BOOL CWndProc::SubclassWindow(HWND hWnd)
+{
+	if (!Attach(hWnd))
+	{
+		return FALSE;
+	}
+
+	PreSubclassWindow();
+
+	WNDPROC newWndProc = &CWndProc::WndProc;
+	WNDPROC oldWndProc = reinterpret_cast<WNDPROC>(::SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(newWndProc)));
+	if ((m_pfnSuper == NULL) && (oldWndProc != newWndProc))
+	{
+		m_pfnSuper = oldWndProc;
+	}
+	return TRUE;
+}
+
+/**
+ * コントロールを動的サブクラス化し、CWnd オブジェクトに結び付けるためにこのメンバー関数を呼び出します
+ * @param[in] nID コントロール ID
+ * @param[in] pParent コントロールの親
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+BOOL CWndProc::SubclassDlgItem(UINT nID, CWndProc* pParent)
+{
+	HWND hWndControl = ::GetDlgItem(pParent->m_hWnd, nID);
+	if (hWndControl != NULL)
+	{
+		return SubclassWindow(hWndControl);
+	}
+	return FALSE;
+}
+
+/**
+ * WndProc に元の値を設定して CWnd オブジェクトから HWND で識別されるウィンドウを切り離すために、このメンバー関数を呼び出します
+ * @return 非サブクラス化されたウィンドウへのハンドル
+ */
+HWND CWndProc::UnsubclassWindow()
+{
+	if (m_pfnSuper != NULL)
+	{
+		::SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(m_pfnSuper));
+		m_pfnSuper = NULL;
+	}
+	return Detach();
+}
+
+/**
  * 指定されたウィンドウを作成し、それを CWndProc オブジェクトにアタッチします
  * @param[in] dwExStyle 拡張ウィンドウ スタイル
  * @param[in] lpszClassName 登録されているシステム ウィンドウ クラスの名前
@@ -244,11 +299,21 @@ LRESULT CALLBACK CWndProc::CbtFilterHook(int nCode, WPARAM wParam, LPARAM lParam
  */
 BOOL CWndProc::DestroyWindow()
 {
-	if (!m_hWnd)
+	if (m_hWnd == NULL)
 	{
 		return FALSE;
 	}
-	return ::DestroyWindow(m_hWnd);
+
+	CWndProc* pWnd = FromHandlePermanent(m_hWnd);
+
+	const BOOL bResult = ::DestroyWindow(m_hWnd);
+
+	if (pWnd == NULL)
+	{
+		Detach();
+	}
+
+	return bResult;
 }
 
 /**
@@ -303,6 +368,7 @@ void CWndProc::OnNcDestroy(WPARAM wParam, LPARAM lParam)
 		if (m_pfnSuper != NULL)
 		{
 			::SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(m_pfnSuper));
+			m_pfnSuper = NULL;
 		}
 	}
 	Detach();

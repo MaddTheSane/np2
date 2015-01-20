@@ -23,11 +23,15 @@ public:
 	virtual ~CWndProc();
 
 	operator HWND() const;
+	HWND GetSafeHwnd() const;
 	static CWndProc* FromHandlePermanent(HWND hWnd);
 	BOOL Attach(HWND hWndNew);
 	HWND Detach();
 
 	virtual void PreSubclassWindow();
+	BOOL SubclassWindow(HWND hWnd);
+	BOOL SubclassDlgItem(UINT nID, CWndProc* pParent);
+	HWND UnsubclassWindow();
 
 	BOOL CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu, LPVOID lpParam = NULL);
 	virtual BOOL DestroyWindow();
@@ -79,3 +83,13 @@ inline CWndProc::operator HWND() const
 {
 	return m_hWnd;
 }
+
+/**
+ * ウィンドウのウィンドウ ハンドルを返します
+ * @return ウィンドウ ハンドル
+ */
+inline HWND CWndProc::GetSafeHwnd() const
+{
+	return (this != NULL) ? m_hWnd : NULL;
+}
+
