@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <map>
 #include "WndBase.h"
 
 /**
@@ -14,24 +15,42 @@ class CWndProc : public CWndBase
 {
 public:
 	static void Initialize(HINSTANCE hInstance);
+	static void Deinitialize();
 	static void SetResourceHandle(HINSTANCE hInstance);
 	static HINSTANCE GetResourceHandle();
 
 	CWndProc();
 	virtual ~CWndProc();
+
 	operator HWND() const;
-	HWND GetSafeHwnd() const;
-	BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu);
-	BOOL DestroyWindow();
+	static CWndProc* FromHandlePermanent(HWND hWnd);
+	BOOL Attach(HWND hWndNew);
+	HWND Detach();
+
+	virtual void PreSubclassWindow();
+
+	BOOL CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu, LPVOID lpParam = NULL);
+	virtual BOOL DestroyWindow();
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
 protected:
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual void OnNcDestroy(WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+	virtual void PostNcDestroy();
 
 protected:
 	static HINSTANCE sm_hInstance;		//!< インスタンス ハンドル
 	static HINSTANCE sm_hResource;		//!< リソース ハンドル
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+private:
+	static DWORD sm_dwThreadId;						//!< 自分のスレッド ID
+	static HHOOK sm_hHookOldCbtFilter;				//!< フック フィルター
+	static CWndProc* sm_pWndInit;					//!< 初期化中のインスタンス
+	static std::map<HWND, CWndProc*> sm_mapWnd;		//!< ウィンドウ マップ
+	WNDPROC m_pfnSuper;								//!< 下位プロシージャ
+	static LRESULT CALLBACK CbtFilterHook(int nCode, WPARAM wParam, LPARAM lParam);
 };
 
 /**

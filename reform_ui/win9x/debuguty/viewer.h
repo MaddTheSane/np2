@@ -35,6 +35,7 @@ public:
 protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	void OnEnterMenuLoop(BOOL bIsTrackPopupMenu);
+	virtual void PostNcDestroy();
 
 public:
 	HWND		hwnd;

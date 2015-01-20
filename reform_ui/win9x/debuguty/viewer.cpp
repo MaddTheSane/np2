@@ -10,12 +10,14 @@
 #include "viewcmn.h"
 #include "cpucore.h"
 
-// static	const TCHAR		np2viewclass[] = _T("NP2-ViewWindow");
+static	const TCHAR		np2viewclass[] = TEXT("NP2-ViewWindow");
 		const TCHAR		np2viewfont[] = _T("ＭＳ ゴシック");
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];
 
 //! チェック マクロ
 #define MFCHECK(bChecked) ((bChecked) ? MF_CHECKED : MF_UNCHECKED)
+
+static void vieweractive_renewal(void);
 
 /**
  * コンストラクタ
@@ -50,6 +52,8 @@ CDebugUtyView::~CDebugUtyView()
 		if (g_np2view[i] == this)
 		{
 			g_np2view[i] = NULL;
+			vieweractive_renewal();
+			break;
 		}
 	}
 }
@@ -64,12 +68,11 @@ void CDebugUtyView::UpdateCaption()
 	{
 		if (g_np2view[i] == this)
 		{
-			nIndex = i;
+			nIndex = static_cast<int>(i);
 			break;
 		}
 	}
 	LPCTSTR lpMode = (this->lock) ? TEXT("Locked") : TEXT("Realtime");
-
 
 	TCHAR szTitle[256];
 	wsprintf(szTitle, TEXT("%d.%s - NP2 Debug Utility"), nIndex + 1, lpMode);
@@ -233,7 +236,7 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_ENTERMENULOOP:
-			OnEnterMenuLoop(wParam);
+			OnEnterMenuLoop(static_cast<BOOL>(wParam));
 			break;
 
 		case WM_ACTIVATE:
@@ -251,10 +254,6 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
 		case WM_CLOSE:
 			DestroyWindow();
-			{
-				delete view;
-				vieweractive_renewal();
-			}
 			break;
 
 		default:
@@ -293,6 +292,14 @@ void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
 }
 
 /**
+ * Called by the default OnNcDestroy member function after the window has been destroyed.
+ */
+void CDebugUtyView::PostNcDestroy()
+{
+	delete this;
+}
+
+/**
  * モード 変更
  * @param[in] type タイプ
  */
@@ -327,23 +334,22 @@ BOOL viewer_init(HINSTANCE hInstance)
 {
 	ZeroMemory(g_np2view, sizeof(g_np2view));
 
-#if 0
 	WNDCLASS np2vc;
 	np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
-	np2vc.lpfnWndProc = ViewProc;
+	np2vc.lpfnWndProc = DefWindowProc;
 	np2vc.cbClsExtra = 0;
 	np2vc.cbWndExtra = 0;
 	np2vc.hInstance = hInstance;
-	np2vc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	np2vc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	np2vc.hbrBackground = (HBRUSH)0;
+	np2vc.hIcon = ::LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	np2vc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	np2vc.hbrBackground = static_cast<HBRUSH>(NULL);
 	np2vc.lpszMenuName = MAKEINTRESOURCE(IDR_VIEW);
 	np2vc.lpszClassName = np2viewclass;
-	if (!RegisterClass(&np2vc)) {
-		return(FAILURE);
+	if (!RegisterClass(&np2vc))
+	{
+		return FAILURE;
 	}
-#endif
-	return(SUCCESS);
+	return SUCCESS;
 }
 
 
@@ -360,18 +366,19 @@ void viewer_open(HINSTANCE hInstance)
 		if (view == NULL)
 		{
 			view = new CDebugUtyView;
-			g_np2view[i] = view;
-
-			view->Create(NULL,
+			if (view->CreateEx(0, np2viewclass, NULL,
 							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 							CW_USEDEFAULT, CW_USEDEFAULT,
 							CW_USEDEFAULT, CW_USEDEFAULT,
-							NULL, ::LoadMenu(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDR_VIEW)));
-			view->hwnd = *view;
-			viewcmn_setmode(view, NULL, VIEWMODE_REG);
-			view->UpdateCaption();
-			view->ShowWindow(SW_SHOWNORMAL);
-			view->UpdateWindow();
+							NULL, 0))
+			{
+				g_np2view[i] = view;
+				view->hwnd = *view;
+				viewcmn_setmode(view, NULL, VIEWMODE_REG);
+				view->UpdateCaption();
+				view->ShowWindow(SW_SHOWNORMAL);
+				view->UpdateWindow();
+			}
 			break;
 		}
 	}
@@ -385,10 +392,8 @@ void viewer_allclose(void)
 		if (view != NULL)
 		{
 			DestroyWindow(view->hwnd);
-			delete view;
 		}
 	}
-	vieweractive_renewal();
 }
 
 
