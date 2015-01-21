@@ -120,8 +120,8 @@ void viewcmn_paint(NP2VIEW_T *view, UINT32 bkgcolor,
 	HBITMAP		hbitmap;
 	HBRUSH		hbrush;
 
-	hdc = BeginPaint(view->hwnd, &ps);
-	GetClientRect(view->hwnd, &rc);
+	hdc = view->BeginPaint(&ps);
+	view->GetClientRect(&rc);
 	hmemdc = CreateCompatibleDC(hdc);
 	hbitmap = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
 	hbitmap = (HBITMAP)SelectObject(hmemdc, hbitmap);
@@ -134,5 +134,5 @@ void viewcmn_paint(NP2VIEW_T *view, UINT32 bkgcolor,
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, hmemdc, 0, 0, SRCCOPY);
 	DeleteObject(SelectObject(hmemdc, hbitmap));
 	DeleteDC(hmemdc);
-	EndPaint(view->hwnd, &ps);
+	view->EndPaint(&ps);
 }

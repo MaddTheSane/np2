@@ -32,8 +32,11 @@ public:
 
 	// Window Size and Position Functions
 	BOOL GetWindowRect(LPRECT lpRect) const;
+	BOOL GetClientRect(LPRECT lpRect) const;
 
 	// Update and Painting Functions
+	HDC BeginPaint(LPPAINTSTRUCT lpPaint);
+	void EndPaint(LPPAINTSTRUCT lpPaint);
 	BOOL UpdateWindow();
 	BOOL Invalidate(BOOL bErase = TRUE);
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
@@ -132,6 +135,36 @@ inline BOOL CWndBase::DrawMenuBar()
 inline BOOL CWndBase::GetWindowRect(LPRECT lpRect) const
 {
 	return ::GetWindowRect(m_hWnd, lpRect);
+}
+
+/**
+ * lpRectが指す構造に CWnd のクライアント領域のクライアント座標をコピーします
+ * @param[out] lpRect 構造体へのポインタを指定します
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+inline BOOL CWndBase::GetClientRect(LPRECT lpRect) const
+{
+	return ::GetClientRect(m_hWnd, lpRect);
+}
+
+/**
+ * 描画を開始します
+ * @param[out] lpPaint 描画情報へのポインタを指定します
+ * @return デバイス コンテキスト
+ */
+inline HDC CWndBase::BeginPaint(LPPAINTSTRUCT lpPaint)
+{
+	return ::BeginPaint(m_hWnd, lpPaint);
+}
+
+/**
+ * 描画の終了します
+ * @param[in] lpPaint 描画情報へのポインタを指定します
+ */
+inline void CWndBase::EndPaint(LPPAINTSTRUCT lpPaint)
+{
+	::EndPaint(m_hWnd, lpPaint);
 }
 
 /**

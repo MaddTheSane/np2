@@ -58,8 +58,9 @@ static void viewasm_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	}
 
 	seg4 = view->seg << 4;
-	pos = view->pos;
-	if (view->pos) {
+	pos = view->GetVScrollPos();
+	if (pos)
+	{
 		if ((view->buf2.type != ALLOCTYPE_ASM) ||
 			(view->buf2.arg != (seg4 + view->off))) {
 			if (viewcmn_alloc(&view->buf2, 256*2)) {
@@ -197,17 +198,17 @@ void viewasm_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 		switch(src->type) {
 			case VIEWMODE_SEG:
 				dst->seg = dst->seg;
-				dst->off = (UINT16)(dst->pos << 4);
+				dst->off = (UINT16)(dst->GetVScrollPos() << 4);
 				break;
 
 			case VIEWMODE_1MB:
-				if (dst->pos < 0x10000) {
-					dst->seg = (UINT16)dst->pos;
+				if (dst->m_nVPos < 0x10000) {
+					dst->seg = (UINT16)dst->GetVScrollPos();
 					dst->off = 0;
 				}
 				else {
 					dst->seg = 0xffff;
-					dst->off = (UINT16)((dst->pos - 0xffff) << 4);
+					dst->off = (UINT16)((dst->GetVScrollPos() - 0xffff) << 4);
 				}
 				break;
 
@@ -221,13 +222,11 @@ void viewasm_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 				break;
 		}
 	}
-	if (!src) {
+	if (!src)
+	{
 		dst->seg = CPU_CS;
 		dst->off = CPU_IP;
 	}
 	dst->type = VIEWMODE_ASM;
-	dst->maxline = 256;
-	dst->mul = 1;
-	dst->pos = 0;
+	dst->SetVScroll(0, 256);
 }
-

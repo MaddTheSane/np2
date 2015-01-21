@@ -331,14 +331,9 @@ LRESULT CALLBACK CWndProc::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	{
 		return ::DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	else if (message != WM_NCDESTROY)
-	{
-		return pWnd->WindowProc(message, wParam, lParam);
-	}
 	else
 	{
-		pWnd->OnNcDestroy(wParam, lParam);
-		return 0;
+		return pWnd->WindowProc(message, wParam, lParam);
 	}
 }
 
@@ -351,7 +346,15 @@ LRESULT CALLBACK CWndProc::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
  */
 LRESULT CWndProc::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
-	return DefWindowProc(nMsg, wParam, lParam);
+	if (nMsg != WM_NCDESTROY)
+	{
+		return DefWindowProc(nMsg, wParam, lParam);
+	}
+	else
+	{
+		OnNcDestroy(wParam, lParam);
+		return 0;
+	}
 }
 
 /**

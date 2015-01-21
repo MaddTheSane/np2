@@ -38,7 +38,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 	}
 
-	pos = view->pos;
+	pos = view->GetVScrollPos();
 	if (view->lock) {
 		r = (I386STAT *)view->buf1.ptr;
 	}
@@ -113,7 +113,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 	}
 
-	pos = view->pos;
+	pos = view->GetVScrollPos();
 	if (view->lock) {
 		r = (V30STAT *)view->buf1.ptr;
 	}
@@ -176,7 +176,7 @@ static void viewreg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 	}
 
-	pos = view->pos;
+	pos = view->GetVScrollPos();
 	if (view->lock) {
 		r = (I286STAT *)view->buf1.ptr;
 	}
@@ -241,8 +241,5 @@ LRESULT CALLBACK viewreg_proc(NP2VIEW_T *view,
 void viewreg_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 
 	dst->type = VIEWMODE_REG;
-	dst->maxline = 4;
-	dst->mul = 1;
-	dst->pos = 0;
+	dst->SetVScroll(0, 4);
 }
-

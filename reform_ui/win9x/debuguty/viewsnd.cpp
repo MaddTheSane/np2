@@ -101,7 +101,7 @@ const UINT8	*p;
 		}
 	}
 
-	pos = view->pos;
+	pos = view->GetVScrollPos();
 	for (y=0; (y<rc->bottom) && (pos<NELEMENTS(fmsndtbl)); y+=16, pos++) {
 		if (fmsndtbl[pos].str) {
 			TextOut(hdc, 0, y, fmsndtbl[pos].str,
@@ -171,8 +171,5 @@ LRESULT CALLBACK viewsnd_proc(NP2VIEW_T *view,
 void viewsnd_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 
 	dst->type = VIEWMODE_SND;
-	dst->maxline = NELEMENTS(fmsndtbl);
-	dst->mul = 1;
-	dst->pos = 0;
+	dst->SetVScroll(0, _countof(fmsndtbl));
 }
-

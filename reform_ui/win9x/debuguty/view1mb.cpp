@@ -11,7 +11,6 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 
 	int		x;
 	LONG	y;
-	UINT32	off;
 	UINT8	*p;
 	UINT8	buf[16];
 	TCHAR	str[16];
@@ -37,7 +36,7 @@ static void view1mb_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 		}
 	}
 
-	off = (view->pos) << 4;
+	UINT off = view->GetVScrollPos() << 4;
 	for (y=0; y<rc->bottom && off<0x10fff0; y+=16, off+=16) {
 		wsprintf(str, _T("%08x"), off);
 		TextOut(hdc, 0, y, str, 8);
@@ -107,29 +106,22 @@ LRESULT CALLBACK view1mb_proc(NP2VIEW_T *view,
 
 void view1mb_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 
+	UINT nPos = 0;
 	if (src) {
 		switch(src->type) {
 			case VIEWMODE_SEG:
-				dst->pos = src->seg;
+				nPos = src->seg;
 				break;
 
 			case VIEWMODE_1MB:
-				dst->pos = src->pos;
+				nPos = src->GetVScrollPos();
 				break;
 
 			case VIEWMODE_ASM:
-				dst->pos = src->seg;
-				break;
-
-			default:
-				src = NULL;
+				nPos = src->seg;
 				break;
 		}
 	}
-	if (!src) {
-		dst->pos = 0;
-	}
 	dst->type = VIEWMODE_1MB;
-	dst->maxline = 0x10fff;
-	dst->mul = 2;
+	dst->SetVScroll(nPos, 0x10fff);
 }

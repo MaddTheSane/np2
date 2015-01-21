@@ -23,11 +23,10 @@ static void vieweractive_renewal(void);
  * コンストラクタ
  */
 CDebugUtyView::CDebugUtyView()
-	: hwnd(NULL)
-	, pos(0)
-	, maxline(0)
-	, step(0)
-	, mul(0)
+	: m_nVPos(0)
+	, m_nVLines(0)
+	, m_nVPage(0)
+	, m_nVMultiple(1)
 	, type(0)
 	, lock(0)
 	, active(0)
@@ -84,11 +83,28 @@ void CDebugUtyView::UpdateCaption()
  * V スクロール位置の設定
  * @param[in] nPos 新しい位置
  */
-void CDebugUtyView::SetVScrollPos(UINT32 nPos)
+void CDebugUtyView::SetVScrollPos(UINT nPos)
 {
-	if (this->pos != nPos)
+	if (m_nVPos != nPos)
 	{
-		this->pos = nPos;
+		m_nVPos = nPos;
+		UpdateVScroll();
+		Invalidate();
+	}
+}
+
+/**
+ * V スクロールの設定
+ * @param[in] nPos 新しい位置
+ * @param[in] nLines ライン数
+ */
+void CDebugUtyView::SetVScroll(UINT nPos, UINT nLines)
+{
+	if ((m_nVPos != nPos) || (m_nVLines != nLines))
+	{
+		m_nVPos = nPos;
+		m_nVLines = nLines;
+		m_nVMultiple = ((nLines - 1) / 0xFFFF) + 1;
 		UpdateVScroll();
 		Invalidate();
 	}
@@ -104,9 +120,9 @@ void CDebugUtyView::UpdateVScroll()
 	si.cbSize = sizeof(si);
 	si.fMask = SIF_ALL;
 	si.nMin = 0;
-	si.nMax = ((this->maxline + this->mul - 1) / this->mul) - 1;
-	si.nPos = this->pos / this->mul;
-	si.nPage = this->step / this->mul;
+	si.nMax = ((m_nVLines + m_nVMultiple - 1) / m_nVMultiple) - 1;
+	si.nPos = m_nVPos / m_nVMultiple;
+	si.nPage = m_nVPage / m_nVMultiple;
 	SetScrollInfo(SB_VERT, &si, TRUE);
 }
 
@@ -146,40 +162,9 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_COMMAND:
-			switch(LOWORD(wParam)) {
-				case IDM_VIEWWINNEW:
-					viewer_open(g_hInstance);
-					break;
-
-				case IDM_VIEWWINCLOSE:
-					return WindowProc(WM_CLOSE, 0, 0);
-
-				case IDM_VIEWWINALLCLOSE:
-					viewer_allclose();
-					break;
-
-				case IDM_VIEWMODEREG:
-					SetMode(VIEWMODE_REG);
-					break;
-
-				case IDM_VIEWMODESEG:
-					SetMode(VIEWMODE_SEG);
-					break;
-
-				case IDM_VIEWMODE1MB:
-					SetMode(VIEWMODE_1MB);
-					break;
-
-				case IDM_VIEWMODEASM:
-					SetMode(VIEWMODE_ASM);
-					break;
-
-				case IDM_VIEWMODESND:
-					SetMode(VIEWMODE_SND);
-					break;
-
-				default:
-					return viewcmn_dispat(this, msg, wParam, lParam);
+			if (!OnCommand(wParam, lParam))
+			{
+				return viewcmn_dispat(this, msg, wParam, lParam);
 			}
 			break;
 
@@ -189,50 +174,14 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE:
 			{
 				RECT rc;
-				GetClientRect(hWnd, &rc);
-				view->step = (UINT16)(rc.bottom / 16);
+				GetClientRect(&rc);
+				m_nVPage = rc.bottom / 16;
 				UpdateVScroll();
 			}
 			break;
 
 		case WM_VSCROLL:
-			{
-				UINT32 newpos = view->pos;
-				switch(LOWORD(wParam)) {
-					case SB_LINEUP:
-						if (newpos) {
-							newpos--;
-						}
-						break;
-					case SB_LINEDOWN:
-						if (newpos < (view->maxline - view->step)) {
-							newpos++;
-						}
-						break;
-					case SB_PAGEUP:
-						if (newpos > view->step) {
-							newpos -= view->step;
-						}
-						else {
-							newpos = 0;
-						}
-						break;
-					case SB_PAGEDOWN:
-						newpos += view->step;
-						if (newpos > (view->maxline - view->step)) {
-							newpos = view->maxline - view->step;
-						}
-						break;
-					case SB_THUMBTRACK:
-						newpos = HIWORD(wParam) * (view->mul);
-						break;
-				}
-				if (view->pos != newpos) {
-					view->pos = newpos;
-					UpdateVScroll();
-					Invalidate();
-				}
-			}
+			OnVScroll(LOWORD(wParam), HIWORD(wParam), reinterpret_cast<HWND>(lParam));
 			break;
 
 		case WM_ENTERMENULOOP:
@@ -257,9 +206,108 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		default:
-			return DefWindowProc(msg, wParam, lParam);
+			return CWndProc::WindowProc(msg, wParam, lParam);
 	}
 	return(0L);
+}
+
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL CDebugUtyView::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	switch (LOWORD(wParam))
+	{
+		case IDM_VIEWWINNEW:
+			viewer_open(g_hInstance);
+			break;
+
+		case IDM_VIEWWINCLOSE:
+			DestroyWindow();
+			break;
+
+		case IDM_VIEWWINALLCLOSE:
+			viewer_allclose();
+			break;
+
+		case IDM_VIEWMODEREG:
+			SetMode(VIEWMODE_REG);
+			break;
+
+		case IDM_VIEWMODESEG:
+			SetMode(VIEWMODE_SEG);
+			break;
+
+		case IDM_VIEWMODE1MB:
+			SetMode(VIEWMODE_1MB);
+			break;
+
+		case IDM_VIEWMODEASM:
+			SetMode(VIEWMODE_ASM);
+			break;
+
+		case IDM_VIEWMODESND:
+			SetMode(VIEWMODE_SND);
+			break;
+
+		default:
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * フレームワークは、ユーザーがウィンドウに垂直スクロール バーをクリックすると、このメンバー関数を呼び出します
+ * @param[in] nSBCodeユーザーの要求を示すスクロール バー コードを指定します
+ * @param[in] nPos 現在のスクロール ボックスの位置
+ * @param[in] hwndScrollBar スクロール バー コントロール
+ */
+void CDebugUtyView::OnVScroll(UINT nSBCode, UINT nPos, HWND hwndScrollBar)
+{
+	UINT32 nNewPos = m_nVPos;
+	switch (nSBCode)
+	{
+		case SB_LINEUP:
+			if (nNewPos)
+			{
+				nNewPos--;
+			}
+			break;
+
+		case SB_LINEDOWN:
+			if ((nNewPos + m_nVPage) < m_nVLines)
+			{
+				nNewPos++;
+			}
+			break;
+
+		case SB_PAGEUP:
+			if (nNewPos > m_nVPage)
+			{
+				nNewPos -= m_nVPage;
+			}
+			else
+			{
+				nNewPos = 0;
+			}
+			break;
+
+		case SB_PAGEDOWN:
+			nNewPos += m_nVPage;
+			if (nNewPos > (m_nVLines - m_nVPage))
+			{
+				nNewPos = m_nVLines - m_nVPage;
+			}
+			break;
+
+		case SB_THUMBTRACK:
+			nNewPos = nPos * m_nVMultiple;
+			break;
+	}
+	SetVScrollPos(nNewPos);
 }
 
 /**
@@ -373,7 +421,6 @@ void viewer_open(HINSTANCE hInstance)
 							NULL, 0))
 			{
 				g_np2view[i] = view;
-				view->hwnd = *view;
 				viewcmn_setmode(view, NULL, VIEWMODE_REG);
 				view->UpdateCaption();
 				view->ShowWindow(SW_SHOWNORMAL);
@@ -391,7 +438,7 @@ void viewer_allclose(void)
 		NP2VIEW_T* view = g_np2view[i];
 		if (view != NULL)
 		{
-			DestroyWindow(view->hwnd);
+			view->DestroyWindow();
 		}
 	}
 }
@@ -415,7 +462,7 @@ static UINT32	last = 0;
 				{
 					view->seg = CPU_CS;
 					view->off = CPU_IP;
-					view->pos = 0;
+					view->m_nVPos = 0;
 					view->UpdateVScroll();
 				}
 				view->dmem.Update();
