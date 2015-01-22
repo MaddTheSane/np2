@@ -10,11 +10,13 @@
 #include "viewcmn.h"
 #include "cpucore.h"
 
-		const TCHAR		np2viewfont[] = _T("ＭＳ ゴシック");
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];
 
 //! ビュー クラス名
 static const TCHAR s_szViewClass[] = TEXT("NP2-ViewWindow");
+
+//! フォント
+static const TCHAR s_szViewFont[] = _T("ＭＳ ゴシック");
 
 //! 最後のTick
 DWORD CDebugUtyView::sm_dwLastTick;
@@ -60,11 +62,10 @@ void CDebugUtyView::New()
 		}
 
 		CDebugUtyView* view = new CDebugUtyView;
+		g_np2view[i] = view;
+
 		if (view->CreateEx(0, s_szViewClass, NULL, WS_OVERLAPPEDWINDOW | WS_VSCROLL, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, 0))
 		{
-			g_np2view[i] = view;
-			viewcmn_setmode(view, NULL, VIEWMODE_REG);
-			view->UpdateCaption();
 			view->ShowWindow(SW_SHOWNORMAL);
 			view->UpdateWindow();
 		}
@@ -118,14 +119,8 @@ CDebugUtyView::CDebugUtyView()
 	, m_nVLines(0)
 	, m_nVPage(0)
 	, m_nVMultiple(1)
-	, type(0)
-	, lock(0)
-	, seg(0)
-	, off(0)
+	, m_lpItem(NULL)
 {
-	ZeroMemory(&this->buf1, sizeof(this->buf1));
-	ZeroMemory(&this->buf2, sizeof(this->buf2));
-	ZeroMemory(&this->dmem, sizeof(this->dmem));
 }
 
 /**
@@ -133,8 +128,10 @@ CDebugUtyView::CDebugUtyView()
  */
 CDebugUtyView::~CDebugUtyView()
 {
-	viewcmn_free(&this->buf1);
-	viewcmn_free(&this->buf2);
+	if (m_lpItem)
+	{
+		delete m_lpItem;
+	}
 
 	for (size_t i = 0; i < _countof(g_np2view); i++)
 	{
@@ -161,7 +158,7 @@ void CDebugUtyView::UpdateCaption()
 			break;
 		}
 	}
-	LPCTSTR lpMode = (this->lock) ? TEXT("Locked") : TEXT("Realtime");
+	LPCTSTR lpMode = (m_lpItem->IsLocked()) ? TEXT("Locked") : TEXT("Realtime");
 
 	TCHAR szTitle[256];
 	wsprintf(szTitle, TEXT("%d.%s - NP2 Debug Utility"), nIndex + 1, lpMode);
@@ -225,32 +222,17 @@ void CDebugUtyView::UpdateVScroll()
  */
 LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// NP2VIEW_T* view = this;
-	// UINT msg = message;
-	// HWND hWnd = *this;
-
 	switch (message)
 	{
 		case WM_CREATE:
-			break;
-
-		case WM_COMMAND:
-			if (!OnCommand(wParam, lParam))
-			{
-				return viewcmn_dispat(this, message, wParam, lParam);
-			}
-			break;
+			return OnCreate(reinterpret_cast<LPCREATESTRUCT>(lParam));
 
 		case WM_PAINT:
-			return viewcmn_dispat(this, message, wParam, lParam);
+			OnPaint();
+			break;
 
 		case WM_SIZE:
-			{
-				RECT rc;
-				GetClientRect(&rc);
-				m_nVPage = rc.bottom / 16;
-				UpdateVScroll();
-			}
+			OnSize(static_cast<UINT>(wParam), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			break;
 
 		case WM_VSCROLL:
@@ -262,8 +244,7 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_ACTIVATE:
-			m_bActive = (LOWORD(wParam) != WA_INACTIVE);
-			UpdateActive();
+			OnActivate(LOWORD(wParam), reinterpret_cast<HWND>(lParam), HIWORD(wParam));
 			break;
 
 		case WM_CLOSE:
@@ -284,7 +265,8 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
  */
 BOOL CDebugUtyView::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD(wParam))
+	UINT nID = LOWORD(wParam);
+	switch (nID)
 	{
 		case IDM_VIEWWINNEW:
 			New();
@@ -299,29 +281,90 @@ BOOL CDebugUtyView::OnCommand(WPARAM wParam, LPARAM lParam)
 			break;
 
 		case IDM_VIEWMODEREG:
-			SetMode(VIEWMODE_REG);
-			break;
-
 		case IDM_VIEWMODESEG:
-			SetMode(VIEWMODE_SEG);
-			break;
-
 		case IDM_VIEWMODE1MB:
-			SetMode(VIEWMODE_1MB);
-			break;
-
 		case IDM_VIEWMODEASM:
-			SetMode(VIEWMODE_ASM);
+		case IDM_VIEWMODESND:
+			SetMode(nID);
 			break;
 
-		case IDM_VIEWMODESND:
-			SetMode(VIEWMODE_SND);
+		case IDM_VIEWMODELOCK:
+			if (!m_lpItem->IsLocked())
+			{
+				m_lpItem->Lock();
+			}
+			else
+			{
+				m_lpItem->Unlock();
+			}
+			UpdateCaption();
+			Invalidate();
 			break;
+
 
 		default:
-			return FALSE;
+			return m_lpItem->OnCommand(wParam, lParam);
 	}
 	return TRUE;
+}
+
+/**
+ * ウィンドウの作成時に、このメンバー関数を呼び出します
+ * @param[in] lpCreateStruct
+ * @retval 0 成功
+ */
+int CDebugUtyView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	m_lpItem = CDebugUtyItem::New(IDM_VIEWMODEREG, this);
+	UpdateCaption();
+	return 0;
+}
+
+/**
+ * フレームワークは、ウィンドウのサイズが変わった後にこのメンバー関数を呼びます 
+ * @param[in] nType サイズ変更の種類
+ * @param[in] cx クライアント領域の新しい幅
+ * @param[in] cy クライアント領域の新しい高さ
+ */
+void CDebugUtyView::OnSize(UINT nType, int cx, int cy)
+{
+	m_nVPage = cy / 16;
+	UpdateVScroll();
+}
+
+/**
+ * 再描画要求時に、このメンバー関数を呼び出します
+ */
+void CDebugUtyView::OnPaint()
+{
+	PAINTSTRUCT ps;
+	HDC hDC = BeginPaint(&ps);
+
+	const RECT& rect = ps.rcPaint;
+
+	HDC hdcMem = ::CreateCompatibleDC(hDC);
+	HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, rect.right, rect.bottom);
+	hBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, hBitmap));
+
+
+	HBRUSH hBrush = ::CreateSolidBrush(RGB(0, 0, 64));
+	::FillRect(hdcMem, &rect, hBrush);
+	::DeleteObject(hBrush);
+
+	HFONT hFont = ::CreateFont(16, 0, 0, 0, 0, 0, 0, 0, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH, s_szViewFont);
+	::SetTextColor(hdcMem, 0xffffff);
+	::SetBkColor(hdcMem, 0x400000);
+	hFont = static_cast<HFONT>(::SelectObject(hdcMem, hFont));
+
+		m_lpItem->OnPaint(hdcMem, rect);
+
+	::DeleteObject(SelectObject(hdcMem, hFont));
+
+	::BitBlt(hDC, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, hdcMem, rect.left, rect.top, SRCCOPY);
+	::DeleteObject(::SelectObject(hdcMem, hBitmap));
+	::DeleteDC(hdcMem);
+
+	EndPaint(&ps);
 }
 
 /**
@@ -386,12 +429,18 @@ void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
 	{
 		return;
 	}
-	::CheckMenuItem(hMenu, IDM_VIEWMODELOCK, MF_BYCOMMAND | MFCHECK(this->lock));
-	::CheckMenuItem(hMenu, IDM_VIEWMODEREG, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_REG));
-	::CheckMenuItem(hMenu, IDM_VIEWMODESEG, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_SEG));
-	::CheckMenuItem(hMenu, IDM_VIEWMODE1MB, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_1MB));
-	::CheckMenuItem(hMenu, IDM_VIEWMODEASM, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_ASM));
-	::CheckMenuItem(hMenu, IDM_VIEWMODESND, MF_BYCOMMAND | MFCHECK(this->type == VIEWMODE_SND));
+	::CheckMenuItem(hMenu, IDM_VIEWMODELOCK, MF_BYCOMMAND | MFCHECK(m_lpItem->IsLocked()));
+
+	const UINT nID = m_lpItem->GetID();
+#if 1
+	::CheckMenuRadioItem(hMenu, IDM_VIEWMODEREG, IDM_VIEWMODESND, nID, MF_BYCOMMAND);
+#else
+	::CheckMenuItem(hMenu, IDM_VIEWMODEREG, MF_BYCOMMAND | MFCHECK(nID == IDM_VIEWMODEREG));
+	::CheckMenuItem(hMenu, IDM_VIEWMODESEG, MF_BYCOMMAND | MFCHECK(nID == IDM_VIEWMODESEG));
+	::CheckMenuItem(hMenu, IDM_VIEWMODE1MB, MF_BYCOMMAND | MFCHECK(nID == IDM_VIEWMODE1MB));
+	::CheckMenuItem(hMenu, IDM_VIEWMODEASM, MF_BYCOMMAND | MFCHECK(nID == IDM_VIEWMODEASM));
+	::CheckMenuItem(hMenu, IDM_VIEWMODESND, MF_BYCOMMAND | MFCHECK(nID == IDM_VIEWMODESND));
+#endif
 
 	HMENU hSubMenu = ::GetSubMenu(hMenu, 2);
 	if (hSubMenu)
@@ -405,6 +454,18 @@ void CDebugUtyView::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
 }
 
 /**
+ * フレームワークは CWnd のオブジェクトがアクティブ化または非アクティブ化されたときにこのメンバー関数が呼び出されます
+ * @param[in] nState アクティブになっているか非アクティブになっているかを指定します
+ * @param[in] hwndOther アクティブまたは非アクティブになるウィンドウ ハンドル
+ * @param[in] bMinimized アクティブまたは非アクティブになるウィンドウの最小化の状態を指定します
+ */
+void CDebugUtyView::OnActivate(UINT nState, HWND hwndOther, BOOL bMinimized)
+{
+	m_bActive = (nState != WA_INACTIVE);
+	UpdateActive();
+}
+
+/**
  * Called by the default OnNcDestroy member function after the window has been destroyed.
  */
 void CDebugUtyView::PostNcDestroy()
@@ -414,15 +475,15 @@ void CDebugUtyView::PostNcDestroy()
 
 /**
  * モード変更
- * @param[in] type タイプ
+ * @param[in] nID モード
  */
-void CDebugUtyView::SetMode(UINT8 type)
+void CDebugUtyView::SetMode(UINT nID)
 {
-	if (this->type != type)
+	if (m_lpItem->GetID() != nID)
 	{
-		viewcmn_setmode(this, this, type);
-		this->dmem.Update();
-		UpdateVScroll();
+		CDebugUtyItem* lpItem = m_lpItem;
+		m_lpItem = CDebugUtyItem::New(nID, this, lpItem);
+		delete lpItem;
 		Invalidate();
 	}
 }
@@ -432,16 +493,8 @@ void CDebugUtyView::SetMode(UINT8 type)
  */
 void CDebugUtyView::UpdateView()
 {
-	if (!this->lock)
+	if (m_lpItem->Update())
 	{
-		if (this->type == VIEWMODE_ASM)
-		{
-			this->seg = CPU_CS;
-			this->off = CPU_IP;
-			m_nVPos = 0;
-			UpdateVScroll();
-		}
-		this->dmem.Update();
 		Invalidate();
 	}
 }

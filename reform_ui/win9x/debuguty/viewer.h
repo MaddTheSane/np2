@@ -6,19 +6,10 @@
 #pragma once
 
 #include "..\misc\WndProc.h"
-#include "viewcmn.h"
-#include "viewmem.h"
+
+class CDebugUtyItem;
 
 #define	NP2VIEW_MAX	8
-
-enum
-{
-	VIEWMODE_REG = 0,
-	VIEWMODE_SEG,
-	VIEWMODE_1MB,
-	VIEWMODE_ASM,
-	VIEWMODE_SND
-};
 
 /**
  * @brief ビュー クラス
@@ -42,29 +33,23 @@ public:
 protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void OnSize(UINT nType, int cx, int cy);
+	void OnPaint();
 	void OnVScroll(UINT nSBCode, UINT nPos, HWND hwndScrollBar);
 	void OnEnterMenuLoop(BOOL bIsTrackPopupMenu);
+	void OnActivate(UINT nState, HWND hwndOther, BOOL bMinimized);
 	virtual void PostNcDestroy();
 
 private:
-	bool m_bActive;			//!< アクティブ フラグ
-	UINT m_nVPos;			//!< 位置
-	UINT m_nVLines;			//!< ライン数
-	UINT m_nVPage;			//!< 1ページの表示数
-	UINT m_nVMultiple;		//!< 倍率
-
-public:
-	VIEWMEMBUF	buf1;
-	VIEWMEMBUF	buf2;
-	UINT8		type;
-	UINT8		lock;
-	UINT16		seg;
-	UINT16		off;
-	DebugUtyViewMemory dmem;
-
-private:
-	static DWORD sm_dwLastTick;		//!< 最後のTick
-	void SetMode(UINT8 type);
+	bool m_bActive;				//!< アクティブ フラグ
+	UINT m_nVPos;				//!< 位置
+	UINT m_nVLines;				//!< ライン数
+	UINT m_nVPage;				//!< 1ページの表示数
+	UINT m_nVMultiple;			//!< 倍率
+	CDebugUtyItem* m_lpItem;	//!< 表示アイテム
+	static DWORD sm_dwLastTick;	//!< 最後のTick
+	void SetMode(UINT nID);
 	void SetSegmentItem(HMENU hMenu, int nId, LPCTSTR lpSegment, UINT nSegment);
 	void UpdateView();
 	static void UpdateActive();
@@ -78,5 +63,3 @@ inline UINT32 CDebugUtyView::GetVScrollPos() const
 {
 	return m_nVPos;
 }
-
-extern	const TCHAR		np2viewfont[];

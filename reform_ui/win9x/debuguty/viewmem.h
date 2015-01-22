@@ -14,6 +14,7 @@ struct DebugUtyViewMemory
 	UINT8	itf;
 	UINT8	A20;
 
+	DebugUtyViewMemory();
 	void Update();
-	void Read(UINT32 nAddress, LPVOID lpBuffer, UINT32 cbBuffer);
+	void Read(UINT32 nAddress, LPVOID lpBuffer, UINT32 cbBuffer) const;
 };

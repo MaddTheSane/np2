@@ -2,37 +2,37 @@
 #pragma once
 
 class CDebugUtyView;
-typedef CDebugUtyView NP2VIEW_T;
 
-enum {
-	ALLOCTYPE_NONE = 0,
-	ALLOCTYPE_REG,
-	ALLOCTYPE_SEG,
-	ALLOCTYPE_1MB,
-	ALLOCTYPE_ASM,
-	ALLOCTYPE_SND,
+/**
+ * @brief デバグ表示アイテムの基底クラス
+ */
+class CDebugUtyItem
+{
+public:
+	static CDebugUtyItem* New(UINT nID, CDebugUtyView* lpView, const CDebugUtyItem* lpItem = NULL);
 
-	ALLOCTYPE_ERROR = 0xffffffff
+	CDebugUtyItem(CDebugUtyView* lpView, UINT nID);
+	virtual ~CDebugUtyItem();
+	UINT GetID() const;
+
+	virtual void Initialize(const CDebugUtyItem* lpItem = NULL);
+	virtual bool Update();
+	virtual bool Lock();
+	virtual void Unlock();
+	virtual bool IsLocked();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void OnPaint(HDC hDC, const RECT& rect);
+
+protected:
+	CDebugUtyView* m_lpView;	//!< ビュー クラス
+	UINT m_nID;					//!< ID
 };
 
-typedef struct {
-	UINT32	type;
-	UINT32	arg;
-	UINT32	size;
-	void	*ptr;
-} VIEWMEMBUF;
-
-
-extern const char viewcmn_hex[16];
-
-void viewcmn_putcaption(NP2VIEW_T *view);
-
-BOOL viewcmn_alloc(VIEWMEMBUF *buf, UINT32 size);
-void viewcmn_free(VIEWMEMBUF *buf);
-
-void viewcmn_setmode(NP2VIEW_T *dst, NP2VIEW_T *src, UINT8 type);
-LRESULT viewcmn_dispat(NP2VIEW_T* dbg, UINT msg, WPARAM wp, LPARAM lp);
-
-void viewcmn_paint(NP2VIEW_T *view, UINT32 bkgcolor,
-						void (*callback)(NP2VIEW_T *view, RECT *rc, HDC hdc));
-
+/**
+ * ID を返す
+ * @return ID
+ */
+inline UINT CDebugUtyItem::GetID() const
+{
+	return m_nID;
+}

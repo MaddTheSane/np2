@@ -15,3 +15,12 @@
 #define for					if (0 /*NEVER*/) { /* no process */ } else for
 
 #endif	// (_MSC_VER < 1300)
+
+#ifndef GET_X_LPARAM
+//! x-coordinate from LPARAM
+#define GET_X_LPARAM(lp)	((int)(short)LOWORD(lp))
+#endif
+#ifndef GET_Y_LPARAM
+//! y-coordinate from LPARAM
+#define GET_Y_LPARAM(lp)	((int)(short)HIWORD(lp))
+#endif

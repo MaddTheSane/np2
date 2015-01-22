@@ -14,6 +14,14 @@
 static void viewmem_read(const DebugUtyViewMemory* cfg, UINT32 adrs, UINT8 *buf, UINT32 size);
 
 /**
+ * 初期化
+ */
+DebugUtyViewMemory::DebugUtyViewMemory()
+{
+	Update();
+}
+
+/**
  * 状態を更新する
  */
 void DebugUtyViewMemory::Update()
@@ -29,7 +37,7 @@ void DebugUtyViewMemory::Update()
  * @param[in] lpBuffer バッファ
  * @param[in] cbBuffer バッファ長
  */
-void DebugUtyViewMemory::Read(UINT32 nAddress, LPVOID lpBuffer, UINT32 cbBuffer)
+void DebugUtyViewMemory::Read(UINT32 nAddress, LPVOID lpBuffer, UINT32 cbBuffer) const
 {
 	viewmem_read(this, nAddress, static_cast<UINT8*>(lpBuffer), cbBuffer);
 }
