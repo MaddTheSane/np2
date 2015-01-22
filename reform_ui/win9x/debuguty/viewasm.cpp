@@ -202,7 +202,7 @@ void viewasm_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 				break;
 
 			case VIEWMODE_1MB:
-				if (dst->m_nVPos < 0x10000) {
+				if (dst->GetVScrollPos() < 0x10000) {
 					dst->seg = (UINT16)dst->GetVScrollPos();
 					dst->off = 0;
 				}

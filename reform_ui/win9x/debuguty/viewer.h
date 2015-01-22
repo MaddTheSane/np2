@@ -26,10 +26,10 @@ enum
 class CDebugUtyView : public CWndProc
 {
 public:
-//	static void Initialize();
-//	static void New();
-//	static void AllClose();
-//	static void AllUpdate(bool bForce);
+	static void Initialize(HINSTANCE hInstance);
+	static void New();
+	static void AllClose();
+	static void AllUpdate(bool bForce);
 
 	CDebugUtyView();
 	virtual ~CDebugUtyView();
@@ -41,28 +41,33 @@ public:
 
 protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	void OnVScroll(UINT nSBCode, UINT nPos, HWND hwndScrollBar);
 	void OnEnterMenuLoop(BOOL bIsTrackPopupMenu);
 	virtual void PostNcDestroy();
 
+private:
+	bool m_bActive;			//!< アクティブ フラグ
+	UINT m_nVPos;			//!< 位置
+	UINT m_nVLines;			//!< ライン数
+	UINT m_nVPage;			//!< 1ページの表示数
+	UINT m_nVMultiple;		//!< 倍率
+
 public:
 	VIEWMEMBUF	buf1;
 	VIEWMEMBUF	buf2;
-	UINT		m_nVPos;			//!< 位置
-	UINT		m_nVLines;			//!< ライン数
-	UINT		m_nVPage;			//!< 1ページの表示数
-	UINT		m_nVMultiple;		//!< 倍率
 	UINT8		type;
 	UINT8		lock;
-	UINT8		active;
 	UINT16		seg;
 	UINT16		off;
 	DebugUtyViewMemory dmem;
 
 private:
+	static DWORD sm_dwLastTick;		//!< 最後のTick
 	void SetMode(UINT8 type);
 	void SetSegmentItem(HMENU hMenu, int nId, LPCTSTR lpSegment, UINT nSegment);
+	void UpdateView();
+	static void UpdateActive();
 };
 
 /**
@@ -74,15 +79,4 @@ inline UINT32 CDebugUtyView::GetVScrollPos() const
 	return m_nVPos;
 }
 
-
 extern	const TCHAR		np2viewfont[];
-
-
-BOOL viewer_init(HINSTANCE hInstance);
-void viewer_term(void);
-
-void viewer_open(HINSTANCE hInstance);
-void viewer_allclose(void);
-
-void viewer_allreload(BOOL force);
-

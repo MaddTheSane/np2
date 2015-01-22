@@ -10,26 +10,116 @@
 #include "viewcmn.h"
 #include "cpucore.h"
 
-static	const TCHAR		np2viewclass[] = TEXT("NP2-ViewWindow");
 		const TCHAR		np2viewfont[] = _T("ＭＳ ゴシック");
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];
+
+//! ビュー クラス名
+static const TCHAR s_szViewClass[] = TEXT("NP2-ViewWindow");
+
+//! 最後のTick
+DWORD CDebugUtyView::sm_dwLastTick;
 
 //! チェック マクロ
 #define MFCHECK(bChecked) ((bChecked) ? MF_CHECKED : MF_UNCHECKED)
 
-static void vieweractive_renewal(void);
+/**
+ * 初期化
+ * @param[in] hInstance インスタンス
+ */
+void CDebugUtyView::Initialize(HINSTANCE hInstance)
+{
+	sm_dwLastTick = ::GetTickCount();
+
+	ZeroMemory(g_np2view, sizeof(g_np2view));
+
+	WNDCLASS np2vc;
+	np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
+	np2vc.lpfnWndProc = ::DefWindowProc;
+	np2vc.cbClsExtra = 0;
+	np2vc.cbWndExtra = 0;
+	np2vc.hInstance = hInstance;
+	np2vc.hIcon = ::LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	np2vc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	np2vc.hbrBackground = static_cast<HBRUSH>(NULL);
+	np2vc.lpszMenuName = MAKEINTRESOURCE(IDR_VIEW);
+	np2vc.lpszClassName = s_szViewClass;
+	::RegisterClass(&np2vc);
+}
+
+/**
+ * 新しいウィンドウを作成する
+ */
+void CDebugUtyView::New()
+{
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		CDebugUtyView* lpView = g_np2view[i];
+		if (lpView != NULL)
+		{
+			continue;
+		}
+
+		CDebugUtyView* view = new CDebugUtyView;
+		if (view->CreateEx(0, s_szViewClass, NULL, WS_OVERLAPPEDWINDOW | WS_VSCROLL, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, 0))
+		{
+			g_np2view[i] = view;
+			viewcmn_setmode(view, NULL, VIEWMODE_REG);
+			view->UpdateCaption();
+			view->ShowWindow(SW_SHOWNORMAL);
+			view->UpdateWindow();
+		}
+		break;
+	}
+}
+
+/**
+ * すべて閉じる
+ */
+void CDebugUtyView::AllClose()
+{
+	for (size_t i = 0; i < _countof(g_np2view); i++)
+	{
+		CDebugUtyView* lpView = g_np2view[i];
+		if (lpView != NULL)
+		{
+			lpView->DestroyWindow();
+		}
+	}
+}
+
+/**
+ * すべて更新
+ * @param[in] bForce 強制的に更新する
+ */
+void CDebugUtyView::AllUpdate(bool bForce)
+{
+	const DWORD dwNow  = ::GetTickCount();
+	if ((!bForce) || ((dwNow - sm_dwLastTick) >= 200))
+	{
+		sm_dwLastTick = dwNow;
+
+		for (size_t i = 0; i < _countof(g_np2view); i++)
+		{
+			CDebugUtyView* lpView = g_np2view[i];
+			if (lpView != NULL)
+			{
+				lpView->UpdateView();
+			}
+		}
+	}
+}
 
 /**
  * コンストラクタ
  */
 CDebugUtyView::CDebugUtyView()
-	: m_nVPos(0)
+	: m_bActive(false)
+	, m_nVPos(0)
 	, m_nVLines(0)
 	, m_nVPage(0)
 	, m_nVMultiple(1)
 	, type(0)
 	, lock(0)
-	, active(0)
 	, seg(0)
 	, off(0)
 {
@@ -51,7 +141,7 @@ CDebugUtyView::~CDebugUtyView()
 		if (g_np2view[i] == this)
 		{
 			g_np2view[i] = NULL;
-			vieweractive_renewal();
+			UpdateActive();
 			break;
 		}
 	}
@@ -126,24 +216,6 @@ void CDebugUtyView::UpdateVScroll()
 	SetScrollInfo(SB_VERT, &si, TRUE);
 }
 
-// ----
-
-static void vieweractive_renewal(void)
-{
-	np2break &= ~NP2BREAK_DEBUG;
-
-	for (size_t i = 0; i < _countof(g_np2view); i++)
-	{
-		const NP2VIEW_T* view = g_np2view[i];
-		if ((view != NULL) && (view->active))
-		{
-			np2break |= NP2BREAK_DEBUG;
-			break;
-		}
-	}
-	np2active_renewal();
-}
-
 /**
  * ウィンドウ プロシージャ
  * @param[in] message メッセージ
@@ -153,23 +225,24 @@ static void vieweractive_renewal(void)
  */
 LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	NP2VIEW_T* view = this;
-	UINT msg = message;
-	HWND hWnd = *this;
+	// NP2VIEW_T* view = this;
+	// UINT msg = message;
+	// HWND hWnd = *this;
 
-	switch (msg) {
+	switch (message)
+	{
 		case WM_CREATE:
 			break;
 
 		case WM_COMMAND:
 			if (!OnCommand(wParam, lParam))
 			{
-				return viewcmn_dispat(this, msg, wParam, lParam);
+				return viewcmn_dispat(this, message, wParam, lParam);
 			}
 			break;
 
 		case WM_PAINT:
-			return viewcmn_dispat(this, msg, wParam, lParam);
+			return viewcmn_dispat(this, message, wParam, lParam);
 
 		case WM_SIZE:
 			{
@@ -189,16 +262,8 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_ACTIVATE:
-			{
-				if (LOWORD(wParam) != WA_INACTIVE) {
-					view->active = 1;
-					Invalidate();
-				}
-				else {
-					view->active = 0;
-				}
-				vieweractive_renewal();
-			}
+			m_bActive = (LOWORD(wParam) != WA_INACTIVE);
+			UpdateActive();
 			break;
 
 		case WM_CLOSE:
@@ -206,9 +271,9 @@ LRESULT CDebugUtyView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		default:
-			return CWndProc::WindowProc(msg, wParam, lParam);
+			return CWndProc::WindowProc(message, wParam, lParam);
 	}
-	return(0L);
+	return 0;
 }
 
 /**
@@ -222,7 +287,7 @@ BOOL CDebugUtyView::OnCommand(WPARAM wParam, LPARAM lParam)
 	switch (LOWORD(wParam))
 	{
 		case IDM_VIEWWINNEW:
-			viewer_open(g_hInstance);
+			New();
 			break;
 
 		case IDM_VIEWWINCLOSE:
@@ -230,7 +295,7 @@ BOOL CDebugUtyView::OnCommand(WPARAM wParam, LPARAM lParam)
 			break;
 
 		case IDM_VIEWWINALLCLOSE:
-			viewer_allclose();
+			AllClose();
 			break;
 
 		case IDM_VIEWMODEREG:
@@ -348,7 +413,7 @@ void CDebugUtyView::PostNcDestroy()
 }
 
 /**
- * モード 変更
+ * モード変更
  * @param[in] type タイプ
  */
 void CDebugUtyView::SetMode(UINT8 type)
@@ -363,6 +428,25 @@ void CDebugUtyView::SetMode(UINT8 type)
 }
 
 /**
+ * ビュー更新
+ */
+void CDebugUtyView::UpdateView()
+{
+	if (!this->lock)
+	{
+		if (this->type == VIEWMODE_ASM)
+		{
+			this->seg = CPU_CS;
+			this->off = CPU_IP;
+			m_nVPos = 0;
+			UpdateVScroll();
+		}
+		this->dmem.Update();
+		Invalidate();
+	}
+}
+
+/**
  * メニュー アイテムを更新
  * @param[in] hMenu メニュー ハンドル
  * @param[in] hId メニュー ID
@@ -372,102 +456,32 @@ void CDebugUtyView::SetMode(UINT8 type)
 void CDebugUtyView::SetSegmentItem(HMENU hMenu, int nId, LPCTSTR lpSegment, UINT nSegment)
 {
 	TCHAR szString[32];
-	wsprintf(szString, _T("Seg = &%s [%04x]"), lpSegment, nSegment);
+	wsprintf(szString, TEXT("Seg = &%s [%04x]"), lpSegment, nSegment);
 	::ModifyMenu(hMenu, nId, MF_BYCOMMAND | MF_STRING, nId, szString);
 }
 
-// -----------------------------------------------------------------------
-
-BOOL viewer_init(HINSTANCE hInstance)
+/**
+ * アクティブ フラグを更新
+ */
+void CDebugUtyView::UpdateActive()
 {
-	ZeroMemory(g_np2view, sizeof(g_np2view));
-
-	WNDCLASS np2vc;
-	np2vc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
-	np2vc.lpfnWndProc = DefWindowProc;
-	np2vc.cbClsExtra = 0;
-	np2vc.cbWndExtra = 0;
-	np2vc.hInstance = hInstance;
-	np2vc.hIcon = ::LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	np2vc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	np2vc.hbrBackground = static_cast<HBRUSH>(NULL);
-	np2vc.lpszMenuName = MAKEINTRESOURCE(IDR_VIEW);
-	np2vc.lpszClassName = np2viewclass;
-	if (!RegisterClass(&np2vc))
-	{
-		return FAILURE;
-	}
-	return SUCCESS;
-}
-
-
-void viewer_term(void) {
-
-}
-
-
-void viewer_open(HINSTANCE hInstance)
-{
+	bool bActive = false;
 	for (size_t i = 0; i < _countof(g_np2view); i++)
 	{
-		NP2VIEW_T* view = g_np2view[i];
-		if (view == NULL)
+		const CDebugUtyView* lpView = g_np2view[i];
+		if ((lpView != NULL) && (lpView->m_bActive))
 		{
-			view = new CDebugUtyView;
-			if (view->CreateEx(0, np2viewclass, NULL,
-							WS_OVERLAPPEDWINDOW | WS_VSCROLL,
-							CW_USEDEFAULT, CW_USEDEFAULT,
-							CW_USEDEFAULT, CW_USEDEFAULT,
-							NULL, 0))
-			{
-				g_np2view[i] = view;
-				viewcmn_setmode(view, NULL, VIEWMODE_REG);
-				view->UpdateCaption();
-				view->ShowWindow(SW_SHOWNORMAL);
-				view->UpdateWindow();
-			}
-			break;
+			bActive = true;
 		}
 	}
-}
 
-void viewer_allclose(void)
-{
-	for (size_t i = 0; i < _countof(g_np2view); i++)
+	if (bActive)
 	{
-		NP2VIEW_T* view = g_np2view[i];
-		if (view != NULL)
-		{
-			view->DestroyWindow();
-		}
+		np2break |= NP2BREAK_DEBUG;
 	}
-}
-
-
-void viewer_allreload(BOOL force) {
-
-static UINT32	last = 0;
-
-	UINT32 now = GetTickCount();
-	if ((force) || ((now - last) >= 200))
+	else
 	{
-		last = now;
-
-		for (size_t i = 0; i < _countof(g_np2view); i++)
-		{
-			NP2VIEW_T* view = g_np2view[i];
-			if ((view != NULL) && (!view->lock))
-			{
-				if (view->type == VIEWMODE_ASM)
-				{
-					view->seg = CPU_CS;
-					view->off = CPU_IP;
-					view->m_nVPos = 0;
-					view->UpdateVScroll();
-				}
-				view->dmem.Update();
-				view->Invalidate();
-			}
-		}
+		np2break &= ~NP2BREAK_DEBUG;
 	}
+	np2active_renewal();
 }

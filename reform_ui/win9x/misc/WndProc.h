@@ -38,6 +38,7 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
 protected:
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	virtual void OnNcDestroy(WPARAM wParam, LPARAM lParam);
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);

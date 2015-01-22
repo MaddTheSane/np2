@@ -35,7 +35,7 @@ static void viewseg_paint(NP2VIEW_T *view, RECT *rc, HDC hdc) {
 	SetBkColor(hdc, 0x400000);
 	hfont = (HFONT)SelectObject(hdc, hfont);
 
-	off = (view->m_nVPos) << 4;
+	off = (view->GetVScrollPos()) << 4;
 	mad = (((UINT32)view->seg) << 4) + off;
 
 	if (view->lock) {
@@ -131,8 +131,8 @@ void viewseg_init(NP2VIEW_T *dst, NP2VIEW_T *src) {
 				break;
 
 			case VIEWMODE_1MB:
-				if (dst->m_nVPos < 0x10000) {
-					dst->seg = (UINT16)dst->m_nVPos;
+				if (dst->GetVScrollPos() < 0x10000) {
+					dst->seg = (UINT16)dst->GetVScrollPos();
 				}
 				else {
 					dst->seg = 0xffff;

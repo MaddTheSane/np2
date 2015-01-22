@@ -346,15 +346,30 @@ LRESULT CALLBACK CWndProc::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
  */
 LRESULT CWndProc::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (nMsg != WM_NCDESTROY)
+	if (nMsg == WM_COMMAND)
 	{
-		return DefWindowProc(nMsg, wParam, lParam);
+		if (OnCommand(wParam, lParam))
+		{
+			return 0;
+		}
 	}
-	else
+	if (nMsg == WM_NCDESTROY)
 	{
 		OnNcDestroy(wParam, lParam);
 		return 0;
 	}
+	return DefWindowProc(nMsg, wParam, lParam);
+}
+
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL CWndProc::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	return FALSE;
 }
 
 /**
