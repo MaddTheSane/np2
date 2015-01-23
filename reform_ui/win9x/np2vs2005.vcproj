@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -140,7 +140,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -309,7 +309,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -1806,19 +1806,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewcmn.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\debuguty\viewer.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmem.cpp"
+						RelativePath=".\debuguty\viewitem.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmenu.cpp"
+						RelativePath=".\debuguty\viewmem.cpp"
 						>
 					</File>
 					<File
@@ -2964,19 +2960,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewcmn.h"
-						>
-					</File>
-					<File
 						RelativePath=".\debuguty\viewer.h"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmem.h"
+						RelativePath=".\debuguty\viewitem.h"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmenu.h"
+						RelativePath=".\debuguty\viewmem.h"
 						>
 					</File>
 					<File

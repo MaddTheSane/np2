@@ -16,8 +16,9 @@
 #include "strres.h"
 #include "parts.h"
 #include "np2.h"
-#include "np2arg.h"
 #include "misc\WndProc.h"
+#include "debuguty\viewer.h"
+#include "np2arg.h"
 #include "dosio.h"
 #include "extromio.h"
 #include "commng.h"
@@ -51,7 +52,6 @@
 #include "keystat.h"
 #include "debugsub.h"
 #include "subwind.h"
-#include "viewer.h"
 #if !defined(_WIN64)
 #include "cputype.h"
 #endif
