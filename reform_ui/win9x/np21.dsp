@@ -1296,6 +1296,14 @@ SOURCE=.\debuguty\viewsnd.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\misc\extrom.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\extrom.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\TickCounter.cpp
 # End Source File
 # Begin Source File
@@ -1484,10 +1492,6 @@ SOURCE=.\DD2.CPP
 # Begin Source File
 
 SOURCE=.\DOSIO.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\EXTROMIO.CPP
 # End Source File
 # Begin Source File
 
