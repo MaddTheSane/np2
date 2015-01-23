@@ -6,7 +6,7 @@
 #pragma once
 
 #include <vector>
-#include "viewcmn.h"
+#include "viewitem.h"
 
 /**
  * @brief サウンド レジスタ表示クラス

@@ -1,12 +1,12 @@
 /**
- * @file	viewcmn.cpp
- * @brief	DebugUty 用ビューワ共通クラスの動作の定義を行います
+ * @file	viewitem.cpp
+ * @brief	DebugUty 用ビュー基底クラスの動作の定義を行います
  */
 
 #include "compiler.h"
 #include "resource.h"
 #include "np2.h"
-#include "viewcmn.h"
+#include "viewitem.h"
 #include "viewer.h"
 #include "viewmem.h"
 #include "viewreg.h"

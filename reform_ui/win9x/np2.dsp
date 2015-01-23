@@ -1379,39 +1379,67 @@ SOURCE=.\DIALOG\NP2CLASS.CPP
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEW1MB.CPP
+SOURCE=.\debuguty\view1mb.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWASM.CPP
+SOURCE=.\debuguty\view1mb.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWCMN.CPP
+SOURCE=.\debuguty\viewasm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWER.CPP
+SOURCE=.\debuguty\viewasm.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWMEM.CPP
+SOURCE=.\debuguty\viewer.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWMENU.CPP
+SOURCE=.\debuguty\viewer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWREG.CPP
+SOURCE=.\debuguty\viewitem.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWSEG.CPP
+SOURCE=.\debuguty\viewitem.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DEBUGUTY\VIEWSND.CPP
+SOURCE=.\debuguty\viewmem.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewmem.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewreg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewreg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewseg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewseg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewsnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\debuguty\viewsnd.h
 # End Source File
 # End Group
 # Begin Group "misc"

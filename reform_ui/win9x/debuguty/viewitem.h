@@ -1,3 +1,7 @@
+/**
+ * @file	viewitem.h
+ * @brief	DebugUty 用ビュー基底クラスの宣言およびインターフェイスの定義をします
+ */
 
 #pragma once
 

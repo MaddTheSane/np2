@@ -7,7 +7,7 @@
 #include "resource.h"
 #include "np2.h"
 #include "viewer.h"
-#include "viewcmn.h"
+#include "viewitem.h"
 #include "cpucore.h"
 
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];

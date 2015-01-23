@@ -17,6 +17,7 @@
 #include "parts.h"
 #include "np2.h"
 #include "np2arg.h"
+#include "misc\WndProc.h"
 #include "dosio.h"
 #include "extromio.h"
 #include "commng.h"
@@ -61,7 +62,6 @@
 #include "juliet.h"
 #endif
 #include "recvideo.h"
-#include "misc\WndProc.h"
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -1910,4 +1910,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	return((int)msg.wParam);
 }
-
