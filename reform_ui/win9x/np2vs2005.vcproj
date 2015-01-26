@@ -1711,10 +1711,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\juliet.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\menu.cpp"
 					>
 				</File>
@@ -1823,6 +1819,14 @@
 					</File>
 					<File
 						RelativePath=".\debuguty\viewsnd.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="devices"
+					>
+					<File
+						RelativePath=".\devices\juliet.cpp"
 						>
 					</File>
 				</Filter>
@@ -2837,10 +2841,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\juliet.h"
-					>
-				</File>
-				<File
 					RelativePath=".\menu.h"
 					>
 				</File>
@@ -2866,10 +2866,6 @@
 				</File>
 				<File
 					RelativePath=".\resource.h"
-					>
-				</File>
-				<File
-					RelativePath=".\romeo.h"
 					>
 				</File>
 				<File
@@ -2928,6 +2924,18 @@
 					RelativePath=".\winloc.h"
 					>
 				</File>
+				<Filter
+					Name="devices"
+					>
+					<File
+						RelativePath=".\devices\juliet.h"
+						>
+					</File>
+					<File
+						RelativePath=".\devices\romeo.h"
+						>
+					</File>
+				</Filter>
 				<Filter
 					Name="dialog"
 					>

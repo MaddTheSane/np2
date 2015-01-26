@@ -7,7 +7,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
-#include	"juliet.h"
+#include	"devices\juliet.h"
 #include	"keydisp.h"
 
 #if !defined(SUPPORT_ROMEO)

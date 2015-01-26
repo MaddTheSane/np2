@@ -15,7 +15,7 @@
 #include "misc\extrom.h"
 #include "sound.h"
 #if defined(SUPPORT_ROMEO)
-#include "juliet.h"
+#include "devices\juliet.h"
 #endif
 #if defined(VERMOUTH_LIB)
 #include "vermouth.h"
