@@ -1,5 +1,5 @@
 /**
- * @file	TickCounter.cpp
+ * @file	tickcounter.cpp
  * @brief	TICK カウンタの動作の定義を行います
  */
 
