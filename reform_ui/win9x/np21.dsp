@@ -1304,6 +1304,14 @@ SOURCE=.\misc\extrom.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\tickcounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\vc6macros.h
 # End Source File
 # Begin Source File
@@ -1552,10 +1560,6 @@ SOURCE=.\SYSMNG.CPP
 # Begin Source File
 
 SOURCE=.\TASKMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\tickcounter.cpp
 # End Source File
 # Begin Source File
 

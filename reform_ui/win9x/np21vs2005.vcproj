@@ -1413,10 +1413,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\tickcounter.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\timemng.cpp"
 					>
 				</File>
@@ -1677,6 +1673,10 @@
 					>
 					<File
 						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
 						>
 					</File>
 					<File
@@ -2579,10 +2579,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\tickcounter.h"
-					>
-				</File>
-				<File
 					RelativePath=".\timemng.h"
 					>
 				</File>
@@ -2671,6 +2667,10 @@
 					>
 					<File
 						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.h"
 						>
 					</File>
 					<File
