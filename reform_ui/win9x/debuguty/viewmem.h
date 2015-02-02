@@ -10,9 +10,9 @@
  */
 struct DebugUtyViewMemory
 {
-	UINT8	vram;
-	UINT8	itf;
-	UINT8	A20;
+	UINT8	vram;		//!< VRAM バンク
+	UINT8	itf;		//!< ITF バンク
+	UINT8	A20;		//!< A20 ライン
 
 	DebugUtyViewMemory();
 	void Update();

@@ -9,7 +9,8 @@
 
 class CDebugUtyItem;
 
-#define	NP2VIEW_MAX	8
+//! ビュー最大数
+#define NP2VIEW_MAX		8
 
 /**
  * @brief ビュー クラス

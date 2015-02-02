@@ -1,5 +1,5 @@
 /**
- * @file	viewrsnd.cpp
+ * @file	viewsnd.cpp
  * @brief	サウンド レジスタ表示クラスの動作の定義を行います
  */
 
@@ -79,6 +79,7 @@ static const SoundRegisterTable s_table[] =
 
 /**
  * コンストラクタ
+ * @param[in] lpView ビューワ インスタンス
  */
 CDebugUtySnd::CDebugUtySnd(CDebugUtyView* lpView)
 	: CDebugUtyItem(lpView, IDM_VIEWMODESND)
@@ -94,6 +95,7 @@ CDebugUtySnd::~CDebugUtySnd()
 
 /**
  * 初期化
+ * @param[in] lpItem 基準となるアイテム
  */
 void CDebugUtySnd::Initialize(const CDebugUtyItem* lpItem)
 {

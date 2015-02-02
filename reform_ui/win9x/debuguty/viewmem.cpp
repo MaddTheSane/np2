@@ -42,7 +42,13 @@ void DebugUtyViewMemory::Read(UINT32 nAddress, LPVOID lpBuffer, UINT32 cbBuffer)
 	viewmem_read(this, nAddress, static_cast<UINT8*>(lpBuffer), cbBuffer);
 }
 
-
+/**
+ * メモリ リード
+ * @param[in] cfg 設定
+ * @param[in] adrs アドレス
+ * @param[in] buf バッファ
+ * @param[in] size バッファ長
+ */
 static void viewmem_read(const DebugUtyViewMemory* cfg, UINT32 adrs, UINT8 *buf, UINT32 size) {
 
 	if (!size) {

@@ -1,5 +1,5 @@
 /**
- * @file	viewrasm.cpp
+ * @file	viewasm.cpp
  * @brief	アセンブラ リスト表示クラスの動作の定義を行います
  */
 
@@ -13,6 +13,7 @@
 
 /**
  * コンストラクタ
+ * @param[in] lpView ビューワ インスタンス
  */
 CDebugUtyAsm::CDebugUtyAsm(CDebugUtyView* lpView)
 	: CDebugUtyItem(lpView, IDM_VIEWMODEASM)
@@ -30,6 +31,7 @@ CDebugUtyAsm::~CDebugUtyAsm()
 
 /**
  * 初期化
+ * @param[in] lpItem 基準となるアイテム
  */
 void CDebugUtyAsm::Initialize(const CDebugUtyItem* lpItem)
 {

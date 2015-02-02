@@ -10,6 +10,7 @@
 #include "viewitem.h"
 #include "cpucore.h"
 
+//! インスタンス
 static CDebugUtyView* g_np2view[NP2VIEW_MAX];
 
 //! ビュー クラス名
@@ -502,7 +503,7 @@ void CDebugUtyView::UpdateView()
 /**
  * メニュー アイテムを更新
  * @param[in] hMenu メニュー ハンドル
- * @param[in] hId メニュー ID
+ * @param[in] nId メニュー ID
  * @param[in] lpSegment セグメント名
  * @param[in] nSegment セグメント値
  */

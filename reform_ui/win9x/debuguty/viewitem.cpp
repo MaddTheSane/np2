@@ -17,6 +17,10 @@
 
 /**
  * インスタンス作成
+ * @param[in] nID ビュー ID
+ * @param[in] lpView ビューワ インスタンス
+ * @param[in] lpItem 基準となるアイテム
+ * @return インスタンス
  */
 CDebugUtyItem* CDebugUtyItem::New(UINT nID, CDebugUtyView* lpView, const CDebugUtyItem* lpItem)
 {
@@ -53,6 +57,8 @@ CDebugUtyItem* CDebugUtyItem::New(UINT nID, CDebugUtyView* lpView, const CDebugU
 
 /**
  * コンストラクタ
+ * @param[in] lpView ビューワ インスタンス
+ * @param[in] nID ビュー ID
  */
 CDebugUtyItem::CDebugUtyItem(CDebugUtyView* lpView, UINT nID)
 	: m_lpView(lpView)

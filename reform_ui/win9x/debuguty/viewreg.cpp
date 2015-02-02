@@ -13,6 +13,7 @@
 
 /**
  * コンストラクタ
+ * @param[in] lpView ビューワ インスタンス
  */
 CDebugUtyReg::CDebugUtyReg(CDebugUtyView* lpView)
 	: CDebugUtyItem(lpView, IDM_VIEWMODEREG)
@@ -28,6 +29,7 @@ CDebugUtyReg::~CDebugUtyReg()
 
 /**
  * 初期化
+ * @param[in] lpItem 基準となるアイテム
  */
 void CDebugUtyReg::Initialize(const CDebugUtyItem* lpItem)
 {
