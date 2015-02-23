@@ -25,9 +25,9 @@
 #define ROOTPATH_SIZE		(sizeof(ROOTPATH_NAME) - 1)
 
 static const char ROOTPATH[ROOTPATH_SIZE + 1] = ROOTPATH_NAME;
-static const HDRVDIR hdd_volume = {"_HOSTDRIVE_", 0, 0, 0, 0x08, {0}, {0}};
-static const HDRVDIR hdd_owner  = {".          ", 0, 0, 0, 0x10, {0}, {0}};
-static const HDRVDIR hdd_parent = {"..         ", 0, 0, 0, 0x10, {0}, {0}};
+static const HDRVDIR hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0, 0x08, {0}, {0}};
+static const HDRVDIR hdd_owner  = {{'.',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
+static const HDRVDIR hdd_parent = {{'.','.',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
 
 //	see int2159-BX0000
 enum {
@@ -435,7 +435,7 @@ const HDRVDIR	*di;
 			di = &hdd_parent;
 		}
 		else {
-			hdl = listarray_getitem(hostdrv.flist, pos - 2);
+			hdl = (HDRVLST)listarray_getitem(hostdrv.flist, pos - 2);
 			if (hdl == NULL) {
 				listarray_destroy(hostdrv.flist);
 				hostdrv.flist = NULL;
@@ -517,7 +517,7 @@ static void close_file(INTRST intrst) {
 	}
 	if (handle_count == 0) {
 		start_sector = LOADINTELWORD(sft.start_sector);
-		hdf = listarray_getitem(hostdrv.fhdl, start_sector);
+		hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, start_sector);
 		if (hdf) {
 			file_close((FILEH)hdf->hdl);
 			hdf->hdl = (long)FILEH_INVALID;
