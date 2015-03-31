@@ -182,6 +182,7 @@ void keystat_resetjoykey(void);
 
 void keystat_down(const UINT8 *key, REG8 keys, REG8 ref);
 void keystat_up(const UINT8 *key, REG8 keys, REG8 ref);
+void keystat_sync(REG8 keycode, REG8 ref, BOOL down);
 void keystat_resendstat(void);
 REG8 keystat_getjoy(void);
 REG8 keystat_getmouse(SINT16 *x, SINT16 *y);

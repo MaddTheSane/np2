@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "np2.h"
 #include "joymng.h"
+#include "keystat.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "winmm.lib")
@@ -87,6 +88,7 @@ REG8 joymng_getstat()
 		{
 			s_sFlag &= s_sJoyPad1ButtonBit[1];
 		}
+#if 0
 		if (ji.wButtons & JOY_BUTTON3)
 		{
 			s_sFlag &= s_sJoyPad1ButtonBit[2];
@@ -95,6 +97,18 @@ REG8 joymng_getstat()
 		{
 			s_sFlag &= s_sJoyPad1ButtonBit[3];
 		}
+#else
+		static const UINT8 s_key[2] = {0xff, 0xff};
+		for (int i = 0; i < 2; i++)
+		{
+			const UINT8 data = s_key[i];
+			if (data == 0xff)
+			{
+				continue;
+			}
+			keystat_sync(data, 0xf6, (ji.wButtons & (JOY_BUTTON3 << i)) ? TRUE : FALSE);
+		}
+#endif
 	}
 	return s_sFlag;
 }

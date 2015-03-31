@@ -383,6 +383,33 @@ void keystat_up(const UINT8 *key, REG8 keys, REG8 ref) {
 	}
 }
 
+/**
+ * sync key flags
+ * @param[in] keycode The keycode
+ * @param[in] ref ref ID
+ * @param[in] down The button states
+ */
+void keystat_sync(REG8 keycode, REG8 ref, BOOL down)
+{
+	keycode = keycode & 0x7f;
+	if (down)
+	{
+		if (keystat.ref[keycode] == NKEYREF_NC)
+		{
+			keyboard_send(keycode);
+			keystat.ref[keycode] = ref;
+		}
+	}
+	else
+	{
+		if (keystat.ref[keycode] == ref)
+		{
+			keyboard_send((REG8)(keycode | 0x80));
+			keystat.ref[keycode] = NKEYREF_NC;
+		}
+	}
+}
+
 void keystat_resendstat(void) {
 
 	REG8	i;
