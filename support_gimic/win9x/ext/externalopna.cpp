@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "externalopna.h"
 #include "c86ctl\c86ctlif.h"
+#include "romeo\juliet.h"
 
 CExternalOpna CExternalOpna::sm_instance;
 
@@ -25,12 +26,21 @@ CExternalOpna::CExternalOpna()
  */
 void CExternalOpna::Initialize()
 {
-	IExtendModule* pModule = new C86CtlIf;
+	IExtendModule* pModule = new CJuliet;
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
 		return;
 	}
+	delete pModule;
+
+	pModule = new C86CtlIf;
+	if (pModule->Initialize())
+	{
+		m_module = pModule;
+		return;
+	}
+	delete pModule;
 }
 
 void CExternalOpna::Deinitialize()

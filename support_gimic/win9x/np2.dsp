@@ -1433,6 +1433,22 @@ SOURCE=.\ext\c86ctl\c86ctlif.cpp
 SOURCE=.\ext\c86ctl\c86ctlif.h
 # End Source File
 # End Group
+# Begin Group "romeo"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\romeo\juliet.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\romeo\juliet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\romeo\romeo.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\ext\extendmodule.h
