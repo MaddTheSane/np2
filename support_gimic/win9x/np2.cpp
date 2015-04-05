@@ -58,7 +58,7 @@
 #include "dclock.h"
 #endif
 #if defined(SUPPORT_ROMEO)
-#include "ext\externalopna.h"
+#include "juliet.h"
 #endif
 
 #ifdef BETA_RELEASE
@@ -1702,7 +1702,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #if defined(SUPPORT_ROMEO)
 	if (np2oscfg.useromeo)
 	{
-		CExternalOpna::GetInstance()->Initialize();
+		CJuliet::GetInstance()->Initialize();
 	}
 #endif
 
@@ -1887,8 +1887,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #endif
 
 #if defined(SUPPORT_ROMEO)
-	CExternalOpna::GetInstance()->Reset();
-	CExternalOpna::GetInstance()->Deinitialize();
+	CJuliet::GetInstance()->Reset();
+	CJuliet::GetInstance()->Deinitialize();
 #endif
 	pccore_term();
 

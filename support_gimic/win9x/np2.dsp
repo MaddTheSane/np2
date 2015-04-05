@@ -1414,14 +1414,6 @@ SOURCE=.\DEBUGUTY\VIEWSEG.CPP
 SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Source File
 # End Group
-# Begin Group "ext"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\ext\extendmodule.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP
