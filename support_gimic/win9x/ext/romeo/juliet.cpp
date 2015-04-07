@@ -8,11 +8,6 @@
 #include <stddef.h>
 #include "romeo.h"
 
-#ifndef _countof
-//! countof
-#define _countof(x)		(sizeof((x)) / sizeof((x)[0]))
-#endif	// _countof
-
 //! DLL –¼
 #define	PCIDEBUG_DLL			TEXT("pcidebug.dll")
 
