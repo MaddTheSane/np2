@@ -1437,14 +1437,6 @@ SOURCE=.\misc\tickcounter.h
 
 SOURCE=.\misc\vc6macros.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\misc\WndBase.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\misc\WndBase.h
-# End Source File
 # End Group
 # Begin Source File
 

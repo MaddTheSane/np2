@@ -2068,10 +2068,6 @@
 						RelativePath=".\misc\tickcounter.cpp"
 						>
 					</File>
-					<File
-						RelativePath=".\misc\WndBase.cpp"
-						>
-					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -3000,10 +2996,6 @@
 					</File>
 					<File
 						RelativePath=".\misc\vc6macros.h"
-						>
-					</File>
-					<File
-						RelativePath=".\misc\WndBase.h"
 						>
 					</File>
 				</Filter>
