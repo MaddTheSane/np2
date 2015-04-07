@@ -1345,10 +1345,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.cpp"
 					>
 				</File>
@@ -1683,6 +1679,10 @@
 				<Filter
 					Name="misc"
 					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
 					<File
 						RelativePath=".\misc\WndBase.cpp"
 						>
@@ -2503,10 +2503,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.h"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.h"
 					>
 				</File>
@@ -2681,6 +2677,10 @@
 				<Filter
 					Name="misc"
 					>
+					<File
+						RelativePath=".\misc\extrom.h"
+						>
+					</File>
 					<File
 						RelativePath=".\misc\vc6macros.h"
 						>
