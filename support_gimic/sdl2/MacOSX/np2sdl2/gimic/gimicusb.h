@@ -6,8 +6,9 @@
 #pragma once
 
 #include "c86ctl.h"
-#include "threadbase.h"
 #include "usbdev.h"
+#include "misc/guard.h"
+#include "misc/threadbase.h"
 
 /**
  * @brief G.I.M.I.C USB アクセス クラス
@@ -56,13 +57,13 @@ private:
 		UINT8 cPadding;		/*!< パディング */
 	};
 
-	pthread_mutex_t m_usbGuard;		/*!< USBアクセス */
-	pthread_mutex_t m_queGuard;		/*!< キュー */
-	ChipType m_nChipType;			/*!< チップ タイプ */
-	size_t m_nQueIndex;				/*!< データ インデックス */
-	size_t m_nQueCount;				/*!< データ カウント */
-	FMDATA m_que[0x400];			/*!< キュー */
-	UINT8 m_sReg[0x200];			/*!< レジスタ */
+	CGuard m_usbGuard;		/*!< USBアクセス */
+	CGuard m_queGuard;		/*!< キュー */
+	ChipType m_nChipType;	/*!< チップ タイプ */
+	size_t m_nQueIndex;		/*!< データ インデックス */
+	size_t m_nQueCount;		/*!< データ カウント */
+	FMDATA m_que[0x400];	/*!< キュー */
+	UINT8 m_sReg[0x200];	/*!< レジスタ */
 
 	int Transaction(const void* lpOutput, size_t cbOutput, void* lpInput = NULL, size_t cbInput = 0);
 	int GetInfo(UINT8 cParam, Devinfo* pInfo);

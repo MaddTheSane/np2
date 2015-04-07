@@ -243,6 +243,7 @@
 		BACA7307195ACCE400784174 /* gimicusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gimicusb.h; sourceTree = "<group>"; };
 		BACA730A195ACD1200784174 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86ctl.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
 		BAF84B13195AA04F00183062 /* np2sdl2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = np2sdl2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAF84B16195AA04F00183062 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BAF84B19195AA04F00183062 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -663,6 +664,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BAE25E911AD3D92F00814B76 /* gimic */ = {
+			isa = PBXGroup;
+			children = (
+				BACA730A195ACD1200784174 /* c86ctl.h */,
+				BACA7306195ACCE400784174 /* gimicusb.cpp */,
+				BACA7307195ACCE400784174 /* gimicusb.h */,
+				BAAEA84A1963E34B00747635 /* usbdev.cpp */,
+				BAAEA84B1963E34B00747635 /* usbdev.h */,
+			);
+			path = gimic;
+			sourceTree = "<group>";
+		};
+		BAE25E921AD3D93D00814B76 /* misc */ = {
+			isa = PBXGroup;
+			children = (
+				BAE25E931AD3DB0F00814B76 /* guard.h */,
+				BAAEA8481963E34B00747635 /* threadbase.cpp */,
+				BAAEA8491963E34B00747635 /* threadbase.h */,
+			);
+			path = misc;
+			sourceTree = "<group>";
+		};
 		BAF84B0A195AA04F00183062 = {
 			isa = PBXGroup;
 			children = (
@@ -1169,15 +1192,10 @@
 		BAF84D0C195AA10500183062 /* np2sdl2 */ = {
 			isa = PBXGroup;
 			children = (
-				BAAEA8481963E34B00747635 /* threadbase.cpp */,
-				BAAEA8491963E34B00747635 /* threadbase.h */,
-				BAAEA84A1963E34B00747635 /* usbdev.cpp */,
-				BAAEA84B1963E34B00747635 /* usbdev.h */,
+				BAE25E911AD3D92F00814B76 /* gimic */,
+				BAE25E921AD3D93D00814B76 /* misc */,
 				BAF84B1D195AA04F00183062 /* Supporting Files */,
 				BACA7305195ACCE400784174 /* board118.cpp */,
-				BACA730A195ACD1200784174 /* c86ctl.h */,
-				BACA7306195ACCE400784174 /* gimicusb.cpp */,
-				BACA7307195ACCE400784174 /* gimicusb.h */,
 				BAF84D0D195AA10500183062 /* compiler.h */,
 				BAF84D0E195AA10500183062 /* compiler.pch */,
 				BAF84D0F195AA10500183062 /* main.m */,

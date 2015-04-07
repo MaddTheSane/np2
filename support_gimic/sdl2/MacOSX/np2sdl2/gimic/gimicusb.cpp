@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include "gimicusb.h"
 #include <algorithm>
-#include <pthread.h>
 
 //! countof macro
 #define _countof NELEMENTS
@@ -19,8 +18,6 @@ CGimicUSB::CGimicUSB()
 	, m_nQueIndex(0)
 	, m_nQueCount(0)
 {
-	::pthread_mutex_init(&m_usbGuard, NULL);
-	::pthread_mutex_init(&m_queGuard, NULL);
 	memset(m_sReg, 0, sizeof(m_sReg));
 }
 
@@ -29,8 +26,6 @@ CGimicUSB::CGimicUSB()
  */
 CGimicUSB::~CGimicUSB()
 {
-	::pthread_mutex_destroy(&m_usbGuard);
-	::pthread_mutex_destroy(&m_queGuard);
 }
 
 /**
@@ -118,13 +113,13 @@ int CGimicUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput,
 	::memcpy(sBuffer, lpOutput, cbOutput);
 	::memset(sBuffer + cbOutput, 0xff, sizeof(sBuffer) - cbOutput);
 
-	pthread_mutex_lock(&m_usbGuard);
+	m_usbGuard.Enter();
 	int nResult = WriteBulk(sBuffer, sizeof(sBuffer));
 	if ((nResult == sizeof(sBuffer)) && (cbInput > 0))
 	{
-		nResult =  ReadBulk(sBuffer, sizeof(sBuffer));
+		nResult = ReadBulk(sBuffer, sizeof(sBuffer));
 	}
-	pthread_mutex_unlock(&m_usbGuard);
+	m_usbGuard.Leave();
 
 	if (nResult != sizeof(sBuffer))
 	{
@@ -335,10 +330,10 @@ int CGimicUSB::GetModuleType(ChipType* pnType)
  */
 int CGimicUSB::Reset()
 {
-	pthread_mutex_lock(&m_queGuard);
+	m_queGuard.Enter();
 	m_nQueIndex = 0;
 	m_nQueCount = 0;
-	pthread_mutex_unlock(&m_queGuard);
+	m_queGuard.Leave();
 
 	static const UINT8 sData[2] = {0xfd, 0x82};
 	return Transaction(sData, sizeof(sData));
@@ -387,12 +382,12 @@ void CGimicUSB::Out(UINT nAddr, UINT8 cData)
 	}
 	m_sReg[nAddr] = cData;
 
-	pthread_mutex_lock(&m_queGuard);
+	m_queGuard.Enter();
 	while (m_nQueCount >= _countof(m_que))
 	{
-		pthread_mutex_unlock(&m_queGuard);
+		m_queGuard.Leave();
 		usleep(1000);
-		pthread_mutex_lock(&m_queGuard);
+		m_queGuard.Enter();
 	}
 
 	FMDATA& data = m_que[(m_nQueIndex + m_nQueCount) % _countof(m_que)];
@@ -400,7 +395,7 @@ void CGimicUSB::Out(UINT nAddr, UINT8 cData)
 	data.cData = cData;
 	m_nQueCount++;
 
-	pthread_mutex_unlock(&m_queGuard);
+	m_queGuard.Leave();
 }
 
 /**
@@ -480,7 +475,7 @@ bool CGimicUSB::Task()
 	UINT8 sData[64];
 	size_t nIndex = 0;
 
-	pthread_mutex_lock(&m_queGuard);
+	m_queGuard.Enter();
 	while (m_nQueCount)
 	{
 		const FMDATA& data = m_que[m_nQueIndex];
@@ -510,7 +505,7 @@ bool CGimicUSB::Task()
 		m_nQueIndex = (m_nQueIndex + 1) % _countof(m_que);
 		m_nQueCount--;
 	}
-	pthread_mutex_unlock(&m_queGuard);
+	m_queGuard.Leave();
 
 	// 書き込み～
 	if (nIndex > 0)

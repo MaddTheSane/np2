@@ -7,8 +7,8 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
-#include "gimicusb.h"
 #include	"keydisp.h"
+#include "gimic/gimicusb.h"
 
 /**! G.I.M.I.C インスタンス */
 static CGimicUSB* s_gimic = NULL;
