@@ -11,6 +11,7 @@
 		BAAEA84D1963E34B00747635 /* usbdev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA84A1963E34B00747635 /* usbdev.cpp */; };
 		BACA7308195ACCE400784174 /* board118.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BACA7305195ACCE400784174 /* board118.cpp */; };
 		BACA7309195ACCE400784174 /* gimicusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BACA7306195ACCE400784174 /* gimicusb.cpp */; };
+		BAE25E961AD3F72700814B76 /* c86boxusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE25E941AD3F72700814B76 /* c86boxusb.cpp */; };
 		BAF84B17195AA04F00183062 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84B16195AA04F00183062 /* Cocoa.framework */; };
 		BAF84B21195AA04F00183062 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B1F195AA04F00183062 /* InfoPlist.strings */; };
 		BAF84B27195AA04F00183062 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B25195AA04F00183062 /* Credits.rtf */; };
@@ -244,6 +245,8 @@
 		BACA730A195ACD1200784174 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86ctl.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
+		BAE25E941AD3F72700814B76 /* c86boxusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = c86boxusb.cpp; sourceTree = "<group>"; };
+		BAE25E951AD3F72700814B76 /* c86boxusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86boxusb.h; sourceTree = "<group>"; };
 		BAF84B13195AA04F00183062 /* np2sdl2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = np2sdl2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAF84B16195AA04F00183062 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BAF84B19195AA04F00183062 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -667,6 +670,8 @@
 		BAE25E911AD3D92F00814B76 /* gimic */ = {
 			isa = PBXGroup;
 			children = (
+				BAE25E941AD3F72700814B76 /* c86boxusb.cpp */,
+				BAE25E951AD3F72700814B76 /* c86boxusb.h */,
 				BACA730A195ACD1200784174 /* c86ctl.h */,
 				BACA7306195ACCE400784174 /* gimicusb.cpp */,
 				BACA7307195ACCE400784174 /* gimicusb.h */,
@@ -1586,6 +1591,7 @@
 				BAF84D9A195AA10500183062 /* menures.c in Sources */,
 				BAF84E2B195AA10500183062 /* sysmenu.c in Sources */,
 				BAF84E3F195AA10500183062 /* scrnbmp.c in Sources */,
+				BAE25E961AD3F72700814B76 /* c86boxusb.cpp in Sources */,
 				BAF84DD2195AA10500183062 /* i286c_0f.c in Sources */,
 				BAF84D7E195AA10500183062 /* ucs2sjis.c in Sources */,
 				BAF84E0F195AA10500183062 /* nevent.c in Sources */,

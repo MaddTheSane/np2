@@ -13,14 +13,13 @@
 /**
  * @brief G.I.M.I.C USB アクセス クラス
  */
-class CGimicUSB : protected CUsbDev, protected CThreadBase
+class CGimicUSB : public IC86RealChip, protected CThreadBase
 {
 public:
 	CGimicUSB();
 	~CGimicUSB();
-	bool Initialize();
-	void Deinitialize();
-	bool IsEnabled() const;
+	virtual int Initialize();
+	virtual int Deinitialize();
 
 	// IGimic
 	int SetSSGVolume(UINT8 cVolume);
@@ -35,13 +34,16 @@ public:
 	int GetModuleType(ChipType* pnType);
 
 	// IRealChip
-	int Reset();
-	void Out(UINT nAddr, UINT8 cData);
-	UINT8 In(UINT nAddr);
+	virtual int Reset();
+	virtual void Out(UINT nAddr, UINT8 cData);
+	virtual UINT8 In(UINT nAddr);
 
 	// IRealChip2
-	int GetChipStatus(UINT nAddr, UINT8* pcStatus);
-	void DirectOut(UINT nAddr, UINT8 cData);
+	virtual int GetChipStatus(UINT nAddr, UINT8* pcStatus);
+	virtual void DirectOut(UINT nAddr, UINT8 cData);
+
+	// IRealChip3
+	virtual int GetChipType(ChipType* pnType);
 
 protected:
 	virtual bool Task();
@@ -57,6 +59,7 @@ private:
 		UINT8 cPadding;		/*!< パディング */
 	};
 
+	CUsbDev m_usb;			/*!< USB */
 	CGuard m_usbGuard;		/*!< USBアクセス */
 	CGuard m_queGuard;		/*!< キュー */
 	ChipType m_nChipType;	/*!< チップ タイプ */
@@ -70,13 +73,3 @@ private:
 	static void TailZeroFill(char* lpBuffer, size_t cbBuffer);
 	UINT GetChipAddr(UINT nAddr) const;
 };
-
-/**
- * G.I.M.I.Cは有効?
- * @retval true 有効
- * @retval false 無効
- */
-inline bool CGimicUSB::IsEnabled() const
-{
-	return IsOpened();
-}

@@ -320,6 +320,41 @@ void CUsbDev::Close()
 }
 
 /**
+ * コントロール
+ * @param[in] nType タイプ
+ * @param[in] nRequest リクエスト
+ * @param[in] nValue 値
+ * @param[in] nIndex インデックス
+ * @param[out] lpBuffer バッファ
+ * @param[in] cbBuffer バッファ長
+ * @return サイズ
+ */
+int CUsbDev::CtrlXfer(int nType, int nRequest, int nValue, int nIndex, void* lpBuffer, size_t cbBuffer)
+{
+	if (m_interface == NULL)
+	{
+		return -1;
+	}
+
+	IOUSBDevRequest req;
+	req.bmRequestType = nType;
+	req.bRequest = nRequest;
+	req.wValue = nValue;
+	req.wIndex = nIndex;
+	req.wLength = cbBuffer;
+	req.pData = lpBuffer;
+	req.wLenDone = 0;
+
+	IOReturn kr = (*m_interface)->ControlRequest(m_interface, 0, &req);
+	if (kr != kIOReturnSuccess)
+	{
+		::printf("Unable to perform control request (%08x)\n", kr);
+		return -1;
+	}
+	return static_cast<int>(req.wLenDone);
+}
+
+/**
  * データ送信
  * @param[in] lpBuffer バッファ
  * @param[in] cbBuffer バッファ長

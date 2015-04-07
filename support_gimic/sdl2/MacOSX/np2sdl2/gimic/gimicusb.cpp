@@ -27,14 +27,13 @@ CGimicUSB::~CGimicUSB()
 
 /**
  * 初期化
- * @retval true 成功
- * @retval false 失敗
+ * @return C86CTL_ERR
  */
-bool CGimicUSB::Initialize()
+int CGimicUSB::Initialize()
 {
-	if (!Open(0x16c0, 0x05e5))
+	if (!m_usb.Open(0x16c0, 0x05e5))
 	{
-		return false;
+		return C86CTL_ERR_NODEVICE;
 	}
 
 	// Query G.I.M.I.C module info.
@@ -42,8 +41,8 @@ bool CGimicUSB::Initialize()
 	::memset(&info, 0, sizeof(info));
 	if (GetModuleInfo(&info) != 0)
 	{
-		Close();
-		return false;
+		m_usb.Close();
+		return C86CTL_ERR_NODEVICE;
 	}
 
 	printf("Found G.I.M.I.C!\n");
@@ -71,19 +70,22 @@ bool CGimicUSB::Initialize()
 	m_nQueIndex = 0;
 	m_nQueCount = 0;
 	Start();
-	return true;
+	return C86CTL_ERR_NONE;
 }
 
 /**
  * 解放
+ * @return C86CTL_ERR
  */
-void CGimicUSB::Deinitialize()
+int CGimicUSB::Deinitialize()
 {
 	Stop();
-	Close();
+	m_usb.Close();
 
 	m_nChipType = CHIP_UNKNOWN;
 	memset(m_sReg, 0, sizeof(m_sReg));
+
+	return C86CTL_ERR_NONE;
 }
 
 /**
@@ -96,7 +98,7 @@ void CGimicUSB::Deinitialize()
  */
 int CGimicUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput, size_t cbInput)
 {
-	if (!IsOpened())
+	if (!m_usb.IsOpened())
 	{
 		return C86CTL_ERR_NODEVICE;
 	}
@@ -111,10 +113,10 @@ int CGimicUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput,
 	::memset(sBuffer + cbOutput, 0xff, sizeof(sBuffer) - cbOutput);
 
 	m_usbGuard.Enter();
-	int nResult = WriteBulk(sBuffer, sizeof(sBuffer));
+	int nResult = m_usb.WriteBulk(sBuffer, sizeof(sBuffer));
 	if ((nResult == sizeof(sBuffer)) && (cbInput > 0))
 	{
-		nResult = ReadBulk(sBuffer, sizeof(sBuffer));
+		nResult = m_usb.ReadBulk(sBuffer, sizeof(sBuffer));
 	}
 	m_usbGuard.Leave();
 
@@ -459,6 +461,20 @@ void CGimicUSB::DirectOut(UINT nAddr, UINT8 cData)
 		sData[2] = cData;
 		Transaction(sData, sizeof(sData));
 	}
+}
+
+/**
+ * チップ タイプを得る
+ * @param[out] pnType タイプ
+ * @return C86CTL_ERR
+ */
+int CGimicUSB::GetChipType(ChipType* pnType)
+{
+	if (pnType != NULL)
+	{
+		*pnType = m_nChipType;
+	}
+	return C86CTL_ERR_NONE;
 }
 
 /**
