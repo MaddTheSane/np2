@@ -1687,10 +1687,6 @@
 						RelativePath=".\misc\WndBase.cpp"
 						>
 					</File>
-					<File
-						RelativePath=".\misc\WndBase.h"
-						>
-					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -2607,10 +2603,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\vc6macros.h"
-					>
-				</File>
-				<File
 					RelativePath=".\win32sub.h"
 					>
 				</File>
@@ -2683,6 +2675,18 @@
 					>
 					<File
 						RelativePath=".\x86\cputype.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\vc6macros.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndBase.h"
 						>
 					</File>
 				</Filter>
