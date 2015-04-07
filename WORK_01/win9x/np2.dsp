@@ -1323,7 +1323,7 @@ SOURCE=..\TRAP\INTTRAP.C
 SOURCE=..\TRAP\STEPTRAP.C
 # End Source File
 # End Group
-# Begin Group "Win9x"
+# Begin Group "win9x"
 
 # PROP Default_Filter ""
 # Begin Group "dialog"
@@ -1424,6 +1424,14 @@ SOURCE=.\misc\extrom.cpp
 # Begin Source File
 
 SOURCE=.\misc\extrom.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.h
 # End Source File
 # Begin Source File
 
@@ -1704,10 +1712,6 @@ SOURCE=.\SYSMNG.CPP
 # Begin Source File
 
 SOURCE=.\TASKMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\tickcounter.cpp
 # End Source File
 # Begin Source File
 
