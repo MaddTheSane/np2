@@ -1311,6 +1311,30 @@ SOURCE=.\ext\externalopna.cpp
 SOURCE=.\ext\externalopna.h
 # End Source File
 # End Group
+# Begin Group "misc"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\extrom.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\extrom.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\vc6macros.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\BOARD118.CPP
@@ -1479,10 +1503,6 @@ SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\EXTROMIO.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\FONTMNG.CPP
 # End Source File
 # Begin Source File
@@ -1544,10 +1564,6 @@ SOURCE=.\SYSMNG.CPP
 # Begin Source File
 
 SOURCE=.\TASKMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\tickcounter.cpp
 # End Source File
 # Begin Source File
 

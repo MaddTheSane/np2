@@ -1336,10 +1336,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.cpp"
 					>
 				</File>
@@ -1401,10 +1397,6 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\tickcounter.cpp"
 					>
 				</File>
 				<File
@@ -1690,6 +1682,18 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -2506,10 +2510,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.h"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.h"
 					>
 				</File>
@@ -2579,10 +2579,6 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\tickcounter.h"
 					>
 				</File>
 				<File
@@ -2708,6 +2704,22 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\vc6macros.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

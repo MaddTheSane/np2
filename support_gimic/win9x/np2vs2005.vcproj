@@ -759,6 +759,26 @@
 				Name="i286c"
 				>
 				<File
+					RelativePath="..\i286c\cpumem.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\i286c\i286c.c"
 					>
 					<FileConfiguration
@@ -920,26 +940,6 @@
 				</File>
 				<File
 					RelativePath="..\i286c\i286c_sf.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\memory.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1699,10 +1699,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.cpp"
 					>
 				</File>
@@ -1764,10 +1760,6 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\tickcounter.cpp"
 					>
 				</File>
 				<File
@@ -2093,6 +2085,18 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -2841,10 +2845,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.h"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.h"
 					>
 				</File>
@@ -2914,10 +2914,6 @@
 				</File>
 				<File
 					RelativePath=".\taskmng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\tickcounter.h"
 					>
 				</File>
 				<File
@@ -3043,6 +3039,22 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\vc6macros.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
