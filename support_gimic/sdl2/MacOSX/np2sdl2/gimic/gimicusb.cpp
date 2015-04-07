@@ -7,9 +7,6 @@
 #include "gimicusb.h"
 #include <algorithm>
 
-//! countof macro
-#define _countof NELEMENTS
-
 /**
  * コンストラクタ
  */

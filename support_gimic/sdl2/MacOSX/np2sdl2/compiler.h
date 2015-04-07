@@ -111,3 +111,6 @@ typedef	unsigned char	BYTE;
 #define SUPPORT_ZLIB
 
 #define	SCREEN_BPP		16
+
+//! countof macro
+#define _countof(a)		(sizeof(a) / sizeof((a)[0]))
