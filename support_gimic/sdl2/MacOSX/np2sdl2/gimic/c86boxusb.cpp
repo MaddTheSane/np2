@@ -137,7 +137,7 @@ int C86BoxUSB::Initialize()
 
 		printf("Found %s in C86BOX-Slot#%c / chips: %d\n", GetBoardName(static_cast<CBUS_BOARD_TYPE>(info.type)), 'A' + i, info.nchips);
 
-		for (UINT j = 0; j < info.nchips; i++)
+		for (UINT j = 0; j < info.nchips; j++)
 		{
 			ChipType type = static_cast<ChipType>(info.chiptype[j] & 0xffff);
 			if ((type == CHIP_OPNA) || (type == CHIP_OPN3L))
