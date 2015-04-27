@@ -1699,10 +1699,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.cpp"
 					>
 				</File>
@@ -2068,6 +2064,18 @@
 								Name="NASM"
 							/>
 						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
+						>
 					</File>
 				</Filter>
 			</Filter>
@@ -2817,10 +2825,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.h"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.h"
 					>
 				</File>
@@ -2985,6 +2989,22 @@
 					>
 					<File
 						RelativePath=".\x86\cputype.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\vc6macros.h"
 						>
 					</File>
 				</Filter>

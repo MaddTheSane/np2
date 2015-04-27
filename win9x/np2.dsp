@@ -1323,7 +1323,7 @@ SOURCE=..\TRAP\INTTRAP.C
 SOURCE=..\TRAP\STEPTRAP.C
 # End Source File
 # End Group
-# Begin Group "Win9x"
+# Begin Group "win9x"
 
 # PROP Default_Filter ""
 # Begin Group "dialog"
@@ -1414,6 +1414,30 @@ SOURCE=.\DEBUGUTY\VIEWSEG.CPP
 SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Source File
 # End Group
+# Begin Group "misc"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\extrom.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\extrom.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\vc6macros.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP
@@ -1433,33 +1457,7 @@ SOURCE=.\COMMNG.CPP
 # Begin Source File
 
 SOURCE=.\COMPILER.CPP
-
-!IF  "$(CFG)" == "np2 - Win32 Release"
-
 # ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Release NT"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 WaveRec"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trap"
-
-# ADD CPP /Yc"compiler.h"
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
-
-# ADD CPP /Yc"compiler.h"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -1630,10 +1628,6 @@ SOURCE=.\DD2.CPP
 # Begin Source File
 
 SOURCE=.\DOSIO.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\EXTROMIO.CPP
 # End Source File
 # Begin Source File
 

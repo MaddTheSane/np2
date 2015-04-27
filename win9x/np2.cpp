@@ -18,7 +18,6 @@
 #include "np2.h"
 #include "np2arg.h"
 #include "dosio.h"
-#include "extromio.h"
 #include "commng.h"
 #include "joymng.h"
 #include "mousemng.h"
@@ -1693,8 +1692,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	if (soundmng_initialize() == SUCCESS) {
-		soundmng_pcmload(SOUND_PCMSEEK, OEMTEXT("SEEKWAV"), EXTROMIO_RES);
-		soundmng_pcmload(SOUND_PCMSEEK1, OEMTEXT("SEEK1WAV"), EXTROMIO_RES);
+		soundmng_pcmload(SOUND_PCMSEEK, TEXT("SEEKWAV"));
+		soundmng_pcmload(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
 		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}

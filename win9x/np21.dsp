@@ -338,11 +338,11 @@ SOURCE=..\I386C\ia32\instructions\flag_ctrl.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\ia32\instructions\fpu.c
+SOURCE=..\I386C\ia32\instructions\fpu\fpdummy.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\ia32\instructions\fpu\fpdummy.c
+SOURCE=..\I386C\ia32\instructions\fpu.c
 # End Source File
 # Begin Source File
 
@@ -1263,6 +1263,30 @@ SOURCE=.\DEBUGUTY\VIEWSEG.CPP
 SOURCE=.\DEBUGUTY\VIEWSND.CPP
 # End Source File
 # End Group
+# Begin Group "misc"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\extrom.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\extrom.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tickcounter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\vc6macros.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\BOARD118.CPP
@@ -1428,10 +1452,6 @@ SOURCE=.\DD2.CPP
 # Begin Source File
 
 SOURCE=.\DOSIO.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\EXTROMIO.CPP
 # End Source File
 # Begin Source File
 
