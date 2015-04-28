@@ -8,10 +8,11 @@
 #include	"fmboard.h"
 #include	"s98.h"
 #include	"keydisp.h"
+#include "gimic/c86boxusb.h"
 #include "gimic/gimicusb.h"
 
 /**! G.I.M.I.C インスタンス */
-static CGimicUSB* s_gimic = NULL;
+static IC86RealChip* s_gimic = NULL;
 
 // ROMEO対応版 PC-9801-118
 
@@ -168,7 +169,7 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 // ---- with romeo
 
-static void RestoreRomeo(CGimicUSB* gimic)
+static void RestoreRomeo(IC86RealChip* gimic)
 {
 	const UINT8* data = opn.reg;
 	for (UINT i = 0x30; i < 0xa0; i++)
@@ -322,25 +323,42 @@ void board118_reset(const NP2CFG *pConfig) {
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 
-	CGimicUSB* gimic = s_gimic;
+	IC86RealChip* gimic = s_gimic;
 	if (gimic != NULL)
 	{
-		gimic->Reset();
+		if (gimic->Reset() != C86CTL_ERR_NONE)
+		{
+			gimic->Deinitialize();
+			delete gimic;
+			gimic = NULL;
+		}
 	}
+	s_gimic = gimic;
 }
 
 void board118_bind(void)
 {
-	CGimicUSB* gimic = s_gimic;
-	if ((gimic != NULL) && (!gimic->IsEnabled()))
+	IC86RealChip* gimic = s_gimic;
+
+	if (gimic == NULL)
 	{
-		delete gimic;
-		gimic = NULL;
+		// G.I.M.I.C オープン
+		gimic = new CGimicUSB();
+		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		{
+			gimic->Reset();
+		}
+		else
+		{
+			delete gimic;
+			gimic = NULL;
+		}
 	}
 	if (gimic == NULL)
 	{
-		gimic = new CGimicUSB();
-		if (gimic->Initialize())
+		// C86BOX オープン
+		gimic = new C86BoxUSB();
+		if (gimic->Initialize() == C86CTL_ERR_NONE)
 		{
 			gimic->Reset();
 		}
@@ -384,7 +402,7 @@ void board118_bind(void)
  */
 extern "C" void board118_deinitialize(void)
 {
-	CGimicUSB* gimic = s_gimic;
+	IC86RealChip* gimic = s_gimic;
 	s_gimic = NULL;
 
 	if (gimic)
