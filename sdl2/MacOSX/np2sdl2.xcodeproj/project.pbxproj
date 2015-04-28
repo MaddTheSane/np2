@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA8481963E34B00747635 /* threadbase.cpp */; };
+		BAAEA84D1963E34B00747635 /* usbdev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA84A1963E34B00747635 /* usbdev.cpp */; };
+		BACA7308195ACCE400784174 /* board118.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BACA7305195ACCE400784174 /* board118.cpp */; };
+		BACA7309195ACCE400784174 /* gimicusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BACA7306195ACCE400784174 /* gimicusb.cpp */; };
 		BAF84B17195AA04F00183062 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84B16195AA04F00183062 /* Cocoa.framework */; };
 		BAF84B21195AA04F00183062 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B1F195AA04F00183062 /* InfoPlist.strings */; };
 		BAF84B27195AA04F00183062 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B25195AA04F00183062 /* Credits.rtf */; };
@@ -25,7 +29,6 @@
 		BAF84D60195AA10500183062 /* calendar.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B61195AA10400183062 /* calendar.c */; };
 		BAF84D61195AA10500183062 /* amd98.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B64195AA10400183062 /* amd98.c */; };
 		BAF84D62195AA10500183062 /* atapicmd.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B66195AA10400183062 /* atapicmd.c */; };
-		BAF84D63195AA10500183062 /* board118.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B68195AA10400183062 /* board118.c */; };
 		BAF84D64195AA10500183062 /* board14.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B6A195AA10400183062 /* board14.c */; };
 		BAF84D65195AA10500183062 /* board26k.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B6C195AA10400183062 /* board26k.c */; };
 		BAF84D66195AA10500183062 /* board86.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84B6E195AA10400183062 /* board86.c */; };
@@ -120,8 +123,6 @@
 		BAF84DD9195AA10500183062 /* i286c_sf.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C31195AA10400183062 /* i286c_sf.c */; };
 		BAF84DDB195AA10500183062 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C33195AA10400183062 /* memory.c */; };
 		BAF84DDC195AA10500183062 /* v30patch.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C35195AA10400183062 /* v30patch.c */; };
-		BAF84DDD195AA10500183062 /* cpucore.inc in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C38195AA10400183062 /* cpucore.inc */; };
-		BAF84DDE195AA10500183062 /* cpucore.inc in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C3A195AA10400183062 /* cpucore.inc */; };
 		BAF84DDF195AA10500183062 /* artic.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C3C195AA10400183062 /* artic.c */; };
 		BAF84DE0195AA10500183062 /* cgrom.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C3E195AA10400183062 /* cgrom.c */; };
 		BAF84DE1195AA10500183062 /* cpuio.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C40195AA10400183062 /* cpuio.c */; };
@@ -233,6 +234,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BAAEA8481963E34B00747635 /* threadbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threadbase.cpp; sourceTree = "<group>"; };
+		BAAEA8491963E34B00747635 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
+		BAAEA84A1963E34B00747635 /* usbdev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usbdev.cpp; sourceTree = "<group>"; };
+		BAAEA84B1963E34B00747635 /* usbdev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usbdev.h; sourceTree = "<group>"; };
+		BACA7305195ACCE400784174 /* board118.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = board118.cpp; sourceTree = "<group>"; };
+		BACA7306195ACCE400784174 /* gimicusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gimicusb.cpp; sourceTree = "<group>"; };
+		BACA7307195ACCE400784174 /* gimicusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gimicusb.h; sourceTree = "<group>"; };
+		BACA730A195ACD1200784174 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86ctl.h; sourceTree = "<group>"; };
+		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
 		BAF84B13195AA04F00183062 /* np2sdl2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = np2sdl2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAF84B16195AA04F00183062 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BAF84B19195AA04F00183062 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -265,7 +276,6 @@
 		BAF84B65195AA10400183062 /* amd98.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = amd98.h; sourceTree = "<group>"; };
 		BAF84B66195AA10400183062 /* atapicmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atapicmd.c; sourceTree = "<group>"; };
 		BAF84B67195AA10400183062 /* atapicmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atapicmd.h; sourceTree = "<group>"; };
-		BAF84B68195AA10400183062 /* board118.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = board118.c; sourceTree = "<group>"; };
 		BAF84B69195AA10400183062 /* board118.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = board118.h; sourceTree = "<group>"; };
 		BAF84B6A195AA10400183062 /* board14.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = board14.c; sourceTree = "<group>"; };
 		BAF84B6B195AA10400183062 /* board14.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = board14.h; sourceTree = "<group>"; };
@@ -436,8 +446,6 @@
 		BAF84C34195AA10400183062 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		BAF84C35195AA10400183062 /* v30patch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = v30patch.c; sourceTree = "<group>"; };
 		BAF84C36195AA10400183062 /* v30patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = v30patch.h; sourceTree = "<group>"; };
-		BAF84C38195AA10400183062 /* cpucore.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = cpucore.inc; sourceTree = "<group>"; };
-		BAF84C3A195AA10400183062 /* cpucore.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = cpucore.inc; sourceTree = "<group>"; };
 		BAF84C3C195AA10400183062 /* artic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = artic.c; sourceTree = "<group>"; };
 		BAF84C3D195AA10400183062 /* artic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = artic.h; sourceTree = "<group>"; };
 		BAF84C3E195AA10400183062 /* cgrom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cgrom.c; sourceTree = "<group>"; };
@@ -656,6 +664,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BAE25E911AD3D92F00814B76 /* gimic */ = {
+			isa = PBXGroup;
+			children = (
+				BACA730A195ACD1200784174 /* c86ctl.h */,
+				BACA7306195ACCE400784174 /* gimicusb.cpp */,
+				BACA7307195ACCE400784174 /* gimicusb.h */,
+				BAAEA84A1963E34B00747635 /* usbdev.cpp */,
+				BAAEA84B1963E34B00747635 /* usbdev.h */,
+			);
+			path = gimic;
+			sourceTree = "<group>";
+		};
+		BAE25E921AD3D93D00814B76 /* misc */ = {
+			isa = PBXGroup;
+			children = (
+				BAE25E931AD3DB0F00814B76 /* guard.h */,
+				BAAEA8481963E34B00747635 /* threadbase.cpp */,
+				BAAEA8491963E34B00747635 /* threadbase.h */,
+			);
+			path = misc;
+			sourceTree = "<group>";
+		};
 		BAF84B0A195AA04F00183062 = {
 			isa = PBXGroup;
 			children = (
@@ -676,6 +706,7 @@
 		BAF84B15195AA04F00183062 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BACA730B195ACE5F00784174 /* IOKit.framework */,
 				BAF84EA6195AA40E00183062 /* libz.1.2.5.dylib */,
 				BAF84E4A195AA35E00183062 /* SDL2.framework */,
 				BAF84B16195AA04F00183062 /* Cocoa.framework */,
@@ -775,7 +806,6 @@
 				BAF84B65195AA10400183062 /* amd98.h */,
 				BAF84B66195AA10400183062 /* atapicmd.c */,
 				BAF84B67195AA10400183062 /* atapicmd.h */,
-				BAF84B68195AA10400183062 /* board118.c */,
 				BAF84B69195AA10400183062 /* board118.h */,
 				BAF84B6A195AA10400183062 /* board14.c */,
 				BAF84B6B195AA10400183062 /* board14.h */,
@@ -1008,26 +1038,8 @@
 				BAF84C34195AA10400183062 /* memory.h */,
 				BAF84C35195AA10400183062 /* v30patch.c */,
 				BAF84C36195AA10400183062 /* v30patch.h */,
-				BAF84C37195AA10400183062 /* x64 */,
-				BAF84C39195AA10400183062 /* x86 */,
 			);
 			path = i286c;
-			sourceTree = "<group>";
-		};
-		BAF84C37195AA10400183062 /* x64 */ = {
-			isa = PBXGroup;
-			children = (
-				BAF84C38195AA10400183062 /* cpucore.inc */,
-			);
-			path = x64;
-			sourceTree = "<group>";
-		};
-		BAF84C39195AA10400183062 /* x86 */ = {
-			isa = PBXGroup;
-			children = (
-				BAF84C3A195AA10400183062 /* cpucore.inc */,
-			);
-			path = x86;
 			sourceTree = "<group>";
 		};
 		BAF84C3B195AA10400183062 /* io */ = {
@@ -1180,7 +1192,10 @@
 		BAF84D0C195AA10500183062 /* np2sdl2 */ = {
 			isa = PBXGroup;
 			children = (
+				BAE25E911AD3D92F00814B76 /* gimic */,
+				BAE25E921AD3D93D00814B76 /* misc */,
 				BAF84B1D195AA04F00183062 /* Supporting Files */,
+				BACA7305195ACCE400784174 /* board118.cpp */,
 				BAF84D0D195AA10500183062 /* compiler.h */,
 				BAF84D0E195AA10500183062 /* compiler.pch */,
 				BAF84D0F195AA10500183062 /* main.m */,
@@ -1397,6 +1412,7 @@
 				BAF84D94195AA10500183062 /* menustr.c in Sources */,
 				BAF84E95195AA38300183062 /* opngeng.c in Sources */,
 				BAF84E8A195AA38300183062 /* cs4231g.c in Sources */,
+				BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */,
 				BAF84E40195AA10500183062 /* scrndraw.c in Sources */,
 				BAF84E8F195AA38300183062 /* getsmix.c in Sources */,
 				BAF84D57195AA10500183062 /* bios1a.c in Sources */,
@@ -1454,6 +1470,7 @@
 				BAF84E93195AA38300183062 /* getwave.c in Sources */,
 				BAF84D88195AA10500183062 /* parts.c in Sources */,
 				BAF84DD3195AA10500183062 /* i286c_8x.c in Sources */,
+				BACA7308195ACCE400784174 /* board118.cpp in Sources */,
 				BAF84D9C195AA10500183062 /* menuvram.c in Sources */,
 				BAF84E0A195AA10500183062 /* memtram.c in Sources */,
 				BAF84E3C195AA10500183062 /* maketext.c in Sources */,
@@ -1488,7 +1505,6 @@
 				BAF84E09195AA10500183062 /* memepp.c in Sources */,
 				BAF84DF6195AA10500183062 /* pit.c in Sources */,
 				BAF84E08195AA10500183062 /* memems.c in Sources */,
-				BAF84D63195AA10500183062 /* board118.c in Sources */,
 				BAF84D61195AA10500183062 /* amd98.c in Sources */,
 				BAF84D95195AA10500183062 /* menubase.c in Sources */,
 				BAF84DC2195AA10500183062 /* np2info.c in Sources */,
@@ -1498,6 +1514,7 @@
 				BAF84E46195AA10500183062 /* vram.c in Sources */,
 				BAF84DAA195AA10500183062 /* sxsihdd.c in Sources */,
 				BAF84E90195AA38300183062 /* getsnd.c in Sources */,
+				BAAEA84D1963E34B00747635 /* usbdev.cpp in Sources */,
 				BAF84DF7195AA10500183062 /* printif.c in Sources */,
 				BAF84E14195AA10500183062 /* dosio.c in Sources */,
 				BAF84D8A195AA10500183062 /* rect.c in Sources */,
@@ -1525,6 +1542,7 @@
 				BAF84D79195AA10500183062 /* sjiseuc.c in Sources */,
 				BAF84E03195AA10500183062 /* lio.c in Sources */,
 				BAF84DEC195AA10500183062 /* gdc_pset.c in Sources */,
+				BACA7309195ACCE400784174 /* gimicusb.cpp in Sources */,
 				BAF84E0B195AA10500183062 /* memvga.c in Sources */,
 				BAF84DE4195AA10500183062 /* dmac.c in Sources */,
 				BAF84E38195AA10500183062 /* dispsync.c in Sources */,
@@ -1538,7 +1556,6 @@
 				BAF84E0C195AA10500183062 /* memvram.c in Sources */,
 				BAF84DA5195AA10500183062 /* fddfile.c in Sources */,
 				BAF84D99195AA10500183062 /* menumbox.c in Sources */,
-				BAF84DDE195AA10500183062 /* cpucore.inc in Sources */,
 				BAF84E23195AA10500183062 /* joymng.c in Sources */,
 				BAF84E29195AA10500183062 /* sdlkbd.c in Sources */,
 				BAF84DDB195AA10500183062 /* memory.c in Sources */,
@@ -1559,7 +1576,6 @@
 				BAF84E2E195AA10500183062 /* sysmng.c in Sources */,
 				BAF84DB4195AA10500183062 /* fontx68k.c in Sources */,
 				BAF84DE3195AA10500183062 /* dipsw.c in Sources */,
-				BAF84DDD195AA10500183062 /* cpucore.inc in Sources */,
 				BAF84E3A195AA10500183062 /* makegrph.c in Sources */,
 				BAF84E37195AA10500183062 /* timing.c in Sources */,
 				BAF84EA5195AA38300183062 /* midvoice.c in Sources */,
@@ -1707,6 +1723,7 @@
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1748,6 +1765,7 @@
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
