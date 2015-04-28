@@ -1462,7 +1462,6 @@ SOURCE=.\ext\externalopna.cpp
 SOURCE=.\ext\externalopna.h
 # End Source File
 # End Group
-
 # Begin Group "misc"
 
 # PROP Default_Filter ""
