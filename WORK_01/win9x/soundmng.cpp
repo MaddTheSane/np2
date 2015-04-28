@@ -15,7 +15,7 @@
 #include "misc\extrom.h"
 #include "sound.h"
 #if defined(SUPPORT_ROMEO)
-#include "juliet.h"
+#include "ext\externalopna.h"
 #endif
 #if defined(VERMOUTH_LIB)
 #include "vermouth.h"
@@ -216,7 +216,7 @@ static void streamenable(BOOL play) {
 	}
 
 #if defined(SUPPORT_ROMEO)
-	CJuliet::GetInstance()->Mute(!play);
+	CExternalOpna::GetInstance()->Mute(!play);
 #endif
 }
 
