@@ -82,6 +82,15 @@ interface IRealChip2 : public IRealChip
 	virtual void __stdcall directOut(UINT addr, UCHAR data) = 0;
 };
 
+// IRealChip3 {761DB10B-2432-4747-AC75-0EA6D9336797}
+static const GUID IID_IRealChip3 = 
+{ 0x761db10b, 0x2432, 0x4747, { 0xac, 0x75, 0xe, 0xa6, 0xd9, 0x33, 0x67, 0x97 } };
+
+interface IRealChip3 : public IRealChip2
+{
+	virtual int __stdcall getChipType( enum ChipType *type ) = 0;
+};
+
 // IGimic {175C7DA0-8AA5-4173-96DA-BB43B8EB8F17}
 static const GUID IID_IGimic = 
 { 0x175c7da0, 0x8aa5, 0x4173, { 0x96, 0xda, 0xbb, 0x43, 0xb8, 0xeb, 0x8f, 0x17 } };

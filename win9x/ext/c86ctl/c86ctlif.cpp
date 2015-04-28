@@ -71,45 +71,48 @@ bool C86CtlIf::Initialize()
 		const int nDeviceCount = m_chipbase->getNumberOfChip();
 		for (int i = 0; i < nDeviceCount; i++)
 		{
-			IGimic* gimic;
-			m_chipbase->getChipInterface(i, IID_IGimic, reinterpret_cast<LPVOID*>(&gimic));
-			if (gimic == NULL)
-			{
-				continue;
-			}
-
-			IRealChip* chip;
+			IRealChip* chip = NULL;
 			m_chipbase->getChipInterface(i, IID_IRealChip, reinterpret_cast<LPVOID*>(&chip));
 			if (chip == NULL)
 			{
 				continue;
 			}
 
-			Devinfo info;
-			if (gimic->getModuleInfo(&info) != C86CTL_ERR_NONE)
+			// G.I.M.I.C ”»’è
+			IGimic* gimic = NULL;
+			m_chipbase->getChipInterface(i, IID_IGimic, reinterpret_cast<LPVOID*>(&gimic));
+			if (gimic)
 			{
-				continue;
+				Devinfo info;
+				if (gimic->getModuleInfo(&info) == C86CTL_ERR_NONE)
+				{
+					if ((!memcmp(info.Devname, "GMC-OPN3L", 9)) || (!memcmp(info.Devname, "GMC-OPNA", 8)))
+					{
+						m_chip = chip;
+						m_gimic = gimic;
+						Reset();
+						return true;
+					}
+				}
 			}
 
-			if (!memcmp(info.Devname, "GMC-OPN3L", 9))
+			// ‚»‚Ì‘¼‚Ì”»’è
+			IRealChip3* chip3 = NULL;
+			m_chipbase->getChipInterface(i, IID_IRealChip3, reinterpret_cast<LPVOID*>(&chip3));
+			if (chip3 != NULL)
 			{
-				// Found YMF-288
+				ChipType chiptype = CHIP_UNKNOWN;
+				chip3->getChipType(&chiptype);
+				const ChipType type = static_cast<ChipType>(chiptype & 0xffff);
+				if ((type == CHIP_OPNA) || (type == CHIP_OPN3L))
+				{
+					m_chip = chip3;
+					m_gimic = NULL;
+					Reset();
+					return true;
+				}
 			}
-			else if (!memcmp(info.Devname, "GMC-OPNA", 8))
-			{
-				// Found OPNA
-			}
-			else
-			{
-				continue;
-			}
-
-			m_chip = chip;
-			m_gimic = gimic;
-			Reset();
-			return true;
 		}
-
 	} while (0 /*CONSTCOND*/);
 
 	Deinitialize();
