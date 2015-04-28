@@ -227,7 +227,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		{
 			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
-				CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+				CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 			}
 			fmtimer_setreg(nAddr, dat);
 		}
