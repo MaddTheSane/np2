@@ -171,10 +171,43 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 static void RestoreRomeo(IC86RealChip* gimic)
 {
-	UINT8 data[0x200];
-	CopyMemory(data, opn.reg, 0x200);
-	CopyMemory(data, &psg1.reg, 14);
-	// CJuliet::GetInstance()->Restore(data, true);
+	const UINT8* data = opn.reg;
+	for (UINT i = 0x30; i < 0xa0; i++)
+	{
+		gimic->Out(i, data[i]);
+	}
+	for (UINT ch = 0; ch < 3; ch++)
+	{
+		gimic->Out(ch + 0xa4, data[ch + 0x0a4]);
+		gimic->Out(ch + 0xa0, data[ch + 0x0a0]);
+		gimic->Out(ch + 0xb0, data[ch + 0x0b0]);
+		gimic->Out(ch + 0xb4, data[ch + 0x0b4]);
+	}
+
+	for (UINT i = 0x130; i < 0x1a0; i++)
+	{
+		gimic->Out(i, data[i]);
+	}
+	for (UINT ch = 0; ch < 3; ch++)
+	{
+		gimic->Out(ch + 0x1a4, data[ch + 0x1a4]);
+		gimic->Out(ch + 0x1a0, data[ch + 0x1a0]);
+		gimic->Out(ch + 0x1b0, data[ch + 0x1b0]);
+		gimic->Out(ch + 0x1b4, data[ch + 0x1b4]);
+	}
+	gimic->Out(0x11, data[0x11]);
+	gimic->Out(0x18, data[0x18]);
+	gimic->Out(0x19, data[0x19]);
+	gimic->Out(0x1a, data[0x1a]);
+	gimic->Out(0x1b, data[0x1b]);
+	gimic->Out(0x1c, data[0x1c]);
+	gimic->Out(0x1d, data[0x1d]);
+
+	const UINT8* psg = reinterpret_cast<UINT8*>(&psg1.reg);
+	for (UINT i = 0; i < 0x0e; i++)
+	{
+		gimic->Out(i, psg[i]);
+	}
 }
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
