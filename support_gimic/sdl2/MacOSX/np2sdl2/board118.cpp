@@ -244,7 +244,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		{
 			s_gimic->Out(nAddr, dat);
 		}
-		if (nAddr == 0x28)
+		else if (nAddr == 0x28)
 		{
 			s_gimic->Out(nAddr, dat);
 			if ((dat & 0x0f) < 3)
