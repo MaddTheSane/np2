@@ -225,7 +225,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		}
 		else if (nAddr < 0x30)
 		{
-			if (nAddr == 0x27)
+			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
 				CJuliet::GetInstance()->WriteRegister(nAddr, dat);
 			}
