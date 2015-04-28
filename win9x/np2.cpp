@@ -119,24 +119,16 @@ static const OEMCHAR szNp2ResDll[] = OEMTEXT("np2_%u.dll");
 
 static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 {
-	int		nRet;
-	LPTSTR	lpszText;
-
-#if defined(OSLANG_UTF8)
-	TCHAR szCation[128];
-	oemtotchar(szCaption, NELEMENTS(szCaption), np2oscfg.titles, -1);
-#else	// defined(OSLANG_UTF8)
 	LPCTSTR szCaption = np2oscfg.titles;
-#endif	// defined(OSLANG_UTF8)
 
-	nRet = 0;
+	int nRet = 0;
 	if (HIWORD(lpcszText))
 	{
 		nRet = MessageBox(hWnd, lpcszText, szCaption, uType);
 	}
 	else
 	{
-		lpszText = lockstringresource(lpcszText);
+		LPTSTR lpszText = lockstringresource(lpcszText);
 		nRet = MessageBox(hWnd, lpszText, szCaption, uType);
 		unlockstringresource(lpszText);
 	}
@@ -380,14 +372,8 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 	}
 	else if ((!force) && (nRet & STATFLAG_DISKCHG))
 	{
-#if defined(OSLANG_UTF8)
-		TCHAR szStat2[128];
-		oemtotchar(szStat2, NELEMENTS(szStat2), szStat, -1);
-#else	// defined(OSLANG_UTF8)
-		LPCTSTR szStat2 = szStat;
-#endif	// defined(OSLANG_UTF8)
 		loadstringresource(IDS_CONFIRM_RESUME, szFormat, NELEMENTS(szFormat));
-		wsprintf(szMessage, szFormat, szStat2);
+		wsprintf(szMessage, szFormat, szStat);
 		nID = messagebox(hWnd, szMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
 	if (nID == IDYES)
