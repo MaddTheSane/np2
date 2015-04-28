@@ -3,8 +3,8 @@
 
 
 typedef struct {
-	short	key;
-	UINT	bit;
+	SDL_Keycode	key;
+	UINT		bit;
 } KEYBIND;
 
 typedef struct {
