@@ -7,8 +7,8 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
-#include	"juliet.h"
 #include	"keydisp.h"
+#include "ext\externalopna.h"
 
 #if !defined(SUPPORT_ROMEO)
 #error Not support ROMEO
@@ -174,7 +174,7 @@ static void RestoreRomeo()
 	UINT8 data[0x200];
 	CopyMemory(data, opn.reg, 0x200);
 	CopyMemory(data, &psg1.reg, 14);
-	CJuliet::GetInstance()->Restore(data, true);
+	CExternalOpna::GetInstance()->Restore(data, true);
 }
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
@@ -193,7 +193,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		(reinterpret_cast<UINT8*>(&psg1.reg))[nAddr] = dat;
 		if (nAddr < 0x0e)
 		{
-			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 
 			if (nAddr == 0x07)
 			{
@@ -209,11 +209,11 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 	{
 		if (nAddr < 0x20)
 		{
-			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 		}
 		else if (nAddr == 0x28)
 		{
-			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 			if ((dat & 0x0f) < 3)
 			{
 				keydisp_fmkeyon(static_cast<UINT8>(dat & 0x0f), dat);
@@ -227,13 +227,13 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		{
 			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
-				CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+				CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 			}
 			fmtimer_setreg(nAddr, dat);
 		}
 		else if (nAddr < 0xc0)
 		{
-			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 		}
 		opn.reg[nAddr] = dat;
 	}
@@ -256,7 +256,7 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 	opn.reg[nAddr] = dat;
 	if (nAddr >= 0x30)
 	{
-		CJuliet::GetInstance()->WriteRegister(0x100 + nAddr, dat);
+		CExternalOpna::GetInstance()->WriteRegister(0x100 + nAddr, dat);
 	}
 	else if (nAddr == 0x10)
 	{
@@ -290,18 +290,18 @@ void board118_reset(const NP2CFG *pConfig) {
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 
-	CJuliet::GetInstance()->Reset();
+	CExternalOpna::GetInstance()->Reset();
 }
 
 void board118_bind(void)
 {
-	CJuliet* juliet = CJuliet::GetInstance();
-	if (juliet->IsEnabled())
+	CExternalOpna* pExternalOpna = CExternalOpna::GetInstance();
+	if (pExternalOpna->IsEnabled())
 	{
-		juliet->WriteRegister(0x22, 0x00);
-		juliet->WriteRegister(0x29, 0x80);
-		juliet->WriteRegister(0x10, 0xbf);
-		juliet->WriteRegister(0x11, 0x30);
+		pExternalOpna->WriteRegister(0x22, 0x00);
+		pExternalOpna->WriteRegister(0x29, 0x80);
+		pExternalOpna->WriteRegister(0x10, 0xbf);
+		pExternalOpna->WriteRegister(0x11, 0x30);
 		Sleep(100);
 
 		RestoreRomeo();
