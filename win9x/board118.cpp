@@ -211,7 +211,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		{
 			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
 		}
-		if (nAddr == 0x28)
+		else if (nAddr == 0x28)
 		{
 			CJuliet::GetInstance()->WriteRegister(nAddr, dat);
 			if ((dat & 0x0f) < 3)
@@ -225,6 +225,10 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		}
 		else if (nAddr < 0x30)
 		{
+			if (nAddr == 0x27)
+			{
+				CJuliet::GetInstance()->WriteRegister(nAddr, dat);
+			}
 			fmtimer_setreg(nAddr, dat);
 		}
 		else if (nAddr < 0xc0)
