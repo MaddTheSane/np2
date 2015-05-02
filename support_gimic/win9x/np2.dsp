@@ -1449,6 +1449,26 @@ SOURCE=.\ext\romeo\juliet.h
 SOURCE=.\ext\romeo\romeo.h
 # End Source File
 # End Group
+# Begin Group "rebirth"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\rebirth\rebirth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\rebirth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\scci.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\SCCIDefines.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\ext\extendmodule.h
