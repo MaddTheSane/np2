@@ -58,10 +58,13 @@ bool CRebirth::Initialize()
 
 		// サウンドインターフェースマネージャーインスタンス初期化
 		// 必ず最初に実行してください
-		m_pManager->initializeInstance();
+		if (!m_pManager->initializeInstance())
+		{
+			break;
+		}
 
 		// リセットを行う
-		m_pManager->reset();
+		Reset();
 
 		m_pChip = m_pManager->getSoundChip(SC_TYPE_YM2608, SC_CLOCK_7987200);
 		if (m_pChip != NULL)
