@@ -184,8 +184,8 @@ void CExternalOpna::Restore(const UINT8* data, bool bOpna)
 	{
 		WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
 		WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
-		WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
 		WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
+		WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
 	}
 
 	if (bOpna)
@@ -198,8 +198,8 @@ void CExternalOpna::Restore(const UINT8* data, bool bOpna)
 		{
 			WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
 			WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
-			WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
 			WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
+			WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
 		}
 		WriteRegister(0x11, data[0x11]);
 		WriteRegister(0x18, data[0x18]);
