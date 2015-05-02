@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "externalopna.h"
 #include "c86ctl\c86ctlif.h"
+#include "rebirth\rebirth.h"
 #include "romeo\juliet.h"
 
 CExternalOpna CExternalOpna::sm_instance;
@@ -26,6 +27,7 @@ CExternalOpna::CExternalOpna()
  */
 void CExternalOpna::Initialize()
 {
+	// ROMEO
 	IExtendModule* pModule = new CJuliet;
 	if (pModule->Initialize())
 	{
@@ -34,18 +36,30 @@ void CExternalOpna::Initialize()
 	}
 	delete pModule;
 
+	// G.I.M.I.C / C86BOX
 	pModule = new C86CtlIf;
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
 		return;
 	}
+	delete pModule;	
+
+	// RE:birth
+	pModule = new CRebirth;
+	if (pModule->Initialize())
+	{
+		m_module = pModule;
+		return;
+	}
 	delete pModule;
+
 }
 
 void CExternalOpna::Deinitialize()
 {
 	IExtendModule* pModule = m_module;
+	m_module = NULL;
 	if (pModule)
 	{
 		pModule->Deinitialize();
@@ -183,8 +197,8 @@ void CExternalOpna::Restore(const UINT8* data, bool bOpna)
 	{
 		WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
 		WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
-		WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
 		WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
+		WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
 	}
 
 	if (bOpna)
@@ -197,8 +211,8 @@ void CExternalOpna::Restore(const UINT8* data, bool bOpna)
 		{
 			WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
 			WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
-			WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
 			WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
+			WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
 		}
 		WriteRegister(0x11, data[0x11]);
 		WriteRegister(0x18, data[0x18]);
