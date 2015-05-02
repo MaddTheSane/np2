@@ -59,6 +59,7 @@ void CExternalOpna::Initialize()
 void CExternalOpna::Deinitialize()
 {
 	IExtendModule* pModule = m_module;
+	m_module = NULLL;
 	if (pModule)
 	{
 		pModule->Deinitialize();
