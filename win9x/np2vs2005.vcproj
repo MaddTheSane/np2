@@ -2085,6 +2085,14 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="misc"
@@ -3036,6 +3044,22 @@
 						</File>
 						<File
 							RelativePath=".\ext\romeo\romeo.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\scci.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\SCCIDefines.h"
 							>
 						</File>
 					</Filter>
