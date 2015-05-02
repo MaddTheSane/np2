@@ -66,7 +66,7 @@ bool CRebirth::Initialize()
 		m_pChip = m_pManager->getSoundChip(SC_TYPE_YM2608, SC_CLOCK_7987200);
 		if (m_pChip != NULL)
 		{
-			// サウンドチップ取得できず
+			// サウンドチップ取得できた
 			printf("Found YM2608\n");
 			return true;
 		}
