@@ -750,6 +750,26 @@
 				Name="i286c"
 				>
 				<File
+					RelativePath="..\i286c\cpumem.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\i286c\i286c.c"
 					>
 					<FileConfiguration
@@ -911,26 +931,6 @@
 				</File>
 				<File
 					RelativePath="..\i286c\i286c_sf.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286c\memory.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1702,10 +1702,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\juliet.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\menu.cpp"
 					>
 				</File>
@@ -2052,6 +2048,38 @@
 							/>
 						</FileConfiguration>
 					</File>
+				</Filter>
+				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="misc"
@@ -2828,10 +2856,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\juliet.h"
-					>
-				</File>
-				<File
 					RelativePath=".\menu.h"
 					>
 				</File>
@@ -2857,10 +2881,6 @@
 				</File>
 				<File
 					RelativePath=".\resource.h"
-					>
-				</File>
-				<File
-					RelativePath=".\romeo.h"
 					>
 				</File>
 				<File
@@ -2978,6 +2998,58 @@
 						RelativePath=".\x86\cputype.h"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\extendmodule.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopna.h"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctl.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\romeo\romeo.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\scci.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\SCCIDefines.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="misc"

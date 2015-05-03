@@ -16,7 +16,7 @@
 #include "misc\extrom.h"
 #include "sound.h"
 #if defined(SUPPORT_ROMEO)
-#include "juliet.h"
+#include "ext\externalopna.h"
 #endif
 #if defined(VERMOUTH_LIB)
 #include "vermouth.h"
@@ -346,7 +346,7 @@ void CDSound3::EnableStream(bool bEnable)
 	}
 
 #if defined(SUPPORT_ROMEO)
-	CJuliet::GetInstance()->Mute(!bEnable);
+	CExternalOpna::GetInstance()->Mute(!bEnable);
 #endif
 }
 

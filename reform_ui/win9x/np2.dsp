@@ -1442,6 +1442,74 @@ SOURCE=.\debuguty\viewsnd.cpp
 SOURCE=.\debuguty\viewsnd.h
 # End Source File
 # End Group
+# Begin Group "ext"
+
+# PROP Default_Filter ""
+# Begin Group "c86ctl"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\c86ctl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\c86ctlif.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\c86ctlif.h
+# End Source File
+# End Group
+# Begin Group "romeo"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\romeo\juliet.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\romeo\juliet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\romeo\romeo.h
+# End Source File
+# End Group
+# Begin Group "rebirth"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ext\rebirth\rebirth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\rebirth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\scci.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\rebirth\SCCIDefines.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\ext\extendmodule.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopna.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopna.h
+# End Source File
+# End Group
 # Begin Group "misc"
 
 # PROP Default_Filter ""
@@ -1680,10 +1748,6 @@ SOURCE=.\INI.CPP
 # Begin Source File
 
 SOURCE=.\JOYMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\JULIET.CPP
 # End Source File
 # Begin Source File
 

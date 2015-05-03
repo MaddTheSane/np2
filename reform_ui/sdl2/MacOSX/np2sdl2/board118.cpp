@@ -8,13 +8,13 @@
 #include	"fmboard.h"
 #include	"s98.h"
 #include	"keydisp.h"
-#include "ext\externalopna.h"
+#include "gimic/c86boxusb.h"
+#include "gimic/gimicusb.h"
 
-#if !defined(SUPPORT_ROMEO)
-#error Not support ROMEO
-#endif
+/**! G.I.M.I.C インスタンス */
+static IC86RealChip* s_gimic = NULL;
 
-// ROMEO�Ή��� PC-9801-118
+// ROMEO対応版 PC-9801-118
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
@@ -169,12 +169,45 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 // ---- with romeo
 
-static void RestoreRomeo()
+static void RestoreRomeo(IC86RealChip* gimic)
 {
-	UINT8 data[0x200];
-	CopyMemory(data, opn.reg, 0x200);
-	CopyMemory(data, &psg1.reg, 14);
-	CExternalOpna::GetInstance()->Restore(data, true);
+	const UINT8* data = opn.reg;
+	for (UINT i = 0x30; i < 0xa0; i++)
+	{
+		gimic->Out(i, data[i]);
+	}
+	for (UINT ch = 0; ch < 3; ch++)
+	{
+		gimic->Out(ch + 0xa4, data[ch + 0x0a4]);
+		gimic->Out(ch + 0xa0, data[ch + 0x0a0]);
+		gimic->Out(ch + 0xb0, data[ch + 0x0b0]);
+		gimic->Out(ch + 0xb4, data[ch + 0x0b4]);
+	}
+
+	for (UINT i = 0x130; i < 0x1a0; i++)
+	{
+		gimic->Out(i, data[i]);
+	}
+	for (UINT ch = 0; ch < 3; ch++)
+	{
+		gimic->Out(ch + 0x1a4, data[ch + 0x1a4]);
+		gimic->Out(ch + 0x1a0, data[ch + 0x1a0]);
+		gimic->Out(ch + 0x1b0, data[ch + 0x1b0]);
+		gimic->Out(ch + 0x1b4, data[ch + 0x1b4]);
+	}
+	gimic->Out(0x11, data[0x11]);
+	gimic->Out(0x18, data[0x18]);
+	gimic->Out(0x19, data[0x19]);
+	gimic->Out(0x1a, data[0x1a]);
+	gimic->Out(0x1b, data[0x1b]);
+	gimic->Out(0x1c, data[0x1c]);
+	gimic->Out(0x1d, data[0x1d]);
+
+	const UINT8* psg = reinterpret_cast<UINT8*>(&psg1.reg);
+	for (UINT i = 0; i < 0x0e; i++)
+	{
+		gimic->Out(i, psg[i]);
+	}
 }
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
@@ -193,7 +226,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		(reinterpret_cast<UINT8*>(&psg1.reg))[nAddr] = dat;
 		if (nAddr < 0x0e)
 		{
-			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
+			s_gimic->Out(nAddr, dat);
 
 			if (nAddr == 0x07)
 			{
@@ -209,11 +242,11 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 	{
 		if (nAddr < 0x20)
 		{
-			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
+			s_gimic->Out(nAddr, dat);
 		}
 		else if (nAddr == 0x28)
 		{
-			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
+			s_gimic->Out(nAddr, dat);
 			if ((dat & 0x0f) < 3)
 			{
 				keydisp_fmkeyon(static_cast<UINT8>(dat & 0x0f), dat);
@@ -225,15 +258,15 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		}
 		else if (nAddr < 0x30)
 		{
+			fmtimer_setreg(nAddr, dat);
 			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
-				CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
+				s_gimic->Out(nAddr, dat);
 			}
-			fmtimer_setreg(nAddr, dat);
 		}
 		else if (nAddr < 0xc0)
 		{
-			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
+			s_gimic->Out(nAddr, dat);
 		}
 		opn.reg[nAddr] = dat;
 	}
@@ -256,7 +289,7 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 	opn.reg[nAddr] = dat;
 	if (nAddr >= 0x30)
 	{
-		CExternalOpna::GetInstance()->WriteRegister(0x100 + nAddr, dat);
+		s_gimic->Out(0x100 + nAddr, dat);
 	}
 	else if (nAddr == 0x10)
 	{
@@ -290,21 +323,61 @@ void board118_reset(const NP2CFG *pConfig) {
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 
-	CExternalOpna::GetInstance()->Reset();
+	IC86RealChip* gimic = s_gimic;
+	if (gimic != NULL)
+	{
+		if (gimic->Reset() != C86CTL_ERR_NONE)
+		{
+			gimic->Deinitialize();
+			delete gimic;
+			gimic = NULL;
+		}
+	}
+	s_gimic = gimic;
 }
 
 void board118_bind(void)
 {
-	CExternalOpna* pExternalOpna = CExternalOpna::GetInstance();
-	if (pExternalOpna->IsEnabled())
-	{
-		pExternalOpna->WriteRegister(0x22, 0x00);
-		pExternalOpna->WriteRegister(0x29, 0x80);
-		pExternalOpna->WriteRegister(0x10, 0xbf);
-		pExternalOpna->WriteRegister(0x11, 0x30);
-		Sleep(100);
+	IC86RealChip* gimic = s_gimic;
 
-		RestoreRomeo();
+	if (gimic == NULL)
+	{
+		// G.I.M.I.C オープン
+		gimic = new CGimicUSB();
+		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		{
+			gimic->Reset();
+		}
+		else
+		{
+			delete gimic;
+			gimic = NULL;
+		}
+	}
+	if (gimic == NULL)
+	{
+		// C86BOX オープン
+		gimic = new C86BoxUSB();
+		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		{
+			gimic->Reset();
+		}
+		else
+		{
+			delete gimic;
+			gimic = NULL;
+		}
+	}
+	s_gimic = gimic;
+
+	if (gimic)
+	{
+		gimic->Out(0x22, 0x00);
+		gimic->Out(0x29, 0x80);
+		gimic->Out(0x10, 0xbf);
+		gimic->Out(0x11, 0x30);
+
+		RestoreRomeo(gimic);
 
 		cbuscore_attachsndex(0x188, ymfr_o, ymf_i);
 	}
@@ -324,3 +397,18 @@ void board118_bind(void)
 	iocore_attachinp(0xa460, ymf_ia460);
 }
 
+/**
+ * Deinitialize
+ */
+extern "C" void board118_deinitialize(void)
+{
+	IC86RealChip* gimic = s_gimic;
+	s_gimic = NULL;
+
+	if (gimic)
+	{
+		gimic->Reset();
+		gimic->Deinitialize();
+		delete gimic;
+	}
+}

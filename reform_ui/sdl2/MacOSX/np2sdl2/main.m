@@ -7,13 +7,16 @@
 #include "../../np2.h"
 #include "../../dosio.h"
 
+/** プロトタイプ */
+void board118_deinitialize(void);
+
 /**
  * メイン
  * @param[in] argc 引数
  * @param[in] argv 引数
  * @return リザルト コード
  */
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
 	NSString *pstrBundlePath = [[NSBundle mainBundle] bundlePath];
 	file_setcd([pstrBundlePath UTF8String]);
@@ -28,5 +31,9 @@ int main(int argc, const char * argv[])
 		}
 	}
 
-	return np2_main(argc, argv);
+	const int ret = np2_main(argc, argv);
+
+	board118_deinitialize();
+
+	return ret;
 }
