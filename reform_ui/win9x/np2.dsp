@@ -1442,22 +1442,6 @@ SOURCE=.\debuguty\viewsnd.cpp
 SOURCE=.\debuguty\viewsnd.h
 # End Source File
 # End Group
-# Begin Group "devices"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\devices\juliet.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\devices\juliet.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\devices\romeo.h
-# End Source File
-# End Group
 # Begin Group "misc"
 
 # PROP Default_Filter ""
@@ -1696,6 +1680,10 @@ SOURCE=.\INI.CPP
 # Begin Source File
 
 SOURCE=.\JOYMNG.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\JULIET.CPP
 # End Source File
 # Begin Source File
 

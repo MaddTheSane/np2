@@ -58,7 +58,7 @@
 #include "dclock.h"
 #endif
 #if defined(SUPPORT_ROMEO)
-#include "devices\juliet.h"
+#include "juliet.h"
 #endif
 #include "recvideo.h"
 
