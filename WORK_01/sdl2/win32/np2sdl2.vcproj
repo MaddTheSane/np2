@@ -574,6 +574,10 @@
 				Name="i286c"
 				>
 				<File
+					RelativePath="..\..\i286c\cpumem.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\i286c\i286c.c"
 					>
 				</File>
@@ -607,10 +611,6 @@
 				</File>
 				<File
 					RelativePath="..\..\i286c\i286c_sf.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\i286c\memory.c"
 					>
 				</File>
 				<File
@@ -1640,11 +1640,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\i286c\i286c.h"
+					RelativePath="..\..\i286c\cpumem.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\i286c\memory.h"
+					RelativePath="..\..\i286c\i286c.h"
 					>
 				</File>
 				<File
