@@ -9,6 +9,5 @@
 // #define	NP2VER_MACOS9
 // #define	NP2VER_MACOSX
 // #define	NP2VER_X11
-// #define	NP2VER_WINCE
 // #define	NP2VER_SDL2
 
