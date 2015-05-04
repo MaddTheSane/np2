@@ -45,8 +45,8 @@ static void dlginit(void) {
 #if defined(_WIN32_WCE) && defined(NP2VER_WINCE)
 	milstr_ncat(work, OEMTEXT(NP2VER_WINCE), NELEMENTS(work));
 #endif
-#if defined(NP2VER_SDL)
-	milstr_ncat(work, OEMTEXT(NP2VER_SDL), NELEMENTS(work));
+#if defined(NP2VER_SDL2)
+	milstr_ncat(work, OEMTEXT(NP2VER_SDL2), NELEMENTS(work));
 #endif
 	menudlg_settext(DID_VER, work);
 }
