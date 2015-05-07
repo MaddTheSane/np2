@@ -112,7 +112,7 @@ static DLGPRM resappend(MENUDLG dlg, const OEMCHAR *str) {
 
 	DLGPRM	prm;
 
-	prm = listarray_enum(dlg->res, seaprmempty, NULL);
+	prm = (DLGPRM)listarray_enum(dlg->res, seaprmempty, NULL);
 	if (prm == NULL) {
 		prm = (DLGPRM)listarray_append(dlg->res, NULL);
 	}
