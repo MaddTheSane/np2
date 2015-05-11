@@ -1734,14 +1734,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\sstp.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpmsg.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\subwind.cpp"
 					>
 				</File>
@@ -2889,18 +2881,6 @@
 				</File>
 				<File
 					RelativePath=".\soundmng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstp.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpmsg.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpres.h"
 					>
 				</File>
 				<File
