@@ -6,9 +6,12 @@
 #endif
 
 // for VC6SDK
-#if !defined(_WIN64)
+#if (_MSC_VER < 1300)
 #ifndef LONG_PTR
-#define	LONG_PTR			LONG
+#define LONG_PTR			LONG
+#endif
+#ifndef DWORD_PTR
+#define DWORD_PTR			DWORD
 #endif
 #ifndef GetWindowLongPtr
 #define GetWindowLongPtr	GetWindowLong

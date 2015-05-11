@@ -75,6 +75,8 @@ typedef	signed __int64		SINT64;
 
 #define	STRCALL		__stdcall
 
+#define INTPTR				INT_PTR
+
 #define	BRESULT				UINT8
 #define	OEMCHAR				TCHAR
 #define	OEMTEXT(string)		_T(string)
