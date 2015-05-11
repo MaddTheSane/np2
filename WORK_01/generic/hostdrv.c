@@ -520,7 +520,7 @@ static void close_file(INTRST intrst) {
 		hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, start_sector);
 		if (hdf) {
 			file_close((FILEH)hdf->hdl);
-			hdf->hdl = (long)FILEH_INVALID;
+			hdf->hdl = (INTPTR)FILEH_INVALID;
 			hdf->path[0] = '\0';
 		}
 	}
@@ -831,7 +831,7 @@ static void open_file(INTRST intrst) {
 		return;
 	}
 
-	hdf->hdl = (long)fh;
+	hdf->hdl = (INTPTR)fh;
 	hdf->mode = mode;
 	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
 
@@ -882,7 +882,7 @@ static void create_file(INTRST intrst) {
 		fail(intrst, ERR_ACCESSDENIED);
 		return;
 	}
-	hdf->hdl = (long)fh;
+	hdf->hdl = (INTPTR)fh;
 	hdf->mode = HDFMODE_READ | HDFMODE_WRITE;
 	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
 
@@ -1158,7 +1158,7 @@ static void ext_openfile(INTRST intrst) {
 		return;
 	}
 
-	hdf->hdl = (long)fh;
+	hdf->hdl = (INTPTR)fh;
 	hdf->mode = mode;
 	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
 
@@ -1399,7 +1399,7 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl) {
 			else {
 				fh = file_open_rb(hdf->path);
 			}
-			hdf->hdl = (long)fh;
+			hdf->hdl = (INTPTR)fh;
 		}
 	}
 	for (i=0; i<sfhdrv.flists; i++) {
