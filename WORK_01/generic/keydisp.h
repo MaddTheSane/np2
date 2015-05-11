@@ -7,7 +7,7 @@ struct _cmnpalfn {
 	UINT8	(*get8)(struct _cmnpalfn *fn, UINT num);
 	UINT32	(*get32)(struct _cmnpalfn *fn, UINT num);
 	UINT16	(*cnv16)(struct _cmnpalfn *fn, RGB32 pal32);
-	long	userdata;
+	INTPTR	userdata;
 };
 typedef struct _cmnpalfn	CMNPALFN;
 
