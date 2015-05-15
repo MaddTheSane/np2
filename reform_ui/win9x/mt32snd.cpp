@@ -43,7 +43,7 @@ BRESULT mt32sound_initialize(void) {
 	HMODULE		mod;
 const DLLPROC	*d;
 const DLLPROC	*dterm;
-	long		proc;
+	FARPROC		proc;
 
 	mt32sound_deinitialize();
 	mod = LoadLibrary(mt32sounddll);
@@ -54,11 +54,11 @@ const DLLPROC	*dterm;
 	d = dllproc;
 	dterm = d + NELEMENTS(dllproc);
 	while(d < dterm) {
-		proc = (long)GetProcAddress(mod, d->symbol);
-		if (proc == (long)NULL) {
+		proc = (FARPROC)GetProcAddress(mod, d->symbol);
+		if (proc == (FARPROC)NULL) {
 			goto m3ini_err2;
 		}
-		*(long *)(((UINT8 *)&mt32sound) + (d->addr)) = proc;
+		*(FARPROC *)(((UINT8 *)&mt32sound) + (d->addr)) = proc;
 		d++;
 	}
 	return(SUCCESS);

@@ -1,5 +1,5 @@
 /**
- * @file	extendopna.cpp
+ * @file	externalopna.cpp
  * @brief	外部 OPNA 演奏クラスの動作の定義を行います
  */
 
@@ -56,6 +56,9 @@ void CExternalOpna::Initialize()
 
 }
 
+/**
+ * 解放
+ */
 void CExternalOpna::Deinitialize()
 {
 	IExtendModule* pModule = m_module;

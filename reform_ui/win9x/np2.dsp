@@ -1791,14 +1791,6 @@ SOURCE=.\SOUNDMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\SSTP.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\SSTPMSG.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\SUBWIND.CPP
 # End Source File
 # Begin Source File

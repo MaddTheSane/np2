@@ -13,7 +13,7 @@
 
 	MPCriticalRegionID	sndcsec;
 
-#elif defined(X11) || defined(SLZAURUS)
+#elif defined(X11)
 
 	pthread_mutex_t		sndcsec;		// = PTHREAD_MUTEX_INITIALIZER;
 

@@ -35,7 +35,7 @@
 
 #if defined(MACOS)
 #define	CRCONST		str_cr
-#elif defined(WIN32) || defined(X11) || defined(SLZAURUS)
+#elif defined(WIN32) || defined(X11)
 #define	CRCONST		str_lf
 #else
 #define	CRCONST		str_crlf

@@ -30,8 +30,6 @@
 #include "ini.h"
 #include "menu.h"
 #include "winloc.h"
-#include "sstp.h"
-#include "sstpmsg.h"
 #include "toolwin.h"
 #include "np2class.h"
 #include "dialog.h"
@@ -91,7 +89,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						{0, 0, 0x3e, 19200,
 						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 9801, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+						0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];
@@ -431,11 +429,10 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			{
 				b = TRUE;
 			}
-			else if (sstpconfirm_reset())
+			else
 			{
 				winuienter();
-				if (messagebox(hWnd, MAKEINTRESOURCE(IDS_CONFIRM_RESET),
-									MB_ICONQUESTION | MB_YESNO) == IDYES)
+				if (messagebox(hWnd, MAKEINTRESOURCE(IDS_CONFIRM_RESET), MB_ICONQUESTION | MB_YESNO) == IDYES)
 				{
 					b = TRUE;
 				}
@@ -443,7 +440,6 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			}
 			if (b)
 			{
-				sstpmsg_reset();
 				pccore_cfgupdate();
 				pccore_reset();
 			}
@@ -451,7 +447,6 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_CONFIG:
 			winuienter();
-			sstpmsg_config();
 			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG),
 									hWnd, (DLGPROC)CfgDialogProc);
 			if (!scrnmng_isfullscreen()) {
@@ -983,11 +978,6 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG;
 			break;
 
-		case IDM_SSTP:
-			xmenu_setsstp(np2oscfg.sstp ^ 1);
-			update |= SYS_UPDATECFG;
-			break;
-
 		case IDM_CPUSAVE:
 			debugsub_status();
 			break;
@@ -998,13 +988,9 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_ABOUT:
-			sstpmsg_about();
-			if (sstp_result() != SSTP_SENDING) {
-				winuienter();
-				DialogBox(hInstance, MAKEINTRESOURCE(IDD_ABOUT),
-								hWnd, (DLGPROC)AboutDialogProc);
-				winuileave();
-			}
+			winuienter();
+			DialogBox(hInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, (DLGPROC)AboutDialogProc);
+			winuileave();
 			break;
 
 		default:
@@ -1041,7 +1027,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_CREATE:
 			np2class_wmcreate(hWnd);
 			np2class_windowtype(hWnd, np2oscfg.wintype);
-			sstp_construct(hWnd);
 #ifndef __GNUC__
 			WINNLSEnableIME(hWnd, FALSE);
 #endif
@@ -1401,7 +1386,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			if (!np2oscfg.comfirm) {
 				b = TRUE;
 			}
-			else if (sstpconfirm_exit()) {
+			else
+			{
 				winuienter();
 				if (messagebox(hWnd, MAKEINTRESOURCE(IDS_CONFIRM_EXIT),
 									MB_ICONQUESTION | MB_YESNO) == IDYES)
@@ -1436,31 +1422,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case NP2CMD_RESET:
 					pccore_cfgupdate();
 					pccore_reset();
-					break;
-			}
-			break;
-
-		case WM_SSTP:
-			switch(LOWORD(lParam)) {
-				case FD_CONNECT:
-					if (!HIWORD(lParam)) {
-						sstp_connect();
-					}
-					break;
-				case FD_READ:
-					if (!HIWORD(lParam)) {
-						sstp_readSocket();
-					}
-					break;
-				case FD_WRITE:
-					if (!HIWORD(lParam)) {
-//						sstp_writeSokect();
-					}
-					break;
-				case FD_CLOSE:
-					if (!HIWORD(lParam)) {
-						sstp_disconnect();
-					}
 					break;
 			}
 			break;
@@ -1561,7 +1522,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	szClassName[2] = (TCHAR)np2oscfg.winid[2];
 
 	if ((hWnd = FindWindow(szClassName, NULL)) != NULL) {
-		sstpmsg_running();
 		ShowWindow(hWnd, SW_RESTORE);
 		SetForegroundWindow(hWnd);
 		dosio_term();
@@ -1653,7 +1613,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	xmenu_setbtnmode(np2cfg.BTN_MODE);
 	xmenu_setbtnrapid(np2cfg.BTN_RAPID);
 	xmenu_setmsrapid(np2cfg.MOUSERAPID);
-	xmenu_setsstp(np2oscfg.sstp);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -1688,11 +1647,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	if (scrnmng_create(scrnmode) != SUCCESS) {
 		scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(scrnmode) != SUCCESS) {
-			if (sstpmsg_dxerror())
-			{
-				messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW),
-														MB_OK | MB_ICONSTOP);
-			}
+			messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW), MB_OK | MB_ICONSTOP);
 			unloadextinst();
 			TRACETERM();
 			dosio_term();
@@ -1725,8 +1680,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	pccore_init();
 	S98_init();
 
-	sstpmsg_welcome();
-
 #ifdef OPENING_WAIT
 	while((GetTickCount() - tick) < OPENING_WAIT);
 #endif
@@ -1752,7 +1705,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			mousemng_disable(MOUSEPROC_WINUI);
 			S98_trash();
 			pccore_term();
-			sstp_destruct();
 			soundmng_deinitialize();
 			scrnmng_destroy();
 			unloadextinst();
@@ -1885,8 +1837,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	CExternalOpna::GetInstance()->Deinitialize();
 #endif
 	pccore_term();
-
-	sstp_destruct();
 
 	soundmng_deinitialize();
 	scrnmng_destroy();

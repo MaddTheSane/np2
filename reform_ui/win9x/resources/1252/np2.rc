@@ -1010,7 +1010,6 @@ BEGIN
         MENUITEM "Joy re&verse",                IDM_JOYX
         MENUITEM "Joy &rapid",                  IDM_RAPID
         MENUITEM "&Mouse rapid",                IDM_MSRAPID
-        MENUITEM "&Use SSTP",                   IDM_SSTP
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
         MENUITEM "&About...",                   IDM_ABOUT
