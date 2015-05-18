@@ -16,6 +16,8 @@
 #include "strres.h"
 #include "parts.h"
 #include "np2.h"
+#include "misc\WndProc.h"
+#include "debuguty\viewer.h"
 #include "np2arg.h"
 #include "dosio.h"
 #include "commng.h"
@@ -47,7 +49,6 @@
 #include "keystat.h"
 #include "debugsub.h"
 #include "subwind.h"
-#include "viewer.h"
 #if !defined(_WIN64)
 #include "cputype.h"
 #endif
@@ -1097,7 +1098,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_DEBUGUTY:
-					viewer_open(g_hInstance);
+					CDebugUtyView::New();
 					break;
 
 				case IDM_SCRNMUL4:
@@ -1396,7 +1397,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				winuileave();
 			}
 			if (b) {
-				viewer_allclose();
+				CDebugUtyView::AllClose();
 				DestroyWindow(hWnd);
 			}
 			break;
@@ -1469,7 +1470,7 @@ static void framereset(UINT cnt) {
 	skbdwin_process();
 	mdbgwin_process();
 	toolwin_draw((UINT8)cnt);
-	viewer_allreload(FALSE);
+	CDebugUtyView::AllUpdate(false);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {
 			sysmng_updatecaption(3);
@@ -1502,6 +1503,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	BOOL		xrollkey;
 
 	_MEM_INIT();
+	CWndProc::Initialize(hInstance);
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
@@ -1575,7 +1577,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		kdispwin_initialize(g_hInstance);
 		skbdwin_initialize(g_hInstance);
 		mdbgwin_initialize(g_hInstance);
-		viewer_init(g_hInstance);
+		CDebugUtyView::Initialize(g_hInstance);
 	}
 
 	mousemng_initialize();
@@ -1708,7 +1710,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			unloadextinst();
 			TRACETERM();
 			dosio_term();
-			viewer_term();
 			return(FALSE);
 		}
 	}
@@ -1856,8 +1857,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	_MEM_USED("report.txt");
 	dosio_term();
 
-	viewer_term();													// ver0.30
-
 	return((int)msg.wParam);
 }
-
