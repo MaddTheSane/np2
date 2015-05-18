@@ -30,9 +30,9 @@
 #endif	// !defined(__GNUC__)
 
 #if defined(_M_IA64) || defined(_M_AMD64)
-#define	SOUNDBUFFERALIGN	(1 << 3)
+#define SOUNDBUFFERALIGN	(1 << 3)					/*!< バッファ アライメント */
 #else
-#define	SOUNDBUFFERALIGN	(1 << 2)
+#define SOUNDBUFFERALIGN	(1 << 2)					/*!< バッファ アライメント */
 #endif
 
 #if !defined(_WIN64)
@@ -40,6 +40,12 @@
 extern "C"
 {
 #endif
+/**
+ * satuation
+ * @param[out] dst 出力バッファ
+ * @param[in] src 入力バッファ
+ * @param[in] size サイズ
+ */
 void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 #ifdef __cplusplus
 }
@@ -47,16 +53,16 @@ void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 #endif
 
 #if 1
-#define DSBUFFERDESC_SIZE	20			// DirectX3 Structsize
+#define DSBUFFERDESC_SIZE	20							/*!< DirectX3 Structsize */
 #else
-#define DSBUFFERDESC_SIZE	sizeof(DSBUFFERDESC)
+#define DSBUFFERDESC_SIZE	sizeof(DSBUFFERDESC)		/*!< DSBUFFERDESC Structsize */
 #endif
 
 #ifndef DSBVOLUME_MAX
-#define DSBVOLUME_MAX		0
+#define DSBVOLUME_MAX		0							/*!< ヴォリューム最大値 */
 #endif
 #ifndef DSBVOLUME_MIN
-#define DSBVOLUME_MIN		(-10000)
+#define DSBVOLUME_MIN		(-10000)					/*!< ヴォリューム最小値 */
 #endif
 
 /**
@@ -89,13 +95,16 @@ public:
 private:
 	static CDSound3 sm_instance;									//!< 唯一のインスタンスです
 
+
 	LPDIRECTSOUND m_lpDSound;										//!< Direct Sound インタフェイス
 	UINT m_nMute;													//!< ミュート フラグ
 	LPDIRECTSOUNDBUFFER m_lpDSStream;								//!< ストリーム バッファ
 	UINT m_dwHalfBufferSize;										//!< バッファ サイズ
 	int m_nStreamEvent;												//!< ストリーム イベント
 	std::map<SoundPCMNumber, LPDIRECTSOUNDBUFFER> m_pcm;			//!< PCM バッファ
-	void (PARTSCALL * m_fnMix)(SINT16*, const SINT32*, UINT);		//!< コールバック
+
+	typedef void (PARTSCALL * FNMIX)(SINT16*, const SINT32*, UINT);	//!< satuation関数型宣言
+	FNMIX m_fnMix;													//!< satuation関数ポインタ
 
 private:
 	void EnableStream(bool bEnable);
