@@ -2094,7 +2094,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\misc\WndBase.cpp"
+						RelativePath=".\misc\WndProc.cpp"
 						>
 					</File>
 				</Filter>
