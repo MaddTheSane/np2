@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2003 NONAKA Kimihiro
+ * Copyright (c) 2001-2003, 2015 NONAKA Kimihiro
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -275,6 +275,7 @@ soundmng_destroy(void)
 		}
 		(*snddrv.sndstop)();
 		(*snddrv.drvterm)();
+		nosound_setup();
 		audio_fd = -1;
 		opened = FALSE;
 	}
@@ -833,10 +834,6 @@ saturation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size)
 
 #include <SDL.h>
 
-static void sdlaudio_lock(void);
-static void sdlaudio_unlock(void);
-static void sdlaudio_play(void);
-static void sdlaudio_stop(void);
 static void sdlaudio_callback(void *, unsigned char *, int);
 
 #if !defined(USE_SDLMIXER)
@@ -882,6 +879,34 @@ sdlaudio_term(void)
 	return SUCCESS;
 }
 
+static void
+sdlaudio_lock(void)
+{
+
+	SDL_LockAudio();
+}
+
+static void
+sdlaudio_unlock(void)
+{
+
+	SDL_UnlockAudio();
+}
+
+static void
+sdlaudio_play(void)
+{
+
+	SDL_PauseAudio(0);
+}
+
+static void
+sdlaudio_stop(void)
+{
+
+	SDL_PauseAudio(1);
+}
+
 static BOOL
 sdlaudio_setup(void)
 {
@@ -905,10 +930,16 @@ sdlaudio_setup(void)
 
 #include <SDL_mixer.h>
 
+static SDL_mutex *audio_lock = NULL;
+
 static BOOL
 sdlmixer_init(UINT rate, UINT samples)
 {
 	int rv;
+
+	if (audio_lock != NULL)
+		SDL_DestroyMutex(audio_lock);
+	audio_lock = SDL_CreateMutex();
 
 	rv = SDL_InitSubSystem(SDL_INIT_AUDIO);
 	if (rv < 0) {
@@ -939,6 +970,8 @@ sdlmixer_init(UINT rate, UINT samples)
 failure1:
 	Mix_CloseAudio();
 failure:
+	if (audio_lock != NULL)
+		SDL_DestroyMutex(audio_lock);
 	return FAILURE;
 }
 
@@ -946,8 +979,10 @@ static BOOL
 sdlmixer_term(void)
 {
 
-	SDL_PauseAudio(1);
+	Mix_Pause(-1);
 	Mix_CloseAudio();
+	SDL_DestroyMutex(audio_lock);
+	audio_lock = NULL;
 
 	return SUCCESS;
 }
@@ -989,16 +1024,44 @@ sdlmixer_pcmvolume(void *cookie, UINT num, int volume)
 	Mix_Volume(num, (MIX_MAX_VOLUME * volume) / 100);
 }
 
+static void
+sdlmixer_lock(void)
+{
+
+	SDL_LockMutex(audio_lock);
+}
+
+static void
+sdlmixer_unlock(void)
+{
+
+	SDL_UnlockMutex(audio_lock);
+}
+
+static void
+sdlmixer_play(void)
+{
+
+	Mix_Resume(-1);
+}
+
+static void
+sdlmixer_stop(void)
+{
+
+	Mix_Pause(-1);
+}
+
 static BOOL
 sdlaudio_setup(void)
 {
 
 	snddrv.drvinit = sdlmixer_init;
 	snddrv.drvterm = sdlmixer_term;
-	snddrv.drvlock = sdlaudio_lock;
-	snddrv.drvunlock = sdlaudio_unlock;
-	snddrv.sndplay = sdlaudio_play;
-	snddrv.sndstop = sdlaudio_stop;
+	snddrv.drvlock = sdlmixer_lock;
+	snddrv.drvunlock = sdlmixer_unlock;
+	snddrv.sndplay = sdlmixer_play;
+	snddrv.sndstop = sdlmixer_stop;
 	snddrv.pcmload = sdlmixer_pcmload;
 	snddrv.pcmdestroy = sdlmixer_pcmdestroy;
 	snddrv.pcmplay = sdlmixer_pcmplay;
@@ -1011,38 +1074,14 @@ sdlaudio_setup(void)
 #endif	/* !USE_SDLMIXER */
 
 static void
-sdlaudio_lock(void)
-{
-
-	SDL_LockAudio();
-}
-
-static void
-sdlaudio_unlock(void)
-{
-
-	SDL_UnlockAudio();
-}
-
-static void
-sdlaudio_play(void)
-{
-
-	SDL_PauseAudio(0);
-}
-
-static void
-sdlaudio_stop(void)
-{
-
-	SDL_PauseAudio(1);
-}
-
-static void
 sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 {
 	UINT samples = PTR_TO_UINT32(userdata);
 	int nextbuf = sound_nextbuf;
+
+#if defined(USE_SDLMIXER)
+	SDL_LockMutex(audio_lock);
+#endif
 
 	if (sound_event != NULL)
 		memset(sound_event, 0, samples);
@@ -1051,6 +1090,10 @@ sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 
 	SDL_MixAudio(stream, (const void *)sound_buffer[nextbuf], len,
 	    SDL_MIX_MAXVOLUME);
+
+#if defined(USE_SDLMIXER)
+	SDL_UnlockMutex(audio_lock);
+#endif
 }
 
 #endif	/* USE_SDLAUDIO || USE_SDLMIXER */
