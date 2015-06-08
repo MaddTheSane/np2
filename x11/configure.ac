@@ -110,7 +110,7 @@ dnl
 dnl Checks for GTK+
 dnl
 AM_PATH_GTK_2_0(2.6.0,,
-  AC_MSG_ERROR(Test for GTK failed. See the file 'x11/INSTALL.ja' for help))
+  AC_MSG_ERROR(Test for GTK failed. See the file 'x11/README.ja' for help))
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])
