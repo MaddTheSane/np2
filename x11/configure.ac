@@ -119,13 +119,23 @@ dnl
 dnl Checks for SDL and SDL_mixer
 dnl
 if test x"$enable_sdl" = "xyes"; then
-  AM_PATH_SDL(1.2.0)
+  AM_PATH_SDL2(2.0.0)
   if test x"$no_sdl" != "xyes"; then
-    AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL library.])
+    AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL 1.2/2.0 library.])
     if test x"$enable_sdlmixer" = "xyes"; then
-      AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+      AC_CHECK_LIB(SDL2_mixer,Mix_OpenAudio,
         AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])
-        SDL_LIBS="$SDL_LIBS -lSDL_mixer",,$SDL_LIBS)
+        SDL_LIBS="$SDL_LIBS -lSDL2_mixer",,$SDL_LIBS)
+    fi
+  else
+    AM_PATH_SDL(1.2.0)
+    if test x"$no_sdl" != "xyes"; then
+      AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL 1.2/2.0 library.])
+      if test x"$enable_sdlmixer" = "xyes"; then
+        AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+          AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])
+          SDL_LIBS="$SDL_LIBS -lSDL_mixer",,$SDL_LIBS)
+      fi
     fi
   fi
 fi
