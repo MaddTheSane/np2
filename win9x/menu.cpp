@@ -322,9 +322,9 @@ void xmenu_initialize(void)
 	if (np2oscfg.I286SAVE)
 	{
 #if defined(SUPPORT_PC9821)
-		(void)menu_addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE32);
+		(void)menu_addmenubyid(hMenu, IDM_MSRAPID, IDR_CPUSAVE32);
 #else	//	defined(SUPPORT_PC9821)
-		(void)menu_addmenubyid(hMenu, IDM_SSTP, IDR_CPUSAVE16);
+		(void)menu_addmenubyid(hMenu, IDM_MSRAPID, IDR_CPUSAVE16);
 #endif	//	defined(SUPPORT_PC9821)
 	}
 }
@@ -556,11 +556,3 @@ void xmenu_setmsrapid(UINT8 value) {
 	np2cfg.MOUSERAPID = value;
 	CheckMenuItem(np2class_gethmenu(g_hWndMain), IDM_MSRAPID, MFCHECK(value));
 }
-
-void xmenu_setsstp(UINT8 value) {
-
-	value &= 1;
-	np2oscfg.sstp = value;
-	CheckMenuItem(np2class_gethmenu(g_hWndMain), IDM_SSTP, MFCHECK(value));
-}
-
