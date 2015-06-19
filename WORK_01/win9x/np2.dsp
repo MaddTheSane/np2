@@ -353,6 +353,93 @@ SOURCE=..\CODECNV\UTF8UCS2.C
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\i286x\cpucore.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\i286x\cpumem.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\I286X\cpumem.x86
+
+!IF  "$(CFG)" == "np2 - Win32 Release"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\rel
+InputPath=..\I286X\cpumem.x86
+InputName=cpumem
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Release NT"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\relnt
+InputPath=..\I286X\cpumem.x86
+InputName=cpumem
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trc
+InputPath=..\I286X\cpumem.x86
+InputName=cpumem
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 WaveRec"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\wr
+InputPath=..\I286X\cpumem.x86
+InputName=cpumem
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Trap"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trap
+InputPath=..\I286X\cpumem.x86
+InputName=cpumem
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\dbg
+InputPath=..\I286X\cpumem.x86
+InputName=cpumem
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\I286X\I286X.CPP
 # End Source File
 # Begin Source File
@@ -370,85 +457,6 @@ SOURCE=..\I286X\I286XREP.CPP
 # Begin Source File
 
 SOURCE=..\I286X\I286XS.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=..\I286X\MEMORY.X86
-
-!IF  "$(CFG)" == "np2 - Win32 Release"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\rel
-InputPath=..\I286X\MEMORY.X86
-InputName=MEMORY
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Release NT"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\relnt
-InputPath=..\I286X\MEMORY.X86
-InputName=MEMORY
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trace"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trc
-InputPath=..\I286X\MEMORY.X86
-InputName=MEMORY
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 WaveRec"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\wr
-InputPath=..\I286X\MEMORY.X86
-InputName=MEMORY
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Trap"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trap
-InputPath=..\I286X\MEMORY.X86
-InputName=MEMORY
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np2 - Win32 Debug"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\dbg
-InputPath=..\I286X\MEMORY.X86
-InputName=MEMORY
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i286x\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
