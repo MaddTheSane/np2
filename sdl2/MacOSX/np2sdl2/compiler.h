@@ -60,12 +60,14 @@ typedef	unsigned char	BYTE;
 #define	MAX_PATH	256
 #endif
 
+#ifndef __cplusplus
 #ifndef	max
 #define	max(a,b)	(((a) > (b)) ? (a) : (b))
 #endif
 #ifndef	min
 #define	min(a,b)	(((a) < (b)) ? (a) : (b))
 #endif
+#endif	/* __cplusplus */
 
 #ifndef	ZeroMemory
 #define	ZeroMemory(d,n)		memset((d), 0, (n))
