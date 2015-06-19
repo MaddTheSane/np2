@@ -30,7 +30,7 @@ extern	MPCriticalRegionID	sndcsec;
 #define	SNDCSEC_ENTER	MPEnterCriticalRegion(sndcsec, kDurationForever)
 #define	SNDCSEC_LEAVE	MPExitCriticalRegion(sndcsec)
 
-#elif defined(X11) || defined(SLZAURUS)
+#elif defined(X11)
 
 extern	pthread_mutex_t		sndcsec;
 
