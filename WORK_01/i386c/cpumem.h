@@ -1,5 +1,5 @@
-#ifndef	NP2_I386C_MEMORY_H__
-#define	NP2_I386C_MEMORY_H__
+#ifndef	NP2_I386C_CPUMEM_H__
+#define	NP2_I386C_CPUMEM_H__
 
 #ifdef NP2_MEMORY_ASM			// アセンブラ版は 必ずfastcallで
 #undef	MEMCALL
@@ -143,4 +143,4 @@ void MEMCALL memr_writes(UINT seg, UINT off, const void *dat, UINT leng);
 #define MEMR_WRITES(seg, off, dat, leng)	\
 			memr_writes((seg), (off), (dat), (leng))
 
-#endif	/* !NP2_I386C_MEMORY_H__ */
+#endif	/* !NP2_I386C_CPUMEM_H__ */
