@@ -13,7 +13,7 @@ enum {
 #endif
 
 #ifndef INTPTR
-#define	INTPTR		long
+#define	INTPTR		intptr_t
 #endif
 
 #ifndef LOADINTELDWORD
