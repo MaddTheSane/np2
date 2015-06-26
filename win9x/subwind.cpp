@@ -338,7 +338,7 @@ void kdispwin_create(HINSTANCE hInstance) {
 	palfn.get8 = kdgetpal8;
 	palfn.get32 = kdgetpal32;
 	palfn.cnv16 = kdcnvpal16;
-	palfn.userdata = (long)kdispwin.dd2hdl;
+	palfn.userdata = (INTPTR)kdispwin.dd2hdl;
 	keydisp_setpal(&palfn);
 	kdispwin_draw(0);
 	SetForegroundWindow(g_hWndMain);
