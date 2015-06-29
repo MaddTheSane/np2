@@ -122,7 +122,7 @@
 		BAF84DD7195AA10500183062 /* i286c_mn.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C2F195AA10400183062 /* i286c_mn.c */; };
 		BAF84DD8195AA10500183062 /* i286c_rp.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C30195AA10400183062 /* i286c_rp.c */; };
 		BAF84DD9195AA10500183062 /* i286c_sf.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C31195AA10400183062 /* i286c_sf.c */; };
-		BAF84DDB195AA10500183062 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C33195AA10400183062 /* memory.c */; };
+		BAF84DDB195AA10500183062 /* cpumem.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C33195AA10400183062 /* cpumem.c */; };
 		BAF84DDC195AA10500183062 /* v30patch.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C35195AA10400183062 /* v30patch.c */; };
 		BAF84DDF195AA10500183062 /* artic.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C3C195AA10400183062 /* artic.c */; };
 		BAF84DE0195AA10500183062 /* cgrom.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84C3E195AA10400183062 /* cgrom.c */; };
@@ -445,8 +445,8 @@
 		BAF84C2F195AA10400183062 /* i286c_mn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = i286c_mn.c; sourceTree = "<group>"; };
 		BAF84C30195AA10400183062 /* i286c_rp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = i286c_rp.c; sourceTree = "<group>"; };
 		BAF84C31195AA10400183062 /* i286c_sf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = i286c_sf.c; sourceTree = "<group>"; };
-		BAF84C33195AA10400183062 /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
-		BAF84C34195AA10400183062 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		BAF84C33195AA10400183062 /* cpumem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpumem.c; sourceTree = "<group>"; };
+		BAF84C34195AA10400183062 /* cpumem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpumem.h; sourceTree = "<group>"; };
 		BAF84C35195AA10400183062 /* v30patch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = v30patch.c; sourceTree = "<group>"; };
 		BAF84C36195AA10400183062 /* v30patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = v30patch.h; sourceTree = "<group>"; };
 		BAF84C3C195AA10400183062 /* artic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = artic.c; sourceTree = "<group>"; };
@@ -1029,6 +1029,8 @@
 			isa = PBXGroup;
 			children = (
 				BAF84C26195AA10400183062 /* cpucore.h */,
+				BAF84C33195AA10400183062 /* cpumem.c */,
+				BAF84C34195AA10400183062 /* cpumem.h */,
 				BAF84C27195AA10400183062 /* i286c.c */,
 				BAF84C28195AA10400183062 /* i286c.h */,
 				BAF84C2A195AA10400183062 /* i286c_0f.c */,
@@ -1039,8 +1041,6 @@
 				BAF84C2F195AA10400183062 /* i286c_mn.c */,
 				BAF84C30195AA10400183062 /* i286c_rp.c */,
 				BAF84C31195AA10400183062 /* i286c_sf.c */,
-				BAF84C33195AA10400183062 /* memory.c */,
-				BAF84C34195AA10400183062 /* memory.h */,
 				BAF84C35195AA10400183062 /* v30patch.c */,
 				BAF84C36195AA10400183062 /* v30patch.h */,
 			);
@@ -1563,7 +1563,7 @@
 				BAF84D99195AA10500183062 /* menumbox.c in Sources */,
 				BAF84E23195AA10500183062 /* joymng.c in Sources */,
 				BAF84E29195AA10500183062 /* sdlkbd.c in Sources */,
-				BAF84DDB195AA10500183062 /* memory.c in Sources */,
+				BAF84DDB195AA10500183062 /* cpumem.c in Sources */,
 				BAF84D54195AA10500183062 /* bios13.c in Sources */,
 				BAF84DF1195AA10500183062 /* necio.c in Sources */,
 				BAF84DE6195AA10500183062 /* emsio.c in Sources */,

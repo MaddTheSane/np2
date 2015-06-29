@@ -255,6 +255,7 @@ LDADD=		$(GTK_LIBS) $(SDL_LIBS) \
 DEFS=		@DEFS@ -DSYSRESPATH=\""$(pkgdatadir)"\"
 
 I286C_SOURCES=	$(real_topsrcdir)/i286c/i286c.c \
+		$(real_topsrcdir)/i286c/cpumem.c \
 		$(real_topsrcdir)/i286c/i286c_mn.c \
 		$(real_topsrcdir)/i286c/i286c_ea.c \
 		$(real_topsrcdir)/i286c/i286c_0f.c \
@@ -263,14 +264,13 @@ I286C_SOURCES=	$(real_topsrcdir)/i286c/i286c.c \
 		$(real_topsrcdir)/i286c/i286c_f6.c \
 		$(real_topsrcdir)/i286c/i286c_fe.c \
 		$(real_topsrcdir)/i286c/i286c_rp.c \
-		$(real_topsrcdir)/i286c/memory.c \
 		$(real_topsrcdir)/i286c/v30patch.c \
 		$(real_topsrcdir)/debugsub.c
 
 I286C_CPPFLAGS=	-I$(real_topsrcdir)/i286c
 
 IA32_SOURCES=	$(real_topsrcdir)/i386c/cpucore.c \
-		$(real_topsrcdir)/i386c/memory.c \
+		$(real_topsrcdir)/i386c/cpumem.c \
 		$(real_topsrcdir)/i386c/ia32/interface.c \
 		$(real_topsrcdir)/i386c/ia32/ia32.c \
 		$(real_topsrcdir)/i386c/ia32/cpu.c \

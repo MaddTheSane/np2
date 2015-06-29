@@ -760,7 +760,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\i386c\memory.c"
+					RelativePath="..\i386c\cpumem.c"
 					>
 				</File>
 				<Filter
@@ -2046,7 +2046,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\i386c\memory.h"
+					RelativePath="..\i386c\cpumem.h"
 					>
 				</File>
 				<Filter

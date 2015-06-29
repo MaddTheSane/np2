@@ -14,7 +14,7 @@
 #error : not support CPUSTRUC_MEMWAIT
 #endif
 
-#include	"memory.h"
+#include	"cpumem.h"
 
 
 #if !defined(CPUDEBUG)

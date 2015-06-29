@@ -759,6 +759,26 @@
 				Name="i286c"
 				>
 				<File
+					RelativePath="..\i286c\cpumem.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\i286c\i286c.c"
 					>
 					<FileConfiguration
@@ -939,26 +959,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\i286c\memory.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\i286c\v30patch.c"
 					>
 					<FileConfiguration
@@ -982,6 +982,26 @@
 			<Filter
 				Name="i286x"
 				>
+				<File
+					RelativePath="..\i286x\cpumem.x86"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+				</File>
 				<File
 					RelativePath="..\i286x\i286x.cpp"
 					>
@@ -1079,26 +1099,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\memory.x86"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
 						/>
 					</FileConfiguration>
 				</File>

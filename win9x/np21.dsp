@@ -451,7 +451,15 @@ SOURCE=..\I386C\cpucore.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\I386C\memory.c
+SOURCE=..\i386c\cpucore.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\i386c\cpumem.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\i386c\cpumem.h
 # End Source File
 # End Group
 # Begin Group "mem"
