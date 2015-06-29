@@ -7,6 +7,7 @@
 #include	"menubase.h"
 #include	"menustr.h"
 #include	"sysmenu.res"
+#include	"dlgcfg.h"
 
 
 enum {
