@@ -295,7 +295,11 @@ joydrv_open(const char *dvname)
 
 	dev = &shdl->dev;
 	dev->devindex = drv;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	dev->devname = strdup(SDL_JoystickName(joy));
+#else
 	dev->devname = strdup(SDL_JoystickName(drv));
+#endif
 	dev->naxis = naxis;
 	for (i = 0; i < JOY_NAXIS; ++i) {
 		if (np2oscfg.JOYAXISMAP[0][i] < naxis) {
