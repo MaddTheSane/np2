@@ -96,7 +96,7 @@ I286_0F _verw(UINT op) {
 	}
 }
 
-I286_0F _sgdt(UINT op) {
+I286_0F __sgdt(UINT op) {
 
 	UINT32	addr;
 
@@ -128,7 +128,7 @@ I286_0F _sidt(UINT op) {
 	}
 }
 
-I286_0F _lgdt(UINT op) {
+I286_0F __lgdt(UINT op) {
 
 	UINT32	addr;
 
@@ -196,7 +196,7 @@ static const I286OP_0F cts0_table[] = {
 			_verr,	_verw,	_verr,	_verw};
 
 static const I286OP_0F cts1_table[] = {
-			_sgdt,	_sidt,	_lgdt,	_lidt,
+			__sgdt,	_sidt,	__lgdt,	_lidt,
 			_smsw,	_smsw,	_lmsw,	_lmsw};
 
 
