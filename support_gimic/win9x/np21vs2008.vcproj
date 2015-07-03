@@ -760,7 +760,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\i386c\memory.c"
+					RelativePath="..\i386c\cpumem.c"
 					>
 				</File>
 				<Filter
@@ -1377,14 +1377,6 @@
 				</File>
 				<File
 					RelativePath=".\soundmng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\sstp.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpmsg.cpp"
 					>
 				</File>
 				<File
@@ -2054,7 +2046,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\i386c\memory.h"
+					RelativePath="..\i386c\cpumem.h"
 					>
 				</File>
 				<Filter
@@ -2563,18 +2555,6 @@
 				</File>
 				<File
 					RelativePath=".\soundmng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstp.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpmsg.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpres.h"
 					>
 				</File>
 				<File

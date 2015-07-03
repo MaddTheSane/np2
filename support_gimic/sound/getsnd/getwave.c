@@ -80,7 +80,7 @@ static UINT pcm_dec(GETSND snd, void *dst) {
 		CopyMemory(dst, snd->datptr, size);
 		snd->datptr += size;
 		snd->datsize -= size;
-		size >>= (int)(long)snd->snd;
+		size >>= (int)(INTPTR)snd->snd;
 	}
 	return(size);
 }
@@ -130,7 +130,7 @@ static BOOL pcm_open(GETSND snd) {
 	}
 	snd->blocksamples = 0x800;					// “K“–‚ÉB
 	snd->blocksize *= snd->blocksamples;
-	snd->snd = (void *)(long)abits[align - 1];
+	snd->snd = (void *)(INTPTR)abits[align - 1];
 	snd->dec = (GSDEC)pcm_dec;
 	return(SUCCESS);
 

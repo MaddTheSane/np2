@@ -983,6 +983,26 @@
 				Name="i286x"
 				>
 				<File
+					RelativePath="..\i286x\cpumem.x86"
+					>
+					<FileConfiguration
+						Name="Debug|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="NASM"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\i286x\i286x.cpp"
 					>
 					<FileConfiguration
@@ -1079,26 +1099,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\i286x\memory.x86"
-					>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="NASM"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1740,14 +1740,6 @@
 				</File>
 				<File
 					RelativePath=".\soundmng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\sstp.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpmsg.cpp"
 					>
 				</File>
 				<File
@@ -2898,18 +2890,6 @@
 				</File>
 				<File
 					RelativePath=".\soundmng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstp.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpmsg.h"
-					>
-				</File>
-				<File
-					RelativePath=".\sstpres.h"
 					>
 				</File>
 				<File

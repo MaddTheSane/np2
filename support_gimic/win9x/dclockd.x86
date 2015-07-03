@@ -48,12 +48,12 @@ dclocky		db		0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3
 				align	16
 _dclock_cntdown:xor		edx, edx
 				cmp		[_dclock + dclock_t.clk_x], dl
-				je		short dcd_main
+				je		short .ed
 				cmp		[_dclock + dclock_t.flm], edx
 				jne		short dcd_main
 				cmp		[_dclock + dclock_t.flm + 4], edx
 				jne		short dcd_main
-				ret
+.ed:			ret
 dcd_main:		mov		cl, [esp+4]
 				cmp		cl, dl
 				jne		short dcd_mnlp

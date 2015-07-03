@@ -1007,7 +1007,6 @@ BEGIN
         MENUITEM "反向游戏按钮(&V)",            IDM_JOYX
         MENUITEM "快速游戏按钮(&R)",            IDM_RAPID
         MENUITEM "快速点击(&M)",                IDM_MSRAPID
-        MENUITEM "使用 SSTP(&U)",               IDM_SSTP
         MENUITEM SEPARATOR
         MENUITEM "帮助主题(&H)...",             IDM_HELP
         MENUITEM "关于(&A)...",                 IDM_ABOUT

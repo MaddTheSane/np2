@@ -10,6 +10,7 @@
 #include	"menubase.h"
 #include	"menustr.h"
 #include	"sysmenu.res"
+#include	"dlgscr.h"
 
 
 enum {

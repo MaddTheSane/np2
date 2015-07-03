@@ -782,7 +782,7 @@ COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 		}
 	}
 	if (getmidiinid(midiin, &id) == SUCCESS) {
-		if (midiInOpen(&hmidiin, id, (DWORD)g_hWndMain, 0, CALLBACK_WINDOW)
+		if (midiInOpen(&hmidiin, id, (DWORD_PTR)g_hWndMain, 0, CALLBACK_WINDOW)
 														== MMSYSERR_NOERROR) {
 			midiInReset(hmidiin);
 			opened |= CMMIDI_MIDIIN;

@@ -112,7 +112,7 @@ static DLGPRM resappend(MENUDLG dlg, const OEMCHAR *str) {
 
 	DLGPRM	prm;
 
-	prm = listarray_enum(dlg->res, seaprmempty, NULL);
+	prm = (DLGPRM)listarray_enum(dlg->res, seaprmempty, NULL);
 	if (prm == NULL) {
 		prm = (DLGPRM)listarray_append(dlg->res, NULL);
 	}
@@ -672,7 +672,7 @@ static void dlglist_drawbar(DLGHDL hdl) {
 						MVC4(MVC_LIGHT, MVC_DARK, MVC_HILIGHT, MVC_SHADOW));
 }
 
-static BOOL dlglist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static BOOL dlglist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR* arg) {
 
 	BOOL	r;
 	DLGPRM	*sto;
@@ -683,7 +683,7 @@ static BOOL dlglist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 	while(*sto) {
 		sto = &((*sto)->next);
 	}
-	*sto = resappend(dlg, (OEMCHAR *)arg);
+	*sto = resappend(dlg, arg);
 	if (*sto) {
 		r = dlglist_drawsub(hdl, hdl->prmcnt, FALSE);
 		hdl->prmcnt++;
@@ -1335,7 +1335,7 @@ static void dlgtablist_setval(MENUDLG dlg, DLGHDL hdl, int val) {
 	}
 }
 
-static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR *arg) {
 
 	DLGPRM	res;
 	DLGPRM	*sto;
@@ -1345,7 +1345,7 @@ static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 	while(*sto) {
 		sto = &((*sto)->next);
 	}
-	res = resappend(dlg, (OEMCHAR *)arg);
+	res = resappend(dlg, arg);
 	if (res) {
 		*sto = res;
 		fontmng_getsize(hdl->c.dtl.font, (OEMCHAR *)arg, &pt);
@@ -1588,12 +1588,9 @@ static void dlgtext_paint(MENUDLG dlg, DLGHDL hdl) {
 	}
 }
 
-static void dlgtext_itemset(MENUDLG dlg, DLGHDL hdl, const void *arg) {
-
-const OEMCHAR	*str;
+static void dlgtext_itemset(MENUDLG dlg, DLGHDL hdl, const OEMCHAR *str) {
 
 	if (hdl->prm) {
-		str = (OEMCHAR *)arg;
 		if (str == NULL) {
 			str = str_null;
 		}
@@ -1603,11 +1600,10 @@ const OEMCHAR	*str;
 	(void)dlg;
 }
 
-static void dlgtext_iconset(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+static void dlgtext_iconset(MENUDLG dlg, DLGHDL hdl, UINT arg) {
 
 	if (hdl->prm) {
-		resattachicon(dlg, hdl->prm, (UINT16)(long)arg,
-											hdl->c.dt.pt.y, hdl->c.dt.pt.y);
+		resattachicon(dlg, hdl->prm, (UINT16)arg, hdl->c.dt.pt.y, hdl->c.dt.pt.y);
 	}
 	(void)dlg;
 }
@@ -2197,14 +2193,14 @@ void menudlg_moving(int x, int y, int btn) {
 
 // ---- ctrl
 
-void *menudlg_msg(int ctrl, MENUID id, void *arg) {
+INTPTR menudlg_msg(int ctrl, MENUID id, INTPTR arg) {
 
-	void	*ret;
+	INTPTR	ret;
 	MENUDLG	dlg;
 	DLGHDL	hdl;
 	int		flg;
 
-	ret = NULL;
+	ret = 0;
 	dlg = &menudlg;
 	hdl = dlghdlsea(dlg, id);
 	if (hdl == NULL) {
@@ -2213,8 +2209,8 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 	drawlock(TRUE);
 	switch(ctrl) {
 		case DMSG_SETHIDE:
-			ret = (void *)((hdl->flag & MENU_DISABLE)?1:0);
-			flg = (arg)?MENU_DISABLE:0;
+			ret = (hdl->flag & MENU_DISABLE) ? 1 : 0;
+			flg = (arg) ? MENU_DISABLE : 0;
 			if ((hdl->flag ^ flg) & MENU_DISABLE) {
 				hdl->flag ^= MENU_DISABLE;
 				if (flg) {
@@ -2227,12 +2223,12 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 			break;
 
 		case DMSG_GETHIDE:
-			ret = (void *)((hdl->flag & MENU_DISABLE)?1:0);
+			ret = (hdl->flag & MENU_DISABLE) ? 1 : 0;
 			break;
 
 		case DMSG_SETENABLE:
-			ret = (void *)((hdl->flag & MENU_GRAY)?0:1);
-			flg = (arg)?0:MENU_GRAY;
+			ret = (hdl->flag & MENU_GRAY) ? 0 : 1;
+			flg = (arg) ? 0 : MENU_GRAY;
 			if ((hdl->flag ^ flg) & MENU_GRAY) {
 				hdl->flag ^= MENU_GRAY;
 				drawctrls(dlg, hdl);
@@ -2240,23 +2236,23 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 			break;
 
 		case DMSG_GETENABLE:
-			ret = (void *)((hdl->flag & MENU_GRAY)?0:1);
+			ret = (hdl->flag & MENU_GRAY) ? 0 : 1;
 			break;
 
 		case DMSG_SETVAL:
-			ret = (void *)hdl->val;
+			ret = hdl->val;
 			if ((UINT)hdl->type < NELEMENTS(dlgsetval)) {
 				dlgsetval[hdl->type](dlg, hdl, (int)arg);
 			}
 			break;
 
 		case DMSG_GETVAL:
-			ret = (void *)hdl->val;
+			ret = hdl->val;
 			break;
 
 		case DMSG_SETVRAM:
 			if (hdl->type == DLGTYPE_VRAM) {
-				ret = hdl->c.dv.vram;
+				ret = (INTPTR)hdl->c.dv.vram;
 				hdl->c.dv.vram = (VRAMHDL)arg;
 				drawctrls(dlg, hdl);
 			}
@@ -2269,7 +2265,7 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 				case DLGTYPE_CHECK:
 				case DLGTYPE_EDIT:
 				case DLGTYPE_TEXT:
-					dlgtext_itemset(dlg, hdl, arg);
+					dlgtext_itemset(dlg, hdl, (OEMCHAR*)arg);
 					drawctrls(dlg, hdl);
 					break;
 			}
@@ -2282,7 +2278,7 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 				case DLGTYPE_CHECK:
 				case DLGTYPE_EDIT:
 				case DLGTYPE_TEXT:
-					dlgtext_iconset(dlg, hdl, arg);
+					dlgtext_iconset(dlg, hdl, (UINT)arg);
 					drawctrls(dlg, hdl);
 					break;
 			}
@@ -2291,13 +2287,13 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 		case DMSG_ITEMAPPEND:
 			switch(hdl->type) {
 				case DLGTYPE_LIST:
-					if (dlglist_append(dlg, hdl, arg)) {
+					if (dlglist_append(dlg, hdl, (OEMCHAR*)arg)) {
 						drawctrls(dlg, hdl);
 					}
 					break;
 
 				case DLGTYPE_TABLIST:
-					dlgtablist_append(dlg, hdl, arg);
+					dlgtablist_append(dlg, hdl, (OEMCHAR*)arg);
 					drawctrls(dlg, hdl);
 					break;
 			}
@@ -2326,18 +2322,18 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 
 		case DMSG_SETLISTPOS:
 			if (hdl->type == DLGTYPE_LIST) {
-				ret = (void *)(long)hdl->c.dl.basepos;
+				ret = hdl->c.dl.basepos;
 				dlglist_setbasepos(dlg, hdl, (int)arg);
 				drawctrls(dlg, hdl);
 			}
 			break;
 
 		case DMSG_GETRECT:
-			ret = &hdl->rect;
+			ret = (INTPTR)&hdl->rect;
 			break;
 
 		case DMSG_SETRECT:
-			ret = &hdl->rect;
+			ret = (INTPTR)&hdl->rect;
 			if ((hdl->type == DLGTYPE_TEXT) && (arg)) {
 				drawctrls(dlg, hdl);
 				hdl->rect = *(RECT_T *)arg;
@@ -2347,29 +2343,29 @@ void *menudlg_msg(int ctrl, MENUID id, void *arg) {
 
 		case DMSG_SETFONT:
 			if (hdl->type == DLGTYPE_LIST) {
-				ret = dlglist_setfont(hdl, arg);
+				ret = (INTPTR)dlglist_setfont(hdl, (void*)arg);
 				drawctrls(dlg, hdl);
 			}
 			else if (hdl->type == DLGTYPE_TABLIST) {
-				ret = dlgtablist_setfont(hdl, arg);
+				ret = (INTPTR)dlgtablist_setfont(hdl, (void*)arg);
 				drawctrls(dlg, hdl);
 			}
 			else if (hdl->type == DLGTYPE_TEXT) {
-				ret = hdl->c.dt.font;
-				hdl->c.dt.font = arg;
+				ret = (INTPTR)hdl->c.dt.font;
+				hdl->c.dt.font = (void*)arg;
 				drawctrls(dlg, hdl);
 			}
 			break;
 
 		case DMSG_GETFONT:
 			if (hdl->type == DLGTYPE_LIST) {
-				ret = hdl->c.dl.font;
+				ret = (INTPTR)hdl->c.dl.font;
 			}
 			else if (hdl->type == DLGTYPE_TABLIST) {
-				ret = hdl->c.dtl.font;
+				ret = (INTPTR)hdl->c.dtl.font;
 			}
 			else if (hdl->type == DLGTYPE_TEXT) {
-				ret = hdl->c.dt.font;
+				ret = (INTPTR)hdl->c.dt.font;
 			}
 			break;
 

@@ -270,7 +270,7 @@ I286C_SOURCES=	$(real_topsrcdir)/i286c/i286c.c \
 I286C_CPPFLAGS=	-I$(real_topsrcdir)/i286c
 
 IA32_SOURCES=	$(real_topsrcdir)/i386c/cpucore.c \
-		$(real_topsrcdir)/i386c/memory.c \
+		$(real_topsrcdir)/i386c/cpumem.c \
 		$(real_topsrcdir)/i386c/ia32/interface.c \
 		$(real_topsrcdir)/i386c/ia32/ia32.c \
 		$(real_topsrcdir)/i386c/ia32/cpu.c \
