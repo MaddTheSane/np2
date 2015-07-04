@@ -762,7 +762,7 @@ SOURCE=..\cbus\BOARDPX.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\CBUS\BOARDSPB.C
+SOURCE=.\boardspb.cpp
 # End Source File
 # Begin Source File
 
