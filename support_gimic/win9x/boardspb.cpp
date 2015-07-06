@@ -104,7 +104,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 	}
 	else if (addr < 0x12) {
 		CExternalOpna::GetInstance()->WriteRegister(0x100 + addr, dat);
-		adpcm_setreg(&adpcm, addr, dat);
+		adpcm_setreg(&g_adpcm, addr, dat);
 	}
 	(void)port;
 }
@@ -112,7 +112,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL spb_i188(UINT port) {
 
 	(void)port;
-	return((fmtimer.status & 3) | adpcm_status(&adpcm));
+	return((fmtimer.status & 3) | adpcm_status(&g_adpcm));
 }
 
 static REG8 IOINPCALL spb_i18a(UINT port) {
@@ -141,7 +141,7 @@ static REG8 IOINPCALL spb_i18e(UINT port) {
 
 	addr = opn.addr1h;
 	if (addr == 0x08) {
-		return(adpcm_readsample(&adpcm));
+		return(adpcm_readsample(&g_adpcm));
 	}
 	else if (addr == 0x0f) {
 		return(opn.reg[addr + 0x100]);
@@ -277,8 +277,8 @@ void boardspb_bind(void) {
 //	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 //	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 //	rhythm_bind(&g_rhythm);
-	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm_dummy);
-//	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
+	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm_dummy);
+//	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 	cbuscore_attachsndex(0x188 - opn.base, spb_o, spb_i);
 }
 
@@ -313,7 +313,7 @@ void boardspr_bind(void) {
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
-	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
+	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 	cbuscore_attachsndex(0x188 - opn.base, spb_o, spb_i);
 	cbuscore_attachsndex(0x588 - opn.base, spr_o, spr_i);
 }

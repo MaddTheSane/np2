@@ -207,7 +207,7 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x12) {
-			adpcm_setreg(&adpcm, addr, dat);
+			adpcm_setreg(&g_adpcm, addr, dat);
 		}
 	}
 	(void)port;
@@ -216,7 +216,7 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL opnac_i18c(UINT port) {
 
 	if (opn.extend) {
-		return((fmtimer.status & 3) | adpcm_status(&adpcm));
+		return((fmtimer.status & 3) | adpcm_status(&g_adpcm));
 //		return((fmtimer.status & 3) | (opn.adpcmmask & 8));
 	}
 	(void)port;
@@ -228,7 +228,7 @@ static REG8 IOINPCALL opnac_i18e(UINT port) {
 	if (opn.extend) {
 		UINT addr = opn.addr1h;
 		if (addr == 0x08) {
-			return(adpcm_readsample(&adpcm));
+			return(adpcm_readsample(&g_adpcm));
 		}
 		else if (addr == 0x0f) {
 			return(opn.reg[addr + 0x100]);
@@ -255,7 +255,7 @@ void board86c_bind(void) {
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
-	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
+	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x188 + opn.base, opnac_o, opnac_i);
 }

@@ -203,7 +203,7 @@ static LRESULT CALLBACK SndmixDlgProc(HWND hWnd, UINT msg,
 				rhythm_setvol(np2cfg.vol_rhythm);
 				rhythm_update(&g_rhythm);
 				adpcm_setvol(np2cfg.vol_adpcm);
-				adpcm_update(&adpcm);
+				adpcm_update(&g_adpcm);
 				pcm86gen_setvol(np2cfg.vol_pcm);
 				pcm86gen_update();
 				return(TRUE);

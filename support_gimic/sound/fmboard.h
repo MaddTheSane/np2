@@ -59,7 +59,7 @@ extern	_OPNGEN		opngen;
 extern	OPNCH		opnch[OPNCH_MAX];
 extern	_PSGGEN		__psg[3];
 extern	_RHYTHM		g_rhythm;
-extern	_ADPCM		adpcm;
+extern	_ADPCM		g_adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 
@@ -72,8 +72,8 @@ extern	OPN_T		opn2;
 extern	OPN_T		opn3;
 extern	_RHYTHM		g_rhythm2;
 extern	_RHYTHM		g_rhythm3;
-extern	_ADPCM		adpcm2;
-extern	_ADPCM		adpcm3;
+extern	_ADPCM		g_adpcm2;
+extern	_ADPCM		g_adpcm3;
 #endif	// defined(SUPPORT_PX)
 
 REG8 fmboard_getjoy(PSGGEN psg);
