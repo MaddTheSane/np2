@@ -31,7 +31,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	else {
 		if (addr < 0x20) {
 			if (opn.extend) {
-				rhythm_setreg(&rhythm, addr, dat);
+				rhythm_setreg(&g_rhythm, addr, dat);
 			}
 		}
 		else if (addr < 0x30) {
@@ -148,7 +148,7 @@ static void extendchannel(REG8 enable) {
 	else {
 		opn.channels = 3;
 		opngen_setcfg(3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
 
@@ -180,10 +180,10 @@ void board86_bind(void) {
 	fmboard_fmrestore(0, 0);
 	fmboard_fmrestore(3, 1);
 	psggen_restore(&psg1);
-	fmboard_rhyrestore(&rhythm, 0);
+	fmboard_rhyrestore(&g_rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&rhythm);
+	rhythm_bind(&g_rhythm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x188 + opn.base, opna_o, opna_i);
 }
@@ -251,10 +251,10 @@ void board86c_bind(void) {
 	fmboard_fmrestore(0, 0);
 	fmboard_fmrestore(3, 1);
 	psggen_restore(&psg1);
-	fmboard_rhyrestore(&rhythm, 0);
+	fmboard_rhyrestore(&g_rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&rhythm);
+	rhythm_bind(&g_rhythm);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x188 + opn.base, opnac_o, opnac_i);

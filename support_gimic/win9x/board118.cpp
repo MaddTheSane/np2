@@ -42,7 +42,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x20) {
-			rhythm_setreg(&rhythm, addr, dat);
+			rhythm_setreg(&g_rhythm, addr, dat);
 		}
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
@@ -149,7 +149,7 @@ static void extendchannel(REG8 enable) {
 	else {
 		opn.channels = 3;
 		opngen_setcfg(3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
 
@@ -313,10 +313,10 @@ void board118_bind(void)
 		fmboard_fmrestore(0, 0);
 		fmboard_fmrestore(3, 1);
 		psggen_restore(&psg1);
-		fmboard_rhyrestore(&rhythm, 0);
+		fmboard_rhyrestore(&g_rhythm, 0);
 		sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 		sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-		rhythm_bind(&rhythm);
+		rhythm_bind(&g_rhythm);
 		cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	}
 	cs4231io_bind();

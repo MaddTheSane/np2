@@ -31,7 +31,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x20) {
-			rhythm_setreg(&rhythm, addr, dat);
+			rhythm_setreg(&g_rhythm, addr, dat);
 		}
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
@@ -147,7 +147,7 @@ static void IOOUTCALL spb_o08a(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x20) {
-			rhythm_setreg(&rhythm2, addr, dat);
+			rhythm_setreg(&g_rhythm2, addr, dat);
 		}
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
@@ -265,7 +265,7 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x20) {
-			rhythm_setreg(&rhythm3, addr, dat);
+			rhythm_setreg(&g_rhythm3, addr, dat);
 		}
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
@@ -612,13 +612,13 @@ void boardpx1_bind(void) {
 	fmboard_fmrestore2(&opn2, 21, 3);
 	psggen_restore(&psg1);
 	psggen_restore(&psg2);
-	fmboard_rhyrestore(&rhythm, 0);
-	fmboard_rhyrestore2(&opn2, &rhythm2, 0);
+	fmboard_rhyrestore(&g_rhythm, 0);
+	fmboard_rhyrestore2(&opn2, &g_rhythm2, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&rhythm);
-	rhythm_bind(&rhythm2);
+	rhythm_bind(&g_rhythm);
+	rhythm_bind(&g_rhythm2);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
 	sound_streamregist(&adpcm2, (SOUNDCB)adpcm_getpcm);
 
@@ -639,7 +639,7 @@ static void extendchannelx2(REG8 enable) {
 	else {
 		opn3.channels = 3;
 		opngen_setcfg(27, OPN_MONORAL | 0x07000000);
-		rhythm_setreg(&rhythm2, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm2, 0x10, 0xff);
 	}
 }
 
@@ -672,16 +672,16 @@ void boardpx2_bind(void) {
 	psggen_restore(&psg1);
 	psggen_restore(&psg2);
 	psggen_restore(&psg3);
-	fmboard_rhyrestore(&rhythm, 0);
-	fmboard_rhyrestore2(&opn2, &rhythm2, 0);
-	fmboard_rhyrestore2(&opn3, &rhythm3, 0);
+	fmboard_rhyrestore(&g_rhythm, 0);
+	fmboard_rhyrestore2(&opn2, &g_rhythm2, 0);
+	fmboard_rhyrestore2(&opn3, &g_rhythm3, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg3, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&rhythm);
-	rhythm_bind(&rhythm2);
-	rhythm_bind(&rhythm3);
+	rhythm_bind(&g_rhythm);
+	rhythm_bind(&g_rhythm2);
+	rhythm_bind(&g_rhythm3);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
 	sound_streamregist(&adpcm2, (SOUNDCB)adpcm_getpcm);
 	sound_streamregist(&adpcm3, (SOUNDCB)adpcm_getpcm);

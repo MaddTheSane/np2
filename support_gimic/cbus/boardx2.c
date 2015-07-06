@@ -97,7 +97,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	else {
 		if (addr < 0x20) {
 			if (opn.extend) {
-				rhythm_setreg(&rhythm, addr, dat);
+				rhythm_setreg(&g_rhythm, addr, dat);
 			}
 		}
 		else if (addr < 0x30) {
@@ -215,7 +215,7 @@ static void extendchannel(REG8 enable) {
 	else {
 		opn.channels = 6;
 		opngen_setcfg(6, OPN_MONORAL | 0x038);
-		rhythm_setreg(&rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
 
@@ -253,11 +253,11 @@ void boardx2_bind(void) {
 	fmboard_fmrestore(6, 1);
 	psggen_restore(&psg1);
 	psggen_restore(&psg2);
-	fmboard_rhyrestore(&rhythm, 0);
+	fmboard_rhyrestore(&g_rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&rhythm);
+	rhythm_bind(&g_rhythm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x088, opn_o, opn_i);
 	cbuscore_attachsndex(0x188, opna_o, opna_i);

@@ -33,7 +33,7 @@
 	_OPNGEN		opngen;
 	OPNCH		opnch[OPNCH_MAX];
 	_PSGGEN		__psg[3];
-	_RHYTHM		rhythm;
+	_RHYTHM		g_rhythm;
 	_ADPCM		adpcm;
 	_PCM86		pcm86;
 	_CS4231		cs4231;
@@ -41,8 +41,8 @@
 #if defined(SUPPORT_PX)
 	OPN_T		opn2;
 	OPN_T		opn3;
-	_RHYTHM		rhythm2;
-	_RHYTHM		rhythm3;
+	_RHYTHM		g_rhythm2;
+	_RHYTHM		g_rhythm3;
 	_ADPCM		adpcm2;
 	_ADPCM		adpcm3;
 #endif	// defined(SUPPORT_PX)
@@ -164,10 +164,10 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	psggen_reset(&psg1);
 	psggen_reset(&psg2);
 	psggen_reset(&psg3);
-	rhythm_reset(&rhythm);
+	rhythm_reset(&g_rhythm);
 #if defined(SUPPORT_PX)
-	rhythm_reset(&rhythm2);
-	rhythm_reset(&rhythm3);
+	rhythm_reset(&g_rhythm2);
+	rhythm_reset(&g_rhythm3);
 #endif	// defined(SUPPORT_PX)
 	adpcm_reset(&adpcm);
 #if defined(SUPPORT_PX)
