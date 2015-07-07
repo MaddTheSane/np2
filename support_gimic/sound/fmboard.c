@@ -25,7 +25,7 @@
 
 	UINT32		usesound;
 	OPN_T		opn;
-	AMD98		amd98;
+	AMD98		g_amd98;
 	MUSICGEN	musicgen;
 
 	_TMS3631	tms3631;
@@ -157,7 +157,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 #endif	// defined(SUPPORT_PX)
 
 	ZeroMemory(&musicgen, sizeof(musicgen));
-	ZeroMemory(&amd98, sizeof(amd98));
+	ZeroMemory(&g_amd98, sizeof(g_amd98));
 
 	tms3631_reset(&tms3631);
 	opngen_reset();

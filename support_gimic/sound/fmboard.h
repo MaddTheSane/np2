@@ -50,7 +50,7 @@ extern "C" {
 
 extern	UINT32		usesound;
 extern	OPN_T		opn;
-extern	AMD98		amd98;
+extern	AMD98		g_amd98;
 extern	MUSICGEN	musicgen;
 
 extern	_TMS3631	tms3631;

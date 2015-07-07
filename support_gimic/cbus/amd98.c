@@ -290,13 +290,13 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 		if ((b & 1) > (dat & 1)) {
 			b &= 0xc2;
 			if (b == 0x42) {
-				amd98.psg3reg = g_psg1.reg.io2;
+				g_amd98.psg3reg = g_psg1.reg.io2;
 			}
 			else if (b == 0x40) {
-				if (amd98.psg3reg < 0x0e) {
-					psggen_setreg(&g_psg3, amd98.psg3reg, g_psg1.reg.io2);
+				if (g_amd98.psg3reg < 0x0e) {
+					psggen_setreg(&g_psg3, g_amd98.psg3reg, g_psg1.reg.io2);
 				}
-				else if (amd98.psg3reg == 0x0f) {
+				else if (g_amd98.psg3reg == 0x0f) {
 					amd98_rhythm(g_psg1.reg.io2);
 				}
 			}
