@@ -368,7 +368,7 @@ static void fmkeysync(void) {
 
 // ---- PSG
 
-static const void *psgtbl[3] = {&psg1, &psg2, &psg3};
+static const void *psgtbl[3] = {&g_psg1, &g_psg2, &g_psg3};
 
 static UINT8 getpsgnote(UINT16 tone) {
 

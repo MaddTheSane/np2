@@ -63,9 +63,9 @@ extern	_ADPCM		g_adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 
-#define	psg1	g_psg[0]
-#define	psg2	g_psg[1]
-#define	psg3	g_psg[2]
+#define	g_psg1	g_psg[0]
+#define	g_psg2	g_psg[1]
+#define	g_psg3	g_psg[2]
 
 #if defined(SUPPORT_PX)
 extern	OPN_T		opn2;

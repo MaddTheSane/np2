@@ -161,9 +161,9 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	tms3631_reset(&tms3631);
 	opngen_reset();
-	psggen_reset(&psg1);
-	psggen_reset(&psg2);
-	psggen_reset(&psg3);
+	psggen_reset(&g_psg1);
+	psggen_reset(&g_psg2);
+	psggen_reset(&g_psg3);
 	rhythm_reset(&g_rhythm);
 #if defined(SUPPORT_PX)
 	rhythm_reset(&g_rhythm2);

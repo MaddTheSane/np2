@@ -153,7 +153,7 @@ BRESULT S98_open(const OEMCHAR *filename) {
 	for (i=0x00; i<0x0e; i++) {
 		S98_putc(NORMAL2608);
 		S98_putc((REG8)i);
-		S98_putc(((UINT8 *)&psg1.reg)[i]);
+		S98_putc(((UINT8 *)&g_psg1.reg)[i]);
 	}
 #endif
 
