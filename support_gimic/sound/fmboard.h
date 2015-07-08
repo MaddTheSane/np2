@@ -98,7 +98,7 @@ void fmboard_rhyrestore2(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 
 #else
 
-#define	fmboard_reset(t)
+#define	fmboard_reset(c, t)
 #define	fmboard_bind()
 
 #endif
