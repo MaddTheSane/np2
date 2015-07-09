@@ -33,17 +33,6 @@ typedef struct {
 	UINT8	rhythm;
 } AMD98;
 
-typedef struct {
-	UINT8	porta;
-	UINT8	portb;
-	UINT8	portc;
-	UINT8	mask;
-	UINT8	key[8];
-	int		sync;
-	int		ch;
-} MUSICGEN;
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,9 +40,7 @@ extern "C" {
 extern	UINT32		g_usesound;
 extern	OPN_T		opn;
 extern	AMD98		g_amd98;
-extern	MUSICGEN	g_musicgen;
 
-extern	_TMS3631	tms3631;
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
 extern	OPNCH		opnch[OPNCH_MAX];
