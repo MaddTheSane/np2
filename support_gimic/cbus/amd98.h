@@ -10,7 +10,8 @@
  */
 struct amd98_t
 {
-	UINT16	port;
+	UINT8	psg1reg;
+	UINT8	psg2reg;
 	UINT8	psg3reg;
 	UINT8	rhythm;
 };
