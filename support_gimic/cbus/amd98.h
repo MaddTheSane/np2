@@ -29,6 +29,7 @@ void amd98_deinitialize(void);
 
 void amd98int(NEVENTITEM item);
 
+void amd98_reset(const NP2CFG *pConfig);
 void amd98_bind(void);
 
 #ifdef __cplusplus

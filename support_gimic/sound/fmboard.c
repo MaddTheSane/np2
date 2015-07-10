@@ -153,8 +153,6 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	opn3.adpcmmask = (UINT8)~(0x1c);
 #endif	// defined(SUPPORT_PX)
 
-	ZeroMemory(&g_amd98, sizeof(g_amd98));
-
 	opngen_reset();
 	psggen_reset(&g_psg1);
 	psggen_reset(&g_psg2);
@@ -172,8 +170,8 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	pcm86_reset();
 	cs4231_reset();
 
-	
 	board14_reset(pConfig, (type == 1) ? TRUE : FALSE);
+	amd98_reset(pConfig);
 
 	switch (type)
 	{
@@ -211,7 +209,6 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 			break;
 
 		case 0x80:
-//			amd98_reset(pConfig);
 			break;
 
 #if	defined(SUPPORT_PX)
