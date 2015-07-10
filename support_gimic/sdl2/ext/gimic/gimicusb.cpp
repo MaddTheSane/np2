@@ -1,6 +1,6 @@
 /**
  * @file	gimicusb.cpp
- * @brief	G.I.M.I.C USB アクセス クラスの動作の定義を行います
+ * @brief	Implementation of accessing G.I.M.I.C USB
  */
 
 #include "compiler.h"
@@ -8,7 +8,7 @@
 #include <algorithm>
 
 /**
- * コンストラクタ
+ * Constructor
  */
 CGimicUSB::CGimicUSB()
 	: m_nChipType(CHIP_UNKNOWN)
@@ -19,14 +19,14 @@ CGimicUSB::CGimicUSB()
 }
 
 /**
- * デストラクタ
+ * Destructor
  */
 CGimicUSB::~CGimicUSB()
 {
 }
 
 /**
- * 初期化
+ * Initialize
  * @return C86CTL_ERR
  */
 int CGimicUSB::Initialize()
@@ -74,7 +74,7 @@ int CGimicUSB::Initialize()
 }
 
 /**
- * 解放
+ * Deinitialize
  * @return C86CTL_ERR
  */
 int CGimicUSB::Deinitialize()

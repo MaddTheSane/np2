@@ -1,6 +1,6 @@
 /**
  * @file	c86boxusb.cpp
- * @brief	C86BOX USB アクセス クラスの動作の定義を行います
+ * @brief	Implementation of accessing C86BOX USB
  */
 
 #include "compiler.h"
@@ -330,8 +330,8 @@ int C86BoxUSB::GetChipType(ChipType* pnType)
 }
 
 /**
- * スレッド
- * @retval true 常に成功
+ * Thread
+ * @retval true Cont.
  */
 bool C86BoxUSB::Task()
 {
