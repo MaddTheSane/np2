@@ -216,11 +216,11 @@ static const IOINP musicgen_i1[4] = {
  */
 void board14_reset(const NP2CFG *pConfig, BOOL bEnable)
 {
+	memset(&g_musicgen, 0, sizeof(g_musicgen));
 	tms3631_reset(&s_tms3631);
 
 	if (bEnable)
 	{
-		memset(&g_musicgen, 0, sizeof(g_musicgen));
 		soundrom_load(0xcc000, OEMTEXT("14"));
 	}
 	(void)pConfig;
