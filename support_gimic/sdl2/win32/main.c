@@ -14,6 +14,9 @@
 #pragma comment(lib, "SDL2_ttf.lib")
 #endif
 
+/** プロトタイプ */
+void board118_deinitialize(void);
+
 /**
  * メイン
  * @param[in] argc 引数
@@ -24,10 +27,15 @@ int main(int argc, char *argv[])
 {
 	UINT nLength;
 	TCHAR szFont[MAX_PATH];
+	int ret;
 
 	nLength = GetWindowsDirectory(szFont, SDL_arraysize(szFont));
 	lstrcpy(szFont + nLength, TEXT("\\Fonts\\msgothic.ttc"));
 	fontmng_setdeffontname(szFont);
 
-	return np2_main(argc, argv);
+	ret = np2_main(argc, argv);
+
+	board118_deinitialize();
+
+	return ret;
 }
