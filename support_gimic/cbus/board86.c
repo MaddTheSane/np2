@@ -11,8 +11,8 @@
 
 static void IOOUTCALL opna_o188(UINT port, REG8 dat) {
 
-	opn.addr1l = dat;
-	opn.data1 = dat;
+	g_opn.addr1l = dat;
+	g_opn.data1 = dat;
 	(void)port;
 }
 
@@ -20,8 +20,8 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
-	addr = opn.addr1l;
+	g_opn.data1 = dat;
+	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
@@ -30,7 +30,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x20) {
-			if (opn.extend) {
+			if (g_opn.extend) {
 				rhythm_setreg(&g_rhythm, addr, dat);
 			}
 		}
@@ -54,16 +54,16 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 		else if (addr < 0xc0) {
 			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[addr] = dat;
+		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL opna_o18c(UINT port, REG8 dat) {
 
-	if (opn.extend) {
-		opn.addr1h = dat;
-		opn.data1 = dat;
+	if (g_opn.extend) {
+		g_opn.addr1h = dat;
+		g_opn.data1 = dat;
 	}
 	(void)port;
 }
@@ -72,20 +72,20 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	if (!opn.extend) {
+	if (!g_opn.extend) {
 		return;
 	}
-	opn.data1 = dat;
-	addr = opn.addr1h;
+	g_opn.data1 = dat;
+	addr = g_opn.addr1h;
 	S98_put(EXTEND2608, addr, dat);
-	opn.reg[addr + 0x100] = dat;
+	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
 		opngen_setreg(3, addr, dat);
 	}
 	else {
 		if (addr == 0x10) {
 			if (!(dat & 0x80)) {
-				opn.adpcmmask = ~(dat & 0x1c);
+				g_opn.adpcmmask = ~(dat & 0x1c);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 
 	UINT	addr;
 
-	addr = opn.addr1l;
+	addr = g_opn.addr1l;
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&g_psg1));
 	}
@@ -113,13 +113,13 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 		return(1);
 	}
 	(void)port;
-	return(opn.data1);
+	return(g_opn.data1);
 }
 
 static REG8 IOINPCALL opna_i18c(UINT port) {
 
-	if (opn.extend) {
-		return((fmtimer.status & 3) | (opn.adpcmmask & 8));
+	if (g_opn.extend) {
+		return((fmtimer.status & 3) | (g_opn.adpcmmask & 8));
 	}
 	(void)port;
 	return(0xff);
@@ -127,12 +127,12 @@ static REG8 IOINPCALL opna_i18c(UINT port) {
 
 static REG8 IOINPCALL opna_i18e(UINT port) {
 
-	if (opn.extend) {
-		UINT addr = opn.addr1h;
+	if (g_opn.extend) {
+		UINT addr = g_opn.addr1h;
 		if ((addr == 0x08) || (addr == 0x0f)) {
-			return(opn.reg[addr + 0x100]);
+			return(g_opn.reg[addr + 0x100]);
 		}
-		return(opn.data1);
+		return(g_opn.data1);
 	}
 	(void)port;
 	return(0xff);
@@ -140,13 +140,13 @@ static REG8 IOINPCALL opna_i18e(UINT port) {
 
 static void extendchannel(REG8 enable) {
 
-	opn.extend = enable;
+	g_opn.extend = enable;
 	if (enable) {
-		opn.channels = 6;
+		g_opn.channels = 6;
 		opngen_setcfg(6, OPN_STEREO | 0x007);
 	}
 	else {
-		opn.channels = 3;
+		g_opn.channels = 3;
 		opngen_setcfg(3, OPN_MONORAL | 0x007);
 		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
@@ -171,7 +171,7 @@ void board86_reset(const NP2CFG *pConfig) {
 	if (pConfig->snd86opt & 2) {
 		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
-	opn.base = (pConfig->snd86opt & 0x01)?0x000:0x100;
+	g_opn.base = (pConfig->snd86opt & 0x01)?0x000:0x100;
 	fmboard_extreg(extendchannel);
 }
 
@@ -185,7 +185,7 @@ void board86_bind(void) {
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	pcm86io_bind();
-	cbuscore_attachsndex(0x188 + opn.base, opna_o, opna_i);
+	cbuscore_attachsndex(0x188 + g_opn.base, opna_o, opna_i);
 }
 
 
@@ -195,13 +195,13 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	if (!opn.extend) {
+	if (!g_opn.extend) {
 		return;
 	}
-	opn.data1 = dat;
-	addr = opn.addr1h;
+	g_opn.data1 = dat;
+	addr = g_opn.addr1h;
 	S98_put(EXTEND2608, addr, dat);
-	opn.reg[addr + 0x100] = dat;
+	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
 		opngen_setreg(3, addr, dat);
 	}
@@ -215,9 +215,9 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 
 static REG8 IOINPCALL opnac_i18c(UINT port) {
 
-	if (opn.extend) {
+	if (g_opn.extend) {
 		return((fmtimer.status & 3) | adpcm_status(&g_adpcm));
-//		return((fmtimer.status & 3) | (opn.adpcmmask & 8));
+//		return((fmtimer.status & 3) | (g_opn.adpcmmask & 8));
 	}
 	(void)port;
 	return(0xff);
@@ -225,15 +225,15 @@ static REG8 IOINPCALL opnac_i18c(UINT port) {
 
 static REG8 IOINPCALL opnac_i18e(UINT port) {
 
-	if (opn.extend) {
-		UINT addr = opn.addr1h;
+	if (g_opn.extend) {
+		UINT addr = g_opn.addr1h;
 		if (addr == 0x08) {
 			return(adpcm_readsample(&g_adpcm));
 		}
 		else if (addr == 0x0f) {
-			return(opn.reg[addr + 0x100]);
+			return(g_opn.reg[addr + 0x100]);
 		}
-		return(opn.data1);
+		return(g_opn.data1);
 	}
 	(void)port;
 	return(0xff);
@@ -257,6 +257,6 @@ void board86c_bind(void) {
 	rhythm_bind(&g_rhythm);
 	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 	pcm86io_bind();
-	cbuscore_attachsndex(0x188 + opn.base, opnac_o, opnac_i);
+	cbuscore_attachsndex(0x188 + g_opn.base, opnac_o, opnac_i);
 }
 

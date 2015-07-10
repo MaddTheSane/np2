@@ -855,7 +855,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	}
 	if (saveflg & FLAG_FM1A) {
 		ret |= statflag_write(sfh, &fmtimer, sizeof(fmtimer));
-		ret |= statflag_write(sfh, &opn, sizeof(opn));
+		ret |= statflag_write(sfh, &g_opn, sizeof(g_opn));
 		CopyMemory(opnkey.keyreg, opngen.keyreg, sizeof(opngen.keyreg));
 		opnkey.extop[0] = opnch[2].extop;
 		opnkey.extop[1] = opnch[5].extop;
@@ -949,7 +949,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 
 	if (saveflg & FLAG_FM1A) {
 		ret |= statflag_read(sfh, &fmtimer, sizeof(fmtimer));
-		ret |= statflag_read(sfh, &opn, sizeof(opn));
+		ret |= statflag_read(sfh, &g_opn, sizeof(g_opn));
 		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
 		CopyMemory(opngen.keyreg, &opnkey.keyreg, sizeof(opngen.keyreg));
 		opnch[2].extop = opnkey.extop[0];

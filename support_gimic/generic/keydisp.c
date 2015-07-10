@@ -527,7 +527,7 @@ static void setfmhdl(UINT8 items, UINT base) {
 		if ((keydisp.keymax < KEYDISP_CHMAX) &&
 			(keydisp.fmmax < KEYDISP_FMCHMAX)) {
 			keydisp.fmpos[keydisp.fmmax] = keydisp.keymax++;
-			keydisp.pfmreg[keydisp.fmmax] = opn.reg + base;
+			keydisp.pfmreg[keydisp.fmmax] = g_opn.reg + base;
 			keydisp.fmmax++;
 			base++;
 			if ((base & 3) == 3) {
@@ -575,16 +575,16 @@ void keydisp_setfmboard(UINT b) {
 #if defined(SUPPORT_PX)
 	if (b == 0x30)
 	{
-		setfmhdlex(&opn, 12, 0);
-		setfmhdlex(&opn2, 12, 0);
+		setfmhdlex(&g_opn, 12, 0);
+		setfmhdlex(&g_opn2, 12, 0);
 		setpsghdl(2);
 		b = 0;
 	}
 	if (b == 0x50)
 	{
-		setfmhdlex(&opn, 12, 0);
-		setfmhdlex(&opn2, 12, 0);
-		setfmhdlex(&opn3, 6, 0);
+		setfmhdlex(&g_opn, 12, 0);
+		setfmhdlex(&g_opn2, 12, 0);
+		setfmhdlex(&g_opn3, 6, 0);
 		setpsghdl(3);
 		b = 0;
 	}

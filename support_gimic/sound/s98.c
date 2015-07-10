@@ -142,11 +142,11 @@ BRESULT S98_open(const OEMCHAR *filename) {
 		if ((i & 3) != 3) {
 			S98_putc(NORMAL2608);
 			S98_putc((REG8)i);
-			S98_putc(opn.reg[i]);
+			S98_putc(g_opn.reg[i]);
 
 			S98_putc(EXTEND2608);
 			S98_putc((REG8)i);
-			S98_putc(opn.reg[i+0x100]);
+			S98_putc(g_opn.reg[i+0x100]);
 		}
 	}
 	// PSG

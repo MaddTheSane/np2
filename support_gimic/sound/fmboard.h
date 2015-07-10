@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 extern	UINT32		g_usesound;
-extern	OPN_T		opn;
+extern	OPN_T		g_opn;
 
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
@@ -48,8 +48,8 @@ extern	_CS4231		cs4231;
 #define	g_psg3	g_psg[2]
 
 #if defined(SUPPORT_PX)
-extern	OPN_T		opn2;
-extern	OPN_T		opn3;
+extern	OPN_T		g_opn2;
+extern	OPN_T		g_opn3;
 extern	_RHYTHM		g_rhythm2;
 extern	_RHYTHM		g_rhythm3;
 extern	_ADPCM		g_adpcm2;
