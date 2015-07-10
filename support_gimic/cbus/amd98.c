@@ -9,6 +9,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 
+	AMD98	g_amd98;
 
 // ないよりあったほーが良い程度のリズム…
 static struct {

@@ -25,7 +25,6 @@
 
 	UINT32		g_usesound;
 	OPN_T		opn;
-	AMD98		g_amd98;
 
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
