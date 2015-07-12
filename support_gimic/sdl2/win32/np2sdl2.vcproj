@@ -1126,6 +1126,42 @@
 							</FileConfiguration>
 						</File>
 						<File
+							RelativePath=".\misc\tty.cpp"
+							>
+							<FileConfiguration
+								Name="Debug|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Debug|x64"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|x64"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+						</File>
+						<File
 							RelativePath=".\misc\usbdev.cpp"
 							>
 							<FileConfiguration
@@ -1206,7 +1242,83 @@
 							</FileConfiguration>
 						</File>
 						<File
+							RelativePath="..\ext\gimic\gimic.cpp"
+							>
+							<FileConfiguration
+								Name="Debug|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Debug|x64"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|x64"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+						</File>
+						<File
 							RelativePath="..\ext\gimic\gimicusb.cpp"
+							>
+							<FileConfiguration
+								Name="Debug|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Debug|x64"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|x64"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									UsePrecompiledHeader="0"
+								/>
+							</FileConfiguration>
+						</File>
+					</Filter>
+					<Filter
+						Name="spfm"
+						>
+						<File
+							RelativePath="..\ext\spfm\spfmlight.cpp"
 							>
 							<FileConfiguration
 								Name="Debug|Win32"
@@ -2348,6 +2460,10 @@
 							>
 						</File>
 						<File
+							RelativePath=".\misc\tty.h"
+							>
+						</File>
+						<File
 							RelativePath=".\misc\usbdev.h"
 							>
 						</File>
@@ -2369,6 +2485,14 @@
 						</File>
 						<File
 							RelativePath="..\ext\gimic\gimicusb.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="spfm"
+						>
+						<File
+							RelativePath="..\ext\spfm\spfmlight.h"
 							>
 						</File>
 					</Filter>
