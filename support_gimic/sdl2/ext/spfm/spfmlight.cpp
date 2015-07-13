@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "spfmlight.h"
+#include "misc/threadbase.h"
 
 /**
  * Constractor
@@ -29,7 +30,12 @@ bool CSpfmLight::Initialize()
 {
 	Deinitialize();
 
+#ifdef _WIN32
 	bool r = m_serial.Open(TEXT("USB Serial Port"), 1500000, TEXT("8N1"));
+#else
+	bool r = m_serial.Open("/dev/tty.usbserial-A601HD4I", 1500000, "8N1");
+#endif
+
 	if (!r)
 	{
 		return false;
@@ -38,7 +44,7 @@ bool CSpfmLight::Initialize()
 	const unsigned char query[1] = {0xff};
 	m_serial.Write(query, sizeof(query));
 
-	::Sleep(100);
+	CThreadBase::Delay(100 * 1000);
 
 	char buffer[4];
 	if ((m_serial.Read(buffer, 2) != 2) || (buffer[0] != 'L') || (buffer[1] != 'T'))
@@ -85,7 +91,7 @@ void CSpfmLight::Reset()
 	const unsigned char reset[1] = {0xfe};
 	m_serial.Write(reset, sizeof(reset));
 
-	::Sleep(10);
+	CThreadBase::Delay(10 * 1000);
 
 	char buffer[4];
 	m_serial.Read(buffer, 2);
