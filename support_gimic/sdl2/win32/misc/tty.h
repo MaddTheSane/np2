@@ -14,6 +14,7 @@ public:
 	CTty();
 	~CTty();
 	bool Open(int nPort, UINT nSpeed = 0, LPCTSTR lpcszParam = NULL);
+	bool Open(LPCTSTR lpDevName, UINT nSpeed = 0, LPCTSTR lpcszParam = NULL);
 	bool IsOpened() const;
 	void Close();
 	int Read(LPVOID lpcvData, int nDataSize);
@@ -21,8 +22,9 @@ public:
 
 private:
 	HANDLE m_hFile;				/*!< ファイル ハンドル */
+	bool OpenPort(LPCTSTR lpPortName, UINT nSpeed, LPCTSTR lpcszParam);
 	static bool SetParam(LPCTSTR lpcszParam, DCB* dcb = NULL);
-	static LPCTSTR GetBoolString(BOOL f);
+	static bool GetPortName(LPCTSTR lpDevName, LPTSTR lpDosName, UINT cchDosName);
 };
 
 /**
@@ -33,14 +35,4 @@ private:
 inline bool CTty::IsOpened() const
 {
 	return (m_hFile != INVALID_HANDLE_VALUE);
-}
-
-/**
- * TRUE/FALSE 文字列を返す
- * @param[in] f BOOL値
- * @return 文字列ポインタ
- */
-inline LPCTSTR CTty::GetBoolString(BOOL f)
-{
-	return (f) ? TEXT("TRUE") : TEXT("FALSE");
 }

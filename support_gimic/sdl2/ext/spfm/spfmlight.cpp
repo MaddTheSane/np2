@@ -29,7 +29,24 @@ bool CSpfmLight::Initialize()
 {
 	Deinitialize();
 
-	return m_serial.Open(5, 1500000, TEXT("8N1"));
+	bool r = m_serial.Open(TEXT("USB Serial Port"), 1500000, TEXT("8N1"));
+	if (!r)
+	{
+		return false;
+	}
+
+	const unsigned char query[1] = {0xff};
+	m_serial.Write(query, sizeof(query));
+
+	::Sleep(100);
+
+	char buffer[4];
+	if ((m_serial.Read(buffer, 2) != 2) || (buffer[0] != 'L') || (buffer[1] != 'T'))
+	{
+		m_serial.Close();
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -68,12 +85,10 @@ void CSpfmLight::Reset()
 	const unsigned char reset[1] = {0xfe};
 	m_serial.Write(reset, sizeof(reset));
 
-	::Sleep(1);
+	::Sleep(10);
 
 	char buffer[4];
 	m_serial.Read(buffer, 2);
-	buffer[2] = '\0';
-	printf("ret = %s (%x,%x)\n", buffer, buffer[0], buffer[1]);
 }
 
 /**
