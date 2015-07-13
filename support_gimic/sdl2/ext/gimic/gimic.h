@@ -1,6 +1,6 @@
 /**
  * @file	gimic.h
- * @brief	G.I.M.I.C アクセス クラスの宣言およびインターフェイスの定義をします
+ * @brief	Interface of accessing G.I.M.I.C
  */
 
 #pragma once
@@ -10,7 +10,7 @@
 class IC86RealChip;
 
 /**
- * @brief G.I.M.I.C アクセス クラス
+ * @brief The class of accessing G.I.M.I.C
  */
 class CGimic : public IExtendModule
 {
@@ -25,5 +25,5 @@ public:
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
 
 private:
-	IC86RealChip* m_device;		/*!< USB デバイス */
+	IC86RealChip* m_device;		/*!< The instance of the chip */
 };

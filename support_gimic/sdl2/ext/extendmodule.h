@@ -1,56 +1,56 @@
 /**
  * @file	extendmodule.h
- * @brief	外付モジュール インターフェイスの定義を行います
+ * @brief	Interface of thg external modules
  */
 
 #pragma once
 
 /**
- * @brief 外付モジュール インターフェイス
+ * @brief The interface of thg external modules
  */
 class IExtendModule
 {
 public:
 	/**
-	 * デストラクタ
+	 * Destractor
 	 */
 	virtual ~IExtendModule() { }
 
 	/**
-	 * 初期化
-	 * @retval true 成功
-	 * @retval false 失敗
+	 * Initialize
+	 * @retval true Succeeded
+	 * @retval false Failed
 	 */
 	virtual bool Initialize() = 0;
 
 	/**
-	 * 解放
+	 * Deinitialize
 	 */
 	virtual void Deinitialize() = 0;
 
 	/**
-	 * デバイスは有効?
-	 * @retval true 有効
-	 * @retval false 無効
+	 * Is device enabled?
+	 * @retval true Enabled
+	 * @retval false Disabled
 	 */
 	virtual bool IsEnabled() = 0;
 
 	/**
-	 * ビジー?
-	 * @retval true ビジー
-	 * @retval false レディ
+	 * Is device busy?
+	 * @retval true Busy
+	 * @retval false Ready
 	 */
 	virtual bool IsBusy() = 0;
 
 	/**
-	 * 音源リセット
+	 * Reset
 	 */
 	virtual void Reset() = 0;
 
 	/**
-	 * レジスタ書き込み
-	 * @param[in] nAddr アドレス
-	 * @param[in] cData データ
+	 * Writes register
+	 * @param[in] nAddr The address
+	 * @param[in] cData The data
 	 */
 	virtual void WriteRegister(UINT nAddr, UINT8 cData) = 0;
 };

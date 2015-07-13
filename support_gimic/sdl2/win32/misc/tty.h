@@ -26,7 +26,9 @@ private:
 };
 
 /**
- *
+ * オープン済?
+ * @retval true オープン済
+ * @retval false 未オープン
  */
 inline bool CTty::IsOpened() const
 {

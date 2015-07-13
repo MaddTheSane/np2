@@ -115,24 +115,72 @@ struct Devinfo
 class IC86RealChip
 {
 public:
-	// Destructor
+	/**
+	 * Destructor
+	 */
 	virtual ~IC86RealChip()
 	{
 	}
 
-	// IRealChipBase
+	/* IRealChipBase */
+
+	/**
+	 * Initialize
+	 * @return C86CTL_ERR
+	 */
 	virtual int Initialize() = 0;
+
+	/**
+	 * Deinitialize
+	 * @return C86CTL_ERR
+	 */
 	virtual int Deinitialize() = 0;
 
-	// IRealChip
+	/* IRealChip */
+
+	/**
+	 * Reset
+	 * @return C86CTL_ERR
+	 */
 	virtual int Reset() = 0;
+
+	/**
+	 * Output
+	 * @param[in] nAddr The address
+	 * @param[in] cData The data
+	 */
 	virtual void Out(UINT nAddr, UINT8 cData) = 0;
+
+	/**
+	 * Input
+	 * @param[in] nAddr The address of registers
+	 * @return The data
+	 */
 	virtual UINT8 In(UINT nAddr) = 0;
 
-	// IRealChip2
+	/* IRealChip2 */
+
+	/**
+	 * Gets the current status
+	 * @param[in] nAddr The address
+	 * @param[out] pcStatus The status
+	 * @return C86CTL_ERR
+	 */
 	virtual int GetChipStatus(UINT nAddr, UINT8* pcStatus) = 0;
+
+	/**
+	 * Output
+	 * @param[in] nAddr The address
+	 * @param[in] cData The data
+	 */
 	virtual void DirectOut(UINT nAddr, UINT8 cData) = 0;
 
-	// IRealChip3
+	/* IRealChip3 */
+
+	/**
+	 * Gets the type of the chip
+	 * @param[out] pnType A pointer of type
+	 * @return C86CTL_ERR
+	 */
 	virtual int GetChipType(ChipType* pnType) = 0;
 };

@@ -1,6 +1,6 @@
 /**
  * @file	gimic.cpp
- * @brief	G.I.M.I.C アクセス クラスの動作の定義を行います
+ * @brief	Implementation of accessing G.I.M.I.C
  */
 
 #include "compiler.h"
@@ -9,7 +9,7 @@
 #include "gimicusb.h"
 
 /**
- * コンストラクタ
+ * Constractor
  */
 CGimic::CGimic()
 	: m_device(NULL)
@@ -17,16 +17,16 @@ CGimic::CGimic()
 }
 
 /**
- * デストラクタ
+ * Destractor
  */
 CGimic::~CGimic()
 {
 }
 
 /**
- * 初期化
- * @retval true 成功
- * @retval false 失敗
+ * Initialize
+ * @retval true Succeeded
+ * @retval false Failed
  */
 bool CGimic::Initialize()
 {
@@ -53,7 +53,7 @@ bool CGimic::Initialize()
 }
 
 /**
- * 解放
+ * Deinitialize
  */
 void CGimic::Deinitialize()
 {
@@ -66,9 +66,9 @@ void CGimic::Deinitialize()
 }
 
 /**
- * デバイスは有効?
- * @retval true 有効
- * @retval false 無効
+ * Is device enabled?
+ * @retval true Enabled
+ * @retval false Disabled
  */
 bool CGimic::IsEnabled()
 {
@@ -76,9 +76,9 @@ bool CGimic::IsEnabled()
 }
 
 /**
- * ビジー?
- * @retval true ビジー
- * @retval false レディ
+ * Is device busy?
+ * @retval true Busy
+ * @retval false Ready
  */
 bool CGimic::IsBusy()
 {
@@ -86,7 +86,7 @@ bool CGimic::IsBusy()
 }
 
 /**
- * 音源リセット
+ * Reset
  */
 void CGimic::Reset()
 {
@@ -105,9 +105,9 @@ void CGimic::Reset()
 }
 
 /**
- * レジスタ書き込み
- * @param[in] nAddr アドレス
- * @param[in] cData データ
+ * Writes register
+ * @param[in] nAddr The address
+ * @param[in] cData The data
  */
 void CGimic::WriteRegister(UINT nAddr, UINT8 cData)
 {

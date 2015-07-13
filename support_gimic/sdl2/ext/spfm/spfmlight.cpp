@@ -7,23 +7,23 @@
 #include "spfmlight.h"
 
 /**
- * コンストラクタ
+ * Constractor
  */
 CSpfmLight::CSpfmLight()
 {
 }
 
 /**
- * デストラクタ
+ * Destractor
  */
 CSpfmLight::~CSpfmLight()
 {
 }
 
 /**
- * 初期化
- * @retval true 成功
- * @retval false 失敗
+ * Initialize
+ * @retval true Succeeded
+ * @retval false Failed
  */
 bool CSpfmLight::Initialize()
 {
@@ -33,7 +33,7 @@ bool CSpfmLight::Initialize()
 }
 
 /**
- * 解放
+ * Deinitialize
  */
 void CSpfmLight::Deinitialize()
 {
@@ -41,9 +41,9 @@ void CSpfmLight::Deinitialize()
 }
 
 /**
- * デバイスは有効?
- * @retval true 有効
- * @retval false 無効
+ * Is device enabled?
+ * @retval true Enabled
+ * @retval false Disabled
  */
 bool CSpfmLight::IsEnabled()
 {
@@ -51,9 +51,9 @@ bool CSpfmLight::IsEnabled()
 }
 
 /**
- * ビジー?
- * @retval true ビジー
- * @retval false レディ
+ * Is device busy?
+ * @retval true Busy
+ * @retval false Ready
  */
 bool CSpfmLight::IsBusy()
 {
@@ -61,7 +61,7 @@ bool CSpfmLight::IsBusy()
 }
 
 /**
- * 音源リセット
+ * Reset
  */
 void CSpfmLight::Reset()
 {
@@ -77,9 +77,9 @@ void CSpfmLight::Reset()
 }
 
 /**
- * レジスタ書き込み
- * @param[in] nAddr アドレス
- * @param[in] cData データ
+ * Writes register
+ * @param[in] nAddr The address
+ * @param[in] cData The data
  */
 void CSpfmLight::WriteRegister(UINT nAddr, UINT8 cData)
 {
