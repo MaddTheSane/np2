@@ -80,7 +80,7 @@ short file_delete_c(const char *path);
 short file_attr_c(const char *path);
 
 FLISTH file_list1st(const char *dir, FLINFO *fli);
-BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli);
 void file_listclose(FLISTH hdl);
 
 #define file_cpyname(p, n, m)	milstr_ncpy(p, n, m)

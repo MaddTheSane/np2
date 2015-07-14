@@ -198,7 +198,7 @@ void ini_write(const char *path, const char *title,
 	FILEH		fh;
 const INITBL	*p;
 const INITBL	*pterm;
-	BOOL		set;
+	BRESULT		set;
 	char		work[512];
 
 	fh = file_create(path);

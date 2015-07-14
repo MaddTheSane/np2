@@ -36,7 +36,7 @@ RGB16 scrnmng_makepal16(RGB32 pal32);
 // ---- for SDL
 
 void scrnmng_initialize(void);
-BOOL scrnmng_create(int width, int height);
+BRESULT scrnmng_create(int width, int height);
 void scrnmng_destroy(void);
 
 
@@ -48,7 +48,7 @@ typedef struct {
 	int		bpp;
 } SCRNMENU;
 
-BOOL scrnmng_entermenu(SCRNMENU *smenu);
+BRESULT scrnmng_entermenu(SCRNMENU *smenu);
 void scrnmng_leavemenu(void);
 void scrnmng_menudraw(const RECT_T *rct);
 
