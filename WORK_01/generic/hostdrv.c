@@ -322,7 +322,7 @@ static void setup_ptrs(INTRST is, SDACDS sc) {
 }
 
 
-static BOOL pathishostdrv(INTRST is, SDACDS sc) {
+static BRESULT pathishostdrv(INTRST is, SDACDS sc) {
 
 	fetch_sda_currcds(sc);
 	setup_ptrs(is, sc);
@@ -339,7 +339,7 @@ static BOOL pathishostdrv(INTRST is, SDACDS sc) {
 }
 
 
-static BOOL read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
+static BRESULT read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 	HDRVFILE	hdf;
 	FILEH		fh;
@@ -366,7 +366,7 @@ static BOOL read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 	return(SUCCESS);
 }
 
-static BOOL write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
+static BRESULT write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 	HDRVFILE	hdf;
 	FILEH		fh;
@@ -399,7 +399,7 @@ static BOOL write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 }
 
 
-static BOOL find_file1(INTRST is, const HDRVDIR *di) {
+static BRESULT find_file1(INTRST is, const HDRVDIR *di) {
 
 	UINT8	attrmask;
 	UINT	attr;
@@ -416,9 +416,9 @@ static BOOL find_file1(INTRST is, const HDRVDIR *di) {
 	return(SUCCESS);
 }
 
-static BOOL find_file(INTRST is) {
+static BRESULT find_file(INTRST is) {
 
-	BOOL		ret;
+	BRESULT		ret;
 	UINT		pos;
 	HDRVLST		hdl;
 const HDRVDIR	*di;

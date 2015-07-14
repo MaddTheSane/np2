@@ -24,13 +24,13 @@ typedef struct {
 LISTARRAY hostdrvs_getpathlist(const OEMCHAR *realpath);
 
 // ホスト側のフォルダを得る
-BOOL hostdrvs_getrealdir(OEMCHAR *path, int size, char *fcb, char *dospath);
+BRESULT hostdrvs_getrealdir(OEMCHAR *path, int size, char *fcb, char *dospath);
 
 // ホスト側のファイル名を得る
-BOOL hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath);
+BRESULT hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath);
 
 // ホスト側のファイル名を作る
-BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath);
+BRESULT hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath);
 
 // ファイルハンドルリスト
 void hostdrvs_fhdlallclose(LISTARRAY fhdl);
