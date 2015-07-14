@@ -167,7 +167,7 @@ static void filltailsample(UINT count) {
 
 // ----
 
-BOOL sound_create(UINT rate, UINT ms) {
+BRESULT sound_create(UINT rate, UINT ms) {
 
 	UINT	samples;
 	UINT	reserve;
