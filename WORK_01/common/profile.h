@@ -6,8 +6,8 @@
 extern "C" {
 #endif
 
-BOOL profile_enum(const OEMCHAR *filename, void *arg,
-							BOOL (*proc)(void *arg, const OEMCHAR *para,
+BRESULT profile_enum(const OEMCHAR *filename, void *arg,
+							BRESULT (*proc)(void *arg, const OEMCHAR *para,
 								const OEMCHAR *key, const OEMCHAR *data));
 const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng);
 

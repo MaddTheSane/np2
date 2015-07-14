@@ -198,7 +198,7 @@ inirdinterp(const char *src, INITBL *ini)
 
 static void update_iniread_flag(const INITBL *p);
 
-static BOOL
+static BRESULT
 inireadcb(void *arg, const char *para, const char *key, const char *data)
 {
 	char work[512];

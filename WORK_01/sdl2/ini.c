@@ -54,7 +54,7 @@ static void inirdarg8(BYTE *dst, int dsize, const char *src) {
 	}
 }
 
-static BOOL inireadcb(void *arg, const char *para,
+static BRESULT inireadcb(void *arg, const char *para,
 										const char *key, const char *data) {
 
 const INITBL	*p;
