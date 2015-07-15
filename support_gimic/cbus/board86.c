@@ -4,14 +4,13 @@
  */
 
 #include "compiler.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"cbuscore.h"
-#include	"board86.h"
-#include	"pcm86io.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"s98.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "cbuscore.h"
+#include "board86.h"
+#include "pcm86io.h"
+#include "sound.h"
+#include "fmboard.h"
 #include "opna.h"
 
 static void IOOUTCALL opna_o188(UINT port, REG8 dat)

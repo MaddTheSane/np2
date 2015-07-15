@@ -54,6 +54,11 @@ void opna_bind(POPNA opna)
 	{
 		fmboard_fmrestore(opna, 3, 1);
 	}
+	if (cCaps & OPNA_HAS_YM3438)
+	{
+		fmboard_fmrestore(opna, 6, 2);
+		fmboard_fmrestore(opna, 9, 3);
+	}
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
