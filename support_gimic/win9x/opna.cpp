@@ -1,5 +1,5 @@
 /**
- * @file	opna.c
+ * @file	opna.cpp
  * @brief	Implementation of OPNA
  */
 
@@ -9,6 +9,12 @@
 #include "sound.h"
 #include "fmboard.h"
 #include "s98.h"
+#include "keydisp.h"
+#include "ext/externalopna.h"
+
+#if !defined(SUPPORT_ROMEO)
+#error Not support ROMEO
+#endif
 
 /**
  * Initialize instance
@@ -36,6 +42,8 @@ void opna_initialize(POPNA opna)
 void opna_reset(POPNA opna, REG8 cCaps)
 {
 	opna->cCaps = cCaps;
+
+	CExternalOpna::GetInstance()->Reset();
 }
 
 /**
@@ -45,6 +53,15 @@ void opna_reset(POPNA opna, REG8 cCaps)
 void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->cCaps;
+
+	if (CExternalOpna::GetInstance()->IsEnabled())
+	{
+		if (cCaps & OPNA_HAS_ADPCM)
+		{
+			sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm_dummy);
+		}
+		return;
+	}
 
 	psggen_restore(&g_psg1);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
@@ -175,6 +192,8 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		opngen_setreg(0, nAddress, cData);
 	}
+
+	CExternalOpna::GetInstance()->WriteRegister(nAddress, cData);
 }
 
 /**
@@ -218,6 +237,8 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 			opngen_setreg(3, nAddress, cData);
 		}
 	}
+
+	CExternalOpna::GetInstance()->WriteRegister(nAddress + 0x100, cData);
 }
 
 /**
