@@ -140,7 +140,7 @@ file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime)
 	struct stat sb;
 
 	if ((fstat(fileno(handle), &sb) == 0)
-	 && (cnvdatetime(&sb, dosdate, dostime)))
+	 && (cnvdatetime(&sb, dosdate, dostime) == SUCCESS))
 		return 0;
 	return -1;
 }
