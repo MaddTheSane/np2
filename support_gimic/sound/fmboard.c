@@ -286,59 +286,29 @@ void fmboard_bind(void) {
 
 // ----
 
-void fmboard_fmrestore(REG8 chbase, UINT bank) {
-
-	REG8	i;
-const UINT8	*reg;
-
-	reg = g_opn.reg + (bank * 0x100);
-	for (i=0x30; i<0xa0; i++) {
-		opngen_setreg(chbase, i, reg[i]);
-	}
-	for (i=0xb7; i>=0xa0; i--) {
-		opngen_setreg(chbase, i, reg[i]);
-	}
-	for (i=0; i<3; i++) {
-		opngen_keyon(chbase + i, opngen.keyreg[chbase + i]);
-	}
-}
-
-void fmboard_rhyrestore(RHYTHM rhy, UINT bank) {
-
-const UINT8	*reg;
-
-	reg = g_opn.reg + (bank * 0x100);
-	rhythm_setreg(rhy, 0x11, reg[0x11]);
-	rhythm_setreg(rhy, 0x18, reg[0x18]);
-	rhythm_setreg(rhy, 0x19, reg[0x19]);
-	rhythm_setreg(rhy, 0x1a, reg[0x1a]);
-	rhythm_setreg(rhy, 0x1b, reg[0x1b]);
-	rhythm_setreg(rhy, 0x1c, reg[0x1c]);
-	rhythm_setreg(rhy, 0x1d, reg[0x1d]);
-}
-
-
-#if defined(SUPPORT_PX)
-void fmboard_fmrestore2(OPN_T* pOpn, REG8 chbase, UINT bank) {
-
-	REG8	i;
-const UINT8	*reg;
+void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
+{
+	REG8 i;
+	const UINT8 *reg;
 
 	reg = pOpn->reg + (bank * 0x100);
-	for (i=0x30; i<0xa0; i++) {
+	for (i = 0x30; i < 0xa0; i++)
+	{
 		opngen_setreg(chbase, i, reg[i]);
 	}
-	for (i=0xb7; i>=0xa0; i--) {
+	for (i = 0xb7; i >= 0xa0; i--)
+	{
 		opngen_setreg(chbase, i, reg[i]);
 	}
-	for (i=0; i<3; i++) {
+	for (i = 0; i < 3; i++)
+	{
 		opngen_keyon(chbase + i, opngen.keyreg[chbase + i]);
 	}
 }
 
-void fmboard_rhyrestore2(OPN_T* pOpn, RHYTHM rhy, UINT bank) {
-
-const UINT8	*reg;
+void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank)
+{
+	const UINT8 *reg;
 
 	reg = pOpn->reg + (bank * 0x100);
 	rhythm_setreg(rhy, 0x11, reg[0x11]);
@@ -349,5 +319,3 @@ const UINT8	*reg;
 	rhythm_setreg(rhy, 0x1c, reg[0x1c]);
 	rhythm_setreg(rhy, 0x1d, reg[0x1d]);
 }
-#endif	// defined(SUPPORT_PX)
-
