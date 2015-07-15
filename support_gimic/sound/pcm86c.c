@@ -76,7 +76,7 @@ void pcm86_cb(NEVENTITEM item) {
 		if (pcm86.virbuf <= pcm86.fifosize) {
 			pcm86.reqirq = 0;
 			pcm86.irqflag = 1;
-			pic_setirq(fmtimer.irq);
+			pic_setirq(g_fmtimer.irq);
 		}
 		else {
 			pcm86_setnextintr();
@@ -135,7 +135,7 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 		if (pcm86.virbuf <= pcm86.fifosize) {
 			pcm86.reqirq = 0;
 			pcm86.irqflag = 1;
-			pic_setirq(fmtimer.irq);
+			pic_setirq(g_fmtimer.irq);
 		}
 		else {
 			pcm86_setnextintr();

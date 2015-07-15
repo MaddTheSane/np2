@@ -107,7 +107,7 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL ymf_i188(UINT port) {
 
 	(void)port;
-	return(fmtimer.status);
+	return(g_fmtimer.status);
 }
 
 static REG8 IOINPCALL ymf_i18a(UINT port) {
@@ -133,7 +133,7 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 static REG8 IOINPCALL ymf_i18c(UINT port) {
 
 	if (g_opn.extend) {
-		return(fmtimer.status & 3);
+		return(g_fmtimer.status & 3);
 	}
 	(void)port;
 	return(0xff);

@@ -52,7 +52,7 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 static REG8 IOINPCALL opn_i188(UINT port) {
 
 	(void)port;
-	return(fmtimer.status);
+	return(g_fmtimer.status);
 }
 
 static REG8 IOINPCALL opn_i18a(UINT port) {

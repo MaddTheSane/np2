@@ -83,7 +83,7 @@ static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL spb_i188(UINT port) {
 
 	(void)port;
-	return((fmtimer.status & 3) | adpcm_status(&g_adpcm));
+	return((g_fmtimer.status & 3) | adpcm_status(&g_adpcm));
 }
 
 static REG8 IOINPCALL spb_i18a(UINT port) {
@@ -185,7 +185,7 @@ static void IOOUTCALL spr_o58e(UINT port, REG8 dat) {
 static REG8 IOINPCALL spr_i588(UINT port) {
 
 	(void)port;
-	return(fmtimer.status);
+	return(g_fmtimer.status);
 }
 
 static REG8 IOINPCALL spr_i58a(UINT port) {
@@ -209,7 +209,7 @@ static REG8 IOINPCALL spr_i58a(UINT port) {
 static REG8 IOINPCALL spr_i58c(UINT port) {
 
 	(void)port;
-	return(fmtimer.status & 3);
+	return(g_fmtimer.status & 3);
 }
 
 static REG8 IOINPCALL spr_i58e(UINT port) {

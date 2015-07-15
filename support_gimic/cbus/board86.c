@@ -95,7 +95,7 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL opna_i188(UINT port) {
 
 	(void)port;
-	return(fmtimer.status);
+	return(g_fmtimer.status);
 }
 
 static REG8 IOINPCALL opna_i18a(UINT port) {
@@ -119,7 +119,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 static REG8 IOINPCALL opna_i18c(UINT port) {
 
 	if (g_opn.extend) {
-		return((fmtimer.status & 3) | (g_opn.adpcmmask & 8));
+		return((g_fmtimer.status & 3) | (g_opn.adpcmmask & 8));
 	}
 	(void)port;
 	return(0xff);
@@ -216,8 +216,8 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL opnac_i18c(UINT port) {
 
 	if (g_opn.extend) {
-		return((fmtimer.status & 3) | adpcm_status(&g_adpcm));
-//		return((fmtimer.status & 3) | (g_opn.adpcmmask & 8));
+		return((g_fmtimer.status & 3) | adpcm_status(&g_adpcm));
+//		return((g_fmtimer.status & 3) | (g_opn.adpcmmask & 8));
 	}
 	(void)port;
 	return(0xff);

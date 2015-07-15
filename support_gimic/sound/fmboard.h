@@ -34,7 +34,7 @@ extern "C" {
 extern	UINT32		g_usesound;
 extern	OPN_T		g_opn;
 
-extern	_FMTIMER	fmtimer;
+extern	_FMTIMER	g_fmtimer;
 extern	_OPNGEN		opngen;
 extern	OPNCH		opnch[OPNCH_MAX];
 extern	_PSGGEN		g_psg[3];

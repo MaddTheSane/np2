@@ -13,7 +13,7 @@ static void set_fmtimeraevent(NEVENTPOSITION absolute) {
 
 	SINT32	l;
 
-	l = 18 * (1024 - fmtimer.timera);
+	l = 18 * (1024 - g_fmtimer.timera);
 	if (pccore.cpumode & CPUMODE_8MHZ) {		// 4MHz
 		l = (l * 1248 / 625) * pccore.multiple;
 	}
@@ -28,7 +28,7 @@ static void set_fmtimerbevent(NEVENTPOSITION absolute) {
 
 	SINT32	l;
 
-	l = 288 * (256 - fmtimer.timerb);
+	l = 288 * (256 - g_fmtimer.timerb);
 	if (pccore.cpumode & CPUMODE_8MHZ) {		// 4MHz
 		l = (l * 1248 / 625) * pccore.multiple;
 	}
@@ -47,18 +47,18 @@ void fmport_a(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
 		intreq = pcm86gen_intrq();
-		if (fmtimer.reg & 0x04) {
-			fmtimer.status |= 0x01;
+		if (g_fmtimer.reg & 0x04) {
+			g_fmtimer.status |= 0x01;
 			intreq = TRUE;
 		}
 		if (intreq) {
-			pic_setirq(fmtimer.irq);
+			pic_setirq(g_fmtimer.irq);
 //			TRACEOUT(("fm int-A"));
 		}
 
 		set_fmtimeraevent(NEVENT_RELATIVE);
 
-		if ((fmtimer.reg & 0xc0) == 0x80) {
+		if ((g_fmtimer.reg & 0xc0) == 0x80) {
 			opngen_csm();
 		}
 	}
@@ -70,12 +70,12 @@ void fmport_b(NEVENTITEM item) {
 
 	if (item->flag & NEVENT_SETEVENT) {
 		intreq = pcm86gen_intrq();
-		if (fmtimer.reg & 0x08) {
-			fmtimer.status |= 0x02;
+		if (g_fmtimer.reg & 0x08) {
+			g_fmtimer.status |= 0x02;
 			intreq = TRUE;
 		}
 		if (intreq) {
-			pic_setirq(fmtimer.irq);
+			pic_setirq(g_fmtimer.irq);
 //			TRACEOUT(("fm int-B"));
 		}
 
@@ -85,11 +85,11 @@ void fmport_b(NEVENTITEM item) {
 
 void fmtimer_reset(UINT irq) {
 
-	ZeroMemory(&fmtimer, sizeof(fmtimer));
-	fmtimer.intr = irq & 0xc0;
-	fmtimer.intdisabel = irq & 0x10;
-	fmtimer.irq = irqtable[irq >> 6];
-//	pic_registext(fmtimer.irq);
+	memset(&g_fmtimer, 0, sizeof(g_fmtimer));
+	g_fmtimer.intr = irq & 0xc0;
+	g_fmtimer.intdisabel = irq & 0x10;
+	g_fmtimer.irq = irqtable[irq >> 6];
+//	pic_registext(g_fmtimer.irq);
 }
 
 void fmtimer_setreg(UINT reg, REG8 value) {
@@ -98,20 +98,20 @@ void fmtimer_setreg(UINT reg, REG8 value) {
 
 	switch(reg) {
 		case 0x24:
-			fmtimer.timera = (value << 2) + (fmtimer.timera & 3);
+			g_fmtimer.timera = (value << 2) + (g_fmtimer.timera & 3);
 			break;
 
 		case 0x25:
-			fmtimer.timera = (fmtimer.timera & 0x3fc) + (value & 3);
+			g_fmtimer.timera = (g_fmtimer.timera & 0x3fc) + (value & 3);
 			break;
 
 		case 0x26:
-			fmtimer.timerb = value;
+			g_fmtimer.timerb = value;
 			break;
 
 		case 0x27:
-			fmtimer.reg = value;
-			fmtimer.status &= ~((value & 0x30) >> 4);
+			g_fmtimer.reg = value;
+			g_fmtimer.status &= ~((value & 0x30) >> 4);
 			if (value & 0x01) {
 				if (!nevent_iswork(NEVENT_FMTIMERA)) {
 					set_fmtimeraevent(NEVENT_ABSOLUTE);
@@ -131,7 +131,7 @@ void fmtimer_setreg(UINT reg, REG8 value) {
 			}
 
 			if (!(value & 0x03)) {
-				pic_resetirq(fmtimer.irq);
+				pic_resetirq(g_fmtimer.irq);
 			}
 			break;
 	}

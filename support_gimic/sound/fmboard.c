@@ -26,7 +26,7 @@
 	UINT32		g_usesound;
 	OPN_T		g_opn;
 
-	_FMTIMER	fmtimer;
+	_FMTIMER	g_fmtimer;
 	_OPNGEN		opngen;
 	OPNCH		opnch[OPNCH_MAX];
 	_PSGGEN		g_psg[3];
@@ -84,7 +84,7 @@ REG8 fmboard_getjoy(PSGGEN psg) {
 
 	// intr îΩâfÇµÇƒèIÇÌÇË								// ver0.28
 	ret &= 0x3f;
-	ret |= fmtimer.intr;
+	ret |= g_fmtimer.intr;
 	return(ret);
 }
 
