@@ -45,7 +45,7 @@ UINT board14_pitcount(void)
 
 /* ---- intr */
 
-static void setmusicgenevent(UINT32 cnt, BOOL absolute)
+static void setmusicgenevent(UINT32 cnt, NEVENTPOSITION absolute)
 {
 	if (cnt > 4)								/* ª‹’‚È‚µ */
 	{
