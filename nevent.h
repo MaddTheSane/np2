@@ -34,11 +34,18 @@ enum {
 
 	NEVENT_ENABLE		= 0x0001,
 	NEVENT_SETEVENT		= 0x0002,
-	NEVENT_WAIT			= 0x0004,
-
-	NEVENT_RELATIVE		= 0,
-	NEVENT_ABSOLUTE		= 1
+	NEVENT_WAIT			= 0x0004
 };
+
+/**
+ * event position
+ */
+enum tagNEventPosition
+{
+	NEVENT_RELATIVE		= 0,		/*!< relative */
+	NEVENT_ABSOLUTE		= 1			/*!< absolute */
+};
+typedef enum tagNEventPosition NEVENTPOSITION;		/*!< the defines of position */
 
 struct _neventitem;
 typedef	struct _neventitem	_NEVENTITEM;
@@ -80,8 +87,8 @@ void nevent_progress(void);
 void nevent_execule(void);
 
 // イベントの追加
-void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute);
-void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, BOOL absolute);
+void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, NEVENTPOSITION absolute);
+void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, NEVENTPOSITION absolute);
 
 // イベントの削除
 void nevent_reset(UINT id);

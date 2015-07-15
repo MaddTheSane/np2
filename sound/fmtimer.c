@@ -9,7 +9,7 @@
 static const UINT8 irqtable[4] = {0x03, 0x0d, 0x0a, 0x0c};
 
 
-static void set_fmtimeraevent(BOOL absolute) {
+static void set_fmtimeraevent(NEVENTPOSITION absolute) {
 
 	SINT32	l;
 
@@ -24,7 +24,7 @@ static void set_fmtimeraevent(BOOL absolute) {
 	nevent_set(NEVENT_FMTIMERA, l, fmport_a, absolute);
 }
 
-static void set_fmtimerbevent(BOOL absolute) {
+static void set_fmtimerbevent(NEVENTPOSITION absolute) {
 
 	SINT32	l;
 
@@ -56,7 +56,7 @@ void fmport_a(NEVENTITEM item) {
 //			TRACEOUT(("fm int-A"));
 		}
 
-		set_fmtimeraevent(FALSE);
+		set_fmtimeraevent(NEVENT_RELATIVE);
 
 		if ((fmtimer.reg & 0xc0) == 0x80) {
 			opngen_csm();
@@ -79,7 +79,7 @@ void fmport_b(NEVENTITEM item) {
 //			TRACEOUT(("fm int-B"));
 		}
 
-		set_fmtimerbevent(FALSE);
+		set_fmtimerbevent(NEVENT_RELATIVE);
 	}
 }
 

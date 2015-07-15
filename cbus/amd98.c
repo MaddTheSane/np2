@@ -215,7 +215,7 @@ static void amd98_rhythm(UINT map) {
 
 // ----
 
-static void setamd98event(UINT32 cnt, BOOL absolute) {
+static void setamd98event(UINT32 cnt, NEVENTPOSITION absolute) {
 
 	if (cnt > 8) {								// ª‹’‚È‚µ
 		cnt *= pccore.multiple;
