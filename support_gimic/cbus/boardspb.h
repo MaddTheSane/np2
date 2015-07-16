@@ -1,7 +1,9 @@
 /**
- * @file	baordspb.h
+ * @file	boardspb.h
  * @brief	Interface of Speak board
  */
+
+#pragma once
 
 #ifdef __cplusplus
 extern "C"

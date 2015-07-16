@@ -1,5 +1,5 @@
 /**
- * @file	baord86.h
+ * @file	board86.h
  * @brief	Interface of PC-9801-86
  */
 

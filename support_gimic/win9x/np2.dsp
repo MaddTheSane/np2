@@ -742,7 +742,7 @@ SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\BOARD118.CPP
+SOURCE=..\CBUS\BOARD118.C
 # End Source File
 # Begin Source File
 
