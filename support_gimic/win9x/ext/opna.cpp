@@ -176,6 +176,14 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			if (pExt->IsEnabled())
 			{
 				pExt->WriteRegister(nAddress, cData);
+				if (nAddress == 0x07)
+				{
+					keydisp_psgmix(&g_psg1);
+				}
+				else if ((nAddress >= 0x08) && (nAddress <= 0x0a))
+				{
+					keydisp_psgvol(&g_psg1, static_cast<UINT8>(nAddress - 8));
+				}
 			}
 		}
 	}
@@ -204,7 +212,21 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			}
 			else if ((cCaps & OPNA_HAS_EXTENDEDFM) && (cChannel >= 4) && (cChannel < 7))
 			{
-				opngen_keyon(cChannel - 1, cData);
+				cChannel--;
+			}
+			else
+			{
+				return;
+			}
+
+			if (!pExt->IsEnabled())
+			{
+				opngen_keyon(cChannel, cData);
+			}
+			else
+			{
+				keydisp_fmkeyon(cChannel, cData);
+				pExt->WriteRegister(nAddress, cData);
 			}
 		}
 		else
