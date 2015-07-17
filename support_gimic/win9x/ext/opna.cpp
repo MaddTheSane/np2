@@ -11,7 +11,7 @@
 #include "fmboard.h"
 #include "s98.h"
 #include "keydisp.h"
-#include "ext/externalopna.h"
+#include "externalopna.h"
 
 #if !defined(SUPPORT_ROMEO)
 #error Not support ROMEO
@@ -23,12 +23,10 @@
  */
 void opna_initialize(POPNA opna)
 {
-	int i;
-
 	memset(opna, 0, sizeof(*opna));
 	opna->adpcmmask = ~(0x1c);
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		memset(opna->reg + (i * 0x100) + 0x30, 0xff, 0x60);
 		memset(opna->reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
@@ -55,10 +53,15 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->cCaps;
 
-	const CExternalOpna* pExt = CExternalOpna::GetInstance();
-
+	CExternalOpna* pExt = CExternalOpna::GetInstance();
 	if (pExt->IsEnabled())
 	{
+		pExt->WriteRegister(0x22, 0x00);
+		pExt->WriteRegister(0x29, 0x80);
+		pExt->WriteRegister(0x10, 0xbf);
+		pExt->WriteRegister(0x11, 0x30);
+		pExt->Restore(opna->reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? true : false);
+
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
 			if (pExt->HasADPCM())
@@ -69,6 +72,13 @@ void opna_bind(POPNA opna)
 			{
 				sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 			}
+		}
+
+		if (cCaps & OPNA_HAS_YM3438)
+		{
+			fmboard_fmrestore(opna, 6, 2);
+			fmboard_fmrestore(opna, 9, 3);
+			sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 		}
 		return;
 	}

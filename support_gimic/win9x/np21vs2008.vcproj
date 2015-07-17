@@ -1096,7 +1096,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\opna.cpp"
+					RelativePath=".\ext\opna.cpp"
 					>
 				</File>
 				<File

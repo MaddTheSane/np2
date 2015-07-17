@@ -1077,7 +1077,7 @@ SOURCE=..\SOUND\FMTIMER.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\opna.cpp
+SOURCE=.\ext\opna.cpp
 # End Source File
 # Begin Source File
 
