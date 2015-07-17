@@ -288,7 +288,7 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 
 	const UINT nAddr = g_opn.addr1l;
 	S98_put(EXTEND2608, nAddr, dat);
-	g_opn.reg[nAddr] = dat;
+	g_opn.reg[nAddr + 0x100] = dat;
 	if (nAddr >= 0x30)
 	{
 		s_ext->WriteRegister(0x100 + nAddr, dat);
