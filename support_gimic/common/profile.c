@@ -108,47 +108,6 @@ gden_err0:
 }
 
 
-// ----
-
-const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng) {
-
-	OEMCHAR	c;
-
-	if (leng) {
-		leng--;
-	}
-	else {
-		buf = NULL;
-	}
-	if (str) {
-		c = *str;
-		while((c > 0) && (c <= 0x20)) {
-			str++;
-			c = *str;
-		}
-		if (c == 0) {
-			str = NULL;
-		}
-	}
-	if (str) {
-		c = *str;
-		while((c < 0) || (c > 0x20)) {
-			if (leng) {
-				*buf++ = c;
-				leng--;
-			}
-			str++;
-			c = *str;
-		}
-	}
-	if (buf) {
-		buf[0] = '\0';
-	}
-	return(str);
-}
-
-
-
 // ---- ‚Ü‚¾ƒeƒXƒg
 
 typedef struct {
