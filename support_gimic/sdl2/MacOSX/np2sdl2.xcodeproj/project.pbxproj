@@ -235,6 +235,7 @@
 		BAF84EA5195AA38300183062 /* midvoice.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E82195AA38300183062 /* midvoice.c */; };
 		BAF84EA7195AA40E00183062 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84EA6195AA40E00183062 /* libz.1.2.5.dylib */; };
 		BAF84EAB195AAAD900183062 /* np2.icns in Resources */ = {isa = PBXBuildFile; fileRef = BAF84EAA195AAAD900183062 /* np2.icns */; };
+		BAFFDA271B5901D500C5DE2E /* opna.c in Sources */ = {isa = PBXBuildFile; fileRef = BAFFDA251B5901D500C5DE2E /* opna.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -660,6 +661,8 @@
 		BAF84E84195AA38300183062 /* vermouth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vermouth.h; sourceTree = "<group>"; };
 		BAF84EA6195AA40E00183062 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		BAF84EAA195AAAD900183062 /* np2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = np2.icns; sourceTree = "<group>"; };
+		BAFFDA251B5901D500C5DE2E /* opna.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opna.c; sourceTree = "<group>"; };
+		BAFFDA261B5901D500C5DE2E /* opna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opna.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1280,6 +1283,8 @@
 				BAF84E58195AA38300183062 /* fmtimer.c */,
 				BAF84E59195AA38300183062 /* fmtimer.h */,
 				BAF84E5A195AA38300183062 /* getsnd */,
+				BAFFDA251B5901D500C5DE2E /* opna.c */,
+				BAFFDA261B5901D500C5DE2E /* opna.h */,
 				BAF84E63195AA38300183062 /* opngen.h */,
 				BAF84E64195AA38300183062 /* opngenc.c */,
 				BAF84E65195AA38300183062 /* opngeng.c */,
@@ -1601,6 +1606,7 @@
 				BAF84DF9195AA10500183062 /* sysport.c in Sources */,
 				BAF84DFE195AA10500183062 /* gcircle.c in Sources */,
 				BAF84E3D195AA10500183062 /* maketgrp.c in Sources */,
+				BAFFDA271B5901D500C5DE2E /* opna.c in Sources */,
 				BAF84E06195AA10500183062 /* dmax86.c in Sources */,
 				BAF84E9D195AA38300183062 /* sound.c in Sources */,
 				BAF84EA0195AA38300183062 /* tms3631g.c in Sources */,
