@@ -117,7 +117,7 @@ struct stat	sb;
 	return(-1);
 }
 
-static BOOL cnv_sttime(time_t *t, DOSDATE *dosdate, DOSTIME *dostime) {
+static BRESULT cnv_sttime(time_t *t, DOSDATE *dosdate, DOSTIME *dostime) {
 
 struct tm	*ftime;
 
@@ -210,7 +210,7 @@ short file_attr_c(const char *path) {
 }
 
 #if defined(WIN32)
-static BOOL cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
+static BRESULT cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
 
 	FILETIME	localtime;
 	SYSTEMTIME	systime;
@@ -232,7 +232,7 @@ static BOOL cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
 	return(SUCCESS);
 }
 
-static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
+static BRESULT setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
 	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
 		((!file_cmpname(w32fd->cFileName, ".")) ||
@@ -276,7 +276,7 @@ FLISTH file_list1st(const char *dir, FLINFO *fli) {
 	return(FLISTH_INVALID);
 }
 
-BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	WIN32_FIND_DATA	w32fd;
 
@@ -310,7 +310,7 @@ ff1_err:
 	return(FLISTH_INVALID);
 }
 
-BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli) {
 
 struct dirent	*de;
 struct stat		sb;

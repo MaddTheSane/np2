@@ -335,7 +335,7 @@ scrnmng_initialize(void)
 	}
 }
 
-BOOL
+BRESULT
 scrnmng_create(UINT8 mode)
 {
 	GdkScreen *screen;

@@ -41,7 +41,7 @@ typedef struct {
 	int		dstpos;
 } DRAWRECT;
 
-static BOOL calcdrawrect(SDL_Surface *surface,
+static BRESULT calcdrawrect(SDL_Surface *surface,
 								DRAWRECT *dr, VRAMHDL s, const RECT_T *rt) {
 
 	int		pos;
@@ -76,7 +76,7 @@ void scrnmng_initialize(void) {
 	scrnstat.height = 400;
 }
 
-BOOL scrnmng_create(int width, int height) {
+BRESULT scrnmng_create(int width, int height) {
 
 	SDL_Surface		*surface;
 	SDL_PixelFormat	*fmt;
@@ -322,7 +322,7 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 
 // ----
 
-BOOL scrnmng_entermenu(SCRNMENU *smenu) {
+BRESULT scrnmng_entermenu(SCRNMENU *smenu) {
 
 	if (smenu == NULL) {
 		goto smem_err;
