@@ -28,7 +28,7 @@ CExternalOpna::CExternalOpna()
 void CExternalOpna::Initialize()
 {
 	// ROMEO
-	IExtendModule* pModule = new CJuliet;
+	IExternalChip* pModule = new CJuliet;
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
@@ -61,7 +61,7 @@ void CExternalOpna::Initialize()
  */
 void CExternalOpna::Deinitialize()
 {
-	IExtendModule* pModule = m_module;
+	IExternalChip* pModule = m_module;
 	m_module = NULL;
 	if (pModule)
 	{

@@ -187,6 +187,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/sound/cs4231g.c \
 		$(real_topsrcdir)/sound/fmboard.c \
 		$(real_topsrcdir)/sound/fmtimer.c \
+		$(real_topsrcdir)/sound/opna.c \
 		$(real_topsrcdir)/sound/opngenc.c \
 		$(real_topsrcdir)/sound/opngeng.c \
 		$(real_topsrcdir)/sound/pcm86c.c \

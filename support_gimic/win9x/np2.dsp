@@ -1487,7 +1487,7 @@ SOURCE=.\ext\rebirth\SCCIDefines.h
 # End Group
 # Begin Source File
 
-SOURCE=.\ext\extendmodule.h
+SOURCE=.\ext\externalchip.h
 # End Source File
 # Begin Source File
 

@@ -615,6 +615,10 @@ SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\CBUS\BOARD118.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\CBUS\BOARD14.C
 # End Source File
 # Begin Source File
@@ -931,6 +935,14 @@ SOURCE=..\SOUND\FMBOARD.C
 # Begin Source File
 
 SOURCE=..\SOUND\FMTIMER.C
+# End Source File
+# Begin Source File
+
+SOURCE=.\opna.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opna.h
 # End Source File
 # Begin Source File
 
@@ -1328,7 +1340,7 @@ SOURCE=.\ext\rebirth\SCCIDefines.h
 # End Group
 # Begin Source File
 
-SOURCE=.\ext\extendmodule.h
+SOURCE=.\ext\externalchip.h
 # End Source File
 # Begin Source File
 
@@ -1363,10 +1375,6 @@ SOURCE=.\misc\tickcounter.h
 SOURCE=.\misc\vc6macros.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\BOARD118.CPP
-# End Source File
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP

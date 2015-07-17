@@ -5,7 +5,7 @@
 
 #pragma once
 
-class IExtendModule;
+class IExternalChip;
 
 /**
  * @brief 外部 OPNA 演奏クラス
@@ -27,7 +27,7 @@ public:
 
 private:
 	static CExternalOpna sm_instance;	//!< 唯一のインスタンスです
-	IExtendModule* m_module;			//!< モジュール
+	IExternalChip* m_module;			//!< モジュール
 	UINT8 m_cPsgMix;					//!< PSG ミキサー
 	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
 	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル

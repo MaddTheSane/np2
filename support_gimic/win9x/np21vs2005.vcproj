@@ -465,7 +465,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\board118.cpp"
+					RelativePath="..\cbus\board118.c"
 					>
 				</File>
 				<File
@@ -1102,6 +1102,10 @@
 				</File>
 				<File
 					RelativePath="..\sound\fmtimer.c"
+					>
+				</File>
+				<File
+					RelativePath=".\opna.cpp"
 					>
 				</File>
 				<File
@@ -2351,6 +2355,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sound\opna.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sound\opngen.h"
 					>
 				</File>
@@ -2670,7 +2678,7 @@
 					Name="ext"
 					>
 					<File
-						RelativePath=".\ext\extendmodule.h"
+						RelativePath=".\ext\externalchip.h"
 						>
 					</File>
 					<File

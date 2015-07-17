@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "..\..\ext\extendmodule.h"
+#include "..\..\ext\externalchip.h"
 
 /**
  * @brief ROMEO アクセス クラス
  */
-class CJuliet : public IExtendModule
+class CJuliet : public IExternalChip
 {
 public:
 	CJuliet();
