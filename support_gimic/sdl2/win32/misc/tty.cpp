@@ -29,23 +29,6 @@ CTty::~CTty()
 
 /**
  * オープンする
- * @param[in] nPort ポート番号
- * @param[in] nSpeed ボーレート
- * @param[in] lpcszParam パラメタ
- * @retval true 成功
- * @retval false 失敗
- */
-bool CTty::Open(int nPort, UINT nSpeed, LPCTSTR lpcszParam)
-{
-	Close();
-
-	TCHAR szPort[16];
-	::wsprintf(szPort, TEXT("COM%u"), nPort);
-	return OpenPort(szPort, nSpeed, lpcszParam);
-}
-
-/**
- * オープンする
  * @param[in] lpDevName デバイス名
  * @param[in] nSpeed ボーレート
  * @param[in] lpcszParam パラメタ
@@ -56,30 +39,12 @@ bool CTty::Open(LPCTSTR lpDevName, UINT nSpeed, LPCTSTR lpcszParam)
 {
 	Close();
 
-	TCHAR szPortName[MAX_PATH];
-	if (!GetPortName(lpDevName, szPortName, _countof(szPortName)))
-	{
-		return false;
-	}
-	return OpenPort(szPortName, nSpeed, lpcszParam);
-}
-
-/**
- * ポート オープンする
- * @param[in] lpPortName ポート名
- * @param[in] nSpeed ボーレート
- * @param[in] lpcszParam パラメタ
- * @retval true 成功
- * @retval false 失敗
- */
-bool CTty::OpenPort(LPCTSTR lpPortName, UINT nSpeed, LPCTSTR lpcszParam)
-{
 	if (!SetParam(lpcszParam, NULL))
 	{
 		return false;
 	}
 
-	HANDLE hFile = ::CreateFile(lpPortName, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
+	HANDLE hFile = ::CreateFile(lpDevName, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		return false;
@@ -256,58 +221,4 @@ bool CTty::SetParam(LPCTSTR lpcszParam, DCB* dcb)
 		dcb->StopBits = cStopBits;
 	}
 	return true;
-}
-
-/**
- * ポート名を得る
- * @param[in] lpDevName デバイス名
- * @param[out] lpPortName ポート名
- * @paramin] cchPortName ポート名長
- * @retval true 発見した
- * @retval false 発見できなかった
- */
-bool CTty::GetPortName(LPCTSTR lpDevName, LPTSTR lpPortName, UINT cchPortName)
-{
-	bool ret = false;
-
-	GUID ClassGuid[1];
-	DWORD dwRequiredSize;
-	if (::SetupDiClassGuidsFromName(TEXT("PORTS"), ClassGuid, _countof(ClassGuid), &dwRequiredSize))
-	{
-		HDEVINFO DeviceInfoSet = ::SetupDiGetClassDevs(&ClassGuid[0], NULL, NULL, DIGCF_PRESENT | DIGCF_PROFILE);
-		if (DeviceInfoSet)
-		{
-			DWORD dwMemberIndex = 0;
-			SP_DEVINFO_DATA DeviceInfoData;
-			ZeroMemory(&DeviceInfoData, sizeof(DeviceInfoData));
-			DeviceInfoData.cbSize = sizeof(DeviceInfoData);
-			while (::SetupDiEnumDeviceInfo(DeviceInfoSet, dwMemberIndex++, &DeviceInfoData))
-			{
-				DWORD dwPropType;
-				TCHAR szFriendlyName[MAX_PATH];
-				DWORD dwReqSize = 0;
-				::SetupDiGetDeviceRegistryProperty(DeviceInfoSet, &DeviceInfoData, SPDRP_FRIENDLYNAME, &dwPropType, reinterpret_cast<LPBYTE>(szFriendlyName), sizeof(szFriendlyName), &dwReqSize);
-
-				HKEY hKey = ::SetupDiOpenDevRegKey(DeviceInfoSet, &DeviceInfoData, DICS_FLAG_GLOBAL, 0, DIREG_DEV, KEY_READ);
-				if (hKey)
-				{
-					TCHAR szPortName[MAX_PATH];
-					DWORD dwType = REG_SZ;
-					dwReqSize = sizeof(szPortName);
-					long lRet = RegQueryValueEx(hKey, TEXT("PortName"), 0, &dwType, reinterpret_cast<LPBYTE>(szPortName), &dwReqSize);
-					::RegCloseKey(hKey);
-
-					if (_tcsnicmp(szFriendlyName, lpDevName, _tcslen(lpDevName)) == 0)
-					{
-						_tcscpy_s(lpPortName, cchPortName, szPortName);
-						ret = true;
-						break;
-					}
-				}
-			}
-		}
-		::SetupDiDestroyDeviceInfoList(DeviceInfoSet);
-	}
-
-	return ret;
 }

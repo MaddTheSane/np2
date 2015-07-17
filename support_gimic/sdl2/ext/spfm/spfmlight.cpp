@@ -5,6 +5,8 @@
 
 #include "compiler.h"
 #include "spfmlight.h"
+#include "dosio.h"
+#include "common/profile.h"
 #include "misc/threadbase.h"
 
 /**
@@ -30,13 +32,33 @@ bool CSpfmLight::Initialize()
 {
 	Deinitialize();
 
-#ifdef _WIN32
-	bool r = m_serial.Open(TEXT("USB Serial Port"), 1500000, TEXT("8N1"));
-#else
-	bool r = m_serial.Open("/dev/tty.usbserial-A601HD4I", 1500000, "8N1");
-#endif
+	bool bOpened = false;
 
-	if (!r)
+	OEMCHAR szPath[MAX_PATH];
+	milstr_ncpy(szPath, file_getcd(OEMTEXT("SCCI.ini")), NELEMENTS(szPath));
+	PFILEH pfh = profile_open(szPath, PFILEH_READONLY);
+
+	OEMCHAR szSections[4096];
+	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
+	{
+		OEMCHAR* lpKeyName = szSections;
+		while ((!bOpened) && (*lpKeyName != '\0'))
+		{
+			const UINT cchKeyName = OEMSTRLEN(lpKeyName);
+			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) == 0)
+			{
+				if ((lpKeyName[10] == '(') && (lpKeyName[cchKeyName - 1] == ')'))
+				{
+					lpKeyName[cchKeyName - 1] = '\0';
+					bOpened = m_serial.Open(lpKeyName + 11, 1500000, OEMTEXT("8N1"));
+				}
+			}
+			lpKeyName += cchKeyName + 1;
+		}
+	}
+	profile_close(pfh);
+
+	if (!bOpened)
 	{
 		return false;
 	}
