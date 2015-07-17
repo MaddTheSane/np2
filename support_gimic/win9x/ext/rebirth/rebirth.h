@@ -29,6 +29,7 @@ private:
 	HMODULE m_hModule;					//!< モジュール	
 	SoundInterfaceManager* m_pManager;	//!< マネージャ
 	SoundChip* m_pChip;					//!< サウンド チップ インターフェイス
+	static bool sm_bOnce;				//!< once
 };
 
 /**

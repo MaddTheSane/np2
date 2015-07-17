@@ -12,10 +12,24 @@
 #include "s98.h"
 
 /**
+ * Initialize
+ */
+void opna_initialize(void)
+{
+}
+
+/**
+ * Deinitialize
+ */
+void opna_deinitialize(void)
+{
+}
+
+/**
  * Initialize instance
  * @param[in] opna The instance
  */
-void opna_initialize(POPNA opna)
+void opna_construct(POPNA opna)
 {
 	int i;
 

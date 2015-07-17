@@ -46,7 +46,10 @@ extern "C"
 {
 #endif
 
-void opna_initialize(POPNA opna);
+void opna_initialize(void);
+void opna_deinitialize(void);
+
+void opna_construct(POPNA opna);
 void opna_reset(POPNA opna, REG8 cCaps);
 void opna_bind(POPNA opna);
 

@@ -8,6 +8,8 @@
 #include "scci.h"
 #include "SCCIDefines.h"
 
+bool CRebirth::sm_bOnce = false;
+
 /**
  * コンストラクタ
  */
@@ -34,11 +36,16 @@ bool CRebirth::Initialize()
 {
 	Deinitialize();
 
+	if (sm_bOnce)
+	{
+		return false;
+	}
 	m_hModule = ::LoadLibrary(TEXT("SCCI.DLL"));
 	if (m_hModule == NULL)
 	{
 		return false;
 	}
+	sm_bOnce = true;
 
 	do
 	{

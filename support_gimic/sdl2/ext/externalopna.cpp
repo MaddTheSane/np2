@@ -5,10 +5,8 @@
 
 #include "compiler.h"
 #include "externalopna.h"
-#include "np2.h"
-#include "c86ctl\c86ctlif.h"
-#include "rebirth\rebirth.h"
-#include "romeo\juliet.h"
+#include "gimic/gimic.h"
+#include "spfm/spfmlight.h"
 
 CExternalOpna CExternalOpna::sm_instance;
 
@@ -28,22 +26,8 @@ CExternalOpna::CExternalOpna()
  */
 void CExternalOpna::Initialize()
 {
-	IExternalChip* pModule;
-
-	// ROMEO
-	if (np2oscfg.useromeo)
-	{
-		pModule = new CJuliet;
-		if (pModule->Initialize())
-		{
-			m_module = pModule;
-			return;
-		}
-		delete pModule;
-	}
-
 	// G.I.M.I.C / C86BOX
-	pModule = new C86CtlIf;
+	IExternalChip* pModule = new CGimic;
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
@@ -51,8 +35,8 @@ void CExternalOpna::Initialize()
 	}
 	delete pModule;
 
-	// RE:birth
-	pModule = new CRebirth;
+	// SPFM Light
+	pModule = new CSpfmLight;
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
