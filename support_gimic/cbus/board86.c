@@ -98,7 +98,7 @@ static REG8 IOINPCALL opna_i18e(UINT port)
 		nAddress = g_opn.addr1h;
 		if ((nAddress == 0x08) || (nAddress == 0x0f))
 		{
-			return opna_readExtenedRegister(&g_opn, nAddress);
+			return opna_readExtendedRegister(&g_opn, nAddress);
 		}
 		return g_opn.data1;
 	}

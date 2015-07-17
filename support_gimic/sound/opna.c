@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "opna.h"
 #include "pccore.h"
+#include "iocore.h"
 #include "sound.h"
 #include "fmboard.h"
 #include "s98.h"
@@ -178,7 +179,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 }
 
 /**
- * Writes extened register
+ * Writes extedned register
  * @param[in] opna The instance
  * @param[in] nAddress The address
  * @param[in] cData The data
@@ -236,12 +237,12 @@ REG8 opna_readRegister(POPNA opna, UINT nAddress)
 }
 
 /**
- * Reads extened register
+ * Reads extended register
  * @param[in] opna The instance
  * @param[in] nAddress The address
  * @return data
  */
-REG8 opna_readExtenedRegister(POPNA opna, UINT nAddress)
+REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
 {
 	if ((opna->cCaps & OPNA_HAS_ADPCM) && (nAddress == 0x08))
 	{

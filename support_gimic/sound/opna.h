@@ -57,7 +57,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
 
 REG8 opna_readRegister(POPNA opna, UINT nAddress);
-REG8 opna_readExtenedRegister(POPNA opna, UINT nAddress);
+REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress);
 
 #ifdef __cplusplus
 }

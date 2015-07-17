@@ -1392,6 +1392,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\sound\opna.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\sound\opngenc.c"
 					>
 				</File>
@@ -2519,6 +2523,10 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\fmtimer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\opna.h"
 					>
 				</File>
 				<File
