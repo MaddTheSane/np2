@@ -19,25 +19,23 @@ typedef BRESULT (*PROFILEENUMPROC)(void *lpParam, const OEMCHAR *lpAppName, cons
 BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC lpFunc);
 
 
-// ---- ‚Ü‚¾ƒeƒXƒg
+/* profiler */
 
-enum {
-	PFILEH_READONLY		= 0x0001,
-	PFILEH_MODIFY		= 0x0002
+/**
+ * mode
+ */
+enum
+{
+	PFILEH_READONLY		= 0x0001,		/*!< Readonly */
+	PFILEH_MODIFY		= 0x0002		/*!< Modified */
 };
 
-typedef struct {
-	OEMCHAR	*buffer;
-	UINT	buffers;
-	UINT	size;
-	UINT8	hdr[4];
-	UINT	hdrsize;
-	UINT	flag;
-	OEMCHAR	path[MAX_PATH];
-} _PFILEH, *PFILEH;
+struct tagProfileHandle;
+typedef struct tagProfileHandle* PFILEH;	/*!< defines handle */
 
 PFILEH profile_open(const OEMCHAR *filename, UINT flag);
 void profile_close(PFILEH hdl);
+UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl);
 BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
 					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl);
 BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
