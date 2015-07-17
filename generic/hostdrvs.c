@@ -216,7 +216,7 @@ static char *dospath2fcb(char *fcbname, char *dospath) {
 	return(dospath);
 }
 
-BOOL hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath) {
+BRESULT hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath) {
 
 	OEMCHAR		path[MAX_PATH];
 	LISTARRAY	lst;
@@ -259,7 +259,7 @@ hdsgrp_err:
 	return(FAILURE);
 }
 
-BOOL hostdrvs_getrealdir(OEMCHAR *path, int size, char *fcb, char *dospath) {
+BRESULT hostdrvs_getrealdir(OEMCHAR *path, int size, char *fcb, char *dospath) {
 
 	LISTARRAY	lst;
 	HDRVLST		hdl;
@@ -298,7 +298,7 @@ hdsgrd_err:
 	return(FAILURE);
 }
 
-BOOL hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
+BRESULT hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 
 	OEMCHAR		path[MAX_PATH];
 	char		fcb[11];

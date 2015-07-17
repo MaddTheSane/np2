@@ -23,7 +23,7 @@ extern "C" {
 
 extern	SOUNDCFG	soundcfg;
 
-BOOL sound_create(UINT rate, UINT ms);
+BRESULT sound_create(UINT rate, UINT ms);
 void sound_destroy(void);
 
 void sound_reset(void);

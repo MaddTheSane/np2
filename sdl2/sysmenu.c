@@ -433,7 +433,7 @@ static void sys_cmd(MENUID id) {
 
 // ----
 
-BOOL sysmenu_create(void) {
+BRESULT sysmenu_create(void) {
 
 	if (menubase_create() != SUCCESS) {
 		goto smcre_err;
@@ -455,7 +455,7 @@ void sysmenu_destroy(void) {
 	menusys_destroy();
 }
 
-BOOL sysmenu_menuopen(UINT menutype, int x, int y) {
+BRESULT sysmenu_menuopen(UINT menutype, int x, int y) {
 
 	BYTE	b;
 

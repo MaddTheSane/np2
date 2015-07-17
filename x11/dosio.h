@@ -84,7 +84,7 @@ short file_delete_c(const OEMCHAR *sjis);
 short file_attr_c(const OEMCHAR *sjis);
 
 FLISTH file_list1st(const OEMCHAR *dir, FLINFO *fli);
-BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli);
 void file_listclose(FLISTH hdl);
 
 void file_cpyname(char *dst, const char *src, int maxlen);

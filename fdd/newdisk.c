@@ -35,7 +35,7 @@ void newdisk_fdd(const OEMCHAR *fname, REG8 type, const OEMCHAR *label) {
 
 // ---- hdd
 
-static BOOL writezero(FILEH fh, UINT size) {
+static BRESULT writezero(FILEH fh, UINT size) {
 
 	UINT8	work[256];
 	UINT	wsize;
@@ -51,7 +51,7 @@ static BOOL writezero(FILEH fh, UINT size) {
 	return(SUCCESS);
 }
 
-static BOOL writehddipl(FILEH fh, UINT ssize, UINT32 tsize) {
+static BRESULT writehddipl(FILEH fh, UINT ssize, UINT32 tsize) {
 
 	UINT8	work[1024];
 	UINT	size;
@@ -84,7 +84,7 @@ void newdisk_thd(const OEMCHAR *fname, UINT hddsize) {
 	FILEH	fh;
 	UINT8	work[256];
 	UINT	size;
-	BOOL	r;
+	BRESULT	r;
 
 	if ((fname == NULL) || (hddsize < 5) || (hddsize > 256)) {
 		goto ndthd_err;
@@ -96,10 +96,10 @@ void newdisk_thd(const OEMCHAR *fname, UINT hddsize) {
 	ZeroMemory(work, 256);
 	size = hddsize * 15;
 	STOREINTELWORD(work, size);
-	r = (file_write(fh, work, 256) != 256);
+	r = (file_write(fh, work, 256) == 256) ? SUCCESS : FAILURE;
 	r |= writehddipl(fh, 256, 0);
 	file_close(fh);
-	if (r) {
+	if (r != SUCCESS) {
 		file_delete(fname);
 	}
 
@@ -112,7 +112,7 @@ void newdisk_nhd(const OEMCHAR *fname, UINT hddsize) {
 	FILEH	fh;
 	NHDHDR	nhd;
 	UINT	size;
-	BOOL	r;
+	BRESULT	r;
 
 	if ((fname == NULL) || (hddsize < 5) || (hddsize > 512)) {
 		goto ndnhd_err;
@@ -129,10 +129,10 @@ void newdisk_nhd(const OEMCHAR *fname, UINT hddsize) {
 	STOREINTELWORD(nhd.surfaces, 8);
 	STOREINTELWORD(nhd.sectors, 17);
 	STOREINTELWORD(nhd.sectorsize, 512);
-	r = (file_write(fh, &nhd, sizeof(nhd)) != sizeof(nhd));
+	r = (file_write(fh, &nhd, sizeof(nhd)) == sizeof(nhd)) ? SUCCESS : FAILURE;
 	r |= writehddipl(fh, 512, size * 8 * 17 * 512);
 	file_close(fh);
-	if (r) {
+	if (r != SUCCESS) {
 		file_delete(fname);
 	}
 
@@ -147,7 +147,7 @@ const SASIHDD	*sasi;
 	FILEH		fh;
 	HDIHDR		hdi;
 	UINT32		size;
-	BOOL		r;
+	BRESULT		r;
 
 	hddtype &= 7;
 	if ((fname == NULL) || (hddtype == 7)) {
@@ -167,11 +167,11 @@ const SASIHDD	*sasi;
 	STOREINTELDWORD(hdi.sectors, sasi->sectors);
 	STOREINTELDWORD(hdi.surfaces, sasi->surfaces);
 	STOREINTELDWORD(hdi.cylinders, sasi->cylinders);
-	r = (file_write(fh, &hdi, sizeof(hdi)) != sizeof(hdi));
+	r = (file_write(fh, &hdi, sizeof(hdi)) == sizeof(hdi)) ? SUCCESS : FAILURE;
 	r |= writezero(fh, 4096 - sizeof(hdi));
 	r |= writehddipl(fh, 256, size);
 	file_close(fh);
-	if (r) {
+	if (r != SUCCESS) {
 		file_delete(fname);
 	}
 
@@ -184,7 +184,7 @@ void newdisk_vhd(const OEMCHAR *fname, UINT hddsize) {
 	FILEH	fh;
 	VHDHDR	vhd;
 	UINT	tmp;
-	BOOL	r;
+	BRESULT	r;
 
 	if ((fname == NULL) || (hddsize < 2) || (hddsize > 512)) {
 		goto ndvhd_err;
@@ -203,10 +203,10 @@ void newdisk_vhd(const OEMCHAR *fname, UINT hddsize) {
 	STOREINTELWORD(vhd.cylinders, (UINT16)tmp);
 	tmp *= 8 * 32;
 	STOREINTELDWORD(vhd.totals, tmp);
-	r = (file_write(fh, &vhd, sizeof(vhd)) != sizeof(vhd));
+	r = (file_write(fh, &vhd, sizeof(vhd)) == sizeof(vhd)) ? SUCCESS : FAILURE;
 	r |= writehddipl(fh, 256, 0);
 	file_close(fh);
-	if (r) {
+	if (r != SUCCESS) {
 		file_delete(fname);
 	}
 

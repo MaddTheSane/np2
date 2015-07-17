@@ -54,7 +54,7 @@ static void inirdarg8(BYTE *dst, int dsize, const char *src) {
 	}
 }
 
-static BOOL inireadcb(void *arg, const char *para,
+static BRESULT inireadcb(void *arg, const char *para,
 										const char *key, const char *data) {
 
 const INITBL	*p;
@@ -198,7 +198,7 @@ void ini_write(const char *path, const char *title,
 	FILEH		fh;
 const INITBL	*p;
 const INITBL	*pterm;
-	BOOL		set;
+	BRESULT		set;
 	char		work[512];
 
 	fh = file_create(path);

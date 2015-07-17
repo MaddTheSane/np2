@@ -65,17 +65,17 @@ static OEMCHAR *profana(OEMCHAR *buf, OEMCHAR **data) {
 	return(NULL);
 }
 
-BOOL profile_enum(const OEMCHAR *filename, void *arg,
-							BOOL (*proc)(void *arg, const OEMCHAR *para,
+BRESULT profile_enum(const OEMCHAR *filename, void *arg,
+							BRESULT (*proc)(void *arg, const OEMCHAR *para,
 								const OEMCHAR *key, const OEMCHAR *data)) {
 	TEXTFILEH	fh;
-	BOOL		r;
+	BRESULT		r;
 	OEMCHAR		buf[0x200];
 	OEMCHAR		para[0x100];
 	OEMCHAR		*key;
 	OEMCHAR		*data;
 
-	r = FALSE;
+	r = SUCCESS;
 	if (proc == NULL) {
 		goto gden_err0;
 	}

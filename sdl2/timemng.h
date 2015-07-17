@@ -17,7 +17,7 @@ typedef struct {
 extern "C" {
 #endif
 
-BOOL timemng_gettime(_SYSTIME *systime);
+BRESULT timemng_gettime(_SYSTIME *systime);
 
 #ifdef __cplusplus
 }
