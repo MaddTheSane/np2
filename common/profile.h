@@ -1,17 +1,22 @@
+/**
+ * @file	profile.h
+ * @brief	Interface of the profiler
+ */
 
 #if !defined(NP2_PROFILE_H__)
 #define	NP2_PROFILE_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-BRESULT profile_enum(const OEMCHAR *filename, void *arg,
-							BRESULT (*proc)(void *arg, const OEMCHAR *para,
-								const OEMCHAR *key, const OEMCHAR *data));
-const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng);
+/**
+ * An application-defined callback function used with the profile_enum
+ */
+typedef BRESULT (*PROFILEENUMPROC)(void *lpParam, const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpString);
 
-
+BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC lpFunc);
 
 
 // ---- ‚Ü‚¾ƒeƒXƒg
