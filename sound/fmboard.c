@@ -26,9 +26,7 @@
 	UINT32		g_usesound;
 	OPN_T		opn;
 	AMD98		amd98;
-	MUSICGEN	g_musicgen;
 
-	_TMS3631	tms3631;
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
 	OPNCH		opnch[OPNCH_MAX];
@@ -156,10 +154,8 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	opn3.adpcmmask = (UINT8)~(0x1c);
 #endif	// defined(SUPPORT_PX)
 
-	ZeroMemory(&g_musicgen, sizeof(g_musicgen));
 	ZeroMemory(&amd98, sizeof(amd98));
 
-	tms3631_reset(&tms3631);
 	opngen_reset();
 	psggen_reset(&psg1);
 	psggen_reset(&psg2);
@@ -177,9 +173,12 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	pcm86_reset();
 	cs4231_reset();
 
-	switch(type) {
+	
+	board14_reset(pConfig, (type == 1) ? TRUE : FALSE);
+
+	switch (type)
+	{
 		case 0x01:
-			board14_reset(pConfig);
 			break;
 
 		case 0x02:

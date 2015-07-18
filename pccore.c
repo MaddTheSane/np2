@@ -34,6 +34,7 @@
 #include	"fmboard.h"
 #include	"beep.h"
 #include	"s98.h"
+#include	"tms3631.h"
 #include	"font.h"
 #include	"diskdrv.h"
 #include	"fddfile.h"
