@@ -1,6 +1,6 @@
 /**
  * @file	c86ctl.h
- * @brief	C86CTL の定義をします
+ * @brief	Defines of C86CTL
  */
 
 #pragma once
@@ -47,13 +47,13 @@ enum ChipType
 };
 
 /**
- * CBUSボード種別定義
+ * The type of CBUS boards
  */
 enum CBUS_BOARD_TYPE
 {
 	CBUS_BOARD_UNKNOWN					= 0,			/*!< Unknown */
 	CBUS_BOARD_14						= 0x0001,		/*!< NEC PC-9801-14 */
-	CBUS_BOARD_AMD98					= 0x0011,		/*!< システムサコム AMD-98 */
+	CBUS_BOARD_AMD98					= 0x0011,		/*!< SYSTEM SACOM AMD-98 */
 	CBUS_BOARD_26						= 0x0002,		/*!< NEC PC-9801-26, 26K */
 	CBUS_BOARD_SOUND_ORCHESTRA			= 0x0012,		/*!< SNE Sound Orchestra */
 	CBUS_BOARD_SOUND_ORCHESTRA_L		= 0x0022,		/*!< SNE Sound Orchestra L */
@@ -71,16 +71,16 @@ enum CBUS_BOARD_TYPE
 	CBUS_BOARD_LITTLE_ORCHESTRA_FELLOW	= 0x00e2,		/*!< SNE Litte Orchestra FELLOW */
 	CBUS_BOARD_JOY2						= 0x00f2,		/*!< SNE JOY-2 */
 	CBUS_BOARD_SOUND_GRANPRI			= 0x0102,		/*!< SNE SOUND GRANPRI */
-	CBUS_BOARD_TN_F3FM					= 0x0112,		/*!< 東京ニーズ TN-F3FM */
+	CBUS_BOARD_TN_F3FM					= 0x0112,		/*!< TOKYO NEEDS TN-F3FM */
 	CBUS_BOARD_73						= 0x0003,		/*!< NEC PC-9801-73 */
 	CBUS_BOARD_86						= 0x0023,		/*!< NEC PC-9801-86 */
-	CBUS_BOARD_ASB01					= 0x0043,		/*!< SIS アミューズメントサウンドボードASB-01 */
-	CBUS_BOARD_SPEAKBOARD				= 0x0053,		/*!< アイドルジャパン SpeakBoard */
+	CBUS_BOARD_ASB01					= 0x0043,		/*!< SIS Amusement Sound Board ASB-01 */
+	CBUS_BOARD_SPEAKBOARD				= 0x0053,		/*!< IDOL JAPAN SpeakBoard */
 	CBUS_BOARD_SOUNDPLAYER98			= 0x0063,		/*!< SPB-98 */
 	CBUS_BOARD_SECONDBUS86				= 0x0073,		/*!< second-bus86 */
 	CBUS_BOARD_SOUNDEDGE				= 0x0083,		/*!< sound-edge */
 	CBUS_BOARD_WINDUO					= 0x0093,		/*!< win-duo */
-	CBUS_BOARD_OTOMI					= 0x00a3,		/*!< MAD FACTORY 音美 */
+	CBUS_BOARD_OTOMI					= 0x00a3,		/*!< MAD FACTORY OTOMI */
 	CBUS_BOARD_WAVEMASTER				= 0x00b3,		/*!< Q-Vision WaveMaster */
 	CBUS_BOARD_WAVESMIT					= 0x00c3,		/*!< Q-Vision WaveSMIT */
 	CBUS_BOARD_WAVESTAR					= 0x00d3,		/*!< Q-Vision WaveStar */
@@ -92,7 +92,7 @@ enum CBUS_BOARD_TYPE
 	CBUS_BOARD_SB16VALUE				= 0x0024,		/*!< sound-blaster 16Value (CT3720) */
 	CBUS_BOARD_POWERWINDOW_T64S			= 0x0034,		/*!< canopus PowerWindow T64S */
 	CBUS_BOARD_PCSB2					= 0x0044,		/*!< EPSON PCSB2 */
-	CBUS_BOARD_WGS98S					= 0x0054,		/*!< コンピュータ・テクニカ WGS-98S */
+	CBUS_BOARD_WGS98S					= 0x0054,		/*!< COM.TECH WGS-98S */
 	CBUS_BOARD_SRB_G					= 0x0064,		/*!< buffalo SRB-G */
 	CBUS_BOARD_MIDI_ORCHESTRA_MIDI3		= 0x0074,		/*!< SNE MIDI ORCHESTRA MIDI-3 */
 	CBUS_BOARD_SB_AWE32					= 0x0005,		/*!< SoundBlaster AWE32 (CT3610) */
@@ -110,29 +110,77 @@ struct Devinfo
 };
 
 /**
- * @brief IRealChip3 クラス
+ * @brief The class of IRealChip3
  */
 class IC86RealChip
 {
 public:
-	// Destructor
+	/**
+	 * Destructor
+	 */
 	virtual ~IC86RealChip()
 	{
 	}
 
-	// IRealChipBase
+	/* IRealChipBase */
+
+	/**
+	 * Initialize
+	 * @return C86CTL_ERR
+	 */
 	virtual int Initialize() = 0;
+
+	/**
+	 * Deinitialize
+	 * @return C86CTL_ERR
+	 */
 	virtual int Deinitialize() = 0;
 
-	// IRealChip
+	/* IRealChip */
+
+	/**
+	 * Reset
+	 * @return C86CTL_ERR
+	 */
 	virtual int Reset() = 0;
+
+	/**
+	 * Output
+	 * @param[in] nAddr The address
+	 * @param[in] cData The data
+	 */
 	virtual void Out(UINT nAddr, UINT8 cData) = 0;
+
+	/**
+	 * Input
+	 * @param[in] nAddr The address of registers
+	 * @return The data
+	 */
 	virtual UINT8 In(UINT nAddr) = 0;
 
-	// IRealChip2
+	/* IRealChip2 */
+
+	/**
+	 * Gets the current status
+	 * @param[in] nAddr The address
+	 * @param[out] pcStatus The status
+	 * @return C86CTL_ERR
+	 */
 	virtual int GetChipStatus(UINT nAddr, UINT8* pcStatus) = 0;
+
+	/**
+	 * Output
+	 * @param[in] nAddr The address
+	 * @param[in] cData The data
+	 */
 	virtual void DirectOut(UINT nAddr, UINT8 cData) = 0;
 
-	// IRealChip3
+	/* IRealChip3 */
+
+	/**
+	 * Gets the type of the chip
+	 * @param[out] pnType A pointer of type
+	 * @return C86CTL_ERR
+	 */
 	virtual int GetChipType(ChipType* pnType) = 0;
 };

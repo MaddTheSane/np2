@@ -1,6 +1,6 @@
 /**
  * @file	gimicusb.cpp
- * @brief	G.I.M.I.C USB アクセス クラスの動作の定義を行います
+ * @brief	Implementation of accessing G.I.M.I.C USB
  */
 
 #include "compiler.h"
@@ -8,7 +8,7 @@
 #include <algorithm>
 
 /**
- * コンストラクタ
+ * Constructor
  */
 CGimicUSB::CGimicUSB()
 	: m_nChipType(CHIP_UNKNOWN)
@@ -19,14 +19,14 @@ CGimicUSB::CGimicUSB()
 }
 
 /**
- * デストラクタ
+ * Destructor
  */
 CGimicUSB::~CGimicUSB()
 {
 }
 
 /**
- * 初期化
+ * Initialize
  * @return C86CTL_ERR
  */
 int CGimicUSB::Initialize()
@@ -74,7 +74,7 @@ int CGimicUSB::Initialize()
 }
 
 /**
- * 解放
+ * Deinitialize
  * @return C86CTL_ERR
  */
 int CGimicUSB::Deinitialize()
@@ -89,11 +89,11 @@ int CGimicUSB::Deinitialize()
 }
 
 /**
- * データ送受信
- * @param[in] lpOutput バッファ
- * @param[in] cbOutput バッファ長
- * @param[out] lpInput バッファ
- * @param[in] cbInput バッファ長
+ * Sends and receives data from USB
+ * @param[in] lpOutput A pointer to the buffer that sends the data
+ * @param[in] cbOutput The number of bytes to be written
+ * @param[out] lpInput A pointer to the buffer that receives the data
+ * @param[in] cbInput The maximum number of bytes to be read
  * @return C86CTL_ERR
  */
 int CGimicUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput, size_t cbInput)
@@ -134,8 +134,8 @@ int CGimicUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput,
 }
 
 /**
- * SSG ヴォリューム設定
- * @param[in] cVolume ヴォリューム
+ * Sets the volumes of SSG
+ * @param[in] cVolume The volume
  * @return C86CTL_ERR
  */
 int CGimicUSB::SetSSGVolume(UINT8 cVolume)
@@ -153,8 +153,8 @@ int CGimicUSB::SetSSGVolume(UINT8 cVolume)
 }
 
 /**
- * SSG ヴォリューム取得
- * @param[out] pcVolume ヴォリューム
+ * Gets the volume of SSG
+ * @param[out] pcVolume A pointer of the volume
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetSSGVolume(UINT8* pcVolume)
@@ -169,8 +169,8 @@ int CGimicUSB::GetSSGVolume(UINT8* pcVolume)
 }
 
 /**
- * クロック設定
- * @param[in] nClock クロック
+ * Sets the clock
+ * @param[in] nClock The clock
  * @return C86CTL_ERR
  */
 int CGimicUSB::SetPLLClock(UINT nClock)
@@ -191,8 +191,8 @@ int CGimicUSB::SetPLLClock(UINT nClock)
 }
 
 /**
- * クロック取得
- * @param[out] pnClock クロック
+ * Gets the clock
+ * @param[out] pnClock A pointer to the clock
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetPLLClock(UINT* pnClock)
@@ -213,11 +213,11 @@ int CGimicUSB::GetPLLClock(UINT* pnClock)
 }
 
 /**
- * ファームウェア バージョン取得
- * @param[out] pnMajor メジャー
- * @param[out] pnMinor マイナー
- * @param[out] pnRev リビジョン
- * @param[out] pnBuild ビルド
+ * Gets the informations of firm
+ * @param[out] pnMajor A pointer to the major
+ * @param[out] pnMinor A pointer to the minor
+ * @param[out] pnRev A pointer to the revision
+ * @param[out] pnBuild A pointer to the number of build
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetFWVer(UINT* pnMajor, UINT* pnMinor, UINT* pnRev, UINT* pnBuild)
@@ -248,8 +248,8 @@ int CGimicUSB::GetFWVer(UINT* pnMajor, UINT* pnMinor, UINT* pnRev, UINT* pnBuild
 }
 
 /**
- * マザーボード情報取得
- * @param[out] pInfo 情報構造体のポインタ
+ * Gets the informations of the mother
+ * @param[out] pInfo A pointer to the informations
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetMBInfo(Devinfo* pInfo)
@@ -258,8 +258,8 @@ int CGimicUSB::GetMBInfo(Devinfo* pInfo)
 }
 
 /**
- * モジュール情報取得
- * @param[out] pInfo 情報構造体のポインタ
+ * Gets the informations of modules
+ * @param[out] pInfo A pointer to the informations
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetModuleInfo(Devinfo* pInfo)
@@ -268,9 +268,9 @@ int CGimicUSB::GetModuleInfo(Devinfo* pInfo)
 }
 
 /**
- * 情報取得
- * @param[in] cParam パラメタ
- * @param[out] pInfo 情報構造体のポインタ
+ * Gets the informations
+ * @param[in] cParam The parameter
+ * @param[out] pInfo A pointer to the informations
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetInfo(UINT8 cParam, Devinfo* pInfo)
@@ -289,9 +289,9 @@ int CGimicUSB::GetInfo(UINT8 cParam, Devinfo* pInfo)
 }
 
 /**
- * おしりを ZeroFill
- * @param[in] lpBuffer バッファ
- * @param[in] cbBuffer バッファ長
+ * Sets ZeroFill
+ * @param[in] lpBuffer A pointer to the buffer
+ * @param[in] cbBuffer The number of bytes
  */
 void CGimicUSB::TailZeroFill(char* lpBuffer, size_t cbBuffer)
 {
@@ -310,8 +310,8 @@ void CGimicUSB::TailZeroFill(char* lpBuffer, size_t cbBuffer)
 }
 
 /**
- * モジュール タイプを得る
- * @param[out] pnType タイプ
+ * Gets the type of the modules
+ * @param[out] pnType The type
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetModuleType(ChipType* pnType)
@@ -324,7 +324,7 @@ int CGimicUSB::GetModuleType(ChipType* pnType)
 }
 
 /**
- * リセット
+ * Reset
  * @return C86CTL_ERR
  */
 int CGimicUSB::Reset()
@@ -339,9 +339,9 @@ int CGimicUSB::Reset()
 }
 
 /**
- * リマップされたアドレスを得る
- * @param[in] nAddr アドレス
- * @return リマップされたアドレス
+ * Remaps address
+ * @param[in] nAddr The address
+ * @return The remapped address
  */
 UINT CGimicUSB::GetChipAddr(UINT nAddr) const
 {
@@ -370,8 +370,8 @@ UINT CGimicUSB::GetChipAddr(UINT nAddr) const
 
 /**
  * Output
- * @param[in] nAddr アドレス
- * @param[in] cData データ
+ * @param[in] nAddr The address of registers
+ * @param[in] cData The data
  */
 void CGimicUSB::Out(UINT nAddr, UINT8 cData)
 {
@@ -385,7 +385,7 @@ void CGimicUSB::Out(UINT nAddr, UINT8 cData)
 	while (m_nQueCount >= _countof(m_que))
 	{
 		m_queGuard.Leave();
-		usleep(1000);
+		Delay(1000);
 		m_queGuard.Enter();
 	}
 
@@ -399,8 +399,8 @@ void CGimicUSB::Out(UINT nAddr, UINT8 cData)
 
 /**
  * Input
- * @param[in] nAddr アドレス
- * @return データ
+ * @param[in] nAddr The address of registers
+ * @return The data
  */
 UINT8 CGimicUSB::In(UINT nAddr)
 {
@@ -412,9 +412,9 @@ UINT8 CGimicUSB::In(UINT nAddr)
 }
 
 /**
- * ステータスを得る
- * @param[in] nAddr アドレス
- * @param[out] pcStatus ステータス
+ * Gets the current status
+ * @param[in] nAddr The address
+ * @param[out] pcStatus The status
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetChipStatus(UINT nAddr, UINT8* pcStatus)
@@ -434,8 +434,8 @@ int CGimicUSB::GetChipStatus(UINT nAddr, UINT8* pcStatus)
 
 /**
  * Output
- * @param[in] nAddr アドレス
- * @param[in] cData データ
+ * @param[in] nAddr The address
+ * @param[in] cData The data
  */
 void CGimicUSB::DirectOut(UINT nAddr, UINT8 cData)
 {
@@ -464,8 +464,8 @@ void CGimicUSB::DirectOut(UINT nAddr, UINT8 cData)
 }
 
 /**
- * チップ タイプを得る
- * @param[out] pnType タイプ
+ * Gets the type of the chip
+ * @param[out] pnType A pointer of type
  * @return C86CTL_ERR
  */
 int CGimicUSB::GetChipType(ChipType* pnType)
@@ -478,13 +478,12 @@ int CGimicUSB::GetChipType(ChipType* pnType)
 }
 
 /**
- * スレッド
- * @param[in] lpArg スレッド パラメータ
- * @retval 0 常に 0
+ * Thread
+ * @retval true Cont.
  */
 bool CGimicUSB::Task()
 {
-	// データ作成～
+	/* builds data */
 	UINT8 sData[64];
 	size_t nIndex = 0;
 
@@ -520,14 +519,14 @@ bool CGimicUSB::Task()
 	}
 	m_queGuard.Leave();
 
-	// 書き込み～
+	/* writes */
 	if (nIndex > 0)
 	{
 		Transaction(sData, nIndex);
 	}
 	else
 	{
-		usleep(1000);
+		Delay(1000);
 	}
 	return true;
 }

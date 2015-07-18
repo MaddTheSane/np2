@@ -1,36 +1,36 @@
 /**
  * @file	c86boxusb.cpp
- * @brief	C86BOX USB アクセス クラスの動作の定義を行います
+ * @brief	Implementation of accessing C86BOX USB
  */
 
 #include "compiler.h"
 #include "c86boxusb.h"
 #include <algorithm>
 
-//! 最大チップ数
+//! The maximum chips
 #define NMAXCHIPS	4
 
 /**
- * @brief ボード情報
+ * @brief The information of sound baords
  */
 struct BOARD_INFO
 {
-	UINT type;						//!< ボード タイプ
-	UINT nchips;					//!< チップ数
-	UINT chiptype[NMAXCHIPS];		//!< チップ タイプ
+	UINT type;						//!< The type of boards
+	UINT nchips;					//!< The numbers of chips
+	UINT chiptype[NMAXCHIPS];		//!< The type of chips
 };
 
 /**
- * @brief ボード名変換
+ * @brief The board's names
  */
 struct BoardName
 {
-	CBUS_BOARD_TYPE nId;			//!< ボード タイプ
-	const char* lpName;				//!< ボード名
+	CBUS_BOARD_TYPE nId;			//!< The type of boards
+	const char* lpName;				//!< The name of boards
 };
 
 /**
- * ボード名変換テーブル
+ * The tables of baords
  */
 static const BoardName s_names[] =
 {
@@ -80,9 +80,9 @@ static const BoardName s_names[] =
 };
 
 /**
- * ボードタイプからボード名を引く
- * @param[in] nType タイプ
- * @return ボード名
+ * Gets the name from type of boards
+ * @param[in] nType The type of boards
+ * @return The name of boards
  */
 static const char* GetBoardName(CBUS_BOARD_TYPE nType)
 {
@@ -98,7 +98,7 @@ static const char* GetBoardName(CBUS_BOARD_TYPE nType)
 }
 
 /**
- * コンストラクタ
+ * Constructor
  */
 C86BoxUSB::C86BoxUSB()
 	: m_nChipType(CHIP_UNKNOWN)
@@ -110,14 +110,14 @@ C86BoxUSB::C86BoxUSB()
 }
 
 /**
- * デストラクタ
+ * Destructor
  */
 C86BoxUSB::~C86BoxUSB()
 {
 }
 
 /**
- * 初期化
+ * Initialize
  * @return C86CTL_ERR
  */
 int C86BoxUSB::Initialize()
@@ -159,7 +159,7 @@ int C86BoxUSB::Initialize()
 }
 
 /**
- * 解放
+ * Deinitialize
  * @return C86CTL_ERR
  */
 int C86BoxUSB::Deinitialize()
@@ -175,11 +175,11 @@ int C86BoxUSB::Deinitialize()
 }
 
 /**
- * データ送受信
- * @param[in] lpOutput バッファ
- * @param[in] cbOutput バッファ長
- * @param[out] lpInput バッファ
- * @param[in] cbInput バッファ長
+ * Sends and receives data from USB
+ * @param[in] lpOutput A pointer to the buffer that sends the data
+ * @param[in] cbOutput The number of bytes to be written
+ * @param[out] lpInput A pointer to the buffer that receives the data
+ * @param[in] cbInput The maximum number of bytes to be read
  * @return C86CTL_ERR
  */
 int C86BoxUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput, size_t cbInput)
@@ -223,7 +223,7 @@ int C86BoxUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput,
 }
 
 /**
- * リセット
+ * Reset
  * @return C86CTL_ERR
  */
 int C86BoxUSB::Reset()
@@ -242,8 +242,8 @@ int C86BoxUSB::Reset()
 
 /**
  * Output
- * @param[in] nAddr アドレス
- * @param[in] cData データ
+ * @param[in] nAddr The address of registers
+ * @param[in] cData The data
  */
 void C86BoxUSB::Out(UINT nAddr, UINT8 cData)
 {
@@ -257,7 +257,7 @@ void C86BoxUSB::Out(UINT nAddr, UINT8 cData)
 	while (m_nQueCount >= _countof(m_que))
 	{
 		m_queGuard.Leave();
-		::usleep(1000);
+		Delay(1000);
 		m_queGuard.Enter();
 	}
 
@@ -269,8 +269,8 @@ void C86BoxUSB::Out(UINT nAddr, UINT8 cData)
 
 /**
  * Input
- * @param[in] nAddr アドレス
- * @return データ
+ * @param[in] nAddr The address of registers
+ * @return The data
  */
 UINT8 C86BoxUSB::In(UINT nAddr)
 {
@@ -282,9 +282,9 @@ UINT8 C86BoxUSB::In(UINT nAddr)
 }
 
 /**
- * ステータスを得る
- * @param[in] nAddr アドレス
- * @param[out] pcStatus ステータス
+ * Gets the current status
+ * @param[in] nAddr The address
+ * @param[out] pcStatus The status
  * @return C86CTL_ERR
  */
 int C86BoxUSB::GetChipStatus(UINT nAddr, UINT8* pcStatus)
@@ -294,8 +294,8 @@ int C86BoxUSB::GetChipStatus(UINT nAddr, UINT8* pcStatus)
 
 /**
  * Output
- * @param[in] nAddr アドレス
- * @param[in] cData データ
+ * @param[in] nAddr The address
+ * @param[in] cData The data
  */
 void C86BoxUSB::DirectOut(UINT nAddr, UINT8 cData)
 {
@@ -316,8 +316,8 @@ void C86BoxUSB::DirectOut(UINT nAddr, UINT8 cData)
 }
 
 /**
- * チップ タイプを得る
- * @param[out] pnType タイプ
+ * Gets the type of the chip
+ * @param[out] pnType A pointer of type
  * @return C86CTL_ERR
  */
 int C86BoxUSB::GetChipType(ChipType* pnType)
@@ -330,12 +330,12 @@ int C86BoxUSB::GetChipType(ChipType* pnType)
 }
 
 /**
- * スレッド
- * @retval true 常に成功
+ * Thread
+ * @retval true Cont.
  */
 bool C86BoxUSB::Task()
 {
-	// データ作成～
+	/* builds data */
 	UINT8 sData[64];
 	size_t nIndex = 0;
 
@@ -353,14 +353,14 @@ bool C86BoxUSB::Task()
 	}
 	m_queGuard.Leave();
 
-	// 書き込み～
+	/* writes */
 	if (nIndex > 0)
 	{
 		Transaction(sData, nIndex);
 	}
 	else
 	{
-		::usleep(1000);
+		Delay(1000);
 	}
 	return true;
 }

@@ -1,17 +1,17 @@
 /**
  * @file	c86boxusb.h
- * @brief	C86BOX USB アクセス クラスの宣言およびインターフェイスの定義をします
+ * @brief	Interface of accessing C86BOX USB
  */
 
 #pragma once
 
 #include "c86ctl.h"
-#include "usbdev.h"
 #include "misc/guard.h"
 #include "misc/threadbase.h"
+#include "misc/usbdev.h"
 
 /**
- * @brief C86BOX USB アクセス クラス
+ * @brief The class of accessing C86BOX USB
  */
 class C86BoxUSB : public IC86RealChip, protected CThreadBase
 {
@@ -40,14 +40,14 @@ protected:
 
 private:
 	CUsbDev m_usb;			/*!< USB */
-	CGuard m_usbGuard;		/*!< USBアクセス */
-	CGuard m_queGuard;		/*!< キュー */
-	ChipType m_nChipType;	/*!< チップ タイプ */
-	int m_nDevId;			/*!< デバイス タイプ */
-	size_t m_nQueIndex;		/*!< データ インデックス */
-	size_t m_nQueCount;		/*!< データ カウント */
-	UINT m_que[0x400];		/*!< キュー */
-	UINT8 m_sReg[0x200];	/*!< レジスタ */
+	CGuard m_usbGuard;		/*!< The quard of accessing USB */
+	CGuard m_queGuard;		/*!< The quard of que */
+	ChipType m_nChipType;	/*!< The type of chip */
+	int m_nDevId;			/*!< The type of devices */
+	size_t m_nQueIndex;		/*!< The position in que */
+	size_t m_nQueCount;		/*!< The count in que */
+	UINT m_que[0x400];		/*!< que */
+	UINT8 m_sReg[0x200];	/*!< register */
 
 	int Transaction(const void* lpOutput, size_t cbOutput, void* lpInput = NULL, size_t cbInput = 0);
 };

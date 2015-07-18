@@ -6,6 +6,7 @@
 #pragma once
 
 #include <pthread.h>
+#include <unistd.h>
 
 /**
  * @brief スレッド基底クラス
@@ -18,12 +19,8 @@ public:
 
 	bool Start();
 	void Stop();
-
-	/**
-	 * スタック サイズの設定
-	 * @param[in] stack_size スタック サイズ
-	 */
-	void SetStackSize(size_t stack_size) { m_stack_size = stack_size; }
+	void SetStackSize(size_t stack_size);
+	static void Delay(unsigned int usec);
 
 protected:
 	virtual bool Task()=0;		//!< スレッド タスク
@@ -35,3 +32,21 @@ private:
 	size_t m_stack_size;		//!< スタック サイズ
 	static void* StartRoutine(void* arg);
 };
+
+/**
+ * スタック サイズの設定
+ * @param[in] stack_size スタック サイズ
+ */
+inline void CThreadBase::SetStackSize(size_t stack_size)
+{
+	m_stack_size = stack_size;
+}
+
+/**
+ * スリープ
+ * @param[in] usec マイクロ秒
+ */
+inline void CThreadBase::Delay(unsigned int usec)
+{
+	::usleep(usec);
+}

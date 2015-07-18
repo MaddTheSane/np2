@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA8481963E34B00747635 /* threadbase.cpp */; };
-		BAAEA84D1963E34B00747635 /* usbdev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA84A1963E34B00747635 /* usbdev.cpp */; };
-		BACA7308195ACCE400784174 /* board118.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BACA7305195ACCE400784174 /* board118.cpp */; };
-		BACA7309195ACCE400784174 /* gimicusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BACA7306195ACCE400784174 /* gimicusb.cpp */; };
-		BAE25E961AD3F72700814B76 /* c86boxusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE25E941AD3F72700814B76 /* c86boxusb.cpp */; };
+		BAE76FEE1B50038300920E49 /* usbdev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FEC1B50038300920E49 /* usbdev.cpp */; };
+		BAE76FF71B5003A100920E49 /* board118.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF01B5003A100920E49 /* board118.cpp */; };
+		BAE76FF81B5003A100920E49 /* c86boxusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF21B5003A100920E49 /* c86boxusb.cpp */; };
+		BAE76FF91B5003A100920E49 /* gimicusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF51B5003A100920E49 /* gimicusb.cpp */; };
 		BAF84B17195AA04F00183062 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84B16195AA04F00183062 /* Cocoa.framework */; };
 		BAF84B21195AA04F00183062 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B1F195AA04F00183062 /* InfoPlist.strings */; };
 		BAF84B27195AA04F00183062 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B25195AA04F00183062 /* Credits.rtf */; };
@@ -237,16 +237,16 @@
 /* Begin PBXFileReference section */
 		BAAEA8481963E34B00747635 /* threadbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threadbase.cpp; sourceTree = "<group>"; };
 		BAAEA8491963E34B00747635 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
-		BAAEA84A1963E34B00747635 /* usbdev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usbdev.cpp; sourceTree = "<group>"; };
-		BAAEA84B1963E34B00747635 /* usbdev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usbdev.h; sourceTree = "<group>"; };
-		BACA7305195ACCE400784174 /* board118.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = board118.cpp; sourceTree = "<group>"; };
-		BACA7306195ACCE400784174 /* gimicusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gimicusb.cpp; sourceTree = "<group>"; };
-		BACA7307195ACCE400784174 /* gimicusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gimicusb.h; sourceTree = "<group>"; };
-		BACA730A195ACD1200784174 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86ctl.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
-		BAE25E941AD3F72700814B76 /* c86boxusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = c86boxusb.cpp; sourceTree = "<group>"; };
-		BAE25E951AD3F72700814B76 /* c86boxusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86boxusb.h; sourceTree = "<group>"; };
+		BAE76FEC1B50038300920E49 /* usbdev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usbdev.cpp; sourceTree = "<group>"; };
+		BAE76FED1B50038300920E49 /* usbdev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usbdev.h; sourceTree = "<group>"; };
+		BAE76FF01B5003A100920E49 /* board118.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = board118.cpp; sourceTree = "<group>"; };
+		BAE76FF21B5003A100920E49 /* c86boxusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = c86boxusb.cpp; sourceTree = "<group>"; };
+		BAE76FF31B5003A100920E49 /* c86boxusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86boxusb.h; sourceTree = "<group>"; };
+		BAE76FF41B5003A100920E49 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86ctl.h; sourceTree = "<group>"; };
+		BAE76FF51B5003A100920E49 /* gimicusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gimicusb.cpp; sourceTree = "<group>"; };
+		BAE76FF61B5003A100920E49 /* gimicusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gimicusb.h; sourceTree = "<group>"; };
 		BAF84B13195AA04F00183062 /* np2sdl2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = np2sdl2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAF84B16195AA04F00183062 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BAF84B19195AA04F00183062 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -667,28 +667,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BAE25E911AD3D92F00814B76 /* gimic */ = {
-			isa = PBXGroup;
-			children = (
-				BAE25E941AD3F72700814B76 /* c86boxusb.cpp */,
-				BAE25E951AD3F72700814B76 /* c86boxusb.h */,
-				BACA730A195ACD1200784174 /* c86ctl.h */,
-				BACA7306195ACCE400784174 /* gimicusb.cpp */,
-				BACA7307195ACCE400784174 /* gimicusb.h */,
-				BAAEA84A1963E34B00747635 /* usbdev.cpp */,
-				BAAEA84B1963E34B00747635 /* usbdev.h */,
-			);
-			path = gimic;
-			sourceTree = "<group>";
-		};
 		BAE25E921AD3D93D00814B76 /* misc */ = {
 			isa = PBXGroup;
 			children = (
+				BAE76FEC1B50038300920E49 /* usbdev.cpp */,
+				BAE76FED1B50038300920E49 /* usbdev.h */,
 				BAE25E931AD3DB0F00814B76 /* guard.h */,
 				BAAEA8481963E34B00747635 /* threadbase.cpp */,
 				BAAEA8491963E34B00747635 /* threadbase.h */,
 			);
 			path = misc;
+			sourceTree = "<group>";
+		};
+		BAE76FEF1B5003A100920E49 /* ext */ = {
+			isa = PBXGroup;
+			children = (
+				BAE76FF11B5003A100920E49 /* gimic */,
+				BAE76FF01B5003A100920E49 /* board118.cpp */,
+			);
+			path = ext;
+			sourceTree = "<group>";
+		};
+		BAE76FF11B5003A100920E49 /* gimic */ = {
+			isa = PBXGroup;
+			children = (
+				BAE76FF21B5003A100920E49 /* c86boxusb.cpp */,
+				BAE76FF31B5003A100920E49 /* c86boxusb.h */,
+				BAE76FF41B5003A100920E49 /* c86ctl.h */,
+				BAE76FF51B5003A100920E49 /* gimicusb.cpp */,
+				BAE76FF61B5003A100920E49 /* gimicusb.h */,
+			);
+			path = gimic;
 			sourceTree = "<group>";
 		};
 		BAF84B0A195AA04F00183062 = {
@@ -1152,6 +1161,7 @@
 				BAF84CA0195AA10500183062 /* commng.h */,
 				BAF84CA1195AA10500183062 /* dosio.c */,
 				BAF84CA2195AA10500183062 /* dosio.h */,
+				BAE76FEF1B5003A100920E49 /* ext */,
 				BAF84CA3195AA10500183062 /* fontmng.c */,
 				BAF84CA4195AA10500183062 /* fontmng.h */,
 				BAF84CA5195AA10500183062 /* ini.c */,
@@ -1165,6 +1175,7 @@
 				BAF84D15195AA10500183062 /* mousemng.h */,
 				BAF84D16195AA10500183062 /* np2.c */,
 				BAF84D17195AA10500183062 /* np2.h */,
+				BAF84D0C195AA10500183062 /* np2sdl2 */,
 				BAF84D18195AA10500183062 /* oemtext.h */,
 				BAF84D19195AA10500183062 /* scrnmng.c */,
 				BAF84D1A195AA10500183062 /* scrnmng.h */,
@@ -1189,7 +1200,6 @@
 		BAF84D0B195AA10500183062 /* MacOSX */ = {
 			isa = PBXGroup;
 			children = (
-				BAF84D0C195AA10500183062 /* np2sdl2 */,
 			);
 			path = MacOSX;
 			sourceTree = "<group>";
@@ -1197,16 +1207,15 @@
 		BAF84D0C195AA10500183062 /* np2sdl2 */ = {
 			isa = PBXGroup;
 			children = (
-				BAE25E911AD3D92F00814B76 /* gimic */,
-				BAE25E921AD3D93D00814B76 /* misc */,
-				BAF84B1D195AA04F00183062 /* Supporting Files */,
-				BACA7305195ACCE400784174 /* board118.cpp */,
 				BAF84D0D195AA10500183062 /* compiler.h */,
 				BAF84D0E195AA10500183062 /* compiler.pch */,
 				BAF84D0F195AA10500183062 /* main.m */,
+				BAE25E921AD3D93D00814B76 /* misc */,
 				BAF84EAA195AAAD900183062 /* np2.icns */,
+				BAF84B1D195AA04F00183062 /* Supporting Files */,
 			);
-			path = np2sdl2;
+			name = np2sdl2;
+			path = MacOSX/np2sdl2;
 			sourceTree = "<group>";
 		};
 		BAF84D35195AA10500183062 /* vram */ = {
@@ -1389,6 +1398,7 @@
 				BAF84EA3195AA38300183062 /* midiout.c in Sources */,
 				BAF84DBB195AA10500183062 /* hostdrv.c in Sources */,
 				BAF84E13195AA10500183062 /* commng.c in Sources */,
+				BAE76FF81B5003A100920E49 /* c86boxusb.cpp in Sources */,
 				BAF84DE5195AA10500183062 /* egc.c in Sources */,
 				BAF84D8F195AA10500183062 /* debugsub.c in Sources */,
 				BAF84DC9195AA10500183062 /* unasm.c in Sources */,
@@ -1461,6 +1471,7 @@
 				BAF84DAE195AA10500183062 /* fontfm7.c in Sources */,
 				BAF84E9C195AA38300183062 /* sndcsec.c in Sources */,
 				BAF84E15195AA10500183062 /* fontmng.c in Sources */,
+				BAE76FF91B5003A100920E49 /* gimicusb.cpp in Sources */,
 				BAF84DD8195AA10500183062 /* i286c_rp.c in Sources */,
 				BAF84DB3195AA10500183062 /* fontx1.c in Sources */,
 				BAF84E89195AA38300183062 /* cs4231c.c in Sources */,
@@ -1474,8 +1485,8 @@
 				BAF84DE1195AA10500183062 /* cpuio.c in Sources */,
 				BAF84E93195AA38300183062 /* getwave.c in Sources */,
 				BAF84D88195AA10500183062 /* parts.c in Sources */,
+				BAE76FF71B5003A100920E49 /* board118.cpp in Sources */,
 				BAF84DD3195AA10500183062 /* i286c_8x.c in Sources */,
-				BACA7308195ACCE400784174 /* board118.cpp in Sources */,
 				BAF84D9C195AA10500183062 /* menuvram.c in Sources */,
 				BAF84E0A195AA10500183062 /* memtram.c in Sources */,
 				BAF84E3C195AA10500183062 /* maketext.c in Sources */,
@@ -1504,6 +1515,7 @@
 				BAF84D65195AA10500183062 /* board26k.c in Sources */,
 				BAF84D58195AA10500183062 /* bios1b.c in Sources */,
 				BAF84D97195AA10500183062 /* menudlg.c in Sources */,
+				BAE76FEE1B50038300920E49 /* usbdev.cpp in Sources */,
 				BAF84DB8195AA10500183062 /* cmver.c in Sources */,
 				BAF84E8B195AA38300183062 /* fmboard.c in Sources */,
 				BAF84DF5195AA10500183062 /* pic.c in Sources */,
@@ -1519,7 +1531,6 @@
 				BAF84E46195AA10500183062 /* vram.c in Sources */,
 				BAF84DAA195AA10500183062 /* sxsihdd.c in Sources */,
 				BAF84E90195AA38300183062 /* getsnd.c in Sources */,
-				BAAEA84D1963E34B00747635 /* usbdev.cpp in Sources */,
 				BAF84DF7195AA10500183062 /* printif.c in Sources */,
 				BAF84E14195AA10500183062 /* dosio.c in Sources */,
 				BAF84D8A195AA10500183062 /* rect.c in Sources */,
@@ -1547,7 +1558,6 @@
 				BAF84D79195AA10500183062 /* sjiseuc.c in Sources */,
 				BAF84E03195AA10500183062 /* lio.c in Sources */,
 				BAF84DEC195AA10500183062 /* gdc_pset.c in Sources */,
-				BACA7309195ACCE400784174 /* gimicusb.cpp in Sources */,
 				BAF84E0B195AA10500183062 /* memvga.c in Sources */,
 				BAF84DE4195AA10500183062 /* dmac.c in Sources */,
 				BAF84E38195AA10500183062 /* dispsync.c in Sources */,
@@ -1591,7 +1601,6 @@
 				BAF84D9A195AA10500183062 /* menures.c in Sources */,
 				BAF84E2B195AA10500183062 /* sysmenu.c in Sources */,
 				BAF84E3F195AA10500183062 /* scrnbmp.c in Sources */,
-				BAE25E961AD3F72700814B76 /* c86boxusb.cpp in Sources */,
 				BAF84DD2195AA10500183062 /* i286c_0f.c in Sources */,
 				BAF84D7E195AA10500183062 /* ucs2sjis.c in Sources */,
 				BAF84E0F195AA10500183062 /* nevent.c in Sources */,
