@@ -8,13 +8,11 @@
 #include	"fmboard.h"
 #include	"s98.h"
 #include	"keydisp.h"
-#include "gimic/c86boxusb.h"
-#include "gimic/gimicusb.h"
+#include "gimic/gimic.h"
+#include "spfm/spfmlight.h"
 
-/**! G.I.M.I.C インスタンス */
-static IC86RealChip* s_gimic = NULL;
-
-// ROMEO対応版 PC-9801-118
+/**! The instance of external modules */
+static IExtendModule* s_ext = NULL;
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
@@ -169,44 +167,48 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 // ---- with romeo
 
-static void RestoreRomeo(IC86RealChip* gimic)
+/**
+ * Restore OPNA
+ * @param[in] ext instance
+ */
+static void RestoreRomeo(IExtendModule* ext)
 {
 	const UINT8* data = g_opn.reg;
 	for (UINT i = 0x30; i < 0xa0; i++)
 	{
-		gimic->Out(i, data[i]);
+		ext->WriteRegister(i, data[i]);
 	}
 	for (UINT ch = 0; ch < 3; ch++)
 	{
-		gimic->Out(ch + 0xa4, data[ch + 0x0a4]);
-		gimic->Out(ch + 0xa0, data[ch + 0x0a0]);
-		gimic->Out(ch + 0xb0, data[ch + 0x0b0]);
-		gimic->Out(ch + 0xb4, data[ch + 0x0b4]);
+		ext->WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
+		ext->WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
+		ext->WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
+		ext->WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
 	}
 
 	for (UINT i = 0x130; i < 0x1a0; i++)
 	{
-		gimic->Out(i, data[i]);
+		ext->WriteRegister(i, data[i]);
 	}
 	for (UINT ch = 0; ch < 3; ch++)
 	{
-		gimic->Out(ch + 0x1a4, data[ch + 0x1a4]);
-		gimic->Out(ch + 0x1a0, data[ch + 0x1a0]);
-		gimic->Out(ch + 0x1b0, data[ch + 0x1b0]);
-		gimic->Out(ch + 0x1b4, data[ch + 0x1b4]);
+		ext->WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
+		ext->WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
+		ext->WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
+		ext->WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
 	}
-	gimic->Out(0x11, data[0x11]);
-	gimic->Out(0x18, data[0x18]);
-	gimic->Out(0x19, data[0x19]);
-	gimic->Out(0x1a, data[0x1a]);
-	gimic->Out(0x1b, data[0x1b]);
-	gimic->Out(0x1c, data[0x1c]);
-	gimic->Out(0x1d, data[0x1d]);
+	ext->WriteRegister(0x11, data[0x11]);
+	ext->WriteRegister(0x18, data[0x18]);
+	ext->WriteRegister(0x19, data[0x19]);
+	ext->WriteRegister(0x1a, data[0x1a]);
+	ext->WriteRegister(0x1b, data[0x1b]);
+	ext->WriteRegister(0x1c, data[0x1c]);
+	ext->WriteRegister(0x1d, data[0x1d]);
 
 	const UINT8* psg = reinterpret_cast<UINT8*>(&g_psg1.reg);
 	for (UINT i = 0; i < 0x0e; i++)
 	{
-		gimic->Out(i, psg[i]);
+		ext->WriteRegister(i, psg[i]);
 	}
 }
 
@@ -226,7 +228,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		(reinterpret_cast<UINT8*>(&g_psg1.reg))[nAddr] = dat;
 		if (nAddr < 0x0e)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 
 			if (nAddr == 0x07)
 			{
@@ -242,11 +244,11 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 	{
 		if (nAddr < 0x20)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 		}
 		else if (nAddr == 0x28)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 			if ((dat & 0x0f) < 3)
 			{
 				keydisp_fmkeyon(static_cast<UINT8>(dat & 0x0f), dat);
@@ -261,12 +263,12 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 			fmtimer_setreg(nAddr, dat);
 			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
-				s_gimic->Out(nAddr, dat);
+				s_ext->WriteRegister(nAddr, dat);
 			}
 		}
 		else if (nAddr < 0xc0)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 		}
 		g_opn.reg[nAddr] = dat;
 	}
@@ -289,7 +291,7 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 	g_opn.reg[nAddr + 0x100] = dat;
 	if (nAddr >= 0x30)
 	{
-		s_gimic->Out(0x100 + nAddr, dat);
+		s_ext->WriteRegister(0x100 + nAddr, dat);
 	}
 	else if (nAddr == 0x10)
 	{
@@ -323,61 +325,55 @@ void board118_reset(const NP2CFG *pConfig) {
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 
-	IC86RealChip* gimic = s_gimic;
-	if (gimic != NULL)
+	IExtendModule* ext = s_ext;
+	if (ext != NULL)
 	{
-		if (gimic->Reset() != C86CTL_ERR_NONE)
-		{
-			gimic->Deinitialize();
-			delete gimic;
-			gimic = NULL;
-		}
+		ext->Reset();
 	}
-	s_gimic = gimic;
 }
 
 void board118_bind(void)
 {
-	IC86RealChip* gimic = s_gimic;
+	IExtendModule* ext = s_ext;
 
-	if (gimic == NULL)
+	if (ext == NULL)
 	{
 		// G.I.M.I.C オープン
-		gimic = new CGimicUSB();
-		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		ext = new CGimic();
+		if (ext->Initialize())
 		{
-			gimic->Reset();
+			ext->Reset();
 		}
 		else
 		{
-			delete gimic;
-			gimic = NULL;
+			delete ext;
+			ext = NULL;
 		}
 	}
-	if (gimic == NULL)
+	if (ext == NULL)
 	{
-		// C86BOX オープン
-		gimic = new C86BoxUSB();
-		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		// SPFM Lightオープン
+		ext = new CSpfmLight();
+		if (ext->Initialize())
 		{
-			gimic->Reset();
+			ext->Reset();
 		}
 		else
 		{
-			delete gimic;
-			gimic = NULL;
+			delete ext;
+			ext = NULL;
 		}
 	}
-	s_gimic = gimic;
+	s_ext = ext;
 
-	if (gimic)
+	if (ext)
 	{
-		gimic->Out(0x22, 0x00);
-		gimic->Out(0x29, 0x80);
-		gimic->Out(0x10, 0xbf);
-		gimic->Out(0x11, 0x30);
+		ext->WriteRegister(0x22, 0x00);
+		ext->WriteRegister(0x29, 0x80);
+		ext->WriteRegister(0x10, 0xbf);
+		ext->WriteRegister(0x11, 0x30);
 
-		RestoreRomeo(gimic);
+		RestoreRomeo(ext);
 
 		cbuscore_attachsndex(0x188, ymfr_o, ymf_i);
 	}
@@ -402,13 +398,13 @@ void board118_bind(void)
  */
 extern "C" void board118_deinitialize(void)
 {
-	IC86RealChip* gimic = s_gimic;
-	s_gimic = NULL;
+	IExtendModule* ext = s_ext;
+	s_ext = NULL;
 
-	if (gimic)
+	if (ext)
 	{
-		gimic->Reset();
-		gimic->Deinitialize();
-		delete gimic;
+		ext->Reset();
+		ext->Deinitialize();
+		delete ext;
 	}
 }
