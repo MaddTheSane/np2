@@ -854,8 +854,8 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
 	if (saveflg & FLAG_FM1A) {
-		ret |= statflag_write(sfh, &fmtimer, sizeof(fmtimer));
-		ret |= statflag_write(sfh, &opn, sizeof(opn));
+		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
+		ret |= statflag_write(sfh, &g_opn, sizeof(g_opn));
 		CopyMemory(opnkey.keyreg, opngen.keyreg, sizeof(opngen.keyreg));
 		opnkey.extop[0] = opnch[2].extop;
 		opnkey.extop[1] = opnch[5].extop;
@@ -873,7 +873,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= statflag_write(sfh, &g_psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_write(sfh, &adpcm, sizeof(adpcm));
+		ret |= statflag_write(sfh, &g_adpcm, sizeof(g_adpcm));
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
@@ -948,8 +948,8 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	if (saveflg & FLAG_FM1A) {
-		ret |= statflag_read(sfh, &fmtimer, sizeof(fmtimer));
-		ret |= statflag_read(sfh, &opn, sizeof(opn));
+		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
+		ret |= statflag_read(sfh, &g_opn, sizeof(g_opn));
 		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
 		CopyMemory(opngen.keyreg, &opnkey.keyreg, sizeof(opngen.keyreg));
 		opnch[2].extop = opnkey.extop[0];
@@ -967,7 +967,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		ret |= statflag_read(sfh, &g_psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_read(sfh, &adpcm, sizeof(adpcm));
+		ret |= statflag_read(sfh, &g_adpcm, sizeof(g_adpcm));
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
@@ -977,7 +977,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI
-	adpcm_update(&adpcm);
+	adpcm_update(&g_adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
 		fmboard_extenable((REG8)(pcm86.extfunc & 1));

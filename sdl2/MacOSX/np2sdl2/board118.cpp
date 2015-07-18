@@ -18,9 +18,9 @@ static IC86RealChip* s_gimic = NULL;
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
-	opn.addr1l = dat;
-	opn.addr1h = 0;
-	opn.data1 = dat;
+	g_opn.addr1l = dat;
+	g_opn.addr1h = 0;
+	g_opn.data1 = dat;
 	(void)port;
 }
 
@@ -28,12 +28,12 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
-	if (opn.addr1h != 0) {
+	g_opn.data1 = dat;
+	if (g_opn.addr1h != 0) {
 		return;
 	}
 
-	addr = opn.addr1l;
+	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
@@ -42,7 +42,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 	}
 	else {
 		if (addr < 0x20) {
-			rhythm_setreg(&rhythm, addr, dat);
+			rhythm_setreg(&g_rhythm, addr, dat);
 		}
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
@@ -61,17 +61,17 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 		else if (addr < 0xc0) {
 			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[addr] = dat;
+		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18c(UINT port, REG8 dat) {
 
-	if (opn.extend) {
-		opn.addr1l = dat;
-		opn.addr1h = 1;
-		opn.data1 = dat;
+	if (g_opn.extend) {
+		g_opn.addr1l = dat;
+		g_opn.addr1h = 1;
+		g_opn.data1 = dat;
 	}
 	(void)port;
 }
@@ -80,24 +80,24 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	if (!opn.extend) {
+	if (!g_opn.extend) {
 		return;
 	}
-	opn.data1 = dat;
+	g_opn.data1 = dat;
 
-	if (opn.addr1h != 1) {
+	if (g_opn.addr1h != 1) {
 		return;
 	}
-	addr = opn.addr1l;
+	addr = g_opn.addr1l;
 	S98_put(EXTEND2608, addr, dat);
-	opn.reg[addr + 0x100] = dat;
+	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
 		opngen_setreg(3, addr, dat);
 	}
 	else {
 		if (addr == 0x10) {
 			if (!(dat & 0x80)) {
-				opn.adpcmmask = ~(dat & 0x1c);
+				g_opn.adpcmmask = ~(dat & 0x1c);
 			}
 		}
 	}
@@ -107,15 +107,15 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL ymf_i188(UINT port) {
 
 	(void)port;
-	return(fmtimer.status);
+	return(g_fmtimer.status);
 }
 
 static REG8 IOINPCALL ymf_i18a(UINT port) {
 
 	UINT	addr;
 
-	if (opn.addr1h == 0) {
-		addr = opn.addr1l;
+	if (g_opn.addr1h == 0) {
+		addr = g_opn.addr1l;
 		if (addr == 0x0e) {
 			return(fmboard_getjoy(&g_psg1));
 		}
@@ -127,13 +127,13 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 		}
 	}
 	(void)port;
-	return(opn.data1);
+	return(g_opn.data1);
 }
 
 static REG8 IOINPCALL ymf_i18c(UINT port) {
 
-	if (opn.extend) {
-		return(fmtimer.status & 3);
+	if (g_opn.extend) {
+		return(g_fmtimer.status & 3);
 	}
 	(void)port;
 	return(0xff);
@@ -141,15 +141,15 @@ static REG8 IOINPCALL ymf_i18c(UINT port) {
 
 static void extendchannel(REG8 enable) {
 
-	opn.extend = enable;
+	g_opn.extend = enable;
 	if (enable) {
-		opn.channels = 6;
+		g_opn.channels = 6;
 		opngen_setcfg(6, OPN_STEREO | 0x007);
 	}
 	else {
-		opn.channels = 3;
+		g_opn.channels = 3;
 		opngen_setcfg(3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
 
@@ -171,7 +171,7 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 static void RestoreRomeo(IC86RealChip* gimic)
 {
-	const UINT8* data = opn.reg;
+	const UINT8* data = g_opn.reg;
 	for (UINT i = 0x30; i < 0xa0; i++)
 	{
 		gimic->Out(i, data[i]);
@@ -212,13 +212,13 @@ static void RestoreRomeo(IC86RealChip* gimic)
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 {
-	opn.data1 = dat;
-	if (opn.addr1h != 0)
+	g_opn.data1 = dat;
+	if (g_opn.addr1h != 0)
 	{
 		return;
 	}
 
-	const UINT nAddr = opn.addr1l;
+	const UINT nAddr = g_opn.addr1l;
 	S98_put(NORMAL2608, nAddr, dat);
 
 	if (nAddr < 0x10)
@@ -268,25 +268,25 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		{
 			s_gimic->Out(nAddr, dat);
 		}
-		opn.reg[nAddr] = dat;
+		g_opn.reg[nAddr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 {
-	if (!opn.extend)
+	if (!g_opn.extend)
 	{
 		return;
 	}
-	opn.data1 = dat;
-	if (opn.addr1h != 1) {
+	g_opn.data1 = dat;
+	if (g_opn.addr1h != 1) {
 		return;
 	}
 
-	const UINT nAddr = opn.addr1l;
+	const UINT nAddr = g_opn.addr1l;
 	S98_put(EXTEND2608, nAddr, dat);
-	opn.reg[nAddr + 0x100] = dat;
+	g_opn.reg[nAddr + 0x100] = dat;
 	if (nAddr >= 0x30)
 	{
 		s_gimic->Out(0x100 + nAddr, dat);
@@ -295,7 +295,7 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 	{
 		if (!(dat & 0x80))
 		{
-			opn.adpcmmask = ~(dat & 0x1c);
+			g_opn.adpcmmask = ~(dat & 0x1c);
 		}
 	}
 	(void)port;
@@ -386,10 +386,10 @@ void board118_bind(void)
 		fmboard_fmrestore(0, 0);
 		fmboard_fmrestore(3, 1);
 		psggen_restore(&g_psg1);
-		fmboard_rhyrestore(&rhythm, 0);
+		fmboard_rhyrestore(&g_rhythm, 0);
 		sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 		sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
-		rhythm_bind(&rhythm);
+		rhythm_bind(&g_rhythm);
 		cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	}
 	cs4231io_bind();
