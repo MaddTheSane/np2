@@ -8,7 +8,6 @@
 
 #include "opna.h"
 #include	"soundrom.h"
-#include	"tms3631.h"
 #include	"fmtimer.h"
 #include	"opngen.h"
 #include	"psggen.h"
