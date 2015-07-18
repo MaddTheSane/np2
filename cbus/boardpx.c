@@ -26,7 +26,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 //	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
-			psggen_setreg(&psg1, addr, dat);
+			psggen_setreg(&g_psg1, addr, dat);
 		}
 	}
 	else {
@@ -94,10 +94,10 @@ static REG8 IOINPCALL spb_i18a(UINT port) {
 
 	addr = opn.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg1));
+		return(fmboard_getjoy(&g_psg1));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&psg1, addr));
+		return(psggen_getreg(&g_psg1, addr));
 	}
 	else if (addr == 0xff) {
 		return(1);
@@ -142,7 +142,7 @@ static void IOOUTCALL spb_o08a(UINT port, REG8 dat) {
 //	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
-			psggen_setreg(&psg2, addr, dat);
+			psggen_setreg(&g_psg2, addr, dat);
 		}
 	}
 	else {
@@ -210,10 +210,10 @@ static REG8 IOINPCALL spb_i08a(UINT port) {
 
 	addr = opn2.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg2));
+		return(fmboard_getjoy(&g_psg2));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&psg2, addr));
+		return(psggen_getreg(&g_psg2, addr));
 	}
 	else if (addr == 0xff) {
 		return(1);
@@ -260,7 +260,7 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 //	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
-			psggen_setreg(&psg3, addr, dat);
+			psggen_setreg(&g_psg3, addr, dat);
 		}
 	}
 	else {
@@ -331,10 +331,10 @@ static REG8 IOINPCALL p86_i28a(UINT port) {
 
 	addr = opn3.addr1l;
 	if (addr == 0x0e) {
-		return(fmboard_getjoy(&psg3));
+		return(fmboard_getjoy(&g_psg3));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&psg3, addr));
+		return(psggen_getreg(&g_psg3, addr));
 	}
 	else if (addr == 0xff) {
 		return(1);
@@ -610,13 +610,13 @@ void boardpx1_bind(void) {
 	fmboard_fmrestore2(&opn2, 15, 1);
 	fmboard_fmrestore2(&opn2, 18, 2);
 	fmboard_fmrestore2(&opn2, 21, 3);
-	psggen_restore(&psg1);
-	psggen_restore(&psg2);
+	psggen_restore(&g_psg1);
+	psggen_restore(&g_psg2);
 	fmboard_rhyrestore(&rhythm, 0);
 	fmboard_rhyrestore2(&opn2, &rhythm2, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
-	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&rhythm);
 	rhythm_bind(&rhythm2);
 	sound_streamregist(&adpcm, (SOUNDCB)adpcm_getpcm);
@@ -669,16 +669,16 @@ void boardpx2_bind(void) {
 	fmboard_fmrestore2(&opn2, 21, 3);
 	fmboard_fmrestore2(&opn3, 24, 0);
 	fmboard_fmrestore2(&opn3, 27, 1);
-	psggen_restore(&psg1);
-	psggen_restore(&psg2);
-	psggen_restore(&psg3);
+	psggen_restore(&g_psg1);
+	psggen_restore(&g_psg2);
+	psggen_restore(&g_psg3);
 	fmboard_rhyrestore(&rhythm, 0);
 	fmboard_rhyrestore2(&opn2, &rhythm2, 0);
 	fmboard_rhyrestore2(&opn3, &rhythm3, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
-	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&psg3, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg3, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&rhythm);
 	rhythm_bind(&rhythm2);
 	rhythm_bind(&rhythm3);

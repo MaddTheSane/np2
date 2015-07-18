@@ -43,15 +43,15 @@ extern	AMD98		amd98;
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
 extern	OPNCH		opnch[OPNCH_MAX];
-extern	_PSGGEN		__psg[3];
+extern	_PSGGEN		g_psg[3];
 extern	_RHYTHM		rhythm;
 extern	_ADPCM		adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 
-#define	psg1	__psg[0]
-#define	psg2	__psg[1]
-#define	psg3	__psg[2]
+#define	g_psg1	g_psg[0]
+#define	g_psg2	g_psg[1]
+#define	g_psg3	g_psg[2]
 
 #if defined(SUPPORT_PX)
 extern	OPN_T		opn2;

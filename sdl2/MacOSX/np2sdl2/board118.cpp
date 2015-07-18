@@ -37,7 +37,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
-			psggen_setreg(&psg1, addr, dat);
+			psggen_setreg(&g_psg1, addr, dat);
 		}
 	}
 	else {
@@ -117,10 +117,10 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 	if (opn.addr1h == 0) {
 		addr = opn.addr1l;
 		if (addr == 0x0e) {
-			return(fmboard_getjoy(&psg1));
+			return(fmboard_getjoy(&g_psg1));
 		}
 		else if (addr < 0x10) {
-			return(psggen_getreg(&psg1, addr));
+			return(psggen_getreg(&g_psg1, addr));
 		}
 		else if (addr == 0xff) {
 			return(1);
@@ -203,7 +203,7 @@ static void RestoreRomeo(IC86RealChip* gimic)
 	gimic->Out(0x1c, data[0x1c]);
 	gimic->Out(0x1d, data[0x1d]);
 
-	const UINT8* psg = reinterpret_cast<UINT8*>(&psg1.reg);
+	const UINT8* psg = reinterpret_cast<UINT8*>(&g_psg1.reg);
 	for (UINT i = 0; i < 0x0e; i++)
 	{
 		gimic->Out(i, psg[i]);
@@ -223,18 +223,18 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 
 	if (nAddr < 0x10)
 	{
-		(reinterpret_cast<UINT8*>(&psg1.reg))[nAddr] = dat;
+		(reinterpret_cast<UINT8*>(&g_psg1.reg))[nAddr] = dat;
 		if (nAddr < 0x0e)
 		{
 			s_gimic->Out(nAddr, dat);
 
 			if (nAddr == 0x07)
 			{
-				keydisp_psgmix(&psg1);
+				keydisp_psgmix(&g_psg1);
 			}
 			else if ((nAddr == 0x08) || (nAddr == 0x09) || (nAddr == 0x0a))
 			{
-				keydisp_psgvol(&psg1, static_cast<UINT8>(nAddr - 8));
+				keydisp_psgvol(&g_psg1, static_cast<UINT8>(nAddr - 8));
 			}
 		}
 	}
@@ -385,10 +385,10 @@ void board118_bind(void)
 	{
 		fmboard_fmrestore(0, 0);
 		fmboard_fmrestore(3, 1);
-		psggen_restore(&psg1);
+		psggen_restore(&g_psg1);
 		fmboard_rhyrestore(&rhythm, 0);
 		sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
-		sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
+		sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 		rhythm_bind(&rhythm);
 		cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	}

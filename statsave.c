@@ -864,13 +864,13 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= statflag_write(sfh, &opnkey, sizeof(opnkey));
 	}
 	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_write(sfh, &psg1.reg, sizeof(PSGREG));
+		ret |= statflag_write(sfh, &g_psg1.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_write(sfh, &psg2.reg, sizeof(PSGREG));
+		ret |= statflag_write(sfh, &g_psg2.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_write(sfh, &psg3.reg, sizeof(PSGREG));
+		ret |= statflag_write(sfh, &g_psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
 		ret |= statflag_write(sfh, &adpcm, sizeof(adpcm));
@@ -958,13 +958,13 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		opnch[11].extop = opnkey.extop[3];
 	}
 	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_read(sfh, &psg1.reg, sizeof(PSGREG));
+		ret |= statflag_read(sfh, &g_psg1.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_read(sfh, &psg2.reg, sizeof(PSGREG));
+		ret |= statflag_read(sfh, &g_psg2.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_read(sfh, &psg3.reg, sizeof(PSGREG));
+		ret |= statflag_read(sfh, &g_psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
 		ret |= statflag_read(sfh, &adpcm, sizeof(adpcm));

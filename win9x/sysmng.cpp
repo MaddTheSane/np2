@@ -83,7 +83,7 @@ void sysmng_updatecaption(UINT8 flag) {
 #if 0
 			OEMSPRINTF(work, OEMTEXT(" (debug: OPN %d / PSG %s)"),
 							opngen.playing,
-							(psg1.mixer & 0x3f)?OEMTEXT("ON"):OEMTEXT("OFF"));
+							(g_psg1.mixer & 0x3f)?OEMTEXT("ON"):OEMTEXT("OFF"));
 			milstr_ncat(clock, work, NELEMENTS(clock));
 #endif
 		}

@@ -265,13 +265,13 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat) {
 
 	addr = opn.addr1l;
 	if (addr < 0x0e) {
-		psggen_setreg(&psg1, addr, dat);
+		psggen_setreg(&g_psg1, addr, dat);
 	}
 	else if (addr == 0x0e) {
-		psg1.reg.io1 = dat;
+		g_psg1.reg.io1 = dat;
 	}
 	else if (addr == 0x0f) {
-		psg1.reg.io2 = dat;
+		g_psg1.reg.io2 = dat;
 	}
 	(void)port;
 }
@@ -282,26 +282,26 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat) {
 
 	addr = opn.addr1h;
 	if (addr < 0x0e) {
-		psggen_setreg(&psg2, addr, dat);
+		psggen_setreg(&g_psg2, addr, dat);
 	}
 	else if (addr == 0x0f) {
 		REG8 b;
-		b = psg2.reg.io2;
+		b = g_psg2.reg.io2;
 		if ((b & 1) > (dat & 1)) {
 			b &= 0xc2;
 			if (b == 0x42) {
-				amd98.psg3reg = psg1.reg.io2;
+				amd98.psg3reg = g_psg1.reg.io2;
 			}
 			else if (b == 0x40) {
 				if (amd98.psg3reg < 0x0e) {
-					psggen_setreg(&psg3, amd98.psg3reg, psg1.reg.io2);
+					psggen_setreg(&g_psg3, amd98.psg3reg, g_psg1.reg.io2);
 				}
 				else if (amd98.psg3reg == 0x0f) {
-					amd98_rhythm(psg1.reg.io2);
+					amd98_rhythm(g_psg1.reg.io2);
 				}
 			}
 		}
-		psg2.reg.io2 = dat;
+		g_psg2.reg.io2 = dat;
 	}
 	(void)port;
 }
@@ -330,13 +330,13 @@ static REG8 IOINPCALL amd_ida(UINT port) {
 
 	addr = opn.addr1l;
 	if (addr < 0x0e) {
-		return(psggen_getreg(&psg1, addr));
+		return(psggen_getreg(&g_psg1, addr));
 	}
 	else if (addr == 0x0e) {
 		return(amd98_getjoy(1));
 	}
 	else if (addr == 0x0f) {
-		return(psg1.reg.io2);
+		return(g_psg1.reg.io2);
 	}
 	(void)port;
 	return(0xff);
@@ -348,13 +348,13 @@ static REG8 IOINPCALL amd_idb(UINT port) {
 
 	addr = opn.addr1h;
 	if (addr < 0x0e) {
-		return(psggen_getreg(&psg2, addr));
+		return(psggen_getreg(&g_psg2, addr));
 	}
 	else if (addr == 0x0e) {
 		return(amd98_getjoy(2));
 	}
 	else if (addr == 0x0f) {
-		return(psg2.reg.io2);
+		return(g_psg2.reg.io2);
 	}
 	(void)port;
 	return(0xff);
@@ -381,15 +381,15 @@ void amd98_bind(void) {
 
 	amd98_rhythmload();
 
-	psgpanset(&psg1);
-	psgpanset(&psg2);
-	psgpanset(&psg3);
-	psggen_restore(&psg1);
-	psggen_restore(&psg2);
-	psggen_restore(&psg3);
-	sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&psg2, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&psg3, (SOUNDCB)psggen_getpcm);
+	psgpanset(&g_psg1);
+	psgpanset(&g_psg2);
+	psgpanset(&g_psg3);
+	psggen_restore(&g_psg1);
+	psggen_restore(&g_psg2);
+	psggen_restore(&g_psg3);
+	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_psg3, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&amd98r, (SOUNDCB)pcmmix_getpcm);
 	iocore_attachout(0xd8, amd_od8);
 	iocore_attachout(0xd9, amd_od9);

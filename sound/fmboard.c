@@ -30,7 +30,7 @@
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
 	OPNCH		opnch[OPNCH_MAX];
-	_PSGGEN		__psg[3];
+	_PSGGEN		g_psg[3];
 	_RHYTHM		rhythm;
 	_ADPCM		adpcm;
 	_PCM86		pcm86;
@@ -157,9 +157,9 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	ZeroMemory(&amd98, sizeof(amd98));
 
 	opngen_reset();
-	psggen_reset(&psg1);
-	psggen_reset(&psg2);
-	psggen_reset(&psg3);
+	psggen_reset(&g_psg1);
+	psggen_reset(&g_psg2);
+	psggen_reset(&g_psg3);
 	rhythm_reset(&rhythm);
 #if defined(SUPPORT_PX)
 	rhythm_reset(&rhythm2);
