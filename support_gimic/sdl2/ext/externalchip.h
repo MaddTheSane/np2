@@ -12,7 +12,7 @@ class IExternalChip
 {
 public:
 	/**
-	 * Destractor
+	 * Destructor
 	 */
 	virtual ~IExternalChip() { }
 
