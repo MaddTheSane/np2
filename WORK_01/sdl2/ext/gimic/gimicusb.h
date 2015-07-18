@@ -1,17 +1,17 @@
 /**
  * @file	gimicusb.h
- * @brief	G.I.M.I.C USB アクセス クラスの宣言およびインターフェイスの定義をします
+ * @brief	Interface of accessing G.I.M.I.C USB
  */
 
 #pragma once
 
 #include "c86ctl.h"
-#include "usbdev.h"
 #include "misc/guard.h"
 #include "misc/threadbase.h"
+#include "misc/usbdev.h"
 
 /**
- * @brief G.I.M.I.C USB アクセス クラス
+ * @brief The class of accessing G.I.M.I.C USB
  */
 class CGimicUSB : public IC86RealChip, protected CThreadBase
 {
@@ -50,23 +50,23 @@ protected:
 
 private:
 	/**
-	 * @brief FM データ
+	 * @brief FM data
 	 */
 	struct FMDATA
 	{
-		UINT16 wAddr;		/*!< アドレス */
-		UINT8 cData;		/*!< データ */
-		UINT8 cPadding;		/*!< パディング */
+		UINT16 wAddr;		/*!< address */
+		UINT8 cData;		/*!< data */
+		UINT8 cPadding;		/*!< padding */
 	};
 
 	CUsbDev m_usb;			/*!< USB */
-	CGuard m_usbGuard;		/*!< USBアクセス */
-	CGuard m_queGuard;		/*!< キュー */
-	ChipType m_nChipType;	/*!< チップ タイプ */
-	size_t m_nQueIndex;		/*!< データ インデックス */
-	size_t m_nQueCount;		/*!< データ カウント */
-	FMDATA m_que[0x400];	/*!< キュー */
-	UINT8 m_sReg[0x200];	/*!< レジスタ */
+	CGuard m_usbGuard;		/*!< The guard of accessing USB */
+	CGuard m_queGuard;		/*!< The guard of que */
+	ChipType m_nChipType;	/*!< The type of chip */
+	size_t m_nQueIndex;		/*!< The position in que */
+	size_t m_nQueCount;		/*!< The count in que */
+	FMDATA m_que[0x400];	/*!< que */
+	UINT8 m_sReg[0x200];	/*!< register */
 
 	int Transaction(const void* lpOutput, size_t cbOutput, void* lpInput = NULL, size_t cbInput = 0);
 	int GetInfo(UINT8 cParam, Devinfo* pInfo);

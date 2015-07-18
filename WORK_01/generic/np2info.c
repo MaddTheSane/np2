@@ -206,7 +206,7 @@ static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 	UINT	type;
 
 	type = 0;
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			type = 1;
 			break;
@@ -252,7 +252,7 @@ static void info_extsnd(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 	OEMCHAR	buf[64];
 
 	info_sound(str, maxlen, ex);
-	if (usesound & 4) {
+	if (g_usesound & 4) {
 		milstr_ncat(str, ex->cr, maxlen);
 		OEMSPRINTF(buf, str_pcm86a,
 							pcm86rate8[pcm86.fifo & 7] >> 3,

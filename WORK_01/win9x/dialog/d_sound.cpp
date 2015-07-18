@@ -24,6 +24,7 @@
 #include "sound.h"
 #include "fmboard.h"
 #include "s98.h"
+#include "tms3631.h"
 #include "dipswbmp.h"
 #include "recvideo.h"
 
@@ -201,9 +202,9 @@ static LRESULT CALLBACK SndmixDlgProc(HWND hWnd, UINT msg,
 				opngen_setvol(np2cfg.vol_fm);
 				psggen_setvol(np2cfg.vol_ssg);
 				rhythm_setvol(np2cfg.vol_rhythm);
-				rhythm_update(&rhythm);
+				rhythm_update(&g_rhythm);
 				adpcm_setvol(np2cfg.vol_adpcm);
-				adpcm_update(&adpcm);
+				adpcm_update(&g_adpcm);
 				pcm86gen_setvol(np2cfg.vol_pcm);
 				pcm86gen_update();
 				return(TRUE);

@@ -1,155 +1,177 @@
-#include	"compiler.h"
-#include	"strres.h"
-#include	"textfile.h"
-#include	"profile.h"
+/**
+ * @file	profile.c
+ * @brief	Implementation of the profiler
+ */
+
+#include "compiler.h"
+#include "strres.h"
+#include "profile.h"
+#include "dosio.h"
+#include "textfile.h"
 #if defined(SUPPORT_TEXTCNV)
-#include	"textcnv.h"
+#include "textcnv.h"
 #endif
-#include	"dosio.h"
 
+/**
+ * Trims space
+ * @param[in] lpString The pointer to a string
+ * @param[in, out] pcchString The size, in characters
+ * @return The start of the string
+ */
+static OEMCHAR* TrimSpace(const OEMCHAR *lpString, UINT *pcchString)
+{
+	UINT cchString;
 
-static void strdelspace(OEMCHAR **buf, int *size) {
-
-	OEMCHAR	*p;
-	int		len;
-
-	p = *buf;
-	len = *size;
-	while((len > 0) && (p[0] == ' ')) {
-		p++;
-		len--;
+	cchString = *pcchString;
+	while ((cchString > 0) && (lpString[0] == ' '))
+	{
+		lpString++;
+		cchString--;
 	}
-	while((len > 0) && (p[len - 1] == ' ')) {
-		len--;
+	while ((cchString > 0) && (lpString[cchString - 1] == ' '))
+	{
+		cchString--;
 	}
-	*buf = p;
-	*size = len;
+	*pcchString = cchString;
+	return (OEMCHAR *)lpString;
 }
 
-static OEMCHAR *profana(OEMCHAR *buf, OEMCHAR **data) {
+/**
+ * Parses line
+ * @param[in] lpString The pointer to a string
+ * @param[in,out] lpcchString The pointer to a length
+ * @param[out] lppData The pointer to data
+ * @param[out] lpcchData The pointer to data-length
+ * @return The start of the string
+ */
+static OEMCHAR *ParseLine(const OEMCHAR *lpString, UINT *lpcchString, OEMCHAR **lppData, UINT *lpcchData)
+{
+	UINT cchString;
+	UINT nIndex;
+	const OEMCHAR *lpData = NULL;
+	UINT cchData = 0;
 
-	int		len;
-	OEMCHAR	*buf2;
-	int		l;
+	cchString = *lpcchString;
+	lpString = TrimSpace(lpString, &cchString);
 
-	len = OEMSTRLEN(buf);
-	strdelspace(&buf, &len);
-	if ((len >= 2) && (buf[0] == '[') && (buf[len - 1] == ']')) {
-		buf++;
-		len -= 2;
-		strdelspace(&buf, &len);
-		buf[len] = '\0';
-		*data = NULL;
-		return(buf);
+	if ((cchString >= 2) && (lpString[0] == '[') && (lpString[cchString - 1] == ']'))
+	{
+		lpString++;
+		cchString -= 2;
 	}
-	for (l=0; l<len; l++) {
-		if (buf[l] == '=') {
-			break;
+	else
+	{
+		for (nIndex = 0; nIndex < cchString; nIndex++)
+		{
+			if (lpString[nIndex] == '=')
+			{
+				break;
+			}
 		}
-	}
-	if (l < len) {
-		len -= (l + 1);
-		buf2 = buf + (l + 1);
-		strdelspace(&buf, &l);
-		buf[l] = '\0';
-		strdelspace(&buf2, &len);
-		if ((len >= 2) && (buf2[0] == '\"') && (buf2[len - 1] == '\"')) {
-			buf2++;
-			len -= 2;
-			strdelspace(&buf2, &len);
+		if (nIndex >= cchString)
+		{
+			return NULL;
 		}
-		buf2[len] = '\0';
-		*data = buf2;
-		return(buf);
+		lpData = lpString + (nIndex + 1);
+		cchData = cchString - (nIndex + 1);
+		cchString = nIndex;
 	}
-	return(NULL);
+
+	lpString = TrimSpace(lpString, &cchString);
+	lpData = TrimSpace(lpData, &cchData);
+	if ((cchData >= 2) && (lpData[0] == '\"') && (lpData[cchData - 1] == '\"'))
+	{
+		lpData++;
+		cchData -= 2;
+		lpData = TrimSpace(lpData, &cchData);
+	}
+
+	*lpcchString = cchString;
+	if (lppData)
+	{
+		*lppData = (OEMCHAR*)lpData;
+	}
+	if (lpcchData)
+	{
+		*lpcchData = cchData;
+	}
+	return (OEMCHAR*)lpString;
 }
 
-BRESULT profile_enum(const OEMCHAR *filename, void *arg,
-							BRESULT (*proc)(void *arg, const OEMCHAR *para,
-								const OEMCHAR *key, const OEMCHAR *data)) {
-	TEXTFILEH	fh;
-	BRESULT		r;
-	OEMCHAR		buf[0x200];
-	OEMCHAR		para[0x100];
-	OEMCHAR		*key;
-	OEMCHAR		*data;
+/**
+ * Retrieves a string from the specified section in an initialization file
+ * @param[in] lpFileName The name of the initialization file
+ * @param[in] lpParam An application-defined value to be passed to the callback function.
+ * @param[in] lpFunc A pointer to an application-defined callback function
+ * @retval SUCCESS If the function succeeds
+ * @retval FAILIURE If the function fails
+ */
+BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC lpFunc)
+{
+	TEXTFILEH fh;
+	BRESULT r;
+	OEMCHAR szAppName[256];
+	OEMCHAR szBuffer[512];
+	UINT cchBuffer;
+	OEMCHAR *lpKeyName;
+	OEMCHAR *lpString;
+	UINT cchString;
+
+	if (lpFunc == NULL)
+	{
+		return SUCCESS;
+	}
+	fh = textfile_open(lpFileName, 0x800);
+	if (fh == NULL)
+	{
+		return SUCCESS;
+	}
 
 	r = SUCCESS;
-	if (proc == NULL) {
-		goto gden_err0;
-	}
-	fh = textfile_open(filename, 0x800);
-	if (fh == NULL) {
-		goto gden_err0;
-	}
-	para[0] = '\0';
-	while(1) {
-		if (textfile_read(fh, buf, NELEMENTS(buf)) != SUCCESS) {
-			break;
-		}
-		key = profana(buf, &data);
-		if (key) {
-			if (data == NULL) {
-				milstr_ncpy(para, key, NELEMENTS(para));
+	szAppName[0] = '\0';
+	while (textfile_read(fh, szBuffer, NELEMENTS(szBuffer)) == SUCCESS)
+	{
+		cchBuffer = OEMSTRLEN(szBuffer);
+		lpKeyName = ParseLine(szBuffer, &cchBuffer, &lpString, &cchString);
+		if (lpKeyName)
+		{
+			lpKeyName[cchBuffer] = '\0';
+			if (lpString == NULL)
+			{
+				milstr_ncpy(szAppName, lpKeyName, NELEMENTS(szAppName));
 			}
-			else {
-				r = proc(arg, para, key, data);
-				if (r != SUCCESS) {
+			else
+			{
+				lpString[cchString] = '\0';
+				r = (*lpFunc)(lpParam, szAppName, lpKeyName, lpString);
+				if (r != SUCCESS)
+				{
 					break;
 				}
 			}
 		}
 	}
 	textfile_close(fh);
-
-gden_err0:
-	return(r);
+	return r;
 }
 
 
-// ----
+/* profiler */
 
-const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng) {
-
-	OEMCHAR	c;
-
-	if (leng) {
-		leng--;
-	}
-	else {
-		buf = NULL;
-	}
-	if (str) {
-		c = *str;
-		while((c > 0) && (c <= 0x20)) {
-			str++;
-			c = *str;
-		}
-		if (c == 0) {
-			str = NULL;
-		}
-	}
-	if (str) {
-		c = *str;
-		while((c < 0) || (c > 0x20)) {
-			if (leng) {
-				*buf++ = c;
-				leng--;
-			}
-			str++;
-			c = *str;
-		}
-	}
-	if (buf) {
-		buf[0] = '\0';
-	}
-	return(str);
-}
-
-
-
-// ---- ‚Ü‚¾ƒeƒXƒg
+/**
+ * @breif the structure of profiler's handle
+ */
+struct tagProfileHandle
+{
+	OEMCHAR	*buffer;
+	UINT	buffers;
+	UINT	size;
+	UINT8	hdr[4];
+	UINT	hdrsize;
+	UINT	flag;
+	OEMCHAR	path[MAX_PATH];
+};
+typedef struct tagProfileHandle _PFILEH;	/*!< defines handle */
 
 typedef struct {
 	UINT		applen;
@@ -555,6 +577,80 @@ wf_err1:
 		_MFREE(buf);
 	}
 	_MFREE(hdl);
+}
+
+/**
+ * Retrieves the names of all sections in an initialization file.
+ * @param[out] lpBuffer A pointer to a buffer that receives the section names
+ * @param[in] cchBuffer The size of the buffer pointed to by the lpBuffer parameter, in characters.
+ * @param[in] hdl The handle of profiler
+ * @return The return value specifies the number of characters copied to the specified buffer
+ */
+UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl)
+{
+	UINT cchWritten = 0;
+	const OEMCHAR* lpProfile;
+	UINT cchProfile;
+	UINT nIndex;
+	OEMCHAR *lpKeyName;
+	UINT cchKeyName;
+	OEMCHAR *lpData;
+	UINT cchRemain;
+
+	if ((hdl == NULL) || (cchBuffer == 1))
+	{
+		return 0;
+	}
+	lpProfile = hdl->buffer;
+	cchProfile = hdl->size;
+
+	cchBuffer--;
+
+	while (cchProfile > 0)
+	{
+		nIndex = 0;
+		while ((nIndex < cchProfile) && (lpProfile[nIndex] != '\r') && (lpProfile[nIndex] != '\n'))
+		{
+			nIndex++;
+		}
+
+		cchKeyName = nIndex;
+		lpKeyName = ParseLine(lpProfile, &cchKeyName, &lpData, NULL);
+		if ((lpKeyName != NULL) && (lpData == NULL))
+		{
+			if (lpBuffer)
+			{
+				cchRemain = cchBuffer - cchWritten;
+				if (cchRemain >= (cchKeyName + 1))
+				{
+					memcpy(lpBuffer + cchWritten, lpKeyName, cchKeyName * sizeof(*lpBuffer));
+					cchWritten += cchKeyName;
+					lpBuffer[cchWritten] = '\0';
+					cchWritten++;
+				}
+			}
+		}
+
+		lpProfile += nIndex;
+		cchProfile -= nIndex;
+
+		if ((cchProfile >= 2) && (lpProfile[0] == '\r') && (lpProfile[1] == '\n'))
+		{
+			lpProfile++;
+			cchProfile--;
+		}
+		if (cchProfile > 0)
+		{
+			lpProfile++;
+			cchProfile--;
+		}
+	}
+
+	if (lpBuffer)
+	{
+		lpBuffer[cchWritten] = '\0';
+	}
+	return cchWritten;
 }
 
 BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,

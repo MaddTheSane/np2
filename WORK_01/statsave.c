@@ -801,7 +801,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	UINT	saveflg;
 	OPNKEY	opnkey;
 
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			saveflg = FLAG_MG;
 			break;
@@ -849,13 +849,13 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 	}
 
-	ret = statflag_write(sfh, &usesound, sizeof(usesound));
+	ret = statflag_write(sfh, &g_usesound, sizeof(g_usesound));
 	if (saveflg & FLAG_MG) {
-		ret |= statflag_write(sfh, &musicgen, sizeof(musicgen));
+		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
 	if (saveflg & FLAG_FM1A) {
-		ret |= statflag_write(sfh, &fmtimer, sizeof(fmtimer));
-		ret |= statflag_write(sfh, &opn, sizeof(opn));
+		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
+		ret |= statflag_write(sfh, &g_opn, sizeof(g_opn));
 		CopyMemory(opnkey.keyreg, opngen.keyreg, sizeof(opngen.keyreg));
 		opnkey.extop[0] = opnch[2].extop;
 		opnkey.extop[1] = opnch[5].extop;
@@ -864,16 +864,16 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= statflag_write(sfh, &opnkey, sizeof(opnkey));
 	}
 	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_write(sfh, &psg1.reg, sizeof(PSGREG));
+		ret |= statflag_write(sfh, &g_psg1.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_write(sfh, &psg2.reg, sizeof(PSGREG));
+		ret |= statflag_write(sfh, &g_psg2.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_write(sfh, &psg3.reg, sizeof(PSGREG));
+		ret |= statflag_write(sfh, &g_psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_write(sfh, &adpcm, sizeof(adpcm));
+		ret |= statflag_write(sfh, &g_adpcm, sizeof(g_adpcm));
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
@@ -891,10 +891,10 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	UINT	saveflg;
 	OPNKEY	opnkey;
 
-	ret = statflag_read(sfh, &usesound, sizeof(usesound));
-	fmboard_reset(&np2cfg, usesound);
+	ret = statflag_read(sfh, &g_usesound, sizeof(g_usesound));
+	fmboard_reset(&np2cfg, g_usesound);
 
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			saveflg = FLAG_MG;
 			break;
@@ -943,13 +943,13 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	if (saveflg & FLAG_MG) {
-		ret |= statflag_read(sfh, &musicgen, sizeof(musicgen));
+		ret |= statflag_read(sfh, &g_musicgen, sizeof(g_musicgen));
 		board14_allkeymake();
 	}
 
 	if (saveflg & FLAG_FM1A) {
-		ret |= statflag_read(sfh, &fmtimer, sizeof(fmtimer));
-		ret |= statflag_read(sfh, &opn, sizeof(opn));
+		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
+		ret |= statflag_read(sfh, &g_opn, sizeof(g_opn));
 		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
 		CopyMemory(opngen.keyreg, &opnkey.keyreg, sizeof(opngen.keyreg));
 		opnch[2].extop = opnkey.extop[0];
@@ -958,16 +958,16 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		opnch[11].extop = opnkey.extop[3];
 	}
 	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_read(sfh, &psg1.reg, sizeof(PSGREG));
+		ret |= statflag_read(sfh, &g_psg1.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_read(sfh, &psg2.reg, sizeof(PSGREG));
+		ret |= statflag_read(sfh, &g_psg2.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_read(sfh, &psg3.reg, sizeof(PSGREG));
+		ret |= statflag_read(sfh, &g_psg3.reg, sizeof(PSGREG));
 	}
 	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_read(sfh, &adpcm, sizeof(adpcm));
+		ret |= statflag_read(sfh, &g_adpcm, sizeof(g_adpcm));
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
@@ -977,7 +977,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI
-	adpcm_update(&adpcm);
+	adpcm_update(&g_adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
 		fmboard_extenable((REG8)(pcm86.extfunc & 1));
