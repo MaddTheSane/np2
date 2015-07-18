@@ -90,7 +90,7 @@ void board26k_reset(const NP2CFG *pConfig) {
 
 void board26k_bind(void) {
 
-	fmboard_fmrestore(0, 0);
+	fmboard_fmrestore(&g_opn, 0, 0);
 	psggen_restore(&g_psg1);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);

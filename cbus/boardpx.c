@@ -602,18 +602,18 @@ void boardpx1_reset(const NP2CFG *pConfig) {
 
 void boardpx1_bind(void) {
 
-	fmboard_fmrestore(0, 0);
-	fmboard_fmrestore(3, 1);
-	fmboard_fmrestore(6, 2);
-	fmboard_fmrestore(9, 3);
-	fmboard_fmrestore2(&g_opn2, 12, 0);
-	fmboard_fmrestore2(&g_opn2, 15, 1);
-	fmboard_fmrestore2(&g_opn2, 18, 2);
-	fmboard_fmrestore2(&g_opn2, 21, 3);
+	fmboard_fmrestore(&g_opn, 0, 0);
+	fmboard_fmrestore(&g_opn, 3, 1);
+	fmboard_fmrestore(&g_opn, 6, 2);
+	fmboard_fmrestore(&g_opn, 9, 3);
+	fmboard_fmrestore(&g_opn2, 12, 0);
+	fmboard_fmrestore(&g_opn2, 15, 1);
+	fmboard_fmrestore(&g_opn2, 18, 2);
+	fmboard_fmrestore(&g_opn2, 21, 3);
 	psggen_restore(&g_psg1);
 	psggen_restore(&g_psg2);
-	fmboard_rhyrestore(&g_rhythm, 0);
-	fmboard_rhyrestore2(&g_opn2, &g_rhythm2, 0);
+	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
+	fmboard_rhyrestore(&g_opn2, &g_rhythm2, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
@@ -659,22 +659,22 @@ void boardpx2_reset(const NP2CFG *pConfig) {
 
 void boardpx2_bind(void) {
 
-	fmboard_fmrestore(0, 0);
-	fmboard_fmrestore(3, 1);
-	fmboard_fmrestore(6, 2);
-	fmboard_fmrestore(9, 3);
-	fmboard_fmrestore2(&g_opn2, 12, 0);
-	fmboard_fmrestore2(&g_opn2, 15, 1);
-	fmboard_fmrestore2(&g_opn2, 18, 2);
-	fmboard_fmrestore2(&g_opn2, 21, 3);
-	fmboard_fmrestore2(&g_opn3, 24, 0);
-	fmboard_fmrestore2(&g_opn3, 27, 1);
+	fmboard_fmrestore(&g_opn, 0, 0);
+	fmboard_fmrestore(&g_opn, 3, 1);
+	fmboard_fmrestore(&g_opn, 6, 2);
+	fmboard_fmrestore(&g_opn, 9, 3);
+	fmboard_fmrestore(&g_opn2, 12, 0);
+	fmboard_fmrestore(&g_opn2, 15, 1);
+	fmboard_fmrestore(&g_opn2, 18, 2);
+	fmboard_fmrestore(&g_opn2, 21, 3);
+	fmboard_fmrestore(&g_opn3, 24, 0);
+	fmboard_fmrestore(&g_opn3, 27, 1);
 	psggen_restore(&g_psg1);
 	psggen_restore(&g_psg2);
 	psggen_restore(&g_psg3);
-	fmboard_rhyrestore(&g_rhythm, 0);
-	fmboard_rhyrestore2(&g_opn2, &g_rhythm2, 0);
-	fmboard_rhyrestore2(&g_opn3, &g_rhythm3, 0);
+	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
+	fmboard_rhyrestore(&g_opn2, &g_rhythm2, 0);
+	fmboard_rhyrestore(&g_opn3, &g_rhythm3, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);

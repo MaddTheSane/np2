@@ -63,13 +63,8 @@ void fmboard_extenable(REG8 enable);
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
 void fmboard_bind(void);
 
-void fmboard_fmrestore(REG8 chbase, UINT bank);
-void fmboard_rhyrestore(RHYTHM rhy, UINT bank);
-
-#if defined(SUPPORT_PX)
-void fmboard_fmrestore2(OPN_T* pOpn, REG8 chbase, UINT bank);
-void fmboard_rhyrestore2(OPN_T* pOpn, RHYTHM rhy, UINT bank);
-#endif	// defined(SUPPORT_PX)
+void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank);
+void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 
 #ifdef __cplusplus
 }
