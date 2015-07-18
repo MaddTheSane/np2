@@ -801,7 +801,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	UINT	saveflg;
 	OPNKEY	opnkey;
 
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			saveflg = FLAG_MG;
 			break;
@@ -849,7 +849,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 	}
 
-	ret = statflag_write(sfh, &usesound, sizeof(usesound));
+	ret = statflag_write(sfh, &g_usesound, sizeof(g_usesound));
 	if (saveflg & FLAG_MG) {
 		ret |= statflag_write(sfh, &musicgen, sizeof(musicgen));
 	}
@@ -891,10 +891,10 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	UINT	saveflg;
 	OPNKEY	opnkey;
 
-	ret = statflag_read(sfh, &usesound, sizeof(usesound));
-	fmboard_reset(&np2cfg, usesound);
+	ret = statflag_read(sfh, &g_usesound, sizeof(g_usesound));
+	fmboard_reset(&np2cfg, g_usesound);
 
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			saveflg = FLAG_MG;
 			break;

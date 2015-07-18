@@ -48,7 +48,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	UINT32		usesound;
+extern	UINT32		g_usesound;
 extern	OPN_T		opn;
 extern	AMD98		amd98;
 extern	MUSICGEN	musicgen;

@@ -23,7 +23,7 @@
 #include	"keystat.h"
 
 
-	UINT32		usesound;
+	UINT32		g_usesound;
 	OPN_T		opn;
 	AMD98		amd98;
 	MUSICGEN	musicgen;
@@ -230,7 +230,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 			type = 0;
 			break;
 	}
-	usesound = type;
+	g_usesound = type;
 	soundmng_setreverse(cross);
 	keydisp_setfmboard(type);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
@@ -238,7 +238,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 void fmboard_bind(void) {
 
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			board14_bind();
 			break;
