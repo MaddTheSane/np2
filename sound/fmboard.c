@@ -26,7 +26,7 @@
 	UINT32		g_usesound;
 	OPN_T		opn;
 	AMD98		amd98;
-	MUSICGEN	musicgen;
+	MUSICGEN	g_musicgen;
 
 	_TMS3631	tms3631;
 	_FMTIMER	fmtimer;
@@ -156,7 +156,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	opn3.adpcmmask = (UINT8)~(0x1c);
 #endif	// defined(SUPPORT_PX)
 
-	ZeroMemory(&musicgen, sizeof(musicgen));
+	ZeroMemory(&g_musicgen, sizeof(g_musicgen));
 	ZeroMemory(&amd98, sizeof(amd98));
 
 	tms3631_reset(&tms3631);

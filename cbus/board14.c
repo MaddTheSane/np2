@@ -67,42 +67,42 @@ void musicgenint(NEVENTITEM item) {
 
 static void IOOUTCALL musicgen_o088(UINT port, REG8 dat) {
 
-	musicgen.porta = dat;
+	g_musicgen.porta = dat;
 	(void)port;
 }
 
 static void IOOUTCALL musicgen_o08a(UINT port, REG8 dat) {
 
-	musicgen.portb = dat;
+	g_musicgen.portb = dat;
 	(void)port;
 }
 
 static void IOOUTCALL musicgen_o08c(UINT port, REG8 dat) {
 
 	if (dat & 0x80) {
-		if (!(musicgen.portc & 0x80)) {
-			musicgen.sync = 1;
-			musicgen.ch = 0;
+		if (!(g_musicgen.portc & 0x80)) {
+			g_musicgen.sync = 1;
+			g_musicgen.ch = 0;
 		}
-		else if (musicgen.sync) {
-			musicgen.sync = 0;
+		else if (g_musicgen.sync) {
+			g_musicgen.sync = 0;
 			sound_sync();
-			musicgen.key[musicgen.ch] = dat;
-			tms3631_setkey(&tms3631, (REG8)musicgen.ch, dat);
+			g_musicgen.key[g_musicgen.ch] = dat;
+			tms3631_setkey(&tms3631, (REG8)g_musicgen.ch, dat);
 		}
-		else if ((!(dat & 0x40)) && (musicgen.portc & 0x40)) {
-			musicgen.sync = 1;
-			musicgen.ch = (musicgen.ch + 1) & 7;
+		else if ((!(dat & 0x40)) && (g_musicgen.portc & 0x40)) {
+			g_musicgen.sync = 1;
+			g_musicgen.ch = (g_musicgen.ch + 1) & 7;
 		}
 	}
-	musicgen.portc = dat;
+	g_musicgen.portc = dat;
 	(void)port;
 }
 
 static void IOOUTCALL musicgen_o188(UINT port, REG8 dat) {
 
 	sound_sync();
-	musicgen.mask = dat;
+	g_musicgen.mask = dat;
 	tms3631_setenable(&tms3631, dat);
 	(void)port;
 }
@@ -127,19 +127,19 @@ static void IOOUTCALL musicgen_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL musicgen_i088(UINT port) {
 
 	(void)port;
-	return(musicgen.porta);
+	return(g_musicgen.porta);
 }
 
 static REG8 IOINPCALL musicgen_i08a(UINT port) {
 
 	(void)port;
-	return(musicgen.portb);
+	return(g_musicgen.portb);
 }
 
 static REG8 IOINPCALL musicgen_i08c(UINT port) {
 
 	(void)port;
-	return(musicgen.portc);
+	return(g_musicgen.portc);
 }
 
 static REG8 IOINPCALL musicgen_i08e(UINT port) {
@@ -151,7 +151,7 @@ static REG8 IOINPCALL musicgen_i08e(UINT port) {
 static REG8 IOINPCALL musicgen_i188(UINT port) {
 
 	(void)port;
-	return(musicgen.mask);
+	return(g_musicgen.mask);
 }
 
 static REG8 IOINPCALL musicgen_i18c(UINT port) {
@@ -188,7 +188,7 @@ static const IOINP musicgen_i1[4] = {
 
 void board14_reset(const NP2CFG *pConfig) {
 
-	ZeroMemory(&musicgen, sizeof(musicgen));
+	ZeroMemory(&g_musicgen, sizeof(g_musicgen));
 	soundrom_load(0xcc000, OEMTEXT("14"));
 
 	(void)pConfig;
@@ -206,7 +206,7 @@ void board14_allkeymake(void) {
 	REG8	i;
 
 	for (i=0; i<8; i++) {
-		tms3631_setkey(&tms3631, i, musicgen.key[i]);
+		tms3631_setkey(&tms3631, i, g_musicgen.key[i]);
 	}
 }
 

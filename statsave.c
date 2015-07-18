@@ -851,7 +851,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 
 	ret = statflag_write(sfh, &g_usesound, sizeof(g_usesound));
 	if (saveflg & FLAG_MG) {
-		ret |= statflag_write(sfh, &musicgen, sizeof(musicgen));
+		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
 	if (saveflg & FLAG_FM1A) {
 		ret |= statflag_write(sfh, &fmtimer, sizeof(fmtimer));
@@ -943,7 +943,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	if (saveflg & FLAG_MG) {
-		ret |= statflag_read(sfh, &musicgen, sizeof(musicgen));
+		ret |= statflag_read(sfh, &g_musicgen, sizeof(g_musicgen));
 		board14_allkeymake();
 	}
 
