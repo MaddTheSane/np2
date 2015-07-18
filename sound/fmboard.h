@@ -26,19 +26,12 @@ typedef struct {
 	UINT8	reg[0x400];
 } OPN_T;
 
-typedef struct {
-	UINT16	port;
-	UINT8	psg3reg;
-	UINT8	rhythm;
-} AMD98;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 extern	UINT32		g_usesound;
 extern	OPN_T		opn;
-extern	AMD98		g_amd98;
 
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;
