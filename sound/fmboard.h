@@ -38,7 +38,7 @@ extern "C" {
 
 extern	UINT32		g_usesound;
 extern	OPN_T		opn;
-extern	AMD98		amd98;
+extern	AMD98		g_amd98;
 
 extern	_FMTIMER	fmtimer;
 extern	_OPNGEN		opngen;

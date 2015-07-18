@@ -25,7 +25,7 @@
 
 	UINT32		g_usesound;
 	OPN_T		opn;
-	AMD98		amd98;
+	AMD98		g_amd98;
 
 	_FMTIMER	fmtimer;
 	_OPNGEN		opngen;
@@ -154,7 +154,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	opn3.adpcmmask = (UINT8)~(0x1c);
 #endif	// defined(SUPPORT_PX)
 
-	ZeroMemory(&amd98, sizeof(amd98));
+	ZeroMemory(&g_amd98, sizeof(g_amd98));
 
 	opngen_reset();
 	psggen_reset(&g_psg1);

@@ -131,7 +131,7 @@ static const SFENTRY np2tbl[] = {
 #if !defined(DISABLE_SOUND)
 	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
 	{"BEEP",		0,	STATFLAG_BIN,	&g_beep,		sizeof(g_beep)},
-	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
+	{"AMD98",		0,	STATFLAG_BIN,	&g_amd98,		sizeof(g_amd98)},
 #endif
 #if defined(SUPPORT_IDEIO)
 	{"IDE",			0,	STATFLAG_BIN,	&ideio,			sizeof(ideio)},
