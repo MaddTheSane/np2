@@ -171,7 +171,6 @@ UINT32 gettick(void);
 
 #define	OEMCHAR		gchar
 #define OEMTEXT(s)	s
-#define OEMNULLSTR	OEMTEXT("")
 #define	OEMSPRINTF	sprintf
 #define	OEMSTRLEN	strlen
 
