@@ -565,7 +565,7 @@ const void		*buf;
 		flushfile(tf);
 		tf->mode = TFMODE_WRITE;
 	}
-	leng = OEMSTRLEN(buffer);
+	leng = (UINT)OEMSTRLEN(buffer);
 #if defined(SUPPORT_TEXTCNV)
 	if (tf->fromoem != NULL) {
 		leng = (tf->fromoem)(tf->cnvbuf, tf->cnvbufsize / tf->width,

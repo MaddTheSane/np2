@@ -133,14 +133,14 @@ void ini_read(const char *path, const char *title,
 
 static void iniwrsetstr(char *work, int size, const char *ptr) {
 
-	int		i;
+	UINT	i;
 	char	c;
 
 	if (ptr[0] == ' ') {
 		goto iwss_extend;
 		
 	}
-	i = strlen(ptr);
+	i = (UINT)strlen(ptr);
 	if ((i) && (ptr[i-1] == ' ')) {
 		goto iwss_extend;
 	}

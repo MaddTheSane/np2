@@ -175,37 +175,37 @@ void file_setcd(const char *exepath) {
 
 char *file_getcd(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(curpath);
 }
 
 FILEH file_open_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_open(curpath));
 }
 
 FILEH file_open_rb_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_open_rb(curpath));
 }
 
 FILEH file_create_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_create(curpath));
 }
 
 short file_delete_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_delete(curpath));
 }
 
 short file_attr_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_attr(curpath));
 }
 
@@ -429,7 +429,7 @@ void file_cutseparator(char *path) {
 
 	int		pos;
 
-	pos = strlen(path) - 1;
+	pos = (int)strlen(path) - 1;
 	if ((pos > 0) &&							// 2文字以上でー
 		(path[pos] == '/') &&					// ケツが \ でー
 		((pos != 1) || (path[0] != '.'))) {		// './' ではなかったら
@@ -441,7 +441,7 @@ void file_setseparator(char *path, int maxlen) {
 
 	int		pos;
 
-	pos = strlen(path);
+	pos = (int)strlen(path);
 	if ((pos) && (path[pos-1] != '/') && ((pos + 2) < maxlen)) {
 		path[pos++] = '/';
 		path[pos] = '\0';
