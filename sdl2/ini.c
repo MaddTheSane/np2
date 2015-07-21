@@ -208,7 +208,7 @@ const INITBL	*pterm;
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
 	milstr_ncat(work, "]\r\n", sizeof(work));
-	file_write(fh, work, strlen(work));
+	file_write(fh, work, (UINT)strlen(work));
 
 	p = tbl;
 	pterm = tbl + count;
@@ -270,9 +270,9 @@ const INITBL	*pterm;
 				break;
 		}
 		if (set == SUCCESS) {
-			file_write(fh, p->item, strlen(p->item));
+			file_write(fh, p->item, (UINT)strlen(p->item));
 			file_write(fh, "=", 1);
-			file_write(fh, work, strlen(work));
+			file_write(fh, work, (UINT)strlen(work));
 			file_write(fh, "\r\n", 2);
 		}
 		p++;
