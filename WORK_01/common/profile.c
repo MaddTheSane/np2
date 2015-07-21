@@ -666,15 +666,8 @@ BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
 		return(FAILURE);
 	}
 	else {
-		if (size > 0)
-		{
-			size = min(size - 1, pfp.datasize);
-			if (size)
-			{
-				milstr_ncpy(ret, pfp.data, size * sizeof(OEMCHAR));
-			}
-			ret[size] = '\0';
-		}
+		size = min(size, pfp.datasize + 1);
+		milstr_ncpy(ret, pfp.data, size);
 		return(SUCCESS);
 	}
 }
@@ -691,6 +684,33 @@ BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
 		(data == NULL) || (seakey(hdl, &pfp, app, key) != SUCCESS)) {
 		return(FAILURE);
 	}
+
+	if (pfp.pos != 0)
+	{
+		buf = hdl->buffer + pfp.pos;
+		if ((buf[-1] != '\r') && (buf[-1] != '\n'))
+		{
+			newsize = 0;
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+			newsize++;
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+			newsize++;
+#endif
+			if (replace(hdl, pfp.pos, 0, newsize) != SUCCESS)
+			{
+				return FAILURE;
+			}
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+			*buf++ = '\r';
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+			*buf++ = '\n';
+#endif
+			pfp.pos += newsize;
+		}
+	}
+
 	if (!pfp.apphit) {
 		newsize = pfp.applen + 2;
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
