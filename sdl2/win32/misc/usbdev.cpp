@@ -225,7 +225,7 @@ void CUsbDev::Close()
  * @param[in] cbBuffer バッファ長
  * @return サイズ
  */
-int CUsbDev::CtrlXfer(int nType, int nRequest, int nValue, int nIndex, void* lpBuffer, size_t cbBuffer)
+int CUsbDev::CtrlXfer(int nType, int nRequest, int nValue, int nIndex, void* lpBuffer, int cbBuffer)
 {
 	if (m_hWinUsb == NULL)
 	{
@@ -244,7 +244,7 @@ int CUsbDev::CtrlXfer(int nType, int nRequest, int nValue, int nIndex, void* lpB
 	{
 		return -1;
 	}
-	return nTransferred;
+	return static_cast<int>(nTransferred);
 }
 
 /**
@@ -253,7 +253,7 @@ int CUsbDev::CtrlXfer(int nType, int nRequest, int nValue, int nIndex, void* lpB
  * @param[in] cbBuffer バッファ長
  * @return サイズ
  */
-int CUsbDev::WriteBulk(const void* lpBuffer, size_t cbBuffer)
+int CUsbDev::WriteBulk(const void* lpBuffer, int cbBuffer)
 {
 	if (m_cOutPipeId == 0)
 	{
@@ -275,7 +275,7 @@ int CUsbDev::WriteBulk(const void* lpBuffer, size_t cbBuffer)
  * @param[in] cbBuffer バッファ長
  * @return サイズ
  */
-int CUsbDev::ReadBulk(void* lpBuffer, size_t cbBuffer)
+int CUsbDev::ReadBulk(void* lpBuffer, int cbBuffer)
 {
 	if (m_cInPipeId == 0)
 	{

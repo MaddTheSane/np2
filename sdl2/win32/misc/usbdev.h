@@ -19,9 +19,9 @@ public:
 	~CUsbDev();
 	bool Open(unsigned int vid, unsigned int pid);
 	void Close();
-	int CtrlXfer(int nType, int nRequest, int nValue = 0, int nIndex = 0, void* lpBuffer = NULL, size_t cbBuffer = 0);
-	int WriteBulk(const void* lpBuffer, size_t cbBuffer);
-	int ReadBulk(void* lpBuffer, size_t cbBuffer);
+	int CtrlXfer(int nType, int nRequest, int nValue = 0, int nIndex = 0, void* lpBuffer = NULL, int cbBuffer = 0);
+	int WriteBulk(const void* lpBuffer, int cbBuffer);
+	int ReadBulk(void* lpBuffer, int cbBuffer);
 	bool IsOpened() const;
 
 private:
