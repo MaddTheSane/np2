@@ -131,7 +131,7 @@ BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC l
 	szAppName[0] = '\0';
 	while (textfile_read(fh, szBuffer, NELEMENTS(szBuffer)) == SUCCESS)
 	{
-		cchBuffer = OEMSTRLEN(szBuffer);
+		cchBuffer = (UINT)OEMSTRLEN(szBuffer);
 		lpKeyName = ParseLine(szBuffer, &cchBuffer, &lpString, &cchString);
 		if (lpKeyName)
 		{
@@ -217,8 +217,8 @@ static BRESULT seakey(PFILEH hdl, PFPOS *pfp, const OEMCHAR *app,
 		return(FAILURE);
 	}
 	ZeroMemory(&ret, sizeof(ret));
-	ret.applen = OEMSTRLEN(app);
-	ret.keylen = OEMSTRLEN(key);
+	ret.applen = (UINT)OEMSTRLEN(app);
+	ret.keylen = (UINT)OEMSTRLEN(key);
 	if ((ret.applen == 0) || (ret.keylen == 0)) {
 		return(FAILURE);
 	}
@@ -708,7 +708,7 @@ BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
 #endif
 		pfp.pos += newsize;
 	}
-	datalen = OEMSTRLEN(data);
+	datalen = (UINT)OEMSTRLEN(data);
 	newsize = pfp.keylen + 1 + datalen;
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
 	newsize++;
