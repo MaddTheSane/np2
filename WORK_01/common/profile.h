@@ -33,13 +33,11 @@ enum
 struct tagProfileHandle;
 typedef struct tagProfileHandle* PFILEH;	/*!< defines handle */
 
-PFILEH profile_open(const OEMCHAR *filename, UINT flag);
+PFILEH profile_open(const OEMCHAR *lpFileName, UINT nFlags);
 void profile_close(PFILEH hdl);
 UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl);
-BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
-					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl);
-BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
-											const OEMCHAR *data, PFILEH hdl);
+BRESULT profile_read(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpDefault, OEMCHAR *lpReturnedString, UINT nSize, PFILEH hdl);
+BRESULT profile_write(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpString, PFILEH hdl);
 
 
 enum {

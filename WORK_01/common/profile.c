@@ -13,6 +13,19 @@
 #endif
 
 /**
+ * End of line style
+ */
+static const OEMCHAR s_eol[] =
+{
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+	'\r',
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+	'\n',
+#endif
+};
+
+/**
  * Trims space
  * @param[in] lpString The pointer to a string
  * @param[in, out] pcchString The size, in characters
@@ -159,7 +172,7 @@ BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC l
 /* profiler */
 
 /**
- * @breif the structure of profiler's handle
+ * @brief the structure of profiler's handle
  */
 struct tagProfileHandle
 {
@@ -173,118 +186,108 @@ struct tagProfileHandle
 };
 typedef struct tagProfileHandle _PFILEH;	/*!< defines handle */
 
-typedef struct {
-	UINT		applen;
-	UINT		keylen;
+/**
+ * @brief
+ */
+struct tagProfilePos
+{
+	UINT cchAppName;
+	UINT cchKeyName;
 	UINT		pos;
 	UINT		size;
 	UINT		apphit;
-const OEMCHAR	*data;
-	UINT		datasize;
-} PFPOS;
+	const OEMCHAR *lpString;
+	UINT cchString;
+};
+typedef struct tagProfilePos	PFPOS;		/*!< defines the structure of position */
 
 #define	PFBUFSIZE	(1 << 8)
 
-static OEMCHAR *delspace(const OEMCHAR *buf, UINT *len) {
+static BRESULT SearchKey(PFILEH hdl, PFPOS *pfp, const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName)
+{
+	PFPOS ret;
+	const OEMCHAR *lpProfile;
+	UINT cchProfile;
+	UINT nIndex;
+	UINT nSize;
+	UINT cchLeft;
+	const OEMCHAR *lpLeft;
+	OEMCHAR *lpRight;
+	UINT cchRight;
 
-	UINT	l;
+	if ((hdl == NULL) || (lpAppName == NULL) || (lpKeyName == NULL))
+	{
+		return FAILURE;
+	}
+	memset(&ret, 0, sizeof(ret));
+	ret.cchAppName = (UINT)OEMSTRLEN(lpAppName);
+	ret.cchKeyName = (UINT)OEMSTRLEN(lpKeyName);
+	if ((ret.cchAppName == 0) || (ret.cchKeyName == 0))
+	{
+		return FAILURE;
+	}
 
-	if ((buf != NULL) && (len != NULL)) {
-		l = *len;
-		while((l) && (buf[0] == ' ')) {
-			l--;
-			buf++;
+	lpProfile = hdl->buffer;
+	cchProfile = hdl->size;
+	while (cchProfile > 0)
+	{
+		nIndex = 0;
+		while ((nIndex < cchProfile) && (lpProfile[nIndex] != '\r') && (lpProfile[nIndex] != '\n'))
+		{
+			nIndex++;
 		}
-		while((l) && (buf[l - 1] == ' ')) {
-			l--;
+		lpLeft = lpProfile;
+		cchLeft = nIndex;
+
+		nSize = nIndex;
+		if ((nSize < cchProfile) && (lpProfile[nSize] == '\r'))
+		{
+			nSize++;
 		}
-		*len = l;
-	}
-	return((OEMCHAR *)buf);
-}
+		if ((nSize < cchProfile) && (lpProfile[nSize] == '\n'))
+		{
+			nSize++;
+		}
 
-static BRESULT seakey(PFILEH hdl, PFPOS *pfp, const OEMCHAR *app,
-														const OEMCHAR *key) {
-
-	PFPOS	ret;
-	UINT	pos;
-	UINT	size;
-	OEMCHAR	*buf;
-	UINT	len;
-	UINT	cnt;
-
-	if ((hdl == NULL) || (app == NULL) || (key == NULL)) {
-		return(FAILURE);
-	}
-	ZeroMemory(&ret, sizeof(ret));
-	ret.applen = (UINT)OEMSTRLEN(app);
-	ret.keylen = (UINT)OEMSTRLEN(key);
-	if ((ret.applen == 0) || (ret.keylen == 0)) {
-		return(FAILURE);
-	}
-
-	pos = 0;
-	size = hdl->size;
-	while(size) {
-		buf = hdl->buffer + pos;
-		len = 0;
-		cnt = 0;
-		do {
-			if (buf[len] == '\r') {
-				if (((len + 1) < size) && (buf[len + 1] == '\n')) {
-					cnt = 2;
+		lpLeft = ParseLine(lpLeft, &cchLeft, &lpRight, &cchRight);
+		if (lpLeft)
+		{
+			if (lpRight == NULL)
+			{
+				if (ret.apphit)
+				{
+					break;
 				}
-				else {
-					cnt = 1;
+				if ((cchLeft == ret.cchAppName) && (!milstr_memcmp(lpLeft, lpAppName)))
+				{
+					ret.apphit = 1;
 				}
-				break;
 			}
-			if (buf[len] == '\n') {
-				cnt = 1;
-				break;
-			}
-			len++;
-		} while(len < size);
-		cnt += len;
-		buf = delspace(buf, &len);
-		if ((len >= 2) && (buf[0] == '[') && (buf[len - 1] == ']')) {
-			if (ret.apphit) {
-				break;
-			}
-			buf++;
-			len -= 2;
-			buf = delspace(buf, &len);
-			if ((len == ret.applen) && (!milstr_memcmp(buf, app))) {
-				ret.apphit = 1;
-			}
-		}
-		else if ((ret.apphit) && (len > ret.keylen) &&
-				(!milstr_memcmp(buf, key))) {
-			buf += ret.keylen;
-			len -= ret.keylen;
-			buf = delspace(buf, &len);
-			if ((len) && (buf[0] == '=')) {
-				buf++;
-				len--;
-				buf = delspace(buf, &len);
-				ret.pos = pos;
-				ret.size = cnt;
-				ret.data = buf;
-				ret.datasize = len;
+			else if ((ret.apphit) && (cchLeft == ret.cchKeyName) && (!milstr_memcmp(lpLeft, lpKeyName)))
+			{
+				ret.pos = (UINT)(lpProfile - hdl->buffer);
+				ret.size = nSize;
+
+				ret.lpString = lpRight;
+				ret.cchString = cchRight;
 				break;
 			}
 		}
-		if (len) {
-			ret.pos = pos + cnt;
+
+		lpProfile += nSize;
+		cchProfile -= nSize;
+
+		if (nIndex)
+		{
+			ret.pos = (UINT)(lpProfile - hdl->buffer);
 			ret.size = 0;
 		}
-		pos += cnt;
-		size -= cnt;
 	}
-	if (pfp) {
+	if (pfp)
+	{
 		*pfp = ret;
 	}
-	return(SUCCESS);
+	return SUCCESS;
 }
 
 static BRESULT replace(PFILEH hdl, UINT pos, UINT size1, UINT size2) {
@@ -452,68 +455,78 @@ rf_err1:
 	return(NULL);
 }
 
-static PFILEH registnew(void) {
+static PFILEH registnew(void)
+{
+	PFILEH ret;
+	const UINT8 *lpHeader;
+	UINT cchHeader;
 
-const UINT8	*hdr;
-	UINT	hdrsize;
-	PFILEH	ret;
+	ret = (PFILEH)_MALLOC(sizeof(*ret), "profile");
+	if (ret != NULL)
+	{
+		memset(ret, 0, sizeof(*ret));
 
 #if defined(OSLANG_UTF8)
-	hdr = str_utf8;
-	hdrsize = sizeof(str_utf8);
+		lpHeader = str_utf8;
+		cchHeader = sizeof(str_utf8);
 #elif defined(OSLANG_UCS2) 
-	hdr = (UINT8 *)str_ucs2;
-	hdrsize = sizeof(str_ucs2);
+		lpHeader = (UINT8 *)str_ucs2;
+		cchHeader = sizeof(str_ucs2);
 #else
-	hdr = NULL;
-	hdrsize = 0;
+		lpHeader = NULL;
+		cchHeader = 0;
 #endif
-
-	ret = (PFILEH)_MALLOC(sizeof(_PFILEH), "profile");
-	if (ret == NULL) {
-		goto rn_err;
+		if (cchHeader)
+		{
+			memcpy(ret->hdr, lpHeader, cchHeader);
+		}
+		ret->hdrsize = cchHeader;
 	}
-	ZeroMemory(ret, sizeof(_PFILEH));
-//	ret->buffer = NULL;
-//	ret->buffers = 0;
-//	ret->size = 0;
-	if (hdrsize) {
-		CopyMemory(ret->hdr, hdr, hdrsize);
-	}
-	ret->hdrsize = hdrsize;
-	return(ret);
-
-rn_err:
-	return(NULL);
+	return ret;
 }
 
-PFILEH profile_open(const OEMCHAR *filename, UINT flag) {
-
-	PFILEH	ret;
-	FILEH	fh;
+/**
+ * Opens profiler
+ * @param[in] lpFileName The name of the initialization file
+ * @param[in] nFlags The flag of opening
+ * @return The handle
+ */
+PFILEH profile_open(const OEMCHAR *lpFileName, UINT nFlags)
+{
+	PFILEH ret;
+	FILEH fh;
 
 	ret = NULL;
-	if (filename != NULL) {
-		fh = file_open_rb(filename);
-		if (fh != FILEH_INVALID) {
+	if (lpFileName != NULL)
+	{
+		fh = file_open_rb(lpFileName);
+		if (fh != FILEH_INVALID)
+		{
 			ret = registfile(fh);
 			file_close(fh);
 		}
-		else if (flag & PFILEH_READONLY) {
+		else if (nFlags & PFILEH_READONLY)
+		{
 		}
-		else {
+		else
+		{
 			ret = registnew();
 		}
 	}
-	if (ret) {
-		ret->flag = flag;
-		file_cpyname(ret->path, filename, NELEMENTS(ret->path));
+	if (ret)
+	{
+		ret->flag = nFlags;
+		file_cpyname(ret->path, lpFileName, NELEMENTS(ret->path));
 	}
-	return(ret);
+	return ret;
 }
 
-void profile_close(PFILEH hdl) {
-
+/**
+ * Close
+ * @param[in] hdl The handle of profiler
+ */
+void profile_close(PFILEH hdl)
+{
 	void	*buf;
 	UINT	bufsize;
 #if defined(SUPPORT_TEXTCNV)
@@ -653,112 +666,103 @@ UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl)
 	return cchWritten;
 }
 
-BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
-					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl) {
-
-	PFPOS	pfp;
-
-	if ((seakey(hdl, &pfp, app, key) != SUCCESS) || (pfp.data == NULL)) {
-		if (def == NULL) {
-			def = str_null;
+/**
+ * Retrieves a string from the specified section in an initialization file
+ * @param[in] lpAppName The name of the section containing the key name
+ * @param[in] lpKeyName The name of the key whose associated string is to be retrieved
+ * @param[in] lpDefault A default string
+ * @param[out]lpReturnedString A pointer to the buffer that receives the retrieved string
+ * @param[in] nSize The size of the buffer pointed to by the lpReturnedString parameter, in characters
+ * @param[in] hdl The handle of profiler
+ * @retval SUCCESS If the function succeeds
+ * @retval FAILIURE If the function fails
+ */
+BRESULT profile_read(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpDefault, OEMCHAR *lpReturnedString, UINT nSize, PFILEH hdl)
+{
+	PFPOS pfp;
+	if ((SearchKey(hdl, &pfp, lpAppName, lpKeyName) != SUCCESS) || (pfp.lpString == NULL))
+	{
+		if (lpDefault == NULL)
+		{
+			lpDefault = str_null;
 		}
-		milstr_ncpy(ret, def, size);
-		return(FAILURE);
+		milstr_ncpy(lpReturnedString, lpDefault, nSize);
+		return FAILURE;
 	}
-	else {
-		size = min(size, pfp.datasize + 1);
-		milstr_ncpy(ret, pfp.data, size);
-		return(SUCCESS);
+	else
+	{
+		nSize = min(nSize, pfp.cchString + 1);
+		milstr_ncpy(lpReturnedString, pfp.lpString, nSize);
+		return SUCCESS;
 	}
 }
 
-BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
-											const OEMCHAR *data, PFILEH hdl) {
+/**
+ * Copies a string into the specified section of an initialization file.
+ * @param[in] lpAppName The name of the section to which the string will be copied
+ * @param[in] lpKeyName The name of the key to be associated with a string
+ * @param[in] lpString A null-terminated string to be written to the file
+ * @param[in] hdl The handle of profiler
+ * @retval SUCCESS If the function succeeds
+ * @retval FAILIURE If the function fails
+ */
+BRESULT profile_write(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpString, PFILEH hdl)
+{
+	PFPOS pfp;
+	UINT cchWrite;
+	UINT cchString;
+	OEMCHAR *lpBuffer;
 
-	PFPOS	pfp;
-	UINT	newsize;
-	UINT	datalen;
-	OEMCHAR	*buf;
-
-	if ((hdl == NULL) || (hdl->flag & PFILEH_READONLY) ||
-		(data == NULL) || (seakey(hdl, &pfp, app, key) != SUCCESS)) {
-		return(FAILURE);
+	if ((hdl == NULL) || (hdl->flag & PFILEH_READONLY) || (lpString == NULL) || (SearchKey(hdl, &pfp, lpAppName, lpKeyName) != SUCCESS))
+	{
+		return FAILURE;
 	}
 
 	if (pfp.pos != 0)
 	{
-		buf = hdl->buffer + pfp.pos;
-		if ((buf[-1] != '\r') && (buf[-1] != '\n'))
+		lpBuffer = hdl->buffer + pfp.pos;
+		if ((lpBuffer[-1] != '\r') && (lpBuffer[-1] != '\n'))
 		{
-			newsize = 0;
-#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
-			newsize++;
-#endif
-#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
-			newsize++;
-#endif
-			if (replace(hdl, pfp.pos, 0, newsize) != SUCCESS)
+			if (replace(hdl, pfp.pos, 0, NELEMENTS(s_eol)) != SUCCESS)
 			{
 				return FAILURE;
 			}
-#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
-			*buf++ = '\r';
-#endif
-#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
-			*buf++ = '\n';
-#endif
-			pfp.pos += newsize;
+			memcpy(lpBuffer, s_eol, sizeof(s_eol));
+			pfp.pos += NELEMENTS(s_eol);
 		}
 	}
 
-	if (!pfp.apphit) {
-		newsize = pfp.applen + 2;
-#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
-		newsize++;
-#endif
-#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
-		newsize++;
-#endif
-		if (replace(hdl, pfp.pos, 0, newsize) != SUCCESS) {
-			return(FAILURE);
+	if (!pfp.apphit)
+	{
+		cchWrite = pfp.cchAppName + 2 + NELEMENTS(s_eol);
+		if (replace(hdl, pfp.pos, 0, cchWrite) != SUCCESS)
+		{
+			return FAILURE;
 		}
-		buf = hdl->buffer + pfp.pos;
-		*buf++ = '[';
-		CopyMemory(buf, app, pfp.applen * sizeof(OEMCHAR));
-		buf += pfp.applen;
-		*buf++ = ']';
-#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
-		*buf++ = '\r';
-#endif
-#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
-		*buf++ = '\n';
-#endif
-		pfp.pos += newsize;
+		lpBuffer = hdl->buffer + pfp.pos;
+		*lpBuffer++ = '[';
+		memcpy(lpBuffer, lpAppName, pfp.cchAppName * sizeof(OEMCHAR));
+		lpBuffer += pfp.cchAppName;
+		*lpBuffer++ = ']';
+		memcpy(lpBuffer, s_eol, sizeof(s_eol));
+		pfp.pos += cchWrite;
 	}
-	datalen = (UINT)OEMSTRLEN(data);
-	newsize = pfp.keylen + 1 + datalen;
-#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
-	newsize++;
-#endif
-#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
-	newsize++;
-#endif
-	if (replace(hdl, pfp.pos, pfp.size, newsize) != SUCCESS) {
-		return(FAILURE);
+
+	cchString = (UINT)OEMSTRLEN(lpString);
+	cchWrite = pfp.cchKeyName + 1 + cchString + NELEMENTS(s_eol);
+	if (replace(hdl, pfp.pos, pfp.size, cchWrite) != SUCCESS)
+	{
+		return FAILURE;
 	}
-	buf = hdl->buffer + pfp.pos;
-	CopyMemory(buf, key, pfp.keylen * sizeof(OEMCHAR));
-	buf += pfp.keylen;
-	*buf++ = '=';
-	CopyMemory(buf, data, datalen * sizeof(OEMCHAR));
-	buf += datalen;
-#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
-	*buf++ = '\r';
-#endif
-#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
-	*buf++ = '\n';
-#endif
-	return(SUCCESS);
+	lpBuffer = hdl->buffer + pfp.pos;
+	memcpy(lpBuffer, lpKeyName, pfp.cchKeyName * sizeof(OEMCHAR));
+	lpBuffer += pfp.cchKeyName;
+	*lpBuffer++ = '=';
+	memcpy(lpBuffer, lpString, cchString * sizeof(OEMCHAR));
+	lpBuffer += cchString;
+	memcpy(lpBuffer, s_eol, sizeof(s_eol));
+
+	return SUCCESS;
 }
 
 
