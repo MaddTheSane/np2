@@ -597,7 +597,7 @@ UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl)
 	OEMCHAR *lpData;
 	UINT cchRemain;
 
-	if ((hdl == NULL) || (cchBuffer == 1))
+	if ((hdl == NULL) || (cchBuffer <= 1))
 	{
 		return 0;
 	}
@@ -666,8 +666,15 @@ BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
 		return(FAILURE);
 	}
 	else {
-		size = min(size, pfp.datasize + 1);
-		milstr_ncpy(ret, pfp.data, size);
+		if (size > 0)
+		{
+			size = min(size - 1, pfp.datasize);
+			if (size)
+			{
+				milstr_ncpy(ret, pfp.data, size * sizeof(OEMCHAR));
+			}
+			ret[size] = '\0';
+		}
 		return(SUCCESS);
 	}
 }
