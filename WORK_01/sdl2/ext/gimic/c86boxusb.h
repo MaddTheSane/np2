@@ -49,5 +49,5 @@ private:
 	UINT m_que[0x400];		/*!< que */
 	UINT8 m_sReg[0x200];	/*!< register */
 
-	int Transaction(const void* lpOutput, size_t cbOutput, void* lpInput = NULL, size_t cbInput = 0);
+	int Transaction(const void* lpOutput, int cbOutput, void* lpInput = NULL, int cbInput = 0);
 };

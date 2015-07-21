@@ -182,7 +182,7 @@ int C86BoxUSB::Deinitialize()
  * @param[in] cbInput The maximum number of bytes to be read
  * @return C86CTL_ERR
  */
-int C86BoxUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput, size_t cbInput)
+int C86BoxUSB::Transaction(const void* lpOutput, int cbOutput, void* lpInput, int cbInput)
 {
 	if (!m_usb.IsOpened())
 	{
@@ -216,7 +216,7 @@ int C86BoxUSB::Transaction(const void* lpOutput, size_t cbOutput, void* lpInput,
 
 	if ((lpInput != NULL) && (cbInput > 0))
 	{
-		cbInput = std::min(cbInput, sizeof(sBuffer));
+		cbInput = std::min(cbInput, static_cast<int>(sizeof(sBuffer)));
 		::memcpy(lpInput, sBuffer, cbInput);
 	}
 	return C86CTL_ERR_NONE;
@@ -337,7 +337,7 @@ bool C86BoxUSB::Task()
 {
 	/* builds data */
 	UINT8 sData[64];
-	size_t nIndex = 0;
+	int nIndex = 0;
 
 	m_queGuard.Enter();
 	while ((m_nQueCount) && ((nIndex + 8) < _countof(sData)))
