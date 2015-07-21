@@ -74,8 +74,9 @@ UINT file_getsize(FILEH handle) {
 
 	struct stat sb;
 
-	if (fstat(fileno(handle), &sb) == 0) {
-		return(sb.st_size);
+	if (fstat(fileno(handle), &sb) == 0)
+	{
+		return (UINT)sb.st_size;
 	}
 	return(0);
 }
@@ -326,7 +327,7 @@ struct stat		sb;
 
 		if (stat(de->d_name, &sb) == 0) {
 			fli->caps |= FLICAPS_SIZE;
-			fli->size = sb.st_size;
+			fli->size = (UINT)sb.st_size;
 			if (!(sb.st_mode & S_IWUSR)) {
 				fli->attr |= FILEATTR_READONLY;
 			}
