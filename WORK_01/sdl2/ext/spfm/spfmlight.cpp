@@ -44,7 +44,7 @@ bool CSpfmLight::Initialize()
 		OEMCHAR* lpKeyName = szSections;
 		while ((!bOpened) && (*lpKeyName != '\0'))
 		{
-			const UINT cchKeyName = OEMSTRLEN(lpKeyName);
+			const size_t cchKeyName = OEMSTRLEN(lpKeyName);
 			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) == 0)
 			{
 				if ((lpKeyName[10] == '(') && (lpKeyName[cchKeyName - 1] == ')'))
