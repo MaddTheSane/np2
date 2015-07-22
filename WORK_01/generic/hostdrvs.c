@@ -248,7 +248,7 @@ const HDRVDIR 	*di;
 		di = &hdl->di;
 	}
 	if (hdp) {
-		CopyMemory(&hdp->di, di, sizeof(HDRVDIR));
+		hdp->di = *di;
 		file_cpyname(hdp->path, path, NELEMENTS(hdp->path));
 	}
 	listarray_destroy(lst);
@@ -321,7 +321,7 @@ BRESULT hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath) {
 	if (hdl != NULL) {
 		file_catname(path, hdl->realname, NELEMENTS(path));
 		if (hdp) {
-			CopyMemory(&hdp->di, &hdl->di, sizeof(HDRVDIR));
+			hdp->di = hdl->di;
 			file_cpyname(hdp->path, path, NELEMENTS(hdp->path));
 		}
 	}

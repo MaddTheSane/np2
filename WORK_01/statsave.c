@@ -1168,7 +1168,7 @@ static int flagload_com(STFLAGH sfh, const SFENTRY *tbl) {
 	if (flag == NULL) {
 		goto flcom_err1;
 	}
-	CopyMemory(flag, &fhdr, sizeof(fhdr));
+	*flag = fhdr;
 	ret |= statflag_read(sfh, flag + 1, fhdr.size - sizeof(fhdr));
 	if (ret != STATFLAG_SUCCESS) {
 		goto flcom_err2;
