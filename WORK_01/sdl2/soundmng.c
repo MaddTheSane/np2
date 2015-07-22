@@ -20,7 +20,7 @@ typedef struct {
 static	SOUNDMNG	soundmng;
 
 
-static void sound_play_cb(void *userdata, BYTE *stream, int len) {
+static void sound_play_cb(void *userdata, UINT8 *stream, int len) {
 
 	int			length;
 	SINT16		*dst;
@@ -37,7 +37,7 @@ const SINT32	*src;
 		ZeroMemory(dst, length);
 	}
 	SDL_memset(stream, 0, len);
-	SDL_MixAudio(stream, (BYTE *)dst, length, SDL_MIX_MAXVOLUME);
+	SDL_MixAudio(stream, (UINT8 *)dst, length, SDL_MIX_MAXVOLUME);
 	soundmng.nsndbuf = (soundmng.nsndbuf + 1) % NSNDBUF;
 	(void)userdata;
 }

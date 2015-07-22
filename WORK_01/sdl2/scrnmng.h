@@ -1,6 +1,6 @@
 
 typedef struct {
-	BYTE	*ptr;
+	UINT8	*ptr;
 	int		xalign;
 	int		yalign;
 	int		width;
