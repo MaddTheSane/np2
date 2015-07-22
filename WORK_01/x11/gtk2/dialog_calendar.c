@@ -45,8 +45,8 @@ static const char *calendar_kind_str[] = {
 
 static struct {
 	GtkWidget	*entry;
-	const BYTE	min;
-	const BYTE	max;
+	const UINT8	min;
+	const UINT8	max;
 } vircal[] = {
 	{ NULL, 0x00, 0x99 },	/* year */
 	{ NULL, 0x01, 0x12 },	/* month */
@@ -58,14 +58,14 @@ static struct {
 
 static GtkWidget *calendar_radiobutton[NELEMENTS(calendar_kind_str)];
 static GtkWidget *now_button;
-static BYTE calendar_kind;
+static UINT8 calendar_kind;
 
 
 static UINT
 getbcd(const char *str, size_t len)
 {
 	UINT val;
-	BYTE c;
+	UINT8 c;
 
 	if (str[0] == '\0') {
 		return 0xff;
@@ -87,10 +87,10 @@ getbcd(const char *str, size_t len)
 static void
 ok_button_clicked(GtkButton *b, gpointer d)
 {
-	BYTE calendar_buf[8];
+	UINT8 calendar_buf[8];
 	const gchar *entryp;
 	BOOL renewal;
-	BYTE val;
+	UINT8 val;
 	int i;
 
 	renewal = FALSE;
@@ -106,7 +106,7 @@ ok_button_clicked(GtkButton *b, gpointer d)
 				if (i == 1) {
 					val = ((val & 0x10) * 10) + (val << 4);
 				}
-				calendar_buf[i] = (BYTE)val;
+				calendar_buf[i] = (UINT8)val;
 			} else {
 				break;
 			}
@@ -137,7 +137,7 @@ dialog_destroy(GtkWidget *w, GtkWidget **wp)
 static void
 set_virtual_calendar(BOOL virtual)
 {
-	BYTE cbuf[8];
+	UINT8 cbuf[8];
 	char buf[8];
 	int i;
 

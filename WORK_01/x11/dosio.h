@@ -30,14 +30,14 @@ enum {
 
 typedef struct {
 	UINT16	year;		/* cx */
-	BYTE	month;		/* dh */
-	BYTE	day;		/* dl */
+	UINT8	month;		/* dh */
+	UINT8	day;		/* dl */
 } DOSDATE;
 
 typedef struct {
-	BYTE	hour;		/* ch */
-	BYTE	minute;		/* cl */
-	BYTE	second;		/* dh */
+	UINT8	hour;		/* ch */
+	UINT8	minute;		/* cl */
+	UINT8	second;		/* dh */
 } DOSTIME;
 
 typedef struct {
