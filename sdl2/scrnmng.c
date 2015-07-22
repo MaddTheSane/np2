@@ -174,7 +174,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 		}
 		SDL_LockSurface(surface);
 		scrnmng.surface = surface;
-		scrnsurf.ptr = (BYTE *)surface->pixels;
+		scrnsurf.ptr = (UINT8 *)surface->pixels;
 		scrnsurf.xalign = surface->format->BytesPerPixel;
 		scrnsurf.yalign = surface->pitch;
 		scrnsurf.bpp = surface->format->BitsPerPixel;
@@ -196,9 +196,9 @@ static void draw_onmenu(void) {
 	RECT_T		rt;
 	SDL_Surface	*surface;
 	DRAWRECT	dr;
-const BYTE		*p;
-	BYTE		*q;
-const BYTE		*a;
+const UINT8		*p;
+	UINT8		*q;
+const UINT8		*a;
 	int			salign;
 	int			dalign;
 	int			x;
@@ -222,7 +222,7 @@ const BYTE		*a;
 #if defined(SUPPORT_16BPP)
 			case 16:
 				p = scrnmng.vram->ptr + (dr.srcpos * 2);
-				q = (BYTE *)surface->pixels + dr.dstpos;
+				q = (UINT8 *)surface->pixels + dr.dstpos;
 				a = menuvram->alpha + dr.srcpos;
 				salign = menuvram->width;
 				dalign = dr.yalign - (dr.width * dr.xalign);
@@ -243,7 +243,7 @@ const BYTE		*a;
 #if defined(SUPPORT_24BPP)
 			case 24:
 				p = scrnmng.vram->ptr + (dr.srcpos * 3);
-				q = (BYTE *)surface->pixels + dr.dstpos;
+				q = (UINT8 *)surface->pixels + dr.dstpos;
 				a = menuvram->alpha + dr.srcpos;
 				salign = menuvram->width;
 				dalign = dr.yalign - (dr.width * dr.xalign);
@@ -266,7 +266,7 @@ const BYTE		*a;
 #if defined(SUPPORT_32BPP)
 			case 32:
 				p = scrnmng.vram->ptr + (dr.srcpos * 4);
-				q = (BYTE *)surface->pixels + dr.dstpos;
+				q = (UINT8 *)surface->pixels + dr.dstpos;
 				a = menuvram->alpha + dr.srcpos;
 				salign = menuvram->width;
 				dalign = dr.yalign - (dr.width * dr.xalign);
@@ -352,10 +352,10 @@ void scrnmng_menudraw(const RECT_T *rct) {
 
 	SDL_Surface	*surface;
 	DRAWRECT	dr;
-const BYTE		*p;
-const BYTE		*q;
-	BYTE		*r;
-	BYTE		*a;
+const UINT8		*p;
+const UINT8		*q;
+	UINT8		*r;
+	UINT8		*a;
 	int			salign;
 	int			dalign;
 	int			x;
@@ -374,7 +374,7 @@ const BYTE		*q;
 			case 16:
 				p = scrnmng.vram->ptr + (dr.srcpos * 2);
 				q = menuvram->ptr + (dr.srcpos * 2);
-				r = (BYTE *)surface->pixels + dr.dstpos;
+				r = (UINT8 *)surface->pixels + dr.dstpos;
 				a = menuvram->alpha + dr.srcpos;
 				salign = menuvram->width;
 				dalign = dr.yalign - (dr.width * dr.xalign);
@@ -403,7 +403,7 @@ const BYTE		*q;
 			case 24:
 				p = scrnmng.vram->ptr + (dr.srcpos * 3);
 				q = menuvram->ptr + (dr.srcpos * 3);
-				r = (BYTE *)surface->pixels + dr.dstpos;
+				r = (UINT8 *)surface->pixels + dr.dstpos;
 				a = menuvram->alpha + dr.srcpos;
 				salign = menuvram->width;
 				dalign = dr.yalign - (dr.width * dr.xalign);
@@ -436,7 +436,7 @@ const BYTE		*q;
 			case 32:
 				p = scrnmng.vram->ptr + (dr.srcpos * 4);
 				q = menuvram->ptr + (dr.srcpos * 3);
-				r = (BYTE *)surface->pixels + dr.dstpos;
+				r = (UINT8 *)surface->pixels + dr.dstpos;
 				a = menuvram->alpha + dr.srcpos;
 				salign = menuvram->width;
 				dalign = dr.yalign - (dr.width * dr.xalign);
