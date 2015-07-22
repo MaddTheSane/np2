@@ -99,7 +99,7 @@ typedef	guint32		UINT32;
 typedef	guint64		UINT64;
 
 typedef	guint8		BYTE;
-typedef	gchar		TCHAR;
+typedef	gchar		CHAR;
 
 typedef	gboolean	BOOL;
 
