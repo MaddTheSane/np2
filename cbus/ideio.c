@@ -824,15 +824,15 @@ static REG8 IOINPCALL ideio_i74c(UINT port) {
 void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 
 	IDEDRV	drv;
-	BYTE	*p;
+	UINT8	*p;
 	long	sec;
 
 	drv = getidedrv();
 	if ((drv != NULL) &&
 		(drv->status & IDESTAT_DRQ) && (drv->bufdir == IDEDIR_OUT)) {
 		p = drv->buf + drv->bufpos;
-		p[0] = (BYTE)value;
-		p[1] = (BYTE)(value >> 8);
+		p[0] = (UINT8)value;
+		p[1] = (UINT8)(value >> 8);
 		TRACEOUT(("ide-data send %.4x (%.4x) [%.4x:%.8x]",
 										value, drv->bufpos, CPU_CS, CPU_EIP));
 		drv->bufpos += 2;
