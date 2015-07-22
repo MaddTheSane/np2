@@ -98,9 +98,6 @@ typedef	guint16		UINT16;
 typedef	guint32		UINT32;
 typedef	guint64		UINT64;
 
-typedef	guint8		BYTE;
-typedef	gchar		CHAR;
-
 typedef	gboolean	BOOL;
 
 #define PTR_TO_UINT32(p)	((UINT32)GPOINTER_TO_UINT(p))

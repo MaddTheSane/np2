@@ -27,7 +27,7 @@
 
 #include "soundmng.h"
 
-BYTE
+UINT8
 snddrv_drv2num(const char* cfgstr)
 {
 
@@ -37,7 +37,7 @@ snddrv_drv2num(const char* cfgstr)
 }
 
 const char *
-snddrv_num2drv(BYTE num)
+snddrv_num2drv(UINT8 num)
 {
 
 	switch (num) {

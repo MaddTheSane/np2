@@ -41,7 +41,7 @@ enum {
 };
 
 BOOL kbdmng_init(void);
-BYTE kbdmng_getf12key(void);
+UINT8 kbdmng_getf12key(void);
 void kbdmng_resetf12(void);
 
 G_END_DECLS
