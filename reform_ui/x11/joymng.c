@@ -37,7 +37,7 @@ static struct {
 
 	joymng_devinfo_t **devlist;
 
-	BYTE pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
+	UINT8 pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
 	REG8 flag;
 } joyinfo = {
 	NULL,
@@ -51,7 +51,7 @@ static struct {
 
 typedef struct {
 	SINT16	axis[JOY_NAXIS];
-	BYTE	button[JOY_NBUTTON];
+	UINT8	button[JOY_NBUTTON];
 } JOYINFO_T;
 
 static joymng_devinfo_t **joydrv_initialize(void);
@@ -295,7 +295,11 @@ joydrv_open(const char *dvname)
 
 	dev = &shdl->dev;
 	dev->devindex = drv;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	dev->devname = strdup(SDL_JoystickName(joy));
+#else
 	dev->devname = strdup(SDL_JoystickName(drv));
+#endif
 	dev->naxis = naxis;
 	for (i = 0; i < JOY_NAXIS; ++i) {
 		if (np2oscfg.JOYAXISMAP[0][i] < naxis) {

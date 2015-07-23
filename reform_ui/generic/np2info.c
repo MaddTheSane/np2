@@ -206,7 +206,7 @@ static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 	UINT	type;
 
 	type = 0;
-	switch(usesound) {
+	switch(g_usesound) {
 		case 0x01:
 			type = 1;
 			break;
@@ -252,7 +252,7 @@ static void info_extsnd(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 	OEMCHAR	buf[64];
 
 	info_sound(str, maxlen, ex);
-	if (usesound & 4) {
+	if (g_usesound & 4) {
 		milstr_ncat(str, ex->cr, maxlen);
 		OEMSPRINTF(buf, str_pcm86a,
 							pcm86rate8[pcm86.fifo & 7] >> 3,
@@ -351,7 +351,7 @@ void np2info(OEMCHAR *dst, const OEMCHAR *src, int maxlen,
 
 	NP2INFOEX	statex;
 	OEMCHAR		c;
-	int			leng;
+	UINT		leng;
 	OEMCHAR		infwork[12];
 const INFOPROC	*inf;
 const INFOPROC	*infterm;
@@ -399,7 +399,7 @@ const INFOPROC	*infterm;
 				if (c == '%') {
 					break;
 				}
-				if (leng < (int)(NELEMENTS(infwork) - 1)) {
+				if (leng < (NELEMENTS(infwork) - 1)) {
 					infwork[leng++] = c;
 				}
 			}
@@ -419,7 +419,7 @@ const INFOPROC	*infterm;
 				}
 			}
 		}
-		leng = OEMSTRLEN(dst);
+		leng = (UINT)OEMSTRLEN(dst);
 		dst += leng;
 		maxlen -= leng;
 	}

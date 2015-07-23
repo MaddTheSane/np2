@@ -10,7 +10,7 @@ G_BEGIN_DECLS
 typedef struct {
 	int	posx;
 	int	posy;
-	BYTE	type;
+	UINT8	type;
 } SKBDCFG;
 
 extern SKBDCFG skbdcfg;

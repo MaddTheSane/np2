@@ -112,7 +112,7 @@ file_attr(const OEMCHAR *path)
 	return -1;
 }
 
-static BOOL
+static BRESULT
 cnvdatetime(struct stat *sb, DOSDATE *dosdate, DOSTIME *dostime)
 {
 	struct tm *ftime;
@@ -140,7 +140,7 @@ file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime)
 	struct stat sb;
 
 	if ((fstat(fileno(handle), &sb) == 0)
-	 && (cnvdatetime(&sb, dosdate, dostime)))
+	 && (cnvdatetime(&sb, dosdate, dostime) == SUCCESS))
 		return 0;
 	return -1;
 }
@@ -253,7 +253,7 @@ file_list1st(const OEMCHAR *dir, FLINFO *fli)
 	return FLISTH_INVALID;
 }
 
-BOOL
+BRESULT
 file_listnext(FLISTH hdl, FLINFO *fli)
 {
 	OEMCHAR buf[MAX_PATH];

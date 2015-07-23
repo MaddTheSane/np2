@@ -74,8 +74,9 @@ UINT file_getsize(FILEH handle) {
 
 	struct stat sb;
 
-	if (fstat(fileno(handle), &sb) == 0) {
-		return(sb.st_size);
+	if (fstat(fileno(handle), &sb) == 0)
+	{
+		return (UINT)sb.st_size;
 	}
 	return(0);
 }
@@ -117,7 +118,7 @@ struct stat	sb;
 	return(-1);
 }
 
-static BOOL cnv_sttime(time_t *t, DOSDATE *dosdate, DOSTIME *dostime) {
+static BRESULT cnv_sttime(time_t *t, DOSDATE *dosdate, DOSTIME *dostime) {
 
 struct tm	*ftime;
 
@@ -175,42 +176,42 @@ void file_setcd(const char *exepath) {
 
 char *file_getcd(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(curpath);
 }
 
 FILEH file_open_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_open(curpath));
 }
 
 FILEH file_open_rb_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_open_rb(curpath));
 }
 
 FILEH file_create_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_create(curpath));
 }
 
 short file_delete_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_delete(curpath));
 }
 
 short file_attr_c(const char *path) {
 
-	file_cpyname(curfilep, path, sizeof(curpath) - (curfilep - curpath));
+	file_cpyname(curfilep, path, NELEMENTS(curpath) - (UINT)(curfilep - curpath));
 	return(file_attr(curpath));
 }
 
 #if defined(WIN32)
-static BOOL cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
+static BRESULT cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
 
 	FILETIME	localtime;
 	SYSTEMTIME	systime;
@@ -232,7 +233,7 @@ static BOOL cnvdatetime(FILETIME *file, DOSDATE *dosdate, DOSTIME *dostime) {
 	return(SUCCESS);
 }
 
-static BOOL setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
+static BRESULT setflist(WIN32_FIND_DATA *w32fd, FLINFO *fli) {
 
 	if ((w32fd->dwFileAttributes & FILEATTR_DIRECTORY) &&
 		((!file_cmpname(w32fd->cFileName, ".")) ||
@@ -276,7 +277,7 @@ FLISTH file_list1st(const char *dir, FLINFO *fli) {
 	return(FLISTH_INVALID);
 }
 
-BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli) {
 
 	WIN32_FIND_DATA	w32fd;
 
@@ -310,7 +311,7 @@ ff1_err:
 	return(FLISTH_INVALID);
 }
 
-BOOL file_listnext(FLISTH hdl, FLINFO *fli) {
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli) {
 
 struct dirent	*de;
 struct stat		sb;
@@ -326,7 +327,7 @@ struct stat		sb;
 
 		if (stat(de->d_name, &sb) == 0) {
 			fli->caps |= FLICAPS_SIZE;
-			fli->size = sb.st_size;
+			fli->size = (UINT)sb.st_size;
 			if (!(sb.st_mode & S_IWUSR)) {
 				fli->attr |= FILEATTR_READONLY;
 			}
@@ -429,7 +430,7 @@ void file_cutseparator(char *path) {
 
 	int		pos;
 
-	pos = strlen(path) - 1;
+	pos = (int)strlen(path) - 1;
 	if ((pos > 0) &&							// 2文字以上でー
 		(path[pos] == '/') &&					// ケツが \ でー
 		((pos != 1) || (path[0] != '.'))) {		// './' ではなかったら
@@ -441,7 +442,7 @@ void file_setseparator(char *path, int maxlen) {
 
 	int		pos;
 
-	pos = strlen(path);
+	pos = (int)strlen(path);
 	if ((pos) && (path[pos-1] != '/') && ((pos + 2) < maxlen)) {
 		path[pos++] = '/';
 		path[pos] = '\0';

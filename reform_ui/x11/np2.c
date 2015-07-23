@@ -114,7 +114,7 @@ NP2OSCFG np2oscfg = {
 };
 
 volatile sig_atomic_t np2running = 0;
-BYTE scrnmode = 0;
+UINT8 scrnmode = 0;
 int ignore_fullscreen_mode = 0;
 
 UINT framecnt = 0;
@@ -231,10 +231,10 @@ flagload(const char* ext, const char* title, BOOL force)
 }
 
 void
-changescreen(BYTE newmode)
+changescreen(UINT8 newmode)
 {
-	BYTE change;
-	BYTE renewal;
+	UINT8 change;
+	UINT8 renewal;
 
 	change = scrnmode ^ newmode;
 	renewal = (change & SCRNMODE_FULLSCREEN);
@@ -283,10 +283,10 @@ framereset(UINT cnt)
 
 	framecnt = 0;
 	scrnmng_dispclock();
-	kdispwin_draw((BYTE)cnt);
+	kdispwin_draw((UINT8)cnt);
 	skbdwin_process();
 	debugwin_process();
-	toolwin_draw((BYTE)cnt);
+	toolwin_draw((UINT8)cnt);
 	viewer_allreload(FALSE);
 	if (np2oscfg.DISPCLK & 3) {
 		if (sysmng_workclockrenewal()) {

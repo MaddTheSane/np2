@@ -93,11 +93,7 @@ static const SFENTRY np2tbl[] = {
 
 	{"ARTIC",		0,	STATFLAG_BIN,	&artic,			sizeof(artic)},
 	{"CGROM",		0,	STATFLAG_BIN,	&cgrom,			sizeof(cgrom)},
-#if !defined(CGWND_FONTPTR)
 	{"CGWINDOW",	0,	STATFLAG_BIN,	&cgwindow,		sizeof(cgwindow)},
-#else
-	{"CGWINDOW",	0,	STATFLAG_CGW,	&cgwindow,		sizeof(cgwindow)},
-#endif
 	{"CRTC",		0,	STATFLAG_BIN,	&grcg,			sizeof(grcg)},
 	{"CRTC2",		0,	STATFLAG_BIN,	&crtc,			sizeof(crtc)},
 	{"DMAC",		0,	STATFLAG_DMA,	&dmac,			sizeof(dmac)},
@@ -131,8 +127,7 @@ static const SFENTRY np2tbl[] = {
 #if !defined(DISABLE_SOUND)
 	{"FMBOARD",		0,	STATFLAG_FM,	NULL,			0},
 	{"BEEP",		0,	STATFLAG_BIN,	&g_beep,		sizeof(g_beep)},
-	{"MUSICGEN",	0,	STATFLAG_BIN,	&musicgen,		sizeof(musicgen)},
-	{"AMD98",		0,	STATFLAG_BIN,	&amd98,			sizeof(amd98)},
+	{"AMD98",		0,	STATFLAG_BIN,	&g_amd98,		sizeof(g_amd98)},
 #endif
 #if defined(SUPPORT_IDEIO)
 	{"IDE",			0,	STATFLAG_BIN,	&ideio,			sizeof(ideio)},

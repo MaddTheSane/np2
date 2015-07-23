@@ -5,7 +5,7 @@ dnl
 dnl require autoconf 2.59
 AC_PREREQ(2.59)
 
-AC_INIT(Xnp2,0.83-20140531,nonakap@gmail.com,xnp2)
+AC_INIT(Xnp2,0.84,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
 AC_CONFIG_SRCDIR([../np2ver.h])
 AC_CONFIG_HEADERS(config.h)
@@ -82,8 +82,11 @@ dnl
 dnl Xnp2 configure options.
 dnl
 AC_ARG_ENABLE(sdl,
-  AC_HELP_STRING([--enable-sdl],[Use SDL library [default=yes]]),,
+  AC_HELP_STRING([--enable-sdl],[Use SDL 1.2 library [default=yes]]),,
   [enable_sdl="yes"])
+AC_ARG_ENABLE(sdl2,
+  AC_HELP_STRING([--enable-sdl2],[Use SDL 2.0 library [default=yes]]),,
+  [enable_sdl2="yes"])
 AC_ARG_ENABLE(sdlmixer,
   AC_HELP_STRING([--enable-sdlmixer],[Use SDL_mixer library [default=yes]]),,
   [enable_sdlmixer="yes"])
@@ -110,7 +113,7 @@ dnl
 dnl Checks for GTK+
 dnl
 AM_PATH_GTK_2_0(2.6.0,,
-  AC_MSG_ERROR(Test for GTK failed. See the file 'x11/INSTALL.ja' for help))
+  AC_MSG_ERROR(Test for GTK failed. See the file 'x11/README.ja' for help))
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])
@@ -118,10 +121,22 @@ AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])
 dnl
 dnl Checks for SDL and SDL_mixer
 dnl
-if test x"$enable_sdl" = "xyes"; then
+no_sdl=yes
+if test x"$enable_sdl2" = "xyes"; then
+  AM_PATH_SDL2(2.0.0)
+  if test x"$no_sdl" != "xyes"; then
+    AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL 1.2/2.0 library.])
+    if test x"$enable_sdlmixer" = "xyes"; then
+      AC_CHECK_LIB(SDL2_mixer,Mix_OpenAudio,
+        AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])
+        SDL_LIBS="$SDL_LIBS -lSDL2_mixer",,$SDL_LIBS)
+    fi
+  fi
+fi
+if test x"$no_sdl" = "xyes" -a x"$enable_sdl" = "xyes"; then
   AM_PATH_SDL(1.2.0)
   if test x"$no_sdl" != "xyes"; then
-    AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL library.])
+    AC_DEFINE(USE_SDLAUDIO,,[Define if you have the SDL 1.2/2.0 library.])
     if test x"$enable_sdlmixer" = "xyes"; then
       AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
         AC_DEFINE(USE_SDLMIXER,,[Define if you have the SDL_mixer library.])

@@ -3,7 +3,7 @@
 #include	"timemng.h"
 
 
-BOOL timemng_gettime(_SYSTIME *systime) {
+BRESULT timemng_gettime(_SYSTIME *systime) {
 
 	time_t	long_time;
 struct tm	*now_time;

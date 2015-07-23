@@ -52,7 +52,7 @@ sysmng_workclockrenewal(void)
 }
 
 void
-sysmng_updatecaption(BYTE flag)
+sysmng_updatecaption(UINT8 flag)
 {
 	char work[512];
 

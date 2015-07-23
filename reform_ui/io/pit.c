@@ -19,7 +19,7 @@
 
 // --- Interval timer
 
-static void setsystimerevent(UINT32 cnt, BOOL absolute) {
+static void setsystimerevent(UINT32 cnt, NEVENTPOSITION absolute) {
 
 	if (cnt > 8) {									// ª‹’‚È‚µ
 		cnt *= pccore.multiple;
@@ -55,7 +55,7 @@ void systimer(NEVENTITEM item) {
 // --- Beep
 
 #if defined(BEEPCOUNTEREX)
-static void setbeepeventex(UINT32 cnt, BOOL absolute) {
+static void setbeepeventex(UINT32 cnt, NEVENTPOSITION absolute) {
 
 	if (cnt > 2) {
 		cnt *= pccore.multiple;
@@ -70,7 +70,7 @@ static void setbeepeventex(UINT32 cnt, BOOL absolute) {
 }
 #endif
 
-static void setbeepevent(UINT32 cnt, BOOL absolute) {
+static void setbeepevent(UINT32 cnt, NEVENTPOSITION absolute) {
 
 	if (cnt > 2) {
 		cnt *= pccore.multiple;
@@ -108,7 +108,7 @@ void beeponeshot(NEVENTITEM item) {
 
 // --- RS-232C
 
-static void setrs232cevent(UINT32 cnt, BOOL absolute) {
+static void setrs232cevent(UINT32 cnt, NEVENTPOSITION absolute) {
 
 	if (cnt > 1) {
 		cnt *= pccore.multiple;

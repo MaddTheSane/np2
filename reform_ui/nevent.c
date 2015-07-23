@@ -136,7 +136,7 @@ void nevent_waitreset(UINT id) {
 	}
 }
 
-void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute) {
+void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, NEVENTPOSITION absolute) {
 
 	SINT32		clk;
 	NEVENTITEM	item;
@@ -186,7 +186,7 @@ void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute) {
 	}
 }
 
-void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, BOOL absolute) {
+void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, NEVENTPOSITION absolute) {
 
 	nevent_set(id, (pccore.realclock / 1000) * ms, proc, absolute);
 }

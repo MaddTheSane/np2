@@ -8,19 +8,17 @@
 #include	"fmboard.h"
 #include	"s98.h"
 #include	"keydisp.h"
-#include "gimic/c86boxusb.h"
-#include "gimic/gimicusb.h"
+#include "gimic/gimic.h"
+#include "spfm/spfmlight.h"
 
-/**! G.I.M.I.C インスタンス */
-static IC86RealChip* s_gimic = NULL;
-
-// ROMEO対応版 PC-9801-118
+/**! The instance of external modules */
+static IExtendModule* s_ext = NULL;
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
-	opn.addr1l = dat;
-	opn.addr1h = 0;
-	opn.data1 = dat;
+	g_opn.addr1l = dat;
+	g_opn.addr1h = 0;
+	g_opn.data1 = dat;
 	(void)port;
 }
 
@@ -28,21 +26,21 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	opn.data1 = dat;
-	if (opn.addr1h != 0) {
+	g_opn.data1 = dat;
+	if (g_opn.addr1h != 0) {
 		return;
 	}
 
-	addr = opn.addr1l;
+	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
-			psggen_setreg(&psg1, addr, dat);
+			psggen_setreg(&g_psg1, addr, dat);
 		}
 	}
 	else {
 		if (addr < 0x20) {
-			rhythm_setreg(&rhythm, addr, dat);
+			rhythm_setreg(&g_rhythm, addr, dat);
 		}
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
@@ -61,17 +59,17 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 		else if (addr < 0xc0) {
 			opngen_setreg(0, addr, dat);
 		}
-		opn.reg[addr] = dat;
+		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18c(UINT port, REG8 dat) {
 
-	if (opn.extend) {
-		opn.addr1l = dat;
-		opn.addr1h = 1;
-		opn.data1 = dat;
+	if (g_opn.extend) {
+		g_opn.addr1l = dat;
+		g_opn.addr1h = 1;
+		g_opn.data1 = dat;
 	}
 	(void)port;
 }
@@ -80,24 +78,24 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 
 	UINT	addr;
 
-	if (!opn.extend) {
+	if (!g_opn.extend) {
 		return;
 	}
-	opn.data1 = dat;
+	g_opn.data1 = dat;
 
-	if (opn.addr1h != 1) {
+	if (g_opn.addr1h != 1) {
 		return;
 	}
-	addr = opn.addr1l;
+	addr = g_opn.addr1l;
 	S98_put(EXTEND2608, addr, dat);
-	opn.reg[addr + 0x100] = dat;
+	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
 		opngen_setreg(3, addr, dat);
 	}
 	else {
 		if (addr == 0x10) {
 			if (!(dat & 0x80)) {
-				opn.adpcmmask = ~(dat & 0x1c);
+				g_opn.adpcmmask = ~(dat & 0x1c);
 			}
 		}
 	}
@@ -107,33 +105,33 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat) {
 static REG8 IOINPCALL ymf_i188(UINT port) {
 
 	(void)port;
-	return(fmtimer.status);
+	return(g_fmtimer.status);
 }
 
 static REG8 IOINPCALL ymf_i18a(UINT port) {
 
 	UINT	addr;
 
-	if (opn.addr1h == 0) {
-		addr = opn.addr1l;
+	if (g_opn.addr1h == 0) {
+		addr = g_opn.addr1l;
 		if (addr == 0x0e) {
-			return(fmboard_getjoy(&psg1));
+			return(fmboard_getjoy(&g_psg1));
 		}
 		else if (addr < 0x10) {
-			return(psggen_getreg(&psg1, addr));
+			return(psggen_getreg(&g_psg1, addr));
 		}
 		else if (addr == 0xff) {
 			return(1);
 		}
 	}
 	(void)port;
-	return(opn.data1);
+	return(g_opn.data1);
 }
 
 static REG8 IOINPCALL ymf_i18c(UINT port) {
 
-	if (opn.extend) {
-		return(fmtimer.status & 3);
+	if (g_opn.extend) {
+		return(g_fmtimer.status & 3);
 	}
 	(void)port;
 	return(0xff);
@@ -141,15 +139,15 @@ static REG8 IOINPCALL ymf_i18c(UINT port) {
 
 static void extendchannel(REG8 enable) {
 
-	opn.extend = enable;
+	g_opn.extend = enable;
 	if (enable) {
-		opn.channels = 6;
+		g_opn.channels = 6;
 		opngen_setcfg(6, OPN_STEREO | 0x007);
 	}
 	else {
-		opn.channels = 3;
+		g_opn.channels = 3;
 		opngen_setcfg(3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
 
@@ -169,72 +167,76 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 // ---- with romeo
 
-static void RestoreRomeo(IC86RealChip* gimic)
+/**
+ * Restore OPNA
+ * @param[in] ext instance
+ */
+static void RestoreRomeo(IExtendModule* ext)
 {
-	const UINT8* data = opn.reg;
+	const UINT8* data = g_opn.reg;
 	for (UINT i = 0x30; i < 0xa0; i++)
 	{
-		gimic->Out(i, data[i]);
+		ext->WriteRegister(i, data[i]);
 	}
 	for (UINT ch = 0; ch < 3; ch++)
 	{
-		gimic->Out(ch + 0xa4, data[ch + 0x0a4]);
-		gimic->Out(ch + 0xa0, data[ch + 0x0a0]);
-		gimic->Out(ch + 0xb0, data[ch + 0x0b0]);
-		gimic->Out(ch + 0xb4, data[ch + 0x0b4]);
+		ext->WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
+		ext->WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
+		ext->WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
+		ext->WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
 	}
 
 	for (UINT i = 0x130; i < 0x1a0; i++)
 	{
-		gimic->Out(i, data[i]);
+		ext->WriteRegister(i, data[i]);
 	}
 	for (UINT ch = 0; ch < 3; ch++)
 	{
-		gimic->Out(ch + 0x1a4, data[ch + 0x1a4]);
-		gimic->Out(ch + 0x1a0, data[ch + 0x1a0]);
-		gimic->Out(ch + 0x1b0, data[ch + 0x1b0]);
-		gimic->Out(ch + 0x1b4, data[ch + 0x1b4]);
+		ext->WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
+		ext->WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
+		ext->WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
+		ext->WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
 	}
-	gimic->Out(0x11, data[0x11]);
-	gimic->Out(0x18, data[0x18]);
-	gimic->Out(0x19, data[0x19]);
-	gimic->Out(0x1a, data[0x1a]);
-	gimic->Out(0x1b, data[0x1b]);
-	gimic->Out(0x1c, data[0x1c]);
-	gimic->Out(0x1d, data[0x1d]);
+	ext->WriteRegister(0x11, data[0x11]);
+	ext->WriteRegister(0x18, data[0x18]);
+	ext->WriteRegister(0x19, data[0x19]);
+	ext->WriteRegister(0x1a, data[0x1a]);
+	ext->WriteRegister(0x1b, data[0x1b]);
+	ext->WriteRegister(0x1c, data[0x1c]);
+	ext->WriteRegister(0x1d, data[0x1d]);
 
-	const UINT8* psg = reinterpret_cast<UINT8*>(&psg1.reg);
+	const UINT8* psg = reinterpret_cast<UINT8*>(&g_psg1.reg);
 	for (UINT i = 0; i < 0x0e; i++)
 	{
-		gimic->Out(i, psg[i]);
+		ext->WriteRegister(i, psg[i]);
 	}
 }
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 {
-	opn.data1 = dat;
-	if (opn.addr1h != 0)
+	g_opn.data1 = dat;
+	if (g_opn.addr1h != 0)
 	{
 		return;
 	}
 
-	const UINT nAddr = opn.addr1l;
+	const UINT nAddr = g_opn.addr1l;
 	S98_put(NORMAL2608, nAddr, dat);
 
 	if (nAddr < 0x10)
 	{
-		(reinterpret_cast<UINT8*>(&psg1.reg))[nAddr] = dat;
+		(reinterpret_cast<UINT8*>(&g_psg1.reg))[nAddr] = dat;
 		if (nAddr < 0x0e)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 
 			if (nAddr == 0x07)
 			{
-				keydisp_psgmix(&psg1);
+				keydisp_psgmix(&g_psg1);
 			}
 			else if ((nAddr == 0x08) || (nAddr == 0x09) || (nAddr == 0x0a))
 			{
-				keydisp_psgvol(&psg1, static_cast<UINT8>(nAddr - 8));
+				keydisp_psgvol(&g_psg1, static_cast<UINT8>(nAddr - 8));
 			}
 		}
 	}
@@ -242,11 +244,11 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 	{
 		if (nAddr < 0x20)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 		}
 		else if (nAddr == 0x28)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 			if ((dat & 0x0f) < 3)
 			{
 				keydisp_fmkeyon(static_cast<UINT8>(dat & 0x0f), dat);
@@ -261,41 +263,41 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 			fmtimer_setreg(nAddr, dat);
 			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
-				s_gimic->Out(nAddr, dat);
+				s_ext->WriteRegister(nAddr, dat);
 			}
 		}
 		else if (nAddr < 0xc0)
 		{
-			s_gimic->Out(nAddr, dat);
+			s_ext->WriteRegister(nAddr, dat);
 		}
-		opn.reg[nAddr] = dat;
+		g_opn.reg[nAddr] = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 {
-	if (!opn.extend)
+	if (!g_opn.extend)
 	{
 		return;
 	}
-	opn.data1 = dat;
-	if (opn.addr1h != 1) {
+	g_opn.data1 = dat;
+	if (g_opn.addr1h != 1) {
 		return;
 	}
 
-	const UINT nAddr = opn.addr1l;
+	const UINT nAddr = g_opn.addr1l;
 	S98_put(EXTEND2608, nAddr, dat);
-	opn.reg[nAddr] = dat;
+	g_opn.reg[nAddr + 0x100] = dat;
 	if (nAddr >= 0x30)
 	{
-		s_gimic->Out(0x100 + nAddr, dat);
+		s_ext->WriteRegister(0x100 + nAddr, dat);
 	}
 	else if (nAddr == 0x10)
 	{
 		if (!(dat & 0x80))
 		{
-			opn.adpcmmask = ~(dat & 0x1c);
+			g_opn.adpcmmask = ~(dat & 0x1c);
 		}
 	}
 	(void)port;
@@ -323,73 +325,67 @@ void board118_reset(const NP2CFG *pConfig) {
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 
-	IC86RealChip* gimic = s_gimic;
-	if (gimic != NULL)
+	IExtendModule* ext = s_ext;
+	if (ext != NULL)
 	{
-		if (gimic->Reset() != C86CTL_ERR_NONE)
-		{
-			gimic->Deinitialize();
-			delete gimic;
-			gimic = NULL;
-		}
+		ext->Reset();
 	}
-	s_gimic = gimic;
 }
 
 void board118_bind(void)
 {
-	IC86RealChip* gimic = s_gimic;
+	IExtendModule* ext = s_ext;
 
-	if (gimic == NULL)
+	if (ext == NULL)
 	{
 		// G.I.M.I.C オープン
-		gimic = new CGimicUSB();
-		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		ext = new CGimic();
+		if (ext->Initialize())
 		{
-			gimic->Reset();
+			ext->Reset();
 		}
 		else
 		{
-			delete gimic;
-			gimic = NULL;
+			delete ext;
+			ext = NULL;
 		}
 	}
-	if (gimic == NULL)
+	if (ext == NULL)
 	{
-		// C86BOX オープン
-		gimic = new C86BoxUSB();
-		if (gimic->Initialize() == C86CTL_ERR_NONE)
+		// SPFM Lightオープン
+		ext = new CSpfmLight();
+		if (ext->Initialize())
 		{
-			gimic->Reset();
+			ext->Reset();
 		}
 		else
 		{
-			delete gimic;
-			gimic = NULL;
+			delete ext;
+			ext = NULL;
 		}
 	}
-	s_gimic = gimic;
+	s_ext = ext;
 
-	if (gimic)
+	if (ext)
 	{
-		gimic->Out(0x22, 0x00);
-		gimic->Out(0x29, 0x80);
-		gimic->Out(0x10, 0xbf);
-		gimic->Out(0x11, 0x30);
+		ext->WriteRegister(0x22, 0x00);
+		ext->WriteRegister(0x29, 0x80);
+		ext->WriteRegister(0x10, 0xbf);
+		ext->WriteRegister(0x11, 0x30);
 
-		RestoreRomeo(gimic);
+		RestoreRomeo(ext);
 
 		cbuscore_attachsndex(0x188, ymfr_o, ymf_i);
 	}
 	else
 	{
-		fmboard_fmrestore(0, 0);
-		fmboard_fmrestore(3, 1);
-		psggen_restore(&psg1);
-		fmboard_rhyrestore(&rhythm, 0);
+		fmboard_fmrestore(&g_opn, 0, 0);
+		fmboard_fmrestore(&g_opn, 3, 1);
+		psggen_restore(&g_psg1);
+		fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 		sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
-		sound_streamregist(&psg1, (SOUNDCB)psggen_getpcm);
-		rhythm_bind(&rhythm);
+		sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
+		rhythm_bind(&g_rhythm);
 		cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	}
 	cs4231io_bind();
@@ -402,13 +398,13 @@ void board118_bind(void)
  */
 extern "C" void board118_deinitialize(void)
 {
-	IC86RealChip* gimic = s_gimic;
-	s_gimic = NULL;
+	IExtendModule* ext = s_ext;
+	s_ext = NULL;
 
-	if (gimic)
+	if (ext)
 	{
-		gimic->Reset();
-		gimic->Deinitialize();
-		delete gimic;
+		ext->Reset();
+		ext->Deinitialize();
+		delete ext;
 	}
 }

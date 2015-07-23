@@ -43,7 +43,9 @@ const void	*arg1;
 
 static const OEMCHAR str_80286[] = OEMTEXT("80286");
 static const OEMCHAR str_v30[] = OEMTEXT("V30");
+#if 0
 static const OEMCHAR str_pentium[] = OEMTEXT("PENTIUM");
+#endif	/* 0 */
 static const OEMCHAR str_mhz[] = OEMTEXT("%uMHz");
 
 

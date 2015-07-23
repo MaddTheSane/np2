@@ -1,5 +1,5 @@
 #include	"compiler.h"
-#include	"cpucore.h"
+#include	"cpumem.h"
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"vram.h"

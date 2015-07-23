@@ -14,10 +14,10 @@ const INITBL	*tblterm;
 	UINT		count;
 } _INIARG, *INIARG;
 
-static void inirdarg8(BYTE *dst, int dsize, const char *src) {
+static void inirdarg8(UINT8 *dst, int dsize, const char *src) {
 
 	int		i;
-	BYTE	val;
+	UINT8	val;
 	BOOL	set;
 	char	c;
 
@@ -54,7 +54,7 @@ static void inirdarg8(BYTE *dst, int dsize, const char *src) {
 	}
 }
 
-static BOOL inireadcb(void *arg, const char *para,
+static BRESULT inireadcb(void *arg, const char *para,
 										const char *key, const char *data) {
 
 const INITBL	*p;
@@ -74,16 +74,16 @@ const INITBL	*p;
 					break;
 
 				case INITYPE_BOOL:
-					*((BYTE *)p->value) = (!milstr_cmp(data, str_true))?1:0;
+					*((UINT8 *)p->value) = (!milstr_cmp(data, str_true))?1:0;
 					break;
 
 				case INITYPE_BYTEARG:
-					inirdarg8((BYTE *)p->value, p->size, data);
+					inirdarg8((UINT8 *)p->value, p->size, data);
 					break;
 
 				case INITYPE_SINT8:
 				case INITYPE_UINT8:
-					*((BYTE *)p->value) = (BYTE)milstr_solveINT(data);
+					*((UINT8 *)p->value) = (UINT8)milstr_solveINT(data);
 					break;
 
 				case INITYPE_SINT16:
@@ -97,7 +97,7 @@ const INITBL	*p;
 					break;
 
 				case INITYPE_HEX8:
-					*((BYTE *)p->value) = (BYTE)milstr_solveHEX(data);
+					*((UINT8 *)p->value) = (UINT8)milstr_solveHEX(data);
 					break;
 
 				case INITYPE_HEX16:
@@ -133,14 +133,14 @@ void ini_read(const char *path, const char *title,
 
 static void iniwrsetstr(char *work, int size, const char *ptr) {
 
-	int		i;
+	UINT	i;
 	char	c;
 
 	if (ptr[0] == ' ') {
 		goto iwss_extend;
 		
 	}
-	i = strlen(ptr);
+	i = (UINT)strlen(ptr);
 	if ((i) && (ptr[i-1] == ' ')) {
 		goto iwss_extend;
 	}
@@ -177,7 +177,7 @@ iwss_extend:
 	}
 }
 
-static void iniwrsetarg8(char *work, int size, const BYTE *ptr, int arg) {
+static void iniwrsetarg8(char *work, int size, const UINT8 *ptr, int arg) {
 
 	int		i;
 	char	tmp[8];
@@ -198,7 +198,7 @@ void ini_write(const char *path, const char *title,
 	FILEH		fh;
 const INITBL	*p;
 const INITBL	*pterm;
-	BOOL		set;
+	BRESULT		set;
 	char		work[512];
 
 	fh = file_create(path);
@@ -208,7 +208,7 @@ const INITBL	*pterm;
 	milstr_ncpy(work, "[", sizeof(work));
 	milstr_ncat(work, title, sizeof(work));
 	milstr_ncat(work, "]\r\n", sizeof(work));
-	file_write(fh, work, strlen(work));
+	file_write(fh, work, (UINT)strlen(work));
 
 	p = tbl;
 	pterm = tbl + count;
@@ -221,16 +221,16 @@ const INITBL	*pterm;
 				break;
 
 			case INITYPE_BOOL:
-				milstr_ncpy(work, (*((BYTE *)p->value))?str_true:str_false,
+				milstr_ncpy(work, (*((UINT8 *)p->value))?str_true:str_false,
 																sizeof(work));
 				break;
 
 			case INITYPE_BYTEARG:
-				iniwrsetarg8(work, sizeof(work), (BYTE *)p->value, p->size);
+				iniwrsetarg8(work, sizeof(work), (UINT8 *)p->value, p->size);
 				break;
 
 			case INITYPE_SINT8:
-				SPRINTF(work, str_d, *((char *)p->value));
+				SPRINTF(work, str_d, *((SINT8 *)p->value));
 				break;
 
 			case INITYPE_SINT16:
@@ -242,7 +242,7 @@ const INITBL	*pterm;
 				break;
 
 			case INITYPE_UINT8:
-				SPRINTF(work, str_u, *((BYTE *)p->value));
+				SPRINTF(work, str_u, *((UINT8 *)p->value));
 				break;
 
 			case INITYPE_UINT16:
@@ -254,7 +254,7 @@ const INITBL	*pterm;
 				break;
 
 			case INITYPE_HEX8:
-				SPRINTF(work, str_x, *((BYTE *)p->value));
+				SPRINTF(work, str_x, *((UINT8 *)p->value));
 				break;
 
 			case INITYPE_HEX16:
@@ -270,9 +270,9 @@ const INITBL	*pterm;
 				break;
 		}
 		if (set == SUCCESS) {
-			file_write(fh, p->item, strlen(p->item));
+			file_write(fh, p->item, (UINT)strlen(p->item));
 			file_write(fh, "=", 1);
-			file_write(fh, work, strlen(work));
+			file_write(fh, work, (UINT)strlen(work));
 			file_write(fh, "\r\n", 2);
 		}
 		p++;

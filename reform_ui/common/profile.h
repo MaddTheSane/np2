@@ -1,38 +1,41 @@
+/**
+ * @file	profile.h
+ * @brief	Interface of the profiler
+ */
 
 #if !defined(NP2_PROFILE_H__)
 #define	NP2_PROFILE_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-BOOL profile_enum(const OEMCHAR *filename, void *arg,
-							BOOL (*proc)(void *arg, const OEMCHAR *para,
-								const OEMCHAR *key, const OEMCHAR *data));
-const OEMCHAR *profile_getarg(const OEMCHAR *str, OEMCHAR *buf, UINT leng);
+/**
+ * An application-defined callback function used with the profile_enum
+ */
+typedef BRESULT (*PROFILEENUMPROC)(void *lpParam, const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpString);
+
+BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC lpFunc);
 
 
+/* profiler */
 
-
-// ---- ‚Ü‚¾ƒeƒXƒg
-
-enum {
-	PFILEH_READONLY		= 0x0001,
-	PFILEH_MODIFY		= 0x0002
+/**
+ * mode
+ */
+enum
+{
+	PFILEH_READONLY		= 0x0001,		/*!< Readonly */
+	PFILEH_MODIFY		= 0x0002		/*!< Modified */
 };
 
-typedef struct {
-	OEMCHAR	*buffer;
-	UINT	buffers;
-	UINT	size;
-	UINT8	hdr[4];
-	UINT	hdrsize;
-	UINT	flag;
-	OEMCHAR	path[MAX_PATH];
-} _PFILEH, *PFILEH;
+struct tagProfileHandle;
+typedef struct tagProfileHandle* PFILEH;	/*!< defines handle */
 
 PFILEH profile_open(const OEMCHAR *filename, UINT flag);
 void profile_close(PFILEH hdl);
+UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl);
 BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
 					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl);
 BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,

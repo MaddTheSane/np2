@@ -2,7 +2,6 @@
 #if !defined(DISABLE_SOUND)
 
 #include	"soundrom.h"
-#include	"tms3631.h"
 #include	"fmtimer.h"
 #include	"opngen.h"
 #include	"psggen.h"
@@ -27,53 +26,33 @@ typedef struct {
 	UINT8	reg[0x400];
 } OPN_T;
 
-typedef struct {
-	UINT16	port;
-	UINT8	psg3reg;
-	UINT8	rhythm;
-} AMD98;
-
-typedef struct {
-	UINT8	porta;
-	UINT8	portb;
-	UINT8	portc;
-	UINT8	mask;
-	UINT8	key[8];
-	int		sync;
-	int		ch;
-} MUSICGEN;
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern	UINT32		usesound;
-extern	OPN_T		opn;
-extern	AMD98		amd98;
-extern	MUSICGEN	musicgen;
+extern	UINT32		g_usesound;
+extern	OPN_T		g_opn;
 
-extern	_TMS3631	tms3631;
-extern	_FMTIMER	fmtimer;
+extern	_FMTIMER	g_fmtimer;
 extern	_OPNGEN		opngen;
 extern	OPNCH		opnch[OPNCH_MAX];
-extern	_PSGGEN		__psg[3];
-extern	_RHYTHM		rhythm;
-extern	_ADPCM		adpcm;
+extern	_PSGGEN		g_psg[3];
+extern	_RHYTHM		g_rhythm;
+extern	_ADPCM		g_adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 
-#define	psg1	__psg[0]
-#define	psg2	__psg[1]
-#define	psg3	__psg[2]
+#define	g_psg1	g_psg[0]
+#define	g_psg2	g_psg[1]
+#define	g_psg3	g_psg[2]
 
 #if defined(SUPPORT_PX)
-extern	OPN_T		opn2;
-extern	OPN_T		opn3;
-extern	_RHYTHM		rhythm2;
-extern	_RHYTHM		rhythm3;
-extern	_ADPCM		adpcm2;
-extern	_ADPCM		adpcm3;
+extern	OPN_T		g_opn2;
+extern	OPN_T		g_opn3;
+extern	_RHYTHM		g_rhythm2;
+extern	_RHYTHM		g_rhythm3;
+extern	_ADPCM		g_adpcm2;
+extern	_ADPCM		g_adpcm3;
 #endif	// defined(SUPPORT_PX)
 
 REG8 fmboard_getjoy(PSGGEN psg);
@@ -84,13 +63,8 @@ void fmboard_extenable(REG8 enable);
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
 void fmboard_bind(void);
 
-void fmboard_fmrestore(REG8 chbase, UINT bank);
-void fmboard_rhyrestore(RHYTHM rhy, UINT bank);
-
-#if defined(SUPPORT_PX)
-void fmboard_fmrestore2(OPN_T* pOpn, REG8 chbase, UINT bank);
-void fmboard_rhyrestore2(OPN_T* pOpn, RHYTHM rhy, UINT bank);
-#endif	// defined(SUPPORT_PX)
+void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank);
+void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 
 #ifdef __cplusplus
 }
@@ -98,7 +72,7 @@ void fmboard_rhyrestore2(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 
 #else
 
-#define	fmboard_reset(t)
+#define	fmboard_reset(c, t)
 #define	fmboard_bind()
 
 #endif
