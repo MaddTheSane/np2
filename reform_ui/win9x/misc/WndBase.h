@@ -30,6 +30,8 @@ public:
 
 	// Window Text Functions
 	BOOL SetWindowText(LPCTSTR lpString);
+	int GetWindowText(LPTSTR lpszStringBuf, int nMaxCount) const;
+	int GetWindowTextLength() const;
 
 	// Font Functions
 	void SetFont(HFONT hFont, BOOL bRedraw = TRUE);
@@ -83,15 +85,6 @@ inline CWndBase& CWndBase::operator=(HWND hWnd)
 }
 
 /**
- * 現在のウィンドウ スタイルを返します
- * @return ウィンドウのスタイル
- */
-inline DWORD CWndBase::GetStyle() const
-{
-	return static_cast<DWORD>(::GetWindowLong(m_hWnd, GWL_STYLE));
-}
-
-/**
  * アタッチ
  * @param[in] hWnd ウィンドウ ハンドル
  */
@@ -118,6 +111,15 @@ inline HWND CWndBase::Detach()
 inline CWndBase::operator HWND() const
 {
 	return m_hWnd;
+}
+
+/**
+ * 現在のウィンドウ スタイルを返します
+ * @return ウィンドウのスタイル
+ */
+inline DWORD CWndBase::GetStyle() const
+{
+	return static_cast<DWORD>(::GetWindowLong(m_hWnd, GWL_STYLE));
 }
 
 /**
@@ -154,6 +156,26 @@ inline BOOL CWndBase::PostMessage(UINT message, WPARAM wParam, LPARAM lParam)
 inline BOOL CWndBase::SetWindowText(LPCTSTR lpString)
 {
 	return ::SetWindowText(m_hWnd, lpString);
+}
+
+/**
+ * 指定されたウィンドウのタイトルバーのテキストをバッファへコピーします
+ * @param[in] lpszStringBuf バッファへのポインタを指定します。このバッファにテキストが格納されます
+ * @param[in] nMaxCount バッファにコピーする文字の最大数を指定します。テキストのこのサイズを超える部分は、切り捨てられます。NULL 文字も数に含められます
+ * @return コピーされた文字列の文字数が返ります (終端の NULL 文字は含められません)
+ */
+inline int CWndBase::GetWindowText(LPTSTR lpszStringBuf, int nMaxCount) const
+{
+	return ::GetWindowText(m_hWnd, lpszStringBuf, nMaxCount);
+}
+
+/**
+ * 指定されたウィンドウのタイトルバーテキストの文字数を返します
+ * @return 関数が成功すると、テキストの文字数が返ります
+ */
+inline int CWndBase::GetWindowTextLength() const
+{
+	return ::GetWindowTextLength(m_hWnd);
 }
 
 /**
