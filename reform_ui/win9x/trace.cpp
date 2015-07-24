@@ -1,88 +1,115 @@
-#include	"compiler.h"
-#include	<stdarg.h>
-#include	"resource.h"
-#include	"strres.h"
-#include	"textfile.h"
-#include	"dosio.h"
-#include	"ini.h"
-#include	"menu.h"
+/**
+ * @file	trace.cpp
+ * @brief	トレース クラスの動作の定義を行います
+ */
+
+#include "compiler.h"
+#include <stdarg.h>
+#include "resource.h"
+#include "misc\WndProc.h"
+#include "strres.h"
+#include "textfile.h"
+#include "dosio.h"
+#include "ini.h"
+#include "menu.h"
 
 #ifdef TRACE
 
-#ifdef STRICT
-#define	SUBCLASSPROC	WNDPROC
-#else
-#define	SUBCLASSPROC	FARPROC
-#endif
-
-#define	IDC_VIEW		(WM_USER + 100)
 #define	VIEW_BUFFERSIZE	4096
 #define	VIEW_FGCOLOR	0x000000
 #define	VIEW_BGCOLOR	0xffffff
 #define	VIEW_TEXT		"ＭＳ ゴシック"
 #define	VIEW_SIZE		12
 
-typedef struct
+/**
+ * @brief トレース ウィンドウ クラス
+ */
+class CTraceWnd : public CWndProc
 {
-	UINT8		en;
-	TEXTFILEH	tf;
-	HWND		hwnd;
-} TRACEWIN;
+public:
+	static CTraceWnd* GetInstance();
 
-typedef struct {
+	CTraceWnd();
+	void Initialize();
+	void Deinitialize();
+	bool IsTrace() const;
+	bool IsVerbose() const;
+	bool IsEnabled() const;
+	void AddString(LPCTSTR lpString);
+
+protected:
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+	int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void OnSysCommand(UINT nID, LPARAM lParam);
+	void OnEnterMenuLoop(BOOL bIsTrackPopupMenu);
+
+private:
+	static CTraceWnd sm_instance;		/*!< 唯一のインスタンスです */
+	UINT8 m_nFlags;						/*!< フラグ */
+	TEXTFILEH m_tfh;					/*!< テキスト ファイル ハンドル */
+	HBRUSH m_hBrush;					/*!< ブラシ */
+	HFONT m_hFont;						/*!< フォント */
+	CWndProc m_wndView;					/*!< テキスト コントロール */
+
+private:
+	int viewpos;
+	int viewleng;
+	TCHAR viewbuf[VIEW_BUFFERSIZE * 2];
+	void View_ScrollToBottom();
+	void View_ClrString();
+	void View_AddString(const OEMCHAR *string);
+};
+
+struct TRACECFG
+{
 	int		posx;
 	int		posy;
 	int		width;
 	int		height;
-} TRACECFG;
+};
 
-extern	HINSTANCE	g_hInstance;
-
-static const TCHAR ProgTitle[] = _T("console");
-static const TCHAR ClassName[] = _T("TRACE-console");
-static const TCHAR ClassEdit[] = _T("EDIT");
-static const TCHAR viewfont[] = _T(VIEW_TEXT);
+static const TCHAR s_szTitle[] = TEXT("console");
+static const TCHAR s_szClassName[] = TEXT("TRACE-console");
+static const TCHAR s_szViewFont[] = TEXT(VIEW_TEXT);
 
 static const OEMCHAR crlf[] = OEMTEXT("\r\n");
 
-static	TRACEWIN	tracewin;
-static	HWND		s_hView = NULL;
-static	HFONT		s_hfView = NULL;
-static	HBRUSH		s_hBrush = NULL;
-static	int			viewpos;
-static	int			viewleng;
-static	TCHAR		viewbuf[VIEW_BUFFERSIZE * 2];
 static	TRACECFG	tracecfg;
 static	int			devpos;
 static	char		devstr[256];
 
 static const OEMCHAR np2trace[] = OEMTEXT("np2trace.ini");
 static const OEMCHAR inititle[] = OEMTEXT("TRACE");
-static const PFTBL initbl[4] = {
-			PFVAL("posx",	PFTYPE_SINT32,	&tracecfg.posx),
-			PFVAL("posy",	PFTYPE_SINT32,	&tracecfg.posy),
-			PFVAL("width",	PFTYPE_SINT32,	&tracecfg.width),
-			PFVAL("height",	PFTYPE_SINT32,	&tracecfg.height)};
+static const PFTBL initbl[4] =
+{
+	PFVAL("posx",	PFTYPE_SINT32,	&tracecfg.posx),
+	PFVAL("posy",	PFTYPE_SINT32,	&tracecfg.posy),
+	PFVAL("width",	PFTYPE_SINT32,	&tracecfg.width),
+	PFVAL("height",	PFTYPE_SINT32,	&tracecfg.height)
+};
 
-static void View_ScrollToBottom(HWND hWnd) {
 
-	int		MinPos;
-	int		MaxPos;
+// ---- View
 
-	GetScrollRange(hWnd, SB_VERT, &MinPos, &MaxPos);
-	PostMessage(hWnd, EM_LINESCROLL, 0, MaxPos);
+void CTraceWnd::View_ScrollToBottom()
+{
+	int MinPos;
+	int MaxPos;
+
+	GetScrollRange(m_wndView, SB_VERT, &MinPos, &MaxPos);
+	m_wndView.PostMessage(EM_LINESCROLL, 0, MaxPos);
 }
 
-static void View_ClrString(void) {
-
+void CTraceWnd::View_ClrString(void)
+{
 	viewpos = 0;
 	viewleng = 0;
 	viewbuf[0] = '\0';
-	SetWindowText(s_hView, viewbuf);
+	m_wndView.SetWindowText(viewbuf);
 }
 
-static void View_AddString(const OEMCHAR *string) {
-
+void CTraceWnd::View_AddString(const OEMCHAR *string)
+{
 	int		slen;
 	int		vpos;
 	int		vlen;
@@ -116,158 +143,218 @@ static void View_AddString(const OEMCHAR *string) {
 	viewbuf[vpos + vlen + 1] = '\n';
 	viewbuf[vpos + vlen + 2] = '\0';
 	viewleng = vlen + 2;
-	SetWindowText(s_hView, viewbuf + vpos);
-	View_ScrollToBottom(s_hView);
+	m_wndView.SetWindowText(viewbuf + vpos);
+	View_ScrollToBottom();
 }
 
 
 // ----
 
-static LRESULT onCreate(HWND hWnd)
+CTraceWnd CTraceWnd::sm_instance;
+
+/**
+ * インスタンスを得る
+ * @return インスタンス
+ */
+inline CTraceWnd* CTraceWnd::GetInstance()
 {
-	HMENU	hMenu;
-	RECT	rc;
-
-	hMenu = GetSystemMenu(hWnd, FALSE);
-	menu_addmenures(hMenu, 0, IDR_TRACE, FALSE);
-
-	CheckMenuItem(hMenu, IDM_TRACE_TRACE,
-								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDM_TRACE_VERBOSE,
-								(tracewin.en & 2)?MF_CHECKED:MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDM_TRACE_ENABLE,
-								(tracewin.en & 4)?MF_CHECKED:MF_UNCHECKED);
-
-	GetClientRect(hWnd, &rc);
-	s_hView = CreateWindowEx(WS_EX_CLIENTEDGE,
-							ClassEdit, NULL,
-							WS_CHILD | WS_VISIBLE | ES_READONLY | ES_LEFT |
-							ES_MULTILINE | WS_VSCROLL | ES_AUTOVSCROLL,
-							0, 0, rc.right, rc.bottom,
-							hWnd, (HMENU)IDC_VIEW, g_hInstance, NULL);
-	SendMessage(s_hView, EM_SETLIMITTEXT, (WPARAM)VIEW_BUFFERSIZE, 0);
-
-	s_hfView = CreateFont(VIEW_SIZE, 0, 0, 0, 0, 0, 0, 0, 
-					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-					DEFAULT_QUALITY, FIXED_PITCH, viewfont);
-	if (s_hfView)
-	{
-		SendMessage(s_hView, WM_SETFONT, (WPARAM)s_hfView,
-												MAKELPARAM(TRUE, 0));
-	}
-
-	s_hBrush = CreateSolidBrush(VIEW_BGCOLOR);
-	SetFocus(s_hView);
-
-	return TRUE;
+	return &sm_instance;
 }
 
-static LRESULT onSysCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
+/**
+ * コンストラクタ
+ */
+CTraceWnd::CTraceWnd()
+	: m_nFlags(0)
+	, m_tfh(NULL)
+	, m_hBrush(NULL)
+	, m_hFont(NULL)
 {
-	HMENU	hMenu;
+}
 
-	hMenu = GetSystemMenu(hWnd, FALSE);
-	switch(wParam)
+/**
+ * Trace は有効?
+ * @retval true 有効
+ * @retval false 無効
+ */
+inline bool CTraceWnd::IsTrace() const
+{
+	return ((m_nFlags & 1) != 0);
+}
+
+/**
+ * Verbose は有効?
+ * @retval true 有効
+ * @retval false 無効
+ */
+inline bool CTraceWnd::IsVerbose() const
+{
+	return ((m_nFlags & 2) != 0);
+}
+
+/**
+ * 有効?
+ * @retval true 有効
+ * @retval false 無効
+ */
+inline bool CTraceWnd::IsEnabled() const
+{
+	return ((m_nFlags & 4) || (m_tfh != NULL));
+}
+
+/**
+ * ログ追加
+ * @param[in] lpString 文字列
+ */
+void CTraceWnd::AddString(LPCTSTR lpString)
+{
+	if ((m_nFlags & 4) && (m_wndView.IsWindow()))
+	{
+		View_AddString(lpString);
+	}
+	if (m_tfh != NULL)
+	{
+		textfile_write(m_tfh, lpString);
+		textfile_write(m_tfh, crlf);
+	}
+}
+
+/**
+ * フレームワークは、Windows のウィンドウは [作成] または CreateEx のメンバー関数を呼び出すことによって作成されたアプリケーションが必要とすると、このメンバー関数を呼び出します
+ * @param[in] lpCreateStruct 作成されたオブジェクトに関する情報が含まれています。
+ * @retval 0 成功
+ * @retval -1 失敗
+ */
+int CTraceWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	HMENU hMenu = GetSystemMenu(FALSE);
+	menu_addmenures(hMenu, 0, IDR_TRACE, FALSE);
+
+	m_hBrush = ::CreateSolidBrush(VIEW_BGCOLOR);
+
+	RECT rc;
+	GetClientRect(&rc);
+	if (m_wndView.CreateEx(WS_EX_CLIENTEDGE, TEXT("EDIT"), NULL, WS_CHILD | WS_VISIBLE | ES_READONLY | ES_LEFT | ES_MULTILINE | WS_VSCROLL | ES_AUTOVSCROLL, 0, 0, rc.right, rc.bottom, m_hWnd, NULL))
+	{
+		m_wndView.SendMessage(EM_SETLIMITTEXT, VIEW_BUFFERSIZE, 0);
+
+		m_hFont = ::CreateFont(VIEW_SIZE, 0, 0, 0, 0, 0, 0, 0,  SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH, s_szViewFont);
+		if (m_hFont)
+		{
+			m_wndView.SetFont(m_hFont);
+		}
+		m_wndView.SetFocus();
+	}
+
+	return 0;
+}
+
+/**
+ * フレームワークは、ユーザーがコントロール メニューからコマンドを選択したとき、または最大化または最小化ボタンを選択すると、このメンバー関数を呼び出します
+ * @param[in] nID 必要なシステム コマンドの種類を指定します
+ * @param[in] lParam カーソルの座標
+ */
+void CTraceWnd::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	switch (nID)
 	{
 		case IDM_TRACE_TRACE:
-			tracewin.en ^= 1;
-			CheckMenuItem(hMenu, IDM_TRACE_TRACE,
-								(tracewin.en & 1)?MF_CHECKED:MF_UNCHECKED);
+			m_nFlags ^= 1;
 			break;
 
 		case IDM_TRACE_VERBOSE:
-			tracewin.en ^= 2;
-			CheckMenuItem(hMenu, IDM_TRACE_VERBOSE,
-								(tracewin.en & 2)?MF_CHECKED:MF_UNCHECKED);
+			m_nFlags ^= 2;
 			break;
 
 		case IDM_TRACE_ENABLE:
-			tracewin.en ^= 4;
-			CheckMenuItem(hMenu, IDM_TRACE_ENABLE,
-								(tracewin.en & 4)?MF_CHECKED:MF_UNCHECKED);
+			m_nFlags ^= 4;
 			break;
 
 		case IDM_TRACE_FILEOUT:
-			if (tracewin.tf != NULL)
+			if (m_tfh != NULL)
 			{
-				textfile_close(tracewin.tf);
-				tracewin.tf = NULL;
+				textfile_close(m_tfh);
+				m_tfh = NULL;
 			}
 			else
 			{
-				tracewin.tf = textfile_create(OEMTEXT("traceout.txt"),
-																0x800);
+				m_tfh = textfile_create(OEMTEXT("traceout.txt"), 0x800);
 			}
-			CheckMenuItem(hMenu, IDM_TRACE_FILEOUT,
-									(tracewin.tf)?MF_CHECKED:MF_UNCHECKED);
 			break;
 
 		case IDM_TRACE_CLEAR:
 			View_ClrString();
 			break;
-
-		default:
-			return DefWindowProc(hWnd, WM_SYSCOMMAND, wParam, lParam);
 	}
-	return FALSE;
 }
 
-static LRESULT CALLBACK traceproc(HWND hWnd, UINT uMsg,
-												WPARAM wParam, LPARAM lParam)
+/**
+ * Windows プロシージャ (WindowProc) を提供します
+ * @param[in] message 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理に使用する追加情報を提供します
+ * @param[in] lParam メッセージの処理に使用する追加情報を提供します
+ * @return 戻り値は、メッセージによって異なります
+ */
+LRESULT CTraceWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
-	RECT	rc;
-
-	switch(uMsg)
+	switch (nMsg)
 	{
 		case WM_CREATE:
-			return onCreate(hWnd);
+			return OnCreate(reinterpret_cast<LPCREATESTRUCT>(lParam));
 
 		case WM_SYSCOMMAND:
-			return onSysCommand(hWnd, wParam, lParam);
+			OnSysCommand(wParam, lParam);
+			return DefWindowProc(nMsg, wParam, lParam);
+
+		case WM_ENTERMENULOOP:
+			OnEnterMenuLoop(wParam);
+			break;
 
 		case WM_MOVE:
-			if (!(GetWindowLong(hWnd, GWL_STYLE) &
-											(WS_MAXIMIZE | WS_MINIMIZE)))
+			if (!(GetStyle() & (WS_MAXIMIZE | WS_MINIMIZE)))
 			{
-				GetWindowRect(hWnd, &rc);
+				RECT rc;
+				GetWindowRect(&rc);
 				tracecfg.posx = rc.left;
 				tracecfg.posy = rc.top;
 			}
 			break;
 
 		case WM_SIZE:							// window resize
-			if (!(GetWindowLong(hWnd, GWL_STYLE) &
-										(WS_MAXIMIZE | WS_MINIMIZE)))
+			if (!(GetStyle() & (WS_MAXIMIZE | WS_MINIMIZE)))
 			{
-				GetWindowRect(hWnd, &rc);
+				RECT rc;
+				GetWindowRect(&rc);
 				tracecfg.width = rc.right - rc.left;
 				tracecfg.height = rc.bottom - rc.top;
 			}
-			MoveWindow(s_hView, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
-			View_ScrollToBottom(s_hView);
+			m_wndView.MoveWindow(0, 0, LOWORD(lParam), HIWORD(lParam));
+			View_ScrollToBottom();
 			break;
 
 		case WM_SETFOCUS:
-			SetFocus(s_hView);
-			return(0L);
+			m_wndView.SetFocus();
+			break;
 
 		case WM_CTLCOLORSTATIC:
 		case WM_CTLCOLOREDIT:
 			SetTextColor((HDC)wParam, VIEW_FGCOLOR);
 			SetBkColor((HDC)wParam, VIEW_BGCOLOR);
-			return((LRESULT)s_hBrush);
+			return reinterpret_cast<LRESULT>(m_hBrush);
 
 		case WM_CLOSE:
 			break;
 
 		case WM_DESTROY:
-			if (s_hBrush)
+			if (m_hBrush)
 			{
-				DeleteObject(s_hBrush);
+				::DeleteObject(m_hBrush);
+				m_hBrush = NULL;
 			}
-			if (s_hfView)
+			if (m_hFont)
 			{
-				DeleteObject(s_hfView);
+				::DeleteObject(m_hFont);
+				m_hFont = NULL;
 			}
 			break;
 #if 0
@@ -280,42 +367,59 @@ static LRESULT CALLBACK traceproc(HWND hWnd, UINT uMsg,
 			break;
 
 		case WM_ERASEBKGND:
-			return FALSE;
+			break;
 #endif
 		default:
-			return DefWindowProc(hWnd, uMsg, wParam, lParam);
+			return DefWindowProc(nMsg, wParam, lParam);
 	}
 	return FALSE;
 }
 
+/**
+ * フレームワークは、メニュー ループ開始時に、このメンバー関数を呼び出します
+ * @param[in] bIsTrackPopupMenu TrackPopupMenu 関数を利用した場合 TRUE
+ */
+void CTraceWnd::OnEnterMenuLoop(BOOL bIsTrackPopupMenu)
+{
+	HMENU hMenu = GetSystemMenu(FALSE);
+	::CheckMenuItem(hMenu, IDM_TRACE_TRACE, (m_nFlags & 1) ? MF_CHECKED : MF_UNCHECKED);
+	::CheckMenuItem(hMenu, IDM_TRACE_VERBOSE, (m_nFlags & 2) ? MF_CHECKED : MF_UNCHECKED);
+	::CheckMenuItem(hMenu, IDM_TRACE_ENABLE, (m_nFlags & 4) ? MF_CHECKED:MF_UNCHECKED);
+	::CheckMenuItem(hMenu, IDM_TRACE_FILEOUT, (m_tfh != NULL) ? MF_CHECKED : MF_UNCHECKED);
+}
+
+
 
 // ----
 
-void trace_init(void) {
+void trace_init(void)
+{
+	CTraceWnd::GetInstance()->Initialize();
+}
 
-	HWND	hwnd;
-
-	ZeroMemory(&tracewin, sizeof(tracewin));
+/**
+ * 初期化
+ */
+void CTraceWnd::Initialize()
+{
 	WNDCLASS wc;
+	ZeroMemory(&wc, sizeof(wc));
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = traceproc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = g_hInstance;
-	wc.hIcon = NULL;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = ClassName;
-	if (!RegisterClass(&wc)) {
+	wc.lpfnWndProc = ::DefWindowProc;
+	wc.hInstance = GetInstanceHandle();
+	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(WHITE_BRUSH));
+	wc.lpszClassName = s_szClassName;
+	if (!::RegisterClass(&wc))
+	{
 		return;
 	}
 
 #if 1
-	tracewin.en = 4;
+	m_nFlags = 4;
 #else
-	tracewin.en = 1;
-	tracewin.tf = textfile_create(OEMTEXT("traceout.txt"), 0x800);
+	m_nFlags = 1;
+	m_tfh = textfile_create(OEMTEXT("traceout.txt"), 0x800);
 #endif
 
 	tracecfg.posx = CW_USEDEFAULT;
@@ -324,119 +428,103 @@ void trace_init(void) {
 	tracecfg.height = CW_USEDEFAULT;
 	ini_read(file_getcd(np2trace), inititle, initbl, NELEMENTS(initbl));
 
-	hwnd = CreateWindowEx(WS_EX_CONTROLPARENT,
-							ClassName, ProgTitle,
-							WS_OVERLAPPEDWINDOW,
-							tracecfg.posx, tracecfg.posy,
-							tracecfg.width, tracecfg.height,
-							NULL, NULL, g_hInstance, NULL);
-	tracewin.hwnd = hwnd;
-	if (hwnd == NULL) {
+	if (!CreateEx(WS_EX_CONTROLPARENT, s_szClassName, s_szTitle, WS_OVERLAPPEDWINDOW, tracecfg.posx, tracecfg.posy, tracecfg.width, tracecfg.height, NULL, NULL))
+	{
 		return;
 	}
-	ShowWindow(hwnd, SW_SHOW);
-	UpdateWindow(hwnd);
+	ShowWindow(SW_SHOW);
+	UpdateWindow();
 }
 
-void trace_term(void) {
-
-	if (tracewin.tf != NULL) {
-		textfile_close(tracewin.tf);
-		tracewin.tf = NULL;
-	}
-	if (tracewin.hwnd) {
-		DestroyWindow(tracewin.hwnd);
-		tracewin.hwnd = NULL;
-		ini_write(file_getcd(np2trace), inititle, initbl, NELEMENTS(initbl));
-	}
+void trace_term(void)
+{
+	CTraceWnd::GetInstance()->Deinitialize();
 }
 
-void trace_fmt(const char *fmt, ...) {
+/**
+ * 解放
+ */
+void CTraceWnd::Deinitialize()
+{
+	if (m_tfh != NULL)
+	{
+		textfile_close(m_tfh);
+		m_tfh = NULL;
+	}
 
-	BOOL	en;
-	va_list	ap;
-	OEMCHAR	buf[0x1000];
+	DestroyWindow();
+	ini_write(file_getcd(np2trace), inititle, initbl, NELEMENTS(initbl));
+}
 
-	en = (tracewin.en & 1) &&
-		((tracewin.en & 4) || (tracewin.tf != NULL));
-	if (en) {
+void trace_fmt(const char *fmt, ...)
+{
+	CTraceWnd* pWnd = CTraceWnd::GetInstance();
+
+	if ((pWnd->IsTrace()) && (pWnd->IsEnabled()))
+	{
+		va_list ap;
 		va_start(ap, fmt);
 #if defined(OSLANG_UCS2)
 		OEMCHAR cnvfmt[0x800];
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
-												cnvfmt, NELEMENTS(cnvfmt));
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1, cnvfmt, NELEMENTS(cnvfmt));
+		OEMCHAR buf[0x1000];
 		vswprintf(buf, cnvfmt, ap);
 #else
+		OEMCHAR buf[0x1000];
 		vsprintf(buf, fmt, ap);
 #endif
 		va_end(ap);
-		if ((tracewin.en & 4) && (s_hView)) {
-			View_AddString(buf);
-		}
-		if (tracewin.tf != NULL) {
-			textfile_write(tracewin.tf, buf);
-			textfile_write(tracewin.tf, crlf);
-		}
+		pWnd->AddString(buf);
 	}
 }
 
-void trace_fmt2(const char *fmt, ...) {
+void trace_fmt2(const char *fmt, ...)
+{
+	CTraceWnd* pWnd = CTraceWnd::GetInstance();
 
-	BOOL	en;
-	va_list	ap;
-	OEMCHAR	buf[0x1000];
-
-	en = (tracewin.en & 2) &&
-		((tracewin.en & 4) || (tracewin.tf != NULL));
-	if (en) {
+	if ((pWnd->IsVerbose()) && (pWnd->IsEnabled()))
+	{
+		va_list ap;
 		va_start(ap, fmt);
 #if defined(OSLANG_UCS2)
 		OEMCHAR cnvfmt[0x800];
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1,
-												cnvfmt, NELEMENTS(cnvfmt));
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1, cnvfmt, NELEMENTS(cnvfmt));
+
+		OEMCHAR buf[0x1000];
 		vswprintf(buf, cnvfmt, ap);
 #else
+		OEMCHAR buf[0x1000];
 		vsprintf(buf, fmt, ap);
 #endif
 		va_end(ap);
-		if ((tracewin.en & 4) && (s_hView)) {
-			View_AddString(buf);
-		}
-		if (tracewin.tf != FILEH_INVALID) {
-			textfile_write(tracewin.tf, buf);
-			textfile_write(tracewin.tf, crlf);
-		}
+		pWnd->AddString(buf);
 	}
 }
 
-void trace_char(char c) {
-
-	if ((c == 0x0a) || (c == 0x0d)) {
-		if (devpos) {
+void trace_char(char c)
+{
+	if ((c == 0x0a) || (c == 0x0d))
+	{
+		if (devpos)
+		{
 			devstr[devpos] = '\0';
 #if defined(OSLANG_UCS2)
 			TCHAR pdevstr[0x800];
-			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, devstr, -1,
-												pdevstr, NELEMENTS(pdevstr));
+			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, devstr, -1, pdevstr, NELEMENTS(pdevstr));
 #else
 			const OEMCHAR *pdevstr = devstr;
 #endif
-			if ((tracewin.en & 4) && (s_hView))
-			{
-				View_AddString(pdevstr);
-			}
-			if (tracewin.tf != NULL) {
-				textfile_write(tracewin.tf, pdevstr);
-				textfile_write(tracewin.tf, crlf);
-			}
+			CTraceWnd::GetInstance()->AddString(pdevstr);
 			devpos = 0;
 		}
 	}
-	else {
-		if (devpos < (sizeof(devstr) - 1)) {
+	else
+	{
+		if (devpos < (sizeof(devstr) - 1))
+		{
 			devstr[devpos++] = c;
 		}
 	}
 }
-#endif
 
+#endif
