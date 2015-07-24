@@ -16,6 +16,7 @@ class CWndProc : public CWndBase
 public:
 	static void Initialize(HINSTANCE hInstance);
 	static void Deinitialize();
+	static HINSTANCE GetInstanceHandle();
 	static void SetResourceHandle(HINSTANCE hInstance);
 	static HINSTANCE GetResourceHandle();
 
@@ -57,6 +58,15 @@ private:
 	WNDPROC m_pfnSuper;								//!< 下位プロシージャ
 	static LRESULT CALLBACK CbtFilterHook(int nCode, WPARAM wParam, LPARAM lParam);
 };
+
+/**
+ * インスタンス ハンドルを取得
+ * @return インスタンス ハンドル
+ */
+inline HINSTANCE CWndProc::GetInstanceHandle()
+{
+	return sm_hInstance;
+}
 
 /**
  * リソース ハンドルを設定
