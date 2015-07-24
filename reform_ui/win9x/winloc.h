@@ -1,23 +1,6 @@
 
 void winloc_setclientsize(HWND hwnd, int width, int height);
 
-
-// ----
-
-typedef struct {
-	UINT	flag;
-	int		gx;
-	int		gy;
-	int		tx;
-	int		ty;
-} WINLOC;
-
-void winloc_movingstart(WINLOC *wl);
-void winloc_movingproc(WINLOC *wl, RECT *rect);
-
-
-// ----
-
 typedef struct {
 	HWND	hwnd;
 	RECT	rect;
