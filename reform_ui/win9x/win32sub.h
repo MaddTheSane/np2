@@ -36,8 +36,6 @@
 #endif
 #endif
 
-#define	LOADSTRING			LoadString
-
 #ifdef __cplusplus
 extern "C" {
 #endif
