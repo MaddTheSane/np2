@@ -1,10 +1,4 @@
 
-#ifdef STRICT
-#define	SUBCLASSPROC	WNDPROC
-#else
-#define	SUBCLASSPROC	FARPROC
-#endif
-
 // for VC6SDK
 #if (_MSC_VER < 1300)
 #ifndef LONG_PTR

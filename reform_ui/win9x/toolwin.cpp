@@ -80,7 +80,7 @@ typedef struct {
 	HDC				hdcfont;
 	HBRUSH			access[2];
 	HWND			sub[IDC_MAXITEMS];
-	SUBCLASSPROC	subproc[IDC_MAXITEMS];
+	WNDPROC			subproc[IDC_MAXITEMS];
 } TOOLWIN;
 
 #define	GTWLP_FOCUS		(NP2GWLP_SIZE + (0 * sizeof(LONG_PTR)))
@@ -432,7 +432,7 @@ static void toolwincreate(HWND hWnd) {
 		toolwin.sub[i] = sub;
 		toolwin.subproc[i] = NULL;
 		if (sub) {
-			toolwin.subproc[i] = (SUBCLASSPROC)GetWindowLongPtr(sub,
+			toolwin.subproc[i] = (WNDPROC)GetWindowLongPtr(sub,
 															GWLP_WNDPROC);
 			SetWindowLongPtr(sub, GWLP_WNDPROC, (LONG_PTR)twsub);
 			SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.hfont,
