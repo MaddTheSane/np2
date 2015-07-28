@@ -5,8 +5,10 @@
 
 #include "compiler.h"
 #include <stdarg.h>
+#include <string>
+#include <atlbase.h>
 #include "resource.h"
-#include "misc\WndProc.h"
+#include "WndProc.h"
 #include "strres.h"
 #include "textfile.h"
 #include "dosio.h"
@@ -34,6 +36,8 @@ public:
 	bool IsTrace() const;
 	bool IsVerbose() const;
 	bool IsEnabled() const;
+	void AddChar(char c);
+	void AddFormat(LPCSTR lpFormat, va_list argptr);
 	void AddString(LPCTSTR lpString);
 
 protected:
@@ -49,6 +53,7 @@ private:
 	HBRUSH m_hBrush;					/*!< ブラシ */
 	HFONT m_hFont;						/*!< フォント */
 	CWndProc m_wndView;					/*!< テキスト コントロール */
+	std::string m_lineBuffer;			/*!< ライン バッファ */
 };
 
 struct TRACECFG
@@ -66,8 +71,6 @@ static const TCHAR s_szViewFont[] = TEXT(VIEW_TEXT);
 static const OEMCHAR crlf[] = OEMTEXT("\r\n");
 
 static	TRACECFG	tracecfg;
-static	int			devpos;
-static	char		devstr[256];
 
 static const OEMCHAR np2trace[] = OEMTEXT("np2trace.ini");
 static const OEMCHAR inititle[] = OEMTEXT("TRACE");
@@ -184,6 +187,41 @@ inline bool CTraceWnd::IsVerbose() const
 inline bool CTraceWnd::IsEnabled() const
 {
 	return ((m_nFlags & 4) || (m_tfh != NULL));
+}
+
+/**
+ * ログ追加
+ * @param[in] c 文字
+ */
+void CTraceWnd::AddChar(char c)
+{
+	if ((c == 0x0a) || (c == 0x0d))
+	{
+		if (!m_lineBuffer.empty())
+		{
+			USES_CONVERSION;
+			AddString(A2CT(m_lineBuffer.c_str()));
+			m_lineBuffer.erase();
+		}
+	}
+	else
+	{
+		m_lineBuffer += c;
+	}
+}
+
+/**
+ * ログ追加
+ * @param[in] lpFormat フォーマット
+ * @param[in] argptr 引数
+ */
+void CTraceWnd::AddFormat(LPCSTR lpFormat, va_list argptr)
+{
+	USES_CONVERSION;
+
+	TCHAR szBuf[4096];
+	_vstprintf(szBuf, A2CT(lpFormat), argptr);
+	AddString(szBuf);
 }
 
 /**
@@ -400,17 +438,8 @@ void trace_fmt(const char *fmt, ...)
 	{
 		va_list ap;
 		va_start(ap, fmt);
-#if defined(OSLANG_UCS2)
-		OEMCHAR cnvfmt[0x800];
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1, cnvfmt, NELEMENTS(cnvfmt));
-		OEMCHAR buf[0x1000];
-		vswprintf(buf, cnvfmt, ap);
-#else
-		OEMCHAR buf[0x1000];
-		vsprintf(buf, fmt, ap);
-#endif
+		pWnd->AddFormat(fmt, ap);
 		va_end(ap);
-		pWnd->AddString(buf);
 	}
 }
 
@@ -422,45 +451,13 @@ void trace_fmt2(const char *fmt, ...)
 	{
 		va_list ap;
 		va_start(ap, fmt);
-#if defined(OSLANG_UCS2)
-		OEMCHAR cnvfmt[0x800];
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fmt, -1, cnvfmt, NELEMENTS(cnvfmt));
-
-		OEMCHAR buf[0x1000];
-		vswprintf(buf, cnvfmt, ap);
-#else
-		OEMCHAR buf[0x1000];
-		vsprintf(buf, fmt, ap);
-#endif
+		pWnd->AddFormat(fmt, ap);
 		va_end(ap);
-		pWnd->AddString(buf);
 	}
 }
 
 void trace_char(char c)
 {
-	if ((c == 0x0a) || (c == 0x0d))
-	{
-		if (devpos)
-		{
-			devstr[devpos] = '\0';
-#if defined(OSLANG_UCS2)
-			TCHAR pdevstr[0x800];
-			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, devstr, -1, pdevstr, NELEMENTS(pdevstr));
-#else
-			const OEMCHAR *pdevstr = devstr;
-#endif
-			CTraceWnd::GetInstance()->AddString(pdevstr);
-			devpos = 0;
-		}
-	}
-	else
-	{
-		if (devpos < (sizeof(devstr) - 1))
-		{
-			devstr[devpos++] = c;
-		}
-	}
+	CTraceWnd::GetInstance()->AddChar(c);
 }
-
 #endif

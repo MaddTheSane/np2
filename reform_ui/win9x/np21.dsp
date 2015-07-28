@@ -1388,6 +1388,14 @@ SOURCE=.\misc\tickcounter.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\trace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\trace.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\tstring.cpp
 # End Source File
 # Begin Source File
@@ -1640,10 +1648,6 @@ SOURCE=.\TIMEMNG.CPP
 # Begin Source File
 
 SOURCE=.\TOOLWIN.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TRACE.CPP
 # End Source File
 # Begin Source File
 
