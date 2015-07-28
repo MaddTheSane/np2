@@ -71,7 +71,7 @@ typedef	signed __int64		SINT64;
 #define	sigsetjmp(env, mask)	setjmp(env)
 #define	siglongjmp(env, val)	longjmp(env, val)
 #endif	// !defined(__GNUC__)
-#define	msgbox(title, msg)		__msgbox(title, msg)
+#define	msgbox(title, msg)		MessageBox(NULL, msg, title, MB_OK)
 
 #define	STRCALL		__stdcall
 
@@ -84,7 +84,6 @@ typedef	signed __int64		SINT64;
 #define	OEMSTRLEN			lstrlen
 
 #include "common.h"
-#include "win32sub.h"
 #include "milstr.h"
 #include "_memory.h"
 #include "rect.h"

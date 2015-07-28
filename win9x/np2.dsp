@@ -1831,10 +1831,6 @@ SOURCE=.\TRACE.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\WIN32SUB.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\WINKBD.CPP
 # End Source File
 # Begin Source File
