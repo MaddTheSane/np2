@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
+#include "misc\tstring.h"
 #include	"sysmng.h"
 #include	"menu.h"
 #include	"np2class.h"
@@ -159,13 +160,12 @@ int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
 BOOL menu_insertmenures(HMENU hMenu, int nPosition, UINT uFlags,
 											UINT_PTR uIDNewItem, UINT uID)
 {
-	BOOL	bResult;
-	TCHAR	szString[128];
+	std::tstring rString(LoadTString(uID));
 
-	bResult = FALSE;
-	if (loadstringresource(uID, szString, NELEMENTS(szString)))
+	BOOL bResult = FALSE;
+	if (!rString.empty())
 	{
-		bResult = InsertMenu(hMenu, nPosition, uFlags, uIDNewItem, szString);
+		bResult = InsertMenu(hMenu, nPosition, uFlags, uIDNewItem, rString.c_str());
 	}
 	return bResult;
 }

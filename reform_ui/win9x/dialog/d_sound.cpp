@@ -13,6 +13,7 @@
 #include "resource.h"
 #include "np2.h"
 #include "dosio.h"
+#include "misc\tstring.h"
 #include "joymng.h"
 #include "sysmng.h"
 #include "menu.h"
@@ -932,7 +933,6 @@ void dialog_sndopt(HWND hWnd)
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[6];
-	TCHAR			szTitle[128];
 
 	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
@@ -965,7 +965,7 @@ void dialog_sndopt(HWND hWnd)
 	psp.pfnDlgProc = (DLGPROC)PAD1optDlgProc;
 	hpsp[5] = CreatePropertySheetPage(&psp);
 
-	loadstringresource(IDS_SOUNDOPTION, szTitle, NELEMENTS(szTitle));
+	std::tstring rTitle(LoadTString(IDS_SOUNDOPTION));
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
@@ -975,7 +975,7 @@ void dialog_sndopt(HWND hWnd)
 	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 6;
 	psh.phpage = hpsp;
-	psh.pszCaption = szTitle;
+	psh.pszCaption = rTitle.c_str();
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);

@@ -11,6 +11,7 @@
 #include "strres.h"
 #include "bmpdata.h"
 #include "dosio.h"
+#include "misc\tstring.h"
 #include "commng.h"
 #include "dialogs.h"
 #include "np2.h"
@@ -44,93 +45,48 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 							LPTSTR pszPath, UINT uSize,
 							BOOL (WINAPI * fnAPI)(LPOPENFILENAME lpofn))
 {
-	LPTSTR		lpszTitle;
-	LPTSTR		lpszFilter;
-	LPTSTR		lpszDefExt;
-	LPTSTR		p;
-	BOOL		bResult;
-
 	if ((lpOFN == NULL) || (pcParam == NULL) ||
 		(pszPath == NULL) || (uSize == 0) || (fnAPI == NULL))
 	{
 		return FALSE;
 	}
 
-	if (!HIWORD(pcParam->lpszTitle))
-	{
-		lpszTitle = lockstringresource(pcParam->lpszTitle);
-		lpOFN->lpstrTitle = lpszTitle;
-	}
-	else
-	{
-		lpszTitle = NULL;
-		lpOFN->lpstrTitle = pcParam->lpszTitle;
-	}
+	std::tstring rTitle(LoadTString(pcParam->lpszTitle));
+	std::tstring rFilter(LoadTString(pcParam->lpszFilter));
+	std::tstring rDefExt(LoadTString(pcParam->lpszDefExt));
 
-	if (!HIWORD(pcParam->lpszFilter))
+	LPTSTR lpFilter = _tcsdup(rFilter.c_str());
+	for (LPTSTR p = lpFilter; p != '\0'; p++)
 	{
-		lpszFilter = lockstringresource(pcParam->lpszFilter);
-		lpOFN->lpstrFilter = lpszFilter;
-	}
-	else
-	{
-		lpszFilter = NULL;
-		lpOFN->lpstrFilter = pcParam->lpszFilter;
-	}
-
-	if (!HIWORD(pcParam->lpszDefExt))
-	{
-		lpszDefExt = lockstringresource(pcParam->lpszDefExt);
-		lpOFN->lpstrDefExt = lpszDefExt;
-	}
-	else
-	{
-		lpszDefExt = NULL;
-		lpOFN->lpstrDefExt = pcParam->lpszDefExt;
-	}
-
-	lpOFN->nFilterIndex = pcParam->nFilterIndex;
-
-
-	p = lpszFilter;
-	if (p)
-	{
-		while(*p != '\0')
-		{
 #if !defined(_UNICODE)
-			if (IsDBCSLeadByte((BYTE)*p))
-			{
-				p += 2;
-				continue;
-			}
-#endif	// !defined(_UNICODE)
-			if (*p == '|')
-			{
-				*p = '\0';
-			}
+		if (IsDBCSLeadByte(static_cast<BYTE>(*p)))
+		{
 			p++;
+			if (*p == '\0')
+			{
+				break;
+			}
+			continue;
+		}
+#endif	// !defined(_UNICODE)
+		if (*p == '|')
+		{
+			*p = '\0';
 		}
 	}
 
+	lpOFN->lpstrTitle = rTitle.c_str();
+	lpOFN->lpstrFilter = lpFilter;
+	lpOFN->lpstrDefExt = rDefExt.c_str();
+	lpOFN->nFilterIndex = pcParam->nFilterIndex;
 	lpOFN->lpstrFile = pszPath;
 	lpOFN->nMaxFile = uSize;
 
-	bResult = (*fnAPI)(lpOFN);
+	const BOOL r = (*fnAPI)(lpOFN);
 
-	if (lpszTitle)
-	{
-		unlockstringresource(lpszTitle);
-	}
-	if (lpszFilter)
-	{
-		unlockstringresource(lpszFilter);
-	}
-	if (lpszDefExt)
-	{
-		unlockstringresource(lpszDefExt);
-	}
+	free(lpFilter);
 
-	return bResult;
+	return r;
 }
 
 BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int *pnRO)
@@ -277,24 +233,13 @@ void dlgs_setcbitem(HWND hWnd, UINT uID, PCCBPARAM pcItem, UINT uItems)
 {
 	HWND	hItem;
 	UINT	i;
-	LPCTSTR lpcszStr;
-	TCHAR	szString[128];
 	int		nIndex;
 
 	hItem = GetDlgItem(hWnd, uID);
 	for (i=0; i<uItems; i++)
 	{
-		lpcszStr = pcItem[i].lpcszString;
-		if (!HIWORD(lpcszStr))
-		{
-			if (!loadstringresource(LOWORD(lpcszStr),
-											szString, NELEMENTS(szString)))
-			{
-				continue;
-			}
-			lpcszStr = szString;
-		}
-		nIndex = (int)SendMessage(hItem, CB_ADDSTRING, 0, (LPARAM)lpcszStr);
+		std::tstring rString(LoadTString(pcItem[i].lpcszString));
+		nIndex = (int)SendMessage(hItem, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(rString.c_str()));
 		if (nIndex >= 0)
 		{
 			SendMessage(hItem, CB_SETITEMDATA,
@@ -360,10 +305,8 @@ int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault)
 
 static void insertnc(HWND hWnd, int nPos)
 {
-	TCHAR	szNC[128];
-
-	loadstringresource(LOWORD(IDS_NONCONNECT), szNC, NELEMENTS(szNC));
-	SendMessage(hWnd, CB_INSERTSTRING, (WPARAM)nPos, (LPARAM)szNC);
+	std::tstring rNC(LoadTString(IDS_NONCONNECT));
+	SendMessage(hWnd, CB_INSERTSTRING, (WPARAM)nPos, reinterpret_cast<LPARAM>(rNC.c_str()));
 }
 
 void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname) {

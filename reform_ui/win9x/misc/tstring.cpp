@@ -69,3 +69,20 @@ std::tstring LoadTString(UINT uID)
 
 	return ret;
 }
+
+/**
+ * リソースから文字列をロード
+ * @param[in] uID 文字列ID
+ * @return 文字列
+ */
+std::tstring LoadTString(LPCTSTR lpString)
+{
+	if (HIWORD(lpString))
+	{
+		return std::tstring(lpString);
+	}
+	else
+	{
+		return LoadTString(static_cast<UINT>(LOWORD(lpString)));
+	}
+}

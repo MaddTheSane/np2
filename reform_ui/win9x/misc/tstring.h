@@ -17,3 +17,4 @@ typedef string			tstring;				//!< tchar stringŒ^’è‹`
 }
 
 std::tstring LoadTString(UINT uID);
+std::tstring LoadTString(LPCTSTR lpString);
