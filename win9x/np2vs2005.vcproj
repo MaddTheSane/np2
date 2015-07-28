@@ -1763,10 +1763,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\trace.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.cpp"
 					>
 				</File>
@@ -2087,6 +2083,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\tickcounter.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\trace.cpp"
 						>
 					</File>
 					<File
@@ -2913,10 +2913,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\trace.h"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.h"
 					>
 				</File>
@@ -3045,6 +3041,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\trace.h"
 						>
 					</File>
 					<File

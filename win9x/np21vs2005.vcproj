@@ -1409,10 +1409,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\trace.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.cpp"
 					>
 				</File>
@@ -1694,6 +1690,46 @@
 					<File
 						RelativePath=".\misc\tickcounter.cpp"
 						>
+					</File>
+					<File
+						RelativePath=".\misc\trace.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\misc\tstring.cpp"
@@ -2587,10 +2623,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\trace.h"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.h"
 					>
 				</File>
@@ -2719,6 +2751,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\trace.h"
 						>
 					</File>
 					<File
