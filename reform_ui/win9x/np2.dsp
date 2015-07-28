@@ -1539,6 +1539,14 @@ SOURCE=.\misc\tickcounter.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\tstring.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tstring.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\vc6macros.h
 # End Source File
 # Begin Source File

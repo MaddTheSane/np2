@@ -15,3 +15,5 @@ typedef wstring			tstring;				//!< tchar string Œ^’è‹`
 typedef string			tstring;				//!< tchar stringŒ^’è‹`
 #endif	// _UNICODE
 }
+
+std::tstring LoadTString(UINT uID);
