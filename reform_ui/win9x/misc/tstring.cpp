@@ -9,7 +9,7 @@
 
 /**
  * リソースから文字列をロード
- * @param[in] uID 文字列ID
+ * @param[in] uID リソース識別子
  * @return 文字列
  */
 std::tstring LoadTString(UINT uID)
@@ -72,7 +72,7 @@ std::tstring LoadTString(UINT uID)
 
 /**
  * リソースから文字列をロード
- * @param[in] uID 文字列ID
+ * @param[in] lpString 文字列ID
  * @return 文字列
  */
 std::tstring LoadTString(LPCTSTR lpString)
