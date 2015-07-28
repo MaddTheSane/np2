@@ -2085,6 +2085,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\misc\tstring.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\WndProc.cpp"
 						>
 					</File>
@@ -3040,6 +3044,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tstring.h"
 						>
 					</File>
 					<File

@@ -1,6 +1,7 @@
 #include	"compiler.h"
 #include	"resource.h"
 #include	"np2.h"
+#include "misc\tstring.h"
 #include	"winloc.h"
 #include	"soundmng.h"
 #include	"sysmng.h"
@@ -12,7 +13,6 @@
 #include	"keydisp.h"
 #include	"memdbg32.h"
 #include	"softkbd.h"
-
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
@@ -296,7 +296,6 @@ BOOL kdispwin_initialize(HINSTANCE hInstance) {
 
 void kdispwin_create(HINSTANCE hInstance) {
 
-	TCHAR		szCaption[128];
 	HWND		hwnd;
 	UINT8		mode;
 	CMNPALFN	palfn;
@@ -306,9 +305,8 @@ void kdispwin_create(HINSTANCE hInstance) {
 	}
 	ZeroMemory(&kdispwin, sizeof(kdispwin));
 
-	loadstringresource(LOWORD(IDS_CAPTION_KEYDISP),
-										szCaption, NELEMENTS(szCaption));
-	hwnd = CreateWindow(kdispclass, szCaption,
+	std::tstring rCaption(LoadTString(IDS_CAPTION_KEYDISP));
+	hwnd = CreateWindow(kdispclass, rCaption.c_str(),
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						kdispcfg.posx, kdispcfg.posy,
@@ -873,7 +871,6 @@ void skbdwin_deinitialize(void) {
 
 void skbdwin_create(HINSTANCE hInstance) {
 
-	TCHAR	szCaption[128];
 	HWND	hwnd;
 
 	if (skbdwin.hwnd != NULL) {
@@ -884,9 +881,8 @@ void skbdwin_create(HINSTANCE hInstance) {
 		return;
 	}
 
-	loadstringresource(LOWORD(IDS_CAPTION_SOFTKEY),
-										szCaption, NELEMENTS(szCaption));
-	hwnd = CreateWindow(skbdclass, szCaption,
+	std::tstring rCaption(LoadTString(IDS_CAPTION_SOFTKEY));
+	hwnd = CreateWindow(skbdclass, rCaption.c_str(),
 						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
 						WS_MINIMIZEBOX,
 						skbdcfg.posx, skbdcfg.posy,

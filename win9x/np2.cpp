@@ -20,6 +20,7 @@
 #include "debuguty\viewer.h"
 #include "np2arg.h"
 #include "dosio.h"
+#include "misc\tstring.h"
 #include "commng.h"
 #include "joymng.h"
 #include "mousemng.h"
@@ -121,18 +122,8 @@ static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 {
 	LPCTSTR szCaption = np2oscfg.titles;
 
-	int nRet = 0;
-	if (HIWORD(lpcszText))
-	{
-		nRet = MessageBox(hWnd, lpcszText, szCaption, uType);
-	}
-	else
-	{
-		LPTSTR lpszText = lockstringresource(lpcszText);
-		nRet = MessageBox(hWnd, lpszText, szCaption, uType);
-		unlockstringresource(lpszText);
-	}
-	return nRet;
+	std::tstring rText(LoadTString(lpcszText));
+	return MessageBox(hWnd, rText.c_str(), szCaption, uType);
 }
 
 // ----
@@ -357,7 +348,6 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 	int		nID;
 	OEMCHAR	szPath[MAX_PATH];
 	OEMCHAR	szStat[1024];
-	TCHAR	szFormat[256];
 	TCHAR	szMessage[1024 + 256];
 
 	getstatfilename(szPath, ext, NELEMENTS(szPath));
@@ -372,8 +362,8 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 	}
 	else if ((!force) && (nRet & STATFLAG_DISKCHG))
 	{
-		loadstringresource(IDS_CONFIRM_RESUME, szFormat, NELEMENTS(szFormat));
-		wsprintf(szMessage, szFormat, szStat);
+		std::tstring rFormat(LoadTString(IDS_CONFIRM_RESUME));
+		wsprintf(szMessage, rFormat.c_str(), szStat);
 		nID = messagebox(hWnd, szMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
 	}
 	if (nID == IDYES)

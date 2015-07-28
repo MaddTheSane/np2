@@ -2,6 +2,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
+#include "misc\tstring.h"
 #include	"winloc.h"
 #include	"dosio.h"
 #include	"soundmng.h"
@@ -14,7 +15,6 @@
 #include	"dialogs.h"
 #include	"pccore.h"
 #include	"diskdrv.h"
-
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
@@ -956,8 +956,8 @@ void toolwin_create(HINSTANCE hInstance) {
 
 	HBITMAP	hbmp;
 	BITMAP	bmp;
-	TCHAR	szCaption[128];
 	HWND	hWnd;
+	std::tstring rCaption;
 
 	if (toolwin.hwnd) {
 		return;
@@ -970,9 +970,8 @@ void toolwin_create(HINSTANCE hInstance) {
 	GetObject(hbmp, sizeof(BITMAP), &bmp);
 	toolwin.hbmp = hbmp;
 
-	loadstringresource(LOWORD(IDS_CAPTION_TOOL),
-										szCaption, NELEMENTS(szCaption));
-	hWnd = CreateWindow(np2toolclass, szCaption,
+	rCaption = LoadTString(IDS_CAPTION_TOOL);
+	hWnd = CreateWindow(np2toolclass, rCaption.c_str(),
 							WS_SYSMENU | WS_MINIMIZEBOX,
 							np2tool.posx, np2tool.posy,
 							bmp.bmWidth, bmp.bmHeight,
