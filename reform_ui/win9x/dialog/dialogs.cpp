@@ -55,38 +55,33 @@ static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,
 	std::tstring rFilter(LoadTString(pcParam->lpszFilter));
 	std::tstring rDefExt(LoadTString(pcParam->lpszDefExt));
 
-	LPTSTR lpFilter = _tcsdup(rFilter.c_str());
-	for (LPTSTR p = lpFilter; p != '\0'; p++)
+	for (std::tstring::iterator it = rFilter.begin(); it != rFilter.end(); ++it)
 	{
 #if !defined(_UNICODE)
-		if (IsDBCSLeadByte(static_cast<BYTE>(*p)))
+		if (IsDBCSLeadByte(static_cast<BYTE>(*it)))
 		{
-			p++;
-			if (*p == '\0')
+			++it;
+			if (it == rFilter.end())
 			{
 				break;
 			}
 			continue;
 		}
 #endif	// !defined(_UNICODE)
-		if (*p == '|')
+		if (*it == '|')
 		{
-			*p = '\0';
+			*it = '\0';
 		}
 	}
 
 	lpOFN->lpstrTitle = rTitle.c_str();
-	lpOFN->lpstrFilter = lpFilter;
+	lpOFN->lpstrFilter = rFilter.c_str();
 	lpOFN->lpstrDefExt = rDefExt.c_str();
 	lpOFN->nFilterIndex = pcParam->nFilterIndex;
 	lpOFN->lpstrFile = pszPath;
 	lpOFN->nMaxFile = uSize;
 
-	const BOOL r = (*fnAPI)(lpOFN);
-
-	free(lpFilter);
-
-	return r;
+	return (*fnAPI)(lpOFN);
 }
 
 BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int *pnRO)
