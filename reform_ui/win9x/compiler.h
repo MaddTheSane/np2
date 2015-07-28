@@ -84,7 +84,6 @@ typedef	signed __int64		SINT64;
 #define	OEMSTRLEN			lstrlen
 
 #include "common.h"
-#include "win32sub.h"
 #include "milstr.h"
 #include "_memory.h"
 #include "rect.h"

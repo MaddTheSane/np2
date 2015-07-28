@@ -1404,10 +1404,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\win32sub.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.cpp"
 					>
 				</File>
@@ -2583,10 +2579,6 @@
 				</File>
 				<File
 					RelativePath=".\trace.h"
-					>
-				</File>
-				<File
-					RelativePath=".\win32sub.h"
 					>
 				</File>
 				<File
