@@ -45,9 +45,6 @@ typedef	unsigned int		UINT32;
 typedef	unsigned char	BOOL;
 #endif
 
-typedef	signed char		CHAR;
-typedef	unsigned char	BYTE;
-
 #ifndef	TRUE
 #define	TRUE	1
 #endif

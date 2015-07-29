@@ -1323,7 +1323,7 @@ static BOOL fhdl_wr(void *vpItem, void *vpArg) {
 	UINT	len;
 
 	p = ((HDRVFILE)vpItem)->path;
-	len = OEMSTRLEN(p);
+	len = (UINT)OEMSTRLEN(p);
 	statflag_write((STFLAGH)vpArg, &len, sizeof(len));
 	if (len) {
 		if (len < MAX_PATH) {
@@ -1337,10 +1337,10 @@ static BOOL fhdl_wr(void *vpItem, void *vpArg) {
 static BOOL flist_wr(void *vpItem, void *vpArg) {
 
 	OEMCHAR	*p;
-	int		len;
+	UINT	len;
 
 	p = ((HDRVLST)vpItem)->realname;
-	len = OEMSTRLEN(p);
+	len = (UINT)OEMSTRLEN(p);
 	if (len < MAX_PATH) {
 		ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));
 	}

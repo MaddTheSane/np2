@@ -3,7 +3,7 @@
 extern "C" {
 #endif
 
-BYTE joymng_getstat(void);
+UINT8 joymng_getstat(void);
 
 #ifdef __cplusplus
 }

@@ -351,7 +351,7 @@ void np2info(OEMCHAR *dst, const OEMCHAR *src, int maxlen,
 
 	NP2INFOEX	statex;
 	OEMCHAR		c;
-	int			leng;
+	UINT		leng;
 	OEMCHAR		infwork[12];
 const INFOPROC	*inf;
 const INFOPROC	*infterm;
@@ -399,7 +399,7 @@ const INFOPROC	*infterm;
 				if (c == '%') {
 					break;
 				}
-				if (leng < (int)(NELEMENTS(infwork) - 1)) {
+				if (leng < (NELEMENTS(infwork) - 1)) {
 					infwork[leng++] = c;
 				}
 			}
@@ -419,7 +419,7 @@ const INFOPROC	*infterm;
 				}
 			}
 		}
-		leng = OEMSTRLEN(dst);
+		leng = (UINT)OEMSTRLEN(dst);
 		dst += leng;
 		maxlen -= leng;
 	}

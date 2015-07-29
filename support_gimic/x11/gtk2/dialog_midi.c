@@ -73,7 +73,7 @@ static GtkWidget *mpu98_midiin_entry;
 static GtkWidget *mpu98_module_entry;
 static GtkWidget *mpu98_mimpi_def_checkbutton;
 static GtkWidget *mpu98_mimpi_def_entry;
-static BYTE mpuopt;
+static UINT8 mpuopt;
 
 
 static void
@@ -182,7 +182,7 @@ mpu98_ioport_entry_changed(GtkEditable *e, gpointer d)
 {
 	const gchar *utf8;
 	gchar *p;
-	BYTE val;
+	UINT8 val;
 
 	utf8 = gtk_entry_get_text(GTK_ENTRY(e));
 	if (utf8 != NULL) {
@@ -203,7 +203,7 @@ mpu98_intr_entry_changed(GtkEditable *e, gpointer d)
 {
 	const gchar *utf8;
 	gchar *p;
-	BYTE val;
+	UINT8 val;
 
 	utf8 = gtk_entry_get_text(GTK_ENTRY(e));
 	if (utf8 != NULL) {

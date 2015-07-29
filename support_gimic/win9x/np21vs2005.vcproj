@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -141,7 +141,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -226,7 +226,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -311,7 +311,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;.\debuguty;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\codecnv;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -1413,14 +1413,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\trace.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\win32sub.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.cpp"
 					>
 				</File>
@@ -1440,19 +1432,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewcmn.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\debuguty\viewer.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmem.cpp"
+						RelativePath=".\debuguty\viewitem.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmenu.cpp"
+						RelativePath=".\debuguty\viewmem.cpp"
 						>
 					</File>
 					<File
@@ -1705,6 +1693,54 @@
 					</File>
 					<File
 						RelativePath=".\misc\tickcounter.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\trace.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\misc\tstring.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndProc.cpp"
 						>
 					</File>
 				</Filter>
@@ -2595,14 +2631,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\trace.h"
-					>
-				</File>
-				<File
-					RelativePath=".\win32sub.h"
-					>
-				</File>
-				<File
 					RelativePath=".\winkbd.h"
 					>
 				</File>
@@ -2638,19 +2666,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewcmn.h"
-						>
-					</File>
-					<File
 						RelativePath=".\debuguty\viewer.h"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmem.h"
+						RelativePath=".\debuguty\viewitem.h"
 						>
 					</File>
 					<File
-						RelativePath=".\debuguty\viewmenu.h"
+						RelativePath=".\debuguty\viewmem.h"
 						>
 					</File>
 					<File
@@ -2738,7 +2762,23 @@
 						>
 					</File>
 					<File
+						RelativePath=".\misc\trace.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tstring.h"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\vc6macros.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndBase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndProc.h"
 						>
 					</File>
 				</Filter>

@@ -68,7 +68,7 @@ private:
 	FMDATA m_que[0x400];	/*!< que */
 	UINT8 m_sReg[0x200];	/*!< register */
 
-	int Transaction(const void* lpOutput, size_t cbOutput, void* lpInput = NULL, size_t cbInput = 0);
+	int Transaction(const void* lpOutput, int cbOutput, void* lpInput = NULL, int cbInput = 0);
 	int GetInfo(UINT8 cParam, Devinfo* pInfo);
 	static void TailZeroFill(char* lpBuffer, size_t cbBuffer);
 	UINT GetChipAddr(UINT nAddr) const;

@@ -10,7 +10,7 @@ enum {
 };
 
 typedef struct {
-	BYTE	*ptr;
+	UINT8	*ptr;
 	int	xalign;
 	int	yalign;
 	int	width;
@@ -36,10 +36,10 @@ enum {
 };
 
 typedef struct {
-	BYTE	flag;
-	BYTE	bpp;
-	BYTE	allflash;
-	BYTE	palchanged;
+	UINT8	flag;
+	UINT8	bpp;
+	UINT8	allflash;
+	UINT8	palchanged;
 } SCRNMNG;
 
 extern SCRNMNG *scrnmngp;

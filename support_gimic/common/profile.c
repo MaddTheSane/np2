@@ -131,7 +131,7 @@ BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC l
 	szAppName[0] = '\0';
 	while (textfile_read(fh, szBuffer, NELEMENTS(szBuffer)) == SUCCESS)
 	{
-		cchBuffer = OEMSTRLEN(szBuffer);
+		cchBuffer = (UINT)OEMSTRLEN(szBuffer);
 		lpKeyName = ParseLine(szBuffer, &cchBuffer, &lpString, &cchString);
 		if (lpKeyName)
 		{
@@ -217,8 +217,8 @@ static BRESULT seakey(PFILEH hdl, PFPOS *pfp, const OEMCHAR *app,
 		return(FAILURE);
 	}
 	ZeroMemory(&ret, sizeof(ret));
-	ret.applen = OEMSTRLEN(app);
-	ret.keylen = OEMSTRLEN(key);
+	ret.applen = (UINT)OEMSTRLEN(app);
+	ret.keylen = (UINT)OEMSTRLEN(key);
 	if ((ret.applen == 0) || (ret.keylen == 0)) {
 		return(FAILURE);
 	}
@@ -597,7 +597,7 @@ UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl)
 	OEMCHAR *lpData;
 	UINT cchRemain;
 
-	if ((hdl == NULL) || (cchBuffer == 1))
+	if ((hdl == NULL) || (cchBuffer <= 1))
 	{
 		return 0;
 	}
@@ -684,6 +684,33 @@ BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
 		(data == NULL) || (seakey(hdl, &pfp, app, key) != SUCCESS)) {
 		return(FAILURE);
 	}
+
+	if (pfp.pos != 0)
+	{
+		buf = hdl->buffer + pfp.pos;
+		if ((buf[-1] != '\r') && (buf[-1] != '\n'))
+		{
+			newsize = 0;
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+			newsize++;
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+			newsize++;
+#endif
+			if (replace(hdl, pfp.pos, 0, newsize) != SUCCESS)
+			{
+				return FAILURE;
+			}
+#if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
+			*buf++ = '\r';
+#endif
+#if defined(OSLINEBREAK_LF) || defined(OSLINEBREAK_CRLF)
+			*buf++ = '\n';
+#endif
+			pfp.pos += newsize;
+		}
+	}
+
 	if (!pfp.apphit) {
 		newsize = pfp.applen + 2;
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
@@ -708,7 +735,7 @@ BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
 #endif
 		pfp.pos += newsize;
 	}
-	datalen = OEMSTRLEN(data);
+	datalen = (UINT)OEMSTRLEN(data);
 	newsize = pfp.keylen + 1 + datalen;
 #if defined(OSLINEBREAK_CR) || defined(OSLINEBREAK_CRLF)
 	newsize++;

@@ -57,9 +57,6 @@ typedef struct {
 enum {
 	STATFLAG_BIN			= 0,
 	STATFLAG_TERM,
-#if defined(CGWND_FONTPTR)
-	STATFLAG_CGW,
-#endif
 	STATFLAG_COM,
 	STATFLAG_DMA,
 	STATFLAG_EGC,
@@ -466,33 +463,6 @@ static int flagload_mem(STFLAGH sfh, const SFENTRY *tbl) {
 	(void)tbl;
 	return(ret);
 }
-
-
-// ---- cg window
-
-#if defined(CGWND_FONTPTR)
-static int flagsave_cgwnd(STFLAGH sfh, const SFENTRY *tbl) {
-
-	_CGWINDOW	cgwnd;
-
-	cgwnd = cgwindow;
-	cgwnd.fontlow -= (INTPTR)fontrom;
-	cgwnd.fonthigh -= (INTPTR)fontrom;
-	(void)tbl;
-	return(statflag_write(sfh, &cgwindow, sizeof(cgwindow)));
-}
-
-static int flagload_cgwnd(STFLAGH sfh, const SFENTRY *tbl) {
-
-	int		ret;
-
-	ret = statflag_read(sfh, &cgwindow, sizeof(cgwindow));
-	cgwindow.fontlow += (INTPTR)fontrom;
-	cgwindow.fonthigh += (INTPTR)fontrom;
-	(void)tbl;
-	return(ret);
-}
-#endif
 
 
 // ---- dma
@@ -1278,12 +1248,6 @@ const SFENTRY	*tblterm;
 				ret |= flagsave_common(&sffh->sfh, tbl);
 				break;
 
-#if defined(CGWND_FONTPTR)
-			case STATFLAG_CGW:
-				ret |= flagsave_cgwnd(&sffh->sfh, tbl);
-				break;
-#endif
-
 			case STATFLAG_COM:
 				ret |= flagsave_com(&sffh->sfh, tbl);
 				break;
@@ -1370,9 +1334,6 @@ const SFENTRY	*tblterm;
 		if (tbl < tblterm) {
 			switch(tbl->type) {
 				case STATFLAG_BIN:
-#if defined(CGWND_FONTPTR)
-				case STATFLAG_CGW:
-#endif
 				case STATFLAG_MEM:
 					ret |= flagcheck_versize(&sffh->sfh, tbl);
 					break;
@@ -1480,12 +1441,6 @@ const SFENTRY	*tblterm;
 				case STATFLAG_TERM:
 					done = TRUE;
 					break;
-
-#if defined(CGWND_FONTPTR)
-				case STATFLAG_CGW:
-					ret |= flagload_cgwnd(&sffh->sfh, tbl);
-					break;
-#endif
 
 				case STATFLAG_COM:
 					ret |= flagload_com(&sffh->sfh, tbl);

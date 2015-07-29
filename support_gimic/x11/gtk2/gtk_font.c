@@ -62,14 +62,14 @@ fontmng_terminate(void)
 }
 
 void
-fontmng_setdeffontname(const TCHAR *fontface)
+fontmng_setdeffontname(const OEMCHAR *fontface)
 {
 
 	milstr_ncpy(fontname, fontface, sizeof(fontname));
 }
 
 void *
-fontmng_create(int size, UINT type, const TCHAR *fontface)
+fontmng_create(int size, UINT type, const OEMCHAR *fontface)
 {
 	char buf[256];
 	_FNTMNG fnt;

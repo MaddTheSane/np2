@@ -4,7 +4,7 @@ BOOL kdispwin_initialize(HINSTANCE hInstance);
 void kdispwin_create(HINSTANCE hInstance);
 void kdispwin_destroy(void);
 HWND kdispwin_gethwnd(void);
-void kdispwin_draw(BYTE cnt);
+void kdispwin_draw(UINT8 cnt);
 void kdispwin_readini(void);
 void kdispwin_writeini(void);
 #else

@@ -1,3 +1,9 @@
+/**
+ * @file	trace.h
+ * @brief	トレース クラスの宣言およびインターフェイスの定義をします
+ */
+
+#pragma once
 
 #ifndef TRACE
 
@@ -31,4 +37,3 @@ void trace_fileout(const OEMCHAR *fname);
 #define	APPDEVOUT(arg)	trace_char(arg)
 
 #endif
-
