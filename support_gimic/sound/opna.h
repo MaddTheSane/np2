@@ -14,8 +14,9 @@ enum
 	OPNA_HAS_EXTENDEDFM	= 0x02,		/*!< Is OPNA */
 	OPNA_HAS_ADPCM		= 0x04,		/*!< Has ADPCM DRAM */
 	OPNA_HAS_YM3438		= 0x08,		/*!< Has YM3438 */
-	OPNA_REALCHIP		= 0x10,		/*!< Allow realchip */
-	OPNA_S98			= 0x20		/*!< Supports S98 */
+	OPNA_HAS_VR			= 0x10,		/*!< Has VR */
+	OPNA_REALCHIP		= 0x20,		/*!< Allow realchip */
+	OPNA_S98			= 0x40		/*!< Supports S98 */
 
 };
 

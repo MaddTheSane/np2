@@ -96,7 +96,14 @@ void opna_bind(POPNA opna)
 		{
 			fmboard_fmrestore(opna, 6, 2);
 			fmboard_fmrestore(opna, 9, 3);
-			sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+			if (cCaps & OPNA_HAS_VR)
+			{
+				sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
+			}
+			else
+			{
+				sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+			}
 		}
 		return;
 	}
@@ -114,8 +121,14 @@ void opna_bind(POPNA opna)
 		fmboard_fmrestore(opna, 6, 2);
 		fmboard_fmrestore(opna, 9, 3);
 	}
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
-
+	if (cCaps & OPNA_HAS_VR)
+	{
+		sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
+	}
+	else
+	{
+		sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	}
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
 		fmboard_rhyrestore(opna, &g_rhythm, 0);

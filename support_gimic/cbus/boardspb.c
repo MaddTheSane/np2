@@ -154,7 +154,7 @@ static const IOINP spb_i[4] =
  */
 void boardspb_reset(const NP2CFG *pConfig)
 {
-	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_VR | OPNA_S98);
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
 	g_opn.channels = 6;
@@ -187,7 +187,7 @@ static const IOINP spr_i[4] = {
  */
 void boardspr_reset(const NP2CFG *pConfig)
 {
-	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_S98);
+	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR | OPNA_S98);
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
 	g_opn.reg[0x2ff] = 0;
