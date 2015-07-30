@@ -236,6 +236,64 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 }
 
 /**
+ * Writes 3438 register
+ * @param[in] opna The instance
+ * @param[in] nAddress The address
+ * @param[in] cData The data
+ */
+void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
+{
+	REG8 cChannel;
+
+	if (opna->cCaps & OPNA_HAS_YM3438)
+	{
+		opna->reg[nAddress + 0x200] = cData;
+
+		if (nAddress < 0x30)
+		{
+			if (nAddress == 0x28)
+			{
+				cChannel = cData & 0x0f;
+				if (cChannel < 3)
+				{
+					opngen_keyon(cChannel + 6, cData);
+				}
+				else if ((cChannel >= 4) && (cChannel < 7))
+				{
+					opngen_keyon(cChannel + 5, cData);
+				}
+			}
+			else
+			{
+				if (nAddress == 0x27)
+				{
+					opnch[8].extop = cData & 0xc0;
+				}
+			}
+		}
+		else if (nAddress < 0xc0)
+		{
+			opngen_setreg(6, nAddress, cData);
+		}
+	}
+}
+
+/**
+ * Writes 3438 extened register
+ * @param[in] opna The instance
+ * @param[in] nAddress The address
+ * @param[in] cData The data
+ */
+void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
+{
+	if (opna->cCaps & OPNA_HAS_YM3438)
+	{
+		opna->reg[nAddress + 0x300] = cData;
+		opngen_setreg(9, nAddress, cData);
+	}
+}
+
+/**
  * Reads register
  * @param[in] opna The instance
  * @param[in] nAddress The address
@@ -263,4 +321,44 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
 		return adpcm_readsample(&g_adpcm);
 	}
 	return opna->reg[nAddress + 0x100];
+}
+
+/**
+ * Reads 3438 register
+ * @param[in] opna The instance
+ * @param[in] nAddress The address
+ * @return data
+ */
+REG8 opna_read3438Register(POPNA opna, UINT nAddress)
+{
+	if (opna->cCaps & OPNA_HAS_YM3438)
+	{
+		if (nAddress == 0xff)
+		{
+			return 0;
+		}
+		else if (nAddress >= 0x20)
+		{
+			return opna->reg[nAddress + 0x200];
+		}
+	}
+	return 0xff;
+}
+
+/**
+ * Reads 3438 extended register
+ * @param[in] opna The instance
+ * @param[in] nAddress The address
+ * @return data
+ */
+REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress)
+{
+	if (opna->cCaps & OPNA_HAS_YM3438)
+	{
+		return opna->reg[nAddress + 0x200];
+	}
+	else
+	{
+		return 0xff;
+	}
 }

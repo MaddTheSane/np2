@@ -81,96 +81,58 @@ static REG8 IOINPCALL spb_i18e(UINT port)
 
 // ---- spark board
 
-static void IOOUTCALL spr_o588(UINT port, REG8 dat) {
-
+static void IOOUTCALL spr_o588(UINT port, REG8 dat)
+{
 	g_opn.addr2l = dat;
 //	g_opn.data2 = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spr_o58a(UINT port, REG8 dat) {
-
-	UINT	addr;
-
+static void IOOUTCALL spr_o58a(UINT port, REG8 dat)
+{
 //	g_opn.data2l = dat;
-	addr = g_opn.addr2l;
-	if (addr < 0x30) {
-		if (addr == 0x28) {
-			if ((dat & 0x0f) < 3) {
-				opngen_keyon((dat & 0x0f) + 6, dat);
-			}
-			else if (((dat & 0x0f) != 3) &&
-					((dat & 0x0f) < 7)) {
-				opngen_keyon((dat & 0x0f) + 5, dat);
-			}
-		}
-		else {
-			if (addr == 0x27) {
-				opnch[8].extop = dat & 0xc0;
-			}
-		}
-	}
-	else if (addr < 0xc0) {
-		opngen_setreg(6, addr, dat);
-	}
-	g_opn.reg[addr + 0x200] = dat;
+	opna_write3438Register(&g_opn, g_opn.addr2l, dat);
+
 	(void)port;
 }
 
-static void IOOUTCALL spr_o58c(UINT port, REG8 dat) {
-
+static void IOOUTCALL spr_o58c(UINT port, REG8 dat)
+{
 	g_opn.addr2h = dat;
 //	g_opn.data2 = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spr_o58e(UINT port, REG8 dat) {
-
-	UINT	addr;
-
+static void IOOUTCALL spr_o58e(UINT port, REG8 dat)
+{
 //	g_opn.data2 = dat;
-	addr = g_opn.addr2h;
-	g_opn.reg[addr + 0x300] = dat;
-	if (addr >= 0x30) {
-		opngen_setreg(9, addr, dat);
-	}
+	opna_write3438ExtRegister(&g_opn, g_opn.addr2h, dat);
+
 	(void)port;
 }
 
-static REG8 IOINPCALL spr_i588(UINT port) {
-
+static REG8 IOINPCALL spr_i588(UINT port)
+{
 	(void)port;
-	return(g_fmtimer.status);
+	return g_fmtimer.status;
 }
 
-static REG8 IOINPCALL spr_i58a(UINT port) {
-
-	UINT	addr;
-
-	addr = g_opn.addr2l;
-	if ((addr >= 0x20) && (addr < 0xff)) {
-		return(g_opn.reg[addr + 0x200]);
-	}
-	else if (addr == 0xff) {
-		return(0);
-	}
-	else {
-		(void)port;
-//		return(g_opn.data2);
-		return(0xff);
-	}
+static REG8 IOINPCALL spr_i58a(UINT port)
+{
+	(void)port;
+	return opna_read3438Register(&g_opn, g_opn.addr2l);
 }
 
-static REG8 IOINPCALL spr_i58c(UINT port) {
-
+static REG8 IOINPCALL spr_i58c(UINT port)
+{
 	(void)port;
-	return(g_fmtimer.status & 3);
+	return (g_fmtimer.status & 3);
 }
 
-static REG8 IOINPCALL spr_i58e(UINT port) {
-
+static REG8 IOINPCALL spr_i58e(UINT port)
+{
 	(void)port;
-	return(g_opn.reg[g_opn.addr2l + 0x200]);
+	return opna_read3438ExtRegister(&g_opn, g_opn.addr2l);
 }
 
 

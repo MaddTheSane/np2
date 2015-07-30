@@ -58,9 +58,13 @@ REG8 opna_readExtendedStatus(POPNA opna);
 
 void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
+void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData);
+void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData);
 
 REG8 opna_readRegister(POPNA opna, UINT nAddress);
 REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress);
+REG8 opna_read3438Register(POPNA opna, UINT nAddress);
+REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress);
 
 #ifdef __cplusplus
 }
