@@ -131,7 +131,7 @@ typedef struct {
 	UINT8	pan;				// pan
 	UINT8	extop;				// extendopelator-enable
 	UINT8	stereo;				// stereo-enable
-	UINT8	padding2;
+	UINT8	keyreg;
 } OPNCH;
 
 typedef struct {
@@ -144,7 +144,7 @@ typedef struct {
 	SINT32	outdc;
 	SINT32	outdr;
 	SINT32	calcremain;
-	UINT8	keyreg[OPNCH_MAX];
+//	UINT8	keyreg[OPNCH_MAX];
 } _OPNGEN, *OPNGEN;
 
 typedef struct {
