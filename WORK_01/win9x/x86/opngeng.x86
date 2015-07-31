@@ -175,9 +175,9 @@ ENVTABLE	equ		(_opncfg + opncfg_t.envtable)
 				align	16
 @opngen_getpcm@12:
 				cmp		dword [esp+4], byte 0
-				je		near og_noupdate
+				je		near .noupdate
 				cmp		dword [_g_opngen + opngen_t.playing], byte 0
-				je		near og_noupdate
+				je		near .noupdate
 
 				push	ebx
 				push	esi
@@ -191,32 +191,32 @@ OPN_LENG		equ		16 + 8 + 4
 
 				mov		ebp, edx
 				mov		ebx, [_g_opngen + opngen_t.calcremain]
-og_fmout_st:	mov		eax, ebx
+.fmout_st:		mov		eax, ebx
 				imul	ebx, [_g_opngen + opngen_t.outdl]
 				mov		[esp + OPN_SAMPL], ebx
 				mov		ebx, FMDIV_ENT
 				sub		ebx, eax
 				imul	eax, [_g_opngen + opngen_t.outdr]
 				mov		[esp + OPN_SAMPR], eax
-og_fmout_lp:	mov		[_g_opngen + opngen_t.calcremain], ebx
+.fmout_lp:		mov		[_g_opngen + opngen_t.calcremain], ebx
 				and		dword [_g_opngen + opngen_t.playing], byte 0
 				and		dword [_g_opngen + opngen_t.outdl], byte 0
 				and		dword [_g_opngen + opngen_t.outdc], byte 0
 				and		dword [_g_opngen + opngen_t.outdr], byte 0
 				mov		ch, [_g_opngen + opngen_t.playchannels]
 				mov		esi, _g_opngen + opngen_t.opnch
-og_calcch_lp:	mov		cl, [esi + ch_t.outslot]
+.calcch_lp:		mov		cl, [esi + ch_t.outslot]
 				test	cl, [esi + ch_t.playing]
-				je		near og_calcch_nt
+				je		near .calcch_nt
 				and		dword [_g_opngen + opngen_t.feedback2], byte 0
 				and		dword [_g_opngen + opngen_t.feedback3], byte 0
 				and		dword [_g_opngen + opngen_t.feedback4], byte 0
 				mov		edi, esi
-				calcenv	envcalc1, envret1			; slot1 calculate
-				jl		near og_calcslot3
+				calcenv	.envcalc1, .envret1			; slot1 calculate
+				jl		near .calcslot3
 				mov		cl, [esi + ch_t.feedback]
 				test	cl, cl
-				je		short og_nofeed
+				je		short .nofeed
 				mov		eax, [esi + ch_t.op1fb]		; with feedback
 				mov		ebx, eax
 				shr		eax, cl
@@ -224,42 +224,42 @@ og_calcch_lp:	mov		cl, [esi + ch_t.outslot]
 				mov		[esi + ch_t.op1fb], eax
 				add		eax, ebx
 				sar		eax, 1
-				jmp		short og_algchk
-og_nofeed:		xor		eax, eax					; without feedback
+				jmp		short .algchk
+.nofeed:		xor		eax, eax					; without feedback
 				op_out
-og_algchk:		cmp		byte [esi + ch_t.algorithm], 5
-				jne		short og_calcalg5
+.algchk:		cmp		byte [esi + ch_t.algorithm], 5
+				jne		short .calcalg5
 				mov		[_g_opngen + opngen_t.feedback2], eax		; case ALG == 5
 				mov		[_g_opngen + opngen_t.feedback3], eax
 				mov		[_g_opngen + opngen_t.feedback4], eax
-				jmp		short og_calcslot3
-og_calcalg5:	mov		ebx, [esi + ch_t.connect1]	; case ALG != 5
+				jmp		short .calcslot3
+.calcalg5:		mov		ebx, [esi + ch_t.connect1]	; case ALG != 5
 				add		[ebx], eax
-og_calcslot3:	add		edi, byte slot_t_size		; slot3 calculate
-				calcenv	envcalc2, envret2
-				jl		short og_calcslot2
+.calcslot3:		add		edi, byte slot_t_size		; slot3 calculate
+				calcenv	.envcalc2, .envret2
+				jl		short .calcslot2
 				mov		eax, [_g_opngen + opngen_t.feedback2]
 				op_out
 				mov		ebx, [esi + ch_t.connect2]
 				add		[ebx], eax
-og_calcslot2:	add		edi, byte slot_t_size		; slot2 calculate
-				calcenv	envcalc3, envret3
-				jl		short og_calcslot4
+.calcslot2:		add		edi, byte slot_t_size		; slot2 calculate
+				calcenv	.envcalc3, .envret3
+				jl		short .calcslot4
 				mov		eax, [_g_opngen + opngen_t.feedback3]
 				op_out
 				mov		ebx, [esi + ch_t.connect3]
 				add		[ebx], eax
-og_calcslot4:	add		edi, byte slot_t_size		; slot4 calculate
-				calcenv	envcalc4, envret4
-				jl		short og_calcsloted
+.calcslot4:		add		edi, byte slot_t_size		; slot4 calculate
+				calcenv	.envcalc4, .envret4
+				jl		short .calcsloted
 				mov		eax, [_g_opngen + opngen_t.feedback4]
 				op_out
 				mov		ebx, [esi + ch_t.connect4]
 				add		[ebx], eax
-og_calcsloted:	inc		dword [_g_opngen + opngen_t.playing]
-og_calcch_nt:	add		esi, ch_t_size
+.calcsloted:	inc		dword [_g_opngen + opngen_t.playing]
+.calcch_nt:		add		esi, ch_t_size
 				dec		ch
-				jne		near og_calcch_lp
+				jne		near .calcch_lp
 				mov		eax, [_g_opngen + opngen_t.outdc]
 				add		[_g_opngen + opngen_t.outdl], eax
 				add		[_g_opngen + opngen_t.outdr], eax
@@ -269,15 +269,15 @@ og_calcch_nt:	add		esi, ch_t_size
 				mov		ebx, [_g_opngen + opngen_t.calcremain]
 				mov		eax, ebx
 				sub		ebx, edx
-				jbe		short og_nextsamp
+				jbe		short .nextsamp
 				mov		[_g_opngen + opngen_t.calcremain], ebx
 				mov		eax, edx
 				imul	eax, [_g_opngen + opngen_t.outdl]
 				add		[esp + OPN_SAMPL], eax
 				imul	edx, [_g_opngen + opngen_t.outdr]
 				add		[esp + OPN_SAMPR], edx
-				jmp		near og_fmout_lp
-og_nextsamp:	neg		ebx
+				jmp		near .fmout_lp
+.nextsamp:		neg		ebx
 				mov		[_g_opngen + opngen_t.calcremain], ebx
 				mov		ecx, eax
 				imul	eax, [_g_opngen + opngen_t.outdl]
@@ -291,18 +291,18 @@ og_nextsamp:	neg		ebx
 				add		[ebp+4], edx
 				add		ebp, byte 8
 				dec		dword [esp + OPN_LENG]
-				jne		near og_fmout_st
+				jne		near .fmout_st
 				add		esp, byte 8
 				pop		ebp
 				pop		edi
 				pop		esi
 				pop		ebx
-og_noupdate:	ret		4
+.noupdate:		ret		4
 
-				setenv	envcalc1, envret1, 1
-				setenv	envcalc2, envret2, 2
-				setenv	envcalc3, envret3, 4
-				setenv	envcalc4, envret4, 8
+				setenv	.envcalc1, .envret1, 1
+				setenv	.envcalc2, .envret2, 2
+				setenv	.envcalc3, .envret3, 4
+				setenv	.envcalc4, .envret4, 8
 
 
 				align	16
@@ -311,7 +311,7 @@ og_noupdate:	ret		4
 				je		near @opngen_getpcm@12
 
 				cmp		dword [esp+4], byte 0
-				je		near ogv_noupdate
+				je		near .noupdate
 
 				push	ebx
 				push	esi
@@ -325,30 +325,30 @@ OPNV_LENG		equ		16 + 8 + 4
 
 				mov		ebp, edx
 				mov		ebx, [_g_opngen + opngen_t.calcremain]
-ogv_fmout_st:	mov		eax, ebx
+.fmout_st:		mov		eax, ebx
 				imul	ebx, [_g_opngen + opngen_t.outdl]
 				mov		[esp + OPNV_SAMPL], ebx
 				mov		ebx, FMDIV_ENT
 				sub		ebx, eax
 				imul	eax, [_g_opngen + opngen_t.outdr]
 				mov		[esp + OPNV_SAMPR], eax
-ogv_fmout_lp:	xor		eax, eax
+.fmout_lp:		xor		eax, eax
 				mov		[_g_opngen + opngen_t.calcremain], ebx
 				mov		[_g_opngen + opngen_t.outdl], eax
 				mov		[_g_opngen + opngen_t.outdc], eax
 				mov		[_g_opngen + opngen_t.outdr], eax
 				mov		ch, [_g_opngen + opngen_t.playchannels]
 				mov		edi, _g_opngen + opngen_t.opnch
-ogv_calcch_lp:	xor		eax, eax
+.calcch_lp:		xor		eax, eax
 				mov		[_g_opngen + opngen_t.feedback2], eax
 				mov		[_g_opngen + opngen_t.feedback3], eax
 				mov		[_g_opngen + opngen_t.feedback4], eax
 				mov		esi, edi
-				calcenv	vrenvcalc1, vrenvret1		; slot1 calculate
-				jl		near ogv_calcslot3
+				calcenv	.envcalc1, .envret1			; slot1 calculate
+				jl		near .calcslot3
 				mov		cl, [esi + ch_t.feedback]
 				test	cl, cl
-				je		short ogv_nofeed
+				je		short .nofeed
 				mov		eax, [esi + ch_t.op1fb]		; with feedback
 				mov		ebx, eax
 				shr		eax, cl
@@ -356,41 +356,41 @@ ogv_calcch_lp:	xor		eax, eax
 				mov		[esi + ch_t.op1fb], eax
 				add		eax, ebx
 				sar		eax, 1
-				jmp		short ogv_algchk
-ogv_nofeed:		xor		eax, eax					; without feedback
+				jmp		short .algchk
+.nofeed:		xor		eax, eax					; without feedback
 				op_out
-ogv_algchk:		cmp		byte [esi + ch_t.algorithm], 5
-				jne		short ogv_calcalg5
+.algchk:		cmp		byte [esi + ch_t.algorithm], 5
+				jne		short .calcalg5
 				mov		[_g_opngen + opngen_t.feedback2], eax		; case ALG == 5
 				mov		[_g_opngen + opngen_t.feedback3], eax
 				mov		[_g_opngen + opngen_t.feedback4], eax
-				jmp		short ogv_calcslot3
-ogv_calcalg5:	mov		ebx, [esi + ch_t.connect1]	; case ALG != 5
+				jmp		short .calcslot3
+.calcalg5:		mov		ebx, [esi + ch_t.connect1]	; case ALG != 5
 				add		[ebx], eax
-ogv_calcslot3:	add		edi, byte slot_t_size		; slot3 calculate
-				calcenv	vrenvcalc2, vrenvret2
-				jl		short ogv_calcslot2
+.calcslot3:		add		edi, byte slot_t_size		; slot3 calculate
+				calcenv	.envcalc2, .envret2
+				jl		short .calcslot2
 				mov		eax, [_g_opngen + opngen_t.feedback2]
 				op_out
 				mov		ebx, [esi + ch_t.connect2]
 				add		[ebx], eax
-ogv_calcslot2:	add		edi, byte slot_t_size		; slot2 calculate
-				calcenv	vrenvcalc3, vrenvret3
-				jl		short ogv_calcslot4
+.calcslot2:		add		edi, byte slot_t_size		; slot2 calculate
+				calcenv	.envcalc3, .envret3
+				jl		short .calcslot4
 				mov		eax, [_g_opngen + opngen_t.feedback3]
 				op_out
 				mov		ebx, [esi + ch_t.connect3]
 				add		[ebx], eax
-ogv_calcslot4:	add		edi, byte slot_t_size		; slot4 calculate
-				calcenv	vrenvcalc4, vrenvret4
-				jl		short ogv_calcsloted
+.calcslot4:		add		edi, byte slot_t_size		; slot4 calculate
+				calcenv	.envcalc4, .envret4
+				jl		short .calcsloted
 				mov		eax, [_g_opngen + opngen_t.feedback4]
 				op_out
 				mov		ebx, [esi + ch_t.connect4]
 				add		[ebx], eax
-ogv_calcsloted:	add		edi, byte (ch_t_size - (slot_t_size * 3))
+.calcsloted:	add		edi, byte (ch_t_size - (slot_t_size * 3))
 				dec		ch
-				jne		near ogv_calcch_lp
+				jne		near .calcch_lp
 				mov		eax, [_g_opngen + opngen_t.outdl]
 				mov		edx, [_g_opngen + opngen_t.outdc]
 				imul	eax, [_opncfg + opncfg_t.vr_l]
@@ -413,15 +413,15 @@ ogv_calcsloted:	add		edi, byte (ch_t_size - (slot_t_size * 3))
 				mov		ebx, [_g_opngen + opngen_t.calcremain]
 				mov		eax, ebx
 				sub		ebx, edx
-				jbe		short ogv_nextsamp
+				jbe		short .nextsamp
 				mov		[_g_opngen + opngen_t.calcremain], ebx
 				mov		eax, edx
 				imul	eax, [_g_opngen + opngen_t.outdl]
 				add		[esp + OPNV_SAMPL], eax
 				imul	edx, [_g_opngen + opngen_t.outdr]
 				add		[esp + OPNV_SAMPR], edx
-				jmp		near ogv_fmout_lp
-ogv_nextsamp:	neg		ebx
+				jmp		near .fmout_lp
+.nextsamp:		neg		ebx
 				mov		[_g_opngen + opngen_t.calcremain], ebx
 				mov		ecx, eax
 				imul	eax, [_g_opngen + opngen_t.outdl]
@@ -435,16 +435,16 @@ ogv_nextsamp:	neg		ebx
 				add		[ebp+4], edx
 				add		ebp, byte 8
 				dec		dword [esp + OPNV_LENG]
-				jne		near ogv_fmout_st
+				jne		near .fmout_st
 				add		esp, byte 8
 				pop		ebp
 				pop		edi
 				pop		esi
 				pop		ebx
-ogv_noupdate:	ret		4
+.noupdate:		ret		4
 
-				setenv	vrenvcalc1, vrenvret1, 1
-				setenv	vrenvcalc2, vrenvret2, 2
-				setenv	vrenvcalc3, vrenvret3, 4
-				setenv	vrenvcalc4, vrenvret4, 8
+				setenv	.envcalc1, .envret1, 1
+				setenv	.envcalc2, .envret2, 2
+				setenv	.envcalc3, .envret3, 4
+				setenv	.envcalc4, .envret4, 8
 
