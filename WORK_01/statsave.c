@@ -1,37 +1,43 @@
-#include	"compiler.h"
-#include	"strres.h"
-#include	"dosio.h"
-#include	"commng.h"
-#include	"scrnmng.h"
-#include	"soundmng.h"
-#include	"timemng.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"gdc_sub.h"
-#include	"cbuscore.h"
-#include	"ideio.h"
-#include	"sasiio.h"
-#include	"scsiio.h"
-#include	"pc9861k.h"
-#include	"mpu98ii.h"
-#include	"board14.h"
-#include	"amd98.h"
-#include	"bios.h"
-#include	"vram.h"
-#include	"palettes.h"
-#include	"maketext.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"beep.h"
-#include	"font.h"
-#include	"fddfile.h"
-#include	"fdd_mtr.h"
-#include	"sxsi.h"
-#include	"keydisp.h"
-#include	"hostdrv.h"
-#include	"calendar.h"
-#include	"keystat.h"
+/**
+ * @file	statsave.cpp
+ * @brief	Implementation of State save
+ */
+
+#include "compiler.h"
+#include "statsave.h"
+#include "strres.h"
+#include "dosio.h"
+#include "commng.h"
+#include "scrnmng.h"
+#include "soundmng.h"
+#include "timemng.h"
+#include "cpucore.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "gdc_sub.h"
+#include "cbuscore.h"
+#include "ideio.h"
+#include "sasiio.h"
+#include "scsiio.h"
+#include "pc9861k.h"
+#include "mpu98ii.h"
+#include "board14.h"
+#include "amd98.h"
+#include "bios.h"
+#include "vram.h"
+#include "palettes.h"
+#include "maketext.h"
+#include "sound.h"
+#include "fmboard.h"
+#include "beep.h"
+#include "font.h"
+#include "fddfile.h"
+#include "fdd_mtr.h"
+#include "sxsi.h"
+#include "keydisp.h"
+#include "hostdrv.h"
+#include "calendar.h"
+#include "keystat.h"
 
 #if defined(MACOS)
 #define	CRCONST		str_cr
@@ -40,7 +46,6 @@
 #else
 #define	CRCONST		str_crlf
 #endif
-
 
 typedef struct {
 	char	name[16];
@@ -54,7 +59,20 @@ typedef struct {
 	UINT32	size;
 } NP2FENT;
 
-enum {
+/**
+ * @brief handle
+ */
+struct TagStatFlagHandle
+{
+	NP2FENT		hdr;
+	UINT		pos;
+	OEMCHAR		*err;
+	int			errlen;
+};
+typedef struct TagStatFlagHandle _STFLAGH;		/* define */
+
+enum
+{
 	STATFLAG_BIN			= 0,
 	STATFLAG_TERM,
 	STATFLAG_COM,

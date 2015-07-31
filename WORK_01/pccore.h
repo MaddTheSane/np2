@@ -1,6 +1,11 @@
+/**
+ * @file	pccore.h
+ * @brief	Interface of core
+ */
+
+#pragma once
 
 #include	"nevent.h"
-#include	"statsave.h"
 
 enum {
 	PCBASECLOCK25		= 2457600,
