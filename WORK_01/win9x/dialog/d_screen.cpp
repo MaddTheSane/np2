@@ -12,6 +12,7 @@
 #include "strres.h"
 #include "resource.h"
 #include "np2.h"
+#include "misc\tstring.h"
 #include "scrnmng.h"
 #include "sysmng.h"
 #include "np2class.h"
@@ -340,7 +341,6 @@ void dialog_scropt(HWND hWnd)
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
-	TCHAR			szTitle[128];
 
 	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
@@ -365,7 +365,7 @@ void dialog_scropt(HWND hWnd)
 	psp.pfnDlgProc = (DLGPROC)ScroptFullScreenDlgProc;
 	hpsp[3] = CreatePropertySheetPage(&psp);
 
-	loadstringresource(IDS_SCREENOPTION, szTitle, NELEMENTS(szTitle));
+	std::tstring rTitle(LoadTString(IDS_SCREENOPTION));
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
@@ -375,7 +375,7 @@ void dialog_scropt(HWND hWnd)
 	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
-	psh.pszCaption = szTitle;
+	psh.pszCaption = rTitle.c_str();
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);

@@ -12,6 +12,7 @@
 #include "resource.h"
 #include "np2.h"
 #include "dosio.h"
+#include "misc\tstring.h"
 #include "commng.h"
 #include "sysmng.h"
 #include "np2class.h"
@@ -706,7 +707,6 @@ void dialog_serial(HWND hWnd)
 	PROPSHEETPAGE	psp;
 	PROPSHEETHEADER	psh;
 	HPROPSHEETPAGE	hpsp[4];
-	TCHAR			szTitle[128];
 
 	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
@@ -731,7 +731,7 @@ void dialog_serial(HWND hWnd)
 	psp.pfnDlgProc = (DLGPROC)Com3Proc;
 	hpsp[3] = CreatePropertySheetPage(&psp);
 
-	loadstringresource(IDS_SERIALOPTION, szTitle, NELEMENTS(szTitle));
+	std::tstring rTitle(LoadTString(IDS_SERIALOPTION));
 
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
@@ -741,7 +741,7 @@ void dialog_serial(HWND hWnd)
 	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
 	psh.nPages = 4;
 	psh.phpage = hpsp;
-	psh.pszCaption = szTitle;
+	psh.pszCaption = rTitle.c_str();
 	psh.pfnCallback = np2class_propetysheet;
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);
