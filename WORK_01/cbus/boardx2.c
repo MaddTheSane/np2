@@ -37,7 +37,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opngen.opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
@@ -113,7 +113,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opngen.opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
@@ -254,7 +254,7 @@ void boardx2_bind(void) {
 	psggen_restore(&g_psg1);
 	psggen_restore(&g_psg2);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);

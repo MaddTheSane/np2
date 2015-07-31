@@ -47,7 +47,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opngen.opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
@@ -181,7 +181,7 @@ void board86_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	psggen_restore(&g_psg1);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	pcm86io_bind();
@@ -252,7 +252,7 @@ void board86c_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	psggen_restore(&g_psg1);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);

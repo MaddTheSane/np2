@@ -44,7 +44,7 @@ static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opngen.opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
@@ -151,7 +151,7 @@ static void IOOUTCALL spr_o58a(UINT port, REG8 dat) {
 		}
 		else {
 			if (addr == 0x27) {
-				opngen.opnch[8].extop = dat & 0xc0;
+				g_opngen.opnch[8].extop = dat & 0xc0;
 			}
 		}
 	}
@@ -243,7 +243,7 @@ void boardspb_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	psggen_restore(&g_psg1);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
@@ -278,7 +278,7 @@ void boardspr_bind(void) {
 	fmboard_fmrestore(&g_opn, 9, 3);
 	psggen_restore(&g_psg1);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);

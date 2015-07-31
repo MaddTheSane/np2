@@ -186,7 +186,7 @@ void board118_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	psggen_restore(&g_psg1);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	cs4231io_bind();
