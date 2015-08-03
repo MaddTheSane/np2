@@ -70,20 +70,20 @@ typedef struct {
 	KDDELAYE	delaye[KEYDISP_DELAYEVENTS];
 } KEYDISP;
 
-static	KEYDISP		keydisp;
+static	KEYDISP		s_keydisp;
 
 #include	"keydisp.res"
 
 
 // ---- event
 
-static void keyon(UINT ch, UINT8 note) {
+static void keyon(KEYDISP *keydisp, UINT ch, UINT8 note) {
 
 	UINT		i;
 	KDCHANNEL	*kdch;
 
 	note &= 0x7f;
-	kdch = keydisp.ch + ch;
+	kdch = keydisp->ch + ch;
 	for (i=0; i<kdch->remain; i++) {
 		if (kdch->k[i] == note) {				// ƒqƒbƒg‚µ‚½
 			for (; i<(kdch->remain-1); i++) {
@@ -104,13 +104,13 @@ static void keyon(UINT ch, UINT8 note) {
 	}
 }
 
-static void keyoff(UINT ch, UINT8 note) {
+static void keyoff(KEYDISP *keydisp, UINT ch, UINT8 note) {
 
 	UINT		i;
 	KDCHANNEL	*kdch;
 
 	note &= 0x7f;
-	kdch = keydisp.ch + ch;
+	kdch = keydisp->ch + ch;
 	for (i=0; i<kdch->remain; i++) {
 		if (kdch->k[i] == note) {				// ƒqƒbƒg‚µ‚½
 			kdch->r[i] = 0x80 | (KEYDISP_LEVEL - 2);
@@ -120,12 +120,12 @@ static void keyoff(UINT ch, UINT8 note) {
 	}
 }
 
-static void chkeyoff(UINT ch) {
+static void chkeyoff(KEYDISP *keydisp, UINT ch) {
 
 	UINT		i;
 	KDCHANNEL	*kdch;
 
-	kdch = keydisp.ch + ch;
+	kdch = keydisp->ch + ch;
 	for (i=0; i<kdch->remain; i++) {
 		if ((kdch->r[i] & (~0x80)) >= (KEYDISP_LEVEL - 1)) {
 			kdch->r[i] = 0x80 | (KEYDISP_LEVEL - 2);
@@ -134,67 +134,67 @@ static void chkeyoff(UINT ch) {
 	}
 }
 
-static void keyalloff(void) {
+static void keyalloff(KEYDISP *keydisp) {
 
 	UINT8	i;
 
 	for (i=0; i<KEYDISP_CHMAX; i++) {
-		chkeyoff(i);
+		chkeyoff(keydisp, i);
 	}
 }
 
-static void keyallreload(void) {
+static void keyallreload(KEYDISP *keydisp) {
 
 	UINT	i;
 
 	for (i=0; i<KEYDISP_CHMAX; i++) {
-		keydisp.ch[i].flag = 2;
+		keydisp->ch[i].flag = 2;
 	}
 }
 
-static void keyallclear(void) {
+static void keyallclear(KEYDISP *keydisp) {
 
-	ZeroMemory(keydisp.ch, sizeof(keydisp.ch));
-	keyallreload();
+	ZeroMemory(keydisp->ch, sizeof(keydisp->ch));
+	keyallreload(keydisp);
 }
 
 
 // ---- delay event
 
-static void delayreset(void) {
+static void delayreset(KEYDISP *keydisp) {
 
-	keydisp.delay.warm = keydisp.delay.warmbase;
-	keydisp.delay.pos = 0;
-	keydisp.delay.rem = 0;
-	ZeroMemory(keydisp.delaye, sizeof(keydisp.delaye));
-	keyalloff();
+	keydisp->delay.warm = keydisp->delay.warmbase;
+	keydisp->delay.pos = 0;
+	keydisp->delay.rem = 0;
+	ZeroMemory(keydisp->delaye, sizeof(keydisp->delaye));
+	keyalloff(keydisp);
 }
 
-static void delayexecevent(UINT8 framepast) {
+static void delayexecevent(KEYDISP *keydisp, UINT8 framepast) {
 
 	KDDELAYE	*ebase;
 	UINT		pos;
 	UINT		rem;
 	KDDELAYE	*ev;
 
-	ebase = keydisp.delaye;
-	pos = keydisp.delay.pos;
-	rem = keydisp.delay.rem;
-	while((keydisp.delay.warm) && (framepast)) {
-		keydisp.delay.warm--;
+	ebase = keydisp->delaye;
+	pos = keydisp->delay.pos;
+	rem = keydisp->delay.rem;
+	while((keydisp->delay.warm) && (framepast)) {
+		keydisp->delay.warm--;
 		framepast--;
 		if (rem >= KEYDISP_DELAYEVENTS) {
 			ev = ebase + pos;
 			rem--;
 			if (ev->ch == 0xff) {
-				keydisp.delay.warm++;
+				keydisp->delay.warm++;
 			}
 			else if (ev->key & 0x80) {
-				keyon(ev->ch, ev->key);
+				keyon(keydisp, ev->ch, ev->key);
 				rem--;
 			}
 			else {
-				keyoff(ev->ch, ev->key);
+				keyoff(keydisp, ev->ch, ev->key);
 			}
 			pos = (pos + 1) & (KEYDISP_DELAYEVENTS - 1);
 		}
@@ -211,44 +211,44 @@ static void delayexecevent(UINT8 framepast) {
 				break;
 			}
 			if (ev->key & 0x80) {
-				keyon(ev->ch, ev->key);
+				keyon(keydisp, ev->ch, ev->key);
 			}
 			else {
-				keyoff(ev->ch, ev->key);
+				keyoff(keydisp, ev->ch, ev->key);
 			}
 			pos = (pos + 1) & (KEYDISP_DELAYEVENTS - 1);
 		}
 		ebase[(pos + rem) & (KEYDISP_DELAYEVENTS - 1)].ch = 0xff;
 		rem++;
 	}
-	keydisp.delay.pos = pos;
-	keydisp.delay.rem = rem;
+	keydisp->delay.pos = pos;
+	keydisp->delay.rem = rem;
 }
 
-static void delaysetevent(UINT8 ch, UINT8 key) {
+static void delaysetevent(KEYDISP *keydisp, UINT8 ch, UINT8 key) {
 
 	KDDELAYE	*e;
 
-	e = keydisp.delaye;
-	if (keydisp.delay.rem < KEYDISP_DELAYEVENTS) {
-		e += (keydisp.delay.pos + keydisp.delay.rem) &
+	e = keydisp->delaye;
+	if (keydisp->delay.rem < KEYDISP_DELAYEVENTS) {
+		e += (keydisp->delay.pos + keydisp->delay.rem) &
 													(KEYDISP_DELAYEVENTS - 1);
-		keydisp.delay.rem++;
+		keydisp->delay.rem++;
 		e->ch = ch;
 		e->key = key;
 	}
 	else {
-		e += keydisp.delay.pos;
-		keydisp.delay.pos += (keydisp.delay.pos + 1) &
+		e += keydisp->delay.pos;
+		keydisp->delay.pos += (keydisp->delay.pos + 1) &
 													(KEYDISP_DELAYEVENTS - 1);
 		if (e->ch == 0xff) {
-			keydisp.delay.warm++;
+			keydisp->delay.warm++;
 		}
 		else if (e->key & 0x80) {
-			keyon(e->ch, e->key);
+			keyon(keydisp, e->ch, e->key);
 		}
 		else {
-			keyoff(e->ch, e->key);
+			keyoff(keydisp, e->ch, e->key);
 		}
 		e->ch = ch;
 		e->key = key;
@@ -288,63 +288,63 @@ static UINT8 getfmnote(UINT16 fnum) {
 	return(ret);
 }
 
-static void fmkeyoff(UINT8 ch, KDFMCTRL *k) {
+static void fmkeyoff(KEYDISP *keydisp, UINT8 ch, KDFMCTRL *k) {
 
-	delaysetevent(keydisp.fmpos[ch], k->lastnote[0]);
+	delaysetevent(keydisp, keydisp->fmpos[ch], k->lastnote[0]);
 }
 
-static void fmkeyon(UINT8 ch, KDFMCTRL *k) {
+static void fmkeyon(KEYDISP *keydisp, UINT8 ch, KDFMCTRL *k) {
 
 	const UINT8 *pReg;
 
-	fmkeyoff(ch, k);
-	pReg = keydisp.pfmreg[ch];
+	fmkeyoff(keydisp, ch, k);
+	pReg = keydisp->pfmreg[ch];
 	if (pReg)
 	{
 		pReg = pReg + 0xa0;
 		k->fnum[0] = ((pReg[4] & 0x3f) << 8) + pReg[0];
 		k->lastnote[0] = getfmnote(k->fnum[0]);
-		delaysetevent(keydisp.fmpos[ch], (UINT8)(k->lastnote[0] | 0x80));
+		delaysetevent(keydisp, keydisp->fmpos[ch], (UINT8)(k->lastnote[0] | 0x80));
 	}
 }
 
-static void fmkeyreset(void) {
+static void fmkeyreset(KEYDISP *keydisp) {
 
-	ZeroMemory(keydisp.fmctl, sizeof(keydisp.fmctl));
+	ZeroMemory(keydisp->fmctl, sizeof(keydisp->fmctl));
 }
 
 void keydisp_fmkeyon(UINT8 ch, UINT8 value) {
 
 	KDFMCTRL	*k;
 
-	if (keydisp.mode != KEYDISP_MODEFM) {
+	if (s_keydisp.mode != KEYDISP_MODEFM) {
 		return;
 	}
-	if (ch < keydisp.fmmax) {
-		k = keydisp.fmctl + ch;
+	if (ch < s_keydisp.fmmax) {
+		k = s_keydisp.fmctl + ch;
 		value &= 0xf0;
 		if (k->flag != value) {
 			if (value) {
-				fmkeyon(ch, k);
+				fmkeyon(&s_keydisp, ch, k);
 			}
 			else {
-				fmkeyoff(ch, k);
+				fmkeyoff(&s_keydisp, ch, k);
 			}
 			k->flag = value;
 		}
 	}
 }
 
-static void fmkeysync(void) {
+static void fmkeysync(KEYDISP *keydisp) {
 
 	UINT8		ch;
 	KDFMCTRL	*k;
 	const UINT8 *pReg;
 	UINT16		fnum;
 
-	for (ch=0, k=keydisp.fmctl; ch<keydisp.fmmax; ch++, k++) {
+	for (ch=0, k=keydisp->fmctl; ch<keydisp->fmmax; ch++, k++) {
 		if (k->flag) {
-			pReg = keydisp.pfmreg[ch];
+			pReg = keydisp->pfmreg[ch];
 			if (pReg)
 			{
 				pReg = pReg + 0xa0;
@@ -354,10 +354,10 @@ static void fmkeysync(void) {
 					k->fnum[0] = fnum;
 					n = getfmnote(fnum);
 					if (k->lastnote[0] != n) {
-						fmkeyoff(ch, k);
+						fmkeyoff(keydisp, ch, k);
 					}
 					k->lastnote[0] = n;
-					delaysetevent(keydisp.fmpos[ch],
+					delaysetevent(keydisp, keydisp->fmpos[ch],
 											(UINT8)(k->lastnote[0] | 0x80));
 				}
 			}
@@ -401,40 +401,40 @@ static UINT8 getpsgnote(UINT16 tone) {
 	return(ret);
 }
 
-static void psgmix(UINT8 ch, PSGGEN psg) {
+static void psgmix(KEYDISP *keydisp, UINT8 ch, PSGGEN psg) {
 
 	KDPSGCTRL	*k;
 
-	k = keydisp.psgctl + ch;
+	k = keydisp->psgctl + ch;
 	if ((k->mix ^ psg->reg.mixer) & 7) {
 		UINT8 i, bit, pos;
 		k->mix = psg->reg.mixer;
-		pos = keydisp.psgpos[ch];
+		pos = keydisp->psgpos[ch];
 		for (i=0, bit=1; i<3; i++, pos++, bit<<=1) {
 			if (k->flag & bit) {
 				k->flag ^= bit;
-				delaysetevent(pos, k->lastnote[i]);
+				delaysetevent(keydisp, pos, k->lastnote[i]);
 			}
 			else if ((!(k->mix & bit)) && (psg->reg.vol[i] & 0x1f)) {
 				k->flag |= bit;
 				k->fto[i] = LOADINTELWORD(psg->reg.tune[i]) & 0xfff;
 				k->lastnote[i] = getpsgnote(k->fto[i]);
-				delaysetevent(pos, (UINT8)(k->lastnote[i] | 0x80));
+				delaysetevent(keydisp, pos, (UINT8)(k->lastnote[i] | 0x80));
 			}
 		}
 	}
 }
 
-static void psgvol(UINT8 ch, PSGGEN psg, UINT8 i) {
+static void psgvol(KEYDISP *keydisp, UINT8 ch, PSGGEN psg, UINT8 i) {
 
 	KDPSGCTRL	*k;
 	UINT8		bit;
 	UINT8		pos;
 	UINT16		tune;
 
-	k = keydisp.psgctl + ch;
+	k = keydisp->psgctl + ch;
 	bit = (1 << i);
-	pos = keydisp.psgpos[ch] + i;
+	pos = keydisp->psgpos[ch] + i;
 	if (psg->reg.vol[i] & 0x1f) {
 		if (!((k->mix | k->flag) & bit)) {
 			k->flag |= bit;
@@ -442,30 +442,30 @@ static void psgvol(UINT8 ch, PSGGEN psg, UINT8 i) {
 			tune &= 0xfff;
 			k->fto[i] = tune;
 			k->lastnote[i] = getpsgnote(tune);
-			delaysetevent(pos, (UINT8)(k->lastnote[i] | 0x80));
+			delaysetevent(keydisp, pos, (UINT8)(k->lastnote[i] | 0x80));
 		}
 	}
 	else if (k->flag & bit) {
 		k->flag ^= bit;
-		delaysetevent(pos, k->lastnote[i]);
+		delaysetevent(keydisp, pos, k->lastnote[i]);
 	}
 }
 
-static void psgkeyreset(void) {
+static void psgkeyreset(KEYDISP *keydisp) {
 
-	ZeroMemory(keydisp.psgctl, sizeof(keydisp.psgctl));
+	ZeroMemory(keydisp->psgctl, sizeof(keydisp->psgctl));
 }
 
 void keydisp_psgmix(void *psg) {
 
 	UINT8	c;
 
-	if (keydisp.mode != KEYDISP_MODEFM) {
+	if (s_keydisp.mode != KEYDISP_MODEFM) {
 		return;
 	}
-	for (c=0; c<keydisp.psgmax; c++) {
+	for (c=0; c<s_keydisp.psgmax; c++) {
 		if (psgtbl[c] == psg) {
-			psgmix(c, (PSGGEN)psg);
+			psgmix(&s_keydisp, c, (PSGGEN)psg);
 			break;
 		}
 	}
@@ -475,18 +475,18 @@ void keydisp_psgvol(void *psg, UINT8 ch) {
 
 	UINT8	c;
 
-	if (keydisp.mode != KEYDISP_MODEFM) {
+	if (s_keydisp.mode != KEYDISP_MODEFM) {
 		return;
 	}
-	for (c=0; c<keydisp.psgmax; c++) {
+	for (c=0; c<s_keydisp.psgmax; c++) {
 		if (psgtbl[c] == psg) {
-			psgvol(c, (PSGGEN)psg, ch);
+			psgvol(&s_keydisp, c, (PSGGEN)psg, ch);
 			break;
 		}
 	}
 }
 
-static void psgkeysync(void) {
+static void psgkeysync(KEYDISP *keydisp) {
 
 	UINT8		ch;
 	KDPSGCTRL	*k;
@@ -497,9 +497,9 @@ static void psgkeysync(void) {
 	UINT16		tune;
 	UINT8		n;
 
-	for (ch=0, k=keydisp.psgctl; ch<keydisp.psgmax; ch++, k++) {
+	for (ch=0, k=keydisp->psgctl; ch<keydisp->psgmax; ch++, k++) {
 		psg = (PSGGEN)psgtbl[ch];
-		pos = keydisp.psgpos[ch];
+		pos = keydisp->psgpos[ch];
 		for (i=0, bit=1; i<3; i++, pos++, bit<<=1) {
 			if (k->flag & bit) {
 				tune = LOADINTELWORD(psg->reg.tune[i]);
@@ -508,9 +508,9 @@ static void psgkeysync(void) {
 					k->fto[i] = tune;
 					n = getpsgnote(tune);
 					if (k->lastnote[i] != n) {
-						delaysetevent(pos, k->lastnote[i]);
+						delaysetevent(keydisp, pos, k->lastnote[i]);
 						k->lastnote[i] = n;
-						delaysetevent(pos, (UINT8)(n | 0x80));
+						delaysetevent(keydisp, pos, (UINT8)(n | 0x80));
 					}
 				}
 			}
@@ -521,14 +521,14 @@ static void psgkeysync(void) {
 
 // ---- BOARD change...
 
-static void setfmhdl(UINT8 items, UINT base) {
+static void setfmhdl(KEYDISP *keydisp, UINT8 items, UINT base) {
 
 	while(items--) {
-		if ((keydisp.keymax < KEYDISP_CHMAX) &&
-			(keydisp.fmmax < KEYDISP_FMCHMAX)) {
-			keydisp.fmpos[keydisp.fmmax] = keydisp.keymax++;
-			keydisp.pfmreg[keydisp.fmmax] = g_opn.reg + base;
-			keydisp.fmmax++;
+		if ((keydisp->keymax < KEYDISP_CHMAX) &&
+			(keydisp->fmmax < KEYDISP_FMCHMAX)) {
+			keydisp->fmpos[keydisp->fmmax] = keydisp->keymax++;
+			keydisp->pfmreg[keydisp->fmmax] = g_opn.reg + base;
+			keydisp->fmmax++;
 			base++;
 			if ((base & 3) == 3) {
 				base += 0x100 - 3;
@@ -541,11 +541,11 @@ static void setfmhdl(UINT8 items, UINT base) {
 static void setfmhdlex(const OPN_T *pOpn, UINT nItems, UINT nBase) {
 
 	while(nItems--) {
-		if ((keydisp.keymax < KEYDISP_CHMAX) &&
-			(keydisp.fmmax < KEYDISP_FMCHMAX)) {
-			keydisp.fmpos[keydisp.fmmax] = keydisp.keymax++;
-			keydisp.pfmreg[keydisp.fmmax] = pOpn->reg + nBase;
-			keydisp.fmmax++;
+		if ((keydisp->keymax < KEYDISP_CHMAX) &&
+			(keydisp->fmmax < KEYDISP_FMCHMAX)) {
+			keydisp->fmpos[keydisp->fmmax] = keydisp->keymax++;
+			keydisp->pfmreg[keydisp->fmmax] = pOpn->reg + nBase;
+			keydisp->fmmax++;
 			nBase++;
 			if ((nBase & 3) == 3) {
 				nBase += 0x100 - 3;
@@ -555,37 +555,37 @@ static void setfmhdlex(const OPN_T *pOpn, UINT nItems, UINT nBase) {
 }
 #endif	// defined(SUPPORT_PX)
 
-static void setpsghdl(UINT8 items) {
+static void setpsghdl(KEYDISP *keydisp, UINT8 items) {
 
 	while(items--) {
-		if ((keydisp.keymax <= (KEYDISP_CHMAX - 3)) &&
-			(keydisp.psgmax < KEYDISP_PSGMAX)) {
-			keydisp.psgpos[keydisp.psgmax++] = keydisp.keymax;
-			keydisp.keymax += 3;
+		if ((keydisp->keymax <= (KEYDISP_CHMAX - 3)) &&
+			(keydisp->psgmax < KEYDISP_PSGMAX)) {
+			keydisp->psgpos[keydisp->psgmax++] = keydisp->keymax;
+			keydisp->keymax += 3;
 		}
 	}
 }
 
 void keydisp_setfmboard(UINT b) {
 
-	keydisp.keymax = 0;
-	keydisp.fmmax = 0;
-	keydisp.psgmax = 0;
+	s_keydisp.keymax = 0;
+	s_keydisp.fmmax = 0;
+	s_keydisp.psgmax = 0;
 
 #if defined(SUPPORT_PX)
 	if (b == 0x30)
 	{
-		setfmhdlex(&g_opn, 12, 0);
-		setfmhdlex(&g_opn2, 12, 0);
-		setpsghdl(2);
+		setfmhdlex(&s_keydisp, &g_opn, 12, 0);
+		setfmhdlex(&s_keydisp, &g_opn2, 12, 0);
+		setpsghdl(&s_keydisp, 2);
 		b = 0;
 	}
 	if (b == 0x50)
 	{
-		setfmhdlex(&g_opn, 12, 0);
-		setfmhdlex(&g_opn2, 12, 0);
-		setfmhdlex(&g_opn3, 6, 0);
-		setpsghdl(3);
+		setfmhdlex(&s_keydisp, &g_opn, 12, 0);
+		setfmhdlex(&s_keydisp, &g_opn2, 12, 0);
+		setfmhdlex(&s_keydisp, &g_opn3, 6, 0);
+		setpsghdl(&s_keydisp, 3);
 		b = 0;
 	}
 
@@ -593,38 +593,38 @@ void keydisp_setfmboard(UINT b) {
 
 	if (b & 0x02) {
 		if (!(b & 0x04)) {
-			setfmhdl(3, 0);
+			setfmhdl(&s_keydisp, 3, 0);
 		}
 		else {								// ‚Q–‡Žh‚µ‚ÌŽžƒŒƒWƒXƒ^ˆÚ“®
-			setfmhdl(3, 0x200);
+			setfmhdl(&s_keydisp, 3, 0x200);
 		}
-		setpsghdl(1);
+		setpsghdl(&s_keydisp, 1);
 	}
 	if (b & 0x04) {
-		setfmhdl(6, 0);
-		setpsghdl(1);
+		setfmhdl(&s_keydisp, 6, 0);
+		setpsghdl(&s_keydisp, 1);
 	}
 	if (b & 0x08) {
-		setfmhdl(6, 0);
-		setpsghdl(1);
+		setfmhdl(&s_keydisp, 6, 0);
+		setpsghdl(&s_keydisp, 1);
 	}
 	if (b & 0x20) {
-		setfmhdl(6, 0);
-		setpsghdl(1);
+		setfmhdl(&s_keydisp, 6, 0);
+		setpsghdl(&s_keydisp, 1);
 	}
 	if (b & 0x40) {
-		setfmhdl(12, 0);
-		setpsghdl(1);
+		setfmhdl(&s_keydisp, 12, 0);
+		setpsghdl(&s_keydisp, 1);
 	}
 	if (b & 0x80) {
-		setpsghdl(3);
+		setpsghdl(&s_keydisp, 3);
 	}
-	delayreset();
-	fmkeyreset();
-	psgkeyreset();
+	delayreset(&s_keydisp);
+	fmkeyreset(&s_keydisp);
+	psgkeyreset(&s_keydisp);
 
-	if (keydisp.mode == KEYDISP_MODEFM) {
-		keydisp.dispflag |= KEYDISP_FLAGSIZING;
+	if (s_keydisp.mode == KEYDISP_MODEFM) {
+		s_keydisp.dispflag |= KEYDISP_FLAGSIZING;
 	}
 }
 
@@ -633,31 +633,31 @@ void keydisp_setfmboard(UINT b) {
 
 void keydisp_midi(const UINT8 *cmd) {
 
-	if (keydisp.mode != KEYDISP_MODEMIDI) {
+	if (s_keydisp.mode != KEYDISP_MODEMIDI) {
 		return;
 	}
 	switch(cmd[0] & 0xf0) {
 		case 0x80:
-			keyoff(cmd[0] & 0x0f, cmd[1]);
+			keyoff(&s_keydisp, cmd[0] & 0x0f, cmd[1]);
 			break;
 
 		case 0x90:
 			if (cmd[2] & 0x7f) {
-				keyon(cmd[0] & 0x0f, cmd[1]);
+				keyon(&s_keydisp, cmd[0] & 0x0f, cmd[1]);
 			}
 			else {
-				keyoff(cmd[0] & 0x0f, cmd[1]);
+				keyoff(&s_keydisp, cmd[0] & 0x0f, cmd[1]);
 			}
 			break;
 
 		case 0xb0:
 			if ((cmd[1] == 0x78) || (cmd[1] == 0x79) || (cmd[1] == 0x7b)) {
-				chkeyoff(cmd[0] & 0x0f);
+				chkeyoff(&s_keydisp, cmd[0] & 0x0f);
 			}
 			break;
 
 		case 0xfe:
-			keyalloff();
+			keyalloff(&s_keydisp);
 			break;
 	}
 }
@@ -665,13 +665,13 @@ void keydisp_midi(const UINT8 *cmd) {
 
 // ---- draw
 
-static int getdispkeys(void) {
+static int getdispkeys(const KEYDISP *keydisp) {
 
 	int		keys;
 
-	switch(keydisp.mode) {
+	switch(keydisp->mode) {
 		case KEYDISP_MODEFM:
-			keys = keydisp.keymax;
+			keys = keydisp->keymax;
 			break;
 
 		case KEYDISP_MODEMIDI:
@@ -688,19 +688,19 @@ static int getdispkeys(void) {
 	return(keys);
 }
 
-static void clearrect(CMNVRAM *vram, int x, int y, int cx, int cy) {
+static void clearrect(const KEYDISP *keydisp, CMNVRAM *vram, int x, int y, int cx, int cy) {
 
 	CMNPAL	col;
 
 	switch(vram->bpp) {
 #if defined(SUPPORT_8BPP)
 		case 8:
-			col.pal8 = keydisp.pal8[KEYDISP_PALBG];
+			col.pal8 = keydisp->pal8[KEYDISP_PALBG];
 			break;
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			col.pal16 = keydisp.pal16[KEYDISP_LEVEL];
+			col.pal16 = keydisp->pal16[KEYDISP_LEVEL];
 			break;
 #endif
 #if defined(SUPPORT_24BPP)
@@ -710,7 +710,7 @@ static void clearrect(CMNVRAM *vram, int x, int y, int cx, int cy) {
 		case 32:
 #endif
 #if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
-			col.pal32 = keydisp.pal32[KEYDISP_LEVEL];
+			col.pal32 = keydisp->pal32[KEYDISP_LEVEL];
 			break;
 #endif
 		default:
@@ -719,7 +719,7 @@ static void clearrect(CMNVRAM *vram, int x, int y, int cx, int cy) {
 	cmndraw_fill(vram, x, y, cx, cy, col);
 }
 
-static void drawkeybg(CMNVRAM *vram) {
+static void drawkeybg(const KEYDISP *keydisp, CMNVRAM *vram) {
 
 	CMNPAL	bg;
 	CMNPAL	fg;
@@ -728,26 +728,26 @@ static void drawkeybg(CMNVRAM *vram) {
 	switch(vram->bpp) {
 #if defined(SUPPORT_8BPP)
 		case 8:
-			bg.pal8 = keydisp.pal8[KEYDISP_PALBG];
-			fg.pal8 = keydisp.pal8[KEYDISP_PALFG];
+			bg.pal8 = keydisp->pal8[KEYDISP_PALBG];
+			fg.pal8 = keydisp->pal8[KEYDISP_PALFG];
 			break;
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			bg.pal16 = keydisp.pal16[KEYDISP_LEVEL];
-			fg.pal16 = keydisp.pal16[0];
+			bg.pal16 = keydisp->pal16[KEYDISP_LEVEL];
+			fg.pal16 = keydisp->pal16[0];
 			break;
 #endif
 #if defined(SUPPORT_24BPP)
 		case 24:
-			bg.pal32 = keydisp.pal32[KEYDISP_LEVEL];
-			fg.pal32 = keydisp.pal32[0];
+			bg.pal32 = keydisp->pal32[KEYDISP_LEVEL];
+			fg.pal32 = keydisp->pal32[0];
 			break;
 #endif
 #if defined(SUPPORT_32BPP)
 		case 32:
-			bg.pal32 = keydisp.pal32[KEYDISP_LEVEL];
-			fg.pal32 = keydisp.pal32[0];
+			bg.pal32 = keydisp->pal32[KEYDISP_LEVEL];
+			fg.pal32 = keydisp->pal32[0];
 			break;
 #endif
 		default:
@@ -759,40 +759,40 @@ static void drawkeybg(CMNVRAM *vram) {
 	cmndraw_setpat(vram, keybrd2, 10 * KEYDISP_KEYCX, 0, bg, fg);
 }
 
-static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n) {
+static BOOL draw1key(const KEYDISP *keydisp, CMNVRAM *vram, KDCHANNEL *kdch, UINT n) {
 
-	KDKEYPOS	*pos;
+	const KDKEYPOS	*pos;
 	UINT		pal;
 	CMNPAL		fg;
 
-	pos = keydisp.keypos + (kdch->k[n] & 0x7f);
+	pos = keydisp->keypos + (kdch->k[n] & 0x7f);
 	pal = kdch->r[n] & 0x7f;
 	switch(vram->bpp) {
 #if defined(SUPPORT_8BPP)
 		case 8:
 			if (pal != (KEYDISP_LEVEL - 1)) {
-				fg.pal8 = keydisp.pal8[
+				fg.pal8 = keydisp->pal8[
 									(pos->pals)?KEYDISP_PALBG:KEYDISP_PALFG];
 				cmndraw_setfg(vram, pos->data, pos->posx, 0, fg);
 				kdch->r[n] = 0;
 				return(TRUE);
 			}
-			fg.pal8 = keydisp.pal8[KEYDISP_PALHIT];
+			fg.pal8 = keydisp->pal8[KEYDISP_PALHIT];
 			break;
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			fg.pal16 = keydisp.pal16[pal + pos->pals];
+			fg.pal16 = keydisp->pal16[pal + pos->pals];
 			break;
 #endif
 #if defined(SUPPORT_24BPP)
 		case 24:
-			fg.pal32 = keydisp.pal32[pal + pos->pals];
+			fg.pal32 = keydisp->pal32[pal + pos->pals];
 			break;
 #endif
 #if defined(SUPPORT_32BPP)
 		case 32:
-			fg.pal32 = keydisp.pal32[pal + pos->pals];
+			fg.pal32 = keydisp->pal32[pal + pos->pals];
 			break;
 #endif
 		default:
@@ -802,7 +802,7 @@ static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n) {
 	return(FALSE);
 }
 
-static BOOL draw1ch(CMNVRAM *vram, UINT8 framepast, KDCHANNEL *kdch) {
+static BOOL draw1ch(KEYDISP *keydisp, CMNVRAM *vram, UINT8 framepast, KDCHANNEL *kdch) {
 
 	BOOL	draw;
 	UINT	i;
@@ -812,7 +812,7 @@ static BOOL draw1ch(CMNVRAM *vram, UINT8 framepast, KDCHANNEL *kdch) {
 
 	draw = FALSE;
 	if (kdch->flag & 2) {
-		drawkeybg(vram);
+		drawkeybg(keydisp, vram);
 		draw = TRUE;
 	}
 	if (kdch->flag) {
@@ -832,7 +832,7 @@ static BOOL draw1ch(CMNVRAM *vram, UINT8 framepast, KDCHANNEL *kdch) {
 						coll = TRUE;
 					}
 				}
-				coll |= draw1key(vram, kdch, i);
+				coll |= draw1key(keydisp, vram, kdch, i);
 				draw = TRUE;
 			}
 		}
@@ -869,13 +869,13 @@ void keydisp_initialize(void) {
 	x = 0;
 	do {
 		for (i=0; i<12 && r<128; i++, r++) {
-			keydisp.keypos[r].posx = keyposdef[i].posx + x;
-			keydisp.keypos[r].pals = keyposdef[i].pals;
-			keydisp.keypos[r].data = keyposdef[i].data;
+			s_keydisp.keypos[r].posx = keyposdef[i].posx + x;
+			s_keydisp.keypos[r].pals = keyposdef[i].pals;
+			s_keydisp.keypos[r].data = keyposdef[i].data;
 		}
 		x += 28;
 	} while(r < 128);
-	keyallclear();
+	keyallclear(&s_keydisp);
 }
 
 void keydisp_setpal(CMNPALFN *palfn) {
@@ -888,47 +888,47 @@ void keydisp_setpal(CMNPALFN *palfn) {
 	}
 	if (palfn->get8) {
 		for (i=0; i<KEYDISP_PALS; i++) {
-			keydisp.pal8[i] = (*palfn->get8)(palfn, i);
+			s_keydisp.pal8[i] = (*palfn->get8)(palfn, i);
 		}
 	}
 	if (palfn->get32) {
 		for (i=0; i<KEYDISP_PALS; i++) {
 			pal32[i].d = (*palfn->get32)(palfn, i);
-			cmndraw_makegrad(keydisp.pal32, KEYDISP_LEVEL,
+			cmndraw_makegrad(s_keydisp.pal32, KEYDISP_LEVEL,
 								pal32[KEYDISP_PALFG], pal32[KEYDISP_PALHIT]);
-			cmndraw_makegrad(keydisp.pal32 + KEYDISP_LEVEL, KEYDISP_LEVEL,
+			cmndraw_makegrad(s_keydisp.pal32 + KEYDISP_LEVEL, KEYDISP_LEVEL,
 								pal32[KEYDISP_PALBG], pal32[KEYDISP_PALHIT]);
 		}
 		if (palfn->cnv16) {
 			for (i=0; i<KEYDISP_LEVEL*2; i++) {
-				keydisp.pal16[i] = (*palfn->cnv16)(palfn, keydisp.pal32[i]);
+				s_keydisp.pal16[i] = (*palfn->cnv16)(palfn, s_keydisp.pal32[i]);
 			}
 		}
 	}
-	keydisp.dispflag |= KEYDISP_FLAGREDRAW;
+	s_keydisp.dispflag |= KEYDISP_FLAGREDRAW;
 }
 
 void keydisp_setmode(UINT8 mode) {
 
-	if (keydisp.mode != mode) {
-		keydisp.mode = mode;
-		keydisp.dispflag |= KEYDISP_FLAGREDRAW | KEYDISP_FLAGSIZING;
-		keyallclear();
+	if (s_keydisp.mode != mode) {
+		s_keydisp.mode = mode;
+		s_keydisp.dispflag |= KEYDISP_FLAGREDRAW | KEYDISP_FLAGSIZING;
+		keyallclear(&s_keydisp);
 		if (mode == KEYDISP_MODEFM) {
-			delayreset();
-			fmkeyreset();
-			psgkeyreset();
+			delayreset(&s_keydisp);
+			fmkeyreset(&s_keydisp);
+			psgkeyreset(&s_keydisp);
 		}
 	}
 	else {
-		keyalloff();
+		keyalloff(&s_keydisp);
 	}
 }
 
 void keydisp_setdelay(UINT8 frames) {
 
-	keydisp.delay.warmbase = frames;
-	delayreset();
+	s_keydisp.delay.warmbase = frames;
+	delayreset(&s_keydisp);
 }
 
 UINT8 keydisp_process(UINT8 framepast) {
@@ -937,21 +937,21 @@ UINT8 keydisp_process(UINT8 framepast) {
 	int		i;
 
 	if (framepast) {
-		if (keydisp.mode == KEYDISP_MODEFM) {
-			fmkeysync();
-			psgkeysync();
-			delayexecevent(framepast);
+		if (s_keydisp.mode == KEYDISP_MODEFM) {
+			fmkeysync(&s_keydisp);
+			psgkeysync(&s_keydisp);
+			delayexecevent(&s_keydisp, framepast);
 		}
-		keydisp.framepast += framepast;
+		s_keydisp.framepast += framepast;
 	}
-	keys = getdispkeys();
+	keys = getdispkeys(&s_keydisp);
 	for (i=0; i<keys; i++) {
-		if (keydisp.ch[i].flag) {
-			keydisp.dispflag |= KEYDISP_FLAGDRAW;
+		if (s_keydisp.ch[i].flag) {
+			s_keydisp.dispflag |= KEYDISP_FLAGDRAW;
 			break;
 		}
 	}
-	return(keydisp.dispflag);
+	return(s_keydisp.dispflag);
 }
 
 void keydisp_getsize(int *width, int *height) {
@@ -960,9 +960,9 @@ void keydisp_getsize(int *width, int *height) {
 		*width = KEYDISP_WIDTH;
 	}
 	if (height) {
-		*height = (getdispkeys() * KEYDISP_KEYCY) + 1;
+		*height = (getdispkeys(&s_keydisp) * KEYDISP_KEYCY) + 1;
 	}
-	keydisp.dispflag &= ~KEYDISP_FLAGSIZING;
+	s_keydisp.dispflag &= ~KEYDISP_FLAGSIZING;
 }
 
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw) {
@@ -977,24 +977,24 @@ BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw) {
 		(vram->width < KEYDISP_WIDTH) || (vram->height < 1)) {
 		goto kdpnt_exit;
 	}
-	if (keydisp.dispflag & KEYDISP_FLAGREDRAW){
+	if (s_keydisp.dispflag & KEYDISP_FLAGREDRAW){
 		redraw = TRUE;
 	}
 	if (redraw) {
-		keyallreload();
-		clearrect(vram, 0, 0, KEYDISP_WIDTH, 1);
-		clearrect(vram, 0, 0, 1, vram->height);
+		keyallreload(&s_keydisp);
+		clearrect(&s_keydisp, vram, 0, 0, KEYDISP_WIDTH, 1);
+		clearrect(&s_keydisp, vram, 0, 0, 1, vram->height);
 		draw = TRUE;
 	}
 	vram->ptr += vram->xalign + vram->yalign;		// ptr (1, 1)
 	keys = (vram->height - 1) / KEYDISP_KEYCY;
-	keys = min(keys, getdispkeys());
-	for (i=0, p=keydisp.ch; i<keys; i++, p++) {
-		draw |= draw1ch(vram, keydisp.framepast, p);
+	keys = min(keys, getdispkeys(&s_keydisp));
+	for (i=0, p=s_keydisp.ch; i<keys; i++, p++) {
+		draw |= draw1ch(&s_keydisp, vram, s_keydisp.framepast, p);
 		vram->ptr += KEYDISP_KEYCY * vram->yalign;
 	}
-	keydisp.dispflag &= ~(KEYDISP_FLAGDRAW | KEYDISP_FLAGREDRAW);
-	keydisp.framepast = 0;
+	s_keydisp.dispflag &= ~(KEYDISP_FLAGDRAW | KEYDISP_FLAGREDRAW);
+	s_keydisp.framepast = 0;
 
 kdpnt_exit:
 	return(draw);
