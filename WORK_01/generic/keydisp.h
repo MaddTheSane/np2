@@ -1,7 +1,13 @@
+/**
+ * @file	keydisp.h
+ * @brief	Interface of the key display
+ */
+
+#pragma once
 
 #if defined(SUPPORT_KEYDISP)
 
-#include	"cmndraw.h"
+#include "cmndraw.h"
 
 struct _cmnpalfn {
 	UINT8	(*get8)(struct _cmnpalfn *fn, UINT num);
@@ -10,14 +16,6 @@ struct _cmnpalfn {
 	INTPTR	userdata;
 };
 typedef struct _cmnpalfn	CMNPALFN;
-
-typedef struct {
-	UINT8	pal8;
-	UINT8	padding;
-	UINT16	pal16;
-	RGB32	pal32;
-} CMNPALS;
-
 
 enum {
 	KEYDISP_MODENONE			= 0,
@@ -100,4 +98,3 @@ void keydisp_midi(const UINT8 *msg);
 #define	keydisp_midi(a)
 
 #endif
-
