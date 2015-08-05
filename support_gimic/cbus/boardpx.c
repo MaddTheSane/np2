@@ -1,129 +1,86 @@
-#include	"compiler.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"cbuscore.h"
-#include	"boardpx.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"s98.h"
-#include	"pcm86io.h"
+/**
+ * @file	boardpx.c
+ * @brief	Implementation of PX
+ */
+
+#include "compiler.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "cbuscore.h"
+#include "boardpx.h"
+#include "sound.h"
+#include "fmboard.h"
+#include "opna.h"
+#include "pcm86io.h"
 
 #if defined(SUPPORT_PX)
 
-static void IOOUTCALL spb_o188(UINT port, REG8 dat) {
-
+static void IOOUTCALL spb_o188(UINT port, REG8 dat)
+{
 	g_opn.addr1l = dat;
 //	g_opn.data1 = dat;
+
 	(void)port;
 }
 
-static void IOOUTCALL spb_o18a(UINT port, REG8 dat) {
-
-	UINT	addr;
-
+static void IOOUTCALL spb_o18a(UINT port, REG8 dat)
+{
 //	g_opn.data1 = dat;
-	addr = g_opn.addr1l;
-//	S98_put(NORMAL2608, addr, dat);
-	if (addr < 0x10) {
-		if (addr != 0x0e) {
-			psggen_setreg(&g_psg1, addr, dat);
-		}
-	}
-	else {
-		if (addr < 0x20) {
-			rhythm_setreg(&g_rhythm, addr, dat);
-		}
-		else if (addr < 0x30) {
-			if (addr == 0x28) {
-				if ((dat & 0x0f) < 3) {
-					opngen_keyon(dat & 0x0f, dat);
-				}
-				else if (((dat & 0x0f) != 3) &&
-						((dat & 0x0f) < 7)) {
-					opngen_keyon((dat & 0x0f) - 1, dat);
-				}
-			}
-			else {
-				fmtimer_setreg(addr, dat);
-				if (addr == 0x27) {
-					opnch[2].extop = dat & 0xc0;
-				}
-			}
-		}
-		else if (addr < 0xc0) {
-			opngen_setreg(0, addr, dat);
-		}
-		g_opn.reg[addr] = dat;
-	}
+	opna_writeRegister(&g_opn, g_opn.addr1l, dat);
+
 	(void)port;
 }
 
-static void IOOUTCALL spb_o18c(UINT port, REG8 dat) {
-
+static void IOOUTCALL spb_o18c(UINT port, REG8 dat)
+{
 	g_opn.addr1h = dat;
 //	g_opn.data1 = dat;
 	(void)port;
 }
 
-static void IOOUTCALL spb_o18e(UINT port, REG8 dat) {
-
-	UINT	addr;
-
+static void IOOUTCALL spb_o18e(UINT port, REG8 dat)
+{
 //	g_opn.data1 = dat;
-	addr = g_opn.addr1h;
-//	S98_put(EXTEND2608, addr, dat);
-	g_opn.reg[addr + 0x100] = dat;
-	if (addr >= 0x30) {
-		opngen_setreg(3, addr, dat);
-	}
-	else if (addr < 0x12) {
-		adpcm_setreg(&g_adpcm, addr, dat);
-	}
-	(void)port;
-}
-
-static REG8 IOINPCALL spb_i188(UINT port) {
+	opna_writeExtendedRegister(&g_opn, g_opn.addr1h, dat);
 
 	(void)port;
-	return((g_fmtimer.status & 3) | adpcm_status(&g_adpcm));
 }
 
-static REG8 IOINPCALL spb_i18a(UINT port) {
+static REG8 IOINPCALL spb_i188(UINT port)
+{
+	(void)port;
 
-	UINT	addr;
-
-	addr = g_opn.addr1l;
-	if (addr == 0x0e) {
-		return(fmboard_getjoy(&g_psg1));
-	}
-	else if (addr < 0x10) {
-		return(psggen_getreg(&g_psg1, addr));
-	}
-	else if (addr == 0xff) {
-		return(1);
-	}
-	else {
-		(void)port;
-		return(g_opn.reg[addr]);
-	}
+	return opna_readExtendedStatus(&g_opn);
 }
 
-static REG8 IOINPCALL spb_i18e(UINT port) {
+static REG8 IOINPCALL spb_i18a(UINT port)
+{
+	UINT nAddress;
 
-	UINT	addr;
+	nAddress = g_opn.addr1l;
+	if (nAddress == 0x0e)
+	{
+		return fmboard_getjoy(&g_psg1);
+	}
 
-	addr = g_opn.addr1h;
-	if (addr == 0x08) {
-		return(adpcm_readsample(&g_adpcm));
-	}
-	else if (addr == 0x0f) {
-		return(g_opn.reg[addr + 0x100]);
-	}
-	else {
-		(void)port;
-		return(g_opn.reg[g_opn.addr1l]);
-	}
+	(void)port;
+	return opna_readRegister(&g_opn, nAddress);
 }
+
+static REG8 IOINPCALL spb_i18e(UINT port)
+{
+	UINT nAddress;
+
+	nAddress = g_opn.addr1h;
+	if ((nAddress == 0x08) || (nAddress == 0x0f))
+	{
+		return opna_readExtendedRegister(&g_opn, nAddress);
+	}
+
+	(void)port;
+	return g_opn.reg[g_opn.addr1l];
+}
+
 
 
 static void IOOUTCALL spb_o088(UINT port, REG8 dat) {
@@ -588,7 +545,13 @@ static const IOOUT spr_o2[4] = {
 static const IOINP spr_i2[4] = {
 			spr_i488,	spr_i48a,	spr_i48c,	spr_i48e};
 
-void boardpx1_reset(const NP2CFG *pConfig) {
+/**
+ * Reset
+ * @param[in] pConfig A pointer to a configure structure
+ */
+void boardpx1_reset(const NP2CFG *pConfig)
+{
+	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR | OPNA_S98);
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
 	g_opn.reg[0x2ff] = 0;
@@ -600,26 +563,20 @@ void boardpx1_reset(const NP2CFG *pConfig) {
 	g_opn.base = (pConfig->spbopt & 0x10)?0x000:0x100;
 }
 
-void boardpx1_bind(void) {
-
-	fmboard_fmrestore(&g_opn, 0, 0);
-	fmboard_fmrestore(&g_opn, 3, 1);
-	fmboard_fmrestore(&g_opn, 6, 2);
-	fmboard_fmrestore(&g_opn, 9, 3);
+/**
+ * Bind
+ */
+void boardpx1_bind(void)
+{
+	opna_bind(&g_opn);
 	fmboard_fmrestore(&g_opn2, 12, 0);
 	fmboard_fmrestore(&g_opn2, 15, 1);
 	fmboard_fmrestore(&g_opn2, 18, 2);
 	fmboard_fmrestore(&g_opn2, 21, 3);
-	psggen_restore(&g_psg1);
 	psggen_restore(&g_psg2);
-	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	fmboard_rhyrestore(&g_opn2, &g_rhythm2, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
-	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&g_rhythm);
 	rhythm_bind(&g_rhythm2);
-	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 	sound_streamregist(&g_adpcm2, (SOUNDCB)adpcm_getpcm);
 
 	cbuscore_attachsndex(0x188, spb_o, spb_i);
@@ -643,7 +600,13 @@ static void extendchannelx2(REG8 enable) {
 	}
 }
 
-void boardpx2_reset(const NP2CFG *pConfig) {
+/**
+ * Reset
+ * @param[in] pConfig A pointer to a configure structure
+ */
+void boardpx2_reset(const NP2CFG *pConfig)
+{
+	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR | OPNA_S98);
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
 	g_opn.reg[0x2ff] = 0;
@@ -657,32 +620,27 @@ void boardpx2_reset(const NP2CFG *pConfig) {
 	fmboard_extreg(extendchannelx2);
 }
 
-void boardpx2_bind(void) {
-
-	fmboard_fmrestore(&g_opn, 0, 0);
-	fmboard_fmrestore(&g_opn, 3, 1);
-	fmboard_fmrestore(&g_opn, 6, 2);
-	fmboard_fmrestore(&g_opn, 9, 3);
+/**
+ * Bind
+ */
+void boardpx2_bind(void)
+{
+	opna_bind(&g_opn);
 	fmboard_fmrestore(&g_opn2, 12, 0);
 	fmboard_fmrestore(&g_opn2, 15, 1);
 	fmboard_fmrestore(&g_opn2, 18, 2);
 	fmboard_fmrestore(&g_opn2, 21, 3);
 	fmboard_fmrestore(&g_opn3, 24, 0);
 	fmboard_fmrestore(&g_opn3, 27, 1);
-	psggen_restore(&g_psg1);
 	psggen_restore(&g_psg2);
 	psggen_restore(&g_psg3);
-	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	fmboard_rhyrestore(&g_opn2, &g_rhythm2, 0);
 	fmboard_rhyrestore(&g_opn3, &g_rhythm3, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcmvr);
-	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg3, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&g_rhythm);
 	rhythm_bind(&g_rhythm2);
 	rhythm_bind(&g_rhythm3);
-	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
 	sound_streamregist(&g_adpcm2, (SOUNDCB)adpcm_getpcm);
 	sound_streamregist(&g_adpcm3, (SOUNDCB)adpcm_getpcm);
 
