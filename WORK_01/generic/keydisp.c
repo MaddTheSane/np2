@@ -68,27 +68,28 @@ typedef struct {
 static	KEYDISP		s_keydisp;
 
 /**
- * @brief キー位置
+ * @brief The table of the notes
  */
-struct TagKeyPos
+struct TagNotePattern
 {
-	UINT16 posx;
-	UINT16 pals;
-	const UINT8 *data;
+	UINT16 nPosX;			/*!< X-Coorinate */
+	UINT8 nType;			/*!< type */
+	const UINT8 *lpImage;	/*!< image */
 };
-typedef struct TagKeyPos KDKEYPOS;
+typedef struct TagNotePattern NOTEPATTERN;		/*!< The define of the note's pattern */
 
 /**
- * @brief 固定データ
+ * @brief const data
  */
 struct KeyDispConstData
 {
-	UINT8		pal8[KEYDISP_PALS];
-	UINT16		pal16[KEYDISP_LEVEL * 2];
-	RGB32		pal32[KEYDISP_LEVEL * 2];
-	KDKEYPOS	keypos[128];
+	UINT8 pal8[KEYDISP_PALS];			/*!< 8npp palettes */
+	UINT16 pal16[2][KEYDISP_LEVEL];		/*!< 16bpp palettes */
+	RGB32 pal32[2][KEYDISP_LEVEL];		/*!< 32bpp palettes */
+	NOTEPATTERN pattern[128];			/*!< pattern */
 };
 
+/*! const data */
 static struct KeyDispConstData s_constData;
 
 #include "keydisp.res"
@@ -330,11 +331,7 @@ static UINT8 getfmnote(UINT16 fnum)
 	{
 		ret++;
 	}
-	if (ret > 127)
-	{
-		return 127;
-	}
-	return ret;
+	return max(ret, 127);
 }
 
 static void fmkeyoff(KEYDISP *keydisp, UINT8 ch, KDFMCTRL *k)
@@ -439,7 +436,7 @@ static UINT8 getpsgnote(UINT16 tone)
 	{
 		tone <<= 1;
 		ret += 12;
-		if (ret >= 128)
+		if (ret > 127)
 		{
 			return 127;
 		}
@@ -457,11 +454,7 @@ static UINT8 getpsgnote(UINT16 tone)
 	{
 		ret++;
 	}
-	if (ret >= 128)
-	{
-		return 127;
-	}
-	return ret;
+	return max(ret, 127);
 }
 
 static void psgmix(KEYDISP *keydisp, UINT8 ch, PSGGEN psg)
@@ -764,11 +757,7 @@ static UINT getdispkeys(const KEYDISP *keydisp)
 			keys = 0;
 			break;
 	}
-	if (keys > KEYDISP_CHMAX)
-	{
-		keys = KEYDISP_CHMAX;
-	}
-	return keys;
+	return max(keys, KEYDISP_CHMAX);
 }
 
 static void clearrect(CMNVRAM *vram, int x, int y, int cx, int cy)
@@ -784,13 +773,13 @@ static void clearrect(CMNVRAM *vram, int x, int y, int cx, int cy)
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			col.pal16 = s_constData.pal16[KEYDISP_LEVEL];
+			col.pal16 = s_constData.pal16[1][0];
 			break;
 #endif
 #if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
 		case 24:
 		case 32:
-			col.pal32 = s_constData.pal32[KEYDISP_LEVEL];
+			col.pal32 = s_constData.pal32[1][0];
 			break;
 #endif
 		default:
@@ -815,15 +804,15 @@ static void drawkeybg(CMNVRAM *vram)
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			bg.pal16 = s_constData.pal16[KEYDISP_LEVEL];
-			fg.pal16 = s_constData.pal16[0];
+			bg.pal16 = s_constData.pal16[1][0];
+			fg.pal16 = s_constData.pal16[0][0];
 			break;
 #endif
 #if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
 		case 24:
 		case 32:
-			bg.pal32 = s_constData.pal32[KEYDISP_LEVEL];
-			fg.pal32 = s_constData.pal32[0];
+			bg.pal32 = s_constData.pal32[1][0];
+			fg.pal32 = s_constData.pal32[0][0];
 			break;
 #endif
 		default:
@@ -838,11 +827,11 @@ static void drawkeybg(CMNVRAM *vram)
 
 static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n)
 {
-	const KDKEYPOS	*pos;
+	const NOTEPATTERN *pPattern;
 	UINT		pal;
 	CMNPAL		fg;
 
-	pos = s_constData.keypos + (kdch->k[n] & 0x7f);
+	pPattern = s_constData.pattern + (kdch->k[n] & 0x7f);
 	pal = kdch->r[n] & 0x7f;
 	switch (vram->bpp)
 	{
@@ -850,8 +839,8 @@ static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n)
 		case 8:
 			if (pal != (KEYDISP_LEVEL - 1))
 			{
-				fg.pal8 = s_constData.pal8[(pos->pals) ? KEYDISP_PALBG : KEYDISP_PALFG];
-				cmndraw_setfg(vram, pos->data, pos->posx, 0, fg);
+				fg.pal8 = s_constData.pal8[(pPattern->nType) ? KEYDISP_PALBG : KEYDISP_PALFG];
+				cmndraw_setfg(vram, pPattern->lpImage, pPattern->nPosX, 0, fg);
 				kdch->r[n] = 0;
 				return TRUE;
 			}
@@ -860,19 +849,19 @@ static BOOL draw1key(CMNVRAM *vram, KDCHANNEL *kdch, UINT n)
 #endif
 #if defined(SUPPORT_16BPP)
 		case 16:
-			fg.pal16 = s_constData.pal16[pal + pos->pals];
+			fg.pal16 = s_constData.pal16[pPattern->nType][pal];
 			break;
 #endif
 #if defined(SUPPORT_24BPP) || defined(SUPPORT_32BPP)
 		case 24:
 		case 32:
-			fg.pal32 = s_constData.pal32[pal + pos->pals];
+			fg.pal32 = s_constData.pal32[pPattern->nType][pal];
 			break;
 #endif
 		default:
 			return FALSE;
 	}
-	cmndraw_setfg(vram, pos->data, pos->posx, 0, fg);
+	cmndraw_setfg(vram, pPattern->lpImage, pPattern->nPosX, 0, fg);
 	return FALSE;
 }
 
@@ -957,9 +946,9 @@ void keydisp_initialize(void)
 	{
 		for (i = 0; i < 12 && r < 128; i++, r++)
 		{
-			s_constData.keypos[r].posx = keyposdef[i].posx + x;
-			s_constData.keypos[r].pals = keyposdef[i].pals;
-			s_constData.keypos[r].data = keyposdef[i].data;
+			s_constData.pattern[r].nPosX = s_notepattern[i].nPosX + x;
+			s_constData.pattern[r].nType = s_notepattern[i].nType;
+			s_constData.pattern[r].lpImage = s_notepattern[i].lpImage;
 		}
 		x += 28;
 	} while (r < 128);
@@ -968,8 +957,8 @@ void keydisp_initialize(void)
 
 void keydisp_setpal(CMNPALFN *palfn)
 {
-	UINT	i;
-	RGB32	pal32[KEYDISP_PALS];
+	UINT i;
+	RGB32 pal32[KEYDISP_PALS];
 
 	if (palfn == NULL)
 	{
@@ -987,14 +976,15 @@ void keydisp_setpal(CMNPALFN *palfn)
 		for (i = 0; i < KEYDISP_PALS; i++)
 		{
 			pal32[i].d = (*palfn->get32)(palfn, i);
-			cmndraw_makegrad(s_constData.pal32, KEYDISP_LEVEL, pal32[KEYDISP_PALFG], pal32[KEYDISP_PALHIT]);
-			cmndraw_makegrad(s_constData.pal32 + KEYDISP_LEVEL, KEYDISP_LEVEL, pal32[KEYDISP_PALBG], pal32[KEYDISP_PALHIT]);
+			cmndraw_makegrad(s_constData.pal32[0], KEYDISP_LEVEL, pal32[KEYDISP_PALFG], pal32[KEYDISP_PALHIT]);
+			cmndraw_makegrad(s_constData.pal32[1], KEYDISP_LEVEL, pal32[KEYDISP_PALBG], pal32[KEYDISP_PALHIT]);
 		}
 		if (palfn->cnv16)
 		{
-			for (i = 0; i < (KEYDISP_LEVEL * 2); i++)
+			for (i = 0; i < KEYDISP_LEVEL; i++)
 			{
-				s_constData.pal16[i] = (*palfn->cnv16)(palfn, s_constData.pal32[i]);
+				s_constData.pal16[0][i] = (*palfn->cnv16)(palfn, s_constData.pal32[0][i]);
+				s_constData.pal16[1][i] = (*palfn->cnv16)(palfn, s_constData.pal32[1][i]);
 			}
 		}
 	}
