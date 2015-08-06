@@ -1,11 +1,11 @@
 /**
  * @file	pccore.h
- * @brief	Interface of core
+ * @brief	Interface of the core
  */
 
 #pragma once
 
-#include	"nevent.h"
+#include "nevent.h"
 
 enum {
 	PCBASECLOCK25		= 2457600,

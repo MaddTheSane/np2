@@ -1,3 +1,9 @@
+/**
+ * @file	nevent.h
+ * @brief	Interface of the event
+ */
+
+#pragma once
 
 enum {
 	NEVENT_MAXEVENTS	= 32,
@@ -106,4 +112,3 @@ void nevent_forceexit(void);
 #ifdef __cplusplus
 }
 #endif
-
