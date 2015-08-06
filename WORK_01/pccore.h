@@ -39,7 +39,8 @@ enum {
 };
 
 
-typedef struct {
+struct tagNP2Config
+{
 	// エミュレート中によく参照される奴
 	UINT8	uPD72020;
 	UINT8	DISPSYNC;
@@ -116,7 +117,8 @@ typedef struct {
 	OEMCHAR	fontfile[MAX_PATH];
 	OEMCHAR	biospath[MAX_PATH];
 	OEMCHAR	hdrvroot[MAX_PATH];
-} NP2CFG;
+};
+typedef struct tagNP2Config  NP2CFG;		/*!< The define of config */
 
 typedef struct {
 	UINT32	baseclock;
