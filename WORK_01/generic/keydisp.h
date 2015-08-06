@@ -26,13 +26,13 @@ enum {
 #if defined(SUPPORT_PX)
 enum {
 	KEYDISP_CHMAX		= 39,
-	KEYDISP_FMCHMAX		= 30,
+	KEYDISP_FMCHMAX		= 30 / 3,
 	KEYDISP_PSGMAX		= 3
 };
 #else	// defined(SUPPORT_PX)
 enum {
 	KEYDISP_CHMAX		= 16,
-	KEYDISP_FMCHMAX		= 12,
+	KEYDISP_FMCHMAX		= 12 / 3,
 	KEYDISP_PSGMAX		= 3
 };
 #endif	// defined(SUPPORT_PX)

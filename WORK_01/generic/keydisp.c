@@ -33,13 +33,19 @@ typedef struct {
 	UINT8	warmbase;
 } KDDELAY;
 
+
+struct FMChannel
+{
+	UINT16 nFNumber;				/*!< F-Number */
+	UINT8 cLastNote;				/*!< The last note */
+	UINT8 cKeyOn;					/*!< KeyOn */
+};
+
 typedef struct
 {
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
-	UINT16	fnum[4];
-	UINT8 cLastNote[4];
+	struct FMChannel ch[3];			/*!< */
 	UINT8 cChannelNum;				/*!< The number of the channel */
-	UINT8	flag;
 } KDFMCTRL;
 
 typedef struct
@@ -268,7 +274,7 @@ static void delayexecevent(KEYDISP *keydisp, UINT8 framepast)
 	keydisp->delay.rem = rem;
 }
 
-static void delaysetevent(KEYDISP *keydisp, UINT8 ch, UINT8 key)
+static void delaysetevent(KEYDISP *keydisp, REG8 ch, REG8 key)
 {
 	KDDELAYE	*e;
 
@@ -335,23 +341,22 @@ static UINT8 GetFMNote(UINT16 fnum)
 	return min(ret, 127);
 }
 
-static void fmkeyoff(KEYDISP *keydisp, KDFMCTRL *k)
+static void fmkeyoff(KEYDISP *keydisp, KDFMCTRL *k, UINT nChannel)
 {
-	delaysetevent(keydisp, k->cChannelNum, k->cLastNote[0]);
+	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannel), k->ch[nChannel].cLastNote);
 }
 
-static void fmkeyon(KEYDISP *keydisp, KDFMCTRL *k)
+static void fmkeyon(KEYDISP *keydisp, KDFMCTRL *k, UINT nChannel)
 {
 	const UINT8 *pReg;
 
-	fmkeyoff(keydisp, k);
+	fmkeyoff(keydisp, k, nChannel);
 	pReg = k->pcRegister;
 	if (pReg)
 	{
-		pReg = pReg + 0xa0;
-		k->fnum[0] = ((pReg[4] & 0x3f) << 8) + pReg[0];
-		k->cLastNote[0] = GetFMNote(k->fnum[0]);
-		delaysetevent(keydisp, k->cChannelNum, (UINT8)(k->cLastNote[0] | 0x80));
+		k->ch[nChannel].nFNumber = ((pReg[0xa4 + nChannel] & 0x3f) << 8) + pReg[0xa0 + nChannel];
+		k->ch[nChannel].cLastNote = GetFMNote(k->ch[nChannel].nFNumber);
+		delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannel), (REG8)(k->ch[nChannel].cLastNote | 0x80));
 	}
 }
 
@@ -361,64 +366,75 @@ static void fmkeyreset(KEYDISP *keydisp)
 
 	for (i = 0; i < KEYDISP_FMCHMAX; i++)
 	{
-		keydisp->fmctl[i].flag = 0;
+		memset(keydisp->fmctl[i].ch, 0, sizeof(keydisp->fmctl[i].ch));
 	}
 }
 
 void keydisp_fmkeyon(UINT8 ch, UINT8 value)
 {
-	KDFMCTRL	*k;
+	KDFMCTRL *k;
+	UINT nChannel;
 
 	if (s_keydisp.mode != KEYDISP_MODEFM)
 	{
 		return;
 	}
+
+	nChannel = ch % 3;
+	ch = ch / 3;
 	if (ch < s_keydisp.fmmax)
 	{
-		k = s_keydisp.fmctl + ch;
+		k = &s_keydisp.fmctl[ch];
 		value &= 0xf0;
-		if (k->flag != value)
+		if (k->ch[nChannel].cKeyOn != value)
 		{
 			if (value)
 			{
-				fmkeyon(&s_keydisp, k);
+				fmkeyon(&s_keydisp, k, nChannel);
 			}
 			else
 			{
-				fmkeyoff(&s_keydisp, k);
+				fmkeyoff(&s_keydisp, k, nChannel);
 			}
-			k->flag = value;
+			k->ch[nChannel].cKeyOn = value;
 		}
 	}
 }
 
 static void fmkeysync(KEYDISP *keydisp)
 {
-	UINT8		ch;
-	KDFMCTRL	*k;
+	UINT i;
+	KDFMCTRL *k;
 	const UINT8 *pReg;
-	UINT16		fnum;
+	UINT j;
+	UINT8 n;
+	UINT16 fnum;
 
-	for (ch = 0, k = keydisp->fmctl; ch < keydisp->fmmax; ch++, k++)
+	for (i = 0; i < keydisp->fmmax; i++)
 	{
-		if (k->flag)
+		k = &keydisp->fmctl[i];
+
+		pReg = k->pcRegister;
+		if (pReg == NULL)
 		{
-			pReg = k->pcRegister;
-			if (pReg)
+			continue;
+		}
+
+		for (j = 0; j < 3; j++)
+		{
+			if (k->ch[j].cKeyOn)
 			{
-				pReg = pReg + 0xa0;
-				fnum = ((pReg[4] & 0x3f) << 8) + pReg[0];
-				if (k->fnum[0] != fnum)
+				fnum = ((pReg[0xa4 + j] & 0x3f) << 8) + pReg[0xa0 + j];
+				if (k->ch[j].nFNumber != fnum)
 				{
-					UINT8 n;
-					k->fnum[0] = fnum;
+					k->ch[j].nFNumber = fnum;
 					n = GetFMNote(fnum);
-					if (k->cLastNote[0] != n)
+					if (k->ch[j].cLastNote != n)
 					{
-						fmkeyoff(keydisp, k);
+						fmkeyoff(keydisp, k, j);
 					}
-					k->cLastNote[0] = n;
-					delaysetevent(keydisp, k->cChannelNum, (UINT8)(k->cLastNote[0] | 0x80));
+					k->ch[j].cLastNote = n;
+					delaysetevent(keydisp, (REG8)(k->cChannelNum + j), (REG8)(n | 0x80));
 				}
 			}
 		}
@@ -620,18 +636,17 @@ static void psgkeysync(KEYDISP *keydisp)
 
 static void setfmhdl(KEYDISP *keydisp, const OPN_T *pOpn, UINT nItems, UINT nBase)
 {
-	while (nItems--)
+	UINT i;
+
+	for (i = 0; i < nItems; i += 3)
 	{
-		if ((keydisp->keymax < KEYDISP_CHMAX) && (keydisp->fmmax < KEYDISP_FMCHMAX))
+		if ((keydisp->keymax < (KEYDISP_CHMAX - 3)) && (keydisp->fmmax < KEYDISP_FMCHMAX))
 		{
-			keydisp->fmctl[keydisp->fmmax].cChannelNum = keydisp->keymax++;
+			keydisp->fmctl[keydisp->fmmax].cChannelNum = keydisp->keymax;
 			keydisp->fmctl[keydisp->fmmax].pcRegister = pOpn->reg + nBase;
 			keydisp->fmmax++;
-			nBase++;
-			if ((nBase & 3) == 3)
-			{
-				nBase += 0x100 - 3;
-			}
+			keydisp->keymax += 3;
+			nBase += 0x100;
 		}
 	}
 }
