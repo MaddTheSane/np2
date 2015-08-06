@@ -1,5 +1,5 @@
 /**
- * @file	nevent.cpp
+ * @file	nevent.c
  * @brief	Implementation of the event
  */
 
