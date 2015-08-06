@@ -94,6 +94,7 @@ void psggen_setreg(PSGGEN psg, UINT reg, REG8 value) {
 		sound_sync();
 	}
 	((UINT8 *)&psg->reg)[reg] = value;
+	keydisp_psg(psg, reg);
 	switch(reg) {
 		case 0:
 		case 1:
@@ -120,7 +121,6 @@ void psggen_setreg(PSGGEN psg, UINT reg, REG8 value) {
 			break;
 
 		case 7:
-			keydisp_psgmix(psg);
 			psg->mixer = ~value;
 			psg->puchicount = psggencfg.puchidec;
 //			TRACEOUT(("psg %x 7 %d", (long)psg, value));
@@ -130,7 +130,6 @@ void psggen_setreg(PSGGEN psg, UINT reg, REG8 value) {
 		case 9:
 		case 10:
 			ch = reg - 8;
-			keydisp_psgvol(psg, (UINT8)ch);
 			if (value & 0x10) {
 				psg->tone[ch].pvol = &psg->evol;
 			}
