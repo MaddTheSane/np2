@@ -1,9 +1,10 @@
-#include	"compiler.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
+/**
+ * @file	opngeng.c
+ * @brief	Implementation of the OPN generator
+ */
 
+#include "compiler.h"
+#include "opngen.h"
 
 #if defined(OPNGENX86)
 #error use opngen.x86

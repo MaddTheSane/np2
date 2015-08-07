@@ -1,10 +1,13 @@
-#include	"compiler.h"
-#include	<math.h>
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"keydisp.h"
+/**
+ * @file	opngenc.c
+ * @brief	Implementation of the OPN generator
+ */
+
+#include "compiler.h"
+#include <math.h>
+#include "opngen.h"
+#include "pccore.h"
+#include "keydisp.h"
 
 
 #define	OPM_ARRATE		 399128L
@@ -408,17 +411,17 @@ static void channleupdate(OPNCH *ch) {
 
 // ----
 
-void opngen_reset(void) {
+void opngen_reset(OPNGEN opngen) {
 
 	OPNCH	*ch;
 	UINT	i;
 	OPNSLOT	*slot;
 	UINT	j;
 
-	memset(&g_opngen, 0, sizeof(g_opngen));
-	g_opngen.playchannels = 3;
+	memset(opngen, 0, sizeof(*opngen));
+	opngen->playchannels = 3;
 
-	ch = g_opngen.opnch;
+	ch = opngen->opnch;
 	for (i=0; i<OPNCH_MAX; i++) {
 		ch->keynote[0] = 0;
 		slot = ch->slot;
@@ -437,25 +440,25 @@ void opngen_reset(void) {
 		ch++;
 	}
 	for (i=0x30; i<0xc0; i++) {
-		opngen_setreg(0, i, 0xff);
-		opngen_setreg(3, i, 0xff);
-		opngen_setreg(6, i, 0xff);
-		opngen_setreg(9, i, 0xff);
+		opngen_setreg(opngen, 0, i, 0xff);
+		opngen_setreg(opngen, 3, i, 0xff);
+		opngen_setreg(opngen, 6, i, 0xff);
+		opngen_setreg(opngen, 9, i, 0xff);
 	}
 }
 
-void opngen_setcfg(REG8 maxch, UINT32 flag) {
+void opngen_setcfg(OPNGEN opngen, REG8 maxch, UINT32 flag) {
 
 	OPNCH	*ch;
 	UINT	i;
 
-	g_opngen.playchannels = maxch;
-	ch = g_opngen.opnch;
+	opngen->playchannels = maxch;
+	ch = opngen->opnch;
 	if ((flag & OPN_CHMASK) == OPN_STEREO) {
 		for (i=0; i<OPNCH_MAX; i++) {
 			if (flag & (1 << i)) {
 				ch->stereo = TRUE;
-				set_algorithm(&g_opngen, ch);
+				set_algorithm(opngen, ch);
 			}
 			ch++;
 		}
@@ -464,22 +467,22 @@ void opngen_setcfg(REG8 maxch, UINT32 flag) {
 		for (i=0; i<OPNCH_MAX; i++) {
 			if (flag & (1 << i)) {
 				ch->stereo = FALSE;
-				set_algorithm(&g_opngen, ch);
+				set_algorithm(opngen, ch);
 			}
 			ch++;
 		}
 	}
 }
 
-void opngen_setextch(UINT chnum, REG8 data) {
+void opngen_setextch(OPNGEN opngen, UINT chnum, REG8 data) {
 
 	OPNCH	*ch;
 
-	ch = g_opngen.opnch;
+	ch = opngen->opnch;
 	ch[chnum].extop = data;
 }
 
-void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
+void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value) {
 
 	UINT	chpos;
 	OPNCH	*ch;
@@ -492,7 +495,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 		return;
 	}
 	sound_sync();
-	ch = g_opngen.opnch + chbase + chpos;
+	ch = opngen->opnch + chbase + chpos;
 	if (reg < 0xa0) {
 		slot = ch->slot + fmslot[(reg >> 2) & 3];
 		switch(reg & 0xf0) {
@@ -545,7 +548,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				break;
 
 			case 0xa8:
-				ch = g_opngen.opnch + chbase + 2;
+				ch = opngen->opnch + chbase + 2;
 				blk = ch->keyfunc[chpos+1] >> 3;
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos+1] = (blk << 2) | kftable[fn >> 7];
@@ -555,7 +558,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				break;
 
 			case 0xac:
-				ch = g_opngen.opnch + chbase + 2;
+				ch = opngen->opnch + chbase + 2;
 				ch->keyfunc[chpos+1] = value & 0x3f;
 				break;
 
@@ -568,18 +571,18 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				else {
 					ch->feedback = 0;
 				}
-				set_algorithm(&g_opngen, ch);
+				set_algorithm(opngen, ch);
 				break;
 
 			case 0xb4:
 				ch->pan = (UINT8)(value & 0xc0);
-				set_algorithm(&g_opngen, ch);
+				set_algorithm(opngen, ch);
 				break;
 		}
 	}
 }
 
-void opngen_keyon(UINT chnum, REG8 value) {
+void opngen_keyon(OPNGEN opngen, UINT chnum, REG8 value) {
 
 	OPNCH	*ch;
 	OPNSLOT	*slot;
@@ -587,8 +590,8 @@ void opngen_keyon(UINT chnum, REG8 value) {
 	UINT	i;
 
 	sound_sync();
-	g_opngen.playing++;
-	ch = g_opngen.opnch + chnum;
+	opngen->playing++;
+	ch = opngen->opnch + chnum;
 	ch->keyreg = value;
 	ch->playing |= value >> 4;
 	slot = ch->slot;
@@ -623,7 +626,8 @@ void opngen_keyon(UINT chnum, REG8 value) {
 	keydisp_fmkeyon((UINT8)chnum, value);
 }
 
-void opngen_csm(void) {
-	opngen_keyon(2, 0x02);
-	opngen_keyon(2, 0xf2);
+void opngen_csm(OPNGEN opngen) {
+
+	opngen_keyon(opngen, 2, 0x02);
+	opngen_keyon(opngen, 2, 0xf2);
 }

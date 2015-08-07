@@ -31,7 +31,7 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 		if (addr < 0x30) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					opngen_keyon(dat & 0x0f, dat);
+					opngen_keyon(&g_opngen, dat & 0x0f, dat);
 				}
 			}
 			else {
@@ -42,7 +42,7 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 			}
 		}
 		else if (addr < 0xc0) {
-			opngen_setreg(0, addr, dat);
+			opngen_setreg(&g_opngen, 0, addr, dat);
 		}
 		g_opn.reg[addr] = dat;
 	}
@@ -82,7 +82,7 @@ static const IOINP opn_i[4] = {
 
 void board26k_reset(const NP2CFG *pConfig) {
 
-	opngen_setcfg(3, 0);
+	opngen_setcfg(&g_opngen, 3, 0);
 	fmtimer_reset(pConfig->snd26opt & 0xc0);
 	soundrom_loadex(pConfig->snd26opt & 7, OEMTEXT("26"));
 	g_opn.base = (pConfig->snd26opt & 0x10)?0x000:0x100;
