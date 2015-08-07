@@ -1,3 +1,9 @@
+/**
+ * @file	sound.h
+ * @brief	Interface of the sound
+ */
+
+#pragma once
 
 #ifndef SOUNDCALL
 #define	SOUNDCALL
