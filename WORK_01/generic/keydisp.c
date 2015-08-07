@@ -44,8 +44,9 @@ struct FMChannel
 typedef struct
 {
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
-	struct FMChannel ch[3];			/*!< */
+	struct FMChannel ch[12];		/*!< The information of FM */
 	UINT8 cChannelNum;				/*!< The number of the channel */
+	UINT8 cFMChannels;				/*!< The channels of FM */
 } KDFMCTRL;
 
 typedef struct
@@ -346,18 +347,16 @@ static void fmkeyoff(KEYDISP *keydisp, KDFMCTRL *k, UINT nChannel)
 	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannel), k->ch[nChannel].cLastNote);
 }
 
-static void fmkeyon(KEYDISP *keydisp, KDFMCTRL *k, UINT nChannel)
+static void fmkeyon(KEYDISP *keydisp, KDFMCTRL *k, UINT nChannelNum)
 {
 	const UINT8 *pReg;
 
-	fmkeyoff(keydisp, k, nChannel);
-	pReg = k->pcRegister;
-	if (pReg)
-	{
-		k->ch[nChannel].nFNumber = ((pReg[0xa4 + nChannel] & 0x3f) << 8) + pReg[0xa0 + nChannel];
-		k->ch[nChannel].cLastNote = GetFMNote(k->ch[nChannel].nFNumber);
-		delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannel), (REG8)(k->ch[nChannel].cLastNote | 0x80));
-	}
+	fmkeyoff(keydisp, k, nChannelNum);
+
+	pReg = k->pcRegister + ((nChannelNum / 3) << 8) + 0xa0 + (nChannelNum % 3);
+	k->ch[nChannelNum].nFNumber = ((pReg[4] & 0x3f) << 8) + pReg[0];
+	k->ch[nChannelNum].cLastNote = GetFMNote(k->ch[nChannelNum].nFNumber);
+	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannelNum), (REG8)(k->ch[nChannelNum].cLastNote | 0x80));
 }
 
 static void fmkeyreset(KEYDISP *keydisp)
@@ -370,34 +369,38 @@ static void fmkeyreset(KEYDISP *keydisp)
 	}
 }
 
-void keydisp_fmkeyon(UINT8 ch, UINT8 value)
+void keydisp_fmkeyon(REG8 nChannelNum, UINT8 value)
 {
+	UINT i;
 	KDFMCTRL *k;
-	UINT nChannel;
 
 	if (s_keydisp.mode != KEYDISP_MODEFM)
 	{
 		return;
 	}
 
-	nChannel = ch % 3;
-	ch = ch / 3;
-	if (ch < s_keydisp.fmmax)
+	for (i = 0; i < s_keydisp.fmmax; i++)
 	{
-		k = &s_keydisp.fmctl[ch];
+		k = &s_keydisp.fmctl[i];
+		if (nChannelNum >= k->cFMChannels)
+		{
+			nChannelNum -= k->cFMChannels;
+			continue;
+		}
 		value &= 0xf0;
-		if (k->ch[nChannel].cKeyOn != value)
+		if (k->ch[nChannelNum].cKeyOn != value)
 		{
 			if (value)
 			{
-				fmkeyon(&s_keydisp, k, nChannel);
+				fmkeyon(&s_keydisp, k, nChannelNum);
 			}
 			else
 			{
-				fmkeyoff(&s_keydisp, k, nChannel);
+				fmkeyoff(&s_keydisp, k, nChannelNum);
 			}
-			k->ch[nChannel].cKeyOn = value;
+			k->ch[nChannelNum].cKeyOn = value;
 		}
+		break;
 	}
 }
 
@@ -413,18 +416,12 @@ static void fmkeysync(KEYDISP *keydisp)
 	for (i = 0; i < keydisp->fmmax; i++)
 	{
 		k = &keydisp->fmctl[i];
-
-		pReg = k->pcRegister;
-		if (pReg == NULL)
-		{
-			continue;
-		}
-
-		for (j = 0; j < 3; j++)
+		for (j = 0; j < k->cFMChannels; j++)
 		{
 			if (k->ch[j].cKeyOn)
 			{
-				fnum = ((pReg[0xa4 + j] & 0x3f) << 8) + pReg[0xa0 + j];
+				pReg = k->pcRegister + ((j / 3) << 8) + 0xa0 + (j % 3);
+				fnum = ((pReg[4] & 0x3f) << 8) + pReg[0];
 				if (k->ch[j].nFNumber != fnum)
 				{
 					k->ch[j].nFNumber = fnum;
@@ -634,20 +631,15 @@ static void psgkeysync(KEYDISP *keydisp)
 
 // ---- BOARD change...
 
-static void setfmhdl(KEYDISP *keydisp, const OPN_T *pOpn, UINT nItems, UINT nBase)
+static void setfmhdl(KEYDISP *keydisp, const OPN_T *pOpn, UINT nChannels, UINT nBase)
 {
-	UINT i;
-
-	for (i = 0; i < nItems; i += 3)
+	if (((keydisp->keymax + nChannels) < KEYDISP_CHMAX) && (keydisp->fmmax < KEYDISP_FMCHMAX))
 	{
-		if ((keydisp->keymax < (KEYDISP_CHMAX - 3)) && (keydisp->fmmax < KEYDISP_FMCHMAX))
-		{
-			keydisp->fmctl[keydisp->fmmax].cChannelNum = keydisp->keymax;
-			keydisp->fmctl[keydisp->fmmax].pcRegister = pOpn->reg + nBase;
-			keydisp->fmmax++;
-			keydisp->keymax += 3;
-			nBase += 0x100;
-		}
+		keydisp->fmctl[keydisp->fmmax].cChannelNum = keydisp->keymax;
+		keydisp->fmctl[keydisp->fmmax].pcRegister = pOpn->reg + nBase;
+		keydisp->fmctl[keydisp->fmmax].cFMChannels = nChannels;
+		keydisp->fmmax++;
+		keydisp->keymax += nChannels;
 	}
 }
 
