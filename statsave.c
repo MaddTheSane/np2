@@ -589,9 +589,9 @@ static int nevent_write(STFLAGH sfh, int num) {
 			break;
 		}
 	}
-	nit.clock = nevent.item[num].clock;
-	nit.flag = nevent.item[num].flag;
-	nit.proc = nevent.item[num].proc;
+	nit.clock = g_nevent.item[num].clock;
+	nit.flag = g_nevent.item[num].flag;
+	nit.proc = g_nevent.item[num].proc;
 	if (PROC2NUM(nit.proc, evtproc)) {
 		nit.proc = NULL;
 	}
@@ -604,15 +604,15 @@ static int flagsave_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	int			ret;
 	UINT		i;
 
-	nevt.readyevents = nevent.readyevents;
-	nevt.waitevents = nevent.waitevents;
+	nevt.readyevents = g_nevent.readyevents;
+	nevt.waitevents = g_nevent.waitevents;
 
 	ret = statflag_write(sfh, &nevt, sizeof(nevt));
 	for (i=0; i<nevt.readyevents; i++) {
-		ret |= nevent_write(sfh, nevent.level[i]);
+		ret |= nevent_write(sfh, g_nevent.level[i]);
 	}
 	for (i=0; i<nevt.waitevents; i++) {
-		ret |= nevent_write(sfh, nevent.waitevent[i]);
+		ret |= nevent_write(sfh, g_nevent.waitevent[i]);
 	}
 	(void)tbl;
 	return(ret);
@@ -634,10 +634,10 @@ static int nevent_read(STFLAGH sfh, UINT *tbl, UINT *pos) {
 	}
 	if (i < NELEMENTS(evtnum)) {
 		num = evtnum[i].num;
-		nevent.item[num].clock = nit.clock;
-		nevent.item[num].flag = nit.flag;
-		nevent.item[num].proc = nit.proc;
-		if (NUM2PROC(nevent.item[num].proc, evtproc)) {
+		g_nevent.item[num].clock = nit.clock;
+		g_nevent.item[num].flag = nit.flag;
+		g_nevent.item[num].proc = nit.proc;
+		if (NUM2PROC(g_nevent.item[num].proc, evtproc)) {
 			ret |= STATFLAG_WARNING;
 		}
 		else {
@@ -659,14 +659,14 @@ static int flagload_evt(STFLAGH sfh, const SFENTRY *tbl) {
 
 	ret = statflag_read(sfh, &nevt, sizeof(nevt));
 
-	nevent.readyevents = 0;
-	nevent.waitevents = 0;
+	g_nevent.readyevents = 0;
+	g_nevent.waitevents = 0;
 
 	for (i=0; i<nevt.readyevents; i++) {
-		ret |= nevent_read(sfh, nevent.level, &nevent.readyevents);
+		ret |= nevent_read(sfh, g_nevent.level, &g_nevent.readyevents);
 	}
 	for (i=0; i<nevt.waitevents; i++) {
-		ret |= nevent_read(sfh, nevent.waitevent, &nevent.waitevents);
+		ret |= nevent_read(sfh, g_nevent.waitevent, &g_nevent.waitevents);
 	}
 	(void)tbl;
 	return(ret);

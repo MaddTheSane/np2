@@ -72,7 +72,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	_NEVENT		nevent;
+extern	_NEVENT		g_nevent;
 
 // ‰Šú‰»
 void nevent_allreset(void);
