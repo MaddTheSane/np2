@@ -54,7 +54,7 @@ private:
 	static DWORD sm_dwThreadId;						//!< 自分のスレッド ID
 	static HHOOK sm_hHookOldCbtFilter;				//!< フック フィルター
 	static CWndProc* sm_pWndInit;					//!< 初期化中のインスタンス
-	static std::map<HWND, CWndProc*> sm_mapWnd;		//!< ウィンドウ マップ
+	static std::map<HWND, CWndProc*>* sm_pWndMap;	//!< ウィンドウ マップ
 	WNDPROC m_pfnSuper;								//!< 下位プロシージャ
 	static LRESULT CALLBACK CbtFilterHook(int nCode, WPARAM wParam, LPARAM lParam);
 };
