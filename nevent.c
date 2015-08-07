@@ -1,6 +1,12 @@
-#include	"compiler.h"
-#include	"cpucore.h"
-#include	"pccore.h"
+/**
+ * @file	nevent.c
+ * @brief	Implementation of the event
+ */
+
+#include "compiler.h"
+#include "nevent.h"
+#include "cpucore.h"
+#include "pccore.h"
 
 
 	_NEVENT		g_nevent;
