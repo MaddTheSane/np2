@@ -12,6 +12,7 @@
 #include	"sdlkbd.h"
 #include	"ini.h"
 #include	"pccore.h"
+#include	"statsave.h"
 #include	"iocore.h"
 #include	"scrndraw.h"
 #include	"s98.h"
