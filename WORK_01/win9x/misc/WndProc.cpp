@@ -18,7 +18,7 @@ HINSTANCE CWndProc::sm_hResource;
 DWORD CWndProc::sm_dwThreadId;						//!< 自分のスレッド ID
 HHOOK CWndProc::sm_hHookOldCbtFilter;				//!< フック フィルター
 CWndProc* CWndProc::sm_pWndInit;					//!< 初期化中のインスタンス
-std::map<HWND, CWndProc*> CWndProc::sm_mapWnd;		//!< ウィンドウ マップ
+std::map<HWND, CWndProc*>* CWndProc::sm_pWndMap;	//!< ウィンドウ マップ
 
 /**
  * 初期化
@@ -31,6 +31,8 @@ void CWndProc::Initialize(HINSTANCE hInstance)
 
 	sm_dwThreadId = ::GetCurrentThreadId();
 	sm_hHookOldCbtFilter = ::SetWindowsHookEx(WH_CBT, CbtFilterHook, NULL, sm_dwThreadId);
+
+	sm_pWndMap = new std::map<HWND, CWndProc*>;
 
 #if 0
 	WNDCLASS wc;
@@ -82,15 +84,16 @@ CWndProc::~CWndProc()
  */
 CWndProc* CWndProc::FromHandlePermanent(HWND hWnd)
 {
-	std::map<HWND, CWndProc*>::iterator it = sm_mapWnd.find(hWnd);
-	if (it != sm_mapWnd.end())
+	std::map<HWND, CWndProc*>* pMap = sm_pWndMap;
+	if (pMap)
 	{
-		return it->second;
+		std::map<HWND, CWndProc*>::iterator it = pMap->find(hWnd);
+		if (it != pMap->end())
+		{
+			return it->second;
+		}
 	}
-	else
-	{
-		return NULL;
-	}
+	return NULL;
 }
 
 /**
@@ -101,9 +104,10 @@ CWndProc* CWndProc::FromHandlePermanent(HWND hWnd)
  */
 BOOL CWndProc::Attach(HWND hWndNew)
 {
-	if (hWndNew != NULL)
+	std::map<HWND, CWndProc*>* pMap = sm_pWndMap;
+	if ((hWndNew != NULL) && (pMap))
 	{
-		sm_mapWnd[hWndNew] = this;
+		(*pMap)[hWndNew] = this;
 		m_hWnd = hWndNew;
 		return TRUE;
 	}
@@ -122,10 +126,14 @@ HWND CWndProc::Detach()
 	HWND hWnd = m_hWnd;
 	if (hWnd != NULL)
 	{
-		std::map<HWND, CWndProc*>::iterator it = sm_mapWnd.find(hWnd);
-		if (it != sm_mapWnd.end())
+		std::map<HWND, CWndProc*>* pMap = sm_pWndMap;
+		if (pMap)
 		{
-			sm_mapWnd.erase(it);
+			std::map<HWND, CWndProc*>::iterator it = pMap->find(hWnd);
+			if (it != pMap->end())
+			{
+				pMap->erase(it);
+			}
 		}
 		m_hWnd = NULL;
 	}
