@@ -33,6 +33,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 
 	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
+	g_opn.reg[addr] = dat;
 	if (addr < 0x10) {
 		if (addr != 0x0e) {
 			psggen_setreg(&g_psg1, addr, dat);
@@ -59,7 +60,6 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 		else if (addr < 0xc0) {
 			opngen_setreg(&g_opngen, 0, addr, dat);
 		}
-		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
@@ -222,7 +222,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 
 	const UINT nAddr = g_opn.addr1l;
 	S98_put(NORMAL2608, nAddr, dat);
-
+	g_opn.reg[nAddr] = dat;
 	if (nAddr < 0x10)
 	{
 		(reinterpret_cast<UINT8*>(&g_psg1.reg))[nAddr] = dat;
@@ -262,7 +262,6 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		{
 			s_ext->WriteRegister(nAddr, dat);
 		}
-		g_opn.reg[nAddr] = dat;
 	}
 	(void)port;
 }
