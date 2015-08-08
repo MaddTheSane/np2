@@ -1,8 +1,11 @@
-#include	"compiler.h"
-#include	"parts.h"
-#include	"sound.h"
-#include	"psggen.h"
+/**
+ * @file	psggeng.c
+ * @brief	Implementation of the PSG
+ */
 
+#include "compiler.h"
+#include "psggen.h"
+#include "parts.h"
 
 extern	PSGGENCFG	psggencfg;
 

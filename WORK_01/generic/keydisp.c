@@ -7,11 +7,10 @@
 
 #if defined(SUPPORT_KEYDISP)
 
+#include "keydisp.h"
 #include "pccore.h"
 #include "iocore.h"
-#include "sound.h"
 #include "fmboard.h"
-#include "keydisp.h"
 
 typedef struct {
 	UINT8	k[KEYDISP_NOTEMAX];
@@ -571,7 +570,7 @@ static void psgkeyreset(KEYDISP *keydisp)
  * @param[in] psg The instance
  * @param[in] nAddress The written register
  */
-void keydisp_psg(void *psg, UINT nAddress)
+void keydisp_psg(PSGGEN psg, UINT nAddress)
 {
 	KDPSGCTRL *k = GetController(&s_keydisp, psg);
 	if (k != NULL)
