@@ -94,9 +94,6 @@ static REG8 IOINPCALL spb_i18a(UINT port) {
 	if (addr == 0x0e) {
 		return(fmboard_getjoy(&g_psg1));
 	}
-	else if (addr < 0x10) {
-		return(psggen_getreg(&g_psg1, addr));
-	}
 	else if (addr == 0xff) {
 		return(1);
 	}

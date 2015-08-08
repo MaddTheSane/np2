@@ -118,7 +118,7 @@ static REG8 IOINPCALL ymf_i18a(UINT port) {
 			return(fmboard_getjoy(&g_psg1));
 		}
 		else if (addr < 0x10) {
-			return(psggen_getreg(&g_psg1, addr));
+			return g_opn.reg[addr];
 		}
 		else if (addr == 0xff) {
 			return(1);

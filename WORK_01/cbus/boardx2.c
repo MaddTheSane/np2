@@ -64,7 +64,7 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 		return(0xff);
 	}
 	if (addr < 0x10) {
-		return(psggen_getreg(&g_psg1, addr));
+		return g_opn.reg[addr + 0x200];
 	}
 	else {
 		(void)port;
@@ -172,7 +172,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 		return(fmboard_getjoy(&g_psg2));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&g_psg2, addr));
+		return g_opn.reg[addr];
 	}
 	else if (addr == 0xff) {
 		return(1);
@@ -236,6 +236,10 @@ static const IOINP opna_i[4] = {
 
 
 void boardx2_reset(const NP2CFG *pConfig) {
+
+	g_opn.reg[0x207] = 0xbf;
+	g_opn.reg[0x20e] = 0xff;
+	g_opn.reg[0x20f] = 0xff;
 
 	fmtimer_reset(0xc0);
 	g_opn.channels = 6;
