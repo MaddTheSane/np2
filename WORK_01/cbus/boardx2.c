@@ -24,9 +24,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 	addr = g_opn.addr2l;
 	g_opn.reg[addr + 0x200] = dat;
 	if (addr < 0x10) {
-		if (addr != 0x0e) {
-			psggen_setreg(&g_psg1, addr, dat);
-		}
+		psggen_setreg(&g_psg1, addr, dat);
 	}
 	else {
 		if (addr < 0x30) {
@@ -91,9 +89,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	S98_put(NORMAL2608, addr, dat);
 	g_opn.reg[addr] = dat;
 	if (addr < 0x10) {
-		if (addr != 0x0e) {
-			psggen_setreg(&g_psg2, addr, dat);
-		}
+		psggen_setreg(&g_psg2, addr, dat);
 	}
 	else {
 		if (addr < 0x20) {

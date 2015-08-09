@@ -308,17 +308,9 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat)
 	UINT	addr;
 
 	addr = g_amd98.psg1reg;
-	if (addr < 0x0e)
+	if (addr < 0x10)
 	{
 		psggen_setreg(&g_psg1, addr, dat);
-	}
-	else if (addr == 0x0e)
-	{
-		g_psg1.reg.io1 = dat;
-	}
-	else if (addr == 0x0f)
-	{
-		g_psg1.reg.io2 = dat;
 	}
 	(void)port;
 }
