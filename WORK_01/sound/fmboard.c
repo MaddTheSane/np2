@@ -314,6 +314,18 @@ void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
 	}
 }
 
+void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank)
+{
+	const UINT8 *reg;
+	UINT i;
+
+	reg = pOpn->reg + (bank * 0x100);
+	for (i=0; i < 0x10; i++)
+	{
+		psggen_setreg(psg, i, reg[i]);
+	}
+}
+
 void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank)
 {
 	const UINT8 *reg;

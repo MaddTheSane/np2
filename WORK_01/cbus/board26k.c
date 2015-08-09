@@ -89,7 +89,7 @@ void board26k_reset(const NP2CFG *pConfig) {
 void board26k_bind(void) {
 
 	fmboard_fmrestore(&g_opn, 0, 0);
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	cbuscore_attachsndex(0x188 - g_opn.base, opn_o, opn_i);

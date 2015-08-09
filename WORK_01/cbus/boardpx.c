@@ -595,8 +595,8 @@ void boardpx1_bind(void) {
 	fmboard_fmrestore(&g_opn2, 15, 1);
 	fmboard_fmrestore(&g_opn2, 18, 2);
 	fmboard_fmrestore(&g_opn2, 21, 3);
-	psggen_restore(&g_psg1);
-	psggen_restore(&g_psg2);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
+	fmboard_psgrestore(&g_opn2, &g_psg2, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	fmboard_rhyrestore(&g_opn2, &g_rhythm2, 0);
 	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
@@ -654,9 +654,9 @@ void boardpx2_bind(void) {
 	fmboard_fmrestore(&g_opn2, 21, 3);
 	fmboard_fmrestore(&g_opn3, 24, 0);
 	fmboard_fmrestore(&g_opn3, 27, 1);
-	psggen_restore(&g_psg1);
-	psggen_restore(&g_psg2);
-	psggen_restore(&g_psg3);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
+	fmboard_psgrestore(&g_opn2, &g_psg2, 0);
+	fmboard_psgrestore(&g_opn3, &g_psg3, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	fmboard_rhyrestore(&g_opn2, &g_rhythm2, 0);
 	fmboard_rhyrestore(&g_opn3, &g_rhythm3, 0);

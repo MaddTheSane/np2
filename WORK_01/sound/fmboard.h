@@ -63,6 +63,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
 void fmboard_bind(void);
 
 void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank);
+void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank);
 void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 
 #ifdef __cplusplus

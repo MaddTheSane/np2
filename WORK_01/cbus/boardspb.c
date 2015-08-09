@@ -236,7 +236,7 @@ void boardspb_bind(void) {
 
 	fmboard_fmrestore(&g_opn, 0, 0);
 	fmboard_fmrestore(&g_opn, 3, 1);
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
@@ -271,7 +271,7 @@ void boardspr_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	fmboard_fmrestore(&g_opn, 6, 2);
 	fmboard_fmrestore(&g_opn, 9, 3);
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
