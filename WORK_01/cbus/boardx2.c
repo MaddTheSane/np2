@@ -7,7 +7,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
-
+#include "sound/soundrom.h"
 
 static void IOOUTCALL opn_o088(UINT port, REG8 dat) {
 

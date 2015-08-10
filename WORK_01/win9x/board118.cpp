@@ -7,6 +7,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
+#include "sound/soundrom.h"
 #include	"keydisp.h"
 #include "ext\externalopna.h"
 

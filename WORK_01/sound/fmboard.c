@@ -19,6 +19,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"beep.h"
+#include "soundrom.h"
 #include	"keydisp.h"
 #include	"keystat.h"
 

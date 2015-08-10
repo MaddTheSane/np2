@@ -6,7 +6,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
-
+#include "sound/soundrom.h"
 
 static void IOOUTCALL spb_o188(UINT port, REG8 dat) {
 
