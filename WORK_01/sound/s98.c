@@ -1,19 +1,18 @@
-//
-//  PC-98 Sound logging
-//    for S98amp S98 Input plugin for Winamp Version 1.3.1+ by Mamiya
-//
+/**
+ * @file	s98.cpp
+ * @brief	Interface of logging PC-98 sound
+ *			for S98amp S98 Input plugin for Winamp Version 1.3.1+ by Mamiya
+ */
 
-#include	"compiler.h"
+#include "compiler.h"
 
 #if defined(SUPPORT_S98)
 
-#include	"dosio.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"s98.h"
-
+#include "s98.h"
+#include "pccore.h"
+#include "nevent.h"
+#include "dosio.h"
+#include "fmboard.h"
 
 #define S98LOG_BUFSIZE (32 * 1024)
 
@@ -153,7 +152,7 @@ BRESULT S98_open(const OEMCHAR *filename) {
 	for (i=0x00; i<0x0e; i++) {
 		S98_putc(NORMAL2608);
 		S98_putc((REG8)i);
-		S98_putc(((UINT8 *)&g_psg1.reg)[i]);
+		S98_putc(g_opn.reg[i]);
 	}
 #endif
 

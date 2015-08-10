@@ -1,3 +1,9 @@
+/**
+ * @file	s98.h
+ * @brief	Interface of logging PC-98 sound
+ */
+
+#pragma once
 
 enum {
 	NORMAL2608	= 0,
@@ -32,4 +38,3 @@ void S98_sync(void);
 #ifdef __cplusplus
 }
 #endif
-
