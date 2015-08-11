@@ -33,40 +33,48 @@ static const UINT8 keybrd2[] = {				// åÆî’ GÇ≈êÿÇÍÇÈÅB
 				0xee, 0xee, 0xe0,
 				0x00, 0x00, 0x00};
 
-static const UINT8 keybrd_s1[] = {				// C, F
-				3, 13,
-				0xc0, 0xc0, 0xc0, 0xc0,
-				0xc0, 0xc0, 0xc0, 0xc0,
-				0xe0, 0xe0, 0xe0, 0xe0,
-				0xe0};
+/*! Key pattern: C, F */
+static const UINT8 keybrd_s1[] =
+{
+	3, 13,
+	0xc0, 0xc0, 0xc0, 0xc0, 0xc0, 0xc0, 0xc0, 0xc0,
+	0xe0, 0xe0, 0xe0, 0xe0, 0xe0
+};
 
-static const UINT8 keybrd_s2[] = {				// D, G, A
-				3, 13,
-				0x40, 0x40, 0x40, 0x40,
-				0x40, 0x40, 0x40, 0x40,
-				0xe0, 0xe0, 0xe0, 0xe0,
-				0xe0};
+/*! Key pattern: D, G, A */
+static const UINT8 keybrd_s2[] =
+{
+	3, 13,
+	0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
+	0xe0, 0xe0, 0xe0, 0xe0, 0xe0
+};
 
-static const UINT8 keybrd_s3[] = {				// E, B
-				3, 13,
-				0x60, 0x60, 0x60, 0x60,
-				0x60, 0x60, 0x60, 0x60,
-				0xe0, 0xe0, 0xe0, 0xe0,
-				0xe0};
+/*! Key pattern: E, B */
+static const UINT8 keybrd_s3[] =
+{
+	3, 13,
+	0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60,
+	0xe0, 0xe0, 0xe0, 0xe0, 0xe0
+};
 
-static const UINT8 keybrd_s4[] = {				// C+, D+, F+, G+, A+
-				3, 8,
-				0xe0, 0xe0, 0xe0, 0xe0,
-				0xe0, 0xe0, 0xe0, 0xe0};
+/*! Key pattern: C+, D+, F+, G+, A+ */
+static const UINT8 keybrd_s4[] =
+{
+	3, 8,
+	0xe0, 0xe0, 0xe0, 0xe0, 0xe0, 0xe0, 0xe0, 0xe0
+};
 
-static const KDKEYPOS keyposdef[12] = {
-				{ 0, 0, keybrd_s1}, { 2, KEYDISP_LEVEL, keybrd_s4},
-				{ 4, 0, keybrd_s2}, { 6, KEYDISP_LEVEL, keybrd_s4},
-				{ 8, 0, keybrd_s3}, {12, 0, keybrd_s1},
-				{14, KEYDISP_LEVEL, keybrd_s4}, {16, 0, keybrd_s2},
-				{18, KEYDISP_LEVEL, keybrd_s4}, {20, 0, keybrd_s2},
-				{22, KEYDISP_LEVEL, keybrd_s4}, {24, 0, keybrd_s3}};
-
+/*! note pattern */
+static const NOTEPATTERN s_notepattern[12] =
+{
+	{ 0, 0, keybrd_s1}, { 2, 1, keybrd_s4},
+	{ 4, 0, keybrd_s2}, { 6, 1, keybrd_s4},
+	{ 8, 0, keybrd_s3},
+	{12, 0, keybrd_s1}, {14, 1, keybrd_s4},
+	{16, 0, keybrd_s2}, {18, 1, keybrd_s4},
+	{20, 0, keybrd_s2}, {22, 1, keybrd_s4},
+	{24, 0, keybrd_s3}
+};
 
 // FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):FM#=HZ#*(2^17)/55556!:PRINT INT(FM#);",";:NEXT
 static const UINT16 fnumtbl[12] = {635,673,713,755,800,848,
