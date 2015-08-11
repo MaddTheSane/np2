@@ -195,15 +195,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		if (nAddr < 0x0e)
 		{
 			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
-
-			if (nAddr == 0x07)
-			{
-				keydisp_psgmix(&g_psg1);
-			}
-			else if ((nAddr == 0x08) || (nAddr == 0x09) || (nAddr == 0x0a))
-			{
-				keydisp_psgvol(&g_psg1, static_cast<UINT8>(nAddr - 8));
-			}
+			keydisp_psg(&g_psg1, nAddr);
 		}
 	}
 	else
