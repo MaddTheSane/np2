@@ -8,7 +8,7 @@
 #include	"dmav30.h"
 #include	"i286c.mcr"
 #if defined(ENABLE_TRAP)
-#include	"steptrap.h"
+#include "trap/steptrap.h"
 #endif
 
 

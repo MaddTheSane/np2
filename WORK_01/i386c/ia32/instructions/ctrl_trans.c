@@ -31,7 +31,7 @@
 #include "ctrl_trans.h"
 
 #if defined(ENABLE_TRAP)
-#include "inttrap.h"
+#include "trap/inttrap.h"
 #endif
 
 

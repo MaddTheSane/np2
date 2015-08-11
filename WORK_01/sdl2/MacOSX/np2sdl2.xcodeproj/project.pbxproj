@@ -1751,7 +1751,6 @@
 					../../sound,
 					../../sound/getsnd,
 					../../sound/vermouth,
-					../../trap,
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
@@ -1792,7 +1791,6 @@
 					../../sound,
 					../../sound/getsnd,
 					../../sound/vermouth,
-					../../trap,
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
