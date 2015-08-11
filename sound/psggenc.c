@@ -1,9 +1,12 @@
-#include	"compiler.h"
-#include	<math.h>
-#include	"sound.h"
-#include	"psggen.h"
-#include	"keydisp.h"
+/**
+ * @file	psggenc.c
+ * @brief	Implementation of the PSG
+ */
 
+#include "compiler.h"
+#include <math.h>
+#include "psggen.h"
+#include "keydisp.h"
 
 	PSGGENCFG	psggencfg;
 
