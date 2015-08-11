@@ -232,7 +232,6 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/font \
 		-I$(real_topsrcdir)/generic \
 		-I$(real_topsrcdir)/io \
-		-I$(real_topsrcdir)/lio \
 		-I$(real_topsrcdir)/mem \
 		-I$(real_topsrcdir)/sound \
 		-I$(real_topsrcdir)/sound/getsnd \

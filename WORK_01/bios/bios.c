@@ -7,7 +7,7 @@
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"sxsibios.h"
-#include	"lio.h"
+#include	"lio/lio.h"
 #include	"vram.h"
 #include	"fddfile.h"
 #include	"fdd_mtr.h"

@@ -24,7 +24,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(NP2_PATH)/generic \
 	$(NP2_PATH)/i286c \
 	$(NP2_PATH)/io \
-	$(NP2_PATH)/lio \
 	$(NP2_PATH)/mem \
 	$(NP2_PATH)/sdl2 \
 	$(NP2_PATH)/sound \
