@@ -7,6 +7,7 @@
 #include	"fmboard.h"
 #include	"s98.h"
 #include	"pcm86io.h"
+#include "sound/soundrom.h"
 
 #if defined(SUPPORT_PX)
 

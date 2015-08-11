@@ -1,7 +1,6 @@
 
 #if !defined(DISABLE_SOUND)
 
-#include	"soundrom.h"
 #include	"fmtimer.h"
 #include	"opngen.h"
 #include	"psggen.h"
