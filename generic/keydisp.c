@@ -239,7 +239,7 @@ static void delaysetevent(UINT8 ch, UINT8 key) {
 	}
 	else {
 		e += keydisp.delay.pos;
-		keydisp.delay.pos += (keydisp.delay.pos + 1) &
+		keydisp.delay.pos = (keydisp.delay.pos + 1) &
 													(KEYDISP_DELAYEVENTS - 1);
 		if (e->ch == 0xff) {
 			keydisp.delay.warm++;
