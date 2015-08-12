@@ -37,9 +37,7 @@ static void IOOUTCALL ymf_o18a(UINT port, REG8 dat) {
 	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
 	if (addr < 0x10) {
-		if (addr != 0x0e) {
-			psggen_setreg(&g_psg1, addr, dat);
-		}
+		psggen_setreg(&g_psg1, addr, dat);
 	}
 	else {
 		if (addr < 0x20) {
