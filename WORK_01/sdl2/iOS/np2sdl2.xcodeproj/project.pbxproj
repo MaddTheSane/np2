@@ -1714,7 +1714,6 @@
 					../../io,
 					../../mem,
 					../../sound,
-					../../sound/getsnd,
 					../../sound/vermouth,
 					../../vram,
 				);
@@ -1757,7 +1756,6 @@
 					../../io,
 					../../mem,
 					../../sound,
-					../../sound/getsnd,
 					../../sound/vermouth,
 					../../vram,
 				);

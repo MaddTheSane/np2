@@ -13,7 +13,7 @@
 #include "iocore.h"
 #include "sndcsec.h"
 #include "beep.h"
-#include "getsnd.h"
+#include "getsnd/getsnd.h"
 
 
 	SOUNDCFG	soundcfg;
