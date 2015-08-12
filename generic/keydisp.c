@@ -660,16 +660,19 @@ void keydisp_setfmboard(UINT b)
 	if (b == 0x30)
 	{
 		setfmhdl(&s_keydisp, &g_opn, 12, 0);
+		setpsghdl(&s_keydisp, &g_psg1);
 		setfmhdl(&s_keydisp, &g_opn2, 12, 0);
-		setpsghdl(&s_keydisp, 2);
+		setpsghdl(&s_keydisp, &g_psg2);
 		b = 0;
 	}
 	if (b == 0x50)
 	{
 		setfmhdl(&s_keydisp, &g_opn, 12, 0);
+		setpsghdl(&s_keydisp, &g_psg1);
 		setfmhdl(&s_keydisp, &g_opn2, 12, 0);
+		setpsghdl(&s_keydisp, &g_psg2);
 		setfmhdl(&s_keydisp, &g_opn3, 6, 0);
-		setpsghdl(&s_keydisp, 3);
+		setpsghdl(&s_keydisp, &g_psg3);
 		b = 0;
 	}
 
