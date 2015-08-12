@@ -1714,7 +1714,6 @@
 					../../io,
 					../../mem,
 					../../sound,
-					../../sound/vermouth,
 					../../vram,
 				);
 				INFOPLIST_FILE = Info.plist;
@@ -1756,7 +1755,6 @@
 					../../io,
 					../../mem,
 					../../sound,
-					../../sound/vermouth,
 					../../vram,
 				);
 				INFOPLIST_FILE = Info.plist;
