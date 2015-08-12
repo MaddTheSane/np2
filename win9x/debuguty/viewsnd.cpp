@@ -121,8 +121,6 @@ bool CDebugUtySnd::Lock()
 {
 	m_buffer.resize(0x400);
 	CopyMemory(&m_buffer.at(0), g_opn.reg, 0x400);
-	CopyMemory(&m_buffer.at(0), &g_psg1.reg, 0x10);
-	CopyMemory(&m_buffer.at(0x200), &g_psg2.reg, 0x10);
 	return true;
 }
 
@@ -170,17 +168,9 @@ void CDebugUtySnd::OnPaint(HDC hDC, const RECT& rect)
 			{
 				p = &m_buffer.at(item.wAddress);
 			}
-			else if (item.wAddress & 0x1ff)
-			{
-				p = g_opn.reg + item.wAddress;
-			}
-			else if (item.wAddress & 0x200)
-			{
-				p = reinterpret_cast<unsigned char*>(&g_psg2.reg);
-			}
 			else
 			{
-				p = reinterpret_cast<unsigned char*>(&g_psg1.reg);
+				p = g_opn.reg + item.wAddress;
 			}
 			for (int x = 0; x < 16; x++)
 			{

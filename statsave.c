@@ -795,37 +795,31 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 
 		case 0x02:
-			saveflg = FLAG_FM1A | FLAG_PSG1;
+			saveflg = FLAG_FM1A;
 			break;
 
 		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_PCM86;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_PCM86;
 			break;
 
 		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_PSG1 |
-										FLAG_PSG2 | FLAG_RHYTHM | FLAG_PCM86;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_RHYTHM | FLAG_PCM86;
 			break;
 
 		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_CS4231;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_CS4231;
 			break;
 
 		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_ADPCM | FLAG_PCM86;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM | FLAG_PCM86;
 			break;
 
 		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_ADPCM;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM;
 			break;
 
 		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B |
-										FLAG_PSG1 | FLAG_RHYTHM | FLAG_ADPCM;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B | FLAG_RHYTHM | FLAG_ADPCM;
 			break;
 
 		case 0x80:
@@ -888,37 +882,31 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 			break;
 
 		case 0x02:
-			saveflg = FLAG_FM1A | FLAG_PSG1;
+			saveflg = FLAG_FM1A;
 			break;
 
 		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_PCM86;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_PCM86;
 			break;
 
 		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_PSG1 |
-										FLAG_PSG2 | FLAG_RHYTHM | FLAG_PCM86;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_RHYTHM | FLAG_PCM86;
 			break;
 
 		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_CS4231;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_CS4231;
 			break;
 
 		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_ADPCM | FLAG_PCM86;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM | FLAG_PCM86;
 			break;
 
 		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PSG1 | FLAG_RHYTHM |
-										FLAG_ADPCM;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM;
 			break;
 
 		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B |
-										FLAG_PSG1 | FLAG_RHYTHM | FLAG_ADPCM;
+			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B | FLAG_RHYTHM | FLAG_ADPCM;
 			break;
 
 		case 0x80:

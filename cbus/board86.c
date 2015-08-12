@@ -23,6 +23,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	g_opn.data1 = dat;
 	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
+	g_opn.reg[addr] = dat;
 	if (addr < 0x10) {
 		psggen_setreg(&g_psg1, addr, dat);
 	}
@@ -52,7 +53,6 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 		else if (addr < 0xc0) {
 			opngen_setreg(0, addr, dat);
 		}
-		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
@@ -105,7 +105,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 		return(fmboard_getjoy(&g_psg1));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&g_psg1, addr));
+		return g_opn.reg[addr];
 	}
 	else if (addr == 0xff) {
 		return(1);
@@ -177,7 +177,7 @@ void board86_bind(void) {
 
 	fmboard_fmrestore(&g_opn, 0, 0);
 	fmboard_fmrestore(&g_opn, 3, 1);
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
@@ -248,7 +248,7 @@ void board86c_bind(void) {
 
 	fmboard_fmrestore(&g_opn, 0, 0);
 	fmboard_fmrestore(&g_opn, 3, 1);
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);

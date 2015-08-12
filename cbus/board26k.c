@@ -22,6 +22,7 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 	g_opn.data1 = dat;
 	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
+	g_opn.reg[addr] = dat;
 	if (addr < 0x10) {
 		psggen_setreg(&g_psg1, addr, dat);
 	}
@@ -42,7 +43,6 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat) {
 		else if (addr < 0xc0) {
 			opngen_setreg(0, addr, dat);
 		}
-		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
@@ -62,7 +62,7 @@ static REG8 IOINPCALL opn_i18a(UINT port) {
 		return(fmboard_getjoy(&g_psg1));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&g_psg1, addr));
+		return g_opn.reg[addr];
 	}
 	(void)port;
 	return(g_opn.data1);
@@ -89,7 +89,7 @@ void board26k_reset(const NP2CFG *pConfig) {
 void board26k_bind(void) {
 
 	fmboard_fmrestore(&g_opn, 0, 0);
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	cbuscore_attachsndex(0x188 - g_opn.base, opn_o, opn_i);
