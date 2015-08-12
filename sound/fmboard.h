@@ -34,7 +34,6 @@ extern	OPN_T		g_opn;
 
 extern	_FMTIMER	g_fmtimer;
 extern	_OPNGEN		opngen;
-extern	OPNCH		opnch[OPNCH_MAX];
 extern	_PSGGEN		g_psg[3];
 extern	_RHYTHM		g_rhythm;
 extern	_ADPCM		g_adpcm;

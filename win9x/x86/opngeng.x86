@@ -83,6 +83,7 @@ EM_OFF			equ		0
 .outdc			resd	1
 .outdr			resd	1
 .calcremain		resd	1
+.opnch			resb	0
 				endstruc
 
 				struc opncfg_t
@@ -102,7 +103,6 @@ EM_OFF			equ		0
 section .text
 
 	extern	_opngen
-	extern	_opnch
 	extern	_opncfg
 
 	extern	_sinshift
@@ -204,7 +204,7 @@ og_fmout_lp:	mov		[_opngen + opngen_t.calcremain], ebx
 				and		dword [_opngen + opngen_t.outdc], byte 0
 				and		dword [_opngen + opngen_t.outdr], byte 0
 				mov		ch, [_opngen + opngen_t.playchannels]
-				mov		esi, _opnch
+				mov		esi, _opngen + opngen_t.opnch
 og_calcch_lp:	mov		cl, [esi + ch_t.outslot]
 				test	cl, [esi + ch_t.playing]
 				je		near og_calcch_nt
@@ -338,7 +338,7 @@ ogv_fmout_lp:	xor		eax, eax
 				mov		[_opngen + opngen_t.outdc], eax
 				mov		[_opngen + opngen_t.outdr], eax
 				mov		ch, [_opngen + opngen_t.playchannels]
-				mov		edi, _opnch
+				mov		edi, _opngen + opngen_t.opnch
 ogv_calcch_lp:	xor		eax, eax
 				mov		[_opngen + opngen_t.feedback2], eax
 				mov		[_opngen + opngen_t.feedback3], eax

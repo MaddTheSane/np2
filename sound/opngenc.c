@@ -416,10 +416,9 @@ void opngen_reset(void) {
 	UINT	j;
 
 	ZeroMemory(&opngen, sizeof(opngen));
-	ZeroMemory(opnch, sizeof(opnch));
 	opngen.playchannels = 3;
 
-	ch = opnch;
+	ch = opngen.opnch;
 	for (i=0; i<OPNCH_MAX; i++) {
 		ch->keynote[0] = 0;
 		slot = ch->slot;
@@ -451,7 +450,7 @@ void opngen_setcfg(REG8 maxch, UINT32 flag) {
 	UINT	i;
 
 	opngen.playchannels = maxch;
-	ch = opnch;
+	ch = opngen.opnch;
 	if ((flag & OPN_CHMASK) == OPN_STEREO) {
 		for (i=0; i<OPNCH_MAX; i++) {
 			if (flag & (1 << i)) {
@@ -476,7 +475,7 @@ void opngen_setextch(UINT chnum, REG8 data) {
 
 	OPNCH	*ch;
 
-	ch = opnch;
+	ch = opngen.opnch;
 	ch[chnum].extop = data;
 }
 
@@ -493,7 +492,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 		return;
 	}
 	sound_sync();
-	ch = opnch + chbase + chpos;
+	ch = opngen.opnch + chbase + chpos;
 	if (reg < 0xa0) {
 		slot = ch->slot + fmslot[(reg >> 2) & 3];
 		switch(reg & 0xf0) {
@@ -546,7 +545,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				break;
 
 			case 0xa8:
-				ch = opnch + chbase + 2;
+				ch = opngen.opnch + chbase + 2;
 				blk = ch->keyfunc[chpos+1] >> 3;
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos+1] = (blk << 2) | kftable[fn >> 7];
@@ -556,7 +555,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				break;
 
 			case 0xac:
-				ch = opnch + chbase + 2;
+				ch = opngen.opnch + chbase + 2;
 				ch->keyfunc[chpos+1] = value & 0x3f;
 				break;
 
@@ -589,7 +588,7 @@ void opngen_keyon(UINT chnum, REG8 value) {
 
 	sound_sync();
 	opngen.playing++;
-	ch = opnch + chnum;
+	ch = opngen.opnch + chnum;
 	ch->keyreg = value;
 	ch->playing |= value >> 4;
 	slot = ch->slot;

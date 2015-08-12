@@ -108,7 +108,7 @@ void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 	if ((!opngen.playing) || (!count)) {
 		return;
 	}
-	fm = opnch;
+	fm = opngen.opnch;
 	do {
 		samp_l = opngen.outdl * (opngen.calcremain * -1);
 		samp_r = opngen.outdr * (opngen.calcremain * -1);
@@ -161,7 +161,7 @@ void SOUNDCALL opngen_getpcmvr(void *hdl, SINT32 *pcm, UINT count) {
 	SINT32	samp_l;
 	SINT32	samp_r;
 
-	fm = opnch;
+	fm = opngen.opnch;
 	while(count--) {
 		samp_l = opngen.outdl * (opngen.calcremain * -1);
 		samp_r = opngen.outdr * (opngen.calcremain * -1);

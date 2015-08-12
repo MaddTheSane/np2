@@ -29,7 +29,6 @@
 
 	_FMTIMER	g_fmtimer;
 	_OPNGEN		opngen;
-	OPNCH		opnch[OPNCH_MAX];
 	_PSGGEN		g_psg[3];
 	_RHYTHM		g_rhythm;
 	_ADPCM		g_adpcm;
@@ -312,7 +311,7 @@ void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
 	}
 	for (i = 0; i < 3; i++)
 	{
-		opngen_keyon(chbase + i, opnch[chbase + i].keyreg);
+		opngen_keyon(chbase + i, opngen.opnch[chbase + i].keyreg);
 	}
 }
 

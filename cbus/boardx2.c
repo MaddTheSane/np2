@@ -36,7 +36,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opnch[2].extop = dat & 0xc0;
+					opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
@@ -110,7 +110,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opnch[2].extop = dat & 0xc0;
+					opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}

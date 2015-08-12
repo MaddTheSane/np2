@@ -144,7 +144,7 @@ typedef struct {
 	SINT32	outdc;
 	SINT32	outdr;
 	SINT32	calcremain;
-//	UINT8	keyreg[OPNCH_MAX];
+	OPNCH	opnch[OPNCH_MAX];
 } _OPNGEN, *OPNGEN;
 
 typedef struct {
