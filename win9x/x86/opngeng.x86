@@ -70,7 +70,7 @@ EM_OFF			equ		0
 .pan			resb	1
 .extop			resb	1
 .stereo			resb	1
-				resb	1
+.keyreg			resb	1
 				endstruc
 
 				struc opngen_t
@@ -83,7 +83,6 @@ EM_OFF			equ		0
 .outdc			resd	1
 .outdr			resd	1
 .calcremain		resd	1
-.keyreg			resb	12
 				endstruc
 
 				struc opncfg_t

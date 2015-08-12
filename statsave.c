@@ -788,6 +788,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	int		ret;
 	UINT	saveflg;
 	OPNKEY	opnkey;
+	UINT	i;
 
 	switch(g_usesound) {
 		case 0x01:
@@ -838,7 +839,10 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	if (saveflg & FLAG_FM1A) {
 		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
 		ret |= statflag_write(sfh, &g_opn, sizeof(g_opn));
-		CopyMemory(opnkey.keyreg, opngen.keyreg, sizeof(opngen.keyreg));
+		for (i = 0; i < OPNCH_MAX; i++)
+		{
+			opnkey.keyreg[i] = opnch[i].keyreg;
+		}
 		opnkey.extop[0] = opnch[2].extop;
 		opnkey.extop[1] = opnch[5].extop;
 		opnkey.extop[2] = opnch[8].extop;
@@ -872,6 +876,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	int		ret;
 	UINT	saveflg;
 	OPNKEY	opnkey;
+	UINT	i;
 
 	ret = statflag_read(sfh, &g_usesound, sizeof(g_usesound));
 	fmboard_reset(&np2cfg, g_usesound);
@@ -927,7 +932,10 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
 		ret |= statflag_read(sfh, &g_opn, sizeof(g_opn));
 		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
-		CopyMemory(opngen.keyreg, &opnkey.keyreg, sizeof(opngen.keyreg));
+		for (i = 0; i < OPNCH_MAX; i++)
+		{
+			opnch[i].keyreg = opnkey.keyreg[i];
+		}
 		opnch[2].extop = opnkey.extop[0];
 		opnch[5].extop = opnkey.extop[1];
 		opnch[8].extop = opnkey.extop[2];

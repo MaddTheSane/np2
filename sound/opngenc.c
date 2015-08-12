@@ -588,9 +588,9 @@ void opngen_keyon(UINT chnum, REG8 value) {
 	UINT	i;
 
 	sound_sync();
-	opngen.keyreg[chnum] = value;
 	opngen.playing++;
 	ch = opnch + chnum;
+	ch->keyreg = value;
 	ch->playing |= value >> 4;
 	slot = ch->slot;
 	bit = 0x10;

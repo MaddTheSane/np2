@@ -312,7 +312,7 @@ void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
 	}
 	for (i = 0; i < 3; i++)
 	{
-		opngen_keyon(chbase + i, opngen.keyreg[chbase + i]);
+		opngen_keyon(chbase + i, opnch[chbase + i].keyreg);
 	}
 }
 
