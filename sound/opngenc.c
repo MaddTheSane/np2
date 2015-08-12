@@ -1,10 +1,13 @@
-#include	"compiler.h"
-#include	<math.h>
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"keydisp.h"
+/**
+ * @file	opngenc.c
+ * @brief	Implementation of the OPN generator
+ */
+
+#include "compiler.h"
+#include <math.h>
+#include "opngen.h"
+#include "pccore.h"
+#include "keydisp.h"
 
 
 #define	OPM_ARRATE		 399128L
@@ -204,56 +207,56 @@ void opngen_setVR(REG8 channel, REG8 value) {
 
 // ----
 
-static void set_algorithm(OPNCH *ch) {
+static void set_algorithm(OPNGEN opngen, OPNCH *ch) {
 
 	SINT32	*outd;
 	UINT8	outslot;
 
-	outd = &opngen.outdc;
+	outd = &opngen->outdc;
 	if (ch->stereo) {
 		switch(ch->pan & 0xc0) {
 			case 0x80:
-				outd = &opngen.outdl;
+				outd = &opngen->outdl;
 				break;
 
 			case 0x40:
-				outd = &opngen.outdr;
+				outd = &opngen->outdr;
 				break;
 		}
 	}
 	switch(ch->algorithm) {
 		case 0:
-			ch->connect1 = &opngen.feedback2;
-			ch->connect2 = &opngen.feedback3;
-			ch->connect3 = &opngen.feedback4;
+			ch->connect1 = &opngen->feedback2;
+			ch->connect2 = &opngen->feedback3;
+			ch->connect3 = &opngen->feedback4;
 			outslot = 0x08;
 			break;
 
 		case 1:
-			ch->connect1 = &opngen.feedback3;
-			ch->connect2 = &opngen.feedback3;
-			ch->connect3 = &opngen.feedback4;
+			ch->connect1 = &opngen->feedback3;
+			ch->connect2 = &opngen->feedback3;
+			ch->connect3 = &opngen->feedback4;
 			outslot = 0x08;
 			break;
 
 		case 2:
-			ch->connect1 = &opngen.feedback4;
-			ch->connect2 = &opngen.feedback3;
-			ch->connect3 = &opngen.feedback4;
+			ch->connect1 = &opngen->feedback4;
+			ch->connect2 = &opngen->feedback3;
+			ch->connect3 = &opngen->feedback4;
 			outslot = 0x08;
 			break;
 
 		case 3:
-			ch->connect1 = &opngen.feedback2;
-			ch->connect2 = &opngen.feedback4;
-			ch->connect3 = &opngen.feedback4;
+			ch->connect1 = &opngen->feedback2;
+			ch->connect2 = &opngen->feedback4;
+			ch->connect3 = &opngen->feedback4;
 			outslot = 0x08;
 			break;
 
 		case 4:
-			ch->connect1 = &opngen.feedback2;
+			ch->connect1 = &opngen->feedback2;
 			ch->connect2 = outd;
-			ch->connect3 = &opngen.feedback4;
+			ch->connect3 = &opngen->feedback4;
 			outslot = 0x0a;
 			break;
 
@@ -265,7 +268,7 @@ static void set_algorithm(OPNCH *ch) {
 			break;
 
 		case 6:
-			ch->connect1 = &opngen.feedback2;
+			ch->connect1 = &opngen->feedback2;
 			ch->connect2 = outd;
 			ch->connect3 = outd;
 			outslot = 0x0e;
@@ -408,17 +411,17 @@ static void channleupdate(OPNCH *ch) {
 
 // ----
 
-void opngen_reset(void) {
+void opngen_reset(OPNGEN opngen) {
 
 	OPNCH	*ch;
 	UINT	i;
 	OPNSLOT	*slot;
 	UINT	j;
 
-	ZeroMemory(&opngen, sizeof(opngen));
-	opngen.playchannels = 3;
+	memset(opngen, 0, sizeof(*opngen));
+	opngen->playchannels = 3;
 
-	ch = opngen.opnch;
+	ch = opngen->opnch;
 	for (i=0; i<OPNCH_MAX; i++) {
 		ch->keynote[0] = 0;
 		slot = ch->slot;
@@ -437,25 +440,25 @@ void opngen_reset(void) {
 		ch++;
 	}
 	for (i=0x30; i<0xc0; i++) {
-		opngen_setreg(0, i, 0xff);
-		opngen_setreg(3, i, 0xff);
-		opngen_setreg(6, i, 0xff);
-		opngen_setreg(9, i, 0xff);
+		opngen_setreg(opngen, 0, i, 0xff);
+		opngen_setreg(opngen, 3, i, 0xff);
+		opngen_setreg(opngen, 6, i, 0xff);
+		opngen_setreg(opngen, 9, i, 0xff);
 	}
 }
 
-void opngen_setcfg(REG8 maxch, UINT32 flag) {
+void opngen_setcfg(OPNGEN opngen, REG8 maxch, UINT32 flag) {
 
 	OPNCH	*ch;
 	UINT	i;
 
-	opngen.playchannels = maxch;
-	ch = opngen.opnch;
+	opngen->playchannels = maxch;
+	ch = opngen->opnch;
 	if ((flag & OPN_CHMASK) == OPN_STEREO) {
 		for (i=0; i<OPNCH_MAX; i++) {
 			if (flag & (1 << i)) {
 				ch->stereo = TRUE;
-				set_algorithm(ch);
+				set_algorithm(opngen, ch);
 			}
 			ch++;
 		}
@@ -464,22 +467,22 @@ void opngen_setcfg(REG8 maxch, UINT32 flag) {
 		for (i=0; i<OPNCH_MAX; i++) {
 			if (flag & (1 << i)) {
 				ch->stereo = FALSE;
-				set_algorithm(ch);
+				set_algorithm(opngen, ch);
 			}
 			ch++;
 		}
 	}
 }
 
-void opngen_setextch(UINT chnum, REG8 data) {
+void opngen_setextch(OPNGEN opngen, UINT chnum, REG8 data) {
 
 	OPNCH	*ch;
 
-	ch = opngen.opnch;
+	ch = opngen->opnch;
 	ch[chnum].extop = data;
 }
 
-void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
+void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value) {
 
 	UINT	chpos;
 	OPNCH	*ch;
@@ -492,7 +495,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 		return;
 	}
 	sound_sync();
-	ch = opngen.opnch + chbase + chpos;
+	ch = opngen->opnch + chbase + chpos;
 	if (reg < 0xa0) {
 		slot = ch->slot + fmslot[(reg >> 2) & 3];
 		switch(reg & 0xf0) {
@@ -545,7 +548,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				break;
 
 			case 0xa8:
-				ch = opngen.opnch + chbase + 2;
+				ch = opngen->opnch + chbase + 2;
 				blk = ch->keyfunc[chpos+1] >> 3;
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos+1] = (blk << 2) | kftable[fn >> 7];
@@ -555,7 +558,7 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				break;
 
 			case 0xac:
-				ch = opngen.opnch + chbase + 2;
+				ch = opngen->opnch + chbase + 2;
 				ch->keyfunc[chpos+1] = value & 0x3f;
 				break;
 
@@ -568,18 +571,18 @@ void opngen_setreg(REG8 chbase, UINT reg, REG8 value) {
 				else {
 					ch->feedback = 0;
 				}
-				set_algorithm(ch);
+				set_algorithm(opngen, ch);
 				break;
 
 			case 0xb4:
 				ch->pan = (UINT8)(value & 0xc0);
-				set_algorithm(ch);
+				set_algorithm(opngen, ch);
 				break;
 		}
 	}
 }
 
-void opngen_keyon(UINT chnum, REG8 value) {
+void opngen_keyon(OPNGEN opngen, UINT chnum, REG8 value) {
 
 	OPNCH	*ch;
 	OPNSLOT	*slot;
@@ -587,8 +590,8 @@ void opngen_keyon(UINT chnum, REG8 value) {
 	UINT	i;
 
 	sound_sync();
-	opngen.playing++;
-	ch = opngen.opnch + chnum;
+	opngen->playing++;
+	ch = opngen->opnch + chnum;
 	ch->keyreg = value;
 	ch->playing |= value >> 4;
 	slot = ch->slot;
@@ -623,7 +626,8 @@ void opngen_keyon(UINT chnum, REG8 value) {
 	keydisp_fmkeyon((UINT8)chnum, value);
 }
 
-void opngen_csm(void) {
-	opngen_keyon(2, 0x02);
-	opngen_keyon(2, 0xf2);
+void opngen_csm(OPNGEN opngen) {
+
+	opngen_keyon(opngen, 2, 0x02);
+	opngen_keyon(opngen, 2, 0xf2);
 }

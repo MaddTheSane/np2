@@ -28,7 +28,7 @@
 	OPN_T		g_opn;
 
 	_FMTIMER	g_fmtimer;
-	_OPNGEN		opngen;
+	_OPNGEN		g_opngen;
 	_PSGGEN		g_psg[3];
 	_RHYTHM		g_rhythm;
 	_ADPCM		g_adpcm;
@@ -162,7 +162,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	g_opn3.adpcmmask = (UINT8)~(0x1c);
 #endif	// defined(SUPPORT_PX)
 
-	opngen_reset();
+	opngen_reset(&g_opngen);
 	psggen_reset(&g_psg1);
 	psggen_reset(&g_psg2);
 	psggen_reset(&g_psg3);
@@ -303,15 +303,15 @@ void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
 	reg = pOpn->reg + (bank * 0x100);
 	for (i = 0x30; i < 0xa0; i++)
 	{
-		opngen_setreg(chbase, i, reg[i]);
+		opngen_setreg(&g_opngen, chbase, i, reg[i]);
 	}
 	for (i = 0xb7; i >= 0xa0; i--)
 	{
-		opngen_setreg(chbase, i, reg[i]);
+		opngen_setreg(&g_opngen, chbase, i, reg[i]);
 	}
 	for (i = 0; i < 3; i++)
 	{
-		opngen_keyon(chbase + i, opngen.opnch[chbase + i].keyreg);
+		opngen_keyon(&g_opngen, chbase + i, g_opngen.opnch[chbase + i].keyreg);
 	}
 }
 

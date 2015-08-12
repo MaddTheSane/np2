@@ -36,22 +36,22 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					opngen_keyon(dat & 0x0f, dat);
+					opngen_keyon(&g_opngen, dat & 0x0f, dat);
 				}
 				else if (((dat & 0x0f) != 3) &&
 						((dat & 0x0f) < 7)) {
-					opngen_keyon((dat & 0x07) - 1, dat);
+					opngen_keyon(&g_opngen, (dat & 0x07) - 1, dat);
 				}
 			}
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opngen.opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
 		else if (addr < 0xc0) {
-			opngen_setreg(0, addr, dat);
+			opngen_setreg(&g_opngen, 0, addr, dat);
 		}
 	}
 	(void)port;
@@ -78,7 +78,7 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 	S98_put(EXTEND2608, addr, dat);
 	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
-		opngen_setreg(3, addr, dat);
+		opngen_setreg(&g_opngen, 3, addr, dat);
 	}
 	else {
 		if (addr == 0x10) {
@@ -141,11 +141,11 @@ static void extendchannel(REG8 enable) {
 	g_opn.extend = enable;
 	if (enable) {
 		g_opn.channels = 6;
-		opngen_setcfg(6, OPN_STEREO | 0x007);
+		opngen_setcfg(&g_opngen, 6, OPN_STEREO | 0x007);
 	}
 	else {
 		g_opn.channels = 3;
-		opngen_setcfg(3, OPN_MONORAL | 0x007);
+		opngen_setcfg(&g_opngen, 3, OPN_MONORAL | 0x007);
 		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
@@ -165,7 +165,7 @@ void board86_reset(const NP2CFG *pConfig) {
 	fmtimer_reset((pConfig->snd86opt & 0x10) |
 					((pConfig->snd86opt & 0x4) << 5) |
 					((pConfig->snd86opt & 0x8) << 3));
-	opngen_setcfg(3, OPN_STEREO | 0x038);
+	opngen_setcfg(&g_opngen, 3, OPN_STEREO | 0x038);
 	if (pConfig->snd86opt & 2) {
 		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
@@ -179,7 +179,7 @@ void board86_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	pcm86io_bind();
@@ -201,7 +201,7 @@ static void IOOUTCALL opnac_o18e(UINT port, REG8 dat) {
 	S98_put(EXTEND2608, addr, dat);
 	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
-		opngen_setreg(3, addr, dat);
+		opngen_setreg(&g_opngen, 3, addr, dat);
 	}
 	else {
 		if (addr < 0x12) {
@@ -250,7 +250,7 @@ void board86c_bind(void) {
 	fmboard_fmrestore(&g_opn, 3, 1);
 	fmboard_psgrestore(&g_opn, &g_psg1, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);
 	sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);

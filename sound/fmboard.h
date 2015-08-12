@@ -33,7 +33,7 @@ extern	UINT32		g_usesound;
 extern	OPN_T		g_opn;
 
 extern	_FMTIMER	g_fmtimer;
-extern	_OPNGEN		opngen;
+extern	_OPNGEN		g_opngen;
 extern	_PSGGEN		g_psg[3];
 extern	_RHYTHM		g_rhythm;
 extern	_ADPCM		g_adpcm;

@@ -1,3 +1,11 @@
+/**
+ * @file	opngen.h
+ * @brief	Interface of the OPN generator
+ */
+
+#pragma once
+
+#include "sound.h"
 
 enum {
 #if defined(SUPPORT_PX)
@@ -169,14 +177,15 @@ void opngen_initialize(UINT rate);
 void opngen_setvol(UINT vol);
 void opngen_setVR(REG8 channel, REG8 value);
 
-void opngen_reset(void);
-void opngen_setcfg(REG8 maxch, UINT32 flag);
-void opngen_setextch(UINT chnum, REG8 data);
-void opngen_setreg(REG8 chbase, UINT reg, REG8 value);
-void opngen_keyon(UINT chnum, REG8 value);
+void opngen_reset(OPNGEN opngen);
+void opngen_setcfg(OPNGEN opngen, REG8 maxch, UINT32 flag);
+void opngen_setextch(OPNGEN opngen, UINT chnum, REG8 data);
+void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value);
+void opngen_keyon(OPNGEN opngen, UINT chnum, REG8 value);
+void opngen_csm(OPNGEN opngen);
 
-void SOUNDCALL opngen_getpcm(void *hdl, SINT32 *buf, UINT count);
-void SOUNDCALL opngen_getpcmvr(void *hdl, SINT32 *buf, UINT count);
+void SOUNDCALL opngen_getpcm(OPNGEN opngen, SINT32 *buf, UINT count);
+void SOUNDCALL opngen_getpcmvr(OPNGEN opngen, SINT32 *buf, UINT count);
 
 #ifdef __cplusplus
 }
