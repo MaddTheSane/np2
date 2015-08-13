@@ -192,7 +192,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 			break;
 
 		case 0x04:
-			board86_reset(pConfig);
+			board86_reset(pConfig, FALSE);
 			break;
 
 		case 0x06:
@@ -204,7 +204,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 			break;
 
 		case 0x14:
-			board86_reset(pConfig);
+			board86_reset(pConfig, TRUE);
 			break;
 
 		case 0x20:
@@ -264,7 +264,7 @@ void fmboard_bind(void) {
 			break;
 
 		case 0x14:
-			board86c_bind();
+			board86_bind();
 			break;
 
 		case 0x20:
@@ -290,53 +290,4 @@ void fmboard_bind(void) {
 #endif	// defined(SUPPORT_PX)
 	}
 	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
-}
-
-
-// ----
-
-void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
-{
-	REG8 i;
-	const UINT8 *reg;
-
-	reg = pOpn->reg + (bank * 0x100);
-	for (i = 0x30; i < 0xa0; i++)
-	{
-		opngen_setreg(&g_opngen, chbase, i, reg[i]);
-	}
-	for (i = 0xb7; i >= 0xa0; i--)
-	{
-		opngen_setreg(&g_opngen, chbase, i, reg[i]);
-	}
-	for (i = 0; i < 3; i++)
-	{
-		opngen_keyon(&g_opngen, chbase + i, g_opngen.opnch[chbase + i].keyreg);
-	}
-}
-
-void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank)
-{
-	const UINT8 *reg;
-	UINT i;
-
-	reg = pOpn->reg + (bank * 0x100);
-	for (i=0; i < 0x10; i++)
-	{
-		psggen_setreg(psg, i, reg[i]);
-	}
-}
-
-void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank)
-{
-	const UINT8 *reg;
-
-	reg = pOpn->reg + (bank * 0x100);
-	rhythm_setreg(rhy, 0x11, reg[0x11]);
-	rhythm_setreg(rhy, 0x18, reg[0x18]);
-	rhythm_setreg(rhy, 0x19, reg[0x19]);
-	rhythm_setreg(rhy, 0x1a, reg[0x1a]);
-	rhythm_setreg(rhy, 0x1b, reg[0x1b]);
-	rhythm_setreg(rhy, 0x1c, reg[0x1c]);
-	rhythm_setreg(rhy, 0x1d, reg[0x1d]);
 }

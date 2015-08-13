@@ -934,6 +934,14 @@ SOURCE=..\SOUND\FMTIMER.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\sound\opna.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opna.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\SOUND\OPNGENC.C
 # End Source File
 # Begin Source File
