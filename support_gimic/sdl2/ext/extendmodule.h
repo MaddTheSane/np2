@@ -12,7 +12,7 @@ class IExtendModule
 {
 public:
 	/**
-	 * Destractor
+	 * Destructor
 	 */
 	virtual ~IExtendModule() { }
 

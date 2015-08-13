@@ -9,7 +9,7 @@
 #include "gimicusb.h"
 
 /**
- * Constractor
+ * Constructor
  */
 CGimic::CGimic()
 	: m_device(NULL)
@@ -17,7 +17,7 @@ CGimic::CGimic()
 }
 
 /**
- * Destractor
+ * Destructor
  */
 CGimic::~CGimic()
 {
