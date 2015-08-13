@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "opna.h"
 #include "pccore.h"
+#include "iocore.h"
 #include "sound.h"
 #include "fmboard.h"
 #include "s98.h"
