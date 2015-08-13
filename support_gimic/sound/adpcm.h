@@ -1,9 +1,3 @@
-/**
- * @file	adpcm.h
- * @brief	Interface of OPNA ADPCM
- */
-
-#pragma once
 
 enum {
 	ADTIMING_BIT	= 11,
@@ -76,8 +70,8 @@ REG8 adpcm_status(ADPCM ad);
 REG8 SOUNDCALL adpcm_readsample(ADPCM ad);
 void SOUNDCALL adpcm_datawrite(ADPCM ad, REG8 data);
 void SOUNDCALL adpcm_getpcm(ADPCM ad, SINT32 *buf, UINT count);
-void SOUNDCALL adpcm_getpcm_dummy(ADPCM ad, SINT32 *buf, UINT count);
 
 #ifdef __cplusplus
 }
 #endif
+

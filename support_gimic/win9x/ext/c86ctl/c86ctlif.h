@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "..\externalchip.h"
+#include "..\extendmodule.h"
 
 namespace c86ctl
 {
@@ -17,7 +17,7 @@ namespace c86ctl
 /**
  * @brief G.I.M.I.C アクセス クラス
  */
-class C86CtlIf : public IExternalChip
+class C86CtlIf : public IExtendModule
 {
 public:
 	C86CtlIf();

@@ -1,12 +1,6 @@
-/**
- * @file	fmboard.h
- */
-
-#pragma once
 
 #if !defined(DISABLE_SOUND)
 
-#include "opna.h"
 #include	"soundrom.h"
 #include	"fmtimer.h"
 #include	"opngen.h"
@@ -15,6 +9,22 @@
 #include	"adpcm.h"
 #include	"pcm86.h"
 #include	"cs4231.h"
+
+
+typedef struct {
+	UINT8	addr1l;
+	UINT8	addr1h;
+	UINT8	addr2l;
+	UINT8	addr2h;
+	UINT8	data1;
+	UINT8	data2;
+	UINT16	base;
+	UINT8	adpcmmask;
+	UINT8	channels;
+	UINT8	extend;
+	UINT8	_padding2;
+	UINT8	reg[0x400];
+} OPN_T;
 
 #ifdef __cplusplus
 extern "C" {

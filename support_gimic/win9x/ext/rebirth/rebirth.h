@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "..\externalchip.h"
+#include "..\..\ext\extendmodule.h"
 
 class SoundInterfaceManager;
 class SoundChip;
@@ -13,7 +13,7 @@ class SoundChip;
 /**
  * @brief SCCI アクセス クラス
  */
-class CRebirth : public IExternalChip
+class CRebirth : public IExtendModule
 {
 public:
 	CRebirth();
@@ -29,7 +29,6 @@ private:
 	HMODULE m_hModule;					//!< モジュール	
 	SoundInterfaceManager* m_pManager;	//!< マネージャ
 	SoundChip* m_pChip;					//!< サウンド チップ インターフェイス
-	static bool sm_bOnce;				//!< once
 };
 
 /**

@@ -98,7 +98,7 @@ static const char* GetBoardName(CBUS_BOARD_TYPE nType)
 }
 
 /**
- * Constructor
+ * Constractor
  */
 C86BoxUSB::C86BoxUSB()
 	: m_nChipType(CHIP_UNKNOWN)
@@ -110,7 +110,7 @@ C86BoxUSB::C86BoxUSB()
 }
 
 /**
- * Destructor
+ * Destractor
  */
 C86BoxUSB::~C86BoxUSB()
 {

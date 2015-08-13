@@ -6,7 +6,9 @@
 #include "compiler.h"
 #include "../../np2.h"
 #include "../../dosio.h"
-#include "sound/opna.h"
+
+/** プロトタイプ */
+void board118_deinitialize(void);
 
 /**
  * メイン
@@ -38,7 +40,7 @@ int main(int argc, char * argv[])
 
 	const int ret = np2_main((int)(q - argv), argv);
 
-	opna_deinitialize();
+	board118_deinitialize();
 
 	return ret;
 }

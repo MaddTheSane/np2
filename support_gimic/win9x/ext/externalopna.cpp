@@ -5,7 +5,6 @@
 
 #include "compiler.h"
 #include "externalopna.h"
-#include "np2.h"
 #include "c86ctl\c86ctlif.h"
 #include "rebirth\rebirth.h"
 #include "romeo\juliet.h"
@@ -19,7 +18,7 @@ CExternalOpna::CExternalOpna()
 	: m_module(NULL)
 	, m_cPsgMix(0x3f)
 {
-	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
+	memset(m_cAlgorithm, 0, sizeof(*m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
 }
 
@@ -28,19 +27,14 @@ CExternalOpna::CExternalOpna()
  */
 void CExternalOpna::Initialize()
 {
-	IExternalChip* pModule;
-
 	// ROMEO
-	if (np2oscfg.useromeo)
+	IExtendModule* pModule = new CJuliet;
+	if (pModule->Initialize())
 	{
-		pModule = new CJuliet;
-		if (pModule->Initialize())
-		{
-			m_module = pModule;
-			return;
-		}
-		delete pModule;
+		m_module = pModule;
+		return;
 	}
+	delete pModule;
 
 	// G.I.M.I.C / C86BOX
 	pModule = new C86CtlIf;
@@ -49,7 +43,7 @@ void CExternalOpna::Initialize()
 		m_module = pModule;
 		return;
 	}
-	delete pModule;
+	delete pModule;	
 
 	// RE:birth
 	pModule = new CRebirth;
@@ -59,6 +53,7 @@ void CExternalOpna::Initialize()
 		return;
 	}
 	delete pModule;
+
 }
 
 /**
@@ -66,7 +61,7 @@ void CExternalOpna::Initialize()
  */
 void CExternalOpna::Deinitialize()
 {
-	IExternalChip* pModule = m_module;
+	IExtendModule* pModule = m_module;
 	m_module = NULL;
 	if (pModule)
 	{

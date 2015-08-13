@@ -10,14 +10,14 @@
 #include "misc/threadbase.h"
 
 /**
- * Constructor
+ * Constractor
  */
 CSpfmLight::CSpfmLight()
 {
 }
 
 /**
- * Destructor
+ * Destractor
  */
 CSpfmLight::~CSpfmLight()
 {

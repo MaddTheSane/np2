@@ -5,7 +5,7 @@
 
 #pragma once
 
-class IExternalChip;
+class IExtendModule;
 
 /**
  * @brief 外部 OPNA 演奏クラス
@@ -19,7 +19,6 @@ public:
 	void Initialize();
 	void Deinitialize();
 	bool IsEnabled() const;
-	bool HasADPCM() const;
 	bool IsBusy() const;
 	void Reset() const;
 	void WriteRegister(UINT nAddr, UINT8 cData);
@@ -28,7 +27,7 @@ public:
 
 private:
 	static CExternalOpna sm_instance;	//!< 唯一のインスタンスです
-	IExternalChip* m_module;			//!< モジュール
+	IExtendModule* m_module;			//!< モジュール
 	UINT8 m_cPsgMix;					//!< PSG ミキサー
 	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
 	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル
@@ -52,16 +51,6 @@ inline CExternalOpna* CExternalOpna::GetInstance()
  * @retval false 無効
  */
 inline bool CExternalOpna::IsEnabled() const
-{
-	return (m_module != NULL);
-}
-
-/**
- * ADPCM のバッファを持っている?
- * @retval true 有効
- * @retval false 無効
- */
-inline bool CExternalOpna::HasADPCM() const
 {
 	return (m_module != NULL);
 }

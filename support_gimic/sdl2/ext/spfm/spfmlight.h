@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "../externalchip.h"
+#include "../extendmodule.h"
 #include "misc/tty.h"
 
 /**
  * @brief The class of SPFM
  */
-class CSpfmLight : public IExternalChip
+class CSpfmLight : public IExtendModule
 {
 public:
 	CSpfmLight();

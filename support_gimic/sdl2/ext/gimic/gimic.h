@@ -5,14 +5,14 @@
 
 #pragma once
 
-#include "../externalchip.h"
+#include "../extendmodule.h"
 
 class IC86RealChip;
 
 /**
  * @brief The class of accessing G.I.M.I.C
  */
-class CGimic : public IExternalChip
+class CGimic : public IExtendModule
 {
 public:
 	CGimic();

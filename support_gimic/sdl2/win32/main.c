@@ -15,7 +15,7 @@
 #endif
 
 /** プロトタイプ */
-void opna_deinitialize(void);
+void board118_deinitialize(void);
 
 /**
  * メイン
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	ret = np2_main(argc, argv);
 
-	opna_deinitialize();
+	board118_deinitialize();
 
 	return ret;
 }

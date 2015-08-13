@@ -1,5 +1,5 @@
 /**
- * @file	externalchip.h
+ * @file	extendmodule.h
  * @brief	Interface of thg external modules
  */
 
@@ -8,13 +8,13 @@
 /**
  * @brief The interface of thg external modules
  */
-class IExternalChip
+class IExtendModule
 {
 public:
 	/**
-	 * Destructor
+	 * Destractor
 	 */
-	virtual ~IExternalChip() { }
+	virtual ~IExtendModule() { }
 
 	/**
 	 * Initialize
