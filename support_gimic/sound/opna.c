@@ -68,8 +68,14 @@ void opna_bind(POPNA opna)
 	{
 		fmboard_fmrestore(opna, 3, 1);
 	}
-	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
-
+	if (cCaps & OPNA_HAS_VR)
+	{
+		sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
+	}
+	else
+	{
+		sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
+	}
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
 		fmboard_rhyrestore(opna, &g_rhythm, 0);
