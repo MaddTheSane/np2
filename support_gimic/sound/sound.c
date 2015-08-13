@@ -1,14 +1,19 @@
-#include	"compiler.h"
-#include	"wavefile.h"
-#include	"dosio.h"
-#include	"soundmng.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"sndcsec.h"
-#include	"beep.h"
-#include	"getsnd.h"
+/**
+ * @file	sound.c
+ * @brief	Implementation of the sound
+ */
+
+#include "compiler.h"
+#include "sound.h"
+#include "wavefile.h"
+#include "dosio.h"
+#include "soundmng.h"
+#include "cpucore.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "sndcsec.h"
+#include "beep.h"
+#include "getsnd.h"
 
 
 	SOUNDCFG	soundcfg;

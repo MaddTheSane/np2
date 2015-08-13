@@ -36,6 +36,7 @@
 #include "dialog.h"
 #include "cpucore.h"
 #include "pccore.h"
+#include "statsave.h"
 #include "iocore.h"
 #include "pc9861k.h"
 #include "mpu98ii.h"

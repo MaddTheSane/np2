@@ -7,7 +7,7 @@
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"s98.h"
-
+#include "sound/soundrom.h"
 
 static void IOOUTCALL opn_o088(UINT port, REG8 dat) {
 
@@ -22,29 +22,27 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 
 	g_opn.data2 = dat;
 	addr = g_opn.addr2l;
+	g_opn.reg[addr + 0x200] = dat;
 	if (addr < 0x10) {
-		if (addr != 0x0e) {
-			psggen_setreg(&g_psg1, addr, dat);
-		}
+		psggen_setreg(&g_psg1, addr, dat);
 	}
 	else {
 		if (addr < 0x30) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					opngen_keyon(dat & 0x0f, dat);
+					opngen_keyon(&g_opngen, dat & 0x0f, dat);
 				}
 			}
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
 		else if (addr < 0xc0) {
-			opngen_setreg(0, addr, dat);
+			opngen_setreg(&g_opngen, 0, addr, dat);
 		}
-		g_opn.reg[addr + 0x200] = dat;
 	}
 	(void)port;
 }
@@ -64,7 +62,7 @@ static REG8 IOINPCALL opn_i08a(UINT port) {
 		return(0xff);
 	}
 	if (addr < 0x10) {
-		return(psggen_getreg(&g_psg1, addr));
+		return g_opn.reg[addr + 0x200];
 	}
 	else {
 		(void)port;
@@ -89,10 +87,9 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	g_opn.data1 = dat;
 	addr = g_opn.addr1l;
 	S98_put(NORMAL2608, addr, dat);
+	g_opn.reg[addr] = dat;
 	if (addr < 0x10) {
-		if (addr != 0x0e) {
-			psggen_setreg(&g_psg2, addr, dat);
-		}
+		psggen_setreg(&g_psg2, addr, dat);
 	}
 	else {
 		if (addr < 0x20) {
@@ -103,24 +100,23 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 		else if (addr < 0x30) {
 			if (addr == 0x28) {
 				if ((dat & 0x0f) < 3) {
-					opngen_keyon((dat & 0x0f) + 3, dat);
+					opngen_keyon(&g_opngen, (dat & 0x0f) + 3, dat);
 				}
 				else if (((dat & 0x0f) != 3) &&
 						((dat & 0x0f) < 7)) {
-					opngen_keyon((dat & 0x0f) + 2, dat);
+					opngen_keyon(&g_opngen, (dat & 0x0f) + 2, dat);
 				}
 			}
 			else {
 				fmtimer_setreg(addr, dat);
 				if (addr == 0x27) {
-					opnch[2].extop = dat & 0xc0;
+					g_opngen.opnch[2].extop = dat & 0xc0;
 				}
 			}
 		}
 		else if (addr < 0xc0) {
-			opngen_setreg(3, addr, dat);
+			opngen_setreg(&g_opngen, 3, addr, dat);
 		}
-		g_opn.reg[addr] = dat;
 	}
 	(void)port;
 }
@@ -145,7 +141,7 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat) {
 	S98_put(EXTEND2608, addr, dat);
 	g_opn.reg[addr + 0x100] = dat;
 	if (addr >= 0x30) {
-		opngen_setreg(6, addr, dat);
+		opngen_setreg(&g_opngen, 6, addr, dat);
 	}
 	else {
 		if (addr == 0x10) {
@@ -172,7 +168,7 @@ static REG8 IOINPCALL opna_i18a(UINT port) {
 		return(fmboard_getjoy(&g_psg2));
 	}
 	else if (addr < 0x10) {
-		return(psggen_getreg(&g_psg2, addr));
+		return g_opn.reg[addr];
 	}
 	else if (addr == 0xff) {
 		return(1);
@@ -210,11 +206,11 @@ static void extendchannel(REG8 enable) {
 	g_opn.extend = enable;
 	if (enable) {
 		g_opn.channels = 9;
-		opngen_setcfg(9, OPN_STEREO | 0x038);
+		opngen_setcfg(&g_opngen, 9, OPN_STEREO | 0x038);
 	}
 	else {
 		g_opn.channels = 6;
-		opngen_setcfg(6, OPN_MONORAL | 0x038);
+		opngen_setcfg(&g_opngen, 6, OPN_MONORAL | 0x038);
 		rhythm_setreg(&g_rhythm, 0x10, 0xff);
 	}
 }
@@ -237,9 +233,13 @@ static const IOINP opna_i[4] = {
 
 void boardx2_reset(const NP2CFG *pConfig) {
 
+	g_opn.reg[0x207] = 0xbf;
+	g_opn.reg[0x20e] = 0xff;
+	g_opn.reg[0x20f] = 0xff;
+
 	fmtimer_reset(0xc0);
 	g_opn.channels = 6;
-	opngen_setcfg(6, OPN_STEREO | 0x1c0);
+	opngen_setcfg(&g_opngen, 6, OPN_STEREO | 0x1c0);
 	soundrom_load(0xcc000, OEMTEXT("86"));
 	fmboard_extreg(extendchannel);
 
@@ -251,10 +251,10 @@ void boardx2_bind(void) {
 	fmboard_fmrestore(&g_opn, 0, 2);
 	fmboard_fmrestore(&g_opn, 3, 0);
 	fmboard_fmrestore(&g_opn, 6, 1);
-	psggen_restore(&g_psg1);
-	psggen_restore(&g_psg2);
+	fmboard_psgrestore(&g_opn, &g_psg1, 2);
+	fmboard_psgrestore(&g_opn, &g_psg2, 0);
 	fmboard_rhyrestore(&g_opn, &g_rhythm, 0);
-	sound_streamregist(&opngen, (SOUNDCB)opngen_getpcm);
+	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
 	rhythm_bind(&g_rhythm);

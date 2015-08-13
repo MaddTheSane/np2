@@ -1,7 +1,10 @@
-#include	"compiler.h"
-#include	"sound.h"
-#include	"adpcm.h"
+/**
+ * @file	adpcmg.c
+ * @brief	Implementation of the OPNA ADPCM
+ */
 
+#include "compiler.h"
+#include "adpcm.h"
 
 #define	ADPCM_NBR	0x80000000
 

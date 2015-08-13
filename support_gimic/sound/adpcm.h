@@ -1,3 +1,11 @@
+/**
+ * @file	adpcm.h
+ * @brief	Interface of the OPNA ADPCM
+ */
+
+#pragma once
+
+#include "sound.h"
 
 enum {
 	ADTIMING_BIT	= 11,

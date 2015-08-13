@@ -93,7 +93,7 @@ void gdc_setanalogpal(int color, int rgb, REG8 value) {
 		if (palevent.events < PALEVENTMAX) {
 			if (!gdc.vsync) {
 				event = palevent.event + palevent.events;
-				event->clock = nevent.item[NEVENT_FLAMES].clock -
+				event->clock = g_nevent.item[NEVENT_FLAMES].clock -
 											(CPU_BASECLOCK - CPU_REMCLOCK);
 				event->color = (UINT16)((color * sizeof(RGB32)) + rgb);
 				event->value = (UINT8)value;
@@ -649,7 +649,7 @@ static REG8 IOINPCALL gdc_i60(UINT port) {
 	}
 #endif
 #ifdef TURE_SYNC				// クロックイベントの誤差修正
-	if (nevent.item[NEVENT_FLAMES].clock < (CPU_BASECLOCK - CPU_REMCLOCK)) {
+	if (g_nevent.item[NEVENT_FLAMES].clock < (CPU_BASECLOCK - CPU_REMCLOCK)) {
 		ret ^= 0x20;
 	}
 #endif
@@ -778,7 +778,7 @@ static REG8 IOINPCALL gdc_ia0(UINT port) {
 	}
 #endif
 #ifdef TURE_SYNC				// クロックイベントの誤差修正
-	if (nevent.item[NEVENT_FLAMES].clock < (CPU_BASECLOCK - CPU_REMCLOCK)) {
+	if (g_nevent.item[NEVENT_FLAMES].clock < (CPU_BASECLOCK - CPU_REMCLOCK)) {
 		ret ^= 0x20;
 	}
 #endif

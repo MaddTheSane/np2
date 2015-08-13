@@ -27,6 +27,7 @@
 
 #include "np2.h"
 #include "pccore.h"
+#include "statsave.h"
 #include "dosio.h"
 #include "scrndraw.h"
 #include "timing.h"

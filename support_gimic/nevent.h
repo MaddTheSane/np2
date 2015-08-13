@@ -1,3 +1,9 @@
+/**
+ * @file	nevent.h
+ * @brief	Interface of the event
+ */
+
+#pragma once
 
 enum {
 	NEVENT_MAXEVENTS	= 32,
@@ -72,7 +78,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	_NEVENT		nevent;
+extern	_NEVENT		g_nevent;
 
 // ‰Šú‰»
 void nevent_allreset(void);
@@ -106,4 +112,3 @@ void nevent_forceexit(void);
 #ifdef __cplusplus
 }
 #endif
-
