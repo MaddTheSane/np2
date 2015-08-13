@@ -53,4 +53,11 @@ public:
 	 * @param[in] cData The data
 	 */
 	virtual void WriteRegister(UINT nAddr, UINT8 cData) = 0;
+
+	/**
+	 * Has ADPCM?
+	 * @retval true Has
+	 * @retval false No exist
+	 */
+	virtual bool HasADPCM() = 0;
 };

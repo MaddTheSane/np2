@@ -44,6 +44,7 @@
 #include "scrndraw.h"
 #include "sound.h"
 #include "beep.h"
+#include "sound\opna.h"
 #include "s98.h"
 #include "diskdrv.h"
 #include "fddfile.h"
@@ -56,9 +57,6 @@
 #endif
 #if defined(SUPPORT_DCLOCK)
 #include "dclock.h"
-#endif
-#if defined(SUPPORT_ROMEO)
-#include "ext\externalopna.h"
 #endif
 #include "recvideo.h"
 
@@ -1653,9 +1651,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
 
-#if defined(SUPPORT_ROMEO)
-	CExternalOpna::GetInstance()->Initialize();
-#endif
+	opna_initialize();
 
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
 		mousemng_enable(MOUSEPROC_SYSTEM);
@@ -1820,10 +1816,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 #endif
 
-#if defined(SUPPORT_ROMEO)
-	CExternalOpna::GetInstance()->Reset();
-	CExternalOpna::GetInstance()->Deinitialize();
-#endif
+	opna_deinitialize();
 	pccore_term();
 
 	soundmng_deinitialize();

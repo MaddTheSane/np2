@@ -742,7 +742,7 @@ SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\BOARD118.CPP
+SOURCE=..\CBUS\BOARD118.C
 # End Source File
 # Begin Source File
 
@@ -1077,7 +1077,7 @@ SOURCE=..\SOUND\FMTIMER.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\sound\opna.c
+SOURCE=.\ext\opna.cpp
 # End Source File
 # Begin Source File
 

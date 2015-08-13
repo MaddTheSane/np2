@@ -615,6 +615,10 @@ SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\CBUS\BOARD118.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\CBUS\BOARD14.C
 # End Source File
 # Begin Source File
@@ -934,7 +938,7 @@ SOURCE=..\SOUND\FMTIMER.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\sound\opna.c
+SOURCE=.\ext\opna.cpp
 # End Source File
 # Begin Source File
 
@@ -1427,10 +1431,6 @@ SOURCE=.\misc\WndProc.cpp
 SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\BOARD118.CPP
-# End Source File
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP

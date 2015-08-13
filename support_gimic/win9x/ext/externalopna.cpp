@@ -17,6 +17,7 @@ CExternalOpna CExternalOpna::sm_instance;
  */
 CExternalOpna::CExternalOpna()
 	: m_module(NULL)
+	, m_bHasADPCM(false)
 	, m_cPsgMix(0x3f)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
@@ -37,6 +38,7 @@ void CExternalOpna::Initialize()
 		if (pModule->Initialize())
 		{
 			m_module = pModule;
+//			m_bHasADPCM = pModule->HasADPCM();
 			return;
 		}
 		delete pModule;
@@ -47,6 +49,7 @@ void CExternalOpna::Initialize()
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
+		m_bHasADPCM = pModule->HasADPCM();
 		return;
 	}
 	delete pModule;
@@ -56,6 +59,7 @@ void CExternalOpna::Initialize()
 	if (pModule->Initialize())
 	{
 		m_module = pModule;
+		m_bHasADPCM = pModule->HasADPCM();
 		return;
 	}
 	delete pModule;
@@ -68,6 +72,7 @@ void CExternalOpna::Deinitialize()
 {
 	IExternalChip* pModule = m_module;
 	m_module = NULL;
+	m_bHasADPCM = false;
 	if (pModule)
 	{
 		pModule->Deinitialize();

@@ -21,6 +21,7 @@ public:
 	virtual bool IsBusy();
 	virtual void Reset();
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual bool HasADPCM();
 
 private:
 	//! @brief ÉçÅ[Éhä÷êî

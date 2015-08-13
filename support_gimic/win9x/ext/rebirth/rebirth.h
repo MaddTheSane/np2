@@ -24,11 +24,13 @@ public:
 	virtual bool IsBusy();
 	virtual void Reset();
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual bool HasADPCM();
 
 private:
 	HMODULE m_hModule;					//!< モジュール	
 	SoundInterfaceManager* m_pManager;	//!< マネージャ
 	SoundChip* m_pChip;					//!< サウンド チップ インターフェイス
+	bool m_bHasADPCM;					//!< ADPCM フラグ
 };
 
 /**

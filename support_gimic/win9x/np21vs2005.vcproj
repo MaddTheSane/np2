@@ -465,7 +465,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\board118.cpp"
+					RelativePath="..\cbus\board118.c"
 					>
 				</File>
 				<File
@@ -1105,7 +1105,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sound\opna.c"
+					RelativePath=".\ext\opna.cpp"
 					>
 				</File>
 				<File

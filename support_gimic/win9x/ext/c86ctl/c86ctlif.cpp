@@ -20,6 +20,7 @@ C86CtlIf::C86CtlIf()
 	, m_chipbase(NULL)
 	, m_gimic(NULL)
 	, m_chip(NULL)
+	, m_bHasADPCM(false)
 {
 }
 
@@ -86,13 +87,23 @@ bool C86CtlIf::Initialize()
 				Devinfo info;
 				if (gimic->getModuleInfo(&info) == C86CTL_ERR_NONE)
 				{
-					if ((!memcmp(info.Devname, "GMC-OPN3L", 9)) || (!memcmp(info.Devname, "GMC-OPNA", 8)))
+					if (!memcmp(info.Devname, "GMC-OPN3L", 9))
 					{
 						m_chip = chip;
 						m_gimic = gimic;
+						m_bHasADPCM = false;
 						Reset();
 						return true;
 					}
+					if (!memcmp(info.Devname, "GMC-OPNA", 8))
+					{
+						m_chip = chip;
+						m_gimic = gimic;
+						m_bHasADPCM = true;
+						Reset();
+						return true;
+					}
+
 				}
 			}
 
@@ -108,6 +119,7 @@ bool C86CtlIf::Initialize()
 				{
 					m_chip = chip3;
 					m_gimic = NULL;
+					m_bHasADPCM = (type == CHIP_OPNA);
 					Reset();
 					return true;
 				}
@@ -130,6 +142,7 @@ void C86CtlIf::Deinitialize()
 		m_chipbase = NULL;
 		m_gimic = NULL;
 		m_chip = NULL;
+		m_bHasADPCM = false;
 	}
 	if (m_hModule)
 	{
@@ -185,4 +198,14 @@ void C86CtlIf::WriteRegister(UINT nAddr, UINT8 cData)
 	{
 		m_chip->out(nAddr, cData);
 	}
+}
+
+/**
+ * Has ADPCM?
+ * @retval true Has
+ * @retval false No exist
+ */
+bool C86CtlIf::HasADPCM()
+{
+	return m_bHasADPCM;
 }
