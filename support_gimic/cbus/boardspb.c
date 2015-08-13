@@ -89,7 +89,7 @@ static void IOOUTCALL spr_o588(UINT port, REG8 dat)
 
 static void IOOUTCALL spr_o58a(UINT port, REG8 dat)
 {
-//	g_opn.data2l = dat;
+//	g_opn.data2 = dat;
 	opna_write3438Register(&g_opn, g_opn.addr2l, dat);
 
 	(void)port;
