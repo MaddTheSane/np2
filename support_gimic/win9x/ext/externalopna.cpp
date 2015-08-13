@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "externalopna.h"
+#include "np2.h"
 #include "c86ctl\c86ctlif.h"
 #include "rebirth\rebirth.h"
 #include "romeo\juliet.h"
@@ -27,14 +28,19 @@ CExternalOpna::CExternalOpna()
  */
 void CExternalOpna::Initialize()
 {
+	IExternalChip* pModule;
+
 	// ROMEO
-	IExtendModule* pModule = new CJuliet;
-	if (pModule->Initialize())
+	if (np2oscfg.useromeo)
 	{
-		m_module = pModule;
-		return;
+		pModule = new CJuliet;
+		if (pModule->Initialize())
+		{
+			m_module = pModule;
+			return;
+		}
+		delete pModule;
 	}
-	delete pModule;
 
 	// G.I.M.I.C / C86BOX
 	pModule = new C86CtlIf;
@@ -43,7 +49,7 @@ void CExternalOpna::Initialize()
 		m_module = pModule;
 		return;
 	}
-	delete pModule;	
+	delete pModule;
 
 	// RE:birth
 	pModule = new CRebirth;
@@ -53,7 +59,6 @@ void CExternalOpna::Initialize()
 		return;
 	}
 	delete pModule;
-
 }
 
 /**
@@ -61,7 +66,7 @@ void CExternalOpna::Initialize()
  */
 void CExternalOpna::Deinitialize()
 {
-	IExtendModule* pModule = m_module;
+	IExternalChip* pModule = m_module;
 	m_module = NULL;
 	if (pModule)
 	{

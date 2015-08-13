@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "..\..\ext\extendmodule.h"
+#include "..\externalchip.h"
 
 class SoundInterfaceManager;
 class SoundChip;
@@ -13,7 +13,7 @@ class SoundChip;
 /**
  * @brief SCCI アクセス クラス
  */
-class CRebirth : public IExtendModule
+class CRebirth : public IExternalChip
 {
 public:
 	CRebirth();

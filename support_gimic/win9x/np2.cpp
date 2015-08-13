@@ -1654,10 +1654,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 #if defined(SUPPORT_ROMEO)
-	if (np2oscfg.useromeo)
-	{
-		CExternalOpna::GetInstance()->Initialize();
-	}
+	CExternalOpna::GetInstance()->Initialize();
 #endif
 
 	if (np2oscfg.MOUSE_SW) {										// ver0.30

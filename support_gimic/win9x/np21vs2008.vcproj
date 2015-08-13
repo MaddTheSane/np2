@@ -2657,7 +2657,7 @@
 					Name="ext"
 					>
 					<File
-						RelativePath=".\ext\extendmodule.h"
+						RelativePath=".\ext\externalchip.h"
 						>
 					</File>
 					<File
