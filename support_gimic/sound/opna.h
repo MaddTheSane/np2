@@ -16,6 +16,7 @@ enum
 	OPNA_HAS_TIMER		= 0x01,		/*!< Has timer */
 	OPNA_HAS_EXTENDEDFM	= 0x02,		/*!< Is OPNA */
 	OPNA_HAS_ADPCM		= 0x04,		/*!< Has ADPCM DRAM */
+	OPNA_HAS_YM3438		= 0x08,		/*!< Has YM3438 */
 	OPNA_HAS_VR			= 0x10,		/*!< Has VR */
 	OPNA_REALCHIP		= 0x20,		/*!< Allow realchip */
 	OPNA_S98			= 0x40		/*!< Supports S98 */
@@ -60,9 +61,13 @@ REG8 opna_readExtendedStatus(POPNA opna);
 
 void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
+void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData);
+void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData);
 
 REG8 opna_readRegister(POPNA opna, UINT nAddress);
 REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress);
+REG8 opna_read3438Register(POPNA opna, UINT nAddress);
+REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress);
 
 void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank);
 void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank);
