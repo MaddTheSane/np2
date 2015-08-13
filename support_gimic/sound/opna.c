@@ -60,7 +60,7 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->cCaps;
 
-	psggen_restore(&g_psg1);
+	fmboard_psgrestore(opna, &g_psg1, 0);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 
 	fmboard_fmrestore(opna, 0, 0);
