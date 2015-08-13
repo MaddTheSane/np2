@@ -142,10 +142,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 
 	if (nAddress < 0x10)
 	{
-		if (nAddress != 0x0e)
-		{
-			psggen_setreg(&g_psg1, nAddress, cData);
-		}
+		psggen_setreg(&g_psg1, nAddress, cData);
 	}
 	else if (nAddress < 0x20)
 	{
