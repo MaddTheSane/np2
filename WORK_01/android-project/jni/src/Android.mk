@@ -16,9 +16,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(NP2_PATH)/cbus \
 	$(NP2_PATH)/codecnv \
 	$(NP2_PATH)/common \
-	$(NP2_PATH)/embed \
-	$(NP2_PATH)/embed/menu \
-	$(NP2_PATH)/embed/menubase \
 	$(NP2_PATH)/fdd \
 	$(NP2_PATH)/font \
 	$(NP2_PATH)/generic \
