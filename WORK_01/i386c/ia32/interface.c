@@ -33,7 +33,7 @@
 #include "pccore.h"
 #include "iocore.h"
 #include "dmax86.h"
-#include "bios.h"
+#include "bios/bios.h"
 
 
 void

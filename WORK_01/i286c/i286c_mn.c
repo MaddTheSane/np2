@@ -3,7 +3,7 @@
 #include	"i286c.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"bios.h"
+#include	"bios/bios.h"
 #include	"i286c.mcr"
 #if defined(ENABLE_TRAP)
 #include "trap/inttrap.h"

@@ -23,7 +23,7 @@
 #include "mpu98ii.h"
 #include "board14.h"
 #include "amd98.h"
-#include "bios.h"
+#include "bios/bios.h"
 #include "vram.h"
 #include "palettes.h"
 #include "maketext.h"

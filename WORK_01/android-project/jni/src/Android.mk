@@ -12,7 +12,6 @@ NP2_PATH := $(LOCAL_PATH)/../np2
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH) \
 	$(NP2_PATH) \
-	$(NP2_PATH)/bios \
 	$(NP2_PATH)/cbus \
 	$(NP2_PATH)/codecnv \
 	$(NP2_PATH)/common \
