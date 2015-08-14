@@ -9,7 +9,7 @@
 #include "dosio.h"
 #include "textfile.h"
 #if defined(SUPPORT_TEXTCNV)
-#include "textcnv.h"
+#include "codecnv/textcnv.h"
 #endif
 
 /**

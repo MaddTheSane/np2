@@ -13,7 +13,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH) \
 	$(NP2_PATH) \
 	$(NP2_PATH)/cbus \
-	$(NP2_PATH)/codecnv \
 	$(NP2_PATH)/common \
 	$(NP2_PATH)/fdd \
 	$(NP2_PATH)/font \
