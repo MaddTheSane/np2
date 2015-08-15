@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -141,7 +141,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -226,7 +226,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -311,7 +311,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i386c;..\i386c\ia32;..\i386c\ia32\instructions;..\i386c\ia32\instructions\fpu;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\fdd;..\font;..\generic;..\trap;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

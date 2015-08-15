@@ -59,7 +59,7 @@ snddrv_num2drv(UINT8 num)
 #include "sound.h"
 
 #if defined(VERMOUTH_LIB)
-#include "vermouth.h"
+#include "sound/vermouth/vermouth.h"
 
 MIDIMOD vermouth_module = NULL;
 #endif

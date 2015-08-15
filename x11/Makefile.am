@@ -234,8 +234,6 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/lio \
 		-I$(real_topsrcdir)/mem \
 		-I$(real_topsrcdir)/sound \
-		-I$(real_topsrcdir)/sound/getsnd \
-		-I$(real_topsrcdir)/sound/vermouth \
 		-I$(real_topsrcdir)/vram \
 		$(GTK_CFLAGS) $(SDL_CFLAGS)
 if BUILD_ALL

@@ -1714,8 +1714,6 @@
 					../../lio,
 					../../mem,
 					../../sound,
-					../../sound/getsnd,
-					../../sound/vermouth,
 					../../trap,
 					../../vram,
 				);
@@ -1758,8 +1756,6 @@
 					../../lio,
 					../../mem,
 					../../sound,
-					../../sound/getsnd,
-					../../sound/vermouth,
 					../../trap,
 					../../vram,
 				);

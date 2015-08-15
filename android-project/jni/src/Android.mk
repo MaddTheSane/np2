@@ -27,8 +27,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(NP2_PATH)/mem \
 	$(NP2_PATH)/sdl2 \
 	$(NP2_PATH)/sound \
-	$(NP2_PATH)/sound/getsnd \
-	$(NP2_PATH)/sound/vermouth \
 	$(NP2_PATH)/vram
 
 # Add your application source files here...
