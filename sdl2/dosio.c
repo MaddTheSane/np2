@@ -2,7 +2,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #if defined(WIN32) && defined(OSLANG_UTF8)
-#include "codecnv.h"
+#include "codecnv/codecnv.h"
 #endif
 #include "dosio.h"
 #if defined(WIN32)

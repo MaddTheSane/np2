@@ -225,7 +225,6 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/x11/gtk2 \
 		-I$(real_topsrcdir)/x11/debug \
 		-I$(real_topsrcdir)/common \
-		-I$(real_topsrcdir)/codecnv \
 		-I$(real_topsrcdir)/bios \
 		-I$(real_topsrcdir)/cbus \
 		-I$(real_topsrcdir)/fdd \

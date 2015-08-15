@@ -14,7 +14,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(NP2_PATH) \
 	$(NP2_PATH)/bios \
 	$(NP2_PATH)/cbus \
-	$(NP2_PATH)/codecnv \
 	$(NP2_PATH)/common \
 	$(NP2_PATH)/embed \
 	$(NP2_PATH)/embed/menu \

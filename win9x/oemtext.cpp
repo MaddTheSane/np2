@@ -1,6 +1,6 @@
 #include	"compiler.h"
 #include	"oemtext.h"
-#include	"textcnv.h"
+#include	"codecnv/textcnv.h"
 
 
 // Use WinAPI version

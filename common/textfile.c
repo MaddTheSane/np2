@@ -2,7 +2,7 @@
 #include	"strres.h"
 #include	"textfile.h"
 #if defined(SUPPORT_TEXTCNV)
-#include	"textcnv.h"
+#include	"codecnv/textcnv.h"
 #endif
 #if defined(SUPPORT_ARC)
 #include	"arc.h"
