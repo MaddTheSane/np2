@@ -1,21 +1,26 @@
-#include	"compiler.h"
-#include	"strres.h"
-#include	"dosio.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"bios.h"
-#include	"biosmem.h"
-#include	"sxsibios.h"
-#include	"lio.h"
-#include	"vram.h"
-#include	"fddfile.h"
-#include	"fdd_mtr.h"
-#include	"fdfmt.h"
-#include	"keytable.res"
-#include	"itfrom.res"
-#include	"startup.res"
-#include	"biosfd80.res"
+/**
+ * @file	bios.c
+ * @brief	Implementation of BIOS
+ */
+
+#include "compiler.h"
+#include "bios.h"
+#include "biosmem.h"
+#include "sxsibios.h"
+#include "strres.h"
+#include "cpucore.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "lio/lio.h"
+#include "vram.h"
+#include "fddfile.h"
+#include "fdd_mtr.h"
+#include "fdfmt.h"
+#include "dosio.h"
+#include "keytable.res"
+#include "itfrom.res"
+#include "startup.res"
+#include "biosfd80.res"
 
 
 #define	BIOS_SIMULATE

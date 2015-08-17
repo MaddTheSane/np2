@@ -4,7 +4,7 @@
 #include	"v30patch.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"bios.h"
+#include	"bios/bios.h"
 #include	"dmav30.h"
 #include	"i286c.mcr"
 #if defined(ENABLE_TRAP)

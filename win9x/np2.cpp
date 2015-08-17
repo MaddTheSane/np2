@@ -40,7 +40,6 @@
 #include "iocore.h"
 #include "pc9861k.h"
 #include "mpu98ii.h"
-#include "bios.h"
 #include "scrndraw.h"
 #include "sound.h"
 #include "beep.h"

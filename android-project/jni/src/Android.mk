@@ -12,7 +12,6 @@ NP2_PATH := $(LOCAL_PATH)/../np2
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH) \
 	$(NP2_PATH) \
-	$(NP2_PATH)/bios \
 	$(NP2_PATH)/cbus \
 	$(NP2_PATH)/common \
 	$(NP2_PATH)/embed \
@@ -23,7 +22,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(NP2_PATH)/generic \
 	$(NP2_PATH)/i286c \
 	$(NP2_PATH)/io \
-	$(NP2_PATH)/lio \
 	$(NP2_PATH)/mem \
 	$(NP2_PATH)/sdl2 \
 	$(NP2_PATH)/sound \

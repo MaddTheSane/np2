@@ -1,4 +1,6 @@
 
+#pragma once
+
 #ifndef MEMCALL
 #define	MEMCALL
 #endif
