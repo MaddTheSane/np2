@@ -8,8 +8,8 @@
 #include	"dialogs.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"scrnsave.h"
 #include	"font/font.h"
+#include	"vram/scrnsave.h"
 
 
 static const FSPARAM fpFont =
@@ -46,18 +46,20 @@ void dialog_font(HWND hWnd)
 void dialog_writebmp(HWND hWnd) {
 
 	SCRNSAVE	ss;
+	int type;
 	FSPARAM		fp;
 	TCHAR		szPath[MAX_PATH];
 	LPCTSTR		pszExt;
 
-	ss = scrnsave_get();
+	ss = scrnsave_create();
 	if (ss == NULL)
 	{
 		return;
 	}
+	type = scrnsave_gettype(ss);
 	fp.lpszTitle = MAKEINTRESOURCE(IDS_BMPTITLE);
 	fp.lpszDefExt = MAKEINTRESOURCE(IDS_BMPEXT);
-	fp.lpszFilter = lpszBmpFilter[ss->type];
+	fp.lpszFilter = lpszBmpFilter[type];
 	fp.nFilterIndex = 1;
 	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
 	file_cutname(szPath);
@@ -67,7 +69,7 @@ void dialog_writebmp(HWND hWnd) {
 		file_cpyname(bmpfilefolder, szPath, NELEMENTS(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
 		pszExt = file_getext(szPath);
-		if ((ss->type <= SCRNSAVE_8BIT) &&
+		if ((type <= SCRNSAVE_8BIT) &&
 			(!file_cmpname(pszExt, TEXT("gif"))))
 		{
 			scrnsave_writegif(ss, szPath, SCRNSAVE_AUTO);
@@ -77,6 +79,6 @@ void dialog_writebmp(HWND hWnd) {
 			scrnsave_writebmp(ss, szPath, SCRNSAVE_AUTO);
 		}
 	}
-	scrnsave_trash(ss);
+	scrnsave_destroy(ss);
 }
 
