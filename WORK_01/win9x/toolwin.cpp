@@ -14,7 +14,7 @@
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
-#include	"diskdrv.h"
+#include	"fdd/diskdrv.h"
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 

@@ -33,8 +33,8 @@
 #include "ini.h"
 #include "pccore.h"
 
-#include "fddfile.h"
-#include "newdisk.h"
+#include "fdd/fddfile.h"
+#include "fdd/newdisk.h"
 
 
 /*

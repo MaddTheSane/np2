@@ -5,9 +5,9 @@
 #include "cpucore.h"
 #include "pccore.h"
 #include "iocore.h"
-#include "fddfile.h"
+#include "fdd/fddfile.h"
 #include "ideio.h"
-#include "sxsi.h"
+#include "fdd/sxsi.h"
 #include "sysmng.h"
 #include "toolkit.h"
 

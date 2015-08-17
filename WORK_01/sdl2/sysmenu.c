@@ -12,7 +12,7 @@
 #include	"mpu98ii.h"
 #include	"sound.h"
 #include	"beep.h"
-#include	"diskdrv.h"
+#include	"fdd/diskdrv.h"
 #include	"keystat.h"
 #include	"sysmenu.h"
 #include "embed/menu/dlgcfg.h"

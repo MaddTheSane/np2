@@ -10,7 +10,7 @@
 #include	"scsiio.h"
 #include	"scsiio.tbl"
 #include	"scsicmd.h"
-#include	"sxsi.h"
+#include	"fdd/sxsi.h"
 
 #if defined(_WIN32) && defined(TRACE)
 extern void iptrace_out(void);

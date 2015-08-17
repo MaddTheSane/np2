@@ -12,8 +12,8 @@
 #include "dosio.h"
 #include "soundmng.h"
 #include "pccore.h"
-#include "diskdrv.h"
-#include "fddfile.h"
+#include "fdd/diskdrv.h"
+#include "fdd/fddfile.h"
 
 enum {
 	DID_FOLDER	= DID_USER,
