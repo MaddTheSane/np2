@@ -37,7 +37,7 @@
 
 #include "beep.h"
 #include "diskdrv.h"
-#include "font.h"
+#include "font/font.h"
 #include "mpu98ii.h"
 #include "pc9861k.h"
 #include "s98.h"
