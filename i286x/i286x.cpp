@@ -13,8 +13,8 @@
 #include	"bios.h"
 #include	"dmax86.h"
 #if defined(ENABLE_TRAP)
-#include	"steptrap.h"
-#include	"inttrap.h"
+#include "trap/inttrap.h"
+#include "trap/steptrap.h"
 #endif
 
 

@@ -1749,7 +1749,6 @@
 					../../lio,
 					../../mem,
 					../../sound,
-					../../trap,
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
@@ -1788,7 +1787,6 @@
 					../../lio,
 					../../mem,
 					../../sound,
-					../../trap,
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";

@@ -12,7 +12,7 @@
 #include	"i286xea.mcr"
 #include	"dmax86.h"
 #if defined(ENABLE_TRAP)
-#include	"steptrap.h"
+#include "trap/steptrap.h"
 #endif
 
 
