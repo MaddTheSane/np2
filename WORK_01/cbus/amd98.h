@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "pccore.h"
+
 /**
  * @breif The sturecture of AMD-98
  */

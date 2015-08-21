@@ -191,6 +191,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/sound/opngeng.c \
 		$(real_topsrcdir)/sound/pcm86c.c \
 		$(real_topsrcdir)/sound/pcm86g.c \
+		$(real_topsrcdir)/sound/pcmmix.c \
 		$(real_topsrcdir)/sound/psggenc.c \
 		$(real_topsrcdir)/sound/psggeng.c \
 		$(real_topsrcdir)/sound/rhythmc.c \
