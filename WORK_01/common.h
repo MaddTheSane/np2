@@ -40,7 +40,7 @@ enum {
 #endif
 
 #ifndef	NELEMENTS
-#define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
+#define	NELEMENTS(a)	((UINT)(sizeof(a) / sizeof(a[0])))
 #endif
 
 
