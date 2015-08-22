@@ -16,6 +16,9 @@
 #endif
 
 /** プロトタイプ */
+#ifdef __cplusplus
+extern "C"
+#endif
 void board118_deinitialize(void);
 
 /**
