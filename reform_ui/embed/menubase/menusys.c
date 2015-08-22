@@ -14,7 +14,6 @@
 #include "inputmng.h"
 
 typedef struct _mhdl {
-struct _mhdl	*chain;
 struct _mhdl	*next;
 struct _mhdl	*child;
 	MENUID		id;
@@ -33,7 +32,6 @@ typedef struct {
 typedef struct {
 	_MSYSWND	wnd[MENUSYS_MAX];
 	LISTARRAY	res;
-	MENUHDL		lastres;
 	MENUHDL		root;
 	UINT16		icon;
 	UINT16		style;
@@ -152,12 +150,6 @@ static MENUHDL append1(MENUSYS *sys, const MSYSITEM *item) {
 	}
 	else {
 		ret = (MENUHDL)listarray_append(sys->res, &hdl);
-	}
-	if (ret) {
-		if (sys->lastres) {
-			sys->lastres->chain = ret;
-		}
-		sys->lastres = ret;
 	}
 	return(ret);
 }
