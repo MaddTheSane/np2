@@ -41,7 +41,7 @@
 #include "mpu98ii.h"
 #include "pc9861k.h"
 #include "s98.h"
-#include "scrnbmp.h"
+#include "vram/scrnsave.h"
 #include "fdd/sxsi.h"
 
 #include "kdispwin.h"
@@ -576,12 +576,11 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 	GtkWidget *dialog = NULL;
 	GtkFileFilter *filter;
 	gchar *utf8, *path;
-	SCRNBMP bmp = NULL;
-	FILEH fh;
+	SCRNSAVE bmp = NULL;
 
 	uninstall_idle_process();
 
-	bmp = scrnbmp();
+	bmp = scrnsave_create();
 	if (bmp == NULL)
 		goto end;
 
@@ -637,19 +636,14 @@ cb_bmpsave(GtkAction *action, gpointer user_data)
 			}
 			file_cpyname(bmpfilefolder, path, sizeof(bmpfilefolder));
 			sysmng_update(SYS_UPDATEOSCFG);
-			fh = file_create(path);
-			if (fh != FILEH_INVALID) {
-				file_write(fh, bmp->ptr, bmp->size);
-				file_close(fh);
-			}
+			scrnsave_writebmp(bmp, path, SCRNSAVE_AUTO);
 			g_free(path);
 		}
 		g_free(utf8);
 	}
 
 end:
-	if (bmp)
-		_MFREE(bmp);
+	scrnsave_destroy(bmp);
 	if (dialog)
 		gtk_widget_destroy(dialog);
 	install_idle_process();

@@ -219,7 +219,6 @@
 		BA7E849E19063AFB00041C04 /* maketext.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838319063AFB00041C04 /* maketext.c */; };
 		BA7E849F19063AFB00041C04 /* maketgrp.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838519063AFB00041C04 /* maketgrp.c */; };
 		BA7E84A019063AFB00041C04 /* palettes.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838719063AFB00041C04 /* palettes.c */; };
-		BA7E84A119063AFB00041C04 /* scrnbmp.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838919063AFB00041C04 /* scrnbmp.c */; };
 		BA7E84A219063AFB00041C04 /* scrndraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838B19063AFB00041C04 /* scrndraw.c */; };
 		BA7E84A319063AFB00041C04 /* scrnsave.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838D19063AFB00041C04 /* scrnsave.c */; };
 		BA7E84A419063AFB00041C04 /* sdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838F19063AFB00041C04 /* sdraw.c */; };
@@ -677,8 +676,6 @@
 		BA7E838619063AFB00041C04 /* maketgrp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maketgrp.h; sourceTree = "<group>"; };
 		BA7E838719063AFB00041C04 /* palettes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palettes.c; sourceTree = "<group>"; };
 		BA7E838819063AFB00041C04 /* palettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = palettes.h; sourceTree = "<group>"; };
-		BA7E838919063AFB00041C04 /* scrnbmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnbmp.c; sourceTree = "<group>"; };
-		BA7E838A19063AFB00041C04 /* scrnbmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnbmp.h; sourceTree = "<group>"; };
 		BA7E838B19063AFB00041C04 /* scrndraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrndraw.c; sourceTree = "<group>"; };
 		BA7E838C19063AFB00041C04 /* scrndraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrndraw.h; sourceTree = "<group>"; };
 		BA7E838D19063AFB00041C04 /* scrnsave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnsave.c; sourceTree = "<group>"; };
@@ -1391,8 +1388,6 @@
 				BA7E838619063AFB00041C04 /* maketgrp.h */,
 				BA7E838719063AFB00041C04 /* palettes.c */,
 				BA7E838819063AFB00041C04 /* palettes.h */,
-				BA7E838919063AFB00041C04 /* scrnbmp.c */,
-				BA7E838A19063AFB00041C04 /* scrnbmp.h */,
 				BA7E838B19063AFB00041C04 /* scrndraw.c */,
 				BA7E838C19063AFB00041C04 /* scrndraw.h */,
 				BA7E838D19063AFB00041C04 /* scrnsave.c */,
@@ -1659,7 +1654,6 @@
 				BA7E848019063AFB00041C04 /* getogg.c in Sources */,
 				BA7E848E19063AFB00041C04 /* sndcsec.c in Sources */,
 				BA7E841D19063AFB00041C04 /* i286c_mn.c in Sources */,
-				BA7E84A119063AFB00041C04 /* scrnbmp.c in Sources */,
 				BA7E849A19063AFB00041C04 /* dispsync.c in Sources */,
 				BA7E84A319063AFB00041C04 /* scrnsave.c in Sources */,
 				BA7E83A819063AFB00041C04 /* atapicmd.c in Sources */,

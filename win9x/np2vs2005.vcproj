@@ -1643,10 +1643,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\vram\scrnbmp.c"
-					>
-				</File>
-				<File
 					RelativePath="..\vram\scrndraw.c"
 					>
 				</File>
@@ -2794,10 +2790,6 @@
 				</File>
 				<File
 					RelativePath="..\vram\palettes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnbmp.h"
 					>
 				</File>
 				<File

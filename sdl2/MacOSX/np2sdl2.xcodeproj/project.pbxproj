@@ -196,7 +196,6 @@
 		BAF84E3C195AA10500183062 /* maketext.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D3D195AA10500183062 /* maketext.c */; };
 		BAF84E3D195AA10500183062 /* maketgrp.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D3F195AA10500183062 /* maketgrp.c */; };
 		BAF84E3E195AA10500183062 /* palettes.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D41195AA10500183062 /* palettes.c */; };
-		BAF84E3F195AA10500183062 /* scrnbmp.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D43195AA10500183062 /* scrnbmp.c */; };
 		BAF84E40195AA10500183062 /* scrndraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D45195AA10500183062 /* scrndraw.c */; };
 		BAF84E41195AA10500183062 /* scrnsave.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D47195AA10500183062 /* scrnsave.c */; };
 		BAF84E42195AA10500183062 /* sdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D49195AA10500183062 /* sdraw.c */; };
@@ -597,8 +596,6 @@
 		BAF84D40195AA10500183062 /* maketgrp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maketgrp.h; sourceTree = "<group>"; };
 		BAF84D41195AA10500183062 /* palettes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palettes.c; sourceTree = "<group>"; };
 		BAF84D42195AA10500183062 /* palettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = palettes.h; sourceTree = "<group>"; };
-		BAF84D43195AA10500183062 /* scrnbmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnbmp.c; sourceTree = "<group>"; };
-		BAF84D44195AA10500183062 /* scrnbmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnbmp.h; sourceTree = "<group>"; };
 		BAF84D45195AA10500183062 /* scrndraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrndraw.c; sourceTree = "<group>"; };
 		BAF84D46195AA10500183062 /* scrndraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrndraw.h; sourceTree = "<group>"; };
 		BAF84D47195AA10500183062 /* scrnsave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnsave.c; sourceTree = "<group>"; };
@@ -1251,8 +1248,6 @@
 				BAF84D40195AA10500183062 /* maketgrp.h */,
 				BAF84D41195AA10500183062 /* palettes.c */,
 				BAF84D42195AA10500183062 /* palettes.h */,
-				BAF84D43195AA10500183062 /* scrnbmp.c */,
-				BAF84D44195AA10500183062 /* scrnbmp.h */,
 				BAF84D45195AA10500183062 /* scrndraw.c */,
 				BAF84D46195AA10500183062 /* scrndraw.h */,
 				BAF84D47195AA10500183062 /* scrnsave.c */,
@@ -1624,7 +1619,6 @@
 				BAF84D68195AA10500183062 /* boardspb.c in Sources */,
 				BAF84D9A195AA10500183062 /* menures.c in Sources */,
 				BAF84E2B195AA10500183062 /* sysmenu.c in Sources */,
-				BAF84E3F195AA10500183062 /* scrnbmp.c in Sources */,
 				BAF84DD2195AA10500183062 /* i286c_0f.c in Sources */,
 				BAF84D7E195AA10500183062 /* ucs2sjis.c in Sources */,
 				BAF84E0F195AA10500183062 /* nevent.c in Sources */,

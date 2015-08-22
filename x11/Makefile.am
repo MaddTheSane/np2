@@ -217,8 +217,8 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/vram/maketext.c \
 		$(real_topsrcdir)/vram/maketgrp.c \
 		$(real_topsrcdir)/vram/makegrph.c \
-		$(real_topsrcdir)/vram/scrnbmp.c \
-		$(real_topsrcdir)/vram/makegrex.c
+		$(real_topsrcdir)/vram/makegrex.c \
+		$(real_topsrcdir)/vram/scrnsave.c
 xnp2_SOURCES=	$(COMMON_SOURCES)
 
 AM_CPPFLAGS=	-I$(real_topsrcdir) \
