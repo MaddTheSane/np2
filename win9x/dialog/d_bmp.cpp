@@ -9,7 +9,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 #include	"scrnsave.h"
-#include	"font.h"
+#include	"font/font.h"
 
 
 static const FSPARAM fpFont =

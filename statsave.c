@@ -30,7 +30,7 @@
 #include "sound.h"
 #include "fmboard.h"
 #include "beep.h"
-#include "font.h"
+#include "font/font.h"
 #include "fddfile.h"
 #include "fdd_mtr.h"
 #include "sxsi.h"

@@ -2,7 +2,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"font.h"
+#include	"font/font.h"
 
 
 static void cgwindowset(CGROM cr) {

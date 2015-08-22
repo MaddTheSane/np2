@@ -18,7 +18,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(NP2_PATH)/embed/menu \
 	$(NP2_PATH)/embed/menubase \
 	$(NP2_PATH)/fdd \
-	$(NP2_PATH)/font \
 	$(NP2_PATH)/generic \
 	$(NP2_PATH)/i286c \
 	$(NP2_PATH)/io \
