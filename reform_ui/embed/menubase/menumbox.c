@@ -1,9 +1,14 @@
-#include	"compiler.h"
-#include	"fontmng.h"
-#include	"vramhdl.h"
-#include	"menudeco.inc"
-#include	"menubase.h"
+/**
+ * @file	menumbox.c
+ * @brief	Implementation of the message box
+ */
 
+#include "compiler.h"
+#include "menumbox.h"
+#include "menudeco.inc"
+#include "menudlg.h"
+#include "menures.h"
+#include "fontmng.h"
 
 typedef struct {
 	int		ret;
