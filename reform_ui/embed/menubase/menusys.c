@@ -256,7 +256,7 @@ static void bitemdraw(VRAMHDL vram, MENUHDL menu, int flag) {
 	int		pos;
 	int		menutype;
 
-	font = menubase.font;
+	font = g_menubase.font;
 	menutype = menu->flag & MENUS_CTRLMASK;
 	if (menutype == 0) {
 		vram_filldat(vram, &menu->rct, menucolor[MVC_STATIC]);
@@ -341,7 +341,7 @@ static BRESULT wndopenbase(MENUSYS *sys) {
 
 	mrect.left = MENU_FBORDER + MENU_BORDER;
 	mrect.top = MENU_FBORDER + MENU_BORDER;
-	mrect.right = menubase.width - (MENU_FBORDER + MENU_BORDER);
+	mrect.right = g_menubase.width - (MENU_FBORDER + MENU_BORDER);
 	mrect.bottom = (MENU_FBORDER + MENU_BORDER) + MENUSYS_CYCAPTION;
 	height = ((MENU_FBORDER + MENU_BORDER) * 2) + MENUSYS_CYCAPTION;
 	if (rootflg & MEXIST_ITEM) {
@@ -351,7 +351,7 @@ static BRESULT wndopenbase(MENUSYS *sys) {
 		mrect.right -= MENUSYS_BCAPTION;
 		mrect.bottom += MENUSYS_BCAPTION;
 	}
-	vram = menuvram_create(menubase.width, height, menubase.bpp);
+	vram = menuvram_create(g_menubase.width, height, g_menubase.bpp);
 	sys->wnd[0].vram = vram;
 	if (vram == NULL) {
 		goto wopn0_err;
@@ -405,9 +405,9 @@ static BRESULT wndopenbase(MENUSYS *sys) {
 				menu->rct.left = posx;
 				menu->rct.top = mrect.bottom + MENUSYS_BCAPTION;
 				menu->rct.bottom = menu->rct.top + MENUSYS_CYSYS;
-				fontmng_getsize(menubase.font, menu->string, &pt);
+				fontmng_getsize(g_menubase.font, menu->string, &pt);
 				posx += MENUSYS_SXSYS + pt.x + MENUSYS_LXSYS;
-				if (posx >= (menubase.width -
+				if (posx >= (g_menubase.width -
 						(MENU_FBORDER + MENU_BORDER + MENUSYS_BCAPTION))) {
 					break;
 				}
@@ -467,7 +467,7 @@ static void citemdraw(VRAMHDL vram, MENUHDL menu, int flag) {
 	else {
 		left = menu->rct.left + MENUSYS_SXITEM + MENUSYS_CXCHECK;
 		top = menu->rct.top + MENUSYS_SYITEM;
-		font = menubase.font;
+		font = g_menubase.font;
 		if (!(menu->flag & MENU_GRAY)) {
 			txtcol = (flag != 0)?MVC_CURTEXT:MVC_TEXT;
 		}
@@ -536,7 +536,7 @@ static BRESULT childopn(MENUSYS *sys, int depth, int pos) {
 			menu->rct.left = (MENU_FBORDER + MENU_BORDER);
 			menu->rct.top = height;
 			if (menu->flag & MENU_SEPARATOR) {
-				if (height > (menubase.height - MENUSYS_CYSEP -
+				if (height > (g_menubase.height - MENUSYS_CYSEP -
 											(MENU_FBORDER + MENU_BORDER))) {
 					break;
 				}
@@ -544,13 +544,13 @@ static BRESULT childopn(MENUSYS *sys, int depth, int pos) {
 				menu->rct.bottom = height;
 			}
 			else {
-				if (height > (menubase.height - MENUSYS_CYITEM -
+				if (height > (g_menubase.height - MENUSYS_CYITEM -
 											(MENU_FBORDER + MENU_BORDER))) {
 					break;
 				}
 				height += MENUSYS_CYITEM;
 				menu->rct.bottom = height;
-				fontmng_getsize(menubase.font, menu->string, &pt);
+				fontmng_getsize(g_menubase.font, menu->string, &pt);
 				if (width < pt.x) {
 					width = pt.x;
 				}
@@ -561,18 +561,18 @@ static BRESULT childopn(MENUSYS *sys, int depth, int pos) {
 	}
 	width += ((MENU_FBORDER + MENU_BORDER + MENUSYS_SXITEM) * 2) +
 										MENUSYS_CXCHECK + MENUSYS_CXNEXT;
-	if (width >= menubase.width) {
-		width = menubase.width;
+	if (width >= g_menubase.width) {
+		width = g_menubase.width;
 	}
 	height += (MENU_FBORDER + MENU_BORDER);
-	wnd->vram = menuvram_create(width, height, menubase.bpp);
+	wnd->vram = menuvram_create(width, height, g_menubase.bpp);
 	if (wnd->vram == NULL) {
 		TRACEOUT(("sub menu vram couldn't create"));
 		goto copn_err;
 	}
 	if (dir == 1) {
 		if ((parent.top < height) ||
-			(parent.bottom < (menubase.height - height))) {
+			(parent.bottom < (g_menubase.height - height))) {
 			parent.top = parent.bottom;
 		}
 		else {
@@ -581,19 +581,19 @@ static BRESULT childopn(MENUSYS *sys, int depth, int pos) {
 	}
 	else if (dir >= 2) {
 		if ((parent.left < width) ||
-			(parent.right < (menubase.width - width))) {
+			(parent.right < (g_menubase.width - width))) {
 			parent.left = parent.right;
 		}
 		else {
 			parent.left -= width;
 		}
-		if ((parent.top > (menubase.height - height)) &&
+		if ((parent.top > (g_menubase.height - height)) &&
 			(parent.bottom >= height)) {
 			parent.top = parent.bottom - height;
 		}
 	}
-	wnd->vram->posx = min(parent.left, menubase.width - width);
-	wnd->vram->posy = min(parent.top, menubase.height - height);
+	wnd->vram->posx = min(parent.left, g_menubase.width - width);
+	wnd->vram->posy = min(parent.top, g_menubase.height - height);
 	wnd->items = items;
 	wnd->focus = -1;
 	sys->depth++;

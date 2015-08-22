@@ -296,7 +296,7 @@ static BRESULT dlgbase_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	rct.right = hdl->rect.right - hdl->rect.left -
 										((MENU_FBORDER + MENU_BORDER) * 2);
-	hdl->vram = vram_create(rct.right, MENUDLG_CYCAPTION, FALSE, menubase.bpp);
+	hdl->vram = vram_create(rct.right, MENUDLG_CYCAPTION, FALSE, g_menubase.bpp);
 	if (hdl->vram == NULL) {
 		goto dbcre_err;
 	}
@@ -495,7 +495,7 @@ static BRESULT dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
 	width = hdl->rect.right - hdl->rect.left - (MENU_LINE * 4);
 	height = hdl->rect.bottom - hdl->rect.top - (MENU_LINE * 4);
-	hdl->vram = vram_create(width, height, FALSE, menubase.bpp);
+	hdl->vram = vram_create(width, height, FALSE, g_menubase.bpp);
 	if (hdl->vram == NULL) {
 		goto dlcre_err;
 	}
@@ -1957,7 +1957,7 @@ BRESULT menudlg_create(int width, int height, const OEMCHAR *str,
 	width += (MENU_FBORDER + MENU_BORDER) * 2;
 	height += ((MENU_FBORDER + MENU_BORDER) * 2) +
 					MENUDLG_CYCAPTION + MENUDLG_BORDER;
-	mb = &menubase;
+	mb = &g_menubase;
 	dlg->font = mb->font;
 	dlg->vram = vram_create(width, height, FALSE, mb->bpp);
 	if (dlg->vram == NULL) {

@@ -88,7 +88,7 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 		else {
 			CopyMemory(work, str, leng * sizeof(OEMCHAR));
 			work[leng] = '\0';
-			fontmng_getsize(menubase.font, work, &pt);
+			fontmng_getsize(g_menubase.font, work, &pt);
 			if ((rem < leng) || ((w + pt.x) > width)) {
 				dst = mb->string[mb->lines];
 				mb->lines++;
@@ -114,7 +114,7 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 
 smbi_set:
 	mb->width += (MENUMBOX_SX + MENUMBOX_PXTEXT + MENUMBOX_LXTEXT);
-	fontmng_getsize(menubase.font, mstr_fontcheck, &pt);
+	fontmng_getsize(g_menubase.font, mstr_fontcheck, &pt);
 	mb->fontsize = pt.y;
 	mb->height = mb->lines * mb->fontsize;
 	if (mb->type & 0xf0) {

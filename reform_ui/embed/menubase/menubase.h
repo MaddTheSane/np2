@@ -66,7 +66,7 @@ extern "C" {
 #endif
 
 extern	VRAMHDL		menuvram;
-extern	MENUBASE	menubase;
+extern	MENUBASE	g_menubase;
 
 BRESULT menubase_create(void);
 void menubase_destroy(void);

@@ -914,7 +914,7 @@ void menuvram_caption(VRAMHDL vram, const RECT_T *rect,
 		pt.x += MENUSYS_SZICON + MENU_PXCAPTION;
 	}
 	pt.y = rect->top + (rect->bottom - rect->top - MENU_FONTSIZE) / 2;
-	vrammix_text(vram, menubase.font, caption, 0xffffff, &pt, rect);
+	vrammix_text(vram, g_menubase.font, caption, 0xffffff, &pt, rect);
 
 mvpt_exit:
 	return;

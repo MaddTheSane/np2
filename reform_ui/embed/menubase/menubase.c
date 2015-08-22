@@ -15,14 +15,14 @@
 #include "taskmng.h"
 
 	VRAMHDL		menuvram;
-	MENUBASE	menubase;
+	MENUBASE	g_menubase;
 
 
 BRESULT menubase_create(void) {
 
 	MENUBASE	*mb;
 
-	mb = &menubase;
+	mb = &g_menubase;
 	mb->font = fontmng_create(MENU_FONTSIZE, FDAT_PROPORTIONAL, NULL);
 	mb->font2 = fontmng_create(MENU_FONTSIZE, 0, NULL);
 	menuicon_initialize();
@@ -34,7 +34,7 @@ void menubase_destroy(void) {
 	MENUBASE	*mb;
 
 	menuicon_deinitialize();
-	mb = &menubase;
+	mb = &g_menubase;
 	fontmng_destroy(mb->font2);
 	fontmng_destroy(mb->font);
 	ZeroMemory(mb, sizeof(MENUBASE));
@@ -46,7 +46,7 @@ BRESULT menubase_open(int num) {
 	SCRNMENU	smenu;
 	VRAMHDL		hdl;
 
-	mb = &menubase;
+	mb = &g_menubase;
 	menubase_close();
 
 	if (scrnmng_entermenu(&smenu) != SUCCESS) {
@@ -74,7 +74,7 @@ void menubase_close(void) {
 	VRAMHDL		hdl;
 	int			num;
 
-	mb = &menubase;
+	mb = &g_menubase;
 	num = mb->num;
 	if (num) {
 		mb->num = 0;
@@ -98,7 +98,7 @@ BRESULT menubase_moving(int x, int y, int btn) {
 
 	int		num;
 
-	num = menubase.num;
+	num = g_menubase.num;
 	if (num == 1) {
 		menusys_moving(x, y, btn);
 	}
@@ -112,7 +112,7 @@ BRESULT menubase_key(UINT key) {
 
 	int		num;
 
-	num = menubase.num;
+	num = g_menubase.num;
 	if (num == 1) {
 		menusys_key(key);
 	}
@@ -133,7 +133,7 @@ void menubase_setrect(VRAMHDL vram, const RECT_T *rect) {
 			rct.right = vram->posx + rect->right;
 			rct.bottom = vram->posy + rect->bottom;
 		}
-		unionrect_add(&menubase.rect, &rct);
+		unionrect_add(&g_menubase.rect, &rct);
 	}
 }
 
@@ -155,7 +155,7 @@ void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg),
 	MENUBASE	*mb;
 const	RECT_T	*rect;
 
-	mb = &menubase;
+	mb = &g_menubase;
 	if (mb->rect.type) {
 		rect = unionrect_get(&mb->rect);
 		if (draw) {
