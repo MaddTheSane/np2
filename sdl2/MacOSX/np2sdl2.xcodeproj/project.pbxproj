@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA8481963E34B00747635 /* threadbase.cpp */; };
+		BAE3496B1B86CE43006EBD05 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE349691B86CE43006EBD05 /* pcmmix.c */; };
 		BAE76FEE1B50038300920E49 /* usbdev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FEC1B50038300920E49 /* usbdev.cpp */; };
 		BAE76FF71B5003A100920E49 /* board118.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF01B5003A100920E49 /* board118.cpp */; };
 		BAE76FF81B5003A100920E49 /* c86boxusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF21B5003A100920E49 /* c86boxusb.cpp */; };
@@ -242,6 +243,8 @@
 		BAAEA8491963E34B00747635 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
+		BAE349691B86CE43006EBD05 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
+		BAE3496A1B86CE43006EBD05 /* pcmmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcmmix.h; sourceTree = "<group>"; };
 		BAE76FEC1B50038300920E49 /* usbdev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usbdev.cpp; sourceTree = "<group>"; };
 		BAE76FED1B50038300920E49 /* usbdev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usbdev.h; sourceTree = "<group>"; };
 		BAE76FF01B5003A100920E49 /* board118.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = board118.cpp; sourceTree = "<group>"; };
@@ -1286,6 +1289,8 @@
 				BAF84E66195AA38300183062 /* pcm86.h */,
 				BAF84E67195AA38300183062 /* pcm86c.c */,
 				BAF84E68195AA38300183062 /* pcm86g.c */,
+				BAE349691B86CE43006EBD05 /* pcmmix.c */,
+				BAE3496A1B86CE43006EBD05 /* pcmmix.h */,
 				BAF84E69195AA38300183062 /* psggen.h */,
 				BAF84E6A195AA38300183062 /* psggenc.c */,
 				BAF84E6B195AA38300183062 /* psggeng.c */,
@@ -1576,6 +1581,7 @@
 				BAF84DEC195AA10500183062 /* gdc_pset.c in Sources */,
 				BAE7700B1B52B91000920E49 /* tty.cpp in Sources */,
 				BAF84E0B195AA10500183062 /* memvga.c in Sources */,
+				BAE3496B1B86CE43006EBD05 /* pcmmix.c in Sources */,
 				BAF84DE4195AA10500183062 /* dmac.c in Sources */,
 				BAF84E38195AA10500183062 /* dispsync.c in Sources */,
 				BAF84DB6195AA10500183062 /* cmjasts.c in Sources */,

@@ -1491,6 +1491,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sound\pcmmix.c"
+					>
+				</File>
+				<File
 					RelativePath="..\sound\psggenc.c"
 					>
 				</File>
@@ -2682,6 +2686,10 @@
 				</File>
 				<File
 					RelativePath="..\sound\pcm86.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\pcmmix.h"
 					>
 				</File>
 				<File

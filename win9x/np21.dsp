@@ -1013,6 +1013,14 @@ SOURCE=..\SOUND\PCM86G.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\sound\pcmmix.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\pcmmix.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\SOUND\PSGGENC.C
 # End Source File
 # Begin Source File
