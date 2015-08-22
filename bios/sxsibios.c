@@ -9,7 +9,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"scsicmd.h"
-#include	"sxsi.h"
+#include	"fdd/sxsi.h"
 #include	"timing.h"
 
 

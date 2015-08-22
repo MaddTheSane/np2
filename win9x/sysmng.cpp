@@ -4,7 +4,7 @@
 #include	"sysmng.h"
 #include	"cpucore.h"
 #include	"pccore.h"
-#include	"fddfile.h"
+#include	"fdd/fddfile.h"
 
 	UINT	sys_updates;
 

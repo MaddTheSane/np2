@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\fdd;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -140,7 +140,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\fdd;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\fdd;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -309,7 +309,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\fdd;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

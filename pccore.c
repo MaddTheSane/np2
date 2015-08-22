@@ -35,11 +35,11 @@
 #include	"beep.h"
 #include	"s98.h"
 #include	"tms3631.h"
+#include	"fdd/diskdrv.h"
+#include	"fdd/fddfile.h"
+#include	"fdd/fdd_mtr.h"
+#include	"fdd/sxsi.h"
 #include	"font/font.h"
-#include	"diskdrv.h"
-#include	"fddfile.h"
-#include	"fdd_mtr.h"
-#include	"sxsi.h"
 #if defined(SUPPORT_HOSTDRV)
 #include	"hostdrv.h"
 #endif

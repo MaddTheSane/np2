@@ -16,7 +16,7 @@
 #include	"iocore.h"
 #include	"scrndraw.h"
 #include	"s98.h"
-#include	"diskdrv.h"
+#include	"fdd/diskdrv.h"
 #include	"timing.h"
 #include	"keystat.h"
 #include	"vramhdl.h"
