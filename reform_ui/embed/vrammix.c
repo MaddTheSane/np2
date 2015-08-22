@@ -2769,7 +2769,7 @@ const UINT8	*p;
 }
 #endif
 
-static void vramsub_text(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
+static void vramsub_text(VRAMHDL dst, FONTMNGH fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct,
 							void (*func)(VRAMHDL dst, const FNTDAT fnt,
 											UINT32 color, MIX_RECT *mr)) {
@@ -2806,7 +2806,7 @@ vstxt_end:
 	return;
 }
 
-void vrammix_text(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
+void vrammix_text(VRAMHDL dst, FONTMNGH fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct) {
 
 	void	(*func)(VRAMHDL dst, const FNTDAT fnt,
@@ -2842,7 +2842,7 @@ void vrammix_text(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
 	vramsub_text(dst, fhdl, str, color, pt, rct, func);
 }
 
-void vrammix_textex(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
+void vrammix_textex(VRAMHDL dst, FONTMNGH fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct) {
 
 	void	(*func)(VRAMHDL dst, const FNTDAT fnt,

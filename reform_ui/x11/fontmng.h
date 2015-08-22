@@ -21,6 +21,8 @@ typedef struct {
 	int	pitch;
 } _FNTDAT, *FNTDAT;
 
+typedef void* FONTMNGH;
+
 BOOL fontmng_init(void);
 void fontmng_terminate(void);
 void fontmng_setdeffontname(const OEMCHAR *fontface);

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../vramhdl.h"
+#include "fontmng.h"
 
 typedef unsigned short		MENUID;
 typedef unsigned short		MENUFLG;
@@ -51,8 +52,8 @@ enum {
 
 typedef struct {
 	int			num;
-	void		*font;
-	void		*font2;
+	FONTMNGH	font;
+	FONTMNGH	font2;
 	int			del;
 	UNIRECT		rect;
 	int			width;

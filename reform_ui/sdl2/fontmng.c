@@ -41,7 +41,7 @@ static char s_sFontName[MAX_PATH] = "./default.ttf";
 /**
  * @brief Handle
  */
-struct TagFontManager
+struct tagFontManager
 {
 	int			fontsize;
 	UINT		fonttype;
@@ -58,13 +58,12 @@ struct TagFontManager
 	FNTCTBL		cache[FONTMNG_CACHE];
 #endif	/* defined(FONTMNG_CACHE) */
 };
-typedef struct TagFontManager		*FNTMNG;	/*!< Defines handle */
 
 #if defined(FONTMNG_CACHE)
 /**
  *
  */
-static BOOL fdatgetcache(FNTMNG fhdl, UINT16 c, FNTDAT *pfdat)
+static BOOL fdatgetcache(FONTMNGH fhdl, UINT16 c, FNTDAT *pfdat)
 {
 	BOOL	r;
 	FNTCTBL	*fct;
@@ -152,12 +151,12 @@ void fontmng_setdeffontname(const char *name)
 /**
  * Creates instance
  */
-void *fontmng_create(int size, UINT type, const char *fontface)
+FONTMNGH fontmng_create(int size, UINT type, const char *fontface)
 {
 	int		fontalign;
 	int		fontwork;
 	int		allocsize;
-	FNTMNG	ret;
+	FONTMNGH ret;
 
 #if !defined(RESOURCE_US)
 	TTF_Font	*ttf_font;
@@ -225,7 +224,7 @@ void *fontmng_create(int size, UINT type, const char *fontface)
 #endif
 
 	allocsize = sizeof(*ret) + fontwork;
-	ret = (FNTMNG)_MALLOC(allocsize, "font mng");
+	ret = (FONTMNGH)_MALLOC(allocsize, "font mng");
 	if (ret == NULL)
 	{
 #if !defined(RESOURCE_US)
@@ -251,19 +250,16 @@ void *fontmng_create(int size, UINT type, const char *fontface)
  * Destroy
  * @param[in] hdl Handle
  */
-void fontmng_destroy(void *hdl)
+void fontmng_destroy(FONTMNGH hdl)
 {
-	FNTMNG _this;
-
-	_this = (FNTMNG)hdl;
-	if (_this)
+	if (hdl)
 	{
 
 #if !defined(RESOURCE_US)
-		TTF_CloseFont(_this->ttf_font);
+		TTF_CloseFont(hdl->ttf_font);
 #endif	/* !defined(RESOURCE_US) */
 
-		_MFREE(_this);
+		_MFREE(hdl);
 	}
 }
 
@@ -273,7 +269,7 @@ void fontmng_destroy(void *hdl)
  * @param[out] fdat Data header
  * @param[in] s SDL_Surface
  */
-static void AnkSetFontHeader(FNTMNG _this, FNTDAT fdat, int width)
+static void AnkSetFontHeader(FONTMNGH _this, FNTDAT fdat, int width)
 {
 	if (_this->fonttype & FDAT_PROPORTIONAL)
 	{
@@ -295,7 +291,7 @@ static void AnkSetFontHeader(FNTMNG _this, FNTDAT fdat, int width)
  * @param[out] fdat Data
  * @param[in] c Charactor
  */
-static void AnkGetLength1(FNTMNG _this, FNTDAT fdat, UINT16 c)
+static void AnkGetLength1(FONTMNGH _this, FNTDAT fdat, UINT16 c)
 {
 	c = c - 0x20;
 	if ((c < 0) || (c >= 0x60))
@@ -311,7 +307,7 @@ static void AnkGetLength1(FNTMNG _this, FNTDAT fdat, UINT16 c)
  * @param[out] fdat Data
  * @param[in] c Charactor
  */
-static void AnkGetFont1(FNTMNG _this, FNTDAT fdat, UINT16 c)
+static void AnkGetFont1(FONTMNGH _this, FNTDAT fdat, UINT16 c)
 {
 const UINT8	*src;
 	int		width;
@@ -358,7 +354,7 @@ const UINT8	*src;
  * @param[out] fdat Data header
  * @param[in] s SDL_Surface
  */
-static void TTFSetFontHeader(FNTMNG _this, FNTDAT fdat, const SDL_Surface *s)
+static void TTFSetFontHeader(FONTMNGH _this, FNTDAT fdat, const SDL_Surface *s)
 {
 	int width;
 	int height;
@@ -422,7 +418,7 @@ static UINT8 TTFGetPixelDepth(const SDL_Surface *s, int x, int y)
  * @param[out] fdat Data
  * @param[in] c Charactor
  */
-static void TTFGetLength1(FNTMNG _this, FNTDAT fdat, UINT16 c)
+static void TTFGetLength1(FONTMNGH _this, FNTDAT fdat, UINT16 c)
 {
 	UINT16 sString[2];
 	SDL_Surface *s;
@@ -451,7 +447,7 @@ static void TTFGetLength1(FNTMNG _this, FNTDAT fdat, UINT16 c)
  * @param[out] fdat Data
  * @param[in] c Charactor
  */
-static void TTFGetFont1(FNTMNG _this, FNTDAT fdat, UINT16 c)
+static void TTFGetFont1(FONTMNGH _this, FNTDAT fdat, UINT16 c)
 {
 	UINT16		sString[2];
 	SDL_Surface	*s;
@@ -550,15 +546,13 @@ static UINT16 GetChar(const char** lppString)
  * @retval SUCCESS Succeeded
  * @retval FAILURE Failed
  */
-BRESULT fontmng_getsize(void *hdl, const char *lpString, POINT_T *pt)
+BRESULT fontmng_getsize(FONTMNGH hdl, const char *lpString, POINT_T *pt)
 {
-	FNTMNG _this;
 	int nWidth;
 	UINT16 c;
 	_FNTDAT fontData;
 
-	_this = (FNTMNG)hdl;
-	if ((_this == NULL) || (lpString == NULL))
+	if ((hdl == NULL) || (lpString == NULL))
 	{
 		return FAILURE;
 	}
@@ -571,14 +565,14 @@ BRESULT fontmng_getsize(void *hdl, const char *lpString, POINT_T *pt)
 		{
 			break;
 		}
-		GetLength1(_this, &fontData, c);
+		GetLength1(hdl, &fontData, c);
 		nWidth += fontData.pitch;
 	}
 
 	if (pt)
 	{
 		pt->x = nWidth;
-		pt->y = _this->fontsize;
+		pt->y = hdl->fontsize;
 	}
 	return SUCCESS;
 }
@@ -591,16 +585,14 @@ BRESULT fontmng_getsize(void *hdl, const char *lpString, POINT_T *pt)
  * @retval SUCCESS Succeeded
  * @retval FAILURE Failed
  */
-BRESULT fontmng_getdrawsize(void *hdl, const char *lpString, POINT_T *pt)
+BRESULT fontmng_getdrawsize(FONTMNGH hdl, const char *lpString, POINT_T *pt)
 {
-	FNTMNG _this;
 	int nWidth;
 	int nPosX;
 	UINT16 c;
 	_FNTDAT fontData;
 
-	_this = (FNTMNG)hdl;
-	if (_this == NULL)
+	if (hdl == NULL)
 	{
 		return FAILURE;
 	}
@@ -614,14 +606,14 @@ BRESULT fontmng_getdrawsize(void *hdl, const char *lpString, POINT_T *pt)
 		{
 			break;
 		}
-		GetLength1(_this, &fontData, c);
+		GetLength1(hdl, &fontData, c);
 		nWidth = nPosX + max(fontData.width, fontData.pitch);
 		nPosX += fontData.pitch;
 	}
 	if (pt)
 	{
 		pt->x = nWidth;
-		pt->y = _this->fontsize;
+		pt->y = hdl->fontsize;
 	}
 	return SUCCESS;
 }
@@ -632,14 +624,12 @@ BRESULT fontmng_getdrawsize(void *hdl, const char *lpString, POINT_T *pt)
  * @param[in] lpString String
  * @return Data
  */
-FNTDAT fontmng_get(void *hdl, const char *lpString)
+FNTDAT fontmng_get(FONTMNGH hdl, const char *lpString)
 {
-	FNTMNG _this;
 	UINT16 c;
 	FNTDAT fontData;
 
-	_this = (FNTMNG)hdl;
-	if (_this  == NULL)
+	if (hdl == NULL)
 	{
 		return NULL;
 	}
@@ -651,14 +641,14 @@ FNTDAT fontmng_get(void *hdl, const char *lpString)
 	}
 
 #if defined(FONTMNG_CACHE)
-	if (fdatgetcache(_this, c, &fontData))
+	if (fdatgetcache(hdl, c, &fontData))
 	{
 		return fontData;
 	}
 #else	/*! defined(FONTMNG_CACHE) */
-	fontData = (FNTDAT)(_this + 1);
+	fontData = (FNTDAT)(hdl + 1);
 #endif	/*! defined(FONTMNG_CACHE) */
 
-	GetFont1(_this, fontData, c);
+	GetFont1(hdl, fontData, c);
 	return fontData;
 }

@@ -27,17 +27,20 @@ typedef struct
 } _FNTDAT, *FNTDAT;
 
 
+struct tagFontManager;
+typedef struct tagFontManager	*FONTMNGH;
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-void *fontmng_create(int size, UINT type, const char *fontface);
-void fontmng_destroy(void *hdl);
+FONTMNGH fontmng_create(int size, UINT type, const char *fontface);
+void fontmng_destroy(FONTMNGH hdl);
 
-BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt);
-BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt);
-FNTDAT fontmng_get(void *hdl, const char *string);
+BRESULT fontmng_getsize(FONTMNGH hdl, const char *string, POINT_T *pt);
+BRESULT fontmng_getdrawsize(FONTMNGH hdl, const char *string, POINT_T *pt);
+FNTDAT fontmng_get(FONTMNGH hdl, const char *string);
 
 #ifdef __cplusplus
 }

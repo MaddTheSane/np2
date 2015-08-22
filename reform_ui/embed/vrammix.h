@@ -6,6 +6,7 @@
 #pragma once
 
 #include "vramhdl.h"
+#include "fontmng.h"
 
 enum {
 	VRAMALPHA		= 255,
@@ -92,9 +93,9 @@ void vrammix_colex(VRAMHDL dst, const RECT_T *rct,
 void vrammix_resize(VRAMHDL dst, const RECT_T *drct,
 									const VRAMHDL src, const RECT_T *srct);
 
-void vrammix_text(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
+void vrammix_text(VRAMHDL dst, FONTMNGH fhdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct);
-void vrammix_textex(VRAMHDL dst, void *fhdl, const OEMCHAR *str,
+void vrammix_textex(VRAMHDL dst, FONTMNGH hdl, const OEMCHAR *str,
 							UINT32 color, POINT_T *pt, const RECT_T *rct);
 
 #ifdef __cplusplus

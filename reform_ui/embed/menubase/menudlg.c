@@ -24,16 +24,16 @@ struct _dprm	*next;
 
 typedef struct {
 	POINT_T		pt;
-	void		*font;
+	FONTMNGH	font;
 } DLGTEXT;
 
 typedef struct {
-	void		*font;
+	FONTMNGH	font;
 	int			fontsize;
 } DLGTAB;
 
 typedef struct {
-	void		*font;
+	FONTMNGH	font;
 	SINT16		fontsize;
 	SINT16		scrollbar;
 	SINT16		dispmax;
@@ -82,7 +82,7 @@ typedef struct {
 	int			closing;
 	int			sx;
 	int			sy;
-	void		*font;
+	FONTMNGH	font;
 	MENUID		page;
 	MENUID		group;
 	int			(*proc)(int msg, MENUID id, long param);
@@ -453,9 +453,9 @@ static void dlgbtn_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
 // ---- list
 
-static void *dlglist_setfont(DLGHDL hdl, void *font) {
+static FONTMNGH dlglist_setfont(DLGHDL hdl, FONTMNGH font) {
 										// 後でスクロールバーの調整をすべし
-	void	*ret;
+	FONTMNGH ret;
 	POINT_T	pt;
 
 	ret = hdl->c.dl.font;
@@ -1194,9 +1194,9 @@ static void dlgslider_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
 
 // ---- tablist
 
-static void *dlgtablist_setfont(DLGHDL hdl, void *font) {
+static FONTMNGH dlgtablist_setfont(DLGHDL hdl, FONTMNGH font) {
 
-	void	*ret;
+	FONTMNGH ret;
 	POINT_T	pt;
 	DLGPRM	prm;
 
@@ -2348,16 +2348,16 @@ INTPTR menudlg_msg(int ctrl, MENUID id, INTPTR arg) {
 
 		case DMSG_SETFONT:
 			if (hdl->type == DLGTYPE_LIST) {
-				ret = (INTPTR)dlglist_setfont(hdl, (void*)arg);
+				ret = (INTPTR)dlglist_setfont(hdl, (FONTMNGH)arg);
 				drawctrls(dlg, hdl);
 			}
 			else if (hdl->type == DLGTYPE_TABLIST) {
-				ret = (INTPTR)dlgtablist_setfont(hdl, (void*)arg);
+				ret = (INTPTR)dlgtablist_setfont(hdl, (FONTMNGH)arg);
 				drawctrls(dlg, hdl);
 			}
 			else if (hdl->type == DLGTYPE_TEXT) {
 				ret = (INTPTR)hdl->c.dt.font;
-				hdl->c.dt.font = (void*)arg;
+				hdl->c.dt.font = (FONTMNGH)arg;
 				drawctrls(dlg, hdl);
 			}
 			break;

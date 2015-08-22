@@ -18,6 +18,8 @@ typedef struct {
 	int		pitch;
 } _FNTDAT, *FNTDAT;
 
+typedef void* FONTMNGH;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

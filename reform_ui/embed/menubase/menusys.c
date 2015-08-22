@@ -250,7 +250,7 @@ static void wndclose(MENUSYS *sys, int depth) {
 
 static void bitemdraw(VRAMHDL vram, MENUHDL menu, int flag) {
 
-	void	*font;
+	FONTMNGH font;
 	POINT_T	pt;
 	UINT32	color;
 	int		pos;
@@ -449,7 +449,7 @@ const MENURES2	*res;
 static void citemdraw(VRAMHDL vram, MENUHDL menu, int flag) {
 
 	POINT_T	pt;
-	void	*font;
+	FONTMNGH font;
 	int		left;
 	int		right;
 	int		top;

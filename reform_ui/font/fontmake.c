@@ -131,7 +131,7 @@ const UINT8	*p;
 	return(TRUE);
 }
 
-static void setank(UINT8 *ptr, void *fnt, UINT from, UINT to) {
+static void setank(UINT8 *ptr, FONTMNGH fnt, UINT from, UINT to) {
 
 	char	work[2];
 	FNTDAT	dat;
@@ -195,7 +195,7 @@ static void patchank(UINT8 *ptr, const UINT8 *fnt, UINT from) {
 	} while(--r);
 }
 
-static void setjis(UINT8 *ptr, void *fnt) {
+static void setjis(UINT8 *ptr, FONTMNGH fnt) {
 
 	char	work[4];
 	UINT16	h;
@@ -284,7 +284,7 @@ static void patchextfnt(UINT8 *ptr, const UINT8 *fnt) {			// 2c24-2c6f
 
 void makepc98bmp(const OEMCHAR *filename) {
 
-	void	*fnt;
+	FONTMNGH fnt;
 	BMPFILE	bf;
 	UINT	size;
 	BMPINFO	bi;
