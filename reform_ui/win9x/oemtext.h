@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "codecnv.h"
+#include "codecnv/codecnv.h"
 
 #ifdef __cplusplus
 extern "C"

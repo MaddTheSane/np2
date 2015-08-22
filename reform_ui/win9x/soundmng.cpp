@@ -19,7 +19,7 @@
 #include "ext\externalopna.h"
 #endif
 #if defined(VERMOUTH_LIB)
-#include "vermouth.h"
+#include "sound\vermouth\vermouth.h"
 #endif
 #if defined(MT32SOUND_DLL)
 #include "mt32snd.h"

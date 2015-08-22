@@ -7,7 +7,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"fddfile.h"
+#include	"fdd/fddfile.h"
 
 enum {
 	FDC_DMACH2HD	= 2,

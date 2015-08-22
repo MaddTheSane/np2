@@ -4,15 +4,15 @@
  */
 
 #include "compiler.h"
-#include "joymng.h"
-#include "keystat.h"
 #include <math.h>
-#include "pccore.h"
+#include "amd98.h"
+#include "keystat.h"
 #include "iocore.h"
 #include "cbuscore.h"
-#include "amd98.h"
 #include "sound.h"
 #include "fmboard.h"
+#include "sound/pcmmix.h"
+#include "joymng.h"
 
 	AMD98	g_amd98;
 
@@ -263,7 +263,7 @@ static void setamd98event(UINT32 cnt, NEVENTPOSITION absolute)
 	}
 	if (!(pccore.cpumode & CPUMODE_8MHZ))
 	{
-		cnt = cnt * 2457600 / 2000000;
+		cnt = cnt * 16 / 13;					// cnt * 2457600 / 1996800
 	}
 	nevent_set(NEVENT_MUSICGEN, cnt, amd98int, absolute);
 }
@@ -308,17 +308,9 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat)
 	UINT	addr;
 
 	addr = g_amd98.psg1reg;
-	if (addr < 0x0e)
+	if (addr < 0x10)
 	{
 		psggen_setreg(&g_psg1, addr, dat);
-	}
-	else if (addr == 0x0e)
-	{
-		g_psg1.reg.io1 = dat;
-	}
-	else if (addr == 0x0f)
-	{
-		g_psg1.reg.io2 = dat;
 	}
 	(void)port;
 }

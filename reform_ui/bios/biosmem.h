@@ -1,3 +1,9 @@
+/**
+ * @file	biosmem.h
+ * @brief	Defines of BIOS memory
+ */
+
+#pragma once
 
 enum {
 	MEMB_EXPMMSZ			= 0x00401,

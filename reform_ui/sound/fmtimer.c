@@ -39,8 +39,6 @@ static void set_fmtimerbevent(NEVENTPOSITION absolute) {
 	nevent_set(NEVENT_FMTIMERB, l, fmport_b, absolute);
 }
 
-extern void opngen_csm(void);
-
 void fmport_a(NEVENTITEM item) {
 
 	BOOL	intreq = FALSE;
@@ -59,7 +57,7 @@ void fmport_a(NEVENTITEM item) {
 		set_fmtimeraevent(NEVENT_RELATIVE);
 
 		if ((g_fmtimer.reg & 0xc0) == 0x80) {
-			opngen_csm();
+			opngen_csm(&g_opngen);
 		}
 	}
 }

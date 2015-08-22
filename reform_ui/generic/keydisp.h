@@ -1,7 +1,14 @@
+/**
+ * @file	keydisp.h
+ * @brief	Interface of the key display
+ */
+
+#pragma once
 
 #if defined(SUPPORT_KEYDISP)
 
-#include	"cmndraw.h"
+#include "cmndraw.h"
+#include "sound/psggen.h"
 
 struct _cmnpalfn {
 	UINT8	(*get8)(struct _cmnpalfn *fn, UINT num);
@@ -10,14 +17,6 @@ struct _cmnpalfn {
 	INTPTR	userdata;
 };
 typedef struct _cmnpalfn	CMNPALFN;
-
-typedef struct {
-	UINT8	pal8;
-	UINT8	padding;
-	UINT16	pal16;
-	RGB32	pal32;
-} CMNPALS;
-
 
 enum {
 	KEYDISP_MODENONE			= 0,
@@ -46,6 +45,7 @@ enum {
 	KEYDISP_KEYCY		= 14,
 
 	KEYDISP_LEVEL		= (1 << 4),
+	KEYDISP_LEVEL_MAX	= KEYDISP_LEVEL - 1,
 
 	KEYDISP_WIDTH		= 301,
 	KEYDISP_HEIGHT		= (KEYDISP_KEYCY * KEYDISP_CHMAX) + 1,
@@ -82,8 +82,7 @@ BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
 void keydisp_setfmboard(UINT board);
 void keydisp_fmkeyon(UINT8 ch, UINT8 value);
-void keydisp_psgmix(void *psg);
-void keydisp_psgvol(void *psg, UINT8 ch);
+void keydisp_psg(PSGGEN psg, UINT nAddress);
 void keydisp_midi(const UINT8 *msg);
 
 #ifdef __cplusplus
@@ -95,9 +94,7 @@ void keydisp_midi(const UINT8 *msg);
 #define keydisp_draw(a)
 #define keydisp_setfmboard(a)
 #define keydisp_fmkeyon(a, b)
-#define keydisp_psgmix(a)
-#define keydisp_psgvol(a, b)
+#define keydisp_psg(p, a)
 #define	keydisp_midi(a)
 
 #endif
-

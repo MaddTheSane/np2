@@ -191,6 +191,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/sound/opngeng.c \
 		$(real_topsrcdir)/sound/pcm86c.c \
 		$(real_topsrcdir)/sound/pcm86g.c \
+		$(real_topsrcdir)/sound/pcmmix.c \
 		$(real_topsrcdir)/sound/psggenc.c \
 		$(real_topsrcdir)/sound/psggeng.c \
 		$(real_topsrcdir)/sound/rhythmc.c \
@@ -216,8 +217,8 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/vram/maketext.c \
 		$(real_topsrcdir)/vram/maketgrp.c \
 		$(real_topsrcdir)/vram/makegrph.c \
-		$(real_topsrcdir)/vram/scrnbmp.c \
-		$(real_topsrcdir)/vram/makegrex.c
+		$(real_topsrcdir)/vram/makegrex.c \
+		$(real_topsrcdir)/vram/scrnsave.c
 xnp2_SOURCES=	$(COMMON_SOURCES)
 
 AM_CPPFLAGS=	-I$(real_topsrcdir) \
@@ -225,18 +226,11 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/x11/gtk2 \
 		-I$(real_topsrcdir)/x11/debug \
 		-I$(real_topsrcdir)/common \
-		-I$(real_topsrcdir)/codecnv \
-		-I$(real_topsrcdir)/bios \
 		-I$(real_topsrcdir)/cbus \
-		-I$(real_topsrcdir)/fdd \
-		-I$(real_topsrcdir)/font \
 		-I$(real_topsrcdir)/generic \
 		-I$(real_topsrcdir)/io \
-		-I$(real_topsrcdir)/lio \
 		-I$(real_topsrcdir)/mem \
 		-I$(real_topsrcdir)/sound \
-		-I$(real_topsrcdir)/sound/getsnd \
-		-I$(real_topsrcdir)/sound/vermouth \
 		-I$(real_topsrcdir)/vram \
 		$(GTK_CFLAGS) $(SDL_CFLAGS)
 if BUILD_ALL

@@ -1,5 +1,13 @@
+/**
+ * @file	hostdrv.h
+ * @brief	Interface of host drive
+ */
+
+#pragma once
 
 #if defined(SUPPORT_HOSTDRV)
+
+#include "statsave.h"
 
 #define	DIRMAX_DEPTH		8
 

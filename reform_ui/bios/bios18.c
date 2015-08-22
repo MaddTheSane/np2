@@ -5,7 +5,7 @@
 #include	"gdc_sub.h"
 #include	"bios.h"
 #include	"biosmem.h"
-#include	"font.h"
+#include	"font/font.h"
 
 
 typedef struct {

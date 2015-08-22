@@ -6,7 +6,7 @@
 #include "mimpidef.h"
 #include "sound.h"
 
-#include "vermouth.h"
+#include "sound/vermouth/vermouth.h"
 
 #if defined(VERMOUTH_LIB)
 extern MIDIMOD vermouth_module;

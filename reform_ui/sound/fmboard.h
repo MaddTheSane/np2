@@ -1,7 +1,6 @@
 
 #if !defined(DISABLE_SOUND)
 
-#include	"soundrom.h"
 #include	"fmtimer.h"
 #include	"opngen.h"
 #include	"psggen.h"
@@ -34,8 +33,7 @@ extern	UINT32		g_usesound;
 extern	OPN_T		g_opn;
 
 extern	_FMTIMER	g_fmtimer;
-extern	_OPNGEN		opngen;
-extern	OPNCH		opnch[OPNCH_MAX];
+extern	_OPNGEN		g_opngen;
 extern	_PSGGEN		g_psg[3];
 extern	_RHYTHM		g_rhythm;
 extern	_ADPCM		g_adpcm;
@@ -64,6 +62,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
 void fmboard_bind(void);
 
 void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank);
+void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank);
 void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 
 #ifdef __cplusplus

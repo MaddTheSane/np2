@@ -8,9 +8,9 @@
 #include	"dialog.h"
 #include	"dialogs.h"
 #include	"pccore.h"
-#include	"diskdrv.h"
-#include	"fddfile.h"
-#include	"newdisk.h"
+#include	"fdd/diskdrv.h"
+#include	"fdd/fddfile.h"
+#include	"fdd/newdisk.h"
 
 static const FSPARAM fpFDD =
 {

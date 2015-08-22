@@ -6,7 +6,7 @@
 #include	"scrndraw.h"
 #include	"dispsync.h"
 #include	"maketext.h"
-#include	"font.h"
+#include	"font/font.h"
 
 
 		TRAM_T	tramflag;
