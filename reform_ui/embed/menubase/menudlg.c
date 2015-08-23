@@ -11,6 +11,7 @@
 #include "../vrammix.h"
 #include "strres.h"
 #include "fontmng.h"
+#include <vector>
 
 typedef struct _dprm {
 struct _dprm	*next;
@@ -54,7 +55,18 @@ typedef struct {
 	VRAMHDL		vram;
 } DLGVRAM;
 
-typedef struct _ditem {
+class MenuDialog;
+
+/**
+ * @brief アイテム
+ */
+class MenuDlgItem
+{
+public:
+	MenuDlgItem(MenuDialog* dlg, int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height);
+	~MenuDlgItem();
+
+public:
 	int			type;
 	MENUID		id;
 	MENUFLG		flag;
@@ -72,7 +84,8 @@ typedef struct _ditem {
 		DLGSLD		ds;
 		DLGVRAM		dv;
 	} c;
-} _DLGHDL, *DLGHDL;
+};
+typedef MenuDlgItem *DLGHDL;
 
 /**
  * @brief Dialog Class
@@ -80,6 +93,7 @@ typedef struct _ditem {
 class MenuDialog
 {
 public:
+	MenuDialog();
 	bool Create(int width, int height, const OEMCHAR *str, int (*proc)(int msg, MENUID id, long param));
 	void Destroy();
 	bool Append(const MENUPRM *res, int count);
@@ -89,9 +103,12 @@ public:
 	void SetPage(MENUID page);
 	void DispPageHidden(MENUID page, bool hidden);
 
+	void DrawItem(MenuDlgItem* item = NULL);
+	void Draw();
+
 public:
 	VRAMHDL		m_vram;
-	LISTARRAY	dlg;
+	std::vector<MenuDlgItem*> m_items;
 	LISTARRAY	res;
 	int			m_nLocked;
 	bool		m_bClosing;
@@ -109,18 +126,48 @@ public:
 	MENUID		m_lastid;
 
 private:
-	void drawlock(BOOL lock);
+	void DrawLock(bool lock);
+	MenuDlgItem* GetItem(MENUID id);
 };
-typedef class MenuDialog	_MENUDLG;
-typedef class MenuDialog	*MENUDLG;
+typedef MenuDialog *MENUDLG;
 
+static MenuDialog s_menudlg;
 
-static	_MENUDLG	s_menudlg;
-
-static void drawctrls(MENUDLG dlg, DLGHDL hdl);
-
+static void drawctrls(MENUDLG dlg, DLGHDL hdl)
+{
+	dlg->DrawItem(hdl);
+}
 
 // ----
+
+/**
+ * コンストラクタ
+ */
+MenuDlgItem::MenuDlgItem(MenuDialog* dlg, int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height)
+{
+	this->type = type;
+	this->id = id;
+	this->flag = flg;
+	this->page = dlg->m_page;
+	this->group = dlg->m_group;
+	this->rect.left = dlg->m_sx + posx;
+	this->rect.top = dlg->m_sy + posy;
+	this->rect.right = this->rect.left + width;
+	this->rect.bottom = this->rect.top + height;
+	this->prm = NULL;
+	this->prmcnt = 0;
+	this->val = 0;
+	this->vram = NULL;
+	memset(&this->c, 0, sizeof(this->c));
+}
+
+/**
+ * デストラクタ
+ */
+MenuDlgItem::~MenuDlgItem()
+{
+	vram_destroy(this->vram);
+}
 
 static BOOL seaprmempty(void *vpItem, void *vpArg) {
 
@@ -179,19 +226,6 @@ static DLGPRM ressea(DLGHDL hdl, int pos) {
 		}
 	}
 	return(NULL);
-}
-
-static BOOL dsbyid(void *vpItem, void *vpArg) {
-
-	if (((DLGHDL)vpItem)->id == (MENUID)(unsigned long)vpArg) {
-		return(TRUE);
-	}
-	return(FALSE);
-}
-
-static DLGHDL dlghdlsea(MENUDLG dlg, MENUID id) {
-
-	return((DLGHDL)listarray_enum(dlg->dlg, dsbyid, (void *)(long)id));
 }
 
 static BRESULT gettextsz(DLGHDL hdl, POINT_T *sz) {
@@ -1468,11 +1502,6 @@ static void dlgframe_paint(MENUDLG dlg, DLGHDL hdl) {
 
 // ---- radio
 
-typedef struct {
-	MENUDLG	dlg;
-	MENUID	group;
-} MDCB1;
-
 static void dlgradio_paint(MENUDLG dlg, DLGHDL hdl) {
 
 	POINT_T		pt;
@@ -1493,28 +1522,21 @@ const MENURES2	*src;
 	dlg_text(dlg, hdl, &pt, &hdl->rect);
 }
 
-static BOOL drsv_cb(void *vpItem, void *vpArg) {
-
-	DLGHDL	item;
-
-	item = (DLGHDL)vpItem;
-	if ((item->type == DLGTYPE_RADIO) && (item->val) &&
-		(item->group == ((MDCB1 *)vpArg)->group)) {
-		item->val = 0;
-		drawctrls(((MDCB1 *)vpArg)->dlg, item);
-	}
-	return(FALSE);
-}
-
-static void dlgradio_setval(MENUDLG dlg, DLGHDL hdl, int val) {
-
-	MDCB1	mdcb;
-
-	if (hdl->val != val) {
-		if (val) {
-			mdcb.dlg = dlg;
-			mdcb.group = hdl->group;
-			listarray_enum(dlg->dlg, drsv_cb, &mdcb);
+static void dlgradio_setval(MENUDLG dlg, DLGHDL hdl, int val)
+{
+	if (hdl->val != val)
+	{
+		if (val)
+		{
+			for (std::vector<MenuDlgItem*>::iterator it = dlg->m_items.begin(); it != dlg->m_items.end(); ++it)
+			{
+				MenuDlgItem* item = *it;
+				if ((item->type == DLGTYPE_RADIO) && (item->val) && (item->group == hdl->group))
+				{
+					item->val = 0;
+					drawctrls(dlg, item);
+				}
+			}
 		}
 		hdl->val = val;
 		drawctrls(dlg, hdl);
@@ -1845,108 +1867,124 @@ static const DLGREL dlgrel[] = {
 
 // ---- draw
 
-static void draw(VRAMHDL dst, const RECT_T *rect, void *arg) {
-
-	MENUDLG		dlg;
-
-	dlg = (MENUDLG)arg;
-	vrammix_cpy2(dst, rect, dlg->m_vram, NULL, 2);
-}
-
-
-typedef struct {
-	MENUDLG	dlg;
-	DLGHDL	hdl;
-	RECT_T	rect;
-} MDCB2;
-
-static BOOL dc_cb(void *vpItem, void *vpArg) {
-
-	DLGHDL	hdl;
-	MDCB2	*mdcb;
-
-	hdl = (DLGHDL)vpItem;
-	mdcb = (MDCB2 *)vpArg;
-	if (hdl == mdcb->hdl) {
-		mdcb->hdl = NULL;
-	}
-	if ((mdcb->hdl != NULL) || (hdl->flag & MENU_DISABLE)) {
-		goto dccb_exit;
-	}
-	if (rect_isoverlap(&mdcb->rect, &hdl->rect)) {
-		hdl->flag |= MENU_REDRAW;
-	}
-
-dccb_exit:
-	return(FALSE);
-}
-
-
-static BOOL dc_cb2(void *vpItem, void *vpArg) {
-
-	MENUDLG	dlg;
-	DLGHDL	hdl;
-
-	hdl = (DLGHDL)vpItem;
-	dlg = (MENUDLG)vpArg;
-	if (hdl->flag & MENU_REDRAW) {
-		hdl->flag &= ~MENU_REDRAW;
-		if ((!(hdl->flag & MENU_DISABLE)) &&
-			((UINT)hdl->type < NELEMENTS(dlgpaint))) {
-			dlgpaint[hdl->type](dlg, hdl);
-			menubase_setrect(dlg->m_vram, &hdl->rect);
-		}
-	}
-	return(FALSE);
-}
-
-
-static void drawctrls(MENUDLG dlg, DLGHDL hdl) {
-
-	MDCB2	mdcb;
-
-	if (hdl) {
-		if (hdl->flag & MENU_DISABLE) {
-			goto dcs_end;
-		}
-		mdcb.rect = hdl->rect;
-	}
-	else {
-		mdcb.rect.left = 0;
-		mdcb.rect.top = 0;
-		mdcb.rect.right = dlg->m_vram->width;
-		mdcb.rect.bottom = dlg->m_vram->height;
-	}
-	mdcb.dlg = dlg;
-	mdcb.hdl = hdl;
-	listarray_enum(dlg->dlg, dc_cb, &mdcb);
-	if (!dlg->m_nLocked) {
-		listarray_enum(dlg->dlg, dc_cb2, dlg);
-		menubase_draw(draw, dlg);
-	}
-
-dcs_end:
-	return;
-}
-
-void MenuDialog::drawlock(BOOL lock)
-{
-	MENUDLG dlg = this;
-
-	if (lock) {
-		m_nLocked++;
-	}
-	else {
-		m_nLocked--;
-		if (!m_nLocked) {
-			listarray_enum(this->dlg, dc_cb2, this);
-			menubase_draw(draw, this);
-		}
-	}
-}
 
 
 // ----
+
+/**
+ * コンストラクタ
+ */
+MenuDialog::MenuDialog()
+	: m_vram(NULL)
+	, res(NULL)
+	, m_nLocked(0)
+	, m_bClosing(false)
+	, m_sx(0)
+	, m_sy(0)
+	, m_font(NULL)
+	, m_page(0)
+	, m_group(0)
+	, m_proc(NULL)
+	, m_dragflg(0)
+	, m_btn(0)
+	, m_lastx(0)
+	, m_lasty(0)
+	, m_lastid(0)
+{
+}
+
+/**
+ * アイテムを得る
+ */
+MenuDlgItem* MenuDialog::GetItem(MENUID id)
+{
+	for (std::vector<MenuDlgItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
+	{
+		MenuDlgItem* item = *it;
+		if (id == item->id)
+		{
+			return item;
+		}
+	}
+	return NULL;
+}
+
+void MenuDialog::DrawItem(MenuDlgItem* item)
+{
+	RECT_T rect;
+
+	if (item)
+	{
+		if (item->flag & MENU_DISABLE)
+		{
+			return;
+		}
+		rect = item->rect;
+	}
+	else
+	{
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = m_vram->width;
+		rect.bottom = m_vram->height;
+	}
+
+	for (std::vector<MenuDlgItem*>::reverse_iterator it = m_items.rbegin(); it != m_items.rend(); ++it)
+	{
+		MenuDlgItem* item2 = *it;
+		if ((!(item2->flag & MENU_DISABLE)) && (rect_isoverlap(&rect, &item2->rect)))
+		{
+			item2->flag |= MENU_REDRAW;
+		}
+		if (item == item2)
+		{
+			break;
+		}
+	}
+	Draw();
+}
+
+void MenuDialog::DrawLock(bool lock)
+{
+	if (lock)
+	{
+		m_nLocked++;
+	}
+	else
+	{
+		m_nLocked--;
+		Draw();
+	}
+}
+
+static void draw(VRAMHDL dst, const RECT_T *rect, void *arg)
+{
+	MENUDLG dlg = (MENUDLG)arg;
+	vrammix_cpy2(dst, rect, dlg->m_vram, NULL, 2);
+}
+
+void MenuDialog::Draw()
+{
+	if (m_nLocked)
+	{
+		return;
+	}
+
+	for (std::vector<MenuDlgItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
+	{
+		MenuDlgItem* item = *it;
+		if (item->flag & MENU_REDRAW)
+		{
+			item->flag &= ~MENU_REDRAW;
+			if ((!(item->flag & MENU_DISABLE)) && ((UINT)item->type < NELEMENTS(dlgpaint)))
+			{
+				dlgpaint[item->type](this, item);
+				menubase_setrect(m_vram, &item->rect);
+			}
+		}
+	}
+	menubase_draw(draw, this);
+}
 
 static int defproc(int msg, MENUID id, long param) {
 
@@ -1967,7 +2005,23 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 	{
 		goto mdcre_err;
 	}
-	ZeroMemory(this, sizeof(*this));
+
+	m_vram = NULL;
+	res = NULL;
+	m_nLocked = 0;
+	m_bClosing = false;
+	m_sx = 0;
+	m_sy = 0;
+	m_font = NULL;
+	m_page = 0;
+	m_group = 0;
+	m_proc = NULL;
+	m_dragflg = 0;
+	m_btn = 0;
+	m_lastx = 0;
+	m_lasty = 0;
+	m_lastid = 0;
+
 	if ((width <= 0) || (height <= 0))
 	{
 		goto mdcre_err;
@@ -1984,11 +2038,6 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 	}
 	m_vram->posx = (mb->width - width) >> 1;
 	m_vram->posy = (mb->height - height) >> 1;
-	this->dlg = listarray_new(sizeof(_DLGHDL), 32);
-	if (this->dlg == NULL)
-	{
-		goto mdcre_err;
-	}
 	this->res = listarray_new(sizeof(_DLGPRM), 32);
 	if (this->res == NULL)
 	{
@@ -2015,24 +2064,16 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 	}
 	m_proc = proc;
 	m_nLocked = 0;
-	drawlock(TRUE);
+	DrawLock(true);
 	(*proc)(DLGMSG_CREATE, 0, 0);
-	drawctrls(this, NULL);
-	drawlock(FALSE);
+	DrawItem(NULL);
+	DrawLock(false);
 
 	return true;
 
 mdcre_err:
 	menubase_close();
 	return false;
-}
-
-
-static BOOL mdds_cb(void *vpItem, void *vpArg) {
-
-	vram_destroy(((DLGHDL)vpItem)->vram);
-	(void)vpArg;
-	return(FALSE);
 }
 
 static BOOL delicon(void *vpItem, void *vpArg) {
@@ -2049,12 +2090,16 @@ void MenuDialog::Destroy()
 	}
 	m_bClosing = false;
 	(*m_proc)(DLGMSG_DESTROY, 0, 0);
-	listarray_enum(this->dlg, mdds_cb, NULL);
+
+	for (std::vector<MenuDlgItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
+	{
+		delete (*it);
+	}
+	m_items.clear();
+
 	menubase_clrrect(m_vram);
 	vram_destroy(m_vram);
 	m_vram = NULL;
-	listarray_destroy(this->dlg);
-	this->dlg = NULL;
 	listarray_enum(this->res, delicon, NULL);
 	listarray_destroy(this->res);
 	this->res = NULL;
@@ -2106,28 +2151,16 @@ bool MenuDialog::Append(int type, MENUID id, MENUFLG flg, const void *arg, int p
 			break;
 	}
 
-	_DLGHDL dhdl;
-	ZeroMemory(&dhdl, sizeof(dhdl));
-	dhdl.type = type;
-	dhdl.id = id;
-	dhdl.flag = flg;
-	dhdl.page = m_page;
-	dhdl.group = m_group;
-	dhdl.rect.left = m_sx + posx;
-	dhdl.rect.top = m_sy + posy;
-	dhdl.rect.right = dhdl.rect.left + width;
-	dhdl.rect.bottom = dhdl.rect.top + height;
-	dhdl.prm = NULL;
-	dhdl.prmcnt = 0;
-	dhdl.val = 0;
-	if (((UINT)type >= NELEMENTS(dlgcre)) ||
-		(dlgcre[type](this, &dhdl, arg))) {
+	MenuDlgItem* hdl = new MenuDlgItem(this, type, id, flg, arg, posx, posy, width, height);
+	if (((UINT)type >= NELEMENTS(dlgcre)) || (dlgcre[type](this, hdl, arg)))
+	{
+		delete hdl;
 		goto mda_err;
 	}
-	drawlock(TRUE);
-	DLGHDL hdl = (DLGHDL)listarray_append(this->dlg, &dhdl);
-	drawctrls(this, hdl);
-	drawlock(FALSE);
+	DrawLock(true);
+	m_items.push_back(hdl);
+	DrawItem(hdl);
+	DrawLock(false);
 	return true;
 
 mda_err:
@@ -2137,40 +2170,22 @@ mda_err:
 
 // ---- moving
 
-typedef struct {
-	int		x;
-	int		y;
-	DLGHDL	ret;
-} MDCB3;
-
-static BOOL hps_cb(void *vpItem, void *vpArg) {
-
-	DLGHDL	hdl;
-	MDCB3	*mdcb;
-
-	hdl = (DLGHDL)vpItem;
-	mdcb = (MDCB3 *)vpArg;
-	if ((!(hdl->flag & (MENU_DISABLE | MENU_GRAY))) &&
-		(rect_in(&hdl->rect, mdcb->x, mdcb->y))) {
-		mdcb->ret = hdl;
+static DLGHDL hdlpossea(MENUDLG dlg, int x, int y)
+{
+	for (std::vector<MenuDlgItem*>::reverse_iterator it = dlg->m_items.rbegin(); it != dlg->m_items.rend(); ++it)
+	{
+		MenuDlgItem* item = *it;
+		if ((!(item->flag & (MENU_DISABLE | MENU_GRAY))) && (rect_in(&item->rect, x, y)))
+		{
+			return item;
+		}
 	}
-	return(FALSE);
-}
-
-static DLGHDL hdlpossea(MENUDLG dlg, int x, int y) {
-
-	MDCB3	mdcb;
-
-	mdcb.x = x;
-	mdcb.y = y;
-	mdcb.ret = NULL;
-	listarray_enum(dlg->dlg, hps_cb, &mdcb);
-	return(mdcb.ret);
+	return NULL;
 }
 
 void MenuDialog::Moving(int x, int y, int btn)
 {
-	drawlock(TRUE);
+	DrawLock(true);
 	MENUDLG dlg = this;
 	x -= m_vram->posx;
 	y -= m_vram->posy;
@@ -2190,7 +2205,7 @@ void MenuDialog::Moving(int x, int y, int btn)
 	}
 	else
 	{
-		DLGHDL hdl = dlghdlsea(dlg, m_lastid);
+		DLGHDL hdl = GetItem(m_lastid);
 		if (hdl) {
 			int focus = rect_in(&hdl->rect, x, y);
 			x -= hdl->rect.left;
@@ -2206,7 +2221,7 @@ void MenuDialog::Moving(int x, int y, int btn)
 			}
 		}
 	}
-	drawlock(FALSE);
+	DrawLock(false);
 }
 
 
@@ -2218,11 +2233,11 @@ INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 
 	INTPTR ret = 0;
 	MenuDialog* dlg = this;
-	DLGHDL hdl = dlghdlsea(dlg, id);
+	DLGHDL hdl = GetItem(id);
 	if (hdl == NULL) {
 		goto mdm_exit;
 	}
-	drawlock(TRUE);
+	DrawLock(true);
 	switch(ctrl) {
 		case DMSG_SETHIDE:
 			ret = (hdl->flag & MENU_DISABLE) ? 1 : 0;
@@ -2386,7 +2401,7 @@ INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 			break;
 
 	}
-	drawlock(FALSE);
+	DrawLock(false);
 
 mdm_exit:
 	return(ret);
@@ -2400,34 +2415,21 @@ void MenuDialog::SetPage(MENUID page)
 	m_page = page;
 }
 
-typedef struct {
-	MENUID	page;
-	MENUFLG	flag;
-} MDCB4;
-
-static BOOL mddph_cb(void *vpItem, void *vpArg) {
-
-	DLGHDL	hdl;
-	MDCB4	*mdcb;
-
-	hdl = (DLGHDL)vpItem;
-	mdcb = (MDCB4 *)vpArg;
-	if ((hdl->page == mdcb->page) &&
-		((hdl->flag ^ mdcb->flag) & MENU_DISABLE)) {
-		hdl->flag ^= MENU_DISABLE;
-	}
-	return(FALSE);
-}
-
 void MenuDialog::DispPageHidden(MENUID page, bool hidden)
 {
-	MDCB4 mdcb;
-	mdcb.page = page;
-	mdcb.flag = (hidden) ? MENU_DISABLE : 0;
-	listarray_enum(this->dlg, mddph_cb, &mdcb);
-	drawlock(TRUE);
-	drawctrls(this, NULL);
-	drawlock(FALSE);
+	const MENUFLG flag = (hidden) ? MENU_DISABLE : 0;
+	for (std::vector<MenuDlgItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
+	{
+		MenuDlgItem* item = *it;
+		if (item->page == page)
+		{
+			item->flag &= ~MENU_DISABLE;
+			item->flag |= flag;
+		}
+	}
+	DrawLock(true);
+	DrawItem(NULL);
+	DrawLock(false);
 }
 
 
