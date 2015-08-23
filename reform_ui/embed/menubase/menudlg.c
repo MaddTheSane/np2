@@ -1938,7 +1938,7 @@ void MenuDialog::drawlock(BOOL lock)
 	}
 	else {
 		m_nLocked--;
-		if (m_nLocked) {
+		if (!m_nLocked) {
 			listarray_enum(this->dlg, dc_cb2, this);
 			menubase_draw(draw, this);
 		}
@@ -1967,7 +1967,7 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 	{
 		goto mdcre_err;
 	}
-	ZeroMemory(dlg, sizeof(_MENUDLG));
+	ZeroMemory(this, sizeof(*this));
 	if ((width <= 0) || (height <= 0))
 	{
 		goto mdcre_err;
