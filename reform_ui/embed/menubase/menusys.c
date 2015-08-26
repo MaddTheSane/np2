@@ -12,21 +12,123 @@
 #include "../vrammix.h"
 #include "fontmng.h"
 #include "inputmng.h"
+#include <vector>
 
-typedef struct _mhdl
+class MenuSysWnd;
+
+/**
+ * @brief item
+ */
+struct MenuSysItem
 {
-struct _mhdl	*next;
-struct _mhdl	*child;
+	MenuSysWnd* child;
 	MENUID		id;
 	MENUFLG		flag;
 	RECT_T		rct;
 	OEMCHAR		string[32];
-} _MENUHDL, *MENUHDL;
+};
+typedef MenuSysItem* MENUHDL;
+
+/**
+ * @brief wnd
+ */
+class MenuSysWnd : public std::vector<MenuSysItem>
+{
+public:
+	MenuSysWnd(MenuSysWnd* pParent = NULL);
+	~MenuSysWnd();
+	void Append(const MSYSITEM* lpItems);
+	MenuSysItem* GetItem(int id);
+
+private:
+	MenuSysWnd* m_pParent;
+};
+
+/**
+ * コンストラクタ
+ */
+MenuSysWnd::MenuSysWnd(MenuSysWnd* pParent)
+	: m_pParent(pParent)
+{
+}
+
+/**
+ * デストラクタ
+ */
+MenuSysWnd::~MenuSysWnd()
+{
+	for (iterator it = begin(); it != end(); ++it)
+	{
+		if (it->child)
+		{
+			delete it->child;
+			it->child = NULL;
+		}
+	}
+}
+
+/**
+ * アイテム追加
+ */
+void MenuSysWnd::Append(const MSYSITEM *lpItems)
+{
+	if (lpItems == NULL)
+	{
+		return;
+	}
+
+	while (true /*CONSTCOND*/)
+	{
+		MenuSysItem item;
+		memset(&item, 0, sizeof(item));
+		item.id = lpItems->id;
+		item.flag = lpItems->flag & (~MENU_DELETED);
+		if (lpItems->string)
+		{
+			milstr_ncpy(item.string, lpItems->string, NELEMENTS(item.string));
+		}
+		if (lpItems->child)
+		{
+			item.child = new MenuSysWnd(this);
+			item.child->Append(lpItems->child);
+		}
+		push_back(item);
+		if (lpItems->flag & MENU_DELETED)
+		{
+			break;
+		}
+		lpItems++;
+	}
+}
+
+/**
+ * アイテムを得る
+ */
+MenuSysItem* MenuSysWnd::GetItem(int id)
+{
+	for (MenuSysWnd::iterator it = begin(); it != end(); ++it)
+	{
+		if (it->id == id)
+		{
+			return &*it;
+		}
+		if (it->child)
+		{
+			MenuSysItem* item = it->child->GetItem(id);
+			if (item)
+			{
+				return item;
+			}
+		}
+	}
+	return NULL;
+}
+
 
 typedef struct
 {
 	VRAMHDL		vram;
-	MENUHDL		menu;
+	MenuSysWnd* menu;
 	int			items;
 	int			focus;
 } _MSYSWND, *MSYSWND;
@@ -46,8 +148,7 @@ public:
 
 public:
 	_MSYSWND	wnd[MENUSYS_MAX];
-	LISTARRAY	res;
-	MENUHDL		root;
+	MenuSysWnd* m_root;
 	UINT16		m_icon;
 	UINT16		m_style;
 	void		(*m_cmd)(MENUID id);
@@ -58,7 +159,7 @@ public:
 	OEMCHAR		m_title[128];
 
 private:
-	MENUHDL GetItem(int depth, int pos);
+	MenuSysItem* GetItem(int depth, int pos);
 	BRESULT OpenChild(int depth, int pos);
 	int OpenPopup();
 	void DrawItem(int depth, int pos, int flag);
@@ -149,62 +250,7 @@ static const MSYSITEM s_root[] =
 
 // ---- regist
 
-static BOOL seaempty(void *vpItem, void *vpArg)
-{
-	if (((MENUHDL)vpItem)->flag & MENU_DELETED)
-	{
-		return(TRUE);
-	}
-	(void)vpArg;
-	return(FALSE);
-}
 
-static MENUHDL append1(MENUSYS *sys, const MSYSITEM *item)
-{
-	_MENUHDL	hdl;
-	ZeroMemory(&hdl, sizeof(hdl));
-	hdl.id = item->id;
-	hdl.flag = item->flag & (~MENU_DELETED);
-	if (item->string)
-	{
-		milstr_ncpy(hdl.string, item->string, NELEMENTS(hdl.string));
-	}
-	MENUHDL ret = (MENUHDL)listarray_enum(sys->res, seaempty, NULL);
-	if (ret)
-	{
-		*ret = hdl;
-	}
-	else
-	{
-		ret = (MENUHDL)listarray_append(sys->res, &hdl);
-	}
-	return(ret);
-}
-
-static MENUHDL appends(MENUSYS *sys, const MSYSITEM *item)
-{
-	MENUHDL ret = append1(sys, item);
-	MENUHDL cur = ret;
-	while (1)
-	{
-		if (cur == NULL)
-		{
-			return NULL;
-		}
-		if (item->child)
-		{
-			cur->child = appends(sys, item->child);
-		}
-		if (item->flag & MENU_DELETED)
-		{
-			break;
-		}
-		item++;
-		cur->next = append1(sys, item);
-		cur = cur->next;
-	}
-	return ret;
-}
 
 
 // ----
@@ -222,28 +268,24 @@ static void draw(VRAMHDL dst, const RECT_T *rect, void *arg)
 	(void)arg;
 }
 
-MENUHDL MenuSys::GetItem(int depth, int pos)
+
+MenuSysItem* MenuSys::GetItem(int depth, int pos)
 {
 	if ((unsigned int)depth >= (unsigned int)m_depth)
 	{
 		return NULL;
 	}
-	MENUHDL ret = this->wnd[depth].menu;
-	while (ret)
+	MenuSysWnd* wnd = this->wnd[depth].menu;
+	if (wnd)
 	{
-		if (!pos)
+		if ((pos >= 0) && (pos < static_cast<int>(wnd->size())))
 		{
+			MenuSysItem* ret = &wnd->at(pos);
 			if (!(ret->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 			{
 				return ret;
 			}
-			else
-			{
-				break;
-			}
 		}
-		pos--;
-		ret = ret->next;
 	}
 	return NULL;
 }
@@ -319,12 +361,14 @@ static BRESULT wndopenbase(MENUSYS *sys)
 	wndclose(sys, 0);
 
 	UINT rootflg = 0;
-	MENUHDL menu = sys->root;
-	while (menu)
-	{					// メニュー内容を調べる。
-		if (!(menu->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+	MenuSysWnd* wnd = sys->m_root;
+
+	// メニュー内容を調べる。
+	for (MenuSysWnd::const_iterator it = wnd->begin(); it != wnd->end(); ++it)
+	{
+		if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 		{
-			switch(menu->flag & MENUS_CTRLMASK)
+			switch (it->flag & MENUS_CTRLMASK)
 			{
 				case MENUS_POPUP:
 					break;
@@ -346,7 +390,6 @@ static BRESULT wndopenbase(MENUSYS *sys)
 					break;
 			}
 		}
-		menu = menu->next;
 	}
 
 	RECT_T mrect;
@@ -375,14 +418,15 @@ static BRESULT wndopenbase(MENUSYS *sys)
 	}
 	menuvram_caption(vram, &mrect, sys->m_icon, sys->m_title);
 	menubase_setrect(vram, NULL);
-	menu = sys->root;
-	sys->wnd[0].menu = menu;
+	sys->wnd[0].menu = wnd;
 	sys->wnd[0].focus = -1;
 	sys->m_depth++;
 	int items = 0;
 	int posx = MENU_FBORDER + MENU_BORDER + MENUSYS_BCAPTION;
-	while (menu)
+
+	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
 	{
+		MenuSysItem* menu = &*it;
 		if (!(menu->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 		{
 			int menutype = menu->flag & MENUS_CTRLMASK;
@@ -441,7 +485,6 @@ static BRESULT wndopenbase(MENUSYS *sys)
 			}
 		}
 		items++;
-		menu = menu->next;
 	}
 	sys->wnd[0].items = items;
 	return SUCCESS;
@@ -514,8 +557,8 @@ static void citemdraw(VRAMHDL vram, MENUHDL menu, int flag)
 
 BRESULT MenuSys::OpenChild(int depth, int pos)
 {
-	MENUHDL menu = GetItem(depth, pos);
-	if ((menu == NULL) || (menu->child == NULL))
+	MenuSysItem* item = GetItem(depth, pos);
+	if ((item == NULL) || (item->child == NULL))
 	{
 		TRACEOUT(("child not found."));
 		goto copn_err;
@@ -524,7 +567,7 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 
 	RECT_T parent;
 	int dir;
-	if ((menu->flag & MENUS_CTRLMASK) == MENUS_POPUP)
+	if ((item->flag & MENUS_CTRLMASK) == MENUS_POPUP)
 	{
 		parent.left = m_popupx;
 		parent.top = max(m_popupy, wnd->vram->height);
@@ -534,10 +577,10 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 	}
 	else
 	{
-		parent.left = wnd->vram->posx + menu->rct.left;
-		parent.top = wnd->vram->posy + menu->rct.top;
-		parent.right = wnd->vram->posx + menu->rct.right;
-		parent.bottom = wnd->vram->posy + menu->rct.bottom;
+		parent.left = wnd->vram->posx + item->rct.left;
+		parent.top = wnd->vram->posy + item->rct.top;
+		parent.right = wnd->vram->posx + item->rct.right;
+		parent.bottom = wnd->vram->posy + item->rct.bottom;
 		dir = depth + 1;
 	}
 	if (depth >= (MENUSYS_MAX - 1))
@@ -549,11 +592,12 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 	int width = 0;
 	int height = (MENU_FBORDER + MENU_BORDER);
 	int items = 0;
-	int drawitems = 0;
-	menu = menu->child;
-	wnd->menu = menu;
-	while (menu)
+
+	MenuSysWnd* w = item->child;
+	wnd->menu = w;
+	for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 	{
+		MenuSysItem* menu = &*it;
 		if (!(menu->flag & MENU_DISABLE))
 		{
 			menu->rct.left = (MENU_FBORDER + MENU_BORDER);
@@ -584,7 +628,6 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 			}
 		}
 		items++;
-		menu = menu->next;
 	}
 	width += ((MENU_FBORDER + MENU_BORDER + MENUSYS_SXITEM) * 2) + MENUSYS_CXCHECK + MENUSYS_CXNEXT;
 	if (width >= g_menubase.width)
@@ -629,16 +672,15 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 	wnd->items = items;
 	wnd->focus = -1;
 	m_depth++;
-	menu = wnd->menu;
-	drawitems = items;
-	while (drawitems--)
+
+	for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 	{
+		MenuSysItem* menu = &*it;
 		if (!(menu->flag & MENU_DISABLE))
 		{
 			menu->rct.right = width - (MENU_FBORDER + MENU_BORDER);
 			citemdraw(wnd->vram, menu, 0);
 		}
-		menu = menu->next;
 	}
 	menubase_setrect(wnd->vram, NULL);
 	return SUCCESS;
@@ -652,19 +694,17 @@ int MenuSys::OpenPopup()
 	if (m_depth == 1)
 	{
 		int pos = 0;
-		MENUHDL menu = this->root;
-		while (menu)
+		for (MenuSysWnd::const_iterator it = m_root->begin(); it != m_root->end(); ++it)
 		{
-			if (!(menu->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+			if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 			{
-				if ((menu->flag & MENUS_CTRLMASK) == MENUS_POPUP)
+				if ((it->flag & MENUS_CTRLMASK) == MENUS_POPUP)
 				{
 					this->wnd[0].focus = pos;
 					OpenChild(0, pos);
 					return 1;
 				}
 			}
-			menu = menu->next;
 			pos++;
 		}
 	}
@@ -719,21 +759,20 @@ static void getposinfo(MENUSYS *sys, MENUPOS *pos, int x, int y)
 	{
 		pos->depth = cnt;
 		pos->wnd = wnd;
-		MENUHDL menu = wnd->menu;
+		MenuSysWnd* w = wnd->menu;
 		cnt = 0;
-		while ((menu) && (cnt < wnd->items))
+		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 		{
-			if (!(menu->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+			if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 			{
-				if (rect_in(&menu->rct, x, y))
+				if (rect_in(&it->rct, x, y))
 				{
 					pos->pos = cnt;
-					pos->menu = menu;
+					pos->menu = &*it;
 					return;
 				}
 			}
 			cnt++;
-			menu = menu->next;
 		}
 	}
 	else
@@ -752,7 +791,8 @@ static void getposinfo(MENUSYS *sys, MENUPOS *pos, int x, int y)
  * コンストラクタ
  */
 MenuSys::MenuSys()
-	: m_icon(0)
+	: m_root(NULL)
+	, m_icon(0)
 	, m_style(0)
 	, m_cmd(NULL)
 	, m_depth(0)
@@ -761,8 +801,6 @@ MenuSys::MenuSys()
 	, m_popupy(0)
 {
 	ZeroMemory(this->wnd, sizeof(this->wnd));
-	this->res = NULL;
-	this->root = NULL;
 	memset(m_title, 0, sizeof(m_title));
 }
 
@@ -782,8 +820,7 @@ BRESULT MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 ico
 	}
 
 	ZeroMemory(this->wnd, sizeof(this->wnd));
-	this->res = NULL;
-	this->root = NULL;
+	m_root = NULL;
 	m_icon = icon;
 	m_style = 0;
 	m_cmd = cmd;
@@ -798,41 +835,18 @@ BRESULT MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 ico
 		milstr_ncpy(m_title, title, NELEMENTS(m_title));
 	}
 
-	LISTARRAY r = listarray_new(sizeof(_MENUHDL), 32);
-	if (r == NULL)
-	{
-		goto mscre_err;
-	}
-	this->res = r;
-
-	MENUHDL hdl = appends(this, s_root);
-	if (hdl == NULL)
-	{
-		goto mscre_err;
-	}
-	this->root = hdl;
-	if (item)
-	{
-		while (hdl->next)
-		{
-			hdl = hdl->next;
-		}
-		hdl->next = appends(this, item);
-	}
+	m_root = new MenuSysWnd();
+	m_root->Append(s_root);
+	m_root->Append(item);
 	return SUCCESS;
-
-mscre_err:
-	return FAILURE;
 }
 
 void MenuSys::Destroy()
 {
 	wndclose(this, 0);
-	if (this->res)
-	{
-		listarray_destroy(this->res);
-		this->res = NULL;
-	}
+
+	delete m_root;
+	m_root = NULL;
 }
 
 BRESULT MenuSys::Open(int x, int y)
@@ -948,9 +962,10 @@ void MenuSys::FocusMove(int depth, int dir)
 	MENUHDL target = NULL;
 	int tarpos = 0;
 	int pos = 0;
-	MENUHDL menu = wnd->menu;
-	while (menu)
+	MenuSysWnd* w = wnd->menu;
+	for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 	{
+		MenuSysItem* menu = &*it;
 		if (pos == wnd->focus)
 		{
 			if ((dir < 0) && (target != NULL))
@@ -985,7 +1000,6 @@ void MenuSys::FocusMove(int depth, int dir)
 			}
 		}
 		pos++;
-		menu = menu->next;
 	}
 	if (target == NULL)
 	{
@@ -1100,35 +1114,9 @@ void MenuSys::Key(UINT key)
 
 // ----
 
-typedef struct
-{
-	MENUHDL		ret;
-	MENUID		id;
-} ITEMSEA;
-
-static BOOL _itemsea(void *vpItem, void *vpArg)
-{
-	if (((MENUHDL)vpItem)->id == ((ITEMSEA *)vpArg)->id)
-	{
-		((ITEMSEA *)vpArg)->ret = (MENUHDL)vpItem;
-		return(TRUE);
-	}
-	return(FALSE);
-}
-
-static MENUHDL itemsea(MENUSYS *sys, MENUID id)
-{
-	ITEMSEA		sea;
-
-	sea.ret = NULL;
-	sea.id = id;
-	listarray_enum(sys->res, _itemsea, &sea);
-	return(sea.ret);
-}
-
 void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 {
-	MENUHDL itm = itemsea(this, id);
+	MENUHDL itm = m_root->GetItem(id);
 	if (itm == NULL)
 	{
 		return;
@@ -1145,13 +1133,13 @@ void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 	int depth = 0;
 	while (depth < m_depth)
 	{
-		itm = this->wnd[depth].menu;
+		MenuSysWnd* w = this->wnd[depth].menu;
 		int pos = 0;
-		while (itm)
+		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 		{
-			if (itm->id == id)
+			if (it->id == id)
 			{
-				if (!(itm->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+				if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 				{
 					int focus = 0;
 					if (this->wnd[depth].focus == pos)
@@ -1164,7 +1152,6 @@ void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 				}
 			}
 			pos++;
-			itm = itm->next;
 		}
 		depth++;
 	}
@@ -1172,7 +1159,7 @@ void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 
 void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 {
-	MENUHDL itm = itemsea(this, id);
+	MENUHDL itm = m_root->GetItem(id);
 	if (itm == NULL)
 	{
 		return;
@@ -1191,13 +1178,13 @@ void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 	int depth = 0;
 	while (depth < m_depth)
 	{
-		itm = this->wnd[depth].menu;
+		MenuSysWnd* w = this->wnd[depth].menu;
 		int pos = 0;
-		while (itm)
+		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 		{
-			if (itm->id == id)
+			if (it->id == id)
 			{
-				if (!(itm->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+				if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 				{
 					int focus = 0;
 					if (this->wnd[depth].focus == pos)
@@ -1210,7 +1197,6 @@ void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 				}
 			}
 			pos++;
-			itm = itm->next;
 		}
 		depth++;
 	}
@@ -1218,7 +1204,7 @@ void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 
 INTPTR MenuSys::Send(int ctrl, MENUID id, INTPTR arg)
 {
-	MENUHDL itm = itemsea(this, id);
+	MENUHDL itm = m_root->GetItem(id);
 	if (itm == NULL)
 	{
 		return 0;
