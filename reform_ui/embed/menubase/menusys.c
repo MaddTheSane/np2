@@ -26,8 +26,121 @@ struct MenuSysItem
 	MENUFLG		flag;
 	RECT_T		rct;
 	OEMCHAR		string[32];
+
+	void DrawRootItem(VRAMHDL vram, int flag) const;
+	void DrawSubItem(VRAMHDL vram, int flag) const;
+	void DrawSubItemSub(VRAMHDL vram, UINT mvc, int pos) const;
 };
+
 typedef MenuSysItem* MENUHDL;
+
+void MenuSysItem::DrawRootItem(VRAMHDL vram, int flag) const
+{
+	FONTMNGH font = g_menubase.font;
+	int menutype = this->flag & MENUS_CTRLMASK;
+	if (menutype == 0)
+	{
+		vram_filldat(vram, &this->rct, menucolor[MVC_STATIC]);
+		int pos = 0;
+		if (flag)
+		{
+			pos = 1;
+		}
+		UINT32 color;
+		if (!(this->flag & MENU_GRAY))
+		{
+			color = menucolor[MVC_TEXT];
+		}
+		else
+		{
+#if 0
+			if (flag == 2)
+			{
+				flag = 0;
+				pos = 0;
+			}
+#endif
+			POINT_T pt;
+			pt.x = this->rct.left + pos + MENUSYS_SXSYS + MENU_DSTEXT;
+			pt.y = this->rct.top + pos + MENUSYS_SYSYS + MENU_DSTEXT;
+			vrammix_text(vram, font, this->string, menucolor[MVC_GRAYTEXT2], &pt, NULL);
+			color = menucolor[MVC_GRAYTEXT1];
+		}
+
+		POINT_T pt;
+		pt.x = this->rct.left + pos + MENUSYS_SXSYS;
+		pt.y = this->rct.top + pos + MENUSYS_SYSYS;
+		vrammix_text(vram, font, this->string, color, &pt, NULL);
+		if (flag)
+		{
+			menuvram_box(vram, &this->rct, MVC2(MVC_SHADOW, MVC_HILIGHT), (flag==2));
+		}
+	}
+}
+
+void MenuSysItem::DrawSubItem(VRAMHDL vram, int flag) const
+{
+	vram_filldat(vram, &this->rct, (flag != 0)?0x000080:0xc0c0c0);
+
+	if (this->flag & MENU_SEPARATOR)
+	{
+		int left = this->rct.left + MENUSYS_SXSEP;
+		int right = this->rct.right - MENUSYS_LXSEP;
+		int top = this->rct.top + MENUSYS_SYSEP;
+		menuvram_linex(vram, left, top, right, MVC_SHADOW);
+		menuvram_linex(vram, left, top + MENU_LINE, right, MVC_HILIGHT);
+	}
+	else
+	{
+		int left = this->rct.left + MENUSYS_SXITEM + MENUSYS_CXCHECK;
+		int top = this->rct.top + MENUSYS_SYITEM;
+		FONTMNGH font = g_menubase.font;
+		UINT32 txtcol;
+		if (!(this->flag & MENU_GRAY))
+		{
+			txtcol = (flag != 0)?MVC_CURTEXT:MVC_TEXT;
+		}
+		else
+		{
+			if (flag == 0)
+			{
+				POINT_T pt;
+				pt.x = left + MENU_DSTEXT;
+				pt.y = top + MENU_DSTEXT;
+				vrammix_text(vram, font, this->string, menucolor[MVC_GRAYTEXT2], &pt, NULL);
+				DrawSubItemSub(vram, MVC_GRAYTEXT2, 1);
+			}
+			txtcol = MVC_GRAYTEXT1;
+		}
+		POINT_T pt;
+		pt.x = left;
+		pt.y = top;
+		vrammix_text(vram, font, this->string, menucolor[txtcol], &pt, NULL);
+		DrawSubItemSub(vram, txtcol, 0);
+	}
+}
+
+void MenuSysItem::DrawSubItemSub(VRAMHDL vram, UINT mvc, int pos) const
+{
+	const MENURES2* res = menures_sys;
+
+	if (this->flag & MENU_CHECKED)
+	{
+		POINT_T pt;
+		pt.x = this->rct.left + MENUSYS_SXITEM + pos,
+		pt.y = this->rct.top + pos;
+		menuvram_res3put(vram, res, &pt, mvc);
+	}
+	if (this->child)
+	{
+		POINT_T pt;
+		pt.x = this->rct.right - MENUSYS_SXITEM - res[1].width + pos,
+		pt.y = this->rct.top + pos;
+		menuvram_res3put(vram, res+1, &pt, mvc);
+	}
+}
+
+
 
 /**
  * @brief wnd
@@ -38,7 +151,11 @@ public:
 	MenuSysWnd(MenuSysWnd* pParent = NULL);
 	~MenuSysWnd();
 	void Append(const MSYSITEM* lpItems);
-	MenuSysItem* GetItem(int id);
+	MenuSysItem* GetAt(int nIndex) const;
+	MenuSysItem* GetItem(int id) const;
+	MenuSysItem* GetItem(int x, int y) const;
+	void DrawItem(int nIndex, int flag) const;
+	void DrawItem(const MenuSysItem* pItem, int flag) const;
 
 private:
 	MenuSysWnd* m_pParent;
@@ -110,13 +227,29 @@ void MenuSysWnd::Append(const MSYSITEM *lpItems)
 /**
  * アイテムを得る
  */
-MenuSysItem* MenuSysWnd::GetItem(int id)
+MenuSysItem* MenuSysWnd::GetAt(int nIndex) const
 {
-	for (MenuSysWnd::iterator it = begin(); it != end(); ++it)
+	if ((nIndex >= 0) && (nIndex < static_cast<int>(size())))
+	{
+		const MenuSysItem* ret = &at(nIndex);
+		if (!(ret->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+		{
+			return const_cast<MenuSysItem*>(ret);
+		}
+	}
+	return NULL;
+}
+
+/**
+ * アイテムを得る
+ */
+MenuSysItem* MenuSysWnd::GetItem(int id) const
+{
+	for (MenuSysWnd::const_iterator it = begin(); it != end(); ++it)
 	{
 		if (it->id == id)
 		{
-			return &*it;
+			return const_cast<MenuSysItem*>(&*it);
 		}
 		if (it->child)
 		{
@@ -130,6 +263,53 @@ MenuSysItem* MenuSysWnd::GetItem(int id)
 	return NULL;
 }
 
+/**
+ * アイテムを得る
+ */
+MenuSysItem* MenuSysWnd::GetItem(int x, int y) const
+{
+	x -= m_vram->posx;
+	y -= m_vram->posy;
+	for (MenuSysWnd::const_iterator it = begin(); it != end(); ++it)
+	{
+		if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+		{
+			if (rect_in(&it->rct, x, y))
+			{
+				return const_cast<MenuSysItem*>(&*it);
+			}
+		}
+	}
+	return NULL;
+}
+
+void MenuSysWnd::DrawItem(int nIndex, int flag) const
+{
+	MenuSysItem* pItem = GetAt(nIndex);
+	if (pItem)
+	{
+		DrawItem(pItem, flag);
+	}
+}
+
+void MenuSysWnd::DrawItem(const MenuSysItem* pItem, int flag) const
+{
+	if (!m_pParent)
+	{
+		pItem->DrawRootItem(m_vram, flag);
+	}
+	else
+	{
+		pItem->DrawSubItem(m_vram, flag);
+	}
+	menubase_setrect(m_vram, &pItem->rct);
+}
+
+
+
+/**
+ *
+ */
 class MenuSys : public std::vector<MenuSysWnd*>
 {
 public:
@@ -154,16 +334,16 @@ public:
 	OEMCHAR		m_title[128];
 
 private:
-	MenuSysItem* GetItem(int depth, int pos);
+	MenuSysWnd* GetWnd(int x, int y);
+	BRESULT OpenRootWnd();
 	BRESULT OpenChild(int depth, int pos);
 	int OpenPopup();
-	void DrawItem(int depth, int pos, int flag);
+	void CloseWnd(int depth);
 	void FocusMove(int depth, int dir);
 	void FocusEnter(int depth, bool exec);
 	void SetFlag(MENUID id, MENUFLG flag, MENUFLG mask);
 	void SetText(MENUID id, const OEMCHAR *arg);
 };
-typedef MenuSys MENUSYS;
 
 static MenuSys s_menusys;
 
@@ -218,7 +398,6 @@ static const OEMCHAR str_sysx[] = OEMTEXT("Maximize");
 static const OEMCHAR str_sysc[] = OEMTEXT("Close");
 #endif
 
-
 static const MSYSITEM s_exit[] =
 {
 		{str_sysr,			NULL,		0,				MENU_GRAY},
@@ -253,84 +432,6 @@ static void draw(VRAMHDL dst, const RECT_T *rect, void *arg)
 	}
 }
 
-
-MenuSysItem* MenuSys::GetItem(int depth, int pos)
-{
-	if ((unsigned int)depth >= size())
-	{
-		return NULL;
-	}
-	MenuSysWnd* wnd = at(depth);
-	if (wnd)
-	{
-		if ((pos >= 0) && (pos < static_cast<int>(wnd->size())))
-		{
-			MenuSysItem* ret = &wnd->at(pos);
-			if (!(ret->flag & (MENU_DISABLE | MENU_SEPARATOR)))
-			{
-				return ret;
-			}
-		}
-	}
-	return NULL;
-}
-
-static void wndclose(MenuSys* sys, int depth)
-{
-	while (sys->size() > (unsigned int)depth)
-	{
-		MenuSysWnd* wnd = sys->back();
-		sys->pop_back();
-		menubase_clrrect(wnd->m_vram);
-		vram_destroy(wnd->m_vram);
-		wnd->m_vram = NULL;
-	}
-}
-
-static void bitemdraw(VRAMHDL vram, MENUHDL menu, int flag)
-{
-	FONTMNGH font = g_menubase.font;
-	int menutype = menu->flag & MENUS_CTRLMASK;
-	if (menutype == 0)
-	{
-		vram_filldat(vram, &menu->rct, menucolor[MVC_STATIC]);
-		int pos = 0;
-		if (flag)
-		{
-			pos = 1;
-		}
-		UINT32 color;
-		if (!(menu->flag & MENU_GRAY))
-		{
-			color = menucolor[MVC_TEXT];
-		}
-		else
-		{
-#if 0
-			if (flag == 2)
-			{
-				flag = 0;
-				pos = 0;
-			}
-#endif
-			POINT_T pt;
-			pt.x = menu->rct.left + pos + MENUSYS_SXSYS + MENU_DSTEXT;
-			pt.y = menu->rct.top + pos + MENUSYS_SYSYS + MENU_DSTEXT;
-			vrammix_text(vram, font, menu->string, menucolor[MVC_GRAYTEXT2], &pt, NULL);
-			color = menucolor[MVC_GRAYTEXT1];
-		}
-
-		POINT_T pt;
-		pt.x = menu->rct.left + pos + MENUSYS_SXSYS;
-		pt.y = menu->rct.top + pos + MENUSYS_SYSYS;
-		vrammix_text(vram, font, menu->string, color, &pt, NULL);
-		if (flag)
-		{
-			menuvram_box(vram, &menu->rct, MVC2(MVC_SHADOW, MVC_HILIGHT), (flag==2));
-		}
-	}
-}
-
 enum
 {
 	MEXIST_SYS		= 0x01,
@@ -339,12 +440,12 @@ enum
 	MEXIST_ITEM		= 0x08
 };
 
-static BRESULT wndopenbase(MENUSYS *sys)
+BRESULT MenuSys::OpenRootWnd()
 {
-	wndclose(sys, 0);
+	CloseWnd(0);
 
 	UINT rootflg = 0;
-	MenuSysWnd* wnd = sys->m_root;
+	MenuSysWnd* wnd = m_root;
 
 	// メニュー内容を調べる。
 	for (MenuSysWnd::const_iterator it = wnd->begin(); it != wnd->end(); ++it)
@@ -395,14 +496,14 @@ static BRESULT wndopenbase(MENUSYS *sys)
 	{
 		return FAILURE;
 	}
-	if (sys->m_style & MENUSTYLE_BOTTOM)
+	if (m_style & MENUSTYLE_BOTTOM)
 	{
 		vram->posy = max(0, menuvram->height - height);
 	}
-	menuvram_caption(vram, &mrect, sys->m_icon, sys->m_title);
+	menuvram_caption(vram, &mrect, m_icon, m_title);
 	menubase_setrect(vram, NULL);
 	wnd->m_focus = -1;
-	sys->push_back(wnd);
+	push_back(wnd);
 	int posx = MENU_FBORDER + MENU_BORDER + MENUSYS_BCAPTION;
 
 	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
@@ -420,7 +521,7 @@ static BRESULT wndopenbase(MENUSYS *sys)
 				menu->rct.right = menu->rct.left;
 				menu->rct.top = mrect.top + MENU_PYCAPTION;
 				menu->rct.bottom = menu->rct.top;
-				if (sys->m_icon)
+				if (m_icon)
 				{
 					menu->rct.right += MENUSYS_SZICON;
 					menu->rct.bottom += MENUSYS_SZICON;
@@ -462,116 +563,46 @@ static BRESULT wndopenbase(MENUSYS *sys)
 					break;
 				}
 				menu->rct.right = posx;
-				bitemdraw(vram, menu, 0);
+				menu->DrawRootItem(vram, 0);
 			}
 		}
 	}
 	return SUCCESS;
 }
 
-
-// ----
-
-static void citemdraw2(VRAMHDL vram, MENUHDL menu, UINT mvc, int pos)
-{
-	const MENURES2* res = menures_sys;
-
-	if (menu->flag & MENU_CHECKED)
-	{
-		POINT_T pt;
-		pt.x = menu->rct.left + MENUSYS_SXITEM + pos,
-		pt.y = menu->rct.top + pos;
-		menuvram_res3put(vram, res, &pt, mvc);
-	}
-	if (menu->child)
-	{
-		POINT_T pt;
-		pt.x = menu->rct.right - MENUSYS_SXITEM - res[1].width + pos,
-		pt.y = menu->rct.top + pos;
-		menuvram_res3put(vram, res+1, &pt, mvc);
-	}
-}
-
-static void citemdraw(VRAMHDL vram, MENUHDL menu, int flag)
-{
-	vram_filldat(vram, &menu->rct, (flag != 0)?0x000080:0xc0c0c0);
-
-	if (menu->flag & MENU_SEPARATOR)
-	{
-		int left = menu->rct.left + MENUSYS_SXSEP;
-		int right = menu->rct.right - MENUSYS_LXSEP;
-		int top = menu->rct.top + MENUSYS_SYSEP;
-		menuvram_linex(vram, left, top, right, MVC_SHADOW);
-		menuvram_linex(vram, left, top + MENU_LINE, right, MVC_HILIGHT);
-	}
-	else
-	{
-		int left = menu->rct.left + MENUSYS_SXITEM + MENUSYS_CXCHECK;
-		int top = menu->rct.top + MENUSYS_SYITEM;
-		FONTMNGH font = g_menubase.font;
-		UINT32 txtcol;
-		if (!(menu->flag & MENU_GRAY))
-		{
-			txtcol = (flag != 0)?MVC_CURTEXT:MVC_TEXT;
-		}
-		else
-		{
-			if (flag == 0)
-			{
-				POINT_T pt;
-				pt.x = left + MENU_DSTEXT;
-				pt.y = top + MENU_DSTEXT;
-				vrammix_text(vram, font, menu->string, menucolor[MVC_GRAYTEXT2], &pt, NULL);
-				citemdraw2(vram, menu, MVC_GRAYTEXT2, 1);
-			}
-			txtcol = MVC_GRAYTEXT1;
-		}
-		POINT_T pt;
-		pt.x = left;
-		pt.y = top;
-		vrammix_text(vram, font, menu->string, menucolor[txtcol], &pt, NULL);
-		citemdraw2(vram, menu, txtcol, 0);
-	}
-}
-
 BRESULT MenuSys::OpenChild(int depth, int pos)
 {
-	MenuSysItem* item = GetItem(depth, pos);
+	MenuSysWnd* _wnd = at(depth);
+	MenuSysItem* item = _wnd->GetAt(pos);
 	if ((item == NULL) || (item->child == NULL))
 	{
 		TRACEOUT(("child not found."));
-		goto copn_err;
+		return FAILURE;
 	}
-	MenuSysWnd* wnd = at(depth);
 
 	RECT_T parent;
 	int dir;
 	if ((item->flag & MENUS_CTRLMASK) == MENUS_POPUP)
 	{
 		parent.left = m_popupx;
-		parent.top = max(m_popupy, wnd->m_vram->height);
+		parent.top = max(m_popupy, _wnd->m_vram->height);
 		parent.right = parent.left;
 		parent.bottom = parent.top;
 		dir = 0;
 	}
 	else
 	{
-		parent.left = wnd->m_vram->posx + item->rct.left;
-		parent.top = wnd->m_vram->posy + item->rct.top;
-		parent.right = wnd->m_vram->posx + item->rct.right;
-		parent.bottom = wnd->m_vram->posy + item->rct.bottom;
+		parent.left = _wnd->m_vram->posx + item->rct.left;
+		parent.top = _wnd->m_vram->posy + item->rct.top;
+		parent.right = _wnd->m_vram->posx + item->rct.right;
+		parent.bottom = _wnd->m_vram->posy + item->rct.bottom;
 		dir = depth + 1;
-	}
-	if (depth >= (MENUSYS_MAX - 1))
-	{
-		TRACEOUT(("menu max."));
-		goto copn_err;
 	}
 	int width = 0;
 	int height = (MENU_FBORDER + MENU_BORDER);
 
-	wnd = item->child;
-	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
+	MenuSysWnd* childWnd = item->child;
+	for (MenuSysWnd::iterator it = childWnd->begin(); it != childWnd->end(); ++it)
 	{
 		MenuSysItem* menu = &*it;
 		if (!(menu->flag & MENU_DISABLE))
@@ -610,12 +641,14 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 		width = g_menubase.width;
 	}
 	height += (MENU_FBORDER + MENU_BORDER);
-	wnd->m_vram = menuvram_create(width, height, g_menubase.bpp);
-	if (wnd->m_vram == NULL)
+	childWnd->m_vram = menuvram_create(width, height, g_menubase.bpp);
+	if (childWnd->m_vram == NULL)
 	{
 		TRACEOUT(("sub menu vram couldn't create"));
-		goto copn_err;
+		return FAILURE;
 	}
+
+
 	if (dir == 1)
 	{
 		if ((parent.top < height) || (parent.bottom < (g_menubase.height - height)))
@@ -642,25 +675,22 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 			parent.top = parent.bottom - height;
 		}
 	}
-	wnd->m_vram->posx = min(parent.left, g_menubase.width - width);
-	wnd->m_vram->posy = min(parent.top, g_menubase.height - height);
-	wnd->m_focus = -1;
-	push_back(wnd);
+	childWnd->m_vram->posx = min(parent.left, g_menubase.width - width);
+	childWnd->m_vram->posy = min(parent.top, g_menubase.height - height);
+	childWnd->m_focus = -1;
+	push_back(childWnd);
 
-	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
+	for (MenuSysWnd::iterator it = childWnd->begin(); it != childWnd->end(); ++it)
 	{
 		MenuSysItem* menu = &*it;
 		if (!(menu->flag & MENU_DISABLE))
 		{
 			menu->rct.right = width - (MENU_FBORDER + MENU_BORDER);
-			citemdraw(wnd->m_vram, menu, 0);
+			menu->DrawSubItem(childWnd->m_vram, 0);
 		}
 	}
-	menubase_setrect(wnd->m_vram, NULL);
+	menubase_setrect(childWnd->m_vram, NULL);
 	return SUCCESS;
-
-copn_err:
-	return FAILURE;
 }
 
 int MenuSys::OpenPopup()
@@ -685,19 +715,19 @@ int MenuSys::OpenPopup()
 	return 0;
 }
 
-void MenuSys::DrawItem(int depth, int pos, int flag)
+void MenuSys::CloseWnd(int depth)
 {
-	MENUHDL menu = GetItem(depth, pos);
-	if (menu)
+	MenuSys* sys = this;
+	while (size() > (unsigned int)depth)
 	{
-		VRAMHDL vram = at(depth)->m_vram;
-
-		void (*drawfn)(VRAMHDL vram, MENUHDL menu, int flag);
-		drawfn = (depth) ? citemdraw : bitemdraw;
-		drawfn(vram, menu, flag);
-		menubase_setrect(vram, &menu->rct);
+		MenuSysWnd* wnd = back();
+		pop_back();
+		menubase_clrrect(wnd->m_vram);
+		vram_destroy(wnd->m_vram);
+		wnd->m_vram = NULL;
 	}
 }
+
 
 
 // ----
@@ -710,7 +740,25 @@ struct MENUPOS
 	MENUHDL	menu;
 };
 
-static void getposinfo(MENUSYS *sys, MENUPOS *pos, int x, int y)
+MenuSysWnd* MenuSys::GetWnd(int x, int y)
+{
+	for (reverse_iterator it = rbegin(); it != rend(); ++it)
+	{
+		MenuSysWnd* wnd = *it;
+		if (wnd->m_vram)
+		{
+			RECT_T rct;
+			vram_getrect(wnd->m_vram, &rct);
+			if (rect_in(&rct, x, y))
+			{
+				return wnd;
+			}
+		}
+	}
+	return NULL;
+}
+
+static void getposinfo(MenuSys *sys, MENUPOS *pos, int x, int y)
 {
 	int cnt = sys->size();
 	while (cnt--)
@@ -812,7 +860,7 @@ BRESULT MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 ico
 
 void MenuSys::Destroy()
 {
-	wndclose(this, 0);
+	CloseWnd(0);
 
 	delete m_root;
 	m_root = NULL;
@@ -825,7 +873,7 @@ BRESULT MenuSys::Open(int x, int y)
 		goto msopn_err;
 	}
 	m_opened = 0;
-	if (wndopenbase(this) != SUCCESS)
+	if (OpenRootWnd() != SUCCESS)
 	{
 		goto msopn_err;
 	}
@@ -842,7 +890,7 @@ msopn_err:
 
 void MenuSys::Close()
 {
-	wndclose(this, 0);
+	CloseWnd(0);
 }
 
 void MenuSys::Moving(int x, int y, int btn)
@@ -851,7 +899,10 @@ void MenuSys::Moving(int x, int y, int btn)
 	getposinfo(this, &cur, x, y);
 
 	/* メニューを閉じる～ */
-	if (cur.depth < 0)
+	MenuSysWnd* wnd = cur.wnd;
+	MenuSysItem* item = cur.menu;
+
+	if (wnd == NULL)
 	{
 		if (btn == 2)
 		{
@@ -860,43 +911,43 @@ void MenuSys::Moving(int x, int y, int btn)
 		}
 	}
 	int topwnd = size() - 1;
-	if (cur.menu != NULL)
+	if (item != NULL)
 	{
-		if (cur.wnd->m_focus != cur.pos)
+		if (wnd->m_focus != cur.pos)
 		{
 			if (m_opened)
 			{
-				if (cur.depth != topwnd)
+				if (wnd != back())
 				{
-					wndclose(this, cur.depth + 1);
+					CloseWnd(cur.depth + 1);
 				}
-				if ((!(cur.menu->flag & MENU_GRAY)) && (cur.menu->child != NULL))
+				if ((!(item->flag & MENU_GRAY)) && (item->child != NULL))
 				{
 					OpenChild(cur.depth, cur.pos);
 				}
 			}
-			DrawItem(cur.depth, cur.wnd->m_focus, 0);
-			DrawItem(cur.depth, cur.pos, 2 - m_opened);
-			cur.wnd->m_focus = cur.pos;
+			wnd->DrawItem(wnd->m_focus, 0);
+			wnd->DrawItem(cur.pos, 2 - m_opened);
+			wnd->m_focus = cur.pos;
 		}
-		if (!(cur.menu->flag & MENU_GRAY))
+		if (!(item->flag & MENU_GRAY))
 		{
 			if (btn == 1)
 			{
-				if ((!m_opened) && (cur.depth == 0) && (cur.menu->child != NULL))
+				if ((!m_opened) && (wnd == m_root) && (item->child != NULL))
 				{
-					wndclose(this, 1);
-					DrawItem(0, cur.pos, 1);
+					CloseWnd(1);
+					wnd->DrawItem(cur.pos, 1);
 					OpenChild(0, cur.pos);
 					m_opened = 1;
 				}
 			}
 			else if (btn == 2)
 			{
-				if ((cur.menu->id) && (!(cur.menu->flag & MENU_NOSEND)))
+				if ((item->id) && (!(item->flag & MENU_NOSEND)))
 				{
 					menubase_close();
-					(*m_cmd)(cur.menu->id);
+					(*m_cmd)(item->id);
 					return;
 				}
 			}
@@ -904,21 +955,19 @@ void MenuSys::Moving(int x, int y, int btn)
 	}
 	else
 	{
-		if ((btn == 1) && (cur.depth == 0))
+		if ((btn == 1) && (wnd == m_root))
 		{
-			wndclose(this, 1);
-			DrawItem(0, cur.wnd->m_focus, 0);
+			CloseWnd(1);
+			wnd->DrawItem(wnd->m_focus, 0);
 			m_opened = OpenPopup();
 		}
-		else if (cur.depth != topwnd)
+		else if (wnd != back())
 		{
-			cur.depth = topwnd;
-			cur.pos = -1;
-			cur.wnd = at(cur.depth);
-			if (cur.wnd->m_focus != cur.pos)
+			MenuSysWnd* wnd = back();
+			if (wnd->m_focus != -1)
 			{
-				DrawItem(cur.depth, cur.wnd->m_focus, 0);
-				cur.wnd->m_focus = cur.pos;
+				wnd->DrawItem(wnd->m_focus, 0);
+				wnd->m_focus = -1;
 			}
 		}
 	}
@@ -973,15 +1022,15 @@ void MenuSys::FocusMove(int depth, int dir)
 	{
 		return;
 	}
-	DrawItem(depth, wnd->m_focus, 0);
-	DrawItem(depth, tarpos, 2 - m_opened);
+	wnd->DrawItem(wnd->m_focus, 0);
+	wnd->DrawItem(tarpos, 2 - m_opened);
 	wnd->m_focus = tarpos;
 //	TRACEOUT(("focus = %d", tarpos));
 	if (depth == 0)
 	{
 		if (m_opened)
 		{
-			wndclose(this, 1);
+			CloseWnd(1);
 			OpenChild(0, tarpos);
 		}
 	}
@@ -989,7 +1038,7 @@ void MenuSys::FocusMove(int depth, int dir)
 	{
 		if (depth != (size() - 1))
 		{
-			wndclose(this, depth + 1);
+			CloseWnd(depth + 1);
 		}
 	}
 }
@@ -997,13 +1046,13 @@ void MenuSys::FocusMove(int depth, int dir)
 void MenuSys::FocusEnter(int depth, bool exec)
 {
 	MenuSysWnd* wnd = at(depth);
-	MENUHDL menu = GetItem(depth, wnd->m_focus);
+	MenuSysItem* menu = wnd->GetAt(wnd->m_focus);
 	if ((menu) && (!(menu->flag & MENU_GRAY)) && (menu->child != NULL))
 	{
 		if (depth == 0)
 		{
-			wndclose(this, 1);
-			DrawItem(0, wnd->m_focus, 1);
+			CloseWnd(1);
+			wnd->DrawItem(wnd->m_focus, 1);
 			m_opened = 1;
 		}
 		OpenChild(depth, wnd->m_focus);
@@ -1024,8 +1073,6 @@ void MenuSys::FocusEnter(int depth, bool exec)
 
 void MenuSys::Key(UINT key)
 {
-	MENUSYS* sys = this;
-
 	int topwnd = size() - 1;
 	if (topwnd == 0)
 	{
@@ -1060,7 +1107,7 @@ void MenuSys::Key(UINT key)
 		{
 			if (topwnd >= 2)
 			{
-				wndclose(sys, topwnd);
+				CloseWnd(topwnd);
 			}
 			else
 			{
@@ -1114,7 +1161,7 @@ void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 					{
 						focus = 2 - m_opened;
 					}
-					DrawItem(depth, pos, focus);
+					w->DrawItem(pos, focus);
 					menubase_draw(draw, this);
 					return;
 				}
@@ -1159,7 +1206,7 @@ void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 					{
 						focus = 2 - m_opened;
 					}
-					DrawItem(depth, pos, focus);
+					w->DrawItem(pos, focus);
 					menubase_draw(draw, this);
 					return;
 				}
