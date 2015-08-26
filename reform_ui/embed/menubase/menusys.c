@@ -129,7 +129,6 @@ typedef struct
 {
 	VRAMHDL		vram;
 	MenuSysWnd* menu;
-	int			items;
 	int			focus;
 } _MSYSWND, *MSYSWND;
 
@@ -421,7 +420,6 @@ static BRESULT wndopenbase(MENUSYS *sys)
 	sys->wnd[0].menu = wnd;
 	sys->wnd[0].focus = -1;
 	sys->m_depth++;
-	int items = 0;
 	int posx = MENU_FBORDER + MENU_BORDER + MENUSYS_BCAPTION;
 
 	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
@@ -484,9 +482,7 @@ static BRESULT wndopenbase(MENUSYS *sys)
 				bitemdraw(vram, menu, 0);
 			}
 		}
-		items++;
 	}
-	sys->wnd[0].items = items;
 	return SUCCESS;
 }
 
@@ -591,7 +587,6 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 	wnd++;
 	int width = 0;
 	int height = (MENU_FBORDER + MENU_BORDER);
-	int items = 0;
 
 	MenuSysWnd* w = item->child;
 	wnd->menu = w;
@@ -627,7 +622,6 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 				}
 			}
 		}
-		items++;
 	}
 	width += ((MENU_FBORDER + MENU_BORDER + MENUSYS_SXITEM) * 2) + MENUSYS_CXCHECK + MENUSYS_CXNEXT;
 	if (width >= g_menubase.width)
@@ -669,7 +663,6 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 	}
 	wnd->vram->posx = min(parent.left, g_menubase.width - width);
 	wnd->vram->posy = min(parent.top, g_menubase.height - height);
-	wnd->items = items;
 	wnd->focus = -1;
 	m_depth++;
 

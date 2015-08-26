@@ -178,3 +178,16 @@ void menubase_modalproc(void) {
 	}
 }
 
+#if 0
+BRESULT menubase_create(void)
+void menubase_destroy(void)
+BRESULT menubase_open(int num)
+void menubase_close(void)
+BRESULT menubase_moving(int x, int y, int btn)
+BRESULT menubase_key(UINT key) {
+void menubase_setrect(VRAMHDL vram, const RECT_T *rect)
+void menubase_clrrect(VRAMHDL vram);
+void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg)
+void menubase_proc(void)
+void menubase_modalproc(void)
+#endif
