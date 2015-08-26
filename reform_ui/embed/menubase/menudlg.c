@@ -1944,7 +1944,7 @@ MenuDlgItem* MenuDlgItem::CreateInstance(int type, MenuDialog* pParent, MENUID i
 			item = new MenuDlgItem(pParent, type, id, flg, rect);
 			break;
 	}
-	if (item == NULL)
+	if (item != NULL)
 	{
 		if (item->OnCreate(arg) != SUCCESS)
 		{
