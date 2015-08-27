@@ -9,11 +9,8 @@
 #include	"s98.h"
 #include "sound/soundrom.h"
 #include	"keydisp.h"
-#include "gimic/gimic.h"
-#include "spfm/spfmlight.h"
-
-/**! The instance of external modules */
-static IExtendModule* s_ext = NULL;
+#include "ext/externalopna.h"
+#include "misc/threadbase.h"
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat) {
 
@@ -168,47 +165,13 @@ static REG8 IOINPCALL ymf_ia460(UINT port) {
 
 /**
  * Restore OPNA
- * @param[in] ext instance
  */
-static void RestoreRomeo(IExtendModule* ext)
+static void RestoreRomeo()
 {
-	const UINT8* data = g_opn.reg;
-	for (UINT i = 0x30; i < 0xa0; i++)
-	{
-		ext->WriteRegister(i, data[i]);
-	}
-	for (UINT ch = 0; ch < 3; ch++)
-	{
-		ext->WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
-		ext->WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
-		ext->WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
-		ext->WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
-	}
-
-	for (UINT i = 0x130; i < 0x1a0; i++)
-	{
-		ext->WriteRegister(i, data[i]);
-	}
-	for (UINT ch = 0; ch < 3; ch++)
-	{
-		ext->WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
-		ext->WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
-		ext->WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
-		ext->WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
-	}
-	ext->WriteRegister(0x11, data[0x11]);
-	ext->WriteRegister(0x18, data[0x18]);
-	ext->WriteRegister(0x19, data[0x19]);
-	ext->WriteRegister(0x1a, data[0x1a]);
-	ext->WriteRegister(0x1b, data[0x1b]);
-	ext->WriteRegister(0x1c, data[0x1c]);
-	ext->WriteRegister(0x1d, data[0x1d]);
-
-	const UINT8* psg = reinterpret_cast<UINT8*>(&g_psg1.reg);
-	for (UINT i = 0; i < 0x0e; i++)
-	{
-		ext->WriteRegister(i, psg[i]);
-	}
+	UINT8 data[0x200];
+	CopyMemory(data, g_opn.reg, 0x200);
+	CopyMemory(data, &g_psg1.reg, 14);
+	CExternalOpna::GetInstance()->Restore(data, true);
 }
 
 static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
@@ -227,7 +190,7 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		(reinterpret_cast<UINT8*>(&g_psg1.reg))[nAddr] = dat;
 		if (nAddr < 0x0e)
 		{
-			s_ext->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 			keydisp_psg(&g_psg1, nAddr);
 		}
 	}
@@ -235,11 +198,11 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 	{
 		if (nAddr < 0x20)
 		{
-			s_ext->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 		}
 		else if (nAddr == 0x28)
 		{
-			s_ext->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 			if ((dat & 0x0f) < 3)
 			{
 				keydisp_fmkeyon(static_cast<UINT8>(dat & 0x0f), dat);
@@ -251,15 +214,15 @@ static void IOOUTCALL ymfr_o18a(UINT port, REG8 dat)
 		}
 		else if (nAddr < 0x30)
 		{
-			fmtimer_setreg(nAddr, dat);
 			if ((nAddr == 0x22) || (nAddr == 0x27))
 			{
-				s_ext->WriteRegister(nAddr, dat);
+				CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 			}
+			fmtimer_setreg(nAddr, dat);
 		}
 		else if (nAddr < 0xc0)
 		{
-			s_ext->WriteRegister(nAddr, dat);
+			CExternalOpna::GetInstance()->WriteRegister(nAddr, dat);
 		}
 	}
 	(void)port;
@@ -281,7 +244,7 @@ static void IOOUTCALL ymfr_o18e(UINT port, REG8 dat)
 	g_opn.reg[nAddr + 0x100] = dat;
 	if (nAddr >= 0x30)
 	{
-		s_ext->WriteRegister(0x100 + nAddr, dat);
+		CExternalOpna::GetInstance()->WriteRegister(0x100 + nAddr, dat);
 	}
 	else if (nAddr == 0x10)
 	{
@@ -315,55 +278,27 @@ void board118_reset(const NP2CFG *pConfig) {
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
 
-	IExtendModule* ext = s_ext;
-	if (ext != NULL)
-	{
-		ext->Reset();
-	}
+	CExternalOpna::GetInstance()->Reset();
 }
 
 void board118_bind(void)
 {
-	IExtendModule* ext = s_ext;
-
-	if (ext == NULL)
+	CExternalOpna* pExternalOpna = CExternalOpna::GetInstance();
+	if (!pExternalOpna->IsEnabled())
 	{
-		// G.I.M.I.C オープン
-		ext = new CGimic();
-		if (ext->Initialize())
-		{
-			ext->Reset();
-		}
-		else
-		{
-			delete ext;
-			ext = NULL;
-		}
+		pExternalOpna->Initialize();
+		pExternalOpna->Reset();
 	}
-	if (ext == NULL)
-	{
-		// SPFM Lightオープン
-		ext = new CSpfmLight();
-		if (ext->Initialize())
-		{
-			ext->Reset();
-		}
-		else
-		{
-			delete ext;
-			ext = NULL;
-		}
-	}
-	s_ext = ext;
 
-	if (ext)
+	if (pExternalOpna->IsEnabled())
 	{
-		ext->WriteRegister(0x22, 0x00);
-		ext->WriteRegister(0x29, 0x80);
-		ext->WriteRegister(0x10, 0xbf);
-		ext->WriteRegister(0x11, 0x30);
+		pExternalOpna->WriteRegister(0x22, 0x00);
+		pExternalOpna->WriteRegister(0x29, 0x80);
+		pExternalOpna->WriteRegister(0x10, 0xbf);
+		pExternalOpna->WriteRegister(0x11, 0x30);
+		CThreadBase::Delay(100);
 
-		RestoreRomeo(ext);
+		RestoreRomeo();
 
 		cbuscore_attachsndex(0x188, ymfr_o, ymf_i);
 	}
@@ -388,13 +323,6 @@ void board118_bind(void)
  */
 extern "C" void board118_deinitialize(void)
 {
-	IExtendModule* ext = s_ext;
-	s_ext = NULL;
-
-	if (ext)
-	{
-		ext->Reset();
-		ext->Deinitialize();
-		delete ext;
-	}
+	CExternalOpna::GetInstance()->Reset();
+	CExternalOpna::GetInstance()->Deinitialize();
 }
