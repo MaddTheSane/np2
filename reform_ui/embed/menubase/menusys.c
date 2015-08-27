@@ -12,6 +12,7 @@
 #include "../vrammix.h"
 #include "fontmng.h"
 #include "inputmng.h"
+#include <algorithm>
 #include <vector>
 
 class MenuSysWnd;
@@ -21,19 +22,39 @@ class MenuSysWnd;
  */
 struct MenuSysItem
 {
-	MenuSysWnd* child;
-	MENUID		id;
-	MENUFLG		flag;
-	RECT_T		rct;
-	OEMCHAR		string[32];
+	MenuSysWnd* child;			/*!< 子 */
+	MENUID		id;				/*!< ID */
+	MENUFLG		flag;			/*!< フラグ */
+	RECT_T		rct;			/*!< 領域 */
+	OEMCHAR		string[32];		/*!< 文字列 */
 
+	void SetText(const OEMCHAR* lpString);
 	void DrawRootItem(VRAMHDL vram, int flag) const;
 	void DrawSubItem(VRAMHDL vram, int flag) const;
 	void DrawSubItemSub(VRAMHDL vram, UINT mvc, int pos) const;
 };
 
-typedef MenuSysItem* MENUHDL;
+/**
+ * テキスト設定
+ * @param[in] lpString テキスト
+ */
+void MenuSysItem::SetText(const OEMCHAR* lpString)
+{
+	if (lpString)
+	{
+		milstr_ncpy(this->string, lpString, NELEMENTS(this->string));
+	}
+	else
+	{
+		this->string[0] = '\0';
+	}
+}
 
+/**
+ * ルート アイテムの描画
+ * @param[in] vram VRAM
+ * @param[in] flag フォーカス フラグ
+ */
 void MenuSysItem::DrawRootItem(VRAMHDL vram, int flag) const
 {
 	FONTMNGH font = g_menubase.font;
@@ -78,6 +99,11 @@ void MenuSysItem::DrawRootItem(VRAMHDL vram, int flag) const
 	}
 }
 
+/**
+ * サブ アイテムの描画
+ * @param[in] vram VRAM
+ * @param[in] flag フォーカス フラグ
+ */
 void MenuSysItem::DrawSubItem(VRAMHDL vram, int flag) const
 {
 	vram_filldat(vram, &this->rct, (flag != 0)?0x000080:0xc0c0c0);
@@ -151,9 +177,11 @@ public:
 	MenuSysWnd(MenuSysWnd* pParent = NULL);
 	~MenuSysWnd();
 	void Append(const MSYSITEM* lpItems);
+	int GetIndex(const MenuSysItem* pItem) const;
 	MenuSysItem* GetAt(int nIndex) const;
 	MenuSysItem* GetItem(int id) const;
 	MenuSysItem* GetItem(int x, int y) const;
+	void Close();
 	void DrawItem(int nIndex, int flag) const;
 	void DrawItem(const MenuSysItem* pItem, int flag) const;
 
@@ -167,6 +195,7 @@ public:
 
 /**
  * コンストラクタ
+ * @param[in] pParent 親ウィンドウ
  */
 MenuSysWnd::MenuSysWnd(MenuSysWnd* pParent)
 	: m_pParent(pParent)
@@ -192,6 +221,7 @@ MenuSysWnd::~MenuSysWnd()
 
 /**
  * アイテム追加
+ * @param[in] lpItems 追加するアイテム
  */
 void MenuSysWnd::Append(const MSYSITEM *lpItems)
 {
@@ -206,10 +236,7 @@ void MenuSysWnd::Append(const MSYSITEM *lpItems)
 		memset(&item, 0, sizeof(item));
 		item.id = lpItems->id;
 		item.flag = lpItems->flag & (~MENU_DELETED);
-		if (lpItems->string)
-		{
-			milstr_ncpy(item.string, lpItems->string, NELEMENTS(item.string));
-		}
+		item.SetText(lpItems->string);
 		if (lpItems->child)
 		{
 			item.child = new MenuSysWnd(this);
@@ -225,7 +252,26 @@ void MenuSysWnd::Append(const MSYSITEM *lpItems)
 }
 
 /**
+ * インデックスを得る
+ * @param[in] pItem アイテム
+ * @return インデックス
+ */
+int MenuSysWnd::GetIndex(const MenuSysItem* pItem) const
+{
+	for (const_iterator it = begin(); it != end(); ++it)
+	{
+		if (pItem == &*it)
+		{
+			return std::distance(begin(), it);
+		}
+	}
+	return -1;
+}
+
+/**
  * アイテムを得る
+ * @param[in] nIndex インデックス
+ * @return アイテム
  */
 MenuSysItem* MenuSysWnd::GetAt(int nIndex) const
 {
@@ -242,6 +288,8 @@ MenuSysItem* MenuSysWnd::GetAt(int nIndex) const
 
 /**
  * アイテムを得る
+ * @param[in] id ID
+ * @return アイテム
  */
 MenuSysItem* MenuSysWnd::GetItem(int id) const
 {
@@ -265,6 +313,9 @@ MenuSysItem* MenuSysWnd::GetItem(int id) const
 
 /**
  * アイテムを得る
+ * @param[in] x X
+ * @param[in] y Y
+ * @return アイテム
  */
 MenuSysItem* MenuSysWnd::GetItem(int x, int y) const
 {
@@ -283,6 +334,19 @@ MenuSysItem* MenuSysWnd::GetItem(int x, int y) const
 	return NULL;
 }
 
+/**
+ * 閉じる
+ */
+void MenuSysWnd::Close()
+{
+	menubase_clrrect(m_vram);
+	vram_destroy(m_vram);
+	m_vram = NULL;
+}
+
+/**
+ * 描画
+ */
 void MenuSysWnd::DrawItem(int nIndex, int flag) const
 {
 	MenuSysItem* pItem = GetAt(nIndex);
@@ -292,6 +356,11 @@ void MenuSysWnd::DrawItem(int nIndex, int flag) const
 	}
 }
 
+/**
+ * 描画
+ * @param[in] pItem アイテム
+ * @param[in] flag フォーカス フラグ
+ */
 void MenuSysWnd::DrawItem(const MenuSysItem* pItem, int flag) const
 {
 	if (!m_pParent)
@@ -341,8 +410,8 @@ private:
 	void CloseWnd(int depth);
 	void FocusMove(int depth, int dir);
 	void FocusEnter(int depth, bool exec);
-	void SetFlag(MENUID id, MENUFLG flag, MENUFLG mask);
-	void SetText(MENUID id, const OEMCHAR *arg);
+	void SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask);
+	void SetText(MenuSysItem* item, const OEMCHAR *arg);
 };
 
 static MenuSys s_menusys;
@@ -442,7 +511,7 @@ enum
 
 BRESULT MenuSys::OpenRootWnd()
 {
-	CloseWnd(0);
+	Close();
 
 	UINT rootflg = 0;
 	MenuSysWnd* wnd = m_root;
@@ -717,14 +786,11 @@ int MenuSys::OpenPopup()
 
 void MenuSys::CloseWnd(int depth)
 {
-	MenuSys* sys = this;
 	while (size() > (unsigned int)depth)
 	{
 		MenuSysWnd* wnd = back();
 		pop_back();
-		menubase_clrrect(wnd->m_vram);
-		vram_destroy(wnd->m_vram);
-		wnd->m_vram = NULL;
+		wnd->Close();
 	}
 }
 
@@ -737,7 +803,7 @@ struct MENUPOS
 	int		depth;
 	int		pos;
 	MenuSysWnd* wnd;
-	MENUHDL	menu;
+	MenuSysItem* menu;
 };
 
 MenuSysWnd* MenuSys::GetWnd(int x, int y)
@@ -860,12 +926,15 @@ BRESULT MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 ico
 
 void MenuSys::Destroy()
 {
-	CloseWnd(0);
+	Close();
 
 	delete m_root;
 	m_root = NULL;
 }
 
+/**
+ * オープンする
+ */
 BRESULT MenuSys::Open(int x, int y)
 {
 	if (menubase_open(1) != SUCCESS)
@@ -888,9 +957,16 @@ msopn_err:
 	return FAILURE;
 }
 
+/**
+ * 閉じる
+ */
 void MenuSys::Close()
 {
-	CloseWnd(0);
+	for (iterator it = begin(); it != end(); ++it)
+	{
+		(*it)->Close();
+	}
+	clear();
 }
 
 void MenuSys::Moving(int x, int y, int btn)
@@ -898,19 +974,19 @@ void MenuSys::Moving(int x, int y, int btn)
 	MENUPOS cur;
 	getposinfo(this, &cur, x, y);
 
-	/* メニューを閉じる～ */
-	MenuSysWnd* wnd = cur.wnd;
-	MenuSysItem* item = cur.menu;
 
+	MenuSysWnd* wnd = cur.wnd;
 	if (wnd == NULL)
 	{
+		/* メニューを閉じる～ */
 		if (btn == 2)
 		{
 			menubase_close();
 			return;
 		}
 	}
-	int topwnd = size() - 1;
+
+	MenuSysItem* item = cur.menu;
 	if (item != NULL)
 	{
 		if (wnd->m_focus != cur.pos)
@@ -977,7 +1053,7 @@ void MenuSys::Moving(int x, int y, int btn)
 void MenuSys::FocusMove(int depth, int dir)
 {
 	MenuSysWnd* wnd = at(depth);
-	MENUHDL target = NULL;
+	MenuSysItem* target = NULL;
 	int tarpos = 0;
 	int pos = 0;
 	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
@@ -1129,20 +1205,19 @@ void MenuSys::Key(UINT key)
 
 // ----
 
-void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
+void MenuSys::SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask)
 {
-	MENUHDL itm = m_root->GetItem(id);
-	if (itm == NULL)
+	if (item == NULL)
 	{
 		return;
 	}
-	flag ^= itm->flag;
+	flag ^= item->flag;
 	flag &= mask;
 	if (!flag)
 	{
 		return;
 	}
-	itm->flag ^= flag;
+	item->flag ^= flag;
 
 	// リドローが必要？
 	unsigned int depth = 0;
@@ -1152,7 +1227,7 @@ void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 		int pos = 0;
 		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 		{
-			if (it->id == id)
+			if (it->id == item->id)
 			{
 				if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 				{
@@ -1172,22 +1247,13 @@ void MenuSys::SetFlag(MENUID id, MENUFLG flag, MENUFLG mask)
 	}
 }
 
-void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
+void MenuSys::SetText(MenuSysItem* item, const OEMCHAR *arg)
 {
-	MENUHDL itm = m_root->GetItem(id);
-	if (itm == NULL)
+	if (item == NULL)
 	{
 		return;
 	}
-
-	if (arg)
-	{
-		milstr_ncpy(itm->string, arg, NELEMENTS(itm->string));
-	}
-	else
-	{
-		itm->string[0] = '\0';
-	}
+	item->SetText(arg);
 
 	// リドローが必要？ (ToDo: 再オープンすべし)
 	unsigned int depth = 0;
@@ -1197,7 +1263,7 @@ void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 		int pos = 0;
 		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
 		{
-			if (it->id == id)
+			if (it->id == item->id)
 			{
 				if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 				{
@@ -1219,8 +1285,8 @@ void MenuSys::SetText(MENUID id, const OEMCHAR *arg)
 
 INTPTR MenuSys::Send(int ctrl, MENUID id, INTPTR arg)
 {
-	MENUHDL itm = m_root->GetItem(id);
-	if (itm == NULL)
+	MenuSysItem* item = m_root->GetItem(id);
+	if (item == NULL)
 	{
 		return 0;
 	}
@@ -1229,34 +1295,34 @@ INTPTR MenuSys::Send(int ctrl, MENUID id, INTPTR arg)
 	switch (ctrl)
 	{
 		case SMSG_SETHIDE:
-			ret = (itm->flag & MENU_DISABLE) ? 1 : 0;
-			SetFlag(id, (MENUFLG)((arg) ? MENU_DISABLE : 0), MENU_DISABLE);
+			ret = (item->flag & MENU_DISABLE) ? 1 : 0;
+			SetFlag(item, (MENUFLG)((arg) ? MENU_DISABLE : 0), MENU_DISABLE);
 			break;
 
 		case SMSG_GETHIDE:
-			ret = (itm->flag & MENU_DISABLE) ? 1 : 0;
+			ret = (item->flag & MENU_DISABLE) ? 1 : 0;
 			break;
 
 		case SMSG_SETENABLE:
-			ret = (itm->flag & MENU_GRAY) ? 0 : 1;
-			SetFlag(id, (MENUFLG)((arg) ? 0 : MENU_GRAY), MENU_GRAY);
+			ret = (item->flag & MENU_GRAY) ? 0 : 1;
+			SetFlag(item, (MENUFLG)((arg) ? 0 : MENU_GRAY), MENU_GRAY);
 			break;
 
 		case SMSG_GETENABLE:
-			ret = (itm->flag & MENU_GRAY) ? 0 : 1;
+			ret = (item->flag & MENU_GRAY) ? 0 : 1;
 			break;
 
 		case SMSG_SETCHECK:
-			ret = (itm->flag & MENU_CHECKED) ? 1 : 0;
-			SetFlag(id, (MENUFLG)((arg) ? MENU_CHECKED : 0), MENU_CHECKED);
+			ret = (item->flag & MENU_CHECKED) ? 1 : 0;
+			SetFlag(item, (MENUFLG)((arg) ? MENU_CHECKED : 0), MENU_CHECKED);
 			break;
 
 		case SMSG_GETCHECK:
-			ret = (itm->flag & MENU_CHECKED) ? 1 : 0;
+			ret = (item->flag & MENU_CHECKED) ? 1 : 0;
 			break;
 
 		case SMSG_SETTEXT:
-			SetText(id, reinterpret_cast<OEMCHAR*>(arg));
+			SetText(item, reinterpret_cast<OEMCHAR*>(arg));
 			break;
 	}
 	return ret;

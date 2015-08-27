@@ -53,9 +53,11 @@ typedef struct {
 	UINT8		sldv;
 } DLGSLD;
 
+#if 0
 typedef struct {
 	VRAMHDL		vram;
 } DLGVRAM;
+#endif
 
 class MenuDialog;
 
@@ -68,7 +70,7 @@ public:
 	static MenuDlgItem* CreateInstance(int type, MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect, const void *arg);
 
 	MenuDlgItem(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, const RECT_T& rect);
-	~MenuDlgItem();
+	virtual ~MenuDlgItem();
 
 	virtual BRESULT OnCreate(const void *arg);
 	virtual void OnPaint();
@@ -76,6 +78,7 @@ public:
 	virtual void OnClick(int x, int y);
 	virtual void OnMove(int x, int y, int focus);
 	virtual void OnRelease(int focus);
+	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
 public:
 	MenuDialog* m_pParent;		//!< The instance of parent
@@ -94,7 +97,7 @@ public:
 		DLGTAB		dtl;
 		DLGLIST		dl;
 		DLGSLD		ds;
-		DLGVRAM		dv;
+//		DLGVRAM		dv;
 	} c;
 };
 typedef MenuDlgItem *DLGHDL;
@@ -1677,87 +1680,149 @@ static void dlgtext_iconset(MENUDLG dlg, DLGHDL hdl, UINT arg) {
 
 // ---- icon/vram
 
-static void iconpaint(MENUDLG dlg, DLGHDL hdl, VRAMHDL src) {
-
-	RECT_U		r;
-	UINT32		bgcol;
-
+static void iconpaint(MENUDLG dlg, DLGHDL hdl, VRAMHDL src)
+{
+	RECT_U r;
 	r.p.x = hdl->m_rect.left;
 	r.p.y = hdl->m_rect.top;
-	bgcol = menucolor[MVC_STATIC];
-	if (src) {
-		if (src->alpha) {
+	UINT32 bgcol = menucolor[MVC_STATIC];
+	if (src)
+	{
+		if (src->alpha)
+		{
 			r.r.right = r.r.left + src->width;
 			r.r.bottom = r.r.top + src->height;
 			vram_filldat(dlg->m_vram, &r.r, bgcol);
 			vramcpy_cpyex(dlg->m_vram, &r.p, src, NULL);
 		}
-		else {
+		else
+		{
 			vramcpy_cpy(dlg->m_vram, &r.p, src, NULL);
 		}
 	}
-	else {
+	else
+	{
 		vram_filldat(dlg->m_vram, &hdl->m_rect, bgcol);
 	}
 }
 
-static BRESULT dlgicon_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
-
-	hdl->prm = resappend(dlg, NULL);
-	resattachicon(dlg, hdl->prm, (UINT16)(long)arg,
-		hdl->m_rect.right - hdl->m_rect.left, hdl->m_rect.bottom - hdl->m_rect.top);
-	return(SUCCESS);
-}
-
-static void dlgicon_paint(MENUDLG dlg, DLGHDL hdl) {
-
-	DLGPRM	prm;
-
-	prm = hdl->prm;
-	if (prm) {
-		iconpaint(dlg, hdl, prm->icon);
+class MenuDlgItemIcon : public MenuDlgItem
+{
+public:
+	MenuDlgItemIcon(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+		: MenuDlgItem(pParent, DLGTYPE_ICON, id, flg, rect)
+	{
 	}
-}
 
-static BRESULT dlgvram_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
+	virtual BRESULT OnCreate(const void *arg)
+	{
+		this->prm = resappend(m_pParent, NULL);
+		resattachicon(m_pParent, this->prm, (UINT16)(long)arg, m_rect.right - m_rect.left, m_rect.bottom - m_rect.top);
+		return SUCCESS;
+	}
 
-	hdl->c.dv.vram = (VRAMHDL)arg;
-	(void)dlg;
-	return(SUCCESS);
-}
+	virtual void OnPaint()
+	{
+		if (this->prm)
+		{
+			::iconpaint(m_pParent, this, this->prm->icon);
+		}
+	}
+};
 
-static void dlgvram_paint(MENUDLG dlg, DLGHDL hdl) {
 
-	iconpaint(dlg, hdl, hdl->c.dv.vram);
-}
+
+// ---- vram
+
+class MenuDlgItemVram : public MenuDlgItem
+{
+public:
+	MenuDlgItemVram(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+		: MenuDlgItem(pParent, DLGTYPE_VRAM, id, flg, rect)
+		, m_resource(NULL)
+	{
+	}
+
+	virtual BRESULT OnCreate(const void *arg)
+	{
+		m_resource = static_cast<VRAMHDL>(const_cast<void*>(arg));
+		return SUCCESS;
+	}
+
+	virtual void OnPaint()
+	{
+		::iconpaint(m_pParent, this, m_resource);
+	}
+
+	virtual INTPTR ItemProc(int ctrl, INTPTR arg)
+	{
+		INTPTR ret = 0;
+		switch (ctrl)
+		{
+			case DMSG_SETVRAM:
+				ret = reinterpret_cast<INTPTR>(m_resource);
+				m_resource = reinterpret_cast<VRAMHDL>(arg);
+				drawctrls(m_pParent, this);
+				break;
+
+			default:
+				ret = __super::ItemProc(ctrl, arg);
+				break;
+		}
+		return ret;
+	}
+
+private:
+	VRAMHDL m_resource;
+};
+
 
 
 // ---- line
 
-static void dlgline_paint(MENUDLG dlg, DLGHDL hdl) {
+class MenuDlgItemLine : public MenuDlgItem
+{
+public:
+	MenuDlgItemLine(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+		: MenuDlgItem(pParent, DLGTYPE_LINE, id, flg, rect)
+	{
+	}
 
-	if (!(hdl->m_flag & MSL_VERT)) {
-		menuvram_linex(dlg->m_vram, hdl->m_rect.left, hdl->m_rect.top,
-											hdl->m_rect.right, MVC_SHADOW);
-		menuvram_linex(dlg->m_vram, hdl->m_rect.left, hdl->m_rect.top + MENU_LINE,
-											hdl->m_rect.right, MVC_HILIGHT);
+	virtual void OnPaint()
+	{
+		VRAMHDL vram = m_pParent->m_vram;
+		if (!(m_flag & MSL_VERT))
+		{
+			menuvram_linex(vram, m_rect.left, m_rect.top, m_rect.right, MVC_SHADOW);
+			menuvram_linex(vram, m_rect.left, m_rect.top + MENU_LINE, m_rect.right, MVC_HILIGHT);
+		}
+		else
+		{
+			menuvram_liney(vram, m_rect.left, m_rect.top, m_rect.bottom, MVC_SHADOW);
+			menuvram_liney(vram, m_rect.left + MENU_LINE, m_rect.top, m_rect.bottom, MVC_HILIGHT);
+		}
+
 	}
-	else {
-		menuvram_liney(dlg->m_vram, hdl->m_rect.left, hdl->m_rect.top,
-											hdl->m_rect.bottom, MVC_SHADOW);
-		menuvram_liney(dlg->m_vram, hdl->m_rect.left+MENU_LINE, hdl->m_rect.top,
-											hdl->m_rect.bottom, MVC_HILIGHT);
-	}
-}
+};
+
 
 
 // ---- box
 
-static void dlgbox_paint(MENUDLG dlg, DLGHDL hdl) {
+class MenuDlgItemBox : public MenuDlgItem
+{
+public:
+	MenuDlgItemBox(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+		: MenuDlgItem(pParent, DLGTYPE_BOX, id, flg, rect)
+	{
+	}
 
-	menuvram_box2(dlg->m_vram, &hdl->m_rect,
-					MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_HILIGHT, MVC_SHADOW));
-}
+	virtual void OnPaint()
+	{
+		menuvram_box2(m_pParent->m_vram, &m_rect, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_HILIGHT, MVC_SHADOW));
+	}
+};
+
 
 
 // ---- procs
@@ -1821,8 +1886,8 @@ static const DLGCRE s_dlgcre[] = {
 		_cre_settext,				// DLGTYPE_FRAME
 		_cre_settext,				// DLGTYPE_EDIT
 		_cre_settext,				// DLGTYPE_TEXT
-		dlgicon_create,				// DLGTYPE_ICON
-		dlgvram_create,				// DLGTYPE_VRAM
+		_cre,						// DLGTYPE_ICON
+		_cre,						// DLGTYPE_VRAM
 		_cre,						// DLGTYPE_LINE
 		_cre						// DLGTYPE_BOX
 };
@@ -1839,10 +1904,6 @@ static const DLGPAINT s_dlgpaint[] = {
 		dlgframe_paint,				// DLGTYPE_FRAME
 		dlgedit_paint,				// DLGTYPE_EDIT
 		dlgtext_paint,				// DLGTYPE_TEXT
-		dlgicon_paint,				// DLGTYPE_ICON
-		dlgvram_paint,				// DLGTYPE_VRAM
-		dlgline_paint,				// DLGTYPE_LINE
-		dlgbox_paint				// DLGTYPE_BOX
 };
 
 static const DLGSETVAL s_dlgsetval[] = {
@@ -1940,6 +2001,22 @@ MenuDlgItem* MenuDlgItem::CreateInstance(int type, MenuDialog* pParent, MENUID i
 	MenuDlgItem* item = NULL;
 	switch (type)
 	{
+		case DLGTYPE_ICON:
+			item = new MenuDlgItemIcon(pParent, id, flg, rect);
+			break;
+
+		case DLGTYPE_VRAM:
+			item = new MenuDlgItemVram(pParent, id, flg, rect);
+			break;
+
+		case DLGTYPE_LINE:
+			item = new MenuDlgItemLine(pParent, id, flg, rect);
+			break;
+
+		case DLGTYPE_BOX:
+			item = new MenuDlgItemBox(pParent, id, flg, rect);
+			break;
+
 		default:
 			item = new MenuDlgItem(pParent, type, id, flg, rect);
 			break;
@@ -2329,16 +2406,27 @@ void MenuDialog::Moving(int x, int y, int btn)
 
 INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 {
-	int		flg;
-
-	INTPTR ret = 0;
-	MenuDialog* dlg = this;
 	DLGHDL hdl = GetItem(id);
-	if (hdl == NULL) {
-		goto mdm_exit;
+	if (hdl == NULL)
+	{
+		return 0;
 	}
 	DrawLock(true);
-	switch(ctrl) {
+	INTPTR ret = hdl->ItemProc(ctrl, arg);
+	DrawLock(false);
+	return ret;
+}
+
+INTPTR MenuDlgItem::ItemProc(int ctrl, INTPTR arg)
+{
+	MenuDialog* dlg = m_pParent;
+	MenuDlgItem* hdl = this;
+
+	int flg = 0;
+
+	INTPTR ret = 0;
+	switch (ctrl) 
+	{
 		case DMSG_SETHIDE:
 			ret = (hdl->m_flag & MENU_DISABLE) ? 1 : 0;
 			flg = (arg) ? MENU_DISABLE : 0;
@@ -2379,6 +2467,7 @@ INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 			ret = hdl->m_nValue;
 			break;
 
+#if 0
 		case DMSG_SETVRAM:
 			if (hdl->m_type == DLGTYPE_VRAM) {
 				ret = (INTPTR)hdl->c.dv.vram;
@@ -2386,6 +2475,7 @@ INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 				drawctrls(dlg, hdl);
 			}
 			break;
+#endif
 
 		case DMSG_SETTEXT:
 			switch(hdl->m_type) {
@@ -2429,9 +2519,9 @@ INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 			break;
 
 		case DMSG_ITEMRESET:
-			if ((m_btn) && (m_lastid == hdl->m_id))
+			if ((dlg->m_btn) && (dlg->m_lastid == hdl->m_id))
 			{
-				m_btn = 0;
+				dlg->m_btn = 0;
 				hdl->OnRelease(FALSE);
 			}
 			if (hdl->m_type == DLGTYPE_LIST) {
@@ -2496,13 +2586,10 @@ INTPTR MenuDialog::Send(int ctrl, MENUID id, INTPTR arg)
 				ret = (INTPTR)hdl->c.dt.font;
 			}
 			break;
-
 	}
-	DrawLock(false);
-
-mdm_exit:
-	return(ret);
+	return ret;
 }
+
 
 
 // --- page
