@@ -96,7 +96,14 @@ void opna_bind(POPNA opna)
 		{
 			fmboard_fmrestore(opna, 6, 2);
 			fmboard_fmrestore(opna, 9, 3);
-			sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
+			if (cCaps & OPNA_HAS_VR)
+			{
+				sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
+			}
+			else
+			{
+				sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
+			}
 		}
 		return;
 	}
