@@ -176,6 +176,7 @@ class MenuSysWnd : public std::vector<MenuSysItem>
 public:
 	MenuSysWnd(MenuSysWnd* pParent = NULL);
 	~MenuSysWnd();
+	MenuSysWnd* GetParent();
 	void Append(const MSYSITEM* lpItems);
 	int GetIndex(const MenuSysItem* pItem) const;
 	MenuSysItem* GetAt(int nIndex) const;
@@ -187,7 +188,6 @@ public:
 
 private:
 	MenuSysWnd* m_pParent;
-
 public:
 	VRAMHDL m_vram;
 	int m_focus;
@@ -217,6 +217,15 @@ MenuSysWnd::~MenuSysWnd()
 			it->child = NULL;
 		}
 	}
+}
+
+/**
+ * 親を取得
+ * @return 親
+ */
+inline MenuSysWnd* MenuSysWnd::GetParent()
+{
+	return m_pParent;
 }
 
 /**
@@ -377,41 +386,42 @@ void MenuSysWnd::DrawItem(const MenuSysItem* pItem, int flag) const
 
 
 /**
- *
+ * @brief システム メニュー
  */
-class MenuSys : public std::vector<MenuSysWnd*>
+class MenuSys : private std::vector<MenuSysWnd*>
 {
 public:
 	MenuSys();
-	BRESULT Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
+	bool Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
 	void Destroy();
-	BRESULT Open(int x, int y);
+	bool Open(int x, int y);
 	void Close();
 	void Moving(int x, int y, int btn);
 	void Key(UINT key);
 	INTPTR Send(int ctrl, MENUID id, INTPTR arg);
 	void SetStyle(UINT16 style);
 
-public:
-	MenuSysWnd* m_root;
-	UINT16		m_icon;
-	UINT16		m_style;
-	void		(*m_cmd)(MENUID id);
-	int			m_opened;
-	int			m_popupx;
-	int			m_popupy;
-	OEMCHAR		m_title[128];
-
 private:
-	MenuSysWnd* GetWnd(int x, int y);
-	BRESULT OpenRootWnd();
-	BRESULT OpenChild(int depth, int pos);
+	MenuSysWnd* m_root;				/*!< ルート ウィンドウ */
+	UINT16 m_icon;					/*!< アイコン */
+	UINT16 m_style;					/*!< スタイル */
+	void (*m_cmd)(MENUID id);		/*!< コマンド */
+	int m_opened;
+	int m_popupx;					/*!< X */
+	int m_popupy;					/*!< Y */
+	OEMCHAR m_title[128];			/*!< タイトル */
+
+	bool OpenRootWnd();
+	bool OpenChild(const MenuSysWnd* wnd, int pos);
 	int OpenPopup();
-	void CloseWnd(int depth);
-	void FocusMove(int depth, int dir);
-	void FocusEnter(int depth, bool exec);
+	void CloseChild(const MenuSysWnd* wnd);
+	MenuSysWnd* GetWnd(int x, int y) const;
+	void FocusMove(MenuSysWnd* wnd, int dir);
+	void FocusEnter(MenuSysWnd* wnd, bool exec);
 	void SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask);
 	void SetText(MenuSysItem* item, const OEMCHAR *arg);
+	void RedrawItem(const MenuSysItem* item);
+	static void Draw(VRAMHDL dst, const RECT_T *rect, void *arg);
 };
 
 static MenuSys s_menusys;
@@ -490,17 +500,6 @@ static const MSYSITEM s_root[] =
 		{NULL,				NULL,		SID_CLOSE,		MENUS_CLOSE |
 														MENU_DELETED}};
 
-// ----
-
-static void draw(VRAMHDL dst, const RECT_T *rect, void *arg)
-{
-	MenuSys* sys = static_cast<MenuSys*>(arg);
-	for (MenuSys::iterator it = sys->begin(); it != sys->end(); ++it)
-	{
-		vrammix_cpy2(dst, rect, (*it)->m_vram, NULL, 2);
-	}
-}
-
 enum
 {
 	MEXIST_SYS		= 0x01,
@@ -509,14 +508,114 @@ enum
 	MEXIST_ITEM		= 0x08
 };
 
-BRESULT MenuSys::OpenRootWnd()
+/**
+ * コンストラクタ
+ */
+MenuSys::MenuSys()
+	: m_root(NULL)
+	, m_icon(0)
+	, m_style(0)
+	, m_cmd(NULL)
+	, m_opened(0)
+	, m_popupx(0)
+	, m_popupy(0)
+{
+	memset(m_title, 0, sizeof(m_title));
+}
+
+static void defcmd(MENUID id)
+{
+	(void)id;
+}
+
+/**
+ * 作成
+ */
+bool MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
+{
+	if (cmd == NULL)
+	{
+		cmd = defcmd;
+	}
+
+	m_root = NULL;
+	m_icon = icon;
+	m_style = 0;
+	m_cmd = cmd;
+	m_opened = 0;
+	m_popupx = 0;
+	m_popupy = 0;
+	memset(m_title, 0, sizeof(m_title));
+
+	if (title)
+	{
+		milstr_ncpy(m_title, title, NELEMENTS(m_title));
+	}
+
+	m_root = new MenuSysWnd();
+	m_root->Append(s_root);
+	m_root->Append(item);
+	return true;
+}
+
+void MenuSys::Destroy()
 {
 	Close();
 
-	UINT rootflg = 0;
+	delete m_root;
+	m_root = NULL;
+}
+
+/**
+ * オープンする
+ */
+bool MenuSys::Open(int x, int y)
+{
+	if (menubase_open(1) != SUCCESS)
+	{
+		goto msopn_err;
+	}
+	m_opened = 0;
+	if (!OpenRootWnd())
+	{
+		goto msopn_err;
+	}
+	m_popupx = x;
+	m_popupy = y;
+	m_opened = OpenPopup();
+	menubase_draw(Draw, this);
+	return true;
+
+msopn_err:
+	menubase_close();
+	return false;
+}
+
+/**
+ * 閉じる
+ */
+void MenuSys::Close()
+{
+	for (iterator it = begin(); it != end(); ++it)
+	{
+		(*it)->Close();
+	}
+	clear();
+}
+
+/**
+ * ルート ウィンドウを開く
+ * @retval true 成功
+ * @retval false 失敗
+ */
+bool MenuSys::OpenRootWnd()
+{
+	Close();
+
 	MenuSysWnd* wnd = m_root;
 
 	// メニュー内容を調べる。
+	UINT rootflg = 0;
 	for (MenuSysWnd::const_iterator it = wnd->begin(); it != wnd->end(); ++it)
 	{
 		if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
@@ -563,7 +662,7 @@ BRESULT MenuSys::OpenRootWnd()
 	wnd->m_vram = vram;
 	if (vram == NULL)
 	{
-		return FAILURE;
+		return false;
 	}
 	if (m_style & MENUSTYLE_BOTTOM)
 	{
@@ -636,37 +735,24 @@ BRESULT MenuSys::OpenRootWnd()
 			}
 		}
 	}
-	return SUCCESS;
+	return true;
 }
 
-BRESULT MenuSys::OpenChild(int depth, int pos)
+/**
+ * 子ウィンドウを開く
+ * @param[in] wnd ウィンドウ
+ * @retval true 成功
+ * @retval false 失敗
+ */
+bool MenuSys::OpenChild(const MenuSysWnd* wnd, int pos)
 {
-	MenuSysWnd* _wnd = at(depth);
-	MenuSysItem* item = _wnd->GetAt(pos);
+	MenuSysItem* item = wnd->GetAt(pos);
 	if ((item == NULL) || (item->child == NULL))
 	{
 		TRACEOUT(("child not found."));
-		return FAILURE;
+		return false;
 	}
 
-	RECT_T parent;
-	int dir;
-	if ((item->flag & MENUS_CTRLMASK) == MENUS_POPUP)
-	{
-		parent.left = m_popupx;
-		parent.top = max(m_popupy, _wnd->m_vram->height);
-		parent.right = parent.left;
-		parent.bottom = parent.top;
-		dir = 0;
-	}
-	else
-	{
-		parent.left = _wnd->m_vram->posx + item->rct.left;
-		parent.top = _wnd->m_vram->posy + item->rct.top;
-		parent.right = _wnd->m_vram->posx + item->rct.right;
-		parent.bottom = _wnd->m_vram->posy + item->rct.bottom;
-		dir = depth + 1;
-	}
 	int width = 0;
 	int height = (MENU_FBORDER + MENU_BORDER);
 
@@ -714,34 +800,49 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 	if (childWnd->m_vram == NULL)
 	{
 		TRACEOUT(("sub menu vram couldn't create"));
-		return FAILURE;
+		return false;
 	}
 
-
-	if (dir == 1)
+	RECT_T parent;
+	if ((item->flag & MENUS_CTRLMASK) == MENUS_POPUP)
 	{
-		if ((parent.top < height) || (parent.bottom < (g_menubase.height - height)))
+		parent.left = m_popupx;
+		parent.top = max(m_popupy, wnd->m_vram->height);
+		parent.right = parent.left;
+		parent.bottom = parent.top;
+	}
+	else
+	{
+		parent.left = wnd->m_vram->posx + item->rct.left;
+		parent.top = wnd->m_vram->posy + item->rct.top;
+		parent.right = wnd->m_vram->posx + item->rct.right;
+		parent.bottom = wnd->m_vram->posy + item->rct.bottom;
+
+		if (wnd == m_root)
 		{
-			parent.top = parent.bottom;
+			if ((parent.top < height) || (parent.bottom < (g_menubase.height - height)))
+			{
+				parent.top = parent.bottom;
+			}
+			else
+			{
+				parent.top -= height;
+			}
 		}
 		else
 		{
-			parent.top -= height;
-		}
-	}
-	else if (dir >= 2)
-	{
-		if ((parent.left < width) || (parent.right < (g_menubase.width - width)))
-		{
-			parent.left = parent.right;
-		}
-		else
-		{
-			parent.left -= width;
-		}
-		if ((parent.top > (g_menubase.height - height)) && (parent.bottom >= height))
-		{
-			parent.top = parent.bottom - height;
+			if ((parent.left < width) || (parent.right < (g_menubase.width - width)))
+			{
+				parent.left = parent.right;
+			}
+			else
+			{
+				parent.left -= width;
+			}
+			if ((parent.top > (g_menubase.height - height)) && (parent.bottom >= height))
+			{
+				parent.top = parent.bottom - height;
+			}
 		}
 	}
 	childWnd->m_vram->posx = min(parent.left, g_menubase.width - width);
@@ -759,9 +860,12 @@ BRESULT MenuSys::OpenChild(int depth, int pos)
 		}
 	}
 	menubase_setrect(childWnd->m_vram, NULL);
-	return SUCCESS;
+	return true;
 }
 
+/**
+ * ポップアップを開く
+ */
 int MenuSys::OpenPopup()
 {
 	if (size() == 1)
@@ -773,8 +877,9 @@ int MenuSys::OpenPopup()
 			{
 				if ((it->flag & MENUS_CTRLMASK) == MENUS_POPUP)
 				{
-					at(0)->m_focus = pos;
-					OpenChild(0, pos);
+					MenuSysWnd* wnd = back();
+					wnd->m_focus = pos;
+					OpenChild(wnd, pos);
 					return 1;
 				}
 			}
@@ -784,198 +889,55 @@ int MenuSys::OpenPopup()
 	return 0;
 }
 
-void MenuSys::CloseWnd(int depth)
+/**
+ * 子を閉じる
+ * @param[in] wnd 対象のウィンドウ
+ */
+void MenuSys::CloseChild(const MenuSysWnd* wnd)
 {
-	while (size() > (unsigned int)depth)
+	iterator it = begin();
+	while (it != end())
 	{
-		MenuSysWnd* wnd = back();
-		pop_back();
-		wnd->Close();
+		MenuSysWnd* p = *it;
+		++it;
+		if (p == wnd)
+		{
+			break;
+		}
+	}
+
+	// 子を閉じる
+	while (it != end())
+	{
+		(*it)->Close();
+		it = erase(it);
 	}
 }
 
-
-
-// ----
-
-struct MENUPOS
+/**
+ * 
+ */
+MenuSysWnd* MenuSys::GetWnd(int x, int y) const
 {
-	int		depth;
-	int		pos;
-	MenuSysWnd* wnd;
-	MenuSysItem* menu;
-};
-
-MenuSysWnd* MenuSys::GetWnd(int x, int y)
-{
-	for (reverse_iterator it = rbegin(); it != rend(); ++it)
+	for (const_reverse_iterator it = rbegin(); it != rend(); ++it)
 	{
-		MenuSysWnd* wnd = *it;
+		const MenuSysWnd* wnd = *it;
 		if (wnd->m_vram)
 		{
 			RECT_T rct;
 			vram_getrect(wnd->m_vram, &rct);
 			if (rect_in(&rct, x, y))
 			{
-				return wnd;
+				return const_cast<MenuSysWnd*>(wnd);
 			}
 		}
 	}
 	return NULL;
 }
 
-static void getposinfo(MenuSys *sys, MENUPOS *pos, int x, int y)
-{
-	int cnt = sys->size();
-	while (cnt--)
-	{
-		MenuSysWnd* wnd = sys->at(cnt);
-		if (wnd->m_vram)
-		{
-			RECT_T rct;
-			vram_getrect(wnd->m_vram, &rct);
-			if (rect_in(&rct, x, y))
-			{
-				x -= wnd->m_vram->posx;
-				y -= wnd->m_vram->posy;
-				break;
-			}
-		}
-	}
-	if (cnt >= 0)
-	{
-		MenuSysWnd* w = sys->at(cnt);
-		pos->depth = cnt;
-		pos->wnd = w;
-		cnt = 0;
-		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
-		{
-			if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
-			{
-				if (rect_in(&it->rct, x, y))
-				{
-					pos->pos = cnt;
-					pos->menu = &*it;
-					return;
-				}
-			}
-			cnt++;
-		}
-	}
-	else
-	{
-		pos->depth = -1;
-		pos->wnd = NULL;
-	}
-	pos->pos = -1;
-	pos->menu = NULL;
-}
-
-
-// ----
-
-/**
- * コンストラクタ
- */
-MenuSys::MenuSys()
-	: m_root(NULL)
-	, m_icon(0)
-	, m_style(0)
-	, m_cmd(NULL)
-	, m_opened(0)
-	, m_popupx(0)
-	, m_popupy(0)
-{
-	memset(m_title, 0, sizeof(m_title));
-}
-
-static void defcmd(MENUID id)
-{
-	(void)id;
-}
-
-/**
- * 作成
- */
-BRESULT MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
-{
-	if (cmd == NULL)
-	{
-		cmd = defcmd;
-	}
-
-	m_root = NULL;
-	m_icon = icon;
-	m_style = 0;
-	m_cmd = cmd;
-	m_opened = 0;
-	m_popupx = 0;
-	m_popupy = 0;
-	memset(m_title, 0, sizeof(m_title));
-
-	if (title)
-	{
-		milstr_ncpy(m_title, title, NELEMENTS(m_title));
-	}
-
-	m_root = new MenuSysWnd();
-	m_root->Append(s_root);
-	m_root->Append(item);
-	return SUCCESS;
-}
-
-void MenuSys::Destroy()
-{
-	Close();
-
-	delete m_root;
-	m_root = NULL;
-}
-
-/**
- * オープンする
- */
-BRESULT MenuSys::Open(int x, int y)
-{
-	if (menubase_open(1) != SUCCESS)
-	{
-		goto msopn_err;
-	}
-	m_opened = 0;
-	if (OpenRootWnd() != SUCCESS)
-	{
-		goto msopn_err;
-	}
-	m_popupx = x;
-	m_popupy = y;
-	m_opened = OpenPopup();
-	menubase_draw(draw, this);
-	return SUCCESS;
-
-msopn_err:
-	menubase_close();
-	return FAILURE;
-}
-
-/**
- * 閉じる
- */
-void MenuSys::Close()
-{
-	for (iterator it = begin(); it != end(); ++it)
-	{
-		(*it)->Close();
-	}
-	clear();
-}
-
 void MenuSys::Moving(int x, int y, int btn)
 {
-	MENUPOS cur;
-	getposinfo(this, &cur, x, y);
-
-
-	MenuSysWnd* wnd = cur.wnd;
+	MenuSysWnd* wnd = GetWnd(x, y);
 	if (wnd == NULL)
 	{
 		/* メニューを閉じる～ */
@@ -986,25 +948,27 @@ void MenuSys::Moving(int x, int y, int btn)
 		}
 	}
 
-	MenuSysItem* item = cur.menu;
+	MenuSysItem* item = NULL;
+	if (wnd)
+	{
+		item = wnd->GetItem(x, y);
+	}
 	if (item != NULL)
 	{
-		if (wnd->m_focus != cur.pos)
+		const int pos = wnd->GetIndex(item);
+		if (wnd->m_focus != pos)
 		{
 			if (m_opened)
 			{
-				if (wnd != back())
-				{
-					CloseWnd(cur.depth + 1);
-				}
+				CloseChild(wnd);
 				if ((!(item->flag & MENU_GRAY)) && (item->child != NULL))
 				{
-					OpenChild(cur.depth, cur.pos);
+					OpenChild(wnd, pos);
 				}
 			}
 			wnd->DrawItem(wnd->m_focus, 0);
-			wnd->DrawItem(cur.pos, 2 - m_opened);
-			wnd->m_focus = cur.pos;
+			wnd->DrawItem(item, 2 - m_opened);
+			wnd->m_focus = pos;
 		}
 		if (!(item->flag & MENU_GRAY))
 		{
@@ -1012,9 +976,9 @@ void MenuSys::Moving(int x, int y, int btn)
 			{
 				if ((!m_opened) && (wnd == m_root) && (item->child != NULL))
 				{
-					CloseWnd(1);
-					wnd->DrawItem(cur.pos, 1);
-					OpenChild(0, cur.pos);
+					CloseChild(wnd);
+					wnd->DrawItem(item, 1);
+					OpenChild(wnd, pos);
 					m_opened = 1;
 				}
 			}
@@ -1033,7 +997,7 @@ void MenuSys::Moving(int x, int y, int btn)
 	{
 		if ((btn == 1) && (wnd == m_root))
 		{
-			CloseWnd(1);
+			CloseChild(wnd);
 			wnd->DrawItem(wnd->m_focus, 0);
 			m_opened = OpenPopup();
 		}
@@ -1047,12 +1011,11 @@ void MenuSys::Moving(int x, int y, int btn)
 			}
 		}
 	}
-	menubase_draw(draw, this);
+	menubase_draw(Draw, this);
 }
 
-void MenuSys::FocusMove(int depth, int dir)
+void MenuSys::FocusMove(MenuSysWnd* wnd, int dir)
 {
-	MenuSysWnd* wnd = at(depth);
 	MenuSysItem* target = NULL;
 	int tarpos = 0;
 	int pos = 0;
@@ -1102,115 +1065,117 @@ void MenuSys::FocusMove(int depth, int dir)
 	wnd->DrawItem(tarpos, 2 - m_opened);
 	wnd->m_focus = tarpos;
 //	TRACEOUT(("focus = %d", tarpos));
-	if (depth == 0)
+	if (wnd == m_root)
 	{
 		if (m_opened)
 		{
-			CloseWnd(1);
-			OpenChild(0, tarpos);
+			CloseChild(wnd);
+			OpenChild(wnd, tarpos);
 		}
 	}
 	else
 	{
-		if (depth != (size() - 1))
-		{
-			CloseWnd(depth + 1);
-		}
+		CloseChild(wnd);
 	}
 }
 
-void MenuSys::FocusEnter(int depth, bool exec)
+void MenuSys::FocusEnter(MenuSysWnd* wnd, bool exec)
 {
-	MenuSysWnd* wnd = at(depth);
-	MenuSysItem* menu = wnd->GetAt(wnd->m_focus);
-	if ((menu) && (!(menu->flag & MENU_GRAY)) && (menu->child != NULL))
+	MenuSysItem* item = wnd->GetAt(wnd->m_focus);
+	if ((item) && (!(item->flag & MENU_GRAY)) && (item->child != NULL))
 	{
-		if (depth == 0)
+		if (wnd == m_root)
 		{
-			CloseWnd(1);
+			CloseChild(wnd);
 			wnd->DrawItem(wnd->m_focus, 1);
 			m_opened = 1;
 		}
-		OpenChild(depth, wnd->m_focus);
+		OpenChild(wnd, wnd->m_focus);
 	}
 	else if (exec)
 	{
-		if ((menu) && (menu->id))
+		if ((item) && (item->id))
 		{
 			menubase_close();
-			(*m_cmd)(menu->id);
+			(*m_cmd)(item->id);
 		}
 	}
 	else
 	{
-		FocusMove(0, 1);
+		FocusMove(m_root, 1);
 	}
 }
 
+/**
+ * キー イベント
+ * @param[in] key キー
+ */
 void MenuSys::Key(UINT key)
 {
-	int topwnd = size() - 1;
-	if (topwnd == 0)
+	if (empty())
+	{
+		return;
+	}
+
+	MenuSysWnd* wnd = back();
+	if (wnd == m_root)
 	{
 		if (key & KEY_LEFT)
 		{
-			FocusMove(0, -1);
+			FocusMove(wnd, -1);
 		}
 		if (key & KEY_RIGHT)
 		{
-			FocusMove(0, 1);
+			FocusMove(wnd, 1);
 		}
 		if (key & KEY_DOWN)
 		{
-			FocusEnter(0, false);
+			FocusEnter(wnd, false);
 		}
 		if (key & KEY_ENTER)
 		{
-			FocusEnter(0, true);
+			FocusEnter(wnd, true);
 		}
 	}
 	else
 	{
 		if (key & KEY_UP)
 		{
-			FocusMove(topwnd, -1);
+			FocusMove(wnd, -1);
 		}
 		if (key & KEY_DOWN)
 		{
-			FocusMove(topwnd, 1);
+			FocusMove(wnd, 1);
 		}
 		if (key & KEY_LEFT)
 		{
-			if (topwnd >= 2)
+			if (size() > 2)
 			{
-				CloseWnd(topwnd);
+				CloseChild(wnd->GetParent());
 			}
 			else
 			{
-				FocusMove(0, -1);
+				FocusMove(m_root, -1);
 			}
 		}
 		if (key & KEY_RIGHT)
 		{
-			FocusEnter(topwnd, false);
+			FocusEnter(wnd, false);
 		}
 		if (key & KEY_ENTER)
 		{
-			FocusEnter(topwnd, true);
+			FocusEnter(wnd, true);
 		}
 	}
-	menubase_draw(draw, this);
+	menubase_draw(Draw, this);
 }
 
 
-// ----
-
+/**
+ * フラグ変更
+ */
 void MenuSys::SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask)
 {
-	if (item == NULL)
-	{
-		return;
-	}
 	flag ^= item->flag;
 	flag &= mask;
 	if (!flag)
@@ -1218,71 +1183,54 @@ void MenuSys::SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask)
 		return;
 	}
 	item->flag ^= flag;
-
-	// リドローが必要？
-	unsigned int depth = 0;
-	while (depth < size())
-	{
-		MenuSysWnd* w = at(depth);
-		int pos = 0;
-		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
-		{
-			if (it->id == item->id)
-			{
-				if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
-				{
-					int focus = 0;
-					if (w->m_focus == pos)
-					{
-						focus = 2 - m_opened;
-					}
-					w->DrawItem(pos, focus);
-					menubase_draw(draw, this);
-					return;
-				}
-			}
-			pos++;
-		}
-		depth++;
-	}
+	RedrawItem(item);
 }
 
+/**
+ * テキスト変更
+ */
 void MenuSys::SetText(MenuSysItem* item, const OEMCHAR *arg)
 {
-	if (item == NULL)
-	{
-		return;
-	}
 	item->SetText(arg);
 
-	// リドローが必要？ (ToDo: 再オープンすべし)
-	unsigned int depth = 0;
-	while (depth < size())
+	// リドローが必要？ (ToDo: テキストの長さが変わるので 再オープンすべし)
+	RedrawItem(item);
+}
+
+/**
+ * アイテムの再描画
+ * @param[in] item 再描画アイテム
+ */
+void MenuSys::RedrawItem(const MenuSysItem* item)
+{
+	for (iterator it = begin(); it != end(); ++it)
 	{
-		MenuSysWnd* w = at(depth);
-		int pos = 0;
-		for (MenuSysWnd::iterator it = w->begin(); it != w->end(); ++it)
+		MenuSysWnd* wnd = *it;
+		const int pos = wnd->GetIndex(item);
+		if (pos >= 0)
 		{
-			if (it->id == item->id)
+			if (!(item->flag & (MENU_DISABLE | MENU_SEPARATOR)))
 			{
-				if (!(it->flag & (MENU_DISABLE | MENU_SEPARATOR)))
+				int focus = 0;
+				if (wnd->m_focus == pos)
 				{
-					int focus = 0;
-					if (w->m_focus == pos)
-					{
-						focus = 2 - m_opened;
-					}
-					w->DrawItem(pos, focus);
-					menubase_draw(draw, this);
-					return;
+					focus = 2 - m_opened;
 				}
+				wnd->DrawItem(item, focus);
+				menubase_draw(Draw, this);
+				return;
 			}
-			pos++;
 		}
-		depth++;
 	}
 }
 
+/**
+ * メッセージ
+ * @param[in] ctrl コントロール コード
+ * @param[in] id ID
+ * @param[in] arg パラメタ
+ * @return リザルト コード
+ */
 INTPTR MenuSys::Send(int ctrl, MENUID id, INTPTR arg)
 {
 	MenuSysItem* item = m_root->GetItem(id);
@@ -1330,17 +1278,32 @@ INTPTR MenuSys::Send(int ctrl, MENUID id, INTPTR arg)
 
 /**
  * スタイルの設定
+ * @param[in] style スタイル
  */
 void MenuSys::SetStyle(UINT16 style)
 {
 	m_style = style;
 }
 
+/**
+ * 描画する
+ */
+void MenuSys::Draw(VRAMHDL dst, const RECT_T *rect, void *arg)
+{
+	MenuSys* sys = static_cast<MenuSys*>(arg);
+	for (MenuSys::iterator it = sys->begin(); it != sys->end(); ++it)
+	{
+		vrammix_cpy2(dst, rect, (*it)->m_vram, NULL, 2);
+	}
+}
+
+
+
 // ----
 
 BRESULT menusys_create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
 {
-	return s_menusys.Create(item, cmd, icon, title);
+	return s_menusys.Create(item, cmd, icon, title) ? SUCCESS : FAILURE;
 }
 
 void menusys_destroy(void)
@@ -1350,7 +1313,7 @@ void menusys_destroy(void)
 
 BRESULT menusys_open(int x, int y)
 {
-	return s_menusys.Open(x, y);
+	return s_menusys.Open(x, y) ? SUCCESS : FAILURE;
 }
 
 void menusys_close(void)
