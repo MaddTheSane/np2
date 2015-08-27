@@ -80,7 +80,7 @@ public:
 	virtual void OnRelease(int focus);
 	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
-protected:
+public:
 	int Send(int msg, long param = 0);
 	VRAMHDL GetVram();
 	void Invalidate();
@@ -514,7 +514,7 @@ public:
 	virtual void OnPaint();
 	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
-public:
+protected:
 	void DrawText(const POINT_T& pt);
 };
 
@@ -647,78 +647,11 @@ void MenuDlgItemText::DrawText(const POINT_T& pt)
 	}
 }
 
-#if 0
-static void dlgtext_itemset(MENUDLG dlg, DLGHDL hdl, const OEMCHAR *str) {
-
-	if (hdl->prm) {
-		if (str == NULL) {
-			str = str_null;
-		}
-		milstr_ncpy(hdl->prm->str, str, NELEMENTS(hdl->prm->str));
-		fontmng_getsize(hdl->c.dt.font, str, &hdl->c.dt.pt);
-	}
-	(void)dlg;
-}
-
-static void dlgtext_iconset(MENUDLG dlg, DLGHDL hdl, UINT arg) {
-
-	if (hdl->prm) {
-		resattachicon(dlg, hdl->prm, (UINT16)arg, hdl->c.dt.pt.y, hdl->c.dt.pt.y);
-	}
-	(void)dlg;
-}
-#endif
 
 
-static void dlg_text(MENUDLG dlg, DLGHDL hdl, const POINT_T *pt, const RECT_T *rect)
-{
-	if (hdl->prm == NULL)
-	{
-		return;
-	}
-	POINT_T fp = *pt;
-	VRAMHDL icon = hdl->prm->icon;
-	if (icon)
-	{
-		if (icon->alpha)
-		{
-			vramcpy_cpyex(dlg->m_vram, &fp, icon, NULL);
-		}
-		else {
-			vramcpy_cpy(dlg->m_vram, &fp, icon, NULL);
-		}
-		fp.x += icon->width;
-#if defined(SIZE_QVGA)
-		fp.x += 1;
-#else
-		fp.x += 2;
-#endif
-	}
-
-	const OEMCHAR* string = hdl->prm->str;
-	if (string)
-	{
-		int color;
-		if (!(hdl->m_flag & MENU_GRAY))
-		{
-			color = MVC_TEXT;
-		}
-		else
-		{
-			POINT_T p;
-			p.x = fp.x + MENU_DSTEXT;
-			p.y = fp.y + MENU_DSTEXT;
-			vrammix_text(dlg->m_vram, hdl->c.dt.font, string, menucolor[MVC_GRAYTEXT2], &p, rect);
-			color = MVC_GRAYTEXT1;
-		}
-		vrammix_text(dlg->m_vram, hdl->c.dt.font, string, menucolor[color], &fp, rect);
-	}
-}
-
-
-
-// ---- button
-
+/**
+ * @brief ƒ{ƒ^ƒ“
+ */
 class MenuDlgItemButton : public MenuDlgItemText
 {
 public:
@@ -752,7 +685,7 @@ public:
 				pt.x += MENU_DSTEXT;
 				pt.y += MENU_DSTEXT;
 			}
-			dlg_text(m_pParent, this, &pt, &m_rect);
+			DrawText(pt);
 		}
 	}
 
@@ -780,7 +713,7 @@ public:
 		}
 		if (focus)
 		{
-			(*m_pParent->m_proc)(DLGMSG_COMMAND, m_id, 0);
+			Send(DLGMSG_COMMAND);
 		}
 	}
 };
@@ -1333,288 +1266,305 @@ public:
 
 // ---- slider
 
-static void dlgslider_setflag(DLGHDL hdl) {
+class MenuDlgItemSlider : public MenuDlgItem
+{
+public:
+	MenuDlgItemSlider(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
 
-	int		size;
-	UINT	type;
+	virtual BRESULT OnCreate(const void *arg);
+	virtual void OnPaint();
+	virtual void OnSetValue(int val);
+	virtual void OnClick(int x, int y);
+	virtual void OnMove(int x, int y, int focus);
+	virtual void OnRelease(int focus);
+//	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
-	if (!(hdl->m_flag & MSS_VERT)) {
-		size = hdl->m_rect.bottom - hdl->m_rect.top;
+private:
+	void SetFlag();
+	int SetPos(int val);
+};
+
+MenuDlgItemSlider::MenuDlgItemSlider(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+	: MenuDlgItem(pParent, DLGTYPE_SLIDER, id, flg, rect)
+{
+}
+
+BRESULT MenuDlgItemSlider::OnCreate(const void *arg)
+{
+	this->c.ds.minval = (SINT16)(long)arg;
+	this->c.ds.maxval = (SINT16)((long)arg >> 16);
+	this->c.ds.moving = 0;
+	SetFlag();
+	this->c.ds.pos = SetPos(0);
+	return SUCCESS;
+}
+
+void MenuDlgItemSlider::SetFlag()
+{
+	int size;
+	if (!(m_flag & MSS_VERT))
+	{
+		size = m_rect.bottom - m_rect.top;
 	}
-	else {
-		size = hdl->m_rect.right - hdl->m_rect.left;
+	else
+	{
+		size = m_rect.right - m_rect.left;
 	}
-	if (size < 13) {
+
+	UINT type;
+	if (size < 13)
+	{
 		type = 0 + (9 << 8) + (5 << 16);
 	}
-	else if (size < 21) {
+	else if (size < 21)
+	{
 		type = 1 + (13 << 8) + (7 << 16);
 	}
-	else {
+	else
+	{
 		type = 2 + (21 << 8) + (11 << 16);
 	}
-	hdl->c.ds.type = (UINT8)type;
-	if (!(hdl->m_flag & MSS_VERT)) {
-		hdl->c.ds.sldh = (UINT8)(type >> 16);
-		hdl->c.ds.sldv = (UINT8)(type >> 8);
+	this->c.ds.type = (UINT8)type;
+	if (!(m_flag & MSS_VERT))
+	{
+		this->c.ds.sldh = (UINT8)(type >> 16);
+		this->c.ds.sldv = (UINT8)(type >> 8);
 	}
-	else {
-		hdl->c.ds.sldh = (UINT8)(type >> 8);
-		hdl->c.ds.sldv = (UINT8)(type >> 16);
+	else
+	{
+		this->c.ds.sldh = (UINT8)(type >> 8);
+		this->c.ds.sldv = (UINT8)(type >> 16);
 	}
 }
 
-static int dlgslider_setpos(DLGHDL hdl, int val) {
+void MenuDlgItemSlider::OnPaint()
+{
+	VRAMHDL vram = GetVram();
+	vram_filldat(vram, &m_rect, menucolor[MVC_STATIC]);
 
-	int		range;
-	int		width;
-	int		dir;
-
-	range = hdl->c.ds.maxval - hdl->c.ds.minval;
-	if (range) {
-		dir = (range > 0)?1:-1;
-		val -= hdl->c.ds.minval;
-		val *= dir;
-		range *= dir;
-		if (val < 0) {
-			val = 0;
-		}
-		else if (val >= range) {
-			val = range;
-		}
-		hdl->m_nValue = hdl->c.ds.minval + (val * dir);
-		if (!(hdl->m_flag & MSS_VERT)) {
-			width = hdl->m_rect.right - hdl->m_rect.left;
-			width -= hdl->c.ds.sldh;
-		}
-		else {
-			width = hdl->m_rect.bottom - hdl->m_rect.top;
-			width -= hdl->c.ds.sldv;
-		}
-		if ((width > 0) || (range)) {
-			val *= width;
-			val /= range;
-		}
-		else {
-			val = 0;
-		}
-	}
-	else {
-		val = 0;
-	}
-	return(val);
-}
-
-static BRESULT _dlgslider_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
-
-	hdl->c.ds.minval = (SINT16)(long)arg;
-	hdl->c.ds.maxval = (SINT16)((long)arg >> 16);
-	hdl->c.ds.moving = 0;
-	dlgslider_setflag(hdl);
-	hdl->c.ds.pos = dlgslider_setpos(hdl, 0);
-	(void)dlg;
-	return(SUCCESS);
-}
-
-static void _dlgslider_paint(MENUDLG dlg, DLGHDL hdl) {
-
-	UINT		flag;
-	int			ptr;
-	RECT_U		rct;
-	POINT_T		pt;
-	MENURES2	src;
-
-	flag = hdl->m_flag;
-	switch(flag & MSS_POSMASK) {
+	int ptr;
+	switch (m_flag & MSS_POSMASK)
+	{
 		case MSS_BOTH:
 			ptr = 1;
 			break;
+
 		case MSS_TOP:
 			ptr = 2;
 			break;
+
 		default:
 			ptr = 0;
 			break;
 	}
-	vram_filldat(dlg->m_vram, &hdl->m_rect, menucolor[MVC_STATIC]);
-	if (!(hdl->m_flag & MSS_VERT)) {
-		rct.r.left = hdl->m_rect.left;
-		rct.r.right = hdl->m_rect.right;
-		rct.r.top = hdl->m_rect.top + ptr +
-									(hdl->c.ds.sldv / 2) - (MENU_LINE * 2);
+
+	POINT_T pt;
+	if (!(m_flag & MSS_VERT))
+	{
+		RECT_U rct;
+		rct.r.left = m_rect.left;
+		rct.r.right = m_rect.right;
+		rct.r.top = m_rect.top + ptr + (this->c.ds.sldv / 2) - (MENU_LINE * 2);
 		rct.r.bottom = rct.r.top + (MENU_LINE * 4);
-		menuvram_box2(dlg->m_vram, &rct.r,
-						MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
-		pt.x = hdl->m_rect.left + hdl->c.ds.pos;
-		pt.y = hdl->m_rect.top;
+		menuvram_box2(vram, &rct.r, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
+		pt.x = m_rect.left + this->c.ds.pos;
+		pt.y = m_rect.top;
 	}
-	else {
-		rct.r.left = hdl->m_rect.left + ptr +
-									(hdl->c.ds.sldh / 2) - (MENU_LINE * 2);
+	else
+	{
+		RECT_U rct;
+		rct.r.left = m_rect.left + ptr + (this->c.ds.sldh / 2) - (MENU_LINE * 2);
 		rct.r.right = rct.r.left + (MENU_LINE * 4);
-		rct.r.top = hdl->m_rect.top;
-		rct.r.bottom = hdl->m_rect.bottom;
-		menuvram_box2(dlg->m_vram, &rct.r,
-						MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
-		pt.x = hdl->m_rect.left;
-		pt.y = hdl->m_rect.top + hdl->c.ds.pos;
+		rct.r.top = m_rect.top;
+		rct.r.bottom = m_rect.bottom;
+		menuvram_box2(vram, &rct.r, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
+		pt.x = m_rect.left;
+		pt.y = m_rect.top + this->c.ds.pos;
 		ptr += 3;
 	}
 	ptr *= 2;
-	if ((hdl->m_flag & MENU_GRAY) || (hdl->c.ds.moving)) {
+	if ((m_flag & MENU_GRAY) || (this->c.ds.moving))
+	{
 		ptr++;
 	}
-	src.width = hdl->c.ds.sldh;
-	src.height = hdl->c.ds.sldv;
-	src.pat = menures_slddat + menures_sldpos[hdl->c.ds.type][ptr];
-	menuvram_res2put(dlg->m_vram, &src, &pt);
+
+	MENURES2 src;
+	src.width = this->c.ds.sldh;
+	src.height = this->c.ds.sldv;
+	src.pat = menures_slddat + menures_sldpos[this->c.ds.type][ptr];
+	menuvram_res2put(vram, &src, &pt);
 }
 
-static void _dlgslider_setval(MENUDLG dlg, DLGHDL hdl, int val) {
-
-	int		pos;
-
-	pos = dlgslider_setpos(hdl, val);
-	if (hdl->c.ds.pos != pos) {
-		hdl->c.ds.pos = pos;
-		drawctrls(dlg, hdl);
+void MenuDlgItemSlider::OnSetValue(int val)
+{
+	int pos = SetPos(val);
+	if (this->c.ds.pos != pos)
+	{
+		this->c.ds.pos = pos;
+		Invalidate();
 	}
 }
 
-static void _dlgslider_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
+int MenuDlgItemSlider::SetPos(int val)
+{
+	int range = this->c.ds.maxval - this->c.ds.minval;
+	if (range)
+	{
+		int dir = (range > 0) ? 1 : -1;
+		val -= this->c.ds.minval;
+		val *= dir;
+		range *= dir;
+		if (val < 0)
+		{
+			val = 0;
+		}
+		else if (val >= range)
+		{
+			val = range;
+		}
+		m_nValue = this->c.ds.minval + (val * dir);
 
-	int		width;
-	int		range;
-	int		dir;
-
-	if (!(hdl->m_flag & MSS_VERT)) {
-		width = hdl->c.ds.sldh;
+		int width;
+		if (!(m_flag & MSS_VERT))
+		{
+			width = this->m_rect.right - this->m_rect.left;
+			width -= this->c.ds.sldh;
+		}
+		else {
+			width = this->m_rect.bottom - this->m_rect.top;
+			width -= this->c.ds.sldv;
+		}
+		if ((width > 0) || (range))
+		{
+			val *= width;
+			val /= range;
+		}
+		else
+		{
+			val = 0;
+		}
 	}
-	else {
-		width = hdl->c.ds.sldv;
+	else
+	{
+		val = 0;
+	}
+	return val;
+}
+
+void MenuDlgItemSlider::OnClick(int x, int y)
+{
+	int width;
+	if (!(m_flag & MSS_VERT))
+	{
+		width = this->c.ds.sldh;
+	}
+	else
+	{
+		width = this->c.ds.sldv;
 		x = y;
 	}
-	x -= hdl->c.ds.pos;
-	if ((x >= -1) && (x <= width)) {
-		dlg->m_dragflg = x;
-		hdl->c.ds.moving = 1;
-		drawctrls(dlg, hdl);
+	x -= this->c.ds.pos;
+	if ((x >= -1) && (x <= width))
+	{
+		m_pParent->m_dragflg = x;
+		this->c.ds.moving = 1;
+		Invalidate();
 	}
 	else {
-		dlg->m_dragflg = -1;
-		dir = (x > 0)?1:0;
-		range = hdl->c.ds.maxval - hdl->c.ds.minval;
-		if (range < 0) {
+		m_pParent->m_dragflg = -1;
+		int dir = (x > 0) ? 1 : 0;
+		int range = this->c.ds.maxval - this->c.ds.minval;
+		if (range < 0)
+		{
 			range = 0 - range;
 			dir ^= 1;
 		}
-		if (range < 16) {
+		if (range < 16)
+		{
 			range = 16;
 		}
 		range >>= 4;
-		if (!dir) {
+		if (!dir)
+		{
 			range = 0 - range;
 		}
-		_dlgslider_setval(dlg, hdl, hdl->m_nValue + range);
-		(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
+		OnSetValue(m_nValue + range);
+		Send(DLGMSG_COMMAND);
 	}
 }
 
-static void _dlgslider_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
-
-	int		range;
-	int		width;
-	int		dir;
-
-	if (hdl->c.ds.moving) {
-		range = hdl->c.ds.maxval - hdl->c.ds.minval;
-		if (range) {
-			dir = (range > 0)?1:-1;
+void MenuDlgItemSlider::OnMove(int x, int y, int focus)
+{
+	if (this->c.ds.moving)
+	{
+		int range = this->c.ds.maxval - this->c.ds.minval;
+		if (range)
+		{
+			int dir = (range > 0) ? 1 : -1;
 			range *= dir;
-			if (!(hdl->m_flag & MSS_VERT)) {
-				width = hdl->m_rect.right - hdl->m_rect.left;
-				width -= hdl->c.ds.sldh;
+			int width = 0;
+			if (!(m_flag & MSS_VERT))
+			{
+				width = m_rect.right - m_rect.left;
+				width -= this->c.ds.sldh;
 			}
-			else {
-				width = hdl->m_rect.bottom - hdl->m_rect.top;
-				width -= hdl->c.ds.sldv;
+			else
+			{
+				width = m_rect.bottom - m_rect.top;
+				width -= this->c.ds.sldv;
 				x = y;
 			}
-			x -= dlg->m_dragflg;
-			if ((x < 0) || (width <= 0)) {
+			x -= m_pParent->m_dragflg;
+			if ((x < 0) || (width <= 0))
+			{
 				x = 0;
 			}
-			else if (x >= width) {
+			else if (x >= width)
+			{
 				x = range;
 			}
-			else {
+			else
+			{
 				x *= range;
 				x += (width >> 1);
 				x /= width;
 			}
-			x = hdl->c.ds.minval + (x * dir);
-			_dlgslider_setval(dlg, hdl, x);
-			(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
+			x = this->c.ds.minval + (x * dir);
+			OnSetValue(x);
+			Send(DLGMSG_COMMAND);
 		}
 	}
-	(void)focus;
 }
 
-
-static void _dlgslider_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
-
-	if (hdl->c.ds.moving) {
-		hdl->c.ds.moving = 0;
-		drawctrls(dlg, hdl);
-	}
-	(void)focus;
-}
-
-
-class MenuDlgItemSlider : public MenuDlgItem
+void MenuDlgItemSlider::OnRelease(int focus)
 {
-public:
-	MenuDlgItemSlider(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
-		: MenuDlgItem(pParent, DLGTYPE_SLIDER, id, flg, rect)
+	if (this->c.ds.moving)
 	{
+		this->c.ds.moving = 0;
+		Invalidate();
 	}
+}
 
-	virtual BRESULT OnCreate(const void *arg)
-	{
-		return _dlgslider_create(m_pParent, this, arg);
-	}
-
-	virtual void OnPaint()
-	{
-		_dlgslider_paint(m_pParent, this);
-	}
-
-	virtual void OnSetValue(int val)
-	{
-		_dlgslider_setval(m_pParent, this, val);
-	}
-
-	virtual void OnClick(int x, int y)
-	{
-		_dlgslider_onclick(m_pParent, this, x, y);
-	}
-
-	virtual void OnMove(int x, int y, int focus)
-	{
-		_dlgslider_move(m_pParent, this, x, y, focus);
-	}
-
-	virtual void OnRelease(int focus)
-	{
-		_dlgslider_rel(m_pParent, this, focus);
-	}
-
-//	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
-
-};
 
 
 // ---- tablist
+
+class MenuDlgItemTabList : public MenuDlgItem
+{
+public:
+	MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
+
+	virtual BRESULT OnCreate(const void *arg);
+	virtual void OnPaint();
+	virtual void OnSetValue(int val);
+	virtual void OnClick(int x, int y);
+//	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
+};
+
+MenuDlgItemTabList::MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+	: MenuDlgItem(pParent, DLGTYPE_TABLIST, id, flg, rect)
+{
+}
 
 static FONTMNGH dlgtablist_setfont(DLGHDL hdl, FONTMNGH font) {
 
@@ -1638,114 +1588,96 @@ static FONTMNGH dlgtablist_setfont(DLGHDL hdl, FONTMNGH font) {
 	return(ret);
 }
 
-static BRESULT _dlgtablist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
-
-	RECT_T	rct;
-
-	rct.right = hdl->m_rect.right - hdl->m_rect.left;
-	hdl->m_nValue = -1;
-	dlgtablist_setfont(hdl, dlg->m_font);
-	(void)arg;
-	return(SUCCESS);
+BRESULT MenuDlgItemTabList::OnCreate(const void *arg)
+{
+	RECT_T rct;
+	rct.right = m_rect.right - m_rect.left;
+	m_nValue = -1;
+	dlgtablist_setfont(this, m_pParent->m_font);
+	return SUCCESS;
 }
 
-static void _dlgtablist_paint(MENUDLG dlg, DLGHDL hdl) {
-
-	VRAMHDL	dst;
-	DLGPRM	prm;
-	POINT_T	pt;
-	RECT_T	rct;
-	int		posx;
-	int		lx;
-	int		cnt;
-	int		tabey;
-	int		tabdy;
-
-	dst = dlg->m_vram;
-	rct = hdl->m_rect;
+void MenuDlgItemTabList::OnPaint()
+{
+	VRAMHDL dst = GetVram();
+	RECT_T rct = m_rect;
 	vram_filldat(dst, &rct, menucolor[MVC_STATIC]);
-	tabey = rct.top + hdl->c.dtl.fontsize +
-							MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB;
-	rct.top = tabey;
-	menuvram_box2(dst, &rct,
-						MVC4(MVC_HILIGHT, MVC_DARK, MVC_LIGHT, MVC_SHADOW));
 
-	posx = hdl->m_rect.left + (MENU_LINE * 2);
-	prm = hdl->prm;
-	cnt = hdl->m_nValue;
-	while(prm) {
-		if (cnt) {
+	int tabey = rct.top + this->c.dtl.fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB;
+	rct.top = tabey;
+	menuvram_box2(dst, &rct, MVC4(MVC_HILIGHT, MVC_DARK, MVC_LIGHT, MVC_SHADOW));
+
+	int posx = m_rect.left + (MENU_LINE * 2);
+	DLGPRM prm = this->prm;
+	int cnt = m_nValue;
+	while (prm)
+	{
+		if (cnt)
+		{
+			POINT_T pt;
 			pt.x = posx;
-			pt.y = hdl->m_rect.top + MENUDLG_SYTAB;
-			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2),
-														tabey, MVC_HILIGHT);
+			pt.y = m_rect.top + MENUDLG_SYTAB;
+			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2), tabey, MVC_HILIGHT);
 			pt.x += MENU_LINE;
-			menuvram_liney(dst, pt.x, pt.y + MENU_LINE,
-										pt.y + (MENU_LINE * 2), MVC_HILIGHT);
-			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2),
-														tabey, MVC_LIGHT);
+			menuvram_liney(dst, pt.x, pt.y + MENU_LINE, pt.y + (MENU_LINE * 2), MVC_HILIGHT);
+			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2), tabey, MVC_LIGHT);
 			pt.x += MENU_LINE;
-			lx = pt.x + prm->width + (MENUDLG_TXTAB * 2);
+			int lx = pt.x + prm->width + (MENUDLG_TXTAB * 2);
 			menuvram_linex(dst, pt.x, pt.y, lx, MVC_HILIGHT);
 			menuvram_linex(dst, pt.x, pt.y + MENU_LINE, lx, MVC_LIGHT);
 
-			menuvram_liney(dst, lx, pt.y + MENU_LINE,
-										pt.y + (MENU_LINE * 2), MVC_DARK);
-			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2),
-														tabey, MVC_SHADOW);
+			menuvram_liney(dst, lx, pt.y + MENU_LINE, pt.y + (MENU_LINE * 2), MVC_DARK);
+			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2), tabey, MVC_SHADOW);
 			lx++;
-			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2),
-														tabey, MVC_DARK);
+			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2), tabey, MVC_DARK);
 			pt.x += MENUDLG_TXTAB;
 			pt.y += MENUDLG_TYTAB;
-			vrammix_text(dst, hdl->c.dtl.font, prm->str,
-											menucolor[MVC_TEXT], &pt, NULL);
+			vrammix_text(dst, this->c.dtl.font, prm->str, menucolor[MVC_TEXT], &pt, NULL);
 		}
 		cnt--;
 		posx += prm->width + (MENU_LINE * 4) + (MENUDLG_TXTAB) * 2;
 		prm = prm->_next;
 	}
 
-	posx = hdl->m_rect.left;
-	prm = hdl->prm;
-	cnt = hdl->m_nValue;
-	while(prm) {
-		if (!cnt) {
+	posx = m_rect.left;
+	prm = this->prm;
+	cnt = m_nValue;
+	while (prm)
+	{
+		if (!cnt)
+		{
+			POINT_T pt;
 			pt.x = posx;
-			pt.y = hdl->m_rect.top;
-			if (posx == hdl->m_rect.left) {
+			pt.y = m_rect.top;
+
+			int tabdy;
+			if (posx == m_rect.left)
+			{
 				tabdy = tabey + 2;
 			}
-			else {
+			else
+			{
 				tabdy = tabey + 1;
-				menuvram_linex(dst, pt.x, tabdy,
-										pt.x + (MENU_LINE * 2), MVC_STATIC);
+				menuvram_linex(dst, pt.x, tabdy, pt.x + (MENU_LINE * 2), MVC_STATIC);
 			}
-			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2),
-														tabdy, MVC_HILIGHT);
+			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2), tabdy, MVC_HILIGHT);
 			pt.x += MENU_LINE;
-			menuvram_liney(dst, pt.x, pt.y + MENU_LINE,
-										pt.y + (MENU_LINE * 2), MVC_HILIGHT);
-			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2),
-														tabdy, MVC_LIGHT);
+			menuvram_liney(dst, pt.x, pt.y + MENU_LINE, pt.y + (MENU_LINE * 2), MVC_HILIGHT);
+			menuvram_liney(dst, pt.x, pt.y + (MENU_LINE * 2), tabdy, MVC_LIGHT);
 			pt.x += MENU_LINE;
-			lx = pt.x + prm->width + (MENU_LINE * 4) + (MENUDLG_TXTAB * 2);
+			int lx = pt.x + prm->width + (MENU_LINE * 4) + (MENUDLG_TXTAB * 2);
 			menuvram_linex(dst, pt.x, pt.y, lx, MVC_HILIGHT);
 			menuvram_linex(dst, pt.x, pt.y + MENU_LINE, lx, MVC_LIGHT);
 			menuvram_linex(dst, pt.x, tabey, lx, MVC_STATIC);
 			menuvram_linex(dst, pt.x, tabey + MENU_LINE, lx, MVC_STATIC);
 			tabdy = tabey + 1;
-			menuvram_liney(dst, lx, pt.y + MENU_LINE,
-										pt.y + (MENU_LINE * 2), MVC_DARK);
-			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2),
-														tabdy, MVC_SHADOW);
+			menuvram_liney(dst, lx, pt.y + MENU_LINE, pt.y + (MENU_LINE * 2), MVC_DARK);
+			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2), tabdy, MVC_SHADOW);
 			lx++;
-			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2),
-														tabdy, MVC_DARK);
+			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2), tabdy, MVC_DARK);
 			pt.x += MENUDLG_TXTAB + (MENU_LINE * 2);
 			pt.y += MENUDLG_TYTAB;
-			vrammix_text(dst, hdl->c.dtl.font, prm->str,
-											menucolor[MVC_TEXT], &pt, NULL);
+			vrammix_text(dst, this->c.dtl.font, prm->str, menucolor[MVC_TEXT], &pt, NULL);
 			break;
 		}
 		cnt--;
@@ -1754,12 +1686,12 @@ static void _dlgtablist_paint(MENUDLG dlg, DLGHDL hdl) {
 	}
 }
 
-static void _dlgtablist_setval(MENUDLG dlg, DLGHDL hdl, int val) {
-
-	if (hdl->m_nValue != val)
+void MenuDlgItemTabList::OnSetValue(int val)
+{
+	if (m_nValue != val)
 	{
-		hdl->m_nValue = val;
-		drawctrls(dlg, hdl);
+		m_nValue = val;
+		Invalidate();
 	}
 }
 
@@ -1782,24 +1714,24 @@ static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR *arg) {
 	}
 }
 
-static void _dlgtablist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
-
-	DLGPRM	prm;
-	int		pos;
-
-	if (y < (hdl->c.dtl.fontsize +
-							MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB)) {
-		pos = 0;
-		prm = hdl->prm;
-		while(prm) {
+void MenuDlgItemTabList::OnClick(int x, int y)
+{
+	if (y < (this->c.dtl.fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB))
+	{
+		int pos = 0;
+		DLGPRM prm = this->prm;
+		while (prm)
+		{
 			x -= (MENU_LINE * 4);
-			if (x < 0) {
+			if (x < 0)
+			{
 				break;
 			}
 			x -= prm->width + (MENUDLG_TXTAB * 2);
-			if (x < 0) {
-				_dlgtablist_setval(dlg, hdl, pos);
-				(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
+			if (x < 0)
+			{
+				OnSetValue(pos);
+				Send(DLGMSG_COMMAND);
 				break;
 			}
 			pos++;
@@ -1807,39 +1739,6 @@ static void _dlgtablist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 		}
 	}
 }
-
-
-class MenuDlgItemTabList : public MenuDlgItem
-{
-public:
-	MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
-		: MenuDlgItem(pParent, DLGTYPE_TABLIST, id, flg, rect)
-	{
-	}
-
-	virtual BRESULT OnCreate(const void *arg)
-	{
-		return _dlgtablist_create(m_pParent, this, arg);
-	}
-
-	virtual void OnPaint()
-	{
-		_dlgtablist_paint(m_pParent, this);
-	}
-
-	virtual void OnSetValue(int val)
-	{
-		_dlgtablist_setval(m_pParent, this, val);
-	}
-
-	virtual void OnClick(int x, int y)
-	{
-		_dlgtablist_onclick(m_pParent, this, x, y);
-	}
-
-//	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
-
-};
 
 
 
@@ -1920,139 +1819,73 @@ public:
 
 
 
-// ---- radio
-
-static void _dlgradio_paint(MENUDLG dlg, DLGHDL hdl) {
-
-	POINT_T		pt;
-const MENURES2	*src;
-	int			pat;
-
-	vram_filldat(dlg->m_vram, &hdl->m_rect, menucolor[MVC_STATIC]);
-	pt.x = hdl->m_rect.left;
-	pt.y = hdl->m_rect.top;
-	src = menures_radio;
-	pat = (hdl->m_flag & MENU_GRAY)?1:0;
-	menuvram_res2put(dlg->m_vram, src + pat, &pt);
-	if (hdl->m_nValue) {
-		menuvram_res3put(dlg->m_vram, src + 2, &pt,
-					(hdl->m_flag & MENU_GRAY)?MVC_GRAYTEXT1:MVC_TEXT);
-	}
-	pt.x += MENUDLG_SXRADIO;
-	dlg_text(dlg, hdl, &pt, &hdl->m_rect);
-}
-
-static void _dlgradio_setval(MENUDLG dlg, DLGHDL hdl, int val)
-{
-	if (hdl->m_nValue != val)
-	{
-		if (val)
-		{
-			for (std::vector<MenuDlgItem*>::iterator it = dlg->m_items.begin(); it != dlg->m_items.end(); ++it)
-			{
-				MenuDlgItem* item = *it;
-				if ((item->m_type == DLGTYPE_RADIO) && (item->m_nValue) && (item->m_group == hdl->m_group))
-				{
-					item->m_nValue = 0;
-					drawctrls(dlg, item);
-				}
-			}
-		}
-		hdl->m_nValue = val;
-		drawctrls(dlg, hdl);
-	}
-}
-
-static void _dlgradio_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
-
-	if (x < (hdl->c.dt.pt.x + MENUDLG_SXRADIO)) {
-		_dlgradio_setval(dlg, hdl, 1);
-		(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
-	}
-	(void)y;
-}
-
 /**
  * @brief radio
  */
 class MenuDlgItemRadio : public MenuDlgItemText
 {
 public:
-	MenuDlgItemRadio(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
-		: MenuDlgItemText(pParent, DLGTYPE_RADIO, id, flg, rect)
-	{
-	}
+	MenuDlgItemRadio(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
 
-	virtual void OnPaint()
-	{
-		_dlgradio_paint(m_pParent, this);
-	}
-
-	virtual void OnSetValue(int val)
-	{
-		_dlgradio_setval(m_pParent, this, val);
-	}
-
-	virtual void OnClick(int x, int y)
-	{
-		_dlgradio_onclick(m_pParent, this, x, y);
-	}
+	virtual void OnPaint();
+	virtual void OnSetValue(int val);
+	virtual void OnClick(int x, int y);
 };
 
-
-
-// ---- check
-
-static void _dlgcheck_paint(MENUDLG dlg, DLGHDL hdl) {
-
-	POINT_T	pt;
-	RECT_T	rct;
-	UINT32	basecol;
-	UINT32	txtcol;
-
-	vram_filldat(dlg->m_vram, &hdl->m_rect, menucolor[MVC_STATIC]);
-	rct.left = hdl->m_rect.left;
-	rct.top = hdl->m_rect.top;
-	rct.right = rct.left + MENUDLG_CXCHECK;
-	rct.bottom = rct.top + MENUDLG_CYCHECK;
-	if (!(hdl->m_flag & MENU_GRAY)) {
-		basecol = MVC_HILIGHT;
-		txtcol = MVC_TEXT;
-	}
-	else {
-		basecol = MVC_STATIC;
-		txtcol = MVC_GRAYTEXT1;
-	}
-	vram_filldat(dlg->m_vram, &rct, menucolor[basecol]);
-	menuvram_box2(dlg->m_vram, &rct,
-						MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
-	if (hdl->m_nValue) {
-		pt.x = rct.left + (MENU_LINE * 2);
-		pt.y = rct.top + (MENU_LINE * 2);
-		menuvram_res3put(dlg->m_vram, &menures_check, &pt, txtcol);
-	}
-	pt.x = rct.left + MENUDLG_SXCHECK;
-	pt.y = rct.top;
-	dlg_text(dlg, hdl, &pt, &hdl->m_rect);
+MenuDlgItemRadio::MenuDlgItemRadio(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+	: MenuDlgItemText(pParent, DLGTYPE_RADIO, id, flg, rect)
+{
 }
 
-static void _dlgcheck_setval(MENUDLG dlg, DLGHDL hdl, int val) {
-
-	if (hdl->m_nValue != val)
+void MenuDlgItemRadio::OnPaint()
+{
+	VRAMHDL vram = GetVram();
+	vram_filldat(vram, &m_rect, menucolor[MVC_STATIC]);
+	POINT_T pt;
+	pt.x = m_rect.left;
+	pt.y = m_rect.top;
+	const MENURES2* src = menures_radio;
+	int pat = (m_flag & MENU_GRAY) ? 1 : 0;
+	menuvram_res2put(vram, src + pat, &pt);
+	if (m_nValue)
 	{
-		hdl->m_nValue = val;
-		drawctrls(dlg, hdl);
+		menuvram_res3put(vram, src + 2, &pt, (m_flag & MENU_GRAY) ? MVC_GRAYTEXT1 : MVC_TEXT);
+	}
+	pt.x += MENUDLG_SXRADIO;
+	DrawText(pt);
+}
+
+void MenuDlgItemRadio::OnSetValue(int val)
+{
+	if (m_nValue != val)
+	{
+		if (val)
+		{
+			for (std::vector<MenuDlgItem*>::iterator it = m_pParent->m_items.begin(); it != m_pParent->m_items.end(); ++it)
+			{
+				MenuDlgItem* item = *it;
+				if ((item->m_type == DLGTYPE_RADIO) && (item->m_nValue) && (item->m_group == m_group))
+				{
+					item->m_nValue = 0;
+					item->Invalidate();
+				}
+			}
+		}
+		m_nValue = val;
+		Invalidate();
 	}
 }
 
-static void _dlgcheck_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
-
-	if (x < (hdl->c.dt.pt.x + MENUDLG_SXCHECK)) {
-		_dlgcheck_setval(dlg, hdl, !hdl->m_nValue);
-		(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
+void MenuDlgItemRadio::OnClick(int x, int y)
+{
+	if (x < (this->c.dt.pt.x + MENUDLG_SXRADIO))
+	{
+		OnSetValue(1);
+		Send(DLGMSG_COMMAND);
 	}
-	(void)y;
 }
+
+
 
 /**
  * @brief check
@@ -2060,26 +1893,74 @@ static void _dlgcheck_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
 class MenuDlgItemCheck : public MenuDlgItemText
 {
 public:
-	MenuDlgItemCheck(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
-		: MenuDlgItemText(pParent, DLGTYPE_CHECK, id, flg, rect)
-	{
-	}
+	MenuDlgItemCheck(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
 
-	virtual void OnPaint()
-	{
-		_dlgcheck_paint(m_pParent, this);
-	}
-
-	virtual void OnSetValue(int val)
-	{
-		_dlgcheck_setval(m_pParent, this, val);
-	}
-
-	virtual void OnClick(int x, int y)
-	{
-		_dlgcheck_onclick(m_pParent, this, x, y);
-	}
+	virtual void OnPaint();
+	virtual void OnSetValue(int val);
+	virtual void OnClick(int x, int y);
 };
+
+MenuDlgItemCheck::MenuDlgItemCheck(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+	: MenuDlgItemText(pParent, DLGTYPE_CHECK, id, flg, rect)
+{
+}
+
+void MenuDlgItemCheck::OnPaint()
+{
+
+	VRAMHDL vram = GetVram();
+	vram_filldat(vram, &m_rect, menucolor[MVC_STATIC]);
+
+	RECT_T rct;
+	rct.left = m_rect.left;
+	rct.top = m_rect.top;
+	rct.right = rct.left + MENUDLG_CXCHECK;
+	rct.bottom = rct.top + MENUDLG_CYCHECK;
+
+	UINT32 basecol;
+	UINT32 txtcol;
+	if (!(m_flag & MENU_GRAY))
+	{
+		basecol = MVC_HILIGHT;
+		txtcol = MVC_TEXT;
+	}
+	else
+	{
+		basecol = MVC_STATIC;
+		txtcol = MVC_GRAYTEXT1;
+	}
+	vram_filldat(vram, &rct, menucolor[basecol]);
+	menuvram_box2(vram, &rct, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
+	if (m_nValue)
+	{
+		POINT_T pt;
+		pt.x = rct.left + (MENU_LINE * 2);
+		pt.y = rct.top + (MENU_LINE * 2);
+		menuvram_res3put(vram, &menures_check, &pt, txtcol);
+	}
+	POINT_T pt;
+	pt.x = rct.left + MENUDLG_SXCHECK;
+	pt.y = rct.top;
+	DrawText(pt);
+}
+
+void MenuDlgItemCheck::OnSetValue(int val)
+{
+	if (m_nValue != val)
+	{
+		m_nValue = val;
+		Invalidate();
+	}
+}
+
+void MenuDlgItemCheck::OnClick(int x, int y)
+{
+	if (x < (this->c.dt.pt.x + MENUDLG_SXCHECK))
+	{
+		OnSetValue(!m_nValue);
+		Send(DLGMSG_COMMAND);
+	}
+}
 
 
 
