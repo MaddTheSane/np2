@@ -45,7 +45,7 @@ public:
 	MenuDlgItem(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, const RECT_T& rect);
 	virtual ~MenuDlgItem();
 
-	virtual BRESULT OnCreate(const void *arg);
+	virtual bool OnCreate(const void *arg);
 	virtual void OnPaint() = 0;
 	virtual void OnSetValue(int val);
 	virtual void OnSetText(const OEMCHAR* lpString);
@@ -170,9 +170,9 @@ MenuDlgItem::~MenuDlgItem()
 	vram_destroy(m_vram);
 }
 
-BRESULT MenuDlgItem::OnCreate(const void *arg)
+bool MenuDlgItem::OnCreate(const void *arg)
 {
-	return SUCCESS;
+	return true;
 }
 
 void MenuDlgItem::OnSetValue(int val)
@@ -292,7 +292,7 @@ class MenuDlgItemBase : public MenuDlgItem
 {
 public:
 	MenuDlgItemBase(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
-	virtual BRESULT OnCreate(const void *arg);
+	virtual bool OnCreate(const void *arg);
 	virtual void OnPaint();
 	virtual void OnClick(int x, int y);
 	virtual void OnMove(int x, int y, int focus);
@@ -304,13 +304,13 @@ MenuDlgItemBase::MenuDlgItemBase(MenuDialog* pParent, MENUID id, MENUFLG flg, co
 {
 }
 
-BRESULT MenuDlgItemBase::OnCreate(const void *arg)
+bool MenuDlgItemBase::OnCreate(const void *arg)
 {
 	int width = m_rect.right - m_rect.left - ((MENU_FBORDER + MENU_BORDER) * 2);
 	m_vram = vram_create(width, MENUDLG_CYCAPTION, FALSE, GetVram()->bpp);
 	if (m_vram == NULL)
 	{
-		return FAILURE;
+		return false;
 	}
 	m_vram->posx = (MENU_FBORDER + MENU_BORDER);
 	m_vram->posy = (MENU_FBORDER + MENU_BORDER);
@@ -321,7 +321,7 @@ BRESULT MenuDlgItemBase::OnCreate(const void *arg)
 	rct.right = width;
 	rct.bottom = MENUDLG_CYCAPTION;
 	menuvram_caption(m_vram, &rct, MICON_NULL, (OEMCHAR *)arg);
-	return SUCCESS;
+	return true;
 }
 
 void MenuDlgItemBase::OnPaint()
@@ -415,7 +415,7 @@ class MenuDlgItemText : public MenuDlgItem
 public:
 	MenuDlgItemText(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, const RECT_T& rect);
 	virtual ~MenuDlgItemText();
-	virtual BRESULT OnCreate(const void *arg);
+	virtual bool OnCreate(const void *arg);
 	virtual void OnPaint();
 	virtual void OnSetText(const OEMCHAR* lpString);
 	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
@@ -442,10 +442,10 @@ MenuDlgItemText::~MenuDlgItemText()
 	menuicon_unlock(m_icon);
 }
 
-BRESULT MenuDlgItemText::OnCreate(const void *arg)
+bool MenuDlgItemText::OnCreate(const void *arg)
 {
 	OnSetText(static_cast<const OEMCHAR*>(arg));
-	return SUCCESS;
+	return true;
 }
 
 void MenuDlgItemText::OnPaint()
@@ -648,7 +648,7 @@ class MenuDlgItemList : public MenuDlgItem
 public:
 	MenuDlgItemList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
 	virtual ~MenuDlgItemList();
-	virtual BRESULT OnCreate(const void *arg);
+	virtual bool OnCreate(const void *arg);
 	virtual void OnPaint();
 	virtual void OnSetValue(int val);
 	virtual void OnSetFont(FONTMNGH font);
@@ -667,8 +667,8 @@ private:
 
 	int GetPos(int y) const;
 	int GetPc(int x, int y) const;
-	void DrawItem(const ListItem& item, int focus, POINT_T *pt, RECT_T *rct);
-	BOOL DrawSub(int pos, int focus);
+	void DrawItem(const ListItem& item, bool focus, POINT_T *pt, RECT_T *rct);
+	bool DrawSub(int pos, bool focus);
 	void SetBtn(int flg);
 	void DrawAll();
 	int BarPos() const;
@@ -677,8 +677,8 @@ private:
 public:
 	void Reset();
 	int SetBasePos(int pos);
-	BOOL Append(const OEMCHAR* arg);
-	BOOL SetEx(const ITEMEXPRM *arg);
+	bool Append(const OEMCHAR* arg);
+	bool SetEx(const ITEMEXPRM *arg);
 
 private:
 	DLGLIST m_dl;
@@ -716,20 +716,20 @@ void MenuDlgItemList::Reset()
 	m_dl.basepos = 0;
 }
 
-BRESULT MenuDlgItemList::OnCreate(const void *arg)
+bool MenuDlgItemList::OnCreate(const void *arg)
 {
 	int width = m_rect.right - m_rect.left - (MENU_LINE * 4);
 	int height = m_rect.bottom - m_rect.top - (MENU_LINE * 4);
 	m_vram = vram_create(width, height, FALSE, GetVram()->bpp);
 	if (m_vram == NULL)
 	{
-		return FAILURE;
+		return false;
 	}
 	m_vram->posx = m_rect.left + (MENU_LINE * 2);
 	m_vram->posy = m_rect.top + (MENU_LINE * 2);
 	OnSetFont(NULL);
 	Reset();
-	return SUCCESS;
+	return true;
 }
 
 void MenuDlgItemList::OnPaint()
@@ -739,7 +739,7 @@ void MenuDlgItemList::OnPaint()
 	vrammix_cpy(vram, NULL, m_vram, NULL);
 }
 
-void MenuDlgItemList::DrawItem(const ListItem& item, int focus, POINT_T *pt, RECT_T *rct)
+void MenuDlgItemList::DrawItem(const ListItem& item, bool focus, POINT_T *pt, RECT_T *rct)
 {
 	vram_filldat(m_vram, rct, menucolor[(focus) ? MVC_CURBACK : MVC_HILIGHT]);
 
@@ -765,24 +765,24 @@ void MenuDlgItemList::DrawItem(const ListItem& item, int focus, POINT_T *pt, REC
 	vrammix_text(m_vram, GetFont(), item.lpString, menucolor[(focus) ? MVC_CURTEXT : MVC_TEXT], &fp, rct);
 }
 
-BOOL MenuDlgItemList::DrawSub(int pos, int focus)
+bool MenuDlgItemList::DrawSub(int pos, bool focus)
 {
 	if ((pos < 0) || (pos >= static_cast<int>(m_items.size())))
 	{
-		return FALSE;
+		return false;
 	}
 
 	pos -= m_dl.basepos;
 	if (pos < 0)
 	{
-		return FALSE;
+		return false;
 	}
 	POINT_T pt;
 	pt.x = 0;
 	pt.y = pos * m_dl.fontsize;
 	if (pt.y >= m_vram->height)
 	{
-		return FALSE;
+		return false;
 	}
 	RECT_T rct;
 	rct.left = 0;
@@ -794,7 +794,7 @@ BOOL MenuDlgItemList::DrawSub(int pos, int focus)
 	}
 	rct.bottom = rct.top + m_dl.fontsize;
 	DrawItem(m_items[pos], focus, &pt, &rct);
-	return TRUE;
+	return true;
 }
 
 void MenuDlgItemList::SetBtn(int flg)
@@ -896,14 +896,14 @@ void MenuDlgItemList::DrawBar()
 	menuvram_box2(m_vram, &rct, MVC4(MVC_LIGHT, MVC_DARK, MVC_HILIGHT, MVC_SHADOW));
 }
 
-BOOL MenuDlgItemList::Append(const OEMCHAR* lpString)
+bool MenuDlgItemList::Append(const OEMCHAR* lpString)
 {
 	ListItem item;
 	memset(&item, 0, sizeof(item));
 	item.lpString = StrDup(lpString);
 	m_items.push_back(item);
 
-	BOOL r = DrawSub(static_cast<int>(m_items.size()) - 1, FALSE);
+	bool r = DrawSub(static_cast<int>(m_items.size()) - 1, false);
 	if (static_cast<int>(m_items.size()) > m_dl.dispmax)
 	{
 		int barsize = m_vram->height - (MENUDLG_CYVSCR * 2);
@@ -925,17 +925,17 @@ BOOL MenuDlgItemList::Append(const OEMCHAR* lpString)
 	return r;
 }
 
-BOOL MenuDlgItemList::SetEx(const ITEMEXPRM *arg)
+bool MenuDlgItemList::SetEx(const ITEMEXPRM *arg)
 {
 	if (arg == NULL)
 	{
-		return FALSE;
+		return false;
 	}
 
 	const int nIndex = arg->pos;
 	if ((nIndex < 0) || (nIndex >= static_cast<int>(m_items.size())))
 	{
-		return FALSE;
+		return false;
 	}
 
 	ListItem& item = m_items[nIndex];
@@ -1031,8 +1031,8 @@ void MenuDlgItemList::OnSetValue(int val)
 	}
 	if (val != m_nValue)
 	{
-		BOOL r = DrawSub(m_nValue, FALSE);
-		r |= DrawSub(val, TRUE);
+		bool r = DrawSub(m_nValue, false);
+		r |= DrawSub(val, true);
 		m_nValue = val;
 		if (r)
 		{
@@ -1199,7 +1199,7 @@ class MenuDlgItemSlider : public MenuDlgItem
 public:
 	MenuDlgItemSlider(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
 
-	virtual BRESULT OnCreate(const void *arg);
+	virtual bool OnCreate(const void *arg);
 	virtual void OnPaint();
 	virtual void OnSetValue(int val);
 	virtual void OnClick(int x, int y);
@@ -1220,14 +1220,14 @@ MenuDlgItemSlider::MenuDlgItemSlider(MenuDialog* pParent, MENUID id, MENUFLG flg
 
 }
 
-BRESULT MenuDlgItemSlider::OnCreate(const void *arg)
+bool MenuDlgItemSlider::OnCreate(const void *arg)
 {
 	m_ds.minval = (SINT16)(long)arg;
 	m_ds.maxval = (SINT16)((long)arg >> 16);
 	m_ds.moving = 0;
 	SetFlag();
 	m_ds.pos = SetPos(0);
-	return SUCCESS;
+	return true;
 }
 
 void MenuDlgItemSlider::SetFlag()
@@ -1486,7 +1486,7 @@ public:
 	MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
 	virtual ~MenuDlgItemTabList();
 
-	virtual BRESULT OnCreate(const void *arg);
+	virtual bool OnCreate(const void *arg);
 	virtual void OnPaint();
 	virtual void OnSetFont(FONTMNGH font);
 	virtual void OnSetValue(int val);
@@ -1521,13 +1521,13 @@ MenuDlgItemTabList::~MenuDlgItemTabList()
 	}
 }
 
-BRESULT MenuDlgItemTabList::OnCreate(const void *arg)
+bool MenuDlgItemTabList::OnCreate(const void *arg)
 {
 	RECT_T rct;
 	rct.right = m_rect.right - m_rect.left;
 	m_nValue = -1;
 	OnSetFont(NULL);
-	return SUCCESS;
+	return true;
 }
 
 void MenuDlgItemTabList::OnPaint()
@@ -1904,12 +1904,12 @@ public:
 		menuicon_unlock(m_icon);
 	}
 
-	virtual BRESULT OnCreate(const void *arg)
+	virtual bool OnCreate(const void *arg)
 	{
 		int width = m_rect.right - m_rect.left;
 		int height = m_rect.bottom - m_rect.top;
 		m_icon = menuicon_lock(static_cast<UINT16>(reinterpret_cast<INTPTR>(arg)), width, height, GetVram()->bpp);
-		return SUCCESS;
+		return true;
 	}
 
 	virtual void OnPaint()
@@ -1935,10 +1935,10 @@ public:
 	{
 	}
 
-	virtual BRESULT OnCreate(const void *arg)
+	virtual bool OnCreate(const void *arg)
 	{
 		m_resource = static_cast<VRAMHDL>(const_cast<void*>(arg));
-		return SUCCESS;
+		return true;
 	}
 
 	virtual void OnPaint()
@@ -2090,7 +2090,7 @@ MenuDlgItem* MenuDlgItem::CreateInstance(int type, MenuDialog* pParent, MENUID i
 	}
 	if (item != NULL)
 	{
-		if (item->OnCreate(arg) != SUCCESS)
+		if (!item->OnCreate(arg))
 		{
 			delete item;
 			item = NULL;

@@ -100,16 +100,11 @@ const OEMCHAR	*str;
 extern "C" {
 #endif
 
-BRESULT menudlg_create(int width, int height, const OEMCHAR *str,
-								int (*proc)(int msg, MENUID id, long param));
+BRESULT menudlg_create(int width, int height, const OEMCHAR *str, int (*proc)(int msg, MENUID id, long param));
 void menudlg_destroy(void);
-
 BRESULT menudlg_appends(const MENUPRM *res, int count);
-BRESULT menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg,
-								int posx, int posy, int width, int height);
-
+BRESULT menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height);
 void menudlg_moving(int x, int y, int btn);
-
 INTPTR menudlg_msg(int ctrl, MENUID id, INTPTR arg);
 void menudlg_setpage(MENUID page);
 void menudlg_disppagehidden(MENUID page, BOOL hidden);
