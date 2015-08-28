@@ -32,15 +32,14 @@ MenuBase::~MenuBase()
 {
 }
 
-bool MenuBase::Create()
+void MenuBase::Initialize()
 {
 	m_font = fontmng_create(MENU_FONTSIZE, FDAT_PROPORTIONAL, NULL);
 	m_font2 = fontmng_create(MENU_FONTSIZE, 0, NULL);
 	menuicon_initialize();
-	return true;
 }
 
-void MenuBase::Destroy()
+void MenuBase::Deinitialize()
 {
 	menuicon_deinitialize();
 	fontmng_destroy(m_font2);
@@ -91,7 +90,7 @@ void MenuBase::Close()
 		VRAMHDL hdl = menuvram;
 		if (hdl)
 		{
-			menubase_draw(NULL, NULL);
+			Draw(NULL, NULL);
 			menuvram = NULL;
 			vram_destroy(hdl);
 		}
@@ -169,12 +168,6 @@ void MenuBase::Draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), vo
 	}
 }
 
-
-// ----
-
-void menubase_proc(void) {
-}
-
 void MenuBase::DoModal()
 {
 	while ((taskmng_sleep(5)) && (menuvram != NULL))
@@ -185,19 +178,14 @@ void MenuBase::DoModal()
 
 // ----
 
-BRESULT menubase_create(void)
+void menubase_initialize(void)
 {
-	return MenuBase::GetInstance()->Create() ? SUCCESS : FAILURE;
+	MenuBase::GetInstance()->Initialize();
 }
 
-void menubase_destroy(void)
+void menubase_deinitialize(void)
 {
-	MenuBase::GetInstance()->Destroy();
-}
-
-BRESULT menubase_open(int num)
-{
-	return MenuBase::GetInstance()->Open(num) ? SUCCESS : FAILURE;
+	MenuBase::GetInstance()->Deinitialize();
 }
 
 void menubase_close(void)
@@ -213,21 +201,6 @@ BRESULT menubase_moving(int x, int y, int btn)
 BRESULT menubase_key(UINT key)
 {
 	return MenuBase::GetInstance()->OnKey(key) ? SUCCESS : FAILURE;
-}
-
-void menubase_setrect(VRAMHDL vram, const RECT_T *rect)
-{
-	MenuBase::GetInstance()->Invalidate(vram, rect);
-}
-
-void menubase_clrrect(VRAMHDL vram)
-{
-	MenuBase::GetInstance()->Clear(vram);
-}
-
-void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg)
-{
-	MenuBase::GetInstance()->Draw(draw, arg);
 }
 
 void menubase_modalproc(void)

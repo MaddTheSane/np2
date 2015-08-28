@@ -60,8 +60,8 @@ public:
 	static MenuBase* GetInstance();
 	MenuBase();
 	~MenuBase();
-	bool Create();
-	void Destroy();
+	void Initialize();
+	void Deinitialize();
 	bool Open(int num);
 	void Close();
 	bool OnMoving(int x, int y, int btn);
@@ -119,19 +119,11 @@ extern "C"
 
 extern	VRAMHDL		menuvram;
 
-BRESULT menubase_create(void);
-void menubase_destroy(void);
-
-BRESULT menubase_open(int num);
+void menubase_initialize(void);
+void menubase_deinitialize(void);
 void menubase_close(void);
 BRESULT menubase_moving(int x, int y, int btn);
 BRESULT menubase_key(UINT key);
-
-void menubase_setrect(VRAMHDL vram, const RECT_T *rect);
-void menubase_clrrect(VRAMHDL vram);
-void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg);
-
-void menubase_proc(void);
 void menubase_modalproc(void);
 
 #ifdef __cplusplus

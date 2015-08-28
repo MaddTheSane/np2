@@ -8,8 +8,8 @@ enum {
 extern "C" {
 #endif
 
-BRESULT sysmenu_create(void);
-void sysmenu_destroy(void);
+BRESULT sysmenu_initialize(void);
+void sysmenu_deinitialize(void);
 
 BRESULT sysmenu_menuopen(UINT menutype, int x, int y);
 

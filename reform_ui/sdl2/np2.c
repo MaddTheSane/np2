@@ -138,7 +138,8 @@ int np2_main(int argc, char *argv[]) {
 	inputmng_init();
 	keystat_initialize();
 
-	if (sysmenu_create() != SUCCESS) {
+	if (sysmenu_initialize() != SUCCESS)
+	{
 		goto np2main_err3;
 	}
 
@@ -236,7 +237,7 @@ int np2_main(int argc, char *argv[]) {
 	sysmng_deinitialize();
 
 	scrnmng_destroy();
-	sysmenu_destroy();
+	sysmenu_deinitialize();
 	TRACETERM();
 	SDL_Quit();
 	return(SUCCESS);
@@ -250,7 +251,7 @@ np2main_err4:
 	scrnmng_destroy();
 
 np2main_err3:
-	sysmenu_destroy();
+	sysmenu_deinitialize();
 
 np2main_err2:
 	TRACETERM();

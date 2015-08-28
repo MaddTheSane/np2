@@ -434,26 +434,18 @@ static void sys_cmd(MENUID id) {
 
 // ----
 
-BRESULT sysmenu_create(void) {
-
-	if (menubase_create() != SUCCESS) {
-		goto smcre_err;
-	}
+BRESULT sysmenu_initialize(void)
+{
+	menubase_initialize();
 	menuicon_regist(MICON_NP2, &np2icon);
-	if (menusys_create(s_main, sys_cmd, MICON_NP2, str_np2)) {
-		goto smcre_err;
-	}
-	return(SUCCESS);
-
-smcre_err:
-	return(FAILURE);
+	return menusys_initialize(s_main, sys_cmd, MICON_NP2, str_np2);
 }
 
-void sysmenu_destroy(void) {
+void sysmenu_deinitialize(void) {
 
 	menubase_close();
-	menubase_destroy();
-	menusys_destroy();
+	menubase_deinitialize();
+	menusys_deinitialize();
 }
 
 BRESULT sysmenu_menuopen(UINT menutype, int x, int y) {

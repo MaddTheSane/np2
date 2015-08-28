@@ -42,12 +42,12 @@ const struct _smi	*child;
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-BRESULT menusys_create(const MSYSITEM *item, void (*cmd)(MENUID id),
-										UINT16 icon, const OEMCHAR *title);
-void menusys_destroy(void);
+BRESULT menusys_initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
+void menusys_deinitialize(void);
 
 BRESULT menusys_open(int x, int y);
 void menusys_close(void);

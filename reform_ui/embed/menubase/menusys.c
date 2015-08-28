@@ -401,8 +401,8 @@ class MenuSys : private std::vector<MenuSysWnd*>
 {
 public:
 	MenuSys();
-	bool Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
-	void Destroy();
+	bool Initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
+	void Deinitialize();
 	bool Open(int x, int y);
 	void Close();
 	void Moving(int x, int y, int btn);
@@ -542,7 +542,7 @@ static void defcmd(MENUID id)
 /**
  * çÏê¨
  */
-bool MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
+bool MenuSys::Initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
 {
 	if (cmd == NULL)
 	{
@@ -569,7 +569,7 @@ bool MenuSys::Create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, 
 	return true;
 }
 
-void MenuSys::Destroy()
+void MenuSys::Deinitialize()
 {
 	Close();
 
@@ -1313,14 +1313,14 @@ void MenuSys::Draw(VRAMHDL dst, const RECT_T *rect, void *arg)
 
 // ----
 
-BRESULT menusys_create(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
+BRESULT menusys_initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title)
 {
-	return s_menusys.Create(item, cmd, icon, title) ? SUCCESS : FAILURE;
+	return s_menusys.Initialize(item, cmd, icon, title) ? SUCCESS : FAILURE;
 }
 
-void menusys_destroy(void)
+void menusys_deinitialize(void)
 {
-	s_menusys.Destroy();
+	s_menusys.Deinitialize();
 }
 
 BRESULT menusys_open(int x, int y)
