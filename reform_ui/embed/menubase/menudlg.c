@@ -25,25 +25,16 @@ typedef DlgItemParam *DLGPRM;
 
 #define	PRMNEXT_EMPTY	((DLGPRM)-1)
 
-typedef struct {
-	POINT_T		pt;
-	FONTMNGH	font;
-} DLGTEXT;
-
-typedef struct {
-	FONTMNGH	font;
-	int			fontsize;
-} DLGTAB;
-
-typedef struct {
-	FONTMNGH	font;
+struct DLGLIST
+{
 	SINT16		fontsize;
 	SINT16		scrollbar;
 	SINT16		dispmax;
 	SINT16		basepos;
-} DLGLIST;
+} ;
 
-typedef struct {
+struct DLGSLD
+{
 	SINT16		minval;
 	SINT16		maxval;
 	int			pos;
@@ -51,7 +42,7 @@ typedef struct {
 	UINT8		moving;
 	UINT8		sldh;
 	UINT8		sldv;
-} DLGSLD;
+} ;
 
 class MenuDialog;
 
@@ -69,8 +60,8 @@ public:
 	virtual BRESULT OnCreate(const void *arg);
 	virtual void OnPaint() = 0;
 	virtual void OnSetValue(int val);
-//	virtual void OnSetText(const OEMCHAR *lpString);
-//	virtual void OnSetFont(FONTMNG font = NULL);
+//	virtual void OnSetText(const OEMCHAR* lpString);
+	virtual void OnSetFont(FONTMNGH font);
 	virtual void OnClick(int x, int y);
 	virtual void OnMove(int x, int y, int focus);
 	virtual void OnRelease(int focus);
@@ -79,6 +70,7 @@ public:
 public:
 	int Send(int msg, long param = 0);
 	VRAMHDL GetVram();
+	FONTMNGH GetFont();
 	void Invalidate();
 	void PaintIcon(VRAMHDL src);
 
@@ -94,13 +86,10 @@ public:
 	int			prmcnt;
 	int			m_nValue;
 	VRAMHDL		m_vram;			// *
-	union {
-		DLGTEXT		dt;
-		DLGTAB		dtl;
-		DLGLIST		dl;
-		DLGSLD		ds;
-//		DLGVRAM		dv;
-	} c;
+
+protected:
+//	const OEMCHAR* m_lpString;	/*!< Text */
+	FONTMNGH m_font;			/*!< Font */
 };
 typedef MenuDlgItem *DLGHDL;
 
@@ -163,12 +152,13 @@ MenuDlgItem::MenuDlgItem(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, 
 	, m_rect(rect)
 	, m_nValue(0)
 	, m_vram(NULL)
+//	, m_lpString(NULL)
+	, m_font(NULL)
 {
 	m_page = pParent->m_page;
 	m_group = pParent->m_group;
 	this->_prm = NULL;
 	this->prmcnt = 0;
-	memset(&this->c, 0, sizeof(this->c));
 }
 
 /**
@@ -186,6 +176,11 @@ BRESULT MenuDlgItem::OnCreate(const void *arg)
 
 void MenuDlgItem::OnSetValue(int val)
 {
+}
+
+void MenuDlgItem::OnSetFont(FONTMNGH font)
+{
+	m_font = font;
 }
 
 void MenuDlgItem::OnClick(int x, int y)
@@ -211,6 +206,19 @@ int MenuDlgItem::Send(int msg, long param)
 inline VRAMHDL MenuDlgItem::GetVram()
 {
 	return m_pParent->m_vram;
+}
+
+/**
+ * フォントを得る
+ */
+FONTMNGH MenuDlgItem::GetFont()
+{
+	FONTMNGH font = m_font;
+	if (font == NULL)
+	{
+		font = m_pParent->m_font;
+	}
+	return font;
 }
 
 /**
@@ -311,31 +319,6 @@ static DLGPRM ressea(DLGHDL hdl, int pos) {
 	return(NULL);
 }
 
-static BRESULT gettextsz(DLGHDL hdl, POINT_T *sz) {
-
-	DLGPRM	prm;
-
-	prm = hdl->_prm;
-	if (prm == NULL) {
-		goto gts_err;
-	}
-	*sz = hdl->c.dt.pt;
-	if (prm->icon) {
-		if (sz->x) {
-#if defined(SIZE_QVGA)
-			sz->x += 1;
-#else
-			sz->x += 2;
-#endif
-		}
-		sz->x += sz->y;
-	}
-	return(SUCCESS);
-
-gts_err:
-	return(FAILURE);
-}
-
 static void getmid(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
 
 	pt->x = rect->left;
@@ -386,12 +369,6 @@ BRESULT MenuDlgItemBase::OnCreate(const void *arg)
 
 void MenuDlgItemBase::OnPaint()
 {
-	OEMCHAR* title = NULL;
-	if (this->_prm)
-	{
-		title = this->_prm->str;
-	}
-
 	VRAMHDL vram = GetVram();
 	menuvram_base(vram);
 	vrammix_cpy(vram, NULL, m_vram, NULL);
@@ -485,13 +462,18 @@ public:
 	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
 protected:
+	POINT_T m_size;
+
 	POINT_T GetTextPos(const POINT_T& size, const RECT_T& rect) const;
+	POINT_T GetTextSize() const;
 	void DrawText(const POINT_T& pt);
 };
 
 MenuDlgItemText::MenuDlgItemText(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, const RECT_T& rect)
 	: MenuDlgItem(pParent, type, id, flg, rect)
 {
+	m_size.x = 0;
+	m_size.y = 0;
 }
 
 BRESULT MenuDlgItemText::OnCreate(const void *arg)
@@ -502,8 +484,7 @@ BRESULT MenuDlgItemText::OnCreate(const void *arg)
 		str = str_null;
 	}
 	this->_prm = resappend(m_pParent, str);
-	this->c.dt.font = m_pParent->m_font;
-	fontmng_getsize(m_pParent->m_font, str, &this->c.dt.pt);
+	fontmng_getsize(GetFont(), str, &m_size);
 	return SUCCESS;
 }
 
@@ -512,12 +493,9 @@ void MenuDlgItemText::OnPaint()
 	VRAMHDL vram = GetVram();
 	vram_filldat(vram, &m_rect, menucolor[MVC_STATIC]);
 
-	POINT_T sz;
-	if (gettextsz(this, &sz) == SUCCESS)
-	{
-		POINT_T pt = GetTextPos(sz, m_rect);
-		DrawText(pt);
-	}
+	POINT_T sz = GetTextSize();
+	POINT_T pt = GetTextPos(sz, m_rect);
+	DrawText(pt);
 }
 
 POINT_T MenuDlgItemText::GetTextPos(const POINT_T& size, const RECT_T& rect) const
@@ -543,6 +521,30 @@ POINT_T MenuDlgItemText::GetTextPos(const POINT_T& size, const RECT_T& rect) con
 	return pt;
 }
 
+POINT_T MenuDlgItemText::GetTextSize() const
+{
+	POINT_T size = m_size;
+
+	DLGPRM prm = this->_prm;
+	if (prm == NULL)
+	{
+		return size;
+	}
+	if (prm->icon)
+	{
+		if (size.x)
+		{
+#if defined(SIZE_QVGA)
+			size.x += 1;
+#else
+			size.x += 2;
+#endif
+		}
+		size.x += size.y;
+	}
+	return size;
+}
+
 INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
 {
 	INTPTR ret = 0;
@@ -557,7 +559,7 @@ INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
 					str = str_null;
 				}
 				milstr_ncpy(this->_prm->str, str, NELEMENTS(this->_prm->str));
-				fontmng_getsize(this->c.dt.font, str, &this->c.dt.pt);
+				fontmng_getsize(GetFont(), str, &m_size);
 				Invalidate();
 			}
 			break;
@@ -565,7 +567,7 @@ INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
 		case DMSG_SETICON:
 			if (this->_prm)
 			{
-				resattachicon(m_pParent, this->_prm, (UINT16)arg, this->c.dt.pt.y, this->c.dt.pt.y);
+				resattachicon(m_pParent, this->_prm, (UINT16)arg, m_size.y, m_size.y);
 				Invalidate();
 			}
 			break;
@@ -607,6 +609,7 @@ void MenuDlgItemText::DrawText(const POINT_T& pt)
 	const OEMCHAR* string = this->_prm->str;
 	if (string)
 	{
+		FONTMNGH font = GetFont();
 		int color;
 		if (!(m_flag & MENU_GRAY))
 		{
@@ -617,10 +620,10 @@ void MenuDlgItemText::DrawText(const POINT_T& pt)
 			POINT_T p;
 			p.x = fp.x + MENU_DSTEXT;
 			p.y = fp.y + MENU_DSTEXT;
-			vrammix_text(vram, this->c.dt.font, string, menucolor[MVC_GRAYTEXT2], &p, &m_rect);
+			vrammix_text(vram, font, string, menucolor[MVC_GRAYTEXT2], &p, &m_rect);
 			color = MVC_GRAYTEXT1;
 		}
-		vrammix_text(vram, this->c.dt.font, string, menucolor[color], &fp, &m_rect);
+		vrammix_text(vram, font, string, menucolor[color], &fp, &m_rect);
 	}
 }
 
@@ -652,8 +655,7 @@ public:
 		}
 		menuvram_box2(vram, &m_rect, c);
 
-		POINT_T sz;
-		if (gettextsz(this, &sz) == SUCCESS)
+		POINT_T sz = GetTextSize();
 		{
 			POINT_T pt;
 			getmid(&pt, &m_rect, &sz);
@@ -708,6 +710,7 @@ public:
 	virtual BRESULT OnCreate(const void *arg);
 	virtual void OnPaint();
 	virtual void OnSetValue(int val);
+	virtual void OnSetFont(FONTMNGH font);
 	virtual void OnClick(int x, int y);
 	virtual void OnMove(int x, int y, int focus);
 	virtual void OnRelease(int focus);
@@ -724,49 +727,37 @@ private:
 	void DrawBar();
 
 public:
-	void SetBasePos(int pos);
+	void Reset();
+	int SetBasePos(int pos);
 	BOOL Append(const OEMCHAR* arg);
 	BOOL SetEx(const ITEMEXPRM *arg);
+
+private:
+	DLGLIST m_dl;
 };
 
 MenuDlgItemList::MenuDlgItemList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
 	: MenuDlgItem(pParent, DLGTYPE_LIST, id, flg, rect)
 {
+	memset(&m_dl, 0, sizeof(m_dl));
 }
 
-static FONTMNGH dlglist_setfont(DLGHDL hdl, FONTMNGH font) {
-										// 後でスクロールバーの調整をすべし
-	FONTMNGH ret;
-	POINT_T	pt;
+void MenuDlgItemList::Reset()
+{
+	vram_filldat(m_vram, NULL, 0xffffff);
 
-	ret = hdl->c.dl.font;
-	hdl->c.dl.font = font;
-	fontmng_getsize(font, mstr_fontcheck, &pt);
-	if ((pt.y <= 0) || (pt.y >= 65536)) {
-		pt.y = 16;
-	}
-	hdl->c.dl.fontsize = (SINT16)pt.y;
-	hdl->c.dl.dispmax = (SINT16)(hdl->m_vram->height / pt.y);
-	return(ret);
-}
-
-static void dlglist_reset(MENUDLG dlg, DLGHDL hdl) {
-
-	DLGPRM	dp;
-	DLGPRM	next;
-
-	vram_filldat(hdl->m_vram, NULL, 0xffffff);
-	dp = hdl->_prm;
-	while(dp) {
-		next = dp->_next;
+	DLGPRM dp = this->_prm;
+	while (dp)
+	{
+		DLGPRM next = dp->_next;
 		dp->_next = PRMNEXT_EMPTY;
 		dp = next;
 	}
-	hdl->_prm = NULL;
-	hdl->prmcnt = 0;
-	hdl->m_nValue = -1;
-	hdl->c.dl.scrollbar = 0;
-	hdl->c.dl.basepos = 0;
+	this->_prm = NULL;
+	this->prmcnt = 0;
+	m_nValue = -1;
+	m_dl.scrollbar = 0;
+	m_dl.basepos = 0;
 }
 
 BRESULT MenuDlgItemList::OnCreate(const void *arg)
@@ -780,8 +771,8 @@ BRESULT MenuDlgItemList::OnCreate(const void *arg)
 	}
 	m_vram->posx = m_rect.left + (MENU_LINE * 2);
 	m_vram->posy = m_rect.top + (MENU_LINE * 2);
-	dlglist_setfont(this, m_pParent->m_font);
-	dlglist_reset(m_pParent, this);
+	OnSetFont(NULL);
+	Reset();
 	return SUCCESS;
 }
 
@@ -816,7 +807,7 @@ void MenuDlgItemList::DrawItem(DLGPRM prm, int focus, POINT_T *pt, RECT_T *rct)
 		fp.x += 2;
 #endif
 	}
-	vrammix_text(m_vram, this->c.dl.font, prm->str, menucolor[(focus) ? MVC_CURTEXT : MVC_TEXT], &fp, rct);
+	vrammix_text(m_vram, GetFont(), prm->str, menucolor[(focus) ? MVC_CURTEXT : MVC_TEXT], &fp, rct);
 }
 
 BOOL MenuDlgItemList::DrawSub(int pos, int focus)
@@ -825,14 +816,14 @@ BOOL MenuDlgItemList::DrawSub(int pos, int focus)
 	if (prm == NULL) {
 		return(FALSE);
 	}
-	pos -= this->c.dl.basepos;
+	pos -= m_dl.basepos;
 	if (pos < 0)
 	{
 		return(FALSE);
 	}
 	POINT_T pt;
 	pt.x = 0;
-	pt.y = pos * this->c.dl.fontsize;
+	pt.y = pos * m_dl.fontsize;
 	if (pt.y >= m_vram->height)
 	{
 		return FALSE;
@@ -841,11 +832,11 @@ BOOL MenuDlgItemList::DrawSub(int pos, int focus)
 	rct.left = 0;
 	rct.top = pt.y;
 	rct.right = m_vram->width;
-	if (this->prmcnt > this->c.dl.dispmax)
+	if (this->prmcnt > m_dl.dispmax)
 	{
 		rct.right -= MENUDLG_CXVSCR;
 	}
-	rct.bottom = rct.top + this->c.dl.fontsize;
+	rct.bottom = rct.top + m_dl.fontsize;
 	DrawItem(prm, focus, &pt, &rct);
 	return TRUE;
 }
@@ -898,9 +889,9 @@ void MenuDlgItemList::DrawAll()
 {
 	RECT_T rct;
 	rct.left = 0;
-	rct.top = 0 - (this->c.dl.basepos * this->c.dl.fontsize);
+	rct.top = 0 - (m_dl.basepos * m_dl.fontsize);
 	rct.right = m_vram->width;
-	if (this->prmcnt > this->c.dl.dispmax)
+	if (this->prmcnt > m_dl.dispmax)
 	{
 		rct.right -= MENUDLG_CXVSCR;
 	}
@@ -915,7 +906,7 @@ void MenuDlgItemList::DrawAll()
 		}
 		if (rct.top >= 0)
 		{
-			rct.bottom = rct.top + this->c.dl.fontsize;
+			rct.bottom = rct.top + m_dl.fontsize;
 			POINT_T pt;
 			pt.x = 0;
 			pt.y = rct.top;
@@ -923,7 +914,7 @@ void MenuDlgItemList::DrawAll()
 		}
 		prm = prm->_next;
 		pos++;
-		rct.top += this->c.dl.fontsize;
+		rct.top += m_dl.fontsize;
 	}
 	rct.bottom = m_vram->height;
 	vram_filldat(m_vram, &rct, menucolor[MVC_HILIGHT]);
@@ -932,9 +923,9 @@ void MenuDlgItemList::DrawAll()
 int MenuDlgItemList::BarPos() const
 {
 	int ret = m_vram->height - (MENUDLG_CYVSCR * 2);
-	ret -= this->c.dl.scrollbar;
-	ret *= this->c.dl.basepos;
-	ret /= (this->prmcnt - this->c.dl.dispmax);
+	ret -= m_dl.scrollbar;
+	ret *= m_dl.basepos;
+	ret /= (this->prmcnt - m_dl.dispmax);
 	return ret;
 }
 
@@ -948,7 +939,7 @@ void MenuDlgItemList::DrawBar()
 	vram_filldat(m_vram, &rct, menucolor[MVC_SCROLLBAR]);
 
 	rct.top += BarPos();
-	rct.bottom = rct.top + this->c.dl.scrollbar;
+	rct.bottom = rct.top + m_dl.scrollbar;
 	vram_filldat(m_vram, &rct, menucolor[MVC_BTNFACE]);
 	menuvram_box2(m_vram, &rct, MVC4(MVC_LIGHT, MVC_DARK, MVC_HILIGHT, MVC_SHADOW));
 }
@@ -970,20 +961,20 @@ BOOL MenuDlgItemList::Append(const OEMCHAR* arg)
 	if (*sto) {
 		r = DrawSub(this->prmcnt, FALSE);
 		this->prmcnt++;
-		if (this->prmcnt > this->c.dl.dispmax) {
+		if (this->prmcnt > m_dl.dispmax) {
 			int barsize = m_vram->height - (MENUDLG_CYVSCR * 2);
 			if (barsize >= 8)
 			{
-				barsize *= this->c.dl.dispmax;
+				barsize *= m_dl.dispmax;
 				barsize /= this->prmcnt;
 				barsize = max(barsize, 6);
-				if (!this->c.dl.scrollbar)
+				if (!m_dl.scrollbar)
 				{
 					DrawAll();
 					SetBtn(0);
 					SetBtn(2);
 				}
-				this->c.dl.scrollbar = barsize;
+				m_dl.scrollbar = barsize;
 				DrawBar();
 			}
 		}
@@ -1013,14 +1004,14 @@ BOOL MenuDlgItemList::SetEx(const ITEMEXPRM *arg)
 	{
 		return FALSE;
 	}
-	resattachicon(m_pParent, dp, arg->icon, this->c.dl.fontsize, this->c.dl.fontsize);
+	resattachicon(m_pParent, dp, arg->icon, m_dl.fontsize, m_dl.fontsize);
 	milstr_ncpy(dp->str, arg->str, NELEMENTS(dp->str));
 	return DrawSub(arg->pos, (arg->pos == m_nValue));
 }
 
 int MenuDlgItemList::GetPos(int y) const
 {
-	int val = (y / this->c.dl.fontsize) + this->c.dl.basepos;
+	int val = (y / m_dl.fontsize) + m_dl.basepos;
 	if ((unsigned int)val < (unsigned int)this->prmcnt)
 	{
 		return val;
@@ -1053,7 +1044,7 @@ int MenuDlgItemList::GetPc(int x, int y) const
 		return DLCUR_OUT;
 	}
 
-	if ((this->prmcnt < this->c.dl.dispmax) || (x < (m_vram->width - MENUDLG_CXVSCR)))
+	if ((this->prmcnt < m_dl.dispmax) || (x < (m_vram->width - MENUDLG_CXVSCR)))
 	{
 		return DLCUR_INLIST;
 	}
@@ -1071,7 +1062,7 @@ int MenuDlgItemList::GetPc(int x, int y) const
 	{
 		return DLCUR_PGUP;
 	}
-	else if (y < (int)this->c.dl.scrollbar)
+	else if (y < (int)m_dl.scrollbar)
 	{
 		return DLCUR_INBAR;
 	}
@@ -1079,6 +1070,21 @@ int MenuDlgItemList::GetPc(int x, int y) const
 	{
 		return DLCUR_PGDN;
 	}
+}
+
+void MenuDlgItemList::OnSetFont(FONTMNGH font)
+{
+	// 後でスクロールバーの調整をすべし
+	m_font = font;
+
+	POINT_T pt;
+	fontmng_getsize(GetFont(), mstr_fontcheck, &pt);
+	if ((pt.y <= 0) || (pt.y >= 65536))
+	{
+		pt.y = 16;
+	}
+	m_dl.fontsize = (SINT16)pt.y;
+	m_dl.dispmax = (SINT16)(m_vram->height / pt.y);
 }
 
 void MenuDlgItemList::OnSetValue(int val)
@@ -1099,7 +1105,7 @@ void MenuDlgItemList::OnSetValue(int val)
 	}
 }
 
-void MenuDlgItemList::SetBasePos(int pos)
+int MenuDlgItemList::SetBasePos(int pos)
 {
 	if (pos < 0)
 	{
@@ -1107,7 +1113,7 @@ void MenuDlgItemList::SetBasePos(int pos)
 	}
 	else
 	{
-		int displimit = this->prmcnt - this->c.dl.dispmax;
+		int displimit = this->prmcnt - m_dl.dispmax;
 		if (displimit < 0)
 		{
 			displimit = 0;
@@ -1117,12 +1123,15 @@ void MenuDlgItemList::SetBasePos(int pos)
 			pos = displimit;
 		}
 	}
-	if (this->c.dl.basepos != pos)
+
+	int ret = m_dl.basepos;
+	if (m_dl.basepos != pos)
 	{
-		this->c.dl.basepos = pos;
+		m_dl.basepos = pos;
 		DrawAll();
 		DrawBar();
 	}
+	return ret;
 }
 
 void MenuDlgItemList::OnClick(int x, int y)
@@ -1148,14 +1157,14 @@ void MenuDlgItemList::OnClick(int x, int y)
 		case 1:
 		case 3:
 			SetBtn(flg);
-			SetBasePos(this->c.dl.basepos + flg - 2);
+			SetBasePos(m_dl.basepos + flg - 2);
 			Invalidate();
 			break;
 
 		case DLCUR_INBAR:
 			y -= MENUDLG_CYVSCR;
 			y -= BarPos();
-			if ((unsigned int)y < (unsigned int)this->c.dl.scrollbar)
+			if ((unsigned int)y < (unsigned int)m_dl.scrollbar)
 			{
 				m_pParent->m_lasty = y;
 			}
@@ -1165,12 +1174,12 @@ void MenuDlgItemList::OnClick(int x, int y)
 			break;
 
 		case DLCUR_PGUP:
-			SetBasePos(this->c.dl.basepos - this->c.dl.dispmax);
+			SetBasePos(m_dl.basepos - m_dl.dispmax);
 			Invalidate();
 			break;
 
 		case DLCUR_PGDN:
-			SetBasePos(this->c.dl.basepos + this->c.dl.dispmax);
+			SetBasePos(m_dl.basepos + m_dl.dispmax);
 			Invalidate();
 			break;
 	}
@@ -1210,7 +1219,7 @@ void MenuDlgItemList::OnMove(int x, int y, int focus)
 				y -= MENUDLG_CYVSCR;
 				y -= m_pParent->m_lasty;
 				int height = m_vram->height - (MENUDLG_CYVSCR * 2);
-				height -= this->c.dl.scrollbar;
+				height -= m_dl.scrollbar;
 				if (y < 0)
 				{
 					y = 0;
@@ -1219,7 +1228,7 @@ void MenuDlgItemList::OnMove(int x, int y, int focus)
 				{
 					y = height;
 				}
-				y *= (this->prmcnt - this->c.dl.dispmax);
+				y *= (this->prmcnt - m_dl.dispmax);
 				y /= height;
 				SetBasePos(y);
 				Invalidate();
@@ -1263,6 +1272,7 @@ public:
 //	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
 private:
+	DLGSLD m_ds;
 	void SetFlag();
 	int SetPos(int val);
 };
@@ -1270,15 +1280,17 @@ private:
 MenuDlgItemSlider::MenuDlgItemSlider(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
 	: MenuDlgItem(pParent, DLGTYPE_SLIDER, id, flg, rect)
 {
+	memset(&m_ds, 0, sizeof(m_ds));
+
 }
 
 BRESULT MenuDlgItemSlider::OnCreate(const void *arg)
 {
-	this->c.ds.minval = (SINT16)(long)arg;
-	this->c.ds.maxval = (SINT16)((long)arg >> 16);
-	this->c.ds.moving = 0;
+	m_ds.minval = (SINT16)(long)arg;
+	m_ds.maxval = (SINT16)((long)arg >> 16);
+	m_ds.moving = 0;
 	SetFlag();
-	this->c.ds.pos = SetPos(0);
+	m_ds.pos = SetPos(0);
 	return SUCCESS;
 }
 
@@ -1307,16 +1319,16 @@ void MenuDlgItemSlider::SetFlag()
 	{
 		type = 2 + (21 << 8) + (11 << 16);
 	}
-	this->c.ds.type = (UINT8)type;
+	m_ds.type = (UINT8)type;
 	if (!(m_flag & MSS_VERT))
 	{
-		this->c.ds.sldh = (UINT8)(type >> 16);
-		this->c.ds.sldv = (UINT8)(type >> 8);
+		m_ds.sldh = (UINT8)(type >> 16);
+		m_ds.sldv = (UINT8)(type >> 8);
 	}
 	else
 	{
-		this->c.ds.sldh = (UINT8)(type >> 8);
-		this->c.ds.sldv = (UINT8)(type >> 16);
+		m_ds.sldh = (UINT8)(type >> 8);
+		m_ds.sldv = (UINT8)(type >> 16);
 	}
 }
 
@@ -1347,54 +1359,54 @@ void MenuDlgItemSlider::OnPaint()
 		RECT_U rct;
 		rct.r.left = m_rect.left;
 		rct.r.right = m_rect.right;
-		rct.r.top = m_rect.top + ptr + (this->c.ds.sldv / 2) - (MENU_LINE * 2);
+		rct.r.top = m_rect.top + ptr + (m_ds.sldv / 2) - (MENU_LINE * 2);
 		rct.r.bottom = rct.r.top + (MENU_LINE * 4);
 		menuvram_box2(vram, &rct.r, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
-		pt.x = m_rect.left + this->c.ds.pos;
+		pt.x = m_rect.left + m_ds.pos;
 		pt.y = m_rect.top;
 	}
 	else
 	{
 		RECT_U rct;
-		rct.r.left = m_rect.left + ptr + (this->c.ds.sldh / 2) - (MENU_LINE * 2);
+		rct.r.left = m_rect.left + ptr + (m_ds.sldh / 2) - (MENU_LINE * 2);
 		rct.r.right = rct.r.left + (MENU_LINE * 4);
 		rct.r.top = m_rect.top;
 		rct.r.bottom = m_rect.bottom;
 		menuvram_box2(vram, &rct.r, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
 		pt.x = m_rect.left;
-		pt.y = m_rect.top + this->c.ds.pos;
+		pt.y = m_rect.top + m_ds.pos;
 		ptr += 3;
 	}
 	ptr *= 2;
-	if ((m_flag & MENU_GRAY) || (this->c.ds.moving))
+	if ((m_flag & MENU_GRAY) || (m_ds.moving))
 	{
 		ptr++;
 	}
 
 	MENURES2 src;
-	src.width = this->c.ds.sldh;
-	src.height = this->c.ds.sldv;
-	src.pat = menures_slddat + menures_sldpos[this->c.ds.type][ptr];
+	src.width = m_ds.sldh;
+	src.height = m_ds.sldv;
+	src.pat = menures_slddat + menures_sldpos[m_ds.type][ptr];
 	menuvram_res2put(vram, &src, &pt);
 }
 
 void MenuDlgItemSlider::OnSetValue(int val)
 {
 	int pos = SetPos(val);
-	if (this->c.ds.pos != pos)
+	if (m_ds.pos != pos)
 	{
-		this->c.ds.pos = pos;
+		m_ds.pos = pos;
 		Invalidate();
 	}
 }
 
 int MenuDlgItemSlider::SetPos(int val)
 {
-	int range = this->c.ds.maxval - this->c.ds.minval;
+	int range = m_ds.maxval - m_ds.minval;
 	if (range)
 	{
 		int dir = (range > 0) ? 1 : -1;
-		val -= this->c.ds.minval;
+		val -= m_ds.minval;
 		val *= dir;
 		range *= dir;
 		if (val < 0)
@@ -1405,17 +1417,17 @@ int MenuDlgItemSlider::SetPos(int val)
 		{
 			val = range;
 		}
-		m_nValue = this->c.ds.minval + (val * dir);
+		m_nValue = m_ds.minval + (val * dir);
 
 		int width;
 		if (!(m_flag & MSS_VERT))
 		{
-			width = this->m_rect.right - this->m_rect.left;
-			width -= this->c.ds.sldh;
+			width = m_rect.right - m_rect.left;
+			width -= m_ds.sldh;
 		}
 		else {
-			width = this->m_rect.bottom - this->m_rect.top;
-			width -= this->c.ds.sldv;
+			width = m_rect.bottom - m_rect.top;
+			width -= m_ds.sldv;
 		}
 		if ((width > 0) || (range))
 		{
@@ -1439,24 +1451,24 @@ void MenuDlgItemSlider::OnClick(int x, int y)
 	int width;
 	if (!(m_flag & MSS_VERT))
 	{
-		width = this->c.ds.sldh;
+		width = m_ds.sldh;
 	}
 	else
 	{
-		width = this->c.ds.sldv;
+		width = m_ds.sldv;
 		x = y;
 	}
-	x -= this->c.ds.pos;
+	x -= m_ds.pos;
 	if ((x >= -1) && (x <= width))
 	{
 		m_pParent->m_dragflg = x;
-		this->c.ds.moving = 1;
+		m_ds.moving = 1;
 		Invalidate();
 	}
 	else {
 		m_pParent->m_dragflg = -1;
 		int dir = (x > 0) ? 1 : 0;
-		int range = this->c.ds.maxval - this->c.ds.minval;
+		int range = m_ds.maxval - m_ds.minval;
 		if (range < 0)
 		{
 			range = 0 - range;
@@ -1478,9 +1490,9 @@ void MenuDlgItemSlider::OnClick(int x, int y)
 
 void MenuDlgItemSlider::OnMove(int x, int y, int focus)
 {
-	if (this->c.ds.moving)
+	if (m_ds.moving)
 	{
-		int range = this->c.ds.maxval - this->c.ds.minval;
+		int range = m_ds.maxval - m_ds.minval;
 		if (range)
 		{
 			int dir = (range > 0) ? 1 : -1;
@@ -1489,12 +1501,12 @@ void MenuDlgItemSlider::OnMove(int x, int y, int focus)
 			if (!(m_flag & MSS_VERT))
 			{
 				width = m_rect.right - m_rect.left;
-				width -= this->c.ds.sldh;
+				width -= m_ds.sldh;
 			}
 			else
 			{
 				width = m_rect.bottom - m_rect.top;
-				width -= this->c.ds.sldv;
+				width -= m_ds.sldv;
 				x = y;
 			}
 			x -= m_pParent->m_dragflg;
@@ -1512,7 +1524,7 @@ void MenuDlgItemSlider::OnMove(int x, int y, int focus)
 				x += (width >> 1);
 				x /= width;
 			}
-			x = this->c.ds.minval + (x * dir);
+			x = m_ds.minval + (x * dir);
 			OnSetValue(x);
 			Send(DLGMSG_COMMAND);
 		}
@@ -1521,9 +1533,9 @@ void MenuDlgItemSlider::OnMove(int x, int y, int focus)
 
 void MenuDlgItemSlider::OnRelease(int focus)
 {
-	if (this->c.ds.moving)
+	if (m_ds.moving)
 	{
-		this->c.ds.moving = 0;
+		m_ds.moving = 0;
 		Invalidate();
 	}
 }
@@ -1539,39 +1551,22 @@ public:
 
 	virtual BRESULT OnCreate(const void *arg);
 	virtual void OnPaint();
+	virtual void OnSetFont(FONTMNGH font);
 	virtual void OnSetValue(int val);
 	virtual void OnClick(int x, int y);
 //	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
 public:
 	void Append(const OEMCHAR *arg);
+
+private:
+	int m_fontsize;
 };
 
 MenuDlgItemTabList::MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
 	: MenuDlgItem(pParent, DLGTYPE_TABLIST, id, flg, rect)
+	, m_fontsize(0)
 {
-}
-
-static FONTMNGH dlgtablist_setfont(DLGHDL hdl, FONTMNGH font) {
-
-	FONTMNGH ret;
-	POINT_T	pt;
-	DLGPRM	prm;
-
-	ret = hdl->c.dtl.font;
-	hdl->c.dtl.font = font;
-	fontmng_getsize(font, mstr_fontcheck, &pt);
-	if ((pt.y <= 0) || (pt.y >= 65536)) {
-		pt.y = 16;
-	}
-	hdl->c.dtl.fontsize = pt.y;
-	prm = hdl->_prm;
-	while(prm) {
-		fontmng_getsize(hdl->c.dtl.font, prm->str, &pt);
-		prm->width = pt.x;
-		prm = prm->_next;
-	}
-	return(ret);
 }
 
 BRESULT MenuDlgItemTabList::OnCreate(const void *arg)
@@ -1579,17 +1574,18 @@ BRESULT MenuDlgItemTabList::OnCreate(const void *arg)
 	RECT_T rct;
 	rct.right = m_rect.right - m_rect.left;
 	m_nValue = -1;
-	dlgtablist_setfont(this, m_pParent->m_font);
+	OnSetFont(NULL);
 	return SUCCESS;
 }
 
 void MenuDlgItemTabList::OnPaint()
 {
 	VRAMHDL dst = GetVram();
+	FONTMNGH font = GetFont();
 	RECT_T rct = m_rect;
 	vram_filldat(dst, &rct, menucolor[MVC_STATIC]);
 
-	int tabey = rct.top + this->c.dtl.fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB;
+	int tabey = rct.top + m_fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB;
 	rct.top = tabey;
 	menuvram_box2(dst, &rct, MVC4(MVC_HILIGHT, MVC_DARK, MVC_LIGHT, MVC_SHADOW));
 
@@ -1618,7 +1614,7 @@ void MenuDlgItemTabList::OnPaint()
 			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2), tabey, MVC_DARK);
 			pt.x += MENUDLG_TXTAB;
 			pt.y += MENUDLG_TYTAB;
-			vrammix_text(dst, this->c.dtl.font, prm->str, menucolor[MVC_TEXT], &pt, NULL);
+			vrammix_text(dst, font, prm->str, menucolor[MVC_TEXT], &pt, NULL);
 		}
 		cnt--;
 		posx += prm->width + (MENU_LINE * 4) + (MENUDLG_TXTAB) * 2;
@@ -1663,11 +1659,32 @@ void MenuDlgItemTabList::OnPaint()
 			menuvram_liney(dst, lx, pt.y + (MENU_LINE * 2), tabdy, MVC_DARK);
 			pt.x += MENUDLG_TXTAB + (MENU_LINE * 2);
 			pt.y += MENUDLG_TYTAB;
-			vrammix_text(dst, this->c.dtl.font, prm->str, menucolor[MVC_TEXT], &pt, NULL);
+			vrammix_text(dst, font, prm->str, menucolor[MVC_TEXT], &pt, NULL);
 			break;
 		}
 		cnt--;
 		posx += prm->width + (MENU_LINE * 4) + (MENUDLG_TXTAB * 2);
+		prm = prm->_next;
+	}
+}
+
+void MenuDlgItemTabList::OnSetFont(FONTMNGH font)
+{
+	m_font = font;
+
+	POINT_T pt;
+	fontmng_getsize(GetFont(), mstr_fontcheck, &pt);
+	if ((pt.y <= 0) || (pt.y >= 65536))
+	{
+		pt.y = 16;
+	}
+	m_fontsize = pt.y;
+	DLGPRM prm = this->_prm;
+	while(prm)
+	{
+		POINT_T pt;
+		fontmng_getsize(GetFont(), prm->str, &pt);
+		prm->width = pt.x;
 		prm = prm->_next;
 	}
 }
@@ -1699,7 +1716,7 @@ void MenuDlgItemTabList::Append(const OEMCHAR *arg)
 		*sto = res;
 
 		POINT_T pt;
-		fontmng_getsize(this->c.dtl.font, (OEMCHAR *)arg, &pt);
+		fontmng_getsize(GetFont(), (OEMCHAR *)arg, &pt);
 		res->width = pt.x;
 		this->prmcnt++;
 	}
@@ -1707,7 +1724,7 @@ void MenuDlgItemTabList::Append(const OEMCHAR *arg)
 
 void MenuDlgItemTabList::OnClick(int x, int y)
 {
-	if (y < (this->c.dtl.fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB))
+	if (y < (m_fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB))
 	{
 		int pos = 0;
 		DLGPRM prm = this->_prm;
@@ -1764,7 +1781,7 @@ public:
 				POINT_T pt;
 				pt.x = rct.left + MENU_LINE;
 				pt.y = rct.top + MENU_LINE;
-				vrammix_text(vram, this->c.dt.font, string, menucolor[MVC_TEXT], &pt, &rct);
+				vrammix_text(vram, GetFont(), string, menucolor[MVC_TEXT], &pt, &rct);
 			}
 		}
 	}
@@ -1795,8 +1812,8 @@ public:
 
 		rct.left += MENUDLG_SXFRAME;
 		rct.top = m_rect.top;
-		rct.right = rct.left + (MENUDLG_PXFRAME * 2) + this->c.dt.pt.x;
-		rct.bottom = rct.top + this->c.dt.pt.y + MENU_DSTEXT;
+		rct.right = rct.left + (MENUDLG_PXFRAME * 2) + m_size.x;
+		rct.bottom = rct.top + m_size.y + MENU_DSTEXT;
 		vram_filldat(vram, &rct, menucolor[MVC_STATIC]);
 		if (this->_prm)
 		{
@@ -1869,7 +1886,7 @@ void MenuDlgItemRadio::OnSetValue(int val)
 
 void MenuDlgItemRadio::OnClick(int x, int y)
 {
-	if (x < (this->c.dt.pt.x + MENUDLG_SXRADIO))
+	if (x < (m_size.x + MENUDLG_SXRADIO))
 	{
 		OnSetValue(1);
 		Send(DLGMSG_COMMAND);
@@ -1946,7 +1963,7 @@ void MenuDlgItemCheck::OnSetValue(int val)
 
 void MenuDlgItemCheck::OnClick(int x, int y)
 {
-	if (x < (this->c.dt.pt.x + MENUDLG_SXCHECK))
+	if (x < (m_size.x + MENUDLG_SXCHECK))
 	{
 		OnSetValue(!m_nValue);
 		Send(DLGMSG_COMMAND);
@@ -2649,7 +2666,7 @@ INTPTR MenuDlgItem::ItemProc(int ctrl, INTPTR arg)
 			}
 			if (m_type == DLGTYPE_LIST)
 			{
-				dlglist_reset(dlg, this);
+				(static_cast<MenuDlgItemList*>(this))->Reset();
 				Invalidate();
 			}
 			break;
@@ -2667,8 +2684,7 @@ INTPTR MenuDlgItem::ItemProc(int ctrl, INTPTR arg)
 		case DMSG_SETLISTPOS:
 			if (m_type == DLGTYPE_LIST)
 			{
-				ret = this->c.dl.basepos;
-				(static_cast<MenuDlgItemList*>(this))->SetBasePos((int)arg);
+				ret = (static_cast<MenuDlgItemList*>(this))->SetBasePos((int)arg);
 				Invalidate();
 			}
 			break;
@@ -2688,37 +2704,13 @@ INTPTR MenuDlgItem::ItemProc(int ctrl, INTPTR arg)
 			break;
 
 		case DMSG_SETFONT:
-			if (m_type == DLGTYPE_LIST)
-			{
-				ret = (INTPTR)dlglist_setfont(hdl, (FONTMNGH)arg);
-				Invalidate();
-			}
-			else if (m_type == DLGTYPE_TABLIST)
-			{
-				ret = (INTPTR)dlgtablist_setfont(hdl, (FONTMNGH)arg);
-				Invalidate();
-			}
-			else if (m_type == DLGTYPE_TEXT)
-			{
-				ret = (INTPTR)hdl->c.dt.font;
-				hdl->c.dt.font = (FONTMNGH)arg;
-				Invalidate();
-			}
+			ret = reinterpret_cast<INTPTR>(GetFont());
+			OnSetFont(reinterpret_cast<FONTMNGH>(arg));
+			Invalidate();
 			break;
 
 		case DMSG_GETFONT:
-			if (m_type == DLGTYPE_LIST)
-			{
-				ret = (INTPTR)hdl->c.dl.font;
-			}
-			else if (m_type == DLGTYPE_TABLIST)
-			{
-				ret = (INTPTR)hdl->c.dtl.font;
-			}
-			else if (m_type == DLGTYPE_TEXT)
-			{
-				ret = (INTPTR)hdl->c.dt.font;
-			}
+			ret = reinterpret_cast<INTPTR>(GetFont());
 			break;
 	}
 	return ret;
