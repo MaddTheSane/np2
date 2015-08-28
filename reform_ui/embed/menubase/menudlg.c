@@ -82,8 +82,6 @@ public:
 	MENUID		m_page;			// *
 	MENUID		m_group;		// *
 	RECT_T		m_rect;
-	DLGPRM		_prm;
-	int			prmcnt;
 	int			m_nValue;
 	VRAMHDL		m_vram;			// *
 
@@ -157,8 +155,6 @@ MenuDlgItem::MenuDlgItem(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, 
 {
 	m_page = pParent->m_page;
 	m_group = pParent->m_group;
-	this->_prm = NULL;
-	this->prmcnt = 0;
 }
 
 /**
@@ -300,23 +296,6 @@ static void resattachicon(MENUDLG dlg, DLGPRM prm, UINT16 icon,
 		prm->num = icon;
 		prm->icon = menuicon_lock(icon, width, height, dlg->m_vram->bpp);
 	}
-}
-
-static DLGPRM ressea(DLGHDL hdl, int pos) {
-
-	DLGPRM	prm;
-
-	if (pos >= 0) {
-		prm = hdl->_prm;
-		while(prm) {
-			if (!pos) {
-				return(prm);
-			}
-			pos--;
-			prm = prm->_next;
-		}
-	}
-	return(NULL);
 }
 
 static void getmid(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
@@ -462,6 +441,7 @@ public:
 	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
 protected:
+	DLGPRM		_prm;
 	POINT_T m_size;
 
 	POINT_T GetTextPos(const POINT_T& size, const RECT_T& rect) const;
@@ -472,6 +452,7 @@ protected:
 MenuDlgItemText::MenuDlgItemText(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, const RECT_T& rect)
 	: MenuDlgItem(pParent, type, id, flg, rect)
 {
+	this->_prm = NULL;
 	m_size.x = 0;
 	m_size.y = 0;
 }
@@ -732,13 +713,18 @@ public:
 	BOOL Append(const OEMCHAR* arg);
 	BOOL SetEx(const ITEMEXPRM *arg);
 
+	DLGPRM		_prm;
+
 private:
+	int			prmcnt;
 	DLGLIST m_dl;
 };
 
 MenuDlgItemList::MenuDlgItemList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
 	: MenuDlgItem(pParent, DLGTYPE_LIST, id, flg, rect)
 {
+	this->_prm = NULL;
+	this->prmcnt = 0;
 	memset(&m_dl, 0, sizeof(m_dl));
 }
 
@@ -808,6 +794,23 @@ void MenuDlgItemList::DrawItem(DLGPRM prm, int focus, POINT_T *pt, RECT_T *rct)
 #endif
 	}
 	vrammix_text(m_vram, GetFont(), prm->str, menucolor[(focus) ? MVC_CURTEXT : MVC_TEXT], &fp, rct);
+}
+
+static DLGPRM ressea(MenuDlgItemList* hdl, int pos) {
+
+	DLGPRM	prm;
+
+	if (pos >= 0) {
+		prm = hdl->_prm;
+		while(prm) {
+			if (!pos) {
+				return(prm);
+			}
+			pos--;
+			prm = prm->_next;
+		}
+	}
+	return(NULL);
 }
 
 BOOL MenuDlgItemList::DrawSub(int pos, int focus)
@@ -1560,6 +1563,8 @@ public:
 	void Append(const OEMCHAR *arg);
 
 private:
+	DLGPRM		_prm;
+	int			prmcnt;
 	int m_fontsize;
 };
 
@@ -1567,6 +1572,8 @@ MenuDlgItemTabList::MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG f
 	: MenuDlgItem(pParent, DLGTYPE_TABLIST, id, flg, rect)
 	, m_fontsize(0)
 {
+	this->_prm = NULL;
+	this->prmcnt = 0;
 }
 
 BRESULT MenuDlgItemTabList::OnCreate(const void *arg)
@@ -1981,6 +1988,7 @@ public:
 	MenuDlgItemIcon(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
 		: MenuDlgItem(pParent, DLGTYPE_ICON, id, flg, rect)
 	{
+		this->_prm = NULL;
 	}
 
 	virtual BRESULT OnCreate(const void *arg)
@@ -1997,6 +2005,9 @@ public:
 			PaintIcon(this->_prm->icon);
 		}
 	}
+
+private:
+	DLGPRM		_prm;
 };
 
 
