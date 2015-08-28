@@ -53,12 +53,6 @@ typedef struct {
 	UINT8		sldv;
 } DLGSLD;
 
-#if 0
-typedef struct {
-	VRAMHDL		vram;
-} DLGVRAM;
-#endif
-
 class MenuDialog;
 
 /**
@@ -75,6 +69,8 @@ public:
 	virtual BRESULT OnCreate(const void *arg);
 	virtual void OnPaint() = 0;
 	virtual void OnSetValue(int val);
+//	virtual void OnSetText(const OEMCHAR *lpString);
+//	virtual void OnSetFont(FONTMNG font = NULL);
 	virtual void OnClick(int x, int y);
 	virtual void OnMove(int x, int y, int focus);
 	virtual void OnRelease(int focus);
@@ -94,7 +90,7 @@ public:
 	MENUID		m_page;			// *
 	MENUID		m_group;		// *
 	RECT_T		m_rect;
-	DLGPRM		prm;
+	DLGPRM		_prm;
 	int			prmcnt;
 	int			m_nValue;
 	VRAMHDL		m_vram;			// *
@@ -148,19 +144,13 @@ public:
 
 private:
 	void DrawLock(bool lock);
-	MenuDlgItem* GetItem(MENUID id);
-	MenuDlgItem* GetItemFromPosition(int x, int y);
+	MenuDlgItem* GetItem(MENUID id) const;
+	MenuDlgItem* GetItemFromPosition(int x, int y) const;
 };
 typedef MenuDialog *MENUDLG;
 
 static MenuDialog s_menudlg;
 
-static void drawctrls(MENUDLG dlg, DLGHDL hdl)
-{
-	dlg->DrawItem(hdl);
-}
-
-// ----
 
 /**
  * コンストラクタ
@@ -176,7 +166,7 @@ MenuDlgItem::MenuDlgItem(MenuDialog* pParent, int type, MENUID id, MENUFLG flg, 
 {
 	m_page = pParent->m_page;
 	m_group = pParent->m_group;
-	this->prm = NULL;
+	this->_prm = NULL;
 	this->prmcnt = 0;
 	memset(&this->c, 0, sizeof(this->c));
 }
@@ -309,7 +299,7 @@ static DLGPRM ressea(DLGHDL hdl, int pos) {
 	DLGPRM	prm;
 
 	if (pos >= 0) {
-		prm = hdl->prm;
+		prm = hdl->_prm;
 		while(prm) {
 			if (!pos) {
 				return(prm);
@@ -325,7 +315,7 @@ static BRESULT gettextsz(DLGHDL hdl, POINT_T *sz) {
 
 	DLGPRM	prm;
 
-	prm = hdl->prm;
+	prm = hdl->_prm;
 	if (prm == NULL) {
 		goto gts_err;
 	}
@@ -344,26 +334,6 @@ static BRESULT gettextsz(DLGHDL hdl, POINT_T *sz) {
 
 gts_err:
 	return(FAILURE);
-}
-
-static void getleft(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
-
-	pt->x = rect->left;
-	pt->y = rect->top;
-	(void)sz;
-}
-
-static void getcenter(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
-
-	pt->x = rect->left;
-	pt->x += (rect->right - rect->left - sz->x) >> 1;
-	pt->y = rect->top;
-}
-
-static void getright(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
-
-	pt->x = rect->right - sz->x - MENU_DSTEXT;
-	pt->y = rect->top;
 }
 
 static void getmid(POINT_T *pt, const RECT_T *rect, const POINT_T *sz) {
@@ -417,9 +387,9 @@ BRESULT MenuDlgItemBase::OnCreate(const void *arg)
 void MenuDlgItemBase::OnPaint()
 {
 	OEMCHAR* title = NULL;
-	if (this->prm)
+	if (this->_prm)
 	{
-		title = this->prm->str;
+		title = this->_prm->str;
 	}
 
 	VRAMHDL vram = GetVram();
@@ -445,7 +415,7 @@ void MenuDlgItemBase::OnMove(int x, int y, int focus)
 		y -= m_pParent->m_lasty;
 		if ((x) || (y))
 		{
-			VRAMHDL vram = m_pParent->m_vram;
+			VRAMHDL vram = GetVram();
 			menubase_clrrect(vram);
 			vram->posx += x;
 			vram->posy += y;
@@ -495,7 +465,7 @@ public:
 	{
 		if (focus)
 		{
-			(*m_pParent->m_proc)(DLGMSG_CLOSE, 0, 0);
+			Send(DLGMSG_CLOSE);
 		}
 	}
 };
@@ -515,6 +485,7 @@ public:
 	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
 
 protected:
+	POINT_T GetTextPos(const POINT_T& size, const RECT_T& rect) const;
 	void DrawText(const POINT_T& pt);
 };
 
@@ -530,7 +501,7 @@ BRESULT MenuDlgItemText::OnCreate(const void *arg)
 	{
 		str = str_null;
 	}
-	this->prm = resappend(m_pParent, str);
+	this->_prm = resappend(m_pParent, str);
 	this->c.dt.font = m_pParent->m_font;
 	fontmng_getsize(m_pParent->m_font, str, &this->c.dt.pt);
 	return SUCCESS;
@@ -544,26 +515,32 @@ void MenuDlgItemText::OnPaint()
 	POINT_T sz;
 	if (gettextsz(this, &sz) == SUCCESS)
 	{
-		void (*getpt)(POINT_T *pt, const RECT_T *rect, const POINT_T *sz);
-		switch (m_flag & MST_POSMASK)
-		{
-			case MST_LEFT:
-			default:
-				getpt = getleft;
-				break;
-
-			case MST_CENTER:
-				getpt = getcenter;
-				break;
-
-			case MST_RIGHT:
-				getpt = getright;
-				break;
-		}
-		POINT_T pt;
-		(*getpt)(&pt, &m_rect, &sz);
+		POINT_T pt = GetTextPos(sz, m_rect);
 		DrawText(pt);
 	}
+}
+
+POINT_T MenuDlgItemText::GetTextPos(const POINT_T& size, const RECT_T& rect) const
+{
+	POINT_T pt;
+	switch (m_flag & MST_POSMASK)
+	{
+		case MST_LEFT:
+		default:
+			pt.x = rect.left;
+			break;
+
+		case MST_CENTER:
+			pt.x = rect.left;
+			pt.x += (rect.right - rect.left - size.x) >> 1;
+			break;
+
+		case MST_RIGHT:
+			pt.x = rect.right - size.x - MENU_DSTEXT;
+			break;
+	}
+	pt.y = rect.top;
+	return pt;
 }
 
 INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
@@ -572,23 +549,23 @@ INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
 	switch (ctrl)
 	{
 		case DMSG_SETTEXT:
-			if (this->prm)
+			if (this->_prm)
 			{
 				const OEMCHAR* str = reinterpret_cast<OEMCHAR*>(arg);
 				if (str == NULL)
 				{
 					str = str_null;
 				}
-				milstr_ncpy(this->prm->str, str, NELEMENTS(this->prm->str));
+				milstr_ncpy(this->_prm->str, str, NELEMENTS(this->_prm->str));
 				fontmng_getsize(this->c.dt.font, str, &this->c.dt.pt);
 				Invalidate();
 			}
 			break;
 
 		case DMSG_SETICON:
-			if (this->prm)
+			if (this->_prm)
 			{
-				resattachicon(m_pParent, this->prm, (UINT16)arg, this->c.dt.pt.y, this->c.dt.pt.y);
+				resattachicon(m_pParent, this->_prm, (UINT16)arg, this->c.dt.pt.y, this->c.dt.pt.y);
 				Invalidate();
 			}
 			break;
@@ -602,14 +579,14 @@ INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
 
 void MenuDlgItemText::DrawText(const POINT_T& pt)
 {
-	if (this->prm == NULL)
+	if (this->_prm == NULL)
 	{
 		return;
 	}
 
 	VRAMHDL vram = GetVram();
 	POINT_T fp = pt;
-	VRAMHDL icon = this->prm->icon;
+	VRAMHDL icon = this->_prm->icon;
 	if (icon)
 	{
 		if (icon->alpha)
@@ -627,7 +604,7 @@ void MenuDlgItemText::DrawText(const POINT_T& pt)
 #endif
 	}
 
-	const OEMCHAR* string = this->prm->str;
+	const OEMCHAR* string = this->_prm->str;
 	if (string)
 	{
 		int color;
@@ -720,7 +697,42 @@ public:
 
 
 
-// ---- list
+/**
+ * list
+ */
+class MenuDlgItemList : public MenuDlgItem
+{
+public:
+	MenuDlgItemList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect);
+
+	virtual BRESULT OnCreate(const void *arg);
+	virtual void OnPaint();
+	virtual void OnSetValue(int val);
+	virtual void OnClick(int x, int y);
+	virtual void OnMove(int x, int y, int focus);
+	virtual void OnRelease(int focus);
+//	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
+
+private:
+	int GetPos(int y) const;
+	int GetPc(int x, int y) const;
+	void DrawItem(DLGPRM prm, int focus, POINT_T *pt, RECT_T *rct);
+	BOOL DrawSub(int pos, int focus);
+	void SetBtn(int flg);
+	void DrawAll();
+	int BarPos() const;
+	void DrawBar();
+
+public:
+	void SetBasePos(int pos);
+	BOOL Append(const OEMCHAR* arg);
+	BOOL SetEx(const ITEMEXPRM *arg);
+};
+
+MenuDlgItemList::MenuDlgItemList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
+	: MenuDlgItem(pParent, DLGTYPE_LIST, id, flg, rect)
+{
+}
 
 static FONTMNGH dlglist_setfont(DLGHDL hdl, FONTMNGH font) {
 										// 後でスクロールバーの調整をすべし
@@ -744,65 +756,58 @@ static void dlglist_reset(MENUDLG dlg, DLGHDL hdl) {
 	DLGPRM	next;
 
 	vram_filldat(hdl->m_vram, NULL, 0xffffff);
-	dp = hdl->prm;
+	dp = hdl->_prm;
 	while(dp) {
 		next = dp->_next;
 		dp->_next = PRMNEXT_EMPTY;
 		dp = next;
 	}
-	hdl->prm = NULL;
+	hdl->_prm = NULL;
 	hdl->prmcnt = 0;
 	hdl->m_nValue = -1;
 	hdl->c.dl.scrollbar = 0;
 	hdl->c.dl.basepos = 0;
 }
 
-static BRESULT _dlglist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
-
-	int		width;
-	int		height;
-
-	width = hdl->m_rect.right - hdl->m_rect.left - (MENU_LINE * 4);
-	height = hdl->m_rect.bottom - hdl->m_rect.top - (MENU_LINE * 4);
-	hdl->m_vram = vram_create(width, height, FALSE, g_menubase.bpp);
-	if (hdl->m_vram == NULL) {
-		goto dlcre_err;
+BRESULT MenuDlgItemList::OnCreate(const void *arg)
+{
+	int width = m_rect.right - m_rect.left - (MENU_LINE * 4);
+	int height = m_rect.bottom - m_rect.top - (MENU_LINE * 4);
+	m_vram = vram_create(width, height, FALSE, g_menubase.bpp);
+	if (m_vram == NULL)
+	{
+		return FAILURE;
 	}
-	hdl->m_vram->posx = hdl->m_rect.left + (MENU_LINE * 2);
-	hdl->m_vram->posy = hdl->m_rect.top + (MENU_LINE * 2);
-	dlglist_setfont(hdl, dlg->m_font);
-	dlglist_reset(dlg, hdl);
-	return(SUCCESS);
-
-dlcre_err:
-	(void)dlg;
-	(void)arg;
-	return(FAILURE);
+	m_vram->posx = m_rect.left + (MENU_LINE * 2);
+	m_vram->posy = m_rect.top + (MENU_LINE * 2);
+	dlglist_setfont(this, m_pParent->m_font);
+	dlglist_reset(m_pParent, this);
+	return SUCCESS;
 }
 
-static void _dlglist_paint(MENUDLG dlg, DLGHDL hdl) {
-
-	menuvram_box2(dlg->m_vram, &hdl->m_rect,
-						MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
-	vrammix_cpy(dlg->m_vram, NULL, hdl->m_vram, NULL);
+void MenuDlgItemList::OnPaint()
+{
+	VRAMHDL vram = GetVram();
+	menuvram_box2(vram, &m_rect, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
+	vrammix_cpy(vram, NULL, m_vram, NULL);
 }
 
-static void dlglist_drawitem(DLGHDL hdl, DLGPRM prm, int focus,
-												POINT_T *pt, RECT_T *rct) {
+void MenuDlgItemList::DrawItem(DLGPRM prm, int focus, POINT_T *pt, RECT_T *rct)
+{
+	vram_filldat(m_vram, rct, menucolor[(focus) ? MVC_CURBACK : MVC_HILIGHT]);
 
-	VRAMHDL	icon;
-	POINT_T	fp;
-
-	vram_filldat(hdl->m_vram, rct, menucolor[focus?MVC_CURBACK:MVC_HILIGHT]);
+	POINT_T fp;
 	fp.x = pt->x;
 	fp.y = pt->y;
-	icon = prm->icon;
-	if (icon) {
-		if (icon->alpha) {
-			vramcpy_cpyex(hdl->m_vram, &fp, icon, NULL);
+	VRAMHDL icon = prm->icon;
+	if (icon)
+	{
+		if (icon->alpha)
+		{
+			vramcpy_cpyex(m_vram, &fp, icon, NULL);
 		}
 		else {
-			vramcpy_cpy(hdl->m_vram, &fp, icon, NULL);
+			vramcpy_cpy(m_vram, &fp, icon, NULL);
 		}
 		fp.x += icon->width;
 #if defined(SIZE_QVGA)
@@ -811,208 +816,218 @@ static void dlglist_drawitem(DLGHDL hdl, DLGPRM prm, int focus,
 		fp.x += 2;
 #endif
 	}
-	vrammix_text(hdl->m_vram, hdl->c.dl.font, prm->str,
-							menucolor[focus?MVC_CURTEXT:MVC_TEXT], &fp, rct);
+	vrammix_text(m_vram, this->c.dl.font, prm->str, menucolor[(focus) ? MVC_CURTEXT : MVC_TEXT], &fp, rct);
 }
 
-static BOOL dlglist_drawsub(DLGHDL hdl, int pos, int focus) {
-
-	DLGPRM	prm;
-	POINT_T	pt;
-	RECT_T	rct;
-
-	prm = ressea(hdl, pos);
+BOOL MenuDlgItemList::DrawSub(int pos, int focus)
+{
+	DLGPRM prm = ressea(this, pos);
 	if (prm == NULL) {
 		return(FALSE);
 	}
-	pos -= hdl->c.dl.basepos;
-	if (pos < 0) {
+	pos -= this->c.dl.basepos;
+	if (pos < 0)
+	{
 		return(FALSE);
 	}
+	POINT_T pt;
 	pt.x = 0;
-	pt.y = pos * hdl->c.dl.fontsize;
-	if (pt.y >= hdl->m_vram->height) {
-		return(FALSE);
+	pt.y = pos * this->c.dl.fontsize;
+	if (pt.y >= m_vram->height)
+	{
+		return FALSE;
 	}
+	RECT_T rct;
 	rct.left = 0;
 	rct.top = pt.y;
-	rct.right = hdl->m_vram->width;
-	if (hdl->prmcnt > hdl->c.dl.dispmax) {
+	rct.right = m_vram->width;
+	if (this->prmcnt > this->c.dl.dispmax)
+	{
 		rct.right -= MENUDLG_CXVSCR;
 	}
-	rct.bottom = rct.top + hdl->c.dl.fontsize;
-	dlglist_drawitem(hdl, prm, focus, &pt, &rct);
-	return(TRUE);
+	rct.bottom = rct.top + this->c.dl.fontsize;
+	DrawItem(prm, focus, &pt, &rct);
+	return TRUE;
 }
 
-static void dlglist_setbtn(DLGHDL hdl, int flg) {
+void MenuDlgItemList::SetBtn(int flg)
+{
+	const MENURES2* res = menures_scrbtn;
 
-	RECT_T		rct;
-	POINT_T		pt;
-	UINT		mvc4;
-const MENURES2	*res;
-
-	res = menures_scrbtn;
-	rct.right = hdl->m_vram->width;
+	RECT_T rct;
+	rct.right = m_vram->width;
 	rct.left = rct.right - MENUDLG_CXVSCR;
-	if (!(flg & 2)) {
+	if (!(flg & 2))
+	{
 		rct.top = 0;
 	}
-	else {
-		rct.top = hdl->m_vram->height - MENUDLG_CYVSCR;
-		if (rct.top < MENUDLG_CYVSCR) {
+	else
+	{
+		rct.top = m_vram->height - MENUDLG_CYVSCR;
+		if (rct.top < MENUDLG_CYVSCR)
+		{
 			rct.top = MENUDLG_CYVSCR;
 		}
 		res++;
 	}
 	rct.bottom = rct.top + MENUDLG_CYVSCR;
+	vram_filldat(m_vram, &rct, menucolor[MVC_BTNFACE]);
 
-	vram_filldat(hdl->m_vram, &rct, menucolor[MVC_BTNFACE]);
-	if (flg & 1) {
+	UINT mvc4;
+	if (flg & 1)
+	{
 		mvc4 = MVC4(MVC_SHADOW, MVC_SHADOW, MVC_LIGHT, MVC_LIGHT);
 	}
-	else {
+	else
+	{
 		mvc4 = MVC4(MVC_LIGHT, MVC_DARK, MVC_HILIGHT, MVC_SHADOW);
 	}
-	menuvram_box2(hdl->m_vram, &rct, mvc4);
+	menuvram_box2(m_vram, &rct, mvc4);
+	POINT_T pt;
 	pt.x = rct.left + (MENU_LINE * 2);
 	pt.y = rct.top + (MENU_LINE * 2);
-	if (flg & 1) {
+	if (flg & 1)
+	{
 		pt.x += MENU_DSTEXT;
 		pt.y += MENU_DSTEXT;
 	}
-	menuvram_res3put(hdl->m_vram, res, &pt, MVC_TEXT);
+	menuvram_res3put(m_vram, res, &pt, MVC_TEXT);
 }
 
-static void dlglist_drawall(DLGHDL hdl) {
-
-	DLGPRM	prm;
-	POINT_T	pt;
-	RECT_T	rct;
-	int		pos;
-
+void MenuDlgItemList::DrawAll()
+{
+	RECT_T rct;
 	rct.left = 0;
-	rct.top = 0 - (hdl->c.dl.basepos * hdl->c.dl.fontsize);
-	rct.right = hdl->m_vram->width;
-	if (hdl->prmcnt > hdl->c.dl.dispmax) {
+	rct.top = 0 - (this->c.dl.basepos * this->c.dl.fontsize);
+	rct.right = m_vram->width;
+	if (this->prmcnt > this->c.dl.dispmax)
+	{
 		rct.right -= MENUDLG_CXVSCR;
 	}
 
-	prm = hdl->prm;
-	pos = 0;
-	while(prm) {
-		if (rct.top >= hdl->m_vram->height) {
+	DLGPRM prm = this->_prm;
+	int pos = 0;
+	while (prm)
+	{
+		if (rct.top >= m_vram->height)
+		{
 			break;
 		}
-		if (rct.top >= 0) {
-			rct.bottom = rct.top + hdl->c.dl.fontsize;
+		if (rct.top >= 0)
+		{
+			rct.bottom = rct.top + this->c.dl.fontsize;
+			POINT_T pt;
 			pt.x = 0;
 			pt.y = rct.top;
-			dlglist_drawitem(hdl, prm, (pos == hdl->m_nValue), &pt, &rct);
+			DrawItem(prm, (pos == m_nValue), &pt, &rct);
 		}
 		prm = prm->_next;
 		pos++;
-		rct.top += hdl->c.dl.fontsize;
+		rct.top += this->c.dl.fontsize;
 	}
-	rct.bottom = hdl->m_vram->height;
-	vram_filldat(hdl->m_vram, &rct, menucolor[MVC_HILIGHT]);
+	rct.bottom = m_vram->height;
+	vram_filldat(m_vram, &rct, menucolor[MVC_HILIGHT]);
 }
 
-static int dlglist_barpos(DLGHDL hdl) {
-
-	int		ret;
-
-	ret = hdl->m_vram->height - (MENUDLG_CYVSCR * 2);
-	ret -= hdl->c.dl.scrollbar;
-	ret *= hdl->c.dl.basepos;
-	ret /= (hdl->prmcnt - hdl->c.dl.dispmax);
-	return(ret);
+int MenuDlgItemList::BarPos() const
+{
+	int ret = m_vram->height - (MENUDLG_CYVSCR * 2);
+	ret -= this->c.dl.scrollbar;
+	ret *= this->c.dl.basepos;
+	ret /= (this->prmcnt - this->c.dl.dispmax);
+	return ret;
 }
 
-static void dlglist_drawbar(DLGHDL hdl) {
-
-	RECT_T	rct;
-
-	rct.right = hdl->m_vram->width;
+void MenuDlgItemList::DrawBar()
+{
+	RECT_T rct;
+	rct.right = m_vram->width;
 	rct.left = rct.right - MENUDLG_CXVSCR;
 	rct.top = MENUDLG_CYVSCR;
-	rct.bottom = hdl->m_vram->height - MENUDLG_CYVSCR;
-	vram_filldat(hdl->m_vram, &rct, menucolor[MVC_SCROLLBAR]);
+	rct.bottom = m_vram->height - MENUDLG_CYVSCR;
+	vram_filldat(m_vram, &rct, menucolor[MVC_SCROLLBAR]);
 
-	rct.top += dlglist_barpos(hdl);
-	rct.bottom = rct.top + hdl->c.dl.scrollbar;
-	vram_filldat(hdl->m_vram, &rct, menucolor[MVC_BTNFACE]);
-	menuvram_box2(hdl->m_vram, &rct,
-						MVC4(MVC_LIGHT, MVC_DARK, MVC_HILIGHT, MVC_SHADOW));
+	rct.top += BarPos();
+	rct.bottom = rct.top + this->c.dl.scrollbar;
+	vram_filldat(m_vram, &rct, menucolor[MVC_BTNFACE]);
+	menuvram_box2(m_vram, &rct, MVC4(MVC_LIGHT, MVC_DARK, MVC_HILIGHT, MVC_SHADOW));
 }
 
-static BOOL dlglist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR* arg) {
+static BOOL dlglist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR* arg)
+{
+	return (static_cast<MenuDlgItemList*>(hdl))->Append(arg);
+}
 
-	BOOL	r;
-	DLGPRM	*sto;
-	int		barsize;
-
-	r = FALSE;
-	sto = &hdl->prm;
-	while(*sto) {
+BOOL MenuDlgItemList::Append(const OEMCHAR* arg)
+{
+	BOOL r = FALSE;
+	DLGPRM* sto = &this->_prm;
+	while(*sto)
+	{
 		sto = &((*sto)->_next);
 	}
-	*sto = resappend(dlg, arg);
+	*sto = resappend(m_pParent, arg);
 	if (*sto) {
-		r = dlglist_drawsub(hdl, hdl->prmcnt, FALSE);
-		hdl->prmcnt++;
-		if (hdl->prmcnt > hdl->c.dl.dispmax) {
-			barsize = hdl->m_vram->height - (MENUDLG_CYVSCR * 2);
-			if (barsize >= 8) {
-				barsize *= hdl->c.dl.dispmax;
-				barsize /= hdl->prmcnt;
+		r = DrawSub(this->prmcnt, FALSE);
+		this->prmcnt++;
+		if (this->prmcnt > this->c.dl.dispmax) {
+			int barsize = m_vram->height - (MENUDLG_CYVSCR * 2);
+			if (barsize >= 8)
+			{
+				barsize *= this->c.dl.dispmax;
+				barsize /= this->prmcnt;
 				barsize = max(barsize, 6);
-				if (!hdl->c.dl.scrollbar) {
-					dlglist_drawall(hdl);
-					dlglist_setbtn(hdl, 0);
-					dlglist_setbtn(hdl, 2);
+				if (!this->c.dl.scrollbar)
+				{
+					DrawAll();
+					SetBtn(0);
+					SetBtn(2);
 				}
-				hdl->c.dl.scrollbar = barsize;
-				dlglist_drawbar(hdl);
+				this->c.dl.scrollbar = barsize;
+				DrawBar();
 			}
 		}
 	}
-	return(r);
+	return r;
 }
 
-static BOOL dlglist_setex(MENUDLG dlg, DLGHDL hdl, const ITEMEXPRM *arg) {
+static BOOL dlglist_setex(MENUDLG dlg, DLGHDL hdl, const ITEMEXPRM *arg)
+{
+	return (static_cast<MenuDlgItemList*>(hdl))->SetEx(arg);
+}
 
-	DLGPRM	dp;
-	UINT	cnt;
-
-	if ((arg == NULL) || (arg->pos >= hdl->prmcnt)) {
-		return(FALSE);
+BOOL MenuDlgItemList::SetEx(const ITEMEXPRM *arg)
+{
+	if ((arg == NULL) || (arg->pos >= this->prmcnt))
+	{
+		return FALSE;
 	}
-	cnt = arg->pos;
-	dp = hdl->prm;
-	while((cnt) && (dp)) {
+	UINT cnt = arg->pos;
+	DLGPRM dp = this->_prm;
+	while((cnt) && (dp))
+	{
 		cnt--;
 		dp = dp->_next;
 	}
-	if (dp == NULL) {
-		return(FALSE);
+	if (dp == NULL)
+	{
+		return FALSE;
 	}
-	resattachicon(dlg, dp, arg->icon, hdl->c.dl.fontsize,
-											hdl->c.dl.fontsize);
+	resattachicon(m_pParent, dp, arg->icon, this->c.dl.fontsize, this->c.dl.fontsize);
 	milstr_ncpy(dp->str, arg->str, NELEMENTS(dp->str));
-	return(dlglist_drawsub(hdl, arg->pos, (arg->pos == hdl->m_nValue)));
+	return DrawSub(arg->pos, (arg->pos == m_nValue));
 }
 
-static int dlglist_getpos(DLGHDL hdl, int y) {
-
-	int		val;
-
-	val = (y / hdl->c.dl.fontsize) + hdl->c.dl.basepos;
-	if ((unsigned int)val < (unsigned int)hdl->prmcnt) {
-		return(val);
+int MenuDlgItemList::GetPos(int y) const
+{
+	int val = (y / this->c.dl.fontsize) + this->c.dl.basepos;
+	if ((unsigned int)val < (unsigned int)this->prmcnt)
+	{
+		return val;
 	}
-	else {
-		return(-1);
+	else
+	{
+		return -1;
 	}
 }
 
@@ -1027,245 +1042,213 @@ enum {
 	DLCUR_INCUR		= 6
 };
 
-static int dlglist_getpc(DLGHDL hdl, int x, int y) {
+int MenuDlgItemList::GetPc(int x, int y) const
+{
+	if ((unsigned int)x >= (unsigned int)m_vram->width)
+	{
+		return DLCUR_OUT;
+	}
+	if ((unsigned int)y >= (unsigned int)m_vram->height)
+	{
+		return DLCUR_OUT;
+	}
 
-	if ((unsigned int)x >= (unsigned int)hdl->m_vram->width) {
-		goto dlgp_out;
+	if ((this->prmcnt < this->c.dl.dispmax) || (x < (m_vram->width - MENUDLG_CXVSCR)))
+	{
+		return DLCUR_INLIST;
 	}
-	if ((unsigned int)y >= (unsigned int)hdl->m_vram->height) {
-		goto dlgp_out;
+	else if (y < MENUDLG_CYVSCR)
+	{
+		return DLCUR_UP;
 	}
-
-	if ((hdl->prmcnt < hdl->c.dl.dispmax) ||
-		(x < (hdl->m_vram->width - MENUDLG_CXVSCR))) {
-		return(DLCUR_INLIST);
-	}
-	else if (y < MENUDLG_CYVSCR) {
-		return(DLCUR_UP);
-	}
-	else if (y >= (hdl->m_vram->height - MENUDLG_CYVSCR)) {
-		return(DLCUR_DOWN);
+	else if (y >= (m_vram->height - MENUDLG_CYVSCR))
+	{
+		return DLCUR_DOWN;
 	}
 	y -= MENUDLG_CYVSCR;
-	y -= dlglist_barpos(hdl);
-	if (y < 0) {
-		return(DLCUR_PGUP);
+	y -= BarPos();
+	if (y < 0)
+	{
+		return DLCUR_PGUP;
 	}
-	else if (y < (int)hdl->c.dl.scrollbar) {
-		return(DLCUR_INBAR);
+	else if (y < (int)this->c.dl.scrollbar)
+	{
+		return DLCUR_INBAR;
 	}
-	else {
-		return(DLCUR_PGDN);
+	else
+	{
+		return DLCUR_PGDN;
 	}
-
-dlgp_out:
-	return(DLCUR_OUT);
 }
 
-static void _dlglist_setval(MENUDLG dlg, DLGHDL hdl, int val) {
-
-	BOOL	r;
-
-	if ((unsigned int)val >= (unsigned int)hdl->prmcnt) {
+void MenuDlgItemList::OnSetValue(int val)
+{
+	if ((unsigned int)val >= (unsigned int)this->prmcnt)
+	{
 		val = -1;
 	}
-	if (val != hdl->m_nValue)
+	if (val != m_nValue)
 	{
-		r = dlglist_drawsub(hdl, hdl->m_nValue, FALSE);
-		r |= dlglist_drawsub(hdl, val, TRUE);
-		hdl->m_nValue = val;
-		if (r) {
-			drawctrls(dlg, hdl);
+		BOOL r = DrawSub(m_nValue, FALSE);
+		r |= DrawSub(val, TRUE);
+		m_nValue = val;
+		if (r)
+		{
+			Invalidate();
 		}
 	}
 }
 
-static void dlglist_setbasepos(MENUDLG dlg, DLGHDL hdl, int pos) {
-
-	int		displimit;
-
-	if (pos < 0) {
+void MenuDlgItemList::SetBasePos(int pos)
+{
+	if (pos < 0)
+	{
 		pos = 0;
 	}
-	else {
-		displimit = hdl->prmcnt - hdl->c.dl.dispmax;
-		if (displimit < 0) {
+	else
+	{
+		int displimit = this->prmcnt - this->c.dl.dispmax;
+		if (displimit < 0)
+		{
 			displimit = 0;
 		}
-		if (pos > displimit) {
+		if (pos > displimit)
+		{
 			pos = displimit;
 		}
 	}
-	if (hdl->c.dl.basepos != pos) {
-		hdl->c.dl.basepos = pos;
-		dlglist_drawall(hdl);
-		dlglist_drawbar(hdl);
+	if (this->c.dl.basepos != pos)
+	{
+		this->c.dl.basepos = pos;
+		DrawAll();
+		DrawBar();
 	}
-	(void)dlg;
 }
 
-static void _dlglist_onclick(MENUDLG dlg, DLGHDL hdl, int x, int y) {
-
-	int		flg;
-	int		val;
-
+void MenuDlgItemList::OnClick(int x, int y)
+{
 	x -= (MENU_LINE * 2);
 	y -= (MENU_LINE * 2);
-	flg = dlglist_getpc(hdl, x, y);
-	dlg->m_dragflg = flg;
-	switch(flg) {
+	int flg = GetPc(x, y);
+	m_pParent->m_dragflg = flg;
+
+	int val;
+	switch (flg)
+	{
 		case DLCUR_INLIST:
-			val = dlglist_getpos(hdl, y);
-			if ((val == hdl->m_nValue) && (val != -1)) {
-				dlg->m_dragflg = DLCUR_INCUR;
+			val = GetPos(y);
+			if ((val == m_nValue) && (val != -1))
+			{
+				m_pParent->m_dragflg = DLCUR_INCUR;
 			}
-			_dlglist_setval(dlg, hdl, val);
-			(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
+			OnSetValue(val);
+			Send(DLGMSG_COMMAND, 0);
 			break;
 
 		case 1:
 		case 3:
-			dlglist_setbtn(hdl, flg);
-			dlglist_setbasepos(dlg, hdl, hdl->c.dl.basepos + flg - 2);
-			drawctrls(dlg, hdl);
+			SetBtn(flg);
+			SetBasePos(this->c.dl.basepos + flg - 2);
+			Invalidate();
 			break;
 
 		case DLCUR_INBAR:
 			y -= MENUDLG_CYVSCR;
-			y -= dlglist_barpos(hdl);
-			if ((unsigned int)y < (unsigned int)hdl->c.dl.scrollbar) {
-				dlg->m_lasty = y;
+			y -= BarPos();
+			if ((unsigned int)y < (unsigned int)this->c.dl.scrollbar)
+			{
+				m_pParent->m_lasty = y;
 			}
 			else {
-				dlg->m_lasty = -1;
+				m_pParent->m_lasty = -1;
 			}
 			break;
 
 		case DLCUR_PGUP:
-			dlglist_setbasepos(dlg, hdl, hdl->c.dl.basepos - hdl->c.dl.dispmax);
-			drawctrls(dlg, hdl);
+			SetBasePos(this->c.dl.basepos - this->c.dl.dispmax);
+			Invalidate();
 			break;
 
 		case DLCUR_PGDN:
-			dlglist_setbasepos(dlg, hdl, hdl->c.dl.basepos + hdl->c.dl.dispmax);
-			drawctrls(dlg, hdl);
+			SetBasePos(this->c.dl.basepos + this->c.dl.dispmax);
+			Invalidate();
 			break;
 	}
 }
 
-static void _dlglist_move(MENUDLG dlg, DLGHDL hdl, int x, int y, int focus) {
-
-	int		flg;
-	int		val;
-	int		height;
-
+void MenuDlgItemList::OnMove(int x, int y, int focus)
+{
 	x -= (MENU_LINE * 2);
 	y -= (MENU_LINE * 2);
-	flg = dlglist_getpc(hdl, x, y);
-	switch(dlg->m_dragflg) {
+	int flg = GetPc(x, y);
+
+	switch (m_pParent->m_dragflg)
+	{
 		case DLCUR_INLIST:
 		case DLCUR_INCUR:
-			if (flg == DLCUR_INLIST) {
-				val = dlglist_getpos(hdl, y);
-				if (val != hdl->m_nValue) {
-					dlg->m_dragflg = DLCUR_INLIST;
-					_dlglist_setval(dlg, hdl, val);
-					(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 0);
+			if (flg == DLCUR_INLIST)
+			{
+				int val = GetPos(y);
+				if (val != m_nValue)
+				{
+					m_pParent->m_dragflg = DLCUR_INLIST;
+					OnSetValue(val);
+					Send(DLGMSG_COMMAND, 0);
 				}
 			}
 			break;
 
 		case 1:
 		case 3:
-			dlglist_setbtn(hdl, dlg->m_dragflg - ((dlg->m_dragflg == flg)?0:1));
-			drawctrls(dlg, hdl);
+			SetBtn(m_pParent->m_dragflg - ((m_pParent->m_dragflg == flg) ? 0 : 1));
+			Invalidate();
 			break;
 
 		case DLCUR_INBAR:
-			if (dlg->m_lasty >= 0) {
+			if (m_pParent->m_lasty >= 0)
+			{
 				y -= MENUDLG_CYVSCR;
-				y -= dlg->m_lasty;
-				height = hdl->m_vram->height - (MENUDLG_CYVSCR * 2);
-				height -= hdl->c.dl.scrollbar;
-				if (y < 0) {
+				y -= m_pParent->m_lasty;
+				int height = m_vram->height - (MENUDLG_CYVSCR * 2);
+				height -= this->c.dl.scrollbar;
+				if (y < 0)
+				{
 					y = 0;
 				}
-				else if (y > height) {
+				else if (y > height)
+				{
 					y = height;
 				}
-				y *= (hdl->prmcnt - hdl->c.dl.dispmax);
+				y *= (this->prmcnt - this->c.dl.dispmax);
 				y /= height;
-				dlglist_setbasepos(dlg, hdl, y);
-				drawctrls(dlg, hdl);
+				SetBasePos(y);
+				Invalidate();
 			}
 			break;
 	}
-	(void)focus;
 }
 
-static void _dlglist_rel(MENUDLG dlg, DLGHDL hdl, int focus) {
-
-	switch (dlg->m_dragflg)
+void MenuDlgItemList::OnRelease(int focus)
+{
+	switch (m_pParent->m_dragflg)
 	{
 		case 1:
 		case 3:
-			dlglist_setbtn(hdl, dlg->m_dragflg - 1);
-			drawctrls(dlg, hdl);
+			SetBtn(m_pParent->m_dragflg - 1);
+			Invalidate();
 			break;
 
 		case DLCUR_INCUR:
-			(*dlg->m_proc)(DLGMSG_COMMAND, hdl->m_id, 1);
+			Send(DLGMSG_COMMAND, 1);
 			break;
 	}
-	(void)focus;
 }
 
-class MenuDlgItemList : public MenuDlgItem
-{
-public:
-	MenuDlgItemList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
-		: MenuDlgItem(pParent, DLGTYPE_LIST, id, flg, rect)
-	{
-	}
 
-	virtual BRESULT OnCreate(const void *arg)
-	{
-		return _dlglist_create(m_pParent, this, arg);
-	}
 
-	virtual void OnPaint()
-	{
-		VRAMHDL vram = m_pParent->m_vram;
-		menuvram_box2(vram, &m_rect, MVC4(MVC_SHADOW, MVC_HILIGHT, MVC_DARK, MVC_LIGHT));
-		vrammix_cpy(vram, NULL, m_vram, NULL);
-	}
-
-	virtual void OnSetValue(int val)
-	{
-		_dlglist_setval(m_pParent, this, val);
-	}
-
-	virtual void OnClick(int x, int y)
-	{
-		_dlglist_onclick(m_pParent, this, x, y);
-	}
-
-	virtual void OnMove(int x, int y, int focus)
-	{
-		_dlglist_move(m_pParent, this, x, y, focus);
-	}
-
-	virtual void OnRelease(int focus)
-	{
-		_dlglist_rel(m_pParent, this, focus);
-	}
-
-//	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
-
-};
-
-// ---- slider
-
+/**
+ * @brief slider
+ */
 class MenuDlgItemSlider : public MenuDlgItem
 {
 public:
@@ -1559,6 +1542,9 @@ public:
 	virtual void OnSetValue(int val);
 	virtual void OnClick(int x, int y);
 //	virtual INTPTR ItemProc(int ctrl, INTPTR arg);
+
+public:
+	void Append(const OEMCHAR *arg);
 };
 
 MenuDlgItemTabList::MenuDlgItemTabList(MenuDialog* pParent, MENUID id, MENUFLG flg, const RECT_T& rect)
@@ -1579,7 +1565,7 @@ static FONTMNGH dlgtablist_setfont(DLGHDL hdl, FONTMNGH font) {
 		pt.y = 16;
 	}
 	hdl->c.dtl.fontsize = pt.y;
-	prm = hdl->prm;
+	prm = hdl->_prm;
 	while(prm) {
 		fontmng_getsize(hdl->c.dtl.font, prm->str, &pt);
 		prm->width = pt.x;
@@ -1608,7 +1594,7 @@ void MenuDlgItemTabList::OnPaint()
 	menuvram_box2(dst, &rct, MVC4(MVC_HILIGHT, MVC_DARK, MVC_LIGHT, MVC_SHADOW));
 
 	int posx = m_rect.left + (MENU_LINE * 2);
-	DLGPRM prm = this->prm;
+	DLGPRM prm = this->_prm;
 	int cnt = m_nValue;
 	while (prm)
 	{
@@ -1640,7 +1626,7 @@ void MenuDlgItemTabList::OnPaint()
 	}
 
 	posx = m_rect.left;
-	prm = this->prm;
+	prm = this->_prm;
 	cnt = m_nValue;
 	while (prm)
 	{
@@ -1695,22 +1681,27 @@ void MenuDlgItemTabList::OnSetValue(int val)
 	}
 }
 
-static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR *arg) {
+static void dlgtablist_append(MENUDLG dlg, DLGHDL hdl, const OEMCHAR *arg)
+{
+	(static_cast<MenuDlgItemTabList*>(hdl))->Append(arg);
+}
 
-	DLGPRM	res;
-	DLGPRM	*sto;
-	POINT_T	pt;
-
-	sto = &hdl->prm;
-	while(*sto) {
+void MenuDlgItemTabList::Append(const OEMCHAR *arg)
+{
+	DLGPRM* sto = &this->_prm;
+	while (*sto)
+	{
 		sto = &((*sto)->_next);
 	}
-	res = resappend(dlg, arg);
-	if (res) {
+	DLGPRM res = resappend(m_pParent, arg);
+	if (res)
+	{
 		*sto = res;
-		fontmng_getsize(hdl->c.dtl.font, (OEMCHAR *)arg, &pt);
+
+		POINT_T pt;
+		fontmng_getsize(this->c.dtl.font, (OEMCHAR *)arg, &pt);
 		res->width = pt.x;
-		hdl->prmcnt++;
+		this->prmcnt++;
 	}
 }
 
@@ -1719,7 +1710,7 @@ void MenuDlgItemTabList::OnClick(int x, int y)
 	if (y < (this->c.dtl.fontsize + MENUDLG_SYTAB + MENUDLG_TYTAB + MENUDLG_EYTAB))
 	{
 		int pos = 0;
-		DLGPRM prm = this->prm;
+		DLGPRM prm = this->_prm;
 		while (prm)
 		{
 			x -= (MENU_LINE * 4);
@@ -1765,9 +1756,9 @@ public:
 		rct.right -= (MENU_LINE * 2);
 		rct.bottom -= (MENU_LINE * 2);
 		vram_filldat(vram, &rct, menucolor[(m_flag & MENU_GRAY) ? MVC_STATIC : MVC_HILIGHT]);
-		if (this->prm)
+		if (this->_prm)
 		{
-			const OEMCHAR* string = this->prm->str;
+			const OEMCHAR* string = this->_prm->str;
 			if (string)
 			{
 				POINT_T pt;
@@ -1807,7 +1798,7 @@ public:
 		rct.right = rct.left + (MENUDLG_PXFRAME * 2) + this->c.dt.pt.x;
 		rct.bottom = rct.top + this->c.dt.pt.y + MENU_DSTEXT;
 		vram_filldat(vram, &rct, menucolor[MVC_STATIC]);
-		if (this->prm)
+		if (this->_prm)
 		{
 			POINT_T pt;
 			pt.x = rct.left + MENUDLG_PXFRAME;
@@ -1977,16 +1968,16 @@ public:
 
 	virtual BRESULT OnCreate(const void *arg)
 	{
-		this->prm = resappend(m_pParent, NULL);
-		resattachicon(m_pParent, this->prm, (UINT16)(long)arg, m_rect.right - m_rect.left, m_rect.bottom - m_rect.top);
+		this->_prm = resappend(m_pParent, NULL);
+		resattachicon(m_pParent, this->_prm, (UINT16)(long)arg, m_rect.right - m_rect.left, m_rect.bottom - m_rect.top);
 		return SUCCESS;
 	}
 
 	virtual void OnPaint()
 	{
-		if (this->prm)
+		if (this->_prm)
 		{
-			PaintIcon(this->prm->icon);
+			PaintIcon(this->_prm->icon);
 		}
 	}
 };
@@ -2024,7 +2015,7 @@ public:
 			case DMSG_SETVRAM:
 				ret = reinterpret_cast<INTPTR>(m_resource);
 				m_resource = reinterpret_cast<VRAMHDL>(arg);
-				drawctrls(m_pParent, this);
+				Invalidate();
 				break;
 
 			default:
@@ -2196,14 +2187,14 @@ MenuDialog::MenuDialog()
 /**
  * アイテムを得る
  */
-MenuDlgItem* MenuDialog::GetItem(MENUID id)
+MenuDlgItem* MenuDialog::GetItem(MENUID id) const
 {
-	for (std::vector<MenuDlgItem*>::iterator it = m_items.begin(); it != m_items.end(); ++it)
+	for (std::vector<MenuDlgItem*>::const_iterator it = m_items.begin(); it != m_items.end(); ++it)
 	{
-		MenuDlgItem* item = *it;
+		const MenuDlgItem* item = *it;
 		if (id == item->m_id)
 		{
-			return item;
+			return const_cast<MenuDlgItem*>(item);
 		}
 	}
 	return NULL;
@@ -2212,14 +2203,14 @@ MenuDlgItem* MenuDialog::GetItem(MENUID id)
 /**
  * アイテムを得る
  */
-MenuDlgItem* MenuDialog::GetItemFromPosition(int x, int y)
+MenuDlgItem* MenuDialog::GetItemFromPosition(int x, int y) const
 {
-	for (std::vector<MenuDlgItem*>::reverse_iterator it = m_items.rbegin(); it != m_items.rend(); ++it)
+	for (std::vector<MenuDlgItem*>::const_reverse_iterator it = m_items.rbegin(); it != m_items.rend(); ++it)
 	{
-		MenuDlgItem* item = *it;
+		const MenuDlgItem* item = *it;
 		if ((!(item->m_flag & (MENU_DISABLE | MENU_GRAY))) && (rect_in(&item->m_rect, x, y)))
 		{
-			return item;
+			return const_cast<MenuDlgItem*>(item);
 		}
 	}
 	return NULL;
@@ -2489,27 +2480,16 @@ bool MenuDialog::Append(int type, MENUID id, MENUFLG flg, const void *arg, int p
 
 // ---- moving
 
-static DLGHDL hdlpossea(MENUDLG dlg, int x, int y)
-{
-	for (std::vector<MenuDlgItem*>::reverse_iterator it = dlg->m_items.rbegin(); it != dlg->m_items.rend(); ++it)
-	{
-		MenuDlgItem* item = *it;
-		if ((!(item->m_flag & (MENU_DISABLE | MENU_GRAY))) && (rect_in(&item->m_rect, x, y)))
-		{
-			return item;
-		}
-	}
-	return NULL;
-}
-
 void MenuDialog::Moving(int x, int y, int btn)
 {
 	DrawLock(true);
 	MENUDLG dlg = this;
 	x -= m_vram->posx;
 	y -= m_vram->posy;
-	if (!m_btn) {
-		if (btn == 1) {
+	if (!m_btn)
+	{
+		if (btn == 1)
+		{
 			DLGHDL hdl = GetItemFromPosition(x, y);
 			if (hdl) {
 				x -= hdl->m_rect.left;
@@ -2565,43 +2545,47 @@ INTPTR MenuDlgItem::ItemProc(int ctrl, INTPTR arg)
 	switch (ctrl) 
 	{
 		case DMSG_SETHIDE:
-			ret = (hdl->m_flag & MENU_DISABLE) ? 1 : 0;
+			ret = (m_flag & MENU_DISABLE) ? 1 : 0;
 			flg = (arg) ? MENU_DISABLE : 0;
-			if ((hdl->m_flag ^ flg) & MENU_DISABLE) {
-				hdl->m_flag ^= MENU_DISABLE;
-				if (flg) {
-					drawctrls(dlg, NULL);
+			if ((m_flag ^ flg) & MENU_DISABLE)
+			{
+				m_flag ^= MENU_DISABLE;
+				if (flg)
+				{
+					m_pParent->DrawItem(NULL);
 				}
-				else {
-					drawctrls(dlg, hdl);
+				else
+				{
+					Invalidate();
 				}
 			}
 			break;
 
 		case DMSG_GETHIDE:
-			ret = (hdl->m_flag & MENU_DISABLE) ? 1 : 0;
+			ret = (m_flag & MENU_DISABLE) ? 1 : 0;
 			break;
 
 		case DMSG_SETENABLE:
-			ret = (hdl->m_flag & MENU_GRAY) ? 0 : 1;
+			ret = (m_flag & MENU_GRAY) ? 0 : 1;
 			flg = (arg) ? 0 : MENU_GRAY;
-			if ((hdl->m_flag ^ flg) & MENU_GRAY) {
-				hdl->m_flag ^= MENU_GRAY;
-				drawctrls(dlg, hdl);
+			if ((m_flag ^ flg) & MENU_GRAY)
+			{
+				m_flag ^= MENU_GRAY;
+				Invalidate();
 			}
 			break;
 
 		case DMSG_GETENABLE:
-			ret = (hdl->m_flag & MENU_GRAY) ? 0 : 1;
+			ret = (m_flag & MENU_GRAY) ? 0 : 1;
 			break;
 
 		case DMSG_SETVAL:
-			ret = hdl->m_nValue;
-			hdl->OnSetValue((int)arg);
+			ret = m_nValue;
+			OnSetValue((int)arg);
 			break;
 
 		case DMSG_GETVAL:
-			ret = hdl->m_nValue;
+			ret = m_nValue;
 			break;
 
 #if 0
@@ -2641,85 +2625,98 @@ INTPTR MenuDlgItem::ItemProc(int ctrl, INTPTR arg)
 #endif
 
 		case DMSG_ITEMAPPEND:
-			switch(hdl->m_type) {
+			switch (m_type)
+			{
 				case DLGTYPE_LIST:
-					if (dlglist_append(dlg, hdl, (OEMCHAR*)arg)) {
-						drawctrls(dlg, hdl);
+					if (dlglist_append(dlg, this, (OEMCHAR*)arg))
+					{
+						Invalidate();
 					}
 					break;
 
 				case DLGTYPE_TABLIST:
-					dlgtablist_append(dlg, hdl, (OEMCHAR*)arg);
-					drawctrls(dlg, hdl);
+					dlgtablist_append(dlg, this, (OEMCHAR*)arg);
+					Invalidate();
 					break;
 			}
 			break;
 
 		case DMSG_ITEMRESET:
-			if ((dlg->m_btn) && (dlg->m_lastid == hdl->m_id))
+			if ((m_pParent->m_btn) && (m_pParent->m_lastid == m_id))
 			{
-				dlg->m_btn = 0;
-				hdl->OnRelease(FALSE);
+				m_pParent->m_btn = 0;
+				OnRelease(FALSE);
 			}
-			if (hdl->m_type == DLGTYPE_LIST) {
-				dlglist_reset(dlg, hdl);
-				drawctrls(dlg, hdl);
+			if (m_type == DLGTYPE_LIST)
+			{
+				dlglist_reset(dlg, this);
+				Invalidate();
 			}
 			break;
 
 		case DMSG_ITEMSETEX:
-			if (hdl->m_type == DLGTYPE_LIST) {
-				if (dlglist_setex(dlg, hdl, (ITEMEXPRM *)arg)) {
-					drawctrls(dlg, hdl);
+			if (m_type == DLGTYPE_LIST)
+			{
+				if (dlglist_setex(dlg, this, (ITEMEXPRM *)arg))
+				{
+					Invalidate();
 				}
 			}
 			break;
 
 		case DMSG_SETLISTPOS:
-			if (hdl->m_type == DLGTYPE_LIST) {
-				ret = hdl->c.dl.basepos;
-				dlglist_setbasepos(dlg, hdl, (int)arg);
-				drawctrls(dlg, hdl);
+			if (m_type == DLGTYPE_LIST)
+			{
+				ret = this->c.dl.basepos;
+				(static_cast<MenuDlgItemList*>(this))->SetBasePos((int)arg);
+				Invalidate();
 			}
 			break;
 
 		case DMSG_GETRECT:
-			ret = (INTPTR)&hdl->m_rect;
+			ret = (INTPTR)&m_rect;
 			break;
 
 		case DMSG_SETRECT:
-			ret = (INTPTR)&hdl->m_rect;
-			if ((hdl->m_type == DLGTYPE_TEXT) && (arg)) {
-				drawctrls(dlg, hdl);
-				hdl->m_rect = *(RECT_T *)arg;
-				drawctrls(dlg, hdl);
+			ret = (INTPTR)&m_rect;
+			if ((m_type == DLGTYPE_TEXT) && (arg))
+			{
+				Invalidate();
+				m_rect = *(RECT_T *)arg;
+				Invalidate();
 			}
 			break;
 
 		case DMSG_SETFONT:
-			if (hdl->m_type == DLGTYPE_LIST) {
+			if (m_type == DLGTYPE_LIST)
+			{
 				ret = (INTPTR)dlglist_setfont(hdl, (FONTMNGH)arg);
-				drawctrls(dlg, hdl);
+				Invalidate();
 			}
-			else if (hdl->m_type == DLGTYPE_TABLIST) {
+			else if (m_type == DLGTYPE_TABLIST)
+			{
 				ret = (INTPTR)dlgtablist_setfont(hdl, (FONTMNGH)arg);
-				drawctrls(dlg, hdl);
+				Invalidate();
 			}
-			else if (hdl->m_type == DLGTYPE_TEXT) {
+			else if (m_type == DLGTYPE_TEXT)
+			{
 				ret = (INTPTR)hdl->c.dt.font;
 				hdl->c.dt.font = (FONTMNGH)arg;
-				drawctrls(dlg, hdl);
+				Invalidate();
 			}
 			break;
 
 		case DMSG_GETFONT:
-			if (hdl->m_type == DLGTYPE_LIST) {
+			if (m_type == DLGTYPE_LIST)
+			{
 				ret = (INTPTR)hdl->c.dl.font;
 			}
-			else if (hdl->m_type == DLGTYPE_TABLIST) {
+			else if (m_type == DLGTYPE_TABLIST)
+			{
 				ret = (INTPTR)hdl->c.dtl.font;
 			}
-			else if (hdl->m_type == DLGTYPE_TEXT) {
+			else if (m_type == DLGTYPE_TEXT)
+			{
 				ret = (INTPTR)hdl->c.dt.font;
 			}
 			break;
