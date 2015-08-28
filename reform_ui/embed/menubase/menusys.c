@@ -18,6 +18,23 @@
 class MenuSysWnd;
 
 /**
+ * 文字列コピー
+ * @param[in] lpString 文字列
+ * @return 文字列
+ */
+static const OEMCHAR* StrDup(const OEMCHAR* lpString)
+{
+	OEMCHAR* ret = NULL;
+	if ((lpString) && (lpString[0] != '\0'))
+	{
+		const int nLength = static_cast<int>(OEMSTRLEN(lpString));
+		ret = new OEMCHAR[nLength + 1];
+		memcpy(ret, lpString, (nLength + 1) * sizeof(OEMCHAR));
+	}
+	return ret;
+}
+
+/**
  * @brief item
  */
 struct MenuSysItem
@@ -26,29 +43,20 @@ struct MenuSysItem
 	MENUID		id;				/*!< ID */
 	MENUFLG		flag;			/*!< フラグ */
 	RECT_T		rct;			/*!< 領域 */
-	OEMCHAR		string[32];		/*!< 文字列 */
+	const OEMCHAR* string;		/*!< 文字列 */
 
-	void SetText(const OEMCHAR* lpString);
+	MenuSysItem(const MSYSITEM& item)
+		: child(NULL)
+		, id(item.id)
+		, flag(item.flag & (~MENU_DELETED))
+		, string(StrDup(item.string))
+	{
+	}
+
 	void DrawRootItem(VRAMHDL vram, int flag) const;
 	void DrawSubItem(VRAMHDL vram, int flag) const;
 	void DrawSubItemSub(VRAMHDL vram, UINT mvc, int pos) const;
 };
-
-/**
- * テキスト設定
- * @param[in] lpString テキスト
- */
-void MenuSysItem::SetText(const OEMCHAR* lpString)
-{
-	if (lpString)
-	{
-		milstr_ncpy(this->string, lpString, NELEMENTS(this->string));
-	}
-	else
-	{
-		this->string[0] = '\0';
-	}
-}
 
 /**
  * ルート アイテムの描画
@@ -216,6 +224,7 @@ MenuSysWnd::~MenuSysWnd()
 			delete it->child;
 			it->child = NULL;
 		}
+		delete[] it->string;
 	}
 }
 
@@ -241,11 +250,7 @@ void MenuSysWnd::Append(const MSYSITEM *lpItems)
 
 	while (true /*CONSTCOND*/)
 	{
-		MenuSysItem item;
-		memset(&item, 0, sizeof(item));
-		item.id = lpItems->id;
-		item.flag = lpItems->flag & (~MENU_DELETED);
-		item.SetText(lpItems->string);
+		MenuSysItem item(*lpItems);
 		if (lpItems->child)
 		{
 			item.child = new MenuSysWnd(this);
@@ -1191,7 +1196,8 @@ void MenuSys::SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask)
  */
 void MenuSys::SetText(MenuSysItem* item, const OEMCHAR *arg)
 {
-	item->SetText(arg);
+	delete[] item->string;
+	item->string = StrDup(arg);
 
 	// リドローが必要？ (ToDo: テキストの長さが変わるので 再オープンすべし)
 	RedrawItem(item);
