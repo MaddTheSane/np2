@@ -15,154 +15,157 @@
 #include "taskmng.h"
 
 	VRAMHDL		menuvram;
-	MENUBASE	g_menubase;
 
+MenuBase MenuBase::sm_instance;
 
-BRESULT menubase_create(void) {
+MenuBase::MenuBase()
+	: m_font(NULL)
+	, m_font2(NULL)
+	, m_width(0)
+	, m_height(0)
+	, m_bpp(0)
+	, m_num(0)
+{
+}
 
-	MENUBASE	*mb;
+MenuBase::~MenuBase()
+{
+}
 
-	mb = &g_menubase;
-	mb->font = fontmng_create(MENU_FONTSIZE, FDAT_PROPORTIONAL, NULL);
-	mb->font2 = fontmng_create(MENU_FONTSIZE, 0, NULL);
+bool MenuBase::Create()
+{
+	m_font = fontmng_create(MENU_FONTSIZE, FDAT_PROPORTIONAL, NULL);
+	m_font2 = fontmng_create(MENU_FONTSIZE, 0, NULL);
 	menuicon_initialize();
-	return(SUCCESS);
+	return true;
 }
 
-void menubase_destroy(void) {
-
-	MENUBASE	*mb;
-
+void MenuBase::Destroy()
+{
 	menuicon_deinitialize();
-	mb = &g_menubase;
-	fontmng_destroy(mb->font2);
-	fontmng_destroy(mb->font);
-	ZeroMemory(mb, sizeof(MENUBASE));
+	fontmng_destroy(m_font2);
+	fontmng_destroy(m_font);
+
+	m_font = NULL;
+	m_font2 = NULL;
+	m_num = 0;
 }
 
-BRESULT menubase_open(int num) {
+bool MenuBase::Open(int num)
+{
+	Close();
 
-	MENUBASE	*mb;
-	SCRNMENU	smenu;
-	VRAMHDL		hdl;
-
-	mb = &g_menubase;
-	menubase_close();
-
-	if (scrnmng_entermenu(&smenu) != SUCCESS) {
-		goto mbopn_err;
+	SCRNMENU smenu;
+	if (scrnmng_entermenu(&smenu) != SUCCESS)
+	{
+		return false;
 	}
-	mb->width = smenu.width;
-	mb->height = smenu.height;
-	mb->bpp = smenu.bpp;
-	hdl = vram_create(mb->width, mb->height, TRUE, smenu.bpp);
+	m_width = smenu.width;
+	m_height = smenu.height;
+	m_bpp = smenu.bpp;
+	VRAMHDL hdl = vram_create(m_width, m_height, TRUE, m_bpp);
 	menuvram = hdl;
-	if (hdl == NULL) {
-		goto mbopn_err;
+	if (hdl == NULL)
+	{
+		return false;
 	}
-	unionrect_rst(&mb->rect);
-	mb->num = num;
-	return(SUCCESS);
-
-mbopn_err:
-	return(FAILURE);
+	unionrect_rst(&m_rect);
+	m_num = num;
+	return true;
 }
 
-void menubase_close(void) {
-
-	MENUBASE	*mb;
-	VRAMHDL		hdl;
-	int			num;
-
-	mb = &g_menubase;
-	num = mb->num;
-	if (num) {
-		mb->num = 0;
-		if (num == 1) {
+void MenuBase::Close()
+{
+	int num = m_num;
+	if (m_num)
+	{
+		m_num = 0;
+		if (num == 1)
+		{
 			menusys_close();
 		}
-		else {
+		else
+		{
 			menudlg_destroy();
 		}
-		hdl = menuvram;
-		if (hdl) {
+		VRAMHDL hdl = menuvram;
+		if (hdl)
+		{
 			menubase_draw(NULL, NULL);
 			menuvram = NULL;
 			vram_destroy(hdl);
 		}
 		scrnmng_leavemenu();
+		m_width = 0;
+		m_height = 0;
+		m_bpp = 0;
 	}
 }
 
-BRESULT menubase_moving(int x, int y, int btn) {
-
-	int		num;
-
-	num = g_menubase.num;
-	if (num == 1) {
+bool MenuBase::OnMoving(int x, int y, int btn)
+{
+	if (m_num == 1)
+	{
 		menusys_moving(x, y, btn);
 	}
-	else if (num) {
+	else if (m_num)
+	{
 		menudlg_moving(x, y, btn);
 	}
-	return(SUCCESS);
+	return true;
 }
 
-BRESULT menubase_key(UINT key) {
-
-	int		num;
-
-	num = g_menubase.num;
-	if (num == 1) {
+bool MenuBase::OnKey(UINT key)
+{
+	if (m_num == 1)
+	{
 		menusys_key(key);
 	}
-	return(SUCCESS);
+	return true;
 }
 
-void menubase_setrect(VRAMHDL vram, const RECT_T *rect) {
-
-	RECT_T	rct;
-
-	if (vram) {
-		if (rect == NULL) {
+void MenuBase::Invalidate(VRAMHDL vram, const RECT_T *rect)
+{
+	if (vram)
+	{
+		RECT_T rct;
+		if (rect == NULL)
+		{
 			vram_getrect(vram, &rct);
 		}
-		else {
+		else
+		{
 			rct.left = vram->posx + rect->left;
 			rct.top = vram->posy + rect->top;
 			rct.right = vram->posx + rect->right;
 			rct.bottom = vram->posy + rect->bottom;
 		}
-		unionrect_add(&g_menubase.rect, &rct);
+		unionrect_add(&m_rect, &rct);
 	}
 }
 
-void menubase_clrrect(VRAMHDL vram) {
-
-	RECT_T	rct;
-
-	if (vram) {
+void MenuBase::Clear(VRAMHDL vram)
+{
+	if (vram)
+	{
+		RECT_T rct;
 		vram_getrect(vram, &rct);
 		vram_fillalpha(menuvram, &rct, 1);
-		menubase_setrect(vram, NULL);
-//		movieredraw = 1;
+		Invalidate(vram, NULL);
 	}
 }
 
-void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg),
-																void *arg) {
-
-	MENUBASE	*mb;
-const	RECT_T	*rect;
-
-	mb = &g_menubase;
-	if (mb->rect.type) {
-		rect = unionrect_get(&mb->rect);
-		if (draw) {
-			draw(menuvram, rect, arg);
+void MenuBase::Draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg)
+{
+	if (m_rect.type)
+	{
+		const RECT_T* rect = unionrect_get(&m_rect);
+		if (draw)
+		{
+			(*draw)(menuvram, rect, arg);
 		}
 		scrnmng_menudraw(rect);
-		unionrect_rst(&mb->rect);
+		unionrect_rst(&m_rect);
 	}
 }
 
@@ -172,22 +175,62 @@ const	RECT_T	*rect;
 void menubase_proc(void) {
 }
 
-void menubase_modalproc(void) {
-
-	while((taskmng_sleep(5)) && (menuvram != NULL)) {
+void MenuBase::DoModal()
+{
+	while ((taskmng_sleep(5)) && (menuvram != NULL))
+	{
 	}
 }
 
-#if 0
+
+// ----
+
 BRESULT menubase_create(void)
+{
+	return MenuBase::GetInstance()->Create() ? SUCCESS : FAILURE;
+}
+
 void menubase_destroy(void)
+{
+	MenuBase::GetInstance()->Destroy();
+}
+
 BRESULT menubase_open(int num)
+{
+	return MenuBase::GetInstance()->Open(num) ? SUCCESS : FAILURE;
+}
+
 void menubase_close(void)
+{
+	MenuBase::GetInstance()->Close();
+}
+
 BRESULT menubase_moving(int x, int y, int btn)
-BRESULT menubase_key(UINT key) {
+{
+	return MenuBase::GetInstance()->OnMoving(x, y, btn) ? SUCCESS : FAILURE;
+}
+
+BRESULT menubase_key(UINT key)
+{
+	return MenuBase::GetInstance()->OnKey(key) ? SUCCESS : FAILURE;
+}
+
 void menubase_setrect(VRAMHDL vram, const RECT_T *rect)
-void menubase_clrrect(VRAMHDL vram);
+{
+	MenuBase::GetInstance()->Invalidate(vram, rect);
+}
+
+void menubase_clrrect(VRAMHDL vram)
+{
+	MenuBase::GetInstance()->Clear(vram);
+}
+
 void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg)
-void menubase_proc(void)
+{
+	MenuBase::GetInstance()->Draw(draw, arg);
+}
+
 void menubase_modalproc(void)
-#endif
+{
+	MenuBase::GetInstance()->DoModal();
+}

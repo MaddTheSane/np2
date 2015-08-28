@@ -47,6 +47,8 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 	POINT_T	pt;
 	int		leng;
 
+	FONTMNGH font = MenuBase::GetInstance()->GetFont();
+
 	if (mb == NULL) {
 		goto smbi_err;
 	}
@@ -88,7 +90,7 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 		else {
 			CopyMemory(work, str, leng * sizeof(OEMCHAR));
 			work[leng] = '\0';
-			fontmng_getsize(g_menubase.font, work, &pt);
+			fontmng_getsize(font, work, &pt);
 			if ((rem < leng) || ((w + pt.x) > width)) {
 				dst = mb->string[mb->lines];
 				mb->lines++;
@@ -114,7 +116,7 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 
 smbi_set:
 	mb->width += (MENUMBOX_SX + MENUMBOX_PXTEXT + MENUMBOX_LXTEXT);
-	fontmng_getsize(g_menubase.font, mstr_fontcheck, &pt);
+	fontmng_getsize(font, mstr_fontcheck, &pt);
 	mb->fontsize = pt.y;
 	mb->height = mb->lines * mb->fontsize;
 	if (mb->type & 0xf0) {
@@ -212,13 +214,13 @@ static int mbox_cmd(int msg, MENUID id, long param) {
 				case DID_NO:
 					mb = &mbox;
 					mb->ret = id;
-					menubase_close();
+					MenuBase::GetInstance()->Close();
 					break;
 			}
 			break;
 
 		case DLGMSG_CLOSE:
-			menubase_close();
+			MenuBase::GetInstance()->Close();
 			break;
 	}
 	(void)param;
@@ -233,7 +235,7 @@ int menumbox(const OEMCHAR *string, const OEMCHAR *title, UINT type) {
 	mb = &mbox;
 	if (setmboxitem(mb, string, type) == SUCCESS) {
 		menudlg_create(mb->width, mb->height, title, mbox_cmd);
-		menubase_modalproc();
+		MenuBase::DoModal();
 		return(mb->ret);
 	}
 	else {

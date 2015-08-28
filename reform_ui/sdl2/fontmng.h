@@ -38,6 +38,7 @@ extern "C"
 FONTMNGH fontmng_create(int size, UINT type, const char *fontface);
 void fontmng_destroy(FONTMNGH hdl);
 
+int fontmng_getfontsize(FONTMNGH hdl);
 BRESULT fontmng_getsize(FONTMNGH hdl, const char *string, POINT_T *pt);
 BRESULT fontmng_getdrawsize(FONTMNGH hdl, const char *string, POINT_T *pt);
 FNTDAT fontmng_get(FONTMNGH hdl, const char *string);

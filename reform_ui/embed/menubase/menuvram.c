@@ -914,7 +914,7 @@ void menuvram_caption(VRAMHDL vram, const RECT_T *rect,
 		pt.x += MENUSYS_SZICON + MENU_PXCAPTION;
 	}
 	pt.y = rect->top + (rect->bottom - rect->top - MENU_FONTSIZE) / 2;
-	vrammix_text(vram, g_menubase.font, caption, 0xffffff, &pt, rect);
+	vrammix_text(vram, MenuBase::GetInstance()->GetFont(), caption, 0xffffff, &pt, rect);
 
 mvpt_exit:
 	return;
@@ -964,4 +964,3 @@ void menuvram_closebtn(VRAMHDL vram, const RECT_T *rect, BOOL focus) {
 
 	putbtn(vram, rect, &menures_close, focus);
 }
-

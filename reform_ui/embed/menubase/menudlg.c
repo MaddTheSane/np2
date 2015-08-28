@@ -69,6 +69,7 @@ protected:
 	FONTMNGH m_font;			/*!< Font */
 
 	int Send(int msg, long param = 0);
+	MenuBase* GetMenuBase();
 	VRAMHDL GetVram();
 	FONTMNGH GetFont();
 	void Invalidate();
@@ -98,6 +99,7 @@ public:
 	void Draw();
 
 public:
+	MenuBase* m_pMenuBase;
 	VRAMHDL		m_vram;
 	std::vector<MenuDlgItem*> m_items;
 	int			m_nLocked;
@@ -207,6 +209,14 @@ int MenuDlgItem::Send(int msg, long param)
 }
 
 /**
+ * メニュー ベースを得る
+ */
+MenuBase* MenuDlgItem::GetMenuBase()
+{
+	return m_pParent->m_pMenuBase;
+}
+
+/**
  * 描画 VRAMを得る
  */
 inline VRAMHDL MenuDlgItem::GetVram()
@@ -297,7 +307,7 @@ MenuDlgItemBase::MenuDlgItemBase(MenuDialog* pParent, MENUID id, MENUFLG flg, co
 BRESULT MenuDlgItemBase::OnCreate(const void *arg)
 {
 	int width = m_rect.right - m_rect.left - ((MENU_FBORDER + MENU_BORDER) * 2);
-	m_vram = vram_create(width, MENUDLG_CYCAPTION, FALSE, g_menubase.bpp);
+	m_vram = vram_create(width, MENUDLG_CYCAPTION, FALSE, GetVram()->bpp);
 	if (m_vram == NULL)
 	{
 		return FAILURE;
@@ -319,7 +329,7 @@ void MenuDlgItemBase::OnPaint()
 	VRAMHDL vram = GetVram();
 	menuvram_base(vram);
 	vrammix_cpy(vram, NULL, m_vram, NULL);
-	menubase_setrect(vram, NULL);
+	GetMenuBase()->Invalidate(vram, NULL);
 }
 
 void MenuDlgItemBase::OnClick(int x, int y)
@@ -339,11 +349,12 @@ void MenuDlgItemBase::OnMove(int x, int y, int focus)
 		y -= m_pParent->m_lasty;
 		if ((x) || (y))
 		{
+			MenuBase* pMenuBase = GetMenuBase();
 			VRAMHDL vram = GetVram();
-			menubase_clrrect(vram);
+			pMenuBase->Clear(vram);
 			vram->posx += x;
 			vram->posy += y;
-			menubase_setrect(m_vram, NULL);
+			pMenuBase->Invalidate(m_vram, NULL);
 		}
 	}
 }
@@ -709,7 +720,7 @@ BRESULT MenuDlgItemList::OnCreate(const void *arg)
 {
 	int width = m_rect.right - m_rect.left - (MENU_LINE * 4);
 	int height = m_rect.bottom - m_rect.top - (MENU_LINE * 4);
-	m_vram = vram_create(width, height, FALSE, g_menubase.bpp);
+	m_vram = vram_create(width, height, FALSE, GetVram()->bpp);
 	if (m_vram == NULL)
 	{
 		return FAILURE;
@@ -1897,7 +1908,7 @@ public:
 	{
 		int width = m_rect.right - m_rect.left;
 		int height = m_rect.bottom - m_rect.top;
-		m_icon = menuicon_lock(static_cast<UINT16>(reinterpret_cast<INTPTR>(arg)), width, height, g_menubase.bpp);
+		m_icon = menuicon_lock(static_cast<UINT16>(reinterpret_cast<INTPTR>(arg)), width, height, GetVram()->bpp);
 		return SUCCESS;
 	}
 
@@ -2094,7 +2105,8 @@ MenuDlgItem* MenuDlgItem::CreateInstance(int type, MenuDialog* pParent, MENUID i
  * コンストラクタ
  */
 MenuDialog::MenuDialog()
-	: m_vram(NULL)
+	: m_pMenuBase(MenuBase::GetInstance())
+	, m_vram(NULL)
 	, m_nLocked(0)
 	, m_bClosing(false)
 	, m_sx(0)
@@ -2213,17 +2225,18 @@ void MenuDialog::Draw()
 			if (!(item->m_flag & MENU_DISABLE))
 			{
 				item->OnPaint();
-				menubase_setrect(m_vram, &item->m_rect);
+				m_pMenuBase->Invalidate(m_vram, &item->m_rect);
 			}
 		}
 	}
-	menubase_draw(draw, this);
+	m_pMenuBase->Draw(draw, this);
 }
 
 static int defproc(int msg, MENUID id, long param) {
 
-	if (msg == DLGMSG_CLOSE) {
-		menubase_close();
+	if (msg == DLGMSG_CLOSE)
+	{
+		MenuBase::GetInstance()->Close();
 	}
 	(void)id;
 	(void)param;
@@ -2235,7 +2248,12 @@ static int defproc(int msg, MENUID id, long param) {
  */
 bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(int msg, MENUID id, long param))
 {
-	if (menubase_open(2) != SUCCESS)
+	if ((width <= 0) || (height <= 0))
+	{
+		goto mdcre_err;
+	}
+
+	if (!m_pMenuBase->Open(2))
 	{
 		goto mdcre_err;
 	}
@@ -2255,22 +2273,17 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 	m_lasty = 0;
 	m_lastid = 0;
 
-	if ((width <= 0) || (height <= 0))
-	{
-		goto mdcre_err;
-	}
 	width += (MENU_FBORDER + MENU_BORDER) * 2;
 	height += ((MENU_FBORDER + MENU_BORDER) * 2) + MENUDLG_CYCAPTION + MENUDLG_BORDER;
 
-	MENUBASE* mb = &g_menubase;
-	m_font = mb->font;
-	m_vram = vram_create(width, height, FALSE, mb->bpp);
+	m_font = m_pMenuBase->GetFont();
+	m_vram = vram_create(width, height, FALSE, m_pMenuBase->Bpp());
 	if (m_vram == NULL)
 	{
 		goto mdcre_err;
 	}
-	m_vram->posx = (mb->width - width) >> 1;
-	m_vram->posy = (mb->height - height) >> 1;
+	m_vram->posx = (m_pMenuBase->Width() - width) >> 1;
+	m_vram->posy = (m_pMenuBase->Height() - height) >> 1;
 	if (!Append(DLGTYPE_BASE, SID_CAPTION, 0, str, 0, 0, width, height))
 	{
 		goto mdcre_err;
@@ -2300,13 +2313,14 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 	return true;
 
 mdcre_err:
-	menubase_close();
+	m_pMenuBase->Close();
 	return false;
 }
 
 void MenuDialog::Destroy()
 {
-	if (m_bClosing) {
+	if (m_bClosing)
+	{
 		return;
 	}
 	m_bClosing = false;
@@ -2318,7 +2332,7 @@ void MenuDialog::Destroy()
 	}
 	m_items.clear();
 
-	menubase_clrrect(m_vram);
+	m_pMenuBase->Clear(m_vram);
 	vram_destroy(m_vram);
 	m_vram = NULL;
 }

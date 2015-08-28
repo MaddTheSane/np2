@@ -50,24 +50,74 @@ enum {
 	SID_CLOSE			= 0x7fff
 };
 
-typedef struct {
-	int			num;
-	FONTMNGH	font;
-	FONTMNGH	font2;
-	int			del;
-	UNIRECT		rect;
-	int			width;
-	int			height;
-	UINT		bpp;
-} MENUBASE;
 
 
 #ifdef __cplusplus
-extern "C" {
+
+class MenuBase
+{
+public:
+	static MenuBase* GetInstance();
+	MenuBase();
+	~MenuBase();
+	bool Create();
+	void Destroy();
+	bool Open(int num);
+	void Close();
+	bool OnMoving(int x, int y, int btn);
+	bool OnKey(UINT key);
+	void Invalidate(VRAMHDL vram, const RECT_T *rect);
+	void Clear(VRAMHDL vram);
+	void Draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg);
+
+	static void DoModal();
+	FONTMNGH GetFont();
+	int Width() const;
+	int Height() const;
+	int Bpp() const;
+
+private:
+	static MenuBase sm_instance;
+	FONTMNGH m_font;
+	FONTMNGH m_font2;
+	UNIRECT m_rect;
+	int m_width;
+	int m_height;
+	UINT m_bpp;
+	int m_num;
+};
+// typedef MenuBase MENUBASE;
+
+inline MenuBase* MenuBase::GetInstance()
+{
+	return &sm_instance;
+}
+
+inline FONTMNGH MenuBase::GetFont()
+{
+	return m_font;
+}
+
+inline int MenuBase::Width() const
+{
+	return m_width;
+}
+
+inline int MenuBase::Height() const
+{
+	return m_height;
+}
+
+inline int MenuBase::Bpp() const
+{
+	return m_bpp;
+}
+
+extern "C"
+{
 #endif
 
 extern	VRAMHDL		menuvram;
-extern	MENUBASE	g_menubase;
 
 BRESULT menubase_create(void);
 void menubase_destroy(void);
@@ -79,8 +129,7 @@ BRESULT menubase_key(UINT key);
 
 void menubase_setrect(VRAMHDL vram, const RECT_T *rect);
 void menubase_clrrect(VRAMHDL vram);
-void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg),
-																void *arg);
+void menubase_draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), void *arg);
 
 void menubase_proc(void);
 void menubase_modalproc(void);
