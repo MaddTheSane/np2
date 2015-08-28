@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <vector>
 #include "menubase.h"
 
 enum {
@@ -97,14 +98,61 @@ const OEMCHAR	*str;
 
 
 #ifdef __cplusplus
-extern "C" {
+
+class MenuDlgItem;
+
+/**
+ * @brief Dialog Class
+ */
+class MenuDialog : public IMenuBaseWnd
+{
+public:
+	MenuDialog();
+	bool Create(int width, int height, const OEMCHAR *str, int (*proc)(int msg, MENUID id, long param));
+	bool Append(const MENUPRM *res, int count);
+	bool Append(int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height);
+	virtual void OnClose();
+	virtual void OnMoving(int x, int y, int btn);
+	virtual void OnKeyDown(UINT key);
+	INTPTR Send(int ctrl, MENUID id, INTPTR arg);
+	void SetPage(MENUID page);
+	void DispPageHidden(MENUID page, bool hidden);
+
+	void DrawItem(MenuDlgItem* item = NULL);
+	void Draw();
+
+public:
+	MenuBase* m_pMenuBase;
+	VRAMHDL		m_vram;
+	std::vector<MenuDlgItem*> m_items;
+	int			m_nLocked;
+	bool		m_bClosing;
+	int			m_sx;
+	int			m_sy;
+	FONTMNGH	m_font;
+	MENUID		m_page;
+	MENUID		m_group;
+	int			(*m_proc)(int msg, MENUID id, long param);
+
+	int			m_dragflg;
+	int			m_btn;
+	int			m_lastx;
+	int			m_lasty;
+	MENUID		m_lastid;
+
+private:
+	void DrawLock(bool lock);
+	MenuDlgItem* GetItem(MENUID id) const;
+	MenuDlgItem* GetItemFromPosition(int x, int y) const;
+};
+
+extern "C"
+{
 #endif
 
 BRESULT menudlg_create(int width, int height, const OEMCHAR *str, int (*proc)(int msg, MENUID id, long param));
-void menudlg_destroy(void);
 BRESULT menudlg_appends(const MENUPRM *res, int count);
 BRESULT menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height);
-void menudlg_moving(int x, int y, int btn);
 INTPTR menudlg_msg(int ctrl, MENUID id, INTPTR arg);
 void menudlg_setpage(MENUID page);
 void menudlg_disppagehidden(MENUID page, BOOL hidden);

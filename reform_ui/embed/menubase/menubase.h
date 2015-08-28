@@ -11,14 +11,6 @@
 typedef unsigned short		MENUID;
 typedef unsigned short		MENUFLG;
 
-// #include	"menuvram.h"
-// #include	"menuicon.h"
-// #include	"menusys.h"
-// #include	"menudlg.h"
-// #include	"menumbox.h"
-// #include	"menures.h"
-
-
 enum {
 	MENU_DISABLE		= 0x0001,
 	MENU_GRAY			= 0x0002,
@@ -50,10 +42,22 @@ enum {
 	SID_CLOSE			= 0x7fff
 };
 
-
-
 #ifdef __cplusplus
 
+/**
+ * @brief MenuBase interface
+ */
+class IMenuBaseWnd
+{
+public:
+	virtual void OnClose() = 0;
+	virtual void OnMoving(int x, int y, int btn) = 0;
+	virtual void OnKeyDown(UINT key) = 0;
+};
+
+/**
+ * @brief MenuBase
+ */
 class MenuBase
 {
 public:
@@ -62,7 +66,7 @@ public:
 	~MenuBase();
 	void Initialize();
 	void Deinitialize();
-	bool Open(int num);
+	bool Open(IMenuBaseWnd* pWnd);
 	void Close();
 	bool OnMoving(int x, int y, int btn);
 	bool OnKey(UINT key);
@@ -84,7 +88,7 @@ private:
 	int m_width;
 	int m_height;
 	UINT m_bpp;
-	int m_num;
+	IMenuBaseWnd* m_pWnd;
 };
 // typedef MenuBase MENUBASE;
 

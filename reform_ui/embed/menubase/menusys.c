@@ -392,48 +392,6 @@ void MenuSysWnd::DrawItem(const MenuSysItem* pItem, int flag) const
 	m_pMenuBase->Invalidate(m_vram, &pItem->rct);
 }
 
-
-
-/**
- * @brief システム メニュー
- */
-class MenuSys : private std::vector<MenuSysWnd*>
-{
-public:
-	MenuSys();
-	bool Initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
-	void Deinitialize();
-	bool Open(int x, int y);
-	void Close();
-	void Moving(int x, int y, int btn);
-	void Key(UINT key);
-	INTPTR Send(int ctrl, MENUID id, INTPTR arg);
-	void SetStyle(UINT16 style);
-
-private:
-	MenuBase* m_pMenuBase;
-	MenuSysWnd* m_root;				/*!< ルート ウィンドウ */
-	UINT16 m_icon;					/*!< アイコン */
-	UINT16 m_style;					/*!< スタイル */
-	void (*m_cmd)(MENUID id);		/*!< コマンド */
-	int m_opened;
-	int m_popupx;					/*!< X */
-	int m_popupy;					/*!< Y */
-	OEMCHAR m_title[128];			/*!< タイトル */
-
-	bool OpenRootWnd();
-	bool OpenChild(const MenuSysWnd* wnd, int pos);
-	int OpenPopup();
-	void CloseChild(const MenuSysWnd* wnd);
-	MenuSysWnd* GetWnd(int x, int y) const;
-	void FocusMove(MenuSysWnd* wnd, int dir);
-	void FocusEnter(MenuSysWnd* wnd, bool exec);
-	void SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask);
-	void SetText(MenuSysItem* item, const OEMCHAR *arg);
-	void RedrawItem(const MenuSysItem* item);
-	static void Draw(VRAMHDL dst, const RECT_T *rect, void *arg);
-};
-
 static MenuSys s_menusys;
 
 #if defined(OSLANG_SJIS) && !defined(RESOURCE_US)
@@ -571,7 +529,7 @@ bool MenuSys::Initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 ic
 
 void MenuSys::Deinitialize()
 {
-	Close();
+	m_pMenuBase->Close();
 
 	delete m_root;
 	m_root = NULL;
@@ -582,7 +540,7 @@ void MenuSys::Deinitialize()
  */
 bool MenuSys::Open(int x, int y)
 {
-	if (!m_pMenuBase->Open(1))
+	if (!m_pMenuBase->Open(this))
 	{
 		goto msopn_err;
 	}
@@ -605,13 +563,13 @@ msopn_err:
 /**
  * 閉じる
  */
-void MenuSys::Close()
+void MenuSys::OnClose()
 {
-	for (iterator it = begin(); it != end(); ++it)
+	for (std::vector<MenuSysWnd*>::iterator it = m_wnd.begin(); it != m_wnd.end(); ++it)
 	{
 		(*it)->Close();
 	}
-	clear();
+	m_wnd.clear();
 }
 
 /**
@@ -621,7 +579,7 @@ void MenuSys::Close()
  */
 bool MenuSys::OpenRootWnd()
 {
-	Close();
+	OnClose();
 
 	MenuSysWnd* wnd = m_root;
 
@@ -682,7 +640,7 @@ bool MenuSys::OpenRootWnd()
 	menuvram_caption(vram, &mrect, m_icon, m_title);
 	m_pMenuBase->Invalidate(vram, NULL);
 	wnd->m_focus = -1;
-	push_back(wnd);
+	m_wnd.push_back(wnd);
 	int posx = MENU_FBORDER + MENU_BORDER + MENUSYS_BCAPTION;
 
 	for (MenuSysWnd::iterator it = wnd->begin(); it != wnd->end(); ++it)
@@ -859,7 +817,7 @@ bool MenuSys::OpenChild(const MenuSysWnd* wnd, int pos)
 	childWnd->m_vram->posx = min(parent.left, m_pMenuBase->Width() - width);
 	childWnd->m_vram->posy = min(parent.top, m_pMenuBase->Height() - height);
 	childWnd->m_focus = -1;
-	push_back(childWnd);
+	m_wnd.push_back(childWnd);
 
 	for (MenuSysWnd::iterator it = childWnd->begin(); it != childWnd->end(); ++it)
 	{
@@ -879,7 +837,7 @@ bool MenuSys::OpenChild(const MenuSysWnd* wnd, int pos)
  */
 int MenuSys::OpenPopup()
 {
-	if (size() == 1)
+	if (m_wnd.size() == 1)
 	{
 		int pos = 0;
 		for (MenuSysWnd::const_iterator it = m_root->begin(); it != m_root->end(); ++it)
@@ -888,7 +846,7 @@ int MenuSys::OpenPopup()
 			{
 				if ((it->flag & MENUS_CTRLMASK) == MENUS_POPUP)
 				{
-					MenuSysWnd* wnd = back();
+					MenuSysWnd* wnd = m_wnd.back();
 					wnd->m_focus = pos;
 					OpenChild(wnd, pos);
 					return 1;
@@ -906,8 +864,8 @@ int MenuSys::OpenPopup()
  */
 void MenuSys::CloseChild(const MenuSysWnd* wnd)
 {
-	iterator it = begin();
-	while (it != end())
+	std::vector<MenuSysWnd*>::iterator it = m_wnd.begin();
+	while (it != m_wnd.end())
 	{
 		MenuSysWnd* p = *it;
 		++it;
@@ -918,10 +876,10 @@ void MenuSys::CloseChild(const MenuSysWnd* wnd)
 	}
 
 	// 子を閉じる
-	while (it != end())
+	while (it != m_wnd.end())
 	{
 		(*it)->Close();
-		it = erase(it);
+		it = m_wnd.erase(it);
 	}
 }
 
@@ -930,7 +888,7 @@ void MenuSys::CloseChild(const MenuSysWnd* wnd)
  */
 MenuSysWnd* MenuSys::GetWnd(int x, int y) const
 {
-	for (const_reverse_iterator it = rbegin(); it != rend(); ++it)
+	for (std::vector<MenuSysWnd*>::const_reverse_iterator it = m_wnd.rbegin(); it != m_wnd.rend(); ++it)
 	{
 		const MenuSysWnd* wnd = *it;
 		if (wnd->m_vram)
@@ -946,7 +904,7 @@ MenuSysWnd* MenuSys::GetWnd(int x, int y) const
 	return NULL;
 }
 
-void MenuSys::Moving(int x, int y, int btn)
+void MenuSys::OnMoving(int x, int y, int btn)
 {
 	MenuSysWnd* wnd = GetWnd(x, y);
 	if (wnd == NULL)
@@ -1012,9 +970,9 @@ void MenuSys::Moving(int x, int y, int btn)
 			wnd->DrawItem(wnd->m_focus, 0);
 			m_opened = OpenPopup();
 		}
-		else if (wnd != back())
+		else if (wnd != m_wnd.back())
 		{
-			MenuSysWnd* wnd = back();
+			MenuSysWnd* wnd = m_wnd.back();
 			if (wnd->m_focus != -1)
 			{
 				wnd->DrawItem(wnd->m_focus, 0);
@@ -1121,14 +1079,14 @@ void MenuSys::FocusEnter(MenuSysWnd* wnd, bool exec)
  * キー イベント
  * @param[in] key キー
  */
-void MenuSys::Key(UINT key)
+void MenuSys::OnKeyDown(UINT key)
 {
-	if (empty())
+	if (m_wnd.empty())
 	{
 		return;
 	}
 
-	MenuSysWnd* wnd = back();
+	MenuSysWnd* wnd = m_wnd.back();
 	if (wnd == m_root)
 	{
 		if (key & KEY_LEFT)
@@ -1160,7 +1118,7 @@ void MenuSys::Key(UINT key)
 		}
 		if (key & KEY_LEFT)
 		{
-			if (size() > 2)
+			if (m_wnd.size() > 2)
 			{
 				CloseChild(wnd->GetParent());
 			}
@@ -1215,7 +1173,7 @@ void MenuSys::SetText(MenuSysItem* item, const OEMCHAR *arg)
  */
 void MenuSys::RedrawItem(const MenuSysItem* item)
 {
-	for (iterator it = begin(); it != end(); ++it)
+	for (std::vector<MenuSysWnd*>::iterator it = m_wnd.begin(); it != m_wnd.end(); ++it)
 	{
 		MenuSysWnd* wnd = *it;
 		const int pos = wnd->GetIndex(item);
@@ -1303,7 +1261,7 @@ void MenuSys::SetStyle(UINT16 style)
 void MenuSys::Draw(VRAMHDL dst, const RECT_T *rect, void *arg)
 {
 	MenuSys* sys = static_cast<MenuSys*>(arg);
-	for (MenuSys::iterator it = sys->begin(); it != sys->end(); ++it)
+	for (std::vector<MenuSysWnd*>::iterator it = sys->m_wnd.begin(); it != sys->m_wnd.end(); ++it)
 	{
 		vrammix_cpy2(dst, rect, (*it)->m_vram, NULL, 2);
 	}
@@ -1326,21 +1284,6 @@ void menusys_deinitialize(void)
 BRESULT menusys_open(int x, int y)
 {
 	return s_menusys.Open(x, y) ? SUCCESS : FAILURE;
-}
-
-void menusys_close(void)
-{
-	s_menusys.Close();
-}
-
-void menusys_moving(int x, int y, int btn)
-{
-	s_menusys.Moving(x, y, btn);
-}
-
-void menusys_key(UINT key)
-{
-	s_menusys.Key(key);
 }
 
 INTPTR menusys_msg(int ctrl, MENUID id, INTPTR arg)

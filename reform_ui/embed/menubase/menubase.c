@@ -24,7 +24,7 @@ MenuBase::MenuBase()
 	, m_width(0)
 	, m_height(0)
 	, m_bpp(0)
-	, m_num(0)
+	, m_pWnd(NULL)
 {
 }
 
@@ -47,10 +47,10 @@ void MenuBase::Deinitialize()
 
 	m_font = NULL;
 	m_font2 = NULL;
-	m_num = 0;
+	m_pWnd = NULL;
 }
 
-bool MenuBase::Open(int num)
+bool MenuBase::Open(IMenuBaseWnd* pWnd)
 {
 	Close();
 
@@ -69,24 +69,17 @@ bool MenuBase::Open(int num)
 		return false;
 	}
 	unionrect_rst(&m_rect);
-	m_num = num;
+	m_pWnd = pWnd;
 	return true;
 }
 
 void MenuBase::Close()
 {
-	int num = m_num;
-	if (m_num)
+	IMenuBaseWnd* pWnd = m_pWnd;
+	if (pWnd)
 	{
-		m_num = 0;
-		if (num == 1)
-		{
-			menusys_close();
-		}
-		else
-		{
-			menudlg_destroy();
-		}
+		m_pWnd = NULL;
+		pWnd->OnClose();
 		VRAMHDL hdl = menuvram;
 		if (hdl)
 		{
@@ -103,22 +96,18 @@ void MenuBase::Close()
 
 bool MenuBase::OnMoving(int x, int y, int btn)
 {
-	if (m_num == 1)
+	if (m_pWnd)
 	{
-		menusys_moving(x, y, btn);
-	}
-	else if (m_num)
-	{
-		menudlg_moving(x, y, btn);
+		m_pWnd->OnMoving(x, y, btn);
 	}
 	return true;
 }
 
 bool MenuBase::OnKey(UINT key)
 {
-	if (m_num == 1)
+	if (m_pWnd)
 	{
-		menusys_key(key);
+		m_pWnd->OnKeyDown(key);
 	}
 	return true;
 }

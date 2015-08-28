@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <vector>
 #include "menubase.h"
 
 enum {
@@ -42,21 +43,59 @@ const struct _smi	*child;
 
 
 #ifdef __cplusplus
+
+struct MenuSysItem;
+class MenuSysWnd;
+
+/**
+ * @brief システム メニュー
+ */
+class MenuSys : public IMenuBaseWnd
+{
+public:
+	MenuSys();
+	bool Initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
+	void Deinitialize();
+	bool Open(int x, int y);
+	virtual void OnClose();
+	virtual void OnMoving(int x, int y, int btn);
+	virtual void OnKeyDown(UINT key);
+	INTPTR Send(int ctrl, MENUID id, INTPTR arg);
+	void SetStyle(UINT16 style);
+
+private:
+	MenuBase* m_pMenuBase;
+	MenuSysWnd* m_root;				/*!< ルート ウィンドウ */
+	std::vector<MenuSysWnd*> m_wnd;	/*!< ウィンドゥ */
+	UINT16 m_icon;					/*!< アイコン */
+	UINT16 m_style;					/*!< スタイル */
+	void (*m_cmd)(MENUID id);		/*!< コマンド */
+	int m_opened;
+	int m_popupx;					/*!< X */
+	int m_popupy;					/*!< Y */
+	OEMCHAR m_title[128];			/*!< タイトル */
+
+	bool OpenRootWnd();
+	bool OpenChild(const MenuSysWnd* wnd, int pos);
+	int OpenPopup();
+	void CloseChild(const MenuSysWnd* wnd);
+	MenuSysWnd* GetWnd(int x, int y) const;
+	void FocusMove(MenuSysWnd* wnd, int dir);
+	void FocusEnter(MenuSysWnd* wnd, bool exec);
+	void SetFlag(MenuSysItem* item, MENUFLG flag, MENUFLG mask);
+	void SetText(MenuSysItem* item, const OEMCHAR *arg);
+	void RedrawItem(const MenuSysItem* item);
+	static void Draw(VRAMHDL dst, const RECT_T *rect, void *arg);
+};
+
 extern "C"
 {
 #endif
 
 BRESULT menusys_initialize(const MSYSITEM *item, void (*cmd)(MENUID id), UINT16 icon, const OEMCHAR *title);
 void menusys_deinitialize(void);
-
 BRESULT menusys_open(int x, int y);
-void menusys_close(void);
-
-void menusys_moving(int x, int y, int btn);
-void menusys_key(UINT key);
-
 INTPTR menusys_msg(int ctrl, MENUID id, INTPTR arg);
-
 void menusys_setstyle(UINT16 style);
 
 #ifdef __cplusplus

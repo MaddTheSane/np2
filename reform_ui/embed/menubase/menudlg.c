@@ -79,50 +79,6 @@ protected:
 	friend MenuDialog;
 };
 
-/**
- * @brief Dialog Class
- */
-class MenuDialog
-{
-public:
-	MenuDialog();
-	bool Create(int width, int height, const OEMCHAR *str, int (*proc)(int msg, MENUID id, long param));
-	void Destroy();
-	bool Append(const MENUPRM *res, int count);
-	bool Append(int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height);
-	void Moving(int x, int y, int btn);
-	INTPTR Send(int ctrl, MENUID id, INTPTR arg);
-	void SetPage(MENUID page);
-	void DispPageHidden(MENUID page, bool hidden);
-
-	void DrawItem(MenuDlgItem* item = NULL);
-	void Draw();
-
-public:
-	MenuBase* m_pMenuBase;
-	VRAMHDL		m_vram;
-	std::vector<MenuDlgItem*> m_items;
-	int			m_nLocked;
-	bool		m_bClosing;
-	int			m_sx;
-	int			m_sy;
-	FONTMNGH	m_font;
-	MENUID		m_page;
-	MENUID		m_group;
-	int			(*m_proc)(int msg, MENUID id, long param);
-
-	int			m_dragflg;
-	int			m_btn;
-	int			m_lastx;
-	int			m_lasty;
-	MENUID		m_lastid;
-
-private:
-	void DrawLock(bool lock);
-	MenuDlgItem* GetItem(MENUID id) const;
-	MenuDlgItem* GetItemFromPosition(int x, int y) const;
-};
-
 static MenuDialog s_menudlg;
 
 
@@ -2253,7 +2209,7 @@ bool MenuDialog::Create(int width, int height, const OEMCHAR *str, int (*proc)(i
 		goto mdcre_err;
 	}
 
-	if (!m_pMenuBase->Open(2))
+	if (!m_pMenuBase->Open(this))
 	{
 		goto mdcre_err;
 	}
@@ -2317,7 +2273,7 @@ mdcre_err:
 	return false;
 }
 
-void MenuDialog::Destroy()
+void MenuDialog::OnClose()
 {
 	if (m_bClosing)
 	{
@@ -2405,7 +2361,7 @@ bool MenuDialog::Append(int type, MENUID id, MENUFLG flg, const void *arg, int p
 
 // ---- moving
 
-void MenuDialog::Moving(int x, int y, int btn)
+void MenuDialog::OnMoving(int x, int y, int btn)
 {
 	DrawLock(true);
 	x -= m_vram->posx;
@@ -2442,6 +2398,9 @@ void MenuDialog::Moving(int x, int y, int btn)
 	DrawLock(false);
 }
 
+void MenuDialog::OnKeyDown(UINT key)
+{
+}
 
 // ---- ctrl
 
@@ -2622,11 +2581,6 @@ BRESULT menudlg_create(int width, int height, const OEMCHAR *str, int (*proc)(in
 	return s_menudlg.Create(width, height, str, proc) ? SUCCESS : FAILURE;
 }
 
-void menudlg_destroy(void)
-{
-	s_menudlg.Destroy();
-}
-
 BRESULT menudlg_appends(const MENUPRM *res, int count)
 {
 	return s_menudlg.Append(res, count) ? SUCCESS : FAILURE;
@@ -2635,11 +2589,6 @@ BRESULT menudlg_appends(const MENUPRM *res, int count)
 BRESULT menudlg_append(int type, MENUID id, MENUFLG flg, const void *arg, int posx, int posy, int width, int height)
 {
 	return s_menudlg.Append(type, id, flg, arg, posx, posy, width, height) ? SUCCESS : FAILURE;
-}
-
-void menudlg_moving(int x, int y, int btn)
-{
-	s_menudlg.Moving(x, y, btn);
 }
 
 INTPTR menudlg_msg(int ctrl, MENUID id, INTPTR arg)
