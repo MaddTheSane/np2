@@ -36,12 +36,12 @@ void MenuBase::Initialize()
 {
 	m_font = fontmng_create(MENU_FONTSIZE, FDAT_PROPORTIONAL, NULL);
 	m_font2 = fontmng_create(MENU_FONTSIZE, 0, NULL);
-	menuicon_initialize();
+	MenuIcon::GetInstance()->Initialize();
 }
 
 void MenuBase::Deinitialize()
 {
-	menuicon_deinitialize();
+	MenuIcon::GetInstance()->Deinitialize();
 	fontmng_destroy(m_font2);
 	fontmng_destroy(m_font);
 

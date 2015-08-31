@@ -6,25 +6,6 @@
 #include "compiler.h"
 #include "menuicon.h"
 
-#define	MICON_MAX			16
-#define	MICON_CACHE			8
-
-
-typedef struct {
-//	UINT16	type;
-const void	*res;
-} ICONREG;
-
-typedef struct {
-	UINT16	id;
-	UINT16	count;
-	VRAMHDL	hdl;
-} ICONCACHE;
-
-
-static ICONREG		iconreg[MICON_MAX - 1];
-static ICONCACHE	iconcache[MICON_CACHE];
-
 static const UINT8 icon24a[178] = {		// 32x32
 		0x07,0x17,0x00,0x00,0x80,0x01,0x7f,0xff,0x01,0x16,0x2b,0x56,0x34,
 		0x44,0xff,0x2e,0x29,0x31,0x2f,0x2c,0xaf,0x32,0xac,0x2e,0x3b,0x31,
@@ -183,104 +164,128 @@ static const MENURES icon24[7] = {
 				{32, 32, iconfld, iconfldm}, {32, 32, iconflp, iconfldm},
 				{32, 32, iconfil, iconfilm}};
 
+/*! 唯一のインスタンスです */
+MenuIcon MenuIcon::sm_instance;
 
-void menuicon_initialize(void) {
-
-	int		i;
-
-	ZeroMemory(iconreg, sizeof(iconreg));
-	ZeroMemory(iconcache, sizeof(iconcache));
-	for (i=0; i<7; i++) {
-		iconreg[i].res = icon24 + i;
+/**
+ * 初期化
+ */
+void MenuIcon::Initialize()
+{
+	for (UINT i = 0; i < 7; i++)
+	{
+		m_resources[i + 1] = icon24[i];
 	}
 }
 
-void menuicon_deinitialize(void) {
-
-	ICONCACHE	*ic;
-	ICONCACHE	*icterm;
-
-	ic = iconcache;
-	icterm = ic + MICON_CACHE;
-	do {
-		vram_destroy(ic->hdl);
-	} while(++ic < icterm);
-	ZeroMemory(iconcache, sizeof(iconcache));
+/**
+ * 解放
+ */
+void MenuIcon::Deinitialize()
+{
+	for (std::deque<Cache>::iterator it = m_caches.begin(); it != m_caches.end(); ++it)
+	{
+		vram_destroy(it->vram);
+	}
+	m_caches.clear();
 }
 
-void menuicon_regist(UINT16 id, const MENURES *res) {
-
-	if ((id != 0) && (id < MICON_MAX)) {
-		iconreg[id - 1].res = res;
+/**
+ * リソース登録
+ * @param[in] nId リソース ID
+ * @param[in] res リソース
+ */
+void MenuIcon::Regist(UINT nId, const MENURES& res)
+{
+	if (nId != 0)
+	{
+		m_resources[nId] = res;
 	}
 }
 
-VRAMHDL menuicon_lock(UINT16 id, int width, int height, int bpp) {
+/**
+ * リソース ロック
+ * @param[in] nId リソース ID
+ * @param[in] nWidth 幅
+ * @param[in] nHeight 高さ
+ * @param[in] nBpp 色数
+ * @return リソース
+ */
+VRAMHDL MenuIcon::Lock(UINT nId, int nWidth, int nHeight, int nBpp)
+{
+	Cache c;
+	memset(&c, 0, sizeof(c));
 
-	ICONCACHE	*icorg;
-	ICONCACHE	*ic;
-	ICONCACHE	*icterm;
-	VRAMHDL		hdl;
-const MENURES	*res;
-	VRAMHDL		ret;
-
-	if ((id == 0) || (id >= MICON_MAX)) {
-		return(NULL);
-	}
-	icorg = iconcache;
-	ic = icorg;
-	icterm = icorg + MICON_CACHE;
-	do {
-		if (ic->id == id) {
-			hdl = ic->hdl;
-			if ((hdl->width == width) && (hdl->height == height) &&
-				(hdl->bpp == bpp)) {
-				ic->count++;
-				return(hdl);
-			}
-		}
-	} while(++ic < icterm);
-	res = (MENURES *)(iconreg[id - 1].res);
-	if (res == NULL) {
-		return(NULL);
-	}
-	hdl = menuvram_resload(res, 24);
-	ret = vram_resize(hdl, width, height, bpp);
-	vram_destroy(hdl);
-	if (ret) {
-		do {
-			ic--;
-			if (ic->count == 0) {
-				vram_destroy(ic->hdl);
-				while(ic > icorg) {
-					CopyMemory(ic, ic - 1, sizeof(ICONCACHE));
-					ic--;
-				}
-				ic->id = id;
-				ic->count = 1;
-				ic->hdl = ret;
+	for (std::deque<Cache>::iterator it = m_caches.begin(); it != m_caches.end(); ++it)
+	{
+		if (it->nId == nId)
+		{
+			VRAMHDL vram = it->vram;
+			if ((vram->width == nWidth) && (vram->height == nHeight) && (vram->bpp == nBpp))
+			{
+				c = *it;
+				c.nCount++;
+				m_caches.erase(it);
 				break;
 			}
-		} while(ic > icorg);
+		}
 	}
-	return(ret);
+	if (c.vram == NULL)
+	{
+		std::map<UINT, MENURES>::const_iterator it = m_resources.find(nId);
+		if (it == m_resources.end())
+		{
+			return NULL;
+		}
+
+		VRAMHDL hdl = menuvram_resload(&it->second, 24);
+		c.nId = nId;
+		c.vram = vram_resize(hdl, nWidth, nHeight, nBpp);
+		vram_destroy(hdl);
+	}
+	m_caches.push_front(c);
+	return c.vram;
 }
 
-void menuicon_unlock(VRAMHDL vram) {
-
-	ICONCACHE	*ic;
-	ICONCACHE	*icterm;
-
-	if (vram) {
-		ic = iconcache;
-		icterm = ic + MICON_CACHE;
-		do {
-			if (ic->hdl == vram) {
-				ic->count--;
-				return;
-			}
-		} while(++ic < icterm);
-		vram_destroy(vram);
+/**
+ * アンロック
+ * @param[in] vram リソース
+ */
+void MenuIcon::Unlock(VRAMHDL vram)
+{
+	for (std::deque<Cache>::iterator it = m_caches.begin(); it != m_caches.end(); ++it)
+	{
+		if (it->vram == vram)
+		{
+			it->nCount--;
+			return;
+		}
 	}
 }
 
+/**
+ * ごみ処理
+ */
+void MenuIcon::GarbageCollection()
+{
+	std::deque<Cache>::iterator it = m_caches.begin();
+	while (it != m_caches.end())
+	{
+		if (it->nCount < 0)
+		{
+			vram_destroy(it->vram);
+			it = m_caches.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+// ----
+
+void menuicon_regist(UINT16 id, const MENURES *res)
+{
+	MenuIcon::GetInstance()->Regist(id, *res);
+}

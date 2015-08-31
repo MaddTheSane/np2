@@ -901,7 +901,7 @@ void menuvram_caption(VRAMHDL vram, const RECT_T *rect,
 	pt.x = rect->left + MENU_PXCAPTION;
 	if (icon) {
 		pt.y = rect->top + MENU_PYCAPTION;
-		work = menuicon_lock(icon, MENUSYS_SZICON, MENUSYS_SZICON, vram->bpp);
+		work = MenuIcon::GetInstance()->Lock(icon, MENUSYS_SZICON, MENUSYS_SZICON, vram->bpp);
 		if (work) {
 			if (work->alpha) {
 				vramcpy_cpyex(vram, &pt, work, NULL);
@@ -909,7 +909,7 @@ void menuvram_caption(VRAMHDL vram, const RECT_T *rect,
 			else {
 				vramcpy_cpy(vram, &pt, work, NULL);
 			}
-			menuicon_unlock(work);
+			MenuIcon::GetInstance()->Unlock(work);
 		}
 		pt.x += MENUSYS_SZICON + MENU_PXCAPTION;
 	}

@@ -395,7 +395,7 @@ MenuDlgItemText::MenuDlgItemText(MenuDialog* pParent, int type, MENUID id, MENUF
 
 MenuDlgItemText::~MenuDlgItemText()
 {
-	menuicon_unlock(m_icon);
+	MenuIcon::GetInstance()->Unlock(m_icon);
 }
 
 bool MenuDlgItemText::OnCreate(const void *arg)
@@ -471,8 +471,8 @@ INTPTR MenuDlgItemText::ItemProc(int ctrl, INTPTR arg)
 	switch (ctrl)
 	{
 		case DMSG_SETICON:
-			menuicon_unlock(m_icon);
-			m_icon = menuicon_lock(static_cast<UINT16>(arg), m_size.y, m_size.y, GetVram()->bpp);
+			MenuIcon::GetInstance()->Unlock(m_icon);
+			m_icon = MenuIcon::GetInstance()->Lock(static_cast<UINT>(arg), m_size.y, m_size.y, GetVram()->bpp);
 			Invalidate();
 			break;
 
@@ -652,7 +652,7 @@ MenuDlgItemList::~MenuDlgItemList()
 	for (std::vector<ListItem>::iterator it = m_items.begin(); it != m_items.end(); ++it)
 	{
 		delete[] it->lpString;
-		menuicon_unlock(it->icon);
+		MenuIcon::GetInstance()->Unlock(it->icon);
 	}
 }
 
@@ -663,7 +663,7 @@ void MenuDlgItemList::Reset()
 	for (std::vector<ListItem>::iterator it = m_items.begin(); it != m_items.end(); ++it)
 	{
 		delete[] it->lpString;
-		menuicon_unlock(it->icon);
+		MenuIcon::GetInstance()->Unlock(it->icon);
 	}
 	m_items.clear();
 
@@ -899,8 +899,8 @@ bool MenuDlgItemList::SetEx(const ITEMEXPRM *arg)
 	delete[] item.lpString;
 	item.lpString = StrDup(arg->str);
 
-	menuicon_unlock(item.icon);
-	item.icon = menuicon_lock(arg->icon, m_dl.fontsize, m_dl.fontsize, GetVram()->bpp);
+	MenuIcon::GetInstance()->Unlock(item.icon);
+	item.icon = MenuIcon::GetInstance()->Lock(arg->icon, m_dl.fontsize, m_dl.fontsize, GetVram()->bpp);
 
 	return DrawSub(nIndex, (nIndex == m_nValue));
 }
@@ -1857,14 +1857,14 @@ public:
 
 	virtual ~MenuDlgItemIcon()
 	{
-		menuicon_unlock(m_icon);
+		MenuIcon::GetInstance()->Unlock(m_icon);
 	}
 
 	virtual bool OnCreate(const void *arg)
 	{
 		int width = m_rect.right - m_rect.left;
 		int height = m_rect.bottom - m_rect.top;
-		m_icon = menuicon_lock(static_cast<UINT16>(reinterpret_cast<INTPTR>(arg)), width, height, GetVram()->bpp);
+		m_icon = MenuIcon::GetInstance()->Lock(static_cast<UINT>(reinterpret_cast<INTPTR>(arg)), width, height, GetVram()->bpp);
 		return true;
 	}
 
