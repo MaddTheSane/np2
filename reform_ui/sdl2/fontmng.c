@@ -538,6 +538,11 @@ static UINT16 GetChar(const char** lppString)
 	return c;
 }
 
+/**
+ * Get font size
+ * @param[in] hdl Handle
+ * @retval size
+ */
 int fontmng_getfontsize(FONTMNGH hdl)
 {
 	int ret = 0;
