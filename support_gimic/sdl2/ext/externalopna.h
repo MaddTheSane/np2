@@ -19,6 +19,7 @@ public:
 	void Initialize();
 	void Deinitialize();
 	bool IsEnabled() const;
+	bool HasADPCM() const;
 	bool IsBusy() const;
 	void Reset() const;
 	void WriteRegister(UINT nAddr, UINT8 cData);
@@ -51,6 +52,16 @@ inline CExternalOpna* CExternalOpna::GetInstance()
  * @retval false 無効
  */
 inline bool CExternalOpna::IsEnabled() const
+{
+	return (m_module != NULL);
+}
+
+/**
+ * ADPCM のバッファを持っている?
+ * @retval true 有効
+ * @retval false 無効
+ */
+inline bool CExternalOpna::HasADPCM() const
 {
 	return (m_module != NULL);
 }
