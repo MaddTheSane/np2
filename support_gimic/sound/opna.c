@@ -34,12 +34,12 @@ void opna_construct(POPNA opna)
 	int i;
 
 	memset(opna, 0, sizeof(*opna));
-	opna->adpcmmask = ~(0x1c);
+	opna->s.adpcmmask = ~(0x1c);
 
 	for (i = 0; i < 4; i++)
 	{
-		memset(opna->reg + (i * 0x100) + 0x30, 0xff, 0x60);
-		memset(opna->reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
+		memset(opna->s.reg + (i * 0x100) + 0x30, 0xff, 0x60);
+		memset(opna->s.reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
 	}
 }
 
@@ -50,7 +50,7 @@ void opna_construct(POPNA opna)
  */
 void opna_reset(POPNA opna, REG8 cCaps)
 {
-	opna->cCaps = cCaps;
+	opna->s.cCaps = cCaps;
 }
 
 /**
@@ -59,20 +59,20 @@ void opna_reset(POPNA opna, REG8 cCaps)
  */
 void opna_bind(POPNA opna)
 {
-	const UINT8 cCaps = opna->cCaps;
+	const UINT8 cCaps = opna->s.cCaps;
 
-	fmboard_psgrestore(opna, &g_psg1, 0);
+	fmboard_psgrestore(&opna->s, &g_psg1, 0);
 	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
 
-	fmboard_fmrestore(opna, 0, 0);
+	fmboard_fmrestore(&opna->s, 0, 0);
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
-		fmboard_fmrestore(opna, 3, 1);
+		fmboard_fmrestore(&opna->s, 3, 1);
 	}
 	if (cCaps & OPNA_HAS_YM3438)
 	{
-		fmboard_fmrestore(opna, 6, 2);
-		fmboard_fmrestore(opna, 9, 3);
+		fmboard_fmrestore(&opna->s, 6, 2);
+		fmboard_fmrestore(&opna->s, 9, 3);
 	}
 	if (cCaps & OPNA_HAS_VR)
 	{
@@ -84,7 +84,7 @@ void opna_bind(POPNA opna)
 	}
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
-		fmboard_rhyrestore(opna, &g_rhythm, 0);
+		fmboard_rhyrestore(&opna->s, &g_rhythm, 0);
 		rhythm_bind(&g_rhythm);
 	}
 	if (cCaps & OPNA_HAS_ADPCM)
@@ -100,7 +100,7 @@ void opna_bind(POPNA opna)
  */
 REG8 opna_readStatus(POPNA opna)
 {
-	if (opna->cCaps & OPNA_HAS_TIMER)
+	if (opna->s.cCaps & OPNA_HAS_TIMER)
 	{
 		return g_fmtimer.status;
 	}
@@ -114,7 +114,7 @@ REG8 opna_readStatus(POPNA opna)
  */
 REG8 opna_readExtendedStatus(POPNA opna)
 {
-	const UINT8 cCaps = opna->cCaps;
+	const UINT8 cCaps = opna->s.cCaps;
 	REG8 ret = 0;
 
 	if (cCaps & OPNA_HAS_ADPCM)
@@ -123,7 +123,7 @@ REG8 opna_readExtendedStatus(POPNA opna)
 	}
 	else
 	{
-		ret = opna->adpcmmask & 8;
+		ret = opna->s.adpcmmask & 8;
 	}
 
 	if (cCaps & OPNA_HAS_TIMER)
@@ -142,10 +142,10 @@ REG8 opna_readExtendedStatus(POPNA opna)
  */
 void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
-	const UINT8 cCaps = opna->cCaps;
+	const UINT8 cCaps = opna->s.cCaps;
 	REG8 cChannel;
 
-	opna->reg[nAddress] = cData;
+	opna->s.reg[nAddress] = cData;
 
 	if (cCaps & OPNA_S98)
 	{
@@ -203,9 +203,9 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
  */
 void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
-	const UINT8 cCaps = opna->cCaps;
+	const UINT8 cCaps = opna->s.cCaps;
 
-	opna->reg[nAddress + 0x100] = cData;
+	opna->s.reg[nAddress + 0x100] = cData;
 
 	if (cCaps & OPNA_S98)
 	{
@@ -224,7 +224,7 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				if (!(cData & 0x80))
 				{
-					opna->adpcmmask = ~(cData & 0x1c);
+					opna->s.adpcmmask = ~(cData & 0x1c);
 				}
 			}
 		}
@@ -248,9 +248,9 @@ void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
 {
 	REG8 cChannel;
 
-	if (opna->cCaps & OPNA_HAS_YM3438)
+	if (opna->s.cCaps & OPNA_HAS_YM3438)
 	{
-		opna->reg[nAddress + 0x200] = cData;
+		opna->s.reg[nAddress + 0x200] = cData;
 
 		if (nAddress < 0x30)
 		{
@@ -289,9 +289,9 @@ void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
  */
 void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
-	if (opna->cCaps & OPNA_HAS_YM3438)
+	if (opna->s.cCaps & OPNA_HAS_YM3438)
 	{
-		opna->reg[nAddress + 0x300] = cData;
+		opna->s.reg[nAddress + 0x300] = cData;
 		opngen_setreg(&g_opngen, 9, nAddress, cData);
 	}
 }
@@ -306,9 +306,9 @@ REG8 opna_readRegister(POPNA opna, UINT nAddress)
 {
 	if (nAddress == 0xff)
 	{
-		return (opna->cCaps & OPNA_HAS_EXTENDEDFM) ? 1 : 0;
+		return (opna->s.cCaps & OPNA_HAS_EXTENDEDFM) ? 1 : 0;
 	}
-	return opna->reg[nAddress];
+	return opna->s.reg[nAddress];
 }
 
 /**
@@ -319,11 +319,11 @@ REG8 opna_readRegister(POPNA opna, UINT nAddress)
  */
 REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
 {
-	if ((opna->cCaps & OPNA_HAS_ADPCM) && (nAddress == 0x08))
+	if ((opna->s.cCaps & OPNA_HAS_ADPCM) && (nAddress == 0x08))
 	{
 		return adpcm_readsample(&g_adpcm);
 	}
-	return opna->reg[nAddress + 0x100];
+	return opna->s.reg[nAddress + 0x100];
 }
 
 /**
@@ -334,7 +334,7 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
  */
 REG8 opna_read3438Register(POPNA opna, UINT nAddress)
 {
-	if (opna->cCaps & OPNA_HAS_YM3438)
+	if (opna->s.cCaps & OPNA_HAS_YM3438)
 	{
 		if (nAddress == 0xff)
 		{
@@ -342,7 +342,7 @@ REG8 opna_read3438Register(POPNA opna, UINT nAddress)
 		}
 		else if (nAddress >= 0x20)
 		{
-			return opna->reg[nAddress + 0x200];
+			return opna->s.reg[nAddress + 0x200];
 		}
 	}
 	return 0xff;
@@ -356,9 +356,9 @@ REG8 opna_read3438Register(POPNA opna, UINT nAddress)
  */
 REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress)
 {
-	if (opna->cCaps & OPNA_HAS_YM3438)
+	if (opna->s.cCaps & OPNA_HAS_YM3438)
 	{
-		return opna->reg[nAddress + 0x200];
+		return opna->s.reg[nAddress + 0x200];
 	}
 	else
 	{

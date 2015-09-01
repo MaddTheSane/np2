@@ -25,7 +25,7 @@ enum
 /**
  * @brief opna
  */
-struct tagOpna
+struct tagOpnaState
 {
 	UINT8	addr1l;
 	UINT8	addr1h;
@@ -41,7 +41,16 @@ struct tagOpna
 	UINT8	reg[0x400];
 };
 
-typedef struct tagOpna OPN_T;
+/**
+ * @brief opna
+ */
+struct tagOpna
+{
+	struct tagOpnaState s;
+};
+
+typedef struct tagOpnaState OPN_T;
+typedef struct tagOpna _OPNA;
 typedef struct tagOpna* POPNA;
 
 #ifdef __cplusplus

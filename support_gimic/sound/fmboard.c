@@ -25,7 +25,7 @@
 
 
 	UINT32		g_usesound;
-	OPN_T		g_opn;
+	_OPNA		g_opn;
 
 	_FMTIMER	g_fmtimer;
 	_OPNGEN		g_opngen;
@@ -125,16 +125,16 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	extfn = NULL;
 	ZeroMemory(&g_opn, sizeof(g_opn));
-	setfmregs(g_opn.reg + 0x000);
-	setfmregs(g_opn.reg + 0x100);
-	setfmregs(g_opn.reg + 0x200);
-	setfmregs(g_opn.reg + 0x300);
-	g_opn.reg[0x07] = 0xbf;
-	g_opn.reg[0x0e] = 0xff;
-	g_opn.reg[0x0f] = 0xff;
-	g_opn.reg[0xff] = 0x01;
-	g_opn.channels = 3;
-	g_opn.adpcmmask = (UINT8)~(0x1c);
+	setfmregs(g_opn.s.reg + 0x000);
+	setfmregs(g_opn.s.reg + 0x100);
+	setfmregs(g_opn.s.reg + 0x200);
+	setfmregs(g_opn.s.reg + 0x300);
+	g_opn.s.reg[0x07] = 0xbf;
+	g_opn.s.reg[0x0e] = 0xff;
+	g_opn.s.reg[0x0f] = 0xff;
+	g_opn.s.reg[0xff] = 0x01;
+	g_opn.s.channels = 3;
+	g_opn.s.adpcmmask = (UINT8)~(0x1c);
 
 #if defined(SUPPORT_PX)
 	ZeroMemory(&g_opn2, sizeof(g_opn2));

@@ -836,7 +836,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	}
 	if (saveflg & FLAG_FM1A) {
 		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= statflag_write(sfh, &g_opn, sizeof(g_opn));
+		ret |= statflag_write(sfh, &g_opn.s, sizeof(g_opn.s));
 		for (i = 0; i < OPNCH_MAX; i++)
 		{
 			opnkey.keyreg[i] = g_opngen.opnch[i].keyreg;
@@ -922,7 +922,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 
 	if (saveflg & FLAG_FM1A) {
 		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= statflag_read(sfh, &g_opn, sizeof(g_opn));
+		ret |= statflag_read(sfh, &g_opn.s, sizeof(g_opn.s));
 		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
 		for (i = 0; i < OPNCH_MAX; i++)
 		{

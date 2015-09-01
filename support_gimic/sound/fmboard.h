@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 extern	UINT32		g_usesound;
-extern	OPN_T		g_opn;
+extern	_OPNA		g_opn;
 
 extern	_FMTIMER	g_fmtimer;
 extern	_OPNGEN		g_opngen;
