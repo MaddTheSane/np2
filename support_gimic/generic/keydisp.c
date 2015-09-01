@@ -11,6 +11,7 @@
 #include "pccore.h"
 #include "iocore.h"
 #include "fmboard.h"
+#include "cbus/amd98.h"
 
 typedef struct {
 	UINT8	k[KEYDISP_NOTEMAX];
@@ -714,9 +715,9 @@ void keydisp_setfmboard(UINT b)
 	}
 	if (b & 0x80)
 	{
-		setpsghdl(&s_keydisp, &g_psg1);
-		setpsghdl(&s_keydisp, &g_psg2);
-		setpsghdl(&s_keydisp, &g_psg3);
+		setpsghdl(&s_keydisp, &g_amd98.psg[0]);
+		setpsghdl(&s_keydisp, &g_amd98.psg[1]);
+		setpsghdl(&s_keydisp, &g_amd98.psg[2]);
 	}
 
 	if (s_keydisp.mode == KEYDISP_MODEFM)

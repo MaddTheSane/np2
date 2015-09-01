@@ -769,9 +769,7 @@ enum {
 	FLAG_FM1B		= 0x0004,
 	FLAG_FM2A		= 0x0008,
 	FLAG_FM2B		= 0x0010,
-	FLAG_PSG1		= 0x0020,
-	FLAG_PSG2		= 0x0040,
-	FLAG_PSG3		= 0x0080,
+	FLAG_AMD98		= 0x0020,
 	FLAG_RHYTHM		= 0x0100,
 	FLAG_ADPCM		= 0x0200,
 	FLAG_PCM86		= 0x0400,
@@ -824,7 +822,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 
 		case 0x80:
-			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
+			saveflg = FLAG_AMD98;
 			break;
 
 		default:
@@ -849,15 +847,6 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		opnkey.extop[3] = g_opngen.opnch[11].extop;
 		ret |= statflag_write(sfh, &opnkey, sizeof(opnkey));
 	}
-	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_write(sfh, &g_psg1.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_write(sfh, &g_psg2.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_write(sfh, &g_psg3.reg, sizeof(PSGREG));
-	}
 	if (saveflg & FLAG_ADPCM) {
 		ret |= statflag_write(sfh, &g_adpcm, sizeof(g_adpcm));
 	}
@@ -867,7 +856,10 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	if (saveflg & FLAG_CS4231) {
 		ret |= statflag_write(sfh, &cs4231, sizeof(cs4231));
 	}
-	(void)tbl;
+	if (saveflg & FLAG_AMD98)
+	{
+		ret |= amd98_sfsave(sfh, tbl);
+	}
 	return(ret);
 }
 
@@ -915,7 +907,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 			break;
 
 		case 0x80:
-			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
+			saveflg = FLAG_AMD98;
 			break;
 
 		default:
@@ -941,15 +933,6 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		g_opngen.opnch[8].extop = opnkey.extop[2];
 		g_opngen.opnch[11].extop = opnkey.extop[3];
 	}
-	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_read(sfh, &g_psg1.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_read(sfh, &g_psg2.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_read(sfh, &g_psg3.reg, sizeof(PSGREG));
-	}
 	if (saveflg & FLAG_ADPCM) {
 		ret |= statflag_read(sfh, &g_adpcm, sizeof(g_adpcm));
 	}
@@ -958,6 +941,10 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 	if (saveflg & FLAG_CS4231) {
 		ret |= statflag_read(sfh, &cs4231, sizeof(cs4231));
+	}
+	if (saveflg & FLAG_AMD98)
+	{
+		ret |= amd98_sfload(sfh, t);
 	}
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI
@@ -969,7 +956,6 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	if (saveflg & FLAG_CS4231) {
 		fmboard_extenable((REG8)(cs4231.extfunc & 1));
 	}
-	(void)t;
 	return(ret);
 }
 #endif
