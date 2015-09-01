@@ -11,7 +11,9 @@
 #include "sndcsec.h"
 #include "beep.h"
 #include "soundmng.h"
-
+#if defined(SUPPORT_WAVEREC)
+#include "common/wavefile.h"
+#endif
 
 	SOUNDCFG	soundcfg;
 
