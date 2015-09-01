@@ -10,7 +10,7 @@
 #include	"iocore.h"
 #include	"ideio.h"
 #include	"atapicmd.h"
-#include	"sxsi.h"
+#include	"fdd/sxsi.h"
 #include	"sound.h"
 #include	"idebios.res"
 

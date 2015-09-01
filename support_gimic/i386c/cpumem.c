@@ -14,7 +14,7 @@
 #include	"memems.h"
 #include	"memepp.h"
 #include	"vram.h"
-#include	"font.h"
+#include	"font/font.h"
 
 
 	UINT8	mem[0x200000];

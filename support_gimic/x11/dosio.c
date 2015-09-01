@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include "codecnv.h"
+#include "codecnv/codecnv.h"
 #include "dosio.h"
 
 

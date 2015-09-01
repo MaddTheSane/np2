@@ -35,7 +35,7 @@
 #endif
 
 #include "np2.h"
-#include "diskdrv.h"
+#include "fdd/diskdrv.h"
 #include "dosio.h"
 #include "ini.h"
 #include "parts.h"

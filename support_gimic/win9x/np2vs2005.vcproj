@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -140,7 +140,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\codecnv;..\i286x;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -309,7 +309,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\codecnv;..\i286c;..\mem;..\io;..\cbus;..\bios;..\lio;..\vram;..\sound;..\sound\vermouth;..\sound\getsnd;..\fdd;..\font;..\generic;..\trap;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -1495,6 +1495,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sound\pcmmix.c"
+					>
+				</File>
+				<File
 					RelativePath="..\sound\psggenc.c"
 					>
 				</File>
@@ -1640,10 +1644,6 @@
 				</File>
 				<File
 					RelativePath="..\vram\palettes.c"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnbmp.c"
 					>
 				</File>
 				<File
@@ -2693,6 +2693,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sound\pcmmix.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sound\psggen.h"
 					>
 				</File>
@@ -2794,10 +2798,6 @@
 				</File>
 				<File
 					RelativePath="..\vram\palettes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\vram\scrnbmp.h"
 					>
 				</File>
 				<File

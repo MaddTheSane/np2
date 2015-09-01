@@ -1,4 +1,4 @@
-#include "codecnv.h"
+#include "codecnv/codecnv.h"
 
 #if 1
 #define	oemtext_sjistooem	codecnv_sjistoeuc

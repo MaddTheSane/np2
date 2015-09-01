@@ -2,8 +2,7 @@ dnl
 dnl Configure for Xnp2
 dnl
 
-dnl require autoconf 2.59
-AC_PREREQ(2.59)
+AC_PREREQ(2.61)
 
 AC_INIT(Xnp2,0.84,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -71,16 +70,14 @@ dnl Checks for X
 dnl
 AC_PATH_X
 AC_PATH_XTRA
-AC_SUBST(XLIB,"")
-if test x"$no_x" != x"yes"; then
-  XLIB="-lX11"
-elif test x"$have_x" = x"no"; then
-  PKG_CHECK_MODULES([X],[x11 xext],[have_x=yes;no_x=no],[have_x=no;no_x=yes])
-fi
 
 dnl
 dnl Xnp2 configure options.
 dnl
+AC_ARG_ENABLE(gtk3,
+  AC_HELP_STRING([--enable-gtk3],[Use GTK+-3 library [default=no]]),,
+  [enable_gtk3="no"])
+
 AC_ARG_ENABLE(sdl,
   AC_HELP_STRING([--enable-sdl],[Use SDL 1.2 library [default=yes]]),,
   [enable_sdl="yes"])
@@ -110,13 +107,38 @@ AC_ARG_ENABLE(gtk-deprecated-api,
   [enable_gtk_deprecated_api="yes"])
 
 dnl
+dnl Checks for X11
+dnl
+PKG_CHECK_MODULES([X11],[x11],,[AC_MSG_ERROR(Xnp2 needs X11)])
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
+PKG_CHECK_MODULES([XEXT],[xext])
+AC_SUBST(XEXT_CFLAGS)
+AC_SUBST(XEXT_LIBS)
+
+dnl
 dnl Checks for GTK+
 dnl
-AM_PATH_GTK_2_0(2.6.0,,
-  AC_MSG_ERROR(Test for GTK failed. See the file 'x11/README.ja' for help))
+AS_IF([test x"$enable_gtk3" = "xyes"],
+  [
+    PKG_CHECK_MODULES([GTK], [gtk+-3.0],
+      [
+        AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])
+        AC_DEFINE(USE_GTK3,1,[Define to 1 if you have the GTK+-3 library.])
+      ],
+      enable_gtk3=no
+    )
+  ]
+)
+AS_IF([test x"$enable_gtk3" != "xyes"],
+  [
+    PKG_CHECK_MODULES([GTK], [gtk+-2.0],
+      [AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])]
+    )
+  ]
+)
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
-AC_DEFINE(USE_GTK2,1,[Define to 1 if you have the GTK+-2 library.])
 
 dnl
 dnl Checks for SDL and SDL_mixer

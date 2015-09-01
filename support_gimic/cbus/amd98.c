@@ -4,15 +4,15 @@
  */
 
 #include "compiler.h"
-#include "joymng.h"
-#include "keystat.h"
 #include <math.h>
-#include "pccore.h"
+#include "amd98.h"
+#include "keystat.h"
 #include "iocore.h"
 #include "cbuscore.h"
-#include "amd98.h"
 #include "sound.h"
 #include "fmboard.h"
+#include "sound/pcmmix.h"
+#include "joymng.h"
 
 	AMD98	g_amd98;
 

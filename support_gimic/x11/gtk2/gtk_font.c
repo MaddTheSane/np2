@@ -26,7 +26,7 @@
 #include "compiler.h"
 
 #include "np2.h"
-#include "codecnv.h"
+#include "codecnv/codecnv.h"
 
 #include "fontmng.h"
 

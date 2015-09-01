@@ -10,11 +10,11 @@
 #include	"i286x.mcr"
 #include	"i286xea.mcr"
 #include	"v30patch.h"
-#include	"bios.h"
+#include	"bios/bios.h"
 #include	"dmax86.h"
 #if defined(ENABLE_TRAP)
-#include	"steptrap.h"
-#include	"inttrap.h"
+#include "trap/inttrap.h"
+#include "trap/steptrap.h"
 #endif
 
 

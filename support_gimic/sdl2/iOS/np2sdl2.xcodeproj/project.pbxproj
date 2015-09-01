@@ -219,13 +219,13 @@
 		BA7E849E19063AFB00041C04 /* maketext.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838319063AFB00041C04 /* maketext.c */; };
 		BA7E849F19063AFB00041C04 /* maketgrp.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838519063AFB00041C04 /* maketgrp.c */; };
 		BA7E84A019063AFB00041C04 /* palettes.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838719063AFB00041C04 /* palettes.c */; };
-		BA7E84A119063AFB00041C04 /* scrnbmp.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838919063AFB00041C04 /* scrnbmp.c */; };
 		BA7E84A219063AFB00041C04 /* scrndraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838B19063AFB00041C04 /* scrndraw.c */; };
 		BA7E84A319063AFB00041C04 /* scrnsave.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838D19063AFB00041C04 /* scrnsave.c */; };
 		BA7E84A419063AFB00041C04 /* sdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E838F19063AFB00041C04 /* sdraw.c */; };
 		BA7E84A719063AFB00041C04 /* sdrawq16.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839319063AFB00041C04 /* sdrawq16.c */; };
 		BA7E84A819063AFB00041C04 /* vram.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839419063AFB00041C04 /* vram.c */; };
 		BA7E84AF190650A800041C04 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7E84AE190650A800041C04 /* main.m */; };
+		BAE349681B86CE20006EBD05 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE349661B86CE20006EBD05 /* pcmmix.c */; };
 		BAFFDA2A1B59058D00C5DE2E /* opna.c in Sources */ = {isa = PBXBuildFile; fileRef = BAFFDA281B59058D00C5DE2E /* opna.c */; };
 		FD779EDE0E26BA1200F39101 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD779EDD0E26BA1200F39101 /* CoreAudio.framework */; };
 		FD77A07D0E26BD8C00F39101 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FD77A07C0E26BD8C00F39101 /* Icon.png */; };
@@ -677,8 +677,6 @@
 		BA7E838619063AFB00041C04 /* maketgrp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maketgrp.h; sourceTree = "<group>"; };
 		BA7E838719063AFB00041C04 /* palettes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palettes.c; sourceTree = "<group>"; };
 		BA7E838819063AFB00041C04 /* palettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = palettes.h; sourceTree = "<group>"; };
-		BA7E838919063AFB00041C04 /* scrnbmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnbmp.c; sourceTree = "<group>"; };
-		BA7E838A19063AFB00041C04 /* scrnbmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnbmp.h; sourceTree = "<group>"; };
 		BA7E838B19063AFB00041C04 /* scrndraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrndraw.c; sourceTree = "<group>"; };
 		BA7E838C19063AFB00041C04 /* scrndraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrndraw.h; sourceTree = "<group>"; };
 		BA7E838D19063AFB00041C04 /* scrnsave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnsave.c; sourceTree = "<group>"; };
@@ -691,6 +689,8 @@
 		BA7E84AC19063C1600041C04 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		BA7E84AD19063C1600041C04 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		BA7E84AE190650A800041C04 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BAE349661B86CE20006EBD05 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
+		BAE349671B86CE20006EBD05 /* pcmmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcmmix.h; sourceTree = "<group>"; };
 		BAFFDA281B59058D00C5DE2E /* opna.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opna.c; sourceTree = "<group>"; };
 		BAFFDA291B59058D00C5DE2E /* opna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opna.h; sourceTree = "<group>"; };
 		FD779EDD0E26BA1200F39101 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -1324,6 +1324,8 @@
 				BA7E835819063AFB00041C04 /* pcm86.h */,
 				BA7E835919063AFB00041C04 /* pcm86c.c */,
 				BA7E835A19063AFB00041C04 /* pcm86g.c */,
+				BAE349661B86CE20006EBD05 /* pcmmix.c */,
+				BAE349671B86CE20006EBD05 /* pcmmix.h */,
 				BA7E835B19063AFB00041C04 /* psggen.h */,
 				BA7E835C19063AFB00041C04 /* psggenc.c */,
 				BA7E835D19063AFB00041C04 /* psggeng.c */,
@@ -1391,8 +1393,6 @@
 				BA7E838619063AFB00041C04 /* maketgrp.h */,
 				BA7E838719063AFB00041C04 /* palettes.c */,
 				BA7E838819063AFB00041C04 /* palettes.h */,
-				BA7E838919063AFB00041C04 /* scrnbmp.c */,
-				BA7E838A19063AFB00041C04 /* scrnbmp.h */,
 				BA7E838B19063AFB00041C04 /* scrndraw.c */,
 				BA7E838C19063AFB00041C04 /* scrndraw.h */,
 				BA7E838D19063AFB00041C04 /* scrnsave.c */,
@@ -1522,6 +1522,7 @@
 				BA7E83D719063AFB00041C04 /* dlgcfg.c in Sources */,
 				BA7E849419063AFB00041C04 /* midinst.c in Sources */,
 				BA7E83FF19063AFB00041C04 /* dipswbmp.c in Sources */,
+				BAE349681B86CE20006EBD05 /* pcmmix.c in Sources */,
 				BA7E83D019063AFB00041C04 /* rect.c in Sources */,
 				BA7E83CD19063AFB00041C04 /* mimpidef.c in Sources */,
 				BA7E846C19063AFB00041C04 /* sysmenu.c in Sources */,
@@ -1659,7 +1660,6 @@
 				BA7E848019063AFB00041C04 /* getogg.c in Sources */,
 				BA7E848E19063AFB00041C04 /* sndcsec.c in Sources */,
 				BA7E841D19063AFB00041C04 /* i286c_mn.c in Sources */,
-				BA7E84A119063AFB00041C04 /* scrnbmp.c in Sources */,
 				BA7E849A19063AFB00041C04 /* dispsync.c in Sources */,
 				BA7E84A319063AFB00041C04 /* scrnsave.c in Sources */,
 				BA7E83A819063AFB00041C04 /* atapicmd.c in Sources */,
@@ -1706,24 +1706,16 @@
 					.,
 					..,
 					../..,
-					../../bios,
 					../../cbus,
-					../../codecnv,
 					../../common,
 					../../embed,
 					../../embed/menu,
 					../../embed/menubase,
-					../../fdd,
-					../../font,
 					../../generic,
 					../../i286c,
 					../../io,
-					../../lio,
 					../../mem,
 					../../sound,
-					../../sound/getsnd,
-					../../sound/vermouth,
-					../../trap,
 					../../vram,
 				);
 				INFOPLIST_FILE = Info.plist;
@@ -1751,24 +1743,16 @@
 					.,
 					..,
 					../..,
-					../../bios,
 					../../cbus,
-					../../codecnv,
 					../../common,
 					../../embed,
 					../../embed/menu,
 					../../embed/menubase,
-					../../fdd,
-					../../font,
 					../../generic,
 					../../i286c,
 					../../io,
-					../../lio,
 					../../mem,
 					../../sound,
-					../../sound/getsnd,
-					../../sound/vermouth,
-					../../trap,
 					../../vram,
 				);
 				INFOPLIST_FILE = Info.plist;

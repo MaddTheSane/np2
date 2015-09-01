@@ -2,7 +2,6 @@
 #include	"bmpdata.h"
 #include	"scrnmng.h"
 #include	"cpucore.h"
-#include	"font.h"
 #include	"cmndraw.h"
 #include	"minifont.res"
 

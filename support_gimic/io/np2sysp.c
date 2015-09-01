@@ -7,7 +7,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"sxsibios.h"
+#include	"bios/sxsibios.h"
 #if defined(SUPPORT_HOSTDRV)
 #include	"hostdrv.h"
 #endif

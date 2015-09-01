@@ -6,9 +6,9 @@
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"sxsibios.h"
-#include	"fddfile.h"
-#include	"fdd_mtr.h"
-#include	"sxsi.h"
+#include	"fdd/fddfile.h"
+#include	"fdd/fdd_mtr.h"
+#include	"fdd/sxsi.h"
 
 
 enum {

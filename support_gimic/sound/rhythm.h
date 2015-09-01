@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "sound.h"
+#include "pcmmix.h"
 
 typedef struct {
 	PMIXHDR	hdr;
