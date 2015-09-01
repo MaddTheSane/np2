@@ -435,7 +435,14 @@ static void psgpanset(PSGGEN psg)
  */
 void amd98_reset(const NP2CFG *pConfig)
 {
+	UINT i;
+
 	memset(&g_amd98, 0, sizeof(g_amd98));
+
+	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
+	{
+		psggen_reset(&g_amd98.psg[i]);
+	}
 
 	(void)pConfig;
 }
