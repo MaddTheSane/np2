@@ -36,13 +36,20 @@ void opna_deinitialize(void)
 void opna_construct(POPNA opna)
 {
 	memset(opna, 0, sizeof(*opna));
-	opna->s.adpcmmask = ~(0x1c);
 
+	opna->s.reg[0x07] = 0xbf;
+	opna->s.reg[0x0e] = 0xff;
+	opna->s.reg[0x0f] = 0xff;
+	opna->s.reg[0xff] = 0x01;
 	for (UINT i = 0; i < 4; i++)
 	{
 		memset(opna->s.reg + (i * 0x100) + 0x30, 0xff, 0x60);
 		memset(opna->s.reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
 	}
+
+	opna->s.channels = 3;
+	opna->s.adpcmmask = ~(0x1c);
+	psggen_reset(&opna->psg);
 }
 
 /**
@@ -84,11 +91,11 @@ void opna_bind(POPNA opna)
 		{
 			if (pExt->HasADPCM())
 			{
-				sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm_dummy);
+				sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm_dummy);
 			}
 			else
 			{
-				sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
+				sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm);
 			}
 		}
 
@@ -108,8 +115,8 @@ void opna_bind(POPNA opna)
 		return;
 	}
 
-	fmboard_psgrestore(&opna->s, &g_psg1, 0);
-	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
+	fmboard_psgrestore(&opna->s, &opna->psg, 0);
+	sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
 
 	fmboard_fmrestore(&opna->s, 0, 0);
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
@@ -131,12 +138,12 @@ void opna_bind(POPNA opna)
 	}
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
-		fmboard_rhyrestore(&opna->s, &g_rhythm, 0);
-		rhythm_bind(&g_rhythm);
+		fmboard_rhyrestore(&opna->s, &opna->rhythm, 0);
+		rhythm_bind(&opna->rhythm);
 	}
 	if (cCaps & OPNA_HAS_ADPCM)
 	{
-		sound_streamregist(&g_adpcm, (SOUNDCB)adpcm_getpcm);
+		sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm);
 	}
 }
 
@@ -166,7 +173,7 @@ REG8 opna_readExtendedStatus(POPNA opna)
 
 	if (cCaps & OPNA_HAS_ADPCM)
 	{
-		ret = adpcm_status(&g_adpcm);
+		ret = adpcm_status(&opna->adpcm);
 	}
 	else
 	{
@@ -201,7 +208,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 
 	if (nAddress < 0x10)
 	{
-		psggen_setreg(&g_psg1, nAddress, cData);
+		psggen_setreg(&opna->psg, nAddress, cData);
 		if (pExt->IsEnabled())
 		{
 			pExt->WriteRegister(nAddress, cData);
@@ -213,7 +220,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 		{
 			if (!pExt->IsEnabled())
 			{
-				rhythm_setreg(&g_rhythm, nAddress, cData);
+				rhythm_setreg(&opna->rhythm, nAddress, cData);
 			}
 			else
 			{
@@ -305,7 +312,7 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
-			adpcm_setreg(&g_adpcm, nAddress, cData);
+			adpcm_setreg(&opna->adpcm, nAddress, cData);
 			if (pExt->HasADPCM())
 			{
 				pExt->WriteRegister(nAddress + 0x100, cData);
@@ -421,7 +428,7 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
 {
 	if ((opna->s.cCaps & OPNA_HAS_ADPCM) && (nAddress == 0x08))
 	{
-		return adpcm_readsample(&g_adpcm);
+		return adpcm_readsample(&opna->adpcm);
 	}
 	return opna->s.reg[nAddress + 0x100];
 }

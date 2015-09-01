@@ -1396,7 +1396,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ext\opna.cpp"
+					RelativePath="..\..\sound\opna.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

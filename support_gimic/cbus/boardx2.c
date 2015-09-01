@@ -24,7 +24,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat) {
 	addr = g_opn.s.addr2l;
 	g_opn.s.reg[addr + 0x200] = dat;
 	if (addr < 0x10) {
-		psggen_setreg(&g_psg1, addr, dat);
+		psggen_setreg(&g_opn.psg, addr, dat);
 	}
 	else {
 		if (addr < 0x30) {
@@ -94,7 +94,7 @@ static void IOOUTCALL opna_o18a(UINT port, REG8 dat) {
 	else {
 		if (addr < 0x20) {
 			if (g_opn.s.extend) {
-				rhythm_setreg(&g_rhythm, addr, dat);
+				rhythm_setreg(&g_opn.rhythm, addr, dat);
 			}
 		}
 		else if (addr < 0x30) {
@@ -211,7 +211,7 @@ static void extendchannel(REG8 enable) {
 	else {
 		g_opn.s.channels = 6;
 		opngen_setcfg(&g_opngen, 6, OPN_MONORAL | 0x038);
-		rhythm_setreg(&g_rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_opn.rhythm, 0x10, 0xff);
 	}
 }
 
@@ -251,13 +251,13 @@ void boardx2_bind(void) {
 	fmboard_fmrestore(&g_opn.s, 0, 2);
 	fmboard_fmrestore(&g_opn.s, 3, 0);
 	fmboard_fmrestore(&g_opn.s, 6, 1);
-	fmboard_psgrestore(&g_opn.s, &g_psg1, 2);
+	fmboard_psgrestore(&g_opn.s, &g_opn.psg, 2);
 	fmboard_psgrestore(&g_opn.s, &g_psg2, 0);
-	fmboard_rhyrestore(&g_opn.s, &g_rhythm, 0);
+	fmboard_rhyrestore(&g_opn.s, &g_opn.rhythm, 0);
 	sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
-	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
+	sound_streamregist(&g_opn.psg, (SOUNDCB)psggen_getpcm);
 	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
-	rhythm_bind(&g_rhythm);
+	rhythm_bind(&g_opn.rhythm);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x088, opn_o, opn_i);
 	cbuscore_attachsndex(0x188, opna_o, opna_i);

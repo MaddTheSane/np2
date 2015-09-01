@@ -56,7 +56,7 @@ static REG8 IOINPCALL spb_i18a(UINT port)
 	nAddress = g_opn.s.addr1l;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_psg1);
+		return fmboard_getjoy(&g_opn.psg);
 	}
 
 	(void)port;

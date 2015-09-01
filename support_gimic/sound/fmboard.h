@@ -9,7 +9,6 @@
 #include	"fmtimer.h"
 #include "opna.h"
 #include	"opngen.h"
-#include	"adpcm.h"
 #include	"pcm86.h"
 #include	"cs4231.h"
 
@@ -22,19 +21,14 @@ extern	_OPNA		g_opn;
 
 extern	_FMTIMER	g_fmtimer;
 extern	_OPNGEN		g_opngen;
-extern	_PSGGEN		g_psg[3];
-extern	_RHYTHM		g_rhythm;
-extern	_ADPCM		g_adpcm;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
-
-#define	g_psg1	g_psg[0]
-#define	g_psg2	g_psg[1]
-#define	g_psg3	g_psg[2]
+extern	_PSGGEN		g_psg2;
 
 #if defined(SUPPORT_PX)
 extern	OPN_T		g_opn2;
 extern	OPN_T		g_opn3;
+extern	_PSGGEN		g_psg3;
 extern	_RHYTHM		g_rhythm2;
 extern	_RHYTHM		g_rhythm3;
 extern	_ADPCM		g_adpcm2;

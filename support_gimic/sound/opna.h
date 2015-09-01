@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "adpcm.h"
 #include "psggen.h"
 #include "rhythm.h"
 
@@ -47,6 +48,9 @@ struct tagOpnaState
 struct tagOpna
 {
 	struct tagOpnaState s;
+	_PSGGEN psg;
+	_RHYTHM rhythm;
+	_ADPCM adpcm;
 };
 
 typedef struct tagOpnaState OPN_T;

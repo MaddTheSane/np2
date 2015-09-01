@@ -29,15 +29,14 @@
 
 	_FMTIMER	g_fmtimer;
 	_OPNGEN		g_opngen;
-	_PSGGEN		g_psg[3];
-	_RHYTHM		g_rhythm;
-	_ADPCM		g_adpcm;
 	_PCM86		pcm86;
 	_CS4231		cs4231;
+	_PSGGEN		g_psg2;
 
 #if defined(SUPPORT_PX)
 	OPN_T		g_opn2;
 	OPN_T		g_opn3;
+	_PSGGEN		g_psg3;
 	_RHYTHM		g_rhythm2;
 	_RHYTHM		g_rhythm3;
 	_ADPCM		g_adpcm2;
@@ -124,17 +123,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	cross = pConfig->snd_x;										// ver0.30
 
 	extfn = NULL;
-	ZeroMemory(&g_opn, sizeof(g_opn));
-	setfmregs(g_opn.s.reg + 0x000);
-	setfmregs(g_opn.s.reg + 0x100);
-	setfmregs(g_opn.s.reg + 0x200);
-	setfmregs(g_opn.s.reg + 0x300);
-	g_opn.s.reg[0x07] = 0xbf;
-	g_opn.s.reg[0x0e] = 0xff;
-	g_opn.s.reg[0x0f] = 0xff;
-	g_opn.s.reg[0xff] = 0x01;
-	g_opn.s.channels = 3;
-	g_opn.s.adpcmmask = (UINT8)~(0x1c);
+	opna_construct(&g_opn);
 
 #if defined(SUPPORT_PX)
 	ZeroMemory(&g_opn2, sizeof(g_opn2));
@@ -163,16 +152,11 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 #endif	// defined(SUPPORT_PX)
 
 	opngen_reset(&g_opngen);
-	psggen_reset(&g_psg1);
 	psggen_reset(&g_psg2);
-	psggen_reset(&g_psg3);
-	rhythm_reset(&g_rhythm);
 #if defined(SUPPORT_PX)
+	psggen_reset(&g_psg3);
 	rhythm_reset(&g_rhythm2);
 	rhythm_reset(&g_rhythm3);
-#endif	// defined(SUPPORT_PX)
-	adpcm_reset(&g_adpcm);
-#if defined(SUPPORT_PX)
 	adpcm_reset(&g_adpcm2);
 	adpcm_reset(&g_adpcm3);
 #endif	// defined(SUPPORT_PX)

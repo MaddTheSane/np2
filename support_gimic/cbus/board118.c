@@ -77,7 +77,7 @@ static REG8 IOINPCALL ymf_i18a(UINT port)
 		nAddress = g_opn.s.addr1l;
 		if (nAddress == 0x0e)
 		{
-			return fmboard_getjoy(&g_psg1);
+			return fmboard_getjoy(&g_opn.psg);
 		}
 		else if (nAddress < 0x10)
 		{
@@ -116,7 +116,7 @@ static void extendchannel(REG8 enable)
 	{
 		g_opn.s.channels = 3;
 		opngen_setcfg(&g_opngen, 3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&g_rhythm, 0x10, 0xff);
+		rhythm_setreg(&g_opn.rhythm, 0x10, 0xff);
 	}
 }
 

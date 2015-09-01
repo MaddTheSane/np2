@@ -848,7 +848,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= statflag_write(sfh, &opnkey, sizeof(opnkey));
 	}
 	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_write(sfh, &g_adpcm, sizeof(g_adpcm));
+		ret |= statflag_write(sfh, &g_opn.adpcm, sizeof(g_opn.adpcm));
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
@@ -934,7 +934,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		g_opngen.opnch[11].extop = opnkey.extop[3];
 	}
 	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_read(sfh, &g_adpcm, sizeof(g_adpcm));
+		ret |= statflag_read(sfh, &g_opn.adpcm, sizeof(g_opn.adpcm));
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
@@ -948,7 +948,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI
-	adpcm_update(&g_adpcm);
+	adpcm_update(&g_opn.adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
 		fmboard_extenable((REG8)(pcm86.extfunc & 1));
