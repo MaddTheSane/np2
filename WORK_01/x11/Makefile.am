@@ -232,7 +232,7 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/mem \
 		-I$(real_topsrcdir)/sound \
 		-I$(real_topsrcdir)/vram \
-		$(GTK_CFLAGS) $(SDL_CFLAGS)
+		$(GTK_CFLAGS) $(SDL_CFLAGS) $(X11_CFLAGS) $(XEXT_CFLAGS)
 if BUILD_ALL
 AM_CPPFLAGS+=	-DX11_BUILD_ALL
 endif
@@ -243,7 +243,7 @@ AM_CFLAGS=	-fsigned-char
 CFLAGS+=	-fno-strict-aliasing
 endif
 
-LDADD=		$(GTK_LIBS) $(SDL_LIBS) \
+LDADD=		$(GTK_LIBS) $(SDL_LIBS) $(X11_LIBS) $(XEXT_LIBS) \
 		$(X_LIBS) $(X_PRE_LIBS) $(XLIB) $(X_EXTRA_LIBS)
 
 DEFS=		@DEFS@ -DSYSRESPATH=\""$(pkgdatadir)"\"
