@@ -5,7 +5,8 @@
 
 #include "compiler.h"
 #include "WndProc.h"
-#include "..\resource.h"
+#include <assert.h>
+#define ASSERT assert	/*!< assert */
 
 //! 基底クラス名
 // static const TCHAR s_szClassName[] = TEXT("WndProcBase");
@@ -248,11 +249,10 @@ BOOL CWndProc::CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 		return FALSE;
 	}
 
-	sm_pWndInit = this;
+	HookWindowCreate(this);
 	HWND hWnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
-	if (sm_pWndInit != NULL)
+	if (!UnhookWindowCreate())
 	{
-		sm_pWndInit = NULL;
 		PostNcDestroy();
 	}
 
@@ -267,6 +267,42 @@ BOOL CWndProc::CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 BOOL CWndProc::PreCreateWindow(CREATESTRUCT& cs)
 {
 	return TRUE;
+}
+
+/**
+ * ウィンドウ作成をフック
+ * @param[in] pWnd ウィンドウ
+ */
+void CWndProc::HookWindowCreate(CWndProc* pWnd)
+{
+	// 同じスレッドのみ許す
+	ASSERT(sm_dwThreadId != ::GetCurrentThreadId());
+
+	if (sm_pWndInit == pWnd)
+	{
+		return;
+	}
+
+	ASSERT(sm_hHookOldCbtFilter != NULL);
+	ASSERT(pWnd != NULL);
+	ASSERT(pWnd->m_hWnd == NULL);
+	ASSERT(sm_pWndInit == NULL);
+	sm_pWndInit = pWnd;
+}
+
+/**
+ * ウィンドウ作成をアンフック
+ * @retval true フックした
+ * @retval false フックしなかった
+ */
+bool CWndProc::UnhookWindowCreate()
+{
+	if (sm_pWndInit != NULL)
+	{
+		sm_pWndInit = NULL;
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -361,7 +397,19 @@ LRESULT CWndProc::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			return 0;
 		}
 	}
-	if (nMsg == WM_NCDESTROY)
+	else if (nMsg == WM_NOTIFY)
+	{
+		NMHDR* pNMHDR = reinterpret_cast<NMHDR*>(lParam);
+		if (pNMHDR->hwndFrom != NULL)
+		{
+			LRESULT lResult = 0;
+			if (OnNotify(wParam, lParam, &lResult))
+			{
+				return lResult;
+			}
+		}
+	}
+	else if (nMsg == WM_NCDESTROY)
 	{
 		OnNcDestroy(wParam, lParam);
 		return 0;
@@ -376,6 +424,19 @@ LRESULT CWndProc::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
  * @retval TRUE アプリケーションがこのメッセージを処理した
  */
 BOOL CWndProc::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	return FALSE;
+}
+
+/**
+ * フレームワークは、イベントがコントロールに発生する場合や、コントロールが一部の種類の情報を要求するコントロールを親ウィンドウに通知するために、このメンバー関数を呼び出します
+ * @param[in] wParam メッセージがコントロールからそのメッセージを送信するコントロールを識別します
+ * @param[in] lParam 通知コードと追加情報を含む通知メッセージ (NMHDR) の構造体へのポインター
+ * @param[out] pResult メッセージが処理されたとき結果を格納するコードする LRESULT の変数へのポインター
+ * @retval TRUE メッセージを処理した
+ * @retval FALSE メッセージを処理しなかった
+ */
+BOOL CWndProc::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	return FALSE;
 }

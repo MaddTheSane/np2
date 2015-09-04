@@ -2069,7 +2069,15 @@
 					Name="misc"
 					>
 					<File
+						RelativePath=".\misc\DlgProc.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\PropProc.cpp"
 						>
 					</File>
 					<File
@@ -3027,7 +3035,15 @@
 					Name="misc"
 					>
 					<File
+						RelativePath=".\misc\DlgProc.h"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\PropProc.h"
 						>
 					</File>
 					<File
