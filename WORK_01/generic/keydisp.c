@@ -43,7 +43,7 @@ struct FMChannel
 typedef struct
 {
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
-	struct FMChannel ch[12];		/*!< The information of FM */
+	struct FMChannel ch[6];			/*!< The information of FM */
 	UINT8 cChannelNum;				/*!< The number of the channel */
 	UINT8 cFMChannels;				/*!< The channels of FM */
 } KDFMCTRL;
@@ -666,17 +666,21 @@ void keydisp_setfmboard(UINT b)
 #if defined(SUPPORT_PX)
 	if (b == 0x30)
 	{
-		setfmhdl(&s_keydisp, &g_opn, 12, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_psg1);
-		setfmhdl(&s_keydisp, &g_opn2, 12, 0);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_psg2);
 		b = 0;
 	}
 	if (b == 0x50)
 	{
-		setfmhdl(&s_keydisp, &g_opn, 12, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_psg1);
-		setfmhdl(&s_keydisp, &g_opn2, 12, 0);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_psg2);
 		setfmhdl(&s_keydisp, &g_opn3, 6, 0);
 		setpsghdl(&s_keydisp, &g_psg3);
@@ -716,7 +720,8 @@ void keydisp_setfmboard(UINT b)
 	}
 	if (b & 0x40)
 	{
-		setfmhdl(&s_keydisp, &g_opn, 12, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_psg1);
 	}
 	if (b & 0x80)

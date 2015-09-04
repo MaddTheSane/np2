@@ -27,7 +27,7 @@ enum {
 enum
 {
 	KEYDISP_CHMAX		= 48,
-	KEYDISP_FMCHMAX		= 3,
+	KEYDISP_FMCHMAX		= 6,
 	KEYDISP_PSGMAX		= 3
 };
 
