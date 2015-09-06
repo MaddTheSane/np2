@@ -24,19 +24,12 @@ enum {
 	KEYDISP_MODEMIDI
 };
 
-#if defined(SUPPORT_PX)
-enum {
-	KEYDISP_CHMAX		= 39,
-	KEYDISP_FMCHMAX		= 30,
+enum
+{
+	KEYDISP_CHMAX		= 48,
+	KEYDISP_FMCHMAX		= 6,
 	KEYDISP_PSGMAX		= 3
 };
-#else	// defined(SUPPORT_PX)
-enum {
-	KEYDISP_CHMAX		= 16,
-	KEYDISP_FMCHMAX		= 12,
-	KEYDISP_PSGMAX		= 3
-};
-#endif	// defined(SUPPORT_PX)
 
 enum {
 	KEYDISP_NOTEMAX		= 16,
@@ -81,7 +74,7 @@ void keydisp_getsize(int *width, int *height);
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
 void keydisp_setfmboard(UINT board);
-void keydisp_fmkeyon(UINT8 ch, UINT8 value);
+void keydisp_fmkeyon(REG8 nChannelNum, UINT8 value);
 void keydisp_psg(PSGGEN psg, UINT nAddress);
 void keydisp_midi(const UINT8 *msg);
 
@@ -93,7 +86,7 @@ void keydisp_midi(const UINT8 *msg);
 
 #define keydisp_draw(a)
 #define keydisp_setfmboard(a)
-#define keydisp_fmkeyon(a, b)
+#define keydisp_fmkeyon(c, v)
 #define keydisp_psg(p, a)
 #define	keydisp_midi(a)
 
