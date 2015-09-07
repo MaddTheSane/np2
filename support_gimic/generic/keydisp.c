@@ -667,10 +667,8 @@ void keydisp_setfmboard(UINT b)
 #if defined(SUPPORT_PX)
 	if (b == 0x30)
 	{
-		setfmhdl(&s_keydisp, &g_opn.s, 12, 0);
-		setpsghdl(&s_keydisp, &g_opn.psg);
-		setfmhdl(&s_keydisp, &g_opn, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
 		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
 		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
@@ -679,8 +677,8 @@ void keydisp_setfmboard(UINT b)
 	}
 	if (b == 0x50)
 	{
-		setfmhdl(&s_keydisp, &g_opn, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
 		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
 		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
@@ -723,8 +721,8 @@ void keydisp_setfmboard(UINT b)
 	}
 	if (b & 0x40)
 	{
-		setfmhdl(&s_keydisp, &g_opn, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
 	}
 	if (b & 0x80)
