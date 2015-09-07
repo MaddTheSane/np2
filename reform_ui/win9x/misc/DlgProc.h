@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "tstring.h"
 #include "WndProc.h"
 
 /**
@@ -18,7 +19,15 @@ public:
 	virtual ~CDlgProc();
 	virtual INT_PTR DoModal();
 	virtual BOOL OnInitDialog();
-	void EndDialog(int nResult);
+
+	/**
+	 * モーダル ダイアログ ボックスを終了する
+	 * @param[in] nResult DoModalの呼び出し元に返す値
+	 */
+	void CDlgProc::EndDialog(int nResult)
+	{
+		::EndDialog(m_hWnd, nResult);
+	}
 
 protected:
 	LPCTSTR m_lpszTemplateName;		//!< テンプレート名
@@ -31,11 +40,118 @@ protected:
 	static BOOL CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
+
 /**
- * モーダル ダイアログ ボックスを終了する
- * @param[in] nResult DoModalの呼び出し元に返す値
+ * @brief コンボ ボックス
  */
-inline void CDlgProc::EndDialog(int nResult)
+class CComboBoxProc : public CWndProc
 {
-	::EndDialog(m_hWnd, nResult);
-}
+public:
+	/**
+	 * コンボ ボックスのリスト ボックスに文字列を追加します
+	 * @param[in] lpszString 追加された null で終わる文字列へのポインター
+	 * @return 文字列が挿入された位置を示すインデックス
+	 */
+	int AddString(LPCTSTR lpszString)
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(lpszString)));
+	}
+
+	/**
+	 * コンボ ボックスのリスト ボックス部分の項目数を取得するには、このメンバー関数を呼び出します
+	 * @return 項目の数
+	 */
+	int GetCount() const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_GETCOUNT, 0, 0));
+	}
+
+	/**
+	 * コンボ ボックスのどの項目が選択されたかを判定するためにこのメンバー関数を呼び出します
+	 * @return コンボ ボックスのリスト ボックスで現在選択されている項目のインデックス
+	 */
+	int GetCurSel() const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_GETCURSEL, 0, 0));
+	}
+
+	/**
+	 * 指定したコンボ ボックスの項目に関連付けられたアプリケーションに用意された 32 ビット値を取得します
+	 * @param[in] nIndex コンボ ボックスのリスト ボックスの項目のインデックス
+	 * @return 32 ビット値
+	 */
+	DWORD_PTR GetItemData(int nIndex) const
+	{
+		return static_cast<DWORD_PTR>(::SendMessage(m_hWnd, CB_GETITEMDATA, static_cast<WPARAM>(nIndex), 0));
+	}
+
+	/**
+	 * コンボ ボックスのリスト ボックスに文字列を追加します
+	 * @param[in] nIndex 文字列を受け取るリスト ボックスの位置
+	 * @param[in] lpszString 追加された null で終わる文字列へのポインター
+	 * @return 文字列が挿入された位置を示すインデックス
+	 */
+	int InsertString(int nIndex, LPCTSTR lpszString)
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_INSERTSTRING, static_cast<WPARAM>(nIndex), reinterpret_cast<LPARAM>(lpszString)));
+	}
+
+	/**
+	 * 32 ビット値をコンボ ボックスの指定項目に関連付けられる
+	 * @param[in] nIndex 項目に始まるインデックスを設定するためのメソッドが含まれます
+	 * @param[in] dwItemData 新しい値を項目に関連付けるに含まれています
+	 * @return エラーの時は CB_ERR
+	 */
+	int SetItemData(int nIndex, DWORD_PTR dwItemData)
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_SETITEMDATA, static_cast<WPARAM>(nIndex), static_cast<LPARAM>(dwItemData)));
+	}
+
+	/**
+	 * コンボ ボックスのリスト ボックスの文字列を選択します
+	 * @param[in] nSelect 文字列のインデックスを選択するように指定します
+	 * @return メッセージが成功した場合は選択された項目のインデックス
+	 */
+	int SetCurSel(int nSelect)
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_SETCURSEL, static_cast<WPARAM>(nSelect), 0));
+	}
+};
+
+
+/**
+ * @brief ファイル選択
+ */
+class CFileDlg
+{
+public:
+	CFileDlg(BOOL bOpenFileDialog, LPCTSTR lpszDefExt = NULL, LPCTSTR lpszFileName = NULL, DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, LPCTSTR lpszFilter = NULL, HWND hParentWnd = NULL);
+	int DoModal();
+
+	/**
+	 * ファイル名の取得
+	 * @return full path and filename
+	 */
+	LPCTSTR GetPathName() const
+	{
+		return m_ofn.lpstrFile;
+	}
+
+	/**
+	 * Readoly?
+	 * @return TRUE if readonly checked
+	 */
+	BOOL GetReadOnlyPref() const
+	{
+		return (m_ofn.Flags & OFN_READONLY) ? TRUE : FALSE;
+	}
+
+public:
+	OPENFILENAME m_ofn;				//!< open file parameter block
+
+protected:
+	BOOL m_bOpenFileDialog;			//!< TRUE for file open, FALSE for file save
+	std::tstring m_strFilter;		//!< filter string
+	TCHAR m_szFileTitle[64];		//!< contains file title after return
+	TCHAR m_szFileName[_MAX_PATH];	//!< contains full path name after return
+};
