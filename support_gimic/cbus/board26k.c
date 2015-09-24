@@ -67,7 +67,7 @@ void board26k_reset(const NP2CFG *pConfig)
 {
 	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_S98);
 
-	opngen_setcfg(&g_opngen, 3, 0);
+	opngen_setcfg(&g_opn.opngen, 3, 0);
 	fmtimer_reset(pConfig->snd26opt & 0xc0);
 	soundrom_loadex(pConfig->snd26opt & 7, OEMTEXT("26"));
 	g_opn.s.base = (pConfig->snd26opt & 0x10)?0x000:0x100;

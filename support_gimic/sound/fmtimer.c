@@ -57,7 +57,7 @@ void fmport_a(NEVENTITEM item) {
 		set_fmtimeraevent(NEVENT_RELATIVE);
 
 		if ((g_fmtimer.reg & 0xc0) == 0x80) {
-			opngen_csm(&g_opngen);
+			opngen_csm(&g_opn.opngen);
 		}
 	}
 }

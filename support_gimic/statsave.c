@@ -839,12 +839,12 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= statflag_write(sfh, &g_opn.s, sizeof(g_opn.s));
 		for (i = 0; i < OPNCH_MAX; i++)
 		{
-			opnkey.keyreg[i] = g_opngen.opnch[i].keyreg;
+			opnkey.keyreg[i] = g_opn.opngen.opnch[i].keyreg;
 		}
-		opnkey.extop[0] = g_opngen.opnch[2].extop;
-		opnkey.extop[1] = g_opngen.opnch[5].extop;
-		opnkey.extop[2] = g_opngen.opnch[8].extop;
-		opnkey.extop[3] = g_opngen.opnch[11].extop;
+		opnkey.extop[0] = g_opn.opngen.opnch[2].extop;
+		opnkey.extop[1] = g_opn.opngen.opnch[5].extop;
+		opnkey.extop[2] = g_opn.opngen.opnch[8].extop;
+		opnkey.extop[3] = g_opn.opngen.opnch[11].extop;
 		ret |= statflag_write(sfh, &opnkey, sizeof(opnkey));
 	}
 	if (saveflg & FLAG_ADPCM) {
@@ -926,12 +926,12 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
 		for (i = 0; i < OPNCH_MAX; i++)
 		{
-			g_opngen.opnch[i].keyreg = opnkey.keyreg[i];
+			g_opn.opngen.opnch[i].keyreg = opnkey.keyreg[i];
 		}
-		g_opngen.opnch[2].extop = opnkey.extop[0];
-		g_opngen.opnch[5].extop = opnkey.extop[1];
-		g_opngen.opnch[8].extop = opnkey.extop[2];
-		g_opngen.opnch[11].extop = opnkey.extop[3];
+		g_opn.opngen.opnch[2].extop = opnkey.extop[0];
+		g_opn.opngen.opnch[5].extop = opnkey.extop[1];
+		g_opn.opngen.opnch[8].extop = opnkey.extop[2];
+		g_opn.opngen.opnch[11].extop = opnkey.extop[3];
 	}
 	if (saveflg & FLAG_ADPCM) {
 		ret |= statflag_read(sfh, &g_opn.adpcm, sizeof(g_opn.adpcm));

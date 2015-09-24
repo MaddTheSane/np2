@@ -369,7 +369,7 @@ static void fmkeyreset(KEYDISP *keydisp)
 	}
 }
 
-void keydisp_fmkeyon(REG8 nChannelNum, UINT8 value)
+void keydisp_fmkeyon(POPNA opna, UINT nBase, REG8 nChannelNum, UINT8 value)
 {
 	UINT i;
 	KDFMCTRL *k;
@@ -382,25 +382,23 @@ void keydisp_fmkeyon(REG8 nChannelNum, UINT8 value)
 	for (i = 0; i < s_keydisp.fmmax; i++)
 	{
 		k = &s_keydisp.fmctl[i];
-		if (nChannelNum >= k->cFMChannels)
+		if (k->pcRegister == &opna->s.reg[nBase])
 		{
-			nChannelNum -= k->cFMChannels;
-			continue;
-		}
-		value &= 0xf0;
-		if (k->ch[nChannelNum].cKeyOn != value)
-		{
-			if (value)
+			value &= 0xf0;
+			if (k->ch[nChannelNum].cKeyOn != value)
 			{
-				fmkeyon(&s_keydisp, k, nChannelNum);
+				if (value)
+				{
+					fmkeyon(&s_keydisp, k, nChannelNum);
+				}
+				else
+				{
+					fmkeyoff(&s_keydisp, k, nChannelNum);
+				}
+				k->ch[nChannelNum].cKeyOn = value;
 			}
-			else
-			{
-				fmkeyoff(&s_keydisp, k, nChannelNum);
-			}
-			k->ch[nChannelNum].cKeyOn = value;
+			break;
 		}
-		break;
 	}
 }
 
@@ -670,9 +668,9 @@ void keydisp_setfmboard(UINT b)
 		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
 		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
-		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
-		setpsghdl(&s_keydisp, &g_psg2);
+		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0x200);
+		setpsghdl(&s_keydisp, &g_opn2.psg);
 		b = 0;
 	}
 	if (b == 0x50)
@@ -680,11 +678,11 @@ void keydisp_setfmboard(UINT b)
 		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
 		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
-		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
-		setpsghdl(&s_keydisp, &g_psg2);
-		setfmhdl(&s_keydisp, &g_opn3, 6, 0);
-		setpsghdl(&s_keydisp, &g_psg3);
+		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0x200);
+		setpsghdl(&s_keydisp, &g_opn2.psg);
+		setfmhdl(&s_keydisp, &g_opn3.s, 6, 0);
+		setpsghdl(&s_keydisp, &g_opn3.psg);
 		b = 0;
 	}
 
@@ -703,10 +701,10 @@ void keydisp_setfmboard(UINT b)
 			break;
 
 		case 0x06:
-			setfmhdl(&s_keydisp, &g_opn.s, 3, 0x200);
-			setpsghdl(&s_keydisp, &g_opn.psg);
 			setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
-			setpsghdl(&s_keydisp, &g_psg2);
+			setpsghdl(&s_keydisp, &g_opn.psg);
+			setfmhdl(&s_keydisp, &g_opn2.s, 3, 0);
+			setpsghdl(&s_keydisp, &g_opn2.psg);
 			break;
 	}
 	if (b & 0x08)

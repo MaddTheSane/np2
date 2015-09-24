@@ -112,12 +112,12 @@ static void extendchannel(REG8 enable)
 	if (enable)
 	{
 		g_opn.s.channels = 6;
-		opngen_setcfg(&g_opngen, 6, OPN_STEREO | 0x007);
+		opngen_setcfg(&g_opn.opngen, 6, OPN_STEREO | 0x007);
 	}
 	else
 	{
 		g_opn.s.channels = 3;
-		opngen_setcfg(&g_opngen, 3, OPN_MONORAL | 0x007);
+		opngen_setcfg(&g_opn.opngen, 3, OPN_MONORAL | 0x007);
 		rhythm_setreg(&g_opn.rhythm, 0x10, 0xff);
 	}
 }
@@ -151,7 +151,7 @@ void board86_reset(const NP2CFG *pConfig, BOOL adpcm)
 	fmtimer_reset((pConfig->snd86opt & 0x10) |
 					((pConfig->snd86opt & 0x4) << 5) |
 					((pConfig->snd86opt & 0x8) << 3));
-	opngen_setcfg(&g_opngen, 3, OPN_STEREO | 0x038);
+	opngen_setcfg(&g_opn.opngen, 3, OPN_STEREO | 0x038);
 	if (pConfig->snd86opt & 2)
 	{
 		soundrom_load(0xcc000, OEMTEXT("86"));

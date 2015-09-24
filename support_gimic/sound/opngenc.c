@@ -7,7 +7,6 @@
 #include <math.h>
 #include "opngen.h"
 #include "pccore.h"
-#include "keydisp.h"
 
 
 #define	OPM_ARRATE		 399128L
@@ -623,7 +622,6 @@ void opngen_keyon(OPNGEN opngen, UINT chnum, REG8 value) {
 		slot++;
 		bit <<= 1;
 	}
-	keydisp_fmkeyon((UINT8)chnum, value);
 }
 
 void opngen_csm(OPNGEN opngen) {

@@ -110,12 +110,12 @@ static void extendchannel(REG8 enable)
 	if (enable)
 	{
 		g_opn.s.channels = 6;
-		opngen_setcfg(&g_opngen, 6, OPN_STEREO | 0x007);
+		opngen_setcfg(&g_opn.opngen, 6, OPN_STEREO | 0x007);
 	}
 	else
 	{
 		g_opn.s.channels = 3;
-		opngen_setcfg(&g_opngen, 3, OPN_MONORAL | 0x007);
+		opngen_setcfg(&g_opn.opngen, 3, OPN_MONORAL | 0x007);
 		rhythm_setreg(&g_opn.rhythm, 0x10, 0xff);
 	}
 }
@@ -151,7 +151,7 @@ void board118_reset(const NP2CFG *pConfig)
 	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_S98);
 
 	fmtimer_reset(0xc0);
-	opngen_setcfg(&g_opngen, 3, OPN_STEREO | 0x038);
+	opngen_setcfg(&g_opn.opngen, 3, OPN_STEREO | 0x038);
 	cs4231io_reset();
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);

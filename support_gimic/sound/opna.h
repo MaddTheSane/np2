@@ -6,6 +6,7 @@
 #pragma once
 
 #include "adpcm.h"
+#include "opngen.h"
 #include "psggen.h"
 #include "rhythm.h"
 
@@ -48,6 +49,7 @@ struct tagOpnaState
 struct tagOpna
 {
 	struct tagOpnaState s;
+	_OPNGEN opngen;
 	_PSGGEN psg;
 	_RHYTHM rhythm;
 	_ADPCM adpcm;
@@ -82,7 +84,7 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress);
 REG8 opna_read3438Register(POPNA opna, UINT nAddress);
 REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress);
 
-void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank);
+void fmboard_fmrestore(POPNA opna, REG8 chbase, UINT bank);
 void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank);
 void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank);
 

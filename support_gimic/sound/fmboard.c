@@ -26,23 +26,14 @@
 
 	UINT32		g_usesound;
 	_OPNA		g_opn;
-
-	_FMTIMER	g_fmtimer;
-	_OPNGEN		g_opngen;
-	_PCM86		pcm86;
-	_CS4231		cs4231;
-	_PSGGEN		g_psg2;
-
+	_OPNA		g_opn2;
 #if defined(SUPPORT_PX)
-	OPN_T		g_opn2;
-	OPN_T		g_opn3;
-	_PSGGEN		g_psg3;
-	_RHYTHM		g_rhythm2;
-	_RHYTHM		g_rhythm3;
-	_ADPCM		g_adpcm2;
-	_ADPCM		g_adpcm3;
+	_OPNA		g_opn3;
 #endif	// defined(SUPPORT_PX)
 
+	_FMTIMER	g_fmtimer;
+	_PCM86		pcm86;
+	_CS4231		cs4231;
 
 static void	(*extfn)(REG8 enable);
 
@@ -124,41 +115,9 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	extfn = NULL;
 	opna_construct(&g_opn);
-
+	opna_construct(&g_opn2);
 #if defined(SUPPORT_PX)
-	ZeroMemory(&g_opn2, sizeof(g_opn2));
-	setfmregs(g_opn2.reg + 0x000);
-	setfmregs(g_opn2.reg + 0x100);
-	setfmregs(g_opn2.reg + 0x200);
-	setfmregs(g_opn2.reg + 0x300);
-	g_opn2.reg[0x07] = 0xbf;
-	g_opn2.reg[0x0e] = 0xff;
-	g_opn2.reg[0x0f] = 0xff;
-	g_opn2.reg[0xff] = 0x01;
-	g_opn2.channels = 3;
-	g_opn2.adpcmmask = (UINT8)~(0x1c);
-
-	ZeroMemory(&g_opn3, sizeof(g_opn3));
-	setfmregs(g_opn3.reg + 0x000);
-	setfmregs(g_opn3.reg + 0x100);
-	setfmregs(g_opn3.reg + 0x200);
-	setfmregs(g_opn3.reg + 0x300);
-	g_opn3.reg[0x07] = 0xbf;
-	g_opn3.reg[0x0e] = 0xff;
-	g_opn3.reg[0x0f] = 0xff;
-	g_opn3.reg[0xff] = 0x01;
-	g_opn3.channels = 3;
-	g_opn3.adpcmmask = (UINT8)~(0x1c);
-#endif	// defined(SUPPORT_PX)
-
-	opngen_reset(&g_opngen);
-	psggen_reset(&g_psg2);
-#if defined(SUPPORT_PX)
-	psggen_reset(&g_psg3);
-	rhythm_reset(&g_rhythm2);
-	rhythm_reset(&g_rhythm3);
-	adpcm_reset(&g_adpcm2);
-	adpcm_reset(&g_adpcm3);
+	opna_construct(&g_opn3);
 #endif	// defined(SUPPORT_PX)
 	pcm86_reset();
 	cs4231_reset();

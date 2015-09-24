@@ -49,6 +49,7 @@ void opna_construct(POPNA opna)
 
 	opna->s.channels = 3;
 	opna->s.adpcmmask = ~(0x1c);
+	opngen_reset(&opna->opngen);
 	psggen_reset(&opna->psg);
 	rhythm_reset(&opna->rhythm);
 	adpcm_reset(&opna->adpcm);
@@ -103,15 +104,15 @@ void opna_bind(POPNA opna)
 
 		if (cCaps & OPNA_HAS_YM3438)
 		{
-			fmboard_fmrestore(&opna->s, 6, 2);
-			fmboard_fmrestore(&opna->s, 9, 3);
+			fmboard_fmrestore(opna, 6, 2);
+			fmboard_fmrestore(opna, 9, 3);
 			if (cCaps & OPNA_HAS_VR)
 			{
-				sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
+				sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
 			}
 			else
 			{
-				sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
+				sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcm);
 			}
 		}
 		return;
@@ -120,23 +121,23 @@ void opna_bind(POPNA opna)
 	fmboard_psgrestore(&opna->s, &opna->psg, 0);
 	sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
 
-	fmboard_fmrestore(&opna->s, 0, 0);
+	fmboard_fmrestore(opna, 0, 0);
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
-		fmboard_fmrestore(&opna->s, 3, 1);
+		fmboard_fmrestore(opna, 3, 1);
 	}
 	if (cCaps & OPNA_HAS_YM3438)
 	{
-		fmboard_fmrestore(&opna->s, 6, 2);
-		fmboard_fmrestore(&opna->s, 9, 3);
+		fmboard_fmrestore(opna, 6, 2);
+		fmboard_fmrestore(opna, 9, 3);
 	}
 	if (cCaps & OPNA_HAS_VR)
 	{
-		sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcmvr);
+		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
 	}
 	else
 	{
-		sound_streamregist(&g_opngen, (SOUNDCB)opngen_getpcm);
+		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcm);
 	}
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
@@ -211,6 +212,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	if (nAddress < 0x10)
 	{
 		psggen_setreg(&opna->psg, nAddress, cData);
+		keydisp_psg(&opna->psg, nAddress);
 		if (pExt->IsEnabled())
 		{
 			pExt->WriteRegister(nAddress, cData);
@@ -249,13 +251,13 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 
 			if (!pExt->IsEnabled())
 			{
-				opngen_keyon(&g_opngen, cChannel, cData);
+				opngen_keyon(&opna->opngen, cChannel, cData);
 			}
 			else
 			{
-				keydisp_fmkeyon(cChannel, cData);
 				pExt->WriteRegister(nAddress, cData);
 			}
+			keydisp_fmkeyon(opna, 0, cChannel, cData);
 		}
 		else
 		{
@@ -267,7 +269,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				if (nAddress == 0x27)
 				{
-					g_opngen.opnch[2].extop = cData & 0xc0;
+					opna->opngen.opnch[2].extop = cData & 0xc0;
 				}
 			}
 			else
@@ -283,7 +285,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (!pExt->IsEnabled())
 		{
-			opngen_setreg(&g_opngen, 0, nAddress, cData);
+			opngen_setreg(&opna->opngen, 0, nAddress, cData);
 		}
 		else
 		{
@@ -337,7 +339,7 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 		{
 			if (!pExt->IsEnabled())
 			{
-				opngen_setreg(&g_opngen, 3, nAddress, cData);
+				opngen_setreg(&opna->opngen, 3, nAddress, cData);
 			}
 			else
 			{
@@ -355,8 +357,6 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
  */
 void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
 {
-	REG8 cChannel;
-
 	if (opna->s.cCaps & OPNA_HAS_YM3438)
 	{
 		opna->s.reg[nAddress + 0x200] = cData;
@@ -365,27 +365,33 @@ void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
 		{
 			if (nAddress == 0x28)
 			{
-				cChannel = cData & 0x0f;
+				REG8 cChannel = cData & 0x0f;
 				if (cChannel < 3)
 				{
-					opngen_keyon(&g_opngen, cChannel + 6, cData);
 				}
 				else if ((cChannel >= 4) && (cChannel < 7))
 				{
-					opngen_keyon(&g_opngen, cChannel + 5, cData);
+					cChannel--;
 				}
+				else
+				{
+					return;
+				}
+
+				opngen_keyon(&opna->opngen, cChannel + 6, cData);
+				keydisp_fmkeyon(opna, 0x200, cChannel, cData);
 			}
 			else
 			{
 				if (nAddress == 0x27)
 				{
-					g_opngen.opnch[8].extop = cData & 0xc0;
+					opna->opngen.opnch[8].extop = cData & 0xc0;
 				}
 			}
 		}
 		else if (nAddress < 0xc0)
 		{
-			opngen_setreg(&g_opngen, 6, nAddress, cData);
+			opngen_setreg(&opna->opngen, 6, nAddress, cData);
 		}
 	}
 }
@@ -401,7 +407,7 @@ void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
 	if (opna->s.cCaps & OPNA_HAS_YM3438)
 	{
 		opna->s.reg[nAddress + 0x300] = cData;
-		opngen_setreg(&g_opngen, 9, nAddress, cData);
+		opngen_setreg(&opna->opngen, 9, nAddress, cData);
 	}
 }
 
@@ -478,23 +484,23 @@ REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress)
 
 // ----
 
-void fmboard_fmrestore(OPN_T* pOpn, REG8 chbase, UINT bank)
+void fmboard_fmrestore(POPNA opna, REG8 chbase, UINT bank)
 {
 	REG8 i;
 	const UINT8 *reg;
 
-	reg = pOpn->reg + (bank * 0x100);
+	reg = opna->s.reg + (bank * 0x100);
 	for (i = 0x30; i < 0xa0; i++)
 	{
-		opngen_setreg(&g_opngen, chbase, i, reg[i]);
+		opngen_setreg(&opna->opngen, chbase, i, reg[i]);
 	}
 	for (i = 0xb7; i >= 0xa0; i--)
 	{
-		opngen_setreg(&g_opngen, chbase, i, reg[i]);
+		opngen_setreg(&opna->opngen, chbase, i, reg[i]);
 	}
 	for (i = 0; i < 3; i++)
 	{
-		opngen_keyon(&g_opngen, chbase + i, g_opngen.opnch[chbase + i].keyreg);
+		opngen_keyon(&opna->opngen, chbase + i, opna->opngen.opnch[chbase + i].keyreg);
 	}
 }
 

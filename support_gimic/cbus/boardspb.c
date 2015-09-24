@@ -157,7 +157,7 @@ void boardspb_reset(const NP2CFG *pConfig)
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
 	g_opn.s.channels = 6;
-	opngen_setcfg(&g_opngen, 6, OPN_STEREO | 0x03f);
+	opngen_setcfg(&g_opn.opngen, 6, OPN_STEREO | 0x03f);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
 	g_opn.s.base = ((pConfig->spbopt & 0x10) ? 0x000 : 0x100);
 }
@@ -191,7 +191,7 @@ void boardspr_reset(const NP2CFG *pConfig)
 	fmtimer_reset(pConfig->spbopt & 0xc0);
 	g_opn.s.reg[0x2ff] = 0;
 	g_opn.s.channels = 12;
-	opngen_setcfg(&g_opngen, 12, OPN_STEREO | 0x03f);
+	opngen_setcfg(&g_opn.opngen, 12, OPN_STEREO | 0x03f);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
 	g_opn.s.base = (pConfig->spbopt & 0x10) ? 0x000 : 0x100;
 }

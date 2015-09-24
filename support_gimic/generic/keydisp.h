@@ -8,7 +8,7 @@
 #if defined(SUPPORT_KEYDISP)
 
 #include "cmndraw.h"
-#include "sound/psggen.h"
+#include "sound/opna.h"
 
 struct _cmnpalfn {
 	UINT8	(*get8)(struct _cmnpalfn *fn, UINT num);
@@ -74,7 +74,7 @@ void keydisp_getsize(int *width, int *height);
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
 void keydisp_setfmboard(UINT board);
-void keydisp_fmkeyon(REG8 nChannelNum, UINT8 value);
+void keydisp_fmkeyon(POPNA opna, UINT nBase, REG8 nChannelNum, UINT8 value);
 void keydisp_psg(PSGGEN psg, UINT nAddress);
 void keydisp_midi(const UINT8 *msg);
 
@@ -86,7 +86,7 @@ void keydisp_midi(const UINT8 *msg);
 
 #define keydisp_draw(a)
 #define keydisp_setfmboard(a)
-#define keydisp_fmkeyon(c, v)
+#define keydisp_fmkeyon(o, b, c, v)
 #define keydisp_psg(p, a)
 #define	keydisp_midi(a)
 
