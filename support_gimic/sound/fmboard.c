@@ -97,14 +97,6 @@ void fmboard_extenable(REG8 enable) {
 
 // ----
 
-static void setfmregs(UINT8 *reg) {
-
-	FillMemory(reg + 0x30, 0x60, 0xff);
-	FillMemory(reg + 0x90, 0x20, 0x00);
-	FillMemory(reg + 0xb0, 0x04, 0x00);
-	FillMemory(reg + 0xb4, 0x04, 0xc0);
-}
-
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	UINT8	cross;
