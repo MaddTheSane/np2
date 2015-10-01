@@ -12,6 +12,10 @@
 #include "s98.h"
 #include "generic/keydisp.h"
 
+static void writeRegister(POPNA opna, UINT nAddress, REG8 cData);
+static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
+static void fmrestore(POPNA opna, REG8 chbase, UINT bank);
+
 /**
  * Initialize
  */
@@ -45,6 +49,10 @@ void opna_construct(POPNA opna)
 		memset(opna->s.reg + (i * 0x100) + 0x30, 0xff, 0x60);
 		memset(opna->s.reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
 	}
+	for (i = 0; i < 16; i++)
+	{
+		opna->s.keyreg[i] = i & 7;
+	}
 
 	opna->s.channels = 3;
 	opna->s.adpcmmask = ~(0x1c);
@@ -65,6 +73,57 @@ void opna_reset(POPNA opna, REG8 cCaps)
 }
 
 /**
+ * Restore
+ * @param[in] opna The instance
+ */
+static void restore(POPNA opna)
+{
+	UINT i;
+
+	// FM
+	writeRegister(opna, 0x22, opna->s.reg[0x22]);
+	for (i = 0x30; i < 0xa0; i++)
+	{
+		if ((i & 3) == 3)
+		{
+			continue;
+		}
+		writeRegister(opna, i, opna->s.reg[i]);
+		writeExtendedRegister(opna, i, opna->s.reg[i + 0x100]);
+	}
+	for (i = 0xb7; i >= 0xa0; i--)
+	{
+		if ((i & 3) == 3)
+		{
+			continue;
+		}
+		writeRegister(opna, i, opna->s.reg[i]);
+		writeExtendedRegister(opna, i, opna->s.reg[i + 0x100]);
+	}
+	for (i = 0; i < 8; i++)
+	{
+		if ((i & 3) == 3)
+		{
+			continue;
+		}
+		writeRegister(opna, 0x28, opna->s.keyreg[i]);
+	}
+
+	// PSG
+	for (i = 0; i < 0x10; i++)
+	{
+		writeRegister(opna, i, opna->s.reg[i]);
+	}
+
+	// Rhythm
+	writeRegister(opna, 0x11, opna->s.reg[0x11]);
+	for (i = 0x18; i < 0x1e; i++)
+	{
+		writeRegister(opna, i, opna->s.reg[i]);
+	}
+}
+
+/**
  * Bind
  * @param[in] opna The instance
  */
@@ -72,19 +131,16 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->s.cCaps;
 
-	fmboard_psgrestore(&opna->s, &opna->psg, 0);
-	sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
-
-	fmboard_fmrestore(opna, 0, 0);
-	if (cCaps & OPNA_HAS_EXTENDEDFM)
-	{
-		fmboard_fmrestore(opna, 3, 1);
-	}
+	opna->opngen.opnch[2].extop = opna->s.reg[0x27] & 0xc0;
+	restore(opna);
 	if (cCaps & OPNA_HAS_YM3438)
 	{
-		fmboard_fmrestore(opna, 6, 2);
-		fmboard_fmrestore(opna, 9, 3);
+		fmrestore(opna, 6, 2);
+		fmrestore(opna, 9, 3);
 	}
+
+	sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
+
 	if (cCaps & OPNA_HAS_VR)
 	{
 		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
@@ -95,7 +151,6 @@ void opna_bind(POPNA opna)
 	}
 	if (cCaps & OPNA_HAS_EXTENDEDFM)
 	{
-		fmboard_rhyrestore(&opna->s, &opna->rhythm, 0);
 		rhythm_bind(&opna->rhythm);
 	}
 	if (cCaps & OPNA_HAS_ADPCM)
@@ -153,15 +208,26 @@ REG8 opna_readExtendedStatus(POPNA opna)
  */
 void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
-	const UINT8 cCaps = opna->s.cCaps;
-	REG8 cChannel;
-
 	opna->s.reg[nAddress] = cData;
 
-	if (cCaps & OPNA_S98)
+	if (opna->s.cCaps & OPNA_S98)
 	{
 		S98_put(NORMAL2608, nAddress, cData);
 	}
+
+	writeRegister(opna, nAddress, cData);
+}
+
+/**
+ * Writes register (Inner)
+ * @param[in] opna The instance
+ * @param[in] nAddress The address
+ * @param[in] cData The data
+ */
+static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
+{
+	const UINT8 cCaps = opna->s.cCaps;
+	REG8 cChannel;
 
 	if (nAddress < 0x10)
 	{
@@ -180,6 +246,10 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 		if (nAddress == 0x28)
 		{
 			cChannel = cData & 0x0f;
+			if (cChannel < 8)
+			{
+				opna->s.keyreg[cChannel] = cData;
+			}
 			if (cChannel < 3)
 			{
 			}
@@ -221,14 +291,25 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
  */
 void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
-	const UINT8 cCaps = opna->s.cCaps;
-
 	opna->s.reg[nAddress + 0x100] = cData;
 
-	if (cCaps & OPNA_S98)
+	if (opna->s.cCaps & OPNA_S98)
 	{
 		S98_put(EXTEND2608, nAddress, cData);
 	}
+
+	writeExtendedRegister(opna, nAddress, cData);
+}
+
+/**
+ * Writes extended register (Inner)
+ * @param[in] opna The instance
+ * @param[in] nAddress The address
+ * @param[in] cData The data
+ */
+static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
+{
+	const UINT8 cCaps = opna->s.cCaps;
 
 	if (nAddress < 0x12)
 	{
@@ -275,6 +356,10 @@ void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
 			if (nAddress == 0x28)
 			{
 				cChannel = cData & 0x0f;
+				if (cChannel < 8)
+				{
+					opna->s.keyreg[cChannel + 8] = cData;
+				}
 				if (cChannel < 3)
 				{
 				}
@@ -393,7 +478,7 @@ REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress)
 
 // ----
 
-void fmboard_fmrestore(POPNA opna, REG8 chbase, UINT bank)
+static void fmrestore(POPNA opna, REG8 chbase, UINT bank)
 {
 	REG8 i;
 	const UINT8 *reg;
@@ -409,32 +494,6 @@ void fmboard_fmrestore(POPNA opna, REG8 chbase, UINT bank)
 	}
 	for (i = 0; i < 3; i++)
 	{
-		opngen_keyon(&opna->opngen, chbase + i, opna->opngen.opnch[chbase + i].keyreg);
+		opngen_keyon(&opna->opngen, chbase + i, opna->s.keyreg[bank * 4 + i]);
 	}
-}
-
-void fmboard_psgrestore(OPN_T* pOpn, PSGGEN psg, UINT bank)
-{
-	const UINT8 *reg;
-	UINT i;
-
-	reg = pOpn->reg + (bank * 0x100);
-	for (i=0; i < 0x10; i++)
-	{
-		psggen_setreg(psg, i, reg[i]);
-	}
-}
-
-void fmboard_rhyrestore(OPN_T* pOpn, RHYTHM rhy, UINT bank)
-{
-	const UINT8 *reg;
-
-	reg = pOpn->reg + (bank * 0x100);
-	rhythm_setreg(rhy, 0x11, reg[0x11]);
-	rhythm_setreg(rhy, 0x18, reg[0x18]);
-	rhythm_setreg(rhy, 0x19, reg[0x19]);
-	rhythm_setreg(rhy, 0x1a, reg[0x1a]);
-	rhythm_setreg(rhy, 0x1b, reg[0x1b]);
-	rhythm_setreg(rhy, 0x1c, reg[0x1c]);
-	rhythm_setreg(rhy, 0x1d, reg[0x1d]);
 }
