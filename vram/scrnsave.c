@@ -40,7 +40,7 @@ typedef struct {
 	int		height;
 	UINT	pals;
 	UINT	type;
-	BMPPAL	pal[NP2PAL_TOTAL];
+	BMPPAL	pal[NP2PAL_MAX];
 	PALNUM	dat[SURFACE_WIDTH * SURFACE_HEIGHT];
 } SCRNDATA;
 
@@ -131,8 +131,8 @@ SCRNSAVE scrnsave_create(void)
 	void		(*mix)(PALNUM *dest, const UINT8 *src1, const UINT8 *src2);
 	PALNUM		*s;
 	UINT		pals;
-	PALNUM		remap[NP2PAL_TOTAL];
-	UINT8		remapflag[NP2PAL_TOTAL];
+	PALNUM		remap[NP2PAL_MAX];
+	UINT8		remapflag[NP2PAL_MAX];
 	int			x;
 	int			y;
 	PALNUM		col;
