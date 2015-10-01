@@ -33,6 +33,9 @@
 #pragma comment(lib, "dxguid.lib")
 #endif	// !defined(__GNUC__)
 
+//! 8BPP ÉpÉåÉbÉgêî
+#define PALLETES_8BPP	NP2PAL_TEXT3
+
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
 
@@ -349,41 +352,39 @@ const RECT	*scrn;
 #endif
 }
 
-static void paletteinit(void) {
-
-	HDC 	hdc;
-	UINT	i;
-
-	hdc = GetDC(g_hWndMain);
+static void paletteinit()
+{
+	HDC hdc = GetDC(g_hWndMain);
 	GetSystemPaletteEntries(hdc, 0, 256, ddraw.pal);
 	ReleaseDC(g_hWndMain, hdc);
 #if defined(SUPPORT_DCLOCK)
-	for (i=0; i<4; i++) {
-		ddraw.pal[i+START_PALORG].peBlue = dclockpal.pal32[i].p.b;
-		ddraw.pal[i+START_PALORG].peRed = dclockpal.pal32[i].p.r;
-		ddraw.pal[i+START_PALORG].peGreen = dclockpal.pal32[i].p.g;
-		ddraw.pal[i+START_PALORG].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
+	for (UINT i = 0; i < 4; i++)
+	 {
+		ddraw.pal[i + START_PALORG].peBlue = dclockpal.pal32[i].p.b;
+		ddraw.pal[i + START_PALORG].peRed = dclockpal.pal32[i].p.r;
+		ddraw.pal[i + START_PALORG].peGreen = dclockpal.pal32[i].p.g;
+		ddraw.pal[i + START_PALORG].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
 #endif
-	for (i=0; i<NP2PAL_TOTAL; i++) {
-		ddraw.pal[i+START_PAL].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
+	for (UINT i = 0; i < PALLETES_8BPP; i++)
+	{
+		ddraw.pal[i + START_PAL].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
 	ddraw.ddraw2->CreatePalette(DDPCAPS_8BIT, ddraw.pal, &ddraw.palette, 0);
 	ddraw.primsurf->SetPalette(ddraw.palette);
 }
 
-static void paletteset(void) {
-
-	UINT	i;
-
-	if (ddraw.palette != NULL) {
-		for (i=0; i<NP2PAL_TOTAL; i++) {
-			ddraw.pal[i+START_PAL].peRed = np2_pal32[i].p.r;
-			ddraw.pal[i+START_PAL].peBlue = np2_pal32[i].p.b;
-			ddraw.pal[i+START_PAL].peGreen = np2_pal32[i].p.g;
+static void paletteset()
+{
+	if (ddraw.palette != NULL)
+	{
+		for (UINT i = 0; i < PALLETES_8BPP; i++)
+		{
+			ddraw.pal[i + START_PAL].peRed = np2_pal32[i].p.r;
+			ddraw.pal[i + START_PAL].peBlue = np2_pal32[i].p.b;
+			ddraw.pal[i + START_PAL].peGreen = np2_pal32[i].p.g;
 		}
-		ddraw.palette->SetEntries(0, START_PAL, NP2PAL_TOTAL,
-													&ddraw.pal[START_PAL]);
+		ddraw.palette->SetEntries(0, START_PAL, PALLETES_8BPP, &ddraw.pal[START_PAL]);
 	}
 }
 

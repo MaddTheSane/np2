@@ -23,8 +23,11 @@ enum {
 	NP2PAL_EXTEND	= (NP2PAL_GRPHEX + 256),
 #endif		/* SUPPORT_PC9821 */
 
-						// 8bit color‚Å‚Í TEXT3‚ÍŽg‚í‚È‚¢”¤
-	NP2PAL_TOTAL	= NP2PAL_TEXT3
+#ifdef SUPPORT_PC9821
+	NP2PAL_MAX		= NP2PAL_EXTEND
+#else		/* SUPPORT_PC9821 */
+	NP2PAL_MAX		= NP2PAL_NORMAL
+#endif		/* SUPPORT_PC9821 */
 };
 
 #define	PALEVENTMAX		1024
@@ -50,9 +53,9 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	RGB32		np2_pal32[];
+extern	RGB32		np2_pal32[NP2PAL_MAX];
 #if defined(SUPPORT_16BPP)
-extern	RGB16		np2_pal16[];
+extern	RGB16		np2_pal16[NP2PAL_MAX];
 #endif
 extern	PALEVENT	palevent;
 extern	UINT8		pal_monotable[16];
