@@ -17,7 +17,7 @@
 #include "sound\vermouth\vermouth.h"
 #endif
 #if defined(MT32SOUND_DLL)
-#include "mt32snd.h"
+#include "ext\mt32snd.h"
 #endif
 #include "keydisp.h"
 

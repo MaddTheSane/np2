@@ -16,7 +16,7 @@
 #include "dialogs.h"
 #include "np2.h"
 #if defined(MT32SOUND_DLL)
-#include "mt32snd.h"
+#include "..\ext\mt32snd.h"
 #endif
 
 #if !defined(__GNUC__)
