@@ -437,8 +437,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_CONFIG:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG),
-									hWnd, (DLGPROC)CfgDialogProc);
+			dialog_configure(hWnd);
 			if (!scrnmng_isfullscreen()) {
 				UINT8 thick;
 				thick = (GetWindowLong(hWnd, GWL_STYLE) & WS_THICKFRAME)?1:0;
@@ -890,8 +889,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_MPUPC98:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_MPUPC98),
-											hWnd, (DLGPROC)MidiDialogProc);
+			dialog_mpu98(hWnd);
 			winuileave();
 			break;
 
@@ -938,8 +936,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_CALENDAR:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CALENDAR),
-											hWnd, (DLGPROC)ClndDialogProc);
+			dialog_calendar(hWnd);
 			winuileave();
 			break;
 
@@ -979,7 +976,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_ABOUT:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, (DLGPROC)AboutDialogProc);
+			dialog_about(hWnd);
 			winuileave();
 			break;
 

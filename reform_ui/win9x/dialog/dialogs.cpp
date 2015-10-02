@@ -1,6 +1,6 @@
 /**
  * @file	dialogs.cpp
- * @brief	Dialog subroutines
+ * @brief	ダイアログ ヘルパーの動作の定義を行います
  *
  * @author	$Author: yui $
  * @date	$Date: 2011/03/07 09:54:11 $
@@ -418,31 +418,56 @@ dsdb_err1:
 }
 
 
-// ----
 
-BOOL dlgs_getitemrect(HWND hWnd, UINT uID, RECT *pRect)
+// -----
+
+void CNp2ComboBox::Add(const UINT32* lpValues, UINT nCount)
 {
-	HWND	hItem;
-	POINT	pt;
-
-	if (pRect == NULL)
+	for (UINT i = 0; i < nCount; i++)
 	{
-		return FALSE;
+		TCHAR str[16];
+		wsprintf(str, str_u, lpValues[i]);
+		InsertString(GetCount(), str);
 	}
-	hItem = GetDlgItem(hWnd, uID);
-	if (!GetWindowRect(hItem, pRect))
-	{
-		return FALSE;
-	}
-	ZeroMemory(&pt, sizeof(pt));
-	if (!ClientToScreen(hWnd, &pt))
-	{
-		return FALSE;
-	}
-	pRect->left -= pt.x;
-	pRect->top -= pt.y;
-	pRect->right -= pt.x;
-	pRect->bottom -= pt.y;
-	return TRUE;
 }
 
+void CNp2ComboBox::Add(PCCBPARAM pcItem, UINT nCount)
+{
+	for (UINT i = 0; i <nCount; i++)
+	{
+		std::tstring rString(LoadTString(pcItem[i].lpcszString));
+		Add(rString.c_str(), pcItem[i].nItemData);
+	}
+}
+
+void CNp2ComboBox::Add(LPCTSTR lpString, DWORD_PTR nItemData)
+{
+	const int nIndex = AddString(lpString);
+	if (nIndex >= 0)
+	{
+		SetItemData(nIndex, nItemData);
+	}
+}
+
+void CNp2ComboBox::SetCurItemData(UINT32 nValue)
+{
+	const int nItems = GetCount();
+	for (int i = 0; i < nItems; i++)
+	{
+		if (GetItemData(i) == nValue)
+		{
+			SetCurSel(i);
+			break;
+		}
+	}
+}
+
+UINT32 CNp2ComboBox::GetCurItemData(UINT32 nDefault) const
+{
+	int nIndex = GetCurSel();
+	if (nIndex >= 0)
+	{
+		return GetItemData(nIndex);
+	}
+	return nDefault;
+}
