@@ -169,7 +169,7 @@ CFileDlg::CFileDlg(BOOL bOpenFileDialog, LPCTSTR lpszDefExt, LPCTSTR lpszFileNam
 			if (IsDBCSLeadByte(static_cast<BYTE>(*it)))
 			{
 				++it;
-				if (it == rFilter.end())
+				if (it == m_strFilter.end())
 				{
 					break;
 				}
