@@ -699,6 +699,7 @@ static void openpopup(HWND hWnd, LPARAM lp)
 	menu_addmenures(hMenu, -1, IDR_TOOLWIN, FALSE);
 	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
 	setSkinMruMenu(hMenu);
+	xmenu_update(hMenu);
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);

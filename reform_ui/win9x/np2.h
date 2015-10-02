@@ -112,6 +112,7 @@ extern	HINSTANCE	g_hInstance;
 extern	HINSTANCE	g_hPrevInst;
 extern	UINT8		np2break;
 extern	BOOL		winui_en;
+extern	UINT8		g_scrnmode;
 #if !defined(_WIN64)
 extern	int			mmxflag;
 #endif
