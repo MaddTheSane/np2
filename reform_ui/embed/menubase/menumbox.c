@@ -37,8 +37,8 @@ static const UINT8 b_res[6][4] = {
 
 // ----
 
-static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
-
+static void setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type)
+{
 	OEMCHAR	*dst;
 	int		rem;
 	int		w;
@@ -49,56 +49,65 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 
 	FONTMNGH font = MenuBase::GetInstance()->GetFont();
 
-	if (mb == NULL) {
-		goto smbi_err;
-	}
 	ZeroMemory(mb, sizeof(MBOX));
-	if (str == NULL) {
+	if (str == NULL)
+	{
 		goto smbi_set;
 	}
-	if ((type & 0xf) >= 6) {
+	if ((type & 0xf) >= 6)
+	{
 		type &= ~0x0f;
 	}
 	mb->type = type;
-	width = MENUMBOX_WIDTH -
-							(MENUMBOX_SX + MENUMBOX_PXTEXT + MENUMBOX_LXTEXT);
-	if (mb->type & 0xf0) {
+	width = MENUMBOX_WIDTH - (MENUMBOX_SX + MENUMBOX_PXTEXT + MENUMBOX_LXTEXT);
+	if (mb->type & 0xf0)
+	{
 		width -= MENUMBOX_CXICON;
 	}
 	dst = NULL;
 	rem = 0;
 	w = 0;
-	while(1) {
+	while (1)
+	{
 		leng = milstr_charsize(str);
-		if (leng == 0) {
+		if (leng == 0)
+		{
 			break;
 		}
-		if ((str[0] >= 0) && (str[0] < 0x20)) {
-			if (str[0] == '\n') {
+		if ((str[0] >= 0) && (str[0] < 0x20))
+		{
+			if (str[0] == '\n')
+			{
 				dst = mb->string[mb->lines];
 				mb->lines++;
-				if (mb->lines >= MENUMBOX_MAXLINE) {
+				if (mb->lines >= MENUMBOX_MAXLINE)
+				{
 					break;
 				}
 				rem = NELEMENTS(mb->string[0]) - 1;
-				if (mb->width < w) {
+				if (mb->width < w)
+				{
 					mb->width = w;
 				}
 				w = 0;
 			}
 		}
-		else {
+		else
+		{
 			CopyMemory(work, str, leng * sizeof(OEMCHAR));
 			work[leng] = '\0';
 			fontmng_getsize(font, work, &pt);
-			if ((rem < leng) || ((w + pt.x) > width)) {
+			if ((rem < leng) || ((w + pt.x) > width))
+			{
 				dst = mb->string[mb->lines];
 				mb->lines++;
-				if (mb->lines >= MENUMBOX_MAXLINE) {
+				if (mb->lines >= MENUMBOX_MAXLINE)
+				{
 					break;
 				}
 				rem = NELEMENTS(mb->string[0]) - 1;
-				if (mb->width < w) {
+				if (mb->width < w)
+				{
 					mb->width = w;
 				}
 				w = 0;
@@ -110,7 +119,8 @@ static BRESULT setmboxitem(MBOX *mb, const OEMCHAR *str, UINT type) {
 		}
 		str += leng;
 	}
-	if (mb->width < w) {
+	if (mb->width < w)
+	{
 		mb->width = w;
 	}
 
@@ -119,25 +129,23 @@ smbi_set:
 	fontmng_getsize(font, mstr_fontcheck, &pt);
 	mb->fontsize = pt.y;
 	mb->height = mb->lines * mb->fontsize;
-	if (mb->type & 0xf0) {
+	if (mb->type & 0xf0)
+	{
 		mb->width += MENUMBOX_CXICON;
-		if (mb->height < MENUMBOX_CYICON) {
+		if (mb->height < MENUMBOX_CYICON)
+		{
 			mb->height = MENUMBOX_CYICON;
 		}
 	}
-	mb->height += MENUMBOX_SY +
-						MENUMBOX_SYBTN + MENUMBOX_CYBTN + MENUMBOX_LYBTN;
+	mb->height += MENUMBOX_SY + MENUMBOX_SYBTN + MENUMBOX_CYBTN + MENUMBOX_LYBTN;
 
 	width = b_res[mb->type & 0x0f][0];
 	width *= (MENUMBOX_CXBTN + MENUMBOX_PXBTN);
 	width += (MENUMBOX_SXBTN * 2) - MENUMBOX_PXBTN;
-	if (mb->width < width) {
+	if (mb->width < width)
+	{
 		mb->width = width;
 	}
-	return(SUCCESS);
-
-smbi_err:
-	return(FAILURE);
 }
 
 
@@ -151,29 +159,33 @@ const UINT8	*btn;
 
 	posx = MENUMBOX_SX + MENUMBOX_PXTEXT;
 	posy = 0;
-	if (mb->type & 0xf0) {
+	if (mb->type & 0xf0)
+	{
 		menudlg_append(DLGTYPE_ICON, 0, 0, (void *)(INTPTR)((mb->type >> 4) & 0xf),
 				MENUMBOX_SX, MENUMBOX_SY, MENUMBOX_SZICON, MENUMBOX_SZICON);
 		posx += MENUMBOX_CXICON;
 		posy = MENUMBOX_CYICON - (mb->lines * mb->fontsize);
 	}
-	if (posy > 0) {
+	if (posy > 0)
+	{
 		posy /= 2;
 		posy += MENUMBOX_SY;
 	}
-	else {
+	else
+	{
 		posy = MENUMBOX_SY;
 	}
 	cnt = 0;
-	while(cnt < mb->lines) {
-		menudlg_append(DLGTYPE_LTEXT, 0, 0, mb->string[cnt],
-								posx, posy, mb->width - posx, mb->fontsize);
+	while (cnt < mb->lines)
+	{
+		menudlg_append(DLGTYPE_LTEXT, 0, 0, mb->string[cnt], posx, posy, mb->width - posx, mb->fontsize);
 		posy += mb->fontsize;
 		cnt++;
 	}
 
 	cnt = mb->type & 0x0f;
-	if (cnt >= 6) {
+	if (cnt >= 6)
+	{
 		cnt = 0;
 	}
 	btn = b_res[cnt];
@@ -182,7 +194,8 @@ const UINT8	*btn;
 	posx = mb->width;
 	posx -= ((MENUMBOX_CXBTN + MENUMBOX_PXBTN) * cnt) - MENUMBOX_PXBTN;
 	posx >>= 1;
-	while(cnt) {
+	while (cnt)
+	{
 		cnt--;
 		btnid = *btn++;
 		menudlg_append(DLGTYPE_BUTTON, (MENUID)btnid, 0,
@@ -192,19 +205,20 @@ const UINT8	*btn;
 	}
 }
 
-
-static int mbox_cmd(int msg, MENUID id, long param) {
-
+static int mbox_cmd(int msg, MENUID id, long param)
+{
 	MBOX	*mb;
 
-	switch(msg) {
+	switch(msg)
+	{
 		case DLGMSG_CREATE:
 			mb = &mbox;
 			mbox_open(mb);
 			break;
 
 		case DLGMSG_COMMAND:
-			switch(id) {
+			switch (id)
+			{
 				case DID_OK:
 				case DID_CANCEL:
 				case DID_ABORT:
@@ -228,18 +242,13 @@ static int mbox_cmd(int msg, MENUID id, long param) {
 }
 
 
-int menumbox(const OEMCHAR *string, const OEMCHAR *title, UINT type) {
-
+int menumbox(const OEMCHAR *string, const OEMCHAR *title, UINT type)
+{
 	MBOX	*mb;
 
 	mb = &mbox;
-	if (setmboxitem(mb, string, type) == SUCCESS) {
-		menudlg_create(mb->width, mb->height, title, mbox_cmd);
-		MenuBase::DoModal();
-		return(mb->ret);
-	}
-	else {
-		return(0);
-	}
+	setmboxitem(mb, string, type);
+	menudlg_create(mb->width, mb->height, title, mbox_cmd);
+	MenuBase::DoModal();
+	return(mb->ret);
 }
-
