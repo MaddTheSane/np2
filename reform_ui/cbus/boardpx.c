@@ -247,7 +247,7 @@ static void IOOUTCALL p86_o28a(UINT port, REG8 dat) {
 	UINT	addr;
 
 //	g_opn3.data1 = dat;
-	addr = g_opn.addr1l;
+	addr = g_opn3.addr1l;
 //	S98_put(NORMAL2608, addr, dat);
 	g_opn3.reg[addr] = dat;
 	if (addr < 0x10) {
