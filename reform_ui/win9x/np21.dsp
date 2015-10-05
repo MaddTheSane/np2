@@ -1488,6 +1488,14 @@ SOURCE=.\subwnd\skbdwnd.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\subwnd\subwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\subwnd\toolwnd.cpp
 # End Source File
 # Begin Source File

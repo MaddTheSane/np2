@@ -11,7 +11,7 @@
 #include "menu.h"
 #include "sysmng.h"
 #include "dialog/np2class.h"
-#include "geenric/keydisp.h"
+#include "generic/keydisp.h"
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
@@ -180,19 +180,18 @@ static UINT32 kdgetpal32(CMNPALFN *self, UINT num)
 	return 0;
 }
 
-static UINT16 kdcnvpal16(CMNPALFN *self, RGB32 pal32) {
-
-	return(dd2_get16pal((DD2HDL)self->userdata, pal32));
+static UINT16 kdcnvpal16(CMNPALFN *self, RGB32 pal32)
+{
+	return (reinterpret_cast<DD2Surface*>(self->userdata))->GetPalette16(pal32);
 }
 
-static void kdopenpopup(HWND hWnd, LPARAM lp) {
-
-	HMENU	hMenu;
-	POINT	pt;
-
-	hMenu = CreatePopupMenu();
+static void kdopenpopup(HWND hWnd, LPARAM lp)
+{
+	HMENU hMenu = CreatePopupMenu();
 	menu_addmenu(hMenu, 0, np2class_gethmenu(hWnd), FALSE);
 	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
+
+	POINT pt;
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);

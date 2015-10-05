@@ -1058,7 +1058,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #endif
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
 				case IDM_MEMDBG32:
-					mdbgwin_create(g_hInstance);
+					mdbgwin_create();
 					break;
 #endif
 				case IDM_SCREENCENTER:
@@ -1572,7 +1572,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		toolwin_initapp(g_hInstance);
 		kdispwin_initialize();
 		skbdwin_initialize();
-		mdbgwin_initialize(g_hInstance);
+		mdbgwin_initialize();
 		CDebugUtyView::Initialize(g_hInstance);
 	}
 

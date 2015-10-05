@@ -19,6 +19,7 @@ public:
 	CSubWndBase();
 	virtual ~CSubWndBase();
 	BOOL Create(UINT nCaptionID, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu);
+	BOOL Create(LPCTSTR lpCaption, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu);
 	void SetWndType(UINT8 nType);
 
 protected:

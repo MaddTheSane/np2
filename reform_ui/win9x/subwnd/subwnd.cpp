@@ -53,12 +53,19 @@ CSubWndBase::~CSubWndBase()
 
 /**
  * ウィンドウ作成
- * 
  */
 BOOL CSubWndBase::Create(UINT nCaptionID, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu)
 {
 	std::tstring rCaption(LoadTString(nCaptionID));
 	return CreateEx(0, s_szClassName, rCaption.c_str(), dwStyle, x, y, nWidth, nHeight, hwndParent, nIDorHMenu);
+}
+
+/**
+ * ウィンドウ作成
+ */
+BOOL CSubWndBase::Create(LPCTSTR lpCaption, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu)
+{
+	return CreateEx(0, s_szClassName, lpCaption, dwStyle, x, y, nWidth, nHeight, hwndParent, nIDorHMenu);
 }
 
 /**

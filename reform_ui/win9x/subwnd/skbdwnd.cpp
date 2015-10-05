@@ -12,8 +12,6 @@
 #include "dialog/np2class.h"
 #include "generic/softkbd.h"
 
-extern WINLOCEX np2_winlocexallwin(HWND base);
-
 #if defined(SUPPORT_SOFTKBD)
 
 //! 唯一のインスタンスです

@@ -22,7 +22,6 @@ public:
 	CSoftKeyboardWnd();
 	virtual ~CSoftKeyboardWnd();
 	void Create();
-	void Destroy();
 	void OnIdle();
 
 protected:
