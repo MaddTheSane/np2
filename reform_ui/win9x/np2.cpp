@@ -31,7 +31,6 @@
 #include "ini.h"
 #include "menu.h"
 #include "winloc.h"
-#include "toolwin.h"
 #include "np2class.h"
 #include "dialog.h"
 #include "cpucore.h"
@@ -49,7 +48,11 @@
 #include "timing.h"
 #include "keystat.h"
 #include "debugsub.h"
-#include "subwind.h"
+#include "subwnd/kdispwnd.h"
+#include "subwnd/mdbgwnd.h"
+#include "subwnd/skbdwnd.h"
+#include "subwnd/subwnd.h"
+#include "subwnd/toolwnd.h"
 #if !defined(_WIN64)
 #include "cputype.h"
 #endif
@@ -1050,7 +1053,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #endif
 #if defined(SUPPORT_SOFTKBD)
 				case IDM_SOFTKBD:
-					skbdwin_create(g_hInstance);
+					skbdwin_create();
 					break;
 #endif
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
@@ -1496,6 +1499,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	_MEM_INIT();
 	CWndProc::Initialize(hInstance);
+	CSubWndBase::Initialize(hInstance);
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();
@@ -1567,7 +1571,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 		toolwin_initapp(g_hInstance);
 		kdispwin_initialize(g_hInstance);
-		skbdwin_initialize(g_hInstance);
+		skbdwin_initialize();
 		mdbgwin_initialize(g_hInstance);
 		CDebugUtyView::Initialize(g_hInstance);
 	}

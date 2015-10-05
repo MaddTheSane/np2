@@ -1,6 +1,7 @@
 #include	"compiler.h"
-#include	"strres.h"
 #include	"resource.h"
+#include	"toolwnd.h"
+#include	"strres.h"
 #include	"np2.h"
 #include "misc\tstring.h"
 #include	"winloc.h"
@@ -8,7 +9,6 @@
 #include	"soundmng.h"
 #include	"sysmng.h"
 #include	"menu.h"
-#include	"toolwin.h"
 #include	"ini.h"
 #include	"np2class.h"
 #include	"dialog.h"
@@ -91,7 +91,7 @@ static	TOOLSKIN	toolskin;
 static	SUBITEM		subitem[IDC_MAXITEMS];
 static	TOOLWIN		toolwin;
 
-#include	"toolwin.res"
+#include	"toolwnd.res"
 
 
 typedef struct {
