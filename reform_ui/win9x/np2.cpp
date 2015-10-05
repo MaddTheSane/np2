@@ -247,7 +247,7 @@ static void changescreen(UINT8 newmode) {
 					toolwin_create(g_hInstance);
 				}
 				if (np2oscfg.keydisp) {
-					kdispwin_create(g_hInstance);
+					kdispwin_create();
 				}
 			}
 		}
@@ -1044,7 +1044,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_KEYDISP:
 					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
 					if (np2oscfg.keydisp) {
-						kdispwin_create(g_hInstance);
+						kdispwin_create();
 					}
 					else {
 						kdispwin_destroy();
@@ -1570,7 +1570,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		}
 
 		toolwin_initapp(g_hInstance);
-		kdispwin_initialize(g_hInstance);
+		kdispwin_initialize();
 		skbdwin_initialize();
 		mdbgwin_initialize(g_hInstance);
 		CDebugUtyView::Initialize(g_hInstance);
@@ -1707,7 +1707,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			toolwin_create(g_hInstance);
 		}
 		if (np2oscfg.keydisp) {
-			kdispwin_create(g_hInstance);
+			kdispwin_create();
 		}
 	}
 

@@ -7,8 +7,10 @@
 #include "resource.h"
 #include "subwnd.h"
 #include "np2.h"
+#include "soundmng.h"
 #include "winloc.h"
-#include "np2class.h"
+#include "dialog/np2class.h"
+#include "misc\tstring.h"
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
@@ -38,6 +40,7 @@ void CSubWndBase::Initialize(HINSTANCE hInstance)
  * コンストラクタ
  */
 CSubWndBase::CSubWndBase()
+	: m_wlex(NULL)
 {
 }
 
@@ -52,9 +55,10 @@ CSubWndBase::~CSubWndBase()
  * ウィンドウ作成
  * 
  */
-BOOL CSubWndBase::Create(LPCTSTR lpszWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu)
+BOOL CSubWndBase::Create(UINT nCaptionID, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu)
 {
-	return CreateEx(0, s_szClassName, lpszWindowName, dwStyle, x, y, nWidth, nHeight, hwndParent, nIDorHMenu);
+	std::tstring rCaption(LoadTString(nCaptionID));
+	return CreateEx(0, s_szClassName, rCaption.c_str(), dwStyle, x, y, nWidth, nHeight, hwndParent, nIDorHMenu);
 }
 
 /**
@@ -68,4 +72,54 @@ void CSubWndBase::SetWndType(UINT8 nType)
 	np2class_windowtype(m_hWnd, nType);
 	winlocex_move(wlex);
 	winlocex_destroy(wlex);
+}
+
+/**
+ * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
+ * @param[in] nMsg 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @return メッセージに依存する値を返します
+ */
+LRESULT CSubWndBase::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMsg)
+	{
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+			::SendMessage(g_hWndMain, nMsg, wParam, lParam);
+			break;
+
+		case WM_ENTERMENULOOP:
+			soundmng_disable(SNDPROC_SUBWIND);
+			break;
+
+		case WM_EXITMENULOOP:
+			soundmng_enable(SNDPROC_SUBWIND);
+			break;
+
+		case WM_ENTERSIZEMOVE:
+			soundmng_disable(SNDPROC_SUBWIND);
+			winlocex_destroy(m_wlex);
+			m_wlex = np2_winlocexallwin(m_hWnd);
+			break;
+
+		case WM_MOVING:
+			winlocex_moving(m_wlex, reinterpret_cast<RECT*>(lParam));
+			break;
+
+		case WM_EXITSIZEMOVE:
+			::winlocex_destroy(m_wlex);
+			m_wlex = NULL;
+			soundmng_enable(SNDPROC_SUBWIND);
+			break;
+
+		case WM_CLOSE:
+			DestroyWindow();
+			break;
+
+		default:
+			return CWndProc::WindowProc(nMsg, wParam, lParam);
+	}
+	return 0L;
 }

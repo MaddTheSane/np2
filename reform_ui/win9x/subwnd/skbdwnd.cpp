@@ -7,11 +7,9 @@
 #include "resource.h"
 #include "skbdwnd.h"
 #include "np2.h"
-#include "soundmng.h"
-#include "sysmng.h"
 #include "ini.h"
+#include "sysmng.h"
 #include "dialog/np2class.h"
-#include "misc/tstring.h"
 #include "generic/softkbd.h"
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
@@ -67,8 +65,7 @@ void CSoftKeyboardWnd::Deinitialize()
  * コンストラクタ
  */
 CSoftKeyboardWnd::CSoftKeyboardWnd()
-	: m_wlex(NULL)
-	, m_nWidth(0)
+	: m_nWidth(0)
 	, m_nHeight(0)
 {
 }
@@ -95,8 +92,7 @@ void CSoftKeyboardWnd::Create()
 		return;
 	}
 
-	std::tstring rCaption(LoadTString(IDS_CAPTION_SOFTKEY));
-	if (!CSubWndBase::Create(rCaption.c_str(), WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX, s_skbdcfg.posx, s_skbdcfg.posy, m_nWidth, m_nHeight, NULL, NULL))
+	if (!CSubWndBase::Create(IDS_CAPTION_SOFTKEY, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX, s_skbdcfg.posx, s_skbdcfg.posy, m_nWidth, m_nHeight, NULL, NULL))
 	{
 		return;
 	}
@@ -164,35 +160,6 @@ LRESULT CSoftKeyboardWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			softkbd_up();
 			break;
 
-		case WM_KEYDOWN:
-		case WM_KEYUP:
-			::SendMessage(g_hWndMain, nMsg, wParam, lParam);
-			break;
-
-		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_SUBWIND);
-			break;
-
-		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_SUBWIND);
-			break;
-
-		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_SUBWIND);
-			winlocex_destroy(m_wlex);
-			m_wlex = np2_winlocexallwin(m_hWnd);
-			break;
-
-		case WM_MOVING:
-			winlocex_moving(m_wlex, reinterpret_cast<RECT*>(lParam));
-			break;
-
-		case WM_EXITSIZEMOVE:
-			::winlocex_destroy(m_wlex);
-			m_wlex = NULL;
-			soundmng_enable(SNDPROC_SUBWIND);
-			break;
-
 		case WM_MOVE:
 			if (!(GetWindowLong(m_hWnd, GWL_STYLE) & (WS_MAXIMIZE | WS_MINIMIZE)))
 			{
@@ -202,10 +169,6 @@ LRESULT CSoftKeyboardWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 				s_skbdcfg.posy = rc.top;
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
-			break;
-
-		case WM_CLOSE:
-			DestroyWindow();
 			break;
 
 		case WM_DESTROY:

@@ -1,145 +1,188 @@
+/**
+ * @file	kdispwnd.cpp
+ * @brief	キーボード クラスの動作の定義を行います
+ */
+
 #include "compiler.h"
 #include "resource.h"
 #include "kdispwnd.h"
 #include "np2.h"
-#include "misc\tstring.h"
-#include "winloc.h"
-#include "soundmng.h"
-#include "sysmng.h"
-#include "menu.h"
 #include "ini.h"
-#include "dd2.h"
-#include "np2class.h"
-#include "keydisp.h"
+#include "menu.h"
+#include "sysmng.h"
+#include "dialog/np2class.h"
+#include "geenric/keydisp.h"
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
-static void wintypechange(HWND hWnd, UINT8 type) {
-
-	WINLOCEX	wlex;
-
-	wlex = np2_winlocexallwin(g_hWndMain);
-	winlocex_setholdwnd(wlex, hWnd);
-	np2class_windowtype(hWnd, type);
-	winlocex_move(wlex);
-	winlocex_destroy(wlex);
-}
-
-
-// ---- key display
-
 #if defined(SUPPORT_KEYDISP)
-enum {
+
+//! 唯一のインスタンスです
+CKeyDisplayWnd CKeyDisplayWnd::sm_instance;
+
+enum
+{
 	KDISPCFG_FM		= 0x00,
 	KDISPCFG_MIDI	= 0x80
 };
 
-typedef struct {
-	HWND		hwnd;
-	WINLOCEX	wlex;
-	DD2HDL		dd2hdl;
-} KDISPWIN;
-
-typedef struct {
+/**
+ * @brief コンフィグ
+ */
+struct KeyDisplayConfig
+{
 	int		posx;
 	int		posy;
 	UINT8	mode;
 	UINT8	type;
-} KDISPCFG;
+};
 
-static	KDISPWIN	kdispwin;
-static	KDISPCFG	kdispcfg;
+//! コンフィグ
+static KeyDisplayConfig s_kdispcfg;
 
-static const TCHAR kdispclass[] = _T("NP2-KeyDispWin");
+//! タイトル
+static const TCHAR s_kdispapp[] = TEXT("Key Display");
 
-static const UINT32 kdisppal[KEYDISP_PALS] =
-									{0x00000000, 0xffffffff, 0xf9ff0000};
+/**
+ * 設定
+ */
+static const PFTBL s_kdispini[] =
+{
+	PFVAL("WindposX", PFTYPE_SINT32,	&s_kdispcfg.posx),
+	PFVAL("WindposY", PFTYPE_SINT32,	&s_kdispcfg.posy),
+	PFVAL("keydmode", PFTYPE_UINT8,		&s_kdispcfg.mode),
+	PFVAL("windtype", PFTYPE_BOOL,		&s_kdispcfg.type)
+};
 
-static const OEMCHAR kdispapp[] = OEMTEXT("Key Display");
-static const PFTBL kdispini[] = {
-				PFVAL("WindposX", PFTYPE_SINT32,	&kdispcfg.posx),
-				PFVAL("WindposY", PFTYPE_SINT32,	&kdispcfg.posy),
-				PFVAL("keydmode", PFTYPE_UINT8,		&kdispcfg.mode),
-				PFVAL("windtype", PFTYPE_BOOL,		&kdispcfg.type)};
+//! パレット
+static const UINT32 s_kdisppal[KEYDISP_PALS] = {0x00000000, 0xffffffff, 0xf9ff0000};
 
 
-static UINT8 kdgetpal8(CMNPALFN *self, UINT num) {
+static UINT8 kdgetpal8(CMNPALFN *self, UINT num);
+static UINT32 kdgetpal32(CMNPALFN *self, UINT num);
+static UINT16 kdcnvpal16(CMNPALFN *self, RGB32 pal32);
 
-	if (num < KEYDISP_PALS) {
-		return(kdisppal[num] >> 24);
-	}
-	return(0);
+/**
+ * 初期化
+ */
+void CKeyDisplayWnd::Initialize()
+{
+	keydisp_initialize();
 }
 
-static UINT32 kdgetpal32(CMNPALFN *self, UINT num) {
+/**
+ * 解放
+ */
+void CKeyDisplayWnd::Deinitialize()
+{
+}
 
-	if (num < KEYDISP_PALS) {
-		return(kdisppal[num] & 0xffffff);
+/**
+ * コンストラクタ
+ */
+CKeyDisplayWnd::CKeyDisplayWnd()
+{
+}
+
+/**
+ * デストラクタ
+ */
+CKeyDisplayWnd::~CKeyDisplayWnd()
+{
+}
+
+/**
+ * 作成
+ */
+void CKeyDisplayWnd::Create()
+{
+	if (m_hWnd != NULL)
+	{
+		return;
 	}
-	return(0);
+
+	HMENU hMenu = ::LoadMenu(GetResourceHandle(), MAKEINTRESOURCE(IDR_KEYDISP));
+	if (!CSubWndBase::Create(IDS_CAPTION_KEYDISP, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX, s_kdispcfg.posx, s_kdispcfg.posy, KEYDISP_WIDTH, KEYDISP_HEIGHT, NULL, hMenu))
+	{
+		sysmenu_setkeydisp(0);
+		sysmng_update(SYS_UPDATEOSCFG);
+		return;
+	}
+
+	UINT8 mode;
+	switch (s_kdispcfg.mode)
+	{
+		case KDISPCFG_FM:
+		default:
+			mode = KEYDISP_MODEFM;
+			break;
+
+		case KDISPCFG_MIDI:
+			mode = KEYDISP_MODEMIDI;
+			break;
+	}
+	SetDispMode(mode);
+	ShowWindow(SW_SHOWNOACTIVATE);
+	UpdateWindow();
+
+	if (!m_dd2.Create(m_hWnd, KEYDISP_WIDTH, KEYDISP_HEIGHT))
+	{
+		DestroyWindow();
+		return;
+	}
+
+	CMNPALFN palfn;
+	palfn.get8 = kdgetpal8;
+	palfn.get32 = kdgetpal32;
+	palfn.cnv16 = kdcnvpal16;
+	palfn.userdata = reinterpret_cast<INTPTR>(&m_dd2);
+	keydisp_setpal(&palfn);
+	kdispwin_draw(0);
+	::SetForegroundWindow(g_hWndMain);
+}
+
+/**
+ * 描画する
+ * @param[in] cnt 進んだフレーム
+ */
+void CKeyDisplayWnd::Draw(UINT8 cnt)
+{
+	if (m_hWnd)
+	{
+		if (!cnt)
+		{
+			cnt = 1;
+		}
+		UINT8 flag = keydisp_process(cnt);
+		if (flag & KEYDISP_FLAGSIZING)
+		{
+			OnResize();
+		}
+		OnDraw(FALSE);
+	}
+}
+
+static UINT8 kdgetpal8(CMNPALFN *self, UINT num)
+{
+	if (num < KEYDISP_PALS)
+	{
+		return s_kdisppal[num] >> 24;
+	}
+	return 0;
+}
+
+static UINT32 kdgetpal32(CMNPALFN *self, UINT num)
+{
+	if (num < KEYDISP_PALS)
+	{
+		return s_kdisppal[num] & 0xffffff;
+	}
+	return 0;
 }
 
 static UINT16 kdcnvpal16(CMNPALFN *self, RGB32 pal32) {
 
 	return(dd2_get16pal((DD2HDL)self->userdata, pal32));
-}
-
-static void kddrawkeys(HWND hWnd, BOOL redraw) {
-
-	RECT	rect;
-	RECT	draw;
-	CMNVRAM	*vram;
-
-	GetClientRect(hWnd, &rect);
-	draw.left = 0;
-	draw.top = 0;
-	draw.right = min(KEYDISP_WIDTH, rect.right - rect.left);
-	draw.bottom = min(KEYDISP_HEIGHT, rect.bottom - rect.top);
-	if ((draw.right <= 0) || (draw.bottom <= 0)) {
-		return;
-	}
-	vram = dd2_bsurflock(kdispwin.dd2hdl);
-	if (vram) {
-		keydisp_paint(vram, redraw);
-		dd2_bsurfunlock(kdispwin.dd2hdl);
-		dd2_blt(kdispwin.dd2hdl, NULL, &draw);
-	}
-}
-
-static void kdsetwinsize(void) {
-
-	int			width;
-	int			height;
-	WINLOCEX	wlex;
-
-	wlex = np2_winlocexallwin(g_hWndMain);
-	winlocex_setholdwnd(wlex, kdispwin.hwnd);
-	keydisp_getsize(&width, &height);
-	winloc_setclientsize(kdispwin.hwnd, width, height);
-	winlocex_move(wlex);
-	winlocex_destroy(wlex);
-}
-
-static void kdsetdispmode(UINT8 mode) {
-
-	HMENU	hmenu;
-
-	keydisp_setmode(mode);
-	hmenu = np2class_gethmenu(kdispwin.hwnd);
-	CheckMenuItem(hmenu, IDM_KDISPFM,
-					((mode == KEYDISP_MODEFM)?MF_CHECKED:MF_UNCHECKED));
-	CheckMenuItem(hmenu, IDM_KDISPMIDI,
-					((mode == KEYDISP_MODEMIDI)?MF_CHECKED:MF_UNCHECKED));
-}
-
-static void kdpaintmsg(HWND hWnd) {
-
-	HDC			hdc;
-	PAINTSTRUCT	ps;
-
-	hdc = BeginPaint(hWnd, &ps);
-	kddrawkeys(hWnd, TRUE);
-	EndPaint(hWnd, &ps);
 }
 
 static void kdopenpopup(HWND hWnd, LPARAM lp) {
@@ -157,96 +200,70 @@ static void kdopenpopup(HWND hWnd, LPARAM lp) {
 	DestroyMenu(hMenu);
 }
 
-static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
-
-	switch(msg) {
+/**
+ * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
+ * @param[in] nMsg 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @return メッセージに依存する値を返します
+ */
+LRESULT CKeyDisplayWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMsg)
+	{
 		case WM_CREATE:
-			np2class_wmcreate(hWnd);
-			np2class_windowtype(hWnd, (kdispcfg.type & 1) << 1);
+			np2class_wmcreate(m_hWnd);
+			np2class_windowtype(m_hWnd, (s_kdispcfg.type & 1) << 1);
 			break;
 
 		case WM_COMMAND:
-			switch(LOWORD(wp)) {
+			switch (LOWORD(wParam))
+			{
 				case IDM_KDISPFM:
-					kdispcfg.mode = KDISPCFG_FM;
+					s_kdispcfg.mode = KDISPCFG_FM;
 					sysmng_update(SYS_UPDATEOSCFG);
-					kdsetdispmode(KEYDISP_MODEFM);
+					SetDispMode(KEYDISP_MODEFM);
 					break;
 
 				case IDM_KDISPMIDI:
-					kdispcfg.mode = KDISPCFG_MIDI;
+					s_kdispcfg.mode = KDISPCFG_MIDI;
 					sysmng_update(SYS_UPDATEOSCFG);
-					kdsetdispmode(KEYDISP_MODEMIDI);
+					SetDispMode(KEYDISP_MODEMIDI);
 					break;
 
 				case IDM_CLOSE:
-					return(SendMessage(hWnd, WM_CLOSE, 0, 0));
+					return SendMessage(WM_CLOSE, 0, 0);
 			}
 			break;
 
 		case WM_PAINT:
-			kdpaintmsg(hWnd);
+			OnPaint();
 			break;
-#if 0
-		case WM_ACTIVATE:
-			if (LOWORD(wp) != WA_INACTIVE) {
-				keydisps_reload();
-				kddrawkeys(hWnd, TRUE);
-			}
-			break;
-#endif
+
 		case WM_LBUTTONDOWN:
-			if (kdispcfg.type & 1) {
-				return(SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0L));
+			if (s_kdispcfg.type & 1)
+			{
+				return SendMessage(WM_NCLBUTTONDOWN, HTCAPTION, 0L);
 			}
 			break;
 
 		case WM_RBUTTONDOWN:
-			kdopenpopup(hWnd, lp);
+			kdopenpopup(m_hWnd, lParam);
 			break;
 
 		case WM_LBUTTONDBLCLK:
-			kdispcfg.type ^= 1;
-			wintypechange(hWnd, (kdispcfg.type & 1) << 1);
+			s_kdispcfg.type ^= 1;
+			SetWndType((s_kdispcfg.type & 1) << 1);
 			sysmng_update(SYS_UPDATEOSCFG);
 			break;
 
-		case WM_KEYDOWN:
-		case WM_KEYUP:
-			SendMessage(g_hWndMain, msg, wp, lp);
-			break;
-
-		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_SUBWIND);
-			break;
-
-		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_SUBWIND);
-			break;
-
-		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_SUBWIND);
-			winlocex_destroy(kdispwin.wlex);
-			kdispwin.wlex = np2_winlocexallwin(hWnd);
-			break;
-
-		case WM_MOVING:
-			winlocex_moving(kdispwin.wlex, (RECT *)lp);
-			break;
-
-		case WM_EXITSIZEMOVE:
-			winlocex_destroy(kdispwin.wlex);
-			kdispwin.wlex = NULL;
-			soundmng_enable(SNDPROC_SUBWIND);
-			break;
-
 		case WM_MOVE:
-			if (!(GetWindowLong(hWnd, GWL_STYLE) &
-									(WS_MAXIMIZE | WS_MINIMIZE))) {
+			if (!(GetWindowLong(m_hWnd, GWL_STYLE) & (WS_MAXIMIZE | WS_MINIMIZE)))
+			{
 				RECT rc;
-				GetWindowRect(hWnd, &rc);
-				kdispcfg.posx = rc.left;
-				kdispcfg.posy = rc.top;
+				GetWindowRect(&rc);
+				s_kdispcfg.posx = rc.left;
+				s_kdispcfg.posy = rc.top;
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			break;
@@ -254,144 +271,110 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_CLOSE:
 			sysmenu_setkeydisp(0);
 			sysmng_update(SYS_UPDATEOSCFG);
-			DestroyWindow(hWnd);
+			DestroyWindow();
 			break;
 
 		case WM_DESTROY:
-			np2class_wmdestroy(hWnd);
-			dd2_release(kdispwin.dd2hdl);
-			kdispwin.hwnd = NULL;
-			kdsetdispmode(KEYDISP_MODENONE);
+			np2class_wmdestroy(m_hWnd);
+			m_dd2.Release();
+			SetDispMode(KEYDISP_MODENONE);
 			break;
 
 		default:
-			return(DefWindowProc(hWnd, msg, wp, lp));
+			return CSubWndBase::WindowProc(nMsg, wParam, lParam);
 	}
-	return(0L);
+	return 0L;
 }
 
-BOOL kdispwin_initialize(HINSTANCE hInstance) {
-
-	WNDCLASS	wc;
-
-	ZeroMemory(&wc, sizeof(wc));
-	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-	wc.lpfnWndProc = kdproc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = NP2GWLP_SIZE;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName = MAKEINTRESOURCE(IDR_KEYDISP);
-	wc.lpszClassName = kdispclass;
-	if (!RegisterClass(&wc)) {
-		return(FAILURE);
-	}
-	keydisp_initialize();
-	return(SUCCESS);
+/**
+ * 描画の時に呼ばれる
+ */
+void CKeyDisplayWnd::OnPaint()
+{
+	PAINTSTRUCT ps;
+	HDC hdc = BeginPaint(&ps);
+	OnDraw(TRUE);
+	EndPaint(&ps);
 }
 
-void kdispwin_create(HINSTANCE hInstance) {
+/**
+ * 描画
+ * @param[in] redraw 再描画
+ */
+void CKeyDisplayWnd::OnDraw(BOOL redraw)
+{
+	RECT rect;
+	GetClientRect(&rect);
 
-	HWND		hwnd;
-	UINT8		mode;
-	CMNPALFN	palfn;
-
-	if (kdispwin.hwnd != NULL) {
+	RECT draw;
+	draw.left = 0;
+	draw.top = 0;
+	draw.right = min(KEYDISP_WIDTH, rect.right - rect.left);
+	draw.bottom = min(KEYDISP_HEIGHT, rect.bottom - rect.top);
+	if ((draw.right <= 0) || (draw.bottom <= 0))
+	{
 		return;
 	}
-	ZeroMemory(&kdispwin, sizeof(kdispwin));
-
-	std::tstring rCaption(LoadTString(IDS_CAPTION_KEYDISP));
-	hwnd = CreateWindow(kdispclass, rCaption.c_str(),
-						WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION |
-						WS_MINIMIZEBOX,
-						kdispcfg.posx, kdispcfg.posy,
-						KEYDISP_WIDTH, KEYDISP_HEIGHT,
-						NULL, NULL, hInstance, NULL);
-	kdispwin.hwnd = hwnd;
-	if (hwnd == NULL) {
-		goto kdcre_err1;
-	}
-	switch(kdispcfg.mode) {
-		case KDISPCFG_FM:
-		default:
-			mode = KEYDISP_MODEFM;
-			break;
-
-		case KDISPCFG_MIDI:
-			mode = KEYDISP_MODEMIDI;
-			break;
-	}
-	kdsetdispmode(mode);
-	ShowWindow(hwnd, SW_SHOWNOACTIVATE);
-	UpdateWindow(hwnd);
-	kdispwin.dd2hdl = dd2_create(hwnd, KEYDISP_WIDTH, KEYDISP_HEIGHT);
-	if (kdispwin.dd2hdl == NULL) {
-		goto kdcre_err2;
-	}
-	palfn.get8 = kdgetpal8;
-	palfn.get32 = kdgetpal32;
-	palfn.cnv16 = kdcnvpal16;
-	palfn.userdata = (INTPTR)kdispwin.dd2hdl;
-	keydisp_setpal(&palfn);
-	kdispwin_draw(0);
-	SetForegroundWindow(g_hWndMain);
-	return;
-
-kdcre_err2:
-	DestroyWindow(hwnd);
-
-kdcre_err1:
-	sysmenu_setkeydisp(0);
-	sysmng_update(SYS_UPDATEOSCFG);
-}
-
-void kdispwin_destroy(void) {
-
-	if (kdispwin.hwnd != NULL) {
-		DestroyWindow(kdispwin.hwnd);
+	CMNVRAM* vram = m_dd2.Lock();
+	if (vram)
+	{
+		keydisp_paint(vram, redraw);
+		m_dd2.Unlock();
+		m_dd2.Blt(NULL, &draw);
 	}
 }
 
-HWND kdispwin_gethwnd(void) {
+/**
+ * リサイズ
+ */
+void CKeyDisplayWnd::OnResize()
+{
+	WINLOCEX wlex = np2_winlocexallwin(g_hWndMain);
+	winlocex_setholdwnd(wlex, m_hWnd);
 
-	return(kdispwin.hwnd);
+	int width;
+	int height;
+	keydisp_getsize(&width, &height);
+	winloc_setclientsize(m_hWnd, width, height);
+	winlocex_move(wlex);
+	winlocex_destroy(wlex);
 }
 
-void kdispwin_draw(UINT8 cnt) {
+/**
+ * モード チェンジ
+ * @param[in] mode モード
+ */
+void CKeyDisplayWnd::SetDispMode(UINT8 mode)
+{
+	keydisp_setmode(mode);
 
-	UINT8	flag;
-
-	if (kdispwin.hwnd) {
-		if (!cnt) {
-			cnt = 1;
-		}
-		flag = keydisp_process(cnt);
-		if (flag & KEYDISP_FLAGSIZING) {
-			kdsetwinsize();
-		}
-		kddrawkeys(kdispwin.hwnd, FALSE);
-	}
+	HMENU hMenu = np2class_gethmenu(m_hWnd);
+	CheckMenuItem(hMenu, IDM_KDISPFM, ((mode == KEYDISP_MODEFM) ? MF_CHECKED : MF_UNCHECKED));
+	CheckMenuItem(hMenu, IDM_KDISPMIDI, ((mode == KEYDISP_MODEMIDI) ? MF_CHECKED : MF_UNCHECKED));
 }
 
-void kdispwin_readini(void) {
+/**
+ * 設定読み込み
+ */
+void kdispwin_readini()
+{
+	ZeroMemory(&s_kdispcfg, sizeof(s_kdispcfg));
+	s_kdispcfg.posx = CW_USEDEFAULT;
+	s_kdispcfg.posy = CW_USEDEFAULT;
 
-	OEMCHAR	path[MAX_PATH];
-
-	ZeroMemory(&kdispcfg, sizeof(kdispcfg));
-	kdispcfg.posx = CW_USEDEFAULT;
-	kdispcfg.posy = CW_USEDEFAULT;
-	initgetfile(path, NELEMENTS(path));
-	ini_read(path, kdispapp, kdispini, NELEMENTS(kdispini));
+	TCHAR szPath[MAX_PATH];
+	initgetfile(szPath, _countof(szPath));
+	ini_read(szPath, s_kdispapp, s_kdispini, _countof(s_kdispini));
 }
 
-void kdispwin_writeini(void) {
+/**
+ * 設定書き込み
+ */
+void kdispwin_writeini()
+{
+	TCHAR szPath[MAX_PATH];
 
-	OEMCHAR	path[MAX_PATH];
-
-	initgetfile(path, NELEMENTS(path));
-	ini_write(path, kdispapp, kdispini, NELEMENTS(kdispini));
+	initgetfile(szPath, _countof(szPath));
+	ini_write(szPath, s_kdispapp, s_kdispini, _countof(s_kdispini));
 }
 #endif

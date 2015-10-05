@@ -9,7 +9,6 @@
 
 #include "dd2.h"
 #include "subwnd.h"
-#include "winloc.h"
 
 /**
  * @brief ソフトウェア キーボード
@@ -33,7 +32,6 @@ protected:
 
 private:
 	static CSoftKeyboardWnd sm_instance;		//!< インスタンス
-	WINLOCEX m_wlex;
 	DD2Surface m_dd2;
 	int m_nWidth;
 	int m_nHeight;
