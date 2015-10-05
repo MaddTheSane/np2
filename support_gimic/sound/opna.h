@@ -56,9 +56,9 @@ struct tagOpna
 	_ADPCM adpcm;
 };
 
-typedef struct tagOpnaState OPN_T;
 typedef struct tagOpna _OPNA;
 typedef struct tagOpna* POPNA;
+typedef const struct tagOpna* PCOPNA;
 
 #ifdef __cplusplus
 extern "C"

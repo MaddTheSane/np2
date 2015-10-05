@@ -629,12 +629,12 @@ static void psgkeysync(KEYDISP *keydisp)
 
 // ---- BOARD change...
 
-static void setfmhdl(KEYDISP *keydisp, const OPN_T *pOpn, UINT nChannels, UINT nBase)
+static void setfmhdl(KEYDISP *keydisp, PCOPNA opna, UINT nChannels, UINT nBase)
 {
 	if (((keydisp->keymax + nChannels) < KEYDISP_CHMAX) && (keydisp->fmmax < KEYDISP_FMCHMAX))
 	{
 		keydisp->fmctl[keydisp->fmmax].cChannelNum = keydisp->keymax;
-		keydisp->fmctl[keydisp->fmmax].pcRegister = pOpn->reg + nBase;
+		keydisp->fmctl[keydisp->fmmax].pcRegister = opna->s.reg + nBase;
 		keydisp->fmctl[keydisp->fmmax].cFMChannels = nChannels;
 		keydisp->fmmax++;
 		keydisp->keymax += nChannels;
@@ -665,23 +665,23 @@ void keydisp_setfmboard(UINT b)
 #if defined(SUPPORT_PX)
 	if (b == 0x30)
 	{
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
-		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn2.psg);
 		b = 0;
 	}
 	if (b == 0x50)
 	{
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
-		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn2.s, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn2, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn2.psg);
-		setfmhdl(&s_keydisp, &g_opn3.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn3, 6, 0);
 		setpsghdl(&s_keydisp, &g_opn3.psg);
 		b = 0;
 	}
@@ -691,36 +691,36 @@ void keydisp_setfmboard(UINT b)
 	switch (b & 0x06)
 	{
 		case 0x02:
-			setfmhdl(&s_keydisp, &g_opn.s, 3, 0);
+			setfmhdl(&s_keydisp, &g_opn, 3, 0);
 			setpsghdl(&s_keydisp, &g_opn.psg);
 			break;
 
 		case 0x04:
-			setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+			setfmhdl(&s_keydisp, &g_opn, 6, 0);
 			setpsghdl(&s_keydisp, &g_opn.psg);
 			break;
 
 		case 0x06:
-			setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+			setfmhdl(&s_keydisp, &g_opn, 6, 0);
 			setpsghdl(&s_keydisp, &g_opn.psg);
-			setfmhdl(&s_keydisp, &g_opn2.s, 3, 0);
+			setfmhdl(&s_keydisp, &g_opn2, 3, 0);
 			setpsghdl(&s_keydisp, &g_opn2.psg);
 			break;
 	}
 	if (b & 0x08)
 	{
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
 		setpsghdl(&s_keydisp, &g_opn.psg);
 	}
 	if (b & 0x20)
 	{
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
 		setpsghdl(&s_keydisp, &g_opn.psg);
 	}
 	if (b & 0x40)
 	{
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0);
-		setfmhdl(&s_keydisp, &g_opn.s, 6, 0x200);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0);
+		setfmhdl(&s_keydisp, &g_opn, 6, 0x200);
 		setpsghdl(&s_keydisp, &g_opn.psg);
 	}
 	if (b & 0x80)
