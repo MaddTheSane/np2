@@ -1,3 +1,11 @@
+/**
+ * @file	toolwnd.h
+ * @brief	ツール ウィンドウ クラスの宣言およびインターフェイスの定義をします
+ */
+
+#pragma once
+
+#include "subwnd.h"
 
 enum {
 	SKINMRU_MAX			= 4,
@@ -21,18 +29,65 @@ typedef struct {
 	OEMCHAR	skinmru[SKINMRU_MAX][MAX_PATH];
 } NP2TOOL;
 
-
 extern	NP2TOOL		np2tool;
 
-BOOL toolwin_initapp(HINSTANCE hInstance);
-void toolwin_create(HINSTANCE hInstance);
-void toolwin_destroy(void);
-HWND toolwin_gethwnd(void);
+enum
+{
+	IDC_TOOLHDDACC			= 0,
+	IDC_TOOLFDD1ACC,
+	IDC_TOOLFDD1LIST,
+	IDC_TOOLFDD1BROWSE,
+	IDC_TOOLFDD1EJECT,
+	IDC_TOOLFDD2ACC,
+	IDC_TOOLFDD2LIST,
+	IDC_TOOLFDD2BROWSE,
+	IDC_TOOLFDD2EJECT,
+	IDC_TOOLRESET,
+	IDC_TOOLPOWER,
+	IDC_MAXITEMS
+};
+
+/**
+ * @brief ツール ウィンドウ クラス
+ */
+class CToolWnd : public CSubWndBase
+{
+public:
+	static CToolWnd* GetInstance();
+	CToolWnd();
+	virtual ~CToolWnd();
+	void Create();
+
+protected:
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+	void OnDestroy();
+	void OnPaint();
+	void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
+
+private:
+	void OnDraw(BOOL redraw);
+
+public:
+	HBITMAP			m_hbmp;
+	UINT8			m_fddaccess[2];
+	UINT8			m_hddaccess;
+	UINT8			m_padding;
+	HFONT			m_hfont;
+	HDC				m_hdcfont;
+	HBRUSH			m_access[2];
+	HWND			m_sub[IDC_MAXITEMS];
+	WNDPROC			m_subproc[IDC_MAXITEMS];
+};
+
+#define toolwin_create		CToolWnd::GetInstance()->Create
+#define toolwin_destroy		CToolWnd::GetInstance()->DestroyWindow
+#define toolwin_gethwnd		CToolWnd::GetInstance()->GetSafeHwnd
 
 void toolwin_setfdd(UINT8 drv, const OEMCHAR *name);
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 void toolwin_fddaccess(UINT8 drv);
 void toolwin_hddaccess(UINT8 drv);
@@ -41,6 +96,5 @@ void toolwin_hddaccess(UINT8 drv);
 #endif
 void toolwin_draw(UINT8 frame);
 
-void toolwin_readini(void);
-void toolwin_writeini(void);
-
+void toolwin_readini();
+void toolwin_writeini();

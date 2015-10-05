@@ -18,21 +18,8 @@
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
 
-
-enum {
-	IDC_TOOLHDDACC			= 0,
-	IDC_TOOLFDD1ACC,
-	IDC_TOOLFDD1LIST,
-	IDC_TOOLFDD1BROWSE,
-	IDC_TOOLFDD1EJECT,
-	IDC_TOOLFDD2ACC,
-	IDC_TOOLFDD2LIST,
-	IDC_TOOLFDD2BROWSE,
-	IDC_TOOLFDD2EJECT,
-	IDC_TOOLRESET,
-	IDC_TOOLPOWER,
-	IDC_MAXITEMS,
-
+enum
+{
 	IDC_BASE				= 3000
 };
 
@@ -61,38 +48,12 @@ const OEMCHAR	*text;
 	short		padding;
 } SUBITEM;
 
-typedef struct {
-	HWND			hwnd;
-	WINLOCEX		wlex;
-	HBITMAP			hbmp;
-	UINT8			fddaccess[2];
-	UINT8			hddaccess;
-	UINT8			_padding;
-	int				winflg;
-	int				wingx;
-	int				wingy;
-	int				wintx;
-	int				winty;
-	UINT			parentcn;
-	int				parentx;
-	int				parenty;
-	HFONT			hfont;
-	HDC				hdcfont;
-	HBRUSH			access[2];
-	HWND			sub[IDC_MAXITEMS];
-	WNDPROC			subproc[IDC_MAXITEMS];
-} TOOLWIN;
-
-#define	GTWLP_FOCUS		(NP2GWLP_SIZE + (0 * sizeof(LONG_PTR)))
-#define	GTWLP_SIZE		(NP2GWLP_SIZE + (1 * sizeof(LONG_PTR)))
-
 		NP2TOOL		np2tool;
 static	TOOLSKIN	toolskin;
 static	SUBITEM		subitem[IDC_MAXITEMS];
-static	TOOLWIN		toolwin;
+static	CToolWnd	toolwin;
 
 #include	"toolwnd.res"
-
 
 typedef struct {
 	UINT16	idc;
@@ -103,10 +64,33 @@ static const UINT8 fddlist[FDDLIST_DRV] = {
 					IDC_TOOLFDD1LIST, IDC_TOOLFDD2LIST};
 
 static const DISKACC diskacc[3] = {
-					{IDC_TOOLFDD1ACC,	&toolwin.fddaccess[0]},
-					{IDC_TOOLFDD2ACC,	&toolwin.fddaccess[1]},
-					{IDC_TOOLHDDACC,	&toolwin.hddaccess}};
+					{IDC_TOOLFDD1ACC,	&toolwin.m_fddaccess[0]},
+					{IDC_TOOLFDD2ACC,	&toolwin.m_fddaccess[1]},
+					{IDC_TOOLHDDACC,	&toolwin.m_hddaccess}};
 
+
+/**
+ * インスタンスを返す
+ * @return インスタンス
+ */
+CToolWnd* CToolWnd::GetInstance()
+{
+	return &toolwin;
+}
+
+/**
+ * コンストラクタ
+ */
+CToolWnd::CToolWnd()
+{
+}
+
+/**
+ * デストラクタ
+ */
+CToolWnd::~CToolWnd()
+{
+}
 
 // ----
 
@@ -141,13 +125,12 @@ static HBITMAP skinload(const OEMCHAR *path) {
 		milstr_ncpy(fname, path, NELEMENTS(fname));
 		file_cutname(fname);
 		file_catname(fname, toolskin.main, NELEMENTS(fname));
-		ret = (HBITMAP)LoadImage(g_hInstance, fname, IMAGE_BITMAP,
-													0, 0, LR_LOADFROMFILE);
+		ret = (HBITMAP)LoadImage(NULL, fname, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 		if (ret != NULL) {
 			return(ret);
 		}
 	}
-	return(LoadBitmap(g_hInstance, _T("NP2TOOL")));
+	return ::LoadBitmap(CWndProc::GetResourceHandle(), TEXT("NP2TOOL"));
 }
 
 
@@ -164,7 +147,7 @@ static void calctextsize(OEMCHAR *path, int leng, const OEMCHAR *p, int width) {
 	int		step;
 
 	milstr_ncpy(path, p, leng);
-	hdc = toolwin.hdcfont;
+	hdc = toolwin.m_hdcfont;
 	GetTextExtentPoint32(hdc, p, OEMSTRLEN(p), &cur);
 	if (cur.cx < width) {
 		return;
@@ -246,7 +229,7 @@ static void sellist(UINT drv) {
 	if (drv >= FDDLIST_DRV) {
 		return;
 	}
-	hwnd = toolwin.sub[fddlist[drv]];
+	hwnd = toolwin.m_sub[fddlist[drv]];
 	fdd = np2tool.fdd + drv;
 	sel = (UINT)SendMessage(hwnd, CB_GETCURSEL, 0, 0);
 	if (sel < fdd->cnt) {
@@ -306,7 +289,7 @@ static void accdraw(HWND hWnd, UINT8 count) {
 
 	hdc = BeginPaint(hWnd, &ps);
 	GetClientRect(hWnd, &rc);
-	hbrush = (HBRUSH)SelectObject(hdc, toolwin.access[(count)?1:0]);
+	hbrush = (HBRUSH)SelectObject(hdc, toolwin.m_access[(count)?1:0]);
 	PatBlt(hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY);
 	SelectObject(hdc, hbrush);
 	EndPaint(hWnd, &ps);
@@ -333,16 +316,16 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 				if (newidc >= IDC_MAXITEMS) {
 					newidc = (dir >= 0)?0:(IDC_MAXITEMS - 1);
 				}
-				if ((toolwin.sub[newidc] != NULL) &&
+				if ((toolwin.m_sub[newidc] != NULL) &&
 					(subitem[newidc].tctl != TCTL_STATIC)) {
-					SetFocus(toolwin.sub[newidc]);
+					SetFocus(toolwin.m_sub[newidc]);
 					break;
 				}
 			} while(idc != newidc);
 		}
 		else if ((short)wp == VK_RETURN) {
 			if (subitem[idc].tctl == TCTL_BUTTON) {
-				return(CallWindowProc(toolwin.subproc[idc],
+				return(CallWindowProc(toolwin.m_subproc[idc],
 										hWnd, WM_KEYDOWN, VK_SPACE, 0));
 			}
 		}
@@ -365,36 +348,36 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	}
 	else if (msg == WM_PAINT) {
 		if (idc == IDC_TOOLHDDACC) {
-			accdraw(hWnd, toolwin.hddaccess);
+			accdraw(hWnd, toolwin.m_hddaccess);
 			return(FALSE);
 		}
 		else if (idc == IDC_TOOLFDD1ACC) {
-			accdraw(hWnd, toolwin.fddaccess[0]);
+			accdraw(hWnd, toolwin.m_fddaccess[0]);
 			return(FALSE);
 		}
 		else if (idc == IDC_TOOLFDD2ACC) {
-			accdraw(hWnd, toolwin.fddaccess[1]);
+			accdraw(hWnd, toolwin.m_fddaccess[1]);
 			return(FALSE);
 		}
 	}
 	else if (msg == WM_SETFOCUS) {
-		SetWindowLongPtr(GetParent(hWnd), GTWLP_FOCUS, idc);
+//		SetWindowLongPtr(GetParent(hWnd), GTWLP_FOCUS, idc);
 	}
-	return(CallWindowProc(toolwin.subproc[idc], hWnd, msg, wp, lp));
+	return(CallWindowProc(toolwin.m_subproc[idc], hWnd, msg, wp, lp));
 }
 
 static void toolwincreate(HWND hWnd) {
 
-	toolwin.hfont = CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
+	toolwin.m_hfont = CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 					DEFAULT_QUALITY, FIXED_PITCH, toolskin.font);
 	HDC hdc = GetDC(NULL);
-	toolwin.hdcfont = CreateCompatibleDC(hdc);
+	toolwin.m_hdcfont = CreateCompatibleDC(hdc);
 	ReleaseDC(NULL, hdc);
-	SelectObject(toolwin.hdcfont, toolwin.hfont);
+	SelectObject(toolwin.m_hdcfont, toolwin.m_hfont);
 
-	toolwin.access[0] = CreateSolidBrush(0x000060);
-	toolwin.access[1] = CreateSolidBrush(0x0000ff);
+	toolwin.m_access[0] = CreateSolidBrush(0x000060);
+	toolwin.m_access[1] = CreateSolidBrush(0x0000ff);
 
 	const SUBITEM *p = subitem;
 	UINT i;
@@ -429,30 +412,30 @@ static void toolwincreate(HWND hWnd) {
 							p->posx, p->posy, p->width, p->height,
 							hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
 		}
-		toolwin.sub[i] = sub;
-		toolwin.subproc[i] = NULL;
+		toolwin.m_sub[i] = sub;
+		toolwin.m_subproc[i] = NULL;
 		if (sub) {
-			toolwin.subproc[i] = (WNDPROC)GetWindowLongPtr(sub,
+			toolwin.m_subproc[i] = (WNDPROC)GetWindowLongPtr(sub,
 															GWLP_WNDPROC);
 			SetWindowLongPtr(sub, GWLP_WNDPROC, (LONG_PTR)twsub);
-			SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.hfont,
+			SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.m_hfont,
 														MAKELPARAM(TRUE, 0));
 		}
 		p++;
 	}
 	for (i=0; i<FDDLIST_DRV; i++) {
-		HWND sub = toolwin.sub[fddlist[i]];
+		HWND sub = toolwin.m_sub[fddlist[i]];
 		if (sub) {
 			DragAcceptFiles(sub, TRUE);
 			remakefddlist(sub, np2tool.fdd + i);
 		}
 	}
 	for (i=0; i<IDC_MAXITEMS; i++) {
-		if ((toolwin.sub[i]) && (subitem[i].tctl != TCTL_STATIC)) {
+		if ((toolwin.m_sub[i]) && (subitem[i].tctl != TCTL_STATIC)) {
 			break;
 		}
 	}
-	SetWindowLongPtr(hWnd, GTWLP_FOCUS, i);
+//	SetWindowLongPtr(hWnd, GTWLP_FOCUS, i);
 }
 
 static void toolwindestroy(void) {
@@ -460,71 +443,70 @@ static void toolwindestroy(void) {
 	UINT	i;
 	HWND	sub;
 
-	if (toolwin.hbmp) {
+	if (toolwin.m_hbmp) {
 		for (i=0; i<IDC_MAXITEMS; i++) {
-			sub = toolwin.sub[i];
+			sub = toolwin.m_sub[i];
 			if (sub) {
 				DestroyWindow(sub);
 			}
 		}
-		DeleteObject(toolwin.access[0]);
-		DeleteObject(toolwin.access[1]);
-		DeleteObject(toolwin.hdcfont);
-		DeleteObject(toolwin.hfont);
-		DeleteObject(toolwin.hbmp);
-		toolwin.hbmp = NULL;
+		DeleteObject(toolwin.m_access[0]);
+		DeleteObject(toolwin.m_access[1]);
+		DeleteObject(toolwin.m_hdcfont);
+		DeleteObject(toolwin.m_hfont);
+		DeleteObject(toolwin.m_hbmp);
+		toolwin.m_hbmp = NULL;
 	}
 }
 
-static void toolwinpaint(HWND hWnd) {
-
-	HDC			hdc;
-	PAINTSTRUCT	ps;
-	BITMAP		bmp;
-	HDC			hmdc;
-
-	hdc = BeginPaint(hWnd, &ps);
-	if (toolwin.hbmp) {
-		GetObject(toolwin.hbmp, sizeof(BITMAP), &bmp);
-		hmdc = CreateCompatibleDC(hdc);
-		SelectObject(hmdc, toolwin.hbmp);
-		BitBlt(hdc, 0, 0, bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
-		DeleteDC(hmdc);
+void CToolWnd::OnPaint()
+{
+	PAINTSTRUCT ps;
+	HDC hdc = BeginPaint(&ps);
+	if (m_hbmp)
+	{
+		BITMAP bmp;
+		::GetObject(m_hbmp, sizeof(bmp), &bmp);
+		HDC hmdc = ::CreateCompatibleDC(hdc);
+		::SelectObject(hmdc, m_hbmp);
+		::BitBlt(hdc, 0, 0, bmp.bmWidth, bmp.bmHeight, hmdc, 0, 0, SRCCOPY);
+		::DeleteDC(hmdc);
 	}
-	EndPaint(hWnd, &ps);
+	EndPaint(&ps);
 }
 
-static void tooldrawbutton(HWND hWnd, UINT idc, LPDRAWITEMSTRUCT lpdis) {
-
-	POINT	pt;
-	HWND	sub;
-	RECT	rect;
-	HDC		hdc;
-	HDC		hmdc;
-	RECT	btn;
-
-	idc -= IDC_BASE;
-	if (idc >= IDC_MAXITEMS) {
+void CToolWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	nIDCtl -= IDC_BASE;
+	if ((nIDCtl < 0) || (nIDCtl >= IDC_MAXITEMS))
+	{
 		return;
 	}
+
+	POINT pt;
 	pt.x = 0;
 	pt.y = 0;
-	ClientToScreen(hWnd, &pt);
-	sub = toolwin.sub[idc];
-	GetWindowRect(sub, &rect);
+	ClientToScreen(&pt);
+	HWND sub = m_sub[nIDCtl];
+
+	RECT rect;
+	::GetWindowRect(sub, &rect);
+
+	RECT btn;
 	btn.left = 0;
 	btn.top = 0;
 	btn.right = rect.right - rect.left;
 	btn.bottom = rect.bottom - rect.top;
-	hdc = lpdis->hDC;
-	if (toolwin.hbmp) {
-		hmdc = CreateCompatibleDC(hdc);
-		SelectObject(hmdc, toolwin.hbmp);
-		BitBlt(hdc, 0, 0, btn.right, btn.bottom,
-					hmdc, rect.left - pt.x, rect.top - pt.y, SRCCOPY);
-		DeleteDC(hmdc);
+	HDC hdc = lpDrawItemStruct->hDC;
+	if (m_hbmp)
+	{
+		HDC hmdc = ::CreateCompatibleDC(hdc);
+		::SelectObject(hmdc, m_hbmp);
+		::BitBlt(hdc, 0, 0, btn.right, btn.bottom, hmdc, rect.left - pt.x, rect.top - pt.y, SRCCOPY);
+		::DeleteDC(hmdc);
 	}
-	if (lpdis->itemState & ODS_FOCUS) {
+	if (lpDrawItemStruct->itemState & ODS_FOCUS)
+	{
 		DrawFocusRect(hdc, &btn);
 	}
 }
@@ -590,56 +572,6 @@ const OEMCHAR	*pcszMruList[SKINMRU_MAX];
 	}
 }
 
-#if 0
-static HMENU createskinmenu(void)
-{
-	HMENU		hMenu;
-const OEMCHAR	*pcszBase;
-	UINT		uCount;
-	OEMCHAR		*pszMru;
-const OEMCHAR	*pcszMruList[SKINMRU_MAX];
-	UINT		i;
-	UINT		uID[SKINMRU_MAX];
-	UINT		j;
-	UINT		uFlag;
-
-	hMenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_TOOLWIN));
-
-	pcszBase = np2tool.skin;
-
-	CheckMenuItem(hMenu, IDM_TOOL_SKINDEF, MFCHECK(pcszBase[0] == '\0'));
-	for (uCount=0; uCount<SKINMRU_MAX; uCount++)
-	{
-		pszMru = np2tool.skinmru[uCount];
-		if (pszMru[0] == '\0')
-		{
-			break;
-		}
-		pszMru = file_getname(pszMru);
-		for (i=0; i<uCount; i++)
-		{
-			if (!file_cmpname(pszMru, pcszMruList[uID[i]]))
-			{
-				break;
-			}
-		}
-		for (j=uCount; j>i; j--)
-		{
-			uID[j] = uID[j-1];
-		}
-		uID[i] = uCount;
-		pcszMruList[uCount] = pszMru;
-	}
-	for (i=0; i<uCount; i++)
-	{
-		j = uID[i];
-		uFlag = MFCHECK(!file_cmpname(pcszBase, np2tool.skinmru[j]));
-		AppendMenu(hMenu, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, pcszMruList[j]);
-	}
-	return hMenu;
-}
-#endif
-
 static void skinchange(HWND hWnd)
 {
 const OEMCHAR	*p;
@@ -671,12 +603,13 @@ const OEMCHAR	*p;
 	winlocex_setholdwnd(wlex, hWnd);
 	toolwindestroy();
 	hbmp = skinload(np2tool.skin);
-	if (hbmp == NULL) {
+	if (hbmp == NULL)
+	{
 		SendMessage(hWnd, WM_CLOSE, 0, 0);
 		return;
 	}
 	GetObject(hbmp, sizeof(BITMAP), &bmp);
-	toolwin.hbmp = hbmp;
+	toolwin.m_hbmp = hbmp;
 	winloc_setclientsize(hWnd, bmp.bmWidth, bmp.bmHeight);
 	toolwincreate(hWnd);
 	winlocex_move(wlex);
@@ -688,10 +621,7 @@ const OEMCHAR	*p;
 
 static void openpopup(HWND hWnd, LPARAM lp)
 {
-	HMENU	hMenu;
-	POINT	pt;
-
-	hMenu = CreatePopupMenu();
+	HMENU hMenu = CreatePopupMenu();
 	if (!winui_en)
 	{
 		menu_addmenu(hMenu, 0, np2class_gethmenu(g_hWndMain), FALSE);
@@ -700,6 +630,7 @@ static void openpopup(HWND hWnd, LPARAM lp)
 	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
 	setSkinMruMenu(hMenu);
 	xmenu_update(hMenu);
+	POINT pt;
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);
@@ -727,43 +658,46 @@ static void toolwin_oncreate(HWND hWnd)
 	toolwincreate(hWnd);
 }
 
-static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
-{
-	BOOL		r;
-	UINT		idc;
-	WINLOCEX	wlex;
 
-	switch(uMsg) {
+
+LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMsg)
+	{
 		case WM_CREATE:
-			toolwin_oncreate(hWnd);
+			toolwin_oncreate(m_hWnd);
 			break;
 
 		case WM_SYSCOMMAND:
-			switch(wp) {
+			switch (wParam)
+			{
 				case IDM_TOOL_SKINSEL:
 				case IDM_TOOL_SKINDEF:
 				case IDM_TOOL_SKINMRU + 0:
 				case IDM_TOOL_SKINMRU + 1:
 				case IDM_TOOL_SKINMRU + 2:
 				case IDM_TOOL_SKINMRU + 3:
-					return(SendMessage(hWnd, WM_COMMAND, wp, lp));
+					return SendMessage(WM_COMMAND, wParam, lParam);
 
 				default:
-					return(DefWindowProc(hWnd, uMsg, wp, lp));
+					return CSubWndBase::WindowProc(nMsg, wParam, lParam);
 			}
 			break;
 
 		case WM_COMMAND:
-			switch(LOWORD(wp)) {
+			switch (LOWORD(wParam))
+			{
 				case IDC_BASE + IDC_TOOLFDD1LIST:
-					if (HIWORD(wp) == CBN_SELCHANGE) {
+					if (HIWORD(wParam) == CBN_SELCHANGE)
+					{
 						sellist(0);
 					}
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD1BROWSE:
-					if (!winui_en) {
-						SendMessage(g_hWndMain, WM_COMMAND, IDM_FDD1OPEN, 0);
+					if (!winui_en)
+					{
+						::SendMessage(g_hWndMain, WM_COMMAND, IDM_FDD1OPEN, 0);
 					}
 					break;
 
@@ -773,14 +707,16 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2LIST:
-					if (HIWORD(wp) == CBN_SELCHANGE) {
+					if (HIWORD(wParam) == CBN_SELCHANGE)
+					{
 						sellist(1);
 					}
 					break;
 
 				case IDC_BASE + IDC_TOOLFDD2BROWSE:
-					if (!winui_en) {
-						SendMessage(g_hWndMain, WM_COMMAND, IDM_FDD2OPEN, 0);
+					if (!winui_en)
+					{
+						::SendMessage(g_hWndMain, WM_COMMAND, IDM_FDD2OPEN, 0);
 					}
 					break;
 
@@ -790,79 +726,88 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 					break;
 
 				case IDC_BASE + IDC_TOOLRESET:
-					if (!winui_en) {
-						SendMessage(g_hWndMain, WM_COMMAND, IDM_RESET, 0);
+					if (!winui_en)
+					{
+						::SendMessage(g_hWndMain, WM_COMMAND, IDM_RESET, 0);
 						SetForegroundWindow(g_hWndMain);
 					}
 					break;
 
 				case IDC_BASE + IDC_TOOLPOWER:
-					if (!winui_en) {
-						SendMessage(g_hWndMain, WM_CLOSE, 0, 0L);
+					if (!winui_en)
+					{
+						::SendMessage(g_hWndMain, WM_CLOSE, 0, 0L);
 					}
 					break;
 
 				case IDM_TOOL_SKINSEL:
-					soundmng_disable(SNDPROC_TOOL);
-					r = dlgs_openfile(hWnd, &fpSkin, np2tool.skin,
-											NELEMENTS(np2tool.skin), NULL);
-					soundmng_enable(SNDPROC_TOOL);
-					if (r) {
-						skinchange(hWnd);
+					{
+						soundmng_disable(SNDPROC_TOOL);
+						BOOL r = dlgs_openfile(m_hWnd, &fpSkin, np2tool.skin, NELEMENTS(np2tool.skin), NULL);
+						soundmng_enable(SNDPROC_TOOL);
+						if (r)
+						{
+							skinchange(m_hWnd);
+						}
 					}
 					break;
 
 				case IDM_TOOL_SKINDEF:
 					np2tool.skin[0] = '\0';
-					skinchange(hWnd);
+					skinchange(m_hWnd);
 					break;
 
 				case IDM_TOOL_SKINMRU + 0:
 				case IDM_TOOL_SKINMRU + 1:
 				case IDM_TOOL_SKINMRU + 2:
 				case IDM_TOOL_SKINMRU + 3:
-					file_cpyname(np2tool.skin,
-							np2tool.skinmru[LOWORD(wp) - IDM_TOOL_SKINMRU],
-							NELEMENTS(np2tool.skin));
-					skinchange(hWnd);
+					file_cpyname(np2tool.skin, np2tool.skinmru[LOWORD(wParam) - IDM_TOOL_SKINMRU], NELEMENTS(np2tool.skin));
+					skinchange(m_hWnd);
 					break;
 
 				case IDM_CLOSE:
-					SendMessage(hWnd, WM_CLOSE, 0, 0);
+					SendMessage(WM_CLOSE, 0, 0);
 					break;
 
 				default:
-					if (!winui_en) {
-						return(SendMessage(g_hWndMain, uMsg, wp, lp));
+					if (!winui_en)
+					{
+						return ::SendMessage(g_hWndMain, nMsg, wParam, lParam);
 					}
 					break;
 			}
 			break;
 
+#if 0
 		case WM_KEYDOWN:						// TABを押した時に復帰
-			if ((short)wp == VK_TAB) {
-				idc = (UINT)GetWindowLongPtr(hWnd, GTWLP_FOCUS);
-				if (idc < IDC_MAXITEMS) {
-					SetFocus(toolwin.sub[idc]);
+			if ((short)wParam == VK_TAB)
+			{
+				UINT idc = (UINT)GetWindowLongPtr(m_hWnd, GTWLP_FOCUS);
+				if (idc < IDC_MAXITEMS)
+				{
+					::SetFocus(toolwin.sub[idc]);
 				}
-				return(0);
+				return 0;
 			}
-			return(SendMessage(g_hWndMain, uMsg, wp, lp));
+			return ::SendMessage(g_hWndMain, nMsg, wParam, lParam);
 
 		case WM_KEYUP:
-			if ((short)wp == VK_TAB) {
-				return(0);
+			if ((short)wParam == VK_TAB)
+			{
+				return 0;
 			}
-			return(SendMessage(g_hWndMain, uMsg, wp, lp));
+			return ::SendMessage(g_hWndMain, nMsg, wParam, lParam);
+#endif
 
 		case WM_PAINT:
-			toolwinpaint(hWnd);
+			OnPaint();
 			break;
 
 		case WM_DRAWITEM:
-			tooldrawbutton(hWnd, (UINT)wp, (LPDRAWITEMSTRUCT)lp);
+			OnDrawItem(static_cast<int>(wParam), reinterpret_cast<LPDRAWITEMSTRUCT>(lParam));
 			break;
 
+#if 0
 		case WM_ENTERMENULOOP:
 			soundmng_disable(SNDPROC_TOOL);
 			break;
@@ -886,12 +831,13 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 			toolwin.wlex = NULL;
 			soundmng_enable(SNDPROC_TOOL);
 			break;
+#endif
 
 		case WM_MOVE:
-			if (!(GetWindowLong(hWnd, GWL_STYLE) &
-									(WS_MAXIMIZE | WS_MINIMIZE))) {
+			if (!(GetWindowLong(m_hWnd, GWL_STYLE) & (WS_MAXIMIZE | WS_MINIMIZE)))
+			{
 				RECT rc;
-				GetWindowRect(hWnd, &rc);
+				GetWindowRect(&rc);
 				np2tool.posx = rc.left;
 				np2tool.posy = rc.top;
 				sysmng_update(SYS_UPDATEOSCFG);
@@ -901,111 +847,83 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 		case WM_CLOSE:
 			sysmenu_settoolwin(0);
 			sysmng_update(SYS_UPDATEOSCFG);
-			DestroyWindow(hWnd);
+			DestroyWindow();
 			break;
 
 		case WM_DESTROY:
-			np2class_wmdestroy(hWnd);
+			np2class_wmdestroy(m_hWnd);
 			toolwindestroy();
-			toolwin.hwnd = NULL;
 			break;
 
 		case WM_LBUTTONDOWN:
-			if (np2tool.type & 1) {
-				return(SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0L));
+			if (np2tool.type & 1)
+			{
+				return SendMessage(WM_NCLBUTTONDOWN, HTCAPTION, 0L);
 			}
 			break;
 
 		case WM_RBUTTONDOWN:
-			openpopup(hWnd, lp);
+			openpopup(m_hWnd, lParam);
 			break;
 
 		case WM_LBUTTONDBLCLK:
-			np2tool.type ^= 1;
-			wlex = np2_winlocexallwin(g_hWndMain);
-			winlocex_setholdwnd(wlex, hWnd);
-			np2class_windowtype(hWnd, (np2tool.type & 1) << 1);
-			winlocex_move(wlex);
-			winlocex_destroy(wlex);
-			sysmng_update(SYS_UPDATEOSCFG);
+			{
+				np2tool.type ^= 1;
+				WINLOCEX wlex = np2_winlocexallwin(g_hWndMain);
+				winlocex_setholdwnd(wlex, m_hWnd);
+				np2class_windowtype(m_hWnd, (np2tool.type & 1) << 1);
+				winlocex_move(wlex);
+				winlocex_destroy(wlex);
+				sysmng_update(SYS_UPDATEOSCFG);
+			}
 			break;
 
 		default:
-			return(DefWindowProc(hWnd, uMsg, wp, lp));
+			return CSubWndBase::WindowProc(nMsg, wParam, lParam);
 	}
-	return(0);
+	return 0;
 }
 
-BOOL toolwin_initapp(HINSTANCE hInstance) {
-
-	WNDCLASS wc;
-
-	wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-	wc.lpfnWndProc = twproc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = GTWLP_SIZE;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName = MAKEINTRESOURCE(IDR_TOOLWIN);
-	wc.lpszClassName = np2toolclass;
-	return(RegisterClass(&wc));
-}
-
-void toolwin_create(HINSTANCE hInstance) {
-
-	HBITMAP	hbmp;
-	BITMAP	bmp;
-	HWND	hWnd;
-	std::tstring rCaption;
-
-	if (toolwin.hwnd) {
+/**
+ * 作成
+ */
+void CToolWnd::Create()
+{
+	if (m_hWnd)
+	{
 		return;
 	}
-	ZeroMemory(&toolwin, sizeof(toolwin));
-	hbmp = skinload(np2tool.skin);
-	if (hbmp == NULL) {
-		goto twope_err1;
-	}
-	GetObject(hbmp, sizeof(BITMAP), &bmp);
-	toolwin.hbmp = hbmp;
 
-	rCaption = LoadTString(IDS_CAPTION_TOOL);
-	hWnd = CreateWindow(np2toolclass, rCaption.c_str(),
-							WS_SYSMENU | WS_MINIMIZEBOX,
-							np2tool.posx, np2tool.posy,
-							bmp.bmWidth, bmp.bmHeight,
-							NULL, NULL, hInstance, NULL);
-	winloc_setclientsize(hWnd, bmp.bmWidth, bmp.bmHeight);
-	toolwin.hwnd = hWnd;
-	if (hWnd == NULL) {
-		goto twope_err2;
+	m_hbmp = NULL;
+	m_fddaccess[0] = 0;
+	m_fddaccess[1] = 0;
+	m_hddaccess = 0;
+	m_hfont = NULL;
+	m_hdcfont = NULL;
+	m_access[0] = NULL;
+	m_access[1] = NULL;
+	ZeroMemory(m_sub, sizeof(m_sub));
+	ZeroMemory(m_subproc, sizeof(m_subproc));
+
+	m_hbmp = skinload(np2tool.skin);
+	if (m_hbmp == NULL)
+	{
+		return;
 	}
-	UpdateWindow(hWnd);
-	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+
+	BITMAP bmp;
+	::GetObject(m_hbmp, sizeof(BITMAP), &bmp);
+
+	if (!CSubWndBase::Create(IDS_CAPTION_TOOL, WS_SYSMENU | WS_MINIMIZEBOX, np2tool.posx, np2tool.posy, bmp.bmWidth, bmp.bmHeight, NULL, NULL))
+	{
+		sysmenu_settoolwin(0);
+		sysmng_update(SYS_UPDATEOSCFG);
+		return;
+	}
+	winloc_setclientsize(m_hWnd, bmp.bmWidth, bmp.bmHeight);
+	UpdateWindow();
+	ShowWindow(SW_SHOWNOACTIVATE);
 	SetForegroundWindow(g_hWndMain);
-	return;
-
-twope_err2:
-	DeleteObject(hbmp);
-
-twope_err1:
-	sysmenu_settoolwin(0);
-	sysmng_update(SYS_UPDATEOSCFG);
-	return;
-}
-
-void toolwin_destroy(void) {
-
-	if (toolwin.hwnd) {
-		DestroyWindow(toolwin.hwnd);
-	}
-}
-
-HWND toolwin_gethwnd(void) {
-
-	return(toolwin.hwnd);
 }
 
 void toolwin_setfdd(UINT8 drv, const OEMCHAR *name) {
@@ -1042,8 +960,8 @@ void toolwin_setfdd(UINT8 drv, const OEMCHAR *name) {
 		file_cpyname(fdd->name[0], name, NELEMENTS(fdd->name[0]));
 	}
 	sysmng_update(SYS_UPDATEOSCFG);
-	if (toolwin.hwnd != NULL) {
-		sub = toolwin.sub[fddlist[drv]];
+	if (toolwin.m_hWnd != NULL) {
+		sub = toolwin.m_sub[fddlist[drv]];
 		if (sub) {
 			remakefddlist(sub, fdd);
 			SetForegroundWindow(g_hWndMain);
@@ -1056,14 +974,14 @@ static void setdiskacc(UINT num, UINT8 count) {
 const DISKACC	*acc;
 	HWND		sub;
 
-	if (toolwin.hwnd == NULL) {
+	if (toolwin.m_hWnd == NULL) {
 		return;
 	}
 	if (num < NELEMENTS(diskacc)) {
 		acc = diskacc + num;
 		sub = NULL;
 		if (*(acc->counter) == 0) {
-			sub = toolwin.sub[acc->idc];
+			sub = toolwin.m_sub[acc->idc];
 		}
 		*(acc->counter) = count;
 		if (sub) {
@@ -1072,15 +990,16 @@ const DISKACC	*acc;
 	}
 }
 
-void toolwin_fddaccess(UINT8 drv) {
-
-	if (drv < 2) {
+void toolwin_fddaccess(UINT8 drv)
+{
+	if (drv < 2)
+	{
 		setdiskacc(drv, 20);
 	}
 }
 
-void toolwin_hddaccess(UINT8 drv) {
-
+void toolwin_hddaccess(UINT8 drv)
+{
 	setdiskacc(2, 10);
 }
 
@@ -1091,7 +1010,7 @@ const DISKACC	*accterm;
 	UINT8		counter;
 	HWND		sub;
 
-	if (toolwin.hwnd == NULL) {
+	if (toolwin.m_hWnd == NULL) {
 		return;
 	}
 	if (!frame) {
@@ -1104,7 +1023,7 @@ const DISKACC	*accterm;
 		if (counter) {
 			if (counter <= frame) {
 				*(acc->counter) = 0;
-				sub = toolwin.sub[acc->idc];
+				sub = toolwin.m_sub[acc->idc];
 				if (sub) {
 					InvalidateRect(sub, NULL, TRUE);
 				}
@@ -1120,9 +1039,14 @@ const DISKACC	*accterm;
 
 // ----
 
-static const OEMCHAR ini_title[] = OEMTEXT("NP2 tool");
+//! タイトル
+static const TCHAR s_toolwndapp[] = TEXT("NP2 tool");
 
-static const PFTBL iniitem[] = {
+/**
+ * 設定
+ */
+static const PFTBL s_toolwndini[] =
+{
 	PFVAL("WindposX", PFTYPE_SINT32,	&np2tool.posx),
 	PFVAL("WindposY", PFTYPE_SINT32,	&np2tool.posy),
 	PFVAL("WindType", PFTYPE_BOOL,		&np2tool.type),
@@ -1146,25 +1070,30 @@ static const PFTBL iniitem[] = {
 	PFSTR("FD2NAME4", PFTYPE_STR,		np2tool.fdd[1].name[4]),
 	PFSTR("FD2NAME5", PFTYPE_STR,		np2tool.fdd[1].name[5]),
 	PFSTR("FD2NAME6", PFTYPE_STR,		np2tool.fdd[1].name[6]),
-	PFSTR("FD2NAME7", PFTYPE_STR,		np2tool.fdd[1].name[7])};
+	PFSTR("FD2NAME7", PFTYPE_STR,		np2tool.fdd[1].name[7])
+};
 
-void toolwin_readini(void) {
-
-	OEMCHAR	path[MAX_PATH];
-
+/**
+ * 設定読み込み
+ */
+void toolwin_readini()
+{
 	ZeroMemory(&np2tool, sizeof(np2tool));
 	np2tool.posx = CW_USEDEFAULT;
 	np2tool.posy = CW_USEDEFAULT;
 	np2tool.type = 1;
-	initgetfile(path, NELEMENTS(path));
-	ini_read(path, ini_title, iniitem, NELEMENTS(iniitem));
+
+	OEMCHAR szPath[MAX_PATH];
+	initgetfile(szPath, _countof(szPath));
+	ini_read(szPath, s_toolwndapp, s_toolwndini, _countof(s_toolwndini));
 }
 
-void toolwin_writeini(void) {
-
-	OEMCHAR	path[MAX_PATH];
-
-	initgetfile(path, NELEMENTS(path));
-	ini_write(path, ini_title, iniitem, NELEMENTS(iniitem));
+/**
+ * 設定書き込み
+ */
+void toolwin_writeini()
+{
+	TCHAR szPath[MAX_PATH];
+	initgetfile(szPath, _countof(szPath));
+	ini_write(szPath, s_toolwndapp, s_toolwndini, _countof(s_toolwndini));
 }
-

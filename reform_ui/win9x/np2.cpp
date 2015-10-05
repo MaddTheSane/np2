@@ -244,7 +244,7 @@ static void changescreen(UINT8 newmode) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			if (!scrnmng_isfullscreen()) {
 				if (np2oscfg.toolwin) {
-					toolwin_create(g_hInstance);
+					toolwin_create();
 				}
 				if (np2oscfg.keydisp) {
 					kdispwin_create();
@@ -1032,7 +1032,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_TOOLWIN:
 					sysmenu_settoolwin(np2oscfg.toolwin ^ 1);
 					if (np2oscfg.toolwin) {
-						toolwin_create(g_hInstance);
+						toolwin_create();
 					}
 					else {
 						toolwin_destroy();
@@ -1569,7 +1569,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			return(FALSE);
 		}
 
-		toolwin_initapp(g_hInstance);
 		kdispwin_initialize();
 		skbdwin_initialize();
 		mdbgwin_initialize();
@@ -1704,7 +1703,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	if (!(g_scrnmode & SCRNMODE_FULLSCREEN)) {
 		if (np2oscfg.toolwin) {
-			toolwin_create(g_hInstance);
+			toolwin_create();
 		}
 		if (np2oscfg.keydisp) {
 			kdispwin_create();
