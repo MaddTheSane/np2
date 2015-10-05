@@ -48,12 +48,12 @@ const OEMCHAR	*text;
 	short		padding;
 } SUBITEM;
 
-		NP2TOOL		np2tool;
+static	NP2TOOL		s_toolwndcfg;
 static	TOOLSKIN	toolskin;
 static	SUBITEM		subitem[IDC_MAXITEMS];
 static	CToolWnd	toolwin;
 
-#include	"toolwnd.res"
+#include "toolwnd.res"
 
 typedef struct {
 	UINT16	idc;
@@ -94,43 +94,49 @@ CToolWnd::~CToolWnd()
 
 // ----
 
-static HBITMAP skinload(const OEMCHAR *path) {
-
-	OEMCHAR	fname[MAX_PATH];
-	UINT	i;
-	HBITMAP	ret;
-
+static HBITMAP skinload(const OEMCHAR *path)
+{
 	ZeroMemory(&toolskin, sizeof(toolskin));
 	toolskin.fontsize = 12;
 	milstr_ncpy(toolskin.font, str_deffont, NELEMENTS(toolskin.font));
 	toolskin.color1 = 0x600000;
 	toolskin.color2 = 0xff0000;
-	if (path) {
-		ini_read(path, skintitle, skinini1, NELEMENTS(skinini1));
+	if (path)
+	{
+		ini_read(path, s_skintitle, s_skinini1, _countof(s_skinini1));
 	}
-	if (toolskin.main[0]) {
-		ZeroMemory(subitem, sizeof(defsubitem));
-		for (i=0; i<IDC_MAXITEMS; i++) {
-			subitem[i].tctl = defsubitem[i].tctl;
-			subitem[i].text = defsubitem[i].text;
+	if (toolskin.main[0])
+	{
+		ZeroMemory(subitem, sizeof(subitem));
+		for (UINT i = 0; i < IDC_MAXITEMS; i++)
+		{
+			subitem[i].tctl = s_defsubitem[i].tctl;
+			subitem[i].text = s_defsubitem[i].text;
 		}
 	}
-	else {
-		CopyMemory(subitem, defsubitem, sizeof(defsubitem));
+	else
+	{
+		CopyMemory(subitem, s_defsubitem, sizeof(s_defsubitem));
 	}
-	if (path) {
-		ini_read(path, skintitle, skinini2, NELEMENTS(skinini2));
+	if (path)
+	{
+		ini_read(path, s_skintitle, s_skinini2, _countof(s_skinini2));
 	}
-	if (toolskin.main[0]) {
+
+	HBITMAP ret = NULL;
+	if (toolskin.main[0])
+	{
+		TCHAR fname[MAX_PATH];
 		milstr_ncpy(fname, path, NELEMENTS(fname));
 		file_cutname(fname);
 		file_catname(fname, toolskin.main, NELEMENTS(fname));
-		ret = (HBITMAP)LoadImage(NULL, fname, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-		if (ret != NULL) {
-			return(ret);
-		}
+		ret = static_cast<HBITMAP>(::LoadImage(NULL, fname, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	}
-	return ::LoadBitmap(CWndProc::GetResourceHandle(), TEXT("NP2TOOL"));
+	if (ret == NULL)
+	{
+		ret = ::LoadBitmap(CWndProc::GetResourceHandle(), TEXT("NP2TOOL"));
+	}
+	return ret;
 }
 
 
@@ -230,7 +236,7 @@ static void sellist(UINT drv) {
 		return;
 	}
 	hwnd = toolwin.m_sub[fddlist[drv]];
-	fdd = np2tool.fdd + drv;
+	fdd = s_toolwndcfg.fdd + drv;
 	sel = (UINT)SendMessage(hwnd, CB_GETCURSEL, 0, 0);
 	if (sel < fdd->cnt) {
 		diskdrv_setfdd(drv, fdd->name[fdd->pos[sel]], 0);
@@ -297,20 +303,15 @@ static void accdraw(HWND hWnd, UINT8 count) {
 
 static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
-	UINT	idc;
-	int		dir;
-	UINT	newidc;
-	int		files;
-	OEMCHAR	fname[MAX_PATH];
-
-	idc = GetWindowLong(hWnd, GWL_ID) - IDC_BASE;
+	UINT idc = GetWindowLong(hWnd, GWL_ID) - IDC_BASE;
 	if (idc >= IDC_MAXITEMS) {
 		return(0);
 	}
+#if 0
 	if (msg == WM_KEYDOWN) {
 		if ((short)wp == VK_TAB) {
-			dir = (GetKeyState(VK_SHIFT) >= 0)?1:-1;
-			newidc = idc;
+			int dir = (GetKeyState(VK_SHIFT) >= 0)?1:-1;
+			UINT newidc = idc;
 			do {
 				newidc += dir;
 				if (newidc >= IDC_MAXITEMS) {
@@ -330,9 +331,13 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			}
 		}
 	}
-	else if (msg == WM_DROPFILES) {
-   	    files = DragQueryFile((HDROP)wp, (UINT)-1, NULL, 0);
-		if (files == 1) {
+	else
+#endif
+	 if (msg == WM_DROPFILES) {
+	    int files = DragQueryFile((HDROP)wp, (UINT)-1, NULL, 0);
+		if (files == 1)
+		{
+			OEMCHAR	fname[MAX_PATH];
 			DragQueryFile((HDROP)wp, 0, fname, NELEMENTS(fname));
 			if (idc == IDC_TOOLFDD1LIST) {
 				diskdrv_setfdd(0, fname, 0);
@@ -363,40 +368,44 @@ static LRESULT CALLBACK twsub(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	else if (msg == WM_SETFOCUS) {
 //		SetWindowLongPtr(GetParent(hWnd), GTWLP_FOCUS, idc);
 	}
-	return(CallWindowProc(toolwin.m_subproc[idc], hWnd, msg, wp, lp));
+	return CallWindowProc(toolwin.m_subproc[idc], hWnd, msg, wp, lp);
 }
 
-static void toolwincreate(HWND hWnd) {
-
-	toolwin.m_hfont = CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
+void CToolWnd::CreateSubItems()
+{
+	m_hfont = ::CreateFont(toolskin.fontsize, 0, 0, 0, 0, 0, 0, 0,
 					SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 					DEFAULT_QUALITY, FIXED_PITCH, toolskin.font);
-	HDC hdc = GetDC(NULL);
-	toolwin.m_hdcfont = CreateCompatibleDC(hdc);
-	ReleaseDC(NULL, hdc);
-	SelectObject(toolwin.m_hdcfont, toolwin.m_hfont);
+	HDC hdc = ::GetDC(NULL);
+	m_hdcfont = ::CreateCompatibleDC(hdc);
+	::ReleaseDC(NULL, hdc);
+	::SelectObject(m_hdcfont, m_hfont);
 
-	toolwin.m_access[0] = CreateSolidBrush(0x000060);
-	toolwin.m_access[1] = CreateSolidBrush(0x0000ff);
+	m_access[0] = ::CreateSolidBrush(0x000060);
+	m_access[1] = ::CreateSolidBrush(0x0000ff);
 
-	const SUBITEM *p = subitem;
-	UINT i;
-	for (i=0; i<IDC_MAXITEMS; i++) {
+	for (UINT i = 0; i < IDC_MAXITEMS; i++)
+	{
 		HWND sub = NULL;
 		const TCHAR *cls = NULL;
 		DWORD style;
-		switch(p->tctl) {
+
+		const SUBITEM *p = &subitem[i];
+		switch (p->tctl)
+		{
 			case TCTL_STATIC:
 				cls = str_static;
 				style = 0;
 				break;
 
 			case TCTL_BUTTON:
-				if (p->extend == 0) {
+				if (p->extend == 0)
+				{
 					cls = str_button;
 					style = BS_PUSHBUTTON;
 				}
-				else if (p->extend == 1) {
+				else if (p->extend == 1)
+				{
 					cls = str_button;
 					style = BS_OWNERDRAW;
 				}
@@ -407,55 +416,74 @@ static void toolwincreate(HWND hWnd) {
 				style = CBS_DROPDOWNLIST | WS_VSCROLL;
 				break;
 		}
-		if ((cls) && (p->width > 0) && (p->height > 0)) {
+		if ((cls) && (p->width > 0) && (p->height > 0))
+		{
 			sub = CreateWindow(cls, p->text, WS_CHILD | WS_VISIBLE | style,
 							p->posx, p->posy, p->width, p->height,
-							hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
+							m_hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
 		}
-		toolwin.m_sub[i] = sub;
-		toolwin.m_subproc[i] = NULL;
-		if (sub) {
-			toolwin.m_subproc[i] = (WNDPROC)GetWindowLongPtr(sub,
-															GWLP_WNDPROC);
+		m_sub[i] = sub;
+		m_subproc[i] = NULL;
+		if (sub)
+		{
+			m_subproc[i] = (WNDPROC)GetWindowLongPtr(sub, GWLP_WNDPROC);
 			SetWindowLongPtr(sub, GWLP_WNDPROC, (LONG_PTR)twsub);
-			SendMessage(sub, WM_SETFONT, (WPARAM)toolwin.m_hfont,
-														MAKELPARAM(TRUE, 0));
+			::SendMessage(sub, WM_SETFONT, (WPARAM)m_hfont, MAKELPARAM(TRUE, 0));
 		}
-		p++;
 	}
-	for (i=0; i<FDDLIST_DRV; i++) {
-		HWND sub = toolwin.m_sub[fddlist[i]];
-		if (sub) {
+	for (UINT i = 0; i < FDDLIST_DRV; i++)
+	{
+		HWND sub = m_sub[fddlist[i]];
+		if (sub)
+		{
 			DragAcceptFiles(sub, TRUE);
-			remakefddlist(sub, np2tool.fdd + i);
+			remakefddlist(sub, s_toolwndcfg.fdd + i);
 		}
 	}
-	for (i=0; i<IDC_MAXITEMS; i++) {
-		if ((toolwin.m_sub[i]) && (subitem[i].tctl != TCTL_STATIC)) {
+	for (UINT i = 0; i < IDC_MAXITEMS; i++)
+	{
+		if ((m_sub[i]) && (subitem[i].tctl != TCTL_STATIC))
+		{
+			// SetWindowLongPtr(hWnd, GTWLP_FOCUS, i);
 			break;
 		}
 	}
-//	SetWindowLongPtr(hWnd, GTWLP_FOCUS, i);
 }
 
-static void toolwindestroy(void) {
-
-	UINT	i;
-	HWND	sub;
-
-	if (toolwin.m_hbmp) {
-		for (i=0; i<IDC_MAXITEMS; i++) {
-			sub = toolwin.m_sub[i];
-			if (sub) {
-				DestroyWindow(sub);
-			}
+void CToolWnd::DestroySubItems()
+{
+	for (UINT i = 0; i < IDC_MAXITEMS; i++)
+	{
+		HWND sub = m_sub[i];
+		m_sub[i] = NULL;
+		if (sub)
+		{
+			::DestroyWindow(sub);
 		}
-		DeleteObject(toolwin.m_access[0]);
-		DeleteObject(toolwin.m_access[1]);
-		DeleteObject(toolwin.m_hdcfont);
-		DeleteObject(toolwin.m_hfont);
-		DeleteObject(toolwin.m_hbmp);
-		toolwin.m_hbmp = NULL;
+	}
+
+	for (UINT i = 0; i < 2; i++)
+	{
+		if (m_access[i])
+		{
+			::DeleteObject(m_access[i]);
+			m_access[i] = NULL;
+		}
+	}
+	if (m_hdcfont)
+	{
+		::DeleteObject(m_hdcfont);
+		m_hdcfont = NULL;
+	}
+	if (m_hfont)
+	{
+		::DeleteObject(m_hfont);
+		m_hfont = NULL;
+	}
+	if (m_hbmp)
+	{
+		::DeleteObject(m_hbmp);
+		m_hbmp = NULL;
 	}
 }
 
@@ -536,13 +564,13 @@ const OEMCHAR	*pcszMruList[SKINMRU_MAX];
 		return;
 	}
 
-	pcszBase = np2tool.skin;
+	pcszBase = s_toolwndcfg.skin;
 
 	CheckMenuItem(hMenu, IDM_TOOL_SKINDEF, MFCHECK(pcszBase[0] == '\0'));
 
 	for (uCount=0; uCount<SKINMRU_MAX; uCount++)
 	{
-		pszMru = np2tool.skinmru[uCount];
+		pszMru = s_toolwndcfg.skinmru[uCount];
 		if (pszMru[0] == '\0')
 		{
 			break;
@@ -566,52 +594,53 @@ const OEMCHAR	*pcszMruList[SKINMRU_MAX];
 	for (i=0; i<uCount; i++)
 	{
 		j = uID[i];
-		uFlag = MFCHECK(!file_cmpname(pcszBase, np2tool.skinmru[j]));
+		uFlag = MFCHECK(!file_cmpname(pcszBase, s_toolwndcfg.skinmru[j]));
 		const TCHAR *szPath = pcszMruList[j];
 		AppendMenu(hmenuSub, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, pcszMruList[j]);
 	}
 }
 
-static void skinchange(HWND hWnd)
+void CToolWnd::ChangeSkin()
 {
-const OEMCHAR	*p;
-	UINT		i;
-	HBITMAP		hbmp;
-	BITMAP		bmp;
-	WINLOCEX	wlex;
-
-	p = np2tool.skin;
-	if (p[0]) {
-		for (i=0; i<(SKINMRU_MAX - 1); i++) {
-			if (!file_cmpname(p, np2tool.skinmru[i])) {
+	const OEMCHAR* p = s_toolwndcfg.skin;
+	if (p[0])
+	{
+		UINT i;
+		for (i = 0; i < (SKINMRU_MAX - 1); i++)
+		{
+			if (!file_cmpname(p, s_toolwndcfg.skinmru[i]))
+			{
 				break;
 			}
 		}
-		while(i > 0) {
-			CopyMemory(np2tool.skinmru[i], np2tool.skinmru[i-1],
-												sizeof(np2tool.skinmru[0]));
+		while (i > 0)
+		{
+			CopyMemory(s_toolwndcfg.skinmru[i], s_toolwndcfg.skinmru[i-1],
+												sizeof(s_toolwndcfg.skinmru[0]));
 			i--;
 		}
-		file_cpyname(np2tool.skinmru[0], p, NELEMENTS(np2tool.skinmru[0]));
+		file_cpyname(s_toolwndcfg.skinmru[0], p, NELEMENTS(s_toolwndcfg.skinmru[0]));
 	}
-	setSkinMruMenu(np2class_gethmenu(hWnd));
-	setSkinMruMenu(GetSystemMenu(hWnd, FALSE));
-	DrawMenuBar(hWnd);
+	setSkinMruMenu(np2class_gethmenu(m_hWnd));
+	setSkinMruMenu(GetSystemMenu(FALSE));
+	DrawMenuBar();
 	sysmng_update(SYS_UPDATEOSCFG);
 
-	wlex = np2_winlocexallwin(g_hWndMain);
-	winlocex_setholdwnd(wlex, hWnd);
-	toolwindestroy();
-	hbmp = skinload(np2tool.skin);
+	WINLOCEX wlex = np2_winlocexallwin(g_hWndMain);
+	winlocex_setholdwnd(wlex, m_hWnd);
+	DestroySubItems();
+	HBITMAP hbmp = skinload(s_toolwndcfg.skin);
 	if (hbmp == NULL)
 	{
-		SendMessage(hWnd, WM_CLOSE, 0, 0);
+		SendMessage(WM_CLOSE, 0, 0);
 		return;
 	}
+
+	BITMAP bmp;
 	GetObject(hbmp, sizeof(BITMAP), &bmp);
-	toolwin.m_hbmp = hbmp;
-	winloc_setclientsize(hWnd, bmp.bmWidth, bmp.bmHeight);
-	toolwincreate(hWnd);
+	m_hbmp = hbmp;
+	winloc_setclientsize(m_hWnd, bmp.bmWidth, bmp.bmHeight);
+	CreateSubItems();
 	winlocex_move(wlex);
 	winlocex_destroy(wlex);
 }
@@ -619,7 +648,7 @@ const OEMCHAR	*p;
 
 // ----
 
-static void openpopup(HWND hWnd, LPARAM lp)
+void CToolWnd::OpenPopUp(LPARAM lParam)
 {
 	HMENU hMenu = CreatePopupMenu();
 	if (!winui_en)
@@ -631,41 +660,37 @@ static void openpopup(HWND hWnd, LPARAM lp)
 	setSkinMruMenu(hMenu);
 	xmenu_update(hMenu);
 	POINT pt;
-	pt.x = LOWORD(lp);
-	pt.y = HIWORD(lp);
-	ClientToScreen(hWnd, &pt);
-	TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
+	pt.x = LOWORD(lParam);
+	pt.y = HIWORD(lParam);
+	ClientToScreen(&pt);
+	TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, m_hWnd, NULL);
 	DestroyMenu(hMenu);
 }
 
-static void toolwin_oncreate(HWND hWnd)
+int CToolWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	HMENU	hMenu;
-	int		nCount;
+	np2class_wmcreate(m_hWnd);
+	setSkinMruMenu(np2class_gethmenu(m_hWnd));
 
-	np2class_wmcreate(hWnd);
-	setSkinMruMenu(np2class_gethmenu(hWnd));
-
-	hMenu = GetSystemMenu(hWnd, FALSE);
-	nCount = menu_addmenures(hMenu, 0, IDR_TOOLWIN, FALSE);
+	HMENU hMenu = GetSystemMenu(FALSE);
+	int nCount = menu_addmenures(hMenu, 0, IDR_TOOLWIN, FALSE);
 	if (nCount)
 	{
 		InsertMenu(hMenu, nCount, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 		setSkinMruMenu(hMenu);
 	}
 
-	np2class_windowtype(hWnd, (np2tool.type & 1) << 1);
-	toolwincreate(hWnd);
+	np2class_windowtype(m_hWnd, (s_toolwndcfg.type & 1) << 1);
+	CreateSubItems();
+	return 0;
 }
-
-
 
 LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (nMsg)
 	{
 		case WM_CREATE:
-			toolwin_oncreate(m_hWnd);
+			return OnCreate(reinterpret_cast<LPCREATESTRUCT>(lParam));
 			break;
 
 		case WM_SYSCOMMAND:
@@ -743,26 +768,26 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 				case IDM_TOOL_SKINSEL:
 					{
 						soundmng_disable(SNDPROC_TOOL);
-						BOOL r = dlgs_openfile(m_hWnd, &fpSkin, np2tool.skin, NELEMENTS(np2tool.skin), NULL);
+						BOOL r = dlgs_openfile(m_hWnd, &fpSkin, s_toolwndcfg.skin, NELEMENTS(s_toolwndcfg.skin), NULL);
 						soundmng_enable(SNDPROC_TOOL);
 						if (r)
 						{
-							skinchange(m_hWnd);
+							ChangeSkin();
 						}
 					}
 					break;
 
 				case IDM_TOOL_SKINDEF:
-					np2tool.skin[0] = '\0';
-					skinchange(m_hWnd);
+					s_toolwndcfg.skin[0] = '\0';
+					ChangeSkin();
 					break;
 
 				case IDM_TOOL_SKINMRU + 0:
 				case IDM_TOOL_SKINMRU + 1:
 				case IDM_TOOL_SKINMRU + 2:
 				case IDM_TOOL_SKINMRU + 3:
-					file_cpyname(np2tool.skin, np2tool.skinmru[LOWORD(wParam) - IDM_TOOL_SKINMRU], NELEMENTS(np2tool.skin));
-					skinchange(m_hWnd);
+					file_cpyname(s_toolwndcfg.skin, s_toolwndcfg.skinmru[LOWORD(wParam) - IDM_TOOL_SKINMRU], NELEMENTS(s_toolwndcfg.skin));
+					ChangeSkin();
 					break;
 
 				case IDM_CLOSE:
@@ -838,8 +863,8 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			{
 				RECT rc;
 				GetWindowRect(&rc);
-				np2tool.posx = rc.left;
-				np2tool.posy = rc.top;
+				s_toolwndcfg.posx = rc.left;
+				s_toolwndcfg.posy = rc.top;
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			break;
@@ -852,26 +877,26 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 
 		case WM_DESTROY:
 			np2class_wmdestroy(m_hWnd);
-			toolwindestroy();
+			DestroySubItems();
 			break;
 
 		case WM_LBUTTONDOWN:
-			if (np2tool.type & 1)
+			if (s_toolwndcfg.type & 1)
 			{
 				return SendMessage(WM_NCLBUTTONDOWN, HTCAPTION, 0L);
 			}
 			break;
 
 		case WM_RBUTTONDOWN:
-			openpopup(m_hWnd, lParam);
+			OpenPopUp(lParam);
 			break;
 
 		case WM_LBUTTONDBLCLK:
 			{
-				np2tool.type ^= 1;
+				s_toolwndcfg.type ^= 1;
 				WINLOCEX wlex = np2_winlocexallwin(g_hWndMain);
 				winlocex_setholdwnd(wlex, m_hWnd);
-				np2class_windowtype(m_hWnd, (np2tool.type & 1) << 1);
+				np2class_windowtype(m_hWnd, (s_toolwndcfg.type & 1) << 1);
 				winlocex_move(wlex);
 				winlocex_destroy(wlex);
 				sysmng_update(SYS_UPDATEOSCFG);
@@ -905,7 +930,7 @@ void CToolWnd::Create()
 	ZeroMemory(m_sub, sizeof(m_sub));
 	ZeroMemory(m_subproc, sizeof(m_subproc));
 
-	m_hbmp = skinload(np2tool.skin);
+	m_hbmp = skinload(s_toolwndcfg.skin);
 	if (m_hbmp == NULL)
 	{
 		return;
@@ -914,7 +939,7 @@ void CToolWnd::Create()
 	BITMAP bmp;
 	::GetObject(m_hbmp, sizeof(BITMAP), &bmp);
 
-	if (!CSubWndBase::Create(IDS_CAPTION_TOOL, WS_SYSMENU | WS_MINIMIZEBOX, np2tool.posx, np2tool.posy, bmp.bmWidth, bmp.bmHeight, NULL, NULL))
+	if (!CSubWndBase::Create(IDS_CAPTION_TOOL, WS_SYSMENU | WS_MINIMIZEBOX, s_toolwndcfg.posx, s_toolwndcfg.posy, bmp.bmWidth, bmp.bmHeight, NULL, NULL))
 	{
 		sysmenu_settoolwin(0);
 		sysmng_update(SYS_UPDATEOSCFG);
@@ -937,7 +962,7 @@ void toolwin_setfdd(UINT8 drv, const OEMCHAR *name) {
 	if (drv >= FDDLIST_DRV) {
 		return;
 	}
-	fdd = np2tool.fdd + drv;
+	fdd = s_toolwndcfg.fdd + drv;
 	if ((name == NULL) || (name[0] == '\0')) {
 		fdd->insert = 0;
 	}
@@ -1047,30 +1072,30 @@ static const TCHAR s_toolwndapp[] = TEXT("NP2 tool");
  */
 static const PFTBL s_toolwndini[] =
 {
-	PFVAL("WindposX", PFTYPE_SINT32,	&np2tool.posx),
-	PFVAL("WindposY", PFTYPE_SINT32,	&np2tool.posy),
-	PFVAL("WindType", PFTYPE_BOOL,		&np2tool.type),
-	PFSTR("SkinFile", PFTYPE_STR,		np2tool.skin),
-	PFSTR("SkinMRU0", PFTYPE_STR,		np2tool.skinmru[0]),
-	PFSTR("SkinMRU1", PFTYPE_STR,		np2tool.skinmru[1]),
-	PFSTR("SkinMRU2", PFTYPE_STR,		np2tool.skinmru[2]),
-	PFSTR("SkinMRU3", PFTYPE_STR,		np2tool.skinmru[3]),
-	PFSTR("FD1NAME0", PFTYPE_STR,		np2tool.fdd[0].name[0]),
-	PFSTR("FD1NAME1", PFTYPE_STR,		np2tool.fdd[0].name[1]),
-	PFSTR("FD1NAME2", PFTYPE_STR,		np2tool.fdd[0].name[2]),
-	PFSTR("FD1NAME3", PFTYPE_STR,		np2tool.fdd[0].name[3]),
-	PFSTR("FD1NAME4", PFTYPE_STR,		np2tool.fdd[0].name[4]),
-	PFSTR("FD1NAME5", PFTYPE_STR,		np2tool.fdd[0].name[5]),
-	PFSTR("FD1NAME6", PFTYPE_STR,		np2tool.fdd[0].name[6]),
-	PFSTR("FD1NAME7", PFTYPE_STR,		np2tool.fdd[0].name[7]),
-	PFSTR("FD2NAME0", PFTYPE_STR,		np2tool.fdd[1].name[0]),
-	PFSTR("FD2NAME1", PFTYPE_STR,		np2tool.fdd[1].name[1]),
-	PFSTR("FD2NAME2", PFTYPE_STR,		np2tool.fdd[1].name[2]),
-	PFSTR("FD2NAME3", PFTYPE_STR,		np2tool.fdd[1].name[3]),
-	PFSTR("FD2NAME4", PFTYPE_STR,		np2tool.fdd[1].name[4]),
-	PFSTR("FD2NAME5", PFTYPE_STR,		np2tool.fdd[1].name[5]),
-	PFSTR("FD2NAME6", PFTYPE_STR,		np2tool.fdd[1].name[6]),
-	PFSTR("FD2NAME7", PFTYPE_STR,		np2tool.fdd[1].name[7])
+	PFVAL("WindposX", PFTYPE_SINT32,	&s_toolwndcfg.posx),
+	PFVAL("WindposY", PFTYPE_SINT32,	&s_toolwndcfg.posy),
+	PFVAL("WindType", PFTYPE_BOOL,		&s_toolwndcfg.type),
+	PFSTR("SkinFile", PFTYPE_STR,		s_toolwndcfg.skin),
+	PFSTR("SkinMRU0", PFTYPE_STR,		s_toolwndcfg.skinmru[0]),
+	PFSTR("SkinMRU1", PFTYPE_STR,		s_toolwndcfg.skinmru[1]),
+	PFSTR("SkinMRU2", PFTYPE_STR,		s_toolwndcfg.skinmru[2]),
+	PFSTR("SkinMRU3", PFTYPE_STR,		s_toolwndcfg.skinmru[3]),
+	PFSTR("FD1NAME0", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[0]),
+	PFSTR("FD1NAME1", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[1]),
+	PFSTR("FD1NAME2", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[2]),
+	PFSTR("FD1NAME3", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[3]),
+	PFSTR("FD1NAME4", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[4]),
+	PFSTR("FD1NAME5", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[5]),
+	PFSTR("FD1NAME6", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[6]),
+	PFSTR("FD1NAME7", PFTYPE_STR,		s_toolwndcfg.fdd[0].name[7]),
+	PFSTR("FD2NAME0", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[0]),
+	PFSTR("FD2NAME1", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[1]),
+	PFSTR("FD2NAME2", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[2]),
+	PFSTR("FD2NAME3", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[3]),
+	PFSTR("FD2NAME4", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[4]),
+	PFSTR("FD2NAME5", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[5]),
+	PFSTR("FD2NAME6", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[6]),
+	PFSTR("FD2NAME7", PFTYPE_STR,		s_toolwndcfg.fdd[1].name[7])
 };
 
 /**
@@ -1078,10 +1103,10 @@ static const PFTBL s_toolwndini[] =
  */
 void toolwin_readini()
 {
-	ZeroMemory(&np2tool, sizeof(np2tool));
-	np2tool.posx = CW_USEDEFAULT;
-	np2tool.posy = CW_USEDEFAULT;
-	np2tool.type = 1;
+	ZeroMemory(&s_toolwndcfg, sizeof(s_toolwndcfg));
+	s_toolwndcfg.posx = CW_USEDEFAULT;
+	s_toolwndcfg.posy = CW_USEDEFAULT;
+	s_toolwndcfg.type = 1;
 
 	OEMCHAR szPath[MAX_PATH];
 	initgetfile(szPath, _countof(szPath));

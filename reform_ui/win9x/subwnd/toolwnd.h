@@ -29,8 +29,6 @@ typedef struct {
 	OEMCHAR	skinmru[SKINMRU_MAX][MAX_PATH];
 } NP2TOOL;
 
-extern	NP2TOOL		np2tool;
-
 enum
 {
 	IDC_TOOLHDDACC			= 0,
@@ -60,12 +58,18 @@ public:
 
 protected:
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+	int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnDestroy();
 	void OnPaint();
 	void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 private:
 	void OnDraw(BOOL redraw);
+	void OpenPopUp(LPARAM lParam);
+	void InitializeSubItems();
+	void CreateSubItems();
+	void DestroySubItems();
+	void ChangeSkin();
 
 public:
 	HBITMAP			m_hbmp;
