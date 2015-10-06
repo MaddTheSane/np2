@@ -131,6 +131,13 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->s.cCaps;
 
+	keydisp_bindfm(opna, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 0);
+	if (cCaps & OPNA_HAS_YM3438)
+	{
+		keydisp_bindfm(opna, 6, 0x200);
+	}
+	keydisp_bindpsg(&opna->psg);
+
 	opna->opngen.opnch[2].extop = opna->s.reg[0x27] & 0xc0;
 	restore(opna);
 	if (cCaps & OPNA_HAS_YM3438)

@@ -462,6 +462,7 @@ void amd98_bind(void)
 
 	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
 	{
+		keydisp_bindpsg(&g_amd98.psg[i]);
 		psgpanset(&g_amd98.psg[i]);
 		psggen_restore(&g_amd98.psg[i]);
 		sound_streamregist(&g_amd98.psg[i], (SOUNDCB)psggen_getpcm);

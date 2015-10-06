@@ -171,13 +171,14 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	}
 	g_usesound = type;
 	soundmng_setreverse(cross);
-	keydisp_setfmboard(type);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
 
 void fmboard_bind(void) {
 
-	switch(g_usesound) {
+	keydisp_reset();
+	switch (g_usesound)
+	{
 		case 0x01:
 			board14_bind();
 			break;
