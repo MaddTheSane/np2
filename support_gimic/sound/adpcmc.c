@@ -21,7 +21,7 @@ void adpcm_setvol(UINT vol) {
 
 void adpcm_reset(ADPCM ad) {
 
-	ZeroMemory(ad, sizeof(_ADPCM));
+	memset(ad, 0, sizeof(*ad));
 	ad->mask = 0;					// (UINT8)~0x1c;
 	ad->delta = 127;
 	STOREINTELWORD(ad->reg.stop, 0x0002);

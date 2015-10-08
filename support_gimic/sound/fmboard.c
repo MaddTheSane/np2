@@ -97,6 +97,33 @@ void fmboard_extenable(REG8 enable) {
 
 // ----
 
+/**
+ * Constructor
+ */
+void fmboard_construct(void)
+{
+	opna_construct(&g_opn);
+	opna_construct(&g_opn2);
+#if defined(SUPPORT_PX)
+	opna_construct(&g_opn3);
+#endif	// defined(SUPPORT_PX)
+}
+
+/**
+ * Destructor
+ */
+void fmboard_destruct(void)
+{
+	opna_destruct(&g_opn);
+	opna_destruct(&g_opn2);
+#if defined(SUPPORT_PX)
+	opna_destruct(&g_opn3);
+#endif	// defined(SUPPORT_PX)
+}
+
+/**
+ * Reset
+ */
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	UINT8	cross;
@@ -105,12 +132,16 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	beep_reset();												// ver0.27a
 	cross = pConfig->snd_x;										// ver0.30
 
-	extfn = NULL;
-	opna_construct(&g_opn);
-	opna_construct(&g_opn2);
+	if (g_usesound != type)
+	{
+		opna_reset(&g_opn, 0);
+		opna_reset(&g_opn2, 0);
 #if defined(SUPPORT_PX)
-	opna_construct(&g_opn3);
+		opna_reset(&g_opn3, 0);
 #endif	// defined(SUPPORT_PX)
+	}
+
+	extfn = NULL;
 	pcm86_reset();
 	cs4231_reset();
 

@@ -31,6 +31,8 @@ REG8 fmboard_getjoy(PSGGEN psg);
 void fmboard_extreg(void (*ext)(REG8 enable));
 void fmboard_extenable(REG8 enable);
 
+void fmboard_construct(void);
+void fmboard_destruct(void);
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
 void fmboard_bind(void);
 

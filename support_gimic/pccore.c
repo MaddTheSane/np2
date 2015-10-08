@@ -256,6 +256,7 @@ void pccore_init(void) {
 	fddfile_initialize();
 
 #if !defined(DISABLE_SOUND)
+	fmboard_construct();
 	sound_init();
 #endif
 
@@ -278,6 +279,7 @@ void pccore_term(void) {
 
 #if !defined(DISABLE_SOUND)
 	sound_term();
+	fmboard_destruct();
 #endif
 
 	fdd_eject(0);

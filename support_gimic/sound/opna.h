@@ -9,6 +9,7 @@
 #include "opngen.h"
 #include "psggen.h"
 #include "rhythm.h"
+#include "statsave.h"
 
 /**
  * Chips flags
@@ -69,6 +70,7 @@ void opna_initialize(void);
 void opna_deinitialize(void);
 
 void opna_construct(POPNA opna);
+void opna_destruct(POPNA opna);
 void opna_reset(POPNA opna, REG8 cCaps);
 void opna_bind(POPNA opna);
 
@@ -84,6 +86,9 @@ REG8 opna_readRegister(POPNA opna, UINT nAddress);
 REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress);
 REG8 opna_read3438Register(POPNA opna, UINT nAddress);
 REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress);
+
+int opna_sfsave(PCOPNA opna, STFLAGH sfh, const SFENTRY *tbl);
+int opna_sfload(POPNA opna, STFLAGH sfh, const SFENTRY *tbl);
 
 #ifdef __cplusplus
 }
