@@ -36,10 +36,30 @@ void opna_deinitialize(void)
  */
 void opna_construct(POPNA opna)
 {
+	memset(opna, 0, sizeof(*opna));
+}
+
+/**
+ * Deinitialize instance
+ * @param[in] opna The instance
+ */
+void opna_destruct(POPNA opna)
+{
+}
+
+/**
+ * Reset
+ * @param[in] opna The instance
+ * @param[in] cCaps
+ */
+void opna_reset(POPNA opna, REG8 cCaps)
+{
 	UINT i;
 
-	memset(opna, 0, sizeof(*opna));
-
+	memset(&opna->s, 0, sizeof(opna->s));
+	opna->s.adpcmmask = ~(0x1c);
+	opna->s.channels = 3;
+	opna->s.cCaps = cCaps;
 	opna->s.reg[0x07] = 0xbf;
 	opna->s.reg[0x0e] = 0xff;
 	opna->s.reg[0x0f] = 0xff;
@@ -54,22 +74,10 @@ void opna_construct(POPNA opna)
 		opna->s.keyreg[i] = i & 7;
 	}
 
-	opna->s.channels = 3;
-	opna->s.adpcmmask = ~(0x1c);
 	opngen_reset(&opna->opngen);
 	psggen_reset(&opna->psg);
 	rhythm_reset(&opna->rhythm);
 	adpcm_reset(&opna->adpcm);
-}
-
-/**
- * Reset
- * @param[in] opna The instance
- * @param[in] cCaps
- */
-void opna_reset(POPNA opna, REG8 cCaps)
-{
-	opna->s.cCaps = cCaps;
 }
 
 /**
@@ -503,4 +511,45 @@ static void fmrestore(POPNA opna, REG8 chbase, UINT bank)
 	{
 		opngen_keyon(&opna->opngen, chbase + i, opna->s.keyreg[bank * 4 + i]);
 	}
+}
+
+
+
+// ---- statsave
+
+/**
+ * Save
+ * @param[in] opna The instance
+ * @param[in] sfh The handle of statsave
+ * @param[in] tbl The item of statsave
+ * @return Error
+ */
+int opna_sfsave(PCOPNA opna, STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret = statflag_write(sfh, &opna->s, sizeof(opna->s));
+	if (opna->s.cCaps & OPNA_HAS_ADPCM)
+	{
+		ret |= statflag_write(sfh, &opna->adpcm, sizeof(opna->adpcm));
+	}
+
+	return ret;
+}
+
+/**
+ * Load
+ * @param[in] opna The instance
+ * @param[in] sfh The handle of statsave
+ * @param[in] tbl The item of statsave
+ * @return Error
+ */
+int opna_sfload(POPNA opna, STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret = statflag_read(sfh, &opna->s, sizeof(opna->s));
+	if (opna->s.cCaps & OPNA_HAS_ADPCM)
+	{
+		ret |= statflag_read(sfh, &opna->adpcm, sizeof(opna->adpcm));
+		adpcm_update(&opna->adpcm);
+	}
+
+	return ret;
 }
