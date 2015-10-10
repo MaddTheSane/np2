@@ -219,7 +219,7 @@ static REG8 IOINPCALL p86_i28e(UINT port)
 {
 	UINT nAddress;
 
-	if (g_opn.s.extend)
+	if (g_opn3.s.extend)
 	{
 		nAddress = g_opn3.s.addr1h;
 		if ((nAddress == 0x08) || (nAddress == 0x0f))
