@@ -17,12 +17,17 @@
 enum
 {
 	OPNA_HAS_TIMER		= 0x01,		/*!< Has timer */
-	OPNA_HAS_EXTENDEDFM	= 0x02,		/*!< Is OPNA */
-	OPNA_HAS_ADPCM		= 0x04,		/*!< Has ADPCM DRAM */
-	OPNA_HAS_YM3438		= 0x08,		/*!< Has YM3438 */
-	OPNA_HAS_VR			= 0x10,		/*!< Has VR */
-	OPNA_REALCHIP		= 0x20,		/*!< Allow realchip */
-	OPNA_S98			= 0x40		/*!< Supports S98 */
+	OPNA_HAS_PSG		= 0x02,		/*!< Has PSG */
+	OPNA_HAS_FM			= 0x04,		/*!< Has FM */
+	OPNA_HAS_EXTENDEDFM	= 0x08,		/*!< Has Extend FM */
+	OPNA_HAS_RHYTHM		= 0x10,		/*!< Has Rhythm */
+	OPNA_HAS_ADPCM		= 0x20,		/*!< Has ADPCM DRAM */
+	OPNA_HAS_VR			= 0x40,		/*!< Has VR */
+	OPNA_S98			= 0x80,		/*!< Supports S98 */
+
+	OPNA_MODE_2203		= OPNA_HAS_PSG | OPNA_HAS_FM,
+	OPNA_MODE_2608		= OPNA_MODE_2203 | OPNA_HAS_EXTENDEDFM | OPNA_HAS_RHYTHM,
+	OPNA_MODE_3438		= OPNA_HAS_FM | OPNA_HAS_EXTENDEDFM
 };
 
 /**
@@ -30,19 +35,15 @@ enum
  */
 struct tagOpnaState
 {
-	UINT8	addr1l;
-	UINT8	addr1h;
-	UINT8	addr2l;
-	UINT8	addr2h;
-	UINT8	data1;
-	UINT8	data2;
+	UINT8	addrl;
+	UINT8	addrh;
+	UINT8	data;
+	UINT8	extend;
 	UINT16	base;
 	UINT8	adpcmmask;
-	UINT8	channels;
-	UINT8	extend;
 	UINT8	cCaps;
-	UINT8	keyreg[16];
-	UINT8	reg[0x400];
+	UINT8	keyreg[8];
+	UINT8	reg[0x200];
 };
 
 /**

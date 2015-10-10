@@ -25,11 +25,7 @@
 
 
 	UINT32		g_usesound;
-	_OPNA		g_opn;
-	_OPNA		g_opn2;
-#if defined(SUPPORT_PX)
-	_OPNA		g_opn3;
-#endif	// defined(SUPPORT_PX)
+	_OPNA		g_opna[OPNA_MAX];
 
 	_FMTIMER	g_fmtimer;
 	_PCM86		pcm86;
@@ -102,11 +98,12 @@ void fmboard_extenable(REG8 enable) {
  */
 void fmboard_construct(void)
 {
-	opna_construct(&g_opn);
-	opna_construct(&g_opn2);
-#if defined(SUPPORT_PX)
-	opna_construct(&g_opn3);
-#endif	// defined(SUPPORT_PX)
+	UINT i;
+
+	for (i = 0; i < NELEMENTS(g_opna); i++)
+	{
+		opna_construct(&g_opna[i]);
+	}
 }
 
 /**
@@ -114,11 +111,12 @@ void fmboard_construct(void)
  */
 void fmboard_destruct(void)
 {
-	opna_destruct(&g_opn);
-	opna_destruct(&g_opn2);
-#if defined(SUPPORT_PX)
-	opna_destruct(&g_opn3);
-#endif	// defined(SUPPORT_PX)
+	UINT i;
+
+	for (i = 0; i < NELEMENTS(g_opna); i++)
+	{
+		opna_destruct(&g_opna[i]);
+	}
 }
 
 /**
@@ -126,7 +124,8 @@ void fmboard_destruct(void)
  */
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
-	UINT8	cross;
+	UINT8 cross;
+	UINT i;
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
@@ -134,11 +133,10 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
 	if (g_usesound != type)
 	{
-		opna_reset(&g_opn, 0);
-		opna_reset(&g_opn2, 0);
-#if defined(SUPPORT_PX)
-		opna_reset(&g_opn3, 0);
-#endif	// defined(SUPPORT_PX)
+		for (i = 0; i < NELEMENTS(g_opna); i++)
+		{
+			opna_reset(&g_opna[i], 0);
+		}
 	}
 
 	extfn = NULL;

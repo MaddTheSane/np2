@@ -765,13 +765,11 @@ static int flagload_gij(STFLAGH sfh, const SFENTRY *tbl) {
 
 enum {
 	FLAG_MG			= 0x0001,
-	FLAG_FM1A		= 0x0002,
-	FLAG_FM1B		= 0x0004,
-	FLAG_FM2A		= 0x0008,
-	FLAG_FM2B		= 0x0010,
-	FLAG_AMD98		= 0x0020,
-	FLAG_PCM86		= 0x0400,
-	FLAG_CS4231		= 0x0800
+	FLAG_FM1		= 0x0002,
+	FLAG_FM2		= 0x0004,
+	FLAG_AMD98		= 0x0008,
+	FLAG_PCM86		= 0x0010,
+	FLAG_CS4231		= 0x0020
 };
 
 typedef struct {
@@ -789,31 +787,31 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 
 		case 0x02:
-			saveflg = FLAG_FM1A;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_FM2 | FLAG_PCM86;
 			break;
 
 		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_CS4231;
+			saveflg = FLAG_FM1 | FLAG_CS4231;
 			break;
 
 		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B;
+			saveflg = FLAG_FM1 | FLAG_FM2;
 			break;
 
 		case 0x80:
@@ -829,9 +827,12 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	if (saveflg & FLAG_MG) {
 		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
-	if (saveflg & FLAG_FM1A) {
+	if (saveflg & FLAG_FM1) {
 		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= opna_sfsave(&g_opn, sfh, tbl);
+		ret |= opna_sfsave(&g_opna[0], sfh, tbl);
+	}
+	if (saveflg & FLAG_FM2) {
+		ret |= opna_sfsave(&g_opna[1], sfh, tbl);
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
@@ -860,31 +861,31 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 
 		case 0x02:
-			saveflg = FLAG_FM1A;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_FM2 | FLAG_PCM86;
 			break;
 
 		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_CS4231;
+			saveflg = FLAG_FM1 | FLAG_CS4231;
 			break;
 
 		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B;
+			saveflg = FLAG_FM1 | FLAG_FM2;
 			break;
 
 		case 0x80:
@@ -901,10 +902,16 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		board14_allkeymake();
 	}
 
-	if (saveflg & FLAG_FM1A) {
+	if (saveflg & FLAG_FM1)
+	{
 		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= opna_sfload(&g_opn, sfh, tbl);
+		ret |= opna_sfload(&g_opna[0], sfh, tbl);
 	}
+	if (saveflg & FLAG_FM2)
+	{
+		ret |= opna_sfload(&g_opna[1], sfh, tbl);
+	}
+
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
 	}
