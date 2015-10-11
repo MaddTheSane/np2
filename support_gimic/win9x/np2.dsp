@@ -1527,6 +1527,14 @@ SOURCE=.\ext\externalchip.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ext\externalchipmanager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ext\externalopna.cpp
 # End Source File
 # Begin Source File

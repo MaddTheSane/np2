@@ -7,6 +7,7 @@
 #include "c86ctlif.h"
 #include "c86ctl.h"
 
+#if 0
 using namespace c86ctl;
 
 //! インタフェイス
@@ -209,3 +210,4 @@ bool C86CtlIf::HasADPCM()
 {
 	return m_bHasADPCM;
 }
+#endif

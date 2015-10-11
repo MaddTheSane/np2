@@ -16,7 +16,7 @@
 #include "misc\extrom.h"
 #include "sound.h"
 #if defined(SUPPORT_ROMEO)
-#include "ext\externalopna.h"
+#include "ext\externalchipmanager.h"
 #endif
 #if defined(VERMOUTH_LIB)
 #include "sound\vermouth\vermouth.h"
@@ -355,7 +355,7 @@ void CDSound3::EnableStream(bool bEnable)
 	}
 
 #if defined(SUPPORT_ROMEO)
-	CExternalOpna::GetInstance()->Mute(!bEnable);
+	CExternalChipManager::GetInstance()->Mute(!bEnable);
 #endif
 }
 

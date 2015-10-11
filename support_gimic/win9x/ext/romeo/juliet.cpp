@@ -3,6 +3,7 @@
  * @brief	ROMEO アクセス クラスの動作の定義を行います
  */
 
+#if 0
 #include "compiler.h"
 #include "juliet.h"
 #include <stddef.h>
@@ -192,3 +193,4 @@ bool CJuliet::HasADPCM()
 {
 	return false;
 }
+#endif

@@ -11,6 +11,7 @@
 #include "sound/sound.h"
 #include "sound/s98.h"
 #include "generic/keydisp.h"
+#include "externalchipmanager.h"
 #include "externalopna.h"
 
 static void writeRegister(POPNA opna, UINT nAddress, REG8 cData);
@@ -28,8 +29,7 @@ void opna_initialize(void)
  */
 void opna_deinitialize(void)
 {
-	CExternalOpna::GetInstance()->Reset();
-	CExternalOpna::GetInstance()->Deinitialize();
+	CExternalChipManager::GetInstance()->Deinitialize();
 }
 
 /**
@@ -47,6 +47,9 @@ void opna_construct(POPNA opna)
  */
 void opna_destruct(POPNA opna)
 {
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
+	CExternalChipManager::GetInstance()->Release(pExt);
+	opna->userdata = NULL;
 }
 
 /**
@@ -78,7 +81,15 @@ void opna_reset(POPNA opna, REG8 cCaps)
 	rhythm_reset(&opna->rhythm);
 	adpcm_reset(&opna->adpcm);
 
-	CExternalOpna::GetInstance()->Reset();
+	if (cCaps != 0)
+	{
+		CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
+		if (pExt)
+		{
+			CExternalChipManager::GetInstance()->Release(pExt);
+			opna->userdata = NULL;
+		}
+	}
 }
 
 /**
@@ -144,15 +155,24 @@ void opna_bind(POPNA opna)
 		keydisp_bindpsg(&opna->psg);
 	}
 
-	CExternalOpna* pExt = CExternalOpna::GetInstance();
-	if (!pExt->IsEnabled())
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
+	if (pExt == NULL)
 	{
-		pExt->Initialize();
-		pExt->Reset();
+		IExternalChip::ChipType nType = IExternalChip::kYMF288;
+		if (cCaps & OPNA_HAS_ADPCM)
+		{
+			nType = IExternalChip::kYM2608;
+		}
+		if (cCaps == OPNA_MODE_3438)
+		{
+			nType = IExternalChip::kYM3438;
+		}
+		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nType, 3993600 * 2));
+		opna->userdata = reinterpret_cast<INTPTR>(pExt);
 	}
-
-	if (pExt->IsEnabled())
+	if (pExt)
 	{
+		pExt->Reset();
 		pExt->WriteRegister(0x22, 0x00);
 		pExt->WriteRegister(0x29, 0x80);
 		pExt->WriteRegister(0x10, 0xbf);
@@ -165,7 +185,7 @@ void opna_bind(POPNA opna)
 	}
 	restore(opna);
 
-	if (pExt->IsEnabled())
+	if (pExt)
 	{
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
@@ -272,7 +292,7 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
 	const UINT8 cCaps = opna->s.cCaps;
-	CExternalOpna* pExt = CExternalOpna::GetInstance();
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 
 	if (nAddress < 0x10)
 	{
@@ -280,7 +300,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 		if (cCaps & OPNA_HAS_PSG)
 		{
 			keydisp_psg(&opna->psg, nAddress);
-			if (pExt->IsEnabled())
+			if (pExt)
 			{
 				pExt->WriteRegister(nAddress, cData);
 			}
@@ -290,7 +310,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_RHYTHM)
 		{
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				rhythm_setreg(&opna->rhythm, nAddress, cData);
 			}
@@ -321,7 +341,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 				return;
 			}
 
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				opngen_keyon(&opna->opngen, cChannel, cData);
 			}
@@ -337,7 +357,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				fmtimer_setreg(nAddress, cData);
 			}
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				if (nAddress == 0x27)
 				{
@@ -355,7 +375,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	}
 	else if (nAddress < 0xc0)
 	{
-		if (!pExt->IsEnabled())
+		if (!pExt)
 		{
 			opngen_setreg(&opna->opngen, 0, nAddress, cData);
 		}
@@ -393,14 +413,14 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
 	const UINT8 cCaps = opna->s.cCaps;
-	CExternalOpna* pExt = CExternalOpna::GetInstance();
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 
 	if (nAddress < 0x12)
 	{
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
 			adpcm_setreg(&opna->adpcm, nAddress, cData);
-			if (pExt->HasADPCM())
+			if ((pExt) && (pExt->HasADPCM()))
 			{
 				pExt->WriteRegister(nAddress + 0x100, cData);
 			}
@@ -420,7 +440,7 @@ static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_EXTENDEDFM)
 		{
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				opngen_setreg(&opna->opngen, 3, nAddress, cData);
 			}

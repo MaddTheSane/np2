@@ -52,6 +52,7 @@ struct tagOpnaState
 struct tagOpna
 {
 	struct tagOpnaState s;
+	INTPTR userdata;
 	_OPNGEN opngen;
 	_PSGGEN psg;
 	_RHYTHM rhythm;
