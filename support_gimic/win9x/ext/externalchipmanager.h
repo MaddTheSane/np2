@@ -7,7 +7,8 @@
 
 #include <vector>
 #include "externalchip.h"
-#include "rebirth\rebirth.h"
+#include "c86ctl/c86ctlif.h"
+#include "rebirth/rebirth.h"
 
 /**
  * @brief 外部チップ管理クラス
@@ -29,6 +30,7 @@ private:
 	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
 	std::vector<IExternalChip*> m_chips;		//!< モジュール
 
+	C86CtlIf m_gimic;
 	CRebirth m_rebirth;
 };
 

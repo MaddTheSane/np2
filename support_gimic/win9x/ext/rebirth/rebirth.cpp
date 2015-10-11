@@ -87,7 +87,6 @@ void CRebirth::Deinitialize()
 		{
 			delete m_chips.front();
 		}
-		m_chips.clear();
 
 		// 一括開放する場合（チップ一括開放の場合）
 		m_pManager->releaseAllSoundChip();
@@ -160,7 +159,7 @@ IExternalChip* CRebirth::GetInterface(IExternalChip::ChipType nType, UINT nClock
 
 	if (bInitialized)
 	{
-		Deinitialize();
+//		Deinitialize();
 	}
 	return NULL;
 }

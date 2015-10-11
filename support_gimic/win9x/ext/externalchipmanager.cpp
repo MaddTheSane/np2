@@ -8,8 +8,6 @@
 #include <algorithm>
 #include "np2.h"
 #include "externalopna.h"
-// #include "c86ctl\c86ctlif.h"
-#include "rebirth\rebirth.h"
 // #include "romeo\juliet.h"
 
 /*! 唯一のインスタンスです */
@@ -27,42 +25,6 @@ CExternalChipManager::CExternalChipManager()
  */
 void CExternalChipManager::Initialize()
 {
-#if 0
-	IExternalChip* pModule;
-
-	// ROMEO
-	if (np2oscfg.useromeo)
-	{
-		pModule = new CJuliet;
-		if (pModule->Initialize())
-		{
-			m_module = pModule;
-//			m_bHasADPCM = pModule->HasADPCM();
-			return;
-		}
-		delete pModule;
-	}
-
-	// G.I.M.I.C / C86BOX
-	pModule = new C86CtlIf;
-	if (pModule->Initialize())
-	{
-		m_module = pModule;
-		m_bHasADPCM = pModule->HasADPCM();
-		return;
-	}
-	delete pModule;
-
-	// RE:birth
-	pModule = new CRebirth;
-	if (pModule->Initialize())
-	{
-		m_module = pModule;
-		m_bHasADPCM = pModule->HasADPCM();
-		return;
-	}
-	delete pModule;
-#endif
 }
 
 /**
@@ -80,6 +42,7 @@ void CExternalChipManager::Deinitialize()
 		delete pChip;
 	}
 
+	m_gimic.Deinitialize();
 	m_rebirth.Deinitialize();
 }
 
@@ -91,6 +54,10 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nType,
 {
 	IExternalChip* pChip = NULL;
 
+	if (pChip == NULL)
+	{
+		pChip = m_gimic.GetInterface(nType, nClock);
+	}
 	if (pChip == NULL)
 	{
 		pChip = m_rebirth.GetInterface(nType, nClock);
