@@ -52,15 +52,32 @@ void CExternalChipManager::Deinitialize()
  */
 IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nType, UINT nClock)
 {
+	IExternalChip* pChip = GetInterfaceInner(nType, nClock);
+	if (pChip == NULL)
+	{
+		if (nType == IExternalChip::kYMF288)
+		{
+			pChip = GetInterface(IExternalChip::kYM2608, nClock);
+		}
+		else if (nType == IExternalChip::kYM3438)
+		{
+			pChip = GetInterface(IExternalChip::kYMF288, nClock);
+		}
+	}
+	return pChip;
+}
+
+IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType nType, UINT nClock)
+{
 	IExternalChip* pChip = NULL;
 
 	if (pChip == NULL)
 	{
-		pChip = m_gimic.GetInterface(nType, nClock);
+		pChip = m_rebirth.GetInterface(nType, nClock);
 	}
 	if (pChip == NULL)
 	{
-		pChip = m_rebirth.GetInterface(nType, nClock);
+		pChip = m_gimic.GetInterface(nType, nClock);
 	}
 
 	// ƒ‰ƒbƒsƒ“ƒO

@@ -178,7 +178,7 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nType, UINT nClock
 				{
 					nRealChipType = IExternalChip::kYM2608;
 				}
-				else if (nChipType == CHIP_OPN3L)
+				else if ((nChipType == CHIP_OPN3L) || (nChipType == (CHIP_OPNA | 0x10000)))
 				{
 					nRealChipType = IExternalChip::kYMF288;
 				}

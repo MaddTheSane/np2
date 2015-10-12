@@ -66,6 +66,7 @@ bool CRebirth::Initialize()
 		{
 			break;
 		}
+		m_pManager->setDelay(0);
 
 		// リセットを行う
 		Reset();

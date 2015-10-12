@@ -32,6 +32,7 @@ private:
 
 	C86CtlIf m_gimic;
 	CRebirth m_rebirth;
+	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nType, UINT nClock);
 };
 
 /**
