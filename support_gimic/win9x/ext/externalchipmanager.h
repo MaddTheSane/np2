@@ -8,7 +8,7 @@
 #include <vector>
 #include "externalchip.h"
 #include "c86ctl/c86ctlif.h"
-#include "rebirth/rebirth.h"
+#include "scci/scciif.h"
 
 /**
  * @brief 外部チップ管理クラス
@@ -21,7 +21,7 @@ public:
 	CExternalChipManager();
 	void Initialize();
 	void Deinitialize();
-	IExternalChip* GetInterface(IExternalChip::ChipType nType, UINT nClock);
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
 	void Release(IExternalChip* pChip);
 	void Reset();
 	void Mute(bool bMute);
@@ -30,9 +30,9 @@ private:
 	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
 	std::vector<IExternalChip*> m_chips;		//!< モジュール
 
-	C86CtlIf m_gimic;							//!< C86CtlIf インスタンス
-	CRebirth m_rebirth;							//!< SCCI インスタンス
-	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nType, UINT nClock);
+	C86CtlIf m_c86ctl;							//!< C86Ctl インスタンス
+	CScciIf m_scci;								//!< SCCI インスタンス
+	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 
 /**

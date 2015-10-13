@@ -1354,29 +1354,37 @@ SOURCE=.\ext\romeo\juliet.h
 SOURCE=.\ext\romeo\romeo.h
 # End Source File
 # End Group
-# Begin Group "rebirth"
+# Begin Group "scci"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\ext\rebirth\rebirth.cpp
+SOURCE=.\ext\scci\scci.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\rebirth.h
+SOURCE=.\ext\scci\SCCIDefines.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\scci.h
+SOURCE=.\ext\scci\scciif.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\SCCIDefines.h
+SOURCE=.\ext\scci\scciif.h
 # End Source File
 # End Group
 # Begin Source File
 
 SOURCE=.\ext\externalchip.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.h
 # End Source File
 # Begin Source File
 

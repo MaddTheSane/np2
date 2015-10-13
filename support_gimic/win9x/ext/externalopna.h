@@ -15,6 +15,8 @@ class CExternalOpna : public IExternalChip
 public:
 	CExternalOpna(IExternalChip* pChip);
 	virtual ~CExternalOpna();
+//	bool HasPsg() const;
+//	bool HasRhythm() const;
 	bool HasADPCM() const;
 	virtual ChipType GetChipType();
 	virtual void Reset();

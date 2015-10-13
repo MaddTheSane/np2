@@ -1,10 +1,10 @@
 /**
- * @file	rebirth.cpp
+ * @file	scciif.cpp
  * @brief	SCCI アクセス クラスの動作の定義を行います
  */
 
 #include "compiler.h"
-#include "rebirth.h"
+#include "scciif.h"
 #include "scci.h"
 #include "SCCIDefines.h"
 #include <algorithm>
@@ -12,7 +12,7 @@
 /**
  * コンストラクタ
  */
-CRebirth::CRebirth()
+CScciIf::CScciIf()
 	: m_hModule(NULL)
 	, m_pManager(NULL)
 {
@@ -21,7 +21,7 @@ CRebirth::CRebirth()
 /**
  * デストラクタ
  */
-CRebirth::~CRebirth()
+CScciIf::~CScciIf()
 {
 	Deinitialize();
 }
@@ -31,7 +31,7 @@ CRebirth::~CRebirth()
  * @retval true 成功
  * @retval false 失敗
  */
-bool CRebirth::Initialize()
+bool CScciIf::Initialize()
 {
 	if (m_hModule)
 	{
@@ -80,7 +80,7 @@ bool CRebirth::Initialize()
 /**
  * 解放
  */
-void CRebirth::Deinitialize()
+void CScciIf::Deinitialize()
 {
 	if (m_pManager)
 	{
@@ -109,7 +109,7 @@ void CRebirth::Deinitialize()
 /**
  * 音源リセット
  */
-void CRebirth::Reset()
+void CScciIf::Reset()
 {
 	if (m_pManager)
 	{
@@ -120,11 +120,11 @@ void CRebirth::Reset()
 
 /**
  * インターフェイス取得
- * @param[in] nType タイプ
+ * @param[in] nChipType タイプ
  * @param[in] nClock クロック
  * @return インスタンス
  */
-IExternalChip* CRebirth::GetInterface(IExternalChip::ChipType nType, UINT nClock)
+IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nClock)
 {
 	const bool bInitialized = Initialize();
 
@@ -136,7 +136,7 @@ IExternalChip* CRebirth::GetInterface(IExternalChip::ChipType nType, UINT nClock
 		}
 
 		SC_CHIP_TYPE iSoundChipType = SC_TYPE_NONE;
-		switch (nType)
+		switch (nChipType)
 		{
 			case IExternalChip::kYM2608:
 				iSoundChipType = SC_TYPE_YM2608;
@@ -172,7 +172,7 @@ IExternalChip* CRebirth::GetInterface(IExternalChip::ChipType nType, UINT nClock
  * 解放
  * @param[in] pChip チップ
  */
-void CRebirth::Detach(CRebirth::Chip* pChip)
+void CScciIf::Detach(CScciIf::Chip* pChip)
 {
 	std::vector<Chip*>::iterator it = std::find(m_chips.begin(), m_chips.end(), pChip);
 	if (it != m_chips.end())
@@ -191,38 +191,38 @@ void CRebirth::Detach(CRebirth::Chip* pChip)
 
 /**
  * コンストラクタ
- * @param[in] pRebirth 親インスタンス
+ * @param[in] pScciIf 親インスタンス
  * @param[in] pChip チップ インスタンス
  */
-CRebirth::Chip::Chip(CRebirth* pRebirth, SoundChip* pChip)
-	: m_pRebirth(pRebirth)
-	, m_pChip(pChip)
+CScciIf::Chip::Chip(CScciIf* pScciIf, SoundChip* pSoundChip)
+	: m_pScciIf(pScciIf)
+	, m_pSoundChip(pSoundChip)
 {
 }
 
 /**
  * デストラクタ
  */
-CRebirth::Chip::~Chip()
+CScciIf::Chip::~Chip()
 {
-	m_pRebirth->Detach(this);
+	m_pScciIf->Detach(this);
 }
 
 /**
  * オペレータ
  */
-CRebirth::Chip::operator SoundChip*()
+CScciIf::Chip::operator SoundChip*()
 {
-	return m_pChip;
+	return m_pSoundChip;
 }
 
 /**
  * Get chip type
  * @return The type of the chip
  */
-IExternalChip::ChipType CRebirth::Chip::GetChipType()
+IExternalChip::ChipType CScciIf::Chip::GetChipType()
 {
-	switch (m_pChip->getSoundChipType())
+	switch (m_pSoundChip->getSoundChipType())
 	{
 		case SC_TYPE_YM2608:
 			return IExternalChip::kYM2608;
@@ -239,7 +239,7 @@ IExternalChip::ChipType CRebirth::Chip::GetChipType()
 /**
  * リセット
  */
-void CRebirth::Chip::Reset()
+void CScciIf::Chip::Reset()
 {
 }
 
@@ -248,9 +248,9 @@ void CRebirth::Chip::Reset()
  * @param[in] nAddr アドレス
  * @param[in] cData データ
  */
-void CRebirth::Chip::WriteRegister(UINT nAddr, UINT8 cData)
+void CScciIf::Chip::WriteRegister(UINT nAddr, UINT8 cData)
 {
-	m_pChip->setRegister(nAddr, cData);
+	m_pSoundChip->setRegister(nAddr, cData);
 }
 
 /**
@@ -259,7 +259,7 @@ void CRebirth::Chip::WriteRegister(UINT nAddr, UINT8 cData)
  * @param[in] nParameter パラメータ
  * @return リザルト
  */
-INTPTR CRebirth::Chip::Message(UINT nMessage, INTPTR nParameter)
+INTPTR CScciIf::Chip::Message(UINT nMessage, INTPTR nParameter)
 {
 	return 0;
 }

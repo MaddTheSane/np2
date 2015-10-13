@@ -26,7 +26,7 @@ public:
 	bool Initialize();
 	void Deinitialize();
 	void Reset();
-	IExternalChip* GetInterface(IExternalChip::ChipType nType, UINT nClock);
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
 
 private:
 	HMODULE m_hModule;					//!< モジュール ハンドル
@@ -38,7 +38,7 @@ private:
 	class Chip : public IExternalChip
 	{
 		public:
-			Chip(C86CtlIf* pC86Ctl, c86ctl::IRealChip* pRealChip, c86ctl::IGimic* pGimic, ChipType nType, UINT nClock);
+			Chip(C86CtlIf* pC86CtlIf, c86ctl::IRealChip* pRealChip, c86ctl::IGimic* pGimic, ChipType nChipType, UINT nClock);
 			virtual ~Chip();
 			virtual ChipType GetChipType();
 			virtual void Reset();
@@ -46,10 +46,10 @@ private:
 			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 		private:
-			C86CtlIf* m_pC86Ctl;				//!< C86Ctl インスタンス
+			C86CtlIf* m_pC86CtlIf;				//!< C86Ctl インスタンス
 			c86ctl::IRealChip* m_pRealChip;		//!< チップ インスタンス
 			c86ctl::IGimic* m_pGimic;			//!< G.I.M.I.C インスタンス
-			ChipType m_nType;					//!< チップ タイプ
+			ChipType m_nChipType;				//!< チップ タイプ
 			UINT m_nClock;						//!< チップ クロック
 	};
 

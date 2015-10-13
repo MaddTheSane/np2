@@ -108,11 +108,11 @@ void C86CtlIf::Reset()
 
 /**
  * インターフェイス取得
- * @param[in] nType タイプ
+ * @param[in] nChipType タイプ
  * @param[in] nClock クロック
  * @return インスタンス
  */
-IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nType, UINT nClock)
+IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nClock)
 {
 	const bool bInitialized = Initialize();
 
@@ -158,7 +158,7 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nType, UINT nClock
 					{
 						nRealChipType = IExternalChip::kYM2608;
 					}
-					if (nType == nRealChipType)
+					if (nChipType == nRealChipType)
 					{
 						// サウンドチップ取得できた
 						Chip* pChip = new Chip(this, pRealChip, pGimic, nRealChipType, nClock);
@@ -185,7 +185,7 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nType, UINT nClock
 				{
 					nRealChipType = IExternalChip::kYMF288;
 				}
-				if (nType == nRealChipType)
+				if (nChipType == nRealChipType)
 				{
 					// サウンドチップ取得できた
 					Chip* pChip = new Chip(this, pChip3, NULL, nRealChipType, nClock);
@@ -227,17 +227,17 @@ void C86CtlIf::Detach(C86CtlIf::Chip* pChip)
 
 /**
  * コンストラクタ
- * @param[in] pC86Ctl C86CtlIf インスタンス
+ * @param[in] pC86CtlIf C86CtlIf インスタンス
  * @param[in] pRealChip チップ インスタンス
  * @param[in] pGimic G.I.M.I.C インスタンス
- * @param[in] nType チップ タイプ
+ * @param[in] nChipType チップ タイプ
  * @param[in] nClock クロック
  */
-C86CtlIf::Chip::Chip(C86CtlIf* pC86Ctl, c86ctl::IRealChip* pRealChip, c86ctl::IGimic* pGimic, ChipType nType, UINT nClock)
-	: m_pC86Ctl(pC86Ctl)
+C86CtlIf::Chip::Chip(C86CtlIf* pC86CtlIf, c86ctl::IRealChip* pRealChip, c86ctl::IGimic* pGimic, ChipType nChipType, UINT nClock)
+	: m_pC86CtlIf(pC86CtlIf)
 	, m_pRealChip(pRealChip)
 	, m_pGimic(pGimic)
-	, m_nType(nType)
+	, m_nChipType(nChipType)
 	, m_nClock(nClock)
 {
 }
@@ -247,7 +247,7 @@ C86CtlIf::Chip::Chip(C86CtlIf* pC86Ctl, c86ctl::IRealChip* pRealChip, c86ctl::IG
  */
 C86CtlIf::Chip::~Chip()
 {
-	m_pC86Ctl->Detach(this);
+	m_pC86CtlIf->Detach(this);
 }
 
 /**
@@ -256,7 +256,7 @@ C86CtlIf::Chip::~Chip()
  */
 IExternalChip::ChipType C86CtlIf::Chip::GetChipType()
 {
-	return m_nType;
+	return m_nChipType;
 }
 
 /**

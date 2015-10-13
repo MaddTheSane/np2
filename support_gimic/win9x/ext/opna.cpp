@@ -158,16 +158,16 @@ void opna_bind(POPNA opna)
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 	if (pExt == NULL)
 	{
-		IExternalChip::ChipType nType = IExternalChip::kYMF288;
+		IExternalChip::ChipType nChipType = IExternalChip::kYMF288;
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
-			nType = IExternalChip::kYM2608;
+			nChipType = IExternalChip::kYM2608;
 		}
 		if (cCaps == OPNA_MODE_3438)
 		{
-			nType = IExternalChip::kYM3438;
+			nChipType = IExternalChip::kYM3438;
 		}
-		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nType, 3993600 * 2));
+		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, 3993600 * 2));
 		opna->userdata = reinterpret_cast<INTPTR>(pExt);
 	}
 	if (pExt)

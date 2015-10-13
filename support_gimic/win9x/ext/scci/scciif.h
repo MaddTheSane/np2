@@ -1,5 +1,5 @@
 /**
- * @file	rebirth.h
+ * @file	scciif.h
  * @brief	SCCI アクセス クラスの宣言およびインターフェイスの定義をします
  */
 
@@ -14,15 +14,15 @@ class SoundChip;
 /**
  * @brief SCCI アクセス クラス
  */
-class CRebirth
+class CScciIf
 {
 public:
-	CRebirth();
-	~CRebirth();
+	CScciIf();
+	~CScciIf();
 	bool Initialize();
 	void Deinitialize();
 	void Reset();
-	IExternalChip* GetInterface(IExternalChip::ChipType nType, UINT nClock);
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
 
 private:
 	HMODULE m_hModule;					//!< モジュール	
@@ -34,7 +34,7 @@ private:
 	class Chip : public IExternalChip
 	{
 		public:
-			Chip(CRebirth* pRebirth, SoundChip* pChip);
+			Chip(CScciIf* pScciIf, SoundChip* pSoundChip);
 			virtual ~Chip();
 			operator SoundChip*();
 			virtual ChipType GetChipType();
@@ -43,8 +43,8 @@ private:
 			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 		private:
-			CRebirth* m_pRebirth;		//!< 親インスタンス
-			SoundChip* m_pChip;			//!< チップ インスタンス
+			CScciIf* m_pScciIf;			//!< 親インスタンス
+			SoundChip* m_pSoundChip;	//!< チップ インスタンス
 	};
 
 	std::vector<Chip*> m_chips;			//!< チップ

@@ -42,26 +42,26 @@ void CExternalChipManager::Deinitialize()
 		delete pChip;
 	}
 
-	m_gimic.Deinitialize();
-	m_rebirth.Deinitialize();
+	m_c86ctl.Deinitialize();
+	m_scci.Deinitialize();
 }
 
 /**
  * チップ確保
- * @param[in] nType チップ タイプ
+ * @param[in] nChipType チップ タイプ
  * @param[in] nClock チップ クロック
  * @return インスタンス
  */
-IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nType, UINT nClock)
+IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipType, UINT nClock)
 {
-	IExternalChip* pChip = GetInterfaceInner(nType, nClock);
+	IExternalChip* pChip = GetInterfaceInner(nChipType, nClock);
 	if (pChip == NULL)
 	{
-		if (nType == IExternalChip::kYMF288)
+		if (nChipType == IExternalChip::kYMF288)
 		{
 			pChip = GetInterface(IExternalChip::kYM2608, nClock);
 		}
-		else if (nType == IExternalChip::kYM3438)
+		else if (nChipType == IExternalChip::kYM3438)
 		{
 			pChip = GetInterface(IExternalChip::kYMF288, nClock);
 		}
@@ -71,27 +71,27 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nType,
 
 /**
  * チップ確保 (Inner)
- * @param[in] nType チップ タイプ
+ * @param[in] nChipType チップ タイプ
  * @param[in] nClock チップ クロック
  * @return インスタンス
  */
-IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType nType, UINT nClock)
+IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock)
 {
 	IExternalChip* pChip = NULL;
 
 	if (pChip == NULL)
 	{
-		pChip = m_rebirth.GetInterface(nType, nClock);
+		pChip = m_scci.GetInterface(nChipType, nClock);
 	}
 	if (pChip == NULL)
 	{
-		pChip = m_gimic.GetInterface(nType, nClock);
+		pChip = m_c86ctl.GetInterface(nChipType, nClock);
 	}
 
 	// ラッピング
 	if (pChip)
 	{
-		switch (nType)
+		switch (nChipType)
 		{
 			case IExternalChip::kYM2608:
 			case IExternalChip::kYM3438:
