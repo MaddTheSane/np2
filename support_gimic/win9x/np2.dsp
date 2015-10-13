@@ -1484,6 +1484,10 @@ SOURCE=.\ext\c86ctl\c86ctlif.cpp
 
 SOURCE=.\ext\c86ctl\c86ctlif.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\cbus_boardtype.h
+# End Source File
 # End Group
 # Begin Group "romeo"
 
