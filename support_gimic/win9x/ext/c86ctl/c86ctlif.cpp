@@ -108,6 +108,9 @@ void C86CtlIf::Reset()
 
 /**
  * インターフェイス取得
+ * @param[in] nType タイプ
+ * @param[in] nClock クロック
+ * @return インスタンス
  */
 IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nType, UINT nClock)
 {
@@ -224,6 +227,11 @@ void C86CtlIf::Detach(C86CtlIf::Chip* pChip)
 
 /**
  * コンストラクタ
+ * @param[in] pC86Ctl C86CtlIf インスタンス
+ * @param[in] pRealChip チップ インスタンス
+ * @param[in] pGimic G.I.M.I.C インスタンス
+ * @param[in] nType チップ タイプ
+ * @param[in] nClock クロック
  */
 C86CtlIf::Chip::Chip(C86CtlIf* pC86Ctl, c86ctl::IRealChip* pRealChip, c86ctl::IGimic* pGimic, ChipType nType, UINT nClock)
 	: m_pC86Ctl(pC86Ctl)
@@ -276,6 +284,9 @@ void C86CtlIf::Chip::WriteRegister(UINT nAddr, UINT8 cData)
 
 /**
  * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return リザルト
  */
 INTPTR C86CtlIf::Chip::Message(UINT nMessage, INTPTR nParameter)
 {

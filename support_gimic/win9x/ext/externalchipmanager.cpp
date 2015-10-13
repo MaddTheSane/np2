@@ -1,5 +1,5 @@
 /**
- * @file	externalchipmanager.c
+ * @file	externalchipmanager.cpp
  * @brief	外部チップ管理クラスの動作の定義を行います
  */
 
@@ -48,7 +48,9 @@ void CExternalChipManager::Deinitialize()
 
 /**
  * チップ確保
- * @return リソース
+ * @param[in] nType チップ タイプ
+ * @param[in] nClock チップ クロック
+ * @return インスタンス
  */
 IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nType, UINT nClock)
 {
@@ -67,6 +69,12 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nType,
 	return pChip;
 }
 
+/**
+ * チップ確保 (Inner)
+ * @param[in] nType チップ タイプ
+ * @param[in] nClock チップ クロック
+ * @return インスタンス
+ */
 IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType nType, UINT nClock)
 {
 	IExternalChip* pChip = NULL;

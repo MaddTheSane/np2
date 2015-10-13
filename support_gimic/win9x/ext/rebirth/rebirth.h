@@ -43,8 +43,8 @@ private:
 			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 		private:
-			CRebirth* m_pRebirth;
-			SoundChip* m_pChip;
+			CRebirth* m_pRebirth;		//!< 親インスタンス
+			SoundChip* m_pChip;			//!< チップ インスタンス
 	};
 
 	std::vector<Chip*> m_chips;			//!< チップ

@@ -120,6 +120,9 @@ void CRebirth::Reset()
 
 /**
  * インターフェイス取得
+ * @param[in] nType タイプ
+ * @param[in] nClock クロック
+ * @return インスタンス
  */
 IExternalChip* CRebirth::GetInterface(IExternalChip::ChipType nType, UINT nClock)
 {
@@ -188,6 +191,8 @@ void CRebirth::Detach(CRebirth::Chip* pChip)
 
 /**
  * コンストラクタ
+ * @param[in] pRebirth 親インスタンス
+ * @param[in] pChip チップ インスタンス
  */
 CRebirth::Chip::Chip(CRebirth* pRebirth, SoundChip* pChip)
 	: m_pRebirth(pRebirth)
@@ -250,6 +255,9 @@ void CRebirth::Chip::WriteRegister(UINT nAddr, UINT8 cData)
 
 /**
  * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return リザルト
  */
 INTPTR CRebirth::Chip::Message(UINT nMessage, INTPTR nParameter)
 {

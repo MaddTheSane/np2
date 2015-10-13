@@ -46,11 +46,11 @@ private:
 			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 		private:
-			C86CtlIf* m_pC86Ctl;
-			c86ctl::IRealChip* m_pRealChip;
-			c86ctl::IGimic* m_pGimic;			//!< G.I.M.I.C インタフェイス
-			ChipType m_nType;					//!< 
-			UINT m_nClock;						//!< 
+			C86CtlIf* m_pC86Ctl;				//!< C86Ctl インスタンス
+			c86ctl::IRealChip* m_pRealChip;		//!< チップ インスタンス
+			c86ctl::IGimic* m_pGimic;			//!< G.I.M.I.C インスタンス
+			ChipType m_nType;					//!< チップ タイプ
+			UINT m_nClock;						//!< チップ クロック
 	};
 
 	std::map<int, Chip*> m_chips;			//!< チップ

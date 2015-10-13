@@ -8,7 +8,7 @@
 
 /**
  * コンストラクタ
- * @param[in] chip チップ
+ * @param[in] pChip チップ
  */
 CExternalOpna::CExternalOpna(IExternalChip* pChip)
 	: m_pChip(pChip)
@@ -33,7 +33,8 @@ CExternalOpna::~CExternalOpna()
 }
 
 /**
- * チップタイプを得る
+ * チップ タイプを得る
+ * @return チップ タイプ
  */
 IExternalChip::ChipType CExternalOpna::GetChipType()
 {

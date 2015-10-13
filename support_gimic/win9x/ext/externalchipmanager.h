@@ -30,8 +30,8 @@ private:
 	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
 	std::vector<IExternalChip*> m_chips;		//!< モジュール
 
-	C86CtlIf m_gimic;
-	CRebirth m_rebirth;
+	C86CtlIf m_gimic;							//!< C86CtlIf インスタンス
+	CRebirth m_rebirth;							//!< SCCI インスタンス
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nType, UINT nClock);
 };
 
