@@ -625,7 +625,7 @@ static void extendchannelx2(REG8 enable) {
 	else {
 		g_opn3.channels = 3;
 		opngen_setcfg(&g_opngen, 27, OPN_MONORAL | 0x07000000);
-		rhythm_setreg(&g_rhythm2, 0x10, 0xff);
+		rhythm_setreg(&g_rhythm3, 0x10, 0xff);
 	}
 }
 
