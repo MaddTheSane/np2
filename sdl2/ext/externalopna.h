@@ -29,7 +29,6 @@ public:
 private:
 	static CExternalOpna sm_instance;	//!< 唯一のインスタンスです
 	IExternalChip* m_module;			//!< モジュール
-	bool m_bHasADPCM;					//!< ADPCM
 	UINT8 m_cPsgMix;					//!< PSG ミキサー
 	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
 	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル
@@ -64,5 +63,5 @@ inline bool CExternalOpna::IsEnabled() const
  */
 inline bool CExternalOpna::HasADPCM() const
 {
-	return m_bHasADPCM;
+	return (m_module != NULL);
 }

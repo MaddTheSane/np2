@@ -15,6 +15,7 @@ CRebirth::CRebirth()
 	: m_hModule(NULL)
 	, m_pManager(NULL)
 	, m_pChip(NULL)
+	, m_bHasADPCM(false)
 {
 }
 
@@ -71,6 +72,7 @@ bool CRebirth::Initialize()
 		{
 			// サウンドチップ取得できた
 			printf("Found YM2608\n");
+			m_bHasADPCM = (m_pChip->getSoundChipType() == SC_TYPE_YM2608);
 			return true;
 		}
 	} while (false /*CONSTCOND*/);
@@ -107,6 +109,7 @@ void CRebirth::Deinitialize()
 	m_hModule = NULL;
 	m_pManager = NULL;
 	m_pChip = NULL;
+	m_bHasADPCM = false;
 }
 
 /**
@@ -142,4 +145,14 @@ void CRebirth::WriteRegister(UINT nAddr, UINT8 cData)
 	{
 		m_pChip->setRegister(nAddr, cData);
 	}
+}
+
+/**
+ * Has ADPCM?
+ * @retval true Has
+ * @retval false No exist
+ */
+bool CRebirth::HasADPCM()
+{
+	return m_bHasADPCM;
 }

@@ -8,9 +8,10 @@
 #if defined(SUPPORT_KEYDISP)
 
 #include "cmndraw.h"
-#include "sound/psggen.h"
+#include "sound/opna.h"
 
-struct _cmnpalfn {
+struct _cmnpalfn
+{
 	UINT8	(*get8)(struct _cmnpalfn *fn, UINT num);
 	UINT32	(*get32)(struct _cmnpalfn *fn, UINT num);
 	UINT16	(*cnv16)(struct _cmnpalfn *fn, RGB32 pal32);
@@ -18,27 +19,22 @@ struct _cmnpalfn {
 };
 typedef struct _cmnpalfn	CMNPALFN;
 
-enum {
+enum
+{
 	KEYDISP_MODENONE			= 0,
 	KEYDISP_MODEFM,
 	KEYDISP_MODEMIDI
 };
 
-#if defined(SUPPORT_PX)
-enum {
-	KEYDISP_CHMAX		= 39,
-	KEYDISP_FMCHMAX		= 30,
+enum
+{
+	KEYDISP_CHMAX		= 48,
+	KEYDISP_FMCHMAX		= 6,
 	KEYDISP_PSGMAX		= 3
 };
-#else	// defined(SUPPORT_PX)
-enum {
-	KEYDISP_CHMAX		= 16,
-	KEYDISP_FMCHMAX		= 12,
-	KEYDISP_PSGMAX		= 3
-};
-#endif	// defined(SUPPORT_PX)
 
-enum {
+enum
+{
 	KEYDISP_NOTEMAX		= 16,
 
 	KEYDISP_KEYCX		= 28,
@@ -53,7 +49,8 @@ enum {
 	KEYDISP_DELAYEVENTS	= 2048,
 };
 
-enum {
+enum
+{
 	KEYDISP_PALBG		= 0,
 	KEYDISP_PALFG,
 	KEYDISP_PALHIT,
@@ -61,7 +58,8 @@ enum {
 	KEYDISP_PALS
 };
 
-enum {
+enum
+{
 	KEYDISP_FLAGDRAW		= 0x01,
 	KEYDISP_FLAGREDRAW		= 0x02,
 	KEYDISP_FLAGSIZING		= 0x04
@@ -69,7 +67,8 @@ enum {
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 void keydisp_initialize(void);
@@ -80,8 +79,10 @@ UINT8 keydisp_process(UINT8 framepast);
 void keydisp_getsize(int *width, int *height);
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
-void keydisp_setfmboard(UINT board);
-void keydisp_fmkeyon(UINT8 ch, UINT8 value);
+void keydisp_reset(void);
+void keydisp_bindfm(PCOPNA opna, UINT nChannels, UINT nBase);
+void keydisp_bindpsg(PSGGEN psg);
+void keydisp_fmkeyon(POPNA opna, UINT nBase, REG8 nChannelNum, UINT8 value);
 void keydisp_psg(PSGGEN psg, UINT nAddress);
 void keydisp_midi(const UINT8 *msg);
 
@@ -92,8 +93,10 @@ void keydisp_midi(const UINT8 *msg);
 #else
 
 #define keydisp_draw(a)
-#define keydisp_setfmboard(a)
-#define keydisp_fmkeyon(a, b)
+#define keydisp_reset()
+#define keydisp_bindfm(o, c, b)
+#define keydisp_bindpsg(p)
+#define keydisp_fmkeyon(o, b, c, v)
 #define keydisp_psg(p, a)
 #define	keydisp_midi(a)
 

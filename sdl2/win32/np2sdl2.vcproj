@@ -420,40 +420,8 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ext\board118.cpp"
+					RelativePath="..\..\cbus\board118.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\cbus\board14.c"
@@ -1202,6 +1170,42 @@
 				<Filter
 					Name="ext"
 					>
+					<File
+						RelativePath="..\ext\externalopna.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
 					<Filter
 						Name="gimic"
 						>
@@ -1390,6 +1394,42 @@
 				<File
 					RelativePath="..\..\sound\fmtimer.c"
 					>
+				</File>
+				<File
+					RelativePath="..\ext\opna.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\sound\opngenc.c"
@@ -2472,6 +2512,14 @@
 				<Filter
 					Name="ext"
 					>
+					<File
+						RelativePath="..\ext\externalchip.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopna.h"
+						>
+					</File>
 					<Filter
 						Name="gimic"
 						>
@@ -2519,6 +2567,10 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\fmtimer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\opna.h"
 					>
 				</File>
 				<File

@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "..\..\ext\extendmodule.h"
+#include "..\..\ext\externalchip.h"
 
 /**
  * @brief ROMEO アクセス クラス
  */
-class CJuliet : public IExtendModule
+class CJuliet : public IExternalChip
 {
 public:
 	CJuliet();
@@ -21,6 +21,7 @@ public:
 	virtual bool IsBusy();
 	virtual void Reset();
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual bool HasADPCM();
 
 private:
 	//! @brief ロード関数

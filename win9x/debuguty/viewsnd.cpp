@@ -120,7 +120,7 @@ bool CDebugUtySnd::Update()
 bool CDebugUtySnd::Lock()
 {
 	m_buffer.resize(0x400);
-	CopyMemory(&m_buffer.at(0), g_opn.reg, 0x400);
+	CopyMemory(&m_buffer.at(0), g_opn.s.reg, 0x400);
 	return true;
 }
 
@@ -170,7 +170,7 @@ void CDebugUtySnd::OnPaint(HDC hDC, const RECT& rect)
 			}
 			else
 			{
-				p = g_opn.reg + item.wAddress;
+				p = g_opn.s.reg + item.wAddress;
 			}
 			for (int x = 0; x < 16; x++)
 			{
