@@ -147,7 +147,7 @@ static void restore(POPNA opna)
  */
 void opna_bind(POPNA opna)
 {
-	const UINT8 cCaps = opna->s.cCaps;
+	UINT8 cCaps = opna->s.cCaps;
 
 	keydisp_bindfm(opna, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 0);
 	if (cCaps & OPNA_HAS_PSG)
@@ -187,40 +187,40 @@ void opna_bind(POPNA opna)
 
 	if (pExt)
 	{
-		if (cCaps & OPNA_HAS_ADPCM)
+		if ((cCaps & OPNA_HAS_PSG) && (pExt->HasPsg()))
 		{
-			if (pExt->HasADPCM())
-			{
-				sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm_dummy);
-			}
-			else
-			{
-				sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm);
-			}
+			cCaps &= ~OPNA_HAS_PSG;
 		}
+		if ((cCaps & OPNA_HAS_RHYTHM) && (pExt->HasRhythm()))
+		{
+			cCaps &= ~OPNA_HAS_RHYTHM;
+		}
+		if ((cCaps & OPNA_HAS_ADPCM) && (pExt->HasADPCM()))
+		{
+			sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm_dummy);
+			cCaps &= ~OPNA_HAS_ADPCM;
+		}
+	}
+
+	if (cCaps & OPNA_HAS_PSG)
+	{
+		sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
+	}
+	if (cCaps & OPNA_HAS_VR)
+	{
+		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
 	}
 	else
 	{
-		if (cCaps & OPNA_HAS_PSG)
-		{
-			sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
-		}
-		if (cCaps & OPNA_HAS_VR)
-		{
-			sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
-		}
-		else
-		{
-			sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcm);
-		}
-		if (cCaps & OPNA_HAS_RHYTHM)
-		{
-			rhythm_bind(&opna->rhythm);
-		}
-		if (cCaps & OPNA_HAS_ADPCM)
-		{
-			sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm);
-		}
+		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcm);
+	}
+	if (cCaps & OPNA_HAS_RHYTHM)
+	{
+		rhythm_bind(&opna->rhythm);
+	}
+	if (cCaps & OPNA_HAS_ADPCM)
+	{
+		sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm);
 	}
 }
 
@@ -310,7 +310,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_RHYTHM)
 		{
-			if (!pExt)
+			if ((!pExt) || (!pExt->HasRhythm()))
 			{
 				rhythm_setreg(&opna->rhythm, nAddress, cData);
 			}

@@ -221,7 +221,15 @@ CScciIf::Chip::operator SoundChip*()
  */
 IExternalChip::ChipType CScciIf::Chip::GetChipType()
 {
-	switch (m_pSoundChip->getSoundChipType())
+	int iSoundChip = m_pSoundChip->getSoundChipType();
+
+	const SCCI_SOUND_CHIP_INFO* pInfo = m_pSoundChip->getSoundChipInfo();
+	if (pInfo)
+	{
+		iSoundChip = pInfo->iSoundChip;
+	}
+
+	switch (iSoundChip)
 	{
 		case SC_TYPE_YM2608:
 			return IExternalChip::kYM2608;

@@ -12,15 +12,26 @@
  */
 CExternalOpna::CExternalOpna(IExternalChip* pChip)
 	: m_pChip(pChip)
+	, m_bHasPsg(false)
+	, m_bHasRhythm(false)
 	, m_bHasADPCM(false)
 	, m_cPsgMix(0x3f)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
 
-	if (GetChipType() == IExternalChip::kYM2608)
+	switch (GetChipType())
 	{
-		m_bHasADPCM = true;
+		case IExternalChip::kYM2608:
+			m_bHasPsg = true;
+			m_bHasRhythm = true;
+			m_bHasADPCM = true;
+			break;
+
+		case IExternalChip::kYMF288:
+			m_bHasPsg = true;
+			m_bHasRhythm = true;
+			break;
 	}
 }
 
