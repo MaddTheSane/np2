@@ -117,8 +117,8 @@ void CExternalChipManager::Release(IExternalChip* pChip)
 	if (it != m_chips.end())
 	{
 		m_chips.erase(it);
-		(*it)->Reset();
-		delete *it;
+		pChip->Reset();
+		delete pChip;
 	}
 }
 

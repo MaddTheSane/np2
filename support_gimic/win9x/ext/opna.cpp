@@ -81,7 +81,7 @@ void opna_reset(POPNA opna, REG8 cCaps)
 	rhythm_reset(&opna->rhythm);
 	adpcm_reset(&opna->adpcm);
 
-	if (cCaps != 0)
+	if (cCaps == 0)
 	{
 		CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 		if (pExt)
