@@ -36,33 +36,39 @@ static void	(*extfn)(REG8 enable);
 
 // ----
 
-static	REG8	rapids = 0;
+static	REG8	s_rapids = 0;
 
-REG8 fmboard_getjoy(PSGGEN psg) {
+REG8 fmboard_getjoy(POPNA opna)
+{
+	REG8 ret;
 
-	REG8	ret;
-
-	rapids ^= 0xf0;											// ver0.28
+	s_rapids ^= 0xf0;											// ver0.28
 	ret = 0xff;
-	if (!(psg->reg.io2 & 0x40)) {
-		ret &= (joymng_getstat() | (rapids & 0x30));
-		if (np2cfg.KEY_MODE == 1) {
+	if (!(opna->s.reg[15] & 0x40))
+	{
+		ret &= (joymng_getstat() | (s_rapids & 0x30));
+		if (np2cfg.KEY_MODE == 1)
+		{
 			ret &= keystat_getjoy();
 		}
 	}
-	else {
-		if (np2cfg.KEY_MODE == 2) {
+	else
+	{
+		if (np2cfg.KEY_MODE == 2)
+		{
 			ret &= keystat_getjoy();
 		}
 	}
-	if (np2cfg.BTN_RAPID) {
-		ret |= rapids;
+	if (np2cfg.BTN_RAPID)
+	{
+		ret |= s_rapids;
 	}
 
 	// rapid‚Æ”ñrapid‚ð‡¬								// ver0.28
 	ret &= ((ret >> 2) | (~0x30));
 
-	if (np2cfg.BTN_MODE) {
+	if (np2cfg.BTN_MODE)
+	{
 		UINT8 bit1 = (ret & 0x20) >> 1;					// ver0.28
 		UINT8 bit2 = (ret & 0x10) << 1;
 		ret = (ret & (~0x30)) | bit1 | bit2;
@@ -71,7 +77,7 @@ REG8 fmboard_getjoy(PSGGEN psg) {
 	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
 	ret &= 0x3f;
 	ret |= g_fmtimer.intr;
-	return(ret);
+	return ret;
 }
 
 

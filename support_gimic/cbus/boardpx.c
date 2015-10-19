@@ -59,7 +59,7 @@ static REG8 IOINPCALL spb_i08a(UINT port)
 	nAddress = g_opna[0].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opna[0].psg);
+		return fmboard_getjoy(&g_opna[0]);
 	}
 
 	(void)port;
@@ -127,7 +127,7 @@ static REG8 IOINPCALL spb_i18a(UINT port)
 	nAddress = g_opna[1].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opna[1].psg);
+		return fmboard_getjoy(&g_opna[1]);
 	}
 
 	(void)port;
@@ -200,7 +200,7 @@ static REG8 IOINPCALL p86_i28a(UINT port)
 	nAddress = g_opna[4].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opna[4].psg);
+		return fmboard_getjoy(&g_opna[4]);
 	}
 	else if (nAddress < 0x10)
 	{

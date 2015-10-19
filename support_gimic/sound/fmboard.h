@@ -28,7 +28,7 @@ extern	_FMTIMER	g_fmtimer;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 
-REG8 fmboard_getjoy(PSGGEN psg);
+REG8 fmboard_getjoy(POPNA opna);
 
 void fmboard_extreg(void (*ext)(REG8 enable));
 void fmboard_extenable(REG8 enable);
