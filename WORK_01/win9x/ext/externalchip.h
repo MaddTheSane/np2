@@ -1,5 +1,5 @@
 /**
- * @file	extendmodule.h
+ * @file	externalchip.h
  * @brief	Interface of thg external modules
  */
 
@@ -8,13 +8,13 @@
 /**
  * @brief The interface of thg external modules
  */
-class IExtendModule
+class IExternalChip
 {
 public:
 	/**
 	 * Destructor
 	 */
-	virtual ~IExtendModule() { }
+	virtual ~IExternalChip() { }
 
 	/**
 	 * Initialize
@@ -53,4 +53,11 @@ public:
 	 * @param[in] cData The data
 	 */
 	virtual void WriteRegister(UINT nAddr, UINT8 cData) = 0;
+
+	/**
+	 * Has ADPCM?
+	 * @retval true Has
+	 * @retval false No exist
+	 */
+	virtual bool HasADPCM() = 0;
 };

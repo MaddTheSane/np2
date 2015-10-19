@@ -183,3 +183,12 @@ void CJuliet::WriteRegister(UINT nAddr, UINT8 cData)
 		(*m_fnOut8)(m_ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288DATA2 : ROMEO_YMF288DATA1), cData);
 	}
 }
+
+/**
+ * Has ADPCM?
+ * @retval false No exist
+ */
+bool CJuliet::HasADPCM()
+{
+	return false;
+}

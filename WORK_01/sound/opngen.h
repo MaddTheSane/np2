@@ -8,11 +8,7 @@
 #include "sound.h"
 
 enum {
-#if defined(SUPPORT_PX)
-	OPNCH_MAX		= 30,
-#else	// defined(SUPPORT_PX)
 	OPNCH_MAX		= 12,
-#endif	// defined(SUPPORT_PX)
 	OPNA_CLOCK		= 55466 * 72,
 
 	OPN_CHMASK		= 0x80000000,
@@ -139,7 +135,7 @@ typedef struct {
 	UINT8	pan;				// pan
 	UINT8	extop;				// extendopelator-enable
 	UINT8	stereo;				// stereo-enable
-	UINT8	keyreg;
+	UINT8	padding;
 } OPNCH;
 
 typedef struct {

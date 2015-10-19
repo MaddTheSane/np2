@@ -9,8 +9,8 @@
 #include "keystat.h"
 #include "iocore.h"
 #include "cbuscore.h"
+#include "generic/keydisp.h"
 #include "sound.h"
-#include "fmboard.h"
 #include "sound/pcmmix.h"
 #include "joymng.h"
 
@@ -293,13 +293,13 @@ void amd98int(NEVENTITEM item)
 
 static void IOOUTCALL amd_od8(UINT port, REG8 dat)
 {
-	g_amd98.psg1reg = dat;
+	g_amd98.s.psg1reg = dat;
 	(void)port;
 }
 
 static void IOOUTCALL amd_od9(UINT port, REG8 dat)
 {
-	g_amd98.psg2reg = dat;
+	g_amd98.s.psg2reg = dat;
 	(void)port;
 }
 
@@ -307,10 +307,11 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat)
 {
 	UINT	addr;
 
-	addr = g_amd98.psg1reg;
+	addr = g_amd98.s.psg1reg;
 	if (addr < 0x10)
 	{
-		psggen_setreg(&g_psg1, addr, dat);
+		psggen_setreg(&g_amd98.psg[0], addr, dat);
+		keydisp_psg(&g_amd98.psg[0], addr);
 	}
 	(void)port;
 }
@@ -319,35 +320,37 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat)
 {
 	UINT	addr;
 
-	addr = g_amd98.psg2reg;
+	addr = g_amd98.s.psg2reg;
 	if (addr < 0x0e)
 	{
-		psggen_setreg(&g_psg2, addr, dat);
+		psggen_setreg(&g_amd98.psg[1], addr, dat);
+		keydisp_psg(&g_amd98.psg[1], addr);
 	}
 	else if (addr == 0x0f)
 	{
 		REG8 b;
-		b = g_psg2.reg.io2;
+		b = g_amd98.psg[1].reg.io2;
 		if ((b & 1) > (dat & 1))
 		{
 			b &= 0xc2;
 			if (b == 0x42)
 			{
-				g_amd98.psg3reg = g_psg1.reg.io2;
+				g_amd98.s.psg3reg = g_amd98.psg[0].reg.io2;
 			}
 			else if (b == 0x40)
 			{
-				if (g_amd98.psg3reg < 0x0e)
+				if (g_amd98.s.psg3reg < 0x0e)
 				{
-					psggen_setreg(&g_psg3, g_amd98.psg3reg, g_psg1.reg.io2);
+					psggen_setreg(&g_amd98.psg[2], g_amd98.s.psg3reg, g_amd98.psg[0].reg.io2);
+					keydisp_psg(&g_amd98.psg[2], g_amd98.s.psg3reg);
 				}
-				else if (g_amd98.psg3reg == 0x0f)
+				else if (g_amd98.s.psg3reg == 0x0f)
 				{
-					amd98_rhythm(g_psg1.reg.io2);
+					amd98_rhythm(g_amd98.psg[0].reg.io2);
 				}
 			}
 		}
-		g_psg2.reg.io2 = dat;
+		g_amd98.psg[1].reg.io2 = dat;
 	}
 	(void)port;
 }
@@ -375,10 +378,10 @@ static REG8 IOINPCALL amd_ida(UINT port)
 {
 	UINT	addr;
 
-	addr = g_amd98.psg1reg;
+	addr = g_amd98.s.psg1reg;
 	if (addr < 0x0e)
 	{
-		return psggen_getreg(&g_psg1, addr);
+		return psggen_getreg(&g_amd98.psg[0], addr);
 	}
 	else if (addr == 0x0e)
 	{
@@ -386,7 +389,7 @@ static REG8 IOINPCALL amd_ida(UINT port)
 	}
 	else if (addr == 0x0f)
 	{
-		return g_psg1.reg.io2;
+		return g_amd98.psg[0].reg.io2;
 	}
 	(void)port;
 	return 0xff;
@@ -396,10 +399,10 @@ static REG8 IOINPCALL amd_idb(UINT port)
 {
 	UINT	addr;
 
-	addr = g_amd98.psg2reg;
+	addr = g_amd98.s.psg2reg;
 	if (addr < 0x0e)
 	{
-		return psggen_getreg(&g_psg2, addr);
+		return psggen_getreg(&g_amd98.psg[1], addr);
 	}
 	else if (addr == 0x0e)
 	{
@@ -407,7 +410,7 @@ static REG8 IOINPCALL amd_idb(UINT port)
 	}
 	else if (addr == 0x0f)
 	{
-		return g_psg2.reg.io2;
+		return g_amd98.psg[1].reg.io2;
 	}
 	(void)port;
 	return 0xff;
@@ -436,7 +439,14 @@ static void psgpanset(PSGGEN psg)
  */
 void amd98_reset(const NP2CFG *pConfig)
 {
+	UINT i;
+
 	memset(&g_amd98, 0, sizeof(g_amd98));
+
+	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
+	{
+		psggen_reset(&g_amd98.psg[i]);
+	}
 
 	(void)pConfig;
 }
@@ -446,17 +456,17 @@ void amd98_reset(const NP2CFG *pConfig)
  */
 void amd98_bind(void)
 {
+	UINT i;
+
 	amd98_rhythmload();
 
-	psgpanset(&g_psg1);
-	psgpanset(&g_psg2);
-	psgpanset(&g_psg3);
-	psggen_restore(&g_psg1);
-	psggen_restore(&g_psg2);
-	psggen_restore(&g_psg3);
-	sound_streamregist(&g_psg1, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&g_psg2, (SOUNDCB)psggen_getpcm);
-	sound_streamregist(&g_psg3, (SOUNDCB)psggen_getpcm);
+	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
+	{
+		keydisp_bindpsg(&g_amd98.psg[i]);
+		psgpanset(&g_amd98.psg[i]);
+		psggen_restore(&g_amd98.psg[i]);
+		sound_streamregist(&g_amd98.psg[i], (SOUNDCB)psggen_getpcm);
+	}
 	sound_streamregist(&amd98r, (SOUNDCB)pcmmix_getpcm);
 	iocore_attachout(0xd8, amd_od8);
 	iocore_attachout(0xd9, amd_od9);
@@ -473,4 +483,42 @@ void amd98_bind(void)
 	iocore_attachinp(0xdc, amd_inp);
 	iocore_attachinp(0xde, amd_inp);
 #endif
+}
+
+/**
+ * state save
+ */
+int amd98_sfsave(STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret;
+	UINT i;
+
+	/* register */
+	ret = statflag_write(sfh, &g_amd98.s, sizeof(g_amd98.s));
+
+	/* psg */
+	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
+	{
+		ret |= statflag_write(sfh, &g_amd98.psg[i].reg, sizeof(g_amd98.psg[i].reg));
+	}
+	return ret;
+}
+
+/**
+ * state load
+ */
+int amd98_sfload(STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret;
+	UINT i;
+
+	/* register */
+	ret = statflag_read(sfh, &g_amd98.s, sizeof(g_amd98.s));
+
+	/* psg */
+	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
+	{
+		ret |= statflag_read(sfh, &g_amd98.psg[i].reg, sizeof(g_amd98.psg[i].reg));
+	}
+	return ret;
 }

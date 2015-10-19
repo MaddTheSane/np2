@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include <math.h>
 #include "psggen.h"
-#include "keydisp.h"
 
 	PSGGENCFG	psggencfg;
 
@@ -97,7 +96,6 @@ void psggen_setreg(PSGGEN psg, UINT reg, REG8 value) {
 		sound_sync();
 	}
 	((UINT8 *)&psg->reg)[reg] = value;
-	keydisp_psg(psg, reg);
 	switch(reg) {
 		case 0:
 		case 1:

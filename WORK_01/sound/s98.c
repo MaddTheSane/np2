@@ -137,22 +137,25 @@ BRESULT S98_open(const OEMCHAR *filename) {
 
 #if 1
 	// FM
-	for (i=0x30; i<0xb6; i++) {
-		if ((i & 3) != 3) {
+	for (i = 0x30; i < 0xb8; i++)
+	{
+		if ((i & 3) != 3)
+		{
 			S98_putc(NORMAL2608);
 			S98_putc((REG8)i);
-			S98_putc(g_opn.reg[i]);
+			S98_putc(g_opn.s.reg[i]);
 
 			S98_putc(EXTEND2608);
 			S98_putc((REG8)i);
-			S98_putc(g_opn.reg[i+0x100]);
+			S98_putc(g_opn.s.reg[i+0x100]);
 		}
 	}
 	// PSG
-	for (i=0x00; i<0x0e; i++) {
+	for (i = 0x00; i < 0x0e; i++)
+	{
 		S98_putc(NORMAL2608);
 		S98_putc((REG8)i);
-		S98_putc(g_opn.reg[i]);
+		S98_putc(g_opn.s.reg[i]);
 	}
 #endif
 
