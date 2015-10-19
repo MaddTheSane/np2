@@ -16,20 +16,6 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
 
 /**
- * Initialize
- */
-void opna_initialize(void)
-{
-}
-
-/**
- * Deinitialize
- */
-void opna_deinitialize(void)
-{
-}
-
-/**
  * Initialize instance
  * @param[in] opna The instance
  */
@@ -399,14 +385,7 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
  */
 REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress)
 {
-	if (opna->s.cCaps == OPNA_MODE_3438)
-	{
-		return opna->s.reg[nAddress];
-	}
-	else
-	{
-		return 0xff;
-	}
+	return opna->s.reg[nAddress];
 }
 
 
