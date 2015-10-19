@@ -28,6 +28,7 @@ public:
 	enum
 	{
 		kMute				= 0,
+		kBusy
 	};
 
 	/**

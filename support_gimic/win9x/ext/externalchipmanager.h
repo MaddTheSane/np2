@@ -7,8 +7,9 @@
 
 #include <vector>
 #include "externalchip.h"
-#include "c86ctl/c86ctlif.h"
-#include "scci/scciif.h"
+#include "c86ctl\c86ctlif.h"
+#include "romeo\juliet.h"
+#include "scci\scciif.h"
 
 /**
  * @brief 外部チップ管理クラス
@@ -31,6 +32,7 @@ private:
 	std::vector<IExternalChip*> m_chips;		//!< モジュール
 
 	C86CtlIf m_c86ctl;							//!< C86Ctl インスタンス
+	CJuliet m_juliet;							//!< ROMEO インスタンス
 	CScciIf m_scci;								//!< SCCI インスタンス
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };

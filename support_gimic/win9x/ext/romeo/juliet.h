@@ -5,23 +5,21 @@
 
 #pragma once
 
-#include "..\..\ext\externalchip.h"
+#include "..\externalchip.h"
 
 /**
  * @brief ROMEO アクセス クラス
  */
-class CJuliet : public IExternalChip
+class CJuliet
 {
 public:
 	CJuliet();
-	virtual ~CJuliet();
-	virtual bool Initialize();
-	virtual void Deinitialize();
-	virtual bool IsEnabled();
-	virtual bool IsBusy();
-	virtual void Reset();
-	virtual void WriteRegister(UINT nAddr, UINT8 cData);
-	virtual bool HasADPCM();
+	~CJuliet();
+	bool Initialize();
+	void Deinitialize();
+	void Reset();
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
+	bool IsEnabled() const;
 
 private:
 	//! @brief ロード関数
@@ -46,6 +44,28 @@ private:
 	UCHAR m_ucIrq;				//!< ROMEO IRQ
 
 	ULONG SearchRomeo() const;
+
+	/**
+	 * @brief チップ クラス
+	 */
+	class Chip288 : public IExternalChip
+	{
+		public:
+			Chip288(CJuliet* pJuliet);
+			virtual ~Chip288();
+			virtual ChipType GetChipType();
+			virtual void Reset();
+			virtual void WriteRegister(UINT nAddr, UINT8 cData);
+			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+
+		private:
+			CJuliet* m_pJuliet;			//!< 親インスタンス
+			bool IsBusy() const;
+	};
+	IExternalChip* m_pChip288;		//!< YMF288 インスタンス
+
+	void Detach(IExternalChip* pChip);
+	friend class Chip288;
 };
 
 /**
@@ -53,7 +73,7 @@ private:
  * @retval true 有効
  * @retval false 無効
  */
-inline bool CJuliet::IsEnabled()
+inline bool CJuliet::IsEnabled() const
 {
 	return (m_hModule != NULL);
 }

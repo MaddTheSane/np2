@@ -8,7 +8,6 @@
 #include <algorithm>
 #include "np2.h"
 #include "externalopna.h"
-// #include "romeo\juliet.h"
 
 /*! 唯一のインスタンスです */
 CExternalChipManager CExternalChipManager::sm_instance;
@@ -43,6 +42,7 @@ void CExternalChipManager::Deinitialize()
 	}
 
 	m_c86ctl.Deinitialize();
+	m_juliet.Deinitialize();
 	m_scci.Deinitialize();
 }
 
@@ -79,6 +79,10 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 {
 	IExternalChip* pChip = NULL;
 
+	if (pChip == NULL)
+	{
+		pChip = m_juliet.GetInterface(nChipType, nClock);
+	}
 	if (pChip == NULL)
 	{
 		pChip = m_scci.GetInterface(nChipType, nClock);

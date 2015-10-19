@@ -3,7 +3,6 @@
  * @brief	ROMEO アクセス クラスの動作の定義を行います
  */
 
-#if 0
 #include "compiler.h"
 #include "juliet.h"
 #include <stddef.h>
@@ -29,6 +28,7 @@ CJuliet::CJuliet()
 	, m_fnIn8(NULL)
 	, m_ulAddress(0)
 	, m_ucIrq(0)
+	, m_pChip288(NULL)
 {
 }
 
@@ -46,7 +46,10 @@ CJuliet::~CJuliet()
  */
 bool CJuliet::Initialize()
 {
-	Deinitialize();
+	if (m_hModule)
+	{
+		return false;
+	}
 
 	m_hModule = ::LoadLibrary(PCIDEBUG_DLL);
 	if (m_hModule == NULL)
@@ -98,17 +101,22 @@ bool CJuliet::Initialize()
  */
 void CJuliet::Deinitialize()
 {
+	if (m_pChip288)
+	{
+		delete m_pChip288;
+	}
+
 	if (m_hModule)
 	{
 		::FreeLibrary(m_hModule);
+		m_hModule = NULL;
+		m_fnRead32 = NULL;
+		m_fnOut8 = NULL;
+		m_fnOut32 = NULL;
+		m_fnIn8 = NULL;
+		m_ulAddress = 0;
+		m_ucIrq = 0;
 	}
-	m_hModule = NULL;
-	m_fnRead32 = NULL;
-	m_fnOut8 = NULL;
-	m_fnOut32 = NULL;
-	m_fnIn8 = NULL;
-	m_ulAddress = 0;
-	m_ucIrq = 0;
 }
 
 /**
@@ -137,17 +145,6 @@ ULONG CJuliet::SearchRomeo() const
 }
 
 /**
- * ビジー?
- * @retval true ビジー
- * @retval false レディ
- */
-bool CJuliet::IsBusy()
-{
-	return (m_fnIn8 == NULL) || (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0);
-
-}
-
-/**
  * 音源リセット
  */
 void CJuliet::Reset()
@@ -163,34 +160,139 @@ void CJuliet::Reset()
 }
 
 /**
+ * インターフェイス取得
+ * @param[in] nChipType タイプ
+ * @param[in] nClock クロック
+ * @return インスタンス
+ */
+IExternalChip* CJuliet::GetInterface(IExternalChip::ChipType nChipType, UINT nClock)
+{
+	const bool bInitialized = Initialize();
+
+	do
+	{
+		if (m_hModule == NULL)
+		{
+			break;
+		}
+
+		if ((nChipType == IExternalChip::kYMF288) && (m_pChip288 == NULL))
+		{
+			m_pChip288 = new Chip288(this);
+			return m_pChip288;
+		}
+	} while (false /*CONSTCOND*/);
+
+	if (bInitialized)
+	{
+//		Deinitialize();
+	}
+
+	return NULL;
+}
+
+/**
+ * 解放
+ * @param[in] pChip チップ
+ */
+void CJuliet::Detach(IExternalChip* pChip)
+{
+	if (m_pChip288 == pChip)
+	{
+		m_pChip288 = NULL;
+	}
+}
+
+
+
+// ---- チップ
+
+/**
+ * コンストラクタ
+ * @param[in] pScciIf 親インスタンス
+ * @param[in] pChip チップ インスタンス
+ */
+CJuliet::Chip288::Chip288(CJuliet* pJuliet)
+	: m_pJuliet(pJuliet)
+{
+}
+
+/**
+ * デストラクタ
+ */
+CJuliet::Chip288::~Chip288()
+{
+	m_pJuliet->Detach(this);
+}
+
+/**
+ * Get chip type
+ * @return The type of the chip
+ */
+IExternalChip::ChipType CJuliet::Chip288::GetChipType()
+{
+	return IExternalChip::kYMF288;
+}
+
+/**
+ * リセット
+ */
+void CJuliet::Chip288::Reset()
+{
+}
+
+/**
  * レジスタ書き込み
  * @param[in] nAddr アドレス
  * @param[in] cData データ
  */
-void CJuliet::WriteRegister(UINT nAddr, UINT8 cData)
+void CJuliet::Chip288::WriteRegister(UINT nAddr, UINT8 cData)
 {
-	if (m_ulAddress != 0)
+	CJuliet* pJuliet = m_pJuliet;
+	ULONG ulAddress = pJuliet->m_ulAddress;
+	if (ulAddress != 0)
 	{
-		while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
+		FnOut8 fnOut8 = pJuliet->m_fnOut8;
+		FnIn8 fnIn8 = pJuliet->m_fnIn8;
+		while (((*fnIn8)(ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
 		{
 			::Sleep(0);
 		}
-		(*m_fnOut8)(m_ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288ADDR2 : ROMEO_YMF288ADDR1), nAddr);
+		(*fnOut8)(ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288ADDR2 : ROMEO_YMF288ADDR1), nAddr);
 
-		while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
+		while (((*fnIn8)(ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
 		{
 			::Sleep(0);
 		}
-		(*m_fnOut8)(m_ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288DATA2 : ROMEO_YMF288DATA1), cData);
+		(*fnOut8)(ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288DATA2 : ROMEO_YMF288DATA1), cData);
 	}
 }
 
 /**
- * Has ADPCM?
- * @retval false No exist
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return リザルト
  */
-bool CJuliet::HasADPCM()
+INTPTR CJuliet::Chip288::Message(UINT nMessage, INTPTR nParameter)
 {
-	return false;
+	if (nMessage == kBusy)
+	{
+		return IsBusy() ? 1 : 0;
+	}
+	return 0;
 }
-#endif
+
+/**
+ * ビジー?
+ * @retval true ビジー
+ * @retval false ビジーではない
+ */
+bool CJuliet::Chip288::IsBusy() const
+{
+	CJuliet* pJuliet = m_pJuliet;
+	ULONG ulAddress = pJuliet->m_ulAddress;
+	FnIn8 fnIn8 = pJuliet->m_fnIn8;
+
+	return (fnIn8 == NULL) || (((*fnIn8)(ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0);
+}
