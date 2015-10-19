@@ -14,9 +14,6 @@
 #pragma comment(lib, "SDL2_ttf.lib")
 #endif
 
-/** プロトタイプ */
-void opna_deinitialize(void);
-
 /**
  * メイン
  * @param[in] argc 引数
@@ -27,15 +24,10 @@ int main(int argc, char *argv[])
 {
 	UINT nLength;
 	TCHAR szFont[MAX_PATH];
-	int ret;
 
 	nLength = GetWindowsDirectory(szFont, SDL_arraysize(szFont));
 	lstrcpy(szFont + nLength, TEXT("\\Fonts\\msgothic.ttc"));
 	fontmng_setdeffontname(szFont);
 
-	ret = np2_main(argc, argv);
-
-	opna_deinitialize();
-
-	return ret;
+	return np2_main(argc, argv);
 }

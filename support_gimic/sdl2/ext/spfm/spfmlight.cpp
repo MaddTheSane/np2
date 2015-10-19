@@ -21,6 +21,7 @@ CSpfmLight::CSpfmLight()
  */
 CSpfmLight::~CSpfmLight()
 {
+	Deinitialize();
 }
 
 /**
@@ -86,23 +87,12 @@ void CSpfmLight::Deinitialize()
 }
 
 /**
- * Is device enabled?
- * @retval true Enabled
- * @retval false Disabled
+ * Get chip type
+ * @return The type of the chip
  */
-bool CSpfmLight::IsEnabled()
+IExternalChip::ChipType CSpfmLight::GetChipType()
 {
-	return m_serial.IsOpened();
-}
-
-/**
- * Is device busy?
- * @retval true Busy
- * @retval false Ready
- */
-bool CSpfmLight::IsBusy()
-{
-	return false;
+	return IExternalChip::kYM2608;
 }
 
 /**
@@ -132,4 +122,15 @@ void CSpfmLight::WriteRegister(UINT nAddr, UINT8 cData)
 	cmd[2] = static_cast<unsigned char>(nAddr & 0xff);
 	cmd[3] = cData;
 	m_serial.Write(cmd, sizeof(cmd));
+}
+
+/**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return リザルト
+ */
+INTPTR CSpfmLight::Message(UINT nMessage, INTPTR nParameter)
+{
+	return 0;
 }

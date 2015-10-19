@@ -5,67 +5,46 @@
 
 #pragma once
 
-class IExternalChip;
+#include "externalchip.h"
 
 /**
  * @brief 外部 OPNA 演奏クラス
  */
-class CExternalOpna
+class CExternalOpna : public IExternalChip
 {
 public:
-	static CExternalOpna* GetInstance();
-
-	CExternalOpna();
-	void Initialize();
-	void Deinitialize();
-	bool IsEnabled() const;
-	static bool HasPsg();
-	static bool HasRhythm();
+	CExternalOpna(IExternalChip* pChip);
+	virtual ~CExternalOpna();
+	bool HasPsg() const;
+	bool HasRhythm() const;
 	bool HasADPCM() const;
-	bool IsBusy() const;
-	void Reset() const;
-	void WriteRegister(UINT nAddr, UINT8 cData);
-	void Mute(bool bMute) const;
-	void Restore(const UINT8* data, bool bOpna);
+	virtual ChipType GetChipType();
+	virtual void Reset();
+	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual INTPTR Message(UINT nMessage, INTPTR nParameter);
 
-private:
-	static CExternalOpna sm_instance;	//!< 唯一のインスタンスです
-	IExternalChip* m_module;			//!< モジュール
+protected:
+	IExternalChip* m_pChip;				//!< チップ
+	bool m_bHasPsg;						//!< PSG
+	bool m_bHasRhythm;					//!< Rhythm
+	bool m_bHasADPCM;					//!< ADPCM
 	UINT8 m_cPsgMix;					//!< PSG ミキサー
 	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
 	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル
 
+	void Mute(bool bMute) const;
 	void WriteRegisterInner(UINT nAddr, UINT8 cData) const;
 	void SetVolume(UINT nChannel, int nVolume) const;
 };
-
-/**
- * インスタンスを得る
- * @return インスタンス
- */
-inline CExternalOpna* CExternalOpna::GetInstance()
-{
-	return &sm_instance;
-}
-
-/**
- * インスタンスは有効?
- * @retval true 有効
- * @retval false 無効
- */
-inline bool CExternalOpna::IsEnabled() const
-{
-	return (m_module != NULL);
-}
 
 /**
  * PSG を持っている?
  * @retval true 有効
  * @retval false 無効
  */
-inline bool CExternalOpna::HasPsg()
+inline bool CExternalOpna::HasPsg() const
 {
-	return true;
+	return m_bHasPsg;
 }
 
 /**
@@ -73,9 +52,9 @@ inline bool CExternalOpna::HasPsg()
  * @retval true 有効
  * @retval false 無効
  */
-inline bool CExternalOpna::HasRhythm()
+inline bool CExternalOpna::HasRhythm() const
 {
-	return true;
+	return m_bHasRhythm;
 }
 
 /**
@@ -85,5 +64,5 @@ inline bool CExternalOpna::HasRhythm()
  */
 inline bool CExternalOpna::HasADPCM() const
 {
-	return (m_module != NULL);
+	return m_bHasADPCM;
 }

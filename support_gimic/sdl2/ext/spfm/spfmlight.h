@@ -16,12 +16,12 @@ class CSpfmLight : public IExternalChip
 public:
 	CSpfmLight();
 	virtual ~CSpfmLight();
-	virtual bool Initialize();
-	virtual void Deinitialize();
-	virtual bool IsEnabled();
-	virtual bool IsBusy();
+	bool Initialize();
+	void Deinitialize();
+	virtual ChipType GetChipType();
 	virtual void Reset();
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 private:
 	CTty m_serial;		/*!< Serial */

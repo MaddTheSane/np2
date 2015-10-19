@@ -1,12 +1,15 @@
-#include	"compiler.h"
-#include	"parts.h"
-#include	"soundmng.h"
-#include	"sound.h"
+#include "compiler.h"
+#include "soundmng.h"
+#include <algorithm>
+#include "parts.h"
+#include "sound.h"
 #if defined(VERMOUTH_LIB)
-#include	"commng.h"
-#include	"cmver.h"
+#include "commng.h"
+#include "cmver.h"
 #endif
-
+#if defined(SUPPORT_EXTERNALCHIP)
+#include "ext/externalchipmanager.h"
+#endif
 
 #define	NSNDBUF				2
 
@@ -26,7 +29,7 @@ static void sound_play_cb(void *userdata, UINT8 *stream, int len) {
 	SINT16		*dst;
 const SINT32	*src;
 
-	length = min(len, (int)(soundmng.samples * 2 * sizeof(SINT16)));
+	length = (std::min)(len, (int)(soundmng.samples * 2 * sizeof(SINT16)));
 	dst = soundmng.buf[soundmng.nsndbuf];
 	src = sound_pcmlock();
 	if (src) {
@@ -122,30 +125,45 @@ void soundmng_destroy(void) {
 	}
 }
 
-void soundmng_play(void) {
-
-	if (soundmng.opened) {
+void soundmng_play(void)
+{
+	if (soundmng.opened)
+	{
 		SDL_PauseAudio(0);
+#if defined(SUPPORT_ROMEO)
+		CExternalChipManager::GetInstance()->Mute(false);
+#endif
 	}
 }
 
-void soundmng_stop(void) {
-
-	if (soundmng.opened) {
+void soundmng_stop(void)
+{
+	if (soundmng.opened)
+	{
 		SDL_PauseAudio(1);
+#if defined(SUPPORT_ROMEO)
+		CExternalChipManager::GetInstance()->Mute(true);
+#endif
 	}
 }
 
 
 // ----
 
-void soundmng_initialize(void) {
+void soundmng_initialize()
+{
+#if defined(SUPPORT_EXTERNALCHIP)
+	CExternalChipManager::GetInstance()->Initialize();
+#endif
 }
 
-void soundmng_deinitialize(void) {
+void soundmng_deinitialize()
+{
+#if defined(SUPPORT_EXTERNALCHIP)
+	CExternalChipManager::GetInstance()->Deinitialize();
+#endif
 
 #if defined(VERMOUTH_LIB)
 	cmvermouth_unload();
 #endif
 }
-

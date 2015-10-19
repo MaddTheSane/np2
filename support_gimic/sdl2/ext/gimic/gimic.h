@@ -17,12 +17,12 @@ class CGimic : public IExternalChip
 public:
 	CGimic();
 	virtual ~CGimic();
-	virtual bool Initialize();
-	virtual void Deinitialize();
-	virtual bool IsEnabled();
-	virtual bool IsBusy();
+	bool Initialize();
+	void Deinitialize();
+	virtual ChipType GetChipType();
 	virtual void Reset();
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 private:
 	IC86RealChip* m_device;		/*!< The instance of the chip */

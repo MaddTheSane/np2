@@ -11,26 +11,11 @@
 #include "sound/sound.h"
 #include "sound/s98.h"
 #include "generic/keydisp.h"
+#include "externalchipmanager.h"
 #include "externalopna.h"
 
 static void writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
-
-/**
- * Initialize
- */
-void opna_initialize(void)
-{
-}
-
-/**
- * Deinitialize
- */
-void opna_deinitialize(void)
-{
-	CExternalOpna::GetInstance()->Reset();
-	CExternalOpna::GetInstance()->Deinitialize();
-}
 
 /**
  * Initialize instance
@@ -48,11 +33,8 @@ void opna_construct(POPNA opna)
 void opna_destruct(POPNA opna)
 {
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
-	if (pExt)
-	{
-		CExternalOpna::GetInstance()->Reset();
-		opna->userdata = NULL;
-	}
+	CExternalChipManager::GetInstance()->Release(pExt);
+	opna->userdata = NULL;
 }
 
 /**
@@ -89,7 +71,7 @@ void opna_reset(POPNA opna, REG8 cCaps)
 		CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 		if (pExt)
 		{
-			CExternalOpna::GetInstance()->Reset();
+			CExternalChipManager::GetInstance()->Release(pExt);
 			opna->userdata = NULL;
 		}
 	}
@@ -161,22 +143,17 @@ void opna_bind(POPNA opna)
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 	if (pExt == NULL)
 	{
-		if (opna == &g_opna[0])
+		IExternalChip::ChipType nChipType = IExternalChip::kYMF288;
+		if (cCaps & OPNA_HAS_ADPCM)
 		{
-			pExt = CExternalOpna::GetInstance();
-			if (!pExt->IsEnabled())
-			{
-				pExt->Initialize();
-			}
-			if (pExt->IsEnabled())
-			{
-				opna->userdata = reinterpret_cast<INTPTR>(pExt);
-			}
-			else
-			{
-				pExt = NULL;
-			}
+			nChipType = IExternalChip::kYM2608;
 		}
+		if (cCaps == OPNA_MODE_3438)
+		{
+			nChipType = IExternalChip::kYM3438;
+		}
+		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, 3993600 * 2));
+		opna->userdata = reinterpret_cast<INTPTR>(pExt);
 	}
 	if (pExt)
 	{

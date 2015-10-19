@@ -988,8 +988,24 @@
 					>
 				</File>
 				<File
-					RelativePath="..\soundmng.c"
+					RelativePath="..\soundmng.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\sysmenu.c"
@@ -1170,6 +1186,26 @@
 				<Filter
 					Name="ext"
 					>
+					<File
+						RelativePath="..\ext\externalchipmanager.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
 					<File
 						RelativePath="..\ext\externalopna.cpp"
 						>
@@ -2514,6 +2550,10 @@
 					>
 					<File
 						RelativePath="..\ext\externalchip.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalchipmanager.h"
 						>
 					</File>
 					<File

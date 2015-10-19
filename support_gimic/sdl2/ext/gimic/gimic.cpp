@@ -21,6 +21,7 @@ CGimic::CGimic()
  */
 CGimic::~CGimic()
 {
+	Deinitialize();
 }
 
 /**
@@ -66,23 +67,12 @@ void CGimic::Deinitialize()
 }
 
 /**
- * Is device enabled?
- * @retval true Enabled
- * @retval false Disabled
+ * Get chip type
+ * @return The type of the chip
  */
-bool CGimic::IsEnabled()
+IExternalChip::ChipType CGimic::GetChipType()
 {
-	return (m_device != NULL);
-}
-
-/**
- * Is device busy?
- * @retval true Busy
- * @retval false Ready
- */
-bool CGimic::IsBusy()
-{
-	return false;
+	return IExternalChip::kYM2608;
 }
 
 /**
@@ -116,4 +106,15 @@ void CGimic::WriteRegister(UINT nAddr, UINT8 cData)
 	{
 		m_device->Out(nAddr, cData);
 	}
+}
+
+/**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return リザルト
+ */
+INTPTR CGimic::Message(UINT nMessage, INTPTR nParameter)
+{
+	return 0;
 }
