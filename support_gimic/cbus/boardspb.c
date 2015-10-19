@@ -90,7 +90,7 @@ static void IOOUTCALL spr_o588(UINT port, REG8 dat)
 static void IOOUTCALL spr_o58a(UINT port, REG8 dat)
 {
 //	g_opna[1].s.data = dat;
-	opna_write3438Register(&g_opna[1], g_opna[1].s.addrl, dat);
+	opna_writeRegister(&g_opna[1], g_opna[1].s.addrl, dat);
 
 	(void)port;
 }
@@ -105,7 +105,7 @@ static void IOOUTCALL spr_o58c(UINT port, REG8 dat)
 static void IOOUTCALL spr_o58e(UINT port, REG8 dat)
 {
 //	g_opna[1].s.data = dat;
-	opna_write3438ExtRegister(&g_opna[1], g_opna[1].s.addrh, dat);
+	opna_writeExtendedRegister(&g_opna[1], g_opna[1].s.addrh, dat);
 
 	(void)port;
 }
@@ -119,7 +119,7 @@ static REG8 IOINPCALL spr_i588(UINT port)
 static REG8 IOINPCALL spr_i58a(UINT port)
 {
 	(void)port;
-	return opna_read3438Register(&g_opna[1], g_opna[1].s.addrl);
+	return opna_readRegister(&g_opna[1], g_opna[1].s.addrl);
 }
 
 static REG8 IOINPCALL spr_i58c(UINT port)

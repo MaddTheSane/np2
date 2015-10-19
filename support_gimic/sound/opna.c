@@ -348,34 +348,6 @@ static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 }
 
 /**
- * Writes 3438 register
- * @param[in] opna The instance
- * @param[in] nAddress The address
- * @param[in] cData The data
- */
-void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
-{
-	if (opna->s.cCaps == OPNA_MODE_3438)
-	{
-		opna_writeRegister(opna, nAddress, cData);
-	}
-}
-
-/**
- * Writes 3438 extened register
- * @param[in] opna The instance
- * @param[in] nAddress The address
- * @param[in] cData The data
- */
-void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
-{
-	if (opna->s.cCaps == OPNA_MODE_3438)
-	{
-		opna_writeExtendedRegister(opna, nAddress, cData);
-	}
-}
-
-/**
  * Reads register
  * @param[in] opna The instance
  * @param[in] nAddress The address
@@ -383,9 +355,23 @@ void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
  */
 REG8 opna_readRegister(POPNA opna, UINT nAddress)
 {
-	if (nAddress == 0xff)
+	if (nAddress < 0x10)
 	{
-		return (opna->s.cCaps & OPNA_HAS_EXTENDEDFM) ? 1 : 0;
+		if (!(opna->s.cCaps & OPNA_HAS_PSG))
+		{
+			return 0xff;
+		}
+	}
+	else if (nAddress < 0x20)
+	{
+		if (!(opna->s.cCaps & OPNA_HAS_RHYTHM))
+		{
+			return 0xff;
+		}
+	}
+	else if (nAddress == 0xff)
+	{
+		return (opna->s.cCaps & OPNA_HAS_RHYTHM) ? 1 : 0;
 	}
 	return opna->s.reg[nAddress];
 }
@@ -403,28 +389,6 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
 		return adpcm_readsample(&opna->adpcm);
 	}
 	return opna->s.reg[nAddress + 0x100];
-}
-
-/**
- * Reads 3438 register
- * @param[in] opna The instance
- * @param[in] nAddress The address
- * @return data
- */
-REG8 opna_read3438Register(POPNA opna, UINT nAddress)
-{
-	if (opna->s.cCaps == OPNA_MODE_3438)
-	{
-		if (nAddress == 0xff)
-		{
-			return 0;
-		}
-		else if (nAddress >= 0x20)
-		{
-			return opna->s.reg[nAddress];
-		}
-	}
-	return 0xff;
 }
 
 /**
