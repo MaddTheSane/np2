@@ -10,6 +10,7 @@
 #include "keydisp.h"
 #include "pccore.h"
 #include "iocore.h"
+#include "sound/psggen.h"
 
 typedef struct
 {
@@ -370,7 +371,7 @@ static void fmkeyreset(KEYDISP *keydisp)
 	}
 }
 
-void keydisp_fmkeyon(POPNA opna, UINT nBase, REG8 nChannelNum, UINT8 value)
+void keydisp_fmkeyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
 {
 	UINT i;
 	KDFMCTRL *k;
@@ -383,7 +384,7 @@ void keydisp_fmkeyon(POPNA opna, UINT nBase, REG8 nChannelNum, UINT8 value)
 	for (i = 0; i < s_keydisp.fmmax; i++)
 	{
 		k = &s_keydisp.fmctl[i];
-		if (k->pcRegister == &opna->s.reg[nBase])
+		if (k->pcRegister == pcRegister)
 		{
 			value &= 0xf0;
 			if (k->ch[nChannelNum].cKeyOn != value)
@@ -442,10 +443,10 @@ static void fmkeysync(KEYDISP *keydisp)
 
 /**
  * Get pointer of controller
- * @param[in] psg The instance of PSG
+ * @param[in] pcRegister The instance of PSG
  * @return The pointer of controller
  */
-static KDPSGCTRL *GetController(KEYDISP *keydisp, PSGGEN psg)
+static KDPSGCTRL *GetController(KEYDISP *keydisp, const UINT8 *pcRegister)
 {
 	UINT i;
 
@@ -457,7 +458,7 @@ static KDPSGCTRL *GetController(KEYDISP *keydisp, PSGGEN psg)
 	for (i = 0; i < keydisp->psgmax; i++)
 	{
 		KDPSGCTRL *k = &keydisp->psgctl[i];
-		if (k->pcRegister == (const UINT8 *)&psg->reg)
+		if (k->pcRegister == pcRegister)
 		{
 			return k;
 		}
@@ -567,12 +568,12 @@ static void psgkeyreset(KEYDISP *keydisp)
 
 /**
  * Update keyboard
- * @param[in] psg The instance
+ * @param[in] pcRegister The instance
  * @param[in] nAddress The written register
  */
-void keydisp_psg(PSGGEN psg, UINT nAddress)
+void keydisp_psg(const UINT8 *pcRegister, UINT nAddress)
 {
-	KDPSGCTRL *k = GetController(&s_keydisp, psg);
+	KDPSGCTRL *k = GetController(&s_keydisp, pcRegister);
 	if (k != NULL)
 	{
 		switch (nAddress)
@@ -652,12 +653,12 @@ void keydisp_reset(void)
 /**
  * bind
  */
-void keydisp_bindfm(PCOPNA opna, UINT nChannels, UINT nBase)
+void keydisp_bindfm(const UINT8 *pcRegister, UINT nChannels)
 {
 	if (((s_keydisp.keymax + nChannels) <= KEYDISP_CHMAX) && (s_keydisp.fmmax < KEYDISP_FMCHMAX))
 	{
 		s_keydisp.fmctl[s_keydisp.fmmax].cChannelNum = s_keydisp.keymax;
-		s_keydisp.fmctl[s_keydisp.fmmax].pcRegister = opna->s.reg + nBase;
+		s_keydisp.fmctl[s_keydisp.fmmax].pcRegister = pcRegister;
 		s_keydisp.fmctl[s_keydisp.fmmax].cFMChannels = nChannels;
 		s_keydisp.fmmax++;
 		s_keydisp.keymax += nChannels;
@@ -672,12 +673,12 @@ void keydisp_bindfm(PCOPNA opna, UINT nChannels, UINT nBase)
 /**
  * bind
  */
-void keydisp_bindpsg(PSGGEN psg)
+void keydisp_bindpsg(const UINT8 *pcRegister)
 {
 	if (((s_keydisp.keymax + 3) <= KEYDISP_CHMAX) && (s_keydisp.psgmax < KEYDISP_PSGMAX))
 	{
 		s_keydisp.psgctl[s_keydisp.psgmax].cChannelNum = s_keydisp.keymax;
-		s_keydisp.psgctl[s_keydisp.psgmax].pcRegister = (const UINT8*)&psg->reg;
+		s_keydisp.psgctl[s_keydisp.psgmax].pcRegister = pcRegister;
 		s_keydisp.psgmax++;
 		s_keydisp.keymax += 3;
 	}

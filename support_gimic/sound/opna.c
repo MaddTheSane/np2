@@ -137,10 +137,10 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->s.cCaps;
 
-	keydisp_bindfm(opna, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 0);
+	keydisp_bindfm(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
 	if (cCaps & OPNA_HAS_PSG)
 	{
-		keydisp_bindpsg(&opna->psg);
+		keydisp_bindpsg(opna->s.reg);
 	}
 
 	opna->opngen.opnch[2].extop = opna->s.reg[0x27] & 0xc0;
@@ -241,7 +241,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 		psggen_setreg(&opna->psg, nAddress, cData);
 		if (cCaps & OPNA_HAS_PSG)
 		{
-			keydisp_psg(&opna->psg, nAddress);
+			keydisp_psg(opna->s.reg, nAddress);
 		}
 	}
 	else if (nAddress < 0x20)
@@ -273,7 +273,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			}
 
 			opngen_keyon(&opna->opngen, cChannel, cData);
-			keydisp_fmkeyon(opna, 0, cChannel, cData);
+			keydisp_fmkeyon(opna->s.reg, cChannel, cData);
 		}
 		else
 		{

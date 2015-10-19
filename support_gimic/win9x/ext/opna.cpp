@@ -149,10 +149,10 @@ void opna_bind(POPNA opna)
 {
 	UINT8 cCaps = opna->s.cCaps;
 
-	keydisp_bindfm(opna, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 0);
+	keydisp_bindfm(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
 	if (cCaps & OPNA_HAS_PSG)
 	{
-		keydisp_bindpsg(&opna->psg);
+		keydisp_bindpsg(opna->s.reg);
 	}
 
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
@@ -299,7 +299,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 		psggen_setreg(&opna->psg, nAddress, cData);
 		if (cCaps & OPNA_HAS_PSG)
 		{
-			keydisp_psg(&opna->psg, nAddress);
+			keydisp_psg(opna->s.reg, nAddress);
 			if ((pExt) && (pExt->HasPsg()))
 			{
 				pExt->WriteRegister(nAddress, cData);
@@ -349,7 +349,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				pExt->WriteRegister(nAddress, cData);
 			}
-			keydisp_fmkeyon(opna, 0, cChannel, cData);
+			keydisp_fmkeyon(opna->s.reg, cChannel, cData);
 		}
 		else
 		{
