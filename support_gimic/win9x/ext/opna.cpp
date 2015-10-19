@@ -296,11 +296,14 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 
 	if (nAddress < 0x10)
 	{
-		psggen_setreg(&opna->psg, nAddress, cData);
 		if (cCaps & OPNA_HAS_PSG)
 		{
 			keydisp_psg(opna->s.reg, nAddress);
-			if ((pExt) && (pExt->HasPsg()))
+			if ((!pExt) || (!pExt->HasPsg()))
+			{
+				psggen_setreg(&opna->psg, nAddress, cData);
+			}
+			else
 			{
 				pExt->WriteRegister(nAddress, cData);
 			}
