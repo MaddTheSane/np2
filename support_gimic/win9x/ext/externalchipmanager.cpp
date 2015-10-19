@@ -79,9 +79,12 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 {
 	IExternalChip* pChip = NULL;
 
-	if (pChip == NULL)
+	if (np2oscfg.useromeo)
 	{
-		pChip = m_juliet.GetInterface(nChipType, nClock);
+		if (pChip == NULL)
+		{
+			pChip = m_juliet.GetInterface(nChipType, nClock);
+		}
 	}
 	if (pChip == NULL)
 	{

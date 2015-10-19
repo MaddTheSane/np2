@@ -28,6 +28,8 @@ CJuliet::CJuliet()
 	, m_fnIn8(NULL)
 	, m_ulAddress(0)
 	, m_ucIrq(0)
+	, m_nQueIndex(0)
+	, m_nQueCount(0)
 	, m_pChip288(NULL)
 {
 }
@@ -92,6 +94,7 @@ bool CJuliet::Initialize()
 	}
 
 	Reset();
+	Start();
 
 	return true;
 }
@@ -101,6 +104,10 @@ bool CJuliet::Initialize()
  */
 void CJuliet::Deinitialize()
 {
+	Stop();
+	m_nQueIndex = 0;
+	m_nQueCount = 0;
+
 	if (m_pChip288)
 	{
 		delete m_pChip288;
@@ -149,6 +156,12 @@ ULONG CJuliet::SearchRomeo() const
  */
 void CJuliet::Reset()
 {
+	m_queGuard.Enter();
+	m_nQueIndex = 0;
+	m_nQueCount = 0;
+	m_queGuard.Leave();
+
+	m_pciGuard.Enter();
 	if (m_fnOut32 != NULL)
 	{
 		(*m_fnOut32)(m_ulAddress + ROMEO_YMF288CTRL, 0x00);
@@ -157,6 +170,7 @@ void CJuliet::Reset()
 		(*m_fnOut32)(m_ulAddress + ROMEO_YMF288CTRL, 0x80);
 		::Sleep(150);
 	}
+	m_pciGuard.Leave();
 }
 
 /**
@@ -201,6 +215,69 @@ void CJuliet::Detach(IExternalChip* pChip)
 	{
 		m_pChip288 = NULL;
 	}
+}
+
+/**
+ * Write
+ * @param[in] nAddr The address of registers
+ * @param[in] cData The data
+ */
+void CJuliet::Write288(UINT nAddr, UINT8 cData)
+{
+	m_queGuard.Enter();
+	while (m_nQueCount >= _countof(m_que))
+	{
+		m_queGuard.Leave();
+		Delay(1000);
+		m_queGuard.Enter();
+	}
+
+	m_que[(m_nQueIndex + m_nQueCount) % _countof(m_que)] = ((nAddr & 0x1ff) << 8) | cData;
+	m_nQueCount++;
+
+	m_queGuard.Leave();
+}
+
+/**
+ * Thread
+ * @retval true Cont.
+ */
+bool CJuliet::Task()
+{
+	m_queGuard.Enter();
+	if (m_nQueCount == 0)
+	{
+		m_queGuard.Leave();
+		Delay(1000);
+	}
+	else
+	{
+		while (m_nQueCount)
+		{
+			const UINT nData = m_que[m_nQueIndex];
+			m_nQueIndex = (m_nQueIndex + 1) % _countof(m_que);
+			m_nQueCount--;
+			m_queGuard.Leave();
+
+			m_pciGuard.Enter();
+			while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
+			{
+				::Sleep(0);
+			}
+			(*m_fnOut8)(m_ulAddress + ((nData & 0x10000) ? ROMEO_YMF288ADDR2 : ROMEO_YMF288ADDR1), static_cast<UINT8>(nData >> 8));
+
+			while (((*m_fnIn8)(m_ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
+			{
+				::Sleep(0);
+			}
+			(*m_fnOut8)(m_ulAddress + ((nData & 0x10000) ? ROMEO_YMF288DATA2 : ROMEO_YMF288DATA1), static_cast<UINT8>(nData));
+			m_pciGuard.Leave();
+
+			m_queGuard.Enter();
+		}
+		m_queGuard.Leave();
+	}
+	return true;
 }
 
 
@@ -248,24 +325,7 @@ void CJuliet::Chip288::Reset()
  */
 void CJuliet::Chip288::WriteRegister(UINT nAddr, UINT8 cData)
 {
-	CJuliet* pJuliet = m_pJuliet;
-	ULONG ulAddress = pJuliet->m_ulAddress;
-	if (ulAddress != 0)
-	{
-		FnOut8 fnOut8 = pJuliet->m_fnOut8;
-		FnIn8 fnIn8 = pJuliet->m_fnIn8;
-		while (((*fnIn8)(ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
-		{
-			::Sleep(0);
-		}
-		(*fnOut8)(ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288ADDR2 : ROMEO_YMF288ADDR1), nAddr);
-
-		while (((*fnIn8)(ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0)
-		{
-			::Sleep(0);
-		}
-		(*fnOut8)(ulAddress + ((nAddr & 0x100) ? ROMEO_YMF288DATA2 : ROMEO_YMF288DATA1), cData);
-	}
+	m_pJuliet->Write288(nAddr, cData);
 }
 
 /**
@@ -276,23 +336,5 @@ void CJuliet::Chip288::WriteRegister(UINT nAddr, UINT8 cData)
  */
 INTPTR CJuliet::Chip288::Message(UINT nMessage, INTPTR nParameter)
 {
-	if (nMessage == kBusy)
-	{
-		return IsBusy() ? 1 : 0;
-	}
 	return 0;
-}
-
-/**
- * ビジー?
- * @retval true ビジー
- * @retval false ビジーではない
- */
-bool CJuliet::Chip288::IsBusy() const
-{
-	CJuliet* pJuliet = m_pJuliet;
-	ULONG ulAddress = pJuliet->m_ulAddress;
-	FnIn8 fnIn8 = pJuliet->m_fnIn8;
-
-	return (fnIn8 == NULL) || (((*fnIn8)(ulAddress + ROMEO_YMF288ADDR1) & 0x80) != 0);
 }

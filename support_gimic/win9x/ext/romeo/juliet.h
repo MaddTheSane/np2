@@ -6,11 +6,13 @@
 #pragma once
 
 #include "..\externalchip.h"
+#include "misc\guard.h"
+#include "misc\threadbase.h"
 
 /**
  * @brief ROMEO アクセス クラス
  */
-class CJuliet
+class CJuliet : protected CThreadBase
 {
 public:
 	CJuliet();
@@ -20,6 +22,9 @@ public:
 	void Reset();
 	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
 	bool IsEnabled() const;
+
+protected:
+	virtual bool Task();
 
 private:
 	//! @brief ロード関数
@@ -42,8 +47,14 @@ private:
 	FnIn8 m_fnIn8;				//!< inp 関数
 	ULONG m_ulAddress;			//!< ROMEO ベース アドレス
 	UCHAR m_ucIrq;				//!< ROMEO IRQ
+	CGuard m_pciGuard;			/*!< The guard of PCI */
+	CGuard m_queGuard;			/*!< The guard of que */
+	size_t m_nQueIndex;			/*!< The position in que */
+	size_t m_nQueCount;			/*!< The count in que */
+	UINT m_que[0x400];			/*!< que */
 
 	ULONG SearchRomeo() const;
+	void Write288(UINT nAddr, UINT8 cData);
 
 	/**
 	 * @brief チップ クラス
@@ -60,7 +71,6 @@ private:
 
 		private:
 			CJuliet* m_pJuliet;			//!< 親インスタンス
-			bool IsBusy() const;
 	};
 	IExternalChip* m_pChip288;		//!< YMF288 インスタンス
 
