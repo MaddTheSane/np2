@@ -814,6 +814,10 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum)
  */
 BRESULT soundmng_initialize(void)
 {
+#if defined(SUPPORT_ROMEO)
+	CExternalChipManager::GetInstance()->Initialize();
+#endif	// defined(SUPPORT_ROMEO)
+
 	return (CDSound3::GetInstance()->Initialize(g_hWndMain)) ? SUCCESS : FAILURE;
 }
 
@@ -822,6 +826,10 @@ BRESULT soundmng_initialize(void)
  */
 void soundmng_deinitialize(void)
 {
+#if defined(SUPPORT_ROMEO)
+	CExternalChipManager::GetInstance()->Deinitialize();
+#endif	// defined(SUPPORT_ROMEO)
+
 	CDSound3::GetInstance()->Deinitialize();
 }
 

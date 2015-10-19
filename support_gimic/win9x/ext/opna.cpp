@@ -18,21 +18,6 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
 
 /**
- * Initialize
- */
-void opna_initialize(void)
-{
-}
-
-/**
- * Deinitialize
- */
-void opna_deinitialize(void)
-{
-	CExternalChipManager::GetInstance()->Deinitialize();
-}
-
-/**
  * Initialize instance
  * @param[in] opna The instance
  */
