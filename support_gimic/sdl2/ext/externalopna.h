@@ -19,6 +19,8 @@ public:
 	void Initialize();
 	void Deinitialize();
 	bool IsEnabled() const;
+	static bool HasPsg();
+	static bool HasRhythm();
 	bool HasADPCM() const;
 	bool IsBusy() const;
 	void Reset() const;
@@ -54,6 +56,26 @@ inline CExternalOpna* CExternalOpna::GetInstance()
 inline bool CExternalOpna::IsEnabled() const
 {
 	return (m_module != NULL);
+}
+
+/**
+ * PSG ‚ğ‚Á‚Ä‚¢‚é?
+ * @retval true —LŒø
+ * @retval false –³Œø
+ */
+inline bool CExternalOpna::HasPsg()
+{
+	return true;
+}
+
+/**
+ * Rhythm ‚ğ‚Á‚Ä‚¢‚é?
+ * @retval true —LŒø
+ * @retval false –³Œø
+ */
+inline bool CExternalOpna::HasRhythm()
+{
+	return true;
 }
 
 /**
