@@ -72,7 +72,27 @@ void CGimic::Deinitialize()
  */
 IExternalChip::ChipType CGimic::GetChipType()
 {
-	return IExternalChip::kYM2608;
+	c86ctl::ChipType nType;
+	if ((m_device) && (m_device->GetChipType(&nType) == C86CTL_ERR_NONE))
+	{
+		switch (nType)
+		{
+			case c86ctl::CHIP_OPNA:
+				return IExternalChip::kYM2608;
+
+			case c86ctl::CHIP_YM2608NOADPCM:
+			case c86ctl::CHIP_OPN3L:
+				return IExternalChip::kYMF288;
+
+			case c86ctl::CHIP_YM2612:
+			case c86ctl::CHIP_YM3438:
+				return IExternalChip::kYM3438;
+
+			default:
+				break;
+		}
+	}
+	return IExternalChip::kNone;
 }
 
 /**

@@ -7,7 +7,10 @@
 
 #include "../externalchip.h"
 
-class IC86RealChip;
+namespace c86ctl
+{
+	class IC86RealChip;
+}
 
 /**
  * @brief The class of accessing G.I.M.I.C
@@ -25,5 +28,5 @@ public:
 	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 private:
-	IC86RealChip* m_device;		/*!< The instance of the chip */
+	c86ctl::IC86RealChip* m_device;		/*!< The instance of the chip */
 };

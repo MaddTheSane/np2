@@ -7,6 +7,8 @@
 #include "c86boxusb.h"
 #include <algorithm>
 
+using namespace c86ctl;
+
 //! The maximum chips
 #define NMAXCHIPS	4
 
@@ -143,7 +145,7 @@ int C86BoxUSB::Initialize()
 			if ((type == CHIP_OPNA) || (type == CHIP_OPN3L))
 			{
 				printf("Found OPNA/OPN3L in #%d\n", j);
-				m_nChipType = type;
+				m_nChipType = static_cast<ChipType>(info.chiptype[j]);
 				m_nDevId = (i << 3) | j;
 
 				m_nQueIndex = 0;
