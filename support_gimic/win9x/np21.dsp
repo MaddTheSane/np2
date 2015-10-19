@@ -1412,6 +1412,18 @@ SOURCE=.\misc\extrom.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\guard.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\threadbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\threadbase.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\tickcounter.cpp
 # End Source File
 # Begin Source File

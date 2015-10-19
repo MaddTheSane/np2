@@ -2081,6 +2081,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\misc\threadbase.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\tickcounter.cpp"
 						>
 					</File>
@@ -3048,6 +3052,14 @@
 					>
 					<File
 						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\guard.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\threadbase.h"
 						>
 					</File>
 					<File
