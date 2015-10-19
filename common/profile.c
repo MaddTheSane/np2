@@ -853,7 +853,7 @@ const PFTBL	*pterm;
 	p = tbl;
 	pterm = tbl + count;
 	while(p < pterm) {
-		if (profile_read(app, p->item, NULL, work, sizeof(work), pfh)
+		if (profile_read(app, p->item, NULL, work, NELEMENTS(work), pfh)
 																== SUCCESS) {
 			switch(p->itemtype & PFTYPE_MASK) {
 				case PFTYPE_STR:
