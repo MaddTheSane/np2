@@ -300,7 +300,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 		if (cCaps & OPNA_HAS_PSG)
 		{
 			keydisp_psg(&opna->psg, nAddress);
-			if (pExt)
+			if ((pExt) && (pExt->HasPsg()))
 			{
 				pExt->WriteRegister(nAddress, cData);
 			}
