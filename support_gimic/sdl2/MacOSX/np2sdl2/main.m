@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include "../../np2.h"
 #include "../../dosio.h"
-#include "sound/opna.h"
 
 /**
  * メイン
@@ -36,9 +35,5 @@ int main(int argc, char * argv[])
 	}
 	*q = NULL;
 
-	const int ret = np2_main((int)(q - argv), argv);
-
-	opna_deinitialize();
-
-	return ret;
+	return np2_main((int)(q - argv), argv);
 }
