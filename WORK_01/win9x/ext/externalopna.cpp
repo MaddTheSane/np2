@@ -20,7 +20,7 @@ CExternalOpna::CExternalOpna()
 	, m_bHasADPCM(false)
 	, m_cPsgMix(0x3f)
 {
-	memset(m_cAlgorithm, 0, sizeof(*m_cAlgorithm));
+	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
 }
 
