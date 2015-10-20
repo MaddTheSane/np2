@@ -57,7 +57,7 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 	if (m_pGimic == NULL)
 	{
 		CGimic* pModule = new CGimic;
-		if (pModule->Initialize())
+		if (pModule->Initialize(nChipType, nClock))
 		{
 			m_pGimic = new CExternalOpna(pModule);
 			return m_pGimic;
@@ -72,7 +72,7 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 	if (m_pLight == NULL)
 	{
 		CSpfmLight* pModule = new CSpfmLight;
-		if (pModule->Initialize())
+		if (pModule->Initialize(nChipType, nClock))
 		{
 			m_pLight = new CExternalOpna(pModule);
 			return m_pLight;

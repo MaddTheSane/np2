@@ -20,7 +20,7 @@ class CGimic : public IExternalChip
 public:
 	CGimic();
 	virtual ~CGimic();
-	bool Initialize();
+	bool Initialize(IExternalChip::ChipType nChipType, UINT nClock);
 	void Deinitialize();
 	virtual ChipType GetChipType();
 	virtual void Reset();
@@ -28,5 +28,7 @@ public:
 	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 private:
-	c86ctl::IC86RealChip* m_device;		/*!< The instance of the chip */
+	c86ctl::IC86RealChip* m_pChip;		/*!< The instance of the chip */
+	UINT m_nClock;						/*!< The clock */
+	static IExternalChip::ChipType GetChipTypeInner(c86ctl::IC86RealChip* pDevice);
 };

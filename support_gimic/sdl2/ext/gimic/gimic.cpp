@@ -12,7 +12,8 @@
  * Constructor
  */
 CGimic::CGimic()
-	: m_device(NULL)
+	: m_pChip(NULL)
+	, m_nClock(7987200)
 {
 }
 
@@ -26,30 +27,33 @@ CGimic::~CGimic()
 
 /**
  * Initialize
+ * @param[in] nChipType The type og chip
+ * @param[in] nClock The clock
  * @retval true Succeeded
  * @retval false Failed
  */
-bool CGimic::Initialize()
+bool CGimic::Initialize(IExternalChip::ChipType nChipType, UINT nClock)
 {
 	Deinitialize();
 
-	CGimicUSB* gimic = new CGimicUSB();
-	if (gimic->Initialize() == C86CTL_ERR_NONE)
+	CGimicUSB* pGimic = new CGimicUSB();
+	if ((pGimic->Initialize() == C86CTL_ERR_NONE) && (GetChipTypeInner(pGimic) == nChipType))
 	{
-		m_device = gimic;
+		m_pChip = pGimic;
+		m_nClock = nClock;
 		Reset();
 		return true;
 	}
-	delete gimic;
+	delete pGimic;
 
-	C86BoxUSB* c86box = new C86BoxUSB();
-	if (c86box->Initialize() == C86CTL_ERR_NONE)
+	C86BoxUSB* pC86Box = new C86BoxUSB();
+	if ((pC86Box->Initialize() == C86CTL_ERR_NONE) && (GetChipTypeInner(pC86Box) == nChipType))
 	{
-		m_device = c86box;
+		m_pChip = pC86Box;
 		Reset();
 		return true;
 	}
-	delete c86box;
+	delete pC86Box;
 	return false;
 }
 
@@ -58,11 +62,11 @@ bool CGimic::Initialize()
  */
 void CGimic::Deinitialize()
 {
-	if (m_device)
+	if (m_pChip)
 	{
-		m_device->Deinitialize();
-		delete m_device;
-		m_device = NULL;
+		m_pChip->Deinitialize();
+		delete m_pChip;
+		m_pChip = NULL;
 	}
 }
 
@@ -72,8 +76,18 @@ void CGimic::Deinitialize()
  */
 IExternalChip::ChipType CGimic::GetChipType()
 {
+	return GetChipTypeInner(m_pChip);
+}
+
+/**
+ * Get chip type
+ * @param[in] pChip The instance of device
+ * @return The type of the chip
+ */
+IExternalChip::ChipType CGimic::GetChipTypeInner(c86ctl::IC86RealChip* pChip)
+{
 	c86ctl::ChipType nType;
-	if ((m_device) && (m_device->GetChipType(&nType) == C86CTL_ERR_NONE))
+	if ((pChip) && (pChip->GetChipType(&nType) == C86CTL_ERR_NONE))
 	{
 		switch (nType)
 		{
@@ -100,15 +114,15 @@ IExternalChip::ChipType CGimic::GetChipType()
  */
 void CGimic::Reset()
 {
-	if (m_device)
+	if (m_pChip)
 	{
-		m_device->Reset();
+		m_pChip->Reset();
 
 		// G.I.M.I.C ‚Ì‰Šú‰»
-		CGimicUSB* gimicusb = dynamic_cast<CGimicUSB*>(m_device);
+		CGimicUSB* gimicusb = dynamic_cast<CGimicUSB*>(m_pChip);
 		if (gimicusb)
 		{
-			gimicusb->SetPLLClock(7987200);
+			gimicusb->SetPLLClock(m_nClock);
 			gimicusb->SetSSGVolume(31);
 		}
 	}
@@ -122,9 +136,9 @@ void CGimic::Reset()
 void CGimic::WriteRegister(UINT nAddr, UINT8 cData)
 {
 	// printf("WriteReg %04x %02x\n", nAddr, cData);
-	if (m_device)
+	if (m_pChip)
 	{
-		m_device->Out(nAddr, cData);
+		m_pChip->Out(nAddr, cData);
 	}
 }
 

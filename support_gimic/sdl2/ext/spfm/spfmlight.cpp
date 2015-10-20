@@ -13,6 +13,7 @@
  * Constructor
  */
 CSpfmLight::CSpfmLight()
+	: m_nScChipType(SC_TYPE_NONE)
 {
 }
 
@@ -24,14 +25,40 @@ CSpfmLight::~CSpfmLight()
 	Deinitialize();
 }
 
+
 /**
  * Initialize
+ * @param[in] nChipType The type og chip
+ * @param[in] nClock The clock
  * @retval true Succeeded
  * @retval false Failed
  */
-bool CSpfmLight::Initialize()
+bool CSpfmLight::Initialize(IExternalChip::ChipType nChipType, UINT nClock)
 {
 	Deinitialize();
+
+	SC_CHIP_TYPE nScChipType = SC_TYPE_NONE;
+	switch (nChipType)
+	{
+		case IExternalChip::kYM2608:
+			nScChipType = SC_TYPE_YM2608;
+			break;
+
+		case IExternalChip::kYM3438:
+			nScChipType = SC_TYPE_YM2612;
+			break;
+
+		case IExternalChip::kYMF288:
+			nScChipType = SC_TYPE_YMF288;
+			break;
+
+		default:
+			break;
+	}
+	if (nScChipType == SC_TYPE_NONE)
+	{
+		return false;
+	}
 
 	bool bOpened = false;
 
@@ -42,24 +69,49 @@ bool CSpfmLight::Initialize()
 	OEMCHAR szSections[4096];
 	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
 	{
-		OEMCHAR* lpKeyName = szSections;
-		while ((!bOpened) && (*lpKeyName != '\0'))
+		OEMCHAR* lpSections = szSections;
+		while (*lpSections != '\0')
 		{
-			const size_t cchKeyName = OEMSTRLEN(lpKeyName);
-			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) == 0)
+			OEMCHAR* lpKeyName = lpSections;
+			const size_t cchKeyName = OEMSTRLEN(lpSections);
+			lpSections += cchKeyName + 1;
+
+			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) != 0)
 			{
-				if ((lpKeyName[10] == '(') && (lpKeyName[cchKeyName - 1] == ')'))
-				{
-					lpKeyName[cchKeyName - 1] = '\0';
-					bOpened = m_serial.Open(lpKeyName + 11, 1500000, OEMTEXT("8N1"));
-				}
+				continue;
 			}
-			lpKeyName += cchKeyName + 1;
+			if ((lpKeyName[10] != '(') || (lpKeyName[cchKeyName - 1] != ')'))
+			{
+				continue;
+			}
+
+			OEMCHAR szChipId[32];
+			profile_read(lpKeyName, OEMTEXT("SLOT_00_CHIP_ID"), OEMTEXT("0"), szChipId, NELEMENTS(szChipId), pfh);
+			if (milstr_solveINT(szChipId) != nScChipType)
+			{
+				continue;
+			}
+
+			lpKeyName[cchKeyName - 1] = '\0';
+			bOpened = Open(lpKeyName + 11);
+			if (bOpened)
+			{
+				m_nScChipType = nScChipType;
+				break;
+			}
 		}
 	}
 	profile_close(pfh);
 
-	if (!bOpened)
+	return bOpened;
+}
+
+/**
+ * Open serial
+ */
+bool CSpfmLight::Open(const OEMCHAR* lpDeviceName)
+{
+	if (!m_serial.Open(lpDeviceName, 1500000, OEMTEXT("8N1")))
 	{
 		return false;
 	}
@@ -84,6 +136,7 @@ bool CSpfmLight::Initialize()
 void CSpfmLight::Deinitialize()
 {
 	m_serial.Close();
+	m_nScChipType = SC_TYPE_NONE;
 }
 
 /**
@@ -92,7 +145,21 @@ void CSpfmLight::Deinitialize()
  */
 IExternalChip::ChipType CSpfmLight::GetChipType()
 {
-	return IExternalChip::kYM2608;
+	switch (m_nScChipType)
+	{
+		case SC_TYPE_YM2608:
+			return IExternalChip::kYM2608;
+
+		case SC_TYPE_YM2612:
+			return IExternalChip::kYM3438;
+
+		case SC_TYPE_YMF288:
+			return IExternalChip::kYMF288;
+
+		default:
+			break;
+	}
+	return IExternalChip::kNone;
 }
 
 /**
