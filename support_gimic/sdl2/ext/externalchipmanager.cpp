@@ -53,6 +53,29 @@ void CExternalChipManager::Deinitialize()
  */
 IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipType, UINT nClock)
 {
+	IExternalChip* pChip = GetInterfaceInner(nChipType, nClock);
+	if (pChip == NULL)
+	{
+		if (nChipType == IExternalChip::kYMF288)
+		{
+			pChip = GetInterface(IExternalChip::kYM2608, nClock);
+		}
+		else if (nChipType == IExternalChip::kYM3438)
+		{
+			pChip = GetInterface(IExternalChip::kYMF288, nClock);
+		}
+	}
+	return pChip;
+}
+
+/**
+ * チップ確保 (Inner)
+ * @param[in] nChipType チップ タイプ
+ * @param[in] nClock チップ クロック
+ * @return インスタンス
+ */
+IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock)
+{
 	// G.I.M.I.C / C86BOX
 	if (m_pGimic == NULL)
 	{

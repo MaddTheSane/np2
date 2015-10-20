@@ -29,6 +29,8 @@ private:
 
 	IExternalChip* m_pGimic;
 	IExternalChip* m_pLight;
+
+	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 
 /**
