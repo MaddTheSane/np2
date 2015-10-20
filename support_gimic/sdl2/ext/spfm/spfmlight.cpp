@@ -85,9 +85,12 @@ bool CSpfmLight::Initialize(IExternalChip::ChipType nChipType, UINT nClock)
 				continue;
 			}
 
-			OEMCHAR szChipId[32];
-			profile_read(lpKeyName, OEMTEXT("SLOT_00_CHIP_ID"), OEMTEXT("0"), szChipId, NELEMENTS(szChipId), pfh);
-			if (milstr_solveINT(szChipId) != nScChipType)
+			if (profile_readint(lpKeyName, OEMTEXT("ACTIVE"), 0, pfh) == 0)
+			{
+				continue;
+			}
+
+			if (profile_readint(lpKeyName, OEMTEXT("SLOT_00_CHIP_ID"), 0, pfh) != nScChipType)
 			{
 				continue;
 			}
