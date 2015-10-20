@@ -22,7 +22,7 @@ BRESULT profile_enum(const OEMCHAR *lpFileName, void *lpParam, PROFILEENUMPROC l
 /* profiler */
 
 /**
- * mode
+ * The mode
  */
 enum
 {
@@ -33,16 +33,17 @@ enum
 struct tagProfileHandle;
 typedef struct tagProfileHandle* PFILEH;	/*!< defines handle */
 
-PFILEH profile_open(const OEMCHAR *filename, UINT flag);
+PFILEH profile_open(const OEMCHAR *lpFileName, UINT nFlags);
 void profile_close(PFILEH hdl);
 UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl);
-BRESULT profile_read(const OEMCHAR *app, const OEMCHAR *key,
-					const OEMCHAR *def, OEMCHAR *ret, UINT size, PFILEH hdl);
-BRESULT profile_write(const OEMCHAR *app, const OEMCHAR *key,
-											const OEMCHAR *data, PFILEH hdl);
+BRESULT profile_read(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpDefault, OEMCHAR *lpReturnedString, UINT nSize, PFILEH hdl);
+BRESULT profile_write(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpString, PFILEH hdl);
 
-
-enum {
+/**
+ * The type of items
+ */
+enum
+{
 	PFTYPE_STR			= 0,
 	PFTYPE_BOOL,
 	PFTYPE_BITMAP,
@@ -64,26 +65,31 @@ enum {
 	PFFLAG_AND			= 0x0400
 };
 
-typedef struct {
-	OEMCHAR	item[12];
-	UINT	itemtype;
-	void	*value;
-	UINT32	arg;
-} PFTBL;
+/**
+ * @brief The item of profile
+ */
+struct tagProfileItem
+{
+	OEMCHAR item[12];		/*!< The name of the item */
+	UINT itemtype;			/*!< The type of the item */
+	void *value;			/*!< The pointer of values */
+	UINT32 arg;				/*!< The arg */
+};
+typedef struct tagProfileItem	PFTBL;		/*!< defines handle */
 
-#define	PFSTR(k, f, a)		{OEMTEXT(k), f, a, NELEMENTS(a)}
-#define	PFVAL(k, f, a)		{OEMTEXT(k), f, a, 0}
-#define	PFMAX(k, f, a, v)	{OEMTEXT(k), f | PFFLAG_MAX, a, v}
-#define	PFAND(k, f, a, v)	{OEMTEXT(k), f | PFFLAG_AND, a, v}
-#define	PFEXT(k, f, a, v)	{OEMTEXT(k), f, a, v}
+#define PFSTR(k, f, a)		{OEMTEXT(k), f, a, NELEMENTS(a)}			/*!< macro:string */
+#define PFVAL(k, f, a)		{OEMTEXT(k), f, a, 0}						/*!< macro:value */
+#define PFMAX(k, f, a, v)	{OEMTEXT(k), f | PFFLAG_MAX, a, v}			/*!< macro:max */
+#define PFAND(k, f, a, v)	{OEMTEXT(k), f | PFFLAG_AND, a, v}			/*!< macro:and */
+#define PFEXT(k, f, a, v)	{OEMTEXT(k), f, a, v}						/*!< macro */
 
-typedef void (*PFREAD)(const PFTBL *item, const OEMCHAR *string);
-typedef OEMCHAR *(*PFWRITE)(const PFTBL *item, OEMCHAR *string, UINT size);
+/** Read callback */
+typedef void (*PFREAD)(const PFTBL *lpItem, const OEMCHAR *lpString);
+/** Write callback */
+typedef OEMCHAR *(*PFWRITE)(const PFTBL *lpItem, OEMCHAR *lpString, UINT cchString);
 
-void profile_iniread(const OEMCHAR *path, const OEMCHAR *app,
-								const PFTBL *tbl, UINT count, PFREAD cb);
-void profile_iniwrite(const OEMCHAR *path, const OEMCHAR *app,
-								const PFTBL *tbl, UINT count, PFWRITE cb);
+void profile_iniread(const OEMCHAR *lpPath, const OEMCHAR *lpApp, const PFTBL *lpTable, UINT nCount, PFREAD cb);
+void profile_iniwrite(const OEMCHAR *lpPath, const OEMCHAR *lpApp, const PFTBL *lpTable, UINT nCount, PFWRITE cb);
 
 #ifdef __cplusplus
 }
