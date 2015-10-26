@@ -8,7 +8,7 @@
 #include "sound.h"
 
 enum {
-	OPNCH_MAX		= 12,
+	OPNCH_MAX		= 6,
 	OPNA_CLOCK		= 55466 * 72,
 
 	OPN_CHMASK		= 0x80000000,

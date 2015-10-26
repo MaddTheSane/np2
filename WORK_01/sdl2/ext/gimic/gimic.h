@@ -7,7 +7,10 @@
 
 #include "../externalchip.h"
 
-class IC86RealChip;
+namespace c86ctl
+{
+	class IC86RealChip;
+}
 
 /**
  * @brief The class of accessing G.I.M.I.C
@@ -17,13 +20,15 @@ class CGimic : public IExternalChip
 public:
 	CGimic();
 	virtual ~CGimic();
-	virtual bool Initialize();
-	virtual void Deinitialize();
-	virtual bool IsEnabled();
-	virtual bool IsBusy();
+	bool Initialize(IExternalChip::ChipType nChipType, UINT nClock);
+	void Deinitialize();
+	virtual ChipType GetChipType();
 	virtual void Reset();
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
+	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 private:
-	IC86RealChip* m_device;		/*!< The instance of the chip */
+	c86ctl::IC86RealChip* m_pChip;		/*!< The instance of the chip */
+	UINT m_nClock;						/*!< The clock */
+	static IExternalChip::ChipType GetChipTypeInner(c86ctl::IC86RealChip* pDevice);
 };

@@ -37,7 +37,9 @@ PFILEH profile_open(const OEMCHAR *lpFileName, UINT nFlags);
 void profile_close(PFILEH hdl);
 UINT profile_getsectionnames(OEMCHAR *lpBuffer, UINT cchBuffer, PFILEH hdl);
 BRESULT profile_read(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpDefault, OEMCHAR *lpReturnedString, UINT nSize, PFILEH hdl);
+int profile_readint(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, int nDefault, PFILEH hdl);
 BRESULT profile_write(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const OEMCHAR *lpString, PFILEH hdl);
+BRESULT profile_writeint(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, int nValue, PFILEH hdl);
 
 /**
  * The type of items

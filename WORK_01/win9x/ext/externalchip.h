@@ -12,35 +12,37 @@ class IExternalChip
 {
 public:
 	/**
+	 * ChipType
+	 */
+	enum ChipType
+	{
+		kNone				= 0,
+		kYM2608,
+		kYM3438,
+		kYMF288
+	};
+
+	/**
+	 * MessageType
+	 */
+	enum
+	{
+		kMute				= 0,
+		kBusy
+	};
+
+	/**
 	 * Destructor
 	 */
-	virtual ~IExternalChip() { }
+	virtual ~IExternalChip()
+	{
+	}
 
 	/**
-	 * Initialize
-	 * @retval true Succeeded
-	 * @retval false Failed
+	 * Get chip type
+	 * @return The type of the chip
 	 */
-	virtual bool Initialize() = 0;
-
-	/**
-	 * Deinitialize
-	 */
-	virtual void Deinitialize() = 0;
-
-	/**
-	 * Is device enabled?
-	 * @retval true Enabled
-	 * @retval false Disabled
-	 */
-	virtual bool IsEnabled() = 0;
-
-	/**
-	 * Is device busy?
-	 * @retval true Busy
-	 * @retval false Ready
-	 */
-	virtual bool IsBusy() = 0;
+	virtual ChipType GetChipType() = 0;
 
 	/**
 	 * Reset
@@ -55,9 +57,10 @@ public:
 	virtual void WriteRegister(UINT nAddr, UINT8 cData) = 0;
 
 	/**
-	 * Has ADPCM?
-	 * @retval true Has
-	 * @retval false No exist
+	 * Message
+	 * @param[in] nMessage The message
+	 * @param[in] nParameter The parameter
+	 * @return Result
 	 */
-	virtual bool HasADPCM() = 0;
+	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0) = 0;
 };

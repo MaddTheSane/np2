@@ -13,6 +13,7 @@
  * Constructor
  */
 CSpfmLight::CSpfmLight()
+	: m_nScChipType(SC_TYPE_NONE)
 {
 }
 
@@ -21,16 +22,43 @@ CSpfmLight::CSpfmLight()
  */
 CSpfmLight::~CSpfmLight()
 {
+	Deinitialize();
 }
+
 
 /**
  * Initialize
+ * @param[in] nChipType The type og chip
+ * @param[in] nClock The clock
  * @retval true Succeeded
  * @retval false Failed
  */
-bool CSpfmLight::Initialize()
+bool CSpfmLight::Initialize(IExternalChip::ChipType nChipType, UINT nClock)
 {
 	Deinitialize();
+
+	SC_CHIP_TYPE nScChipType = SC_TYPE_NONE;
+	switch (nChipType)
+	{
+		case IExternalChip::kYM2608:
+			nScChipType = SC_TYPE_YM2608;
+			break;
+
+		case IExternalChip::kYM3438:
+			nScChipType = SC_TYPE_YM2612;
+			break;
+
+		case IExternalChip::kYMF288:
+			nScChipType = SC_TYPE_YMF288;
+			break;
+
+		default:
+			break;
+	}
+	if (nScChipType == SC_TYPE_NONE)
+	{
+		return false;
+	}
 
 	bool bOpened = false;
 
@@ -41,24 +69,52 @@ bool CSpfmLight::Initialize()
 	OEMCHAR szSections[4096];
 	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
 	{
-		OEMCHAR* lpKeyName = szSections;
-		while ((!bOpened) && (*lpKeyName != '\0'))
+		OEMCHAR* lpSections = szSections;
+		while (*lpSections != '\0')
 		{
-			const size_t cchKeyName = OEMSTRLEN(lpKeyName);
-			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) == 0)
+			OEMCHAR* lpKeyName = lpSections;
+			const size_t cchKeyName = OEMSTRLEN(lpSections);
+			lpSections += cchKeyName + 1;
+
+			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) != 0)
 			{
-				if ((lpKeyName[10] == '(') && (lpKeyName[cchKeyName - 1] == ')'))
-				{
-					lpKeyName[cchKeyName - 1] = '\0';
-					bOpened = m_serial.Open(lpKeyName + 11, 1500000, OEMTEXT("8N1"));
-				}
+				continue;
 			}
-			lpKeyName += cchKeyName + 1;
+			if ((lpKeyName[10] != '(') || (lpKeyName[cchKeyName - 1] != ')'))
+			{
+				continue;
+			}
+
+			if (profile_readint(lpKeyName, OEMTEXT("ACTIVE"), 0, pfh) == 0)
+			{
+				continue;
+			}
+
+			if (profile_readint(lpKeyName, OEMTEXT("SLOT_00_CHIP_ID"), 0, pfh) != nScChipType)
+			{
+				continue;
+			}
+
+			lpKeyName[cchKeyName - 1] = '\0';
+			bOpened = Open(lpKeyName + 11);
+			if (bOpened)
+			{
+				m_nScChipType = nScChipType;
+				break;
+			}
 		}
 	}
 	profile_close(pfh);
 
-	if (!bOpened)
+	return bOpened;
+}
+
+/**
+ * Open serial
+ */
+bool CSpfmLight::Open(const OEMCHAR* lpDeviceName)
+{
+	if (!m_serial.Open(lpDeviceName, 1500000, OEMTEXT("8N1")))
 	{
 		return false;
 	}
@@ -83,26 +139,30 @@ bool CSpfmLight::Initialize()
 void CSpfmLight::Deinitialize()
 {
 	m_serial.Close();
+	m_nScChipType = SC_TYPE_NONE;
 }
 
 /**
- * Is device enabled?
- * @retval true Enabled
- * @retval false Disabled
+ * Get chip type
+ * @return The type of the chip
  */
-bool CSpfmLight::IsEnabled()
+IExternalChip::ChipType CSpfmLight::GetChipType()
 {
-	return m_serial.IsOpened();
-}
+	switch (m_nScChipType)
+	{
+		case SC_TYPE_YM2608:
+			return IExternalChip::kYM2608;
 
-/**
- * Is device busy?
- * @retval true Busy
- * @retval false Ready
- */
-bool CSpfmLight::IsBusy()
-{
-	return false;
+		case SC_TYPE_YM2612:
+			return IExternalChip::kYM3438;
+
+		case SC_TYPE_YMF288:
+			return IExternalChip::kYMF288;
+
+		default:
+			break;
+	}
+	return IExternalChip::kNone;
 }
 
 /**
@@ -132,4 +192,15 @@ void CSpfmLight::WriteRegister(UINT nAddr, UINT8 cData)
 	cmd[2] = static_cast<unsigned char>(nAddr & 0xff);
 	cmd[3] = cData;
 	m_serial.Write(cmd, sizeof(cmd));
+}
+
+/**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return リザルト
+ */
+INTPTR CSpfmLight::Message(UINT nMessage, INTPTR nParameter)
+{
+	return 0;
 }

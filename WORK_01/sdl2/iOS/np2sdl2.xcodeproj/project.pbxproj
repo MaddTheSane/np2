@@ -175,7 +175,7 @@
 		BA7E846819063AFB00041C04 /* np2.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E832319063AFB00041C04 /* np2.c */; };
 		BA7E846919063AFB00041C04 /* scrnmng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E832619063AFB00041C04 /* scrnmng.c */; };
 		BA7E846A19063AFB00041C04 /* sdlkbd.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E832819063AFB00041C04 /* sdlkbd.c */; };
-		BA7E846B19063AFB00041C04 /* soundmng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E832A19063AFB00041C04 /* soundmng.c */; };
+		BA7E846B19063AFB00041C04 /* soundmng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA7E832A19063AFB00041C04 /* soundmng.cpp */; };
 		BA7E846C19063AFB00041C04 /* sysmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E832C19063AFB00041C04 /* sysmenu.c */; };
 		BA7E846F19063AFB00041C04 /* sysmng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E833019063AFB00041C04 /* sysmng.c */; };
 		BA7E847019063AFB00041C04 /* taskmng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E833219063AFB00041C04 /* taskmng.c */; };
@@ -599,7 +599,7 @@
 		BA7E832719063AFB00041C04 /* scrnmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnmng.h; sourceTree = "<group>"; };
 		BA7E832819063AFB00041C04 /* sdlkbd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sdlkbd.c; sourceTree = "<group>"; };
 		BA7E832919063AFB00041C04 /* sdlkbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sdlkbd.h; sourceTree = "<group>"; };
-		BA7E832A19063AFB00041C04 /* soundmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = soundmng.c; sourceTree = "<group>"; };
+		BA7E832A19063AFB00041C04 /* soundmng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = soundmng.cpp; sourceTree = "<group>"; };
 		BA7E832B19063AFB00041C04 /* soundmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundmng.h; sourceTree = "<group>"; };
 		BA7E832C19063AFB00041C04 /* sysmenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sysmenu.c; sourceTree = "<group>"; };
 		BA7E832D19063AFB00041C04 /* sysmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysmenu.h; sourceTree = "<group>"; };
@@ -1286,7 +1286,7 @@
 				BA7E832719063AFB00041C04 /* scrnmng.h */,
 				BA7E832819063AFB00041C04 /* sdlkbd.c */,
 				BA7E832919063AFB00041C04 /* sdlkbd.h */,
-				BA7E832A19063AFB00041C04 /* soundmng.c */,
+				BA7E832A19063AFB00041C04 /* soundmng.cpp */,
 				BA7E832B19063AFB00041C04 /* soundmng.h */,
 				BA7E832C19063AFB00041C04 /* sysmenu.c */,
 				BA7E832D19063AFB00041C04 /* sysmenu.h */,
@@ -1590,7 +1590,7 @@
 				BA7E83E619063AFB00041C04 /* diskdrv.c in Sources */,
 				BA7E848C19063AFB00041C04 /* rhythmc.c in Sources */,
 				BA7E845319063AFB00041C04 /* memvram.c in Sources */,
-				BA7E846B19063AFB00041C04 /* soundmng.c in Sources */,
+				BA7E846B19063AFB00041C04 /* soundmng.cpp in Sources */,
 				BA7E83F219063AFB00041C04 /* fontdata.c in Sources */,
 				BA7E849C19063AFB00041C04 /* makegrph.c in Sources */,
 				BA7E839819063AFB00041C04 /* bios0c.c in Sources */,

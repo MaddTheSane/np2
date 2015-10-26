@@ -15,100 +15,32 @@
 #include "sound/sound.h"
 #include "sound/soundrom.h"
 
-static void IOOUTCALL spb_o188(UINT port, REG8 dat)
-{
-	g_opn.s.addr1l = dat;
-//	g_opn.s.data1 = dat;
-
-	(void)port;
-}
-
-static void IOOUTCALL spb_o18a(UINT port, REG8 dat)
-{
-//	g_opn.s.data1 = dat;
-	opna_writeRegister(&g_opn, g_opn.s.addr1l, dat);
-
-	(void)port;
-}
-
-static void IOOUTCALL spb_o18c(UINT port, REG8 dat)
-{
-	g_opn.s.addr1h = dat;
-//	g_opn.s.data1 = dat;
-	(void)port;
-}
-
-static void IOOUTCALL spb_o18e(UINT port, REG8 dat)
-{
-//	g_opn.s.data1 = dat;
-	opna_writeExtendedRegister(&g_opn, g_opn.s.addr1h, dat);
-
-	(void)port;
-}
-
-static REG8 IOINPCALL spb_i188(UINT port)
-{
-	(void)port;
-
-	return opna_readExtendedStatus(&g_opn);
-}
-
-static REG8 IOINPCALL spb_i18a(UINT port)
-{
-	UINT nAddress;
-
-	nAddress = g_opn.s.addr1l;
-	if (nAddress == 0x0e)
-	{
-		return fmboard_getjoy(&g_opn.psg);
-	}
-
-	(void)port;
-	return opna_readRegister(&g_opn, nAddress);
-}
-
-static REG8 IOINPCALL spb_i18e(UINT port)
-{
-	UINT nAddress;
-
-	nAddress = g_opn.s.addr1h;
-	if ((nAddress == 0x08) || (nAddress == 0x0f))
-	{
-		return opna_readExtendedRegister(&g_opn, nAddress);
-	}
-
-	(void)port;
-	return g_opn.s.reg[g_opn.s.addr1l];
-}
-
-
-
 static void IOOUTCALL spb_o088(UINT port, REG8 dat)
 {
-	g_opn2.s.addr1l = dat;
-//	g_opn2.s.data1 = dat;
+	g_opna[0].s.addrl = dat;
+//	g_opna[0].s.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spb_o08a(UINT port, REG8 dat)
 {
-//	g_opn2.s.data1 = dat;
-	opna_writeRegister(&g_opn2, g_opn2.s.addr1l, dat);
+//	g_opna[0].s.data = dat;
+	opna_writeRegister(&g_opna[0], g_opna[0].s.addrl, dat);
 
 	(void)port;
 }
 
 static void IOOUTCALL spb_o08c(UINT port, REG8 dat)
 {
-	g_opn2.s.addr1h = dat;
-//	g_opn2.s.data1 = dat;
+	g_opna[0].s.addrh = dat;
+//	g_opna[0].s.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spb_o08e(UINT port, REG8 dat)
 {
-//	g_opn2.2.data1 = dat;
-	opna_writeExtendedRegister(&g_opn2, g_opn2.s.addr1h, dat);
+//	g_opna[0].data = dat;
+	opna_writeExtendedRegister(&g_opna[0], g_opna[0].s.addrh, dat);
 
 	(void)port;
 }
@@ -117,60 +49,128 @@ static REG8 IOINPCALL spb_i088(UINT port)
 {
 	(void)port;
 
-	return opna_readExtendedStatus(&g_opn2);
+	return opna_readExtendedStatus(&g_opna[0]);
 }
 
 static REG8 IOINPCALL spb_i08a(UINT port)
 {
 	UINT nAddress;
 
-	nAddress = g_opn2.s.addr1l;
+	nAddress = g_opna[0].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opn2.psg);
+		return fmboard_getjoy(&g_opna[0]);
 	}
 
 	(void)port;
-	return opna_readRegister(&g_opn2, nAddress);
+	return opna_readRegister(&g_opna[0], nAddress);
 }
 
 static REG8 IOINPCALL spb_i08e(UINT port)
 {
 	UINT nAddress;
 
-	nAddress = g_opn2.s.addr1h;
+	nAddress = g_opna[0].s.addrh;
 	if ((nAddress == 0x08) || (nAddress == 0x0f))
 	{
-		return opna_readExtendedRegister(&g_opn2, nAddress);
+		return opna_readExtendedRegister(&g_opna[0], nAddress);
 	}
 
 	(void)port;
-	return g_opn2.s.reg[g_opn2.s.addr1l];
+	return g_opna[0].s.reg[g_opna[0].s.addrl];
+}
+
+
+
+static void IOOUTCALL spb_o188(UINT port, REG8 dat)
+{
+	g_opna[1].s.addrl = dat;
+//	g_opna[1].s.data = dat;
+
+	(void)port;
+}
+
+static void IOOUTCALL spb_o18a(UINT port, REG8 dat)
+{
+//	g_opna[1].s.data = dat;
+	opna_writeRegister(&g_opna[1], g_opna[1].s.addrl, dat);
+
+	(void)port;
+}
+
+static void IOOUTCALL spb_o18c(UINT port, REG8 dat)
+{
+	g_opna[1].s.addrh = dat;
+//	g_opna[1].s.data = dat;
+	(void)port;
+}
+
+static void IOOUTCALL spb_o18e(UINT port, REG8 dat)
+{
+//	g_opna[1].s.data = dat;
+	opna_writeExtendedRegister(&g_opna[1], g_opna[1].s.addrh, dat);
+
+	(void)port;
+}
+
+static REG8 IOINPCALL spb_i188(UINT port)
+{
+	(void)port;
+
+	return opna_readExtendedStatus(&g_opna[1]);
+}
+
+static REG8 IOINPCALL spb_i18a(UINT port)
+{
+	UINT nAddress;
+
+	nAddress = g_opna[1].s.addrl;
+	if (nAddress == 0x0e)
+	{
+		return fmboard_getjoy(&g_opna[1]);
+	}
+
+	(void)port;
+	return opna_readRegister(&g_opna[1], nAddress);
+}
+
+static REG8 IOINPCALL spb_i18e(UINT port)
+{
+	UINT nAddress;
+
+	nAddress = g_opna[1].s.addrh;
+	if ((nAddress == 0x08) || (nAddress == 0x0f))
+	{
+		return opna_readExtendedRegister(&g_opna[1], nAddress);
+	}
+
+	(void)port;
+	return g_opna[1].s.reg[g_opna[1].s.addrl];
 }
 
 
 
 static void IOOUTCALL p86_o288(UINT port, REG8 dat)
 {
-	g_opn3.s.addr1l = dat;
-	g_opn3.s.data1 = dat;
+	g_opna[4].s.addrl = dat;
+	g_opna[4].s.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL p86_o28a(UINT port, REG8 dat)
 {
-	g_opn3.s.data1 = dat;
-	opna_writeRegister(&g_opn3, g_opn3.s.addr1l, dat);
+	g_opna[4].s.data = dat;
+	opna_writeRegister(&g_opna[4], g_opna[4].s.addrl, dat);
 
 	(void)port;
 }
 
 static void IOOUTCALL p86_o28c(UINT port, REG8 dat)
 {
-	if (g_opn3.s.extend)
+	if (g_opna[4].s.extend)
 	{
-		g_opn3.s.addr1h = dat;
-		g_opn3.s.data1 = dat;
+		g_opna[4].s.addrh = dat;
+		g_opna[4].s.data = dat;
 	}
 
 	(void)port;
@@ -178,10 +178,10 @@ static void IOOUTCALL p86_o28c(UINT port, REG8 dat)
 
 static void IOOUTCALL p86_o28e(UINT port, REG8 dat)
 {
-	if (g_opn3.s.extend)
+	if (g_opna[4].s.extend)
 	{
-		g_opn3.s.data1 = dat;
-		opna_writeExtendedRegister(&g_opn3, g_opn3.s.addr1h, dat);
+		g_opna[4].s.data = dat;
+		opna_writeExtendedRegister(&g_opna[4], g_opna[4].s.addrh, dat);
 	}
 
 	(void)port;
@@ -197,14 +197,14 @@ static REG8 IOINPCALL p86_i28a(UINT port)
 {
 	UINT nAddress;
 
-	nAddress = g_opn3.s.addr1l;
+	nAddress = g_opna[4].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opn3.psg);
+		return fmboard_getjoy(&g_opna[4]);
 	}
 	else if (nAddress < 0x10)
 	{
-		return opna_readRegister(&g_opn3, nAddress);
+		return opna_readRegister(&g_opna[4], nAddress);
 	}
 	else if (nAddress == 0xff)
 	{
@@ -212,21 +212,21 @@ static REG8 IOINPCALL p86_i28a(UINT port)
 	}
 
 	(void)port;
-	return g_opn3.s.data1;
+	return g_opna[4].s.data;
 }
 
 static REG8 IOINPCALL p86_i28e(UINT port)
 {
 	UINT nAddress;
 
-	if (g_opn3.s.extend)
+	if (g_opna[4].s.extend)
 	{
-		nAddress = g_opn3.s.addr1h;
+		nAddress = g_opna[4].s.addrh;
 		if ((nAddress == 0x08) || (nAddress == 0x0f))
 		{
-			return opna_readExtendedRegister(&g_opn3, nAddress);
+			return opna_readExtendedRegister(&g_opna[4], nAddress);
 		}
-		return g_opn3.s.data1;
+		return g_opna[4].s.data;
 	}
 
 	(void)port;
@@ -235,89 +235,25 @@ static REG8 IOINPCALL p86_i28e(UINT port)
 
 
 // ---- spark board
-
-static void IOOUTCALL spr_o588(UINT port, REG8 dat)
-{
-	g_opn.s.addr2l = dat;
-//	g_opn.s.data2 = dat;
-	(void)port;
-}
-
-static void IOOUTCALL spr_o58a(UINT port, REG8 dat)
-{
-//	g_opn.s.data2 = dat;
-	opna_write3438Register(&g_opn, g_opn.s.addr2l, dat);
-
-	(void)port;
-}
-
-static void IOOUTCALL spr_o58c(UINT port, REG8 dat)
-{
-	g_opn.s.addr2h = dat;
-//	g_opn.s.data2 = dat;
-	(void)port;
-}
-
-static void IOOUTCALL spr_o58e(UINT port, REG8 dat)
-{
-//	g_opn.s.data2 = dat;
-	opna_write3438ExtRegister(&g_opn, g_opn.s.addr2h, dat);
-
-	(void)port;
-}
-
-static REG8 IOINPCALL spr_i588(UINT port)
-{
-	(void)port;
-	return g_fmtimer.status;
-}
-
-static REG8 IOINPCALL spr_i58a(UINT port)
-{
-	(void)port;
-	return opna_read3438Register(&g_opn, g_opn.s.addr2l);
-}
-
-static REG8 IOINPCALL spr_i58c(UINT port)
-{
-	(void)port;
-	return (g_fmtimer.status & 3);
-}
-
-static REG8 IOINPCALL spr_i58e(UINT port)
-{
-	(void)port;
-	return opna_read3438ExtRegister(&g_opn, g_opn.s.addr2l);
-}
-
-
-
-static void IOOUTCALL spr_o488(UINT port, REG8 dat)
-{
-	g_opn2.s.addr2l = dat;
-//	g_opn2.s.data2 = dat;
-	(void)port;
-}
-
 static void IOOUTCALL spr_o48a(UINT port, REG8 dat)
 {
-//	g_opn2.s.data2 = dat;
-	opna_write3438Register(&g_opn2, g_opn2.s.addr2l, dat);
+//	g_opna[2].s.data = dat;
+	opna_writeRegister(&g_opna[2], g_opna[2].s.addrl, dat);
 
 	(void)port;
 }
 
 static void IOOUTCALL spr_o48c(UINT port, REG8 dat)
 {
-	g_opn2.s.addr2h = dat;
-//	g_opn2.s.data2 = dat;
+	g_opna[2].s.addrh = dat;
+//	g_opna[2].s.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL spr_o48e(UINT port, REG8 dat)
 {
-//	g_opn.s.data2 = dat;
-	opna_write3438ExtRegister(&g_opn2, g_opn2.s.addr2h, dat);
+//	g_opn.s.data = dat;
+	opna_writeExtendedRegister(&g_opna[2], g_opna[2].s.addrh, dat);
 
 	(void)port;
 }
@@ -331,7 +267,7 @@ static REG8 IOINPCALL spr_i488(UINT port)
 static REG8 IOINPCALL spr_i48a(UINT port)
 {
 	(void)port;
-	return opna_read3438Register(&g_opn2, g_opn2.s.addr2l);
+	return opna_readRegister(&g_opna[2], g_opna[2].s.addrl);
 }
 
 static REG8 IOINPCALL spr_i48c(UINT port)
@@ -343,8 +279,72 @@ static REG8 IOINPCALL spr_i48c(UINT port)
 static REG8 IOINPCALL spr_i48e(UINT port)
 {
 	(void)port;
-	return opna_read3438ExtRegister(&g_opn2, g_opn2.s.addr2l);
+	return opna_read3438ExtRegister(&g_opna[2], g_opna[2].s.addrl);
 }
+
+static void IOOUTCALL spr_o488(UINT port, REG8 dat)
+{
+	g_opna[2].s.addrl = dat;
+//	g_opna[2].s.data = dat;
+	(void)port;
+}
+
+
+
+static void IOOUTCALL spr_o588(UINT port, REG8 dat)
+{
+	g_opna[3].s.addrl = dat;
+//	g_opna[3].s.data = dat;
+	(void)port;
+}
+
+static void IOOUTCALL spr_o58a(UINT port, REG8 dat)
+{
+//	g_opna[3].s.data = dat;
+	opna_writeRegister(&g_opna[3], g_opna[3].s.addrl, dat);
+
+	(void)port;
+}
+
+static void IOOUTCALL spr_o58c(UINT port, REG8 dat)
+{
+	g_opna[3].s.addrh = dat;
+//	g_opna[3].s.data = dat;
+	(void)port;
+}
+
+static void IOOUTCALL spr_o58e(UINT port, REG8 dat)
+{
+//	g_opna[3].s.data = dat;
+	opna_writeExtendedRegister(&g_opna[3], g_opna[3].s.addrh, dat);
+
+	(void)port;
+}
+
+static REG8 IOINPCALL spr_i588(UINT port)
+{
+	(void)port;
+	return g_fmtimer.status;
+}
+
+static REG8 IOINPCALL spr_i58a(UINT port)
+{
+	(void)port;
+	return opna_readRegister(&g_opna[3], g_opna[3].s.addrl);
+}
+
+static REG8 IOINPCALL spr_i58c(UINT port)
+{
+	(void)port;
+	return (g_fmtimer.status & 3);
+}
+
+static REG8 IOINPCALL spr_i58e(UINT port)
+{
+	(void)port;
+	return opna_read3438ExtRegister(&g_opna[3], g_opna[3].s.addrl);
+}
+
 
 
 // ----
@@ -387,18 +387,18 @@ static const IOINP spr_i2[4] = {
  */
 void boardpx1_reset(const NP2CFG *pConfig)
 {
-	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR | OPNA_S98);
-	opna_reset(&g_opn2, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR);
+	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_reset(&g_opna[2], OPNA_MODE_3438);
+	opna_reset(&g_opna[3], OPNA_MODE_3438);
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
-	g_opn.s.reg[0x2ff] = 0;
-	g_opn.s.channels = 12;
-	g_opn2.s.reg[0x2ff] = 0;
-	g_opn2.s.channels = 12;
-	opngen_setcfg(&g_opn.opngen, 12, OPN_STEREO | 0xfff);
-	opngen_setcfg(&g_opn2.opngen, 12, OPN_STEREO | 0xfff);
+	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[2].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[3].opngen, 6, OPN_STEREO | 0x3f);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
-	g_opn.s.base = (pConfig->spbopt & 0x10)?0x000:0x100;
+	g_opna[0].s.base = (pConfig->spbopt & 0x10) ? 0x000 : 0x100;
 }
 
 /**
@@ -406,8 +406,10 @@ void boardpx1_reset(const NP2CFG *pConfig)
  */
 void boardpx1_bind(void)
 {
-	opna_bind(&g_opn);
-	opna_bind(&g_opn2);
+	opna_bind(&g_opna[0]);
+	opna_bind(&g_opna[1]);
+	opna_bind(&g_opna[2]);
+	opna_bind(&g_opna[3]);
 	cbuscore_attachsndex(0x188, spb_o, spb_i);
 	cbuscore_attachsndex(0x588, spr_o, spr_i);
 	cbuscore_attachsndex(0x088, spb_o2, spb_i2);
@@ -417,17 +419,15 @@ void boardpx1_bind(void)
 
 static void extendchannelx2(REG8 enable) {
 
-	g_opn3.s.extend = enable;
+	g_opna[4].s.extend = enable;
 	if (enable)
 	{
-		g_opn3.s.channels = 6;
-		opngen_setcfg(&g_opn3.opngen, 6, OPN_STEREO | 0x007);
+		opngen_setcfg(&g_opna[4].opngen, 6, OPN_STEREO | 0x07);
 	}
 	else
 	{
-		g_opn3.s.channels = 3;
-		opngen_setcfg(&g_opn3.opngen, 3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&g_opn3.rhythm, 0x10, 0xff);
+		opngen_setcfg(&g_opna[4].opngen, 3, OPN_MONORAL | 0x07);
+		rhythm_setreg(&g_opna[4].rhythm, 0x10, 0xff);
 	}
 }
 
@@ -437,21 +437,20 @@ static void extendchannelx2(REG8 enable) {
  */
 void boardpx2_reset(const NP2CFG *pConfig)
 {
-	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR | OPNA_S98);
-	opna_reset(&g_opn2, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM | OPNA_HAS_YM3438 | OPNA_HAS_VR);
-	opna_reset(&g_opn3, OPNA_HAS_EXTENDEDFM | OPNA_HAS_ADPCM);
+	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM);
+	opna_reset(&g_opna[2], OPNA_MODE_3438);
+	opna_reset(&g_opna[3], OPNA_MODE_3438);
+	opna_reset(&g_opna[4], OPNA_MODE_2608 | OPNA_HAS_ADPCM);
 
 	fmtimer_reset(pConfig->spbopt & 0xc0);
-	g_opn.s.reg[0x2ff] = 0;
-	g_opn.s.channels = 12;
-	g_opn2.s.reg[0x2ff] = 0;
-	g_opn2.s.channels = 12;
-	g_opn3.s.channels = 3;
-	opngen_setcfg(&g_opn.opngen, 12, OPN_STEREO | 0xfff);
-	opngen_setcfg(&g_opn2.opngen, 12, OPN_STEREO | 0xfff);
-	opngen_setcfg(&g_opn3.opngen,  3, OPN_STEREO | 0x038);
+	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[2].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[3].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[4].opngen, 3, OPN_STEREO | 0x38);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
-	g_opn.s.base = (pConfig->spbopt & 0x10)?0x000:0x100;
+	g_opna[0].s.base = (pConfig->spbopt & 0x10) ? 0x000 : 0x100;
 	fmboard_extreg(extendchannelx2);
 }
 
@@ -460,9 +459,11 @@ void boardpx2_reset(const NP2CFG *pConfig)
  */
 void boardpx2_bind(void)
 {
-	opna_bind(&g_opn);
-	opna_bind(&g_opn2);
-	opna_bind(&g_opn3);
+	opna_bind(&g_opna[0]);
+	opna_bind(&g_opna[1]);
+	opna_bind(&g_opna[2]);
+	opna_bind(&g_opna[3]);
+	opna_bind(&g_opna[4]);
 	pcm86io_bind();
 	cbuscore_attachsndex(0x188, spb_o, spb_i);
 	cbuscore_attachsndex(0x588, spr_o, spr_i);

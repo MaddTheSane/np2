@@ -11,27 +11,11 @@
 #include "sound/sound.h"
 #include "sound/s98.h"
 #include "generic/keydisp.h"
+#include "externalchipmanager.h"
 #include "externalopna.h"
 
 static void writeRegister(POPNA opna, UINT nAddress, REG8 cData);
 static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData);
-static void fmrestore(POPNA opna, REG8 chbase, UINT bank);
-
-/**
- * Initialize
- */
-void opna_initialize(void)
-{
-}
-
-/**
- * Deinitialize
- */
-void opna_deinitialize(void)
-{
-	CExternalOpna::GetInstance()->Reset();
-	CExternalOpna::GetInstance()->Deinitialize();
-}
 
 /**
  * Initialize instance
@@ -40,27 +24,17 @@ void opna_deinitialize(void)
 void opna_construct(POPNA opna)
 {
 	memset(opna, 0, sizeof(*opna));
+}
 
-	opna->s.reg[0x07] = 0xbf;
-	opna->s.reg[0x0e] = 0xff;
-	opna->s.reg[0x0f] = 0xff;
-	opna->s.reg[0xff] = 0x01;
-	for (UINT i = 0; i < 4; i++)
-	{
-		memset(opna->s.reg + (i * 0x100) + 0x30, 0xff, 0x60);
-		memset(opna->s.reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
-	}
-	for (UINT i = 0; i < 16; i++)
-	{
-		opna->s.keyreg[i] = i & 7;
-	}
-
-	opna->s.channels = 3;
-	opna->s.adpcmmask = ~(0x1c);
-	opngen_reset(&opna->opngen);
-	psggen_reset(&opna->psg);
-	rhythm_reset(&opna->rhythm);
-	adpcm_reset(&opna->adpcm);
+/**
+ * Deinitialize instance
+ * @param[in] opna The instance
+ */
+void opna_destruct(POPNA opna)
+{
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
+	CExternalChipManager::GetInstance()->Release(pExt);
+	opna->userdata = NULL;
 }
 
 /**
@@ -70,9 +44,37 @@ void opna_construct(POPNA opna)
  */
 void opna_reset(POPNA opna, REG8 cCaps)
 {
+	memset(&opna->s, 0, sizeof(opna->s));
+	opna->s.adpcmmask = ~(0x1c);
 	opna->s.cCaps = cCaps;
+	opna->s.reg[0x07] = 0xbf;
+	opna->s.reg[0x0e] = 0xff;
+	opna->s.reg[0x0f] = 0xff;
+	opna->s.reg[0xff] = (cCaps & OPNA_HAS_RHYTHM) ? 0x01 : 0x00;
+	for (UINT i = 0; i < 2; i++)
+	{
+		memset(opna->s.reg + (i * 0x100) + 0x30, 0xff, 0x60);
+		memset(opna->s.reg + (i * 0x100) + 0xb4, 0xc0, 0x04);
+	}
+	for (UINT i = 0; i < 7; i++)
+	{
+		opna->s.keyreg[i] = i & 7;
+	}
 
-	CExternalOpna::GetInstance()->Reset();
+	opngen_reset(&opna->opngen);
+	psggen_reset(&opna->psg);
+	rhythm_reset(&opna->rhythm);
+	adpcm_reset(&opna->adpcm);
+
+	if (cCaps == 0)
+	{
+		CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
+		if (pExt)
+		{
+			CExternalChipManager::GetInstance()->Release(pExt);
+			opna->userdata = NULL;
+		}
+	}
 }
 
 /**
@@ -130,24 +132,32 @@ static void restore(POPNA opna)
  */
 void opna_bind(POPNA opna)
 {
-	const UINT8 cCaps = opna->s.cCaps;
+	UINT8 cCaps = opna->s.cCaps;
 
-	keydisp_bindfm(opna, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 0);
-	if (cCaps & OPNA_HAS_YM3438)
+	keydisp_bindfm(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
+	if (cCaps & OPNA_HAS_PSG)
 	{
-		keydisp_bindfm(opna, 6, 0x200);
+		keydisp_bindpsg(opna->s.reg);
 	}
-	keydisp_bindpsg(&opna->psg);
 
-	CExternalOpna* pExt = CExternalOpna::GetInstance();
-	if (!pExt->IsEnabled())
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
+	if (pExt == NULL)
 	{
-		pExt->Initialize();
+		IExternalChip::ChipType nChipType = IExternalChip::kYMF288;
+		if (cCaps & OPNA_HAS_ADPCM)
+		{
+			nChipType = IExternalChip::kYM2608;
+		}
+		if (cCaps == OPNA_MODE_3438)
+		{
+			nChipType = IExternalChip::kYM3438;
+		}
+		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, 3993600 * 2));
+		opna->userdata = reinterpret_cast<INTPTR>(pExt);
+	}
+	if (pExt)
+	{
 		pExt->Reset();
-	}
-
-	if (pExt->IsEnabled())
-	{
 		pExt->WriteRegister(0x22, 0x00);
 		pExt->WriteRegister(0x29, 0x80);
 		pExt->WriteRegister(0x10, 0xbf);
@@ -159,43 +169,28 @@ void opna_bind(POPNA opna)
 		opna->opngen.opnch[2].extop = opna->s.reg[0x27] & 0xc0;
 	}
 	restore(opna);
-	if (cCaps & OPNA_HAS_YM3438)
+
+	if (pExt)
 	{
-		opna->opngen.opnch[8].extop = opna->s.reg[0x227] & 0xc0;
-		fmrestore(opna, 6, 2);
-		fmrestore(opna, 9, 3);
+		if ((cCaps & OPNA_HAS_PSG) && (pExt->HasPsg()))
+		{
+			cCaps &= ~OPNA_HAS_PSG;
+		}
+		if ((cCaps & OPNA_HAS_RHYTHM) && (pExt->HasRhythm()))
+		{
+			cCaps &= ~OPNA_HAS_RHYTHM;
+		}
+		if ((cCaps & OPNA_HAS_ADPCM) && (pExt->HasADPCM()))
+		{
+			sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm_dummy);
+			cCaps &= ~OPNA_HAS_ADPCM;
+		}
 	}
 
-	if (pExt->IsEnabled())
+	if (cCaps & OPNA_HAS_PSG)
 	{
-		if (cCaps & OPNA_HAS_ADPCM)
-		{
-			if (pExt->HasADPCM())
-			{
-				sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm_dummy);
-			}
-			else
-			{
-				sound_streamregist(&opna->adpcm, (SOUNDCB)adpcm_getpcm);
-			}
-		}
-
-		if (cCaps & OPNA_HAS_YM3438)
-		{
-			if (cCaps & OPNA_HAS_VR)
-			{
-				sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
-			}
-			else
-			{
-				sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcm);
-			}
-		}
-		return;
+		sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
 	}
-
-	sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
-
 	if (cCaps & OPNA_HAS_VR)
 	{
 		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
@@ -204,7 +199,7 @@ void opna_bind(POPNA opna)
 	{
 		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcm);
 	}
-	if (cCaps & OPNA_HAS_EXTENDEDFM)
+	if (cCaps & OPNA_HAS_RHYTHM)
 	{
 		rhythm_bind(&opna->rhythm);
 	}
@@ -282,22 +277,28 @@ void opna_writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
 	const UINT8 cCaps = opna->s.cCaps;
-	CExternalOpna* pExt = CExternalOpna::GetInstance();
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 
 	if (nAddress < 0x10)
 	{
-		psggen_setreg(&opna->psg, nAddress, cData);
-		keydisp_psg(&opna->psg, nAddress);
-		if (pExt->IsEnabled())
+		if (cCaps & OPNA_HAS_PSG)
 		{
-			pExt->WriteRegister(nAddress, cData);
+			keydisp_psg(opna->s.reg, nAddress);
+			if ((!pExt) || (!pExt->HasPsg()))
+			{
+				psggen_setreg(&opna->psg, nAddress, cData);
+			}
+			else
+			{
+				pExt->WriteRegister(nAddress, cData);
+			}
 		}
 	}
 	else if (nAddress < 0x20)
 	{
-		if (cCaps & OPNA_HAS_EXTENDEDFM)
+		if (cCaps & OPNA_HAS_RHYTHM)
 		{
-			if (!pExt->IsEnabled())
+			if ((!pExt) || (!pExt->HasRhythm()))
 			{
 				rhythm_setreg(&opna->rhythm, nAddress, cData);
 			}
@@ -328,7 +329,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 				return;
 			}
 
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				opngen_keyon(&opna->opngen, cChannel, cData);
 			}
@@ -336,7 +337,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				pExt->WriteRegister(nAddress, cData);
 			}
-			keydisp_fmkeyon(opna, 0, cChannel, cData);
+			keydisp_fmkeyon(opna->s.reg, cChannel, cData);
 		}
 		else
 		{
@@ -344,7 +345,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				fmtimer_setreg(nAddress, cData);
 			}
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				if (nAddress == 0x27)
 				{
@@ -362,7 +363,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	}
 	else if (nAddress < 0xc0)
 	{
-		if (!pExt->IsEnabled())
+		if (!pExt)
 		{
 			opngen_setreg(&opna->opngen, 0, nAddress, cData);
 		}
@@ -400,14 +401,14 @@ void opna_writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 {
 	const UINT8 cCaps = opna->s.cCaps;
-	CExternalOpna* pExt = CExternalOpna::GetInstance();
+	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 
 	if (nAddress < 0x12)
 	{
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
 			adpcm_setreg(&opna->adpcm, nAddress, cData);
-			if (pExt->HasADPCM())
+			if ((pExt) && (pExt->HasADPCM()))
 			{
 				pExt->WriteRegister(nAddress + 0x100, cData);
 			}
@@ -427,7 +428,7 @@ static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_EXTENDEDFM)
 		{
-			if (!pExt->IsEnabled())
+			if (!pExt)
 			{
 				opngen_setreg(&opna->opngen, 3, nAddress, cData);
 			}
@@ -440,72 +441,6 @@ static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 }
 
 /**
- * Writes 3438 register
- * @param[in] opna The instance
- * @param[in] nAddress The address
- * @param[in] cData The data
- */
-void opna_write3438Register(POPNA opna, UINT nAddress, REG8 cData)
-{
-	if (opna->s.cCaps & OPNA_HAS_YM3438)
-	{
-		opna->s.reg[nAddress + 0x200] = cData;
-
-		if (nAddress < 0x30)
-		{
-			if (nAddress == 0x28)
-			{
-				REG8 cChannel = cData & 0x0f;
-				if (cChannel < 8)
-				{
-					opna->s.keyreg[cChannel + 8] = cData;
-				}
-				if (cChannel < 3)
-				{
-				}
-				else if ((cChannel >= 4) && (cChannel < 7))
-				{
-					cChannel--;
-				}
-				else
-				{
-					return;
-				}
-
-				opngen_keyon(&opna->opngen, cChannel + 6, cData);
-				keydisp_fmkeyon(opna, 0x200, cChannel, cData);
-			}
-			else
-			{
-				if (nAddress == 0x27)
-				{
-					opna->opngen.opnch[8].extop = cData & 0xc0;
-				}
-			}
-		}
-		else if (nAddress < 0xc0)
-		{
-			opngen_setreg(&opna->opngen, 6, nAddress, cData);
-		}
-	}
-}
-
-/**
- * Writes 3438 extened register
- * @param[in] opna The instance
- * @param[in] nAddress The address
- * @param[in] cData The data
- */
-void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
-{
-	if (opna->s.cCaps & OPNA_HAS_YM3438)
-	{
-		opna->s.reg[nAddress + 0x300] = cData;
-		opngen_setreg(&opna->opngen, 9, nAddress, cData);
-	}
-}
-
-/**
  * Reads register
  * @param[in] opna The instance
  * @param[in] nAddress The address
@@ -513,9 +448,23 @@ void opna_write3438ExtRegister(POPNA opna, UINT nAddress, REG8 cData)
  */
 REG8 opna_readRegister(POPNA opna, UINT nAddress)
 {
-	if (nAddress == 0xff)
+	if (nAddress < 0x10)
 	{
-		return (opna->s.cCaps & OPNA_HAS_EXTENDEDFM) ? 1 : 0;
+		if (!(opna->s.cCaps & OPNA_HAS_PSG))
+		{
+			return 0xff;
+		}
+	}
+	else if (nAddress < 0x20)
+	{
+		if (!(opna->s.cCaps & OPNA_HAS_RHYTHM))
+		{
+			return 0xff;
+		}
+	}
+	else if (nAddress == 0xff)
+	{
+		return (opna->s.cCaps & OPNA_HAS_RHYTHM) ? 1 : 0;
 	}
 	return opna->s.reg[nAddress];
 }
@@ -536,28 +485,6 @@ REG8 opna_readExtendedRegister(POPNA opna, UINT nAddress)
 }
 
 /**
- * Reads 3438 register
- * @param[in] opna The instance
- * @param[in] nAddress The address
- * @return data
- */
-REG8 opna_read3438Register(POPNA opna, UINT nAddress)
-{
-	if (opna->s.cCaps & OPNA_HAS_YM3438)
-	{
-		if (nAddress == 0xff)
-		{
-			return 0;
-		}
-		else if (nAddress >= 0x20)
-		{
-			return opna->s.reg[nAddress + 0x200];
-		}
-	}
-	return 0xff;
-}
-
-/**
  * Reads 3438 extended register
  * @param[in] opna The instance
  * @param[in] nAddress The address
@@ -565,35 +492,46 @@ REG8 opna_read3438Register(POPNA opna, UINT nAddress)
  */
 REG8 opna_read3438ExtRegister(POPNA opna, UINT nAddress)
 {
-	if (opna->s.cCaps & OPNA_HAS_YM3438)
-	{
-		return opna->s.reg[nAddress + 0x200];
-	}
-	else
-	{
-		return 0xff;
-	}
+	return opna->s.reg[nAddress];
 }
 
 
-// ----
 
-static void fmrestore(POPNA opna, REG8 chbase, UINT bank)
+// ---- statsave
+
+/**
+ * Save
+ * @param[in] opna The instance
+ * @param[in] sfh The handle of statsave
+ * @param[in] tbl The item of statsave
+ * @return Error
+ */
+int opna_sfsave(PCOPNA opna, STFLAGH sfh, const SFENTRY *tbl)
 {
-	REG8 i;
-	const UINT8 *reg;
+	int ret = statflag_write(sfh, &opna->s, sizeof(opna->s));
+	if (opna->s.cCaps & OPNA_HAS_ADPCM)
+	{
+		ret |= statflag_write(sfh, &opna->adpcm, sizeof(opna->adpcm));
+	}
 
-	reg = opna->s.reg + (bank * 0x100);
-	for (i = 0x30; i < 0xa0; i++)
+	return ret;
+}
+
+/**
+ * Load
+ * @param[in] opna The instance
+ * @param[in] sfh The handle of statsave
+ * @param[in] tbl The item of statsave
+ * @return Error
+ */
+int opna_sfload(POPNA opna, STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret = statflag_read(sfh, &opna->s, sizeof(opna->s));
+	if (opna->s.cCaps & OPNA_HAS_ADPCM)
 	{
-		opngen_setreg(&opna->opngen, chbase, i, reg[i]);
+		ret |= statflag_read(sfh, &opna->adpcm, sizeof(opna->adpcm));
+		adpcm_update(&opna->adpcm);
 	}
-	for (i = 0xb7; i >= 0xa0; i--)
-	{
-		opngen_setreg(&opna->opngen, chbase, i, reg[i]);
-	}
-	for (i = 0; i < 3; i++)
-	{
-		opngen_keyon(&opna->opngen, chbase + i, opna->s.keyreg[bank * 4 + i]);
-	}
+
+	return ret;
 }

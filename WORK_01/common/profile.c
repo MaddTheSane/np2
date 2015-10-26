@@ -762,6 +762,32 @@ BRESULT profile_read(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const O
 }
 
 /**
+ * Retrieves a string from the specified section in an initialization file
+ * @param[in] lpAppName The name of the section containing the key name
+ * @param[in] lpKeyName The name of the key whose associated string is to be retrieved
+ * @param[in] nDefault A default value
+ * @param[in] hdl The handle of profiler
+ * @return The value
+ */
+int profile_readint(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, int nDefault, PFILEH hdl)
+{
+	PFPOS pfp;
+	UINT nSize;
+	OEMCHAR szBuffer[32];
+
+	if ((SearchKey(hdl, &pfp, lpAppName, lpKeyName) != SUCCESS) || (pfp.lpString == NULL))
+	{
+		return nDefault;
+	}
+	else
+	{
+		nSize = min(NELEMENTS(szBuffer), pfp.cchString + 1);
+		milstr_ncpy(szBuffer, pfp.lpString, nSize);
+		return milstr_solveINT(szBuffer);
+	}
+}
+
+/**
  * Copies a string into the specified section of an initialization file.
  * @param[in] lpAppName The name of the section to which the string will be copied
  * @param[in] lpKeyName The name of the key to be associated with a string
@@ -827,6 +853,24 @@ BRESULT profile_write(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, const 
 	memcpy(lpBuffer, s_eol, sizeof(s_eol));
 
 	return SUCCESS;
+}
+
+/**
+ * Copies a string into the specified section of an initialization file.
+ * @param[in] lpAppName The name of the section to which the string will be copied
+ * @param[in] lpKeyName The name of the key to be associated with a string
+ * @param[in] nValue The value
+ * @param[in] hdl The handle of profiler
+ * @retval SUCCESS If the function succeeds
+ * @retval FAILIURE If the function fails
+ */
+BRESULT profile_writeint(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, int nValue, PFILEH hdl)
+{
+	OEMCHAR szBuffer[32];
+
+	SPRINTF(szBuffer, OEMTEXT("%d"), nValue);
+	return profile_write(lpAppName, lpKeyName, szBuffer, hdl);
+
 }
 
 

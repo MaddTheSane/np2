@@ -5,6 +5,9 @@
 
 #pragma once
 
+namespace c86ctl
+{
+
 /**
  * Status code
  */
@@ -184,3 +187,5 @@ public:
 	 */
 	virtual int GetChipType(ChipType* pnType) = 0;
 };
+
+}

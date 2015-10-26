@@ -52,6 +52,7 @@ static const SoundRegisterTable s_table[] =
 	{NULL, 0x0190, 0x7777},
 	{NULL, 0x01a0, 0x7777},
 	{NULL, 0x01b0, 0x0077},
+#if 0
 	{str_null, 0, 0},
 	{TEXT("Sound-Board II"), 0, 0},
 	{NULL, 0x0200, 0xffff},
@@ -75,6 +76,7 @@ static const SoundRegisterTable s_table[] =
 	{NULL, 0x0290, 0x7777},
 	{NULL, 0x02a0, 0x7777},
 	{NULL, 0x02b0, 0x0077}
+#endif
 };
 
 /**
@@ -119,8 +121,8 @@ bool CDebugUtySnd::Update()
  */
 bool CDebugUtySnd::Lock()
 {
-	m_buffer.resize(0x400);
-	CopyMemory(&m_buffer.at(0), g_opn.s.reg, 0x400);
+	m_buffer.resize(0x200);
+	CopyMemory(&m_buffer.at(0), g_opna[0].s.reg, 0x200);
 	return true;
 }
 
@@ -170,7 +172,7 @@ void CDebugUtySnd::OnPaint(HDC hDC, const RECT& rect)
 			}
 			else
 			{
-				p = g_opn.s.reg + item.wAddress;
+				p = g_opna[0].s.reg + item.wAddress;
 			}
 			for (int x = 0; x < 16; x++)
 			{

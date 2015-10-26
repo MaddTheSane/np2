@@ -5,84 +5,62 @@
 
 #include "compiler.h"
 #include "externalopna.h"
-#include "gimic/gimic.h"
-#include "spfm/spfmlight.h"
-
-CExternalOpna CExternalOpna::sm_instance;
 
 /**
  * コンストラクタ
+ * @param[in] pChip チップ
  */
-CExternalOpna::CExternalOpna()
-	: m_module(NULL)
+CExternalOpna::CExternalOpna(IExternalChip* pChip)
+	: m_pChip(pChip)
+	, m_bHasPsg(false)
+	, m_bHasRhythm(false)
+	, m_bHasADPCM(false)
 	, m_cPsgMix(0x3f)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
-}
 
-/**
- * 初期化
- */
-void CExternalOpna::Initialize()
-{
-	// G.I.M.I.C / C86BOX
-	IExternalChip* pModule = new CGimic;
-	if (pModule->Initialize())
+	switch (GetChipType())
 	{
-		m_module = pModule;
-		return;
-	}
-	delete pModule;
+		case IExternalChip::kYM2608:
+			m_bHasPsg = true;
+			m_bHasRhythm = true;
+			m_bHasADPCM = true;
+			break;
 
-	// SPFM Light
-	pModule = new CSpfmLight;
-	if (pModule->Initialize())
-	{
-		m_module = pModule;
-		return;
-	}
-	delete pModule;
-}
+		case IExternalChip::kYMF288:
+			m_bHasPsg = true;
+			m_bHasRhythm = true;
+			break;
 
-/**
- * 解放
- */
-void CExternalOpna::Deinitialize()
-{
-	IExternalChip* pModule = m_module;
-	m_module = NULL;
-	if (pModule)
-	{
-		pModule->Deinitialize();
-		delete pModule;
+		default:
+			break;
 	}
 }
 
 /**
- * ビジー?
- * @retval true ビジー
- * @retval false レディ
+ * デストラクタ
  */
-bool CExternalOpna::IsBusy() const
+CExternalOpna::~CExternalOpna()
 {
-	if (m_module)
-	{
-		return m_module->IsBusy();
-	}
-	return false;
+	delete m_pChip;
+}
 
+/**
+ * チップ タイプを得る
+ * @return チップ タイプ
+ */
+IExternalChip::ChipType CExternalOpna::GetChipType()
+{
+	return m_pChip->GetChipType();
 }
 
 /**
  * 音源リセット
  */
-void CExternalOpna::Reset() const
+void CExternalOpna::Reset()
 {
-	if (m_module)
-	{
-		m_module->Reset();
-	}
+	m_pChip->Reset();
 }
 
 /**
@@ -111,6 +89,23 @@ void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
 }
 
 /**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParameter パラメータ
+ * @return 結果
+ */
+INTPTR CExternalOpna::Message(UINT nMessage, INTPTR nParameter)
+{
+	switch (nMessage)
+	{
+		case kMute:
+			Mute(nParameter != 0);
+			break;
+	}
+	return 0;
+}
+
+/**
  * ミュート
  * @param[in] bMute ミュート
  */
@@ -133,10 +128,7 @@ void CExternalOpna::Mute(bool bMute) const
  */
 void CExternalOpna::WriteRegisterInner(UINT nAddr, UINT8 cData) const
 {
-	if (m_module)
-	{
-		m_module->WriteRegister(nAddr, cData);
-	}
+	m_pChip->WriteRegister(nAddr, cData);
 }
 
 /**
@@ -172,51 +164,4 @@ void CExternalOpna::SetVolume(UINT nChannel, int nVolume) const
 		nOffset += 4;
 		cMask >>= 1;
 	} while (cMask != 0);
-}
-
-/**
- * レジスタをリストアする
- * @param[in] data データ
- * @param[in] bOpna OPNA レジスタもリストアする
- */
-void CExternalOpna::Restore(const UINT8* data, bool bOpna)
-{
-	for (UINT i = 0x30; i < 0xa0; i++)
-	{
-		WriteRegister(i, data[i]);
-	}
-	for (UINT ch = 0; ch < 3; ch++)
-	{
-		WriteRegister(ch + 0xa4, data[ch + 0x0a4]);
-		WriteRegister(ch + 0xa0, data[ch + 0x0a0]);
-		WriteRegister(ch + 0xb4, data[ch + 0x0b4]);
-		WriteRegister(ch + 0xb0, data[ch + 0x0b0]);
-	}
-
-	if (bOpna)
-	{
-		for (UINT i = 0x130; i < 0x1a0; i++)
-		{
-			WriteRegister(i, data[i]);
-		}
-		for (UINT ch = 0; ch < 3; ch++)
-		{
-			WriteRegister(ch + 0x1a4, data[ch + 0x1a4]);
-			WriteRegister(ch + 0x1a0, data[ch + 0x1a0]);
-			WriteRegister(ch + 0x1b4, data[ch + 0x1b4]);
-			WriteRegister(ch + 0x1b0, data[ch + 0x1b0]);
-		}
-		WriteRegister(0x11, data[0x11]);
-		WriteRegister(0x18, data[0x18]);
-		WriteRegister(0x19, data[0x19]);
-		WriteRegister(0x1a, data[0x1a]);
-		WriteRegister(0x1b, data[0x1b]);
-		WriteRegister(0x1c, data[0x1c]);
-		WriteRegister(0x1d, data[0x1d]);
-	}
-
-	for (UINT i = 0; i < 0x0e; i++)
-	{
-		WriteRegister(i, data[i]);
-	}
 }

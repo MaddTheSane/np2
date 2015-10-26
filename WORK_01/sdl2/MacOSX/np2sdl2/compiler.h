@@ -106,6 +106,8 @@ typedef	unsigned char	BOOL;
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 
+#define SUPPORT_EXTERNALCHIP
+
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 

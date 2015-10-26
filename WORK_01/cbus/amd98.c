@@ -311,7 +311,7 @@ static void IOOUTCALL amd_oda(UINT port, REG8 dat)
 	if (addr < 0x10)
 	{
 		psggen_setreg(&g_amd98.psg[0], addr, dat);
-		keydisp_psg(&g_amd98.psg[0], addr);
+		keydisp_psg((UINT8 *)&g_amd98.psg[0].reg, addr);
 	}
 	(void)port;
 }
@@ -324,7 +324,7 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat)
 	if (addr < 0x0e)
 	{
 		psggen_setreg(&g_amd98.psg[1], addr, dat);
-		keydisp_psg(&g_amd98.psg[1], addr);
+		keydisp_psg((UINT8 *)&g_amd98.psg[1].reg, addr);
 	}
 	else if (addr == 0x0f)
 	{
@@ -342,7 +342,7 @@ static void IOOUTCALL amd_odb(UINT port, REG8 dat)
 				if (g_amd98.s.psg3reg < 0x0e)
 				{
 					psggen_setreg(&g_amd98.psg[2], g_amd98.s.psg3reg, g_amd98.psg[0].reg.io2);
-					keydisp_psg(&g_amd98.psg[2], g_amd98.s.psg3reg);
+					keydisp_psg((UINT8 *)&g_amd98.psg[2].reg, g_amd98.s.psg3reg);
 				}
 				else if (g_amd98.s.psg3reg == 0x0f)
 				{
@@ -462,7 +462,7 @@ void amd98_bind(void)
 
 	for (i = 0; i < NELEMENTS(g_amd98.psg); i++)
 	{
-		keydisp_bindpsg(&g_amd98.psg[i]);
+		keydisp_bindpsg((UINT8 *)&g_amd98.psg[i].reg);
 		psgpanset(&g_amd98.psg[i]);
 		psggen_restore(&g_amd98.psg[i]);
 		sound_streamregist(&g_amd98.psg[i], (SOUNDCB)psggen_getpcm);
