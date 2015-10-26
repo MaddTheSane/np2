@@ -854,12 +854,14 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 
 	int		ret;
+	UINT32	usesound;
 	UINT	saveflg;
 
-	ret = statflag_read(sfh, &g_usesound, sizeof(g_usesound));
-	fmboard_reset(&np2cfg, g_usesound);
+	ret = statflag_read(sfh, &usesound, sizeof(usesound));
+	fmboard_reset(&np2cfg, usesound);
 
-	switch(g_usesound) {
+	switch (usesound)
+	{
 		case 0x01:
 			saveflg = FLAG_MG;
 			break;
