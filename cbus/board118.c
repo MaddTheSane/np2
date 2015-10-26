@@ -15,49 +15,49 @@
 
 static void IOOUTCALL ymf_o188(UINT port, REG8 dat)
 {
-	g_opn.s.addr1l = dat;
-	g_opn.s.addr1h = 0;
-	g_opn.s.data1 = dat;
+	g_opna[0].s.addrl = dat;
+	g_opna[0].s.addrh = 0;
+	g_opna[0].s.data = dat;
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18a(UINT port, REG8 dat)
 {
-	g_opn.s.data1 = dat;
-	if (g_opn.s.addr1h != 0) {
+	g_opna[0].s.data = dat;
+	if (g_opna[0].s.addrh != 0) {
 		return;
 	}
 
-	opna_writeRegister(&g_opn, g_opn.s.addr1l, dat);
+	opna_writeRegister(&g_opna[0], g_opna[0].s.addrl, dat);
 
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18c(UINT port, REG8 dat)
 {
-	if (g_opn.s.extend)
+	if (g_opna[0].s.extend)
 	{
-		g_opn.s.addr1l = dat;
-		g_opn.s.addr1h = 1;
-		g_opn.s.data1 = dat;
+		g_opna[0].s.addrl = dat;
+		g_opna[0].s.addrh = 1;
+		g_opna[0].s.data = dat;
 	}
 	(void)port;
 }
 
 static void IOOUTCALL ymf_o18e(UINT port, REG8 dat)
 {
-	if (!g_opn.s.extend)
+	if (!g_opna[0].s.extend)
 	{
 		return;
 	}
-	g_opn.s.data1 = dat;
+	g_opna[0].s.data = dat;
 
-	if (g_opn.s.addr1h != 1)
+	if (g_opna[0].s.addrh != 1)
 	{
 		return;
 	}
 
-	opna_writeExtendedRegister(&g_opn, g_opn.s.addr1h, dat);
+	opna_writeExtendedRegister(&g_opna[0], g_opna[0].s.addrh, dat);
 
 	(void)port;
 }
@@ -72,16 +72,16 @@ static REG8 IOINPCALL ymf_i18a(UINT port)
 {
 	UINT nAddress;
 
-	if (g_opn.s.addr1h == 0)
+	if (g_opna[0].s.addrh == 0)
 	{
-		nAddress = g_opn.s.addr1l;
+		nAddress = g_opna[0].s.addrl;
 		if (nAddress == 0x0e)
 		{
-			return fmboard_getjoy(&g_opn.psg);
+			return fmboard_getjoy(&g_opna[0]);
 		}
 		else if (nAddress < 0x10)
 		{
-			return opna_readRegister(&g_opn, nAddress);
+			return opna_readRegister(&g_opna[0], nAddress);
 		}
 		else if (nAddress == 0xff)
 		{
@@ -90,12 +90,12 @@ static REG8 IOINPCALL ymf_i18a(UINT port)
 	}
 
 	(void)port;
-	return g_opn.s.data1;
+	return g_opna[0].s.data;
 }
 
 static REG8 IOINPCALL ymf_i18c(UINT port)
 {
-	if (g_opn.s.extend)
+	if (g_opna[0].s.extend)
 	{
 		return (g_fmtimer.status & 3);
 	}
@@ -106,17 +106,15 @@ static REG8 IOINPCALL ymf_i18c(UINT port)
 
 static void extendchannel(REG8 enable)
 {
-	g_opn.s.extend = enable;
+	g_opna[0].s.extend = enable;
 	if (enable)
 	{
-		g_opn.s.channels = 6;
-		opngen_setcfg(&g_opn.opngen, 6, OPN_STEREO | 0x007);
+		opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x007);
 	}
 	else
 	{
-		g_opn.s.channels = 3;
-		opngen_setcfg(&g_opn.opngen, 3, OPN_MONORAL | 0x007);
-		rhythm_setreg(&g_opn.rhythm, 0x10, 0xff);
+		opngen_setcfg(&g_opna[0].opngen, 3, OPN_MONORAL | 0x007);
+		rhythm_setreg(&g_opna[0].rhythm, 0x10, 0xff);
 	}
 }
 
@@ -148,10 +146,10 @@ static const IOINP ymf_i[4] = {
  */
 void board118_reset(const NP2CFG *pConfig)
 {
-	opna_reset(&g_opn, OPNA_HAS_TIMER | OPNA_HAS_EXTENDEDFM | OPNA_S98);
+	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
 
 	fmtimer_reset(0xc0);
-	opngen_setcfg(&g_opn.opngen, 3, OPN_STEREO | 0x038);
+	opngen_setcfg(&g_opna[0].opngen, 3, OPN_STEREO | 0x038);
 	cs4231io_reset();
 	soundrom_load(0xcc000, OEMTEXT("118"));
 	fmboard_extreg(extendchannel);
@@ -164,7 +162,7 @@ void board118_reset(const NP2CFG *pConfig)
  */
 void board118_bind(void)
 {
-	opna_bind(&g_opn);
+	opna_bind(&g_opna[0]);
 	cs4231io_bind();
 	cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	iocore_attachout(0xa460, ymf_oa460);

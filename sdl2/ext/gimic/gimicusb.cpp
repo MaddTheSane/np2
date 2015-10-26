@@ -7,6 +7,8 @@
 #include "gimicusb.h"
 #include <algorithm>
 
+using namespace c86ctl;
+
 /**
  * Constructor
  */

@@ -143,11 +143,11 @@ BRESULT S98_open(const OEMCHAR *filename) {
 		{
 			S98_putc(NORMAL2608);
 			S98_putc((REG8)i);
-			S98_putc(g_opn.s.reg[i]);
+			S98_putc(g_opna[0].s.reg[i]);
 
 			S98_putc(EXTEND2608);
 			S98_putc((REG8)i);
-			S98_putc(g_opn.s.reg[i+0x100]);
+			S98_putc(g_opna[0].s.reg[i+0x100]);
 		}
 	}
 	// PSG
@@ -155,7 +155,7 @@ BRESULT S98_open(const OEMCHAR *filename) {
 	{
 		S98_putc(NORMAL2608);
 		S98_putc((REG8)i);
-		S98_putc(g_opn.s.reg[i]);
+		S98_putc(g_opna[0].s.reg[i]);
 	}
 #endif
 

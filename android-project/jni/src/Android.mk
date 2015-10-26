@@ -51,6 +51,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 		$(wildcard $(NP2_PATH)/lio/*.c) \
 		$(wildcard $(NP2_PATH)/mem/*.c) \
 		$(wildcard $(NP2_PATH)/sdl2/*.c) \
+		$(wildcard $(NP2_PATH)/sdl2/*.cpp) \
 		$(wildcard $(NP2_PATH)/sound/*.c) \
 		$(wildcard $(NP2_PATH)/sound/getsnd/*.c) \
 		$(wildcard $(NP2_PATH)/sound/vermouth/*.c) \

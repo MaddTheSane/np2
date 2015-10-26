@@ -22,9 +22,6 @@ void soundmng_stop(void);
 #define	soundmng_pcmplay(a, b)
 #define	soundmng_pcmstop(a)
 
-#ifdef __cplusplus
-}
-#endif
 
 
 // ---- for SDL
@@ -32,3 +29,6 @@ void soundmng_stop(void);
 void soundmng_initialize(void);
 void soundmng_deinitialize(void);
 
+#ifdef __cplusplus
+}
+#endif

@@ -13,7 +13,7 @@
 /**
  * @brief The class of accessing G.I.M.I.C USB
  */
-class CGimicUSB : public IC86RealChip, protected CThreadBase
+class CGimicUSB : public c86ctl::IC86RealChip, protected CThreadBase
 {
 public:
 	CGimicUSB();
@@ -27,11 +27,11 @@ public:
 	int SetPLLClock(UINT nClock);
 	int GetPLLClock(UINT* pnClock);
 	int GetFWVer(UINT* pnMajor, UINT* pnMinor, UINT* pnRev, UINT* pnBuild);
-	int GetMBInfo(Devinfo* pInfo);
-	int GetModuleInfo(Devinfo* pInfo);
+	int GetMBInfo(c86ctl::Devinfo* pInfo);
+	int GetModuleInfo(c86ctl::Devinfo* pInfo);
 
 	// IGimic2
-	int GetModuleType(ChipType* pnType);
+	int GetModuleType(c86ctl::ChipType* pnType);
 
 	// IRealChip
 	virtual int Reset();
@@ -43,7 +43,7 @@ public:
 	virtual void DirectOut(UINT nAddr, UINT8 cData);
 
 	// IRealChip3
-	virtual int GetChipType(ChipType* pnType);
+	virtual int GetChipType(c86ctl::ChipType* pnType);
 
 protected:
 	virtual bool Task();
@@ -62,14 +62,14 @@ private:
 	CUsbDev m_usb;			/*!< USB */
 	CGuard m_usbGuard;		/*!< The guard of accessing USB */
 	CGuard m_queGuard;		/*!< The guard of que */
-	ChipType m_nChipType;	/*!< The type of chip */
+	c86ctl::ChipType m_nChipType;	/*!< The type of chip */
 	size_t m_nQueIndex;		/*!< The position in que */
 	size_t m_nQueCount;		/*!< The count in que */
 	FMDATA m_que[0x400];	/*!< que */
 	UINT8 m_sReg[0x200];	/*!< register */
 
 	int Transaction(const void* lpOutput, int cbOutput, void* lpInput = NULL, int cbInput = 0);
-	int GetInfo(UINT8 cParam, Devinfo* pInfo);
+	int GetInfo(UINT8 cParam, c86ctl::Devinfo* pInfo);
 	static void TailZeroFill(char* lpBuffer, size_t cbBuffer);
 	UINT GetChipAddr(UINT nAddr) const;
 };

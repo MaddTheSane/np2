@@ -13,7 +13,7 @@
 /**
  * @brief The class of accessing C86BOX USB
  */
-class C86BoxUSB : public IC86RealChip, protected CThreadBase
+class C86BoxUSB : public c86ctl::IC86RealChip, protected CThreadBase
 {
 public:
 	C86BoxUSB();
@@ -33,7 +33,7 @@ public:
 	virtual void DirectOut(UINT nAddr, UINT8 cData);
 
 	// IRealChip3
-	virtual int GetChipType(ChipType* pnType);
+	virtual int GetChipType(c86ctl::ChipType* pnType);
 
 protected:
 	virtual bool Task();
@@ -42,7 +42,7 @@ private:
 	CUsbDev m_usb;			/*!< USB */
 	CGuard m_usbGuard;		/*!< The quard of accessing USB */
 	CGuard m_queGuard;		/*!< The quard of que */
-	ChipType m_nChipType;	/*!< The type of chip */
+	c86ctl::ChipType m_nChipType;	/*!< The type of chip */
 	int m_nDevId;			/*!< The type of devices */
 	size_t m_nQueIndex;		/*!< The position in que */
 	size_t m_nQueCount;		/*!< The count in que */

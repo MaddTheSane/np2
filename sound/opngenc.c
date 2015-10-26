@@ -441,8 +441,6 @@ void opngen_reset(OPNGEN opngen) {
 	for (i=0x30; i<0xc0; i++) {
 		opngen_setreg(opngen, 0, i, 0xff);
 		opngen_setreg(opngen, 3, i, 0xff);
-		opngen_setreg(opngen, 6, i, 0xff);
-		opngen_setreg(opngen, 9, i, 0xff);
 	}
 }
 

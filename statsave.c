@@ -765,15 +765,11 @@ static int flagload_gij(STFLAGH sfh, const SFENTRY *tbl) {
 
 enum {
 	FLAG_MG			= 0x0001,
-	FLAG_FM1A		= 0x0002,
-	FLAG_FM1B		= 0x0004,
-	FLAG_FM2A		= 0x0008,
-	FLAG_FM2B		= 0x0010,
-	FLAG_AMD98		= 0x0020,
-	FLAG_RHYTHM		= 0x0100,
-	FLAG_ADPCM		= 0x0200,
-	FLAG_PCM86		= 0x0400,
-	FLAG_CS4231		= 0x0800
+	FLAG_FM1		= 0x0002,
+	FLAG_FM2		= 0x0004,
+	FLAG_AMD98		= 0x0008,
+	FLAG_PCM86		= 0x0010,
+	FLAG_CS4231		= 0x0020
 };
 
 typedef struct {
@@ -791,31 +787,31 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 			break;
 
 		case 0x02:
-			saveflg = FLAG_FM1A;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_RHYTHM | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_FM2 | FLAG_PCM86;
 			break;
 
 		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_CS4231;
+			saveflg = FLAG_FM1 | FLAG_CS4231;
 			break;
 
 		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B | FLAG_RHYTHM | FLAG_ADPCM;
+			saveflg = FLAG_FM1 | FLAG_FM2;
 			break;
 
 		case 0x80:
@@ -831,12 +827,12 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	if (saveflg & FLAG_MG) {
 		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
-	if (saveflg & FLAG_FM1A) {
+	if (saveflg & FLAG_FM1) {
 		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= statflag_write(sfh, &g_opn.s, sizeof(g_opn.s));
+		ret |= opna_sfsave(&g_opna[0], sfh, tbl);
 	}
-	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_write(sfh, &g_opn.adpcm, sizeof(g_opn.adpcm));
+	if (saveflg & FLAG_FM2) {
+		ret |= opna_sfsave(&g_opna[1], sfh, tbl);
 	}
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
@@ -851,7 +847,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	return(ret);
 }
 
-static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
+static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl) {
 
 	int		ret;
 	UINT32	usesound;
@@ -867,31 +863,31 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 			break;
 
 		case 0x02:
-			saveflg = FLAG_FM1A;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_RHYTHM | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_FM2 | FLAG_PCM86;
 			break;
 
 		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_CS4231;
+			saveflg = FLAG_FM1 | FLAG_CS4231;
 			break;
 
 		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM | FLAG_PCM86;
+			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
 		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM;
+			saveflg = FLAG_FM1;
 			break;
 
 		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B | FLAG_RHYTHM | FLAG_ADPCM;
+			saveflg = FLAG_FM1 | FLAG_FM2;
 			break;
 
 		case 0x80:
@@ -908,13 +904,16 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		board14_allkeymake();
 	}
 
-	if (saveflg & FLAG_FM1A) {
+	if (saveflg & FLAG_FM1)
+	{
 		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= statflag_read(sfh, &g_opn.s, sizeof(g_opn.s));
+		ret |= opna_sfload(&g_opna[0], sfh, tbl);
 	}
-	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_read(sfh, &g_opn.adpcm, sizeof(g_opn.adpcm));
+	if (saveflg & FLAG_FM2)
+	{
+		ret |= opna_sfload(&g_opna[1], sfh, tbl);
 	}
+
 	if (saveflg & FLAG_PCM86) {
 		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
 	}
@@ -923,11 +922,10 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 	}
 	if (saveflg & FLAG_AMD98)
 	{
-		ret |= amd98_sfload(sfh, t);
+		ret |= amd98_sfload(sfh, tbl);
 	}
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI
-	adpcm_update(&g_opn.adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
 		fmboard_extenable((REG8)(pcm86.extfunc & 1));

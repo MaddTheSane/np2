@@ -5,23 +5,26 @@
 
 #pragma once
 
-#include "..\..\ext\externalchip.h"
+#include "..\externalchip.h"
+#include "misc\guard.h"
+#include "misc\threadbase.h"
 
 /**
  * @brief ROMEO アクセス クラス
  */
-class CJuliet : public IExternalChip
+class CJuliet : protected CThreadBase
 {
 public:
 	CJuliet();
-	virtual ~CJuliet();
-	virtual bool Initialize();
-	virtual void Deinitialize();
-	virtual bool IsEnabled();
-	virtual bool IsBusy();
-	virtual void Reset();
-	virtual void WriteRegister(UINT nAddr, UINT8 cData);
-	virtual bool HasADPCM();
+	~CJuliet();
+	bool Initialize();
+	void Deinitialize();
+	void Reset();
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
+	bool IsEnabled() const;
+
+protected:
+	virtual bool Task();
 
 private:
 	//! @brief ロード関数
@@ -44,8 +47,35 @@ private:
 	FnIn8 m_fnIn8;				//!< inp 関数
 	ULONG m_ulAddress;			//!< ROMEO ベース アドレス
 	UCHAR m_ucIrq;				//!< ROMEO IRQ
+	CGuard m_pciGuard;			/*!< The guard of PCI */
+	CGuard m_queGuard;			/*!< The guard of que */
+	size_t m_nQueIndex;			/*!< The position in que */
+	size_t m_nQueCount;			/*!< The count in que */
+	UINT m_que[0x400];			/*!< que */
 
 	ULONG SearchRomeo() const;
+	void Write288(UINT nAddr, UINT8 cData);
+
+	/**
+	 * @brief チップ クラス
+	 */
+	class Chip288 : public IExternalChip
+	{
+		public:
+			Chip288(CJuliet* pJuliet);
+			virtual ~Chip288();
+			virtual ChipType GetChipType();
+			virtual void Reset();
+			virtual void WriteRegister(UINT nAddr, UINT8 cData);
+			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+
+		private:
+			CJuliet* m_pJuliet;			//!< 親インスタンス
+	};
+	IExternalChip* m_pChip288;		//!< YMF288 インスタンス
+
+	void Detach(IExternalChip* pChip);
+	friend class Chip288;
 };
 
 /**
@@ -53,7 +83,7 @@ private:
  * @retval true 有効
  * @retval false 無効
  */
-inline bool CJuliet::IsEnabled()
+inline bool CJuliet::IsEnabled() const
 {
 	return (m_hModule != NULL);
 }

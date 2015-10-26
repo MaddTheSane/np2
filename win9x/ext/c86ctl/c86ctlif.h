@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <map>
 #include "..\externalchip.h"
 
 namespace c86ctl
@@ -17,23 +18,42 @@ namespace c86ctl
 /**
  * @brief G.I.M.I.C アクセス クラス
  */
-class C86CtlIf : public IExternalChip
+class C86CtlIf
 {
 public:
 	C86CtlIf();
-	virtual ~C86CtlIf();
-	virtual bool Initialize();
-	virtual void Deinitialize();
-	virtual bool IsEnabled();
-	virtual bool IsBusy();
-	virtual void Reset();
-	virtual void WriteRegister(UINT nAddr, UINT8 cData);
-	virtual bool HasADPCM();
+	~C86CtlIf();
+	bool Initialize();
+	void Deinitialize();
+	void Reset();
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
 
 private:
 	HMODULE m_hModule;					//!< モジュール ハンドル
-	c86ctl::IRealChipBase* m_chipbase;	//!< チップ ベース インスタンス
-	c86ctl::IGimic* m_gimic;			//!< G.I.M.I.C インタフェイス
-	c86ctl::IRealChip* m_chip;			//!< チップ インタフェイス
-	bool m_bHasADPCM;					//!< ADPCM フラグ
+	c86ctl::IRealChipBase* m_pChipBase;	//!< チップ ベース インスタンス
+
+	/**
+	 * @brief チップ クラス
+	 */
+	class Chip : public IExternalChip
+	{
+		public:
+			Chip(C86CtlIf* pC86CtlIf, c86ctl::IRealChip* pRealChip, c86ctl::IGimic* pGimic, ChipType nChipType, UINT nClock);
+			virtual ~Chip();
+			virtual ChipType GetChipType();
+			virtual void Reset();
+			virtual void WriteRegister(UINT nAddr, UINT8 cData);
+			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+
+		private:
+			C86CtlIf* m_pC86CtlIf;				//!< C86Ctl インスタンス
+			c86ctl::IRealChip* m_pRealChip;		//!< チップ インスタンス
+			c86ctl::IGimic* m_pGimic;			//!< G.I.M.I.C インスタンス
+			ChipType m_nChipType;				//!< チップ タイプ
+			UINT m_nClock;						//!< チップ クロック
+	};
+
+	std::map<int, Chip*> m_chips;			//!< チップ
+	void Detach(Chip* pChip);
+	friend class Chip;
 };

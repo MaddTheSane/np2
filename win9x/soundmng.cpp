@@ -16,7 +16,7 @@
 #include "misc\extrom.h"
 #include "sound.h"
 #if defined(SUPPORT_ROMEO)
-#include "ext\externalopna.h"
+#include "ext\externalchipmanager.h"
 #endif
 #if defined(VERMOUTH_LIB)
 #include "sound\vermouth\vermouth.h"
@@ -355,7 +355,7 @@ void CDSound3::EnableStream(bool bEnable)
 	}
 
 #if defined(SUPPORT_ROMEO)
-	CExternalOpna::GetInstance()->Mute(!bEnable);
+	CExternalChipManager::GetInstance()->Mute(!bEnable);
 #endif
 }
 
@@ -814,6 +814,10 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum)
  */
 BRESULT soundmng_initialize(void)
 {
+#if defined(SUPPORT_ROMEO)
+	CExternalChipManager::GetInstance()->Initialize();
+#endif	// defined(SUPPORT_ROMEO)
+
 	return (CDSound3::GetInstance()->Initialize(g_hWndMain)) ? SUCCESS : FAILURE;
 }
 
@@ -822,6 +826,10 @@ BRESULT soundmng_initialize(void)
  */
 void soundmng_deinitialize(void)
 {
+#if defined(SUPPORT_ROMEO)
+	CExternalChipManager::GetInstance()->Deinitialize();
+#endif	// defined(SUPPORT_ROMEO)
+
 	CDSound3::GetInstance()->Deinitialize();
 }
 

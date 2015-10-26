@@ -1656,6 +1656,10 @@
 					Name="ext"
 					>
 					<File
+						RelativePath=".\ext\externalchipmanager.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ext\externalopna.cpp"
 						>
 					</File>
@@ -1676,10 +1680,10 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="rebirth"
+						Name="scci"
 						>
 						<File
-							RelativePath=".\ext\rebirth\rebirth.cpp"
+							RelativePath=".\ext\scci\scciif.cpp"
 							>
 						</File>
 					</Filter>
@@ -1689,6 +1693,10 @@
 					>
 					<File
 						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\threadbase.cpp"
 						>
 					</File>
 					<File
@@ -2706,6 +2714,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ext\externalchipmanager.h"
+						>
+					</File>
+					<File
 						RelativePath=".\ext\externalopna.h"
 						>
 					</File>
@@ -2718,6 +2730,10 @@
 						</File>
 						<File
 							RelativePath=".\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\c86ctl\cbus_boardtype.h"
 							>
 						</File>
 					</Filter>
@@ -2734,18 +2750,18 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="rebirth"
+						Name="scci"
 						>
 						<File
-							RelativePath=".\ext\rebirth\rebirth.h"
+							RelativePath=".\ext\scci\scci.h"
 							>
 						</File>
 						<File
-							RelativePath=".\ext\rebirth\scci.h"
+							RelativePath=".\ext\scci\SCCIDefines.h"
 							>
 						</File>
 						<File
-							RelativePath=".\ext\rebirth\SCCIDefines.h"
+							RelativePath=".\ext\scci\scciif.h"
 							>
 						</File>
 					</Filter>
@@ -2755,6 +2771,14 @@
 					>
 					<File
 						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\guard.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\threadbase.h"
 						>
 					</File>
 					<File

@@ -67,6 +67,8 @@ typedef	signed int			SINT32;
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 
+#define SUPPORT_EXTERNALCHIP
+
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 

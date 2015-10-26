@@ -25,11 +25,7 @@
 
 
 	UINT32		g_usesound;
-	_OPNA		g_opn;
-	_OPNA		g_opn2;
-#if defined(SUPPORT_PX)
-	_OPNA		g_opn3;
-#endif	// defined(SUPPORT_PX)
+	_OPNA		g_opna[OPNA_MAX];
 
 	_FMTIMER	g_fmtimer;
 	_PCM86		pcm86;
@@ -40,33 +36,39 @@ static void	(*extfn)(REG8 enable);
 
 // ----
 
-static	REG8	rapids = 0;
+static	REG8	s_rapids = 0;
 
-REG8 fmboard_getjoy(PSGGEN psg) {
+REG8 fmboard_getjoy(POPNA opna)
+{
+	REG8 ret;
 
-	REG8	ret;
-
-	rapids ^= 0xf0;											// ver0.28
+	s_rapids ^= 0xf0;											// ver0.28
 	ret = 0xff;
-	if (!(psg->reg.io2 & 0x40)) {
-		ret &= (joymng_getstat() | (rapids & 0x30));
-		if (np2cfg.KEY_MODE == 1) {
+	if (!(opna->s.reg[15] & 0x40))
+	{
+		ret &= (joymng_getstat() | (s_rapids & 0x30));
+		if (np2cfg.KEY_MODE == 1)
+		{
 			ret &= keystat_getjoy();
 		}
 	}
-	else {
-		if (np2cfg.KEY_MODE == 2) {
+	else
+	{
+		if (np2cfg.KEY_MODE == 2)
+		{
 			ret &= keystat_getjoy();
 		}
 	}
-	if (np2cfg.BTN_RAPID) {
-		ret |= rapids;
+	if (np2cfg.BTN_RAPID)
+	{
+		ret |= s_rapids;
 	}
 
 	// rapid‚Æ”ñrapid‚ð‡¬								// ver0.28
 	ret &= ((ret >> 2) | (~0x30));
 
-	if (np2cfg.BTN_MODE) {
+	if (np2cfg.BTN_MODE)
+	{
 		UINT8 bit1 = (ret & 0x20) >> 1;					// ver0.28
 		UINT8 bit2 = (ret & 0x10) << 1;
 		ret = (ret & (~0x30)) | bit1 | bit2;
@@ -75,7 +77,7 @@ REG8 fmboard_getjoy(PSGGEN psg) {
 	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
 	ret &= 0x3f;
 	ret |= g_fmtimer.intr;
-	return(ret);
+	return ret;
 }
 
 
@@ -97,20 +99,53 @@ void fmboard_extenable(REG8 enable) {
 
 // ----
 
+/**
+ * Constructor
+ */
+void fmboard_construct(void)
+{
+	UINT i;
+
+	for (i = 0; i < NELEMENTS(g_opna); i++)
+	{
+		opna_construct(&g_opna[i]);
+	}
+}
+
+/**
+ * Destructor
+ */
+void fmboard_destruct(void)
+{
+	UINT i;
+
+	for (i = 0; i < NELEMENTS(g_opna); i++)
+	{
+		opna_destruct(&g_opna[i]);
+	}
+}
+
+/**
+ * Reset
+ */
 void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 
-	UINT8	cross;
+	UINT8 cross;
+	UINT i;
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
 	cross = pConfig->snd_x;										// ver0.30
 
+	if (g_usesound != type)
+	{
+		for (i = 0; i < NELEMENTS(g_opna); i++)
+		{
+			opna_reset(&g_opna[i], 0);
+		}
+	}
+
 	extfn = NULL;
-	opna_construct(&g_opn);
-	opna_construct(&g_opn2);
-#if defined(SUPPORT_PX)
-	opna_construct(&g_opn3);
-#endif	// defined(SUPPORT_PX)
 	pcm86_reset();
 	cs4231_reset();
 
