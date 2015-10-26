@@ -72,6 +72,10 @@ void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
 		// psg mix
 		m_cPsgMix = cData;
 	}
+	else if ((nAddr == 0x0e) || (nAddr == 0x0f))
+	{
+		return;
+	}
 	else if ((nAddr & 0xf0) == 0x40)
 	{
 		// ttl
