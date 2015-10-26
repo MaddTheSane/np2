@@ -276,7 +276,7 @@ BOOL CWndProc::PreCreateWindow(CREATESTRUCT& cs)
 void CWndProc::HookWindowCreate(CWndProc* pWnd)
 {
 	// “¯‚¶ƒXƒŒƒbƒh‚Ì‚Ý‹–‚·
-	ASSERT(sm_dwThreadId != ::GetCurrentThreadId());
+	ASSERT(sm_dwThreadId == ::GetCurrentThreadId());
 
 	if (sm_pWndInit == pWnd)
 	{
