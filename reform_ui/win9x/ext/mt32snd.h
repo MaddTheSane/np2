@@ -39,10 +39,10 @@ private:
 	};
 
 	// 定義
-	typedef int (WINAPI * FnOpen)(int rate, int reverb, int def, int revtype, int revtime, int revlvl); 	/*!< オープン */
-	typedef int (WINAPI * FnClose)(void);																	/*!< クローズ */
-	typedef int (WINAPI * FnWrite)(unsigned char data);														/*!< ライト */
-	typedef int (WINAPI * FnMix)(void *buff, unsigned long size);											/*!< ミックス */
+	typedef int (*FnOpen)(int rate, int reverb, int def, int revtype, int revtime, int revlvl); 	/*!< オープン */
+	typedef int (*FnClose)(void);																	/*!< クローズ */
+	typedef int (*FnWrite)(unsigned char data);														/*!< ライト */
+	typedef int (*FnMix)(void *buff, unsigned long size);											/*!< ミックス */
 
 	HMODULE m_hModule;	/*!< モジュール */
 	bool m_bOpened;		/*!< オープン フラグ */

@@ -130,7 +130,7 @@ void MT32Sound::Close()
  */
 void MT32Sound::ShortMsg(UINT32 msg)
 {
-	int (WINAPI * fnWrite)(unsigned char data) = m_fnWrite;
+	FnWrite fnWrite = m_fnWrite;
 	if (fnWrite == NULL)
 	{
 		return;
@@ -168,7 +168,7 @@ void MT32Sound::LongMsg(const UINT8* lpBuffer, UINT cchBuffer)
 		return;
 	}
 
-	int (WINAPI * fnWrite)(unsigned char data) = m_fnWrite;
+	FnWrite fnWrite = m_fnWrite;
 	if (fnWrite == NULL)
 	{
 		return;
