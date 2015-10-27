@@ -131,6 +131,36 @@ static REG8 IOINPCALL ymf_ia460(UINT port)
 	return (0x80 | (cs4231.extfunc & 1));
 }
 
+/**
+ * Status
+ */
+static REG8 IOINPCALL ymf_i148f(UINT port)
+{
+	(void)port;
+	return 0;
+}
+
+static void IOOUTCALL ymf_o1488(UINT port, REG8 dat)
+{
+	g_opl3.s.addrl = dat;
+}
+
+static void IOOUTCALL ymf_o1489(UINT port, REG8 dat)
+{
+	opl3_writeRegister(&g_opl3, g_opl3.s.addrl, dat);
+}
+
+static void IOOUTCALL ymf_o148a(UINT port, REG8 dat)
+{
+	g_opl3.s.addrh = dat;
+}
+
+static void IOOUTCALL ymf_o148b(UINT port, REG8 dat)
+{
+	opl3_writeExtendedRegister(&g_opl3, g_opl3.s.addrh, dat);
+}
+
+
 
 // ----
 
@@ -147,6 +177,7 @@ static const IOINP ymf_i[4] = {
 void board118_reset(const NP2CFG *pConfig)
 {
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
+	opl3_reset(&g_opl3, OPL3_MODE_262);
 
 	fmtimer_reset(0xc0);
 	opngen_setcfg(&g_opna[0].opngen, 3, OPN_STEREO | 0x038);
@@ -163,8 +194,16 @@ void board118_reset(const NP2CFG *pConfig)
 void board118_bind(void)
 {
 	opna_bind(&g_opna[0]);
+	opl3_bind(&g_opl3);
+
 	cs4231io_bind();
 	cbuscore_attachsndex(0x188, ymf_o, ymf_i);
 	iocore_attachout(0xa460, ymf_oa460);
 	iocore_attachinp(0xa460, ymf_ia460);
+
+	iocore_attachout(0x1488, ymf_o1488);
+	iocore_attachout(0x1489, ymf_o1489);
+	iocore_attachout(0x148a, ymf_o148a);
+	iocore_attachout(0x148b, ymf_o148b);
+	iocore_attachinp(0x148f, ymf_i148f);
 }
