@@ -97,6 +97,15 @@ void sound_recstop(void) {
 	wavewr_close(rec);
 }
 
+/**
+ * is recording?
+ * @retval TRUE Yes
+ */
+BOOL sound_isrecording(void)
+{
+	return (sndstream.rec != NULL) ? TRUE : FALSE;
+}
+
 static void streamfilewrite(UINT samples) {
 
 	CBTBL	*cb;

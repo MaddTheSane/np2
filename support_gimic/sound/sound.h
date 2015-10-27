@@ -44,6 +44,7 @@ void sound_pcmunlock(const SINT32 *hdl);
 #if defined(SUPPORT_WAVEREC)
 BOOL sound_recstart(const OEMCHAR *filename);
 void sound_recstop(void);
+BOOL sound_isrecording(void);
 #endif
 
 #ifdef __cplusplus

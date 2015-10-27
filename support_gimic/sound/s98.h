@@ -23,6 +23,7 @@ extern "C" {
 #define	S98_close()
 #define	S98_put(m, a, d)
 #define S98_sync()
+#define S98_isopened()		(FALSE)
 
 #else
 
@@ -32,6 +33,7 @@ BRESULT S98_open(const OEMCHAR *filename);
 void S98_close(void);
 void S98_put(REG8 module, UINT addr, REG8 data);
 void S98_sync(void);
+BOOL S98_isopened(void);
 
 #endif
 

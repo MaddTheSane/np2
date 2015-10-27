@@ -16,7 +16,6 @@
 #include "misc\tstring.h"
 #include "joymng.h"
 #include "sysmng.h"
-#include "menu.h"
 #include "np2class.h"
 #include "dialog.h"
 #include "dialogs.h"
@@ -1000,11 +999,9 @@ static const TCHAR szS98File[] = TEXT("NP2_####.S98");
 
 void dialog_s98(HWND hWnd)
 {
-	BOOL	bCheck;
 	TCHAR	szPath[MAX_PATH];
 
 	S98_close();
-	bCheck = FALSE;
 	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
 	file_cutname(szPath);
 	file_catname(szPath, szS98File, NELEMENTS(szPath));
@@ -1013,9 +1010,7 @@ void dialog_s98(HWND hWnd)
 	{
 		file_cpyname(bmpfilefolder, szPath, NELEMENTS(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
-		bCheck = TRUE;
 	}
-	xmenu_sets98logging(bCheck);
 }
 #endif	// defined(SUPPORT_S98)
 
@@ -1047,13 +1042,11 @@ void dialog_waverec(HWND hWnd)
 	file_cutname(szPath);
 	file_catname(szPath, szWaveFile, NELEMENTS(szPath));
 
-	UINT8 bCheck = FALSE;
 	if ((dlgs_createfilenum(hWnd, &fpWave, szPath, NELEMENTS(szPath))) &&
 		(sound_recstart(szPath) == SUCCESS))
 	{
 		file_cpyname(bmpfilefolder, szPath, NELEMENTS(bmpfilefolder));
 		sysmng_update(SYS_UPDATEOSCFG);
-		bCheck = TRUE;
 	}
 
 #if defined(SUPPORT_RECVIDEO)
@@ -1064,8 +1057,6 @@ void dialog_waverec(HWND hWnd)
 		recvideo_open(hWnd, szPath);
 	}
 #endif	// defined(SUPPORT_RECVIDEO)
-
-	xmenu_setwaverec(bCheck);
 }
 #endif	// defined(SUPPORT_WAVEREC)
 

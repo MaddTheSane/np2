@@ -190,5 +190,10 @@ void S98_put(REG8 module, UINT addr, REG8 data) {
 
 void S98_sync(void) {
 }
-#endif
 
+BOOL S98_isopened(void)
+{
+	return (s98log.fh != FILEH_INVALID) ? TRUE : FALSE;
+}
+
+#endif

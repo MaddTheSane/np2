@@ -17,5 +17,3 @@ void sysmenu_update(HMENU hMenu);
 
 void xmenu_initialize(HMENU hMenu);
 void xmenu_update(HMENU hMenu);
-void xmenu_sets98logging(UINT8 value);
-void xmenu_setwaverec(UINT8 value);
