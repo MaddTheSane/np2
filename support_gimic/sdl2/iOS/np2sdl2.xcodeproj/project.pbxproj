@@ -226,6 +226,8 @@
 		BA7E84A719063AFB00041C04 /* sdrawq16.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839319063AFB00041C04 /* sdrawq16.c */; };
 		BA7E84A819063AFB00041C04 /* vram.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839419063AFB00041C04 /* vram.c */; };
 		BA7E84AF190650A800041C04 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7E84AE190650A800041C04 /* main.m */; };
+		BADADEBD1BDF804700137975 /* boardso.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEBB1BDF804700137975 /* boardso.c */; };
+		BADADEC01BDF806400137975 /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEBE1BDF806400137975 /* opl3.c */; };
 		BAE349681B86CE20006EBD05 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE349661B86CE20006EBD05 /* pcmmix.c */; };
 		BAFFDA2A1B59058D00C5DE2E /* opna.c in Sources */ = {isa = PBXBuildFile; fileRef = BAFFDA281B59058D00C5DE2E /* opna.c */; };
 		FD779EDE0E26BA1200F39101 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD779EDD0E26BA1200F39101 /* CoreAudio.framework */; };
@@ -691,6 +693,10 @@
 		BA7E84AC19063C1600041C04 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		BA7E84AD19063C1600041C04 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		BA7E84AE190650A800041C04 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BADADEBB1BDF804700137975 /* boardso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boardso.c; sourceTree = "<group>"; };
+		BADADEBC1BDF804700137975 /* boardso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boardso.h; sourceTree = "<group>"; };
+		BADADEBE1BDF806400137975 /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
+		BADADEBF1BDF806400137975 /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
 		BAE349661B86CE20006EBD05 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
 		BAE349671B86CE20006EBD05 /* pcmmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcmmix.h; sourceTree = "<group>"; };
 		BAFFDA281B59058D00C5DE2E /* opna.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opna.c; sourceTree = "<group>"; };
@@ -940,6 +946,8 @@
 				BA7E81D019063AFA00041C04 /* board86.h */,
 				BA7E81D119063AFA00041C04 /* boardpx.c */,
 				BA7E81D219063AFA00041C04 /* boardpx.h */,
+				BADADEBB1BDF804700137975 /* boardso.c */,
+				BADADEBC1BDF804700137975 /* boardso.h */,
 				BA7E81D319063AFA00041C04 /* boardspb.c */,
 				BA7E81D419063AFA00041C04 /* boardspb.h */,
 				BA7E81D519063AFA00041C04 /* boardx2.c */,
@@ -1319,6 +1327,8 @@
 				BA7E834A19063AFB00041C04 /* fmtimer.c */,
 				BA7E834B19063AFB00041C04 /* fmtimer.h */,
 				BA7E834C19063AFB00041C04 /* getsnd */,
+				BADADEBE1BDF806400137975 /* opl3.c */,
+				BADADEBF1BDF806400137975 /* opl3.h */,
 				BAFFDA281B59058D00C5DE2E /* opna.c */,
 				BAFFDA291B59058D00C5DE2E /* opna.h */,
 				BA7E835519063AFB00041C04 /* opngen.h */,
@@ -1662,9 +1672,11 @@
 				BA7E840619063AFB00041C04 /* memdbg32.c in Sources */,
 				BA7E843319063AFB00041C04 /* gdc_sub.c in Sources */,
 				BA7E83FD19063AFB00041C04 /* cmndraw.c in Sources */,
+				BADADEBD1BDF804700137975 /* boardso.c in Sources */,
 				BA7E848019063AFB00041C04 /* getogg.c in Sources */,
 				BA7E848E19063AFB00041C04 /* sndcsec.c in Sources */,
 				BA7E841D19063AFB00041C04 /* i286c_mn.c in Sources */,
+				BADADEC01BDF806400137975 /* opl3.c in Sources */,
 				BA7E849A19063AFB00041C04 /* dispsync.c in Sources */,
 				BA7E84A319063AFB00041C04 /* scrnsave.c in Sources */,
 				BA7E83A819063AFB00041C04 /* atapicmd.c in Sources */,

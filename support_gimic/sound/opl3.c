@@ -51,6 +51,7 @@ static void restore(POPL3 opl3)
  */
 void opl3_bind(POPL3 opl3)
 {
+	restore(opl3);
 }
 
 /**
