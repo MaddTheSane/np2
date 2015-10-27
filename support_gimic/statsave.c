@@ -778,7 +778,8 @@ enum
 #endif	/* defined(SUPPORT_PX) */
 	FLAG_AMD98		= 0x0040,
 	FLAG_PCM86		= 0x0080,
-	FLAG_CS4231		= 0x0100
+	FLAG_CS4231		= 0x0100,
+	FLAG_OPL3		= 0x0200
 };
 
 /**
@@ -816,6 +817,9 @@ static UINT GetSoundFlags(SOUNDID nSoundID)
 
 		case SOUNDID_AMD98:
 			return FLAG_AMD98;
+
+		case SOUNDID_SOUNDORCHESTRA:
+			return FLAG_OPNA1 | FLAG_OPL3;
 
 #if defined(SUPPORT_PX)
 		case SOUNDID_PX1:
@@ -866,6 +870,10 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl)
 	{
 		ret |= amd98_sfsave(sfh, tbl);
 	}
+	if (nSaveFlags & FLAG_OPL3)
+	{
+		ret |= opl3_sfsave(&g_opl3, sfh, tbl);
+	}
 	return ret;
 }
 
@@ -907,6 +915,10 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	if (nSaveFlags & FLAG_AMD98)
 	{
 		ret |= amd98_sfload(sfh, tbl);
+	}
+	if (nSaveFlags & FLAG_OPL3)
+	{
+		ret |= opl3_sfload(&g_opl3, sfh, tbl);
 	}
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI

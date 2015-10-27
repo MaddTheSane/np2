@@ -476,6 +476,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\cbus\boardso.c"
+					>
+				</File>
+				<File
 					RelativePath="..\cbus\boardspb.c"
 					>
 				</File>
@@ -1093,6 +1097,10 @@
 				</File>
 				<File
 					RelativePath="..\sound\fmtimer.c"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opl3.c"
 					>
 				</File>
 				<File
@@ -1834,6 +1842,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\cbus\boardso.h"
+					>
+				</File>
+				<File
 					RelativePath="..\cbus\boardspb.h"
 					>
 				</File>
@@ -2351,6 +2363,10 @@
 				</File>
 				<File
 					RelativePath="..\sound\fmtimer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opl3.h"
 					>
 				</File>
 				<File

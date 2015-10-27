@@ -762,6 +762,14 @@ SOURCE=..\cbus\BOARDPX.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\cbus\boardso.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\cbus\boardso.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\CBUS\BOARDSPB.C
 # End Source File
 # Begin Source File
@@ -1074,6 +1082,14 @@ SOURCE=..\SOUND\FMBOARD.C
 # Begin Source File
 
 SOURCE=..\SOUND\FMTIMER.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opl3.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opl3.h
 # End Source File
 # Begin Source File
 

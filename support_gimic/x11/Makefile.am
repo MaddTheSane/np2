@@ -93,6 +93,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/cbus/board14.c \
 		$(real_topsrcdir)/cbus/board26k.c \
 		$(real_topsrcdir)/cbus/board86.c \
+		$(real_topsrcdir)/cbus/boardso.c \
 		$(real_topsrcdir)/cbus/boardspb.c \
 		$(real_topsrcdir)/cbus/boardx2.c \
 		$(real_topsrcdir)/cbus/cs4231io.c \
@@ -187,6 +188,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/sound/cs4231g.c \
 		$(real_topsrcdir)/sound/fmboard.c \
 		$(real_topsrcdir)/sound/fmtimer.c \
+		$(real_topsrcdir)/sound/opl3.c \
 		$(real_topsrcdir)/sound/opna.c \
 		$(real_topsrcdir)/sound/opngenc.c \
 		$(real_topsrcdir)/sound/opngeng.c \

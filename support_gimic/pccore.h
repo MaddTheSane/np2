@@ -51,6 +51,7 @@ enum tagSoundId
 	SOUNDID_SPEAKBOARD			= 0x20,		/*!< Speak board */
 	SOUNDID_SPARKBOARD			= 0x40,		/*!< Spark board */
 	SOUNDID_AMD98				= 0x80,		/*!< AMD-98 */
+	SOUNDID_SOUNDORCHESTRA		= 0x32,		/*!< SOUND ORCHESTRA */
 
 #if defined(SUPPORT_PX)
 	SOUNDID_PX1					= 0x30,
