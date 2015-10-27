@@ -17,7 +17,7 @@
 #include "sound\vermouth\vermouth.h"
 #endif
 #if defined(MT32SOUND_DLL)
-#include "mt32snd.h"
+#include "ext\mt32snd.h"
 #endif
 #include "keydisp.h"
 
@@ -319,21 +319,21 @@ const SINT32	*ptr;
 // ---- MT-32
 
 #if defined(MT32SOUND_DLL)
-static void midi_mt32short(CMMIDI midi, UINT32 msg) {
-
+static void midi_mt32short(CMMIDI midi, UINT32 msg)
+{
 	sound_sync();
-	mt32sound_shortmsg(msg);
+	MT32Sound::GetInstance()->ShortMsg(msg);
 }
 
-static void midi_mt32long(CMMIDI midi, const UINT8 *msg, UINT leng) {
-
+static void midi_mt32long(CMMIDI midi, const UINT8 *msg, UINT leng)
+{
 	sound_sync();
-	mt32sound_longmsg(msg, leng);
+	MT32Sound::GetInstance()->LongMsg(msg, leng);
 }
 
-static void SOUNDCALL mt32_getpcm(MIDIHDL hdl, SINT32 *pcm, UINT count) {
-
-	mt32sound_mix32(pcm, count);
+static void SOUNDCALL mt32_getpcm(MIDIHDL hdl, SINT32 *pcm, UINT count)
+{
+	MT32Sound::GetInstance()->Mix(pcm, count);
 }
 #endif
 
@@ -736,8 +736,9 @@ static void midirelease(COMMNG self) {
 	}
 #endif
 #if defined(MT32SOUND_DLL)
-	if (midi->opened & CMMIDI_MT32SOUND) {
-		mt32sound_close();
+	if (midi->opened & CMMIDI_MT32SOUND)
+	{
+		MT32Sound::GetInstance()->Close();
 	}
 #endif
 	_MFREE(self);
@@ -800,7 +801,8 @@ COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 #endif
 #if defined(MT32SOUND_DLL)
 	else if (!milstr_cmp(midiout, cmmidi_mt32sound)) {
-		if (mt32sound_open() == SUCCESS) {
+		if (MT32Sound::GetInstance()->Open())
+		{
 			shortout = midi_mt32short;
 			longout = midi_mt32long;
 			opened |= CMMIDI_MT32SOUND;
@@ -870,8 +872,9 @@ cmcre_err2:
 	}
 #endif
 #if defined(MT32SOUND_DLL)
-	if (opened & CMMIDI_MT32SOUND) {
-		mt32sound_close();
+	if (opened & CMMIDI_MT32SOUND)
+	{
+		MT32Sound::GetInstance()->Close();
 	}
 #endif
 
