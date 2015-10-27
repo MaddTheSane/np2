@@ -2709,6 +2709,10 @@
 						RelativePath=".\ext\externalopna.h"
 						>
 					</File>
+					<File
+						RelativePath=".\ext\mt32snd.h"
+						>
+					</File>
 					<Filter
 						Name="c86ctl"
 						>
@@ -2759,10 +2763,6 @@
 					</File>
 					<File
 						RelativePath=".\misc\extrom.h"
-						>
-					</File>
-					<File
-						RelativePath=".\ext\mt32snd.h"
 						>
 					</File>
 					<File
