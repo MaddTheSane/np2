@@ -16,7 +16,7 @@
 #include "dialogs.h"
 #include "np2.h"
 #if defined(MT32SOUND_DLL)
-#include "mt32snd.h"
+#include "..\ext\mt32snd.h"
 #endif
 
 #if !defined(__GNUC__)
@@ -330,7 +330,8 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname) {
 	num++;
 #endif
 #if defined(MT32SOUND_DLL)
-	if (mt32sound_isenable()) {
+	if (MT32Sound::GetInstance()->IsEnabled())
+	{
 		SendMessage(wnd, CB_INSERTSTRING, (WPARAM)num,
 													(LPARAM)cmmidi_mt32sound);
 		if (!milstr_cmp(defname, cmmidi_mt32sound)) {

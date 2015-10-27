@@ -1545,6 +1545,14 @@ SOURCE=.\ext\externalopna.cpp
 
 SOURCE=.\ext\externalopna.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\ext\mt32snd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\mt32snd.h
+# End Source File
 # End Group
 # Begin Group "misc"
 
@@ -1820,10 +1828,6 @@ SOURCE=.\MENU.CPP
 # Begin Source File
 
 SOURCE=.\MOUSEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\MT32SND.CPP
 # End Source File
 # Begin Source File
 

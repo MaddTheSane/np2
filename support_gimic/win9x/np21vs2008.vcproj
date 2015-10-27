@@ -1360,10 +1360,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\mt32snd.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\np2.cpp"
 					>
 				</File>
@@ -1652,6 +1648,10 @@
 					</File>
 					<File
 						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\mt32snd.cpp"
 						>
 					</File>
 					<Filter
@@ -2546,10 +2546,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\mt32snd.h"
-					>
-				</File>
-				<File
 					RelativePath=".\np2.h"
 					>
 				</File>
@@ -2674,6 +2670,10 @@
 					</File>
 					<File
 						RelativePath=".\ext\externalopna.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\mt32snd.h"
 						>
 					</File>
 					<Filter
