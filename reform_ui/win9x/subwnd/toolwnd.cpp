@@ -870,7 +870,7 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_CLOSE:
-			sysmenu_settoolwin(0);
+			np2oscfg.toolwin = 0;
 			sysmng_update(SYS_UPDATEOSCFG);
 			DestroyWindow();
 			break;
@@ -941,7 +941,7 @@ void CToolWnd::Create()
 
 	if (!CSubWndBase::Create(IDS_CAPTION_TOOL, WS_SYSMENU | WS_MINIMIZEBOX, s_toolwndcfg.posx, s_toolwndcfg.posy, bmp.bmWidth, bmp.bmHeight, NULL, NULL))
 	{
-		sysmenu_settoolwin(0);
+		np2oscfg.toolwin = 0;
 		sysmng_update(SYS_UPDATEOSCFG);
 		return;
 	}

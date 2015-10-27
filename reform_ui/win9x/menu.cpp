@@ -13,7 +13,16 @@
 #include "dialog\np2class.h"
 #include "pccore.h"
 
-BOOL menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
+/**
+ * 検索
+ * @param[in] hMenu メニュー ハンドル
+ * @param[in] uID ID
+ * @param[out] phmenuRet 見つかったメニュー
+ * @param[out] pnPos 見つかった位置
+ * @retval true 見つかった
+ * @retval false 見つからなかった
+ */
+bool menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
 {
 	int nCount = GetMenuItemCount(hMenu);
 	for (int i = 0; i < nCount; i++)
@@ -34,57 +43,25 @@ BOOL menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
 				{
 					*pnPos = i;
 				}
-				return TRUE;
+				return true;
 			}
-			else if ((mii.hSubMenu) &&
-					(menu_searchmenu(mii.hSubMenu, uID, phmenuRet, pnPos)))
+			else if ((mii.hSubMenu) && (menu_searchmenu(mii.hSubMenu, uID, phmenuRet, pnPos)))
 			{
-				return TRUE;
+				return true;
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-#if 0
-static BOOL searchsubmenu(HMENU hMenu, HMENU hmenuTarget,
-												HMENU *phmenuRet, int *pnPos)
-{
-	int				nCount;
-	int				i;
-	MENUITEMINFO	mii;
-
-	nCount = GetMenuItemCount(hMenu);
-	for (i=0; i<nCount; i++)
-	{
-		ZeroMemory(&mii, sizeof(mii));
-		mii.cbSize = sizeof(mii);
-		mii.fMask = MIIM_SUBMENU;
-		if ((GetMenuItemInfo(hMenu, i, TRUE, &mii)) && (mii.hSubMenu))
-		{
-			if (mii.hSubMenu == hmenuTarget)
-			{
-				if (phmenuRet)
-				{
-					*phmenuRet = hMenu;
-				}
-				if (pnPos)
-				{
-					*pnPos = i;
-				}
-				return TRUE;
-			}
-			if (searchsubmenu(mii.hSubMenu, hmenuTarget, phmenuRet, pnPos))
-			{
-				return TRUE;
-			}
-		}
-	}
-	return FALSE;
-}
-#endif	// 0
-
-// これってAPIあるのか？
+/**
+ * メニュー追加
+ * @param[in] hMenu メニュー ハンドル
+ * @param[in] nPos 追加する位置
+ * @param[in] hmenuAdd 追加するメニュー
+ * @param[in] bSeparator セパレータを追加する
+ * @return 追加数
+ */
 int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator)
 {
 	if (nPos < 0)
@@ -114,8 +91,7 @@ int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator)
 			if (bSeparator)
 			{
 				bSeparator = FALSE;
-				InsertMenu(hMenu, nPos + nAdded, MF_BYPOSITION | MF_SEPARATOR,
-																	0, NULL);
+				InsertMenu(hMenu, nPos + nAdded, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 				nAdded++;
 			}
 			InsertMenuItem(hMenu, nPos + nAdded, TRUE, &mii);
@@ -125,6 +101,14 @@ int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator)
 	return nAdded;
 }
 
+/**
+ * メニュー追加
+ * @param[in] hMenu メニュー ハンドル
+ * @param[in] nPos 追加する位置
+ * @param[in] uID メニュー ID
+ * @param[in] bSeparator セパレータを追加する
+ * @return 追加数
+ */
 int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator)
 {
 	int nCount = 0;
@@ -137,7 +121,14 @@ int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator)
 	return nCount;
 }
 
-int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
+/**
+ * メニュー追加
+ * @param[in] hMenu メニュー ハンドル
+ * @param[in] uByID メニュー位置
+ * @param[in] uID メニュー ID
+ * @return 追加数
+ */
+static int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
 {
 	int nCount = 0;
 
@@ -150,32 +141,47 @@ int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
 	return nCount;
 }
 
-BOOL menu_insertmenures(HMENU hMenu, int nPosition, UINT uFlags, UINT_PTR uIDNewItem, UINT uID)
+/**
+ * メニュー追加
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uPosition 新しい項目の直前に位置する項目
+ * @param[in] uFlags オプション
+ * @param[in] uIDNewItem 識別子、メニュー、サブメニューのいずれか
+ * @param[in] lpNewItem メニュー 文字列
+ * @return 関数が成功すると、0 以外の値が返ります
+ */
+static BOOL InsertMenuString(HMENU hMenu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, UINT uStringID)
 {
-	std::tstring rString(LoadTString(uID));
+	std::tstring rString(LoadTString(uStringID));
 
 	BOOL bResult = FALSE;
 	if (!rString.empty())
 	{
-		bResult = InsertMenu(hMenu, nPosition, uFlags, uIDNewItem, rString.c_str());
+		bResult = InsertMenu(hMenu, uPosition, uFlags, uIDNewItem, rString.c_str());
 	}
 	return bResult;
 }
 
+/**
+ * メニュー追加 (単純コピー)
+ * @param[in] popup コピー先
+ * @param[in] menubar コピー元
+ */
 void menu_addmenubar(HMENU popup, HMENU menubar)
 {
 	(void)menu_addmenu(popup, 0, menubar, FALSE);
 }
 
 
+
 // ----
 
 /**
- * メニュー初期化
+ * システム メニュー初期化
+ * @param[in] hMenu メニュー ハンドル
  */
-void sysmenu_initialize()
+void sysmenu_initialize(HMENU hMenu)
 {
-	HMENU hMenu = GetSystemMenu(g_hWndMain, FALSE);
 	UINT uPos = 0;
 
 #if defined(SUPPORT_KEYDISP)
@@ -195,74 +201,37 @@ void sysmenu_initialize()
 	}
 }
 
-void sysmenu_settoolwin(UINT8 value) {
+/**
+ * システム メニュー更新
+ * @param[in] hMenu メニュー ハンドル
+ */
+void sysmenu_update(HMENU hMenu)
+{
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_TOOLWIN, MFCHECK(np2oscfg.toolwin));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_KEYDISP, MFCHECK(np2oscfg.keydisp));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SNAPENABLE, MFCHECK(np2oscfg.WINSNAP));
 
-	value &= 1;
-	np2oscfg.toolwin = value;
-	CheckMenuItem(GetSystemMenu(g_hWndMain, FALSE),
-											IDM_TOOLWIN, MFCHECK(value));
+	const UINT8 background = np2oscfg.background ^ 3;
+	EnableMenuItem(hMenu, IDM_BGSOUND, (background & 1) ? MF_ENABLED : MF_GRAYED);
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BACKGROUND, MFCHECK(background & 1));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BGSOUND, MFCHECK(background & 2));
+
+	const int scrnmul = scrnmng_getmultiple();
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL4, MFCHECK(scrnmul == 4));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL6, MFCHECK(scrnmul == 6));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL8, MFCHECK(scrnmul == 8));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL10, MFCHECK(scrnmul == 10));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL12, MFCHECK(scrnmul == 12));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL16, MFCHECK(scrnmul == 16));
 }
 
-void sysmenu_setkeydisp(UINT8 value) {
-
-	value &= 1;
-	np2oscfg.keydisp = value;
-	CheckMenuItem(GetSystemMenu(g_hWndMain, FALSE),
-											IDM_KEYDISP, MFCHECK(value));
-}
-
-void sysmenu_setwinsnap(UINT8 value) {
-
-	value &= 1;
-	np2oscfg.WINSNAP = value;
-	CheckMenuItem(GetSystemMenu(g_hWndMain, FALSE),
-											IDM_SNAPENABLE, MFCHECK(value));
-}
-
-void sysmenu_setbackground(UINT8 value) {
-
-	HMENU	hmenu;
-
-	np2oscfg.background &= 2;
-	np2oscfg.background |= (value & 1);
-	hmenu = GetSystemMenu(g_hWndMain, FALSE);
-	if (value & 1) {
-		CheckMenuItem(hmenu, IDM_BACKGROUND, MF_UNCHECKED);
-		EnableMenuItem(hmenu, IDM_BGSOUND, MF_GRAYED);
-	}
-	else {
-		CheckMenuItem(hmenu, IDM_BACKGROUND, MF_CHECKED);
-		EnableMenuItem(hmenu, IDM_BGSOUND, MF_ENABLED);
-	}
-}
-
-void sysmenu_setbgsound(UINT8 value) {
-
-	np2oscfg.background &= 1;
-	np2oscfg.background |= (value & 2);
-	CheckMenuItem(GetSystemMenu(g_hWndMain, FALSE),
-									IDM_BGSOUND, MFCHECK((value & 2) ^ 2));
-}
-
-void sysmenu_setscrnmul(UINT8 value) {
-
-	HMENU	hmenu;
-
-//	np2cfg.scrnmul = value;
-	hmenu = GetSystemMenu(g_hWndMain, FALSE);
-	CheckMenuItem(hmenu, IDM_SCRNMUL4, MFCHECK(value == 4));
-	CheckMenuItem(hmenu, IDM_SCRNMUL6, MFCHECK(value == 6));
-	CheckMenuItem(hmenu, IDM_SCRNMUL8, MFCHECK(value == 8));
-	CheckMenuItem(hmenu, IDM_SCRNMUL10, MFCHECK(value == 10));
-	CheckMenuItem(hmenu, IDM_SCRNMUL12, MFCHECK(value == 12));
-	CheckMenuItem(hmenu, IDM_SCRNMUL16, MFCHECK(value == 16));
-}
 
 
 // ----
 
 /**
- * 初期化
+ * メニュー初期化
+ * @param[in] メニュー ハンドル
  */
 void xmenu_initialize(HMENU hMenu)
 {
@@ -294,7 +263,7 @@ void xmenu_initialize(HMENU hMenu)
 #if defined(SUPPORT_SCSI)
 		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_SCSIMENU, TRUE);
 #endif
-		menu_insertmenures(hMenu, nPos, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hmenuSub, IDS_HDD);
+		InsertMenuString(hMenu, nPos, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hmenuSub, IDS_HDD);
 	}
 
 #if defined(SUPPORT_PX)

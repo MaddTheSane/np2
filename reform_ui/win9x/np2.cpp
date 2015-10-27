@@ -1030,7 +1030,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			update = 0;
 			switch(wParam) {
 				case IDM_TOOLWIN:
-					sysmenu_settoolwin(np2oscfg.toolwin ^ 1);
+					np2oscfg.toolwin = !np2oscfg.toolwin;
 					if (np2oscfg.toolwin) {
 						toolwin_create();
 					}
@@ -1042,7 +1042,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 #if defined(SUPPORT_KEYDISP)
 				case IDM_KEYDISP:
-					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
+					np2oscfg.keydisp = !np2oscfg.keydisp;
 					if (np2oscfg.keydisp) {
 						kdispwin_create();
 					}
@@ -1073,17 +1073,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_SNAPENABLE:
-					sysmenu_setwinsnap(np2oscfg.WINSNAP ^ 1);
+					np2oscfg.WINSNAP = !np2oscfg.WINSNAP;
 					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BACKGROUND:
-					sysmenu_setbackground(np2oscfg.background ^ 1);
+					np2oscfg.background ^= 1;
 					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BGSOUND:
-					sysmenu_setbgsound(np2oscfg.background ^ 2);
+					np2oscfg.background ^= 2;
 					update |= SYS_UPDATEOSCFG;
 					break;
 
@@ -1104,7 +1104,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if ((!scrnmng_isfullscreen()) &&
 						!(GetWindowLong(g_hWndMain, GWL_STYLE) & WS_MINIMIZE))
 					{
-						sysmenu_setscrnmul((UINT8)(wParam - IDM_SCRNMUL));
 						scrnmng_setmultiple((int)(wParam - IDM_SCRNMUL));
 					}
 					break;
@@ -1211,6 +1210,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_ENTERMENULOOP:
 			winuienter();
+			sysmenu_update(GetSystemMenu(hWnd, FALSE));
 			xmenu_update(GetMenu(hWnd));
 			if (scrnmng_isfullscreen()) {
 				DrawMenuBar(hWnd);
@@ -1594,7 +1594,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	tick = GetTickCount();
 #endif
 
-	sysmenu_initialize();
+	sysmenu_initialize(GetSystemMenu(hWnd, FALSE));
 
 	HMENU hMenu = GetMenu(hWnd);
 	xmenu_initialize(hMenu);
@@ -1604,13 +1604,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		EnableMenuItem(hMenu, IDM_HELP, MF_GRAYED);
 	}
 	DrawMenuBar(hWnd);
-
-	sysmenu_settoolwin(np2oscfg.toolwin);
-	sysmenu_setkeydisp(np2oscfg.keydisp);
-	sysmenu_setwinsnap(np2oscfg.WINSNAP);
-	sysmenu_setbackground(np2oscfg.background);
-	sysmenu_setbgsound(np2oscfg.background);
-	sysmenu_setscrnmul(8);
 
 	g_scrnmode = 0;
 	if (Np2Arg::GetInstance()->fullscreen())

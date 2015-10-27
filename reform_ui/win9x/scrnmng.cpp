@@ -17,7 +17,6 @@
 #include "mousemng.h"
 #include "scrnmng.h"
 #include "sysmng.h"
-#include "menu.h"
 #include "np2class.h"
 #include "pccore.h"
 #include "scrndraw.h"
@@ -872,13 +871,20 @@ void scrnmng_update(void) {
 
 // ----
 
-void scrnmng_setmultiple(int multiple) {
-
-	if (scrnstat.multiple != multiple) {
+void scrnmng_setmultiple(int multiple)
+{
+	if (scrnstat.multiple != multiple)
+	{
 		scrnstat.multiple = multiple;
 		renewalclientsize(TRUE);
 	}
 }
+
+int scrnmng_getmultiple(void)
+{
+	return scrnstat.multiple;
+}
+
 
 
 // ----
@@ -1057,9 +1063,8 @@ void scrnmng_sizing(UINT side, RECT *rect) {
 	scrnsizing.mul = mul;
 }
 
-void scrnmng_exitsizing(void) {
-
-	sysmenu_setscrnmul(scrnsizing.mul);
+void scrnmng_exitsizing(void)
+{
 	scrnmng_setmultiple(scrnsizing.mul);
 	InvalidateRect(g_hWndMain, NULL, TRUE);		// ugh
 }

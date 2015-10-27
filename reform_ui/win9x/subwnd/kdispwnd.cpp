@@ -104,7 +104,7 @@ void CKeyDisplayWnd::Create()
 	HMENU hMenu = ::LoadMenu(GetResourceHandle(), MAKEINTRESOURCE(IDR_KEYDISP));
 	if (!CSubWndBase::Create(IDS_CAPTION_KEYDISP, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX, s_kdispcfg.posx, s_kdispcfg.posy, KEYDISP_WIDTH, KEYDISP_HEIGHT, NULL, hMenu))
 	{
-		sysmenu_setkeydisp(0);
+		np2oscfg.keydisp = 0;
 		sysmng_update(SYS_UPDATEOSCFG);
 		return;
 	}
@@ -268,7 +268,7 @@ LRESULT CKeyDisplayWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_CLOSE:
-			sysmenu_setkeydisp(0);
+			np2oscfg.keydisp = 0;
 			sysmng_update(SYS_UPDATEOSCFG);
 			DestroyWindow();
 			break;
