@@ -16,10 +16,14 @@ public:
 	 */
 	enum ChipType
 	{
-		kNone				= 0,
-		kYM2608,
-		kYM3438,
-		kYMF288
+		kNone		= 0,	/*!< None */
+		kYM2608,			/*!< OPNA */
+		kYM3438,			/*!< OPN2 */
+		kYMF288,			/*!< OPN3 */
+
+		kYM3812,			/*!< OPL2 */
+		kYMF262,			/*!< OPL3 */
+		kY8950				/*!< Y8950 */
 	};
 
 	/**
