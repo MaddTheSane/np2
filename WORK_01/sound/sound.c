@@ -72,98 +72,127 @@ static void streamprepare(UINT samples) {
 #if defined(SUPPORT_WAVEREC)
 // ---- wave rec
 
-BOOL sound_recstart(const OEMCHAR *filename) {
-
-	WAVEWR	rec;
+/**
+ * Starts recording
+ * @param[in] lpFilename The filename
+ * @retval SUCCESS If succeeded
+ * @retval FAILURE If failed
+ */
+BRESULT sound_recstart(const OEMCHAR *lpFilename)
+{
+	WAVEWR rec;
 
 	sound_recstop();
-	if (sndstream.buffer == NULL) {
-		return(FAILURE);
+	if (sndstream.buffer == NULL)
+	{
+		return FAILURE;
 	}
-	rec = wavewr_open(filename, soundcfg.rate, 16, 2);
+	rec = wavewr_open(lpFilename, soundcfg.rate, 16, 2);
 	sndstream.rec = rec;
-	if (rec) {
-		return(SUCCESS);
+	if (rec)
+	{
+		return SUCCESS;
 	}
-	return(FAILURE);
+	return FAILURE;
 }
 
-void sound_recstop(void) {
-
-	WAVEWR	rec;
+/**
+ * Stops recording
+ */
+void sound_recstop(void)
+{
+	WAVEWR rec;
 
 	rec = sndstream.rec;
 	sndstream.rec = NULL;
 	wavewr_close(rec);
 }
 
-static void streamfilewrite(UINT samples) {
+/**
+ * write
+ * @param[in] samples The count of samples
+ */
+static void streamfilewrite(UINT nSamples)
+{
+	UINT nCount;
+	SINT32 buf32[2 * 512];
+	CBTBL *cb;
+	UINT8 buf[2 * 512][2];
+	UINT r;
+	UINT i;
+	SINT32 nSample;
 
-	CBTBL	*cb;
-	UINT	count;
-	SINT32	buf32[2*512];
-	UINT8	buf[2*2*512];
-	UINT	r;
-	UINT	i;
-	SINT32	samp;
-
-	while(samples) {
-		count = min(samples, 512);
-		ZeroMemory(buf32, count * 2 * sizeof(SINT32));
+	while (nSamples)
+	{
+		nCount = min(nSamples, 512);
+		memset(buf32, 0, nCount * 2 * sizeof(buf32[0]));
 		cb = sndstream.cb;
-		while(cb < sndstream.cbreg) {
-			cb->cbfn(cb->hdl, buf32, count);
+		while (cb < sndstream.cbreg)
+		{
+			cb->cbfn(cb->hdl, buf32, nCount);
 			cb++;
 		}
-		r = min(sndstream.remain, count);
-		if (r) {
-			CopyMemory(sndstream.ptr, buf32, r * 2 * sizeof(SINT32));
+		r = min(sndstream.remain, nCount);
+		if (r)
+		{
+			memcpy(sndstream.ptr, buf32, r * 2 * sizeof(buf32[0]));
 			sndstream.ptr += r * 2;
 			sndstream.remain -= r;
 		}
-		for (i=0; i<count*2; i++) {
-			samp = buf32[i];
-			if (samp > 32767) {
-				samp = 32767;
+		for (i = 0; i < nCount * 2; i++)
+		{
+			nSample = buf32[i];
+			if (nSample > 32767)
+			{
+				nSample = 32767;
 			}
-			else if (samp < -32768) {
-				samp = -32768;
+			else if (nSample < -32768)
+			{
+				nSample = -32768;
 			}
 			// little endian‚È‚Ì‚Å satuation_s16‚ÍŽg‚¦‚È‚¢
-			buf[i*2+0] = (UINT8)samp;
-			buf[i*2+1] = (UINT8)(samp >> 8);
+			buf[i][0] = (UINT8)nSample;
+			buf[i][1] = (UINT8)(nSample >> 8);
 		}
-		wavewr_write(sndstream.rec, buf, count * 4);
-		samples -= count;
+		wavewr_write(sndstream.rec, buf, nCount * 2 * sizeof(buf[0]));
+		nSamples -= nCount;
 	}
 }
 
-static void filltailsample(UINT count) {
+/**
+ * fill
+ * @param[in] samples The count of samples
+ */
+static void filltailsample(UINT nCount)
+{
+	SINT32 *ptr;
+	UINT nOrgSize;
+	SINT32 nSampleL;
+	SINT32 nSampleR;
 
-	SINT32	*ptr;
-	UINT	orgsize;
-	SINT32	sampl;
-	SINT32	sampr;
-
-	count = min(sndstream.remain, count);
-	if (count) {
+	nCount = min(sndstream.remain, nCount);
+	if (nCount)
+	{
 		ptr = sndstream.ptr;
-		orgsize = (ptr - sndstream.buffer) / 2;
-		if (orgsize == 0) {
-			sampl = 0;
-			sampr = 0;
+		nOrgSize = (ptr - sndstream.buffer) / 2;
+		if (nOrgSize == 0)
+		{
+			nSampleL = 0;
+			nSampleR = 0;
 		}
-		else {
-			sampl = *(ptr - 2);
-			sampr = *(ptr - 1);
+		else
+		{
+			nSampleL = *(ptr - 2);
+			nSampleR = *(ptr - 1);
 		}
-		sndstream.ptr += count * 2;
-		sndstream.remain -= count;
-		do {
-			ptr[0] = sampl;
-			ptr[1] = sampr;
+		sndstream.ptr += nCount * 2;
+		sndstream.remain -= nCount;
+		do
+		{
+			ptr[0] = nSampleL;
+			ptr[1] = nSampleR;
 			ptr += 2;
-		} while(--count);
+		} while (--nCount);
 	}
 }
 #endif
