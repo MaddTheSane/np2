@@ -180,7 +180,7 @@ static void pccore_set(const NP2CFG *pConfig)
 	CopyMemory(pccore.dipsw, pConfig->dipsw, 3);
 
 	// サウンドボードの接続
-	pccore.sound = pConfig->SOUND_SW;
+	pccore.sound = (SOUNDID)pConfig->SOUND_SW;
 
 	// その他CBUSの接続
 	pccore.device = 0;

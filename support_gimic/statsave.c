@@ -776,45 +776,46 @@ typedef struct {
 	UINT8	extop[4];
 } OPNKEY;
 
-static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
+static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret;
+	UINT saveflg;
 
-	int		ret;
-	UINT	saveflg;
-
-	switch(g_usesound) {
-		case 0x01:
+	switch (g_usesound)
+	{
+		case SOUNDID_PC_9801_14:
 			saveflg = FLAG_MG;
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			saveflg = FLAG_FM1;
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			saveflg = FLAG_FM1 | FLAG_FM2 | FLAG_PCM86;
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			saveflg = FLAG_FM1 | FLAG_CS4231;
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			saveflg = FLAG_FM1;
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			saveflg = FLAG_FM1 | FLAG_FM2;
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			saveflg = FLAG_AMD98;
 			break;
 
@@ -824,20 +825,25 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	}
 
 	ret = statflag_write(sfh, &g_usesound, sizeof(g_usesound));
-	if (saveflg & FLAG_MG) {
+	if (saveflg & FLAG_MG)
+	{
 		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
-	if (saveflg & FLAG_FM1) {
+	if (saveflg & FLAG_FM1)
+	{
 		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
 		ret |= opna_sfsave(&g_opna[0], sfh, tbl);
 	}
-	if (saveflg & FLAG_FM2) {
+	if (saveflg & FLAG_FM2)
+	{
 		ret |= opna_sfsave(&g_opna[1], sfh, tbl);
 	}
-	if (saveflg & FLAG_PCM86) {
+	if (saveflg & FLAG_PCM86)
+	{
 		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
 	}
-	if (saveflg & FLAG_CS4231) {
+	if (saveflg & FLAG_CS4231)
+	{
 		ret |= statflag_write(sfh, &cs4231, sizeof(cs4231));
 	}
 	if (saveflg & FLAG_AMD98)
@@ -847,50 +853,50 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
 	return(ret);
 }
 
-static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl) {
+static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret;
+	SOUNDID nSoundID;
+	UINT saveflg;
 
-	int		ret;
-	UINT32	usesound;
-	UINT	saveflg;
+	ret = statflag_read(sfh, &nSoundID, sizeof(nSoundID));
+	fmboard_reset(&np2cfg, nSoundID);
 
-	ret = statflag_read(sfh, &usesound, sizeof(usesound));
-	fmboard_reset(&np2cfg, usesound);
-
-	switch (usesound)
+	switch (nSoundID)
 	{
-		case 0x01:
+		case SOUNDID_PC_9801_14:
 			saveflg = FLAG_MG;
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			saveflg = FLAG_FM1;
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			saveflg = FLAG_FM1 | FLAG_FM2 | FLAG_PCM86;
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			saveflg = FLAG_FM1 | FLAG_CS4231;
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			saveflg = FLAG_FM1 | FLAG_PCM86;
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			saveflg = FLAG_FM1;
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			saveflg = FLAG_FM1 | FLAG_FM2;
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			saveflg = FLAG_AMD98;
 			break;
 
@@ -914,10 +920,12 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl) {
 		ret |= opna_sfload(&g_opna[1], sfh, tbl);
 	}
 
-	if (saveflg & FLAG_PCM86) {
+	if (saveflg & FLAG_PCM86)
+	{
 		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
 	}
-	if (saveflg & FLAG_CS4231) {
+	if (saveflg & FLAG_CS4231)
+	{
 		ret |= statflag_read(sfh, &cs4231, sizeof(cs4231));
 	}
 	if (saveflg & FLAG_AMD98)
@@ -927,10 +935,12 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl) {
 
 	// ïúå≥ÅB Ç±ÇÍà⁄ìÆÇ∑ÇÈÇ±Ç∆ÅI
 	pcm86gen_update();
-	if (saveflg & FLAG_PCM86) {
+	if (saveflg & FLAG_PCM86)
+	{
 		fmboard_extenable((REG8)(pcm86.extfunc & 1));
 	}
-	if (saveflg & FLAG_CS4231) {
+	if (saveflg & FLAG_CS4231)
+	{
 		fmboard_extenable((REG8)(cs4231.extfunc & 1));
 	}
 	return(ret);

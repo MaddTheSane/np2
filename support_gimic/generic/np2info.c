@@ -201,45 +201,46 @@ const OEMCHAR	*p;
 	(void)ex;
 }
 
-static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
-
-	UINT	type;
+static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex)
+{
+	UINT type;
 
 	type = 0;
-	switch(g_usesound) {
-		case 0x01:
+	switch (g_usesound)
+	{
+		case SOUNDID_PC_9801_14:
 			type = 1;
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			type = 2;
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			type = 3;
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			type = 4;
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			type = 5;
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			type = 6;
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			type = 7;
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			type = 8;
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			type = 9;
 			break;
 	}
