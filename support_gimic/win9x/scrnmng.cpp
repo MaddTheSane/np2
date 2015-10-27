@@ -17,7 +17,6 @@
 #include "mousemng.h"
 #include "scrnmng.h"
 #include "sysmng.h"
-#include "menu.h"
 #include "np2class.h"
 #include "pccore.h"
 #include "scrndraw.h"
@@ -433,7 +432,6 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 
 	DWORD			winstyle;
 	DWORD			winstyleex;
-	HMENU			hmenu;
 	LPDIRECTDRAW2	ddraw2;
 	DDSURFACEDESC	ddsd;
 	DDPIXELFORMAT	ddpf;
@@ -446,15 +444,12 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 	ZeroMemory(&scrnmng, sizeof(scrnmng));
 	winstyle = GetWindowLong(g_hWndMain, GWL_STYLE);
 	winstyleex = GetWindowLong(g_hWndMain, GWL_EXSTYLE);
-	hmenu = GetMenu(g_hWndMain);
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		scrnmode &= ~SCRNMODE_ROTATEMASK;
 		scrnmng.flag = SCRNFLAG_FULLSCREEN;
 		winstyle &= ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME);
 		winstyle |= WS_POPUP;
 		winstyleex |= WS_EX_TOPMOST;
-		CheckMenuItem(hmenu, IDM_WINDOW, MF_UNCHECKED);
-		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_CHECKED);
 		ddraw.menudisp = 0;
 		ddraw.menusize = GetSystemMetrics(SM_CYMENU);
 		np2class_enablemenu(g_hWndMain, FALSE);
@@ -470,8 +465,6 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		}
 		winstyle &= ~WS_POPUP;
 		winstyleex &= ~WS_EX_TOPMOST;
-		CheckMenuItem(hmenu, IDM_WINDOW, MF_CHECKED);
-		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_UNCHECKED);
 	}
 	SetWindowLong(g_hWndMain, GWL_STYLE, winstyle);
 	SetWindowLong(g_hWndMain, GWL_EXSTYLE, winstyleex);
@@ -878,13 +871,20 @@ void scrnmng_update(void) {
 
 // ----
 
-void scrnmng_setmultiple(int multiple) {
-
-	if (scrnstat.multiple != multiple) {
+void scrnmng_setmultiple(int multiple)
+{
+	if (scrnstat.multiple != multiple)
+	{
 		scrnstat.multiple = multiple;
 		renewalclientsize(TRUE);
 	}
 }
+
+int scrnmng_getmultiple(void)
+{
+	return scrnstat.multiple;
+}
+
 
 
 // ----
@@ -1063,9 +1063,8 @@ void scrnmng_sizing(UINT side, RECT *rect) {
 	scrnsizing.mul = mul;
 }
 
-void scrnmng_exitsizing(void) {
-
-	sysmenu_setscrnmul(scrnsizing.mul);
+void scrnmng_exitsizing(void)
+{
 	scrnmng_setmultiple(scrnsizing.mul);
 	InvalidateRect(g_hWndMain, NULL, TRUE);		// ugh
 }

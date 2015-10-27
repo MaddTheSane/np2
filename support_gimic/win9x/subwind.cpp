@@ -254,7 +254,7 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_CLOSE:
-			sysmenu_setkeydisp(0);
+			np2oscfg.keydisp = 0;
 			sysmng_update(SYS_UPDATEOSCFG);
 			DestroyWindow(hWnd);
 			break;
@@ -346,7 +346,7 @@ kdcre_err2:
 	DestroyWindow(hwnd);
 
 kdcre_err1:
-	sysmenu_setkeydisp(0);
+	np2oscfg.keydisp = 0;
 	sysmng_update(SYS_UPDATEOSCFG);
 }
 
