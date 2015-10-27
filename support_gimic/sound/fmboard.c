@@ -24,7 +24,7 @@
 #include	"keystat.h"
 
 
-	SOUNDID g_usesound;
+	SOUNDID g_nSoundID;
 	_OPNA		g_opna[OPNA_MAX];
 
 	_FMTIMER	g_fmtimer;
@@ -139,7 +139,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 	beep_reset();												// ver0.27a
 	cross = pConfig->snd_x;										// ver0.30
 
-	if (g_usesound != nSoundID)
+	if (g_nSoundID != nSoundID)
 	{
 		for (i = 0; i < NELEMENTS(g_opna); i++)
 		{
@@ -192,7 +192,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 		case SOUNDID_AMD98:
 			break;
 
-#if	defined(SUPPORT_PX)
+#if defined(SUPPORT_PX)
 		case SOUNDID_PX1:
 			boardpx1_reset(pConfig);
 			break;
@@ -206,7 +206,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 			nSoundID = SOUNDID_NONE;
 			break;
 	}
-	g_usesound = nSoundID;
+	g_nSoundID = nSoundID;
 	soundmng_setreverse(cross);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
@@ -214,7 +214,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 void fmboard_bind(void) {
 
 	keydisp_reset();
-	switch (g_usesound)
+	switch (g_nSoundID)
 	{
 		case SOUNDID_PC_9801_14:
 			board14_bind();

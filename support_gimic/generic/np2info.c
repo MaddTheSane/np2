@@ -23,7 +23,6 @@ static const OEMCHAR str_grcgchip[] = OEMTEXT("\0GRCG \0GRCG CG-Window \0EGC CG-
 static const OEMCHAR str_vrammode[] = OEMTEXT("Digital\0Analog\000256colors");
 static const OEMCHAR str_vrampage[] = OEMTEXT(" page-0\0 page-1\0 page-all");
 static const OEMCHAR str_chpan[] = OEMTEXT("none\0Mono-R\0Mono-L\0Stereo");
-static const OEMCHAR str_fmboard[] = OEMTEXT("none\0PC-9801-14\0PC-9801-26\0PC-9801-86\0PC-9801-26 + 86\0PC-9801-118\0PC-9801-86 + Chibi-oto\0Speak board\0Spark board\0AMD-98");
 
 static const OEMCHAR str_clockfmt[] = OEMTEXT("%d.%1dMHz");
 static const OEMCHAR str_memfmt[] = OEMTEXT("%3uKB");
@@ -203,48 +202,58 @@ const OEMCHAR	*p;
 
 static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex)
 {
-	UINT type;
+	const OEMCHAR *lpBoard;
 
-	type = 0;
-	switch (g_usesound)
+	lpBoard = OEMTEXT("none");
+	switch (g_nSoundID)
 	{
 		case SOUNDID_PC_9801_14:
-			type = 1;
+			lpBoard = OEMTEXT("PC-9801-14");
 			break;
 
 		case SOUNDID_PC_9801_26K:
-			type = 2;
+			lpBoard = OEMTEXT("PC-9801-26");
 			break;
 
 		case SOUNDID_PC_9801_86:
-			type = 3;
+			lpBoard = OEMTEXT("PC-9801-86");
 			break;
 
 		case SOUNDID_PC_9801_86_26K:
-			type = 4;
+			lpBoard = OEMTEXT("PC-9801-26 + 86");
 			break;
 
 		case SOUNDID_PC_9801_118:
-			type = 5;
+			lpBoard = OEMTEXT("PC-9801-118");
 			break;
 
 		case SOUNDID_PC_9801_86_ADPCM:
-			type = 6;
+			lpBoard = OEMTEXT("C-9801-86 + Chibi-oto");
 			break;
 
 		case SOUNDID_SPEAKBOARD:
-			type = 7;
+			lpBoard = OEMTEXT("Speak board");
 			break;
 
 		case SOUNDID_SPARKBOARD:
-			type = 8;
+			lpBoard = OEMTEXT("Spark board");
 			break;
 
 		case SOUNDID_AMD98:
-			type = 9;
+			lpBoard = OEMTEXT("AMD-98");
 			break;
+
+#if defined(SUPPORT_PX)
+		case SOUNDID_PX1:
+			lpBoard = OEMTEXT("Otomi-chanx2");
+			break;
+
+		case SOUNDID_PX2:
+			lpBoard = OEMTEXT("Otomi-chanx2 + 86");
+			break;
+#endif	// defined(SUPPORT_PX)
 	}
-	milstr_ncpy(str, milstr_list(str_fmboard, type), maxlen);
+	milstr_ncpy(str, lpBoard, maxlen);
 	(void)ex;
 }
 
@@ -253,7 +262,7 @@ static void info_extsnd(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 	OEMCHAR	buf[64];
 
 	info_sound(str, maxlen, ex);
-	if (g_usesound & 4) {
+	if (g_nSoundID & 4) {
 		milstr_ncat(str, ex->cr, maxlen);
 		OEMSPRINTF(buf, str_pcm86a,
 							pcm86rate8[pcm86.fifo & 7] >> 3,
