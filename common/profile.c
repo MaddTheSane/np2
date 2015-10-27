@@ -868,7 +868,7 @@ BRESULT profile_writeint(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, int
 {
 	OEMCHAR szBuffer[32];
 
-	SPRINTF(szBuffer, OEMTEXT("%d"), nValue);
+	OEMSPRINTF(szBuffer, OEMTEXT("%d"), nValue);
 	return profile_write(lpAppName, lpKeyName, szBuffer, hdl);
 
 }
