@@ -123,7 +123,7 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->s.cCaps;
 
-	keydisp_bindfm(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
+	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
 	if (cCaps & OPNA_HAS_PSG)
 	{
 		keydisp_bindpsg(opna->s.reg);
@@ -259,7 +259,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			}
 
 			opngen_keyon(&opna->opngen, cChannel, cData);
-			keydisp_fmkeyon(opna->s.reg, cChannel, cData);
+			keydisp_opnakeyon(opna->s.reg, cChannel, cData);
 		}
 		else
 		{
