@@ -8,9 +8,7 @@
 #include "pccore.h"
 #include "iocore.h"
 #include "sound/fmboard.h"
-// #include "sound/sound.h"
-// #include "sound/s98.h"
-// #include "generic/keydisp.h"
+#include "generic/keydisp.h"
 #include "externalchipmanager.h"
 #include "externalopl3.h"
 
@@ -98,27 +96,28 @@ static void restore(POPL3 opl3)
  */
 void opl3_bind(POPL3 opl3)
 {
+	UINT nBaseClock = 3579545;
 	UINT8 cCaps = opl3->s.cCaps;
+
+	nBaseClock = (cCaps & OPL3_HAS_OPL3) ? 3579545 : 3993600;
 
 	CExternalOpl3* pExt = reinterpret_cast<CExternalOpl3*>(opl3->userdata);
 	if (pExt == NULL)
 	{
 		IExternalChip::ChipType nChipType = IExternalChip::kNone;
-		UINT nClock = 0;
+		UINT nClock = nBaseClock;
 		if (cCaps & OPL3_HAS_OPL3)
 		{
 			nChipType = IExternalChip::kYMF262;
-			nClock = 3579545 * 4;
+			nClock *= 4;
 		}
 		else if (cCaps & OPL3_HAS_OPL2)
 		{
 			nChipType = IExternalChip::kYM3812;
-			nClock = 3993600;
 		}
 		else
 		{
 			nChipType = IExternalChip::kY8950;
-			nClock = 3993600;
 		}
 		pExt = static_cast<CExternalOpl3*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, nClock));
 		opl3->userdata = reinterpret_cast<INTPTR>(pExt);
@@ -128,6 +127,8 @@ void opl3_bind(POPL3 opl3)
 		pExt->Reset();
 	}
 	restore(opl3);
+
+	keydisp_bindopl3(opl3->s.reg, (cCaps & OPL3_HAS_OPL3) ? 18 : 9, nBaseClock);
 }
 
 /**
@@ -182,6 +183,10 @@ static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 			if ((nAddress & 0x0f) >= 9)
 			{
 				return;
+			}
+			if (nAddress & 0x10)
+			{
+				keydisp_opl3keyon(opl3->s.reg, nAddress & 0x0f, cData);
 			}
 			break;
 
@@ -263,6 +268,10 @@ static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 			{
 				return;
 			}
+			if (nAddress & 0x10)
+			{
+				keydisp_opl3keyon(opl3->s.reg, (nAddress & 0x0f) + 9, cData);
+			}
 			break;
 
 		case 0xc0:
@@ -283,7 +292,7 @@ static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 	CExternalOpl3* pExt = reinterpret_cast<CExternalOpl3*>(opl3->userdata);
 	if (pExt)
 	{
-//		pExt->WriteRegister(nAddress + 0x100, cData);
+		pExt->WriteRegister(nAddress + 0x100, cData);
 	}
 }
 
