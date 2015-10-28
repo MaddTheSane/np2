@@ -946,7 +946,7 @@ SOURCE=..\SOUND\FMTIMER.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\sound\opl3.c
+SOURCE=.\ext\opl3.cpp
 # End Source File
 # Begin Source File
 
@@ -1405,6 +1405,14 @@ SOURCE=.\ext\externalchipmanager.cpp
 # Begin Source File
 
 SOURCE=.\ext\externalchipmanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.h
 # End Source File
 # Begin Source File
 
