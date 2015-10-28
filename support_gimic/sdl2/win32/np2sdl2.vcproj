@@ -1432,10 +1432,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\sound\fmtimer.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\sound\opl3.c"
 					>
 				</File>
@@ -1481,6 +1477,10 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\opngeng.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\opntimer.c"
 					>
 				</File>
 				<File
@@ -2618,10 +2618,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\sound\fmtimer.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\sound\opl3.h"
 					>
 				</File>
@@ -2631,6 +2627,10 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\opngen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\opntimer.h"
 					>
 				</File>
 				<File

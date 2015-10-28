@@ -1,9 +1,13 @@
-#include	"compiler.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
+/**
+ * @file	opntimer.c
+ * @brief	Implementation of OPN timer
+ */
+
+#include "compiler.h"
+#include "opntimer.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "fmboard.h"
 
 
 static const UINT8 irqtable[4] = {0x03, 0x0d, 0x0a, 0x0c};
