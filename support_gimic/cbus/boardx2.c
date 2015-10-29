@@ -196,6 +196,7 @@ void boardx2_reset(const NP2CFG *pConfig)
 		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
 	fmboard_extreg(extendchannel);
+	pcm86io_setopt(0x0c);
 }
 
 void boardx2_bind(void)

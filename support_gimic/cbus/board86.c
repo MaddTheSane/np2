@@ -156,6 +156,7 @@ void board86_reset(const NP2CFG *pConfig, BOOL adpcm)
 	}
 	g_opna[0].s.base = (pConfig->snd86opt & 0x01) ? 0x000 : 0x100;
 	fmboard_extreg(extendchannel);
+	pcm86io_setopt(pConfig->snd86opt);
 }
 
 /**

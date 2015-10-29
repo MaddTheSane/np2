@@ -452,6 +452,7 @@ void boardpx2_reset(const NP2CFG *pConfig)
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
 	g_opna[0].s.base = (pConfig->spbopt & 0x10) ? 0x000 : 0x100;
 	fmboard_extreg(extendchannelx2);
+	pcm86io_setopt(0x10);
 }
 
 /**

@@ -50,9 +50,9 @@ typedef struct {
 	UINT8	dactrl;
 	UINT8	_write;
 	UINT8	stepbit;
+	UINT8	irq;
 	UINT8	reqirq;
 	UINT8	irqflag;
-	UINT8	padding[1];
 
 	UINT8	buffer[PCM86_BUFSIZE];
 } _PCM86, *PCM86;

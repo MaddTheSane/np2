@@ -46,6 +46,7 @@ void pcm86_reset(void) {
 	pcm86.stepclock /= 44100;
 	pcm86.stepclock *= pccore.multiple;
 	pcm86.rescue = (PCM86_RESCUE * 32) << 2;
+	pcm86.irq = 0xff;
 }
 
 void pcm86gen_update(void) {
@@ -76,7 +77,10 @@ void pcm86_cb(NEVENTITEM item) {
 		if (pcm86.virbuf <= pcm86.fifosize) {
 			pcm86.reqirq = 0;
 			pcm86.irqflag = 1;
-			pic_setirq(g_fmtimer.irq);
+			if (pcm86.irq != 0xff)
+			{
+				pic_setirq(pcm86.irq);
+			}
 		}
 		else {
 			pcm86_setnextintr();
@@ -135,7 +139,10 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 		if (pcm86.virbuf <= pcm86.fifosize) {
 			pcm86.reqirq = 0;
 			pcm86.irqflag = 1;
-			pic_setirq(g_fmtimer.irq);
+			if (pcm86.irq != 0xff)
+			{
+				pic_setirq(pcm86.irq);
+			}
 		}
 		else {
 			pcm86_setnextintr();
