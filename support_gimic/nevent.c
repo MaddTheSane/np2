@@ -134,7 +134,7 @@ void nevent_reset(NEVENTID id)
 	}
 }
 
-void nevent_waitreset(UINT id)
+void nevent_waitreset(NEVENTID id)
 {
 	UINT i;
 
