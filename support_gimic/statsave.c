@@ -98,7 +98,7 @@ typedef struct {
 
 typedef struct {
 	UINT32	id;
-	int		num;
+	NEVENTID num;
 } ENUMTBL;
 
 #define	PROCID(a, b, c, d)	(((d) << 24) + ((c) << 16) + ((b) << 8) + (a))
@@ -595,7 +595,7 @@ typedef struct {
 	NEVENTCB	proc;
 } NEVTITEM;
 
-static int nevent_write(STFLAGH sfh, int num) {
+static int nevent_write(STFLAGH sfh, NEVENTID num) {
 
 	NEVTITEM	nit;
 	UINT		i;
@@ -636,12 +636,12 @@ static int flagsave_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	return(ret);
 }
 
-static int nevent_read(STFLAGH sfh, UINT *tbl, UINT *pos) {
+static int nevent_read(STFLAGH sfh, NEVENTID *tbl, UINT *pos) {
 
 	int			ret;
 	NEVTITEM	nit;
 	UINT		i;
-	UINT		num;
+	NEVENTID	num;
 
 	ret = statflag_read(sfh, &nit, sizeof(nit));
 
