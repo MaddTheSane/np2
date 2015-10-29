@@ -53,7 +53,7 @@ void fmport_a(NEVENTITEM item) {
 			g_fmtimer.status |= 0x01;
 			intreq = TRUE;
 		}
-		if (intreq) {
+		if ((intreq) && (!g_fmtimer.intdisable)) {
 			pic_setirq(g_fmtimer.irq);
 //			TRACEOUT(("fm int-A"));
 		}
@@ -76,7 +76,7 @@ void fmport_b(NEVENTITEM item) {
 			g_fmtimer.status |= 0x02;
 			intreq = TRUE;
 		}
-		if (intreq) {
+		if ((intreq) && (!g_fmtimer.intdisable)) {
 			pic_setirq(g_fmtimer.irq);
 //			TRACEOUT(("fm int-B"));
 		}
@@ -89,7 +89,7 @@ void fmtimer_reset(UINT irq) {
 
 	memset(&g_fmtimer, 0, sizeof(g_fmtimer));
 	g_fmtimer.intr = irq & 0xc0;
-	g_fmtimer.intdisabel = irq & 0x10;
+	g_fmtimer.intdisable = irq & 0x10;
 	g_fmtimer.irq = irqtable[irq >> 6];
 //	pic_registext(g_fmtimer.irq);
 }
@@ -132,7 +132,7 @@ void fmtimer_setreg(UINT reg, REG8 value) {
 				nevent_reset(NEVENT_FMTIMERB);
 			}
 
-			if (!(value & 0x03)) {
+			if ((!(value & 0x03)) && (!g_fmtimer.intdisable)) {
 				pic_resetirq(g_fmtimer.irq);
 			}
 			break;

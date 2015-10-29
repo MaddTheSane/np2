@@ -14,7 +14,7 @@ typedef struct {
 	UINT8	reg;
 	UINT8	intr;
 	UINT8	irq;
-	UINT8	intdisabel;
+	UINT8	intdisable;
 } _FMTIMER, *FMTIMER;
 
 
