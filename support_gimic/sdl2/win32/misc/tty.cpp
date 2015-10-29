@@ -107,7 +107,7 @@ int CTty::Read(LPVOID lpcvData, int nDataSize)
 		return 0;
 	}
 
-	DWORD dwReadLength = std::min(stat.cbInQue, static_cast<DWORD>(nDataSize));
+	DWORD dwReadLength = (std::min)(stat.cbInQue, static_cast<DWORD>(nDataSize));
 	if (dwReadLength == 0)
 	{
 		return 0;
