@@ -155,7 +155,7 @@ void boardspb_reset(const NP2CFG *pConfig)
 {
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_HAS_VR | OPNA_S98);
 
-	fmtimer_reset(pConfig->spbopt & 0xc0);
+	fmtimer_reset((pConfig->spbopt & 0xc0) | 0x10);
 	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
 	g_opna[0].s.base = ((pConfig->spbopt & 0x10) ? 0x000 : 0x100);
@@ -188,7 +188,7 @@ void boardspr_reset(const NP2CFG *pConfig)
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_HAS_VR | OPNA_S98);
 	opna_reset(&g_opna[1], OPNA_MODE_3438 | OPNA_HAS_VR);
 
-	fmtimer_reset(pConfig->spbopt & 0xc0);
+	fmtimer_reset((pConfig->spbopt & 0xc0) | 0x10);
 	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x0f);
 	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x0f);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));

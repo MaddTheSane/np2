@@ -89,7 +89,7 @@ void fmtimer_reset(UINT irq) {
 
 	memset(&g_fmtimer, 0, sizeof(g_fmtimer));
 	g_fmtimer.intr = irq & 0xc0;
-	g_fmtimer.intdisable = irq & 0x10;
+	g_fmtimer.intdisable = (~irq) & 0x10;
 	g_fmtimer.irq = irqtable[irq >> 6];
 //	pic_registext(g_fmtimer.irq);
 }

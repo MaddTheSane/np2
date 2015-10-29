@@ -179,7 +179,7 @@ void board118_reset(const NP2CFG *pConfig)
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
 	opl3_reset(&g_opl3, OPL3_MODE_262);
 
-	fmtimer_reset(0xc0);
+	fmtimer_reset(0xd0);
 	opngen_setcfg(&g_opna[0].opngen, 3, OPN_STEREO | 0x038);
 	cs4231io_reset();
 	soundrom_load(0xcc000, OEMTEXT("118"));

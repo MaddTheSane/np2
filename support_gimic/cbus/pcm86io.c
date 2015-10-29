@@ -16,7 +16,7 @@ static const SINT32 pcm86rescue[] = {PCM86_RESCUE * 32, PCM86_RESCUE * 24,
 									 PCM86_RESCUE *  8, PCM86_RESCUE *  6,
 									 PCM86_RESCUE *  4, PCM86_RESCUE *  3};
 
-static const UINT8 s_irqtable[8] = {0x03, 0x0a, 0x0d, 0x0c, 0xff, 0xff, 0xff, 0xff};
+static const UINT8 s_irqtable[8] = {0xff, 0xff, 0xff, 0xff, 0x03, 0x0a, 0x0d, 0x0c};
 
 
 static void IOOUTCALL pcm86_oa460(UINT port, REG8 val) {

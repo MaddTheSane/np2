@@ -188,7 +188,7 @@ void boardx2_reset(const NP2CFG *pConfig)
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
 	opna_reset(&g_opna[1], OPNA_MODE_2203);
 
-	fmtimer_reset(0xc0);
+	fmtimer_reset(0xd0);
 	opngen_setcfg(&g_opna[0].opngen, 3, OPN_STEREO | 0x038);
 	opngen_setcfg(&g_opna[1].opngen, 3, 0);
 	if (pConfig->snd86opt & 2)
@@ -196,7 +196,7 @@ void boardx2_reset(const NP2CFG *pConfig)
 		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
 	fmboard_extreg(extendchannel);
-	pcm86io_setopt(0x0c);
+	pcm86io_setopt(0x1c);
 }
 
 void boardx2_bind(void)

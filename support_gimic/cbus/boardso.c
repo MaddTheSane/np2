@@ -90,7 +90,7 @@ void boardso_reset(const NP2CFG *pConfig)
 	opl3_reset(&g_opl3, OPL3_MODE_3812);
 
 	opngen_setcfg(&g_opna[0].opngen, 3, 0x00);
-	fmtimer_reset(pConfig->snd26opt & 0xc0);
+	fmtimer_reset((pConfig->snd26opt & 0xc0) | 0x10);
 	soundrom_loadex(pConfig->snd26opt & 7, OEMTEXT("26"));
 	g_opna[0].s.base = (pConfig->snd26opt & 0x10) ? 0x000 : 0x100;
 }
