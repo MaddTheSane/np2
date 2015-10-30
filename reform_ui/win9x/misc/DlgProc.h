@@ -37,7 +37,11 @@ protected:
 	virtual void OnOK();
 	virtual void OnCancel();
 
+#if defined(_WIN64)
+	static INT_PTR CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+#else	// defined(_WIN64)
 	static BOOL CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+#endif	// defined(_WIN64)
 };
 
 

@@ -58,7 +58,11 @@ INT_PTR CDlgProc::DoModal()
  * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
  * @return メッセージに依存する値を返します
  */
+#if defined(_WIN64)
+INT_PTR CALLBACK CDlgProc::DlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+#else	// defined(_WIN64)
 BOOL CALLBACK CDlgProc::DlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+#endif	// defined(_WIN64)
 {
 	if (message == WM_INITDIALOG)
 	{
