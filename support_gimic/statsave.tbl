@@ -1,5 +1,5 @@
 
-#define		NP2STATUS_VERSION		810
+#define		NP2STATUS_VERSION		849
 
 static const NP2FHDR np2flagdef = {
 						"Neko Project II",
@@ -48,6 +48,8 @@ static const ENUMTBL evtnum[] = {
 			{PROCID('m','g','e','n'), NEVENT_MUSICGEN},
 			{PROCID('f','m','-','a'), NEVENT_FMTIMERA},
 			{PROCID('f','m','-','b'), NEVENT_FMTIMERB},
+			{PROCID('f','m','2','a'), NEVENT_FMTIMER2A},
+			{PROCID('f','m','2','b'), NEVENT_FMTIMER2B},
 			{PROCID('m','o','u','s'), NEVENT_MOUSE},
 			{PROCID('m','o','u','s'), NEVENT_KEYBOARD},
 			{PROCID('m','i','d','w'), NEVENT_MIDIWAIT},

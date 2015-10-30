@@ -22,12 +22,12 @@ enum tagNEventId
 	NEVENT_MUSICGEN		= 4,
 	NEVENT_FMTIMERA		= 5,
 	NEVENT_FMTIMERB		= 6,
-		NEVENT_FMTIMER2A	= 7,
-		NEVENT_FMTIMER2B	= 8,
-		NEVENT_FMTIMER3A	= 9,
-		NEVENT_FMTIMER3B	= 10,
-		NEVENT_FMTIMER4A	= 11,
-		NEVENT_FMTIMER4B	= 12,
+	NEVENT_FMTIMER2A	= 7,
+	NEVENT_FMTIMER2B	= 8,
+	//	NEVENT_FMTIMER3A	= 9,
+	//	NEVENT_FMTIMER3B	= 10,
+	//	NEVENT_FMTIMER4A	= 11,
+	//	NEVENT_FMTIMER4B	= 12,
 	NEVENT_MOUSE		= 13,
 	NEVENT_KEYBOARD		= 14,
 	NEVENT_MIDIWAIT		= 15,
@@ -70,11 +70,12 @@ typedef	struct _neventitem	_NEVENTITEM;
 typedef	struct _neventitem	*NEVENTITEM;
 typedef void (*NEVENTCB)(NEVENTITEM item);
 
-struct _neventitem {
+struct _neventitem
+{
 	SINT32		clock;
 	UINT32		flag;
 	NEVENTCB	proc;
-	UINT32		param;
+	INTPTR		userData;
 };
 
 typedef struct {

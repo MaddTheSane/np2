@@ -847,10 +847,6 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl)
 	{
 		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
-	if (nSaveFlags & FLAG_OPNA1)
-	{
-		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
-	}
 	for (i = 0; i < NELEMENTS(g_opna); i++)
 	{
 		if (nSaveFlags & (FLAG_OPNA1 << i))
@@ -892,10 +888,6 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	{
 		ret |= statflag_read(sfh, &g_musicgen, sizeof(g_musicgen));
 		board14_allkeymake();
-	}
-	if (nSaveFlags & FLAG_OPNA1)
-	{
-		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
 	}
 	for (i = 0; i < NELEMENTS(g_opna); i++)
 	{
