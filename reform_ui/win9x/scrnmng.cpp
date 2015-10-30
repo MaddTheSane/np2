@@ -347,7 +347,7 @@ const RECT	*scrn;
 	}
 	clearoutofrect(scrn, &base);
 #if defined(SUPPORT_DCLOCK)
-	dclock_redraw();
+	DispClock::GetInstance()->Redraw();
 #endif
 }
 
@@ -357,11 +357,12 @@ static void paletteinit()
 	GetSystemPaletteEntries(hdc, 0, 256, ddraw.pal);
 	ReleaseDC(g_hWndMain, hdc);
 #if defined(SUPPORT_DCLOCK)
+	const RGB32* pal32 = DispClock::GetInstance()->GetPalettes();
 	for (UINT i = 0; i < 4; i++)
 	 {
-		ddraw.pal[i + START_PALORG].peBlue = dclockpal.pal32[i].p.b;
-		ddraw.pal[i + START_PALORG].peRed = dclockpal.pal32[i].p.r;
-		ddraw.pal[i + START_PALORG].peGreen = dclockpal.pal32[i].p.g;
+		ddraw.pal[i + START_PALORG].peBlue = pal32[i].p.b;
+		ddraw.pal[i + START_PALORG].peRed = pal32[i].p.r;
+		ddraw.pal[i + START_PALORG].peGreen = pal32[i].p.g;
 		ddraw.pal[i + START_PALORG].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
 #endif
@@ -477,7 +478,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 #if defined(SUPPORT_DCLOCK)
-		dclock_init();
+		DispClock::GetInstance()->Initialize();
 #endif
 		ddraw2->SetCooperativeLevel(g_hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
@@ -550,7 +551,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 			goto scre_err;
 		}
 #if defined(SUPPORT_DCLOCK)
-		dclock_palset(bitcolor);
+		DispClock::GetInstance()->SetPalettes(bitcolor);
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
@@ -558,7 +559,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		ddsd.dwWidth = DCLOCK_WIDTH;
 		ddsd.dwHeight = DCLOCK_HEIGHT;
 		ddraw2->CreateSurface(&ddsd, &ddraw.clocksurf, NULL);
-		dclock_reset();
+		DispClock::GetInstance()->Reset();
 #endif
 	}
 	else {
@@ -908,7 +909,7 @@ void scrnmng_dispclock(void)
 	{
 		return;
 	}
-	if (!dclock_disp())
+	if (!DispClock::GetInstance()->IsDisplayed())
 	{
 		return;
 	}
@@ -926,14 +927,14 @@ void scrnmng_dispclock(void)
 	{
 		return;
 	}
-	dclock.Make();
+	DispClock::GetInstance()->Make();
 
 	DDSURFACEDESC dest;
 	ZeroMemory(&dest, sizeof(dest));
 	dest.dwSize = sizeof(dest);
 	if (ddraw.clocksurf->Lock(NULL, &dest, DDLOCK_WAIT, NULL) == DD_OK)
 	{
-		dclock.Draw(scrnmng.bpp, dest.lpSurface, dest.lPitch);
+		DispClock::GetInstance()->Draw(scrnmng.bpp, dest.lpSurface, dest.lPitch);
 		ddraw.clocksurf->Unlock(NULL);
 	}
 	if (ddraw.primsurf->BltFast(ddraw.width - DCLOCK_WIDTH - 4,
@@ -944,7 +945,7 @@ void scrnmng_dispclock(void)
 		ddraw.primsurf->Restore();
 		ddraw.clocksurf->Restore();
 	}
-	dclock.CountDown(np2oscfg.DRAW_SKIP);
+	DispClock::GetInstance()->CountDown(np2oscfg.DRAW_SKIP);
 }
 #endif
 

@@ -1,6 +1,6 @@
 /**
  * @file	dclock.h
- * @brief
+ * @brief	時刻表示クラスの宣言およびインターフェイスの定義をします
  */
 
 #pragma once
@@ -12,21 +12,20 @@ enum
 	DCLOCK_YALIGN	= (56 / 8)
 };
 
-
-struct DCPOS
-{
-	UINT8	*pos;
-	UINT16	mask;
-	UINT8	rolbit;
-	UINT8	reserved;
-};
+struct DispClockPattern;
 
 /**
  * @brief 時刻表示クラス
  */
-struct DispClock
+class DispClock
 {
+public:
+	static DispClock* GetInstance();
+
 	DispClock();
+	void Initialize();
+	void SetPalettes(UINT bpp);
+	const RGB32* GetPalettes() const;
 	void Reset();
 	void Update();
 	void Redraw();
@@ -34,6 +33,9 @@ struct DispClock
 	void CountDown(UINT nFrames);
 	bool Make();
 	void Draw(UINT nBpp, void* lpBuffer, int nYAlign) const;
+
+private:
+	static DispClock sm_instance;		//!< 唯一のインスタンスです
 
 	/**
 	 * @brief QuadBytes
@@ -44,15 +46,20 @@ struct DispClock
 		UINT64 q;			//!< quad
 	};
 
-	const UINT8* m_pFont;		//!< フォント
-	const DCPOS* pos;
-	QuadBytes m_nCounter;		//!< カウンタ
-	UINT8 m_cTime[8];			//!< 現在時間
-	UINT8	bak[8];
-	UINT16 m_cDirty;			//!< 描画フラグ drawing;
-	UINT8 m_cCharaters;			//!< 文字数
-	UINT8 dat[(DCLOCK_HEIGHT * DCLOCK_YALIGN) + 4];
+	const DispClockPattern* m_pPattern;	//!< パターン
+	QuadBytes m_nCounter;				//!< カウンタ
+	UINT8 m_cTime[8];					//!< 現在時間
+	UINT8 m_cLastTime[8];				//!< 最後の時間
+	UINT8 m_cDirty;						//!< 描画フラグ drawing;
+	UINT8 m_cCharaters;					//!< 文字数
+	RGB32 m_pal32[4];					//!< パレット
+	RGB16 m_pal16[4];					//!< パレット
+	UINT32 m_pal8[4][16];				//!< パレット パターン
+	UINT8 m_buffer[(DCLOCK_HEIGHT * DCLOCK_YALIGN) + 4];	/*!< バッファ */
 
+private:
+	void SetPalette8();
+	void SetPalette16();
 	static UINT8 CountPos(UINT nCount);
 	void Draw8(void* lpBuffer, int nYAlign) const;
 	void Draw16(void* lpBuffer, int nYAlign) const;
@@ -60,65 +67,20 @@ struct DispClock
 	void Draw32(void* lpBuffer, int nYAlign) const;
 };
 
-typedef struct DispClock	_DCLOCK;
-typedef struct DispClock	*DCLOCK;
-
+/**
+ * インスタンスを得る
+ * @return インスタンス
+ */
+inline DispClock* DispClock::GetInstance()
+{
+	return &sm_instance;
+}
 
 /**
- * @brief 時刻表示パレット クラス
+ * パレットを得る
+ * @return パレット
  */
-struct DispClockPalette
+inline const RGB32* DispClock::GetPalettes() const
 {
-	void Initialize();
-	void SetPalette(UINT bpp);
-	void SetPalette8();
-	void SetPalette16();
-
-	RGB32	pal32[4];
-	RGB16	pal16[4];
-	UINT32	pal8[4][16];
-};
-
-typedef struct DispClockPalette DCLOCKPAL;
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-extern	_DCLOCK		dclock;
-extern	DCLOCKPAL	dclockpal;
-
-#ifdef __cplusplus
-}
-#endif
-
-inline void dclock_init(void)
-{
-	dclockpal.Initialize();
-}
-
-inline void dclock_palset(UINT bpp)
-{
-	dclockpal.SetPalette(bpp);
-}
-
-inline void dclock_reset(void)
-{
-	dclock.Reset();
-}
-
-inline void dclock_callback(void)
-{
-	dclock.Update();
-}
-
-inline void dclock_redraw(void)
-{
-	dclock.Redraw();
-}
-
-inline BOOL dclock_disp(void)
-{
-	return dclock.IsDisplayed();
+	return m_pal32;
 }

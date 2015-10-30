@@ -1,6 +1,6 @@
 /**
  * @file	dclock.cpp
- * @brief
+ * @brief	時刻表示クラスの動作の定義を行います
  */
 
 #include "compiler.h"
@@ -12,14 +12,133 @@
 #include "scrndraw.h"
 #include "palettes.h"
 
+//! 唯一のインスタンスです
+DispClock DispClock::sm_instance;
 
-	_DCLOCK		dclock;
-	DCLOCKPAL	dclockpal;
+/**
+ * @brief パターン構造体
+ */
+struct DispClockPattern
+{
+	UINT8 cWidth;											/*!< フォント サイズ */
+	UINT8 cMask;											/*!< マスク */
+	UINT8 cPosition[6];										/*!< 位置 */
+	void (*fnInitialize)(UINT8* lpBuffer, UINT8 nDegits);	/*!< 初期化関数 */
+	UINT8 font[11][16];										/*!< フォント */
+};
 
+/**
+ * 初期化-1
+ * @param[out] lpBuffer バッファ
+ * @param[in] nDegits 桁数
+ */
+static void InitializeFont1(UINT8* lpBuffer, UINT8 nDegits)
+{
+	if (nDegits)
+	{
+		const UINT32 pat = (nDegits <= 4) ? 0x00008001 : 0x30008001;
+		*(UINT32 *)(lpBuffer + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + (10 * DCLOCK_YALIGN)) = pat;
+	}
+}
 
-// ------------------------------------------------------------------ font1
+/**
+ * 初期化-2
+ * @param[out] lpBuffer バッファ
+ * @param[in] nDegits 桁数
+ */
+static void InitializeFont2(UINT8* lpBuffer, UINT8 nDegits)
+{
+	if (nDegits)
+	{
+		UINT32 pat = (nDegits <= 4) ? 0x00000002 : 0x00020002;
+		*(UINT32 *)(lpBuffer + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		pat <<= 1;
+		*(UINT32 *)(lpBuffer + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + (10 * DCLOCK_YALIGN)) = pat;
+	}
+}
 
-static const UINT8 clockchr1[11][16] = {
+/**
+ * 初期化-3
+ * @param[out] lpBuffer バッファ
+ * @param[in] nDegits 桁数
+ */
+static void InitializeFont3(UINT8* lpBuffer, UINT8 nDegits)
+{
+	if (nDegits)
+	{
+		const UINT32 pat = (nDegits <= 4) ? 0x00000010 : 0x00400010;
+		*(UINT32 *)(lpBuffer + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + (10 * DCLOCK_YALIGN)) = pat;
+	}
+}
+
+/**
+ * 初期化-4
+ * @param[out] lpBuffer バッファ
+ * @param[in] nDegits 桁数
+ */
+static void InitializeFont4(UINT8* lpBuffer, UINT8 nDegits)
+{
+	if (nDegits)
+	{
+		const UINT32 pat = (nDegits <= 4) ? 0x00000004 : 0x00040004;
+		*(UINT32 *)(lpBuffer + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 6 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + (10 * DCLOCK_YALIGN)) = pat;
+	}
+}
+
+/**
+ * 初期化-5
+ * @param[out] lpBuffer バッファ
+ * @param[in] nDegits 桁数
+ */
+static void InitializeFont5(UINT8* lpBuffer, UINT8 nDegits)
+{
+	if (nDegits)
+	{
+		const UINT32 pat = (nDegits <= 4) ? 0x00000006 : 0x00030006;
+		*(UINT32 *)(lpBuffer + 1 + ( 6 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 7 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + (10 * DCLOCK_YALIGN)) = pat;
+	}
+}
+
+/**
+ * 初期化-6
+ * @param[out] lpBuffer バッファ
+ * @param[in] nDegits 桁数
+ */
+static void InitializeFont6(UINT8* lpBuffer, UINT8 nDegits)
+{
+	if (nDegits)
+	{
+		const UINT32 pat = (nDegits <= 4) ? 0x00000020 : 0x00000220;
+		*(UINT32 *)(lpBuffer + 1 + ( 8 * DCLOCK_YALIGN)) = pat;
+		*(UINT32 *)(lpBuffer + 1 + (10 * DCLOCK_YALIGN)) = pat;
+	}
+}
+
+/**
+ * パターン
+ */
+static const DispClockPattern s_pattern[6] =
+{
+	// FONT-1
+	{
+		6, 0xfc,
+		{0, 7, 19, 26, 38, 45},
+		InitializeFont1,
+		{
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x78, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0x78,},
 			{0x30, 0x70, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,},
@@ -30,39 +149,16 @@ static const UINT8 clockchr1[11][16] = {
 			{0x38, 0x60, 0xc0, 0xf8, 0xcc, 0xcc, 0xcc, 0xcc, 0x78,},
 			{0xfc, 0x0c, 0x0c, 0x18, 0x18, 0x18, 0x30, 0x30, 0x30,},
 			{0x78, 0xcc, 0xcc, 0xcc, 0x78, 0xcc, 0xcc, 0xcc, 0x78,},
-			{0x78, 0xcc, 0xcc, 0xcc, 0xcc, 0x7c, 0x0c, 0x18, 0x70,}};
-
-static const DCPOS dclockpos1[6] = {
-						{dclock.dat + 0, (UINT16)(~0x00fc), 0, 0},
-						{dclock.dat + 0, (UINT16)(~0xf801), 7, 0},
-						{dclock.dat + 2, (UINT16)(~0x801f), 3, 0},
-						{dclock.dat + 3, (UINT16)(~0x003f), 2, 0},
-						{dclock.dat + 4, (UINT16)(~0xf003), 6, 0},
-						{dclock.dat + 5, (UINT16)(~0xe007), 5, 0}};
-
-static void resetfont1(void) {
-
-	UINT32	pat;
-
-	if (np2oscfg.clk_x) {
-		if (np2oscfg.clk_x <= 4) {
-			pat = 0x00008001;
+			{0x78, 0xcc, 0xcc, 0xcc, 0xcc, 0x7c, 0x0c, 0x18, 0x70,}
 		}
-		else {
-			pat = 0x30008001;
-		}
-		*(UINT32 *)(dclock.dat + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
-	}
-}
+	},
 
-
-// ------------------------------------------------------------------ font2
-
-// 5x9
-static const UINT8 clockchr2[11][16] = {
+	// FONT-2
+	{
+		6, 0xfc,
+		{0, 6, 16, 22, 32, 38},
+		InitializeFont2,
+		{
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x00, 0x30, 0x48, 0x88, 0x88, 0x88, 0x88, 0x70,},
 			{0x10, 0x30, 0x10, 0x10, 0x10, 0x20, 0x20, 0x20, 0x20,},
@@ -73,40 +169,16 @@ static const UINT8 clockchr2[11][16] = {
 			{0x10, 0x10, 0x20, 0x70, 0x48, 0x88, 0x88, 0x90, 0x60,},
 			{0x7c, 0x04, 0x08, 0x08, 0x10, 0x10, 0x20, 0x20, 0x40,},
 			{0x38, 0x44, 0x44, 0x48, 0x30, 0x48, 0x88, 0x88, 0x70,},
-			{0x18, 0x24, 0x40, 0x44, 0x48, 0x38, 0x10, 0x20, 0x20,}};
-
-static const DCPOS dclockpos2[6] = {
-						{dclock.dat + 0, (UINT16)(~0x00fc), 0, 0},
-						{dclock.dat + 0, (UINT16)(~0xf003), 6, 0},
-						{dclock.dat + 2, (UINT16)(~0x00fc), 0, 0},
-						{dclock.dat + 2, (UINT16)(~0xf003), 6, 0},
-						{dclock.dat + 4, (UINT16)(~0x00fc), 0, 0},
-						{dclock.dat + 4, (UINT16)(~0xf003), 6, 0}};
-
-static void resetfont2(void) {
-
-	UINT32	pat;
-
-	if (np2oscfg.clk_x) {
-		if (np2oscfg.clk_x <= 4) {
-			pat = 0x00000002;
+			{0x18, 0x24, 0x40, 0x44, 0x48, 0x38, 0x10, 0x20, 0x20,}
 		}
-		else {
-			pat = 0x00020002;
-		}
-		*(UINT32 *)(dclock.dat + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
-		pat <<= 1;
-		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
-	}
-}
+	},
 
-
-// ------------------------------------------------------------------ font3
-
-// 4x9
-static const UINT8 clockchr3[11][16] = {
+	// FONT-3
+	{
+		4, 0xf0,
+		{0, 5, 14, 19, 28, 33},
+		InitializeFont3,
+		{
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x60, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x60,},
 			{0x20, 0x60, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,},
@@ -117,39 +189,16 @@ static const UINT8 clockchr3[11][16] = {
 			{0x60, 0x90, 0x90, 0x80, 0xe0, 0x90, 0x90, 0x90, 0x60,},
 			{0xf0, 0x10, 0x10, 0x20, 0x20, 0x20, 0x40, 0x40, 0x40,},
 			{0x60, 0x90, 0x90, 0x90, 0x60, 0x90, 0x90, 0x90, 0x60,},
-			{0x60, 0x90, 0x90, 0x90, 0x70, 0x10, 0x90, 0x90, 0x60,}};
-
-static const DCPOS dclockpos3[6] = {
-						{dclock.dat + 0, (UINT16)(~0x00f0), 0, 0},
-						{dclock.dat + 0, (UINT16)(~0x8007), 5, 0},
-						{dclock.dat + 1, (UINT16)(~0xc003), 6, 0},
-						{dclock.dat + 2, (UINT16)(~0x001e), 3, 0},
-						{dclock.dat + 3, (UINT16)(~0x000f), 4, 0},
-						{dclock.dat + 4, (UINT16)(~0x0078), 1, 0}};
-
-static void resetfont3(void) {
-
-	UINT32	pat;
-
-	if (np2oscfg.clk_x) {
-		if (np2oscfg.clk_x <= 4) {
-			pat = 0x00000010;
+			{0x60, 0x90, 0x90, 0x90, 0x70, 0x10, 0x90, 0x90, 0x60,}
 		}
-		else {
-			pat = 0x00400010;
-		}
-		*(UINT32 *)(dclock.dat + 1 + ( 4 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
-	}
-}
+	},
 
-
-// ------------------------------------------------------------------ font4
-
-// 5x8
-static const UINT8 clockchr4[11][16] = {
+	// FONT-4
+	{
+		5, 0xf8,
+		{0, 6, 16, 22, 32, 38},
+		InitializeFont4,
+		{
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x70, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x70,},
 			{0x00, 0x60, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x70,},
@@ -160,30 +209,16 @@ static const UINT8 clockchr4[11][16] = {
 			{0x00, 0x18, 0x20, 0x40, 0xb0, 0xc8, 0x88, 0x88, 0x70,},
 			{0x00, 0x70, 0x88, 0x88, 0x10, 0x10, 0x10, 0x20, 0x20,},
 			{0x00, 0x70, 0x88, 0x88, 0x70, 0x50, 0x88, 0x88, 0x70,},
-			{0x00, 0x70, 0x88, 0x88, 0x88, 0x78, 0x10, 0x20, 0xc0,}};
-
-static void resetfont4(void) {
-
-	UINT32	pat;
-
-	if (np2oscfg.clk_x) {
-		if (np2oscfg.clk_x <= 4) {
-			pat = 0x00000004;
+			{0x00, 0x70, 0x88, 0x88, 0x88, 0x78, 0x10, 0x20, 0xc0,}
 		}
-		else {
-			pat = 0x00040004;
-		}
-		*(UINT32 *)(dclock.dat + 1 + ( 5 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 6 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
-	}
-}
+	},
 
-
-// ------------------------------------------------------------------ font5
-
-static const UINT8 clockchr5[11][16] = {
+	// FONT-5
+	{
+		5, 0xf8,
+		{0, 6, 17, 23, 34, 40},
+		InitializeFont5,
+		{
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x00, 0x70, 0x88, 0x88, 0x88, 0x88, 0x88, 0x70,},
 			{0x00, 0x00, 0x20, 0x60, 0x20, 0x20, 0x20, 0x20, 0x20,},
@@ -194,39 +229,16 @@ static const UINT8 clockchr5[11][16] = {
 			{0x00, 0x00, 0x30, 0x40, 0xf0, 0x88, 0x88, 0x88, 0x70,},
 			{0x00, 0x00, 0xf8, 0x08, 0x10, 0x20, 0x20, 0x40, 0x40,},
 			{0x00, 0x00, 0x70, 0x88, 0x88, 0x70, 0x88, 0x88, 0x70,},
-			{0x00, 0x00, 0x70, 0x88, 0x88, 0x88, 0x78, 0x10, 0x60,}};
-
-static const DCPOS dclockpos5[6] = {
-						{dclock.dat + 0, (UINT16)(~0x00f8), 0, 0},
-						{dclock.dat + 0, (UINT16)(~0xe003), 6, 0},
-						{dclock.dat + 2, (UINT16)(~0x007c), 1, 0},
-						{dclock.dat + 2, (UINT16)(~0xf001), 7, 0},
-						{dclock.dat + 4, (UINT16)(~0x003e), 2, 0},
-						{dclock.dat + 5, (UINT16)(~0x00f8), 0, 0}};
-
-static void resetfont5(void) {
-
-	UINT32	pat;
-
-	if (np2oscfg.clk_x) {
-		if (np2oscfg.clk_x <= 4) {
-			pat = 0x00000006;
+			{0x00, 0x00, 0x70, 0x88, 0x88, 0x88, 0x78, 0x10, 0x60,}
 		}
-		else {
-			pat = 0x00030006;
-		}
-		*(UINT32 *)(dclock.dat + 1 + ( 6 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 7 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + ( 9 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
-	}
-}
+	},
 
-
-// ------------------------------------------------------------------ font6
-
-// 4x6
-static const UINT8 clockchr6[11][16] = {
+	// FONT-6
+	{
+		4, 0xf0,
+		{0, 5, 12, 17, 24, 29},
+		InitializeFont6,
+		{
 			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,},
 			{0x00, 0x00, 0x00, 0x60, 0x90, 0x90, 0x90, 0x90, 0x60,},
 			{0x00, 0x00, 0x00, 0x20, 0x60, 0x20, 0x20, 0x20, 0x20,},
@@ -237,51 +249,10 @@ static const UINT8 clockchr6[11][16] = {
 			{0x00, 0x00, 0x00, 0x40, 0x80, 0xe0, 0x90, 0x90, 0x60,},
 			{0x00, 0x00, 0x00, 0xe0, 0x10, 0x10, 0x20, 0x20, 0x40,},
 			{0x00, 0x00, 0x00, 0x60, 0x90, 0x60, 0x90, 0x90, 0x60,},
-			{0x00, 0x00, 0x00, 0x60, 0x90, 0x90, 0x70, 0x20, 0x40,}};
-
-static const DCPOS dclockpos6[6] = {
-						{dclock.dat + 0, (UINT16)(~0x00f0), 0, 0},
-						{dclock.dat + 0, (UINT16)(~0x8007), 5, 0},
-						{dclock.dat + 1, (UINT16)(~0x000f), 4, 0},
-						{dclock.dat + 2, (UINT16)(~0x0078), 1, 0},
-						{dclock.dat + 3, (UINT16)(~0x00f0), 0, 0},
-						{dclock.dat + 3, (UINT16)(~0x8007), 5, 0}};
-
-static void resetfont6(void) {
-
-	UINT32	pat;
-
-	if (np2oscfg.clk_x) {
-		if (np2oscfg.clk_x <= 4) {
-			pat = 0x00000020;
+			{0x00, 0x00, 0x00, 0x60, 0x90, 0x90, 0x70, 0x20, 0x40,}
 		}
-		else {
-			pat = 0x00000220;
-		}
-		*(UINT32 *)(dclock.dat + 1 + ( 8 * DCLOCK_YALIGN)) = pat;
-		*(UINT32 *)(dclock.dat + 1 + (10 * DCLOCK_YALIGN)) = pat;
 	}
-}
-
-
-// ------------------------------------------------------------------------
-
-typedef struct {
-const UINT8	*fnt;
-const DCPOS	*pos;
-	void	(*init)(void);
-} DCLOCKFNT;
-
-static const DCLOCKFNT fonttype[] =
-					{{clockchr1[0], dclockpos1, resetfont1},
-					 {clockchr2[0], dclockpos2, resetfont2},
-					 {clockchr3[0], dclockpos3, resetfont3},
-					 {clockchr4[0], dclockpos2, resetfont4},
-					 {clockchr5[0], dclockpos5, resetfont5},
-					 {clockchr6[0], dclockpos6, resetfont6}};
-
-
-// ------------------------------------------------------------------------
+};
 
 /**
  * コンストラクタ
@@ -292,12 +263,70 @@ DispClock::DispClock()
 }
 
 /**
+ * 初期化
+ */
+void DispClock::Initialize()
+{
+	::pal_makegrad(m_pal32, 4, np2oscfg.clk_color1, np2oscfg.clk_color2);
+}
+
+/**
+ * パレット設定
+ * @param[in] bpp 色
+ */
+void DispClock::SetPalettes(UINT bpp)
+{
+	switch (bpp)
+	{
+		case 8:
+			SetPalette8();
+			break;
+
+		case 16:
+			SetPalette16();
+			break;
+	}
+}
+
+/**
+ * 8bpp パレット設定
+ */
+void DispClock::SetPalette8()
+{
+	for (UINT i = 0; i < 16; i++)
+	{
+		UINT nBits = 0;
+		for (UINT j = 1; j < 0x10; j <<= 1)
+		{
+			nBits <<= 8;
+			if (i & j)
+			{
+				nBits |= 1;
+			}
+		}
+		for (UINT j = 0; j < 4; j++)
+		{
+			m_pal8[j][i] = nBits * (START_PALORG + j);
+		}
+	}
+}
+
+/**
+ * 16bpp パレット設定
+ */
+void DispClock::SetPalette16()
+{
+	for (UINT i = 0; i < 4; i++)
+	{
+		m_pal16[i] = scrnmng_makepal16(m_pal32[i]);
+	}
+}
+
+/**
  * リセット
  */
 void DispClock::Reset()
 {
-	ZeroMemory(this, sizeof(*this));
-
 	if (np2oscfg.clk_x)
 	{
 		if (np2oscfg.clk_x <= 4)
@@ -313,19 +342,19 @@ void DispClock::Reset()
 			np2oscfg.clk_x = 0;
 		}
 	}
-	if (np2oscfg.clk_fnt >= NELEMENTS(fonttype))
+	if (np2oscfg.clk_fnt >= _countof(s_pattern))
 	{
 		np2oscfg.clk_fnt = 0;
 	}
 
+	ZeroMemory(m_cTime, sizeof(m_cTime));
+	ZeroMemory(m_cLastTime, sizeof(m_cLastTime));
+	ZeroMemory(m_buffer, sizeof(m_buffer));
+	m_pPattern = &s_pattern[np2oscfg.clk_fnt];
 	m_cCharaters = np2oscfg.clk_x;
-
-	const DCLOCKFNT* fnt = fonttype + np2oscfg.clk_fnt;
-	m_pFont = fnt->fnt;
-	this->pos = fnt->pos;
-	fnt->init();
-	dclock_callback();
-	dclock_redraw();
+	(*m_pPattern->fnInitialize)(m_buffer, m_cCharaters);
+	Update();
+	Redraw();
 }
 
 /**
@@ -381,10 +410,13 @@ bool DispClock::IsDisplayed() const
 	return ((m_cDirty != 0) || (m_nCounter.q != 0));
 }
 
+//! オフセット テーブル
 static const UINT8 s_dclocky[13] = {0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};
 
 /**
- *
+ * 位置計算
+ * @param[in] nCount カウント値
+ * @return オフセット
  */
 UINT8 DispClock::CountPos(UINT nCount)
 {
@@ -464,7 +496,7 @@ bool DispClock::Make()
 		const UINT nRemain = m_nCounter.b[i];
 		if (nRemain == 0)
 		{
-			this->bak[i] = nNumber;
+			m_cLastTime[i] = nNumber;
 		}
 		else if (nRemain < _countof(s_dclocky))
 		{
@@ -472,25 +504,25 @@ bool DispClock::Make()
 		}
 		else
 		{
-			nNumber = this->bak[i];
+			nNumber = this->m_cLastTime[i];
 		}
 
-		const DCPOS* eax = &this->pos[i];
-		UINT8* q = eax->pos;
-		const UINT16 mask = eax->mask;
-		const UINT8 rolbit = eax->rolbit;
+		UINT8* q = m_buffer + (m_pPattern->cPosition[i] >> 3);
+		const UINT8 cShifter = m_pPattern->cPosition[i] & 7;
+		const UINT8 cMask0 = ~(m_pPattern->cMask >> cShifter);
+		const UINT8 cMask1 = ~(m_pPattern->cMask << (8 - cShifter));
 		for (UINT y = 0; y < nPadding; y++)
 		{
-			*(reinterpret_cast<UINT16*>(q)) &= mask;
+			q[0] = (q[0] & cMask0);
+			q[1] = (q[1] & cMask1);
 			q += DCLOCK_YALIGN;
 		}
 
-		const UINT8* p = m_pFont + (nNumber * 16);
+		const UINT8* p = m_pPattern->font[nNumber];
 		for (UINT y = 0; y < 9; y++)
 		{
-			*(reinterpret_cast<UINT16*>(q)) &= mask;
-			q[0] |= (p[y] >> rolbit);
-			q[1] |= (p[y] << (8 - rolbit));
+			q[0] = (q[0] & cMask0) | (p[y] >> cShifter);
+			q[1] = (q[1] & cMask1) | (p[y] << (8 - cShifter));
 			q += DCLOCK_YALIGN;
 		}
 	}
@@ -501,8 +533,8 @@ bool DispClock::Make()
 /**
  * 描画
  * @param[in] nBpp 色数
- * @param[out] ptr 描画ポインタ
- * @param[int] nYAlign アライメント
+ * @param[out] lpBuffer 描画ポインタ
+ * @param[in] nYAlign アライメント
  */
 void DispClock::Draw(UINT nBpp, void* lpBuffer, int nYAlign) const
 {
@@ -528,16 +560,16 @@ void DispClock::Draw(UINT nBpp, void* lpBuffer, int nYAlign) const
 
 /**
  * 描画(8bpp)
- * @param[out] ptr 描画ポインタ
- * @param[int] nYAlign アライメント
+ * @param[out] lpBuffer 描画ポインタ
+ * @param[in] nYAlign アライメント
  */
 void DispClock::Draw8(void* lpBuffer, int nYAlign) const
 {
-	const UINT8* p = this->dat;
+	const UINT8* p = m_buffer;
 
 	for (UINT i = 0; i < 4; i++)
 	{
-		const UINT32* pPattern = dclockpal.pal8[i];
+		const UINT32* pPattern = m_pal8[i];
 		for (UINT j = 0; j < 3; j++)
 		{
 			for (UINT x = 0; x < DCLOCK_YALIGN; x++)
@@ -553,16 +585,16 @@ void DispClock::Draw8(void* lpBuffer, int nYAlign) const
 
 /**
  * 描画(16bpp)
- * @param[out] ptr 描画ポインタ
- * @param[int] nYAlign アライメント
+ * @param[out] lpBuffer 描画ポインタ
+ * @param[in] nYAlign アライメント
  */
 void DispClock::Draw16(void* lpBuffer, int nYAlign) const
 {
-	const UINT8* p = this->dat;
+	const UINT8* p = m_buffer;
 
 	for (UINT i = 0; i < 4; i++)
 	{
-		const RGB16 pal = dclockpal.pal16[i];
+		const RGB16 pal = m_pal16[i];
 		for (UINT j = 0; j < 3; j++)
 		{
 			for (UINT x = 0; x < (8 * DCLOCK_YALIGN); x++)
@@ -577,17 +609,17 @@ void DispClock::Draw16(void* lpBuffer, int nYAlign) const
 
 /**
  * 描画(24bpp)
- * @param[out] ptr 描画ポインタ
- * @param[int] nYAlign アライメント
+ * @param[out] lpBuffer 描画ポインタ
+ * @param[in] nYAlign アライメント
  */
 void DispClock::Draw24(void* lpBuffer, int nYAlign) const
 {
-	const UINT8* p = this->dat;
+	const UINT8* p = m_buffer;
 	UINT8* q = static_cast<UINT8*>(lpBuffer);
 
 	for (UINT i = 0; i < 4; i++)
 	{
-		const RGB32 pal = dclockpal.pal32[i];
+		const RGB32 pal = m_pal32[i];
 		for (UINT j = 0; j < 3; j++)
 		{
 			for (UINT x = 0; x < (8 * DCLOCK_YALIGN); x++)
@@ -614,16 +646,16 @@ void DispClock::Draw24(void* lpBuffer, int nYAlign) const
 
 /**
  * 描画(32bpp)
- * @param[out] ptr 描画ポインタ
- * @param[int] nYAlign アライメント
+ * @param[out] lpBuffer 描画ポインタ
+ * @param[in] nYAlign アライメント
  */
 void DispClock::Draw32(void* lpBuffer, int nYAlign) const
 {
-	const UINT8* p = this->dat;
+	const UINT8* p = m_buffer;
 
 	for (UINT i = 0; i < 4; i++)
 	{
-		const UINT32 pal = dclockpal.pal32[i].d;
+		const UINT32 pal = m_pal32[i].d;
 		for (UINT j = 0; j < 3; j++)
 		{
 			for (UINT x = 0; x < (8 * DCLOCK_YALIGN); x++)
@@ -633,69 +665,5 @@ void DispClock::Draw32(void* lpBuffer, int nYAlign) const
 			p += DCLOCK_YALIGN;
 			lpBuffer = reinterpret_cast<void*>(reinterpret_cast<INTPTR>(lpBuffer) + nYAlign);
 		}
-	}
-}
-
-
-
-// ----
-
-/**
- * 初期化
- */
-void DispClockPalette::Initialize()
-{
-	::pal_makegrad(this->pal32, 4, np2oscfg.clk_color1, np2oscfg.clk_color2);
-}
-
-/**
- * パレット設定
- * @param[in] bpp 色
- */
-void DispClockPalette::SetPalette(UINT bpp)
-{
-	switch (bpp)
-	{
-		case 8:
-			SetPalette8();
-			break;
-
-		case 16:
-			SetPalette16();
-			break;
-	}
-}
-
-/**
- * 8bpp パレット設定
- */
-void DispClockPalette::SetPalette8()
-{
-	for (UINT i = 0; i < 16; i++)
-	{
-		UINT nBits = 0;
-		for (UINT j = 1; j < 0x10; j <<= 1)
-		{
-			nBits <<= 8;
-			if (i & j)
-			{
-				nBits |= 1;
-			}
-		}
-		for (UINT j = 0; j < 4; j++)
-		{
-			this->pal8[j][i] = nBits * (START_PALORG + j);
-		}
-	}
-}
-
-/**
- * 16bpp パレット設定
- */
-void DispClockPalette::SetPalette16()
-{
-	for (UINT i = 0; i < 4; i++)
-	{
-		this->pal16[i] = scrnmng_makepal16(this->pal32[i]);
 	}
 }
