@@ -902,52 +902,49 @@ BOOL scrnmng_isdispclockclick(const POINT *pt) {
 	}
 }
 
-void scrnmng_dispclock(void) {
+void scrnmng_dispclock(void)
+{
+	if (!ddraw.clocksurf)
+	{
+		return;
+	}
+	if (!dclock_disp())
+	{
+		return;
+	}
 
-	DDSURFACEDESC	dest;
-const RECT			*scrn;
-																// ver0.26
-	if (!ddraw.clocksurf) {
-		return;
-	}
-	if (!dclock_disp()) {
-		return;
-	}
-	if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU)) {
+	const RECT* scrn;
+	if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU))
+	{
 		scrn = &ddraw.scrn;
 	}
-	else {
+	else
+	{
 		scrn = &ddraw.scrnclip;
 	}
-	if ((scrn->bottom + DCLOCK_HEIGHT) > ddraw.height) {
+	if ((scrn->bottom + DCLOCK_HEIGHT) > ddraw.height)
+	{
 		return;
 	}
-	dclock_make();
+	dclock.Make();
+
+	DDSURFACEDESC dest;
 	ZeroMemory(&dest, sizeof(dest));
 	dest.dwSize = sizeof(dest);
-	if (ddraw.clocksurf->Lock(NULL, &dest, DDLOCK_WAIT, NULL) == DD_OK) {
-		if (scrnmng.bpp == 8) {
-			dclock_out8(dest.lpSurface, dest.lPitch);
-		}
-		else if (scrnmng.bpp == 16) {
-			dclock_out16(dest.lpSurface, dest.lPitch);
-		}
-		else if (scrnmng.bpp == 24) {
-			dclock_out24(dest.lpSurface, dest.lPitch);
-		}
-		else if (scrnmng.bpp == 32) {
-			dclock_out32(dest.lpSurface, dest.lPitch);
-		}
+	if (ddraw.clocksurf->Lock(NULL, &dest, DDLOCK_WAIT, NULL) == DD_OK)
+	{
+		dclock.Draw(scrnmng.bpp, dest.lpSurface, dest.lPitch);
 		ddraw.clocksurf->Unlock(NULL);
 	}
 	if (ddraw.primsurf->BltFast(ddraw.width - DCLOCK_WIDTH - 4,
 									ddraw.height - DCLOCK_HEIGHT,
 									ddraw.clocksurf, (RECT *)&rectclk,
-									DDBLTFAST_WAIT) == DDERR_SURFACELOST) {
+									DDBLTFAST_WAIT) == DDERR_SURFACELOST)
+	{
 		ddraw.primsurf->Restore();
 		ddraw.clocksurf->Restore();
 	}
-	dclock_cntdown(np2oscfg.DRAW_SKIP);
+	dclock.CountDown(np2oscfg.DRAW_SKIP);
 }
 #endif
 
