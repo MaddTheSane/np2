@@ -197,7 +197,11 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 			break;
 
 		case SOUNDID_SOUNDORCHESTRA:
-			boardso_reset(pConfig);
+			boardso_reset(pConfig, FALSE);
+			break;
+
+		case SOUNDID_SOUNDORCHESTRAV:
+			boardso_reset(pConfig, TRUE);
 			break;
 
 #if defined(SUPPORT_PX)
@@ -261,6 +265,7 @@ void fmboard_bind(void) {
 			break;
 
 		case SOUNDID_SOUNDORCHESTRA:
+		case SOUNDID_SOUNDORCHESTRAV:
 			boardso_bind();
 			break;
 

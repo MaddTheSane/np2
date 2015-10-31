@@ -819,6 +819,7 @@ static UINT GetSoundFlags(SOUNDID nSoundID)
 			return FLAG_AMD98;
 
 		case SOUNDID_SOUNDORCHESTRA:
+		case SOUNDID_SOUNDORCHESTRAV:
 			return FLAG_OPNA1 | FLAG_OPL3;
 
 #if defined(SUPPORT_PX)

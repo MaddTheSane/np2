@@ -250,6 +250,10 @@ static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex)
 			lpBoard = OEMTEXT("SOUND ORCHESTRA");
 			break;
 
+		case SOUNDID_SOUNDORCHESTRAV:
+			lpBoard = OEMTEXT("SOUND ORCHESTRA-V");
+			break;
+
 #if defined(SUPPORT_PX)
 		case SOUNDID_PX1:
 			lpBoard = OEMTEXT("Otomi-chanx2");
