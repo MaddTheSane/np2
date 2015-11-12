@@ -138,7 +138,7 @@ void opna_bind(POPNA opna)
 	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
 	if (cCaps & OPNA_HAS_PSG)
 	{
-		keydisp_bindpsg(opna->s.reg);
+		keydisp_bindpsg(opna->s.reg, 3993600);
 	}
 
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
