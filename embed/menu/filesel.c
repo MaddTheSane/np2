@@ -378,9 +378,9 @@ const OEMCHAR	*title;
 
 static const OEMCHAR diskfilter[] = OEMTEXT("All supported files");
 static const OEMCHAR fddtitle[] = OEMTEXT("Select floppy image");
-static const OEMCHAR fddext[] = OEMTEXT("d88\0" "88d\0" "d98\0" "98d\0" "fdi\0" "xdf\0" "hdm\0" "dup\0" "2hd\0" "tfd\0");
+static const OEMCHAR fddext[] = OEMTEXT("d88\0") OEMTEXT("88d\0") OEMTEXT("d98\0") OEMTEXT("98d\0") OEMTEXT("fdi\0") OEMTEXT("xdf\0") OEMTEXT("hdm\0") OEMTEXT("dup\0") OEMTEXT("2hd\0") OEMTEXT("tfd\0");
 static const OEMCHAR hddtitle[] = OEMTEXT("Select HDD image");
-static const OEMCHAR sasiext[] = OEMTEXT("thd\0" "nhd\0" "hdi\0");
+static const OEMCHAR sasiext[] = OEMTEXT("thd\0") OEMTEXT("nhd\0") OEMTEXT("hdi\0");
 
 static const FSELPRM fddprm = {fddtitle, diskfilter, fddext};
 static const FSELPRM sasiprm = {hddtitle, diskfilter, sasiext};
