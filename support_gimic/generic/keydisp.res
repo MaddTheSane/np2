@@ -76,22 +76,22 @@ static const NOTEPATTERN s_notepattern[12] =
 	{24, 0, keybrd_s3}
 };
 
-// FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):FM#=HZ#*(2^17)/55556!:PRINT INT(FM#);",";:NEXT
-static const UINT16 fnumtbl[12] = {635,673,713,755,800,848,
-									898,951,1008,1068,1132, 0xffff};
+// FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):FM#=HZ#*(2^17)/55466!:PRINT INT(FM#);",";:NEXT
+static const UINT16 fnumtbl[12] = {636,674,714,757,802,849,
+									900,953,1010,1070,1134, 0xffff};
 
 enum {
-	FNUM_MIN	= 599,
-	FNUM_MAX	= 1199
+	FNUM_MIN	= 601,
+	FNUM_MAX	= 1201,
 };
 
 
-// FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):PSG#=4000000#*(32*HZ#):PRINT INT(PSG#);",";:NEXT
-static const UINT16 ftotbl[12] = {464,438,413,390,368,347,
-									328,309,292,276,260, 0};
+// FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):PSG#=3993600#*(32*HZ#):PRINT INT(PSG#);",";:NEXT
+static const UINT16 ftotbl[12] = {464,438,414,390,368,348,
+									328,310,292,276,261, 0};
 
 enum {
-	FTO_MAX		= 491,
-	FTO_MIN		= 245
+	FTO_MAX		= 492,
+	FTO_MIN		= 246
 };
 
