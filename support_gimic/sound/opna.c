@@ -124,7 +124,7 @@ void opna_bind(POPNA opna)
 {
 	const UINT8 cCaps = opna->s.cCaps;
 
-	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
+	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 3993600);
 	if (cCaps & OPNA_HAS_PSG)
 	{
 		keydisp_bindpsg(opna->s.reg, 3993600);
@@ -262,7 +262,7 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			}
 
 			opngen_keyon(&opna->opngen, cChannel, cData);
-			keydisp_opnakeyon(opna->s.reg, cChannel, cData);
+			keydisp_opnakeyon(opna->s.reg, cData);
 		}
 		else if (nAddress == 0x27)
 		{

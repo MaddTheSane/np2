@@ -53,9 +53,10 @@ typedef struct tagFmChannel		FMCHANNEL;
 struct tagOpnaControl
 {
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
-	FMCHANNEL ch[6];				/*!< The information of FM */
 	UINT8 cChannelNum;				/*!< The number of the channel */
 	UINT8 cFMChannels;				/*!< The channels of FM */
+	UINT16 wFNumber[13];			/*!< The list of F-number */
+	FMCHANNEL ch[6];				/*!< The information of FM */
 };
 typedef struct tagOpnaControl	OPNACTL;
 
@@ -342,35 +343,35 @@ static void delaysetevent(KEYDISP *keydisp, REG8 ch, REG8 key)
 
 /* ---- OPNA */
 
-static UINT8 GetOpnaNote(UINT16 fnum)
+static UINT8 GetOpnaNote(const OPNACTL *k, UINT16 wFNum)
 {
-	UINT8	ret;
-	int		i;
+	UINT nOct;
+	UINT nKey;
 
-	ret = (fnum >> 11) & 7;
-	ret *= 12;
-	ret += 24;
-	fnum &= 0x7ff;
+	nOct = ((wFNum >> 11) & 7) + 2;
+	wFNum &= 0x7ff;
 
-	while (fnum < FNUM_MIN)
+	while (wFNum < k->wFNumber[0])
 	{
-		if (!ret)
+		if (!nOct)
 		{
 			return 0;
 		}
-		ret -= 12;
-		fnum <<= 1;
+		nOct--;
+		wFNum <<= 1;
 	}
-	while (fnum > FNUM_MAX)
+	while (wFNum > k->wFNumber[12])
 	{
-		fnum >>= 1;
-		ret += 12;
+		wFNum >>= 1;
+		nOct++;
 	}
-	for (i = 0; fnum >= fnumtbl[i]; i++)
+
+	for (nKey = 0; wFNum > k->wFNumber[nKey + 1]; nKey++)
 	{
-		ret++;
 	}
-	return min(ret, 127);
+
+	nKey += nOct * 12;
+	return (int)(min(nKey, 127));
 }
 
 static void opnakeyoff(KEYDISP *keydisp, OPNACTL *k, UINT nChannel)
@@ -386,7 +387,7 @@ static void opnakeyon(KEYDISP *keydisp, OPNACTL *k, UINT nChannelNum)
 
 	pReg = k->pcRegister + ((nChannelNum / 3) << 8) + 0xa0 + (nChannelNum % 3);
 	k->ch[nChannelNum].nFNumber = ((pReg[4] & 0x3f) << 8) + pReg[0];
-	k->ch[nChannelNum].cLastNote = GetOpnaNote(k->ch[nChannelNum].nFNumber);
+	k->ch[nChannelNum].cLastNote = GetOpnaNote(k, k->ch[nChannelNum].nFNumber);
 	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannelNum), (REG8)(k->ch[nChannelNum].cLastNote | 0x80));
 }
 
@@ -400,12 +401,18 @@ static void opnakeyreset(KEYDISP *keydisp)
 	}
 }
 
-void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
+void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 cData)
 {
 	UINT i;
 	OPNACTL *k;
+	UINT nChannelNum;
 
 	if (s_keydisp.mode != KEYDISP_MODEFM)
+	{
+		return;
+	}
+
+	if ((cData & 3) == 3)
 	{
 		return;
 	}
@@ -415,10 +422,15 @@ void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
 		k = &s_keydisp.opnactl[i];
 		if (k->pcRegister == pcRegister)
 		{
-			value &= 0xf0;
-			if (k->ch[nChannelNum].cKeyOn != value)
+			nChannelNum = cData & 7;
+			cData &= 0xf0;
+			if (nChannelNum >= 4)
 			{
-				if (value)
+				nChannelNum--;
+			}
+			if ((nChannelNum < k->cFMChannels) && (k->ch[nChannelNum].cKeyOn != cData))
+			{
+				if (cData)
 				{
 					opnakeyon(&s_keydisp, k, nChannelNum);
 				}
@@ -426,7 +438,7 @@ void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
 				{
 					opnakeyoff(&s_keydisp, k, nChannelNum);
 				}
-				k->ch[nChannelNum].cKeyOn = value;
+				k->ch[nChannelNum].cKeyOn = cData;
 			}
 			break;
 		}
@@ -454,7 +466,7 @@ static void opnakeysync(KEYDISP *keydisp)
 				if (k->ch[j].nFNumber != fnum)
 				{
 					k->ch[j].nFNumber = fnum;
-					n = GetOpnaNote(fnum);
+					n = GetOpnaNote(k, fnum);
 					if (k->ch[j].cLastNote != n)
 					{
 						opnakeyoff(keydisp, k, j);
@@ -816,13 +828,21 @@ void keydisp_reset(void)
 /**
  * bind
  */
-void keydisp_bindopna(const UINT8 *pcRegister, UINT nChannels)
+void keydisp_bindopna(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock)
 {
+	OPNACTL *k;
+	UINT i;
+
 	if (((s_keydisp.keymax + nChannels) <= KEYDISP_CHMAX) && (s_keydisp.opnamax < NELEMENTS(s_keydisp.opnactl)))
 	{
-		s_keydisp.opnactl[s_keydisp.opnamax].cChannelNum = s_keydisp.keymax;
-		s_keydisp.opnactl[s_keydisp.opnamax].pcRegister = pcRegister;
-		s_keydisp.opnactl[s_keydisp.opnamax].cFMChannels = nChannels;
+		k = &s_keydisp.opnactl[s_keydisp.opnamax];
+		k->cChannelNum = s_keydisp.keymax;
+		k->pcRegister = pcRegister;
+		k->cFMChannels = nChannels;
+		for (i = 0; i < NELEMENTS(k->wFNumber); i++)
+		{
+			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 17.0) * 72.0 / (double)nBaseClock);
+		}
 		s_keydisp.opnamax++;
 		s_keydisp.keymax += nChannels;
 	}

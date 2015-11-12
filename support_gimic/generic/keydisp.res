@@ -76,12 +76,3 @@ static const NOTEPATTERN s_notepattern[12] =
 	{24, 0, keybrd_s3}
 };
 
-// FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):FM#=HZ#*(2^17)/55466!:PRINT INT(FM#);",";:NEXT
-static const UINT16 fnumtbl[12] = {636,674,714,757,802,849,
-									900,953,1010,1070,1134, 0xffff};
-
-enum {
-	FNUM_MIN	= 601,
-	FNUM_MAX	= 1201,
-};
-
