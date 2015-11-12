@@ -684,7 +684,7 @@ static UINT8 GetOpl3Note(const OPL3CTL *k, UINT16 wFNum)
 		nOct++;
 	}
 
-	for (nKey = 0; wFNum >= k->wFNumber[nKey]; nKey++)
+	for (nKey = 0; wFNum > k->wFNumber[nKey + 1]; nKey++)
 	{
 	}
 
@@ -865,7 +865,7 @@ void keydisp_bindopl3(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock)
 		k->cFMChannels = nChannels;
 		for (i = 0; i < NELEMENTS(k->wFNumber); i++)
 		{
-			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 23.0) / (double)nBaseClock);
+			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 17.0) * 72.0 / (double)nBaseClock);
 		}
 		s_keydisp.opl3max++;
 		s_keydisp.keymax += nChannels;
