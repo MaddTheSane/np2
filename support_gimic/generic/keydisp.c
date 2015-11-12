@@ -67,6 +67,7 @@ struct tagPsgControl
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
 	REG16 nLastTone[4];
 	UINT8 cLastNote[4];
+	UINT16 wTone[13];				/*!< The list of Tone */
 	UINT8 cChannelNum;				/*!< The number of the channel */
 	UINT8 cPsgOn;
 	UINT8 cLastMixer;
@@ -495,37 +496,39 @@ static PSGCTL *GetController(KEYDISP *keydisp, const UINT8 *pcRegister)
 	return NULL;
 }
 
-static UINT8 GetPSGNote(UINT16 tone)
+static UINT8 GetPSGNote(const PSGCTL *k, UINT16 nTone)
 {
-	UINT8	ret;
-	int		i;
+	UINT nOct;
+	UINT nKey;
 
-	ret = 60;
-	tone &= 0xfff;
+	nOct = 5;
+	nTone &= 0xfff;
 
-	while (tone < FTO_MIN)
+	while (nTone > k->wTone[0])
 	{
-		tone <<= 1;
-		ret += 12;
-		if (ret > 127)
-		{
-			return 127;
-		}
-	}
-	while (tone > FTO_MAX)
-	{
-		if (!ret)
+		if (!nOct)
 		{
 			return 0;
 		}
-		tone >>= 1;
-		ret -= 12;
+		nTone >>= 1;
+		nOct--;
 	}
-	for (i = 0; tone < ftotbl[i]; i++)
+
+	if (!nTone)
 	{
-		ret++;
+		return 127;
 	}
-	return min(ret, 127);
+
+	while (nTone < k->wTone[12])
+	{
+		nTone <<= 1;
+		nOct++;
+	}
+	for (nKey = 0; nTone < k->wTone[nKey + 1]; nKey++)
+	{
+	}
+	nKey += nOct * 12;
+	return (int)(min(nKey, 127));
 }
 
 static void psgmix(KEYDISP *keydisp, PSGCTL *k)
@@ -549,7 +552,7 @@ static void psgmix(KEYDISP *keydisp, PSGCTL *k)
 			{
 				k->cPsgOn |= bit;
 				k->nLastTone[i] = LOADINTELWORD(pReg->tune[i]) & 0xfff;
-				k->cLastNote[i] = GetPSGNote(k->nLastTone[i]);
+				k->cLastNote[i] = GetPSGNote(k, k->nLastTone[i]);
 				delaysetevent(keydisp, pos, (UINT8)(k->cLastNote[i] | 0x80));
 			}
 		}
@@ -574,7 +577,7 @@ static void psgvol(KEYDISP *keydisp, PSGCTL *k, UINT ch)
 			tune = LOADINTELWORD(pReg->tune[ch]);
 			tune &= 0xfff;
 			k->nLastTone[ch] = tune;
-			k->cLastNote[ch] = GetPSGNote(tune);
+			k->cLastNote[ch] = GetPSGNote(k, tune);
 			delaysetevent(keydisp, pos, (UINT8)(k->cLastNote[ch] | 0x80));
 		}
 	}
@@ -644,7 +647,7 @@ static void psgkeysync(KEYDISP *keydisp)
 				if (k->nLastTone[i] != tune)
 				{
 					k->nLastTone[i] = tune;
-					n = GetPSGNote(tune);
+					n = GetPSGNote(k, tune);
 					if (k->cLastNote[i] != n)
 					{
 						delaysetevent(keydisp, pos, k->cLastNote[i]);
@@ -833,12 +836,20 @@ void keydisp_bindopna(const UINT8 *pcRegister, UINT nChannels)
 /**
  * bind
  */
-void keydisp_bindpsg(const UINT8 *pcRegister)
+void keydisp_bindpsg(const UINT8 *pcRegister, UINT nBaseClock)
 {
+	PSGCTL *k;
+	UINT i;
+
 	if (((s_keydisp.keymax + 3) <= KEYDISP_CHMAX) && (s_keydisp.psgmax < NELEMENTS(s_keydisp.psgctl)))
 	{
-		s_keydisp.psgctl[s_keydisp.psgmax].cChannelNum = s_keydisp.keymax;
-		s_keydisp.psgctl[s_keydisp.psgmax].pcRegister = pcRegister;
+		k = &s_keydisp.psgctl[s_keydisp.psgmax];
+		k->cChannelNum = s_keydisp.keymax;
+		k->pcRegister = pcRegister;	
+		for (i = 0; i < NELEMENTS(k->wTone); i++)
+		{
+			k->wTone[i] = (UINT16)((double)nBaseClock / 32.0 / (440.0 * pow(2.0, ((double)i - 9.5) / 12.0)));
+		}
 		s_keydisp.psgmax++;
 		s_keydisp.keymax += 3;
 	}
