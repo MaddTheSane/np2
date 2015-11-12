@@ -87,11 +87,11 @@ enum {
 
 
 // FOR I=0 TO 12:K=I-9:HZ# = 440*(2^((K*2-1)/24)):PSG#=3993600#*(32*HZ#):PRINT INT(PSG#);",";:NEXT
-static const UINT16 ftotbl[12] = {464,438,414,390,368,348,
-									328,310,292,276,261, 0};
+static const UINT16 ftotbl[12] = {463,437,413,390,368,347,
+									328,309,292,276,260, 0};
 
 enum {
-	FTO_MAX		= 492,
-	FTO_MIN		= 246
+	FTO_MAX		= 491,
+	FTO_MIN		= 245
 };
 
