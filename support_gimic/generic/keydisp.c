@@ -734,7 +734,7 @@ static void opl3keyreset(KEYDISP *keydisp)
 	}
 }
 
-void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
+void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, REG8 cData)
 {
 	UINT i;
 	OPL3CTL *k;
@@ -749,10 +749,10 @@ void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
 		k = &s_keydisp.opl3ctl[i];
 		if (k->pcRegister == pcRegister)
 		{
-			value &= 0x20;
-			if (k->ch[nChannelNum].cKeyOn != value)
+			cData &= 0x20;
+			if (k->ch[nChannelNum].cKeyOn != cData)
 			{
-				if (value)
+				if (cData)
 				{
 					opl3keyon(&s_keydisp, k, nChannelNum);
 				}
@@ -760,7 +760,7 @@ void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, UINT8 value)
 				{
 					opl3keyoff(&s_keydisp, k, nChannelNum);
 				}
-				k->ch[nChannelNum].cKeyOn = value;
+				k->ch[nChannelNum].cKeyOn = cData;
 			}
 			break;
 		}
@@ -896,7 +896,7 @@ void keydisp_bindopl3(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock)
 		k->cFMChannels = nChannels;
 		for (i = 0; i < NELEMENTS(k->wFNumber); i++)
 		{
-			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 17.0) * 72.0 / (double)nBaseClock);
+			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 16.0) * 72.0 / (double)nBaseClock);
 		}
 		s_keydisp.opl3max++;
 		s_keydisp.keymax += nChannels;
