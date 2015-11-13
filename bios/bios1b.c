@@ -279,7 +279,7 @@ static void b0patch(void) {
 }
 
 static void b0clr(void) {
-	b0p.flg = 0;
+	b0p.flg = FALSE;
 }
 #endif
 
