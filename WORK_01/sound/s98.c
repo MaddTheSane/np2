@@ -40,7 +40,7 @@ static struct {
 
 static void s98timer(NEVENTITEM item);
 
-static void sets98event(BOOL absolute) {
+static void sets98event(NEVENTPOSITION absolute) {
 
 	s98log.intcount++;
 	nevent_set(NEVENT_S98TIMER, s98log.clock, s98timer, NEVENT_RELATIVE);
