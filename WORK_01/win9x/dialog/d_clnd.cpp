@@ -84,11 +84,11 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			calendar_getvir(cbuf);
 			set_cal2dlg(hWnd, cbuf);
 			if (np2cfg.calendar) {
-				vircalendar(hWnd, 0);
+				vircalendar(hWnd, FALSE);
 				subwnd = GetDlgItem(hWnd, IDC_CLNDREAL);
 			}
 			else {
-				vircalendar(hWnd, 1);
+				vircalendar(hWnd, TRUE);
 				subwnd = GetDlgItem(hWnd, IDC_CLNDVIR);
 			}
 			SendMessage(subwnd, BM_SETCHECK, TRUE, 0);
@@ -123,11 +123,11 @@ LRESULT CALLBACK ClndDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 					break;
 
 				case IDC_CLNDVIR:
-					vircalendar(hWnd, 1);
+					vircalendar(hWnd, TRUE);
 					return(FALSE);
 
 				case IDC_CLNDREAL:
-					vircalendar(hWnd, 0);
+					vircalendar(hWnd, FALSE);
 					return(FALSE);
 
 				case IDC_SETNOW:
