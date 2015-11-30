@@ -504,11 +504,7 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity)
 
 		case 0x04:								/* ƒZƒ“ƒX */
 			ret_ah = DISK_READY;
-			if (fdd_diskaccess())
-			{
-				ret_ah = DISK_NODATA;
-			}
-			else if (fdd_diskprotect(g_fdc.us))
+			if (fdd_diskprotect(g_fdc.us))
 			{
 				ret_ah = DISK_WRITEPROTECT;
 			}
