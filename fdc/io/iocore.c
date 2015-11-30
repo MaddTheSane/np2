@@ -18,7 +18,7 @@
 	_EGC		egc;
 	_EPSONIO	epsonio;
 	_EMSIO		emsio;
-	_FDC		fdc;
+	_FDC		g_fdc;
 	_GDC		gdc;
 	_GDCS		gdcs;
 	_GRCG		grcg;

@@ -170,8 +170,8 @@ static void bios_reinitbyswitch(void) {
 #endif
 
 	// FDC
-	if (fdc.support144) {
-		mem[MEMB_F144_SUP] |= fdc.equip;
+	if (g_fdc.support144) {
+		mem[MEMB_F144_SUP] |= g_fdc.equip;
 	}
 
 	// IDE initialize

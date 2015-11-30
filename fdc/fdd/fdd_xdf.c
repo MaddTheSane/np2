@@ -181,8 +181,8 @@ BRESULT fddxdf_seek(FDDFILE fdd) {
 
 	if ((fdd->type != DISKTYPE_BETA) ||
 		(CTRL_FDMEDIA != fdd->inf.xdf.disktype) ||
-		(fdc.rpm[fdc.us] != fdd->inf.xdf.rpm) ||
-		(fdc.ncn >= (fdd->inf.xdf.tracks >> 1))) {
+		(g_fdc.rpm[g_fdc.us] != fdd->inf.xdf.rpm) ||
+		(g_fdc.ncn >= (fdd->inf.xdf.tracks >> 1))) {
 		return(FAILURE);
 	}
 	return(SUCCESS);
@@ -192,16 +192,16 @@ BRESULT fddxdf_seeksector(FDDFILE fdd) {
 
 	if ((fdd->type != DISKTYPE_BETA) ||
 		(CTRL_FDMEDIA != fdd->inf.xdf.disktype) ||
-		(fdc.rpm[fdc.us] != fdd->inf.xdf.rpm) ||
-		(fdc.treg[fdc.us] >= (fdd->inf.xdf.tracks >> 1))) {
+		(g_fdc.rpm[g_fdc.us] != fdd->inf.xdf.rpm) ||
+		(g_fdc.treg[g_fdc.us] >= (fdd->inf.xdf.tracks >> 1))) {
 		fddlasterror = 0xe0;
 		return(FAILURE);
 	}
-	if ((!fdc.R) || (fdc.R > fdd->inf.xdf.sectors)) {
+	if ((!g_fdc.R) || (g_fdc.R > fdd->inf.xdf.sectors)) {
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
-	if ((fdc.mf != 0xff) && (fdc.mf != 0x40)) {
+	if ((g_fdc.mf != 0xff) && (g_fdc.mf != 0x40)) {
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
@@ -218,14 +218,14 @@ BRESULT fddxdf_read(FDDFILE fdd) {
 	if (fddxdf_seeksector(fdd)) {
 		return(FAILURE);
 	}
-	if (fdc.N != fdd->inf.xdf.n) {
+	if (g_fdc.N != fdd->inf.xdf.n) {
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
 
-	seekp = (fdc.treg[fdc.us] << 1) + fdc.hd;
+	seekp = (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd;
 	seekp *= fdd->inf.xdf.sectors;
-	seekp += fdc.R - 1;
+	seekp += g_fdc.R - 1;
 	seekp <<= (7 + fdd->inf.xdf.n);
 	seekp += fdd->inf.xdf.headersize;
 	secsize = 128 << fdd->inf.xdf.n;
@@ -236,13 +236,13 @@ BRESULT fddxdf_read(FDDFILE fdd) {
 		return(FAILURE);
 	}
 	if ((file_seek(hdl, seekp, FSEEK_SET) != seekp) ||
-		(file_read(hdl, fdc.buf, secsize) != secsize)) {
+		(file_read(hdl, g_fdc.buf, secsize) != secsize)) {
 		file_close(hdl);
 		fddlasterror = 0xe0;
 		return(FAILURE);
 	}
 	file_close(hdl);
-	fdc.bufcnt = secsize;
+	g_fdc.bufcnt = secsize;
 	fddlasterror = 0x00;
 	return(SUCCESS);
 }
@@ -262,14 +262,14 @@ BRESULT fddxdf_write(FDDFILE fdd) {
 		fddlasterror = 0x70;
 		return(FAILURE);
 	}
-	if (fdc.N != fdd->inf.xdf.n) {
+	if (g_fdc.N != fdd->inf.xdf.n) {
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
 
-	seekp = (fdc.treg[fdc.us] << 1) + fdc.hd;
+	seekp = (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd;
 	seekp *= fdd->inf.xdf.sectors;
-	seekp += fdc.R - 1;
+	seekp += g_fdc.R - 1;
 	seekp <<= (7 + fdd->inf.xdf.n);
 	seekp += fdd->inf.xdf.headersize;
 	secsize = 128 << fdd->inf.xdf.n;
@@ -280,13 +280,13 @@ BRESULT fddxdf_write(FDDFILE fdd) {
 		return(FAILURE);
 	}
 	if ((file_seek(hdl, seekp, FSEEK_SET) != seekp) ||
-		(file_write(hdl, fdc.buf, secsize) != secsize)) {
+		(file_write(hdl, g_fdc.buf, secsize) != secsize)) {
 		file_close(hdl);
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
 	file_close(hdl);
-	fdc.bufcnt = secsize;
+	g_fdc.bufcnt = secsize;
 	fddlasterror = 0x00;
 	return(SUCCESS);
 }
@@ -294,16 +294,16 @@ BRESULT fddxdf_write(FDDFILE fdd) {
 BRESULT fddxdf_readid(FDDFILE fdd) {
 
 	fddlasterror = 0x00;
-	if ((!fdc.mf) ||
-		(fdc.rpm[fdc.us] != fdd->inf.xdf.rpm) ||
-		(fdc.crcn >= fdd->inf.xdf.sectors)) {
+	if ((!g_fdc.mf) ||
+		(g_fdc.rpm[g_fdc.us] != fdd->inf.xdf.rpm) ||
+		(g_fdc.crcn >= fdd->inf.xdf.sectors)) {
 		fddlasterror = 0xe0;
 		return(FAILURE);
 	}
-	fdc.C = fdc.treg[fdc.us];
-	fdc.H = fdc.hd;
-	fdc.R = ++fdc.crcn;
-	fdc.N = fdd->inf.xdf.n;
+	g_fdc.C = g_fdc.treg[g_fdc.us];
+	g_fdc.H = g_fdc.hd;
+	g_fdc.R = ++g_fdc.crcn;
+	g_fdc.N = fdd->inf.xdf.n;
 	return(SUCCESS);
 }
 

@@ -99,7 +99,7 @@ static const SFENTRY np2tbl[] = {
 	{"DMAC",		0,	STATFLAG_DMA,	&dmac,			sizeof(dmac)},
 	{"EGC",			0,	STATFLAG_EGC,	NULL,			0},
 	{"EPSON",		0,	STATFLAG_EPSON,	NULL,			0},
-	{"FDC",			0,	STATFLAG_BIN,	&fdc,			sizeof(fdc)},
+	{"FDC",			0,	STATFLAG_BIN,	&g_fdc,			sizeof(g_fdc)},
 	{"EMSIO",		0,	STATFLAG_BIN,	&emsio,			sizeof(emsio)},
 	{"GDC1",		0,	STATFLAG_BIN,	&gdc,			sizeof(gdc)},
 	{"GDC2",		0,	STATFLAG_BIN,	&gdcs,			sizeof(gdcs)},

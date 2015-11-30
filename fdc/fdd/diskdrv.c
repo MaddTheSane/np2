@@ -114,10 +114,10 @@ void diskdrv_hddbind(void) {
 void diskdrv_readyfddex(REG8 drv, const OEMCHAR *fname,
 												UINT ftype, int readonly) {
 
-	if ((drv < 4) && (fdc.equip & (1 << drv))) {
+	if ((drv < 4) && (g_fdc.equip & (1 << drv))) {
 		if ((fname != NULL) && (fname[0] != '\0')) {
 			fdd_set(drv, fname, ftype, readonly);
-			fdc.stat[drv] = FDCRLT_AI | drv;
+			g_fdc.stat[drv] = FDCRLT_AI | drv;
 			fdc_interrupt();
 			sysmng_update(SYS_UPDATEFDD);
 		}
@@ -127,11 +127,11 @@ void diskdrv_readyfddex(REG8 drv, const OEMCHAR *fname,
 void diskdrv_setfddex(REG8 drv, const OEMCHAR *fname,
 												UINT ftype, int readonly) {
 
-	if ((drv < 4) && (fdc.equip & (1 << drv))) {
+	if ((drv < 4) && (g_fdc.equip & (1 << drv))) {
 		fdd_eject(drv);
 		diskdrv_delay[drv] = 0;
 		diskdrv_fname[drv][0] = '\0';
-		fdc.stat[drv] = FDCRLT_AI | FDCRLT_NR | drv;
+		g_fdc.stat[drv] = FDCRLT_AI | FDCRLT_NR | drv;
 		fdc_interrupt();
 
 		if (fname) {

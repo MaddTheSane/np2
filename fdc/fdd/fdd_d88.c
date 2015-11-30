@@ -83,7 +83,7 @@ static BRESULT d88trk_read(D88TRK trk, FDDFILE fdd, UINT track, UINT type) {
 		goto dtrd_err1;
 	}
 
-	rpm = fdc.rpm[fdc.us];
+	rpm = g_fdc.rpm[g_fdc.us];
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 			TRACEOUT(("DISKTYPE_2D"));
@@ -148,10 +148,10 @@ dtrd_err1:
 
 static BRESULT rpmcheck(D88SEC sec) {
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 	UINT8	rpm;
 
-	rpm = fdc.rpm[fdc.us];
+	rpm = g_fdc.rpm[g_fdc.us];
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 		case DISKTYPE_2DD:
@@ -219,8 +219,8 @@ static D88SEC searchsector_d88(BOOL check) {			// ver0.29
 	UINT	sectors;
 	UINT	secsize;
 
-	if (fdc.N < 8) {
-		nsize = 128 << fdc.N;
+	if (g_fdc.N < 8) {
+		nsize = 128 << g_fdc.N;
 	}
 	else {
 		nsize = 128 << 8;
@@ -232,16 +232,16 @@ static D88SEC searchsector_d88(BOOL check) {			// ver0.29
 			break;
 		}
 
-		if ((((D88SEC)p)->c == fdc.C) &&
-			(((D88SEC)p)->h == fdc.H) &&
-			(((D88SEC)p)->r == fdc.R) &&
-			(((D88SEC)p)->n == fdc.N) &&
+		if ((((D88SEC)p)->c == g_fdc.C) &&
+			(((D88SEC)p)->h == g_fdc.H) &&
+			(((D88SEC)p)->r == g_fdc.R) &&
+			(((D88SEC)p)->n == g_fdc.N) &&
 			(!rpmcheck((D88SEC)p))) {
 
 			// ver0.29
 			if (check) {
-				if ((fdc.mf != 0xff) &&
-					!((fdc.mf ^ (((D88SEC)p)->mfm_flg)) & 0x40)) {
+				if ((g_fdc.mf != 0xff) &&
+					!((g_fdc.mf ^ (((D88SEC)p)->mfm_flg)) & 0x40)) {
 					break;
 				}
 			}
@@ -311,10 +311,10 @@ BRESULT fddd88_eject(FDDFILE fdd) {
 
 BRESULT fdd_diskaccess_d88(void) {									// ver0.31
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 	UINT8	rpm;
 
-	rpm = fdc.rpm[fdc.us];
+	rpm = g_fdc.rpm[g_fdc.us];
 	switch(fdd->inf.d88.fdtype_major) {
 		case DISKTYPE_2D:
 		case DISKTYPE_2DD:
@@ -341,16 +341,16 @@ BRESULT fdd_diskaccess_d88(void) {									// ver0.31
 
 BRESULT fdd_seek_d88(void) {
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 
-	return(trkseek(fdd, (fdc.ncn << 1) + fdc.hd));
+	return(trkseek(fdd, (g_fdc.ncn << 1) + g_fdc.hd));
 }
 
 BRESULT fdd_seeksector_d88(void) {
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 
-	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+	if (trkseek(fdd, (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd)) {
 		return(FAILURE);
 	}
 	if (!searchsector_d88(FALSE)) {
@@ -361,13 +361,13 @@ BRESULT fdd_seeksector_d88(void) {
 
 BRESULT fdd_read_d88(void) {
 
-	FDDFILE		fdd = fddfile + fdc.us;
+	FDDFILE		fdd = fddfile + g_fdc.us;
 	D88SEC		p;
 	UINT		size;
 	UINT		secsize;
 
 	fddlasterror = 0x00;
-	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+	if (trkseek(fdd, (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd)) {
 		fddlasterror = 0xe0;
 		return(FAILURE);
 	}
@@ -376,20 +376,20 @@ BRESULT fdd_read_d88(void) {
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
-	if (fdc.N < 8) {
-		size = 128 << fdc.N;
+	if (g_fdc.N < 8) {
+		size = 128 << g_fdc.N;
 	}
 	else {
 		size = 128 << 8;
 	}
-	fdc.bufcnt = size;
-	ZeroMemory(fdc.buf, size);
+	g_fdc.bufcnt = size;
+	ZeroMemory(g_fdc.buf, size);
 	secsize = LOADINTELWORD(p->size);
 	if (size > secsize) {
 		size = secsize;
 	}
 	if (size) {
-		CopyMemory(fdc.buf, p+1, size);
+		CopyMemory(g_fdc.buf, p+1, size);
 	}
 	fddlasterror = p->stat;
 	return(SUCCESS);
@@ -397,13 +397,13 @@ BRESULT fdd_read_d88(void) {
 
 BRESULT fdd_write_d88(void) {
 
-	FDDFILE		fdd = fddfile + fdc.us;
+	FDDFILE		fdd = fddfile + g_fdc.us;
 	D88SEC		p;
 	UINT		size;
 	UINT		secsize;
 
 	fddlasterror = 0x00;
-	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+	if (trkseek(fdd, (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd)) {
 		fddlasterror = 0xe0;
 		return(FAILURE);
 	}
@@ -412,8 +412,8 @@ BRESULT fdd_write_d88(void) {
 		fddlasterror = 0xc0;
 		return(FAILURE);
 	}
-	if (fdc.N < 8) {
-		size = 128 << fdc.N;
+	if (g_fdc.N < 8) {
+		size = 128 << g_fdc.N;
 	}
 	else {
 		size = 128 << 8;
@@ -423,7 +423,7 @@ BRESULT fdd_write_d88(void) {
 		size = secsize;
 	}
 	if (size) {
-		CopyMemory(p+1, fdc.buf, size);
+		CopyMemory(p+1, g_fdc.buf, size);
 		d88trk.write = TRUE;
 	}
 	fddlasterror = 0x00;
@@ -432,7 +432,7 @@ BRESULT fdd_write_d88(void) {
 
 BRESULT fdd_readid_d88(void) {
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 	UINT8	*p;
 	UINT	sec;
 	UINT	pos = 0;
@@ -440,7 +440,7 @@ BRESULT fdd_readid_d88(void) {
 	UINT	secsize;
 
 	fddlasterror = 0x00;
-	if (trkseek(fdd, (fdc.treg[fdc.us] << 1) + fdc.hd)) {
+	if (trkseek(fdd, (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd)) {
 		fddlasterror = 0xe0;
 		return(FAILURE);
 	}
@@ -450,17 +450,17 @@ BRESULT fdd_readid_d88(void) {
 			break;
 		}
 		sectors = LOADINTELWORD(((D88SEC)p)->sectors);
-		if ((sec == fdc.crcn) && (!rpmcheck((D88SEC)p))) {			// ver0.31
-			fdc.C = ((D88SEC)p)->c;
-			fdc.H = ((D88SEC)p)->h;
-			fdc.R = ((D88SEC)p)->r;
-			fdc.N = ((D88SEC)p)->n;
-			fdc.crcn++;
-			if (fdc.crcn >= sectors) {
-				fdc.crcn = 0;
+		if ((sec == g_fdc.crcn) && (!rpmcheck((D88SEC)p))) {			// ver0.31
+			g_fdc.C = ((D88SEC)p)->c;
+			g_fdc.H = ((D88SEC)p)->h;
+			g_fdc.R = ((D88SEC)p)->r;
+			g_fdc.N = ((D88SEC)p)->n;
+			g_fdc.crcn++;
+			if (g_fdc.crcn >= sectors) {
+				g_fdc.crcn = 0;
 			}
-			if ((fdc.mf == 0xff) ||
-					((fdc.mf ^ (((D88SEC)p)->mfm_flg)) & 0x40)) {
+			if ((g_fdc.mf == 0xff) ||
+					((g_fdc.mf ^ (((D88SEC)p)->mfm_flg)) & 0x40)) {
 				fddlasterror = 0x00;
 				return(SUCCESS);
 			}
@@ -473,7 +473,7 @@ BRESULT fdd_readid_d88(void) {
 		pos += secsize;
 		p += secsize;
 	}
-	fdc.crcn = 0x00;
+	g_fdc.crcn = 0x00;
 	fddlasterror = 0xe0;											// ver0.31
 	return(FAILURE);
 }
@@ -527,7 +527,7 @@ static int fileappend(FILEH hdl, FDDFILE fdd, UINT ptr, UINT last, int apsize) {
 
 static void endoftrack(UINT fmtsize, UINT8 sectors) {
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 
 	D88SEC	d88sec;
 	FILEH	hdl;
@@ -540,7 +540,7 @@ static void endoftrack(UINT fmtsize, UINT8 sectors) {
 	int		ptr;
 	int		apsize;
 
-	trk = (fdc.treg[fdc.us] << 1) + fdc.hd;
+	trk = (g_fdc.treg[g_fdc.us] << 1) + g_fdc.hd;
 
 	ptr = 0;
 	for (i=0; i<(int)sectors; i++) {
@@ -550,7 +550,7 @@ static void endoftrack(UINT fmtsize, UINT8 sectors) {
 		ptr += sizeof(_D88SEC);
 	}
 
-	hdl = file_open(fddfile[fdc.us].fname);
+	hdl = file_open(fddfile[g_fdc.us].fname);
 	if (hdl == FILEH_INVALID) {
 		return;
 	}
@@ -594,12 +594,12 @@ static void endoftrack(UINT fmtsize, UINT8 sectors) {
 
 BRESULT fdd_formatinit_d88(void) {
 
-	if (fdc.treg[fdc.us] < 82) {
+	if (g_fdc.treg[g_fdc.us] < 82) {
 		formating = TRUE;
 		formatsec = 0;
 		formatpos = 0;
 		formatwrt = 0;
-		drvflush(fddfile + fdc.us);
+		drvflush(fddfile + g_fdc.us);
 		return(SUCCESS);
 	}
 	return(FAILURE);
@@ -608,7 +608,7 @@ BRESULT fdd_formatinit_d88(void) {
 	// todo アンフォーマットとか ディスク１周した時の切り捨てとか…
 BRESULT fdd_formating_d88(const UINT8 *ID) {
 
-	FDDFILE	fdd = fddfile + fdc.us;
+	FDDFILE	fdd = fddfile + g_fdc.us;
 
 	UINT	size;
 	D88SEC	d88sec;
@@ -616,8 +616,8 @@ BRESULT fdd_formating_d88(const UINT8 *ID) {
 	if (!formating) {
 		return(FAILURE);
 	}
-	if (fdc.N < 8) {
-		size = 128 << fdc.N;
+	if (g_fdc.N < 8) {
+		size = 128 << g_fdc.N;
 	}
 	else {
 		size = 128 << 8;
@@ -632,9 +632,9 @@ BRESULT fdd_formating_d88(const UINT8 *ID) {
 		STOREINTELWORD(d88sec->size, size);
 		if ((fdd->inf.d88.fdtype_major == DISKTYPE_2HD) &&
 			(fdd->inf.d88.fdtype_minor != 0)) {
-			d88sec->rpm_flg = fdc.rpm[fdc.us];
+			d88sec->rpm_flg = g_fdc.rpm[g_fdc.us];
 		}
-		FillMemory(d88sec + 1, size, fdc.d);
+		FillMemory(d88sec + 1, size, g_fdc.d);
 		formatpos += sizeof(_D88SEC);
 		formatpos += size;
 		formatwrt++;
@@ -642,9 +642,9 @@ BRESULT fdd_formating_d88(const UINT8 *ID) {
 	formatsec++;
 //	TRACE_("format sec", formatsec);
 //	TRACE_("format wrt", formatwrt);
-//	TRACE_("format max", fdc.sc);
+//	TRACE_("format max", g_fdc.sc);
 //	TRACE_("format pos", formatpos);
-	if (formatsec >= fdc.sc) {
+	if (formatsec >= g_fdc.sc) {
 		endoftrack(formatpos, formatwrt);
 		formating = FALSE;
 	}

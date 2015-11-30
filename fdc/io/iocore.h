@@ -54,7 +54,7 @@ extern	_DMAC		dmac;
 extern	_EGC		egc;
 extern	_EPSONIO	epsonio;
 extern	_EMSIO		emsio;
-extern	_FDC		fdc;
+extern	_FDC		g_fdc;
 extern	_GDC		gdc;
 extern	_GDCS		gdcs;
 extern	_GRCG		grcg;

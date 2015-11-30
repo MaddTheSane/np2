@@ -110,7 +110,7 @@ typedef struct {
 extern "C" {
 #endif
 
-#define	CTRL_FDMEDIA	fdc.ctrlfd
+#define	CTRL_FDMEDIA	g_fdc.ctrlfd
 
 void fdc_intwait(NEVENTITEM item);
 

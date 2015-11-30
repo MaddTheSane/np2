@@ -151,7 +151,7 @@ BRESULT fdd_diskaccess(void) {
 
 	FDDFILE		fdd;
 
-	fdd = fddfile + fdc.us;
+	fdd = fddfile + g_fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
 			return(fddxdf_diskaccess(fdd));
@@ -168,7 +168,7 @@ BRESULT fdd_seek(void) {
 	FDDFILE		fdd;
 
 	ret = FAILURE;
-	fdd = fddfile + fdc.us;
+	fdd = fddfile + g_fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
 			ret = fddxdf_seek(fdd);
@@ -178,7 +178,7 @@ BRESULT fdd_seek(void) {
 			ret = fdd_seek_d88();
 			break;
 	}
-	fdc.treg[fdc.us] = fdc.ncn;
+	g_fdc.treg[g_fdc.us] = g_fdc.ncn;
 	return(ret);
 }
 
@@ -186,7 +186,7 @@ BRESULT fdd_seeksector(void) {
 
 	FDDFILE		fdd;
 
-	fdd = fddfile + fdc.us;
+	fdd = fddfile + g_fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
 			return(fddxdf_seeksector(fdd));
@@ -202,8 +202,8 @@ BRESULT fdd_read(void) {
 
 	FDDFILE		fdd;
 
-	sysmng_fddaccess(fdc.us);
-	fdd = fddfile + fdc.us;
+	sysmng_fddaccess(g_fdc.us);
+	fdd = fddfile + g_fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
 			return(fddxdf_read(fdd));
@@ -218,8 +218,8 @@ BRESULT fdd_write(void) {
 
 	FDDFILE		fdd;
 
-	sysmng_fddaccess(fdc.us);
-	fdd = fddfile + fdc.us;
+	sysmng_fddaccess(g_fdc.us);
+	fdd = fddfile + g_fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
 			return(fddxdf_write(fdd));
@@ -234,8 +234,8 @@ BRESULT fdd_readid(void) {
 
 	FDDFILE		fdd;
 
-	sysmng_fddaccess(fdc.us);
-	fdd = fddfile + fdc.us;
+	sysmng_fddaccess(g_fdc.us);
+	fdd = fddfile + g_fdc.us;
 	switch(fdd->type) {
 		case DISKTYPE_BETA:
 			return(fddxdf_readid(fdd));
@@ -248,7 +248,7 @@ BRESULT fdd_readid(void) {
 
 BRESULT fdd_formatinit(void) {
 
-	if (fddfile[fdc.us].type == DISKTYPE_D88) {
+	if (fddfile[g_fdc.us].type == DISKTYPE_D88) {
 		return(fdd_formatinit_d88());
 	}
 	return(FAILURE);
@@ -256,8 +256,8 @@ BRESULT fdd_formatinit(void) {
 
 BRESULT fdd_formating(const UINT8 *ID) {
 
-	sysmng_fddaccess(fdc.us);
-	if (fddfile[fdc.us].type == DISKTYPE_D88) {
+	sysmng_fddaccess(g_fdc.us);
+	if (fddfile[g_fdc.us].type == DISKTYPE_D88) {
 		return(fdd_formating_d88(ID));
 	}
 	return(FAILURE);
@@ -265,7 +265,7 @@ BRESULT fdd_formating(const UINT8 *ID) {
 
 BOOL fdd_isformating(void) {
 
-	if (fddfile[fdc.us].type == DISKTYPE_D88) {
+	if (fddfile[g_fdc.us].type == DISKTYPE_D88) {
 		return(fdd_isformating_d88());
 	}
 	return(FALSE);
