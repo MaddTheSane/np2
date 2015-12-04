@@ -1,17 +1,22 @@
-#include	"compiler.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
+/**
+ * @file	pcm86c.c
+ * @brief	Implementation of the 86-PCM
+ */
+
+#include "compiler.h"
+#include "pcm86.h"
+#include "pccore.h"
+#include "cpucore.h"
+#include "iocore.h"
+#include "fmboard.h"
 
 
-// サンプリングレートに8掛けた物
+/* サンプリングレートに8掛けた物 */
 const UINT pcm86rate8[] = {352800, 264600, 176400, 132300,
 							88200,  66150,  44010,  33075};
 
-// 32,24,16,12, 8, 6, 4, 3 - 最少公倍数: 96
-//  3, 4, 6, 8,12,16,24,32
+/* 32,24,16,12, 8, 6, 4, 3 - 最少公倍数: 96 */
+/*  3, 4, 6, 8,12,16,24,32 */
 
 static const UINT clk25_128[] = {
 					0x00001bde, 0x00002527, 0x000037bb, 0x00004a4e,
@@ -99,19 +104,19 @@ void pcm86_setnextintr(void) {
 		if (cnt > 0) {
 			cnt += pcm86.stepmask;
 			cnt >>= pcm86.stepbit;
-//			cnt += 4;								// ちょっと延滞させる
-			// ここで clk = pccore.realclock * cnt / 86pcm_rate
-			// clk = ((pccore.baseclock / 86pcm_rate) * cnt) * pccore.multiple
+//			cnt += 4;								/* ちょっと延滞させる */
+			/* ここで clk = pccore.realclock * cnt / 86pcm_rate */
+			/* clk = ((pccore.baseclock / 86pcm_rate) * cnt) * pccore.multiple */
 			if (pccore.cpumode & CPUMODE_8MHZ) {
 				clk = clk20_128[pcm86.fifo & 7];
 			}
 			else {
 				clk = clk25_128[pcm86.fifo & 7];
 			}
-			// cntは最大 8000h で 32bitで収まるように…
+			/* cntは最大 8000h で 32bitで収まるように… */
 			clk *= cnt;
 			clk >>= 7;
-//			clk++;						// roundup
+//			clk++;						/* roundup */
 			clk *= pccore.multiple;
 			nevent_set(NEVENT_86PCM, clk, pcm86_cb, NEVENT_ABSOLUTE);
 		}
@@ -133,7 +138,7 @@ void SOUNDCALL pcm86gen_checkbuf(void) {
 	}
 
 	bufs = pcm86.realbuf - pcm86.virbuf;
-	if (bufs < 0) {									// 処理落ちてる…
+	if (bufs < 0) {									/* 処理落ちてる… */
 		bufs &= ~3;
 		pcm86.virbuf += bufs;
 		if (pcm86.virbuf <= pcm86.fifosize) {

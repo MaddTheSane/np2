@@ -1,8 +1,11 @@
-#include	"compiler.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
+/**
+ * @file	pcm86g.c
+ * @brief	Implementation of the 86-PCM
+ */
+
+#include "compiler.h"
+#include "pcm86.h"
+#include "fmboard.h"
 
 
 #define	PCM86GET8(a)													\
@@ -20,7 +23,7 @@
 
 static void pcm86mono16(SINT32 *pcm, UINT count) {
 
-	if (pcm86.div < PCM86_DIVENV) {					// アップさんぷる
+	if (pcm86.div < PCM86_DIVENV) {					/* アップさんぷる */
 		do {
 			SINT32 smp;
 			if (pcm86.divremain < 0) {
@@ -80,7 +83,7 @@ pm16_bufempty:
 
 static void pcm86stereo16(SINT32 *pcm, UINT count) {
 
-	if (pcm86.div < PCM86_DIVENV) {					// アップさんぷる
+	if (pcm86.div < PCM86_DIVENV) {					/* アップさんぷる */
 		do {
 			SINT32 smp;
 			if (pcm86.divremain < 0) {
@@ -156,7 +159,7 @@ ps16_bufempty:
 
 static void pcm86mono8(SINT32 *pcm, UINT count) {
 
-	if (pcm86.div < PCM86_DIVENV) {					// アップさんぷる
+	if (pcm86.div < PCM86_DIVENV) {					/* アップさんぷる */
 		do {
 			SINT32 smp;
 			if (pcm86.divremain < 0) {
@@ -216,7 +219,7 @@ pm8_bufempty:
 
 static void pcm86stereo8(SINT32 *pcm, UINT count) {
 
-	if (pcm86.div < PCM86_DIVENV) {					// アップさんぷる
+	if (pcm86.div < PCM86_DIVENV) {					/* アップさんぷる */
 		do {
 			SINT32 smp;
 			if (pcm86.divremain < 0) {
@@ -294,33 +297,33 @@ void SOUNDCALL pcm86gen_getpcm(void *hdl, SINT32 *pcm, UINT count) {
 
 	if ((count) && (pcm86.fifo & 0x80) && (pcm86.div)) {
 		switch(pcm86.dactrl & 0x70) {
-			case 0x00:						// 16bit-none
+			case 0x00:						/* 16bit-none */
 				break;
 
-			case 0x10:						// 16bit-right
+			case 0x10:						/* 16bit-right */
 				pcm86mono16(pcm + 1, count);
 				break;
 
-			case 0x20:						// 16bit-left
+			case 0x20:						/* 16bit-left */
 				pcm86mono16(pcm, count);
 				break;
 
-			case 0x30:						// 16bit-stereo
+			case 0x30:						/* 16bit-stereo */
 				pcm86stereo16(pcm, count);
 				break;
 
-			case 0x40:						// 8bit-none
+			case 0x40:						/* 8bit-none */
 				break;
 
-			case 0x50:						// 8bit-right
+			case 0x50:						/* 8bit-right */
 				pcm86mono8(pcm + 1, count);
 				break;
 
-			case 0x60:						// 8bit-left
+			case 0x60:						/* 8bit-left */
 				pcm86mono8(pcm, count);
 				break;
 
-			case 0x70:						// 8bit-stereo
+			case 0x70:						/* 8bit-stereo */
 				pcm86stereo8(pcm, count);
 				break;
 		}
