@@ -81,8 +81,8 @@ enum {
 
 enum {
 	OPNSLOT1		= 0,				// slot number
-	OPNSLOT2		= 2,
-	OPNSLOT3		= 1,
+	OPNSLOT2		= 1,
+	OPNSLOT3		= 2,
 	OPNSLOT4		= 3,
 
 	EM_ATTACK		= 4,
