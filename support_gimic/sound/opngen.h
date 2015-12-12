@@ -16,51 +16,26 @@ enum {
 	OPN_MONORAL		= 0x00000000
 };
 
-
-#if defined(OPNGENX86)
-
 enum {
 	FMDIV_BITS		= 8,
 	FMDIV_ENT		= (1 << FMDIV_BITS),
 	FMVOL_SFTBIT	= 4
 };
+
+#if defined(OPNGENX86)
 
 #define SIN_BITS		11
 #define EVC_BITS		10
 #define ENV_BITS		16
-#define KF_BITS			6
 #define FREQ_BITS		21
 #define ENVTBL_BIT		14
 #define SINTBL_BIT		14
 
-#elif defined(OPNGENARM)
-
-enum {
-	FMDIV_BITS		= 8,
-	FMDIV_ENT		= (1 << FMDIV_BITS),
-	FMVOL_SFTBIT	= 4
-};
-
-#define SIN_BITS		8
-#define	EVC_BITS		7
-#define	ENV_BITS		16
-#define	KF_BITS			6
-#define	FREQ_BITS		20
-#define	ENVTBL_BIT		14
-#define	SINTBL_BIT		14							// env+sin 30bit max
-
 #else
-
-enum {
-	FMDIV_BITS		= 8,
-	FMDIV_ENT		= (1 << FMDIV_BITS),
-	FMVOL_SFTBIT	= 4
-};
 
 #define	SIN_BITS		10
 #define	EVC_BITS		10
 #define	ENV_BITS		16
-#define	KF_BITS			6
 #define	FREQ_BITS		21
 #define	ENVTBL_BIT		14
 #define	SINTBL_BIT		15

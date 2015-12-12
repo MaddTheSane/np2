@@ -14,7 +14,6 @@
 
 #define	EG_STEP	(96.0 / EVC_ENT)					// dB step
 #define	SC(db)	(SINT32)((db) * ((3.0 / EG_STEP) * (1 << ENV_BITS))) + EC_DECAY
-#define	D2(v)	(((double)(6 << KF_BITS) * log((double)(v)) / log(2.0)) + 0.5)
 #define	FMASMSHIFT	(32 - 6 - (OPM_OUTSB + 1 + FMDIV_BITS) + FMVOL_SFTBIT)
 #define	FREQBASE4096	((double)OPNA_CLOCK / calcrate / 64)
 
