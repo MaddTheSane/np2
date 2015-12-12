@@ -4,8 +4,8 @@
  */
 
 #include "compiler.h"
-#include <math.h>
 #include "opngen.h"
+#include <math.h>
 #include "pccore.h"
 
 
@@ -97,7 +97,7 @@ void opngen_initialize(UINT rate) {
 		char sft;
 		sft = SINTBL_BIT;
 		while(sft < (SINTBL_BIT + 8)) {
-			pom = (double)(1 << sft) * sin(2*PI*i/SIN_ENT);
+			pom = (double)(1 << sft) * sin(2 * M_PI * i / SIN_ENT);
 			opncfg.sintable[i] = (SINT32)pom;
 			sinshift[i] = sft;
 			if (opncfg.sintable[i] >= (1 << (SINTBL_BIT - 1))) {
@@ -109,7 +109,7 @@ void opngen_initialize(UINT rate) {
 			sft++;
 		}
 #else
-		pom = (double)((1 << SINTBL_BIT) - 1) * sin(2*PI*i/SIN_ENT);
+		pom = (double)((1 << SINTBL_BIT) - 1) * sin(2 * M_PI * i / SIN_ENT);
 		opncfg.sintable[i] = (SINT32)pom;
 #endif
 	}

@@ -54,3 +54,10 @@
 #define GWLP_ID				GWL_ID							/*!< Retrieves the identifier of the window */
 #endif
 #endif
+
+#if (_MSC_VER < 1300)
+#if defined(_USE_MATH_DEFINES) && !defined(_MATH_DEFINES_DEFINED)
+#define _MATH_DEFINES_DEFINED
+#define M_PI		3.14159265358979323846
+#endif
+#endif
