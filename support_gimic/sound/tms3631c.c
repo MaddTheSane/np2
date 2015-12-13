@@ -1,7 +1,10 @@
-#include	"compiler.h"
-#include	"sound.h"
-#include	"tms3631.h"
+/**
+ * @file	tms3631c.c
+ * @brief	Implementation of the TMS3631
+ */
 
+#include "compiler.h"
+#include "tms3631.h"
 
 	TMS3631CFG	tms3631cfg;
 
@@ -16,8 +19,8 @@ static const UINT16 tms3631_freqtbl[] = {
 				0x39CB, 0x3D3B, 0x40DF, 0x44BA, 0x48D1, 0x4D25, 0x51BB, 0,0};
 
 
-void tms3631_initialize(UINT rate) {
-
+void tms3631_initialize(UINT rate)
+{
 	UINT	sft;
 
 	ZeroMemory(&tms3631cfg, sizeof(tms3631cfg));
@@ -34,18 +37,20 @@ void tms3631_initialize(UINT rate) {
 	tms3631cfg.ratesft = sft;
 }
 
-void tms3631_setvol(const UINT8 *vol) {
-
-	UINT	i;
-	UINT	j;
-	SINT32	data;
+void tms3631_setvol(const UINT8 *vol)
+{
+	UINT i;
+	UINT j;
+	SINT32 data;
 
 	tms3631cfg.left = (vol[0] & 15) << 5;
 	tms3631cfg.right = (vol[1] & 15) << 5;
 	vol += 2;
-	for (i=0; i<16; i++) {
+	for (i = 0; i < 16; i++)
+	{
 		data = 0;
-		for (j=0; j<4; j++) {
+		for (j = 0; j < 4; j++)
+		{
 			data += (vol[j] & 15) * ((i & (1 << j))?1:-1);
 		}
 		tms3631cfg.feet[i] = data << 5;
@@ -55,18 +60,17 @@ void tms3631_setvol(const UINT8 *vol) {
 
 // ----
 
-void tms3631_reset(TMS3631 tms) {
-
-	ZeroMemory(tms, sizeof(_TMS3631));
+void tms3631_reset(TMS3631 tms)
+{
+	memset(tms, 0, sizeof(*tms));
 }
 
-void tms3631_setkey(TMS3631 tms, REG8 ch, REG8 key) {
-
+void tms3631_setkey(TMS3631 tms, REG8 ch, REG8 key)
+{
 	tms->ch[ch & 7].freq = tms3631_freqtbl[key & 0x3f] >> tms3631cfg.ratesft;
 }
 
-void tms3631_setenable(TMS3631 tms, REG8 enable) {
-
+void tms3631_setenable(TMS3631 tms, REG8 enable)
+{
 	tms->enable = enable;
 }
-
