@@ -6,13 +6,12 @@
 #include "compiler.h"
 #include "opngen.h"
 
-#if defined(OPNGENX86)
-#error use opngen.x86
-#endif
-
-
 extern	OPNCFG	opncfg;
 
+#if defined(OPNGENX86)
+extern char envshift[EVC_ENT];
+extern char sinshift[SIN_ENT];
+#endif	/* defined(OPNGENX86) */
 
 #define	CALCENV(e, c, s)													\
 	(c)->slot[(s)].freq_cnt += (c)->slot[(s)].freq_inc;						\
@@ -44,10 +43,17 @@ extern	OPNCFG	opncfg;
 	(e) = (c)->slot[(s)].totallevel -										\
 					opncfg.envcurve[(c)->slot[(s)].env_cnt >> ENV_BITS];
 
-#define SLOTOUT(s, e, c)													\
-		((opncfg.sintable[(((s).freq_cnt + (c)) >>							\
-							(FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1)] *		\
-				opncfg.envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
+#if defined(OPNGENX86)
+static SINT32 SLOTOUT(SINT32 e, SINT32 c)
+{
+	c = (c >> (FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1);
+	return (opncfg.sintable[c] * opncfg.envtable[e]) >> (sinshift[c] + envshift[e]);
+}
+#else	/* defined(OPNGENX86) */
+#define SLOTOUT(e, c)														\
+	((opncfg.sintable[((c) >> (FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1)]		\
+			* opncfg.envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
+#endif	/* defined(OPNGENX86) */
 
 
 static void calcratechannel(OPNGEN opngen, OPNCH *ch) {
@@ -61,17 +67,16 @@ static void calcratechannel(OPNGEN opngen, OPNCH *ch) {
 
 	/* SLOT 1 */
 	CALCENV(envout, ch, 0);
-	if (envout > 0) {
+	if (envout >= 0) {
 		if (ch->feedback) {
 			/* with self feed back */
 			opout = ch->op1fb;
-			ch->op1fb = SLOTOUT(ch->slot[0], envout,
-											(ch->op1fb >> ch->feedback));
-			opout = (opout + ch->op1fb) / 2;
+			ch->op1fb = SLOTOUT(envout, ch->slot[0].freq_cnt + (ch->op1fb >> ch->feedback));
+			opout = (opout + ch->op1fb) >> 1;
 		}
 		else {
 			/* without self feed back */
-			opout = SLOTOUT(ch->slot[0], envout, 0);
+			opout = SLOTOUT(envout, ch->slot[0].freq_cnt);
 		}
 		/* output slot1 */
 		if (!ch->connect1) {
@@ -83,18 +88,18 @@ static void calcratechannel(OPNGEN opngen, OPNCH *ch) {
 	}
 	/* SLOT 2 */
 	CALCENV(envout, ch, 1);
-	if (envout > 0) {
-		*ch->connect2 += SLOTOUT(ch->slot[1], envout, opngen->feedback2);
+	if (envout >= 0) {
+		*ch->connect2 += SLOTOUT(envout, ch->slot[1].freq_cnt + opngen->feedback2);
 	}
 	/* SLOT 3 */
 	CALCENV(envout, ch, 2);
-	if (envout > 0) {
-		*ch->connect3 += SLOTOUT(ch->slot[2], envout, opngen->feedback3);
+	if (envout >= 0) {
+		*ch->connect3 += SLOTOUT(envout, ch->slot[2].freq_cnt + opngen->feedback3);
 	}
 	/* SLOT 4 */
 	CALCENV(envout, ch, 3);
-	if (envout > 0) {
-		*ch->connect4 += SLOTOUT(ch->slot[3], envout, opngen->feedback4);
+	if (envout >= 0) {
+		*ch->connect4 += SLOTOUT(envout, ch->slot[3].freq_cnt + opngen->feedback4);
 	}
 }
 
@@ -111,9 +116,9 @@ void SOUNDCALL opngen_getpcm(OPNGEN opngen, SINT32 *pcm, UINT count) {
 	}
 	fm = opngen->opnch;
 	do {
-		samp_l = opngen->outdl * (opngen->calcremain * -1);
-		samp_r = opngen->outdr * (opngen->calcremain * -1);
-		opngen->calcremain += FMDIV_ENT;
+		samp_l = opngen->outdl * opngen->calcremain;
+		samp_r = opngen->outdr * opngen->calcremain;
+		opngen->calcremain = FMDIV_ENT - opngen->calcremain;
 		while(1) {
 			opngen->outdc = 0;
 			opngen->outdl = 0;
@@ -130,25 +135,30 @@ void SOUNDCALL opngen_getpcm(OPNGEN opngen, SINT32 *pcm, UINT count) {
 			opngen->outdl >>= FMVOL_SFTBIT;
 			opngen->outdr >>= FMVOL_SFTBIT;
 			if (opngen->calcremain > opncfg.calc1024) {
+				opngen->calcremain -= opncfg.calc1024;
 				samp_l += opngen->outdl * opncfg.calc1024;
 				samp_r += opngen->outdr * opncfg.calc1024;
-				opngen->calcremain -= opncfg.calc1024;
 			}
 			else {
 				break;
 			}
 		}
 		samp_l += opngen->outdl * opngen->calcremain;
+		samp_r += opngen->outdr * opngen->calcremain;
+#if defined(OPNGENX86)
+		pcm[0] += (SINT32)(((SINT64)samp_l * (SINT32)opncfg.fmvol) >> 32);
+		pcm[1] += (SINT32)(((SINT64)samp_r * (SINT32)opncfg.fmvol) >> 32);
+#else	/* defined(OPNGENX86) */
 		samp_l >>= 8;
 		samp_l *= opncfg.fmvol;
 		samp_l >>= (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8);
 		pcm[0] += samp_l;
-		samp_r += opngen->outdr * opngen->calcremain;
 		samp_r >>= 8;
 		samp_r *= opncfg.fmvol;
 		samp_r >>= (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8);
 		pcm[1] += samp_r;
-		opngen->calcremain -= opncfg.calc1024;
+#endif	/* defined(OPNGENX86) */
+		opngen->calcremain = opncfg.calc1024 - opngen->calcremain;
 		pcm += 2;
 	} while(--count);
 	opngen->playing = playing;
@@ -161,11 +171,15 @@ void SOUNDCALL opngen_getpcmvr(OPNGEN opngen, SINT32 *pcm, UINT count) {
 	SINT32	samp_l;
 	SINT32	samp_r;
 
+	if ((!opngen->playing) || (!count)) {
+		return;
+	}
+
 	fm = opngen->opnch;
-	while(count--) {
-		samp_l = opngen->outdl * (opngen->calcremain * -1);
-		samp_r = opngen->outdr * (opngen->calcremain * -1);
-		opngen->calcremain += FMDIV_ENT;
+	do {
+		samp_l = opngen->outdl * opngen->calcremain;
+		samp_r = opngen->outdr * opngen->calcremain;
+		opngen->calcremain = FMDIV_ENT - opngen->calcremain;
 		while(1) {
 			opngen->outdc = 0;
 			opngen->outdl = 0;
@@ -176,10 +190,10 @@ void SOUNDCALL opngen_getpcmvr(OPNGEN opngen, SINT32 *pcm, UINT count) {
 			if (opncfg.vr_en) {
 				SINT32 tmpl;
 				SINT32 tmpr;
-				tmpl = (opngen->outdl >> 5) * opncfg.vr_l;
-				tmpr = (opngen->outdr >> 5) * opncfg.vr_r;
-				opngen->outdl += tmpr;
-				opngen->outdr += tmpl;
+				tmpl = opngen->outdl * opncfg.vr_l;
+				tmpr = opngen->outdr * opncfg.vr_r;
+				opngen->outdl += (tmpr >> 5) + (tmpl >> 7);
+				opngen->outdr += (tmpl >> 5) + (tmpr >> 7);
 			}
 			opngen->outdl += opngen->outdc;
 			opngen->outdr += opngen->outdc;
@@ -195,17 +209,22 @@ void SOUNDCALL opngen_getpcmvr(OPNGEN opngen, SINT32 *pcm, UINT count) {
 			}
 		}
 		samp_l += opngen->outdl * opngen->calcremain;
+		samp_r += opngen->outdr * opngen->calcremain;
+#if defined(OPNGENX86)
+		pcm[0] += (SINT32)(((SINT64)samp_l * (SINT32)opncfg.fmvol) >> 32);
+		pcm[1] += (SINT32)(((SINT64)samp_r * (SINT32)opncfg.fmvol) >> 32);
+#else	/* defined(OPNGENX86) */
 		samp_l >>= 8;
 		samp_l *= opncfg.fmvol;
 		samp_l >>= (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8);
 		pcm[0] += samp_l;
-		samp_r += opngen->outdr * opngen->calcremain;
 		samp_r >>= 8;
 		samp_r *= opncfg.fmvol;
 		samp_r >>= (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8);
 		pcm[1] += samp_r;
-		opngen->calcremain -= opncfg.calc1024;
+#endif	/* defined(OPNGENX86) */
+		opngen->calcremain = opncfg.calc1024 - opngen->calcremain;
 		pcm += 2;
-	}
+	} while(--count);
 }
 
