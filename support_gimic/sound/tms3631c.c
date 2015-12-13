@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "tms3631.h"
+#include <math.h>
 
 	TMS3631CFG	tms3631cfg;
 
@@ -21,20 +22,20 @@ static const UINT16 tms3631_freqtbl[] = {
 
 void tms3631_initialize(UINT rate)
 {
-	UINT	sft;
+	UINT i, j;
+	double f;
 
 	ZeroMemory(&tms3631cfg, sizeof(tms3631cfg));
-	sft = 0;
-	if (rate == 11025) {
-		sft = 0;
+
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 12; j++)
+		{
+			f = 440.0 * pow(2.0, (i - 4.0) + (j / 12.0));
+			f = f * TMS3631_MUL * (1 << (TMS3631_FREQ + 1)) / rate;
+			tms3631cfg.freqtbl[(i * 16) + j + 1] = (UINT32)floor(f + 0.5);
+		}
 	}
-	else if (rate == 22050) {
-		sft = 1;
-	}
-	else if (rate == 44100) {
-		sft = 2;
-	}
-	tms3631cfg.ratesft = sft;
 }
 
 void tms3631_setvol(const UINT8 *vol)
@@ -51,7 +52,7 @@ void tms3631_setvol(const UINT8 *vol)
 		data = 0;
 		for (j = 0; j < 4; j++)
 		{
-			data += (vol[j] & 15) * ((i & (1 << j))?1:-1);
+			data += (vol[j] & 15) * ((i & (1 << j)) ? 1 : -1);
 		}
 		tms3631cfg.feet[i] = data << 5;
 	}
@@ -67,7 +68,7 @@ void tms3631_reset(TMS3631 tms)
 
 void tms3631_setkey(TMS3631 tms, REG8 ch, REG8 key)
 {
-	tms->ch[ch & 7].freq = tms3631_freqtbl[key & 0x3f] >> tms3631cfg.ratesft;
+	tms->ch[ch & 7].freq = tms3631cfg.freqtbl[key & 0x3f];
 }
 
 void tms3631_setenable(TMS3631 tms, REG8 enable)

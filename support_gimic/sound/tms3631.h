@@ -27,10 +27,10 @@ typedef struct
 
 typedef struct
 {
-	UINT	ratesft;
 	SINT32	left;
 	SINT32	right;
 	SINT32	feet[16];
+	UINT32	freqtbl[64];
 } TMS3631CFG;
 
 #ifdef __cplusplus
