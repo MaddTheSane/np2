@@ -132,8 +132,10 @@ void opna_bind(POPNA opna)
 	opna->opngen.opnch[2].extop = opna->s.reg[0x27] & 0xc0;
 	restore(opna);
 
-	sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
-
+	if (cCaps & OPNA_HAS_PSG)
+	{
+		sound_streamregist(&opna->psg, (SOUNDCB)psggen_getpcm);
+	}
 	if (cCaps & OPNA_HAS_VR)
 	{
 		sound_streamregist(&opna->opngen, (SOUNDCB)opngen_getpcmvr);
