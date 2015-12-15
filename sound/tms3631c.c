@@ -20,7 +20,7 @@ void tms3631_initialize(UINT rate)
 	{
 		for (j = 0; j < 12; j++)
 		{
-			f = 440.0 * pow(2.0, (i - 4.0) + (j / 12.0));
+			f = 440.0 * pow(2.0, (i - 3.0) + ((j - 9.0) / 12.0));
 			f = f * TMS3631_MUL * (1 << (TMS3631_FREQ + 1)) / rate;
 			tms3631cfg.freqtbl[(i * 16) + j + 1] = (UINT32)floor(f + 0.5);
 		}
