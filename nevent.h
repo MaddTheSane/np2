@@ -5,10 +5,16 @@
 
 #pragma once
 
-enum {
-	NEVENT_MAXEVENTS	= 32,
+enum
+{
 	NEVENT_MAXCLOCK		= 0x400000,
+};
 
+/**
+ * NEvent ID
+ */
+enum tagNEventId
+{
 	NEVENT_FLAMES		= 0,
 	NEVENT_ITIMER		= 1,
 	NEVENT_BEEP			= 2,
@@ -37,7 +43,13 @@ enum {
 	NEVENT_86PCM		= 25,
 	NEVENT_SASIIO		= 26,
 	NEVENT_SCSIIO		= 27,
+	/* ---- */
+	NEVENT_MAXEVENTS	= 32
+};
+typedef enum tagNEventId NEVENTID;
 
+enum
+{
 	NEVENT_ENABLE		= 0x0001,
 	NEVENT_SETEVENT		= 0x0002,
 	NEVENT_WAIT			= 0x0004
@@ -68,8 +80,8 @@ struct _neventitem {
 typedef struct {
 	UINT		readyevents;
 	UINT		waitevents;
-	UINT		level[NEVENT_MAXEVENTS];
-	UINT		waitevent[NEVENT_MAXEVENTS];
+	NEVENTID	level[NEVENT_MAXEVENTS];
+	NEVENTID	waitevent[NEVENT_MAXEVENTS];
 	_NEVENTITEM	item[NEVENT_MAXEVENTS];
 } _NEVENT, *NEVENT;
 
@@ -93,18 +105,18 @@ void nevent_progress(void);
 void nevent_execule(void);
 
 // イベントの追加
-void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, NEVENTPOSITION absolute);
-void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, NEVENTPOSITION absolute);
+void nevent_set(NEVENTID id, SINT32 eventclock, NEVENTCB proc, NEVENTPOSITION absolute);
+void nevent_setbyms(NEVENTID id, SINT32 ms, NEVENTCB proc, NEVENTPOSITION absolute);
 
 // イベントの削除
-void nevent_reset(UINT id);
-void nevent_waitreset(UINT id);
+void nevent_reset(NEVENTID id);
+void nevent_waitreset(NEVENTID id);
 
 // イベントの動作状態取得
-BOOL nevent_iswork(UINT id);
+BOOL nevent_iswork(NEVENTID id);
 
 // イベント実行までのクロック数の取得
-SINT32 nevent_getremain(UINT id);
+SINT32 nevent_getremain(NEVENTID id);
 
 // NEVENTの強制脱出
 void nevent_forceexit(void);
