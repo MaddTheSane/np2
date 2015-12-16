@@ -9,6 +9,7 @@
  */
 
 #include "targetver.h"
+#define _USE_MATH_DEFINES
 #include <windows.h>
 #if !defined(__GNUC__)
 #include <tchar.h>

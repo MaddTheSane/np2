@@ -4,8 +4,8 @@
  */
 
 #include "compiler.h"
-#include <math.h>
 #include "amd98.h"
+#include <math.h>
 #include "keystat.h"
 #include "iocore.h"
 #include "cbuscore.h"
@@ -78,7 +78,7 @@ static void pcmmake1(PMIXDAT *dat, UINT rate, int vol, double hz, double env)
 	UINT	size;
 	SINT16	*ptr;
 
-	x = 44100.0 * 2.0 * PI / ((double)rate * hz);
+	x = 44100.0 * 2.0 * M_PI / ((double)rate * hz);
 	y = 44100.0 / 256.0 / (double)rate;
 	slast = 0.0;
 	for (i = 0; i < rate; i++)
@@ -124,7 +124,7 @@ static void pcmmake2(PMIXDAT *dat, UINT rate, int vol, double hz, double env, do
 	UINT	size;
 	SINT16	*ptr;
 
-	x = 2.0 * PI * hz / (double)rate;
+	x = 2.0 * M_PI * hz / (double)rate;
 	y = 44100.0 / 256.0 / (double)rate;
 	p = 0.0;
 	slast = 0.0;
