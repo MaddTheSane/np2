@@ -28,8 +28,6 @@ enum
 enum
 {
 	KEYDISP_CHMAX		= 48,
-	KEYDISP_FMCHMAX		= 6,
-	KEYDISP_PSGMAX		= 3
 };
 
 enum
@@ -79,10 +77,10 @@ void keydisp_getsize(int *width, int *height);
 BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 
 void keydisp_reset(void);
-void keydisp_bindfm(const UINT8* pcRegister, UINT nChannels);
-void keydisp_bindpsg(const UINT8* pcRegister);
-void keydisp_fmkeyon(const UINT8* pcRegister, REG8 nChannelNum, UINT8 value);
-void keydisp_psg(const UINT8* pcRegister, UINT nAddress);
+void keydisp_bindopna(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock);
+void keydisp_bindpsg(const UINT8 *pcRegister, UINT nBaseClock);
+void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 cData);
+void keydisp_psg(const UINT8 *pcRegister, UINT nAddress);
 void keydisp_midi(const UINT8 *msg);
 
 #ifdef __cplusplus
@@ -93,9 +91,9 @@ void keydisp_midi(const UINT8 *msg);
 
 #define keydisp_draw(a)
 #define keydisp_reset()
-#define keydisp_bindfm(r, c)
-#define keydisp_bindpsg(r)
-#define keydisp_fmkeyon(r, c, v)
+#define keydisp_bindopna(r, c, b)
+#define keydisp_bindpsg(r, b)
+#define keydisp_opnakeyon(r, d)
 #define keydisp_psg(r, a)
 #define	keydisp_midi(a)
 
