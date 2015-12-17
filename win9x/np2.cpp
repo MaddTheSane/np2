@@ -71,6 +71,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 #endif
 		UINT8		np2break = 0;									// ver0.30
 		BOOL		winui_en;
+		UINT8		g_scrnmode;
 
 		NP2OSCFG	np2oscfg = {
 						OEMTEXT(PROJECTNAME) OEMTEXT(PROJECTSUBNAME),
@@ -100,7 +101,6 @@ static	UINT		framemax = 1;
 static	UINT8		np2stopemulate = 0;
 static	int			np2opening = 1;
 static	int			np2quitmsg = 0;
-static	UINT8		scrnmode;
 static	WINLOCEX	smwlex;
 static	HMODULE		s_hModResource;
 
@@ -202,7 +202,7 @@ static void changescreen(UINT8 newmode) {
 	UINT8		renewal;
 	WINLOCEX	wlex;
 
-	change = scrnmode ^ newmode;
+	change = g_scrnmode ^ newmode;
 	renewal = (change & SCRNMODE_FULLSCREEN);
 	wlex = NULL;
 	if (newmode & SCRNMODE_FULLSCREEN) {
@@ -226,10 +226,10 @@ static void changescreen(UINT8 newmode) {
 		mousemng_disable(MOUSEPROC_WINUI);
 		scrnmng_destroy();
 		if (scrnmng_create(newmode) == SUCCESS) {
-			scrnmode = newmode;
+			g_scrnmode = newmode;
 		}
 		else {
-			if (scrnmng_create(scrnmode) != SUCCESS) {
+			if (scrnmng_create(g_scrnmode) != SUCCESS) {
 				PostQuitMessage(0);
 				return;
 			}
@@ -253,7 +253,7 @@ static void changescreen(UINT8 newmode) {
 		soundmng_play();
 	}
 	else {
-		scrnmode = newmode;
+		g_scrnmode = newmode;
 	}
 }
 
@@ -391,6 +391,7 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 	}
 	hMenu = CreatePopupMenu();
 	menu_addmenubar(hMenu, mainmenu);
+	xmenu_update(hMenu);
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);
@@ -586,73 +587,70 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 #endif
 
 		case IDM_WINDOW:
-			changescreen(scrnmode & (~SCRNMODE_FULLSCREEN));
+			changescreen(g_scrnmode & (~SCRNMODE_FULLSCREEN));
 			break;
 
 		case IDM_FULLSCREEN:
-			changescreen(scrnmode | SCRNMODE_FULLSCREEN);
+			changescreen(g_scrnmode | SCRNMODE_FULLSCREEN);
 			break;
 
 		case IDM_ROLNORMAL:
-			xmenu_setroltate(0);
-			changescreen(scrnmode & (~SCRNMODE_ROTATEMASK));
+			changescreen(g_scrnmode & (~SCRNMODE_ROTATEMASK));
 			break;
 
 		case IDM_ROLLEFT:
-			xmenu_setroltate(1);
-			changescreen((scrnmode & (~SCRNMODE_ROTATEMASK)) |
-														SCRNMODE_ROTATELEFT);
+			changescreen((g_scrnmode & (~SCRNMODE_ROTATEMASK)) | SCRNMODE_ROTATELEFT);
 			break;
 
 		case IDM_ROLRIGHT:
-			xmenu_setroltate(2);
-			changescreen((scrnmode & (~SCRNMODE_ROTATEMASK)) |
-														SCRNMODE_ROTATERIGHT);
+			changescreen((g_scrnmode & (~SCRNMODE_ROTATEMASK)) | SCRNMODE_ROTATERIGHT);
 			break;
 
 		case IDM_DISPSYNC:
-			xmenu_setdispmode(np2cfg.DISPSYNC ^ 1);
+			np2cfg.DISPSYNC = !np2cfg.DISPSYNC;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_RASTER:
-			xmenu_setraster(np2cfg.RASTER ^ 1);
-			if (np2cfg.RASTER) {
-				changescreen(scrnmode | SCRNMODE_HIGHCOLOR);
+			np2cfg.RASTER = !np2cfg.RASTER;
+			if (np2cfg.RASTER)
+			{
+				changescreen(g_scrnmode | SCRNMODE_HIGHCOLOR);
 			}
-			else {
-				changescreen(scrnmode & (~SCRNMODE_HIGHCOLOR));
+			else
+			{
+				changescreen(g_scrnmode & (~SCRNMODE_HIGHCOLOR));
 			}
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_NOWAIT:
-			xmenu_setwaitflg(np2oscfg.NOWAIT ^ 1);
+			np2oscfg.NOWAIT = !np2oscfg.NOWAIT;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_AUTOFPS:
-			xmenu_setframe(0);
+			np2oscfg.DRAW_SKIP = 0;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_60FPS:
-			xmenu_setframe(1);
+			np2oscfg.DRAW_SKIP = 1;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_30FPS:
-			xmenu_setframe(2);
+			np2oscfg.DRAW_SKIP = 2;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_20FPS:
-			xmenu_setframe(3);
+			np2oscfg.DRAW_SKIP = 3;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_15FPS:
-			xmenu_setframe(4);
+			np2oscfg.DRAW_SKIP = 4;
 			update |= SYS_UPDATECFG;
 			break;
 
@@ -663,219 +661,219 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_KEY:
-			xmenu_setkey(0);
+			np2cfg.KEY_MODE = 0;
 			keystat_resetjoykey();
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_JOY1:
-			xmenu_setkey(1);
+			np2cfg.KEY_MODE = 1;
 			keystat_resetjoykey();
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_JOY2:
-			xmenu_setkey(2);
+			np2cfg.KEY_MODE = 2;
 			keystat_resetjoykey();
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_XSHIFT:
-			xmenu_setxshift(np2cfg.XSHIFT ^ 1);
+			np2cfg.XSHIFT ^= 1;
 			keystat_forcerelease(0x70);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_XCTRL:
-			xmenu_setxshift(np2cfg.XSHIFT ^ 2);
+			np2cfg.XSHIFT ^= 2;
 			keystat_forcerelease(0x74);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_XGRPH:
-			xmenu_setxshift(np2cfg.XSHIFT ^ 4);
+			np2cfg.XSHIFT ^= 4;
 			keystat_forcerelease(0x73);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_F12MOUSE:
-			xmenu_setf12copy(0);
+			np2oscfg.F12COPY = 0;
 			winkbd_resetf12();
 			winkbd_setf12(0);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COPY:
-			xmenu_setf12copy(1);
+			np2oscfg.F12COPY = 1;
 			winkbd_resetf12();
 			winkbd_setf12(1);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12STOP:
-			xmenu_setf12copy(2);
+			np2oscfg.F12COPY = 2;
 			winkbd_resetf12();
 			winkbd_setf12(2);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12EQU:
-			xmenu_setf12copy(3);
+			np2oscfg.F12COPY = 3;
 			winkbd_resetf12();
 			winkbd_setf12(3);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_F12COMMA:
-			xmenu_setf12copy(4);
+			np2oscfg.F12COPY = 4;
 			winkbd_resetf12();
 			winkbd_setf12(4);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_USERKEY1:
-			xmenu_setf12copy(5);
+			np2oscfg.F12COPY = 5;
 			winkbd_resetf12();
 			winkbd_setf12(5);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_USERKEY2:
-			xmenu_setf12copy(6);
+			np2oscfg.F12COPY = 6;
 			winkbd_resetf12();
 			winkbd_setf12(6);
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_BEEPOFF:
-			xmenu_setbeepvol(0);
+			np2cfg.BEEP_VOL = 0;
 			beep_setvol(0);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_BEEPLOW:
-			xmenu_setbeepvol(1);
+			np2cfg.BEEP_VOL = 1;
 			beep_setvol(1);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_BEEPMID:
-			xmenu_setbeepvol(2);
+			np2cfg.BEEP_VOL = 2;
 			beep_setvol(2);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_BEEPHIGH:
-			xmenu_setbeepvol(3);
+			np2cfg.BEEP_VOL = 3;
 			beep_setvol(3);
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_NOSOUND:
-			xmenu_setsound(0x00);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x00;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PC9801_14:
-			xmenu_setsound(0x01);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x01;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PC9801_26K:
-			xmenu_setsound(0x02);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x02;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PC9801_86:
-			xmenu_setsound(0x04);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x04;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PC9801_26_86:
-			xmenu_setsound(0x06);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x06;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PC9801_86_CB:
-			xmenu_setsound(0x14);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x14;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PC9801_118:
-			xmenu_setsound(0x08);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x08;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_SPEAKBOARD:
-			xmenu_setsound(0x20);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x20;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_SPARKBOARD:
-			xmenu_setsound(0x40);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x40;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_AMD98:
-			xmenu_setsound(0x80);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x80;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 #if defined(SUPPORT_PX)
 		case IDM_PX1:
-			xmenu_setsound(0x30);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x30;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
 		case IDM_PX2:
-			xmenu_setsound(0x50);
-			update |= SYS_UPDATECFG;
+			np2cfg.SOUND_SW = 0x50;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 #endif	// defined(SUPPORT_PX)
 
 		case IDM_JASTSOUND:
-			xmenu_setjastsound(np2oscfg.jastsnd ^ 1);
+			np2oscfg.jastsnd = !np2oscfg.jastsnd;
 			update |= SYS_UPDATEOSCFG;
 			break;
 
 		case IDM_SEEKSND:
-			xmenu_setmotorflg(np2cfg.MOTOR ^ 1);
+			np2cfg.MOTOR = !np2cfg.MOTOR;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_MEM640:
-			xmenu_setextmem(0);
-			update |= SYS_UPDATECFG;
+			np2cfg.EXTMEM = 0;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
 		case IDM_MEM16:
-			xmenu_setextmem(1);
-			update |= SYS_UPDATECFG;
+			np2cfg.EXTMEM = 1;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
 		case IDM_MEM36:
-			xmenu_setextmem(3);
-			update |= SYS_UPDATECFG;
+			np2cfg.EXTMEM = 3;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
 		case IDM_MEM76:
-			xmenu_setextmem(7);
-			update |= SYS_UPDATECFG;
+			np2cfg.EXTMEM = 7;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
 		case IDM_MEM116:
-			xmenu_setextmem(11);
-			update |= SYS_UPDATECFG;
+			np2cfg.EXTMEM = 11;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
 		case IDM_MEM136:
-			xmenu_setextmem(13);
-			update |= SYS_UPDATECFG;
+			np2cfg.EXTMEM = 13;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
 		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
-			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+			np2oscfg.MOUSE_SW = !np2oscfg.MOUSE_SW;
 			update |= SYS_UPDATECFG;
 			break;
 
@@ -909,6 +907,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			dialog_writebmp(hWnd);
 			winuileave();
 			break;
+
 #if defined(SUPPORT_S98)
 		case IDM_S98LOGGING:
 			winuienter();
@@ -916,6 +915,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 #endif
+
 #if defined(SUPPORT_WAVEREC)
 		case IDM_WAVEREC:
 			winuienter();
@@ -923,15 +923,6 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 #endif
-		case IDM_DISPCLOCK:
-			xmenu_setdispclk(np2oscfg.DISPCLK ^ 1);
-			update |= SYS_UPDATECFG;
-			break;
-
-		case IDM_DISPFRAME:
-			xmenu_setdispclk(np2oscfg.DISPCLK ^ 2);
-			update |= SYS_UPDATECFG;
-			break;
 
 		case IDM_CALENDAR:
 			winuienter();
@@ -941,27 +932,41 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_ALTENTER:
-			xmenu_setshortcut(np2oscfg.shortcut ^ 1);
+			np2oscfg.shortcut ^= 1;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_ALTF4:
-			xmenu_setshortcut(np2oscfg.shortcut ^ 2);
+			np2oscfg.shortcut ^= 2;
 			update |= SYS_UPDATECFG;
 			break;
 
+		case IDM_DISPCLOCK:
+			np2oscfg.DISPCLK ^= 1;
+			update |= SYS_UPDATECFG;
+			sysmng_workclockrenewal();
+			sysmng_updatecaption(3);
+			break;
+
+		case IDM_DISPFRAME:
+			np2oscfg.DISPCLK ^= 2;
+			update |= SYS_UPDATECFG;
+			sysmng_workclockrenewal();
+			sysmng_updatecaption(3);
+			break;
+
 		case IDM_JOYX:
-			xmenu_setbtnmode(np2cfg.BTN_MODE ^ 1);
+			np2cfg.BTN_MODE = !np2cfg.BTN_MODE;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_RAPID:
-			xmenu_setbtnrapid(np2cfg.BTN_RAPID ^ 1);
+			np2cfg.BTN_RAPID = !np2cfg.BTN_RAPID;
 			update |= SYS_UPDATECFG;
 			break;
 
 		case IDM_MSRAPID:
-			xmenu_setmsrapid(np2cfg.MOUSERAPID ^ 1);
+			np2cfg.MOUSERAPID = !np2cfg.MOUSERAPID;
 			update |= SYS_UPDATECFG;
 			break;
 
@@ -970,8 +975,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_HELP:
-			ShellExecute(hWnd, NULL, file_getcd(np2help),
-									NULL, NULL, SW_SHOWNORMAL);
+			ShellExecute(hWnd, NULL, file_getcd(np2help), NULL, NULL, SW_SHOWNORMAL);
 			break;
 
 		case IDM_ABOUT:
@@ -982,14 +986,14 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		default:
 #if defined(SUPPORT_STATSAVE)
-			if ((uID >= IDM_FLAGSAVE) &&
-				(uID < (IDM_FLAGSAVE + SUPPORT_STATSAVE))) {
+			if ((uID >= IDM_FLAGSAVE) && (uID < (IDM_FLAGSAVE + SUPPORT_STATSAVE)))
+			{
 				OEMCHAR ext[4];
 				OEMSPRINTF(ext, np2flagext, uID - IDM_FLAGSAVE);
 				flagsave(ext);
 			}
-			else if ((uID >= IDM_FLAGLOAD) &&
-				(uID < (IDM_FLAGLOAD + SUPPORT_STATSAVE))) {
+			else if ((uID >= IDM_FLAGLOAD) && (uID < (IDM_FLAGLOAD + SUPPORT_STATSAVE)))
+			{
 				OEMCHAR ext[4];
 				OEMSPRINTF(ext, np2flagext, uID - IDM_FLAGLOAD);
 				flagload(hWnd, ext, _T("Status Load"), TRUE);
@@ -1023,7 +1027,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			update = 0;
 			switch(wParam) {
 				case IDM_TOOLWIN:
-					sysmenu_settoolwin(np2oscfg.toolwin ^ 1);
+					np2oscfg.toolwin = !np2oscfg.toolwin;
 					if (np2oscfg.toolwin) {
 						toolwin_create(g_hInstance);
 					}
@@ -1035,7 +1039,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 #if defined(SUPPORT_KEYDISP)
 				case IDM_KEYDISP:
-					sysmenu_setkeydisp(np2oscfg.keydisp ^ 1);
+					np2oscfg.keydisp = !np2oscfg.keydisp;
 					if (np2oscfg.keydisp) {
 						kdispwin_create(g_hInstance);
 					}
@@ -1066,17 +1070,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					break;
 
 				case IDM_SNAPENABLE:
-					sysmenu_setwinsnap(np2oscfg.WINSNAP ^ 1);
+					np2oscfg.WINSNAP = !np2oscfg.WINSNAP;
 					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BACKGROUND:
-					sysmenu_setbackground(np2oscfg.background ^ 1);
+					np2oscfg.background ^= 1;
 					update |= SYS_UPDATEOSCFG;
 					break;
 
 				case IDM_BGSOUND:
-					sysmenu_setbgsound(np2oscfg.background ^ 2);
+					np2oscfg.background ^= 2;
 					update |= SYS_UPDATEOSCFG;
 					break;
 
@@ -1097,7 +1101,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if ((!scrnmng_isfullscreen()) &&
 						!(GetWindowLong(g_hWndMain, GWL_STYLE) & WS_MINIMIZE))
 					{
-						sysmenu_setscrnmul((UINT8)(wParam - IDM_SCRNMUL));
 						scrnmng_setmultiple((int)(wParam - IDM_SCRNMUL));
 					}
 					break;
@@ -1204,6 +1207,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_ENTERMENULOOP:
 			winuienter();
+			sysmenu_update(GetSystemMenu(hWnd, FALSE));
+			xmenu_update(GetMenu(hWnd));
 			if (scrnmng_isfullscreen()) {
 				DrawMenuBar(hWnd);
 			}
@@ -1247,7 +1252,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			if ((wParam == VK_F12) && (!np2oscfg.F12COPY)) {
 				mousemng_toggle(MOUSEPROC_SYSTEM);
-				xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+				np2oscfg.MOUSE_SW = !np2oscfg.MOUSE_SW;
 				sysmng_update(SYS_UPDATECFG);
 			}
 			else {
@@ -1267,7 +1272,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_SYSKEYDOWN:
 			if (lParam & 0x20000000) {								// ver0.30
 				if ((np2oscfg.shortcut & 1) && (wParam == VK_RETURN)) {
-					changescreen(scrnmode ^ SCRNMODE_FULLSCREEN);
+					changescreen(g_scrnmode ^ SCRNMODE_FULLSCREEN);
 					break;
 				}
 				if ((np2oscfg.shortcut & 2) && (wParam == VK_F4)) {
@@ -1322,7 +1327,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_MBUTTONDOWN:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
-			xmenu_setmouse(np2oscfg.MOUSE_SW ^ 1);
+			np2oscfg.MOUSE_SW = !np2oscfg.MOUSE_SW;
 			sysmng_update(SYS_UPDATECFG);
 			break;
 
@@ -1579,28 +1584,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	g_hWndMain = hWnd;
 	scrnmng_initialize();
 
-	xmenu_setroltate(0);
-	xmenu_setdispmode(np2cfg.DISPSYNC);
-	xmenu_setraster(np2cfg.RASTER);
-	xmenu_setwaitflg(np2oscfg.NOWAIT);
-	xmenu_setframe(np2oscfg.DRAW_SKIP);
-
-	xmenu_setkey(0);
-	xmenu_setxshift(0);
-	xmenu_setf12copy(np2oscfg.F12COPY);
-	xmenu_setbeepvol(np2cfg.BEEP_VOL);
-	xmenu_setsound(np2cfg.SOUND_SW);
-	xmenu_setjastsound(np2oscfg.jastsnd);
-	xmenu_setmotorflg(np2cfg.MOTOR);
-	xmenu_setextmem(np2cfg.EXTMEM);
-	xmenu_setmouse(np2oscfg.MOUSE_SW);
-
-	xmenu_setshortcut(np2oscfg.shortcut);
-	xmenu_setdispclk(np2oscfg.DISPCLK);
-	xmenu_setbtnmode(np2cfg.BTN_MODE);
-	xmenu_setbtnrapid(np2cfg.BTN_RAPID);
-	xmenu_setmsrapid(np2cfg.MOUSERAPID);
-
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
@@ -1608,32 +1591,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	tick = GetTickCount();
 #endif
 
-	sysmenu_initialize();
-	xmenu_initialize();
+	sysmenu_initialize(GetSystemMenu(hWnd, FALSE));
+
+	HMENU hMenu = GetMenu(hWnd);
+	xmenu_initialize(hMenu);
+	xmenu_update(hMenu);
+	if (file_attr_c(np2help) == -1)								// ver0.30
+	{
+		EnableMenuItem(hMenu, IDM_HELP, MF_GRAYED);
+	}
 	DrawMenuBar(hWnd);
 
-	if (file_attr_c(np2help) == (short)-1) {						// ver0.30
-		EnableMenuItem(GetMenu(hWnd), IDM_HELP, MF_GRAYED);
-	}
-
-	sysmenu_settoolwin(np2oscfg.toolwin);
-	sysmenu_setkeydisp(np2oscfg.keydisp);
-	sysmenu_setwinsnap(np2oscfg.WINSNAP);
-	sysmenu_setbackground(np2oscfg.background);
-	sysmenu_setbgsound(np2oscfg.background);
-	sysmenu_setscrnmul(8);
-
-	scrnmode = 0;
+	g_scrnmode = 0;
 	if (Np2Arg::GetInstance()->fullscreen())
 	{
-		scrnmode |= SCRNMODE_FULLSCREEN;
+		g_scrnmode |= SCRNMODE_FULLSCREEN;
 	}
 	if (np2cfg.RASTER) {
-		scrnmode |= SCRNMODE_HIGHCOLOR;
+		g_scrnmode |= SCRNMODE_HIGHCOLOR;
 	}
-	if (scrnmng_create(scrnmode) != SUCCESS) {
-		scrnmode ^= SCRNMODE_FULLSCREEN;
-		if (scrnmng_create(scrnmode) != SUCCESS) {
+	if (scrnmng_create(g_scrnmode) != SUCCESS) {
+		g_scrnmode ^= SCRNMODE_FULLSCREEN;
+		if (scrnmng_create(g_scrnmode) != SUCCESS) {
 			messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW), MB_OK | MB_ICONSTOP);
 			unloadextinst();
 			TRACETERM();
@@ -1705,7 +1684,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		}
 	}
 
-	if (!(scrnmode & SCRNMODE_FULLSCREEN)) {
+	if (!(g_scrnmode & SCRNMODE_FULLSCREEN)) {
 		if (np2oscfg.toolwin) {
 			toolwin_create(g_hInstance);
 		}
@@ -1713,6 +1692,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			kdispwin_create(g_hInstance);
 		}
 	}
+
+	sysmng_workclockreset();
+	sysmng_updatecaption(3);
 
 	while(1) {
 		if (!np2stopemulate) {
