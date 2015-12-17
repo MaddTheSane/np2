@@ -11,18 +11,18 @@
 #include "pcm86.h"
 #include "cs4231.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #if defined(SUPPORT_PX)
 #define OPNA_MAX	5
 #else	/* defined(SUPPORT_PX) */
 #define OPNA_MAX	2
 #endif	/* defined(SUPPORT_PX) */
 
-extern	UINT32		g_usesound;
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+extern	SOUNDID		g_nSoundID;
 extern	_OPNA		g_opna[OPNA_MAX];
 extern	_FMTIMER	g_fmtimer;
 extern	_PCM86		pcm86;
@@ -35,7 +35,7 @@ void fmboard_extenable(REG8 enable);
 
 void fmboard_construct(void);
 void fmboard_destruct(void);
-void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
+void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID);
 void fmboard_bind(void);
 
 #ifdef __cplusplus

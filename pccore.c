@@ -82,7 +82,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 
 	PCCORE	pccore = {	PCBASECLOCK25, PCBASEMULTIPLE,
 						0, PCMODEL_VX, 0, 0, {0x3e, 0x73, 0x7b}, 0,
-						0, 0,
+						SOUNDID_NONE, 0,
 						PCBASECLOCK25 * PCBASEMULTIPLE};
 	PCSTAT	pcstat = {3, TRUE, FALSE, FALSE};
 
@@ -180,7 +180,7 @@ static void pccore_set(const NP2CFG *pConfig)
 	CopyMemory(pccore.dipsw, pConfig->dipsw, 3);
 
 	// サウンドボードの接続
-	pccore.sound = pConfig->SOUND_SW;
+	pccore.sound = (SOUNDID)pConfig->SOUND_SW;
 
 	// その他CBUSの接続
 	pccore.device = 0;

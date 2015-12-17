@@ -24,7 +24,7 @@
 #include	"keystat.h"
 
 
-	UINT32		g_usesound;
+	SOUNDID g_nSoundID;
 	_OPNA		g_opna[OPNA_MAX];
 
 	_FMTIMER	g_fmtimer;
@@ -127,9 +127,11 @@ void fmboard_destruct(void)
 
 /**
  * Reset
+ * @param[in] pConfig The pointer of config
+ * @param[in] nSoundId The sound ID
  */
-void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
-
+void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
+{
 	UINT8 cross;
 	UINT i;
 
@@ -137,7 +139,7 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	beep_reset();												// ver0.27a
 	cross = pConfig->snd_x;										// ver0.30
 
-	if (g_usesound != type)
+	if (g_nSoundID != nSoundID)
 	{
 		for (i = 0; i < NELEMENTS(g_opna); i++)
 		{
@@ -149,62 +151,62 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	pcm86_reset();
 	cs4231_reset();
 
-	board14_reset(pConfig, (type == 1) ? TRUE : FALSE);
+	board14_reset(pConfig, (nSoundID == SOUNDID_PC_9801_14) ? TRUE : FALSE);
 	amd98_reset(pConfig);
 
-	switch (type)
+	switch (nSoundID)
 	{
-		case 0x01:
+		case SOUNDID_PC_9801_14:
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			board26k_reset(pConfig);
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			board86_reset(pConfig, FALSE);
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			boardx2_reset(pConfig);
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			board118_reset(pConfig);
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			board86_reset(pConfig, TRUE);
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			boardspb_reset(pConfig);
 			cross ^= pConfig->spb_x;
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			boardspr_reset(pConfig);
 			cross ^= pConfig->spb_x;
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			break;
 
-#if	defined(SUPPORT_PX)
-		case 0x30:
+#if defined(SUPPORT_PX)
+		case SOUNDID_PX1:
 			boardpx1_reset(pConfig);
 			break;
 
-		case 0x50:
+		case SOUNDID_PX2:
 			boardpx2_reset(pConfig);
 			break;
 #endif	// defined(SUPPORT_PX)
 
 		default:
-			type = 0;
+			nSoundID = SOUNDID_NONE;
 			break;
 	}
-	g_usesound = type;
+	g_nSoundID = nSoundID;
 	soundmng_setreverse(cross);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
@@ -212,50 +214,50 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 void fmboard_bind(void) {
 
 	keydisp_reset();
-	switch (g_usesound)
+	switch (g_nSoundID)
 	{
-		case 0x01:
+		case SOUNDID_PC_9801_14:
 			board14_bind();
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			board26k_bind();
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			board86_bind();
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			boardx2_bind();
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			board118_bind();
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			board86_bind();
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			boardspb_bind();
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			boardspr_bind();
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			amd98_bind();
 			break;
 
 #if defined(SUPPORT_PX)
-		case 0x30:
+		case SOUNDID_PX1:
 			boardpx1_bind();
 			break;
 
-		case 0x50:
+		case SOUNDID_PX2:
 			boardpx2_bind();
 			break;
 #endif	// defined(SUPPORT_PX)
