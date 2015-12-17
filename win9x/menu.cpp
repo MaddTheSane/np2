@@ -12,6 +12,12 @@
 #include "misc\tstring.h"
 #include "dialog\np2class.h"
 #include "pccore.h"
+#if defined(SUPPORT_S98)
+#include "sound\s98.h"
+#endif
+#if defined(SUPPORT_WAVEREC)
+#include "sound\sound.h"
+#endif
 
 /**
  * åüçı
@@ -373,6 +379,12 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_ALTF4, MFCHECK(shortcut & 2));
 
 	// Other
+#if defined(SUPPORT_S98)
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_S98LOGGING, MFCHECK(S98_isopened()));
+#endif
+#if defined(SUPPORT_WAVEREC)
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_WAVEREC, MFCHECK(sound_isrecording()));
+#endif
 	const UINT8 DISPCLK = np2oscfg.DISPCLK;
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_DISPCLOCK, MFCHECK(DISPCLK & 1));
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_DISPFRAME, MFCHECK(DISPCLK & 2));
@@ -380,17 +392,3 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_RAPID, MFCHECK(np2cfg.BTN_RAPID));
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MSRAPID, MFCHECK(np2cfg.MOUSERAPID));
 }
-
-#if defined(SUPPORT_S98)
-void xmenu_sets98logging(UINT8 value)
-{
-	CheckMenuItem(np2class_gethmenu(g_hWndMain), MF_BYCOMMAND | IDM_S98LOGGING, MFCHECK(value));
-}
-#endif
-
-#if defined(SUPPORT_WAVEREC)
-void xmenu_setwaverec(UINT8 value)
-{
-	CheckMenuItem(np2class_gethmenu(g_hWndMain), MF_BYCOMMAND | IDM_WAVEREC, MFCHECK(value));
-}
-#endif

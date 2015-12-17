@@ -109,6 +109,15 @@ void sound_recstop(void)
 }
 
 /**
+ * is recording?
+ * @retval TRUE Yes
+ */
+BOOL sound_isrecording(void)
+{
+	return (sndstream.rec != NULL) ? TRUE : FALSE;
+}
+
+/**
  * write
  * @param[in] samples The count of samples
  */
