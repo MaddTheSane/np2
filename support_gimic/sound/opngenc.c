@@ -317,7 +317,7 @@ static void set_ks_ar(OPNSLOT *slot, REG8 value)
 {
 	slot->keyscale = ((~value) >> 6) & 3;
 	value &= 0x1f;
-	slot->attack = (value)?(attacktable + (value << 1)):nulltable;
+	slot->attack = (value) ? (attacktable + (value << 1)) : nulltable;
 	slot->env_inc_attack = slot->attack[slot->envratio];
 	if (slot->env_mode == EM_ATTACK)
 	{
@@ -328,7 +328,7 @@ static void set_ks_ar(OPNSLOT *slot, REG8 value)
 static void set_d1r(OPNSLOT *slot, REG8 value)
 {
 	value &= 0x1f;
-	slot->decay1 = (value)?(decaytable + (value << 1)):nulltable;
+	slot->decay1 = (value) ? (decaytable + (value << 1)) : nulltable;
 	slot->env_inc_decay1 = slot->decay1[slot->envratio];
 	if (slot->env_mode == EM_DECAY1)
 	{
@@ -339,7 +339,7 @@ static void set_d1r(OPNSLOT *slot, REG8 value)
 static void set_dt2_d2r(OPNSLOT *slot, REG8 value)
 {
 	value &= 0x1f;
-	slot->decay2 = (value)?(decaytable + (value << 1)):nulltable;
+	slot->decay2 = (value) ? (decaytable + (value << 1)) : nulltable;
 	if (slot->ssgeg1)
 	{
 		slot->env_inc_decay2 = 0;
