@@ -137,7 +137,7 @@ void opngen_initialize(UINT rate)
 		for (j = 0; j < 32; j++)
 		{
 			detune = dttable[i*32 + j];
-			sft = ratebit + (FREQ_BITS - 21);
+			sft = ratebit + (FREQ_BITS - 20);
 			if (sft >= 0)
 			{
 				detune <<= sft;
@@ -405,7 +405,7 @@ static void channleupdate(OPNCH *ch)
 	{
 		for (i = 0; i < 4; i++, slot++)
 		{
-			slot->freq_inc = (fc + slot->detune1[kc]) * slot->multiple;
+			slot->freq_inc = ((fc + slot->detune1[kc]) * slot->multiple) >> 1;
 			evr = kc >> slot->keyscale;
 			if (slot->envratio != evr)
 			{
@@ -422,7 +422,7 @@ static void channleupdate(OPNCH *ch)
 		for (i = 0; i < 4; i++, slot++)
 		{
 			s = extendslot[i];
-			slot->freq_inc = (ch->keynote[s] + slot->detune1[ch->kcode[s]]) * slot->multiple;
+			slot->freq_inc = ((ch->keynote[s] + slot->detune1[ch->kcode[s]]) * slot->multiple) >> 1;
 			evr = ch->kcode[s] >> slot->keyscale;
 			if (slot->envratio != evr)
 			{
@@ -578,7 +578,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value)
 				blk = ch->keyfunc[0] >> 3;
 				fn = ((ch->keyfunc[0] & 7) << 8) + value;
 				ch->kcode[0] = (blk << 2) | kftable[fn >> 7];
-				ch->keynote[0] = (fn << (opncfg.ratebit + blk + FREQ_BITS - 21)) >> 1;
+				ch->keynote[0] = fn << (opncfg.ratebit + blk + FREQ_BITS - 21);
 				channleupdate(ch);
 				break;
 
@@ -591,7 +591,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value)
 				blk = ch->keyfunc[chpos+1] >> 3;
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos + 1] = (blk << 2) | kftable[fn >> 7];
-				ch->keynote[chpos + 1] = (fn << (opncfg.ratebit + blk + FREQ_BITS - 21)) >> 1;
+				ch->keynote[chpos + 1] = fn << (opncfg.ratebit + blk + FREQ_BITS - 21);
 				channleupdate(ch);
 				break;
 
