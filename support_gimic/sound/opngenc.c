@@ -15,7 +15,6 @@
 #define	EG_STEP			(96.0 / EVC_ENT)					/* dB step */
 #define	SC(db)			(SINT32)((db) * ((3.0 / EG_STEP) * (1 << ENV_BITS))) + EC_DECAY
 #define	FMASMSHIFT		(32 - 6 - (OPM_OUTSB + 1 + FMDIV_BITS) + FMVOL_SFTBIT)
-#define	FREQBASE4096(r)	(OPNA_CLOCK / r / 64.0)
 
 
 	OPNCFG	opncfg;
@@ -60,7 +59,6 @@ void opngen_initialize(UINT rate)
 	double	pom;
 	SINT32	detune;
 	double	freq;
-	double	calcrate;
 
 	if (rate > (OPNA_CLOCK / 144.0))
 	{
@@ -74,7 +72,6 @@ void opngen_initialize(UINT rate)
 	{
 		ratebit = 2;
 	}
-	calcrate = (OPNA_CLOCK >> ratebit) / 72.0;
 	opncfg.calc1024 = (SINT32)((FMDIV_ENT * (rate << ratebit) / (OPNA_CLOCK / 72.0)) + 0.5);
 
 	for (i = 0; i < EVC_ENT; i++)
@@ -157,23 +154,14 @@ void opngen_initialize(UINT rate)
 	}
 	for (i = 4; i < 64; i++)
 	{
-		freq = (double)(EVC_ENT << ENV_BITS) * FREQBASE4096(calcrate);
-		if (i < 8)
-		{
-			freq *= 1.0 + (i & 2) * 0.25;
-		}
-		else if (i < 60)
+		freq = (EVC_ENT << (ENV_BITS + ratebit)) * 72.0 / 64.0;
+		if (i < 60)
 		{
 			freq *= 1.0 + (i & 3) * 0.25;
 		}
 		freq *= (double)(1 << ((i >> 2) - 1));
-#if 0
-		attacktable[i] = (SINT32)((freq + OPM_ARRATE - 1) / OPM_ARRATE);
-		decaytable[i] = (SINT32)((freq + OPM_DRRATE - 1) / OPM_DRRATE);
-#else
 		attacktable[i] = (SINT32)(freq / OPM_ARRATE);
 		decaytable[i] = (SINT32)(freq / OPM_DRRATE);
-#endif
 		if (attacktable[i] >= EC_DECAY)
 		{
 			TRACEOUT(("attacktable %d %d %ld", i, attacktable[i], EC_DECAY));
