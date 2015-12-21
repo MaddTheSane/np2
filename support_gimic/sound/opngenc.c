@@ -130,7 +130,7 @@ void opngen_initialize(UINT rate)
 	}
 	opncfg.envcurve[EVC_ENT * 2] = EVC_ENT;
 
-	opncfg.ratebit = ratebit + FREQ_BITS - 16;
+	opncfg.ratebit = ratebit;
 
 	for (i = 0; i < 4; i++)
 	{
@@ -578,7 +578,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value)
 				blk = ch->keyfunc[0] >> 3;
 				fn = ((ch->keyfunc[0] & 7) << 8) + value;
 				ch->kcode[0] = (blk << 2) | kftable[fn >> 7];
-				ch->keynote[0] = (fn << (opncfg.ratebit + blk)) >> 6;
+				ch->keynote[0] = (fn << (opncfg.ratebit + blk + FREQ_BITS - 21)) >> 1;
 				channleupdate(ch);
 				break;
 
@@ -591,7 +591,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value)
 				blk = ch->keyfunc[chpos+1] >> 3;
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos + 1] = (blk << 2) | kftable[fn >> 7];
-				ch->keynote[chpos + 1] = (fn << (opncfg.ratebit + blk)) >> 6;
+				ch->keynote[chpos + 1] = (fn << (opncfg.ratebit + blk + FREQ_BITS - 21)) >> 1;
 				channleupdate(ch);
 				break;
 
