@@ -303,7 +303,7 @@ static void set_tl(OPNSLOT *slot, REG8 value)
 
 static void set_ks_ar(OPNSLOT *slot, REG8 value)
 {
-	slot->keyscale = ((~value) >> 6) & 3;
+	slot->keyscalerate = ((~value) >> 6) & 3;
 	value &= 0x1f;
 	slot->attack = (value) ? (attacktable + (value << 1)) : nulltable;
 	slot->env_inc_attack = slot->attack[slot->envratio];
@@ -394,7 +394,7 @@ static void channleupdate(OPNCH *ch)
 		for (i = 0; i < 4; i++, slot++)
 		{
 			slot->freq_inc = ((fc + slot->detune1[kc]) * slot->multiple) >> 1;
-			evr = kc >> slot->keyscale;
+			evr = kc >> slot->keyscalerate;
 			if (slot->envratio != evr)
 			{
 				slot->envratio = evr;
@@ -411,7 +411,7 @@ static void channleupdate(OPNCH *ch)
 		{
 			s = extendslot[i];
 			slot->freq_inc = ((ch->keynote[s] + slot->detune1[ch->kcode[s]]) * slot->multiple) >> 1;
-			evr = ch->kcode[s] >> slot->keyscale;
+			evr = ch->kcode[s] >> slot->keyscalerate;
 			if (slot->envratio != evr)
 			{
 				slot->envratio = evr;

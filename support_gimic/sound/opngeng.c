@@ -54,7 +54,7 @@ static SINT32 SLOTOUT(SINT32 e, SINT32 c)
 #else	/* defined(OPNGENX86) */
 #define SLOTOUT(e, c)														\
 	((opncfg.sintable[((c) >> (FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1)]		\
-			* opncfg.envtable[(e)]) >> (ENVTBL_BIT+SINTBL_BIT-TL_BITS))
+			* opncfg.envtable[(e)]) >> (ENVTBL_BIT + SINTBL_BIT - TL_BITS))
 #endif	/* defined(OPNGENX86) */
 
 
