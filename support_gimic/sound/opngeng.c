@@ -5,8 +5,7 @@
 
 #include "compiler.h"
 #include "opngen.h"
-
-extern	OPNCFG	opncfg;
+#include "opngencfg.h"
 
 #if defined(OPNGENX86)
 extern char envshift[EVC_ENT];

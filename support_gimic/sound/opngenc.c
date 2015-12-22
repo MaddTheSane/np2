@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "opngen.h"
 #include <math.h>
+#include "opngencfg.h"
 #include "pccore.h"
 
 
