@@ -44,7 +44,7 @@ enum
 
 #endif
 
-#define	TL_BITS			(FREQ_BITS+2)
+#define	TL_BITS			(FREQ_BITS + 2)
 #define	OPM_OUTSB		(TL_BITS + 2 - 16)				/* OPM output 16bit */
 
 #define	SIN_ENT			(1L << SIN_BITS)
@@ -53,8 +53,6 @@ enum
 #define	EC_ATTACK		0								/* ATTACK start */
 #define	EC_DECAY		(EVC_ENT << ENV_BITS)			/* DECAY start */
 #define	EC_OFF			((2 * EVC_ENT) << ENV_BITS)		/* OFF */
-
-#define	TL_MAX			(EVC_ENT * 2)
 
 enum
 {

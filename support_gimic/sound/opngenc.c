@@ -14,7 +14,6 @@
 
 #define	EG_STEP			(96.0 / EVC_ENT)					/* dB step */
 #define	SC(db)			(SINT32)((db) * ((3.0 / EG_STEP) * (1 << ENV_BITS))) + EC_DECAY
-#define	FMASMSHIFT		(32 - 6 - (OPM_OUTSB + 1 + FMDIV_BITS) + FMVOL_SFTBIT)
 
 
 	OPNCFG	opncfg;
@@ -97,11 +96,10 @@ void opngen_initialize(UINT rate)
 	for (i = 0; i < SIN_ENT; i++)
 	{
 #ifdef OPNGENX86
-		char sft;
 		sft = SINTBL_BIT;
-		while(sft < (SINTBL_BIT + 8))
+		while (sft < (SINTBL_BIT + 8))
 		{
-			pom = (double)(1 << sft) * sin(2 * M_PI * i / SIN_ENT);
+			pom = (double)((1 << sft) - 1) * sin(2 * M_PI * i / SIN_ENT);
 			opncfg.sintable[i] = (SINT32)pom;
 			sinshift[i] = sft;
 			if (opncfg.sintable[i] >= (1 << (SINTBL_BIT - 1)))
@@ -184,7 +182,7 @@ void opngen_setvol(UINT vol)
 {
 	opncfg.fmvol = vol * 5 / 4;
 #if defined(OPNGENX86)
-	opncfg.fmvol <<= FMASMSHIFT;
+	opncfg.fmvol <<= (32 - (OPM_OUTSB + 1 - FMVOL_SFTBIT + FMDIV_BITS + 6));
 #endif
 }
 
