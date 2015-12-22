@@ -1137,7 +1137,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\sound\opnimer.c"
+					RelativePath="..\sound\opntimer.c"
 					>
 				</File>
 				<File
