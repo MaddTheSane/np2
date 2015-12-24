@@ -693,6 +693,7 @@
 		BA7E84AC19063C1600041C04 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		BA7E84AD19063C1600041C04 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		BA7E84AE190650A800041C04 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BAA9AE101C2B6ECD00C88FD6 /* opngencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opngencfg.h; sourceTree = "<group>"; };
 		BADADEBB1BDF804700137975 /* boardso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boardso.c; sourceTree = "<group>"; };
 		BADADEBC1BDF804700137975 /* boardso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boardso.h; sourceTree = "<group>"; };
 		BADADEBE1BDF806400137975 /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
@@ -1331,6 +1332,7 @@
 				BAFFDA291B59058D00C5DE2E /* opna.h */,
 				BA7E835519063AFB00041C04 /* opngen.h */,
 				BA7E835619063AFB00041C04 /* opngenc.c */,
+				BAA9AE101C2B6ECD00C88FD6 /* opngencfg.h */,
 				BA7E835719063AFB00041C04 /* opngeng.c */,
 				BA7E834A19063AFB00041C04 /* opntimer.c */,
 				BA7E834B19063AFB00041C04 /* opntimer.h */,
