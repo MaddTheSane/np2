@@ -1555,6 +1555,14 @@ SOURCE=.\misc\extrom.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\monitorapi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\monitorapi.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\PropProc.cpp
 # End Source File
 # Begin Source File

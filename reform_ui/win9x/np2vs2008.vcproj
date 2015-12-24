@@ -2045,6 +2045,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\misc\monitorapi.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\PropProc.cpp"
 						>
 					</File>
@@ -3024,6 +3028,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\monitorapi.h"
 						>
 					</File>
 					<File
