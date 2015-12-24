@@ -213,22 +213,22 @@ void sysmenu_initialize(HMENU hMenu)
  */
 void sysmenu_update(HMENU hMenu)
 {
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_TOOLWIN, MFCHECK(np2oscfg.toolwin));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_KEYDISP, MFCHECK(np2oscfg.keydisp));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SNAPENABLE, MFCHECK(np2oscfg.WINSNAP));
+	CheckMenuItem(hMenu, IDM_TOOLWIN, MF_BYCOMMAND | MFCHECK(np2oscfg.toolwin));
+	CheckMenuItem(hMenu, IDM_KEYDISP, MF_BYCOMMAND | MFCHECK(np2oscfg.keydisp));
+	CheckMenuItem(hMenu, IDM_SNAPENABLE, MF_BYCOMMAND | MFCHECK(np2oscfg.WINSNAP));
 
 	const UINT8 background = np2oscfg.background ^ 3;
 	EnableMenuItem(hMenu, IDM_BGSOUND, (background & 1) ? MF_ENABLED : MF_GRAYED);
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BACKGROUND, MFCHECK(background & 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BGSOUND, MFCHECK(background & 2));
+	CheckMenuItem(hMenu, IDM_BACKGROUND, MF_BYCOMMAND | MFCHECK(background & 1));
+	CheckMenuItem(hMenu, IDM_BGSOUND, MF_BYCOMMAND | MFCHECK(background & 2));
 
 	const int scrnmul = scrnmng_getmultiple();
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL4, MFCHECK(scrnmul == 4));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL6, MFCHECK(scrnmul == 6));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL8, MFCHECK(scrnmul == 8));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL10, MFCHECK(scrnmul == 10));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL12, MFCHECK(scrnmul == 12));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SCRNMUL16, MFCHECK(scrnmul == 16));
+	CheckMenuItem(hMenu, IDM_SCRNMUL4, MF_BYCOMMAND | MFCHECK(scrnmul == 4));
+	CheckMenuItem(hMenu, IDM_SCRNMUL6, MF_BYCOMMAND | MFCHECK(scrnmul == 6));
+	CheckMenuItem(hMenu, IDM_SCRNMUL8, MF_BYCOMMAND | MFCHECK(scrnmul == 8));
+	CheckMenuItem(hMenu, IDM_SCRNMUL10, MF_BYCOMMAND | MFCHECK(scrnmul == 10));
+	CheckMenuItem(hMenu, IDM_SCRNMUL12, MF_BYCOMMAND | MFCHECK(scrnmul == 12));
+	CheckMenuItem(hMenu, IDM_SCRNMUL16, MF_BYCOMMAND | MFCHECK(scrnmul == 16));
 }
 
 
@@ -303,80 +303,80 @@ void xmenu_update(HMENU hMenu)
 
 	// Screen
 	const bool bFullScreen = ((g_scrnmode & SCRNMODE_FULLSCREEN) != 0);
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_WINDOW, MFCHECK(!bFullScreen));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_FULLSCREEN, MFCHECK(bFullScreen));
+	CheckMenuItem(hMenu, IDM_WINDOW, MF_BYCOMMAND | MFCHECK(!bFullScreen));
+	CheckMenuItem(hMenu, IDM_FULLSCREEN, MF_BYCOMMAND | MFCHECK(bFullScreen));
 	const UINT8 nRotateMode = g_scrnmode & SCRNMODE_ROTATEMASK;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_ROLNORMAL, MFCHECK(nRotateMode == 0));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_ROLLEFT, MFCHECK(nRotateMode == SCRNMODE_ROTATELEFT));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_ROLRIGHT, MFCHECK(nRotateMode == SCRNMODE_ROTATERIGHT));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_DISPSYNC, MFCHECK(np2cfg.DISPSYNC));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_RASTER, MFCHECK(np2cfg.RASTER));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_NOWAIT, MFCHECK(np2oscfg.NOWAIT));
+	CheckMenuItem(hMenu, IDM_ROLNORMAL, MF_BYCOMMAND | MFCHECK(nRotateMode == 0));
+	CheckMenuItem(hMenu, IDM_ROLLEFT, MF_BYCOMMAND | MFCHECK(nRotateMode == SCRNMODE_ROTATELEFT));
+	CheckMenuItem(hMenu, IDM_ROLRIGHT, MF_BYCOMMAND | MFCHECK(nRotateMode == SCRNMODE_ROTATERIGHT));
+	CheckMenuItem(hMenu, IDM_DISPSYNC, MF_BYCOMMAND | MFCHECK(np2cfg.DISPSYNC));
+	CheckMenuItem(hMenu, IDM_RASTER, MF_BYCOMMAND | MFCHECK(np2cfg.RASTER));
+	CheckMenuItem(hMenu, IDM_NOWAIT, MF_BYCOMMAND | MFCHECK(np2oscfg.NOWAIT));
 	const UINT8 DRAW_SKIP = np2oscfg.DRAW_SKIP;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_AUTOFPS, MFCHECK(DRAW_SKIP == 0));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_60FPS, MFCHECK(DRAW_SKIP == 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_30FPS, MFCHECK(DRAW_SKIP == 2));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_20FPS, MFCHECK(DRAW_SKIP == 3));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_15FPS, MFCHECK(DRAW_SKIP == 4));
+	CheckMenuItem(hMenu, IDM_AUTOFPS, MF_BYCOMMAND | MFCHECK(DRAW_SKIP == 0));
+	CheckMenuItem(hMenu, IDM_60FPS, MF_BYCOMMAND | MFCHECK(DRAW_SKIP == 1));
+	CheckMenuItem(hMenu, IDM_30FPS, MF_BYCOMMAND | MFCHECK(DRAW_SKIP == 2));
+	CheckMenuItem(hMenu, IDM_20FPS, MF_BYCOMMAND | MFCHECK(DRAW_SKIP == 3));
+	CheckMenuItem(hMenu, IDM_15FPS, MF_BYCOMMAND | MFCHECK(DRAW_SKIP == 4));
 
 	// Device-Keyboard
 	const UINT8 KEY_MODE = np2cfg.KEY_MODE;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_KEY, MFCHECK(KEY_MODE == 0));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_JOY1, MFCHECK(KEY_MODE == 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_JOY2, MFCHECK(KEY_MODE == 2));
+	CheckMenuItem(hMenu, IDM_KEY, MF_BYCOMMAND | MFCHECK(KEY_MODE == 0));
+	CheckMenuItem(hMenu, IDM_JOY1, MF_BYCOMMAND | MFCHECK(KEY_MODE == 1));
+	CheckMenuItem(hMenu, IDM_JOY2, MF_BYCOMMAND | MFCHECK(KEY_MODE == 2));
 	const UINT8 XSHIFT = np2cfg.XSHIFT;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_XSHIFT, MFCHECK(XSHIFT & 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_XCTRL, MFCHECK(XSHIFT & 2));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_XGRPH, MFCHECK(XSHIFT & 4));
+	CheckMenuItem(hMenu, IDM_XSHIFT, MF_BYCOMMAND | MFCHECK(XSHIFT & 1));
+	CheckMenuItem(hMenu, IDM_XCTRL, MF_BYCOMMAND | MFCHECK(XSHIFT & 2));
+	CheckMenuItem(hMenu, IDM_XGRPH, MF_BYCOMMAND | MFCHECK(XSHIFT & 4));
 	const UINT8 F12COPY = np2oscfg.F12COPY;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_F12MOUSE, MFCHECK(F12COPY == 0));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_F12COPY, MFCHECK(F12COPY == 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_F12STOP, MFCHECK(F12COPY == 2));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_F12EQU, MFCHECK(F12COPY == 3));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_F12COMMA, MFCHECK(F12COPY == 4));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_USERKEY1, MFCHECK(F12COPY == 5));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_USERKEY2, MFCHECK(F12COPY == 6));
+	CheckMenuItem(hMenu, IDM_F12MOUSE, MF_BYCOMMAND | MFCHECK(F12COPY == 0));
+	CheckMenuItem(hMenu, IDM_F12COPY, MF_BYCOMMAND | MFCHECK(F12COPY == 1));
+	CheckMenuItem(hMenu, IDM_F12STOP, MF_BYCOMMAND | MFCHECK(F12COPY == 2));
+	CheckMenuItem(hMenu, IDM_F12EQU, MF_BYCOMMAND | MFCHECK(F12COPY == 3));
+	CheckMenuItem(hMenu, IDM_F12COMMA, MF_BYCOMMAND | MFCHECK(F12COPY == 4));
+	CheckMenuItem(hMenu, IDM_USERKEY1, MF_BYCOMMAND | MFCHECK(F12COPY == 5));
+	CheckMenuItem(hMenu, IDM_USERKEY2, MF_BYCOMMAND | MFCHECK(F12COPY == 6));
 
 	// Device-Sound
 	const UINT8 BEEP_VOL = np2cfg.BEEP_VOL;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BEEPOFF, MFCHECK(BEEP_VOL == 0));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BEEPLOW, MFCHECK(BEEP_VOL == 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BEEPMID, MFCHECK(BEEP_VOL == 2));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_BEEPHIGH, MFCHECK(BEEP_VOL == 3));
+	CheckMenuItem(hMenu, IDM_BEEPOFF, MF_BYCOMMAND | MFCHECK(BEEP_VOL == 0));
+	CheckMenuItem(hMenu, IDM_BEEPLOW, MF_BYCOMMAND | MFCHECK(BEEP_VOL == 1));
+	CheckMenuItem(hMenu, IDM_BEEPMID, MF_BYCOMMAND | MFCHECK(BEEP_VOL == 2));
+	CheckMenuItem(hMenu, IDM_BEEPHIGH, MF_BYCOMMAND | MFCHECK(BEEP_VOL == 3));
 	const UINT8 SOUND_SW = np2cfg.SOUND_SW;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_NOSOUND, MFCHECK(SOUND_SW == 0x00));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PC9801_14, MFCHECK(SOUND_SW == 0x01));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PC9801_26K, MFCHECK(SOUND_SW == 0x02));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PC9801_86, MFCHECK(SOUND_SW == 0x04));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PC9801_26_86, MFCHECK(SOUND_SW == 0x06));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PC9801_86_CB, MFCHECK(SOUND_SW == 0x14));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PC9801_118, MFCHECK(SOUND_SW == 0x08));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SPEAKBOARD, MFCHECK(SOUND_SW == 0x20));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SPARKBOARD, MFCHECK(SOUND_SW == 0x40));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_AMD98, MFCHECK(SOUND_SW == 0x80));
+	CheckMenuItem(hMenu, IDM_NOSOUND, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x00));
+	CheckMenuItem(hMenu, IDM_PC9801_14, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x01));
+	CheckMenuItem(hMenu, IDM_PC9801_26K, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x02));
+	CheckMenuItem(hMenu, IDM_PC9801_86, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x04));
+	CheckMenuItem(hMenu, IDM_PC9801_26_86, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x06));
+	CheckMenuItem(hMenu, IDM_PC9801_86_CB, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x14));
+	CheckMenuItem(hMenu, IDM_PC9801_118, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x08));
+	CheckMenuItem(hMenu, IDM_SPEAKBOARD, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x20));
+	CheckMenuItem(hMenu, IDM_SPARKBOARD, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x40));
+	CheckMenuItem(hMenu, IDM_AMD98, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x80));
 #if defined(SUPPORT_PX)
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PX1, MFCHECK(SOUND_SW == 0x30));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PX2, MFCHECK(SOUND_SW == 0x50));
+	CheckMenuItem(hMenu, IDM_PX1, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x30));
+	CheckMenuItem(hMenu, IDM_PX2, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x50));
 #endif	// defined(SUPPORT_PX)
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_JASTSOUND, MFCHECK(np2oscfg.jastsnd));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SEEKSND, MFCHECK(np2cfg.MOTOR));
+	CheckMenuItem(hMenu, IDM_JASTSOUND, MF_BYCOMMAND | MFCHECK(np2oscfg.jastsnd));
+	CheckMenuItem(hMenu, IDM_SEEKSND, MF_BYCOMMAND | MFCHECK(np2cfg.MOTOR));
 
 	// Device-Memory
 	const UINT8 EXTMEM = np2cfg.EXTMEM;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MEM640, MFCHECK(EXTMEM == 0));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MEM16, MFCHECK(EXTMEM == 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MEM36, MFCHECK(EXTMEM == 3));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MEM76, MFCHECK(EXTMEM == 7));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MEM116, MFCHECK(EXTMEM == 11));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MEM136, MFCHECK(EXTMEM == 13));
+	CheckMenuItem(hMenu, IDM_MEM640, MF_BYCOMMAND | MFCHECK(EXTMEM == 0));
+	CheckMenuItem(hMenu, IDM_MEM16, MF_BYCOMMAND | MFCHECK(EXTMEM == 1));
+	CheckMenuItem(hMenu, IDM_MEM36, MF_BYCOMMAND | MFCHECK(EXTMEM == 3));
+	CheckMenuItem(hMenu, IDM_MEM76, MF_BYCOMMAND | MFCHECK(EXTMEM == 7));
+	CheckMenuItem(hMenu, IDM_MEM116, MF_BYCOMMAND | MFCHECK(EXTMEM == 11));
+	CheckMenuItem(hMenu, IDM_MEM136, MF_BYCOMMAND | MFCHECK(EXTMEM == 13));
 
 	// Device
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MOUSE, MFCHECK(np2oscfg.MOUSE_SW));
+	CheckMenuItem(hMenu, IDM_MOUSE, MF_BYCOMMAND | MFCHECK(np2oscfg.MOUSE_SW));
 
 	// Other-ShortcutKey
 	const UINT8 shortcut = np2oscfg.shortcut;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_ALTENTER, MFCHECK(shortcut & 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_ALTF4, MFCHECK(shortcut & 2));
+	CheckMenuItem(hMenu, IDM_ALTENTER, MF_BYCOMMAND | MFCHECK(shortcut & 1));
+	CheckMenuItem(hMenu, IDM_ALTF4, MF_BYCOMMAND | MFCHECK(shortcut & 2));
 
 	// Other
 #if defined(SUPPORT_S98)
@@ -386,9 +386,9 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_WAVEREC, MFCHECK(sound_isrecording()));
 #endif
 	const UINT8 DISPCLK = np2oscfg.DISPCLK;
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_DISPCLOCK, MFCHECK(DISPCLK & 1));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_DISPFRAME, MFCHECK(DISPCLK & 2));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_JOYX, MFCHECK(np2cfg.BTN_MODE));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_RAPID, MFCHECK(np2cfg.BTN_RAPID));
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_MSRAPID, MFCHECK(np2cfg.MOUSERAPID));
+	CheckMenuItem(hMenu, IDM_DISPCLOCK, MF_BYCOMMAND | MFCHECK(DISPCLK & 1));
+	CheckMenuItem(hMenu, IDM_DISPFRAME, MF_BYCOMMAND | MFCHECK(DISPCLK & 2));
+	CheckMenuItem(hMenu, IDM_JOYX, MF_BYCOMMAND | MFCHECK(np2cfg.BTN_MODE));
+	CheckMenuItem(hMenu, IDM_RAPID, MF_BYCOMMAND | MFCHECK(np2cfg.BTN_RAPID));
+	CheckMenuItem(hMenu, IDM_MSRAPID, MF_BYCOMMAND | MFCHECK(np2cfg.MOUSERAPID));
 }
