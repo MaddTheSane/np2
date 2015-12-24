@@ -93,8 +93,8 @@ static void setwindowsize(HWND hWnd, int width, int height)
 		GetWindowRect(hWnd, &rectwindow);
 		RECT rectclient;
 		GetClientRect(hWnd, &rectclient);
-		int winx = rectwindow.left;
-		int winy = rectwindow.top;
+		int winx = (np2oscfg.winx != CW_USEDEFAULT) ? np2oscfg.winx : rectwindow.left;
+		int winy = (np2oscfg.winy != CW_USEDEFAULT) ? np2oscfg.winy : rectwindow.top;
 		int cx = width;
 		cx += np2oscfg.paddingx * 2;
 		cx += rectwindow.right - rectwindow.left;
