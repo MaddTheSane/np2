@@ -207,6 +207,9 @@ static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex)
 	lpBoard = OEMTEXT("none");
 	switch (g_nSoundID)
 	{
+		case SOUNDID_NONE:
+			break;
+
 		case SOUNDID_PC_9801_14:
 			lpBoard = OEMTEXT("PC-9801-14");
 			break;
@@ -252,6 +255,10 @@ static void info_sound(OEMCHAR *str, int maxlen, const NP2INFOEX *ex)
 			lpBoard = OEMTEXT("Otomi-chanx2 + 86");
 			break;
 #endif	// defined(SUPPORT_PX)
+
+		default:
+			lpBoard = OEMTEXT("unknown");
+			break;
 	}
 	milstr_ncpy(str, lpBoard, maxlen);
 	(void)ex;

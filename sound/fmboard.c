@@ -260,6 +260,9 @@ void fmboard_bind(void) {
 			boardpx2_bind();
 			break;
 #endif	// defined(SUPPORT_PX)
+
+		default:
+			break;
 	}
 	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
 }
