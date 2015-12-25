@@ -1101,10 +1101,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sound\fmtimer.c"
-					>
-				</File>
-				<File
 					RelativePath=".\ext\opna.cpp"
 					>
 				</File>
@@ -1131,6 +1127,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\sound\opntimer.c"
+					>
 				</File>
 				<File
 					RelativePath="..\sound\pcm86c.c"
@@ -2375,15 +2375,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sound\fmtimer.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sound\opna.h"
 					>
 				</File>
 				<File
 					RelativePath="..\sound\opngen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opntimer.h"
 					>
 				</File>
 				<File

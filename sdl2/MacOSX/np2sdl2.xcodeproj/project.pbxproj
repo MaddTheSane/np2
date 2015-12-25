@@ -212,7 +212,7 @@
 		BAF84E89195AA38300183062 /* cs4231c.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E54195AA38300183062 /* cs4231c.c */; };
 		BAF84E8A195AA38300183062 /* cs4231g.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E55195AA38300183062 /* cs4231g.c */; };
 		BAF84E8B195AA38300183062 /* fmboard.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E56195AA38300183062 /* fmboard.c */; };
-		BAF84E8C195AA38300183062 /* fmtimer.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E58195AA38300183062 /* fmtimer.c */; };
+		BAF84E8C195AA38300183062 /* opntimer.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E58195AA38300183062 /* opntimer.c */; };
 		BAF84E8D195AA38300183062 /* getmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E5B195AA38300183062 /* getmp3.c */; };
 		BAF84E8E195AA38300183062 /* getogg.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E5C195AA38300183062 /* getogg.c */; };
 		BAF84E8F195AA38300183062 /* getsmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E5D195AA38300183062 /* getsmix.c */; };
@@ -626,8 +626,8 @@
 		BAF84E55195AA38300183062 /* cs4231g.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs4231g.c; sourceTree = "<group>"; };
 		BAF84E56195AA38300183062 /* fmboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fmboard.c; sourceTree = "<group>"; };
 		BAF84E57195AA38300183062 /* fmboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmboard.h; sourceTree = "<group>"; };
-		BAF84E58195AA38300183062 /* fmtimer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fmtimer.c; sourceTree = "<group>"; };
-		BAF84E59195AA38300183062 /* fmtimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmtimer.h; sourceTree = "<group>"; };
+		BAF84E58195AA38300183062 /* opntimer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opntimer.c; sourceTree = "<group>"; };
+		BAF84E59195AA38300183062 /* opntimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opntimer.h; sourceTree = "<group>"; };
 		BAF84E5B195AA38300183062 /* getmp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getmp3.c; sourceTree = "<group>"; };
 		BAF84E5C195AA38300183062 /* getogg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getogg.c; sourceTree = "<group>"; };
 		BAF84E5D195AA38300183062 /* getsmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getsmix.c; sourceTree = "<group>"; };
@@ -1291,13 +1291,13 @@
 				BAF84E55195AA38300183062 /* cs4231g.c */,
 				BAF84E56195AA38300183062 /* fmboard.c */,
 				BAF84E57195AA38300183062 /* fmboard.h */,
-				BAF84E58195AA38300183062 /* fmtimer.c */,
-				BAF84E59195AA38300183062 /* fmtimer.h */,
 				BAF84E5A195AA38300183062 /* getsnd */,
 				BAFFDA261B5901D500C5DE2E /* opna.h */,
 				BAF84E63195AA38300183062 /* opngen.h */,
 				BAF84E64195AA38300183062 /* opngenc.c */,
 				BAF84E65195AA38300183062 /* opngeng.c */,
+				BAF84E58195AA38300183062 /* opntimer.c */,
+				BAF84E59195AA38300183062 /* opntimer.h */,
 				BAF84E66195AA38300183062 /* pcm86.h */,
 				BAF84E67195AA38300183062 /* pcm86c.c */,
 				BAF84E68195AA38300183062 /* pcm86g.c */,
@@ -1498,7 +1498,7 @@
 				BAF84DE0195AA10500183062 /* cgrom.c in Sources */,
 				BAF84D90195AA10500183062 /* dlgabout.c in Sources */,
 				BAF84DA8195AA10500183062 /* sxsi.c in Sources */,
-				BAF84E8C195AA38300183062 /* fmtimer.c in Sources */,
+				BAF84E8C195AA38300183062 /* opntimer.c in Sources */,
 				BAF84E16195AA10500183062 /* ini.c in Sources */,
 				BAF84D60195AA10500183062 /* calendar.c in Sources */,
 				BAF84DAE195AA10500183062 /* fontfm7.c in Sources */,

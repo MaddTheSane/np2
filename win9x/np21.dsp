@@ -934,10 +934,6 @@ SOURCE=..\SOUND\FMBOARD.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\FMTIMER.C
-# End Source File
-# Begin Source File
-
 SOURCE=.\ext\opna.cpp
 # End Source File
 # Begin Source File
@@ -1014,6 +1010,14 @@ InputName=OPNGENG
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.h
 # End Source File
 # Begin Source File
 

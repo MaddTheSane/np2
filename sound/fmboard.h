@@ -1,13 +1,14 @@
 /**
  * @file	fmboard.h
+ * @brief	Interface of The board manager
  */
 
 #pragma once
 
 #if !defined(DISABLE_SOUND)
 
-#include "fmtimer.h"
 #include "opna.h"
+#include "opntimer.h"
 #include "pcm86.h"
 #include "cs4231.h"
 
