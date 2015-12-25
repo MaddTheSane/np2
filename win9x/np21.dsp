@@ -942,18 +942,26 @@ SOURCE=..\sound\opna.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\OPNGENC.C
+SOURCE=..\sound\opngen.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\x86\OPNGENG.X86
+SOURCE=..\sound\opngenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\x86\opngeng.x86
 
 !IF  "$(CFG)" == "np21 - Win32 Release"
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\rel21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -964,8 +972,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\relnt21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -976,8 +984,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\trc21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -988,8 +996,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\trap21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -1000,8 +1008,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\dbg21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)

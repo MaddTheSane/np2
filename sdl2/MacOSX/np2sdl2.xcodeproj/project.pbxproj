@@ -243,6 +243,7 @@
 /* Begin PBXFileReference section */
 		BA99F2D31BD4DD1000B97E10 /* externalchipmanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = externalchipmanager.cpp; sourceTree = "<group>"; };
 		BA99F2D41BD4DD1000B97E10 /* externalchipmanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = externalchipmanager.h; sourceTree = "<group>"; };
+		BAA9AE0F1C2B6E6800C88FD6 /* opngencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opngencfg.h; sourceTree = "<group>"; };
 		BAAEA8481963E34B00747635 /* threadbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threadbase.cpp; sourceTree = "<group>"; };
 		BAAEA8491963E34B00747635 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -1295,6 +1296,7 @@
 				BAFFDA261B5901D500C5DE2E /* opna.h */,
 				BAF84E63195AA38300183062 /* opngen.h */,
 				BAF84E64195AA38300183062 /* opngenc.c */,
+				BAA9AE0F1C2B6E6800C88FD6 /* opngencfg.h */,
 				BAF84E65195AA38300183062 /* opngeng.c */,
 				BAF84E58195AA38300183062 /* opntimer.c */,
 				BAF84E59195AA38300183062 /* opntimer.h */,

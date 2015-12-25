@@ -2664,6 +2664,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sound\opngencfg.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sound\opntimer.h"
 					>
 				</File>
